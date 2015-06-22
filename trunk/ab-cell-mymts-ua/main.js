@@ -6,7 +6,7 @@ var g_headers = {
 	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
 	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
 	'Connection': 'keep-alive',
-	'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/43.0.2357.124 Safari/537.36',
+	'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/43.0.2357.125 Safari/537.36',
 };
 
 function parseTrafficMb(str){
@@ -114,6 +114,14 @@ function main() {
 //	for(var i=0; i<arr.length; ++i){
 //          getParam(arr[i], result, 'counter' + i);
 //      }
+
+	//Политика скорости
+	getParam (html, result, 'speed', /Поточна швидкість:\s*<\/span>\s*<\/td>\s*<td>\s*<div[^>]*>\s*<span>([^<]*)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
+	if (matches=/Поточна швидкість:\s*<\/span>\s*<\/td>\s*<td>\s*<div[^>]*>\s*<span>\s*<small>([^<]*)<\/small>([^<]*)<small>([^<]*)<\/small>\s*<\/span>/.exec(html)){
+	result.speed=matches[1]+' '+matches[2]+' '+matches[3];
+	}
+	getParam (html, result, 'traffic5', /Залишилось:\s*<\/span>\s*<\/td>\s*<td>\s*<div[^>]*>\s*<span>\s*(\d+,?\d*)\s*<small>Мбайт<\/small>\s*<\/span>/i, null, parseBalance);
+	sumParam (html, result, 'speed_termin', /Обмеження діє:\s*<\/span>\s*<\/td>\s*<td>\s*<div[^>]*>\s*<span>\s*<small>до<\/small>\s*([^<]*)\s*<\/span>/ig, replaceTagsAndSpaces, parseDate, aggregate_min);
 
 	//Особые параметры
 	getParam (html, result, 'PZS_MB_opera', />OperaMini: ПЗС за первое событие для APN opera:\s*(\d+)<\/span>/ig, replaceTagsAndSpaces, parseBalance);

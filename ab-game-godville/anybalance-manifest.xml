@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id version="10">ab-game-godville</id>
+	<id version="11">ab-game-godville</id>
 	<name>Godville.net</name>
 	<description html="true"><![CDATA[
 	<p>Отображает некоторые параметры игры (здоровье, прана, количество кирпичей, бревен, уровень героя и др.)</p>

@@ -1,5 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="7" date="2015-06-22">
+	Поддержка депозитов
+	</change>
         <change version="6" date="2015-01-21">
 	- Изменено время ожидания ввода кода смс-подтверждения до 4 минут.
 	</change>

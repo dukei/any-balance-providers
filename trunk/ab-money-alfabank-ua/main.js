@@ -2,99 +2,106 @@
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 */
 
-var g_headers = {
-	'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-	'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
-	'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
-	'Connection':'keep-alive',
-	'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:35.0) Gecko/20100101 Firefox/35.0'
+var g_countersTable = {
+	card: {
+    	"balance": "contracts.balance",
+		"limit": "contracts.limit",
+		"currency": "contracts.currency",
+		"card_num": "contracts.cards.num",
+		"acc_num": "contracts.accnum",
+		"card_name": "contracts.__name",
+		"__tariff": "contracts.cards.num",
+		"fio": "fio"
+    },
+    credit: {
+    	"balance": "credits.balance",
+		"limit": "credits.limit",
+		"currency": "credits.currency",
+		"__tariff": "credits.accnum",
+		"next_payment": "credits.next_payment",
+		"next_payment_date": "credits.next_payment_date",
+		"period": "credits.next_period",
+		"fio": "fio"
+    },
+	dep: {
+    	"balance": "deposits.balance",
+		"currency": "deposits.currency",
+		"pct_sum": "deposits.pct_sum",
+		"acc_num": "deposits.accnum",
+		"pct": "deposits.pct",
+		"__tariff": "deposits.__name",
+		"fio": "fio"
+    }
 };
 
-function main(){
-    var prefs = AnyBalance.getPreferences();
-	checkEmpty(prefs.login, 'Введите логин!');
-	checkEmpty(prefs.password, 'Введите пароль!');
+function shouldProcess(counter, info){
+	var prefs = AnyBalance.getPreferences();
 
-    var baseurl = 'https://my.alfabank.com.ua/';
-    AnyBalance.setDefaultCharset('utf-8'); 
-
-    var html = AnyBalance.requestGet(baseurl + 'login', g_headers);
-
-	html = AnyBalance.requestPost(baseurl + 'login', {
-        'forbiddenUrl':'',
-        'login_':prefs.login,
-        password:prefs.password,
-        nonce:'',
-		ok:''
-    }, addHeaders({Referer: baseurl + 'login'}));
-
-	var otpa = getParam(html, null, null, /код смс-подтверждения/i);
-	if(otpa) {
-		if(AnyBalance.getLevel() >= 7){
-			AnyBalance.trace('Пытаемся ввести код смс-подтверждения');
-			code = AnyBalance.retrieveCode("Пожалуйста, введите код смс-подтверждения", 'R0lGODlhBAAEAJEAAAAAAP///////wAAACH5BAEAAAIALAAAAAAEAAQAAAIElI8pBQA7', {time: 240000, inputType: 'number'});
-			AnyBalance.trace('Код получен: ' + code);
-			html = AnyBalance.requestPost(baseurl + 'loginConfirm', {
-			action:'next',
-		        otp:code
-	                }, addHeaders({Referer: baseurl + 'loginConfirm'}));
-		}else{
-			throw new AnyBalance.Error('Провайдер требует AnyBalance API v7, пожалуйста, обновите AnyBalance!');
+	switch(counter){
+		case 'contracts':
+		{
+			if(prefs.type != 'card')
+				return false;
+		    if(!prefs.cardnum)
+		    	return true;
+		    for(var i=0; i<info.cards.length; ++i){
+		    	if(endsWith(info.cards[i].num, prefs.cardnum))
+		    		return true;
+		    }
+		    return false;
 		}
+		case 'deposits':
+		{
+			if(prefs.type != 'dep')
+				return false;
+		    if(!prefs.cardnum)
+		    	return true;
+		    return new RegExp(prefs.cardnum + '$').test(info.accnum);
+		}
+		default:
+			return false;
 	}
-	
-	if (!/class="logout"/i.test(html)) {
-		var error = getParam(html, null, null, /icon exclamation[\s\S]*?"text"[\s\S]*?>\s*([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
-		if (error)
-			throw new AnyBalance.Error(error, null, /Проверьте, пожалуйста, правильность ввода логина и пароля/i.test(error));
-		
-		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
-	}
-
-	// Успешно вошли в кабинет, теперь получаем балансы
-	if(prefs.type == 'dep')
-        processDep(html, baseurl);
-    else if(prefs.type == 'credit')
-        processCredit(html, baseurl);
-    else 
-        processCard(html, baseurl);
 }
 
-function processCard(html, baseurl){
+function main(){
 	var prefs = AnyBalance.getPreferences();
-	
-    if(prefs.cardnum && !/^\d{4}$/.test(prefs.cardnum))
-        throw new AnyBalance.Error("Введите 4 последних цифры номера карты или не вводите ничего, чтобы показать информацию по первой карте");
+    if(!/^(card|dep|credit)$/i.test(prefs.type || ''))
+    	prefs.type = 'card';
 
-	html = AnyBalance.requestGet(baseurl + 'get_home_page_block?block=groupCardAccount&_=' + new Date().getTime(), g_headers);		
+    var adapter = new NAdapter(g_countersTable[prefs.type], shouldProcess);
+    adapter.processContracts = adapter.envelope(processContracts);
+    adapter.processDeposits = adapter.envelope(processDeposits);
+    adapter.processCredentials = adapter.envelope(processCredentials);
 
-	//class="card(?:[^>]*>){1}\s*[x\d]{10,}0105(?:[^>]*>){5,9}[^>]*CardContractAction.view\?contract=\d+
-	var card = getParam(html, null, null, new RegExp('class="card(?:[^>]*>){1}\\s*[x\\d]{10,}' + (prefs.cardnum || '') + '(?:[^>]*>){5,9}[^>]*CardContractAction.view\\?contract=(\\d+)', 'i'));
-	checkEmpty(card, 'Не удалось найти ' + (prefs.cardnum ? 'карту с последними цифрами ' + prefs.cardnum : 'ни одной карты!'), true);
-
-	html = AnyBalance.requestGet(baseurl + 'CardContractAction.view?contract=' + card, g_headers);
+	var html = login();
 
 	var result = {success: true};
 
-	getParam(html, result, 'fio', /<span>Рады Вас видеть,([^>]*>){2}/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'balance', /Общий баланс([^>]*>){5}/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'limit', /лимит:([^>]*>){2}/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, ['currency', 'limit', 'balance'], /Общий баланс([^>]*>){5}/i, replaceTagsAndSpaces, parseCurrency);
-    getParam(html, result, '__tariff', /(\d{4}\s*xxxxxxx\s*\d{4})/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'card_num', /(\d{4}\s*xxxxxxx\s*\d{4})/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'acc_num', /Список операций по счету №\s*(\d{10,})/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'card_name', /"defaultSettingsId_productName"([^>]*>){2}/i, replaceTagsAndSpaces, html_entity_decode);
+	adapter.processCredentials(html, result);
 
-    AnyBalance.setResult(result);
+	if(prefs.type == 'card'){
+
+		adapter.processContracts(result);
+		if(result.contracts.length == 0)
+			throw new AnyBalance.Error(prefs.cardnum ? 'Не найдена карта с последними цифрами ' + prefs.cardnum : 'У вас нет ни одной карты');
+		result = adapter.convert(result);
+
+	}else if(prefs.type == 'dep'){
+
+		adapter.processDeposits(result);
+		if(result.deposits.length == 0)
+			throw new AnyBalance.Error(prefs.cardnum ? 'Не найден депозит с последними цифрами ' + prefs.cardnum : 'У вас нет ни одного депозита');
+		result = adapter.convert(result);
+
+	}else if(prefs.type == 'credit'){
+		processCredit(result);
+	}
+
+	AnyBalance.setResult(result);
 }
 
-function processDep(html, baseurl){
-	throw new AnyBalance.Error('Депозиты не поддерживаются в данной версии, свяжитесь с автором по e-mail.');
-}
-
-function processCredit(html, baseurl, _accnum, result){
-     html = AnyBalance.requestGet(baseurl + 'get_home_page_block?block=groupCredit&_=1374241044354', g_headers);
+function processCredit(result){
+    var html = AnyBalance.requestGet(g_baseurl + 'get_home_page_block?block=groupCredit&_=' + new Date().getTime(), g_headers);
 
     /*var prefs = AnyBalance.getPreferences();
     if(prefs.cardnum && !/^\d{4}$/.test(prefs.cardnum))
@@ -110,3 +117,4 @@ function processCredit(html, baseurl, _accnum, result){
 
     AnyBalance.setResult(result);
 }
+

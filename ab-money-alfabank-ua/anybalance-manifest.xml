@@ -1,7 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="6">ab-money-alfabank-ua</id>
+	<id version="7">ab-money-alfabank-ua</id>
 	<name>Альфа-Банк (Украина)</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе на картах, кредитах и депозитах Альфа-Банка Украина (https://my.alfabank.com.ua/)</p>
@@ -11,6 +11,8 @@
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
 		<js>library.js</js>
+		<js>extract.js</js>
+		<js>nadapter.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
@@ -18,6 +20,8 @@
 		<counter id="balance" name="Баланс" units=" {@currency}"/>
 		<counter id="limit" name="Лимит" units=" {@currency}"/>
 		<counter id="currency" name="Валюта" type="text"/>
+		<counter id="pct_sum" name="Начисленные проценты" units=" {@currency}"/>
+		<counter id="pct" name="Проценты" units="%"/>
 		<counter id="card_num" name="Номер карты" type="text"/>
 		<counter id="acc_num" name="Номер счета" type="text"/>
 		<counter id="card_name" name="Название" type="text"/>
@@ -27,6 +31,6 @@
 		<counter id="fio" name="ФИО" type="text"/>
 	</counters>
 	<keywords></keywords>
-	<type>money</type>
+	<type>money, bank</type>
 	<country>ua</country>
 </provider>

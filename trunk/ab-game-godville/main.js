@@ -77,7 +77,7 @@ function mainOld(prefs) {
 	getParam(json.bricks_cnt/10 + '', result, 'bricks_p', null, replaceTagsAndSpaces, parseBalance);
 	getParam(json.bricks_cnt + '', result, 'bricks', null, replaceTagsAndSpaces, parseBalance);
 	getParam(json.godpower + '', result, 'godpower', null, replaceTagsAndSpaces, parseBalance);
-	getParam(json.wood_cnt ? json.wood_cnt / 10 : 0 + '', result, 'wood_p', null, replaceTagsAndSpaces, parseBalance);
+	getParam(json.wood_cnt ? (json.wood_cnt / 10) + '' : 0 + '', result, 'wood_p', null, replaceTagsAndSpaces, parseBalance);
 	getParam(json.wood_cnt + '', result, 'wood', null, replaceTagsAndSpaces, parseBalance);
 	getParam(json.inventory_num + '', result, 'inventory', null, replaceTagsAndSpaces, parseBalance);
 	getParam(((json.health / json.max_health) * 100).toFixed(1) + '', result, 'health_p', null, replaceTagsAndSpaces, parseBalance);

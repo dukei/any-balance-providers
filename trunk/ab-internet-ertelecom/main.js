@@ -77,7 +77,7 @@ function main(){
 	getParam(info, result, 'tariff_number', /№ договора:\s*<\/div>([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(info, result, 'name', /b-head-block-account-info-name[^>]*>([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(info, result, '__tariff', /Ваш пакет[^<]*<a[^>]*>([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(info, result, 'bits', /status__block-item_bonus[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(info, result, 'bits', /status[^>]*bonus"[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseBalance);
 	getParam(info, result, 'status', /<a[^>]+href="[^"]*status.domru.ru"[^>]*>([\s\S]*?)<\/a>/i, replaceTagsAndSpaces, html_entity_decode);
 
 	AnyBalance.setResult(result);

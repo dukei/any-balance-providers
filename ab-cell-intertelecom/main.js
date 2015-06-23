@@ -52,9 +52,9 @@ function main() {
     //Бонус "Смартфон за Check-in"
     sumParam(html, result, 'bonus_fb', /<td[^>]*>\s*Бонус [^>]*Смартфон за Check-in[^>]*\s*<\/td>\s*<td[^>]*>([\s\S]*?) \([^<]*\)\s*<\/td>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
     //Бонус "На лето" (на доп.услуги)"
-    sumParam(html, result, 'bonus_fb', /<td[^>]*>\s*Бонус регистрация АССА\s*<\/td>\s*<td[^>]*>([\s\S]*?) \([^<]*\)\s*<\/td>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-    //Бонус за регистрацию в АССА
     sumParam(html, result, 'bonus_fb', /<td[^>]*>\s*Бонус [^>]*На лето[^>]*\s*[^>]*на доп.услуги[^>]*\s*<\/td>\s*<td[^>]*>([\s\S]*?) \([^<]*\)\s*<\/td>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+    //Бонус за регистрацию в АССА
+    sumParam(html, result, 'bonus_fb', /<td[^>]*>\s*Бонус регистрация АССА\s*<\/td>\s*<td[^>]*>([\s\S]*?) \([^<]*\)\s*<\/td>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
     //Бонус «Вільний доступ»    [^>]*<\/td>
     getParam(html, result, 'bonus_vd', /<td[^>]*>\s*Бонус [^>]*Вільний доступ[^>]*\s*<\/td>\s*<td[^>]*>([\s\S]*?) \([^>]*\)\s*<\/td>/i, replaceTagsAndSpaces, parseBalance);
     //Бонус при пополнении счета через Portmone

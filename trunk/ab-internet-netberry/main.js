@@ -58,7 +58,7 @@ function main() {
 		getParam(html, result, 'traffic_pir_out', /Итого:(?:[\S\s]*?<td[^>]*>){7}([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, parseTrafficTotalGb);
 		
 		if (AnyBalance.isAvailable('traffic_total'))
-			result.traffic_total = parseFloat(traffic_vpn_in + traffic_vpn_out + traffic_pir_in + traffic_pir_out);
+			result.traffic_total = Math.round((result.traffic_vpn_in + result.traffic_vpn_out + result.traffic_pir_in + result.traffic_pir_out)* 100) / 100;
 	}
 
 	AnyBalance.setResult(result);

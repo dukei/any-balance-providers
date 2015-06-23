@@ -1,9 +1,15 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="5" date="2015-06-24">
+	- Исправлена ошибка в поле "Общий трафик за текущий месяц".
+	</change>
 	<change version="4" date="2015-06-23">
 	- Отдельный показ трафика VPN-вх, VPN-исх. Пиринг-вх, Пиринг-исх за текущий месяц.
 	</change>
 	<change version="3" date="2015-06-23">
 	- Поддержка изменений на сайте биллинга.
+	</change>
+	<change version="3" date="2014-08-20">
+	- Поддержка изменений на сайте.
 	</change>
 </history>

@@ -1,5 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="3.0" version="160" date="2015-06-23">
+	- Не стираем пропадающие значения
+	- Срок действия трафика исправлен
+	</change>
 	<change major_version="3.0" version="159" date="2015-06-11">
 	- Исправлено получение опции Гигабайт в дорогу
 	</change>

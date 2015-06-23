@@ -557,7 +557,7 @@ function megafonTrayInfo(filial) {
 					    internet_totals_was.total = (internet_totals_was.total || 0) + _valTotal;
 					}
 
-					if(_valTotal > 10000000){
+					if(_valTotal > 100000000){
 					    var realTotal = getParam(names, null, null, /\d+\s*[гмкgmk][бb]/i, null, parseTrafficToBytes);
 					    if(isset(realTotal)){
 							AnyBalance.trace('Нашли тотал из названия опции: ' + realTotal + ' байт');
@@ -805,6 +805,7 @@ function megafonTrayInfo(filial) {
 	else
 		AnyBalance.trace('Мы уже получили весь трафик, в getInternetInfo не пойдем, т.к. иначе все просуммируется и трафика станет в два раза больше')
 */
+	setCountersToNull(result);
 	AnyBalance.setResult(result);
 }
 
@@ -1042,6 +1043,7 @@ function megafonLK(filinfo, tryOldSG) {
 		getParam(html, result, 'last_pay_date', /Сумма<(?:[^>]*>){4}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseDateWord);
 	}
 	
+	setCountersToNull(result);
 	AnyBalance.setResult(result);	
 }
 
@@ -1191,6 +1193,7 @@ function megafonServiceGuideCorporate(filial, sessionid){
     //Теперь получим баланс
     getParam(html, result, 'balance', /<div class="balance_[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
 
+	setCountersToNull(result);
     AnyBalance.setResult(result);
 }
 
@@ -1293,6 +1296,7 @@ function megafonServiceGuidePhysical(filial, sessionid, text){
 			/(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i,
 			/(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i,
 			/(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\/td>/i,
+			/(?:[\s\S]*?<td[^>]*>){6}([\s\S]*?)<\/td>/i,
         ];
         var rows = sumParam(text, null, null, /<tr[^>]*>[\s\S]*?<\/tr>/ig, null, html_entity_decode);
 		var reOption = /<tr[^>]*>(?:(?:[\s\S](?!<\/tr>))*?<td[^>]*>\s*<div[^>]+class="td_def"[^>]*>){3}[\s\S]*?<\/tr>/i;
@@ -1370,6 +1374,8 @@ function megafonServiceGuidePhysical(filial, sessionid, text){
 					sumParam(total, result, 'internet_total', null, null, null, aggregate_sum);
 					sumParam(left, result, 'internet_left', null, null, null, aggregate_sum);
 					sumParam(used, result, 'internet_cur', null, null, null, aggregate_sum);
+
+					sumParam(row, result, 'internet_till', columnsRegexps[(has_used ? 3 : 2) + colnum - 1], [replaceTagsAndSpaces, /.*-/, ''], parseDate, aggregate_min);
 				}else{
 				    AnyBalance.trace('??? НЕИЗВЕСТНАЯ ОПЦИЯ (группа ' + optionGroupText + ') ' + name + ': ' + row);
 				}
@@ -1513,6 +1519,7 @@ function megafonServiceGuidePhysical(filial, sessionid, text){
         }
     }
     
+	setCountersToNull(result);
     AnyBalance.setResult(result);
 }
 
@@ -1749,7 +1756,12 @@ function callAPI(method, url, params, allowerror) {
 	else
 		var html = AnyBalance.requestGet(api_url + url, g_api_headers);
 	
-	var json = getJson(html);
+	var json;
+	try{
+	    json = getJson(html);
+	}catch(e){
+		json = getJsonEval(html);
+	}
 	
 	if(json.code && !allowerror) {
 		throw new AnyBalance.Error('Ошибка вызова API! ' + json.message);
@@ -1776,6 +1788,7 @@ function isCaptchaAllowed(){
 
 function megafonLkAPI(filinfo, options) {
 	var prefs = AnyBalance.getPreferences();
+	AnyBalance.setDefaultCharset('utf-8');
 	
 	AnyBalance.trace('Пробуем войти через API мобильного приложения...');
 	
@@ -1876,18 +1889,26 @@ function megafonLkAPI(filinfo, options) {
 						if(/Гигабайт в дорогу/i.test(name)) {
 							getParam(current.available + current.unit, result, 'gb_with_you', null, replaceTagsAndSpaces, parseTraffic);
 						} else {
-							if(current.available >= 999999999999) {
-								AnyBalance.trace('Пропускаем огромный трафик...');
-								continue;
-							}
 							var internet_left = getParam(current.available + current.unit, null, null, null, replaceTagsAndSpaces, parseTraffic);
 							var internet_total = getParam(current.total + current.unit, null, null, null, replaceTagsAndSpaces, parseTraffic);
-							if(isset(internet_left))
+							if(isset(internet_left) && internet_left < 100000000)
 								sumParam(internet_left, result, 'internet_left', null, null, null, aggregate_sum);
-							if(isset(internet_total))
+							if(isset(internet_total) && internet_total < 100000000)
 								sumParam(internet_total, result, 'internet_total', null, null, null, aggregate_sum);
 							if(isset(internet_left) && isset(internet_total))
 								sumParam(internet_total - internet_left, result, 'internet_cur', null, null, null, aggregate_sum);
+							
+                     		if(current.dateTo)
+                     			sumParam(current.dateTo, result, 'internet_till', null, replaceTagsAndSpaces, parseDate, aggregate_min);
+                     		else if(current.dateFrom && current.monthly)
+                     			sumParam(current.dateFrom, result, 'internet_till', null, replaceTagsAndSpaces, function(str) {
+                     				var time = parseDate(str);
+                     				if(time){
+                     					var dt = new Date(time);
+                     					time = new Date(dt.getFullYear(), dt.getMonth()+1, dt.getDate(), dt.getHours(), dt.getMinutes(), dt.getSeconds()).getTime();
+                     				}
+                     				return time;
+                     			}, aggregate_min);
 						}
 					// Ошибка 
 					} else {
@@ -1934,6 +1955,7 @@ function megafonLkAPI(filinfo, options) {
 	} catch(e) {
 	}
 	
+	setCountersToNull(result);
 	AnyBalance.setResult(result);
 }
 
@@ -1967,7 +1989,7 @@ function initialize(filial){
 	    result.region = f;
     }
 
-    AnyBalance.setResult(result);
+	AnyBalance.setResult(result);
 }
 
 function enterLK(filial, options){

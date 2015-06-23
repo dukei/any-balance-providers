@@ -82,7 +82,7 @@ function main() {
 		}
 
 		// Возмонжо мы попадем в кабинет где есть ИП и физ лицо, надо проверить
-		if(/<h1[^>]*>\s*Выбор роли\s*<\/h1>/i.test(html)) {
+		if(/<h1[^>]*>\s*Выбор роли\s*<\/h1>|Войти как/i.test(html)) {
 			html = AnyBalance.requestGet('https://esia.gosuslugi.ru/idp/globalRoleSelection?orgID=P', g_headers);
 		}
 		

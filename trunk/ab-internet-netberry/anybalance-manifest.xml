@@ -1,15 +1,14 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-internet-netberry</id>
+	<id version="4">ab-internet-netberry</id>
 	<api flags="no_browser"/>
 	<name>NetBerry (Белоруссия)</name>
 	<description html="true"><![CDATA[
-	<p>Получает баланс и информацию о тарифном плане для белорусского интернет-провайдера NetBerry (http://nbr.by).</p>
-	<p>Информация берется из личного кабинета https://user.nbr.by/bgbilling/webexecuter.</p>
-
+	<p>Получает баланс и информацию о тарифном плане для белорусского интернет-провайдера NetBerry <a href="http://nbr.by">http://nbr.by</a>.</p>
+	<p>Информация берется из личного кабинета <a href="https://user.nbr.by/bgbilling/webexecuter">https://user.nbr.by/bgbilling/webexecuter</a>.</p>
 	<p>ВНИМАНИЕ! Пароль для доступа к серверу статистики указывается в карте регистрации, выдаваемой при заключении договора.</p>
 	]]></description>
-	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
@@ -21,7 +20,11 @@
 		<counter id="balance" name="Баланс" units=" р"/>
 		<counter id="traffic_time" name="Время соединений за текущий месяц" type="time_interval" format="{@H}:{@min}:{@sec}"/>
 		<counter id="traffic_cost" name="Стоимость трафика за текущий месяц" units=" р"/>
-		<counter id="traffic_total" name="Общий трафик за текущий месяц" units=" Gb"/>
+		<counter id="traffic_vpn_in" name="Входящий VPN трафик" units=" Гб"/>
+		<counter id="traffic_vpn_out" name="Исходящий VPN трафик" units=" Гб"/>
+		<counter id="traffic_pir_in" name="Входящий Пиринг трафик" units=" Гб"/>
+		<counter id="traffic_pir_out" name="Исходящий Пиринг трафик" units=" Гб"/>
+		<counter id="traffic_total" name="Общий трафик за текущий месяц" units=" Гб"/>
 	</counters>
 	<keywords>нетберри</keywords>
 	<type>internet</type>

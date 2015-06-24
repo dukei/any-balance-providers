@@ -1,5 +1,10 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="3.0" version="19" date="2015-06-24">
+	 - Улучшена процедура входа
+	 - Поддержка входа с вводом одноразового пароля
+	
+	</change>
 	<change major_version="3.0" version="18" date="2014-08-11">
 	- Поддержка изменений при запросе депозитов.
 	</change>

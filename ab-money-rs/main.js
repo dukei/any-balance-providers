@@ -20,11 +20,48 @@ function main() {
 	});
 	
 	if(!/>&#1042;&#1099;&#1093;&#1086;&#1076;</.test(html)){
+		while(/Ввод пароля из SMS-сообщения/i.test(html)){
+			var err = getParam(html, null, null, /<div[^>]+class="b-errors-message"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+			var prmpt = getParam(html, null, null, /<label[^>]+for="temp_pass"[^>]*>([\s\S]*?)<\/label>/i, replaceTagsAndSpaces, html_entity_decode);
+			var sms_off = 'Для пользования провайдером удобно отключить одноразовый пароль на вход в настройках интернет-банка. Это безопасно, для проведения любых операций SMS-пароль всё равно будет требоваться.';
+			if(err)
+				prmpt = err + '\n\n' + prmpt;
+		    else
+		    	prmpt = prmpt + '\n\n' + 'Для пользования провайдером удобно отключить одноразовый пароль на вход в настройках интернет-банка. Это безопасно, для проведения любых операций SMS-пароль всё равно будет требоваться.';
+
+		    var form = getParam(html, null, null, /<form[^>]+action="[^"]*sms.jsp[\s\S]*?<\/form>/i);
+		    if(!form)
+		    	throw new AnyBalance.Error('Не удаётся найти форму ввода одноразового смс кода на вход.\n\n' + sms_off);
+
+			var params = createFormParams(form, function(params, str, name, value) {
+				if (/submit_by_enth?er/i.test(str)) 
+					return AnyBalance.retrieveCode(prmpt, null, {time: 300000, inputType: "number"});
+				if(/type="submit"/i.test(str)){
+					if(/&#1042;&#1086;&#1081;&#1090;&#1080;/.test(str))
+						params.source = name;
+					return;
+				}
+	        
+				return value;
+			});
+
+			html = AnyBalance.requestPost(baseurl + 'system/login/sms/sms.jsp', params); 
+		}
+	}
+
+	if(!/>&#1042;&#1099;&#1093;&#1086;&#1076;</.test(html)){
 		if(/Ввод пароля из SMS-сообщения/i.test(html))
-			throw new AnyBalance.Error('У вас настроен вход по паролю из SMS сообщения. Для пользования провайдером необходимо отключить этот пароль в настройках интернет-банка. Это безопасно, для проведения любых операций SMS-пароль всё равно будет требоваться.');
-			
+			throw new AnyBalance.Error('У вас настроен вход по паролю из SMS сообщения. Для пользования провайдером удобно отключить этот пароль в настройках интернет-банка. Это безопасно, для проведения любых операций SMS-пароль всё равно будет требоваться.');
+		var error = getParam(html, null, null, /<div[^>]+class="b-frm-warning2"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+		if(/необходимо задать новый пароль/i.test('' + error))
+			error += ' Зайдите в интернет-банк https://online.rsb.ru через браузер, задайте новый пароль и введите новый пароль в настройки провайдера.';
+		if(error)
+			throw new AnyBalance.Error(error, null, /новый пароль/i.test(error));
+		
+		AnyBalance.trace(html);
 	    throw new AnyBalance.Error('Ошибка авторизации. Проверьте логин и пароль');
 	}
+
     html = AnyBalance.requestGet(baseurl + 'request.json');
 	var json = getJson(html);
 	if(!json.data){

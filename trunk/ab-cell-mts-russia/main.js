@@ -618,7 +618,7 @@ function checkLoginState(html, loginUrl) {
         if(error)
         	throw new AnyBalance.Error(error, null, /Неверный пароль/i.test(error));
     }
-
+	
 	if(/checkAuthStatus\(\)|дождитесь окончания процесса авторизации/i.test(html)) {
 		var json = {}, tries = 20;
 		while(json.Data != 'Success' && tries-- > 0) {
@@ -630,6 +630,9 @@ function checkLoginState(html, loginUrl) {
 			
 			sleep(1000);
 		}
+		// Если прождали авторизацию, а она так и не произошла надо об этом явно сообщить
+		if(json.Data != 'Success')
+			throw new AnyBalance.Error('МТС не пустил нас в ЛК после ожидания авторизации. Это проблема на сайте МТС, как только работа сайта наладится - данные отобразятся.');
 	
 		return AnyBalance.requestGet(loginUrl, addHeaders({Referer: loginUrl}));
 	} else {
@@ -818,7 +821,7 @@ function mainLK(allowRetry) {
             }
         }
     }else{
-	AnyBalance.trace('Пропускаем получение данных из ЛК, если требуется информация по другому номеру');
+		AnyBalance.trace('Пропускаем получение данных из ЛК, если требуется информация по другому номеру');
     }
 
     if (isAnotherNumber() || isAvailableStatus()) {
@@ -955,7 +958,7 @@ function getPasswordBySMS(login){
     var html = AnyBalance.requestGet(url, g_headers);
 
     var img = getParam(html, null, null, /<img[^>]+id="kaptchaImage"[^>]*src="data:image\/\w+;base64,([^"]+)/i, null, html_entity_decode);
-    var code = AnyBalance.retrieveCode('Для получения пароля к личному кабинету по SMS символы, которые вы видите на картинке.', img, {time: 5000});
+    var code = AnyBalance.retrieveCode('Для получения пароля к личному кабинету по SMS символы, которые вы видите на картинке.', img, {time: 300000});
 	var form = getParam(html, null, null, /<form[^>]+name="Login"[^>]*>([\s\S]*?)<\/form>/i);
 	var params = createFormParams(form, function (params, input, name, value) {
         if (name == 'IDToken1')

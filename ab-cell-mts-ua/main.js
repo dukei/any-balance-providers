@@ -125,6 +125,7 @@ function main(){
 	// Пакет бесплатных минут для внутрисетевых звонков
     sumParam (html, result, 'min_paket', /<li>Осталось ([\d\.,]+) бесплатных секунд\.? до[^<]*<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
     sumParam (html, result, 'min_paket', /<li>100\/700 минут внутри сети, осталось ([\d\.,]+) бесплатных секунд\.? до[^<]*<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+    sumParam (html, result, 'min_paket', /<li>GSM "Бізнес Оптимальний-2", осталось:\s*([\d\.,]+)\s*мин.<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
     //Срок Пакет бесплатных минут для внутрисетевых звонков
     sumParam (html, result, 'termin_min_paket', /<li>Осталось[^<]*бесплатных секунд\.? до ([^<]*)<\/li>/ig, replaceTagsAndSpaces, parseDate, aggregate_min);
     sumParam (html, result, 'termin_min_paket', /<li>100\/700 минут внутри сети, осталось[^<]*бесплатных секунд\.? до ([^<]*)<\/li>/ig, replaceTagsAndSpaces, parseDate, aggregate_min);

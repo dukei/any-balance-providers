@@ -1,12 +1,15 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="5" date="2015-06-25">
+	- Улучшен поиск счетов.
+	</change>
 	<change version="4" date="2015-02-24">
 	- Поддержка изменений на сайте.
 	</change>
-<change version="3" date="2013-12-05">
-- Поддержка изменений на сайте (Stark)
-</change>
-<change version="2" date="2013-10-10">
-- Поддержка изменений на сайте (Stark)
-</change>
+	<change version="3" date="2013-12-05">
+	- Поддержка изменений на сайте (Stark)
+	</change>
+	<change version="2" date="2013-10-10">
+	- Поддержка изменений на сайте (Stark)
+	</change>
 </history>

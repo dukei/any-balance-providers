@@ -60,8 +60,8 @@ function fetchAccount(html, headers, baseurl){
     if(prefs.cardnum && !/^\d{4}$/.test(prefs.cardnum))
         throw new AnyBalance.Error("Введите 4 последних цифры номера счета или не вводите ничего, чтобы показать информацию по первому счету");
 	
-	// <tr>\s*<td[^>]*class="ui-narrowest(?:[^>]*>){5}\s*\d{6,}1189[\s\S]*?</tr>
-    var re = new RegExp('<tr>\\s*<td[^>]*class="ui-narrowest(?:[^>]*>){5}\\s*\\d{6,}' + (prefs.cardnum || '') + '[\\s\\S]*?</tr>', 'i');
+	// <tr>\s*<td[^>]*class="\s*(?:ui-narrowest|ui-lte-sm-hidden)(?:[^>]*>){5,10}\s*\d{6,}1189(?:[^>]*>){20,40}\s*<\/tr>
+    var re = new RegExp('<tr>\\s*<td[^>]*class="\\s*(?:ui-narrowest|ui-lte-sm-hidden)(?:[^>]*>){5,10}\\s*\\d{6,}' + (prefs.cardnum || '') + '(?:[^>]*>){20,40}\\s*</tr>', 'i');
     var tr = getParam(html, null, null, re);
 
     if(!tr)

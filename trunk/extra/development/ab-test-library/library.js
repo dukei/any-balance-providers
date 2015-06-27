@@ -106,9 +106,7 @@ function __getParName(param){ //Возвращает для параметра �
 function isAvailable(param) {
 	if (!param)
 		return true;
-	var bArray = isArray(param),
-		tariffName = '__tariff';
-	if ((bArray && param.indexOf(tariffName) >= 0) || (!bArray && param == '__tariff'))
+	if (/\b__/.test(param.toString())) //Если какой-то параметр начинается на __, то он обязательный, нужно возвращать true
 		return true; //Тариф всегда нужен
 	return AnyBalance.isAvailable(param);
 }
@@ -866,14 +864,29 @@ function getElement(html, re, replaces, parseFunc){
     ВНИМАНИЕ! Чтобы вернулись все элементы, надо указывать регулярное выражение с флагом g
     Например, 
     	getElements(html, /<div[^>]+id="somediv"[^>]*>/ig)
+
+    //Найти див somediv, содержащий <div class="title"	
+    	getElements(html, [/<div[^>]+id="somediv"[^>]*>/ig, /<div[^>]+class="title"/i])
 */
 function getElements(html, re, replaces, parseFunc){
 	var results = [];
+	var regexp = isArray(re) ? re[0] : re;
+	var add_re = isArray(re) ? (re.shift(), re) : null;
 	do{
-		var res = getElement(html, re, replaces, parseFunc);
-		if(res)
+		var res = getElement(html, regexp, replaces, parseFunc);
+		
+		var good_res = res && !add_re;
+		if(add_re && res){
+		    for(var i=0; i<add_re.length; ++i){
+		        good_res = good_res || add_re[i].test(res);
+		        if(good_res)
+		        	break;
+		    }
+		}
+		if(good_res)
 			results.push(res);
-		if(!re.global)
+		
+		if(!regexp.global)
 			break; //Экспрешн только на один матч
 	}while(res !== null);
 	return results;

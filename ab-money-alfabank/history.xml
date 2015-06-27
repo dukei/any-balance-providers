@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="36" date="2015-06-27">
+	- Поддержка изменений на сайте.
+	</change>
 	<change version="35" date="2015-05-07">
 	- Улучшен поиск счетов в некоторых случаях.
 	</change>

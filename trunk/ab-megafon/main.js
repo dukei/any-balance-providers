@@ -38,7 +38,6 @@ var filial_info = {
 filial_info[MEGA_FILIAL_MOSCOW] = {
 	name: 'Столичный филиал',
 	id: 'mos',
-	func: megafonServiceGuide,
     sg: "https://moscowsg.megafon.ru/",
 	widget: 'https://moscowsg.megafon.ru/WIDGET_INFO/GET_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%&CHANNEL=WYANDEX&LANG_ID=1&P_RATE_PLAN_POS=1&P_PAYMENT_POS=2&P_ADD_SERV_POS=4&P_DISCOUNT_POS=3',
 //	tray: "https://moscowsg.megafon.ru/TRAY_INFO/TRAY_INFO?LOGIN=%LOGIN%&PASSWORD=%PASSWORD%",
@@ -49,49 +48,43 @@ filial_info[MEGA_FILIAL_MOSCOW] = {
 filial_info[MEGA_FILIAL_SIBIR] = {
 	name: 'Сибирский филиал',
 	id: 'sib',
-        sg: "https://sibsg.megafon.ru/",
+    sg: "https://sibsg.megafon.ru/",
 	tray: "https://sibsg.megafon.ru/ROBOTS/SC_TRAY_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%",
 	widget: 'https://sibsg.megafon.ru/WIDGET_INFO/GET_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%&CHANNEL=WYANDEX&LANG_ID=1&P_RATE_PLAN_POS=1&P_PAYMENT_POS=2&P_ADD_SERV_POS=4&P_DISCOUNT_POS=3',
-	func: megafonTrayInfo
 };
 filial_info[MEGA_FILIAL_NW] = {
 	name: 'Северо-западный филиал',
 	id: 'nw',
-        sg: "https://szfsg.megafon.ru/",
+    sg: "https://szfsg.megafon.ru/",
 	tray: 'https://szfsg.megafon.ru/ROBOTS/SC_TRAY_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%',
 	widget: 'https://szfsg.megafon.ru/WIDGET_INFO/GET_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%&CHANNEL=WYANDEX&LANG_ID=1&P_RATE_PLAN_POS=1&P_PAYMENT_POS=2&P_ADD_SERV_POS=4&P_DISCOUNT_POS=3',
-	func: megafonTrayInfo,
 };
 filial_info[MEGA_FILIAL_FAREAST] = {
 	name: 'Дальневосточный филиал',
 	id: 'dv',
-        sg: "https://dvsg.megafon.ru/",
+    sg: "https://dvsg.megafon.ru/",
 	tray: 'https://dvsg.megafon.ru/ROBOTS/SC_TRAY_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%',
 	widget: 'https://dvsg.megafon.ru/WIDGET_INFO/GET_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%&CHANNEL=WYANDEX&LANG_ID=1&P_RATE_PLAN_POS=1&P_PAYMENT_POS=2&P_ADD_SERV_POS=4&P_DISCOUNT_POS=3',
-	func: megafonTrayInfo
 };
 filial_info[MEGA_FILIAL_VOLGA] = {
 	name: 'Поволжский филиал',
 	id: 'vlg',
 	//  site: "https://volgasg.megafon.ru/",
 	//  func: megafonServiceGuide,
-        sg: "https://volgasg.megafon.ru/",
-	func: megafonTrayInfo,
+    sg: "https://volgasg.megafon.ru/",
 	widget: 'https://volgasg.megafon.ru/WIDGET_INFO/GET_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%&CHANNEL=WYANDEX&LANG_ID=1&P_RATE_PLAN_POS=1&P_PAYMENT_POS=2&P_ADD_SERV_POS=4&P_DISCOUNT_POS=3',
 	tray: 'https://volgasg.megafon.ru/ROBOTS/SC_TRAY_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%'
 };
 filial_info[MEGA_FILIAL_KAVKAZ] = {
 	name: 'Кавказский филиал',
 	id: 'kv',
-        sg: "https://kavkazsg.megafon.ru/",
+    sg: "https://kavkazsg.megafon.ru/",
 	tray: "https://kavkazsg.megafon.ru/ROBOTS/SC_TRAY_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%",
 	widget: 'https://kavkazsg.megafon.ru/WIDGET_INFO/GET_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%&CHANNEL=WYANDEX&LANG_ID=1&P_RATE_PLAN_POS=1&P_PAYMENT_POS=2&P_ADD_SERV_POS=4&P_DISCOUNT_POS=3',
-	func: megafonTrayInfo
 };
 filial_info[MEGA_FILIAL_CENTRAL] = {
 	name: 'Центральный филиал',
 	id: 'ctr',
-	func: megafonServiceGuide,
 	sg: "https://moscowsg.megafon.ru/",
 	lk: "https://lk.megafon.ru/",
 	widget: 'https://moscowsg.megafon.ru/WIDGET_INFO/GET_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%&CHANNEL=WYANDEX&LANG_ID=1&P_RATE_PLAN_POS=1&P_PAYMENT_POS=2&P_ADD_SERV_POS=4&P_DISCOUNT_POS=3',
@@ -106,9 +99,9 @@ filial_info[MEGA_FILIAL_URAL] = {
 	sg: 'https://uralsg.megafon.ru/',
 	tray: 'https://uralsg.megafon.ru/ROBOTS/SC_TRAY_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%',
 	widget: 'https://uralsg.megafon.ru/WIDGET_INFO/GET_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%&CHANNEL=WYANDEX&LANG_ID=1&P_RATE_PLAN_POS=1&P_PAYMENT_POS=2&P_ADD_SERV_POS=4&P_DISCOUNT_POS=3',
-	func: megafonTrayInfo,
 	old_server: true
 };
+
 var g_login_errors = {
 	error_1: "Введите логин!",
 	error_2: "Введите пароль!",
@@ -269,13 +262,9 @@ function main(){
     if(!filinfo)
         throw new AnyBalance.Error('Unknown filial ' + filial);
     
-    if(!filinfo.func)
-        throw new AnyBalance.Error(filinfo.name + ' Мегафона ещё не поддерживается. Пожалуйста, помогите его поддержать. Информация на сайте программы http://any-balance-providers.googlecode.com .');
-
     if(prefs.__initialization)
 	    return initialize(filial);
     
-    //(filinfo.func)(filial);
     loadFilialInfo(filial);
 }
 
@@ -1052,7 +1041,7 @@ function megafonBalanceInfo(filial) {
     var prefs = AnyBalance.getPreferences();
 
     AnyBalance.trace('Connecting to MEGAFON_BALANCE ' + filinfo.name);
-    if(filial != MEGA_FILIAL_MOSCOW){
+    if(!filinfo.balanceRobot){
 	    var e = new AnyBalance.Error('MEGAFON_BALANCE отсутствует для этого филиала');
 	    e.meaningless = true;
 	    throw e;
@@ -1075,125 +1064,6 @@ function megafonBalanceInfo(filial) {
     //getInternetInfo(filial, result, {});
 
     setCountersToNull(result);
-    AnyBalance.setResult(result);
-}
-
-/**
- * Получаем данные из обычного сервис-гида для столичного филиала
- */
-function megafonServiceGuide(filial){
-    var filinfo = filial_info[filial];
-    var baseurl = filinfo.sg;
-    
-    var prefs = AnyBalance.getPreferences();
-    AnyBalance.trace('Connecting to service guide ' + filinfo.name);
-
-    var session;
-    if(filinfo.sg) {
-		// Мегафон шлет смс на вход если пытаемся войти через большой кабинет
-	   	try {
-			megafonLkAPI(filinfo, {allow_captcha: true});
-		} catch (e) {
-			// Если ошибка в логине и пароле, дальше идти нет смысла. Позже: А вдруг у кого-то не установлен пароль в новом кабинете, закидают же?
-			if(e.fatal)
-			    throw e;
-
-			try{
-		    	AnyBalance.trace('Невозможно зайти в мобильный клиент, Попробуем получить данные из ЛК. Причина: ' + e.message);
-				megafonLK(filinfo, true);
-			}catch(e){
-			    if(e.fatal)
-			        throw e;
-
-		        AnyBalance.trace('Невозможно зайти в личный кабинет, придется получать данные из виджета. Причина: ' + e.message);
-				try{
-					megafonTrayInfo(filial);
-					return;
-				}catch(e){
-				    if(e.fatal)
-				        throw e;
-				    if(/неверный ответ сервера/i.test(e.message) && filinfo.balanceRobot){
-				        //Яндекс виджет, скотина, не даёт получить баланс :(
-				        //Тогда баланс получим хотя бы из московского балансера
-				        AnyBalance.trace('Не удалось получить данные из яндекс виджета: ' + e.message);
-				        AnyBalance.trace('Пробуем получить баланс из ещё одного источника...');
-				        megafonBalanceInfo(filial);
-				        return;
-				    }else{
-					    throw e;
-				    }
-				} 
-	        }
-	    }
-	    return;
-    }else{
-		session = AnyBalance.requestPost(baseurl + 'ps/scc/php/check.php?CHANNEL=WWW', {
-            LOGIN: (prefs.corporate ? 'CP_' : '') + prefs.login, 
-            PASSWORD: prefs.password
-        });
-    }
-	
-    AnyBalance.trace('Got result from service guide: ' + session);
-    var sessionid = getSessionIdFromSGLogin(session);
-/*
-    //Зачем-то мегафон вставил ещё один шаг авторизации...
-    var html = AnyBalance.requestPost(baseurl + 'SCC/SC_BASE_LOGIN',
-    {
-	SESSION_ID:sessionid,
-	CHANNEL:'WWW',
-        LOGIN: (prefs.corporate ? 'CP_' : '') + prefs.login, 
-        PASSWD: prefs.password
-    });
-*/
-
-    //Мегафон завершается с ошибкой, если делать без таймаута.
-    //Странно
-//    sleep(5000);
-
-    if(prefs.corporate)
-        megafonServiceGuideCorporate(filial, sessionid);
-    else
-        megafonServiceGuidePhysical(filial, sessionid);
-}
-
-function megafonServiceGuideCorporate(filial, sessionid){
-    var filinfo = filial_info[filial];
-    var baseurl = filinfo.sg;
-    var prefs = AnyBalance.getPreferences();
-
-    var result = {
-        success: true, filial: filinfo.id
-    };
-
-    var html = AnyBalance.requestPost(baseurl + 'CPWWW/SC_CP_ASSC_CHARGES_FORM', {
-        find: '',
-        CHANNEL:'WWW',
-        SESSION_ID:sessionid,
-        P_USER_LANG_ID:1        
-    });
-
-    if(/SESSION_TIMEOUT_REDIRECT/.test(html))
-        throw new AnyBalance.Error('Мегафон не желает пускать в корпоративный портал, возможно, из-за того, что введена капча (ввод цифр с картинки) на входе. Если вы знаете способ войти в корпоративный портал без капчи, обращайтесь к автору провайдера по е-мейл.');
-
-    //Получим объединение:
-    var asscid = getParam(html, null, null, /<select[^>]+id="P_START_ASSC_ID"[^>]*>[\s\S]*?<option[^>]+value="([^"]*)"/i);
-    getParam(html, result, '__tariff', /<select[^>]+id="P_START_ASSC_ID"[^>]*>[\s\S]*?<option[^>]+title="([^"]*)"/i, null, html_entity_decode);
-
-    html = AnyBalance.requestPost(baseurl + 'CPWWW/SC_CP_ACCOUNT_ASSC_AJAX', {
-        P_ACCOUNT:'',
-        P_START_ASSC_ID:asscid,
-        P_ACCOUNT_PREV_FORM:'SC_CP_ASSC_CHARGES_FORM',
-        P_ASSC_ACCOUNT_LOADED:'onLoadedAccount()',
-        P_ASSC_ACCOUNT_RADIO_CLICK:'onClickRadioAccount()',
-        CHANNEL:'WWW',
-        SESSION_ID:sessionid,
-        P_USER_LANG_ID:1
-    });
-
-    //Теперь получим баланс
-    getParam(html, result, 'balance', /<div class="balance_[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
-
-	setCountersToNull(result);
     AnyBalance.setResult(result);
 }
 
@@ -1235,9 +1105,9 @@ function megafonServiceGuidePhysical(filial, sessionid, text){
             SUBSCRIBER_MSISDN:phone,
             CHANNEL: 'WWW', 
             SESSION_ID: sessionid,
-            P_USER_LANG_ID: 1,
+            P_USER_LANG_ID: '1',
             CUR_SUBS_MSISDN:phone
-        });
+        }, addHeaders({Referer: baseurl + 'SCC/SC_BASE_LOGIN'}));
     }
 
     checkTextForError(text);
@@ -1392,7 +1262,7 @@ function megafonServiceGuidePhysical(filial, sessionid, text){
                         SESSION_ID: sessionid,
                         CUR_SUBS_MSISDN: phone,
                         SUBSCRIBER_MSISDN: phone
-                    });
+        			}, addHeaders({Referer: baseurl + 'SCC/SC_BASE_LOGIN'}));
         getParam(text, result, 'last_pay_sum', /idHiddenSum[^>]*>\s*<table(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
         getParam(text, result, 'last_pay_date', /idHiddenSum[^>]*>\s*<table(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
     }
@@ -1405,7 +1275,7 @@ function megafonServiceGuidePhysical(filial, sessionid, text){
                     SESSION_ID: sessionid,
                     CUR_SUBS_MSISDN: phone,
                     SUBSCRIBER_MSISDN: phone
-                });
+        		}, addHeaders({Referer: baseurl + 'SCC/SC_BASE_LOGIN'}));
                 
         if(matches = text.match(/&#1041;&#1086;&#1085;&#1091;&#1089;&#1085;&#1099;&#1081; &#1073;&#1072;&#1083;&#1072;&#1085;&#1089;:[\s\S]*?<td class="td_right">[\s\S]*?<div>([\d\.]+)/i)){
             result.bonus_balance = parseFloat(matches[1]);
@@ -1418,8 +1288,8 @@ function megafonServiceGuidePhysical(filial, sessionid, text){
 
     if(filinfo.sg){
         // Продли скорость (Москва)
-        if(AnyBalance.isAvailable(['internet_total','internet_cur', 'internet_left'])){
-            text = AnyBalance.requestGet(baseurl + 'SCCEXTSYS/EXT_SYSTEM_PROXY_FORM?CHANNEL=WWW&SESSION_ID=' + sessionid + '&URI=3.');
+        if(false && AnyBalance.isAvailable(['internet_total','internet_cur', 'internet_left'])){ //Вроде бы уже не должно работать. Отключаем.
+            text = AnyBalance.requestGet(baseurl + 'SCCEXTSYS/EXT_SYSTEM_PROXY_FORM?CHANNEL=WWW&SESSION_ID=' + sessionid + '&URI=3.', addHeaders({Referer: baseurl + 'SCC/SC_BASE_LOGIN'}));
             var href = getParam(text, null, null, /"gupscc_href"[^>]*href="([^"]*)"/i, [/&amp;/g, '&']);
             if(href){
                 text = AnyBalance.requestGet(baseurl + 'SCCEXTSYS/' + href);
@@ -1464,7 +1334,8 @@ function megafonServiceGuidePhysical(filial, sessionid, text){
 				'P_USER_LANG_ID':'1',
 				'CUR_SUBS_MSISDN':phone,
 				'SUBSCRIBER_MSISDN':phone
-			});
+        	}, addHeaders({Referer: baseurl + 'SCC/SC_BASE_LOGIN'}));
+
 			var tbody = getParam(text, null, null, /(?:Опции группы|&#1054;&#1087;&#1094;&#1080;&#1080; &#1075;&#1088;&#1091;&#1087;&#1087;&#1099;)[\s\S]*?(<tbody>[\s\S]*?<\/tbody>)/i, null, html_entity_decode);
 			if(tbody)
 			{
@@ -1508,7 +1379,7 @@ function megafonServiceGuidePhysical(filial, sessionid, text){
         }
 
         //Отключаем посылку смс при входе.
-	turnOffNotificationSMSSG(filial, sessionid, phone);
+		turnOffNotificationSMSSG(filial, sessionid, phone);
     }
     
     if(filial == MEGA_FILIAL_VOLGA){
@@ -1889,14 +1760,16 @@ function megafonLkAPI(filinfo, options) {
 						if(/Гигабайт в дорогу/i.test(name)) {
 							getParam(current.available + current.unit, result, 'gb_with_you', null, replaceTagsAndSpaces, parseTraffic);
 						} else {
+							var suffix = '';
+							if(/ночь/i.test(name)) suffix = '_night';
 							var internet_left = getParam(current.available + current.unit, null, null, null, replaceTagsAndSpaces, parseTraffic);
 							var internet_total = getParam(current.total + current.unit, null, null, null, replaceTagsAndSpaces, parseTraffic);
 							if(isset(internet_left) && internet_left < 100000000)
-								sumParam(internet_left, result, 'internet_left', null, null, null, aggregate_sum);
+								sumParam(internet_left, result, 'internet_left' + suffix, null, null, null, aggregate_sum);
 							if(isset(internet_total) && internet_total < 100000000)
-								sumParam(internet_total, result, 'internet_total', null, null, null, aggregate_sum);
+								sumParam(internet_total, result, 'internet_total' + suffix, null, null, null, aggregate_sum);
 							if(isset(internet_left) && isset(internet_total))
-								sumParam(internet_total - internet_left, result, 'internet_cur', null, null, null, aggregate_sum);
+								sumParam(internet_total - internet_left, result, 'internet_cur' + suffix, null, null, null, aggregate_sum);
 							
                      		if(current.dateTo)
                      			sumParam(current.dateTo, result, 'internet_till', null, replaceTagsAndSpaces, parseDate, aggregate_min);
@@ -2141,13 +2014,23 @@ function enterSG(filial, options){
     }
 
     html = AnyBalance.requestPost(baseurl + 'ps/scc/php/check.php?CHANNEL=WWW', {
-	PHPSESSID: psid,
-	LOGIN: options.login, 
+		PHPSESSID: psid,
+		LOGIN: options.login, 
         PASSWORD: options.password,
-	CODE: code
+		CODE: code
     }, g_headers);
     
     var sessionid = getSessionIdFromSGLogin(html);
+/*
+    html = AnyBalance.requestPost(baseurl + 'SCC/SC_BASE_LOGIN', {
+        SESSION_ID: sessionid,
+        CHANNEL: 'WWW', 
+        P_USER_LANG_ID: '1',
+        LOGIN: options.login,
+        PASSWD: options.password
+    });
+*/
+
 /*  //И без этого работает, зачем сервер мегафона нагружать зря
     html = AnyBalance.requestPost(baseurl + 'SCC/SC_BASE_LOGIN', {
         SESSION_ID: sessionid,

@@ -1,5 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="3.0" version="162" date="2015-06-27">
+	- Исправлен вход в СГ в дальневосточном филиале
+	- Добавлен "Интернет ночь" для некоторых тарифов
+	</change>
 	<change major_version="3.0" version="161" date="2015-06-24">
 	- Исправление автоинициализации.
 	</change>

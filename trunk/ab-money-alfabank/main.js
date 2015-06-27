@@ -4,6 +4,7 @@
 
 function main(){
     AnyBalance.setOptions({cookiePolicy: 'rfc2109'});
+    AnyBalance.setDefaultCharset('utf-8');
 
     var prefs = AnyBalance.getPreferences();
 	checkEmpty(prefs.login, 'Введите логин!');
@@ -31,7 +32,9 @@ var g_headers = [
 	['Accept', 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8'],
 	['Accept-Language', 'ru,en-US;q=0.8,en;q=0.6'],
 	['Connection', 'keep-alive'],
-	['User-Agent', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2272.118 Safari/537.36']
+	['User-Agent', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2272.118 Safari/537.36'],
+	['Origin', null],
+	['Cookie2', '$Version=1']
 ];
 
 var g_currencyDependancy = ['currency', 'balance', 'topay', 'debt', 'minpay', 'penalty', 'late', 'overdraft', 'limit'];
@@ -180,7 +183,7 @@ function processClick(){
         password: prefs.password.substr(0, 16),
     }, g_headers);
 
-    if(/<form[^>]*action="security"/.test(html)){
+    if(!/"_afrLoop",\s*"(\d+)"/i.test(html)){
         //Мы остались на странице входа. какая-то ошибка
         var error = getParam(html, null, null, /<div[^>]+class="[^"]*\bred"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
         if(error)
@@ -188,7 +191,20 @@ function processClick(){
         error = getParam(html, null, null, /(Неверный логин или пароль)/i);
         if(error)
             throw new AnyBalance.Error(error, null, true);
+        var error_code = getParam(AnyBalance.getLastUrl(), null, null, /p_error_code=([^&]*)/i, null, decodeURIComponent);
+        if(error_code){
+        	var jsons = AnyBalance.requestGet(baseurl + 'SLAlfaSignFront10/errors?code=' + error_code + '&type=' + getParam(error_code, null, null, /[^\-]*/), g_headers);
+        	var json = getJson(jsons);
+        	if(json.result != 'SUCCESS'){
+        		AnyBalance.trace('Не удалось получить ошибку: ' + jsons);
+        	}else{
+        		error = json.payload[error_code];
+        	}
+        	if(error)
+            	throw new AnyBalance.Error(error, null, /логин или пароль/i.test(error));
+        }
 		
+		AnyBalance.trace(html);
         throw new AnyBalance.Error("Не удалось зайти в интернет-банк. Сайт изменен?");
     }
 
@@ -319,7 +335,7 @@ function processCard2(html, baseurl){
     
     var result = {success: true};
     //Баланс счета
-    getParam(html, result, 'balance', /&#1041;&#1072;&#1083;&#1072;&#1085;&#1089; &#1089;&#1095;&#1077;&#1090;&#1072;[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'balance', /&#1041;&#1072;&#1083;&#1072;&#1085;&#1089; &#1089;&#1095;&#(?:1077|1105);&#1090;&#1072;[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, g_currencyDependancy, /&#1041;&#1072;&#1083;&#1072;&#1085;&#1089; &#1089;&#1095;&#1077;&#1090;&#1072;[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseCurrency);
     //Срок действия
     getParam(html, result, 'till', /&#1057;&#1088;&#1086;&#1082; &#1076;&#1077;&#1081;&#1089;&#1090;&#1074;&#1080;&#1103;[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
@@ -329,13 +345,13 @@ function processCard2(html, baseurl){
     //Тип
     getParam(html, result, 'cardtype', /&#1058;&#1080;&#1087;<[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
     //Название счета
-    getParam(html, result, 'acctype', /&#1053;&#1072;&#1079;&#1074;&#1072;&#1085;&#1080;&#1077; &#1089;&#1095;&#1077;&#1090;&#1072;<[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'acctype', /&#1053;&#1072;&#1079;&#1074;&#1072;&#1085;&#1080;; &#1089;&#1095;&#(?:1077|1105);&#1090;&#1072;<[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
     //Рады вас видеть
     getParam(html, result, 'userName', /&#1056;&#1072;&#1076;&#1099; &#1042;&#1072;&#1089; &#1074;&#1080;&#1076;&#1077;&#1090;&#1100;,([^<(]*)/i, replaceTagsAndSpaces, html_entity_decode);
     //Статус
     getParam(html, result, 'status', /&#1057;&#1090;&#1072;&#1090;&#1091;&#1089;<[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
     //Номер счета
-    getParam(html, result, 'accnum', /&#1053;&#1086;&#1084;&#1077;&#1088; &#1089;&#1095;&#1077;&#1090;&#1072;<[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'accnum', /&#1053;&#1086;&#1084;&#1077;&#1088; &#1089;&#1095;&#(?:1077|1105);&#1090;&#1072;<[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
 
     //Тип карты
     var type = getParam(html, null, null, /&#1058;&#1080;&#1087;<[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);

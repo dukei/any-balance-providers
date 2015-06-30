@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="5">ab-cell-3mob</id>
+	<id version="6">ab-cell-3mob</id>
 	<api flags="no_browser"/>
 	<name>3Mob</name>
 	<description html="true"><![CDATA[
@@ -26,11 +26,20 @@
 		<counter id="minutes_roam" name="Минуты внутри сети и нац. роуминг" type="time_interval" format="{@H}:{@min}:{@sec}"/>
 		<counter id="internet_local" name="Интернет внутри сети" units=" Мб"/>
 		<counter id="internet_roam" name="Интернет внутри сети и нац. роуминг" units=" Мб"/>
-		<counter id="internet_roaming" name="Интернет в нац. роумингу" units=" Мб"/>
+		<counter id="internet_roaming" name="Интернет в нац. роуминге" units=" Мб"/>
 		<counter id="internet_action" name="Интернет акционний" units=" Мб"/>
 		<counter id="balance_sms" name="SMS" suffix=" смс" type="numeric"/>
 		<counter id="money_transfer" name="Денежний перевод" suffix=" ₴" type="numeric"/>
-		<counter id="internet_action_termin" name="Срок действия акционного интернета" type="time" format="dd/MM/yyyy HH:mm:ss"/>
+		<counter id="balance_termin" name="Срок действия баланса" type="time" format="dd/MM/yyyy HH:mm:ss"/>
+		<counter id="balance_bonus_termin" name="Срок действия бонусного баланса" type="time" format="dd/MM/yyyy HH:mm:ss"/>
+		<counter id="minutes_local_termin" name="Срок действия минут внутри сети" type="time" format="dd/MM/yyyy HH:mm:ss"/>
+		<counter id="minutes_roam_termin" name="Срок действия минут внутри сети и нац. роуминге" type="time" format="dd/MM/yyyy HH:mm:ss"/>
+		<counter id="internet_local_termin" name="Срок действия интернета внутри сети" type="time" format="dd/MM/yyyy HH:mm:ss"/>
+		<counter id="internet_roam_termin" name="Срок действия интернета внутри сети и нац. роуминге" type="time" format="dd/MM/yyyy HH:mm:ss"/>
+		<counter id="internet_roaming_termin" name="Срок действия интернета в нац. роуминге" type="time" format="dd/MM/yyyy HH:mm:ss"/>
+		<counter id="internet_action_termin" name="Срок действия интернета акционного" type="time" format="dd/MM/yyyy HH:mm:ss"/>
+		<counter id="balance_sms_termin" name="Срок действия SMS" type="time" format="dd/MM/yyyy HH:mm:ss"/>
+		<counter id="money_transfer_termin" name="Срок действия денежного перевода" type="time" format="dd/MM/yyyy HH:mm:ss"/>
 		<counter id="deadline" name="Дата деактивации" type="time" format="dd/MM/yyyy"/>
 		<counter id="mobphone" name="Номер телефона" type="text"/>
 		</counters>

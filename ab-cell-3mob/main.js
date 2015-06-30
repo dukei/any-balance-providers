@@ -7,7 +7,7 @@ var g_headers = {
 	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
 	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
 	'Connection': 'keep-alive',
-	'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/38.0.2125.122 Safari/537.36',
+	'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/43.0.2357.125 Safari/537.36',
 };
 
 function main() {
@@ -50,8 +50,18 @@ function main() {
 	getParam(html, result, 'internet_roaming', /<tr ><td>Інтернет в  нац.роумінгу<[^>]*><[^>]*>([^>]*) Кбайт</i, [replaceTagsAndSpaces, /(.*)/i, '$1 kb'], parseTraffic);
 	getParam(html, result, 'internet_action', /<tr ><td>Акційний баланс<[^>]*><[^>]*>([^>]*) Кбайт</i, [replaceTagsAndSpaces, /(.*)/i, '$1 kb'], parseTraffic);
 	getParam(html, result, 'balance_sms', /<tr ><td>SMS<[^>]*><[^>]*>([^>]*) штук</i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'money_transfer', /<tr ><td>Грошовий переказ \"U\'transfer\"<[^>]*><[^>]*>([^>]*) грн</i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'money_transfer', /<tr ><td>Грошовий переказ \"?U\'?transfer\"?<[^>]*><[^>]*>([^>]*) грн</i, replaceTagsAndSpaces, parseBalance);
+
+	getParam(html, result, 'balance_termin', /<tr ><td>Основний баланс<[^>]*><[^>]*>[^>]* грн<[^>]*><[^>]*>([^<]+)</i, replaceTagsAndSpaces, parseDate);
+	getParam(html, result, 'balance_bonus_termin', /<tr ><td>Бонусний грошовий баланс<[^>]*><[^>]*>[^>]* грн<[^>]*><[^>]*>([^<]+)</i, replaceTagsAndSpaces, parseDate);
+	getParam(html, result, 'minutes_local_termin', /<tr ><td>Голосовий баланс в мережі Тримоб<[^>]*><[^>]*>[^>]* сек<[^>]*><[^>]*>([^<]+)</i, replaceTagsAndSpaces, parseDate);
+	getParam(html, result, 'minutes_roam_termin', /<tr ><td>Голосовий баланс в мережі Тримоб та нац.роумінгу<[^>]*><[^>]*>[^>]* сек<[^>]*><[^>]*>([^<]+)</i, replaceTagsAndSpaces, parseDate);
+	getParam(html, result, 'internet_local_termin', /<tr ><td>Інтернет в мережі Тримоб<[^>]*><[^>]*>[^>]* Кбайт<[^>]*><[^>]*>([^<]+)</i, replaceTagsAndSpaces, parseDate);
+	getParam(html, result, 'internet_roam_termin', /<tr ><td>Інтернет в мережі Тримоб та нац.роумінгу<[^>]*><[^>]*>[^>]* Кбайт<[^>]*><[^>]*>([^<]+)</i, replaceTagsAndSpaces, parseDate);
+	getParam(html, result, 'internet_roaming_termin', /<tr ><td>Інтернет в  нац.роумінгу<[^>]*><[^>]*>[^>]* Кбайт<[^>]*><[^>]*>([^<]+)</i, replaceTagsAndSpaces, parseDate);
 	getParam(html, result, 'internet_action_termin', /<tr ><td>Акційний баланс<[^>]*><[^>]*>[^>]* Кбайт<[^>]*><[^>]*>([^<]+)</i, replaceTagsAndSpaces, parseDate);
+	getParam(html, result, 'balance_sms_termin', /<tr ><td>SMS<[^>]*><[^>]*>[^>]* штук<[^>]*><[^>]*>([^<]+)</i, replaceTagsAndSpaces, parseDate);
+	getParam(html, result, 'money_transfer_termin', /<tr ><td>Грошовий переказ \"?U\'?transfer\"?<[^>]*><[^>]*>[^>]* грн<[^>]*><[^>]*>([^<]+)</i, replaceTagsAndSpaces, parseDate);
 
 	html = AnyBalance.requestGet(baseurl + '/logout', g_headers);
 

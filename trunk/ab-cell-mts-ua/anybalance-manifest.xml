@@ -57,7 +57,7 @@
 		<counter id="sms_mms_others" name="СМС/MMC на сети других мобильных операторов Украины" units=" sms/mms"/>
 		<counter id="mms_others" name="ММС на сети других мобильных операторов Украины" units=" mms"/>
 		<counter id="min_net_maxenergy" name="Минуты в сети МТС" type="time_interval" format="{@MIN}" units=" мин"/>
-		<counter id="min_reg_3000" name="3000 региональных минут в сети" type="time_interval" format="{@MIN}" units=" мин"/>
+		<counter id="min_reg_3000" name="3000/6000 региональных минут в сети" type="time_interval" format="{@MIN}" units=" мин"/>
 		<counter id="min_all_100" name="100 минут абонентам по Украине" type="time_interval" format="{@MIN}" units=" мин"/>
 		<counter id="min_net" name="Минуты с услугой «Супер без пополнения» в сети МТС" type="time_interval" format="{@MIN}" units=" мин"/>
 		<counter id="min_all_25" name="25 минут на другие сети" type="time_interval" format="{@MIN}" units=" мин"/>

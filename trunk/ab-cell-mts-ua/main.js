@@ -151,8 +151,8 @@ function main(){
     // 200 минут в день на внутрисетевое направление
     sumParam (html, result, 'min_net_200', /<li>залишилось\s*([\d\.,]+)\s*безкоштовних хвилин<\/li>/ig, replaceTagsAndSpaces, parseBalance, parseTime, aggregate_sum);
     sumParam (html, result, 'min_net_200', /<li>Безкоштовні хвилини на добу в рамках "Супер без поповнення", залишилось\s*([\d\.,]+)\s*безкоштовних хвилин<\/li>/ig, replaceTagsAndSpaces, parseBalance, parseTime, aggregate_sum);
-    // 3000 региональных минут в сети
-    sumParam (html, result, 'min_reg_3000', /<li>3000 региональных минут в сети:[^<]*осталось\s*([^<]*)/ig, replaceTagsAndSpaces, parseBalance, parseTime, aggregate_sum);
+    // 3000/6000 региональных минут в сети
+    sumParam (html, result, 'min_reg_3000', /<li>(?:3|6)000 региональных минут в сети:[^<]*осталось\s*([^<]*)/ig, replaceTagsAndSpaces, parseBalance, parseTime, aggregate_sum);
 
     // Пакет СМС
     sumParam (html, result, 'sms_paket', /<li>100 бесплатных смс по Украине:[^<]*осталось\s*(\d+) смс. Срок действия до[^<]*<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);

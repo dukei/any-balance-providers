@@ -77,6 +77,7 @@ function main() {
 	//Минуты в сети МТС которые действуют в регионе
 	sumParam (html, result, 'hvylyny_net1', /минут в день для внутрисетевых звонков: осталось\s*(\d+)\s*бесплатных секунд/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 	sumParam (html, result, 'hvylyny_net1', />Безкоштовні хвилини на добу в рамках "Супер без поповнення", залишилось\s*([\d\.,]+)\s*безкоштовних хвилин<\/span>/ig, parseBalance, parseTime, aggregate_sum);
+	sumParam (html, result, 'hvylyny_net1', />(?:3|6)000 региональных минут в сети: осталось\s*([\d\.,]+)\s*бесплатных минут<\/span>/ig, parseBalance, parseTime, aggregate_sum);
 
 	//Минуты в сети МТС которые действуют вне региона
 	getParam (html, result, 'hvylyny_net2', /минут в день вне региона, осталось\s*([\d\.,]+)\s*минут<\/span>/i, parseBalance, parseTime);

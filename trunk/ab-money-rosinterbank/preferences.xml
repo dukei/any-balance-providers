@@ -20,14 +20,14 @@
         summary="|Введите пароль в Интернет-банк|***********"
         dialogMessage="Введите пароль, используемый для входа в систему Интернет-банк."
         inputType="textPassword">
-    </EditTextPreference>
-    <ListPreference 
-        key="what" 
-        title="Что смотреть"
-        summary="||{@s}\n"
-        entries="Карта|Счет|Вклад"
-        entryValues="card|acc|dep"
-	defaultValue="card">
+	</EditTextPreference>
+	<ListPreference 
+		key="what" 
+		title="Что смотреть"
+		summary="||{@s}\n"
+		entries="Карта|Счет|Вклад"
+		entryValues="card|acc|dep"
+		defaultValue="card">
     </ListPreference>
     <EditTextPreference 
         positiveButtonText="ОК"
@@ -36,7 +36,6 @@
         negativeButtonText="Отмена"
         title="Номер карты/счета/вклада"
         summary="Последние цифры карты/счета/договора|Автоматически\n|{@s}\n"
-        dialogMessage="Введите последние цифры карты (обычно 4, но можно и больше), счета или номера договора на вклад, по которому вы хотите получить информацию. Если это поле оставить пустым, то будет показана информация по первой карте/счету/вкладу."
-        inputType="number">
+        dialogMessage="Введите последние цифры карты (обычно 4, но можно и больше), счета или номера договора на вклад, по которому вы хотите получить информацию. Если это поле оставить пустым, то будет показана информация по первой карте/счету/вкладу.">
     </EditTextPreference>
 </PreferenceScreen>

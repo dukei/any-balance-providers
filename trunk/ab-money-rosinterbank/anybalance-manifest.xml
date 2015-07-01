@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="3">ab-money-rosinterbank</id>
+	<id version="4">ab-money-rosinterbank</id>
 	<api flags="no_browser"/>
 	<name>Росинтербанк</name>
 	<description html="true"><![CDATA[

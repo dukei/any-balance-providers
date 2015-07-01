@@ -112,8 +112,7 @@ function mainDep(what, baseurl){
     var prefs = AnyBalance.getPreferences();
     var html = AnyBalance.requestGet(baseurl + "/priv/deposits");
 	
-	//<tr>\s*<td>\s*<div class="black"(?:[^>]*>){5}57759(?:[^>]*>){25}\s*</td>\s*</tr>
-	pattern = new RegExp('<tr>\\s*<td>\\s*<div class="black"(?:[^>]*>){5}\\d*' + (prefs.num || '') + '(?:[^>]*>){25}\\s*</td>\\s*</tr>', 'i');
+	pattern = new RegExp('<tr>\\s*<td>\\s*<div class="black"(?:[^>]*>){5}[^<]*' + (prefs.num || '') + '(?:[^>]*>){20,30}\\s*</td>\\s*</tr>', 'i');
 	
 	AnyBalance.trace('Pattern is: ' + pattern);
 	var deposit = getParam(html, null, null, pattern);

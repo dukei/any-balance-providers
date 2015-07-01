@@ -5,7 +5,7 @@ echo **************************************************
 
 SET yuicompressor=java -jar yuicompressor-2.4.8.jar 
 
-for %%d in ("library.js") do (
+for %%d in ("library.js", "nadapter.js") do (
   %yuicompressor% --line-break 0 -o "%%~nd.min.js" "%%d"
   echo -------------------------------------
   echo %%~nxd was %%~zd bytes
@@ -19,4 +19,8 @@ for /D %%d in ("..\ab-stark-typical-provider\"      ^
   copy /Y library.min.js %%~pdlibrary.js
 )
 
-del library.min.js
+for /D %%d in ("..\") do (
+  copy /Y nadapter.min.js "%%~pd"nadapter.js
+)
+
+del *.min.js

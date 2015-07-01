@@ -86,7 +86,7 @@ function main() {
 	sumParam (html, result, 'hvylyny_net3', /минут внутри сети, осталось\s*(\d+)\s*бесплатных секунд/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 	sumParam (html, result, 'hvylyny_net3', /(?:15|30)00 минут на МТС для (?:MAX Energy Allo|MAX Energy), осталось\s*(\d+)\s*бесплатных секунд/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 	sumParam (html, result, 'hvylyny_net3', /GSM "Бізнес Оптимальний-2", осталось:\s*([\d\.,]+)\s*мин/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-	if (result.__tariff == 'GSM "Бізнес Оптимальний-2"') {
+	if (result.__tariff == 'GSM \"Бизнес Оптимальный-2\"') {
     	result.hvylyny_net3 = result.hvylyny_net3 * 60;
 	}
 

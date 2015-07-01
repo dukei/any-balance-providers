@@ -18,23 +18,23 @@ function main() {
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 	
-	var html = AnyBalance.requestGet(baseurl, g_headers);
+	var html = AnyBalance.requestGet(baseurl + 'Account.mvc/LogOn?ReturnUrl=%2fbalancePotr', g_headers);
 	
 	if(!html || AnyBalance.getLastStatusCode() > 400)
 		throw new AnyBalance.Error('Ошибка! Сервер не отвечает! Попробуйте обновить баланс позже.');
 	
 	var params = createFormParams(html, function(params, str, name, value) {
-		if (name == 'username') 
+		if (name == 'UserName') 
 			return prefs.login;
-		else if (name == 'password')
+		else if (name == 'Password')
 			return prefs.password;
 
 		return value;
 	});
 	
-	html = AnyBalance.requestPost(baseurl + 'Account.mvc/LogOn?ReturnUrl=%2finmotion', params, addHeaders({Referer: baseurl + 'Account.mvc/LogOn?ReturnUrl=%2finmotion'}));
+	html = AnyBalance.requestPost(baseurl + 'Account.mvc/LogOn?ReturnUrl=%2fbalancePotr', params, addHeaders({Referer: baseurl + 'Account.mvc/LogOn?ReturnUrl=%2fbalancePotr'}));
 	
-	if (!/<title>Заказы<\/title>/i.test(html)) {
+	if (!/<title>Баланс потребителя<\/title>/i.test(html)) {
 		var error = getParam(html, null, null, /<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
 		if (error)
 			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
@@ -43,7 +43,7 @@ function main() {
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
 	
-	html = AnyBalance.requestGet(baseurl + 'balancePotr', g_headers);
+	// html = AnyBalance.requestGet(baseurl + 'balancePotr', g_headers);
 	
 	var result = {success: true};
 	

@@ -19,10 +19,9 @@ if(a){j=a(j)
 }function checkEmpty(c,b,a){if(!c){throw new AnyBalance.Error(b,null,!a)
 }}function __getParName(b){var a=isArray(b)?b[0]:b;
 return a&&a.substr(a.lastIndexOf(".")+1)
-}function isAvailable(c){if(!c){return true
-}var b=isArray(c),a="__tariff";
-if((b&&c.indexOf(a)>=0)||(!b&&c=="__tariff")){return true
-}return AnyBalance.isAvailable(c)
+}function isAvailable(a){if(!a){return true
+}if(/\b__/.test(a.toString())){return true
+}return AnyBalance.isAvailable(a)
 }var replaceTagsAndSpaces=[/&nbsp;/ig," ",/&minus;/ig,"-",/<!--[\s\S]*?-->/g,"",/<[^>]*>/g," ",/\s{2,}/g," ",/^\s+|\s+$/g,""],replaceFloat=[/&minus;/ig,"-",/\s+/g,"",/'/g,"",/,/g,".",/\.([^.]*)(?=\.)/g,"$1",/^\./,"0."],replaceSlashes=[/\\(.?)/g,function(a,b){switch(b){case"0":return"\0";
 case"":return"";
 default:return b
@@ -252,4 +251,38 @@ for(var c=0;
 c<a.length;
 ++c){if(a[c]!=="--auto--"&&!isset(b[a[c]])){b[a[c]]=null
 }}if(!isset(b.__tariff)){b.__tariff=null
-}};
+}}function getElement(j,m,e,a){var d=getParam(m.toString(),null,null,/<(\w+)/);
+var c=m.exec(j);
+if(!c){return null
+}var l=c.index;
+var f=new RegExp("(?:<"+d+"|</"+d+")[^>]*>","ig");
+f.lastIndex=l+c[0].length;
+var g=0;
+while(true){c=f.exec(j);
+if(!c){break
+}var b=c[0];
+if(b.charAt(1)=="/"){if(g==0){break
+}--g
+}else{++g
+}f.lastIndex=c.index+b.length
+}var h=j.length;
+if(c){h=c.index+c[0].length
+}m.lastIndex=h;
+var k=j.substring(l,h);
+if(e){k=replaceAll(k,e)
+}if(a){k=a(k)
+}return k
+}function getElements(e,k,b,a){var d=[];
+var g=isArray(k)?k[0]:k;
+var f=isArray(k)?(k.shift(),k):null;
+do{var h=getElement(e,g,b,a);
+var j=h&&!f;
+if(f&&h){for(var c=0;
+c<f.length;
+++c){j=j||f[c].test(h);
+if(j){break
+}}}if(j){d.push(h)
+}if(!g.global){break
+}}while(h!==null);
+return d
+};

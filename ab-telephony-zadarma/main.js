@@ -20,7 +20,7 @@ function main() {
 	var html = AnyBalance.requestGet(baseurl + 'auth/', g_headers);
 
 	var captcha, captchaSrc, captchaKey;
-	if(AnyBalance.getLevel() >= 7){
+	if(AnyBalance.getLevel() >= 7) {
 		AnyBalance.trace('Пытаемся ввести капчу');
 		captcha = AnyBalance.requestGet(baseurl + 'captcha/index.php?form=login&unq=' + Math.random(), g_headers);
 		captchaKey = AnyBalance.retrieveCode("Пожалуйста, введите код с картинки", captcha);
@@ -28,28 +28,28 @@ function main() {
 	} else {
 		throw new AnyBalance.Error('Провайдер требует AnyBalance API v7, пожалуйста, обновите AnyBalance!');
 	}
-
+	
 	html = AnyBalance.requestPost(baseurl + "auth/login/", {
 		redirect:'',
+		answer: 'json',
 		captcha: captchaKey || '',
 		email: prefs.login,
 		password: prefs.password
 	}, addHeaders({ Referer: baseurl }));
-
-	try{
-		var json = getJson(html);
-		error = !json.success ? json.error : null;
-	} catch(e){ }
-
-	if(error)
-		throw new AnyBalance.Error(error);
-
-	html = AnyBalance.requestGet(baseurl + 'auth/', g_headers);
-
-	if (!/\/auth\/logout\//i.test(html)) {
-		AnyBalance.trace(html)
+	
+	var json = getJson(html);
+	
+	if(!json.success) {
+		var error = !json.success ? json.error : null;
+		if(error)
+			throw new AnyBalance.Error(error);
+		
+		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
+	
+	html = AnyBalance.requestGet(baseurl + 'auth/', g_headers);
+
 	var result = {success: true};
 	
 	getParam(html, result, 'balance', /<span class="balance">[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);

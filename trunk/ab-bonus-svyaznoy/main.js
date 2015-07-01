@@ -72,7 +72,7 @@ function main () {
 			
 			getParam(lastOperation.amount + '', result, 'pointsinlastoper', null, replaceTagsAndSpaces, parseBalance);
 			getParam(lastOperation.partnerName + '', result, 'lastoperationplace', null, replaceTagsAndSpaces);
-			getParam(lastOperation.operationDate + '', result, 'lastoperationdate', null, replaceTagsAndSpaces, parseDate);
+			getParam(lastOperation.operationDate + '', result, 'lastoperationdate', null, replaceTagsAndSpaces, parseDateISO);
 		}
     }
 	

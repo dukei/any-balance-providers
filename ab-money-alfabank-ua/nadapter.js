@@ -3,6 +3,7 @@
 */
 function NAdapter(countersMap, shouldProcess){
 	var availableCounters = {};
+	var originalIsAvailable = AnyBalance.isAvailable;
 	
 	for(var c in countersMap){
 		if(AnyBalance.isAvailable(c)){
@@ -31,6 +32,9 @@ function NAdapter(countersMap, shouldProcess){
 	    for(var i=0; i<arrOrString.length; ++i){
 	    	if(availableCounters[arrOrString[i]])
 	    		return true;
+	    	//≈сли мы не нашли простой счетчик, то о его присутствии надо спросить у оригинала
+	    	if(arrOrString[i].indexOf('.') < 0)
+	    		return originalIsAvailable.call(AnyBalance, arrOrString[i]);
 	    }
 	    
 	    return false;
@@ -59,12 +63,11 @@ function NAdapter(countersMap, shouldProcess){
 	}
 
 	function __exec(func, args){
-		var oldIsAvailable = AnyBalance.isAvailable;
 		AnyBalance.isAvailable = __isAvailable;
 		try{
 			return func.apply(null, args);
 		}finally{
-			AnyBalance.isAvailable = oldIsAvailable;
+			AnyBalance.isAvailable = originalIsAvailable;
 		}
 	}
 

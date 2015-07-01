@@ -85,7 +85,10 @@ function main() {
 	//Пакетные минуты в сети МТС общенациональные
 	sumParam (html, result, 'hvylyny_net3', /минут внутри сети, осталось\s*(\d+)\s*бесплатных секунд/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 	sumParam (html, result, 'hvylyny_net3', /(?:15|30)00 минут на МТС для (?:MAX Energy Allo|MAX Energy), осталось\s*(\d+)\s*бесплатных секунд/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-	sumParam (html, result, 'hvylyny_net3', /GSM "Бізнес Оптимальний-2", осталось:\s*([\d\.,]+)\s*мин/ig, replaceTagsAndSpaces, parseBalance, parseTime, aggregate_sum);
+	sumParam (html, result, 'hvylyny_net3', /GSM "Бізнес Оптимальний-2", осталось:\s*([\d\.,]+)\s*мин/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+	if (result.__tariff == 'GSM "Бізнес Оптимальний-2"') {
+    	result.hvylyny_net3 = result.hvylyny_net3 * 60;
+	}
 
 	sumParam (html, result, 'hvylyny_net3_termin', /минут внутри сети, осталось \d+ бесплатных секунд до\s*([^<]*)\s*<\/span>/ig, replaceTagsAndSpaces, parseDate, aggregate_min);
 

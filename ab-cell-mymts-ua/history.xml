@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change major_version="1.0" version="12" date="2015-07-01">
+      - Исправлено отображение минут в счетчикe: "Минуты в сети МТС".
+    </change>
     <change major_version="1.0" version="11" date="2015-06-30">
       - Исправлено отображение минут в счетчиках: "Минуты в сети МТС" и "Минуты в сети МТС региональные".
     </change>

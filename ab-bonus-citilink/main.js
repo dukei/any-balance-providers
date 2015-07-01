@@ -19,24 +19,36 @@ function main(){
 	var html = AnyBalance.requestGet(baseurl + 'login/', g_headers);
 	
 	var action = getParam(html, null, null, /<form name="mainForm" method="POST" action="([^"]+)/i);
+	var captchaSrc = getParam(html, null, null, /"captchaLogin"[^>]*src="\/([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
 	
-	try{
-        html = AnyBalance.requestPost(action, {
-			email:prefs.login,
-			pass:prefs.password,
-			passOk:false
-        }, addHeaders({Referer: baseurl})); 
-    }catch(e){
-    	if(prefs.__dbg)
-    		html = AnyBalance.requestGet(baseurl + 'profile/', g_headers);
-    	else
-    		throw e;
-    }
-
+	if(!action || !captchaSrc) {
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удалось найти форму входа, сайт изменен?');
+	}
+	
+	var captchaa;
+	if(AnyBalance.getLevel() >= 7){
+		AnyBalance.trace('Пытаемся ввести капчу');
+		var captcha = AnyBalance.requestGet(baseurl + captchaSrc);
+		captchaa = AnyBalance.retrieveCode("Пожалуйста, введите код с картинки", captcha);
+		AnyBalance.trace('Капча получена: ' + captchaa);
+	}else{
+		throw new AnyBalance.Error('Провайдер требует AnyBalance API v7, пожалуйста, обновите AnyBalance!');
+	}
+	
+	html = AnyBalance.requestPost(action, {
+		email:prefs.login,
+		pass:prefs.password,
+		captchaLogin: captchaa,
+		passOk:false
+	}, addHeaders({Referer: baseurl})); 
+	
     if(!/\/logout\//i.test(html)){
         var error = getParam(html, null, null, /<p[^>]+class="(?:red|msg-error)"[^>]*>([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, html_entity_decode);
         if(error)
             throw new AnyBalance.Error(error, null, /Логин или пароль неверный/i.test(error));
+		
+		AnyBalance.trace(html);
         throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
     }
 	

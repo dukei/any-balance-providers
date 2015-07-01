@@ -1,7 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="7">ab-bonus-citilink</id>
-	<api flags="no_browser"/>
+	<id version="8">ab-bonus-citilink</id>
+	<api flags="no_browser|captcha"/>
 	<name>Ситилинк</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о количестве бонусов в бонусной программе электронного дискаунтера "Ситилинк" (http://www.citilink.ru/).</p>
@@ -13,7 +13,7 @@
 	<li>Получить доступ к личному кабинету вы можете, пройдя регистрацию по адресу http://www.citilink.ru/registration.</li>
 	</ul>
 	]]></instruction>
-	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

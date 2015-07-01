@@ -11,7 +11,6 @@ var g_countersTable = {
 		"acc_num": "contracts.accnum",
 		"card_name": "contracts.__name",
 		"__tariff": "contracts.cards.num",
-		"fio": "fio"
     },
     credit: {
     	"balance": "credits.balance",
@@ -21,7 +20,6 @@ var g_countersTable = {
 		"next_payment": "credits.next_payment",
 		"next_payment_date": "credits.next_payment_date",
 		"period": "credits.next_period",
-		"fio": "fio"
     },
 	dep: {
     	"balance": "deposits.balance",
@@ -30,7 +28,6 @@ var g_countersTable = {
 		"acc_num": "deposits.accnum",
 		"pct": "deposits.pct",
 		"__tariff": "deposits.__name",
-		"fio": "fio"
     }
 };
 

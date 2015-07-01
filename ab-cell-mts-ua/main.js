@@ -344,7 +344,7 @@ function main(){
     // Тарифный план
     getParam (html, result, '__tariff', /<p>(?:Ваш тариф|tariff plan):\s*<strong>([\s\S]*?)<\/strong><\/p>/i, replaceTagsAndSpaces, html_entity_decode);
 
-    if (result.__tariff == 'GSM "Бізнес Оптимальний-2"') {
+    if (result.__tariff == 'GSM \"Бизнес Оптимальный-2\"') {
     	result.min_paket = result.min_paket * 60;
 	}
 

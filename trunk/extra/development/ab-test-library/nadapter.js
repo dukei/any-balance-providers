@@ -33,11 +33,15 @@ function NAdapter(countersMap, shouldProcess){
 	    	if(availableCounters[arrOrString[i]])
 	    		return true;
 	    	//≈сли мы не нашли простой счетчик, то о его присутствии надо спросить у оригинала
-	    	if(arrOrString[i].indexOf('.') < 0)
+	    	if(isSimpleName(arrOrString[i]))
 	    		return originalIsAvailable.call(AnyBalance, arrOrString[i]);
 	    }
 	    
 	    return false;
+	}
+
+	function isSimpleName(name){
+		return name.indexOf('.') < 0;
 	}
 
 	function __isAvailable(strOrArray){
@@ -79,6 +83,13 @@ function NAdapter(countersMap, shouldProcess){
 				return json;
 
 			var result = {success: true};
+
+			//ѕростые пол€ переписываем сразу
+			for(var c in json){
+				if(!availableCounters[c] && !isArray(json[c]))
+					result[c] = json[c];
+			}
+
 			for(var c in countersMap){
 				if(isAvailable([c]))
 					result[c] = traverse(json, countersMap[c]);

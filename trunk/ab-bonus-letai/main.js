@@ -15,8 +15,8 @@ function main(){
     var baseurl = "https://bonus.letai.ru:8443/";
     AnyBalance.setDefaultCharset('utf-8'); 
 	
-    var html = AnyBalance.requestGet(baseurl + 'template.LOGIN/', g_headers);
-
+    var html = AnyBalance.requestGet(baseurl + 'template.LOGIN/?entrance=login', g_headers);
+	
     var VGN_NONCE = getParam(html, null, null, /VGN_NONCE"\s*value="([\s\S]*?)"/i, null, html_entity_decode);
     if(!VGN_NONCE)
         throw new AnyBalance.Error('Не удалось найти токен авторизации. Сайт изменен?');
@@ -29,12 +29,19 @@ function main(){
         Submit223:'Войти'
     }, g_headers); 
 
-    if(!/LOGOUT/i.test(html)){
-        throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
-    }
+	if(!/LOGOUT/i.test(html)) {
+		var error = getParam(html, null, null, /"messageArea"(?:[^>]*>){6}([\s\S]*?)<\/table>/i, replaceTagsAndSpaces, html_entity_decode);
+		if (error)
+			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
+		
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
+	}
+	
 	html = AnyBalance.requestGet(baseurl + 'portal/site/letaibonus/profile/', g_headers);
 
     var result = {success: true};
+	
     getParam(html, result, 'fio', /ФИО:\s*<\/dt>\s*<dd>([\s\S]*?)<\/dd>/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, 'acc', /Номер участия в программе Летай Бонус:\s*<\/dt>\s*<dd>([\s\S]*?)<\/dd>/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, 'balance', /<strong>([\s\S]{1,20})бонусных баллов<\/strong>/i, replaceTagsAndSpaces, parseBalance);

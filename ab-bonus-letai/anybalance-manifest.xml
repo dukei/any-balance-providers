@@ -2,7 +2,7 @@
 <provider>
 	<!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
 	<api flags="no_browser" />
-	<id version="2">ab-bonus-letai</id>
+	<id version="3">ab-bonus-letai</id>
 	<name>Летай (Бонусы)</name>
 	<description>
 		Получает бонусные баллы интернет провайдера Летай (http://letai.ru/) (Таттелеком http://tattelecom.ru/)

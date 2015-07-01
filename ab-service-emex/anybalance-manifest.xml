@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-service-emex</id>
+	<id version="3">ab-service-emex</id>
 	<api flags="no_browser"/>
 	<name>Emex.ru</name>
 	<description html="true"><![CDATA[

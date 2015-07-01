@@ -19,7 +19,7 @@ function main(){
 	var html = AnyBalance.requestGet(baseurl + 'login/', g_headers);
 	
 	var action = getParam(html, null, null, /<form name="mainForm" method="POST" action="([^"]+)/i);
-	var captchaSrc = getParam(html, null, null, /"captchaLogin"[^>]*src="\/([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
+	var captchaSrc = getParam(html, null, null, /"captchaLogin"[^>]*src="\/([^"]+)/i, replaceTagsAndSpaces, html_entity_decode);
 	
 	if(!action || !captchaSrc) {
 		AnyBalance.trace(html);

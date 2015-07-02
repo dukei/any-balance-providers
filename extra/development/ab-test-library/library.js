@@ -892,3 +892,8 @@ function getElements(html, re, replaces, parseFunc){
 	return results;
 }
 
+function __shouldProcess(counter, info){
+	if(!AnyBalance.shouldProcess)
+		return !!info.__id;
+	return AnyBalance.shouldProcess(counter, info);
+}

@@ -64,7 +64,7 @@ function main() {
 			AnyBalance.trace(html);
 			throw new AnyBalance.Error('Не удалось найти идентификатор команды для входа.');
 		}
-		
+
 		html = AnyBalance.requestPost('https://esia.gosuslugi.ru/idp/login/pwd/do', {
 			login: formattedLogin,
 			password: prefs.password,
@@ -343,7 +343,7 @@ function checkForJsOff(html) {
 		// Поскольку Ваш браузер не поддерживает JavaScript, для продолжения Вам необходимо нажать кнопку "Продолжить".
 		var params = createFormParams(html);
 		
-		html = checkForRedirect(AnyBalance.requestPost('https://www.gosuslugi.ru/pgu/saml/SAMLAssertionConsumer', params, addHeaders({Referer: g_baseurl + 'idp/profile/SAML2/Redirect/SSO'})));
+		html = checkForRedirect(AnyBalance.requestPost('https://www.gosuslugi.ru/auth-provider/saml/SAMLAssertionConsumer', params, addHeaders({Referer: g_baseurl + 'idp/profile/SAML2/Redirect/SSO'})));
 	}
 	return html;
 }

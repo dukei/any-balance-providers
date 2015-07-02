@@ -44,21 +44,22 @@ function shouldProcess(counter, info){
 		{
 			if(prefs.type != 'card')
 				return false;
-		    if(!prefs.cardnum)
+		    if(!prefs.lastdigits)
 		    	return true;
-		    for(var i=0; i<info.cards.length; ++i) {
-		    	if(endsWith(info.cards[i].cardNumber, prefs.cardnum))
-		    		return true;
-		    }
+			
+			var num = getParam(info.__name, null, null, /([^,]+)/i);
+			if(endsWith(num, prefs.lastdigits))
+				return true;
+		    
 		    return false;
 		}
 		case 'accounts':
 		{
 			if(prefs.type != 'acc')
 				return false;
-		    if(!prefs.cardnum)
+		    if(!prefs.lastdigits)
 		    	return true;
-		    return new RegExp(prefs.cardnum + '$').test(info.cardNumber);
+		    return new RegExp(prefs.lastdigits + '$').test(info.__name);
 		}
 		default:
 			return false;

@@ -26,11 +26,13 @@ function main() {
 	var params = createFormParams(html, function(params, str, name, value) {
 		if (name == 'UserName') 
 			return prefs.login;
-		else if (name == 'Password')
+		else if (name == 'Password' || name == 'password')
 			return prefs.password;
 
 		return value;
 	});
+	
+	params['password'] = prefs.password;
 	
 	html = AnyBalance.requestPost(baseurl + 'Account.mvc/LogOn?ReturnUrl=%2fbalancePotr', params, addHeaders({Referer: baseurl + 'Account.mvc/LogOn?ReturnUrl=%2fbalancePotr'}));
 	

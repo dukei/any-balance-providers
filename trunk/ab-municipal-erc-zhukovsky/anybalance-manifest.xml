@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-municipal-erc-zhukovsky</id>
+	<api flags="no_browser"/>
+	<name>ЕИРЦ г. Жуковский</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о задолженности в Едином Информационном Расчетном Центре г. Жуковского <a href="http://eirczhukovskiy.ru/">http://eirczhukovskiy.ru/</a></p>
+	<p>Информация берется из личного кабинета</p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Если у вас нет доступа в Личный кабинет, получите его на странице http://eirczhukovskiy.ru/user/register</p>
+	]]></instruction>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>export.js</js>
+		<js>nadapter.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="debt" name="Долг на начало периода" units=" р"/>
+		<counter id="paid" name="Оплачено" units=" р"/>
+		<counter id="bill" name="Начислено" units=" р"/>
+		<counter id="period" name="Период" type="time" format="MM/yyyy"/>
+		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="address" name="Адрес" type="text"/>
+	</counters>
+	<keywords>Единый информационный расчетный центр</keywords>
+	<type>municipal</type>
+	<country>ru</country>
+</provider>

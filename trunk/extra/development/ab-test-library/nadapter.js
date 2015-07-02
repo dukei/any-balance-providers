@@ -1,9 +1,11 @@
 /*
 	AnyBalance adapter to convert result from excerpt to row
 */
-function NAdapter(countersMap, shouldProcess){
+function NAdapter(countersMap, shouldProcess, options){
 	var availableCounters = {};
 	var originalIsAvailable = AnyBalance.isAvailable;
+	if(!options)
+		options = {};
 	
 	for(var c in countersMap){
 		if(AnyBalance.isAvailable(c)){
@@ -18,7 +20,7 @@ function NAdapter(countersMap, shouldProcess){
 	var productIds = {};
 	AnyBalance.shouldProcess = function(counter, info){
 		if(productIds[counter])
-			return info.__id == g_productIds[counter];
+			return info.__id == productIds[counter];
 		var should = shouldProcess(counter, info);
 		if(should)
 			productIds[counter] = info.__id;
@@ -32,8 +34,8 @@ function NAdapter(countersMap, shouldProcess){
 	    for(var i=0; i<arrOrString.length; ++i){
 	    	if(availableCounters[arrOrString[i]])
 	    		return true;
-	    	//Åñëè ìû íå íàøëè ïðîñòîé ñ÷åò÷èê, òî î åãî ïðèñóòñòâèè íàäî ñïðîñèòü ó îðèãèíàëà
-	    	if(isSimpleName(arrOrString[i]))
+	    	//Ð•ÑÐ»Ð¸ Ð¼Ñ‹ Ð½Ðµ Ð½Ð°ÑˆÐ»Ð¸ Ð¿Ñ€Ð¾ÑÑ‚Ð¾Ð¹ ÑÑ‡ÐµÑ‚Ñ‡Ð¸Ðº, Ñ‚Ð¾ Ð¾ ÐµÐ³Ð¾ Ð¿Ñ€Ð¸ÑÑƒÑ‚ÑÑ‚Ð²Ð¸Ð¸ Ð½Ð°Ð´Ð¾ ÑÐ¿Ñ€Ð¾ÑÐ¸Ñ‚ÑŒ Ñƒ Ð¾Ñ€Ð¸Ð³Ð¸Ð½Ð°Ð»Ð°
+	    	if(options.autoSimpleCounters && isSimpleName(arrOrString[i]))
 	    		return originalIsAvailable.call(AnyBalance, arrOrString[i]);
 	    }
 	    
@@ -57,8 +59,21 @@ function NAdapter(countersMap, shouldProcess){
 		var prop;
 		for(var i=0; i<props.length; ++i){
 			prop = json[props[i]];
-			if(isArray(prop))
-				prop = prop[0];
+			if(isArray(prop)){
+				var counter_name = props.slice(0, i).join('.');
+				if(productIds[counter_name]){
+					//ÐÐ°Ñ…Ð¾Ð´Ð¸Ð¼ entity Ñ Ð½ÑƒÐ¶Ð½Ñ‹Ð¼ __id
+					prop = prop.reduce(function(previousValue, currentValue){
+						if(!previousValue){
+							if(currentValue.__id == productIds[counter_name])
+								return currentValue;
+						}
+						return previousValue;
+					}, null);
+				}else{
+					prop = prop[0];
+				}
+			}
 			if(!isset(prop) || prop === null)
 				return prop;
 			json = prop;
@@ -84,10 +99,12 @@ function NAdapter(countersMap, shouldProcess){
 
 			var result = {success: true};
 
-			//Ïðîñòûå ïîëÿ ïåðåïèñûâàåì ñðàçó
-			for(var c in json){
-				if(!availableCounters[c] && !isArray(json[c]))
-					result[c] = json[c];
+			if(options.autoSimpleCounters){
+				//ÐŸÑ€Ð¾ÑÑ‚Ñ‹Ðµ Ð¿Ð¾Ð»Ñ Ð¿ÐµÑ€ÐµÐ¿Ð¸ÑÑ‹Ð²Ð°ÐµÐ¼ ÑÑ€Ð°Ð·Ñƒ
+				for(var c in json){
+					if(!availableCounters[c] && !isArray(json[c]))
+						result[c] = json[c];
+				}
 			}
 
 			for(var c in countersMap){

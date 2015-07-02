@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="55">ab-money-sberbank</id>
+	<id version="56">ab-money-sberbank</id>
 	<api flags="no_browser"/>
 	<name>Сбербанк ОнЛ@йн</name>
 	<description html="true"><![CDATA[
@@ -43,10 +43,12 @@
 		<li>Нажмите "Сохранить" и подтвердите своё решение, следуя инструкциям Интернет-банка.</li>
 	</ol></p>
 	]]></instruction>
-	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
+		<js>extract.js</js>
+		<js>nadapter.js</js>
 		<js>md5.js</js>
 		<js>library.js</js>
 		<js>main.js</js>

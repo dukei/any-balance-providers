@@ -126,6 +126,8 @@ function doNewAccount(page) {
 // Обработка счетов
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 function processAccounts(html, result) {
+	fetchNewThanks(nodeUrl, result);
+	
 	html = AnyBalance.requestGet(nodeUrl + '/PhizIC/private/accounts/list.do');
 	var pageToken = getParamByName(html, 'PAGE_TOKEN');
 	
@@ -152,13 +154,16 @@ function processAccount(html, _id, result, pageToken){
 	getParam(html, result, 'accounts.balance', /overallAmount\b[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'accounts.rate', /descriptionRight[^>]*>\s*([\d.,]+%)/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, ['accounts.currency', 'accounts.balance', 'accounts.cash', 'accounts.electrocash', 'accounts.debt', 'accounts.maxlimit'], /overallAmount\b[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseCurrency);
-	getParam(html, result, 'accounts.cardNumber', /<[^>]*class="accountNumber\b[^"]*">([^<,]+)/i, replaceTagsAndSpaces);
-	getParam(html, result, 'accounts.till', /<[^>]*class="accountNumber\b[^"]*">[^<]+,\s+действует (?:до|по)([^<]+)/i, replaceTagsAndSpaces, parseDateWord);
+	getParam(html, result, 'accounts.cardNumber', /<[^>]*class="(?:product|account)Number\b[^"]*">([^<,]+)/i, replaceTagsAndSpaces);
+	getParam(html, result, 'accounts.till', /<[^>]*class="(?:product|account)Number\b[^"]*">[^<]+,\s+действует (?:до|по)([^<]+)/i, replaceTagsAndSpaces, parseDateWord);
 	
 	processAccountTransactions(_id, pageToken, result);
 }
 
 function processAccountTransactions(_id, pageToken, result) {
+	if(!AnyBalance.isAvailable('accounts.transactions'))
+		return;
+	
 	AnyBalance.trace('Получаем последние операции по счету...');
 	
 	var dt = new Date();
@@ -218,7 +223,7 @@ function processCards(html, result) {
 		
 		var c = {__id: _id, __name: title};
 		
-		if(__shouldProcess('cards', c)){
+		if(__shouldProcess('cards', c)) {
 			processCard(cards[i], _id, c);
 			result.cards.push(c);
 		}
@@ -242,6 +247,7 @@ function processCard(html, _id, result){
 		getParam(html, result, 'cards.minpaydate', /Обязательный платеж(?:[^>]*>){7}([\s\S]*?)<\/div>/, replaceTagsAndSpaces, parseDateWord);
 		getParam(html, result, 'cards.maxlimit', /Кредитный лимит(?:[^>]*>){5}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
 	}
+	// // Нужно только для старого провайдера
 	// if (AnyBalance.isAvailable('cards.lastPurchSum', 'cards.lastPurchPlace', 'cards.lastPurchDate')) {
 		// html = AnyBalance.requestGet(nodeUrl + '/PhizIC/private/cards/info.do?id=' + _id);
 		// var tr = getParam(html, null, null, /<tr[^>]*class="ListLine0"[^>]*>([\S\s]*?)<\/tr>/i);
@@ -266,14 +272,14 @@ function processCardTransactions(_id, result) {
 	var dt = new Date();
 	
 	var html = AnyBalance.requestGet(nodeUrl + '/PhizIC/private/accounts/print.do?sel=c:' + _id + '&fromDateString=' + getFormattedDate(5) + '&toDateString=' + getFormattedDate(), g_headers);
-
+	
 	if(!/<table(?:[^>]*>){3}\s*Выписка/i.test(html)) {
 	    AnyBalance.trace(html);
 	    AnyBalance.trace('Не удалось найти таблицу операций! Пробуем другой вариант выписки...');
 		processCardLast10Transactions(_id, result);
 		return;
 	}
-
+	
     result.transactions = [];
 	
     var ops = sumParam(html, null, null, /<tr class="">(?:[^>]*>){15,25}\s*<\/tr>/ig);
@@ -281,9 +287,9 @@ function processCardTransactions(_id, result) {
 	var currency = getParam(html, null, null, /Входящий остаток:[^>]*>\s*[\w\s.,-]+([^.]+)/i, replaceTagsAndSpaces);
 	
     AnyBalance.trace('У карты ' + _id + ' найдено транзакций: ' + ops.length);
-    for(var i=0; i<ops.length; ++i){
+    for(var i=0; i<ops.length; ++i) {
     	var o = {};
-
+		
 		var debit = -1 * (getParam(ops[i], null, null, /debit([^>]*>){3}/i, replaceTagsAndSpaces, parseBalance) || 0);
 		var credit = (getParam(ops[i], null, null, /credit([^>]*>){3}/i, replaceTagsAndSpaces, parseBalance) || 0);
 		

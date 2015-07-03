@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="58" date="2015-07-03">
+	- Исправление ошибок в получении данных по картам и счетам.
+	</change>
 	<change version="57" date="2015-07-02">
 	- Улучшен поиск информации по картам и счетам.
 	</change>

@@ -3,6 +3,14 @@
 */
 
 var g_countersTable = {
+	common: {
+		'spasibo': 'spasibo',
+		'userName': 'userName',
+		'eurPurch': 'eurPurch',
+		'eurSell': 'eurSell',
+		'usdPurch': 'usdPurch',
+		'usdSell': 'usdSell',
+	}, 
 	card: {
     	"balance": "cards.balance",
 		"currency": "cards.currency",
@@ -18,9 +26,14 @@ var g_countersTable = {
 		"electrocash": "cards.electrocash",
 		"userName": "cards.userName",
 		"__tariff": "cards.cardNumber",
+		
+		"lastPurchSum": "cards.transactions.sum",
+		"lastPurchPlace": "cards.transactions.name",
+		"lastPurchDate": "cards.transactions.time"
 	},
     acc: {
     	"balance": "accounts.balance",
+		"currency": "accounts.currency",
 		"rate": "accounts.rate",
 		"cardNumber": "accounts.cardNumber",
 		"__tariff": "accounts.cardNumber",
@@ -36,42 +49,12 @@ var g_countersTable = {
     }
 };
 
-function shouldProcess(counter, info){
-	var prefs = AnyBalance.getPreferences();
-
-	switch(counter){
-		case 'cards':
-		{
-			if(prefs.type != 'card')
-				return false;
-		    if(!prefs.lastdigits)
-		    	return true;
-			
-			var num = getParam(info.__name, null, null, /([^,]+)/i);
-			if(endsWith(num, prefs.lastdigits))
-				return true;
-		    
-		    return false;
-		}
-		case 'accounts':
-		{
-			if(prefs.type != 'acc')
-				return false;
-		    if(!prefs.lastdigits)
-		    	return true;
-		    return new RegExp(prefs.lastdigits + '$').test(info.__name);
-		}
-		default:
-			return false;
-	}
-}
-
 function main(){
 	var prefs = AnyBalance.getPreferences();
     if(!/^(card|acc|metal_acc)$/i.test(prefs.type || ''))
     	prefs.type = 'card';
 	
-    var adapter = new NAdapter(g_countersTable[prefs.type], shouldProcess);
+    var adapter = new NAdapter(joinObjects(g_countersTable[prefs.type], g_countersTable.common), shouldProcess);
 	
 	if(prefs.source == 'app') {
 		mainMobileApp2(prefs);
@@ -79,7 +62,6 @@ function main(){
 	}
 	
     adapter.processRates = adapter.envelope(processRates);
-    // adapter.processProfile = adapter.envelope(processProfile);
     adapter.processCards = adapter.envelope(processCards);
     adapter.processAccounts = adapter.envelope(processAccounts);
 	
@@ -87,18 +69,21 @@ function main(){
 	
 	var result = {success: true};
 	
-	// adapter.processProfile(html, result);
-
+	adapter.processRates(html, result);
+	
 	if(prefs.type == 'card') {
 		adapter.processCards(html, result);
+		
 		if(result.cards && result.cards.length == 0)
-			throw new AnyBalance.Error(prefs.cardnum ? 'Не найдена карта с последними цифрами ' + prefs.cardnum : 'У вас нет ни одной карты');
+			throw new AnyBalance.Error(prefs.lastdigits ? 'Не найдена карта с последними цифрами ' + prefs.lastdigits : 'У вас нет ни одной карты');
+		
 		result = adapter.convert(result);
-
 	} else if(prefs.type == 'acc') {
 		adapter.processAccounts(html, result);
+
 		if(result.accounts && result.accounts.length == 0)
-			throw new AnyBalance.Error(prefs.cardnum ? 'Не найден счет с последними цифрами ' + prefs.cardnum : 'У вас нет ни одного счета');
+			throw new AnyBalance.Error(prefs.lastdigits ? 'Не найден счет с последними цифрами ' + prefs.lastdigits : 'У вас нет ни одного счета');
+		
 		result = adapter.convert(result);
 	} else if(prefs.type == 'metal_acc') {
 		fetchNewAccountMetallAcc(html, nodeUrl);
@@ -108,6 +93,37 @@ function main(){
 	AnyBalance.setResult(result);
 }
 
+function shouldProcess(counter, info){
+	var prefs = AnyBalance.getPreferences();
+	var num = getParam(info.__name, null, null, /([^,]+)/i);
+	
+	switch(counter){
+		case 'cards':
+		{
+			if(prefs.type != 'card')
+				return false;
+		    if(!prefs.lastdigits)
+		    	return true;
+			
+			if(endsWith(num, prefs.lastdigits))
+				return true;
+		    
+			return false;
+		}
+		case 'accounts':
+		{
+			if(prefs.type != 'acc')
+				return false;
+		    if(!prefs.lastdigits)
+		    	return true;
+			
+			if(endsWith(num, prefs.lastdigits))
+				return true;
+		}
+		default:
+			return false;
+	}
+}
 
 function requestApi(action, params, dontAddDefParams, url, ignoreErrors) {
 	var baseurl = (url || 'https://online.sberbank.ru:4477/CSAMAPI/');

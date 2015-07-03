@@ -61,7 +61,7 @@ function NAdapter(countersMap, shouldProcess, options){
 			prop = json[props[i]];
 			if(isArray(prop)){
 				var counter_name = props.slice(0, i).join('.');
-				if(productIds[counter_name]){
+				if(productIds[counter_name] && prop[0] && prop[0].__id){
 					//Находим entity с нужным __id
 					prop = prop.reduce(function(previousValue, currentValue){
 						if(!previousValue){

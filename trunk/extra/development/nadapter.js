@@ -28,7 +28,7 @@ for(var c=0;
 c<q.length;
 ++c){s=o[q[c]];
 if(isArray(s)){var p=q.slice(0,c).join(".");
-if(j[p]){s=s.reduce(function(t,u){if(!t){if(u.__id==j[p]){return u
+if(j[p]&&s[0]&&s[0].__id){s=s.reduce(function(t,u){if(!t){if(u.__id==j[p]){return u
 }}return t
 },null)
 }else{s=s[0]

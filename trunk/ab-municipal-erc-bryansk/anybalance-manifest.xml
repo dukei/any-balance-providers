@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-municipal-erc-bryansk</id>
+	<api flags="no_browser"/>
+	<name>РИРЦ Брянской области</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе <a href="https://www.rirc.ru/">Регионального Информационно-Расчетного центра Брянской области</a></p>
+	<p>Информация берется из <a href="https://www.rirc.ru/cabinet/cgi-bin/get_cabinet.pl">личного кабинета</a></p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Логин и пароль может быть получен только на <a href="http://www.rirc.ru/index.php?id=23">абонентских участках ООО "РИРЦ"</a> по предъявлении оператору участка паспорта, удостоверяющего личность абонента. Более подробно смотрите <a href="https://www.rirc.ru/cabinet/html/rules.html">здесь</a>.</p>
+	]]></instruction>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс ЖКХ" units=" р"/>
+		<counter id="balance_krm" name="Баланс капремонт" units=" р"/>
+		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="address" name="Адрес" type="text"/>
+		<counter id="licschet" name="Лицевой счет ЖКХ" type="text"/>
+		<counter id="licschet_krm" name="Лицевой счет капремонт" type="text"/>
+		<counter id="live" name="Число проживающих" units=" чел"/>
+	</counters>
+	<keywords>Региональный Информационно-Расчетный Центр коммунальные коммуналка жкх</keywords>
+	<type>municipal</type>
+	<country>ru</country>
+</provider>

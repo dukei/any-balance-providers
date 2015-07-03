@@ -4,18 +4,11 @@
 	<api flags="no_browser"/>
 	<name>МКС-Новосибирск</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе провайдера ИмяПровайдера <a href=""></a></p>
-	<p>Информация берется из личного кабинета <a href=""></a></p>
-
-	<b>Особенности:</b>
-	<ul>
-		<li></li>
-		<li></li>
-		<li></li>
-	</ul>
+	<p>Предоставляет информацию о балансе и выставленном счете в управляющей компании <a href="http://mks-novosibirsk.ru/">ЗАО «МКС-Новосибирск»</a></p>
+	<p>Информация берется из <a href="http://mks-novosibirsk.ru/index.php?option=com_kabinet">личного кабинета</a></p>
 	]]></description>
 	<instruction html="true"><![CDATA[
-	<p>Если у вас нет доступа в Личный кабинет, получите его на странице <a href=""></a></p>
+	<p>Если у вас нет доступа в Личный кабинет, получите его на странице <a href="http://mks-novosibirsk.ru/index.php?option=com_kabinet&layout=reg">регистрации</a></p>
 	]]></instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
@@ -26,13 +19,14 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units=" {@currency}"/>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="bill" name="Начислено" units=" р"/>
+		<counter id="period" name="Дата отключения" type="time" format="MM/yyyy"/>
+		<counter id="licschet" name="Лицевой счет" type="text"/>
+		<counter id="kod" name="Код оплаты" type="text"/>
 		<counter id="fio" name="ФИО" type="text"/>
-		<counter id="status" name="Статус" type="text"/>
-		<counter id="phone" name="Телефон" type="text"/>
-		<counter id="deadline" name="Дата отключения" type="time" format="dd/MM/yyyy"/>
 	</counters>
 	<keywords></keywords>
-	<type></type>
+	<type>ук коммуналка коммунальные платежи мой коммунальный стандарт</type>
 	<country>ru</country>
 </provider>

@@ -13,6 +13,15 @@ var g_headers = {
 	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
 };
 
+function redirect(html){
+    do{
+        var url = getParam(html, null, null, /<meta[^>]+http-equiv="refresh"[^>]*content="0;([^"]*)/i, null, html_entity_decode);
+        if(url)
+        	html = AnyBalance.requestGet(url, g_headers);
+    }while(url);
+    return html;
+}
+
 function main() {
 	var prefs = AnyBalance.getPreferences();
 	var baseurl = 'http://mks-novosibirsk.ru/';
@@ -41,11 +50,13 @@ function main() {
 		login: prefs.login,
 		password: prefs.password
 	}, addHeaders({Referer: baseurl + 'component/kabinet/index.php?option=com_kabinet&task=auth'}));
+
+	html = redirect(html);
 	
 	if (!/logout/i.test(html)) {
-		var error = getParam(html, null, null, /<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
+		var error = getParam(html, null, null, /<dd[^>]+class="message[^>]*>[\s\S]*?<\/dd>/i, replaceTagsAndSpaces, html_entity_decode);
 		if (error)
-			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
+			throw new AnyBalance.Error(error, null, /логин или пароль/i.test(error));
 		
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');

@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="3" version="29" date="2015-07-03">
+	- Улучшен поиск счетов и карт.
+	</change>
 	<change major_version="3" version="28" date="2015-05-26">
 	- Улучшена обработка ошибок.
 	</change>

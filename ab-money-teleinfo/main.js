@@ -62,7 +62,6 @@ function putTypeVal(ret, type, val){
    	ret.push('<', type, '>', serialize(val), '</', type, '>');
 }
 
-
 function serialize(obj) {
     if (obj === null) {
     	return '';
@@ -258,6 +257,21 @@ function deserialize(xml) {
 
 }
 
+function isSessionValid(commonProperties) {
+	try {
+		var obj = request(new Message({
+			__type: 'ru.vtb24.mobilebanking.protocol.product.MainPageProductsRequest',
+			portfolioTypeMto: {
+				__type: 'ru.vtb24.mobilebanking.protocol.product.PortfolioTypeMto',
+				id: 'ACCOUNTS_AND_CARDS'
+			}
+		}, null, commonProperties));		
+	} catch (e) {
+		return false;
+	}
+	
+	return true;
+}
 
 function main() {
     var prefs = AnyBalance.getPreferences();
@@ -292,65 +306,78 @@ function main() {
         lastUpdateDate: new Date(0),
         __types: {radius: 'int'}
     }, 'AtmListRequest theme'));
-*/
-
-    var session = request(new Message({
-        __type: 'ru.vtb24.mobilebanking.protocol.security.StartSessionRequest',
-        sessionContext: {
-        	__type: 'ru.vtb24.mobilebanking.protocol.security.SessionContextMto',
-        	certificateNumber: null,
-        	clientIp: '192.168.1.51',
-        	outerSessionId: 'VTB_TEST_APP',
-        	timeoutDuration: null,
-        	userAgent: null
-        }
-    }));
-
-    var sessionId = session.payload.sessionId;
-    var commonProperties = {
+	*/
+	
+	// Получаем sessionID
+	var sessionId = AnyBalance.getData('sessionId', '');
+	
+	var commonProperties = {
     	APP_VERSION: '5.0.10',
     	DEVICE_PLATFORM: 'ANDROID',
     	'CLIENT-TOKEN': sessionId,
     	'DEVICE_OS': 'Android OS 4.4.4'
     };
+	
+	if(!isSessionValid(commonProperties)) {
+		AnyBalance.trace('Необходимо авторизоваться...');
+		var session = request(new Message({
+        
+		__type: 'ru.vtb24.mobilebanking.protocol.security.StartSessionRequest',
+			sessionContext: {
+				__type: 'ru.vtb24.mobilebanking.protocol.security.SessionContextMto',
+				certificateNumber: null,
+				clientIp: '192.168.1.51',
+				outerSessionId: 'VTB_TEST_APP',
+				timeoutDuration: null,
+				userAgent: null
+			}
+		}));		
+		
+		sessionId = session.payload.sessionId;
+		commonProperties['CLIENT-TOKEN'] = sessionId;
+		
+		var obj = request(new Message({
+			__type: 'ru.vtb24.mobilebanking.protocol.security.LoginRequest',
+			login: prefs.login,
+			password: prefs.password
+		}, 'LoginRequest theme', commonProperties));
 
-    var obj = request(new Message({
-        __type: 'ru.vtb24.mobilebanking.protocol.security.LoginRequest',
-        login: prefs.login,
-        password: prefs.password
-    }, 'LoginRequest theme', commonProperties));
+		if(!obj.payload.authorizationLevel || obj.payload.authorizationLevel.id != 'IDENTIFIED')
+			throw new AnyBalance.Error('Неизвестная ошибка. Сайт изменен?');
 
-    if(!obj.payload.authorizationLevel || obj.payload.authorizationLevel.id != 'IDENTIFIED')
-        throw new AnyBalance.Error('Неизвестная ошибка. Сайт изменен?');
+		if(obj.payload.authorization.type.id != 'NONE'){
+			//Надо вводить код...
+			AnyBalance.trace('Придется, черт возьми, вводить код: ' + obj.payload.authorization.type.id);
+		}
 
-    if(obj.payload.authorization.type.id != 'NONE'){
-    	//Надо вводить код...
-    	AnyBalance.trace('Придется, черт возьми, вводить код: ' + obj.payload.authorization.type.id);
-    }
+		var userid = obj.payload.userInfo.unc;
 
-    var userid = obj.payload.userInfo.unc;
+		obj = request(new Message({
+			__type: 'ru.vtb24.mobilebanking.protocol.security.SelectAuthorizationTypeRequest',
+			authorizationType: obj.payload.authorization.type
+		}, 'SelectAuthorizationTypeRequest theme', commonProperties));
 
-    obj = request(new Message({
-        __type: 'ru.vtb24.mobilebanking.protocol.security.SelectAuthorizationTypeRequest',
-        authorizationType: obj.payload.authorization.type
-    }, 'SelectAuthorizationTypeRequest theme', commonProperties));
+		obj = request(new Message({
+			__type: 'ru.vtb24.mobilebanking.protocol.security.GetChallengeRequest'
+		}, 'GetChallengeRequest theme', commonProperties));
 
-    obj = request(new Message({
-        __type: 'ru.vtb24.mobilebanking.protocol.security.GetChallengeRequest'
-    }, 'GetChallengeRequest theme', commonProperties));
+		var code = '';
+		if(obj.payload.authorization.type.id != 'NONE'){
+			var code = AnyBalance.retrieveCode(obj.payload.authorization.message, null, {inputType: 'number', time: 300000});
+		}
 
-    var code = '';
-    if(obj.payload.authorization.type.id != 'NONE'){
-    	var code = AnyBalance.retrieveCode(obj.payload.authorization.message, null, {inputType: 'number', time: 300000});
-    }
+		commonProperties.USER_ID = userid;
 
-    commonProperties.USER_ID = userid;
-
-    obj = request(new Message({
-        __type: 'ru.vtb24.mobilebanking.protocol.security.ConfirmLoginRequest',
-        inChallengeResponse: code
-    }, 'ConfirmLoginRequest theme', commonProperties));
-
+		obj = request(new Message({
+			__type: 'ru.vtb24.mobilebanking.protocol.security.ConfirmLoginRequest',
+			inChallengeResponse: code
+		}, 'ConfirmLoginRequest theme', commonProperties));
+		
+		// save data here
+		AnyBalance.setData('sessionId', sessionId);
+		AnyBalance.saveData();
+	}
+	
     if(!prefs.type || prefs.type == 'card'){
     	fetchCard(commonProperties);
     }else if(prefs.type == 'dep'){
@@ -378,7 +405,7 @@ function main() {
 
 function fetchCard(commonProperties){
     var prefs = AnyBalance.getPreferences();
-
+	
     var obj = request(new Message({
         __type: 'ru.vtb24.mobilebanking.protocol.product.MainPageProductsRequest',
         portfolioTypeMto: {
@@ -404,7 +431,7 @@ function fetchCard(commonProperties){
     }
 
     if(!(p = product)) {
-		AnyBalance.trace(JSON.stringify(obj));
+		// AnyBalance.trace(JSON.stringify(obj));
     	throw new AnyBalance.Error('Не удалось найти карту или счет с последними цифрами ' + prefs.card);
 	}
 

@@ -27,6 +27,10 @@ function NAdapter(countersMap, shouldProcess, options){
 		return should;
 	}
 
+	function wasProcessed(counter){
+		return !!productIds[counter];
+	}
+
 	function __isAvailable1(arrOrString){
 	    if(!isArray(arrOrString))
 	    	arrOrString = [arrOrString];
@@ -75,7 +79,7 @@ function NAdapter(countersMap, shouldProcess, options){
 				}
 			}
 			if(!isset(prop) || prop === null)
-				return prop;
+				 prop;
 			json = prop;
 		}
 		return prop;
@@ -119,6 +123,8 @@ function NAdapter(countersMap, shouldProcess, options){
 			return function(){
 				return __exec(func, arguments);
 			}
-		}
+		},
+
+		wasProcessed: wasProcessed
 	};
 }

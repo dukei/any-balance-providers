@@ -12,6 +12,8 @@ var g_headers = {
 
 function main(){
 	var prefs = AnyBalance.getPreferences();
+	AnyBalance.setDefaultCharset('utf-8');
+
 	var baseurl = 'http://www.mnogo.ru/';
 
 	checkEmpty(prefs.login, 'Введите логин!');
@@ -39,6 +41,15 @@ function main(){
 		'UserBirth[y]': dt.getFullYear()
 	}, g_headers);
 	
+	if(!html || AnyBalance.getLastStatusCode() > 400){
+		var error = getParam(html, null, null, /<div[^>]+class="notfound_title"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+		if(error)
+			throw new AnyBalance.Error(error);
+
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
+	}
+
 	if (!/^OK$/i.test(html)) {
 		var error = html;
 		if (error && /Неверный логин или пароль/i.test(error))

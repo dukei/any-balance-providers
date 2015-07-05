@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-internet-evo73</id>
+	<api flags="no_browser"/>
+	<name>EVO (Ульяновск)</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе и статус услуг у Ульяновского интернет провайдера <a href="https://www.evo73.ru/">EVO</a></p>
+	<p>Информация берется из личного кабинета</p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Логин и пароль вы можете получить у службы поддержки EVO (8422)270909 или в офисах обслуживания EVO по вашему запросу.</p>
+	]]></instruction>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>nadapter.js</js>
+		<js>export.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="status" name="Статус" type="text"/>
+		<counter id="licschet" name="Лицевой счет" type="text"/>
+		<counter id="type" name="Тип услуги" type="text"/>
+		<counter id="abon" name="Абонентская плата" units=" р"/>
+		<counter id="topay" name="К оплате" units=" р"/>
+		<counter id="fio" name="ФИО" type="text"/>
+	</counters>
+	<keywords>evo73</keywords>
+	<type>internet, tv, telephony</type>
+	<country>ru</country>
+</provider>

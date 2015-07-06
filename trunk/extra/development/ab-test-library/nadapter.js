@@ -103,7 +103,7 @@ function NAdapter(countersMap, shouldProcess, options){
 		var prop;
 		for(var i=0; i<props.length; ++i){
 			prop = json[props[i]];
-			path = props.slice(0, i).join('.');
+			path = props.slice(0, i+1).join('.');
 			prop = traverseProperty(prop, path);
 			if(!isset(prop) || prop === null)
 				 break;

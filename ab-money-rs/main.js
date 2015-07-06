@@ -18,8 +18,12 @@ function main() {
 		j_password: prefs.password,
 		systemid: 'hb'
 	});
+
+    var redirect = getParam(html, null, null, /window.location\s*=\s*"faces\/([^"]*)/i, replaceSlashes);
+    if(redirect)
+    	html = AnyBalance.requestGet(baseurl + redirect);
 	
-	if(!/>&#1042;&#1099;&#1093;&#1086;&#1076;</.test(html)){
+	if(!/<div[^>]+class="b-login"[^>]*>/i.test(html)){
 		while(/Ввод пароля из SMS-сообщения/i.test(html)){
 			var err = getParam(html, null, null, /<div[^>]+class="b-errors-message"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
 			var prmpt = getParam(html, null, null, /<label[^>]+for="temp_pass"[^>]*>([\s\S]*?)<\/label>/i, replaceTagsAndSpaces, html_entity_decode);
@@ -49,14 +53,20 @@ function main() {
 		}
 	}
 
-	if(!/>&#1042;&#1099;&#1093;&#1086;&#1076;</.test(html)){
+	if(!/<div[^>]+class="b-login"[^>]*>/i.test(html)){
 		if(/Ввод пароля из SMS-сообщения/i.test(html))
 			throw new AnyBalance.Error('У вас настроен вход по паролю из SMS сообщения. Для пользования провайдером удобно отключить этот пароль в настройках интернет-банка. Это безопасно, для проведения любых операций SMS-пароль всё равно будет требоваться.');
+		
 		var error = getParam(html, null, null, /<div[^>]+class="b-frm-warning2"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+
+		if(!error)
+			error = getParam(html, null, null, /<h2[^>]+class="b-auth-error[^>]*>([\s\S]*?)<\/h2>/i, replaceTagsAndSpaces, html_entity_decode);
+
 		if(/необходимо задать новый пароль/i.test('' + error))
 			error += ' Зайдите в интернет-банк https://online.rsb.ru через браузер, задайте новый пароль и введите новый пароль в настройки провайдера.';
+
 		if(error)
-			throw new AnyBalance.Error(error, null, /новый пароль/i.test(error));
+			throw new AnyBalance.Error(error, null, /новый пароль|или пароль/i.test(error));
 		
 		AnyBalance.trace(html);
 	    throw new AnyBalance.Error('Ошибка авторизации. Проверьте логин и пароль');

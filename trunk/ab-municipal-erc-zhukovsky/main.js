@@ -45,8 +45,8 @@ function main(){
 	var result = {success: true};
 
 	adapter.processAccounts(result);
-	if(result.accounts && result.accounts.length == 0)
-		throw new AnyBalance.Error(prefs.cardnum ? 'Не найден лицевой счет ' + prefs.licschet : 'У вас нет ни одного лицевого счета');
+	if(!adapter.wasProcessed('accounts'))
+		throw new AnyBalance.Error(prefs.licschet ? 'Не найден лицевой счет ' + prefs.licschet : 'У вас нет ни одного лицевого счета');
 	adapter.processInfo(result);
 
 	result = adapter.convert(result);

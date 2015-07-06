@@ -1,4 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?><history>
+	<change version="6" date="2015-07-06">
+	- Исправление ошибки
+	</change>
 	<change version="5" date="2015-07-06">
 	- Поддержка выбора лицевого счета
 	</change>

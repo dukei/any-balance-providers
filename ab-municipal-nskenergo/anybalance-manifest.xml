@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="4">ab-municipal-nskenergo</id>
+	<id version="5">ab-municipal-nskenergo</id>
 	<name>Новосибирскэнергосбыт</name>
 	<api flags="no_browser"/>
 	<description html="true"><![CDATA[
@@ -18,13 +18,10 @@
 	<counters>
 		<counter id="balance" name="Баланс (Электричество)" units=" р"/>
 		<counter id="pen" name="Пеня (Электричество)" units=" р"/>
-		<counter id="lastpaydate" name="Дата последнего платежа (Электричество)" type="time" format="dd/MM/yyyy"/>
 		<counter id="balance_otop" name="Баланс (Отопление)" units=" р"/>
 		<counter id="pen_otop" name="Пеня (Отопление)" units=" р"/>
-		<counter id="lastpaydate_otop" name="Дата последнего платежа (Отопление)" type="time" format="dd/MM/yyyy"/>
 		<counter id="balance_gor" name="Баланс (ГВ)" units=" р"/>
 		<counter id="pen_gor" name="Пеня (ГВ)" units=" р"/>
-		<counter id="lastpaydate_gor" name="Дата последнего платежа (ГВ)" type="time" format="dd/MM/yyyy"/>
 		<counter id="indication" name="Показания счетчика (Электричество)" units=" Квт*ч"/>
 		<counter id="fio" name="ФИО" type="text"/>
 	</counters>

@@ -37,7 +37,7 @@ var w;
 for(var c=0;
 c<u.length;
 ++c){w=t[u[c]];
-v=u.slice(0,c).join(".");
+v=u.slice(0,c+1).join(".");
 w=q(w,v);
 if(!isset(w)||w===null){break
 }t=w

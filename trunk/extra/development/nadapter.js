@@ -52,5 +52,5 @@ if(b.autoSimpleCounters){for(var v in u){if(!k[v]&&!isArray(u[v])){t[v]=u[v]
 }}return t
 },envelope:function(c){return function(){return o(c,arguments)
 }
-},wasProcessed:l}
+},wasProcessed:l,setTraverseCallbacks:e}
 };

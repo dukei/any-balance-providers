@@ -152,6 +152,7 @@ function NAdapter(countersMap, shouldProcess, options){
 			}
 		},
 
-		wasProcessed: wasProcessed
+		wasProcessed: wasProcessed,
+		setTraverseCallbacks: setTraverseCallbacks
 	};
 }

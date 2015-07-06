@@ -6,7 +6,7 @@ var g_headers = {
 	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
 	'Accept-Language': 'ru,en;q=0.8',
 	'Connection': 'keep-alive',
-	'Origin': 'https://internet.velcom.by',
+	'Origin': 'https://my.velcom.by',
 	'Cache-Control': 'max-age=0',
 	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/36.0.1985.143 Safari/537.36',
 };
@@ -17,7 +17,7 @@ var velcomOddPeople = 'Не удалось войти в личный кабин
 function main(){
     var prefs = AnyBalance.getPreferences();
 	
-    var baseurl = "https://internet.velcom.by/";
+    var baseurl = "https://my.velcom.by/";
     AnyBalance.setDefaultCharset('utf-8');
 	
     checkEmpty(prefs.login, 'Введите номер телефона в международном формате!');
@@ -32,44 +32,9 @@ function main(){
     
     var html = AnyBalance.requestGet(baseurl, g_headers);
 
-    //А провайдер некоммерческий с открытым исходным кодом, бесплатный (LGPL). Программа работает как браузер (по HTML, JavaScript стандартам). 
-    //Используется именно вашими пользователями, для личных нужд, потому что только они знают свой логин-пароль.
-    //Если дальше так пойдет, мы будем реальному браузеру всё отдавать и результат забирать. Так что капчу или OTP вводите или отстаньте.
-    //Продекларируйте явно, что вы хотите усложнить пользователям доступ к их балансу.
-    
-    //Да вы и по выходным шпарите, я смотрю. Личная инициатива?
-    //Без капчи или OTP не получится запретить. Тупо придется тратить ваши и наши усилия на гонку обфускации. Но зачем??? Страдают-то пользователи. Давайте жить дружно!
-	
-	//Ребят, а чего вы так сражаетесь-то со входом в кабинет? Боретесь со своими же пользователями?
-	//Не хотите, чтобы они свой баланс видели? :)
-	//Свяжитесь со мной (dco@mail.ru), объясните, что вам так не нравится-то? Может, какое совместное решение выработаем.
-	/*
-	var obfuscatedScript = sumParam(html, null, null, /<script(?:[^>](?!src\s*=))*>([\s\S]*?)<\/script>/ig, null, null, create_aggregate_join('\n'));
-	if(obfuscatedScript) {
-		var win = {document: {cookie: ''}, location: {href: baseurl}};
-		safeEval(win, obfuscatedScript);
-
-		var cookieName = getParam(win.document.cookie, null, null, /(.*?)=/);
-		var cookieVal = getParam(win.document.cookie, null, null, /=(.*?)(?:;|$)/);
-		if(!cookieName || !cookieVal)
-			throw new AnyBalance.Error(velcomOddPeople);
-		
-		AnyBalance.setCookie('internet.velcom.by', cookieName, cookieVal);
 		function randomString(length) {var result = '', chars = '0123456789';for (var i = length; i > 0; --i) {	result += chars[Math.round(Math.random() * (chars.length - 1))];}return result;}
 		// Ищи новый способ, как нас заблокировать.
-		AnyBalance.setCookie('internet.velcom.by', '_ga', 'GA1.2.' + randomString(10) + '.' + randomString(10));
-		
-		try {
-			html = AnyBalance.requestGet(win.location.href, addHeaders({'Referer': 'https://internet.velcom.by/'}));
-		} catch (e) {
-			html = AnyBalance.requestGet('https://internet.velcom.by/');
-		}
-	}
-	*/
-
-		function randomString(length) {var result = '', chars = '0123456789';for (var i = length; i > 0; --i) {	result += chars[Math.round(Math.random() * (chars.length - 1))];}return result;}
-		// Ищи новый способ, как нас заблокировать.
-		AnyBalance.setCookie('internet.velcom.by', '_ga', 'GA1.2.' + randomString(10) + '.' + randomString(10));
+		AnyBalance.setCookie('my.velcom.by', '_ga', 'GA1.2.' + randomString(10) + '.' + randomString(10));
 
     var sid = getParam(html, null, null, /name="sid3" value="([^"]*)"/i);
     if(!sid){
@@ -116,12 +81,6 @@ function main(){
     });
     params.user_submit = undefined;
 
-    /*var required_headers = {
-		'origin':'https://internet.velcom.by',
-		'referer':'https://internet.velcom.by/',
-		'user-agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/36.0.1985.143 Safari/537.36'
-    };*/
-	
 	try {
 		html = requestPostMultipart(baseurl + 'work.html', params, addHeaders({Referer: baseurl}));
 	} catch(e) {

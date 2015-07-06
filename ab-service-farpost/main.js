@@ -42,8 +42,8 @@ function main(){
     }
 	
     var result = {success: true};
-    getParam(html, result, 'balance', />Баланс([^>]*>){3}/i, replaceTagsAndSpaces, parseBalanceRK);
-	getParam(html, result, '__tariff', /Ваш номер пользователя[^>]*>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'balance', /user_balance_string"\s*:\s*"([^"]*)/, replaceSlashes, parseBalanceRK);
+	getParam(html, result, '__tariff', /data-user-login="([^"]*)/i, replaceTagsAndSpaces, html_entity_decode);
 
     AnyBalance.setResult(result);
 }

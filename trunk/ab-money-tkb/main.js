@@ -28,7 +28,7 @@ function main() {
 	var html = AnyBalance.requestGet(baseurl + 'index.csp', g_headers);
 	
 	var form = getParam(html, null, null, /<FORM[^>]*action="\/j_security_check[\s\S]*?<\/FORM>/i);
-	var action = getParam(form, null, null, /action="\/(j_security_check[^"]+)/i);
+	var action = getParam(form, null, null, /action="\/(j_security_check[^"]*)/i);
 	checkEmpty(form && action, 'Не удалось найти форму входа, сайт изменен?', true);
 	
 	if(!html || AnyBalance.getLastStatusCode() > 400)

@@ -1108,7 +1108,7 @@ function proceedWithMobileAppAPI(baseurl, prefs, failover) {
 		if(isAvailable('overpay')) {
 			json = callAPIProc(baseurl + 'info/postpaidDebt?ctn=' + encodedLogin);
 			
-			getParam(json.balance + '', result, 'overpay', null, [replaceTagsAndSpaces, /^\s*-/i, ''], apiParseBalanceRound);
+			getParam(json.balance + '', result, 'overpay', null, replaceTagsAndSpaces, function (str) {return (apiParseBalanceRound(str) || 0)*-1;});
 		}
 	} else {
 		throw new AnyBalance.Error('Неизвестный тип кабинета: ' + payType);

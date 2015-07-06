@@ -19,10 +19,9 @@ if(a){j=a(j)
 }function checkEmpty(c,b,a){if(!c){throw new AnyBalance.Error(b,null,!a)
 }}function __getParName(b){var a=isArray(b)?b[0]:b;
 return a&&a.substr(a.lastIndexOf(".")+1)
-}function isAvailable(c){if(!c){return true
-}var b=isArray(c),a="__tariff";
-if((b&&c.indexOf(a)>=0)||(!b&&c=="__tariff")){return true
-}return AnyBalance.isAvailable(c)
+}function isAvailable(a){if(!a){return true
+}if(/\b__/.test(a.toString())){return true
+}return AnyBalance.isAvailable(a)
 }var replaceTagsAndSpaces=[/&nbsp;/ig," ",/&minus;/ig,"-",/<!--[\s\S]*?-->/g,"",/<[^>]*>/g," ",/\s{2,}/g," ",/^\s+|\s+$/g,""],replaceFloat=[/&minus;/ig,"-",/\s+/g,"",/'/g,"",/,/g,".",/\.([^.]*)(?=\.)/g,"$1",/^\./,"0."],replaceSlashes=[/\\(.?)/g,function(a,b){switch(b){case"0":return"\0";
 case"":return"";
 default:return b
@@ -273,10 +272,19 @@ var k=j.substring(l,h);
 if(e){k=replaceAll(k,e)
 }if(a){k=a(k)
 }return k
-}function getElements(e,f,b,a){var d=[];
-do{var c=getElement(e,f,b,a);
-if(c){d.push(c)
-}if(!f.global){break
-}}while(c!==null);
+}function getElements(e,k,b,a){var d=[];
+var g=isArray(k)?k[0]:k;
+var f=isArray(k)?(k.shift(),k):null;
+do{var h=getElement(e,g,b,a);
+var j=h&&!f;
+if(f&&h){for(var c=0;
+c<f.length;
+++c){j=j||f[c].test(h);
+if(j){break
+}}}if(j){d.push(h)
+}if(!g.global){break
+}}while(h!==null);
 return d
+}function __shouldProcess(a,b){if(!AnyBalance.shouldProcess){return !!b.__id
+}return AnyBalance.shouldProcess(a,b)
 };

@@ -73,6 +73,10 @@ function fetchAPICard(jsonInfo){
 	if(prefs.cardnum && !/^\d{4}$/.test(prefs.cardnum))
 		throw new AnyBalance.Error("Введите 4 последних цифры номера карты или не вводите ничего, чтобы показать информацию по первой карте");
 	
+	// Есть разные кабинеты, в которых карты в json или в json.main
+	if(!jsonInfo.main)
+		jsonInfo.main = jsonInfo;
+	
 	if(!jsonInfo.main || !jsonInfo.main.cards)
 		throw new AnyBalance.Error('Не удалось найти данные по картам в ответе банка, попробуйте обновить данные позже.');
 	
@@ -115,6 +119,10 @@ function fetchAPIAccount(jsonInfo){
 	if(prefs.cardnum && !/^\d{4}$/.test(prefs.cardnum))
 		throw new AnyBalance.Error("Введите 4 последних цифры номера счета или не вводите ничего, чтобы показать информацию по первому счету");
 
+	// Есть разные кабинеты, в которых карты в json или в json.main
+	if(!jsonInfo.main)
+		jsonInfo.main = jsonInfo;
+	
 	if(!jsonInfo.main || !jsonInfo.main.accounts)
 		throw new AnyBalance.Error('Не удалось найти данные по счетам в ответе банка, попробуйте обновить данные позже.');
 	
@@ -155,6 +163,10 @@ function fetchAPIDeposit(jsonInfo){
 	if(prefs.cardnum && !/^\d{4}$/.test(prefs.cardnum))
 		throw new AnyBalance.Error("Введите 4 последних цифры номера счета или не вводите ничего, чтобы показать информацию по первому счету");
 
+	// Есть разные кабинеты, в которых карты в json или в json.main
+	if(!jsonInfo.main)
+		jsonInfo.main = jsonInfo;
+	
 	if(!jsonInfo.main || !jsonInfo.main.deposits)
 		throw new AnyBalance.Error('Не удалось найти данные по счетам в ответе банка, попробуйте обновить данные позже.');
 	

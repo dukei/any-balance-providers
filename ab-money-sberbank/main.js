@@ -27,9 +27,21 @@ var g_countersTable = {
 		"userName": "cards.userName",
 		"__tariff": "cards.cardNumber",
 		
-		"lastPurchSum": "cards.transactions.sum",
-		"lastPurchPlace": "cards.transactions.name",
-		"lastPurchDate": "cards.transactions.time"
+		"lastPurchSum": "cards.transactions10.sum",
+		"lastPurchPlace": "cards.transactions10.name",
+		"lastPurchDate": "cards.transactions10.time"
+		
+	},
+	loan: {
+    	"balance": "loans.balance",
+		"currency": "loans.currency",
+		"till": "loans.till",
+		
+		"minpaydate": "loans.minpaydate",
+		"minpay": "loans.minpay",
+		"maxlimit": "loans.maxlimit",
+		"loan_ammount": "loans.loan_ammount",
+		"userName": "loans.userName",
 	},
     acc: {
     	"balance": "accounts.balance",
@@ -51,12 +63,15 @@ var g_countersTable = {
 
 function main(){
 	var prefs = AnyBalance.getPreferences();
-    if(!/^(card|acc|metal_acc)$/i.test(prefs.type || ''))
+    if(!/^(card|acc|metal_acc|loan)$/i.test(prefs.type || ''))
     	prefs.type = 'card';
 	
     var adapter = new NAdapter(joinObjects(g_countersTable[prefs.type], g_countersTable.common), shouldProcess);
 	
 	if(prefs.source == 'app') {
+		if(prefs.type == 'loan')
+			throw new AnyBalance.Error('Отображение кредитов не поддерживается в API мобильного приложения. Попробуйте получить данные через сайт.');
+		
 		mainMobileApp2(prefs);
 		return;
 	}
@@ -64,28 +79,40 @@ function main(){
     adapter.processRates = adapter.envelope(processRates);
     adapter.processCards = adapter.envelope(processCards);
     adapter.processAccounts = adapter.envelope(processAccounts);
+    adapter.processLoans = adapter.envelope(processLoans);
+    adapter.fetchNewThanks = adapter.envelope(fetchNewThanks);
 	
 	var html = login(prefs);
 	
 	var result = {success: true};
 	
 	adapter.processRates(html, result);
+	adapter.fetchNewThanks(nodeUrl, result);
 	
 	if(prefs.type == 'card') {
 		adapter.processCards(html, result);
 		
-		if(result.cards && result.cards.length == 0)
+		if(!adapter.wasProcessed('cards'))
 			throw new AnyBalance.Error(prefs.lastdigits ? 'Не найдена карта с последними цифрами ' + prefs.lastdigits : 'У вас нет ни одной карты');
 		
 		result = adapter.convert(result);
 	} else if(prefs.type == 'acc') {
 		adapter.processAccounts(html, result);
 
-		if(result.accounts && result.accounts.length == 0)
+		if(!adapter.wasProcessed('accounts'))
 			throw new AnyBalance.Error(prefs.lastdigits ? 'Не найден счет с последними цифрами ' + prefs.lastdigits : 'У вас нет ни одного счета');
 		
 		result = adapter.convert(result);
-	} else if(prefs.type == 'metal_acc') {
+	} else if(prefs.type == 'loan') {
+		adapter.processLoans(html, result);
+
+		if(!adapter.wasProcessed('loans'))
+			throw new AnyBalance.Error(prefs.lastdigits ? 'Не найден кредит с последними цифрами ' + prefs.lastdigits : 'У вас нет ни одного кредита');
+		
+		result = adapter.convert(result);
+	}
+	
+	else if(prefs.type == 'metal_acc') {
 		fetchNewAccountMetallAcc(html, nodeUrl);
 		return;
 	}
@@ -120,6 +147,16 @@ function shouldProcess(counter, info){
 			if(endsWith(num, prefs.lastdigits))
 				return true;
 		}
+		case 'loans':
+		{
+			if(prefs.type != 'loan')
+				return false;
+		    if(!prefs.lastdigits)
+		    	return true;
+			
+			if(endsWith(num, prefs.lastdigits))
+				return true;
+		}		
 		default:
 			return false;
 	}

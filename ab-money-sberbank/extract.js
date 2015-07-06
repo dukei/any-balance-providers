@@ -23,8 +23,8 @@ function login(prefs) {
 	}
 	checkEmpty(prefs.login, "Пожалуйста, укажите логин для входа в Сбербанк-Онлайн!");
 	checkEmpty(prefs.password, "Пожалуйста, укажите пароль для входа в Сбербанк-Онлайн!");
-	if (prefs.lastdigits && !/^\d{4,5}$/.test(prefs.lastdigits)) 
-		throw new AnyBalance.Error("Надо указывать 4 последних цифры карты или не указывать ничего", null, true);
+	if (prefs.lastdigits && !/^\d{4,5}$/.test(prefs.lastdigits))
+		throw new AnyBalance.Error("Надо указывать 4 последних цифры карты/счета/кредита, или не указывать ничего", null, true);
 	
 	//Сбер разрешает русские логины и кодирует их почему-то в 1251, хотя в контент-тайп передаёт utf-8.
 	AnyBalance.setDefaultCharset('windows-1251');
@@ -72,7 +72,7 @@ function doNewAccount(page) {
 	var html = AnyBalance.requestGet(page);
 	if (/StartMobileBankRegistrationForm/i.test(html)) {
 		//Сбербанк хочет, чтобы вы приняли решение о подключении мобильного банка. Откладываем решение.
-		var pageToken = getParam(html, null, null, /name="PAGE_TOKEN"[^>]*value="([^"]+)/i);
+		var pageToken = getParamByName(html, 'PAGE_TOKEN');
 		checkEmpty(pageToken, 'Попытались отказаться от подключения мобильного банка, но не удалось найти PAGE_TOKEN!', true);
 		
 		html = AnyBalance.requestPost('https://online.sberbank.ru/PhizIC/login/register-mobilebank/start.do', {
@@ -89,8 +89,32 @@ function doNewAccount(page) {
 	nodeUrl = baseurl;
 	if (/PhizIC/.test(html)) {
 		AnyBalance.trace('Entering physic account...: ' + baseurl);
-		if (/confirmTitle/.test(html))
-			throw new AnyBalance.Error("Ваш личный кабинет требует одноразовых паролей для входа. Пожалуйста, отмените в настройках кабинета требование одноразовых паролей при входе. Это безопасно: для совершения денежных операций требование одноразового пароля всё равно останется.");
+		if (/confirmTitle/.test(html)) {
+			var pass = AnyBalance.retrieveCode('Ваш личный кабинет требует одноразовых паролей для входа. Пожалуйста, отмените в настройках кабинета требование одноразовых паролей при входе. Это безопасно: для совершения денежных операций требование одноразового пароля всё равно останется', null, {time: 300000});
+			
+			html = AnyBalance.requestPost(baseurl + '/PhizIC/async/confirm.do', {
+				'receiptNo': '',
+				'passwordsLeft': '',
+				'passwordNo': '',
+				'SID': '',
+				'$$confirmSmsPassword': pass,
+				'PAGE_TOKEN': getParamByName(html, 'PAGE_TOKEN'),
+				'operation': 'button.confirm'
+			}, addHeaders({Referer: baseurl}));
+			
+			
+			// throw new AnyBalance.Error("Ваш личный кабинет требует одноразовых паролей для входа. Пожалуйста, отмените в настройках кабинета требование одноразовых паролей при входе. Это безопасно: для совершения денежных операций требование одноразового пароля всё равно останется.");
+		}
+		if (/internetSecurity/.test(html)) {
+			AnyBalance.trace('Требуется принять соглашение о безопасности... Принимаем...');
+			
+			html = AnyBalance.requestPost(baseurl + '/PhizIC/internetSecurity.do', {
+				'field(selectAgreed)': 'on',
+				'PAGE_TOKEN': getParamByName(html, 'PAGE_TOKEN'),
+				'operation': 'button.confirm'
+			}, addHeaders({Referer: baseurl}));
+		}
+		
 		if (/Откроется справочник регионов, в котором щелкните по названию выбранного региона/.test(html)) {
 			//Тупой сбер предлагает обязательно выбрать регион оплаты. Вот навязчивость...
 			//Ну просто выберем все регионы
@@ -121,13 +145,10 @@ function doNewAccount(page) {
 	
 	return html;
 }
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Обработка счетов
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 function processAccounts(html, result) {
-	fetchNewThanks(nodeUrl, result);
-	
 	html = AnyBalance.requestGet(nodeUrl + '/PhizIC/private/accounts/list.do');
 	var pageToken = getParamByName(html, 'PAGE_TOKEN');
 	
@@ -143,8 +164,9 @@ function processAccounts(html, result) {
 		
 		if(__shouldProcess('accounts', c)){
 			processAccount(accounts[i], _id, c, pageToken);
-			result.accounts.push(c);
 		}
+		
+		result.accounts.push(c);
 	}
 }
 
@@ -205,13 +227,10 @@ function processAccountTransactions(_id, pageToken, result) {
     	result.transactions.push(o);
     }
 }
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Обработка карт
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 function processCards(html, result) {
-	fetchNewThanks(nodeUrl, result);
-	
 	html = AnyBalance.requestGet(nodeUrl + '/PhizIC/private/cards/list.do');
 	var cards = getElements(html, /<div[^>]+class="productCover[^"]*activeProduct[^>]*">/ig);
 	AnyBalance.trace('Найдено карт: ' + cards.length);
@@ -225,8 +244,9 @@ function processCards(html, result) {
 		
 		if(__shouldProcess('cards', c)) {
 			processCard(cards[i], _id, c);
-			result.cards.push(c);
 		}
+		
+		result.cards.push(c);
 	}
 }
 
@@ -260,6 +280,7 @@ function processCard(html, _id, result){
 		// }
 	// }
 	
+	processCardLast10Transactions(_id, result);
 	processCardTransactions(_id, result);
 }
 
@@ -267,7 +288,7 @@ function processCardTransactions(_id, result) {
 	if(!AnyBalance.isAvailable('cards.transactions'))
 		return;
 	
-	AnyBalance.trace('Получаем последние операции по карте...');
+	AnyBalance.trace('Получаем все операции по карте...');
 	
 	var dt = new Date();
 	
@@ -275,8 +296,8 @@ function processCardTransactions(_id, result) {
 	
 	if(!/<table(?:[^>]*>){3}\s*Выписка/i.test(html)) {
 	    AnyBalance.trace(html);
-	    AnyBalance.trace('Не удалось найти таблицу операций! Пробуем другой вариант выписки...');
-		processCardLast10Transactions(_id, result);
+	    AnyBalance.trace('Не удалось найти таблицу операций!');
+		// processCardLast10Transactions(_id, result);
 		return;
 	}
 	
@@ -303,6 +324,8 @@ function processCardTransactions(_id, result) {
 		
     	result.transactions.push(o);
     }
+	// Сортируем в нужном нам порядке, чтобы первой была последняя транзакция
+	result.transactions = sortObject(result.transactions, 'time');
 }
 
 function processCardLast10Transactions(_id, result) {
@@ -316,7 +339,7 @@ function processCardLast10Transactions(_id, result) {
 		return;
 	}
 
-    result.transactions = [];
+    result.transactions10 = [];
 	
     var ops = sumParam(html, null, null, /<tr[^>]*class="ListLine\d+">(?:[^>]*>){6}\s*<\/tr>/ig);
 	
@@ -324,15 +347,50 @@ function processCardLast10Transactions(_id, result) {
     for(var i=0; i<ops.length; ++i){
     	var o = {};
 
-		getParam(ops[i], o, 'cards.transactions.sum', /([^>]*>){7}/i, replaceTagsAndSpaces, parseBalance);
-		getParam(ops[i], o, 'cards.transactions.currency', /([^>]*>){7}/i, replaceTagsAndSpaces, parseCurrency);
-		getParam(ops[i], o, 'cards.transactions.name', /([^>]*>){3}/i, replaceTagsAndSpaces, html_entity_decode);
-    	getParam(ops[i], o, 'cards.transactions.time', /([^>]*>){5}/i, replaceTagsAndSpaces, parseSmallDate);
+		getParam(ops[i], o, 'cards.transactions10.sum', /([^>]*>){7}/i, replaceTagsAndSpaces, parseBalance);
+		getParam(ops[i], o, 'cards.transactions10.currency', /([^>]*>){7}/i, replaceTagsAndSpaces, parseCurrency);
+		getParam(ops[i], o, 'cards.transactions10.name', /([^>]*>){3}/i, replaceTagsAndSpaces, html_entity_decode);
+    	getParam(ops[i], o, 'cards.transactions10.time', /([^>]*>){5}/i, replaceTagsAndSpaces, parseSmallDate);
 
-    	result.transactions.push(o);
+    	result.transactions10.push(o);
     }
+	
+	result.transactions10 = sortObject(result.transactions10, 'time');
+}
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Обработка кредитов
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+function processLoans(html, result) {
+	html = AnyBalance.requestGet(nodeUrl + '/PhizIC/private/loans/list.do');
+	var loans = getElements(html, /<div[^>]+class="productCover[^"]*activeProduct[^>]*">/ig);
+	AnyBalance.trace('Найдено кредитов: ' + loans.length);
+	result.loans = [];
+	
+	for(var i=0; i < loans.length; ++i){
+		var _id = getParam(loans[i], null, null, /id=(\d+)/i);
+		var title = getParam(loans[i], null, null, /<span[^>]*title="([^"]+)/i, replaceTagsAndSpaces, html_entity_decode);
+		
+		var c = {__id: _id, __name: title};
+		
+		if(__shouldProcess('loans', c)) {
+			processLoan(loans[i], _id, c);
+		}
+		result.loans.push(c);
+	}
 }
 
+function processLoan(html, _id, result){
+    AnyBalance.trace('Обработка кредита ' + _id);
+	
+	html = AnyBalance.requestGet(nodeUrl + '/PhizIC/private/loans/detail.do?id=' + _id);
+	
+	getParam(html, result, 'loans.balance', /Осталось оплатить:(?:[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, ['loans.currency', 'loans.balance', 'loans.loan_ammount', 'loans.minpay'], /Осталось оплатить:(?:[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseCurrency);
+	getParam(html, result, 'loans.minpaydate', /Внести до:(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseDateWord);
+	getParam(html, result, 'loans.minpay', /"detailAmount"([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'loans.loan_ammount', /Сумма кредита:(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'loans.userName', /ФИО заемщика:(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces, capitalFirstLetters);
+}
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Шаблоны
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -363,8 +421,8 @@ function processTemplates(html, result) {
 		if(__shouldProcess('templates', t)){
 			processTemplate(t, id);
 			tpls_done[id] = true;
-			result.templates.push(t);
 		}
+		result.templates.push(t);
 	}
 }
 
@@ -406,14 +464,25 @@ function processProfile(html, result) {
 		getParam(html, result, 'passport', /Паспорт гражданина РФ([^>]*>){5}/i, replaceTagsAndSpaces);
 	}
 }
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Всякие вспомогательные функции
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+function sortObject(objArray, sortField) {
+	return objArray.sort(function sortFunction(a, b) {
+		if(a[sortField] > b[sortField])
+			return -1;
+		
+		if(a[sortField] < b[sortField])
+			return 1;
+		
+		return 0
+	});
+}
+
 function getFormattedDate(yearCorr) {
 	var dt = new Date();
 	
-	var day = (dt.getDay() < 10 ? '0' + dt.getDay() : dt.getDay());
+	var day = (dt.getDate() < 10 ? '0' + dt.getDate() : dt.getDate());
 	var month = ((dt.getMonth()+1) < 10 ? '0' + (dt.getMonth()+1) : dt.getMonth()+1);
 	var year = isset(yearCorr) ? dt.getFullYear() - yearCorr : dt.getFullYear();
 	
@@ -426,6 +495,7 @@ function getParamByName(html, name) {
 
 function processRates(html, result) {
 	AnyBalance.trace('Fetching rates...');
+	
 	getParam(html, result, 'eurPurch', /"currencyRateName"[^>]*>EUR(?:[^>]*>){2}([^<]*)/i, null, parseBalance);
 	getParam(html, result, 'eurSell', /"currencyRateName"[^>]*>EUR(?:[^>]*>){5}([^<]*)/i, null, parseBalance);
 	getParam(html, result, 'usdPurch', /"currencyRateName"[^>]*>USD(?:[^>]*>){2}([^<]*)/i, null, parseBalance);
@@ -662,8 +732,8 @@ function processAPICards(html, result) {
 		
 		if(__shouldProcess('cards', c)){
 			processAPICard(cards[i], _id, c);
-			result.cards.push(c);
 		}
+		result.cards.push(c);
 	}
 }
 

@@ -1,49 +1,56 @@
-function NAdapter(l,h,n){var m={};
-var f=AnyBalance.isAvailable;
-if(!n){n={}
-}for(var i in l){if(AnyBalance.isAvailable(i)){var k=l[i];
-do{m[k]=true;
-k=k.indexOf(".")>=0?k.replace(/\.[^.]*$/,""):null
-}while(k!==null)
-}}var j={};
-AnyBalance.shouldProcess=function(o,p){if(j[o]){return p.__id==j[o]
-}var c=h(o,p);
-if(c){j[o]=p.__id
+function NAdapter(f,r,b){var k={};
+var a=AnyBalance.isAvailable;
+if(!b){b={}
+}var g={};
+for(var p in f){if(AnyBalance.isAvailable(p)){var i=f[p];
+do{k[i]=true;
+i=i.indexOf(".")>=0?i.replace(/\.[^.]*$/,""):null
+}while(i!==null)
+}}var h={};
+AnyBalance.shouldProcess=function(t,u){if(h[t]){return u.__id==h[t]
+}var c=r(t,u);
+if(c){h[t]=u.__id
 }return c
 };
-function a(o){if(!isArray(o)){o=[o]
+function l(c){return !!h[c]
+}function e(c){for(var t in c){g[t]=c[t]
+}}function n(t){if(!isArray(t)){t=[t]
 }for(var c=0;
-c<o.length;
-++c){if(m[o[c]]){return true
-}if(n.autoSimpleCounters&&e(o[c])){return f.call(AnyBalance,o[c])
+c<t.length;
+++c){if(k[t[c]]){return true
+}if(b.autoSimpleCounters&&s(t[c])){return a.call(AnyBalance,t[c])
 }}return false
-}function e(c){return c.indexOf(".")<0
-}function d(c){for(var o=0;
-o<arguments.length;
-++o){if(a(arguments[o])){return true
+}function s(c){return c.indexOf(".")<0
+}function d(c){for(var t=0;
+t<arguments.length;
+++t){if(n(arguments[t])){return true
 }}return false
-}function g(o,r){var q=r.split(/\./g);
-var s;
-for(var c=0;
-c<q.length;
-++c){s=o[q[c]];
-if(isArray(s)){var p=q.slice(0,c).join(".");
-if(j[p]&&s[0]&&s[0].__id){s=s.reduce(function(t,u){if(!t){if(u.__id==j[p]){return u
-}}return t
+}function q(t,c){if(g[c]){return g[c](t,c)
+}if(isArray(t)){t=j(t,c)
+}return t
+}function j(t,c){if(h[c]&&t[0]&&t[0].__id){return t.reduce(function(u,v){if(!u){if(v.__id==h[c]){return v
+}}return u
 },null)
-}else{s=s[0]
-}}if(!isset(s)||s===null){return s
-}o=s
-}return s
-}function b(o,c){AnyBalance.isAvailable=d;
-try{return o.apply(null,c)
-}finally{AnyBalance.isAvailable=f
-}}return{exec:b,convert:function(p){if(!p.success){return p
-}var o={success:true};
-if(n.autoSimpleCounters){for(var q in p){if(!m[q]&&!isArray(p[q])){o[q]=p[q]
-}}}for(var q in l){if(isAvailable([q])){o[q]=g(p,l[q])
-}}return o
-},envelope:function(c){return function(){return b(c,arguments)
+}else{return t[0]
+}}function m(t,v){var u=v.split(/\./g);
+var w;
+for(var c=0;
+c<u.length;
+++c){w=t[u[c]];
+v=u.slice(0,c).join(".");
+w=q(w,v);
+if(!isset(w)||w===null){break
+}t=w
+}return w
+}function o(t,c){AnyBalance.isAvailable=d;
+try{return t.apply(null,c)
+}finally{AnyBalance.isAvailable=a
+}}return{exec:o,convert:function(u){if(!u.success){return u
+}var t={success:true};
+if(b.autoSimpleCounters){for(var v in u){if(!k[v]&&!isArray(u[v])){t[v]=u[v]
+}}}for(var v in f){if(isAvailable([v])){t[v]=m(u,f[v])
+}}return t
+},envelope:function(c){return function(){return o(c,arguments)
 }
-}}
+},wasProcessed:l,setTraverseCallbacks:e}
 };

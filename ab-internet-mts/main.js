@@ -844,7 +844,7 @@ function newTypicalLanBillingInetTv(baseurl) {
 	}
 	
 	if (!/r=site\/logout/i.test(html)) {
-		var error = getParam(html, null, null, /Необходимо исправить следующие ошибки:([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
+		var error = getParam(html, null, null, [/alert-error[^>]*"(?:[^>]*>){2}([\s\S]*?)<\/div>/i, /Необходимо исправить следующие ошибки:([\s\S]*?)<\/ul>/i], replaceTagsAndSpaces, html_entity_decode);
 		if (error)
 			throw new AnyBalance.Error(error, null, /Неверное имя пользователя или пароль/i.test(error));
 		

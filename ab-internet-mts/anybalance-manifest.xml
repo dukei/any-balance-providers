@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="89">ab-internet-mts</id>
+	<id version="90">ab-internet-mts</id>
 	<name>Домашний Интернет и Телевидение МТС</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о текущем балансе, номере лицевого счета и договора, ФИО владельца, трафике в текущем месяце, абонентской плате для пользователей провайдера "Домашний Интернет и Телевидение МТС".</p>
@@ -36,6 +36,7 @@
 		<li>Волжск (<a href="https://internet.mari-el.mts.ru/index.php?r=site/login">https://internet.mari-el.mts.ru/index.php?r=site/login</a>)<br></li>
 		<li>Смоленск (<a href="https://lk-smolensk.center.mts.ru/index.php">https://lk-smolensk.center.mts.ru/index.php</a>)<br></li>
 		<li>Новокузнецк (<a href="https://kabinet.kemerovo.mts.ru/">https://kabinet.kemerovo.mts.ru/</a>)<br></li>
+		<li>Находка (<a href="https://clb.primorye.mts.ru/cvld/">https://clb.primorye.mts.ru/cvld/</a>)<br></li>
 	</ul>
 	]]></description>
 	<instruction html="true"><![CDATA[

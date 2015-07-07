@@ -14,7 +14,7 @@ function main() {
 	var prefs = AnyBalance.getPreferences();
 	checkEmpty(prefs.login, 'Введите ID счетчика, информацию по которому вы хотите посмотреть');
 	checkEmpty(/^\d+$/.test(prefs.login), 'ID счетчика должен состоять только из цифр!');
-	var baseurl = 'https://metrika.yandex.ru/';
+	var baseurl = 'https://old.metrika.yandex.ru/';
 	AnyBalance.setDefaultCharset('utf-8');
 	var html = '';
 	if (!prefs.debug) html = AnyBalance.requestGet(baseurl + 'stat/?counter_id=' + prefs.login, g_headers);

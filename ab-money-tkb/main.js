@@ -11,6 +11,11 @@ var g_headers = {
 	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/38.0.2125.104 Safari/537.36',
 };
 
+var g_errors = {
+	'Возможно вы ошиблись!': 'Неправильное имя пользователя или пароль, возможно, вы ошиблись при вводе данных.'
+	
+}
+
 function main() {
 	var prefs = AnyBalance.getPreferences();
 	
@@ -43,10 +48,10 @@ function main() {
 
 	// html = AnyBalance.requestGet(baseurl + 'user/standalone_menu', g_headers);
 
-	if (!/Подождите, пожалуйста/i.test(html)) {
+	if (/Вход в Интернет-банк/i.test(html)) {
 		var error = getParam(html, null, null, /LogonFail(?:[^>]*>){3}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
 		if (error)
-			throw new AnyBalance.Error(error, null, /ошиблись/i.test(error));
+			throw new AnyBalance.Error(g_errors[error], null, /ошиблись/i.test(error));
 		
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');

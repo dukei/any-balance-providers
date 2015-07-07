@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="3">ab-money-tkb</id>
+	<id version="4">ab-money-tkb</id>
 	<api flags="no_browser"/>
 	<name>ТрансКредитБанк (ВТБ24)</name>
 	<description html="true"><![CDATA[

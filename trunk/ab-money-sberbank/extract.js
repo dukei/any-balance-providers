@@ -56,9 +56,9 @@ function login(prefs) {
 	
 	AnyBalance.trace("About to authorize: " + page);	
 	
-	if (/esk.zubsb.ru/.test(page)) {
-		// html = doOldAccount(page);
-	} else if (/online.sberbank.ru\/PhizIC/.test(page)) {
+	/*if (/esk.zubsb.ru/.test(page)) {
+		html = doOldAccount(page);
+	} else */if (/online.sberbank.ru\/PhizIC/.test(page)) {
 		html = doNewAccount(page);
 	} else if (/Off_Service/i.test(page))
 		throw new AnyBalance.Error("В настоящее время услуга Сбербанк ОнЛ@йн временно недоступна по техническим причинам. Сбербанк приносит свои извинения за доставленные неудобства.");
@@ -76,7 +76,7 @@ function doNewAccount(page) {
 		checkEmpty(pageToken, 'Попытались отказаться от подключения мобильного банка, но не удалось найти PAGE_TOKEN!', true);
 		
 		html = AnyBalance.requestPost('https://online.sberbank.ru/PhizIC/login/register-mobilebank/start.do', {
-			PAGE_TOKEN:pageToken,
+			PAGE_TOKEN: pageToken,
 			operation: 'skip'
 		});
 	}
@@ -124,23 +124,24 @@ function doNewAccount(page) {
 			});
 		}
 	} else {
-		AnyBalance.trace('Entering esk account...');
-		var baseurl = 'https://esk.sbrf.ru';
-		//self.location.href='/esClient/Default.aspx?Page=1&qs=AuthToken=d80365e0-4bfd-41a1-80a1-b24847ae3e94&i=1'
-		var page = getParam(html, null, null, /self\.location\.href\s*=\s*'([^'"]*?AuthToken=[^'"]*)/i);
-		if (!page) {
-			AnyBalance.trace(html);
-			throw new AnyBalance.Error("Не удаётся найти ссылку на информацию по картам (esk). Пожалуйста, обратитесь к разработчикам для исправления ситуации.");
-		}
-		var token = getParam(page, null, null, /AuthToken=([^&]*)/i);
-		//Переходим в лк esk (Типа логинимся автоматически)
-		html = AnyBalance.requestGet(baseurl + page);
-		//Зачем-то ещё логинимся 
-		html = AnyBalance.requestGet(baseurl + '/esClient/_logon/MoveToCards.aspx?AuthToken=' + token + '&i=1&supressNoCacheScript=1');
-		//AnyBalance.trace(html);
-		if (AnyBalance.getPreferences().type == 'acc')
-			throw new AnyBalance.Error('Ваш тип личного кабинета не поддерживает просмотр счетов. Если вам кажется это неправильным, напишите автору провайдера е-мейл.');
-		// readEskCards();
+		throw new AnyBalance.Error('Ваш тип личного кабинета не поддерживается. Свяжитесь, пожалуйста, с разработчиками.');
+		// AnyBalance.trace('Entering esk account...');
+		// var baseurl = 'https://esk.sbrf.ru';
+		// //self.location.href='/esClient/Default.aspx?Page=1&qs=AuthToken=d80365e0-4bfd-41a1-80a1-b24847ae3e94&i=1'
+		// var page = getParam(html, null, null, /self\.location\.href\s*=\s*'([^'"]*?AuthToken=[^'"]*)/i);
+		// if (!page) {
+			// AnyBalance.trace(html);
+			// throw new AnyBalance.Error("Не удаётся найти ссылку на информацию по картам (esk). Пожалуйста, обратитесь к разработчикам для исправления ситуации.");
+		// }
+		// var token = getParam(page, null, null, /AuthToken=([^&]*)/i);
+		// //Переходим в лк esk (Типа логинимся автоматически)
+		// html = AnyBalance.requestGet(baseurl + page);
+		// //Зачем-то ещё логинимся 
+		// html = AnyBalance.requestGet(baseurl + '/esClient/_logon/MoveToCards.aspx?AuthToken=' + token + '&i=1&supressNoCacheScript=1');
+		// //AnyBalance.trace(html);
+		// if (AnyBalance.getPreferences().type == 'acc')
+			// throw new AnyBalance.Error('Ваш тип личного кабинета не поддерживает просмотр счетов. Если вам кажется это неправильным, напишите автору провайдера е-мейл.');
+		// // readEskCards();
 	}
 	
 	return html;
@@ -370,10 +371,14 @@ function processLoans(html, result) {
 		var _id = getParam(loans[i], null, null, /id=(\d+)/i);
 		var title = getParam(loans[i], null, null, /<span[^>]*title="([^"]+)/i, replaceTagsAndSpaces, html_entity_decode);
 		
-		var c = {__id: _id, __name: title};
+		html = AnyBalance.requestGet(nodeUrl + '/PhizIC/private/loans/detail.do?id=' + _id);
+		// Заменим ID на номер счета, чтобы выполнять поиск по счетам
+		var acc_num = getParam(html, null, null, /Номер ссудного счета:(?:[^>]*>){3}(\d{20})/i);
+
+		var c = {__id: acc_num, __name: title};
 		
 		if(__shouldProcess('loans', c)) {
-			processLoan(loans[i], _id, c);
+			processLoan(html, _id, c);
 		}
 		result.loans.push(c);
 	}
@@ -382,14 +387,44 @@ function processLoans(html, result) {
 function processLoan(html, _id, result){
     AnyBalance.trace('Обработка кредита ' + _id);
 	
-	html = AnyBalance.requestGet(nodeUrl + '/PhizIC/private/loans/detail.do?id=' + _id);
-	
 	getParam(html, result, 'loans.balance', /Осталось оплатить:(?:[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, ['loans.currency', 'loans.balance', 'loans.loan_ammount', 'loans.minpay'], /Осталось оплатить:(?:[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseCurrency);
 	getParam(html, result, 'loans.minpaydate', /Внести до:(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseDateWord);
 	getParam(html, result, 'loans.minpay', /"detailAmount"([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'loans.loan_ammount', /Сумма кредита:(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'loans.userName', /ФИО заемщика:(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces, capitalFirstLetters);
+	getParam(html, result, 'loans.cardNumber', /Номер ссудного счета:(?:[^>]*>){3}(\d{20})/i);
+}
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Обработка металлических счетов
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+function processMetalAccounts(html, result) {
+	html = AnyBalance.requestGet(nodeUrl + '/PhizIC/private/ima/list.do');
+	var accounts = getElements(html, /<div[^>]+class="productCover[^"]*activeProduct[^>]*">/ig);
+	AnyBalance.trace('Найдено мет. счетов: ' + accounts.length);
+	result.accounts_met = [];
+	
+	for(var i=0; i < accounts.length; ++i){
+		var _id = getParam(accounts[i], null, null, /id=(\d+)/i);
+		var title = getParam(accounts[i], null, null, /<span[^>]*title="([^"]+)/i, replaceTagsAndSpaces, html_entity_decode);
+		// Заменим ID на номер счета, чтобы выполнять поиск по счетам
+		var acc_num = getParam(html, null, null, /"productNumberBlock"(?:[^>]*>){2}\s*([^<]+)/i, [/\D/g, '']);
+
+		var c = {__id: acc_num, __name: title};
+		
+		if(__shouldProcess('accounts_met', c)) {
+			processMetalAccount(html, _id, c);
+		}
+		result.accounts_met.push(c);
+	}
+}
+
+function processMetalAccount(html, _id, result){
+    AnyBalance.trace('Обработка металлического счета ' + _id);
+	
+	getParam(html, result, 'accounts_met.balance', /"overallAmount"([^>]*>){2}/i, replaceTagsAndSpaces, parseBalance);
+	getParam('г.', result, ['accounts_met.currency', 'accounts_met.balance']);
+	getParam(result.__id, result, 'accounts_met.cardNumber');
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Шаблоны
@@ -829,7 +864,6 @@ function processAPICardLast10Transactions(_id, result) {
     }
 }
 
-
 function fetchApiCard(html, result, prefs) {
 	if (prefs.lastdigits && !/^\d{4}$/.test(prefs.lastdigits)) 
 		throw new AnyBalance.Error("Надо указывать 4 последних цифры карты или не указывать ничего", null, true);
@@ -882,12 +916,9 @@ function fetchApiCard(html, result, prefs) {
 		}
 	}
 }
-
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Всякая фигня для API 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
 function fetchAPIThanks(result) {
 	// Спасибо
 	if (AnyBalance.isAvailable('spasibo')) {
@@ -901,25 +932,4 @@ function fetchAPIThanks(result) {
 			AnyBalance.trace("Не удалось найти ссылку на программу спасибо, сайт изменен?");
 		}
 	}
-	
 }
-
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// Еще не знаю что это :)
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-function findAndAddField(fields, name){
-	for(var i=0; i<fields.length; ++i){
-		if(fields[i].name == name)
-			return fields[i];
-	}
-
-	var f = {name: name};
-	fields.push(f);
-	return f;
-}
-
-
-

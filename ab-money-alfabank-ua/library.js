@@ -285,4 +285,6 @@ if(j){break
 }if(!g.global){break
 }}while(h!==null);
 return d
+}function __shouldProcess(a,b){if(!AnyBalance.shouldProcess){return !!b.__id
+}return AnyBalance.shouldProcess(a,b)
 };

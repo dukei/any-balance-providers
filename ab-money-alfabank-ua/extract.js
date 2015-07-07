@@ -72,9 +72,8 @@ function processContracts(result){
 
 		if(__shouldProcess('contracts', c)){
 			processContract(cardid, c);
-			result.contracts.push(c);
 		}
-
+		result.contracts.push(c);
 	}
 
 }
@@ -165,8 +164,9 @@ function processDeposits(result){
 
 		if(__shouldProcess('deposits', c)){
 			processDeposit(id, c, blocks[i]);
-			result.deposits.push(c);
 		}
+
+		result.deposits.push(c);
 
 	}
 
@@ -263,8 +263,8 @@ function processTemplates(result){
 		if(__shouldProcess('templates', t)){
 			processTemplate(t, tpl);
 			tpls_done[id] = true;
-			result.templates.push(t);
 		}
+		result.templates.push(t);
 	}
 }
 
@@ -371,10 +371,4 @@ function processCredentials(html, result){
 		getParam(html, result, 'email', /E-Mail[\s\S]*?<div[^>]+s-wizard-right[^>]*>([\s\S]*?)(?:<font|<\/div>)/i, replaceTagsAndSpaces, html_entity_decode);
 		getParam(html, result, 'reg_date', /Дата регистрации[\s\S]*?<div[^>]+s-wizard-right[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseDate);
 	}
-}
-
-function __shouldProcess(counter, info){
-	if(!AnyBalance.shouldProcess)
-		return !!info.__id;
-	return AnyBalance.shouldProcess(counter, info);
 }

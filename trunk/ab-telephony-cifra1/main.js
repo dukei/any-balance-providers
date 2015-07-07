@@ -31,11 +31,11 @@ function main() {
 	html = AnyBalance.requestPost(baseurl + 'amsc/auth.jsf', params, addHeaders({Referer: baseurl + 'amsc/auth.jsf'}));
 	
 	if(!/&#1074;&#1099;&#1081;&#1090;&#1080;/i.test(html)) {
-		var error = getParam(html, null, null, /<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
-		if(error && /Неверный логин или пароль/i.test(error))
-			throw new AnyBalance.Error(error, null, true);
+		var error = getParam(html, null, null, /"error"(?:[^>]*>){1}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
 		if(error)
-			throw new AnyBalance.Error(error);
+			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
+		
+		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
     var result = {success: true};

@@ -11,7 +11,8 @@ var g_regions = {
     lipetsk: mainBelgorod,
 	tver: mainUniversal,
 	lobnya: mainLobnya,
-    murmansk: mainUniversal
+    murmansk: mainUniversal,
+	cheboksary: mainUniversal,
 };
 
 function main(){
@@ -144,7 +145,7 @@ function mainVoronezh(){
 
 function mainUniversal(region){
     var prefs = AnyBalance.getPreferences();
-    var baseurl = 'https://selfcare.netbynet.ru/'+region+'/';
+    var baseurl = 'https://selfcare.netbynet.ru/' + region + '/';
 
     AnyBalance.trace ("Trying to enter selfcare at address: " + baseurl);
     var html = requestPostMultipart (baseurl + "?", {
@@ -168,7 +169,7 @@ function mainUniversal(region){
     getParam (html, result, 'balance', /Баланс:(?:[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
     getParam (html, result, 'subscriber', /Приветствуем Вас,([^<]*)/i, replaceTagsAndSpaces);
     getParam (html, result, 'contract', /<b>\s*Лицевой счет:|ЛС:(?:[^>]*>){2}([^<,]*)/i, replaceTagsAndSpaces);
-    getParam (html, result, 'day_left', /дней до ухода в финансовую блокировку:|до списания абонентской платы осталось(?:[^>]*>){2}\s*(\d+)/i, replaceTagsAndSpaces, parseBalance);
+    getParam (html, result, 'day_left', /(?:дней до ухода в финансовую блокировку:|до списания абонентской платы осталось)(?:[^>]*>){1,3}\s*(\d+)/i, replaceTagsAndSpaces, parseBalance);
 	sumParam(html, result, '__tariff', /Тарифный план:([\s\S]*?)(?:<\/span>|<a)/i, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
     getParam (html, result, 'bonus_balance', /Баланс:([^<]*)балл/i, replaceTagsAndSpaces, parseBalance);
     sumParam (html, result, '__tariff', /(<strong[^>]*>\s*Бонусный счет[\s\S]*?)Баланс/i, replaceTagsAndSpaces, html_entity_decode, aggregate_join);

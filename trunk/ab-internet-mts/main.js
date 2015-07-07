@@ -45,7 +45,8 @@ var regions = {
 	arkh: getArkh,
 	vladimir: getVladimir,
 	volzhsk: getVolzhsk,
-    novokuz: getNovokuz
+    novokuz: getNovokuz,
+	nahodka: getNahodka,
 };
 
 function main(){
@@ -797,6 +798,10 @@ function getSaratov(){
 
 function getChita(){
 	newTypicalLanBillingInetTv('https://clb.primorye.mts.ru/chita/index.php');
+}
+
+function getNahodka(){
+	newTypicalLanBillingInetTv('https://clb.primorye.mts.ru/cvld/index.php');
 }
 
 function getAmur(){

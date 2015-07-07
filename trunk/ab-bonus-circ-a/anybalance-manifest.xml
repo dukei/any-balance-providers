@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-bonus-circ-a</id>
+	<id version="2">ab-bonus-circ-a</id>
 	<api flags="no_browser"/>
 	<name>Цирк Аквамарин</name>
 	<description html="true"><![CDATA[
@@ -16,7 +16,7 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units=" баллов"/>
+		<counter id="balance" name="Баланс" units=" б"/>
 		<counter id="fio" name="ФИО" type="text"/>
 	</counters>
 	<keywords></keywords>

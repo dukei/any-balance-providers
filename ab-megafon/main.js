@@ -467,7 +467,7 @@ function loadFilial(filial, addr){
 	try{
 		html = AnyBalance.getPreferences()['__dbg_'+addr] || AnyBalance.requestGet(widget_url, g_headers);
 	}catch(e){
-		if(e.message && /Connection closed by peer|Handshake failed/i.test(e.message) && filinfo.old_server){
+		if(e.message && /Connection closed by peer|Handshake failed|No peer certificate/i.test(e.message) && filinfo.old_server){
 			//Поскольку на лоллипопе проблемы и напрямую он не может получить данные, придется получать через гейт
 			html = AnyBalance.requestGet('https://anybalance.ru/ext/gate.php?dest=' + encodeURIComponent(widget_url));
 		}
@@ -947,93 +947,6 @@ function read_sum_parameters_text(result, xml){
     getParam(xml, result, 'sub_scl', /<SCL>([\s\S]*?)<\/SCL>/i, null, parseBalance);
     getParam(xml, result, 'sub_scr', /<SCR>([\s\S]*?)<\/SCR>/i, null, parseBalance);
     getParam(xml, result, 'sub_soi', /<SOI>([\s\S]*?)<\/SOI>/i, null, parseBalance);
-}
-
-/** новый ЛК от мегафона */
-function megafonLK(filinfo, tryOldSG) {
-	var prefs = AnyBalance.getPreferences();
-	AnyBalance.trace('Пробуем войти в новый ЛК...');
-	
-	var baseurl = lk_url;
-	
-	var html = AnyBalance.requestGet(baseurl + 'login/', g_headers);
-	var token = getParam(html, null, null, /name=CSRF value="([^"]+)/i);
-	
-	checkEmpty(token, 'Не удалось найти токен авторизации!', true);
-	
-	html = AnyBalance.requestPost(baseurl + 'dologin/', {
-		j_username:prefs.login,
-		j_password:prefs.password,
-		CSRF:token,
-	}, addHeaders({Referer: baseurl + 'login/'}));	
-
-	if (!/logout|CLOSE_SESSION/i.test(html)) {
-		var error = getParam(html, null, null, /login-warning[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
-		if (error)
-			throw new AnyBalance.Error(error, null, /Неверный логин\/пароль/i.test(error));
-		
-		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Не удалось зайти в новый личный кабинет. Сайт изменен или на этом номере он не поддерживается.');
-	}
-	
-	if(tryOldSG) {
-		var href = getParam(html, null, null, /href="\/redirect\/sg\/index"/i, replaceTagsAndSpaces, html_entity_decode);
-		// Не у всех доступен новый ЛК, если у юзера он не подключен, та нас редиректит сразу в старый кабинет
-		var sessionid = getParam(html, null, null, /SESSION_ID=([^&"]+)/i);
-
-		if(href || sessionid) {
-			if(href) {
-				AnyBalance.trace('Нашли ссылку для перехода в старый сервис-гид, получим данные оттуда...');
-				try {
-					html = AnyBalance.requestGet(baseurl + 'redirect/sg/index', g_headers);
-					
-					var url = AnyBalance.getLastUrl();
-					AnyBalance.trace('Redirected to ' + url /*+ '\nResult\n\n' + html*/);
-					sessionid = getParam(href + url, null, null, /SESSION_ID=([^&"]+)/i);
-				} catch(e){
-				    AnyBalance.trace('Error: ' + e.message);
-				}
-			}
-			
-			if(sessionid && !href) {
-				AnyBalance.trace('На данном номере не поддерживается новый ЛК, нас просто отправили в старый кабинет...');
-			}
-			
-			if(!sessionid) {
-				if(prefs.debug) {
-					sessionid = AnyBalance.retrieveCode("Пожалуйста, введите sessionid");
-				} else {
-					AnyBalance.trace(html);
-					throw new AnyBalance.Error('Не удалось найти код сессии!');
-				}
-			}
-			
-		    if(prefs.corporate)
-				megafonServiceGuideCorporate(MEGA_FILIAL_MOSCOW, sessionid);
-			else
-				megafonServiceGuidePhysical(MEGA_FILIAL_MOSCOW, sessionid);
-			return;
-			
-		} else {
-			AnyBalance.trace('Не удалось найти ссылку на вход в старый кабинет, пробуем получить данные из новго ЛК!');
-		}
-	}
-	
-	var result = {success: true, filial: filinfo.id};
-	
-	getParam(html, result, 'balance', /Баланс[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'bonus_balance', /Бонусные баллы[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'phone', /Ваш номер[^>]*>([\s\S]*?)<\//i, replaceNumber, html_entity_decode);
-	
-	if(isAvailable(['last_pay_sum', 'last_pay_date'])) {
-		html = AnyBalance.requestGet(baseurl + 'history/', g_headers);
-		
-		getParam(html, result, 'last_pay_sum', /Сумма<(?:[^>]*>){8}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
-		getParam(html, result, 'last_pay_date', /Сумма<(?:[^>]*>){4}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseDateWord);
-	}
-	
-	setCountersToNull(result);
-	AnyBalance.setResult(result);	
 }
 
 function megafonBalanceInfo(filial) {
@@ -1897,11 +1810,13 @@ function enterLK(filial, options){
 		var sessionid = getParam(html, null, null, /SESSION_ID=([^&"]+)/i);
 
 		if(href || sessionid) {
-			if(href) {
+			var goneToSG = false;
+
+			if(href && !sessionid) {
 				AnyBalance.trace('Нашли ссылку для перехода в старый сервис-гид, получим данные оттуда...');
 				try {
 					html = AnyBalance.requestGet(baseurl + 'redirect/sg/index', g_headers);
-					
+					goneToSG = true;
 					var url = AnyBalance.getLastUrl();
 					AnyBalance.trace('Redirected to ' + url /*+ '\nResult\n\n' + html*/);
 					sessionid = getParam(href + url, null, null, /SESSION_ID=([^&"]+)/i);
@@ -1918,7 +1833,7 @@ function enterLK(filial, options){
 				if(prefs.debug) {
 					sessionid = AnyBalance.retrieveCode("Пожалуйста, введите sessionid");
 				} else {
-					AnyBalance.trace(html);
+					if(goneToSG) AnyBalance.trace(html);
 					throw new AnyBalance.Error('Не удалось найти код сессии!');
 				}
 			}

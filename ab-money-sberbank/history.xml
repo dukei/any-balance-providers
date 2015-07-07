@@ -1,5 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="62" date="2015-07-07">
+	- Исправлено получение металлических счетов.
+	- Улучшен поиск кредитов по номеру счета.
+	</change>
 	<change version="61" date="2015-07-06">
 	- Исправление работы с All Balance.
 	</change>

@@ -25,6 +25,7 @@ function main() {
         var prof = getParam(html, null, null, /<title>(Профилактические работы)<\/title>/i);
         if(prof)
             throw new AnyBalance.Error("В настоящее время в системе Интернет-банк проводятся профилактические работы. Пожалуйста, попробуйте ещё раз позже.");
+        AnyBalance.trace(html);
         throw new AnyBalance.Error("Не удаётся найти форму входа в интернет-банк! Сайт недоступен или изменения на сайте.");
     }
 	

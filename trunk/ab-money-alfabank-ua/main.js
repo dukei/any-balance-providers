@@ -79,14 +79,14 @@ function main(){
 	if(prefs.type == 'card'){
 
 		adapter.processContracts(result);
-		if(result.contracts.length == 0)
+		if(!adapter.wasProcessed('contracts'))
 			throw new AnyBalance.Error(prefs.cardnum ? 'Не найдена карта с последними цифрами ' + prefs.cardnum : 'У вас нет ни одной карты');
 		result = adapter.convert(result);
 
 	}else if(prefs.type == 'dep'){
 
 		adapter.processDeposits(result);
-		if(result.deposits.length == 0)
+		if(!adapter.wasProcessed('deposits'))
 			throw new AnyBalance.Error(prefs.cardnum ? 'Не найден депозит с последними цифрами ' + prefs.cardnum : 'У вас нет ни одного депозита');
 		result = adapter.convert(result);
 

@@ -37,6 +37,8 @@ function main() {
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
 	
+	var form = getParam(html, null, null, /<form[^>]+action="[^"]*AccountInfo"[^>]*>([\s\S]*?)<\/form>/i);
+
 	if(prefs.digits) {
 		var accs = sumParam(html, null, null, /<option value="(\d+)/ig);
 		if(!accs || accs.length < 1) {
@@ -55,16 +57,51 @@ function main() {
 			throw new AnyBalance.Error('Не удалось найти счет с последними цифрами ' + prefs.digits);
 		
 		var dt = new Date();
-		html = AnyBalance.requestPost(baseurl + 'lich_kab/Home/AccountInfo', {
-			AccauntNum: account,
-			Month: dt.getMonth() + 1,
-			Year: dt.getFullYear()
-		}, addHeaders({Referer: baseurl + 'lich_kab/Home/Login'}));
+		var params = createFormParams(html, function(params, str, name, value) {
+			if (name == 'AccauntNum') 
+				return account;
+			else if (name == 'Month')
+				return dt.getMonth() + 1;
+			else if (name == 'Year')
+				return dt.getFullYear();
+	    
+			return value;
+		});
+
+		html = AnyBalance.requestPost(baseurl + 'lich_kab/Home/AccountInfo', params, addHeaders({Referer: baseurl + 'lich_kab/Home/Login'}));
 	}
+
+	var error;
+
+	for(var i=1; i<=3; ++i){
+		if(/Нет данных для лицевого счета/i.test(html)){
+			error = getParam(html, null, null, /Нет данных для лицевого счета[^<]*/i);
+			AnyBalance.trace(error);
+			var dtNow = new Date();
+			var dt = new Date(dtNow.getFullYear(), dtNow.getMonth()-i, dtNow.getDate());
+
+			var params = createFormParams(html, function(params, str, name, value) {
+				if (name == 'Month')
+					return dt.getMonth() + 1;
+				else if (name == 'Year')
+					return dt.getFullYear();
+	        
+				return value;
+			});
+			
+			html = AnyBalance.requestPost(baseurl + 'lich_kab/Home/AccountInfo', params, addHeaders({Referer: baseurl + 'lich_kab/Home/Login'}));
+		}else{
+			break;
+		}
+	}
+
+	if(i > 3)
+		throw new AnyBalance.Error(error);
 	
 	var result = {success: true};
 	
 	getParam(html, result, 'balance', /<b>Начислено:(?:[^>]*>){1}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalanceRK);
+	getParam(html, result, 'debt', /Вы не заплатили([^<]*)/i, replaceTagsAndSpaces, parseBalanceRK);
 	getParam(html, result, '__tariff', /<b>Период:(?:[^>]*>){1}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(html, result, 'fine', /<b>Пеня:(?:[^>]*>){1}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalanceRK);
 	getParam(html, result, 'payment', /<b>К оплате:(?:[^>]*>){1}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalanceRK);

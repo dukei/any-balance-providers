@@ -820,11 +820,12 @@ function setCountersToNull(result){
     	getElement(html, /<div[^>]+id="somediv"[^>]*>/i)
 */
 function getElement(html, re, replaces, parseFunc){
-	var elem = getParam(re.toString(), null, null, /<(\w+)/);
 	var amatch = re.exec(html);
 	if(!amatch)
 		return null;
 	var startIndex = amatch.index;
+	var startTag = html.substr(startIndex, amatch[0].length);
+	var elem = getParam(startTag, null, null, /<(\w+)/);
 	var endTag = new RegExp('(?:<' + elem + '|<\/' + elem + ')[^>]*>', 'ig');
 	endTag.lastIndex = startIndex + amatch[0].length;
 	var depth = 0;

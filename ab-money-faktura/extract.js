@@ -63,8 +63,9 @@ function getCards(html, result){
 function processAccounts(html, result){
     var html = AnyBalance.requestGet(g_baseurl + "/priv/accounts");
 
-    getParam(html, result, 'total', /<span[^>]+class="total-block"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'currency', /<span[^>]+class="total-block"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseCurrency);
+    getParam(html, result, 'total', /<span[^>]+class="total-block"[^>]*>([\s\S]*?)<\/span>/i, myReplaceTagsAndSpaces, parseBalance);
+    if(AnyBalance.isAvailable('total', 'currency'))
+    	result.currency = getElement(html, /<span[^>]+class="total-block"[^>]*>/i, myReplaceTagsAndSpaces, parseCurrency);
 
     if(!AnyBalance.isAvailable('accounts'))
     	return;

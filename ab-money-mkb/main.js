@@ -2,98 +2,190 @@
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 */
 
-var g_headers = {
-	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
-	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
-	'Connection': 'keep-alive',
-	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
+// Фикс для All Balance - убрать с выходом новой версии
+// Шаги алгоритма ECMA-262, 5-е издание, 15.4.4.21
+// Ссылка (en): http://es5.github.io/#x15.4.4.21
+// Ссылка (ru): http://es5.javascript.ru/x15.4.html#x15.4.4.21
+if (!Array.prototype.reduce) {
+	Array.prototype.reduce = function(callback /*, initialValue*/ ) {
+		'use strict';
+		if (this == null) {
+			throw new TypeError('Array.prototype.reduce called on null or undefined');
+		}
+		if (typeof callback !== 'function') {
+			throw new TypeError(callback + ' is not a function');
+		}
+		var t = Object(this),
+			len = t.length >>> 0,
+			k = 0,
+			value;
+		if (arguments.length == 2) {
+			value = arguments[1];
+		} else {
+			while (k < len && !k in t) {
+				k++;
+			}
+			if (k >= len) {
+				throw new TypeError('Reduce of empty array with no initial value');
+			}
+			value = t[k++];
+		}
+		for (; k < len; k++) {
+			if (k in t) {
+				value = callback(value, t[k], k, t);
+			}
+		}
+		return value;
+	};
+}
+
+var g_countersTable = {
+	common: {
+		'spasibo': 'spasibo',
+	}, 
+	card: {
+    	"balance": "cards.balance",
+		"currency": "cards.currency",
+		"cardnum": "cards.cardnum",
+		"__tariff": "cards.cardnum",
+		"name": "cards.type",
+		"status": "cards.status",
+		"till": "cards.till",
+		"accnum": "cards.acc_num",
+	},
+	crd: {
+    	"balance": "loans.balance",
+		"currency": "loans.currency",
+		"latedebt": "loans.penalty",
+		"needpaytill": "loans.minpaydate",
+		"needpay": "loans.minpay",
+		"accnum": "loans.acc_num",
+		"pctcredit": "loans.pct",
+		"__tariff": "loans.acc_num",
+	},
+    acc: {
+    	"balance": "accounts.balance",
+		"currency": "accounts.currency",
+		"name": "cards.type",
+		"cardnum": "accounts.cardnum",
+		
+		
+		
+		"rate": "accounts.rate",
+		"__tariff": "accounts.cardNumber",
+		"till": "accounts.till",
+    },
+	dep: {
+    	"balance": "deposits.balance",
+    	"currency": "deposits.currency",
+
+    }
 };
+
+function shouldProcess(counter, info){
+	var prefs = AnyBalance.getPreferences();
+	
+	if(!info || (!info.__id || !info.__name))
+		return false;
+	
+	switch(counter){
+		case 'cards':
+		{
+			if(prefs.type != 'card')
+				return false;
+		    if(!prefs.num)
+		    	return true;
+			
+			if(endsWith(info.__id, prefs.num))
+				return true;
+		    
+			return false;
+		}
+		case 'accounts':
+		{
+			if(prefs.type != 'acc')
+				return false;
+		    if(!prefs.num)
+		    	return true;
+			
+			if(endsWith(info.__id, prefs.num))
+				return true;
+		}
+		case 'loans':
+		{
+			if(prefs.type != 'crd')
+				return false;
+		    if(!prefs.num)
+		    	return true;
+			
+			if(endsWith(info.__id, prefs.num))
+				return true;
+		}	
+		case 'deposits':
+		{
+			if(prefs.type != 'dep')
+				return false;
+		    if(!prefs.num)
+		    	return true;
+			
+			if(endsWith(info.__id, prefs.num))
+				return true;
+		}
+		default:
+			return false;
+	}
+}
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'https://online.mkb.ru/';
-	AnyBalance.setDefaultCharset('utf-8');
 	
-	checkEmpty(prefs.login, 'Введите логин!');
-	checkEmpty(prefs.password, 'Введите пароль!');
-	checkEmpty(!prefs.num || /^\d{4}$/.test(prefs.num), 'Укажите 4 последних цифры или не указывайте ничего, чтобы получить информацию по первому продукту.');
-
-	var html = AnyBalance.requestGet(baseurl + 'secure/login.aspx', g_headers);
+    if(!/^(card|crd|dep|acc)$/i.test(prefs.type || ''))
+    	prefs.type = 'card';
 	
-	if(!html || AnyBalance.getLastStatusCode() > 400){
-		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
-	}
+    var adapter = new NAdapter(joinObjects(g_countersTable[prefs.type], g_countersTable.common), shouldProcess);
 	
-	html = AnyBalance.requestPost(baseurl + 'secure/login.aspx', {
-		__VIEWSTATE: '',
-		__EVENTTARGET: '',
-		__EVENTARGUMENT: '',
-		txtLogin: prefs.login,
-		txtPassword: prefs.password,
-		btnLoginStandard: ''
-	}, addHeaders({Referer: baseurl + 'secure/login.aspx'}));
+    adapter.processCards = adapter.envelope(processCards);
+    adapter.processAccounts = adapter.envelope(processAccounts);
+    adapter.processLoans = adapter.envelope(processLoans);
+    adapter.processDeposits = adapter.envelope(processDeposits);
 	
-	if (!/logout/i.test(html)) {
-		var error = getParam(html, null, null, /<div[^>]+id="errMessage"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
-		if (error)
-			throw new AnyBalance.Error(error, null, /Проверьте правильность указания Логина и Пароля/i.test(error));
-		
-		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
-	}
-
+	var html = login(prefs);
+	
 	var result = {success: true};
-	getParam(html, result, 'bonuses', /МКБ Бонус\s*<span[^>]*>([\s\d]+)&nbsp;баллов/i, replaceTagsAndSpaces, parseBalance);
+	
+	if(prefs.type == 'card') {
+		adapter.processCards(html, result);
+		
+		if(!adapter.wasProcessed('cards'))
+			throw new AnyBalance.Error(prefs.num ? 'Не найдена карта с последними цифрами ' + prefs.num : 'У вас нет ни одной карты!');
+		
+		result = adapter.convert(result);
+	} else if(prefs.type == 'acc') {
+		adapter.processAccounts(html, result);
 
-	if(prefs.type == 'crd')
-		fetchCredit(baseurl, result, prefs);
-	else if(prefs.type == 'dep')
-		fetchDeposit(baseurl, result, prefs);
-	else if(prefs.type == 'acc')
-		fetchAccount(baseurl, result, prefs);
-	else
-		fetchCard(baseurl, result, prefs);
+		if(!adapter.wasProcessed('accounts'))
+			throw new AnyBalance.Error(prefs.num ? 'Не найден счет с последними цифрами ' + prefs.num : 'У вас нет ни одного счета!');
+		
+		result = adapter.convert(result);
+	} else if(prefs.type == 'crd') {
+		adapter.processLoans(html, result);
 
+		if(!adapter.wasProcessed('loans'))
+			throw new AnyBalance.Error(prefs.num ? 'Не найден кредит с последними цифрами ' + prefs.num : 'У вас нет ни одного кредита!');
+		
+		result = adapter.convert(result);
+	} else if(prefs.type == 'dep') {
+		adapter.processDeposits(html, result);
+		
+		if(!adapter.wasProcessed('deposits'))
+			throw new AnyBalance.Error(prefs.num ? 'Не найден депозит с последними цифрами ' + prefs.num : 'У вас нет ни одного депозита!');
+		
+		result = adapter.convert(result);
+	}
+	
+	// getParam(html, result, 'bonuses', /МКБ Бонус\s*<span[^>]*>([\s\d]+)&nbsp;баллов/i, replaceTagsAndSpaces, parseBalance);
+	
 	AnyBalance.setResult(result);
-}
-
-function fetchCard(baseurl, result, prefs){
-	var html = AnyBalance.requestGet(baseurl + 'secure/dcards.aspx', g_headers);
-
-	var cardList = getParam(html, null, null, /<table[^>]* class="prodlist"[^>]*>[^]*?<\/table>/i);
-	if(!cardList){
-		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Не удалось найти таблицу с картами.');
-	}
-
-	var cards = sumParam(cardList, null, null, /<tr[^>]*>[^]*?<\/tr>/ig);
-
-	// 1-я строка - заголовочная
-	if(!cards || cards.length < 2){
-		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Не удалось найти ни одной карты.');
-	}
-
-	var card;
-	for(var i = 1, toi = cards.length; i < toi; i++){
-		if((prefs.num && new RegExp('\\*\\*\\*' + prefs.num).test(cards[i])) || !prefs.num){
-			card = cards[i];
-			break;
-		}
-	}
-
-	if(!card){
-		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Не удалось найти карту с последними цифрами ' + prefs.num);
-	}
-
-	getParam(card, result, 'cardnum', /<div[^>]*class="txt"[^>]*>([\d\*]+)/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(card, result, 'type', /(?:<td[^>]*>[^]*?<\/td>\s*){2}(<td[^>]*>[^]*?<\/td>)/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(card, result, '__tariff', /<div[^>]*class="txt"[^>]*>([\d\*]+[^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(card, result, 'balance', /(?:<td[^>]*>[^]*?<\/td>\s*){4}(<td[^>]*>[^]*?<\/td>)/i, replaceTagsAndSpaces, parseBalance);
-    getParam(card, result, ['currency' , 'balance'], /(?:<td[^>]*>[^]*?<\/td>\s*){4}(<td[^>]*>[^]*?<\/td>)/i, replaceTagsAndSpaces, parseCurrency);
 }
 
 function fetchCredit(baseurl, result, prefs) {

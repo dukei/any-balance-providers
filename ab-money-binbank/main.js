@@ -2,78 +2,102 @@
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 */
 
-var g_headers = {
-	'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-	'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
-	'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
-	'Connection':'keep-alive',
-	'User-Agent':'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
+var g_countersTable = {
+	card: {
+		"total": "total",
+		"currency": "currency",
+    	"balance": "accounts.cards.balance",
+		"credit_used": "accounts.credit_used",
+		"credit_pay_to": "accounts.minpay_till",
+		"credit_pay_sum": "accounts.minpay",
+		"cardnum": "accounts.cards.num",
+		"accnum": "accounts.num",
+		"fio": "fio",
+		"__tariff": "accounts.cards.num"
+    },
+/*	acc: {
+		"total": "total",
+		"currency": "currency",
+    	"balance": "accounts.balance",
+		"limit": "accounts.limit",
+		"accamount": "accounts.balance",
+		"credit_used": "accounts.credit_used",
+		"credit_pay_to": "accounts.minpay_till",
+		"credit_pay_sum": "accounts.minpay",
+		"cardnum": "accounts.cards.num",
+		"cardname": "accounts.cards.name",
+		"accnum": "accounts.num",
+		"accname": "accounts.name",
+//		"fio": "fio",
+		"__tariff": "accounts.__name"
+    }, */
 };
 
-function main() {
-	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'https://online.binbank.ru/';
-	AnyBalance.setDefaultCharset('utf-8');
-	
-	checkEmpty(prefs.login, 'Введите логин!');
-	checkEmpty(prefs.password, 'Введите пароль!');
-	
-	var html = AnyBalance.requestGet(baseurl + 'lite/app/pub/Login', g_headers);
-	
-	var matches = /Wicket.Ajax.ajax\(\{"f":"id([^"]+)","\w":".\/([^"]+)/i.exec(html);
-    if(!matches){
-        var prof = getParam(html, null, null, /<title>(Профилактические работы)<\/title>/i);
-        if(prof)
-            throw new AnyBalance.Error("В настоящее время в системе Интернет-банк проводятся профилактические работы. Пожалуйста, попробуйте ещё раз позже.");
-        AnyBalance.trace(html);
-        throw new AnyBalance.Error("Не удаётся найти форму входа в интернет-банк! Сайт недоступен или изменения на сайте.");
-    }
-	
-    var id = matches[1], href = matches[2];
+var g_found_card_idx;
 
-    var params = {};
-    params[id + "_hf_0"] = '';
-    params.hasData = 'X';
-    params.login = prefs.login;
-    params.password = prefs.password;
-	
-	html = AnyBalance.requestPost(baseurl + 'lite/app/pub/' + href, params, addHeaders({Referer: baseurl + 'lite/app/pub/Login'}));
-	
-	if(!/lite\/app\/pub\/Exit/i.test(html)) {
-		var error = getParam(html, null, null, /<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
-		if(error)
-			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
-		
-		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
-	}
-	
-	html = AnyBalance.requestGet(baseurl + 'lite/app/priv/accounts', g_headers);
-	
-	fetchCard(html, baseurl, prefs); //По умолчанию карты будем получать
+function traverseCard(prop, path){
+	return prop ? prop[g_found_card_idx || 0] : prop;
 }
 
-function fetchCard(html, baseurl, prefs){
-    if(prefs.cardnum && !/^\d{4}$/.test(prefs.cardnum))
-        throw new AnyBalance.Error("Введите 4 последних цифры номера карты или не вводите ничего, чтобы показать информацию по первой карте");
-	
-	// <div[^>]*class="card-info"(?:[^>]*>){2}[\d\s*]{10,}5241(?:[^>]*>){20,30}\s*<div[^>]*class="account-amount-info"(?:[^>]*>){10,40}(?:\s*?<\/div>){3}
-	var re = new RegExp('<div[^>]*class="card-info"(?:[^>]*>){2}[\\d\\s*]{10,}' + (prefs.cardnum ? prefs.cardnum : '') + '(?:[^>]*>){20,30}\\s*<div[^>]*class="account-amount-info"(?:[^>]*>){10,40}(?:\\s*?</div>){3}', 'i');
-    var card = getParam(html, null, null, re);
-	if(!card)
-		throw new AnyBalance.Error('Не удаётся найти ' + (prefs.cardnum ? 'карту с последними цифрами ' + prefs.cardnum : 'ни одной карты!'));
-	
-	AnyBalance.trace('Got card div: ' + card);
-	
-    var result = {success: true};
-	
-	getParam(card, result, 'fio', /(?:[\s\S]*?<td[^>]*>){8}([\s\S]*?)<\//i, replaceTagsAndSpaces);
-	
-	getParam(card, result, 'accnum', /(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\//i, replaceTagsAndSpaces);
-    getParam(card, result, 'cardnum', /"card-info"(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces);
-	getParam(card, result, '__tariff', /"card-info"(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces);
-    getParam(card, result, 'balance', /"amount"(?:[^>]*>){2}([\s\S]*?)<\//i, [replaceTagsAndSpaces, /([\s\S]+)-/, '$1.'], parseBalance);
-    getParam(card, result, ['currency', 'balance'], /"amount"(?:[^>]*>){3}([\s\S]*?)<\//i, [replaceTagsAndSpaces, /\./, '']);
-    
-    AnyBalance.setResult(result);
+function shouldProcess(counter, info){
+	var prefs = AnyBalance.getPreferences();
+
+	switch(counter){
+		case 'accounts':
+		{
+		    if(!prefs.num)
+		    	return true;
+			if(prefs.what == 'card'){
+		        for(var i=0; i<info.cards.length; ++i){
+		        	if(endsWith(info.cards[i].num, prefs.num)){
+		        		g_found_card_idx = i;
+		        		return true;
+		        	}
+		        }
+		    }else if(prefs.what == 'acc'){
+		       	if(endsWith(info.__id, prefs.num))
+	        		return true;
+		    }
+		    return false;
+		}
+		default:
+			return false;
+	}
+}
+
+function main(){
+	var prefs = AnyBalance.getPreferences();
+    if(!/^(card|acc|dep)$/i.test(prefs.what || ''))
+    	prefs.what = 'card';
+
+    var adapter = new NAdapter(g_countersTable[prefs.what], shouldProcess);
+    adapter.processAccounts = adapter.envelope(processAccounts);
+    adapter.processInfo = adapter.envelope(processInfo);
+    adapter.setTraverseCallbacks({'accounts.cards': traverseCard});
+
+	var html = login();
+
+	var result = {success: true};
+
+	adapter.processInfo(html, result);
+
+	if(prefs.what == 'card'){
+
+		adapter.processAccounts(html, result);
+		if(!adapter.wasProcessed('accounts'))
+			throw new AnyBalance.Error(prefs.num ? 'Не найдена карта с последними цифрами ' + prefs.num : 'У вас нет ни одной карты');
+		result = adapter.convert(result);
+
+	}else if(prefs.what == 'acc'){
+
+		adapter.processAccounts(html, result);
+		if(!adapter.wasProcessed('accounts'))
+			throw new AnyBalance.Error(prefs.num ? 'Не найден счет с последними цифрами ' + prefs.num : 'У вас нет ни одного депозита');
+		result = adapter.convert(result);
+
+	}else {//if(prefs.what == 'dep'){
+		throw AnyBalance.Error('Депозиты пока не поддерживаются!')
+	}
+
+	AnyBalance.setResult(result);
 }

@@ -4,13 +4,14 @@
 
 var g_countersTable = {
 	card: {
+		"total": "total",
+		"currency": "currency",
     	"balance": "accounts.cards.balance",
 		"limit": "accounts.limit",
-		"currency": "accounts.currency",
 		"accamount": "accounts.balance",
 		"credit_used": "accounts.credit_used",
-		"credit_pay_to": "accounts.credit_pay_to",
-		"credit_pay_sum": "accounts.credit_pay_sum",
+		"credit_pay_to": "accounts.minpay_till",
+		"credit_pay_sum": "accounts.minpay",
 		"cardnum": "accounts.cards.num",
 		"cardname": "accounts.cards.name",
 		"accnum": "accounts.num",
@@ -19,13 +20,14 @@ var g_countersTable = {
 		"__tariff": "accounts.cards.num"
     },
 	acc: {
+		"total": "total",
+		"currency": "currency",
     	"balance": "accounts.balance",
 		"limit": "accounts.limit",
-		"currency": "accounts.currency",
 		"accamount": "accounts.balance",
 		"credit_used": "accounts.credit_used",
-		"credit_pay_to": "accounts.credit_pay_to",
-		"credit_pay_sum": "accounts.credit_pay_sum",
+		"credit_pay_to": "accounts.minpay_till",
+		"credit_pay_sum": "accounts.minpay",
 		"cardnum": "accounts.cards.num",
 		"cardname": "accounts.cards.name",
 		"accnum": "accounts.num",

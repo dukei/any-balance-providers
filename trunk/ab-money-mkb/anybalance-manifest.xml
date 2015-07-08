@@ -1,10 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="15">ab-money-mkb</id>
+	<id version="16">ab-money-mkb</id>
 	<api flags="no_browser"/>
 	<name>Московский Кредитный Банк</name>
 	<description html="true"><![CDATA[
-	<p>Получает текущий остаток и другие параметры карт и кредитов Московского Кредитного Банка, используя систему МКБ Онлайн (https://online.mkb.ru).</p>
+	<p>Получает текущий остаток и другие параметры карт и кредитов Московского Кредитного Банка, используя систему МКБ Онлайн <a href="https://online.mkb.ru">https://online.mkb.ru</a></p>
 	]]></description>
 	<instruction html="true"><![CDATA[
 	<p>Если у вас нет доступа к МКБ-онлайн: для подключения к комплексу услуг МКБ Онлайн Вам необходимо заполнить заявление в любом отделении Банка.</p>
@@ -13,6 +13,8 @@
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
+		<js>nadapter.js</js>
+		<js>extract.js</js>
 		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
@@ -34,6 +36,8 @@
 		<counter id="cardnum" name="Номер карты/кредита/депозита" type="text"/>
 		<counter id="accnum" name="Номер счета" type="text"/>
 		<counter id="name" name="Тип карты/кредита" type="text"/>
+		<counter id="status" name="Статус" type="text"/>
+		<counter id="till" name="Срок действия карты" type="time" format="dd/MM/yyyy"/>
 		<counter id="fio" name="ФИО" type="text"/>
 	</counters>
 	<keywords>мкб онлайн, mkb online, moscow credit bank</keywords>

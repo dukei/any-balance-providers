@@ -16,6 +16,10 @@ function img2status(str){
     return statuses[str] || str;
 }
 
+function num2(n){
+	return n < 10 ? '0' + n : '' + n;
+}
+
 function main() {
 	var prefs = AnyBalance.getPreferences();
 	var baseurl='https://www.gpnbonus.ru/';
@@ -71,14 +75,26 @@ function main() {
 	getParam(html, result, '__tariff', /Текущий статус карты[\s\S]*?<img[^>]+src="[^"]*images\/([^\/"]*)\.png"[^>]*>/i, replaceTagsAndSpaces, img2status);
 	getParam(html, result, 'month_need', /Для подтверждения статуса (?:[\s\S](?!<\/p>))*необходимо совершить покупки на сумму[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
 	
-	var month1 = getParam(html, null, null, /Сумма покупок за текущий месяц(?:[^>]*>){4}\s*1 зона([\s\S]*?)</i, replaceTagsAndSpaces, parseBalance) || 0;
-	var month2 = getParam(html, null, null, /Сумма покупок за текущий месяц(?:[^>]*>){5}\s*2 зона([\s\S]*?)</i, replaceTagsAndSpaces, parseBalance) || 0;
-	getParam(month1, result, 'month1');
-	getParam(month2, result, 'month2');
-	getParam(month1 + month2, result, 'month');
-	
+	var dt = new Date();
+	var curMonth = num2(dt.getMonth() + 1) + '.' + dt.getFullYear();
+
 	getParam(html, result, 'customer', /<div[^>]+class="[^"]*PersonalName"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(html, result, 'month_need_up', /Для повышения статуса (?:[\s\S](?!<\/p>))*необходимо совершить покупки на сумму[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+
+	if(AnyBalance.isAvailable('month2', 'month')){
+		html = AnyBalance.requestGet(baseurl + 'profile-online/statistics/');
+		sumParam(html, result, 'month2', new RegExp('<tr[^>]*>\\s*<td[^>]*>\\d+\\.' + curMonth + '(?:(?:[\\s\\S](?!</tr>))*?<td[^>]*>){3}([\\s\\S]*?)</td>', 'ig'), replaceTagsAndSpaces, parseBalance, aggregate_sum);
+	}
+
+	if(AnyBalance.isAvailable('month1', 'month')){
+		html = AnyBalance.requestGet(baseurl + 'profile-online/statistics/index-online.php');
+		sumParam(html, result, 'month1', new RegExp('<tr[^>]*>\\s*<td[^>]*>\\d+\\.' + curMonth + '(?:(?:[\\s\\S](?!</tr>))*?<td[^>]*>){3}([\\s\\S]*?)</td>', 'ig'), replaceTagsAndSpaces, parseBalance, aggregate_sum);
+	}
+	
+	if(AnyBalance.isAvailable('month')){
+		getParam((result.month1 || 0) + (result.month2 || 0), result, 'month');
+	}
+	
 	//Баланс по курсу в рублях
     /* Курс теперь 1:1, так что неинтересно смотреть.	
 	if(AnyBalance.isAvailable('balance_money', 'kurs')) {

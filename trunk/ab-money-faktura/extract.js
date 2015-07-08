@@ -63,8 +63,8 @@ function getCards(html, result){
 function processAccounts(html, result){
     var html = AnyBalance.requestGet(g_baseurl + "/priv/accounts");
 
-    getParam(html, result, 'total', /<span[^>]+class="total-block"[^>]*>([\s\S]*)<\/span>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'currency', /<span[^>]+class="total-block"[^>]*>([\s\S]*)<\/span>/i, replaceTagsAndSpaces, parseCurrency);
+    getParam(html, result, 'total', /<span[^>]+class="total-block"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'currency', /<span[^>]+class="total-block"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseCurrency);
 
     if(!AnyBalance.isAvailable('accounts'))
     	return;
@@ -265,9 +265,6 @@ function processAccount(acc, result, html){
 
 	getParam(acc, result, 'accounts.name', /<span[^>]+class="editable-name-block"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
 
-	getParam(acc, result, 'accounts.credit_pay_to', /Оплатить до([^<]*)/i, myReplaceTagsAndSpaces, parseDate);
-	getParam(acc, result, 'accounts.credit_pay_sum', /Оплатить до(?:[^>]*>){4}([^<]*)/i, myReplaceTagsAndSpaces, parseBalance);
-
 	getParam(acc, result, 'accounts.num', /<td>Номер:[\s\S]*?<td[^>]*>([\s\S]*?)(?:\(|<\/td>)/i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(acc, result, 'accounts.currencyISO', /<td>Валюта:[\s\S]*?<td[^>]*>([\s\S]*?)(?:\(|<\/td>)/i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(acc, result, 'accounts.fio', /<td>Владелец:[\s\S]*?<td[^>]*>([\s\S]*?)(?:\(|<\/td>)/i, replaceTagsAndSpaces, html_entity_decode);
@@ -302,9 +299,14 @@ function processTemplates(html, result){
 }
 
 function processTemplate(tpl, result, html){
+	if(!AnyBalance.isAvailable('templates'))
+		return;
+
 	var hrefId = getParam(tpl, null, null, /<a[^>]+class="template-name"[^>]*id="([^"]*)/i, null, html_entity_decode);
 
 	var tpl = followAjaxUrl(hrefId, html);
+
+	getParam(tpl, result, 'type', /<h1[^>]*>([\s\S]*?)<\/h1>/i, replaceTagsAndSpaces, html_entity_decode);
 
 	var fieldsets = getElements(tpl, /<fieldset[^>]*>/ig);
 	if(fieldsets.length)
@@ -312,12 +314,19 @@ function processTemplate(tpl, result, html){
 
 	for(var i=0; i<fieldsets.length; ++i){
 	    var fldset = fieldsets[i];
+	    if(/<fieldset[^>]+class="submit"/i.test(fldset))
+	    	continue; //Кнопки не нужны
+	    if(/<span>Имя платежа<\/span>/i.test(fldset))
+	    	continue; //Имя платежа не нужно
+
 		var fs = {};
 		getParam(fldset, fs, 'templates.fieldsets.name', /<legend[^>]*>([\s\S]*?)<\/legend>/i, replaceTagsAndSpaces, html_entity_decode);
 
 		var fields = getElements(fldset, /<(?:label|div)[^>]*>/ig);
-		if(fields.length)
-			fs.fields = [];
+		if(!fields.length)
+			continue;
+		
+		fs.fields = [];
 
 		for(var j=0; j<fields.length; j+=2){
 			var label = fields[j];
@@ -329,30 +338,51 @@ function processTemplate(tpl, result, html){
 				label = getElement(label, /<label[^>]+inside-div[^>]*>/i);
 			}
 
+			if(/^<[^>]*display:none/i.test(field) && /^<[^>]*display:none/i.test(label))
+				continue; //Скрытое поле какое-то
+
 			var f = {};
 			getParam(label, f, 'templates.fieldsets.fields.name', null, replaceTagsAndSpaces, html_entity_decode);
 			getParam(label, f, 'templates.fieldsets.fields.required', /<label[^>]+required/i, null, function(str){return !!str});
 
 			if(/<input[^>]+type="radio"/i.test(field)){
-				var options = getElements(field, /<div[^>]*>/i);
-				getParam(field, o, 'templates.fieldsets.fields.id', /<input[^>]+type="radio"[^>]*name=([^"])/i, null, html_entity_decode);
+				getParam(field, f, 'templates.fieldsets.fields.id', /<input[^>]+type="radio"[^>]*name="([^"]*)/i, null, html_entity_decode);
+				var options = sumParam(field, null, null, /<(?:input|label)[\s\S]*?<\/(?:span|div)/ig);
 
 				for(var k=0; k<options.length; ++k){
 					var o = {};
-					getParam(options[k], o, 'templates.fieldsets.fields.options.value', /<input[^>]+type="radio"[^>]*value=([^"])/i, null, html_entity_decode);
+					getParam(options[k], o, 'templates.fieldsets.fields.options.value', /<input[^>]+type="radio"[^>]*value="([^"]*)/i, null, html_entity_decode);
 					getParam(options[k], o, 'templates.fieldsets.fields.options.name', /<label[^>]*>[\s\S]*?<\/label>/i, replaceTagsAndSpaces, html_entity_decode);
 
-					getParam(options[k], f, 'templates.fieldsets.fields.options.extra_id', /<input[^>]+type="text"[^>]*name="([^"])/i, null, html_entity_decode);
-					getParam(options[k], f, 'templates.fieldsets.fields.options.extra_value', /<input[^>]+type="text"[^>]*value="([^"])/i, null, html_entity_decode);
-					getParam(options[k], f, 'templates.fieldsets.fields.options.extra_comment', /<input[^>]+type="text"[^>]*title="([^"])/i, null, html_entity_decode);
+					getParam(options[k], o, 'templates.fieldsets.fields.extra_id', /<input[^>]+type="text"[^>]*name="([^"]*)/i, null, html_entity_decode);
+					getParam(options[k], o, 'templates.fieldsets.fields.extra_value', /<input[^>]+type="text"[^>]*value="([^"]*)/i, null, html_entity_decode);
+					getParam(options[k], o, 'templates.fieldsets.fields.extra_comment', /<input[^>]+type="text"[^>]*title="([^"]*)/i, null, html_entity_decode);
 
 					if(/checked/i.test(options[k])){
-						getParam(options[k], o, 'templates.fieldsets.fields.options.value', /<input[^>]+type="radio"[^>]*value=([^"])/i, null, html_entity_decode);
+						getParam(options[k], o, 'templates.fieldsets.fields.options.value', /<input[^>]+type="radio"[^>]*value="([^"]*)/i, null, html_entity_decode);
 						getParam(options[k], o, 'templates.fieldsets.fields.options.value_name', /<label[^>]*>[\s\S]*?<\/label>/i, replaceTagsAndSpaces, html_entity_decode);
 
-						getParam(options[k], f, 'templates.fieldsets.fields.options.extra_id', /<input[^>]+type="text"[^>]*name="([^"])/i, null, html_entity_decode);
-						getParam(options[k], f, 'templates.fieldsets.fields.options.extra_value', /<input[^>]+type="text"[^>]*value="([^"])/i, null, html_entity_decode);
-						getParam(options[k], f, 'templates.fieldsets.fields.options.extra_comment', /<input[^>]+type="text"[^>]*title="([^"])/i, null, html_entity_decode);
+						getParam(options[k], f, 'templates.fieldsets.fields.extra_id', /<input[^>]+type="text"[^>]*name="([^"]*)/i, null, html_entity_decode);
+						getParam(options[k], f, 'templates.fieldsets.fields.extra_value', /<input[^>]+type="text"[^>]*value="([^"]*)/i, null, html_entity_decode);
+						getParam(options[k], f, 'templates.fieldsets.fields.extra_comment', /<input[^>]+type="text"[^>]*title="([^"]*)/i, null, html_entity_decode);
+					}
+
+					if(AnyBalance.isAvailable('templates.fieldsets.fields.options')){
+						if(!f.options) f.options = [];
+						f.options.push(o);
+					}
+				}
+			}else if(/<select/i.test(field)){
+				getParam(field, f, 'id', /<select[^>]+name="([^"]*)/i, null, html_entity_decode);
+				var options = getElements(field, /<option[^>]*>/ig);
+				for(var k=0; k<options.length; ++k){
+					var o = {};
+					getParam(options[k], o, 'templates.fieldsets.fields.options.name', null, replaceTagsAndSpaces, html_entity_decode);
+					getParam(options[k], o, 'templates.fieldsets.fields.options.value', /<option[^>]+value="([^"]*)/i, null, html_entity_decode);
+
+					if(/selected/i.test(options[k])){
+						getParam(options[k], f, 'templates.fieldsets.fields.options.value_name', null, replaceTagsAndSpaces, html_entity_decode);
+						getParam(options[k], f, 'templates.fieldsets.fields.options.value', /<option[^>]+value="([^"]*)/i, null, html_entity_decode);
 					}
 
 					if(AnyBalance.isAvailable('templates.fieldsets.fields.options')){
@@ -361,34 +391,43 @@ function processTemplate(tpl, result, html){
 					}
 				}
 			}else if(/<input[^>]+type="text"/i.test(field)){
-				getParam(field, f, 'id', /<input[^>]+name="([^"])/i, null, html_entity_decode);
-				getParam(field, f, 'value', /<input[^>]+value="([^"])/i, null, html_entity_decode);
-				getParam(field, f, 'comment', /<input[^>]+title="([^"])/i, null, html_entity_decode);
-			}else if(/<select/i.test(field)){
-				var options = getElements(field, /<option[^>]*>/i);
-				for(var k=0; k<options.length; ++k){
-					var o = {};
-					getParam(options[k], o, 'templates.fieldsets.fields.options.name', null, replaceTagsAndSpaces, html_entity_decode);
-					getParam(options[k], o, 'templates.fieldsets.fields.options.value', /<option[^>]+value=([^"]*)/i, null, html_entity_decode);
-
-					if(/selected/i.test(options[k])){
-						getParam(options[k], o, 'templates.fieldsets.fields.options.value_name', null, replaceTagsAndSpaces, html_entity_decode);
-						getParam(options[k], o, 'templates.fieldsets.fields.options.value', /<option[^>]+value=([^"]*)/i, null, html_entity_decode);
-					}
-
-					if(AnyBalance.isAvailable('templates.fieldsets.fields.options')){
-						if(!f.options) f.options = [];
-						f.options.push(o);
-					}
-				}
+				getParam(field, f, 'templates.fieldsets.fields.id', /<input[^>]+name="([^"]*)/i, null, html_entity_decode);
+				getParam(field, f, 'templates.fieldsets.fields.value', /<input[^>]+value="([^"]*)/i, null, html_entity_decode);
+				getParam(field, f, 'templates.fieldsets.fields.comment', /<input[^>]+title="([^"]*)/i, null, html_entity_decode);
+			}else if(/<textarea/i.test(field)){
+				getParam(field, f, 'templates.fieldsets.fields.id', /<textarea[^>]+name="([^"]*)/i, null, html_entity_decode);
+				getParam(field, f, 'templates.fieldsets.fields.value', /<textarea[^>]*>([\s\S]*)<\/textarea>/i, replaceTagsAndSpaces, html_entity_decode);
+				getParam(field, f, 'templates.fieldsets.fields.comment', /<input[^>]+title="([^"]*)/i, null, html_entity_decode);
 			}else{
-				getParam(field, f, 'value', null, replaceTagsAndSpaces, html_entity_decode);
+				getParam(field, f, 'templates.fieldsets.fields.value', null, replaceTagsAndSpaces, html_entity_decode);
 			}
 
 			fs.fields.push(f);
 		}
 
-		result.fieldsets.push(fs);
+		if(!checkDescriptiveFieldSet(fs, result)){
+			result.fieldsets.push(fs);
+		}
 		
 	}
+}
+
+function checkDescriptiveFieldSet(fs, result){
+	var len = fs.fields.length;
+	if(len && len<= 2){
+		var vals = {};
+		for(var i=0; i<len; ++i){
+			var f = fs.fields[i];
+			if(f.id)  //Описательные без ID
+				return false;
+			if(['Услуга', 'Поставщик'].indexOf(f.name) < 0)
+				return false; //Только из этого списка должно быть имя
+			vals[f.name] = f.value;
+		}
+
+		getParam(vals['Услуга'], result, 'templates.service');
+		getParam(vals['Поставщик'], result, 'templates.provider');
+		return true;
+	}
+	return false;
 }

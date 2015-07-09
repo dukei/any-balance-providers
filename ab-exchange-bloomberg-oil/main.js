@@ -20,14 +20,15 @@ function main() {
 	var result = {success: true};
 	
 	var type = prefs.type || 'WTI';
+	var baseFind = type + '\\s*Crude(?:[^>]*>)';
 	
-	getParam(html, result, 'balance', new RegExp('Crude Oil \\('+ type +'\\)(?:[^>]*>){5}([^<]+)', 'i'), replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, ['currency', 'balance'], new RegExp('Crude Oil \\('+ type +'\\)(?:[^>]*>){3}([^<]*)', 'i'), replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'change', new RegExp('Crude Oil \\('+ type +'\\)(?:[^>]*>){7}([^<]*)', 'i'), replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'change_pcts', new RegExp('Crude Oil \\('+ type +'\\)(?:[^>]*>){9}([^<]*)', 'i'), replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'contract', new RegExp('Crude Oil \\('+ type +'\\)(?:[^>]*>){11}([^<]*)', 'i'), replaceTagsAndSpaces);
-	getParam(html, result, 'contract_time', new RegExp('Crude Oil \\('+ type +'\\)(?:[^>]*>){13}([^<]*)', 'i'), replaceTagsAndSpaces);
-	getParam(html, result, '__tariff', /<h2>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'balance', new RegExp(baseFind + '{5}([^<]+)', 'i'), replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, ['currency', 'balance'], new RegExp(baseFind + '{3}([^<]*)', 'i'), replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'change', new RegExp(baseFind + '{7}([^<]*)', 'i'), replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'change_pcts', new RegExp(baseFind + '{9}([^<]*)', 'i'), replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'contract', new RegExp(baseFind + '{11}([^<]*)', 'i'), replaceTagsAndSpaces);
+	getParam(html, result, 'contract_time', new RegExp(baseFind + '{13}([^<]*)', 'i'), replaceTagsAndSpaces);
+	getParam(html, result, '__tariff', /<h2>([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
 	
     AnyBalance.setResult(result);
 }

@@ -11,11 +11,9 @@ var g_headers = {
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
-
-	checkEmpty(prefs.prava, 'Введите номер водительского удостоверения!');
-	checkEmpty(prefs.prava.length == 10, 'Номер водительского удостоверения должен состоять из 10 символов!');
-	checkEmpty(prefs.regcert, 'Введите номер свидетельства о регистрации ТС!');
-	checkEmpty(prefs.regcert.length == 10, 'Номер свидетельства о регистрации должен состоять из 10 символов!');
+	
+	checkEmpty(/^.{10}$/.test(prefs.prava), 'Введите номер водительского удостоверения (10 символов)!');
+	checkEmpty(/^.{10}$/.test(prefs.regcert), 'Введите номер свидетельства о регистрации ТС (10 символов)!');
 	
     var baseurl = 'https://money.yandex.ru';
     AnyBalance.setDefaultCharset('utf-8');
@@ -44,27 +42,30 @@ function main() {
 		}
 	}while(true);
 
-	if(info.status == 'error'){
-		throw new AnyBalance.Error(info.error, null, /length must be/i.test(info.error));
+	if(info.status != 'ok'){
+		if(info.error)
+			throw new AnyBalance.Error(info.error, null, /length must be/i.test(info.error));
+		
+		throw new AnyBalance.Error('Не удалось получить данные о штрафах! Проверьте правильность ввода номера водительского удостоверения и свидетельства о регистрации');
 	}
 
 	var result = {success: true};
+	
 	var length = info.data ? info.data.length : 0;
 	getParam(length, result, 'count');
 	getParam(0, result, 'balance');
 
 	var fine, all='';
-	for(var i=0; i<length; ++i){
+	for(var i=0; i<length; ++i) {
 	    fine = info.data[i];
 		sumParam(fine.PayUntil, result, 'payTill', null, null, parseDateISO, aggregate_min);
 		sumParam(fine.TotalAmount, result, 'balance', null, null, parseBalance, aggregate_sum);
-
-
-		all += '<b>' + fine.TotalAmount + '</b> - ' + fine.SupplierBillID + ' от ' + fine.BillDate + '<br\>\n';
+		
+		all += '<b>' + fine.TotalAmount + '</b> - ' + fine.SupplierBillID + ' от ' + fine.BillDate + '<br\><br\>';
 	}
 
-	if(fine){
-		getParam(all, result, 'all');
+	if(fine) {
+		getParam(all, result, 'all', null, [/<br\><br\>$/, '']);
 		getParam(fine.TotalAmount, result, 'summ', null, null, parseBalance);
 		getParam(fine.BillDate, result, 'date', null, null, parseDate);
 		getParam(fine.BillFor, result, 'descr');

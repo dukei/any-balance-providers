@@ -32,9 +32,9 @@ var g_headers = [
 	['Accept', 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8'],
 	['Accept-Language', 'ru,en-US;q=0.8,en;q=0.6'],
 	['Connection', 'keep-alive'],
-	['User-Agent', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2272.118 Safari/537.36'],
-	['Origin', null],
-	['Cookie2', '$Version=1']
+	['User-Agent', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2272.118 Safari/537.36']
+//	['Origin', null], //Падает пейстор на этом
+//	['Cookie2', '$Version=1']
 ];
 
 var g_currencyDependancy = ['currency', 'balance', 'topay', 'debt', 'minpay', 'penalty', 'late', 'overdraft', 'limit'];

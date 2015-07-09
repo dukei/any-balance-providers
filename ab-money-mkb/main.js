@@ -52,6 +52,12 @@ var g_countersTable = {
 		"status": "cards.status",
 		"till": "cards.till",
 		"accnum": "cards.acc_num",
+		'needpay': 'cards.needpay',
+		'gracepay': 'cards.gracepay',
+		'gracepaytill': 'cards.gracepaytill',
+		'pct': 'cards.pct',
+		'credit': 'cards.credit',
+		'limit': 'cards.limit',
 	},
 	crd: {
     	"balance": "loans.balance",
@@ -78,7 +84,8 @@ var g_countersTable = {
 	dep: {
     	"balance": "deposits.balance",
     	"currency": "deposits.currency",
-
+		"pctcredit": "deposits.pct",
+		"accnum": "deposits.acc_num",
     }
 };
 
@@ -118,7 +125,10 @@ function shouldProcess(counter, info){
 		    if(!prefs.num)
 		    	return true;
 			
-			if(endsWith(info.__id, prefs.num))
+			var accNum = info.__id.replace(/\D/g, '');
+			return new RegExp(prefs.num, 'i').test(accNum);
+			
+			if(endsWith(info.__id.replace(/\D/g, ''), prefs.num))
 				return true;
 		}	
 		case 'deposits':

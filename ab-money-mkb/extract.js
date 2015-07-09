@@ -231,9 +231,9 @@ function processDeposits(html, result) {
 	AnyBalance.trace('Найдено депозитов: ' + deposits.length);
 	result.deposits = [];
 	
-	var cardsJson = getParam(html, null, null, /var\s+depdata\s*=\s*(\[{[\s\S]*?}\])\s*;/i);
-	if(cardsJson)
-		cardsJson = getJson(cardsJson);
+	var detailsJson = getParam(html, null, null, /var\s+depdata\s*=\s*(\[{[\s\S]*?}\])\s*;/i);
+	if(detailsJson)
+		detailsJson = getJson(detailsJson);
 	
 	for(var i=0; i < deposits.length; ++i){
 		var _id = getParam(deposits[i], null, null, /class="txt"[^>]*>\s*([^<]+)/i, replaceTagsAndSpaces);
@@ -242,16 +242,18 @@ function processDeposits(html, result) {
 		var c = {__id: _id, __name: title};
 		
 		if(__shouldProcess('deposits', c)) {
-			processDeposit(deposits[i], _id, c, cardsJson[i]);
+			processDeposit(deposits[i], _id, c, detailsJson[i]);
 		}
 		
 		result.deposits.push(c);
 	}
 }
 
-function processDeposit(card, _id, result, cardDetailsJson) {
-    getParam(cardDetailsJson.db, result, 'deposits.balance', null, replaceTagsAndSpaces, parseBalance);
-    getParam(cardDetailsJson.db, result, ['deposits.currency', 'deposits.balance'], null, replaceTagsAndSpaces, parseCurrency);
+function processDeposit(card, _id, result, detailsJson) {
+    getParam(detailsJson.db, result, 'deposits.balance', null, replaceTagsAndSpaces, parseBalance);
+    getParam(detailsJson.db, result, ['deposits.currency', 'deposits.balance'], null, replaceTagsAndSpaces, parseCurrency);
+	getParam(detailsJson.dr, result, 'deposits.pct', null, replaceTagsAndSpaces, parseBalance);
+	getParam(detailsJson.ac, result, 'deposits.acc_num', null, replaceTagsAndSpaces);
 }
 
 function processDepositTransactions(_id, result, html) {

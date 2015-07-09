@@ -14,6 +14,8 @@ function main() {
     var prefs = AnyBalance.getPreferences();
     var baseurl = 'https://my.licard.com/';
     var baseurlFizik = 'https://club-lukoil.ru/';
+   	checkEmpty(prefs.login, 'Введите номер карты!');
+   	checkEmpty(prefs.password, 'Введите пароль!');
 	
     AnyBalance.setDefaultCharset('utf-8');
     
@@ -41,6 +43,8 @@ function main() {
         getParam(html, result, 'last_payment', /Последний платёж[\s\S]*?payments">([\s\S]*?)<\/a/i, replaceTagsAndSpaces, parseBalance);
         getParam(html, result, 'name', /class="value user-name">\s*<b>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces);
     } else {
+    	checkEmpty(/^\d{18}$|^\d{19}$/.test(prefs.login), 'Номер карты введен неверно!');
+
 		if(prefs.type == 'clubby')
 			baseurlFizik = baseurlFizik.replace(/\.ru/i, '.by');
 		

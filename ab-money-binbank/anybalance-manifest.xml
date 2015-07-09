@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="6">ab-money-binbank</id>
+	<id version="7">ab-money-binbank</id>
 	<api flags="no_browser"/>
 	<name>Бинбанк</name>
 	<description html="true"><![CDATA[
@@ -38,6 +38,7 @@
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
+		<js>nadapter.js</js>
 		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>

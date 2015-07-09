@@ -1,11 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id version="4">ab-cell-vodafone-it</id>
+	<id version="5">ab-cell-vodafone-it</id>
 	<name>Vodafone Italy</name>
 	<description html="true"><![CDATA[
 	<p>Obtains balance and other plan information on Vodafone Italy personal account (http://www.vodafone.it)</p>
-	<p>If you don't have Vodafone personal account, please register here: https://registrazione.vodafone.it/190/regu/checkLinkAccount.do</p>
+	<p>If you don't have Vodafone personal account, please press button "Register" at http://www.vodafone.it</p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
@@ -17,7 +17,7 @@
 	</files>
 	<counters>
 		<counter id="balance" name="Balance" units=" €"/>
-		<counter id="fio" name="User name" type="text"/>
+<!--		<counter id="fio" name="User name" type="text"/> -->
 		<counter id="phone" name="Phone" type="text"/>
 	</counters>
 	<keywords></keywords>

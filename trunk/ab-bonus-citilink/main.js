@@ -21,19 +21,21 @@ function main(){
 	var action = getParam(html, null, null, /<form name="mainForm" method="POST" action="([^"]+)/i);
 	var captchaSrc = getParam(html, null, null, /"captchaLogin"[^>]*src="\/([^"]+)/i, replaceTagsAndSpaces, html_entity_decode);
 	
-	if(!action || !captchaSrc) {
+	if(!action) {
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось найти форму входа, сайт изменен?');
 	}
 	
 	var captchaa;
-	if(AnyBalance.getLevel() >= 7){
-		AnyBalance.trace('Пытаемся ввести капчу');
-		var captcha = AnyBalance.requestGet(baseurl + captchaSrc);
-		captchaa = AnyBalance.retrieveCode("Пожалуйста, введите код с картинки", captcha);
-		AnyBalance.trace('Капча получена: ' + captchaa);
-	}else{
-		throw new AnyBalance.Error('Провайдер требует AnyBalance API v7, пожалуйста, обновите AnyBalance!');
+	if(captchaSrc) {
+		if(AnyBalance.getLevel() >= 7){
+			AnyBalance.trace('Пытаемся ввести капчу');
+			var captcha = AnyBalance.requestGet(baseurl + captchaSrc);
+			captchaa = AnyBalance.retrieveCode("Пожалуйста, введите код с картинки", captcha);
+			AnyBalance.trace('Капча получена: ' + captchaa);
+		}else{
+			throw new AnyBalance.Error('Провайдер требует AnyBalance API v7, пожалуйста, обновите AnyBalance!');
+		}
 	}
 	
 	html = AnyBalance.requestPost(action, {

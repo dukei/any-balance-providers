@@ -6,7 +6,7 @@ var g_headers = {
 	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
 	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
 	'Connection': 'keep-alive',
-	'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/43.0.2357.125 Safari/537.36',
+	'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/43.0.2357.130 Safari/537.36',
 };
 
 function parseTrafficMb(str){
@@ -67,6 +67,8 @@ function main() {
 	getParam(html, result, 'balance', /Баланс<\/span>\s+<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'bonus_balance', /Денежный бонусный счет: осталось\s*([\s\S]*?)\s*грн/i, replaceTagsAndSpaces, parseBalance);
 	getParam (html, result, 'bonus_balance_termin', />Денежный бонусный счет: осталось [\s\S]* грн. Срок действия до([^<]*)<\/span>/i, replaceTagsAndSpaces, parseDate);
+	sumParam (html, result, 'smo_pack', /<li>Супер МТСОлімпійський Стандарт, осталось\s*([\d\.,]+)\s*грн.<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+        sumParam (html, result, 'smo_pack', /<li>Супер МТСОлімпійський, осталось\s*([\d\.,]+)\s*грн.<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 
 	//Секция бонусов
 	getParam(html, result, 'bonusy', /ВАШ БОНУСН(?:И|Ы)Й (?:РАХУНОК|СЧЕТ)<\/div>\s+<div[^>]*>\s+<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
@@ -86,7 +88,9 @@ function main() {
 	sumParam (html, result, 'hvylyny_net3', /минут внутри сети, осталось\s*(\d+)\s*бесплатных секунд/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 	sumParam (html, result, 'hvylyny_net3', /(?:15|30)00 минут на МТС для (?:MAX Energy Allo|MAX Energy), осталось\s*(\d+)\s*бесплатных секунд/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 	sumParam (html, result, 'hvylyny_net3', /GSM "Бізнес Оптимальний-2", осталось:\s*([\d\.,]+)\s*мин/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-	if (result.__tariff == 'GSM \"Бизнес Оптимальный-2\"') {
+	sumParam (html, result, 'hvylyny_net3', /<li>Супер МТСОлімпійський Стандарт, осталось:\s*([\d\.,]+)\s*мин.<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+        sumParam (html, result, 'hvylyny_net3', /<li>Супер МТСОлімпійський, осталось:\s*([\d\.,]+)\s*мин.<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+	if (result.__tariff == 'GSM \"Бизнес Оптимальный-2\"' || result.__tariff == 'Супер МТС Олімпійський Стандарт' || result.__tariff == 'Супер МТС Олімпійський') {
     	result.hvylyny_net3 = result.hvylyny_net3 * 60;
 	}
 

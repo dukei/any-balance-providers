@@ -122,10 +122,15 @@ function main(){
     getParam (html, result, 'bonus_balance', /<li>Денежный бонусный счет:[^<]*осталось\s*([\d\.,]+)\s*грн. Срок действия до[^<]*<\/li>/i, replaceTagsAndSpaces, parseBalance);
       //Срок бонусного счета
     getParam (html, result, 'termin_bonus_balance', /<li>Денежный бонусный счет:[^<]*осталось\s*[^<]*\s*грн. Срок действия до ([^<]*)<\/li>/i, replaceTagsAndSpaces, parseDate);
+    //Пакет денежный Олимпийский
+    sumParam (html, result, 'smo_pack', /<li>Супер МТСОлімпійський Стандарт, осталось\s*([\d\.,]+)\s*грн.<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+    sumParam (html, result, 'smo_pack', /<li>Супер МТСОлімпійський, осталось\s*([\d\.,]+)\s*грн.<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 	// Пакет бесплатных минут для внутрисетевых звонков
     sumParam (html, result, 'min_paket', /<li>Осталось ([\d\.,]+) бесплатных секунд\.? до[^<]*<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
     sumParam (html, result, 'min_paket', /<li>100\/700 минут внутри сети, осталось ([\d\.,]+) бесплатных секунд\.? до[^<]*<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
     sumParam (html, result, 'min_paket', /<li>GSM "Бізнес Оптимальний-2", осталось:\s*([\d\.,]+)\s*мин.<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+    sumParam (html, result, 'min_paket', /<li>Супер МТСОлімпійський Стандарт, осталось:\s*([\d\.,]+)\s*мин.<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+    sumParam (html, result, 'min_paket', /<li>Супер МТСОлімпійський, осталось:\s*([\d\.,]+)\s*мин.<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
     //Срок Пакет бесплатных минут для внутрисетевых звонков
     sumParam (html, result, 'termin_min_paket', /<li>Осталось[^<]*бесплатных секунд\.? до ([^<]*)<\/li>/ig, replaceTagsAndSpaces, parseDate, aggregate_min);
     sumParam (html, result, 'termin_min_paket', /<li>100\/700 минут внутри сети, осталось[^<]*бесплатных секунд\.? до ([^<]*)<\/li>/ig, replaceTagsAndSpaces, parseDate, aggregate_min);
@@ -344,7 +349,7 @@ function main(){
     // Тарифный план
     getParam (html, result, '__tariff', /<p>(?:Ваш тариф|tariff plan):\s*<strong>([\s\S]*?)<\/strong><\/p>/i, replaceTagsAndSpaces, html_entity_decode);
 
-    if (result.__tariff == 'GSM \"Бизнес Оптимальный-2\"') {
+    if (result.__tariff == 'GSM \"Бизнес Оптимальный-2\"' || result.__tariff == 'Супер МТС Олімпійський Стандарт' || result.__tariff == 'Супер МТС Олімпійський') {
     	result.min_paket = result.min_paket * 60;
 	}
 

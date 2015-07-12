@@ -1,22 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-    <id version="2" major_version="1.0">ab-money-iqtech</id>
-    <name>Карта учащегося (iQTech)</name>
+    <id version="3" major_version="2.0">ab-money-iqtech</id>
+    <name>Образовательная карта (Татарстан)</name>
     <type>money</type>
     <description>
-        Показывает баланс на карте учащегося школьника, предоставленной компанией iQTech (Татарстан).
-        Данные берутся из личного кабинета http://iqtech.org/iq/cabinet.html
+        Показывает баланс на образовательной карте учащегося школьника.
+        Образовательная карта — это персональный электронный кошелек школьника, предназначенный для оплаты питания в
+        школьной столовой и проезда в общественном транспорте.
+        Данные берутся из личного кабинета http://obrkarta.ru/
     </description>
     <author>Sergeev Roman &lt;nm666.srv@gmail.com&gt;</author>
     <files>
         <icon>icon.png</icon>
         <preferences>preferences.xml</preferences>
         <js>main.js</js>
+        <js target="parser">api:jquery.min.js</js>
+        <history>history.xml</history>
     </files>
     <counters>
-        <counter id="balanceValue" name="Баланс" suffix=" р." type="numeric" />
-        <counter id="overdraftValue" name="Овердрафт" suffix=" р." type="numeric" />
-        <counter id="childName" name="ФИО ребенка" type="text" />
-        <counter id="contractNumber" name="Номер договора" type="text" />
+        <counter id="balanceValue" name="Баланс" suffix=" р." type="numeric"/>
+        <counter id="childName" name="ФИО ребенка" type="text"/>
+        <counter id="transportCardNumber" name="Номер транспортной карты" type="text"/>
     </counters>
+    <keywords>
+        карта питания, питание школьника
+    </keywords>
+    <country>
+        ru
+    </country>
 </provider>

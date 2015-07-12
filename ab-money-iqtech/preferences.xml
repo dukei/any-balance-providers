@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
     <EditTextPreference
-        title="Номер договора"
-        positiveButtonText="ОК"
-        summary="Привязанный к карте номер договора.||{@s}\n"
-        dialogTitle="Номер договора"
-        negativeButtonText="Отмена"
-        dialogMessage="Укажите привязанный к карте номер договора. Данный номер указан на карте и выдается учителем. Обычно состоит из восьми цифр."
-        key="login">
+            key="login"
+            title="Номер договора"
+            summary="Привязанный к карте номер договора||{@s}\n"
+            dialogTitle="Номер договора"
+            dialogMessage="Укажите привязанный к карте номер договора. Данный номер указан на карте и выдается учителем."
+            positiveButtonText="ОК"
+            negativeButtonText="Отмена">
     </EditTextPreference>
     <EditTextPreference
-        title="Пароль"
-        positiveButtonText="ОК"
-        summary="Установленный для входа в личный кабинет пароль.||***********\n"
-        dialogTitle="Пароль"
-        negativeButtonText="Отмена"
-        dialogMessage="Укажите заданный Вами для входа в личный кабинет пароль. В момент выдачи карты пароль задан как 123."
-        inputType="textPassword"
-        key="password">
+            key="password"
+            title="Пароль"
+            summary="Установленный пароль.||***********\n"
+            dialogTitle="Пароль"
+            dialogMessage="Укажите заданный Вами для входа в личный кабинет пароль. Первоначально может совпадать с номером договора."
+            positiveButtonText="ОК"
+            negativeButtonText="Отмена"
+            inputType="textPassword">
     </EditTextPreference>
 </PreferenceScreen>

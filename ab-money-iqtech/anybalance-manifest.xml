@@ -14,7 +14,6 @@
         <icon>icon.png</icon>
         <preferences>preferences.xml</preferences>
         <js>main.js</js>
-        <js target="parser">api:jquery.min.js</js>
         <history>history.xml</history>
     </files>
     <counters>

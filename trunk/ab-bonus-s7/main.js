@@ -7,7 +7,8 @@ var g_headers = {
 	'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
 	'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
 	'Connection':'keep-alive',
-	'User-Agent':'Mozilla/5.0 (BlackBerry; U; BlackBerry 9900; en-US) AppleWebKit/534.11+ (KHTML, like Gecko) Version/7.0.0.187 Mobile Safari/534.11+'
+	'Origin': 'https://service.s7.ru',
+	'User-Agent': 'Mozilla/5.0 (Linux; Android 5.0; SM-G900F Build/LRX21T) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/43.0.2357.93 Mobile Safari/537.36'
 };
 
 function main(){
@@ -17,50 +18,40 @@ function main(){
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 	
-    var baseurl = 'https://www.s7.ru/';
-	var baseurlLogin = 'https://cca.s7.ru/';
+    var baseurl = 'https://service.s7.ru/';
 	
-    var html = AnyBalance.requestPost(baseurl + 'dotCMS/priority/ajaxLogin', {
-        dispatch: 'login',
-        username: prefs.login,
-        password: prefs.password
+	// var html = AnyBalance.requestGet(baseurl + 'home/s7-priority/profile2Login.dot', g_headers);
+	
+	// if(!html || AnyBalance.getLastStatusCode() > 400){
+		// AnyBalance.trace(html);
+		// throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
+	// }
+	
+    html = AnyBalance.requestPost(baseurl + 'mobileffp/loginEmailAction.action', {
+		'scr': '360x640',
+        'user.emailOrCardNumber': prefs.login,
+		'user.passwordOrPin': prefs.password,
+		'user.remember': 'false',
+		'button_next': 'Логин'
     }, addHeaders({ Referer: baseurl }));
 	
-	htmlJson = AnyBalance.requestGet(baseurl + 'dotCMS/priority/ajaxProfileService?dispatch=getUserInfo', addHeaders({
-		'X-Requested-With':'XMLHttpRequest'
-	}));
-	
-	var json = getJson(htmlJson);	
-	
-    if(json.stc != 200){
+	if (!/action:exitAction/i.test(html)) {
 		var error = getParam(html, null, null, /"error_block"[^>]*>([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
 		if (error)
-			throw new AnyBalance.Error(error, null, /Неверный логин\/пароль/i.test(error));
-
-		try{ error = getJson(html).errors.join('. ') }catch(e){ }
-		if(error)
-			throw new AnyBalance.Error(error, null, /Неверное имя пользователя или пароль/i.test(error));	
-
+			throw new AnyBalance.Error(error, null, /Неверное имя пользователя или пароль/i.test(error));
+		
 		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Не удалось войти в личный кабинет. Проблемы на сайте или сайт изменен.');
-	}
-	
+		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
+	}	
 	
     var result = {success: true};
 	
-    getParam(json.c.milesBalance + '', result, 'balance', null, replaceTagsAndSpaces, parseBalance);
-    getParam(json.c.firstName + ' ' + json.c.lastName, result, 'userName', null, replaceTagsAndSpaces);
-	getParam(json.c.qMiles+'', result, 'qmiles', null, replaceTagsAndSpaces, parseBalance);
-	getParam(json.c.qFlights+'', result, 'flights', null, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'balance', /Баланс:([^>]*>){2}/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'cardnum', /Номер карты:([^>]*>){2}/i, replaceTagsAndSpaces);
+	getParam(html, result, '__tariff', /Номер карты:([^>]*>){2}/i, replaceTagsAndSpaces);
+	getParam(html, result, 'qmiles', /Статусный баланс:(?:[^>]*>){1}\s*(\d+)\s*мил/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'flights', /Статусный баланс:[^>]*>[^/]+([^<]+)/i, replaceTagsAndSpaces, parseBalance);
 	
-    var cardNum = json.c.cardNumber;
-	var cardType = json.c.cardLevel;
-    //var status = getParam(html, null, null, /(?:Статус|Status):[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
-	
-	getParam(cardNum, result, 'cardnum');
-	getParam(cardType, result, 'type');
-	
-	result.__tariff = cardType + ', №' + cardNum;	
 	
     /*if(AnyBalance.isAvailable('qmiles', 'flights')){
         html = AnyBalance.requestGet(baseurl + 'home/priority/ffpMyMiles.dot');

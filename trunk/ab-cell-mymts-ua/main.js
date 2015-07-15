@@ -6,7 +6,7 @@ var g_headers = {
 	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
 	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
 	'Connection': 'keep-alive',
-	'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/43.0.2357.130 Safari/537.36',
+	'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/43.0.2357.134 Safari/537.36',
 };
 
 function parseTrafficMb(str){
@@ -90,8 +90,14 @@ function main() {
 	sumParam (html, result, 'hvylyny_net3', /GSM "Бізнес Оптимальний-2", осталось:\s*([\d\.,]+)\s*мин/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 	sumParam (html, result, 'hvylyny_net3', /<li>Супер МТСОлімпійський Стандарт, осталось:\s*([\d\.,]+)\s*мин.<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
         sumParam (html, result, 'hvylyny_net3', /<li>Супер МТСОлімпійський, осталось:\s*([\d\.,]+)\s*мин.<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-	if (result.__tariff == 'GSM \"Бизнес Оптимальный-2\"' || result.__tariff == 'Супер МТС Олімпійський Стандарт' || result.__tariff == 'Супер МТС Олімпійський') {
-    	result.hvylyny_net3 = result.hvylyny_net3 * 60;
+	switch(result.__tariff) {
+		case 'GSM \"Бизнес Оптимальный-2\"':
+		case 'Супер МТС Олимпийский Стандарт':
+		case 'Супер МТС Олимпийский':
+		case 'Супер МТС Олімпійський Стандарт':
+		case 'Супер МТС Олімпійський':
+			result.min_paket = result.min_paket * 60;
+			break;
 	}
 
 	sumParam (html, result, 'hvylyny_net3_termin', /минут внутри сети, осталось \d+ бесплатных секунд до\s*([^<]*)\s*<\/span>/ig, replaceTagsAndSpaces, parseDate, aggregate_min);

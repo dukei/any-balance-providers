@@ -7,7 +7,7 @@ var g_headers = {
 	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
 	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
 	'Connection': 'keep-alive',
-	'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/43.0.2357.125 Safari/537.36',
+	'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/43.0.2357.134 Safari/537.36',
 };
 
 function main() {
@@ -73,7 +73,7 @@ function mainSite(prefs, baseurl) {
 		if(AnyBalance.getLevel() >= 7){
 			AnyBalance.trace('Пытаемся ввести капчу');
 			var captcha = AnyBalance.requestGet(baseurl + href);
-			params.captcha_1 = AnyBalance.retrieveCode("Пожалуйста, введите код с картинки", captcha);
+			params.captcha_1 = AnyBalance.retrieveCode("Пожалуйста, введите код с картинки", captcha, {time: 180000, inputType: 'number'});
 			AnyBalance.trace('Капча получена: ' + params.captcha_1);
 		}else{
 			throw new AnyBalance.Error('Провайдер требует AnyBalance API v7, пожалуйста, обновите AnyBalance!');

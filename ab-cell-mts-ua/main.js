@@ -349,9 +349,15 @@ function main(){
     // Тарифный план
     getParam (html, result, '__tariff', /<p>(?:Ваш тариф|tariff plan):\s*<strong>([\s\S]*?)<\/strong><\/p>/i, replaceTagsAndSpaces, html_entity_decode);
 
-    if (result.__tariff == 'GSM \"Бизнес Оптимальный-2\"' || result.__tariff == 'Супер МТС Олімпійський Стандарт' || result.__tariff == 'Супер МТС Олімпійський') {
-    	result.min_paket = result.min_paket * 60;
-	}
+    switch(result.__tariff) {
+        case 'GSM \"Бизнес Оптимальный-2\"':
+        case 'Супер МТС Олимпийский Стандарт':
+        case 'Супер МТС Олимпийский':
+        case 'Супер МТС Олімпійський Стандарт':
+        case 'Супер МТС Олімпійський':
+            result.min_paket = result.min_paket * 60;
+            break;
+    }
 
     if (AnyBalance.isAvailable ('usedinprevmonth')) {
 

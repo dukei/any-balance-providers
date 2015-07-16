@@ -15,7 +15,7 @@ function main(){
 	var baseurl = 'http://services.ukrposhta.ua/';
 	AnyBalance.setDefaultCharset('utf-8'); 
 
-	var html = AnyBalance.requestGet(baseurl+'bardcodesingle/', g_headers);
+	var html = AnyBalance.requestGet(baseurl + 'bardcodesingle/', g_headers);
 
 	var params = createFormParams(html, function(params, str, name, value){
 		if(name == 'ctl00$centerContent$txtBarcode')
@@ -30,7 +30,8 @@ function main(){
     }
 
     var result = {success: true};
-    getParam(html, result, 'all', /<div id="ctl00_centerContent_divInfo">\s*([\s\S]*?)\s*<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+	
+    getParam(html, result, 'all', /<div id="ctl00_centerContent_divInfo"[^>]*>\s*([\s\S]*?)\s*<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
 
     AnyBalance.setResult(result);
 }

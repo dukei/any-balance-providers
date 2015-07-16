@@ -1,13 +1,12 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
 	<api flags="no_browser" />
-	<id version="2">ab-tracking-ukrposhta</id>
+	<id version="3">ab-tracking-ukrposhta</id>
 	<name>Укрпошта</name>
 	<description>
 	Отримує дані за номером поштового відправлення на сайті http://ukrposhta.ua/vidslidkuvati-forma-poshuku
 	</description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

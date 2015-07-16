@@ -1,6 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="4">ab-cell-lebara-es</id>
+	<api flags="no_browser"/>
+	<id version="5">ab-cell-lebara-es</id>
 	<name>Lebara Móvil</name>
 	<description html="true"><![CDATA[
 	<p>Obtains balance on Lebara Mobile account (Spain). Gets data via MyLebara: https://www.lebara.es/dashboard.</p>

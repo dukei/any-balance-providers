@@ -30,8 +30,7 @@ function main(){
 			if(/LogoutController/.test(html))
 				break;
 		}
-	} catch(e) {
-	}
+	} catch(e) {}
 	
 	html = AnyBalance.requestGet(baseurl + 'dashboard', g_headers);
 	//AnyBalance.trace(html);
@@ -48,7 +47,7 @@ function main(){
     var result = {success: true};
 	
 	getParam(html, result, '__tariff', /<option[^>]+selected[^>]*>\s*(\d+[^<]*)/i, replaceTagsAndSpaces);
-	getParam(html, result, 'balance', [/<p>[^<]*(?:saldo|balance)(?:[^>]*>){2}([^<]*)/i, /<p>[^<]*(?:Prepago|Pay as you go)(?:[^>]*>)([^<]+)/i], replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'balance', [/<[^>]*>[^<]*(?:saldo|balance)(?:[^>]*>){1}([\d.,-]+€)/i, /<p>[^<]*(?:Prepago|Pay as you go)(?:[^>]*>)([^<]+)/i], replaceTagsAndSpaces, parseBalance);
 	
     AnyBalance.setResult(result);
 }

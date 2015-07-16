@@ -1,40 +1,32 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-internet-aist</id>
-  <name>AIST (Самара, Тольятти)</name>
-  <description>
-    Получает баланс и информацию о тарифном плане для тольяттинского и самарского интернет провайдера АИСТ (http://aist.net.ru)
-
-    Информация берется из личного кабинета: http://tlt.class.avtograd.ru/
-
-    Если вы не помните свой пароль, воспользуйтесь страницей восстановления пароля http://smr.class.avtograd.ru/login/Restore.aspx для Самары и http://tlt.class.avtograd.ru/login/Restore.aspx для Тольятти.
-  </description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>library.js</js>
-    <js>main.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="balance" name="Баланс" units="р"/>
-    <counter id="fio" name="ФИО" type="text"/>
-    <counter id="status" name="Статус" type="text"/>
-    <counter id="line" name="Номер выделенной линии" type="text"/>
-    <counter id="staticip" name="Статический IP-адрес" type="text"/>
-    <counter id="till" name="Срок действия тарифа" type="time" format="dd/MM/yyyy"/>
-    <counter id="nexttar" name="Следующий тариф" type="text"/>
-    <counter id="email" name="Email" type="text"/>
-    <counter id="filter" name="Фильтрация портов" type="text"/>
-  </counters>
-  <keywords>
-    aist
-  </keywords>
-  <type>
-    internet
-  </type>
-  <country>
-    ru
-  </country>
+	<api flags="no_browser"/>
+	<id version="3">ab-internet-aist</id>
+	<name>AIST (Самара, Тольятти)</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера интернет-провайдера АИСТ <a href="http://aist.net.ru">http://aist.net.ru</a></p>
+	<p>Информация берется из личного кабинета <a href="https://tlt.class.avtograd.ru/">https://tlt.class.avtograd.ru/</a></p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="status" name="Статус" type="text"/>
+		<counter id="line" name="Номер выделенной линии" type="text"/>
+		<counter id="staticip" name="Статический IP-адрес" type="text"/>
+		<counter id="till" name="Срок действия тарифа" type="time" format="dd/MM/yyyy"/>
+		<counter id="nexttar" name="Следующий тариф" type="text"/>
+		<counter id="email" name="Email" type="text"/>
+		<counter id="filter" name="Фильтрация портов" type="text"/>
+	</counters>
+	<keywords>aist</keywords>
+	<type>internet</type>
+	<country>ru</country>
 </provider>

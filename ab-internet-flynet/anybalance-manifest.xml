@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-internet-flynet</id>
+	<id version="3">ab-internet-flynet</id>
 	<api flags="no_browser"/>
 	<name>FlyNet</name>
 	<description html="true"><![CDATA[
@@ -17,8 +17,9 @@
 	</files>
 	<counters>
 		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="trafic" name="Остаток трафика" units=" Мб"/>
 		<counter id="account" name="Договор №" type="text"/>
-		<counter id="fee" name="Абонентская плата" type="text"/>
+		<counter id="fee" name="Абонентская плата" units=" р"/>
 	</counters>
 	<keywords></keywords>
 	<type>internet</type>

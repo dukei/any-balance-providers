@@ -1,11 +1,20 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="5">ab-internet-zelenayatochka</id>
+	<id version="6">ab-internet-zelenayatochka</id>
 	<api flags="no_browser"/>
 	<name>Зеленая точка</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе интернет-провайдера Зеленая точка http://zelenaya.net в города Ставрополь и Нальчик.</p>
-	<p>Информация берется из личного кабинета https://personal.ooonet.ru и http://abonent.naltel.ru</p>
+	<p>Предоставляет информацию о балансе интернет-провайдера Зеленая точка  <a href="http://zelenaya.net">http://zelenaya.net</a><.</p>
+	<p>Информация берется из личных кабинетов:</p>
+	<ul>
+		<li>Липецк <a href="https://lk.lipetsk.zelenaya.net/">https://lk.lipetsk.zelenaya.net/</a></li>
+		<li>Ставрополь <a href="https://personal.ooonet.ru/">https://personal.ooonet.ru/</a></li>
+		<li>Нальчик <a href="http://abonent.naltel.ru/">http://abonent.naltel.ru/</a></li>
+		<li>Уфа <a href="https://lk.ufa.zelenaya.net/">https://lk.ufa.zelenaya.net/</a></li>
+		<li>Белгород <a href="https://lk.belgorod.zelenaya.net/">https://lk.belgorod.zelenaya.net/</a></li>
+		<li>Томск <a href="https://lk.tomsk.zelenaya.net/">https://lk.tomsk.zelenaya.net/</a></li>
+		<li>Владивосток <a href="https://lk.vladivostok.zelenaya.net/">https://lk.vladivostok.zelenaya.net/</a></li>
+	</ul>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>

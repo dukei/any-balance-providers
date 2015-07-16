@@ -25,8 +25,8 @@
 		key="region"
 		title="Регион"
 		summary="||{@s}"
-		entries="Липецк|Ставрополь|Нальчик"
-		entryValues="lipetsk|stavr|nal"
+		entries="Липецк|Ставрополь|Нальчик|Уфа|Белгород|Томск|Владивосток"
+		entryValues="lipetsk|stavr|nal|ufa|belgorod|tomsk|vladivostok"
 		defaultValue="stavr">
 	</ListPreference>	
 </PreferenceScreen>

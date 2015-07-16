@@ -11,9 +11,10 @@ var g_headers = {
 };
 
 var g_regions = {
-	'lipetsk': getLipetsk,
+	'lipetsk': getUnified,
 	'stavr': getStavr,
 	'nal': getNal,
+	'ufa': getUnified
 };
 
 function main() {
@@ -23,17 +24,14 @@ function main() {
 
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
-	
-	// По умолчанию ставрополь
-	if(!prefs.region)
-		prefs.region = 'stavr';
+	checkEmpty(prefs.region, 'Выберите регион!');
 	
 	AnyBalance.trace('Регион: ' + prefs.region);
 	g_regions[prefs.region](prefs);
 }
 
-function getLipetsk(prefs) {
-	var baseurl = 'https://lk.lipetsk.zelenaya.net/';
+function getUnified(prefs) {
+	var baseurl = 'https://lk.' + prefs.region + '.zelenaya.net/';
 	
 	var html = AnyBalance.requestGet(baseurl + 'login', g_headers);
 
@@ -45,10 +43,14 @@ function getLipetsk(prefs) {
 	}, addHeaders({Referer: baseurl + 'login'}));
 
 	if (!/logout/i.test(html)) {
-		var error = getParam(html, null, null, /<div class="alert alert-danger">([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+		var error = getParam(html, null, null, /<div[^>]*class="alert alert-danger"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+		if(error)
 			throw new AnyBalance.Error(error, null, /Ошибка с паролем или пользователем/i.test(error));
+		
+		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
+	
 	var result = {success: true};
 	
 	getParam(html, result, 'fio', /Клиент:\s*<\/td>\s*<td[^>]*>([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);

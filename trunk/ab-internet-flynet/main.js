@@ -24,7 +24,7 @@ function main() {
 		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
 	
 	html = AnyBalance.requestPost(baseurl + 'bgbilling/webexecuter', {
-        action: 'GetBalance',
+        action: 'Dashboard',
         user: prefs.login,
         pswd: prefs.password
 	}, addHeaders({Referer: baseurl + 'bgbilling/webexecuter'}));
@@ -40,9 +40,25 @@ function main() {
 	
 	var result = {success: true};
 	
-	getParam(html, result, 'balance', /Исходящий остаток на конец месяца(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'balance', /Баланс(?:[^>]*>){4}\s*([\s\d.,]+)руб/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'account', /Договор №([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'fee', /Абонентская плата(?:[^>]*>){2}([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, '__tariff', /Тарифный план(?:[^>]*>){4}([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
+	
+	var traficUsed = getParam(html, null, null, /action=TrafficRangeReport(?:[^>]*>){1}\s*([\d.,]+)/i, replaceTagsAndSpaces, parseTrafficGb);
+	var traficTotal = getParam(html, null, null, /action=TrafficRangeReport(?:[^>]*>){1}[^<]+из\s*([\d.,]+)/i, replaceTagsAndSpaces, parseTrafficGb);
+	if(isset(traficUsed) && isset(traficTotal)) {
+		getParam(traficTotal - traficUsed, result, 'trafic');
+	}
+	
+	if(isAvailable('fee')) {
+		html = AnyBalance.requestGet(baseurl + 'bgbilling/webexecuter?action=GetBalance&mid=0&module=contract', g_headers);
+		
+		getParam(html, result, 'fee', /Абонентская плата(?:[^>]*>){2}([^<]+)/i, replaceTagsAndSpaces, parseBalance);
+	}
 	
 	AnyBalance.setResult(result);
+}
+
+function parseTrafficGb(str) {
+	return parseTraffic(str + 'gb');
 }

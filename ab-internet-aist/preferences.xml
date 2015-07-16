@@ -25,6 +25,6 @@
         summary="||{@s}"
         entries="Тольятти|Самара"
         entryValues="tlt|smr"
-	      defaultValue="tlt">
+		defaultValue="tlt">
     </ListPreference>
 </PreferenceScreen>

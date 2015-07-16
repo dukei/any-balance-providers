@@ -69,6 +69,8 @@ function main(){
 				
 				result.fulltext += '<b>' + status + ' (' + geo + ')</b><br/>' + '<small>' + getDateString(date) + '</small><br/><br/>';
 			}
+			
+			result.fulltext.replace(/<br\/><br\/>$/i, '');
 		}
 	}
 	

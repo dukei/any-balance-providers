@@ -102,19 +102,19 @@ function main(){
 }
 
 function getDateString(dt) {
-	function numSize(num, size) {
-		var str = num + '';
-		if (str.length < size) {
-			for (var i = str.length; i < size; ++i) {
-				str = '0' + str;
-			}
-		}
-		return str;
-	}
-
     if (typeof dt != 'object') 
 		dt = new Date(dt);
-    return numSize(dt.getDate(), 2) + '/' + numSize(dt.getMonth() + 1, 2) + '/' + dt.getFullYear() + " " + dt.getHours() + ':' + dt.getMinutes();
+    return numSize(dt.getDate(), 2) + '/' + numSize(dt.getMonth() + 1, 2) + '/' + dt.getFullYear() + " " + numSize(dt.getHours(), 2) + ':' + numSize(dt.getMinutes(), 2);
+}
+
+function numSize(num, size) {
+	var str = num + '';
+	if (str.length < size) {
+		for (var i = str.length; i < size; ++i) {
+			str = '0' + str;
+		}
+	}
+	return str;
 }
 
 

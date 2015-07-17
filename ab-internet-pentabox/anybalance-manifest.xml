@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1"></id>
+	<api flags="no_browser"/>
+	<name>Пентабокс</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе интернет-провайдера Пентабокс (http://www.pentabox.ru/)</p>
+	<p>Информация берется из личного кабинета http://stat.pentabox.ru/</p>
+
+	<p>Пентабокс предлагает услуги по подключению к интернет в Москве и Московской области, в городах Мытищи, Пушкино, Юбилейный, Королёв.</p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>extract.js</js>
+		<js>nadapter.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Сальдо" units=" р"/>
+		<counter id="balance_new" name="Сальдо с учетом начислений" units=" р"/>
+		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="agreement" name="Договор" type="text"/>
+		<counter id="traffic" name="Трафик в текущем месяце" units="Гб"/>
+	</counters>
+	<keywords></keywords>
+	<type>internet</type>
+	<country>ru</country>
+</provider>

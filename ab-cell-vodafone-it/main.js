@@ -60,7 +60,7 @@ function main(){
     }
 
     //Установим нужные куки
-    html= AnyBalance.requestGet(baseurl + '/190/ecbb/jsp/utility/createLegacySessionBroker.jsp?picassoJSbroker=https://www.vodafone.it/area-utente/picassoGetLegacySession.jsp', g_headers);
+    html= AnyBalance.requestGet(baseurl + '190/ecbb/jsp/utility/createLegacySessionBroker.jsp?picassoJSbroker=https://www.vodafone.it/area-utente/picassoGetLegacySession.jsp', g_headers);
 
     html= AnyBalance.requestGet(href, g_headers);
 	

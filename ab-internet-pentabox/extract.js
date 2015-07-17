@@ -75,7 +75,7 @@ function processAccount(html, result){
 	getParam(html, result, 'accounts.balance_new', /(?:[\s\S]*?<td[^>]*>){4}([\s\S]*)/i, replaceTagsAndSpaces, parseBalance);
 
 	if(AnyBalance.isAvailable('accounts.traffic')){
-		var href = getParam(html, null, null, /<a[^>]+href="[^"]*w3_p_Main.ShowForm([^"]*IP_CONTRACT_INFO[^"]*)/i, null, html_entity_decode);
+		var href = getParam(html, null, null, /<a[^>]+href="[^"]*w3_p_Main.ShowForm([^"]*IP_CONTRACT_INFO[^"]*)/i, [/\s+/g, ''], html_entity_decode);
 		if(!href){
 			AnyBalance.trace(html);
 			AnyBalance.trace('Не удаётся найти ссылку на расширенную информацию о договоре. Сайт изменен?');

@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="14" date="2015-07-19">
+	Добавлено распознавание смс и минут
+	</change>
 	<change version="13" date="2015-04-21">
 	- Улучшена обработка ошибок.
 	</change>

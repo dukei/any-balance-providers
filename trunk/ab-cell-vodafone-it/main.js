@@ -10,6 +10,18 @@ var g_headers = {
 	'User-Agent':'Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/43.0.2357.130 Safari/537.36'
 };
 
+function getCurrentPhone(html){
+   	var elem = getElements(html, [/<a[^>]+loginOverlayerSim[^>]*>/ig, /currentSim/i])[0];
+   	if(!elem){
+   		AnyBalance.trace(html);
+   		throw new AnyBalance.Error('Could not find current number. Is the site changed?');
+   	}
+   	AnyBalance.trace('Current number: ' + replaceAll(elem, replaceTagsAndSpaces));
+
+   	var phone = getParam(elem, null, null, /<div[^>]+class="loginOverlayerNumero"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+   	return phone;
+}
+
 function main(){
     var prefs = AnyBalance.getPreferences();
     var baseurl = "https://www.vodafone.it/";
@@ -33,20 +45,34 @@ function main(){
         throw new AnyBalance.Error('Could not enter personal account. Is the site changed?');
     }
 
-   	var elem = getElements(html, [/<a[^>]+loginOverlayerSim[^>]*>/ig, /currentSim/i])[0];
-   	if(!elem){
-   		AnyBalance.trace(html);
-   		throw new AnyBalance.Error('Could not find current number. Is the site changed?');
-   	}
-   	AnyBalance.trace('Current number: ' + replaceAll(elem, replaceTagsAndSpaces));
-
-   	var phone = getParam(elem, null, null, /<div[^>]+class="loginOverlayerNumero"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+   	var phone = getCurrentPhone(html);
 
     if(prefs.phone){
-    	if((phone || '').indexOf(prefs.phone) < 0)
-    		throw new AnyBalance.Error('Switching phone numbers is not currently supported. Please contact AnyBalance Team if you have multiple phones in your account', null, true);
+    	if((phone || '').indexOf(prefs.phone) < 0){
+    		AnyBalance.trace('Need to switch to another number...');
+    		var elem = getElements(html, [/<a[^>]+loginOverlayerSim[^>]*>/ig, new RegExp("'selectedBOID':'[^']*" + prefs.phone)])[0];
+    		if(!elem)
+            	throw new AnyBalance.Error('Number ' + prefs.phone + ' has not been found in your account', null, true);
 
-    	//html = AnyBalance.requestGet(baseurl + '190mobile/endpoint/Mobile5_restyle/swap_sim.php?msisdn_swap=' + prefs.phone, g_headers);
+            var formname = getParam(elem, null, null, /jsfcljs\s*\(\s*document.getElementById\('([^']*)/, replaceSlashes);
+            var params = getParam(elem, null, null, /jsfcljs\s*\(\s*document.getElementById[^,]*,(\{[^}]*\})/, null, getJsonEval);
+            var form = getElement(html, new RegExp('<form[^>]+id="' + formname + '"[^>]*>', 'i'));
+
+            if(!form){
+            	AnyBalance.trace(html);
+            	throw new AnyBalance.Error('Could not find phone switching form. Is the site changed?');
+            }
+            
+            params = joinObjects(createFormParams(form), params);
+            var action = getParam(form, null, null, /<form[^>]+action="([^"]*)/i, null, html_entity_decode);
+
+            html = AnyBalance.requestPost(action, params, g_headers);
+            phone = getCurrentPhone(html);
+    	}
+    	if((phone || '').indexOf(prefs.phone) < 0){
+    		AnyBalance.trace(html);
+    		throw new AnyBalance.Error('Could not switch to phone ' + params.selectedBOID + '. Is site changed?');
+    	}
     }
 
     var href = getParam(html, null, null, /updateContents\("[^"]*async",\s*"([^"]*Errore[^"]*)/, replaceSlashes);

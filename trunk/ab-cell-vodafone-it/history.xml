@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="6" date="2015-07-19">
+	Switching phone numbers
+	</change>
 	<change version="5" date="2015-07-09">
 	- Support for site changes
 	</change>

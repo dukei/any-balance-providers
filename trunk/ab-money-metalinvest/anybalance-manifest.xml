@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-money-metalinvest</id>
+	<api flags="no_browser"/>
+	<name>Металлинвестбанк</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансах на счетах Металинвестбанка http://metallinvestbank.ru/</p>
+	<p>Информация берется из интернет-банка https://info.metib.ru:8223</p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>nadapter.js</js>
+		<js>extract.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Остаток" units=" {@currency}"/>
+		<counter id="currency" name="Валюта" type="text"/>
+		<counter id="limit" name="Кредитный лимит" units=" {@currency}"/>
+		<counter id="pct" name="Процентная ставка" units="%"/>
+		<counter id="min_pay" name="Всего к погашению в очередной платеж" units=" {@currency}"/>
+		<counter id="min_pay_till" name="Срок очередного платежа" units=" {@currency}"/>
+		<counter id="accnum" name="Номер счета" type="text"/>
+		<counter id="accname" name="Название" type="text"/>
+		<counter id="fio" name="Владелец" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>money, bank</type>
+	<country>ru</country>
+</provider>

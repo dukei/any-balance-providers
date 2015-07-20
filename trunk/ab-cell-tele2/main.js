@@ -60,6 +60,9 @@ function main() {
 	
 	var matches = html.match(/(csrf[^:]*):\s*'([^']*)'/i);
 	if (!matches){
+		var error = getParam(html, null, null, /<div[^>]+error-wrapper[^>]*>([\s\S]*?)<\/?div/i, replaceTagsAndSpaces, html_entity_decode);
+		if(error)
+			throw new AnyBalance.Error(error);
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error("Не удаётся найти код безопасности для запроса балансов. Свяжитесь с автором провайдера для исправления.");
 	}

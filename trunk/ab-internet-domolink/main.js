@@ -237,6 +237,10 @@ function domolink_new(region,login,password) {
         AnyBalance.trace("Entering client portal: " + form_action);
         html = AnyBalance.requestPost(form_action, params, headers);
 	
+	    if(/elk_clone/i.test(AnyBalance.getLastUrl())){
+	    	//Переадресовали нас на новый лк
+	    	throw new AnyBalance.Error('Ростелеком изменил личный кабинет для вашего логина. Теперь это https://lk.rt.ru - единый личный кабинет Ростелеком. Воспользуйтесь провайдером Ростелеком (Единый кабинет)', null, true);
+	    }
         if(/name="logScope.log_form"/i.test(html)){
             //AnyBalance.trace(html);
             var error = getParam(html, null, null, /<div[^>]+id="loginArea[\s\S]*?<[^>]*txtRed[^>]*>([\s\S]*?)</i, replaceTagsAndSpaces, html_entity_decode);

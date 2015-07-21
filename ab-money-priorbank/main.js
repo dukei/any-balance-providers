@@ -6,8 +6,7 @@ var g_headers = {
 	'User-Agent': 'User-Agent: Dalvik/1.6.0 (Linux; U; Android 4.4.2; sdk Build/MR1)',
 };
 
-//var g_baseurl = 'https://www.prior.by/api/ibapi.axd?action=';
-var g_baseurl = 'http://proxy.anybalance.ru/api/ibapi.axd?action=';
+var g_baseurl = 'https://www.prior.by/api/ibapi.axd?action=';
 
 function main() {
 	var prefs = AnyBalance.getPreferences();

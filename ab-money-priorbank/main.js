@@ -3,10 +3,11 @@
 */
 
 var g_headers = {
-	'User-Agent': 'User-Agent: Dalvik/1.6.0 (Linux; U; Android 4.0.4; sdk Build/MR1)',
+	'User-Agent': 'User-Agent: Dalvik/1.6.0 (Linux; U; Android 4.4.2; sdk Build/MR1)',
 };
 
-var g_baseurl = 'https://www.prior.by/api/ibapi.axd?action=';
+//var g_baseurl = 'https://www.prior.by/api/ibapi.axd?action=';
+var g_baseurl = 'http://proxy.anybalance.ru/api/ibapi.axd?action=';
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
@@ -25,7 +26,13 @@ function main() {
 	
 	var passHash = CryptoJS.SHA512(prefs.password);
 	
-	var xml = AnyBalance.requestPost(g_baseurl + 'login', {UserName: prefs.login, UserPassword: passHash.toString(), Token: encodedToken.toString()}, g_headers);
+	var xml = AnyBalance.requestPost(g_baseurl + 'login', {
+		UserName: prefs.login, 
+		UserPassword: passHash.toString(), 
+		Token: encodedToken.toString(), 
+		'@OSType': '2', 
+		'@OSVersion': '19', 
+		'@AppVersion': '2.15.06.18'}, g_headers);
 	
 	if (!/UserSession/i.test(xml)) {
 		var error = sumParam(xml, null, null, /<Error>([\s\S]*?)<\/Error/i, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
@@ -75,6 +82,8 @@ function fetchContract(prefs, result) {
 	getParam(contract, result, 'balance', /ContractRest[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseBalance);
 	getParam(contract, result, ['currency', 'balance'], /CurrCode[^>]*>([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(contract, result, 'name', /CustomSynonym[^>]*>([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
+	if(AnyBalance.isAvailable('name') && !result.name)
+		getParam(contract, result, 'name', /Description[^>]*>([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(contract, result, 'cardNumber', /ContracNum[^>]*>([^<]+)/i);
 	getParam(contract, result, '__tariff', /ContracNum[^>]*>([^<]+)/i);
 	getParam(contract, result, 'validto', /FinishDate[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseDate);

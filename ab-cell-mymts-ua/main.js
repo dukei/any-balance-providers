@@ -82,7 +82,8 @@ function main() {
 	sumParam (html, result, 'hvylyny_net1', />(?:3|6)000 региональных минут в сети: осталось\s*([\d\.,]+)\s*бесплатных минут<\/span>/ig, parseBalance, parseTime, aggregate_sum);
 
 	//Минуты в сети МТС которые действуют вне региона
-	getParam (html, result, 'hvylyny_net2', /минут в день вне региона, осталось\s*([\d\.,]+)\s*минут<\/span>/i, parseBalance, parseTime);
+	sumParam (html, result, 'hvylyny_net2', /минут в день вне региона, осталось\s*([\d\.,]+)\s*минут<\/span>/ig, parseBalance, parseTime, aggregate_sum);
+	sumParam (html, result, 'hvylyny_net2', /минут в день для внутрисетевых звонков во всех областях: осталось\s*([\d\.,]+)\s*бесплатных секунд.<\/span>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 
 	//Пакетные минуты в сети МТС общенациональные
 	sumParam (html, result, 'hvylyny_net3', /минут внутри сети, осталось\s*(\d+)\s*бесплатных секунд/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);

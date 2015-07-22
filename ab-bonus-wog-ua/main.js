@@ -25,7 +25,20 @@ function main() {
     }, addHeaders({Referer: baseurl + 'profile/login/'}));
 	
 	var json = getJson(html);
-	if(!json || !json.status) {
+	if(!json || json.status !== true) {
+		if(json){
+			if(json.status == 'card_not_found')
+				throw new AnyBalance.Error('Карта не найдена', null, true);
+			if(json.status == 'invalid_password')
+				throw new AnyBalance.Error('Неверный пароль', null, true);
+			var e = {};
+			if(json.errors){
+				for(var i in json.errors)
+					sumParam(json.errors[i], e, 'e', null, null, null, aggregate_join);
+			}
+			if(e.e)
+				throw new AnyBalance.Error(e);
+		}
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}

@@ -12,26 +12,36 @@ var g_headers = {
 };
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'http://pride.wog.ua/';
+	var baseurl = 'http://wog.ua/ua/';
 	AnyBalance.setDefaultCharset('utf-8');
 	
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 	
-	var html = AnyBalance.requestPost(baseurl + 'ajax/service.php', {
-        card:prefs.login,
-        pass:prefs.password,
+	var html = AnyBalance.requestPost(baseurl + 'profile/login/', {
+        "data[login]":prefs.login,
+        "data[password]":prefs.password,
 		func:'GetRemains'
-    }, addHeaders({Referer: 'http://pride.wog.ua/rus'}));
+    }, addHeaders({Referer: baseurl + 'profile/login/'}));
 	
 	var json = getJson(html);
-	if(!json || json.Status != 0 || !json.Bonuses.Remains) {
+	if(!json || !json.status) {
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
-	
+
     var result = {success: true};
-	getParam(json.Bonuses.Remains+'', result, 'balance', null, replaceTagsAndSpaces, parseBalance);
+    sumParam(json.info.FIRSTNAME, result, 'fio', null, null, null, aggregate_join);
+    sumParam(json.info.MIDDLENAME, result, 'fio', null, null, null, aggregate_join);
+    sumParam(json.info.LASTNAME, result, 'fio', null, null, null, aggregate_join);
+    getParam(json.info.BIRTHDAY, result, 'birthday', null, null, parseDate);
+    getParam(json.info.TELEPHONE, result, 'phone');
+    getParam(json.info.EMAIL, result, 'email');
+    getParam(json.info.SEX, result, 'sex', null, null, function(str){return str == 2 ? 'ж' : 'м'});
+
+    html = AnyBalance.requestGet(json.redirectLink, g_headers);
+	getParam(html, result, 'balance', /<span[^>]+balance_status[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, '__tariff', />Номер картки<[\s\S]*?<div[^>]+class="right"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
 	
     AnyBalance.setResult(result);
 }

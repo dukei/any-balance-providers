@@ -82,6 +82,8 @@ function main() {
             }
         }
 
+        result.__tariff = prefs.login;
+
         result.success = true;
 
         AnyBalance.trace("Все запросы завершены.");

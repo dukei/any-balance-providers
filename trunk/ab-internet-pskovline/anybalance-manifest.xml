@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="7" major_version="1">ab-internet-pskovline</id>
+  <id version="8" major_version="1">ab-internet-pskovline</id>
   <name>PskovLine (Псков)</name>
   <description>
     ПсковЛайн (http://www.pskovline.ru). Псковский интернет-провайдер.

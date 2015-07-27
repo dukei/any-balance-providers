@@ -26,7 +26,7 @@ function main() {
 	
 	html = AnyBalance.requestGet(baseurl + href, g_headers);
 	
-	var header = getParam(html, null, null, /<div[^>]*class="basic-quote[^"]*"(?:[^>]*>){43}(?:\s*<\/div[^>]*>\s*){3}/i);
+	var header = getElement(html, /<div[^>]*class="basic-quote"[^>]*>/i);
 	if(!header)
 		throw new AnyBalance.Error('Please check entered quote. The quote ' + prefs.quote + ' has not been found!');
 	

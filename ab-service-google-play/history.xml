@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="6" date="2015-07-27">
+	- Support for site changes.
+	</change>
 	<change version="5" date="2015-02-26">
 	- Translation added.
 	</change>
@@ -12,9 +15,4 @@
 	<change version="2" date="2015-02-26">
 	- preferences fixed.
 	</change>
-<!--
-	<change version="2" date="2014-09-03">
-	- 
-	</change>
--->
 </history>

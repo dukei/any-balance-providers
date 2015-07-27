@@ -68,7 +68,7 @@ function main() {
 		for(var i =0; i < apps.length; i++) {
 			var currentApp = apps[i];
 			
-			var appName = currentApp[1][2][1][0][2];
+			var appName = currentApp[6][1];
 			if(new RegExp(prefs.app_name, 'i').test(appName)) {
 				app = currentApp;
 				//AnyBalance.trace(JSON.stringify(app));
@@ -79,7 +79,7 @@ function main() {
 
 	var result = {success: true};
 	
-	getParam((dev_acc_name || '') + ': ' + currentApp[1][2][1][0][2], result, '__tariff');
+	getParam((dev_acc_name || '') + ': ' + appName, result, '__tariff');
 	// СР. ОЦЕНКА 
 	getParam((app[3][3] || '0') + '', result, 'rating', null, replaceTagsAndSpaces, parseBalance);
 	// ВСЕГО оценок
@@ -92,4 +92,8 @@ function main() {
 	getParam((app[3][4] || '0') + '', result, 'errors_total', null, replaceTagsAndSpaces, parseBalance);
 	
 	AnyBalance.setResult(result);
+}
+
+function findInArray() {
+		
 }

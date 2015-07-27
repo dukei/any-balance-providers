@@ -52,7 +52,7 @@ function googleLogin(prefs) {
 	}, g_headers);
 	
 	// Двухэтапная авторизация...
-	if(/secondfactor/i.test(html)) {
+	if(/secondfactor|Двухэтапная аутентификация/i.test(html)) {
 		// throw new AnyBalance.Error('Two-factor authorization is enabled. Just now we can`t deal with this. Login attempt has failed.');
 		if(AnyBalance.getLevel() >= 7) {
 			AnyBalance.trace('Trying to get code...');

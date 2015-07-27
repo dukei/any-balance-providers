@@ -346,7 +346,7 @@ function createFormParams(html, process, array){
                 value=undefined;
             else if(/type=['"]checkbox['"]/i.test(str)){
             	//Чекбокс передаёт значение только если он чекед. Если чекед, а значения нет, то передаёт on
-                value = /\s+checked[\s>=]/i.test(str) ? getParam(str, null, null, /value=['"]([^'"]*)['"]/i, null, html_entity_decode) || 'on' : undefined;
+                value = /[^\w]checked[^\w]/i.test(str) ? getParam(str, null, null, /value=['"]([^'"]*)['"]/i, null, html_entity_decode) || 'on' : undefined;
             }else
                 value = getParam(str, null, null, /value=['"]([^'"]*)['"]/i, null, html_entity_decode) || '';
             name = nameInp;

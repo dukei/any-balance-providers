@@ -7,10 +7,10 @@
 
 function isLoginSuccesful(html) {
 	if (!/logout/i.test(html)) {
-		var error = getParam(html, null, null, /<span[^>]+class="errormsg[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
+		var error = getParam(html, null, null, /<span[^>]+id="errormsg[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
 		if (error)
 			throw new AnyBalance.Error(error);
-		error = getParam(html, null, null, /(<form[^>]+name="verifyForm")|secondfactor/i, replaceTagsAndSpaces, html_entity_decode);
+		error = getParam(html, null, null, /<form[^>]+id="challenge"/i, replaceTagsAndSpaces, html_entity_decode);
 		if (error)
 			throw new AnyBalance.Error('This account requires 2-step authorization. Turn off 2-step authorization to use this provider.');
 		
@@ -52,31 +52,22 @@ function googleLogin(prefs) {
 	}, g_headers);
 	
 	// Двухэтапная авторизация...
-	if(/secondfactor|Двухэтапная аутентификация/i.test(html)) {
+	var form = getParam(html, null, null, /<form[^>]+id="challenge"[^>]*>([\s\S]*?)<\/form>/i);
+	if(form) {
 		// throw new AnyBalance.Error('Two-factor authorization is enabled. Just now we can`t deal with this. Login attempt has failed.');
 		if(AnyBalance.getLevel() >= 7) {
 			AnyBalance.trace('Trying to get code...');
-			var promt = getParam(html, null, null, /"deliverymethodcontainer"[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
-			var code = AnyBalance.retrieveCode(promt || 'Plaese, enter code from Authentificator');
-			AnyBalance.trace('Got code: ' + code);
+			var promt = getParam(html, null, null, /<input[^>]+name="Pin"[^>]*placeholder="([^"]*)/i, null, html_entity_decode);
+			var code = AnyBalance.retrieveCode(promt || 'Please, enter code from Authentificator');
+			AnyBalance.trace('Got code: ' + code);           
 		}
 		if(!isset(code))
 			throw new AnyBalance.Error('Two-factor authorization is enabled. Just now we can`t deal with this. Login attempt has failed.');
+
+		var params = createFormParams(form);
+		params.Pin = code;
 		
-		var secTok = getParam(html, null, null, /['"]secTok['"][^>]*value=['"]([^'']+)/i);
-		var timeStmp = getParam(html, null, null, /['"]timeStmp['"][^>]*value=['"]([^'']+)/i);
-		
-		html = AnyBalance.requestPost(baseurlLogin + 'SecondFactor', [
-			['checkedDomains', 'youtube'],
-			['pstMsg', '0'],
-			['timeStmp', timeStmp],
-			['secTok', secTok],
-			['smsToken', ''],
-			['smsUserPin', code],
-			['smsVerifyPin', 'Подтвердить'],
-			['PersistentOptionSelection', '1'],
-			['PersistentCookie', 'on'],
-		], addHeaders({Referer: baseurlLogin + 'SecondFactor?checkedDomains=youtube&pstMsg=0'}));
+		html = AnyBalance.requestPost(baseurlLogin + 'signin/challenge', params, addHeaders({Referer: baseurlLogin + 'ServiceLoginAuth'}));
 		
 		// if(isLoginSuccesful(html)) {
 			// // Если вошли, то это повод сохранить все куки чтобы больше не донимать юзера окошками

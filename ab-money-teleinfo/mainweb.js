@@ -26,14 +26,20 @@ function mainWeb() {
 }
 
 function doNew(prefs) {
-    var baseurl = 'https://www.telebank.ru/';
+    var baseurl = 'https://online.vtb24.ru/';
     var html = AnyBalance.requestGet(baseurl + 'content/telebank-client/ru/login.html', g_headers);
+
+    var psec = getParam(html, null, null, /page-security-id="([^"]*)/i, null, html_entity_decode);
+	var M = new Date(), N = M.getHours() + ":" + M.getMinutes() + ":" + M.getSeconds() + " " + M.getDate() + "-" + M.getMonth() + "-" + M.getFullYear();
 	
     html = AnyBalance.requestPost(baseurl + 'services/signin', {
         login: prefs.login,
         password: prefs.password,
         '_charset_': 'utf-8',
-        'dateTime': '18:10:20 4-6-2014'
+        'dateTime': N,
+        logParams: '{"ScreenResolution":"1920x1080"}',
+		callId: '2',
+		pageSecurityID: psec
     }, addHeaders({Referer: baseurl + 'content/telebank-client/ru/login.html', 'X-Requested-With': 'XMLHttpRequest'}));
 
     var json = getJson(html);

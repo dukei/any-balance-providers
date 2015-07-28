@@ -27,7 +27,7 @@ function main() {
 		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
 	}
 	
-	html = AnyBalance.requestPost(baseurlLogin + 'wap/auth/submitLoginAndPassword', {
+	html = AnyBalance.requestPost(baseurlLogin + 'wap/auth/submitLoginAndPassword?serviceId=301', {
 		pNumber: prefs.login,
 		password: prefs.password,
 	}, g_headers);
@@ -57,6 +57,7 @@ function main() {
 	
 	getParam(html, result, "userName", /"wide-header"[\s\S]*?([^<>]*)<\/h1>/i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(html, result, '__tariff', /Тариф<\/h2>[\s\S]*?>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, "phone", /"top-profile-subscriber-phone"[^>]*>([^<>]*)<\//i, replaceTagsAndSpaces, html_entity_decode);
 	
 	var matches = html.match(/(csrf[^:]*):\s*'([^']*)'/i);
 	if (!matches){
@@ -132,7 +133,7 @@ function getCounter(result, json){
 		}
 		if (AnyBalance.isAvailable('traffic_used')) {
 			matches = /GPRS.*?([\d\.\,]+)\s*(Гб|Мб|Кб)/i.exec(name);
-			if (!matches) matches = /([\d\.\,]+)\s*(Гб|Мб|Кб).*GPRS/i.exec(name);
+			if (!matches) matches = /([\d\.\,]+)\s*(Гб|Мб|Кб).*GPRS/i.exec(name.replace(/\s+/g, ''));
 			if (matches) {
 				var val = parseFloat(matches[1].replace(/^[\s,\.]*|[\s,\.]*$/g, '').replace(',', '.'));
 				switch (matches[2]) {

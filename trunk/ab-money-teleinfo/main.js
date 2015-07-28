@@ -116,8 +116,13 @@ function request(m) {
     if (AnyBalance.getLastStatusCode() >= 400)
         throw new AnyBalance.Error('Error requesting ' + sm + ': ' + CryptoJS.enc.Utf8.stringify(words));
 
-    var xml = CryptoJS.enc.Utf8.stringify(words, sizesSize + wordsVer.sigBytes);
+    var xml = CryptoJS.enc.Utf8.stringify(words, 4 + wordsVer.sigBytes);
+    AnyBalance.trace(xml);
     var obj = deserialize(xml);
+
+    if(typeof(obj.payload) == 'string')
+    	throw new AnyBalance.Error(obj.payload);
+
     AnyBalance.trace('Returned ' + getParam(obj.payload.__type, null, null, /\.(\w+)$/));
 
     if(/ErrorResponse/.test(obj.payload.__type))
@@ -127,133 +132,139 @@ function request(m) {
 }
 
 function deserialize(xml) {
-    var parser = new EasySAXParser();
-
-    var stack = [];
-    var propNamesStack = [];
-    var propName = null;
-    var container = null;
-    var obj = null;
-    var text = null;
-    var refMap = [];
-    var refCount = 0;
-
-    parser.on('error', function (msg) {
-        AnyBalance.trace(msg);
-    });
-
-    parser.on('startNode', function (elem, attr, uq, tagend, getStrNode) {
-        text = ''; //В начале тэга всегда сбрасываем текст содержимого
-        switch (elem) {
-            case 'map':
-                obj = {};
-                break;
-            case 'list':
-                obj = [];
-                break;
-            default:
-                return; //Нечего делать
-        }
-        refMap[refCount++] = obj;
-        stack.push(obj);
-        propNamesStack.push(propName);
-        propName = null; //Сбрасываем имя проперти текущее
-        container = elem;
-    });
-
-    function putValue(val, getTypedVal, bSetName) {
-        if (container == 'list') {
-            //Просто айтем в массиве
-            obj.push(getTypedVal(val));
-        } else if (container == 'map') {
-            if (propName) {
-                //Имя свойства уже установлено, значит, это значение
-                obj[propName] = getTypedVal(val);
-                propName = null;
-            } else {
-                if(!bSetName)
-                    throw new AnyBalance.Error('deserialize error: unexpected property without name: <' + elem + '>' + val);
-                else
-                	propName = val;
+	try{
+        var parser = new EasySAXParser();
+        
+        var stack = [];
+        var propNamesStack = [];
+        var propName = null;
+        var container = null;
+        var obj = null;
+        var text = null;
+        var refMap = [];
+        var refCount = 0;
+        
+        parser.on('error', function (msg) {
+            AnyBalance.trace(msg);
+        });
+        
+        parser.on('startNode', function (elem, attr, uq, tagend, getStrNode) {
+            text = ''; //В начале тэга всегда сбрасываем текст содержимого
+            switch (elem) {
+                case 'map':
+                    obj = {};
+                    break;
+                case 'list':
+                    obj = [];
+                    break;
+                default:
+                    return; //Нечего делать
             }
-        } else {
-            throw new AnyBalance.Error('deserialize error: unexpected value outside the container: <' + elem + '>' + val);
-        }
-    }
-
-    parser.on('endNode', function (elem, uq, tagstart, str) {
-        var val = text;
-        switch (elem) {
-            case 'type':
-                obj.__type = val;
-                break;
-            case 'length':
-                if(container != 'list')
-                    throw new AnyBalance.Error('deserialize error: unexpected length outside list: <' + elem + '>' + val);
-                //А можно и не обрабатывать, всё равно наполняем постепенно
-                break;
-            case 'string':
-                putValue(val, function(val){return val}, true);
-                break;
-            case 'boolean':
-                putValue(val, function(val){return val.toLowerCase() == "true"});
-                break;
-            case 'null':
-                putValue(val, function(val){return null});
-                break;
-            case 'double':
-                putValue(val, function(val){return parseFloat(val)});
-                break;
-            case 'long':
-            case 'int':
-                putValue(val, function(val){return parseInt(val)});
-                break;
-            case 'date':
-                putValue(val, function(val){
-                    var matches = val.match(/(\d{4})(\d\d)(\d\d)T(\d\d)(\d\d)(\d\d)\.(\d\d\d)Z/);
-                    if(!matches)
-                        throw new AnyBalance.Error('deserialize error: unexpected date format: <' + elem + '>' + val);
-                    var d = new Date(0);
-                    d.setUTCFullYear(parseInt(matches[1]), parseInt(matches[2]) - 1, parseInt(matches[3]));
-                    d.setUTCHours(parseInt(matches[4]), parseInt(matches[5]), parseInt(matches[6]), parseInt(matches[7]));
-                    return d;
-                });
-                break;
-            case 'map':
-            case 'list':
-                var contObj = stack.pop();
-                propName = propNamesStack.pop();
-                if (stack.length > 0) {
-                    obj = stack[stack.length - 1];
-                    container = isArray(obj) ? 'list' : 'map';
-                    if(container == 'map') {
-                        obj[propName] = contObj;
-                    }else{
-                        obj.push(contObj);
-                    }
+            refMap[refCount++] = obj;
+            stack.push(obj);
+            propNamesStack.push(propName);
+            propName = null; //Сбрасываем имя проперти текущее
+            container = elem;
+        });
+        
+        function putValue(val, getTypedVal, bSetName) {
+            if (container == 'list') {
+                //Просто айтем в массиве
+                obj.push(getTypedVal(val));
+            } else if (container == 'map') {
+                if (propName) {
+                    //Имя свойства уже установлено, значит, это значение
+                    obj[propName] = getTypedVal(val);
                     propName = null;
+                } else {
+                    if(!bSetName)
+                        throw new AnyBalance.Error('deserialize error: unexpected property without name: <' + elem + '>' + val);
+                    else
+                    	propName = val;
                 }
-                break;
-            case 'ref':
-            	putValue(val, function(val){
-            		var id = parseInt(val);
-            		if(!refMap[id])
-            			throw new AnyBalance.Error('Inexistent reference: ' + id + ' of ' + refMap.length);
-            		return refMap[id];
-            	});
-            	break;
-            default:
-                throw new AnyBalance.Error('deserialize error: unexpected tag: <' + elem + '>' + val);
+            } else {
+                throw new AnyBalance.Error('deserialize error: unexpected value outside the container: <' + elem + '>' + val);
+            }
         }
-    });
+        
+        parser.on('endNode', function (elem, uq, tagstart, str) {
+            var val = text;
+            switch (elem) {
+                case 'type':
+                    obj.__type = val;
+                    break;
+                case 'length':
+                    if(container != 'list')
+                        throw new AnyBalance.Error('deserialize error: unexpected length outside list: <' + elem + '>' + val);
+                    //А можно и не обрабатывать, всё равно наполняем постепенно
+                    break;
+                case 'string':
+                    putValue(val, function(val){return val}, true);
+                    break;
+                case 'boolean':
+                    putValue(val, function(val){return val.toLowerCase() == "true"});
+                    break;
+                case 'null':
+                    putValue(val, function(val){return null});
+                    break;
+                case 'double':
+                    putValue(val, function(val){return parseFloat(val)});
+                    break;
+                case 'long':
+                case 'int':
+                    putValue(val, function(val){return parseInt(val)});
+                    break;
+                case 'date':
+                    putValue(val, function(val){
+                        var matches = val.match(/(\d{4})(\d\d)(\d\d)T(\d\d)(\d\d)(\d\d)\.(\d\d\d)Z/);
+                        if(!matches)
+                            throw new AnyBalance.Error('deserialize error: unexpected date format: <' + elem + '>' + val);
+                        var d = new Date(0);
+                        d.setUTCFullYear(parseInt(matches[1]), parseInt(matches[2]) - 1, parseInt(matches[3]));
+                        d.setUTCHours(parseInt(matches[4]), parseInt(matches[5]), parseInt(matches[6]), parseInt(matches[7]));
+                        return d;
+                    });
+                    break;
+                case 'map':
+                case 'list':
+                    var contObj = stack.pop();
+                    propName = propNamesStack.pop();
+                    if (stack.length > 0) {
+                        obj = stack[stack.length - 1];
+                        container = isArray(obj) ? 'list' : 'map';
+                        if(container == 'map') {
+                            obj[propName] = contObj;
+                        }else{
+                            obj.push(contObj);
+                        }
+                        propName = null;
+                    }
+                    break;
+                case 'ref':
+                	putValue(val, function(val){
+                		var id = parseInt(val);
+                		if(!refMap[id])
+                			throw new AnyBalance.Error('Inexistent reference: ' + id + ' of ' + refMap.length);
+                		return refMap[id];
+                	});
+                	break;
+                default:
+                    throw new AnyBalance.Error('deserialize error: unexpected tag: <' + elem + '>' + val);
+            }
+        });
+        
+        parser.on('textNode', function (s, uq) {
+            text = uq(s);
+        });
+        
+        parser.parse(xml);
+    	return obj;
 
-    parser.on('textNode', function (s, uq) {
-        text = uq(s);
-    });
-
-    parser.parse(xml);
-
-    return obj;
+    }catch(e){
+    	AnyBalance.trace('Error unserializing xml: ' + xml);
+    	AnyBalance.trace('Exception: ' + e.message + ': ' + e.stack);
+    	throw e;
+    }
 
 }
 

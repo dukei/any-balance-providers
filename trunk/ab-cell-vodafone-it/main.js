@@ -17,7 +17,7 @@ function getCurrentPhone(html){
    		throw new AnyBalance.Error('Could not find current number. Is the site changed?');
    	}
    	AnyBalance.trace('Current number: ' + replaceAll(elem, replaceTagsAndSpaces));
-
+   	
    	var phone = getParam(elem, null, null, /<div[^>]+class="loginOverlayerNumero"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
    	return phone;
 }
@@ -25,8 +25,12 @@ function getCurrentPhone(html){
 function main(){
     var prefs = AnyBalance.getPreferences();
     var baseurl = "https://www.vodafone.it/";
-    AnyBalance.setDefaultCharset('utf-8'); 
+    AnyBalance.setDefaultCharset('utf-8');
 
+    checkEmpty(prefs.login, 'Введите логин!');
+    checkEmpty(!/^\s+|\s+$/.test(prefs.login), 'Логин не должен начинаться или заканчиваться пробелами. Уберите лишние пробелы!');
+    checkEmpty(prefs.password, 'Введите пароль!');
+    
 //	var html = AnyBalance.requestGet(baseurl + '190mobile/endpoint/Mobile5_restyle/home_mio190.php', g_headers);
 
 	var html = AnyBalance.requestPost(baseurl + 'area-utente/sso/external/login', {

@@ -697,8 +697,7 @@ function getMiass(){
 }
 
 function getKurgan(){
-    var baseurl = 'https://infocentr.ru/';
-    typicalLanBillingInetTv(baseurl + 'lk/index.php?r=site/login');
+    newTypicalLanBillingInetTv('https://lkkurgan.ural.mts.ru/index.php');
 }
 
 function getBarnaul(){

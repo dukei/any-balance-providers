@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="24">ab-cell-tele2</id>
+	<id version="25">ab-cell-tele2</id>
 	<api flags="no_browser"/>
 	<name>Tele2</name>
 	<description html="true"><![CDATA[
@@ -38,6 +38,7 @@
 		<counter id="history_income" name="Сумма последних 10 пополнений" units=" р"/>
 		<counter id="history_out" name="Сумма последних 10 списаний" units=" р"/>
 		<counter id="history" name="Последние 10" type="text"/>
+		<counter id="phone" name="Телефон" type="text"/>
 		<counter id="userName" name="Владелец" type="text"/>
 	</counters>
 	<keywords>Сотовый телефон, мобильный, мобильник, теле2, россия</keywords>

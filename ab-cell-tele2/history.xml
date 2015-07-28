@@ -1,5 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="25" date="2015-07-28">
+	Исправлено получение трафика в некоторых случаях
+	Авторизация с учетом рекомендаций Tele2
+	</change>
 	<change version="24" date="2015-07-20">
 	- Улучшена обработка ошибок.
 	</change>

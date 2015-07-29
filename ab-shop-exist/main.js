@@ -82,14 +82,12 @@ function main(){
 	
 	var result = {success: true};
 	
-    getParam(html, result, 'balance', />\s*Счёт:([^<]+)/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'balance', /Средства на счету:([^<]+)<\/div/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'debt', /Задолженность по заказам:([^<]+)<\/div/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'balance_total', /<div>\s*Итого:\s*<span>([^<]+)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+	
     getParam(html, result, 'code', /'код клиента':\s*<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, '__tariff', /'код клиента':\s*<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'debt', />\s*Долг по заказам:([^<]+)/i, replaceTagsAndSpaces, parseBalance);
-	// Вроде как этих данных нет больше
-	getParam(html, result, 'balancebez', /Безналичный счёт:[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'card', /Счёт[^>]*карты:[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'carddebt', /Долг по счёту кредитной карты:[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
 	
 	var singleOrder;
 	// Новый формат, по всем позициям в заказе

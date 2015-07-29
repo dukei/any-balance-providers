@@ -25,15 +25,15 @@
         key="type" 
         title="Банковский продукт"
         summary="||{@s}\n"
-        entries="Карта|Счет"
-        entryValues="card|acc"
+        entries="Карта|Счет|Депозит"
+        entryValues="card|acc|dep"
 	defaultValue="card">
     </ListPreference>
     <EditTextPreference 
-        title="Номер карты/счета" 
+        title="Номер карты/счета/депозита" 
         positiveButtonText="ОК" 
         summary="|Автоматически|{@s}" 
-        dialogTitle="Номер карты/счета" 
+        dialogTitle="Номер карты/счета/депозита" 
         negativeButtonText="Отмена" 
         dialogMessage="Введите последние 4 цифры номера карты/счета или введите название счета, информацию по которому Вы хотите получить. Оставьте это поле пустым, если хотите получить информацию по первой карте/счету"
         key="num">

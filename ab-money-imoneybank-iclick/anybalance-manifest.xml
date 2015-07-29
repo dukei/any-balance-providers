@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="4">ab-money-imoneybank-iclick</id>
+	<id version="5">ab-money-imoneybank-iclick</id>
 	<name>АйМаниБанк (iclick)</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе на счете или карте для клиентов iMoneyBank (бывший «АлтайЭнергоБанк») (http://imoneybank.ru).</p>
@@ -18,19 +18,23 @@
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
 		<js>library.js</js>
+		<js>nadapter.js</js>
+		<js>extract.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
 	<counters>
 		<counter id="balance" name="Остаток" units="{@currency}"/>
-		<counter id="currency" name="Валюта" type="text"/>
+		<counter id="min_pay" name="Минимальный платеж" units="{@currency}"/>
+		<counter id="min_pay_till" name="Срок минимального платежа" type="time" format="dd/MM/yyyy"/>
 		<counter id="type" name="Продукт" type="text"/>
 		<counter id="status" name="Статус" type="text"/>
 		<counter id="deadline" name="Срок действия" type="time" format="dd/MM/yyyy"/>
 		<counter id="acc_num" name="Номер счета" type="text"/>
 		<counter id="card_num" name="Номер карты" type="text"/>
+		<counter id="currency" name="Валюта" type="text"/>
 	</counters>
 	<keywords>imoneybank</keywords>
-	<type>money</type>
+	<type>money, bank</type>
 	<country>ru</country>
 </provider>

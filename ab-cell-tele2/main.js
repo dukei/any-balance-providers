@@ -26,7 +26,7 @@ function main() {
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
 	}
-	
+	                                                                             
 	html = AnyBalance.requestPost(baseurlLogin + 'wap/auth/submitLoginAndPassword?serviceId=301', {
 		pNumber: prefs.login,
 		password: prefs.password,
@@ -61,7 +61,10 @@ function main() {
 	
 	var matches = html.match(/(csrf[^:]*):\s*'([^']*)'/i);
 	if (!matches){
-		var error = getParam(html, null, null, /<div[^>]+error-wrapper[^>]*>([\s\S]*?)<\/?div/i, replaceTagsAndSpaces, html_entity_decode);
+		var error = getParam(html, null, null, /<div[^>]+(?:error-wrapper|popup-message\s+error)[^>]*>([\s\S]*?)<\/?div/i, replaceTagsAndSpaces, html_entity_decode);
+		if(error)
+			throw new AnyBalance.Error(error);
+		var error = getElement(html, /<div[^>]+popup-message\s+error[^>]*>/i, replaceTagsAndSpaces, html_entity_decode);
 		if(error)
 			throw new AnyBalance.Error(error);
 		AnyBalance.trace(html);
@@ -114,7 +117,7 @@ function getCounter(result, json){
 	        getCounter(result, json.subTotals[j]);
 	    }
 	}else  {
-		var name = json.name;
+		var name = json.name || '';
 		var matches;
 		if (AnyBalance.isAvailable('min_used')) {
 			if (matches = /(\d+).*минут/i.exec(name)) {

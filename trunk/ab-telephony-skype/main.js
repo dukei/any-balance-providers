@@ -10,32 +10,43 @@
 	
  	AnyBalance.setDefaultCharset('utf-8');
  	var baseLogin = 'https://login.skype.com/login?method=skype&application=account&intcmp=sign-in&return_url=https%3A%2F%2Fsecure.skype.com%2Faccount%2Flogin', info = '';
- 	if (!prefs.__dbg) {
- 		info = AnyBalance.requestGet(baseLogin);
- 		var form = getParam(info, null, null, /<form[^>]+id="LoginForm[^>]*>([\s\S]*?)<\/form>/i);
- 		if (!form){ 
-			AnyBalance.trace(info);
-			throw new AnyBalance.Error("Can`t find login form. Is site changed or down?");
-		}
- 		var params = createFormParams(form, function(params, input, name, value) {
- 			if (name == 'username') 
-				value = prefs.login;
- 			else if (name == 'password')
-				value = prefs.password;
 
-			return value;
- 		});
- 		info = AnyBalance.requestPost(baseLogin, params);
- 	} else {
- 		info = AnyBalance.requestGet('https://secure.skype.com/portal/overview');
- 	}
- 	if (!/skype\.com\/(?:portal\/)?logout/i.test(info)) {
+ 	var info = AnyBalance.requestGet(baseLogin);
+ 	var form = getParam(info, null, null, /<form[^>]+id="LoginForm[^>]*>([\s\S]*?)<\/form>/i);
+ 	if (!form){ 
+		AnyBalance.trace(info);
+		throw new AnyBalance.Error("Can`t find login form. Is site changed or down?");
+	}
+ 	var params = createFormParams(form, function(params, input, name, value) {
+ 		if (name == 'username') 
+			value = prefs.login;
+ 		else if (name == 'password')
+			value = prefs.password;
+
+		return value;
+ 	});
+ 	info = AnyBalance.requestPost(baseLogin, params);
+
+ 	var form = getElement(info, /<form[^>]+id="redirectForm"[^>]*>/i);
+
+ 	if (!form) {
  		var error = getElement(info, /<div[^>]+message_error[^>]*>/i, [/<div[^>]+messageIcon[^>]*>[\s\S]*?<\/div>/ig, '', replaceTagsAndSpaces], html_entity_decode);
  		if (error)
 			throw new AnyBalance.Error(error, null, /your password|ваш пароль|введіть пароль/i.test(error)); //Надо бы и другие языки поддержать, конечно, но хотя бы 3
 		AnyBalance.trace(info);
  		throw new AnyBalance.Error("Can`t login in skype account. Maybe site is changed?");
  	}
+
+ 	info = AnyBalance.requestPost("https://secure.skype.com/portal/login", createFormParams(form));
+
+ 	if (!/skype\.com\/(?:portal\/)?logout/i.test(info)) {
+ 		var error = getElement(info, /<div[^>]+message_error[^>]*>/i, [/<div[^>]+messageIcon[^>]*>[\s\S]*?<\/div>/ig, '', replaceTagsAndSpaces], html_entity_decode);
+ 		if (error)
+			throw new AnyBalance.Error(error, null, /your password|ваш пароль|введіть пароль/i.test(error)); //Надо бы и другие языки поддержать, конечно, но хотя бы 3
+		AnyBalance.trace(info);
+ 		throw new AnyBalance.Error("Can`t redirect to skype account. Maybe site is changed?");
+ 	}
+
  	var result = {success: true, subscriptions: 0};
 	
  	getParam(info, result, 'balance', /class="credit(?:[\s\S]*?<span[^>]*>){3}([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);

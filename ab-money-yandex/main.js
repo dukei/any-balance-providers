@@ -31,7 +31,7 @@ function main() {
 	getParam(html, result, '__tariff', /Номер кошелька(?:[^>]*>){2}(\d{10,20})/i, replaceTagsAndSpaces);
 	getParam(result['__tariff'], result, 'number');
 	
-	var textsum = getParam(html, result, 'balance', /b-sum__amount[^>]*>([\s\S]*?)<\/span>\s*<\/span>/i, replaceTagsAndSpaces);
+	var textsum = getParam(html, result, 'balance', /(?:price|sum)__amount[^>]*>([\s\S]*?)<\/span>\s*<\/span>/i, replaceTagsAndSpaces);
 	AnyBalance.trace('Предположительно баланс где-то здесь: ' + textsum);
 
 	if(/\*{3}/.test(textsum)) {

@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="2.0" version="3">ab-money-transcard-krs</id>
+	<id major_version="2.0" version="4">ab-money-transcard-krs</id>
 	<api flags="no_browser"/>
 	<name>Транспортная карта, Красноярск</name>
 	<description html="true"><![CDATA[
@@ -22,6 +22,6 @@
 		<counter id="LastDate" name="Дата последнего пополнения" type="text"/>
 	</counters>
 	<keywords>Транспортная карта, Красноярск</keywords>
-	<type>money</type>
+	<type>money, wallet</type>
 	<country>ru</country>
 </provider>

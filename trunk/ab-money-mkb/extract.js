@@ -319,7 +319,8 @@ function processLoans(html, result) {
 function processLoan(html, _id, result, detailsJson){
     AnyBalance.trace('Обработка кредита ' + _id);
 	
-	getParam(html, result, 'loans.balance', /(?:[^>]*>){15}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
+	getParam(detailsJson.dt, result, 'loans.balance', /Текущая сумма долга по кредиту:(?:[^>]*>){1}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'loans.limit', /(?:[^>]*>){15}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
 	getParam(detailsJson.dt, result, 'loans.minpay', /Сумма ближайшего платежа:(?:[^>]*>){1}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, ['loans.currency', 'loans.balance', 'loans.minpay'], /(?:[^>]*>){15}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseCurrency);
 	getParam(html, result, 'loans.minpaydate', /(?:[^>]*>){16}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseDateWord);

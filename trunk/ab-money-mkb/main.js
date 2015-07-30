@@ -61,6 +61,7 @@ var g_countersTable = {
 	},
 	crd: {
     	"balance": "loans.balance",
+    	"limit": "loans.limit",
 		"currency": "loans.currency",
 		"latedebt": "loans.penalty",
 		"needpaytill": "loans.minpaydate",

@@ -17,7 +17,7 @@ function main() {
 
 	checkEmpty(prefs.CardNumber, 'Введите номер карты!');
 
-	var html = AnyBalance.requestGet(baseurl + 'card/transport/', g_headers);
+	var html = AnyBalance.requestGet(baseurl, g_headers);
 
 	var token = getParam(html, null, null, /name="csrf_token"[^>]*value="([^"]*)/i, null, html_entity_decode);
 	if (!token)
@@ -36,8 +36,8 @@ function main() {
 	}
 	var result = {success: true};
 	
-	getParam(html, result, 'KolvoEdinits', /Количество транспортных единиц:[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'LastDate', /<h3>\s*Платежи(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'KolvoEdinits', /<h3>\s*Текущий баланс(?:[^>]*>){14}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'LastDate', /<h3>\s*Платежи(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(html, result, 'LastSum', /<h3>\s*Платежи(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
 	
 	AnyBalance.setResult(result);

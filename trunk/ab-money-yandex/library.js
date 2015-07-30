@@ -66,7 +66,7 @@ if(d.hasOwnProperty(f)){return String.fromCharCode(d[f])
 }function createFormParams(a,b,d){var c=d?[]:{};
 a.replace(/<input[^>]+name=['"]([^'"]*)['"][^>]*>|<select[^>]+name=['"]([^'"]*)['"][^>]*>[\s\S]*?<\/select>/ig,function(j,f,g){var e="";
 if(f){if(/type=['"]button['"]/i.test(j)){e=undefined
-}else{if(/type=['"]checkbox['"]/i.test(j)){e=/\s+checked[\s>=]/i.test(j)?getParam(j,null,null,/value=['"]([^'"]*)['"]/i,null,html_entity_decode)||"on":undefined
+}else{if(/type=['"]checkbox['"]/i.test(j)){e=/[^\w]checked[^\w]/i.test(j)?getParam(j,null,null,/value=['"]([^'"]*)['"]/i,null,html_entity_decode)||"on":undefined
 }else{e=getParam(j,null,null,/value=['"]([^'"]*)['"]/i,null,html_entity_decode)||""
 }}name=f
 }else{if(g){e=getParam(j,null,null,/^<[^>]*value=['"]([^'"]*)['"]/i,null,html_entity_decode);
@@ -251,10 +251,11 @@ for(var c=0;
 c<a.length;
 ++c){if(a[c]!=="--auto--"&&!isset(b[a[c]])){b[a[c]]=null
 }}if(!isset(b.__tariff)){b.__tariff=null
-}}function getElement(j,m,e,a){var d=getParam(m.toString(),null,null,/<(\w+)/);
-var c=m.exec(j);
+}}function getElement(j,n,e,a){var c=n.exec(j);
 if(!c){return null
 }var l=c.index;
+var m=j.substr(l,c[0].length);
+var d=getParam(m,null,null,/<(\w+)/);
 var f=new RegExp("(?:<"+d+"|</"+d+")[^>]*>","ig");
 f.lastIndex=l+c[0].length;
 var g=0;
@@ -267,7 +268,7 @@ if(b.charAt(1)=="/"){if(g==0){break
 }f.lastIndex=c.index+b.length
 }var h=j.length;
 if(c){h=c.index+c[0].length
-}m.lastIndex=h;
+}n.lastIndex=h;
 var k=j.substring(l,h);
 if(e){k=replaceAll(k,e)
 }if(a){k=a(k)

@@ -424,11 +424,20 @@ function fetchOrdinary(html, baseurl, resultFromLK) {
     }
     if (AnyBalance.isAvailable('abonservice')) {
         AnyBalance.trace("Fetching paid services...");
+        checkIHError(html, result);
         html = AnyBalance.requestGet(baseurl + "product-2-view.aspx", g_headers);
         sumParam(html, result, 'abonservice', /<tr[^>]+class="gm-row-item(?:[\s\S](?!<\/tr>))*?<td[^>]+class="price"[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
     }
     if (!resultFromLK)
         AnyBalance.setResult(result);
+}
+
+function checkIHError(html, result){
+    var error = getParam(html, null, null, /<div[^>]+class="b_error"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+    if(error){
+    	AnyBalance.trace('Ошибка со стороны МТС: ' + error);
+		setCountersToNull(result);
+    }
 }
 
 function isAvailableStatus() {
@@ -438,12 +447,14 @@ function isAvailableStatus() {
 
 function fetchAccumulatedCounters(html, result, mobile) {
     AnyBalance.trace("Parsing accumulated counters...");
+    checkIHError(html, result);
     getParam(html, result, 'tourist', mobile ? /Счетчик Туристическая СИМ-карта от МТС\.[\s\S]*?Состояние счетчика:[\s\S]*?<span[^>]+class="value"[^>]*>([\s\S]*?)<\/span>/i :
         /Счетчик Туристическая СИМ-карта от МТС\.[\s\S]*?<td[^>]+class="counter-value"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 }
 
 function fetchAccountStatus(html, result) {
     AnyBalance.trace("Parsing status...");
+    checkIHError(html, result);
     // Ближайший срок истекания пакета минут
     sumParam(html, result, 'min_till', [/мин\.?,?\s*(?:Пакет\s*)?действует до ([^<]*)/ig, /Остаток пакета минут:[^<]*действует до([^<]*)/ig], replaceTagsAndSpaces, parseDate, aggregate_min);
     // Ближайший срок истекания пакета SMS
@@ -686,8 +697,12 @@ function enterLK(options){
     	if(!options.onlyAutomatic){
             var form = getParam(html, null, null, /<form[^>]+name="Login"[^>]*>([\s\S]*?)<\/form>/i);
             if (!form) {
+            	if(!html)
+            		throw new AnyBalance.Error('Личный кабинет МТС временно недоступен. Попробуйте ещё раз позже');
+            	if(/<h1[^>]*>\s*Request Error/i.test(html))
+            		throw new AnyBalance.Error('Личный кабинет МТС временно не работает. Попробуйте ещё раз позже');
                 AnyBalance.trace(html);
-                throw new AnyBalance.Error("Не удаётся найти форму входа!", allowRetry);
+                throw new AnyBalance.Error("Не удаётся найти форму входа! Сайт изменен?", allowRetry);
             }
 
             var params = createFormParams(form, function (params, input, name, value) {

@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="3.3" version="118" date="2015-07-30">
+	- Улучшена обработка ошибок.
+	</change>
 	<change major_version="3.3" version="117" date="2015-06-24">
 	- Улучшена обработка ошибок.
 	- Исправление автоинициализации.

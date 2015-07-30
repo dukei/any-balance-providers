@@ -98,7 +98,8 @@ function request(m) {
 
     AnyBalance.trace('Requesting ' + getParam(m.payload.__type, null, null, /\.(\w+)$/));
 
-    var ver = "2.0.24";
+//    var ver = "2.0.24";
+    var ver = "2.1.0";
     var wordsStr = CryptoJS.enc.Utf8.parse(sm);
     var wordsVer = CryptoJS.enc.Utf8.parse(ver);
     var words = new CryptoJS.lib.WordArray.init([wordsStr.sigBytes + wordsVer.sigBytes + 1, wordsVer.sigBytes << 24], 5);
@@ -116,7 +117,7 @@ function request(m) {
     if (AnyBalance.getLastStatusCode() >= 400)
         throw new AnyBalance.Error('Error requesting ' + sm + ': ' + CryptoJS.enc.Utf8.stringify(words));
 
-    var xml = CryptoJS.enc.Utf8.stringify(words, 4 + wordsVer.sigBytes);
+    var xml = CryptoJS.enc.Utf8.stringify(words, sizesSize + wordsVer.sigBytes);
     AnyBalance.trace(xml);
     var obj = deserialize(xml);
 
@@ -323,7 +324,7 @@ function main() {
 	var sessionId = AnyBalance.getData('sessionId', '');
 	
 	var commonProperties = {
-    	APP_VERSION: '5.0.10',
+    	APP_VERSION: '5.1.10',
     	DEVICE_PLATFORM: 'ANDROID',
     	'CLIENT-TOKEN': sessionId,
     	'DEVICE_OS': 'Android OS 4.4.4'

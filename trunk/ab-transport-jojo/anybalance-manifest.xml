@@ -1,38 +1,33 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="2" version="4">ab-transport-jojo</id>
-  <name>Skanetrafiken Jojo card</name>
-  <description>
+	<api flags="no_browser"/>
+	<id major_version="2" version="5">ab-transport-jojo</id>
+	<name>Skanetrafiken Jojo card</name>
+	<description>
 	Retrieves the balance and other info of the Skånetrafiken Jojo transport card.
-  </description>
-  <author>valeravi &lt;valeravi@vi-soft.com.ua&gt;</author>
-  <files>
-	<icon>icon.png</icon>
-	<preferences>preferences.xml</preferences>
-	<js>main.js</js>
-	<js>library.js</js>
-	<history>history.xml</history>
-  </files>
-  <counters>
-	<counter id="balance" name="Balance" units=" {@currency}"/>
-	<counter id="expiresat" name="Card expires at" type="time" format="dd/MM/yyyy"/>
-	<counter id="validtill" name="Paid till"  type="time" format="dd/MM/yyyy"/>
-	<counter id="cardnum" name="Card number" type="text"/>
-	<counter id="zonesnum" name="Number of zones"/>
-	<counter id="balancenow" name="Available now" units=" {@currency}"/>
-	<counter id="balancedownload" name="To download" units=" {@currency}"/>
-	<counter id="expirestate" name="Card expire state" type="text"/>
-	<counter id="validfrom" name="Paid from"  type="time" format="dd/MM/yyyy"/>
-	<counter id="expiresin" name="Card expires in" units=" days"/>
-	<counter id="currency" name="Currency" type="text"/>
-  </counters>
-  <keywords>
-	transport, skånetrafiken, skanetrafiken, jojo, jojo reskassa, jojo period, sweden
-  </keywords>
-  <type>
-	transport
-  </type>
-  <country>
-	se
-  </country>
+	</description>
+	<author>valeravi &lt;valeravi@vi-soft.com.ua&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<js>library.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Balance" units=" {@currency}"/>
+		<counter id="expiresat" name="Card expires at" type="time" format="dd/MM/yyyy"/>
+		<counter id="validtill" name="Paid till"  type="time" format="dd/MM/yyyy"/>
+		<counter id="cardnum" name="Card number" type="text"/>
+		<counter id="zonesnum" name="Number of zones"/>
+		<counter id="balancenow" name="Available now" units=" {@currency}"/>
+		<counter id="balancedownload" name="To download" units=" {@currency}"/>
+		<counter id="expirestate" name="Card expire state" type="text"/>
+		<counter id="validfrom" name="Paid from"  type="time" format="dd/MM/yyyy"/>
+		<counter id="expiresin" name="Card expires in" units=" days"/>
+		<counter id="currency" name="Currency" type="text"/>
+	</counters>
+	<keywords>transport, skånetrafiken, skanetrafiken, jojo, jojo reskassa, jojo period, sweden</keywords>
+	<type>transport</type>
+	<country>se</country>
 </provider>

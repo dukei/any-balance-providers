@@ -193,7 +193,7 @@ function processSite(){
 	//Срок действия номера
 	sumParam(html, result, 'till', /(?:Номер діє до:|Номер действует до:)[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate, aggregate_sum);
 	//Номер телефона
-	getParam(html, result, 'phone', /Номер[^<]*телефона(?:[^>]*>){3}\s*(\+38\d+)/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'phone', /Номер[^<]*(?:[^>]*>){3}\s*(\+38\d+)/i, replaceTagsAndSpaces, html_entity_decode);
 	//Лицевой счет
 	getParam(html, result, 'personal_account', /(?:Особовий рахунок|Лицевой счет):[\s\S]*?<td[^>]*>([\s\S]*?)(?:\(|<\/td>)/i, replaceTagsAndSpaces, html_entity_decode);
 	//Срок действия услуги Комфортный переход

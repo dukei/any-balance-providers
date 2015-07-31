@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1" version="5">ab-bonus-balticmiles</id>
+  <id major_version="1" version="6">ab-bonus-balticmiles</id>
   <api flags="no_browser" />
   <name>BalticMiles</name>
   <description>
+    !!! balticmiles.com was shut down. Use http://www.pinsforme.com instead. Not possible to create provider for pinsforme.com as it uses reCAPTCHA... !!!
+
+
     Reading the information from BalticMiles account (http://www.balticmiles.com)
 
     BalticMiles is the largest multi-partner loyalty programme in the Baltic states with more than 200 Point-issuing partners. It was launched in October 2009. BalticMiles Points can be earned at over 19 650 places throughout the world. 

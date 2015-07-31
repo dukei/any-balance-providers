@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1" version="2">ab-money-swedbank</id>
+  <id major_version="1" version="3">ab-money-swedbank</id>
   <name>Swedbank</name>
   <description>
+    !!! Swedbank mobile website was shut down. Not possible to update provider... !!!
+
+
     Retrieves the balance of the bank account in Swedbank through internet bank system.
 	To save the bandwidth, the mobile version of internet-banking is used: https://mobilbank.swedbank.se/
 	To login to the internet banking, the personal password is used, which allow very limited action in internet banking, so it is relatively safe to use the personal password here.

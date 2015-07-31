@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change major_version="1" version="4" date="2015-07-31">
+	- Handelsbanken mobile website was shut down. Not possible to update provider...
+	</change>
     <change major_version="1" version="3" date="2014-10-23">
 	- Updated to be able to skip warning, that mobile web interface for internet banking soon will be shut down.
 	  Anyone want to implement some another solution for future? Maybe reverse engineering official Android application?

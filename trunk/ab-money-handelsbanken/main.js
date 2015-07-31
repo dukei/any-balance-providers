@@ -18,6 +18,8 @@ var g_headers = {
 };
 
 function main(){
+    throw new AnyBalance.Error("Handelsbanken mobile website was shut down. Not possible to update provider...");
+
     var prefs = AnyBalance.getPreferences();
 
     var baseurl = "https://m.handelsbanken.se/";

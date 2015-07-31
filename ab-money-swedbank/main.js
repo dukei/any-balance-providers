@@ -78,6 +78,8 @@ function parseDate(str){
 }
 
 function main(){
+    throw new AnyBalance.Error("Swedbank mobile website was shut down. Not possible to update provider...");
+
     var prefs = AnyBalance.getPreferences();
     var baseurl = "https://mobilbank.swedbank.se/banking/swedbank/";
     var result = {success: true}, matches;

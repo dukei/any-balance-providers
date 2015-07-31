@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="1" version="6" date="2015-07-31">
+	- balticmiles.com was shut down. Use pinsforme.com instead. Not possible to create provider for pinsforme.com as it uses reCAPTCHA...
+	</change> 
 	<change major_version="1" version="5" date="2013-09-17">
 	- Minor fixes 3
 	</change> 

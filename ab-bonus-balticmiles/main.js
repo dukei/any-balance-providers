@@ -6,6 +6,8 @@ Author: valeravi (valeravi@vi-soft.com.ua)
 */
 
 function main(){
+    throw new AnyBalance.Error("balticmiles.com was shut down. Use pinsforme.com instead. Not possible to create provider for pinsforme.com as it uses reCAPTCHA...");
+
     var prefs = AnyBalance.getPreferences();
     var baseurl = "https://www.balticmiles.com/en/";
     AnyBalance.setDefaultCharset('utf-8'); 

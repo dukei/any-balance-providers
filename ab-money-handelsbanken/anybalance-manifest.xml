@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1" version="3">ab-money-handelsbanken</id>
+  <id major_version="1" version="4">ab-money-handelsbanken</id>
   <api flags="no_browser" />
   <name>Handelsbanken</name>
   <description>
+	!!! Handelsbanken mobile website was shut down. Not possible to update provider... !!!
+
+
 	Reads the information from Handelsbanken account (http://m.handelsbanken.se)
   </description>
   <author>valeravi &lt;valeravi@vi-soft.com.ua&gt;</author>

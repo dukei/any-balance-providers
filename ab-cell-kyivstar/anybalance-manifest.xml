@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id major_version="2.0" version="61">ab-cell-kyivstar</id>
+	<id major_version="2.0" version="62">ab-cell-kyivstar</id>
 	<name>Киевстар</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе, бонусных минутах, SMS, MMS, остатке интернет-трафика и других бонусах для пользователей мобильного оператора "Киевстар".</p>
@@ -24,6 +24,7 @@
 	</files>
 	<counters>
 		<counter id="balance" name="Баланс" suffix=" ₴" />
+		<counter id="bonus" name="Бонус" units=" б" />
 		<counter id="bonus_mins_1" name="Бонусные минуты (1)" type="time_interval" format="{@MIN}:{@s}"/>
 		<counter id="bonus_mins_2" name="Бонусные минуты (2)" type="time_interval" format="{@MIN}:{@s}"/>
 		<counter id="mins_tariff" name="Тарифные минуты" units=" мин" type="time_interval" format="{@MIN}"/>

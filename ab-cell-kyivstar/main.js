@@ -119,6 +119,8 @@ function processSite(){
 	getParam(html, result, '__tariff', /(?:Тарифний план:|Тарифный план:)[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
 	// Баланс
 	getParam(html, result, 'balance', /(?:Залишок на рахунку:|Остаток на счету:|Поточний баланс:|Текущий баланс:)[\s\S]*?<b>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+	// Бонус
+	getParam(html, result, 'bonus', /Баланс:(?:[^>]*>){2,5}\s*(\d+)(?:[^>]*>)\s*бонус/i, replaceTagsAndSpaces, parseBalance);
 	//Бонусные минуты (1) на номера внутри сети
 	sumParam(html, result, 'bonus_mins_1', /(?:Кількість хвилин для дзвінків|Количество минут для звонков)[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
 	sumParam(html, result, 'bonus_mins_1', /(?:Хвилини всередині мережі ["«»]?Ки.встар["«»]?:|Минуты внутри сети ["«»]?Ки.встар["«»]?:)[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
@@ -191,7 +193,7 @@ function processSite(){
 	//Срок действия номера
 	sumParam(html, result, 'till', /(?:Номер діє до:|Номер действует до:)[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate, aggregate_sum);
 	//Номер телефона
-	getParam(html, result, 'phone', /(?:номер|номер):[\s\S]*?<td[^>]*>([\s\S]*?)(?:\(|<)/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'phone', /Номер[^<]*телефона(?:[^>]*>){3}\s*(\+38\d+)/i, replaceTagsAndSpaces, html_entity_decode);
 	//Лицевой счет
 	getParam(html, result, 'personal_account', /(?:Особовий рахунок|Лицевой счет):[\s\S]*?<td[^>]*>([\s\S]*?)(?:\(|<\/td>)/i, replaceTagsAndSpaces, html_entity_decode);
 	//Срок действия услуги Комфортный переход

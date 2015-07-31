@@ -1,5 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="2.0" version="62" date="2015-07-31">
+	- Новый счетчик: Бонус.
+	- Исправлено отображение номера телефона.
+	</change>
 	<change major_version="2.0" version="61" date="2015-05-29">
 	- Изменения для нового дизайна личного кабинета.
 	- Обновлен логотип.

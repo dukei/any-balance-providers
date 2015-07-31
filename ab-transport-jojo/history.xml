@@ -1,5 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="2" version="5" date="2015-07-31">
+	- Support of the site changes.
+	</change>
 	<change major_version="2" version="4" date="2013-12-29">
 		- Supported new website design at www.shop.skanetrafiken.se.
 		NOTE!!! Authentification method was changed!!! So, after updating this provider, go to each account settings and enter number and CVC of card instead of login and password!!!

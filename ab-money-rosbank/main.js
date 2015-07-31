@@ -144,27 +144,24 @@ function fetchAccount(baseurl, html){
     var acc;
     if(prefs.contract && !/^\d{1,4}$/.test(prefs.contract))
         throw new AnyBalance.Error('Пожалуйста, введите не менее 1 последних цифр номера счета, по которому вы хотите получить информацию, или не вводите ничего, чтобы получить информацию по первому счету.');
-    html = AnyBalance.requestGet(baseurl + 'Accounts.aspx', g_headers3);
-
-    //Сколько цифр осталось, чтобы дополнить до 4
-    var accnum = prefs.contract || '';
-    var accprefix = accnum.length;
-    accprefix = 4 - accprefix;
-
+    
+	html = AnyBalance.requestGet(baseurl + 'Accounts.aspx', g_headers3);
+	
     var result = {success: true};
-
-    var re = new RegExp('<td>\\S*' + (accprefix > 0 ? '\\d{' + accprefix + '}' : '') + accnum + '<\\/td><td>[\\d,\\s]*\\.\\d{2}\\s[\\D]{3}<\\/td>.*(?:\\r\\n.*<option.*){2}AccountInfo.aspx\\?id=\\d*', 'i');
-
-    var tr = getParam(html, null, null, re);
-    html = AnyBalance.requestGet(baseurl + getParam(tr,null,null,/AccountInfo.aspx\?id=\d*/i));
+	
+	// <tr(?:[^>]*>){4}4\d+[^<]+9991(?:[^>]*>){70,90}\s*<\/tr>
+    var tr = getParam(html, null, null, new RegExp('<tr(?:[^>]*>){4}4\\d+[^<]+' + (prefs.contract || '\\d{4}') + '(?:[^>]*>){50,90}\\s*</tr>', 'i'));
+    if(!tr)
+        throw new AnyBalance.Error('Не удалось найти ' + (prefs.contract ? 'счет № ' + prefs.contract : 'ни одного счета'));
+	
+    html = AnyBalance.requestGet(baseurl + getParam(tr, null, null, /AccountInfo.aspx\?id=\d*/i));
     //AnyBalance.trace('Проверка условия отсутствия счетов');
     //AnyBalance.trace('re='+re);
     //AnyBalance.trace('tr='+tr);
     //AnyBalance.trace('html='+html);
     //Сразу завершаем сеанс, иначе сессия останется до конца ее жизни и новый запрос не сделать.
     //AnyBalance.requestGet(baseurl + 'Logout.aspx', g_headers3);
-    if(!tr)
-        throw new AnyBalance.Error('Не удалось найти ' + (prefs.contract ? 'счет № ' + prefs.contract : 'ни одного счета'));
+
     
     getParam(tr, result, 'balance', /<td>([\d,\s]*\.\d{2})\s[\D]{3}<\/td>/i, replaceTagsAndSpaces, parseBalance);
     getParam(tr, result, '__tariff', /<td>(\S*\d{4})<\/td>/i, replaceTagsAndSpaces, html_entity_decode);

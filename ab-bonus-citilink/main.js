@@ -10,22 +10,36 @@ var g_headers = {
 	'User-Agent':'Mozilla/5.0 (BlackBerry; U; BlackBerry 9900; en-US) AppleWebKit/534.11+ (KHTML, like Gecko) Version/7.0.0.187 Mobile Safari/534.11+'
 };
 
+function gnn(e,x) {
+    var f='f',a='a',xx,yy, g='', y, a, b, c, d, s, f, r, e, ee,dd,aa,bb, cc,ss,dd,ff,rr;
+    if(x.toString().substr(x.length-1)==f) { xx =e; x*=62789;x-=5682;}
+    if(x.toString().substr(x.length-1)==a) { xx=e;y-=3466;y*=4234;}
+    for(var i= 0,l=xx.length; i<l;i++) g += '' + xx[l-i-1]; return g;
+    ss = 'r'+'e';cc=d-a;ss+='t';ff=a-b;ss+='u';dd=ff;ss+='r';ss+='n';dd*=ff;
+    b=cc;cc=a-b-c;ee=e;e=ee*34-e+e/3243+Math.abs(e*34);r=ee;s+=c+d;('g'+'nn'+'('+'"'+ee+'"'+','+1+')');if(x)return ee;cc_=aa;r=ee-r;r=rr;aa-bb;
+    var result = r - aa;
+    return result;
+}
+
 function main(){
     var prefs = AnyBalance.getPreferences();
     var baseurl = "http://www.citilink.ru/";
 
+    AnyBalance.setCookie('www.citilink.ru', 'forceOldSite', '1');
+
     AnyBalance.setDefaultCharset('windows-1251'); 
 
 	var html = AnyBalance.requestGet(baseurl + 'login/', g_headers);
-	
-	var action = getParam(html, null, null, /<form name="mainForm" method="POST" action="([^"]+)/i);
-	var captchaSrc = getParam(html, null, null, /"captchaLogin"[^>]*src="\/([^"]+)/i, replaceTagsAndSpaces, html_entity_decode);
+
+	var form = getElement(html, /<form[^>]+name="mainForm"[^>]*>/i);
+	var action = getParam(form, null, null, /<form[^>]+action="([^"]+)/i);
+	var captchaSrc = getParam(form, null, null, /"captchaLogin"[^>]*src="\/([^"]+)/i, replaceTagsAndSpaces, html_entity_decode);
 	
 	if(!action) {
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось найти форму входа, сайт изменен?');
 	}
-	
+
 	var captchaa;
 	if(captchaSrc) {
 		if(AnyBalance.getLevel() >= 7){
@@ -38,12 +52,25 @@ function main(){
 		}
 	}
 	
-	html = AnyBalance.requestPost(action, {
-		email:prefs.login,
-		pass:prefs.password,
-		captchaLogin: captchaa,
-		passOk:false
-	}, addHeaders({Referer: baseurl})); 
+	var params = createFormParams(form, function(params, str, name, value) {
+		if (name == 'email') 
+			return prefs.login;
+		else if (name == 'pass')
+			return prefs.password;
+		else if (name == 'captchaLogin')
+			return captchaa;
+
+		return value;
+	});
+
+	var extraInput = getParam(html, null, null, /\[name=mainForm\]'\)\.append\(([\s\S]*?')\);/);
+	AnyBalance.trace('Секретный параметр формы: ' + extraInput);
+	var inp = safeEval('return ' + extraInput);
+	var name = getParam(inp, null, null, /<input[^>]+name="([^"]*)/, null, html_entity_decode);
+	var val = getParam(inp, null, null, /<input[^>]+value="([^"]*)/, null, html_entity_decode);
+	params[name] = val;
+	
+	html = AnyBalance.requestPost(action, params, addHeaders({Referer: baseurl})); 
 	
     if(!/\/logout\//i.test(html)){
         var error = getParam(html, null, null, /<p[^>]+class="(?:red|msg-error)"[^>]*>([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, html_entity_decode);

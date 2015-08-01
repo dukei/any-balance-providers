@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-bonus-onlinetrade</id>
+	<id version="2">ab-bonus-onlinetrade</id>
 	<api flags="no_browser"/>
 	<name>Onlinetrade</name>
 	<description html="true"><![CDATA[

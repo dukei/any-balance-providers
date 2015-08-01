@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="13">ab-bonus-ulmart</id>
-	<api flags="no_browser" />
+	<id version="14">ab-bonus-ulmart</id>
+	<api flags="no_browser|captcha" />
 	<name>Ulmart</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе XXL-бонусов в бонусной программе магазина электроники Ulmart (http://www.ulmart.ru).</p>

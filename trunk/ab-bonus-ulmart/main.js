@@ -6,8 +6,6 @@ var g_headers = {
 	'Accept':'text/html, */*; q=0.01',
 	'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
 	'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
-	'Connection':'keep-alive',
-	'X-Requested-With':'XMLHttpRequest',
 	'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.62 Safari/537.36',
 };
 
@@ -20,20 +18,30 @@ function main(){
 	
     var baseurl = 'http://www.ulmart.ru/';
 	
-	var html = AnyBalance.requestGet(baseurl + 'login?target=/', g_headers);
-	
+	var html = AnyBalance.requestGet(baseurl + 'login', g_headers);
+
+	var byphone = /^\+\d+$/.test(prefs.login);
+
+	if(/loginCaptcha/i.test(html)){
+		var imgUrl = getParam(html, null, null, /<img[^>]+id="captchaImg"[^>]*src="\/([^"]*)/i, null, html_entity_decode);
+		var img = AnyBalance.requestGet(baseurl + imgUrl, g_headers);
+		var captcha = AnyBalance.retrieveCode('Введите код с картинки', img);
+	}
+
 	html = AnyBalance.requestPost(baseurl + 'j_spring_security_check', {
+		'target': '/',
 		'_csrf':getParam(html, null, null, /name="_csrf" content="([^"]+)/i),
-        'email':prefs.login,
+		'enterby': byphone ? 'email' : 'phone',
+        'phone':byphone ? prefs.login : '',
+        'email':byphone ? '' : prefs.login,
         'j_password':prefs.password,
-        'target':'/',
-		'enterby':'email'
-    }, addHeaders({Referer: baseurl + 'login?target=/'}));
+        'loginCaptcha': captcha
+    }, addHeaders({Referer: baseurl + 'login'}));
 	
     if(!/\/logout/.test(html)){
-        // var error = getParam(html, null, null, /<div[^>]+id="loginErrorDiv"[^>]*>([\s\S]*?)(?:Проверьте состояние|<\/div>)/i, replaceTagsAndSpaces, html_entity_decode);
-        // if(error)
-            // throw new AnyBalance.Error(error);
+        var error = getParam(html, null, null, /<div[^>]+(?:b-box_error|alert-danger)[^>]*>([\s\S]*?)(?:<\/div>)/i, replaceTagsAndSpaces, html_entity_decode);
+        if(error)
+            throw new AnyBalance.Error(error, null, /Неправиль.*пароль/i.test(error));
 		AnyBalance.trace(html);
         throw new AnyBalance.Error('Не удалось войти в личный кабинет. Проблемы на сайте или сайт изменен.');
     }
@@ -45,7 +53,12 @@ function main(){
     getParam(html, result, '__tariff', /<div[^>]+class="b-dropdown-popup__info"[^>]*>[\s\S]*?<\/div>([\s\S]*?)<ul/i, replaceTagsAndSpaces, html_entity_decode);
 	
 	if(isAvailable(['subaccountall', 'subaccounts', 'balance'])){
-		html = AnyBalance.requestGet(baseurl + 'cabinet/bonus', addHeaders({Referer:'http://www.ulmart.ru/cabinet?v=bonus'}));
+		html = AnyBalance.requestGet(baseurl + 'cabinet/bonus', addHeaders({
+			Referer: baseurl + 'cabinet?v=bonus', 
+			'X-Requested-With':'XMLHttpRequest', 
+			'X-CSRF-TOKEN': getParam(html, null, null, 
+			/name="_csrf" content="([^"]+)/i)
+		}));
 		
 		getParam(html, result, 'balance', /XXL-бонус:([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
 		getParam(html, result, 'subaccounts', /вашей сети[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);

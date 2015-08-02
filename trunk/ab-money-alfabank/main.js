@@ -125,8 +125,9 @@ function getNextPage(html, event, baseurl, extra_params) {
 	}, true);
 	var paramsModule = createParams(joinArrays(params, extra_params), event);
 	html = AnyBalance.requestPost(baseurl + action, paramsModule, addHeaders({"Adf-Rich-Message": "true"}));
-	return getParam(html, null, null, /<fragment>\s*<!\[CDATA\[([\s\S]*?)\]\]>/); //Вычленяем html;
+	return sumParam(html, null, null, /<fragment>\s*<!\[CDATA\[([\s\S]*?)\]\]>/ig, null, null, aggregate_join); //Вычленяем html;
 }
+
 function getDetails(html, event, baseurl, renderAndProcess) {
 	var action = getParam(html, null, null, /<form[^>]*name="f1"[^>]*action="\/(ALFAIBSR[^"]*)/i, null, html_entity_decode);
 	if (!action) 
@@ -463,29 +464,56 @@ function processCredit2(html, baseurl, _accnum, result){
 
     html = getMainPageOrModule2(html, 'crd', baseurl);
 	
-    var events = sumParam(html, null, null, /<a[^>]+id="([^"]*)"[^>]*>&#1055;&#1086;&#1076;&#1088;&#1086;&#1073;&#1085;&#1072;&#1103; &#1080;&#1085;&#1092;&#1086;&#1088;&#1084;&#1072;&#1094;&#1080;&#1103;/ig);
-    if(!events)
-        throw new AnyBalance.Error('Не удаётся найти ' + (prefs.cardnum ? 'кредит, чей номер оканчивается на ' + prefs.cardnum : 'ни одного кредита!'));
-	
-	AnyBalance.trace('Кредитов в системе: ' + events.length);
-	
-	var currentAccountNumber;
-	
-	for(var i = 0; i < events.length; i++) {
-		AnyBalance.trace('Запрос данных по кредиту №' + (i+1));
-		html = getNextPage(html, events[i], baseurl, [
+    var creditTitles = sumParam(html, null, null, /<a[^>]+id="([^"]*)::disAcr"[^>]*>/ig);
+    if(!creditTitles)
+        throw new AnyBalance.Error('Не удаётся найти ни одного кредита!');
+
+	AnyBalance.trace('Кредитов в системе: ' + creditTitles.length);
+
+    for(var j=0; j<creditTitles.length; ++j){
+        var crd = html;
+        if(j > 0){
+			AnyBalance.trace('Запрос кредита №' + (j+1));
+			crd = getNextPage(html, creditTitles[j], baseurl, [
+				['event', '%EVENT%'],
+				['event.%EVENT%', '<m xmlns="http://oracle.com/richClient/comm"><k v="expand"><b>1</b></k><k v="type"><s>disclosure</s></k></m>'],
+				['oracle.adf.view.rich.PROCESS', 'pt1:r12:0:pt2']
+			]);
+		}
+
+		//Подробная информация
+        var event = getParam(crd, null, null, /<a[^>]+id="([^"]*)"[^>]*>&#1055;&#1086;&#1076;&#1088;&#1086;&#1073;&#1085;&#1072;&#1103; &#1080;&#1085;&#1092;&#1086;&#1088;&#1084;&#1072;&#1094;&#1080;&#1103;/i);
+        if(!event){
+        	AnyBalance.trace(crd);
+            throw new AnyBalance.Error('Не удаётся найти ссылку на подробную информацию о кредите!');
+        }
+		
+		var currentAccountNumber;
+		
+		AnyBalance.trace('Запрос данных по кредиту №' + (j+1));
+		var details = getNextPage(html, event, baseurl, [
 			['event', '%EVENT%'],
 			['event.%EVENT%', '<m xmlns="http://oracle.com/richClient/comm"><k v="type"><s>action</s></k></m>'],
 			['oracle.adf.view.rich.PPR_FORCED', 'true']
 		]);
 		
-		currentAccountNumber = getParam(html, null, null, /\d{20}/i);
+		currentAccountNumber = getParam(details, null, null, /\d{20}/i);
 		AnyBalance.trace('Нашли счет:' + currentAccountNumber);
-		if(!prefs.cardnum) {
+		if(_accnum && _accnum == currentAccountNumber){
+			AnyBalance.trace('Найден искомый счет: ' + _accnum);
+			break;
+		}
+		if(!_accnum && !prefs.cardnum) {
 			AnyBalance.trace('В настройках не указан номер счета, будут отображены данные по первому счету...');
 			break;
 		}
+		if(!_accnum && prefs.cardnum && endsWith(currentAccountNumber, prefs.cardnum)){
+			AnyBalance.trace('Найден искомый счет, оканчивающийся на ' + prefs.cardnum + ': ' + _accnum);
+			break;
+		}
 	}
+
+	html = details;
 	
     result = result || {success: true};
 	

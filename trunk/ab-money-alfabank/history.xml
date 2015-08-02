@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="38" date="2015-08-02">
+	- поддержка изменений в отображении кредитов
+	</change>
 	<change version="37" date="2015-07-09">
 	- Мелкие улучшения (совместимость с сервером)
 	</change>

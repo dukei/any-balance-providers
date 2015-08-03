@@ -24,15 +24,21 @@ function main() {
 	}
 	
 	html = AnyBalance.requestPost(baseurl + 'auth/login', {
-		act:'enter',
-        login:prefs.login,
-        pwd:prefs.password,
+        email: prefs.login,
+        pwd: prefs.password,
+		'remember': '0',
+		'captcha': '',
+		'act': 'enter',
     }, addHeaders({
-		Referer: baseurl+'auth/login'
+		'Accept': 'application/json, text/javascript, */*; q=0.01',
+		'X-Requested-With': 'XMLHttpRequest',
+		'Referer': baseurl + 'auth/login'
 	}));
-
-	if (!/logout/i.test(html)) {
-		var error = getParam(html, null, null, /<div[^>]+class="error"([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+	
+	var json = getJson(html);
+	
+	if (!json.status) {
+		var error = json.errors.access;
 		if (error)
 			throw new AnyBalance.Error(error, null, /Неверные логин или пароль/i.test(error));
 		

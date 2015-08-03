@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="9" date="2015-08-03">
+	- Исправлено получение информации по карте, указанной в настройках
+	</change>
 	<change version="8" date="2015-07-10">
 	- Исправлена ошибка.
 	</change>

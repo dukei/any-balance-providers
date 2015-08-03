@@ -22,4 +22,14 @@
         dialogMessage="Введите пароль, используемый для входа в личный кабинет."
         inputType="textPassword">
     </EditTextPreference>
+    <EditTextPreference
+        title="Код клиента" 
+        positiveButtonText="ОК" 
+        summary="||{@s}" 
+        dialogTitle="Код клиента" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите код клиента, если у вас их несколько в личном кабинете."
+        inputType="number"
+        key="num">
+    </EditTextPreference>
 </PreferenceScreen>

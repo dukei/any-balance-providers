@@ -9,6 +9,10 @@ var g_headers = {
 	'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.62 Safari/537.36',
 };
 
+function getCsrfToken(html){
+	return getParam(html, null, null, /name="_csrf" content="([^"]+)/i);
+}
+
 function main(){
     var prefs = AnyBalance.getPreferences();
     AnyBalance.setDefaultCharset('utf-8');
@@ -30,7 +34,7 @@ function main(){
 
 	html = AnyBalance.requestPost(baseurl + 'j_spring_security_check', {
 		'target': '/',
-		'_csrf':getParam(html, null, null, /name="_csrf" content="([^"]+)/i),
+		'_csrf':getCsrfToken(html),
 		'enterby': byphone ? 'email' : 'phone',
         'phone':byphone ? prefs.login : '',
         'email':byphone ? '' : prefs.login,
@@ -38,6 +42,30 @@ function main(){
         'loginCaptcha': captcha
     }, addHeaders({Referer: baseurl + 'login'}));
 	
+    if(!/\/logout/.test(html)){
+    	var form = getElement(html, /<form[^>]+id="changeContractorForm"[^>]*>/i);
+    	if(form){
+    		//Надо выбрать контракт
+    		var contractor = getElement(form, new RegExp('<span[^>]+id="contractor[^"]*' + (prefs.num || '') + '"[^>]*>', 'i'));
+    		if(!contractor){
+    			AnyBalance.trace(form);
+    			throw new AnyBalance.Error(prefs.num ? 'Не удалось найти контрактора с номером ' + prefs.num : 'Не удалось найти ни одного контрактора');
+    		}
+
+    		var name = getParam(contractor, null, null, null, replaceTagsAndSpaces, html_entity_decode);
+    		AnyBalance.trace('Контрактор: ' + name);
+    		var contractorId = getParam(contractor, null, null, /uniChangeContractor\(\s*'([^']*)/i, replaceSlashes);
+
+    		html = AnyBalance.requestPost(baseurl + 'cabinet/contractor', {agentId: contractorId}, addHeaders({
+				Referer: baseurl, 
+				'X-Requested-With':'XMLHttpRequest', 
+				'X-CSRF-TOKEN': getCsrfToken(html)
+			}));
+
+			html = AnyBalance.requestGet(baseurl + html, g_headers);
+    	}
+    }
+
     if(!/\/logout/.test(html)){
         var error = getParam(html, null, null, /<div[^>]+(?:b-box_error|alert-danger)[^>]*>([\s\S]*?)(?:<\/div>)/i, replaceTagsAndSpaces, html_entity_decode);
         if(error)
@@ -56,8 +84,7 @@ function main(){
 		html = AnyBalance.requestGet(baseurl + 'cabinet/bonus', addHeaders({
 			Referer: baseurl + 'cabinet?v=bonus', 
 			'X-Requested-With':'XMLHttpRequest', 
-			'X-CSRF-TOKEN': getParam(html, null, null, 
-			/name="_csrf" content="([^"]+)/i)
+			'X-CSRF-TOKEN': getCsrfToken(html)
 		}));
 		
 		getParam(html, result, 'balance', /XXL-бонус:([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);

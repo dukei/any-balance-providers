@@ -35,14 +35,12 @@ function main(){
 
     var html = AnyBalance.requestGet(baseurl + 'Login.aspx', g_headers);
 
-    html = AnyBalance.requestPost(baseurl + 'Login.aspx', {
+    html = AnyBalance.requestPost(baseurl + 'Login.aspx?redirect', {
         'ctl00$ToolkitScriptManager1':'ctl00$ContentPlaceHolder1$UpdatePanel1|ctl00$ContentPlaceHolder1$BLogin',
+        __LASTFOCUS:'',
         ctl00_ToolkitScriptManager1_HiddenField:'',
         __EVENTTARGET:'',
         __EVENTARGUMENT:'',
-        ctl00_ContentPlaceHolder2_NavigationTree1_TreeView1_ExpandState:'ennnennnnnn',
-        ctl00_ContentPlaceHolder2_NavigationTree1_TreeView1_SelectedNode:'',
-        ctl00_ContentPlaceHolder2_NavigationTree1_TreeView1_PopulateLog:'',
         __VIEWSTATE:getViewState(html),
         __PREVIOUSPAGE:getPrevPage(html),
         __EVENTVALIDATION:getEventValidation(html),
@@ -53,14 +51,14 @@ function main(){
         __ASYNCPOST:true,
         'ctl00$ContentPlaceHolder1$BLogin.x':49,
         'ctl00$ContentPlaceHolder1$BLogin.y':17
-    }, addHeaders({'X-MicrosoftAjax':'Delta=true'}));
+    }, addHeaders({'X-MicrosoftAjax':'Delta=true', 'X-Requested-With': 'XMLHttpRequest'}));
 
     var redirect = getParam(html, null, null, /pageRedirect\|\|\/trCustomer\/([^|]*)/i);
 
 	if (!redirect) {
 		var error = getParam(html, null, null, /<span[^>]*ctl00_ContentPlaceHolder1_ErrDescr[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
 		if (error)
-			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
+			throw new AnyBalance.Error(error, null, /или пароль/i.test(error));
 		
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');

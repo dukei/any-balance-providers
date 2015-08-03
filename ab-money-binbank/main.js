@@ -45,17 +45,17 @@ function shouldProcess(counter, info){
 	switch(counter){
 		case 'accounts':
 		{
-		    if(!prefs.num)
+		    if(!prefs.cardnum)
 		    	return true;
 			if(prefs.what == 'card'){
 		        for(var i=0; i<info.cards.length; ++i){
-		        	if(endsWith(info.cards[i].num, prefs.num)){
+		        	if(endsWith(info.cards[i].num, prefs.cardnum)){
 		        		g_found_card_idx = i;
 		        		return true;
 		        	}
 		        }
 		    }else if(prefs.what == 'acc'){
-		       	if(endsWith(info.__id, prefs.num))
+		       	if(endsWith(info.__id, prefs.cardnum))
 	        		return true;
 		    }
 		    return false;
@@ -85,14 +85,14 @@ function main(){
 
 		adapter.processAccounts(html, result);
 		if(!adapter.wasProcessed('accounts'))
-			throw new AnyBalance.Error(prefs.num ? 'Не найдена карта с последними цифрами ' + prefs.num : 'У вас нет ни одной карты');
+			throw new AnyBalance.Error(prefs.cardnum ? 'Не найдена карта с последними цифрами ' + prefs.cardnum : 'У вас нет ни одной карты');
 		result = adapter.convert(result);
 
 	}else if(prefs.what == 'acc'){
 
 		adapter.processAccounts(html, result);
 		if(!adapter.wasProcessed('accounts'))
-			throw new AnyBalance.Error(prefs.num ? 'Не найден счет с последними цифрами ' + prefs.num : 'У вас нет ни одного депозита');
+			throw new AnyBalance.Error(prefs.cardnum ? 'Не найден счет с последними цифрами ' + prefs.cardnum : 'У вас нет ни одного депозита');
 		result = adapter.convert(result);
 
 	}else {//if(prefs.what == 'dep'){

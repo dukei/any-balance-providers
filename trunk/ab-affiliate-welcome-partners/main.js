@@ -12,7 +12,7 @@ var g_headers = {
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'http://m.welcomepartners.com/';
+	var baseurl = 'https://m.welcomepartners.com/';
 	AnyBalance.setDefaultCharset('utf-8');
     
 	checkEmpty(prefs.login, 'Введите логин!');

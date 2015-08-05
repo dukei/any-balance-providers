@@ -94,7 +94,7 @@ try{
 			objStream.SaveToFile (g_history_file || g_new_history_file_name, 1);
 		objStream.Close();
 		
-		var intDoIt = WshShell.Popup('Provider: ' + g_prov_text_id + ' v.' + g_prov_major_version + '.' + g_prov_version + ' edited.\nAdded new history line: ' + result + '\n\nDo you want to commit via SVN?', 0, "Result", vbYesNo + vbInformation + stayOnTop);
+		var intDoIt = WshShell.Popup('Provider: ' + g_prov_text_id + ' v.' + g_prov_major_version + '.' + g_prov_version + ' edited.\nAdded new history line: ' + result + '\n\nDo you want to commit via TortoiseGit?', 0, "Result", vbYesNo + vbInformation + stayOnTop);
 		
 		if(intDoIt == vbYes) {
 			// Want to commit
@@ -109,7 +109,10 @@ try{
 }
 
 function commit(WshShell, mesg) {
-	WshShell.Run('tortoiseproc /command:commit /logmsg:"' + g_prov_name + ' (' + g_prov_text_id + '):\n' + mesg + '" /path:"'+WshShell.CurrentDirectory+'"');
+	// SVN
+	// WshShell.Run('tortoiseproc /command:commit /logmsg:"' + g_prov_name + ' (' + g_prov_text_id + '):\n' + mesg + '" /path:"'+WshShell.CurrentDirectory+'"');
+	// GIT
+	WshShell.Run('TortoiseGitProc /command:commit /logmsg:"' + g_prov_name + ' (' + g_prov_text_id + '):\n' + mesg + '" /path:"'+WshShell.CurrentDirectory+'"');
 }
 
 function readFileToString(file) {

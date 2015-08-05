@@ -1,18 +1,16 @@
 ﻿/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
-
-Получает баланс и информацию о тарифном плате для оператора интернет КМВТелеком
-
-Operator site: http://www.kmvtelecom.ru
-Личный кабинет: http://stat.kmvtelecom.ru
 */
 
 var g_headers = {
-'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
-'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
-'Connection':'keep-alive',
-'User-Agent':'Mozilla/5.0 (BlackBerry; U; BlackBerry 9900; en-US) AppleWebKit/534.11+ (KHTML, like Gecko) Version/7.0.0.187 Mobile Safari/534.11+'
+	'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+	'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
+	'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
+	'Connection':'keep-alive',
+	'User-Agent':'Mozilla/5.0 (BlackBerry; U; BlackBerry 9900; en-US) AppleWebKit/534.11+ (KHTML, like Gecko) Version/7.0.0.187 Mobile Safari/534.11+',
+	'Origin': 'http://stat.kmvtelecom.ru',
+	'Upgrade-Insecure-Requests': '1',
+	
 };
 
 function main(){
@@ -20,18 +18,31 @@ function main(){
     var baseurl = "http://stat.kmvtelecom.ru/main.php";
 
     AnyBalance.setDefaultCharset('windows-1251'); 
-
-    var html = AnyBalance.requestPost(baseurl, {
-        UserName:prefs.login,
-        PWDD:prefs.password
+	
+	checkEmpty(prefs.login, 'Введите логин!');
+	checkEmpty(prefs.password, 'Введите пароль!');
+	
+	var html = AnyBalance.requestGet(baseurl, g_headers);
+	
+	if(!html || AnyBalance.getLastStatusCode() > 400){
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
+	}
+	
+    html = AnyBalance.requestPost(baseurl + '?parm=1', {
+		form: '1',
+        UserName: prefs.login,
+        PWDD: prefs.password
     }, addHeaders({Referer: baseurl})); 
-
-    if(!/\?parm=exit/i.test(html)){
-        //Если в кабинет войти не получилось, то в первую очередь надо поискать в ответе сервера объяснение ошибки
+	
+	html = AnyBalance.requestGet(baseurl, g_headers);
+	
+    if(!/parm=exit/i.test(html)){
         var error = getParam(html, null, null, /<tr[^>]+bgcolor="#f0f1f3"[^>]*class="page"[^>]*>([\s\S]*?)<\/tr>/i, replaceTagsAndSpaces, html_entity_decode);
         if(error)
             throw new AnyBalance.Error(error);
-        //Если объяснения ошибки не найдено, при том, что на сайт войти не удалось, то, вероятно, произошли изменения на сайте
+        
+		AnyBalance.trace(html);
         throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
     }
 

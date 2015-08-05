@@ -1,36 +1,30 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-internet-kmvtel</id>
-  <name>КМВ Телеком (Пятигорск)</name>
-  <description>
-    Получает баланс и информацию о тарифном плане для пятигорского интернет провайдера КМВ Телеком (http://kmvtelecom.ru)
-
-    Информация берется из личного кабинета:  http://stat.kmvtelecom.ru
-  </description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>library.js</js>
-    <js>main.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="balance" name="Баланс" units="р"/>
-    <counter id="paid" name="Сумма платежей" units="р"/>
-    <counter id="credit" name="Кредит" units="р"/>
-    <counter id="licschet" name="Лицевой счет" type="text"/>
-    <counter id="cardnum" name="Номер карты" type="text"/>
-    <counter id="limit" name="Лимит карты" units="р"/>
-    <counter id="status" name="Статус" type="text"/>
-  </counters>
-  <keywords>
-    
-  </keywords>
-  <type>
-    internet
-  </type>
-  <country>
-    ru
-  </country>
+	<api flags="no_browser"/>
+	<id version="2">ab-internet-kmvtel</id>
+	<name>КМВ Телеком (Пятигорск)</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера КМВ Телеком <a href="http://kmvtelecom.ru">http://kmvtelecom.ru</a></p>
+	<p>Информация берется из личного кабинета <a href="http://stat.kmvtelecom.ru">http://stat.kmvtelecom.ru</a></p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="paid" name="Сумма платежей" units=" р"/>
+		<counter id="credit" name="Кредит" units=" р"/>
+		<counter id="licschet" name="Лицевой счет" type="text"/>
+		<counter id="cardnum" name="Номер карты" type="text"/>
+		<counter id="limit" name="Лимит карты" units=" р"/>
+		<counter id="status" name="Статус" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>internet</type>
+	<country>ru</country>
 </provider>

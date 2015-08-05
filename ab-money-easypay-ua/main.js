@@ -38,11 +38,15 @@ function main(){
 	
     getParam(html, result, 'points', /class="points"([^>]*>){2}/i, replaceTagsAndSpaces, parseBalance);
 	
-	var tr = getParam(html, null, null, new RegExp("<tr>\\s*<td[^>]*>\\s*" + (prefs.number || '\\d+')+ "\\s*</td>\\s*<td[^>]*>[\\s\\S]*?<\/td>", "i"));
-
-	checkEmpty(tr, 'Не удалось найти ' + (prefs.number ? 'кошелек с последними цифрами ' + prefs.number : 'ни одного кошелька!'), true);
+	html = AnyBalance.requestGet(baseurl + 'wallets', g_headers);
+	// <tr[^>]*>\s*<td(?:[^>]*>){1,2}\s*\d+(?:[^>]*>){10,50}\s*</tr>
+	var tr = getParam(html, null, null, new RegExp("<tr[^>]*>\\s*<td(?:[^>]*>){1,2}\\s*" + (prefs.number || '\\d+')+ "(?:[^>]*>){10,50}\\s*</tr>", "i"));
+	if(!tr) {
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удалось найти ' + (prefs.number ? 'кошелек с последними цифрами ' + prefs.number : 'ни одного кошелька!'));
+	}
 	
-    getParam(tr, result, 'balance', /([^>]*>){5}/i, replaceTagsAndSpaces, parseBalance);
+    getParam(tr, result, 'balance', /([^>]*>){11}/i, replaceTagsAndSpaces, parseBalance);
 	
     AnyBalance.setResult(result);
 }

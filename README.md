@@ -22,23 +22,23 @@ https://market.android.com/details?id=com.dukei.android.apps.anybalance
 
 
 ## Документация ##
-  * [Общая информация](Philosophy)
-  * [AnyBalance API](AnyBalanceAPI)
-  * [Отладка провайдеров](Debugging)
-  * [Настройка HTML виджета](HtmlWidget)
+  * [Общая информация](https://github.com/dukei/any-balance-providers/wiki/Philosophy)
+  * [AnyBalance API](https://github.com/dukei/any-balance-providers/wiki/AnyBalanceAPI)
+  * [Отладка провайдеров](https://github.com/dukei/any-balance-providers/wiki/Debugging)
+  * [Настройка HTML виджета](https://github.com/dukei/any-balance-providers/wiki/HtmlWidget)
 
 ## Примеры ##
-  * [Hello World](TutorialHelloWorld)
-  * [Курсы валют](TutorialExchangeCbr)
-  * [Отслеживание посылок](TutorialTrackingRussianPost)
-  * [Обработка XML](TutorialXML)
+  * [Hello World](https://github.com/dukei/any-balance-providers/wiki/TutorialHelloWorld)
+  * [Курсы валют](https://github.com/dukei/any-balance-providers/wiki/TutorialExchangeCbr)
+  * [Отслеживание посылок](https://github.com/dukei/any-balance-providers/wiki/TutorialTrackingRussianPost)
+  * [Обработка XML](https://github.com/dukei/any-balance-providers/wiki/TutorialXML)
 
 ## Участие ##
-  * [Добавление нового провайдера](HowToAddProvider)
-  * [Изменение существующего провайдера](HowToChangeProvider)
+  * [Добавление нового провайдера](https://github.com/dukei/any-balance-providers/wiki/HowToAddProvider)
+  * [Изменение существующего провайдера](https://github.com/dukei/any-balance-providers/wiki/HowToChangeProvider)
 
 ## Интеграция ##
-  * [Как получать и показывать балансы в своём приложении](ContentProvider)
+  * [Как получать и показывать балансы в своём приложении](https://github.com/dukei/any-balance-providers/wiki/ContentProvider)
 
 ## Вопросы ##
 

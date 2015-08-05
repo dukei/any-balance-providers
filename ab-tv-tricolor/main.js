@@ -7,21 +7,10 @@ var g_headers = {
     'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
     'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Intel Mac OS X 10.6; rv:7.0.1) Gecko/20100101 Firefox/7.0.1',
     Connection: 'keep-alive',
-    Origin: 'https://lk.tricolor.tv',
-    Referer: 'https://lk.tricolor.tv/trcustomer/Login.aspx'
+    Origin: 'https://lk-subscr.tricolor.tv',
+    Referer: 'https://lk-subscr.tricolor.tv/',
+    'X-Requested-With': 'XMLHttpRequest'
 };
-
-function getViewState(html) {
-    return getParam(html, null, null, /name="__VIEWSTATE".*?value="([^"]*)"/);
-}
-
-function getEventValidation(html) {
-    return getParam(html, null, null, /name="__EVENTVALIDATION".*?value="([^"]*)"/);
-}
-
-function getPrevPage(html) {
-    return getParam(html, null, null, /name="__PREVIOUSPAGE".*?value="([^"]*)"/);
-}
 
 function main(){
     var prefs = AnyBalance.getPreferences();
@@ -31,65 +20,59 @@ function main(){
 	
     AnyBalance.setDefaultCharset('utf-8');
 
-    var baseurl = "https://lk.tricolor.tv/trCustomer/";
+    var baseurl = "https://lk-subscr.tricolor.tv/";
 
-    var html = AnyBalance.requestGet(baseurl + 'Login.aspx', g_headers);
+    var html = AnyBalance.requestPost(baseurl + 'Token', {
+        grant_type: 'password',
+		username:prefs.login,
+		password:prefs.password,
+		type:'Login'
+    }, g_headers);
 
-    html = AnyBalance.requestPost(baseurl + 'Login.aspx?redirect', {
-        'ctl00$ToolkitScriptManager1':'ctl00$ContentPlaceHolder1$UpdatePanel1|ctl00$ContentPlaceHolder1$BLogin',
-        __LASTFOCUS:'',
-        ctl00_ToolkitScriptManager1_HiddenField:'',
-        __EVENTTARGET:'',
-        __EVENTARGUMENT:'',
-        __VIEWSTATE:getViewState(html),
-        __PREVIOUSPAGE:getPrevPage(html),
-        __EVENTVALIDATION:getEventValidation(html),
-        ctl00$ContentPlaceHolder1$hfPPVRedirect:'',
-        ctl00$ContentPlaceHolder1$hfPPVdate:'',
-        ctl00$ContentPlaceHolder1$TDreid:prefs.login,
-        ctl00$ContentPlaceHolder1$TPassword:prefs.password,
-        __ASYNCPOST:true,
-        'ctl00$ContentPlaceHolder1$BLogin.x':49,
-        'ctl00$ContentPlaceHolder1$BLogin.y':17
-    }, addHeaders({'X-MicrosoftAjax':'Delta=true', 'X-Requested-With': 'XMLHttpRequest'}));
+    var token = getJson(html);
+    if(!token.access_token){
+    	AnyBalance.trace(html);
+    	if(token.error)
+    		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Проверьте логин и пароль');
+    	throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
+    }
 
-    var redirect = getParam(html, null, null, /pageRedirect\|\|\/trCustomer\/([^|]*)/i);
+    html = AnyBalance.requestGet(baseurl + 'api/Account/UserInfo', addHeaders({Authorization: 'Bearer ' + token.access_token}));
 
-	if (!redirect) {
-		var error = getParam(html, null, null, /<span[^>]*ctl00_ContentPlaceHolder1_ErrDescr[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
-		if (error)
-			throw new AnyBalance.Error(error, null, /или пароль/i.test(error));
-		
-		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
-	}
-	
-    html = AnyBalance.requestGet(baseurl + redirect, g_headers);
-    
+    var json = getJson(html);
+
 	var result = {success: true};
-	
-    getParam(html, result, 'balance', /<td[^>]*id="[^"]*pBalanceCurr"[^>]*>([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'agreement', /<td[^>]+id="[^"]*pContractNumber"[^>]*>([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'device', /<td[^>]+id="[^"]*pReceicerNumber"[^>]*>([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, '__tariff', /pStartTariff"[^>]*>([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+
+	getParam(json.Subscriber.Agreements[0].Number, result, 'agreement');
+	getParam(json.Subscriber.Agreements[0].Devices[0].SmartCard, result, 'device');
+
+	html = AnyBalance.requestGet(baseurl + 'odata/StartTariff(00000000-0000-0000-0000-000000000000)', addHeaders({Authorization: 'Bearer ' + token.access_token})); 
+    json = getJson(html);
+
+	getParam(json.TariffName, result, '__tariff');
+
+	html = AnyBalance.requestGet(baseurl + 'odata/Balance?%24filter=(SubjectId%20eq%20%27' + encodeURIComponent(prefs.login) + '%27%20and%20SubjectTypeId%20eq%20%27Device%27)&%24orderby=Id', addHeaders({Authorization: 'Bearer ' + token.access_token}));
+    json = getJson(html);
+
+	getParam(json.value[0].Balance, result, 'balance');
     
-	var services = [];
-	var activeSevices = sumParam(html, null, null, /<tr[^>]*>\s*<td>(?:[^>]*>){2}\s*Активная(?:[^>]*>){4}\s*[\d\s.]{8,}(?:[^>]*>){10,20}\s*<\/tr>/ig);
-	for (var i = 0; i < activeSevices.length; i++) {
-		var tr = activeSevices[i];
-		
-        var name = getParam(tr, null, null, /(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-        var days = getParam(tr, null, null, /(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance) || 0;
-		
-		services.push(name + ' (' + days + ' дн)');
-		
-        getParam(name, result, 'service' + (i+1));
-        getParam(days, result, 'daysleft' + (i+1));
-	}
-	
-	var tar = services.join(', ');
-	if(tar)
-		result.__tariff = services.join(', ');
-	
+	html = AnyBalance.requestGet(baseurl + 'odata/ServiceInfo?%24filter=(SubjectId%20eq%20%27' + encodeURIComponent(prefs.login) + '%27%20and%20SubjectTypeId%20eq%20%27Device%27)&%24orderby=Id', addHeaders({Authorization: 'Bearer ' + token.access_token}));
+    json = getJson(html);
+
+    var n = 1;
+    for(var i=0; i<json.value.length; ++i){
+    	var si = json.value[i];
+    	var name = si.ServiceName;
+    	if(si.ServiceStatusId != 'Active'){
+    		AnyBalance.trace('Сервис ' + name + ' неактивен, пропускаем.');
+    		continue;
+    	}
+
+    	var left = Math.floor((parseDateISO(si.EndDate) - new Date().getTime())/86400/1000);
+    	getParam(name, result, 'service' + n);
+    	getParam(left, result, 'daysleft' + n);
+    	++n;
+    }
+
     AnyBalance.setResult(result);
 }

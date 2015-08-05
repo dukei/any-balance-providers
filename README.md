@@ -22,23 +22,23 @@ https://market.android.com/details?id=com.dukei.android.apps.anybalance
 
 
 ## Документация ##
-  * [Общая информация](Philosophy.md)
-  * [AnyBalance API](AnyBalanceAPI.md)
-  * [Отладка провайдеров](Debugging.md)
-  * [Настройка HTML виджета](HtmlWidget.md)
+  * [Общая информация](Philosophy)
+  * [AnyBalance API](AnyBalanceAPI)
+  * [Отладка провайдеров](Debugging)
+  * [Настройка HTML виджета](HtmlWidget)
 
 ## Примеры ##
-  * [Hello World](TutorialHelloWorld.md)
-  * [Курсы валют](TutorialExchangeCbr.md)
-  * [Отслеживание посылок](TutorialTrackingRussianPost.md)
-  * [Обработка XML](TutorialXML.md)
+  * [Hello World](TutorialHelloWorld)
+  * [Курсы валют](TutorialExchangeCbr)
+  * [Отслеживание посылок](TutorialTrackingRussianPost)
+  * [Обработка XML](TutorialXML)
 
 ## Участие ##
-  * [Добавление нового провайдера](HowToAddProvider.md)
-  * [Изменение существующего провайдера](HowToChangeProvider.md)
+  * [Добавление нового провайдера](HowToAddProvider)
+  * [Изменение существующего провайдера](HowToChangeProvider)
 
 ## Интеграция ##
-  * [Как получать и показывать балансы в своём приложении](ContentProvider.md)
+  * [Как получать и показывать балансы в своём приложении](ContentProvider)
 
 ## Вопросы ##
 

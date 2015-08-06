@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1"></id>
+	<id version="1">ab-telephony-gvoip</id>
 	<api flags="no_browser"/>
 	<name>GVoIP</name>
 	<description html="true"><![CDATA[

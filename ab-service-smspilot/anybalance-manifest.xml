@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-service-smspilot</id>
+	<api flags="no_browser"/>
+	<name>SMSPilot</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера SMSPILOT.RU http://www.smspilot.ru/</p>
+	<p>Информация берется из личного кабинета https://www.smspilot.ru/my.php
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" {@currency}"/>
+		<counter id="agreement" name="Договор" type="text"/>
+	</counters>
+	<keywords>смс рассылка</keywords>
+	<type>sms, service</type>
+	<country>ru</country>
+</provider>

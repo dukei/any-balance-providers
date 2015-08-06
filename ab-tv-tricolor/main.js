@@ -56,7 +56,12 @@ function main(){
 	html = AnyBalance.requestGet(baseurl + 'odata/Balance?%24filter=(SubjectId%20eq%20%27' + encodeURIComponent(deviceid) + '%27%20and%20SubjectTypeId%20eq%20%27Device%27)&%24orderby=Id', addHeaders({Authorization: 'Bearer ' + token.access_token}));
     json = getJson(html);
 
-	getParam(json.value[0].Balance, result, 'balance');
+    if(json.value[0]){
+		getParam(json.value[0].Balance, result, 'balance');
+	}else{
+		getParam(0, result, 'balance');
+		AnyBalance.trace('Похоже, денежные средства на счете отсутствуют');
+	}
     
 	html = AnyBalance.requestGet(baseurl + 'odata/ServiceInfo?%24filter=(SubjectId%20eq%20%27' + encodeURIComponent(deviceid) + '%27%20and%20SubjectTypeId%20eq%20%27Device%27)&%24orderby=Id', addHeaders({Authorization: 'Bearer ' + token.access_token}));
     json = getJson(html);

@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="12" date="2015-08-06">
+	- Ошибка при отсутствии денег на балансе
+	</change>
 	<change version="11" date="2015-08-06">
 	Исправлена ошибка при входе по номеру договора
 	</change>

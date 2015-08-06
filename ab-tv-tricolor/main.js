@@ -43,6 +43,8 @@ function main(){
 
 	var result = {success: true};
 
+	var deviceid = json.Subscriber.Agreements[0].Devices[0].SmartCard;
+
 	getParam(json.Subscriber.Agreements[0].Number, result, 'agreement');
 	getParam(json.Subscriber.Agreements[0].Devices[0].SmartCard, result, 'device');
 
@@ -51,12 +53,12 @@ function main(){
 
 	getParam(json.TariffName, result, '__tariff');
 
-	html = AnyBalance.requestGet(baseurl + 'odata/Balance?%24filter=(SubjectId%20eq%20%27' + encodeURIComponent(prefs.login) + '%27%20and%20SubjectTypeId%20eq%20%27Device%27)&%24orderby=Id', addHeaders({Authorization: 'Bearer ' + token.access_token}));
+	html = AnyBalance.requestGet(baseurl + 'odata/Balance?%24filter=(SubjectId%20eq%20%27' + encodeURIComponent(deviceid) + '%27%20and%20SubjectTypeId%20eq%20%27Device%27)&%24orderby=Id', addHeaders({Authorization: 'Bearer ' + token.access_token}));
     json = getJson(html);
 
 	getParam(json.value[0].Balance, result, 'balance');
     
-	html = AnyBalance.requestGet(baseurl + 'odata/ServiceInfo?%24filter=(SubjectId%20eq%20%27' + encodeURIComponent(prefs.login) + '%27%20and%20SubjectTypeId%20eq%20%27Device%27)&%24orderby=Id', addHeaders({Authorization: 'Bearer ' + token.access_token}));
+	html = AnyBalance.requestGet(baseurl + 'odata/ServiceInfo?%24filter=(SubjectId%20eq%20%27' + encodeURIComponent(deviceid) + '%27%20and%20SubjectTypeId%20eq%20%27Device%27)&%24orderby=Id', addHeaders({Authorization: 'Bearer ' + token.access_token}));
     json = getJson(html);
 
     var n = 1;

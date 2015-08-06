@@ -50,6 +50,8 @@ function main(){
     getParam(html, result, 'till', /(?:Срок действия карты|Kartes derīguma termiņš):[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
     getParam(html, result, '__tariff', /(?:Тарифный план|Tarifu plāns):[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, 'phone', /(?:Номер телефона|Telefona numurs)[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'traffic', /(?:Пакет данных|Datu paka):[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseTraffic);
+    getParam(html, result, 'traffic_till', /(?:Пакет данных|Datu paka):(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
 
     AnyBalance.setResult(result);
 }

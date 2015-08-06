@@ -1,6 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-cell-zz</id>
+	<api flags="no_browser"/>
+  <id version="2">ab-cell-zz</id>
   <name>Zelta Zivtiņa (Латвия)</name>
   <description>
     Получает баланс и информацию о тарифном плане для сотового оператора Zelta Zivtiņa (http://www.zeltazivtina.lv).
@@ -19,6 +20,8 @@
   <counters>
     <counter id="balance" name="Баланс" prefix="Ls "/>
     <counter id="incoming" name="Бонус за входящий звонок" prefix="Ls "/>
+    <counter id="traffic" name="Пакет данных" suffix=" MB"/>
+    <counter id="traffic_till" name="Срок действия пакета данных" type="time" format="dd/MM/yyyy"/>
     <counter id="till" name="Срок действия карты" type="time" format="dd/MM/yyyy"/>
     <counter id="phone" name="Телефон" type="text"/>
   </counters>

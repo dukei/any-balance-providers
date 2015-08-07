@@ -27,7 +27,7 @@ function main(){
 		// throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
 	// }
 	
-    html = AnyBalance.requestPost(baseurl + 'mobileffp/loginEmailAction.action', {
+    html = AnyBalance.requestPost(baseurl + (/@/.test(prefs.login) ? 'mobileffp/loginEmailAction.action' : 'mobileffp/loginCardAction.action'), {
 		'scr': '360x640',
         'user.emailOrCardNumber': prefs.login,
 		'user.passwordOrPin': prefs.password,
@@ -36,9 +36,9 @@ function main(){
     }, addHeaders({ Referer: baseurl }));
 	
 	if (!/action:exitAction/i.test(html)) {
-		var error = getParam(html, null, null, /"error_block"[^>]*>([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
+		var error = getParam(html, null, null, /<ul[^>]+class="error"[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
 		if (error)
-			throw new AnyBalance.Error(error, null, /Неверное имя пользователя или пароль/i.test(error));
+			throw new AnyBalance.Error(error, null, /неправильного формата|Карты с таким номером не существует|Укажите корректный ПИН|Профиль с такими параметрами не найден/i.test(error));
 		
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');

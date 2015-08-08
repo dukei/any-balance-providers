@@ -1,6 +1,6 @@
 function OFX(){
 
-	function ofx2xml(ofx){
+	function validateOfxXML(ofx){
         var xml = ofx.replace(/>\s+</g, '><')
             .replace(/\s+</g, '<')
             .replace(/>\s+/g, '>')
@@ -12,7 +12,7 @@ function OFX(){
 	function parseHeader(header){
         var response = {};
 		
-		header = ofxData[0].split(/\r|\n/);
+		header = header.split(/\r|\n/);
         
         for (var i=0; i<header.length; ++i) {
             var attributes = header[i].split(/:/,2);
@@ -35,23 +35,60 @@ function OFX(){
         var response = {};
         
         response.header = parseHeader(ofxData[0]);
-        
-		var x2js = new X2JS();
-		var 
+        var xml = validateOfxXML(ofx);
 
-	        parser.parseString(ofxToXML(ofx), function(error, object){
-          if (error) {
-            return callback(error);
-          }
-        
-          response.body = object;
-          return callback(null, response);
+        response.body = parseOfxXML(xml);
+        return response;
+	}
+
+	function parseOfxXML(xml){
+        var parser = new EasySAXParser();
+
+        var resultObject = {};
+        var stack = [{name: null, value: resultObject}];
+
+        parser.on('error', function (msg) {
+            AnyBalance.trace(msg);
         });
-		
+        
+        parser.on('startNode', function (elem, attr, uq, tagend, getStrNode) {
+            var info = {name: elem, value: null};
+            stack.push(info);
+        });
+        
+        parser.on('endNode', function (elem, uq, tagstart, str) {
+        	var info = stack[stack.length-1];
+        	var parent = stack[stack.length-2];
+        	if(!parent.value)
+        		parent.value = {};
+
+        	if(parent.value.hasOwnProperty(info.name)){ //У нас уже есть это свойство
+        		if(typeof(parent.value[info.name]) != 'object'){ //Simple value
+        			AnyBalance.trace('Overwriting text node (' + info.name + '): ' + parent.value[info.name]);
+        			parent.value[info.name] = info.value;
+        		}else if(!isArray(parent.value[info.name])){ //Object
+        			var obj = parent.value[info.name];
+        			parent.value[info.name] = [obj, info.value];
+        		}else{ //Array
+        			parent.value[info.name].push(info.value);
+        		}
+        	}else{
+        		parent.value[info.name] = info.value;
+        	}
+        	stack.pop();
+        });
+        
+        parser.on('textNode', function (s, uq) {
+        	var info = stack[stack.length-1];
+            info.value = uq(s);
+        });
+        
+        parser.parse(xml);
+    	return resultObject.OFX;
+
 	}
 
 	return {
-		ofx2xml: ofx2xml,
 		ofx2json: ofx2json
 	}
 }

@@ -1,38 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1"></id>
+	<id version="1">ab-money-wellsfargo</id>
 	<api flags="no_browser"/>
-	<name>TypicalProvider</name>
+	<name>WellsFargo (USA)</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе провайдера ИмяПровайдера <a href=""></a></p>
-	<p>Информация берется из личного кабинета <a href=""></a></p>
-
-	<b>Особенности:</b>
-	<ul>
-		<li></li>
-		<li></li>
-		<li></li>
-	</ul>
+	<p>Gets info on WellsFargo accounts https://www.wellsfargo.com</p>
+	<p>Information is obtained through internet bank https://online.wellsfargo.com/</a></p>
 	]]></description>
-	<instruction html="true"><![CDATA[
-	<p>Если у вас нет доступа в Личный кабинет, получите его на странице <a href=""></a></p>
-	]]></instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
+		<js>easysax.js</js>
 		<js>library.js</js>
+		<js>extract.js</js>
+		<js>ofx.js</js>
+		<js>wellsfargo.js</js>
+		<js>nadapter.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units=" {@currency}"/>
-		<counter id="fio" name="ФИО" type="text"/>
-		<counter id="status" name="Статус" type="text"/>
-		<counter id="phone" name="Телефон" type="text"/>
-		<counter id="deadline" name="Дата отключения" type="time" format="dd/MM/yyyy"/>
+		<counter id="total" name="Total" prefix="$"/>
+		<counter id="balance" name="Available" prefix="$"/>
+		<counter id="cash" name="Cash" prefix="$"/>
+		<counter id="num" name="Account number (masked)" type="text"/>
 	</counters>
 	<keywords></keywords>
-	<type></type>
-	<country>ru</country>
+	<type>money, bank</type>
+	<country>us</country>
 </provider>

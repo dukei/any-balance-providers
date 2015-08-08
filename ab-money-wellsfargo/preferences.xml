@@ -1,24 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
 	<EditTextPreference
-		title="Логин"
+		title="Login"
 		key="login"
 		summary="||{@s}"
 		obligatory="true"
-		dialogTitle="Логин"
-		positiveButtonText="ОК"
-		negativeButtonText="Отмена"
-		dialogMessage="Введите логин, используемый для входа в личный кабинет.">
+		dialogTitle="Login"
+		positiveButtonText="OK"
+		negativeButtonText="Cancel"
+		dialogMessage="Enter login to your internet bank.">
 	</EditTextPreference>
 	<EditTextPreference
-		title="Пароль"
+		title="Password"
 		key="password"
 		summary="||***********"
 		obligatory="true"
-		dialogTitle="Пароль"
-		positiveButtonText="ОК"
-		negativeButtonText="Отмена"
-		dialogMessage="Введите пароль, используемый для входа в личный кабинет."
+		dialogTitle="Password"
+		positiveButtonText="OK"
+		negativeButtonText="Cancel"
+		dialogMessage="Enter password for you internet bank."
 		inputType="textPassword">
+	</EditTextPreference>
+	<EditTextPreference
+		title="Number"
+		key="num"
+		summary="|4 last digits of your account or empty|{@s}"
+		obligatory="true"
+		dialogTitle="Number"
+		inputType="number"
+		positiveButtonText="OK"
+		negativeButtonText="Cancel"
+		dialogMessage="Please enter four last digits of your account number you want to view or leave this field empty to view the first account.">
 	</EditTextPreference>
 </PreferenceScreen>

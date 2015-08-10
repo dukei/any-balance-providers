@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-bonus-electrosila</id>
+	<api flags="no_browser"/>
+	<name>Электросила</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе бонусов сети Электросила (http://sila.by/)</p>
+	<p>Информация берется из личного кабинета http://sila.by/bonus </p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" {@currency}"/>
+		<counter id="till" name="Срок действия" type="time" format="dd/MM/yyyy"/>
+	</counters>
+	<keywords></keywords>
+	<type>bonus</type>
+	<country>by</country>
+</provider>

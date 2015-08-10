@@ -43,7 +43,7 @@ function main() {
 	var result = {success: true};
 	
 	getParam(html, result, 'balance', /Баланс:([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);    
-	getParam(html, result, 'dw_key', /Cтоимость одного dw \(ключа\):[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'dw_key', /Cтоимость одного dw:[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(html, result, 'dw_users', /Сумма dw юзеров[\s:]*?\[([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'sum', /На сумму[\s:]*?\[([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'status', /font\s*?color="#006600">([\s\S]*?)</i, replaceTagsAndSpaces, html_entity_decode);

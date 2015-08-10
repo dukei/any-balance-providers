@@ -114,28 +114,90 @@ function main(){
 	fetchCard(baseurl, html);
 }
 
+function findAccount(html){
+    var prefs = AnyBalance.getPreferences();
+    var accnum, cards, card, cardnum, account;
+
+    var accounts = getElements(html, /<table[^>]+id="[^"]*ClientCardsDataForm:accountContainer"[^>]*>/ig);
+    AnyBalance.trace('Найдено ' + accounts.length + ' счетов');
+
+    for(var i=0; i<accounts.length; ++i){
+    	account = accounts[i];
+    	accnum = getParam(account, null, null, /<td[^>]+class="tdId"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+    	cards = getElements(account, [/<table[^>]+id="[^"]*ClientCardsDataForm:accountContainer:[^>]*>/ig, /<td[^>]+class="tdNumber"/i]);
+    	var cardnums = sumParam(account, null, null, /<td[^>]+class="tdNumber"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+    	
+    	var ok = !prefs.lastdigits || endsWith(accnum, prefs.lastdigits);
+    	for(var j=0; !ok && j<cards.length; ++j){
+    		card = cards[j];
+    		cardnum = getParam(card, null, null, /<td[^>]+class="tdNumber"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+    		ok = ok || endsWith(cardnum, prefs.lastdigits);
+    	}
+
+    	AnyBalance.trace("Account number " + accnum + ' with cards ' + cardnums.join(', ') + ': ' + ok);
+    	if(ok)
+    		return {
+    			accnum: accnum,
+    			cards: cards,
+    			card: card || cards[0],
+    			cardnum: cardnum,
+    			account: account
+    		};
+    }
+
+    return null;
+}
+
 function fetchCard(baseurl, html){
     var prefs = AnyBalance.getPreferences();
 
-    if(prefs.lastdigits && !/^\d{4}$/.test(prefs.lastdigits))
-        throw new AnyBalance.Error("Надо указывать 4 последних цифры карты или не указывать ничего");
-	
+    if(prefs.lastdigits && !/^\d{4,}$/.test(prefs.lastdigits))
+        throw new AnyBalance.Error("Надо указывать 4 последних цифры карты или счета или не указывать ничего");
+
 	var href = getParam(html, null, null, /href="\/([^"]+)"(?:[^>]*>){1,2}\s*Счета с карточкой/i, replaceTagsAndSpaces, html_entity_decode);
 	checkEmpty(href, 'Не удалось найти ссылку на счета, сайт изменен?', true);
 	html = AnyBalance.requestGet(baseurl + href, addHeaders({'Referer': baseurl}));
-	
-    var re = new RegExp('<tr[^>]*>\\s*<td[^>]*class="tdAccountText">(?:[^](?!<\\/tr>))+?<td[^>]*class="tdId">\\s*<div[^>]*>\\s*\\d+' + (prefs.lastdigits || '') + '[^]+?<\\/tr>', 'i');
-    var tr = getParam(html, null, null, re);
-	
-    if(!tr)
-        throw new AnyBalance.Error(prefs.lastdigits ? "Не найден счет с последними цифрами " + prefs.lastdigits : "Не найдено ни одного счета");
+
+    var info = findAccount(html);
+
+    if(!info)
+        throw new AnyBalance.Error(prefs.lastdigits ? "Не найден счет/карта с последними цифрами " + prefs.lastdigits : "Не найдено ни одного счета/карты");
+
+    if(info.accnum == 'ExtraCardsAccount'){
+    	//Надо заново получить всё.
+    	var cardId = getParam(info.card, null, null, /<td[^>]+class="tdId"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+    	var form = getParam(html, null, null, /<form[^>]+id="[^"]*:ClientCardsDataForm"[^>]*>[\s\S]*?<\/form>/i);
+    	var action = getParam(form, null, null, /<form[^>]+action="([^"]*)/i, null, html_entity_decode);
+		var params = createFormParams(form, function(params, str, name, value) {
+			if (/acctIdSelField/i.test(name) || name == 'accountNumber') 
+				return info.accnum;
+			else if (/cardIdSelField/i.test(name))
+				return cardId;
+			return value;
+		});
+		params['accountNumber'] = info.accnum;
+
+		var pname = getParam(info.account, null, null, /oam.submitForm\('([^']*)/, replaceSlashes);
+		var pval = getParam(info.account, null, null, /oam.submitForm\('[^']*','([^']*)/, replaceSlashes);
+		params[pname + ':_idcl'] = pval;
+
+		html = AnyBalance.requestPost(baseurl + action, params, addHeaders({'Referer': baseurl}));
+		info = findAccount(html);
+    }
 	
     var result = {success: true};
 	
-    getParam(tr, result, 'cardnum', /<td[^>]*class="tdAccountText">([^]*?)<\/td>/, replaceTagsAndSpaces, html_entity_decode);
-	getParam(tr, result, '__tariff', /<td[^>]*class="tdAccountText">([^]*?)<\/td>/, replaceTagsAndSpaces, html_entity_decode);
-    getParam(tr, result, 'balance', /<td[^>]*class="tdBalance">([^]*?)<\/td>/, replaceTagsAndSpaces, parseBalance);
-    getParam(tr, result, ['currency', 'balance'], /<td[^>]*class="tdBalance">([^]*?)<\/td>/, replaceTagsAndSpaces, parseCurrency);
+    getParam(info.card, result, 'cardnum', /<td[^>]*class="tdNumber">([^]*?)<\/td>/, replaceTagsAndSpaces, html_entity_decode);
+    getParam(info.card, result, 'cardaccnum', /<td[^>]+class="tdId"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(info.account, result, '__tariff', /<td[^>]*class="tdAccountText">([^]*?)<\/td>/, replaceTagsAndSpaces, html_entity_decode);
+	if(info.accnum == 'ExtraCardsAccount'){
+    	getParam(info.card, result, 'balance', /\(<nobr[^>]*>[^<]*<\/nobr>\s+\w+\)/i, replaceTagsAndSpaces, parseBalance);
+    	getParam(info.card, result, ['currency', 'balance'], /\(<nobr[^>]*>([^<]*<\/nobr>\s+\w+)\)/i, replaceTagsAndSpaces, parseCurrency);
+    }else{
+    	getParam(info.account, result, 'balance', /<td[^>]*class="tdBalance">([\s\S]*?)<\/td>/, replaceTagsAndSpaces, parseBalance);
+    	getParam(info.account, result, ['currency', 'balance'], /<td[^>]*class="tdBalance">([\s\S]*?)<\/td>/, replaceTagsAndSpaces, parseCurrency);
+    	getParam(info.accnum, result, 'accnum');
+    }
     
     AnyBalance.setResult(result);
 }

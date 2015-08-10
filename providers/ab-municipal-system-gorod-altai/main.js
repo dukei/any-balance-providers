@@ -42,7 +42,7 @@ function main(){
 
 function altai(prefix){
     var prefs = AnyBalance.getPreferences();
-    var pan = prefs.login.substr(6);
+    checkEmpty(prefs.login, 'Введите номер карты или телефон.');
     checkEmpty(prefs.password, 'Введите ПИН.');
 
     var accnumRe;
@@ -63,7 +63,7 @@ function altai(prefix){
     var html = AnyBalance.requestPost(baseurl + "auth", {
         'type-auth':'card',
         'answer-captcha':'',
-        pan:pan,
+        login:prefs.login,
         pin: prefs.password
     }, g_headers);
 	

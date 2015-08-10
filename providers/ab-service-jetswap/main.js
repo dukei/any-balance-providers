@@ -14,13 +14,26 @@ function main(){
     var baseurl = 'http://go.jetswap.com/';
     AnyBalance.setDefaultCharset('utf-8'); 
 	
-    var html = AnyBalance.requestGet(baseurl + 'account', g_headers);
+//    var html = AnyBalance.requestGet(baseurl + 'account', g_headers);
 	
-	html = AnyBalance.requestPost(baseurl + 'account', {
+	var html = AnyBalance.requestPost(baseurl + 'account', {
         user:prefs.login,
         pss:prefs.password,
         qs:''
     }, addHeaders({Referer: baseurl + 'account'})); 
+
+    var uniqueid;
+   	uniqueid = AnyBalance.getData('uniqueid', null);
+
+    if(!uniqueid){
+    	uniqueid = AnyBalance.requestGet(baseurl + 'uniqueid.php', addHeaders({'X-Requested-With': 'XMLHttpRequest', Referer: baseurl + 'account'}));
+   		AnyBalance.setData('uniqueid', uniqueid);
+   		AnyBalance.saveData(); 
+    }
+
+   	AnyBalance.setCookie('go.jetswap.com', 'jetuserid', uniqueid);
+
+    html = AnyBalance.requestPost(baseurl + 'account', {evc: uniqueid, fnp: hex_md5(uniqueid)}, addHeaders({Referer: baseurl + 'account'}));
 	
     if(!/cmd=logout/i.test(html)) {
         var error = getParam(html, null, null, /Ошибка:[^>]*>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
@@ -28,12 +41,14 @@ function main(){
             throw new AnyBalance.Error(error);
         throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
     }
+
+
 	
     var result = {success: true};
     getParam(html, result, 'balance', /Деньги[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'cred', /Список рефералов[\s\S]*?Кредиты[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'bonus', /Список рефералов[\s\S]*?Бонусы[^>]*>[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, '__tariff', /Статус([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, '__tariff', /Статус:([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(html, result, 'refs', /Всего рефералов([^<]*)/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'refs_pcts', /Процент с рефералов:([^<]*)/i, replaceTagsAndSpaces, parseBalance);
 	

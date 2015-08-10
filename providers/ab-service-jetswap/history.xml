@@ -1,5 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="3" date="2015-08-10">
+	Изменения в процедуре входа
+	</change>
 	<change version="2" date="2013-09-09">
 	- Новые счетчики: Заработали кредитов в серфинге сегодня и Заработали кредитов в серфинге в среднем за месяц
 	</change>

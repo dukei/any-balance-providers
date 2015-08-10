@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-bonus-club-good</id>
+	<api flags="no_browser"/>
+	<name>Клуб Хороших Людей (Мурманск)</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе на карте <a href="http://krugka.ru/kruzhka/novosti/?newsid=1016&page=1">Клуб Хороших Людей</a> сети ресторанов Кружка</p>
+	<p>Информация берется из личного кабинета <a href="http://xn--80aaahi2bjaklrrng.xn--p1ai/cardsystem/">мурмандоставка.рф/cardsystem</a></p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" {@currency}"/>
+		<counter id="till" name="Срок действия" type="time" format="dd/MM/yyyy"/>
+	</counters>
+	<keywords>Кружка, Царская Охота, Gray Goose, Ресторанный синдикат</keywords>
+	<type>bonus, food</type>
+	<country>ru</country>
+</provider>

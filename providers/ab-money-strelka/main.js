@@ -17,6 +17,7 @@ function main() {
 	AnyBalance.setDefaultCharset('utf-8');
 	
 	checkEmpty(prefs.login, 'Введите логин!');
+	checkEmpty(!/\s+/.test(prefs.login), 'Логин не должен содержать пробелов!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 
 	var html = AnyBalance.requestGet(baseurl, g_headers);
@@ -30,10 +31,13 @@ function main() {
 		prefs.login = '7' + prefs.login;
 	
 	// Логинимся
-	makeRequest('Post', baseurl + 'api/users/login/', {
+	var json = makeRequest('Post', baseurl + 'api/users/login/', {
 		username: prefs.login,
 		password: prefs.password
 	}, baseurl);
+
+	if(json.username)
+		throw new AnyBalance.Error(json.username, null, true);
 
 	// Получаем данные по всем картам
 	var data = makeRequest('Get', lkurl + 'api/cards/', null, lkurl + '/cards');

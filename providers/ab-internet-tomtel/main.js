@@ -15,8 +15,8 @@ function main(){
 	
 	var baseurl = "https://bill.tomtel.ru/fastcom/!w3_p_main.showform";
 	
-	var html = AnyBalance.requestPost(baseurl + '?IDENTIFICATION=TOMTEL_CONTRACT&ROOTMENU=ROOT', {
-        CONTRACT:'IDENTIFICATION',
+	var html = AnyBalance.requestPost(baseurl + '?IDENTIFICATION=CONTRACT&ROOTMENU=ROOT&CONFIG=CONTRACT', {
+        IDENTIFICATION:'CONTRACT',
         ROOT:'ROOTMENU',
         FORMNAME:'QFRAME',
         USERNAME:prefs.login,
@@ -44,8 +44,8 @@ function main(){
     var result = {success: true};
 
     getParam(html, result, 'balance', /Текущий баланс[\s\S]*?<td[^>]*>([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'topay', /Рекомендуемая сумма платежа:[\s\S]*?<td[^>]*>([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'bonus', /Количество бонусных баллов[\s\S]*?<td[^>]*>([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+//    getParam(html, result, 'topay', /Рекомендуемая сумма платежа:[\s\S]*?<td[^>]*>([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'bonus', /(?:Количество бонусных баллов|Бонусные баллы)[\s\S]*?<td[^>]*>([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'licschet', /Лицевой счёт:[\s\S]*?<td[^>]*>([\s\S]*?)<\/?t[dr]>/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, 'fio', /Клиент:[\s\S]*?<td[^>]*>([\s\S]*?)<\/?t[dr]>/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, '__tariff', /Клиент:[\s\S]*?<td[^>]*>([\s\S]*?)<\/?t[dr]>/i, replaceTagsAndSpaces, html_entity_decode);

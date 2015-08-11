@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="1.2" version="58">ab-cell-mts-ua</id>
+	<id major_version="1.2" version="59">ab-cell-mts-ua</id>
 	<api flags="no_browser"/>
 	<name>МТС (Украина)</name>
 	<description html="true"><![CDATA[
@@ -45,6 +45,7 @@
 		<counter id="min_net_all_33" name="30/33 минуты в день для внутрисетевых звонков во всех областях" type="time_interval" format="{@MIN}" units=" мин"/>
 		<counter id="min_net_100" name="100 минут в день на внутрисетевое направление" type="time_interval" format="{@MIN}" units=" мин"/>
 		<counter id="min_net_200" name="200 минут в день на внутрисетевое направление" type="time_interval" format="{@MIN}" units=" мин"/>
+		<counter id="min_net_3D" name="Минуты в день для услуги Супер 3D" type="time_interval" format="{@MIN}" units=" мин"/>
 		<counter id="sms_paket" name="Пакет СМС" units=" sms"/>
 		<counter id="mms_paket" name="Пакет ММС" units=" mms"/>
 		<counter id="traffic_paket_mb" name="Пакет интернета" units=" mb"/>
@@ -86,6 +87,7 @@
 		<counter id="PZS_MB_opera" name="ПЗС за первое событие для APN opera" flags="zero_when_empty"/>
 		<counter id="PZS_first" name="ПЗС за первое событие" flags="zero_when_empty"/>
 		<counter id="PZS_first_out" name="ПЗС за пределами региона" flags="zero_when_empty"/>
+		<counter id="PZS_minute" name="ПЗС за минуты по услуге Супер 3D" flags="zero_when_empty"/>
 		<counter id="PZS_first_evrope" name="Плата за первое GPRS событие в Европе"/>
 		<counter id="PZS_first_russia" name="Плата за первое GPRS событие в России"/>
 		<!--Сроки пакетов -->

@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-internet-ulan</id>
+	<api flags="no_browser"/>
+	<name>U-LAN</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера U-LAN <a href="http://u-lan.ru/">http://u-lan.ru/</a></p>
+	<p>Информация берется из личного кабинета <a href="https://stat.u-lan.ru/account/info/">https://stat.u-lan.ru/account/info/</a></p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="days" name="Дней" units=" д"/>
+		<counter id="status" name="Статус" type="text"/>
+		<counter id="deadline" name="Окончание расчетного периода" type="time" format="dd/MM/yyyy"/>
+		<counter id="account" name="Лицевой счет" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>internet</type>
+	<country>ru</country>
+</provider>

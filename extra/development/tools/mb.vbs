@@ -1,19 +1,19 @@
 Option Explicit
 
-'Функция создания окна похожего на inputBox с таймаутом в миллисекундах
+'Р¤СѓРЅРєС†РёСЏ СЃРѕР·РґР°РЅРёСЏ РѕРєРЅР° РїРѕС…РѕР¶РµРіРѕ РЅР° inputBox СЃ С‚Р°Р№РјР°СѓС‚РѕРј РІ РјРёР»Р»РёСЃРµРєСѓРЅРґР°С…
 Function createInput(file,title,timeout)
     Dim content, wnd, status
-    'Задаём HTML код окна
-	'Загрузим из файла
+    'Р—Р°РґР°С‘Рј HTML РєРѕРґ РѕРєРЅР°
+	'Р—Р°РіСЂСѓР·РёРј РёР· С„Р°Р№Р»Р°
 	Dim objStream
 
 	Set objStream = CreateObject("ADODB.Stream")
 	objStream.CharSet = "utf-8"
 	objStream.Open
-	objStream.LoadFromFile("..\\extra\\development\\tools\\" & file)
+	objStream.LoadFromFile("..\\..\\extra\\development\\tools\\" & file)
 	content = objStream.ReadText()
 	
-    'Создаём нужное нам окошко (без скролов, без меню и т.п)
+    'РЎРѕР·РґР°С‘Рј РЅСѓР¶РЅРѕРµ РЅР°Рј РѕРєРѕС€РєРѕ (Р±РµР· СЃРєСЂРѕР»РѕРІ, Р±РµР· РјРµРЅСЋ Рё С‚.Рї)
     Set wnd = createWindow(content,"border=dialog " &_
                                 "minimizeButton=no " &_
                                 "maximizeButton=no " &_
@@ -24,20 +24,20 @@ Function createInput(file,title,timeout)
                                 "innerBorder=no")
 
     
-    'Устанавливаем таймер таймаута
+    'РЈСЃС‚Р°РЅР°РІР»РёРІР°РµРј С‚Р°Р№РјРµСЂ С‚Р°Р№РјР°СѓС‚Р°
     wnd.execScript "window.setTimeout('window.close()'," & Clng(timeout) & ");window.returnValue=''"
 
-    'Заполняем нужные нам объекты текстом
+    'Р—Р°РїРѕР»РЅСЏРµРј РЅСѓР¶РЅС‹Рµ РЅР°Рј РѕР±СЉРµРєС‚С‹ С‚РµРєСЃС‚РѕРј
     With wnd
-        'По умолчанию выставляем статус 0 (потом будем проверять его в цикле)
+        'РџРѕ СѓРјРѕР»С‡Р°РЅРёСЋ РІС‹СЃС‚Р°РІР»СЏРµРј СЃС‚Р°С‚СѓСЃ 0 (РїРѕС‚РѕРј Р±СѓРґРµРј РїСЂРѕРІРµСЂСЏС‚СЊ РµРіРѕ РІ С†РёРєР»Рµ)
         .status = 0
-        'Ставим фокус на inpText
+        'РЎС‚Р°РІРёРј С„РѕРєСѓСЃ РЅР° inpText
         .inpText.focus
-        'Задаём заголовок окна
+        'Р—Р°РґР°С‘Рј Р·Р°РіРѕР»РѕРІРѕРє РѕРєРЅР°
         .document.title = title
-        'Двигаем окошко на нужные нам координаты (при желании можно отцентрировать по wnd.screenWidth / wnd.screenHeight)
+        'Р”РІРёРіР°РµРј РѕРєРѕС€РєРѕ РЅР° РЅСѓР¶РЅС‹Рµ РЅР°Рј РєРѕРѕСЂРґРёРЅР°С‚С‹ (РїСЂРё Р¶РµР»Р°РЅРёРё РјРѕР¶РЅРѕ РѕС‚С†РµРЅС‚СЂРёСЂРѕРІР°С‚СЊ РїРѕ wnd.screenWidth / wnd.screenHeight)
         .moveTo 200, 200
-        'Задаём ширину и высоту окошка
+        'Р—Р°РґР°С‘Рј С€РёСЂРёРЅСѓ Рё РІС‹СЃРѕС‚Сѓ РѕРєРѕС€РєР°
         .resizeTo 370, 250
     End With
     
@@ -46,10 +46,10 @@ Function createInput(file,title,timeout)
 	prevSelect = 0
     
     Do
-        'Проверяем статус окна
+        'РџСЂРѕРІРµСЂСЏРµРј СЃС‚Р°С‚СѓСЃ РѕРєРЅР°
         On Error Resume Next
         status = wnd.status
-		'проверяем выбор селекта
+		'РїСЂРѕРІРµСЂСЏРµРј РІС‹Р±РѕСЂ СЃРµР»РµРєС‚Р°
 		If prevSelect = wnd.standartMessages.selectedIndex Then
 
 		Else
@@ -57,13 +57,13 @@ Function createInput(file,title,timeout)
 			prevSelect = wnd.standartMessages.selectedIndex
 			End if
 		
-        'Если окошко закрыли кнопкой [X], то произойдёт ошибка обращения к нему
+        'Р•СЃР»Рё РѕРєРѕС€РєРѕ Р·Р°РєСЂС‹Р»Рё РєРЅРѕРїРєРѕР№ [X], С‚Рѕ РїСЂРѕРёР·РѕР№РґС‘С‚ РѕС€РёР±РєР° РѕР±СЂР°С‰РµРЅРёСЏ Рє РЅРµРјСѓ
         If Err.number <> 0 Then 
             On Error Goto 0
-            'В этом случае выходим из цикла
+            'Р’ СЌС‚РѕРј СЃР»СѓС‡Р°Рµ РІС‹С…РѕРґРёРј РёР· С†РёРєР»Р°
             Exit Do
         Else
-            'Если же статус равен "1", то возвращаем из функции заполненное свойство и выходим из цикла
+            'Р•СЃР»Рё Р¶Рµ СЃС‚Р°С‚СѓСЃ СЂР°РІРµРЅ "1", С‚Рѕ РІРѕР·РІСЂР°С‰Р°РµРј РёР· С„СѓРЅРєС†РёРё Р·Р°РїРѕР»РЅРµРЅРЅРѕРµ СЃРІРѕР№СЃС‚РІРѕ Рё РІС‹С…РѕРґРёРј РёР· С†РёРєР»Р°
             if status = 1 Then 
                 createInput = wnd.returnValue
                 Exit Do
@@ -71,11 +71,11 @@ Function createInput(file,title,timeout)
         End if
         WScript.Sleep 200
     Loop
-    'По концу функции закрываем окно
+    'РџРѕ РєРѕРЅС†Сѓ С„СѓРЅРєС†РёРё Р·Р°РєСЂС‹РІР°РµРј РѕРєРЅРѕ
     wnd.close
 End Function
 
-'Функция создания HTA окна
+'Р¤СѓРЅРєС†РёСЏ СЃРѕР·РґР°РЅРёСЏ HTA РѕРєРЅР°
 Function createWindow(content,features)
     Dim wid, we, sw, id, i, doc
     Randomize:wid = Clng(Rnd*100000)

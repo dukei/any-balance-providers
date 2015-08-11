@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="38">ab-money-alfabank</id>
+	<id version="39">ab-money-alfabank</id>
 	<api flags="no_browser"/>
 	<name>Альфа-Банк</name>
 	<description html="true"><![CDATA[
@@ -40,6 +40,8 @@
 		<counter id="topay" name="Сумма к оплате" units=" {@currency}"/>
 		<counter id="paytill" name="Оплатить до" type="time" format="dd/MM/yyyy"/>
 		<counter id="debt" name="Общая задолженность" units=" {@currency}"/>
+		<counter id="blocked" name="Заблокировано" units=" {@currency}"/>
+		<counter id="own" name="Собственные средства" units=" {@currency}"/>
 		<counter id="gracetill" name="Окончание льготного периода" type="time" format="dd/MM/yyyy"/>
 		<counter id="minpay" name="Минимальный платеж" units=" {@currency}"/>
 		<counter id="penalty" name="Штрафы" units=" {@currency}"/>

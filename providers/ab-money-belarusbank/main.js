@@ -118,14 +118,21 @@ function findAccount(html){
     var prefs = AnyBalance.getPreferences();
     var accnum, cards, card, cardnum, account;
 
-    var accounts = getElements(html, /<table[^>]+id="[^"]*ClientCardsDataForm:accountContainer"[^>]*>/ig);
+    var accountsArea = getElement(html, /<table[^>]+id="[^"]*ClientCardsDataForm:accountContainer"[^>]*>/i);
+    if(!accountsArea){
+    	AnyBalance.trace('Не удалось найти таблицу счетов!');
+    	AnyBalance.trace(html);
+    	return null;
+    }
+    	
+    var accounts = getElements(accountsArea, /<tr[^>]*>/ig);
     AnyBalance.trace('Найдено ' + accounts.length + ' счетов');
 
     for(var i=0; i<accounts.length; ++i){
     	account = accounts[i];
     	accnum = getParam(account, null, null, /<td[^>]+class="tdId"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
     	cards = getElements(account, [/<table[^>]+id="[^"]*ClientCardsDataForm:accountContainer:[^>]*>/ig, /<td[^>]+class="tdNumber"/i]);
-    	var cardnums = sumParam(account, null, null, /<td[^>]+class="tdNumber"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+    	var cardnums = sumParam(account, null, null, /<td[^>]+class="tdNumber"[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, html_entity_decode);
     	
     	var ok = !prefs.lastdigits || endsWith(accnum, prefs.lastdigits);
     	for(var j=0; !ok && j<cards.length; ++j){

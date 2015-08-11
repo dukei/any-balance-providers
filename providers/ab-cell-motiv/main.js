@@ -50,7 +50,7 @@ function main(){
     getParam(html, result, 'sms', /Остаток SMS:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'mms', /Остаток MMS:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'min', /Пакеты голосовых услуг:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'traf', /Мобильный интернет[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseTraffic);
+    getParam(html, result, 'traf', /(?:Мобильный интернет|Остаток GPRS:)[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseTraffic);
 
     AnyBalance.setResult(result);
 }

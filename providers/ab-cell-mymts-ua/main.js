@@ -95,13 +95,16 @@ function main() {
 	sumParam (html, result, 'hvylyny_net3', /GSM "Бізнес Оптимальний-2", осталось:\s*([\d\.,]+)\s*мин/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 	sumParam (html, result, 'hvylyny_net3', /<li>Супер МТСОлімпійський Стандарт, осталось:\s*([\d\.,]+)\s*мин.<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
         sumParam (html, result, 'hvylyny_net3', /<li>Супер МТСОлімпійський, осталось:\s*([\d\.,]+)\s*мин.<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+	sumParam (html, result, 'hvylyny_net3', />100 минут в день для услуги Супер 3D, осталось\s*([\d\.,]+)\s*минут<\/span>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 	switch(result.__tariff) {
 		case 'GSM \"Бизнес Оптимальный-2\"':
 		case 'Супер МТС Олимпийский Стандарт':
 		case 'Супер МТС Олимпийский':
 		case 'Супер МТС Олімпійський Стандарт':
 		case 'Супер МТС Олімпійський':
-			result.min_paket = result.min_paket * 60;
+		case 'Супер МТС 3D Ноль':
+		case 'Супер МТС 3D Нуль':
+			result.hvylyny_net3 = result.hvylyny_net3 * 60;
 			break;
 	}
 
@@ -113,6 +116,7 @@ function main() {
 
 	//СМС и ММС
 	sumParam (html, result, 'sms_used', />50 SMS по Украине для "Смартфона", израсходовано:(\d+)\s*смс.<\/span>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+	sumParam (html, result, 'sms_used', />80 sms в день для услуги Супер 3D, израсходовано:(\d+)\s*смс.<\/span>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 	sumParam (html, result, 'mms_used', />50 MMS по Украине для "Смартфона", израсходовано:(\d+)\s*mms.<\/span>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 	sumParam (html, result, 'sms_mms_used', /SMS\\MMS по Украине, израсходовано:(\d+)\s*sms\/mms/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 	sumParam (html, result, 'sms_net', />1500 (?:SMS|SMS и MMS) на МТС для (?:MAX Energy Allo|MAX Energy), осталось (\d+) (?:бесплатных SMS|смс)</ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
@@ -147,6 +151,8 @@ function main() {
 	getParam (html, result, 'PZS_MB_opera', />OperaMini: ПЗС за первое событие для APN opera:\s*(\d+)<\/span>/ig, replaceTagsAndSpaces, parseBalance);
 	getParam (html, result, 'PZS_first', />Снятие ПЗС за первое событие:\s*(\d+)<\/span>/ig, replaceTagsAndSpaces, parseBalance);
 	getParam (html, result, 'PZS_first_out', />Единоразовое ПЗС за пределами региона \(Смартфон\):\s*(\d+)<\/span>/ig, replaceTagsAndSpaces, parseBalance);
+	getParam (html, result, 'PZS_MB_3D', />ПЗС за Мб по услуге Супер 3D:\s*(\d+)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+	getParam (html, result, 'PZS_minute', />ПЗС за минуты по услуге Супер 3D:\s*(\d+)<\/span>/i, replaceTagsAndSpaces, parseBalance);
 
 	//Второстепенные параметры
 	getParam(html, result, 'spent', /Витрачено за номером \+\d\d\d \d\d \d\d\d-\d\d-\d\d за період з \d\d.\d\d до \d\d.\d\d.\d\d\d\d \(з урахуванням ПДВ і збору до ПФ\)<\/span>\s*<div[^>]*><span>([\s\S]*?)\s*<small>грн/i, replaceTagsAndSpaces, parseBalance);

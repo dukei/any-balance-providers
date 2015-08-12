@@ -23,7 +23,7 @@ function main(){
         throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
     }
 
-    AnyBalance.sleep(1000);
+    AnyBalance.sleep(2000);
 
     html = AnyBalance.requestPost(baseurl + 'login', {
         action: 'validate',
@@ -36,6 +36,8 @@ function main(){
         var error = getParam(html, null, null, /<span[^>]*style=["']color:\s*#101010[^>]*>([\s\S]*?)<\/span>/, replaceTagsAndSpaces, html_entity_decode);
         if(error)
             throw new AnyBalance.Error(error);
+		
+		AnyBalance.trace(html);
         throw new AnyBalance.Error('Не удалось войти в личный кабинет. Проблемы на сайте или сайт изменен.');
     }
 
@@ -43,9 +45,11 @@ function main(){
 
     var url = AnyBalance.getLastUrl();
     if(/statistics\.gorcomnet/.test(url)){
-		getParam(html, result, 'balance', /баланс:([\s\S]*?<\/tr[^>]*>){2}/i, [replaceTagsAndSpaces, /(\d+)\s(\d+)/, '$1,$2'], parseBalance);
-		getParam(html, result, 'days', /Осталось дней до блокировки([^<]+)/i, replaceTagsAndSpaces, parseBalance);
-		getParam(html, result, 'licschet', /Лицевой счет([\s\d]+)/i, replaceTagsAndSpaces, html_entity_decode);
+		getParam(html, result, 'balance', /<li>\s*Баланс:(?:<[^>]*>){2}([^<]+)/i, replaceTagsAndSpaces, parseBalance);
+		getParam(html, result, 'days', /<li[^>]*>\s*Дней до блокировки:(?:<[^>]*>){1}([^<]+)/i, replaceTagsAndSpaces, parseBalance);
+		
+		getParam(html, result, 'licschet', /Лицевой счет №\s*(\d+)/i, replaceTagsAndSpaces, html_entity_decode);
+		
     } else if(/stat\.seven-sky\.net/.test(url)){
         getParam(html, result, 'balance', /Ваш баланс(?:[^>]*>){5}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
         getParam(html, result, 'licschet', /счет N([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);

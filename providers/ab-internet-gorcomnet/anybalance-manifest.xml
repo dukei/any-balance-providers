@@ -1,33 +1,30 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-internet-gorcomnet</id>
-  <name>Горком (Москва)</name>
-  <description>
-    Получает баланс и информацию о тарифном плане для московского интернет провайдера Горком (http://gorcomnet.ru). Информация берется из личного кабинета https://statistics.gorcomnet.ru:7778/.
-    ООО «ГорКом» является телекоммуникационной компанией полного профиля, предоставляющей услуги широкополосного доступа в Интернет, 
-    телефонии, цифрового телевидения и веб-хостинга физическим и юридическим лицам в следующих городах: Москва, Щербинка, Люберцы, Московский, Одинцово, Красногорск, Долгопрудный.
-  </description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>main.js</js>
-  </files>
-  <counters>
-    <counter id="balance" name="Баланс" units="р"/>
-    <counter id="trafficIn" name="Входящий трафик в текущем месяце" units="Mb"/>
-    <counter id="trafficOut" name="Исходящий трафик в текущем месяце" units="Mb"/>
-    <counter id="expences" name="Расходы в текущем месяце" units="р"/>
-    <counter id="credit" name="Кредит" units="р"/>
-    <counter id="licschet" name="Лицевой счет" type="text"/>
-  </counters>
-  <keywords>
-    интернет, москва
-  </keywords>
-  <type>
-    internet
-  </type>
-  <country>
-    ru
-  </country>
+	<api flags="no_browser"/>
+	<id version="2">ab-internet-gorcomnet</id>
+	<name>Горком (Москва)</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера Горком <a href="http://gorcomnet.ru">http://gorcomnet.ru</a></p>
+	<p>Информация берется из личного кабинета <a href="https://statistics.gorcomnet.ru:7778/">https://statistics.gorcomnet.ru:7778/</a></p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="days" name="Дней до блокировки" units=" д"/>
+		<counter id="trafficIn" name="Входящий трафик в текущем месяце" units=" Mb"/>
+		<counter id="trafficOut" name="Исходящий трафик в текущем месяце" units=" Mb"/>
+		<counter id="expences" name="Расходы в текущем месяце" units=" р"/>
+		<counter id="credit" name="Кредит" units=" р"/>
+		<counter id="licschet" name="Лицевой счет" type="text"/>
+	</counters>
+	<keywords>интернет, москва</keywords>
+	<type>internet</type>
+	<country>ru</country>
 </provider>

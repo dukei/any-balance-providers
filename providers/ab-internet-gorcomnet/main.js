@@ -1,84 +1,58 @@
 ﻿/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
-
-Текущий баланс у московского оператора интернет Горком.
-
-Сайт оператора: http://gorcomnet.ru/
-Личный кабинет: https://statistics.gorcomnet.ru:7778/
 */
 
-function getParam (html, result, param, regexp, replaces, parser) {
-	if (param && (param != '__tariff' && !AnyBalance.isAvailable (param)))
-		return;
-
-	var value = regexp.exec (html);
-	if (value) {
-		value = value[1];
-		if (replaces) {
-			for (var i = 0; i < replaces.length; i += 2) {
-				value = value.replace (replaces[i], replaces[i+1]);
-			}
-		}
-		if (parser)
-			value = parser (value);
-
-    if(param)
-      result[param] = value;
-    else
-      return value
-	}
-}
-
-function parseBalance(str){
-    var val = parseFloat(str);
-    if(isNaN(val))
-        val = 0;
-    return val;
-}
-
-var replaceTagsAndSpaces = [/<[^>]*>/g, ' ', /\s{2,}/g, ' ', /^\s+|\s+$/g, ''];
-var replaceFloat = [/\s+/g, '', /,/g, '.'];
+var g_headers = {
+	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
+	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
+	'Connection': 'keep-alive',
+	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
+};
 
 function main(){
     var prefs = AnyBalance.getPreferences();
-
     var baseurl = "https://statistics.gorcomnet.ru:7778/";
-    var html = AnyBalance.requestPost(baseurl + 'login.jsp', {
+
+	checkEmpty(prefs.login, 'Введите логин!');
+	checkEmpty(prefs.password, 'Введите пароль!');
+	
+	var html = AnyBalance.requestGet(baseurl + 'login.jsp', g_headers);
+	
+	if(!html || AnyBalance.getLastStatusCode() > 400){
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
+	}
+	
+	html = AnyBalance.requestPost(baseurl + 'login.jsp', {
         p_logname: prefs.login,
         p_pwd: prefs.password
-    });
-
-    var error = getParam(html, null, null, /<p[^>]*class=['"]hi['"][^>]*>([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, html_entity_decode);
-    if(error)
-        throw new AnyBalance.Error(error);
-
+	}, addHeaders({Referer: baseurl + 'login.jsp'}));
+	
+	if (!/exit\.jsp/i.test(html)) {
+		var error = getParam(html, null, null, /<p[^>]*class=['"]hi['"][^>]*>([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, html_entity_decode);
+		if (error)
+			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
+		
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
+	}	
+	
     var result = {success: true};
 
-    if(AnyBalance.isAvailable('balance')){
-        var integer = getParam(html, null, null, /Баланс[\s\S]*?<td[^>]+class="integer"[^>]*>(-?\d[\d\.,\s]*)/i, replaceFloat, parseFloat) || 0; 
-        var frac = getParam(html, null, null, /Баланс[\s\S]*?<td[^>]+class="frac"[^>]*>(-?\d[\d\.,\s]*)/i, replaceFloat, parseFloat) || 0;
-        result.balance = integer + frac/100;
-    }
-
-    getParam(html, result, 'licschet', /Лицевой счет([^<]*)</i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'credit', /Кредит[\s\S]*?<td[^>]*>([^<]*)/i, replaceFloat, parseBalance);
-    getParam(html, result, 'expences', /Расходы в текущем месяце[\s\S]*?<td[^>]*>([^<]*)/i, replaceFloat, parseBalance);
+	getParam(html, result, 'balance', /<li>\s*Баланс:(?:<[^>]*>){2}([^<]+)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'days', /<li[^>]*>\s*Дней до блокировки:(?:<[^>]*>){1}([^<]+)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'licschet', /Лицевой счет №\s*(\d+)/i, replaceTagsAndSpaces, html_entity_decode);	
+    getParam(html, result, 'credit', /Кредит[\s\S]*?<td[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'expences', /Расходы в текущем месяце[\s\S]*?<td[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, '__tariff', /Ваш тарифный план[^>]*&laquo;([^>]*)&raquo;/i, replaceTagsAndSpaces, html_entity_decode);
 
-    if(AnyBalance.isAvailable('trafficIn', 'trafficOut')){
+    if(AnyBalance.isAvailable('trafficIn', 'trafficOut')) {
         html = AnyBalance.requestGet(baseurl + 'stat.jsp');
-        getParam(html, result, 'trafficIn', /Входящий Internet трафик[\s\S]*?<td[^>]*>([^<]*)/i, replaceFloat, parseBalance);
-        getParam(html, result, 'trafficOut', /Исходящий Internet трафик[\s\S]*?<td[^>]*>([^<]*)/i, replaceFloat, parseBalance);
+		
+        getParam(html, result, 'trafficIn', /Входящий Internet трафик[\s\S]*?<td[^>]*>([^<]*)/i, [replaceTagsAndSpaces, /([\s\S]*?)/, '$1 mb'], parseTraffic);
+        getParam(html, result, 'trafficOut', /Исходящий Internet трафик[\s\S]*?<td[^>]*>([^<]*)/i, [replaceTagsAndSpaces, /([\s\S]*?)/, '$1 mb'], parseTraffic);
     }
 
     AnyBalance.setResult(result);
 }
-
-function html_entity_decode(str)
-{
-    //jd-tech.net
-    var tarea=document.createElement('textarea');
-    tarea.innerHTML = str;
-    return tarea.value;
-}
-

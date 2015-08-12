@@ -3,7 +3,7 @@
     <EditTextPreference 
         title="Логин" 
         positiveButtonText="ОК" 
-        summary="||{@s}\n" 
+        summary="||{@s}" 
         dialogTitle="Логин" 
         negativeButtonText="Отмена" 
         dialogMessage="Введите логин для входа в личный кабинет"
@@ -16,8 +16,16 @@
         dialogTitle="Пароль"
         negativeButtonText="Отмена"
         title="Пароль"
-        summary="||***********\n"
+        summary="||***********"
         dialogMessage="Введите пароль, используемый для входа в личный кабинет"
         inputType="textPassword">
     </EditTextPreference>
+    <ListPreference 
+        key="city" 
+        title="Город"
+        summary="|Выберите город|{@s}"
+        entries="Черкаси|Сміла|Канів|Золотоноша|Переяслав - Хмельницький|Ватутіно|Звенигородка"
+        entryValues="cherkassy|smila|kaniv|zolotonosha|pereyaslav|vatutino|zvenigorodka"
+		defaultValue="cherkassy">
+    </ListPreference>
 </PreferenceScreen>

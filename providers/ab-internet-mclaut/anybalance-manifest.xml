@@ -1,13 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="3">ab-internet-mclaut</id>
+  <id version="4">ab-internet-mclaut</id>
   <api flags="no_browser|private"/>
-  <name>McLaut (Черкассы)</name>
-  <description>
-    Получает баланс и информацию о тарифном плане для черкасского интернет провайдера McLaut (https://cherkassy.mclaut.com/).
-
-    Информация берется из личного кабинета https://cherkassy.mclaut.com/.
-  </description>
+  <name>McLaut</name>
+  <description><![CDATA[
+    <p>Получает баланс и информацию о тарифном плане для интернет провайдера McLaut (https://mclaut.com/).</p>
+    <p>Интернет провайдер присутствует в городах Канев, Черкассы, Смела, Золотоноша, Переяслав-Хмельницкий, Звенигородка, Ватутино.</p>
+  ]]></description>
   <author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
   <files>
     <icon>icon.png</icon>

@@ -19,10 +19,9 @@ if(a){j=a(j)
 }function checkEmpty(c,b,a){if(!c){throw new AnyBalance.Error(b,null,!a)
 }}function __getParName(b){var a=isArray(b)?b[0]:b;
 return a&&a.substr(a.lastIndexOf(".")+1)
-}function isAvailable(c){if(!c){return true
-}var b=isArray(c),a="__tariff";
-if((b&&c.indexOf(a)>=0)||(!b&&c=="__tariff")){return true
-}return AnyBalance.isAvailable(c)
+}function isAvailable(a){if(!a){return true
+}if(/\b__/.test(a.toString())){return true
+}return AnyBalance.isAvailable(a)
 }var replaceTagsAndSpaces=[/&nbsp;/ig," ",/&minus;/ig,"-",/<!--[\s\S]*?-->/g,"",/<[^>]*>/g," ",/\s{2,}/g," ",/^\s+|\s+$/g,""],replaceFloat=[/&minus;/ig,"-",/\s+/g,"",/'/g,"",/,/g,".",/\.([^.]*)(?=\.)/g,"$1",/^\./,"0."],replaceSlashes=[/\\(.?)/g,function(a,b){switch(b){case"0":return"\0";
 case"":return"";
 default:return b
@@ -67,8 +66,9 @@ if(d.hasOwnProperty(f)){return String.fromCharCode(d[f])
 }function createFormParams(a,b,d){var c=d?[]:{};
 a.replace(/<input[^>]+name=['"]([^'"]*)['"][^>]*>|<select[^>]+name=['"]([^'"]*)['"][^>]*>[\s\S]*?<\/select>/ig,function(j,f,g){var e="";
 if(f){if(/type=['"]button['"]/i.test(j)){e=undefined
+}else{if(/type=['"]checkbox['"]/i.test(j)){e=/[^\w]checked[^\w]/i.test(j)?getParam(j,null,null,/value=['"]([^'"]*)['"]/i,null,html_entity_decode)||"on":undefined
 }else{e=getParam(j,null,null,/value=['"]([^'"]*)['"]/i,null,html_entity_decode)||""
-}name=f
+}}name=f
 }else{if(g){e=getParam(j,null,null,/^<[^>]*value=['"]([^'"]*)['"]/i,null,html_entity_decode);
 if(typeof(e)=="undefined"){var h=getParam(j,null,null,/(<option[^>]+selected[^>]*>)/i);
 if(!h){h=getParam(j,null,null,/(<option[^>]*>)/i)
@@ -128,22 +128,24 @@ return a
 }}function endsWith(b,a){return b.indexOf(a,b.length-a.length)!==-1
 }(function(b,d){var c=b.parse,a=[1,4,5,6,7,10,11];
 b.parse=function(f){var j,l,h=0;
-if((l=/^(\d{4}|[+\-]\d{6})(?:-(\d{2})(?:-(\d{2}))?)?(?:T(\d{2}):(\d{2})(?::(\d{2})(?:\.(\d{3}))?)?(?:(Z)|([+\-])(\d{2})(?::(\d{2}))?)?)?$/.exec(f))){for(var g=0,e;
+if((l=/^(\d{4}|[+\-]\d{6})(?:-(\d{2})(?:-(\d{2}))?)?(?:(?:T|\s+)(\d{2}):(\d{2})(?::(\d{2})(?:\.(\d{3})\d*)?)?(?:(Z)|([+\-])(\d{2})(?::(\d{2}))?)?)?$/.exec(f))){for(var g=0,e;
 (e=a[g]);
 ++g){l[e]=+l[e]||0
 }l[2]=(+l[2]||1)-1;
 l[3]=+l[3]||1;
 if(l[8]!=="Z"&&l[9]!==d){h=l[10]*60+l[11];
 if(l[9]==="+"){h=0-h
-}}j=b.UTC(l[1],l[2],l[3],l[4],l[5]+h,l[6],l[7])
-}else{j=c?c(f):NaN
+}}j=b.UTC(l[1],l[2],l[3],l[4],l[5]+h,l[6],l[7]);
+b.lastParse="custom"
+}else{j=c?c(f):NaN;
+b.lastParse="original"
 }return j
 }
 }(Date));
 function parseDateISO(b){var a=Date.parse(b);
-if(!a){AnyBalance.trace("Could not parse date from "+b);
+if(!a){AnyBalance.trace("Could not parse ("+Date.lastParse+") date from "+b);
 return
-}else{AnyBalance.trace("Parsed "+new Date(a)+" from "+b);
+}else{AnyBalance.trace("Parsed ("+Date.lastParse+") "+new Date(a)+" from "+b);
 return a
 }}function parseDateJS(b){var c=b.replace(/(\d+)\s*г(?:\.|ода?)?,?/i,"$1 ");
 var a=Date.parse(c);
@@ -251,4 +253,41 @@ for(var c=0;
 c<a.length;
 ++c){if(a[c]!=="--auto--"&&!isset(b[a[c]])){b[a[c]]=null
 }}if(!isset(b.__tariff)){b.__tariff=null
-}};
+}}function getElement(j,n,e,a){var c=n.exec(j);
+if(!c){return null
+}var l=c.index;
+var m=j.substr(l,c[0].length);
+var d=getParam(m,null,null,/<(\w+)/);
+var f=new RegExp("(?:<"+d+"|</"+d+")[^>]*>","ig");
+f.lastIndex=l+c[0].length;
+var g=0;
+while(true){c=f.exec(j);
+if(!c){break
+}var b=c[0];
+if(b.charAt(1)=="/"){if(g==0){break
+}--g
+}else{++g
+}f.lastIndex=c.index+b.length
+}var h=j.length;
+if(c){h=c.index+c[0].length
+}n.lastIndex=h;
+var k=j.substring(l,h);
+if(e){k=replaceAll(k,e)
+}if(a){k=a(k)
+}return k
+}function getElements(e,k,b,a){var d=[];
+var g=isArray(k)?k[0]:k;
+var f=isArray(k)?(k.shift(),k):null;
+do{var h=getElement(e,g,b,a);
+var j=h&&!f;
+if(f&&h){for(var c=0;
+c<f.length;
+++c){j=j||f[c].test(h);
+if(j){break
+}}}if(j){d.push(h)
+}if(!g.global){break
+}}while(h!==null);
+return d
+}function __shouldProcess(a,b){if(!AnyBalance.shouldProcess){return !!b.__id
+}return AnyBalance.shouldProcess(a,b)
+};

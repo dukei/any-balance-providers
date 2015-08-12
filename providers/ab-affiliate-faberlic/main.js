@@ -10,6 +10,13 @@ var g_headers = {
 	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
 };
 
+function handleRedirect(html){
+	var url = getParam(html, null, null, /<meta[^>]+http-equiv="refresh"[^>]*content="\d+;([^"]*)/i, null, html_entity_decode);
+	if(url)
+		return AnyBalance.requestGet(url, g_headers);
+	return html;
+}
+
 function main() {
 	var prefs = AnyBalance.getPreferences();
 	var baseurl = 'https://faberlic.com/';
@@ -37,11 +44,12 @@ function main() {
 	});
     
 	html = AnyBalance.requestPost(baseurl + 'index.php?option=com_user&view=login&lang=ru', params, addHeaders({Referer: baseurl + 'index.php?option=com_user&view=login&lang=ru'}));
+	html = handleRedirect(html);
 	
-    html = AnyBalance.requestGet(baseurl + 'index.php?option=com_user&view=cabinet', g_headers);
+//    html = AnyBalance.requestGet(baseurl + 'index.php?option=com_user&view=cabinet', g_headers);
     
 	if (!/logout/i.test(html)) {
-		var error = getParam(html, null, null, /<dd[^>]+class="error message fade"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
+		var error = getParam(html, null, null, /<div[^>]+alert-danger[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
 		if (error)
 			throw new AnyBalance.Error(error, null, /Неправильный логин или пароль/i.test(error));
 		
@@ -54,18 +62,21 @@ function main() {
 	var result = {success: true};
 	
 	getParam(html, result, 'balance', /Доступно(?:[^>]*>){4}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'fio', /Личный кабинет(?:[^>]*>){9}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'topay', /К оплате(?:[^>]*>){4}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'fio', /<span[^>]+fio[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
     
     html = AnyBalance.requestGet(baseurl + 'index.php?option=com_list&view=list&listId=84&Itemid=1679&lang=ru', g_headers);
     
 	getParam(html, result, 'orders_sum', /Итоговая сумма заказов(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'points_sum', /Итоговая сумма баллов(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'points_sum_good', /Итоговая сумма баллов, учтенных в расчете(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
     
     html = AnyBalance.requestGet(baseurl + 'index.php?option=com_user&view=cabinet&Itemid=2069&lang=ru', g_headers);
+    var block = getElements(html, [/<div[^>]+period-score-block[^>]*>/ig, /Текущий период/i])[0];
     
-	getParam(html, result, 'lo', /<td[^>]*>\s*Текущий период\s*<\/td>(?:[\s\S]*?<td[^>]*>){6}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'olg', /<td[^>]*>\s*Текущий период\s*<\/td>(?:[\s\S]*?<td[^>]*>){9}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'go', /<td[^>]*>\s*Текущий период\s*<\/td>(?:[\s\S]*?<td[^>]*>){12}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(block, result, 'lo', /ЛО[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(block, result, 'olg', /ОЛГ[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(block, result, 'go', /ГО[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
 	
     html = AnyBalance.requestPost(baseurl + 'index2.php?option=com_module&task=getmodule&module=mod_flmybusiness&no_html=1', {}, addHeaders({Referer: baseurl + 'index.php?option=com_user&view=cabinet&Itemid=2069&lang=ru', 'X-Requested-With':'XMLHttpRequest'}));
     

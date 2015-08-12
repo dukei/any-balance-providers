@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-telephony-siplink</id>
+	<api flags="no_browser"/>
+	<name>Siplink</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе виртуальной АТС siplink https://siplink.pro</p>
+	<p>Информация берется из личного кабинета https://siplink.pro/auth</p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="id" name="ID" type="text"/>
+		<counter id="abon" name="Абонентская плата" units=" р"/>
+	</counters>
+	<keywords>ats sip миниатс pbx vpbx</keywords>
+	<type>telephony, vpbx</type>
+	<country>ru</country>
+</provider>

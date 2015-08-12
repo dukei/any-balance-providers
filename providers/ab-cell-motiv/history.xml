@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="7" date="2015-08-11">
+	Исправлено получение трафика в некоторых случаях
+	</change>
 	<change version="6" date="2015-06-13">
 	- Улучшена обработка ошибок.
 	</change>

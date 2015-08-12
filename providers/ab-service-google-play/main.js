@@ -32,13 +32,51 @@ function main() {
 	
 	devAccJson = getJson(devAccJson);
 	
-	var dev_acc = devAccJson['1'][0][1];
-	var dev_acc_name = devAccJson['1'][0][2];
-	
 	var token = getParam(html, null, null, /"XsrfToken"[^{]+{[^:]+:\\"([\s\S]*?)\\"/i);
 	
-	checkEmpty(dev_acc && token, 'Can`t find developer account in Google-Play', true);
+	// Если аккаунтов разработчика несколько, как у меня, нужно пройтись по всем
 	
+	var developerAccounts = [];
+	
+	for(var i = 0; i < devAccJson['1'].length; i++) {
+		var curr = devAccJson['1'][i];
+		
+		var dev_acc = curr[1];
+		var dev_acc_name = curr[2];
+		
+		AnyBalance.trace('Developer account: ' + dev_acc_name);
+		
+		var app = findAppInDevAccount(baseurl, token, dev_acc, prefs);
+		if(app) {
+			AnyBalance.trace('Found app: ' + JSON.stringify(app));
+			break;
+		}
+	}
+	
+	if(!app) {
+		throw new AnyBalance.Error('Can`t find application with name ' + prefs.app_name);
+	}
+	
+	var appName = app[6][1];
+	
+	var result = {success: true};
+	
+	getParam((dev_acc_name || '') + ': ' + appName, result, '__tariff');
+	// СР. ОЦЕНКА 
+	getParam((app[3][3] || '0') + '', result, 'rating', null, replaceTagsAndSpaces, parseBalance);
+	// ВСЕГО оценок
+	getParam((app[3][2] || '0') + '', result, 'rating_total', null, replaceTagsAndSpaces, parseBalance);
+	// Активные юзеры
+	getParam((app[3][1] || '0') + '', result, 'active_users', null, replaceTagsAndSpaces, parseBalance);
+	// Всего юзеров
+	getParam((app[3][5] || '0') + '', result, 'total_users', null, replaceTagsAndSpaces, parseBalance);
+	// СБОИ И ANR
+	getParam((app[3][4] || '0') + '', result, 'errors_total', null, replaceTagsAndSpaces, parseBalance);
+	
+	AnyBalance.setResult(result);
+}
+
+function findAppInDevAccount(baseurl, token, dev_acc, prefs) {
 	var p = {
 		"method":"fetch",
 		"params":{"2":1,"3":7},
@@ -76,24 +114,6 @@ function main() {
 			}
 		}
 	}
-
-	var result = {success: true};
 	
-	getParam((dev_acc_name || '') + ': ' + appName, result, '__tariff');
-	// СР. ОЦЕНКА 
-	getParam((app[3][3] || '0') + '', result, 'rating', null, replaceTagsAndSpaces, parseBalance);
-	// ВСЕГО оценок
-	getParam((app[3][2] || '0') + '', result, 'rating_total', null, replaceTagsAndSpaces, parseBalance);
-	// Активные юзеры
-	getParam((app[3][1] || '0') + '', result, 'active_users', null, replaceTagsAndSpaces, parseBalance);
-	// Всего юзеров
-	getParam((app[3][5] || '0') + '', result, 'total_users', null, replaceTagsAndSpaces, parseBalance);
-	// СБОИ И ANR
-	getParam((app[3][4] || '0') + '', result, 'errors_total', null, replaceTagsAndSpaces, parseBalance);
-	
-	AnyBalance.setResult(result);
-}
-
-function findInArray() {
-		
+	return app;
 }

@@ -140,6 +140,8 @@ function main(){
     sumParam (html, result, 'min_net_30', /<li>Осталось\s*([\d\.,]+)\s*минут<\/li>/ig, replaceTagsAndSpaces, parseBalance, parseTime, aggregate_sum);
     sumParam (html, result, 'min_net_30', /<li>30 минут в день вне региона, осталось\s*([\d\.,]+) минут<\/li>/ig, replaceTagsAndSpaces, parseBalance, parseTime, aggregate_sum);
     sumParam (html, result, 'min_net_30', /<li>30 минут в день для внутрисетевых звонков:[^<]*осталось\s*([\d\.,]+) бесплатных секунд<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+        //100 минут в день для услуги Супер 3D
+    sumParam (html, result, 'min_net_3D', /<li>100 минут в день для услуги Супер 3D, осталось\s*([\d\.,]+) минут<\/li>/ig, replaceTagsAndSpaces, parseBalance, parseTime, aggregate_sum);
 	// 30/33 минуты в день для внутрисетевых звонков во всех областях
     sumParam (html, result, 'min_net_all_33', /<li>33 минуты в день для внутрисетевых звонков во всех областях:[^<]*осталось\s*([\d\.,]+) бесплатных секунд[^<]*<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
     sumParam (html, result, 'min_net_all_33', /<li>30 минут в день для внутрисетевых звонков во всех областях:[^<]*осталось\s*([\d\.,]+) бесплатных секунд[^<]*<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
@@ -308,6 +310,7 @@ function main(){
     sumParam (html, result, 'sms_used', /<li>50 SMS по Украине для "Смартфона", израсходовано:\s*(\d+)\s*(?:sms|смс)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
     sumParam (html, result, 'sms_used', /<li>SMS на других операторов по услуге "Супер МТС Команда 3D", израсходовано \(другие сети\):\s*(\d+)\s*(?:sms|смс)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
     sumParam (html, result, 'sms_used_net', /<li>SMS в сети МТС по услуге "Супер МТС Команда 3D", израсходовано \(внутри сети\):\s*(\d+)\s*(?:sms|смс)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+    sumParam (html, result, 'sms_used_net', /<li>80 sms в день для услуги Супер 3D, израсходовано:\s*(\d+)\s*смс/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 
     // Тариф 3d команда и "Смарфон 0.50" "Команда 3D"
     sumParam (html, result, 'mms_used', /<li>Израсходовано:\s*(\d+)\s*(?:mms|ммс)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
@@ -337,6 +340,9 @@ function main(){
 
     // Единоразовое ПЗС за пределами региона (Смартфон)
     sumParam (html, result, 'PZS_first_out', /<li>Единоразовое ПЗС за пределами региона \(Смартфон\)[^<]*([\d\.,]+)<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+
+    // ПЗС за минуты по услуге Супер 3D
+    sumParam (html, result, 'PZS_minute', /<li>ПЗС за минуты по услуге Супер 3D:[^<]*([\d\.,]+)<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 
     // Плата за первое GPRS событие тариф "Команда 3D"
     sumParam (html, result, 'PZS_first_evrope', /<li>Плата за первое GPRS событие в Европе:\s*([\d\.,]+)<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);

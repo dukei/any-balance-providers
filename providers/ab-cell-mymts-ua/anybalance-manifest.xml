@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="1.0" version="16">ab-cell-mymts-ua</id>
+	<id major_version="1.0" version="17">ab-cell-mymts-ua</id>
 	<api flags="no_browser"/>
 	<name>Мой МТС (Украина)</name>
 	<description html="true"><![CDATA[
@@ -51,6 +51,8 @@
 		<counter id="PZS_MB_opera" name="ПЗС за первое событие для APN opera"/>
 		<counter id="PZS_first" name="ПЗС за первое событие"/>
 		<counter id="PZS_first_out" name="ПЗС за пределами региона"/>
+		<counter id="PZS_MB_3D" name="ПЗС за Мб"/>
+		<counter id="PZS_minute" name="ПЗС за минуты"/>
 		<counter id="spent" name="Потрачено за текущий месяц" units=" ₴"/>
 		<counter id="phone" name="Номер телефона" type="text"/>
 	</counters>

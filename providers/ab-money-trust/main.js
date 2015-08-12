@@ -55,7 +55,7 @@ function main() {
 		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
 	}
 	
-	var json = apiCAll('login', {
+	var json = apiCAll('sessions', {
 		'username': prefs.login,
 		'password': prefs.password,
 	});

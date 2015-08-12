@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="7">ab-internet-tomtel</id>
+	<id version="8">ab-internet-tomtel</id>
 	<api flags="no_browser" min_level="6"/>
 	<name>Tomtel (Томск)</name>
 	<description html="true"><![CDATA[
@@ -17,7 +17,7 @@
 	</files>
 	<counters>
 		<counter id="balance" name="Баланс" units=" р"/>
-		<counter id="topay" name="Рекомендуемый платеж" units=" р"/>
+<!--		<counter id="topay" name="Рекомендуемый платеж" units=" р"/> -->
 		<counter id="bonus" name="Бонусные баллы"/>
 		<counter id="licschet" name="Договор" type="text"/>
 		<counter id="fio" name="ФИО" type="text"/>

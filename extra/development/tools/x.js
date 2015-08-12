@@ -73,8 +73,8 @@ try{
 		
 		// История 
 		var originalHistory = '<?xml version="1.0" encoding="utf-8"?>\n\
-<history>\n\
-</history>';
+		<history>\n\
+		</history>';
 
 		if(g_history_file)
 			originalHistory = readFileToString(g_history_file);

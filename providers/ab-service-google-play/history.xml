@@ -1,7 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="8" date="2015-08-12">
+	- Support for site changes.
+	</change>
 	<change version="7" date="2015-07-27">
-	- Исправлена двухфакторная авторизация
+	- Two-step authorization fixed.
 	</change>
 	<change version="6" date="2015-07-27">
 	- Support for site changes.

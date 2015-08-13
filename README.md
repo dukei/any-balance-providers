@@ -1,14 +1,4 @@
-<table cellpadding='8' align='right'>
-<tr><td>
-<wiki:gadget title="Последние обновления" url="https://any-balance-providers.googlecode.com/svn/misc/gadgets/downloads/gcDownloads.xml?1005" up_projectName="any-balance-providers" up_lastCount="20" width="300" border="0"/><br>
-</td></tr>
-</table>
-
-<table cellpadding='10' align='left'>
-<tr><td>
-<img width='200' src='https://any-balance-providers.googlecode.com/svn/wiki/images/widgets.jpg' />
-</td></tr>
-</table>
+<img align="left" hspace="10" width="200" src="https://any-balance-providers.googlecode.com/svn/wiki/images/widgets.jpg" />
 
 Вам никогда не хотелось иметь нужную и актуальную информацию на экране мобильного телефона? Например, лично мне хотелось бы видеть баланс телефона, состояние счета интернет-провайдера, отслеживание почтового отправления, курсы валют, биржевые котировки. Такие программы есть, их много, но каждая показывает только часть того, что мне надо. Если мне понадобилось показать что-то еще, приходится держать на телефоне целый зоопарк программ. Или смириться, если такая программа еще не была написана. Или писать свою. Я решил написать свою, но сделать возможным добавление новых типов отображаемой информации для всех, чтобы вы сами, или ваш друг, знающий JavaScript, смогли добавить себе на экран мобильного телефона нужный индикатор.
 

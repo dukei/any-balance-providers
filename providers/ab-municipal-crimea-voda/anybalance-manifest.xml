@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-municipal-crimea-voda</id>
+	<api flags="no_browser"/>
+	<name>Вода Крыма</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о начислениях в ГУП РК Вода Крыма http://voda.crimea.ru/</p>
+	<p>Информация берется из личного кабинета http://voda.crimea.ru/personalAccount/</p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Если у вас нет доступа в Личный кабинет, получите его на странице http://voda.crimea.ru/personalAccount/, нажав ссылку Регистрация</p>
+	]]></instruction>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="debt" name="Долг" units=" р"/>
+		<counter id="payed" name="Оплачено" units=" р"/>
+		<counter id="spent" name="Начислено" units=" р"/>
+		<counter id="debt_start" name="Долг на начало периода" units=" р"/>
+		<counter id="licschet" name="Лицевой счет" type="text"/>
+		<counter id="address" name="Адрес" type="text"/>
+	</counters>
+	<keywords>коммунальные платежи коммуналка</keywords>
+	<type>municipal</type>
+	<country>ru</country>
+</provider>

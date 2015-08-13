@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-  <id version="4">ab-affiliate-oriflame-ua</id>
+  <id version="5">ab-affiliate-oriflame-ua</id>
   <name>Орифлейм</name>
   <description>
     Получает показатели личной активности консультанта Oriflame:
@@ -18,18 +18,19 @@
     <js>main.js</js>
   </files>
   <counters>
+    <counter id="out" name="Сумма выплат" units=" {@currency}"/>
     <counter id="bp" name="ББ" units=" ББ"/>
     <counter id="ebp" name="ББ группы" units=" ББ"/>
-    <counter id="da" name="Объемная скидка" units=" ₴"/>
+    <counter id="da" name="Объемная скидка" units=" {@currency}"/>
     <counter id="bpr" name="ББ до следующего уровня" units=" ББ"/>
     <counter id="nr" name="Следующий уровень"/>
     <counter id="num" name="№ Консультанта" type="text"/>
     <counter id="fio" name="Имя" type="text"/>
-    <counter id="bv" name="ОП" units=" ₴"/>
-    <counter id="ebv" name="ОП группы" units=" ₴"/>
-    <counter id="ob" name="Другие бонусы" units=" ₴"/>
-    <counter id="lc" name="Бонус ЛК" units=" ₴"/>
-    <counter id="cl" name="Кредитный статус" units=" ₴"/>
+    <counter id="bv" name="ОП" units=" {@currency}"/>
+    <counter id="ebv" name="ОП группы" units=" {@currency}"/>
+    <counter id="ob" name="Другие бонусы" units=" {@currency}"/>
+    <counter id="lc" name="Бонус ЛК" units=" {@currency}"/>
+    <counter id="cl" name="Кредитный статус" units=" {@currency}"/>
   </counters>
   <keywords>
     орифлейм

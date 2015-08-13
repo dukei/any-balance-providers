@@ -13,6 +13,12 @@ var g_baseurl = {
     ru: "https://ru-eshop.oriflame.com/eShop/"
 };
 
+var g_currency = {
+	by: 'р',
+	ru: 'р',
+	ua: '₴'
+};
+
 var g_headers = {
         'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
         'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
@@ -75,6 +81,12 @@ function main(){
     getParam(html, result, 'num', /<span[^>]+id="[^"]*lblDistNum"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, 'fio', /<span[^>]+id="[^"]*lbl_Rep_\d+_DIST_NAME"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, '__tariff', /<span[^>]+id="[^"]*lbl_Rep_\d+_DIST_NAME"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
+
+    //"объемная скидка" плюс "другие бонусы" http://support.anybalance.ru/scp/tickets.php?id=3674
+    sumParam(html, result, 'out', /<span[^>]+id="[^"]*lbl_Rep_\d+_DISCOUNT_AMOUNT"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+    sumParam(html, result, 'out', /<span[^>]+id="[^"]*lbl_Rep_\d+_OTHER_BONUSES"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+
+    result.currency = g_currency[prefs.country];
     
     AnyBalance.setResult(result);
 }

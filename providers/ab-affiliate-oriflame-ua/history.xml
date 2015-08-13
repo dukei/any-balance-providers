@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="5" date="2015-08-13">
+	Добавлен счетчик суммы выплат "объемная скидка" плюс "другие бонусы"
+	</change>
 	<change version="4" date="2015-06-19">
 	- Добавлена Беларусь (спасибо kadr555vova)
 	</change>

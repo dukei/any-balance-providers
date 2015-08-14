@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="50" date="2015-08-14">
+	Улучшено распознавание трафика, имени и телефона абонента
+	</change>
 	<change version="49" date="2015-07-06">
 	- Изменился адрес личного кабинета
 	</change>

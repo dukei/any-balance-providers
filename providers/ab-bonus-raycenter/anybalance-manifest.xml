@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-bonus-raycenter</id>
+	<api flags="no_browser"/>
+	<name>Райцентр</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о бонусных баллах магазинов "Точка", "Райцентр", "РайЦен" и "Гастроном №1" <a href="http://raycenter.ru/">http://raycenter.ru/</a></p>
+	<p>Информация берется из личного кабинета <a href="http://client.raycenter.ru/">http://client.raycenter.ru/</a></p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Если у вас нет доступа в Личный кабинет, получите его на странице <a href="http://client.raycenter.ru/">http://client.raycenter.ru/</a></p>
+	]]></instruction>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" баллов"/>
+		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="cardid" name="Номер карты" type="text"/>
+		<counter id="modeinfo" name="Тип карты" type="text"/>
+		<counter id="datelastbuy" name="Дата последней покупки" type="text"/>
+		<counter id="sumlastbuy" name="Сумма последней покупки" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>bonus</type>
+	<country>ru</country>
+</provider>

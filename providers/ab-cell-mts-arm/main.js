@@ -24,19 +24,19 @@ function main(){
 	var prefix = found[1];
 	var tel = found[2];
 
-	var HiddenField = 0;
-	if(prefix == '077')
-		HiddenField = 0;
-	else if(prefix == '093')
-		HiddenField = 1;
-	else if(prefix == '094')
-		HiddenField = 2;
-	else if(prefix == '098')
-		HiddenField = 3;
+	var prefixes = getParam(html, null, null, /<ul[^>]+OptionList[^>]*>([\s\S]*?)<\/ul>/i);
+	prefixes = sumParam(prefixes, null, null, /<li[^>]*>([\s\S]*?)<\/li>/ig, replaceTagsAndSpaces, html_entity_decode);
+	var HiddenField = prefixes.indexOf(prefix);
+	if(HiddenField < 0){
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Логин должен быть в формате 094123456, без пробелов');
+	}
 
 	var form = getElement(html, /<form[^>]+name="aspnetForm"[^>]*>/i);
-	if(!form)
+	if(!form){
+		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось найти форму входа. Сайт изменен?');
+	}
 
 	var params = createFormParams(form, function(params, str, name, value) {
 		if (/TextBox/i.test(name)) 
@@ -50,7 +50,6 @@ function main(){
 		else if (/MessageBox/i.test(name))
 			return;
 			
-
 		return value;
 	});
 	

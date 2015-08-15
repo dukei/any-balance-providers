@@ -10,7 +10,7 @@
 	<instruction html="true"><![CDATA[
 	<p>Если у вас нет доступа в Личный кабинет, получите его на странице <a href="http://client.raycenter.ru/">http://client.raycenter.ru/</a></p>
 	]]></instruction>
-	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<author>Mixa &lt;mexan.nik@gmail.com&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

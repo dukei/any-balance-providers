@@ -24,10 +24,6 @@ function main(){
 	var prefix = found[1];
 	var tel = found[2];
 
-	var __VIEWSTATE = getParam(html, null, null, /__VIEWSTATE"\s*value="([\s\S]*?)"/i, null, null);
-	if(!__VIEWSTATE)
-		throw new AnyBalance.Error('Не удалось войти в личный кабинет, сайт изменился?');
-	
 	var HiddenField = 0;
 	if(prefix == '077')
 		HiddenField = 0;
@@ -38,19 +34,28 @@ function main(){
 	else if(prefix == '098')
 		HiddenField = 3;
 
-	html = AnyBalance.requestPost(baseurl + 'Pages/login.aspx', {
-		'__EVENTARGUMENT':'',
-		'__EVENTTARGET':'',
-		'__VIEWSTATE':__VIEWSTATE,
-		'ctl00$MainContent2$btnLogin.x':'28',
-		'ctl00$MainContent2$btnLogin.y':'4',
-		'ctl00$MainContent2$ddList$HiddenField':HiddenField,
-		'ctl00$MainContent2$ddList$TextBox':prefix,
-		'ctl00$MainContent2$txtGsmNumber':tel,
-		'ctl00$MainContent2$txtPassword':prefs.password,
-		'password':prefs.password,
-		
-	}, g_headers); 
+	var form = getElement(html, /<form[^>]+name="aspnetForm"[^>]*>/i);
+	if(!form)
+		throw new AnyBalance.Error('Не удалось найти форму входа. Сайт изменен?');
+
+	var params = createFormParams(form, function(params, str, name, value) {
+		if (/TextBox/i.test(name)) 
+			return prefix;
+		if (/GsmNumber/i.test(name)) 
+			return tel;
+		else if (/Password/i.test(name))
+			return prefs.password;
+		else if (/HiddenField/i.test(name))
+			return HiddenField;
+		else if (/MessageBox/i.test(name))
+			return;
+			
+
+		return value;
+	});
+	
+
+	html = AnyBalance.requestPost(baseurl + 'Pages/login.aspx', params, g_headers); 
 	
 	if(!/ctl00_ctl00_ctl00_lnkSignOut/i.test(html)) {
 		var error = sumParam(html, null, null, /<span[^>]*message_box_([^>]*>){2}/ig, replaceTagsAndSpaces, html_entity_decode, aggregate_join);

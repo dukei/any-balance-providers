@@ -610,26 +610,6 @@ function isAnotherNumber(){
 }
 
 function checkLoginState(html, loginUrl) {
-    var error = sumParam(html, null, null, /var\s+(?:passwordErr|loginErr)\s*=\s*'([^']*)/g, replaceSlashes, null, aggregate_join);
-    if(error)
-    	throw new AnyBalance.Error(error, null, /Неверный пароль/i.test(error));
-    var img = getParam(html, null, null, /<img[^>]+id="kaptchaImage"[^>]*src="data:image\/\w+;base64,([^"]+)/i, null, html_entity_decode);
-
-	if(img) {
-	    AnyBalance.trace('МТС решило показать капчу :( Жаль');
-	    var code = AnyBalance.retrieveCode('МТС требует ввести капчу для входа в личный кабинет, чтобы подтвердить, что вы не робот. Введите символы, которые вы видите на картинке.', img);
-	    var form = getParam(html, null, null, /<form[^>]+name="Login"[^>]*>([\s\S]*?)<\/form>/i);
-	    var params = createFormParams(form, function (params, input, name, value) {
-            if (name == 'IDToken2')
-                value = code;
-            return value;
-        });
-        html = AnyBalance.requestPost(loginUrl, params, addHeaders({Referer: loginUrl}));
-        var error = sumParam(html, null, null, /var\s+(?:passwordErr|loginErr)\s*=\s*'([^']*)/g, replaceSlashes, null, aggregate_join);
-        if(error)
-        	throw new AnyBalance.Error(error, null, /Неверный пароль/i.test(error));
-    }
-	
 	if(/checkAuthStatus\(\)|дождитесь окончания процесса авторизации/i.test(html)) {
 		var json = {}, tries = 20;
 		while(json.Data != 'Success' && tries-- > 0) {
@@ -645,7 +625,7 @@ function checkLoginState(html, loginUrl) {
 		if(json.Data != 'Success')
 			throw new AnyBalance.Error('МТС не пустил нас в ЛК после ожидания авторизации. Это проблема на сайте МТС, как только работа сайта наладится - данные отобразятся.');
 	
-		return AnyBalance.requestGet(loginUrl, addHeaders({Referer: loginUrl}));
+		return AnyBalance.requestGet(g_baseurl, addHeaders({Referer: loginUrl}));
 	} else {
 		return html;
 	}
@@ -695,54 +675,14 @@ function enterLK(options){
 
     if (!isLoggedIn(html)) {
     	if(!options.onlyAutomatic){
-            var form = getParam(html, null, null, /<form[^>]+name="Login"[^>]*>([\s\S]*?)<\/form>/i);
-            if (!form) {
-            	if(!html)
-            		throw new AnyBalance.Error('Личный кабинет МТС временно недоступен. Попробуйте ещё раз позже');
-            	if(/<h1[^>]*>\s*Request Error/i.test(html))
-            		throw new AnyBalance.Error('Личный кабинет МТС временно не работает. Попробуйте ещё раз позже');
-                AnyBalance.trace(html);
-                throw new AnyBalance.Error("Не удаётся найти форму входа! Сайт изменен?", allowRetry);
-            }
-
-            var params = createFormParams(form, function (params, input, name, value) {
-                var undef;
-                if (name == 'IDToken1')
-                    value = options.login;
-                else if (name == 'IDToken2')
-                    value = options.password;
-                else if (name == 'noscript')
-                    value = undef; //Снимаем галочку
-                else if (name == 'IDButton')
-                    value = 'Submit';
-                return value;
-            });
-            // AnyBalance.trace("Login params: " + JSON.stringify(params));
-            AnyBalance.trace("Логинимся с заданным номером");
-            html = AnyBalance.requestPost(loginUrl, params, addHeaders({Origin: g_baseurlLogin, Referer: loginUrl}));
-			html = checkLoginState(html, loginUrl);
-
-            // Бага при авторизации ошибка 502, но если запросить гет еще раз - все ок
-            if (AnyBalance.getLastStatusCode() >= 500) {
-                AnyBalance.trace("МТС вернул 500 при попытке логина. Пробуем ещё разок...");
-                html = AnyBalance.requestGet(loginUrl, addHeaders({Referer: loginUrl}));
-				html = checkLoginState(html, loginUrl);
-            }
-			
-            // AnyBalance.trace("Команду логина послали, смотрим, что получилось...");
-
-			if(AnyBalance.getLastStatusCode() >= 500)
-        	    throw new AnyBalance.Error("Ошибка на сервере МТС при попытке зайти, сервер не смог обработать запрос! Можно попытаться позже...", allowRetry);
+    		html = enterMTS(joinObjects(options, {html: html, service: 'lk'}));
+    		html = checkLoginState(html, loginUrl);
         }else{
         	throw new AnyBalance.Error('Ручной вход запрещен', allowRetry);
         }
     }
 
     if (!isLoggedIn(html)) {
-        // AnyBalance.trace(html);
-        var error = getParam(html, null, null, /<div[^>]+class="(?:msg_error|field_error)"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
-        if (error)
-            throw new AnyBalance.Error(error, false);
         if (getParam(html, null, null, /(auth-status=0)/i))
             throw new AnyBalance.Error('Неверный логин или пароль. Повторите попытку или получите новый пароль на сайте https://lk.ssl.mts.ru/.', false, true);
 

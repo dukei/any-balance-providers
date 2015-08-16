@@ -54,7 +54,7 @@ function main() {
 	getParam(html, result, 'fio', /id="logOff"[\s\S]+?<span>([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(html, result, 'cardid', /for="cardID"[\s\S]+?<strong>([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(html, result, 'modeinfo', /for="modeInfo"[\s\S]+?<div class="CardInfo_right">([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'datelastbuy', /for="dateLastBuy"[\s\S]+?<div class="CardInfo_right">([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'datelastbuy', /for="dateLastBuy"[\s\S]+?<div class="CardInfo_right">([^<]+)/i, replaceTagsAndSpaces, parseDate);
 	getParam(html, result, 'sumlastbuy', /for="sumLastBuy"[\s\S]+?<div class="CardInfo_right">([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
 	
 	AnyBalance.setResult(result);

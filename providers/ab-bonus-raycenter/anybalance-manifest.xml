@@ -23,7 +23,7 @@
 		<counter id="fio" name="ФИО" type="text"/>
 		<counter id="cardid" name="Номер карты" type="text"/>
 		<counter id="modeinfo" name="Тип карты" type="text"/>
-		<counter id="datelastbuy" name="Дата последней покупки" type="text"/>
+		<counter id="datelastbuy" name="Дата последней покупки" type="time" format="dd/MM/yyyy HH:mm:ss"/>
 		<counter id="sumlastbuy" name="Сумма последней покупки" type="text"/>
 	</counters>
 	<keywords></keywords>

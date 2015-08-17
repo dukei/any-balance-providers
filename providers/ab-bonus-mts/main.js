@@ -12,6 +12,18 @@ var g_headers = {
 
 var g_baseurl = 'https://bonus.ssl.mts.ru';
 
+function checkStatus(html){
+	html = AnyBalance.requestGet(g_baseurl + '/api/user/part/Status', addHeaders({Referer: g_baseurl + '/', 'X-Requested-With': 'XMLHttpRequest'}));
+	var json = getJson(html);
+
+	if(json.status != 'registered'){
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Информация временно недоступна. Пожалуйста, попробуйте позже');
+	}
+
+	return json;
+}
+
 function main() {
 	var prefs = AnyBalance.getPreferences();
 
@@ -22,13 +34,13 @@ function main() {
 	AnyBalance.trace('It looks like we are in selfcare...');
 
 	var result = {success: true};
+	var json = checkStatus(html);
 
-	html = AnyBalance.requestGet(g_baseurl + '/api/user/part/Status', addHeaders({Referer: g_baseurl + '/', 'X-Requested-With': 'XMLHttpRequest'}));
-	var json = getJson(html);
-
-	if(json.status == 'unavailable'){
-		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Информация временно недоступна. Пожалуйста, попробуйте позже');
+	if(!endsWith(json.login, prefs.login)){
+		AnyBalance.trace('Залогинились не на тот номер: ' + json.login + '. Выходим...');
+		html = AnyBalance.requestGet(g_baseurl + '/logout?goto=' + encodeURIComponent(g_baseurl + '/'), g_headers);
+		html = enterMTS({login: prefs.login, password: prefs.password, service: 'bonus', html: html});
+		json = checkStatus(html);
 	}
 
 	getParam(json.login, result, 'phone', null, [/7(\d\d\d)(\d\d\d)(\d\d)(\d\d)/, '+7($1)$2-$3-$4']);

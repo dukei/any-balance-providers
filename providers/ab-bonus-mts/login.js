@@ -31,7 +31,7 @@ function checkLoginError(html, loginUrl) {
         var error = sumParam(html, null, null, /var\s+(?:passwordErr|loginErr)\s*=\s*'([^']*)/g, replaceSlashes, null, aggregate_join);
         if(error)
         	throw new AnyBalance.Error(error, null, /Неверный пароль/i.test(error));
-        error = sumParam(html, null, null, /<div[^>]+class="msg_error"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+        error = getParam(html, null, null, /<div[^>]+class="msg_error"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
         if(error)
         	throw new AnyBalance.Error(error);
     }

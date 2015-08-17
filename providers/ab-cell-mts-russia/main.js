@@ -462,12 +462,11 @@ function fetchAccountStatus(html, result) {
     // Ближайший срок истекания пакета MMS
     sumParam(html, result, 'mms_till', /(?:ммс|mms)[^<]*[.:,]*\s*(?:Пакет\s*)?действует до ([^<]*)/ig, replaceTagsAndSpaces, parseDate, aggregate_min);
     // Разделим минуты на МТС и МТС РФ
-    html = sumParam(html, result, 'min_left_mts_rf', /Оста(?:лось|ток):?\s*([\d\.,]+)\s*(?:бесплатных\s*)?мин[^>]+МТС РФ/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum, true);
+    html = sumParam(html, result, 'min_left_mts_rf', /Оста(?:лось|ток):?\s*([\d\.,]+)\s*(?:бесплатных\s*)?мин[^>]+МТС (?:РФ|России)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum, true);
     html = sumParam(html, result, 'min_left_mts_rf', /Оста(?:лось|ток)[^<]+мин[^>]+МТС РФ:\s*([\d\.,]+)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum, true);
     //Территория МТС (3000 минут): Осталось 0 минут
     html = sumParam(html, result, 'min_left_mts', /Территория МТС.*?: Осталось\s*([\d\.,]+)\s*мин/ig, replaceFloat, parseBalance, aggregate_sum, true);
-    html = sumParam(html, result, 'min_left_mts', /Оста(?:ток|лось)\s*([\d\.,]+)\s*мин\S*\s*(?:на\s*)?МТС/ig, replaceFloat, parseBalance, aggregate_sum, true);
-    html = sumParam(html, result, 'min_left_mts', /Оста(?:ток|лось)\s*([\d\.,]+)\s*мин\S*\s*(?:на\s*)?МТС/ig, replaceFloat, parseBalance, aggregate_sum, true);
+    html = sumParam(html, result, 'min_left_mts', /Оста(?:ток|лось):?\s*([\d\.,]+)\s*мин\S*\s*(?:на\s*)?МТС/ig, replaceFloat, parseBalance, aggregate_sum, true);
     //html = sumParam (html, result, 'min_left_mts', /Остаток:?\s*([\d\.,]+)\s*мин\S* на МТС/ig, replaceFloat, parseBalance, aggregate_sum, true);
     //Срочный контракт (15%, 25% как 15%): Осталось 0 минут
     html = sumParam(html, result, 'min_left', /Срочный контракт.*?: Осталось\s*([\d\.,]+)\s*мин/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum, true);
@@ -520,7 +519,7 @@ function fetchAccountStatus(html, result) {
     //Использовано: 17 мин на МТС России 
     sumParam(html, result, 'min_used_mts', /Использовано:?\s*(\d+)\s*мин\S* на МТС/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
     // Остаток СМС Перезвони мне 
-    html = sumParam(html, result, 'sms_left_perezvoni', /Осталось:\s*([0-5])\s*(?:sms|смс)/i, replaceTagsAndSpaces, parseBalance, aggregate_sum, true);
+    html = sumParam(html, result, 'sms_left_perezvoni', /Осталось:?\s*([0-5])\s*(?:sms|смс)\.?\s*<[^>]*>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum, true);
     // Остаток ежемесячных пакетов: 392 смс
     html = sumParam(html, result, 'sms_left', /Остаток ежемесячных пакетов\s*:?\s*([\d\.,]+)\s*(?:смс|sms)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum, true);
     // Остаток ежемесячного пакета : 98 смс

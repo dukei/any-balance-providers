@@ -15,10 +15,25 @@ function checkLoginError(html, loginUrl) {
                 value = code;
             return value;
         });
-        html = AnyBalance.requestPost(loginUrl, params, addHeaders({Referer: loginUrl}));
+
+        AnyBalance.trace("Логинимся с заданным номером и капчей");
+        html = AnyBalance.requestPost(loginUrl, params, addHeaders({Origin: g_baseurlLogin, Referer: loginUrl}));
+        
+        // Бага при авторизации ошибка 502, но если запросить гет еще раз - все ок
+        if (AnyBalance.getLastStatusCode() >= 500) {
+            AnyBalance.trace("МТС вернул 500 при попытке логина. Пробуем ещё разок...");
+            html = AnyBalance.requestPost(loginUrl, params, addHeaders({Origin: g_baseurlLogin, Referer: loginUrl}));
+        }
+        
+		if(AnyBalance.getLastStatusCode() >= 500)
+            throw new AnyBalance.Error("Ошибка на сервере МТС при попытке зайти, сервер не смог обработать запрос! Можно попытаться позже...", allowRetry);
+        
         var error = sumParam(html, null, null, /var\s+(?:passwordErr|loginErr)\s*=\s*'([^']*)/g, replaceSlashes, null, aggregate_join);
         if(error)
         	throw new AnyBalance.Error(error, null, /Неверный пароль/i.test(error));
+        error = getParam(html, null, null, /<div[^>]+class="msg_error"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+        if(error)
+        	throw new AnyBalance.Error(error);
     }
 
     return html;
@@ -40,6 +55,9 @@ function enterMTS(options){
         if(AnyBalance.getLastStatusCode() >= 500)
         	throw new AnyBalance.Error("Ошибка на сервере МТС, сервер не смог обработать запрос. Можно попытаться позже...", allowRetry);
     }
+
+    if(AnyBalance.getLastUrl().indexOf(baseurl) == 0) //Если нас сразу переадресовали на целевую страницу, значит, уже залогинены
+		return html;
 
     var form = getParam(html, null, null, /<form[^>]+name="Login"[^>]*>([\s\S]*?)<\/form>/i);
     if (!form) {

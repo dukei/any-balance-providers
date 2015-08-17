@@ -6,8 +6,9 @@ var g_headers = {
 	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
 	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
 	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
+	'Cache-Control': 'max-age=0',
 	'Connection': 'keep-alive',
-	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
+	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/44.0.2403.155 Safari/537.36',
 };
 
 function main(){
@@ -85,11 +86,29 @@ function main(){
     getParam(html, result, 'fio', /Владелец карты[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, 'balance', /Вы можете потратить[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, '__tariff', /Номер карты[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
-    // Дата последней операции по счету
-   	getParam(html, result, 'last_date2', /Дата создания:[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseDate);
+    
+    var hist = getElement(html, /<li[^>]+class="order-history-item"[^>]*>/i);
+    if(hist){
+    	// Дата последней операции по счету
+   		getParam(hist, result, 'last_date2', /Дата создания:[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseDate);
+   		getParam(hist, result, 'last_number', /Заказ:[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
+   		getParam(hist, result, 'last_status', /Статус:[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
+    	getParam(html, result, 'last_sum', /Сумма:[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+    }else{
+    	AnyBalance.trace('Последняя операция не найдена...');
+    }
 
     if(AnyBalance.isAvailable('burn_date2')){
-	    html = AnyBalance.requestGet(baseurl1 + '/my-account/loyalty?ssb_block=balansBonusCardTabContentBlock&ajax=true&_=' + new Date().getTime(), g_headers);
+    	var tri = 0;
+    	do{
+	    	if(tri)
+	    		AnyBalance.trace('Попытка №' + (tri+1) + ' получить время устаревания бонусов');
+	    	html = AnyBalance.requestGet(baseurl1 + '/my-account/loyalty?ssb_block=balansBonusCardTabContentBlock&ajax=true&_=' + new Date().getTime(), addHeaders({
+	    		Referer: baseurl + '/my-account/loyalty',
+	    		'X-Requested-With':'XMLHttpRequest'
+	    	}));
+	    	++tri;
+	    }while(html.length < 3 && tri < 5);
     	//Даты сгорания бонусных рублей
 	    sumParam(html, result, 'burn_date2', /<td[^>]+balans-table-cell-1[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseDate, aggregate_min);
 	}

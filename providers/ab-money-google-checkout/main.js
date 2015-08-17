@@ -54,7 +54,7 @@ function main() {
 		getParam(html, result, 'last_payment', /id="lastSuccessfulPayment"(?:[^>]*>){1}[^<(]+([^<]+)/i, replaceTagsAndSpaces, parseBalance);
 		getParam(html, result, 'last_payment_date', /id="lastSuccessfulPayment"(?:[^>]*>){1}([^<]+)/i, replaceTagsAndSpaces, parseDate);
 		// Следующая выплата
-		getParam(html, result, 'next_payment', /01.\d{2}.\d{4}\s*-\s*(?:28|29|30|31).\d{2}.\d{4}(?:[^>]*>){6}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
+		getParam(html, result, 'next_payment', /Остаток на конец месяца:([^<]+\$)/i, replaceTagsAndSpaces, parseBalance);
 	} else {
 		AnyBalance.trace('Can`t login to Google Wallet, do have it on this account?');
 	}

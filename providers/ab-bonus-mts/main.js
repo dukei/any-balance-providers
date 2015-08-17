@@ -25,6 +25,12 @@ function main() {
 
 	html = AnyBalance.requestGet(g_baseurl + '/api/user/part/Status', addHeaders({Referer: g_baseurl + '/', 'X-Requested-With': 'XMLHttpRequest'}));
 	var json = getJson(html);
+
+	if(json.status == 'unavailable'){
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Информация временно недоступна. Пожалуйста, попробуйте позже');
+	}
+
 	getParam(json.login, result, 'phone', null, [/7(\d\d\d)(\d\d\d)(\d\d)(\d\d)/, '+7($1)$2-$3-$4']);
 	getParam(json.fullName, result, 'fio');
 	getParam(json.fullName, result, '__tariff');

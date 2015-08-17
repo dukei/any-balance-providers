@@ -14,6 +14,8 @@ var g_headers = {
 function main(){
     var prefs = AnyBalance.getPreferences();
     AnyBalance.setDefaultCharset('utf-8');
+    AnyBalance.setOptions({cookiePolicy: 'netscape'});
+
     if(!prefs.type)
     	prefs.type = '0';
     
@@ -111,11 +113,15 @@ function main(){
 	    }while(html.length < 3 && tri < 5);
     	//Даты сгорания бонусных рублей
 	    sumParam(html, result, 'burn_date2', /<td[^>]+balans-table-cell-1[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseDate, aggregate_min);
+	    if(AnyBalance.isAvailable('burn_date2') && !isset(result.burn_date2))
+	    	AnyBalance.trace('Не удалось получить дату сгорания: ' + html);
 	}
 
     if(AnyBalance.isAvailable('strategy')){
    	   	html = AnyBalance.requestGet(baseurl1 + '/my-account/bonusStrategy', g_headers);
    	   	var checked = getElements(html, [/<div[^>]+class="controls-group"[^>]*>/ig, /<input[^>]+id="newsletterBySms[^>]+checked/i])[0];
+   	   	if(!checked)
+   	   		AnyBalance.trace('Стратегия не выбрана?\n' + html); 
    	   	getParam(checked, result, 'strategy', null, replaceTagsAndSpaces, html_entity_decode);
    	}
 

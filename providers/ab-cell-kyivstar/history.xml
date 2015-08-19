@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
 	<change major_version="2.0" version="63" date="2015-08-19">
-	Улучшено паспознавание минут на киевстар (КОЛБАСКИН)
+	Улучшено распознавание минут на киевстар (КОЛБАСКИН)
 	</change>
 	<change major_version="2.0" version="62" date="2015-07-31">
 	- Новый счетчик: Бонус.

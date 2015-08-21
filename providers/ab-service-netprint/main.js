@@ -19,6 +19,8 @@ function main() {
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 
+	html = AnyBalance.requestGet(baseurl + 'russia', g_headers);
+
 	var html = AnyBalance.requestPost(baseurl + 'xml/777', {
 		'operation':'stdlogin',
 		'POST_AUTH_USER':prefs.login,
@@ -32,7 +34,7 @@ function main() {
 			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
-	html = AnyBalance.requestGet(baseurl + 'ru/73/', g_headers);
+	html = AnyBalance.requestGet(baseurl + 'russia/73/', g_headers);
 	
 	var result = {success: true};
 

@@ -1024,7 +1024,7 @@ function megafonServiceGuidePhysical(filial, sessionid, text){
     }
 
     checkTextForError(text);
-    if(!/id="MAIN_FORM_NAME"[^>]*value="ACCOUNT_INFO"/i.test(text) || !/id="SESSION_ID" value="[^"]+/i.test(text)){
+    if(!/id="MAIN_FORM_NAME"[^>]*value="ACCOUNT_INFO"/i.test(text) || !/id="SESSION_ID"[^>]*value="[^"]+/i.test(text)){
         AnyBalance.trace(text);
     	if(/SESSION_TIMEOUT_REDIRECT/.test(text))
     		throw new AnyBalance.Error('Сессия внезапно устарела.');
@@ -1154,9 +1154,10 @@ function megafonServiceGuidePhysical(filial, sessionid, text){
 					if(isset(total) && isset(left) && !used)
 						used = total - left;
 
-					sumParam(total, result, 'internet_total', null, null, null, aggregate_sum);
-					sumParam(left, result, 'internet_left', null, null, null, aggregate_sum);
-					sumParam(used, result, 'internet_cur', null, null, null, aggregate_sum);
+					var night = /ночь/i.test(name) ? '_night' : '';
+					sumParam(total, result, 'internet_total' + night, null, null, null, aggregate_sum);
+					sumParam(left, result, 'internet_left' + night, null, null, null, aggregate_sum);
+					sumParam(used, result, 'internet_cur' + night, null, null, null, aggregate_sum);
 
 					sumParam(row, result, 'internet_till', columnsRegexps[(has_used ? 3 : 2) + colnum - 1], [replaceTagsAndSpaces, /.*-/, ''], parseDate, aggregate_min);
 				}else{
@@ -1614,7 +1615,7 @@ function megafonLkAPI(filinfo, options) {
 	if(json.ratePlan)
 		getParam(json.ratePlan.name, result, '__tariff', null, replaceTagsAndSpaces, html_entity_decode);
 	
-	if (AnyBalance.isAvailable('mins_n_free', 'mins_left', 'mins_total', 'sms_left', 'sms_total', 'mms_left', 'mms_total', 'gb_with_you', 'internet_left', 'internet_total', 'internet_cur')) {
+	if (AnyBalance.isAvailable('mins_n_free', 'mins_left', 'mins_total', 'sms_left', 'sms_total', 'mms_left', 'mms_total', 'gb_with_you', 'internet_left', 'internet_total', 'internet_cur', 'internet_left_night', 'internet_total_night', 'internet_cur_night')) {
 		json = callAPI('get', 'api/options/remainders');
 		
 		var namesProcessed = [];

@@ -23,25 +23,41 @@ function main() {
 	
     if (prefs.type == 'likard') {
 		var html = AnyBalance.requestGet(baseurl + 'ru/login', g_headers);
+
+		var params = [];
+
+		var captcha = getParam(html, null, null, /<img[^>]+src="\/([^"]*)"[^>]*class="captcha-pic/i, null, html_entity_decode);
+		if(captcha){
+			var img = AnyBalance.requestGet(baseurl + captcha, addHeaders({Referer:baseurl + 'ru/login'}));
+			captcha = AnyBalance.retrieveCode('Пожалуйста, введите код с картинки', img);
+			params.push(['keystring', captcha]);
+		}
+		
+		params = params.concat([
+			['login', prefs.login],
+			['pass' , prefs.password],
+			['submit', 'Войти'],
+		]);
 		
 		try {
-			html = AnyBalance.requestPost(baseurl + 'ru/login', [
-				['login', prefs.login],
-				['pass' , prefs.password],
-				['submit', 'Войти'],
-			], addHeaders({Referer: baseurl + 'ru/login', 'Origin': 'https://my.licard.com'}));
+			html = AnyBalance.requestPost(baseurl + 'ru/login', params, addHeaders({Referer: baseurl + 'ru/login', 'Origin': 'https://my.licard.com'}));
 		} catch(e) {
 			html = AnyBalance.requestGet(baseurl + 'ru', addHeaders({Referer: baseurl + 'ru/login', 'Origin': 'https://my.licard.com'}));
 		}
         //получим id пользователя
         var usedId = /\/([\s\S]{1,15})\/client/i.exec(html);
-        if (!usedId)
-			throw new AnyBalance.Error('Не удалось найти пользователя, проверьте логин и пароль');
+        if (!usedId){
+        	var error = getParam(html, null, null, /<div[^>]+common-errors[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+        	if(error)
+        		throw new AnyBalance.Error(error);
+			throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
+		}
 		
         getParam(prefs.login, result, 'cardnum');
         getParam(html, result, 'balance', /Баланс[\s\S]*?>[\s\S]*?>([\s\S]*?)<\/b/i, replaceTagsAndSpaces, parseBalance);
         getParam(html, result, 'last_payment', /Последний платёж[\s\S]*?payments">([\s\S]*?)<\/a/i, replaceTagsAndSpaces, parseBalance);
         getParam(html, result, 'name', /class="value user-name">\s*<b>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces);
+        getParam(html, result, 'status', /<th[^>]*>\s*Статус[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
     } else {
     	checkEmpty(/^\d{18}$|^\d{19}$/.test(prefs.login), 'Номер карты введен неверно!');
 

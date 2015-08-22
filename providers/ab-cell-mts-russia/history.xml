@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="3.3" version="121" date="2015-08-22">
+	Исправлено получение баланса бонусов
+	</change>
 	<change major_version="3.3" version="120" date="2015-08-17">
 	Улучшено распознавание минут и смс в некоторых случаях
 	</change>

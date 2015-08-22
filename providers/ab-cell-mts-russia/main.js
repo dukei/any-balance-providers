@@ -729,14 +729,21 @@ function mainLK(allowRetry) {
                 if (!isset(result.__tariff) && isset(rel.target.productResources) && isset(rel.target.productResources[0]))
                     getParam(rel.target.productResources[0].product.name['ru-RU'], result, '__tariff', null, replaceTagsAndSpaces, html_entity_decode);
         
-                if (!isset(result.bonus) && isset(rel.target.bonusBalance))
-                    getParam(rel.target.bonusBalance + '', result, 'bonus', null, null, parseBalance);
-        
                 if (!isset(result.phone) && isset(rel.target.address))
                     getParam(rel.target.address + '', result, 'phone', null, replaceNumber, html_entity_decode);
             }
         } catch (e) {
             AnyBalance.trace('Не удалось получить данные о пользователе, скорее всего, виджет временно недоступен... ' + e.message);
+        }
+
+        try {
+            if(AnyBalance.isAvailable('bonus')){
+            	info = AnyBalance.requestGet('https://bonus.ssl.mts.ru/api/user/part/Points', addHeaders({Referer: 'https://bonus.ssl.mts.ru/', 'X-Requested-With': 'XMLHttpRequest'}));
+                var json = getJson(info);
+				getParam(json.points, result, 'points');
+            }
+        } catch (e) {
+            AnyBalance.trace('Не удалось получить данные о бонусах... ' + e.message);
         }
         
         if (isAvailable('traffic_left_mb', 'traffic_used_mb')) {

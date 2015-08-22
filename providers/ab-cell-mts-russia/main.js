@@ -740,7 +740,7 @@ function mainLK(allowRetry) {
             if(AnyBalance.isAvailable('bonus')){
             	info = AnyBalance.requestGet('https://bonus.ssl.mts.ru/api/user/part/Points', addHeaders({Referer: 'https://bonus.ssl.mts.ru/', 'X-Requested-With': 'XMLHttpRequest'}));
                 var json = getJson(info);
-				getParam(json.points, result, 'points');
+				getParam(json.points, result, 'bonus');
             }
         } catch (e) {
             AnyBalance.trace('Не удалось получить данные о бонусах... ' + e.message);

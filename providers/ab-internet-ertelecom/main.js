@@ -50,6 +50,11 @@ function main(){
 		var error = sumParam(info, null, null, /<div[^>]+class="b-login__errormessage"[^>]*>([\s\S]*?)<\/div>/ig, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
 		if (error)
 			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
+
+		if(AnyBalance.getLastStatusCode() >= 500){
+			AnyBalance.trace(info);
+			throw new AnyBalance.Error('Ошибка сервера. Подождите немного и попробуйте ещё раз. Если ошибка сохраняется долгое время, попробуйте войти в личный кабинет через браузер. Если там то же самое, обращайтесь в поддержку Дом.ру.');
+		}
 		
 		AnyBalance.trace(info);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');

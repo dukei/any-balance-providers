@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+	<EditTextPreference
+		title="Phone number"
+		key="login"
+		summary="||{@s}"
+		obligatory="true"
+		dialogTitle="Phone number"
+		inputType="number"
+		positiveButtonText="OK"
+		negativeButtonText="Cancel"
+		dialogMessage="Enter your phone, for example 38267123456 (digits only)">
+	</EditTextPreference>
+	<EditTextPreference
+		title="Password"
+		key="password"
+		summary="||***********"
+		obligatory="true"
+		dialogTitle="Password"
+		positiveButtonText="OK"
+		negativeButtonText="Cancel"
+		dialogMessage="Enter password."
+		inputType="textPassword">
+	</EditTextPreference>
+    <ListPreference 
+        key="lang" 
+        title="Language"
+        summary="||{@s}\n"
+        entries="русский|Crnogorski"
+        entryValues="ru|me"
+		defaultValue="me">
+    </ListPreference>
+</PreferenceScreen>

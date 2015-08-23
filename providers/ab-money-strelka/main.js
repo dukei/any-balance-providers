@@ -23,7 +23,7 @@ function main() {
 	var html = AnyBalance.requestGet(lkurl, g_headers);
 	var error = getParam(html, null, null, /<div[^>]+class="panel-body"[^>]*>([\s\S]*?)(?:<\/p>|<\/div>)/i, replaceTagsAndSpaces, html_entity_decode);
 	if(error)
-		throw new AnyBalance.Error(error);
+		throw new AnyBalance.Error('ЛК Стрелки не работает: ' + error + ' Для получения информации по карте можно воспользоваться провайдером "Стрелка (по номеру)".');
 
 	
 	if(!html || AnyBalance.getLastStatusCode() > 400){

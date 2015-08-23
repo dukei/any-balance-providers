@@ -1160,6 +1160,10 @@ function megafonServiceGuidePhysical(filial, sessionid, text){
 					sumParam(used, result, 'internet_cur' + night, null, null, null, aggregate_sum);
 
 					sumParam(row, result, 'internet_till', columnsRegexps[(has_used ? 3 : 2) + colnum - 1], [replaceTagsAndSpaces, /.*-/, ''], parseDate, aggregate_min);
+				}else if(/<div[^>]+class="td_def"[^>]*>\s*\d+\s*шт\s*</i.test(row)){
+					//Какие-то штуки. Наверное СМС
+					AnyBalance.trace('Штуки ' + name + ' относим к смс');
+					sumOption(colnum, row, result, 'sms_total', 'sms_left', '.');
 				}else{
 				    AnyBalance.trace('??? НЕИЗВЕСТНАЯ ОПЦИЯ (группа ' + optionGroupText + ') ' + name + ': ' + row);
 				}

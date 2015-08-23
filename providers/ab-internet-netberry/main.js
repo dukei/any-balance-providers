@@ -36,29 +36,48 @@ function main() {
 		getParam(html, result, 'balance', /Исходящий остаток на конец месяца.*[\s].*?>(.*?)</i, replaceTagsAndSpaces, parseBalance);
 	}
 
-	AnyBalance.trace('Getting tariff plane');
-	html = AnyBalance.requestGet(baseurl + '?action=ChangeTariff&module=contract');
-	getParam(html, result, '__tariff', /<td>Тарифный план[\s\S]*?<td><font>([\S\s]*?)<\/font>/i, replaceTagsAndSpaces, html_entity_decode);
+	if (AnyBalance.isAvailable('__tariff')) {
+		AnyBalance.trace('Getting tariff plane');
+		html = AnyBalance.requestGet(baseurl + '?action=ChangeTariff&module=contract');
+		getParam(html, result, '__tariff', /<td>Тарифный план[\s\S]*?<td><font>([\S\s]*?)<\/font>/i, replaceTagsAndSpaces, html_entity_decode);
+	}
 
-	if (AnyBalance.isAvailable('traffic_time', 'traffic_cost', 'traffic_total', 'traffic_vpn_in', 'traffic_vpn_out', 'traffic_pir_in', 'traffic_pir_out')) {
+	AnyBalance.trace('Getting inetServId');
+	html = AnyBalance.requestGet(baseurl + '?action=TrafficReport&mid=17&module=inet');
+  var inetServId = getParam(html, null, null, /name=\"inetServId\"[^>]*><option value=\"(\d+)\">/i);
+
+	if (AnyBalance.isAvailable('traffic_total')) {
+		AnyBalance.trace('Getting traffic_total info');
+		html = AnyBalance.requestGet(baseurl + '?action=TrafficReport&mid=17&module=inet&trafficTypeIds=1&trafficTypeIds=2&trafficTypeIds=3&trafficTypeIds=4&unit=1048576&inetServId=' + inetServId);
+		getParam(html, result, 'traffic_total', /Итого:([\S\s]*?)&nbsp;МБ/i, replaceTagsAndSpaces, parseTrafficTotalGb);
+	}
+
+	if (AnyBalance.isAvailable('traffic_time', 'traffic_cost')) {
+
+		AnyBalance.trace('Getting traffic time cost');
+		html = AnyBalance.requestGet(baseurl + '?action=SessionReport&mid=17&module=inet&unit=1048576&inetServId=' + inetServId);
+
+		getParam(html, result, 'traffic_time', /Итого(?:[\S\s]*?<td[^>]*>){1}[\S\s]*?\[(\d+)\]/i, replaceTagsAndSpaces, parseBalance);
+		getParam(html, result, 'traffic_cost', /Итого(?:[\S\s]*?<td[^>]*>){2}([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+
+	}
+
+	if (AnyBalance.isAvailable('traffic_vpn_in', 'traffic_vpn_out', 'traffic_pir_in', 'traffic_pir_out')) {
+
 		AnyBalance.trace('Getting traffic info');
-		html = AnyBalance.requestGet(baseurl + '?action=ShowLoginsBalance&mid=6&module=dialup&unit=1048576');
-
-		getParam(html, result, 'traffic_time', /Итого:(?:[\S\s]*?<td[^>]*>){2}[\S\s]*?\[(\d+)\]/i, replaceTagsAndSpaces, parseBalance);
-		getParam(html, result, 'traffic_cost', /Итого:(?:[\S\s]*?<td[^>]*>){3}([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-
-		var traffic_vpn_in = parseFloat(0.0);
-		var traffic_vpn_out = parseFloat(0.0);
-		var traffic_pir_in = parseFloat(0.0);
-		var traffic_pir_out = parseFloat(0.0);
 		
-		getParam(html, result, 'traffic_vpn_in', /Итого:(?:[\S\s]*?<td[^>]*>){4}([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, parseTrafficTotalGb);
-		getParam(html, result, 'traffic_vpn_out', /Итого:(?:[\S\s]*?<td[^>]*>){5}([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, parseTrafficTotalGb);
-		getParam(html, result, 'traffic_pir_in', /Итого:(?:[\S\s]*?<td[^>]*>){6}([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, parseTrafficTotalGb);
-		getParam(html, result, 'traffic_pir_out', /Итого:(?:[\S\s]*?<td[^>]*>){7}([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, parseTrafficTotalGb);
+		html = AnyBalance.requestGet(baseurl + '?action=TrafficReport&mid=17&module=inet&trafficTypeIds=1&unit=1048576&inetServId=' + inetServId);
+		getParam(html, result, 'traffic_vpn_in', /Итого:([\S\s]*?)&nbsp;МБ/i, replaceTagsAndSpaces, parseTrafficTotalGb);
+
+		html = AnyBalance.requestGet(baseurl + '?action=TrafficReport&mid=17&module=inet&trafficTypeIds=2&unit=1048576&inetServId=' + inetServId);
+		getParam(html, result, 'traffic_vpn_out', /Итого:([\S\s]*?)&nbsp;МБ/i, replaceTagsAndSpaces, parseTrafficTotalGb);
+
+		html = AnyBalance.requestGet(baseurl + '?action=TrafficReport&mid=17&module=inet&trafficTypeIds=3&unit=1048576&inetServId=' + inetServId);
+		getParam(html, result, 'traffic_pir_in', /Итого:([\S\s]*?)&nbsp;МБ/i, replaceTagsAndSpaces, parseTrafficTotalGb);
+
+		html = AnyBalance.requestGet(baseurl + '?action=TrafficReport&mid=17&module=inet&trafficTypeIds=4&unit=1048576&inetServId=' + inetServId);
+		getParam(html, result, 'traffic_pir_out', /Итого:([\S\s]*?)&nbsp;МБ/i, replaceTagsAndSpaces, parseTrafficTotalGb);
 		
-		if (AnyBalance.isAvailable('traffic_total'))
-			result.traffic_total = Math.round((result.traffic_vpn_in + result.traffic_vpn_out + result.traffic_pir_in + result.traffic_pir_out)* 100) / 100;
 	}
 
 	AnyBalance.setResult(result);

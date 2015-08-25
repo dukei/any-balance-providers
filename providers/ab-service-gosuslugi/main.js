@@ -131,6 +131,8 @@ function main() {
 			}
     	} catch (e) {
 			AnyBalance.trace('Не удалось получить данные по штрафам из-за ошибки: ' + e.message);
+			if(e.fatal)
+				throw e;
     	}
     }
     // Налоги
@@ -140,6 +142,8 @@ function main() {
     		processNalogi(result, html, prefs);
     	} catch (e) {
     		AnyBalance.trace('Не удалось получить данные по налогам из-за ошибки: ' + e.message);
+			if(e.fatal)
+				throw e;
     	}
     }
     AnyBalance.setResult(result);
@@ -205,7 +209,7 @@ function processGibdd(result, html, prefs) {
 		html = getXmlFileResult(html);
 		
 		// Все теперь у нас есть данные, наконец-то..
-		var fees = sumParam(html, null, null, /<div[^>]*class="text"[^>]*>\s*<table(?:[\s\S]*?<tr[^>]*>){12}(?:[^>]*>){5}\s*<\/table>/ig);
+		var fees = getElements(html, /<div[^>]+class="[^"]*tabs-dd[^>]*>/ig);
 		
 		AnyBalance.trace('Найдено штрафов: ' + fees.length);
 		
@@ -218,7 +222,7 @@ function processGibdd(result, html, prefs) {
 			var feeName = getParam(current, null, null, /<td[^>]*>([^<]+)/i, replaceTagsAndSpaces);
 			
 			if(/Оплачено/i.test(current)) {
-				//AnyBalance.trace('Нашли оплаченный штраф, пропускаем: ' + feeName);
+				AnyBalance.trace('Нашли оплаченный штраф, пропускаем: ' + feeName);
 				//g_gibdd_info += feeName + ' - <b>Оплачен</b><br/><br/>';
 			} else {
 				AnyBalance.trace('Нашли неоплаченный штраф: ' + feeName);

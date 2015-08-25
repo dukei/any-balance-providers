@@ -22,4 +22,12 @@
         positiveButtonText="ОК"
         negativeButtonText="Отмена">
     </EditTextPreference>
+    <ListPreference 
+        key="zone" 
+        title="Зона обслуживания"
+        summary="||{@s}"
+        entries="1|2"
+        entryValues="1|2"
+		defaultValue="2">
+	</ListPreference>
 </PreferenceScreen>

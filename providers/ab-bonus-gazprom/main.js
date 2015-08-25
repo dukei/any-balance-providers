@@ -71,22 +71,25 @@ function main() {
 	getParam(balance, result, 'balance');
 
 	//getParam(html, result, 'balance', /Бонусов доступно[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'status', /Текущий статус карты[\s\S]*?<img[^>]+src="[^"]*images\/([^\/"]*)\.png"[^>]*>/i, replaceTagsAndSpaces, img2status);
-	getParam(html, result, '__tariff', /Текущий статус карты[\s\S]*?<img[^>]+src="[^"]*images\/([^\/"]*)\.png"[^>]*>/i, replaceTagsAndSpaces, img2status);
-	getParam(html, result, 'month_need', /Для подтверждения статуса (?:[\s\S](?!<\/p>))*необходимо совершить покупки на сумму[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+	var reStatus = prefs.zone == 1 ? /Текущий статус карты в 1[\s\S]*?<img[^>]+src="[^"]*images\/([^\/"]*)\.png"[^>]*>/i : /Текущий статус карты в 2[\s\S]*?<img[^>]+src="[^"]*images\/([^\/"]*)\.png"[^>]*>/i;
+	var reSave = prefs.zone == 1 ? /Для подтверждения статуса в 1(?:[\s\S](?!<\/p>))*необходимо совершить покупки на сумму[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i : /Для подтверждения статуса в 2(?:[\s\S](?!<\/p>))*необходимо совершить покупки на сумму[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i;
+	var reHeighten = prefs.zone == 1 ? /Для повышения статуса в 1(?:[\s\S](?!<\/p>))*необходимо совершить покупки на сумму[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i : /Для повышения статуса в 2(?:[\s\S](?!<\/p>))*необходимо совершить покупки на сумму[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i;
+	getParam(html, result, 'status', reStatus, replaceTagsAndSpaces, img2status);
+	getParam(html, result, '__tariff', reStatus, replaceTagsAndSpaces, img2status);
+	getParam(html, result, 'month_need', reSave, replaceTagsAndSpaces, parseBalance);
 	
 	var dt = new Date();
 	var curMonth = num2(dt.getMonth() + 1) + '.' + dt.getFullYear();
 
 	getParam(html, result, 'customer', /<div[^>]+class="[^"]*PersonalName"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'month_need_up', /Для повышения статуса (?:[\s\S](?!<\/p>))*необходимо совершить покупки на сумму[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'month_need_up', reHeighten, replaceTagsAndSpaces, parseBalance);
 
-	if(AnyBalance.isAvailable('month2', 'month')){
-		html = AnyBalance.requestGet(baseurl + 'profile-online/statistics/');
+	if(prefs.zone != 1 && AnyBalance.isAvailable('month2', 'month')){
+		html = AnyBalance.requestPost(baseurl + 'profile-online/statistics/handler.php', {year: '0', month: '0'});
 		sumParam(html, result, 'month2', new RegExp('<tr[^>]*>\\s*<td[^>]*>\\d+\\.' + curMonth + '(?:(?:[\\s\\S](?!</tr>))*?<td[^>]*>){3}([\\s\\S]*?)</td>', 'ig'), replaceTagsAndSpaces, parseBalance, aggregate_sum);
 	}
 
-	if(AnyBalance.isAvailable('month1', 'month')){
+	if(prefs.zone == 1 && AnyBalance.isAvailable('month1', 'month')){
 		html = AnyBalance.requestGet(baseurl + 'profile-online/statistics/index-online.php');
 		sumParam(html, result, 'month1', new RegExp('<tr[^>]*>\\s*<td[^>]*>\\d+\\.' + curMonth + '(?:(?:[\\s\\S](?!</tr>))*?<td[^>]*>){3}([\\s\\S]*?)</td>', 'ig'), replaceTagsAndSpaces, parseBalance, aggregate_sum);
 	}

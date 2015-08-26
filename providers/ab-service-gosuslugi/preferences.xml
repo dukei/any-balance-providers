@@ -47,6 +47,6 @@
 		dialogTitle="ИНН"
 		positiveButtonText="ОК"
 		negativeButtonText="Отмена"
-		dialogMessage="Введите ИНН.">
+		dialogMessage="Введите один ИНН или несколько через символ ; максимально можно ввести 3 ИНН.">
 	</EditTextPreference>		
 </PreferenceScreen>

@@ -41,6 +41,8 @@ function parseBalance(text){
 function main(){
     var prefs = AnyBalance.getPreferences();
 
+    throw AnyBalance.Error('Этот провайдер больше не поддерживается в связи с поглощением Элайн GSM Ростелекомом. Для слежения за балансом пользуйтесь провайдером Ростелеком-Регионы', null, true);
+
     var baseurl = "http://rt-gsm.ru/index.php";
 
     AnyBalance.setDefaultCharset('utf-8');

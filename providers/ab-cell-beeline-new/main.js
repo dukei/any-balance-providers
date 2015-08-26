@@ -921,13 +921,14 @@ function getBonuses(xhtml, result) {
 		var services = sumParam(bonus, null, null, /<div[^>]+class="\s*(?:(?:item\s*)?(?:accumulator|accumulator|bonus|item)?)[^"]*"(?:[\s\S](?!$|<div[^>]+class="(?:accumulator|accumulator|bonus|item)"))*[\s\S]/ig);
 		
 		AnyBalance.trace("Found " + services.length + ' bonuses');
-		var reValue = /<div[^>]+class="[^>]*column2[^"]*"[^>]*>([\s\S]*?)<\/div>/i;
-		var reNewValue = /<div[^>]+class="[^>]*column2[^"]*"(?:[^>]*>){5}([\s\d,.]+)/i;
+		var reValue = /<div[^>]+class="[^>]*column2[^"]*"[^>]*>/i;
+		var replaceMinutes = [replaceTagsAndSpaces, /из.*/i, ''];
 		
 		for (var i = 0; i < services.length; ++i) {
 			var name = '' + getParam(services[i], null, null, /<div[^>]+class="[^"]*column1[^"]*"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode); //+ ' ' + bonus_name;
-			var values = getParam(services[i], null, null, /<div class="val">([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+			var values = getElement(services[i], reValue, replaceTagsAndSpaces, html_entity_decode);
 			var rest = getParam(services[i], null, null, /class="[^>]*rest"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+			AnyBalance.trace('Найдена опция ' + name + ': ' + values + ', rest: ' + rest);
 			
 			if (/Internet|Интернет/i.test(name)) {
 				// Для опции Хайвей все отличается..
@@ -961,33 +962,32 @@ function getBonuses(xhtml, result) {
 					sumParam(services[i], result, 'traffic_left', reValue, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
 				}
 			} else if (/SMS|СМС|штук/i.test(name)) {
-				sumParam(services[i], result, 'sms_left', [reValue, reNewValue], replaceTagsAndSpaces, parseBalance, aggregate_sum);
+				sumParam(values, result, 'sms_left', null, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 			} else if (/MMS/i.test(name)) {
-				sumParam(services[i], result, 'mms_left', [reValue, reNewValue], replaceTagsAndSpaces, parseBalance, aggregate_sum);
+				sumParam(value, result, 'mms_left', null, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 			} else if (/Рублей БОНУС|бонус-баланс|Дополнительный баланс/i.test(name)) {
-				sumParam(services[i], result, 'rub_bonus', reValue, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+				sumParam(values, result, 'rub_bonus', null, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 			} else if (/Денежный бонус/i.test(name)) {
-				getParam(services[i], result, 'rub_bonus2', reValue, replaceTagsAndSpaces, parseBalance);
+				getParam(values, result, 'rub_bonus2', null, replaceTagsAndSpaces, parseBalance);
 				getParam(services[i], result, 'rub_bonus2_till', /<div[^>]+class="column3[^"]*"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseDateWord);
 			} else if (/Рублей за участие в опросе|Счастливое время|Бонусы по программе|Счастливого времени/i.test(name)) {
-				sumParam(services[i], result, 'rub_opros', reValue, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+				sumParam(values, result, 'rub_opros', null, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 			} else if (/Времени общения|Включенные минуты/i.test(name)) {
-				sumParam(services[i], result, 'min_local', [reValue, reNewValue], replaceTagsAndSpaces, parseMinutes, aggregate_sum);
+				sumParam(values, result, 'min_local', null, replaceMinutes, parseMinutes, aggregate_sum);
 			} else if (/Секунд БОНУС\s*\+|Баланс бонус-секунд/i.test(name)) {
-				sumParam(services[i], result, 'min_bi', reValue, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
+				sumParam(values, result, 'min_bi', null, replaceMinutes, parseMinutes, aggregate_sum);
 			} else if (/Секунд БОНУС-2|Баланс бесплатных секунд-промо/i.test(name)) {
-				sumParam(services[i], result, 'min_left_1', reValue, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
+				sumParam(values, result, 'min_left_1', null, replaceMinutes, parseMinutes, aggregate_sum);
 				sumParam(services[i], result, 'min_local_till', /Доступно до([^<]{10,20})/i, replaceTagsAndSpaces, parseDateWord, aggregate_min);
 			} else if (/минут в месяц|мин\.|Голосовой трафик/i.test(name)) {
-				var minutes = getParam(services[i], null, null, reValue, replaceTagsAndSpaces, parseMinutes);
-				sumParam(minutes, result, 'min_local', null, null, null, aggregate_sum);
+				getParam(values, result, 'min_local', null, replaceMinutes, parseMinutes);
 			// Это новый вид отображения данных
 			} else if (/Минут общения по (?:тарифу|услуге)|вызовы|на местные номера/i.test(name)) {
 				// Очень внимательно надо матчить
 				if(/любые номера Вашего региона|^Минут общения по тарифу$|других (?:сотовых\s+)?операторов|все номера|На номера домашнего региона|Минут общения по тарифу Все для бизнеса Бронза|кроме номеров "Билайн"|на местные номера других операторов/i.test(name))
-					sumParam(services[i], result, 'min_local', reNewValue, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
+					sumParam(values, result, 'min_local', null, replaceMinutes, parseMinutes, aggregate_sum);
 				else
-					sumParam(services[i], result, 'min_bi', reNewValue, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
+					sumParam(values, result, 'min_bi', null, replaceMinutes, parseMinutes, aggregate_sum);
 				/*if(/на номера.+Билайн.+$/i.test(name))
 					sumParam(services[i], result, 'min_bi', reNewValue, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
 				else 

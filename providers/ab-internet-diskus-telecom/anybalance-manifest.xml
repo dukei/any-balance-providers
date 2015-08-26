@@ -1,13 +1,13 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-internet-diskus-telecom</id>
+	<id version="2">ab-internet-diskus-telecom</id>
 	<api flags="no_browser"/>
 	<name>Дискус-Телеком</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе провайдера Дискус-Телеком http://diskus-telecom.ru/</p>
 	<p>Информация берется из личного кабинета http://diskus-telecom.ru/personal</p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
@@ -17,6 +17,7 @@
 	</files>
 	<counters>
 		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="licschet" name="Лицевой счет" type="text"/>
 		<counter id="fio" name="ФИО" type="text"/>
 	</counters>
 	<keywords></keywords>

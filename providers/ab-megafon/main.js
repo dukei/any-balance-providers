@@ -1099,6 +1099,8 @@ function megafonServiceGuidePhysical(filial, sessionid, text){
 				var name = getParam(row, null, null, /(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
 			    AnyBalance.trace('Найдена опция: ' + name);
 				
+				var isInternetUnits = /[\d\.]+\s*[гмкgmk][бb]/i.test(row);
+				
 				//Ищем в таблице скидок строки вида: 39:00 мин   39:00, что означает Всего, Остаток
 				if(/<div class="td_def">\s*(\d+)(?::(\d+))?[^<]*(?:М|м)ин[^<]*<[^а-я\d]*<div class="td_def">(\d+)(?::(\d+))?/i.test(row)){ 
 				    //Это минуты, надо бы их рассортировать
@@ -1116,7 +1118,8 @@ function megafonServiceGuidePhysical(filial, sessionid, text){
 				        AnyBalance.trace('Минуты ' + name + ', относим к просто минутам');
 						sumOption(colnum, row, result, 'mins_total', 'mins_left', '.', parseMinutes);
 					}
-				}else if(/(?:SMS|СМС|сообщен)/i.test(name)){
+				// Надо проверить нет ли в юнитах кб, а то вот такая строка "5 минут 30 SMS 30 MMS 30 МБ" разбирается неправильно
+				}else if(/(?:SMS|СМС|сообщен)/i.test(name) && !isInternetUnits ){
 					// Карманный интернет теперь покрывается циклом выше
 					
 					//200 SMS MegaVIP 0
@@ -1128,7 +1131,7 @@ function megafonServiceGuidePhysical(filial, sessionid, text){
 				}else if(/Исходящие SM\s*</i.test(name)){
 					//Исходящие SM (ОХард, Москва)
 					sumOption(colnum, row, result, 'sms_total', 'sms_left', '.');
-				}else if(/(?:MMS|ММС)/i.test(name)){
+				}else if(/(?:MMS|ММС)/i.test(name) && !isInternetUnits ){
 					//MMS
 					sumOption(colnum, row, result, 'mms_total', 'mms_left', '.');
 				}else if(/Нужный подарок/i.test(name)){
@@ -1140,7 +1143,7 @@ function megafonServiceGuidePhysical(filial, sessionid, text){
 				}else if(/на номера МегаФон/i.test(name)){
 					//3 мин на номера МегаФон-Сибирь
 					sumOption(colnum, row, result, 'mins_net_total', 'mins_net_left', '.', parseMinutes);
-				}else if(/БИ[ТT]\b|GPRS|Интернет|трафик|Internet|\d+\s+[гмкgmk][бb]/i.test(name) || /[\d\.]+\s*[гмкgmk][бb]/i.test(row)){
+				}else if(/БИ[ТT]\b|GPRS|Интернет|трафик|Internet|\d+\s+[гмкgmk][бb]/i.test(name) || isInternetUnits){
 				    var internetPacket = getParam(optionGroupText, null, null, /Интернет \w+/i);
 					if(internetPacket)
 					    foundInternetPacketOptions[internetPacket] = true;
@@ -1154,7 +1157,7 @@ function megafonServiceGuidePhysical(filial, sessionid, text){
 					if(isset(total) && isset(left) && !used)
 						used = total - left;
 
-					var night = /ночь/i.test(name) ? '_night' : '';
+					var night = /ноч/i.test(name) ? '_night' : '';
 					sumParam(total, result, 'internet_total' + night, null, null, null, aggregate_sum);
 					sumParam(left, result, 'internet_left' + night, null, null, null, aggregate_sum);
 					sumParam(used, result, 'internet_cur' + night, null, null, null, aggregate_sum);

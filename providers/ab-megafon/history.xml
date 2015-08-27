@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="3.0" version="167" date="2015-08-27">
+	- Улучшено получение трафика в некоторых случаях.
+	</change>
 	<change major_version="3.0" version="166" date="2015-08-23">
 	- Улучшено распознавание смс, когда они в сервис гиде не называются, как смс.
 	</change>

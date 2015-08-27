@@ -50,11 +50,15 @@ function main(){
 
 	html = AnyBalance.requestGet(baseurl + 'odata/StartTariff(00000000-0000-0000-0000-000000000000)', addHeaders({Authorization: 'Bearer ' + token.access_token})); 
     json = getJson(html);
+    if(!json.TariffName)
+    	AnyBalance.trace(html);
 
 	getParam(json.TariffName, result, '__tariff');
 
 	html = AnyBalance.requestGet(baseurl + 'odata/Balance?%24filter=(SubjectId%20eq%20%27' + encodeURIComponent(deviceid) + '%27%20and%20SubjectTypeId%20eq%20%27Device%27)&%24orderby=Id', addHeaders({Authorization: 'Bearer ' + token.access_token}));
     json = getJson(html);
+    if(!json.value)
+    	AnyBalance.trace(html);
 
     if(json.value[0]){
 		getParam(json.value[0].Balance, result, 'balance');
@@ -65,6 +69,8 @@ function main(){
     
 	html = AnyBalance.requestGet(baseurl + 'odata/ServiceInfo?%24filter=(SubjectId%20eq%20%27' + encodeURIComponent(deviceid) + '%27%20and%20SubjectTypeId%20eq%20%27Device%27)&%24orderby=Id', addHeaders({Authorization: 'Bearer ' + token.access_token}));
     json = getJson(html);
+    if(!json.value)
+    	AnyBalance.trace(html);
 
     var n = 1;
     for(var i=0; i<json.value.length; ++i){

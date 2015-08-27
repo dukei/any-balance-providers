@@ -38,7 +38,7 @@ function main() {
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
 	
-	var parcel = getParam(html, null, null, new RegExp('<div id="' + (prefs.track || '[^"]{8,}') + '"(?:[^>]*>){30,68}[^>]*в архив">\\s*</a>\\s*</div>', 'i'));
+	var parcel = getElement(html, new RegExp('<div[^>]+id="' + (prefs.track || '') + '[^>]+class="shipment"[^>]*>', 'i'));
 	if(!parcel) {
 		throw new AnyBalance.Error('Не удалось найти ' + (prefs.track ? 'посылку с номером ' + prefs.track : 'ни одной посылки!'));
 	}
@@ -48,7 +48,7 @@ function main() {
 	getParam(parcel, result, '__tariff', /<div id="([^"]+)/i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(parcel, result, 'name', /<span title="([^"]+)/i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(parcel, result, 'days', /Время в пути:([\s\d]+)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(parcel, result, 'status', /<b title="([^"]+)/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(parcel, result, 'status', /<b[^>]+class="current-status"[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(parcel, result, 'date', /"infoRow3">([^<(]+)/i, replaceTagsAndSpaces, parseDate);
 	
 	AnyBalance.setResult(result);

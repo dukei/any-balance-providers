@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-internet-utex-telecom</id>
+  <name>Ютэкс-Телеком</name>
+  <description>
+    Получает баланс и информацию о тарифном плане для московского интернет-провайдера ЮТЭКС-ТЕЛЕКОМ. http://www.utex-telecom.ru/
+    Информация берется из личного кабинета https://cabinet.utex-telecom.ru/
+  </description>
+  <author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+    <js>library.js</js>
+    <history>history.xml</history>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units="р"/>
+    <counter id="bonus" name="Бонусы"/>
+    <counter id="status" name="Состояние" type="text"/>
+    <counter id="agreement" name="Номер договора" type="text"/>
+    <counter id="paycode" name="Код оплаты" type="text"/>
+    <counter id="trafficIn" name="Вх.трафик в текущем месяце" units="Гб"/>
+    <counter id="trafficOut" name="Исх.трафик в текущем месяце" units="Гб"/>
+    <counter id="userName" name="ФИО" type="text"/>
+  </counters>
+  <keywords>
+    utextelecom москва
+  </keywords>
+  <type>
+    internet
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

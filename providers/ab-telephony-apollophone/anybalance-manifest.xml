@@ -1,7 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="4">ab-telephony-apollophone</id>
+	<id version="5">ab-telephony-apollophone</id>
 	<name>Apollo Phone</name>
 	<description>
 	Получает текущий баланс, валюту баланса в провайдере IP-телефонии Apollo Phone (http://www.apollophone.ru). 

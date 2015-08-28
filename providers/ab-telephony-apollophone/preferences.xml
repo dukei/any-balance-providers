@@ -1,12 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
     <EditTextPreference 
-        title="Логин или номер карты" 
+        title="Номер телефона или договора или пин-код" 
         positiveButtonText="ОК" 
-        summary="Логин в Apollo Phone||{@s}\n" 
-        dialogTitle="Логин или номер карты" 
+        summary="||{@s}" 
+        dialogTitle="Номер телефона или договора или пин-код" 
         negativeButtonText="Отмена" 
-        dialogMessage="Введите ваш Логин или номер карты в личный кабинет Apollo Phone. Если Вы ввели номер карты, так же необходимо выбрать Тип абонента - Карточный"
+        inputType="number"
+        obligatory="true"
+        dialogMessage="Введите ваш номер договора или телефона. Если Вы ввели пин-код карты, то пароль вводить не нужно. Номер телефона должен быть полным - включая код страны и города (области)."
         key="login">
     </EditTextPreference>
     <EditTextPreference 
@@ -16,15 +18,7 @@
         negativeButtonText="Отмена"
         title="Пароль"
         summary="Введите пароль||************\n"
-        dialogMessage="Введите ваш пароль в личный кабинет Apollo Phone"
+        dialogMessage="Введите ваш пароль в личный кабинет. Для пин-кода карты пароль не требуется"
         inputType="textPassword">
     </EditTextPreference>
-	<ListPreference 
-        key="type" 
-        title="Тип абонента"
-        summary="|Обычный|{@s}\n"
-        entries="Обычный|Карточный"
-        entryValues="def|card"
-	defaultValue="def">
-    </ListPreference>
 </PreferenceScreen>

@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="3">ab-municipal-energosbyt</id>
+	<id version="4">ab-municipal-energosbyt</id>
 	<name>Энергосбыт (ЭК "Восток")</name>
 	<description>
     Получает информацию в системе Энергосбыт (ОАО "Энергосбытовая компания "Восток") сайт: http://www.ensbyt.ru/
@@ -27,7 +27,7 @@
 		<counter id="agreement" name="Лицевой счет" type="text"/>
 		<counter id="fio" name="ФИО" type="text"/>
 	</counters>
-	<keywords>энерго, курган, электричество</keywords>
+	<keywords>энерго, курган, электричество, коммуналка, коммунальные услуги</keywords>
 	<type>municipal</type>
 	<country>ru</country>
 </provider>

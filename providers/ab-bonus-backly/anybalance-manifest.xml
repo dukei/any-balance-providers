@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-bonus-backly</id>
+	<api flags="no_browser"/>
+	<name>Бэкли</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе в сервисе кешбэк Бэкли: http://backly.ru/</p>
+	<p>Информация берется из личного кабинета http://backly.ru/?with_login_form=true</p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" prefix="$"/>
+		<counter id="count" name="Покупок" units=" шт"/>
+		<counter id="got" name="Получено" prefix="$"/>
+		<counter id="got4friends" name="За друзей" prefix="$"/>
+		<counter id="friends" name="Все друзья" units=" ч"/>
+	</counters>
+	<keywords>кэшбэк</keywords>
+	<type>bonus</type>
+	<country>ru</country>
+</provider>

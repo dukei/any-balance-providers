@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-municipal-ellisbank</id>
+	<api flags="no_browser"/>
+	<name>ЭллисБанк</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о задолженности по услугам ЖКХ в ЭллисБанк https://ellisbank.com</p>
+	<p>Информация берется из личного кабинета</p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="balance_start" name="Баланс на начало месяца" units=" р"/>
+		<counter id="cost" name="Начислено" units=" р"/>
+		<counter id="paid" name="Оплачено" units=" р"/>
+		<counter id="peni" name="Пени" units=" р"/>
+		<counter id="licschet" name="Лицевой счет" type="text"/>
+		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="address" name="Адрес" type="text"/>
+		<counter id="phone" name="Телефон" type="text"/>
+		<counter id="period" name="Период" type="text"/>
+	</counters>
+	<keywords>коммуналка коммунальные платежи</keywords>
+	<type>municipal</type>
+	<country>ru</country>
+</provider>

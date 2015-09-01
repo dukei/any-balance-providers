@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-municipal-altai-energosbyt</id>
+	<api flags="no_browser"/>
+	<name>Алтайэнергосбыт</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о задолженности по оплате электроэнергии в Алтайэнергосбыт https://www.altaiensb.com</p>
+	<p>Информация берется из личного кабинета https://www.altaiensb.com/personal/</p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Если у вас нет доступа в Личный кабинет, получите его на странице https://www.altaiensb.com/registration/</p>
+	]]></instruction>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Задолженность" units=" р"/>
+		<counter id="price" name="Ставка" units=" р/кВтч"/>
+		<counter id="value" name="Показания счетчика"/>
+		<counter id="licschet" name="Лицевой счет" type="text"/>
+		<counter id="off" name="Льгота" type="text"/>
+		<counter id="fio" name="ФИО" type="text"/>
+	</counters>
+	<keywords>коммуналка электричество коммунальные платежи</keywords>
+	<type>municipal</type>
+	<country>ru</country>
+</provider>

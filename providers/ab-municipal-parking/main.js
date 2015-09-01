@@ -28,15 +28,24 @@ function main(){
 		password: prefs.password		
 	}, addHeaders({ Referer: loginurl + 'eaidit/eaiditweb/openouterlogin.do' }));
 
-	html = AnyBalance.requestGet(loginurl + 'eaidit/eaiditweb/redirect.do?redirectto=https%3A%2F%2Fpgu.mos.ru%2Fru%2Fid%2F%3Fto%3Dhttps%253A%252F%252Fparkingcab.mos.ru%252Flocal%252FMPGU.php%252F%253Flogin%253D1%2526redirect%253D', g_headers)
+	var url = AnyBalance.getLastUrl();
+	AnyBalance.trace('Попали на ' + url);
 
-    if(!/logout/i.test(html)){
-        /*var error = getParam(html, null, null, /<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
+    if(!/loginok/i.test(url)){
+        var error = getParam(html, null, null, /<input[^>]+id="errortext"[^>]*value="([^"]*)/i, null, html_entity_decode);
         if(error)
-            throw new AnyBalance.Error(error);*/
+            throw new AnyBalance.Error(error, null, /Неверное имя пользователя/i.test(error));
+        AnyBalance.trace(html);
         throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
     }
-    
+
+   	html = AnyBalance.requestGet(loginurl + 'eaidit/eaiditweb/redirect.do?redirectto=https%3A%2F%2Fpgu.mos.ru%2Fru%2Fid%2F%3Fto%3Dhttps%253A%252F%252Fparkingcab.mos.ru%252Flocal%252FMPGU.php%252F%253Flogin%253D1%2526redirect%253D', g_headers)
+ 
+    if(!/logout/i.test(html)){
+    	AnyBalance.trace(html);
+        throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
+    }
+
 	var result = {success: true};
 	
     getParam(html, result, 'balance', /<strong[^>]*class="balance"[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseBalance);

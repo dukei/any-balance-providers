@@ -11,7 +11,7 @@ var g_headers = {
 };
 
 function main(){
-	var baseurl = 'http://ag.mos.ru/';
+	var baseurl = 'http://ag.mos.ru';
 
 	var prefs = AnyBalance.getPreferences();
 	AnyBalance.setDefaultCharset('utf-8');
@@ -20,12 +20,14 @@ function main(){
 	checkEmpty(phone, 'Введите номер телефона, 10 цифр подряд!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 	
-	var html = AnyBalance.requestPost(baseurl + 'site/login',{
+	var html = AnyBalance.requestGet(baseurl + '/site/index', g_headers);
+
+	html = AnyBalance.requestPost(baseurl + '/site/login',{
 		"LoginForm[username]": phone,
 		"LoginForm[password]": prefs.password,
 		"LoginForm[verifyCode]": "",
 		"LoginForm[offer]": "true",
-	}, addHeaders({'X-Requested-With': 'XMLHttpRequest'}));
+	}, addHeaders({'X-Requested-With': 'XMLHttpRequest', Origin: baseurl, Referer: baseurl + '/site/index'}));
 	
 	// Нужно завернуть в try/catch иначе будет падать при неверно
 	var json = getJson(html);

@@ -51,6 +51,7 @@ filial_info[MEGA_FILIAL_SIBIR] = {
     sg: "https://sibsg.megafon.ru/",
 	tray: "https://sibsg.megafon.ru/ROBOTS/SC_TRAY_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%",
 	widget: 'https://sibsg.megafon.ru/WIDGET_INFO/GET_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%&CHANNEL=WYANDEX&LANG_ID=1&P_RATE_PLAN_POS=1&P_PAYMENT_POS=2&P_ADD_SERV_POS=4&P_DISCOUNT_POS=3',
+	sgCaptchaInputType: 'text',
 };
 filial_info[MEGA_FILIAL_NW] = {
 	name: 'Северо-западный филиал',
@@ -1933,6 +1934,7 @@ function enterSG(filial, options){
     if(psid){
 	var imgurl = baseurl + "ps/scc/php/cryptographp.php?PHPSESSID=" + psid + '&ref=' + (Math.round(1E3 * Math.random()) + 1) + '&w=137';
 	var img = AnyBalance.requestGet(imgurl, g_headers);
+		var inputType = filinfo.sgCaptchaInputType || 'number';
         code = AnyBalance.retrieveCode('Пожалуйста, введите код с картинки', img, {inputType: 'number'});
     }
 

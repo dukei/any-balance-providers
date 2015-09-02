@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="12" date="2015-09-02">
+	- Сообщение о необходимости включения расширенных данных API в профиле игры.
+	</change>
 	<change version="11" date="2015-06-22">
 	- Исправлена ошибка.
 	</change>

@@ -7,6 +7,11 @@
 
 	//Возвращаем транзакцию, находящуюся в середине, например.
 	adapter.setTraverseCallbacks({"cards.transactions", function(prop, path){ return prop[Math.floor(prop.length/2)] }});
+
+	options: {
+		//Вызывать shouldProcess для каждого ID, даже если предыдущий уже вернул true
+		shouldProcessMultipleCalls: true|{counter: true}
+	}
 */
 
 function NAdapter(countersMap, shouldProcess, options){
@@ -28,7 +33,9 @@ function NAdapter(countersMap, shouldProcess, options){
 
 	var productIds = {};
 	AnyBalance.shouldProcess = function(counter, info){
-		if(productIds[counter])
+		var multipleCalls = options.shouldProcessMultipleCalls;
+		multipleCalls = typeof(multipleCalls) == 'object' ? multipleCalls[counter] : multipleCalls;
+		if(!multipleCalls && productIds[counter])
 			return info.__id == productIds[counter];
 		var should = shouldProcess(counter, info);
 		if(should)

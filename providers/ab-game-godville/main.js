@@ -67,13 +67,16 @@ function mainOld(prefs) {
 	
 	var json = getJson(pd);
 
+	if(json.health === undefined)
+		AnyBalance.trace('API вернуло не все данные. Если хотите все данные, необходимо включить в профиле игры галочку "Оперативные данные в API"');
+
 	var result = {success: true};
 
 	getParam(json.name, result, '__tariff', null, replaceTagsAndSpaces);
 	getParam(json.name, result, 'name', null, replaceTagsAndSpaces);
 	getParam(json.level + '', result, 'level', null, replaceTagsAndSpaces);
 	getParam(json.health + '', result, 'health', null, replaceTagsAndSpaces, parseBalance);
-	getParam(json.health + '/' + json.max_health, result, 'health_t', null, replaceTagsAndSpaces);
+	getParam((json.health === undefined ? '?' : json.health) + '/' + json.max_health, result, 'health_t', null, replaceTagsAndSpaces);
 	getParam(json.bricks_cnt/10 + '', result, 'bricks_p', null, replaceTagsAndSpaces, parseBalance);
 	getParam(json.bricks_cnt + '', result, 'bricks', null, replaceTagsAndSpaces, parseBalance);
 	getParam(json.godpower + '', result, 'godpower', null, replaceTagsAndSpaces, parseBalance);

@@ -1935,7 +1935,7 @@ function enterSG(filial, options){
 	var imgurl = baseurl + "ps/scc/php/cryptographp.php?PHPSESSID=" + psid + '&ref=' + (Math.round(1E3 * Math.random()) + 1) + '&w=137';
 	var img = AnyBalance.requestGet(imgurl, g_headers);
 		var inputType = filinfo.sgCaptchaInputType || 'number';
-        code = AnyBalance.retrieveCode('Пожалуйста, введите код с картинки', img, {inputType: 'number'});
+        code = AnyBalance.retrieveCode('Пожалуйста, введите код с картинки', img, {inputType: inputType});
     }
 
     html = AnyBalance.requestPost(baseurl + 'ps/scc/php/check.php?CHANNEL=WWW', {

@@ -278,6 +278,11 @@ function fetchCard(accounts, baseurl, sessionid){
     if(AnyBalance.isAvailable('minpaytill') && isset(card.duedate))
         result.minpaytill = card.duedate.milliseconds;
 
+    if(AnyBalance.isAvailable('freeaddlimit') && card.defaultRenewalAmountLeft)
+        result.freeaddlimit = parseBalance(card.defaultRenewalAmountLeft.value+'');
+    if(AnyBalance.isAvailable('freecashlimit') && card.defaultMonthlyCashLimit)
+        result.freecashlimit = parseBalance(card.defaultMonthlyCashLimit.value+'');
+
     if(AnyBalance.isAvailable('pcts')){
         //Информация по выписке
         try{

@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="19">ab-money-tcs</id>
+	<id version="20">ab-money-tcs</id>
 	<api flags="no_browser" min_level="4"/>
 	<name>Тинькофф Кредитные Системы</name>
 	<description html="true"><![CDATA[
@@ -45,7 +45,7 @@
 		<counter id="accnum" name="Номер счета" type="text"/>
 		<counter id="nextStatementDate" name="Дата следующего зачисления процентов" type="time" format="dd/MM/yyyy"/>
 		<counter id="freeaddlimit" name="Бесплатные пополнения (Лимит)" units=" {@currency}"/>
-		<counter id="freecashlimt" name="Сумма льготного снятия (Лимит)" units=" {@currency}"/>
+		<counter id="freecashlimit" name="Сумма льготного снятия (Лимит)" units=" {@currency}"/>
 		<counter id="currency" name="Валюта" type="text"/>
 	</counters>
 	<keywords>ткс онлайн, tcs online, tinkoff</keywords>

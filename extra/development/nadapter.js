@@ -7,10 +7,12 @@ do{k[i]=true;
 i=i.indexOf(".")>=0?i.replace(/\.[^.]*$/,""):null
 }while(i!==null)
 }}var h={};
-AnyBalance.shouldProcess=function(t,u){if(h[t]){return u.__id==h[t]
-}var c=r(t,u);
-if(c){h[t]=u.__id
-}return c
+AnyBalance.shouldProcess=function(u,v){var c=b.shouldProcessMultipleCalls;
+c=typeof(c)=="object"?c[u]:c;
+if(!c&&h[u]){return v.__id==h[u]
+}var t=r(u,v);
+if(t){h[u]=v.__id
+}return t
 };
 function l(c){return !!h[c]
 }function e(c){for(var t in c){g[t]=c[t]

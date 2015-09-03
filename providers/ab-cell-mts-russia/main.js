@@ -738,9 +738,15 @@ function mainLK(allowRetry) {
 
         try {
             if(AnyBalance.isAvailable('bonus')){
-            	info = AnyBalance.requestGet('https://bonus.ssl.mts.ru/api/user/part/Points', addHeaders({Referer: 'https://bonus.ssl.mts.ru/', 'X-Requested-With': 'XMLHttpRequest'}));
+                info = AnyBalance.requestGet('https://bonus.ssl.mts.ru/api/user/part/Status', addHeaders({Referer: 'https://bonus.ssl.mts.ru/', 'X-Requested-With': 'XMLHttpRequest'}));
                 var json = getJson(info);
-				getParam(json.points, result, 'bonus');
+				if(json.status != 'registered'){
+					AnyBalance.trace('Бонус не может быть получен: ' + info);
+				}else{
+            		info = AnyBalance.requestGet('https://bonus.ssl.mts.ru/api/user/part/Points', addHeaders({Referer: 'https://bonus.ssl.mts.ru/', 'X-Requested-With': 'XMLHttpRequest'}));
+                    var json = getJson(info);
+					getParam(json.points, result, 'bonus');
+				}
             }
         } catch (e) {
             AnyBalance.trace('Не удалось получить данные о бонусах... ' + e.message);

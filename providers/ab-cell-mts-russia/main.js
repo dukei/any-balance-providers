@@ -778,6 +778,7 @@ function mainLK(allowRetry) {
         
 					sumParam(json.TrafficLeft + '', result, 'traffic_left_mb', null, null, function (str) { return parseTraffic(str, 'kb'); }, aggregate_sum);
 					sumParam(json.TrafficConsumed + '', result, 'traffic_used_mb', null, null, function (str) { return parseTraffic(str, 'kb'); }, aggregate_sum);
+					getParam(json.PackageUpdated + '', result, 'traffic_left_till', null, null, parseDateISO);
 					break;
 				} else {
 					AnyBalance.trace('Трафика нет...');

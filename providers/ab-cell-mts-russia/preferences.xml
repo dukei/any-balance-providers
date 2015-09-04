@@ -22,14 +22,14 @@
         obligatory="true"
         inputType="textPassword">
     </EditTextPreference>
-    <ListPreference 
+<!--    <ListPreference 
         key="type" 
         title="Личный кабинет"
         summary="|Автоматически|{@s}"
         entries="Автоматически|Личный кабинет МТС|Мобильный интернет-помощник|Обычный интернет-помощник"
         entryValues="auto|lk|mobile|ordinary"
 	defaultValue="auto">
-    </ListPreference>
+    </ListPreference> -->
     <EditTextPreference 
         positiveButtonText="ОК"
         key="phone" 
@@ -40,12 +40,12 @@
         dialogMessage="Введите 10 цифр номера телефона, чей баланс вы хотите посмотреть. Например, 9161234567. Этот номер должен быть виден в вашем личном кабинете. Чтобы смотреть информацию по основному номеру, оставьте это поле пустым."
         inputType="number">
     </EditTextPreference>
-    <ListPreference 
+<!--    <ListPreference 
         key="region" 
         title="Регион"
         summary="Регион вашего номера|Нужен для определения Интернет-Помощника\n|{@s}\n"
         entries="Автоматически|Москва/Центр|Дальний Восток|Поволжье|Северо-Запад|Сибирь|Урал|Юг"
         entryValues="auto|center|primorye|nnov|nw|sib|ural|ug"
 	      defaultValue="auto">
-    </ListPreference>
+    </ListPreference> -->
 </PreferenceScreen>

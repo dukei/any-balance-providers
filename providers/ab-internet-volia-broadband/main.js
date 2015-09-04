@@ -7,7 +7,7 @@ var g_headers = {
 	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
 	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
 	'Connection': 'keep-alive',
-	'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2272.76 Safari/537.36',
+	'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/44.0.2403.157 Safari/537.36',
 };
 
 function main(){
@@ -50,7 +50,7 @@ function main(){
 		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
 	}
 
-	html = AnyBalance.requestGet(baseurl + redirect, g_headers);	
+	html = AnyBalance.requestGet(baseurl + redirect, g_headers);
 
 	if (!/signout/i.test(html)) {
 		var error = getParam(html, null, null, /<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
@@ -68,10 +68,41 @@ function main(){
 	getParam(html, result, 'amountToPay', /name="amountToPay"[^>]*value="([^"]+)/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'ndogovor', /№ Договора[^>]*>\s*<span[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'fio', /\/signout[^>]*>\s*<\/a>\s*<\/div>\s*<span[^>]*>([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'kodtarif', /cockpit\/services\/channel\/compare" id="(\d+)"/i, replaceTagsAndSpaces, parseBalance);
+
+	form = getParam(html, null, null, /<input name="_csrf" type="hidden" value="[^]+?" \/>/i);
+
+	params = createFormParams(form, function(params, str, name, value) {
+		AnyBalance.trace(name + ' = ' + value);
+
+		return value;
+	});
+
+	html = AnyBalance.requestPost(baseurl + 'kiev/ru/cockpit/common/devices/fragment', params, addHeaders({
+		Referer: baseurl + 'kiev/ru/faq',
+		'X-Requested-With':'XMLHttpRequest'
+	}));
+
+	getParam(html, result, 'ktel', /tvCounter">([^<]+)/i, replaceTagsAndSpaces, parseBalance);
+
+	html = AnyBalance.requestGet(baseurl + 'kiev/ru/cockpit/services', g_headers);
+
+	getParam(html, result, 'kodtarif', /data-tm-code="(\d+)"/i, replaceTagsAndSpaces, parseBalance);
+
+	form = getParam(html, null, null, /<input name="_csrf" type="hidden" value="[^]+?" \/>/i);
+
+	params = createFormParams(form, function(params, str, name, value) {
+		AnyBalance.trace(name + ' = ' + value);
+
+		return value;
+	});
+
+	html = AnyBalance.requestPost(baseurl + 'kiev/ru/cockpit/common/speedup/fragment', params, addHeaders({
+		Referer: baseurl + 'kiev/ru/faq',
+		'X-Requested-With':'XMLHttpRequest'
+	}));
+
 	getParam(html, result, 'kkan', /Телевидение\s*<\/b>\s*<span>([^<]+)/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'speed', /Интернет\s*<\/b>\s*<span>([^<]+)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'ktel', /tvCounter">([^<]+)/i, replaceTagsAndSpaces, parseBalance);
 
 	AnyBalance.setResult(result);
 }

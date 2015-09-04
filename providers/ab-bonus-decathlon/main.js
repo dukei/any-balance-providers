@@ -4,7 +4,6 @@
 Бонусная программа Декатлон
 
 Сайт оператора: http://www.decathlon.ru/RU/
-Личный кабинет: http://customercard.decathlon.fr/netcard/index.jsp?language=RU&country=RU
 */
 
 var g_headers = {
@@ -12,7 +11,7 @@ var g_headers = {
   'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
   'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
   'Connection':'keep-alive',
-  'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.97 Safari/537.11'
+  'User-Agent':'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/44.0.2403.157 Safari/537.36'
 };
 
 function dkt_getJson(html){
@@ -75,7 +74,7 @@ function main(){
     			email: prefs.login,
     			__preventCache__: new Date().getTime(),
     			callback: '__gwt_jsonp__.P1.onSuccess'
-    }));
+    }), addHeaders({Referer: 'http://www.mydecathlon.com/mydecathlon.html?ppays=RU&langue=RU&?language=RU&country=RU'}));
 
     var json = dkt_getJson(html);
     if(json.data.codeRetour == "404")
@@ -86,6 +85,19 @@ function main(){
         throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
     }
 
+    //Зачем-то надо ещё раз вызвать,тогда работает
+    var html = AnyBalance.requestGet(root + pathAuth + createParams({
+    			ppays: 'RU',
+    			codeAppli: 'NetCardV2',
+    			langue: 'RU',
+    			resterConnecter:false,
+    			mdp: mdp,
+    			email: prefs.login,
+    			__preventCache__: new Date().getTime(),
+    			callback: '__gwt_jsonp__.P2.onSuccess'
+    }), addHeaders({Referer: 'http://www.mydecathlon.com/mydecathlon.html?ppays=RU&langue=RU&?language=RU&country=RU'}));
+
+    json = dkt_getJson(html);
     var token = json.data.token;
     var personneId = 66600000000 + Math.floor(Math.random() * 100000000);
 
@@ -94,8 +106,8 @@ function main(){
     			personneId: personneId,
     			esdljkdl: token,
     			__preventCache__: new Date().getTime(),
-    			callback: '__gwt_jsonp__.P2.onSuccess'
-    }));
+    			callback: '__gwt_jsonp__.P3.onSuccess'
+    }), addHeaders({Referer: 'http://www.mydecathlon.com/mydecathlon.html?ppays=RU&langue=RU&?language=RU&country=RU'}));
 
     json = dkt_getJson(html);
 

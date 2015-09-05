@@ -32,7 +32,10 @@ function main(){
 	if (!/exit\.jsp/i.test(html)) {
 		var error = getParam(html, null, null, /<p[^>]*class=['"]hi['"][^>]*>([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, html_entity_decode);
 		if (error)
-			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
+			throw new AnyBalance.Error(error, null, /Проверьте логин и пароль/i.test(error));
+
+		if(/<input[^>]+(?:id|name)="phone"/i.test(html))
+			throw new AnyBalance.Error('Горком требует подтвердить ваш номер телефона. Зайдите в личный кабинет через браузер и подтвердите его.');
 		
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');

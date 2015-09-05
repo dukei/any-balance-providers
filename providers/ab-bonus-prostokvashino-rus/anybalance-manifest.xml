@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<id version="1">ab-bonus-prostokvashino-rus</id>
-	<api flags="no_browser"/>
+	<api flags="no_browser|captcha"/>
 	<name>Простоквашино (Россия)</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о бонусных баллах «Простоквашино» <a href="http://prostokvashino.ru/">http://prostokvashino.ru/</a></p>

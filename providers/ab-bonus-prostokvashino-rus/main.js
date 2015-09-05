@@ -33,27 +33,48 @@ function main() {
 		
 		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
 	}
-	
+	// пробуем войти
 	html = AnyBalance.requestPost(baseurl + 'ajax', {method: 'user.login',
 											login: prefs.login,
 											password: prefs.password,
-											remember: 'yes',
+											remember: 'no',
 											captcha: ''},
 											addHeaders({Referer: baseurl}));
+									
+	if (/"captcha"/i.test(html)) {
+			// пробуем получить captcha
+			var capt = AnyBalance.requestPost(baseurl + 'ajax', {method: 'user.captcha'}, addHeaders({Referer: baseurl}));
+			var captchaSrc = getParam(capt, null, null, /"captcha":"[^\/][\S]([^"]+)/i, replaceTagsAndSpaces, html_entity_decode);
+			var captchaa = '';
+			if(captchaSrc) {
+				if(AnyBalance.getLevel() >= 7){
+					AnyBalance.trace('Пытаемся ввести капчу');
+					var captcha = AnyBalance.requestGet(baseurl + captchaSrc);
+					captchaa = AnyBalance.retrieveCode("Пожалуйста, введите код с картинки", captcha);
+					AnyBalance.trace('Капча получена: ' + captchaa);					
+					html = AnyBalance.requestPost(baseurl + 'ajax', {method: 'user.login',
+															login: prefs.login,
+															password: prefs.password,
+															remember: 'no',
+															captcha: captchaa},
+															addHeaders({Referer: baseurl}));	
+				}else{
+					throw new AnyBalance.Error('Провайдер требует AnyBalance API v7, пожалуйста, обновите AnyBalance!');
+				}
+			}		
+	}	
 	
- 
 	if (!/"status":0/i.test(html)) {
 		var error = getParam(html, null, null, /"msg":[\s\S]+?([^"]+)/i, replaceTagsAndSpaces, html_entity_decode);
 		if (error == "captcha")
-			error = getParam(html, null, null, /Введите число с картинки/i, replaceTagsAndSpaces, html_entity_decode);
-		else 
-			error = getParam(html, null, null, /Логин или Пароль не правильные/i, replaceTagsAndSpaces, html_entity_decode);
-			throw new AnyBalance.Error(error);
+			throw new AnyBalance.Error('Число с картинки неверно');
+		else
+			throw new AnyBalance.Error('Логин или Пароль не правильные');
 		
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	} 
- 
+	
 	html = AnyBalance.requestGet(baseurl + 'user/account', g_headers);
 	
 	var result = {success: true};

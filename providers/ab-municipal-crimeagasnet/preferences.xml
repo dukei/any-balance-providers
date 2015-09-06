@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+	<EditTextPreference
+		title="Фамилия"
+		key="fam"
+		summary="||{@s}"
+		obligatory="true"
+		dialogTitle="Фамилия"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите фамилию абонента.">
+	</EditTextPreference>
+	<EditTextPreference
+		title="Лицевой счет"
+		key="licschet"
+		summary="||***********"
+		obligatory="true"
+		dialogTitle="Лицевой счет"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите номер вашего лицевого счета."
+		inputType="number">
+	</EditTextPreference>
+    <ListPreference 
+        key="region" 
+        title="Управление"
+        summary="||{@s}"
+        entries="Алуштинское|Бахчисарайское|Джанкойское|Евпаторийское|Кировское|Красногвардейское|Красноперекопское|Раздольненское|Раздольненское (Черноморский участок)|Раздольненское (Первомайский участок)|Сакское|Симферопольское|Советское|Советское (Нижнегорский участок)|Судакское|Феодосийское|Ялтинское"
+        entryValues="AL|BA|DJ|EV|KI|KG|KP|RA|CH|PE|SA|SI|SO|NI|SU|FE|YA"
+		defaultValue="SI">
+    </ListPreference>
+</PreferenceScreen>

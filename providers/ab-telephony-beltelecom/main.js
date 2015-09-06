@@ -45,7 +45,15 @@ function main() {
 	
 	var result = {success: true};
 	
-	getParam(html, result, 'balance', /Общая сумма неоплаченных услуг:([^>]*>){4}/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'phone', /По телефону:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'fio', /Абонент:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+
+	sumParam(html, result, '__tariff', /По телефону:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
+	sumParam(html, result, '__tariff', /Абонент:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
+
+	getParam(html, result, 'balance', [/Общая сумма неоплаченных услуг:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, /Услуги оплачены/i], replaceTagsAndSpaces, function(str){
+		return /Услуги оплачены/i.test(str) ? 0 : parseBalance(str)
+	});
 	
 	AnyBalance.setResult(result);
 }

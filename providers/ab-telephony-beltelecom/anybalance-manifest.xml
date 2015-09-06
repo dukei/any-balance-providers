@@ -1,13 +1,13 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-telephony-beltelecom</id>
+	<id version="3">ab-telephony-beltelecom</id>
 	<api flags="no_browser"/>
 	<name>Белтелеком (Минск)</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе Белтелеком г. Минск</p>
 	<p>Информация берется с сайта http://beltelecom.by/subscribers/phone-debt</p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
@@ -17,6 +17,8 @@
 	</files>
 	<counters>
 		<counter id="balance" name="Общая сумма неоплаченных услуг" units=" р"/>
+		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="phone" name="Телефон" type="text"/>
 	</counters>
 	<keywords></keywords>
 	<type>telephony</type>

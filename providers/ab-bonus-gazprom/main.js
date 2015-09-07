@@ -86,12 +86,12 @@ function main() {
 
 	if(prefs.zone != 1 && AnyBalance.isAvailable('month2', 'month')){
 		html = AnyBalance.requestPost(baseurl + 'profile-online/statistics/handler.php', {year: '0', month: '0'});
-		sumParam(html, result, 'month2', new RegExp('<tr[^>]*>\\s*<td[^>]*>\\d+\\.' + curMonth + '(?:(?:[\\s\\S](?!</tr>))*?<td[^>]*>){3}([\\s\\S]*?)</td>', 'ig'), replaceTagsAndSpaces, parseBalance, aggregate_sum);
+		sumParam(html, result, ['month2', 'month'], new RegExp('<tr[^>]*>\\s*<td[^>]*>\\d+\\.' + curMonth + '(?:(?:[\\s\\S](?!</tr>))*?<td[^>]*>){3}([\\s\\S]*?)</td>', 'ig'), replaceTagsAndSpaces, parseBalance, aggregate_sum);
 	}
 
 	if(prefs.zone == 1 && AnyBalance.isAvailable('month1', 'month')){
 		html = AnyBalance.requestGet(baseurl + 'profile-online/statistics/index-online.php');
-		sumParam(html, result, 'month1', new RegExp('<tr[^>]*>\\s*<td[^>]*>\\d+\\.' + curMonth + '(?:(?:[\\s\\S](?!</tr>))*?<td[^>]*>){3}([\\s\\S]*?)</td>', 'ig'), replaceTagsAndSpaces, parseBalance, aggregate_sum);
+		sumParam(html, result, ['month1', 'month'], new RegExp('<tr[^>]*>\\s*<td[^>]*>\\d+\\.' + curMonth + '(?:(?:[\\s\\S](?!</tr>))*?<td[^>]*>){3}([\\s\\S]*?)</td>', 'ig'), replaceTagsAndSpaces, parseBalance, aggregate_sum);
 	}
 	
 	if(AnyBalance.isAvailable('month')){

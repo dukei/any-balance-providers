@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id major_version="3.0" version="8">ab-bonus-mts</id>
+	<id major_version="3.0" version="9">ab-bonus-mts</id>
 	<name>МТС Бонус</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о бонусных баллах за пользование услугами МТС (https://bonus.ssl.mts.ru).</p>

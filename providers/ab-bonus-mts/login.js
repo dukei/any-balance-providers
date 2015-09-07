@@ -31,7 +31,8 @@ function checkLoginError(html, loginUrl) {
         var error = sumParam(html, null, null, /var\s+(?:passwordErr|loginErr)\s*=\s*'([^']*)/g, replaceSlashes, null, aggregate_join);
         if(error)
         	throw new AnyBalance.Error(error, null, /Неверный пароль/i.test(error));
-        error = getParam(html, null, null, /<div[^>]+class="msg_error"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+		//b-page_error__msg возникает в случае блокировки: Учетная запись заблокирована в связи с превышением попыток ввода пароля
+        error = getParam(html, null, null, /<div[^>]+class="(?:msg_error|b-page_error__msg)"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
         if(error)
         	throw new AnyBalance.Error(error);
     }
@@ -41,7 +42,7 @@ function checkLoginError(html, loginUrl) {
 
 function enterMTS(options){
 	var baseurl = options.baseurl || g_baseurl;
-    var loginUrl = g_baseurlLogin + "/amserver/UI/Login?service=" + (options.service || 'lk') + '&goto=' + baseurl + '/';
+    var loginUrl = options.url || g_baseurlLogin + "/amserver/UI/Login?service=" + (options.service || 'lk') + '&goto=' + baseurl + '/';
     var allowRetry = options.allowRetry;
 
     var html = options.html;

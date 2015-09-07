@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="3.3" version="125" date="2015-09-07">
+	- Улучшена обработка ошибок.
+	</change>
 	<change major_version="3.3" version="124" date="2015-09-04">
 	- Срок действия трафика исправлен
 	</change>

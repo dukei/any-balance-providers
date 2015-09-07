@@ -674,7 +674,7 @@ function enterLK(options){
 
     if (!isLoggedIn(html)) {
     	if(!options.onlyAutomatic){
-    		html = enterMTS(joinObjects(options, {html: html, service: 'lk'}));
+    		html = enterMTS(joinObjects(options, {html: html, service: 'lk', url: AnyBalance.getLastUrl()}));
     		html = checkLoginState(html, loginUrl);
         }else{
         	throw new AnyBalance.Error('Ручной вход запрещен', allowRetry);
@@ -964,7 +964,8 @@ function changePassword(oldPass, newPass){
 
     html = AnyBalance.requestPost(url, params, addHeaders({Referer: url}));
     var lastUrl = AnyBalance.getLastUrl();
-    if(!/#pass_changed/i.test(lastUrl)){
+    AnyBalance.trace('Password change resulted in: ' + lastUrl); 
+    if(!/#pass_changed|https:\/\/lk\.ssl\.mts\.ru/i.test(lastUrl)){ //Иногда почему-то сразу на лк переадресовывает
         var error = sumParam(html, null, null, /var\s+(?:old|new|con)passwordErr\s*=\s*'([^']*)/, replaceSlashes, null, aggregate_join);
         if(error)
         	throw new AnyBalance.Error(error);

@@ -32,4 +32,13 @@
         dialogMessage="Введите 9 цифр номера телефона, чей баланс вы хотите посмотреть. Например, 661234567. Этот номер должен быть виден в вашем личном кабинете. Чтобы смотреть информацию по основному номеру, оставьте это поле пустым."
         inputType="number">
     </EditTextPreference>
+    <ListPreference
+        key="fnomer"
+        title="Формат отображения номера"
+        summary="||{@s}"
+        entries="Длинный|Короткий"
+        entryValues="1|2"
+        defaultValue="1"
+        dialogTitle="Выберите формат отображения номера">
+     </ListPreference>
 </PreferenceScreen>

@@ -7,6 +7,9 @@
 	<p>Предоставляет информацию о балансе провайдера МТС (Туркменистан) <a href="http://www.mts.tm/">http://www.mts.tm/</a></p>
 	<p>Информация берется из личного кабинета <a href="https://ihelper.mts.tm/">https://ihelper.mts.tm/</a></p>
 	]]></description>
+	<instruction>
+		Для получения пароля на доступ в систему воспользуйтесь USSD командой *131# со своего телефона МТС.
+	</instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>

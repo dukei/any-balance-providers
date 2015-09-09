@@ -25,6 +25,7 @@ function main(){
 	}
 
 	var baseurl = 'https://ihelper-prp.mts.com.ua/SelfCarePda/';
+	var fnomer = prefs.fnomer || '1';
 
 	AnyBalance.trace("Trying to enter selfcare at address: " + baseurl);
 	var html = AnyBalance.requestPost(baseurl + "Security.mvc/LogOn", {
@@ -92,6 +93,11 @@ function main(){
     var result = {success: true};
 
     var min_all_60_isp;
+    
+    // Телефон
+    if(fnomer == '2') {
+    getParam (html, result, 'phone', /(?:Ваш телефон|phone):.*?>([^<]*)</i, replaceTagsAndSpaces, html_entity_decode);
+    }
 
     AnyBalance.trace("Fetching status...");
 
@@ -115,7 +121,9 @@ function main(){
 	// Баланс
     getParam (html, result, 'balance', /(?:Ваш поточний баланс|Ваш текущий баланс|balance):\s*([\s\S]*?)\s*грн/i, replaceTagsAndSpaces, parseBalance);
       // Телефон
+    if(fnomer == '1') {
     getParam (html, result, 'phone', /(?:Витрачено по номеру|Израсходовано по номеру|phone)\s*([\s\S]*?)\s*за/i, replaceTagsAndSpaces, html_entity_decode);
+    }
       //Срок действия (баланса) номера (!!!пропал из интернет помощника)
     getParam (html, result, 'termin', /Термін життя балансу:([^<]*)/i, replaceTagsAndSpaces, parseDate);
       //Денежный бонусный счет.

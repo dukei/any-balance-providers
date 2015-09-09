@@ -392,7 +392,7 @@ function parseDate(str) {
 /** Парсит дату из такого вида: 27 июля 2013 без использования сторонних библиотек, результат в мс */
 function parseDateWord(str){
 	AnyBalance.trace('Trying to parse date from ' + str);
-	var dateString = getParam(str, null, null, null, [replaceTagsAndSpaces, 
+	var dateString = replaceAll(str, [replaceTagsAndSpaces, replaceHtmlEntities,
 		/\D*(?:январ(?:я|ь)|янв|january|jan)\D*/i, '.01.', 
 		/\D*(?:феврал(?:я|ь)|фев|febrary|feb)\D*/i, '.02.', 
 		/\D*(?:марта|март|мар|march|mar)\D*/i, '.03.', 
@@ -671,14 +671,17 @@ function aggregate_sum(values) {
 	}
 	return total_value;
 }
+
 function aggregate_join(values, delimiter, allow_empty) {
 	if (values.length == 0) 
 		return;
 	if (!isset(delimiter)) 
 		delimiter = ', ';
 	var ret = values.join(delimiter);
-	if (!allow_empty) 
-		ret = ret.replace(/^(?:\s*,\s*)+|(?:\s*,\s*){2,}|(?:\s*,\s*)+$/g, '');
+	if (!allow_empty){
+		delimiter = delimiter.trim().replace(/([.?*+^$[\]\\(){}|-])/g, "\\$1");
+		ret = ret.replace(new RegExp('^(?:\\s*' + delimiter + '\\s*)+|(?:\\s*' + delimiter + ']\\s*){2,}|(?:\\s*' + delimiter + '\\s*)+$', 'g'), '');
+	}
 	return ret;
 }
 
@@ -899,4 +902,9 @@ function __shouldProcess(counter, info){
 	if(!AnyBalance.shouldProcess)
 		return !!info.__id;
 	return AnyBalance.shouldProcess(counter, info);
+}
+
+function __setLoginSuccessful(){
+	if(AnyBalance.setLoginSuccessful)
+		AnyBalance.setLoginSuccessful();
 }

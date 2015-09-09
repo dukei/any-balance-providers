@@ -54,9 +54,13 @@ function main(){
 	var region = prefs.region;
 	if(!region || !regions[region])
 		region = 'volzhsk';
-	
+
 	var func = regions[region];
 	AnyBalance.trace('Регион: ' + region);
+
+	checkEmpty(prefs.login, 'Введите логин!');
+	checkEmpty(prefs.password, 'Введите пароль!');
+
     func();
 }
 
@@ -98,36 +102,19 @@ function getRostov(){
 function getMoscow(){
     var prefs = AnyBalance.getPreferences();
     var baseurl = 'https://kabinet.mts.ru/zservice/';
-    var baseloginurl = "https://login.mts.ru/amserver/UI/Login?service=stream&arg=newsession&goto=http%3A%2F%2Fkabinet.mts.ru%3A80%2Fzservice%2Fgo";
-    
-    if(!prefs.__dbg){
-        var info = AnyBalance.requestGet(baseloginurl);
-        
-        var form = getParam(info, null, null, /<form[^>]+name="Login"[^>]*>([\s\S]*?)<\/form>/i);
-        if(!form)
-            throw new AnyBalance.Error("Не удаётся найти форму входа!");
-        
-        var params = createFormParams(form, function(params, input, name, value){
-            var undef;
-            if(name == 'IDToken1')
-                value = prefs.login;
-            else if(name == 'IDToken2')
-                value = prefs.password;
-            else if(name == 'noscript')
-                value = undef; //Снимаем галочку
-            else if(name == 'IDButton')
-                value = 'Submit';
-           
-            return value;
-        });
-        
-        // Заходим на главную страницу
-        info = AnyBalance.requestPost(baseloginurl, params, addHeaders({Referer: baseloginurl}));
-    }else{
-        var info = AnyBalance.requestGet(baseurl);
-    }
+    var baseloginurl = "https://login.mts.ru/amserver/UI/Login?service=stream&arg=newsession&goto=http%3A%2F%2Fkabinet.mts.ru%3A80%2Fzservice%2F";
 
-    $parse = $(info);
+    AnyBalance.setOptions({
+    	PER_DOMAIN: {
+    		'dialup.mtu.ru': {
+    			DEFAULT_CHARSET: 'koi8-r'
+    		}
+    	}
+    });
+
+    var info = enterMTS({baseurl: baseurl, url: baseloginurl, login: prefs.login, password: prefs.password});
+    
+    $parse = $(info.replace(/^[^<]+/, ''));
 
     if(!/src=exit/i.test(info)){
         var error = $.trim($parse.find('div.logon-result-block>p').text());

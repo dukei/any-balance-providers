@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="92">ab-internet-mts</id>
+	<id version="93">ab-internet-mts</id>
 	<name>Домашний Интернет и Телевидение МТС</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о текущем балансе, номере лицевого счета и договора, ФИО владельца, трафике в текущем месяце, абонентской плате для пользователей провайдера "Домашний Интернет и Телевидение МТС".</p>
@@ -48,6 +48,7 @@
 		<preferences>preferences.xml</preferences>
 		<js>api:jquery.min.js</js> <!-- Используем библиотеку, которая и так входит в AnyBalance -->
 		<js>library.js</js>
+		<js>login.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>

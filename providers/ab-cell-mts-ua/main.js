@@ -252,7 +252,7 @@ function main(){
 
     // Минуты с услугой «Супер без пополнения» в сети МТС
     sumParam (html, result, 'min_net', /<li>Осталось ([\d\.,]+) бесплатных секунд<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-    sumParam (html, result, 'min_net', /<li>60 минут в день внутри сети для услуги Супер без пополнения, осталось ([\d\.,]+) бесплатных секунд<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+    sumParam (html, result, 'min_net', /<li>(?:6|4)0 минут в день внутри сети для услуги Супер без пополнения, осталось ([\d\.,]+) бесплатных секунд<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 
     // 25 минут на другие сети
     sumParam (html, result, 'min_all_25', /<li>Осталось ([\d\.,]+) секунд на другие сети<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);

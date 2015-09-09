@@ -6,7 +6,7 @@ var g_headers = {
 	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
 	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
 	'Connection': 'keep-alive',
-	'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/43.0.2357.134 Safari/537.36',
+	'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/44.0.2403.157 Safari/537.36',
 };
 
 function parseTrafficMb(str){
@@ -90,7 +90,7 @@ function main() {
 	sumParam (html, result, 'hvylyny_net2', /минут в день для внутрисетевых звонков во всех областях: осталось\s*([\d\.,]+)\s*бесплатных секунд.<\/span>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 
 	//Пакетные минуты в сети МТС общенациональные
-	sumParam (html, result, 'hvylyny_net3', /минут внутри сети, осталось\s*(\d+)\s*бесплатных секунд/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+	sumParam (html, result, 'hvylyny_net3', /минут (?:внутри сети|в день внутри сети для услуги Супер без пополнения), осталось\s*(\d+)\s*бесплатных секунд/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 	sumParam (html, result, 'hvylyny_net3', /(?:15|30)00 минут на МТС для (?:MAX Energy Allo|MAX Energy), осталось\s*(\d+)\s*бесплатных секунд/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 	sumParam (html, result, 'hvylyny_net3', /GSM "Бізнес Оптимальний-2", осталось:\s*([\d\.,]+)\s*мин/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 	sumParam (html, result, 'hvylyny_net3', /<li>Супер МТСОлімпійський Стандарт, осталось:\s*([\d\.,]+)\s*мин.<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);

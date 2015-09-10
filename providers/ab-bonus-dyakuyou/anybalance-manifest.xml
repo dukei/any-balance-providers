@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-bonus-dyakuyou</id>
+	<id version="2">ab-bonus-dyakuyou</id>
 	<api flags="no_browser"/>
 	<name>ДякуYOU System</name>
 	<description html="true"><![CDATA[
@@ -36,7 +36,7 @@
 		<counter id="lt_date" name="Дата последней транзакции" type="time" format="dd/MM/yyyy"/>
 		<counter id="lt_spent" name="Списание последней транзакции"/>
 		<counter id="lt_gain" name="Начисление последней транзакции"/>
-		<counter id="lt_where" name="Место последней транзакции"/>
+		<counter id="lt_where" name="Место последней транзакции" type="text"/>
 		<counter id="lt_status" name="Статус последней транзакции" type="text"/>
 		<counter id="cardno" name="Номер карты" type="text"/>
 		<counter id="fio" name="ФИО" type="text"/>

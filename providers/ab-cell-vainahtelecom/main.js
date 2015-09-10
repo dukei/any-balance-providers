@@ -43,7 +43,11 @@ function main(){
         if(error == -3)
             throw new AnyBalance.Error('Введите цифры с картинки!');
         else if(error == -6)
-            throw new AnyBalance.Error('Вы ввели не верные символы с картинки! Попробуйте еще раз');
+            throw new AnyBalance.Error('Вы ввели неверные символы с картинки! Попробуйте еще раз');
+       	error = getParam(html, null, null, /<ERROR_MESSAGE>([\s\S]*?)<\/ERROR_MESSAGE>/i, replaceTagsAndSpaces, html_entity_decode);
+       	if(error)
+       		throw new AnyBalance.Error(error, null, /неправильный пароль/i.test(error));
+       	AnyBalance.trace(html);
         throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
     }
 	

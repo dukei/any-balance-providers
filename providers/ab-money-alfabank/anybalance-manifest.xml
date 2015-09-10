@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="40">ab-money-alfabank</id>
+	<id version="41">ab-money-alfabank</id>
 	<api flags="no_browser"/>
 	<name>Альфа-Банк</name>
 	<description html="true"><![CDATA[
@@ -32,6 +32,8 @@
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
 		<js>library.js</js>
+		<js>nadapter.js</js>
+		<js>extract.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>

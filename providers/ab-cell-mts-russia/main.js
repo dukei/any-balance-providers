@@ -608,7 +608,7 @@ function isAnotherNumber(){
     return prefs.phone && prefs.phone != prefs.login;
 }
 
-function checkLoginState(html, loginUrl) {
+function checkLoginState(html, loginUrl, options) {
 	if(/checkAuthStatus\(\)|дождитесь окончания процесса авторизации/i.test(html)) {
 		var json = {}, tries = 20;
 		while(json.Data != 'Success' && tries-- > 0) {
@@ -621,8 +621,14 @@ function checkLoginState(html, loginUrl) {
 			sleep(1000);
 		}
 		// Если прождали авторизацию, а она так и не произошла надо об этом явно сообщить
-		if(json.Data != 'Success')
+		if(json.Data != 'Success'){
+			if(options && options.automatic){
+				//Это была попытка автоматического входа. Раз он не получился, давайте попробуем по логину и паролю
+				AnyBalance.trace('МТС не пустил нас в ЛК после ожидания авторизации. Ладно, попробуем с логином и паролем войти.');
+				return AnyBalance.requestGet(loginUrl.replace(/\/Login.*/, '/Logout', addHeaders({Referer: g_baseurl})));
+			}
 			throw new AnyBalance.Error('МТС не пустил нас в ЛК после ожидания авторизации. Это проблема на сайте МТС, как только работа сайта наладится - данные отобразятся.');
+		}
 	
 		return AnyBalance.requestGet(g_baseurl, addHeaders({Referer: loginUrl}));
 	} else {
@@ -643,7 +649,7 @@ function enterLK(options){
     if(AnyBalance.getLastStatusCode() >= 500)
     	throw new AnyBalance.Error("Ошибка на сервере МТС, сервер не смог обработать запрос. Можно попытаться позже...", allowRetry);
 
-	html = checkLoginState(html, loginUrl);
+	html = checkLoginState(html, loginUrl, {automatic: true});
 	
 	AnyBalance.trace('isLoggedIn(html) = ' + isLoggedIn(html));
 	

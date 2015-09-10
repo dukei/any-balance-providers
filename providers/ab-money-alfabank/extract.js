@@ -178,8 +178,8 @@ function processCards2(html, result) {
 
     html = getMainPageOrModule2(html, 'card');
 
-    var table = getElements(html, [/<table[^>]*>/ig, /c2_cardlist_Card/i])[0];
-    if (!table) {
+    var rows = getElements(html, [/<div[^>]+class="[^"]*AFFlow[^>]*>/ig, /c2_cardlist_Card/i]);
+    if (!rows.length) {
         if (/Удобство пластиковых карт:/i.test(html)) {
             AnyBalance.trace('Нет ни одной карты');
         } else {
@@ -190,7 +190,6 @@ function processCards2(html, result) {
 
     result.cards = [];
 
-    var rows = table ? getElements(table, /<tr[^>]*>/ig) : [];
     AnyBalance.trace('Найдено карт: ' + rows.length);
     for (var i = 0; i < rows.length; ++i) {
         var row = rows[i];

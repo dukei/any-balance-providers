@@ -180,7 +180,7 @@ function shouldProcess(counter, info){
 
 
 function main(){
-	var html = login();
+	var html = login({allowClick10: true});
 	if(isClick20(html)){
 	    main2();
 	}else{

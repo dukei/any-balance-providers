@@ -18,7 +18,7 @@ var g_mainHtml;
 var g_csrfToken;
 var g_pageID;
 
-function login() {
+function login(options) {
     AnyBalance.setOptions({cookiePolicy: 'rfc2109'});
     AnyBalance.setDefaultCharset('utf-8');
 
@@ -28,7 +28,7 @@ function login() {
         checkEmpty(prefs.login, 'Введите логин!');
         checkEmpty(prefs.password, 'Введите пароль!');
 
-        return processClick();
+        return processClick(options);
     }else{
         return g_mainHtml;
     }
@@ -41,7 +41,7 @@ function isClick20() {
     return g_mainHtmlIs20;
 }
 
-function processClick() {
+function processClick(options) {
     var prefs = AnyBalance.getPreferences();
 
     var html = AnyBalance.requestGet(g_baseurl + '/ALFAIBSR/', g_headers);
@@ -90,7 +90,10 @@ function processClick() {
 
     function getClickOTP(params, str, name, value) {
         if (name == 'pt1:password_key')
-            return AnyBalance.retrieveCode("Вам на мобильный телефон выслан одноразовый пароль на вход в Альфа-Клик. Введите его в поле ниже.\n\nВы можете отключить требование пароля на вход в интернет-банк в настройках Альфа-Клик. Это безопасно, отменяет только подтверждение входа. Подтверждение транзакций всё равно будет требоваться обязательно.");
+            return AnyBalance.retrieveCode("Вам на мобильный телефон выслан одноразовый пароль на вход в Альфа-Клик. Введите его в поле ниже.\n\nВы можете отключить требование пароля на вход в интернет-банк в настройках Альфа-Клик. Это безопасно, отменяет только подтверждение входа. Подтверждение транзакций всё равно будет требоваться обязательно.", {
+                    time: 180000, //Время ожидания ввода кода в мс (3 минуты)
+                    inputType: 'number' //Способ ввода (только цифры
+                });
         return value;
     }
 
@@ -106,7 +109,7 @@ function processClick() {
         html = o.html;
 
         if(html) {
-            var error = getParam(o.scripts, null, null, /AdfFacesMessage.TYPE_ERROR,[^,]*,('[^']*')/i, [/^/, 'return '], safeEval);
+            error = getParam(o.scripts, null, null, /AdfFacesMessage.TYPE_ERROR,[^,]*,('[^']*')/i, [/^/, 'return '], safeEval);
             if (error)
                 throw new AnyBalance.Error(error);
             AnyBalance.trace(html + o.scripts);
@@ -121,15 +124,17 @@ function processClick() {
         throw new AnyBalance.Error('Не удалось войти в Альфа-Клик. Сайт изменен?');
     }
 
-    __setLoginSuccessful();
     g_mainHtml = html;
 
     if (isClick20()) {  //Альфаклик 2.0
         AnyBalance.trace("Определен Альфа-Клик 2.0");
     } else {
         AnyBalance.trace("Определен Альфа-Клик 1.0");
+        if(!options || !options.allowClick10)
+            throw new AnyBalance.Error('К сожалению, Альфа-Клик 1.0 не поддерживается. Зайдите в Альфа-Клик через браузер и переключите ваш Альфа-Клик на версию 2.0');
     }
 
+    __setLoginSuccessful();
 
     return html;
 }

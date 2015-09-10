@@ -1,5 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="94" date="2015-09-10">
+	Добавлен Саратов (ТВ)
+	Исправлен Нижний Новгород (интернет)
+	</change>
 	<change version="93" date="2015-09-09">
 	- Улучшена обработка ошибок.
 	</change>

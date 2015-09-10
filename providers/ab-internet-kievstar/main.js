@@ -38,16 +38,24 @@ function main() {
 	}*/
 	
 	var params = createFormParams(form);
+	params.isSubmitted = "true";
 	params.user = prefs.login;
 	params.password = prefs.password;
 	//params.captcha = captchaa;	
 	
-	html = AnyBalance.requestPost(baseurl + 'tbmb/login/perform.do', params, headers);
+	try{
+		html = AnyBalance.requestPost(baseurl + 'tbmb/login/perform.do', params, headers);
+	}catch(e){
+		if(!prefs.__debug)
+			throw e;
+		html = AnyBalance.requestGet(baseurl + 'tbmb/disclaimer/show.do', headers);
+	}
 	
 	if(!/\/logout\/perform/i.test(html)){
 		var matches = html.match(/class="redError"[^>]*>([\s\S]*?)<\/td>/i);
 		if (matches)
 			throw new AnyBalance.Error(matches[1]);
+		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
 	
@@ -56,7 +64,9 @@ function main() {
 	var result = {success: true};
 	getParam(html, result, 'balance', /(?:Текущий баланс|Поточний баланс|Current balance):[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'bonuses', /(?:Бонусный баланс|Бонусний баланс|Bonuses)[\s\S]*?>\s*(?:Баланс|Balance):[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, '__tariff', /(?:Тарифный пакет|Тарифний пакет|Rate package):[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'licschet', /(?:Особовий рахунок|Лицевой счет|Account):[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'licschet', /(?:Статус послуги «Домашній Інтернет»|Статус услуги «Домашний Интернет»|The state of service «Home Internet»):[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, '__tariff', /(?:Тарифный пакет|Тарифний пакет|Rate package|Тарифний план|Тарифный план|Rate Plan):[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
 	
 	AnyBalance.setResult(result);
 }

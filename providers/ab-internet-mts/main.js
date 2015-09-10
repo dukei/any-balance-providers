@@ -36,6 +36,7 @@ var regions = {
 	barnaul: getBarnaul,
 	belgorod: getBelgorod,
 	saratov: getSaratov,
+	saratov_tv: getSaratovTv,
     smolensk: getSmolensk,
 	chita: getChita,
 	amur: getAmur,
@@ -480,7 +481,7 @@ function getNnov(){
     var prefs = AnyBalance.getPreferences();
     AnyBalance.setDefaultCharset('windows-1251');
 
-    var baseurl = 'http://stat.nnov.comstar-r.ru';
+    var baseurl = 'https://lknn.pv.mts.ru/stat/';
     AnyBalance.setAuthentication(prefs.login, prefs.password);
 
     var html = AnyBalance.requestGet(baseurl);
@@ -497,7 +498,7 @@ function getNnov(){
     getParam(html, result, 'username', /Лицевой счёт[^<]*(?:<[^>]*>\s*)*([^<]*)/i, replaceTagsAndSpaces);
     getParam(html, result, 'daysleft', /Этой суммы вам хватит[\s\S]*?<span[^>]+class="imp"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance2);
 
-    var url = getParam(html, null, null, /<a[^>]+href="([^"]*)"[^>]*>Информация об услугах/i, null, html_entity_decode);
+    var url = getParam(html, null, null, /<a[^>]+href="\/stat\/([^"]*)"[^>]*>Информация об услугах/i, null, html_entity_decode);
     if(!url){
         AnyBalance.trace("Не удалось найти ссылку на информацию об услугах.");
     }else{
@@ -506,7 +507,7 @@ function getNnov(){
         if(!tr){
             AnyBalance.trace("Не удалось найти ссылку на информацию об интернет.");
         }else{
-            url = getParam(tr, null, null, /<a[^>]+href="([^"]*)/i, null, html_entity_decode);
+            url = getParam(tr, null, null, /<a[^>]+href="\/stat\/([^"]*)/i, null, html_entity_decode);
             html = AnyBalance.requestGet(baseurl + url);
             getParam(html, result, 'agreement', /Договор:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
             getParam(html, result, '__tariff', /Описание услуги:[\s\S]*?<td[^>]*>(?:\s*<b[^>]*>[^<]*<\/b>)?([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
@@ -782,6 +783,10 @@ function getSaratov(){
 	newTypicalLanBillingInetTv('https://lksrt.pv.mts.ru/internet/index.php');
 }
 
+function getSaratovTv(){
+	newTypicalLanBillingInetTv('https://lksrt.pv.mts.ru/ktv/index.php');
+}
+
 function getChita(){
 	newTypicalLanBillingInetTv('https://clb.primorye.mts.ru/chita/index.php');
 }
@@ -876,6 +881,7 @@ function newTypicalLanBillingInetTv(baseurl) {
 			
 			var response = {
 				bal:balance,
+				abon:json.body[j].rent,
 				acc:account,
 				accId:accountID,
 				'tarifdescr':tarifdescr,
@@ -901,6 +907,7 @@ function newTypicalLanBillingInetTv(baseurl) {
     function readAcc(json, isInet){
         if(json) {
 			getParam(json.bal, result, isInet ? 'balance' : 'balance_tv');
+			getParam(json.abon, result, 'abon', null, null, parseBalance);
 			if(!usedAccs['acc_' + json.acc]){ //аккаунты только уникальные собираем
 				sumParam(json.acc, result, 'agreement', null, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
 				usedAccs['acc_' + json.acc] = true;

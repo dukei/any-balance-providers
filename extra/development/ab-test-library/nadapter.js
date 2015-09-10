@@ -22,12 +22,18 @@ function NAdapter(countersMap, shouldProcess, options){
 	var traverseCallbacks = {};
 	
 	for(var c in countersMap){
-		if(AnyBalance.isAvailable(c)){
+		if(isAvailable(c)){
 			var cnew = countersMap[c];
-			do{
-				availableCounters[cnew] = true;
-				cnew = cnew.indexOf('.') >= 0 ? cnew.replace(/\.[^.]*$/, '') : null;
-			}while(cnew !== null);
+			if(!isArray(cnew))
+				cnew = [cnew];
+			//Если у нас массив задан счетчиков, то все надо сделать требуемыми
+			for(var i=0; i<cnew.length; ++i){
+				var cnew1 = cnew[i];
+				do{
+					availableCounters[cnew1] = true;
+					cnew1 = cnew1.indexOf('.') >= 0 ? cnew1.replace(/\.[^.]*$/, '') : null;
+				}while(cnew1 !== null);
+			}
 		}
 	}
 
@@ -146,8 +152,19 @@ function NAdapter(countersMap, shouldProcess, options){
 			}
 
 			for(var c in countersMap){
-				if(isAvailable([c]))
-					result[c] = traverse(json, countersMap[c]);
+				if(isAvailable(c) && c != '__forceAvailable'){
+					var cnew = countersMap[c];
+					if(!isArray(cnew))
+						cnew = [cnew];
+					//Если у нас массив задан, то ищем первое дефайнед значение
+					for(var i=0; i<cnew.length; ++i){
+						var val = traverse(json, cnew[i]);
+						if(isset(val)){
+							result[c] = val;
+							break;
+						}
+					}
+				}
 			}
 
 			return result;
@@ -158,6 +175,8 @@ function NAdapter(countersMap, shouldProcess, options){
 				return __exec(func, arguments);
 			}
 		},
+
+		traverse: traverse,
 
 		wasProcessed: wasProcessed,
 		setTraverseCallbacks: setTraverseCallbacks

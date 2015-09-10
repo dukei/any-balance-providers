@@ -120,6 +120,7 @@ function main() {
 	sumParam (html, result, 'mms_used', />50 MMS по Украине для "Смартфона", израсходовано:(\d+)\s*mms.<\/span>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 	sumParam (html, result, 'sms_mms_used', /SMS\\MMS по Украине, израсходовано:(\d+)\s*sms\/mms/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 	sumParam (html, result, 'sms_net', />1500 (?:SMS|SMS и MMS) на МТС для (?:MAX Energy Allo|MAX Energy), осталось (\d+) (?:бесплатных SMS|смс)</ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+	sumParam (html, result, 'sms_net', />30 sms в день внутри сети, осталось (\d+) смс.</ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 	sumParam (html, result, 'mms_net', />1500 SMS и MMS на МТС для MAX Energy, осталось (\d+) ммс</ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 	sumParam (html, result, 'sms_mms_all', /1000 SMS\/MMS по Украине, осталось: (\d+) SMS\/MMS/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 

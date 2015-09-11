@@ -653,8 +653,21 @@ function processCredits2(html, result) {
     }
 }
 
+//получаем ближайшую дату платежа из 10-е число.
+function parseNDay(str){
+	var d = getParam(str, null, null, /(\d+)[^<]*число/i, null, parseBalance);
+ 	if(!isset(d))
+ 		return;
+    
+     var dt = new Date();
+     var dtNew = new Date(dt.getFullYear(), dt.getMonth() + (dt.getDate() > d ? 1 : 0), d);
+     AnyBalance.trace('Parsed date ' + dtNew + ' from ' + str);
+     return dtNew.getTime();
+}
+
 function processCredit2(html, result) {
     var params = getElements(html, /<table[^>]+pglCreditDetails(?:Label)?List[^>]*/ig);
+    var wasMinpay = false;
     for (var i = 0; i < params.length; i++) {
         var param = params[i];
         var tds = getElements(param, /<td[^>]*>/ig);
@@ -668,15 +681,15 @@ function processCredit2(html, result) {
             getParam(value, result, ['credits.currency', 'credits.balance'], null, null, parseCurrency);
         } else if (/Собственных средств/i.test(name)) {
             getParam(value, result, 'credits.own', null, null, parseBalance);
-        } else if (/Задолженность|Остаток задолженности/i.test(name)) {
+        } else if (/Задолженность|Остаток задолженности|Для полного погашения/i.test(name)) {
             getParam(value, result, 'credits.debt', null, null, parseBalance);
-        } else if (/сумма основного долга/i.test(name)) {
+        } else if (/сумма основного долга/i.test(name) && !wasMinpay) {
             getParam(value, result, 'credits.debt_main', null, null, parseBalance);
-        } else if (/сумма начисленных процентов/i.test(name)) {
+        } else if (/сумма начисленных процентов/i.test(name) && !wasMinpay) {
             getParam(value, result, 'credits.debt_pct', null, null, parseBalance);
         } else if (/Процентная ставка/i.test(name)) {
             getParam(value, result, 'credits.pct', null, null, parseBalance);
-        } else if (/Установленный лимит/i.test(name)) {
+        } else if (/Установленный лимит|Начальная сумма кредита/i.test(name)) {
             getParam(value, result, 'credits.limit', null, null, parseBalance);
         } else if (/Неподтверждённые операции/i.test(name)) {
             getParam(value, result, 'credits.blocked', null, null, parseBalance);
@@ -687,9 +700,23 @@ function processCredit2(html, result) {
         } else if (/Дата окончания льготного периода/i.test(name)) {
             getParam(value, result, 'credits.grace_till', null, null, parseDateWord);
         } else if (/дата платежа|Оплатить до/i.test(name)) {
-            getParam(value, result, 'credits.paytill', null, null, parseDateWord);
+            getParam(value, result, 'credits.pay_till', null, null, parseDateWord);
         } else if (/Ближайший плат[её]ж|Минимальный плат[её]ж|Ежемесячный плат[её]ж/i.test(name)) {
-            getParam(value, result, 'credits.minpay', null, null, parseDateWord);
+        	wasMinpay = true;
+            getParam(value, result, 'credits.minpay', null, null, parseBalance);
+        } else if ('основной долг' == name && wasMinpay) {
+            getParam(value, result, 'credits.minpay_main', null, null, parseBalance);
+        } else if ('проценты' == name && wasMinpay) {
+            getParam(value, result, 'credits.minpay_pct', null, null, parseBalance);
+        } else if (/Дата выдачи/i.test(name)) {
+            getParam(value, result, 'credits.date_start', null, null, parseDateWord);
+        } else if (/Срок кредита/i.test(name)) {
+            getParam(value, result, 'credits.period');
+        } else if (/День платежа/i.test(name)) {
+            getParam(value, result, 'credits.payment_day');
+            getParam(value, result, 'credits.pay_till', null, null, parseNDay);
+        } else if (/Уже внесено/i.test(name)) {
+            getParam(value, result, 'credits.minpay_paid', null, null, parseBalance);
         } else {
             AnyBalance.trace('Неизвестный параметр: ' + name + ': ' + value + '\n' + param);
         }

@@ -97,10 +97,10 @@ function enterMTS(options){
         throw new AnyBalance.Error("Ошибка на сервере МТС при попытке зайти, сервер не смог обработать запрос! Можно попытаться позже...", allowRetry);
 
     //Если переадресовали с логина, значит, залогинились. А если нет, то какие-то проблемы
-    if(AnyBalance.getLastUrl().startsWith(g_baseurlLogin))
+    if(AnyBalance.getLastUrl().indexOf(g_baseurlLogin) == 0)
 		html = checkLoginError(html, loginUrl);
 
-    if(AnyBalance.getLastUrl().startsWith(g_baseurlLogin)){
+    if(AnyBalance.getLastUrl().indexOf(g_baseurlLogin) == 0){
         AnyBalance.trace(html);
         throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Он изменился или проблемы на сайте.', allowRetry);
     }

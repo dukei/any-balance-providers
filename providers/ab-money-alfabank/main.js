@@ -107,7 +107,7 @@ function main2(){
 	} else if(prefs.type == 'crd') {
 		adapter.processCredits2(g_mainHtml, result);
 
-		if(!adapter.wasProcessed('loans'))
+		if(!adapter.wasProcessed('credits'))
 			throw new AnyBalance.Error(prefs.cardnum ? 'Не найден кредит с последними цифрами ' + prefs.cardnum : 'У вас нет ни одного кредита!');
 		
 		result = adapter.convert(result);

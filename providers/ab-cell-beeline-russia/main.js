@@ -161,7 +161,7 @@ function parseBalanceList(html, result){
     if(AnyBalance.isAvailable('bonus_balance')){
       sumParam(html, result, 'bonus_balance', /Бонус-баланс[\s\S]*?<td[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
       //Узбекистан
-      sumParam(html, result, 'bonus_balance', /BEE_CLUB[\s\S]*?<td[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+      sumParam(html, result, 'bonus_balance', /(?:BEE_CLUB|BeeClub)[\s\S]*?<td[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
     }
     
     // Бонус за опрос
@@ -235,7 +235,7 @@ function parseBalanceList(html, result){
             result.traffic = (result.traffic || 0) + val/1024;
           
         //Для узбекистана актуально
-        var val = getBalanceValue(html, 'GPRS_PACK', parseBalance);
+        var val = getBalanceValue(html, '(?:GPRS_PACK|Пакеты GPRS)', parseBalance);
         if(val)
             result.traffic = (result.traffic || 0) + val/1024;
 

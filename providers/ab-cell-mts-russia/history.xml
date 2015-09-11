@@ -1,5 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="3.3" version="127" date="2015-09-10">
+	- Исправлена ошибка совместимости с разными версиями JavaScript
+	</change>
+	<change major_version="3.3" version="126" date="2015-09-10">
+	- Обход проблемы МТС с автологином на мобильном интернете
+	</change>
 	<change major_version="3.3" version="125" date="2015-09-07">
 	- Улучшена обработка ошибок.
 	</change>

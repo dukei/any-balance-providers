@@ -1,5 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="2.1" version="38" date="2015-09-11">
+	Добавлено распознавание бонусного баланса и трафика для Узбекистана в некоторых случаях
+	</change>
     <change major_version="2.1" version="37" date="2013-07-19">
       - Сообщение об ошибке при невозможности найти балансы.
     </change>

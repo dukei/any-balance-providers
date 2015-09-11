@@ -703,7 +703,7 @@ function processCredit2(html, result) {
             getParam(value, result, 'credits.pay_till', null, null, parseDateWord);
         } else if (/Ближайший плат[её]ж|Минимальный плат[её]ж|Ежемесячный плат[её]ж/i.test(name)) {
         	wasMinpay = true;
-            getParam(value, result, 'credits.minpay', null, null, parseBalance);
+            getParam(value, result, ['credits.minpay', 'credits.minpay_left'], null, null, parseBalance);
         } else if ('основной долг' == name && wasMinpay) {
             getParam(value, result, 'credits.minpay_main', null, null, parseBalance);
         } else if ('проценты' == name && wasMinpay) {
@@ -716,11 +716,14 @@ function processCredit2(html, result) {
             getParam(value, result, 'credits.payment_day');
             getParam(value, result, 'credits.pay_till', null, null, parseNDay);
         } else if (/Уже внесено/i.test(name)) {
-            getParam(value, result, 'credits.minpay_paid', null, null, parseBalance);
+            getParam(value, result, ['credits.minpay_paid', 'credits.minpay_left'], null, null, parseBalance);
         } else {
             AnyBalance.trace('Неизвестный параметр: ' + name + ': ' + value + '\n' + param);
         }
     }
+
+    if(AnyBalance.isAvailable('credits.minpay_left'))
+        result.minpay_left = result.minpay - (result.minpay_paid || 0);
 
     if (AnyBalance.isAvailable('credits.transactions')) {
         processCreditTransactions(html, result);

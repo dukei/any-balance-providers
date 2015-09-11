@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="45">ab-money-alfabank</id>
+	<id version="46">ab-money-alfabank</id>
 	<api flags="no_browser"/>
 	<name>Альфа-Банк</name>
 	<description html="true"><![CDATA[
@@ -47,7 +47,7 @@
 		<counter id="gracetill" name="Окончание льготного периода" type="time" format="dd/MM/yyyy"/>
 		<counter id="minpay" name="Минимальный платеж" units=" {@currency}"/>
 		<counter id="penalty" name="Штрафы" units=" {@currency}"/>
-		<counter id="till" name="Срок действия" type="text"/>
+		<counter id="till" name="Срок действия" type="time" format="MM/yy"/>
 		<counter id="cardnum" name="Номер карты" type="text"/>
 		<counter id="userName" name="ФИО владельца" type="text"/>
 		<counter id="accnum" name="Номер счета" type="text"/>

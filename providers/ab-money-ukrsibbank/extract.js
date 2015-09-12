@@ -134,7 +134,7 @@ function processAccounts(html, result){
     	};
 
     	if(__shouldProcess('accounts', c)){
-    		processAccount(tr, c);
+    		processAccount(html, tr, c);
     	}
 
     	result.accounts.push(c);
@@ -145,7 +145,8 @@ function n2(n){
 	return n<10 ? '0' + n : '' + n;
 }
 
-function processAccount(html, result) {
+function processAccount(page, html, result) {
+	AnyBalance.trace('Обработка счета ' + result.__name);
 	getParam(result.__id, result, 'accounts.num'); 
 	getParam(html, result, 'accounts.type', /<td[^>]+class="aliasColumn"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(html, result, ['accounts.currency', 'accounts.balance'], /<td[^>]+class="currencyColumn"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
@@ -153,13 +154,13 @@ function processAccount(html, result) {
 
 	// Дополнительная инфа по счетам.
 	if (AnyBalance.isAvailable('own', 'avail', 'debt', 'fill', 'expense', 'overdraft', 'blocked')) {
-		var wForm = getParam(html, null, null, /(welcomeForm:j_id_jsp_[^']+)/i, null, html_entity_decode);
+		var wForm = getParam(html, null, null, /(welcomeForm:j_id_jsp_[^'"]+)/i, null, html_entity_decode);
 		var accountId = getParam(html, null, null, /accountId'\s*,\s*'(\d+)/i);
 		
 		if(wForm && accountId) {
 			html = AnyBalance.requestPost(g_baseurl + 'protected/welcome.jsf', {
 				'welcomeForm_SUBMIT':'1',
-				'javax.faces.ViewState':getViewState(html),
+				'javax.faces.ViewState':getViewState(page),
 				'accountId':accountId,
 				'welcomeForm:_idcl': wForm
 			}, addHeaders({Referer: g_baseurl + 'protected/welcome.jsf'}));
@@ -218,28 +219,28 @@ function processAccount(html, result) {
 }
 
 function processAccountTransactions(html, accountId, result){
-	var periodParams = {
-		'cardAccountInfoForm:reportPeriod':'0',
-		'accountId':accountId,
-		'cardAccountInfoForm_SUBMIT':'1',
-		'javax.faces.ViewState':getViewState(html)
-	};
-	
-	var params = sumParam(html, null, null, /(cardAccountInfoForm:[^']+)'\),'dd.MM.yyyy'/ig);
+	var form = getElement(html, /<form[^>]+id="(?:cardAccountInfoForm|accountInfoForm)"[^>]*>/i);
 	
 	var dt = new Date();
 	var month = n2(dt.getMonth()+1);
-	var year = dt.getFullYear();
+	var year = dt.getFullYear()-1;
 	
-	periodParams[params[0]] = n2(dt.getDate()) + '.' + month + '.' + (year-1);
-	periodParams[params[1]] = n2(dt.getDate()) + '.' + month + '.' + year;
+	var periodParams = createFormParams(form, function(params, str, name, value) {
+//		if (name == 'accountInfoForm:reportPeriod') 
+//			return '0';
+		if (/class="calendar"/i.test(str))
+			return n2(dt.getDate()) + '.' + month + '.' + (year++);
+
+		return value;
+	});
+	var action = getParam(form, null, null, /<form[^>]+action="\/web_banking\/([^"]*)/i, null, html_entity_decode);
 	
-	html = AnyBalance.requestPost(g_baseurl + 'protected/reports/sap_card_account_info.jsf', periodParams, addHeaders({Referer: g_baseurl + 'protected/welcome.jsf'}));
+	html = AnyBalance.requestPost(g_baseurl + action, periodParams, addHeaders({Referer: g_baseurl + 'protected/welcome.jsf'}));
 
 	var tables = getElements(html, /<table[^>]+class="opersTable"[^>]*>/ig);
 	for(var i=0; i<tables.length; ++i){
 		var table = tables[i];
-		var caption = getParam(table, null, null, /<caption>([\s\S]*?)<\/table>/i, replaceTagsAndSpace, html_entity_decode);
+		var caption = getParam(table, null, null, /<caption>([\s\S]*?)<\/table>/i, replaceTagsAndSpaces, html_entity_decode);
 		var cardid = caption && getParam(caption, null, null, /\d{6}\*{4}\d{4}/);
 		var comission = caption && caption.indexOf(result.__id) >= 0;
 		var transactions;
@@ -256,7 +257,7 @@ function processAccountTransactions(html, accountId, result){
 			}
 
 			result.transactions_card.push(c);
-			transactions = c.transactions;
+			transactions = c.transactions_card;
 			path = 'accounts.transactions_card.transactions';
 		}else if(comission){
 			//Это списания комиссий
@@ -290,5 +291,5 @@ function processAccountTransactions(html, accountId, result){
 }
 
 function getViewState(html) {
-	return getParam(html, null, null, /javax.faces.ViewState[^>]*value="([^"]+)/i);
+	return getParam(html, null, null, /javax.faces.ViewState[^>]*value="([^"]+)/i, null, html_entity_decode);
 }

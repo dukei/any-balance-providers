@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="128">ab-cell-beeline-new</id>
+	<id version="129">ab-cell-beeline-new</id>
 	<name>Билайн (новый кабинет)</name>
 	<api flags="no_browser" min_level="5"/>
 	<description html="true"><![CDATA[
@@ -53,6 +53,7 @@
 		<counter id="min_local" name="Минуты на местные номера" type="time_interval" format="{@MIN}:{@sec}"/>
 		<counter id="rub_opros" name="Бонусы по программе Счастливое время" units=" руб"/>
 		<counter id="traffic_left" name="Остаток трафика" units=" Mb"/>
+		<counter id="traffic_left_night" name="Остаток ночного трафика" units=" Mb"/>
 		<counter id="traffic_bonus" name="Бонусный трафик" units=" Mb"/>
 		<counter id="min_left_1" name="Остаток минут 1" type="time_interval" format="{@MIN}:{@sec}"/>
 		<counter id="min_left_2" name="Остаток минут 2" type="time_interval" format="{@MIN}:{@sec}"/>

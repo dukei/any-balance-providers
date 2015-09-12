@@ -959,7 +959,7 @@ function getBonuses(xhtml, result) {
 					}
 
 				} else {
-					sumParam(services[i], result, 'traffic_left', reValue, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
+					sumParam(values, result, 'traffic_left' + (/ноч/i.test(name) ? '_night' : ''), null, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
 				}
 			} else if (/SMS|СМС|штук/i.test(name)) {
 				sumParam(values, result, 'sms_left', null, replaceTagsAndSpaces, parseBalance, aggregate_sum);
@@ -979,8 +979,8 @@ function getBonuses(xhtml, result) {
 			} else if (/Секунд БОНУС-2|Баланс бесплатных секунд-промо/i.test(name)) {
 				sumParam(values, result, 'min_left_1', null, replaceMinutes, parseMinutes, aggregate_sum);
 				sumParam(services[i], result, 'min_local_till', /Доступно до([^<]{10,20})/i, replaceTagsAndSpaces, parseDateWord, aggregate_min);
-			} else if (/минут в месяц|мин\.|Голосовой трафик/i.test(name)) {
-				getParam(values, result, 'min_local', null, replaceMinutes, parseMinutes);
+			} else if (/минут в месяц|мин\.|Голосовой трафик|Разговоры.*вне сети/i.test(name)) {
+				sumParam(values, result, 'min_local', null, replaceMinutes, parseMinutes, aggregate_sum);
 			// Это новый вид отображения данных
 			} else if (/Минут общения по (?:тарифу|услуге)|вызовы|на местные номера/i.test(name)) {
 				// Очень внимательно надо матчить

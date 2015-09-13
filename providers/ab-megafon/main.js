@@ -293,13 +293,17 @@ function loadFilialInfo(filial){
             	var sginfo;
             	try{
             		AnyBalance.trace('Пробуем зайти в ЛК');
-            		sginfo = enterLK(filial, {login: prefs.login, password: prefs.password, useOldSG: true});
+            		sginfo = enterLK(filial, {login: prefs.login, password: prefs.password});
             	}catch(e){
             		if(e.fatal || !allow_captcha_sg) throw e;
             		AnyBalance.trace('Пробуем зайти в сервис-гид (в лк не получилось: ' + e.message + ')');
             		sginfo = enterSG(filial, {login: prefs.login, password: prefs.password});
             	}
-            	megafonServiceGuidePhysical(filial, sginfo.sessionid, sginfo.html);
+            	if(sginfo.old){
+            		megafonServiceGuidePhysical(filial, sginfo.sessionid, sginfo.html);
+            	}else{
+            		megafonLK(filial, sginfo.html);
+            	}
 				ok = true;
 			}catch(e){
 				if(e.fatal)
@@ -1787,24 +1791,50 @@ function initialize(filial){
 	AnyBalance.setResult(result);
 }
 
+function isLoggedInLK(html){
+	return /app-id=ru.megafon.mlk/i.test(html) && /logout/i.test(html);
+}
+
+function isLoggedInSG(html){
+	return /CLOSE_SESSION/i.test(html);
+}
+
 function enterLK(filial, options){
 	var prefs = AnyBalance.getPreferences();
 	AnyBalance.trace('Пробуем войти в новый ЛК...');
 	
 	var baseurl = lk_url;
 	
-	var html = AnyBalance.requestGet(baseurl + 'login/', g_headers);
-	var token = getParam(html, null, null, /name=CSRF value="([^"]+)/i);
-	
-	checkEmpty(token, 'Не удалось найти токен авторизации ЛК!', true);
-	
-	html = AnyBalance.requestPost(baseurl + 'dologin/', {
-		j_username:options.login,
-		j_password:options.password,
-		CSRF:token,
-	}, addHeaders({Referer: baseurl + 'login/'}));	
+	var html = AnyBalance.requestGet(baseurl, g_headers);
+	if(isLoggedInLK(html)){
+		var phone = getParam(html, null, null, /<div[^>]+private-office-info-phone[^>]*>([\s\S]*?)<\/div>/i, [replaceTagsAndSpaces, replaceHtmlEntities, /\D/g, '']);
+		AnyBalance.trace('Автоматически зашли в личный кабинет на номер ' + phone);
+		if(!phone){
+			AnyBalance.trace(html);
+			AnyBalance.trace('Не удалось определить номер... Будем входить по логину и паролю.');
+			removeAllLKCookies();
+			html = AnyBalance.requestGet(baseurl + 'login/', g_headers);
+		}else if(phone.indexOf(prefs.login) >= 0){
+			AnyBalance.trace('Номер правильный. Используем этот вход.');
+		}else{
+			AnyBalance.trace('Номер неправильный (нужен ' + prefs.login + '). Будем входить по логину и паролю.');
+			removeAllLKCookies();
+			html = AnyBalance.requestGet(baseurl + 'login/', g_headers);
+		}
+	}
+	if(!isLoggedInLK(html)){
+		var token = getParam(html, null, null, /name=CSRF value="([^"]+)/i);
+		
+		checkEmpty(token, 'Не удалось найти токен авторизации ЛК!', true);
+		
+		html = AnyBalance.requestPost(baseurl + 'dologin/', {
+			j_username:options.login,
+			j_password:options.password,
+			CSRF:token,
+		}, addHeaders({Referer: baseurl + 'login/'}));
+	}	
 
-	if (!/logout|CLOSE_SESSION/i.test(html)) {
+	if (!isLoggedInLK(html) && !isLoggedInSG(html)) {
 		var error = getParam(html, null, null, /login-warning[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
 		if (error)
 			throw new AnyBalance.Error(error, null, /(?:Неверный|Неправильный) логин\/пароль/i.test(error));
@@ -1812,48 +1842,56 @@ function enterLK(filial, options){
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в новый личный кабинет. Сайт изменен или на этом номере он не поддерживается.');
 	}
-
-	if(options.useOldSG){
-		var href = getParam(html, null, null, /href="\/redirect\/sg\/index"/i, replaceTagsAndSpaces, html_entity_decode);
-		// Не у всех доступен новый ЛК, если у юзера он не подключен, та нас редиректит сразу в старый кабинет
-		var sessionid = getParam(html, null, null, /SESSION_ID=([^&"]+)/i);
-
-		if(href || sessionid) {
-			var goneToSG = false;
-
-			if(href && !sessionid) {
-				AnyBalance.trace('Нашли ссылку для перехода в старый сервис-гид, получим данные оттуда...');
-				try {
-					html = AnyBalance.requestGet(baseurl + 'redirect/sg/index', g_headers);
-					goneToSG = true;
-					var url = AnyBalance.getLastUrl();
-					AnyBalance.trace('Redirected to ' + url /*+ '\nResult\n\n' + html*/);
-					sessionid = getParam(href + url, null, null, /SESSION_ID=([^&"]+)/i);
-				} catch(e){
-				    AnyBalance.trace('Error: ' + e.message);
-				}
-			}
 			
-			if(sessionid && !href) {
-				AnyBalance.trace('На данном номере не поддерживается новый ЛК, нас просто отправили в старый кабинет...');
-			}
-			
-			if(!sessionid) {
-				if(prefs.debug) {
-					sessionid = AnyBalance.retrieveCode("Пожалуйста, введите sessionid");
-				} else {
-					if(goneToSG) AnyBalance.trace(html);
-					throw new AnyBalance.Error('Не удалось найти код сессии!');
+	var sessionid = getParam(html, null, null, /SESSION_ID=([^&"]+)/i);
+
+	try{
+		if(options.useOldSG){
+			var sghtml = html;
+			var href = getParam(sghtml, null, null, /href="\/redirect\/sg\/index"/i, replaceTagsAndSpaces, html_entity_decode);
+			// Не у всех доступен новый ЛК, если у юзера он не подключен, та нас редиректит сразу в старый кабинет
+	    
+			if(href || sessionid) {
+				var goneToSG = false;
+	    
+				if(href && !sessionid) {
+					AnyBalance.trace('Нашли ссылку для перехода в старый сервис-гид, получим данные оттуда...');
+					try {
+						sghtml = AnyBalance.requestGet(baseurl + 'redirect/sg/index', g_headers);
+						goneToSG = true;
+						var url = AnyBalance.getLastUrl();
+						AnyBalance.trace('Redirected to ' + url /*+ '\nResult\n\n' + html*/);
+						sessionid = getParam(href + url, null, null, /SESSION_ID=([^&"]+)/i);
+					} catch(e){
+					    AnyBalance.trace('Error: ' + e.message);
+					}
 				}
+				
+				if(sessionid && !href) {
+					AnyBalance.trace('На данном номере не поддерживается новый ЛК, нас просто отправили в старый кабинет...');
+				}
+				
+				if(!sessionid) {
+					if(prefs.debug) {
+						sessionid = AnyBalance.retrieveCode("Пожалуйста, введите sessionid");
+					} else {
+						if(goneToSG) AnyBalance.trace(sghtml);
+						throw new AnyBalance.Error('Не удалось найти код сессии!');
+					}
+				}
+
+				return {old: true, sessionid: sessionid, html: sghtml};
+			} else {
+				throw new AnyBalance.Error('Не удалось найти ссылку на вход в старый кабинет!');
 			}
-		} else {
-			AnyBalance.trace('Не удалось найти ссылку на вход в старый кабинет, пробуем получить данные из нового ЛК!');
 		}
-
-		return {old: true, sessionid: sessionid, html: html};
+	}catch(e){
+		AnyBalance.trace('Ошибка входа в сервис гид через ЛК: ' + e.message + '\nБудем получать данные из ЛК');
 	}
 
-	throw new AnyBalance.Error('Получение данных из нового ЛК пока не поддерживается');
+	//Может быть нас просто отправили в старый кабинет...
+	var sessionid = getParam(html, null, null, /SESSION_ID=([^&"]+)/i);
+	return {old: !!sessionid, html: html, sessionid: sessionid};
 }
 
 function changePasswordSG(filial, sessionid, frompass, topass){
@@ -1966,7 +2004,7 @@ function enterSG(filial, options){
     
     checkTextForError(html);
 */
-    return {sessionid: sessionid, html: html};;
+    return {old: true, sessionid: sessionid, html: html};;
 }
 
 function getSessionIdFromSGLogin(html){
@@ -2080,3 +2118,249 @@ function allowRobotsSG(filial, sessionid, login){
         AnyBalance.trace("Result: " + action_result);
     }
 }
+
+//Получение данных из ЛК мегафона
+function megafonLK(filial, html){
+	var result = {success: true, filial: filial_info[filial].id};
+
+	getParam(html, result, 'phone', /<div[^>]*private-office-info-phone[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'credit', /<div[^>]*private-office-limit[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'balance', /Баланс([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'available', /Доступно([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'bonus_balance', /Бонусные баллы([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, '__tariff', />\s*Тариф([\s\S]*?)<\/div>/i, [replaceTagsAndSpaces, /^&laquo;(.*)&raquo;$/, '$1'], html_entity_decode);
+
+	if(AnyBalance.isAvailable('mins_n_free', 'mins_net_left', 'mins_left', 'mins_total', 'mms_left', 'mms_total', 'sms_left', 'sms_total', 
+			'gb_with_you', 'internet_left', 'internet_total', 'internet_cur', 'internet_left_night', 'internet_total_night', 'interent_cur_night')){
+		html = AnyBalance.requestGet(lk_url + 'remainders/', g_headers);
+		megafonLKRemainders(filial, html, result);
+	}
+
+	if(AnyBalance.isAvailable('bonus_burn')){
+		html = AnyBalance.requestGet(lk_url + 'bonus/', g_headers);
+		getParam(html, result, 'bonus_burn', /<div[^>]+gadget-bonus-summ-2[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+	}
+
+	if(AnyBalance.isAvailable('sub_soi', 'sub_smit', 'sub_smio', 'sub_scl', 'sub_scr', 'internet_cost',
+			'last_pay_sum', 'last_pay_date')){
+//		html = AnyBalance.requestGet(lk_url + 'historyNew/', g_headers);
+		megafonLKFinance(filial, html, result);
+	}
+
+	megafonLKTurnOffSMSNotification(html);
+
+	setCountersToNull(result);
+	AnyBalance.setResult(result);
+}
+
+function megafonLKRemainders(filial, html, result){
+	var remGroups = getElements(html, /<div[^>]+class="gadget-remainders-color[^>]*>/ig);
+	AnyBalance.trace('Найдено ' + remGroups.length + ' групп остатков услуг');
+
+	for(var i=0; i<remGroups.length; ++i){
+		var rg = remGroups[i];
+		var gname = getElement(rg, /<h1[^>]*>/i, replaceTagsAndSpaces, html_entity_decode);
+		
+		var rows = getElements(rg, /<div[^>]+gadget-remainders-row[^>]*>/ig);
+		AnyBalance.trace('Группа ' + gname + ' содержит ' + (rows.length-1) + ' подуслуг');
+
+		for(var j=0; j<rows.length; ++j){
+			var row = rows[j];
+			if(/gadget-remainders-mobile-del/i.test(row))
+				continue; //Заголовок пропускаем
+
+			var rname = getElement(row, /<div[^>]+gadget-remainders-td-name[^>]*>/i, replaceTagsAndSpaces, html_entity_decode);
+			var total = getParam(row, null, null, /<div[^>]+gadget-remainders-td-2[^>]*>([\s\S]*?)<\/div>/i, [/<span[^>]+gadget-remainders-mobile-name[^>]*>[\s\S]*?<\/span>/i, '']);
+			var left = getParam(row, null, null, /<div[^>]+gadget-remainders-td-3[^>]*>([\s\S]*?)<\/div>/i, [/<span[^>]+gadget-remainders-mobile-name[^>]*>[\s\S]*?<\/span>/i, '']);
+			var units = getParam(left, null, null, /<span[^>]*>([^<]*)<\/span>\s*$/i, replaceTagsAndSpaces, html_entity_decode);
+			var name = gname + ' ' + rname;
+
+
+			// Минуты
+			if(/мин/i.test(units)) {
+				if(/бесплат/i.test(name)) {
+					getParam(left, result, 'mins_n_free', null, replaceTagsAndSpaces, parseMinutes);
+				}else if(/\.\s*МегаФон/i.test(name) && !/МТС/i.test(name)) {
+					sumParam(left, result, 'mins_net_left', null, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
+				} else {
+					sumParam(left, result, 'mins_left', null, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
+					sumParam(total, result, 'mins_total', null, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
+				}
+			// Сообщения
+			} else if(/шт|sms|смс|mms|ммс/i.test(units)) {
+			    if(/mms|ММС/i.test(name)){
+					sumParam(left, result, 'mms_left', null, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+					sumParam(total, result, 'mms_total', null, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+				}else{
+					sumParam(left, result, 'sms_left', null, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+					sumParam(total, result, 'sms_total', null, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+				}
+			// Трафик
+			} else if(/([kmgкмгт][бb]?|[бb](?![\wа-я])|байт|byte)/i.test(units)) {
+				if(/Гигабайт в дорогу/i.test(name)) {
+					getParam(left, result, 'gb_with_you', null, replaceTagsAndSpaces, parseTraffic);
+				} else {
+					var suffix = '';
+					if(/ночь/i.test(name)) suffix = '_night';
+					
+					var internet_left = getParam(left, null, null, null, replaceTagsAndSpaces, parseTraffic);
+					var internet_total = getParam(total, null, null, null, replaceTagsAndSpaces, parseTraffic);
+					if(isset(internet_left) && internet_left < 100000000)
+						sumParam(internet_left, result, 'internet_left' + suffix, null, null, null, aggregate_sum);
+					if(isset(internet_total) && internet_total < 100000000)
+						sumParam(internet_total, result, 'internet_total' + suffix, null, null, null, aggregate_sum);
+					if(isset(internet_left) && isset(internet_total))
+						sumParam(internet_total - internet_left, result, 'internet_cur' + suffix, null, null, null, aggregate_sum);
+					
+             		/*if(current.dateTo)
+             			sumParam(current.dateTo, result, 'internet_till', null, replaceTagsAndSpaces, parseDate, aggregate_min);
+             		else if(current.dateFrom && current.monthly)
+             			sumParam(current.dateFrom, result, 'internet_till', null, replaceTagsAndSpaces, function(str) {
+             				var time = parseDate(str);
+             				if(time){
+             					var dt = new Date(time);
+             					time = new Date(dt.getFullYear(), dt.getMonth()+1, dt.getDate(), dt.getHours(), dt.getMinutes(), dt.getSeconds()).getTime();
+             				}
+             				return time;
+             			}, aggregate_min);*/
+				}
+			// Ошибка 
+			} else {
+				AnyBalance.trace('Неизвестные единицы измерений: ' + units + ' опция: ' + name + ': '  + row);
+			}
+		}
+
+	}
+}
+
+function requestPipe(csrf, addr, get, post){
+	if(!get)
+		get = {};
+	get.CSRF = csrf;
+	if(!post)
+		get._ = new Date().getTime();
+
+    var url = lk_url + 'pipes/lk/' + addr + '?';
+    var params = '';
+	for(var name in get){
+		params += (params ? '&' : '') + encodeURIComponent(name) + '=' + encodeURIComponent('' + get[name]);
+	}
+	url += params;
+
+	var html;
+	if(post){
+		html = AnyBalance.requestPost(url, post, addHeaders({'X-Requested-With': 'XMLHttpRequest'}));
+	}else{
+		html = AnyBalance.requestGet(url, addHeaders({'X-Requested-With': 'XMLHttpRequest'}));
+	}
+
+	var json = getJson(html);
+	return json;
+}
+
+function megafonLKFinance(filial, html, result){
+	var csrf = getParam(html, null, null, /CSRF_PARAM\s*=\s*"([^"]*)/, replaceSlashes);
+	 
+	if(AnyBalance.isAvailable('sub_soi', 'sub_smit', 'sub_smio', 'sub_scl', 'sub_scr', 'internet_cost')){
+		var json = requestPipe(csrf, 'reports/expenses');
+		AnyBalance.trace('Parsing expenses: ' + JSON.stringify(json));
+
+		for(var group in json.expenseGroups){
+			var g = json.expenseGroups[group];
+			if(/Абонентская плата/i.test(group)){
+				for(var i=0; i<g.expenses.length; ++i){
+					var expense = g.expenses[i];
+					if(/тариф/i.test(expense.definition))
+						sumParam(expense.amount, result, 'sub_smit', null, null, null, aggregate_sum);
+					else
+						sumParam(expense.amount, result, 'sub_smio', null, null, null, aggregate_sum);
+				}
+			}else if(/Интернет/i.test(group)){
+				for(var i=0; i<g.expenses.length; ++i){
+					var expense = g.expenses[i];
+					sumParam(expense.amount, result, 'internet_cost', null, null, null, aggregate_sum);
+				}
+			}else if(/Роуминг/i.test(group)){
+				for(var i=0; i<g.expenses.length; ++i){
+					var expense = g.expenses[i];
+					sumParam(expense.amount, result, 'sub_scr', null, null, null, aggregate_sum);
+				}
+			}else if(/вызов|сообщен/i.test(group)){
+				for(var i=0; i<g.expenses.length; ++i){
+					var expense = g.expenses[i];
+					sumParam(expense.amount, result, 'sub_scl', null, null, null, aggregate_sum);
+				}
+			}else{
+				if(!/прочие услуги/i.test(group))
+					AnyBalance.trace('Относим траты к неизвестным услугам: неизвестная группа трат ' + group + ': ' + JSON.stringify(g));
+
+				for(var i=0; i<g.expenses.length; ++i){
+					var expense = g.expenses[i];
+					sumParam(expense.amount, result, 'sub_soi', null, null, null, aggregate_sum);
+				}
+			}
+		}
+	}
+
+	if(AnyBalance.isAvailable('last_pay_sum', 'last_pay_date')){
+		json = requestPipe(csrf, 'payment/history/list', {OFFSET: 0, SIZE: 5});
+		if(json.payments && json.payments.length){
+			getParam(json.payments[0].amount, result, 'last_pay_sum');
+			getParam(json.payments[0].date, result, 'last_pay_date', null, null, parseDate);
+		}
+	}
+}
+
+function removeAllLKCookies(){
+	var cookies = AnyBalance.getCookies();
+	for(var i=0; i<cookies.length; ++i){
+		if(cookies[i].domain == 'lk.megafon.ru')
+			AnyBalance.setCookie('lk.megafon.ru', cookies[i].name, null);
+	}
+}
+
+function megafonLKTurnOffSMSNotification(html){
+
+    function getSMSHash(csrf){
+		var json = requestPipe(csrf, 'check/sms');
+		return json.hash;
+	}
+
+//	var html = AnyBalance.requestGet(lk_url + 'settings/notification/', g_headers);
+	var csrf = getParam(html, null, null, /CSRF_PARAM\s*=\s*"([^"]*)/, replaceSlashes);
+	var json = requestPipe(csrf, 'userProfile/settings/notifications');
+	
+	var on = json.notify;
+	if(!on){
+		AnyBalance.trace('Уведомления о входе отключены. Ну и отлично.');
+		return;
+	}	
+
+    AnyBalance.trace('Уведомления о входе включены. Попытаемся отключить, чтобы не парили зря мозг.');
+
+	var hash = getSMSHash(csrf);
+
+	var json = requestPipe(csrf, 'userProfile/settings/notifications', null, {NOTIFY: 'false'});
+	if(!json.ok){
+		AnyBalance.trace('Запрос на выключение сработал неудачно: ' + info);
+	}
+
+	var tries = 5;
+	while(tries--){
+		var newHash = getSMSHash(csrf);
+		if(newHash != hash){
+			break; //Наверное, переключилось
+		}
+		AnyBalance.trace('Ждем результата. Запас терпения: ' + tries);
+		if(tries > 0)
+			AnyBalance.sleep(4000);
+	}
+
+	var json = requestPipe(csrf, 'userProfile/settings/notifications');
+	if(json.notify === false){
+		AnyBalance.trace('Уведомление выключено успешно!');
+	}else{
+		AnyBalance.trace('Результат выключения, к сожалению, неизвестен: ' + info);
+	}
+}
+

@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="95">ab-internet-mts</id>
+	<id version="96">ab-internet-mts</id>
 	<name>Домашний Интернет и Телевидение МТС</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о текущем балансе, номере лицевого счета и договора, ФИО владельца, трафике в текущем месяце, абонентской плате для пользователей провайдера "Домашний Интернет и Телевидение МТС".</p>
@@ -23,7 +23,7 @@
 		<li>Ульяновск (<a href="http://ess.netroad.ru">http://ess.netroad.ru</a>)<br></li>
 		<li>Норильск (<a href="http://kabinet.norilsk.mts.ru">http://kabinet.norilsk.mts.ru</a>)<br></li>
 		<li>Магнитогорск (<a href="http://stat.magnitogorsk.multinex.ru">http://stat.magnitogorsk.multinex.ru</a>)<br></li>
-		<li>Миасс (<a href="http://stat.miass.multinex.ru">http://stat.miass.multinex.ru</a>)<br></li>
+		<li>Миасс (https://lkmiass.ural.mts.ru/)<br></li>
 		<li>Курган (<a href="http://infocentr.ru/lk/index.php?r=site/login">http://infocentr.ru/lk/index.php?r=site/login</a>)<br></li>
 		<li>Барнаул (<a href="http://kabinet.barnaul.mts.ru">http://kabinet.barnaul.mts.ru</a>)<br></li>
 		<li>Белгород (<a href="http://stat.belgorod-net.ru">http://stat.belgorod-net.ru</a>)<br></li>

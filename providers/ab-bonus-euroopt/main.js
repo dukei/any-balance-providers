@@ -56,6 +56,13 @@ function main () {
         error = getParam(html, null, null, /Вы не заполнили сведения о себе|Для идентификации пользователя/);
         if(error)
             throw new AnyBalance.Error("Евроопт требует заполнить форму регистрации. Вам необходимо зайти на сайт http://www.euroopt.by/otchet-po-diskontnoj-karte-2 через браузер и заполнить форму");
+
+        error = getParam(html, null, null, /<h1[^>]*>\s*An error occurred/i);
+        if(error){
+        	error = getParam(html, null, null, /<b[^>]*>\s*Message:([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, html_entity_decode);
+        	AnyBalance.trace('Системная ошибка на стороне Евроопта: ' + error);
+        	throw new AnyBalance.Error("Системная ошибка на сайте евроопт. Обращайтесь в их службу поддержки.");
+        }
 		
         AnyBalance.trace(html);
         throw new AnyBalance.Error('Не удалось получить данные по карте. Сайт изменен?');

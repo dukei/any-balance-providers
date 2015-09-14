@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="96" date="2015-09-13">
+	Исправлен Миасс (переезд личного кабинета)
+	</change>
 	<change version="95" date="2015-09-10">
 	- Исправлен логин в московском регионе
 	</change>

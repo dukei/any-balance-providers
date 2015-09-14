@@ -23,16 +23,23 @@ function main(){
 
     var baseurl = "https://www.aeroflot.ru/personal/";
     AnyBalance.setDefaultCharset('utf-8');
+
+    var html = AnyBalance.requestGet(baseurl + 'login', g_headers);
     
-    var html = requestPostMultipart(baseurl + 'login', {
-    	return_url: '',
-    	login: prefs.login,
-    	password: prefs.password,
-    	submit0: 'Подождите...',
-    }, addHeaders({
+	var params = createFormParams(html, function(params, str, name, value) {
+		if (name == 'login') 
+			return prefs.login;
+		else if (name == 'password')
+			return prefs.password;
+
+		return value;
+	});
+     
+    html = requestPostMultipart(baseurl + 'login', params, addHeaders({
     	Origin: "https://www.aeroflot.ru",
     	Referer: baseurl + 'login'
     }));
+
 	if (!/\/personal\/logout/i.test(html)) {
 		var error = getParam(html, null, null, /<div[^>]+class="[^"]*error[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
 		if (error)

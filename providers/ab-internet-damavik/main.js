@@ -8,7 +8,7 @@ var g_headers = {
 	'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
 	'Connection':'keep-alive',
 	'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.66 Safari/537.36',
-	'Origin':'https://issa.damavik.by',
+	'Origin':'https://issa.telecom.by',
 };
 
 // Сайт требует разлогиниваться безопасно, чтобы входить в аккаунт чаще чем раз в 5 минут
@@ -23,7 +23,7 @@ function main(){
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 	
-    var baseurl = 'https://issa.damavik.by/';
+    var baseurl = 'https://issa.telecom.by/';
     AnyBalance.setDefaultCharset('utf-8'); 
 	
     var html = AnyBalance.requestGet(baseurl, g_headers);

@@ -8,7 +8,7 @@
 		dialogTitle="Логин"
 		positiveButtonText="ОК"
 		negativeButtonText="Отмена"
-		dialogMessage="Введите логин, используемый для входа в личный кабинет.">
+		dialogMessage="Введите логин, используемый для входа в интернет-банк.">
 	</EditTextPreference>
 	<EditTextPreference
 		title="Пароль"
@@ -18,9 +18,17 @@
 		dialogTitle="Пароль"
 		positiveButtonText="ОК"
 		negativeButtonText="Отмена"
-		dialogMessage="Введите пароль, используемый для входа в личный кабинет."
+		dialogMessage="Введите пароль, используемый для входа в интернет-банк."
 		inputType="textPassword|number">
 	</EditTextPreference>
+	<ListPreference
+		key="type"
+		title="Что смотреть"
+		summary="||{@s}"
+		entries="Карта|Счет"
+		entryValues="card|acc"
+		defaultValue="acc">
+	</ListPreference>
 	<EditTextPreference
 		positiveButtonText="ОК"
 		key="lastdigits"

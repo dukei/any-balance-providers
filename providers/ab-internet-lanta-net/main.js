@@ -7,41 +7,6 @@
 Личный кабинет: https://stat.lanta-net.ru
 */
 
-function getParam (html, result, param, regexp, replaces, parser) {
-	if (param && (param != '__tariff' && !AnyBalance.isAvailable (param)))
-		return;
-
-	var matches = regexp.exec (html), value;
-	if (matches) {
-		value = matches[1];
-		if (replaces) {
-			for (var i = 0; i < replaces.length; i += 2) {
-				value = value.replace (replaces[i], replaces[i+1]);
-			}
-		}
-		if (parser)
-			value = parser (value);
-
-    if(param)
-      result[param] = value;
-	}
-   return value
-}
-
-var replaceTagsAndSpaces = [/&nbsp;/g, ' ', /<[^>]*>/g, ' ', /\s{2,}/g, ' ', /^\s+|\s+$/g, ''];
-var replaceFloat = [/\s+/g, '', /,/g, '.'];
-
-function parseBalance(text){
-    var val = getParam(text.replace(/\s+/g, ''), null, null, /(-?\d[\d\s.,]*)/, replaceFloat, parseFloat);
-    AnyBalance.trace('Parsing balance (' + val + ') from: ' + text);
-    return val;
-}
-
-function parseTrafficGb(str){
-  var val = getParam(str.replace(/\s+/g, ''), null, null, /(-?\d[\d\s.,]*)/, replaceFloat, parseFloat);
-  return parseFloat((val/1024).toFixed(2));
-}
-
 function main(){
     var prefs = AnyBalance.getPreferences();
     AnyBalance.setDefaultCharset('utf-8');
@@ -82,15 +47,8 @@ function main(){
     getParam(html, result, 'trafficIn', /&#1042;&#1093;&#1086;&#1076;&#1103;&#1097;&#1080;&#1081; &#1090;&#1088;&#1072;&#1092;&#1080;&#1082;:[\S\s]*?<td[^>]*>([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, parseTrafficGb);
     //Исходящий трафик
     getParam(html, result, 'trafficOut', /&#1048;&#1089;&#1093;&#1086;&#1076;&#1103;&#1097;&#1080;&#1081; &#1090;&#1088;&#1072;&#1092;&#1080;&#1082;:[\S\s]*?<td[^>]*>([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, parseTrafficGb);
+    //Бонусный баланс
+    getParam(html, result, 'bonus', /&#1041;&#1086;&#1085;&#1091;&#1089;&#1085;&#1099;&#1081; &#1073;&#1072;&#1083;&#1072;&#1085;&#1089;:[\S\s]*?<td[^>]*>([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 
     AnyBalance.setResult(result);
 }
-
-function html_entity_decode(str)
-{
-    //jd-tech.net
-    var tarea=document.createElement('textarea');
-    tarea.innerHTML = str;
-    return tarea.value;
-}
-

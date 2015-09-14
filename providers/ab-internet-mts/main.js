@@ -680,8 +680,8 @@ function getMagnit(){
 
 
 function getMiass(){
-    var baseurl = "http://stat.miass.multinex.ru/";
-    typicalLanBillingInetTv(baseurl + 'index.php?r=site/login');
+    var baseurl = "https://lkmiass.ural.mts.ru/";
+    newTypicalLanBillingInetTv(baseurl + 'index.php');
 }
 
 function getKurgan(){
@@ -872,7 +872,7 @@ function newTypicalLanBillingInetTv(baseurl) {
 		for(var j = 0; j < json.body.length; j++) {
 			var tarifdescr = json.body[j].tarifdescr; //Цифровое ТВ
 			
-			if(typeof tarifdescr == Object) {
+			if(typeof tarifdescr == 'object') {
 				tarifdescr = tarifdescr.descr;
 			}
 			
@@ -907,14 +907,14 @@ function newTypicalLanBillingInetTv(baseurl) {
     function readAcc(json, isInet){
         if(json) {
 			getParam(json.bal, result, isInet ? 'balance' : 'balance_tv');
-			getParam(json.abon, result, 'abon', null, null, parseBalance);
 			if(!usedAccs['acc_' + json.acc]){ //аккаунты только уникальные собираем
 				sumParam(json.acc, result, 'agreement', null, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
 				usedAccs['acc_' + json.acc] = true;
 			}
 			
-			if(!/Нет подключенных услуг|не\s*доступно/i.test(json.services)) {
-				sumParam(json.tarifdescr, result, '__tariff', null, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
+			if(!/Выключен/i.test(json.state) && !/не\s*доступно/i.test(json.services)) {
+				sumParam(json.abon, result, 'abon', null, null, parseBalance, aggregate_sum);
+				sumParam(json.tarifdescr, result, '__tariff', null, null, null, aggregate_join);
 			}
 		}
     }

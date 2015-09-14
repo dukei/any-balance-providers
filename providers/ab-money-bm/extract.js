@@ -178,7 +178,11 @@ function login(){
     var msg = getParam(html, null, null, new RegExp('<span[^>]+id="otp_type_' + otpType + '"[^>]*confirmType[^>]*>([\\s\\S]*?)</span>', 'i'), replaceTagsAndSpaces, html_entity_decode);
 
     //Запрос смс
-    var sessionid = AnyBalance.requestPost(g_baseurl + '/scoring/smsPasswordLoginAjaxServlet', '', addHeaders({Origin: g_baseurl, Referer: g_baseurl + '/scoring/j_security_check', 'X-Requested-With': 'XMLHttpRequest'}));
+    var sessionid = AnyBalance.requestPost(g_baseurl + '/scoring/smsPasswordLoginAjaxServlet', {smsSentTime: new Date().getTime()}, addHeaders({
+    	Origin: g_baseurl, 
+    	Referer: g_baseurl + '/scoring/j_security_check', 
+    	'X-Requested-With': 'XMLHttpRequest'
+    }));
     var code = AnyBalance.retrieveCode(msg || 'Введите код подтверждения входа');
     
 	var params = createFormParams(form, function(params, str, name, value) {

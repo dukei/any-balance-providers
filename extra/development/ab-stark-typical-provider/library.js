@@ -255,7 +255,7 @@ c<a.length;
 ++c){if(a[c]!=="--auto--"&&!isset(b[a[c]])){b[a[c]]=null
 }}if(!isset(b.__tariff)){b.__tariff=null
 }}function getElement(j,n,e,a){var c=n.exec(j);
-if(!c){return null
+if(!c){return
 }var l=c.index;
 var m=j.substr(l,c[0].length);
 var d=getParam(m,null,null,/<(\w+)/);
@@ -287,9 +287,19 @@ c<f.length;
 if(j){break
 }}}if(j){d.push(h)
 }if(!g.global){break
-}}while(h!==null);
+}}while(isset(h));
 return d
 }function __shouldProcess(a,b){if(!AnyBalance.shouldProcess){return !!b.__id
 }return AnyBalance.shouldProcess(a,b)
 }function __setLoginSuccessful(){if(AnyBalance.setLoginSuccessful){AnyBalance.setLoginSuccessful()
-}};
+}}function n2(a){return a<10?"0"+a:""+a
+}function fmtDate(b,a){if(!isset(a)){a="."
+}return n2(b.getDate())+a+n2(b.getMonth()+1)+a+b.getFullYear()
+}function joinUrl(a,b){if(!b){return a
+}if(/^\//.test(b)){return a.replace(/^(\w+:\/\/[\w.\-]+).*$/,"$1"+b)
+}if(/^\w+:\/\//.test(b)){return b
+}a=a.replace(/\?.*$/,"");
+if(/:\/\/.*\//.test(a)){a=a.replace(/\/[^\/]*$/,"/")
+}if(!endsWith(a,"/")){a+="/"
+}return a+b
+};

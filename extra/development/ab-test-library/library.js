@@ -10,6 +10,8 @@ AnyBalance (http://any-balance-providers.googlecode.com)
 library.js v0.17 от 05.06.15
 
 changelog:
+16.09.15 добавлены n2, joinUrl, fmtDate
+ 
 05.06.15 добавлена правильная обработка чекбоксов в createFormParams;
 
 17.05.15 getElement, getElements - добавлены функции получения HMTL всего элемента, включая вложенные элементы с тем же тегом
@@ -827,7 +829,7 @@ function setCountersToNull(result){
 function getElement(html, re, replaces, parseFunc){
 	var amatch = re.exec(html);
 	if(!amatch)
-		return null;
+		return;
 	var startIndex = amatch.index;
 	var startTag = html.substr(startIndex, amatch[0].length);
 	var elem = getParam(startTag, null, null, /<(\w+)/);
@@ -894,7 +896,7 @@ function getElements(html, re, replaces, parseFunc){
 		
 		if(!regexp.global)
 			break; //Экспрешн только на один матч
-	}while(res !== null);
+	}while(isset(res));
 	return results;
 }
 
@@ -907,4 +909,30 @@ function __shouldProcess(counter, info){
 function __setLoginSuccessful(){
 	if(AnyBalance.setLoginSuccessful)
 		AnyBalance.setLoginSuccessful();
+}
+
+function n2(n){
+	return n < 10 ? '0' + n : '' + n;
+}
+
+function fmtDate(dt, delimiter){
+	if(!isset(delimiter))
+		delimiter = '.';
+	return n2(dt.getDate()) + delimiter + n2(dt.getMonth()+1) + delimiter + dt.getFullYear();
+}
+
+function joinUrl(url, path){
+	if(!path) //Пустой путь
+		return url;
+	if(/^\//.test(path)) //Абсолютный путь
+		return url.replace(/^(\w+:\/\/[\w.\-]+).*$/, '$1' + path);
+	if(/^\w+:\/\//.test(path)) //Абсолютный урл
+		return path;
+	//относительный путь
+	url = url.replace(/\?.*$/, ''); //Обрезаем аргументы
+	if(/:\/\/.*\//.test(url))
+		url = url.replace(/\/[^\/]*$/, '/'); //Сокращаем до папки
+	if(!endsWith(url, '/'))
+		url += '/';
+	return url + path;
 }

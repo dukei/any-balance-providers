@@ -14,8 +14,8 @@ function main() {
     };
 
 	var html=AnyBalance.requestGet('http://www.appodeal.ru/signin');
-		
-	if(html.indexOf('<a class="logout" data-method="delete" href="/signout" rel="nofollow">')==-1) {
+
+	if(html.indexOf('<a class="logout" data-method="delete" href="/signout" rel="nofollow"')==-1) {
 		
 		var prefs=AnyBalance.getPreferences();
 		
@@ -34,7 +34,7 @@ function main() {
 		
 		var html=AnyBalance.requestPost('http://www.appodeal.ru/signin',post);
 		
-		if(html.indexOf('<a class="logout" data-method="delete" href="/signout" rel="nofollow">')==-1) throw new AnyBalance.Error('Ошибка авторизации. Проверьте логин и пароль');
+		if(html.indexOf('<a class="logout" data-method="delete" href="/signout" rel="nofollow"')==-1) throw new AnyBalance.Error('Ошибка авторизации. Проверьте логин и пароль');
 	}
 	
 	r=new RegExp('<li><a class="balance" href="/payment_requests">([0-9.]+)</a></li>');

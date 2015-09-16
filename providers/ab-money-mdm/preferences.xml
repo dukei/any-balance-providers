@@ -24,17 +24,17 @@
         key="type" 
         title="Что смотреть"
         summary="||{@s}"
-        entries="Карта|Депозит|Счет"
-        entryValues="card|dep|acc"
+        entries="Карта|Депозит|Счет|Кредит"
+        entryValues="card|dep|acc|crd"
 	defaultValue="card">
     </ListPreference>
     <EditTextPreference
-        title="№ карты/счета" 
+        title="№ карты/счета/договора" 
         positiveButtonText="ОК" 
         summary="|Автоматически|{@s}" 
-        dialogTitle="Номер счета или карты" 
+        dialogTitle="Номер продукта" 
         negativeButtonText="Отмена" 
-        dialogMessage="В зависимости от настройки Что смотреть, введите сюда не менее 4 последних цифр счета или последние 4 цифры номера карты. Если оставить поле пустым, то будет показана информация по первой карте/счету/депозиту."
+        dialogMessage="В зависимости от настройки Что смотреть, введите сюда не менее 4 последних цифр счета, кредитного договора или последние 4 цифры номера карты. Если оставить поле пустым, то будет показана информация по первой карте/счету/депозиту/кредиту."
         key="contract"
         inputType="number">
     </EditTextPreference>

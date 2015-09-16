@@ -964,7 +964,7 @@ function getBonuses(xhtml, result) {
 			} else if (/SMS|СМС|штук/i.test(name)) {
 				sumParam(values, result, 'sms_left', null, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 			} else if (/MMS/i.test(name)) {
-				sumParam(value, result, 'mms_left', null, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+				sumParam(values, result, 'mms_left', null, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 			} else if (/Рублей БОНУС|бонус-баланс|Дополнительный баланс/i.test(name)) {
 				sumParam(values, result, 'rub_bonus', null, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 			} else if (/Денежный бонус/i.test(name)) {

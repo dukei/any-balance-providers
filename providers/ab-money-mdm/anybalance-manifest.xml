@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-    <id version="7">ab-money-mdm</id>
+    <id version="8">ab-money-mdm</id>
     <api flags="no_browser"/>
     <name>МДМ-Банк</name>
 	<description html="true"><![CDATA[
@@ -22,8 +22,10 @@
     <files>
 	<icon>icon.png</icon>
         <preferences>preferences.xml</preferences>
-        <js>main.js</js>
         <js>library.js</js>
+        <js>extract.js</js>
+        <js>nadapter.js</js>
+        <js>main.js</js>
         <history>history.xml</history>
     </files>
     <counters>

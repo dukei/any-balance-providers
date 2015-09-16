@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="8" date="2015-09-16">
+	- добавлены необходимые файлы
+	</change>
 	<change version="7" date="2015-09-16">
 	- Поддержка изменений в интернет-банке
 	- Поддержка кредитов

@@ -1,5 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="14" date="2015-09-16">
+	- Поддержка изменений на сайте.
+	</change>
 	<change version="13" date="2014-09-15">
 	- Улучшено распознавание минут, если по прежнему возникают ошибки, свяжитесь с разработчиками.
 	</change>

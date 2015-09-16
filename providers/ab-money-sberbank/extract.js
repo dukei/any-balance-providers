@@ -150,40 +150,79 @@ function doNewAccount(page) {
 // Обработка счетов
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 function processAccounts(html, result) {
-	html = AnyBalance.requestGet(nodeUrl + '/PhizIC/private/accounts/list.do');
+	html = AnyBalance.requestGet(nodeUrl + '/PhizIC/private/accounts/list.do', g_headers);
 	var pageToken = getParamByName(html, 'PAGE_TOKEN');
 	
-	var accounts = getElements(html, /<div[^>]+class="productCover[^"]*Product[^>]*">/ig);
+	var accounts = getElements(html, /<div[^>]+class="productCover[^"]*Product[^>]*">/ig, g_headers);
 	AnyBalance.trace('Найдено счетов: ' + accounts.length);
 	result.accounts = [];
 	
 	for(var i=0; i < accounts.length; ++i){
-		var _id = getParam(accounts[i], null, null, /<div[^>]+id="account_(\d+)/i);
-		var title = getParam(accounts[i], null, null, /<[^>]*class="productNumber\b[^"]*">([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
+		var acc = accounts[i];
+		var _id = getParam(acc, null, null, /<div[^>]+id="account_(\d+)/i);
+		var name = getElement(acc, /<div[^>]+productName[^>]*>/i, replaceTagsAndSpaces, html_entity_decode);
+		var num = getParam(acc, null, null, /<[^>]*class="productNumber\b[^"]*">([^<]+)/i, replaceTagsAndSpaces, html_entity_decode), info;
+		if(num){
+			//Попытаемся извлечь номер счета
+			num = getParam(acc, null, null, /№([^,]*)/i);
+		}else{
+			AnyBalance.trace('Не удаётся найти номер счета ' + name + '! Пробуем получить его из расширенной информации.');
+			info = AnyBalance.requestGet(nodeUrl + '/PhizIC/private/accounts/bankDetails.do?id=' + _id, g_headers);
+			num = getParam(info, null, null, /Номер счета:[\s\S]*?<div[^>]+detailsValue[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+			AnyBalance.trace('Получен номер: ' + num);
+		}
 		
-		var c = {__id: _id, __name: title};
+		var c = {__id: _id, __name: name, num: num};
 		
 		if(__shouldProcess('accounts', c)){
-			processAccount(accounts[i], _id, c, pageToken);
+			processAccount(accounts[i], c, pageToken);
 		}
 		
 		result.accounts.push(c);
 	}
 }
 
-function processAccount(html, _id, result, pageToken){
-    AnyBalance.trace('Обработка счтеа ' + _id);
-	
-	getParam(html, result, 'accounts.balance', /overallAmount\b[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'accounts.rate', /descriptionRight[^>]*>\s*([\d.,]+%)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, ['accounts.currency', 'accounts.balance', 'accounts.cash', 'accounts.electrocash', 'accounts.debt', 'accounts.maxlimit'], /overallAmount\b[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseCurrency);
-	getParam(html, result, 'accounts.cardNumber', /<[^>]*class="(?:product|account)Number\b[^"]*">([^<,]+)/i, replaceTagsAndSpaces);
-	getParam(html, result, 'accounts.till', /<[^>]*class="(?:product|account)Number\b[^"]*">[^<]+,\s+действует (?:до|по)([^<]+)/i, replaceTagsAndSpaces, parseDateWord);
-	
-	processAccountTransactions(_id, pageToken, result);
+function parseAllow(str){
+	return /разрешено/i.test(str);
 }
 
-function processAccountTransactions(_id, pageToken, result) {
+function processAccount(html, result, pageToken){
+    AnyBalance.trace('Обработка счета ' + result.__name);
+
+    var isTarget = /thermometertargetTemplate/i.test(html);
+
+    if(!isTarget){
+		getParam(html, result, 'accounts.balance', /overallAmount\b[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+		getParam(html, result, 'accounts.rate', /descriptionRight[^>]*>\s*([\d.,]+%)/i, replaceTagsAndSpaces, parseBalance);
+		getParam(html, result, ['accounts.currency', 'accounts.balance'], /overallAmount\b[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseCurrency);
+		getParam(html, result, 'accounts.till', /<[^>]*class="(?:product|account)Number\b[^"]*">[^<]+,\s+действует (?:до|по)([^<]+)/i, replaceTagsAndSpaces, parseDateWord);
+	}else{
+		//Целевой
+		getParam(html, result, 'accounts.balance', /dribbleCenter\b[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+		getParam(html, result, 'accounts.rate', /ставка:\s*([\d.,]+%)/i, replaceTagsAndSpaces, parseBalance);
+		getParam(html, result, ['accounts.currency', 'accounts.balance'], /dribbleCenter\b[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseCurrency);
+		getParam(html, result, 'accounts.till', /Дата покупки\s*<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseDate);
+	}
+
+	if(AnyBalance.isAvailable('accounts.num', 'accounts.pct', 'accounts.period', 'accounts.balance_min', 'accounts.pct_conditions', 'accounts.status', 'accounts.prolong', 'accounts.withdraw', 'accounts.topup')){
+		var info = AnyBalance.requestGet(nodeUrl + '/PhizIC/private/accounts/info.do?id=' + result.__id, g_headers);
+	    
+		getParam(info, result, 'accounts.num', /Номер счета[^<]*:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+		getParam(info, result, 'accounts.pct', /Процентная ставка:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+		getParam(info, result, 'accounts.period', /Срок вклада:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+		getParam(info, result, 'accounts.balance_min', /Сумма неснижаемого остатка:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+		getParam(info, result, 'accounts.pct_conditions', /Порядок уплаты процентов:[\s\S]*?<td[^>]*>([\s\S]*?)(?:<\/td>|<script)/i, replaceTagsAndSpaces, html_entity_decode);
+		getParam(info, result, 'accounts.status', /Текущее состояние:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+		//Пролонгация:	не осуществляется|осуществляется
+		getParam(info, result, 'accounts.prolong', /Пролонгация:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode); 
+		getParam(info, result, 'accounts.withdraw', /Списание:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseAllow);
+		getParam(info, result, 'accounts.topup', /Зачисление:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseAllow);
+	}
+	
+	processAccountTransactions(pageToken, result);
+}
+
+function processAccountTransactions(pageToken, result) {
 	if(!AnyBalance.isAvailable('accounts.transactions'))
 		return;
 	
@@ -191,7 +230,7 @@ function processAccountTransactions(_id, pageToken, result) {
 	
 	var dt = new Date();
 	
-	html = AnyBalance.requestPost(nodeUrl + '/PhizIC/private/accounts/operations.do?id=' + _id, {
+	html = AnyBalance.requestPost(nodeUrl + '/PhizIC/private/accounts/operations.do?id=' + result.__id, {
 		'showInMain': 'on',
 		'filter(typePeriod)': 'period',
 		'filter(fromPeriod)': getFormattedDate(5),
@@ -211,12 +250,12 @@ function processAccountTransactions(_id, pageToken, result) {
 	
     var ops = sumParam(html, null, null, /<tr[^>]*class="ListLine\d+">(?:[^>]*>){8}\s*<\/tr>/ig);
 	
-    AnyBalance.trace('У счета ' + _id + ' найдено транзакций: ' + ops.length);
+    AnyBalance.trace('У счета ' + result.__id + ' найдено транзакций: ' + ops.length);
     for(var i=0; i < ops.length; ++i){
     	var o = {};
 
-		var debit = -1 * (getParam(ops[i], null, null, /([^>]*>){7}/i, replaceTagsAndSpaces, parseBalance) || 0);
-		var credit = (getParam(ops[i], null, null, /([^>]*>){9}/i, replaceTagsAndSpaces, parseBalance) || 0);
+		var debit = (getParam(ops[i], null, null, /([^>]*>){7}/i, replaceTagsAndSpaces, parseBalance) || 0);
+		var credit = -1 * (getParam(ops[i], null, null, /([^>]*>){9}/i, replaceTagsAndSpaces, parseBalance) || 0);
 		
 		getParam(debit + credit, o, 'accounts.transactions.sum');
 		if(isset(result.currency))
@@ -232,6 +271,9 @@ function processAccountTransactions(_id, pageToken, result) {
 // Обработка карт
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 function processCards(html, result) {
+	if(!AnyBalance.isAvailable('cards'))
+		return;
+
 	html = AnyBalance.requestGet(nodeUrl + '/PhizIC/private/cards/list.do');
 	var cards = getElements(html, /<div[^>]+class="productCover[^"]*activeProduct[^>]*">/ig);
 	AnyBalance.trace('Найдено карт: ' + cards.length);
@@ -330,6 +372,9 @@ function processCardTransactions(_id, result) {
 }
 
 function processCardLast10Transactions(_id, result) {
+	if(!AnyBalance.isAvailable('cards.transactions10'))
+		return;
+
 	AnyBalance.trace('Получаем последние 10 операций по карте...');
 	
 	html = AnyBalance.requestGet(nodeUrl + '/PhizIC/private/cards/info.do?id=' + _id);
@@ -362,6 +407,9 @@ function processCardLast10Transactions(_id, result) {
 // Обработка кредитов
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 function processLoans(html, result) {
+	if(!AnyBalance.isAvailable('loans'))
+		return;
+
 	html = AnyBalance.requestGet(nodeUrl + '/PhizIC/private/loans/list.do');
 	var loans = getElements(html, /<div[^>]+class="productCover[^"]*activeProduct[^>]*">/ig);
 	AnyBalance.trace('Найдено кредитов: ' + loans.length);

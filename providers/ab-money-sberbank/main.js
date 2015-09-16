@@ -2,43 +2,6 @@
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 */
 
-// Фикс для All Balance - убрать с выходом новой версии
-// Шаги алгоритма ECMA-262, 5-е издание, 15.4.4.21
-// Ссылка (en): http://es5.github.io/#x15.4.4.21
-// Ссылка (ru): http://es5.javascript.ru/x15.4.html#x15.4.4.21
-if (!Array.prototype.reduce) {
-	Array.prototype.reduce = function(callback /*, initialValue*/ ) {
-		'use strict';
-		if (this == null) {
-			throw new TypeError('Array.prototype.reduce called on null or undefined');
-		}
-		if (typeof callback !== 'function') {
-			throw new TypeError(callback + ' is not a function');
-		}
-		var t = Object(this),
-			len = t.length >>> 0,
-			k = 0,
-			value;
-		if (arguments.length == 2) {
-			value = arguments[1];
-		} else {
-			while (k < len && !k in t) {
-				k++;
-			}
-			if (k >= len) {
-				throw new TypeError('Reduce of empty array with no initial value');
-			}
-			value = t[k++];
-		}
-		for (; k < len; k++) {
-			if (k in t) {
-				value = callback(value, t[k], k, t);
-			}
-		}
-		return value;
-	};
-}
-
 var g_countersTable = {
 	common: {
 		'spasibo': 'spasibo',
@@ -86,8 +49,8 @@ var g_countersTable = {
     	"balance": "accounts.balance",
 		"currency": "accounts.currency",
 		"rate": "accounts.rate",
-		"cardNumber": "accounts.cardNumber",
-		"__tariff": "accounts.cardNumber",
+		"cardNumber": "accounts.num",
+		"__tariff": "accounts.num",
 		"till": "accounts.till",
     },
 	metal_acc: {
@@ -185,7 +148,7 @@ function shouldProcess(counter, info){
 		    if(!prefs.lastdigits)
 		    	return true;
 			
-			if(endsWith(num, prefs.lastdigits))
+			if(endsWith(info.num, prefs.lastdigits))
 				return true;
 		}
 		case 'loans':

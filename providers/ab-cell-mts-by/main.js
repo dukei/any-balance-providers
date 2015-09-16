@@ -343,6 +343,8 @@ function main(){
 	
 	checkEmpty(prefs.login, 'Введите телефон (логин)!');
 	checkEmpty(prefs.password, 'Введите пароль!');
+
+	AnyBalance.setOptions({SSL_ENABLED_PROTOCOLS: ['TLSv1'], SSL_ENABLED_CIPHER_SUITES_ADD: ['SSL_RSA_WITH_3DES_EDE_CBC_SHA']});
 	
     if(prefs.type == 'mobile'){
         mainMobile();

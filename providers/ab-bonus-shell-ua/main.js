@@ -13,19 +13,20 @@ var g_headers = {
 function main(){
     var prefs = AnyBalance.getPreferences();
 	
-    var baseurl = "https://shellsmart.com.ua/";
+    var baseurl = "http://shellsmart.com.ua/";
 	
     AnyBalance.setDefaultCharset('utf-8'); 
 	
-    var html = AnyBalance.requestPost(baseurl + 'ru/account/login', {
+    var html = AnyBalance.requestPost(baseurl + 'ua/account/login', {
         "form[login]":prefs.login,
         "form[pass]":prefs.password
-    }, addHeaders({Referer: baseurl})); 
+    }, addHeaders({Referer: baseurl, 'X-Requested-With': 'XMLHttpRequest'})); 
 
     if(/[\s\S]*?\.html/i.test(html)){
         var error = getParam(html, null, null, /(?:[\s\S]*?\.html){2}\(\'([\s\S]*?)\'/i, replaceTagsAndSpaces, html_entity_decode);
         if(error)
             throw new AnyBalance.Error(error);
+		
         throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
     }
     html = AnyBalance.requestGet(baseurl + 'ru/account', g_headers); 
@@ -36,8 +37,8 @@ function main(){
     
     html = AnyBalance.requestGet(baseurl + 'ru/account/view', g_headers); 
 
-    getParam(html, result, 'balance', />Обменять баллы на подарки Вы можете:([^>]*>){9}/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'allbalance', />Всего накоплено([^>]*>){6}/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'balance', /Обміняти бали на подарунки Ви можете:[^>]*>([\s\S]*?)<\/td/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'allbalance', /"totalAccum2"[^>]*>([\s\S]*?)<\/div/i, replaceTagsAndSpaces, parseBalance);
 
     AnyBalance.setResult(result);
 }

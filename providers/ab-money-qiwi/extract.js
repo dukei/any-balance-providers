@@ -18,7 +18,13 @@ function login(prefs) {
 	
     AnyBalance.requestGet(baseurl + 'payment/main.action'); //Надо сессию поставить
 	
-    var login = /^\s*\+7/.test(prefs.login) ? prefs.login : '+7' + prefs.login;
+	var login = prefs.login;
+	// Только для России
+	if(/^\d{10}$/i.test(prefs.login)) {
+		login = '+7' + prefs.login;
+	} else if(!/^\s*\+/.test(prefs.login)) {
+		login = '+' + prefs.login;
+	}
 	
     var response = requestAPI({
 		action: 'cas/tgts',

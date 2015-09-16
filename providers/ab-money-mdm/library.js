@@ -296,7 +296,7 @@ return d
 }function fmtDate(b,a){if(!isset(a)){a="."
 }return n2(b.getDate())+a+n2(b.getMonth()+1)+a+b.getFullYear()
 }function joinUrl(a,b){if(!b){return a
-}if(b.startsWith("/")){return a.replace(/^(\w+:\/\/[\w.\-]+).*$/,"$1"+b)
+}if(/^\//.test(b)){return a.replace(/^(\w+:\/\/[\w.\-]+).*$/,"$1"+b)
 }if(/^\w+:\/\//.test(b)){return b
 }a=a.replace(/\?.*$/,"");
 if(/:\/\/.*\//.test(a)){a=a.replace(/\/[^\/]*$/,"/")

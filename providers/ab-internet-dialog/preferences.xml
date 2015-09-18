@@ -7,7 +7,7 @@
 		summary="Логин:||{@s}\n"
 		dialogTitle="Логин"
 		negativeButtonText="Отмена"
-		dialogMessage="Введите логин на страницу информации об учетной записи на https://stats.tis-dialog.ru."
+		dialogMessage="Введите логин, используемый для входа в личный кабинет на https://stats.tis-dialog.ru."
 		key="login">
 	</EditTextPreference>
 	<EditTextPreference
@@ -18,7 +18,7 @@
 		negativeButtonText="Отмена"
 		title="Пароль"
 		summary="Пароль||***********\n"
-		dialogMessage="Введите пароль, используемый для входа на страницу информации об учетной записи на https://stats.tis-dialog.ru."
+		dialogMessage="Введите пароль, используемый для входа в личный кабинет на https://stats.tis-dialog.ru."
 		inputType="textPassword">
 	</EditTextPreference>
 </PreferenceScreen>

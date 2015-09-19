@@ -974,6 +974,7 @@ function getBonuses(xhtml, result) {
 				sumParam(values, result, 'rub_opros', null, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 			} else if (/Времени общения|Включенные минуты/i.test(name)) {
 				sumParam(values, result, 'min_local', null, replaceMinutes, parseMinutes, aggregate_sum);
+				sumParam(services[i], result, 'min_local_till', /Доступно до([^<]{10,20})/i, replaceTagsAndSpaces, parseDateWord, aggregate_min);
 			} else if (/Секунд БОНУС\s*\+|Баланс бонус-секунд/i.test(name)) {
 				sumParam(values, result, 'min_bi', null, replaceMinutes, parseMinutes, aggregate_sum);
 			} else if (/Секунд БОНУС-2|Баланс бесплатных секунд-промо/i.test(name)) {
@@ -981,6 +982,7 @@ function getBonuses(xhtml, result) {
 				sumParam(services[i], result, 'min_local_till', /Доступно до([^<]{10,20})/i, replaceTagsAndSpaces, parseDateWord, aggregate_min);
 			} else if (/минут в месяц|мин\.|Голосовой трафик|Разговоры.*вне сети/i.test(name)) {
 				sumParam(values, result, 'min_local', null, replaceMinutes, parseMinutes, aggregate_sum);
+				sumParam(services[i], result, 'min_local_till', /Доступно до([^<]{10,20})/i, replaceTagsAndSpaces, parseDateWord, aggregate_min);
 			// Это новый вид отображения данных
 			} else if (/Минут общения по (?:тарифу|услуге)|вызовы|на местные номера/i.test(name)) {
 				// Очень внимательно надо матчить

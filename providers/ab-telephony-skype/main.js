@@ -9,7 +9,7 @@
 	checkEmpty(prefs.password, 'Please, enter password!');	
 	
  	AnyBalance.setDefaultCharset('utf-8');
- 	var baseLogin = 'https://login.skype.com/login?method=skype&application=account&intcmp=sign-in&return_url=https%3A%2F%2Fsecure.skype.com%2Faccount%2Flogin', info = '';
+ 	var baseLogin = 'https://login.skype.com/login', info = '';
 
  	var info = AnyBalance.requestGet(baseLogin);
  	var form = getParam(info, null, null, /<form[^>]+id="LoginForm[^>]*>([\s\S]*?)<\/form>/i);
@@ -17,11 +17,21 @@
 		AnyBalance.trace(info);
 		throw new AnyBalance.Error("Can`t find login form. Is site changed or down?");
 	}
+
+	var offset = new Date().getTimezoneOffset();
+	offset = ((offset<0? '+':'-') + // Note the reversed sign!
+          n2(parseInt(Math.abs(offset/60))) + '|' +
+          n2(Math.abs(offset%60)));
+
  	var params = createFormParams(form, function(params, input, name, value) {
  		if (name == 'username') 
 			value = prefs.login;
  		else if (name == 'password')
 			value = prefs.password;
+	    else if(name == 'timezone_field')
+	    	value = offset;
+	    else if(name == 'js_time')
+	    	value = new Date().getTime()/1000;
 
 		return value;
  	});

@@ -1,10 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-    <id version="6">ab-money-mdm</id>
+    <id version="9">ab-money-mdm</id>
     <api flags="no_browser"/>
     <name>МДМ-Банк</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о карте, счете и депозите для клиентов МДМ-Банка (http://www.mdm.ru).</p>
+	<p>Предоставляет информацию о карте, счете, депозите и кредите для клиентов МДМ-Банка (http://www.mdm.ru).</p>
 	]]></description>
 	<instruction html="true"><![CDATA[
 	<p>Настройки:</p>
@@ -22,14 +22,17 @@
     <files>
 	<icon>icon.png</icon>
         <preferences>preferences.xml</preferences>
-        <js>main.js</js>
         <js>library.js</js>
+        <js>extract.js</js>
+        <js>nadapter.js</js>
+        <js>main.js</js>
         <history>history.xml</history>
     </files>
     <counters>
-	<counter id="balance" name="Баланс" units=" {@currency}"/>
+		<counter id="balance" name="Баланс" units=" {@currency}"/>
         <counter id="currency" name="Валюта" type="text"/>
         <counter id="minpay" name="Минимальный платеж" units=" {@currency}"/>
+        <counter id="minpay_till" name="Срок минимального платежа" type="time" format="dd/MM/yyyy"/>
         <counter id="blocked" name="Заблокировано" units=" {@currency}"/>
         <counter id="till" name="Срок действия" type="time" format="dd/MM/yyyy"/>
         <counter id="nextpct" name="Следующая выплата процентов" type="time" format="dd/MM/yyyy"/>
@@ -40,7 +43,6 @@
         <counter id="accnum" name="Номер счета" type="text"/>
         <counter id="cardnum" name="Номер карты" type="text"/>
         <counter id="accname" name="Название" type="text"/>
-        <counter id="bonus" name="МДМ Бонус"  units=" бон"/>
     </counters>
     <keywords>Кредит, банк, mdm</keywords>
     <type>money, bank</type>

@@ -21,8 +21,13 @@ function main() {
 	var error = getParam(html, null, null, /Ф\.И\.О\.[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
 	var licschet = getParam(html, null, null, /Лицевой счет[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
 	if (!licschet) {
+		if(!error)
+			error = getParam(html, null, null, /<span[^>]+color:\s*#dd0000[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
+		if(error)
+			throw new AnyBalance.Error(error, null, /Неправильный логин или пароль/i.test(error));
+			
 		AnyBalance.trace(html);
-		throw new AnyBalance.Error(error);
+		throw new AnyBalance.Error('Не удалось войти в личный кабинет. Сайт изменен?');
 	}
 	
 	var result = {success: true};

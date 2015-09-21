@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="3">ab-internet-dialog</id>
+	<id version="4">ab-internet-dialog</id>
 	<api flags="no_browser"/>
 	<name>Диалог (Калининград)</name>
 	<description html="true"><![CDATA[

@@ -4,7 +4,8 @@
 	<api flags="no_browser"/>
 	<name>Диалог (Калининград)</name>
 	<description html="true"><![CDATA[
-	<p>Получает баланс и информацию о тарифном плане для калининградского интернет провайдера Диалог (http://tis-dialog.ru). Информация берется из личного кабинета https://stats.tis-dialog.ru.</p>
+	<p>Получает баланс и информацию о тарифном плане для калининградского интернет провайдера Диалог (http://tis-dialog.ru).</p>
+	<p>Информация берется из личного кабинета https://stats.tis-dialog.ru.</p>
 	]]></description>
 	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
 	<files>

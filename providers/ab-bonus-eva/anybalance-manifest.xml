@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="2">ab-bonus-eva</id>
+  <id version="3">ab-bonus-eva</id>
   <api flags="no_browser"/>
   <name>EVA (Украина)</name>
   <description html="true"><![CDATA[

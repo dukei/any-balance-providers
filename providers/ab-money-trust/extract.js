@@ -124,6 +124,19 @@ function login(prefs) {
 	return json;
 }
 ////////////////////////////////////////////////////////////////////////////////////////
+// Профиль 
+////////////////////////////////////////////////////////////////////////////////////////
+function processProfile(jsonInfo, result) {
+	if(!AnyBalance.isAvailable('profile'))
+		return;	
+	
+	getParam(jsonInfo.profile.address, result, 'profile.address', null, replaceTagsAndSpaces);
+	getParam(jsonInfo.profile.email, result, 'profile.email', null, replaceTagsAndSpaces);
+	getParam(jsonInfo.profile.filial, result, 'profile.filial', null, replaceTagsAndSpaces);
+	getParam(jsonInfo.profile.name, result, 'profile.name', null, replaceTagsAndSpaces);
+	getParam(jsonInfo.profile.phone, result, 'profile.phone', null, replaceTagsAndSpaces);
+}
+////////////////////////////////////////////////////////////////////////////////////////
 // Счета 
 ////////////////////////////////////////////////////////////////////////////////////////
 function processAccounts(jsonInfo, result) {
@@ -162,7 +175,7 @@ function processAccount(account, result) {
 
 function processAccountTransactions(account, result) {
 	if(!AnyBalance.isAvailable('accounts.transactions'))
-		return;	
+		return;
 	
 	result.transactions = [];
 	
@@ -349,11 +362,97 @@ function processTemplate(template, result) {
     getParam(template.receiver, result, 'templates.receiver', null, replaceTagsAndSpaces);
     getParam(template.receiverAccount, result, 'templates.receiverAccount', null, replaceTagsAndSpaces);
     getParam(template.receiverBIC, result, 'templates.receiverBIC', null, replaceTagsAndSpaces);
-    getParam(template.clientOperation.description, result, 'templates.description', null, replaceTagsAndSpaces);
+	
+	if (template.clientOperation.description)
+		getParam(template.clientOperation.description, result, 'templates.description', null, replaceTagsAndSpaces);
+	if (template.clientOperation.operationType)
+		getParam(template.clientOperation.operationType + '', result, 'templates.operationType', null, replaceTagsAndSpaces);
+	if (template.clientOperation.operation)
+		getParam(template.clientOperation.operation + '', result, 'templates.operation', null, replaceTagsAndSpaces);
+	if (template.clientOperation.operationSubType)
+		getParam(template.clientOperation.operationSubType + '', result, 'templates.operationSubType', null, replaceTagsAndSpaces);
 	
 	if(template.targetKey && !template.receiverAccount) {
 		getParam(template.targetKey, result, 'templates.receiverAccount', null, replaceTagsAndSpaces);
 	}
+}
+////////////////////////////////////////////////////////////////////////////////////////
+// Провайдеры
+////////////////////////////////////////////////////////////////////////////////////////
+function processProviders(result) {
+	if(!AnyBalance.isAvailable('providers'))
+		return;
+	
+	var json = getJsonAPI('payments/regions');
+	
+	result.providers = [];
+	
+	for(var r = 0; r<json.regions.length; r++) {
+		var currRegion = json.regions[r];
+		
+		var groupJson = getJsonAPI('payments/groups?count=3&region=' + encodeURIComponent(currRegion));
+		
+		// Получим группы
+		for(var i=0;i<groupJson.simpleProviderGroupList.length; i++) {
+			var currGroup = groupJson.simpleProviderGroupList[i];
+			
+			var groupName = currGroup.name;
+			var groupId = currGroup.id;
+			
+			var providersJson = getJsonAPI('payments/providers?id=' + groupId + '&region=' + encodeURIComponent(currRegion));
+			
+			// Получим провайдеры из группы
+			for(var p = 0; p < providersJson.simpleProviders.length; p++) {
+				var currProvider = providersJson.simpleProviders[p];
+				
+				var provName = currProvider.name;
+				var provId = currProvider.id;
+				
+				var prov = {
+					__id: provId, 
+					__name: provName,
+					groupName: groupName,
+					groupId: groupId,
+					region: currRegion
+				};
+				
+				if(__shouldProcess('providers', prov)){
+					processProvider(currProvider, prov);
+				}
+				
+				result.providers.push(prov);
+			}
+		}
+	}
+}
+
+function processProvider(prov, result) {
+	var provJson = getJsonAPI('payments/providers/' + result.__id);
+	
+	result.fields = [];
+	
+	for(var i = 0; i < provJson.simplePageList[0].simpleControlList.length; i++) {
+		var curr = provJson.simplePageList[0].simpleControlList[i];
+		
+		if(!curr.name)
+			continue;
+		
+		var f = {
+			name: curr.name,
+			desc: curr.header,
+			type: curr.type
+		}
+		
+		result.fields.push(f);
+	}
+}
+
+function getJsonAPI(url) {
+	var html = AnyBalance.requestGet(baseurlAPI + url, addHeaders({Authorization: getToken()}));
+	if(!html)
+		throw new AnyBalance.Error('Не удалось получить ответ от сервера!');
+	
+	return getJson(html)
 }
 
 function getFormattedDate(yearCorr) {

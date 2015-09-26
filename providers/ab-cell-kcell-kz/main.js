@@ -12,7 +12,7 @@ function main() {
 	
 	var lang = prefs.lang || 'kk';
 	
-	var baseurl = "http://www.kcell.kz/" + lang + "/ics.security/authenticate";
+	var baseurl = "https://www.kcell.kz/" + lang + "/ics.security/authenticate";
 	var ibaseurl = 'https://i.kcell.kz/';
 	
 	AnyBalance.setDefaultCharset('utf-8');
@@ -37,7 +37,7 @@ function main() {
 	var result = {success: true, balance: null};
 	
 	getParam(html, result, 'balance', /(?:Доступные средства|Пайдалануға болатын қаржы|Available:|Ваш баланс|Сіздің теңгеріміңіз|Your balance is)([\s\d.,\-]*тг)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'licschet', /(?:Номер лицевого счета|Дербес шот нөмірі|Account):[\s\S]*?<font[^>]*>([\s\S]*?)<\/font>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'licschet', /(?:Номер лицевого счета|Дербес шот нөмірі|Account):[\s\S]*?<font[^>]*>([\s\S]*?)<\/font>/i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(html, result, 'userName', [/"cvet account_name"[^>]*>([^<]+)/i, /<h2[^>]*>([\s\S]*?)<\/h2>/i], replaceTagsAndSpaces, html_entity_decode);
 	// Не отображается
 	getParam(html, result, '__tariff', /(?:Тарифный план|Тариф|Tariff):[\s\S]*?<font[^>]*>([\s\S]*?)<\/font>/i, replaceTagsAndSpaces, html_entity_decode);

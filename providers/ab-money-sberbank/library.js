@@ -2,7 +2,7 @@
 The uncompressed full source code of this library is here: https://code.google.com/p/any-balance-providers/source/browse/trunk/extra/development/ab-test-library/library.js
 */
 ;
-function getParam(f,k,b,g,c,a){if(!isset(f)){AnyBalance.trace("getParam: input "+(b?"("+b+")":"")+" is unset! "+new Error().stack);
+function getParam(f,k,b,g,c,a){if(!isset(f)){AnyBalance.trace("param1 is unset! "+new Error().stack);
 return
 }if(!isAvailable(b)){AnyBalance.trace(b+" is disabled!");
 return
@@ -154,9 +154,7 @@ return
 }a=new Date(a);
 AnyBalance.trace("Parsed date "+a.toString()+" from "+b);
 return a.getTime()
-}function sumParam(k,q,d,n,e,b,f,c){if(!isset(k)){AnyBalance.trace("sumParam: input "+(d?"("+d+")":"")+" is unset! "+new Error().stack);
-return
-}if(typeof(f)=="function"){var a=c;
+}function sumParam(k,q,d,n,e,b,f,c){if(typeof(f)=="function"){var a=c;
 c=f;
 f=a||false
 }function p(){if(f){return n?k.replace(n,""):""

@@ -522,64 +522,6 @@ function processMetalAccountTransactions(html, result){
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// Шаблоны
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-function processTemplates(html, result) {
-	if(!AnyBalance.isAvailable('templates'))
-		return;
-
-	result.templates = [];
-	
-	html = AnyBalance.requestGet(nodeUrl + '/PhizIC/private/favourite/list/PaymentsAndTemplates.do');
-	
-	var tpls = sumParam(html, null, null, /<li[^>]+class="listLine"(?:[^>]*>){200,300}\s*<\/li>/ig);
-	AnyBalance.trace('Найдено шаблонов и черновиков: ' + tpls.length)
-
-	var tpls_done = {};
-	for(var i=0; i<tpls.length; ++i){
-		var id = getParam(tpls[i], null, null, /editTemplate\((\d+)\)/i, replaceTagsAndSpaces);
-		var name = getParam(tpls[i], null, null, /"sortNameBreak"([^>]*>){2}/i, replaceTagsAndSpaces, html_entity_decode);		
-		var serviceTemplate = /servicesPayments/i.test(tpls[i]);
-		
-		if(tpls_done[id]) {
-			AnyBalance.trace('Шаблон ' + name + ' (' + id + ') уже обработан, пропускаем');
-			continue;
-		}
-
-		var t = {__id: id, __name: name, serviceTemplate: serviceTemplate};
-
-		if(__shouldProcess('templates', t)){
-			processTemplate(t, id);
-			tpls_done[id] = true;
-		}
-		result.templates.push(t);
-	}
-}
-
-function processTemplate(result, _id) {
-	AnyBalance.trace('Обработка шаблона ' + _id);
-	
-	if(isAvailable(['balance', 'account', 'dest', 'date'])) {
-		if(result.serviceTemplate) {
-			html = AnyBalance.requestGet(nodeUrl + '/PhizIC/private/template/services-payments/edit.do?id=' + _id);
-			
-			getParam(html, result, 'balance', /field\(amount\)(?:[^"]*"){3}([\d.,]+)/i, replaceTagsAndSpaces, parseBalance);
-			getParam(html, result, 'account', /field\(RecIdentifier\)(?:[^"]*"){3}([\d]+)/i, replaceTagsAndSpaces);
-			
-			
-			getParam('Service template', result, 'dest', null, replaceTagsAndSpaces);
-		} else {
-			html = AnyBalance.requestGet(nodeUrl + '/PhizIC/private/payments/template.do?id=' + _id);
-			
-			getParam(html, result, 'balance', /value="([^"]+)"[^>]*name="[^"]*sellAmount/i, replaceTagsAndSpaces, parseBalance);
-			getParam(html, result, 'account', /value="([^"]+)"[^>]*name="[^"]*CardNumber/i, replaceTagsAndSpaces);
-			getParam(html, result, 'dest', /activeButton"([^>]*>){2}/i, replaceTagsAndSpaces);
-		}
-		
-		getParam(html, result, 'date', /userEmail"([^>]*>){2}/i, replaceTagsAndSpaces, parseSmallDate);
-	}	
-}
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Профиль пользователя
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 function processProfile(html, result) {

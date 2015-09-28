@@ -56,28 +56,30 @@
 	</files>
 	<counters>
 		<counter id="balance" name="Остаток" units=" {@currency}"/>
+		<counter id="weight" name="Вес" units=" {@weight_units}"/>
 		<counter id="spasibo" name="Спасибо"/>
-		<counter id="cash" name="Наличные" units=" {@currency}"/>
-		<counter id="electrocash" name="Для покупок" units=" {@currency}"/>
-		<counter id="currency" name="Валюта" type="text"/>
-		<counter id="cardNumber" name="Номер карты/счета" type="text"/>
-		<counter id="userName" name="ФИО" type="text"/>
-		<counter id="till" name="Срок действия" type="time" format="dd/MM/yyyy"/>
-		<counter id="debt" name="Задолженность" units=" {@currency}"/>
-		<counter id="maxlimit" name="Кредитный лимит" units=" {@currency}"/>
-		<counter id="loan_ammount" name="Сумма кредита" units=" {@currency}"/>
 		<counter id="minpay" name="Минимальный платеж" units=" {@currency}"/>
 		<counter id="minpaydate" name="Дата минимального платежа" type="time" format="dd/MM/yyyy"/>
+		<counter id="electrocash" name="Для покупок" units=" {@currency}"/>
+		<counter id="cash" name="Наличные" units=" {@currency}"/>
+		<counter id="own" name="Собственные средства" units=" {@currency}"/>
+		<counter id="cardNumber" name="Номер карты/счета" type="text"/>
+		<counter id="till" name="Срок действия" type="time" format="MM/yyyy"/>
+		<counter id="debt" name="Задолженность" units=" {@currency}"/>
+		<counter id="debt_date" name="Дата последнего отчета по задолженности" type="time" format="dd/MM/yyyy"/>
+		<counter id="maxlimit" name="Кредитный лимит" units=" {@currency}"/>
+		<counter id="loan_ammount" name="Сумма кредита" units=" {@currency}"/>
 		<counter id="cardName" name="Имя на карте" type="text"/>
 		<counter id="status" name="Статус" type="text"/>
 		<counter id="lastPurchSum" name="Сумма последней операции" type="text"/>
 		<counter id="lastPurchPlace" name="Место последней операции" type="text"/>
 		<counter id="lastPurchDate" name="Дата последней операции" type="time" format="dd/MM"/>
-		<counter id="weight" name="Вес" units=" {@weight_units}"/>
 		<counter id="usdPurch" name="USD покупка"/>
 		<counter id="usdSell" name="USD продажа"/>
 		<counter id="eurPurch" name="EUR покупка"/>
 		<counter id="eurSell" name="EUR продажа"/>
+		<counter id="userName" name="ФИО" type="text"/>
+		<counter id="currency" name="Валюта" type="text"/>
 	</counters>
 	<keywords>сбербанк онлайн, sberbank online, сберегательный банк, спасибо</keywords>
 	<type>money, bank</type>

@@ -22,7 +22,9 @@ var g_countersTable = {
 		"minpay": "cards.minpay",
 		"maxlimit": "cards.maxlimit",
 		"debt": "cards.debt",
+		"debt_date": "cards.debt_date",
 		"cash": "cards.cash",
+		"own": "cards.own",
 		"electrocash": "cards.electrocash",
 		"userName": "cards.userName",
 		"__tariff": "cards.cardNumber",
@@ -56,9 +58,15 @@ var g_countersTable = {
 	metal_acc: {
     	"balance": "accounts_met.balance",
     	"currency": "accounts_met.currency",
-		"cardNumber": "accounts_met.cardNumber",
-		"__tariff": "accounts_met.cardNumber",
+		"cardNumber": "accounts_met.num",
+		"__tariff": "accounts_met.__name",
 		"weight": "accounts_met.weight",
+		"weight_units": "accounts_met.weight_units",
+
+		"lastPurchSum": "accounts_met.transactions.sum",
+		"lastPurchPlace": "accounts_met.transactions.descr",
+		"lastPurchDate": "accounts_met.transactions.time"
+
     }
 };
 
@@ -168,7 +176,7 @@ function shouldProcess(counter, info){
 		    if(!prefs.lastdigits)
 		    	return true;
 			
-			if(endsWith(info.__id, prefs.lastdigits))
+			if(endsWith(info.num, prefs.lastdigits))
 				return true;
 		}
 		default:

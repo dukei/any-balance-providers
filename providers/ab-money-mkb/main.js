@@ -32,7 +32,7 @@ var g_countersTable = {
 		"needpay": "loans.minpay",
 		"accnum": "loans.acc_num",
 		"pctcredit": "loans.pct",
-		"__tariff": "loans.acc_num",
+		"__tariff": "loans.__name",
 	},
     acc: {
     	"balance": "accounts.balance",

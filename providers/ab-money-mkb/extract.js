@@ -420,10 +420,10 @@ function processLoans(html, result) {
 	AnyBalance.trace('Найдено кредитов: ' + loans.length);
 	result.loans = [];
 	
-	var detailsJson = getParam(html, null, null, /var\s+loanDetailsData\s*=\s*(\[{[\s\S]*?}\])/i);
-	if(detailsJson)
-		detailsJson = getJson(detailsJson);
-	
+	var detailsJson = getParam(html, null, null, /var\s+loanDetailsData\s*=\s*(\[{[\s\S]*?}\])/i, null, getJson);
+    var historyJson = getParam(html, null, null, /var\s+loanHistoryData\s*=\s*(\[{[\s\S]*?}\])/i, null, getJson);
+    var scheduleJson = getParam(html, null, null, /var\s+loanFuturePaymentsData\s*=\s*(\[{[\s\S]*?}\])/i, null, getJson);
+
 	for(var i=0; i < loans.length; ++i){
 		var _id = getParam(loans[i], null, null, /class="txt"[^>]*>\s*([^<]+)/i, replaceTagsAndSpaces);
 		var title = getParam(loans[i], null, null, /class="txt"(?:[^>]*>){6}\s*([^<]+)/i, replaceTagsAndSpaces);
@@ -431,23 +431,133 @@ function processLoans(html, result) {
 		var c = {__id: _id, __name: title};
 		
 		if(__shouldProcess('loans', c)) {
-			processLoan(loans[i], _id, c, detailsJson[i]);
+			processLoan(loans[i], c, detailsJson[i]);
+
+            if(AnyBalance.isAvailable('loans.transactions')){
+                processLoanTransactions(historyJson[i], c);
+            }
+
+            if(AnyBalance.isAvailable('loans.schedule')){
+                processLoanSchedule(scheduleJson[i], c);
+            }
 		}
 		
 		result.loans.push(c);
 	}
 }
 
-function processLoan(html, _id, result, detailsJson){
+function parseSum(path, td, result){
+    var info = this; //Остальные параметры
+    getParam(td, result, path + info._prefix + 'sum', /<div[^>]+class="summ"[^>]*>([^]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(td, result, path + info._prefix + 'debt', /Погашение основного долга[^]*?<td[^>]*>([^]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(td, result, path + info._prefix + 'pct', /Погашение процентов[^]*?<td[^>]*>([^]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+}
+
+function processLoanTransactions(json, result){
+    AnyBalance.trace('Получаем все операции по кредиту ' + result.__name);
+
+    var table = json.his;
+    if(!table) {
+        AnyBalance.trace(JSON.stringify(json));
+        AnyBalance.trace('Не удалось найти таблицу операций по кредиту!');
+        return;
+    }
+
+    result.transactions = [];
+
+    var colsDef = {
+        date: {
+            re: /Дата/i,
+            result_func: parseDate,
+        },
+        min_sum: {
+            re: /Минимальная сумма погашения/i,
+            _prefix: 'min_',
+            result_process: parseSum
+        },
+        sum: {
+            re: /Фактически внесено/i,
+        },
+        fact_sum: {
+            re: /Фактически погашено/i,
+            _prefix: 'fact_',
+            result_process: parseSum
+        },
+    };
+
+    processTable(table, result.transactions, 'loans.transactions.', colsDef);
+}
+
+function processLoanSchedule(json, result){
+    AnyBalance.trace('Получаем расписание платежей по кредиту ' + result.__name);
+
+    var table = json.fut;
+    if(!table) {
+        AnyBalance.trace(JSON.stringify(json));
+        AnyBalance.trace('Не удалось найти расписание платежей по кредиту!');
+        return;
+    }
+
+    result.schedule = [];
+
+    var colsDef = {
+        date: {
+            re: /Дата/i,
+            result_func: parseDateWord,
+        },
+        details: {
+            re: /В том числе/i,
+            _prefix: '',
+            result_process: parseSum
+        },
+        sum: {
+            re: /Сумма платежа/i,
+        },
+    };
+
+    processTable(table, result.schedule, 'loans.schedule.', colsDef);
+}
+
+
+//Определяет процент из строки вида c 23.07.2014 - 15%, c 22.09.2015 - 19%
+function parsePcts(str){
+    var dates = sumParam(str, null, null, /c\s*\d+\D\d+\D\d+\s*-\s*[\d.,]+%/ig);
+    if(dates){
+        var dt = new Date();
+        for (var i = dates.length-1; i >= 0; i++) {
+            var time1 = getParam(dates[i], null, null, /\d+\D\d+\D\d+/, null, parseDate);
+            if (dt.getTime() >= time1) {
+                var pct = getParam(dates[i], null, null, /[\d.,]+%/i, null, parseBalance);
+                return pct;
+            }
+        }
+    }else{
+        return parseBalance(str);
+    }
+}
+
+function parseBool(str){
+    return !/нет/i.test(str);
+}
+
+function processLoan(html, result, detailsJson){
+    var _id = result.__id;
     AnyBalance.trace('Обработка кредита ' + _id);
-	
-	getParam(html, result, 'loans.balance', /(?:[^>]*>){15}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
-	getParam(detailsJson.dt, result, 'loans.minpay', /Сумма ближайшего платежа:(?:[^>]*>){1}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, ['loans.currency', 'loans.balance', 'loans.minpay'], /(?:[^>]*>){15}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseCurrency);
-	getParam(html, result, 'loans.minpaydate', /(?:[^>]*>){16}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseDateWord);
-	getParam(html, result, 'loans.penalty', /(?:[^>]*>){18}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
-	getParam(detailsJson.dt, result, 'loans.acc_num', /Лицевой счет №:(?:[^>]*>){1}([\s\S]*?)<\//i, replaceTagsAndSpaces);
-	getParam(detailsJson.dt, result, 'loans.pct', /Текущая процентная ставка по кредиту:(?:[^>]*>){1}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
+
+	getParam(detailsJson.dt, result, 'loans.limit', /Общая сумма кредита:([^]*?)<\/li>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(detailsJson.dt, result, ['loans.currency', 'loans.balance', 'loans.minpay', 'loans.limit'], /Общая сумма кредита:([^]*?)<\/li>/i, replaceTagsAndSpaces, parseCurrency);
+	getParam(detailsJson.dt, result, 'loans.minpay', /Сумма ближайшего платежа:([^]*?)<\/li>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(detailsJson.dt, result, 'loans.minpaydate', /Дата ближайшего платежа:([^]*?)<\/li>/i, replaceTagsAndSpaces, parseDateWord);
+	getParam(detailsJson.dt, result, 'loans.penalty', /Просроченная задолженность по кредиту:([^]*?)<\/li>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(detailsJson.dt, result, 'loans.acc_num', /Лицевой счет №:([^]*?)<\/li>/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(detailsJson.dt, result, 'loans.pct', /Текущая процентная ставка по кредиту:([^]*?)<\/li>/i, replaceTagsAndSpaces, parsePcts);
+    getParam(detailsJson.dt, result, 'loans.date_start', /Дата выдачи:([^]*?)<\/li>/i, replaceTagsAndSpaces, parseDateWord);
+    getParam(detailsJson.dt, result, 'loans.date_end', /Дата финального погашения:([^]*?)<\/li>/i, replaceTagsAndSpaces, parseDateWord);
+    getParam(detailsJson.dt, result, 'loans.period', /Срок кредита:([^]*?)<\/li>/i, replaceTagsAndSpaces, parseBalance); //мес
+    getParam(detailsJson.dt, result, 'loans.balance', /Текущая сумма долга по кредиту:([^]*?)<\/li>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(detailsJson.dt, result, 'loans.sum_close', /Сумма[^<]*под закрытие договора[^<]*:([^]*?)<\/li>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(detailsJson.dt, result, 'loans.noclose', /Мораторий на погашение по кредиту:([^]*?)<\/li>/i, replaceTagsAndSpaces, parseBool);
+
 }
 
 function initCols(colsDef, ths){

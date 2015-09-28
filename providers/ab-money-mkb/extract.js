@@ -400,7 +400,7 @@ function processDepositTransactions(html, result) {
 // Обработка кредитов
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 function processLoans(html, result) {
-	if(!AnyBalance.isAvailable('cards'))
+	if(!AnyBalance.isAvailable('loans'))
 		return;
 
 	var html = AnyBalance.requestGet(baseurl + 'secure/loans.aspx', g_headers);

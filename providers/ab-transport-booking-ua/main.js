@@ -112,8 +112,8 @@ function main() {
     
     var types = [];
     
-    for(var i = 0; i < json.value[0].types.length; i++)	{
-        var avail_seats = " " + json.value[0].types[i].title + ": " + json.value[0].types[i].places;
+    for(var i = 0; i < data.types.length; i++)	{
+        var avail_seats = " " + data.types[i].title + ": " + data.types[i].places;
         types.push(avail_seats);
 	}
     result.types = types.toString();

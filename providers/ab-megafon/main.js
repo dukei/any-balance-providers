@@ -521,7 +521,7 @@ function megafonTrayInfo(filial) {
 					AnyBalance.trace('Найдены MMS: ' + names);
 					sumParam(d, result, 'mms_left', /<VOLUME_AVAILABLE>([\s\S]*?)<\/VOLUME_AVAILABLE>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 					sumParam(d, result, 'mms_total', /<VOLUME_TOTAL>([\s\S]*?)<\/VOLUME_TOTAL>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-				} else if (/GPRS| Байт|интернет|мб|Пакетная передача данных|QoS\d*:\s*\d+\s*Гб|Продли скорость\s*\d+\s*Гб|трафик/i.test(names)
+				} else if (/GPRS| Байт|интернет|мб|Пакетная передача данных|QoS\d*:\s*\d+\s*Гб|Продли скорость\s*\d+\s*Гб|трафик|internet/i.test(names)
 					 || /Пакетная передача данных/i.test(name_service) || /Байт|Тар.ед./i.test(plan_si)) {
 					AnyBalance.trace('Найден интернет: ' + names + ', ' + plan_si);
 					var valAvailable = vol_ava;
@@ -536,7 +536,7 @@ function megafonTrayInfo(filial) {
 					if (units == 'мин') {
 						//Надо попытаться исправить ошибку мегафона с единицами измерения трафика
 						if (/[GM]B|[гм]б/i.test(plan_name)) units = 'мб';
-						else if (/GPRS-Internet трафик/i.test(plan_name)) units = 'мб'; //Вот ещё такое исключение. Надеюсь, на всём будет работать, хотя сообщили из поволжского филиала
+						else if (/Internet/i.test(plan_name)) units = 'мб'; //Вот ещё такое исключение. Надеюсь, на всём будет работать, хотя сообщили из поволжского филиала
 						else if (/100\s*мб/i.test(plan_name)) units = 'тар.ед.';
 						else if (/Интернет (?:S|M|L|XL)/i.test(names)) units = 'мб';
 						else if (/Все включено|Интернет трафик на месяц/i.test(plan_name)) units = 'мб'; //Из дальневосточного филиала сообщили
@@ -2126,7 +2126,7 @@ function allowRobotsSG(filial, sessionid, login){
 function megafonLK(filial, html){
 	var result = {success: true, filial: filial_info[filial].id};
 
-	getParam(html, result, 'phone', /<div[^>]*private-office-info-phone[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'phone', /<div[^>]*private-office-info-phone[^>]*>([\s\S]*?)<\/div>/i, replaceNumber, html_entity_decode);
 	getParam(html, result, 'credit', /<div[^>]*private-office-limit[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'balance', /Баланс([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'available', /Доступно([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);

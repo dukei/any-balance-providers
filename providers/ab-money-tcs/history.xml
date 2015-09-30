@@ -1,5 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="21" date="2015-09-30">
+	- Поддержка счетов
+	- Поддержка новой версии приложения
+	</change>
 	<change version="20" date="2015-09-02">
 	Опечатка в названии Лимита суммы льготного снятия
 	</change>

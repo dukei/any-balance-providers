@@ -521,7 +521,7 @@ function megafonTrayInfo(filial) {
 					AnyBalance.trace('Найдены MMS: ' + names);
 					sumParam(d, result, 'mms_left', /<VOLUME_AVAILABLE>([\s\S]*?)<\/VOLUME_AVAILABLE>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 					sumParam(d, result, 'mms_total', /<VOLUME_TOTAL>([\s\S]*?)<\/VOLUME_TOTAL>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-				} else if (/GPRS| Байт|интернет|мб|Пакетная передача данных|QoS\d*:\s*\d+\s*Гб|Продли скорость\s*\d+\s*Гб|трафик/i.test(names)
+				} else if (/GPRS| Байт|интернет|мб|Пакетная передача данных|QoS\d*:\s*\d+\s*Гб|Продли скорость\s*\d+\s*Гб|трафик|internet/i.test(names)
 					 || /Пакетная передача данных/i.test(name_service) || /Байт|Тар.ед./i.test(plan_si)) {
 					AnyBalance.trace('Найден интернет: ' + names + ', ' + plan_si);
 					var valAvailable = vol_ava;
@@ -536,7 +536,7 @@ function megafonTrayInfo(filial) {
 					if (units == 'мин') {
 						//Надо попытаться исправить ошибку мегафона с единицами измерения трафика
 						if (/[GM]B|[гм]б/i.test(plan_name)) units = 'мб';
-						else if (/GPRS-Internet трафик/i.test(plan_name)) units = 'мб'; //Вот ещё такое исключение. Надеюсь, на всём будет работать, хотя сообщили из поволжского филиала
+						else if (/Internet/i.test(plan_name)) units = 'мб'; //Вот ещё такое исключение. Надеюсь, на всём будет работать, хотя сообщили из поволжского филиала
 						else if (/100\s*мб/i.test(plan_name)) units = 'тар.ед.';
 						else if (/Интернет (?:S|M|L|XL)/i.test(names)) units = 'мб';
 						else if (/Все включено|Интернет трафик на месяц/i.test(plan_name)) units = 'мб'; //Из дальневосточного филиала сообщили
@@ -1660,9 +1660,11 @@ function megafonLkAPI(filinfo, options) {
 					// Минуты
 					if(/мин/i.test(units)) {
 						AnyBalance.trace('Parsing minutes...' + JSON.stringify(current));
+						var val = getParam(current.available, null, null, null, replaceTagsAndSpaces, parseBalance);
 						if(/бесплат/i.test(name)) {
 							getParam(current.available, result, 'mins_n_free', null, replaceTagsAndSpaces, parseMinutes);
-						}else if(/\.\s*МегаФон/i.test(name) && !/МТС/i.test(name)) {
+						}else if((/\.\s*МегаФон/i.test(name) && !/МТС/i.test(name))
+								|| /внутри сети/i.test(name)) {
 							sumParam(current.available, result, 'mins_net_left', null, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
 						} else {
 							sumParam(current.available, result, 'mins_left', null, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
@@ -1687,12 +1689,13 @@ function megafonLkAPI(filinfo, options) {
 							getParam(current.available + current.unit, result, 'gb_with_you', null, replaceTagsAndSpaces, parseTraffic);
 						} else {
 							var suffix = '';
-							if(/ночь/i.test(name)) suffix = '_night';
+							if(/ноч/i.test(name)) suffix = '_night';
+							var unlim = /^9{7,}$/i.test(current.total); //Безлимитные значения только из девяток состоят
 							var internet_left = getParam(current.available + current.unit, null, null, null, replaceTagsAndSpaces, parseTraffic);
 							var internet_total = getParam(current.total + current.unit, null, null, null, replaceTagsAndSpaces, parseTraffic);
-							if(isset(internet_left) && internet_left < 100000000)
+							if(isset(internet_left) && !unlim)
 								sumParam(internet_left, result, 'internet_left' + suffix, null, null, null, aggregate_sum);
-							if(isset(internet_total) && internet_total < 100000000)
+							if(isset(internet_total) && !unlim)
 								sumParam(internet_total, result, 'internet_total' + suffix, null, null, null, aggregate_sum);
 							if(isset(internet_left) && isset(internet_total))
 								sumParam(internet_total - internet_left, result, 'internet_cur' + suffix, null, null, null, aggregate_sum);
@@ -2123,7 +2126,7 @@ function allowRobotsSG(filial, sessionid, login){
 function megafonLK(filial, html){
 	var result = {success: true, filial: filial_info[filial].id};
 
-	getParam(html, result, 'phone', /<div[^>]*private-office-info-phone[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'phone', /<div[^>]*private-office-info-phone[^>]*>([\s\S]*?)<\/div>/i, replaceNumber, html_entity_decode);
 	getParam(html, result, 'credit', /<div[^>]*private-office-limit[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'balance', /Баланс([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'available', /Доступно([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
@@ -2178,17 +2181,30 @@ function megafonLKRemainders(filial, html, result){
 
 			// Минуты
 			if(/мин/i.test(units)) {
-				if(/бесплат/i.test(name)) {
-					getParam(left, result, 'mins_n_free', null, replaceTagsAndSpaces, parseMinutes);
-				}else if(/\.\s*МегаФон/i.test(name) && !/МТС/i.test(name)) {
-					sumParam(left, result, 'mins_net_left', null, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
-				} else {
-					sumParam(left, result, 'mins_left', null, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
-					sumParam(total, result, 'mins_total', null, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
+				var val = getParam(left, null, null, null, replaceTagsAndSpaces, parseBalance);
+				if(val >= 0){
+					if(/бесплат/i.test(name)) {
+						getParam(left, result, 'mins_n_free', null, replaceTagsAndSpaces, parseMinutes);
+					}else if((/\.\s*МегаФон/i.test(name) && !/МТС/i.test(name))
+							|| /внутри сети/i.test(name)) {
+						sumParam(left, result, 'mins_net_left', null, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
+					} else {
+						sumParam(left, result, 'mins_left', null, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
+						sumParam(total, result, 'mins_total', null, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
+					}
+				}else{
+					AnyBalance.trace('Отрицательное значение минут, пропускаем: ' + row);
 				}
 			// Сообщения
 			} else if(/шт|sms|смс|mms|ммс/i.test(units)) {
-			    if(/mms|ММС/i.test(name)){
+				//Название группы иногда содержит всё подряд. Так что надо аккуратно матчить
+			    if(/mms|ММС/i.test(rname)){
+					sumParam(left, result, 'mms_left', null, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+					sumParam(total, result, 'mms_total', null, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+				}else if(/sms|[cС]М[cС]/i.test(rname)){
+					sumParam(left, result, 'sms_left', null, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+					sumParam(total, result, 'sms_total', null, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+			    }else if(/mms|ММС/i.test(name)){
 					sumParam(left, result, 'mms_left', null, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 					sumParam(total, result, 'mms_total', null, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 				}else{
@@ -2201,13 +2217,15 @@ function megafonLKRemainders(filial, html, result){
 					getParam(left, result, 'gb_with_you', null, replaceTagsAndSpaces, parseTraffic);
 				} else {
 					var suffix = '';
-					if(/ночь/i.test(name)) suffix = '_night';
+					if(/ноч/i.test(name)) suffix = '_night';
+
+					var unlim = /^9{7,}$/.test(total.replace(/\D/g, '')); //Безлимитные значения состоят только из девяток
 					
 					var internet_left = getParam(left, null, null, null, replaceTagsAndSpaces, parseTraffic);
 					var internet_total = getParam(total, null, null, null, replaceTagsAndSpaces, parseTraffic);
-					if(isset(internet_left) && internet_left < 100000000)
+					if(isset(internet_left) && !unlim)
 						sumParam(internet_left, result, 'internet_left' + suffix, null, null, null, aggregate_sum);
-					if(isset(internet_total) && internet_total < 100000000)
+					if(isset(internet_total) && !unlim)
 						sumParam(internet_total, result, 'internet_total' + suffix, null, null, null, aggregate_sum);
 					if(isset(internet_left) && isset(internet_total))
 						sumParam(internet_total - internet_left, result, 'internet_cur' + suffix, null, null, null, aggregate_sum);
@@ -2229,7 +2247,19 @@ function megafonLKRemainders(filial, html, result){
 				AnyBalance.trace('Неизвестные единицы измерений: ' + units + ' опция: ' + name + ': '  + row);
 			}
 		}
+	}
 
+	var discounts = getElements(html, /<div[^>]+gadget-remainders-discount-info[^>]*>/ig);
+	AnyBalance.trace('Найдено ' + discounts.length + ' скидок');
+
+	for(i=0; i<discounts.length; ++i){
+		var discount = discounts[i];
+		if(/до ограничения скорости осталось/i.test(discount)){
+			sumParam(discount, result, 'internet_left', /до ограничения скорости осталось(.*?)(?:-|$)/i, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
+			sumParam(discount, result, 'internet_till', /действует до(.*)/i, replaceTagsAndSpaces, parseDate, aggregate_min);
+		}else{
+			AnyBalance.trace('Неизвестная скидка: ' + discount);
+		}
 	}
 }
 

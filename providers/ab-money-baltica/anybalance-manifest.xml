@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="6">ab-money-baltica</id>
+	<id version="8">ab-money-baltica</id>
 	<api flags="no_browser"/>
 	<name>Банк Балтика</name>
 	<description html="true"><![CDATA[
@@ -11,11 +11,12 @@
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<history>history.xml</history>
-		<js>library.js</js>
-		<js>main.js</js>
 		<js>md5.js</js>
 		<js>enc-base64-min.js</js>
+		<js>isimple-SP-digest.js</js>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
 	</files>
 	<counters>
 		<counter id="balance" name="Баланс" units=" {@currency}"/>

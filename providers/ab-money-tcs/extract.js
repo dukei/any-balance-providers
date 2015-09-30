@@ -124,39 +124,6 @@ function login() {
 	return g_sessionid;
 }
 
-function processInfo(result){
-	var json = requestJson('personal_info');
-	var info = result.info = {};
-
-	var join = create_aggregate_join(' ');
-
-	getParam(jspath1(json, '$.payload.employer.name'), info, 'info.employer');
-	getParam(jspath1(json, '$.payload.passport.registrationAddress.zipCode.value'), info, 'info.registration_zip');
-	getParam(jspath1(json, '$.payload.passport.registrationAddress.houseNumber'), info, 'info.registration_house');
-	sumParam(jspath1(json, '$.payload.passport.registrationAddress.phoneNumber.countryCode'), info, 'info.registration_phone', null, null, null, join);
-	sumParam(jspath1(json, '$.payload.passport.registrationAddress.phoneNumber.innerCode'), info, 'info.registration_phone', null, null, null, join);
-	sumParam(jspath1(json, '$.payload.passport.registrationAddress.phoneNumber.number'), info, 'info.registration_phone', null, null, null, join);
-
-	getParam(jspath1(json, '$.payload.personalInfo.homeAddress.zipCode.value'), info, 'info.home_zip');
-	getParam(jspath1(json, '$.payload.personalInfo.homeAddress.houseNumber'), info, 'info.home_house');
-	sumParam(jspath1(json, '$.payload.personalInfo.homeAddress.phoneNumber.countryCode'), info, 'info.home_phone', null, null, null, join);
-	sumParam(jspath1(json, '$.payload.personalInfo.homeAddress.phoneNumber.innerCode'), info, 'info.home_phone', null, null, null, join);
-	sumParam(jspath1(json, '$.payload.personalInfo.homeAddress.phoneNumber.number'), info, 'info.home_phone', null, null, null, join);
-
-	getParam(jspath1(json, '$.payload.personalInfo.fullName.firstName'), info, 'info.name');
-	getParam(jspath1(json, '$.payload.personalInfo.fullName.lastName'), info, 'info.name_last');
-	getParam(jspath1(json, '$.payload.personalInfo.fullName.patronymic'), info, 'info.name_patronymic');
-
-	sumParam(jspath1(json, '$.payload.personalInfo.mobilePhoneNumber.countryCode'), info, 'info.mobile_phone', null, null, null, join);
-	sumParam(jspath1(json, '$.payload.personalInfo.mobilePhoneNumber.innerCode'), info, 'info.mobile_phone', null, null, null, join);
-	sumParam(jspath1(json, '$.payload.personalInfo.mobilePhoneNumber.number'), info, 'info.mobile_phone', null, null, null, join);
-
-	getParam(jspath1(json, '$.payload.personalInfo.inn'), info, 'info.inn');
-	getParam(jspath1(json, '$.payload.personalInfo.isResident'), info, 'info.resident');
-	getParam(jspath1(json, '$.payload.personalInfo.email.emailAddress'), info, 'info.email');
-	getParam(jspath1(json, '$.payload.personalInfo.birthDate'), info, 'info.birthday', null, null, null, parseDate);
-}
-
 function processCards(result){
     if(!AnyBalance.isAvailable('cards'))
         return;
@@ -293,7 +260,7 @@ function processDeposits(result){
 
         var c = {
             __id: acc.id,
-            __name: acc.marketingName + ', ' + acc.externalAccountNumber,
+            __name: (acc.marketingName || acc.name) + (acc.externalAccountNumber ? ', ' + acc.externalAccountNumber : ''),
             num: acc.externalAccountNumber
         };
 

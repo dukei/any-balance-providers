@@ -141,7 +141,8 @@ function shouldProcess(counter, info){
 		    if(!prefs.num)
 		    	return true;
 			
-			if(endsWith(info.num, prefs.num))
+			//Закрытые депозиты могут быть без номера
+			if(info.num && endsWith(info.num, prefs.num))
 				return true;
 		}
 		default:

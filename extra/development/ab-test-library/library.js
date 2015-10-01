@@ -936,3 +936,121 @@ function joinUrl(url, path){
 		url += '/';
 	return url + path;
 }
+
+/** Пример использования
+	var colsDef = {
+		type: {
+			re: /Тип/i,
+			result_func: function(str){
+				if(/мобил/i.test(str))
+					return 'mobile';
+				if(/эл/i.test(str))
+					return 'email';
+				if(/домаш/i.test(str))
+					return 'home';
+				if(/рабоч/i.test(str))
+					return 'work';
+				return str;
+			}
+		},
+		sum_out: {
+            re: /Сумма зачисления/i,
+            result_name: 'sum_done',
+            result_sum: true,
+            result_replace: replaceSign,
+        },
+		loan: {
+            re: /Ссуда/i,
+            result_process: function(path, td, result){
+                var info = this; //Остальные параметры
+                td = replaceAll(td, replaceTagsAndSpaces);
+                getParam(td, result, path + 'debt_main', /([^\/]*)/i, null, parseBalance);
+                getParam(td, result, path + 'debt_pct', /[^\/]*\/([^\/]*)/i, null, parseBalance);
+                getParam(td, result, path + 'debt_fee', /(?:[^\/]*\/){2}([^\/]*)/i, null, parseBalance);
+            }
+        },
+		contact: {
+			re: /Контакт/i,
+			result_func: html_entity_decode
+		}
+	};
+	var table = getElement(html, /<table[^>]+class="card-table"[^>]*>/i);
+	if(table){
+		info.contacts = [];
+		processTable(table, info.contacts, 'info.contacts.', colsDef);
+	}
+*/
+function processTable(table, result, path, colsDef, onWrongSize, onFilledResult){
+    var trs = getElements(table, /<tr[^>]*>/ig);
+    var cols, size;
+    for (var i = 0; i < trs.length; i++) {
+        var tr = trs[i];
+        var tds = getElements(tr, /<td[^>]*>/ig);
+        if(tds.length == 0) {
+            //Заголовок
+            var ths = getElements(tr, /<th[^>]*>/ig);
+            size = ths.length;
+            cols = initCols(colsDef, ths);
+        }else if(tds.length == size){
+            var t = {};
+
+            fillColsResult(colsDef, cols, tds, t, path);
+            if(onFilledResult)
+                onFilledResult(t, path);
+
+            result.push(t);
+        }else if(onWrongSize){
+            onWrongSize(tr, tds);
+        }
+    }
+}
+
+
+function initCols(colsDef, ths){
+    var cols = {};
+    for (var i = 0; i < ths.length; i++) {
+        var th = ths[i];
+        for(var name in colsDef){
+            if(colsDef[name].re.test(th))
+                cols[name] = i;
+        }
+    }
+    return cols;
+}
+
+function fillColsResult(colsDef, cols, tds, result, path){
+    function getset(val, def){
+        return isset(val) ? val : def;
+    }
+    path = path || '';
+
+    var rts = replaceTagsAndSpaces,
+        pb = parseBalance,
+        as = aggregate_sum;
+
+    for(var name in colsDef){
+        var cd = colsDef[name];
+        if(isset(cols[name])){
+            var td = tds[cols[name]];
+            var rn = getset(cd.result_name, name);
+            if(isArray(rn)){
+                var rn1 = [];
+                for (var i = 0; i < rn.length; i++) {
+                    rn1.push(path + rn[i]);
+                }
+                rn = rn1;
+            }else{
+                rn = path + rn;
+            }
+
+            if(cd.result_process) {
+                cd.result_process(path, td, result);
+            }else if(cd.result_sum){
+                cd.result_re && (cd.result_re.lastIndex = 0);
+                sumParam(td, result, rn, cd.result_re, getset(cd.result_replace, rts), getset(cd.result_func, pb), getset(cd.result_aggregate, as));
+            }else {
+                getParam(td, result, rn, cd.result_re, getset(cd.result_replace, rts), getset(cd.result_func, pb));
+            }
+        }
+    }
+}

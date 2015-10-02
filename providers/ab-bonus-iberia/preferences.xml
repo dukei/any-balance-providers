@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        title="IB Plus card number" 
+        positiveButtonText="OK" 
+        summary="||{@s}" 
+        dialogTitle="IB Plus card number" 
+        negativeButtonText="Cancel" 
+        dialogMessage="Please enter your Iberia Plus card number."
+        inputType="number"
+        key="login">
+    </EditTextPreference>
+    <EditTextPreference 
+        positiveButtonText="OK"
+        key="password" 
+        dialogTitle="PIN"
+        negativeButtonText="Cancel"
+        title="PIN"
+        summary="||***********"
+        dialogMessage="Enter PIN."
+        inputType="numberPassword">
+    </EditTextPreference>
+</PreferenceScreen>

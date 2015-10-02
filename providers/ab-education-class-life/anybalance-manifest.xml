@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-education-class-life</id>
+	<id version="3">ab-education-class-life</id>
 	<api flags="no_browser"/>
 	<name>Школьная карта (http://www.avsu.ru/)</name>
 	<description html="true"><![CDATA[

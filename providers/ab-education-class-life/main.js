@@ -12,13 +12,13 @@ var g_headers = {
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'https://www.avsu.ru';
+	var baseurl = 'https://www.avsu.ru/';
 	AnyBalance.setDefaultCharset('utf-8');
 	
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 	
-	var html = AnyBalance.requestGet('http://www.avsu.ru/loginparent/', g_headers);
+	var html = AnyBalance.requestGet(baseurl + 'loginparent/', g_headers);
 
 	if(!html || AnyBalance.getLastStatusCode() > 400){
 		AnyBalance.trace(html);
@@ -40,7 +40,7 @@ function main() {
 		return value;
 	});
 	
-	html = AnyBalance.requestPost(baseurl + '/client/', params, addHeaders({Referer: AnyBalance.getLastUrl()}));
+	html = AnyBalance.requestPost(baseurl + 'client/', params, addHeaders({Referer: AnyBalance.getLastUrl()}));
 	
 	if (!/exitForm/i.test(html)) {
 		if(/loginparent/i.test(AnyBalance.getLastUrl()))

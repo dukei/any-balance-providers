@@ -88,7 +88,7 @@ AnyBalance.trace("Parsing date "+a+" from value: "+e);
 return d
 }AnyBalance.trace("Failed to parse date from value: "+e)
 }function parseDateWord(b){AnyBalance.trace("Trying to parse date from "+b);
-var a=getParam(b,null,null,null,[replaceTagsAndSpaces,/\D*(?:январ(?:я|ь)|янв|january|jan)\D*/i,".01.",/\D*(?:феврал(?:я|ь)|фев|febrary|feb)\D*/i,".02.",/\D*(?:марта|март|мар|march|mar)\D*/i,".03.",/\D*(?:апрел(?:я|ь)|апр|april|apr)\D*/i,".04.",/\D*(?:ма(?:я|й)|may)\D*/i,".05.",/\D*(?:июн(?:я|ь)|июн|june|jun)\D*/i,".06.",/\D*(?:июл(?:я|ь)|июл|july|jul)\D*/i,".07.",/\D*(?:августа|август|авг|august|aug)\D*/i,".08.",/\D*(?:сентябр(?:я|ь)|сен|september|sep)\D*/i,".09.",/\D*(?:октябр(?:я|ь)|окт|october|oct)\D*/i,".10.",/\D*(?:ноябр(?:я|ь)|ноя|november|nov)\D*/i,".11.",/\D*(?:декабр(?:я|ь)|dec|december|dec)\D*/i,".12.",/\s/g,""]);
+var a=replaceAll(b,[replaceTagsAndSpaces,replaceHtmlEntities,/\D*(?:январ(?:я|ь)|янв|january|jan)\D*/i,".01.",/\D*(?:феврал(?:я|ь)|фев|febrary|feb)\D*/i,".02.",/\D*(?:марта|март|мар|march|mar)\D*/i,".03.",/\D*(?:апрел(?:я|ь)|апр|april|apr)\D*/i,".04.",/\D*(?:ма(?:я|й)|may)\D*/i,".05.",/\D*(?:июн(?:я|ь)|июн|june|jun)\D*/i,".06.",/\D*(?:июл(?:я|ь)|июл|july|jul)\D*/i,".07.",/\D*(?:августа|август|авг|august|aug)\D*/i,".08.",/\D*(?:сентябр(?:я|ь)|сен|september|sep)\D*/i,".09.",/\D*(?:октябр(?:я|ь)|окт|october|oct)\D*/i,".10.",/\D*(?:ноябр(?:я|ь)|ноя|november|nov)\D*/i,".11.",/\D*(?:декабр(?:я|ь)|dec|december|dec)\D*/i,".12.",/\s/g,""]);
 if(endsWith(a,".")){a+=new Date().getFullYear()
 }return parseDate(a)
 }function joinObjects(c,a){var d={};
@@ -189,7 +189,8 @@ b<a.length;
 }function aggregate_join(b,a,d){if(b.length==0){return
 }if(!isset(a)){a=", "
 }var c=b.join(a);
-if(!d){c=c.replace(/^(?:\s*,\s*)+|(?:\s*,\s*){2,}|(?:\s*,\s*)+$/g,"")
+if(!d){a=a.trim().replace(/([.?*+^$[\]\\(){}|-])/g,"\\$1");
+c=c.replace(new RegExp("^(?:\\s*"+a+"\\s*)+|(?:\\s*"+a+"]\\s*){2,}|(?:\\s*"+a+"\\s*)+$","g"),"")
 }return c
 }function create_aggregate_join(a,b){return function(c){return aggregate_join(c,a,b)
 }
@@ -254,7 +255,7 @@ c<a.length;
 ++c){if(a[c]!=="--auto--"&&!isset(b[a[c]])){b[a[c]]=null
 }}if(!isset(b.__tariff)){b.__tariff=null
 }}function getElement(j,n,e,a){var c=n.exec(j);
-if(!c){return null
+if(!c){return
 }var l=c.index;
 var m=j.substr(l,c[0].length);
 var d=getParam(m,null,null,/<(\w+)/);
@@ -286,8 +287,55 @@ c<f.length;
 if(j){break
 }}}if(j){d.push(h)
 }if(!g.global){break
-}}while(h!==null);
+}}while(isset(h));
 return d
 }function __shouldProcess(a,b){if(!AnyBalance.shouldProcess){return !!b.__id
 }return AnyBalance.shouldProcess(a,b)
-};
+}function __setLoginSuccessful(){if(AnyBalance.setLoginSuccessful){AnyBalance.setLoginSuccessful()
+}}function n2(a){return a<10?"0"+a:""+a
+}function fmtDate(b,a){if(!isset(a)){a="."
+}return n2(b.getDate())+a+n2(b.getMonth()+1)+a+b.getFullYear()
+}function joinUrl(a,b){if(!b){return a
+}if(/^\//.test(b)){return a.replace(/^(\w+:\/\/[\w.\-]+).*$/,"$1"+b)
+}if(/^\w+:\/\//.test(b)){return b
+}a=a.replace(/\?.*$/,"");
+if(/:\/\/.*\//.test(a)){a=a.replace(/\/[^\/]*$/,"/")
+}if(!endsWith(a,"/")){a+="/"
+}return a+b
+}function processTable(l,o,n,f,g,d){var e=getElements(l,/<tr[^>]*>/ig);
+var j,m;
+for(var c=0;
+c<e.length;
+c++){var h=e[c];
+var b=getElements(h,/<td[^>]*>/ig);
+if(b.length==0){var a=getElements(h,/<th[^>]*>/ig);
+m=a.length;
+j=initCols(f,a)
+}else{if(b.length==m){var k={};
+fillColsResult(f,j,b,k,n);
+if(d){d(k,n)
+}o.push(k)
+}else{if(g){g(h,b)
+}}}}}function initCols(d,a){var f={};
+for(var c=0;
+c<a.length;
+c++){var e=a[c];
+for(var b in d){if(d[b].re.test(e)){f[b]=c
+}}}return f
+}function fillColsResult(l,m,h,p,o){function f(r,q){return isset(r)?r:q
+}o=o||"";
+var j=replaceTagsAndSpaces,n=parseBalance,c=aggregate_sum;
+for(var a in l){var b=l[a];
+if(isset(m[a])){var d=h[m[a]];
+var k=f(b.result_name,a);
+if(isArray(k)){var e=[];
+for(var g=0;
+g<k.length;
+g++){e.push(o+k[g])
+}k=e
+}else{k=o+k
+}if(b.result_process){b.result_process(o,d,p)
+}else{if(b.result_sum){b.result_re&&(b.result_re.lastIndex=0);
+sumParam(d,p,k,b.result_re,f(b.result_replace,j),f(b.result_func,n),f(b.result_aggregate,c))
+}else{getParam(d,p,k,b.result_re,f(b.result_replace,j),f(b.result_func,n))
+}}}}};

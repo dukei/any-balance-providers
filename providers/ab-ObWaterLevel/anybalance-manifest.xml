@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-ObWaterLevel</id>
+  <name>Ob water level</name>
+  <description>
+    Water level Ob Novosibirsk
+  </description>
+  <author>mtch0604 &lt;mtch0604@gmail.com&gt;</author>
+  <files>
+    <js>main.js</js>
+    <icon>ico-bridge.png</icon>
+  </files>
+  <counters>
+    <counter id="WL" name="Уровень воды в Оби" units=" см"/>
+  </counters>
+</provider>

@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="8">ab-money-mts</id>
+	<id version="9">ab-money-mts</id>
 	<api flags="no_browser"/>
 	<name>МТС Банк</name>
 	<description html="true"><![CDATA[
@@ -36,9 +36,13 @@
 	<counters>
 		<counter id="balance" name="Остаток" units=" {@currency}"/>
 		<counter id="currency" name="Валюта" type="text"/>
+		<counter id="minpay" name="Минимальный платеж" units=" {@currency}"/>
+		<counter id="minpay_till" name="Срок минимального платежа" type="time" format="dd/MM/yyyy"/>
+		<counter id="accnum" name="Номер счета" type="text"/>
 		<counter id="type" name="Тип" type="text"/>
 		<counter id="cardnum" name="Номер" type="text"/>
 		<counter id="fio" name="Владелец" type="text"/>
+		<counter id="till" name="Срок действия" type="time" format="MM/yy"/>
 	</counters>
 	<keywords>интернет-банкинг</keywords>
 	<type>money, bank</type>

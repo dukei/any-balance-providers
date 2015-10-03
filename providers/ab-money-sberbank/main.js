@@ -44,8 +44,8 @@ var g_countersTable = {
 		"maxlimit": "loans.maxlimit",
 		"loan_ammount": "loans.loan_ammount",
 		"userName": "loans.userName",
-		"cardNumber": "loans.cardNumber",
-		"__tariff": "loans.cardNumber",
+		"cardNumber": "loans.num",
+		"__tariff": "loans.num",
 	},
     acc: {
     	"balance": "accounts.balance",
@@ -166,7 +166,7 @@ function shouldProcess(counter, info){
 		    if(!prefs.lastdigits)
 		    	return true;
 			
-			if(endsWith(info.__id, prefs.lastdigits))
+			if(endsWith(info.num, prefs.lastdigits))
 				return true;
 		}	
 		case 'accounts_met':

@@ -4,7 +4,7 @@
 		obligatory="true"
 		title="Логин"
 		positiveButtonText="ОК"
-		summary="|УНК или псевдоним|{@s}\n"
+		summary="|УНК или псевдоним|{@s}"
 		dialogTitle="УНК или псевдоним"
 		negativeButtonText="Отмена"
 		dialogMessage="УНК или псевдоним"
@@ -17,7 +17,7 @@
 		dialogTitle="Пароль"
 		negativeButtonText="Отмена"
 		title="Пароль"
-		summary="|Введите пароль|***********\n"
+		summary="|Введите пароль|***********"
 		dialogMessage="Введите пароль для входа в телебанк"
 		inputType="textPassword">
 	</EditTextPreference>
@@ -25,7 +25,7 @@
 		key="source"
 		title="Источник данных"
 		summary="||{@s}"
-		entries="Мобильное приложение|Интернет-банк"
+		entries="Мобильное приложение|Интернет-банк (только карты и счета)"
 		entryValues="mobile|site"
 		defaultValue="mobile">
 	</ListPreference>
@@ -33,14 +33,14 @@
 		key="type"
 		title="Что смотреть"
 		summary="||{@s}"
-		entries="Карта или счет|Счет в АБС"
-		entryValues="card|abs"
+		entries="Карта или счет|Депозит|Кредит"
+		entryValues="card|dep|crd"
 		defaultValue="card">
 	</ListPreference>
 	<EditTextPreference
 		title="Номер карты/счета"
 		positiveButtonText="ОК"
-		summary="|Автоматически|{@s}\n"
+		summary="|Автоматически|{@s}"
 		dialogTitle="Номер карты/счета"
 		negativeButtonText="Отмена"
 		dialogMessage="В зависимости от настройки Что смотреть, введите сюда последние цифры номера карты или счета. Если оставить поле пустым, то будет показана информация по первому счету/карте."

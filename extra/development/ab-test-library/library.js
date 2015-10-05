@@ -68,7 +68,7 @@ changelog:
  
 function getParam(html, result, param, regexp, replaces, parser) {
 	if(!isset(html)) {
-		AnyBalance.trace('param1 is unset! ' + new Error().stack);
+		AnyBalance.trace('getParam: input ' + (param ? '(' + param + ')' : '') + ' is unset! ' + new Error().stack);
 		return;
 	}
 	if (!isAvailable(param)) {
@@ -602,6 +602,11 @@ function parseDateJS(str) {
  * см. например replaceTagsAndSpaces
  */
 function sumParam(html, result, param, regexp, replaces, parser, do_replace, aggregate) {
+	if(!isset(html)) {
+		AnyBalance.trace('sumParam: input ' + (param ? '(' + param + ')' : '') + ' is unset! ' + new Error().stack);
+		return;
+	}
+
 	if (typeof(do_replace) == 'function') {
 		var aggregate_old = aggregate;
 		aggregate = do_replace;

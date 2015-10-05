@@ -57,7 +57,8 @@ function main(){
     if(!/BtnExit_Click/i.test(html)){
         var error = getParam(html, null, null, /<font[^>]*color:\s*red[^>]*>([\s\S]*?)<\/font>/, replaceTagsAndSpaces, html_entity_decode);
         if(error)
-            throw new AnyBalance.Error(error);
+            throw new AnyBalance.Error(error, null, /Неверное имя пользователя или пароль/i.test(error));
+        AnyBalance.trace(html);
         throw new AnyBalance.Error('Не удалось войти в личный кабинет. Проблемы на сайте или сайт изменен.');
     }
 

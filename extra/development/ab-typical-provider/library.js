@@ -304,4 +304,40 @@ return d
 if(/:\/\/.*\//.test(a)){a=a.replace(/\/[^\/]*$/,"/")
 }if(!endsWith(a,"/")){a+="/"
 }return a+b
-};
+}function processTable(l,o,n,f,g,d){var e=getElements(l,/<tr[^>]*>/ig);
+var j,m;
+for(var c=0;
+c<e.length;
+c++){var h=e[c];
+var b=getElements(h,/<td[^>]*>/ig);
+if(b.length==0){var a=getElements(h,/<th[^>]*>/ig);
+m=a.length;
+j=initCols(f,a)
+}else{if(b.length==m){var k={};
+fillColsResult(f,j,b,k,n);
+if(d){d(k,n)
+}o.push(k)
+}else{if(g){g(h,b)
+}}}}}function initCols(d,a){var f={};
+for(var c=0;
+c<a.length;
+c++){var e=a[c];
+for(var b in d){if(d[b].re.test(e)){f[b]=c
+}}}return f
+}function fillColsResult(l,m,h,p,o){function f(r,q){return isset(r)?r:q
+}o=o||"";
+var j=replaceTagsAndSpaces,n=parseBalance,c=aggregate_sum;
+for(var a in l){var b=l[a];
+if(isset(m[a])){var d=h[m[a]];
+var k=f(b.result_name,a);
+if(isArray(k)){var e=[];
+for(var g=0;
+g<k.length;
+g++){e.push(o+k[g])
+}k=e
+}else{k=o+k
+}if(b.result_process){b.result_process(o,d,p)
+}else{if(b.result_sum){b.result_re&&(b.result_re.lastIndex=0);
+sumParam(d,p,k,b.result_re,f(b.result_replace,j),f(b.result_func,n),f(b.result_aggregate,c))
+}else{getParam(d,p,k,b.result_re,f(b.result_replace,j),f(b.result_func,n))
+}}}}};

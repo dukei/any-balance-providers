@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-bonus-iberia</id>
+	<api flags="no_browser"/>
+	<name>Iberia</name>
+	<description html="true"><![CDATA[
+	<p>Shows your Elite Points in Iberia Plus bonus program https://www.iberia.com</p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Your avios"/>
+		<counter id="avios_left" name="Elite points to upgrade to the next level"/>
+		<counter id="flights_left" name="Flights to upgrade to the next level"/>
+		<counter id="status_till" name="Status upgrade deadline"/>
+		<counter id="fio" name="Name" type="text"/>
+		<counter id="num" name="Card Number" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>bonus, air</type>
+</provider>

@@ -722,8 +722,7 @@ function processCredit2(html, result) {
         }
     }
 
-    if(AnyBalance.isAvailable('credits.minpay_left'))
-        result.minpay_left = result.minpay - (result.minpay_paid || 0);
+    getParam(html, result, 'credits.minpay_left', /<span[^>]+ACCreditsLargeHeaderFont[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
 
     if (AnyBalance.isAvailable('credits.transactions')) {
         processCreditTransactions(html, result);

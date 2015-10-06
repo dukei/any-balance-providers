@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-transport-beltoll</id>
-	<api flags="no_browser"/>
+	<id version="3">ab-transport-beltoll</id>
+	<api flags="no_browser|captcha"/>
 	<name>Система BelToll</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе провайдера BelToll<a href="http://beltoll.by/ru.aspx">http://beltoll.by/ru.aspx</a></p>

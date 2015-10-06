@@ -1827,6 +1827,8 @@ function enterLK(filial, options){
 	}
 	if(!isLoggedInLK(html)){
 		var token = getParam(html, null, null, /name=CSRF value="([^"]+)/i);
+		if(!token)
+			AnyBalance.trace(html);
 		
 		checkEmpty(token, 'Не удалось найти токен авторизации ЛК!', true);
 		
@@ -2178,6 +2180,7 @@ function megafonLKRemainders(filial, html, result){
 			var units = getParam(left, null, null, /<span[^>]*>([^<]*)<\/span>\s*$/i, replaceTagsAndSpaces, html_entity_decode);
 			var name = gname + ' ' + rname;
 
+			AnyBalance.trace('Обработка услуги ' + gname + ':' + rname);
 
 			// Минуты
 			if(/мин/i.test(units)) {

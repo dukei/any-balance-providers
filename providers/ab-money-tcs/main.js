@@ -51,7 +51,15 @@ var g_countersTable = {
 		"freeaddlimit": "accounts.free_add_limit",
 		"freecashlimit": "accounts.free_cash_limit",
 		"accnum": "accounts.num"
-    }
+    },
+	saving: {
+    	"balance": "savings.balance",
+		"currency": "savings.currency",
+		"name": "savings.name",
+		"__tariff": "savings.name",
+		"pcts": "savings.pct_sum",
+	},
+
 };
 
 var g_accountIDForCard;
@@ -61,15 +69,13 @@ function main(){
     if(!/^(card|acc|dep|saving)$/i.test(prefs.type || ''))
     	prefs.type = 'card';
 
-    if(prefs.type == 'saving')
-    	throw new AnyBalance.Error('Не удаётся получить накопительный счет. Сайт изменен?');
-	
     var adapter = new NAdapter(joinObjects(g_countersTable[prefs.type], g_countersTable.common), shouldProcess);
 	
 //    adapter.processInfo = adapter.envelope(processInfo);
     adapter.processCards = adapter.envelope(processCards);
     adapter.processAccounts = adapter.envelope(processAccounts);
     adapter.processDeposits = adapter.envelope(processDeposits);
+    adapter.processSavings = adapter.envelope(processSavings);
 
 	login();
 	
@@ -99,6 +105,13 @@ function main(){
 		
 		if(!adapter.wasProcessed('deposits'))
 			throw new AnyBalance.Error(prefs.num ? 'Не найден депозит последними цифрами ' + prefs.num : 'У вас нет ни одного депозита!');
+		
+		result = adapter.convert(result);
+	} else if(prefs.type == 'saving') {
+		adapter.processSavings(result);
+		
+		if(!adapter.wasProcessed('savings'))
+			throw new AnyBalance.Error('У вас нет ни одного сберегательного счета!');
 		
 		result = adapter.convert(result);
 	}
@@ -144,6 +157,12 @@ function shouldProcess(counter, info){
 			//Закрытые депозиты могут быть без номера
 			if(info.num && endsWith(info.num, prefs.num))
 				return true;
+		}
+		case 'savings':
+		{
+			if(prefs.type != 'saving')
+				return false;
+	    	return true; //У них нет номера, возвращаем только первый
 		}
 		default:
 			return false;

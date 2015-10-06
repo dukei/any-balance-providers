@@ -199,7 +199,7 @@ function processAccounts(result){
 
         var c = {
             __id: acc.id,
-            __name: acc.marketingName + ', ' + acc.externalAccountNumber,
+            __name: acc.marketingName + (acc.externalAccountNumber ? ', ' + acc.externalAccountNumber : ''),
             num: acc.externalAccountNumber
         };
 
@@ -230,8 +230,9 @@ function processAccount(acc, result){
     getParam(jspath1(acc, '$.creditLimit.value'), result, 'accounts.limit');
 
     getParam(jspath1(acc, '$.debtAmount.value'), result, 'accounts.debt');
+    getParam(jspath1(acc, '$.currentRecommendedPayment.value'), result, 'accounts.recompay');
     getParam(jspath1(acc, '$.currentMinimalPayment.value'), result, 'accounts.minpay');
-    getParam(jspath1(acc, '$.minpaytill.milliseconds'), result, 'accounts.minpaytill');
+    getParam(jspath1(acc, '$.duedate.milliseconds'), result, 'accounts.minpaytill');
     getParam(jspath1(acc, '$.marketingName'), result, 'accounts.name');
     getParam(jspath1(acc, '$.loyalty[0].amount'), result, 'accounts.cashback');
 
@@ -272,6 +273,38 @@ function processDeposits(result){
     }
 }
 
+function processSavings(result){
+    if(!AnyBalance.isAvailable('savings'))
+        return;
+
+    var json = requestAccountsJson();
+    var accs = [];
+
+    for (var i = 0; i < json.payload.length; i++) {
+        var acc = json.payload[i];
+        if(/Saving/i.test(acc.accountType))
+            accs.push(acc);
+    }
+
+    AnyBalance.trace('Найдено ' + accs.length + ' сберегательных счетов');
+    result.savings = [];
+
+    for (var i = 0; i < accs.length; i++) {
+        acc = accs[i];
+
+        var c = {
+            __id: acc.id,
+            __name: (acc.marketingName || acc.name),
+        };
+
+        if(__shouldProcess('savings', c)){
+            processSaving(acc, c);
+        }
+
+        result.savings.push(c);
+    }
+}
+
 function processDeposit(acc, result){
     getParam(jspath1(acc, '$.accountType'), result, 'deposits.type_code');
     getParam(jspath1(acc, '$.marketingName'), result, 'deposits.name');
@@ -305,6 +338,24 @@ function processDeposit(acc, result){
 
     if(AnyBalance.isAvailable('deposits.transactions'))
         processDepositsTransactions(result);
+
+
+}
+
+function processSaving(acc, result){
+    getParam(jspath1(acc, '$.accountType'), result, 'savings.type_code');
+    getParam(jspath1(acc, '$.marketingName'), result, 'savings.name');
+
+    getParam(jspath1(acc, '$.creationDate.milliseconds'), result, 'savings.date_start');
+    getParam(jspath1(acc, '$.interest.value'), result, 'savings.pct_sum');
+
+    getParam(jspath1(acc, '$.moneyAmount.value'), result, 'savings.balance');
+    getParam(jspath1(acc, '$.moneyAmount.currency.name'), result, 'savings.currency');
+
+    getParam(jspath1(acc, '$.status'), result, 'savings.status_code'); //ACTIVE
+
+    if(AnyBalance.isAvailable('savings.transactions'))
+        processSavingsTransactions(result);
 
 
 }

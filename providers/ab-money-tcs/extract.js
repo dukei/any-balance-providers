@@ -97,7 +97,7 @@ function login() {
 
             AnyBalance.trace('Необходимо привязать устройство...');
             var code = AnyBalance.retrieveCode("Пожалуйста, введите код подтверждения из смс", null, {
-                inputType: number,
+                inputType: 'number',
                 time: 180000
             });
             AnyBalance.trace('Получили код: ' + code);

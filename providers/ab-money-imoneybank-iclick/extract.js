@@ -22,29 +22,53 @@ function login(){
 	
     AnyBalance.setDefaultCharset('utf-8'); 
 
-    var html = AnyBalance.requestGet(g_baseurl + 'login', g_headers);
-    AnyBalance.trace(html);
-
     try{
-		html = AnyBalance.requestPost(g_baseurl + 'login_check', {
-			'_cellphone':prefs.login,
-			'_password':prefs.password,
-			'submit':'',
-        }, addHeaders({Referer: AnyBalance.getLastUrl()}));
+	    var html = AnyBalance.requestGet(g_baseurl, addHeaders({Referer: g_baseurl}));
     }catch(e){
     	if(!prefs.__debug)
     		throw e;
-    	html = AnyBalance.requestGet(g_baseurl, addHeaders({Referer: AnyBalance.getLastUrl()}));
+    	html = '';
+    }
+
+    if(!/logout/i.test(html)){
+        html = AnyBalance.requestGet(g_baseurl + 'login', addHeaders({Referer: g_baseurl}));
+        //AnyBalance.trace(html);
+
+		if(/Личный кабинет временно недоступен/i.test(html)){
+			error = getParam(html, null, null, /<\/h1>[^]*?<table[^>]*>/i, replaceTagsAndSpaces, html_entity_decode);
+			throw new AnyBalance.Error(error || 'Личный кабинет временно недоступен');
+		}
+        
+        try{
+			html = AnyBalance.requestPost(g_baseurl + 'login_check', {
+				'_cellphone':prefs.login,
+				'_password':prefs.password,
+				'submit':'',
+            }, addHeaders({Referer: AnyBalance.getLastUrl()}));
+        }catch(e){
+        	if(!prefs.__debug)
+        		throw e;
+        	html = AnyBalance.requestGet(g_baseurl, addHeaders({Referer: AnyBalance.getLastUrl()}));
+        }
+    }else{
+    	AnyBalance.trace('Уже внутри. Пользуемся предыдущей сессией');
     }
 	
 	if (!/logout/i.test(html)) {
 		var error = getParam(html, null, null, /window.msg\(["']([^"']+)["'],\s*["']error/i, replaceTagsAndSpaces, html_entity_decode);
 		if (error)
 			throw new AnyBalance.Error(error, null, /Номер не зарегистрирован в системе|Неверная пара логин\/пароль|Поля формы заполнены некорректно/i.test(error));
+
+		if(/Личный кабинет временно недоступен/i.test(html)){
+			error = getParam(html, null, null, /<\/h1>[^]*?<table[^>]*>/i, replaceTagsAndSpaces, html_entity_decode);
+			throw new AnyBalance.Error(error || 'Личный кабинет временно недоступен');
+		}
 		
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
+
+	__setLoginSuccessful();
 
 	return html;
 }
@@ -78,7 +102,18 @@ function n2(n){
 }
 
 function fetchInfo(result, html){
-	getParam(html, result, 'fio', /<a[^>]+href="[^"]*\/profile[^>]*>([\s\S]*?)<\/a>/i, replaceTagsAndSpaces, html_entity_decode);
+    if(!AnyBalance.isAvailable('info'))
+    	return;
+
+    var info = result.info = {};
+
+	getParam(html, result, 'info.fio', /<a[^>]+href="[^"]*\/profile[^>]*>([\s\S]*?)<\/a>/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(prefs.login, result, 'info.mphone');
+	
+	if(AnyBalance.isAvailable('info.email')){
+		var html = AnyBalance.requestGet(g_baseurl + 'profile/alerts/email', addHeaders({Referer: g_baseurl}));
+		getParam(html, result, 'info.email', /<input[^>]+id="change_alert_data_email"[^>]*value="([^"]*)/i, null, html_entity_decode);
+	}
 }
 
 function fetchAccount(result, acc){

@@ -1,25 +1,20 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id major_version="2.0" version="21">ab-money-uralsib</id>
+	<id major_version="2.0" version="22">ab-money-uralsib</id>
 	<name>Банк УРАЛСИБ</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о текущем остатке и других параметрах счетов банка УРАЛСИБ (http://www.bankuralsib.ru).</p>
-	<p>Информация берется из старого Интернет-банка (http://client.uralsibbank.ru) и нового (https://i.bankuralsib.ru)</p>
+	<p>Предоставляет информацию о текущем остатке и других параметрах счетов банка УРАЛСИБ <a href="http://www.bankuralsib.ru">http://www.bankuralsib.ru</a></p>
+	<p>Информация берется из старого Интернет-банка <a href="https://i.bankuralsib.ru">https://i.bankuralsib.ru</a></p>
 	]]></description>
 	<instruction html="true"><![CDATA[
-	<p>Как указать счет, по которому необходимо получить информацию:</p>
-	<ol>
-	<li> Узнайте ID имеющихся у вас счетов, выбрав в настройках отображение счетчика ""Сводка"".</li>
-	<li>Введите ID счета в настройках провайдера.</li>
-	</ol>
 	<p>Как получить логин и пароль для входа в систему:</p>
 	<ol>  
-	<li>Станьте клиентом Банка УРАЛСИБ.</li>  
-	<li>Подпишите в любом отделений Банка УРАЛСИБ заявление «О предоставлении дистанционного банковского обслуживания».</li>
+		<li>Станьте клиентом Банка УРАЛСИБ.</li>  
+		<li>Подпишите в любом отделений Банка УРАЛСИБ заявление «О предоставлении дистанционного банковского обслуживания».</li>
 	</ol>
 	]]></instruction>
-	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
@@ -31,6 +26,8 @@
 		<js>base64.js</js>
 		<js>hash.js</js>
 		<js>library.js</js>
+		<js>nadapter.js</js>
+		<js>extract.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>

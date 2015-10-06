@@ -6,4 +6,7 @@
 	<change version="2" date="2015-06-14">
 	- Handle temporary errors, such as "service temporary unavailable", properly.
 	</change>
+	<change version="3" date="2015-10-06">
+	- Bugfix for the CROSS data extension packs credit not showing.
+	</change>
 </history>

@@ -119,7 +119,9 @@ function processClick(options) {
         html = clickGoToUrl(lastUrl.replace(/_afrWindowId=null/, '_afrWindowId=' + windowName));
     }
 
-    if(!/images\/close.png/i.test(html)){
+    if(!/images\/close.png/i.test(html) //Click 2.0
+    	 && !/&#1042;&#1099;&#1093;&#1086;&#1076;/i.test(html) //Click 1.0
+    	 ){
         AnyBalance.trace(html);
         throw new AnyBalance.Error('Не удалось войти в Альфа-Клик. Сайт изменен?');
     }

@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="48" date="2015-10-07">
+	Исправление работы с клик 1.0
+	</change>
 	<change version="47" date="2015-10-02">
 	Исправлен счетчик К оплате
 	</change>

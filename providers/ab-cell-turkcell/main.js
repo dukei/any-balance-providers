@@ -20,43 +20,51 @@ function requestBonuses() {
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'https://m.turkcell.com.tr/';
+	var baseurl = 'https://m.turkcell.com.tr';
+	var baseurlApi = 'https://tsdk.turkcell.com.tr';
 	AnyBalance.setDefaultCharset('utf-8');
 	
 	checkEmpty(prefs.login, 'Enter login!');
 	checkEmpty(prefs.password, 'Enter password!');
 	
-	var html = AnyBalance.requestGet(baseurl + 'giris', g_headers);
-	
-	var params = createFormParams(html, function(params, str, name, value) {
-		if (name == 'msisdn') 
-			return prefs.login;
-		else if (name == 'password')
-			return prefs.password;
+	var html = AnyBalance.requestGet(baseurl + '/giris', g_headers);
 
-		return value;
-	});	
+	html = AnyBalance.requestPost(baseurlApi + '/SERVICE/AuthAPI/serviceLogin.json', JSON.stringify({
+		"appId": "215302", "username": prefs.login, "password": prefs.password, "rememberMe" : "true"
+	}), addHeaders({Accept: 'application/json, text/javascript, */*; q=0.01', 'Content-Type': 'application/json', Referer: baseurl + '/giris'}));
+
+	var json = getJson(html);
+
+	if(json.message != 'Success'){
+		var error = json.message;
+		if(error)
+			throw new AnyBalance.Error(error, null, /Lütfen girmiş olduğunuz bilgileri kontrol ederek tekrar deneyiniz/i.test(error));
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Can`t login? Is the site changed?');
+	}
 	
-	html = AnyBalance.requestPost(baseurl + 'giris', params, addHeaders({Referer: baseurl + 'giris'}));
+	html = AnyBalance.requestPost(baseurl + '/giris', {
+		authToken: json.rememberMeToken,
+		clientSecret: json.clientSecret
+	}, addHeaders({Referer: baseurl + '/giris'}));
 	
-	var re = new RegExp('media__number(?:[^>]*>){1}[^<]*'+prefs.login, 'i');
-	
-	if(!re.exec(html)) {
-		var error = getParam(html, null, null, /<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
+	if(!/logout_button/i.test(html)) {
+		var error = getElement(html, /<div[^>]+error_main[^>]*>([\s\S]*?)<\/div>/i, [/<a[^>]+type="submit"[^>]*>[^]*?<\/a>/i, '', replaceTagsAndSpaces], html_entity_decode);
 		if(error)
 			throw new AnyBalance.Error(error);
+		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Can`t login? Is the site changed?');
 	}
 	
 	var result = {success: true};
 	// Одинаковые данные для всех линий
-	getParam(html, result, 'balance', /class="price"(?:[^>]*>){2}([^<]*TL)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'fio', /"media__title text-satura"(?:[^>]*>){1}([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'phone', /"media__number"(?:[^>]*>){1}([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'balance', /<span[^>]+class="price"[^>]*>([^]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'phone', /<div[^>]*media__number[^>]*>([^]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'fio', /<div[^>]*media__title[^>]*>([^]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
 	
 	// Для постоплаты, дата платежа и сумма счета
 	if(isAvailable(['fatura', 'fatura_date'])) {
-		html = AnyBalance.requestGet(baseurl + 'hesabim/faturalar/fatura-ozet', addHeaders({Referer: baseurl + 'giris'}));
+		html = AnyBalance.requestGet(baseurl + '/hesabim/faturalar/fatura-ozet', addHeaders({Referer: baseurl + '/giris'}));
 		
 		getParam(html, result, 'fatura', /Toplam Tutar[^>]*>\s*Son ödeme tarihi(?:[^>]*>){5}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
 		if(isset(result.fatura))
@@ -70,9 +78,9 @@ function main() {
 		'minutes_local_days', 'minutes_local_left', 'minutes_local_total', 'minutes_local_used', 
 		'minutes_days', 'minutes_left', 'minutes_total', 'minutes_used', 
 		'minutes_group_total', 'minutes_group_used', 'minutes_group_left', 
-		'data_days', 'data_left', 'data_total', 'data_used'])) {
+		'data_days', 'data_left', 'data_total', 'data_used', '__tariff'])) {
 		
-		html = AnyBalance.requestGet(baseurl + 'hesabim', g_headers);
+		html = AnyBalance.requestGet(baseurl + '/hesabim', g_headers);
 
 		sumParam(html, result, 'minutes_local_total', /class="media__body"(?:[\s\S]*?<\/div)(?:[^>]*>){2}TURKCELL'LİLERLE\s*-([^<]*DK)/ig, [replaceTagsAndSpaces, /\./, ''], parseBalance, aggregate_sum);
 		sumParam(html, result, 'minutes_local_used', /([\d.,]+)(?:<[^<]*){6}TURKCELL'LİLERLE[^<]*DK/ig, [replaceTagsAndSpaces, /\./, ''], parseBalance, aggregate_sum);
@@ -100,7 +108,9 @@ function main() {
 			sumParam(smsTable, result, 'sms_left', /((?:<[^<]*){2})(?:[^>]*>){1}ADET KALDI/ig, [replaceTagsAndSpaces, /\./, ''], parseBalance, aggregate_sum);
 			if(isset(result.sms_left) && isset(result.sms_used))
 				getParam(result.sms_left+result.sms_used, result, 'sms_total');
-		}		
+		}
+
+		getParam(html, result, '__tariff', /<div[^>]+credit__tariff[^>]*>([^]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
 	}
 	
     AnyBalance.setResult(result);

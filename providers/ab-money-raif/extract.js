@@ -109,7 +109,7 @@ function processCard(info, result) {
 	getParam(info, result, 'cards.openDate', /<openDate>([\s\S]*?)<\/openDate>/i, replaceTagsAndSpaces, parseDateISO);	
     getParam(info, result, 'cards.shortType', /<shortType>([\s\S]*?)<\/shortType>/i, replaceTagsAndSpaces, html_entity_decode);
 	
-	if(processCardTransactions)
+	if(typeof processCardTransactions != 'undefined')
 		processCardTransactions(info, result);
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -153,7 +153,7 @@ function processAccount(info, result) {
 	getParam(info, result, 'accounts.owner_id', /<owner_id>([\s\S]*?)<\/owner_id>/i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(info, result, 'accounts.branchId', /<branchId>([\s\S]*?)<\/branchId>/i, replaceTagsAndSpaces, html_entity_decode);
 	
-	if(processAccountTransactions)
+	if(typeof processAccountTransactions != 'undefined')
 		processAccountTransactions(info, result);
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -231,7 +231,7 @@ function processLoan(loan, result) {
 	getParam(loan, result, 'loans.till', /<closeDate>([\s\S]*?)<\/closeDate>/i, replaceTagsAndSpaces, parseDateISO);
 	getParam(loan, result, 'loans.openDate', /<openDate>([\s\S]*?)<\/openDate>/i, replaceTagsAndSpaces, parseDateISO);
 	
-	if(processLoanTransactions)
+	if(typeof processLoanTransactions != 'undefined')
 		processLoanTransactions(loan, result);
 }
 

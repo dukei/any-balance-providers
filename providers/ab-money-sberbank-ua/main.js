@@ -99,8 +99,10 @@ function fetchCard(html, baseurl) {
     getParam(prod.balances.full_crlimit.value, result, 'maxlimit', null, null, parseBalance);
 	getParam(prod.card.expiryDate + '', result, 'till', null, null, parseDate);
     getParam(prod.balances.total_due.value, result, 'debt', null, null, parseBalance);
+    //Поки так, бо prod.balances.06.value видає помилку
+    getParam(html, result, 'mz', /\"06\" \: \{[\s\S]*?\"value\" \: \"([\s\d.,\-]+)\"/i, replaceTagsAndSpaces, parseBalance);
     getParam(prod.card.accountNumber, result, 'rr');
-    getParam(prod.balances.available.currency, result, ['currency', 'balance', 'maxlimit', 'debt']);
+    getParam(prod.balances.available.currency, result, ['currency', 'balance', 'maxlimit', 'debt', 'mz']);
     getParam(prod.product.name, result, '__tariff');
 	getParam(prod.number, result, 'cardNumber');
 	
@@ -135,8 +137,10 @@ function fetchAcc(html, baseurl) {
     getParam(prod.balances.full_crlimit.value, result, 'maxlimit', null, null, parseBalance);
 //	getParam(prod.card.expiryDate, result, 'till', null, null, parseDate);
     getParam(prod.balances.total_due.value, result, 'debt', null, null, parseBalance);
+    //Поки так, бо prod.balances.06.value видає помилку
+    getParam(html, result, 'mz', /\"06\" \: \{[\s\S]*?\"value\" \: \"([\s\d.,\-]+)\"/i, replaceTagsAndSpaces, parseBalance);
     getParam(prod.cardAccount.accountNumber, result, 'rr');
-    getParam(prod.balances.available.currency, result, ['currency', 'balance', 'maxlimit', 'debt']);
+    getParam(prod.balances.available.currency, result, ['currency', 'balance', 'maxlimit', 'debt', 'mz']);
     getParam(prod.product.name, result, '__tariff');
 //	getParam(prod.number, result, 'cardNumber');
 	

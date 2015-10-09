@@ -1,5 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="18" date="2015-10-09">
+	- Улучшено получение данных по счетам, картам, кредитам и депозитам.
+	</change>
 	<change version="17" date="2014-09-15">
 	- Исправлено получение депозитов.
 	</change>

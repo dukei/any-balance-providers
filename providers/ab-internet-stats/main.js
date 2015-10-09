@@ -21,7 +21,7 @@ function main(){
     AnyBalance.setDefaultCharset('windows-1251');
 	
     var html = AnyBalance.requestGet(baseurl + 'index.php', addHeaders({Referer: baseurl})); 
-	
+	throw new AnyBalance.Error('Провайдер ликвидировал свою деятельность в форме присоединения к stupino.su');
 	var captchaa;
 	if(AnyBalance.getLevel() >= 7){
 		var captcha_href = getParam(html, null, null, /(pic\.php[^"]*)/i);
@@ -46,6 +46,7 @@ function main(){
 		lp:gm5(html)
 	}, addHeaders({Referer: baseurl + 'index.php'}));
 	
+
 	if(!/logout\.php/i.test(html) && !/window.location.href='index.php'/i.test(html)){
 		var error = getParam(html, null, null, /alert\(\'([\s\S]*?)\'/i, replaceTagsAndSpaces, html_entity_decode);
 		if (error)

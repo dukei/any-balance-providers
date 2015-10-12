@@ -134,7 +134,6 @@ function main(){
 
 function shouldProcess(counter, info){
 	var prefs = AnyBalance.getPreferences();
-	var num = getParam(info.__name, null, null, /([^,]+)/i);
 	
 	switch(counter){
 		case 'cards':
@@ -144,6 +143,7 @@ function shouldProcess(counter, info){
 		    if(!prefs.lastdigits)
 		    	return true;
 			
+			var num = getParam(info.__name, null, null, /([^,]+)/i);
 			if(endsWith(num, prefs.lastdigits))
 				return true;
 		    

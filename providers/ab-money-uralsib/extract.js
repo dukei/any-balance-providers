@@ -162,9 +162,9 @@ function processCards(html, result) {
 
 function processCard(card, result) {
 	getParam(result.__name, result, 'cards.cardNumber');
-	getParam(card, result, 'cards.balance', /"sum"(?:[^>]*>){1}([^<]+)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(card, result, ['cards.currency', 'cards.balance'], /"sum"(?:[^>]*>){1}([^<]+)/i, replaceTagsAndSpaces, parseCurrencyAndMy);
-	getParam(card, result, 'cards.till', /\d{4}[-x]{8,}\d{4}[^<]*?(\d{1,2}\/\d{1,2})/i, [replaceTagsAndSpaces, /(.*)/i, '01/$1'], parseDate);
+	getParam(card, result, 'cards.balance', /"(?:sum|quant)"(?:[^>]*>){1}([^<]+)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(card, result, ['cards.currency', 'cards.balance'], /"(?:sum|quant)"(?:[^>]*>){1}([^<]+)/i, replaceTagsAndSpaces, parseCurrencyAndMy);
+	getParam(card, result, 'cards.till', /\d{4}[\s-x]{8,}\d{4}[^<]*?(\d{1,2}\/\d{1,2})/i, [replaceTagsAndSpaces, /(.*)/i, '01/$1'], parseDate);
 
 	// Дополнительная инфа.
 	var href = getParam(card, null, null, /href="(f\?p=[^"]+)"/i);

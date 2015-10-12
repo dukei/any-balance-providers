@@ -103,7 +103,7 @@ function shouldProcess(counter, info){
 		    if(!prefs.cardnum)
 		    	return true;
 			
-			if(endsWith(info.num, prefs.cardnum))
+			if(endsWith(num, prefs.cardnum))
 				return true;
 		}
 		default:

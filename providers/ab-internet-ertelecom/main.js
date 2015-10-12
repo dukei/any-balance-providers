@@ -13,10 +13,15 @@ var g_headers = {
 var g_region_change = {
 	kzn: 'kazan',
 	nch: 'chelny',
-	nsk: 'novosib'
+	novosib: 'nsk'
 };
 
 function main(){
+	AnyBalance.setDefaultCharset('utf-8');
+
+//	makeRegions();
+//	return;
+
 	var prefs = AnyBalance.getPreferences();
 	var domain = prefs.region || 'kzn'; // Казань по умолчанию
 	
@@ -25,26 +30,29 @@ function main(){
 	
 	AnyBalance.trace('Selected region: ' + domain);
 	var baseurl = 'https://lk.domru.ru/';
+
+	var info = AnyBalance.requestGet(baseurl + "login", g_headers);
 	
-	AnyBalance.setDefaultCharset('utf-8');
-	
-	var info = AnyBalance.requestGet(baseurl + "login");
-	var token = getParam(info, null, null, /<input[^>]+value="([^"]*)"[^>]*name="YII_CSRF_TOKEN"/i);
-	if (!token)
+	var form = getElement(info, /<form[^>]+login-form[^>]*>/i);
+	if(!form)
 		throw new AnyBalance.Error('Не удалось найти форму входа. Сайт изменен?');
 	
 	AnyBalance.setCookie('domru.ru', 'citydomain'); //Удаляем старую куку
 	AnyBalance.setCookie('.domru.ru', 'service', '0');
 	AnyBalance.setCookie('.domru.ru', 'citydomain', domain, {path: '/'});
-	
+	AnyBalance.setCookie('.domru.ru', 'cityconfirm', '1', {path: '/'});
+
+	var params = createFormParams(form, function(params, str, name, value) {
+		if (/username/i.test(name)) 
+			return prefs.log;
+		else if (/password/i.test(name))
+			return prefs.pwd;
+
+		return value;
+	}, true);
+
 	// Заходим на главную страницу
-	var info = AnyBalance.requestPost(baseurl + "login", {
-		YII_CSRF_TOKEN: token,
-		"Login[username]": prefs.log,
-		"Login[password]": prefs.pwd,
-		city: domain,
-		yt0: 'Войти'
-	});
+	var info = AnyBalance.requestPost(baseurl + "login", params, g_headers);
 
  	if(!/\/logout/.test(info)) {
 		var error = sumParam(info, null, null, /<div[^>]+class="b-login__errormessage"[^>]*>([\s\S]*?)<\/div>/ig, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
@@ -63,6 +71,7 @@ function main(){
 	var result = {success: true};
 	
 	if(isAvailable(['balance', 'pay_till'])){
+		var token = getParam(info, null, null, /<input[^>]+value="([^"]*)"[^>]*name="YII_CSRF_TOKEN"/i);
 		var res = AnyBalance.requestPost(baseurl + 'user', [
 			['needProperties[]', 'balance'],
 			['needProperties[]', 'dataPay'],
@@ -76,14 +85,29 @@ function main(){
 		} catch(e) { }
 
 		getParam(user.bill.balance, result, 'balance', null, replaceTagsAndSpaces, parseBalance);
-		getParam(user.bill.datePay, result, 'pay_till', null, replaceTagsAndSpaces, html_entity_decode);
+		getParam(user.bill.datePay, result, 'pay_till', null, replaceTagsAndSpaces, parseDateWord);
 	}
 
-	getParam(info, result, 'tariff_number', /№ договора:\s*<\/div>([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(info, result, 'name', /b-head-block-account-info-name[^>]*>([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(info, result, 'tariff_number', /<span[^>]+account-data-item_link[^>]*>([^]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(info, result, 'name', /b-head__account-data-item[^>]*data-name="([^"]*)/i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(info, result, '__tariff', /Ваш пакет[^<]*<a[^>]*>([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(info, result, 'bits', /status[^>]*bonus"[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(info, result, 'bits', /status[^>]*bonus"[^>]*>([^]*?)<\/a>/i, replaceTagsAndSpaces, parseBalance);
 	getParam(info, result, 'status', /<a[^>]+href="[^"]*status.domru.ru"[^>]*>([\s\S]*?)<\/a>/i, replaceTagsAndSpaces, html_entity_decode);
 
 	AnyBalance.setResult(result);
 };
+
+function makeRegions(){
+	var html = AnyBalance.requestGet('https://lk.domru.ru/login', g_headers);
+	var elems = getElements(html, /<div[^>]+data-domain[^>]*>/ig);
+	var values=[], names=[];
+	for(var i=0; i<elems.length; ++i){
+		var elem = elems[i];
+		var name = getParam(elem, null, null, null, replaceTagsAndSpaces, html_entity_decode);
+		var id = getParam(elem, null, null, /data-domain="([^"]*)/i, null, html_entity_decode);
+		values.push(id);
+		names.push(name);
+	}
+
+	AnyBalance.setResult({values: values.join('|'), names: names.join('|')});
+}

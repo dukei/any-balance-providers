@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="11">ab-internet-ertelecom</id>
+	<id version="12">ab-internet-ertelecom</id>
 	<api flags="no_browser"/>
 	<name>Дом.ру (Эр-телеком)</name>
 	<description html="true"><![CDATA[
@@ -26,7 +26,7 @@
 		<counter id="traffic_outer" name="Внешний трафик" prefix="Вн:" suffix="Гб"/> -->
 		<counter id="tariff_number" name="Номер договора" type="text"/>
 		<counter id="status" name="Статус" type="text"/>
-		<counter id="pay_till" name="Дата пополнения" type="text"/>
+		<counter id="pay_till" name="Дата пополнения" type="time" format="dd/MM/yyyy"/>
 	</counters>
 	<keywords>дом.ру ertelecom citidom эретелеком ситидом</keywords>
 	<type>internet</type>

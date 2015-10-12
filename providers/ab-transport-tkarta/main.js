@@ -7,7 +7,7 @@ var g_headers = {
 	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
 	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
 	'Connection': 'keep-alive',
-	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
+	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/45.0.2454.101 Safari/537.36',
 };
 
 function main() {
@@ -32,7 +32,15 @@ function main() {
 		throw new AnyBalance.Error('Не удалось найти форму входа.');
 	}
 
-	html = AnyBalance.requestPost(baseurl + 'Cabinet/CheckUserCard', {pan: prefs.login, currDate: ''}, addHeaders({Referer: baseurl + 'Events/Krasnodar', 'X-Requested-With':'XMLHttpRequest'}));
+	html = AnyBalance.requestPost(baseurl + 'EK/Cabinet/CheckUserCard', {
+		pan: prefs.login, 
+		currDate: fmtDate(new Date())
+	}, addHeaders({
+		Accept: 'application/json, text/javascript, */*; q=0.01',
+		Origin: baseurl,
+		Referer: baseurl + 'Events/Krasnodar',
+		'X-Requested-With':'XMLHttpRequest'
+	}));
 
 	if(/false/i.test(html)){
 		throw new AnyBalance.Error('Неверный номер карты!', null, true);
@@ -46,7 +54,7 @@ function main() {
 		return value;
 	});
 
-	html = AnyBalance.requestPost(baseurl + 'Cabinet/Trip', params, addHeaders({
+	html = AnyBalance.requestPost(baseurl + 'EK/Cabinet/Trip', params, addHeaders({
 		Referer: baseurl + 'Events/Krasnodar'
 	}));  	
 

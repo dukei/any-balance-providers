@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-transport-tkarta</id>
+	<id version="3">ab-transport-tkarta</id>
 	<api flags="no_browser"/>
 	<name>Транспортная карта Золотая Корона</name>
 	<description html="true"><![CDATA[

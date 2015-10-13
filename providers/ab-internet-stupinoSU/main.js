@@ -17,7 +17,7 @@ function main(){
         contract: prefs.dogovor,
         passwd1: prefs.password,
 		}, addHeaders({
-    	'Referer': baseurl
+    	Referer: baseurl
 	}));
 
 	if(!/выход/i.test(html)) {

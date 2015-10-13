@@ -83,7 +83,7 @@ function main(){
 		}
 		//Мої Спеціальні пропозиції
 		if (AnyBalance.isAvailable('baly')) {
-			var matches = html.match(/Мої Спеціальні пропозиції понад\s*<span[^>]*>(\d+?)\s*балів[^<]*<\/span>/i);
+			var matches = html.match(/Мої (?:С|c)пеціальні пропозиції понад\s*<span[^>]*>(\d+?)\s*балів[^<]*</i);
 			if (matches) {
 				result.baly = parseFloat(matches[1]);
 			} else {

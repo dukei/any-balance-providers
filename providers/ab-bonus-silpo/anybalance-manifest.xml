@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="10">ab-bonus-silpo</id>
+  <id version="11">ab-bonus-silpo</id>
   <name>Сільпо, мережа супермаркетів (Україна)</name>
   <description>
     Мониторинг накопленных бонусов по программе "Власний рахунок" сети супермаркетов Сільпо (Украина). Получает информацию из личного кабинета https://my.silpo.ua.

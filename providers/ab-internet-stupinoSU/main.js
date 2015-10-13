@@ -11,6 +11,8 @@ function main(){
 	var baseurl = 'https://lk2.stupino.su/';
 	AnyBalance.setDefaultCharset('utf-8');
 	
+	checkEmpty(prefs.dogovor, 'Введите номер договора!');
+	checkEmpty(prefs.password, 'Введите пароль!');
 	
 	var html = requestPostMultipart(baseurl, {
         action_id: 'AUTH',

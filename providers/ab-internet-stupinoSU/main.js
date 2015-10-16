@@ -37,6 +37,7 @@ function main(){
 	getParam(html, result, 'ip', /<td>IP-адрес<\/td>\s*<td>([\s\S]*?)&nbsp;<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(html, result, 'status', /<td>Авторизация<\/td>\s*<td>([\s\S]*?)&nbsp;<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(html, result, 'tarif', /<td>Тарифный план<\/td>\s*<td>([\s\S]*?)<div[^>]/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'eip', /<td>Внешний IP-адрес<\/td>\s*<td>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
 	
     AnyBalance.setResult(result);
 }

@@ -21,6 +21,7 @@
 		<counter id="tarif" name="Текущий тариф" type="text"/>	
 		<counter id="status" name="Авторизация" type="text"/>	
 		<counter id="ip" name="IP адрес" type="text"/>
+		<counter id="eip" name="Внешний IP" type="text"/>
 		<counter id="fio" name="ФИО" type="text"/>
 		<counter id="id" name="Номер договора" type="text"/>
 	</counters>

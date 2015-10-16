@@ -38,8 +38,11 @@ function main() {
 	}
 	var result = {success: true};
 	
-	getParam(html, result, 'balance', /На всех моих счетах:(?:[\s\S]*?<[^>]*>){1}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'balance_income', /из них инвестиционный доход(?:[\s\S]*?<[^>]*>){1}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
+	var table = getElement(html, /<div class="block-table">/i);
+	
+	getParam(table, result, 'balance', /Текущий баланс(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
+	getParam(table, result, 'balance_income', /Инвестиционный(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
+	getParam(table, result, '__tariff', /Номер договора(?:[\s\S]*?<td[^>]*>)([\s\S]*?)<\//i, replaceTagsAndSpaces);
 	
 	AnyBalance.setResult(result);
 }

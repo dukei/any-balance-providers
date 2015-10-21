@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-internet-vermont-it</id>
+	<id version="2">ab-internet-vermont-it</id>
 	<api flags="no_browser"/>
 	<name>Вермонт-ИТ (Королев)</name>
 	<description html="true"><![CDATA[

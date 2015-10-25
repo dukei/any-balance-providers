@@ -1841,6 +1841,8 @@ function enterLK(filial, options){
 
 	if (!isLoggedInLK(html) && !isLoggedInSG(html)) {
 		var error = getParam(html, null, null, /login-warning[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
+		if (!error)
+			error = getParam(html, null, null, /<div[^>]+mf-error[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
 		if (error)
 			throw new AnyBalance.Error(error, null, /(?:Неверный|Неправильный) логин\/пароль/i.test(error));
 		
@@ -2318,7 +2320,7 @@ function megafonLKFinance(filial, html, result){
 					var expense = g.expenses[i];
 					sumParam(expense.amount, result, 'sub_scr', null, null, null, aggregate_sum);
 				}
-			}else if(/вызов|сообщен/i.test(group)){
+			}else if(/вызов|сообщен|Звонки/i.test(group)){
 				for(var i=0; i<g.expenses.length; ++i){
 					var expense = g.expenses[i];
 					sumParam(expense.amount, result, 'sub_scl', null, null, null, aggregate_sum);

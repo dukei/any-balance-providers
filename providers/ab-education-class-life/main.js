@@ -50,21 +50,31 @@ function main() {
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
 	
-	var info = getElements(html, [/<div[^>]+class='dataHeaderLc'[^>]*>/ig, /dataHeaderLcDiv1/i])[0];
+	var infos = getElements(html, [/<div[^>]+class='dataHeaderLc'[^>]*>/ig, /dataHeaderLcDiv1/i]), info;
+	AnyBalance.trace('Найдено ' + infos.length + ' блоков лицевых счетов' );
+	for(var i=0; i<infos.length; ++i){
+	    info = infos[i];
+		var namels = sumParam(info, null, null, /<div[^>]+dataHeaderLcDiv[12][^>]*>([^]*?)<\/div>/ig, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
+		if(!prefs.num)
+			break;
+		if(namels.indexOf(prefs.num) >= 0)
+			break;
+	}
+
 	if(!info){
 		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Не удалось найти блок информации о лицевом счете. Сайт изменен?');
+		throw new AnyBalance.Error(prefs.num ? 'Не удалось найти блок информации о лицевом счете ' + prefs.num : 'Не удалось найти блок информации о лицевом счете. Сайт изменен?');
 	}
 
 	var result = {success: true};
 	
-	sumParam(html, result, '__tariff', /<div[^>]+class='dataHeaderLcDiv1'[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
-	sumParam(html, result, '__tariff', /<div[^>]+class='dataHeaderLcDiv2'[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
-	getParam(html, result, 'fio', /<div[^>]+class='dataHeaderLcDiv1'[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'licschet', /<div[^>]+class='dataHeaderLcDiv2'[^>]*>([\s\S]*?)<\/div>/i, [/Л\/с:/i, '', replaceTagsAndSpaces], html_entity_decode);
+	sumParam(info, result, '__tariff', /<div[^>]+class='dataHeaderLcDiv1'[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
+	sumParam(info, result, '__tariff', /<div[^>]+class='dataHeaderLcDiv2'[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
+	getParam(info, result, 'fio', /<div[^>]+class='dataHeaderLcDiv1'[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(info, result, 'licschet', /<div[^>]+class='dataHeaderLcDiv2'[^>]*>([\s\S]*?)<\/div>/i, [/Л\/с:/i, '', replaceTagsAndSpaces], html_entity_decode);
 	
-	getParam(html, result, ['balance_hot', 'balance'], /Баланс горячего питания:[\s\S]*?<div[^>]+class='dataHeaderLcDiv4'[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, ['balance_cafe', 'balance'], /Баланс буфетного питания:[\s\S]*?<div[^>]+class='dataHeaderLcDiv4'[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(info, result, ['balance_hot', 'balance'], /Баланс горячего питания:[\s\S]*?<div[^>]+class='dataHeaderLcDiv4'[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(info, result, ['balance_cafe', 'balance'], /Баланс буфетного питания:[\s\S]*?<div[^>]+class='dataHeaderLcDiv4'[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
 	
 	if(isset(result.balance_hot) && isset(result.balance_cafe))
 		getParam(result.balance_hot + result.balance_cafe, result, 'balance');

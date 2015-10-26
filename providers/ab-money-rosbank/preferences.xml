@@ -26,10 +26,10 @@
         key="type" 
         title="Что смотреть"
         summary="||{@s}"
-        entries="Счет|Кредит"
-        entryValues="acc|crd"
+        entries="Карта|Счет|Кредит"
+        entryValues="card|acc|crd"
         enabled="false"
-        defaultValue="acc">
+        defaultValue="card">
     </ListPreference>
     <EditTextPreference
         title="Номер продукта" 
@@ -37,7 +37,7 @@
         summary="|Автоматически|{@s}" 
         dialogTitle="Номер продукта" 
         negativeButtonText="Отмена" 
-        dialogMessage="В зависимости от настройки Что смотреть, введите сюда номер договора по кредиту или последние цифры номера счета. Если оставить поле пустым, то будет показана информация по первому счету/кредиту."
+        dialogMessage="В зависимости от настройки Что смотреть, введите сюда последние цифры номера счета или карты. Если оставить поле пустым, то будет показана информация по первому счету/карте."
         key="contract">
     </EditTextPreference>
 </PreferenceScreen>

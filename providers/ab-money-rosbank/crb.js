@@ -2,6 +2,7 @@ var CRB_M = {
     len_n_fmt: function(name, len, a_f) { return name + " должен быть длиной " + len + " символов и состоять из цифр от 0 до 9" + (a_f ? " и букв A, B, C, D, F" : ""); },
     crypt_err: function(msg) { return "Ошибка шифрования: " + msg; },
     invalid: function(name) { return name + " задан неверно"; },
+    invalid_s: function(len, str) { return "Пароль не должен содержать " + len + " и более символов подряд из последовательности \"" + str + "\""; },
 
     SESSION: "Номер сессии",
     PASS: "Пароль",
@@ -12,7 +13,16 @@ var CRB_M = {
     ENC_PIN2: "Зашифрованный ПИН2",
     INKEY: "АСП",
     NUMKEY: "Номер АСП",
-    NUMCLIENT: "Идентификационная карта"
+    NUMCLIENT: "Идентификационная карта",
+    PASS_D: "Пароль должен содержать не менее одной цифры",
+    PASS_L: "Пароль должен содержать не менее одной маленькой буквы латинского алфавита",
+    PASS_U: "Пароль должен содержать не менее одной большой буквы латинского алфавита",
+    PASS_3: "Пароль не должен содержать 4 и более совпадающих символов подряд",
+    PASS_C1: "Пароль не должен содержать первые 8 цифр номера идентификационной карты",
+    PASS_C2: "Пароль не должен содержать последние 8 цифр номера идентификационной карты",
+    PASS_4: "Первые 4 символа пароля не должны совпадать с последними 4-мя символами",
+    PASS_4R: "Первые 4 символа пароля не должны совпадать с обратной перестановкой последних 4-х символов"
+    
 };
 
 var CRB = {
@@ -58,6 +68,76 @@ var CRB = {
         }
     },
 
+    pass2bis: function(opwd1, opwd2, oCardNum) {
+        var pwd1 = opwd1.val();
+        var pwd2 = opwd2.val();
+        var CardNum = oCardNum.val();
+        var err = "";
+        var res = "";
+        if (!(pwd1 === pwd2)) err += this._eol + this.msg.PASS_COMPARE;
+        if (!pwd1.match(new RegExp(/[0-9]+/))) err += this._eol + this.msg.PASS_D;
+        if (!pwd1.match(new RegExp(/[a-z]+/))) err += this._eol + this.msg.PASS_L;
+        if (!pwd1.match(new RegExp(/[A-Z]+/))) err += this._eol + this.msg.PASS_U;
+        err += CRB.getLCSLen(pwd1, "01234567890", 3, false);
+        err += CRB.getLCSLen(pwd1, "09876543210", 3, false);
+        err += CRB.getLCSLen(pwd1, "abcdefghijklmnopqrstuvwxyz", 3, false);
+        err += CRB.getLCSLen(pwd1, "zyxwvutsrqponmlkjihgfedcba", 3, false);
+        err += CRB.getLCSLen(pwd1, "ABCDEFGHIJKLMNOPQRSTUVWXYZ", 3, false);
+        err += CRB.getLCSLen(pwd1, "ZYXWVUTSRQPONMLKJIHGFEDCBA", 3, false);
+        if (pwd1.match(new RegExp(/(.)\1{3,}/))) err += this._eol + this.msg.PASS_3;
+        if (CardNum.length == 16) {
+            if (pwd1.match(new RegExp("(" + CardNum.substr(0, 8) + ")", "i"))) err += this._eol + this.msg.PASS_C1;
+            if (pwd1.match(new RegExp("(" + CardNum.substr(8, 8) + ")", "i"))) err += this._eol + this.msg.PASS_C2;
+        }
+        if (pwd1.length > 7) {
+            if (pwd1.substr(0, 4) == pwd1.substr(pwd1.length - 4, 4)) err += this._eol + this.msg.PASS_4;
+            if (pwd1.substr(0, 4) == pwd1.substr(pwd1.length - 4, 4).split("").reverse().join("")) err += this._eol + this.msg.PASS_4R;
+        }
+        if (err) { opwd1.val(''); opwd2.val(''); }
+        else {
+            try {
+                var res = this.data.pass2hexmd517(pwd1);
+            } catch (e) {
+                opwd1.val('');
+                opwd2.val('');
+                err += this._eol + this.msg.crypt_err(e.message);
+            }
+        }
+        return { error: err, result: res };
+    },
+
+    getLCSLen: function(lcstest, lcstarget, maxlen, ignoreCase) {
+        var err = "";
+        var str = CRB.lcs(lcstest, lcstarget, ignoreCase);
+        //console.log(str);
+        if (str.length > maxlen) {
+            err += this._eol + this.msg.invalid_s(maxlen + 1, lcstarget);
+        }
+        return err;
+    },
+
+    lcs: function(lcstest, lcstarget, ignoreCase) {
+        var matchfound = 0,
+            lsclen = lcstest.length;
+        for (lcsi = 0; lcsi < lcstest.length; lcsi++) {
+            var lscos = 0;
+            for (lcsj = 0; lcsj < lcsi + 1; lcsj++) {
+                var re = new RegExp("(?:.{" + lscos + "})(.{" + lsclen + "})", (ignoreCase ? "i" : ""));
+                var temp = re.test(lcstest);
+                re = new RegExp("(" + RegExp.$1 + ")", (ignoreCase ? "i" : ""));
+                if (re.test(lcstarget)) {
+                    matchfound = 1;
+                    result = RegExp.$1;
+                    break;
+                }
+                lscos++;
+            }
+            if (matchfound == 1) { return result; break; }
+            lsclen--;
+        }
+        result = "";
+        return result;
+    },
     encryptPin2n: function(opin1, opin2, opwd1, opwd2) {
         var pin1 = opin1.val();
         var pin2 = opin2.val();
@@ -121,11 +201,11 @@ var CRB = {
         }
     },
 
-    decryptPin2: function(encPin2, pass) {
+    decryptPin2: function(encPin2, pass, fl) {
         if (!this.data.checkMatches(encPin2, 32, true))
             return { error: this.msg.len_n_fmt(this.msg.ENC_PIN2, 32, true) };
 
-        if (!this.data.checkMatches(pass, 8))
+        if ((fl) &&(!this.data.checkMatches(pass, 8)))
             return { error: this.msg.len_n_fmt(this.msg.PASS, 8, false) };
 
         try {
@@ -214,7 +294,7 @@ var CRB = {
         },
 
         pass2hex: function(str) { return CryptoJS.enc.Latin1.parse(CryptoJS.enc.Latin1.parse(str).toString().toUpperCase()) },
-
+        pass2hexmd517: function(pass) { return this.genMD5(this.pass2hex(pass) + this.salt(), 17) },
         doCrypt: function(method, cb, hex, pass) {
             var g = this.pair(this.genMD5(this.pass2hex(pass) + this.salt(), 17));
             var obj = CryptoJS.TripleDES[method](cb(CryptoJS.enc.Hex.parse(hex)), g.start, { mode: CryptoJS.mode.CBC, iv: g.end });
@@ -359,6 +439,7 @@ var CRB = {
         len_n_fmt: CRB_M.len_n_fmt,
         crypt_err: CRB_M.crypt_err,
         invalid: CRB_M.invalid,
+        invalid_s: CRB_M.invalid_s,
 
         SESSION: CRB_M.SESSION,
         PASS: CRB_M.PASS,
@@ -369,9 +450,16 @@ var CRB = {
         ENC_PIN2: CRB_M.ENC_PIN2,
         INKEY: CRB_M.INKEY,
         NUMKEY: CRB_M.NUMKEY,
-        NUMCLIENT: CRB_M.NUMCLIENT
+        NUMCLIENT: CRB_M.NUMCLIENT,
+        PASS_U: CRB_M.PASS_U,
+        PASS_L: CRB_M.PASS_L,
+        PASS_D: CRB_M.PASS_D,
+        PASS_3: CRB_M.PASS_3,
+        PASS_C1: CRB_M.PASS_C1,
+        PASS_C2: CRB_M.PASS_C2,
+        PASS_4: CRB_M.PASS_4,
+        PASS_4R: CRB_M.PASS_4R
     },
     _eol: "\r\n"
 
 };
-

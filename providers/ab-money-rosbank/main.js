@@ -1,176 +1,105 @@
 /**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
-
-Информация о карте, кредите, депозите в банке "ХоумКредит".
-
-Сайт: http://www.homecredit.ru
-ЛК: https://ib.homecredit.ru
 */
 
-var g_headers = {
-    Accept:'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-    'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
-    'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
-    Connection:'keep-alive',
-    Referer: 'https://ibank.rosbank.ru/Login.aspx',
-    'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.11'
+var g_countersTable = {
+	common: {
+		'fio' : 'info.fio'
+	},
+	card: {
+    	"balance": "cards.balance",
+		"currency": "cards.currency",
+		"till": "cards.till",
+		"accnum": "cards.num",
+		"accname": "cards.accnum",
+		"__tariff": "cards.__name"
+    },
+	acc: {
+		"currency": "accounts.currency",
+    	"balance": "accounts.balance",
+		"accnum": "accounts.num",
+		"accname": "accounts.type",
+		"__tariff": "accounts.__name"
+    }
 };
 
-var g_headers2 = {
-    Accept:'*/*',
-    'Accept-Encoding':'gzip,deflate,sdch',
-    'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
-    'Cache-Control':'no-cache',
-    Connection:'keep-alive',
-    'Content-Type':'application/x-www-form-urlencoded; charset=UTF-8',
-    //Cookie:'SBPROGID=te1gk1nn6elgt4dcq1f1u0i4s5; mobile=1; ASP.NET_SessionId=q4huu355y2dr3uvgmdxhyjao; sb_geolocation=undefined; sb_start_session=1; _ym_visorc_10028974=b; __utma=58428841.965910810.1400262912.1402233216.1402426508.3; __utmb=58428841.2.9.1402426511039; __utmc=58428841; __utmz=58428841.1400262912.1.1.utmcsr=(direct)|utmccn=(direct)|utmcmd=(none); SiteLang=ru-RU',
-    Host:'ibank.rosbank.ru',
-    Origin:'https://ibank.rosbank.ru',
-    Referer:'https://ibank.rosbank.ru/Login.aspx',
-    'User-Agent':'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.1916.114 Safari/537.36',
-    'X-MicrosoftAjax':'Delta=true'
-};
+function shouldProcess(counter, info){
+	var prefs = AnyBalance.getPreferences();
 
-var g_headers3 = {
-    Accept:'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-    'Accept-Encoding':'gzip,deflate,sdch',
-    'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
-    Connection:'keep-alive',
-    Host:'ibank.rosbank.ru',
-    Referer:'https://ibank.rosbank.ru/Login.aspx',
-    'User-Agent':'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.1916.114 Safari/537.36'
-};
-
-function getViewState(html){
-    return getParam(html, null, null, /name="__VIEWSTATE".*?value="([^"]*)"/) || getParam(html, null, null, /__VIEWSTATE\|([^\|]*)/i);
-};
-
-function getEventValidation(html) {
-    return getParam(html, null, null, /name="__EVENTVALIDATION".*?value="([^"]*)"/) || getParam(html, null, null, /__EVENTVALIDATION\|([^\|]*)/i);
-};
-
-function main() {
-    var prefs = AnyBalance.getPreferences();
-    var baseurl = 'https://ibank.rosbank.ru/';
-
-    //AnyBalance.requestGet(baseurl + 'Logout.aspx', g_headers3);
-    var html = AnyBalance.requestGet(baseurl, g_headers);
-    if(!/Logout.aspx/i.test(html)) {
-        html = AnyBalance.requestPost(baseurl + 'Login.aspx', {
-            'ctl00$MainScriptManager':'ctl00$MainContentPlaceHolder$TabsUpdatePanel|ctl00$MainContentPlaceHolder$CardButton',
-            __LASTFOCUS:'',
-            __EVENTTARGET:'',
-            __EVENTARGUMENT:'',
-            __VIEWSTATE:getViewState(html),
-            __EVENTVALIDATION:getEventValidation(html),
-            'ctl00$MainContentPlaceHolder$pin1':'',
-            'ctl00$MainContentPlaceHolder$TransCod':'',
-            'ctl00$MainContentPlaceHolder$pin2enc':'',
-            'ctl00$MainContentPlaceHolder$Signature':'',
-            'ctl00$MainContentPlaceHolder$CardNumTextBox':prefs.login,
-            __ASYNCPOST:'true',
-            'ctl00$MainContentPlaceHolder$CardButton':'%D0%9F%D1%80%D0%BE%D0%B4%D0%BE%D0%BB%D0%B6%D0%B8%D1%82%D1%8C'
-        }, g_headers2);
-
-        var pin2enc = getParam(html,null,null,/class="pin2enc" value="(.*)"/);
-        var TransCod = getParam(html,null,null,/class="TransCod" value="(.*)"/);
-        var pin3 = prefs.password;
-        var Signature = '';
-
-        //AnyBalance.trace('pin2enc:'+pin2enc);
-        //AnyBalance.trace('TransCod:'+TransCod);
-        //AnyBalance.trace('pin3:'+pin3);
-        
-        //Этот код расчета Signature выдран из main.js сайта (использует cryptojs.js и crb.js)
-        var v = CRB.decryptPin2(pin2enc,pin3);
-        if (v.result) {
-            var sign = CRB.encryptBlock(v.result, TransCod);
-            if (sign.result) {
-                Signature = sign.result;
-            }
-            else {
-                pin3 = '';
-                throw new AnyBalance.Error(sign.error);
-            }
-        }
-        else {
-            pin3 = '';
-            throw new AnyBalance.Error(v.error);
-        }
-        //Расчитали Signature
-
-        //AnyBalance.trace('Signature:'+Signature);
-        
-        html = AnyBalance.requestPost(baseurl + 'Login.aspx', {
-            'ctl00$MainScriptManager':'ctl00$MainContentPlaceHolder$TabsUpdatePanel|ctl00$MainContentPlaceHolder$Pwd1Button',
-            'ctl00$MainContentPlaceHolder$pin1':'50845000'+prefs.login.replace(' ',''),
-            'ctl00$MainContentPlaceHolder$TransCod':TransCod,
-            'ctl00$MainContentPlaceHolder$pin2enc':pin2enc,
-            'ctl00$MainContentPlaceHolder$Signature':Signature,
-            'ctl00$MainContentPlaceHolder$pin3':pin3,
-            __LASTFOCUS:'',
-            __EVENTTARGET:'',
-            __EVENTARGUMENT:'',
-            __VIEWSTATE:getViewState(html),
-            __EVENTVALIDATION:getEventValidation(html),
-            __ASYNCPOST:'true',
-            'ctl00$MainContentPlaceHolder$Pwd1Button':'%D0%9F%D1%80%D0%BE%D0%B4%D0%BE%D0%BB%D0%B6%D0%B8%D1%82%D1%8C'
-        }, g_headers2);
-        //AnyBalance.trace('html_Login='+html);
-
-        //html = AnyBalance.requestGet(baseurl + 'Main2.aspx', g_headers3);
-        //AnyBalance.trace('html_Main2='+html);
-        
-        if(!/Logout.aspx/i.test(html) && !/pageRedirect/i.test(html)){
-            var error = getParam(html, null, null, /<div[^>]+class="loginError"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
-            if(error)
-                throw new AnyBalance.Error(error);
-            throw new AnyBalance.Error('Не удалось войти в интернет-банк. Сайт изменен?');
-        }
-    };
-
-    if(prefs.type == 'crd')
-        fetchCredit(baseurl, html);
-    else if(prefs.type == 'acc')
-        fetchAccount(baseurl, html);
-    else
-        fetchAccount(baseurl, html); //По умолчанию счет
-    
-    //html = AnyBalance.requestGet(baseurl + 'Logout.aspx', g_headers3);
+	switch(counter){
+		case 'cards':
+		{
+		    if(!prefs.contract)
+		    	return true;
+			if(prefs.type != 'card')
+				return false;
+			return endsWith(info.num, prefs.contract);
+		}
+		case 'accounts':
+		{
+		    if(!prefs.contract)
+		    	return true;
+			if(prefs.type != 'acc')
+				return false;
+			return endsWith(info.num, prefs.contract);
+		}
+		default:
+			return false;
+	}
 }
 
-function fetchAccount(baseurl, html){
-    var prefs = AnyBalance.getPreferences();
-    var acc;
-    if(prefs.contract && !/^\d{1,4}$/.test(prefs.contract))
-        throw new AnyBalance.Error('Пожалуйста, введите не менее 1 последних цифр номера счета, по которому вы хотите получить информацию, или не вводите ничего, чтобы получить информацию по первому счету.');
-    
-	html = AnyBalance.requestGet(baseurl + 'Accounts.aspx', g_headers3);
-	
-    var result = {success: true};
-	
-	// <tr(?:[^>]*>){4}4\d+[^<]+9991(?:[^>]*>){70,90}\s*<\/tr>
-    var tr = getParam(html, null, null, new RegExp('<tr(?:[^>]*>){4}4\\d+[^<]+' + (prefs.contract || '\\d{4}') + '(?:[^>]*>){50,90}\\s*</tr>', 'i'));
-    if(!tr)
-        throw new AnyBalance.Error('Не удалось найти ' + (prefs.contract ? 'счет № ' + prefs.contract : 'ни одного счета'));
-	
-    html = AnyBalance.requestGet(baseurl + getParam(tr, null, null, /AccountInfo.aspx\?id=\d*/i));
-    //AnyBalance.trace('Проверка условия отсутствия счетов');
-    //AnyBalance.trace('re='+re);
-    //AnyBalance.trace('tr='+tr);
-    //AnyBalance.trace('html='+html);
-    //Сразу завершаем сеанс, иначе сессия останется до конца ее жизни и новый запрос не сделать.
-    //AnyBalance.requestGet(baseurl + 'Logout.aspx', g_headers3);
+function main(){
+	var prefs = AnyBalance.getPreferences();
+    if(!/^(card|acc|crd)$/i.test(prefs.type || ''))
+    	prefs.type = 'card';
 
-    
-    getParam(tr, result, 'balance', /<td>([\d,\s]*\.\d{2})\s[\D]{3}<\/td>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(tr, result, '__tariff', /<td>(\S*\d{4})<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(tr, result, 'currency', /([\D]{3})<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-    //getParam(tr, result, 'accnum', /(\d{4})<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'accnum', /<td>\W*<\/td><td>(\d*)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'accname',   /(?:<tr[\S\s]*?<\/tr>){3}<tr[\S\s]*?<td>.*<\/td><td>(.*)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'fio',       /(?:<tr[\S\s]*?<\/tr>){1}<tr[\S\s]*?<td>.*<\/td><td>(.*)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-    AnyBalance.setResult(result);
+    if(prefs.type == 'crd')
+    	throw new AnyBalance.Error('Не удаётся получить информацию по кредиту. Сайт изменен?');
+
+    var adapter = new NAdapter(joinObjects(g_countersTable.common, g_countersTable[prefs.type]), shouldProcess);
+    adapter.processAccounts = adapter.envelope(processAccounts);
+    adapter.processCards = adapter.envelope(processCards);
+//    adapter.processDeposits = adapter.envelope(processDeposits);
+//    adapter.processCredits = adapter.envelope(processCredits);
+    adapter.processInfo = adapter.envelope(processInfo);
+
+	var html = login();
+
+	var result = {success: true};
+
+	adapter.processInfo(result);
+
+	if(prefs.type == 'card'){
+
+		adapter.processCards(result);
+		if(!adapter.wasProcessed('cards'))
+			throw new AnyBalance.Error(prefs.contract ? 'Не найдена карта с последними цифрами ' + prefs.contract : 'У вас нет ни одной карты');
+		result = adapter.convert(result);
+
+	}else if(prefs.type == 'acc'){
+
+		adapter.processAccounts(result);
+		if(!adapter.wasProcessed('accounts'))
+			throw new AnyBalance.Error(prefs.contract ? 'Не найден счет с последними цифрами ' + prefs.contract : 'У вас нет ни одного счета');
+		result = adapter.convert(result);
+
+/*	}else if(prefs.type == 'dep'){
+
+		adapter.processDeposits(result);
+		if(!adapter.wasProcessed('deposits'))
+			throw new AnyBalance.Error(prefs.contract ? 'Не найден депозит с последними цифрами ' + prefs.contract : 'У вас нет ни одного депозита');
+		result = adapter.convert(result);
+
+	}else if(prefs.type == 'crd'){
+
+		adapter.processCredits(result);
+		if(!adapter.wasProcessed('credits'))
+			throw new AnyBalance.Error(prefs.contract ? 'Не найден кредит с последними цифрами ' + prefs.contract : 'У вас нет ни одного кредита');
+		result = adapter.convert(result);
+*/
+	}
+
+	AnyBalance.setResult(result);
 }
 
 function fetchCredit(baseurl, html){

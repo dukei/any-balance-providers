@@ -1,4 +1,4 @@
-﻿/*! AnyBalance Library (http://any-balance-providers.googlecode.com)
+/*! AnyBalance Library (http://any-balance-providers.googlecode.com)
 The uncompressed full source code of this library is here: https://code.google.com/p/any-balance-providers/source/browse/trunk/extra/development/ab-test-library/library.js
 */
 /**
@@ -7,9 +7,11 @@ AnyBalance (http://any-balance-providers.googlecode.com)
 Содержит некоторые полезные для извлечения значений с сайтов функции.
 Для конкретного провайдера рекомендуется оставлять в этом файле только те функции, которые используются.
 
-library.js v0.17 от 05.06.15
+library.js v0.18 от 27.10.15
 
 changelog:
+27.10.15 sumParam: добавлено сообщение об отключенном счетчике
+
 16.09.15 добавлены n2, joinUrl, fmtDate
  
 05.06.15 добавлена правильная обработка чекбоксов в createFormParams;
@@ -618,9 +620,12 @@ function sumParam(html, result, param, regexp, replaces, parser, do_replace, agg
 			return regexp ? html.replace(regexp, '') : '';
 	}
 
-	if (!isAvailable(param)) //Даже если счетчик не требуется, всё равно надо вырезать его матчи, чтобы не мешалось другим счетчикам
+	if (!isAvailable(param)) {
+		AnyBalance.trace(param + ' is disabled!');
+		//Даже если счетчик не требуется, всё равно надо вырезать его матчи, чтобы не мешалось другим счетчикам
 		return replaceIfNeeded();
-
+	}
+	
 	//После того, как проверили нужность счетчиков, кладем результат в первый из переданных счетчиков. Оставляем только первый
 	param = __getParName(param);
 

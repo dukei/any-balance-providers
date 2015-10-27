@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-    <id version="3">ab-money-rosbank</id>
+    <id version="4">ab-money-rosbank</id>
     <name>РОСБАНК</name>
     <description>Информация о счете, кредите в банке Росбанк (http://www.rosbank.ru).
 	В настройках провайдера требуется указать 8 последних цифр номера Идентификационной карты и пароль к Интернет-банку https://ibank.rosbank.ru/.

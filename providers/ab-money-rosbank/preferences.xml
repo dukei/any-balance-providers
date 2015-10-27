@@ -3,12 +3,11 @@
     <EditTextPreference
         title="Номер карты" 
         positiveButtonText="ОК" 
-        summary="|Последние 8 цифр номера карты|5084 5000 {@s}" 
-        dialogTitle="Номер карты: 5084 5000 ..." 
+        summary="|Последние 8 цифр номера карты или логин|5084 5000 {@s}" 
+        dialogTitle="Логин или номер карты: 5084 5000 ..." 
         negativeButtonText="Отмена" 
-        dialogMessage="Введите последние 8 цифр номера карты для входа в Интернет-банк"
+        dialogMessage="Введите последние 8 цифр номера карты или ваш логин для входа в Интернет-банк"
         key="login"
-        inputType="number"
         obligatory="true">
     </EditTextPreference>
     <EditTextPreference 
@@ -19,7 +18,7 @@
         title="Пароль"
         summary="|Пароль для входа в Интернет-банк|***********"
         dialogMessage="Введите пароль, используемый для входа в Интернет-банк."
-        inputType="numberPassword"
+        inputType="password"
         obligatory="true">
     </EditTextPreference>
     <ListPreference 
@@ -28,7 +27,6 @@
         summary="||{@s}"
         entries="Карта|Счет|Кредит"
         entryValues="card|acc|crd"
-        enabled="false"
         defaultValue="card">
     </ListPreference>
     <EditTextPreference

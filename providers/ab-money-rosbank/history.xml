@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="5" date="2015-10-27">
+	- Исправление настроек
+	</change>
 	<change version="4" date="2015-10-27">
 	- Разрешено вводить не только цифры в логине и пароле
 	</change>

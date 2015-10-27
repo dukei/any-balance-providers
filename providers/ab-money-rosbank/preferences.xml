@@ -18,7 +18,7 @@
         title="Пароль"
         summary="|Пароль для входа в Интернет-банк|***********"
         dialogMessage="Введите пароль, используемый для входа в Интернет-банк."
-        inputType="password"
+        inputType="textPassword"
         obligatory="true">
     </EditTextPreference>
     <ListPreference 

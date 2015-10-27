@@ -957,7 +957,6 @@ function getBonuses(xhtml, result) {
 							sumParam(result.traffic_total - result.traffic_left, result, 'traffic_used', null, null, null, aggregate_sum);
 						}
 					}
-
 				} else {
 					sumParam(values, result, 'traffic_left' + (/ноч/i.test(name) ? '_night' : ''), null, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
 				}
@@ -972,16 +971,14 @@ function getBonuses(xhtml, result) {
 				getParam(services[i], result, 'rub_bonus2_till', /<div[^>]+class="column3[^"]*"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseDateWord);
 			} else if (/Рублей за участие в опросе|Счастливое время|Бонусы по программе|Счастливого времени/i.test(name)) {
 				sumParam(values, result, 'rub_opros', null, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-			} else if (/Времени общения|Включенные минуты/i.test(name)) {
+			} else if (/Минут[^<]+на номера вашего региона|Времени общения|Включенные минуты|Минут общения на номера вашего региона|минут в месяц|мин\.|Голосовой трафик|Разговоры.*вне сети/i.test(name)) {
 				sumParam(values, result, 'min_local', null, replaceMinutes, parseMinutes, aggregate_sum);
 				sumParam(services[i], result, 'min_local_till', /Доступно до([^<]{10,20})/i, replaceTagsAndSpaces, parseDateWord, aggregate_min);
+				
 			} else if (/Секунд БОНУС\s*\+|Баланс бонус-секунд/i.test(name)) {
 				sumParam(values, result, 'min_bi', null, replaceMinutes, parseMinutes, aggregate_sum);
 			} else if (/Секунд БОНУС-2|Баланс бесплатных секунд-промо/i.test(name)) {
 				sumParam(values, result, 'min_left_1', null, replaceMinutes, parseMinutes, aggregate_sum);
-				sumParam(services[i], result, 'min_local_till', /Доступно до([^<]{10,20})/i, replaceTagsAndSpaces, parseDateWord, aggregate_min);
-			} else if (/минут в месяц|мин\.|Голосовой трафик|Разговоры.*вне сети/i.test(name)) {
-				sumParam(values, result, 'min_local', null, replaceMinutes, parseMinutes, aggregate_sum);
 				sumParam(services[i], result, 'min_local_till', /Доступно до([^<]{10,20})/i, replaceTagsAndSpaces, parseDateWord, aggregate_min);
 			// Это новый вид отображения данных
 			} else if (/Минут общения по (?:тарифу|услуге)|вызовы|на местные номера/i.test(name)) {

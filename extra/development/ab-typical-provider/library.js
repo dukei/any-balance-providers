@@ -160,7 +160,8 @@ return
 c=f;
 f=a||false
 }function p(){if(f){return n?k.replace(n,""):""
-}}if(!isAvailable(d)){return p()
+}}if(!isAvailable(d)){AnyBalance.trace(d+" is disabled!");
+return p()
 }d=__getParName(d);
 var o=[],j;
 if(d&&isset(q[d])){o.push(q[d])

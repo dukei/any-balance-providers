@@ -22,6 +22,7 @@ var g_countersTable = {
 		"cred_ammount": "cards.totalCreditDebtAmount",
 		"ownFunds": "cards.ownFunds",
 		"clearBalance": "cards.clearBalance",
+		"type_code": "cards.type_code",
 	},
     acc: {
 		"__tariff": "accounts.accnum",

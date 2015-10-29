@@ -19,6 +19,9 @@ var g_countersTable = {
 		"minpay": "cards.minpay",
 		"limit": "cards.limit",
 		"minpaytill": "cards.minpaytill",
+		"cred_ammount": "cards.totalCreditDebtAmount",
+		"ownFunds": "cards.ownFunds",
+		"clearBalance": "cards.clearBalance",
 	},
     acc: {
 		"__tariff": "accounts.accnum",

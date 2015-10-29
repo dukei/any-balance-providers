@@ -88,14 +88,14 @@ function processCards(html, result) {
 }
 
 function processCard(info, result) {
-	var balance = getParam(info, result, 'cards.balance', /<balance>([\s\S]*?)<\/balance>/i, replaceTagsAndSpaces, parseBalance);
+	var balance = getParam(info, result, ['cards.balance', 'cards.clearBalance'], /<balance>([\s\S]*?)<\/balance>/i, replaceTagsAndSpaces, parseBalance);
 	getParam(info, result, ['cards.currency', 'cards.balance', 'cards.minpay', 'cards.limit', 'cards.totalCreditDebtAmount', 'cards.holdedFunds'], /<currency>([\s\S]*?)<\/currency>/i, replaceTagsAndSpaces, toUpperCaseMy);
 	
 	getParam(info, result, 'cards.minpay', /<minimalCreditPayment>([\s\S]*?)<\/minimalCreditPayment>/i, replaceTagsAndSpaces, parseBalance);
 	getParam(info, result, 'cards.limit', /<creditLimit>([\s\S]*?)<\/creditLimit>/i, replaceTagsAndSpaces, parseBalance);
 	// getParam(info, result, 'cards.totalCreditDebtAmount', /<totalCreditDebtAmount>([\s\S]*?)<\/totalCreditDebtAmount>/i, replaceTagsAndSpaces, parseBalance);
 	getParam(info, result, 'cards.holdedFunds', /<holdedFunds>([\s\S]*?)<\/holdedFunds>/i, replaceTagsAndSpaces, parseBalance);
-	var type = getParam(info, result, 'cards.type_code', /<accountType>([\s\S]*?)<\/accountType>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(type, result, 'cards.type_code', /<accountType>([\s\S]*?)<\/accountType>/i, replaceTagsAndSpaces, parseBalance);
 	getParam(info, result, 'cards.type', /<type>([\s\S]*?)<\/type>/i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(info, result, 'cards.cardnum', /<number>([\s\S]*?)<\/number>/i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(info, result, 'cards.accnum', /<accountNumber>([\s\S]*?)<\/accountNumber>/i, replaceTagsAndSpaces, html_entity_decode);
@@ -114,6 +114,8 @@ function processCard(info, result) {
 	}
 	
 	// Кредитные карты
+	var type = getParam(info, null, null, /<accountType>([\s\S]*?)<\/accountType>/i, replaceTagsAndSpaces, parseBalance);
+	
 	if (type == '3' && (isAvailable(['cards.totalCreditDebtAmount', 'cards.clearBalance', 'cards.ownFunds']) || isAvailableButUnset('cards.limit') || isAvailableButUnset('cards.minpay'))) {
 		var html = AnyBalance.requestPost(baseurl + 'RCCardService', '<?xml version=\'1.0\' encoding=\'UTF-8\' standalone=\'yes\' ?><soapenv:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://entry.rconnect/xsd" xmlns:ser="http://service.rconnect" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"><soapenv:Header /><soapenv:Body><ser:getCreditStatementPeriods2><cardId>' + result.__id + '</cardId></ser:getCreditStatementPeriods2></soapenv:Body></soapenv:Envelope>', addHeaders({SOAPAction: ''}));
 		
@@ -123,7 +125,7 @@ function processCard(info, result) {
 		if(prime && id) {
 			html = AnyBalance.requestPost(baseurl + 'RCCardService', '<?xml version=\'1.0\' encoding=\'UTF-8\' standalone=\'yes\' ?><soapenv:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://entry.rconnect/xsd" xmlns:ser="http://service.rconnect" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"><soapenv:Header /><soapenv:Body><ser:getCurrentCreditStatement><cardId>' + result.__id + '</cardId><id>' + id + '</id><isPrime>' + prime + '</isPrime></ser:getCurrentCreditStatement></soapenv:Body></soapenv:Envelope>', addHeaders({SOAPAction: ''}));
 			
-			var limit = getParam(html, result, 'cards.limit', /<availableCreditLimit>([\s\S]*?)<\/availableCreditLimit>/i, replaceTagsAndSpaces, parseBalance);
+			var limit = getParam(html, result, ['cards.limit', 'cards.clearBalance'], /<availableCreditLimit>([\s\S]*?)<\/availableCreditLimit>/i, replaceTagsAndSpaces, parseBalance);
 			getParam(html, result, 'cards.totalCreditDebtAmount', /<totalDebtAmount>([\s\S]*?)<\/totalDebtAmount>/i, replaceTagsAndSpaces, parseBalance);
 			getParam(html, result, 'cards.minpay', /<minAmount>([\s\S]*?)<\/minAmount>/i, replaceTagsAndSpaces, parseBalance);
 			var ownFunds = getParam(html, result, 'cards.ownFunds', /<ownFunds>([\s\S]*?)<\/ownFunds>/i, replaceTagsAndSpaces, parseBalance);

@@ -24,9 +24,7 @@ function main(){
 	var id = prefs.track_id; //Код отправления, введенный пользователем
 
 	var baseurl = "http://novaposhta.ua/tracking";
-	var html = AnyBalance.requestPost(baseurl, {
-		'cargo_number': prefs.track_id
-	}, addHeaders({Origin:baseurl}));
+	var html = AnyBalance.requestGet(baseurl + '/?cargo_number=' + encodeURIComponent(prefs.track_id), addHeaders({Origin:baseurl}));
 
 	if(/не найден|не знайдено/i.test(html)){
             var error = getParam(html, null, null, /class="response"[^<]([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
@@ -37,9 +35,9 @@ function main(){
      
 	var result = {success: true};
 
-        getParam(html, result, 'trackid', /(?:Результат пошуку[^№]+|Результат поиска[^№]+)(?:[№])([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
+        getParam(html, result, 'trackid', /(?:Результат пошуку[^№]+|Результат поиска[^№]+)(?:[№])([^<:]*)/i, replaceTagsAndSpaces, html_entity_decode);
         getParam(html, result, 'route', /Маршрут:(?:[^>]*>){1}([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
-        getParam(html, result, 'location', /(?:Текущее местоположение:|Поточне місцезнаходження:)([\s\S]*?)<\/a>/i, replaceTagsAndSpaces, html_entity_decode);
+        getParam(html, result, 'location', /(?:Текущее местоположение:|Поточне місцезнаходження:)([\s\S]*?)(?:<\/a>|<table)/i, replaceTagsAndSpaces, html_entity_decode);
         getParam(html, result, 'back', /Обратная доставка:|Зворотна доставка:(?:[^>]*>){1}([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
         getParam(html, result, 'weight', /Вес отправления:|Вага відправлення:(?:[^>]*>){2}([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
         getParam(html, result, 'payment', /Сумма к оплате:|Сума до сплати:(?:[^>]*>){2}([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);     

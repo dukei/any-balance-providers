@@ -35,7 +35,7 @@ function main(){
     if(!/exit.jsp|action=logout/.test(html)){
         var error = getParam(html, null, null, /<span[^>]*style=["']color:\s*#101010[^>]*>([\s\S]*?)<\/span>/, replaceTagsAndSpaces, html_entity_decode);
         if(error)
-            throw new AnyBalance.Error(error);
+            throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
 		
 		AnyBalance.trace(html);
         throw new AnyBalance.Error('Не удалось войти в личный кабинет. Проблемы на сайте или сайт изменен.');
@@ -44,15 +44,18 @@ function main(){
     var result = {success: true};
 
     var url = AnyBalance.getLastUrl();
-    if(/statistics\.gorcomnet/.test(url)){
+    if(/lk.seven-sky\.net/.test(url)){
 		getParam(html, result, 'balance', /<li>\s*Баланс:(?:<[^>]*>){2}([^<]+)/i, replaceTagsAndSpaces, parseBalance);
 		getParam(html, result, 'days', /<li[^>]*>\s*Дней до блокировки:(?:<[^>]*>){1}([^<]+)/i, replaceTagsAndSpaces, parseBalance);
-		
+		getParam(html, result, '__tariff', /Ваш тарифный план[\s\S]*?<strong[^>]*>([\s\S]*?)<\/strong>/i, replaceTagsAndSpaces, html_entity_decode);
 		getParam(html, result, 'licschet', /Лицевой счет №\s*(\d+)/i, replaceTagsAndSpaces, html_entity_decode);
 		
-    } else if(/stat\.seven-sky\.net/.test(url)){
+    } else if(/stat.seven-sky\.net/.test(url)){
+    	//Может, этого уже и нет...
         getParam(html, result, 'balance', /Ваш баланс(?:[^>]*>){5}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
         getParam(html, result, 'licschet', /счет N([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
+    } else{
+    	throw new AnyBalance.Error('Кабинет по адресу ' + url + ' не поддерживается. Сайт изменен?');
     }
 
     AnyBalance.setResult(result);

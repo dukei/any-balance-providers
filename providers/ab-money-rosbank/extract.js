@@ -122,8 +122,8 @@ function processAccounts(result){
 
     for(var i=0; i<trs.length; ++i){
         var tr = trs[i];
-        var id = getParam(tr, null, null, /([^]*?<\/td>){2}/i, replaceTagsAndSpaces, html_entity_decode);
-        var name = getParam(tr, null, null, /([^]*?<\/td>){1}/i, replaceTagsAndSpaces, html_entity_decode);
+        var id = getParam(tr, null, null, /([\s\S]*?<\/td>){2}/i, replaceTagsAndSpaces, html_entity_decode);
+        var name = getParam(tr, null, null, /([\s\S]*?<\/td>){1}/i, replaceTagsAndSpaces, html_entity_decode);
 
         var o = {
             __id: id,
@@ -142,16 +142,16 @@ function processAccounts(result){
 function processAccount(tr, result){
     AnyBalance.trace('Обработка счета ' + result.__name);
 
-    getParam(tr, result, 'accounts.balance', /([^]*?<\/td>){3}/i, replaceTagsAndSpaces, parseBalance);
-    getParam(tr, result, 'accounts.currency', /([^]*?<\/td>){3}/i, replaceTagsAndSpaces, parseCurrency);
+    getParam(tr, result, 'accounts.balance', /([\s\S]*?<\/td>){3}/i, replaceTagsAndSpaces, parseBalance);
+    getParam(tr, result, 'accounts.currency', /([\s\S]*?<\/td>){3}/i, replaceTagsAndSpaces, parseCurrency);
 
     if(AnyBalance.isAvailable('accounts.num', 'accounts.type', 'accounts.owner')) {
         var infourl = getParam(tr, null, null, /"(AccountInfo.aspx\?id=[^"]*)/i, null, html_entity_decode);
         var html = AnyBalance.requestGet(g_baseurl + infourl, g_headers);
 
-        getParam(html, result, 'accounts.num', /Номер счёта:[^]*?<td[^>]*>([^]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-        getParam(html, result, 'accounts.type', /Тип счёта:[^]*?<td[^>]*>([^]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-        getParam(html, result, 'accounts.owner', /Наименование счёта:[^]*?<td[^>]*>([^]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+        getParam(html, result, 'accounts.num', /Номер счёта:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+        getParam(html, result, 'accounts.type', /Тип счёта:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+        getParam(html, result, 'accounts.owner', /Наименование счёта:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
     }
 
     if(AnyBalance.isAvailable('accounts.transactions')){
@@ -218,8 +218,8 @@ function processCards(result){
 
     for(var i=0; i<trs.length; ++i){
         var tr = trs[i];
-        var id = getParam(tr, null, null, /([^]*?<\/td>){2}/i, replaceTagsAndSpaces, html_entity_decode);
-        var name = getParam(tr, null, null, /([^]*?<\/td>){1}/i, replaceTagsAndSpaces, html_entity_decode);
+        var id = getParam(tr, null, null, /([\s\S]*?<\/td>){2}/i, replaceTagsAndSpaces, html_entity_decode);
+        var name = getParam(tr, null, null, /([\s\S]*?<\/td>){1}/i, replaceTagsAndSpaces, html_entity_decode);
 
         var o = {
             __id: id,
@@ -238,22 +238,22 @@ function processCards(result){
 function processCard(tr, result){
     AnyBalance.trace('Обработка карты ' + result.__name);
 
-    getParam(tr, result, 'cards.till', /([^]*?<\/td>){4}/i, replaceTagsAndSpaces, parseDate);
-    getParam(tr, result, 'cards.status', /([^]*?<\/td>){3}/i, replaceTagsAndSpaces, html_entity_decode); //Карта активна
+    getParam(tr, result, 'cards.till', /([\s\S]*?<\/td>){4}/i, replaceTagsAndSpaces, parseDate);
+    getParam(tr, result, 'cards.status', /([\s\S]*?<\/td>){3}/i, replaceTagsAndSpaces, html_entity_decode); //Карта активна
 
     if(AnyBalance.isAvailable('cards.balance', 'cards.currency', 'cards.num', 'cards.accnum')) {
         var infourl = getParam(tr, null, null, /"(CardInfo.aspx\?id=[^"]*)/i, null, html_entity_decode);
         var html = AnyBalance.requestGet(g_baseurl + infourl, g_headers);
 
-        getParam(html, result, 'cards.balance', /Текущий доступный остаток:[^]*?<td[^>]*>([^]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-        getParam(html, result, 'cards.currency', /Валюта счета:[^]*?<td[^>]*>([^]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+        getParam(html, result, 'cards.balance', /Текущий доступный остаток:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+        getParam(html, result, 'cards.currency', /Валюта счета:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
 
         if(AnyBalance.getPreferences().full_num) {
             //И эти люди работают в банке...
-            getParam(html, result, 'cards.num', /Номер карты[^]*?<td[^>]*>([^]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+            getParam(html, result, 'cards.num', /Номер карты[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
         }
 
-        getParam(html, result, 'cards.accnum', /Номер счета:[^]*?<td[^>]*>([^]*?)<\/td>/i, [replaceTagsAndSpaces, /\(.*/i, ''], html_entity_decode);
+        getParam(html, result, 'cards.accnum', /Номер счета:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, [replaceTagsAndSpaces, /\(.*/i, ''], html_entity_decode);
     }
 
     if(AnyBalance.isAvailable('cards.transactions')){
@@ -269,9 +269,9 @@ function processInfo(result){
     var info = result.info = {};
 
     var html = AnyBalance.requestGet(g_baseurl + 'Profile.aspx', g_headers);
-    getParam(html, info, 'info.fio', /<h3\s+class="two-cols"\s*>\s*<span[^>]*>([^]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, info, 'info.email', /<a[^>]+EmailHyperLink[^>]*>([^]*?)<\/a>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, info, 'info.notify', /Уведомления:[^]*?<td[^>]*>([^]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode); //не получать уведомлений|Получать уведомления только об успешных операциях|Получать уведомления обо всех активных операциях
+    getParam(html, info, 'info.fio', /<h3\s+class="two-cols"\s*>\s*<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, info, 'info.email', /<a[^>]+EmailHyperLink[^>]*>([\s\S]*?)<\/a>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, info, 'info.notify', /Уведомления:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode); //не получать уведомлений|Получать уведомления только об успешных операциях|Получать уведомления обо всех активных операциях
 
     if(AnyBalance.isAvailable('info.phone')) {
         html = AnyBalance.requestGet(g_baseurl + 'ProfileChangeParams.aspx', g_headers);
@@ -307,4 +307,99 @@ function fetchCredit(baseurl, html){
     html = AnyBalance.requestGet(baseurl + 'Logout.aspx', g_headers2);
     AnyBalance.setResult(result);
     
+}
+
+function processDeposits(result){
+    if(!AnyBalance.isAvailable('deposits'))
+        return;
+
+    var html = AnyBalance.requestGet(g_baseurl + 'Deposits.aspx', g_headers);
+    html = html.replace(/<!--[\s\S]*?-->/g, ''); //Вырежем комментарии
+
+    var divs = getElements(html, /<div[^>]+class="entryCont"[^>]*>/i);
+    if(divs.length == 0){
+        AnyBalance.trace(html);
+        AnyBalance.trace('Не удалось получить вклады');
+        return;
+    }
+
+    result.deposits = [];
+
+    AnyBalance.trace('Нашли ' + divs.length + ' вкладов');
+
+    for(var i=0; i<divs.length; ++i){
+        var div = divs[i];
+        var id = getParam(div, null, null, /([\s\S]*?<\/td>){3}/i, replaceTagsAndSpaces, html_entity_decode);
+        var name = getParam(div, null, null, /<td[^>]*>([\s\S]*?<\/td>){1}/i, replaceTagsAndSpaces, html_entity_decode);
+
+        var o = {
+            __id: id,
+            __name: name + ' ' + id.substr(-4),
+            num: id
+        };
+
+        if(__shouldProcess('deposits', o)){
+            processDeposit(div, o);
+        }
+
+        result.deposits.push(o);
+    }
+}
+
+function parseBool(str){
+    return /Да/i.test(str);
+}
+
+function processDeposit(div, result){
+    AnyBalance.trace('Обработка вклада ' + result.__name);
+
+    getParam(div, result, 'deposits.balance', /([\s\S]*?<\/td>){4}/i, replaceTagsAndSpaces, parseBalance);
+    getParam(div, result, 'deposits.currency', /([\s\S]*?<\/td>){4}/i, replaceTagsAndSpaces, parseCurrency);
+    getParam(div, result, 'deposits.agreement', /([\s\S]*?<\/td>){2}/i, replaceTagsAndSpaces, html_entity_decode);
+
+    if(AnyBalance.isAvailable('deposits.num', 'deposits.num1', 'deposits.num2', 'deposits.type',
+            'deposits.period', 'deposits.owner', 'deposits.date_start', 'deposits.date_end', 'deposits.balance_start',
+            'deposits.balance_min', 'deposits.min_topup', 'deposits.pct', 'deposits.pct_sum', 'deposits.pct_period',
+            'deposits.pct_period2', 'deposits.pct_next_till', 'deposits.pct_next', 'deposits.topup')) {
+        var infourl = getParam(div, null, null, /"(DepositInfo.aspx\?id=[^"]*)/i, null, html_entity_decode);
+        var html = AnyBalance.requestGet(g_baseurl + infourl, g_headers);
+
+        getParam(html, result, 'deposits.num', /Номер\s+счёта\s+вклада:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+        getParam(html, result, 'deposits.num1', /Номер\s+счёта-синонима:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+        getParam(html, result, 'deposits.type', /Вид\s+вклада:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+        getParam(html, result, 'deposits.period', /Срок\s+вклада:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode); //3 мес. 0 дн.
+        getParam(html, result, 'deposits.owner', /ФИО\s+клиента:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+        getParam(html, result, 'deposits.num2', /Счёт\s+погашения\s+суммы\s+вклада\s+и\s+%:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+        getParam(html, result, 'deposits.date_start', /Дата\s+открытия\s+вклада:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
+        getParam(html, result, 'deposits.date_end', /Дата\s+окончания\s+срока\s+вклада:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
+        getParam(html, result, 'deposits.balance_start', /Начальная\s+сумма\s+вклада:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+        getParam(html, result, 'deposits.balance_min', /Минимальная\s+сумма\s+вклада:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+        getParam(html, result, 'deposits.min_topup', /Минимальная\s+сумма\s+пополнения:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+        getParam(html, result, 'deposits.pct', /Текущая\s+ставка\s+%:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+        getParam(html, result, 'deposits.pct_sum', /Выплаченные\s+%:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+        getParam(html, result, 'deposits.pct_period', /Частота\s+выплаты\s+процентов\s+на\s+счёт\s+по\s+вкладу:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode); //Ежемесячно
+        getParam(html, result, 'deposits.pct_period2', /Частота\s+перечисления\s+процентов\s+на\s+счёт\s+погашения:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode); //Конец срока
+        getParam(html, result, 'deposits.pct_next_till', /Дата\s+очередного\s+начисления\s+процентов:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
+        getParam(html, result, 'deposits.pct_next', /Сумма\s+процентов\s+к\s+очередной\s+выплате:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+        getParam(html, result, 'deposits.topup', /Пополнение:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBool);
+    }
+
+    if(AnyBalance.isAvailable('deposits.transactions')){
+        processTransactions(div, result);
+    }
+
+}
+
+function processCredits(result){
+    if(!AnyBalance.isAvailable('deposits'))
+        return;
+
+    var html = AnyBalance.requestGet(g_baseurl + 'Loans.aspx', g_headers);
+
+    var error = getElement(html, /<div[^>]+id="[^"]*_ErrorPanel"/i, replaceTagsAndSpaces, html_entity_decode);
+    if(error){
+        AnyBalance.trace("У вас нет кредитов: " + error);
+        return;
+    }
+
 }

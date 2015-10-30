@@ -73,6 +73,11 @@ function main() {
     }, addHeaders({Referer: baseurl + 'qa/PersonalCabin.html', 'X-Requested-With': 'XMLHttpRequest'}));  
     
     var json = getJson(html);
+
+    if(!json.Credits || !json.Credits[0]){
+    	AnyBalance.trace(html);
+    	throw new AnyBalance.Error('Информация временно недоступна. Попробуйте позднее');
+    }
     
     getParam(json.Credits[0].Balance, result, 'to_pay', null, null, parseBalance);
     getParam(json.Credits[0].Month, result, 'month', null, null, null);

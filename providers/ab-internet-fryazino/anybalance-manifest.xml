@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-internet-fryazino</id>
+	<id version="3">ab-internet-fryazino</id>
 	<api flags="no_browser"/>
 	<name>Fryazino.net</name>
 	<description html="true"><![CDATA[

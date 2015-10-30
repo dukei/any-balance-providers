@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id version="18">ab-money-raif</id>
+	<id version="20">ab-money-raif</id>
 	<name>Райффайзен</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о текущем остатке и других параметрах счетов и депозитов для клиентов банка Райффайзенбанк (<a href="http://www.raiffeisen.ru">http://www.raiffeisen.ru</a>).</p>
@@ -26,6 +26,8 @@
 	</files>
 	<counters>
 		<counter id="balance" name="Баланс" units=" {@currency}"/>
+		<counter id="ownFunds" name="Собственные средства" units=" {@currency}"/>
+		<counter id="clearBalance" name="Баланс кредитной карты" units=" {@currency}"/>
 		<counter id="pcts" name="Проценты в конце срока" units=" {@currency}"/>
 		<counter id="currency" name="Валюта" type="text"/>
 		<counter id="accnum" name="Номер счета" type="text"/>

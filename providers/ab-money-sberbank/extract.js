@@ -7,10 +7,19 @@ var g_headers = {
 	'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
 	'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
 	'Connection':'keep-alive',
-	'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:35.0) Gecko/20100101 Firefox/35.0'
+	'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/46.0.2490.80 Safari/537.36'
 };
 
 var nodeUrl = ''; // Подставляется при авторизации, обычно имеет вид https://node1.online.sberbank.ru/
+
+function getLoggedInHtml(){
+    var nurl = (nodeUrl || 'https://node1.online.sberbank.ru');
+    var html = AnyBalance.requestGet(nurl + '/PhizIC/private/userprofile/userSettings.do', g_headers);
+    if(/accountSecurity.do/i.test(html)){
+        nodeUrl = nurl;
+        return html;
+    }
+}
 
 function login(prefs) {
 	var baseurl = "https://online.sberbank.ru/CSAFront/login.do";
@@ -19,11 +28,9 @@ function login(prefs) {
 	checkEmpty(prefs.login, "Пожалуйста, укажите логин для входа в Сбербанк-Онлайн!");
 	checkEmpty(prefs.password, "Пожалуйста, укажите пароль для входа в Сбербанк-Онлайн!");
 
-    var nurl = (nodeUrl || 'https://node1.online.sberbank.ru');
-    var html = AnyBalance.requestGet(nurl + '/PhizIC/private/userprofile/userSettings.do', g_headers);
-    if(/logoff.do/i.test(html)){
+	var html = getLoggedInHtml();
+    if(html){
         AnyBalance.trace("Уже залогинены, используем текущую сессию");
-        nodeUrl = nurl;
         return html;
     }
 
@@ -33,7 +40,7 @@ function login(prefs) {
 		'field(login)': prefs.login,
 		'field(password)': prefs.password,
 		operation: 'button.begin'
-	});
+	}, addHeaders({Referer: baseurl, 'X-Requested-With': 'XMLHttpRequest', Origin: 'https://online.sberbank.ru'}));
 	AnyBalance.setDefaultCharset('utf-8');
 	
 	var error = getParam(html, null, null, /<h1[^>]*>О временной недоступности услуги[\s\S]*?<p[^>]*>([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, html_entity_decode);
@@ -45,14 +52,14 @@ function login(prefs) {
 		throw new AnyBalance.Error(error);
 	
 	if (/\$\$errorFlag/i.test(html)) {
-		var error = getParam(html, null, null, /([\s\S]*)/, replaceTagsAndSpaces, html_entity_decode);
+		var error = getParam(html, null, null, /([\s\S]*)/, [replaceTagsAndSpaces, /^:/, ''], html_entity_decode);
 		throw new AnyBalance.Error(error, null, /Ошибка идентификации/i.test(error));
 	}
 	
 	var page = getParam(html, null, null, /value\s*=\s*["'](https:[^'"]*?AuthToken=[^'"]*)/i);
 	if (!page) {
 		AnyBalance.trace(html);
-		throw new AnyBalance.Error("Не удаётся найти ссылку на информацию по картам. Пожалуйста, обратитесь к разработчикам для исправления ситуации.");
+		throw new AnyBalance.Error("Не удаётся найти ссылку на информацию. Пожалуйста, обратитесь к разработчикам для исправления ситуации.");
 	}
 	
 	AnyBalance.trace("About to authorize: " + page);	
@@ -72,10 +79,11 @@ function login(prefs) {
 }
 
 function doNewAccount(page) {
-	var html = AnyBalance.requestGet(page, g_headers);
+	var html = AnyBalance.requestGet(page, addHeaders({Referer: baseurl}));
+
 	if(!html){
 		AnyBalance.trace('Почему-то получили пустую страницу... Попробуем ещё раз');
-		html = AnyBalance.requestGet(page, g_headers);
+		html = AnyBalance.requestGet(page, addHeaders({Referer: baseurl}));
 	}
 
 	if (/StartMobileBankRegistrationForm/i.test(html)) {
@@ -86,7 +94,7 @@ function doNewAccount(page) {
 		html = AnyBalance.requestPost('https://online.sberbank.ru/PhizIC/login/register-mobilebank/start.do', {
 			PAGE_TOKEN: pageToken,
 			operation: 'skip'
-		});
+		}, addHeaders({Referer: baseurl}));
 	}
 
 	// А ну другой кейс, пользователь сменил идентификатор на логин
@@ -99,7 +107,23 @@ function doNewAccount(page) {
 	if (/PhizIC/.test(html)) {
 		AnyBalance.trace('Entering physic account...: ' + baseurl);
 		if (/confirmTitle/.test(html)) {
-			var pass = AnyBalance.retrieveCode('Ваш личный кабинет требует одноразовых паролей для входа. Пожалуйста, отмените в настройках кабинета требование одноразовых паролей при входе. Это безопасно: для совершения денежных операций требование одноразового пароля всё равно останется', null, {time: 300000});
+			var origHtml = html;
+
+		    //проверяем сначала тип подтверждения и переключаем его на смс, если это чек
+			var active = getElement(html, /<div[^>]+clickConfirm[^>]+buttonGreen[^>]*>/i) || '';
+			if(/confirmSMS/i.test(active)){
+				AnyBalance.trace('Запрошен смс-пароль...');
+			}else if(/confirmCard/i.test(active)){
+				AnyBalance.trace('Запрошен пароль с чека. Это неудобно, запрашиваем пароль по смс.');
+				html = AnyBalance.requestPost(baseurl + '/PhizIC/async/confirm.do', {
+					'PAGE_TOKEN': getParamByName(origHtml, 'PAGE_TOKEN'),
+					'operation': 'button.confirmSMS'
+				}, addHeaders({Referer: baseurl, 'X-Requested-With': 'XMLHttpRequest'}));
+			}else{
+				AnyBalance.trace('Неизвестное подтверждение: ' + active + '. Надеемся, это смс.');
+			}
+
+			var pass = AnyBalance.retrieveCode('Для входа в интернет банк, пожалуйста, введите одноразовый пароль, который выслан вам по СМС.\n\nЕсли вы не хотите постоянно вводить СМС-пароли при входе, вы можете отменить их в настройках вашего Сбербанк-онлайн. Это безопасно - для совершения денежных операций требование одноразового пароля всё равно останется', null, {time: 300000});
 			
 			html = AnyBalance.requestPost(baseurl + '/PhizIC/async/confirm.do', {
 				'receiptNo': '',
@@ -107,9 +131,9 @@ function doNewAccount(page) {
 				'passwordNo': '',
 				'SID': '',
 				'$$confirmSmsPassword': pass,
-				'PAGE_TOKEN': getParamByName(html, 'PAGE_TOKEN'),
+				'PAGE_TOKEN': getParamByName(origHtml, 'PAGE_TOKEN'),
 				'operation': 'button.confirm'
-			}, addHeaders({Referer: baseurl}));
+			}, addHeaders({Referer: baseurl, 'X-Requested-With': 'XMLHttpRequest'}));
 			
 			
 			// throw new AnyBalance.Error("Ваш личный кабинет требует одноразовых паролей для входа. Пожалуйста, отмените в настройках кабинета требование одноразовых паролей при входе. Это безопасно: для совершения денежных операций требование одноразового пароля всё равно останется.");
@@ -121,7 +145,7 @@ function doNewAccount(page) {
 				'field(selectAgreed)': 'on',
 				'PAGE_TOKEN': getParamByName(html, 'PAGE_TOKEN'),
 				'operation': 'button.confirm'
-			}, addHeaders({Referer: baseurl}));
+			}, addHeaders({Referer: baseurl, 'X-Requested-With': 'XMLHttpRequest'}));
 		}
 		
 		if (/Откроется справочник регионов, в котором щелкните по названию выбранного региона/.test(html)) {
@@ -130,8 +154,23 @@ function doNewAccount(page) {
 			html = AnyBalance.requestPost(baseurl + '/PhizIC/region.do', {
 				id: -1,
 				operation: 'button.save'
-			});
+			}, addHeaders({Referer: baseurl, 'X-Requested-With': 'XMLHttpRequest'}));
 		}
+
+		if(!/accountSecurity.do/i.test(html)){
+			var error = getElement(html, /<div[^>]+warningMessages[^>]*>/i, [replaceTagsAndSpaces, /Получите новый пароль, нажав.*/i, ''], html_entity_decode);
+			if(error)
+				throw new AnyBalance.Error(error);
+		}
+
+		if(!/accountSecurity.do/i.test(html))
+			html = getLoggedInHtml();
+
+		if(!/accountSecurity.do/i.test(html)){
+			AnyBalance.trace(html);
+			throw new AnyBalance.Error('Не удалось зайти в Cбербанк-онлайн. Сайт изменен?');
+		}
+
 	} else {
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Ваш тип личного кабинета не поддерживается. Свяжитесь, пожалуйста, с разработчиками.');
@@ -538,20 +577,24 @@ function processMetalAccountTransactions(html, result){
 // Профиль пользователя
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 function processProfile(html, result) {
+	if(!AnyBalance.isAvailable('info'))
+		return;
+
 	AnyBalance.trace('Разбираем профиль...');
+
+	var info = result.info = {};
 	
-	if(isAvailable(['fio', 'phone', 'email', 'passport', 'hphone', 'snils'])) {
-		html = AnyBalance.requestGet(nodeUrl + '/PhizIC/private/userprofile/userSettings.do');
-		
-		getParam(html, result, 'fio', /<span[^>]+"userFIO"[^>]*>([^]*?)<\/span>/i, replaceTagsAndSpaces, capitalFirstLetters);
-		getParam(html, result, 'hphone', /Домашний телефон:[^]*?<span[^>]+"phoneNumber"[^>]*>([^]*?)<\/span>/i, replaceTagsAndSpaces);
-        getParam(html, result, 'phone', /Мобильный телефон:[^]*?<span[^>]+"phoneNumber"[^>]*>([^]*?)<\/span>/i, replaceTagsAndSpaces);
-		getParam(html, result, 'email', /<span[^>]+userEmail[^>]*>([^]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
-		getParam(html, result, 'passport', /Паспорт гражданина РФ[^]*?<td[^>]+class="docNumber"[^>]*>([^]*?)<\/td>/i, replaceTagsAndSpaces);
-        getParam(html, result, 'snils', /Страховое свидетельство[^]*?<div[^>]+class="documentNumber"[^>]*>([^]*?)<\/div>/i, replaceTagsAndSpaces);
-        getParam(html, result, 'inn', /<div[^>]*documentTitle[^>]*>\s*ИНН[^]*?<div[^>]+class="documentNumber"[^>]*>([^]*?)<\/div>/i, replaceTagsAndSpaces);
-	}
+	html = AnyBalance.requestGet(nodeUrl + '/PhizIC/private/userprofile/userSettings.do');
+	
+	getParam(html, info, 'info.fio', /<span[^>]+"userFIO"[^>]*>([^]*?)<\/span>/i, replaceTagsAndSpaces, capitalFirstLetters);
+	getParam(html, info, 'info.hphone', /Домашний телефон:[^]*?<span[^>]+"phoneNumber"[^>]*>([^]*?)<\/span>/i, replaceTagsAndSpaces);
+    getParam(html, info, 'info.phone', /Мобильный телефон:[^]*?<span[^>]+"phoneNumber"[^>]*>([^]*?)<\/span>/i, replaceTagsAndSpaces);
+	getParam(html, info, 'info.email', /<span[^>]+userEmail[^>]*>([^]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, info, 'info.passport', /Паспорт гражданина РФ[^]*?<td[^>]+class="docNumber"[^>]*>([^]*?)<\/td>/i, replaceTagsAndSpaces);
+    getParam(html, info, 'info.snils', /Страховое свидетельство[^]*?<div[^>]+class="documentNumber"[^>]*>([^]*?)<\/div>/i, replaceTagsAndSpaces);
+    getParam(html, info, 'info.inn', /<div[^>]*documentTitle[^>]*>\s*ИНН[^]*?<div[^>]+class="documentNumber"[^>]*>([^]*?)<\/div>/i, replaceTagsAndSpaces);
 }
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Всякие вспомогательные функции
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -25,8 +25,8 @@
         key="type" 
         title="Что смотреть"
         summary="||{@s}"
-        entries="Карта|Счет|Кредит"
-        entryValues="card|acc|crd"
+        entries="Карта|Счет|Кредит|Депозит"
+        entryValues="card|acc|crd|dep"
         defaultValue="card">
     </ListPreference>
     <EditTextPreference

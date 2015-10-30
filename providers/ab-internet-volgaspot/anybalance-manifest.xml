@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-internet-volgaspot</id>
+	<api flags="no_browser"/>
+	<name>Volgaspot</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе интернет-провайдера <a href="http://volgaspot.ru/">Volgaspot</a></p>
+	<p>Информация берется из личного кабинета http://volgaspot.ru/webmain/site/login</p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="account" name="Лицевой счет №" units=" р"/>
+		<counter id="balance" name="Баланс" type="numeric"/>
+		<counter id="work_days" name="Осталось дней работы" type="numeric"/>
+		<counter id="credit" name="Кредит" type="text"/>
+		<counter id="lock" name="Блокировка" type="text"/>
+		<counter id="access" name="Доступ к Интернет" type="text"/>
+	</counters>
+	<keywords>Амо Антиповка Береславка Волгоград Волгодонский-2 Волжский Балыклей Городище Дубовка Ерзовка Калач-на-Дону Каменка Качалино Котельниково КрСлобода Максимка Нариман, Новый Рогачик, Нокиевка Орловка Панфилово ПетровВал Приморский Сарепта, Средняя Ахтуба, Успенка Фролово</keywords>
+	<type>internet</type>
+	<country>ru</country>
+</provider>

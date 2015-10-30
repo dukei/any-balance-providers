@@ -5,12 +5,18 @@ Function createInput(file,title,timeout)
     Dim content, wnd, status
     'Задаём HTML код окна
 	'Загрузим из файла
-	Dim objStream
+	Dim objStream, strPath, objFSO, objFile
+
+	strPath = Wscript.ScriptFullName
+
+	Set objFSO = CreateObject("Scripting.FileSystemObject")
+	Set objFile = objFSO.GetFile(strPath)
+	strPath = objFSO.GetParentFolderName(objFile)
 
 	Set objStream = CreateObject("ADODB.Stream")
 	objStream.CharSet = "utf-8"
 	objStream.Open
-	objStream.LoadFromFile("..\\..\\extra\\development\\tools\\" & file)
+	objStream.LoadFromFile(strPath & "\" & file)
 	content = objStream.ReadText()
 	
     'Создаём нужное нам окошко (без скролов, без меню и т.п)

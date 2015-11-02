@@ -75,7 +75,7 @@ function login(prefs) {
 	
 	var url = baseurl + 'f?p=10:MAIN:' + loginVar;
 	html = AnyBalance.requestGet(url, g_headers);
-
+	
 	if(/Необходимо актуализировать e-mail/i.test(html)) {
 		AnyBalance.trace('Необходимо актуализировать e-mail, ок, сделаем...');
 
@@ -109,6 +109,11 @@ function login(prefs) {
 			p_flow_step_id:getFlowStepID(html) || FlowStepID,		
 		}, addHeaders({Referer: url, 'X-Requested-With': 'XMLHttpRequest'}));
 	}
+	// Проверим, может нас бросили не на главную страницу, а нам надо начать с главной!
+	if(!/<title>[^<]*Главная[^<]*<\/title>/i.test(html)) {
+		var href = getParam(html, null, null, /<a href="([^"]+)"[\s\S]*?Портфель[^<]+<\/a>/i);
+		html = AnyBalance.requestGet(baseurl + href, g_headers);
+	}
 	
 	return html;
 }
@@ -131,10 +136,14 @@ function processProfile(html, result) {
 		p_arg_values:'PERSONAL_INFO',
 	}, addHeaders({Referer: baseurl}));
 	
-	getParam(html, result, 'profile.name', /"profile-name with-icon"[^>]*>([\s\S]*?)<\/div/i, replaceTagsAndSpaces);
-	getParam(html, result, 'profile.phone', /"profile-phone-mobile"[^>]*>([^<]+)/i, replaceTagsAndSpaces);
-	getParam(html, result, 'profile.mail', /"profile-email"[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces);
-	getParam(html, result, 'profile.dateOfBirth', /"profile-birthday-date"[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseDate);
+	var p = {};
+	
+	getParam(html, p, 'profile.name', /"profile-name with-icon"[^>]*>([\s\S]*?)<\/div/i, replaceTagsAndSpaces);
+	getParam(html, p, 'profile.phone', /"profile-phone-mobile"[^>]*>([^<]+)/i, replaceTagsAndSpaces);
+	getParam(html, p, 'profile.mail', /"profile-email"[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces);
+	getParam(html, p, 'profile.dateOfBirth', /"profile-birthday-date"[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseDate);
+	
+	result.profile = p;
 	// getParam(html, result, 'profile.inn', //i, replaceTagsAndSpaces);
 }
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -148,7 +157,7 @@ function processCards(html, result) {
 	
 	for(var i=0; i < cards.length; ++i) {
 		var title = getParam(cards[i], null, null, /\d{4}(?:[-\s][\dx]{4}){2}[-\s]\d{4}/i, replaceTagsAndSpaces);
-		var _id = title;
+		var _id = getParam(cards[i], null, null, /acc_id="([^"]+)"/i, replaceTagsAndSpaces);
 		
 		var c = {__id: _id, __name: title};
 		
@@ -168,12 +177,19 @@ function processCard(card, result) {
 
 	// Дополнительная инфа.
 	var href = getParam(card, null, null, /href="(f\?p=[^"]+)"/i);
-	if(href) {
+	if(href && isAvailable(['cards.limit', 'cards.blocked', 'cards.minpay', 'cards.total_debt', 'cards.minpay', 'cards.minpay', 'cards.gracepay', 'cards.minpay_till', 'cards.gracepay_till'])) {
 		var html = AnyBalance.requestGet(baseurl + href, g_headers);
 		
-		getParam(html, result, 'cards.blocked', /Заблокировано по операциям с картой([^>]*>){5}/i, replaceTagsAndSpaces, parseBalance);
-		getParam(html, result, 'cards.balance', /Доступно для операций с картами([^>]*>){5}/i, replaceTagsAndSpaces, parseBalance);
+		getParam(html, result, 'cards.limit', /Кредитный лимит(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+		getParam(html, result, 'cards.blocked', /Заблокировано по операциям с картой(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+		getParam(html, result, 'cards.minpay', /cумма минимального платежа(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+		getParam(html, result, 'cards.total_debt', /общая сумма задолженности(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+		getParam(html, result, 'cards.minpay', /cумма минимального платежа(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+		getParam(html, result, 'cards.gracepay', /для выполнения условий льготного периода кредитования(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 		
+		var replaceTill = [replaceTagsAndSpaces, /[\s\S]*?(\d+\.\d+\.\d+$)/i, '$1'];
+		getParam(html, result, 'cards.minpay_till', /cумма минимального платежа(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTill, parseDate);
+		getParam(html, result, 'cards.gracepay_till', /для выполнения условий льготного периода кредитования(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTill, parseDate);
 	} else {
 		AnyBalance.trace('Не нашли ссылку на дополнительную информацию по счетам, возможно, сайт изменился?');
 	}
@@ -183,17 +199,36 @@ function processCard(card, result) {
 
 function processCardTransactions(card, html, url, result) {
 	if(!AnyBalance.isAvailable('cards.transactions'))
-		return;	
+		return;
 	
 	// Похоже, что он всегда такой, т.к. со страницы никогда не приходит такое значение
 	var step = '99';
 	
+	// Старый вариант
+	// html = AnyBalance.requestPost(baseurl + 'wwv_flow.show', [
+		// ['p_request', 'STATEMENT'],
+		// ['p_instance', getP_instance(html)],
+		// ['p_flow_id', getFlowID(html)],
+		// ['p_flow_step_id', step],
+		// ['p_arg_names', 'P' + step + '_ID'],
+		// ['p_arg_values', result.__id],
+		// ['p_arg_names', 'P' + step + '_DATE_FROM'],
+		// ['p_arg_values', getFormattedDate(5)],
+		// ['p_arg_names', 'P' + step + '_DATE_TO'],
+		// ['p_arg_values', getFormattedDate()],
+		// // ['p_arg_names', 'P' + step + '_CURRENCY'],
+		// // ['p_arg_values', 'RUB'],
+		// ['p_arg_names', 'P' + step + '_OPER_TYPE'],
+		// ['p_arg_values', ''],		
+	// ], addHeaders({Referer: url, Accept: '*/*'}));
+	
+	// Попробуем новый
 	html = AnyBalance.requestPost(baseurl + 'wwv_flow.show', [
-		['p_request', 'STATEMENT'],
+		['p_request', 'getpaymentlist'],
 		['p_instance', getP_instance(html)],
 		['p_flow_id', getFlowID(html)],
 		['p_flow_step_id', step],
-		['p_arg_names', 'P' + step + '_ID'],
+		['p_arg_names', 'P' + step + '_ITEM_ID'],
 		['p_arg_values', result.__id],
 		['p_arg_names', 'P' + step + '_DATE_FROM'],
 		['p_arg_values', getFormattedDate(5)],
@@ -202,12 +237,14 @@ function processCardTransactions(card, html, url, result) {
 		// ['p_arg_names', 'P' + step + '_CURRENCY'],
 		// ['p_arg_values', 'RUB'],
 		['p_arg_names', 'P' + step + '_OPER_TYPE'],
-		['p_arg_values', ''],		
+		['p_arg_values', '0'],
+		['p_arg_names', 'P' + step + '_AUTH_HIDE_OR_SHOW'],
+		['p_arg_values', 'show'],
 	], addHeaders({Referer: url, Accept: '*/*'}));
 	
 	result.transactions = [];
 	
-	var printHref = getParam(html, null, null, /print[^>]*html_PopUp\(\\'([^\\']+)/i);
+	var printHref = getParam(html, null, null, /print[^>]*PopUp[^\(]*\(\'([^\']+)/i);
 	if(!printHref)
 		return;
 	
@@ -219,7 +256,7 @@ function processCardTransactions(card, html, url, result) {
             result_func: html_entity_decode
         },
         date: {
-            re: /Дата операции/i,
+            re: /Дата операции|Дата и время/i,
             result_func: parseDate
         },
         sum: {

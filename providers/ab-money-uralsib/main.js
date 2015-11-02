@@ -15,7 +15,13 @@ var g_countersTable = {
 		"cardNumber": "cards.cardNumber",
 		"till": "cards.till",
 		"blocked": "cards.blocked",
-
+		"limit": "cards.limit",
+		"grace_pay": "cards.gracepay",
+		"grace_till": "cards.gracepay_till",
+		"debt": "cards.total_debt",
+		"minpay": "cards.minpay",
+		"minpay_till": "cards.minpay_till",
+		
 		"__tariff": "cards.cardNumber",
 	},
     acc: {

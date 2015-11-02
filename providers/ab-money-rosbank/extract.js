@@ -49,6 +49,9 @@ function login() {
         }, addHeaders({'X-MicrosoftAjax':'Delta=true'}));
 
         var pin2enc = getParam(html,null,null,/class="pin2enc" value="(.*)"/);
+        if(!pin2enc)
+        	throw new AnyBalance.Error('Вы ввели неправильный логин! Введите последние восемь цифр идентификационной карты или ваш логин в интернет банк Росбанк.', null, true);
+
         var TransCod = getParam(html,null,null,/class="TransCod" value="(.*)"/);
         var pin3 = prefs.password;
         var Signature = '';
@@ -91,6 +94,16 @@ function login() {
             var error = getParam(html, null, null, /<div[^>]+class="loginError"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
             if(error)
                 throw new AnyBalance.Error(error, null, /не найден/i.test(error));
+
+            error = getParam(html, null, null, /<div[^>]+class="fulltab"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+            if(error)
+                throw new AnyBalance.Error(error, null, /некорректного ввода пароля/i.test(error));
+
+            error = getParam(html, null, null, /<div[^>]+id="[^"]*CardDesc11Panel"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+            if(error)
+                throw new AnyBalance.Error(error, null, /Пароль введен неверно/i.test(error));
+
+            AnyBalance.trace(html);
             throw new AnyBalance.Error('Не удалось войти в интернет-банк. Сайт изменен?');
         }
         

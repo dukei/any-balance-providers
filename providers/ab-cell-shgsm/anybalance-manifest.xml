@@ -5,7 +5,7 @@
 	<name>Смартс (Чувашия)</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе провайдера Смартс (Чувашия) <a href="http://shgsm.ru/">http://shgsm.ru/</a></p>
-	<p>Информация берется из личного кабинета <a href="http://web.shgsm.ru/account/login?ReturnUrl=%2f">http://web.shgsm.ru/account/login?ReturnUrl=%2f</a></p>
+	<p>Информация берется из личного кабинета <a href="http://issa.shgsm.ru/account/login?ReturnUrl=%2f">http://issa.shgsm.ru/account/login?ReturnUrl=%2f</a></p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>

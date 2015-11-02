@@ -33,14 +33,17 @@ function main() {
 	}, addHeaders({Referer: baseurl + 'main'}));
 	
 	if (!/Выход/i.test(html)) {
+		var error = getParam(html, null, null, /<font[^>]+color=[^>]*red[^>]*>([\s\S]*?)<\/font>/i, replaceTagsAndSpaces, html_entity_decode);
+		if(error)
+			throw new AnyBalance.Error(error, null, /Неверные регистрационные данные/i.test(error));
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
 	
 	var result = {success: true};
 	
-	getParam(html, result, 'balance', /баланс:(?:[^>]*>){1}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'fio', /Здравствуйте,(?:[^>]*>){1}([\s\S]*?)!/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'balance', /Ваш текущий баланс\s*:([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'fio', /Здравствуйте,([\s\S]*?)!/i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(html, result, 'acc_num', /Текущий номер лицевого счета:(?:[^>]*>){1}([\s\S]*?)</i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(html, result, 'paid', /Денег потрачено с начала месяца:(?:[^>]*>){1}([\s\S]*?)</i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, '__tariff', /Ваш текущий тарифный план(?:[^>]*>){1}([\s\S]*?)</i, replaceTagsAndSpaces, html_entity_decode);

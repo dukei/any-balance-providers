@@ -80,14 +80,19 @@ function doNewCabinet(){
 		html = AnyBalance.requestGet(baseurl + "main/discounts", g_headers);
 		json = JSON.parse(html);
 
-		for (var i = 0; i < json.discountsIncluded.length; ++i) {
-			var discount = json.discountsIncluded[i];
-			if(isArray(discount)){
-				for(var j=0; j<discount.length; ++j){
-					getDiscount(result, discount[j]);
+		var arr = [json.discountsIncluded, json.discountsNotIncluded];
+
+		for(var k=0; k<arr.length; ++k){
+			var discounts = arr[k];
+			for (var i = 0; discounts && i < discounts.length; ++i) {
+				var discount = discounts[i];
+				if(isArray(discount)){
+					for(var j=0; j<discount.length; ++j){
+						getDiscount(result, discount[j]);
+					}
+				}else{
+					getDiscount(result, discount);
 				}
-			}else{
-				getDiscount(result, discount);
 			}
 		}
 	}

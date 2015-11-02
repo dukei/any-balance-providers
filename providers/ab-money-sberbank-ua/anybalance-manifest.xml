@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="2.8" version="18">ab-money-sberbank-ua</id>
+	<id major_version="2.8" version="19">ab-money-sberbank-ua</id>
 	<api flags="no_browser"/>
 	<name>Ощадбанк ОнЛ@йн (Україна)</name>
 	<description html="true"><![CDATA[
@@ -27,7 +27,8 @@
                 <counter id="mz" name="Мобільні заощадження" units=" {@currency}"/>
 		<counter id="rr" name="Розрахунковий рахунок" type="text"/>
 		<counter id="cardNumber" name="Номер карти" type="text"/>
-		<counter id="fio" name="ПIБ" type="text"/>    
+		<counter id="fio" name="ПIБ" type="text"/>
+                <counter id="mess" name="Повідомлення"/>
 	</counters>
 	<keywords>сбербанк онлайн, sberbank online, сберегательный банк, ощадбанк, ощадний банк</keywords>
 	<type>money, bank</type>

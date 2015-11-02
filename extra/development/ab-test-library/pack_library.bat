@@ -14,6 +14,7 @@ for %%d in ("library.js", "nadapter.js") do (
 
 for /D %%d in ("..\ab-stark-typical-provider\"      ^
       "..\ab-typical-provider\"                     ^
+      "..\ab-test-rand\"                            ^
       "..\"                                         ^
       ) do (
   copy /Y library.min.js %%~pdlibrary.js

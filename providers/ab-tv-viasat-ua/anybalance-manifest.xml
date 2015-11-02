@@ -1,34 +1,28 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="2">ab-tv-viasat-ua</id>
-  <name>Viasat (Украина)</name>
-  <description>
-    Получает баланс и другую информацию у провайдера спутникового телевидения Viasat (http://www.viasat.ua) в Украине.
-
-    Если у вас ещё нет доступа к личному кабинету Виасат, то получите его здесь: http://www.viasat.ua/abonent/accounts/new
-  </description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>main.js</js>
-    <js>library.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="balance" name="Баланс" units=" ₴"/>
-    <counter id="agreement" name="Договор" type="text"/>
-    <counter id="clientid" name="№ клиента" type="text"/>
-    <counter id="status" name="Статус" type="text"/>
-    <counter id="cardnum" name="№ карты" type="text"/>
-  </counters>
-  <keywords>
-    спутник
-  </keywords>
-  <type>
-    tv
-  </type>
-  <country>
-    ua
-  </country>
+	<id version="3">ab-tv-viasat-ua</id>
+	<api flags="no_browser"/>
+	<name>Viasat (Украина)</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера Viasat в Украине <a href="http://www.viasat.ua">http://www.viasat.ua</a></p>
+	<p>Информация берется из личного кабинета <a href="https://my.viasat.ua/ua">https://my.viasat.ua/ua</a></p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" ₴"/>
+		<counter id="agreement" name="Договор" type="text"/>
+		<counter id="clientid" name="№ клиента" type="text"/>
+		<counter id="status" name="Статус" type="text"/>
+		<counter id="cardnum" name="№ карты" type="text"/>
+	</counters>
+	<keywords>спутник</keywords>
+	<type>tv</type>
+	<country>ua</country>
 </provider>

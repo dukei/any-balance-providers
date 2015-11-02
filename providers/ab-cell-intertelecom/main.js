@@ -34,7 +34,7 @@ function main() {
     //Предоплачение ИТ(местные+Украина+моб.094)+Местные
     getParam(html, result, 'min_it', /<td[^>]*>[^<]*ИТ\(местные\+Украина\+моб.094\)\+Местные[^<]*<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseSeconds);
     //Предоплачение местные минуты
-    getParam(html, result, 'min_local', /<td[^>]*>\s*Минуты\s*<\/td>[\s\S]*?<td[^>]*>[^<]*местные[^<]*<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseSeconds);
+    getParam(html, result, 'min_local', /<td>Местные<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseSeconds);
     //Предоплачение местные минуты и по Украине
     getParam(html, result, 'min_local_uk', /<td>Местные\+Украина<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseSeconds);
     //Украина (моб.) [100 и 200 мин]

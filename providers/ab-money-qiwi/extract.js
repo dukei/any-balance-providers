@@ -91,14 +91,17 @@ function requestAPI(actionObj, params, addOnHeaders) {
 	
     // Проверка ошибки входа
 	if(actionObj.isAuth) {
-		if (!response.entity.ticket) {
-			var error = response.entity.error.message;
-			if(error)
-				throw new AnyBalance.Error(error, null, /Неверный логин или пароль|Неправильный номер телефона или пароль/i.test(error));
+		if (!response.entity || !response.entity.ticket) {
+			if(response.entity){
+				var error = response.entity.error.message;
+				if(error)
+					throw new AnyBalance.Error(error, null, /Неверный логин или пароль|Неправильный номер телефона или пароль/i.test(error));
+			}
 			
 			AnyBalance.trace(info);
 			throw new AnyBalance.Error('Не удалось войти в Qiwi Visa Wallet, сайт изменен?');
 		}
+
 	} else {
 		if (!response.data) {
 			var error = response.message;
@@ -157,7 +160,7 @@ function processAccounts(result) {
 }
 
 function processAccount(data, _id, result){
-    AnyBalance.trace('Обработка счтеа ' + _id);
+    AnyBalance.trace('Обработка счета ' + _id);
 	
 	getParam(data[_id] + '', result, 'accounts.balance', null, replaceTagsAndSpaces, parseBalance);
 	getParam(g_currency[_id] + '', result, ['accounts.currency', 'accounts.balance'], null, replaceTagsAndSpaces);

@@ -92,7 +92,7 @@ function main(){
 		}
 		//Начисленные бонусы переведённые в грн.
 		if (AnyBalance.isAvailable('skidka')) {
-			var matches = html.match(/Всього надано Бонусів<\S*>\s*<\S*>(\d+?.\d+?) грн.<\S*>/i);
+			var matches = html.match(/Всього надано (?:Б|б)онусів<[^>]*><[^>]*>\s*<[^>]*><[^>]*>(\d+?.\d+?) грн.<[^>]*>/i);
 			if (matches) {
 				result.skidka = parseFloat(matches[1]);
 			}

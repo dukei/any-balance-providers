@@ -45,7 +45,7 @@ function main() {
 	if(AnyBalance.isAvailable('month')) {
 		var date=new Date();
 		html=AnyBalance.requestGet('http://www.appodeal.ru/dashboard/dashboard_ajax_table?chart_detalisation=month&date_to='+date.getFullYear()+'-'+(date.getMonth()+1)+'-'+date.getDate()+'&date_from='+date.getFullYear()+'-'+(date.getMonth()+1)+'-01&detalisation%5B%5D=none');
-		r=new RegExp('<td><span class="currency">([0-9.]+)</span></td>');
+		r=new RegExp('<td>\\s+<span class="currency">([0-9.]+)</span>\\s+</td>');
 		matches=r.exec(html);
 		if(matches==null) throw new AnyBalance.Error('Невозможно получить заработок за месяц');
 		result.month=matches[1];

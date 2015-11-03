@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-    <id version="4">ab-affiliate-appodeal</id>
+    <id version="5">ab-affiliate-appodeal</id>
     <name>Appodeal</name>
     <description>Статистика заработков для Appodeal.com</description>
     <author>BArtWell &lt;web@bartwell.ru&gt;</author>

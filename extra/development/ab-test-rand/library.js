@@ -341,4 +341,5 @@ g++){e.push(o+k[g])
 }else{if(b.result_sum){b.result_re&&(b.result_re.lastIndex=0);
 sumParam(d,p,k,b.result_re,f(b.result_replace,j),f(b.result_func,n),f(b.result_aggregate,c))
 }else{getParam(d,p,k,b.result_re,f(b.result_replace,j),f(b.result_func,n))
-}}}}};
+}}}}}String.prototype.regExpExtra=function(){return this.replace(/[\x00-\x20]*/g,"").replace(/\./g,"[\\s\\S]")
+};

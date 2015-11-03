@@ -67,7 +67,7 @@ changelog:
  * массивы могут быть вложенными
  * см. например replaceTagsAndSpaces
  */
- 
+
 function getParam(html, result, param, regexp, replaces, parser) {
 	if(!isset(html)) {
 		AnyBalance.trace('getParam: input ' + (param ? '(' + param + ')' : '') + ' is unset! ' + new Error().stack);
@@ -886,7 +886,7 @@ function getElement(html, re, replaces, parseFunc){
     //Найти див somediv, содержащий <div class="title"	
     	getElements(html, [/<div[^>]+id="somediv"[^>]*>/ig, /<div[^>]+class="title"/i])
 */
-function getElements(html, re, replaces, parseFunc){
+/*array*/ function getElements(html, re, replaces, parseFunc){
 	var results = [];
 	var regexp = isArray(re) ? re[0] : re;
 	var add_re = isArray(re) ? (re.shift(), re) : null;
@@ -1063,4 +1063,12 @@ function fillColsResult(colsDef, cols, tds, result, path){
             }
         }
     }
+}
+
+
+/*
+Для того, чтобы было удобно писать регулярные выражения, см. пример в ab-statistic-finnopolis/main.js
+*/
+String.prototype.regExpExtra = function() {
+	return this.replace(/[\x00-\x20]*/g, '').replace(/\./g, '[\\s\\S]');
 }

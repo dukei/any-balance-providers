@@ -11,6 +11,7 @@ var g_headers = {
 };
 
 function login(prefs) {
+	AnyBalance.setDefaultCharset('utf-8');
     var prefs = AnyBalance.getPreferences();
 	
 	checkEmpty(prefs.login, 'Введите номер телефона!');

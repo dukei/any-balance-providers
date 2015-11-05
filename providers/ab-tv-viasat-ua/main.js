@@ -13,6 +13,9 @@ function main(){
     var prefs = AnyBalance.getPreferences();
     AnyBalance.setDefaultCharset('utf-8');
 
+	checkEmpty(prefs.login, 'Введите логин!');
+	checkEmpty(prefs.password, 'Введите пароль!');
+	
     var baseurl = "https://my.viasat.ua/ua/";
 
     var html = AnyBalance.requestGet(baseurl + 'login', g_headers);

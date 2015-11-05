@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-exchange-kicb</id>
+	<api flags="no_browser"/>
+	<name>Курсы валют КИКБ</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о курсе валют с главной страницы сайта КИКБ http://kicb.net/welcome/</p>
+	]]></description>
+	<author>Guseinov Murad &lt;guseinovmg@gmail.com&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<js>main.js</js>
+	</files>
+	<counters>
+		<counter id="cash_usd_buy" name="Нал. USD покупка" units=" c"/>
+		<counter id="cash_usd_sell" name="Нал. USD продажа" units=" c"/>
+		<counter id="cash_eur_buy" name="Нал. EUR покупка" units=" c"/>
+		<counter id="cash_eur_sell" name="Нал. EUR продажа" units=" c"/>
+		<counter id="cash_kzt_buy" name="Нал. KZT покупка" units=" c"/>
+		<counter id="cash_kzt_sell" name="Нал. KZT продажа" units=" c"/>
+		<counter id="cash_rub_buy" name="Нал. RUB покупка" units=" c"/>
+		<counter id="cash_rub_sell" name="Нал. RUB продажа" units=" c"/>
+		
+		<counter id="cashless_usd_buy" name="Безнал. USD покупка" units=" c"/>
+		<counter id="cashless_usd_sell" name="Безнал. USD продажа" units=" c"/>
+		<counter id="cashless_eur_buy" name="Безнал. EUR покупка" units=" c"/>
+		<counter id="cashless_eur_sell" name="Безнал. EUR продажа" units=" c"/>
+		<counter id="cashless_kzt_buy" name="Безнал. KZT покупка" units=" c"/>
+		<counter id="cashless_kzt_sell" name="Безнал. KZT продажа" units=" c"/>
+		<counter id="cashless_rub_buy" name="Безнал. RUB покупка" units=" c"/>
+		<counter id="cashless_rub_sell" name="Безнал. RUB продажа" units=" c"/>
+	</counters>
+	<keywords>валюта</keywords>
+	<type>exchange</type>
+	<country>kg</country>
+</provider>

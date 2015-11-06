@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id version="3">ab-bonus-automag</id>
+	<id version="2">ab-bonus-automag</id>
 	<name>Автомаг</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе на бонусной карте <a href="http://club-automag.ru">http://club-automag.ru</a></p>

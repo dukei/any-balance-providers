@@ -3,4 +3,7 @@
     <change version="1" date="2015-11-04">
       Первая версия
     </change>
+    <change version="2" date="2015-11-06">
+      Улучшена обработка ошибок
+    </change>
 </history>

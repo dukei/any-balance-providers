@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="5" date="2015-11-06">
+	- Исправлен вход в кабинет, если сайт показывает рекламу.
+	</change>
 	<change version="4" date="2015-11-05">
 	- Исправлены настройки.
 	</change>

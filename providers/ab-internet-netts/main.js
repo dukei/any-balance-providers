@@ -65,7 +65,7 @@ function main() {
 	getParam(html, result, 'balance', /Лицевой счет(?:[\s\S]*?<td[^>]*>)([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'fio', /"su-name"(?:[^>]*>)([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(html, result, '__tariff', /Тарифный план(?:[\s\S]*?<td[^>]*>)([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'payment', /Размер абон. платы(?:[\s\S]*?<td[^>]*>)([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'payment', /Размер абон. платы(?:[\s\S]*?<td[^>]*>)([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'next_payment', /Дата снятия следующей(?:[\s\S]*?<td[^>]*>)([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
 	getParam(html, result, 'account', /Логин(?:[\s\S]*?<td[^>]*>)([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
 	

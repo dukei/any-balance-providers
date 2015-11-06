@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="5">ab-internet-cifra1</id>
+	<id version="6">ab-internet-cifra1</id>
 	<api flags="no_browser"/>
 	<name>Цифра Один</name>
 	<description html="true"><![CDATA[
@@ -12,7 +12,7 @@
 	<p>* http://cifra1.ru</p>
 	<p>* http://cifra1.ru</p>
 	]]></description>
-	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

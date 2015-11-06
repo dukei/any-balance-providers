@@ -25,7 +25,6 @@ function main() {
 			return prefs.login;
 		else if (name == 'pswd')
 			return prefs.password;
-
 		return value;
 	});
 	
@@ -36,10 +35,11 @@ function main() {
 		if (error)
 			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(html));
 		
+		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
 	
-	html = AnyBalance.requestGet(baseurl + 'webexecuter?action=ShowBalance&mid=contract', g_headers);
+	html = AnyBalance.requestGet(baseurl + 'webexecuter?action=GetBalance&mid=0&module=contract', g_headers);
 	
 	var result = {success: true};
 	

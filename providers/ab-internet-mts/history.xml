@@ -1,5 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="97" date="2015-11-07">
+	Добавлен Курск
+	Исправлен Северодвинск, Архангельск
+	</change>
 	<change version="96" date="2015-09-13">
 	Исправлен Миасс (переезд личного кабинета)
 	</change>

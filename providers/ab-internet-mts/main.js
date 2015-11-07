@@ -48,6 +48,7 @@ var regions = {
 	volzhsk: getVolzhsk,
     novokuz: getNovokuz,
 	nahodka: getNahodka,
+	kursk: getKursk,
 };
 
 function main(){
@@ -466,7 +467,7 @@ function getVolzhsk(){
 }
 	
 function getArkh(){
-	newTypicalLanBillingInetTv('https://lk.arkhangelsk.mts.ru/client/index.php');
+	newTypicalLanBillingInetTv('https://lk.arkhangelsk.mts.ru/index.php');
 }
 
 function getPnz(){
@@ -520,8 +521,7 @@ function getNnov(){
 }
 
 function getSdv(){
-    var baseurl = 'https://lk.arkhangelsk.mts.ru/client/';
-    typicalLanBillingInetTv(baseurl + 'index.php?r=site/login');
+    newTypicalLanBillingInetTv('https://lk.arkhangelsk.mts.ru/index.php');
 }
 
 function getVologda(){
@@ -815,6 +815,10 @@ function getYar() {
 	newTypicalLanBillingInetTv('https://lk-yaroslavl.center.mts.ru/index.php');
 }
 
+function getKursk(){
+	newTypicalLanBillingInetTv('https://lk-kursk.center.mts.ru/index.php');
+}
+
 function newTypicalLanBillingInetTv(baseurl) {
 	var urlAjax = baseurl + '?r=account/vgroups&agrmid=';
 	var urlIndex = baseurl + '?r=site/login';
@@ -891,7 +895,7 @@ function newTypicalLanBillingInetTv(baseurl) {
 			var act = /Состояние:\s+актив|Действует/i.test(state) ? 'active' : 'inactive';
 			var pri = priority[act];
 			// Это ТВ
-			if(/\BТВ\B|Телевидение/.test(tarifdescr)) {
+			if(/\BТВ\B|Телевидение/.test(tarifdescr) && !/ШПД/.test(tarifdescr)) {
 				if(!isset(accTv[pri]))
 					accTv[pri] = response;
 			// Это интернет

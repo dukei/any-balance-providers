@@ -61,6 +61,10 @@ try{
 				}
 			}
 
+			//Обработать ошибку входа!
+			if(mainJs.indexOf('<div[^>]+class="t-error"[^>]*>[\\s\\S]*?<ul[^>]*>([\\s\\S]*?)<\\/ul>') > 0){
+					throw new Error('You have to check for login error and show appropriate message!');
+			}
 		}
 		
 		// var intDoIt = WshShell.Popup('Do you want to use new library.js?', 0, "Result", vbYesNo + vbInformation + stayOnTop);

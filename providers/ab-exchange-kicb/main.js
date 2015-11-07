@@ -1,60 +1,57 @@
 ﻿/**
-Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
-*/
+ Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
+ */
 
 var g_headers = {
-	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
-	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
-	'Connection': 'keep-alive',
-	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
+    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+    'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
+    'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
+    'Connection': 'keep-alive',
+    'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
 };
 
 
 function main() {
-	var baseurl = 'http://kicb.net/welcome/';
-	AnyBalance.setDefaultCharset('windows-1251');
-	
-	var html = AnyBalance.requestGet(baseurl, g_headers);
-	if(!html || AnyBalance.getLastStatusCode() > 400)
-		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
-	
-	var result = {success: true};
+    var baseurl = 'http://kicb.net/welcome/';
+    AnyBalance.setDefaultCharset('windows-1251');
 
-	var cash = /USD([\s\S]*?)Безналичный/i.exec(html);
-	if(!cash)
-		throw new AnyBalance.Error('Не удалось найти таблицу с валютами, сайт изменен?');
-	console.log(cash[1]);
-	var currencies = cash[1].match(/<span >([\s\S]*?)<img/ig);
-	for (var i = 0; i < currencies.length; i++) {
-		currencies[i] = currencies[i].replace('data2', '').replace(/[^.\d]/g, '');
-	}
-	result.cash_usd_buy = currencies[0];
-	result.cash_usd_sell = currencies[1];
-	result.cash_eur_buy = currencies[2];
-	result.cash_eur_sell = currencies[3];
-	result.cash_rub_buy = currencies[4];
-	result.cash_rub_sell = currencies[5];
-	result.cash_kzt_buy = currencies[6];
-	result.cash_kzt_sell = currencies[7];
+    var html = AnyBalance.requestGet(baseurl, g_headers);
+    if (!html || AnyBalance.getLastStatusCode() > 400)
+        throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
 
-	var cashless = /Безналичный([\s\S]*?)Акции/i.exec(html);
-	if(!cashless)
-		throw new AnyBalance.Error('Не удалось найти таблицу с валютами, сайт изменен?');
+    var result = {success: true};
 
-	cashless = /USD([\s\S]*?)Акции/i.exec(cashless[0]);
-	currencies = cashless[1].match(/<span >([\s\S]*?)<img/ig);
-	for (var i = 0; i < currencies.length; i++) {
-		currencies[i] = currencies[i].replace('data2', '').replace(/[^.\d]/g, '');
-	}
-	result.cashless_usd_buy = currencies[0];
-	result.cashless_usd_sell = currencies[1];
-	result.cashless_eur_buy = currencies[2];
-	result.cashless_eur_sell = currencies[3];
-	result.cashless_rub_buy = currencies[4];
-	result.cashless_rub_sell = currencies[5];
-	result.cashless_kzt_buy = currencies[6];
-	result.cashless_kzt_sell = currencies[7];
+    var currency = getElement(html, /<div[^>]+id="curency"[^>]*>/i);
 
-	AnyBalance.setResult(result);
+    if (!currency)
+        throw new AnyBalance.Error('Не удалось найти таблицу с валютами, сайт изменен?');
+
+    var currency_blocks = currency.split("<div class='con'>");
+
+    for (var j = 0; j < currency_blocks.length; j++) {
+        var isCash = null;
+        if (currency_blocks[j].match(/безнал/i)) {
+            isCash = 'cashless';
+        } else if (currency_blocks[j].match(/нал/i)) {
+            isCash = 'cash';
+        } else continue;
+        var lines = currency_blocks[j].split("<div  class='cur_line'>");
+        for (var i = 0; i < lines.length; i++) {
+            var currency_type = null;
+            if (lines[i].match(/USD/)) {
+                currency_type = 'usd';
+            } else if (lines[i].match(/EUR/)) {
+                currency_type = 'eur';
+            } else if (lines[i].match(/RUB/)) {
+                currency_type = 'rub';
+            } else if (lines[i].match(/KZT/)) {
+                currency_type = 'kzt';
+            } else continue;
+            var currency_values = lines[i].match(/<span >([\s\S]*?)<img/ig);
+            getParam(currency_values[0], result, isCash + '_' + currency_type + '_buy', null,[/data2/,'',/[^.\d]/g, '']);
+            getParam(currency_values[1], result, isCash + '_' + currency_type + '_sell', null,[/data2/,'',/[^.\d]/g, '']);
+        }
+    }
+
+    AnyBalance.setResult(result);
 }

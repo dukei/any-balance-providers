@@ -9,6 +9,7 @@
 	<author>Guseinov Murad &lt;guseinovmg@gmail.com&gt;</author>
 	<files>
 		<icon>icon.png</icon>
+		<js>library.js</js>
 		<js>main.js</js>
 	</files>
 	<counters>

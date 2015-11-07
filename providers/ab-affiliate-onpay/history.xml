@@ -1,5 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="8" date="2015-11-07">
+	- Поддержка изменений на сайте.
+	</change>
 <change version="2" date="2013-10-13">
 - Исправлена ошибка когда не подгружались данные
 </change>

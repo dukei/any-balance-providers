@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-internet-jet-kg</id>
+	<api flags="no_browser"/>
+	<name>JET</name>
+	<description html="true"><![CDATA[
+	<p> Предоставляет информацию о балансе провайдера JET 	  <a href="http://jet.kg/jet/</a></p>
+	<p> Информация берется со страницы баланса лицевого счёта <a href="http://jet.kg/jet/balance_show.php/</a></p>
+	]]></description>
+	<author>Parshikova Xenia &lt;adri.espanol@gmail.com&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units="сом"/>
+	</counters>
+	<keywords>баланс</keywords>
+	<type>internet</type>
+	<country>kg</country>
+</provider>

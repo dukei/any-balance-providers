@@ -27,12 +27,6 @@ function main() {
 		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
 	}
 	
-	var params = createFormParams(html, function(params, str, name, value) {
-		if (name == 'login') 
-			return prefs.login;
-		return value;
-	});
-	
 	html = AnyBalance.requestGet(baseurl + 'balance_show.php?bill_type=2&acc_id=' + prefs.login)
 	
 	if (!/Состояние лицевого счёта/i.test(html)) {

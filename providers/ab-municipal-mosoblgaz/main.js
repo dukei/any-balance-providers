@@ -12,11 +12,10 @@ var g_headers = {
 
 function main(){
     var prefs = AnyBalance.getPreferences();
-    var baseurl = 'http://lksaupg.mosoblgaz.ru/';
+    var baseurl = 'http://lkk.mosoblgaz.ru/';
     AnyBalance.setDefaultCharset('utf-8'); 
 
-    var html = AnyBalance.requestGet(baseurl + 'LoginPersonalSUPG.aspx?ReturnUrl=%2fPersonalCabinetSUPG.aspx', g_headers);
-	var captcha_href = getParam(html, null, null, /(CaptchaImage.axd[^"]*)/i);
+    var html = AnyBalance.requestGet(baseurl + 'PersonalCabinetSUPG.aspx', g_headers);
 	
 	var params = createFormParams(html, function(params, str, name, value) {
 		AnyBalance.trace('Processing form field ' + name + ': ' + value);
@@ -24,24 +23,21 @@ function main(){
 			return prefs.login;
 		else if (/\$Password/i.test(name))
 			return prefs.password;
-		else if (/\$Captcha/i.test(name)){
-			if(AnyBalance.getLevel() >= 7){
-				AnyBalance.trace('Пытаемся ввести капчу');
-				AnyBalance.setOptions({forceCharset:'base64'});
-				var captcha = AnyBalance.requestGet(baseurl+ captcha_href);
-				var captchaVal = AnyBalance.retrieveCode("Пожалуйста, введите код с картинки", captcha);
-			        AnyBalance.trace('Капча получена: ' + captchaVal);
-				AnyBalance.setOptions({forceCharset:'utf-8'});
-				return captchaVal;
-			}
-			else
-				throw new AnyBalance.Error('Провайдер требует AnyBalance API v7, пожалуйста, обновите AnyBalance!');
-		}
+/*		else if (/\$Captcha/i.test(name)){
+			AnyBalance.trace('Пытаемся ввести капчу');
+			AnyBalance.setOptions({forceCharset:'base64'});
+			var captcha_href = getParam(html, null, null, /(CaptchaImage.axd[^"]*)/i);
+			var captcha = AnyBalance.requestGet(baseurl+ captcha_href);
+			var captchaVal = AnyBalance.retrieveCode("Пожалуйста, введите код с картинки", captcha);
+			    AnyBalance.trace('Капча получена: ' + captchaVal);
+			AnyBalance.setOptions({forceCharset:'utf-8'});
+			return captchaVal;                            
+		}  */
 
 		return value;
 	}, true); //Важен порядок параметров
 	
-	html = AnyBalance.requestPost(baseurl + 'LoginPersonalSUPG.aspx?ReturnUrl=%2fPersonalCabinetSUPG.aspx', params, addHeaders({Referer: baseurl + 'LoginPersonalSUPG.aspx?ReturnUrl=%2fPersonalCabinetSUPG.aspx'})); 
+	html = AnyBalance.requestPost(baseurl + 'LoginPersonalSUPG.aspx?ReturnUrl=%2fLoginPersonalSUPG.aspx%3fout%3d1', params, addHeaders({Referer: baseurl + 'LoginPersonalSUPG.aspx'})); 
 	
     if(!/LoginPersonalSUPG.aspx\?out=1/i.test(html)){
         var error = getParam(html, null, null, /ctl00_ChildContent_CustomCaptchaValidator[^>]*>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
@@ -49,26 +45,39 @@ function main(){
             throw new AnyBalance.Error(error);
         error = getParam(html, null, null, /ctl00_ChildContent_AccountCustomValidator[^>]*>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
         if(error)
-            throw new AnyBalance.Error(error, null, /Данный лицевой счёт не зарегистрирован или пароль неверный/i.test(error));
+            throw new AnyBalance.Error(error, null, /пароль неверный/i.test(error));
         throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
     }
 	
     var result = {success: true};
-    getParam(html, result, 'balance', /Баланс на(?:[\s\S]*?<span[^>]*>){1}([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'acc', /ЛС\s*(\d+)/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'fio', /Абонент:\s*([^,]*)/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'income', /Поступления на счёт в текущем месяце(?:[\s\S]*?<span[^>]*>){1}([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'nachisl', /Начисления текущего месяца(?:[\s\S]*?<span[^>]*>){1}([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'recomended', /Рекомендуемая сумма к оплате(?:[\s\S]*?<span[^>]*>){1}([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'licschet', /<span[^>]+lblCurrentAccount[^>]*>([\s\S]*?)<\/span>/i, [replaceTagsAndSpaces, /№/, ''], html_entity_decode);
 
-	getParam(html, result, '__tariff', />Счетчик([^,]*)/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'balance', /по лицевому счету при показаниях.*?составляет\s*<strong[^>]*>([\s\S]*?)<\/strong>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'acc', /<span[^>]+lblCurrentAccount[^>]*>([\s\S]*?)<\/span>/i, [replaceTagsAndSpaces, /№/, ''], html_entity_decode);
+	getParam(html, result, 'fio', /<input[^>]+id="fioInputs"[^>]*value="([^"]*)/i, null, html_entity_decode);
+
 	getParam(html, result, 'next_check', /очередной срок поверки([^<]*)/i, replaceTagsAndSpaces, parseDate);
-	getParam(html, result, 'last_counter_val', /Последние показания(?:[\s\S]*?<p[^>]*>)([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'last_counter_date', /Последние показания(?:[\s\S]*?<p[^>]*>){2}([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, parseDate);
+	getParam(html, result, 'last_counter_val', /по лицевому счету при показаниях\s*<strong[^>]*>([\s\S]*?)<\/strong>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'last_counter_date', /Показания от([^<\-]*)/i, replaceTagsAndSpaces, parseDate);
 
-	if(!result.balance){
-		html = AnyBalance.requestGet(baseurl + 'PersonalCalculationsSUPG.aspx', g_headers);
-		getParam(html, result, 'balance', /Задолженность(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+	if(isAvailable('__tariff')){
+		html = AnyBalance.requestGet(baseurl + 'DevicesSUPG.aspx', g_headers);
+		getParam(html, result, '__tariff', /<span[^>]+current-counter[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
+
 	}
+
+	if(isAvailable('income', 'nachisl', 'recomended', 'balance')){
+		html = AnyBalance.requestGet(baseurl + 'PersonalCalculationsSUPG.aspx', g_headers);
+		var tbl = getElement(html, /<table[^>]+history-table[^>]*>/i);
+		if(tbl){
+			getParam(html, result, 'income',  /(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+			getParam(html, result, 'nachisl',  /(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+			getParam(html, result, 'recomended', /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+			getParam(html, result, 'balance', /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+		}else{
+			AnyBalance.trace('Не удаётся найти таблицу расчетов: ' + html);
+		}
+	}
+
     AnyBalance.setResult(result);
 }

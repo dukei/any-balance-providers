@@ -48,7 +48,7 @@ function main () {
 	
     var html = AnyBalance.requestPost(baseurl + 'otchet-po-diskontnoj-karte-2', params, addHeaders({Referer: baseurl + 'otchet-po-diskontnoj-karte-2'}));
     
-    if(!/<tr[^>]*class="itog"/i.test(html)){
+    if(!/<div[^>]*id="discount_report"/i.test(html)){
         var error = getParam(html, null, null, /<ul[^>]+class="errors"[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
         if(error)
             throw new AnyBalance.Error(error, null, /Карточка с таким номером не найдена/i.test(error));

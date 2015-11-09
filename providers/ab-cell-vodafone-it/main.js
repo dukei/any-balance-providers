@@ -27,9 +27,9 @@ function main(){
     var baseurl = "https://www.vodafone.it/";
     AnyBalance.setDefaultCharset('utf-8');
 
-    checkEmpty(prefs.login, 'Введите логин!');
-    checkEmpty(!/^\s+|\s+$/.test(prefs.login), 'Логин не должен начинаться или заканчиваться пробелами. Уберите лишние пробелы!');
-    checkEmpty(prefs.password, 'Введите пароль!');
+    checkEmpty(prefs.login, 'Enter login!');
+    checkEmpty(!/^\s+|\s+$/.test(prefs.login), 'Login can not start or end with spaces. Remove extra spaces!');
+    checkEmpty(prefs.password, 'Enter password!');
     
 //	var html = AnyBalance.requestGet(baseurl + '190mobile/endpoint/Mobile5_restyle/home_mio190.php', g_headers);
 
@@ -79,12 +79,12 @@ function main(){
     	}
     }
 
-    var href = getParam(html, null, null, /updateContents\("[^"]*async",\s*"([^"]*Errore[^"]*)/, replaceSlashes);
+    var href = getParam(html, null, null, /updateContents\("[^"]*async",\s*"([^"]*ResidualCredit[^"]*)/, replaceSlashes);
     if(!href){
     	AnyBalance.trace(html);
     	throw new AnyBalance.Error("Could not find reference to balance. Is the site changed?");
     }
-    var hrefPlan = getParam(html, null, null, /updateContents\("[^"]*async",\s*"([^"]*Piano[^"]*)/, replaceSlashes);
+    var hrefPlan = getParam(html, null, null, /updateContents\("[^"]*async",\s*"([^"]*TariffPlan[^"]*)/, replaceSlashes);
     if(!hrefPlan){
     	AnyBalance.trace("Could not find reference to tariff. Is the site changed?");
     }
@@ -97,11 +97,11 @@ function main(){
     var result = {success: true};
 	
     getParam(phone, result, 'phone');
-	getParam(html, result, 'balance', /<div[^>]+box2atomic[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'balance', /<div[^>]+creditoresiduoSub[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
 	
 	if(hrefPlan){
     	html= AnyBalance.requestGet(hrefPlan, g_headers);
-    	getParam(html, result, '__tariff', /<div[^>]+column2_pf02[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+    	getParam(html, result, '__tariff', /<div[^>]+pianotelefonicoSub[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
     }
 
     AnyBalance.setResult(result);

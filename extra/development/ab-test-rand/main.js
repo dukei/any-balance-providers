@@ -7,14 +7,17 @@ function main() {
 	
 	var result = {
 		success: true,
-		balance: null
+		balance: null,
+		balance2: null,
+		text_counter: null,
+		hidden: 'hidden counter' // счетчик, который не объявлен в манифесте
 	};
 	
-	if(!prefs.return_null)
+	if(!prefs.return_null) {
 		getParam((Math.random() * 10000).toFixed(2) + '', result, 'balance', null, replaceTagsAndSpaces, parseBalance);
-	
-	getParam((Math.random() * 10000).toFixed(2) + '', result, 'balance2', null, replaceTagsAndSpaces, parseBalance);
-	getParam((Math.random() * 10000).toFixed(2) + '', result, 'balance3', null, replaceTagsAndSpaces, parseBalance);
+		getParam((Math.random() * 10000).toFixed(2) + '', result, 'balance2', null, replaceTagsAndSpaces, parseBalance);
+		getParam((Math.random() * 10000).toFixed(2) + '', result, 'text_counter');
+	}
 	
 	AnyBalance.setResult(result);
 }

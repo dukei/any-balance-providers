@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1"></id>
+	<id version="1">ab-internet-ktnet-kg</id>
 	<api flags="no_browser"/>
-	<name>TypicalProvider</name>
+	<name>JET (личный кабинет)</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе провайдера  <a href="http://jet.kg/jet/">JET</a></p>
+	<p>Предоставляет информацию о балансе провайдера  <a href="http://jet.kg/jet/">JET (КыргызТелеком)</a></p>
 	<p>Информация берется из личного кабинета <a href="https://stat.ktnet.kg/"></a></p>
 	]]></description>
 	<instruction html="true"><![CDATA[
@@ -27,7 +27,7 @@
 		<counter id = "adjustments" name = "Корректировки" units = "сом"/>
 		<counter id = "credit" name = "Кредит" units = "сом"/>
 	</counters>
-	<keywords></keywords>
-	<type></type>
-	<country>ru</country>
+	<keywords>Кыргыз</keywords>
+	<type>internet</type>
+	<country>kg</country>
 </provider>

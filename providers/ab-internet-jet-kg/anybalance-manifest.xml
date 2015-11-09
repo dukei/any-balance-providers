@@ -5,7 +5,7 @@
 	<name>JET</name>
 	<description html="true"><![CDATA[
 	<p> Предоставляет информацию о балансе провайдера JET 	  <a href="http://jet.kg/jet/">JET</a></p>
-	<p> Информация берется со страницы баланса лицевого счёта <a href="http://jet.kg/jet/balance_show.php/">Баланс лицевого счёта</a></p>
+	<p> Информация берется со страницы баланса лицевого счёта </p>
 	]]></description>
 	<author>Parshikova Xenia &lt;adri.espanol@gmail.com&gt;</author>
 	<files>

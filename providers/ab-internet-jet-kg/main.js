@@ -27,14 +27,12 @@ function main() {
 	html = AnyBalance.requestGet(baseurl + 'balance_show.php?bill_type=2&acc_id=' + prefs.login)
 	
 	if (!/Состояние лицевого счёта/i.test(html)) {
-			throw new AnyBalance.Error(error, null, /Неверный номер лицевого счёта/i.test(error));
-		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
+		throw new AnyBalance.Error('Лицевой счёт не найден.');
 	}
 
 	var result = {success: true};
 	
-	getParam(html, result, 'balance', /<div[^>]+?class="balans"[^>]*>[\s\S]*?Состояние\s+лицевого\s+счёта[\s\S]*?<\/div>/g , replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'balance', /<div[^>]+?class="balans"[^>]*>[\s\S]*?Состояние\s+лицевого\s+счёта[\s\S]*?<\/div>/i , replaceTagsAndSpaces, parseBalance);
 	
 	AnyBalance.setResult(result);
 }

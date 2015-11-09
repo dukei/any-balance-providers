@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1"></id>
+	<api flags="no_browser"/>
+	<name>TypicalProvider</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера  <a href="http://jet.kg/jet/">JET</a></p>
+	<p>Информация берется из личного кабинета <a href="https://stat.ktnet.kg/"></a></p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Если у вас нет доступа в Личный кабинет, получите его на странице <a href="https://stat.ktnet.kg"></a></p>
+	]]></instruction>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id = "balance" name = "Баланс" units = "сом"/>
+		<counter id = "balanceOfMonth" name = "Баланс на начало месяца" units = "сом"/>
+		<counter id = "paymentsCurrentMonth" name = "Платежи в текущем месяце" units = "сом"/>
+		<counter id = "promisedPayment" name = "Обещанные платежи" units = "сом"/>
+		<counter id = "costsCurrentMonth" name = "Расходы в текущем месяце" units = "сом"/>
+		<counter id = "adjustments" name = "Корректировки" units = "сом"/>
+		<counter id = "credit" name = "Кредит" units = "сом"/>
+	</counters>
+	<keywords></keywords>
+	<type></type>
+	<country>ru</country>
+</provider>

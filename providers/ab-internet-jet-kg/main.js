@@ -27,7 +27,10 @@ function main() {
 	html = AnyBalance.requestGet(baseurl + 'balance_show.php?bill_type=2&acc_id=' + prefs.login)
 	
 	if (!/Состояние лицевого счёта/i.test(html)) {
-		throw new AnyBalance.Error('Лицевой счёт не найден.');
+		if(/номер не найден/i.test(html))
+			throw new AnyBalance.Error('Лицевой счёт не найден.', null, true);
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удалось получить информацию по счету. Сайт изменен?');
 	}
 
 	var result = {success: true};

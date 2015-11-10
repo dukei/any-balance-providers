@@ -15,7 +15,7 @@ function main() {
 	var baseurl = 'http://crimeagasnet.ru:8106';
 	AnyBalance.setDefaultCharset('utf-8');
 
-	return createList();
+//	return createList();
 	
 	checkEmpty(prefs.fam, 'Введите фамилию!');
 	checkEmpty(prefs.licschet, 'Введите лицевой счет!');

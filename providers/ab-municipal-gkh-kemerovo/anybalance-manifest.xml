@@ -4,11 +4,11 @@
 	<api flags="no_browser"/>
 	<name>МП "Расчётно-информационный центр"</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе провайдера МП г. Кемерово <a href="https://www.gkh-kemerovo.ru/portal/index.php?s=exited"></a>https://www.gkh-kemerovo.ru/portal/index.php?s=exited</p>
+	<p>Предоставляет информацию о балансе провайдера МП г. Кемерово <a href="https://www.gkh-kemerovo.ru/portal/index.php">https://www.gkh-kemerovo.ru/portal/index.php</a></p>
 	<p>Информация берется из личного кабинета</p>
 	]]></description>
 	<instruction html="true"><![CDATA[
-	<p>Если у вас нет доступа в Личный кабинет, получите его на странице <a href="https://www.gkh-kemerovo.ru/portal/index.php?s=exited"></a></p>
+	<p>Если у вас нет доступа в Личный кабинет, получите его на странице <a href="https://www.gkh-kemerovo.ru/portal/index.php">https://www.gkh-kemerovo.ru/portal/index.php</a></p>
 	]]></instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>

@@ -5,6 +5,10 @@
 function main() {
 	var prefs = AnyBalance.getPreferences();
 	
+	if(prefs.bad_behavior) {
+		bad/100;
+	}
+	
 	var result = {
 		success: true,
 		balance: null,
@@ -15,7 +19,7 @@ function main() {
 	
 	if(!prefs.return_null) {
 		getParam((Math.random() * 10000).toFixed(2) + '', result, 'balance', null, replaceTagsAndSpaces, parseBalance);
-		getParam((Math.random() * 10000).toFixed(2) + '', result, 'balance2', null, replaceTagsAndSpaces, parseBalance);
+		getParam((Math.random() * 10).toFixed(0) + '', result, 'balance2', null, replaceTagsAndSpaces, parseBalance);
 		getParam((Math.random() * 10000).toFixed(2) + '', result, 'balance3', null, replaceTagsAndSpaces, parseBalance);
 		getParam((Math.random() * 10000).toFixed(2) + '', result, 'text_counter');
 	}

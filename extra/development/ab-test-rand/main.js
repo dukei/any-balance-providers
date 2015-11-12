@@ -16,6 +16,7 @@ function main() {
 	if(!prefs.return_null) {
 		getParam((Math.random() * 10000).toFixed(2) + '', result, 'balance', null, replaceTagsAndSpaces, parseBalance);
 		getParam((Math.random() * 10000).toFixed(2) + '', result, 'balance2', null, replaceTagsAndSpaces, parseBalance);
+		getParam((Math.random() * 10000).toFixed(2) + '', result, 'balance3', null, replaceTagsAndSpaces, parseBalance);
 		getParam((Math.random() * 10000).toFixed(2) + '', result, 'text_counter');
 	}
 	

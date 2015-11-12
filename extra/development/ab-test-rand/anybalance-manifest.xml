@@ -17,6 +17,7 @@
 	<counters>
 		<counter id="balance" name="Баланс"/>
 		<counter id="balance2" name="Баланс 2"/>
+		<counter id="balance3" name="Баланс 3"/>
 		<counter id="text_counter" name="Текстовый счетчик" type="text"/>
 	</counters>
 	<keywords></keywords>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-municipal-gkh-kemerovo</id>
+	<api flags="no_browser"/>
+	<name>МП "Расчётно-информационный центр"</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера МП г. Кемерово <a href="https://www.gkh-kemerovo.ru/portal/index.php?s=exited"></a>https://www.gkh-kemerovo.ru/portal/index.php?s=exited</p>
+	<p>Информация берется из личного кабинета</p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Если у вас нет доступа в Личный кабинет, получите его на странице <a href="https://www.gkh-kemerovo.ru/portal/index.php?s=exited"></a></p>
+	]]></instruction>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" {@currency}"/>
+	</counters>
+	<keywords>ЖКХ, Кемерово</keywords>
+	<type>municipal</type>
+	<country>ru</country>
+</provider>

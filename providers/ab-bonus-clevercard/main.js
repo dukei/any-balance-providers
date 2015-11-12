@@ -35,7 +35,10 @@ function main() {
 	}, addHeaders({Referer: baseurl}));
 	
 	if (!/Операции по карте/i.test(html)) {
-
+		var error  = getParam(html, null, null, /<font[^>]+class="errortext"[^>]*>([\s\S]*?)<\/font>/i, replaceTagsAndSpaces, html_entity_decode)
+		if(error)
+			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
+		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменён?');
 	}
 	

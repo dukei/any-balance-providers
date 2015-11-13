@@ -19,10 +19,10 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units="р"/>
-		<counter id = "fio" name = "ФИО" />
-		<counter id = "adress" name = "Адрес" type="text"/>
-		<counter id = "acc_num" name = "Лицевой счёт" type="text"/>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="fio" name ="ФИО" type="text"/>
+		<counter id="adress" name ="Адрес" type="text"/>
+		<counter id="acc_num" name ="Лицевой счёт" type="text"/>
 	</counters>
 	<keywords>ЖКХ, Кемерово</keywords>
 	<type>municipal</type>

@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change version="13" date="2015-11-13">
+      Исправленно распознавание счетчика "Балы".
+    </change>
     <change version="12" date="2015-11-03">
       Исправленно распознавание счетчика "Скидка".
     </change>

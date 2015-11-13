@@ -77,17 +77,13 @@ function main(){
 			var matches = html.match(/<div class=[^>]*>\s*Загальна кількість\s*<div>(\d+?)<\/div>/i);
 			if (matches) {
 				result.bonus = parseFloat(matches[1]);
-			} else {
-				throw new AnyBalance.Error("Не удалось проверить бонусы");
 			}
 		}
 		//Мої Спеціальні пропозиції
 		if (AnyBalance.isAvailable('baly')) {
-			var matches = html.match(/Мої (?:С|c)пеціальні пропозиції понад\s*<span[^>]*>(\d+?)\s*балів[^<]*</i);
+			var matches = html.match(/Мої (?:С|c)пеціальні пропозиції п*о*н*а*д*\s*<span[^>]*>(\d+?)\s*балів[^<]*</i);
 			if (matches) {
 				result.baly = parseFloat(matches[1]);
-			} else {
-				throw new AnyBalance.Error("Не удалось проверить баллы");
 			}
 		}
 		//Начисленные бонусы переведённые в грн.

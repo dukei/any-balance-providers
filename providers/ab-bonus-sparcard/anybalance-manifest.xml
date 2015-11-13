@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="5">ab-bonus-sparcard</id>
+	<id version="7">ab-bonus-sparcard</id>
 	<api flags="no_browser"/>
-	<name>Sparcard.ru</name>
+	<name>sparcard.ru</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о бонусах по карте магазинов SPAR, EUROSPAR и SPARexpress</p>
-	<p>Информация берется из личного кабинета http://sparcard.ru</p>
+	<p>Информация берется из личного кабинета http://card.spar-nn.ru/</p>
 	]]></description>
 	<author>dp &lt;d.p@km.ru&gt;</author>
 	<files>

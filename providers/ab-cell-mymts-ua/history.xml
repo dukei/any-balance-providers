@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change major_version="1.0" version="20" date="2015-11-13">
+      - Добавлено распознавание 40 минут на другие сети в счетчик: "Минуты по Украине".
+    </change>
     <change major_version="1.0" version="19" date="2015-09-10">
       - Исправлено распознавание sms с тарифа Супер МТС Стандартный в счетчик: "SMS в сети МТС".
     </change>

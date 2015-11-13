@@ -15,7 +15,7 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс"/>
+		<counter id="balance" name="Баланс" units=" {@currency}"/>
 		<counter id="balance2" name="Баланс 2"/>
 		<counter id="balance3" name="Баланс 3"/>
 		<counter id="balance4" name="Баланс 4" flags="zero_when_empty"/>

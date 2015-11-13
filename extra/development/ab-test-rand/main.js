@@ -14,7 +14,9 @@ function main() {
 		balance: null,
 		balance2: null,
 		text_counter: null,
-		hidden: 'hidden counter' // счетчик, который не объявлен в манифесте
+		currency: ' р',
+		hidden: 'hidden counter' // счетчик, который не объявлен в манифесте и он нигде не используется
+		
 	};
 	
 	if(!prefs.return_null) {

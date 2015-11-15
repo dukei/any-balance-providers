@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-cell-cricket</id>
+	<api flags="no_browser"/>
+	<name>Cricket</name>
+	<description html="true"><![CDATA[
+	<p>Cricket provider beta, created for personal use, has only been tested with the Cricket prepaid Smart plan, on a single line.</p>
+	]]></description>
+	<author>Borislip &lt;borislip@gmail.com&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>aes.js</js>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="data" name="Data" units="MB"/>
+        <counter id="days" name="Days"/>
+        <counter id="bonus" name="Bonus"/>
+		<counter id="credit" name="Credit" units="$"/>
+		<counter id="monthly" name="Monthly" units="$"/>
+	</counters>
+	<keywords>Сотовый телефон, мобильный, мобильник, теле2, USA, mobile, cellphone, Cricket</keywords>
+	<type>cell</type>
+	<country>us</country>
+</provider>

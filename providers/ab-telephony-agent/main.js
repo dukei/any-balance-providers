@@ -18,28 +18,24 @@ function main(){
          throw new AnyBalance.Error('Вы ввели неправильный е-мейл для входа на agent.mail.ru.', null, true);
 	
     var baseurlLogin = "https://auth.mail.ru/cgi-bin/auth";
-    var baseurl = "http://agent.mail.ru/";
+    var baseurl = "https://agent.mail.ru/";
 	
     AnyBalance.setDefaultCharset('utf-8');
 	
-    var html = AnyBalance.requestPost(baseurlLogin, {
+    var html = AnyBalance.requestPost(baseurlLogin + '?lang=ru_RU&from=authpopup', {
         page:baseurl,
-        post:'',
-        login_from:'',
-        lang:'',
-        setLang:'',
-        Login:parts[1],
+        FailPage:'',
+        Login:prefs.login,
         Domain:parts[2].toLowerCase(),
         Password:prefs.password,
         new_auth_form:1
     });
 	
-    if(!/url=http:\/\/agent.mail.ru/i.test(html))
-        throw new AnyBalance.Error('Не удалось войти в личный кабинет. Неправильный логин-пароль?');
-	
-    html = AnyBalance.requestGet(baseurl); 
-	
-    if(!/\/cgi-bin\/logout/i.test(html)){
+	if(AnyBalance.getLastUrl().indexOf(baseurl) != 0){
+		var error = getParam(html, null, null, /<div[^>]+login-page__external_error[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+		if(error)
+			throw new AnyBalance.Error(error, null, /Неверное имя пользователя или пароль/i.test(error));
+		AnyBalance.trace(html);
         throw new AnyBalance.Error('Не удалось войти в личный кабинет. Неправильный логин-пароль?');
     }
 	

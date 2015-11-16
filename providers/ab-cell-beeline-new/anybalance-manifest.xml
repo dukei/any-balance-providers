@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="131">ab-cell-beeline-new</id>
+	<id version="132">ab-cell-beeline-new</id>
 	<name>Билайн (новый кабинет)</name>
 	<api flags="no_browser" min_level="5"/>
 	<description html="true"><![CDATA[
@@ -36,6 +36,10 @@
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
 		<js>library.js</js>
+		<js>nadapter.js</js>
+		<js>lk.js</js>
+		<js>lkapi.js</js>
+		<js>lkkz.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 		<settings target="init">settings_init.xml</settings>

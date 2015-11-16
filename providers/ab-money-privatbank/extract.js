@@ -168,7 +168,7 @@ var makeCRCTable = function(){
 }
 
 var crc32 = function(str) {
-    var crcTable = window.crcTable || (window.crcTable = makeCRCTable());
+    var crcTable = makeCRCTable();
     var crc = 0 ^ (-1);
 
     for (var i = 0; i < str.length; i++ ) {

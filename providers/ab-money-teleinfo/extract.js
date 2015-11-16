@@ -119,7 +119,7 @@ function request(m) {
 
     AnyBalance.trace('Requesting ' + getParam(m.payload.__type, null, null, /\.(\w+)$/));
 
-    var ver = "2.1.0";
+    var ver = "2.6.0";
     var wordsStr = CryptoJS.enc.Utf8.parse(sm);
     var wordsVer = CryptoJS.enc.Utf8.parse(ver);
     var words = new CryptoJS.lib.WordArray.init([wordsStr.sigBytes + wordsVer.sigBytes + 1, wordsVer.sigBytes << 24], 5);
@@ -132,7 +132,7 @@ function request(m) {
         Connection: 'Keep-Alive'
     });
 
-    words = CryptoJS.enc.Base64.parse(ret);
+	words = CryptoJS.enc.Base64.parse(ret);
 
     if (AnyBalance.getLastStatusCode() >= 400)
         throw new AnyBalance.Error('Error requesting ' + sm + ': ' + CryptoJS.enc.Utf8.stringify(words));
@@ -235,7 +235,7 @@ function deserialize(xml) {
                     break;
                 case 'long':
                 case 'int':
-                    putValue(val, function(val){return parseInt(val)});
+                    putValue(val, function(val){return parseInt(val,10)});
                     break;
                 case 'date':
                     putValue(val, function(val){
@@ -243,8 +243,11 @@ function deserialize(xml) {
                         if(!matches)
                             throw new AnyBalance.Error('deserialize error: unexpected date format: <' + elem + '>' + val);
                         var d = new Date(0);
-                        d.setUTCFullYear(parseInt(matches[1]), parseInt(matches[2]) - 1, parseInt(matches[3]));
-                        d.setUTCHours(parseInt(matches[4]), parseInt(matches[5]), parseInt(matches[6]), parseInt(matches[7]));
+                        d.setUTCFullYear(parseInt(matches[1],10), parseInt(matches[2],10) - 1, parseInt(matches[3],10));
+                        d.setUTCHours(parseInt(matches[4],10), parseInt(matches[5],10), parseInt(matches[6],10), parseInt(matches[7],10));
+                        if(isNaN(d.getTime()))
+                            throw new AnyBalance.Error('Failed to parse date: <' + elem + '> ' + val);
+                        	
                         return d;
                     });
                     break;
@@ -265,7 +268,7 @@ function deserialize(xml) {
                     break;
                 case 'ref':
                     putValue(val, function(val){
-                        var id = parseInt(val);
+                        var id = parseInt(val,10);
                         if(!refMap[id])
                             throw new AnyBalance.Error('Inexistent reference: ' + id + ' of ' + refMap.length);
                         return refMap[id];
@@ -575,10 +578,11 @@ function processAccountTransactions(p, result){
 
 function processIdentityTransactions(path, p, result){
     var dt = new Date();
+    AnyBalance.trace('openDate: ' + p.openDate + ', issueDate: ' + p.issueDate + ', currentDate: ' + dt); 
     var params = {
         __type: 'ru.vtb24.mobilebanking.protocol.statement.StatementRequest',
         endDate: dt,
-        startDate: p.openDate || p.issueDate,
+        startDate: p.openDate || p.issueDate || new Date(dt.getFullYear()-2, dt.getMonth(), dt.getDate()),
         products: [
             //__type: '[ru.vtb24.mobilebanking.protocol.ObjectIdentityMto', //поставим позже
             {

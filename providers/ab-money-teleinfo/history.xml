@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="3" version="33" date="2015-11-16">
+	Изменения на сайте
+	</change>
 	<change major_version="3" version="32" date="2015-10-05">
 	Поддержка кредитов и депозитов (для источника Мобильное приложение)
 	</change>

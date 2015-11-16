@@ -4,7 +4,7 @@
 	<api flags="no_browser|sms"/>
 	<name>Приватбанк (Украина)</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе на картах Приватбанка http://privatbank.ua/</p>
+	<p>Предоставляет информацию о балансе на картах Приватбанка <a href="http://privatbank.ua/">http://privatbank.ua/</a></p>
 	]]></description>
 	<instruction html="true"><![CDATA[
 	<ul>
@@ -12,7 +12,7 @@
 		<li>Введите его во всплывающем окне, больше смс-код приходить не будет для данного логина.</li>
 	</ul>
 	]]></instruction>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

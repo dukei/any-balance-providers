@@ -42,6 +42,8 @@ function megafonLkAPILogin(options){
     var prefs = AnyBalance.getPreferences();
     AnyBalance.setDefaultCharset('utf-8');
 
+    checkEmpty(prefs.login && /^\d{10}$/.test(prefs.login), 'Введите 10 цифр номера телефона без пробелов и разделителей в качестве логина!');
+
     AnyBalance.trace('Пробуем войти через API мобильного приложения...');
 
     var sessid = AnyBalance.getCookie('JSESSIONID');
@@ -55,6 +57,16 @@ function megafonLkAPILogin(options){
     }
 
     var json = getJson(html);
+    if(json.authenticated){
+        AnyBalance.trace('Уже авторизованы на номер ' + json.phone);
+        if(json.phone != prefs.login){
+            AnyBalance.trace('Номер неправильный (надо ' + prefs.login + '), придется авторизоваться заново');
+            json.authenticated = false;
+        }else {
+            AnyBalance.trace('Номер правильный, используем текущую сессию');
+        }
+    }
+
     if(!json.authenticated) {
         json = callAPI('post', 'login', {
             login: prefs.login,
@@ -77,8 +89,6 @@ function megafonLkAPILogin(options){
         }
 
         __setLoginSuccessful();
-    }else{
-        AnyBalance.trace('Уже авторизованы. Используем текущую сессию.');
     }
 }
 

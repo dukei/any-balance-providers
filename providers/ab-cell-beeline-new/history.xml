@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="134" date="2015-11-17">
+	Исправлены счетчики SMS и MMS
+	</change>
 	<change version="133" date="2015-11-17">
 	Исправлено получение остатков услуг в российском билайне
 	</change>

@@ -944,7 +944,7 @@ function getBonuses(xhtml, result, nopath) {
     }else{
     	//для новых провайдеров
     	remainders = result.remainders = result.remainders || {};
-    	path = 'remainders';
+    	path = 'remainders.';
     }
 
     AnyBalance.trace("Found " + bonuses.length + ' aggregated bonuses');

@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="49" date="2015-11-17">
+	Поддержка альфа-ключа
+	</change>
 	<change version="48" date="2015-10-07">
 	Исправление работы с клик 1.0
 	</change>

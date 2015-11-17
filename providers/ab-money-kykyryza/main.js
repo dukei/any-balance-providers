@@ -27,7 +27,7 @@ function main(){
 }
 
 function doNewCabinet(prefs){
-	var baseurl = 'https://oplata.kykyryza.ru/';
+	var baseurl = 'https://classic.oplata.kykyryza.ru/';
 	var html = AnyBalance.requestGet(baseurl + 'personal/pub/Entrance', g_headers);
 	// Это форма где нужно ввести только номер карты, затем ставится кука и можно уже вводить логин и пароль
 	var loginForm = getParam(html, null, null, /<form[^>]*>(?!<form[^>]*>)[\s\S]*?b-form-login[\s\S]*?<\/form>/i);

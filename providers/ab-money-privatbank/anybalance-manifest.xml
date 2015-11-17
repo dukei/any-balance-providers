@@ -1,10 +1,10 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="6">ab-money-privatbank</id>
+	<id version="8">ab-money-privatbank</id>
 	<api flags="no_browser|sms"/>
 	<name>Приватбанк (Украина)</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе на картах Приватбанка http://privatbank.ua/</p>
+	<p>Предоставляет информацию о балансе на картах Приватбанка <a href="http://privatbank.ua/">http://privatbank.ua/</a></p>
 	]]></description>
 	<instruction html="true"><![CDATA[
 	<ul>
@@ -12,12 +12,14 @@
 		<li>Введите его во всплывающем окне, больше смс-код приходить не будет для данного логина.</li>
 	</ul>
 	]]></instruction>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
 		<js>md5-min.js</js>
+		<js>nadapter.js</js>
 		<js>library.js</js>
+		<js>extract.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
@@ -31,6 +33,6 @@
 		<counter id="card_name" name="Название карты" type="text"/>
 	</counters>
 	<keywords>приват, банк, украина</keywords>
-	<type>money</type>
+	<type>money, bank</type>
 	<country>ua</country>
 </provider>

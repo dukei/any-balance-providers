@@ -62,6 +62,7 @@ function initialize(baseurl){
 var g_countersTable = {
 	common: {
 		"balance": "balance",
+		"currency": "currency",
 		"prebal": "prebal",
 		"overpay": "overpay",
 		"sms_left": "remainders.sms_left",

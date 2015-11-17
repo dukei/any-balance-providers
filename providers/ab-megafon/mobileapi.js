@@ -210,7 +210,7 @@ function processRemaindersApi(result){
                         var val = getParam(current.available, null, null, null, replaceTagsAndSpaces, parseBalance);
                         if(/бесплат/i.test(name)) {
                             getParam(current.available, remainders, 'remainders.mins_n_free', null, replaceTagsAndSpaces, parseMinutes);
-                        }else if((/\.\s*МегаФон/i.test(name) && !/МТС/i.test(name))
+                        }else if((/\.\s*МегаФон|на мегафон/i.test(name) && !/МТС/i.test(name))
                             || /внутри сети/i.test(name)) {
                             sumParam(current.available, remainders, 'remainders.mins_net_left', null, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
                         } else {

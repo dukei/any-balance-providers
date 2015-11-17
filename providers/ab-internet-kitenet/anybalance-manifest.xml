@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id version="1">ab-</id>
-	<name>ab-internet-kitenet</name>
+	<id version="1">ab-internet-kitenet</id>
+	<name>РуСат</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе и рекомендуемом платеже пользователя услугами ООО "ИНКО-Сервис" (в Рублях, Долларах США или Евро).
 	</p>
-	<p>Информация берется из личного кабинета (http://my.rusat.com).
+	<p>Информация берется из личного кабинета (http://my.rusat.com/cgi-bin/clients/login).
 	</p>
 	]]></description>
 	<instruction html="true"><![CDATA[
 		<p>В настройках необходимо ввести логин, пароль и в какой валюте отображать данные лицевого счёта</p>
 	]]></instruction>
-	<author>Olga Malanova &lt;olgamalanova@gmail.com&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
@@ -25,7 +25,7 @@
 		<counter id="payment" name="Рекомендуемый платеж" units=" {@currency}"/>
 		<counter id="id" name="Лицевой счёт"/>
 	</counters>
-	<keywords></keywords>
-	<type></type>
+	<keywords>РуСат, Kitenet</keywords>
+	<type>internet</type>
 	<country>ru</country>
 </provider>

@@ -15,47 +15,45 @@ var g_headers = {
 'User-Agent':'Mozilla/5.0 (BlackBerry; U; BlackBerry 9900; en-US) AppleWebKit/534.11+ (KHTML, like Gecko) Version/7.0.0.187 Mobile Safari/534.11+'
 };
 
-var g_currency = {
-    1: ' руб',
-    2: ' евро',
-    3: ' долларов США'
-}
-
 function main(){
     //Получаем в переменную заданные пользователем настройки
     var prefs = AnyBalance.getPreferences();
-
+    var dbg = prefs.__dbg;
     //Проверяем, что логин и пароль введены
     checkEmpty(prefs.login, 'Введите логин!');
     checkEmpty(prefs.password, 'Введите пароль!');
-    checkEmpty(prefs.currency, 'Введите валюту!');
-    var currency = prefs.currency;
+
     //Лучше базовый url забить где-нибудь вначале в переменную, потом гораздо легче переделывать в другой провайдер
-    var baseurl = "http://my.rusat.com/cgi-bin/clients/";
-    
+    var baseurl = "http://my.rusat.com/cgi-bin/clients/",
+        redirecturl = "http://kitenet.ru/blogin/&err=1";
     //Не забываем устанавливать кодировку по-умолчанию. Её можно узнать из заголовка Content-Type или из тела страницы в теге <meta> 
-    AnyBalance.setDefaultCharset('utf-8'); 
-
-    var html = AnyBalance.requestPost(baseurl + 'login', {
-        login:prefs.login,
-        password:prefs.password,
-        action: 'validate'
-    }, addHeaders({Referer: baseurl + 'login'})); 
-    var session_id = AnyBalance.getLastUrl().match(/session_id=(.*)\b/i)[1];
-    AnyBalance.trace('currency ' + currency);
-    if (currency !== 1) {
-        html = AnyBalance.requestPost(baseurl + 'deal_account', {
-            session_id: session_id,
-            change_currency: 'Выбрать',
-            currency_id: currency
-        })
-    }
-
-    if(!html || AnyBalance.getLastStatusCode() > 400 || !session_id){ //Если главная страница возвращает ошибку, то надо отреагировать
-     AnyBalance.trace('trying to find html');
+    AnyBalance.setDefaultCharset('utf-8');
+    
+    var html = AnyBalance.requestGet(baseurl + 'login', g_headers);
+    if(!html || AnyBalance.getLastStatusCode() > 400){ //Если главная страница возвращает ошибку, то надо отреагировать
+        AnyBalance.trace('trying to find html');
         AnyBalance.trace(html); //В непонятных случаях лучше сделать распечатку в лог, чтобы можно было понять, что случилось
-     throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
+        throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
     }
+    try {
+        html = AnyBalance.requestPost(baseurl + 'login', {
+            login:prefs.login,
+            password:prefs.password,
+            action: 'validate'
+        }, addHeaders({Referer: baseurl + 'login'}));         
+    } catch(e) {
+        if (!dbg) {
+            AnyBalance.trace('Error redirecting', e.message);
+            continue;
+        } else {
+            html = AnyBalance.requestPost(redirecturl, {
+                login:prefs.login,
+                password:prefs.password,
+                action: 'validate'
+            }, addHeaders({Referer: baseurl + 'login'}));  
+        }
+    }
+
 
     //После входа обязательно проверяем маркер успешного входа
     //Обычно это ссылка на выход, хотя иногда приходится искать что-то ещё
@@ -77,9 +75,8 @@ function main(){
     //Получаем все счетчики
     var result = {success: true};
     getParam(html, result, 'id', /лицевой счет № (\d+)/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'balance', /Ваш баланс:.*((&nbsp;|\s|\b)\d+\.\d{0,2})/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'balance', /Ваш баланс:.*((&nbsp;|\s|\b)\d+\.\d{0,2})/i, replaceTagsAndSpaces, parseBalance, html_entity_decode);
     getParam(html, result, 'payment', /Рекомендуемый платеж:.*((&nbsp;|\s|\b)\d+\.\d{0,2})/i, replaceTagsAndSpaces, parseBalance);
-    result.currency = g_currency[currency];
     //Возвращаем результат
     AnyBalance.setResult(result);
 }

@@ -27,7 +27,7 @@ function main() {
 
 	var hintPage = AnyBalance.requestPost(baseurl + 'hint.php', {
 		t:'street'
-	})
+	}, g_headers);
 
 	var treadValue = getParam(hintPage, null, null, /(\d+)$/i, replaceTagsAndSpaces);
 
@@ -40,8 +40,7 @@ function main() {
 		tread: treadValue,
 		'Remember': 'false'
 	}, addHeaders({Referer: baseurl + 'index.php'}));
-
-
+	
 	if (!/\?s=exit/i.test(html)) {
 		var error = getParam(html, null, null, /id=["']el["'][^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
 		if(error)
@@ -56,9 +55,12 @@ function main() {
 	getParam(html, result, 'balance', /<td[^>]*>(?:(?!<\/?td>)[\s\S])*?вашего счета((?:(?!<\/?td>)[\s\S])*?)<\/td>/i, [[ /(задолженность:)/i, '-'], replaceTagsAndSpaces], parseBalance);
 	getParam(html, result, 'acc_num', /Лицевой счет[\s\S]*?<\/big>/i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(html, result, 'adress', /<big[^>]*>\(([\s\S]*?)\)[\s\S]*?<\/big>/i, replaceTagsAndSpaces, html_entity_decode);
-
-	html = AnyBalance.requestGet(baseurl+'index.php?show=param', g_headers);
-
-	getParam(html, result, 'fio', /name=["']lgn["'][\s\S]*?value=['"]([\s\S]*?)['"][^>]*>/i, replaceTagsAndSpaces, html_entity_decode)
+	
+	if(isAvailable('fio')) {
+		html = AnyBalance.requestGet(baseurl + 'index.php?show=param', g_headers);
+		
+		getParam(html, result, 'fio', /name=["']lgn["'][\s\S]*?value=['"]([\s\S]*?)['"][^>]*>/i, replaceTagsAndSpaces, html_entity_decode)
+	}
+	
 	AnyBalance.setResult(result);
 }

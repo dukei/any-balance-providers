@@ -26,8 +26,8 @@
 		<counter id="usedMessages" name="Number of messages"/>
 		<counter id="nextPaymentDate" name="Next payment date" type="text"/>
 		<counter id="totalAmount" name="Total Amount" units=" kr"/>
-		//Я не знаю как правильно назвать этот счётчик.
-		//Яндекс-перевод "Utomlands och betalsamtal" - За рубежом тариф "Премиум".
+		<!--Я не знаю как правильно назвать этот счётчик.
+		Яндекс-перевод "Utomlands och betalsamtal" - За рубежом тариф "Премиум".-->
 		<counter id="premium" name="Действие за рубежом" type="text"/>
 	</counters>
 	<keywords></keywords>

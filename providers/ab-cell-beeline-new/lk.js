@@ -1011,7 +1011,7 @@ function getBonuses(xhtml, result, nopath) {
                 getParam(services[i], remainders, path + 'rub_bonus2_till', /<div[^>]+class="column3[^"]*"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseDateWord);
             } else if (/Рублей за участие в опросе|Счастливое время|Бонусы по программе|Счастливого времени/i.test(name)) {
                 sumParam(values, remainders, path + 'rub_opros', null, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-            } else if (/Минут[^<]+на номера вашего региона|Времени общения|Включенные минуты|Минут общения на номера вашего региона|минут в месяц|мин\.|Голосовой трафик|Разговор.*вне сети/i.test(name)) {
+            } else if (/Минут[^<]+на номера вашего региона|Времени общения|Включенные минуты|Пакет минут|Минут общения на номера вашего региона|минут в месяц|мин\.|Голосовой трафик|Разговор.*вне сети/i.test(name)) {
                 sumParam(values, remainders, path + 'min_local', null, replaceMinutes, parseMinutes, aggregate_sum);
                 sumParam(services[i], remainders, path + 'min_local_till', /Доступно до([^<]{10,20})/i, replaceTagsAndSpaces, parseDateWord, aggregate_min);
 

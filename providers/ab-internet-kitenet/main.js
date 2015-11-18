@@ -36,6 +36,7 @@ function main(){
         AnyBalance.trace(html); //В непонятных случаях лучше сделать распечатку в лог, чтобы можно было понять, что случилось
         throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
     }
+    AnyBalance.sleep(1000);
 
     try {
         html = AnyBalance.requestPost(baseurl + 'login', {
@@ -45,17 +46,22 @@ function main(){
         }, addHeaders({Referer: baseurl + 'login'}));         
     } catch(e) {
         if (!dbg) {
-            AnyBalance.trace('Error redirecting', e.message);
+            AnyBalance.Error('Ошибка при переходе на http://kitenet.ru/blogin/&err=1 ', e.message);
+            return false;
         } else {
-            html = AnyBalance.requestPost(redirecturl, {
-                login:prefs.login,
-                password:prefs.password,
-                action: 'validate'
-            }, addHeaders({Referer: baseurl + 'login'}));  
+            try {
+                html = AnyBalance.requestPost(redirecturl, {
+                    login:prefs.login,
+                    password:prefs.password,
+                    action: 'validate'
+                }, addHeaders({Referer: baseurl + 'login'}));  
+            } catch(e) {
+                AnyBalance.Error('Ошибка при входе в личный кабинет на http://kitenet.ru/blogin/&err=1 ', e.message);
+                return false;
+            }
         }
     }
 
-    AnyBalance.trace(html);
     //После входа обязательно проверяем маркер успешного входа
     //Обычно это ссылка на выход, хотя иногда приходится искать что-то ещё
     if(!/logout/i.test(html)){

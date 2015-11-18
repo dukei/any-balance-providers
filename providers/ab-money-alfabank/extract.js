@@ -913,12 +913,16 @@ function processDeposits2(html, result) {
 
         var name = getParam(row, null, null, /(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
         var id = getParam(row, null, null, /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-        var currency = getParam(row, null, null, /(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseCurrency);
+        var currency = getParam(row, null, null, /(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseCurrency);
 
         var d = {
             __id: id,
             __name: name + ' ' + currency + ' (' + id.substr(-4) + ')'
         };
+
+        if(!currency){
+            AnyBalance.trace('Не удалось получить баланс и валюту для депозита ' + d.__name + ': ' + row);
+        }
 
         if (__shouldProcess('deposits', d)) {
             processDeposit2(html, row, d);
@@ -939,8 +943,8 @@ function processDeposit2(html, row, result) {
 
     getParam(row, result, 'deposits.acctype', /(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(row, result, 'deposits.accnum', /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(row, result, 'deposits.balance', /(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(row, result, 'deposits.currency', /(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseCurrency);
+    getParam(row, result, 'deposits.balance', /(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(row, result, 'deposits.currency', /(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseCurrency);
     getParam(row, result, 'deposits.till', />\s*&#1044;&#1086; (\d+[^>]*<)/i, replaceTagsAndSpaces, parseDateWord);
 
     if (AnyBalance.isAvailable('deposits.expressnum', 'deposits.balance_start', 'deposits.pct_sum', 'deposits.date_start',

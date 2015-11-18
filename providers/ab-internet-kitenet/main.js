@@ -30,21 +30,22 @@ function main(){
     AnyBalance.setDefaultCharset('utf-8');
     
     var html = AnyBalance.requestGet(baseurl + 'login', g_headers);
+
     if(!html || AnyBalance.getLastStatusCode() > 400){ //Если главная страница возвращает ошибку, то надо отреагировать
         AnyBalance.trace('trying to find html');
         AnyBalance.trace(html); //В непонятных случаях лучше сделать распечатку в лог, чтобы можно было понять, что случилось
         throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
     }
+
     try {
         html = AnyBalance.requestPost(baseurl + 'login', {
-            login:prefs.login,
-            password:prefs.password,
+            login: prefs.login,
+            password: prefs.password,
             action: 'validate'
         }, addHeaders({Referer: baseurl + 'login'}));         
     } catch(e) {
         if (!dbg) {
             AnyBalance.trace('Error redirecting', e.message);
-            continue;
         } else {
             html = AnyBalance.requestPost(redirecturl, {
                 login:prefs.login,
@@ -54,7 +55,7 @@ function main(){
         }
     }
 
-
+    AnyBalance.trace(html);
     //После входа обязательно проверяем маркер успешного входа
     //Обычно это ссылка на выход, хотя иногда приходится искать что-то ещё
     if(!/logout/i.test(html)){
@@ -66,6 +67,7 @@ function main(){
             //Это важно, а то постоянные попытки обновления с неправильным паролем могут заблокировать кабинет.
             throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test());
         }
+        AnyBalance.trace('logout not found');
 		AnyBalance.trace(html); //В непонятных случаях лучше сделать распечатку в лог, чтобы можно было понять, что случилось
         //Если объяснения ошибки не найдено, при том, что на сайт войти не удалось, то, вероятно, произошли изменения на сайте
         throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');

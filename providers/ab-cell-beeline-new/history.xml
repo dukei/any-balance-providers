@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="137" date="2015-11-18">
+	Окончательно исправлено получение валюты
+	</change>
 	<change version="136" date="2015-11-18">
 	Исправление получения бонусов через API приложения
 	</change>

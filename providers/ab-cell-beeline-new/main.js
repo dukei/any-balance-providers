@@ -62,7 +62,6 @@ function initialize(baseurl){
 var g_countersTable = {
 	common: {
 		"balance": "balance",
-		"currency": "currency",
 		"prebal": "prebal",
 		"overpay": "overpay",
 		"sms_left": "remainders.sms_left",
@@ -103,9 +102,10 @@ function mainRu(baseurl){
 	var result = {success: true};
 
 	adapter.proceedWithSite(baseurl, ret.type, ret.html, result);
-	result = adapter.convert(result);
+	var newresult = adapter.convert(result);
+	newresult.currency = result.currency;
 
-	setCountersToNull(result);
+	setCountersToNull(newresult);
 
-	AnyBalance.setResult(result);
+	AnyBalance.setResult(newresult);
 }

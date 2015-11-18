@@ -200,7 +200,7 @@ function getBonusesBlock(url, html, name, exact, onlyReturnParams) {
 
 function myParseCurrency(text) {
     var val = html_entity_decode(text).replace(/\s+/g, '').replace(/[\-\d\.,]+/g, '');
-    val = g_currencys[val];
+    val = g_currencys[val] || val;
     AnyBalance.trace('Parsing currency (' + val + ') from: ' + text);
     return val;
 }
@@ -424,7 +424,7 @@ function fetchB2B(baseurl, html, result) {
         // Неизвестно что и как выводить, пока сделаем так, может нужно будет переделать
         getParam(html, result, 'balance', /class="balance"[^>]*>([\s\S]*?)<\/div>/i, [replaceTagsAndSpaces, /Сумма неоплаченных счетов[^\d]+/i, '-'], parseBalance);
         getParam(html, result, 'overpay', /class="[^>]*balance"[^>]*>([\s\S]*?)<\/div>/i, [replaceTagsAndSpaces, /Сумма неоплаченных счетов[^\d]+/i, '-'], parseBalance);
-        getParam(html, result, ['currency', 'balance'], /class="balance"[^>]*>([\s\S]*?)<\/div>/i, [replaceTagsAndSpaces, /все счета оплачены/, '', /[.,]/g, ''], parseCurrency);
+        getParam(html, result, ['currency', 'balance'], /class="balance"[^>]*>([\s\S]*?)<\/div>/i, [replaceTagsAndSpaces, /все счета оплачены/, '', /[.,]/g, ''], myParseCurrency);
     }
     //Получим страницу с тарифом и опциями
     html = AnyBalance.requestGet(baseurl + 'b/info/abonents/catalog.xhtml', g_headers);

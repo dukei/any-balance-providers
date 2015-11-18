@@ -25,45 +25,42 @@ function main() {
 		throw new AnyBalance.Error('Error connecting to the site! Try to refresh the data later.');
 	}
 	
-	html = AnyBalance.requestPost(baseurl+'/user/login', {
+	var postHTML = AnyBalance.requestPost(baseurl+'/user/login', {
 		username: prefs.login,
 		password: prefs.password,
 		'Remember': 'false'
 	}, addHeaders({Referer: baseurl+ '/mitt-vimla'}));
 
 
-	var json = getJson(html);
-	if(json.location !== '/mitt-vimla')
+	var json = getJson(postHTML);
+	if(!json.success)
+	{
+		var error = getParam(html, null, null, /"loginFailed":"([\s\S]*?)"/i, replaceTagsAndSpaces, html_entity_decode);
+		if (error)
+			throw new AnyBalance.Error(error, null, /Oj, något gick snett/i.test(error));
 		throw new AnyBalance.Error("Can`t login to selfcare. Site changed?");
-
-	html = AnyBalance.requestGet(baseurl+'/mitt-vimla', g_headers);
-	var result = {success: true};
-
-	getParam(html, result, 'fio', /personal['"][^>]*>[\s\S]*?(<span[^>]*>(\w+)<\/span>[\s\S]*?<span[^>]*>(\w+)<\/span>)/i, replaceTagsAndSpaces);
-	getParam(html, result, 'phone', /Mobilnummer[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'premium', /<p[^>]*>Utomlands och betalsamtal[\s\S]*?<em[^>]*>([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, html_entity_decode)
-
-	function formatSizeUnits(bytes) {
-		if (bytes >= 1073741824) 	{bytes = (bytes / 1073741824).toFixed(2) + ' GB';}
-		else if (bytes>=1048576)    {bytes=(bytes/1048576).toFixed(2)+' MB';}
-		else if (bytes>=1024)       {bytes=(bytes/1024).toFixed(2)+' KB';}
-		else if (bytes>1)           {bytes=bytes+' bytes';}
-		else if (bytes==1)          {bytes=bytes+' byte';}
-		else                        {bytes='0 byte';}
-		return bytes;
 	}
 
-	html = AnyBalance.requestGet(baseurl+'/subscription/priceplan',g_headers);
-	getParam(html, result, 'BUsed', /"Included":{[^}]*?BUsed[^}]*?(\d+)/i, null, formatSizeUnits);
-	getParam(html, result, 'BTotal', /"Included":{[^}]*?BTotal[^}]*?(\d+)/i, null, formatSizeUnits);
-	getParam(html, result, 'BLeft', /"Included":{[^}]*?BLeft[^}]*?(\d+)/i, null, formatSizeUnits);
-	getParam(html, result, 'extradata', /"Extra":{[^}]*?BLeft[^}]*?(\d+)/i, null, formatSizeUnits);
-	getParam(html, result, 'usedMessages', /"Sms":{[^}]*?Used[\s\S]*?(\d+)[^}]*}/i, null, parseBalance);
-	getParam(html, result, 'calls', /"Voice":{[^}]*?Used[\s\S]*?(\d+)[^}]*}/i, null, parseBalance);
+	var result = {success: true};
+
+	html = AnyBalance.requestGet(baseurl+json.location, g_headers);
+	getParam(html, result, 'fio', /personal['"][^>]*>[\s\S]*?(<span[^>]*>(\w+)<\/span>[\s\S]*?<span[^>]*>(\w+)<\/span>)/i, replaceTagsAndSpaces);
+	getParam(html, result, 'phone', /Mobilnummer[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'premium', /<p[^>]*>Utomlands och betalsamtal[\s\S]*?<em[^>]*>([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, html_entity_decode);
 
 	html = AnyBalance.requestGet(baseurl+'/invoice/aggregatelines', g_headers);
-	getParam(html, result, 'nextPaymentDate', /"invoice":{[^}]*?NextPaymentDate[^}]*?(\d+)/i, null, parseBalance);
-	getParam(html,result, 'totalAmount', /"invoice":{[^}]*?TotalAmount[^}]*?(\d+)/i, null, parseBalance);
+	json=getJson(html);
+	getParam(json.invoice.NextPaymentDate, result, 'nextPaymentDate', null, null, parseBalance);
+	getParam(json.invoice.TotalAmount, result, 'totalAmount', null, null, null);
+
+	html = AnyBalance.requestGet(baseurl+'/subscription/priceplan',g_headers);
+	json=getJson(html);
+	getParam(json.pricePlan.Usage.Included.BUsed+'b', result, 'BUsed', null, null, parseTraffic);
+	getParam(json.pricePlan.Usage.Included.BTotal+'b', result, 'BTotal', null, null, parseTraffic);
+	getParam(json.pricePlan.Usage.Included.BLeft+'b', result, 'BLeft', null, null, parseTraffic);
+	getParam(json.pricePlan.Usage.Extra.BLeft+'b', result, 'extradata', null, null, parseTraffic);
+	getParam(json.pricePlan.Usage.Sms.Used, result, 'usedMessages', null, null, null);
+	getParam(json.pricePlan.Usage.Voice.Used, result, 'calls', null, null, null);
 
 	AnyBalance.setResult(result);
 }

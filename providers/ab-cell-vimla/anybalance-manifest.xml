@@ -16,19 +16,17 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
+		<counter id="totalAmount" name="Total Amount" units=" kr"/>
+		<counter id="nextPaymentDate" name="Next payment date" type="time" format="dd/MM/yyyy"/>
 		<counter id="fio" name="Name" type="text"/>
 		<counter id="phone" name="Phone number" type="text"/>
-		<counter id="BTotal" name="Total data" type="text"/>
-		<counter id="BUsed" name="Used data" type="text"/>
-		<counter id="BLeft" name="Left data" type="text"/>
-		<counter id="extradata" name="Extradata" type="text"/>
+		<counter id="premium" name="Premium" type="text"/>
+		<counter id="BTotal" name="Total data" units=" mb"/>
+		<counter id="BUsed" name="Used data" units=" mb"/>
+		<counter id="BLeft" name="Left data" units=" mb"/>
+		<counter id="extradata" name="Extradata" units=" mb"/>
 		<counter id="calls" name="Number of calls"/>
 		<counter id="usedMessages" name="Number of messages"/>
-		<counter id="nextPaymentDate" name="Next payment date" type="text"/>
-		<counter id="totalAmount" name="Total Amount" units=" kr"/>
-		<!--Я не знаю как правильно назвать этот счётчик.
-		Яндекс-перевод "Utomlands och betalsamtal" - За рубежом тариф "Премиум".-->
-		<counter id="premium" name="Действие за рубежом" type="text"/>
 	</counters>
 	<keywords></keywords>
 	<type>cell</type>

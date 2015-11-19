@@ -88,6 +88,7 @@ function makeReplaces(str, cfg){
 
 function main(){
     var prefs = AnyBalance.getPreferences();
+    AnyBalance.setOptions({cookiePolicy: 'netscape'});
 
     checkEmpty(prefs.login, 'Введите логин!');
     checkEmpty(prefs.password, 'Введите пароль!');

@@ -2,15 +2,15 @@
 <provider>
 	<api flags="no_browser"/>
 	<id version="1">ab-internet-kitenet</id>
-	<name>РуСат</name>
+	<name>KiteNet (РуСат)</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе и рекомендуемом платеже пользователя услугами ООО "ИНКО-Сервис" (в Рублях, Долларах США или Евро).
+	<p>Предоставляет информацию о балансе и рекомендуемом платеже в KiteNet (Русат) http://kitenet.ru/.
 	</p>
-	<p>Информация берется из личного кабинета (http://my.rusat.com/cgi-bin/clients/login).
+	<p>Информация берется из личного кабинета (http://my.rusat.com/).
 	</p>
 	]]></description>
 	<instruction html="true"><![CDATA[
-		<p>В настройках необходимо ввести логин, пароль и в какой валюте отображать данные лицевого счёта</p>
+		<p>В настройках необходимо ввести логин, пароль для входа в личный кабинет KiteNet. Если у вас ещё нет пароля, получите его, зайдя через сеть KiteNet на http://kitenet.ru/reg-info/ </p>
 	]]></instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
@@ -21,11 +21,11 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Ваш баланс" units=" {@currency}"/>
-		<counter id="payment" name="Рекомендуемый платеж" units=" {@currency}"/>
+		<counter id="balance" name="Ваш баланс" units=" р"/>
+		<counter id="payment" name="Рекомендуемый платеж" units=" р"/>
 		<counter id="id" name="Лицевой счёт"/>
 	</counters>
-	<keywords>РуСат, Kitenet</keywords>
+	<keywords>РуСат, Kitenet, rusat</keywords>
 	<type>internet</type>
 	<country>ru</country>
 </provider>

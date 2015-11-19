@@ -21,9 +21,4 @@
 		dialogMessage="Введите пароль, используемый для входа в личный кабинет."
 		inputType="textPassword">
 	</EditTextPreference>
-	<EditTextPreference
-		title="dbg"
-		key="__dbg"
-		obligatory="false"
-	</EditTextPreference>
 </PreferenceScreen>

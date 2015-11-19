@@ -35,7 +35,9 @@ function main() {
 	var json = getJson(postHTML);
 	if(!json.success)
 	{
-		var error = getParam(html, null, null, /"loginFailed":"([\s\S]*?)"/i, replaceTagsAndSpaces, html_entity_decode);
+		var jsonString = getParam(html, null, null, /components.login[^\}]*?(\{[\s\S]*?\})/i);
+		json = getJson(jsonString);
+		var error = getParam(json.loginFailed, null, null, null, replaceTagsAndSpaces, html_entity_decode);
 		if (error)
 			throw new AnyBalance.Error(error, null, /Oj, något gick snett/i.test(error));
 		throw new AnyBalance.Error("Can`t login to selfcare. Site changed?");
@@ -51,7 +53,7 @@ function main() {
 	html = AnyBalance.requestGet(baseurl+'/invoice/aggregatelines', g_headers);
 	json=getJson(html);
 	getParam(json.invoice.NextPaymentDate, result, 'nextPaymentDate', null, null, parseBalance);
-	getParam(json.invoice.TotalAmount, result, 'totalAmount', null, null, null);
+	getParam(json.invoice.TotalAmount, result, 'totalAmount');
 
 	html = AnyBalance.requestGet(baseurl+'/subscription/priceplan',g_headers);
 	json=getJson(html);
@@ -59,8 +61,8 @@ function main() {
 	getParam(json.pricePlan.Usage.Included.BTotal+'b', result, 'BTotal', null, null, parseTraffic);
 	getParam(json.pricePlan.Usage.Included.BLeft+'b', result, 'BLeft', null, null, parseTraffic);
 	getParam(json.pricePlan.Usage.Extra.BLeft+'b', result, 'extradata', null, null, parseTraffic);
-	getParam(json.pricePlan.Usage.Sms.Used, result, 'usedMessages', null, null, null);
-	getParam(json.pricePlan.Usage.Voice.Used, result, 'calls', null, null, null);
+	getParam(json.pricePlan.Usage.Sms.Used, result, 'usedMessages');
+	getParam(json.pricePlan.Usage.Voice.Used, result, 'calls');
 
 	AnyBalance.setResult(result);
 }

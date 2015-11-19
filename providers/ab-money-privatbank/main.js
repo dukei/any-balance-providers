@@ -7,15 +7,15 @@ var g_countersTable = {
 		"p": "profile.fio",
 	}, 
 	card: {
-		"__tariff": "cards.cardnum",
+		"__tariff": "cards.__name",
 		
     	"balance": "cards.balance",
 		"card_number": "cards.cardnum",
+		"card_name": "cards.__name",
 		"type": "cards.type",
 		"status": "cards.status",
 		"currency": "cards.currency",
 		"limit": "cards.limit",
-		"available": "cards.available",
 		"min_pay": "cards.min_pay",
 		"is_credit": "cards.is_credit",
 		"rate": "cards.rate",

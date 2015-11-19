@@ -43,40 +43,35 @@ function main(){
             login: prefs.login,
             password: prefs.password,
             action: 'validate'
-        }, addHeaders({Referer: baseurl + 'login'}));         
+        }, addHeaders({Referer: baseurl + 'login'}));
+        //После входа обязательно проверяем маркер успешного входа
+        //Обычно это ссылка на выход, хотя иногда приходится искать что-то ещё
+        if(!/logout/i.test(html)){
+            //Если в кабинет войти не получилось, то в первую очередь надо поискать в ответе сервера объяснение ошибки
+            var error = getParam(html, null, null, /<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
+            if(error){
+                //При выкидывании ошибки входа третьим параметром передаём проверку на то, что это ошибка неправильного пароля. 
+                //Если третий параметр true, то AnyBalance прекратит обновления до тех пор, пока пользователь не изменит настройки.
+                //Это важно, а то постоянные попытки обновления с неправильным паролем могут заблокировать кабинет.
+                throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test());
+            }
+            AnyBalance.trace(html); //В непонятных случаях лучше сделать распечатку в лог, чтобы можно было понять, что случилось
+            //Если объяснения ошибки не найдено, при том, что на сайт войти не удалось, то, вероятно, произошли изменения на сайте
+            throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
+        }         
     } catch(e) {
         if (!dbg) {
             AnyBalance.Error('Ошибка при переходе на http://kitenet.ru/blogin/&err=1 ', e.message);
             return false;
         } else {
-            try {
-                html = AnyBalance.requestPost(redirecturl, {
-                    login:prefs.login,
-                    password:prefs.password,
-                    action: 'validate'
-                }, addHeaders({Referer: baseurl + 'login'}));  
-            } catch(e) {
-                AnyBalance.Error('Ошибка при входе в личный кабинет на http://kitenet.ru/blogin/&err=1 ', e.message);
-                return false;
+            html = AnyBalance.requestGet(redirecturl, g_headers);
+            var err = getParam(html, this, 'err', /<div[^>]*>.*?(Ошибка.*?)<\/div>/g , replaceTagsAndSpaces, html_entity_decode);
+            // var err = html.match(/<div[^>]*>.*?(Ошибка.*?)<\/div>/g);
+            if  (err) {
+                throw new AnyBalance.Error(err);
             }
+            AnyBalance.Error('Ошибка при входе в личный кабинет на http://kitenet.ru/blogin/&err=1:\n', e.message);
         }
-    }
-
-    //После входа обязательно проверяем маркер успешного входа
-    //Обычно это ссылка на выход, хотя иногда приходится искать что-то ещё
-    if(!/logout/i.test(html)){
-        //Если в кабинет войти не получилось, то в первую очередь надо поискать в ответе сервера объяснение ошибки
-        var error = getParam(html, null, null, /<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
-        if(error){
-            //При выкидывании ошибки входа третьим параметром передаём проверку на то, что это ошибка неправильного пароля. 
-            //Если третий параметр true, то AnyBalance прекратит обновления до тех пор, пока пользователь не изменит настройки.
-            //Это важно, а то постоянные попытки обновления с неправильным паролем могут заблокировать кабинет.
-            throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test());
-        }
-        AnyBalance.trace('logout not found');
-		AnyBalance.trace(html); //В непонятных случаях лучше сделать распечатку в лог, чтобы можно было понять, что случилось
-        //Если объяснения ошибки не найдено, при том, что на сайт войти не удалось, то, вероятно, произошли изменения на сайте
-        throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
     }
 
     //Раз мы здесь, то мы успешно вошли в кабинет

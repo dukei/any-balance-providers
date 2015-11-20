@@ -51,6 +51,9 @@ function main() {
 		if(AnyBalance.getLastStatusCode() === 601)
 			throw new AnyBalance.Error('Невірний логін або пароль', null, true);
 		AnyBalance.trace('error code: ' + AnyBalance.getLastStatusCode());
+		if(AnyBalance.getLastStatusCode() < 600)
+			throw new AnyBalance.Error('Сайт временно недоступен. Попробуйте ещё раз позднее.');
+		AnyBalance.trace(res);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
 	

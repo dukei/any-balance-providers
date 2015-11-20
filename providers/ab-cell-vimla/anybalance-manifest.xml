@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-cell-vimla</id>
+	<api flags="no_browser"/>
+	<name>Vimla</name>
+	<description html="true"><![CDATA[
+	<p>Obtains information from <a href="https://vimla.se">https://vimla.se</a></p>
+	<p>Selfcare located at <a href="https://vimla.se/mitt-vimla">https://vimla.se/mitt-vimla</p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="totalAmount" name="Total Amount" units=" kr"/>
+		<counter id="nextPaymentDate" name="Next payment date" type="time" format="dd/MM/yyyy"/>
+		<counter id="fio" name="Name" type="text"/>
+		<counter id="phone" name="Phone number" type="text"/>
+		<counter id="premium" name="Premium" type="text"/>
+		<counter id="BTotal" name="Total data" units=" mb"/>
+		<counter id="BUsed" name="Used data" units=" mb"/>
+		<counter id="BLeft" name="Left data" units=" mb"/>
+		<counter id="extradata" name="Extradata" units=" mb"/>
+		<counter id="calls" name="Number of calls"/>
+		<counter id="usedMessages" name="Number of messages"/>
+	</counters>
+	<keywords></keywords>
+	<type>cell</type>
+	<country>se</country>
+</provider>

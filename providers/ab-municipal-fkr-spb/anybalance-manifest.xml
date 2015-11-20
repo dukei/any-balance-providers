@@ -22,7 +22,6 @@
 		<counter id="houseKadNum" name="Кадастровый номер дома" type="text"/>
 		<counter id="flatKadNum" name="Кадастровый номер квартиры" type="text"/>
 		<counter id="adress" name="Адрес" type="text"/>
-		<counter id="flatNumber" name="Номер квартиры"/>
 		<counter id="flatArea" name="Площадь квартиры" suffix="м²"/>
 	</counters>
 	<keywords>ЖКХ, Спб, Санкт-Петербург</keywords>

@@ -1,7 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id version="1">ab-internet-kitenet</id>
+	<id version="2">ab-internet-kitenet</id>
 	<name>KiteNet (РуСат)</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе и рекомендуемом платеже в KiteNet (Русат) http://kitenet.ru/.
@@ -23,7 +23,7 @@
 	<counters>
 		<counter id="balance" name="Ваш баланс" units=" р"/>
 		<counter id="payment" name="Рекомендуемый платеж" units=" р"/>
-		<counter id="id" name="Лицевой счёт"/>
+		<counter id="id" name="Лицевой счёт" type="text"/>
 	</counters>
 	<keywords>РуСат, Kitenet, rusat</keywords>
 	<type>internet</type>

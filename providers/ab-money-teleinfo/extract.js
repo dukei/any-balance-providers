@@ -320,7 +320,7 @@ function login() {
 
     AnyBalance.trace('Обновление из мобильного приложения');
 
-    AnyBalance.setOptions({FORCE_CHARSET: 'base64'});
+    AnyBalance.setOptions({FORCE_CHARSET: 'base64', REQUEST_CHARSET: 'base64'});
 
     checkEmpty(prefs.login, 'Введите логин!');
     checkEmpty(prefs.password, 'Введите пароль!');

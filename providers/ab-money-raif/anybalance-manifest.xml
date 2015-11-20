@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id version="20">ab-money-raif</id>
+	<id version="21">ab-money-raif</id>
 	<name>Райффайзен</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о текущем остатке и других параметрах счетов и депозитов для клиентов банка Райффайзенбанк (<a href="http://www.raiffeisen.ru">http://www.raiffeisen.ru</a>).</p>
@@ -38,6 +38,9 @@
 		<counter id="minpaytill" name="Срок платежа по кредиту" type="time" format="dd/MM/yyyy"/>
 		<counter id="limit" name="Кредитный лимит" units=" {@currency}"/>
 		<counter id="till" name="Срок действия" type="time" format="dd/MM/yyyy"/>
+		<counter id="gracePeriodOutstanding" name="Просрочено в льготном периоде" units=" {@currency}"/>
+		<counter id="unpaidGracePeriodDue" name="Неоплачено в льготном периоде" units=" {@currency}"/>
+		<counter id="gracePeriodEnd" name="Окончание льготного периода" type="time" format="dd/MM/yyyy"/>
 		<counter id="rate" name="Процентная ставка" units=" %"/>
 		<counter id="fio" name="ФИО" type="text"/>
 		<counter id="type" name="Тип" type="text"/>

@@ -49,6 +49,7 @@ filial_info[MEGA_FILIAL_NW] = {
     sg: "https://szfsg.megafon.ru/",
 	tray: 'https://szfsg.megafon.ru/ROBOTS/SC_TRAY_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%',
 	widget: 'https://szfsg.megafon.ru/WIDGET_INFO/GET_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%&CHANNEL=WYANDEX&LANG_ID=1&P_RATE_PLAN_POS=1&P_PAYMENT_POS=2&P_ADD_SERV_POS=4&P_DISCOUNT_POS=3',
+	sgCaptchaInputType: 'text',
 };
 filial_info[MEGA_FILIAL_FAREAST] = {
 	name: 'Дальневосточный филиал',
@@ -1964,7 +1965,7 @@ function megafonLKRemainders(filial, html, result){
 				if(val >= 0){
 					if(/бесплат/i.test(name)) {
 						getParam(left, result, 'mins_n_free', null, replaceTagsAndSpaces, parseMinutes);
-					}else if((/\.\s*МегаФон/i.test(name) && !/МТС/i.test(name))
+					}else if((/\.\s*МегаФон|на Мегафон/i.test(name) && !/МТС/i.test(name))
 							|| /внутри сети/i.test(name)) {
 						sumParam(left, result, 'mins_net_left', null, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
 					} else {

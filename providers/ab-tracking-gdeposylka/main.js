@@ -14,7 +14,7 @@ function main(){
 	var prefs = AnyBalance.getPreferences();
 	checkEmpty(prefs.track_id, 'Введите номер почтового отправления!');
 	
-	var baseurl = "http://gdeposylka.ru/";
+	var baseurl = "https://gdeposylka.ru/";
 	
 	var html = AnyBalance.requestGet(baseurl, g_headers);
 	

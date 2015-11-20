@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<api flags="no_browser"/>
+	<id version="2">ab-internet-kitenet</id>
+	<name>KiteNet (РуСат)</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе и рекомендуемом платеже в KiteNet (Русат) http://kitenet.ru/.
+	</p>
+	<p>Информация берется из личного кабинета (http://my.rusat.com/).
+	</p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+		<p>В настройках необходимо ввести логин, пароль для входа в личный кабинет KiteNet. Если у вас ещё нет пароля, получите его, зайдя через сеть KiteNet на http://kitenet.ru/reg-info/ </p>
+	]]></instruction>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Ваш баланс" units=" р"/>
+		<counter id="payment" name="Рекомендуемый платеж" units=" р"/>
+		<counter id="id" name="Лицевой счёт" type="text"/>
+	</counters>
+	<keywords>РуСат, Kitenet, rusat</keywords>
+	<type>internet</type>
+	<country>ru</country>
+</provider>

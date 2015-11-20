@@ -156,10 +156,15 @@ function replaceAll(value, replaces) {
 }
 
 /** Извлекает числовое значение из переданного текста */
-function parseBalance(text) {
+function parseBalance(text, silent) {
 	var val = getParam(html_entity_decode(text).replace(/\s+/g, ''), null, null, /(-?[.,]?\d[\d'.,]*)/, replaceFloat, parseFloat);
-	AnyBalance.trace('Parsing balance (' + val + ') from: ' + text);
+	if(!silent)
+		AnyBalance.trace('Parsing balance (' + val + ') from: ' + text);
 	return val;
+}
+
+function parseBalanceSilent(text){
+	return parseBalance(text, true);
 }
 
 /** Извлекает валюту из переданного текста (типичная реализация) */
@@ -172,7 +177,7 @@ function parseCurrency(text) {
 /** Извлекает время в секундах из переданного текста, на разных языках, из разных форматов (1:30, 01:02:03, 1 м 3 сек, 3 сек, 1 час...) 
 Если на входе будет просто число - вернет минуты.
 Если на входе будет 02:03 будет принят формат ММ:СС*/
-function parseMinutes(_text) {
+function parseMinutes(_text, silent) {
 	var text = html_entity_decode(_text).replace(/[\s�]+/g, '');
 	var hour = 0, min = 0, sec = 0;
 	// Это формат ЧЧ:ММ:СС	
@@ -194,8 +199,13 @@ function parseMinutes(_text) {
 		sec = getParam(text, null, null, /(-?\d[\d.,]*)\s*(?:сек|c|с|sec|s)/i, replaceFloat, parseFloat) || 0;
 	}
 	var val = (hour*3600) + (min * 60) + sec;
-	AnyBalance.trace('Parsed seconds (' + val + ') from: ' + _text);
+	if(!silent)
+		AnyBalance.trace('Parsed seconds (' + val + ') from: ' + _text);
 	return val;
+}
+
+function parseMinutesSilent(_text){
+	return parseMinutes(_text, true);
 }
 
 /** Заменяет HTML сущности в строке на соответствующие им символы */
@@ -381,16 +391,22 @@ function createFormParams(html, process, array){
 }
 
 /** Получает дату из строки 23.02.13*/
-function parseDate(str) {
+function parseDate(str, silent) {
 	var matches = /(?:(\d+)[^\d])?(\d+)[^\d](\d{2,4})(?:[^\d](\d+):(\d+)(?::(\d+))?)?/.exec(str);
 	if (matches) {
 		var year = +matches[3];
 		var date = new Date(year < 1000 ? 2000 + year : year, matches[2] - 1, +(matches[1] || 1), matches[4] || 0, matches[5] || 0, matches[6] || 0);
 		var time = date.getTime();
-		AnyBalance.trace('Parsing date ' + date + ' from value: ' + str);
+		if(!silent)
+			AnyBalance.trace('Parsing date ' + date + ' from value: ' + str);
 		return time;
 	}
-	AnyBalance.trace('Failed to parse date from value: ' + str);
+	if(!silent)
+		AnyBalance.trace('Failed to parse date from value: ' + str);
+}
+
+function parseDateSilent(str){
+	return parseDate(str, true);
 }
 
 /** Парсит дату из такого вида: 27 июля 2013 без использования сторонних библиотек, результат в мс */

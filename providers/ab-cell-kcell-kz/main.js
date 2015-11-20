@@ -36,7 +36,8 @@ function main() {
 	
 	var result = {success: true, balance: null};
 	
-	getParam(html, result, 'balance', /(?:Доступные средства|Пайдалануға болатын қаржы|Available:|Ваш баланс|Сіздің теңгеріміңіз|Your balance is)([\s\d.,\-]*тг)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'balance', /(?:Доступные средства|Пайдалануға болатын қаржы|Available:|Ваш баланс|Сіздің теңгеріміңіз|Your balance is|Текущий баланс:|Ағымдағы теңгерім:|Your balance:)([\s\d.,\-]*(?:тг|tg))/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'limit', /(?:Ваш кредитный лимит:|Сіздің несиелік лимитіңіз:|Your credit limit:)([\s\d.,\-]*(?:тг|tg))/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'licschet', /(?:Номер лицевого счета|Дербес шот нөмірі|Account):[\s\S]*?<font[^>]*>([\s\S]*?)<\/font>/i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(html, result, 'userName', [/"cvet account_name"[^>]*>([^<]+)/i, /<h2[^>]*>([\s\S]*?)<\/h2>/i], replaceTagsAndSpaces, html_entity_decode);
 	// Не отображается

@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id major_version="3.3" version="127">ab-cell-mts-russia</id>
+	<id major_version="4.0" version="128">ab-cell-mts-russia</id>
 	<name>МТС (Россия)</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе, бонусных баллах, использованных минутах на локальные, мобильные и любимые номера, расходах, статусе блокировки, кредите, номере лицевого счета, ежемесячной плате.</p>
@@ -29,7 +29,9 @@
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
 		<js>library.js</js>
+		<js>nadapter.js</js>
 		<js>login.js</js>
+		<js>extract.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 		<settings target="init">settings_init.xml</settings>
@@ -69,7 +71,6 @@
 		<counter id="phone" name="Номер телефона" type="text"/>
 		<counter id="bonus_balance" name="Остаток бонусного баланса" units=" р"/>
 		<counter id="sms_left_perezvoni" name="СМС Перезвони" units=" sms"/>
-		<counter id="traffic_left" name="Остаток трафика (как в помощнике)" type="text"/>
 	</counters>
 	<keywords>Сотовый телефон, мобильный, мобильник, mts, россия</keywords>
 	<type>cell</type>

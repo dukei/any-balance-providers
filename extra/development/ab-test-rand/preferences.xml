@@ -13,6 +13,11 @@
 	<CheckBoxPreference
 		title="Возвращать null?"
 		key="return_null"
-		summary="Возвращает null у первого счетчика">
+		summary="Возвращает null у всех счетчиков">
 	</CheckBoxPreference>
+	<CheckBoxPreference
+		title="Падать?"
+		key="bad_behavior"
+		summary="Падает с ошибкой">
+	</CheckBoxPreference>	
 </PreferenceScreen>

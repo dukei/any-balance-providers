@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        title="User" 
+        positiveButtonText="ОК" 
+        summary="|User name (normally the mobile number)|{@s}"
+        dialogTitle="User Name" 
+        negativeButtonText="Cancel" 
+        obligatory="true"
+        dialogMessage="Enter your Cricket user name. Normally this is your mobile phone number."
+        key="login"
+        inputType="text">
+    </EditTextPreference>
+    <EditTextPreference 
+        positiveButtonText="ОК"
+        key="password" 
+        dialogTitle="Password"
+        negativeButtonText="Cancel"
+        title="Password"
+        obligatory="true"
+        summary="|Cricket account password|***********"
+        dialogMessage="Enter your Cricket account password."
+        inputType="textPassword">
+    </EditTextPreference>
+</PreferenceScreen>

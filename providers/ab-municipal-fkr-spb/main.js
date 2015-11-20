@@ -48,9 +48,9 @@ function main() {
     html = AnyBalance.requestGet(baseurl + '/user/' + userID + '/edit');
     getParam(html, result, 'fio', /id="edit-field-fio-und-0-value"[^>]+value="([\s\S]*?)"[^>]*>/i, replaceTagsAndSpaces, html_entity_decode);
 
-    var json = requestGetJson('/rest.php?method=flats');
+    var json = requestGetJson('/rest.php?method=flats', baseurl);
 
-    if (!isArray(json) && json.length == 0)
+    if (!isArray(json) || json.length == 0)
         throw new AnyBalance.Error('Не удалось найти информацию по квартире, сайт изменен?');
 
     getParam(json[0].fullAddress, result, 'adress', null, replaceTagsAndSpaces, html_entity_decode);
@@ -58,7 +58,7 @@ function main() {
     getParam(json[0].kadNum, result, 'flatKadNum', null, replaceTagsAndSpaces, html_entity_decode);
     getParam(json[0].house.kadNum, result, 'houseKadNum', null, replaceTagsAndSpaces, html_entity_decode);
 
-    json = requestGetJson('/rest.php?method=flat&id=' + json[0].id);
+    json = requestGetJson('/rest.php?method=flat&id=' + json[0].id, baseurl);
 
     getParam(json.house.houseTotals.collectPercent, result, 'contributions');
     getParam(json.saldo + '', result, 'balance', null, null, parseBalance);
@@ -66,6 +66,6 @@ function main() {
     AnyBalance.setResult(result);
 }
 
-function requestGetJson(href) {
+function requestGetJson(href, baseurl) {
     return getJson(AnyBalance.requestGet(baseurl + href));
 }

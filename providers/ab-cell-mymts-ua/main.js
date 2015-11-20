@@ -6,7 +6,7 @@ var g_headers = {
 	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
 	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
 	'Connection': 'keep-alive',
-	'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/44.0.2403.157 Safari/537.36',
+	'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/46.0.2490.86 Safari/537.36',
 };
 
 function parseTrafficMb(str){
@@ -113,6 +113,7 @@ function main() {
 	//Минуты по Украине
 	sumParam (html, result, 'hvylyny_all1', /(?:50 хвилин на всi мережi|100 минут по Украине для MAX Energy Allo), осталось\s*(\d+)\s*(?:секунд на все сети|бесплатных секунд)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 	sumParam (html, result, 'hvylyny_all1', /100 минут на других мобильных операторов по Украине, осталось: (\d+),*\d* мин/ig, replaceTagsAndSpaces, parseTime, aggregate_sum);
+        sumParam (html, result, 'hvylyny_all1', /40 минут на другие сети, осталось\s*(\d+)\s*секунд на другие сети/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 
 	//СМС и ММС
 	sumParam (html, result, 'sms_used', />50 SMS по Украине для "Смартфона", израсходовано:(\d+)\s*смс.<\/span>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);

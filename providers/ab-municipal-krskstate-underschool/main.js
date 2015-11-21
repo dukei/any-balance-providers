@@ -22,24 +22,24 @@ function main(){
     html = AnyBalance.requestGet(baseurl + 'queue?kinnumber=' + prefs.kinnumber,
         addHeaders({Referer: baseurl + 'queue'})); 
 
-    if(!/\/Первичная информация о положении в очереди/i.test(html)){
-        // var error = getParam(html, null, null, /Информация не найдена[\s\S]*?<\/p>/i, replaceTagsAndSpaces, html_entity_decode);
-        var error = /Информация не найдена/.test(html);
+    if(!/<h3[^>]*>Первичная информация о положении в очереди/i.test(html)){
+        var error = getParam(html, null, null, /<\/form>[^f]*(?=Уважаемые посетители!)/i, replaceTagsAndSpaces, html_entity_decode);
         if(error){
-            //При выкидывании ошибки входа третьим параметром передаём проверку на то, что это ошибка неправильного пароля. 
-            //Если третий параметр true, то AnyBalance прекратит обновления до тех пор, пока пользователь не изменит настройки.
-            //Это важно, а то постоянные попытки обновления с неправильным паролем могут заблокировать кабинет.
-            throw new AnyBalance.Error(error, null, /Информация не найдена/i.test());
+            throw new AnyBalance.Error(error, null, true);
         }
-		AnyBalance.trace(html); //В непонятных случаях лучше сделать распечатку в лог, чтобы можно было понять, что случилось
+		AnyBalance.trace(html);
         throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
     }
 
-    var result = {success: true};
-    getParam(html, result, 'login', /Имя(?:\s|&nbsp;)*абонента:[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'queue', /<p[^>]*>Статус/состояние:[\s\S]*?([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'lvcount', /<p[^>]*>Количество внеочередников[\s\S]*?([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'lpcount', /<p[^>]*>Количество первоочередников[\s\S]*?([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'uncount', /<p[^>]*>Количество не имеющих льготу[\s\S]*?([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, html_entity_decode);
+    var result = {success: true, login: prefs.kinnumber};
+    getParam(html, result, 'district', /<p[^>]*>Район:([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'agegroup', /<p[^>]*>Возрастная группа:([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'healthgroup', /<p[^>]*>Группа здоровья:([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'queue', /<p[^>]*>Номер в очереди:([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'status', /<p[^>]*>Статус\/состояние:([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'lvcount', /<p[^>]*>Количество внеочередников:([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'lpcount', /<p[^>]*>Количество первоочередников:([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'uncount', /<p[^>]*>Количество не имеющих льготу:([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'total', /<p[^>]*>Всего в очереди:([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, parseBalance);
     AnyBalance.setResult(result);
 }

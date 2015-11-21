@@ -8,9 +8,9 @@
 	</p>
 	]]></description>
 	<instruction html="true"><![CDATA[
-	<p>Если у вас нет доступа в Личный кабинет, получите его на странице https://login.mts.ru/amserver/password</p>
+	Номер заявления в формате 24ХХХХХХХХХХ выдается родителю в момент постановки на учет в дошкольное образовательное учреждение;
 	]]></instruction>
-	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
@@ -20,13 +20,18 @@
 	</files>
 	<counters>
 		<counter id="login" name="Номер заявления" type="text"/>
-		<counter id="queue" name="Номер в очерели" type="text"/>
-<!-- 		<counter id="status" name="Статус/состояние" type="text"/>
-		<counter id="lvcount" name="Количество внеочередников (ЛВ)" type="text"/>
-		<counter id="lpcount" name="Количество первоочередников (ЛП)" type="text"/>
-		<counter id="uncount" name="Количество не имеющих льготу" type="text"/> -->
+		<counter id="district" name="Район" type="text"/>
+		<counter id="agegroup" name="возрастная группа" type="text"/>
+		<counter id="healthgroup" name="Группа здоровья" type="text"/>
+		<counter id="queue" name="Номер в очереди"/>
+		<counter id="queue" name="Номер в очерели"/>
+		<counter id="status" name="Статус/состояние" type="text"/>
+		<counter id="lvcount" name="Количество внеочередников (ЛВ)"/>
+		<counter id="lpcount" name="Количество первоочередников (ЛП)"/>
+		<counter id="uncount" name="Количество не имеющих льготу"/>
+		<counter id="total" name="Всего в очереди"/>
 	</counters>
-	<!-- <keywords>krskstate, Красноярский край, Красноярск</keywords> -->
-	<!-- <type>municipal</type> -->
-	<!-- <country>ru</country> -->
+	<keywords>krskstate, Красноярский край, Красноярск</keywords>
+	<type>municipal</type>
+	<country>ru</country>
 </provider>

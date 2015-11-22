@@ -26,7 +26,7 @@ function main(){
 
     //Лучше базовый url забить где-нибудь вначале в переменную, потом гораздо легче переделывать в другой провайдер
     var baseurl = "http://lk.o.kg/";
-
+    var code = prefs.phone.substring(0, 3);
     //Не забываем устанавливать кодировку по-умолчанию. Её можно узнать из заголовка Content-Type или из тела страницы в теге <meta> 
     AnyBalance.setDefaultCharset('utf-8'); 
 
@@ -41,7 +41,7 @@ function main(){
 
     html = AnyBalance.requestPost(baseurl + 'login', {
         MSISDN_PREFIX:700,
-        _MSISDN:prefs.login,
+        _MSISDN:prefs.phone,
         SUBMIT_FIRST_STAGE:'Войти в кабинет',
         H_STAGE:1,
         H_TYPE_AUTH:1,
@@ -52,14 +52,14 @@ function main(){
         SUBMIT_MOVE_TO_PIN2_AUTH: 'Войти, указав PIN2 от вашей SIM-карты',
         // H_CODE 
         H_STAGE: '2',
-        H_MSISDN: '558255',
+        H_MSISDN: prefs.phone,
         H_MSISDN_PREFIX: '700',
         H_TYPE_AUTH: '1',
         H_VIEW_CAPTCHA: '2'
     }
 
     html = AnyBalance.requestPost(baseurl + 'login', {
-        PIN2: '3500',
+        PIN2: prefs.pin2,
         SUBMIT: 'Войти в кабинет',
         // H_CODE 
         H_STAGE: '3',
@@ -88,11 +88,10 @@ function main(){
     //Раз мы здесь, то мы успешно вошли в кабинет
     //Получаем все счетчики
     var result = {success: true};
-    getParam(html, result, 'fio', /Имя(?:\s|&nbsp;)*абонента:[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, '__tariff', /Тарифный план:[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'tariff', /Тарифный план:[\s\S]*?<\/b>/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, 'phone', /Номер:[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'balance', /Текущий баланс:[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'status', /Статус:[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'balance', /Ваш баланс:[\s\S]*?<\/span>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'status', /Статус:[\s\S]*?<\/b>/i, replaceTagsAndSpaces, html_entity_decode);
 
     //Возвращаем результат
     AnyBalance.setResult(result);

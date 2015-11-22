@@ -7,7 +7,7 @@
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
-		<icon>bananawars.png</icon>
+		<icon>icon_bananawars.gif</icon>
 		<preferences>preferences.xml</preferences>
 		<js>library.js</js>
 		<js>main.js</js>

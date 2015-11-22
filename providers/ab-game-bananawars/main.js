@@ -19,83 +19,56 @@ function main() {
 			auth_pass: prefs.password
 	};
 	
+	AnyBalance.requestGet(baseurl + 'xml/main/logout.php?do=logout');
 	html = AnyBalance.requestPost(baseurl, data);
 	
-	if (!/logout/i.test(html)) {
-		var error = getParam(html, null, null, /(Неправильный пароль)/i, replaceTagsAndSpaces, html_entity_decode);
-		if (error && /Неверный логин или пароль/i.test(error))
-			throw new AnyBalance.Error(error, null, true);
-		if (error)
-			throw new AnyBalance.Error(error);
-		{
-			AnyBalance.requestGet(baseurl + 'xml/main/logout.php?do=logout');
-			throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
-		}
+	var error = getParam(html, null, null, /(Неправильный пароль)/i, replaceTagsAndSpaces, html_entity_decode);
+	
+	//console.log("error: " + error);
+	
+	if (error) {
+		//AnyBalance.requestGet(baseurl + 'xml/main/logout.php?do=logout');
+		throw new AnyBalance.Error(error, false, true);
 	}
 	
-	var levelReg = /.+?Уровень:.*?>[^>\d]*?(\d{1,})[^<\d]*?<.+/im;
-	var boostersReg = /.+?<a id="bonusLbl".*?>(\d+?)<.+?/im;
-	var moneyReg = /<span id="moneyLbl">(-?\d{1,}\.?\d{0,1})<\/span>/i;
-	var ratingReg = /<a href='\/items\/\?act=achievements' >(\d+?)<.+/im;
-	var placeReg = /<a href='\/xml\/misc\/rating\.php\?act=rating_total#my_rate' >(\d+?)<.+/im;
-	var mailReg = /.+?><a href=\/mail\/>.*?(\d+?(<\/font>\/)?\d*?)<\/a>.+/im;
-	var pointsReg = /.+?<a href='\/xml\/misc\/rating.php\?act=rating_glory#my_rate'.*?>(\d+?)<.+/im;
-	
-	var matchLevel = html.match(levelReg);
-	var matchBoosters = html.match(boostersReg);
-	var matchMoney = html.match(moneyReg);
-	var matchPoints = html.match(pointsReg);
-	var matchRating = html.match(ratingReg);
-	
-	var matchPlace = html.match(placeReg);
-	
-	var matchMail = html.match(mailReg);
-	
-	var level, boosters, money, rating, place, points, mail;
-	
-	if(false
-		|| matchLevel == null
-		|| matchBoosters == null
-		|| matchMoney == null
-		|| matchPoints == null
-		|| matchMail == null
-	) {
-		 AnyBalance.Error('Не удалось прочитать значения. Сайт изменен?');
-	} else if(false
-		|| isNaN(matchLevel[1])
-		|| isNaN(matchBoosters[1])
-		|| isNaN(matchMoney[1])
-		|| isNaN(matchPoints[1])
-		|| !/\d+?(<\/font>\/)?\d*?/.test(matchMail[1])
-	) {
-		AnyBalance.Error('Не удалось прочитать значения. Сайт изменен?');
-	} else {
-		level = Number(matchLevel[1]);
-		boosters = Number(matchBoosters[1]);
-		money = Number(matchMoney[1]);
-		if(matchPlace != null && matchRating != null) {
-			rating = Number(matchRating[1]);
-			place = Number(matchPlace[1]);
-		}
-		points = Number(matchPoints[1]);
-		mail = matchMail[1].replace('</font>', '');
+	var errCode = getParam(html, null, null, /(Неправильный код)/i, replaceTagsAndSpaces, html_entity_decode);
+	if(errCode) {
+		throw new AnyBalance.Error(errCode, true, true);
 	}
+	//console.log("errCode: " + errCode);
+	/*if(errCode) {
+		var captchaimg = AnyBalance.requestGet(baseurl + 'cls/common/code.php');
+		var value = AnyBalance.retrieveCode("Пожалуйста, введите код с картинки.", captchaimg, {inputType: 'text'});
+		AnyBalance.trace("Capche value: " + value);
+		data.Code = value;
+		AnyBalance.trace("data: " + data.auth_name + "  " + data.auth_pass + "   " + data.Code);
+		html = AnyBalance.requestPost(baseurl, data);
+	}*/
 	
-	var result = {
-		success: true,
-		level: level,
-		boosters: boosters,
-		money: money,
-		points: points,
-		mail: mail
-	};
+	var levelReg = /Уровень:.*?>[^>\d]*?(\d+)[^<\d]*?</im;
+	var boostersReg = /Бустеры:.*?(?:[^>]*>){4}(\d+)</im;
+	var moneyReg = /Деньги:.*?(?:[^>]*>){4}(\d+)</im;
+	var ratingReg = /Рейтинг:.*?(?:[^>]*>){4}(\d+)</im;
+	var placeReg = /Место:.*?(?:[^>]*>){4}(\d+)</im;
+	var pointsReg = /Очки:.*?(?:[^>]*>){4}(\d+)</im;
+	var mailReg = /Почта:.+?<a href=\/mail\/>(.*?)<\/a>/im;
 	
-	if(matchPlace != null && matchRating != null) {
-		result.rating = rating;
-		result.place = place;
-	}
+	
+	var result = {success: true};
+	getParam(html, result, 'level', levelReg, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'boosters', boostersReg, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'money', moneyReg, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'rating', ratingReg, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'points', pointsReg, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'place', placeReg, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'mail', mailReg, replaceTagsAndSpaces, removeSpaces);
 	
 	AnyBalance.requestGet(baseurl + 'xml/main/logout.php?do=logout');
 	
 	AnyBalance.setResult(result);
 }
+
+function removeSpaces(text) {
+	var retValue = text.replace(/\s+/g, '');
+	return retValue;
+} 

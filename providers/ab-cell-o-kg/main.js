@@ -1,10 +1,5 @@
 /**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
-
-Получает баланс и информацию о тарифном плане для сотового оператора xxxxxx 
-
-Operator site: http://xxxxxx.ru
-Личный кабинет: https://kabinet.xxxxxx.ru/login
 */
 
 var g_headers = {
@@ -17,22 +12,18 @@ var g_headers = {
 };
 
 function main(){
-    //Получаем в переменную заданные пользователем настройки
     var prefs = AnyBalance.getPreferences();
 
-    //Проверяем, что логин и пароль введены
     checkEmpty(prefs.phone, 'Введите номер телефона в 9-значном формате!');
     checkEmpty(prefs.pin2, 'Введите pin2!');
 
-    //Лучше базовый url забить где-нибудь вначале в переменную, потом гораздо легче переделывать в другой провайдер
-    var baseurl = "http://lk.o.kg/";
-    var code = prefs.phone.substring(0, 3);
-    //Не забываем устанавливать кодировку по-умолчанию. Её можно узнать из заголовка Content-Type или из тела страницы в теге <meta> 
-    AnyBalance.setDefaultCharset('utf-8'); 
+    var baseurl = "https://lk.o.kg/",
+        codephone = prefs.phone.substring(0, 3),
+        numberphone = prefs.phone.substring(4);
+    AnyBalance.setDefaultCharset('utf-8');
 
-    //В данном провайдере в форму передаётся "секретный" параметр, поэтому, прежде чем делать запрос, надо его получить
-    //Для этого сначала загружаем форму входа
-    var html = AnyBalance.requestGet(baseurl + 'login', g_headers);
+    var html = AnyBalance.requestGet(baseurl + 'login', g_headers,
+        addHeaders({Referer: baseurl + 'login'}));
 
     if(!html || AnyBalance.getLastStatusCode() > 400){ //Если главная страница возвращает ошибку, то надо отреагировать
     	AnyBalance.trace(html); //В непонятных случаях лучше сделать распечатку в лог, чтобы можно было понять, что случилось
@@ -40,59 +31,51 @@ function main(){
     }
 
     html = AnyBalance.requestPost(baseurl + 'login', {
-        MSISDN_PREFIX:700,
-        _MSISDN:prefs.phone,
-        SUBMIT_FIRST_STAGE:'Войти в кабинет',
-        H_STAGE:1,
-        H_TYPE_AUTH:1,
-        H_VIEW_CAPTCHA:1
+        'MSISDN_PREFIX':codephone,
+        '_MSISDN':numberphone,
+        'SUBMIT_FIRST_STAGE':'Войти в кабинет',
+        'H_STAGE':'1',
+        'H_TYPE_AUTH':'1',
+        'H_VIEW_CAPTCHA':'1'
     }, addHeaders({Referer: baseurl + 'login'})); 
 
     html = AnyBalance.requestPost(baseurl + 'login', {
-        SUBMIT_MOVE_TO_PIN2_AUTH: 'Войти, указав PIN2 от вашей SIM-карты',
-        // H_CODE 
-        H_STAGE: '2',
-        H_MSISDN: prefs.phone,
-        H_MSISDN_PREFIX: '700',
-        H_TYPE_AUTH: '1',
-        H_VIEW_CAPTCHA: '2'
-    }
+        'SUBMIT_MOVE_TO_PIN2_AUTH': 'Войти, указав PIN2 от вашей SIM-карты',
+        'H_STAGE': '2',
+        'H_MSISDN': numberphone,
+        'H_MSISDN_PREFIX': codephone,
+        'H_TYPE_AUTH': '1',
+        'H_VIEW_CAPTCHA': '2'
+    });
 
     html = AnyBalance.requestPost(baseurl + 'login', {
-        PIN2: prefs.pin2,
-        SUBMIT: 'Войти в кабинет',
-        // H_CODE 
-        H_STAGE: '3',
-        H_MSISDN: '558255',
-        H_MSISDN_PREFIX: '700',
-        H_TYPE_AUTH: '2',
-        H_VIEW_CAPTCHA: '2'
-    }
+        'PIN2': prefs.pin2,
+        'SUBMIT': 'Войти в кабинет',
+        'H_STAGE': '3',
+        'H_MSISDN': numberphone,
+        'H_MSISDN_PREFIX': codephone,
+        'H_TYPE_AUTH': '2',
+        'H_VIEW_CAPTCHA': '2'
+    });
 
-    //После входа обязательно проверяем маркер успешного входа
-    //Обычно это ссылка на выход, хотя иногда приходится искать что-то ещё
-    if(!/\/Logout/i.test(html)){
-        //Если в кабинет войти не получилось, то в первую очередь надо поискать в ответе сервера объяснение ошибки
-        // var error = getParam(html, null, null, /<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
-        // if(error){
-        //     //При выкидывании ошибки входа третьим параметром передаём проверку на то, что это ошибка неправильного пароля. 
-        //     //Если третий параметр true, то AnyBalance прекратит обновления до тех пор, пока пользователь не изменит настройки.
-        //     //Это важно, а то постоянные попытки обновления с неправильным паролем могут заблокировать кабинет.
-        //     throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test());
-        // }
-		AnyBalance.trace(html); //В непонятных случаях лучше сделать распечатку в лог, чтобы можно было понять, что случилось
-        //Если объяснения ошибки не найдено, при том, что на сайт войти не удалось, то, вероятно, произошли изменения на сайте
-        // throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
+    if(!/Войти в кабинет/i.test(html)){
+        var error = getParam(html, null, null, /Войти в кабинет/i, replaceTagsAndSpaces, html_entity_decode);
+        if(error){
+            throw new AnyBalance.Error('Неверная пара номер телефона-pin2', null, true);
+        }
+        AnyBalance.trace(html);
+        throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
     }
+    html = AnyBalance.requestGet(baseurl + 'private-data/internet', g_headers,
+        addHeaders({Referer: baseurl + 'multimedia-and-sms/send-sms'}));
 
-    //Раз мы здесь, то мы успешно вошли в кабинет
-    //Получаем все счетчики
     var result = {success: true};
-    getParam(html, result, 'tariff', /Тарифный план:[\s\S]*?<\/b>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'phone', /Номер:[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'balance', /Ваш баланс:[\s\S]*?<\/span>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'status', /Статус:[\s\S]*?<\/b>/i, replaceTagsAndSpaces, html_entity_decode);
-
+    getParam(html, result, 'tarif', /Тарифный план:([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'phone', /Ваш номер:([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'balance', /Ваш баланс:([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'status', /Статус:([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'traffic', /Объем не использованного трафика[\s\S]*<span[^>]class=['"]bundle_balance["'][\s\S]*?>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'paydate', /Объем не использованного трафика[\s\S]*<span[^>]class=['"]next_payday["'][\s\S]*?>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
     //Возвращаем результат
     AnyBalance.setResult(result);
 }

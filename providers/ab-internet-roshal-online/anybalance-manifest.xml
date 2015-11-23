@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-internet-roshal-online</id>
+	<api flags="no_browser"/>
+	<name>Рошаль-Онлайн</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе интерне-провайдера Рошаль-Онлайн <a href="http://www.roshalonline.ru/">http://www.roshalonline.ru/</a></p>
+	<p>Информация берется из личного кабинета <a href="http://netstat.atnr.ru/">http://netstat.atnr.ru/</a></p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="credit" name="Кредит" units=" p"/>
+		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="status" name="Состояние интернета" type="text"/>
+		<counter id="currentTariff" name="Текущий тариф" type="text"/>
+		<counter id="cost" name="Абонентская плата" units=" p"/>
+		<counter id="writtenOff" name="Списано абонентской платы" units=" p"/>
+		<counter id="deadline" name="Конец расчётного периода" type="time" format="dd/mm/yyyy"/>
+		<counter id="accountID" name="Основной лицевой счёт" type="text"/>
+		<counter id="adress" name="Фактический адрес" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>internet</type>
+	<country>ru</country>
+</provider>

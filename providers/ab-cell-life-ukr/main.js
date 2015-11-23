@@ -7,7 +7,7 @@ var g_headers = {
 	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
 	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
 	'Connection': 'keep-alive',
-	'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/43.0.2403.157 Safari/537.36',
+	'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/46.0.2490.86 Safari/537.36',
 };
 
 function main() {
@@ -102,6 +102,8 @@ function mainSite(prefs, baseurl) {
     	sumParam(html, result, 'mins_life', /минуты \[сеть <span class="life">life:\)<\/span>](?:[\s\S]*?<td[^>]*>){1}\s*([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseSec, aggregate_sum);
     	//Минуты по сети Life:) тариф Life 25
     	sumParam(html, result, 'mins_life', /25 - 3000 мин.(?:[\s\S]*?<td[^>]*>){1}\s*([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseBalanceSecLeft, aggregate_sum);
+        //Минуты на других операторов
+    	sumParam(html, result, 'mins_uk', /минуты на другие сети(?:[\s\S]*?<td[^>]*>){1}\s*([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 	//Подарочный трафик (Бесплатный Интернет [Интернет, WAP]: CMS и Бесплатный Интернет) + 3G
 	html = sumParam(html, result, 'hspa', /3G интернет(?:[\s\S]*?<td[^>]*>){1}\s*([\s\d.,\-]+)/ig, replaceTagsAndSpaces, parseTrafficMb, aggregate_sum, true);
     	sumParam(html, result, 'hspa', /3G\+ Internet(?:[\s\S]*?<td[^>]*>){1}\s*([\s\d.,\-]+)/ig, replaceTagsAndSpaces, parseTrafficMb, aggregate_sum);

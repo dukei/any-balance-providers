@@ -19,7 +19,7 @@ function main(){
 
     var baseurl = "https://lk.o.kg/",
         codephone = prefs.phone.substring(0, 3),
-        numberphone = prefs.phone.substring(4);
+        numberphone = prefs.phone.substring(3);
     AnyBalance.setDefaultCharset('utf-8');
 
     var html = AnyBalance.requestGet(baseurl + 'login', g_headers,
@@ -47,6 +47,13 @@ function main(){
         'H_TYPE_AUTH': '1',
         'H_VIEW_CAPTCHA': '2'
     });
+
+    var captchaimg = getParam(html, null, null, /\/default\/login\/create-captcha\?a=image&amp;c=2\&amp;random=\w+/i, null, html_entity_decode);
+    if (captchaimg) {
+        AnyBalance.trace('O! решило показать капчу с адреса\n' + baseurl + captchaimg);
+        var value = AnyBalance.retrieveCode("Пожалуйста, введите цифры с картинки.", baseurl + captchaimg, {inputType: 'text', time: 300000});
+        html = AnyBalance.requestPost(loginUrl, params, addHeaders({Origin: g_baseurlLogin, Referer: loginUrl}));
+    }
 
     html = AnyBalance.requestPost(baseurl + 'login', {
         'PIN2': prefs.pin2,

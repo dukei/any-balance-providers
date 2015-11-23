@@ -4,7 +4,7 @@
 	<api flags="no_browser"/>
 	<name>Рошаль-Онлайн</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе интерне-провайдера Рошаль-Онлайн <a href="http://www.roshalonline.ru/">http://www.roshalonline.ru/</a></p>
+	<p>Предоставляет информацию о балансе интернет-провайдера Рошаль-Онлайн <a href="http://www.roshalonline.ru/">http://www.roshalonline.ru/</a></p>
 	<p>Информация берется из личного кабинета <a href="http://netstat.atnr.ru/">http://netstat.atnr.ru/</a></p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>

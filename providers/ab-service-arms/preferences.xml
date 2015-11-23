@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+	<EditTextPreference
+		title="User ID"
+		key="userid"
+		summary="||{@s}"
+		obligatory="true"
+		dialogTitle="User ID"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		dialogMessage="Your User ID.">
+	</EditTextPreference>
+	<EditTextPreference
+		title="Password"
+		key="password"
+		summary="||***********"
+		obligatory="true"
+		dialogTitle="Password"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		dialogMessage="Your password."
+		inputType="textPassword">
+	</EditTextPreference>
+</PreferenceScreen>

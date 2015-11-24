@@ -2,7 +2,7 @@
 <provider>
 	<api flags="no_browser"/>
 	<id version="1">ab-cell-o-kg</id>
-	<name>Оператор мобильной связи О!</name>
+	<name>О! (Кыргызстан)</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о статусе лицевого счета абонента мобильного оператора связи 'O!', балансе, тарифе, остатке интернет-трафика, дате очередного снятия абонентской платы.
 	</p>
@@ -29,7 +29,7 @@
 		<counter id="paydate" name="Дата очередного снятия абонентской платы" type="text"/>
 		<counter id="traffic" name="Остаток интернет трафика" units=" Mb"/>
 	</counters>
-	<keywords></keywords>
-	<type></type>
-	<country>ru</country>
+	<keywords>O!, Сотовый телефон, мобильный, мобильник, Кыргызстан</keywords>
+	<type>cell</type>
+	<country>kg</country>
 </provider>

@@ -23,8 +23,7 @@ function main(){
         numberphone = prefs.phone.substring(3);
     AnyBalance.setDefaultCharset('utf-8');
 
-    var html = AnyBalance.requestGet(baseurl + 'login', g_headers,
-        addHeaders({Referer: baseurl + 'login'}));
+    var html = AnyBalance.requestGet(baseurl + 'login', g_headers);
 
     if(!html || AnyBalance.getLastStatusCode() > 400){ //Если главная страница возвращает ошибку, то надо отреагировать
     	AnyBalance.trace(html); //В непонятных случаях лучше сделать распечатку в лог, чтобы можно было понять, что случилось
@@ -35,10 +34,10 @@ function main(){
         'MSISDN_PREFIX':codephone,
         '_MSISDN':numberphone,
         'SUBMIT_FIRST_STAGE':'Войти в кабинет',
-        'H_STAGE':1,
-        'H_TYPE_AUTH':1,
-        'H_VIEW_CAPTCHA':1
-    }, addHeaders({Referer: baseurl + 'login'})); 
+        'H_STAGE':'1',
+        'H_TYPE_AUTH':'1',
+        'H_VIEW_CAPTCHA':'1'
+    });
 
     html = AnyBalance.requestPost(baseurl + 'login', {
         'SUBMIT_MOVE_TO_PIN2_AUTH': 'Войти, указав PIN2 от вашей SIM-карты',
@@ -49,7 +48,7 @@ function main(){
         'H_VIEW_CAPTCHA': '2'
     });
 
-    if(/Укажите код с картинки/i.test(html)){
+    if (/<input[^>]*id="CAPTCHA_CODE2"/i.test(html)) {
         var captchasrc = getParam(html, null, null, /\/default\/login\/create-captcha\?a=image\&amp;c=2\&amp;random=\w+/i, null, html_entity_decode);
         AnyBalance.trace('O! решило показать капчу с адреса\n' + baseurl + captchasrc);
         var captchaimg = AnyBalance.requestGet(baseurl + captchasrc, g_headers);
@@ -65,9 +64,8 @@ function main(){
                 'H_TYPE_AUTH': '2',
                 'H_VIEW_CAPTCHA': '2'
             });
-        }
-        throw new AnyBalance.Error("Не нашли капчу!");
-    }
+        } else AnyBalance.trace("Не нашли капчу!");
+    };
 
     html = AnyBalance.requestPost(baseurl + 'login', {
         'PIN2': prefs.pin2,
@@ -86,8 +84,7 @@ function main(){
         }
     }
 
-    html = AnyBalance.requestGet(baseurl + 'private-data/internet', g_headers,
-        addHeaders({Referer: baseurl + 'multimedia-and-sms/send-sms'}));
+    html = AnyBalance.requestGet(baseurl + 'private-data/internet', g_headers);
 
     if (!/Выход/i.test(html)) {
         AnyBalance.trace(html);

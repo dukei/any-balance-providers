@@ -14,24 +14,16 @@ var g_headers = {
 function main() {
 	var prefs = AnyBalance.getPreferences();
 	var baseurl = 'https://www.smartutilities.com.mt/wps/portal/';
-	AnyBalance.setDefaultCharset('utf-8');
+	// AnyBalance.setDefaultCharset('utf-8');
 	
-	checkEmpty(prefs.login, 'Введите логин!');
-	checkEmpty(prefs.password, 'Введите пароль!');
+	checkEmpty(prefs.login, 'Input user ID');
+	checkEmpty(prefs.password, 'Input password');
 	
 	var html = AnyBalance.requestGet(baseurl + 'Public%20Area/wps.Login/!ut/p/b1', g_headers);
 	
 	if(!html || AnyBalance.getLastStatusCode() > 400)
 		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
 	
-	// var params = createFormParams(html, function(params, str, name, value) {
-	// 	if (name == 'username') 
-	// 		return prefs.login;
-	// 	else if (name == 'password')
-	// 		return prefs.password;
-
-	// 	return value;
-	// });
     var params = {
     	'wps.portlets.userid': prefs.userid,
     	'password'=prefs.password,

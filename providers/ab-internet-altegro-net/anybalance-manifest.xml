@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1"></id>
+	<api flags="no_browser"/>
+	<name>AltegroNet</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе интернет-провайдера AltegroNet <a href="http://altegronet.ru/">http://altegronet.ru/</a></p>
+	<p>Информация берется из личного кабинета <a href="http://lk.altegronet.ru/">http://lk.altegronet.ru/</a></p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="accountNumber" name="Ваш счёт" type="text"/>
+		<counter id="currentTariff" name="Текущий тариф" type="text"/>
+		<counter id="trafficIn" name="Входящий трафик" units=" Гб"/>
+		<counter id="trafficOut" name="Исходящий трафик" units=" Гб"/>
+		<counter id="writeOffs" name="Сумма списаний" units=" р"/>
+	</counters>
+	<keywords></keywords>
+	<type>internet</type>
+	<country>ru</country>
+</provider>

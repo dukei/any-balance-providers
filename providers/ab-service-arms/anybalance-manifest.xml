@@ -16,10 +16,7 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="sum" name="Общая сумма"/>
-		<counter id="order" name="Номер заказа" type="text"/>
-		<counter id="status" name="Статус" type="text"/>
-		<counter id="date" name="Дата" type="text"/>
+		<counter id="subtotal" name="Payment Subtotal" units=" euro" />
 	</counters>
 	<keywords>Automated Revenue Management Services, ARMS, Malta, Operator</keywords>
 	<type>service</type>

@@ -41,7 +41,7 @@ function main(){
 
     getParam(html, result, 'fio', /Абонент:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, 'licschet', /Лицевой cчет N:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'balance', /((?:Переплата|Задолженность):[\s\S]*?<td[^>]*>[\s\S]*?)<\/td>/i, [/Задолженность:/ig, '-', replaceTagsAndSpaces], parseBalance);
+    getParam(html, result, 'balance', /((?:Переплата|Задолженность):[\s\S]*?<td[^>]*>[\s\S]*?)<\/td>/i, [/:[\s\S]*?<\/th>/i, '', /Задолженность/ig, '-', replaceTagsAndSpaces], parseBalance);
 	
 	if(AnyBalance.isAvailable('lastpaydate', 'lastpaysum')){
 		html = AnyBalance.requestGet(baseurl + '?action=payment_history', g_headers);

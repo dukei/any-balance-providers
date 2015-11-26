@@ -62,22 +62,29 @@ function main() {
 		html = AnyBalance.requestPost(baseurl, data);
 	}*/
 	
-	var levelReg = /Уровень:.*?>[^>\d]*?(\d+)[^<\d]*?</i;
-	var boostersReg = /Бустеры:.*?(?:[^>]*>){4}([\s\S]+?)</i;
-	var moneyReg = /Деньги:.*?(?:[^>]*>){5}([\s\S]+?)</i;
-	var ratingReg = /Рейтинг:.*?(?:[^>]*>){4}([\s\S]+?)</i;
-	var placeReg = /Место:.*?(?:[^>]*>){4}([\s\S]+?)</i;
-	var pointsReg = /Очки:.*?(?:[^>]*>){4}([\s\S]+?)</i;
-	var mailReg = /Почта:.+?<a href=\/mail\/>([\s\S]*?)<\/a>/i;
+	//var levelReg = /Уровень:.*?>[^>\d]*?(\d+)[^<\d]*?</i;
+	var levelReg = /Уровень:([\s\S]+?)<\/td>/i;
+	//var boostersReg = /Бустеры:.*?(?:[^>]*>){4}([\s\S]+?)</i;
+	var boostersReg = /Бустеры:([\s\S]+?)<\/td>/i;
+	//var moneyReg = /Деньги:.*?(?:[^>]*>){5}([\s\S]+?)</i;
+	var moneyReg = /Деньги:([\s\S]+?)<\/td>/i;
+	//var ratingReg = /Рейтинг:.*?(?:[^>]*>){4}([\s\S]+?)</i;
+	var ratingReg = /Рейтинг:([\s\S]+?)<\/td>/i;
+	//var placeReg = /Место:.*?(?:[^>]*>){4}([\s\S]+?)</i;
+	var placeReg = /Место:([\s\S]+?)<\/td>/i;
+	//var pointsReg = /Очки:.*?(?:[^>]*>){4}([\s\S]+?)</i;
+	var pointsReg = /Очки:([\s\S]+?)<\/td>/i;
+	//var mailReg = /Почта:.+?<a href=\/mail\/>([\s\S]*?)<\/a>/i;
+	var mailReg = /Почта:([\s\S]+?)<\/td>/i;
 	
-	var re = [/<tr[^>]*>/ig, /Уровень:/i];
-	var els = getElements(html, re, replaceTagsAndSpaces, parseBalance);
-	console.log(els);
+	//var re = [/<td[^>]*?>/im, /Уровень:/i];
+	//var els = getElements(html, re, replaceTagsAndSpaces, parseBalance);
+	//console.log("els: " + els);
 	
 	var result = {success: true};
 	getParam(html, result, 'level', levelReg, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'boosters', boostersReg, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'money', moneyReg, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'money', moneyReg, replaceTagsAndSpaces, parseMoney);
 	getParam(html, result, 'rating', ratingReg, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'points', pointsReg, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'place', placeReg, replaceTagsAndSpaces, parseBalance);
@@ -91,4 +98,10 @@ function main() {
 function removeSpaces(text) {
 	var retValue = text.replace(/\s+/g, '');
 	return retValue;
-} 
+}
+
+/* Специальная функция для парсинга денег в игре. Отличие от стандартного парсера parseFloat в том,
+ * что здесь точкой разделяются тысячи, а само число представляет собой int */
+function parseMoney(text) {	
+	return parseInt(parseBalanceSilent(text.replace(/\./g, '')));
+}

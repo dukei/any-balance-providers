@@ -1,4 +1,4 @@
-﻿/**
+﻿﻿/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 */
 
@@ -19,9 +19,7 @@ function main() {
 	checkEmpty(prefs.userid, 'Input user ID');
 	checkEmpty(prefs.password, 'Input password');
 	
-
-	var loginurl = 'portal/Public%20Area/wps.Login/!ut/p/b1/04_Sj9CPykssy0xPLMnMz0vMAfGjzOKd3R09TMx9DAwsfNxNDTwdPUKDLAONjQ1czYEKIoEKDHAARwOofqNAM2M3H7NAc2dXA0cTM18XF_8wIwNPI6h-XBY4GhNnPx4LCOgP14_CqwTkArACPF7088jPTdUvyA0NjTDIMgEAMTbqew!!/dl4/d5/L0lDUWtpQ1NZSkNncFJBISEvb0VvZ0FFQ1FRREdJUXBTR0djRndUT0EhLzRHMGhSQjdRUjM1UWhTWkNuNnBoL1o3X0NHQUg0N0wwMDhMRzUwSUFIVVI5UTMzMFUxLzAvd3BzLnBvcnRsZXRzLmxvZ2lu/';
-	var html = AnyBalance.requestGet(baseurl + loginurl, g_headers);
+	var html = AnyBalance.requestGet(baseurl + 'portal/Public%20Area/wps.Login/!ut/p/b1/04_Sj9CPykssy0xPLMnMz0vMAfGjzOKd3Y0CzYzdfMwCzZ1dDRxNzHxdXPzDjAw8jYAKIoEKDHAARwNC-sP1o6BKHD1MzH0MDCx83E0NPB09QoMsA42NDRyNoQrwWOHnkZ-bql-QG2GQZeKoCABxOILM/dl4/d5/L2dJQSEvUUt3QS80SmtFL1o2X0NHQUg0N0wwMDhMRzUwSUFIVVI5UTMzMEU3/', g_headers);
 	
 	if(!html || AnyBalance.getLastStatusCode() > 400)
 		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
@@ -31,30 +29,30 @@ function main() {
 		'password': prefs.password,
 		'ns_Z7_CGAH47L008LG50IAHUR9Q330U1__login': 'Log in'
     };
-    // var loginurl = 'portal/!ut/p/b0/04_Sj9CPykssy0xPLMnMz0vMAfGjzOKd3R09TMx9DAwsfNxNDTwdPUKDLAONjQ1czfULsh0VAW9IRPw!/';
-	
-	html = AnyBalance.requestPost(baseurl + loginurl, params,
-		addHeaders({'Referer':'https://www.smartutilities.com.mt/wps/portal/Public%20Area/wps.Login/!ut/p/b1/04_Sj9CPykssy0xPLMnMz0vMAfGjzOKd3Y0CzYzdfMwCzZ1dDRxNzHxdXPzDjAw8jYAKIoEKDHAARwNC-sP1o6BKHD1MzH0MDCx83E0NPB09QoMsA42NDRyNoQrwWOHnkZ-bql-QG2GQZeKoCABxOILM/dl4/d5/L2dJQSEvUUt3QS80SmtFL1o2X0NHQUg0N0wwMDhMRzUwSUFIVVI5UTMzMEU3/'}));
-	html = AnyBalance.requestGet(baseurl + 'https://www.smartutilities.com.mt/wps/myportal/Public%20Area/ARMS.CustomerArea.loginPage/ARMS.AccountManagement/billingOverview2/!ut/p/b1/04_SjzSyMDI3MjMztNCP0I_KSyzLTE8syczPS8wB8aPM4p3djQLNjN18zDxDXV0MHE18Q1xCvX0MDbzNgQoiwQocPUzMfQwMLHzcTQ08HT1CgywDjY0NHI2J02-AAzgaENIfrh-FX4kpAQUmhnAFuP0AVoDHkX4e-bmp-rlROW6WnpkB6Y6KigAYi_Lk/dl4/d5/L2dBISEvZ0FBIS9nQSEh/',
-		addHeaders({'Referer':'https://www.smartutilities.com.mt/wps/portal/Public%20Area/wps.Login/!ut/p/b1/04_Sj9CPykssy0xPLMnMz0vMAfGjzOKd3Y0CzYzdfMwCzZ1dDRxNzHxdXPzDjAw8jYAKIoEKDHAARwNC-sP1o6BKHD1MzH0MDCx83E0NPB09QoMsA42NDRyNoQrwWOHnkZ-bql-QG2GQZeKoCABxOILM/dl4/d5/L2dJQSEvUUt3QS80SmtFL1o2X0NHQUg0N0wwMDhMRzUwSUFIVVI5UTMzMEU3/'}));
+    // var loginurl = 'myportal/!ut/p/b0/04_Sj9CPykssy0xPLMnMz0vMAfGjzOKd3R09TMx9DAwsfNxNDTwdPUKDLAONjQ1czfULsh0VAW9IRPw!/';
+    var loginurl = 'portal/Public%20Area/wps.Login/!ut/p/b1/04_Sj9CPykssy0xPLMnMz0vMAfGjzOKd3R09TMx9DAwsfNxNDTwdPUKDLAONjQ1czYEKIoEKDHAARwOofqNAM2M3H7NAc2dXA0cTM18XF_8wIwNPI6h-XBY4GhNnPx4LCOgP14_CqwTkArACPF7088jPTdUvyA0NjTDIMgEAMTbqew!!/dl4/d5/L0lDUWtpQ1NZSkNncFJBISEvb0VvZ0FFQ1FRREdJUXBTR0djRndUT0EhLzRHMGhSQjdRUjM1UWhTWkNuNnBoL1o3X0NHQUg0N0wwMDhMRzUwSUFIVVI5UTMzMFUxLzAvd3BzLnBvcnRsZXRzLmxvZ2lu/';
+	html = AnyBalance.requestPost(baseurl + loginurl, params);
 
-	if (!/Выход из системы/i.test(html)) {
-		var error = getParam(html, null, null, /class="wpsFieldSuccessText"[\s\S]*?<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
+	if (!/Выход из системы/i.test(html) && !/Log out/i.test(html)) {
+		var error = getParam(html, null, null, /class="wpsFieldSuccessText"[^>]*>([\s\S]*?<\/span>)/i, replaceTagsAndSpaces, html_entity_decode);
 		if (error)
 			throw new AnyBalance.Error(error, null, true);
-		
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
-    
-    html = AnyBalance.requestGet(baseurl + 'myportal/!ut/p/b1/04_Sj9CPykssy0xPLMnMz0vMAfGjzOKd3Y0CzYzdfMw8Q11dDBxNfENcQr19DA28zfULsh0VAWCRPls', g_headers);
-	
+	// Успешно вошли в систему - можно перейти на страницу с основной информацией    
+	html = AnyBalance.requestGet(baseurl + 'myportal/!ut/p/b1/04_Sj9CPykssy0xPLMnMz0vMAfGjzOKd3Y0CzYzdfMw8Q11dDBxNfENcQr19DA28zfULsh0VAWCRPls!/');
+
 	var result = {success: true};
-	
-	// getParam(html, result, 'subtotal', /Payment Subtotal[\s\S]*?\/>/i, replaceTagsAndSpaces, parseBalance);
-	// getParam(html, result, 'date', /(?:Заказ\s№[^>]*>)([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
-	// getParam(html, result, 'status', /Статус[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
-	// getParam(html, result, 'sum', /Общая сумма([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'unpaiddate', /ExclamationRounded16x16([\s\S]*?<\/td>){2}/i, replaceTagsAndSpaces, parseDateWord);
+	getParam(html, result, 'unpaidbilldatedue', /ExclamationRounded16x16([\s\S]*?<\/td>){3}/i, replaceTagsAndSpaces, parseDateWord);
+	getParam(html, result, 'unpaidbillnumber', /ExclamationRounded16x16([\s\S]*?<\/td>){4}/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'unpaidbilled', /ExclamationRounded16x16([\s\S]*?<\/td>){5}/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'unpaidoutstanding', /ExclamationRounded16x16([\s\S]*?<\/td>){6}/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'unpaidbillstatus', /ExclamationRounded16x16([\s\S]*?<\/td>){7}/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'unpaiddaysoverdue', /ExclamationRounded16x16([\s\S]*?<\/td>){8}/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'unpaidinterestacc', /ExclamationRounded16x16([\s\S]*?<\/td>){9}/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'subtotal', /Payment Subtotal[\s\S]*?\/>/i, replaceTagsAndSpaces, parseBalance);
 	
 	AnyBalance.setResult(result);
 }

@@ -16,7 +16,14 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="subtotal" name="Payment Subtotal" units=" euro" />
+		<counter id="unpaidbilldate" name="Date Unpaid" type="time" format="dd/MM/yyyy"/>
+		<counter id="unpaidbilldatedue" name="Due By" type="time" format="dd/MM/yyyy"/>
+		<counter id="unpaidbillnumber" name="Bill Number" type="text"/>
+		<counter id="unpaidbilled" name="Billed" units=" euro"/>
+		<counter id="unpaidoutstanding" name="Outstanding" units=" euro"/>
+		<counter id="unpaidbillstatus" name="Status" type="text"/>
+		<counter id="unpaiddaysoverdue" name="Days Overdue" />
+		<counter id="unpaidinterestacc" name="Days Interest Acc" units="euro"/>
 	</counters>
 	<keywords>Automated Revenue Management Services, ARMS, Malta, Operator</keywords>
 	<type>service</type>

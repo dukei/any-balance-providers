@@ -17,12 +17,17 @@ function main() {
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 
-	AnyBalance.setAuthentication(prefs.login, prefs.password, '');
+	AnyBalance.setAuthentication(prefs.login, prefs.password);
 	var html = AnyBalance.requestGet(baseurl+'pls/webbil/create_session');
 
-	var error;
-	if(error=/Authorization Required/.test(html))
-		throw new AnyBalance.Error("Неправильно указаны логин и/или пароль");
+	if(!/logout/i.test(html))
+	{
+		var error = getParam(html, null, null, /<\/h1>([\s\S]*?)<p/i, replaceTagsAndSpaces, html_entity_decode);
+		if(error)
+			throw new AnyBalance.Error(error);
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error("Не удалось войти в личный кабинет. Сайт изменен?")
+	}
 
 	var result = {success: true};
 

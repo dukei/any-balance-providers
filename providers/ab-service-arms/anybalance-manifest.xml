@@ -1,33 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-<id version="1">ab-service-arms</id>
-<api flags="no_browser"/>
-<name>Automated Revenue Management Services</name>
-<description html="true"><![CDATA[
-<p>Предоставляет информацию о платежах через систему ARMS <a href="https://www.smartutilities.com.mt/wps/portal/">https://www.smartutilities.com.mt/wps/portal/</a></p>
-<p>Информация берется из личного кабинета <a href="https://www.smartutilities.com.mt/wps/portal/Public%20Area/wps.Login/!ut/p/b1/04_SjzQysDAxMzCwsDTTj9CPykssy0xPLMnMz0vMAfGjzOKd3Y0CzYzdfMwCzZ1dDRxNzHxdXPzDjAw8jYAKIoEKDHAARwNC-sP1o6BKHD1MzH2ArvBxNzXwdPQIDbIMNDY2cDSGKsBjhZ9Hfm6qfm5UjqWnrqMiAM-RTuA!/dl4/d5/L2dJQSEvUUt3QS80SmtFL1o2X0NHQUg0N0wwMDhMRzUwSUFIVVI5UTMzMEU3/">https://www.smartutilities.com.mt/wps/portal/Public%20Area/wps.Login/!ut/p/b1/04_SjzQysDAxMzCwsDTTj9CPykssy0xPLMnMz0vMAfGjzOKd3Y0CzYzdfMwCzZ1dDRxNzHxdXPzDjAw8jYAKIoEKDHAARwNC-sP1o6BKHD1MzH2ArvBxNzXwdPQIDbIMNDY2cDSGKsBjhZ9Hfm6qfm5UjqWnrqMiAM-RTuA!/dl4/d5/L2dJQSEvUUt3QS80SmtFL1o2X0NHQUg0N0wwMDhMRzUwSUFIVVI5UTMzMEU3/</a></p>
-]]></description>
-<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
-<files>
-<icon>icon.png</icon>
-<preferences>preferences.xml</preferences>
-<js>library.js</js>
-<js>main.js</js>
-<history>history.xml</history>
-</files>
-<counters>
-<counter id="contractno" name="Contract Number" type="text"/>
-<counter id="contractaddress" name="Address" type="text"/>
-<counter id="totalbalance" name="Total Balance" prefix="€"/>
-<counter id="date" name="Date Unpaid" type="time" format="dd/MM/yyyy"/>
-<counter id="datedue" name="Due By" type="time" format="dd/MM/yyyy"/>
-<counter id="billnumber" name="Bill Number" type="text"/>
-<counter id="billed" name="Billed" prefix="€"/>
-<counter id="billstatus" name="Status" type="text"/>
-<counter id="daysoverdue" name="Days Overdue" />
-<counter id="interestacc" name="Days Interest Acc" prefix="€"/>
-</counters>
-<keywords>Automated Revenue Management Services, ARMS, Malta, Operator, Payment Service</keywords>
-<type>service</type>
-<country>mt</country>
+	<id version="1">ab-service-arms</id>
+	<api flags="no_browser"/>
+	<name>Automated Revenue Management Services</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о платежах через систему ARMS <a href="https://www.smartutilities.com.mt/wps/portal/">https://www.smartutilities.com.mt/wps/portal/</a></p>
+	<p>Информация берется из личного кабинета <a href="https://www.smartutilities.com.mt/wps/portal/Public%20Area/wps.Login/!ut/p/b1/04_SjzQysDAxMzCwsDTTj9CPykssy0xPLMnMz0vMAfGjzOKd3Y0CzYzdfMwCzZ1dDRxNzHxdXPzDjAw8jYAKIoEKDHAARwNC-sP1o6BKHD1MzH2ArvBxNzXwdPQIDbIMNDY2cDSGKsBjhZ9Hfm6qfm5UjqWnrqMiAM-RTuA!/dl4/d5/L2dJQSEvUUt3QS80SmtFL1o2X0NHQUg0N0wwMDhMRzUwSUFIVVI5UTMzMEU3/">https://www.smartutilities.com.mt/wps/portal/Public%20Area/wps.Login/!ut/p/b1/04_SjzQysDAxMzCwsDTTj9CPykssy0xPLMnMz0vMAfGjzOKd3Y0CzYzdfMwCzZ1dDRxNzHxdXPzDjAw8jYAKIoEKDHAARwNC-sP1o6BKHD1MzH2ArvBxNzXwdPQIDbIMNDY2cDSGKsBjhZ9Hfm6qfm5UjqWnrqMiAM-RTuA!/dl4/d5/L2dJQSEvUUt3QS80SmtFL1o2X0NHQUg0N0wwMDhMRzUwSUFIVVI5UTMzMEU3/</a></p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="contractno" name="Contract Number" type="text"/>
+		<counter id="contractaddress" name="Address" type="text"/>
+		<counter id="totalbalance" name="Total Balance" prefix="€"/>
+		<counter id="date" name="Date Unpaid" type="time" format="dd/MM/yyyy"/>
+		<counter id="datedue" name="Due By" type="time" format="dd/MM/yyyy"/>
+		<counter id="billnumber" name="Bill Number" type="text"/>
+		<counter id="billed" name="Billed" prefix="€"/>
+		<counter id="billstatus" name="Status" type="text"/>
+		<counter id="daysoverdue" name="Days Overdue" />
+		<counter id="interestacc" name="Days Interest Acc" prefix="€"/>
+	</counters>
+	<keywords>Automated Revenue Management Services, ARMS, Malta, Operator, Payment Service</keywords>
+	<type>service</type>
+	<country>mt</country>
 </provider>

@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="15">ab-cell-tele2-kz</id>
+	<id version="16">ab-cell-tele2-kz</id>
 	<api flags="no_browser|captcha"/>
 	<name>Теле2 Казахстан</name>
 	<description html="true"><![CDATA[
@@ -23,8 +23,8 @@
 		<counter id="phone" name="Телефон" type="text"/>
 		<counter id="internet_trafic" name="Интернет-пакеты" units=" Мб"/>
 		<counter id="internet_trafic_night" name="Интернет-пакеты (ночь)" units=" Мб"/>
-		<counter id="sms_left" name="Остаток СМС" units=" Мб"/>
-		<counter id="min_left" name="Остаток минут" units=" Мб"/>
+		<counter id="sms_left" name="Остаток СМС" units=" sms"/>
+		<counter id="min_left" name="Остаток минут" units=" мин"/>
 	</counters>
 	<keywords>теле2</keywords>
 	<type>cell</type>

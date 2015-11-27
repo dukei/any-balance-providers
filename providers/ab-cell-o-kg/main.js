@@ -64,7 +64,9 @@ function main(){
                 'H_TYPE_AUTH': '2',
                 'H_VIEW_CAPTCHA': '2'
             });
-        } else AnyBalance.trace("Не нашли капчу!");
+        } else {
+            throw new AnyBalance.Error("Картинка с кодом не найдена", null, true);
+        };
     };
 
     html = AnyBalance.requestPost(baseurl + 'login', {
@@ -76,20 +78,19 @@ function main(){
         'H_TYPE_AUTH': '2',
         'H_VIEW_CAPTCHA': '2'
     });
+    
+    var error = getParam(html, null, null, /"auth_result"[^>]*>([^<]*)/i, replaceTagsAndSpaces);
 
-    if(/Войти в кабинет/i.test(html)){
-        var error = getParam(html, null, null, /Войти в кабинет/i, replaceTagsAndSpaces, html_entity_decode);
-        if(error){
-            throw new AnyBalance.Error('Неверная пара номер телефона - pin2', null, true);
-        }
-    }
+    if (error) {
+        throw new AnyBalance.Error(error);
+    };
 
     html = AnyBalance.requestGet(baseurl + 'private-data/internet', g_headers);
 
     if (!/Выход/i.test(html)) {
         AnyBalance.trace(html);
         throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
-    }
+    };
 
     var result = {success: true};
     getParam(html, result, 'tarif', /Тарифный план:([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, html_entity_decode);

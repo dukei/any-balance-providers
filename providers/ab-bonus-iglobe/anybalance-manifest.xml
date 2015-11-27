@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-bonus-iglobe</id>
+	<id version="2">ab-bonus-iglobe</id>
 	<api flags="no_browser"/>
 	<name>iGlobe (Мили)</name>
 	<description html="true"><![CDATA[
@@ -8,6 +8,7 @@
 	<p>Информация берется из личного кабинета http://iglobe.ru/travelmiles/info/service</p>
 	]]></description>
 	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>d3vil-st &lt;d3vil.st@gmail.com&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

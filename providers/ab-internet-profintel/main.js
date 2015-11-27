@@ -27,7 +27,7 @@ function main() {
 	}, addHeaders({Referer: baseurl + 'login'}));
 	
 	if (!/logout/i.test(html)) {
-                var error = getParam(html, null, null, /<span[^>]+class="error_message"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
+                var error = getElement(html, /<div[^>]+alert-danger[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
                 if(error)
                     throw new AnyBalance.Error(error, null, /логин\/пароль неверны/i.test(error));
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
@@ -38,9 +38,9 @@ function main() {
 	
 	var result = {success: true};
 	
-	getParam(html, result, 'balance', /Текущий баланс(?:[^>]*>){4}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'balance_expense', /Расход за текущий день(?:[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'id_pay', /ID для оплаты через банкоматы(?:[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'balance', /Баланс[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, '__tariff', /Тариф:[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'id_pay', /ID для оплаты(?:[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(html, result, 'fio', /ФИО(?:[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
 	
 	AnyBalance.setResult(result);

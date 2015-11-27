@@ -108,7 +108,7 @@ function serialize(obj) {
     } else if (typeof(obj) == 'string') {
         return encodeXML(obj);
     } else if (typeof(obj) == 'boolean') {
-        return obj ? 'true' : 'false';
+        return obj ? '1' : '0';
     } else if (typeof(obj) == 'number') {
         return '' + obj;
     }
@@ -119,7 +119,7 @@ function request(m) {
 
     AnyBalance.trace('Requesting ' + getParam(m.payload.__type, null, null, /\.(\w+)$/));
 
-    var ver = "2.6.0";
+    var ver = "2.5.0";
     var wordsStr = CryptoJS.enc.Utf8.parse(sm);
     var wordsVer = CryptoJS.enc.Utf8.parse(ver);
     var words = new CryptoJS.lib.WordArray.init([wordsStr.sigBytes + wordsVer.sigBytes + 1, wordsVer.sigBytes << 24], 5);
@@ -326,13 +326,13 @@ function login() {
     checkEmpty(prefs.password, 'Введите пароль!');
 
     // Получаем sessionID
-    var sessionId = AnyBalance.getData('sessionId', '');
+    var sessionId = AnyBalance.getData('sessionId', prefs.sessionId || '');
 
     g_commonProperties = {
-        APP_VERSION: '5.1.10',
+        APP_VERSION: '5.3.8',
         DEVICE_PLATFORM: 'ANDROID',
         'CLIENT-TOKEN': sessionId,
-        'DEVICE_OS': 'Android OS 4.4.4'
+        'DEVICE_OS': 'Android OS 5.1.1'
     };
 
     if(!isSessionValid()) {
@@ -407,13 +407,26 @@ function getCardsAndAccounts(){
     if(g_cardsAndAccounts)
         return g_cardsAndAccounts;
 
+    //Раньше мы это из MainPageProductsRequest получали, но там почему-то карты не всегда возвращаются.
     var obj = request(new Message({
-        __type: 'ru.vtb24.mobilebanking.protocol.product.MainPageProductsRequest',
-        portfolioTypeMto: {
+        __type: 'ru.vtb24.mobilebanking.protocol.product.PortfolioRequest',
+        refreshImmediately: true,
+        portfolioType: {
             __type: 'ru.vtb24.mobilebanking.protocol.product.PortfolioTypeMto',
             id: 'ACCOUNTS_AND_CARDS'
         }
     }, null, g_commonProperties));
+
+    obj.payload.products = [];
+
+    //Приводим к плоскому виду, как MainPageProductsRequest
+    for(var i=0; i<obj.payload.portfolio.productGroups.length; ++i){
+        var group = obj.payload.portfolio.productGroups[i];
+        for (var j = 0; j < group.items.length; j++) {
+            var p = group.items[j];
+            obj.payload.products.push(p);
+        }
+    }
 
     AnyBalance.trace('Найдено ' + obj.payload.products.length + ' карт и счетов');
     g_cardsAndAccounts = obj;

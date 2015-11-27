@@ -325,7 +325,7 @@ function make_html_entity_replacement(str, sharp, x, m){
 			return String.fromCharCode(entities[ml]);
 	} else if (!x) {
 		if (/^\d+$/.test(m))
-			return String.fromCharCode(parseInt(m));
+			return String.fromCharCode(parseInt(m, 10));
 	} else {
 		if (/^[0-9a-f]+$/i.test(m))
 			return String.fromCharCode(parseInt(m, 16));

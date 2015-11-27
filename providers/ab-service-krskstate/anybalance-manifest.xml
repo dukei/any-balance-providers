@@ -1,12 +1,15 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-service-krskstate</id>
 	<api flags="no_browser"/>
-	<name>Очередь в детские сады Красноярского края</name>
+	<id version="3">ab-service-krskstate</id>
+	<name>Текущее состояние очереди в детские сады Красноярского края</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию по идентификатору в очереди на сайте http://www.krskstate.ru/krao/underschool/queue</p>
+	<p>Предоставляет информацию о состоянии очереди в детские сады по Красноярскому краю на <a href="http://www.krskstate.ru/krao/underschool/queue">http://www.krskstate.ru/krao/underschool/queue</a></p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<instruction html="true"><![CDATA[
+	Номер заявления в формате 24ХХХХХХХХХХ выдается родителю в момент постановки на учет в дошкольное образовательное учреждение;
+	]]></instruction>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
@@ -17,8 +20,16 @@
 	<counters>
 		<counter id="balance" name="Номер в очереди"/>
 		<counter id="total" name="Всего в очереди"/>
+		<counter id="login" name="Номер заявления" type="text"/>
+		<counter id="district" name="Район" type="text"/>
+		<counter id="agegroup" name="Возрастная группа" type="text"/>
+		<counter id="healthgroup" name="Группа здоровья" type="text"/>
+		<counter id="status" name="Статус/состояние" type="text"/>
+		<counter id="lvcount" name="Количество внеочередников (ЛВ)"/>
+		<counter id="lpcount" name="Количество первоочередников (ЛП)"/>
+		<counter id="uncount" name="Количество не имеющих льготу"/>
 	</counters>
-	<keywords></keywords>
-	<type>service</type>
+	<keywords>krskstate, Красноярский край, Красноярск</keywords>
+	<type>service, municipal</type>
 	<country>ru</country>
 </provider>

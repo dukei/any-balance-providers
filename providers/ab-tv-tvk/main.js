@@ -24,7 +24,12 @@ function main() {
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
 	}
-	
+
+	while (prefs.login.length < 7)
+	{
+		prefs.login = '0'+prefs.login;
+	}
+
 	var params = createFormParams(html, function(params, str, name, value) {
 		if (name == 'USER_LOGIN')
 			return prefs.login;
@@ -38,7 +43,7 @@ function main() {
 		AUTH_FORM: params.AUTH_FORM,
 		TYPE: params.TYPE,
 		USER_CITY: params.USER_CITY,
-		USER_LOGIN: '00'+prefs.login,
+		USER_LOGIN: prefs.login,
 		USER_PASSWORD: prefs.password
 	}, addHeaders({Referer: baseurl}));
 	
@@ -62,18 +67,16 @@ function main() {
 		throw new AnyBalance.Error('Не удалось найти информацию о пользователе, сайт изменён?');
 
 	getParam(json[0].FIO, result, "fio", null, replaceTagsAndSpaces, html_entity_decode);
-	getParam(json[0].KARTA+'', result, "card", null, replaceTagsAndSpaces, html_entity_decode);
+	if(json[0].KARTA)
+		getParam(json[0].KARTA+'', result, "card", null, replaceTagsAndSpaces, html_entity_decode);
 	getParam(json[0].DOGOVOR_NO+'', result, "agreementID", null, replaceTagsAndSpaces, html_entity_decode);
 	getParam(json[0].ACCOUNT_NO+'', result, "accountNumber", null, replaceTagsAndSpaces, html_entity_decode);
-	getParam(json[0].BALANS+'', result, "balance", null, replaceTagsAndSpaces, parseBalance);
+	getParam(json[0].BALANS*(-1), result, "balance");
 
 
-	json = requestGetJson(baseurl, hrefTarifInfo, /var dat = ([\s\S]*?);/i);
-	if(!isArray(json.VKL_TRF) || json.VKL_TRF.length == 0)
-		throw new AnyBalance.Error('Не удалось найти информацию по подключённым услугам. Сайт изменён?');
-
-	getParam(json.VKL_TRF[0].NAME, result, 'divitalTV', null, replaceTagsAndSpaces, html_entity_decode);
-	getParam(json.VKL_TRF[0].PERS_TRF, result, 'costTV', null, replaceTagsAndSpaces, parseBalance);
+	html= AnyBalance.requestGet(baseurl+hrefTarifInfo, g_headers);
+	getParam(html, result, 'tarifTV', /checked="checked"[^>]*>[\s\S]*?<input[^>]+value="([\s\S]+?)\-/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'costTV', /checked="checked"[^>]*>[\s\S]*?<input[^>]+value="[^\d]+(\d+[.,]\d+)/i, replaceTagsAndSpaces, parseBalance);
 
 	AnyBalance.setResult(result);
 }

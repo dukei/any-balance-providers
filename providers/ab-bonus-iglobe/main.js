@@ -24,20 +24,12 @@ function main() {
 		usr: prefs.login,
 		pwd: prefs.password,
 		site_auth: 'sent',
-		x: 0,
-		y: 0
-	}, addHeaders({Referer: 'http://www.iglobe.ru/cabinet_login?next=cabinet/booking'},
-								{Origin: 'http://www.iglobe.ru'}));
-
-	if (/Вход в личный кабинет/i.test(html)) {
-		var error = 0
-		throw new AnyBalance.Error(null, null, /Неверный логин или пароль/i.test(null));
-	}
-	else if (!/На счёте/i.test(html)) {
+	}, addHeaders({Referer: baseurl + 'cabinet_login?next=cabinet/booking'}));
+	
+	if (!/logout=yes/i.test(html)) {
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
-	html = AnyBalance.requestGet(baseurl + 'travelmiles/info/service', g_headers);
 
 	var result = {success: true};
 

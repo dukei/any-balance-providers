@@ -24,7 +24,6 @@
 		<counter id="agegroup" name="возрастная группа" type="text"/>
 		<counter id="healthgroup" name="Группа здоровья" type="text"/>
 		<counter id="queue" name="Номер в очереди"/>
-		<counter id="queue" name="Номер в очерели"/>
 		<counter id="status" name="Статус/состояние" type="text"/>
 		<counter id="lvcount" name="Количество внеочередников (ЛВ)"/>
 		<counter id="lpcount" name="Количество первоочередников (ЛП)"/>

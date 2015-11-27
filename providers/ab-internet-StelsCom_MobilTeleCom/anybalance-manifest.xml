@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="4">ab-internet-StelsCom_MobileTeleCom</id>
+	<id version="4">ab-internet-StelsCom_MobilTeleCom</id>
 	<api flags="no_browser"/>
-	<name>MobileTeleCom (Сатка)</name>
+	<name>MobilTeleCom (Сатка)</name>
 	<description html="true"><![CDATA[
-	<p>Получает данные для интернет провайдера MobileTeleCom, http://stat.satka.ru</p>
+	<p>Получает данные для интернет провайдера MobilTeleCom, http://stat.satka.ru</p>
 	<p>Личный кабинет находится по адресу http://utmv2.xn--80aa3a0ag.xn--80asehdb/</p>
 	]]></description>
 	<author>Etamin419 &lt;etamin419@gmail.com&gt;</author>

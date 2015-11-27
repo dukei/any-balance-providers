@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-internet-wetel</id>
+	<api flags="no_browser"/>
+	<name>Wetel</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе интернет-провайдера Wetel <a href="http://www.wetel.ru/">http://www.wetel.ru/</a></p>
+	<p>Информация берется из личного кабинета <a href="http://www.wetel.ru/user">http://www.wetel.ru/user</a></p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="accountNumber" name="Номер счёта" type="text"/>
+		<counter id="status" name="Статус" type="text"/>
+		<counter id="currentTariff" name="Текущий тариф" type="text"/>
+		<counter id="deadline" name="Конец учётного периода" type="time" format="dd/mm/yyyy"/>
+		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="phone" name="Телефон" type ="text"/>
+		<counter id="adress" name="Адрес" type="text"/>
+		<counter id="promisedPayment" name="Отложенный платёж" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>internet</type>
+	<country>ru</country>
+</provider>

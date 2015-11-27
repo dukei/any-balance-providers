@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-telephony-kt</id>
+	<api flags="no_browser"/>
+	<name>КыргызТелеком</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера КыргызТелеком <a href="http://abonent.kt.kg/">http://abonent.kt.kg/</a></p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Всего к оплате" units=" сом"/>
+		<counter id="accountNumber" name="Номер лицевого счёта" type="text"/>
+		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="phone" name="Телефон" type="text"/>
+		<counter id="incomingBalance" name="Входящий остаток" units=" сом"/>
+		<counter id="charged" name="Начислено" units=" сом"/>
+		<counter id="paid" name="Оплачено" units=" сом"/>
+		<counter id="outgoingBalance" name="Исходящий остаток" units=" сом"/>
+	</counters>
+	<keywords></keywords>
+	<type>telephony</type>
+	<country>kg</country>
+</provider>

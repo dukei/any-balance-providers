@@ -25,6 +25,10 @@ function main() {
     }, addHeaders({Referer: baseurl + 'login'}));
 	
 	if(!/logout/i.test(html)) {
+		var error = getParam(html, null, null, /<div[^>]+#ffc0c0[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+		if(error)
+			throw new AnyBalance.Error(error, null, /корректный логин и пароль/i.test(error));
+		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
     var result = {success: true};
@@ -43,8 +47,8 @@ function main() {
 	}
 	if(isAvailable(['last_pay_date','last_pay_sum'])) {
 		html = AnyBalance.requestGet(baseurl+'go/pays_history', g_headers);
-		getParam(html, result, 'last_pay_date', /<table[^>]*class="list_table"(?:[\s\S]*?<td[^>]*>){1}([^<]*)/i, replaceTagsAndSpaces, parseDate);
-		getParam(html, result, 'last_pay_sum', /<table[^>]*class="list_table"(?:[\s\S]*?<td[^>]*>){3}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+		getParam(html, result, 'last_pay_date', /<table[^>]*class="list_table"(?:[\s\S]*?<td(?:[^>](?!colspan))*>){1}([^<]*)/i, replaceTagsAndSpaces, parseDate);
+		getParam(html, result, 'last_pay_sum', /<table[^>]*class="list_table"(?:[\s\S]*?<td(?:[^>](?!colspan))*>){3}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
 	}	
 	
     AnyBalance.setResult(result);

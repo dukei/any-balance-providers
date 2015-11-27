@@ -22,6 +22,9 @@ var g_countersTable = {
 		"cred_ammount": "cards.totalCreditDebtAmount",
 		"ownFunds": "cards.ownFunds",
 		"clearBalance": "cards.clearBalance",
+		"gracePeriodOutstanding": "cards.gracePeriodOutstanding",
+		"unpaidGracePeriodDue": "cards.unpaidGracePeriodDue",
+		"gracePeriodEnd": "cards.gracePeriodEnd",
 	},
     acc: {
 		"__tariff": "accounts.accnum",

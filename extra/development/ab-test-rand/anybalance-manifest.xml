@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="4">ab-test-rand</id>
+	<id version="5">ab-test-rand</id>
 	<api flags="no_browser"/>
 	<name>Test Provider</name>
 	<description html="true"><![CDATA[
@@ -17,7 +17,7 @@
 	<counters>
 		<counter id="balance" name="Баланс" units=" {@currency}"/>
 		<counter id="balance2" name="Баланс 2"/>
-		<counter id="balance3" name="Баланс 3"/>
+		<counter id="date" name="Дата" type="time" format="dd/MM/yyyy"/>
 		<counter id="balance4" name="Баланс 4" flags="zero_when_empty"/>
 		<counter id="text_counter" name="Текстовый счетчик" type="text"/>
 	</counters>

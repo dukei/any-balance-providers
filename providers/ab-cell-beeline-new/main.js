@@ -64,8 +64,8 @@ var g_countersTable = {
 		"balance": "balance",
 		"prebal": "prebal",
 		"overpay": "overpay",
-		"sms": "remainders.sms",
-		"mms": "remainders.mms",
+		"sms_left": "remainders.sms_left",
+		"mms_left": "remainders.mms_left",
 		"rub_bonus": "remainders.bonus",
 		"rub_bonus2": "remainders.rub_bonus2",
 		"rub_bonus2_till": "remainders.rub_bonus2_till",
@@ -102,9 +102,10 @@ function mainRu(baseurl){
 	var result = {success: true};
 
 	adapter.proceedWithSite(baseurl, ret.type, ret.html, result);
-	result = adapter.convert(result);
+	var newresult = adapter.convert(result);
+	newresult.currency = result.currency;
 
-	setCountersToNull(result);
+	setCountersToNull(newresult);
 
-	AnyBalance.setResult(result);
+	AnyBalance.setResult(newresult);
 }

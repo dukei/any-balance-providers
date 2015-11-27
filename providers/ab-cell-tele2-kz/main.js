@@ -67,7 +67,7 @@ function main(){
 				throw new AnyBalance.Error(errors[error]);
 			if(error)
 				throw new AnyBalance.Error(error);
-			
+			AnyBalance.trace(html);
 			throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 		}
 	}
@@ -120,7 +120,7 @@ function sumDiscount(result, name, units, value){
 		sumParam(value + '', result, 'mms_left', null, null, parseBalance, aggregate_sum);
 	}else if(/минут/i.test(bigname)){
 		sumParam(value + '', result, 'min_left', null, [/[\.,].*/, ''], parseBalance, aggregate_sum);
-	}else if(/[гкмgkm][бb]/i.test(bigname)){
+	}else if(/[гкмgkm][бb]/i.test(bigname) || /интернет/i.test(name)){
 		var night = /ноч/i.test(bigname) ? '_night' : '';
 		sumParam(value + 'мб', result, 'internet_trafic' + night, null, null, parseTraffic, aggregate_sum);
 	}else{

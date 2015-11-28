@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="2">ab-transport-avtodor</id>
+  <id version="3">ab-transport-avtodor</id>
   <!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
   <api flags="no_browser" />
   <name>Автодор</name>
@@ -12,6 +12,7 @@
     Для возможности проверки баланса текущего счета необходимо завершить регистрацию своего профиля и ввести в соответствующее поле формы сайта компании номер Договора, заключенного при приобретении электронного средства проезда.
   </description>
   <author>Alexandra Shalamova &lt;alexandrashalamova@gmail.com&gt;</author>
+	<author>d3vil-st &lt;d3vil.st@gmail.com&gt;</author>
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
@@ -24,6 +25,7 @@
     <counter id="fio" name="ФИО" type="text"/>
     <counter id="number" name="Договор" type="text"/>
     <counter id="email" name="Email (логин)" type="text"/>
+    <counter id="bonus" name="Бонусные баллы"/>
   </counters>
   <keywords>
     avtodor

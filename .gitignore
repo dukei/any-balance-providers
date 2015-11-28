@@ -4,3 +4,5 @@ _packsend.bat
 provider.zip
 packsend.bat
 debug
+/nbproject/private/
+/nbproject

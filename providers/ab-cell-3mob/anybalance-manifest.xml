@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="7">ab-cell-3mob</id>
+	<id version="8">ab-cell-3mob</id>
 	<api flags="no_browser"/>
 	<name>3Mob</name>
 	<description html="true"><![CDATA[
@@ -38,7 +38,7 @@
 		<counter id="internet_local_termin" name="Срок действия интернета внутри сети" type="time" format="dd/MM/yyyy HH:mm:ss"/>
 		<counter id="internet_roam_termin" name="Срок действия интернета внутри сети и нац. роуминге" type="time" format="dd/MM/yyyy HH:mm:ss"/>
 		<counter id="internet_roaming_termin" name="Срок действия интернета в нац. роуминге" type="time" format="dd/MM/yyyy HH:mm:ss"/>
-		<counter id="internet_roaming_termin" name="Срок действия безлимита" type="time" format="dd/MM/yyyy HH:mm:ss"/>
+		<counter id="internet_bezlim_termin" name="Срок действия безлимита" type="time" format="dd/MM/yyyy HH:mm:ss"/>
 		<counter id="internet_action_termin" name="Срок действия интернета акционного" type="time" format="dd/MM/yyyy HH:mm:ss"/>
 		<counter id="balance_sms_termin" name="Срок действия SMS" type="time" format="dd/MM/yyyy HH:mm:ss"/>
 		<counter id="money_transfer_termin" name="Срок действия денежного перевода" type="time" format="dd/MM/yyyy HH:mm:ss"/>

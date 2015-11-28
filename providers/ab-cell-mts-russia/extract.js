@@ -645,16 +645,24 @@ function mainLK(html, result) {
         AnyBalance.trace('Пропускаем получение данных из ЛК, если требуется информация по другому номеру');
     }
 
-    if (isAnotherNumber() || isAvailableStatus()) {
-        var ret = followIHLink();
-        html = ret.html;
-
-        if (!isInOrdinary(html)) { //Тупой МТС не всегда может перейти из личного кабинета в интернет-помощник :(
-            var error = getElement(html, /<div[^>]+class="b(?:-page)?_error"[^>]*>/i, replaceTagsAndSpaces, html_entity_decode);
-            throw new AnyBalance.Error('Ошибка перехода в интернет-помощник: ' + error);
+    try{
+        if (isAnotherNumber() || isAvailableStatus()) {
+            var ret = followIHLink();
+            html = ret.html;
+        
+            if (!isInOrdinary(html)) { //Тупой МТС не всегда может перейти из личного кабинета в интернет-помощник :(
+                var error = getElement(html, /<div[^>]+class="b(?:-page)?_error"[^>]*>/i, replaceTagsAndSpaces, html_entity_decode);
+                if(!error)
+	                AnyBalance.trace(html);
+                throw new AnyBalance.Error('Ошибка перехода в интернет-помощник: ' + (error || 'вероятно, он временно недоступен') );
+            }
+        
+            fetchOrdinary(html, ret.baseurlHelper, result);
         }
-
-        fetchOrdinary(html, ret.baseurlHelper, result);
+    }catch(e){
+    	if(isAnotherNumber())
+    		throw e; //В случае требования другого номера все данные получаются только из интернет-помощника
+        AnyBalance.trace('Не удалось получить данные из ип: ' + e.message + '\n' + e.stack);
     }
 }
 

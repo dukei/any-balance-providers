@@ -46,6 +46,7 @@ function main(){
         error = getParam(html, null, null, /ctl00_ChildContent_AccountCustomValidator[^>]*>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
         if(error)
             throw new AnyBalance.Error(error, null, /пароль неверный/i.test(error));
+        AnyBalance.trace(html);
         throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
     }
 	

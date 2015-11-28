@@ -1,42 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
     <EditTextPreference 
-        title="Лицевой счет" 
+        title="Лицевой счет или имя пользователя" 
         positiveButtonText="ОК" 
         summary="||{@s}" 
-        dialogTitle="Лицевой счет" 
+        dialogTitle="Лицевой счет или имя пользователя" 
         negativeButtonText="Отмена" 
-        dialogMessage="Введите номер лицевого счета."
-        inputType="text"
-        key="abonentid">
-    </EditTextPreference>
-    <EditTextPreference 
-        title="Фамилия" 
-        positiveButtonText="ОК" 
-        summary="||{@s}" 
-        dialogTitle="Фамилия" 
-        negativeButtonText="Отмена" 
-        dialogMessage="Введите Фамилию абонента."
-        inputType="text"
-        key="fam">
-    </EditTextPreference>
-    <EditTextPreference 
-        title="Имя пользователя" 
-        positiveButtonText="ОК" 
-        summary="||{@s}" 
-        dialogTitle="Имя пользователя" 
-        negativeButtonText="Отмена" 
-        dialogMessage="Введите имя пользователя."
+        dialogMessage="Лицевой счет или имя пользователя."
         inputType="text"
         key="login">
     </EditTextPreference>
     <EditTextPreference 
-        title="Пароль" 
+        title="Фамилия или пароль" 
         positiveButtonText="ОК" 
         summary="||{@s}" 
-        dialogTitle="Пароль" 
+        dialogTitle="Фамилия или пароль" 
         negativeButtonText="Отмена" 
-        dialogMessage="Введите пароль."
+        dialogMessage="Введите вашу фамилию или пароль. Будьте внимательны, фамилию допустимо вводить только если вы ввели Лицевой счет в поле выше и в вашем кабинете разрешен вход по лицевому счету и фамилии"
         inputType="textPassword"
         key="password">
     </EditTextPreference>	

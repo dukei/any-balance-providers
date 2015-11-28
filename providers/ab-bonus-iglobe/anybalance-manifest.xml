@@ -1,13 +1,13 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-bonus-iglobe</id>
+	<id version="3">ab-bonus-iglobe</id>
 	<api flags="no_browser"/>
 	<name>iGlobe (Мили)</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию об остатке миль в системе iGlobe http://iglobe.ru</p>
-	<p>Информация берется из личного кабинета http://iglobe.ru/travelmiles/info/service</p>
+	<p>Предоставляет информацию об остатке миль в системе iGlobe <a href="http://iglobe.ru">http://iglobe.ru</a></p>
+	<p>Информация берется из личного кабинета <a href="http://iglobe.ru/travelmiles/info/service">http://iglobe.ru/travelmiles/info/service</a></p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<author>d3vil-st &lt;d3vil.st@gmail.com&gt;</author>
 	<files>
 		<icon>icon.png</icon>

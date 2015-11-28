@@ -163,12 +163,15 @@ function doNewAccount(page) {
 				throw new AnyBalance.Error(error);
 		}
 
-		if(!/accountSecurity.do/i.test(html))
-			html = getLoggedInHtml();
-
 		if(!/accountSecurity.do/i.test(html)){
-			AnyBalance.trace(html);
-			throw new AnyBalance.Error('Не удалось зайти в Cбербанк-онлайн. Сайт изменен?');
+			var html1 = getLoggedInHtml();
+
+			if(!/accountSecurity.do/i.test(html1)){
+				AnyBalance.trace(html);
+				throw new AnyBalance.Error('Не удалось зайти в Cбербанк-онлайн. Сайт изменен?');
+			}
+
+			html = html1;
 		}
 
 	} else {

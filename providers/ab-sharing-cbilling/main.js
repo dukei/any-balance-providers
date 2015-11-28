@@ -17,10 +17,7 @@ function main() {
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 	
-	//if(!prefs.dbg) {
 	var html = AnyBalance.requestGet(baseurl + '?mode=auth', g_headers);
-		
-	
 	
 	var captchaa;
 	if(AnyBalance.getLevel() >= 7){

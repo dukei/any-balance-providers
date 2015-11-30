@@ -18,19 +18,23 @@ function main() {
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 	
-	var html = AnyBalance.requestGet(baseurl, g_headers);
+	var html = AnyBalance.requestGet(baseurl + '/profile/index.php', g_headers);
 	
-	if(!html || AnyBalance.getLastStatusCode() > 400){
+	if(!html || AnyBalance.getLastStatusCode() > 400) {
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
 	}
 
-	while (prefs.login.length < 7)
-	{
-		prefs.login = '0'+prefs.login;
+	while (prefs.login.length < 7) 
+		prefs.login = '0' + prefs.login;
+	
+	var form = getParam(html, null, null, /<form id="auth_f"[\s\S]*?<\/form>/i);
+	if(!form) {
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удалось найти форму входа, сайт изменён?');
 	}
 
-	var params = createFormParams(html, function(params, str, name, value) {
+	var params = createFormParams(form, function(params, str, name, value) {
 		if (name == 'USER_LOGIN')
 			return prefs.login;
 		else if (name == 'USER_PASSWORD')
@@ -38,50 +42,45 @@ function main() {
 		return value;
 	});
 	
-	html = AnyBalance.requestPost(baseurl + '/index.php?login=yes', {
-		backurl: params.backurl,
-		AUTH_FORM: params.AUTH_FORM,
-		TYPE: params.TYPE,
-		USER_CITY: params.USER_CITY,
-		USER_LOGIN: prefs.login,
-		USER_PASSWORD: prefs.password
-	}, addHeaders({Referer: baseurl}));
+	html = AnyBalance.requestPost(baseurl + '/profile/index.php?login=yes', params, addHeaders({Referer: baseurl}));
 	
 	if (!/text-lk-out/i.test(html)) {
 		var error = getParam(html, null, null, /<font[^>]+class="errortext"[^>]*>([\s\S]*?)<\/font>/i, replaceTagsAndSpaces, html_entity_decode);
 		if (error)
 			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
+		
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменён?');
 	}
 	
 	var result = {success: true};
-	html = AnyBalance.requestGet(baseurl+'/profile/index.php', g_headers);
-
-	var hrefTarifInfo = getParam(html, null, null, /urlt = "([\s\S]*?)"/i, replaceTagsAndSpaces, html_entity_decode);
-	var hrefUserInfo = getParam(html, null, null, /url: '(\/bitrix\/components\/dv\/kabinet\.tv\/json_ajax.php\?fio[^']*)'/i, replaceTagsAndSpaces, html_entity_decode);
-
+	
+	var hrefTarifInfo = getParam(html, null, null, /urlt\s*=\s*"([\s\S]*?)"/i, replaceTagsAndSpaces, html_entity_decode);
+	var hrefUserInfo = getParam(html, null, null, /url:\s*'(\/bitrix\/components\/dv\/kabinet\.tv\/json_ajax.php\?fio[^']*)'/i, replaceTagsAndSpaces, html_entity_decode);
+	
 	var json = requestGetJson(baseurl, hrefUserInfo, /\(([\s\S]*?)\)/i);
-
+	
 	if (!isArray(json) || json.length == 0)
 		throw new AnyBalance.Error('Не удалось найти информацию о пользователе, сайт изменён?');
-
+	
 	getParam(json[0].FIO, result, "fio", null, replaceTagsAndSpaces, html_entity_decode);
 	if(json[0].KARTA)
-		getParam(json[0].KARTA+'', result, "card", null, replaceTagsAndSpaces, html_entity_decode);
-	getParam(json[0].DOGOVOR_NO+'', result, "agreementID", null, replaceTagsAndSpaces, html_entity_decode);
-	getParam(json[0].ACCOUNT_NO+'', result, "accountNumber", null, replaceTagsAndSpaces, html_entity_decode);
-	getParam(json[0].BALANS*(-1), result, "balance");
+		getParam(json[0].KARTA, result, "card", null, replaceTagsAndSpaces, html_entity_decode);
+	
+	getParam(json[0].DOGOVOR_NO, result, "agreementID", null, replaceTagsAndSpaces, html_entity_decode);
+	getParam(json[0].ACCOUNT_NO, result, "accountNumber", null, replaceTagsAndSpaces, html_entity_decode);
+	getParam(json[0].BALANS*-1, result, "balance");
 
-
-	html= AnyBalance.requestGet(baseurl+hrefTarifInfo, g_headers);
+	html= AnyBalance.requestGet(baseurl + hrefTarifInfo, g_headers);
+	
 	getParam(html, result, 'tarifTV', /checked="checked"[^>]*>[\s\S]*?<input[^>]+value="([\s\S]+?)\-/i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(html, result, 'costTV', /checked="checked"[^>]*>[\s\S]*?<input[^>]+value="[^\d]+(\d+[.,]\d+)/i, replaceTagsAndSpaces, parseBalance);
+	
+	// html = AnyBalance.requestGet(baseurl + '/profile/index.php?logout=yes', g_headers);
 
 	AnyBalance.setResult(result);
 }
+
 function requestGetJson(baseurl, href, regex) {
-	return getJson(
-		getParam(AnyBalance.requestGet(baseurl+href), null, null, regex)
-	);
+	return getParam(AnyBalance.requestGet(baseurl + href), null, null, regex, null, getJson);
 }

@@ -1,7 +1,6 @@
 ﻿/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 */
-
 var g_headers = {
 	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
 	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/46.0.2490.86 Safari/537.36',
@@ -13,7 +12,6 @@ function main() {
 	var prefs = AnyBalance.getPreferences();
 	var baseurl = 'https://www.smartutilities.com.mt';
 	AnyBalance.setDefaultCharset('utf-8');
-	
 	checkEmpty(prefs.userid, 'Input user ID');
 	checkEmpty(prefs.password, 'Input password');
 	

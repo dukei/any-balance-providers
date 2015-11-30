@@ -54,14 +54,14 @@ function main() {
 	
 	getParam(html, result, 'contractno', /id="contractNo"[\s\S]*<option[^>]*selected[^>]+>(\d+)[\s\S]*<\/option>/i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(html, result, 'contractaddress', /id="contractNo"[\s\S]*<option[^>]*selected[^>]+>\d+[^,]*,([\s\S]*)<\/option>/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'totalbalance', /You have a total due of[\s\S]*?in/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'date', /PA_LastBills([\s\S]*?<\/td>){2}/i, replaceTagsAndSpaces, parseDateWord);
-	getParam(html, result, 'datedue', /PA_LastBills([\s\S]*?<\/td>){3}/i, replaceTagsAndSpaces, parseDateWord);
-	getParam(html, result, 'billnumber', /PA_LastBills([\s\S]*?<\/td>){6}/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'billed', /PA_LastBills([\s\S]*?<\/td>){7}/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'status', /PA_LastBills([\s\S]*?<\/td>){9}/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'daysoverdue', /PA_LastBills([\s\S]*?<\/td>){10}/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'interestacc', /PA_LastBills([\s\S]*?<\/td>){11}/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'totalbalance', /You have a total due of([\s\S]*?)in/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'date', /<table class="resume">(?:[\s\S]*?<td>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDateWord);
+	getParam(html, result, 'datedue', /<table class="resume">(?:[\s\S]*?<td>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDateWord);
+	getParam(html, result, 'billnumber', /<table class="resume">(?:[\s\S]*?<td>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'billed', /<table class="resume">(?:[\s\S]*?<td>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'status', /<table class="resume">(?:[\s\S]*?<td>){6}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'daysoverdue', /<table class="resume">(?:[\s\S]*?<td>){7}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'interestacc', /<table class="resume">(?:[\s\S]*?<td>){8}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 	
 	AnyBalance.setResult(result);
 }

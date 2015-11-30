@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-bonus-adamas</id>
+	<id version="3">ab-bonus-adamas</id>
 	<api flags="no_browser"/>
-	<name>Адамас</name>
+	<name>Адамас (Бонусы)</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе провайдера Адамас <a href="http://www.adamas.ru/">http://www.adamas.ru/</a></p>
 	<p>Информация берется из личного кабинета</p>
@@ -16,11 +16,11 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Бонус" units=" р"/>
-		<counter id="fio" name="ФИО" type="text"/>
-		<counter id="phone" name="Телефон" type="text"/>
+		<counter id="balance" name="Бонусы" units=" р"/>
 		<counter id="discount" name="Скидка" units=" %"/>
 		<counter id="cardNumber" name="Номер карты" type="text"/>
+		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="phone" name="Телефон" type="text"/>
 	</counters>
 	<keywords>ювелирные украшения</keywords>
 	<type>bonus</type>

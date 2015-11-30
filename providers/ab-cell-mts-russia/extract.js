@@ -366,7 +366,7 @@ function checkLoginState(html, loginUrl, options) {
     if (/checkAuthStatus\(\)|дождитесь окончания процесса авторизации/i.test(html)) {
         var json = {}, tries = 20;
         while (json.Data != 'Success' && tries-- > 0) {
-            json = AnyBalance.requestGet(g_baseurl + '/WaitAuth/CheckAuth', addHeaders({Referer: g_baseurl + '/waitauth?goto=http://lk.ssl.mts.ru/'}));
+            json = AnyBalance.requestGet(g_baseurl + '/WaitAuth/CheckAuth?_=' + new Date().getTime(), addHeaders({Referer: g_baseurl + '/waitauth?goto=http://lk.ssl.mts.ru/'}));
             json = getJson(json);
 
             if (json.Data == 'Success')
@@ -376,6 +376,7 @@ function checkLoginState(html, loginUrl, options) {
         }
         // Если прождали авторизацию, а она так и не произошла надо об этом явно сообщить
         if (json.Data != 'Success') {
+        	AnyBalance.trace('Слишком долго ждали авторизацию: ' + JSON.stringify(json));
             if (options && options.automatic) {
                 //Это была попытка автоматического входа. Раз он не получился, давайте попробуем по логину и паролю
                 AnyBalance.trace('МТС не пустил нас в ЛК после ожидания авторизации. Ладно, попробуем с логином и паролем войти.');

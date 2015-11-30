@@ -39,28 +39,22 @@ function main() {
 	
 	html = AnyBalance.requestPost(baseurl, data, addHeaders({Referer: baseurl}));
 	
-	var error = getParam(html, null, null, /(Неправильный пароль)/i, replaceTagsAndSpaces, html_entity_decode);
-	
-	//console.log("error: " + error);
-	
-	if (error) {
-		//AnyBalance.requestGet(baseurl + 'xml/main/logout.php?do=logout');
-		throw new AnyBalance.Error(error, false, true);
+	if (!/logout/i.test(html)) {
+		var error = getParam(html, null, null, /(Неправильный пароль)/i, replaceTagsAndSpaces, html_entity_decode);
+		if (error) {
+			throw new AnyBalance.Error(error, false, true);
+		}
+		
+		var errCode = getParam(html, null, null, /(Неправильный код)/i, replaceTagsAndSpaces, html_entity_decode);
+		if(errCode) {
+			throw new AnyBalance.Error(errCode, true, true);
+		}
+		
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
 	
-	var errCode = getParam(html, null, null, /(Неправильный код)/i, replaceTagsAndSpaces, html_entity_decode);
-	if(errCode) {
-		throw new AnyBalance.Error(errCode, true, true);
-	}
-	//console.log("errCode: " + errCode);
-	/*if(errCode) {
-		var captchaimg = AnyBalance.requestGet(baseurl + 'cls/common/code.php');
-		var value = AnyBalance.retrieveCode("Пожалуйста, введите код с картинки.", captchaimg, {inputType: 'text'});
-		AnyBalance.trace("Capche value: " + value);
-		data.Code = value;
-		AnyBalance.trace("data: " + data.auth_name + "  " + data.auth_pass + "   " + data.Code);
-		html = AnyBalance.requestPost(baseurl, data);
-	}*/
+		
 	
 	//var levelReg = /Уровень:.*?>[^>\d]*?(\d+)[^<\d]*?</i;
 	var levelReg = /Уровень:([\s\S]+?)<\/td>/i;

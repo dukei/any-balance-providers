@@ -5,8 +5,11 @@
 	<name>Automated Revenue Management Services</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о платежах через систему ARMS <a href="https://www.smartutilities.com.mt/wps/portal/">https://www.smartutilities.com.mt/wps/portal/</a></p>
-	<p>Информация берется из личного кабинета <a href="https://www.smartutilities.com.mt/wps/portal/Public%20Area/wps.Login/!ut/p/b1/04_SjzQysDAxMzCwsDTTj9CPykssy0xPLMnMz0vMAfGjzOKd3Y0CzYzdfMwCzZ1dDRxNzHxdXPzDjAw8jYAKIoEKDHAARwNC-sP1o6BKHD1MzH2ArvBxNzXwdPQIDbIMNDY2cDSGKsBjhZ9Hfm6qfm5UjqWnrqMiAM-RTuA!/dl4/d5/L2dJQSEvUUt3QS80SmtFL1o2X0NHQUg0N0wwMDhMRzUwSUFIVVI5UTMzMEU3/">https://www.smartutilities.com.mt/wps/portal/Public%20Area/wps.Login/!ut/p/b1/04_SjzQysDAxMzCwsDTTj9CPykssy0xPLMnMz0vMAfGjzOKd3Y0CzYzdfMwCzZ1dDRxNzHxdXPzDjAw8jYAKIoEKDHAARwNC-sP1o6BKHD1MzH2ArvBxNzXwdPQIDbIMNDY2cDSGKsBjhZ9Hfm6qfm5UjqWnrqMiAM-RTuA!/dl4/d5/L2dJQSEvUUt3QS80SmtFL1o2X0NHQUg0N0wwMDhMRzUwSUFIVVI5UTMzMEU3/</a></p>
+	<p>Информация берется из личного кабинета <a href="https://www.smartutilities.com.mt/wps/myportal/">https://www.smartutilities.com.mt/wps/myportal/</a></p>
 	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Если у вас нет доступа в Личный кабинет, получите его на странице https://www.smartutilities.com.mt/wps/portal/</p>
+	]]></instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>

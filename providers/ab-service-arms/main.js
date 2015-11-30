@@ -1,49 +1,57 @@
-﻿﻿/**
+﻿/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 */
 
 var g_headers = {
-	'Connection': 'keep-alive',
 	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
 	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/46.0.2490.86 Safari/537.36',
-	'Content-Type': 'application/x-www-form-urlencoded',
-	'Accept-Encoding': 'gzip, deflate',
-	'Accept-Language': 'en-US,en;q=0.8'
+	'Connection': 'keep-alive',
+	'Accept-Language': 'en-US,en;q=0.8',
 };
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'https://www.smartutilities.com.mt/wps/';
+	var baseurl = 'https://www.smartutilities.com.mt';
 	AnyBalance.setDefaultCharset('utf-8');
 	
 	checkEmpty(prefs.userid, 'Input user ID');
 	checkEmpty(prefs.password, 'Input password');
 	
-	var html = AnyBalance.requestGet(baseurl + 'portal/Public%20Area/wps.Login/!ut/p/b1/04_Sj9CPykssy0xPLMnMz0vMAfGjzOKd3Y0CzYzdfMwCzZ1dDRxNzHxdXPzDjAw8jYAKIoEKDHAARwNC-sP1o6BKHD1MzH0MDCx83E0NPB09QoMsA42NDRyNoQrwWOHnkZ-bql-QG2GQZeKoCABxOILM/dl4/d5/L2dJQSEvUUt3QS80SmtFL1o2X0NHQUg0N0wwMDhMRzUwSUFIVVI5UTMzMEU3/', g_headers);
+	var html = AnyBalance.requestGet(baseurl + '/wps/myportal', g_headers);
 	
-	if(!html || AnyBalance.getLastStatusCode() > 400)
+	if(!html || AnyBalance.getLastStatusCode() > 400){
+		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
+	}
 	
-    var params = {
-		'wps.portlets.userid': prefs.userid,
-		'password': prefs.password,
-		'ns_Z7_CGAH47L008LG50IAHUR9Q330U1__login': 'Log in'
-    };
-    var loginurl = 'portal/Public%20Area/wps.Login/!ut/p/b1/04_Sj9CPykssy0xPLMnMz0vMAfGjzOKd3R09TMx9DAwsfNxNDTwdPUKDLAONjQ1czYEKIoEKDHAARwOofqNAM2M3H7NAc2dXA0cTM18XF_8wIwNPI6h-XBY4GhNnPx4LCOgP14_CqwTkArACPF7088jPTdUvyA0NjTDIMgEAMTbqew!!/dl4/d5/L0lDUWtpQ1NZSkNncFJBISEvb0VvZ0FFQ1FRREdJUXBTR0djRndUT0EhLzRHMGhSQjdRUjM1UWhTWkNuNnBoL1o3X0NHQUg0N0wwMDhMRzUwSUFIVVI5UTMzMFUxLzAvd3BzLnBvcnRsZXRzLmxvZ2lu/';
-	html = AnyBalance.requestPost(baseurl + loginurl, params);
+	var form = getParam(html, null, null, /<form[^>]*name="LoginForm[\s\S]*?<\/form>/i);
+	var action = getParam(form, null, null, /action="([^"]+)/i);
+	if(!form || !action) {
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удалось найти форму входа, сайт изменен?');
+	}
 
-	if (!/Выход из системы/i.test(html) && !/Log out/i.test(html)) {
+	var params = createFormParams(form, function(params, str, name, value) {
+		if (name == 'wps.portlets.userid') 
+			return prefs.userid;
+		else if (name == 'password')
+			return prefs.password;
+		return value;
+	});
+	
+	html = AnyBalance.requestPost(baseurl + action, params, addHeaders({'Referer': baseurl + action}));
+	
+	if (!/Выход из системы|Log out/i.test(html)) {
 		var error = getParam(html, null, null, /class="wpsFieldSuccessText"[^>]*>([\s\S]*?<\/span>)/i, replaceTagsAndSpaces, html_entity_decode);
 		if (error)
-			throw new AnyBalance.Error(error, null, true);
+			throw new AnyBalance.Error(error, null, /Please enter a valid user ID and password/i.test(error));
+		
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
-	// Успешно вошли в систему - можно перейти на страницу с основной информацией    
-	html = AnyBalance.requestGet(baseurl + 'myportal/!ut/p/b1/04_Sj9CPykssy0xPLMnMz0vMAfGjzOKd3Y0CzYzdfMw8Q11dDBxNfENcQr19DA28zfULsh0VAWCRPls!/');
 
 	var result = {success: true};
-
+	
 	getParam(html, result, 'contractno', /id="contractNo"[\s\S]*<option[^>]*selected[^>]+>(\d+)[\s\S]*<\/option>/i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(html, result, 'contractaddress', /id="contractNo"[\s\S]*<option[^>]*selected[^>]+>\d+[^,]*,([\s\S]*)<\/option>/i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(html, result, 'totalbalance', /You have a total due of[\s\S]*?in/i, replaceTagsAndSpaces, parseBalance);

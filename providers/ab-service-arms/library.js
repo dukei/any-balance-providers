@@ -17,8 +17,7 @@ if(a){j=a(j)
 }break
 }}return j
 }function checkEmpty(c,b,a){if(!c){throw new AnyBalance.Error(b,null,!a)
-}}
-function __getParName(b){var a=isArray(b)?b[0]:b;
+}}function __getParName(b){var a=isArray(b)?b[0]:b;
 return a&&a.substr(a.lastIndexOf(".")+1)
 }function isAvailable(c){if(!c){return true
 }var b=isArray(c),a="__tariff";
@@ -247,9 +246,4 @@ for(i=0;
 i<a.length;
 i++){b+=a[i].substring(0,1).toUpperCase()+a[i].substring(1)+" "
 }return b.replace(/^\s+|\s+$/g,"")
-}function setCountersToNull(b){var a=AnyBalance.getAvailableCounters();
-for(var c=0;
-c<a.length;
-++c){if(a[c]!=="--auto--"&&!isset(b[a[c]])){b[a[c]]=null
-}}if(!isset(b.__tariff)){b.__tariff=null
-}};
+};

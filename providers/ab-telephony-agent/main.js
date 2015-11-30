@@ -10,14 +10,35 @@ var g_headers = {
 	'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/30.0.1599.101 Safari/537.36'
 };
 
-
 function main(){
     var prefs = AnyBalance.getPreferences();
 	checkEmpty(prefs.login, 'Введите е-мейл для входа в личный кабинет agent.mail.ru!');
-
+    var parts = prefs.login.match(/([\w-\.]+)@((?:[\w]+\.)+[a-zA-Z]{2,4})$/i);
+    if(!parts)
+         throw new AnyBalance.Error('Вы ввели неправильный е-мейл для входа на agent.mail.ru.', null, true);
+	
+    var baseurlLogin = "https://auth.mail.ru/cgi-bin/auth";
     var baseurl = "https://agent.mail.ru/";
 	
-	var html = loginMailRu(baseurl);
+    AnyBalance.setDefaultCharset('utf-8');
+	
+    var html = AnyBalance.requestPost(baseurlLogin + '?lang=ru_RU&from=authpopup', {
+        page:baseurl,
+        FailPage:'',
+        Login:prefs.login,
+        Domain:parts[2].toLowerCase(),
+        Password:prefs.password,
+        new_auth_form:1
+    });
+	
+	if(AnyBalance.getLastUrl().indexOf(baseurl) != 0){
+		var error = getParam(html, null, null, /<div[^>]+login-page__external_error[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+		if(error)
+			throw new AnyBalance.Error(error, null, /Неверное имя пользователя или пароль/i.test(error));
+		AnyBalance.trace(html);
+        throw new AnyBalance.Error('Не удалось войти в личный кабинет. Неправильный логин-пароль?');
+    }
+	
     html = AnyBalance.requestGet(baseurl + 'phonecalls/cabinet/settings');
 	
     var result = {success: true};

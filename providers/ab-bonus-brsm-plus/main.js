@@ -36,12 +36,8 @@ function main() {
 	
 	var result = {success: true};
 	
-	var discAll = getElement(html, /Накопичено балів\s*<\/div>\s*<div class="disc_all">/i);
-	var discNext = getElement(html, /<div class="disc_next">/i);
-	
-	getParam(discAll, result, 'balance', null, [/\D/ig, ''], parseBalance);
-	
-	getParam(discNext, result, 'next', /([\s\S]*?)балів/i, [/\D/ig, ''], parseBalance);
+	getParam(html, result, 'balance', /Всього балів[^>]*>[^>]*discount_all[^>]*>([\s\S]*?)<div class="clear"/i, [/\D/ig, ''], parseBalance);
+	getParam(html, result, 'next', /До наступного рівня[^>]*>[^>]*discount_next[^>]*>([\s\S]*?)<div class="clear"/i, [/\D/ig, ''], parseBalance);
 	
 	AnyBalance.setResult(result);
 }

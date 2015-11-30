@@ -30,15 +30,13 @@ function main(){
 	
 	html = AnyBalance.requestPost(baseurl + 'login', params, addHeaders({Referer: baseurl + 'login'})); 
 
-    if(!/logout|changePasswordTextBtn|fa-sign-out/i.test(html)){
-        var error = getParam(html, null, null, /<div[^>]+text-error[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+    if(!/logout/i.test(html)){
+        var error = getParam(html, null, null, /msg"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
         if(error)
-            throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
+            throw new AnyBalance.Error(error);
 		
-		AnyBalance.trace(html);
         throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
     }
-
 	AnyBalance.trace('Авторизация выполнена, начинаю парсить'); 
     html = AnyBalance.requestGet('https://portal.1c.ru/subscription/contract/list', g_headers);
 	

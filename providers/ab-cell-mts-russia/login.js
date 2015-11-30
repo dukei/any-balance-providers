@@ -1,17 +1,9 @@
 var g_baseurlLogin = 'https://login.mts.ru';
 
 function checkLoginError(html, loginUrl) {
-	function processError(html){
-        var error = sumParam(html, null, null, /var\s+(?:passwordErr|loginErr)\s*=\s*'([^']*)/g, replaceSlashes, null, aggregate_join);
-        if (error)
-            throw new AnyBalance.Error(error, null, /Неверный пароль/i.test(error));
-
-        var error = getElement(html, /<div[^>]+b-page_error__msg[^>]*>/, replaceTagsAndSpaces, html_entity_decode);
-        if(error)
-        	throw new AnyBalance.Error(error);
-	}
-
-    processError(html);
+    var error = sumParam(html, null, null, /var\s+(?:passwordErr|loginErr)\s*=\s*'([^']*)/g, replaceSlashes, null, aggregate_join);
+    if(error)
+    	throw new AnyBalance.Error(error, null, /Неверный пароль/i.test(error));
     var img = getParam(html, null, null, /<img[^>]+id="kaptchaImage"[^>]*src="data:image\/\w+;base64,([^"]+)/i, null, html_entity_decode);
 
 	if(img) {
@@ -37,7 +29,9 @@ function checkLoginError(html, loginUrl) {
             throw new AnyBalance.Error("Ошибка на сервере МТС при попытке зайти, сервер не смог обработать запрос! Можно попытаться позже...", allowRetry);
 
         if(AnyBalance.getLastUrl().indexOf(g_baseurlLogin) == 0) { //Если нас не переадресовали, значит, случилась ошибка
-        	processError(html);
+            var error = sumParam(html, null, null, /var\s+(?:passwordErr|loginErr)\s*=\s*'([^']*)/g, replaceSlashes, null, aggregate_join);
+            if (error)
+                throw new AnyBalance.Error(error, null, /Неверный пароль/i.test(error));
         }
     }
 
@@ -106,7 +100,7 @@ function enterMTS(options){
 
     if(AnyBalance.getLastUrl().indexOf(g_baseurlLogin) == 0){
         AnyBalance.trace(html);
-        throw new AnyBalance.Error('Не удаётся зайти в личный кабинет. Он изменился или проблемы на сайте.', allowRetry);
+        throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Он изменился или проблемы на сайте.', allowRetry);
     }
 
     return html;

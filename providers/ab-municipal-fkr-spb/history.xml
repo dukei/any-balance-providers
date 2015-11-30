@@ -1,9 +1,0 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<history>
-	<change version="2" date="2015-11-20">
-	- Исправлены ошибки, мешающие получения информации
-	</change>
-	<change version="1" date="2015-11-17">
-	Первая версия провайдера
-	</change>
-</history>

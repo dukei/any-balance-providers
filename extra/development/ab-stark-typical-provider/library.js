@@ -65,25 +65,23 @@ if(d.hasOwnProperty(f)){return String.fromCharCode(d[f])
 }}else{if(!b){if(/^\d+$/.test(a)){return String.fromCharCode(parseInt(a))
 }}else{if(/^[0-9a-f]+$/i.test(a)){return String.fromCharCode(parseInt(a,16))
 }}}return e
-}function createFormParams(k,b,l){var g=l?[]:{},j=/value\s*=\s*("[^"]*"|'[^']*'|[\w\-\/\\]+)/i,m=[/^"([^"]*)"$|^'([^']*)'$/,"$1$2"],a,q=/<input[^>]+name\s*=\s*("[^"]*"|'[^']*'|[\w\-\/\\]+)[^>]*>|<select[^>]+name\s*=\s*("[^"]*"|'[^']*'|[\w\-\/\\]+)[^>]*>[\s\S]*?<\/select>/ig,h=null;
-while(true){var f=q.exec(k);
-if(!f){break
-}var n=f[0],e=f[1],o=f[2],p="";
-if(e){if(/type\s*=\s*['"]?button['"]?/i.test(n)){p=undefined
-}else{if(/type\s*=\s*['"]?checkbox['"]?/i.test(n)){p=/[^\w\-]checked[^\w\-]/i.test(n)?getParam(n,h,h,j,m,html_entity_decode)||"on":undefined
-}else{p=getParam(n,h,h,j,m,html_entity_decode)||""
-}}a=replaceAll(e,m)
-}else{if(o){var c=getParam(n,h,h,/^<[^>]*>/i);
-p=getParam(c,h,h,j,m,html_entity_decode);
-if(typeof(p)=="undefined"){var d=getParam(n,h,h,/(<option[^>]+selected[^>]*>)/i);
-if(!d){d=getParam(n,h,h,/(<option[^>]*>)/i)
-}if(d){p=getParam(d,h,h,j,m,html_entity_decode)
-}}a=replaceAll(o,m)
-}}a=html_entity_decode(a);
-if(b){p=b(g,n,a,p)
-}if(typeof(p)!="undefined"){if(l){g.push([a,p])
-}else{g[a]=p
-}}}return g
+}function createFormParams(a,b,d){var c=d?[]:{};
+a.replace(/<input[^>]+name=['"]([^'"]*)['"][^>]*>|<select[^>]+name=['"]([^'"]*)['"][^>]*>[\s\S]*?<\/select>/ig,function(j,f,g){var e="";
+if(f){if(/type=['"]button['"]/i.test(j)){e=undefined
+}else{if(/type=['"]checkbox['"]/i.test(j)){e=/[^\w]checked[^\w]/i.test(j)?getParam(j,null,null,/value=['"]([^'"]*)['"]/i,null,html_entity_decode)||"on":undefined
+}else{e=getParam(j,null,null,/value=['"]([^'"]*)['"]/i,null,html_entity_decode)||""
+}}name=f
+}else{if(g){e=getParam(j,null,null,/^<[^>]*value=['"]([^'"]*)['"]/i,null,html_entity_decode);
+if(typeof(e)=="undefined"){var h=getParam(j,null,null,/(<option[^>]+selected[^>]*>)/i);
+if(!h){h=getParam(j,null,null,/(<option[^>]*>)/i)
+}if(h){e=getParam(h,null,null,/value=['"]([^'"]*)["']/i,null,html_entity_decode)
+}}name=g
+}}name=html_entity_decode(name);
+if(b){e=b(c,j,name,e)
+}if(typeof(e)!="undefined"){if(d){c.push([name,e])
+}else{c[name]=e
+}}});
+return c
 }function parseDate(f,a){var d=/(?:(\d+)[^\d])?(\d+)[^\d](\d{2,4})(?:[^\d](\d+):(\d+)(?::(\d+))?)?/.exec(f);
 if(d){var c=+d[3];
 var b=new Date(c<1000?2000+c:c,d[2]-1,+(d[1]||1),d[4]||0,d[5]||0,d[6]||0);

@@ -1,8 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
-	<change version="9" date="2015-11-19">
-	Исправлен механизм первичной привязки карты
-	</change>
 	<change version="8" date="2015-11-16">
 	- Исправлена ошибка.
 	</change>

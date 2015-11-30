@@ -14,26 +14,31 @@ function main() {
 	var prefs = AnyBalance.getPreferences();
 	var baseurl = 'http://www.iglobe.ru/';
 	AnyBalance.setDefaultCharset('utf-8');
-
+	
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
-
+	
 	var html = AnyBalance.requestGet(baseurl + 'travelmiles/info/service', g_headers);
-
-	html = AnyBalance.requestPost(baseurl + 'cabinet_login?next=cabinet/booking', {
+	
+	html = AnyBalance.requestPost(baseurl + 'xml/auth', {
 		usr: prefs.login,
 		pwd: prefs.password,
-		site_auth: 'sent',
-	}, addHeaders({Referer: baseurl + 'cabinet_login?next=cabinet/booking'}));
+		'': ''
+	}, addHeaders({Referer: baseurl + 'travelmiles/info/service'}));
 	
-	if (!/logout=yes/i.test(html)) {
+	if (!/msg="ok"/i.test(html)) {
+		var error = getParam(html, null, null, /<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
+		if (error)
+			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
+		
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
-
+	html = AnyBalance.requestGet(baseurl + 'travelmiles/info/service', g_headers);
+	
 	var result = {success: true};
-
+	
 	getParam(html, result, 'balance', /На счёте:([^>]*>){2}/i, replaceTagsAndSpaces, parseBalance);
-
+	
 	AnyBalance.setResult(result);
 }

@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="13">ab-bonus-citilink</id>
+	<id version="12">ab-bonus-citilink</id>
 	<api flags="no_browser|captcha"/>
 	<name>Ситилинк</name>
 	<description html="true"><![CDATA[

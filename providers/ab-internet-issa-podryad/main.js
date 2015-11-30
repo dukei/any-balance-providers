@@ -16,48 +16,34 @@ function main() {
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 	
-	var baseurl = "https://issa.podryad.tv/";
+	var baseurl = "http://issa.podryad.tv/";
 	AnyBalance.setDefaultCharset('utf-8');
 	
-	var html = AnyBalance.requestGet(baseurl + 'login', g_headers);
-
-	var params = createFormParams(html, function(params, str, name, value) {
-		if (/login/i.test(name)) 
-			return prefs.login;
-		else if (/password/i.test(name))
-			return prefs.password;
-
-		return value;
-	});
+	var html = AnyBalance.requestPost(baseurl + 'webexecuter', {
+		user: prefs.login,
+		pswd: prefs.password
+	}, addHeaders({Referer: baseurl + 'webexecuter'}));
 	
-	var html = AnyBalance.requestPost(baseurl + 'login', params, addHeaders({Referer: baseurl + 'webexecuter'}));
-	
-	if (!/new\s+HupoApp\s*\(\s*\{/.test(html)) {
-		var error = getParam(html, null, null, /<div[^>]+error_container[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+	if (!/\?action=Exit/i.test(html)) {
+		var error = getParam(html, null, null, /<div[^>]+id="idDiv"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
 		if (error)
-			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
+			throw new AnyBalance.Error(error);
 		
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
-
-	var json = getParam(html, null, null, /new\s+HupoApp\s*\(\s*(\{[\s\S]*?\})(?:\.data)?,\s/i, null, getJson);
-
+	
+	var href = getParam(html, null, null, /href="(\?action=ShowBalance[^"]+)/i, replaceTagsAndSpaces, html_entity_decode);
+	html = AnyBalance.requestGet(baseurl + 'webexecuter' + href, '', g_headers);
+	
 	var result = {success: true};
 	
-	getParam(json.data.personal_accounts[0].n_sum_bal, result, 'balance', null, null, parseBalance);
-	getParam(json.data.personal_accounts[0].n_recommended_pay, result, 'recommended_pay', null, null, parseBalance);
-
-	for(var i=0; i<json.data.servs.length; ++i){
-		var s = json.data.servs[i];
-		sumParam(s.n_good_sum, result, 'licenseFee', null, null, parseBalance, aggregate_sum);
-		sumParam(s.vc_name, result, '__tariff', null, null, null, aggregate_join);
-	}
-
-	getParam(json.data.personal_accounts[0].vc_account, result, 'licschet');
-	getParam(json.data.person.vc_name, result, 'fio');
-	
-	getParam(json.data.personal_accounts[0].n_last_payment_sum, result, 'last_pay', null, null, parseBalance);
-	getParam(json.data.personal_accounts[0].d_last_payment, result, 'last_pay_date', null, null, parseDateISO);
+	getParam(html, result, 'balance', /Входящий остаток на начало месяца<\/td><td>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'coming', /Приход за месяц \(всего\)<\/td><td>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'consumption', /Расход за месяц \(всего\)<\/td><td>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'working', /Наработка за месяц \(всего\)<\/td><td>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+	// getParam(html, result, 'licenseFee', /Абонентская плата<\/td><td>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'outgoing', /Исходящий остаток на конец месяца<\/td><td>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'limit', /Лимит<\/td><td>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 	
 	AnyBalance.setResult(result);
 }

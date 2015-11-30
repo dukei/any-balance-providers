@@ -88,17 +88,14 @@ function processCards(html, result) {
 }
 
 function processCard(info, result) {
-	var balance = getParam(info, null, null, /<balance>([\s\S]*?)<\/balance>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(balance, result, 'cards.balance');
+	var balance = getParam(info, result, ['cards.balance', 'cards.clearBalance'], /<balance>([\s\S]*?)<\/balance>/i, replaceTagsAndSpaces, parseBalance);
 	getParam(info, result, ['cards.currency', 'cards.balance', 'cards.minpay', 'cards.limit', 'cards.totalCreditDebtAmount', 'cards.holdedFunds'], /<currency>([\s\S]*?)<\/currency>/i, replaceTagsAndSpaces, toUpperCaseMy);
 	
 	getParam(info, result, 'cards.minpay', /<minimalCreditPayment>([\s\S]*?)<\/minimalCreditPayment>/i, replaceTagsAndSpaces, parseBalance);
 	getParam(info, result, 'cards.limit', /<creditLimit>([\s\S]*?)<\/creditLimit>/i, replaceTagsAndSpaces, parseBalance);
 	// getParam(info, result, 'cards.totalCreditDebtAmount', /<totalCreditDebtAmount>([\s\S]*?)<\/totalCreditDebtAmount>/i, replaceTagsAndSpaces, parseBalance);
 	getParam(info, result, 'cards.holdedFunds', /<holdedFunds>([\s\S]*?)<\/holdedFunds>/i, replaceTagsAndSpaces, parseBalance);
-	var type = getParam(info, null, null, /<accountType>([\s\S]*?)<\/accountType>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(type, result, 'cards.type_code');
-	
+	getParam(type, result, 'cards.type_code', /<accountType>([\s\S]*?)<\/accountType>/i, replaceTagsAndSpaces, parseBalance);
 	getParam(info, result, 'cards.type', /<type>([\s\S]*?)<\/type>/i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(info, result, 'cards.cardnum', /<number>([\s\S]*?)<\/number>/i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(info, result, 'cards.accnum', /<accountNumber>([\s\S]*?)<\/accountNumber>/i, replaceTagsAndSpaces, html_entity_decode);
@@ -117,6 +114,8 @@ function processCard(info, result) {
 	}
 	
 	// Кредитные карты
+	var type = getParam(info, null, null, /<accountType>([\s\S]*?)<\/accountType>/i, replaceTagsAndSpaces, parseBalance);
+	
 	if (type == '3' && (isAvailable(['cards.totalCreditDebtAmount', 'cards.clearBalance', 'cards.ownFunds']) || isAvailableButUnset('cards.limit') || isAvailableButUnset('cards.minpay'))) {
 		var html = AnyBalance.requestPost(baseurl + 'RCCardService', '<?xml version=\'1.0\' encoding=\'UTF-8\' standalone=\'yes\' ?><soapenv:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://entry.rconnect/xsd" xmlns:ser="http://service.rconnect" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"><soapenv:Header /><soapenv:Body><ser:getCreditStatementPeriods2><cardId>' + result.__id + '</cardId></ser:getCreditStatementPeriods2></soapenv:Body></soapenv:Envelope>', addHeaders({SOAPAction: ''}));
 		
@@ -126,27 +125,15 @@ function processCard(info, result) {
 		if(prime && id) {
 			html = AnyBalance.requestPost(baseurl + 'RCCardService', '<?xml version=\'1.0\' encoding=\'UTF-8\' standalone=\'yes\' ?><soapenv:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://entry.rconnect/xsd" xmlns:ser="http://service.rconnect" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"><soapenv:Header /><soapenv:Body><ser:getCurrentCreditStatement><cardId>' + result.__id + '</cardId><id>' + id + '</id><isPrime>' + prime + '</isPrime></ser:getCurrentCreditStatement></soapenv:Body></soapenv:Envelope>', addHeaders({SOAPAction: ''}));
 			
-			var limit = getParam(html, null, null, /<availableCreditLimit>([\s\S]*?)<\/availableCreditLimit>/i, replaceTagsAndSpaces, parseBalance);
-			var ownFunds = getParam(html, null, null, /<ownFunds>([\s\S]*?)<\/ownFunds>/i, replaceTagsAndSpaces, parseBalance);
-			
-			getParam(limit, result, 'cards.limit');
-			getParam(ownFunds, result, 'cards.ownFunds');
-			// баланс - Лимит
-			getParam(balance - limit, result, 'cards.clearBalance');
-			
+			var limit = getParam(html, result, ['cards.limit', 'cards.clearBalance'], /<availableCreditLimit>([\s\S]*?)<\/availableCreditLimit>/i, replaceTagsAndSpaces, parseBalance);
 			getParam(html, result, 'cards.totalCreditDebtAmount', /<totalDebtAmount>([\s\S]*?)<\/totalDebtAmount>/i, replaceTagsAndSpaces, parseBalance);
 			getParam(html, result, 'cards.minpay', /<minAmount>([\s\S]*?)<\/minAmount>/i, replaceTagsAndSpaces, parseBalance);
-			getParam(html, result, 'cards.gracePeriodOutstanding', /<gracePeriodOutstanding>([\s\S]*?)<\/gracePeriodOutstanding>/i, replaceTagsAndSpaces, parseBalance);
-			getParam(html, result, 'cards.unpaidGracePeriodDue', /<unpaidGracePeriodDue>([\s\S]*?)<\/unpaidGracePeriodDue>/i, replaceTagsAndSpaces, parseBalance);
-			getParam(html, result, 'cards.gracePeriodEnd', /<gracePeriodEnd>([\s\S]*?)<\/gracePeriodEnd>/i, replaceTagsAndSpaces, parseDateISO);
-			
+			var ownFunds = getParam(html, result, 'cards.ownFunds', /<ownFunds>([\s\S]*?)<\/ownFunds>/i, replaceTagsAndSpaces, parseBalance);
+			// баланс - Лимит
+			getParam(balance - limit, result, 'cards.clearBalance');
 			/*
-			<availableCreditLimit>155000.000</availableCreditLimit>
-			<card_id>6601272</card_id>
-			<endDate>2015-11-20T12:53:23.829+03:00</endDate>
-			<gracePeriodEnd>2015-11-27T00:00:00.000+03:00</gracePeriodEnd>
+			<endDate>2015-10-29T14:40:32.542+03:00</endDate>
 			<gracePeriodOutstanding>0.000</gracePeriodOutstanding>
-			<id>249007617</id>
 			<intrestOutstanding>0.000</intrestOutstanding>
 			<minAmount>0.000</minAmount>
 			<overlimit>0</overlimit>
@@ -154,12 +141,12 @@ function processCard(info, result) {
 			<pastDueInterestOutstanding>0</pastDueInterestOutstanding>
 			<pastDuePrincipalOutstanding>0.000</pastDuePrincipalOutstanding>
 			<paymentHolidays>false</paymentHolidays>
-			<prevStatementTotalDebt>0.000</prevStatementTotalDebt>
+			<prevStatementTotalDebt>0</prevStatementTotalDebt>
 			<prime>true</prime>
-			<startDate>2015-11-07T00:00:00.000+03:00</startDate>
-			<totalCredit>0.000</totalCredit>
-			<totalDebit>0.000</totalDebit>
-			<totalDebtAmount>0.000</totalDebtAmount>
+			<startDate>2015-10-22T00:00:00.000+03:00</startDate>
+			<totalCredit>10100.000</totalCredit>
+			<totalDebit>34910.000</totalDebit>
+			<totalDebtAmount>24810.000</totalDebtAmount>
 			<unpaidGracePeriodDue>0.000</unpaidGracePeriodDue>
 			*/
 		} else {

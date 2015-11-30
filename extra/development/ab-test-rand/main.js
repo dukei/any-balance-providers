@@ -12,7 +12,7 @@ function main() {
 	var result = {
 		success: true,
 		balance: null,
-		date: null,
+		balance2: null,
 		text_counter: null,
 		currency: ' р',
 		hidden: 'hidden counter' // счетчик, который не объявлен в манифесте и он нигде не используется
@@ -22,13 +22,9 @@ function main() {
 	if(!prefs.return_null) {
 		getParam((Math.random() * 10000).toFixed(2) + '', result, 'balance', null, replaceTagsAndSpaces, parseBalance);
 		getParam((Math.random() * 10).toFixed(0) + '', result, 'balance2', null, replaceTagsAndSpaces, parseBalance);
+		getParam((Math.random() * 10000).toFixed(2) + '', result, 'balance3', null, replaceTagsAndSpaces, parseBalance);
 		getParam((Math.random() * 10000).toFixed(2) + '', result, 'text_counter');
-		getParam(getRandomInt(1, 31) + '.11.2015', result, 'date', null, replaceTagsAndSpaces, parseDate);
 	}
 	
 	AnyBalance.setResult(result);
-}
-
-function getRandomInt(min, max) {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
 }

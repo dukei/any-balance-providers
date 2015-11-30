@@ -11,79 +11,35 @@ var g_headers = {
 };
 function main() {
 	var prefs = AnyBalance.getPreferences();
+	var baseurl = 'http://my.docs-group.ru/';
 	AnyBalance.setDefaultCharset('utf-8');
+	
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
-
-	if (prefs.cab=='direct') {
-		var baseurl = 'http://direct.docs-group.ru/';
-		var html = AnyBalance.requestGet(baseurl + 'login', g_headers);
 		
-		var params = createFormParams(html, function(params, str, name, value) {
-			if (name == 'LOGIN') 
-				return prefs.login;
-			else if (name == 'PASSWORD')
-				return prefs.password;
-			return value;
-		});
-
-		var captchaa;
-		if(AnyBalance.getLevel() >= 7){
-			AnyBalance.setOptions({forceCharset: 'base64'});
-			AnyBalance.trace('Пытаемся ввести капчу');
-			var captcha = AnyBalance.requestGet(baseurl + 'bitrix/tools/captcha2.php?captcha_sid=' + captcha_sid, g_headers);
-			captchaa = AnyBalance.retrieveCode("Пожалуйста, введите код с картинки", captcha);
-			AnyBalance.setOptions({forceCharset: 'utf-8'});
-			AnyBalance.trace('Капча получена: ' + captchaa);
-		}else{
-			throw new AnyBalance.Error('Провайдер требует AnyBalance API v7, пожалуйста, обновите AnyBalance!');
-		}
-		html = AnyBalance.requestPost(baseurl + 'bot', {
-				'CAPTCHA_CID': captcha_sid,
-				'CAPTCHA_CODE': captchaa,
-			}, addHeaders({Referer: baseurl + 'bot'}));
-		
-		html = AnyBalance.requestPost(baseurl + 'login/', params);
-		var captcha_sid = getParam(html, null, null, /name="captcha_sid"\s*value="([\s\S]*?)"/i);
-		AnyBalance.trace(captcha_sid);
-    
+	var html = AnyBalance.requestPost(baseurl + 'cabinet.html', {
+        login:prefs.login,
+        pass:prefs.password,
+    }, addHeaders({Referer: baseurl + 'cabinet.html'}));
 	
-		
-		if(!/login\/out/i.test(html)){
-			var error = getParam(html, null, null, /placeholder="([^a-z]+)"/, replaceTagsAndSpaces, html_entity_decode);
-			if(error)
-				throw new AnyBalance.Error(error);
-			throw new AnyBalance.Error('Не удалось зайти в личный кабинет, проверьте логин или пароль. Сайт изменен?');
-		}
-		var result = {success: true};
-			getParam(html, result, 'balance', /Баланс счёта: ([\s\S]*?) RUR/i, replaceTagsAndSpaces, parseBalance);
+	if(!/logout/i.test(html)) {
+		var error = getParam(html, null, null, /АВТОРИЗАЦИЯ<[^>]*> или[\s\S]*?<td colspan=2>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
+		if(error && /Неправильный логин или пароль/i.test(error))
+			throw new AnyBalance.Error(error, null, true);
+		if(error)
+			throw new AnyBalance.Error(error);
+		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
-	else {
-		var baseurl = 'http://sms.docs-group.ru/';
-		var html = AnyBalance.requestPost(baseurl,g_headers);
-		
-		var params = createFormParams(html, function(params, str, name, value) {
-			if (name == 'username') 
-				return prefs.login;
-			else if (name == 'password')
-				return prefs.password;
-			return value;
-		});
-		
-		html = AnyBalance.requestPost(baseurl + 'Account/LogOn', params);
-
-		if(!/Выйти/i.test(html)){
-			var error = getParam(html, null, null, /<div class="validation-summary-errors"><ul><li>([\s\S]*?)<\/li>/, replaceTagsAndSpaces, html_entity_decode);
-			if(error)
-					throw new AnyBalance.Error(error);
-			
-			throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
-		}
-		var result = {success: true};
-
-			getParam(html, result, 'balance', /Баланс: <span class="info">([\s\S]*?)\,/i, replaceTagsAndSpaces, parseBalance);
-	}
-
-AnyBalance.setResult(result);
+    var result = {success: true};
+	getParam(html, result, 'balance', /Ваш баланс:[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, ['currency', 'balance', 'lastpay_sum'], /Ваш баланс:[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, parseCurrency);
+	getParam(html, result, 'sms_russia', /Вам доступны СМС[^>]*>\s*Russia:[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
 	
+	if(isAvailable(['lastpay_date', 'lastpay_sum'])) {
+		html = AnyBalance.requestGet(baseurl + getParam(html, null, null, /<a href="\/(cabinet\/\d+\/report.html)/i), g_headers);
+		
+		getParam(html, result, 'lastpay_date', /Поступившие средства(?:[\s\S]*?<td class="trd"[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces, parseDate);
+		getParam(html, result, 'lastpay_sum', /Поступившие средства(?:[\s\S]*?<td class="trd"[^>]*>){4}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+	}
+    AnyBalance.setResult(result);
 }

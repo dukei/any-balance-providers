@@ -36,7 +36,7 @@ function main(){
     var baseurl = 'https://www.mvideo.ru';
     var baseurl1 = 'http://www.mvideo.ru';
 
-    var html = AnyBalance.requestGet(baseurl + '/login', g_headers);
+    var html = AnyBalance.requestPost(baseurl + '/login', g_headers);
     var form = getElement(html, prefs.type == '-1' ? /<form[^>]+id="login-form"[^>]*>/i : /<form[^>]+id="login-bonus-card-form"[^>]*>/i);
     if(!form){
     	AnyBalance.trace(form);

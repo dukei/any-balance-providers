@@ -5,36 +5,22 @@ var g_headers = {
 	'Connection':'keep-alive',
 	'User-Agent':'Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/38.0.2125.111 Safari/537.36'
 	};
+function main(){  
 
-	function main(){  
-
-	var prefs = AnyBalance.getPreferences();
-	checkEmpty(prefs.dogovor, 'Введите номер договора!');
-	checkEmpty(prefs.password, 'Введите пароль!');
+	var prefs = AnyBalance.getPreferences();	
+	var baseurl = 'https://lk2.stupino.su/';
 	AnyBalance.setDefaultCharset('utf-8');
 	
-	try {
-		var baseurl = 'https://lk2.stupino.su/';
-		var html = requestPostMultipart(baseurl, {
-			action_id: 'AUTH',
-			contract: prefs.dogovor,
-			passwd1: prefs.password,
-			}, addHeaders({
-			Referer: baseurl
-			})
-		);
-	}catch (e) {
-		var baseurl = 'https://lk.stupino.su/';
-		var html = requestPostMultipart(baseurl, {
-			action_id: 'AUTH',
-			contract: prefs.dogovor,
-			passwd1: prefs.password,
-			}, addHeaders({
-			Referer: baseurl
-			})
-		);
-	}
-
+	checkEmpty(prefs.dogovor, 'Введите номер договора!');
+	checkEmpty(prefs.password, 'Введите пароль!');
+	
+	var html = requestPostMultipart(baseurl, {
+        action_id: 'AUTH',
+        contract: prefs.dogovor,
+        passwd1: prefs.password,
+		}, addHeaders({
+    	Referer: baseurl
+	}));
 
 	if(!/выход/i.test(html)) {
 		var error = getParam(html, null, null, /<div[^>]+id="err_msg[^style.]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);

@@ -1,11 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
-	<change major_version="3" version="35" date="2015-11-27">
-	Получение карт и счетов через спец меню, а не с главной страницы (главная страница не всё показывала)
-	</change>
-	<change major_version="3" version="34" date="2015-11-20">
-	- Поддержка нового API
-	</change>
 	<change major_version="3" version="33" date="2015-11-16">
 	Изменения на сайте
 	</change>

@@ -83,10 +83,6 @@ function main(){
 	getParam(html, result, 'balance_corent', /Оплаченные обязательства(?:[^>]*>){2}([^<]+)/i, replaceTagsAndSpaces, parseBalance);
 	// Карманы
 	getParam(html, result, 'carmani_min_left', /(?:&#34;|")карманы(?:&#34;|")(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
-
-	// Life points
-	getParam(html, result, 'life_points', /Бонусный счет для участников клуба my life(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
-	
 	
 	html = AnyBalance.requestGet(baseurl + 'ru/upravleniye-kontraktom/smena-tarifnogo-plana/', g_headers);
 	getParam(html, result, '__tariff', /href="[^"]*">([^<]+)(?:[^>]*>){11}Активен/i, replaceTagsAndSpaces, html_entity_decode);

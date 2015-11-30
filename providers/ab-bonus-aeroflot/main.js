@@ -1,5 +1,10 @@
 ﻿/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
+
+Текущий баланс миль в программе Aeroflot Bonus.
+
+Сайт оператора: http://aeroflotbonus.ru/
+Личный кабинет: https://www.aeroflot.ru/personal/
 */
 
 var g_headers = {
@@ -10,122 +15,9 @@ var g_headers = {
 	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.99 Safari/537.36'
 };
 
-var g_APIheaders = {
-	'User-Agent': 'Mobile Application/2.5.0.377 (Android 5.0)'
-};
-
-var baseurl = "https://www.aeroflot.ru/personal/";
-
-function main() {
+function main(){
     var prefs = AnyBalance.getPreferences();
 	
-    checkEmpty(prefs.login, 'Введите логин');
-    checkEmpty(prefs.login, 'Введите пароль');
-	
-	mainAppAPI(prefs);
-}
-
-function apiCall(method, params) {
-	var m = method.split(':');
-	
-	if(m[0] == 'POST') {
-		var html = AnyBalance.requestPost(baseurl + m[1], params, g_APIheaders);
-	} else {
-		var html = AnyBalance.requestGet(baseurl + m[1], g_APIheaders);
-	}
-	
-	var json = getJson(html);
-	
-	if(!json.isSuccess) {
-		if(json.errors) {
-			var errors = [];
-			
-			for(var i = 0; i < json.errors.length; i++) {
-				errors.push(json.errors[i].message);
-			}
-			
-			if(errors.length > 0) {
-				var err = errors.join(', ');
-				throw new AnyBalance.Error(err, null, /неправильные реквизиты/i.test(err));
-			}
-		}
-		
-		throw new AnyBalance.Error('Error in apiCall!');
-	}
-	
-	return json;
-}
-
-var ALPHABET_STRING = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
-var ALPHABET_SIZE = ALPHABET_STRING.length;
-
-function mainAppAPI(prefs) {
-    
-    AnyBalance.setDefaultCharset('utf-8');
-	
-	var json = apiCall('POST:services/v.1/app_auth/hello?_preferredLanguage=ru', {
-		email: prefs.login
-	});
-	
-	if(json.data.hash_alg != 'PBKDF2')
-		throw new AnyBalance.Error('Данный алгоритм шифрования еще не поддерживается ' + json.data.hash_alg);
-	
-	var password = prefs.password;
-	var salt = json.data.passwd_salt + '';
-	var nonce = json.data.nonce + '';
-	var captcha = json.data.captcha_url;
-	var cfg = {
-		keySize: 5,
-		iterations: json.data.hash_iter
-	};
-	
-	var hash1 = CryptoJS.PBKDF2(password, salt, cfg);
-	var cnonce = cnonceGenerator();
-	var hash2 = CryptoJS.SHA1(hash1 + nonce + cnonce) + '';
-
-	if(captcha) {
-		AnyBalance.trace('Пытаемся ввести капчу');
-		captcha = AnyBalance.requestGet(captcha);
-		captcha = AnyBalance.retrieveCode("Пожалуйста, введите код с картинки", captcha);
-		AnyBalance.trace('Капча получена: ' + captcha);
-	}
-	
-	json = apiCall('POST:services/v.1/app_auth/welcome?_preferredLanguage=ru', {
-		passwd_hash2: hash2 + '',
-		cnonce: cnonce,
-		captcha: captcha
-	});
-	
-	var profileJson = apiCall('GET:ws/v.0.0.2/json/profile_info');
-	
-    var result = {success: true};
-	
-	getParam(profileJson.data.mileBalance + '', result, 'balance', null, replaceTagsAndSpaces, parseBalance);
-	getParam(profileJson.data.currentYearBusinessSegments + '', result, 'segments', null, replaceTagsAndSpaces, parseBalance);
-	getParam(profileJson.data.milesExpirationDate, result, 'milesExpirationDate', null, replaceTagsAndSpaces, parseDateISO);
-	getParam(profileJson.data.tierLevel, result, 'level');
-	
-    AnyBalance.setResult(result);
-}
-
-	
-function cnonceGenerator() {
-	return getRandomString(16, 32);
-}
-
-function getRandomString(minLength, maxLength) {
-	//must start with leading 1
-	var allowedChars = ALPHABET_STRING;
-	var result = "1";
-
-	for(var i=0; i<maxLength; ++i) {
-		result += allowedChars.charAt(Math.floor(Math.random() * allowedChars.length));
-	}
-	
-	return result;
-}
-
-function mainSite(prefs) {
     checkEmpty(prefs.login, 'Введите логин');
     checkEmpty(prefs.login, 'Введите пароль');
 
@@ -205,3 +97,4 @@ function mainSite(prefs) {
 	
     AnyBalance.setResult(result);
 }
+

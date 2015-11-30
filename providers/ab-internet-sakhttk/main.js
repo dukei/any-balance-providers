@@ -46,7 +46,7 @@ function parseBalance(text){
 
 function main(){
     var prefs = AnyBalance.getPreferences();
-    var baseurl = 'http://issa.sakhttk.ru/';
+    var baseurl = 'https://issa.sakhttk.ru/';
     
     AnyBalance.setDefaultCharset('utf-8');
 

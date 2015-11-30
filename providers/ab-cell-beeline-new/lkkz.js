@@ -365,7 +365,7 @@ function fetchPostKz(baseurl, html) {
 
     getParam(html, result, ['phone', 'traffic_used'], /<h1[^>]+class="phone-number"[^>]*>([\s\S]*?)<\/h1>/i, replaceTagsAndSpaces, html_entity_decode);
 
-	if(AnyBalance.isAvailable('min_local', 'min_bi', 'sms_left', 'mms_left', 'traffic_left', 'traffic_used', 'traffic_total', 'rub_opros', 'min_left_1', 'min_local')) {
+    if (isAvailableBonuses()) {
         AnyBalance.trace('Запросим бонусы...');
         // Вот геморойщики!!
         xhtml = getBlockKz(baseurl + 'c/post/index.xhtml', html, 'loadingBonusesAndServicesDetails');
@@ -529,7 +529,7 @@ function fetchPreKz(baseurl, html) {
             l_getCurrency();
         }
     }
-	if(AnyBalance.isAvailable('min_local', 'min_bi', 'sms_left', 'mms_left', 'traffic_left', 'traffic_used', 'traffic_total', 'rub_opros', 'min_left_1', 'min_local')) {
+    if (isAvailableBonuses()) {
         xhtml = getBonusesBlock(baseurl + 'c/pre/index.xhtml', html, 'bonusesForm');
         AnyBalance.trace(xhtml);
         // Затем надо пнуть систему, чтобы точно получить все бонусы

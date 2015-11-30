@@ -1,8 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
-	<change version="5" date="2015-11-20">
-	- Поддержка изменений в процедуре входа
-	</change>
 	<change version="4" date="2015-02-22">
 	- Поддержка двухфакторной авторизации
 	</change>

@@ -10,8 +10,6 @@ AnyBalance (http://any-balance-providers.googlecode.com)
 library.js v0.18 от 27.10.15
 
 changelog:
-27.11.15 createFormParams: доработки для универсальности
-
 27.10.15 sumParam: добавлено сообщение об отключенном счетчике
 
 16.09.15 добавлены n2, joinUrl, fmtDate
@@ -325,7 +323,7 @@ function make_html_entity_replacement(str, sharp, x, m){
 			return String.fromCharCode(entities[ml]);
 	} else if (!x) {
 		if (/^\d+$/.test(m))
-			return String.fromCharCode(parseInt(m, 10));
+			return String.fromCharCode(parseInt(m));
 	} else {
 		if (/^[0-9a-f]+$/i.test(m))
 			return String.fromCharCode(parseInt(m, 16));
@@ -354,48 +352,39 @@ function make_html_entity_replacement(str, sharp, x, m){
 	});
 */
 function createFormParams(html, process, array){
-    var params = array ? [] : {}, valueRegExp=/value\s*=\s*("[^"]*"|'[^']*'|[\w\-\/\\]+)/i, valueReplace=[/^"([^"]*)"$|^'([^']*)'$/, '$1$2'], name,
-		inputRegExp = /<input[^>]+name\s*=\s*("[^"]*"|'[^']*'|[\w\-\/\\]+)[^>]*>|<select[^>]+name\s*=\s*("[^"]*"|'[^']*'|[\w\-\/\\]+)[^>]*>[\s\S]*?<\/select>/ig, nullVal = null;
-
-	while(true) {
-		var amatch = inputRegExp.exec(html);
-		if (!amatch)
-			break;
-		var str = amatch[0], nameInp = amatch[1], nameSel = amatch[2], value = '';
+    var params = array ? [] : {};
+    html.replace(/<input[^>]+name=['"]([^'"]*)['"][^>]*>|<select[^>]+name=['"]([^'"]*)['"][^>]*>[\s\S]*?<\/select>/ig, function(str, nameInp, nameSel){
+        var value = '';
         if(nameInp){
-            if(/type\s*=\s*['"]?button['"]?/i.test(str))
+            if(/type=['"]button['"]/i.test(str))
                 value=undefined;
-            else if(/type\s*=\s*['"]?checkbox['"]?/i.test(str)){
+            else if(/type=['"]checkbox['"]/i.test(str)){
             	//Чекбокс передаёт значение только если он чекед. Если чекед, а значения нет, то передаёт on
-                value = /[^\w\-]checked[^\w\-]/i.test(str) ? getParam(str, nullVal, nullVal, valueRegExp, valueReplace, html_entity_decode) || 'on' : undefined;
+                value = /[^\w]checked[^\w]/i.test(str) ? getParam(str, null, null, /value=['"]([^'"]*)['"]/i, null, html_entity_decode) || 'on' : undefined;
             }else
-                value = getParam(str, nullVal, nullVal, valueRegExp, valueReplace, html_entity_decode) || '';
-            name = replaceAll(nameInp, valueReplace);
+                value = getParam(str, null, null, /value=['"]([^'"]*)['"]/i, null, html_entity_decode) || '';
+            name = nameInp;
 			
         }else if(nameSel){
-			var sel = getParam(str, nullVal, nullVal, /^<[^>]*>/i);
-            value = getParam(sel, nullVal, nullVal, valueRegExp, valueReplace, html_entity_decode);
+            value = getParam(str, null, null, /^<[^>]*value=['"]([^'"]*)['"]/i, null, html_entity_decode);
             if(typeof(value) == 'undefined'){
-                var optSel = getParam(str, nullVal, nullVal, /(<option[^>]+selected[^>]*>)/i);
+                var optSel = getParam(str, null, null, /(<option[^>]+selected[^>]*>)/i);
                 if(!optSel)
-                    optSel = getParam(str, nullVal, nullVal, /(<option[^>]*>)/i);
+                    optSel = getParam(str, null, null, /(<option[^>]*>)/i);
 				if(optSel)
-				    value = getParam(optSel, nullVal, nullVal, valueRegExp, valueReplace, html_entity_decode);
+				    value = getParam(optSel, null, null, /value=['"]([^'"]*)["']/i, null, html_entity_decode);
             }
-            name = replaceAll(nameSel, valueReplace);;
+            name = nameSel;
         }
 
         name = html_entity_decode(name);
         if(process){
             value = process(params, str, name, value);
         }
-        if(typeof(value) != 'undefined') {
-			if (array)
-				params.push([name, value])
-			else
-				params[name] = value;
-		}
-    }
+        if(typeof(value) != 'undefined')
+            if(array) params.push([name, value])
+            else params[name] = value;
+    });
 
     //AnyBalance.trace('Form params are: ' + JSON.stringify(params));
     return params;

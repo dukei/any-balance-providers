@@ -69,11 +69,7 @@ function main(){
     });
 
     if(!/\/index\/logout/i.test(html)){
-        var error = getParam(html, null, null, /<div[^>]+authMsgBox[^>]*>\s*<h3[^>]*>([\s\S]*?)<\/h3>/i, replaceTagsAndSpaces, html_entity_decode);
-        if(error)
-            throw new AnyBalance.Error(error, null, /неверный логин или пароль/i.test(error));
-        
-        error = getParam(html, null, null, /<div[^>]*background-color:\s*Maroon[^>]*>([\s\S]*?)<\/div>/, replaceTagsAndSpaces, html_entity_decode);
+        var error = getParam(html, null, null, /<div[^>]*background-color:\s*Maroon[^>]*>([\s\S]*?)<\/div>/, replaceTagsAndSpaces, html_entity_decode);
         if(error)
             throw new AnyBalance.Error(error);
 		

@@ -3,49 +3,35 @@
 */
 
 var g_headers = {
-	'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-	'Accept-Encoding':'gzip, deflate, sdch',
-	'Accept-Language':'en-US,en;q=0.8,ru;q=0.6',
-	'Connection':'keep-alive',
-	'User-Agent':'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/46.0.2490.86 Safari/537.36'
-}
+	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
+	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
+	'Connection': 'keep-alive',
+	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
+};
 
-function main(){
-	AnyBalance.setDefaultCharset('utf-8'); 
-    var prefs = AnyBalance.getPreferences();
+function main() {
+	var prefs = AnyBalance.getPreferences();
+	var baseurl = 'http://www.krskstate.ru/';
+	AnyBalance.setDefaultCharset('utf-8');
 	
-    checkEmpty(prefs.kinnumber, 'Введите номер заявления!');
-	var baseurl = "http://www.krskstate.ru/krao/underschool/";
-    
-    var html = AnyBalance.requestGet(baseurl + 'queue', g_headers);
+	checkEmpty(prefs.login, 'Введите уникальный идентификатор заявления!');
 	
-    if(!html || AnyBalance.getLastStatusCode() > 400){
-    	AnyBalance.trace(html);
-    	throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
-    };
+	var html = AnyBalance.requestGet(baseurl + 'krao/underschool/queue?kinnumber='+prefs.login+'&search=%CF%EE%EA%E0%E7%E0%F2%FC', g_headers);
 	
-    html = AnyBalance.requestGet(baseurl + 'queue?kinnumber=' + prefs.kinnumber, addHeaders({Referer: baseurl + 'queue'})); 
-
-    if(!/<h3[^>]*>Первичная информация о положении в очереди/i.test(html)) {
-        var error = getParam(html, null, null, /<\/form>[^f]*(?=Уважаемые посетители!)/i, replaceTagsAndSpaces, html_entity_decode);
-        if(error)
-            throw new AnyBalance.Error(error, null, true);
-        
+	if (/Информация не найдена/i.test(html)) {
+		var error = getParam(html, null, null, /<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
+		if (error)
+			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
+		
 		AnyBalance.trace(html);
-        throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
-    }
-
-    var result = {success: true, login: prefs.kinnumber};
+		throw new AnyBalance.Error('Не удалось найти информацию по номеру '+prefs.login+'. Сайт изменен?');
+	}
 	
-    getParam(html, result, 'district', /<p[^>]*>Район:([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'agegroup', /<p[^>]*>Возрастная группа:([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'healthgroup', /<p[^>]*>Группа здоровья:([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'balance', /<p[^>]*>Номер в очереди:([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'status', /<p[^>]*>Статус\/состояние:([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'lvcount', /<p[^>]*>Количество внеочередников:([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'lpcount', /<p[^>]*>Количество первоочередников:([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'uncount', /<p[^>]*>Количество не имеющих льготу:([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'total', /<p[^>]*>Всего в очереди:([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, parseBalance);
+	var result = {success: true};
 	
-    AnyBalance.setResult(result);
+	getParam(html, result, 'balance', /Номер в очереди:([^>]*>){2}/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'total', /Всего в очереди:([^>]*>){2}/i, replaceTagsAndSpaces, parseBalance);
+	
+	AnyBalance.setResult(result);
 }

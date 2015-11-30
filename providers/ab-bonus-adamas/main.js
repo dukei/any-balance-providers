@@ -56,8 +56,8 @@ function main() {
 	getParam(lName + ' ' + fName + ' ' + patronymic, result, 'fio');
 	getParam('+7'+phone, result, 'phone');
 	getParam(html, result, 'discount', /name="DISCOUNT"[^>]+value="([\s\S]*?)"/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'bonus', /name="BONUS"[^>]+value="([\s\S]*?)"/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'cardNumber', /<div[^>]+class="ads-discount-card"[^>]*>(?:[\s\S]*?<div[^>]*>){1}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'balance', /name="BONUS"[^>]+value="([\s\S]*?)"/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'cardNumber', /Номер карты:[\s\S]*?(\d+)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
 
 	AnyBalance.setResult(result);
 }

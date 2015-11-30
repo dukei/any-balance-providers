@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-bonus-adamas</id>
+	<id version="2">ab-bonus-adamas</id>
 	<api flags="no_browser"/>
 	<name>Адамас</name>
 	<description html="true"><![CDATA[
@@ -22,7 +22,7 @@
 		<counter id="discount" name="Скидка" units=" %"/>
 		<counter id="cardNumber" name="Номер карты" type="text"/>
 	</counters>
-	<keywords></keywords>
+	<keywords>ювелирные украшения</keywords>
 	<type>bonus</type>
 	<country>ru</country>
 </provider>

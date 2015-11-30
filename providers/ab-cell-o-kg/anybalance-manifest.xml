@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id version="2">ab-cell-o-kg</id>
+	<id version="3">ab-cell-o-kg</id>
 	<name>О! (Кыргызстан)</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе оператора сотовой связи O! в Кыргызстане <a href="http://o.kg/">http://o.kg/</a></p>

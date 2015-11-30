@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="2.0" version="28" date="2015-11-26">
+	Добавлены Life Points
+	</change>
 	<change major_version="2.0" version="27" date="2014-11-18">
 	- Улучшено получение бонусного баланса.
 	</change>

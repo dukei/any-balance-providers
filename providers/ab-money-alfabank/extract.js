@@ -89,11 +89,15 @@ function processClick(options) {
     }
 
     function getClickOTP(params, str, name, value) {
-        if (name == 'pt1:password_key')
-            return AnyBalance.retrieveCode("Вам на мобильный телефон выслан одноразовый пароль на вход в Альфа-Клик. Введите его в поле ниже.\n\nВы можете отключить требование пароля на вход в интернет-банк в настройках Альфа-Клик. Это безопасно, отменяет только подтверждение входа. Подтверждение транзакций всё равно будет требоваться обязательно.", null, {
+        if (name == 'pt1:password_key'){
+            var msg = getParam(html, null, null, /<span[^>]+id="[^>]*_(?:token|sms)"(?:[^>](?!display\s*:\s*none))*>([\s\S]*?)(?:<\/span>|<div)/i, replaceTagsAndSpaces, html_entity_decode);
+            AnyBalance.trace('Затребован код на вход: ' + msg);
+            msg = msg || "Для входа в интернет-банк требуется одноразовый код. Введите его в поле ниже.";
+            return AnyBalance.retrieveCode(msg + "\n\nЧтобы не вводить код всегда при входе в интернет-банк, вы можете отключить требование одноразового кода на вход в настройках Альфа-Клик. Это безопасно, отменяет только подтверждение входа. Подтверждение транзакций всё равно будет требоваться обязательно.", null, {
                     time: 180000, //Время ожидания ввода кода в мс (3 минуты)
                     inputType: 'number' //Способ ввода (только цифры
                 });
+        }
         return value;
     }
 
@@ -245,98 +249,6 @@ function processCard2(html, row, result) {
     }
 }
 
-function processCardTransactions(html, result) {
-    AnyBalance.trace('Получаем транзакции для карты ' + result.__name);
-
-    function setSwitchTo3(params, str, name, value) {
-        if (name == 'pt1:periodSwitch')
-            return "3"; //Квартал
-        /*if(name == 'pt1:id1') { // Из формы будем получать
-         var dt = new Date(), dtFrom = new Date(dt.getFullYear()-2, dt.getMonth(), dt.getDate());
-         return n2(dtFrom.getDate()) + '.' + n2(dtFrom.getMonth() + 1) + '.' + dtFrom.getFullYear();
-         }*/
-        return value;
-    }
-
-    //Показать подробную выписку
-    var event = getParam(html, null, null, /<a[^>]+id="([^"]*)[^>]*>\s*&#1055;&#1086;&#1082;&#1072;&#1079;&#1072;&#1090;&#1100; &#1087;&#1086;&#1076;&#1088;&#1086;&#1073;&#1085;&#1091;&#1102; &#1074;&#1099;&#1087;&#1080;&#1089;&#1082;&#1091;/i);
-    html = getNextPage(html, event, [
-        ['event', '%EVENT%'],
-        ['event.%EVENT%', g_some_action],
-        ['oracle.adf.view.rich.PPR_FORCED', 'true']
-    ]);
-
-    html = getNextPage(html, 'pt1:periodSwitch', [
-        ['event', '%EVENT%'],
-        ['event.%EVENT%', g_some_action]
-    ], {paramsFunc: setSwitchTo3});
-
-    html = getNextPage(html, 'pt1:show', [
-        ['event', '%EVENT%'],
-        ['event.%EVENT%', g_some_action]
-    ], {paramsFunc: setSwitchTo3});
-
-    event = getParam(html, null, null, /<a[^>]+id="([^"]*)[^>]+title="csv"/i, null, html_entity_decode);
-    if (!event) {
-        AnyBalance.trace(html);
-        AnyBalance.trace('Не удалось найти ссылку на загрузку csv для карты ' + result.__name);
-        return;
-    }
-
-    html = getNextPage(html, event, [
-        ['event', '%EVENT%'],
-        ['event.%EVENT%', g_some_action],
-        ['oracle.adf.view.rich.PROCESS', '%EVENT%']
-    ], {paramsFunc: setSwitchTo3, headers: {}, requestOptions: {FORCE_CHARSET: 'windows-1251'}});
-
-    var data = Papa.parse(html);
-
-    AnyBalance.trace('Для карты ' + result.__name + ' получено ' + data.data.length + ' транзакций: ' + data.data[0].join(';'));
-    var cols = {};
-    for (var j = 0; j < data.data[0].length; ++j) {
-        var col = data.data[0][j];
-        if (col == 'Валюта')
-            cols.currency = j;
-        else if (col == 'Дата')
-            cols.date = j;
-        else if (col == 'Референс')
-            cols.id = j;
-        else if (col == 'Примечание')
-            cols.descr = j;
-        else if (col == 'Приход')
-            cols.debit = j;
-        else if (col == 'Расход')
-            cols.credit = j;
-    }
-
-    result.transactions = [];
-
-    for (j = 1; j < data.data.length; ++j) {
-        var d = data.data[j], t = {};
-        if (d.length >= 6) {
-            if (isset(cols.descr) && /Предоставление транша\s+Дог/i.test(d[cols.descr]))
-                continue; //Предоставление транша неинтересно
-            if (isset(cols.date))
-                getParam(d[cols.date], t, 'cards.transactions.date', null, null, parseDate);
-            if (isset(cols.currency))
-                getParam(d[cols.currency], t, 'cards.transactions.currency');
-            if (isset(cols.descr))
-                getParam(d[cols.descr], t, 'cards.transactions.descr');
-            if (isset(cols.debit))
-                sumParam(d[cols.debit], t, 'cards.transactions.sum', null, null, parseBalance, aggregate_sum);
-            if (isset(cols.credit))
-                sumParam(d[cols.credit], t, 'cards.transactions.sum', null, null, function (str) {
-                    var val = parseBalance(str);
-                    return val && -val
-                }, aggregate_sum);
-            if (isset(cols.ref))
-                sumParam(d[cols.ref], t, 'cards.transactions.ref');
-
-            result.transactions.push(t);
-        }
-    }
-}
-
 function processAccounts2(html, result) {
     if (!AnyBalance.isAvailable('accounts'))
         return;
@@ -408,104 +320,6 @@ function processAccount2(html, row, result) {
         }
     }
 }
-
-function processAccountTransactions(html, result) {
-    AnyBalance.trace('Получаем транзакции для счета ' + result.__name);
-
-    function setSwitchTo5(params, str, name, value) {
-        if (name == 'pt1:periodSwitch')
-            return "5"; //Джва года
-        /*if(name == 'pt1:id1') { // Из формы будем получать
-         var dt = new Date(), dtFrom = new Date(dt.getFullYear()-2, dt.getMonth(), dt.getDate());
-         return n2(dtFrom.getDate()) + '.' + n2(dtFrom.getMonth() + 1) + '.' + dtFrom.getFullYear();
-         }*/
-        return value;
-    }
-
-    //Показать подробную выписку
-    var event = getParam(html, null, null, /<a[^>]+id="([^"]*)[^>]*>\s*&#1055;&#1086;&#1082;&#1072;&#1079;&#1072;&#1090;&#1100; &#1087;&#1086;&#1076;&#1088;&#1086;&#1073;&#1085;&#1091;&#1102; &#1074;&#1099;&#1087;&#1080;&#1089;&#1082;&#1091;/i);
-    html = getNextPage(html, event, [
-        ['event', '%EVENT%'],
-        ['event.%EVENT%', g_some_action],
-        ['oracle.adf.view.rich.PPR_FORCED', 'true']
-    ]);
-
-    html = getNextPage(html, 'pt1:periodSwitch', [
-        ['event', '%EVENT%'],
-        ['event.%EVENT%', g_some_action]
-    ], {paramsFunc: setSwitchTo5});
-    /*
-     html = getNextPage(html, 'pt1:showButton', [
-     ['event', '%EVENT%'],
-     ['event.%EVENT%', g_some_action]
-     ], {paramsFunc: setSwitchTo5});
-
-     html = getNextPage(html, 'pt1:downloadCSVLinkBottom', [
-     ['event', '%EVENT%'],
-     ['event.%EVENT%', g_some_action]
-     ], {paramsFunc: setSwitchTo5});
-     */
-    html = getNextPage(html, 'pt1:HiddenBtn', [
-        ['event', '%EVENT%'],
-        ['event.%EVENT%', g_some_action],
-        ['oracle.adf.view.rich.PROCESS', '%EVENT%']
-    ], {paramsFunc: setSwitchTo5, headers: {}, requestOptions: {FORCE_CHARSET: 'windows-1251'}});
-
-    var data = Papa.parse(html);
-    AnyBalance.trace('Для счета ' + result.__name + ' получено ' + data.data.length + ' транзакций: ' + data.data[0].join(';'));
-
-    var cols = {};
-    for (var j = 0; j < data.data[0].length; ++j) {
-        var col = data.data[0][j];
-        if (col == 'Валюта')
-            cols.currency = j;
-        else if (col == 'Дата операции')
-            cols.date = j;
-        else if (col == 'Референс проводки')
-            cols.ref = j;
-        else if (col == 'Описание операции')
-            cols.descr = j;
-        else if (col == 'Приход')
-            cols.debit = j;
-        else if (col == 'Расход')
-            cols.credit = j;
-    }
-
-    result.transactions = [];
-
-    var transhes = 0;
-
-    for (j = 1; j < data.data.length; ++j) {
-        var d = data.data[j], t = {};
-        if (d.length >= 6) {
-            if (isset(cols.descr) && /Предоставление транша\s+Дог/i.test(d[cols.descr])) {
-                ++transhes;
-                continue; //Предоставление транша неинтересно
-            }
-            if (isset(cols.date))
-                getParam(d[cols.date], t, 'accounts.transactions.date', null, null, parseDate);
-            if (isset(cols.currency))
-                getParam(d[cols.currency], t, 'accounts.transactions.currency');
-            if (isset(cols.descr))
-                getParam(d[cols.descr], t, 'accounts.transactions.descr');
-            if (isset(cols.debit))
-                sumParam(d[cols.debit], t, 'accounts.transactions.sum', null, null, parseBalance, aggregate_sum);
-            if (isset(cols.credit))
-                sumParam(d[cols.credit], t, 'accounts.transactions.sum', null, null, function (str) {
-                    var val = parseBalance(str);
-                    return val && -val
-                }, aggregate_sum);
-            if (isset(cols.ref))
-                sumParam(d[cols.ref], t, 'accounts.transactions.ref');
-
-            result.transactions.push(t);
-        }
-    }
-
-    if (transhes)
-        AnyBalance.trace('Вырезано ' + transhes + ' тразакций "Предоставление транша"');
-}
-
 
 function createParams(params, event) {
     var ret = {};
@@ -731,103 +545,6 @@ function processCredit2(html, result) {
     }
 }
 
-function processCreditTransactions(html, result) {
-    AnyBalance.trace('Получаем транзакции для счета ' + result.__name);
-
-    function setSwitchTo3(params, str, name, value) {
-        if (name == 'pt2:periodSwitch')
-            return "3"; //Квартал
-        /*if(name == 'pt1:id1') { // Из формы будем получать
-         var dt = new Date(), dtFrom = new Date(dt.getFullYear()-2, dt.getMonth(), dt.getDate());
-         return n2(dtFrom.getDate()) + '.' + n2(dtFrom.getMonth() + 1) + '.' + dtFrom.getFullYear();
-         }*/
-        return value;
-    }
-
-    //Показать подробную выписку
-    var event = getParam(html, null, null, /<a[^>]+id="([^"]*)[^>]*>\s*&#1055;&#1086;&#1082;&#1072;&#1079;&#1072;&#1090;&#1100; &#1087;&#1086;&#1076;&#1088;&#1086;&#1073;&#1085;&#1091;&#1102; &#1074;&#1099;&#1087;&#1080;&#1089;&#1082;&#1091;/i);
-    html = getNextPage(html, event, [
-        ['event', '%EVENT%'],
-        ['event.%EVENT%', g_some_action],
-        ['oracle.adf.view.rich.PPR_FORCED', 'true']
-    ]);
-
-    html = getNextPage(html, 'pt2:periodSwitch', [
-        ['event', '%EVENT%'],
-        ['event.%EVENT%', g_some_action]
-    ], {paramsFunc: setSwitchTo3});
-    /*
-     html = getNextPage(html, 'pt1:showButton', [
-     ['event', '%EVENT%'],
-     ['event.%EVENT%', g_some_action]
-     ], {paramsFunc: setSwitchTo5});
-
-     html = getNextPage(html, 'pt1:downloadCSVLinkBottom', [
-     ['event', '%EVENT%'],
-     ['event.%EVENT%', g_some_action]
-     ], {paramsFunc: setSwitchTo5});
-     */
-    html = getNextPage(html, 'pt2:downloadCSVLink', [
-        ['event', '%EVENT%'],
-        ['event.%EVENT%', g_some_action],
-        ['oracle.adf.view.rich.PROCESS', '%EVENT%']
-    ], {paramsFunc: setSwitchTo3, headers: {}, requestOptions: {FORCE_CHARSET: 'windows-1251'}});
-
-    var data = Papa.parse(html);
-    AnyBalance.trace('Для счета ' + result.__name + ' получено ' + data.data.length + ' транзакций: ' + data.data[0].join(';'));
-
-    var cols = {};
-    for (var j = 0; j < data.data[0].length; ++j) {
-        var col = data.data[0][j];
-        if (col == 'Валюта')
-            cols.currency = j;
-        else if (col == 'Дата операции')
-            cols.date = j;
-        else if (col == 'Референс проводки')
-            cols.id = j;
-        else if (col == 'Описание операции')
-            cols.descr = j;
-        else if (col == 'Приход')
-            cols.debit = j;
-        else if (col == 'Расход')
-            cols.credit = j;
-    }
-
-    result.transactions = [];
-
-    var transhes = 0;
-
-    for (j = 1; j < data.data.length; ++j) {
-        var d = data.data[j], t = {};
-        if (d.length >= 6) {
-            if (isset(cols.descr) && /Предоставление транша\s+Дог/i.test(d[cols.descr])) {
-                ++transhes;
-                continue; //Предоставление транша неинтересно
-            }
-            if (isset(cols.date))
-                getParam(d[cols.date], t, 'credits.transactions.date', null, null, parseDate);
-            if (isset(cols.currency))
-                getParam(d[cols.currency], t, 'credits.transactions.currency');
-            if (isset(cols.descr))
-                getParam(d[cols.descr], t, 'credits.transactions.descr');
-            if (isset(cols.debit))
-                sumParam(d[cols.debit], t, 'credits.transactions.sum', null, null, parseBalance, aggregate_sum);
-            if (isset(cols.credit))
-                sumParam(d[cols.credit], t, 'credits.transactions.sum', null, null, function (str) {
-                    var val = parseBalance(str);
-                    return val && -val
-                }, aggregate_sum);
-            if (isset(cols.ref))
-                sumParam(d[cols.ref], t, 'credits.transactions.ref');
-
-            result.transactions.push(t);
-        }
-    }
-
-    if (transhes)
-        AnyBalance.trace('Вырезано ' + transhes + ' тразакций "Предоставление транша"');
-}
-
 function processInfo2(html, result) {
     if (AnyBalance.isAvailable('info')) {
         AnyBalance.trace('Получаем информацию о пользователе');
@@ -852,18 +569,15 @@ function processInfo2(html, result) {
         //Дополнительный логин
         getParam(html, result, 'info.login2', /<label[^>]*>\s*&#1044;&#1086;&#1087;&#1086;&#1083;&#1085;&#1080;&#1090;&#1077;&#1083;&#1100;&#1085;&#1099;&#1081; &#1083;&#1086;&#1075;&#1080;&#1085;[\s\S]*?(<input[^>]+)/i, replaceValue, html_entity_decode);
         //Е-mail
-        getParam(html, result, 'info.email', /<label[^>]*>\s*(?:&#1045;|E)-mail[\s\S]*?(<input[^>]+)/i, replaceValue, html_entity_decode);
+        getParam(html, result, 'info.email', /<label[^>]*>\s*(?:&#1045;|E)-mail[\s\S]*?<table[^>]*>([^]*?)<\/table>/i, replaceTagsAndSpaces, html_entity_decode);
         //Рабочий телефон
-        sumParam(html, result, 'info.wphone', /<label[^>]*>\s*&#1056;&#1072;&#1073;&#1086;&#1095;&#1080;&#1081; &#1090;&#1077;&#1083;&#1077;&#1092;&#1086;&#1085;[\s\S]*?(<input[^>]+)/i, replaceValue, html_entity_decode, join_space);
-        sumParam(html, result, 'info.wphone', /<label[^>]*>\s*&#1056;&#1072;&#1073;&#1086;&#1095;&#1080;&#1081; &#1090;&#1077;&#1083;&#1077;&#1092;&#1086;&#1085;[\s\S]*?<input[\s\S]*?(<input[^>]+)/i, replaceValue, html_entity_decode, join_space);
+        getParam(html, result, 'info.wphone', /<label[^>]*>\s*&#1056;&#1072;&#1073;&#1086;&#1095;&#1080;&#1081; &#1090;&#1077;&#1083;&#1077;&#1092;&#1086;&#1085;[\s\S]*?<table[^>]*>([^]*?)<\/table>/i, replaceTagsAndSpaces, html_entity_decode);
         //Телефон по месту жительства
-        sumParam(html, result, 'info.hphone', /<label[^>]*>\s*&#1058;&#1077;&#1083;&#1077;&#1092;&#1086;&#1085; &#1087;&#1086; &#1084;&#1077;&#1089;&#1090;&#1091; &#1078;&#1080;&#1090;&#1077;&#1083;&#1100;&#1089;&#1090;&#1074;&#1072;[\s\S]*?(<input[^>]+)/i, replaceValue, html_entity_decode, join_space);
-        sumParam(html, result, 'info.hphone', /<label[^>]*>\s*&#1058;&#1077;&#1083;&#1077;&#1092;&#1086;&#1085; &#1087;&#1086; &#1084;&#1077;&#1089;&#1090;&#1091; &#1078;&#1080;&#1090;&#1077;&#1083;&#1100;&#1089;&#1090;&#1074;&#1072;[\s\S]*?<input[\s\S]*?(<input[^>]+)/i, replaceValue, html_entity_decode, join_space);
+        getParam(html, result, 'info.hphone', /<label[^>]*>\s*&#1058;&#1077;&#1083;&#1077;&#1092;&#1086;&#1085; &#1087;&#1086; &#1084;&#1077;&#1089;&#1090;&#1091; &#1078;&#1080;&#1090;&#1077;&#1083;&#1100;&#1089;&#1090;&#1074;&#1072;[\s\S]*?<table[^>]*>([^]*?)<\/table>/i, replaceTagsAndSpaces, html_entity_decode);
         //Телефон по месту регистрации
-        sumParam(html, result, 'info.rphone', /<label[^>]*>\s*&#1058;&#1077;&#1083;&#1077;&#1092;&#1086;&#1085; &#1087;&#1086; &#1084;&#1077;&#1089;&#1090;&#1091; &#1088;&#1077;&#1075;&#1080;&#1089;&#1090;&#1088;&#1072;&#1094;&#1080;&#1080;[\s\S]*?(<input[^>]+)/i, replaceValue, html_entity_decode, join_space);
-        sumParam(html, result, 'info.rphone', /<label[^>]*>\s*&#1058;&#1077;&#1083;&#1077;&#1092;&#1086;&#1085; &#1087;&#1086; &#1084;&#1077;&#1089;&#1090;&#1091; &#1088;&#1077;&#1075;&#1080;&#1089;&#1090;&#1088;&#1072;&#1094;&#1080;&#1080;[\s\S]*?<input[\s\S]*?(<input[^>]+)/i, replaceValue, html_entity_decode, join_space);
+        getParam(html, result, 'info.rphone', /<label[^>]*>\s*&#1058;&#1077;&#1083;&#1077;&#1092;&#1086;&#1085; &#1087;&#1086; &#1084;&#1077;&#1089;&#1090;&#1091; &#1088;&#1077;&#1075;&#1080;&#1089;&#1090;&#1088;&#1072;&#1094;&#1080;&#1080;[\s\S]*?<table[^>]*>([^]*?)<\/table>/i, replaceTagsAndSpaces, html_entity_decode);
         //Услуга «Альфа-Чек» подключена к следующим картам:
-        var check = getParam(html, null, null, /&#1059;&#1089;&#1083;&#1091;&#1075;&#1072; &laquo;&#1040;&#1083;&#1100;&#1092;&#1072;-&#1063;&#1077;&#1082;&raquo; &#1087;&#1086;&#1076;&#1082;&#1083;&#1102;&#1095;&#1077;&#1085;&#1072; &#1082; &#1089;&#1083;&#1077;&#1076;&#1091;&#1102;&#1097;&#1080;&#1084; &#1082;&#1072;&#1088;&#1090;&#1072;&#1084;:[\s\S]*?<table[^>]*>([\s\S]*?)<\/table>/i);
+        var check = getParam(html, null, null, /&#1059;&#1089;&#1083;&#1091;&#1075;&#1072; &laquo;&#1040;&#1083;&#1100;&#1092;&#1072;-&#1063;&#1077;&#1082;&raquo; &#1087;&#1086;&#1076;&#1082;&#1083;&#1102;&#1095;&#1077;&#1085;&#1072; &#1082; &#1089;&#1083;&#1077;&#1076;&#1091;&#1102;&#1097;&#1080;&#1084; &#1082;&#1072;&#1088;&#1090;&#1072;&#1084;:[\s\S]*?<table[^>]*>([^]*?)<\/table>/i);
         if (check && AnyBalance.isAvailable('info.check')) {
             var cs = [];
             var rows = getElements(check, [/<tr[^>]*>/ig, /<span[^>]+class="mediumHeader"/i]);
@@ -912,12 +626,16 @@ function processDeposits2(html, result) {
 
         var name = getParam(row, null, null, /(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
         var id = getParam(row, null, null, /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-        var currency = getParam(row, null, null, /(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseCurrency);
+        var currency = getParam(row, null, null, /(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseCurrency);
 
         var d = {
             __id: id,
             __name: name + ' ' + currency + ' (' + id.substr(-4) + ')'
         };
+
+        if(!currency){
+            AnyBalance.trace('Не удалось получить баланс и валюту для депозита ' + d.__name + ': ' + row);
+        }
 
         if (__shouldProcess('deposits', d)) {
             processDeposit2(html, row, d);
@@ -938,8 +656,8 @@ function processDeposit2(html, row, result) {
 
     getParam(row, result, 'deposits.acctype', /(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(row, result, 'deposits.accnum', /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(row, result, 'deposits.balance', /(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(row, result, 'deposits.currency', /(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseCurrency);
+    getParam(row, result, 'deposits.balance', /(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(row, result, 'deposits.currency', /(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseCurrency);
     getParam(row, result, 'deposits.till', />\s*&#1044;&#1086; (\d+[^>]*<)/i, replaceTagsAndSpaces, parseDateWord);
 
     if (AnyBalance.isAvailable('deposits.expressnum', 'deposits.balance_start', 'deposits.pct_sum', 'deposits.date_start',
@@ -1000,79 +718,3 @@ function processDeposit2(html, row, result) {
     }
 }
 
-function processDepositTransactions(html, result) {
-    AnyBalance.trace('Получаем транзакции для депозита ' + result.__name);
-
-    //Распечатать
-    var event = getParam(html, null, null, /<a[^>]+id="([^"]*)[^>]*>\s*&#1056;&#1072;&#1089;&#1087;&#1077;&#1095;&#1072;&#1090;&#1072;&#1090;&#1100;/i);
-    var o = getNextPage(html, event, [
-        ['event', '%EVENT%'],
-        ['event.%EVENT%', g_some_action],
-        ['oracle.adf.view.rich.PROCESS', '%EVENT%']
-    ], {withScripts: true});
-
-    html = o.html;
-
-    var url = getParam(o.scripts, null, null, /launchWindow\("([^"]*)/, replaceSlashes) + '&_rtrnId=' + new Date().getTime();
-    var windowId = getParam(o.scripts, null, null, /launchWindow\("[^"]*",\s*'([^']*)/, replaceSlashes);
-    html = AnyBalance.requestGet(g_baseurl + url, g_headers);
-
-    var afr = getParam(html, null, null, /"_afrLoop",\s*"(\d+)"/i);
-    if (!afr)
-        throw new AnyBalance.Error('Не удаётся найти параметр для входа: _afrLoop. Сайт изменен?');
-
-    html = AnyBalance.requestGet(g_baseurl + url + '&_afrLoop=' + afr + '&_afrWindowMode=1&_afrWindowId=' + windowId, addHeaders({Referer: g_baseurl + url}));
-    url = getParam(html, null, null, /<frame[^>]+id="_adfvdlg"[^>]*src="([^"]*)/i, null, html_entity_decode);
-
-    //Получаем собственно распечатку
-    html = AnyBalance.requestGet(g_baseurl + url, g_headers);
-
-    //Ищем ссылку на csv
-    event = getParam(html, null, null, /<img[^>]+id="([^"]*)::icon"[^>]*src="[^"]*csv/i, null, html_entity_decode);
-
-    html = getNextPage(html, event, [
-        ['event', '%EVENT%'],
-        ['event.%EVENT%', g_some_action],
-        ['oracle.adf.view.rich.PROCESS', '%EVENT%']
-    ], {headers: {}, requestOptions: {FORCE_CHARSET: 'windows-1251'}});
-
-    var data = Papa.parse(html);
-    AnyBalance.trace('Для депозита ' + result.__name + ' получено ' + data.data.length + ' транзакций: ' + data.data[0].join(';'));
-
-    var cols = {};
-    for (var j = 0; j < data.data[0].length; ++j) {
-        var col = data.data[0][j];
-        if (col == 'Дата')
-            cols.date = j;
-        else if (col == 'Примечание')
-            cols.descr = j;
-        else if (col == 'Сумма')
-            cols.sum = j;
-        else if (col == 'Остаток')
-            cols.balance = j;
-    }
-
-    result.transactions = [];
-
-    for (j = 1; j < data.data.length; ++j) {
-        var d = data.data[j], t = {};
-        if (d.length >= 4) {
-            if (isset(cols.descr) && /Предоставление транша\s+Дог/i.test(d[cols.descr])) {
-                ++transhes;
-                continue; //Предоставление транша неинтересно
-            }
-            if (isset(cols.date))
-                getParam(d[cols.date], t, 'deposits.transactions.date', null, null, parseDate);
-            if (isset(cols.descr))
-                getParam(d[cols.descr], t, 'credits.transactions.descr');
-            if (isset(cols.sum)) {
-                getParam(d[cols.sum], t, 'deposits.transactions.sum', null, null, parseBalance);
-                getParam(d[cols.sum], t, ['deposits.transactions.currency', 'deposits.transactions.sum', 'deposits.transactions.balance'], null, null, parseCurrency);
-            }
-            if (isset(cols.balance) && d[cols.balance])
-                getParam(d[cols.balance], t, 'credits.transactions.balance', null, null, parseBalance);
-
-            result.transactions.push(t);
-        }
-    }
-}

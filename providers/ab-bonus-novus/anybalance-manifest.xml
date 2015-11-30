@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="3">ab-bonus-novus</id>
+	<id version="4">ab-bonus-novus</id>
 	<api flags="no_browser"/>
 	<name>NOVUS (Супермаркеты, Украина)</name>
 	<description html="true"><![CDATA[
@@ -16,8 +16,9 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс"/>
-		<counter id="status" name="Статус" type="text"/>
+		<counter id="balance" name="Бонусы"/>
+		<counter id="status" name="Статус карты" type="text"/>
+		<counter id="deadline" name="Действуют до" type="time" format="dd/MM/yyyy"/>
 	</counters>
 	<keywords></keywords>
 	<type>bonus</type>

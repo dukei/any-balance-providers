@@ -30,6 +30,8 @@ function main(){
 			return prefs.login;
 		else if (name == 'pass')
 			return prefs.password;
+	    else if (name == 'token')
+	    	return getParam(html, null, null, /"staticVersion"\s*:\s*['"]?([^'",]*)/, replaceSlashes)
 
 		return value;
 	});

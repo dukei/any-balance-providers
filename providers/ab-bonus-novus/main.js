@@ -18,38 +18,34 @@ function main() {
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 	
-	if(prefs.__dbg) {
-		var html = AnyBalance.requestGet(baseurl + 'info/', g_headers);
-	} else {
-		var html = AnyBalance.requestGet(baseurl, g_headers);
+
+	var html = AnyBalance.requestGet(baseurl+'login', g_headers);
 		
-		var params = createFormParams(html, function(params, str, name, value) {
-			if (name == 'id') 
-				return prefs.login;
-			else if (name == 'password')
-				return prefs.password;
-
-			return value;
-		});
+	var params = createFormParams(html, function(params, str, name, value) {
+		if (name == 'ctl00$cphMain$txtLogin')
+			return prefs.login;
+		else if (name == 'ctl00$cphMain$txtPass')
+			return prefs.password;
+		return value;
+	});
 	
-		html = AnyBalance.requestPost(baseurl, params, addHeaders({Referer: baseurl}));
-	}
+	html = AnyBalance.requestPost(baseurl+'login', params, addHeaders({Referer: baseurl+'login'}));
 
-	if (!/Баланс/i.test(html)) {
-		var error = getParam(html, null, null, /<div[^>]+class="alert alert-block alert-danger"[^>]*>[\s\S]*?([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+
+	if (!/logout/i.test(html)) {
+		var error = getParam(html, null, null, /<span[^>]+id="ctl00_cphMain_lblError"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
 		if (error)
-			throw new AnyBalance.Error(error, null, /Вибачте, користувач з таким|Пароль не вірний/i.test(error));
+			throw new AnyBalance.Error(error, null, /Невірний номер картки чи пароль!/i.test(error));
 		
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
-	
-	html = AnyBalance.requestGet(baseurl + 'balance/', g_headers);
-	
+
 	var result = {success: true};
 	
 	getParam(html, result, 'status', /Статус([^>]*>){4}/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'balance', /Баланс за карткою([^>]*>){4}/i, replaceTagsAndSpaces, parseBalance);
-	
+	getParam(html, result, 'balance', /Баланс за карткою([^>]*>){3}/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'deadline', /Бонуси діють([^>]*>){1}/i, replaceTagsAndSpaces, parseDate);
+
 	AnyBalance.setResult(result);
 }

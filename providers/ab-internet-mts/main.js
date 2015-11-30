@@ -19,6 +19,7 @@ var regions = {
 	prm: getPrm,
 	ekt: getPrm,
 	krv: getKrv,
+	vnov: getVnov,
 	nnov: getNnov,
 	nnov_tv: getNnovTv,
 	sdv: getSdv,
@@ -476,6 +477,10 @@ function getPnz(){
 
 function getNnovTv() {
 	newTypicalLanBillingInetTv('https://lktvnn.pv.mts.ru/index.php');
+}
+
+function getVnov() {
+	newTypicalLanBillingInetTv('https://lk.nov.mts.ru/index.php');
 }
 
 function getNnov(){

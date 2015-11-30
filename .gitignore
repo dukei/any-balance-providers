@@ -4,4 +4,9 @@ _packsend.bat
 provider.zip
 packsend.bat
 debug
+<<<<<<< HEAD
 .DS_Store
+=======
+/nbproject/private/
+/nbproject
+>>>>>>> 8317f82ea790cb3647ca4620128a28bc3ce087e6

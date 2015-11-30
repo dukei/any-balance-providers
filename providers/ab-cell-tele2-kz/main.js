@@ -67,7 +67,7 @@ function main(){
 				throw new AnyBalance.Error(errors[error]);
 			if(error)
 				throw new AnyBalance.Error(error);
-			
+			AnyBalance.trace(html);
 			throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 		}
 	}
@@ -81,39 +81,49 @@ function main(){
 	getParam(html, result, 'phone', /"profile-phonenum"[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
 	
 	try{
-		if(isAvailable('internet_trafic')) {
+		if(isAvailable('internet_trafic', 'internet_trafic_night', 'min_left', 'sms_left', 'mms_left')) {
 			token = getParam(html, null, null, /constant\("csrf_token",\s+['"]([^"']*)/i);
 			var requestJson = {same_origin_token: token};
 			// Сайт возвращает JSON c доп. балансами, они -то нам и нужны
 			html = AnyBalance.requestPost(baseurl + 'balanceres', JSON.stringify(requestJson), addHeaders({Referer: baseurl + 'profile'}));
 			json = getJson(html);
-			var v;
-			if(isset(json.returns[0])){ //Ежемесячные
-				v = Math.round(json.returns[0].volume);
-				sumParam('' + v, result, 'internet_trafic', null, null, parseBalance, aggregate_sum);
-				//getParam('' + v, result, 'internet_trafic', null, null, parseBalance);
-			}
-			if(isset(json.returns[1])){ //Еженедельные
-				v = Math.round(json.returns[1].volume);
-				sumParam('' + v, result, 'internet_trafic', null, null, parseBalance, aggregate_sum);
-				//getParam('' + v, result, 'internet_trafic', null, null, parseBalance);
-			}
-			if(isset(json.returns[2])){ //Ежедневные
-				v = Math.round(json.returns[2].volume);
-				//getParam('' + v, result, 'internet_trafic', null, null, parseBalance);
-				sumParam('' + v, result, 'internet_trafic', null, null, parseBalance, aggregate_sum);
+
+			for(var i=0; i<json.returns.length; ++i){
+				var it = json.returns[i];
+				var name = it.balanceName[0], units = it.unitName[0];
+				var value = it.volume[0];
+				sumDiscount(result, name, units, value);
 			}
 
 			html = AnyBalance.requestPost(baseurl + 'balancedis', JSON.stringify(requestJson), addHeaders({Referer: baseurl + 'profile'}));
 			json = getJson(html);
 
-			if(isset(json.returns[0])){ //Ежегодные
-				v = Math.round(json.returns[0].balance);
-				sumParam('' + v, result, 'internet_trafic', null, null, parseBalance, aggregate_sum);
+			for(var i=0; i<json.returns.length; ++i){
+				var it = json.returns[i];
+				var name = it.dvtpName[0] + ' ' + it.name[0], units = '';
+				var value = it.balance[0];
+				sumDiscount(result, name, units, value);
 			}
 		}
 	} catch(e){
 		AnyBalance.trace('Ошибка при получении Интернет-пакетов: ' + e);
 	}
     AnyBalance.setResult(result);
+}
+
+function sumDiscount(result, name, units, value){
+	var bigname = name + units;
+	AnyBalance.trace('Найдено ' + name + ' ' + value + ' ' + units);
+	if(/шт|sms|смс/i.test(bigname)){
+		sumParam(value + '', result, 'sms_left', null, null, parseBalance, aggregate_sum);
+	}else if(/mms|ммс/i.test(bigname)){
+		sumParam(value + '', result, 'mms_left', null, null, parseBalance, aggregate_sum);
+	}else if(/минут/i.test(bigname)){
+		sumParam(value + '', result, 'min_left', null, [/[\.,].*/, ''], parseBalance, aggregate_sum);
+	}else if(/[гкмgkm][бb]/i.test(bigname) || /интернет/i.test(name)){
+		var night = /ноч/i.test(bigname) ? '_night' : '';
+		sumParam(value + 'мб', result, 'internet_trafic' + night, null, null, parseTraffic, aggregate_sum);
+	}else{
+		AnyBalance.trace('Неизвестная опция: ' + name);
+	}
 }

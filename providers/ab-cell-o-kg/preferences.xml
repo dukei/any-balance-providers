@@ -12,7 +12,7 @@
 	</EditTextPreference>
 	<EditTextPreference
 		title="Pin2"
-		pin2="pin2"
+		key="pin2"
 		summary="||****"
 		obligatory="true"
 		dialogTitle="Пароль"

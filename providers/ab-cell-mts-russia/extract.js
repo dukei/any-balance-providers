@@ -366,7 +366,7 @@ function checkLoginState(html, loginUrl, options) {
     if (/checkAuthStatus\(\)|дождитесь окончания процесса авторизации/i.test(html)) {
         var json = {}, tries = 20;
         while (json.Data != 'Success' && tries-- > 0) {
-            json = AnyBalance.requestGet(g_baseurl + '/WaitAuth/CheckAuth', addHeaders({Referer: g_baseurl + '/waitauth?goto=http://lk.ssl.mts.ru/'}));
+            json = AnyBalance.requestGet(g_baseurl + '/WaitAuth/CheckAuth?_=' + new Date().getTime(), addHeaders({Referer: g_baseurl + '/waitauth?goto=http://lk.ssl.mts.ru/'}));
             json = getJson(json);
 
             if (json.Data == 'Success')
@@ -376,6 +376,7 @@ function checkLoginState(html, loginUrl, options) {
         }
         // Если прождали авторизацию, а она так и не произошла надо об этом явно сообщить
         if (json.Data != 'Success') {
+        	AnyBalance.trace('Слишком долго ждали авторизацию: ' + JSON.stringify(json));
             if (options && options.automatic) {
                 //Это была попытка автоматического входа. Раз он не получился, давайте попробуем по логину и паролю
                 AnyBalance.trace('МТС не пустил нас в ЛК после ожидания авторизации. Ладно, попробуем с логином и паролем войти.');
@@ -645,16 +646,24 @@ function mainLK(html, result) {
         AnyBalance.trace('Пропускаем получение данных из ЛК, если требуется информация по другому номеру');
     }
 
-    if (isAnotherNumber() || isAvailableStatus()) {
-        var ret = followIHLink();
-        html = ret.html;
-
-        if (!isInOrdinary(html)) { //Тупой МТС не всегда может перейти из личного кабинета в интернет-помощник :(
-            var error = getElement(html, /<div[^>]+class="b(?:-page)?_error"[^>]*>/i, replaceTagsAndSpaces, html_entity_decode);
-            throw new AnyBalance.Error('Ошибка перехода в интернет-помощник: ' + error);
+    try{
+        if (isAnotherNumber() || isAvailableStatus()) {
+            var ret = followIHLink();
+            html = ret.html;
+        
+            if (!isInOrdinary(html)) { //Тупой МТС не всегда может перейти из личного кабинета в интернет-помощник :(
+                var error = getElement(html, /<div[^>]+class="b(?:-page)?_error"[^>]*>/i, replaceTagsAndSpaces, html_entity_decode);
+                if(!error)
+	                AnyBalance.trace(html);
+                throw new AnyBalance.Error('Ошибка перехода в интернет-помощник: ' + (error || 'вероятно, он временно недоступен') );
+            }
+        
+            fetchOrdinary(html, ret.baseurlHelper, result);
         }
-
-        fetchOrdinary(html, ret.baseurlHelper, result);
+    }catch(e){
+    	if(isAnotherNumber())
+    		throw e; //В случае требования другого номера все данные получаются только из интернет-помощника
+        AnyBalance.trace('Не удалось получить данные из ип: ' + e.message + '\n' + e.stack);
     }
 }
 

@@ -12,25 +12,24 @@ var g_headers = {
 };
 
 function main(){
-
+    AnyBalance.setDefaultCharset('utf-8');
     var prefs = AnyBalance.getPreferences();
 
     checkEmpty(prefs.phone, 'Введите номер телефона в 9-значном формате!');
     checkEmpty(prefs.pin2, 'Введите pin2!');
 
-    var baseurl = "https://lk.o.kg/",
-        codephone = prefs.phone.substring(0, 3),
-        numberphone = prefs.phone.substring(3);
-    AnyBalance.setDefaultCharset('utf-8');
-
+    var baseurl = "https://lk.o.kg/";
+    var codephone = prefs.phone.substring(0, 3);
+	var numberphone = prefs.phone.substring(3);
+	
     var html = AnyBalance.requestGet(baseurl + 'login', g_headers);
 
-    if(!html || AnyBalance.getLastStatusCode() > 400){ //Если главная страница возвращает ошибку, то надо отреагировать
-    	AnyBalance.trace(html); //В непонятных случаях лучше сделать распечатку в лог, чтобы можно было понять, что случилось
+    if(!html || AnyBalance.getLastStatusCode() > 400) {
+    	AnyBalance.trace(html);
     	throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
     }
 
-    AnyBalance.requestPost(baseurl + 'login', {
+    html = AnyBalance.requestPost(baseurl + 'login', {
         'MSISDN_PREFIX':codephone,
         '_MSISDN':numberphone,
         'SUBMIT_FIRST_STAGE':'Войти в кабинет',
@@ -79,25 +78,25 @@ function main(){
         'H_VIEW_CAPTCHA': '2'
     });
     
-    var error = getParam(html, null, null, /"auth_result"[^>]*>([^<]*)/i, replaceTagsAndSpaces);
-
-    if (error) {
-        throw new AnyBalance.Error(error);
-    };
-
-    html = AnyBalance.requestGet(baseurl + 'private-data/internet', g_headers);
-
-    if (!/Выход/i.test(html)) {
-        AnyBalance.trace(html);
-        throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
-    };
-
+	if (!/Выход/i.test(html)) {
+		var error = getParam(html, null, null, /"auth_result"[^>]*>([^<]+)/i, replaceTagsAndSpaces);
+		if (error)
+			throw new AnyBalance.Error(error, null, /Неверный номер телефона/i.test(error));
+		
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
+	}
+	
+	html = AnyBalance.requestGet(baseurl + 'private-data/internet', g_headers);
+	
     var result = {success: true};
-    getParam(html, result, 'tarif', /Тарифный план:([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, html_entity_decode);
+	
+    getParam(html, result, '__tariff', /Тарифный план:([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, 'phone', /Ваш номер:([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, 'balance', /Ваш баланс:([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'status', /Статус:([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'traffic', /Объем не использованного трафика[\s\S]*<span[^>]class=['"]bundle_balance["'][\s\S]*?>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'paydate', /Объем не использованного трафика[\s\S]*<span[^>]class=['"]next_payday["'][\s\S]*?>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'traffic', /Объем не использованного трафика[\s\S]*<span[^>]class=['"]bundle_balance["'][\s\S]*?>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseTraffic);
+    getParam(html, result, 'paydate', /next_payday[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseDate);
+	
     AnyBalance.setResult(result);
 }

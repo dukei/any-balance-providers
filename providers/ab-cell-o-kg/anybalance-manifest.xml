@@ -1,11 +1,11 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id version="1">ab-cell-o-kg</id>
+	<id version="2">ab-cell-o-kg</id>
 	<name>О! (Кыргызстан)</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о статусе лицевого счета абонента мобильного оператора связи 'O!', балансе, тарифе, остатке интернет-трафика, дате очередного снятия абонентской платы.
-	</p>
+	<p>Предоставляет информацию о балансе оператора сотовой связи O! в Кыргызстане <a href="http://o.kg/">http://o.kg/</a></p>
+	<p>Информация берется из личного кабинета <a href="https://lk.o.kg/login">https://lk.o.kg/login</a></p>
 	]]></description>
 	<instruction html="true"><![CDATA[
 	<ol>
@@ -24,9 +24,8 @@
 	<counters>
 		<counter id="balance" name="Баланс" units=" сом"/>
 		<counter id="phone" name="Телефон" type="text"/>
-		<counter id="tarif" name="Тариф" type="text"/>
 		<counter id="status" name="Статус" type="text"/>
-		<counter id="paydate" name="Дата очередного снятия абонентской платы" type="text"/>
+		<counter id="paydate" name="Дата очередного снятия абонентской платы" type="time" format="dd/MM/yyyy"/>
 		<counter id="traffic" name="Остаток интернет трафика" units=" Mb"/>
 	</counters>
 	<keywords>O!, Сотовый телефон, мобильный, мобильник, Кыргызстан</keywords>

@@ -35,7 +35,7 @@ function main(){
 
     if(!/\/logout/i.test(html)){
         var error = getParam(html, null, null, /<div[^>]+class="block_thanks"[^>]*>[\s\S]*?<div[^>]+class="text"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
-        console.log(error);
+        AnyBalance.trace(error);
         if(error)
             throw new AnyBalance.Error(error);
         throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
@@ -49,12 +49,12 @@ function main(){
     getParam(html, result, 'number', /<td>Договор[\s]*<\/td>[\s]*<td>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, 'email', /<td>Email[\s]*<\/td>[\s]*<td class="word-break">([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, loyalty, 'url', /<div class="col-md-4 col-sm-6 col-xs-6 gray"><a href="([\s\S]*?)" class="btn btn-lg btn-gray" >Программа лояльности<\/a>/i);
-    console.log(loyalty)
+    AnyBalance.trace(loyalty)
 
     var html = AnyBalance.requestGet(loyalty.url)
     if(!/Личный кабинет участника программы лояльности/i.test(html)){
       var error = getParam(html, null, null, /<div class="unauthorized-invite">[\s\S]*?<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
-      console.log(error);
+      AnyBalance.trace(error);
       if(error)
           throw new AnyBalance.Error(error);
     }

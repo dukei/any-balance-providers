@@ -1,5 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="4" date="2015-11-30">
+	Убрана зависимость от console (чтобы не падала)
+	</change>
     <change version="2" date="2013-08-05">
 	Поддержка изменений в личном кабинете
     </change>

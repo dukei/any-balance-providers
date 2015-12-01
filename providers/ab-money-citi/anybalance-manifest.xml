@@ -1,26 +1,31 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-    <id version="9">ab-money-citi</id>
+    <id version="10">ab-money-citi</id>
     <name>Ситибанк</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о на картах и счетах в Ситибинке (https://www.citibank.ru).</p>
+	<p>Предоставляет информацию о на картах и счетах в Ситибинке <a href="https://www.citibank.ru">https://www.citibank.ru</a></p>
 	<p>В настройках провайдера требуется указать логин и пароль к Интернет-банку.</p>
 	]]></description>
 	<instruction html="true"><![CDATA[
-	<p>Если у вас нет логина и пароля, вы можете получить их на этой странице: https://www.citibank.ru/RUGCB/JSO/reg/Setup.do</p>
+	<p>Если у вас нет логина и пароля, вы можете получить их на этой странице: <a href="https://www.citibank.ru/RUGCB/JSO/reg/Setup.do">https://www.citibank.ru/RUGCB/JSO/reg/Setup.do</a></p>
 	]]></instruction>
-	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
 		<js>library.js</js>
+		<js>nadapter.js</js>
+		<js>extract.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
 	<counters>
 		<counter id="balance" name="Доступно" units=" {@currency}"/>
 		<counter id="ondeposit" name="Текущий баланс" units=" {@currency}"/>
+		<counter id="onhold" name="Замороженные суммы" units=" {@currency}"/>
+		<counter id="incash" name="Доступно для снятия" units=" {@currency}"/>
+		<counter id="balance_lastEx" name="Баланс с последней выписки" units=" {@currency}"/>
 		<counter id="currency" name="Валюта" type="text"/>
 		<counter id="limit" name="Кредитный лимит" units=" {@currency}"/>
 		<counter id="credit" name="Использованный кредит" units=" {@currency}"/>
@@ -29,8 +34,10 @@
 		<counter id="credit_next_payment_till" name="Дата следующего платежа" type="time" format="dd/MM/yyyy"/>
 		<counter id="accnum" name="Номер" type="text"/>
 		<counter id="accname" name="Название" type="text"/>
+		<counter id="ibanAccuntNo" name="Номер счета для погашения со счета в другом банке" type="text"/>
+		<counter id="rewardPoints " name="Баланс бонусных баллов"/>
 	</counters>
 	<keywords>Кредит, банк, citi</keywords>
-	<type>money</type>
+	<type>money, bank</type>
 	<country>ru</country>
 </provider>

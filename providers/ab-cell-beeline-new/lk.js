@@ -929,7 +929,7 @@ function isAvailableBonuses() {
 }
 
 function getFoundBonuses(xhtml) {
-    var bonuses = sumParam(xhtml, null, null, /<div[^>]+class="item(?:[\s\S](?!$|<div[^>]+class="item))*[\s\S]/ig);
+	var bonuses = getElements(xhtml, /<div[^>]+class="(?:grouped-bonuses|item)[^>]*>/ig);
     return bonuses;
 }
 
@@ -956,6 +956,11 @@ function getBonuses(xhtml, result, nopath) {
     }
     for (var j = 0; j < bonuses.length; ++j) {
         var bonus = bonuses[j];
+		
+		if(!/^<div[^>]*item/i.test(bonus)) {
+			AnyBalance.trace('Пропускаем grouped-bonuses: ' + bonus);
+			continue;
+		}
         //var bonus_name = ''; //getParam(bonus, null, null, /<span[^>]+class="bonuses-accums-list"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
         // var services = sumParam(bonus, null, null, /<div[^>]+class="\s*(?:accumulator|bonus|item)\s*"(?:[\s\S](?!$|<div[^>]+class="(?:accumulator|bonus|item)"))*[\s\S]/ig);
         var services = sumParam(bonus, null, null, /<div[^>]+class="\s*(?:(?:item\s*)?(?:accumulator|accumulator|bonus|item)?)[^"]*"(?:[\s\S](?!$|<div[^>]+class="(?:accumulator|accumulator|bonus|item)"))*[\s\S]/ig);

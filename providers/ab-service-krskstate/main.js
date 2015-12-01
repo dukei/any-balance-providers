@@ -14,7 +14,7 @@ function main(){
 	AnyBalance.setDefaultCharset('utf-8'); 
     var prefs = AnyBalance.getPreferences();
 	
-    checkEmpty(prefs.kinnumber, 'Введите номер заявления!');
+    checkEmpty(prefs.login, 'Введите номер заявления!');
 	var baseurl = "http://www.krskstate.ru/krao/underschool/";
     
     var html = AnyBalance.requestGet(baseurl + 'queue', g_headers);
@@ -24,7 +24,7 @@ function main(){
     	throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
     };
 	
-    html = AnyBalance.requestGet(baseurl + 'queue?kinnumber=' + prefs.kinnumber, addHeaders({Referer: baseurl + 'queue'})); 
+    html = AnyBalance.requestGet(baseurl + 'queue?kinnumber=' + prefs.login, addHeaders({Referer: baseurl + 'queue'})); 
 
     if(!/<h3[^>]*>Первичная информация о положении в очереди/i.test(html)) {
         var error = getParam(html, null, null, /<\/form>[^f]*(?=Уважаемые посетители!)/i, replaceTagsAndSpaces, html_entity_decode);
@@ -35,7 +35,7 @@ function main(){
         throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
     }
 
-    var result = {success: true, login: prefs.kinnumber};
+    var result = {success: true, login: prefs.login};
 	
     getParam(html, result, 'district', /<p[^>]*>Район:([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, 'agegroup', /<p[^>]*>Возрастная группа:([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, html_entity_decode);

@@ -42,6 +42,7 @@ var g_userAgent = 'mozilla/5.0 (windows nt 10.0; win64; x64) applewebkit/537.36 
 
 var g_lks = {
     pesc: {
+    protocols: ['TLSv1.2'],
 	url: 'https://ikus.pesc.ru/IKUSUser/',
 	uid: 'E85D8BB4C101FFBB462908DEC5BC61A6',
 	auth_uid: 'AE742241A0A8AD76E4877D96DE250A42',
@@ -96,6 +97,9 @@ function main(){
     checkEmpty(prefs.password, 'Введите пароль!');
 
     var cfg = !prefs.type || !g_lks[prefs.type] ? g_lks.pesc : g_lks[prefs.type];
+
+    if(cfg.protocols)
+    	AnyBalance.setOptions({SSL_ENABLED_PROTOCOLS: cfg.protocols}); 
 
     var baseurl = cfg.url;
     var uid = cfg.uid;

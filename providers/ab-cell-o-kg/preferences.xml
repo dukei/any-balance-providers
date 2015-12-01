@@ -1,24 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
 	<EditTextPreference
-		title="Логин"
-		key="login"
+		title="Номер телефона"
+		key="phone"
 		summary="||{@s}"
 		obligatory="true"
 		dialogTitle="Логин"
 		positiveButtonText="ОК"
 		negativeButtonText="Отмена"
-		dialogMessage="Введите логин, используемый для входа в личный кабинет.">
+		dialogMessage="Введите номер телефона в 9-значном формате.">
 	</EditTextPreference>
 	<EditTextPreference
-		title="Пароль"
-		key="password"
-		summary="||***********"
+		title="Pin2"
+		key="pin2"
+		summary="||****"
 		obligatory="true"
 		dialogTitle="Пароль"
 		positiveButtonText="ОК"
 		negativeButtonText="Отмена"
-		dialogMessage="Введите пароль, используемый для входа в личный кабинет."
+		dialogMessage="Введите pin2, используемый для входа в личный кабинет."
 		inputType="textPassword">
 	</EditTextPreference>
 </PreferenceScreen>

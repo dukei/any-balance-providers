@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-tv-tvk</id>
+	<id version="3">ab-tv-tvk</id>
 	<api flags="no_browser"/>
 	<name>ТВК-плюс Бердск</name>
 	<description html="true"><![CDATA[
@@ -20,7 +20,7 @@
 		<counter id="phone" name="Телефон" type="text"/>
 		<counter id="accountNumber" name="Лицевой счёт" type="text"/>
 		<counter id="agreementID" name="Номер договора" type="text"/>
-		<counter id="digitalTV" name="Цифровое ТВ" type="text"/>
+		<counter id="tarifTV" name="Тариф ТВ" type="text"/>
 		<counter id="costTV" name="Стоимость тарифа" units=" p"/>
 		<counter id="card" name="Номер карты доступа" type="text"/>
 	</counters>

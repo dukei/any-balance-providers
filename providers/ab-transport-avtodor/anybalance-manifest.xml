@@ -1,38 +1,29 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="4">ab-transport-avtodor</id>
-  <!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
-  <api flags="no_browser" />
-  <name>Автодор</name>
-  <description>
-    Получает баланс со счета в компании Автодор (http://avtodor-ts.ru)
-
-    Информация берется из личного кабинета системы Автодор: http://avtodor-ts.ru/account/index
-
-    Для возможности проверки баланса текущего счета необходимо завершить регистрацию своего профиля и ввести в соответствующее поле формы сайта компании номер Договора, заключенного при приобретении электронного средства проезда.
-  </description>
+	<id version="5">ab-transport-avtodor</id>
+	<api flags="no_browser" />
+	<name>Автодор</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе счета в компании Автодор <a href="http://avtodor-ts.ru">http://avtodor-ts.ru</a></p>
+	<p>Информация берется из личного кабинета <a href="http://avtodor-ts.ru/account/index">http://avtodor-ts.ru/account/index</a></p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<author>d3vil-st &lt;d3vil.st@gmail.com&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>library.js</js>
-    <js>main.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="balance" name="Баланс" units="р"/>
-    <counter id="fio" name="ФИО" type="text"/>
-    <counter id="number" name="Договор" type="text"/>
-    <counter id="email" name="Email (логин)" type="text"/>
-    <counter id="bonus" name="Бонусные баллы"/>
-  </counters>
-  <keywords>
-    avtodor
-  </keywords>
-  <type>
-    transport
-  </type>
-  <country>
-    ru
-  </country>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="number" name="Договор" type="text"/>
+		<counter id="email" name="Email (логин)" type="text"/>
+		<counter id="bonus" name="Бонусные баллы"/>
+	</counters>
+	<keywords>avtodor</keywords>
+	<type>transport</type>
+	<country>ru</country>
 </provider>

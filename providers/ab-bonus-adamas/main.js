@@ -46,18 +46,17 @@ function main() {
 	
 	var result = {success: true};
 
-	html = AnyBalance.requestGet(baseurl+'personal/', g_headers);
+	html = AnyBalance.requestGet(baseurl + 'personal/', g_headers);
 
-	var fName = getParam(html, null, null, /name="name"[^>]+value="([\s\S]*?)"/i, replaceTagsAndSpaces, html_entity_decode);
-	var lName = getParam(html, null, null, /name="last_name"[^>]+value="([\s\S]*?)"/i, replaceTagsAndSpaces, html_entity_decode);
-	var patronymic = getParam(html, null, null, /name="SECOND_NAME"[^>]+value="([\s\S]*?)"/i, replaceTagsAndSpaces, html_entity_decode);
-	var phone = getParam(html, null, null, /Мобильный телефон:([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+	var fName = getParam(html, null, null, /name="name"[^>]+value="([\s\S]*?)"/i, replaceTagsAndSpaces, html_entity_decode) || '';
+	var lName = getParam(html, null, null, /name="last_name"[^>]+value="([\s\S]*?)"/i, replaceTagsAndSpaces, html_entity_decode) || '';
+	var patronymic = getParam(html, null, null, /name="SECOND_NAME"[^>]+value="([\s\S]*?)"/i, replaceTagsAndSpaces, html_entity_decode) || '';
 
 	getParam(lName + ' ' + fName + ' ' + patronymic, result, 'fio');
-	getParam('+7'+phone, result, 'phone');
+	getParam(html, result, 'phone', /Мобильный телефон:([\s\S]*?)<\/div>/i, [replaceTagsAndSpaces, /(.*?)/, '+7$1'], html_entity_decode);
 	getParam(html, result, 'discount', /name="DISCOUNT"[^>]+value="([\s\S]*?)"/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'bonus', /name="BONUS"[^>]+value="([\s\S]*?)"/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'cardNumber', /<div[^>]+class="ads-discount-card"[^>]*>(?:[\s\S]*?<div[^>]*>){1}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'balance', /name="BONUS"[^>]+value="([\s\S]*?)"/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'cardNumber', /Номер карты:[\s\S]*?(\d+)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
 
 	AnyBalance.setResult(result);
 }

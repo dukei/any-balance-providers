@@ -51,6 +51,8 @@ function login(prefs) {
 			return str;
 		});
 		
+		AnyBalance.trace('XXX_Extra evaluate successfull');
+		
 		JFP_TOKEN = getJFPToken(html);
 		SYNC_TOKEN = getToken(html);
 		
@@ -103,6 +105,7 @@ function login(prefs) {
     }	
 	
 	__setLoginSuccessful();
+	AnyBalance.trace('Успешно вошли, отлично.');
 	
 	return html;
 }
@@ -110,19 +113,26 @@ function login(prefs) {
 // Профиль
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 function processProfile(html, result) {
-	var jsonStr = AnyBalance.requestPost(baseurl + 'REST/welcome/welcomeMsgContent?JFP_TOKEN=' + getJFPToken(html), '', addHeaders(jsonHeaders, {
-		Referer: baseurl + 'JSO/signon/uname/HomePage.do?SYNC_TOKEN='+getToken(html)+'&JFP_TOKEN=' + getJFPToken(html)
-	}));
-	
-	var json = getJson(jsonStr);
-	
-	result.profile = {};
-	
-	getParam(json.USERNAME, result.profile, 'profile.USERNAME', null, replaceTagsAndSpaces, capitalFirstLetters);
-	getParam(json.EMAIL, result.profile, 'profile.EMAIL', null, replaceTagsAndSpaces);
-	getParam(json.MOBILENUMBER, result.profile, 'profile.MOBILENUMBER', null, replaceTagsAndSpaces);
-	getParam(json.COMPANYNAMEPHRASE, result.profile, 'profile.COMPANYNAMEPHRASE', null, replaceTagsAndSpaces);
-	getParam(json.COMPANYNAME, result.profile, 'profile.COMPANYNAME', null, replaceTagsAndSpaces);
+	AnyBalance.trace('Получаем данные профиля');
+	try {
+		var jsonStr = AnyBalance.requestPost(baseurl + 'REST/welcome/welcomeMsgContent?JFP_TOKEN=' + getJFPToken(html), '', addHeaders(jsonHeaders, {
+			Referer: baseurl + 'JSO/signon/uname/HomePage.do?SYNC_TOKEN='+getToken(html) + '&JFP_TOKEN=' + getJFPToken(html)
+		}));
+		
+		var json = getJson(jsonStr);
+		
+		result.profile = {};
+		
+		getParam(json.USERNAME, result.profile, 'profile.USERNAME', null, replaceTagsAndSpaces, capitalFirstLetters);
+		getParam(json.EMAIL, result.profile, 'profile.EMAIL', null, replaceTagsAndSpaces);
+		getParam(json.MOBILENUMBER, result.profile, 'profile.MOBILENUMBER', null, replaceTagsAndSpaces);
+		getParam(json.COMPANYNAMEPHRASE, result.profile, 'profile.COMPANYNAMEPHRASE', null, replaceTagsAndSpaces);
+		getParam(json.COMPANYNAME, result.profile, 'profile.COMPANYNAME', null, replaceTagsAndSpaces);
+		
+		AnyBalance.trace('Получили данные профиля');		
+	} catch(e) {
+		
+	}
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Смс-код
@@ -340,6 +350,7 @@ function getFormattedDate(dayCorr) {
 */
 
 var g_append = '';
+var document = '';
 
 function jQueryLocal(args) {
 	jQueryLocal.fn = {

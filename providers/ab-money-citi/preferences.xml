@@ -47,6 +47,6 @@
 		defaultValue="false"
 		summaryOn="Смс запрашивается"
 		summaryOff="Смс не запрашивается"
-		key="detailsEnabled" />	
+		key="detailsEnabled">
 	</CheckBoxPreference>
 </PreferenceScreen>

@@ -62,7 +62,7 @@ if(!b){AnyBalance.trace("Parsed seconds ("+g+") from: "+f)
 }function make_html_entity_replacement(e,c,b,a){var d={amp:38,nbsp:160,iexcl:161,cent:162,pound:163,curren:164,yen:165,brvbar:166,sect:167,uml:168,copy:169,ordf:170,laquo:171,not:172,shy:173,reg:174,macr:175,deg:176,plusmn:177,sup2:178,sup3:179,acute:180,micro:181,para:182,middot:183,cedil:184,sup1:185,ordm:186,raquo:187,frac14:188,frac12:189,frac34:190,iquest:191,agrave:192,aacute:193,acirc:194,atilde:195,auml:196,aring:197,aelig:198,ccedil:199,egrave:200,eacute:201,ecirc:202,euml:203,igrave:204,iacute:205,icirc:206,iuml:207,eth:208,ntilde:209,ograve:210,oacute:211,ocirc:212,otilde:213,ouml:214,times:215,oslash:216,ugrave:217,uacute:218,ucirc:219,uuml:220,yacute:221,thorn:222,szlig:223,agrave:224,aacute:225,acirc:226,atilde:227,auml:228,aring:229,aelig:230,ccedil:231,egrave:232,eacute:233,ecirc:234,euml:235,igrave:236,iacute:237,icirc:238,iuml:239,eth:240,ntilde:241,ograve:242,oacute:243,ocirc:244,otilde:245,ouml:246,divide:247,oslash:248,ugrave:249,uacute:250,ucirc:251,uuml:252,yacute:253,thorn:254,yuml:255,quot:34,lt:60,gt:62};
 if(!c){var f=a.toLowerCase(a);
 if(d.hasOwnProperty(f)){return String.fromCharCode(d[f])
-}}else{if(!b){if(/^\d+$/.test(a)){return String.fromCharCode(parseInt(a))
+}}else{if(!b){if(/^\d+$/.test(a)){return String.fromCharCode(parseInt(a,10))
 }}else{if(/^[0-9a-f]+$/i.test(a)){return String.fromCharCode(parseInt(a,16))
 }}}return e
 }function createFormParams(k,b,l){var g=l?[]:{},j=/value\s*=\s*("[^"]*"|'[^']*'|[\w\-\/\\]+)/i,m=[/^"([^"]*)"$|^'([^']*)'$/,"$1$2"],a,q=/<input[^>]+name\s*=\s*("[^"]*"|'[^']*'|[\w\-\/\\]+)[^>]*>|<select[^>]+name\s*=\s*("[^"]*"|'[^']*'|[\w\-\/\\]+)[^>]*>[\s\S]*?<\/select>/ig,h=null;

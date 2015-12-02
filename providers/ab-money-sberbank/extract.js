@@ -646,7 +646,7 @@ function fetchNewThanks(baseurl, result) {
 			AnyBalance.trace('Не удаётся получить ссылку на спасибо от сбербанка: ' + html);
 		} else {
 			html = AnyBalance.requestGet(href);
-			getParam(html, result, 'spasibo', /Баланс:\s*<strong[^>]*>\s*([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+			getParam(html, result, 'spasibo', /<span[^>]*balance__thanks-count[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
 		}
 	}
 }

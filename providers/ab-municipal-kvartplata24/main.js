@@ -20,7 +20,7 @@ function main() {
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 
-	var html = AnyBalance.requestGet(baseurl + 'lk/login.jsp', g_headers);
+	var html = AnyBalance.requestGet(baseurl + 'lk/login', g_headers);
 	
 	html = AnyBalance.requestPost(baseurl + 'lk/j_spring_security_check', {
 		j_username: prefs.login,
@@ -39,7 +39,7 @@ function main() {
 	var result = {success: true};
 	
 	if(isAvailable(['balance', 'date'])) {
-		html = AnyBalance.requestPost(baseurl + 'lk/payment/getDataByYear', JSON.stringify(p), addHeaders( {
+		html = AnyBalance.requestGet(baseurl + 'lk/payment/getDataByYear/' + year, addHeaders( {
 			Referer: baseurl + 'lk/payment',
 			Accept:'*/*',
 			'X-Requested-With':'XMLHttpRequest',		
@@ -53,7 +53,7 @@ function main() {
 	}
 
 	if(isAvailable(['balance', 'date'])) {
-		html = AnyBalance.requestPost(baseurl + 'lk/history/getDataByYear', JSON.stringify(p), addHeaders( {
+		html = AnyBalance.requestGet(baseurl + 'lk/history/getDataByYear/' + year, addHeaders( {
 			Referer: baseurl + 'lk/payment',
 			Accept:'*/*',
 			'X-Requested-With':'XMLHttpRequest',		

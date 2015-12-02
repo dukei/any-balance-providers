@@ -79,7 +79,8 @@ function main() {
 	
 	var result = {success: true};
 	
-	getParam(html, result, 'balance', /balance[\s\S]+?([^<]+)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'balance', /js_profile_balance[\s\S]+?([^><]+)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'balance_rur', /lk-million-main__ball[\s\S]+?([&\d]+)/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'fio', /profile_avatar-name[\s\S]+?([^><]+)/i, replaceTagsAndSpaces, html_entity_decode);
 	
 	AnyBalance.setResult(result);

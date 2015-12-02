@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-bonus-prostokvashino-rus</id>
+	<id version="2">ab-bonus-prostokvashino-rus</id>
 	<api flags="no_browser|captcha"/>
 	<name>Простоквашино (Россия)</name>
 	<description html="true"><![CDATA[
@@ -19,7 +19,8 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units=" баллов"/>
+		<counter id="balance" name="Баланс баллов" units=" баллов"/>
+		<counter id="balance_rur" name="Баланс рублей" units=" рублей"/>
 		<counter id="fio" name="ФИО" type="text"/>
 	</counters>
 	<keywords></keywords>

@@ -965,7 +965,11 @@ function megafonBalanceInfo(filial) {
     }
 
     var result = {success: true, filial: filinfo.id};
-    getParam(html, result, 'balance', /<BALANCE>([^<]*)<\/BALANCE>/i, replaceTagsAndSpaces, parseBalance);
+
+    var balance = getParam(html, null, null, /<BALANCE>([^<]*)<\/BALANCE>/i, replaceTagsAndSpaces, parseBalance);
+    var limit = getParam(html, null, null, /<CREDIT_\w+LIMIT>([^<]*)<\/CREDIT_\w+LIMIT>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(balance-(limit || 0), result, 'balance');
+    getParam(limit, result, 'credit');
     getParam(html, result, 'phone', /<MSISDN>([^<]*)<\/MSISDN>/i, replaceNumber, html_entity_decode);
 
     //Не, врет безбожно, бесполезно вызывать

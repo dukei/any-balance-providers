@@ -1,0 +1,44 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-money-bspb</id>
+	<api flags="no_browser"/>
+	<name>Банк Санкт Петербург (БСПБ)</name>
+	<description html="true"><![CDATA[
+	<p>Получает текущий остаток и другие параметры продуктов Банка Санкт-Петербург https://bspb.ru/, используя интернет-банк (https://i.bspb.ru/).</p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Если вы ещё ни разу не входили в интернет-банк, зайдите на https://i.bspb.ru/ и укажите цифровые коды (пользователь и пароль), пришедшие в SMS-сообщении, в соответствующие поля в правом верхнем углу. Придумайте новые имя пользователя и пароль, которые в дальнейшем будете использовать для входа в интернет-банк.</p>
+	<p>Если услуга интернет-банк у вас ещё не подключена, подключите услугу интернет-банк в любом офисе банка. Для этого вам понадобится паспорт и несколько минут времени.</p>
+	<p>Если ввести логин demo и пароль demo, то данные будут получены из демо-версии интернет-банка https://idemo.bspb.ru/</p>
+	]]></instruction>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>nadapter.js</js>
+		<js>extract.js</js>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Остаток" units=" {@currency}"/>
+		<counter id="bonus" name="Бонусы ЯРКО"/>
+		<counter id="needpay" name="Обязательный платеж" units=" {@currency}"/>
+		<counter id="needpaytill" name="Обязательный платеж: заплатить до" type="time" format="dd/MM/yyyy"/>
+		<counter id="pct" name="Срочные проценты" units=" {@currency}"/>
+		<counter id="till" name="Срок действия" type="time" format="dd/MM/yyyy"/>
+		<counter id="debt" name="Просроченная задолженность" units=" {@currency}"/>
+		<counter id="peni" name="Пени" units=" {@currency}"/>
+		<counter id="limit" name="Кредитный лимит" units=" {@currency}"/>
+		<counter id="currency" name="Валюта" type="text"/>
+		<counter id="num" name="Номер" type="text"/>
+		<counter id="accnum" name="Обслуживающий счет" type="text"/>
+		<counter id="type" name="Тип карты/кредита" type="text"/>
+		<counter id="status" name="Статус" type="text"/>
+		<counter id="fio" name="ФИО" type="text"/>
+	</counters>
+	<keywords>Бспб, bspb</keywords>
+	<type>money, bank</type>
+	<country>ru</country>
+</provider>

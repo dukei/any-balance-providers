@@ -59,7 +59,7 @@ function login(prefs) {
 		var XYZ_Extra = getParam(html, null, null, /XYZ_Extra[^>]*value=([^"'>]+)/i);
 		var XXX_Extra = getParam(g_append, null, null, /XXX_Extra[^>]*value=([^'">]+)/i);
 		
-		checkEmpty(JFP_TOKEN && XYZ_Extra && XXX_Extra, 'Не удалось найти один из важных параметров входа, сайт изменен?');		
+		checkEmpty(JFP_TOKEN && XYZ_Extra && XXX_Extra, 'Не удалось найти один из важных параметров входа, сайт изменен?', true);		
 		
 		html = AnyBalance.requestPost(baseurl + 'JSO/signon/ProcessUsernameSignon.do?JFP_TOKEN=' + JFP_TOKEN, {
 			'SYNC_TOKEN': SYNC_TOKEN,
@@ -78,8 +78,13 @@ function login(prefs) {
 			html = AnyBalance.requestGet(baseurl + 'JSO/signon/uname/HomepagePortal.do?SYNC_TOKEN=' + getToken(html), addHeaders({Referer: baseurl + 'JSO/signon/DisplayUsernameSignon.do'}));
 		}
 		
-		if(!/signOffLink/i.test(html)) {
-			throw new AnyBalance.Error('Не удалось войти в интернет-банк. Неправильный логин-пароль?');
+		if (!/выйти/i.test(html)) {
+			var error = getParam(html, null, null, /<span class="[^"]*error[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
+			if (error)
+				throw new AnyBalance.Error(error, null, /неправильные данные|Неверный логин или пароль/i.test(error));
+			
+			AnyBalance.trace(html);
+			throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 		}
 
 		// html = AnyBalance.requestGet(baseurl + 'JSO/signon/uname/HomePage.do?SYNC_TOKEN=' + getToken(html) + '&JFP_TOKEN=' + getJFPToken(html), addHeaders({Referer: baseurl + 'JSO/signon/DisplayUsernameSignon.do'}));

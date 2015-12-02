@@ -30,7 +30,7 @@ function main(){
 
     //Ссылка на печать квитанции
     if(!/Лицевой cчет N/i.test(html)){
-        var error = getParam(html, null, null, [/<div[^>]+class="error"[^>]*>([\s\S]*?)<\/div>/i, /<\/form>(?:\s+|<br[^>]*>)*<strong[^>]*>([\s\S]*?)<\/strong>/i], replaceTagsAndSpaces, html_entity_decode);
+        var error = getParam(html, null, null, [/<div[^>]+class="error"[^>]*>([\s\S]*?)<\/div>/i, /<\/form>(?:\s+|<br[^>]*>)*<b[^>]*>([\s\S]*?)<\/b>/i], replaceTagsAndSpaces, html_entity_decode);
         if(error)
             throw new AnyBalance.Error(error, null, /некорректные данные/i.test(html));
         AnyBalance.trace(html);

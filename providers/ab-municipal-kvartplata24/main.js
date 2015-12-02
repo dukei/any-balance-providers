@@ -29,8 +29,8 @@ function main() {
 	}, addHeaders({Referer: baseurl + 'lk/login.jsp'}));
 
 	if (!/logout/i.test(html)) {
-		var error = getParam(html, null, null, /<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
-		if (error) throw new AnyBalance.Error(error);
+		var error = getParam(html, null, null, /<div[^>]+alert-error[^>]*>([\s\S]*?)(?:<\/div>|<\/strong)/i, replaceTagsAndSpaces, html_entity_decode);
+		if (error) throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
 	var dt = new Date();

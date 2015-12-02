@@ -1,5 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="4" date="2015-12-02">
+	Поддержка изменений на сайте (спс slydiman)
+	Улучшена обработка ошибок
+	</change>
 	<change version="3" date="2015-04-10">
 	- Сайт переехал на https (спс slydiman)
 	</change>

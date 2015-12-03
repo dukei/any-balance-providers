@@ -20,6 +20,9 @@ function login(prefs) {
 	AnyBalance.setDefaultCharset('utf-8');
 	
 	var html = AnyBalance.requestGet(baseurl + '', g_headers);
+	if(/securemsg/i.test(html)){
+		html = new WellsFargo(AnyBalance.getLastUrl()).executeScript(html);
+	}
 	
     var authkey = getAuthKey(html);
 	var rsa_N = getRsaN(html);

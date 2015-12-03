@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="2.0" version="25" date="2015-12-03">
+	Преодоление новой защиты от роботов
+	</change>
 	<change major_version="2.0" version="24" date="2015-11-02">
 	- Новые счетчики: Минимальный платеж, Минимальный платеж оплатить до.
 	</change>

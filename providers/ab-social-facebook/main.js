@@ -35,8 +35,8 @@ function main() {
 	
 	html = AnyBalance.requestPost(baseurl + 'login.php?refsrc=https%3A%2F%2Fm.facebook.com%2F&lwv=100&refid=8', params, addHeaders({Referer: baseurl}));
 	
-	if (!/logout/i.test(html)) {
-		var error = getParam(html, null, null, /<div class="x">([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+	if (!/requests_jewel/i.test(html)) {
+		var error = getParam(html, null, null, /<div[^>]+id="root"[^>]*>([\s\S]*?)<\/form>/i, [replaceTagsAndSpaces, /Зарегистрируйте аккаунт.*/i, ''], html_entity_decode);
 		if (error)
 			throw new AnyBalance.Error(error, null, /Нам не удалось опознать|не соответствует ни одному аккаунту/i.test(error));
 		

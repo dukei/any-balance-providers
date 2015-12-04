@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-telephony-mtt-business</id>
+	<api flags="no_browser"/>
+	<name>МТТ Бизнес</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера МТТ (ОАО «Межрегиональный Транзит Телеком») <a href="http://www.mtt.ru/">http://www.mtt.ru/</a></p>
+	<p>Информация берется из личного кабинета <a href="https://business.mtt.ru/">https://business.mtt.ru/</a></p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" p"/>
+		<counter id="cost" name="Абонентская плата" units=" p"/>
+		<counter id="lkCost" name="Стоимость ЛК" units=" p"/>
+		<counter id="diskCost" name="Стоимость дискового пространства" units=" p"/>
+		<counter id="accountID" name="Лицевой счёт" type="text"/>
+		<counter id="manager" name="Менеджер" type="text"/>
+		<counter id="busyLK" name="Занято личных кабинетов"/>
+		<counter id="freeLK" name="Свободно личных кабинетов"/>
+		<counter id="totalLK" name="Всего личных кабинетов"/>
+		<counter id="totalDiskSpace" name="Всего места на диске" units=" Mb"/>
+		<counter id="usedDiskSpace" name="Использованного места на диске" units=" Mb"/>
+		<counter id="freeDiskSpace" name="Свободного места на диске" units=" Mb"/>
+	</counters>
+	<keywords></keywords>
+	<type>telephony</type>
+	<country>ru</country>
+</provider>

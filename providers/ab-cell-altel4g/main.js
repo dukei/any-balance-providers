@@ -57,12 +57,19 @@ function main(){
 			}else if(/на город/i.test(note)){
 				counter_name = 'min_left_city'; // Минуты на город
 			}
-			if(counter_name)
-				getParam(counter, result, counter_name, /(\d+:\d+)/i, replaceTagsAndSpaces, parseMinutes);
+			if(counter_name && !/unlim/i.test((counter)))
+				getParam(counter, result, counter_name, /(\d+(:\d+)?)/i, replaceTagsAndSpaces, parseMinutes);
+			else  getParam(counter, result, counter_name, null, [replaceTagsAndSpaces, /unlim/i, '0'], parseMinutes);
 		}else if(/[МГКMGK][бb]/i.test(units)){
 			// трафик
-			counter_name = 'traffic_left';
-			getParam(counter, result, counter_name, /([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseTraffic);
+			if(/c 08/i.test(counter)){
+				counter_name = 'day_traffic_left'
+			}else if(/с 00/i.test(counter)){
+				counter_name = 'night_traffic_left'
+			}
+			else counter_name = 'traffic_left';
+			if(counter_name)
+				getParam(counter, result, counter_name, /([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseTraffic);
 		}else if(/СМС|SMS/i.test(units)){
 			// Смс внутри сети
 			counter_name = 'sms_left';

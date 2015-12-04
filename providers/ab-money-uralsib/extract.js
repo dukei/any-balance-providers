@@ -17,9 +17,15 @@ function login(prefs) {
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 
-	AnyBalance.setDefaultCharset('utf-8');
+	AnyBalance.setOptions({
+		DEFAULT_CHARSET: 'utf-8',
+		cookiePolicy: 'netscape'
+	});
 	
 	var html = AnyBalance.requestGet(baseurl + '', g_headers);
+	if(/securemsg/i.test(html)){
+		html = new WellsFargo(AnyBalance.getLastUrl()).executeScript(html);
+	}
 	
     var authkey = getAuthKey(html);
 	var rsa_N = getRsaN(html);

@@ -8,6 +8,7 @@ var g_countersTable = {
 	}, 
     acc: {
 		"__tariff": "accounts.__name",
+		"accnum": "accounts.__name",
 		
 		"balance": "accounts.avail",
 		"ondeposit": "accounts.balance",
@@ -39,6 +40,8 @@ function main() {
     adapter.processProfile = adapter.envelope(processProfile);
     adapter.processAccounts = adapter.envelope(processAccounts);
 	
+	adapter.processProfile(html, result);
+
 	if(prefs.type == 'acc') {
 		adapter.processAccounts(html, result);
 

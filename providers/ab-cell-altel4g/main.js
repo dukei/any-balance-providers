@@ -44,42 +44,41 @@ function main(){
 
 	var counters = sumParam(html, null, null, /<div[^>]+class="[^"]*\bcounter\b[^>]*>([\s\S]*?)<\/div>/ig);
 	AnyBalance.trace('Found counters: ' + counters.length);
-	for(var i=0; i<counters.length; ++i){
+	for(var i=0; i<counters.length; ++i) {
 		var counter = counters[i];
 		var units = getParam(counter, null, null, /<span[^>]+class="icon-[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
 		var note = getParam(counter, null, null, /<div[^>]+class="counter-note"[^>]*>([\s\S]*)/i, null, html_entity_decode);
 		var counter_name = null;
-		if(/Мин/i.test(units)){
-			if(/Внутри сети|Желі ішінде/i.test(note)){
+		if(/Мин/i.test(units)) {
+			if(/Внутри сети|Желі ішінде/i.test(note))
 				counter_name = 'min_left'; // Минуты внутри сети
-			}else if(/GSM/i.test(note)){
+			else if(/GSM/i.test(note))
 				counter_name = 'min_left_gsm'; // Минуты на GSM
-			}else if(/на город/i.test(note)){
+			else if(/на город/i.test(note))
 				counter_name = 'min_left_city'; // Минуты на город
-			}
+			
 			if(counter_name && !/unlim/i.test((counter)))
 				getParam(counter, result, counter_name, /(\d+(:\d+)?)/i, replaceTagsAndSpaces, parseMinutes);
-			else  getParam(counter, result, counter_name, null, [replaceTagsAndSpaces, /unlim/i, '0'], parseMinutes);
-		}else if(/[МГКMGK][бb]/i.test(units)){
+		} else if(/[МГКMGK][бb]/i.test(units)) {
 			// трафик
-			if(/c 08/i.test(counter)){
+			if(/с 08/i.test(counter))
 				counter_name = 'day_traffic_left'
-			}else if(/с 00/i.test(counter)){
+			else if(/с 00/i.test(counter))
 				counter_name = 'night_traffic_left'
-			}
-			else counter_name = 'traffic_left';
+			else 
+				counter_name = 'traffic_left';
+			
 			if(counter_name)
 				getParam(counter, result, counter_name, /([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseTraffic);
-		}else if(/СМС|SMS/i.test(units)){
+		} else if(/СМС|SMS/i.test(units)) {
 			// Смс внутри сети
 			counter_name = 'sms_left';
 			getParam(counter, result, counter_name, /([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
 		}
-		if(!counter_name){
+		if(!counter_name)
 			AnyBalance.trace('Неизвестная опция: ' + counter);
-		}else{
+		else
 			getParam(note, result, counter_name + '_till', /<br[^>]*>([^>]*)/i, replaceTagsAndSpaces, parseDateLocal);
-		}
 	}
     
     AnyBalance.setResult(result);

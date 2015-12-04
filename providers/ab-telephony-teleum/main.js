@@ -35,8 +35,11 @@ function main() {
 	
 	html = AnyBalance.requestPost(baseurl+'login.php', params, addHeaders({Referer: baseurl}));
 	var json = getJson(html);
-	if (json.error) {
-			throw new AnyBalance.Error(json.errormsg);
+
+	if (json.error != 0){
+		var error = json.errormsg;
+		if (error)
+			throw new AnyBalance.Error(error, null, /Неправильный пароль/i.test(error));
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
@@ -44,8 +47,8 @@ function main() {
 	var result = {success: true};
 	html = AnyBalance.requestGet(baseurl+'ajax/balance.php', g_headers);
 
-	getParam(html, result, 'balance', /Баланс:([^<]*)</i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'agreementID', /Договор:([^<]*)</i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'balance', /Баланс:([^<]+)</i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'agreementID', /Договор:([^<]+)</i, replaceTagsAndSpaces, html_entity_decode);
 
 	AnyBalance.setResult(result);
 }

@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-finance-toshl</id>
+	<api flags="no_browser"/>
+	<name>TOSHL Finance</name>
+	<description html="true"><![CDATA[
+	<p>Obtains information from <a href="https://toshl.com/">https://toshl.com/</a></p>
+	<p>Selfcare located at <a href="https://toshl.com/timeline/">https://toshl.com/timeline/</a></p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Balance" units=" {@currency}"/>
+		<counter id="expenses" name="Expenses" units=" {@currency}"/>
+		<counter id="incomes" name="Incomes" units=" {@currency}"/>
+		<counter id="currency" name="Currency" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>finance</type>
+	<country>ru</country>
+</provider>

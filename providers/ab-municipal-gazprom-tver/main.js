@@ -35,24 +35,16 @@ function main() {
 	});
 
 	if (/<input[^>]+name="captcha_token"/i.test(html)) {
-		params = createFormParams(html, function(params, str, name, value) {
-			if (name == 'login')
-				return prefs.login;
-			else if (name == 'password')
-				return prefs.password;
-			return value;
-		});
 		var captchaSRC = getParam(html, null, null, /<div[^>]+class\s*=\s*"captcha"[^>]*>[\s\S]*?src="([\s\S]*?)"/i);
 		var captchaIMG = AnyBalance.requestGet(baseurl + captchaSRC, g_headers);
 		if (captchaIMG) {
-			params.captcha_response = AnyBalance.retrieveCode("Введите код с картинки.", captchaIMG, {
-				inputType: 'text',
-				time: 300000
-			});
-			html = AnyBalance.requestPost(baseurl + '/lk/login', params, addHeaders({Referer: baseurl}))
+			params.captcha_response = AnyBalance.retrieveCode("Введите код с картинки.", captchaIMG);
+			html = AnyBalance.requestPost(baseurl + '/lk/login', params, addHeaders({
+				Referer: baseurl
+			}))
 		}
 		else {
-			throw new AnyBalance.Error("Капча не найдена.", null, true);
+			throw new AnyBalance.Error("Капча не найдена.");
 		}
 	}
 	else {

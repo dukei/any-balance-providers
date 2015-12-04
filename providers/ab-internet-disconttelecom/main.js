@@ -13,7 +13,7 @@ var g_headers = {
 function main(){
     var prefs = AnyBalance.getPreferences();
 
-    var baseurl = "https://disconttelecom.ru/";
+    var baseurl = "https://discounttelecom.ru/";
     AnyBalance.setDefaultCharset('utf-8'); 
 	// запрашиваем форму входа, чтобы получить параметры авторизации
 	var html = AnyBalance.requestGet(baseurl + 'register/login/?return=/cabinet/', g_headers);

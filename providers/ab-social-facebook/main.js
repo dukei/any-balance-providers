@@ -52,7 +52,7 @@ function main() {
 
 	getParam(html, result, 'messages', /Входящие(?:[^>]*>){1,7}(\d+)/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'friends', /Запросы на добавление в друзья(?:[^>]*>){1,7}(\d+)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, '__tariff', new RegExp(userid + ',"name":"([^"]+)', 'i'), replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, '__tariff', new RegExp(userid + ',"name":("[^"]+")', 'i'), [/^/, 'return '], safeEval);
 	getParam(result.__tariff, result, 'name');
 	
     AnyBalance.setResult(result);

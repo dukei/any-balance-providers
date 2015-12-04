@@ -21,7 +21,7 @@ function main(){
 
     var baseurl = "https://vk.com";
 
-    var uid = AnyBalance.getData('remixttpid');
+    var uid = AnyBalance.getData ? AnyBalance.getData('remixttpid') : '';
     if(uid){
         AnyBalance.trace('Найдена привязка к браузеру, восстанавливаем её.');
         AnyBalance.setCookie('.vk.com', 'remixttpid', uid);
@@ -81,8 +81,10 @@ function main(){
         }
 
         var uid = AnyBalance.getCookie('remixttpid');
-        AnyBalance.setData('remixttpid', uid);
-        AnyBalance.saveData();
+        if(AnyBalance.getData){
+        	AnyBalance.setData('remixttpid', uid);
+        	AnyBalance.saveData();
+        }
 
         var url = res.data;
         if(!/^https?:/i.test(url))

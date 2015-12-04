@@ -1,5 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="7" date="2015-12-04">
+	Добавлены единицы изменения
+	</change>
+	<change version="6" date="2015-12-04">
+	Убрана зависимось от getData, setData
+	</change>
 	<change version="5" date="2015-11-20">
 	- Поддержка изменений в процедуре входа
 	</change>

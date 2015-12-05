@@ -750,7 +750,7 @@ function getPasswordBySMS(login) {
 }
 
 function changePassword(oldPass, newPass) {
-    var url = g_baseurlLogin + '/amserver/UI/Login?service=changepassword2014';
+    var url = g_baseurlLogin + '/amserver/UI/Login?service=changepassword2014&ForceAuth=true';
     var html = AnyBalance.requestGet(url, g_headers);
     var form = getParam(html, null, null, /<form[^>]+name="Login"[^>]*>[\s\S]*?<\/form>/i);
     if (!form) {

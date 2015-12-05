@@ -67,6 +67,7 @@ var g_countersTable = {
 
 
 function initialize(){
+	var prefs = AnyBalance.getPreferences();
     AnyBalance.setDefaultCharset('utf-8');
 
     checkEmpty(prefs.login, 'Введите телефон (логин)!');

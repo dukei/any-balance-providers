@@ -173,16 +173,16 @@ function fetchOrdinary(html, baseurl, result) {
     }
 }
 
-function checkIHError(html, result) {
-    var error = getParam(html, null, null, /<div[^>]+class="b_error"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
-    if (error) {
+function checkIHError(html, result, forceError) {
+    var error = getParam(html, null, null, /<div[^>]+class="b_(?:-page)error"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+    if (error || forceError) 
+        var err = 'Ошибка МТС при получения данных из интернет-помощника: ' + (error || 'вероятно, он временно недоступен');
         if(result === true){
-            throw new AnyBalance.Error('Ошибка со стороны МТС: ' + error);
+            throw new AnyBalance.Error(err);
         }else {
-            AnyBalance.trace('Ошибка со стороны МТС: ' + error);
-            setCountersToNull(result);
+            AnyBalance.trace(err);
+            result.were_errors = true;
         }
-    }
 }
 
 function isAvailableStatus() {
@@ -675,6 +675,7 @@ function processTrafficLK(result){
             }
         } catch (e) {
             AnyBalance.trace('Не удалось получить трафик: ' + e.message);
+            result.were_errors = true;
         }
     }
 }
@@ -696,12 +697,8 @@ function mainLK(html, result) {
             var ret = followIHLink();
             html = ret.html;
         
-            if (!isInOrdinary(html)) { //Тупой МТС не всегда может перейти из личного кабинета в интернет-помощник :(
-                var error = getElement(html, /<div[^>]+class="b(?:-page)?_error"[^>]*>/i, replaceTagsAndSpaces, html_entity_decode);
-                if(!error)
-	                AnyBalance.trace(html);
-                throw new AnyBalance.Error('Ошибка перехода в интернет-помощник: ' + (error || 'вероятно, он временно недоступен') );
-            }
+            if (!isInOrdinary(html)) //Тупой МТС не всегда может перейти из личного кабинета в интернет-помощник :(
+            	checkIHError(html, true, true);
         
             fetchOrdinary(html, ret.baseurlHelper, result);
         }
@@ -709,6 +706,7 @@ function mainLK(html, result) {
     	if(isAnotherNumber())
     		throw e; //В случае требования другого номера все данные получаются только из интернет-помощника
         AnyBalance.trace('Не удалось получить данные из ип: ' + e.message + '\n' + e.stack);
+        result.were_errors = true;
     }
 }
 

@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="1.2" version="62">ab-cell-mts-ua</id>
+	<id major_version="1.3" version="63">ab-cell-mts-ua</id>
 	<api flags="no_browser"/>
 	<name>МТС (Украина)</name>
 	<description html="true"><![CDATA[
@@ -57,6 +57,9 @@
 		<counter id="sms_net" name="СМС в сети МТС" units=" sms"/>
 		<counter id="sms_others" name="СМС на сети других мобильных операторов Украины" units=" sms"/>
 		<counter id="sms_mms_others" name="СМС/MMC на сети других мобильных операторов Украины" units=" sms/mms"/>
+		<counter id="sms_mms_others1" name="SMS/MMS по Украине и Европе в месяц" units=" sms/mms"/>
+		<counter id="sms_mms_others2" name="SMS/MMS по Украине и Европе в день" units=" sms/mms"/>
+		<counter id="sms_mms_others3" name="SMS/MMS Роуминг как дома" units=" sms/mms"/>
 		<counter id="mms_others" name="ММС на сети других мобильных операторов Украины" units=" mms"/>
 		<counter id="min_net_maxenergy" name="Минуты в сети МТС" type="time_interval" format="{@MIN}" units=" мин"/>
 		<counter id="min_reg_3000" name="3000/6000 региональных минут в сети" type="time_interval" format="{@MIN}" units=" мин"/>
@@ -70,6 +73,9 @@
 		<counter id="min_unlin_life" name="Минуты Супер безлимит yf Life" type="time_interval" format="{@MIN}" units=" мин"/>
 		<counter id="min_allo_net" name="Минуты MAX Energy Allo в сети МТС" type="time_interval" format="{@MIN}" units=" мин"/>
 		<counter id="min_allo_other" name="Минуты по Украине линейки тарифов MAX Energy" type="time_interval" format="{@MIN}" units=" мин"/>
+		<counter id="min_all1" name="Минуты по Украине и Европе в месяц" type="time_interval" format="{@MIN}" units=" мин"/>
+		<counter id="min_all2" name="Минуты по Украине и Европе в день" type="time_interval" format="{@MIN}" units=" мин"/>
+		<counter id="min_all3" name="Минуты Роуминг как дома" type="time_interval" format="{@MIN}" units=" мин"/>
 		<counter id="min_ln" name="Расход минут на Любимые Номера" type="time_interval" format="{@MIN}" units=" мин"/>
 		<counter id="sms_100" name="Бесплатные смс для отправки на номера в пределах Украины" units=" sms"/>
 		<counter id="min_all_60" name="60 минут на все сети за 5 коп" type="time_interval" format="{@MIN}" units=" мин"/>
@@ -81,7 +87,10 @@
 		<counter id="sms_used_net" name="Израсходовано SMS внутри сети" units=" sms"/>
 		<counter id="mms_used" name="Израсходовано MMS" units=" mms"/>
 		<counter id="sms_mms_used" name="Израсходовано SMS/MMS" units=" sms/mms"/>
-		<counter id="traffic_used" name="Использованно Мб" units=" mb"/>
+		<counter id="traffic_used" name="Использовано тарифного трафика" units=" mb"/>
+		<counter id="traffic_used1" name="Использовано ежедневного трафика" units=" mb"/>
+		<counter id="traffic_used2" name="Использовано трафика в роуминге" units=" mb"/>
+		<counter id="traffic_used3" name="Использовано трафика «Роуминг как дома»" units=" mb"/>
 		<counter id="min_used" name="Израсходовано минут" type="time_interval" format="{@MIN}" units=" мин"/>
 		<counter id="PZS_MB_3D" name="ПЗС за Мб по услуге Супер 3D" flags="zero_when_empty"/>
 		<counter id="PZS_MB_opera" name="ПЗС за первое событие для APN opera" flags="zero_when_empty"/>

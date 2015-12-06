@@ -1,4 +1,4 @@
-﻿/**
+/**
  Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
  */
 
@@ -328,6 +328,29 @@ function isLoggedIn(html) {
 }
 
 function getLKJson(html, allowExceptions) {
+    try {
+    	return getLKJson2(html);
+    } catch (e) {
+        AnyBalance.trace(e.message);
+        AnyBalance.trace('Не удалось найти Json с описанием пользователя первым способом, сайт изменен?');
+    }
+
+    try {
+    	return getLKJson1(html);
+    } catch (e) {
+        if (allowExceptions) {
+            throw e;
+        } else {
+            AnyBalance.trace(e.message);
+            AnyBalance.trace('Не удалось найти Json с описанием пользователя двумя способами, сайт изменен?');
+        }
+        json = {};
+    }
+
+    return {};
+}
+
+function getLKJson1(html) {
     var html = AnyBalance.requestGet('https://login.mts.ru/profile/header?ref=https%3A//lk.ssl.mts.ru/&scheme=https&style=2015v2', addHeaders({
     	Referer: g_baseurl + '/'
     }));
@@ -344,6 +367,45 @@ function getLKJson(html, allowExceptions) {
 
     return json;
 }
+
+function getLKJson2(html) {
+    var html = AnyBalance.requestGet('https://oauth.mts.ru/webapi-1.4/customers/@me', addHeaders({
+        'X-Requested-With': 'XMLHttpRequest',
+        'Authorization': 'Bearer sso_1.0_websso_cookie'
+    }));
+
+    var info = getParam(html, null, null, /^\{[\s\S]*?\}$/i, null, getJson);
+    if (!info) {
+        AnyBalance.trace(html);
+
+        var error = getParam(html, null, null, /<div[^>]+class="red-status"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+        if (error)
+            throw new AnyBalance.Error(error);
+
+        throw new AnyBalance.Error('Не удалось найти Json с описанием пользователя, сайт изменен?');
+    }
+
+    var json = {};
+    for (var i = 0; i < info.genericRelations.length; i++) {
+        var rel = info.genericRelations[i];
+        if (isset(rel.target.balance))
+            json.balance = getParam(rel.target.balance + '', null, null, null, null, parseBalanceRound);
+
+        if (isset(rel.target.productResources) && isset(rel.target.productResources[0]))
+            json.tariff = rel.target.productResources[0].product.name['ru-RU'];
+
+        if (isset(rel.target.address)){
+            json.phone = rel.target.address;
+            json.phone_formatted = replaceAll(json.phone, replaceNumber);
+        }
+
+        if (isset(rel.target.displayNameNat))
+            json.fio = rel.target.displayNameNat;
+    }
+
+    return json;
+}
+
 
 function isAnotherNumber() {
     var prefs = AnyBalance.getPreferences();
@@ -531,10 +593,10 @@ function processInfoLK(html, result){
         result.info = {};
 
         AnyBalance.trace(JSON.stringify(info));
-        //AnyBalance.trace(JSON.stringify(info));
         getParam(info.balance, result, 'balance');
         getParam(info.phone, result.info, 'info.phone', null, replaceNumber);
         getParam(info.fio, result.info, 'info.fio');
+        getParam(info.tariff, result, 'tariff');
     } catch (e) {
         AnyBalance.trace('Не удалось получить данные о пользователе, скорее всего, виджет временно недоступен... ' + e.message);
     }
@@ -542,6 +604,8 @@ function processInfoLK(html, result){
 
 function processBonusLK(result){
     try {
+    	//Если мы уже вошли в бонус, то логаут из кабинета не получается. 
+    	//Впрочем, в реальном использовании провайдера такого быть не должно
         if (AnyBalance.isAvailable('bonus')) {
             info = AnyBalance.requestGet('https://bonus.ssl.mts.ru/api/user/part/Status', addHeaders({
                 Referer: 'https://bonus.ssl.mts.ru/',

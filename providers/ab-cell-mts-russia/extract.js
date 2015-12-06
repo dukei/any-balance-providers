@@ -328,30 +328,18 @@ function isLoggedIn(html) {
 }
 
 function getLKJson(html, allowExceptions) {
-    try {
-        var html = AnyBalance.requestGet('https://oauth.mts.ru/webapi-1.4/customers/@me', addHeaders({
-            'X-Requested-With': 'XMLHttpRequest',
-            'Authorization': 'Bearer sso_1.0_websso_cookie'
-        }));
+    var html = AnyBalance.requestGet('https://login.mts.ru/profile/header?ref=https%3A//lk.ssl.mts.ru/&scheme=https&style=2015v2', addHeaders({
+    	Referer: g_baseurl + '/'
+    }));
 
-        var json = getParam(html, null, null, /^\{[\s\S]*?\}$/i);
-        if (!json) {
-            AnyBalance.trace(html);
+    var json = {};
+    json.fio = getElement(html, /<div[^>]+b-header_lk__name[^>]*>/i, replaceTagsAndSpaces, html_entity_decode);
+    json.phone_formatted = getElement(html, /<div[^>]+b-header_lk__phone[^>]*>/i, replaceTagsAndSpaces, html_entity_decode);
+    json.phone = replaceAll(json.phone_formatted, [/\+7/, '', /\D/g, '']);
+    json.balance = getElement(html, /<div[^>]+b-header_balance[^>]*>/i, replaceTagsAndSpaces, parseBalance);
 
-            var error = getParam(html, null, null, /<div[^>]+class="red-status"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
-            if (error)
-                throw new AnyBalance.Error(error);
-
-            throw new AnyBalance.Error('Не удалось найти Json с описанием пользователя, сайт изменен?');
-        }
-    } catch (e) {
-        var json = "{}";
-        if (allowExceptions) {
-            throw e;
-        } else {
-            AnyBalance.trace(e.message);
-            AnyBalance.trace('Не удалось найти Json с описанием пользователя, сайт изменен?');
-        }
+    if(!json.phone){
+    	AnyBalance.trace('Не удаётся получить информацию о текущем пользователе. Сайт изменен?\n' + html);
     }
 
     return json;
@@ -411,22 +399,27 @@ function enterLK(options) {
         AnyBalance.trace("Уже залогинены, проверяем, что на правильный номер...");
         //Автоматом залогинились, надо проверить, что на тот номер
 
-        var json = getJson(getLKJson(html));
+        var json = getLKJson(html);
 
-        var loggedInMSISDN = json.id;
-        if (!loggedInMSISDN) {
-            AnyBalance.trace(html);
-            throw new AnyBalance.Error('Не удалось определить текущий номер в кабинете, сайт изменен?', true);
-        }
-
-        if (loggedInMSISDN != options.login) { //Автоматом залогинились не на тот номер
-            AnyBalance.trace("Залогинены на неправильный номер: " + loggedInMSISDN + ", выходим");
-            html = AnyBalance.requestGet(g_baseurlLogin + '/amserver/UI/Logout', g_headers);
+        function logoutMTS(){
+            var html = AnyBalance.requestGet(g_baseurlLogin + '/amserver/UI/Logout', g_headers);
 
             if (isLoggedIn(html)) {
                 AnyBalance.trace(html);
                 throw new AnyBalance.Error('Не удаётся выйти из личного кабинета, чтобы зайти под правильным номером. Сайт изменен?');
             }
+
+            return html;
+        }
+
+        var loggedInMSISDN = json.phone;
+        if (!loggedInMSISDN) {
+            AnyBalance.trace(html);
+            AnyBalance.trace('Не удалось определить текущий номер в кабинете, сайт изменен? Попробуем выйти и зайти с логином-паролем.');
+            html = logoutMTS();
+        }else if (loggedInMSISDN != options.login) { //Автоматом залогинились не на тот номер
+            AnyBalance.trace("Залогинены на неправильный номер: " + loggedInMSISDN + ", выходим");
+            html = logoutMTS();
         } else {
             AnyBalance.trace("Залогинены на правильный номер: " + loggedInMSISDN);
         }
@@ -530,30 +523,18 @@ function login(result){
 }
 
 function processInfoLK(html, result){
-    if(!AnyBalance.isAvailable('balance', 'info.phone', 'info.fio', 'tariff'))
+    if(!AnyBalance.isAvailable('balance', 'info.phone', 'info.fio'))
         return;
 
     try {
         var info = getLKJson(html, true);
         result.info = {};
 
-        AnyBalance.trace(info);
-        info = getJson(info);
+        AnyBalance.trace(JSON.stringify(info));
         //AnyBalance.trace(JSON.stringify(info));
-        for (var i = 0; i < info.genericRelations.length; i++) {
-            var rel = info.genericRelations[i];
-            if (isset(rel.target.balance))
-                getParam(rel.target.balance + '', result, 'balance', null, null, parseBalanceRound);
-
-            if (isset(rel.target.productResources) && isset(rel.target.productResources[0]))
-                getParam(rel.target.productResources[0].product.name['ru-RU'], result, 'tariff');
-
-            if (isset(rel.target.address))
-                getParam(rel.target.address + '', result.info, 'info.phone', null, replaceNumber);
-
-            if (isset(rel.target.displayNameNat))
-                getParam(rel.target.displayNameNat + '', result.info, 'info.fio');
-        }
+        getParam(info.balance, result, 'balance');
+        getParam(info.phone, result.info, 'info.phone', null, replaceNumber);
+        getParam(info.fio, result.info, 'info.fio');
     } catch (e) {
         AnyBalance.trace('Не удалось получить данные о пользователе, скорее всего, виджет временно недоступен... ' + e.message);
     }
@@ -596,7 +577,7 @@ function processTrafficLK(result){
 
                 var html = AnyBalance.requestGet(g_baseurl, addHeaders({Referer: g_baseurl}));
 
-                var widgetJson = getParam(html, null, null, /myInternet.\w+\s*=\s*(\{[\s\S]*?\});/i, null, getJsonEval);
+                var widgetJson = getParam(html, null, null, /myInternet.diagram\s*=\s*(\{[\s\S]*?\});/i, null, getJsonEval);
                 var href = widgetJson.widgetDataUrl;
                 if (!href)
                     throw new AnyBalance.Error('Не удалось найти ссылку на трафик.');

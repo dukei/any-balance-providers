@@ -7,7 +7,7 @@
 		summary="||{@s}"
 		dialogTitle="Логин"
 		negativeButtonText="Отмена"
-		dialogMessage="Введите логин для входа в систему МКБ-онлайн."
+		dialogMessage="Введите логин для входа в интернет-банк."
 		key="login">
 	</EditTextPreference>
 	<EditTextPreference
@@ -18,7 +18,7 @@
 		negativeButtonText="Отмена"
 		title="Пароль"
 		summary="||***********"
-		dialogMessage="Введите пароль, используемый для входа в систему МКБ-онлайн."
+		dialogMessage="Введите пароль, используемый для входа в интернет-банк."
 		inputType="textPassword">
 	</EditTextPreference>
 	<ListPreference

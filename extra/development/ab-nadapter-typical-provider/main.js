@@ -24,15 +24,15 @@ var g_countersTable = {
 		'limit': 'cards.limit',
 	},
 	crd: {
-    	"balance": "loans.balance",
-    	"limit": "loans.limit",
-		"currency": "loans.currency",
-		"latedebt": "loans.penalty",
-		"needpaytill": "loans.minpaydate",
-		"needpay": "loans.minpay",
-		"accnum": "loans.acc_num",
-		"pctcredit": "loans.pct",
-		"__tariff": "loans.__name",
+    	"balance": "credits.balance",
+    	"limit": "credits.limit",
+		"currency": "credits.currency",
+		"latedebt": "credits.penalty",
+		"needpaytill": "credits.minpaydate",
+		"needpay": "credits.minpay",
+		"accnum": "credits.acc_num",
+		"pctcredit": "credits.pct",
+		"__tariff": "credits.__name",
 	},
     acc: {
     	"balance": "accounts.balance",
@@ -65,7 +65,7 @@ function shouldProcess(counter, info){
 		    if(!prefs.num)
 		    	return true;
 			
-			if(endsWith(info.__id, prefs.num))
+			if(endsWith(info.num, prefs.num))
 				return true;
 		    
 			return false;
@@ -77,20 +77,17 @@ function shouldProcess(counter, info){
 		    if(!prefs.num)
 		    	return true;
 			
-			if(endsWith(info.__id, prefs.num))
+			if(endsWith(info.num, prefs.num))
 				return true;
 		}
-		case 'loans':
+		case 'credits':
 		{
 			if(prefs.type != 'crd')
 				return false;
 		    if(!prefs.num)
 		    	return true;
 			
-			var accNum = info.__id.replace(/\D/g, '');
-			return new RegExp(prefs.num, 'i').test(accNum);
-			
-			if(endsWith(info.__id.replace(/\D/g, ''), prefs.num))
+			if(endsWith(info.num, prefs.num))
 				return true;
 		}	
 		case 'deposits':
@@ -100,7 +97,7 @@ function shouldProcess(counter, info){
 		    if(!prefs.num)
 		    	return true;
 			
-			if(endsWith(info.__id, prefs.num))
+			if(endsWith(info.num, prefs.num))
 				return true;
 		}
 		default:
@@ -118,7 +115,7 @@ function main() {
 	
     adapter.processCards = adapter.envelope(processCards);
     adapter.processAccounts = adapter.envelope(processAccounts);
-    adapter.processLoans = adapter.envelope(processLoans);
+    adapter.processСredits = adapter.envelope(processСredits);
     adapter.processDeposits = adapter.envelope(processDeposits);
 	
 	var html = login(prefs);
@@ -140,9 +137,9 @@ function main() {
 		
 		result = adapter.convert(result);
 	} else if(prefs.type == 'crd') {
-		adapter.processLoans(html, result);
+		adapter.processСredits(html, result);
 
-		if(!adapter.wasProcessed('loans'))
+		if(!adapter.wasProcessed('credits'))
 			throw new AnyBalance.Error(prefs.num ? 'Не найден кредит с последними цифрами ' + prefs.num : 'У вас нет ни одного кредита!');
 		
 		result = adapter.convert(result);

@@ -1,4 +1,4 @@
-﻿/**
+/**
  Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
  */
 
@@ -173,16 +173,16 @@ function fetchOrdinary(html, baseurl, result) {
     }
 }
 
-function checkIHError(html, result) {
-    var error = getParam(html, null, null, /<div[^>]+class="b_error"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
-    if (error) {
+function checkIHError(html, result, forceError) {
+    var error = getParam(html, null, null, /<div[^>]+class="b_(?:-page)error"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+    if (error || forceError) 
+        var err = 'Ошибка МТС при получения данных из интернет-помощника: ' + (error || 'вероятно, он временно недоступен');
         if(result === true){
-            throw new AnyBalance.Error('Ошибка со стороны МТС: ' + error);
+            throw new AnyBalance.Error(err);
         }else {
-            AnyBalance.trace('Ошибка со стороны МТС: ' + error);
-            setCountersToNull(result);
+            AnyBalance.trace(err);
+            result.were_errors = true;
         }
-    }
 }
 
 function isAvailableStatus() {
@@ -329,33 +329,83 @@ function isLoggedIn(html) {
 
 function getLKJson(html, allowExceptions) {
     try {
-        var html = AnyBalance.requestGet('https://oauth.mts.ru/webapi-1.4/customers/@me', addHeaders({
-            'X-Requested-With': 'XMLHttpRequest',
-            'Authorization': 'Bearer sso_1.0_websso_cookie'
-        }));
-
-        var json = getParam(html, null, null, /^\{[\s\S]*?\}$/i);
-        if (!json) {
-            AnyBalance.trace(html);
-
-            var error = getParam(html, null, null, /<div[^>]+class="red-status"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
-            if (error)
-                throw new AnyBalance.Error(error);
-
-            throw new AnyBalance.Error('Не удалось найти Json с описанием пользователя, сайт изменен?');
-        }
+    	return getLKJson2(html);
     } catch (e) {
-        var json = "{}";
+        AnyBalance.trace(e.message);
+        AnyBalance.trace('Не удалось найти Json с описанием пользователя первым способом, сайт изменен?');
+    }
+
+    try {
+    	return getLKJson1(html);
+    } catch (e) {
         if (allowExceptions) {
             throw e;
         } else {
             AnyBalance.trace(e.message);
-            AnyBalance.trace('Не удалось найти Json с описанием пользователя, сайт изменен?');
+            AnyBalance.trace('Не удалось найти Json с описанием пользователя двумя способами, сайт изменен?');
         }
+        json = {};
+    }
+
+    return {};
+}
+
+function getLKJson1(html) {
+    var html = AnyBalance.requestGet('https://login.mts.ru/profile/header?ref=https%3A//lk.ssl.mts.ru/&scheme=https&style=2015v2', addHeaders({
+    	Referer: g_baseurl + '/'
+    }));
+
+    var json = {};
+    json.fio = getElement(html, /<div[^>]+b-header_lk__name[^>]*>/i, replaceTagsAndSpaces, html_entity_decode);
+    json.phone_formatted = getElement(html, /<div[^>]+b-header_lk__phone[^>]*>/i, replaceTagsAndSpaces, html_entity_decode);
+    json.phone = replaceAll(json.phone_formatted, [/\+7/, '', /\D/g, '']);
+    json.balance = getElement(html, /<div[^>]+b-header_balance[^>]*>/i, replaceTagsAndSpaces, parseBalance);
+
+    if(!json.phone){
+    	AnyBalance.trace('Не удаётся получить информацию о текущем пользователе. Сайт изменен?\n' + html);
     }
 
     return json;
 }
+
+function getLKJson2(html) {
+    var html = AnyBalance.requestGet('https://oauth.mts.ru/webapi-1.4/customers/@me', addHeaders({
+        'X-Requested-With': 'XMLHttpRequest',
+        'Authorization': 'Bearer sso_1.0_websso_cookie'
+    }));
+
+    var info = getParam(html, null, null, /^\{[\s\S]*?\}$/i, null, getJson);
+    if (!info) {
+        AnyBalance.trace(html);
+
+        var error = getParam(html, null, null, /<div[^>]+class="red-status"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+        if (error)
+            throw new AnyBalance.Error(error);
+
+        throw new AnyBalance.Error('Не удалось найти Json с описанием пользователя, сайт изменен?');
+    }
+
+    var json = {};
+    for (var i = 0; i < info.genericRelations.length; i++) {
+        var rel = info.genericRelations[i];
+        if (isset(rel.target.balance))
+            json.balance = getParam(rel.target.balance + '', null, null, null, null, parseBalanceRound);
+
+        if (isset(rel.target.productResources) && isset(rel.target.productResources[0]))
+            json.tariff = rel.target.productResources[0].product.name['ru-RU'];
+
+        if (isset(rel.target.address)){
+            json.phone = rel.target.address;
+            json.phone_formatted = replaceAll(json.phone, replaceNumber);
+        }
+
+        if (isset(rel.target.displayNameNat))
+            json.fio = rel.target.displayNameNat;
+    }
+
+    return json;
+}
+
 
 function isAnotherNumber() {
     var prefs = AnyBalance.getPreferences();
@@ -411,22 +461,27 @@ function enterLK(options) {
         AnyBalance.trace("Уже залогинены, проверяем, что на правильный номер...");
         //Автоматом залогинились, надо проверить, что на тот номер
 
-        var json = getJson(getLKJson(html));
+        var json = getLKJson(html);
 
-        var loggedInMSISDN = json.id;
-        if (!loggedInMSISDN) {
-            AnyBalance.trace(html);
-            throw new AnyBalance.Error('Не удалось определить текущий номер в кабинете, сайт изменен?', true);
-        }
-
-        if (loggedInMSISDN != options.login) { //Автоматом залогинились не на тот номер
-            AnyBalance.trace("Залогинены на неправильный номер: " + loggedInMSISDN + ", выходим");
-            html = AnyBalance.requestGet(g_baseurlLogin + '/amserver/UI/Logout', g_headers);
+        function logoutMTS(){
+            var html = AnyBalance.requestGet(g_baseurlLogin + '/amserver/UI/Logout', g_headers);
 
             if (isLoggedIn(html)) {
                 AnyBalance.trace(html);
                 throw new AnyBalance.Error('Не удаётся выйти из личного кабинета, чтобы зайти под правильным номером. Сайт изменен?');
             }
+
+            return html;
+        }
+
+        var loggedInMSISDN = json.phone;
+        if (!loggedInMSISDN) {
+            AnyBalance.trace(html);
+            AnyBalance.trace('Не удалось определить текущий номер в кабинете, сайт изменен? Попробуем выйти и зайти с логином-паролем.');
+            html = logoutMTS();
+        }else if (loggedInMSISDN != options.login) { //Автоматом залогинились не на тот номер
+            AnyBalance.trace("Залогинены на неправильный номер: " + loggedInMSISDN + ", выходим");
+            html = logoutMTS();
         } else {
             AnyBalance.trace("Залогинены на правильный номер: " + loggedInMSISDN);
         }
@@ -530,30 +585,18 @@ function login(result){
 }
 
 function processInfoLK(html, result){
-    if(!AnyBalance.isAvailable('balance', 'info.phone', 'info.fio', 'tariff'))
+    if(!AnyBalance.isAvailable('balance', 'info.phone', 'info.fio'))
         return;
 
     try {
         var info = getLKJson(html, true);
         result.info = {};
 
-        AnyBalance.trace(info);
-        info = getJson(info);
-        //AnyBalance.trace(JSON.stringify(info));
-        for (var i = 0; i < info.genericRelations.length; i++) {
-            var rel = info.genericRelations[i];
-            if (isset(rel.target.balance))
-                getParam(rel.target.balance + '', result, 'balance', null, null, parseBalanceRound);
-
-            if (isset(rel.target.productResources) && isset(rel.target.productResources[0]))
-                getParam(rel.target.productResources[0].product.name['ru-RU'], result, 'tariff');
-
-            if (isset(rel.target.address))
-                getParam(rel.target.address + '', result.info, 'info.phone', null, replaceNumber);
-
-            if (isset(rel.target.displayNameNat))
-                getParam(rel.target.displayNameNat + '', result.info, 'info.fio');
-        }
+        AnyBalance.trace(JSON.stringify(info));
+        getParam(info.balance, result, 'balance');
+        getParam(info.phone, result.info, 'info.phone', null, replaceNumber);
+        getParam(info.fio, result.info, 'info.fio');
+        getParam(info.tariff, result, 'tariff');
     } catch (e) {
         AnyBalance.trace('Не удалось получить данные о пользователе, скорее всего, виджет временно недоступен... ' + e.message);
     }
@@ -561,6 +604,8 @@ function processInfoLK(html, result){
 
 function processBonusLK(result){
     try {
+    	//Если мы уже вошли в бонус, то логаут из кабинета не получается. 
+    	//Впрочем, в реальном использовании провайдера такого быть не должно
         if (AnyBalance.isAvailable('bonus')) {
             info = AnyBalance.requestGet('https://bonus.ssl.mts.ru/api/user/part/Status', addHeaders({
                 Referer: 'https://bonus.ssl.mts.ru/',
@@ -596,7 +641,7 @@ function processTrafficLK(result){
 
                 var html = AnyBalance.requestGet(g_baseurl, addHeaders({Referer: g_baseurl}));
 
-                var widgetJson = getParam(html, null, null, /myInternet.\w+\s*=\s*(\{[\s\S]*?\});/i, null, getJsonEval);
+                var widgetJson = getParam(html, null, null, /myInternet.diagram\s*=\s*(\{[\s\S]*?\});/i, null, getJsonEval);
                 var href = widgetJson.widgetDataUrl;
                 if (!href)
                     throw new AnyBalance.Error('Не удалось найти ссылку на трафик.');
@@ -630,6 +675,7 @@ function processTrafficLK(result){
             }
         } catch (e) {
             AnyBalance.trace('Не удалось получить трафик: ' + e.message);
+            result.were_errors = true;
         }
     }
 }
@@ -651,12 +697,8 @@ function mainLK(html, result) {
             var ret = followIHLink();
             html = ret.html;
         
-            if (!isInOrdinary(html)) { //Тупой МТС не всегда может перейти из личного кабинета в интернет-помощник :(
-                var error = getElement(html, /<div[^>]+class="b(?:-page)?_error"[^>]*>/i, replaceTagsAndSpaces, html_entity_decode);
-                if(!error)
-	                AnyBalance.trace(html);
-                throw new AnyBalance.Error('Ошибка перехода в интернет-помощник: ' + (error || 'вероятно, он временно недоступен') );
-            }
+            if (!isInOrdinary(html)) //Тупой МТС не всегда может перейти из личного кабинета в интернет-помощник :(
+            	checkIHError(html, true, true);
         
             fetchOrdinary(html, ret.baseurlHelper, result);
         }
@@ -664,6 +706,7 @@ function mainLK(html, result) {
     	if(isAnotherNumber())
     		throw e; //В случае требования другого номера все данные получаются только из интернет-помощника
         AnyBalance.trace('Не удалось получить данные из ип: ' + e.message + '\n' + e.stack);
+        result.were_errors = true;
     }
 }
 
@@ -750,7 +793,7 @@ function getPasswordBySMS(login) {
 }
 
 function changePassword(oldPass, newPass) {
-    var url = g_baseurlLogin + '/amserver/UI/Login?service=changepassword2014';
+    var url = g_baseurlLogin + '/amserver/UI/Login?service=changepassword2014&ForceAuth=true';
     var html = AnyBalance.requestGet(url, g_headers);
     var form = getParam(html, null, null, /<form[^>]+name="Login"[^>]*>[\s\S]*?<\/form>/i);
     if (!form) {

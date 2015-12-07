@@ -18,9 +18,11 @@ function main() {
     adapter.mainLK = adapter.envelope(mainLK);
 	
     adapter.mainLK(html, result);
-	result = adapter.convert(result);
+    var were_errors = result.were_errors;
 
-	setCountersToNull(result);
+	result = adapter.convert(result);
+    if(were_errors)
+    	setCountersToNull(result);
 
     AnyBalance.setResult(result);
 }
@@ -67,6 +69,7 @@ var g_countersTable = {
 
 
 function initialize(){
+	var prefs = AnyBalance.getPreferences();
     AnyBalance.setDefaultCharset('utf-8');
 
     checkEmpty(prefs.login, 'Введите телефон (логин)!');

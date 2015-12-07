@@ -59,30 +59,18 @@ function main(){
 	
     AnyBalance.setDefaultCharset('utf-8');
 	
-	var baseurl = "http://www.avtomir.ru/";
+	var baseurl = "http://lk.avtomir.tmweb.ru/";
 	
-    var info = AnyBalance.requestGet(baseurl + 'personal/', g_headers);
-    var rsainfo = getParam(info, null, null, /top.rsasec_form_bind\)\s*\((\{'formid':'form_auth'[^)]*\})\)/);
+    var html = AnyBalance.requestGet(baseurl + 'personal/', g_headers);
 	
-    if (!rsainfo) {
-    	var error = getParam(info, null, null, /<h2[^>]+style="color:\s*#933"[^>]*>([\s\S]*?)<\/h2>/i, replaceTagsAndSpaces, html_entity_decode);
-    	if (error)
-			throw new AnyBalance.Error(error);
-		
-    	throw new AnyBalance.Error('Не найдены ключи шифрования пароля. Сайт изменен, обратитесь к автору провайдера.');
-    }
-	
-    rsainfo = getMyJson(rsainfo);
-    //console.log(rsainfo);
-	
-    var html = AnyBalance.requestPost(baseurl + "personal/?login=yes", createSignedParams([
+    html = AnyBalance.requestPost(baseurl + "personal/?login=yes", [
     	['AUTH_FORM', 'Y'],
     	['TYPE', 'AUTH'],
-    	['backurl', '/personal/'],
+    	['backurl', '/personal/index.php'],
     	['USER_LOGIN', prefs.login],
     	['USER_PASSWORD', prefs.password],
     	['Login', 'Войти']
-    ], rsainfo), addHeaders({'Content-Type': 'application/x-www-form-urlencoded',Referer: baseurl + 'personal/'}));
+    ], addHeaders({'Content-Type': 'application/x-www-form-urlencoded',Referer: baseurl + 'personal/'}));
 	
     if(!/\?logout=yes/i.test(html)){
         var error = getParam(html, null, null, [/<font[^>]+class="errortext"[^>]*>([\s\S]*?)<\/font>/i,
@@ -90,7 +78,7 @@ function main(){
 			/<h2[^>]+style="color:\s*#933"[^>]*>([\s\S]*?)<\/h2>/i], replaceTagsAndSpaces, html_entity_decode);
 		
         if(error)
-            throw new AnyBalance.Error(error);
+            throw new AnyBalance.Error(error, null, /Ошибка авторизации/i.test(error));
 		
         AnyBalance.trace(html);
         throw new AnyBalance.Error('Не удалось войти в личный кабинет. Сайт изменен?');
@@ -99,7 +87,7 @@ function main(){
     var result = {success: true};
 	
     getParam(html, result, 'fio', /<div[^>]+class="b_private_cab_info"[^>]*>\s*<p[^>]*>([\s\S]*?)<br>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'phone', /div[^>]+class="b_private_cab_info"[^>]*>\s*<p[^>]*>[^<]*[\s\S]*?<br>([\s\S]*?)<br>/i, replaceTagsAndSpaces, html_entity_decode);
+//    getParam(html, result, 'phone', /div[^>]+class="b_private_cab_info"[^>]*>\s*<p[^>]*>[^<]*[\s\S]*?<br>([\s\S]*?)<br>/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, 'balance', /Общая сумма баллов:([\s\S]*?)<br>/i, replaceTagsAndSpaces, parseBalance);
     getParam(prefs.login, result, 'number', null, replaceTagsAndSpaces, html_entity_decode);
 	

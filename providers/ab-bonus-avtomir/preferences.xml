@@ -11,14 +11,14 @@
 		dialogMessage="Введите номер карты, без пробелов и разделителей.">
 	</EditTextPreference>
 	<EditTextPreference
-		title="Дата рождения"
+		title="Пароль"
 		key="password"
-		summary="||***********"
+		summary="|Введите дату рождения или пароль|***********"
 		obligatory="true"
-		dialogTitle="Дата рождения"
+		dialogTitle="Пароль"
 		positiveButtonText="ОК"
 		negativeButtonText="Отмена"
-		dialogMessage="Введите дату рождения в формате 10.04.1988."
+		dialogMessage="Если вы не меняли пароль, то это - дата Вашего рождения (в формате 01.01.1970). Введите дату рождения или пароль."
 		inputType="textPassword">
 	</EditTextPreference>
 </PreferenceScreen>

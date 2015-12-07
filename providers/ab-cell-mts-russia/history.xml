@@ -1,5 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="4.0" version="134" date="2015-12-06">
+	Улучшена обработка ошибок, возникающих на сайте МТС
+	</change>
+	<change major_version="4.0" version="133" date="2015-12-06">
+	- Поддержка изменений на сайте.
+	</change>
+	<change major_version="4.0" version="132" date="2015-12-06">
+	Попытка исправить смену пароля при автоматическом получении пароля
+	</change>
+	<change major_version="4.0" version="131" date="2015-12-06">
+	- Исправлена помощь в получении пароля
+	</change>
 	<change major_version="4.0" version="130" date="2015-11-30">
 	- Улучшена обработка ошибок.
 	</change>

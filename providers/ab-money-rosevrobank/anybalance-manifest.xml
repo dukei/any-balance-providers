@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-money-rosevrobank</id>
+	<api flags="no_browser"/>
+	<name>РосЕвроБанк</name>
+	<description html="true"><![CDATA[
+	<p>Получает текущий остаток и другие параметры продуктов РосЕвроБанка http://www.rosevrobank.ru/, используя интернет-банк (https://ibanking.rosevrobank.ru).</p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Указания по получению пароля в интернет-банк: http://www.rosevrobank.ru/download/38020.php</p>
+	]]></instruction>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>nadapter.js</js>
+		<js>extract.js</js>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Остаток" units=" {@currency}"/>
+		<counter id="penalty" name="Просроченная задолженность" units=" {@currency}"/>
+		<counter id="minpaytill" name="Следующая расчетная дата" type="time" format="dd/MM/yyyy"/>
+		<counter id="blocked" name="Неоплаченные авторизации" units=" {@currency}"/>
+		<counter id="available" name="Платежный лимит" units=" {@currency}"/>
+		<counter id="num" name="Номер" type="text"/>
+		<counter id="accnum" name="Номер счета" type="text"/>
+		<counter id="status" name="Статус" type="text"/>
+		<counter id="type" name="Тип" type="text"/>
+		<counter id="pct" name="Процентная ставка" units=" %"/>
+		<counter id="limit" name="Кредитный лимит" units=" {@currency}"/>
+		<counter id="currency" name="Валюта" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>money, bank</type>
+	<country>ru</country>
+</provider>

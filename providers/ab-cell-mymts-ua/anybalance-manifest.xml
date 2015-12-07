@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="1.0" version="20">ab-cell-mymts-ua</id>
+	<id major_version="1.1" version="21">ab-cell-mymts-ua</id>
 	<api flags="no_browser"/>
 	<name>Мой МТС (Украина)</name>
 	<description html="true"><![CDATA[
@@ -30,17 +30,27 @@
 		<counter id="hvylyny_net2" name="Минуты в сети МТС вне региона" type="time_interval" format="{@MIN}" units=" мин"/>
 		<counter id="hvylyny_net3" name="Минуты в сети МТС" type="time_interval" format="{@MIN}" units=" мин"/>
 		<counter id="hvylyny_all1" name="Минуты по Украине" type="time_interval" format="{@MIN}" units=" мин"/>
+		<counter id="hvylyny_all2" name="Минуты по Украине и Европе в месяц" type="time_interval" format="{@MIN}" units=" мин"/>
+		<counter id="hvylyny_all3" name="Минуты по Украине и Европе в день" type="time_interval" format="{@MIN}" units=" мин"/>
+		<counter id="hvylyny_all4" name="Минуты Роуминг как дома" type="time_interval" format="{@MIN}" units=" мин"/>
 		<counter id="sms_used" name="Израсходовано SMS" units=" sms"/>
 		<counter id="mms_used" name="Израсходовано MMS" units=" mms"/>
 		<counter id="sms_mms_used" name="Израсходовано SMS/MMS" units=" sms/mms"/>
 		<counter id="sms_net" name="SMS в сети МТС" units=" sms"/>
 		<counter id="mms_net" name="MMS в сети МТС" units=" mms"/>
 		<counter id="sms_mms_all" name="SMS/MMS по Украине" units=" sms/mms"/>
+		<counter id="sms_mms_all1" name="SMS/MMS по Украине и Европе в месяц" units=" sms/mms"/>
+		<counter id="sms_mms_all2" name="SMS/MMS по Украине и Европе в день" units=" sms/mms"/>
+		<counter id="sms_mms_all3" name="SMS/MMS Роуминг как дома" units=" sms/mms"/>
 		<counter id="traffic1" name="Интернет пакет" units=" mb"/>
 		<counter id="traffic2" name="Интернет ежедневный пакет" units=" mb"/>
 		<counter id="traffic3" name="Интернет трафик" units=" mb"/>
 		<counter id="traffic4" name="Интернет Смарт.NET" units=" mb"/>
 		<counter id="traffic5" name="Остаток трафика без ограничения скорости" units=" mb" flags="zero_when_empty"/>
+                <counter id="traffic_used1" name="Использовано тарифного трафика" units=" mb"/>
+                <counter id="traffic_used2" name="Использовано ежедневного трафика" units=" mb"/>
+                <counter id="traffic_used3" name="Использовано трафика в роуминге" units=" mb"/>
+                <counter id="traffic_used4" name="Использовано трафика «Роуминг как дома»" units=" mb"/>
 		<counter id="bonusy_burn" name="Бонусы на списание" units=" б."/>
 		<counter id="speed" name="Текущая скорость" type="text"/>
 		<counter id="bonusy_burn_termin" name="Дата списания бонусов" type="time" format="dd/MM/yyyy"/>

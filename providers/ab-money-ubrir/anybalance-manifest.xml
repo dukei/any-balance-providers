@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-money-ubrir</id>
+	<api flags="no_browser"/>
+	<name>УБРИР</name>
+	<description html="true"><![CDATA[
+	<p>Получает текущий остаток и другие параметры продуктов Уральского банка реконструкции и развития (УБРИР) www.ubrr.ru/, используя мобильный интернет банк (https://i.ubrr.ru/).</p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Если у вас нет доступа к интернет-банку, выполните инструкции на этой странице: https://i.ubrr.ru/restorecredentials</p>
+	]]></instruction>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>extract.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+			<counter id="balance" name="Остаток" units=" {@currency}"/>
+            <counter id="available" name="Доступно" units=" {@currency}"/>
+            <counter id="blocked" name="Заблокировано" units=" {@currency}"/>
+			<counter id="num" name="Номер карты" type="text"/>
+			<counter id="till" name="Срок действия" type="time" format="dd/MM/yy"/>
+			<counter id="accnum" name="Номер счета" type="text"/>
+			<counter id="status" name="Статус" type="text"/>
+			<counter id="type" name="Тип карты" type="text"/>
+			<counter id="currency" name="Валюта" type="text"/>
+	</counters>
+
+	<keywords></keywords>
+	<type>money, bank</type>
+	<country>ru</country>
+</provider>

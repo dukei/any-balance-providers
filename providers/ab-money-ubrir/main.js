@@ -3,52 +3,24 @@
 */
 
 var g_countersTable = {
-	common: {
-		'bonuses': 'bonuses',
-		'fio': 'info.fio'
-	}, 
 	card: {
-    	"balance": "cards.balance",
-		"currency": "cards.currency",
-		"cardnum": "cards.cardnum",
-		"__tariff": "cards.cardnum",
-		"name": "cards.type",
-		"status": "cards.status",
-		"till": "cards.till",
-		"accnum": "cards.acc_num",
-		'needpay': 'cards.needpay',
-		'gracepay': 'cards.gracepay',
-		'gracepaytill': 'cards.gracepaytill',
-		'pct': 'cards.pct',
-		'credit': 'cards.credit',
-		'limit': 'cards.limit',
+        "balance": "cards.balance",
+        "num": "cards.num",
+        "till": "cards.till",
+        "accnum": "cards.accnum",
+        "status": "cards.status",
+        "type": "cards.type",
+        "currency": "cards.currency",
+        "__tariff": "cards.__name"
 	},
-	crd: {
-    	"balance": "credits.balance",
-    	"limit": "credits.limit",
-		"currency": "credits.currency",
-		"latedebt": "credits.penalty",
-		"needpaytill": "credits.minpaydate",
-		"needpay": "credits.minpay",
-		"accnum": "credits.acc_num",
-		"pctcredit": "credits.pct",
-		"__tariff": "credits.__name",
+	acc: {
+        "balance": "accounts.balance",
+        "available": "accounts.available",
+        "blocked": "accounts.blocked",
+        "accnum": "accounts.num",
+        "currency": "accounts.currency",
+        "__tariff": "accounts.__name"
 	},
-    acc: {
-    	"balance": "accounts.balance",
-		"currency": "accounts.currency",
-		"name": "accounts.type",
-		"cardnum": "accounts.cardnum",
-		"rate": "accounts.pct",
-		"__tariff": "accounts.num",
-    },
-	dep: {
-    	"balance": "deposits.balance",
-    	"currency": "deposits.currency",
-		"pctcredit": "deposits.pct",
-		"accnum": "deposits.acc_num",
-		"till": "deposits.date_end",
-    }
 };
 
 function shouldProcess(counter, info){
@@ -110,13 +82,16 @@ function main() {
 	
     if(!/^(card|crd|dep|acc)$/i.test(prefs.type || ''))
     	prefs.type = 'card';
+
+    if(/^(crd|dep)$/i.test(prefs.type))
+    	throw new AnyBalance.Error('Не удалось получить информацию по кредиту/депозиту. Сайт изменен?');
 	
     var adapter = new NAdapter(joinObjects(g_countersTable[prefs.type], g_countersTable.common), shouldProcess);
 	
     adapter.processCards = adapter.envelope(processCards);
     adapter.processAccounts = adapter.envelope(processAccounts);
-    adapter.processCredits = adapter.envelope(processCredits);
-    adapter.processDeposits = adapter.envelope(processDeposits);
+//    adapter.processCredits = adapter.envelope(processCredits);
+//    adapter.processDeposits = adapter.envelope(processDeposits);
 	
 	var html = login(prefs);
 	
@@ -151,8 +126,6 @@ function main() {
 		
 		result = adapter.convert(result);
 	}
-	
-	// getParam(html, result, 'bonuses', /МКБ Бонус\s*<span[^>]*>([\s\d]+)&nbsp;баллов/i, replaceTagsAndSpaces, parseBalance);
 	
 	AnyBalance.setResult(result);
 }

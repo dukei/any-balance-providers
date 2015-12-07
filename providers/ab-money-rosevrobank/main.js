@@ -3,54 +3,48 @@
 */
 
 var g_countersTable = {
-	common: {
-		'bonuses': 'bonuses',
-		'fio': 'info.fio'
-	}, 
 	card: {
-    	"balance": "cards.balance",
-		"currency": "cards.currency",
-		"cardnum": "cards.cardnum",
-		"__tariff": "cards.cardnum",
-		"name": "cards.type",
+		"balance": "cards.balance",
+		"num": "cards.num",
+		"blocked": "cards.blocked",
+		"available": "cards.available",
 		"status": "cards.status",
-		"till": "cards.till",
-		"accnum": "cards.acc_num",
-		'needpay': 'cards.needpay',
-		'gracepay': 'cards.gracepay',
-		'gracepaytill': 'cards.gracepaytill',
-		'pct': 'cards.pct',
-		'credit': 'cards.credit',
-		'limit': 'cards.limit',
-	},
+		"type": "cards.type",
+		"accnum": "cards.accnum",
+		"limit": "cards.limit",
+		"currency": "cards.currency",
+		"__tariff": "cards.__name"
+	}, 
 	crd: {
-    	"balance": "credits.balance",
-    	"limit": "credits.limit",
-		"currency": "credits.currency",
-		"latedebt": "credits.penalty",
-		"needpaytill": "credits.minpaydate",
-		"needpay": "credits.minpay",
-		"accnum": "credits.acc_num",
-		"pctcredit": "credits.pct",
+		__forceAvailable: ['credits.accnum'],
+		"balance": "accounts.balance",
+		"penalty": "credits.penalty",
+		"minpaytill": "credits.minpaytill",
+		"num": "credits.num",
+		"accnum": "credits.accnum",
+		"pct": "credits.pct",
+		"limit": "credits.limit",
+		"currency": "accounts.currency",
 		"__tariff": "credits.__name",
+		"blocked": "accounts.blocked",
+		"available": "accounts.available",
 	},
     acc: {
-    	"balance": "accounts.balance",
+		"balance": "accounts.balance",
+		"blocked": "accounts.blocked",
+		"available": "accounts.available",
+		"status": "status",
+		"type": "accounts.type",
+		"accnum": "accounts.num",
+		"pct": "accounts.pct",
 		"currency": "accounts.currency",
-		"name": "accounts.type",
-		"cardnum": "accounts.cardnum",
-		"rate": "accounts.pct",
-		"__tariff": "accounts.num",
+		"__tariff": "accounts.__name",
     },
 	dep: {
-    	"balance": "deposits.balance",
-    	"currency": "deposits.currency",
-		"pctcredit": "deposits.pct",
-		"accnum": "deposits.acc_num",
-		"till": "deposits.date_end",
     }
 };
 
+var g_accnum;
 function shouldProcess(counter, info){
 	var prefs = AnyBalance.getPreferences();
 	
@@ -72,13 +66,18 @@ function shouldProcess(counter, info){
 		}
 		case 'accounts':
 		{
-			if(prefs.type != 'acc')
+			if(prefs.type == 'acc'){
+		        if(!prefs.num)
+		        	return true;
+				
+				if(endsWith(info.num, prefs.num))
+					return true;
+			}else if(prefs.type == 'crd'){
+				if(g_accnum)
+					return info.num == g_accnum;
+			}else{
 				return false;
-		    if(!prefs.num)
-		    	return true;
-			
-			if(endsWith(info.num, prefs.num))
-				return true;
+			}
 		}
 		case 'credits':
 		{
@@ -110,13 +109,16 @@ function main() {
 	
     if(!/^(card|crd|dep|acc)$/i.test(prefs.type || ''))
     	prefs.type = 'card';
-	
-    var adapter = new NAdapter(joinObjects(g_countersTable[prefs.type], g_countersTable.common), shouldProcess);
+
+    if(/^(dep)$/i.test(prefs.type || ''))
+    	throw new AnyBalance.Error('Не удалось получить информацию по депозиту. Сайт изменен?');
+    	
+    var adapter = new NAdapter(g_countersTable[prefs.type], shouldProcess);
 	
     adapter.processCards = adapter.envelope(processCards);
     adapter.processAccounts = adapter.envelope(processAccounts);
     adapter.processCredits = adapter.envelope(processCredits);
-    adapter.processDeposits = adapter.envelope(processDeposits);
+//    adapter.processDeposits = adapter.envelope(processDeposits);
 	
 	var html = login(prefs);
 	
@@ -141,6 +143,9 @@ function main() {
 
 		if(!adapter.wasProcessed('credits'))
 			throw new AnyBalance.Error(prefs.num ? 'Не найден кредит с последними цифрами ' + prefs.num : 'У вас нет ни одного кредита!');
+
+		g_accnum = result.credits[0].accnum;
+		adapter.processAccounts(html, result);
 		
 		result = adapter.convert(result);
 	} else if(prefs.type == 'dep') {
@@ -151,8 +156,6 @@ function main() {
 		
 		result = adapter.convert(result);
 	}
-	
-	// getParam(html, result, 'bonuses', /МКБ Бонус\s*<span[^>]*>([\s\d]+)&nbsp;баллов/i, replaceTagsAndSpaces, parseBalance);
 	
 	AnyBalance.setResult(result);
 }

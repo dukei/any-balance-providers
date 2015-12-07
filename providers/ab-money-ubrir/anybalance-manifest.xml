@@ -15,7 +15,6 @@
 		<preferences>preferences.xml</preferences>
 		<js>library.js</js>
 		<js>extract.js</js>
-		<js>templates.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>

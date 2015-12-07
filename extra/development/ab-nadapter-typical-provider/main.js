@@ -115,7 +115,7 @@ function main() {
 	
     adapter.processCards = adapter.envelope(processCards);
     adapter.processAccounts = adapter.envelope(processAccounts);
-    adapter.processСredits = adapter.envelope(processСredits);
+    adapter.processCredits = adapter.envelope(processCredits);
     adapter.processDeposits = adapter.envelope(processDeposits);
 	
 	var html = login(prefs);
@@ -137,7 +137,7 @@ function main() {
 		
 		result = adapter.convert(result);
 	} else if(prefs.type == 'crd') {
-		adapter.processСredits(html, result);
+		adapter.processCredits(html, result);
 
 		if(!adapter.wasProcessed('credits'))
 			throw new AnyBalance.Error(prefs.num ? 'Не найден кредит с последними цифрами ' + prefs.num : 'У вас нет ни одного кредита!');

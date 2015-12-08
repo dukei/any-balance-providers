@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="">ab-telephony-teleum</id>
+	<id version="1">ab-telephony-teleum</id>
 	<api flags="no_browser"/>
 	<name>Teleum умный телеком</name>
 	<description html="true"><![CDATA[

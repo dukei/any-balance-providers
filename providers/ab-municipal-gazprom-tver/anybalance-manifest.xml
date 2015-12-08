@@ -16,7 +16,7 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Долг(+)/Аванс(-)" units=" р"/>
+		<counter id="balance" name="Баланс" units=" р"/>
 		<counter id="charged" name="Начислено" units=" р"/>
 		<counter id="recalculation" name="Перерасчет" units=" р"/>
 		<counter id="paid" name="Оплачено" units=" р"/>

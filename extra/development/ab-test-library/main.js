@@ -128,7 +128,7 @@ function main() {
 	var temp = 0;
 	for (var i = 0; i < times.length; i++) {
 		AnyBalance.trace('Parsing item ' + (temp+1) + ': ' + times[i]);
-		var parsed = parseMinutes(times[i]);
+		var parsed = parseMinutes(html_entity_decode(times[i]));
 		var res = times[++i];
 		
 		if(res == parsed) {

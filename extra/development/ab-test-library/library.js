@@ -1,15 +1,19 @@
-/*! AnyBalance Library (http://any-balance-providers.googlecode.com)
-The uncompressed full source code of this library is here: https://code.google.com/p/any-balance-providers/source/browse/trunk/extra/development/ab-test-library/library.js
+/*! AnyBalance Library (https://github.com/dukei/any-balance-providers/)
+The uncompressed full source code of this library is here: https://github.com/dukei/any-balance-providers/blob/master/extra/development/ab-test-library/library.js
 */
 /**
-AnyBalance (http://any-balance-providers.googlecode.com)
+AnyBalance (https://github.com/dukei/any-balance-providers/)
 
 Содержит некоторые полезные для извлечения значений с сайтов функции.
 Для конкретного провайдера рекомендуется оставлять в этом файле только те функции, которые используются.
 
-library.js v0.18 от 27.10.15
+library.js v0.20 от 06.12.15
 
 changelog:
+06.12.15 Полностью переработаны html_entity_decode и replaceTagsAndSpaces, добавлен XRegExp (http://xregexp.com/)
+	ВНИМАНИЕ!!! replaceTagsAndSpaces теперь уже включает html_entity_decode, поэтому при использовании replaceTagsAndSpaces уже не надо пользовать html_entity_decode
+	Если значение берется из атрибута, и теги удалять не надо, то заменить сущности можно массивом replaceHtmlEntities
+
 27.11.15 createFormParams: доработки для универсальности
 
 27.10.15 sumParam: добавлено сообщение об отключенном счетчике
@@ -69,7 +73,6 @@ changelog:
  * массивы могут быть вложенными
  * см. например replaceTagsAndSpaces
  */
-
 function getParam(html, result, param, regexp, replaces, parser) {
 	if(!isset(html)) {
 		AnyBalance.trace('getParam: input ' + (param ? '(' + param + ')' : '') + ' is unset! ' + new Error().stack);
@@ -117,22 +120,21 @@ function isAvailable(param) {
 	return AnyBalance.isAvailable(param);
 }
 //Замена пробелов и тэгов
-var replaceTagsAndSpaces = [/&nbsp;/ig, ' ', /&minus;/ig, '-', /<!--[\s\S]*?-->/g, '', /<[^>]*>/g, ' ', /\s{2,}/g, ' ', /^\s+|\s+$/g, ''],
-//Замена для чисел
-    replaceFloat = [/&minus;/ig, '-', /\s+/g, '', /'/g, '', /,/g, '.', /\.([^.]*)(?=\.)/g, '$1', /^\./, '0.'],
+var replaceTagsAndSpaces = [String.REPLACE_TAGS_AND_SPACES, /[\uFEFF\xA0]/ig, ' ', /\s{2,}/g, ' ', /^\s+|\s+$/g, ''],
+//Замена для чисел (&minus, &mdash, &ndash)
+    replaceFloat = [/[\u2212\u2013\u2014]/ig, '-', /\s+/g, '', /'/g, '', /,/g, '.', /\.([^.]*)(?=\.)/g, '$1', /^\./, '0.'],
 //Замена для Javascript строк
     replaceSlashes = [/\\(.?)/g, function(str, n) {
-	switch (n) {
-	case '0':
-		return '\0';
-	case '':
-		return '';
-	default:
-		return n;
-	}
-}],
-//Замена всех html энтитей
-    replaceHtmlEntities = [/&(#(x)?)?(\w+);/ig, make_html_entity_replacement];
+		switch (n) {
+		case '0':
+			return '\0';
+		case '':
+			return '';
+		default:
+			return n;
+		}
+	}],
+	replaceHtmlEntities = String.REPLACE_HTML_ENTITIES;
 
 /** Проверяет, определено ли значение переменной */
 function isset(v) {
@@ -146,20 +148,12 @@ function isArray(arr) {
 
 /** Делает все замены в строке value. При этом, если элемент replaces массив, то делает замены по нему рекурсивно. */
 function replaceAll(value, replaces) {
-	for (var i = 0; replaces && i < replaces.length; ++i) {
-		if (isArray(replaces[i])) {
-			value = replaceAll(value, replaces[i]);
-		} else {
-			value = value.replace(replaces[i], replaces[i + 1]);
-			++i; //Пропускаем ещё один элемент, использованный в качестве замены
-		}
-	}
-	return value;
+	return value.replaceAll(replaces);
 }
 
 /** Извлекает числовое значение из переданного текста */
 function parseBalance(text, silent) {
-	var val = getParam(html_entity_decode(text).replace(/\s+/g, ''), null, null, /(-?[.,]?\d[\d'.,]*)/, replaceFloat, parseFloat);
+	var val = getParam(text.replace(/\s+/g, ''), null, null, /(-?[.,]?\d[\d'.,]*)/, replaceFloat, parseFloat);
 	if(!silent)
 		AnyBalance.trace('Parsing balance (' + val + ') from: ' + text);
 	return val;
@@ -171,7 +165,7 @@ function parseBalanceSilent(text){
 
 /** Извлекает валюту из переданного текста (типичная реализация) */
 function parseCurrency(text) {
-	var val = getParam(html_entity_decode(text).replace(/\s+/g, ''), null, null, /-?\d[\d.,]*(\S*)/);
+	var val = getParam(text.replace(/\s+/g, ''), null, null, /-?\d[\d.,]*(\S*)/);
 	AnyBalance.trace('Parsing currency (' + val + ') from: ' + text);
 	return val;
 }
@@ -180,7 +174,7 @@ function parseCurrency(text) {
 Если на входе будет просто число - вернет минуты.
 Если на входе будет 02:03 будет принят формат ММ:СС*/
 function parseMinutes(_text, silent) {
-	var text = html_entity_decode(_text).replace(/[\s�]+/g, '');
+	var text = _text.replace(/[\s�]+/g, '');
 	var hour = 0, min = 0, sec = 0;
 	// Это формат ЧЧ:ММ:СС	
 	if(/^\d+:\d+:\d+$/i.test(text)) {
@@ -212,127 +206,8 @@ function parseMinutesSilent(_text){
 
 /** Заменяет HTML сущности в строке на соответствующие им символы */
 function html_entity_decode(string) {
-	return replaceAll(string, replaceHtmlEntities);
+	return string.htmlEntityDecode();
 }
-
-function make_html_entity_replacement(str, sharp, x, m){
-	var entities = {
-		amp		: 38,
-		nbsp	: 160,
-		iexcl	: 161,
-		cent	: 162,
-		pound	: 163,
-		curren	: 164,
-		yen		: 165,
-		brvbar	: 166,
-		sect	: 167,
-		uml		: 168,
-		copy	: 169,
-		ordf	: 170,
-		laquo	: 171,
-		not		: 172,
-		shy		: 173,
-		reg		: 174,
-		macr	: 175,
-		deg		: 176,
-		plusmn	: 177,
-		sup2	: 178,
-		sup3	: 179,
-		acute	: 180,
-		micro	: 181,
-		para	: 182,
-		middot	: 183,
-		cedil	: 184,
-		sup1	: 185,
-		ordm	: 186,
-		raquo	: 187,
-		frac14	: 188,
-		frac12	: 189,
-		frac34	: 190,
-		iquest	: 191,
-		agrave	: 192,
-		aacute	: 193,
-		acirc	: 194,
-		atilde	: 195,
-		auml	: 196,
-		aring	: 197,
-		aelig	: 198,
-		ccedil	: 199,
-		egrave	: 200,
-		eacute	: 201,
-		ecirc	: 202,
-		euml	: 203,
-		igrave	: 204,
-		iacute	: 205,
-		icirc	: 206,
-		iuml	: 207,
-		eth		: 208,
-		ntilde	: 209,
-		ograve	: 210,
-		oacute	: 211,
-		ocirc	: 212,
-		otilde	: 213,
-		ouml	: 214,
-		times	: 215,
-		oslash	: 216,
-		ugrave	: 217,
-		uacute	: 218,
-		ucirc	: 219,
-		uuml	: 220,
-		yacute	: 221,
-		thorn	: 222,
-		szlig	: 223,
-		agrave	: 224,
-		aacute	: 225,
-		acirc	: 226,
-		atilde	: 227,
-		auml	: 228,
-		aring	: 229,
-		aelig	: 230,
-		ccedil	: 231,
-		egrave	: 232,
-		eacute	: 233,
-		ecirc	: 234,
-		euml	: 235,
-		igrave	: 236,
-		iacute	: 237,
-		icirc	: 238,
-		iuml	: 239,
-		eth		: 240,
-		ntilde	: 241,
-		ograve	: 242,
-		oacute	: 243,
-		ocirc	: 244,
-		otilde	: 245,
-		ouml	: 246,
-		divide	: 247,
-		oslash	: 248,
-		ugrave	: 249,
-		uacute	: 250,
-		ucirc	: 251,
-		uuml	: 252,
-		yacute	: 253,
-		thorn	: 254,
-		yuml	: 255,
-		quot	: 34,
-		lt		: 60,
-		gt		: 62
-	};
-
-	if (!sharp) {
-		var ml = m.toLowerCase(m);
-		if (entities.hasOwnProperty(ml))
-			return String.fromCharCode(entities[ml]);
-	} else if (!x) {
-		if (/^\d+$/.test(m))
-			return String.fromCharCode(parseInt(m, 10));
-	} else {
-		if (/^[0-9a-f]+$/i.test(m))
-			return String.fromCharCode(parseInt(m, 16));
-	}
-	return str;
-}
-
 /**
  * Получает объект с параметрами форм (ищет в html все <input и <select и возвращает объект с их именами-значениями.
  * 
@@ -354,7 +229,7 @@ function make_html_entity_replacement(str, sharp, x, m){
 	});
 */
 function createFormParams(html, process, array){
-    var params = array ? [] : {}, valueRegExp=/value\s*=\s*("[^"]*"|'[^']*'|[\w\-\/\\]+)/i, valueReplace=[/^"([^"]*)"$|^'([^']*)'$/, '$1$2'], name,
+    var params = array ? [] : {}, valueRegExp=/value\s*=\s*("[^"]*"|'[^']*'|[\w\-\/\\]+)/i, valueReplace=[/^"([^"]*)"$|^'([^']*)'$/, '$1$2', replaceHtmlEntities], name,
 		inputRegExp = /<input[^>]+name\s*=\s*("[^"]*"|'[^']*'|[\w\-\/\\]+)[^>]*>|<select[^>]+name\s*=\s*("[^"]*"|'[^']*'|[\w\-\/\\]+)[^>]*>[\s\S]*?<\/select>/ig, nullVal = null;
 
 	while(true) {
@@ -367,25 +242,24 @@ function createFormParams(html, process, array){
                 value=undefined;
             else if(/type\s*=\s*['"]?checkbox['"]?/i.test(str)){
             	//Чекбокс передаёт значение только если он чекед. Если чекед, а значения нет, то передаёт on
-                value = /[^\w\-]checked[^\w\-]/i.test(str) ? getParam(str, nullVal, nullVal, valueRegExp, valueReplace, html_entity_decode) || 'on' : undefined;
+                value = /[^\w\-]checked[^\w\-]/i.test(str) ? getParam(str, nullVal, nullVal, valueRegExp, valueReplace) || 'on' : undefined;
             }else
-                value = getParam(str, nullVal, nullVal, valueRegExp, valueReplace, html_entity_decode) || '';
+                value = getParam(str, nullVal, nullVal, valueRegExp, valueReplace) || '';
             name = replaceAll(nameInp, valueReplace);
 			
         }else if(nameSel){
 			var sel = getParam(str, nullVal, nullVal, /^<[^>]*>/i);
-            value = getParam(sel, nullVal, nullVal, valueRegExp, valueReplace, html_entity_decode);
+            value = getParam(sel, nullVal, nullVal, valueRegExp, valueReplace);
             if(typeof(value) == 'undefined'){
                 var optSel = getParam(str, nullVal, nullVal, /(<option[^>]+selected[^>]*>)/i);
                 if(!optSel)
                     optSel = getParam(str, nullVal, nullVal, /(<option[^>]*>)/i);
 				if(optSel)
-				    value = getParam(optSel, nullVal, nullVal, valueRegExp, valueReplace, html_entity_decode);
+				    value = getParam(optSel, nullVal, nullVal, valueRegExp, valueReplace);
             }
             name = replaceAll(nameSel, valueReplace);;
         }
 
-        name = html_entity_decode(name);
         if(process){
             value = process(params, str, name, value);
         }
@@ -762,7 +636,7 @@ function parseTrafficGb(text, defaultUnits) {
 
 /** Вычисляет трафик в нужных единицах из переданной строки. */
 function parseTrafficEx(text, thousand, order, defaultUnits) {
-	var _text = html_entity_decode(text.replace(/\s+/g, ''));
+	var _text = text.replace(/\s+/g, '');
 	var val = getParam(_text, null, null, /(-?\.?\d[\d\.,]*)/, replaceFloat, parseFloat);
 	if (!isset(val) || val === '') {
 		AnyBalance.trace("Could not parse traffic value from " + text);
@@ -836,7 +710,7 @@ function requestPostMultipart(url, data, headers) {
 
 /** Приводим все к единому виду вместо ИВаНов пишем Иванов */
 function capitalFirstLetters(str) {
-	var wordSplit = html_entity_decode(str + '').toLowerCase().split(' ');
+	var wordSplit = str.toLowerCase().split(' ');
 	var wordCapital = '';
 	for (i = 0; i < wordSplit.length; i++) {
 		wordCapital += wordSplit[i].substring(0, 1).toUpperCase() + wordSplit[i].substring(1) + ' ';
@@ -1008,7 +882,7 @@ function joinUrl(url, path){
         },
 		contact: {
 			re: /Контакт/i,
-			result_func: html_entity_decode
+			result_func: null //Текст
 		}
 	};
 	var table = getElement(html, /<table[^>]+class="card-table"[^>]*>/i);
@@ -1090,12 +964,4 @@ function fillColsResult(colsDef, cols, tds, result, path){
             }
         }
     }
-}
-
-
-/*
-Для того, чтобы было удобно писать регулярные выражения, см. пример в ab-statistic-finnopolis/main.js
-*/
-String.prototype.regExpExtra = function() {
-	return this.replace(/[\x00-\x20]*/g, '').replace(/\./g, '[\\s\\S]');
 }

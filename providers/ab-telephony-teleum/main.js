@@ -12,37 +12,43 @@ var g_headers = {
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'http://ottclub.cc/';
+	var baseurl = 'https://teleum.com/';
 	AnyBalance.setDefaultCharset('utf-8');
 	
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 	
-	var html = AnyBalance.requestGet(baseurl + 'auth/login', g_headers);
+	var html = AnyBalance.requestGet(baseurl, g_headers);
 	
-	if(!html || AnyBalance.getLastStatusCode() > 400)
+	if(!html || AnyBalance.getLastStatusCode() > 400){
+		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
+	}
 	
-	html = AnyBalance.requestPost(baseurl + 'auth/login', {
-		email: prefs.login,
-		password: prefs.password
-	}, addHeaders({Referer: baseurl, 'X-Requested-With': 'XMLHttpRequest'}));
-    
-	if (/Ошибка авторизации/i.test(html)) {
-		var error = getParam(html, null, null, /<fieldset>([\s\S]*?)<\/fieldset>/i, replaceTagsAndSpaces, html_entity_decode);
+	var params = createFormParams(html, function(params, str, name, value) {
+		if (name == 'email')
+			return prefs.login;
+		else if (name == 'paswd')
+			return prefs.password;
+		return value;
+	});
+	
+	html = AnyBalance.requestPost(baseurl+'login.php', params, addHeaders({Referer: baseurl}));
+	var json = getJson(html);
+
+	if (json.error != 0){
+		var error = json.errormsg;
 		if (error)
-			throw new AnyBalance.Error(error, null, /Неверный логин или пароль|Ошибка авторизации/i.test(error));
-		
+			throw new AnyBalance.Error(error, null, /Неправильный пароль/i.test(error));
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
-	
-    html = AnyBalance.requestGet(baseurl, g_headers);
-	
+
 	var result = {success: true};
-	
-	getParam(html, result, 'balance', /баланс:(?:[^>]*>){1}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'status', /Услуга:[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
-	
+	html = AnyBalance.requestGet(baseurl+'ajax/balance.php', g_headers);
+
+	getParam(html, result, 'balance', /Баланс:([^<]+)</i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'agreementID', /Договор:([^<]+)</i, replaceTagsAndSpaces, html_entity_decode);
+
 	AnyBalance.setResult(result);
 }

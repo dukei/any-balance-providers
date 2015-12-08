@@ -339,7 +339,8 @@ function fetchAccountStatus(html, result) {
     // Остаток СМС
     getParam(html, result, 'sms_left', /(?:Осталось|Остаток)[^\d]*(\d*).*?(sms|смс)/i, [], parseBalance);
     getParam(html, result, 'sms_left', /SMS:\s*([\d\.,]+)\s*шт/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'sms_left', /\s*([\d\.,]+)\s*шт/i, replaceTagsAndSpaces, parseBalance);
+    //Если не нашли ничего из вышеперечисленного, то считаем, что это СМС
+    getParam(html, result, 'sms_left', /([\d\.,]+)\s*шт/i, replaceTagsAndSpaces, parseBalance);
 }
 
 function main(){

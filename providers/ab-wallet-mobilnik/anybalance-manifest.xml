@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-wallet-mobilnik</id>
+	<api flags="no_browser"/>
+	<name>Wallet Mobilnik Balance</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет ФИО, номер счета и баланс пользователя mobilnik.kg со страницы https://wallet.mobilnik.kg/wallet/</p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	
+	]]></instruction>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" suffix="KGS"/>
+		<counter id="account_num" name="Лицевой счет"/>
+		<counter id="username" name="ФИО" type="text"/>
+	</counters>
+	<keywords>мобильник, мобильный кошелек, mobilnik.kg, mobilnik, money, wallet</keywords>
+	<type></type>
+	<country>kgz</country>
+</provider>

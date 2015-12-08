@@ -4,7 +4,7 @@
 	<api flags="no_browser"/>
 	<name>Wallet Mobilnik Balance</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет ФИО, номер счета и баланс пользователя</p>
+	<p>Предоставляет ФИО, номер счета и баланс пользователя mobilnik.kg со страницы https://wallet.mobilnik.kg/wallet/</p>
 	]]></description>
 	<instruction html="true"><![CDATA[
 	
@@ -17,11 +17,11 @@
 		<js>main.js</js>
 	</files>
 	<counters>
-		<counter id="username" name="ФИО" type="text"/>
+		<counter id="balance" name="Баланс" suffix="KGS"/>
 		<counter id="account_num" name="Лицевой счет"/>
-		<counter id="balance" name="Баланс" type="text"/>
+		<counter id="username" name="ФИО" type="text"/>
 	</counters>
-	<keywords>мобильник, мобильный кошелек, mobilnik.kg, mobilnik</keywords>
+	<keywords>мобильник, мобильный кошелек, mobilnik.kg, mobilnik, money, wallet</keywords>
 	<type></type>
-	<country>ru</country>
+	<country>kgz</country>
 </provider>

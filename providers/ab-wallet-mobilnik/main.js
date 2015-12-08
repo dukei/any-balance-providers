@@ -27,7 +27,14 @@ function main(){
 	}
 
 	// убрал поля, которые были вне формы
-	html = getElement(html, /<form[^>]+id="login_form"[^>]*>/i);
+	var tmp = getElement(html, /<form[^>]+id="login_form"[^>]*>/i);
+
+	if(!tmp) {
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Ошибка. На странице не найдена форма входа');
+	} else {
+		html = tmp;
+	}
 
 	var params = createFormParams(html, function(params, str, name, value) {
 		if (name == 'login') 
@@ -59,17 +66,20 @@ function main(){
 
 	html = getElement(html, /<div[^>]*class="[^\"]*user-about[^\"]*">/i);
 
-	if(!html) throw new AnyBalance.Error("На странице что-то изменилось. Невозможно получить данные");
+	if(!html) {
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error("На странице что-то изменилось. Невозможно получить данные");
+	}
 
 	var result = { success: true };
 
-	getParam(html, result, 'username', /<span[^>]*>([^>]*)<\/span>/i, replaceHtmlEntities);
+	if(AnyBalance.isAvailable("username")) getParam(html, result, 'username', /<span[^>]*>([^>]*)<\/span>/i, replaceHtmlEntities);
 
 	var dd = getElements(html, /<dd[^>]*>/gi);
 
 
-	result['account_num'] = dd[0] ? parseBalance(dd[0]) : null;
-	result['balance'] = dd[1] ? replaceAll(dd[1], replaceTagsAndSpaces) : null;
+	if(AnyBalance.isAvailable("account_num") && dd[0]) result['account_num'] =  parseBalance(dd[0]);
+	if(AnyBalance.isAvailable("balance") && dd[1]) result['balance'] = parseBalance(dd[1]);
 
 	AnyBalance.setResult(result);
 }

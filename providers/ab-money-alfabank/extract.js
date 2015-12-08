@@ -4,14 +4,14 @@
 
 var g_baseurl = 'https://click.alfabank.ru';
 
-var g_headers = [
-    ['Accept', 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8'],
-    ['Accept-Language', 'ru,en-US;q=0.8,en;q=0.6'],
-    ['Connection', 'keep-alive'],
-    ['User-Agent', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2272.118 Safari/537.36']
-//	['Origin', null], //Падает пейстор на этом
-//	['Cookie2', '$Version=1']
-];
+var g_headers = {
+    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+    'Accept-Language': 'ru,en-US;q=0.8,en;q=0.6',
+    'Connection': 'keep-alive',
+    'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2272.118 Safari/537.36'
+//	'Origin': null, //Падает пейстор на этом
+//	'Cookie2': '$Version=1'
+};
 
 var g_some_action = '<m xmlns="http://oracle.com/richClient/comm"><k v="type"><s>action</s></k></m>';
 var g_mainHtml;
@@ -374,6 +374,7 @@ function getNextPage(html, event, extra_params, options) {
         return value;
     }, true);
     var paramsModule = createParams(joinArrays(params, extra_params), event);
+
     var newhtml = AnyBalance.requestPost(g_baseurl + action, paramsModule, addHeaders(options.headers || {
             "Adf-Ads-Page-Id": g_pageID,
             "Adf-Rich-Message": "true",

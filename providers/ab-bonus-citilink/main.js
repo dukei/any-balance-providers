@@ -16,7 +16,7 @@ function main(){
 
     AnyBalance.setDefaultCharset('utf-8'); 
 
-	var html = AnyBalance.requestGet(baseurl, g_headers);
+	var html = AnyBalance.requestGet(baseurl + '/', g_headers);
 	var form = getElement(html, /<form[^>]+action="[^"]*auth\/login[^>]*>/i);
 	var action = getParam(form, null, null, /<form[^>]+action="([^"]+)/i);
 
@@ -24,7 +24,6 @@ function main(){
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось найти форму входа, сайт изменен?');
 	}
-	AnyBalance.trace('form action: ' + action);
 
 	var params = createFormParams(form, function(params, str, name, value) {
 		if (name == 'login') 
@@ -40,7 +39,9 @@ function main(){
 		return value;
 	});
 
-	html = AnyBalance.requestPost(joinUrl(baseurl, action), params, addHeaders({Referer: baseurl + '/'})); 
+	var url = joinUrl(baseurl, action);
+	AnyBalance.trace('Posting to url: ' + url);
+	html = AnyBalance.requestPost(url, params, addHeaders({Referer: baseurl + '/'})); 
 	
     if(!/\/login\/exit/i.test(html)){
         var error = getParam(html, null, null, /<div[^>]+class="[^"]*error[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);

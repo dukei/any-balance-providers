@@ -140,11 +140,11 @@ function main() {
 
 	var html = '<span sl> <div class="test"> parsed <div class="test"></div> <span sdflj> it </span> <div askdfj> ok </div>!</div> test </div>';
 	var str = getElement(html, /<\w+[^>]+class="test"[^>]*>/i, replaceTagsAndSpaces);
-	var res = 'parsed it ok !';
-	if(str == res)
+	var res = /^parsed\sit\sok\s!$/i;
+	if(str.test(res))
 		AnyBalance.trace('getElement is ok');
 	else
-		AnyBalance.trace('!!!____________________________________________________________getElement test is failed: should be ' + res + ', parsed ' + str + '!!!');
+		AnyBalance.trace('!!!____________________________________________________________getElement test is failed: should be ' + res.source + ', parsed ' + str + '!!!');
 	
 		
 	//checkEmpty(prefs.s, 'checkEmpty работает нормально!');

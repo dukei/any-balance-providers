@@ -117,7 +117,7 @@ function isAvailable(param) {
 	return AnyBalance.isAvailable(param);
 }
 //Замена пробелов и тэгов
-var replaceTagsAndSpaces = [String.REPLACE_TAGS_AND_SPACES, /[\uFEFF\xA0\r\n]/ig, ' ', /\s{2,}/g, ' ', /^\s+|\s+$/g, ''],
+var replaceTagsAndSpaces = [String.REPLACE_TAGS_AND_SPACES, /[\uFEFF\xA0]/ig, ' ', /\s{2,}/g, ' ', /^\s+|\s+$/g, ''],
 //Замена для чисел (&minus, &mdash, &ndash)
     replaceFloat = [/[\u2212\u2013\u2014]/ig, '-', /\s+/g, '', /'/g, '', /,/g, '.', /\.([^.]*)(?=\.)/g, '$1', /^\./, '0.'],
 //Замена для Javascript строк

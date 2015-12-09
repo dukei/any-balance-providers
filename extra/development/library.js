@@ -592,28 +592,36 @@ for(var c=0;
 c<a.length;
 ++c){if(a[c]!=="--auto--"&&!isset(b[a[c]])){b[a[c]]=null
 }}if(!isset(b.__tariff)){b.__tariff=null
-}}function getElement(j,n,e,a){var c=n.exec(j);
+}}function getElement(f,k,e,a){var c=k.exec(f);
 if(!c){return
-}var l=c.index;
-var m=j.substr(l,c[0].length);
-var d=getParam(m,null,null,/<(\w+)/);
-var f=new RegExp("(?:<"+d+"|</"+d+")[^>]*>","ig");
-f.lastIndex=l+c[0].length;
+}var h=c.index;
+var j=f.substr(h,c[0].length);
+var d=getParam(j,null,null,/<(\w+)/);
+var g=new RegExp("<"+d+"[^>]*>","ig");
+var b=new RegExp("</"+d+"[^>]*>","ig");
+g.lastIndex=h;
+return getRecursiveMatch(f,g,b,e,a)
+}function getRecursiveMatch(j,m,d,f,b){var e=m.exec(j);
+if(!e){return
+}var n=e.index;
 var g=0;
-while(true){c=f.exec(j);
-if(!c){break
-}var b=c[0];
-if(b.charAt(1)=="/"){if(g==0){break
+var k=new RegExp("(?:"+m.source+")|(?:"+d.source+")","ig");
+var a=new RegExp("^(?:"+d.source+")",d.ignoreCase?"i":"");
+k.lastIndex=n+e[0].length;
+while(true){e=k.exec(j);
+if(!e){break
+}var c=e[0];
+if(a.test(c)){if(g==0){break
 }--g
 }else{++g
-}f.lastIndex=c.index+b.length
+}k.lastIndex=e.index+c.length
 }var h=j.length;
-if(c){h=c.index+c[0].length
-}n.lastIndex=h;
-var k=j.substring(l,h);
-if(e){k=replaceAll(k,e)
-}if(a){k=a(k)
-}return k
+if(e){h=e.index+e[0].length
+}m.lastIndex=h;
+var l=j.substring(n,h);
+if(f){l=replaceAll(l,f)
+}if(b){l=b(l)
+}return l
 }function getElements(e,k,b,a){var d=[];
 var g=isArray(k)?k[0]:k;
 var f=isArray(k)?(k.shift(),k):null;

@@ -32,9 +32,9 @@ function main(){
 	if(!tmp) {
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Ошибка. На странице не найдена форма входа');
-	} else {
-		html = tmp;
 	}
+	
+	html = tmp;
 
 	var params = createFormParams(html, function(params, str, name, value) {
 		if (name == 'login') 
@@ -49,7 +49,6 @@ function main(){
 
 	if(!html || AnyBalance.getLastStatusCode() > 400){
 
-		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
 
 	} else if(!/logout/.test(html)){
@@ -64,22 +63,25 @@ function main(){
 	}
 
 
-	html = getElement(html, /<div[^>]*class="[^\"]*user-about[^\"]*">/i);
+	tmp = getElement(html, /<div[^>]*class="[^\"]*user-about[^\"]*">/i);
 
-	if(!html) {
+	if(!tmp) {
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error("На странице что-то изменилось. Невозможно получить данные");
 	}
+	
+	html = tmp;
 
 	var result = { success: true };
 
-	if(AnyBalance.isAvailable("username")) getParam(html, result, 'username', /<span[^>]*>([^>]*)<\/span>/i, replaceHtmlEntities);
+	getParam(html, result, 'username', /<span[^>]*>([^>]*)<\/span>/i, replaceHtmlEntities);
 
 	var dd = getElements(html, /<dd[^>]*>/gi);
 
-
-	if(AnyBalance.isAvailable("account_num") && dd[0]) result['account_num'] =  parseBalance(dd[0]);
-	if(AnyBalance.isAvailable("balance") && dd[1]) result['balance'] = parseBalance(dd[1]);
+	if(dd.length > 0){
+		getParam(dd[0], result, "account_num", null, replaceTagsAndSpaces);
+		getParam(dd[1], result, "balance", null, replaceTagsAndSpaces, parseBalance);
+	}
 
 	AnyBalance.setResult(result);
 }

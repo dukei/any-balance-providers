@@ -17,7 +17,7 @@
 		<js>main.js</js>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" suffix="KGS"/>
+		<counter id="balance" name="Баланс" suffix=" KGS"/>
 		<counter id="account_num" name="Лицевой счет" type="text"/>
 		<counter id="username" name="ФИО" type="text"/>
 	</counters>

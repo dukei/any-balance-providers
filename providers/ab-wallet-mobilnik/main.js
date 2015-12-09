@@ -76,12 +76,11 @@ function main(){
 
 	getParam(html, result, 'username', /<span[^>]*>([^>]*)<\/span>/i, replaceHtmlEntities);
 
-	var dd = getElements(html, /<dd[^>]*>/gi);
 
-	if(dd.length > 0){
-		getParam(dd[0], result, "account_num", null, replaceTagsAndSpaces);
-		getParam(dd[1], result, "balance", null, replaceTagsAndSpaces, parseBalance);
-	}
+	var dd = getElements(html, /<dd[^>]*>/gi);
+	
+	getParam(dd[0], result, "account_num", null, replaceTagsAndSpaces);
+	getParam(dd[1], result, "balance", null, replaceTagsAndSpaces, parseBalance);
 
 	AnyBalance.setResult(result);
 }

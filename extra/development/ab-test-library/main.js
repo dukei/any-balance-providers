@@ -137,7 +137,14 @@ function main() {
 			AnyBalance.trace('!!!____________________________________________________________Item ' + (temp++) + ' parsing failed: should be ' + res + ', parsed ' + parsed + '!!!');
 		}
 	}
-	
+
+	var html = '<span sl> <div class="test"> parsed <div class="test"></div> <span sdflj> it </span> <div askdfj> ok </div>!</div> test </div>';
+	var str = getElement(html, /<\w+[^>]+class="test"[^>]*>/i, replaceTagsAndSpaces);
+	var res = 'parsed it ok !';
+	if(str == res)
+		AnyBalance.trace('getElement is ok');
+	else
+		AnyBalance.trace('!!!____________________________________________________________getElement test is failed: should be ' + res + ', parsed ' + str + '!!!');
 	
 		
 	//checkEmpty(prefs.s, 'checkEmpty работает нормально!');

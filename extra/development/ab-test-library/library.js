@@ -117,7 +117,7 @@ function isAvailable(param) {
 	return AnyBalance.isAvailable(param);
 }
 //Замена пробелов и тэгов
-var replaceTagsAndSpaces = [String.REPLACE_TAGS_AND_SPACES, /[\uFEFF\xA0]/ig, ' ', /\s{2,}/g, ' ', /^\s+|\s+$/g, ''],
+var replaceTagsAndSpaces = [String.REPLACE_TAGS_AND_SPACES, /[\uFEFF\xA0\r\n]/ig, ' ', /\s{2,}/g, ' ', /^\s+|\s+$/g, ''],
 //Замена для чисел (&minus, &mdash, &ndash)
     replaceFloat = [/[\u2212\u2013\u2014]/ig, '-', /\s+/g, '', /'/g, '', /,/g, '.', /\.([^.]*)(?=\.)/g, '$1', /^\./, '0.'],
 //Замена для Javascript строк
@@ -741,32 +741,49 @@ function getElement(html, re, replaces, parseFunc){
 	var startIndex = amatch.index;
 	var startTag = html.substr(startIndex, amatch[0].length);
 	var elem = getParam(startTag, null, null, /<(\w+)/);
-	var endTag = new RegExp('(?:<' + elem + '|<\/' + elem + ')[^>]*>', 'ig');
-	endTag.lastIndex = startIndex + amatch[0].length;
+	var reStart = new RegExp('<' + elem + '[^>]*>', 'ig');
+	var reEnd = new RegExp('<\/' + elem + '[^>]*>', 'ig');
+	reStart.lastIndex = startIndex;
+
+	return getRecursiveMatch(html, reStart, reEnd, replaces, parseFunc);
+}
+
+function getRecursiveMatch(html, reStart, reEnd, replaces, parseFunc){
+	var amatch = reStart.exec(html);
+	if(!amatch)
+		return;
+
+	var startIndex = amatch.index;
+
 	var depth = 0;
+	var reStartOrEnd = new RegExp('(?:' + reStart.source + ')|(?:' + reEnd.source + ')', 'ig');
+	var reStartWithEnd = new RegExp('^(?:' + reEnd.source + ')', reEnd.ignoreCase ? 'i' : '');
+
+	reStartOrEnd.lastIndex = startIndex + amatch[0].length;
 
 	while(true){
-		amatch = endTag.exec(html);
+		amatch = reStartOrEnd.exec(html);
 		if(!amatch)
 			break;
 		var matched = amatch[0];
-		if(matched.charAt(1) == '/'){
+		if(reStartWithEnd.test(matched)){ //Закрывающий тег
 		    if(depth == 0)
 		    	break;
 		    --depth;
 		}else{
 			++depth;
 		}
-		endTag.lastIndex = amatch.index + matched.length;
+		reStartOrEnd.lastIndex = amatch.index + matched.length;
 	}
 
 	var endIndex = html.length;
 	if(amatch)
 		endIndex = amatch.index + amatch[0].length;
 
-	re.lastIndex = endIndex;
+	reStart.lastIndex = endIndex;
 
 	var str = html.substring(startIndex, endIndex);
+
 	if(replaces)
 		str = replaceAll(str, replaces);
 	if(parseFunc)

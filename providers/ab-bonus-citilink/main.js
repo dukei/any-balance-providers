@@ -24,6 +24,7 @@ function main(){
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось найти форму входа, сайт изменен?');
 	}
+	AnyBalance.trace('form action: ' + action);
 
 	var params = createFormParams(form, function(params, str, name, value) {
 		if (name == 'login') 
@@ -39,7 +40,7 @@ function main(){
 		return value;
 	});
 
-	html = AnyBalance.requestPost(action, params, addHeaders({Referer: baseurl + '/'})); 
+	html = AnyBalance.requestPost(joinUrl(baseurl, action), params, addHeaders({Referer: baseurl + '/'})); 
 	
     if(!/\/login\/exit/i.test(html)){
         var error = getParam(html, null, null, /<div[^>]+class="[^"]*error[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);

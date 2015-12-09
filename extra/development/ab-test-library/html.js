@@ -1,6 +1,6 @@
 (function () {
 	/** Делает все замены в строке value (четные - регулярное выражение, нечетные - замена). При этом, если элемент replaces массив, то делает замены по нему рекурсивно. */
-	String.prototype.replaceAll = function (replaces) {
+	String.prototype.replaceAll = function(replaces) {
 		var value = this, i;
 		for (i = 0; replaces && i < replaces.length; ++i) {
 			if (isArray(replaces[i])) {
@@ -10,7 +10,7 @@
 				++i; //Пропускаем ещё один элемент, использованный в качестве замены
 			}
 		}
-		return value;
+		return value.valueOf(); //Важно, а то в AnyBalance при сочленении вебкита и джавы может падать
 	}
 
 	/**

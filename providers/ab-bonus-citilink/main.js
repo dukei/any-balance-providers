@@ -30,8 +30,11 @@ function main(){
 			return prefs.login;
 		else if (name == 'pass')
 			return prefs.password;
-	    else if (name == 'token')
-	    	return getParam(html, null, null, /"staticVersion"\s*:\s*['"]?([^'",]*)/, replaceSlashes)
+	    else if (name == 'token'){
+	    	var json = getParam(html, null, null, /window\s*\[\s*'globalSettings'\s*\]\s*=\s*(\{[^}]*\})/, null, getJson);
+	    	var obj = new te(json);
+	    	return pg({a: obj}); //Весьма сложные преобразования токена
+	    }
 
 		return value;
 	});
@@ -39,7 +42,7 @@ function main(){
 	html = AnyBalance.requestPost(action, params, addHeaders({Referer: baseurl + '/'})); 
 	
     if(!/\/login\/exit/i.test(html)){
-        var error = getParam(html, null, null, /<div[^>]+class="[^"]*error[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+        var error = getParam(html, null, null, /<div[^>]+class="[^"]*error[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
         if(error)
             throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
 		
@@ -48,7 +51,7 @@ function main(){
     }
 
     var result = {success: true};
-    getParam(html, result, '__tariff', /Статус(?:\s|<[^>]*>)*:([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, '__tariff', /Статус(?:\s|<[^>]*>)*:([^<]*)/i, replaceTagsAndSpaces);
     getParam(html, result, 'balance', /Бонусы(?:\s|<[^>]*>)*:([^<]*)/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'wishes', /Желания(?:\s|<[^>]*>)*:([^<]*)/i, replaceTagsAndSpaces, parseBalance);
 

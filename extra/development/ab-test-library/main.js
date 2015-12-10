@@ -141,10 +141,33 @@ function main() {
 	var html = '<span sl> <div class="test"> parsed <div class="test"></div> <span sdflj> it </span> <div askdfj> ok </div>!</div> test </div>';
 	var str = getElement(html, /<\w+[^>]+class="test"[^>]*>/i, replaceTagsAndSpaces);
 	var res = /^parsed\sit\sok\s!$/i;
-	if(str.test(res))
+	if(res.test(str))
 		AnyBalance.trace('getElement is ok');
 	else
 		AnyBalance.trace('!!!____________________________________________________________getElement test is failed: should be ' + res.source + ', parsed ' + str + '!!!');
+
+	var s1 = 'some html ajsdfkaj; <script> var x=\
+			{						\n\
+				i: 1,				\n\
+				b: true,			\n\
+				s1: "}  \\"  ",		\n\
+				s2: \'} \\\'  \',	\n\
+				r: /[regexp]{1,}/ig,\n\
+				a: [				\n\
+					{ff: 2.2},		\n\
+					{oo: {}}		\n\
+				],					\n\
+				o: {				\n\
+				}					\n\
+			};						\n\
+			var x = "{}"			\n\
+			';
+	var str = getJsonObject(s1, /var\s+x\s*=(?=\s*\{)/);
+	if(str && str.i == 1)
+		AnyBalance.trace('getJsonObject is ok');
+	else
+		AnyBalance.trace('!!!____________________________________________________________getJsonObject test is failed!!!');
+
 	
 		
 	//checkEmpty(prefs.s, 'checkEmpty работает нормально!');

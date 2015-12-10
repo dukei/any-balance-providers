@@ -7,6 +7,8 @@ AnyBalance (https://github.com/dukei/any-balance-providers/)
 library.js v0.20 от 06.12.15
 
 changelog:
+10.12.15 Добавлена getJsonObject
+
 06.12.15 Полностью переработаны html_entity_decode и replaceTagsAndSpaces, добавлен XRegExp (http://xregexp.com/)
 	ВНИМАНИЕ!!! replaceTagsAndSpaces теперь уже включает html_entity_decode, поэтому при использовании replaceTagsAndSpaces уже не надо пользовать html_entity_decode
 	Если значение берется из атрибута, и теги удалять не надо, то заменить сущности можно массивом replaceHtmlEntities
@@ -746,6 +748,53 @@ function getElement(html, re, replaces, parseFunc){
 	reStart.lastIndex = startIndex;
 
 	return getRecursiveMatch(html, reStart, reEnd, replaces, parseFunc);
+}
+
+/**
+	Находит в html JSON объект, начиная с позиции первого вхождения регулярного выражения reStartSearch (если оно указано).
+	Если type '[', то ищется массив, если другое, то объект.
+
+	Возвращается объект (или массив) или undefined, если объект не найден.
+*/
+function getJsonObject(html, reStartSearch, type){
+    var types = {
+    	'{': {
+    		left: '\\\{												\n\
+				(?:	[^"\'\\\{\\\}\\/]+								\n\
+				 |	"	(?:[^"\\\\]+|\\\\.)*	"		#string1	\n\
+				 |	\'	(?:[^\'\\\\]+|\\\\.)*	\'		#string2	\n\
+				 |	\\/	(?:[^\\/\\\\]+|\\\\.)+	\\/		#regexp		\n\
+				)*													\n\
+			',
+            right: /\}/
+            },
+        '[': {
+    		left: '\\\[												\n\
+				(?:	[^"\'\\\[\\\]\\/]+								\n\
+				 |	"	(?:[^"\\\\]+|\\\\.)*	"		#string1	\n\
+				 |	\'	(?:[^\'\\\\]+|\\\\.)*	\'		#string2	\n\
+				 |	\\/	(?:[^\\/\\\\]+|\\\\.)+	\\/		#regexp		\n\
+				)*													\n\
+			',
+            right: /\]/
+        }
+    };
+
+	if(!types[type])
+		type = '{';
+
+	var startIndex = 0;
+	if(reStartSearch){
+		var amatch = reStartSearch.exec(html);
+		if(!amatch)
+			return;
+		startIndex = amatch.index;
+	}
+
+	var reStart = new XRegExp(types[type].left, 'gx');
+	reStart.lastIndex = startIndex;
+
+	return getRecursiveMatch(html, reStart, types[type].right, null, getJsonEval);
 }
 
 function getRecursiveMatch(html, reStart, reEnd, replaces, parseFunc){

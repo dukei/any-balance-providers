@@ -601,6 +601,15 @@ var g=new RegExp("<"+d+"[^>]*>","ig");
 var b=new RegExp("</"+d+"[^>]*>","ig");
 g.lastIndex=h;
 return getRecursiveMatch(f,g,b,e,a)
+}function getJsonObject(c,b,d){var a={"{":{left:"\\{												\n				(?:	[^\"'\\{\\}\\/]+								\n				 |	\"	(?:[^\"\\\\]+|\\\\.)*	\"		#string1	\n				 |	'	(?:[^'\\\\]+|\\\\.)*	'		#string2	\n				 |	\\/	(?:[^\\/\\\\]+|\\\\.)+	\\/		#regexp		\n				)*													\n			",right:/\}/},"[":{left:"\\[												\n				(?:	[^\"'\\[\\]\\/]+								\n				 |	\"	(?:[^\"\\\\]+|\\\\.)*	\"		#string1	\n				 |	'	(?:[^'\\\\]+|\\\\.)*	'		#string2	\n				 |	\\/	(?:[^\\/\\\\]+|\\\\.)+	\\/		#regexp		\n				)*													\n			",right:/\]/}};
+if(!a[d]){d="{"
+}var g=0;
+if(b){var e=b.exec(c);
+if(!e){return
+}g=e.index
+}var f=new XRegExp(a[d].left,"gx");
+f.lastIndex=g;
+return getRecursiveMatch(c,f,a[d].right,null,getJsonEval)
 }function getRecursiveMatch(j,m,d,f,b){var e=m.exec(j);
 if(!e){return
 }var n=e.index;

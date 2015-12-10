@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+	<EditTextPreference
+		title="Номер карты"
+		key="cardnum"
+		summary="||{@s}"
+		obligatory="true"
+		dialogTitle="Номер карты"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите номер, используемый для входа на сайт.">
+	</EditTextPreference>
+	<EditTextPreference
+		title="Пин"
+		key="cardpin"
+		summary="||***********"
+		obligatory="true"
+		dialogTitle="Пин"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите пин, используемый для входа на сайт."
+		inputType="textPassword">
+	</EditTextPreference>
+</PreferenceScreen>

@@ -1,5 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="4.0" version="135" date="2015-12-10">
+	- Исправление получения трафика во многих случаях
+	- Разделение минут на МТС Коннект
+	</change>
 	<change major_version="4.0" version="134" date="2015-12-06">
 	Улучшена обработка ошибок, возникающих на сайте МТС
 	</change>

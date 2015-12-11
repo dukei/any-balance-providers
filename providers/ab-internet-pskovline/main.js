@@ -20,22 +20,19 @@ function main() {
 		throw new AnyBalance.Error("Повторите ввод логина и пароля");
 	}
 	else if(info.match(/rightblock.*?>/i)){
-                if(matches = info.match(/<td>(.*?)<\/td>/igm)){
+                if(matches = info.match(/td>([\s\S.]*?)<\/td/igm)){
 
-		var i=0; while(x=matches[i]) {
-			 matches[i]=x.match('td>(.*?)<\/td','i')[1];
-		i++;
-		}
                         var login, ballance, number, date;
 
 			result['success']=true;
-			result['ballance']=parseFloat(matches[3].match(/>([\d\-\.]+)</)[1]);
+
+			result['ballance']=parseFloat(matches[3].match(/>([\d\-\.]+)<\//)[1]);
 
 // Сумма списания за период
-var tarif= ( isNaN(parseInt(matches[13].match(/\d+/))) ? (parseInt(matches[12].match(/\d+/))) : (parseInt(matches[13].match(/\d+/))) );
+var tarif= ( isNaN(parseInt(matches[14].match(/\d+/))) ? (parseInt(matches[13].match(/\d+/))) : (parseInt(matches[14].match(/\d+/))) );
 result['tarif']=tarif;
 			if (AnyBalance.isAvailable('login'))
-				result['login'] =matches[5];
+				result['login'] =matches[5].match(/>(.*)<\//)[1];
 
 			if (AnyBalance.isAvailable('number'))
 				result['number']=matches[1].match(/\d+/)[0];
@@ -44,9 +41,10 @@ result['tarif']=tarif;
 				result['date']=info.match('<em .+>[(](.+?)[)]</em','igm')[1].match(/(\d*\.\d*\.\d*)/igm)[1];
 
 // Срок до отключения
-var dats=result['date'].split('.'); var tmp=dats[0]; dats[0]=parseInt(dats[1],10); dats[1]=tmp;
+var dats=result['date'].split('.'); var tmp=dats[0]; dats[0]=parseInt(dats[1]); dats[1]=tmp;
 // ...больше месяца ?
 if (tarif<result['ballance']) dats[0]+=Math.floor(result['ballance']/tarif);
+if (dats[0]==13) {dats[0]=1; dats[2]++;}
 // Считаем дни
 dats=Math.ceil((Date.parse(dats.join('.'))-date)/(1000*60*60*24));
 

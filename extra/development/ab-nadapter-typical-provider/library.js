@@ -370,7 +370,9 @@ default:return b
 }}],replaceHtmlEntities=String.REPLACE_HTML_ENTITIES;
 function isset(a){return typeof(a)!="undefined"
 }function isArray(a){return Object.prototype.toString.call(a)==="[object Array]"
-}function replaceAll(b,a){return b.replaceAll(a)
+}function replaceAll(b,a){if(!a){return b
+}if(typeof b!="string"){b+=""
+}return b.replaceAll(a)
 }function parseBalance(c,a){var b=getParam(c.replace(/\s+/g,""),null,null,/(-?[.,]?\d[\d'.,]*)/,replaceFloat,parseFloat);
 if(!a){AnyBalance.trace("Parsing balance ("+b+") from: "+c)
 }return b

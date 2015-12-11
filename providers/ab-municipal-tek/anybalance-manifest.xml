@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-municipal-tek</id>
+	<id version="2">ab-municipal-tek</id>
 	<api flags="no_browser"/>
 	<name>ТЭК</name>
 	<description html="true"><![CDATA[
@@ -17,6 +17,7 @@
 	</files>
 	<counters>
 		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="fines" name="Пени" units=" р"/>
 		<counter id="fio" name="Потребитель" type="text"/>
 		<counter id="account" name="Лицевой счет" type="text"/>
 		<counter id="device_number" name="Номер прибора учета" type="text"/>

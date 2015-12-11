@@ -4,9 +4,18 @@ AnyBalance (https://github.com/dukei/any-balance-providers/)
 Содержит некоторые полезные для извлечения значений с сайтов функции.
 Для конкретного провайдера рекомендуется оставлять в этом файле только те функции, которые используются.
 
-library.js v0.20 от 06.12.15
+library.js v0.21 от 11.12.15
 
 changelog:
+11.12.15 добавлена функция getFormattedDate, на нее переключена fmtDate для сохранения совместимости
+getFormattedDate на входе получает json: options = {
+	format: 'DD/MM/YYYY', // DD=09, D=9, MM=08, М=8, YYYY=2015, YY=15
+	offsetDay: 0, // Смещение по дням
+	offsetMonth: 0, // Смещение по месяцам
+	offsetYear: 5, // Смещение по годам
+}
+и вторым параметром Date (необязательно)
+
 10.12.15 Добавлена getJsonObject
 
 06.12.15 Полностью переработаны html_entity_decode и replaceTagsAndSpaces, добавлен XRegExp (http://xregexp.com/)
@@ -888,14 +897,39 @@ function __setLoginSuccessful(){
 		AnyBalance.setLoginSuccessful();
 }
 
-function n2(n){
+function fmtDate(dt, delimiter) {
+	if(!isset(delimiter))
+		delimiter = '.';
+	
+	return getFormattedDate({format: 'DD' + delimiter + 'MM' + delimiter + 'YYYY'}, dt);
+}
+
+function n2(n) {
 	return n < 10 ? '0' + n : '' + n;
 }
 
-function fmtDate(dt, delimiter){
-	if(!isset(delimiter))
-		delimiter = '.';
-	return n2(dt.getDate()) + delimiter + n2(dt.getMonth()+1) + delimiter + dt.getFullYear();
+/**
+options = {
+	format: 'DD/MM/YYYY', // DD=09, D=9, MM=08, М=8, YYYY=2015, YY=15
+	offsetDay: 0, // Смещение по дням
+	offsetMonth: 0, // Смещение по месяцам
+	offsetYear: 5, // Смещение по годам
+}
+*/
+
+function getFormattedDate(options, dt) {
+	if(!dt)
+		var dt = new Date();
+	
+	var day = dt.getDate() - (options.offsetDay || 0);
+	var month = (dt.getMonth() + 1) - (options.offsetMonth || 0);
+	var year = dt.getFullYear() - (options.offsetYear || 0);
+	
+	return getParam(options.format, null, null, null, [
+		/DD/, n2(day), /D/, day,
+		/MM/, n2(month), /M/, month,
+		/YYYY/, year, /YY/, (year+'').substring(2,4)
+	]);
 }
 
 function joinUrl(url, path){

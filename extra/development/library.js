@@ -647,9 +647,14 @@ return d
 }function __shouldProcess(a,b){if(!AnyBalance.shouldProcess){return !!b.__id
 }return AnyBalance.shouldProcess(a,b)
 }function __setLoginSuccessful(){if(AnyBalance.setLoginSuccessful){AnyBalance.setLoginSuccessful()
-}}function n2(a){return a<10?"0"+a:""+a
-}function fmtDate(b,a){if(!isset(a)){a="."
-}return n2(b.getDate())+a+n2(b.getMonth()+1)+a+b.getFullYear()
+}}function fmtDate(b,a){if(!isset(a)){a="."
+}return getFormattedDate({format:"DD"+a+"MM"+a+"YYYY"},b)
+}function n2(a){return a<10?"0"+a:""+a
+}function getFormattedDate(b,d){if(!d){var d=new Date()
+}var a=d.getDate()-(b.offsetDay||0);
+var e=(d.getMonth()+1)-(b.offsetMonth||0);
+var c=d.getFullYear()-(b.offsetYear||0);
+return getParam(b.format,null,null,null,[/DD/,n2(a),/D/,a,/MM/,n2(e),/M/,e,/YYYY/,c,/YY/,(c+"").substring(2,4)])
 }function joinUrl(a,b){if(!b){return a
 }if(/^\//.test(b)){return a.replace(/^(\w+:\/\/[\w.\-]+).*$/,"$1"+b)
 }if(/^\w+:\/\//.test(b)){return b

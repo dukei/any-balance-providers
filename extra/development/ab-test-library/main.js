@@ -182,6 +182,40 @@ function main() {
 
 	getParam(undefined, result, 'status', /Статус:[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, html_entity_decode);
 	
+	// Тестируем форматирование дат
+	var dates = [{
+			format: 'DD/MM/YYYY',
+			offsetDay: 0,
+			offsetMonth: 0,
+			offsetYear: 5,
+			// То, что на входе, дата
+			inputDate: '01.01.2015',
+			// Что на выходе
+			expectedOutput: '01/01/2010'
+		}, {
+			format: 'D/M/YY',
+			offsetDay: 0,
+			offsetMonth: 0,
+			offsetYear: 5,
+			// То, что на входе, дата
+			inputDate: '01.01.2015',
+			// Что на выходе
+			expectedOutput: '1/1/10'
+		},
+	];
+	
+	for(var i = 0; i < dates.length; i++) {
+		var obj = dates[i];
+		
+		var dt = new Date(obj.inputDate);
+		var res = getFormattedDate(obj, dt);
+		
+		if(res === obj.expectedOutput)
+			AnyBalance.trace('getFormattedDate is ok');
+		else
+			AnyBalance.trace('!!!____________________________________________________________getFormattedDate test is failed!!!');
+	}
+	
 	AnyBalance.setResult(result);
 }
 

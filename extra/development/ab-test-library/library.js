@@ -147,6 +147,9 @@ function isArray(arr) {
 
 /** Делает все замены в строке value. При этом, если элемент replaces массив, то делает замены по нему рекурсивно. */
 function replaceAll(value, replaces) {
+	if(!replaces) return value;
+	if(typeof value != 'string')
+		value += '';
 	return value.replaceAll(replaces);
 }
 

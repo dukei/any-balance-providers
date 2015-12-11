@@ -37,15 +37,15 @@ function main() {
 	}
 	
 	var result = {success: true};
-
-	if(/задолженность/i.test((html)))
-		getParam(html, result, 'balance', /<span[^>]+class\s*=\s*"text_bi([^>]*>){3}/i, [replaceTagsAndSpaces, /(.*?)/, '-$1'], parseBalance);
-	else
-		getParam(html, result, 'balance', /<span[^>]+class\s*=\s*"text_bi([^>]*>){3}/i, replaceTagsAndSpaces, parseBalance);
+	
+	var span = getParam(html, null, null, /<span[^>]+class\s*=\s*"text_bi(?:[^>]*>){3}/i);
+	
+	getParam(span, result, 'balance', /[^>]*руб/i, [replaceTagsAndSpaces, /(.+)/, ((/задолженность/i.test(span) ? '-' : '') + '$1')], parseBalance);
 	getParam(html, result, 'fines', /<span[^>]+class\s*=\s*"text_bi([^>]*>){6}/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'fio', /Потребитель:(?:[^>]*>){1}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(html, result, 'account', /Логин:(?:[^>]*>){1}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(html, result, 'device_number', /Номер прибора учета:(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(html, result, 'last_counters', /Последние принятые показания:(?:[^>]*>){1}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
+	
 	AnyBalance.setResult(result);
 }

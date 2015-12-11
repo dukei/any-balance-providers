@@ -31,7 +31,7 @@
 	</ol>	
 	<small>Если данные об оставшихся SMS, MMS, минутах и трафике не отображаются в приложении, вначале проверьте, есть ли они в личном кабинете. Если есть, обратитесь к разработчикам.</small>
 	]]></instruction>	
-	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

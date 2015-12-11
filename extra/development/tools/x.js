@@ -73,7 +73,7 @@ try{
 		// }
 		
 		// Запишем манифест
-		writeManifest(objStream, manifest, WshShell);
+		writeManifest(objStream, manifest, mainJs, WshShell);
 		
 		// История 
 		var originalHistory = '<?xml version="1.0" encoding="utf-8"?>\n\
@@ -156,7 +156,7 @@ function openManifest(objStream) {
 	return strData;
 }
 
-function writeManifest(objStream, manifest, WshShell) {
+function writeManifest(objStream, manifest, mainJs, WshShell) {
 	if(!/jquery/i.test(manifest) && !/no_browser/.test(manifest)) {
 		var intDoIt = WshShell.Popup('You do not use jquery in your provider!\nTo improve compability you must add "no_browser" flag \nDo you want to do this?', 0, "Result", vbYesNo + vbInformation + stayOnTop);
 		if(intDoIt == vbYes) {
@@ -177,7 +177,14 @@ function writeManifest(objStream, manifest, WshShell) {
 
 		manifest = manifest.replace(/<\/type>/, ', ' + result + '</type>');
 	}
-	
+
+	if(!/nadapter\.js/i.test(manifest) && /NAdapter/.test(mainJs)){
+		var intDoIt = WshShell.Popup('You seem to use NAdapter, but you have forgot to include it in manifest.\nDo you want to do this?', 0, "Result", vbYesNo + vbInformation + stayOnTop);
+		if(intDoIt == vbYes) {
+			manifest = manifest.replace(/(<js[^>]*>\s*library\.js\s*<\/js>)/i, '$1\n\t\t<js>nadapter.js</js>');
+		}
+	}
+
 	if(!g_history_file)
 		manifest = manifest.replace(/(\s*)<\/files>/i, '$1\t<history>' + g_new_history_file_name + '</history>$1</files>');
 	

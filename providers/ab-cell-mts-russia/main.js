@@ -34,6 +34,7 @@ var g_countersTable = {
 		"min_local": "remainders.min_local",
 		"min_left": "remainders.min_left",
 		"min_left_mezh": "remainders.min_left_mezh",
+		"min_left_connect": "remainders.min_left_connect",
 		"sms_left": "remainders.sms_left",
 		"sms_europe": "remainders.sms_europe",
 		"sms_world": "remainders.sms_world",

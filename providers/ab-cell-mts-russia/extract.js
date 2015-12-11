@@ -129,13 +129,13 @@ function fetchOrdinary(html, baseurl, result) {
         } while (true);
     }
     // Тарифный план
-    getParam(html, result, 'tariff', /Тарифный план.*?>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'tariff', /Тарифный план.*?>([^<]*)/i, replaceTagsAndSpaces);
     // Баланс
     getParam(html, result, 'balance', /<span[^>]*id="customer-info-balance[^>]*>([\s\S]*?)(?:\(|<\/span>)/i, replaceTagsAndSpaces, parseBalance);
     // Телефон
     if(!result.info)
         result.info = {};
-    getParam(html, result.info, 'info.phone', /Номер:.*?>([^<]*)</i, replaceNumber, html_entity_decode);
+    getParam(html, result.info, 'info.phone', /Номер:.*?>([^<]*)</i, replaceNumber);
 
     if (AnyBalance.isAvailable('bonus') && !isset(result.bonus))
         result.bonus = null; //Не сбрасываем уже ранее полученное значение бонуса в 0. Может, мы получаем из помощника, потому что сдох ЛК
@@ -174,7 +174,7 @@ function fetchOrdinary(html, baseurl, result) {
 }
 
 function checkIHError(html, result, forceError) {
-    var error = getParam(html, null, null, /<div[^>]+class="b_(?:-page)error"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+    var error = getParam(html, null, null, /<div[^>]+class="b_(?:-page)error"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
     if (error || forceError) 
         var err = 'Ошибка МТС при получения данных из интернет-помощника: ' + (error || 'вероятно, он временно недоступен');
         if(result === true){
@@ -213,6 +213,8 @@ function fetchAccountStatus(html, result) {
     sumParam(html, result.remainders, 'remainders.sms_till', /(?:смс|sms)[^<]*[.:,]*\s*(?:Пакет\s*)?действует до ([^<]*)/ig, replaceTagsAndSpaces, parseDate, aggregate_min);
     // Ближайший срок истекания пакета MMS
     sumParam(html, result.remainders, 'remainders.mms_till', /(?:ммс|mms)[^<]*[.:,]*\s*(?:Пакет\s*)?действует до ([^<]*)/ig, replaceTagsAndSpaces, parseDate, aggregate_min);
+    // Разделим минуты на МТС Коннект
+    html = sumParam(html, result.remainders, 'remainders.min_left_connect', /МТС Connect:\s+остаток\s*([\d\.,]+)[^<]*/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum, true);
     // Разделим минуты на МТС и МТС РФ
     html = sumParam(html, result.remainders, 'remainders.min_left_mts_rf', /Оста(?:лось|ток):?\s*([\d\.,]+)\s*(?:бесплатных\s*)?мин[^>]+МТС (?:РФ|России)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum, true);
     html = sumParam(html, result.remainders, 'remainders.min_left_mts_rf', /Оста(?:лось|ток)[^<]+мин[^>]+МТС РФ:\s*([\d\.,]+)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum, true);
@@ -310,11 +312,11 @@ function fetchAccountStatus(html, result) {
     //Подбаланс gprs: 1,17 Mb до 26.11.2013
     sumParam(html, result.remainders, 'remainders.traffic_left_till', [/Подбаланс gprs:[^<]*?[kmgкмг][бb]\s*до\s*([\s\S]*?)<\//ig, /Остаток GPRS-пакета[^<]*[мm][бb][^<]*действует до([^<]*)/ig], null, parseDate, aggregate_min);
     // Лицевой счет
-    getParam(html, result.info, 'info.licschet', /№([\s\S]*?)[:<]/, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result.info, 'info.licschet', /№([\s\S]*?)[:<]/, replaceTagsAndSpaces);
     // Симкарта
-    getParam(html, result.info, 'info.sim', /Номер SIM-карты:([\s\S]*?)[:<]/, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result.info, 'info.sim', /Номер SIM-карты:([\s\S]*?)[:<]/, replaceTagsAndSpaces);
     // Блокировка
-    getParam(html, result, 'statuslock', /<(?:p|div)[^>]+class="account-status-lock"[^>]*>([\s\S]*?)<\/(?:p|div)>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'statuslock', /<(?:p|div)[^>]+class="account-status-lock"[^>]*>([\s\S]*?)<\/(?:p|div)>/i, replaceTagsAndSpaces);
     // Сумма кредитного лимита
     getParam(html, result, 'credit', /(?:Лимит|Сумма кредитного лимита)[\s\S]*?([-\d\.,]+)\s*\(?руб/i, replaceTagsAndSpaces, parseBalance);
     // Расход за этот месяц
@@ -356,8 +358,8 @@ function getLKJson1(html) {
     }));
 
     var json = {};
-    json.fio = getElement(html, /<div[^>]+b-header_lk__name[^>]*>/i, replaceTagsAndSpaces, html_entity_decode);
-    json.phone_formatted = getElement(html, /<div[^>]+b-header_lk__phone[^>]*>/i, replaceTagsAndSpaces, html_entity_decode);
+    json.fio = getElement(html, /<div[^>]+b-header_lk__name[^>]*>/i, replaceTagsAndSpaces);
+    json.phone_formatted = getElement(html, /<div[^>]+b-header_lk__phone[^>]*>/i, replaceTagsAndSpaces);
     json.phone = replaceAll(json.phone_formatted, [/\+7/, '', /\D/g, '']);
     json.balance = getElement(html, /<div[^>]+b-header_balance[^>]*>/i, replaceTagsAndSpaces, parseBalance);
 
@@ -378,7 +380,7 @@ function getLKJson2(html) {
     if (!info) {
         AnyBalance.trace(html);
 
-        var error = getParam(html, null, null, /<div[^>]+class="red-status"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+        var error = getParam(html, null, null, /<div[^>]+class="red-status"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
         if (error)
             throw new AnyBalance.Error(error);
 
@@ -412,11 +414,16 @@ function isAnotherNumber() {
     return prefs.phone && prefs.phone != prefs.login;
 }
 
-function checkLoginState(html, loginUrl, options) {
+/**
+	Осуществляет ожидание загрузки личного кабинета (или сайта, переданного в options.baseurl)
+*/
+function checkLoginState(html, options) {
+	var baseurl = (options && options.baseurl) || g_baseurl;
+	var referer = AnyBalance.getLastUrl();
     if (/checkAuthStatus\(\)|дождитесь окончания процесса авторизации/i.test(html)) {
         var json = {}, tries = 20;
         while (json.Data != 'Success' && tries-- > 0) {
-            json = AnyBalance.requestGet(g_baseurl + '/WaitAuth/CheckAuth?_=' + new Date().getTime(), addHeaders({Referer: g_baseurl + '/waitauth?goto=http://lk.ssl.mts.ru/'}));
+            json = AnyBalance.requestGet(baseurl + '/WaitAuth/CheckAuth?_=' + new Date().getTime(), addHeaders({Referer: referer}));
             json = getJson(json);
 
             if (json.Data == 'Success')
@@ -424,18 +431,18 @@ function checkLoginState(html, loginUrl, options) {
 
             sleep(1000);
         }
-        // Если прождали авторизацию, а она так и не произошла надо об этом явно сообщить
+        // Если прождали авторизацию, а она так и не произошла, надо об этом явно сообщить
         if (json.Data != 'Success') {
         	AnyBalance.trace('Слишком долго ждали авторизацию: ' + JSON.stringify(json));
             if (options && options.automatic) {
                 //Это была попытка автоматического входа. Раз он не получился, давайте попробуем по логину и паролю
                 AnyBalance.trace('МТС не пустил нас в ЛК после ожидания авторизации. Ладно, попробуем с логином и паролем войти.');
-                return AnyBalance.requestGet(loginUrl.replace(/\/Login.*/, '/Logout', addHeaders({Referer: g_baseurl})));
+                return AnyBalance.requestGet(g_baseurlLogin.replace(/\/Login.*/, '/Logout', addHeaders({Referer: baseurl})));
             }
-            throw new AnyBalance.Error('МТС не пустил нас в ЛК после ожидания авторизации. Это проблема на сайте МТС, как только работа сайта наладится - данные отобразятся.');
+            throw new AnyBalance.Error('МТС не пустил нас в ' + baseurl + ' после ожидания авторизации. Это проблема на сайте МТС, как только работа сайта наладится - данные отобразятся.');
         }
 
-        return AnyBalance.requestGet(g_baseurl, addHeaders({Referer: loginUrl}));
+        return AnyBalance.requestGet(baseurl, addHeaders({Referer: referer}));
     } else {
         return html;
     }
@@ -453,7 +460,7 @@ function enterLK(options) {
     if (AnyBalance.getLastStatusCode() >= 500)
         throw new AnyBalance.Error("Ошибка на сервере МТС, сервер не смог обработать запрос. Можно попытаться позже...");
 
-    html = checkLoginState(html, loginUrl, {automatic: true});
+    html = checkLoginState(html, {automatic: true});
 
     AnyBalance.trace('isLoggedIn(html) = ' + isLoggedIn(html));
 
@@ -490,7 +497,7 @@ function enterLK(options) {
     if (!isLoggedIn(html)) {
         if (!options.onlyAutomatic) {
             html = enterMTS(joinObjects(options, {html: html, service: 'lk', url: AnyBalance.getLastUrl()}));
-            html = checkLoginState(html, loginUrl);
+            html = checkLoginState(html);
         } else {
             throw new AnyBalance.Error('Ручной вход запрещен');
         }
@@ -523,7 +530,7 @@ function followIHLink(){
 
     var IHLink = AnyBalance.getCookie('IHLink');
     if (IHLink) {
-        baseurlHelper = getParam(IHLink, null, null, /[\s\S]*?selfcare\//i, replaceTagsAndSpaces, html_entity_decode) || "https://ihelper.mts.ru/selfcare/";
+        baseurlHelper = getParam(IHLink, null, null, /[\s\S]*?selfcare\//i, replaceTagsAndSpaces) || "https://ihelper.mts.ru/selfcare/";
     }
     var redirect = null, html;
     try {
@@ -598,7 +605,7 @@ function processInfoLK(html, result){
         getParam(info.fio, result.info, 'info.fio');
         getParam(info.tariff, result, 'tariff');
     } catch (e) {
-        AnyBalance.trace('Не удалось получить данные о пользователе, скорее всего, виджет временно недоступен... ' + e.message);
+        AnyBalance.trace('Не удалось получить данные о пользователе, скорее всего, виджет временно недоступен... ' + e.message + '\n' + e.stack);
     }
 }
 
@@ -624,7 +631,105 @@ function processBonusLK(result){
             }
         }
     } catch (e) {
-        AnyBalance.trace('Не удалось получить данные о бонусах... ' + e.message);
+        AnyBalance.trace('Не удалось получить данные о бонусах... ' + e.message + '\n' + e.stack);
+    }
+}
+
+function processTraffic(result){
+	try{
+	    AnyBalance.trace('Пробуем получить трафик из интернет-кабинета');
+	    processTrafficInternet(result);
+	    return;
+    } catch (e) {
+        AnyBalance.trace('Не удалось получить трафик из интернет-кабинета: ' + e.message + '\n' + e.stack);
+    }
+/* //Не получаем отсюда больше ничего
+	try{
+	    AnyBalance.trace('Пробуем получить трафик из ЛК');
+	    processTrafficLK(result);
+	    return;
+    } catch (e) {
+        AnyBalance.trace('Не удалось получить трафик из ЛК: ' + e.message + '\n' + e.stack);
+    }
+*/
+    //Сюда попадаем только если во всех случаях случилась ошибка
+    result.were_errors = true;
+}
+
+function parseTrafficFromKb(str){
+    return parseTraffic(str, 'kb');
+}
+
+function processTrafficInternet(result){
+	var baseurl = 'https://internet.mts.ru';
+
+    if (isAvailable('remainders.traffic_left_mb', 'remainders.traffic_used_mb', 'remainders.traffic_left_till')) {
+    	var html = AnyBalance.requestGet(baseurl + '/', addHeaders({Referer: g_baseurl}));
+    	html = checkLoginState(html, {baseurl: baseurl});
+
+    	var script = AnyBalance.requestGet(baseurl + '/sitesettings/H2OProfile.js', addHeaders({Referer: baseurl+'/'}));
+    	var obj = getJsonObject(script, /_profile:(?=\s*\{)/i);
+    	AnyBalance.trace('H2O profile: ' + JSON.stringify(obj));
+
+        if(!result.remainders)
+            result.remainders = {};
+        var remainders = result.remainders;
+
+        //Теперь надо сделать сложные манипуляции с трафиком, как они делают их на сайте (http://internet.mts.ru/Scripts/mtsinternet/widgets/availableTraffic-valid.js). Извращенцы, почему нельзя было проще?
+        var isAcceptor = typeof (obj.h2O.p.muia) != 'undefined' && obj.h2O.p.muia.acceptor;
+
+        function anyActive(prev, x){
+        	return prev || x.isActive
+        }
+
+        function getTrafficInfo(trafficItem, isAcceptor) { //http://internet.mts.ru/Scripts/mtsinternet/widgets/availableTraffic-invalid.js
+            var quota = 0;
+            if (isAcceptor && trafficItem.muia) {
+                quota = trafficItem.muia.personalQuota > 0 ? trafficItem.muia.personalQuota : trafficItem.muia.sharedQuotaSize;
+            }
+            if (trafficItem.limits) {
+                for (var i = 0; i < trafficItem.limits.length; i++) {
+                    var curr = trafficItem.limits[i].floor > trafficItem.limits[i].ceiling || isNaN(trafficItem.limits[i].ceiling)
+                        ? trafficItem.limits[i].floor
+                        : trafficItem.limits[i].ceiling;
+                    quota = quota < curr ? curr : quota;
+                }
+            } else {
+                quota = 'Infinity';
+            }
+
+            var unavailable = isAcceptor && trafficItem.muia
+                    ? quota - trafficItem.muia.quantumRemaining - trafficItem.muia.quotaRemaining
+                    : 0;
+            return {
+                quota: quota,
+                unavailable: unavailable,
+                consumed: trafficItem.value,
+                available: quota - unavailable - trafficItem.value
+            };
+        }
+
+        var trafficExt = obj.personalTrafficExtended;
+        var paoExt = obj.personalOptionExtended;
+        if(trafficExt){ //Valid
+        	AnyBalance.trace('найден валидный трафик');
+            if (!isAcceptor && (paoExt.autoProlongations.reduce(anyActive) || paoExt.extraPackages.reduce(anyActive))) {
+            	sumParam('' + (trafficExt.consumed),
+            		remainders, 'remainders.traffic_used_mb', null, null, parseTrafficFromKb, aggregate_sum);
+            	sumParam('' + (trafficExt.consumed > paoExt.quotas.baseQuota ? 0 : paoExt.quotas.baseQuota - trafficExt.consumed),
+            		remainders, 'remainders.traffic_left_mb', null, null, parseTrafficFromKb, aggregate_sum);
+            } else {
+            	sumParam(trafficExt.available + '', remainders, 'remainders.traffic_left_mb', null, null, parseTrafficFromKb, aggregate_sum);
+            	sumParam(trafficExt.consumed + '', remainders, 'remainders.traffic_used_mb', null, null, parseTrafficFromKb, aggregate_sum);
+            }
+        }else{ //Invalid
+        	var ti = getTrafficInfo(obj.personalTrafficItem, isAcceptor);
+        	AnyBalance.trace('найден невалидный трафик ' + JSON.stringify(ti));
+         	sumParam(ti.available + '', remainders, 'remainders.traffic_left_mb', null, null, parseTrafficFromKb, aggregate_sum);
+           	sumParam(ti.consumed + '', remainders, 'remainders.traffic_used_mb', null, null, parseTrafficFromKb, aggregate_sum);
+        }
+
+        getParam(obj.personalTrafficItem.expirationTime, remainders, 'remainders.traffic_left_till', null, null, parseDateISO);
     }
 }
 
@@ -635,48 +740,39 @@ function processTrafficLK(result){
         var remainders = result.remainders;
 
         AnyBalance.trace('Запросим трафик...');
-        try {
-            for (var i = 0; i < 3; i++) {
-                AnyBalance.trace('Пробуем получить трафик, попытка: ' + (i + 1));
+        for (var i = 0; i < 3; i++) {
+            AnyBalance.trace('Пробуем получить трафик, попытка: ' + (i + 1));
+            var html = AnyBalance.requestGet(g_baseurl, addHeaders({Referer: g_baseurl}));
 
-                var html = AnyBalance.requestGet(g_baseurl, addHeaders({Referer: g_baseurl}));
+            var widgetJson = getParam(html, null, null, /myInternet.diagram\s*=\s*(\{[\s\S]*?\});/i, null, getJsonEval);
+            var href = widgetJson.widgetDataUrl;
+            if (!href)
+                throw new AnyBalance.Error('Не удалось найти ссылку на трафик.');
 
-                var widgetJson = getParam(html, null, null, /myInternet.diagram\s*=\s*(\{[\s\S]*?\});/i, null, getJsonEval);
-                var href = widgetJson.widgetDataUrl;
-                if (!href)
-                    throw new AnyBalance.Error('Не удалось найти ссылку на трафик.');
+            info = AnyBalance.requestGet(g_baseurl + href + '&_=' + new Date().getTime(), addHeaders({
+                'X-Requested-With': 'XMLHttpRequest',
+                'Accept': '*/*',
+                'Referer': g_baseurl + '/'
+            }));
+            AnyBalance.trace(info);
 
-                info = AnyBalance.requestGet(g_baseurl + href + '&_=' + new Date().getTime(), addHeaders({
-                    'X-Requested-With': 'XMLHttpRequest',
-                    'Accept': '*/*',
-                    'Referer': g_baseurl + '/'
-                }));
-                AnyBalance.trace(info);
-
-                if (!info) {
-                    AnyBalance.trace('Сервер вернул ерунду, пробуем еще раз...');
-                    continue;
-                }
-                var json = getJson(info);
-                if (json.OptionName != 'null' && isset(json.OptionName)) {
-                    AnyBalance.trace('Нашли трафик...');
-
-                    sumParam(json.TrafficLeft + '', remainders, 'remainders.traffic_left_mb', null, null, function (str) {
-                        return parseTraffic(str, 'kb');
-                    }, aggregate_sum);
-                    sumParam(json.TrafficConsumed + '', remainders, 'remainders.traffic_used_mb', null, null, function (str) {
-                        return parseTraffic(str, 'kb');
-                    }, aggregate_sum);
-                    getParam(json.PackageUpdated + '', remainders, 'remainders.traffic_left_till', null, null, parseDateISO);
-                    break;
-                } else {
-                    AnyBalance.trace('Трафика нет...');
-                }
+            if (!info) {
+                AnyBalance.trace('Сервер вернул ерунду, пробуем еще раз...');
+                continue;
             }
-        } catch (e) {
-            AnyBalance.trace('Не удалось получить трафик: ' + e.message);
-            result.were_errors = true;
+            var json = getJson(info);
+            if (json.OptionName != 'null' && isset(json.OptionName)) {
+                AnyBalance.trace('Нашли трафик...');
+
+                sumParam(json.TrafficLeft + '', remainders, 'remainders.traffic_left_mb', null, null, parseTrafficFromKb, aggregate_sum);
+                sumParam(json.TrafficConsumed + '', remainders, 'remainders.traffic_used_mb', null, null, parseTrafficFromKb, aggregate_sum);
+                getParam(json.PackageUpdated + '', remainders, 'remainders.traffic_left_till', null, null, parseDateISO);
+                return;
+            } else {
+                AnyBalance.trace('Трафика нет...');
+            }
         }
+        throw new AnyBalance.Error('Трафик не найден!');
     }
 }
 
@@ -687,7 +783,7 @@ function mainLK(html, result) {
     if (!isAnotherNumber()) {
         processInfoLK(html, result);
         processBonusLK(result);
-        processTrafficLK(result);
+        processTraffic(result);
     } else {
         AnyBalance.trace('Пропускаем получение данных из ЛК, если требуется информация по другому номеру');
     }
@@ -772,7 +868,7 @@ function getPasswordBySMS(login) {
     var url = g_baseurlLogin + '/amserver/UI/Login?service=smspassword&srcsvc=lk&goto=http%3A%2F%2Flk.ssl.mts.ru%2F';
     var html = AnyBalance.requestGet(url, g_headers);
 
-    var img = getParam(html, null, null, /<img[^>]+id="kaptchaImage"[^>]*src="data:image\/\w+;base64,([^"]+)/i, null, html_entity_decode);
+    var img = getParam(html, null, null, /<img[^>]+id="kaptchaImage"[^>]*src="data:image\/\w+;base64,([^"]+)/i, replaceHtmlEntities);
     var code = AnyBalance.retrieveCode('Для получения пароля к личному кабинету по SMS символы, которые вы видите на картинке.', img, {time: 300000});
     var form = getParam(html, null, null, /<form[^>]+name="Login"[^>]*>([\s\S]*?)<\/form>/i);
     var params = createFormParams(form, function (params, input, name, value) {

@@ -44,7 +44,7 @@ function main() {
 		
 		var error = errors.join(', ');
 		if (errors.length > 0)
-			throw new AnyBalance.Error(error, null, /Неверное имя пользователя или пароль/i.test(error));
+			throw new AnyBalance.Error(error.replace(/Not Found/, 'Неверное имя пользователя или пароль'), null, /not found/i.test(error));
 
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');

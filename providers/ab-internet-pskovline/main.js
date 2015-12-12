@@ -41,7 +41,7 @@ result['tarif']=tarif;
 				result['date']=info.match('<em .+>[(](.+?)[)]</em','igm')[1].match(/(\d*\.\d*\.\d*)/igm)[1];
 
 // Срок до отключения
-var dats=result['date'].split('.'); var tmp=dats[0]; dats[0]=parseInt(dats[1]); dats[1]=tmp;
+var dats=result['date'].split('.'); var tmp=dats[0]; dats[0]=parseInt(dats[1],10); dats[1]=tmp;
 // ...больше месяца ?
 if (tarif<result['ballance']) dats[0]+=Math.floor(result['ballance']/tarif);
 if (dats[0]==13) {dats[0]=1; dats[2]++;}

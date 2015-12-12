@@ -62,8 +62,14 @@ function main(){
 	getParam(html, result, 'partnerITS-OTR', /<h4>Активированные сервисы 1С:ИТС Отраслевой<\/h4>([^>]*>){31}/i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(html, result, 'productITS-OTR', /<th>Сопровождаемый продукт<\/th>([^>]*>){18}/i, replaceTagsAndSpaces, html_entity_decode);
 	
-	//AnyBalance.trace('Делаю выход'); 
-	//html = AnyBalance.requestPost(baseurl + 'logout');
-	
-    AnyBalance.setResult(result);
+	AnyBalance.trace('Начинаю поиск версий'); 
+	html = AnyBalance.requestGet('https://releases.1c.ru/total', g_headers);
+	getParam(html, result, 'PostgreSQL', /PostgreSQL<\/a>[\s\S]*?<a[^>]*>([\d\D]*?)<\/a>/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'platform83', /Технологическая платформа 8.3<\/a>[\s\S]*?<a[^>]*>([\d\D]*?)<\/a>/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'platform82', /Технологическая платформа 8.2<\/a>[\s\S]*?<a[^>]*>([\d\D]*?)<\/a>/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'konf_buh_pred_red3', /Бухгалтерия предприятия, редакция 3.0<\/a>[\s\S]*?<a[^>]*>([\d\D]*?)<\/a>/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'konf_buh_pred_red2', /Бухгалтерия предприятия, редакция 2.0 для Технологической платформы 8.2<\/a>[\s\S]*?<a[^>]*>([\d\D]*?)<\/a>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'konf_zup_pred_red3', /Зарплата и Управление Персоналом, редакция 3.0<\/a>[\s\S]*?<a[^>]*>([\d\D]*?)<\/a>/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'konf_zup_pred_red25', /Зарплата и Управление Персоналом, редакция 2.5<\/a>[\s\S]*?<a[^>]*>([\d\D]*?)<\/a>/i, replaceTagsAndSpaces, html_entity_decode);
+	AnyBalance.setResult(result);
 }

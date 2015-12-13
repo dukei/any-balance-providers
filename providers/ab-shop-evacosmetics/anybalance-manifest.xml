@@ -4,7 +4,11 @@
 	<api flags="no_browser"/>
 	<name>Eva Cosmetics</name>
 	<description html="true"><![CDATA[
+<<<<<<< HEAD
 	<p>Предоставляет информацию о количестве баллов на карте со страницы https://evacosmetics.ru/orangecard/account/my-card/bill//</p>
+=======
+	<p>Предоставляет информацию о количестве баллов на карте со страницы .../</p>
+>>>>>>> a8937c9097ce1617652c39003adf903b9c2b43b2
 	]]></description>
 	<instruction html="true"><![CDATA[
 	
@@ -21,7 +25,10 @@
 		<counter id="activeBinus" name="Доступны для списания" />
 		<counter id="inactiveBonus" name="Будут доступны скоро" />
 		<counter id="first_burn_date" type="time" name="Ближайшая дата сгорания бонусных баллов" />
+<<<<<<< HEAD
 		<counter id="first_burn_bonus" name="Сколько сгорит бонусов" />
+=======
+>>>>>>> a8937c9097ce1617652c39003adf903b9c2b43b2
 	</counters>
 	<keywords>магазин, косметика, баллы, скидки</keywords>
 	<type>shop</type>

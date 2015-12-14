@@ -17,7 +17,7 @@
 	</files>
 	<counters>
 		<counter id="balance" name="Баланс" units=" {@currency}"/>
-		<counter id="currency" name="Currency" type="text"/>
+		<counter id="currency" name="Валюта" type="text"/>
 		<counter id="fio" name="ФИО" type="text"/>
 		<counter id="cardNumber" name="Номер карты" type="text"/>
 	</counters>

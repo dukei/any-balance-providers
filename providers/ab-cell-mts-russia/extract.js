@@ -189,6 +189,14 @@ function isAvailableStatus() {
     return AnyBalance.isAvailable('remainders', 'info.licschet', 'info.sim', 'statuslock', 'credit', 'usedinthismonth', 'bonus_balance', 'debt', 'pay_till');
 }
 
+function isAvailableIH() {
+    return isAvailableStatus() ||
+    	AnyBalance.isAvailable('tourist', 'abonservice', 'info.date_start', 'expenses', 'payments', 'detalization') ||
+    	(isAvailable('tariff') && !isset(result.tariff)) ||
+    	(isAvailable('info.phone') && (!isset(result.info) || !isset(result.info.phone)));
+    	
+}
+
 function fetchAccumulatedCounters(html, result) {
     AnyBalance.trace("Parsing accumulated counters...");
     if(!result.remainders)
@@ -713,7 +721,7 @@ function processTrafficInternet(result){
         var paoExt = obj.personalOptionExtended;
         if(trafficExt){ //Valid
         	AnyBalance.trace('найден валидный трафик');
-            if (!isAcceptor && (paoExt.autoProlongations.reduce(anyActive) || paoExt.extraPackages.reduce(anyActive))) {
+            if (!isAcceptor && (paoExt.autoProlongations.reduce(anyActive, false) || paoExt.extraPackages.reduce(anyActive, false))) {
             	sumParam('' + (trafficExt.consumed),
             		remainders, 'remainders.traffic_used_mb', null, null, parseTrafficFromKb, aggregate_sum);
             	sumParam('' + (trafficExt.consumed > paoExt.quotas.baseQuota ? 0 : paoExt.quotas.baseQuota - trafficExt.consumed),
@@ -789,7 +797,7 @@ function mainLK(html, result) {
     }
 
     try{
-        if (isAnotherNumber() || isAvailableStatus()) {
+        if (isAnotherNumber() || isAvailableIH()) {
             var ret = followIHLink();
             html = ret.html;
         

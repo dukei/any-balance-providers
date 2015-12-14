@@ -5,7 +5,7 @@ echo **************************************************
 
 SET yuicompressor=java -jar yuicompressor-2.4.8.jar 
 
-copy /b header.js + xregexp.js + html.js + library.js library_tmp.js
+copy /b header.js + xregexp.js + xregexp-build.js + html.js + library.js library_tmp.js
 
 for %%d in ("library_tmp.js", "nadapter.js") do (
   %yuicompressor% --line-break 0 -o "%%~nd.min.js" "%%d"

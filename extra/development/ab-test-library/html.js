@@ -278,7 +278,7 @@
 		spades  : 0x2660,  //"\xe2\x99\xa0" [♠] black spade suit
 		clubs   : 0x2663,  //"\xe2\x99\xa3" [♣] black club suit = shamrock
 		hearts  : 0x2665,  //"\xe2\x99\xa5" [♥] black heart suit = valentine
-		diams   : 0x2666,  //"\xe2\x99\xa6" [♦] black diamond suit
+		diams   : 0x2666  //"\xe2\x99\xa6" [♦] black diamond suit
 	};
 	
 	var HTML_ENTITY_RE = new XRegExp(
@@ -353,7 +353,7 @@
 		|	<!--  .*?   -->					#comments			\n\
 		|	<\\?  .*?  \\?>					#instructions part1 (PHP, Perl, ASP)	\n\
 		|	<%	  .*?    %>					#instructions part2 (PHP, Perl, ASP)	\n\
-		)';
+		)';//.replace(/#.*/g, '').replace(/\s+/g, '');
 
 
 	var htmlBlockTagsRe = new RegExp('^<('+ HTML_BLOCK_TAGS + ')\\b', 'i'),

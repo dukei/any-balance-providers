@@ -318,6 +318,47 @@ return"("
 },{optionalFlags:"n",leadChar:"("});
 return g
 }());
+/*!
+ * XRegExp.build 3.0.0
+ * <http://xregexp.com/>
+ * Steven Levithan (c) 2012-2015 MIT License
+ * Inspired by Lea Verou's RegExp.create <http://lea.verou.me/>
+ */
+(function(d){var a="xregexp",c=/(\()(?!\?)|\\([1-9]\d*)|\\[\s\S]|\[(?:[^\\\]]|\\[\s\S])*]/g,b=d.union([/\({{([\w$]+)}}\)|{{([\w$]+)}}/,c],"g");
+function f(h){var j=/^\^/,g=/\$$/;
+if(j.test(h)&&g.test(h.replace(/\\[\s\S]/g,""))){return h.replace(j,"").replace(g,"")
+}return h
+}function e(g){return d.isRegExp(g)?(g[a]&&g[a].captureNames?g:d(g.source)):d(g)
+}d.build=function(r,l,j){var k=/^\(\?([\w$]+)\)/.exec(r),o={},s=0,m,n=0,t=[0],q,g,h;
+if(k){j=j||"";
+k[1].replace(/./g,function(p){j+=(j.indexOf(p)>-1?"":p)
+})
+}for(h in l){if(l.hasOwnProperty(h)){g=e(l[h]);
+o[h]={pattern:f(g.source),names:g[a].captureNames||[]}
+}}r=e(r);
+q=r[a].captureNames||[];
+r=r.source.replace(b,function(u,p,A,y,x){var w=p||A,z,v;
+if(w){if(!o.hasOwnProperty(w)){throw new ReferenceError("Undefined property "+u)
+}if(p){z=q[n];
+t[++n]=++s;
+v="(?<"+(z||w)+">"
+}else{v="(?:"
+}m=s;
+return v+o[w].pattern.replace(c,function(B,C,D){if(C){z=o[w].names[s-m];
+++s;
+if(z){return"(?<"+z+">"
+}}else{if(D){return"\\"+(+D+m)
+}}return B
+})+")"
+}if(y){z=q[n];
+t[++n]=++s;
+if(z){return"(?<"+z+">"
+}}else{if(x){return"\\"+t[+x]
+}}return u
+});
+return d(r,j)
+}
+}(XRegExp));
 (function(){String.prototype.replaceAll=function(k){var m=this,l;
 for(l=0;
 k&&l<k.length;
@@ -605,17 +646,16 @@ g.lastIndex=h;
 d=getRecursiveMatch(f,g,b,e,a);
 k.lastIndex=g.lastIndex;
 return d
-}function getJsonObject(d,c,e){var b={"{":{left:"\\{												\n				(?:	[^\"'\\{\\}\\/]+								\n				 |	\"	(?:[^\"\\\\]+|\\\\.)*	\"		#string1	\n				 |	'	(?:[^'\\\\]+|\\\\.)*	'		#string2	\n				 |	\\/	(?:[^\\/\\\\]+|\\\\.)+	\\/		#regexp		\n				)*													\n			",right:/\}/},"[":{left:"\\[												\n				(?:	[^\"'\\[\\]\\/]+								\n				 |	\"	(?:[^\"\\\\]+|\\\\.)*	\"		#string1	\n				 |	'	(?:[^'\\\\]+|\\\\.)*	'		#string2	\n				 |	\\/	(?:[^\\/\\\\]+|\\\\.)+	\\/		#regexp		\n				)*													\n			",right:/\]/}};
-if(!b[e]){e="{"
-}var h=0;
-if(c){var f=c.exec(d);
-if(!f){return
-}h=f.index+f[0].length
-}var g=new XRegExp(b[e].left,"gx");
-g.lastIndex=h;
-var a=getRecursiveMatch(d,g,b[e].right,null,getJsonEval);
-c.lastIndex=g.lastIndex;
-return a
+}function getJsonObject(d,c){var b=/"(?:[^"\\]+|\\.)*"/,e=/'(?:[^'\\]+|\\.)*'/,l=/`(?:[^`\\]+|\\.)*`/,n=/\/(?![\*\/])(?:[^\/\\]+|\\.)+\//,k=/\/\*[\D\d]*?\*\//,h=/\/\/[^\r\n]*/,g=/[^\{\}\[\]"'`\/]+/,f=XRegExp.union([g,b,e,l,n,k,h],"x");
+var m=0;
+if(c){var a=c.exec(d);
+if(!a){return
+}m=a.index+a[0].length
+}var j=XRegExp.build("[\\{\\[]	(?:	{{AFTER_BRACE_PART}}  )*",{AFTER_BRACE_PART:f},"xg");
+j.lastIndex=m;
+var o=getRecursiveMatch(d,j,/[\}\]]/,null,getJsonEval);
+c.lastIndex=j.lastIndex;
+return o
 }function getRecursiveMatch(j,m,d,f,b){var e=m.exec(j);
 if(!e){return
 }var n=e.index;

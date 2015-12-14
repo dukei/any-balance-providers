@@ -168,19 +168,23 @@ function main() {
 		AnyBalance.trace('!!!____________________________________________________________getElements test is failed: should be ' + 3 + ', parsed ' + a.length + '!!!');
 
 
-	var s1 = 'some html ajsdfkaj; <script> var x=\
+	var s1 = '<div>some html</div>		\n\
+		<script> var x=				\n\
 			{						\n\
+				\/* \/{} \\			\n\
+				*\/					\n\
+				// \/{}	\\			\n\
 				i: 1,				\n\
 				b: true,			\n\
-				s1: "}  \\"  ",		\n\
-				s2: \'} \\\'  \',	\n\
-				r: /[regexp]{1,}/ig,\n\
+				s1: "_{}}  \\" \/\/  ",		\n\
+				s2: \'_{}} \\\' \/\/  \',	\n\
+				s3: `_{}} \\`  \/\/  `,		\n\
+				r: /[\\/regexp\\d]{1,}/ig,	\n\
 				a: [				\n\
 					{ff: 2.2},		\n\
 					{oo: {}}		\n\
 				],					\n\
-				o: {				\n\
-				}					\n\
+				o: {}				\n\
 			};						\n\
 			var x = "{}"			\n\
 			';

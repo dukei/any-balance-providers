@@ -766,36 +766,28 @@ function getElement(html, re, replaces, parseFunc){
 
 /**
 	Находит в html JSON объект, начиная с позиции первого вхождения регулярного выражения reStartSearch (если оно указано).
-	Если type '[', то ищется массив, если другое, то объект.
+	Ищется либо массив, либо объект, что встретится ранее
 
 	Возвращается объект (или массив) или undefined, если объект не найден.
 */
-function getJsonObject(html, reStartSearch, type){
-    var types = {
-    	'{': {
-    		left: '\\\{												\n\
-				(?:	[^"\'\\\{\\\}\\/]+								\n\
-				 |	"	(?:[^"\\\\]+|\\\\.)*	"		#string1	\n\
-				 |	\'	(?:[^\'\\\\]+|\\\\.)*	\'		#string2	\n\
-				 |	\\/	(?:[^\\/\\\\]+|\\\\.)+	\\/		#regexp		\n\
-				)*													\n\
-			',
-            right: /\}/
-            },
-        '[': {
-    		left: '\\\[												\n\
-				(?:	[^"\'\\\[\\\]\\/]+								\n\
-				 |	"	(?:[^"\\\\]+|\\\\.)*	"		#string1	\n\
-				 |	\'	(?:[^\'\\\\]+|\\\\.)*	\'		#string2	\n\
-				 |	\\/	(?:[^\\/\\\\]+|\\\\.)+	\\/		#regexp		\n\
-				)*													\n\
-			',
-            right: /\]/
-        }
-    };
+function getJsonObject(html, reStartSearch){
+	var STRING_IN_DOUBLE_QUOTES		= /"(?:[^"\\]+|\\.)*"/,
+		STRING_IN_SINGLE_QUOTES		= /'(?:[^'\\]+|\\.)*'/,
+		STRING_IN_BACKTICK_QUOTES	= /`(?:[^`\\]+|\\.)*`/,		//ECMA6+
+		REGEXP_INLINE				= /\/(?![\*\/])(?:[^\/\\]+|\\.)+\//,
+		COMMENT_MULTILINE			= /\/\*[\D\d]*?\*\//,
+		COMMENT_SINGLELINE			= /\/\/[^\r\n]*/,
+		NOT_SPECIAL_SYMBOL			= /[^\{\}\[\]"'`\/]+/,	//any symbol with exceptions
+		AFTER_BRACE_PART			= XRegExp.union([	
+			NOT_SPECIAL_SYMBOL,
+			STRING_IN_DOUBLE_QUOTES,
+			STRING_IN_SINGLE_QUOTES,
+			STRING_IN_BACKTICK_QUOTES,
+			REGEXP_INLINE,
+			COMMENT_MULTILINE,
+			COMMENT_SINGLELINE
+		], 'x');
 
-	if(!types[type])
-		type = '{';
 
 	var startIndex = 0;
 	if(reStartSearch){
@@ -805,10 +797,16 @@ function getJsonObject(html, reStartSearch, type){
 		startIndex = amatch.index + amatch[0].length;
 	}
 
-	var reStart = new XRegExp(types[type].left, 'gx');
+	var reStart =  XRegExp.build(
+		'[\\\{\\\[]	(?:	{{AFTER_BRACE_PART}}  )*', 
+		{
+			AFTER_BRACE_PART: AFTER_BRACE_PART
+		}, 'xg'
+	);
+	
 	reStart.lastIndex = startIndex;
 
-	var json = getRecursiveMatch(html, reStart, types[type].right, null, getJsonEval);
+	var json = getRecursiveMatch(html, reStart, /[\}\]]/, null, getJsonEval);
 	reStartSearch.lastIndex = reStart.lastIndex;
 
 	return json;

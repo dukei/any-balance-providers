@@ -69,7 +69,7 @@ function proceedWithSiteKz(baseurl) {
         params['loginFormB2C:loginForm:passwordVisible'] = prefs.password;
         params['loginFormB2C:loginForm:loginButton'] = '';
 
-        var action = getParam(tform, null, null, /<form[^>]+action="\/([^"]*)/i, null, html_entity_decode);
+        var action = getParam(tform, null, null, /<form[^>]+action="\/([^"]*)/i, replaceHtmlEntities);
 
         //Теперь, когда секретный параметр есть, можно попытаться войти
         for(var i = 1 ; i < 6; i++) {
@@ -103,7 +103,7 @@ function proceedWithSiteKz(baseurl) {
         //Обычно это ссылка на выход, хотя иногда приходится искать что-то ещё
         if (!/logOutLink/i.test(html)) {
             //Если в кабинет войти не получилось, то в первую очередь надо поискать в ответе сервера объяснение ошибки
-            var error = getParam(html, null, null, [/<div[^>]+class="error-page[\s|"][^>]*>([\s\S]*?)<\/div>/i, /<span[^>]+class="ui-messages-error-summary"[^>]*>([\s\S]*?)<\/span>/i], replaceTagsAndSpaces, html_entity_decode);
+            var error = getParam(html, null, null, [/<div[^>]+class="error-page[\s|"][^>]*>([\s\S]*?)<\/div>/i, /<span[^>]+class="ui-messages-error-summary"[^>]*>([\s\S]*?)<\/span>/i], replaceTagsAndSpaces);
             if(error)
                 throw new AnyBalance.Error(error, null, /Неправильные логин и\s*(?:\(или\)\s*)?пароль/i.test(error));
 
@@ -112,7 +112,7 @@ function proceedWithSiteKz(baseurl) {
                 throw new AnyBalance.Error('Личный кабинет Билайн временно не работает. Пожалуйста, попробуйте позднее.');
             }
 
-            var message = getParam(html, null, null, /<h1>\s*(Личный кабинет временно недоступен\s*<\/h1>[\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
+            var message = getParam(html, null, null, /<h1>\s*(Личный кабинет временно недоступен\s*<\/h1>[\s\S]*?)<\//i, replaceTagsAndSpaces);
             if(message)
                 throw new AnyBalance.Error(message);
             //Если объяснения ошибки не найдено, при том, что на сайт войти не удалось, то, вероятно, произошли изменения на сайте
@@ -266,11 +266,11 @@ function fetchPostKz(baseurl, html) {
     // Пытаемся исправить всякую ерунду в балансе и валюте
     var balancesReplaces = [replaceTagsAndSpaces, /информация[^<]*недоступна|недоступна|временно недоступен/ig, ''];
 
-    getParam(html, result, 'agreement', /<h2[^>]*>\s*Договор №([\s\S]*?)<\/h2>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'agreement', /<h2[^>]*>\s*Договор №([\s\S]*?)<\/h2>/i, replaceTagsAndSpaces);
 //	xhtml = getBlockKz(baseurl + 'c/post/index.html', html, '^list-contents'); //Это строка вообще приводила к созданию/отмене заявки на смену тарифного плана
-//	getParam(xhtml, result, '__tariff', /<h2[^>]*>(?:[\s\S](?!<\/h2>))*?Текущий тариф([\s\S]*?)<\/h2>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, '__tariff', /<h2[^>]*>(?:[\s\S](?!<\/h2>))*?Текущий тариф([\s\S]*?)<\/h2>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'fio', /<div[^>]+class="ban-param name">([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+//	getParam(xhtml, result, '__tariff', /<h2[^>]*>(?:[\s\S](?!<\/h2>))*?Текущий тариф([\s\S]*?)<\/h2>/i, replaceTagsAndSpaces);
+    getParam(html, result, '__tariff', /<h2[^>]*>(?:[\s\S](?!<\/h2>))*?Текущий тариф([\s\S]*?)<\/h2>/i, replaceTagsAndSpaces);
+    getParam(html, result, 'fio', /<div[^>]+class="ban-param name">([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
 
     if (!multi) {
         AnyBalance.trace('Похоже на кабинет с одним номером.');
@@ -297,7 +297,7 @@ function fetchPostKz(baseurl, html) {
 
             var num = getParam(numinfo, null, null, /selectAccount\('([^']*)/, replaceSlashes);
             if(!isset(num))
-                num = getParam(numinfo, null, null, null, replaceTagsAndSpaces, html_entity_decode);
+                num = getParam(numinfo, null, null, null, replaceTagsAndSpaces);
 
             checkEmpty(num, 'Не удалось найти номер на который необходимо переключиться, сайт изменен?', true);
 
@@ -363,7 +363,7 @@ function fetchPostKz(baseurl, html) {
         }
     }
 
-    getParam(html, result, ['phone', 'traffic_used'], /<h1[^>]+class="phone-number"[^>]*>([\s\S]*?)<\/h1>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, ['phone', 'traffic_used'], /<h1[^>]+class="phone-number"[^>]*>([\s\S]*?)<\/h1>/i, replaceTagsAndSpaces);
 
 	if(AnyBalance.isAvailable('min_local', 'min_bi', 'sms_left', 'mms_left', 'traffic_left', 'traffic_used', 'traffic_total', 'rub_opros', 'min_left_1', 'min_local')) {
         AnyBalance.trace('Запросим бонусы...');
@@ -420,7 +420,7 @@ function fetchPostKz(baseurl, html) {
     if(prefs.__debug){
         //Проверяем, не создалась ли лишняя заявка в процессе просмотра личного кабинета
         html = AnyBalance.requestGet(baseurl + 'c/operations/operationsHistory.xhtml');
-        var last_time = getParam(html, null, null, /<span[^>]+class="date"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
+        var last_time = getParam(html, null, null, /<span[^>]+class="date"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
         AnyBalance.trace('Последняя заявка: ' + last_time);
     }
 
@@ -486,20 +486,20 @@ function fetchPreKz(baseurl, html) {
             params[source] = source;
 
             var xhtml = AnyBalance.requestPost(baseurl + 'c/pre/index.xhtml', params, addHeaders({Referer: baseurl + 'c/pre/index.xhtml'}));
-            var url = getParam(xhtml, null, null, /<redirect[^>]+url="\/([^"]*)/i, null, html_entity_decode);
+            var url = getParam(xhtml, null, null, /<redirect[^>]+url="\/([^"]*)/i, replaceHtmlEntities);
             if(!url)
                 AnyBalance.trace('Не удалось переключить номер: ' + xhtml);
             else
                 html = AnyBalance.requestGet(baseurl + url, addHeaders({Referer: baseurl + 'c/pre/index.xhtml'}));
         }
     }
-    getParam(html, result, 'phone', /<h1[^>]+class="phone-number"[^>]*>([\s\S]*?)<\/h1>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, '__tariff', /Текущий тариф[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'phone', /<h1[^>]+class="phone-number"[^>]*>([\s\S]*?)<\/h1>/i, replaceTagsAndSpaces);
+    getParam(html, result, '__tariff', /Текущий тариф[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces);
 
     var xhtml;
     if(prefs.country == 'kz' && !result.__tariff) {
         xhtml = getBlockKz(baseurl + 'c/pre/index.xhtml', html, 'currentTariffLoaderDetails');
-        getParam(xhtml, result, '__tariff', [/<div[^>]+:tariffInfo[^>]*class="current"[^>]*>(?:[\s\S](?!<\/div>))*?<h2[^>]*>([\s\S]*?)<\/h2>/i, /<h2>(?:[\s\S](?!<\/h2>))*?Текущий тариф[^>]*>([\s\S]*?)\s*<\/h2>/i], replaceTagsAndSpaces, html_entity_decode);
+        getParam(xhtml, result, '__tariff', [/<div[^>]+:tariffInfo[^>]*class="current"[^>]*>(?:[\s\S](?!<\/div>))*?<h2[^>]*>([\s\S]*?)<\/h2>/i, /<h2>(?:[\s\S](?!<\/h2>))*?Текущий тариф[^>]*>([\s\S]*?)\s*<\/h2>/i], replaceTagsAndSpaces);
     }
 
     if (AnyBalance.isAvailable('balance')) {

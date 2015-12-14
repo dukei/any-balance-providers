@@ -64,6 +64,7 @@ var g_countersTable = {
 		"balance": "balance",
 		"prebal": "prebal",
 		"overpay": "overpay",
+		"credit": "credit",
 		"sms_left": "remainders.sms_left",
 		"mms_left": "remainders.mms_left",
 		"rub_bonus": "remainders.bonus",

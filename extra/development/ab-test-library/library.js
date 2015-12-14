@@ -759,7 +759,9 @@ function getElement(html, re, replaces, parseFunc){
 	var reEnd = new RegExp('<\/' + elem + '[^>]*>', 'ig');
 	reStart.lastIndex = startIndex;
 
-	return getRecursiveMatch(html, reStart, reEnd, replaces, parseFunc);
+	elem = getRecursiveMatch(html, reStart, reEnd, replaces, parseFunc);
+	re.lastIndex = reStart.lastIndex;
+	return elem;
 }
 
 /**
@@ -800,13 +802,16 @@ function getJsonObject(html, reStartSearch, type){
 		var amatch = reStartSearch.exec(html);
 		if(!amatch)
 			return;
-		startIndex = amatch.index;
+		startIndex = amatch.index + amatch[0].length;
 	}
 
 	var reStart = new XRegExp(types[type].left, 'gx');
 	reStart.lastIndex = startIndex;
 
-	return getRecursiveMatch(html, reStart, types[type].right, null, getJsonEval);
+	var json = getRecursiveMatch(html, reStart, types[type].right, null, getJsonEval);
+	reStartSearch.lastIndex = reStart.lastIndex;
+
+	return json;
 }
 
 function getRecursiveMatch(html, reStart, reEnd, replaces, parseFunc){

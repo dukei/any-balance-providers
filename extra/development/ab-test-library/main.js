@@ -146,6 +146,28 @@ function main() {
 	else
 		AnyBalance.trace('!!!____________________________________________________________getElement test is failed: should be ' + res.source + ', parsed ' + str + '!!!');
 
+	var html = '<div class="accountDetailTextBlock">\
+									<div class="accountTitle totalAccountUp">\
+										ИТОГО\
+									</div><div class="accountTitle">\
+										собственные средства\
+									</div><div class="accountTitle">\
+										кредитные средства\
+									</div>\
+								</div>';
+	var a = getElements(html, /<div[^>]*>/ig);
+	if(a.length == 1)
+		AnyBalance.trace('getElements is ok');
+	else
+		AnyBalance.trace('!!!____________________________________________________________getElements test is failed: should be ' + 1 + ', parsed ' + a.length + '!!!');
+	
+	var a = getElements(html.substr(1), /<div[^>]*>/ig);
+	if(a.length == 3)
+		AnyBalance.trace('getElements is ok');
+	else
+		AnyBalance.trace('!!!____________________________________________________________getElements test is failed: should be ' + 3 + ', parsed ' + a.length + '!!!');
+
+
 	var s1 = 'some html ajsdfkaj; <script> var x=\
 			{						\n\
 				i: 1,				\n\

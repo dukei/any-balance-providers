@@ -328,35 +328,35 @@
 				|	"   [^"]*    "	\n\
 				|	\'  [^\']*  \'	\n\
 			)*';
-	var HTML_TAG_RE = '(?:															\n\
-			#pair tags with content:									\n\
-			<	(?=[a-z])				#speed improve optimization		\n\
-				(' + HTML_PAIR_TAGS_WITH_CONTENT + ')\\b	#1			\n\
-				' + HTML_ATTR_RE + '									\n\
-			>															\n\
-				.*?														\n\
-			< (?!script\\b)												\n\
-				#speed improve optimization - atomic group				\n\
-				(?=(/?))\\2									#2			\n\
-				\\1' + HTML_ATTR_RE + '									\n\
-			>															\n\
-																	\n\
-			#opened tags:												\n\
-		|	<	(?=[a-z])												\n\
-				(?!(?:' + HTML_PAIR_TAGS_WITH_CONTENT + ')\\b)			\n\
-				' + HTML_ATTR_RE + '									\n\
-			>															\n\
-																	\n\
-		|	</[a-z]' + HTML_ATTR_RE + '>	#closed tags		\n\
-		|	<![a-z]' + HTML_ATTR_RE + '>	#<!DOCTYPE ...>		\n\
-		|	<!\\[CDATA\\[  .*?  \\]\\]>		#CDATA				\n\
-		|	<!--  .*?   -->					#comments			\n\
-		|	<\\?  .*?  \\?>					#instructions part1 (PHP, Perl, ASP)	\n\
-		|	<%	  .*?    %>					#instructions part2 (PHP, Perl, ASP)	\n\
-		)';//.replace(/#.*/g, '').replace(/\s+/g, '');
+	var HTML_TAG_RE = `(?:
+			#pair tags with content:
+			<	(?=[a-z])				#speed improve optimization
+				(' + HTML_PAIR_TAGS_WITH_CONTENT + ')\\b	#1
+				' + HTML_ATTR_RE + '
+			>
+				.*?
+			< (?!script\\b)
+				#speed improve optimization - atomic group
+				(?=(/?))\\2									#2
+				\\1' + HTML_ATTR_RE + '
+			>
+
+			#opened tags:
+		|	<	(?=[a-z])
+				(?!(?:' + HTML_PAIR_TAGS_WITH_CONTENT + ')\\b)
+				' + HTML_ATTR_RE + '
+			>
+
+		|	</[a-z]' + HTML_ATTR_RE + '>	#closed tags
+		|	<![a-z]' + HTML_ATTR_RE + '>	#<!DOCTYPE ...>
+		|	<!\\[CDATA\\[  .*?  \\]\\]>		#CDATA
+		|	<!--  .*?   -->					#comments
+		|	<\\?  .*?  \\?>					#instructions part1 (PHP, Perl, ASP)
+		|	<%	  .*?    %>					#instructions part2 (PHP, Perl, ASP)
+		)`;
 
 
-	var htmlBlockTagsRe = new RegExp('^<('+ HTML_BLOCK_TAGS + ')\\b', 'i'),
+	let htmlBlockTagsRe = new RegExp('^<('+ HTML_BLOCK_TAGS + ')\\b', 'i'),
 		replaceTagsAndSpaces = String.REPLACE_TAGS_AND_SPACES = [
 		
 		new XRegExp(HTML_TAG_RE, 'igx'), 

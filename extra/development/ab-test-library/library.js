@@ -797,12 +797,7 @@ function getJsonObject(html, reStartSearch){
 		startIndex = amatch.index + amatch[0].length;
 	}
 
-	var reStart =  XRegExp.build(
-		'[\\\{\\\[]	(?:	{{AFTER_BRACE_PART}}  )*', 
-		{
-			AFTER_BRACE_PART: AFTER_BRACE_PART
-		}, 'xg'
-	);
+	var reStart = new RegExp('[\\\{\\\[](?:' + AFTER_BRACE_PART.source + ')*', 'g');
 	
 	reStart.lastIndex = startIndex;
 

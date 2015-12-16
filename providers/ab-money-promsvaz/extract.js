@@ -202,6 +202,10 @@ function processAccountsPreliminaryDetails(html, result, path){
 		}
 	}
 
+	//А если не нашли блок, то надо попытаться баланс взять из обычного места.
+	getParam(html, result, path + 'balance', /"balanceAmountM"[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, [path + 'currency', path + 'balance', path + 'blocked', path + 'balance_own'], /"balanceAmountCurrencyM"[^>]*>([^<]*)/i, replaceTagsAndSpaces);
+
 	if(path == 'cards.') {
 		getParam(html, result, path + 'accnum', /<a[^>]+class="infoUnitObject[^>]*>([\s\S]*?)<\/a>/i, [replaceTagsAndSpaces, /\D/g, '']);
 		getParam(html, result, path + 'accname', /<div[^>]+class="infoUnitCaption[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);

@@ -186,18 +186,20 @@ function processAccountDetails(acc, result){
 
 function processAccountsPreliminaryDetails(html, result, path){
 	var divText = getElement(html, /<div[^>]+accountDetailTextBlock[^>]*>/i);
-	var divValue = getElement(html, /<div[^>]+accountDetailValueBlock[^>]*>/i);
-	var divTexts = getElements(divText.substr(1), /<div[^>]*>/ig);
-	var divValues = getElements(divValue.substr(1), /<div[^>]*>/ig);
-	for (var i = 0; i < divTexts.length; i++) {
-		var d = divTexts[i], v = divValues[i];
-		if(/ИТОГО/i.test(d)) {
-			getParam(v, result, [path + 'currency', path + 'balance', path + 'blocked', path + 'balance_own'], /<div[^>]+curNameISO[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
-			getParam(v, result, path + 'balance', null, replaceTagsAndSpaces, parseBalance);
-		}else if(/собственные средства/i.test(d))
-			getParam(v, result, path + 'balance_own', null, replaceTagsAndSpaces, parseBalance);
-		else if(/кредитные средства/i.test(d))
-			getParam(v, result, path + 'unused_credit', null, replaceTagsAndSpaces, parseBalance);
+	if(divText){
+		var divValue = getElement(html, /<div[^>]+accountDetailValueBlock[^>]*>/i);
+		var divTexts = getElements(divText.substr(1), /<div[^>]*>/ig);
+		var divValues = getElements(divValue.substr(1), /<div[^>]*>/ig);
+		for (var i = 0; i < divTexts.length; i++) {
+			var d = divTexts[i], v = divValues[i];
+			if(/ИТОГО/i.test(d)) {
+				getParam(v, result, [path + 'currency', path + 'balance', path + 'blocked', path + 'balance_own'], /<div[^>]+curNameISO[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+				getParam(v, result, path + 'balance', null, replaceTagsAndSpaces, parseBalance);
+			}else if(/собственные средства/i.test(d))
+				getParam(v, result, path + 'balance_own', null, replaceTagsAndSpaces, parseBalance);
+			else if(/кредитные средства/i.test(d))
+				getParam(v, result, path + 'unused_credit', null, replaceTagsAndSpaces, parseBalance);
+		}
 	}
 
 	if(path == 'cards.') {

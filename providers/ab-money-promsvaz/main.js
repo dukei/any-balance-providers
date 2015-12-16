@@ -67,7 +67,7 @@ function shouldProcess(counter, info){
 			
 				if(endsWith(info.num, prefs.lastdigits))
 					return true;
-			}else if(prefs.type == 'card'){
+			}else if(prefs.type == 'card' && g_selectedCard){ //Если ни одной карты у счета не осталось, то g_selectedCard не инициализируется
 				return info.num == g_selectedCard.accnum;
 			}
 		}

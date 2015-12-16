@@ -19,46 +19,46 @@ var g_headers = {
 
 function main(){
     var prefs = AnyBalance.getPreferences();
-	
-	var formattedLogin = getParam(prefs.login, null, null, /^\d+$/, [/^(\d{4})(\d{4})(\d{4})(\d{4})$/, '$1 $2 $3 $4']);
-    checkEmpty(formattedLogin, 'Введите номер карты без пробелов и разделителей, только цифры!');
-    checkEmpty(prefs.password, 'Введите PIN-код для входа в личный кабинет!');
+
+    var cardNumber = getParam(prefs.login, null, null, /^\d+$/, [/^(\d{4})(\d{4})(\d{4})(\d{4})$/, '$1 $2 $3 $4']),
+	    login = cardNumber || prefs.login,
+        passMsg = cardNumber ? 'PIN-код' : 'пароль';
+
+    checkEmpty(login, 'Введите номер карты или логин!');
+    checkEmpty(prefs.password, 'Введите ' + passMsg + ' для входа в личный кабинет!');
     
     var baseurl = "http://www.eldorado.ru/";
 	
 	var html = AnyBalance.requestGet(baseurl + 'personal/club/offers/index.php', g_headers);
+
+    var params = createFormParams(html, function(params, str, name, value) {
+        switch (name.toLowerCase()) {
+            case 'user_login':
+                return login;
+            case 'user_password':
+                return prefs.password;
+            default:
+                return value;
+        }
+    });
 	
-	// var captchaa;
-	// if(AnyBalance.getLevel() >= 7){
-		// AnyBalance.trace('Пытаемся ввести капчу');
-		var captcha = AnyBalance.requestGet(baseurl+ 'bitrix/tools/captcha.php?captcha_sid=123');
-		// captchaa = AnyBalance.retrieveCode("Пожалуйста, введите код с картинки", captcha);
-		// AnyBalance.trace('Капча получена: ' + captchaa);
-	// }else{
-		// throw new AnyBalance.Error('Провайдер требует AnyBalance API v7, пожалуйста, обновите AnyBalance!');
-	// }
-	
-    html = AnyBalance.requestPost(baseurl + '_ajax/userCardAuth.php', {
-		'AUTH_FORM':'Y',
-		'action':'AUTH',
-		'auth_popup':'1',
-		'backurl':'/personal/orders/index.php?login=yes',
-		'USER_LOGIN':formattedLogin,
-		'USER_PASSWORD':prefs.password,
-		captcha_sid:'123',
-		captcha_word:'5xx57',
-    }, addHeaders({Referer: baseurl + 'personal/orders/index.php', 'X-Requested-With': 'XMLHttpRequest'}));
+    html = AnyBalance.requestPost(
+        baseurl + '_ajax/userCardAuth.php',
+        params,
+        addHeaders({Referer: baseurl + 'personal/index.php', 'X-Requested-With': 'XMLHttpRequest'})
+    );
 
     var json = getJson(html);
-    if(!json.data){
+    if(!json.data && !json.success) {
         throw new AnyBalance.Error(json.message || 'Не удаётся войти в личный кабинет. Сайт изменен?');
     }
 
     html = AnyBalance.requestGet(baseurl + '_ajax/getUserCardBonus.php', addHeaders({Referer: baseurl + 'personal/?loyalty', 'X-Requested-With': 'XMLHttpRequest'}));
     json = getJson(html);
 
-    if(!json.result)
+    if(!json.result) {
         throw new AnyBalance.Error('Не удаётся найти бонусы. Сайт изменен?');
+    }
 
     var result = {success: true};
 

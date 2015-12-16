@@ -1,6 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
-	<change version="10" date="2015-05-19">
+  <change version="11" date="2015-12-16">
+  - Добавлена возможность заходить в кабинет с помощью логина и пароля.
+  </change>
+  <change version="10" date="2015-05-19">
 	- Поддержка изменений на сайте.
 	</change>
 	<change version="9" date="2015-02-06">

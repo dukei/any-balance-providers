@@ -14,46 +14,94 @@ var g_headers = {
 function main() {
 	var prefs = AnyBalance.getPreferences();
 	var baseurl = 'https://mans.lmt.lv/ru/';
+    var SITE_MIGHT_BE_CHANGED = 'Не удалось зайти. Сайт изменен или проблемы на сайте.';
 	AnyBalance.setDefaultCharset('utf-8');
 
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 	
-	var html = AnyBalance.requestGet(baseurl, g_headers);
-	
-	html = AnyBalance.requestGet('https://mans.lmt.lv/styles.css?_=1463', g_headers);
-	
-	html = AnyBalance.requestGet('https://mans.lmt.lv/auth_image.php?id=176831871', g_headers);
-	
+	var html = AnyBalance.requestGet(baseurl + 'auth', g_headers);
+
 	if(!html || AnyBalance.getLastStatusCode() > 400){
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
 	}
 
-	html = AnyBalance.requestPost(baseurl, [
-		['where_login_form', 'manslmt'],
-		['username', prefs.login],
-		['password', prefs.password],
-		['code', ''],
-		['submit', 'login'],
-		['login', 'Подключaйся!']
-	], addHeaders({Referer: baseurl}));
+    var params = createFormParams(html, function(params, str, name, value) {
+        switch (name) {
+            case 'login-name':
+                return prefs.login;
+            case 'login-pass':
+                return prefs.password;
+            case 'login-code':
+                return getCaptcha(html);
+            default:
+                return value;
+        }
+    });
 
-	html = AnyBalance.requestGet(baseurl, g_headers);
+    // Check is done in order to skip redundant requests
+    if (!params.hasOwnProperty('update')) {
+        var authXhrHeaders = addHeaders({'Referer': baseurl + 'auth', 'X-Requested-With': 'XMLHttpRequest'});
 
-	if (!/logout=true/i.test(html)) {
-		var error = getParam(html, null, null, /<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
-		if (error)
-			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
-		
-		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
-	}
+        var res = AnyBalance.requestPost(
+            baseurl + 'auth/login',
+            params,
+            authXhrHeaders
+        );
+
+        try {
+            res = JSON.parse(res);
+        }
+        catch(e) {
+            AnyBalance.trace(res);
+            throw new AnyBalance.Error(SITE_MIGHT_BE_CHANGED);
+        }
+
+        if (!res.success) {
+            AnyBalance.trace(html);
+            var msg = res.error && res.error.msg ? res.error.msg : SITE_MIGHT_BE_CHANGED;
+            throw new AnyBalance.Error(msg, null, true);
+        }
+
+        res = AnyBalance.requestGet(baseurl + 'auth/access_info', authXhrHeaders);
+        html = AnyBalance.requestGet(baseurl + 'index.php', g_headers);
+    }
 	
 	var result = {success: true};
+    var dateReplaces = replaceTagsAndSpaces.concat(/[^\d:\-]+/, ' ');
 	
-	getParam(html, result, 'balance', /Остаток на счету[^>]*>\s*<td[^>]*>([^]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, '__tariff', /Тарифный план[^>]*>\s*<td[^>]*>([^]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-	
+	getParam(html, result, 'balance', getRegEx('Остаток на счету'), replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'advance_duration', getRegEx('Срок действия аванса', true), dateReplaces, parseDate);
+    getParam(html, result, 'usage_duration', getRegEx('Срок использования', true), dateReplaces, parseDate);
+	getParam(html, result, '__tariff', getRegEx('Тарифный план'), replaceTagsAndSpaces);
+    getParam(html, result, 'service_package', getServicePackageRe(), replaceTagsAndSpaces);
+
 	AnyBalance.setResult(result);
+}
+
+function getCaptcha(html) {
+    if(AnyBalance.getLevel() >= 7) {
+        AnyBalance.trace('Пытаемся ввести капчу');
+
+        var captchaUrl = getParam(html, null, null, /login-code-img.*src=["']([^"']*)['"]/i);
+        var captchaImg = AnyBalance.requestGet(captchaUrl);
+
+        AnyBalance.trace('Капча получена: ' + captchaImg);
+        return AnyBalance.retrieveCode('Пожалуйста, введите код с картинки', captchaImg);
+    }
+    else {
+        throw new AnyBalance.Error('К сожалению, сайт https://mans.lmt.lv ввел капчу для входа в личный кабинет.');
+    }
+}
+
+function getServicePackageRe() {
+    var srcString = 'пакеты услуг[^]*?<table[^>]*>[^]*?<td[^>]*>(.*?)<\/td>[^]*?<\/table>';
+    return new RegExp(srcString, 'i')
+}
+
+function getRegEx(searchString, isPeriodValue) {
+    var fstRe = isPeriodValue ? '[^]*?' : '[^>]*>\\s*',
+        lastRe = '<td[^>]*>([^]*?)<\/td>';
+    return new RegExp(searchString + fstRe + lastRe, 'i')
 }

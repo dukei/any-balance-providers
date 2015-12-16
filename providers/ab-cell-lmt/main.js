@@ -75,7 +75,7 @@ function main() {
     getParam(html, result, 'advance_duration', getRegEx('Срок действия аванса', true), dateReplaces, parseDate);
     getParam(html, result, 'usage_duration', getRegEx('Срок использования', true), dateReplaces, parseDate);
 	getParam(html, result, '__tariff', getRegEx('Тарифный план'), replaceTagsAndSpaces);
-    getParam(html, result, 'service_package', getServicePackageRe(), replaceTagsAndSpaces);
+    getParam(html, result, 'service_package', getServicePackageRe(), replaceTagsAndSpaces, parseServicePackage);
 
 	AnyBalance.setResult(result);
 }
@@ -93,6 +93,14 @@ function getCaptcha(html) {
     else {
         throw new AnyBalance.Error('К сожалению, сайт https://mans.lmt.lv ввел капчу для входа в личный кабинет.');
     }
+}
+
+function parseServicePackage(value) {
+    var res = parseDate(value);
+    if (!res) {
+        res = value;
+    }
+    return res;
 }
 
 function getServicePackageRe() {

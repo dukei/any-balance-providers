@@ -41,6 +41,11 @@ function main(){
                 return value;
         }
     });
+
+    if(!params) {
+        AnyBalance.trace(params);
+        throw new AnyBalance.Error('Не удалось найти форму входа. Сайт изменен?');
+    }
 	
     html = AnyBalance.requestPost(
         baseurl + '_ajax/userCardAuth.php',

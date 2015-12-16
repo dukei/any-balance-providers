@@ -18,8 +18,8 @@ function main() {
 	var baseurl = 'https://kabinet.xxxxxx.ru/';
 	AnyBalance.setDefaultCharset('utf-8');
 	
-	checkEmpty(prefs.login, 'Введите логин!');
-	checkEmpty(prefs.password, 'Введите пароль!');
+	AB.checkEmpty(prefs.login, 'Введите логин!');
+	AB.checkEmpty(prefs.password, 'Введите пароль!');
 	
 	var html = AnyBalance.requestGet(baseurl + 'login', g_headers);
 	
@@ -28,7 +28,7 @@ function main() {
 		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
 	}
 	
-	var params = createFormParams(html, function(params, str, name, value) {
+	var params = AB.createFormParams(html, function(params, str, name, value) {
 		if (name == 'login') 
 			return prefs.login;
 		else if (name == 'password')
@@ -41,10 +41,10 @@ function main() {
 		login: prefs.login,
 		password: prefs.password,
 		'Remember': 'false'
-	}, addHeaders({Referer: baseurl + 'login'}));
+	}, AB.addHeaders({Referer: baseurl + 'login'}));
 	
 	if (!/logout/i.test(html)) {
-		var error = getParam(html, null, null, /<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces);
+		var error = AB.getParam(html, null, null, /<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, AB.replaceTagsAndSpaces);
 		if (error)
 			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
 		
@@ -54,13 +54,13 @@ function main() {
 	
 	var result = {success: true};
 	
-	getParam(html, result, 'balance', /баланс:(?:[^>]*>){1}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, ['currency', 'balance'], /Текущий баланс:[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, parseCurrency);
-	getParam(html, result, 'fio', /Имя абонента:(?:[\s\S]*?<b[^>]*>){1}([\s\S]*?)<\/b>/i, replaceTagsAndSpaces);
-	getParam(html, result, '__tariff', /Тарифный план:[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces);
-	getParam(html, result, 'phone', /Номер:[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces);
-	getParam(html, result, 'deadline', /Действителен до:[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, parseDate);
-	getParam(html, result, 'status', /Статус:[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces);
+	AB.getParam(html, result, 'balance', /баланс:(?:[^>]*>){1}([\s\S]*?)<\//i, AB.replaceTagsAndSpaces, AB.parseBalance);
+	AB.getParam(html, result, ['currency', 'balance'], /Текущий баланс:[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, AB.replaceTagsAndSpaces, AB.parseCurrency);
+	AB.getParam(html, result, 'fio', /Имя абонента:(?:[\s\S]*?<b[^>]*>){1}([\s\S]*?)<\/b>/i, AB.replaceTagsAndSpaces);
+	AB.getParam(html, result, '__tariff', /Тарифный план:[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, AB.replaceTagsAndSpaces);
+	AB.getParam(html, result, 'phone', /Номер:[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, AB.replaceTagsAndSpaces);
+	AB.getParam(html, result, 'deadline', /Действителен до:[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, AB.replaceTagsAndSpaces, AB.parseDate);
+	AB.getParam(html, result, 'status', /Статус:[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, AB.replaceTagsAndSpaces);
 	
 	AnyBalance.setResult(result);
 }

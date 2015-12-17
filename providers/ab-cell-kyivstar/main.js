@@ -2,13 +2,6 @@
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 */
 
-var g_headers = {
-	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
-	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
-	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Intel Mac OS X 10.6; rv:7.0.1) Gecko/20100101 Firefox/7.0.1',
-	Connection: 'keep-alive'
-};
-
 function main() {
 	var prefs = AnyBalance.getPreferences();
 
@@ -34,73 +27,7 @@ function processSite(){
 	var prefs = AnyBalance.getPreferences();
 
 	var baseurl = "https://my.kyivstar.ua/";
-	AnyBalance.trace('Соединение с ' + baseurl);
-	var html = AnyBalance.requestGet(baseurl + 'tbmb/login/show.do', g_headers);
-	
-	// Проверим, нужна ли капча?
-	var captchaa = AnyBalance.requestPost(baseurl + "tbmb/checkUser", {
-		action:'isCaptchaNeeded',
-		user:prefs.login
-	}, g_headers);
-	
-	if(captchaa == true) {
-		AnyBalance.trace('Необходимо ввести капчу..');
-		
-		if(AnyBalance.getLevel() >= 7){
-			AnyBalance.trace('Пытаемся ввести капчу');
-			var p = getParam(html, null, null, /src="\/(tbmb\/jcaptcha[^"]+)/i);
-			
-			var captcha = AnyBalance.requestGet(baseurl + p);
-			captchaa = AnyBalance.retrieveCode("Пожалуйста, введите код с картинки", captcha);
-			AnyBalance.trace('Капча получена: ' + captchaa);
-		}else{
-			throw new AnyBalance.Error('Провайдер требует AnyBalance API v7, пожалуйста, обновите AnyBalance!');
-		}
-	}
-	
-	//заготовка для обработки ошибок сайта, надо будет проверить во время следующего сбоя
-	if (/<TITLE>error<\/TITLE>/i.test(html)) {
-		var matches = html.match(/(<H1>[\s\S]*?<\/p>)/i);
-		if (matches) {
-			throw new AnyBalance.Error(matches[1].replace(/<\/?[^>]+>/g, ''));
-		}
-		throw new AnyBalance.Error("Неизвестная ошибка на сайте.");
-	}
-	
-	AnyBalance.trace('Успешное соединение.');
-	if (/\/tbmb\/logout\/perform/i.test(html)) {
-		AnyBalance.trace('Уже в системе.');
-		if (!~html.indexOf(prefs.login)) {
-			AnyBalance.trace('Не тот аккаунт, выход.');
-			html = AnyBalance.requestGet(baseurl + 'tbmb/logout/perform.do', g_headers);
-			AnyBalance.trace('Переход на страницу входа.');
-			html = AnyBalance.requestGet(baseurl + 'tbmb/login/show.do', g_headers);
-		}
-	}
-	// Login
-	var form = getParam(html, null, null, /<form[^>]+action="[^"]*perform.do"[^>]*>([\s\S]*?)<\/form>/i);
-	if (form) {
-		AnyBalance.trace('Вход в систему.');
-		var params = createFormParams(form);
-		params.user = prefs.login;
-		params.password = prefs.password;
-		
-		if(captchaa)
-			params.captcha = captchaa;
-		
-		html = AnyBalance.requestPost(baseurl + "tbmb/login/perform.do", params, g_headers);
-		
-		if (!/\/tbmb\/logout\/perform/i.test(html)) {
-			var error = getParam(html, null, null, /<td class="redError"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-			if (error)
-				throw new AnyBalance.Error(error, null, /Перевірте правильність введення логіну|введіть правильний пароль/i.test(error));
-			if (/<form[^>]+action="[^"]*perform.do"/i.test(html))
-				throw new AnyBalance.Error('Киевстар показал форму входа без ошибки. Возможно, вы пытаетесь войти в кабинет через мобильный интернет. На стороне Киевстара сейчас с этим проблема. Попробуйте обновить провайдер через вайфай.');
-			
-			AnyBalance.trace(html);
-			throw new AnyBalance.Error('Не удалось зайти в систему. Сайт изменен?');
-		}
-	}
+	var html = login(baseurl);
 	
 	/**
 	if (!/payment\/activity\//i.test(html)) {

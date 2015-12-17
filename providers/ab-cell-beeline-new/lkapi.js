@@ -35,7 +35,7 @@ function proceedWithMobileAppAPI(baseurl, prefs, failover) {
 	
 	var result = {success: true};
 	
-	getParam(json.pricePlanInfo.entityName, result, '__tariff', null, replaceTagsAndSpaces, html_entity_decode);
+	getParam(json.pricePlanInfo.entityName, result, '__tariff', null, replaceTagsAndSpaces);
 	
 	// Предоплата
 	if(payType == 'PREPAID') {

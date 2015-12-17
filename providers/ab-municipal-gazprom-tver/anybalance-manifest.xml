@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-municipal-gazprom-tver</id>
+	<api flags="no_browser"/>
+	<name>Газпром межрегионгаз (Тверь) </name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера Газпром (Тверь) <a href="http://tverregiongaz.ru/">http://tverregiongaz.ru/</a></p>
+	<p>Информация берется из личного кабинета <a href="http://lk.tverregiongaz.ru/">http://lk.tverregiongaz.ru/</a></p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="charged" name="Начислено" units=" р"/>
+		<counter id="recalculation" name="Перерасчет" units=" р"/>
+		<counter id="paid" name="Оплачено" units=" р"/>
+		<counter id="total" name="Итого" units=" р"/>
+	</counters>
+	<keywords></keywords>
+	<type>municipal</type>
+	<country>ru</country>
+</provider>

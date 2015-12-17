@@ -118,9 +118,9 @@ function refreshBalance(url, html, htmlBalance) {
     var source = getParam(form, null, null, /s:\s*["']([^"']+)/i, replaceSlashes);
     var render = getParam(data, null, null, /(?:u|block):\s*["']([^"']+)/i, replaceSlashes);
 
-    var viewState = getParam(html, null, null, /<input[^>]+name="javax.faces.ViewState"[^>]*value="([^"]+)/i, null, html_entity_decode);
+    var viewState = getParam(html, null, null, /<input[^>]+name="javax.faces.ViewState"[^>]*value="([^"]+)/i, replaceHtmlEntities);
 
-    //var formId = getParam(form, null, null, /id="([^"]*)/i, null, html_entity_decode);
+    //var formId = getParam(form, null, null, /id="([^"]*)/i, replaceHtmlEntities);
     var params = createFormParams(form);
     params['javax.faces.partial.ajax'] = true;
     params['javax.faces.source'] = source;
@@ -199,7 +199,7 @@ function getBonusesBlock(url, html, name, exact, onlyReturnParams) {
 }
 
 function myParseCurrency(text) {
-    var val = html_entity_decode(text).replace(/\s+/g, '').replace(/[\-\d\.,]+/g, '');
+    var val = text.replace(/\s+/g, '').replace(/[\-\d\.,]+/g, '');
     val = g_currencys[val] || val;
     AnyBalance.trace('Parsing currency (' + val + ') from: ' + text);
     return val;
@@ -280,7 +280,7 @@ function getLKType(html){
     //Обычно это ссылка на выход, хотя иногда приходится искать что-то ещё
     if (!isLoggedIn(html)) {
         //Если в кабинет войти не получилось, то в первую очередь надо поискать в ответе сервера объяснение ошибки
-        var error = getParam(html, null, null, [/<div[^>]+class="error-page[\s|"][^>]*>([\s\S]*?)<\/div>/i, /<span[^>]+class="ui-messages-error-summary"[^>]*>([\s\S]*?)<\/span>/i], replaceTagsAndSpaces, html_entity_decode);
+        var error = getParam(html, null, null, [/<div[^>]+class="error-page[\s|"][^>]*>([\s\S]*?)<\/div>/i, /<span[^>]+class="ui-messages-error-summary"[^>]*>([\s\S]*?)<\/span>/i], replaceTagsAndSpaces);
         if(error)
             throw new AnyBalance.Error(error, null, /Неправильные логин и\s*(?:\(или\)\s*)?пароль/i.test(error));
 
@@ -289,7 +289,7 @@ function getLKType(html){
             throw new AnyBalance.Error('Личный кабинет Билайн временно не работает. Пожалуйста, попробуйте позднее.');
         }
 
-        var message = getParam(html, null, null, /<h1>\s*(Личный кабинет временно недоступен\s*<\/h1>[\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
+        var message = getParam(html, null, null, /<h1>\s*(Личный кабинет временно недоступен\s*<\/h1>[\s\S]*?)<\//i, replaceTagsAndSpaces);
         if(message)
             throw new AnyBalance.Error(message);
         //Если объяснения ошибки не найдено, при том, что на сайт войти не удалось, то, вероятно, произошли изменения на сайте
@@ -334,7 +334,7 @@ function loginWithPassword(baseurl){
         params['loginFormB2C:loginForm:passwordVisible'] = prefs.password;
         params['loginFormB2C:loginForm:loginButton'] = '';
 
-        var action = getParam(tform, null, null, /<form[^>]+action="\/([^"]*)/i, null, html_entity_decode);
+        var action = getParam(tform, null, null, /<form[^>]+action="\/([^"]*)/i, replaceHtmlEntities);
 
         //Теперь, когда секретный параметр есть, можно попытаться войти
         for(var i = 1 ; i < 6; i++) {
@@ -558,8 +558,8 @@ function fetchB2B(baseurl, html, result) {
 
 function processInfo_basic(baseurl, html, result){
     getParam(html, result.info, 'info.more3', /Вы с нами больше трёх лет!/i, null, function(str) { return !!str });
-    getParam(html, result.info, 'info.phone', /<h1[^>]+class="phone-number"[^>]*>([\s\S]*?)<\/h1>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result.info, 'info.region', /<div[^>]+region[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result.info, 'info.phone', /<h1[^>]+class="phone-number"[^>]*>([\s\S]*?)<\/h1>/i, replaceTagsAndSpaces);
+    getParam(html, result.info, 'info.region', /<div[^>]+region[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
 }
 
 function processInfoPost_basic(baseurl, html, result){
@@ -567,12 +567,12 @@ function processInfoPost_basic(baseurl, html, result){
         if(!result.info)
             result.info = {};
 
-        getParam(html, result.info, 'info.fio', /<div[^>]+class="ban-param name"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+        getParam(html, result.info, 'info.fio', /<div[^>]+class="ban-param name"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
         if(AnyBalance.isAvailable('info.email')) {
             var xhtml = html;
             if(!/<div[^>]+class="email-fixed-width"[^>]*>/i.test(html))
                 xhtml = getBlock(baseurl + 'c/post/index.xhtml', html, 'benAddressLoaderDetails');
-            getParam(xhtml, result.info, 'info.email', /<div[^>]+class="email-fixed-width"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+            getParam(xhtml, result.info, 'info.email', /<div[^>]+class="email-fixed-width"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
         }
 
         processInfo_basic(baseurl, html, result);
@@ -602,7 +602,7 @@ function switchNumberPost(baseurl, html){
 
     var num = getParam(numinfo, null, null, /selectAccount\('([^']*)/, replaceSlashes);
     if(!isset(num))
-        num = getParam(numinfo, null, null, null, replaceTagsAndSpaces, html_entity_decode);
+        num = getParam(numinfo, null, null, null, replaceTagsAndSpaces);
 
     checkEmpty(num, 'Не удалось найти номер на который необходимо переключиться, сайт изменен?', true);
 
@@ -659,8 +659,8 @@ function fetchPost(baseurl, html, result) {
     // Пытаемся исправить всякую ерунду в балансе и валюте
     var balancesReplaces = [replaceTagsAndSpaces, /информация[^<]*недоступна|недоступна|временно недоступен/ig, ''];
 
-    getParam(html, result, 'agreement', /<h2[^>]*>\s*Договор №([\s\S]*?)<\/h2>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'tariff', /<h2[^>]*>(?:[\s\S](?!<\/h2>))*?Текущий тариф([\s\S]*?)<\/h2>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'agreement', /<h2[^>]*>\s*Договор №([\s\S]*?)<\/h2>/i, replaceTagsAndSpaces);
+    getParam(html, result, 'tariff', /<h2[^>]*>(?:[\s\S](?!<\/h2>))*?Текущий тариф([\s\S]*?)<\/h2>/i, replaceTagsAndSpaces);
 
     if (!multi) {
         AnyBalance.trace('Похоже на кабинет с одним номером.');
@@ -694,7 +694,7 @@ function fetchPost(baseurl, html, result) {
         }
     }
 
-    var phone = getParam(html, null, null, /<h1[^>]+class="phone-number"[^>]*>([\s\S]*?)<\/h1>/i, replaceTagsAndSpaces, html_entity_decode);
+    var phone = getParam(html, null, null, /<h1[^>]+class="phone-number"[^>]*>([\s\S]*?)<\/h1>/i, replaceTagsAndSpaces);
     getParam('POSTPAID', result, 'type');
 
     processInfoPost_basic(baseurl, html, result);
@@ -741,7 +741,7 @@ function fetchPost(baseurl, html, result) {
     if(prefs.__debug){
         //Проверяем, не создалась ли лишняя заявка в процессе просмотра личного кабинета
         html = AnyBalance.requestGet(baseurl + 'c/operations/operationsHistory.xhtml');
-        var last_time = getParam(html, null, null, /<span[^>]+class="date"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
+        var last_time = getParam(html, null, null, /<span[^>]+class="date"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
         AnyBalance.trace('Последняя заявка: ' + last_time);
     }
 
@@ -792,7 +792,7 @@ function processInfoPre_basic(baseurl, html, result){
     if (AnyBalance.isAvailable('info.fio', 'info.region', 'info.phone', 'info.more3')) {
         if(!result.info)
             result.info = {};
-        getParam(html, result.info, 'info.fio', /<p[^>]*>([^<,]*),(?:\s|&nbsp;|<[^>]*>)*Мы стремимся сделать/i, replaceTagsAndSpaces, html_entity_decode);
+        getParam(html, result.info, 'info.fio', /<p[^>]*>([^<,]*),(?:\s|&nbsp;|<[^>]*>)*Мы стремимся сделать/i, replaceTagsAndSpaces);
 
         processInfo_basic(baseurl, html, result);
     }
@@ -806,21 +806,21 @@ function processInfo_settings(baseurl, result){
             result.info = {};
         var info = result.info;
 
-        getParam(html, info, 'info.email', /Электронная почта[\s\S]*?<div[^>]+value-cell[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
-        getParam(html, info, 'info.address', /<div[^>]+class="[^"]*address[^>]*>([\s\S]*?)<\/div>/i, [/Адрес проживания/i, '', replaceTagsAndSpaces], html_entity_decode);
+        getParam(html, info, 'info.email', /Электронная почта[\s\S]*?<div[^>]+value-cell[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+        getParam(html, info, 'info.address', /<div[^>]+class="[^"]*address[^>]*>([\s\S]*?)<\/div>/i, [/Адрес проживания/i, '', replaceTagsAndSpaces]);
 
         var day = getElement(html, /<select[^>]+birthDay[^>]*>/i);
         var month = getElement(html, /<select[^>]+birthMonth[^>]*>/i);
         var year = getElement(html, /<select[^>]+yearPeriods[^>]*>/i);
 
         var join_space = create_aggregate_join(' ');
-        sumParam(day, info, 'info.birthday', /<option[^>]*selected[^>]*>([\s\S]*?)<\/option>/i, [/день/i, '', replaceTagsAndSpaces], html_entity_decode, join_space);
-        sumParam(month, info, 'info.birthday', /<option[^>]*selected[^>]*>([\s\S]*?)<\/option>/i, [/месяц/i, '', replaceTagsAndSpaces], html_entity_decode, join_space);
-        sumParam(year, info, 'info.birthday', /<option[^>]*selected[^>]*>([\s\S]*?)<\/option>/i, [/год/i, '', replaceTagsAndSpaces], html_entity_decode, join_space);
+        sumParam(day, info, 'info.birthday', /<option[^>]*selected[^>]*>([\s\S]*?)<\/option>/i, [/день/i, '', replaceTagsAndSpaces], null, join_space);
+        sumParam(month, info, 'info.birthday', /<option[^>]*selected[^>]*>([\s\S]*?)<\/option>/i, [/месяц/i, '', replaceTagsAndSpaces], null, join_space);
+        sumParam(year, info, 'info.birthday', /<option[^>]*selected[^>]*>([\s\S]*?)<\/option>/i, [/год/i, '', replaceTagsAndSpaces], null, join_space);
 
         if(!isset(info.fio) || /^[\s\-\d\+]*$/.test(info.fio)){
             //Если фио не удалось получить, постараемся получить его из соц сетей
-            getParam(html, info, 'info.fio', /<div[^>]+class="name"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+            getParam(html, info, 'info.fio', /<div[^>]+class="name"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
         }
     }
 }
@@ -859,7 +859,7 @@ function switchNumberPre(baseurl, html){
         params[source] = source;
 
         var xhtml = AnyBalance.requestPost(baseurl + 'c/pre/index.xhtml', params, addHeaders({Referer: baseurl + 'c/pre/index.xhtml'}));
-        var url = getParam(xhtml, null, null, /<redirect[^>]+url="([^"]+)/i, null, html_entity_decode);
+        var url = getParam(xhtml, null, null, /<redirect[^>]+url="([^"]+)/i, replaceHtmlEntities);
         if (!url)
             AnyBalance.trace('Не удалось переключить номер: ' + xhtml);
         else
@@ -878,20 +878,22 @@ function fetchPre(baseurl, html, result) {
 
     getParam('PREPAID', result, 'type');
 
-    var phone = getParam(html, null, null, /<h1[^>]+class="phone-number"[^>]*>([\s\S]*?)<\/h1>/i, replaceTagsAndSpaces, html_entity_decode), xhtml;
+    var phone = getParam(html, null, null, /<h1[^>]+class="phone-number"[^>]*>([\s\S]*?)<\/h1>/i, replaceTagsAndSpaces), xhtml;
     processInfoPre_basic(baseurl, html, result);
 
-    getParam(html, result, 'tariff', /Текущий тариф[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'tariff', /Текущий тариф[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces);
 
-    if (AnyBalance.isAvailable('balance')) {
+    if (AnyBalance.isAvailable('balance', 'currency', 'limit')) {
         // Если нет баланса, валюту не нужно получать
         function l_getCurrency() {
             if(isset(result.balance) && result.balance != null)
                 getParam(html + xhtml, result, ['currency', 'balance'], balanceRegExp, replaceTagsAndSpaces, myParseCurrency);
         }
         // Пробуем получить со страницы, при обновлении через мобильный интернет, он там есть
-        var balanceRegExp = /<h3>[^>]*class="price[^>]*>((?:[\s\S]*?span[^>]*>){3})/i;
+        var balanceRegExp = /<h3[^>]*>[^>]*class="price[^>]*>((?:[\s\S]*?span[^>]*>){3})/i;
         getParam(html, result, 'balance', balanceRegExp, replaceTagsAndSpaces, parseBalance);
+        var credit = getElement(html, /<div[^>]+class="balance-credit"[^>]*>/i);
+        getParam(credit, result, 'credit', /<h3[^>]*>([\s\S]*?)<\/h3>/i, replaceTagsAndSpaces, parseBalance);
         l_getCurrency();
 
         if(!isset(result.balance) || result.balance == null) {
@@ -961,7 +963,7 @@ function getBonuses(xhtml, result, nopath) {
 			AnyBalance.trace('Пропускаем grouped-bonuses: ' + bonus);
 			continue;
 		}
-        //var bonus_name = ''; //getParam(bonus, null, null, /<span[^>]+class="bonuses-accums-list"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
+        //var bonus_name = ''; //getParam(bonus, null, null, /<span[^>]+class="bonuses-accums-list"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
         // var services = sumParam(bonus, null, null, /<div[^>]+class="\s*(?:accumulator|bonus|item)\s*"(?:[\s\S](?!$|<div[^>]+class="(?:accumulator|bonus|item)"))*[\s\S]/ig);
         var services = sumParam(bonus, null, null, /<div[^>]+class="\s*(?:(?:item\s*)?(?:accumulator|accumulator|bonus|item)?)[^"]*"(?:[\s\S](?!$|<div[^>]+class="(?:accumulator|accumulator|bonus|item)"))*[\s\S]/ig);
 
@@ -970,9 +972,9 @@ function getBonuses(xhtml, result, nopath) {
         var replaceMinutes = [replaceTagsAndSpaces, /из.*/i, ''];
 
         for (var i = 0; i < services.length; ++i) {
-            var name = '' + getParam(services[i], null, null, /<div[^>]+class="[^"]*column1[^"]*"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode); //+ ' ' + bonus_name;
-            var values = getElement(services[i], reValue, replaceTagsAndSpaces, html_entity_decode);
-            var rest = getParam(services[i], null, null, /class="[^>]*rest"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+            var name = '' + getParam(services[i], null, null, /<div[^>]+class="[^"]*column1[^"]*"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces); //+ ' ' + bonus_name;
+            var values = getElement(services[i], reValue, replaceTagsAndSpaces);
+            var rest = getParam(services[i], null, null, /class="[^>]*rest"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
             AnyBalance.trace('Найдена опция ' + name + ': ' + values + ', rest: ' + rest);
 
             if (/Internet|Интернет|трафика/i.test(name)) {
@@ -1069,7 +1071,7 @@ function getTempPasswordSMS(baseurl, html){
                 kaptchaUrl = json.url;
                 value = json.id;
             }else if(/kaptchaInput/i.test(name)){
-                var cError = getParam(form, null, null, /<div[^>]+ui-message-error[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+                var cError = getParam(form, null, null, /<div[^>]+ui-message-error[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
                 var img = AnyBalance.requestGet(baseurl + kaptchaUrl, g_headers);
                 var code = AnyBalance.retrieveCode((cError || '') + '\nВведите, пожалуйста, символы с картинки.', img, {time: 300000});
                 value = code;
@@ -1082,7 +1084,7 @@ function getTempPasswordSMS(baseurl, html){
             AnyBalance.trace(form);
             throw new AnyBalance.Error('Не удаётся найти кнопку подтверждения регистрации. Проблемы на сайте или сайт изменен');
         }
-        var formId = getParam(button, null, null, /name="([^"]*)/i, null, html_entity_decode);
+        var formId = getParam(button, null, null, /name="([^"]*)/i, replaceHtmlEntities);
 
         params['javax.faces.partial.ajax'] = 'true';
         params['javax.faces.source'] = formId;
@@ -1117,7 +1119,7 @@ function createNewPassword(baseurl){
     //Вводим смс
     var form = getParam(html, null, null, /<form[^>]+id="tokenForm"[^>]*>[\s\S]*?<\/form>/i);
     if(!form){
-        var error = getParam(html, null, null, /<div[^>]*ui-message-error[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+        var error = getParam(html, null, null, /<div[^>]*ui-message-error[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
         if(error)
             throw new AnyBalance.Error(error);
         AnyBalance.trace(html);
@@ -1135,7 +1137,7 @@ function createNewPassword(baseurl){
         AnyBalance.trace(form);
         throw new AnyBalance.Error('Не удаётся найти кнопку подтверждения ввода SMS кода. Проблемы на сайте или сайт изменен');
     }
-    var formId = getParam(button, null, null, /name="([^"]*)/i, null, html_entity_decode);
+    var formId = getParam(button, null, null, /name="([^"]*)/i, replaceHtmlEntities);
 
     params['javax.faces.partial.ajax'] = 'true';
     params['javax.faces.source'] = formId;
@@ -1145,9 +1147,9 @@ function createNewPassword(baseurl){
     params['javax.faces.ViewState'] = viewState;
 
     html = AnyBalance.requestPost(url, params, addHeaders({'X-Requested-With': 'XMLHttpRequest'}));
-    var go_to = getParam(html, null, null, /<redirect[^>]+url="([^"]*)/i, null, html_entity_decode);
+    var go_to = getParam(html, null, null, /<redirect[^>]+url="([^"]*)/i, replaceHtmlEntities);
     if(!go_to){
-    	var error = getElement(html, /<div[^>]+ui-messages-error[^>]*>/i, replaceTagsAndSpaces, html_entity_decode);
+    	var error = getElement(html, /<div[^>]+ui-messages-error[^>]*>/i, replaceTagsAndSpaces);
     	if(error)
     		throw new AnyBalance.Error(error);
     	AnyBalance.trace(html);
@@ -1216,14 +1218,14 @@ function turnOffSMSNotification(baseurl){
         throw new AnyBalance.Error('Не удалось найти форму управления уведомлениями.');
     }
 
-    var checkbox = getParam(form, null, null, /(<input[^>]+id="notificationEventsForm:[^>]*Вход в личный кабинет[^>]*>)/i, null, html_entity_decode);
+    var checkbox = getParam(form, null, null, /(<input[^>]+id="notificationEventsForm:[^>]*Вход в личный кабинет[^>]*>)/i, replaceHtmlEntities);
     if(!checkbox){
         AnyBalance.trace(form);
         throw new AnyBalance.Error('Не удалось найти галочку отключения уведомления.');
     }
 
-    var chk_name = getParam(checkbox, null, null, /name="([^"]*)/i, null, html_entity_decode);
-    var checked = getParam(checkbox, null, null, /\s+checked=/i, null, html_entity_decode);
+    var chk_name = getParam(checkbox, null, null, /name="([^"]*)/i, replaceHtmlEntities);
+    var checked = getParam(checkbox, null, null, /\s+checked=/i, replaceHtmlEntities);
     if(!checked){
         AnyBalance.trace('Уведомление о входе уже выключено. Отлично :)');
         return;
@@ -1241,7 +1243,7 @@ function turnOffSMSNotification(baseurl){
         throw new AnyBalance.Error('Не удалось найти кнопку сохранения уведомлений.');
     }
 
-    var source = getParam(button, null, null, /s:'([^']*)/, null, html_entity_decode);
+    var source = getParam(button, null, null, /s:'([^']*)/, replaceHtmlEntities);
     params['javax.faces.partial.ajax'] = 'true';
     params['javax.faces.source'] = source;
     params['javax.faces.partial.execute'] = '@all';

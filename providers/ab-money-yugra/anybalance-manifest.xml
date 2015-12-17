@@ -1,0 +1,41 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="2">ab-money-yugra</id>
+	<api flags="no_browser"/>
+	<name>Банк ЮГРА</name>
+	<description html="true"><![CDATA[
+	<p>Получает текущий остаток и другие параметры продуктов Банка Югра http://jugra.ru/, используя новый интернет-банк (https://online.jugra.ru).</p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Если у вас нет доступа к интернет-банку, получите его на странице https://online.jugra.ru/auth, нажав кнопку Активация доступа.</p>
+	<p>Банк может требовать ввод SMS-пароля для подтверждения входа в интернет банк. Если вы не хотите вводить его каждый раз для обновления баланса, отключите требование кода на вход в настройках интернет-банка https://online.jugra.ru</p>
+	]]></instruction>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>currencyISO.js</js>
+		<js>library.js</js>
+		<js>nadapter.js</js>
+		<js>extract.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="available" name="Доступно" units=" {@currency}"/>
+		<counter id="balance" name="Остаток" units=" {@currency}"/>
+		<counter id="blocked" name="Заблокировано" units=" {@currency}"/>
+		<counter id="cashback" name="Кэшбэк" units=" {@currency}"/>
+		<counter id="num" name="Номер карты" type="text"/>
+		<counter id="accnum" name="Номер счета" type="text"/>
+		<counter id="type" name="Тип" type="text"/>
+		<counter id="currency" name="Валюта" type="text"/>
+		<counter id="balance_min" name="Неснижаемый остаток" units=" {@currency}"/>
+		<counter id="till" name="Срок действия" type="time" format="dd/MM/yyyy"/>
+		<counter id="rate" name="Процентная ставка" units="%"/>
+	</counters>
+
+	<keywords></keywords>
+	<type>money, bank</type>
+	<country>ru</country>
+</provider>

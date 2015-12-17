@@ -20,8 +20,8 @@ function main(){
     var prefs = AnyBalance.getPreferences();
 
     //Проверяем, что логин и пароль введены
-    checkEmpty(prefs.login, 'Введите логин!');
-    checkEmpty(prefs.password, 'Введите пароль!');
+    AB.checkEmpty(prefs.login, 'Введите логин!');
+    AB.checkEmpty(prefs.password, 'Введите пароль!');
 
     //Лучше базовый url забить где-нибудь вначале в переменную, потом гораздо легче переделывать в другой провайдер
     var baseurl = "https://kabinet.xxxxxx.ru/";
@@ -39,9 +39,9 @@ function main(){
     }
 
     //Находим секретный параметр
-    var tform = getParam(html, null, null, /<input[^>]+name="t:formdata"[^>]*value="([^"]*)/i, replaceHtmlEntities);
+    var tform = AB.getParam(html, null, null, /<input[^>]+name="t:formdata"[^>]*value="([^"]*)/i, AB.replaceHtmlEntities);
     if(!tform){ //Если параметр не найден, то это, скорее всего, свидетельствует об изменении сайта или о проблемах с ним
-	AnyBalance.trace(html); //В непонятных случаях лучше сделать распечатку в лог, чтобы можно было понять, что случилось
+		AnyBalance.trace(html); //В непонятных случаях лучше сделать распечатку в лог, чтобы можно было понять, что случилось
         throw new AnyBalance.Error('Не удалось найти форму входа. Сайт изменен?');
     }
 
@@ -53,13 +53,13 @@ function main(){
         confirmAgreement:'on'
         //Данный сайт не проверяет заголовок Referer, но если заголовок требуется передать, то можно сделать это так
         //В результате в запрос уйдут все заголовки из g_headers и Referer
-    }, addHeaders({Referer: baseurl + 'login'})); 
+    }, AB.addHeaders({Referer: baseurl + 'login'})); 
 
     //После входа обязательно проверяем маркер успешного входа
     //Обычно это ссылка на выход, хотя иногда приходится искать что-то ещё
     if(!/\/Logout/i.test(html)){
         //Если в кабинет войти не получилось, то в первую очередь надо поискать в ответе сервера объяснение ошибки
-        var error = getParam(html, null, null, /<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces);
+        var error = AB.getParam(html, null, null, /<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, AB.replaceTagsAndSpaces);
         if(error){
             //При выкидывании ошибки входа третьим параметром передаём проверку на то, что это ошибка неправильного пароля. 
             //Если третий параметр true, то AnyBalance прекратит обновления до тех пор, пока пользователь не изменит настройки.
@@ -74,11 +74,11 @@ function main(){
     //Раз мы здесь, то мы успешно вошли в кабинет
     //Получаем все счетчики
     var result = {success: true};
-    getParam(html, result, 'fio', /Имя(?:\s|&nbsp;)*абонента:[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces);
-    getParam(html, result, '__tariff', /Тарифный план:[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces);
-    getParam(html, result, 'phone', /Номер:[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces);
-    getParam(html, result, 'balance', /Текущий баланс:[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'status', /Статус:[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces);
+    AB.getParam(html, result, 'fio', /Имя(?:\s|&nbsp;)*абонента:[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, AB.replaceTagsAndSpaces);
+    AB.getParam(html, result, '__tariff', /Тарифный план:[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, AB.replaceTagsAndSpaces);
+    AB.getParam(html, result, 'phone', /Номер:[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, AB.replaceTagsAndSpaces);
+    AB.getParam(html, result, 'balance', /Текущий баланс:[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, AB.replaceTagsAndSpaces, AB.parseBalance);
+    AB.getParam(html, result, 'status', /Статус:[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, AB.replaceTagsAndSpaces);
 
     //Возвращаем результат
     AnyBalance.setResult(result);

@@ -1,4 +1,6 @@
 (function () {
+	"use strict";
+
 	/** Делает все замены в строке value (четные - регулярное выражение, нечетные - замена). При этом, если элемент replaces массив, то делает замены по нему рекурсивно. */
 	String.prototype.replaceAll = function(replaces) {
 		var value = this, i;
@@ -18,7 +20,7 @@
 	 * @link http://www.fileformat.info/format/w3c/entitytest.htm?sort=Unicode%20Character  HTML Entity Browser Test Page
 	 * @var  array
 	 */
-	String.HTML_ENTITY_TABLE = {
+	var HTML_ENTITY_TABLE = {
 		//HTML special chars table
 		quot : 0x0022,  //"\x22" ["] &#34; quotation mark = APL quote
 		amp  : 0x0026,  //"\x26" [&] &#38; ampersand
@@ -278,7 +280,7 @@
 		spades  : 0x2660,  //"\xe2\x99\xa0" [♠] black spade suit
 		clubs   : 0x2663,  //"\xe2\x99\xa3" [♣] black club suit = shamrock
 		hearts  : 0x2665,  //"\xe2\x99\xa5" [♥] black heart suit = valentine
-		diams   : 0x2666,  //"\xe2\x99\xa6" [♦] black diamond suit
+		diams   : 0x2666  //"\xe2\x99\xa6" [♦] black diamond suit
 	};
 	
 	var HTML_ENTITY_RE = new XRegExp(
@@ -290,8 +292,8 @@
 		;', 'gx'),
     entityReplace = function (str, key) {
 		if (key[0] !== '#') {
-			if (String.HTML_ENTITY_TABLE.hasOwnProperty(key))
-				return String.fromCharCode(String.HTML_ENTITY_TABLE[key]);
+			if (HTML_ENTITY_TABLE.hasOwnProperty(key))
+				return String.fromCharCode(HTML_ENTITY_TABLE[key]);
 			return '&' + key + ';'; //unknown entry
 		}
 		return String.fromCharCode(key[1] === 'x'	? parseInt(key.substr(2), 16) 
@@ -302,6 +304,7 @@
 	];
 
 	String.REPLACE_HTML_ENTITIES = replaceEntities;
+	String.HTML_ENTITY_TABLE = HTML_ENTITY_TABLE;
 	String.prototype.htmlEntityDecode = function () {
 		//HTML entities, examples: &gt; &Ouml; &#x02DC; &#34;
 		return this.replaceAll(replaceEntities);
@@ -322,41 +325,36 @@
 	].join('|');
 
 	//fast short implementation
-	var HTML_ATTR_RE = 
-		'(?:						\n\
-					[^>"\']+		\n\
-				|	"   [^"]*    "	\n\
-				|	\'  [^\']*  \'	\n\
-			)*';
-	var HTML_TAG_RE = '(?:															\n\
-			#pair tags with content:									\n\
-			<	(?=[a-z])				#speed improve optimization		\n\
-				(' + HTML_PAIR_TAGS_WITH_CONTENT + ')\\b	#1			\n\
-				' + HTML_ATTR_RE + '									\n\
-			>															\n\
-				.*?														\n\
-			< (?!script\\b)												\n\
-				#speed improve optimization - atomic group				\n\
-				(?=(/?))\\2									#2			\n\
-				\\1' + HTML_ATTR_RE + '									\n\
-			>															\n\
-																	\n\
-			#opened tags:												\n\
-		|	<	(?=[a-z])												\n\
-				(?!(?:' + HTML_PAIR_TAGS_WITH_CONTENT + ')\\b)			\n\
-				' + HTML_ATTR_RE + '									\n\
-			>															\n\
-																	\n\
-		|	</[a-z]' + HTML_ATTR_RE + '>	#closed tags		\n\
-		|	<![a-z]' + HTML_ATTR_RE + '>	#<!DOCTYPE ...>		\n\
-		|	<!\\[CDATA\\[  .*?  \\]\\]>		#CDATA				\n\
-		|	<!--  .*?   -->					#comments			\n\
-		|	<\\?  .*?  \\?>					#instructions part1 (PHP, Perl, ASP)	\n\
-		|	<%	  .*?    %>					#instructions part2 (PHP, Perl, ASP)	\n\
-		)';
+	var HTML_ATTR_RE = /(?:[^>"']+|"[^"]*"|'[^']*')*/.source; //Регулярное выражение для пропуска атрибутов
+	var HTML_TAG_RE = `(?:
+			#pair tags with content:
+			<	(?=[a-z])	#speed improve optimization
+				(` + HTML_PAIR_TAGS_WITH_CONTENT + `)\\b	#1`
+				+ HTML_ATTR_RE +
+			`>
+				.*?
+			< (?!script\\b)
+				#speed improve optimization - atomic group
+				(?=(/?))\\2									#2
+				\\1` + HTML_ATTR_RE + 
+			`>
+
+			#opened tags:
+		|	<	(?=[a-z])
+				(?!(?:` + HTML_PAIR_TAGS_WITH_CONTENT + `)\\b)`
+				+ HTML_ATTR_RE + 
+			`>
+
+		|	</[a-z]` + HTML_ATTR_RE + `>	#closed tags
+		|	<![a-z]` + HTML_ATTR_RE + `>	#<!DOCTYPE ...>
+		|	<!\\[CDATA\\[  .*?  \\]\\]>		#CDATA
+		|	<!--  .*?   -->					#comments
+		|	<\\?  .*?  \\?>					#instructions part1 (PHP, Perl, ASP)
+		|	<%	  .*?    %>					#instructions part2 (PHP, Perl, ASP)
+		)`;
 
 
-	var htmlBlockTagsRe = new RegExp('^<('+ HTML_BLOCK_TAGS + ')\\b', 'i'),
+	let htmlBlockTagsRe = new RegExp('^<('+ HTML_BLOCK_TAGS + ')\\b', 'i'),
 		replaceTagsAndSpaces = String.REPLACE_TAGS_AND_SPACES = [
 		
 		new XRegExp(HTML_TAG_RE, 'igx'), 
@@ -379,7 +377,7 @@
 	];
 
 	String.prototype.htmlToText = function () {
-		return str.replaceAll(replaceTagsAndSpaces);
+		return this.replaceAll(replaceTagsAndSpaces);
 	}
 
 })();

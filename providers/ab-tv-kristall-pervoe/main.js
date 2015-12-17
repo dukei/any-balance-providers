@@ -20,37 +20,35 @@ function main(){
     var prefs = AnyBalance.getPreferences();
 
     var baseurl = "http://lk.kristall-pervoe.tv/";
-
     AnyBalance.setDefaultCharset('utf-8'); 
 
-    var html = AnyBalance.requestPost(baseurl + 'login', {
+    var html = AnyBalance.requestPost(baseurl + 'login.php', {
         city:prefs.town,
         login:prefs.login,
         password:prefs.password,
         authtype_alt:'0'
-    }, addHeaders({Referer: baseurl + 'login'})); 
+    }, addHeaders({Referer: baseurl + 'login.php'}));
 
-    if(!/\/logout/i.test(html)){
-        var error = getParam(html, null, null, /<img[^>]+src="\/images\/layout\/!\.png"[^>]*><\/img><\/td><td>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+    if(!/logout/i.test(html)){
+        var error = getParam(html, null, null, /<div[^>]+class\s*=\s*"login-msg"[^>]*>[\s\S]*?<strong[^>]*>([\s\S]*?)<ul>/i, replaceTagsAndSpaces, html_entity_decode);
         if(error)
-            throw new AnyBalance.Error(error);
+            throw new AnyBalance.Error(error,  null, /Ошибка авторизации!/i.test(error));
         throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
     }
-    AnyBalance.requestGet(baseurl + 'login', g_headers);
-
-    html = AnyBalance.requestGet(baseurl + 'infoline/head_view', g_headers);
-
     var result = {success: true};
-    getParam(html, result, 'fio', /title="договор"[^>]*>([\s\S]*?)<br>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'balance', /<a[^>]+href=\"\/account\/balance\"[^>]*>([\s\S]*?)<br>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'bonus', /title="в копилке"[^>]*>([\s\S]*?)<br>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'days', /title="осталось"[^>]*>([\s\S]*?)<br>/i, replaceTagsAndSpaces, parseBalance);
 
-    html = AnyBalance.requestGet(baseurl + 'account/balance', g_headers);
-    getParam(html, result, 'lastPeriod', /<td[^>]*>Остаток с прошлого периода<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'income', /<td[^>]*>Поступления на счёт \(всего\)<\/td>(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'service', /<td[^>]*>Наработка по услугам \(всего\)<\/td>(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'oneService', /Расход по разовым услугам \(всего\)<\/td>(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'fio', /fa-user(?:[^>]*>){3}([\s\S]*?)<\//i, replaceTagsAndSpaces);
+    getParam(html, result, 'balance', /баланс(?:[^>]*>){1}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'bonus', /бонусы(?:[^>]*>){1}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'days', /До конца учетного периода(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
+
+    html = AnyBalance.requestGet(baseurl+ 'pay.php', g_headers);
+
+    getParam(html, result, 'lastPeriod', /<td[^>]*>Остаток с пред\.месяца<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'income', /<td[^>]*>Поступления<\/td>(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'service', /<td[^>]*>Наработка<\/td>(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'oneService', /Расход<\/td>(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+
 
     AnyBalance.setResult(result);
 }

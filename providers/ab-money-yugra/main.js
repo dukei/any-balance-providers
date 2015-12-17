@@ -15,7 +15,7 @@ var g_countersTable = {
         "type": "cards.type",
         "currency": "cards.currency",
         "till": "cards.till",
-        __tariff: "cards.__name",
+        __tariff: "cards.tariff_name",
 	},
 	crd: {
 	},
@@ -29,7 +29,7 @@ var g_countersTable = {
         "balance_min": "accounts.balance_min",
         "till": "accounts.date_end",
         "rate": "accounts.rate",
-        __tariff: "accounts.__name",
+        __tariff: "accounts.tariff_name",
     },
 	dep: {
     }

@@ -149,6 +149,8 @@ function processAccount(tool, result){
 	getParam(n(account.replenish), result, 'accounts.replenish'); //bool
 	getParam(n(account.partial_withdrawal), result, 'accounts.withdrawal'); //bool
 	getParam(n(account.rate), result, 'accounts.rate');
+	getParam(n(account.tariff_code), result, 'accounts.tariff_code');
+	getParam(n(account.tariff_name), result, 'accounts.tariff_name');
 
     if(AnyBalance.isAvailable('accounts.transactions')) {
         processAccountTransactions(tool, result);
@@ -177,7 +179,7 @@ function processCards(json, result) {
 			if(tool.parent_id){
 				//Есть родительский счет
 				var acctool = getToolById(json.data.tools, tool.parent_id);
-				getParam(acctool && acctool.account && acctool.account.number, t, 'cards.accnum');
+				getParam(acctool && acctool.account && acctool.account.number, t, 'accnum');
 			}
 			processCard(tool, t);
 		}
@@ -202,6 +204,8 @@ function processCard(tool, result) {
 	getParam(n(card.owner), result, 'cards.holder');
 	getParam(n(card.sms_notice), result, 'cards.sms_notice'); //bool
 	getParam(n(card.cashback_sum), result, 'cards.cashback');
+	getParam(n(card.tariff_code), result, 'cards.tariff_code');
+	getParam(n(card.tariff_name), result, 'cards.tariff_name');
 
 	if(isAvailable('cards.transactions'))
 		processCardTransactions(tool, result);
@@ -233,6 +237,6 @@ function processInfo(json, result){
 		getParam(n(json.data.person.pass_number), info, 'info.pass_number');
 		getParam(n(json.data.person.pass_description), info, 'info.pass_descr');
 		getParam(n(json.data.person.address), info, 'info.address');
-		getParam(n(json.data.person.email), info, 'info.email');
+		getParam(n(json.data.email || json.data.person.email), info, 'info.email');
 	}
 }

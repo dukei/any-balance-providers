@@ -215,6 +215,7 @@ function getNsk(){
     AnyBalance.setDefaultCharset('utf-8');
 
     var baseurl = 'https://kabinet.nsk.mts.ru/';
+    //TODO: Лучше перевести на typicalApiInetTv!!!
 
     var html = AnyBalance.requestPost(baseurl + 'res/modules/AjaxRequest.php?Method=Login', {
 		BasicAuth:true,
@@ -255,94 +256,6 @@ function getNsk(){
 	
     AnyBalance.setResult(result);
 	
-	
-	/*
-
-    var prefs = AnyBalance.getPreferences();
-    var baseurl = 'https://my.citynsk.ru/csp/rkc/';
-
-    var html = AnyBalance.requestGet(baseurl + 'index.csp');
-    var href = getParam(html, null, null, /<form[^>]*action="(login[^"]*)"/i);
-    if(!href)
-        throw new AnyBalance.Error("Не удалось найти форму входа. Сайт изменен или проблемы на сайте");
-
-    html = AnyBalance.requestPost(baseurl + href, {
-        login:prefs.login,
-        passwd:prefs.password
-    });
-
-    if(!getParam(html, null, null, /<input[^>]*type=["']submit["'][^>]*value=["'](Выход)["']/i)){
-        var error = getParam(html, null, null, /FormFocus\s*\(\s*['"]([^'"]*)/i);
-        if(error)
-            throw new AnyBalance.Error(error);
-        throw new AnyBalance.Error("Не удалось войти в личный кабинет");
-    }
-
-    href = getParam(html, null, null, /<iframe[^>]*name="PM"[^>]*src=['"]([^'"]*)/i);
-    if(!href)
-        throw new AnyBalance.Error("Не удаётся найти очередную ссылку (portmonetmain). Cайт изменен?");
-
-    html = AnyBalance.requestGet(baseurl + href);
-    href = getParam(html, null, null, /<iframe[^>]*name="PMUP"[^>]*src=['"]([^'"]*)/i);
-    if(!href)
-        throw new AnyBalance.Error("Не удаётся найти очередную ссылку (pmroles). Cайт изменен?");
-
-    html = AnyBalance.requestGet(baseurl + href);
-    href = getParam(html, null, null, /<A[^>]*href=['"](pmrolesmaincontract[^'"]*)/i);
-    if(!href)
-        throw new AnyBalance.Error("Не удаётся найти очередную ссылку (pmrolesmaincontract). Cайт изменен?");
-
-    html = AnyBalance.requestGet(baseurl + href);
-    href = getParam(html, null, null, /<iframe[^>]*name="PMMENU"[^>]*src=['"]([^'"]*)/i);
-    if(!href)
-        throw new AnyBalance.Error("Не удаётся найти очередную ссылку (pmmenucontract). Cайт изменен?");
-
-    html = AnyBalance.requestGet(baseurl + href);
-    var hrefs = sumParam(html, null, null, /<a[^>]*href=['"](contractinfo[^'"]*)/ig);
-    if(!hrefs.length)
-        throw new AnyBalance.Error("Не удаётся найти очередную ссылку (contractinfo). Cайт изменен?");
-    href = hrefs[0];
-
-    html = AnyBalance.requestGet(baseurl + href);
-    href = getParam(html, null, null, /<iframe[^>]*name="frmContent"[^>]*src=['"]([^'"]*)/i);
-    if(!href)
-        throw new AnyBalance.Error("Не удаётся найти очередную ссылку (contractinfonew). Cайт изменен?");
-
-    var hrefipstat = getParam(html, null, null, /<a[^>]*href=['"](ipstat[^'"]*)/i);
-
-    html = AnyBalance.requestGet(baseurl + href); //Совсем охренели так лк писать... Наконец-то добрались до баланса
-    
-    var result = {success: true};
-                                                   
-    getParam(html, result, 'agreement', /Договор[\s\S]*?<td[^>]*>([\s\S]*?)(?:от|<\/td>)/i, replaceTagsAndSpaces);
-    getParam(html, result, 'license', /Номер (?:связанного )?л[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
-    getParam(html, result, 'balance', /Остаток на л[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance3);
-    getParam(html, result, '__tariff', /Текущий тариф[\s\S]*?<td[^>]*>([\s\S]*?)(?:\(|<\/td>)/i, replaceTagsAndSpaces);
-    getParam(html, result, 'abon', />(?:\s|&nbsp;)*АП(?:\s|&nbsp;)+([\d\.]+)/i, replaceTagsAndSpaces, parseBalance3);
-
-    if(AnyBalance.isAvailable('balance_tv') && hrefs.length >= 2){
-        href = hrefs[1];
-
-        html = AnyBalance.requestGet(baseurl + href);
-        href = getParam(html, null, null, /<iframe[^>]*name="frmContent"[^>]*src=['"]([^'"]*)/i);
-        if(!href)
-            throw new AnyBalance.Error("Не удаётся найти очередную ссылку (contractinfonew). Cайт изменен?");
-        
-        html = AnyBalance.requestGet(baseurl + href); //Совсем охренели так лк писать... Наконец-то добрались до баланса
-        
-        getParam(html, result, 'balance_tv', /Остаток на л[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance3);
-    }
-
-    if(AnyBalance.isAvailable('internet_cur')){
-        if(!hrefipstat){
-            AnyBalance.trace("Не найдена ссылка на трафик!");
-        }else{
-            html = AnyBalance.requestGet(baseurl + hrefipstat);
-            getParam(html, result, 'internet_cur', /Итого[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, [/,/g, '', replaceTagsAndSpaces], parseTrafficBytes);
-        }
-    }
-
-    AnyBalance.setResult(result);*/
 }
 
 function getPrmOld(){
@@ -642,39 +555,164 @@ function getUln(){
 }
 
 function getNorilsk(){
+    var baseurl = "https://kabinet.norilsk.mts.ru/";
+    typicalApiInetTv(baseurl);
+}
+
+function typicalApiInetTv(baseurl){
     var prefs = AnyBalance.getPreferences();
     AnyBalance.setDefaultCharset('utf-8');
 
-    var baseurl = "https://kabinet.norilsk.mts.ru/";
-
-    var html = AnyBalance.requestPost(baseurl, {
-        extDvc:0,
-        authLogin:prefs.login,
-        authPassword:prefs.password,
-        userAction:'auth'
+    var html = AnyBalance.requestPost(baseurl + 'res/modules/AjaxRequest.php?Method=Login', {
+        'Data[LoginType]':'Login',
+        'Data[Login]':prefs.login,
+        'Data[Passwd]':prefs.password,
+        'Service':'API.User.Service',
+        'Client':'mts',
+        BasicAuth:'true',
     });
-
-    if(!/\/index\/logout/i.test(html)){
-        var error = getParam(html, null, null, /<div[^>]*background-color:\s*Maroon[^>]*>([\s\S]*?)<\/div>/, replaceTagsAndSpaces, html_entity_decode);
-        if(error)
-            throw new AnyBalance.Error(error);
-        AnyBalance.trace(html);
-        throw new AnyBalance.Error('Не удалось войти в личный кабинет. Проблемы на сайте или сайт изменен.');
+    
+    var json = getJson(html);
+    
+    if(json.Error){
+    	var error = json.SoapFault.Text;
+    	if(error)
+    		throw new AnyBalance.Error(error, null, /неверный логин или пароль/i.test(error));
+    	AnyBalance.trace(JSON.stringify(json));
+        throw new AnyBalance.Error("Не удалось войти в личный кабинет. Неправильный логин-пароль?");
     }
 
+    var token = json.Result.Result.Token[0];
+    html = AnyBalance.requestPost(baseurl + 'res/modules/AjaxRequest.php?Method=GetContainerByPath', {
+        'AccessToken':token,
+        'Client':'mts',
+        'Service':'API.Interface.Service'
+    });
+    json = getJson(html);
+
+    /**
+    	Находим группу контролов, чьё поле удовлетворяет регулярному выражению
+    */
+    function findControls(child, re, field){
+    	if(!field) field = "ClientId";
+    	if(re.test(child[field]))
+    		return child;
+   		for(var i=0; child.ChildrenList && child.ChildrenList.Container && i < child.ChildrenList.Container.length; ++i){
+   			var ch = findControls(child.ChildrenList.Container[i], re);
+   			if(ch)
+   				return ch; 
+   		}
+    }
+
+    /**
+    	Находим контрол, чьё поле удовлетворяет регулярному выражению
+    */
+    function findControl(controls, re, field){
+    	if(!field) field = "ClientId";
+   		for(var i=0; i < controls.length; ++i){
+    		if(re.test(controls[i][field]))
+    			return controls[i];
+   		}
+    }
+
+    function sumTariffNames(controls, result){
+   		for(var i=0; i < controls.length; ++i){
+    		sumParam(controls[i].Name, result, '__tariff', null, replaceTagsAndSpaces, null, aggregate_join);
+   		}
+    }
+
+    var fioacc = findControls(json.Result.Result, /UserCardPart1/i);
+    var taragr = findControls(json.Result.Result, /UserCardPart2/i);
+    if(!fioacc || !fioacc){
+    	AnyBalance.trace(JSON.stringify(json));
+    	throw AnyBalance.Error('Не удалось найти карточку пользователя');
+    }
+
+    //Находим тарифный контрол
+    var tariff = findControl(taragr.ControlList.Control, /_LK$/);
+    var first = /tv/i.test(tariff.ClientId) ? 'tv' : 'internet'; //Определяем, tv это или интернет
+    var second = first == 'tv' ? 'internet' : 'tv'
+    var data = {};
+    data[first] = {fioacc: fioacc, taragr: taragr};
+
+
+    //Найдем активный и второй лицевой счет
+    var secondId;
+    for(var i=0; i<fioacc.ControlList.Control.length; ++i){
+    	var c = fioacc.ControlList.Control[i];
+	    if(c.Type == 'Node' && /ReloadUserCard/.test(JSON.stringify(c.ParamList))){
+    		try{
+	    		if(c.AttrList.Attr[0]._ == 'active')
+	    			data[first].license = c.Name;
+    		}catch(e){
+	    		data[second] = {license: c.Name};
+	    		secondId = c.ServerId;
+	    	}
+	    }
+    }
+
+    if(secondId){
+        html = AnyBalance.requestPost(baseurl + 'res/modules/AjaxRequest.php?Method=ReloadUserCard', {
+        	'Data[AccountId]': secondId,
+            'AccessToken':token,
+            'Client':'mts',
+            'Service':'API.User.Service'
+        });
+        json = getJson(html);
+        
+        fioacc = findControls(json.Result.Container, /UserCardPart1/i);
+        taragr = findControls(json.Result.Container, /UserCardPart2/i);
+        if(!fioacc || !fioacc){
+        	AnyBalance.trace(JSON.stringify(json));
+        	throw AnyBalance.Error('Не удалось найти карточку пользователя для второго лицевого счета');
+        }
+
+        data[second].fioacc = fioacc;
+        data[second].taragr = taragr;
+    }
+
+    //Теперь в data есть инфа по счету internet и, возможно, tv
+    	
     var result = {success: true};
 
-    getParam(html, result, 'balance', /Баланс:[\S\s]*?<strong[^>]*>([\S\s]*?)<\/strong>/i, replaceTagsAndSpaces, parseBalanceRK);
-    getParam(html, result, 'status', /Статус:[\S\s]*?<strong[^>]*>([\S\s]*?)<\/strong>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'licschet', /Лицевой счёт:[\S\s]*?<strong[^>]*>([\S\s]*?)<\/strong>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, '__tariff', /Тарифный план:[\S\s]*?<strong[^>]*>([\S\s]*?)<\/strong>/i, replaceTagsAndSpaces, html_entity_decode);
-	
-	if(isAvailable('internet_cur')) {
-		html = AnyBalance.requestGet(baseurl + 'equipment/traffic');
-		
-		getParam(html, result, 'internet_cur', /Количество неизрасходованного трафика, включенного в абонентскую плату:(?:[^>]*>){3}([^<]+)/i, replaceTagsAndSpaces, parseTraffic);
-	}
-	
+    var active = data.internet ? 'internet' : 'tv'; //Счет, по которому в первую очередь получаем инфу
+    var activeData = data[active], ctl;
+
+    getParam(activeData.fioacc.ControlList.Control[0].Value, result, 'username');
+    getParam(activeData.license, result, 'license');
+
+    if(data.internet){
+    	ctl = findControl(data.internet.taragr.ControlList.Control, /Balance/i);
+    	getParam(ctl && ctl.Value, result, 'balance', null, null, parseBalance);
+
+    	tariff = findControl(data.internet.taragr.ControlList.Control, /_LK$/);
+    	sumTariffNames(tariff.ChildrenList.Control, result);
+    }
+    if(data.tv){
+    	ctl = findControl(data.tv.taragr.ControlList.Control, /Balance/i);
+    	getParam(ctl && ctl.Value, result, 'balance_tv', null, null, parseBalance);
+    	
+    	tariff = findControl(data.tv.taragr.ControlList.Control, /_LK$/);
+    	sumTariffNames(tariff.ChildrenList.Control, result);
+    }
+   	
+   	ctl = findControl(activeData.taragr.ControlList.Control, /GeneralContract/i);
+    getParam(ctl && ctl.Value, result, 'agreement');
+
+    if(AnyBalance.isAvailable('abon')){
+    	//Абонентская плата в другом запросе
+        html = AnyBalance.requestPost(baseurl + 'res/modules/AjaxRequest.php?Method=GetPageByPath', {
+        	'Data[ServerPath]': 'HomePage',
+            'AccessToken':token,
+            'Client':'mts',
+            'Service':'API.Interface.Service'
+        });
+    	json = getJson(html);
+    	html = JSON.stringify(json); //Чтобы русские буквы стали русскими
+
+    	getParam(html, result, 'abon', /Ежемесячная плата за пакет услуг[^<]*?:([^<]*)/, replaceTagsAndSpaces, parseBalance);
+    }
+    
     AnyBalance.setResult(result);
 }
 
@@ -698,6 +736,7 @@ function getBarnaul(){
     AnyBalance.setDefaultCharset('utf-8');
 
     var baseurl = 'https://kabinet.barnaul.mts.ru/';
+    //TODO: Лучше перевести на typicalApiInetTv!!!
 
     var html = AnyBalance.requestPost(baseurl + 'res/modules/AjaxRequest.php?Method=Login', {
         BasicAuth:true,
@@ -741,6 +780,7 @@ function getNovokuz(){
     AnyBalance.setDefaultCharset('utf-8');
 
     var baseurl = 'https://kabinet.kemerovo.mts.ru/';
+    //TODO: Лучше перевести на typicalApiInetTv!!!
 
     var html = AnyBalance.requestPost(baseurl + 'res/modules/AjaxRequest.php?Method=Login', {
         'Data[LoginType]': 'PPPoE',

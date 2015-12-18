@@ -27,9 +27,7 @@ function main() {
 	html = AnyBalance.requestPost(baseurl + 'auth/login', {
 		'username': prefs.login,
 		'password': prefs.password
-	}, addHeaders({
-		Host: 'gost56.ru'
-	}));
+	}, g_headers);
 	
 	if (!/загружаем/i.test(html)) {
 		var error = getParam(html, null, null, /<center[^>]*>([\s\S]*?)<\/center>/i, replaceTagsAndSpaces);

@@ -14,8 +14,7 @@ function main() {
 	var prefs = AnyBalance.getPreferences();
 	var baseurl = 'http://lk.ang-vodokanal.ru/';
 	AnyBalance.setDefaultCharset('utf-8');
-	//16.00
-	checkEmpty(prefs.login, 'Введите логин!');
+ 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 	
 	var html = AnyBalance.requestGet(baseurl+'avtoris/', g_headers);

@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-internet-telestar</id>
+	<api flags="no_browser"/>
+	<name>Telestar </name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера Telestar.net <a href="http://tlstar.ru/">http://tlstar.ru/</a></p>
+	<p>Информация берется из личного кабинета <a href="http://tls2.tlstar.ru/">http://tls2.tlstar.ru/</a></p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" p"/>
+		<counter id="credit" name="Кредит" units=" p"/>
+		<counter id="cost" name="Стоимость тарифа" units=" p"/>
+		<counter id="paid" name="Списано в текущем месяце" units=" p"/>
+		<counter id="nds" name="Ставка НДС" units=" %"/>
+		<counter id="account" name="Основной счёт" type="text"/>
+		<counter id="ID" name="ID" type="text"/>
+		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="block" name="Блокировка" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>internet</type>
+	<country>ru</country>
+</provider>

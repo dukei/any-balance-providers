@@ -42,14 +42,14 @@ function main() {
 	getParam(html, result, 'block', /<td[^>]*>Блокировка<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
 
 	var href = getParam(html, null, null, /<SPAN[^>]+class="submenu-inact"[^>]*><A[^>]+href=\"([\s\S]*?)\"[^>]*>Список услуг<\/A>/i, null, html_entity_decode);
-	if(!href){
-		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Не удалось найти ссылку на список услуг. Сайт изменен?');
+	if(!href)
+		AnyBalance.trace('Не удалось найти ссылку на список услуг. Сайт изменен?');
+	else {
+		html = AnyBalance.requestGet(baseurl + href, g_headers);
+		getParam(html, result, '__tariff', /<TD[^>]*>Тарифный план<\/TD>(?:[\s\S]*?<td[^>]*>){7}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+		getParam(html, result, 'cost', /(?:[\s\S]*?<tr[^>]*>){6}(?:[\s\S]*?<td[^>]*>){6}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+		getParam(html, result, 'paid', /(?:[\s\S]*?<tr[^>]*>){6}(?:[\s\S]*?<td[^>]*>){7}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 	}
-	html = AnyBalance.requestGet(baseurl + href, g_headers);
-	getParam(html, result, '__tariff', /<TD[^>]*>Тарифный план<\/TD>(?:[\s\S]*?<td[^>]*>){7}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'cost', /(?:[\s\S]*?<tr[^>]*>){6}(?:[\s\S]*?<td[^>]*>){6}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'paid', /(?:[\s\S]*?<tr[^>]*>){6}(?:[\s\S]*?<td[^>]*>){7}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 
 	AnyBalance.setResult(result);
 }

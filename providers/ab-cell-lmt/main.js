@@ -69,13 +69,13 @@ function main() {
     }
 	
 	var result = {success: true};
-    var dateReplaces = replaceTagsAndSpaces.concat(/[^\d:\-]+/, ' ');
+    var dateReplaces = [replaceTagsAndSpaces, /[^\d:\-]+/, ' '];
 	
 	getParam(html, result, 'balance', getRegEx('Остаток на счету'), replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'advance_duration', getRegEx('Срок действия аванса', true), dateReplaces, parseDate);
     getParam(html, result, 'usage_duration', getRegEx('Срок использования', true), dateReplaces, parseDate);
 	getParam(html, result, '__tariff', getRegEx('Тарифный план'), replaceTagsAndSpaces);
-    getParam(html, result, 'service_package', getServicePackageRe(), replaceTagsAndSpaces, parseServicePackage);
+    getParam(html, result, 'service_package', /пакеты услуг[^]*?>[^]*?>(.*?)<\/td>[^]*?<\/table>/i, replaceTagsAndSpaces, parseServicePackage);
 
 	AnyBalance.setResult(result);
 }
@@ -101,11 +101,6 @@ function parseServicePackage(value) {
         res = value;
     }
     return res;
-}
-
-function getServicePackageRe() {
-    var srcString = 'пакеты услуг[^]*?<table[^>]*>[^]*?<td[^>]*>(.*?)<\/td>[^]*?<\/table>';
-    return new RegExp(srcString, 'i')
 }
 
 function getRegEx(searchString, isPeriodValue) {

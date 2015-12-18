@@ -34,7 +34,7 @@ function main() {
 	var json = getJson(html);
 
 	if (json.error) {
-		var error = getParam(json.error.name);
+		var error = json.error ? json.error.name : undefined;
 		//Здесь у них хранятся расшифровки ошибок
 		var rusJson = getJson(AnyBalance.requestGet('http://travel.vtb24.ru/app/js/translations/translation_ru.json', g_headers));
 		if (error)

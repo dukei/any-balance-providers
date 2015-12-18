@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-municipal-donetskoblenergo</id>
+	<api flags="no_browser"/>
+	<name>ДОНЕЦКОБЛЭНЕРГО</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера ПАО &laquo;ДТЭК ДОНЕЦКОБЛЭНЕРГО&raquo; <a href="http://donetskoblenergo.dn.ua/">http://donetskoblenergo.dn.ua/</a></p>
+	<p>Информация берется из личного кабинета <a href="https://www.myenergy.dn.ua/ru/customer/login">https://www.myenergy.dn.ua/ru/customer/login</a></p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Текущая задолженность" units=" грн."/>
+		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="adress" name="Адрес" type="text"/>
+		<counter id="lastValue" name="Значение последнего измерения" units=" кВт*ч"/>
+		<counter id="lastDate" name="Дата съёма показаний счётчика" type="time" format="dd/MM/yyyy"/>
+	</counters>
+	<keywords></keywords>
+	<type>municipal</type>
+	<country>ru</country>
+</provider>

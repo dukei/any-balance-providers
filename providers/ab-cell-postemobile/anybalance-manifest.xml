@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-cell-postemobile</id>
+	<api flags="no_browser"/>
+	<name>Postemobile</name>
+	<description html="true"><![CDATA[
+	<p>Obtains information from <a href="https://www.postemobile.it/">https://www.postemobile.it/</a></p>
+	<p>Selfcare located at <a href="https://www.postemobile.it/areapersonale/Privati/pagine/PM13/AreaPersonale.aspx">https://www.postemobile.it/areapersonale/Privati/pagine/PM13/AreaPersonale.aspx</a></p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Traffico Residuo Totale" units=" €"/>
+		<counter id="FIO" name="Nome" type="text"/>
+		<counter id="phone" name="Numero" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>cell</type>
+	<country>it</country>
+</provider>

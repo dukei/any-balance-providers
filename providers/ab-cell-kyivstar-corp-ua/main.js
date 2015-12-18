@@ -8,8 +8,8 @@
 
 function parseBalanceRK(_text){
     var text = _text.replace(/\s+/g, '');
-    var rub = getParam(text, null, null, /(-?\d[\d\.,]*)(?:min|мин|хв|руб|грн)/i, replaceFloat, parseFloat) || 0;
-    var kop = getParam(text, null, null, /(-?\d[\d\.,]*)(?:сек|коп|sec)/i, replaceFloat, parseFloat) || 0;
+    var rub = getParam(text, null, null, /(-?\d[\d\.,]*)(?:min|мин|хв|руб|грн)/i, null, parseBalance) || 0;
+    var kop = getParam(text, null, null, /(-?\d[\d\.,]*)(?:сек|коп|sec)/i, null, parseBalance) || 0;
     var val = rub+kop/100;
     AnyBalance.trace('Parsing balance/minutes (' + val + ') from: ' + _text);
     return val;
@@ -39,28 +39,7 @@ function main(){
 
     
     var baseurl = "https://my.kyivstar.ua/";
-    var headers = {
-      'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
-      'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
-      'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Intel Mac OS X 10.6; rv:7.0.1) Gecko/20100101 Firefox/7.0.1',
-      Connection: 'keep-alive'
-    };
-	
-    AnyBalance.trace("Trying to enter selfcare at address: " + baseurl);
-    var html = AnyBalance.requestPost(baseurl + "tbmb/login/perform.do", {
-        isSubmitted: "true",
-        user: prefs.login,
-        password: prefs.password
-    }, headers);
-    
-    if(!/\/tbmb\/logout\/perform/i.test(html)){
-	var error = getParam(html, null, null, /<td[^>]+class="redError"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-	if (error)
-		throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
-	
-	AnyBalance.trace(html);
-	throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
-    }
+   	var html = loginSite(baseurl);
 
     if(/\/tbmb\/payment\/activity\//i.test(html)){
         //Нашли ссылку на платежи. Очень вероятно, что это физический аккаунт
@@ -164,14 +143,14 @@ function main(){
         AnyBalance.trace('Проверяем, не подключены ли какие акции...');
         var html = AnyBalance.requestGet(baseurl + "tbmb/flash/goto.do?action=features&subs=" + nodeid_services);
         //ММС пакет
-        var url = getParam(html, null, null, /(?:Подключенные акции|Підключені акції|Activated offers)[\s\S]*?(?:Пакет MMS|Пакет MMS|MMS Pack)(?:[\s\S](?!<\/td>))*?<a[^>]+href="\/([^"]*)"[^>]*class="changeLink"/i, null, html_entity_decode);
+        var url = getParam(html, null, null, /(?:Подключенные акции|Підключені акції|Activated offers)[\s\S]*?(?:Пакет MMS|Пакет MMS|MMS Pack)(?:[\s\S](?!<\/td>))*?<a[^>]+href="\/([^"]*)"[^>]*class="changeLink"/i, replaceHtmlEntities);
         if(url && AnyBalance.isAvailable('mms_left')){
             AnyBalance.trace('Найден Пакет ММС...');
             var html_val = AnyBalance.requestGet(baseurl + url);
             getParam(html_val, result, 'mms_left', /(?:остаток MMS|залишок MMS|Balance MMS):([^<]*)/i, replaceTagsAndSpaces, parseBalance);
         }
         //Программа благодарности "Киевстар бизнес-клуб"
-        var url = getParam(html, null, null, /(?:Подключенные акции|Підключені акції|Activated offers)[\s\S]*?(?:Программа благодарности[^<]*Киевстар бизнес-клуб|Програма подяки[^>]*Київстар бізнес клуб|Kyivstar Business Club)(?:[\s\S](?!<\/td>))*?<a[^>]+href="\/([^"]*)"[^>]*class="changeLink"/i, null, html_entity_decode);
+        var url = getParam(html, null, null, /(?:Подключенные акции|Підключені акції|Activated offers)[\s\S]*?(?:Программа благодарности[^<]*Киевстар бизнес-клуб|Програма подяки[^>]*Київстар бізнес клуб|Kyivstar Business Club)(?:[\s\S](?!<\/td>))*?<a[^>]+href="\/([^"]*)"[^>]*class="changeLink"/i, replaceHtmlEntities);
         if(url && AnyBalance.isAvailable('bonus_available')){
             AnyBalance.trace('Найден Киевстар бизнес-клуб...');
             var html_val = AnyBalance.requestGet(baseurl + url);

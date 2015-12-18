@@ -2,13 +2,6 @@
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 */
 
-var g_headers = {
-	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
-	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
-	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Intel Mac OS X 10.6; rv:7.0.1) Gecko/20100101 Firefox/7.0.1',
-	Connection: 'keep-alive'
-};
-
 function main() {
 	var prefs = AnyBalance.getPreferences();
 
@@ -34,73 +27,7 @@ function processSite(){
 	var prefs = AnyBalance.getPreferences();
 
 	var baseurl = "https://my.kyivstar.ua/";
-	AnyBalance.trace('Соединение с ' + baseurl);
-	var html = AnyBalance.requestGet(baseurl + 'tbmb/login/show.do', g_headers);
-	
-	// Проверим, нужна ли капча?
-	var captchaa = AnyBalance.requestPost(baseurl + "tbmb/checkUser", {
-		action:'isCaptchaNeeded',
-		user:prefs.login
-	}, g_headers);
-	
-	if(captchaa == true) {
-		AnyBalance.trace('Необходимо ввести капчу..');
-		
-		if(AnyBalance.getLevel() >= 7){
-			AnyBalance.trace('Пытаемся ввести капчу');
-			var p = getParam(html, null, null, /src="\/(tbmb\/jcaptcha[^"]+)/i);
-			
-			var captcha = AnyBalance.requestGet(baseurl + p);
-			captchaa = AnyBalance.retrieveCode("Пожалуйста, введите код с картинки", captcha);
-			AnyBalance.trace('Капча получена: ' + captchaa);
-		}else{
-			throw new AnyBalance.Error('Провайдер требует AnyBalance API v7, пожалуйста, обновите AnyBalance!');
-		}
-	}
-	
-	//заготовка для обработки ошибок сайта, надо будет проверить во время следующего сбоя
-	if (/<TITLE>error<\/TITLE>/i.test(html)) {
-		var matches = html.match(/(<H1>[\s\S]*?<\/p>)/i);
-		if (matches) {
-			throw new AnyBalance.Error(matches[1].replace(/<\/?[^>]+>/g, ''));
-		}
-		throw new AnyBalance.Error("Неизвестная ошибка на сайте.");
-	}
-	
-	AnyBalance.trace('Успешное соединение.');
-	if (/\/tbmb\/logout\/perform/i.test(html)) {
-		AnyBalance.trace('Уже в системе.');
-		if (!~html.indexOf(prefs.login)) {
-			AnyBalance.trace('Не тот аккаунт, выход.');
-			html = AnyBalance.requestGet(baseurl + 'tbmb/logout/perform.do', g_headers);
-			AnyBalance.trace('Переход на страницу входа.');
-			html = AnyBalance.requestGet(baseurl + 'tbmb/login/show.do', g_headers);
-		}
-	}
-	// Login
-	var form = getParam(html, null, null, /<form[^>]+action="[^"]*perform.do"[^>]*>([\s\S]*?)<\/form>/i);
-	if (form) {
-		AnyBalance.trace('Вход в систему.');
-		var params = createFormParams(form);
-		params.user = prefs.login;
-		params.password = prefs.password;
-		
-		if(captchaa)
-			params.captcha = captchaa;
-		
-		html = AnyBalance.requestPost(baseurl + "tbmb/login/perform.do", params, g_headers);
-		
-		if (!/\/tbmb\/logout\/perform/i.test(html)) {
-			var error = getParam(html, null, null, /<td class="redError"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-			if (error)
-				throw new AnyBalance.Error(error, null, /Перевірте правильність введення логіну|введіть правильний пароль/i.test(error));
-			if (/<form[^>]+action="[^"]*perform.do"/i.test(html))
-				throw new AnyBalance.Error('Киевстар показал форму входа без ошибки. Возможно, вы пытаетесь войти в кабинет через мобильный интернет. На стороне Киевстара сейчас с этим проблема. Попробуйте обновить провайдер через вайфай.');
-			
-			AnyBalance.trace(html);
-			throw new AnyBalance.Error('Не удалось зайти в систему. Сайт изменен?');
-		}
-	}
+	var html = loginSite(baseurl);
 	
 	/**
 	if (!/payment\/activity\//i.test(html)) {
@@ -113,7 +40,6 @@ function processSite(){
 		throw new AnyBalance.Error("Ошибка. Информация о номере не найдена. Если у вас корпоративный аккаунт, воспользуйтесь провайдером Киевстар для корпоративных тарифов.");
 	}
 
-	AnyBalance.trace('Успешный вход.');
 	var result = {success: true};
 	//Тарифный план
 	getParam(html, result, '__tariff', /(?:Тарифний план:|Тарифный план:)[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
@@ -169,7 +95,7 @@ function processSite(){
 	//Бонусные средства 
 	sumParam(html, result, 'bonus_money', /(?:Бонусні кошти:|Бонусные средства:)[\s\S]*?<b>(.*?)</ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 	sumParam(html, result, 'bonus_money', /(?:Бонуси за умовами тарифного плану ["«»]Єдина ціна["«»]:|Бонусы по условиям тарифного плана ["«»]Единая цена["«»]:)[\s\S]*?<b>(.*?)</ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-	sumParam(html, result, 'bonus_money', /(?:Кошти по послузі ["«»]Екстра кошти["«»]|Средства по услуге ["«»]Экстра деньги["«»]):[\s\S]*?<b>(.*?)</ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+	sumParam(html, result, 'bonus_money', /(?:["«»]Екстра кошти["«»]|["«»]Экстра деньги["«»]|["«»]Екстра гроші["«»]):[\s\S]*?<b>(.*?)</ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 	sumParam(html, result, 'bonus_money_till', /(?:Бонусні кошти:|Бонусные средства:)(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseDate, aggregate_min);
 	sumParam(html, result, 'bonus_money_till', /(?:Бонуси за умовами тарифного плану ["«»]Єдина ціна["«»]:|Бонусы по условиям тарифного плана ["«»]Единая цена["«»]:)(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseDate, aggregate_min);
 	sumParam(html, result, 'bonus_money_till', /(?:Кошти по послузі ["«»]Екстра кошти["«»]|Средства по услуге ["«»]Экстра деньги["«»]):(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseDate, aggregate_min);
@@ -198,9 +124,9 @@ function processSite(){
 	//Срок действия номера
 	sumParam(html, result, 'till', /(?:Номер діє до:|Номер действует до:)[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate, aggregate_sum);
 	//Номер телефона
-	getParam(html, result, 'phone', /Номер[^<]*(?:[^>]*>){3}\s*(\+38\d+)/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'phone', /Номер[^<]*(?:[^>]*>){3}\s*(\+38\d+)/i, replaceTagsAndSpaces);
 	//Лицевой счет
-	getParam(html, result, 'personal_account', /(?:Особовий рахунок|Лицевой счет):[\s\S]*?<td[^>]*>([\s\S]*?)(?:\(|<\/td>)/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'personal_account', /(?:Особовий рахунок|Лицевой счет):[\s\S]*?<td[^>]*>([\s\S]*?)(?:\(|<\/td>)/i, replaceTagsAndSpaces);
 	//Срок действия услуги Комфортный переход
 	if (AnyBalance.isAvailable('comfort_till')) {
 		if(!/overview/i.test(AnyBalance.getLastUrl()))
@@ -229,7 +155,7 @@ var g_session_token;
 var g_replace_date = [/01.01.0001/, 'истек'];
 
 function createMobileParams(params){
-	var o = {"version":"1.3.0.0","lang":"ru","sourceId":"Android 4.2"};
+	var o = {"version":"1.6.0.0","lang":"ru","sourceId":"Android 4.2"};
 	var ret = {};
 	if(params){
 		for(var i in params){
@@ -265,7 +191,7 @@ function callMobileApi(cmd, params){
 		html = AnyBalance.requestPost(baseurl + cmd + '/?' + new Date().getTime(), JSON.stringify({param: createMobileParams(params)}), headers);
 		var json = getJson(html);
 		var value = getMobileApiResult(json);
-		if(cmd == 'login'){
+		if(cmd == 'login2'){
 			if(value.session_token)
 				g_session_token = value.session_token;
 		}
@@ -290,7 +216,12 @@ function processMobileApi() {
 	var prefs = AnyBalance.getPreferences();
 	var result = {success: true};
 
-	var json = callMobileApi('login', {uid: prefs.login, password: prefs.password});
+	loginMobile();
+	var ticket = getParam(AnyBalance.getLastUrl(), null, null, /ticket=([^&]*)/i, null, decodeURIComponent);
+	if(!ticket)
+		throw new AnyBalance.Error('Не удалось найти тикет для авторизации в мобильном приложении. Сайт изменен?');
+
+	var json = callMobileApi('login2', {ticket: ticket});
 	getParam(json.rate_plan, result, '__tariff');
 	getParam(json.uid, result, 'phone');
 

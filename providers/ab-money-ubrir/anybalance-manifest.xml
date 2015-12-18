@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-money-ubrir</id>
+	<id version="3">ab-money-ubrir</id>
 	<api flags="no_browser"/>
 	<name>УБРИР</name>
 	<description html="true"><![CDATA[
@@ -27,7 +27,8 @@
 			<counter id="till" name="Срок действия" type="time" format="dd/MM/yy"/>
 			<counter id="accnum" name="Номер счета" type="text"/>
 			<counter id="status" name="Статус" type="text"/>
-			<counter id="type" name="Тип карты" type="text"/>
+			<counter id="type" name="Тип" type="text"/>
+			<counter id="pct" name="Процентная ставка" type="text"/>
 			<counter id="currency" name="Валюта" type="text"/>
 	</counters>
 

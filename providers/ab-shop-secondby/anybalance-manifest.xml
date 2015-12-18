@@ -4,8 +4,7 @@
 	<api flags="no_browser"/>
 	<name>Second.by</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе провайдера ab-shop-secondby <a href="second.by"></a></p>
-	<p>Информация берется из личного кабинета <a href="second.by"></a></p>
+	<p>Предоставляет информацию из личного кабинета на сайте <a href="http://second.by"></a></p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>

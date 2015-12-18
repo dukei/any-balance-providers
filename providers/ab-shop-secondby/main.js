@@ -30,7 +30,7 @@ function main() {
       loginData = ({
         'class': 'auth',
         'method': 'user_login',
-        'form': $.param({
+        'form': parametrize({
           login: prefs.login,
           pass: prefs.password
         })
@@ -40,48 +40,36 @@ function main() {
         'X-Requested-With': 'XMLHttpRequest'
       };
 	
-	var res = AnyBalance.requestPost(baseurl + loginUrl, loginData, addHeaders(headers));
-
-  if (res == 0) {
-    throw new AnyBalance.Error('Неверный логин или пароль', null, true);
-  }
-  else if (res == '') {
-    throw new AnyBalance.Error('Не удалось зайти в аккаунт. Сайт изменен?');
-  }
-
+	var success = AnyBalance.requestPost(baseurl + loginUrl, loginData, addHeaders(headers));
   html = AnyBalance.requestGet(baseurl);
+
+  if (!/logout/i.test(html)) {
+
+    // Проверка на неправильный логин/пароль такая, так как на сайте идет ajax запрос,
+    // который потом в случае неудачи на клиента javascript'ом добавляет класс all_error форме
+    if (!success)
+      throw new AnyBalance.Error('Неверный логин или пароль!', null, true);
+
+    AnyBalance.trace(html);
+    throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
+  }
 	
 	var result = {success: true};
 
-  var counters = [{
-      name: 'advertisements',
-      searchValue: 'объявлений'
-    }, {
-      name: 'comments',
-      searchValue: 'комментарии'
-    }, {
-      name: 'messages',
-      searchValue: 'сообщения'
-    }, {
-      name: 'user_lists',
-      searchValue: 'списки пользователей'
-    }, {
-      name: 'collaborative_purchases',
-      searchValue: 'совместные покупки'
-    }, {
-      name: 'feedback',
-      searchValue: 'отзывы'
-  }];
-
-  counters.forEach(function(counter) {
-    var re = getRegex(counter.searchValue),
-        numericCounters = ['advertisements', 'messages', 'user_lists'],
-        parser = numericCounters.includes(counter.name) ? parseBalance : null;
-
-    getParam(html, result, counter.name, re, replaceTagsAndSpaces, parser);
-  });
+  getParam(html, result, 'advertisements', getRegex('объявлений'), replaceTagsAndSpaces, parseBalance);
+  getParam(html, result, 'comments', getRegex('комментарии'), replaceTagsAndSpaces);
+  getParam(html, result, 'messages', getRegex('сообщения'), replaceTagsAndSpaces, parseBalance);
+  getParam(html, result, 'user_lists', getRegex('списки пользователей'), replaceTagsAndSpaces, parseBalance);
+  getParam(html, result, 'collaborative_purchases', getRegex('совместные покупки'), replaceTagsAndSpaces);
+  getParam(html, result, 'feedback', getRegex('отзывы'), replaceTagsAndSpaces);
 	
 	AnyBalance.setResult(result);
+}
+
+function parametrize(obj) {
+  return Object.keys(obj).map(function(item) {
+    return encodeURIComponent(item) + '=' + encodeURIComponent(obj[item]);
+  }).join('&');
 }
 
 function getRegex(srcValue) {

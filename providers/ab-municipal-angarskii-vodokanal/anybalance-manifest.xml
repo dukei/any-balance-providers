@@ -16,7 +16,7 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units="  руб"/>
+		<counter id="balance" name="Баланс" units=" р"/>
 		<counter id="acc_num" name="ФИО" type="text"/>
 		<counter id="lastDate" name="Дата передачи последних показаний" type="time" format="dd/MM/yyyy"/>
 	</counters>

@@ -29,7 +29,7 @@ function gwtGetStrongName(js, cfg){
 
 function gwtGetJSON(str, reFatal){
     if(/^\/\/EX/i.test(str)){
-        var error = getParam(str, null, null, /Exception.*?","([^"]*)/);
+        var error = getParam(str, null, null, /Exception[^"]*","([^"]*)"\]/);
         throw new AnyBalance.Error(error, null, (reFatal || /Неверный логин или пароль/i).test(error));
     }
 

@@ -49,9 +49,12 @@ function main() {
 
 	getParam(html, result, 'fio', /Абонент(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces);
 	getParam(html, result, 'adress', /Адрес(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces);
-	html = AnyBalance.requestGet(baseurl+'Home/getSelectedView?=_'+ new Date().getTime());
-	getParam(html, result, 'balance', /основной долг(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'peni', /пени(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
+	if(isAvailable(['balance', 'peni'])) {
+		html = AnyBalance.requestGet(baseurl+'Home/getSelectedView?=_'+ new Date().getTime());
+		getParam(html, result, 'balance', /основной долг(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
+		getParam(html, result, 'peni', /пени(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
+	}
+
 	
 	AnyBalance.setResult(result);
 }

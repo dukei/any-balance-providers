@@ -61,7 +61,7 @@ function main() {
 	});
 
 	html = AnyBalance.requestPost(baseurl+'User/', params, addHeaders({
-		'Referer': baseurl+'User/',
+		'Referer': baseurl+'User/'
 	}));
 	if (!/сохранить/i.test(html)) {
 		var error = getParam(html, null, null, /<div[^>]+class="MessageText"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
@@ -75,7 +75,6 @@ function main() {
 	var result = {success: true};
 	
 	getParam(html, result, 'balance', /<div[^>]+class="saldo"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, ['currency', 'balance'], /<div[^>]+class="saldo"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseCurrency);
 	getParam(html, result, 'device', /прибор учета(?:[\s\S]*?<div[^>]*>){6}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
 	getParam(html, result, 'previousCounter', /предыдущее показание(?:[\s\S]*?<div[^>]*>){6}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'currentCounter', /теку(?:[\s\S]*?<div[^>]*>){6}<input[^>]+value="([\s\S]*?)"/i, replaceTagsAndSpaces, parseBalance);

@@ -16,8 +16,7 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units=" {@currency}"/>
-		<counter id="currency" name="Валюта" type="text"/>
+		<counter id="balance" name="Баланс" units=" p"/>
 		<counter id="device" name="Прибор учёта" type="text"/>
 		<counter id="previousCounter" name="Предыдущее показание"/>
 		<counter id="currentCounter" name="Текущее показание счётчика"/>

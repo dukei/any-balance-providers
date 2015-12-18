@@ -19,6 +19,8 @@
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
 		<js>library.js</js>
+		<js>gwt.js</js>
+		<js>kyivstar_login.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>

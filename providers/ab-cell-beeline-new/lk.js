@@ -931,7 +931,7 @@ function isAvailableBonuses() {
 }
 
 function getFoundBonuses(xhtml) {
-	var bonusesDiv = getElement(xhtml, /<div[^>]+id="subscriberDetailsForm[^>]*bonusesList[^>]*>/i);
+	var bonusesDiv = getElement(xhtml, /<div[^>]+class="bonuses-accums[^>]*>/i);
 	var bonuses = bonusesDiv ? getElements(bonusesDiv, /<div[^>]+class="(?:grouped-bonuses|item)[^>]*>/ig) : [];
     return bonuses;
 }

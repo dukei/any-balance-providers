@@ -62,8 +62,6 @@ function main() {
 
 	html = AnyBalance.requestPost(baseurl+'User/', params, addHeaders({
 		'Referer': baseurl+'User/',
-		Origin: 'http://gmch.ru',
-		Host: 'gmch.ru'
 	}));
 	if (!/сохранить/i.test(html)) {
 		var error = getParam(html, null, null, /<div[^>]+class="MessageText"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);

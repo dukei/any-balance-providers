@@ -43,7 +43,7 @@ function main(){
     });
 
     if(!params) {
-        AnyBalance.trace(params);
+        AnyBalance.trace(html);
         throw new AnyBalance.Error('Не удалось найти форму входа. Сайт изменен?');
     }
 	

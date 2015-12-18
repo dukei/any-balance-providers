@@ -134,7 +134,7 @@ function main() {
 	}
 
 	html = AnyBalance.requestPost(baseurl + 'personalAccount/servPart.php', {type:'getAllData', '':''}, g_headers);
-	json = getJson(html);
+	json = getJsonEval(html);
 
 	var result = {success: true};
 

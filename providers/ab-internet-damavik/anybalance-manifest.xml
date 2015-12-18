@@ -1,12 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="7">ab-internet-damavik</id>
-	<name>Шпарки Дамавик</name>
+	<id version="8">ab-internet-damavik</id>
+	<name>Атлант Телеком (Шпарки Дамавик)</name>
 	<description html="true"><![CDATA[
-	<p>Получает данные для интернет-провайдера Шпарки дамавик (Шпаркi дамавiк или Атлант Телеком) http://www.damavik.by/</p>
+	<p>Получает данные для интернет-провайдера Шпарки дамавик (Шпаркi дамавiк или Атлант Телеком) http://www.telecom.by/</p>
 	]]></description>	
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

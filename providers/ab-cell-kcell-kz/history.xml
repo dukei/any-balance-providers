@@ -1,5 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="13" date="2015-11-18">
+	- Поддержка кредитных тарифных планов
+	</change>
+	<change version="12" date="2015-09-26">
+	- Изменение адреса личного кабинета
+	</change>
 	<change version="11" date="2015-02-11">
 	- Исправлено отображение трафика.
 	</change>

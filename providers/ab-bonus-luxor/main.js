@@ -27,8 +27,8 @@ function main(){
         ctl00$contentPlaceHolder$btnLogin:''
     });
 	
-    if(!/SignOut.aspx/i.test(html)){
-		var error = getParam(html, null, null, /span[^>]*lblMessageLogin[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
+    if(!/exit.png/i.test(html)){
+		var error = sumParam(html, null, null, /<span[^>]*lblMessageLogin[^>]*>([\s\S]*?)<\/span>/ig, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
 		if (error)
 			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
 		
@@ -36,14 +36,15 @@ function main(){
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
 	
-    html = AnyBalance.requestGet(baseurl + 'users/MyBonuses.aspx');
+    html = AnyBalance.requestGet(baseurl + 'club-profile/cardinfo/default.aspx');
 	
     var result = {success: true};
 	
-    getParam(html, result, 'balance', /Количество баллов(\s*<(?:[^>]*>){2,5})\s*<\/div>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'visits', /Количество посещений(\s*<(?:[^>]*>){2,5})\s*<\/div>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'cardnum', /Карта №(\s*<(?:[^>]*>){2,5})\s*<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, '__tariff', /Карта №(\s*<(?:[^>]*>){2,5})\s*<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'balance', /Количество баллов[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'visits', /Количество посещений[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'visits_left', /Посещений до следующего уровня[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'cardnum', /Карта №[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, '__tariff', /Ваш уровень[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
 	
     AnyBalance.setResult(result);
 }

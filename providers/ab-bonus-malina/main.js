@@ -47,7 +47,7 @@ function main () {
 	var json = getJson(html);
 	
     // Проверка на корректный вход
-    if (json.status != 'ok') {
+    if (!/success|ok/i.test(json.status)) {
     	// Проверка неправильной пары логин/пароль
 		if(json.errors['__all__']) {
 			var error = json.errors['__all__'].join(', ');

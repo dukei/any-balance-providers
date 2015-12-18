@@ -12,42 +12,69 @@ var g_headers = {
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'https://www.class-life.ru/';
+	var baseurl = 'https://www.avsu.ru/';
 	AnyBalance.setDefaultCharset('utf-8');
 	
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 	
-	var html = AnyBalance.requestGet(baseurl, g_headers);
+	var html = AnyBalance.requestGet(baseurl + 'loginparent/', g_headers);
+
+	if(!html || AnyBalance.getLastStatusCode() > 400){
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
+	}
 	
-	var params = createFormParams(html, function(params, str, name, value) {
-		if (name == 'nick')
+	var form = getElement(html, /<form[^>]+id="loginForm"[^>]*>/i);
+	if(!form){
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удалось найти форму входа. Сайт изменен?');
+	}
+	
+	var params = createFormParams(form, function(params, str, name, value) {
+		if (name == 'avsu_nick')
 			return prefs.login;
-		else if (name == 'pass')
+		else if (name == 'avsu_pass')
 			return prefs.password;
 		
 		return value;
 	});
 	
-	html = AnyBalance.requestPost(baseurl, params, addHeaders({Referer: baseurl}));
+	html = AnyBalance.requestPost(baseurl + 'client/', params, addHeaders({Referer: AnyBalance.getLastUrl()}));
 	
-	if (!/>Выход</i.test(html)) {
-		var error = getParam(html, null, null, /<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
-		if (error)
-			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
+	if (!/exitForm/i.test(html)) {
+		if(/loginparent/i.test(AnyBalance.getLastUrl()))
+			throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Неверный логин или пароль?');
 		
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
 	
-	html = AnyBalance.requestGet(baseurl + 'card/stat', g_headers);
-	
+	var infos = getElements(html, [/<div[^>]+class='dataHeaderLc'[^>]*>/ig, /dataHeaderLcDiv1/i]), info;
+	AnyBalance.trace('Найдено ' + infos.length + ' блоков лицевых счетов' );
+	for(var i=0; i<infos.length; ++i){
+	    info = infos[i];
+		var namels = sumParam(info, null, null, /<div[^>]+dataHeaderLcDiv[12][^>]*>([^]*?)<\/div>/ig, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
+		if(!prefs.num)
+			break;
+		if(namels.indexOf(prefs.num) >= 0)
+			break;
+	}
+
+	if(!info){
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error(prefs.num ? 'Не удалось найти блок информации о лицевом счете ' + prefs.num : 'Не удалось найти блок информации о лицевом счете. Сайт изменен?');
+	}
+
 	var result = {success: true};
 	
-	getParam(html, result, '__tariff', /Номер лицевого счета моего ребенка:([^>]*>){2}/i, replaceTagsAndSpaces, html_entity_decode);
+	sumParam(info, result, '__tariff', /<div[^>]+class='dataHeaderLcDiv1'[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
+	sumParam(info, result, '__tariff', /<div[^>]+class='dataHeaderLcDiv2'[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
+	getParam(info, result, 'fio', /<div[^>]+class='dataHeaderLcDiv1'[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(info, result, 'licschet', /<div[^>]+class='dataHeaderLcDiv2'[^>]*>([\s\S]*?)<\/div>/i, [/Л\/с:/i, '', replaceTagsAndSpaces], html_entity_decode);
 	
-	getParam(html, result, 'balance_hot', /Баланс горячего питания:([^>]*>){2}/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'balance_cafe', /Баланс буфетного питания:([^>]*>){2}/i, replaceTagsAndSpaces, parseBalance);
+	getParam(info, result, ['balance_hot', 'balance'], /Баланс горячего питания:[\s\S]*?<div[^>]+class='dataHeaderLcDiv4'[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(info, result, ['balance_cafe', 'balance'], /Баланс буфетного питания:[\s\S]*?<div[^>]+class='dataHeaderLcDiv4'[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
 	
 	if(isset(result.balance_hot) && isset(result.balance_cafe))
 		getParam(result.balance_hot + result.balance_cafe, result, 'balance');

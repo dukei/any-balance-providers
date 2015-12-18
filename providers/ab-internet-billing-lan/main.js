@@ -11,8 +11,8 @@ var g_headers = {
 };
 
 function auth3(html, prefs) {
-	var remote_addr = '212.46.225.78'; 
-	var key = getParam(html, null, null, /var\s+key\s*=\s*['"]([^"']+)/i);
+	var remote_addr = getParam(html, null, null, /var\s+remote_addr\s*=\s*['"]([^"']+)/i, replaceSlashes);; 
+	var key = getParam(html, null, null, /var\s+key\s*=\s*['"]([^"']+)/i, replaceSlashes);
 	
 	var login = prefs.login;
 	var password = hex_md5(prefs.password);
@@ -35,7 +35,7 @@ function main() {
 	
 	if (!/"Выход"/i.test(html)) {
 		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
+		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Неправильный логин пароль?');
 	}
 	
 	html = AnyBalance.requestGet(baseurl + '?m=deposit', g_headers);

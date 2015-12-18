@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="6">ab-money-rencred</id>
+	<id version="7">ab-money-rencred</id>
 	<api flags="no_browser|sms"/>
 	<name>Ренессанс Кредит</name>
 	<description html="true"><![CDATA[
@@ -14,6 +14,8 @@
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
 		<js>library.js</js>
+		<js>nadapter.js</js>
+		<js>extract.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
@@ -21,7 +23,7 @@
 		<counter id="balance" name="Остаток" units=" {@currency}"/>
 		<counter id="minpay" name="Минимальный платеж" units=" {@currency}"/>
 		<counter id="minpaytill" name="Заплатить до" type="time" format="dd/MM/yyyy"/>
-		<counter id="currency" name="Валюта" type="text"/>
+		<counter id="bonus" name="Бонусы" units=" Б"/>
 		<counter id="limit" name="Кредитный лимит" units=" {@currency}"/>
 		<counter id="cardnum" name="Номер карты" type="text"/>
 		<counter id="accnum" name="Номер счета" type="text"/>
@@ -29,7 +31,8 @@
 		<counter id="сontract" name="№ договора" type="text"/>
 		<counter id="userName" name="ФИО" type="text"/>
 		<counter id="status" name="Статус карты" type="text"/>
-		<counter id="available" name="Доступно" units=" {@currency}"/>
+		<counter id="available" name="Доступно для снятия наличных" units=" {@currency}"/>
+		<counter id="currency" name="Валюта" type="text"/>
 	</counters>
 	<keywords>интернет-банкинг</keywords>
 	<type>money, bank</type>

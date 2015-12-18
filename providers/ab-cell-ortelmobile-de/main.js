@@ -90,7 +90,7 @@ function getCurrentDataAndVoice(sessionId)
     {
         var option = options[i];
         var status = option.getElementsByTagName("status")[0].childNodes[0].nodeValue;
-        if (status!="ACTIVE")
+        if ((status!="ACTIVE") && (status!="SCHEDULED_FOR_REMOVAL"))
             continue;
         
         // get the option name, add it to the plan names string

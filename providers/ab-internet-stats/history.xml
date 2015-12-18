@@ -26,4 +26,7 @@
 	<change version="7" date="2014-07-24">
 	Поддержка капчи (Stark)
 	</change>
+	<change version="8" date="2015-10-9">
+	Провайдер ликвидирован в форме присоединения к stupino.su (sinitsynviktor)
+	</change>
 </history>

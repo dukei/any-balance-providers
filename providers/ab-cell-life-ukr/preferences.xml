@@ -41,7 +41,7 @@
 		key="type"
 		title="Тип кабинета"
 		summary="||{@s}"
-		entries="Мобильное приложение|Сайт (С вводом кода)"
+		entries="Мобильное приложение|Сайт (с вводом кода)"
 		entryValues="app|site"
 		defaultValue="app"
 		dialogTitle="Выберите тип кабинета">

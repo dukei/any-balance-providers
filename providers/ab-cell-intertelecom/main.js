@@ -34,11 +34,13 @@ function main() {
     //Предоплачение ИТ(местные+Украина+моб.094)+Местные
     getParam(html, result, 'min_it', /<td[^>]*>[^<]*ИТ\(местные\+Украина\+моб.094\)\+Местные[^<]*<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseSeconds);
     //Предоплачение местные минуты
-    getParam(html, result, 'min_local', /<td[^>]*>\s*Минуты\s*<\/td>[\s\S]*?<td[^>]*>[^<]*местные[^<]*<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseSeconds);
+    getParam(html, result, 'min_local', /<td>Местные<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseSeconds);
     //Предоплачение местные минуты и по Украине
     getParam(html, result, 'min_local_uk', /<td>Местные\+Украина<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseSeconds);
     //Украина (моб.) [100 и 200 мин]
     sumParam(html, result, 'min_uk_mob', /<td>[^<]*Украина\s*\(моб.?\)\s*(?:\[.00\s*мин?\][^<]*<\/td>|[^<]*<\/td>)\s*<td[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseSeconds, aggregate_sum);
+    //Украина+Моб.Украина
+    sumParam(html, result, 'min_uk_mob_uk', /<td>[^<]*Украина\+Моб\.Украина[^<]*<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseSeconds, aggregate_sum);
     //Россия [100 мин]
     getParam(html, result, 'min_rus', /<td[^>]*>\s*Минуты\s*<\/td>[\s\S]*?<td[^>]*>[^<]*Россия[^<]*<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseSeconds);
     //Бонус по программе лояльности «Наилучшее общение»

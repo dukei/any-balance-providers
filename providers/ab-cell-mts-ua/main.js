@@ -25,6 +25,7 @@ function main(){
 	}
 
 	var baseurl = 'https://ihelper-prp.mts.com.ua/SelfCarePda/';
+	var fnomer = prefs.fnomer || '1';
 
 	AnyBalance.trace("Trying to enter selfcare at address: " + baseurl);
 	var html = AnyBalance.requestPost(baseurl + "Security.mvc/LogOn", {
@@ -92,6 +93,11 @@ function main(){
     var result = {success: true};
 
     var min_all_60_isp;
+    
+    // Телефон
+    if(fnomer == '2') {
+    getParam (html, result, 'phone', /(?:Ваш телефон|phone):.*?>([^<]*)</i, replaceTagsAndSpaces, html_entity_decode);
+    }
 
     AnyBalance.trace("Fetching status...");
 
@@ -115,7 +121,9 @@ function main(){
 	// Баланс
     getParam (html, result, 'balance', /(?:Ваш поточний баланс|Ваш текущий баланс|balance):\s*([\s\S]*?)\s*грн/i, replaceTagsAndSpaces, parseBalance);
       // Телефон
+    if(fnomer == '1') {
     getParam (html, result, 'phone', /(?:Витрачено по номеру|Израсходовано по номеру|phone)\s*([\s\S]*?)\s*за/i, replaceTagsAndSpaces, html_entity_decode);
+    }
       //Срок действия (баланса) номера (!!!пропал из интернет помощника)
     getParam (html, result, 'termin', /Термін життя балансу:([^<]*)/i, replaceTagsAndSpaces, parseDate);
       //Денежный бонусный счет.
@@ -226,6 +234,10 @@ function main(){
     sumParam (html, result, 'termin_sms_others', /<li>Осталось: \d+ смс. Срок действия до([^<]*)<\/li>/ig, replaceTagsAndSpaces, parseDate, aggregate_min);
     //CMC+MMS на других
     sumParam (html, result, 'sms_mms_others', /<li>1000 SMS\/MMS по Украине, осталось: (\d+) SMS\/MMS/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+    //CMC+MMS по Украине и Европе
+    sumParam (html, result, 'sms_mms_others1', /<li>\d+ SMS\/MMS в месяц RED ., осталось (\d+) sms\/mms/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+    sumParam (html, result, 'sms_mms_others2', /<li>\d+ SMS\/MMS в день RED ., осталось (\d+) sms\/mms/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+    sumParam (html, result, 'sms_mms_others3', /<li>\d+ SMS\/MMS "Роуминг как дома", осталось (\d+) sms\/mms/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 
     // MMC на сети других мобильных операторов Украины
     sumParam (html, result, 'mms_others', /<li>Осталось (\d+) ммс.<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
@@ -244,11 +256,11 @@ function main(){
 
     // Минуты с услугой «Супер без пополнения» в сети МТС
     sumParam (html, result, 'min_net', /<li>Осталось ([\d\.,]+) бесплатных секунд<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-    sumParam (html, result, 'min_net', /<li>60 минут в день внутри сети для услуги Супер без пополнения, осталось ([\d\.,]+) бесплатных секунд<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+    sumParam (html, result, 'min_net', /<li>(?:6|4)0 минут в день внутри сети для услуги Супер без пополнения, осталось ([\d\.,]+) бесплатных секунд<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 
-    // 25 минут на другие сети
+    // 25/40 минут на другие сети
     sumParam (html, result, 'min_all_25', /<li>Осталось ([\d\.,]+) секунд на другие сети<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-
+    sumParam (html, result, 'min_all_25', /<li>40 минут на другие сети, осталось ([\d\.,]+) секунд на другие сети<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 
     //2500 минут в сети МТС
     sumParam (html, result, 'min_net_2500', /<li>Осталось ([\d\.,]+) секунд внутри сети<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
@@ -270,6 +282,11 @@ function main(){
     sumParam (html, result, 'min_allo_other', /<li>100 минут по Украине для MAX Energy Allo, осталось ([\d\.,]+) бесплатных секунд[^<]*<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
     // 50 минут на другие сети в тарифе MAX Energy
     sumParam (html, result, 'min_allo_other', /<li>\d+\sхвилин\sна\sвсi\sмережi,\sосталось\s(\d+)\sсекунд\sна\sвсе\sсети<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+
+    //Минуты по Украине и Европы Vodafone
+    sumParam (html, result, 'min_all1', /<li>\d+ минут в месяц RED ., осталось (\d+) бесплатных минут<\/li>/ig, replaceTagsAndSpaces, parseTime, aggregate_sum);
+    sumParam (html, result, 'min_all2', /<li>\d+ минуты? в день RED ., осталось (\d+) бесплатных минут<\/li>/ig, replaceTagsAndSpaces, parseTime, aggregate_sum);
+    sumParam (html, result, 'min_all3', /<li>\d+ минут "Роуминг как дома", осталось (\d+) бесплатных минут<\/li>/ig, replaceTagsAndSpaces, parseTime, aggregate_sum);
 
     // Расход минут на Любимые Номера
     sumParam (html, result, 'min_ln', /<li>К-во бесплатных минут для звонков на ЛН:[^<]*Израсходовано\s*([\d\.,]+) сек.<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
@@ -324,6 +341,11 @@ function main(){
     sumParam (html, result, 'traffic_used', /<li>Стандартные условия[^\d]*?использовано[^\d]*?(\d+,?\d* *(kb|mb|gb|кб|мб|гб|байт|bytes)).<\/li>/ig, null, parseTraffic, aggregate_sum);
     // Интернет «Команда 3D»
     sumParam (html, result, 'traffic_used', /<li>МБ GPRS по услуге "Супер МТС Команда 3D", использовано:\s*(\d+,?\d* *(Кб|kb|mb|gb|кб|мб|гб|байт|bytes)).<\/li>/ig, null, parseTraffic, aggregate_sum);
+    // Интернет Vodafone
+    sumParam (html, result, 'traffic_used', /<li>\d+ МБ 3G в месяц RED ., использовано:\s*(\d+ *(Кб|kb|mb|gb|кб|мб|гб|байт|bytes)).<\/li>/ig, null, parseTraffic, aggregate_sum);
+    sumParam (html, result, 'traffic_used1', /<li>Мобильный Интернет на день RED, использовано:\s*(\d+ *(Кб|kb|mb|gb|кб|мб|гб|байт|bytes)).<\/li>/ig, null, parseTraffic, aggregate_sum);
+    sumParam (html, result, 'traffic_used2', /<li>Интернет в роуминге \(\d+ гривен в день\), использовано:\s*(\d+ *(Кб|kb|mb|gb|кб|мб|гб|байт|bytes)).<\/li>/ig, null, parseTraffic, aggregate_sum);
+    sumParam (html, result, 'traffic_used3', /<li>Мобильный Интернет "Роуминг как дома", использовано:\s*(\d+ *(Кб|kb|mb|gb|кб|мб|гб|байт|bytes)).<\/li>/ig, null, parseTraffic, aggregate_sum);
 
     // Тариф 3d команда
     sumParam (html, result, 'min_used', /<li>Израсходовано\s*([\d\.,]+) сек.<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);

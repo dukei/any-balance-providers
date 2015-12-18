@@ -21,20 +21,12 @@
 		dialogMessage="Введите пароль, используемый для входа в интернет-банк."
 		inputType="textPassword">
 	</EditTextPreference>
-<!-- 	<ListPreference
-		key="interface"
-		title="Что использовать"
-		summary="||{@s}"
-		entries="Сайт|API Мобильного приложения"
-		entryValues="site|mobileapp"
-		defaultValue="site">
-	</ListPreference> -->
 	<ListPreference
 		key="type"
 		title="Что смотреть"
 		summary="||{@s}"
-		entries="Карта|Депозит|Накопительный счет"
-		entryValues="card|dep|saving"
+		entries="Карта|Счет|Депозит|Накопительный счет"
+		entryValues="card|acc|dep|saving"
 		defaultValue="card">
 	</ListPreference>
 	<EditTextPreference

@@ -12,13 +12,14 @@ var g_headers = {
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'http://web.shgsm.ru/';
+	
+	var baseurl = 'http://issa.shgsm.ru/';
 	AnyBalance.setDefaultCharset('utf-8');
 	
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 	
-	var html = AnyBalance.requestGet(baseurl + 'account/login?ReturnUrl=%2f', g_headers);
+	var html = AnyBalance.requestGet(baseurl + 'Account/login?ReturnUrl=%2f', g_headers);
 	
 	if(!html || AnyBalance.getLastStatusCode() > 400)
 		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
@@ -32,7 +33,7 @@ function main() {
 		return value;
 	});
     
-	html = AnyBalance.requestPost(baseurl + 'Account/Login?ReturnUrl=%2F', params, addHeaders({Referer: baseurl + 'account/login?ReturnUrl=%2f'}));
+	html = AnyBalance.requestPost(baseurl + 'Account/Login?ReturnUrl=%2F', params, addHeaders({Referer: baseurl + 'Account/login?ReturnUrl=%2f'}));
 	
 	if (!/logout/i.test(html)) {
 		var error = getParam(html, null, null, /<div[^>]+class="validation-summary-errors[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);

@@ -14,6 +14,8 @@ var g_headers = {
 function main(){
     var prefs = AnyBalance.getPreferences();
     AnyBalance.setDefaultCharset('utf-8');
+
+    throw new AnyBalance.Error('Трансаэро ввело капчу в личном кабинете и сразу обанкротилось. Вот! Так будет с каждым! Но в связи с этим провайдер больше не поддерживается.', null, true);
 	
     var baseurl = "http://transaero.ru/";
 

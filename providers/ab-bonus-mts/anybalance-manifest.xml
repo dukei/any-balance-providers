@@ -1,23 +1,25 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="2.0" version="6">ab-bonus-mts</id>
+	<api flags="no_browser"/>
+	<id major_version="3.0" version="9">ab-bonus-mts</id>
 	<name>МТС Бонус</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о бонусных баллах за пользование услугами МТС (http://wap.bonus.mts.ru).</p>
+	<p>Предоставляет информацию о бонусных баллах за пользование услугами МТС (https://bonus.ssl.mts.ru).</p>
 	<p><small>Для абонентов МТС трафик бесплатный.</small></p>
 	]]></description>
-	<author>iReset &lt;ireset.ag@gmail.com&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
 		<js>library.js</js>
+		<js>login.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
 	<counters>
 		<counter id="balance" name="Баланс"/>
 		<counter id="customer" name="Телефон" type="text"/>
-		<counter id="lifeInProgram" name="Стаж в программе" type="text"/>
+		<counter id="fio" name="ФИО" type="text"/>
 	</counters>
 	<keywords>бонус, мтс, bonus, mts</keywords>
 	<type>bonus</type>

@@ -12,27 +12,31 @@ var g_headers = {
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'http://diskus-telecom.ru/';
+	var baseurl = 'http://diskus-telecom.ru';
 	AnyBalance.setDefaultCharset('utf-8');
 	
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 	
-	var html = AnyBalance.requestGet(baseurl + 'personal', g_headers);
+	var html = AnyBalance.requestGet(baseurl + '/personal', g_headers);
 	
 	if(!html || AnyBalance.getLastStatusCode() > 400)
 		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
 	
-	var params = createFormParams(html, function(params, str, name, value) {
+	var form = getElement(html, /<form[^>]+user.login[^>]*>/i);
+	if(!form)
+		throw new AnyBalance.Error('Не удалось найти форму входа. Сайт изменен?');
+
+	var params = createFormParams(form, function(params, str, name, value) {
 		if (name == 'username') 
 			return prefs.login;
-		else if (name == 'passwd')
+		else if (name == 'password')
 			return prefs.password;
 
 		return value;
 	});
 	
-	html = AnyBalance.requestPost(baseurl + 'index.php', params, addHeaders({Referer: baseurl + 'personal'}));
+	html = AnyBalance.requestPost(baseurl + '/personal?task=user.login', params, addHeaders({Referer: baseurl + '/personal'}));
 	
 	if (!/logout/i.test(html)) {
 		var error = getParam(html, null, null, /<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
@@ -46,7 +50,8 @@ function main() {
 	var result = {success: true};
 	
 	getParam(html, result, 'balance', />\s*Баланс(?:[^>]*>){1}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'fio', />\s*ФИО(?:[^>]*>){4}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'fio', />\s*ФИО:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'licschet', /<u[^>]*>\s*Лицевой счет([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(html, result, '__tariff', /td>\s*Тариф(?:[^>]*>){1}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
 	
 	AnyBalance.setResult(result);

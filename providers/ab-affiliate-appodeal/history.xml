@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
 <change version="1" date="2015-05-23">Релиз</change>
+<change version="2" date="2015-09-16">Поддержка изменений на сайте</change>
+<change version="3" date="2015-09-23">Новый счетчик: заработок за месяц</change>
+<change version="4" date="2015-10-28">Поддержка изменений на сайте</change>
+<change version="5" date="2015-11-03">Поддержка изменений на сайте</change>
 </history>

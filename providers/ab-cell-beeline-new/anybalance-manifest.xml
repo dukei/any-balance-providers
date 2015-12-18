@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="127">ab-cell-beeline-new</id>
+	<id version="141">ab-cell-beeline-new</id>
 	<name>Билайн (новый кабинет)</name>
 	<api flags="no_browser" min_level="5"/>
 	<description html="true"><![CDATA[
@@ -31,11 +31,15 @@
 	</ol>	
 	<small>Если данные об оставшихся SMS, MMS, минутах и трафике не отображаются в приложении, вначале проверьте, есть ли они в личном кабинете. Если есть, обратитесь к разработчикам.</small>
 	]]></instruction>	
-	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
 		<js>library.js</js>
+		<js>nadapter.js</js>
+		<js>lk.js</js>
+		<js>lkapi.js</js>
+		<js>lkkz.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 		<settings target="init">settings_init.xml</settings>
@@ -53,9 +57,11 @@
 		<counter id="min_local" name="Минуты на местные номера" type="time_interval" format="{@MIN}:{@sec}"/>
 		<counter id="rub_opros" name="Бонусы по программе Счастливое время" units=" руб"/>
 		<counter id="traffic_left" name="Остаток трафика" units=" Mb"/>
+		<counter id="traffic_left_night" name="Остаток ночного трафика" units=" Mb"/>
 		<counter id="traffic_bonus" name="Бонусный трафик" units=" Mb"/>
 		<counter id="min_left_1" name="Остаток минут 1" type="time_interval" format="{@MIN}:{@sec}"/>
 		<counter id="min_left_2" name="Остаток минут 2" type="time_interval" format="{@MIN}:{@sec}"/>
+		<counter id="credit" name="Кредит" units=" {@currency}"/>
 		<counter id="fio" name="ФИО" type="text"/>
 		<counter id="phone" name="Телефон" type="text"/>
 		<counter id="agreement" name="Договор" type="text"/>

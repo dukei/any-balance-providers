@@ -1,5 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="8" date="2015-08-23">
+	- Сообщение о возможности использовать провайдер Стрелка (по номеру).
+	</change>
+	<change version="7" date="2015-08-17">
+	- Улучшена обработка ошибок.
+	</change>
 	<change version="6" date="2015-08-10">
 	- Улучшена обработка ошибок.
 	</change>

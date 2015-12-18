@@ -3,12 +3,11 @@
     <EditTextPreference
         title="Номер карты" 
         positiveButtonText="ОК" 
-        summary="|Последние 8 цифр номера карты|5084 5000 {@s}" 
-        dialogTitle="Номер карты: 5084 5000 ..." 
+        summary="|Последние 8 цифр номера карты или логин|5084 5000 {@s}" 
+        dialogTitle="Логин или номер карты: 5084 5000 ..." 
         negativeButtonText="Отмена" 
-        dialogMessage="Введите последние 8 цифр номера карты для входа в Интернет-банк"
+        dialogMessage="Введите последние 8 цифр номера карты или ваш логин для входа в Интернет-банк"
         key="login"
-        inputType="number"
         obligatory="true">
     </EditTextPreference>
     <EditTextPreference 
@@ -19,17 +18,16 @@
         title="Пароль"
         summary="|Пароль для входа в Интернет-банк|***********"
         dialogMessage="Введите пароль, используемый для входа в Интернет-банк."
-        inputType="numberPassword"
+        inputType="textPassword"
         obligatory="true">
     </EditTextPreference>
     <ListPreference 
         key="type" 
         title="Что смотреть"
         summary="||{@s}"
-        entries="Счет|Кредит"
-        entryValues="acc|crd"
-        enabled="false"
-        defaultValue="acc">
+        entries="Карта|Счет|Кредит|Депозит"
+        entryValues="card|acc|crd|dep"
+        defaultValue="card">
     </ListPreference>
     <EditTextPreference
         title="Номер продукта" 
@@ -37,7 +35,7 @@
         summary="|Автоматически|{@s}" 
         dialogTitle="Номер продукта" 
         negativeButtonText="Отмена" 
-        dialogMessage="В зависимости от настройки Что смотреть, введите сюда номер договора по кредиту или последние цифры номера счета. Если оставить поле пустым, то будет показана информация по первому счету/кредиту."
+        dialogMessage="В зависимости от настройки Что смотреть, введите сюда последние цифры номера счета или карты. Если оставить поле пустым, то будет показана информация по первому счету/карте."
         key="contract">
     </EditTextPreference>
 </PreferenceScreen>

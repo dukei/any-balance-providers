@@ -3,11 +3,13 @@
 */
 
 var g_headers = {
-	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+	'Accept': 'text/html, application/xhtml+xml, image/jxr, */*',
+	'Accept-Language': 'ru,en-US;q=0.7,en;q=0.3',
+	
 	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
-	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
-	'Connection': 'keep-alive',
-	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
+	'Connection': 'Keep-Alive',
+	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.10240',
+	'Cache-Control': 'no-cache',
 };
 
 function main(){
@@ -21,9 +23,9 @@ function main(){
     
     var baseurl = 'https://uslugi.tatarstan.ru/';
 	
-    var html = AnyBalance.requestGet(baseurl + 'user/login', g_headers);
+    var html = AnyBalance.requestGet(baseurl, g_headers);
 	
-    var form = getParam(html, null, null, /<form[^>]+id="login-form"[^>]*>([\s\S]*?)<\/form>/i, null, html_entity_decode);
+    var form = getParam(html, null, null, /<form[^>]+action="[^"]+user\/login"[^>]*>([\s\S]*?)<\/form>/i, null, html_entity_decode);
     if(!form)
         throw new AnyBalance.Error('Не удалось найти форму входа. Сайт изменен?');
 	
@@ -33,16 +35,22 @@ function main(){
         if(/password/i.test(name))
             return prefs.password;
         if(/remember_me/i.test(name))
-            return '0';
+            return '1';
         return value;
     });
 	
-    html = AnyBalance.requestPost(baseurl + 'user/login', params, addHeaders({Referer: baseurl + ''}));
+    html = AnyBalance.requestPost(baseurl + 'user/login', params, addHeaders({Referer: baseurl + '#'}));
+	
+	/*
+	cookie:PHPSESSID=mrg7pon70a6ciuap2km3etv877; user_id=1033048; passwd_hash=95765202e373b801890672567c466c4d2e01b4f5; _ga=GA1.3.333398957.1440405474; _gat=1; _pk_id.48.53d4=e921c84074a5110d.1440405474.1.1440405474.1440405474.; _pk_ses.48.53d4=*; _ym_visorc_13106635=w
+	*/
 	
     if(!/is_user_authorized\s*=\s*true/i.test(html)){
         var error = getParam(html, null, null, /<div[^>]*id=["']error_explanation[^>]*>([\s\S]*?)<\/div>/, replaceTagsAndSpaces, html_entity_decode);
         if(error)
             throw new AnyBalance.Error(error);
+		
+		AnyBalance.trace(html);
         throw new AnyBalance.Error('Не удалось войти в личный кабинет. Проблемы на сайте или сайт изменен.');
     }
 	
@@ -50,36 +58,31 @@ function main(){
     var number = getParam(prefs.plate, null, null, /^.\d\d\d../);
     var region = getParam(prefs.plate, null, null, /(\d+)$/);
 	
-    html = AnyBalance.requestPost(baseurl + 'gibdd/fines/getFromApi', {
-        findType:'car',
-        type_ts:isAuto ? 'auto' : 'moto',
+    var finesHtml = AnyBalance.requestPost(baseurl + 'gibdd/fines/getFromApi', {
         number:number,
         region:region,
         doc_nm:prefs.sr,
-        find_protocol_region:'',
-        find_protocol_series:'',
-        find_protocol_number:'',
-        find_protocol_date:''
+        type_ts:isAuto ? 'auto' : 'moto',
     }, addHeaders({'x-requested-with':'XMLHttpRequest'}));
 	
-	var json = getJson(html);
+	var json = getJson(finesHtml);
+	var message_id = json.message_id;
 	
-	for(var i = 0; i < 20; i++) {
+	for(var i = 0; i < 10; i++) {
 		AnyBalance.sleep(1000);
 		
-		html = AnyBalance.requestGet(baseurl + 'gibdd/fines/getBy/message_id/' + (json.message_id || json.id), g_headers);
+		finesHtml = AnyBalance.requestGet(baseurl + 'gibdd/fines/getBy/message_id/' + message_id, addHeaders({'X-Requested-With': 'XMLHttpRequest'}));
+		json = getJson(finesHtml);
 		
-		json = getJson(html);
-		
-		if(json.status != 'in_processing') {
-			AnyBalance.trace('Данные успешно обновлены за ' + i + ' сек.');
+		if(json.status == 'completed') {
+			AnyBalance.trace('Данные успешно обновлены за ' + (i+1) + ' попыток.');
 			break;
 		}
 	}
 	
 	var result = {success: true};
 	
-	if(/<h2>Штрафов не найдено<\/h2>/i.test(html)) {
+	if(/>\s*Штрафов не найдено\s*<\//i.test(html)) {
 		AnyBalance.trace('Не найдено штрафов..');
 		getParam('0', result, 'balance', null, replaceTagsAndSpaces, parseBalance);
 	} else {

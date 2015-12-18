@@ -12,12 +12,11 @@ var g_headers = {
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'http://ottclub.no-ip.org/';
+	var baseurl = 'http://ottclub.cc/';
 	AnyBalance.setDefaultCharset('utf-8');
 	
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
-	
 	var html = AnyBalance.requestGet(baseurl + 'auth/login', g_headers);
 	
 	if(!html || AnyBalance.getLastStatusCode() > 400)
@@ -41,8 +40,11 @@ function main() {
 	
 	var result = {success: true};
 	
-	getParam(html, result, 'balance', /баланс:(?:[^>]*>){1}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'status', /Услуга:[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
-	
+	getParam(html, result, 'balance', /баланс:(?:[^>]*>){3}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'partnerBalance', /баланс партнерки:(?:[^>]*>){1}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'charged', /Заработано сегодня:(?:[^>]*>){1}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'status', /Услуга:[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces);
+
+
 	AnyBalance.setResult(result);
 }

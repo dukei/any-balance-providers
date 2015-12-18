@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-bonus-onecard</id>
+	<api flags="no_browser"/>
+	<name>One Card</name>
+	<description html="true"><![CDATA[
+	<p>Provides balance for bonus card One Card http://www.one-card.me</p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Balance" units=""/>
+		<counter id="fio" name="Name" type="text"/>
+		<counter id="status" name="Card status" type="text"/>
+		<counter id="num" name="Card number" type="text"/>
+		<counter id="type" name="Card type" type="text"/>
+		<counter id="till" name="Card validity" type="time" format="dd/MM/yyyy"/>
+	</counters>
+	<keywords>onecard</keywords>
+	<type>bonus</type>
+	<country>me</country>
+</provider>

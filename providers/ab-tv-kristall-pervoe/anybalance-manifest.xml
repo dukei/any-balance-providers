@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-tv-kristall-pervoe</id>
+  <id version="2">ab-tv-kristall-pervoe</id>
   <name>Кристалл (Уфа, Туймазы, Белебей)</name>
   <description>
     Получает баланс для провайдера Кристалл (http://kristall-pervoe.tv/)
@@ -19,10 +19,10 @@
     <counter id="balance" name="Баланс" units="р"/>
     <counter id="bonus" name="Бонусов" units=" Б"/>
     <counter id="days" name="Осталось" units=" дней"/>
-    <counter id="lastPeriod" name="Остаток с прошлого периода" units="р"/>
-    <counter id="income" name="Поступления на счёт (всего)" units="р"/>
-    <counter id="service" name="Наработка по услугам (всего)" units="р"/>
-    <counter id="oneService" name="Расход по разовым услугам (всего)" units="р"/>
+    <counter id="lastPeriod" name="Остаток с пред.месяца" units="р"/>
+    <counter id="income" name="Поступления" units="р"/>
+    <counter id="service" name="Наработка" units="р"/>
+    <counter id="oneService" name="Расход" units="р"/>
     <counter id="fio" name="ФИО" type="text"/>
   </counters>
   <keywords>

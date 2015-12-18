@@ -1,12 +1,13 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-education-class-life</id>
+	<id version="4">ab-education-class-life</id>
 	<api flags="no_browser"/>
-	<name>Школьная карта (https://class-life.ru)</name>
+	<name>Школьная карта (http://www.avsu.ru/)</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе на школьной карте https://www.class-life.ru/</p>
+	<p>Предоставляет информацию о балансе на школьной карте http://www.avsu.ru/.</p>
+	<p>Информация берется из личного кабинета http://www.avsu.ru/loginparent</p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
@@ -18,6 +19,8 @@
 		<counter id="balance" name="Общий баланс" units=" р"/>
 		<counter id="balance_hot" name="Баланс горячего питания" units=" р"/>
 		<counter id="balance_cafe" name="Баланс буфетного питания" units=" р"/>
+		<counter id="fio" name="Имя" type="text"/>
+		<counter id="licschet" name="Лицевой счет" type="text"/>
 	</counters>
 	<keywords></keywords>
 	<type>education</type>

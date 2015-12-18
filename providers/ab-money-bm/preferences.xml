@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+	<EditTextPreference
+		title="Логин"
+		key="login"
+		summary="||{@s}"
+		obligatory="true"
+		dialogTitle="Логин"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите логин, используемый для входа в личный кабинет.">
+	</EditTextPreference>
+	<EditTextPreference
+		title="Пароль"
+		key="password"
+		summary="||***********"
+		obligatory="true"
+		dialogTitle="Пароль"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите пароль, используемый для входа в личный кабинет."
+		inputType="textPassword">
+	</EditTextPreference>
+	<ListPreference
+		key="region"
+		title="Регион"
+		summary="||{@s}"
+		entries="Москва и Московская область|Санкт-Петербург и Ленинградская область|Волгоградская область|Воронежская область|Иркутская область|Калининградская область|Кемеровская область|Краснодарский край|Красноярский край|Курская область|Нижегородская область|Новосибирская область|Омская область|Оренбургская область|Пермский край|Приморский край|Республика Адыгея (Адыгея)|Республика Башкортостан|Республика Северная Осетия-Алания|Республика Татарстан|Ростовская область|Самарская область|Сахалинская область|Свердловская область|Ставропольский край|Тульская область|Тюменская область|Хабаровский край|Ханты-Мансийский автономный округ - Югра|Ямало-Ненецкий автономный округ|Ярославская область"
+		entryValues="Moskv|Sankt|Volgo|Voron|Irkut|Kalin|Kemer|Krasn|Krasn|Kursk|Nizheg|Novos|Omska|Orenb|Perms|Primo|adige|Bashko|Sever|Tatar|Rosto|Samar|Sahal|Sverd|Stavr|Tul_s|Tyumen|Habar|Hanti|Yamalo|Yarosl"
+		defaultValue="Moskv">
+	</ListPreference>
+	<EditTextPreference
+		positiveButtonText="ОК"
+		key="num"
+		dialogTitle="Номер карты"
+		negativeButtonText="Отмена"
+		title="Номер карты"
+		summary="Последние 4 цифры карты|Автоматически\n|{@s}\n"
+		dialogMessage="Введите последние цифры карты, по которой вы хотите получить информацию. Если это поле оставить пустым, то будет показана информация по первой карте."
+		inputType="number">
+	</EditTextPreference>
+</PreferenceScreen>

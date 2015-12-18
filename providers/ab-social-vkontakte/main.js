@@ -21,7 +21,7 @@ function main(){
 
     var baseurl = "https://vk.com";
 
-    var uid = AnyBalance.getData('remixttpid');
+    var uid = AnyBalance.getData ? AnyBalance.getData('remixttpid') : '';
     if(uid){
         AnyBalance.trace('Найдена привязка к браузеру, восстанавливаем её.');
         AnyBalance.setCookie('.vk.com', 'remixttpid', uid);
@@ -35,16 +35,18 @@ function main(){
         login:prefs.login
     }, g_headers);
     AnyBalance.trace(html);*/
+    var form = getElement(html, /<form[^>]+id="login"[^>]*>/i);
+	var params = createFormParams(form, function(params, str, name, value) {
+		if (name == 'email') 
+			return prefs.login;
+		else if (name == 'pass')
+			return prefs.password;
+
+		return value;
+	});
+
     if(!prefs.dbg) {
-		html = AnyBalance.requestPost("https://login.vk.com", {
-			act:'login',
-			to:getParam(html, null, null, /<input[^>]+name="to"[^>]*value="([^"]*)/i, null, html_entity_decode),
-			_origin:baseurl, 
-			ip_h:getParam(html, null, null, /<input[^>]+name="ip_h"[^>]*value="([^"]*)/i, null, html_entity_decode),
-			email:prefs.login,
-			pass:prefs.password,
-			expire:''
-		}, g_headers);
+		html = AnyBalance.requestPost("https://login.vk.com", params, g_headers);
 	}
 	else
 		html = AnyBalance.requestGet(baseurl + '/settings?act=balance', g_headers);
@@ -79,8 +81,10 @@ function main(){
         }
 
         var uid = AnyBalance.getCookie('remixttpid');
-        AnyBalance.setData('remixttpid', uid);
-        AnyBalance.saveData();
+        if(AnyBalance.getData){
+        	AnyBalance.setData('remixttpid', uid);
+        	AnyBalance.saveData();
+        }
 
         var url = res.data;
         if(!/^https?:/i.test(url))

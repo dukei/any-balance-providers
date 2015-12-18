@@ -1,17 +1,20 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="4">ab-money-akbars</id>
+	<id version="6">ab-money-akbars</id>
 	<api flags="no_browser"/>
 	<name>АК БАРС Online</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе на картах АК БАРС Банка http://akbars.ru</p>
-	<p>Информация берется из АК БАРС Online https://online.akbars.ru/frontend/frontend</p>
+	<p>Предоставляет информацию о балансе на картах АК БАРС Банка <a href="https://www.akbars.ru/">https://www.akbars.ru/</a></p>
+	<p>Информация берется из АК БАРС Online <a href="https://online.akbars.ru/wb/#login">https://online.akbars.ru/wb/#login</a></p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
 		<js>library.js</js>
+		<js>nadapter.js</js>
+		<js>extract.js</js>
+		<js>jsonpath.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
@@ -26,6 +29,6 @@
 		<counter id="card_exp" name="Срок действия карты" type="time" format="dd/MM/yyyy"/>
 	</counters>
 	<keywords></keywords>
-	<type>money</type>
+	<type>money, bank</type>
 	<country>ru</country>
 </provider>

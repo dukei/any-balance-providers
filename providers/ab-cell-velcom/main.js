@@ -145,8 +145,8 @@ function main(){
         last_id: ''
     }, g_headers);
 	
-	getParam(html, result, 'userName', /(?:Абонент:|ФИО)(?: \(название абонента\))?:?[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'userNum', /(?:Номер):[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'userName', /<td[^>]+id="(?:NAME|FIO)"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'userNum', /<td[^>]+id="(?:TEL_NUM|DIRNUM|PhoneNumber)"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
     //Хитрецы несколько строчек начисления абонента делают, одна при этом пустая
     sumParam(html, result, 'balance', /(?:Баланс основного счета|Баланс лицевого счета|Баланс|Начисления абонента):[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
     sumParam(html, result, 'balanceBonus', /(?:Баланс бонусного счета(?: \d)?):[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
@@ -154,13 +154,17 @@ function main(){
     getParam(html, result, '__tariff', /Тарифный план:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
 	sumParam(html, result, 'min', /Остаток исходящего бонуса:[\s\S]*?<td[^>]*>([\s\S]*?мин)/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
     getParam(html, result, 'call_barring', /Запрет исходящих с:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDateWord);
-//    getParam(html, result, 'traffic', /<td[^>]+id="DISCOUNT"[^>]*>([\s\S]*?)<\/td>/i, [replaceTagsAndSpaces, /^\D+/, ''], parseTraffic);
+
+    //Это иногда идет как Скидки:	У вас осталось 938 Мб 1001 Кб, 1 Кб.
+    var discount = getParam(html, null, null, /<td[^>]+id="DISCOUNT"[^>]*>([\s\S]*?)<\/td>/i, [replaceTagsAndSpaces, /^\D+/, '', /\s+/g, ''], html_entity_decode);
+    if(discount)
+    	sumParam(discount, result, 'traffic', /(\d[\d.,]*[гмкgmk][бb])/ig, null, parseTraffic, aggregate_sum);
 
     var counters = getParam(html, null, null, /(?:Остаток трафика|Остаток минут, SMS, MMS, (?:МБ|GPRS), включенных в абонплату):[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i);
     if(counters){
 	    sumParam(counters, result, 'sms', /(-?\d[\d,\.]*)\s*SMS/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 	    sumParam(counters, result, 'mms', /(-?\d[\d,\.]*)\s*MMS/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-	    counters = sumParam(counters, result, 'min_fn', /(-?\d[\d,\.]*)\s*мин(?:ут[аы]?)? на ЛН/i, replaceTagsAndSpaces, parseBalance, true, aggregate_sum);
+	    counters = sumParam(counters, result, 'min_fn', /(-?\d[\d,\.]*)\s*мин(?:ут[аы]?)? на (?:ЛН|"любимый" номер)/i, replaceTagsAndSpaces, parseBalance, true, aggregate_sum);
         counters = sumParam(counters, result, 'min_velcom', /(-?\d[\d,\.]*)\s*мин(?:ут[аы]?)? на velcom/i, replaceTagsAndSpaces, parseBalance, true, aggregate_sum);
         getParam(counters, result, 'traffic', /(-?\d[\d,\.]*)\s*Мб/i, replaceTagsAndSpaces, parseBalance);
 		getParam(counters, result, 'traffic_night', /([\s\d.]+[М|M][B|Б]\s+ночь)/i, replaceTagsAndSpaces, parseTraffic);

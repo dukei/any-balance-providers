@@ -24,10 +24,12 @@ function main() {
 		'Remember': 'false'
 	}, addHeaders({Referer: baseurl + 'moneypass.php'}));
 	
-	if (!/"abon_info_balance"/i.test(html)) {
-		var error = getParam(html, null, null, /<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
+	var balance = getParam(html, null, null, /<span[^>]+class="abon_info_balance"[^>]*>([\s\S]*?)<\/span>/i, [/.*<br[^>]*>/i, '', replaceTagsAndSpaces], parseBalance);
+
+	if (!isset(balance)) {
+		var error = getParam(html, null, null, /<font[^>]+color="#cc1111"[^>]*>([\s\S]*?)<a[^>]+href="[^"]*moneypass/i, replaceTagsAndSpaces, html_entity_decode);
 		if (error)
-			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
+			throw new AnyBalance.Error(error, null, /Пользователь не обнаружен/i.test(error));
 		
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
@@ -35,11 +37,8 @@ function main() {
 	
 	var result = {success: true};
 	
-	getParam(html, result, 'balance', /<span class="abon_info_balance"(?:[^>]*>){2}([-\s\d.,]{2,})/i, replaceTagsAndSpaces, parseBalance);
+	getParam(balance, result, 'balance');
 	getParam(prefs.login, result, '__tariff');
-	
-	if(!isset(result.balance))
-		AnyBalance.trace(html);
 	
 	AnyBalance.setResult(result);
 }

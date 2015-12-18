@@ -47,19 +47,23 @@ try{
 		if(g_prefs_file) {
 			var msg = ' Check you main.js file for stupid errors!';
 			
+			
 			var prefsName = searchRegExpSafe(/(?:var\s+)?([^\s]+)\s*=\s*AnyBalance\.getPreferences\s*\(\)/i, mainJs);
 			//var prefsName = /(?:var\s+)?([^\s]+)\s*=\s*AnyBalance\.getPreferences\s*\(\)/i.exec(mainJs)[1];
-			if(!prefsName) {
-				throw new Error('We don`t found AnyBalance.getPreferences()!' + msg);
-			}
-			
-			// Нельзя хардкодить преференсы!
-			var reg = new RegExp('(?:var\\s+)?' + prefsName + '\\s*=\\s*([^,;]+)', 'ig');
-			var r_result;
-			while((r_result = reg.exec(mainJs)) !== null) {
-				if(!/AnyBalance\.getPreferences\s*\(\)/i.test(r_result[1])) {
-					throw new Error('You have overrided your preferences!' + msg);
+			if(prefsName) {
+				// Нельзя хардкодить преференсы!
+				var reg = new RegExp('(?:var\\s+)?' + prefsName + '\\s*=\\s*([^,;]+)', 'ig');
+				var r_result;
+				while((r_result = reg.exec(mainJs)) !== null) {
+					if(!/AnyBalance\.getPreferences\s*\(\)/i.test(r_result[1])) {
+						throw new Error('You have overrided your preferences!' + msg);
+					}
 				}
+			}
+
+			//Обработать ошибку входа!
+			if(mainJs.indexOf('<div[^>]+class="t-error"[^>]*>[\\s\\S]*?<ul[^>]*>([\\s\\S]*?)<\\/ul>') > 0){
+					throw new Error('You have to check for login error and show appropriate message!');
 			}
 		}
 		
@@ -69,7 +73,7 @@ try{
 		// }
 		
 		// Запишем манифест
-		writeManifest(objStream, manifest, WshShell);
+		writeManifest(objStream, manifest, mainJs, WshShell);
 		
 		// История 
 		var originalHistory = '<?xml version="1.0" encoding="utf-8"?>\n\
@@ -152,7 +156,7 @@ function openManifest(objStream) {
 	return strData;
 }
 
-function writeManifest(objStream, manifest, WshShell) {
+function writeManifest(objStream, manifest, mainJs, WshShell) {
 	if(!/jquery/i.test(manifest) && !/no_browser/.test(manifest)) {
 		var intDoIt = WshShell.Popup('You do not use jquery in your provider!\nTo improve compability you must add "no_browser" flag \nDo you want to do this?', 0, "Result", vbYesNo + vbInformation + stayOnTop);
 		if(intDoIt == vbYes) {
@@ -173,7 +177,14 @@ function writeManifest(objStream, manifest, WshShell) {
 
 		manifest = manifest.replace(/<\/type>/, ', ' + result + '</type>');
 	}
-	
+
+	if(!/nadapter\.js/i.test(manifest) && /NAdapter/.test(mainJs)){
+		var intDoIt = WshShell.Popup('You seem to use NAdapter, but you have forgot to include it in manifest.\nDo you want to do this?', 0, "Result", vbYesNo + vbInformation + stayOnTop);
+		if(intDoIt == vbYes) {
+			manifest = manifest.replace(/(<js[^>]*>\s*library\.js\s*<\/js>)/i, '$1\n\t\t<js>nadapter.js</js>');
+		}
+	}
+
 	if(!g_history_file)
 		manifest = manifest.replace(/(\s*)<\/files>/i, '$1\t<history>' + g_new_history_file_name + '</history>$1</files>');
 	

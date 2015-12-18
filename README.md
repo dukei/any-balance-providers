@@ -1,4 +1,4 @@
-<p align="right"><a href="http://anybalance.ru/catalog.php" target="_blank"><b>Обновление провайдера вручную (открывать с компьютера!)</b></a></p>
+<p align="right"><a href="http://anybalance.ru/catalog.php?inapp=no" target="_blank"><b>Обновление провайдера вручную</b></a></p>
 * * * 
 
 <img align="left" hspace="10" width="200" src="https://any-balance-providers.googlecode.com/svn/wiki/images/widgets.jpg" />

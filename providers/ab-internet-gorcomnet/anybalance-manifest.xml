@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id version="2">ab-internet-gorcomnet</id>
+	<id version="3">ab-internet-gorcomnet</id>
 	<name>Горком (Москва)</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе провайдера Горком <a href="http://gorcomnet.ru">http://gorcomnet.ru</a></p>

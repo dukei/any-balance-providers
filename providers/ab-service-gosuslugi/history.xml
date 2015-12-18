@@ -1,5 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="1.0" version="28" date="2015-08-26">
+	- Восстановлено получение данных по налогам.
+	</change>
+	<change major_version="1.0" version="27" date="2015-08-25">
+	- Улучшена обработка ошибок.
+	</change>
 	<change major_version="1.0" version="26" date="2015-07-02">
 	- Поддержка изменений на сайте.
 	</change>

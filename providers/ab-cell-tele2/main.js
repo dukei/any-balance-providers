@@ -50,8 +50,100 @@ function main() {
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
+
+	if(prefs.cabinet == 'new'){
+		doNewCabinet();
+	}else{
+		doOldCabinet(baseurl);
+	}
 	
-	html = AnyBalance.requestGet(baseurl + 'home', g_headers);
+}
+
+function doNewCabinet(){
+	var baseurl = "https://new.my.tele2.ru/";
+	var html = AnyBalance.requestGet(baseurl + 'login', g_headers);
+
+	var result = {success: true};
+
+	getParam(html, result, "userName", /<div[^>]+class="user-name"[^>]*>([^]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, "phone", /<div[^>]+class="user-phone"[^>]*>([^]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+
+	html = AnyBalance.requestGet(baseurl + 'main/tariffAndBalance', g_headers);
+	var json = getJson(html);
+
+	getParam(json.currentTariffPlan.name, result, '__tariff');
+	getParam(json.balance.amount, result, 'balance', null, null, parseBalance);
+
+	if (AnyBalance.isAvailable('sms_used', 'min_used', 'traffic_used', 'mms_used', 'sms_left', 'min_left', 'traffic_left', 'mms_left')) {
+		AnyBalance.trace("Searching for resources left");
+
+		html = AnyBalance.requestGet(baseurl + "main/discounts", g_headers);
+		json = JSON.parse(html);
+
+		var arr = [json.discountsIncluded, json.discountsNotIncluded];
+
+		for(var k=0; k<arr.length; ++k){
+			var discounts = arr[k];
+			for (var i = 0; discounts && i < discounts.length; ++i) {
+				var discount = discounts[i];
+				if(isArray(discount)){
+					for(var j=0; j<discount.length; ++j){
+						getDiscount(result, discount[j]);
+					}
+				}else{
+					getDiscount(result, discount);
+				}
+			}
+		}
+	}
+
+	if (AnyBalance.isAvailable('history')) {
+		AnyBalance.trace("Searching for history");
+		html = AnyBalance.requestGet(baseurl + "payments/history?filter=LAST_10");
+		var json = getParam(html, null, null, /JS_DATA\s*=\s*JSON.parse\s*\(('(?:[^\\']+|\\.)*')/, null, function(str){ return getJson(safeEval("return " + str)) });
+		for(var i=0; i<json.payments.length; ++i){
+			var p = json.payments[i];
+			sumParam(p.date + ' ' + p.amount, result, 'history', null, null, null, aggregate_join);
+			if(/^-/.test(p.amount)){
+				sumParam(p.amount, result, 'history_out', null, null, parseBalance, aggregate_sum);
+			}else{
+				sumParam(p.amount, result, 'history_income', null, null, parseBalance, aggregate_sum);
+			}
+		}
+	}	
+
+	AnyBalance.setResult(result);
+}
+
+function getDiscount(result, discount){
+	var name = discount.name;
+	var units = discount.limitMeasureCode;
+	AnyBalance.trace('Найден дискаунт: ' + name + ' (' + units + ')');
+	if(/мин/i.test(units)){
+		//Минуты
+		getParam(discount.rest.value, result, 'min_left');
+		getParam(discount.limit.value - discount.rest.value, result, 'min_used');
+	}else if(/[кмгkmg][bб]/i.test(units)){
+		//трафик
+		getParam(discount.rest.value + discount.rest.measure, result, 'traffic_left', null, null, parseTraffic);
+		getParam((discount.limit.value-discount.rest.value) + discount.limit.measure, result, 'traffic_used', null, null, parseTraffic);
+	}else if(/шт/i.test(units)){                                              
+		//СМС/ММС
+		if(/ммс|mms/i.test(name)){
+			getParam(discount.rest.value, result, 'mms_left');
+			getParam(discount.limit.value - discount.rest.value, result, 'mms_used');
+		}else{
+			getParam(discount.rest.value, result, 'sms_left');
+			getParam(discount.limit.value - discount.rest.value, result, 'sms_used');
+		}
+	}else{
+		AnyBalance.trace("Неизвестный дискаунт: " + JSON.stringify(discount));
+	}
+}
+
+
+function doOldCabinet(baseurl){
+	var html = AnyBalance.requestGet(baseurl + 'home', g_headers);
 	
 	var result = {success: true};
 	
@@ -95,7 +187,7 @@ function main() {
 	}
 	if (AnyBalance.isAvailable('history')) {
 		AnyBalance.trace("Searching for history");
-		html = prefs.testPage || AnyBalance.requestGet(baseurl + "payments/history/last_10");
+		html = AnyBalance.getPreferences().testPage || AnyBalance.requestGet(baseurl + "payments/history/last_10");
 		
 		var table = getParam(html, null, null, /Время платежа([\s\S]*?)<\/table>/i);
 		if(table) {

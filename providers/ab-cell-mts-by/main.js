@@ -286,7 +286,13 @@ function fetchAccountStatus(html, result) {
 	html = sumParam(html, result, 'min_local', /внутр?и страны:\s*([\d\.,]+)\s*мин/ig, replaceTagsAndSpaces, parseBalance, true, aggregate_sum);
 	// Пакет минут МТС: 671,1 мин.
 	html = sumParam(html, result, 'min_mts', /МТС:\s*([\d\.,]+)\s*мин/ig, replaceTagsAndSpaces, parseBalance, true, aggregate_sum);
-	// Странные минуты, которые на самом деле секунды
+	//Смарт Офис on-net
+    html = sumParam(html, result, 'min_mts', /on-net:\s*([\d\.,]+)\s*мин/ig, replaceTagsAndSpaces, parseBalance, true, aggregate_sum);
+    //Смарт офис off-net
+    html = sumParam(html, result, 'min_local', /off-net:\s*([\d\.,]+).*?мин[^\s]*/ig, replaceTagsAndSpaces, parseBalance, true, aggregate_sum);
+    //Смарт офис международный
+    html = sumParam(html, result, 'min_world', /межд:\s*([\d\.,]+).*?мин[^\s]*/ig, replaceTagsAndSpaces, parseBalance, true, aggregate_sum);
+    // Странные минуты, которые на самом деле секунды
 	html = sumParam(html, result, 'min_left', /[\d\.,]+\s+мин:[^<]*?[\d\.,]+\s*мин/ig, replaceTagsAndSpaces, parseOddSeconds, true, aggregate_sum);
 	// Пакет минут
 	html = sumParam(html, result, 'min_left', /Остаток пакета минут:.*?([\d\.,]+)\./ig, replaceTagsAndSpaces, parseBalance, true, aggregate_sum);
@@ -306,9 +312,6 @@ function fetchAccountStatus(html, result) {
 	html = sumParam(html, result, 'min_local', /Использовано:\s*([\d\.,]+).*?мин[^\s]* местных/ig, replaceTagsAndSpaces, parseBalance, true, aggregate_sum);
 	// Использовано: 0 минут на любимые номера
 	html = sumParam(html, result, 'min_love', /Использовано:\s*([\d\.,]+).*?мин[^\s]* на любимые/ig, replaceTagsAndSpaces, parseBalance, true, aggregate_sum);
-	// Остаток СМС
-	getParam(html, result, 'sms_left', /(?:Осталось|Остаток)[^\d]*(\d*).*?(sms|смс)/i, [], parseBalance);
-	getParam(html, result, 'sms_left', /SMS:\s*([\d\.,]+)\s*шт/i, replaceTagsAndSpaces, parseBalance);
 	// Остаток ММС
 	getParam(html, result, 'mms_left', /(?:Осталось|Остаток)[^\d]*(\d*).*?(mms|ммс)/i, [], parseBalance);
 	// Накоплено 54 мин. в текущем месяце
@@ -333,6 +336,11 @@ function fetchAccountStatus(html, result) {
 	getParam(html, result, 'credit', /(?:Сумма кредитного лимита|Кредитный лимит)[\s\S]*?(-?\d+[\d\.,]*)/i, replaceTagsAndSpaces, parseBalance);
 	// Расход за этот месяц
 	getParam(html, result, 'usedinthismonth', /Израсходовано по номеру[^<]*?(?:<strong>|:)([\s\S]*?)(?:<\/strong>|<\/p>|<\/td>)/i, replaceTagsAndSpaces, parseBalance);
+    // Остаток СМС
+    getParam(html, result, 'sms_left', /(?:Осталось|Остаток)[^\d]*(\d*).*?(sms|смс)/i, [], parseBalance);
+    getParam(html, result, 'sms_left', /SMS:\s*([\d\.,]+)\s*шт/i, replaceTagsAndSpaces, parseBalance);
+    //Если не нашли ничего из вышеперечисленного, то считаем, что это СМС
+    getParam(html, result, 'sms_left', /([\d\.,]+)\s*шт/i, replaceTagsAndSpaces, parseBalance);
 }
 
 function main(){
@@ -343,6 +351,8 @@ function main(){
 	
 	checkEmpty(prefs.login, 'Введите телефон (логин)!');
 	checkEmpty(prefs.password, 'Введите пароль!');
+
+	AnyBalance.setOptions({SSL_ENABLED_PROTOCOLS: ['TLSv1'], SSL_ENABLED_CIPHER_SUITES_ADD: ['SSL_RSA_WITH_3DES_EDE_CBC_SHA']});
 	
     if(prefs.type == 'mobile'){
         mainMobile();

@@ -12,32 +12,32 @@ var g_headers = {
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'https://login.dnevnik.ru/';
+	var baseurlLogin = 'https://login.dnevnik.ru/login';
 	AnyBalance.setDefaultCharset('utf-8');
 	
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 	
-	var html = AnyBalance.requestGet('https://dnevnik.ru/user/', g_headers);
+	var html = AnyBalance.requestGet(baseurlLogin, g_headers);
 	
 	var params = createFormParams(html, function(params, str, name, value) {
-		if (name == 'Login')
+		if (name == 'login')
 			return prefs.login;
-		else if (name == 'Password')
+		else if (name == 'password')
 			return prefs.password;
 		return value;
 	});
 	
 	try {
-		html = AnyBalance.requestPost(baseurl, params, addHeaders({Referer: baseurl}));
+		html = AnyBalance.requestPost(baseurlLogin, params, addHeaders({Referer: baseurlLogin}));
 	} catch(e) {
 		html = AnyBalance.requestGet('http://dnevnik.ru/user/', g_headers);
 	}
 	
 	if (!/logout/i.test(html)) {
-		var error = getParam(html, null, null, /<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
+		var error = getParam(html, null, null, /<div[^>]+class="message\s*"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
 		if (error)
-			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
+			throw new AnyBalance.Error(error, null, /Ошибка в логине или пароле/i.test(error));
 		
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');

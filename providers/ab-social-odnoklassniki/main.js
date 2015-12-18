@@ -37,8 +37,8 @@ function main() {
 	
 	var result = {success: true};
 	
-	getParam(html, result, 'fio', /"Страница пользователя"(?:[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, '__tariff', /"Страница пользователя"(?:[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'fio', /<a[^>]+id="sm-s-title"[^>]*>([^]*?)<\/a>/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, '__tariff', /<a[^>]+id="sm-s-title"[^>]*>([^]*?)<\/a>/i, replaceTagsAndSpaces, html_entity_decode);
 	
 	html = AnyBalance.requestGet(baseurl + 'dk?st.cmd=selectPresent&st.or=o%3AM%2C&_prevCmd=userSettings&tkn=4665', g_headers);
 	

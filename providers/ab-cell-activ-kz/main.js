@@ -68,9 +68,24 @@ function main(){
     //Тариф:
     getParam(html, result, '__tariff', /<h[^>]*>(?:Тарифный план|Тариф|Tariff)[\s\S]*?<h[^>]*>([\s\S]*?)<\/h/i, replaceTagsAndSpaces, html_entity_decode);
     //минуты
-    getParam(html, result, 'min_left', /(?:Ваш баланс|Сіздің теңгеріміңіз|Your balance is)[^<]*?\+\s*([\d\s.,]*)\s*(?:мин|min)/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'min_left', /(?:Ваш баланс|Сіздің теңгеріміңіз|Your balance is)[^<]*?\+\s*([\d\s.,]*)\s*(?:Бонусных|Бонустық|Bonus)?\s+(?:мин|min)/i, replaceTagsAndSpaces, parseBalance);
+    //Бонусных секунд/Бонустық секунд/Bonus seconds
+    sumParam(html, result, 'min_left', /(?:Ваш баланс|Сіздің теңгеріміңіз|Your balance is)[^<]*?\+\s*([\d\s.,]*)\s*(?:Бонусных|Бонустық|Bonus)?\s+(?:сек|sec)/i, replaceTagsAndSpaces, function(str){ var s = parseBalance(str); return s && s/60 }, aggregate_sum );
     //SMS
     getParam(html, result, 'sms_net', /(?:Ваш баланс|Сіздің теңгеріміңіз|Your balance is)[^<]*?\+\s*([\d\s.,]*)\s*(?:SMS\s+в\s+сети|желiдегi\s+SMS|onnet\s+SMS)/i, replaceTagsAndSpaces, parseBalance);
+
+    if(AnyBalance.isAvailable('internet_plus')){
+        html = AnyBalance.requestGet(baseurl + lang + '/ics.account/getconnectedservices', g_headers);
+        var json = getJson(html);
+        var inet = json.inetPlusPack && json.inetPlusPack.inetPlusPackInfoDto;
+        if(inet){
+        	sumParam(inet.totalAvailableBytes + 'bytes', result, 'internet_plus', null, null, parseTraffic, aggregate_sum);
+        	sumParam(inet.welcomeBonusBytes + 'bytes', result, 'internet_plus', null, null, parseTraffic, aggregate_sum);
+        }
+    }
+
+
+
 
     AnyBalance.setResult(result);
 }

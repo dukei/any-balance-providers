@@ -51,7 +51,7 @@ function main(){
 	
 	var result = {success: true}; 
 	
-	getParam(html, result, 'balance', /[-\d\s,.]{2,}Eur/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'balance', /<big[^>]+class="sub_header"[^>]*>([\s\S]*?)<\/big>/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'name', /<p\s*id="userinfo"\s*[^>]*>[\s\S]*?Prisijungęs:\s*<strong>([^>]*?)\s*<\/strong>[\s\S]*?<\/p>/i, replaceTagsAndSpaces, null);
     getParam(html, result, 'balanceExpire', /<th>Sąskaitos\s*likutis:[\s\S]*?<small\sclass="expiration_date">\s*galioja\s*iki\s*([^>]*?)\s*<\/small>\s*<\/th>/i, replaceTagsAndSpaces, parseDateISO);
 	

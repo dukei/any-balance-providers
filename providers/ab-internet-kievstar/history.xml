@@ -1,5 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="2.0" version="8" date="2015-09-10">
+	- Улучшена обработка ошибок
+	- Добавлены счетчики Тарифный план, Статус и Лицевой счет
+	</change>
 	<change major_version="2.0" version="7" date="2014-11-27">
 	- Исправление лоллипопа
 	</change>

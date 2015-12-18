@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="2">ab-municipal-crimeagasnet</id>
+	<api flags="no_browser|captcha"/>
+	<name>КрымГазСети</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о задолженности абонента КрымГазСети http://crimeagasnet.ru/proverca-zadolzhennosti-abonenta</p>
+	<p>Доступна информация по управлениям: Алуштинское, Бахчисарайское, Джанкойское, Евпаторийское, Кировское, Красногвардейское, Красноперекопское, Раздольненское, Раздольненское (Черноморский участок), Раздольненское (Первомайский участок), Сакское, Симферопольское, Советское, Советское (Нижнегорский участок), Судакское, Феодосийское, Ялтинское.</p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р."/>
+		<counter id="fio" name="ФИО" type="text"/>
+	</counters>
+	<keywords>газ</keywords>
+	<type>municipal, gas</type>
+	<country>ru</country>
+</provider>

@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<api flags="no_browser"/>
+	<id version="3">ab-cell-o-kg</id>
+	<name>О! (Кыргызстан)</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе оператора сотовой связи O! в Кыргызстане <a href="http://o.kg/">http://o.kg/</a></p>
+	<p>Информация берется из личного кабинета <a href="https://lk.o.kg/login">https://lk.o.kg/login</a></p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<ol>
+		<li>Для входа используется номер телефона и pin2</li>
+		<li>Номер pin2 указан на рубашке от Вашей SIM-карты</li>
+	</ol>
+	]]></instruction>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" сом"/>
+		<counter id="phone" name="Телефон" type="text"/>
+		<counter id="status" name="Статус" type="text"/>
+		<counter id="paydate" name="Дата очередного снятия абонентской платы" type="time" format="dd/MM/yyyy"/>
+		<counter id="traffic" name="Остаток интернет трафика" units=" Mb"/>
+	</counters>
+	<keywords>O!, Сотовый телефон, мобильный, мобильник, Кыргызстан</keywords>
+	<type>cell</type>
+	<country>kg</country>
+</provider>

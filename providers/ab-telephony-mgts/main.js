@@ -56,18 +56,29 @@ function main() {
 		}
 		
 		if (!/logout/i.test(html)) {
-			var error = sumParam(html, null, null, /"auth-error-text"[^>]*>([^<]+)<\//ig, replaceTagsAndSpaces, html_entity_decode).join(', ');
+			var error = sumParam(html, null, null, /"auth-error-text"[^>]*>([^<]+)<\//ig, replaceTagsAndSpaces).join(', ');
 			if (error)
-				throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
+				throw new AnyBalance.Error(error, null, /неверный номер телефона/i.test(error));
 			
 			AnyBalance.trace(html);
 			throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 		}
 		
-		getParam(html, result, 'fio', /"cabinet-aside"[^>]*>([\s\S]*?)<\/h3/i, replaceTagsAndSpaces);
-		getParam(html, result, 'balance', /Баланс:([^>]*>){3}/i, replaceTagsAndSpaces, parseBalance);
-		getParam(html, result, 'phone', /Номер:(?:[^>]*>){2}([\s\S]*?)<\/dd>/i, replaceTagsAndSpaces);
-		getParam(html, result, 'licschet', /Лицевой счет:([^>]*>){3}/i, replaceTagsAndSpaces);
+		getParam(html, result, 'fio', /<div[^>]+account-info_header[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+		getParam(html, result, 'balance', /<div[^>]+account-info_balance_value[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+		getParam(html, result, 'phone', /Номер телефона:[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+		getParam(html, result, 'licschet', /Лицевой счет:[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+
+		var services = getJsonObject(html, /mgts.data.widgets =/, '[');
+		if(services){
+			//Сложим в tariffs все опции, у которых есть value
+			var tariffs = services.reduce(function(arr, cur){
+				if(cur.value)
+					arr.push(cur.value);
+				return arr;
+			}, []);
+			getParam(tariffs.join(', '), result, '__tariff');
+		}
 	}
 	
 	AnyBalance.setResult(result);

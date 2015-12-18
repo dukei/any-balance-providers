@@ -31,7 +31,7 @@ function main() {
     
 	html = AnyBalance.requestPost(baseurl + 'UserTools/index.php', {
         'auth_type': auth_type,
-        'FORM_ACTION': 'войти',
+        'FORM_ACTION': 'Войти',
         'KEY': key,
         'redirect': '/UserTools/index.php',
         'pw': prefs.login,

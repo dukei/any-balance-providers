@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id version="1">ab-</id>
+	<id version="1">ab-</id><!-- идентификатор провайдера: https://github.com/dukei/any-balance-providers/wiki/HowToAddProvider#%D0%98%D0%B4%D0%B5%D0%BD%D1%82%D0%B8%D1%84%D0%B8%D0%BA%D0%B0%D1%82%D0%BE%D1%80-%D0%BF%D1%80%D0%BE%D0%B2%D0%B0%D0%B9%D0%B4%D0%B5%D1%80%D0%B0 -->
 	<name></name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе, бонусных баллах, использованных минутах на локальные, мобильные и любимые номера, расходах, статусе блокировки, кредите, номере лицевого счета, ежемесячой плате.
@@ -30,9 +30,9 @@
 	]]></instruction>
 	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
 	<files>
-		<icon>icon.png</icon>
+		<icon>icon.png</icon><!-- требования к иконке: https://github.com/dukei/any-balance-providers/wiki/Icon -->
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
+		<js>library.js</js><!-- обязательно посмотрите на функции библиотеки /any-balance-providers/extra/development/ab-test-library/library.js, которые облегчают написание провайдеров! -->
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>

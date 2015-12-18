@@ -57,8 +57,10 @@ function fetchCard(prefs, result) {
 	
 	var re = new RegExp('<Card\\s+[^>]*>\\s*<Synonym>' + (prefs.num || '[^]+?') + '<\/Synonym>[^]*?<\/Card>', 'i');
 	var card = getParam(html, null, null, re);
-	if(!card)
-        throw new AnyBalance.Error('Не удаётся найти ' + (prefs.num ? 'карту с псевдонимом ' + prefs.num : 'ни одной карты'));
+	if(!card){
+		AnyBalance.trace(html);
+        throw new AnyBalance.Error(prefs.num ? 'Не удаётся найти карту с псевдонимом ' + prefs.num : 'У вас нет ни одной карты');
+    }
 
 	getParam(card, result, 'balance', /AMOUNT_AVAILABLE[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseBalance);
 	getParam(card, result, ['currency', 'balance'], /Currency[^>]*>([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
@@ -75,8 +77,10 @@ function fetchContract(prefs, result) {
 	
 	var re = new RegExp('<Contract\\s+[^>]*>\\s*<Synonym>' + (prefs.num ? '<!\\[CDATA\\[' + prefs.num + '\\]\\]>' : '[^]+?') + '<\/Synonym>[^]*?<\/Contract>', 'i');
 	var contract = getParam(html, null, null, re);
-	if(!contract)
-        throw new AnyBalance.Error('Не удаётся найти ' + (prefs.num ? 'услугу с псевдонимом ' + prefs.num : 'ни одной услуги'));
+	if(!contract){
+		AnyBalance.trace(html);
+        throw new AnyBalance.Error(prefs.num ? 'Не удаётся найти договор с псевдонимом ' + prefs.num : 'У вас нет ни одного договора');
+    }
 
 	getParam(contract, result, 'balance', /ContractRest[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseBalance);
 	getParam(contract, result, ['currency', 'balance'], /CurrCode[^>]*>([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);

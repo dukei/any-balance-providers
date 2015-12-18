@@ -1,7 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="13">ab-cell-mts-by</id>
+	<id version="15">ab-cell-mts-by</id>
 	<name>МТС (Беларусь)</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе, расходах, статусе блокировки, кредите, номере лицевого счета, ежемесячной плате.</p>   
@@ -25,6 +25,7 @@
 		<counter id="balance" name="Баланс" units=" р"/>
 		<counter id="bonus" name="Бонусные баллы" units=" б"/>
 		<counter id="min_local" name="Локальные и мобильные минуты" units=" мин"/>
+		<counter id="min_world" name="Международные и мобильные минуты" units=" мин"/>
 		<counter id="min_love" name="Любимые минуты" units=" мин"/>
 		<counter id="min_left" name="Бесплатные минуты" units=" мин"/>
 		<counter id="min_mts" name="Минуты на МТС" units=" мин"/>

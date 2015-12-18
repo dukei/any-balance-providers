@@ -2,43 +2,6 @@
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 */
 
-// Фикс для All Balance - убрать с выходом новой версии
-// Шаги алгоритма ECMA-262, 5-е издание, 15.4.4.21
-// Ссылка (en): http://es5.github.io/#x15.4.4.21
-// Ссылка (ru): http://es5.javascript.ru/x15.4.html#x15.4.4.21
-if (!Array.prototype.reduce) {
-	Array.prototype.reduce = function(callback /*, initialValue*/ ) {
-		'use strict';
-		if (this == null) {
-			throw new TypeError('Array.prototype.reduce called on null or undefined');
-		}
-		if (typeof callback !== 'function') {
-			throw new TypeError(callback + ' is not a function');
-		}
-		var t = Object(this),
-			len = t.length >>> 0,
-			k = 0,
-			value;
-		if (arguments.length == 2) {
-			value = arguments[1];
-		} else {
-			while (k < len && !k in t) {
-				k++;
-			}
-			if (k >= len) {
-				throw new TypeError('Reduce of empty array with no initial value');
-			}
-			value = t[k++];
-		}
-		for (; k < len; k++) {
-			if (k in t) {
-				value = callback(value, t[k], k, t);
-			}
-		}
-		return value;
-	};
-}
-
 var g_countersTable = {
 	common: {
 		'spasibo': 'spasibo',
@@ -59,7 +22,9 @@ var g_countersTable = {
 		"minpay": "cards.minpay",
 		"maxlimit": "cards.maxlimit",
 		"debt": "cards.debt",
+		"debt_date": "cards.debt_date",
 		"cash": "cards.cash",
+		"own": "cards.own",
 		"electrocash": "cards.electrocash",
 		"userName": "cards.userName",
 		"__tariff": "cards.cardNumber",
@@ -79,23 +44,29 @@ var g_countersTable = {
 		"maxlimit": "loans.maxlimit",
 		"loan_ammount": "loans.loan_ammount",
 		"userName": "loans.userName",
-		"cardNumber": "loans.cardNumber",
-		"__tariff": "loans.cardNumber",
+		"cardNumber": "loans.num",
+		"__tariff": "loans.num",
 	},
     acc: {
     	"balance": "accounts.balance",
 		"currency": "accounts.currency",
 		"rate": "accounts.rate",
-		"cardNumber": "accounts.cardNumber",
-		"__tariff": "accounts.cardNumber",
+		"cardNumber": "accounts.num",
+		"__tariff": "accounts.num",
 		"till": "accounts.till",
     },
 	metal_acc: {
     	"balance": "accounts_met.balance",
     	"currency": "accounts_met.currency",
-		"cardNumber": "accounts_met.cardNumber",
-		"__tariff": "accounts_met.cardNumber",
+		"cardNumber": "accounts_met.num",
+		"__tariff": "accounts_met.__name",
 		"weight": "accounts_met.weight",
+		"weight_units": "accounts_met.weight_units",
+
+		"lastPurchSum": "accounts_met.transactions.sum",
+		"lastPurchPlace": "accounts_met.transactions.descr",
+		"lastPurchDate": "accounts_met.transactions.time"
+
     }
 };
 
@@ -163,7 +134,6 @@ function main(){
 
 function shouldProcess(counter, info){
 	var prefs = AnyBalance.getPreferences();
-	var num = getParam(info.__name, null, null, /([^,]+)/i);
 	
 	switch(counter){
 		case 'cards':
@@ -173,6 +143,7 @@ function shouldProcess(counter, info){
 		    if(!prefs.lastdigits)
 		    	return true;
 			
+			var num = getParam(info.__name, null, null, /([^,]+)/i);
 			if(endsWith(num, prefs.lastdigits))
 				return true;
 		    
@@ -185,7 +156,7 @@ function shouldProcess(counter, info){
 		    if(!prefs.lastdigits)
 		    	return true;
 			
-			if(endsWith(num, prefs.lastdigits))
+			if(endsWith(info.num, prefs.lastdigits))
 				return true;
 		}
 		case 'loans':
@@ -195,7 +166,7 @@ function shouldProcess(counter, info){
 		    if(!prefs.lastdigits)
 		    	return true;
 			
-			if(endsWith(info.__id, prefs.lastdigits))
+			if(endsWith(info.num, prefs.lastdigits))
 				return true;
 		}	
 		case 'accounts_met':
@@ -205,7 +176,7 @@ function shouldProcess(counter, info){
 		    if(!prefs.lastdigits)
 		    	return true;
 			
-			if(endsWith(info.__id, prefs.lastdigits))
+			if(endsWith(info.num, prefs.lastdigits))
 				return true;
 		}
 		default:

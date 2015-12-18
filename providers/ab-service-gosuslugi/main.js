@@ -4,7 +4,6 @@
 
 var g_headers = {
 	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
 	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
 	'Connection': 'keep-alive',
 	'User-Agent': 'Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/32.0.1700.76 Safari/537.36',
@@ -19,12 +18,99 @@ var g_apiHeaders = {
 	'Referer':'https://www.gosuslugi.ru/pgu/personcab',
 }
 
+var g_betaApiHeaders = {
+	'Accept':'application/json, text/javascript, */*; q=0.01',
+	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/44.0.2403.157 Safari/537.36',
+	'Accept-Language': 'ru,en;q=0.8',
+}
+
 var g_baseurl = 'https://www.gosuslugi.ru/';
+var g_betaBaseurl = 'https://beta.gosuslugi.ru/';
+
 var g_replaceSpacesAndBrs = [/^\s+|\s+$/g, '', /<br\/><br\/>$/i, ''];
 var g_gibdd_info = '';
 // Максимальное количество автомобилей, по которым получать данные.
 var g_max_plates_num = 3;
+// Максимальное количество ИНН, по которым получать данные.
+var g_max_inns_num = 3;
 
+/////////////////////////////////////////////// Начало блока бета-кабинета ///////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Бета версия кабинета гос услуг
+function processNalogiBeta(result, html, inn) {
+	if(isAvailable(['nalog_balance', 'nalog_info'])) {
+		html = AnyBalance.requestGet(g_betaBaseurl + '10002', g_headers);
+		
+		var trackId = AnyBalance.getLastResponseHeader('X-Atmosphere-tracking-id');
+		var mnemonic = getParam(html, null, null, /fns\.requestTemplate\s*=\s*(?:[\s\S]*?{){2}\s*"mnemonic":\s*"([^"]+)/i);
+		
+		checkEmpty(trackId, 'X-Atmosphere-tracking-id header missing', true);
+		
+		var json = {
+			"type": "javaServiceTask",
+			"serviceName": "formProcessing",
+			"methodName": "process",
+			"parameter": "{\"submitComponent\":\"Fns.FormStep1.Panel1.button\",\"submitEventNumber\":\"0\",\"submitEvent\":\"submit\",\"userSelectedRegion\":\"00000000000\",\"form\":{\"mnemonic\":\"" + mnemonic + "\",\"content\":{\"Fns.FormStep1.Panel1.userInn\":{\"value\":\"" + inn + "\"},\"Fns.FormStep1.Panel1.emailSend\":{\"value\":false},\"Fns.FormStep1.Panel1.phoneSend\":{\"value\":false},\"Fns.FormStep1.Panel1.formatedResponse\":{\"value\":false},\"Fns.FormStep1.Panel1.requested\":{\"value\":false},\"Fns.FormStep1.Panel1.useFailoverCache\":{\"value\":false}}},\"context\":{\"context\":{\"groovy\":{\"Script\":\"groovy.fnsFetchBill\"}}}}"
+		}
+		
+		var fns = apiCallBetaCabinet('POST', 'a/wsapi/?_=' + new Date().getTime(), JSON.stringify(json), {
+			'Origin': 'https://beta.gosuslugi.ru',
+			'X-Atmosphere-tracking-id': trackId,
+			'X-Atmosphere-Framework': '1.0',
+			'Content-Type': 'application/json',
+			'X-Cache-Date': '0',
+			'X-Atmosphere-Transport': 'long-polling',
+			'Referer': 'https://beta.gosuslugi.ru/10002/result',
+		});
+		// Общая сумма
+		sumParam(fns.form.content.total.total + '', result, 'nalog_balance', null, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+		
+		var details = '';
+		
+		for (var data in fns.form.content) {
+			if(fns.form.content[data].vidnalog) {
+				details += fns.form.content[data].vidnalog + ': <b>' + fns.form.content[data].summa + '</b><br/><br/>';
+			} else {
+				continue;
+			}
+			
+		}
+		
+		if(details != '')
+			sumParam(details, result, 'nalog_info', null, replaceTagsAndSpaces, null, aggregate_join);
+	}
+}
+
+/**
+	API call implementation.
+	returns json obj
+*/
+function apiCallBetaCabinet(method, action, params, addOnHeaders) {
+	var ret;
+	if(method == 'GET')	{
+		ret = AnyBalance.requestGet(g_betaBaseurl + action, isset(addOnHeaders) ? addHeaders(g_betaApiHeaders, addOnHeaders) : g_betaApiHeaders);
+	} else if(method == 'POST')	{
+		ret = AnyBalance.requestPost(g_betaBaseurl + action, params, isset(addOnHeaders) ? addHeaders(g_betaApiHeaders, addOnHeaders) : g_betaApiHeaders);
+	} else {
+		throw new AnyBalance.Error('Method ' + method + ' isn`t supported!');
+	}
+	
+	ret = getJson(ret);
+	
+	var code = isset(ret.error.code) ? ret.error.code : ret.error.errorCode;
+	var message = ret.error.message || ret.error.errorMessage;
+	
+	if(code !== 0) {
+		if (message)
+			throw new AnyBalance.Error(message);
+		
+		throw new AnyBalance.Error('Произошла неизвестная ошибка при выполнении запроса.');
+	}
+	
+	return ret;
+}
+/////////////////////////////////////////////// Конец блока бета-кабинета ////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 function main() {
 	var prefs = AnyBalance.getPreferences();
 	
@@ -131,15 +217,29 @@ function main() {
 			}
     	} catch (e) {
 			AnyBalance.trace('Не удалось получить данные по штрафам из-за ошибки: ' + e.message);
+			if(e.fatal)
+				throw e;
     	}
     }
     // Налоги
     if (prefs.inn) {
     	try {
     		AnyBalance.trace('Указан ИНН, значит надо получать данные по налогам...');
-    		processNalogi(result, html, prefs);
+			
+			var inns = prefs.inn.split(';');
+			AnyBalance.trace('Указано ИНН: ' + inns.length);
+			var len = Math.min(inns.length, g_max_inns_num);
+			for(var i = 0; i < len; i++) {
+				var current = inns[i];
+				if(current) {
+					AnyBalance.trace('Получаем данные по ИНН: ' + current);
+					processNalogiBeta(result, html, current);
+				}
+			}
     	} catch (e) {
     		AnyBalance.trace('Не удалось получить данные по налогам из-за ошибки: ' + e.message);
+			if(e.fatal)
+				throw e;
     	}
     }
     AnyBalance.setResult(result);
@@ -205,7 +305,7 @@ function processGibdd(result, html, prefs) {
 		html = getXmlFileResult(html);
 		
 		// Все теперь у нас есть данные, наконец-то..
-		var fees = sumParam(html, null, null, /<div[^>]*class="text"[^>]*>\s*<table(?:[\s\S]*?<tr[^>]*>){12}(?:[^>]*>){5}\s*<\/table>/ig);
+		var fees = getElements(html, /<div[^>]+class="[^"]*tabs-dd[^>]*>/ig);
 		
 		AnyBalance.trace('Найдено штрафов: ' + fees.length);
 		
@@ -218,7 +318,7 @@ function processGibdd(result, html, prefs) {
 			var feeName = getParam(current, null, null, /<td[^>]*>([^<]+)/i, replaceTagsAndSpaces);
 			
 			if(/Оплачено/i.test(current)) {
-				//AnyBalance.trace('Нашли оплаченный штраф, пропускаем: ' + feeName);
+				AnyBalance.trace('Нашли оплаченный штраф, пропускаем: ' + feeName);
 				//g_gibdd_info += feeName + ' - <b>Оплачен</b><br/><br/>';
 			} else {
 				AnyBalance.trace('Нашли неоплаченный штраф: ' + feeName);

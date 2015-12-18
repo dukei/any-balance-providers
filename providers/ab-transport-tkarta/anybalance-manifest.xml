@@ -1,11 +1,11 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-transport-tkarta</id>
-	<api flags="no_browser|captcha"/>
+	<id version="3">ab-transport-tkarta</id>
+	<api flags="no_browser"/>
 	<name>Транспортная карта Золотая Корона</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе транспортной карты Золотая Корона <a href="https://t-karta.ru/">https://t-karta.ru/</a></p>
-	<p>Информация берется из личного кабинета <a href="https://t-karta.ru/Pages/default.aspx">https://t-karta.ru/Pages/default.aspx</a></p>
+	<p>Информация берется из личного кабинета</p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
@@ -18,6 +18,8 @@
 	<counters>
 		<counter id="balance" name="Баланс" units=" р"/>
 		<counter id="deadline" name="Дата окончания" type="time" format="dd/MM/yyyy"/>
+		<counter id="num" name="Номер карты" type="text"/>
+		<counter id="city" name="Город" type="text"/>
 	</counters>
 	<keywords></keywords>
 	<type>transport</type>

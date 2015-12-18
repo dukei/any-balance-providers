@@ -142,7 +142,34 @@ function fetchCard(jsonInfo, html, headers, baseurl){
     // getParam(div, result, 'type', /(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
 	
     getParam(jsonInfo.USR, result, 'fio', null, replaceTagsAndSpaces, capitalFirstLetters);
-	
+
+    var id = getParam(div, null, null, /'ID=([A-F0-9]+)'/i, replaceSlashes);
+    
+    var html = AnyBalance.requestPost(baseurl, {
+        SID:jsonInfo.SID,
+        tic:1,
+        T:'RT_2IC.form',
+        nvgt:1,
+        SCHEMENAME:'CARDLIST',
+        XACTION:'VIEW',
+        ID: id
+    }, headers);
+
+    getParam(html, result, 'status', /<span[^>]+class="[^"]*status[^>]*>([^]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode); //Активная
+    getParam(html, result, 'till', /Срок действия[^]*?<td[^>]*>([^]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
+    getParam(html, result, 'debt', /Использовано в кредит(?:[^]*?<td[^>]*>){6}([^]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'minpay', /Минимальный платёж по кредиту(?:[^]*?<td[^>]*>){6}([^]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'minpay_till', /Дата платежа(?:[^]*?<td[^>]*>){6}([^]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
+    getParam(html, result, 'pct', /Процентная ставка(?:[^]*?<td[^>]*>){6}([^]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'pct_sum', /Сумма процентов к уплате(?:[^]*?<td[^>]*>){6}([^]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'overdraft', /Сумма технического овердрафта(?:[^]*?<td[^>]*>){6}([^]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'peni', /Штрафы, пени, платы(?:[^]*?<td[^>]*>){6}([^]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+
+    getParam(html, result, 'date_start', /Дата начала действия кредитного договора[^]*?<td[^>]*>([^]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
+    getParam(html, result, 'limit', /Лимит по договору[^]*?<td[^>]*>([^]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'agreement', /Номер договора[^]*?<td[^>]*>([^]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'accnum', /Номер счёта для погашения[^]*?<td[^>]*>([^]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+
     AnyBalance.setResult(result);
 }
 

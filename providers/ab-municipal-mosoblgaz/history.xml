@@ -1,5 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="8" date="2015-11-27">
+	- Улучшена обработка ошибок.
+	</change>
+	<change version="7" date="2015-11-08">
+	- Новый личный кабинет
+	</change>
 	<change version="6" date="2015-04-08">
 	- Улучшена обработка ошибок.
 	</change>

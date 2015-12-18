@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+	<EditTextPreference
+		title="Логин"
+		key="login"
+		summary="||{@s}"
+		obligatory="true"
+		dialogTitle="Логин"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите логин, используемый для входа в интернет-банк.">
+	</EditTextPreference>
+	<EditTextPreference
+		title="Пароль"
+		key="password"
+		summary="||***********"
+		obligatory="true"
+		dialogTitle="Пароль"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите пароль, используемый для входа в интернет-банк."
+		inputType="textPassword">
+	</EditTextPreference>
+	<ListPreference
+		key="type"
+		title="Что смотреть"
+		summary="||{@s}"
+		entries="Карта|Счет|Депозит"
+		entryValues="card|acc|dep"
+		defaultValue="card">
+	</ListPreference>
+	<EditTextPreference
+		title="Номер счета/карты"
+		key="digits"
+		summary="||{@s}"
+		obligatory="true"
+		dialogTitle="Номер счета/карты"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите последние цифры номер счета или карты по которой нужно получать данные, либо оставьте это поле пустым, чтобы получить данные по первому счету или карте.">
+	</EditTextPreference>	
+</PreferenceScreen>

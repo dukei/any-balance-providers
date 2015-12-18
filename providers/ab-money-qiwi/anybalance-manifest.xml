@@ -1,18 +1,19 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="2.3" version="27">ab-money-qiwi</id>
+	<id major_version="2.3" version="31">ab-money-qiwi</id>
 	<api flags="no_browser"/>
 	<name>QIWI Кошелек</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе, номере QVC-карты, сроке действия QVC-карты, транзакции по QVC, количестве сообщений и счетов в QIWI Кошельке.</p> 
-	<p>Информация берется из личного кабинета <a href="https://visa.qiwi.com/">https://visa.qiwi.com/</a></p>
+	<p>Информация берется из личного кабинета <a href="https://qiwi.com/">https://qiwi.com/</a></p>
 	]]></description>
-	<author>iReset &lt;ireset.ag@gmail.com&gt;</author>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
 		<js>library.js</js>
+		<js>nadapter.js</js>
+		<js>extract.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
@@ -20,11 +21,12 @@
 		<counter id="balance" name="Баланс" units=" {@currency}"/>
 		<counter id="balance2" name="Баланс 2" units=" {@currency2}"/>
 		<counter id="balance3" name="Баланс 3" units=" {@currency3}"/>
+		
 		<counter id="megafon_balance" name="Баланс Мегафон" units=" р"/>
 		<counter id="megafon_can_pay" name="Доступно для платежей Мегафон" units=" р"/>
 		<counter id="qvc_card" name="Номер карты QVC" type="text"/>
 		<counter id="qvc_exp" name="Срок действия QVC" type="time" format="dd/MM/yyyy"/>
-		<counter id="qvc_last" name="Последняя транзакция по QVC" type="text"/>
+		<!-- <counter id="qvc_last" name="Последняя транзакция по QVC" type="text"/> -->
 		<counter id="messages" name="Сообщения" units=" шт"/>
 		<counter id="bills" name="Счета" units=" шт"/>
 	</counters>

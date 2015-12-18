@@ -1,5 +1,20 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="2.0" version="26" date="2015-12-03">
+	Еще более сильно преодолена защита от роботов
+	</change>
+	<change major_version="2.0" version="25" date="2015-12-03">
+	Преодоление новой защиты от роботов
+	</change>
+	<change major_version="2.0" version="24" date="2015-11-02">
+	- Новые счетчики: Минимальный платеж, Минимальный платеж оплатить до.
+	</change>
+	<change major_version="2.0" version="23" date="2015-10-09">
+	- Поддержка изменений на сайте.
+	</change>
+	<change major_version="2.0" version="22" date="2015-10-06">
+	- Поддержка изменений на сайте.
+	</change>
 	<change major_version="2.0" version="21" date="2015-05-26">
 	- Исправлен выход из кабинета после обновления данных.
 	</change>

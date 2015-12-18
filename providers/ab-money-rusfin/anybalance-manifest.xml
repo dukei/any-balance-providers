@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="4">ab-money-rusfin</id>
+	<id version="5">ab-money-rusfin</id>
 	<api flags="no_browser"/>
 	<name>Русфинанс банк</name>
 	<description html="true"><![CDATA[
@@ -14,6 +14,7 @@
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
 		<js>library.js</js>
+		<js>extract.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
@@ -27,6 +28,7 @@
 		<counter id="limit" name="Сумма кредита" units=" {@currency}"/>
 		<counter id="agreement" name="Номер договора" type="text"/>
 		<counter id="currency" name="Валюта" type="text"/>
+		<counter id="fio" name="ФИО" type="text"/>
 	</counters>
 	<keywords></keywords>
 	<type>money, bank</type>

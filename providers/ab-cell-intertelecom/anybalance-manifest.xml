@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="38">ab-cell-intertelecom</id>
+  <id version="40">ab-cell-intertelecom</id>
   <api flags="no_browser" />
   <name>Интертелеком</name>
 	<description html="true"><![CDATA[
@@ -30,7 +30,8 @@
     <counter id="min_local" name="Местные минуты" type="time_interval" format="{@H}:{@min}:{@sec}"/>
     <counter id="min_local_uk" name="Местные минуты и по Украине" type="time_interval" format="{@H}:{@min}:{@sec}"/>
     <counter id="min_uk_mob" name="Минуты по Украине на мобильные" type="time_interval" format="{@H}:{@min}:{@sec}"/>
-	<counter id="min_rus" name="Минуты по России" type="time_interval" format="{@H}:{@min}:{@sec}"/>
+    <counter id="min_uk_mob_uk" name="Минуты по Украине на мобильные и городские" type="time_interval" format="{@H}:{@min}:{@sec}"/>
+    <counter id="min_rus" name="Минуты по России" type="time_interval" format="{@H}:{@min}:{@sec}"/>
     <counter id="bonus_pl" name="Бонус по программе лояльности «Наилучшее общение»" suffix=" ₴" type="numeric" flags="zero_when_empty"/>
     <counter id="traffic_paket" name="Пакетный трафик" units=" mb"/>
     <counter id="traffic_paket_revb" name="Пакетный трафик (Rev.B)" units=" mb"/>

@@ -1,0 +1,67 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<api flags="no_browser"/>
+  <id version="1">ab-internet-lentel</id>
+  <name>Lentel (Ленинградская область)</name>
+  <description><![CDATA[
+    <p>Получает баланс и информацию о тарифном плане для интернет-провайдера Ленинградской области Lentel (http://lentel.ru/).</p>
+    <p>Информация берется из личного кабинета https://kabinet.lentel.ru/</p>
+
+    <p>Осуществляет подключение физических лиц в населенных пунктах<\/p>
+    <ul>
+		<li>Выборгский район
+			<ul>
+				<li>Поселок Рощино</li>
+			</ul>
+		</li>
+		<li>Кировский район
+			<ul>
+				<li>Город Кировск</li>
+				<li>Город Отрадное</li>
+				<li>Поселок Приладожский</li>
+				<li>Город Шлиссельбург</li>
+				<li>Поселок Павлово</li>
+			</ul>
+		</li>
+		<li>Ломоносовский район
+			<ul>
+				<li>Поселок Большая Ижора</li>
+				<li>Поселок Лебяжье</li>
+			</ul>
+		</li>
+		<li>Тосненский район
+			<ul>
+				<li>Город Никольское</li>
+				<li>Город Тосно</li>
+				<li>Поселок Гладкое</li>
+				<li>Посёлок Красный бор</li>
+				<li>Поселок Ульяновка</li>
+				<li>Совхоз Ушаки</li>
+				<li>Посёлок Новолисино</li>
+			</ul>
+		</li>
+  </ul>
+  ]]></description>
+  <author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>library.js</js>
+    <js>main.js</js>
+  	<history>history.xml</history>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units="р"/>
+    <counter id="prihod" name="Платежи в текущем месяце" units="р"/>
+    <counter id="licschet" name="Договор" type="text"/>
+  </counters>
+  <keywords>
+    интернет, лентел
+  </keywords>
+  <type>
+    internet
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

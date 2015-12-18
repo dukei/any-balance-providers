@@ -1,12 +1,14 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-    <id version="7">ab-affiliate-onpay</id>
+	<api flags="no_browser"/>
+    <id version="8">ab-affiliate-onpay</id>
     <name>OnPay</name>
     <description>Баланс на OnPay</description>
     <author>BArtWell &lt;web@bartwell.ru&gt;</author>
     <files>
 		<icon>icon.png</icon>
         <preferences>preferences.xml</preferences>
+        <js>library.js</js>
         <js>main.js</js>
         <history>history.xml</history>
     </files>

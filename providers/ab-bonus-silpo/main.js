@@ -74,25 +74,21 @@ function main(){
 		}
 		//Накапливаемый бонус по программе Мій «Власний Рахунок»
 		if (AnyBalance.isAvailable('bonus')) {
-			var matches = html.match(/<div class="bottom">\s*Загальна кількість\s*<div>(\d+?)<\/div>/i);
+			var matches = html.match(/<div class=[^>]*>\s*Загальна кількість\s*<div>(\d+?)<\/div>/i);
 			if (matches) {
 				result.bonus = parseFloat(matches[1]);
-			} else {
-				throw new AnyBalance.Error("Не удалось проверить бонусы");
 			}
 		}
 		//Мої Спеціальні пропозиції
 		if (AnyBalance.isAvailable('baly')) {
-			var matches = html.match(/Мої Спеціальні пропозиції ?б?і?л?ь?ш?е? ?н?і?ж? +<span>(\d+?)<\/span>/i);
+			var matches = html.match(/Мої (?:С|c)пеціальні пропозиції п*о*н*а*д*\s*<span[^>]*>(\d+?)\s*балів[^<]*</i);
 			if (matches) {
 				result.baly = parseFloat(matches[1]);
-			} else {
-				throw new AnyBalance.Error("Не удалось проверить баллы");
 			}
 		}
 		//Начисленные бонусы переведённые в грн.
 		if (AnyBalance.isAvailable('skidka')) {
-			var matches = html.match(/Всього надано Бонусів<\S*>\s*<\S*>(\d+?.\d+?) грн.<\S*>/i);
+			var matches = html.match(/Всього надано (?:Б|б)онусів<[^>]*><[^>]*>\s*<[^>]*><[^>]*>(\d+?.\d+?) грн.<[^>]*>/i);
 			if (matches) {
 				result.skidka = parseFloat(matches[1]);
 			}
@@ -105,7 +101,8 @@ function main(){
 			}
 		}
 		//Дата перерасчета бонусов
-		getParam(html, result, 'bonus_conversion', /<td>Наступне(?:&nbsp;|\s)+перерахування(?:&nbsp;|\s)+Балів(?:&nbsp;|\s)+в(?:&nbsp;|\s)+Бонус<\/td>\s*<td>Наступна(?:&nbsp;|\s)+доставка(?:&nbsp;|\s)+Сертифікатів<\/td>\s*<\/tr>\s*<tr>\s*<td>([^<]*)<\/td>/i, replaceTagsAndSpaces, parseDateMoment);
+		getParam(html, result, 'bonus_conversion', /<th[^>]*>Наступне(?:&nbsp;|\s)+перерахування(?:&nbsp;|\s)+(?:Б|б)алів(?:&nbsp;|\s)+(?:у|в)(?:&nbsp;|\s)+(?:Б|б)онус<\/th>\s*<th[^>]*>Наступна(?:&nbsp;|\s)+доставка(?:&nbsp;|\s)+(?:С|с)ертифікатів<\/th>\s*<\/tr>\s*<tr>\s*<td[^>]*>([^<]*)<\/td>/i, replaceTagsAndSpaces, parseDateMoment);
+
 		AnyBalance.setResult(result);
 	} else { 
 		var error = getParam(html, null, null, /<\/script>([\s\S]*?)<br[^>]*>/i, replaceTagsAndSpaces);

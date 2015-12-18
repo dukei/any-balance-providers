@@ -1,6 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="2">ab-internet-rline</id>
+	<api flags="no_browser"/>
+  <id version="3">ab-internet-rline</id>
   <name>Эрлайн (Дагестан)</name>
   <description>
     Получает баланс и информацию о тарифном плане для дагестанского интернет-провайдера Эрлайн (http://www.r-line.ru/).
@@ -12,16 +13,14 @@
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
     <js>library.js</js>
+    <js>bgbilling.js</js>
     <js>main.js</js>
     <history>history.xml</history>
   </files>
   <counters>
     <counter id="balance" name="Баланс" units="р"/>
     <counter id="licschet" name="Лицевой счет" type="text"/>
-    <counter id="credit" name="Кредит" units="р"/>
     <counter id="prihod" name="Приход за месяц" units="р"/>
-<!--    <counter id="trafficIn" name="Вх.трафик" units="Gb"/>
-    <counter id="trafficOut" name="Исх.трафик" units="Gb"/> -->
   </counters>
   <keywords>
     интернет

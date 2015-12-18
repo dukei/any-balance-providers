@@ -2,184 +2,137 @@
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 */
 
-var g_headers = {
-    Accept:'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-    'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
-    'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
-    Connection:'keep-alive',
-    'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.11'
+var g_countersTable = {
+	card: {
+		"currency": "cards.currency",
+    	"balance": "cards.balance",
+    	"blocked": "cards.blocked",
+		"minpay": "cards.minpay",
+		"minpay_till": "cards.minpay_till",
+		"limit": "cards.limit",
+		"till": "cards.till",
+		"overlimit": "cards.overlimit",
+		"accnum": "cards.accnum",
+		"comissiondebt": "cards.debt_comission",
+		"cardnum": "cards.num",
+		"__tariff": "cards.__name"
+    },
+	acc: {
+		"currency": "accounts.currency",
+    	"balance": "accounts.balance",
+		"accnum": "accounts.accnum",
+		"accname": "accounts.type",
+		"__tariff": "accounts.num"
+    },
+    crd: {
+		"currency": "credits.currency",
+    	"balance": "credits.balance",
+		"minpay": "credits.minpay",
+		"minpay_till": "credits.minpay_till",
+		"accnum": "credits.accnum",
+		"till": "credits.date_end",
+		"pct": "credits.pct",
+		"__tariff": "credits.__name"
+    },
+    dep: {
+		"currency": "deposits.currency",
+    	"balance": "deposits.balance",
+		"accnum": "deposits.num",
+		"nextpct": "deposits.next_pct",
+		"till": "deposits.date_end",
+		"pct": "deposits.pct",
+		"__tariff": "deposits.__name"
+    }
 };
 
-function main() {
-    var prefs = AnyBalance.getPreferences();
-	
-	checkEmpty(prefs.login, 'Введите логин!');
-	checkEmpty(prefs.password, 'Введите пароль!');
-	
-	var baseurl = 'https://client.mdmbank.ru/retailweb/';
+function shouldProcess(counter, info){
+	var prefs = AnyBalance.getPreferences();
 
-    var html = AnyBalance.requestGet(baseurl + 'login.asp', g_headers);
-	
-	if(!html || AnyBalance.getLastStatusCode() > 400){
-		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
+	switch(counter){
+		case 'cards':
+		{
+		    if(!prefs.contract)
+		    	return true;
+			if(prefs.type != 'card')
+				return false;
+			return endsWith(info.num, prefs.contract);
+		}
+		case 'accounts':
+		{
+		    if(!prefs.contract)
+		    	return true;
+			if(prefs.type != 'acc')
+				return false;
+			return endsWith(info.num, prefs.contract);
+		}
+		case 'deposits':
+		{
+		    if(!prefs.contract)
+		    	return true;
+			if(prefs.type != 'dep')
+				return false;
+			return endsWith(info.num, prefs.contract);
+		}
+		case 'credits':
+		{
+		    if(!prefs.contract)
+		    	return true;
+			if(prefs.type != 'crd')
+				return false;
+			return endsWith(info.agreement, prefs.contract);
+		}
+		default:
+			return false;
 	}
-	
-	html = AnyBalance.requestPost(baseurl + 'login.asp', {
-		unc: prefs.login,
-		pin: prefs.password
-	}, addHeaders({Referer: baseurl + 'login.asp'}));
-	
-	if(!/logout\.asp/i.test(html)) {
-		if(/<h4>\s*Подтверждение входа в Интернет-банк/i.test(html))
-			throw new AnyBalance.Error('Для работы провайдера необходимо отключить смс-подтверждение входа в интернет-банк.');
-		
-		var error = getParam(html, null, null, /<label[^>]*>((?:[\s\S](?!<\/label>))*RetailWeb.Web.ClientLogin[\s\S]*?)<\/label>/i, replaceTagsAndSpaces, html_entity_decode);
-		if (error)
-			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
+}
 
-        error = getParam(html, null, null, /<div id="error-dialog"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
-        if (error)
-            throw new AnyBalance.Error(error, null, /Неверное имя пользователя или пароль/i.test(error));
-		
-		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Не удалось войти в интернет-банк. Сайт изменен?');
+function main(){
+	var prefs = AnyBalance.getPreferences();
+    if(!/^(card|acc|dep|crd)$/i.test(prefs.type || ''))
+    	prefs.type = 'card';
+
+    var adapter = new NAdapter(g_countersTable[prefs.type], shouldProcess);
+    adapter.processAccounts = adapter.envelope(processAccounts);
+    adapter.processCards = adapter.envelope(processCards);
+    adapter.processDeposits = adapter.envelope(processDeposits);
+    adapter.processCredits = adapter.envelope(processCredits);
+    adapter.processInfo = adapter.envelope(processInfo);
+
+	var html = login();
+
+	var result = {success: true};
+
+	//adapter.processInfo(html, result);
+
+	if(prefs.type == 'card'){
+
+		adapter.processCards(html, result);
+		if(!adapter.wasProcessed('cards'))
+			throw new AnyBalance.Error(prefs.contract ? 'Не найдена карта с последними цифрами ' + prefs.contract : 'У вас нет ни одной карты');
+		result = adapter.convert(result);
+
+	}else if(prefs.type == 'acc'){
+
+		adapter.processAccounts(html, result);
+		if(!adapter.wasProcessed('accounts'))
+			throw new AnyBalance.Error(prefs.contract ? 'Не найден счет с последними цифрами ' + prefs.contract : 'У вас нет ни одного счета');
+		result = adapter.convert(result);
+
+	}else if(prefs.type == 'dep'){
+
+		adapter.processDeposits(html, result);
+		if(!adapter.wasProcessed('deposits'))
+			throw new AnyBalance.Error(prefs.contract ? 'Не найден депозит с последними цифрами ' + prefs.contract : 'У вас нет ни одного депозита');
+		result = adapter.convert(result);
+
+	}else if(prefs.type == 'crd'){
+
+		adapter.processCredits(html, result);
+		if(!adapter.wasProcessed('credits'))
+			throw new AnyBalance.Error(prefs.contract ? 'Не найден кредит с последними цифрами ' + prefs.contract : 'У вас нет ни одного кредита');
+		result = adapter.convert(result);
+
 	}
-	
-    var result;
-	if (prefs.type == 'crd')
-		result = fetchCredit(baseurl);
-	else if (prefs.type == 'acc')
-		result = fetchAccount(baseurl);
-	else if (prefs.type == 'dep')
-		result = fetchDeposit(baseurl);
-	else
-		result = fetchCard(baseurl); //По умолчанию карта
 
-    if(isAvailable('bonus')){
-        html =  AnyBalance.requestGet(baseurl + 'bonus.asp', addHeaders({ Referer: baseurl + 'bonus.asp' }));
-        if(html && AnyBalance.getLastStatusCode() < 400){
-            var bonusHref =  getParam(html, null, null, /bonus_frame[^>]+src="([^"]+)/i);
-            AnyBalance.trace('Ссылка на бонусную программу: ' + bonusHref)
-            if(bonusHref){
-                html =  AnyBalance.requestGet(bonusHref, g_headers);
-                getParam(html, result, 'bonus', /cartLink[^>]*>(\d+)/i, replaceTagsAndSpaces, parseBalance);
-            }
-        }
-    }
-
-    AnyBalance.setResult(result);
-}
-function fetchCard(baseurl){
-    var prefs = AnyBalance.getPreferences();
-    if(prefs.contract && !/^\d{4}$/.test(prefs.contract))
-        throw new AnyBalance.Error('Пожалуйста, введите 4 последних цифры номера карты, по которой вы хотите получить информацию, или не вводите ничего, чтобы получить информацию по первой карте.');
-
-    var html = AnyBalance.requestGet(baseurl + 'cards.asp', addHeaders({Referer: baseurl + 'index.asp'}));
-
-    var re = new RegExp('(<tr[^>]*>(?:[\\s\\S](?!<\\/tr>))*\\d{4}X{7,8}' + (prefs.contract ? prefs.contract : '\\d{4}') + '[\\s\\S]*?<\\/tr>)', 'i');
-    var tr = getParam(html, null, null, re);
-    if(!tr)
-        throw new AnyBalance.Error('Не удаётся найти ' + (prefs.contract ? 'карту с последними цифрами ' + prefs.contract : 'ни одной карты'));
-    
-    var result = {success: true};
-    getParam(tr, result, ['currency', '__tariff'], /<td[^>]+class="card-currency"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(tr, result, 'balance', /(?:[\s\S]*?<td[^>]*>){6}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(tr, result, 'blocked', /(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(tr, result, 'limit', /(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(tr, result, 'till', /(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
-    getParam(tr, result, 'cardnum', /(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(tr, result, '__tariff', /(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-
-    var href = getParam(tr, null, null, /<a[^>]+href="([^"]*card-statement.asp[^"]*)"[^>]*>/i, null, html_entity_decode);
-   
-    if(AnyBalance.isAvailable('overlimit','comissiondebt','minpay','accnum')){
-        html = AnyBalance.requestGet(baseurl + href, addHeaders({Referer: baseurl + 'cards.asp'}));
-        getParam(html, result, 'overlimit', /Сумма использованных сверхлимитных средств[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/, replaceTagsAndSpaces, parseBalance);
-        getParam(html, result, 'comissiondebt', /Комиссионная задолженность[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/, replaceTagsAndSpaces, parseBalance);
-        getParam(html, result, 'minpay', /Минимальная сумма взноса[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/, replaceTagsAndSpaces, parseBalance);
-        getParam(html, result, 'accnum', /Р\/с([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
-    }
-
-    return result;
-}
-
-function fetchAccount(baseurl){
-    var prefs = AnyBalance.getPreferences();
-    if(prefs.contract && !/^\d{4,20}$/.test(prefs.contract))
-        throw new AnyBalance.Error('Пожалуйста, введите не менее 4 последних цифр номера счета, по которому вы хотите получить информацию, или не вводите ничего, чтобы получить информацию по первому счету.');
-
-    var html = AnyBalance.requestGet(baseurl + 'accounts.asp', addHeaders({Referer: baseurl + 'index.asp'}));
-
-    //Сколько цифр осталось, чтобы дополнить до 20
-    var accnum = prefs.contract || '';
-    var accprefix = accnum.length;
-    accprefix = 20 - accprefix;
-
-    var re = new RegExp('(<tr[^>]*>(?:[\\s\\S](?!<\\/tr>))*' + (accprefix > 0 ? '\\d{' + accprefix + '}' : '') + accnum + '\\s*<[\\s\\S]*?<\\/tr>)', 'i');
-    var tr = getParam(html, null, null, re);
-
-    if(!tr)
-        throw new AnyBalance.Error('Не удаётся найти ' + (prefs.contract ? 'счет с последними цифрами ' + prefs.contract : 'ни одного счета'));
-    
-    var result = {success: true};
-    getParam(tr, result, 'balance', /(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(tr, result, ['currency', '__tariff'], /(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseCurrency);
-    getParam(tr, result, 'accnum', /(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(tr, result, '__tariff', /(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(tr, result, 'accname', /(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-
-    /* Работает, но получать тарифный план, наверное, смысла нет
-
-    var href = getParam(tr, null, null, /<a[^>]+href="([^"]*account-statement.asp[^"]*)"[^>]*>/i, null, html_entity_decode);
-   
-    if(AnyBalance.isAvailable('???')){
-        html = AnyBalance.requestGet(baseurl + href, addHeaders({Referer: baseurl + 'accounts.asp'}));
-    }
-
-    */
-    return result;
-}
-
-function fetchDeposit(baseurl){
-    var prefs = AnyBalance.getPreferences();
-    if(prefs.contract && !/^\d{4,20}$/.test(prefs.contract))
-        throw new AnyBalance.Error('Пожалуйста, введите не менее 4 последних цифр номера счета вклада, по которому вы хотите получить информацию, или не вводите ничего, чтобы получить информацию по первому вкладу.');
-
-    var html = AnyBalance.requestGet(baseurl + 'deposits.asp', addHeaders({Referer: baseurl + 'index.asp'}));
-
-    //Сколько цифр осталось, чтобы дополнить до 20
-    var accnum = prefs.contract || '';
-    var accprefix = 20 - accnum.length;
-
-    var re = new RegExp('(<tr[^>]*>(?:[\\s\\S](?!<\\/tr>))*' + (accprefix > 0 ? '\\d{' + accprefix + '}' : '') + accnum + '\\s*<[\\s\\S]*?<\\/tr>)', 'i');
-    var tr = getParam(html, null, null, re);
-    if(!tr)
-        throw new AnyBalance.Error('Не удаётся найти ' + (prefs.contract ? 'вклад с последними цифрами ' + prefs.contract : 'ни одного вклада'));
-    
-    var result = {success: true};
-    getParam(tr, result, 'balance', /(?:[\s\S]*?<td[^>]*>){7}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(tr, result, ['currency', '__tariff'], /(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(tr, result, 'accnum', /(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(tr, result, '__tariff', /(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(tr, result, 'till', /(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
-    getParam(tr, result, 'pct', /(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-
-    var href = getParam(tr, null, null, /<a[^>]+href=["']([^"']*deposit-statement.asp[^"']*)["'][^>]*>/i, null, html_entity_decode);
-   
-    if(AnyBalance.isAvailable('nextpct')){
-        html = AnyBalance.requestGet(baseurl + href, addHeaders({Referer: baseurl + 'deposits.asp'}));
-        getParam(html, result, 'nextpct', /Дата следующей уплаты процентов:([^<]*)/i, replaceTagsAndSpaces, parseDate);
-    }
-
-    return result;
-}
-
-function fetchCredit(baseurl){
-    var prefs = AnyBalance.getPreferences();
-
-    if(prefs.contract && !/^\d{6,10}$/.test(prefs.contract))
-        throw new AnyBalance.Error('Пожалуйста, введите номер кредита, по которому вы хотите получить информацию, или не вводите ничего, чтобы получить информацию по первому кредиту.');
-
-    throw new AnyBalance.Error('Кредиты пока не поддерживаются, обратитесь к автору провайдера.');
+	AnyBalance.setResult(result);
 }

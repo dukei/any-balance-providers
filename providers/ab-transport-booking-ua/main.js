@@ -36,17 +36,17 @@ function main() {
 	if (!html || AnyBalance.getLastStatusCode() > 400) 
 		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
 
-        var svAB = AnyBalance;
-        this.fake_localStorage = {
+	var svAB = AnyBalance;
+	this.fake_localStorage = {
 	    setItem: function(key, value) {
-		svAB.trace('Получили token (' + key + '): ' + value);
-		token = value;
-	    }
-        }
+			svAB.trace('Получили token (' + key + '): ' + value);
+			token = value;
+		}
+	}
 
 	var obf_script = getParam(html, null, null, /(\$\$_=~[\s\S]*?)\(function\s*\(\s*\)\s*\{\s*var\s+ga/);
         
-        (0).constructor.constructor = function(str){ //Обфусцированный скрипт использует это для выполнения кода
+	(0).constructor.constructor = function(str){ //Обфусцированный скрипт использует это для выполнения кода
 		if(str && typeof(str)=='string' && /localStorage/.test(str)){
 			str = str.replace(/localStorage/g, 'fake_localStorage');
 		}
@@ -86,16 +86,34 @@ function main() {
     
 	var result = {success: true};
 	
-    result.train = json.value[0].num;
-    result.depart_station = json.value[0].from.station;
-    result.depart_time = json.value[0].from.src_date;
-    result.arrival_station = json.value[0].till.station;
-    result.arrival_time = json.value[0].till.src_date;
+	var data;
+	
+	if(prefs.train) {
+		for(var i = 0; i < json.value.length; i++) {
+			if(endsWith(json.value[i].num+'', prefs.train)) {
+				AnyBalance.trace('Нашли нужный поезд.');
+				data = json.value[i];
+				break;
+			} else {
+				AnyBalance.trace('Поезд с номером ' + json.value[i].num + ' не соответствует заданному в настройках ' + prefs.train);
+			}
+		}
+	} else {
+		data = json.value[0];
+	}
+	
+	checkEmpty(data, 'Не удалось найти информацию по по рейсам, сайт изменен?', true);
+	
+	getParam(data.num, result, 'train');
+	getParam(data.from.station, result, 'depart_station');
+	getParam(data.from.src_date, result, 'depart_time');
+	getParam(data.till.station, result, 'arrival_station');
+	getParam(data.till.src_date, result, 'arrival_time');
     
     var types = [];
     
-    for(var i = 0; i < json.value[0].types.length; i++)	{
-        var avail_seats = " " + json.value[0].types[i].title + ": " + json.value[0].types[i].places;
+    for(var i = 0; i < data.types.length; i++)	{
+        var avail_seats = " " + data.types[i].title + ": " + data.types[i].places;
         types.push(avail_seats);
 	}
     result.types = types.toString();

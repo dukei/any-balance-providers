@@ -1,7 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="4">ab-telephony-apollophone</id>
+	<id version="5">ab-telephony-apollophone</id>
 	<name>Apollo Phone</name>
 	<description>
 	Получает текущий баланс, валюту баланса в провайдере IP-телефонии Apollo Phone (http://www.apollophone.ru). 
@@ -10,9 +10,7 @@
       междугородная/международная телефонная связь с помощью телефонных карт Apollo Phone;
       прямой доступ к междугородной/международной телефонной связи.
 
-    Провайдер получает данные из личного кабинета https://secure.apollophone.ru/office
-
-    Доступ к личному кабинету выдаётся только для постоянных клиентов компании, заключивших договор на прямое подключение. Информацию о том, как заключить договор, Вы можете посмотреть здесь: http://www.apollophone.ru/moskva/pr_pod_m.php.
+    Провайдер получает данные из личного кабинета https://lk.apollophone.ru
 	</description>
 	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
 	<files>

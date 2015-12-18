@@ -7,7 +7,7 @@ var g_headers = {
 	'Accept-Language': 'ru,en-US;q=0.8,en;q=0.6,uk;q=0.4',
 	'Connection': 'keep-alive',
 	'Origin': 'https://online.oschadbank.ua',
-	'User-Agent': 'Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/38.0.2125.66 Safari/537.36 OPR/25.0.1614.31 (Edition beta)',
+	'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/46.0.2490.80 Safari/537.36',
 };
 
 function main() {
@@ -99,10 +99,17 @@ function fetchCard(html, baseurl) {
     getParam(prod.balances.full_crlimit.value, result, 'maxlimit', null, null, parseBalance);
 	getParam(prod.card.expiryDate + '', result, 'till', null, null, parseDate);
     getParam(prod.balances.total_due.value, result, 'debt', null, null, parseBalance);
+    //Поки так, бо prod.balances.06.value видає помилку
+    getParam(html, result, 'mz', /\"06\" \: \{[\s\S]*?\"value\" \: \"([\s\d.,\-]+)\"/i, replaceTagsAndSpaces, parseBalance);
     getParam(prod.card.accountNumber, result, 'rr');
-    getParam(prod.balances.available.currency, result, ['currency', 'balance', 'maxlimit', 'debt']);
+    getParam(prod.balances.available.currency, result, ['currency', 'balance', 'maxlimit', 'debt', 'mz']);
     getParam(prod.product.name, result, '__tariff');
-	getParam(prod.number, result, 'cardNumber');
+    getParam(prod.number, result, 'cardNumber');
+    html = AnyBalance.requestGet(baseurl + 'wb/api/v1/messages?system=W4C', addHeaders({'X-Requested-With':'XMLHttpRequest'}));
+    if(AnyBalance.isAvailable('mess')){
+           var countmess = sumParam(html, null, null, /"status" : "unread"/ig);
+           result.mess = countmess.length;
+    }
 	
 	AnyBalance.setResult(result);
 }
@@ -135,10 +142,17 @@ function fetchAcc(html, baseurl) {
     getParam(prod.balances.full_crlimit.value, result, 'maxlimit', null, null, parseBalance);
 //	getParam(prod.card.expiryDate, result, 'till', null, null, parseDate);
     getParam(prod.balances.total_due.value, result, 'debt', null, null, parseBalance);
+    //Поки так, бо prod.balances.06.value видає помилку
+    getParam(html, result, 'mz', /\"06\" \: \{[\s\S]*?\"value\" \: \"([\s\d.,\-]+)\"/i, replaceTagsAndSpaces, parseBalance);
     getParam(prod.cardAccount.accountNumber, result, 'rr');
-    getParam(prod.balances.available.currency, result, ['currency', 'balance', 'maxlimit', 'debt']);
+    getParam(prod.balances.available.currency, result, ['currency', 'balance', 'maxlimit', 'debt', 'mz']);
     getParam(prod.product.name, result, '__tariff');
 //	getParam(prod.number, result, 'cardNumber');
+    html = AnyBalance.requestGet(baseurl + 'wb/api/v1/messages?system=W4C', addHeaders({'X-Requested-With':'XMLHttpRequest'}));
+    if(AnyBalance.isAvailable('mess')){
+           var countmess = sumParam(html, null, null, /"status" : "unread"/ig);
+           result.mess = countmess.length;
+    }
 	
 	AnyBalance.setResult(result);
 }

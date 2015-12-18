@@ -1,5 +1,14 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="9" date="2015-11-19">
+	Исправлен механизм первичной привязки карты
+	</change>
+	<change version="8" date="2015-11-16">
+	- Исправлена ошибка.
+	</change>
+	<change version="7" date="2015-11-16">
+	- Поддержка изменений на сайте.
+	</change>
 	<change version="5" date="2014-05-19">
 	- Улучшена обработка кредитных карт.
 	</change>

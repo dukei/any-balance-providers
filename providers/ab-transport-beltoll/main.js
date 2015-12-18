@@ -29,14 +29,10 @@ function main() {
     var token = getParam(html, null, null, /RequestVerificationToken"[\s\S]type="hidden"[\s\S]value=(?:[^>]){1}([^"]+)/i, replaceTagsAndSpaces, html_entity_decode);
    
     var captchaa = "0000";
-    // if(AnyBalance.getLevel() >= 7) {
-      // AnyBalance.trace('Пытаемся ввести капчу');
-      // var captcha = AnyBalance.requestGet(baseurl+ '/Captcha/CaptchaImage');
-      // captchaa = AnyBalance.retrieveCode("Пожалуйста, введите код с картинки", captcha);
-      // AnyBalance.trace('Капча получена: ' + captchaa);
-     // }else{
-      // throw new AnyBalance.Error('Провайдер требует AnyBalance API v7, пожалуйста, обновите AnyBalance!');
-     // }
+    AnyBalance.trace('Пытаемся ввести капчу');
+    var captcha = AnyBalance.requestGet(baseurl+ '/Captcha/CaptchaImage?noisy=False');
+    captchaa = AnyBalance.retrieveCode("Пожалуйста, введите код с картинки", captcha);
+    AnyBalance.trace('Капча получена: ' + captchaa);
    
 	html = AnyBalance.requestPost(baseurl + '/Account/Login', {
 		UserName: prefs.login,
@@ -49,6 +45,9 @@ function main() {
 		var error = getParam(html, null, null, /<label[^>]+class="validation-summary-errors-login"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
 		if (error)
 			throw new AnyBalance.Error(error, null, /Недействительные права/i.test(error));
+		error = sumParam(html, null, null, /<span[^>]+field-validation-error[^>]*>([^]*?)<\/span>/ig, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
+		if (error)
+			throw new AnyBalance.Error(error);
 		
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');

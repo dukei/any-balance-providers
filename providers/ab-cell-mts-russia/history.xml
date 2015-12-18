@@ -1,5 +1,59 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="4.1" version="136" date="2015-12-14">
+	Исправлено получение трафика в некоторых случаях
+	Исправлено получение абонентской платы в некоторых случаях
+	</change>
+	<change major_version="4.0" version="135" date="2015-12-10">
+	- Исправление получения трафика во многих случаях
+	- Разделение минут на МТС Коннект
+	</change>
+	<change major_version="4.0" version="134" date="2015-12-06">
+	Улучшена обработка ошибок, возникающих на сайте МТС
+	</change>
+	<change major_version="4.0" version="133" date="2015-12-06">
+	- Поддержка изменений на сайте.
+	</change>
+	<change major_version="4.0" version="132" date="2015-12-06">
+	Попытка исправить смену пароля при автоматическом получении пароля
+	</change>
+	<change major_version="4.0" version="131" date="2015-12-06">
+	- Исправлена помощь в получении пароля
+	</change>
+	<change major_version="4.0" version="130" date="2015-11-30">
+	- Улучшена обработка ошибок.
+	</change>
+	<change major_version="4.0" version="129" date="2015-11-26">
+	- Улучшена обработка ошибок (но личный кабинет МТС всё ещё работает плохо и часть информации не получается. Ждем, когда они решат свои проблемы).
+	</change>
+	<change major_version="4.0" version="128" date="2015-11-16">
+	Исправление входа при необходимости ввести капчу
+	Чистка устаревшего кода
+	</change>
+	<change major_version="3.3" version="127" date="2015-09-10">
+	- Исправлена ошибка совместимости с разными версиями JavaScript
+	</change>
+	<change major_version="3.3" version="126" date="2015-09-10">
+	- Обход проблемы МТС с автологином на мобильном интернете
+	</change>
+	<change major_version="3.3" version="125" date="2015-09-07">
+	- Улучшена обработка ошибок.
+	</change>
+	<change major_version="3.3" version="124" date="2015-09-04">
+	- Срок действия трафика исправлен
+	</change>
+	<change major_version="3.3" version="123" date="2015-09-03">
+	Поддержка изменений в получении бонусных баллов
+	</change>
+	<change major_version="3.3" version="122" date="2015-08-22">
+	Исправлено получение баланса бонусов
+	</change>
+	<change major_version="3.3" version="120" date="2015-08-17">
+	Улучшено распознавание минут и смс в некоторых случаях
+	</change>
+	<change major_version="3.3" version="119" date="2015-08-16">
+	Подправлена процедура входа
+	</change>
 	<change major_version="3.3" version="118" date="2015-07-30">
 	- Улучшена обработка ошибок.
 	</change>

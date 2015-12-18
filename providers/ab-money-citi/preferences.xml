@@ -42,4 +42,11 @@
 		key="profile"
 		inputType="number">
 	</EditTextPreference>
+	<CheckBoxPreference
+		title="Запрашивать смс-код для получения полных данных?"
+		defaultValue="false"
+		summaryOn="Смс запрашивается"
+		summaryOff="Смс не запрашивается"
+		key="detailsEnabled">
+	</CheckBoxPreference>
 </PreferenceScreen>

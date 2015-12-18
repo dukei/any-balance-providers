@@ -1,6 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-internet-lanta-net</id>
+	<api flags="no_browser"/>
+  <id version="2">ab-internet-lanta-net</id>
   <name>LanTa (Тамбов)</name>
   <description>
      Получает баланс и информацию о тарифном плане для тамбовского интернет-провайдера LanTa
@@ -12,11 +13,14 @@
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
+    <js>library.js</js>
     <js>main.js</js>
+  	<history>history.xml</history>
   </files>
   <counters>
     <counter id="balance" name="Баланс" units="р"/>
     <counter id="abon" name="Абонентская плата" units="р"/>
+    <counter id="bonus" name="Бонусный баланс" units=" Б"/>
     <counter id="trafficIn" name="Вх.трафик" units="Gb"/>
     <counter id="trafficOut" name="Исх.трафик" units="Gb"/>
   </counters>

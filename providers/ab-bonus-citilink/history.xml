@@ -1,5 +1,20 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="16" date="2015-12-09">
+	Исправлена работа в AnyBalance
+	</change>
+	<change version="15" date="2015-12-09">
+	- Улучшена обработка ошибок.
+	</change>
+	<change version="14" date="2015-12-09">
+	- Обход защиты от роботов
+	</change>
+	<change version="13" date="2015-11-20">
+	- Поддержка изменений в процедуре входа
+	</change>
+	<change version="12" date="2015-08-23">
+	Сменился личный кабинет на новый
+	</change>
 	<change version="11" date="2015-08-01">
 	- Изменения в процедуре входа
 	</change>

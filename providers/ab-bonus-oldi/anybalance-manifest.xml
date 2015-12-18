@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="3">ab-bonus-oldi</id>
+	<id version="4">ab-bonus-oldi</id>
 	<name>Олди (Бонусы)</name>
 	<description html="true"><![CDATA[
 	<p>Получает данные по бонусным картам сети магазинов Олди <a href="http://www.oldi.ru/">http://www.oldi.ru/</a></p>
@@ -17,9 +17,11 @@
 	</files>
 	<counters>
 		<counter id="bonus" name="Накоплено бонусов"/>
-		<counter id="suumazakazov" name="Сумма заказов"/>
-		<counter id="zakazy" name="Количество заказов"/>
-		<counter id="price" name="Доступная ценовая колонка" type="text"/>
+		<counter id="suumazakazov" name="Сумма покупок"/>
+		<counter id="burn" name="Сгораемые бонусы"/>
+		<counter id="till" name="Ближайший срок сгорания" type="time" format="dd/MM/yyyy"/>
+		<counter id="zakazy" name="Количество покупок"/>
+		<counter id="price" name="Ценовая колонка" type="text"/>
 	</counters>
 	<keywords>oldi</keywords>
 	<type>bonus</type>

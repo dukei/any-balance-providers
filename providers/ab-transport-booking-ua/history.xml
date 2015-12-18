@@ -1,5 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="6" date="2015-09-28">
+	- Исправлена ошибка в определении мест в поезде.
+	</change>
+	<change version="5" date="2015-09-23">
+	- Мелкие улучшения.
+	</change>
+	<change version="4" date="2015-08-31">
+	- Добавлено отображение информации по конкретному поезду.
+	</change>
 	<change version="3" date="2014-10-10">
 	- Исправлена ошибка в AnyBalance.
 	</change>

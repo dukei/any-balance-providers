@@ -11,9 +11,18 @@ var g_headers = {
 	'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
 };
 
+function createParams(params){
+	var strParams = '';
+	for(var i = 0; i < params.length; i++) {
+		strParams += '&' + encodeURIComponent(params[i][0]) + '=' + encodeURIComponent(params[i][1]);
+	}
+	return strParams;
+}
+
 function main() {
 	var prefs = AnyBalance.getPreferences();
 	var baseurl = 'http://fssprus.ru/';
+	var baseurl_api = 'http://is.fssprus.ru/';
 	AnyBalance.setDefaultCharset('utf-8');
 	
 	checkEmpty(prefs.last_name, 'Введите Фамилию!');
@@ -42,33 +51,31 @@ function main() {
 		['is[date]',(prefs.birthdate || '')],
 		['nocache','1'],
 		['is[sort_field]',''],
-		['is[sort_direction]',''],
+		['is[sort_direction]','']
 	];
 	
-	var strParams = '';
-	for(var i = 0; i < params.length; i++) {
-		strParams += '&' + encodeURIComponent(params[i][0]) + '=' + encodeURIComponent(params[i][1]);
-	}
-	
-	var url = baseurl + 'iss/ajax_search?' + strParams;
+	var url = baseurl_api + 'ajax_search?' + createParams(params);
 	html = AnyBalance.requestGet(url, addHeaders({'X-Requested-With': 'XMLHttpRequest'}));
+	html = getJson(html).data;
 	
-	var captchaa = getParam(html, null, null, /<img\s*src=".([^"]*)/i);
+	var captchaa = getParam(html, null, null, /<img[^>]+src="data:image[^"]*?,([^"]*)"[^>]*id="capchaVisual"/i, null, html_entity_decode);
 	if(captchaa) {
-		if(AnyBalance.getLevel() >= 7) {
-			AnyBalance.trace('Пытаемся ввести капчу');
-			//AnyBalance.setOptions({forceCharset:'base64'});
-			var captcha = AnyBalance.requestGet(baseurl + captchaa);
-			captchaa = AnyBalance.retrieveCode('Пожалуйста, введите код с картинки', captcha);
-			//AnyBalance.setOptions({forceCharset:'utf-8'});
-			AnyBalance.trace('Капча получена: ' + captchaa);
-		} else {
-			throw new AnyBalance.Error('Провайдер требует AnyBalance API v7, пожалуйста, обновите AnyBalance!');
-		}
+		AnyBalance.trace('Пытаемся ввести капчу');
+		captchaa = AnyBalance.retrieveCode('Пожалуйста, введите код с картинки', captchaa);
+		AnyBalance.trace('Капча получена: ' + captchaa);
 		
-		html = AnyBalance.requestPost(url, {
-			code:captchaa,
-		}, addHeaders({Referer: url, 'X-Requested-With': 'XMLHttpRequest'}));
+		params.push(['code', captchaa]);
+		html = AnyBalance.requestGet(baseurl_api + 'ajax_search?' + createParams(params), addHeaders({Referer: url, 'X-Requested-With': 'XMLHttpRequest'}));
+		html = getJson(html).data;
+	}
+
+	if(!/<div[^>]+class="results"/i.test(html)){
+		var error = getParam(html, null, null, /<div[^>]+class="empty"[^>]*>([^]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+		if(error)
+			throw new AnyBalance.Error(error, null, /не найден/i.test(html));
+
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
 	
 	var result = {success: true};

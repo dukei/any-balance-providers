@@ -1,13 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="4">ab-tv-itce</id>
+	<id version="5">ab-tv-itce</id>
 	<api flags="no_browser"/>
 	<name>Группа Компаний Электрон (Цифровое ТВ, Интернет)</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе ГК Электрон (Цифровое ТВ и Интернет)</p>
 	<p>Информация берется из личного кабинета http://tv.itce.ru/?page=billing - Цифровое ТВ и http://inet.itce.ru/?page=billing - Интернет</p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
@@ -18,6 +18,7 @@
 	<counters>
 		<counter id="balance" name="Баланс" units=" р"/>
 		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="agreement" name="Договор" type="text"/>
 	</counters>
 	<keywords></keywords>
 	<type>tv, internet</type>

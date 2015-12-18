@@ -62,7 +62,7 @@ function main(){
 
     if(AnyBalance.isAvailable('last_pay_date', 'last_pay_sum', 'last_pay_comment')){
         html = AnyBalance.requestGet(baseurl + 'payact.html', g_headers);
-        var row = getParam(html, null, null, /Зачисленные платежи за последние 180 дней(?:[\s\S](?!<\/table>))*?(<td[^>]*>\d\d\.\d\d\.\d{2,4} \d\d:\d\d:\d\d<[\s\S]*?)<\/tr>/i);
+        var row = getParam(html, null, null, /Зачисленные платежи за последние \d+ дн(?:[\s\S](?!<\/table>))*?(<td[^>]*>\d\d\.\d\d\.\d{2,4} \d\d:\d\d:\d\d<[\s\S]*?)<\/tr>/i);
         if(row){
             getParam(row, result, 'last_pay_date', /(?:[\s\S]*?<td[^>]*>)([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
             getParam(row, result, 'last_pay_sum', /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);

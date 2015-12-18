@@ -1,13 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="3">ab-municipal-kvartplata24</id>
+	<id version="4">ab-municipal-kvartplata24</id>
 	<api flags="no_browser"/>
 	<name>Квартплата 24</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию из системы Квартплата 24 http://kvp24.ru/</p>
-	<p>Информация берется из личного кабинета http://lk.kvp24.ru/lk/login.jsp</p>
+	<p>Информация берется из личного кабинета http://lk.kvp24.ru/lk/login</p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

@@ -1,7 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id version="17">ab-money-raif</id>
+	<id version="21">ab-money-raif</id>
 	<name>Райффайзен</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о текущем остатке и других параметрах счетов и депозитов для клиентов банка Райффайзенбанк (<a href="http://www.raiffeisen.ru">http://www.raiffeisen.ru</a>).</p>
@@ -14,16 +14,20 @@
 		<li>После подписания заявления вы получите логин и ПИН-конверт, содержащий ваш пароль для доступа в Raiffeisen CONNECT.</li>
 	</ol>
 	]]></instruction>
-	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
 		<js>library.js</js>
+		<js>nadapter.js</js>
+		<js>extract.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
 	<counters>
 		<counter id="balance" name="Баланс" units=" {@currency}"/>
+		<counter id="ownFunds" name="Собственные средства" units=" {@currency}"/>
+		<counter id="clearBalance" name="Баланс кредитной карты" units=" {@currency}"/>
 		<counter id="pcts" name="Проценты в конце срока" units=" {@currency}"/>
 		<counter id="currency" name="Валюта" type="text"/>
 		<counter id="accnum" name="Номер счета" type="text"/>
@@ -34,12 +38,15 @@
 		<counter id="minpaytill" name="Срок платежа по кредиту" type="time" format="dd/MM/yyyy"/>
 		<counter id="limit" name="Кредитный лимит" units=" {@currency}"/>
 		<counter id="till" name="Срок действия" type="time" format="dd/MM/yyyy"/>
+		<counter id="gracePeriodOutstanding" name="Просрочено в льготном периоде" units=" {@currency}"/>
+		<counter id="unpaidGracePeriodDue" name="Неоплачено в льготном периоде" units=" {@currency}"/>
+		<counter id="gracePeriodEnd" name="Окончание льготного периода" type="time" format="dd/MM/yyyy"/>
 		<counter id="rate" name="Процентная ставка" units=" %"/>
 		<counter id="fio" name="ФИО" type="text"/>
 		<counter id="type" name="Тип" type="text"/>
-		<counter id="all" name="Сводка" type="text"/>
+		<!-- <counter id="all" name="Сводка" type="text"/> -->
 	</counters>
 	<keywords>raiffaisen raif raifaisen райф конект</keywords>
-	<type>money</type>
+	<type>money, bank</type>
 	<country>ru</country>
 </provider>

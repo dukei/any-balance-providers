@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-internet-it-tv</id>
+	<api flags="no_browser"/>
+	<name>IT-TV.org (Украина)</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера <a href="https://www.it-tv.org/">IT-TV.org</a> (Украина)</p>
+	<p>Информация берется из личного кабинета <a href="https://bms.it-tv.org/stat/index.php">https://bms.it-tv.org/stat/index.php</a></p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" грн"/>
+		<counter id="abon" name="Абонплата" units=" грн"/>
+		<counter id="acc_num" name="Лицевой счёт" type="text"/>
+		<counter id="state" name="Состояние услуги" type="text"/>
+		<counter id="agreement" name="Договор" type="text"/>
+		
+		<counter id="traf_in" name="Входящий интернет-трафик" units=" Мб"/>
+		<counter id="traf_out" name="Исходящий интернет-трафик" units=" Мб"/>
+	</counters>
+	<keywords></keywords>
+	<type>internet</type>
+	<country>ua</country>
+</provider>

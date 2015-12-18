@@ -20,10 +20,25 @@ function main(){
 
     AnyBalance.setDefaultCharset('utf-8'); 
 
-    var html = AnyBalance.requestPost(baseurl + 'auth/signin', {
-        login:prefs.login,
-        password:prefs.password
-    }, addHeaders({Referer: baseurl + 'auth/signin'})); 
+    var html = AnyBalance.requestGet(baseurl + 'auth/signin', g_headers);
+    var form = getElement(html, /<form[^>]+id="authForm"[^>]*>/i);
+
+    if(!form){
+    	AnyBalance.trace(html);
+    	throw new AnyBalance.Error('Не удалось найти форму входа. Сайт изменен?');
+    }
+
+    var params = createFormParams(form, function(params, str, name, value) {
+        if (/login/.test(name))
+            return prefs.login;
+        else if (/password/.test(name))
+            return prefs.password;
+
+        return value;
+    });
+
+
+    html = AnyBalance.requestPost(baseurl + 'auth/signin', params, addHeaders({Referer: baseurl + 'auth/signin'})); 
 
 	if(!/class="exit/i.test(html)) {
 		var error = getParam(html, null, null, /<div[^>]+class="error1"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);

@@ -1,12 +1,15 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="3">ab-internet-ttk</id>
+	<id version="4">ab-internet-ttk</id>
 	<api flags="no_browser"/>
 	<name>ТТК (Единый кабинет)</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе провайдера ТТК (Единый кабинет)</p>
-	<p>Информация берется из личного кабинета https://lk.ttk.ru/po/LoginForm.jsp</p>
+	<p>Информация берется из личного кабинета https://lk.ttk.ru/</p>
 	]]></description>
+	<instruction>
+		Если у вас несколько лицевых счетов в кабинете, указывайте в качестве логина тот счет, по которому вы хотите получить информацию.
+	</instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>

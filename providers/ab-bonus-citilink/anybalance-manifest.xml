@@ -1,11 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="11">ab-bonus-citilink</id>
+	<id version="16">ab-bonus-citilink</id>
 	<api flags="no_browser|captcha"/>
 	<name>Ситилинк</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о количестве бонусов в бонусной программе электронного дискаунтера "Ситилинк" (http://www.citilink.ru/).</p>
-	<p>Информация берется из личного кабинета (http://www.citilink.ru/login/).</p>
+	<p>Информация берется из личного кабинета.</p>
 	]]></description>
 	<instruction html="true"><![CDATA[
 	<p>Настройки:</p>
@@ -17,15 +17,16 @@
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
+		<js>citi.js</js>
 		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
 	<counters>
 		<counter id="balance" name="Бонусы" units=" Б"/>
-		<counter id="new" name="Бонусы к начислению" units=" Б"/>
 		<counter id="num" name="Товаров в текущем квартале" units=" т"/>
 		<counter id="sum" name="Покупки в текущем квартале" units=" р"/>
+		<counter id="wishes" name="Желания" units=" ж"/>
 		<counter id="obrabotannie" name="Количество обработанных вопросов"/>
 		<counter id="pomosh" name="Скольким людям помогли ответы"/>
 		<counter id="reshennie" name="Количество решенных вопросов"/>

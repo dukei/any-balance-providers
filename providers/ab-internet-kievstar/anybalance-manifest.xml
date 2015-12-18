@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="2.0" version="7">ab-internet-kievstar</id>
+	<id major_version="2.0" version="8">ab-internet-kievstar</id>
 	<!-- <api flags="no_browser|captcha"/> -->
 	<api flags="no_browser"/>
 	<name>Киевстар (домашний интернет)</name>
@@ -19,6 +19,8 @@
 	<counters>
 		<counter id="balance" name="Баланс" units=" ₴"/>
 		<counter id="bonuses" name="Бонусный счет" units=" б"/>
+		<counter id="status" name="Статус" type="text"/>
+		<counter id="licschet" name="Лицевой счет" type="text"/>
 	</counters>
 	<keywords>Домашний интернет, интернет, kyivstar, киевстар, украина</keywords>
 	<type>internet</type>

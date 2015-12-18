@@ -1,5 +1,20 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="7" date="2015-11-02">
+	- Улучшена обработка ошибок.
+	</change>
+	<change version="6" date="2015-10-30">
+	Добавление депозитов
+	</change>
+	<change version="5" date="2015-10-27">
+	- Исправление настроек
+	</change>
+	<change version="4" date="2015-10-27">
+	- Разрешено вводить не только цифры в логине и пароле
+	</change>
+	<change version="3" date="2015-10-26">
+	- Поддержка изменений на сайте.
+	</change>
 	<change version="2" date="2015-07-31">
 	- Поддержка изменений на сайте.
 	</change>

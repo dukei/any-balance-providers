@@ -1,4 +1,4 @@
-﻿/**
+/**
 Тест для library.js
 */
 
@@ -128,7 +128,7 @@ function main() {
 	var temp = 0;
 	for (var i = 0; i < times.length; i++) {
 		AnyBalance.trace('Parsing item ' + (temp+1) + ': ' + times[i]);
-		var parsed = parseMinutes(times[i]);
+		var parsed = parseMinutes(html_entity_decode(times[i]));
 		var res = times[++i];
 		
 		if(res == parsed) {
@@ -137,7 +137,66 @@ function main() {
 			AnyBalance.trace('!!!____________________________________________________________Item ' + (temp++) + ' parsing failed: should be ' + res + ', parsed ' + parsed + '!!!');
 		}
 	}
+
+	var html = '<span sl> <div class="test"> parsed <div class="test"></div> <span sdflj> it </span> <div askdfj> ok </div>!</div> test </div>';
+	var str = getElement(html, /<\w+[^>]+class="test"[^>]*>/i, replaceTagsAndSpaces);
+	var res = /^parsed\sit\sok\s!$/i;
+	if(res.test(str))
+		AnyBalance.trace('getElement is ok');
+	else
+		AnyBalance.trace('!!!____________________________________________________________getElement test is failed: should be ' + res.source + ', parsed ' + str + '!!!');
+
+	var html = '<div class="accountDetailTextBlock">\
+									<div class="accountTitle totalAccountUp">\
+										ИТОГО\
+									</div><div class="accountTitle">\
+										собственные средства\
+									</div><div class="accountTitle">\
+										кредитные средства\
+									</div>\
+								</div>';
+	var a = getElements(html, /<div[^>]*>/ig);
+	if(a.length == 1)
+		AnyBalance.trace('getElements is ok');
+	else
+		AnyBalance.trace('!!!____________________________________________________________getElements test is failed: should be ' + 1 + ', parsed ' + a.length + '!!!');
 	
+	var a = getElements(html.substr(1), /<div[^>]*>/ig);
+	if(a.length == 3)
+		AnyBalance.trace('getElements is ok');
+	else
+		AnyBalance.trace('!!!____________________________________________________________getElements test is failed: should be ' + 3 + ', parsed ' + a.length + '!!!');
+
+
+	var s1 = '<div>some html</div>		\n\
+		<script> var x=				\n\
+			{						\n\
+				\/* \/{} \\			\n\
+				*\/					\n\
+				// \/{}	\\			\n\
+				i: 1,				\n\
+				b: true,			\n\
+				s1: "_{}}  \\" \/\/  ",		\n\
+				s2: \'_{}} \\\' \/\/  \',	\n\
+				s3: `_{}} \\`  \/\/  `,		\n\
+				s4: "_{}}  \\"\\\n\/\/  ",	\n\
+				r: /[\\/regexp\\d]{1,}/ig,	\n\
+				a: [				\n\
+					{ff: 2.2},		\n\
+					{oo: {}}		\n\
+				],					\n\
+				"sdf}sdsdf": 666,   \n\
+				/* check } */		\n\
+				o: {}				\n\
+			};						\n\
+			var x = "{}"			\n\
+			';
+	var str = getJsonObject(s1, /var\s+x\s*=(?=\s*\{)/);
+	if(str && str.i == 1)
+		AnyBalance.trace('getJsonObject is ok');
+	else
+		AnyBalance.trace('!!!____________________________________________________________getJsonObject test is failed!!!');
+
 	
 		
 	//checkEmpty(prefs.s, 'checkEmpty работает нормально!');
@@ -151,6 +210,40 @@ function main() {
 	getParam(html, result, 'status', /Статус:[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, html_entity_decode);*/
 
 	getParam(undefined, result, 'status', /Статус:[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, html_entity_decode);
+	
+	// Тестируем форматирование дат
+	var dates = [{
+			format: 'DD/MM/YYYY',
+			offsetDay: 0,
+			offsetMonth: 0,
+			offsetYear: 5,
+			// То, что на входе, дата
+			inputDate: '01.01.2015',
+			// Что на выходе
+			expectedOutput: '01/01/2010'
+		}, {
+			format: 'D/M/YY',
+			offsetDay: 0,
+			offsetMonth: 0,
+			offsetYear: 5,
+			// То, что на входе, дата
+			inputDate: '01.01.2015',
+			// Что на выходе
+			expectedOutput: '1/1/10'
+		},
+	];
+	
+	for(var i = 0; i < dates.length; i++) {
+		var obj = dates[i];
+		
+		var dt = new Date(obj.inputDate);
+		var res = getFormattedDate(obj, dt);
+		
+		if(res === obj.expectedOutput)
+			AnyBalance.trace('getFormattedDate is ok');
+		else
+			AnyBalance.trace('!!!____________________________________________________________getFormattedDate test is failed!!!');
+	}
 	
 	AnyBalance.setResult(result);
 }

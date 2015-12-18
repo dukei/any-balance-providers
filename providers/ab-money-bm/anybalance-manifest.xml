@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="2">ab-money-bm</id>
+	<api flags="no_browser|sms"/>
+	<name>Банк Москвы</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о картах Банка Москвы http://www.bm.ru</p>
+	<p>Информация берется из интернет-банка https://online.bm.ru</p>
+
+	<p>Вход в интернет банк требует ввода одноразового кода по СМС!</p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>nadapter.js</js>
+		<js>extract.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" {@currency}"/>
+		<counter id="currency" name="Валюта" type="text"/>
+		<counter id="till" name="Срок действия" type="time" format="dd/MM/yyyy"/>
+		<counter id="blocked" name="Заблокировано" units=" {@currency}"/>
+		<counter id="sms" name="Телефон SMS оповещения" type="text"/>
+		<counter id="num" name="Номер карты" type="text"/>
+		<counter id="type" name="Тип карты" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>money, bank</type>
+	<country>ru</country>
+</provider>

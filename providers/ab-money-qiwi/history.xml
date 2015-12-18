@@ -1,5 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="2.3" version="31" date="2015-11-05">
+	- Исправлена кодировка.
+	</change>
+	<change major_version="2.3" version="30" date="2015-11-02">
+	- Улучшена обработка ошибок.
+	</change>
+	<change major_version="2.3" version="29" date="2015-09-15">
+	- Мелкие улучшения.
+	</change>
+	<change major_version="2.3" version="28" date="2015-09-02">
+	- Мелкие улучшения.
+	</change>
 	<change major_version="2.3" version="27" date="2015-07-09">
 	- Поддержка изменений на сайте.
 	</change>

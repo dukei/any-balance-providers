@@ -38,8 +38,11 @@ function gwtGetJSON(str){
     return getJson(json);
 }
 
+var g_userAgent = 'mozilla/5.0 (windows nt 10.0; win64; x64) applewebkit/537.36 (khtml, like gecko) chrome/46.0.2490.86 safari';
+
 var g_lks = {
     pesc: {
+    protocols: ['TLSv1.2'],
 	url: 'https://ikus.pesc.ru/IKUSUser/',
 	uid: 'E85D8BB4C101FFBB462908DEC5BC61A6',
 	auth_uid: 'AE742241A0A8AD76E4877D96DE250A42',
@@ -48,7 +51,7 @@ var g_lks = {
 	auth_nocache: 'userAuth/userAuth.nocache.js',
 	auth_file: 'com.sigma.personal.client.auth.AuthService.gxt',
 	auth_class: 'com.sigma.personal.client.auth.AuthService',
-	auth_data: "7|0|8|%url%%auth_url%|%uid%|%auth_class%|login|java.lang.String/2004016611|%LOGIN%|%PASSWORD%|mozilla/5.0 (windows nt 6.1; wow64) applewebkit/537.36 (khtml, like gecko) chrome/35.0.1916.114 safari/537.36|1|2|3|4|4|5|5|5|5|6|7|0|8|",
+	auth_data: "7|0|8|%url%%auth_url%|%uid%|%auth_class%|login|java.lang.String/2004016611|%LOGIN%|%PASSWORD%|%USER_AGENT%|1|2|3|4|4|5|5|5|5|6|7|0|8|",
 	user_url: 'userPhysical/',
 	user_nocache: 'userPhysical/userPhysical.nocache.js',
 	user_file: 'com.sigma.personal.client.physical.ClientService.gwt',
@@ -60,14 +63,14 @@ var g_lks = {
     },
     pes: {
 	url: 'https://ikus.pes.spb.ru/IKUSUser/',
-	uid: 'D71455428F33C019BC5C4C1707CA205C',
+	uid: 'E85D8BB4C101FFBB462908DEC5BC61A6',
 	auth_uid: 'AE742241A0A8AD76E4877D96DE250A42',
 	strong_name: '\\b%VARNAME%,\\w+\\],(\\w+)\\)',
 	auth_url: 'userAuth/',
 	auth_nocache: 'userAuth/userAuth.nocache.js',
 	auth_file: 'com.sigma.personal.client.auth.AuthService.gxt',
 	auth_class: 'com.sigma.personal.client.auth.AuthService',
-	auth_data: "7|0|8|%url%%auth_url%|%uid%|%auth_class%|login|java.lang.String/2004016611|%LOGIN%|%PASSWORD%|mozilla/5.0 (windows nt 6.1; wow64) applewebkit/537.36 (khtml, like gecko) chrome/35.0.1916.114 safari/537.36|1|2|3|4|4|5|5|5|5|6|7|0|8|",
+	auth_data: "7|0|8|%url%%auth_url%|%uid%|%auth_class%|login|java.lang.String/2004016611|%LOGIN%|%PASSWORD%|%USER_AGENT%|1|2|3|4|4|5|5|5|5|6|7|0|8|",
 	user_url: 'userPhysical/',
 	user_nocache: 'userPhysical/userPhysical.nocache.js',
 	user_file: 'com.sigma.personal.client.physical.ClientService.gwt',
@@ -88,11 +91,15 @@ function makeReplaces(str, cfg){
 
 function main(){
     var prefs = AnyBalance.getPreferences();
+    AnyBalance.setOptions({cookiePolicy: 'netscape'});
 
     checkEmpty(prefs.login, 'Введите логин!');
     checkEmpty(prefs.password, 'Введите пароль!');
 
     var cfg = !prefs.type || !g_lks[prefs.type] ? g_lks.pesc : g_lks[prefs.type];
+
+    if(cfg.protocols)
+    	AnyBalance.setOptions({SSL_ENABLED_PROTOCOLS: cfg.protocols}); 
 
     var baseurl = cfg.url;
     var uid = cfg.uid;
@@ -106,7 +113,7 @@ function main(){
 
     //Авторизируемся
     html = AnyBalance.requestPost(baseurl + cfg.auth_file, 
-	makeReplaces(cfg.auth_data, cfg).replace(/%LOGIN%/g, gwtEscape(prefs.login)).replace(/%PASSWORD%/g, gwtEscape(prefs.password)),
+	makeReplaces(cfg.auth_data, cfg).replace(/%LOGIN%/g, gwtEscape(prefs.login)).replace(/%PASSWORD%/g, gwtEscape(prefs.password)).replace(/%USER_AGENT%/, gwtEscape(g_userAgent)),
         { 
           'Content-Type': 'text/x-gwt-rpc; charset=UTF-8', 
           'X-GWT-Module-Base':baseurl + cfg.auth_url,

@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-money-okpay</id>
+	<api flags="no_browser"/>
+	<name>OkPay</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе на электронном кошельке OkPay (https://www.okpay.com/)</p>
+	<p>Информация берется из личного кабинета https://secure.okpay.com/</p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" {@currency}"/>
+		<counter id="available" name="Доступно" units=" {@currency}"/>
+		<counter id="status" name="Статус" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type></type>
+	<country>ru</country>
+</provider>

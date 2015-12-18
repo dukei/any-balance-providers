@@ -1,10 +1,11 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-internet-dialog</id>
+	<id version="4">ab-internet-dialog</id>
 	<api flags="no_browser"/>
 	<name>Диалог (Калининград)</name>
 	<description html="true"><![CDATA[
-	<p>Получает баланс и информацию о тарифном плане для калининградского интернет провайдера Диалог (http://tis-dialog.ru). Информация берется из личного кабинета https://stats.tis-dialog.ru.</p>
+	<p>Получает баланс и информацию о тарифном плане для калининградского интернет провайдера Диалог (http://tis-dialog.ru).</p>
+	<p>Информация берется из личного кабинета https://stats.tis-dialog.ru.</p>
 	]]></description>
 	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
 	<files>
@@ -18,8 +19,6 @@
 		<counter id="balance" name="Баланс" units=" р"/>
 		<counter id="trafficExt" name="Внешний трафик" units=" Gb"/>
 		<counter id="trafficCity" name="Городской трафик" units=" Gb"/>
-		<counter id="turbo" name="Турбо трафик" units=" Gb"/>
-		<counter id="turbo_bought" name="Купленный турбо трафик" units=" Gb"/>
 		<counter id="status" name="Состояние" type="text"/>
 		<counter id="licschet" name="Лицевой счет" type="text"/>
 		<counter id="userName" name="ФИО" type="text"/>
@@ -27,6 +26,10 @@
 		<counter id="trafficExtOut" name="Внешний трафик (исх)" units=" Gb"/>
 		<counter id="trafficCityIn" name="Городской трафик (вх)" units=" Gb"/>
 		<counter id="trafficCityOut" name="Городской трафик (исх)" units=" Gb"/>
+		<counter id="speed" name="Скорость подключения" type="text"/>
+		<counter id="online" name="Дата и время подключения" type="text"/>
+		<counter id="ip" name="IP-адрес" type="text"/>
+		<counter id="user_address" name="Адрес подключения" type="text"/>
 	</counters>
 	<keywords>интернет, калининград</keywords>
 	<type>internet</type>

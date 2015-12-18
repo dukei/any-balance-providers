@@ -63,6 +63,17 @@ function loginBasic(html) {
 	if(json[7])
 		throw new AnyBalance.Error('К сожалению, Киевстар потребовал ввода капчи для этого номера. Зайдите в личный кабинет один раз через браузер.', null, true);
 
+	var types = {
+		msisdn: 'MSISDN_PASSWORD',
+		fttb: 'ACCOUNT_PASSWORD'
+	}
+
+	var type = getParam(html, null, null, /"([^"]*)"\]/i, replaceSlashes);
+	if(!types[type]){
+		AnyBalance.trace('Неизвестный тип входа: ' + type + '\n' + html);
+		type = msisdn;
+	}
+
 	//Получаем токен для входа
     html = AnyBalance.requestPost(g_gwtCfg.url + 'authSupport.rpc', 
 		makeReplaces(authRequest, g_gwtCfg).replace(/%LOGIN%/g, gwtEscape(prefs.login.replace(/\D+/g, ''))).replace(/%PASSWORD%/g, gwtEscape(prefs.password)),
@@ -79,7 +90,7 @@ function loginBasic(html) {
 		else if (name == 'password')
 			return prefs.password;
 		else if (name == 'authenticationType')
-			return "MSISDN_PASSWORD";
+			return types[type];
 		else if (name == 'rememberMe')
 			return "false";
 		else if (name == 'token'){

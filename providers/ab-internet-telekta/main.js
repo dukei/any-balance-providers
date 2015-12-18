@@ -43,14 +43,13 @@ function main() {
 	getParam(html, result, 'status', /<td[^>]*>состояние интернета<\/td>\s*<td[^>]*>([\s\S]*?)<a/i, replaceTagsAndSpaces, html_entity_decode);
 
 	var href = getParam(html, null, null, /Отчеты[\s\S]*?<a[^>]+href\s*=\s*'([\s\S]*?)'[^>]*>/i);
-	if(!href) {
-		AnyBalance.trace(html);
-		throw new AnyBalance.Error("Не удалось найти ссылку на отчёты. Сайт изменен?");
+	if(!href)
+		AnyBalance.trace("Не удалось найти ссылку на отчёты. Сайт изменен?");
+	else {
+		html = AnyBalance.requestGet(baseurl + href, g_headers);
+		getParam(html, result, '__tariff', /<TD[^>]*>Текущий ТП<\/TD>(?:[\s\S]*?<td[^>]*>){7}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+		getParam(html, result, 'deadline', /<TD[^>]*>Конец расчетного периода<\/TD>(?:[\s\S]*?<td[^>]*>){7}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
 	}
-	
-	html = AnyBalance.requestGet(baseurl + href, g_headers);
-	getParam(html, result, '__tariff', /<TD[^>]*>Текущий ТП<\/TD>(?:[\s\S]*?<td[^>]*>){7}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'deadline', /<TD[^>]*>Конец расчетного периода<\/TD>(?:[\s\S]*?<td[^>]*>){7}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
 
 	AnyBalance.setResult(result);
 }

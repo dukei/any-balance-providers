@@ -64,6 +64,6 @@ function main() {
 }
 
 function getRegEx(searchValue) {
-    var commonPattern = '[^]*?<td[^>]*?>([^]*?)<\/td>';
+    var commonPattern = '[\\s\\S]*?<td[^>]*?>([\\s\\S]*?)</td>';
     return new RegExp(searchValue + commonPattern, 'i');
 }

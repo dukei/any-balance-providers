@@ -727,7 +727,8 @@ function processTrafficInternet(result){
         var paoExt = obj.personalOptionExtended;
         if(trafficExt){ //Valid
         	AnyBalance.trace('найден валидный трафик');
-            if (!isAcceptor && (paoExt.autoProlongations.reduce(anyActive, false) || paoExt.extraPackages.reduce(anyActive, false))) {
+            if (!isAcceptor && ((paoExt.autoProlongations && paoExt.autoProlongations.reduce(anyActive, false)) 
+            		|| (paoExt.extraPackages && paoExt.extraPackages.reduce(anyActive, false)))) {
             	sumParam('' + (trafficExt.consumed),
             		remainders, 'remainders.traffic_used_mb', null, null, parseTrafficFromKb, aggregate_sum);
             	sumParam('' + (trafficExt.consumed > paoExt.quotas.baseQuota ? 0 : paoExt.quotas.baseQuota - trafficExt.consumed),

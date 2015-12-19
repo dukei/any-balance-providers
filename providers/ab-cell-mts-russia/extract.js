@@ -434,9 +434,15 @@ function checkLoginState(html, options) {
             json = AnyBalance.requestGet(baseurl + '/WaitAuth/CheckAuth?_=' + new Date().getTime(), addHeaders({Referer: referer}));
             json = getJson(json);
 
+            if (json.Data == 'PreSuccess'){
+            	json = AnyBalance.requestGet(baseurl + '/WaitAuth/CompleteAuth?_=' + new Date().getTime(), addHeaders({Referer: referer}));
+            	json = getJson(json);
+            	AnyBalance.trace('Received PreSuccess, called CompleteAuth: ' + JSON.stringify(json));
+            }
+
             if (json.Data == 'Success')
                 break;
-
+            
             sleep(1000);
         }
         // Если прождали авторизацию, а она так и не произошла, надо об этом явно сообщить

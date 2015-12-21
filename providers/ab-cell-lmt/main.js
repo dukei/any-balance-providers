@@ -75,7 +75,9 @@ function main() {
     getParam(html, result, 'advance_duration', getRegEx('Срок действия аванса', true), dateReplaces, parseDate);
     getParam(html, result, 'usage_duration', getRegEx('Срок использования', true), dateReplaces, parseDate);
 	getParam(html, result, '__tariff', getRegEx('Тарифный план'), replaceTagsAndSpaces);
-    getParam(html, result, 'service_package', /пакеты услуг[^]*?>[^]*?>(.*?)<\/td>[^]*?<\/table>/i, replaceTagsAndSpaces, parseServicePackage);
+
+    var servicePackagesHtml = getParam(html, null, null, /Пакеты услуг[\s\S]*?<table[^>]*>([\s\S]*?)<\/table>/i);
+    sumParam(servicePackagesHtml, result, 'service_package', /[^<!\-\-]\s*<td[^>]*>([\d\-]*?)<\/td>/g, replaceTagsAndSpaces, parseDate, true, aggregate_min);
 
 	AnyBalance.setResult(result);
 }
@@ -95,16 +97,8 @@ function getCaptcha(html) {
     }
 }
 
-function parseServicePackage(value) {
-    var res = parseDate(value);
-    if (!res) {
-        res = value;
-    }
-    return res;
-}
-
 function getRegEx(searchString, isPeriodValue) {
-    var fstRe = isPeriodValue ? '[^]*?' : '[^>]*>\\s*',
-        lastRe = '<td[^>]*>([^]*?)<\/td>';
+    var fstRe = isPeriodValue ? '[\\s\\S]*?' : '[^>]*>\\s*',
+        lastRe = '<td[^>]*>([\\s\\S]*?)<\/td>';
     return new RegExp(searchString + fstRe + lastRe, 'i')
 }

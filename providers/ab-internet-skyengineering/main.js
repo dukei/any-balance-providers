@@ -47,13 +47,6 @@ function main(){
 
 	html = AnyBalance.requestPost(baseurl, params, addHeaders({ Referer: baseurl, Origin: 'http://sky-en.ru' }));
 
-	if(!html || AnyBalance.getLastStatusCode() > 400){
-
-		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
-
-	}
-
 	// к сожалению при вводе неправильных данных не обнаружил никакого выхлопа - 
 	// сервер просто перенаправляет на ту же страницу входа и все...
 	// поэтому вся проверка авторизации свелась к проверке слова logout
@@ -75,18 +68,14 @@ function main(){
 
 	}
 
-	var data = getElements(block, /<div[^>]+class="[^\"\']*user-data[^\"\']*"[^>]*>/gi);
-
-	console.log(data);
-
 	var result = {success: true};
 
-	getParam(data[0], result, 'name', null, [replaceTagsAndSpaces, replaceHtmlEntities]);
-	getParam(data[1], result, 'login', null, [replaceTagsAndSpaces, replaceHtmlEntities]);
-	getParam(data[2], result, 'contract', null, [replaceTagsAndSpaces, replaceHtmlEntities]);
-	getParam(data[3], result, 'balance', null, [replaceTagsAndSpaces, replaceHtmlEntities], parseBalance);
-	getParam(data[4], result, 'payment', null, [replaceTagsAndSpaces, replaceHtmlEntities], parseBalance);
-	getParam(data[5], result, 'status', null, [replaceTagsAndSpaces, replaceHtmlEntities]);
+	getParam(block, result, 'name', /клиент(?:[^>]*>){3}([\s\S]*?)</i, replaceTagsAndSpaces);
+	getParam(block, result, 'login', /логин(?:[^>]*>){3}([\s\S]*?)</i, replaceTagsAndSpaces);
+	getParam(block, result, 'contract', /договор(?:[^>]*>){3}([\s\S]*?)</i, replaceTagsAndSpaces);
+	getParam(block, result, 'balance', /баланс(?:[^>]*>){4}([\s\S\d]*?)</i, replaceTagsAndSpaces, parseBalance);
+	getParam(block, result, 'payment', /рекомендуемый платеж(?:[^>]*>){4}([\s\S\d]*?)</i, replaceTagsAndSpaces, parseBalance);
+	getParam(block, result, 'status', /статус(?:[^>]*>){3}([\s\S]*?)</i, replaceTagsAndSpaces);
 
 	AnyBalance.setResult(result);
 }

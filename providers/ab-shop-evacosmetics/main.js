@@ -60,27 +60,32 @@ function main(){
 
 	// вывод массива сгораемых бонусов,
 	// чтоб при проблемах с ними было понятно, что с ними делать
-	AnyBalance.trace(json);
+	AnyBalance.trace(JSON.stringify(json));
 
 
 	var result = { success: true };
 
-	if(AnyBalance.isAvailable("allBonus")) result.allBonus = allBonus;
-	if(AnyBalance.isAvailable("activeBonus")) result.activeBonus = activeBonus;
-	if(AnyBalance.isAvailable("inactiveBonus")) result.inactiveBonus = inactiveBonus;
-
-
-	// этот блок потенциально косячный =)
-	// 1. не известно, какого формата дата приходит с сервера
-	//    - поэтому же format у счетчика может оказаться не правильным
-	// 2. не известно, как сортируются бонусы, я взял 0-й, но он может оказаться и последним по дате
-	// 3. не известно, в каком виде с сервера приходит количество бонусов, и зачем они делают substr(1, 10)
-	//    надеюсь, мой parseFloat ничего там не сломает
+	getParam(allBonus, result, 'allBonus');
+	getParam(activeBonus, result, 'activeBonus');
+	getParam(inactiveBonus, result, 'inactiveBonus');
 
 	if(json.burnings.length > 0){
-		if(AnyBalance.isAvailable("first_burn_bonus")) result.first_burn_bonus = parseFloat(json.burnings[0].bonus.substr(1, 10));
-		if(AnyBalance.isAvailable("first_burn_date")) result.first_burn_date  = parseDate(json.burnings[0].date);
-	}
+		var bonus, dt;
+		if(json.burnings[0] && json.burnings[0].bonus) {
+			bonus = parseFloat(json.burnings[0].bonus.substr(1, 10));
+		}
+		if(json.burnings[0] && json.burnings[0].date) {
+			dt = parseDate(json.burnings[0].date) || parseDateWord(json.burnings[0].date) || parseDateISO(json.burnings[0].date) || parseDateJS(json.burnings[0].date);
 
+		}
+
+		if(bonus && dt) {
+			getParam(bonus, result, 'first_burn_bonus');
+			getParam(dt, result, 'first_burn_date');
+		} else {
+			AnyBalance.trace(JSON.stringify(json));
+			throw new AnyBalance.Error("Не удалось обработать данные с сервера. Возможно изменился формат вывода.");
+		}
+	}
 	AnyBalance.setResult(result);
 }

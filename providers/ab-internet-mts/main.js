@@ -50,6 +50,7 @@ var regions = {
     novokuz: getNovokuz,
 	nahodka: getNahodka,
 	kursk: getKursk,
+	ryazan: getRyazan,
 };
 
 function main(){
@@ -460,6 +461,10 @@ function getTula(){
 
 function getSmolensk(){
     newTypicalLanBillingInetTv('https://lk-smolensk.center.mts.ru/index.php');
+}
+
+function getRyazan(){
+    newTypicalLanBillingInetTv('https://lk-ryazan.center.mts.ru/index.php');
 }
 
 function typicalLanBillingInetTv(url) {

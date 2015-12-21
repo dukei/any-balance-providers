@@ -17,7 +17,6 @@ function getStateParams(html, param) {
 function main(){
     var prefs = AnyBalance.getPreferences();
     var baseurl = 'https://issa.life.com.by/';
-	var baseurlOld = 'https://issa2.life.com.by/';
 	
 	checkEmpty(prefs.login, 'Введите номер телефона!');
 	checkEmpty(prefs.password, 'Введите пароль!');
@@ -50,7 +49,7 @@ function main(){
 			doOldCabinet(prefs, matches);
 			return;
 		}
-        var error = getParam(html, null, null, /<div class="validation-summary-errors errorMessage">([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+        var error = getParam(html, null, null, /<div class="validation-summary-errors errorMessage">([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
 		if (error)
 			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
 			
@@ -59,9 +58,9 @@ function main(){
 	
     var result = {success: true, balance: null};
 	
-	getParam(html, result, '__tariff', [/Тарифный план([^<]+)/i, /Наименование тарифного плана(?:[^>]*>){2}([\s\S]*?)<\/td>/i], replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'fio', /ФИО(?:[^>]+>){2}([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'phone', /Номер life(?:[^>]+>){2}([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, '__tariff', [/Тарифный план([^<]+)/i, /Наименование тарифного плана(?:[^>]*>){2}([\s\S]*?)<\/td>/i], replaceTagsAndSpaces);
+	getParam(html, result, 'fio', /ФИО(?:[^>]+>){2}([^<]+)/i, replaceTagsAndSpaces);
+	getParam(html, result, 'phone', /Номер life(?:[^>]+>){2}([^<]+)/i, replaceTagsAndSpaces);
 	// СМС/ММС
 	sumParam(html, result, 'sms_left_other', /SMS на все сети(?:[^>]+>){2}([^<]+)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 	sumParam(html, result, 'sms_left', /SMS внутри сети(?:[^>]+>){2}([^<]+)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
@@ -74,11 +73,11 @@ function main(){
 	sumParam(html, result, 'traffic_left', />(?:Безлимитный)?\s*интернет(?:[^>]+>){2}([^<]+МБ)/ig, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
 	// Баланс
 	
-	getParam(html, result, 'balance', /Основной (?:счет|баланс:)([^<]+)\s*<\/li>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'balance', /<tr>\s*<td[^>]*>\s*Основной (?:сч(?:е|ё)т|баланс:)([\s\S]*?)<\/tr>/i, replaceTagsAndSpaces, parseBalance);
 	// Баланс для постоплаты
 	if(!isset(result.balance) || result.balance === 0)
 		getParam(html, result, 'balance', /Задолженность на линии(?:[^>]*>){2}([^<]+)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'balance_bonus', /Бонусный (?:счет|баланс:)([^<]+)\s*<\/li>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'balance_bonus', /<tr>\s*<td[^>]*>\s*Бонусный (?:сч(?:е|ё)т|баланс:)([\s\S]*?)<\/tr>/i, replaceTagsAndSpaces, parseBalance);
 	// Оплаченные обязательства	
 	getParam(html, result, 'balance_corent', /Оплаченные обязательства(?:[^>]*>){2}([^<]+)/i, replaceTagsAndSpaces, parseBalance);
 	// Карманы
@@ -89,77 +88,18 @@ function main(){
 	
 	
 	html = AnyBalance.requestGet(baseurl + 'ru/upravleniye-kontraktom/smena-tarifnogo-plana/', g_headers);
-	getParam(html, result, '__tariff', /href="[^"]*">([^<]+)(?:[^>]*>){11}Активен/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, '__tariff', /href="[^"]*">([^<]+)(?:[^>]*>){11}Активен/i, replaceTagsAndSpaces);
 	
 	if (isAvailable(['packs', 'packs_deadline'])) {
 		html = AnyBalance.requestGet(baseurl + 'ru/upravleniye-kontraktom/upravleniye-uslugami/', g_headers);
 		
-		var packs = sumParam(html, null, null, /<tr>\s*<td[^>]*>\s*<p>[^<]+<\/p>(?:[^>]*>){5}\s*Активная(?:[^>]*>){2}\s*до[^<]+/ig, null, html_entity_decode);
+		var packs = sumParam(html, null, null, /<tr>\s*<td[^>]*>\s*<p>[^<]+<\/p>(?:[^>]*>){5}\s*Активная(?:[^>]*>){2}\s*до[^<]+/ig, null);
 		
 		AnyBalance.trace('Найдено активных пакетов: ' + packs.length);
 		
-		sumParam(packs, result, 'packs', /<tr>\s*<td[^>]*>\s*<p>([^<]+)<\/p>/ig, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
+		sumParam(packs, result, 'packs', /<tr>\s*<td[^>]*>\s*<p>([^<]+)<\/p>/ig, replaceTagsAndSpaces, null, aggregate_join);
 		sumParam(packs, result, 'packs_deadline', /Активная(?:[^>]*>){2}\s*до([^<]+)/ig, replaceTagsAndSpaces, parseDate, aggregate_min);
 	}
 	
-	// В новом кабинете нет баланса, очень круто :)
-	/*if (AnyBalance.isAvailable('balance', 'balance_bonus') && (!isset(result.balance) || !isset(result.balance_bonus))) {
-	    html = AnyBalance.requestPost(baseurlOld, {
-			Code: matches[1],
-			Phone: matches[2],
-			password: prefs.password
-		}, g_headers);
-		
-		if(!/\/Account.aspx\/Logoff/i.test(html)){
-			var error = getParam(html, null, null, /<div class="validation-summary-errors errorMessage">([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
-			if(error)
-				throw new AnyBalance.Error(error);
-			throw new AnyBalance.Error("Не удалось зайти в личный кабинет. Сайт изменен?");
-		}
-		getParam(html, result, 'balance', /Текущий основной баланс:[\s\S]*?<div[^>]*>\s*(-?\d[\d\., \s]*)/i, replaceTagsAndSpaces, parseBalance);
-		getParam(html, result, 'balance_bonus', /Текущий бонусный баланс:[\s\S]*?<div[^>]*>\s*(-?\d[\d\., \s]*)/i, replaceTagsAndSpaces, parseBalance);
-	}*/
-
-    AnyBalance.setResult(result);
-}
-
-function doOldCabinet(prefs, matches){
-	var baseurl = 'https://issa2.life.com.by/';
-	
-	AnyBalance.trace('Получаем информацию из ' + baseurl);
-	
-    html = AnyBalance.requestPost(baseurl, {
-        Code: matches[1],
-        Phone: matches[2],
-        password: prefs.password
-    }, g_headers);
-    
-    if(!/\/Account.aspx\/Logoff/i.test(html)){
-        var error = getParam(html, null, null, /<div class="validation-summary-errors errorMessage">([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
-        if(error)
-            throw new AnyBalance.Error(error);
-        throw new AnyBalance.Error("Не удалось зайти в личный кабинет. Сайт изменен?");
-    }
-
-    var result = {success: true};
-	
-    getParam(html, result, '__tariff', /Тарифный план:[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'balance', /Текущий основной баланс:[\s\S]*?<div[^>]*>\s*(-?\d[\d\., \s]*)/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'balance_bonus', /Текущий бонусный баланс:[\s\S]*?<div[^>]*>\s*(-?\d[\d\., \s]*)/i, replaceTagsAndSpaces, parseBalance);
-
-    if (isAvailable(['traffic_left', 'min_left_other', 'min_left', 'traffic_night_left', 'sms_left', 'mms_left'])) {
-    	html = AnyBalance.requestGet(baseurl + 'User.aspx/Index');
-    	var table = getParam(html, null, null, /Остаток пакетов:[\s\S]*<table[^>]+class="longinfo"[^>]*>([\s\S]*?)<\/table>/i);
-    	if (table) {
-    		sumParam(html, result, 'traffic_left', /<tr[^>]*>\s*<td[^>]*>(?:[\s\S](?!<tr|НОЧНОЙ))*?<td[^>]*>((?:[\s\S](?!<tr))*?(?:[мmkкгg][бb]|байт|byte)[^<]*)<\/td>\s*<td[^>]*>/ig, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
-    		sumParam(html, result, 'min_left_other', /<tr[^>]*>\s*<td[^>]*>(?:[\s\S](?!<tr))*?другие сети(?:[\s\S](?!<tr))*?<td[^>]*>((?:[\s\S](?!<tr))*?(?:мин|min)[^<]*)<\/td>\s*<td[^>]*>/ig, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
-    		sumParam(html, result, 'min_left', /<tr[^>]*>\s*<td[^>]*>(?:[\s\S](?!<tr|другие сети))*?<td[^>]*>((?:[\s\S](?!<tr))*?(?:мин|min)[^<]*)<\/td>\s*<td[^>]*>/ig, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
-    		sumParam(html, result, 'traffic_night_left', /<tr[^>]*>\s*<td[^>]*>(?:[\s\S](?!<tr))*?НОЧНОЙ(?:[\s\S](?!<tr))*?<td[^>]*>((?:[\s\S](?!<tr))*?(?:[мmkкгg][бb]|байт|byte)[^<]*)<\/td>\s*<td[^>]*>/ig, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
-    		sumParam(html, result, 'sms_left', /<td[^>]*>(?:[\s\S](?!<tr))*?<td[^>]*>((?:[\s\S](?!<tr))*?(?:СМС|sms)[^<]*)<\/td>\s*<td[^>]*>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-    		sumParam(html, result, 'mms_left', /<td[^>]*>(?:[\s\S](?!<tr))*?<td[^>]*>((?:[\s\S](?!<tr))*?(?:ММС|mms)[^<]*)<\/td>\s*<td[^>]*>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-    	} else {
-    		AnyBalance.trace('Информация по пакетам не найдена.');
-    	}
-    }
     AnyBalance.setResult(result);
 }

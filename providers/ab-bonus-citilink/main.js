@@ -2,17 +2,19 @@
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 */
 
+var baseurl = "http://www.citilink.ru";
+
 var g_headers = {
 	'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
 	'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
 	'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
 	'Connection':'keep-alive',
-	'User-Agent':'Mozilla/5.0 (BlackBerry; U; BlackBerry 9900; en-US) AppleWebKit/534.11+ (KHTML, like Gecko) Version/7.0.0.187 Mobile Safari/534.11+'
+	'Origin': baseurl,
+	'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/47.0.2526.106 Safari/537.36'
 };
 
 function main(){
     var prefs = AnyBalance.getPreferences();
-    var baseurl = "http://www.citilink.ru";
 
     AnyBalance.setDefaultCharset('utf-8'); 
 
@@ -40,6 +42,12 @@ function main(){
 	});
 
 	var url = joinUrl(baseurl, action);
+	
+	//Надо вздремнуть, а то нас палят как роботов (а зачем это делать? оставьте полезных роботов в покое.)
+	var sleeptime = 2000 + Math.floor(Math.random()*3000);
+	AnyBalance.trace('Надо вздремнуть ' + sleeptime + ' мс, а то нас палят как роботов (а зачем это делать? оставьте полезных роботов в покое.)');
+	AnyBalance.sleep(sleeptime);
+
 	AnyBalance.trace('Posting to url: ' + url);
 	html = AnyBalance.requestPost(url, params, addHeaders({Referer: baseurl + '/'})); 
 	
@@ -66,7 +74,7 @@ function main(){
 	
 	if(isAvailable(['obrabotannie', 'pomosh', 'reshennie', 'zhalobi', 'rating', 'position', 'nachisleno'])) {
 		AnyBalance.trace('Переходим на страницу эксперта..');
-		html = AnyBalance.requestGet(baseurl + '/profile/expert/', g_headers);
+//		html = AnyBalance.requestGet(baseurl + '/profile/expert/', g_headers);
 		
 		AnyBalance.trace('Но кабинет новый, можем счетчиков не найти... Если что, присылайте лог');
 		getParam(html, result, 'obrabotannie', /Количество обработанных вопросов(?:[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces, parseBalance);

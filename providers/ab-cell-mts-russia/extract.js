@@ -175,7 +175,7 @@ function fetchOrdinary(html, baseurl, result) {
 
 function checkIHError(html, result, forceError) {
     var error = getParam(html, null, null, /<div[^>]+class="b_(?:-page)error"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
-    if (error || forceError) 
+    if (error || forceError) {
         var err = 'Ошибка МТС при получения данных из интернет-помощника: ' + (error || 'вероятно, он временно недоступен');
         if(result === true){
             throw new AnyBalance.Error(err);
@@ -183,6 +183,7 @@ function checkIHError(html, result, forceError) {
             AnyBalance.trace(err);
             result.were_errors = true;
         }
+    }
 }
 
 function isAvailableStatus() {

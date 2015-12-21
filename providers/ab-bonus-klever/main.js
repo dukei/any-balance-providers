@@ -59,15 +59,17 @@ function main() {
 	
 	result = {success: true};
 
-	res = getJson(res);
-	if(res.mediumSelectionRequired){
-		AnyBalance.trace("Требуется установка медиума. Устанавливаем " + res.mediums[0].id);
-		res = AnyBalance.requestPost(baseurl + 'CWA/rest/auth/login/setCard/' + res.mediums[0].id, '{}', addHeaders({
-			Referer: baseurl + 'CWA/',
-			'X-Requested-With':' XMLHttpRequest',
-			'Content-Type': 'application/json',
-			'Accept': 'application/json, text/javascript, */*; q=0.01'
-		}));
+	if(/^\s*\{/i.test(res)){
+		res = getJson(res);
+		if(res.mediumSelectionRequired){
+			AnyBalance.trace("Требуется установка медиума. Устанавливаем " + res.mediums[0].id);
+			res = AnyBalance.requestPost(baseurl + 'CWA/rest/auth/login/setCard/' + res.mediums[0].id, '{}', addHeaders({
+				Referer: baseurl + 'CWA/',
+				'X-Requested-With':' XMLHttpRequest',
+				'Content-Type': 'application/json',
+				'Accept': 'application/json, text/javascript, */*; q=0.01'
+			}));
+		}
 	}
 
 	res = AnyBalance.requestGet(baseurl + 'CWA/rest/balance/summary/', null, addHeaders({

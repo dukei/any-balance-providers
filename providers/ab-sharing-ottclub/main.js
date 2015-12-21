@@ -40,7 +40,7 @@ function main() {
 	
 	var result = {success: true};
 	
-	getParam(html, result, 'balance', /баланс:(?:[^>]*>){3}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'balance', /Ваш баланс:([\s\S]*?)<\/li>/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'partnerBalance', /баланс партнерки:(?:[^>]*>){1}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'charged', /Заработано сегодня:(?:[^>]*>){1}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'status', /Услуга:[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces);

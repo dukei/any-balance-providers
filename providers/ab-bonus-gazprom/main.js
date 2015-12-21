@@ -59,7 +59,7 @@ function main() {
 	if (!/Персональные данные/.exec(html)){
 		var error = getParam(html.replace(/<!--[\s\S]*?-->/ig, ''), null, null, /<ul[^>]+class="form-errors"[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
 		if(error)
-			throw new AnyBalance.Error(error);
+			throw new AnyBalance.Error(error, null, /Неверные номер карты или пароль/i.test(error));
 		AnyBalance.trace('Что-то не то, возможно проблемы с сайтом');
 		throw new AnyBalance.Error ('Не удаётся зайти в личный кабинет. Возможно, неправильный логин, пароль или сайт изменен.');
 	};

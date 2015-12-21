@@ -434,9 +434,15 @@ function checkLoginState(html, options) {
             json = AnyBalance.requestGet(baseurl + '/WaitAuth/CheckAuth?_=' + new Date().getTime(), addHeaders({Referer: referer}));
             json = getJson(json);
 
+            if (json.Data == 'PreSuccess'){
+            	json = AnyBalance.requestGet(baseurl + '/WaitAuth/CompleteAuth?_=' + new Date().getTime(), addHeaders({Referer: referer}));
+            	json = getJson(json);
+            	AnyBalance.trace('Received PreSuccess, called CompleteAuth: ' + JSON.stringify(json));
+            }
+
             if (json.Data == 'Success')
                 break;
-
+            
             sleep(1000);
         }
         // Если прождали авторизацию, а она так и не произошла, надо об этом явно сообщить
@@ -721,7 +727,8 @@ function processTrafficInternet(result){
         var paoExt = obj.personalOptionExtended;
         if(trafficExt){ //Valid
         	AnyBalance.trace('найден валидный трафик');
-            if (!isAcceptor && (paoExt.autoProlongations.reduce(anyActive, false) || paoExt.extraPackages.reduce(anyActive, false))) {
+            if (!isAcceptor && ((paoExt.autoProlongations && paoExt.autoProlongations.reduce(anyActive, false)) 
+            		|| (paoExt.extraPackages && paoExt.extraPackages.reduce(anyActive, false)))) {
             	sumParam('' + (trafficExt.consumed),
             		remainders, 'remainders.traffic_used_mb', null, null, parseTrafficFromKb, aggregate_sum);
             	sumParam('' + (trafficExt.consumed > paoExt.quotas.baseQuota ? 0 : paoExt.quotas.baseQuota - trafficExt.consumed),

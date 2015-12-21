@@ -1,8 +1,6 @@
 //Ситилинк, имейте совесть, не надо этих сложных защит. Вы же вашим собственным клиентам (а я, вообще-то, тоже им являюсь) мешаете за балансом поинтов следить.
 //Будьте добры, не препятствуйте.
 
-//var input = {a: false, b: 6941837, d: 148, e: "OTlhNWM1YjE3N2QzNzJiMTI3ZmQyMzJiNDU2NGM3ODc="}, result = "74125a4d51ddf43547d8f0d740bc78e4";
-
 var citi = {},
 te = function(obj) {
     var t = obj;
@@ -284,4 +282,8 @@ lg.prototype.reset = function() {
     this.e = this.d = 0
 };
 
-//WScript.Echo(result + '\n' + pg({a: input}));
+//var input = {"staticVersion":152,"isAuth":false,"directCreditPartnerId":6941837,"token":"YTUyOGUzNjZiMjJmYjMwNWQ0N2E2NzFiNmMzNWI5MzE="}, result = "68931d2922d264d619f6a2483a122480";
+//var input = {"staticVersion":152,"isAuth":false,"directCreditPartnerId":6941837,"token":"M2FhODJhYTA2ZmM1ZGI5OTkwMDIyMGFlMjIyNGYwNDE="}, result = "7eff7d0bcb184e7c75c72c04a666ba86";
+//var input = {"staticVersion":152,"isAuth":false,"directCreditPartnerId":6941837,"token":"ZGE3N2MwMmU2YjIyOTM0MmYxMzIxMjQ1OTZhMDVhNDE="}, result = "e900a6f646c0bee9fad736fab6968512";
+//var obj = new te(input);
+//WScript.Echo(result + '\n' + pg({a: obj})); //Весьма сложные преобразования токена

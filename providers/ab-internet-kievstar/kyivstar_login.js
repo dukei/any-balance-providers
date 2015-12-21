@@ -113,6 +113,7 @@ function loginBasic(html) {
 }
 
 function loginSite(baseurl) {
+	var prefs = AnyBalance.getPreferences();
 	initializeLogin();
 
 	AnyBalance.trace('Логин на сайт.');

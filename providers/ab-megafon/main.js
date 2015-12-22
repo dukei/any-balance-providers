@@ -274,8 +274,8 @@ function loadFilialInfo(filial){
         allow_captcha_sg = allow_captcha_app = false;
 
     var ok = false;
-    var e_some = null;
-    var e_total = null;
+    var e_some_messages = [];
+    var e_total_messages = [];
 
     for(var i=0; i<priority.length; ++i){
     	var src = priority[i];
@@ -300,8 +300,8 @@ function loadFilialInfo(filial){
 				if(e.fatal)
 					throw e;
 				if(!e.meaningless)
-					e_total = e;
-				e_some = e;
+					e_total_messages.push('ЛК: ' + e.message);
+				e_some_messages.push('ЛК: ' + e.message);
 				
 				if(/Требуется ввод кода/i.test(e.message || '') && !allow_captcha_sg && allow_captcha_sg != allow_captcha){
 					AnyBalance.trace('Без капчи зайти в sg не удалось, но может, потом попробуем с капчей...');
@@ -321,8 +321,9 @@ function loadFilialInfo(filial){
 				if(e.fatal)
 					throw e;
 				if(!e.meaningless)
-					e_total = e;
-				e_some = e;
+					e_total_messages.push('Мобильное приложение: ' + e.message);
+				e_some_messages.push('Мобильное приложение: ' + e.message);
+
 				if(/Требуется ввод кода/i.test(e.message || '') && !allow_captcha_app && allow_captcha_app != allow_captcha){
 					AnyBalance.trace('Без капчи зайти в app не удалось, но может, потом попробуем с капчей...');
 				    allow_captcha_app = allow_captcha;
@@ -341,9 +342,9 @@ function loadFilialInfo(filial){
 			}catch(e){
 				if(e.fatal)
 					throw e;
-				if(!e.meaningless)
-					e_total = e;
-				e_some = e;
+//				if(!e.meaningless) //Это неинтересно уже показывать
+//					e_total_messages.push('Роботы: ' + e.message);
+				e_some_messages.push('Роботы: ' + e.message);
 		        AnyBalance.trace('Не удалось получить информацию из входа для автоматизированных систем: ' + e.message);
 			}
 		}
@@ -357,15 +358,15 @@ function loadFilialInfo(filial){
 		}catch(e){
 			if(e.fatal)
 				throw e;
-			if(!e.meaningless)
-				e_total = e;
-			e_some = e;
+			if(!e.meaningless) //Это неинтересно показывать
+				e_total_messages.push('Робот баланса: ' + e.message);
+			e_some_messages.push('Робот баланса: ' + e.message);
 	        AnyBalance.trace('Не удалось получить информацию даже по балансу: ' + e.message);
 		}
 	}
 
 	if(!ok)
-		throw e_total || e_some;
+		throw e_total_messages.join('\n') || e_some_messages.join('\n');
 }
 
 var g_headers = {
@@ -1624,7 +1625,7 @@ function enterLK(filial, options){
 		if (!error)
 			error = getParam(html, null, null, /<div[^>]+mf-error[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
 		if (error)
-			throw new AnyBalance.Error(error, null, /(?:Неверный|Неправильный) логин\/пароль/i.test(error));
+			throw new AnyBalance.Error(error, null, /(?:Неверный|Неправильный) логин\/пароль|Пользователь заблокирован/i.test(error));
 		
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в новый личный кабинет. Сайт изменен или на этом номере он не поддерживается.');
@@ -1800,13 +1801,13 @@ function getSessionIdFromSGLogin(html){
         AnyBalance.trace('Got error from sg: ' + errid);
 
         if(errid == '60020011')
-            throw new AnyBalance.Error('Пользователь заблокирован. Для разблокировки наберите команду *105*00# и нажмите клавишу вызова, новый пароль будет отправлен Вам в SMS.');
+            throw new AnyBalance.Error('Пользователь заблокирован. Для разблокировки наберите команду *105*00# и нажмите клавишу вызова, новый пароль будет отправлен Вам в SMS.', null, true);
 
         //Случилась ошибка, может быть мы можем даже увидеть её описание
 	var error = getParam(html, null, null, /<ERROR_MESSAGE>(.*?)<\/ERROR_MESSAGE>/i, replaceTagsAndSpaces, html_entity_decode);
         if(error){
             AnyBalance.trace('Got error message from sg: ' + error);
-            throw new AnyBalance.Error(error, null, /неправильный пароль|Абонент не найден/i.test(html));
+            throw new AnyBalance.Error(error, null, /неправильный пароль|Абонент не найден|Пользователь заблокирован/i.test(html));
         }
 
         errid = "error_" + Math.abs(parseInt(errid));

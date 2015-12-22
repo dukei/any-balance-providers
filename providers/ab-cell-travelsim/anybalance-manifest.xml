@@ -1,13 +1,14 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-cell-travelsim</id>
+	<api flags="no_browser"/>
+  <id version="2">ab-cell-travelsim</id>
   <name>TravelSIM (Украина)</name>
   <description> 
     Получает баланс для оператора TravelSIM (http://travelsim.ua/)
 
     Информация берется из личного кабинета клиента (http://my.travelsim.ua/billing/)
   </description>
-  <author>Alexandra Shalamova &lt;alexandrashalamova@gmail.com&gt;</author>
+  <author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>

@@ -192,7 +192,7 @@ function getFilial(prefs) {
 		try{	
 			// Мегафон сделал сервис для определения филиала, так что попытаемся обойтись им    
 			// Но этот сервис сдох... 13.03.15, но снова поднялся 14.03.15
-			var html = AnyBalance.requestPost("https://sg.megafon.ru/ps/scc/php/route.php", {
+			var html = AnyBalance.requestPost("https://oldsg.megafon.ru/ps/scc/php/route.php", {
 				 CHANNEL: 'WWW',
 				 ULOGIN: number
 			});
@@ -274,8 +274,8 @@ function loadFilialInfo(filial){
         allow_captcha_sg = allow_captcha_app = false;
 
     var ok = false;
-    var e_some = null;
-    var e_total = null;
+    var e_some_messages = [];
+    var e_total_messages = [];
 
     for(var i=0; i<priority.length; ++i){
     	var src = priority[i];
@@ -300,8 +300,8 @@ function loadFilialInfo(filial){
 				if(e.fatal)
 					throw e;
 				if(!e.meaningless)
-					e_total = e;
-				e_some = e;
+					e_total_messages.push('ЛК: ' + e.message);
+				e_some_messages.push('ЛК: ' + e.message);
 				
 				if(/Требуется ввод кода/i.test(e.message || '') && !allow_captcha_sg && allow_captcha_sg != allow_captcha){
 					AnyBalance.trace('Без капчи зайти в sg не удалось, но может, потом попробуем с капчей...');
@@ -321,8 +321,9 @@ function loadFilialInfo(filial){
 				if(e.fatal)
 					throw e;
 				if(!e.meaningless)
-					e_total = e;
-				e_some = e;
+					e_total_messages.push('Мобильное приложение: ' + e.message);
+				e_some_messages.push('Мобильное приложение: ' + e.message);
+
 				if(/Требуется ввод кода/i.test(e.message || '') && !allow_captcha_app && allow_captcha_app != allow_captcha){
 					AnyBalance.trace('Без капчи зайти в app не удалось, но может, потом попробуем с капчей...');
 				    allow_captcha_app = allow_captcha;
@@ -341,9 +342,9 @@ function loadFilialInfo(filial){
 			}catch(e){
 				if(e.fatal)
 					throw e;
-				if(!e.meaningless)
-					e_total = e;
-				e_some = e;
+//				if(!e.meaningless) //Это неинтересно уже показывать
+//					e_total_messages.push('Роботы: ' + e.message);
+				e_some_messages.push('Роботы: ' + e.message);
 		        AnyBalance.trace('Не удалось получить информацию из входа для автоматизированных систем: ' + e.message);
 			}
 		}
@@ -357,15 +358,15 @@ function loadFilialInfo(filial){
 		}catch(e){
 			if(e.fatal)
 				throw e;
-			if(!e.meaningless)
-				e_total = e;
-			e_some = e;
+			if(!e.meaningless) //Это неинтересно показывать
+				e_total_messages.push('Робот баланса: ' + e.message);
+			e_some_messages.push('Робот баланса: ' + e.message);
 	        AnyBalance.trace('Не удалось получить информацию даже по балансу: ' + e.message);
 		}
 	}
 
 	if(!ok)
-		throw e_total || e_some;
+		throw e_total_messages.join('\n') || e_some_messages.join('\n');
 }
 
 var g_headers = {
@@ -1030,14 +1031,15 @@ function megafonServiceGuidePhysical(filial, sessionid, text){
     	throw new AnyBalance.Error('Не удалось зайти в сервис-гид. Сайт изменен?');
     }
 	
-    //Теперь получим баланс
-    getParam(text, result, 'balance', /&#1041;&#1072;&#1083;&#1072;&#1085;&#1089;[\s\S]*?<div class="balance_[^>]*>([\S\s]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+    //Теперь получим баланс и кредитный лимит (Уровень кредита|Кредитный лимит):
+	var balance = getParam(text, null, null, /&#1041;&#1072;&#1083;&#1072;&#1085;&#1089;[\s\S]*?<div class="balance_[^>]*>([\S\s]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+    var limit = getParam(text, null, null, /(?:&#1059;&#1088;&#1086;&#1074;&#1077;&#1085;&#1100; &#1082;&#1088;&#1077;&#1076;&#1080;&#1090;&#1072;|&#1050;&#1088;&#1077;&#1076;&#1080;&#1090;&#1085;&#1099;&#1081; &#1083;&#1080;&#1084;&#1080;&#1090;):([\S\s]*?)<\/tr>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(balance-(limit || 0), result, 'balance');
+    getParam(limit, result, 'credit');
     //Теперь получим телефон
     getParam(text, result, 'phone', /<select[^>]*name="SUBSCRIBER_MSISDN"[\s\S]*?<option[^>]+value="([^"]*)[^>]*selected/i, replaceNumber, html_entity_decode);
     //Теперь получим персональный баланс
     getParam(text, result, 'prsnl_balance', /&#1055;&#1077;&#1088;&#1089;&#1086;&#1085;&#1072;&#1083;&#1100;&#1085;&#1099;&#1081; &#1073;&#1072;&#1083;&#1072;&#1085;&#1089;[\s\S]*?<div class="balance_[^>]*>([\S\s]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
-    //Теперь получим кредитный лимит (Уровень кредита|Кредитный лимит):
-    getParam(text, result, 'credit', /(?:&#1059;&#1088;&#1086;&#1074;&#1077;&#1085;&#1100; &#1082;&#1088;&#1077;&#1076;&#1080;&#1090;&#1072;|&#1050;&#1088;&#1077;&#1076;&#1080;&#1090;&#1085;&#1099;&#1081; &#1083;&#1080;&#1084;&#1080;&#1090;):([\S\s]*?)<\/tr>/i, replaceTagsAndSpaces, parseBalance);
     
 
     //Начислено абонентской платы по тарифному плану:
@@ -1111,7 +1113,7 @@ function megafonServiceGuidePhysical(filial, sessionid, text){
 						sumOption(colnum, row, result, 'mins_sng_total', 'mins_sng_left', '.', parseMinutes);
 					else if(/мин по России/i.test(name))
 						sumOption(colnum, row, result, 'mins_country_total', 'mins_country_left', '.', parseMinutes);
-					else if(/внутри сети|\.\s*мегафон/i.test(name) && !/мтс/i.test(name)) //мегафон не должен быть сначала. А то перепутается с названием тарифа
+					else if(/внутри сети|\.\s*мегафон|на мегафон/i.test(name) && !/мтс/i.test(name)) //мегафон не должен быть сначала. А то перепутается с названием тарифа
 						sumOption(colnum, row, result, 'mins_net_total', 'mins_net_left', '.', parseMinutes);
 					else{
 				        AnyBalance.trace('Минуты ' + name + ', относим к просто минутам');
@@ -1623,7 +1625,7 @@ function enterLK(filial, options){
 		if (!error)
 			error = getParam(html, null, null, /<div[^>]+mf-error[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
 		if (error)
-			throw new AnyBalance.Error(error, null, /(?:Неверный|Неправильный) логин\/пароль/i.test(error));
+			throw new AnyBalance.Error(error, null, /(?:Неверный|Неправильный) логин\/пароль|Пользователь заблокирован/i.test(error));
 		
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в новый личный кабинет. Сайт изменен или на этом номере он не поддерживается.');
@@ -1799,13 +1801,13 @@ function getSessionIdFromSGLogin(html){
         AnyBalance.trace('Got error from sg: ' + errid);
 
         if(errid == '60020011')
-            throw new AnyBalance.Error('Пользователь заблокирован. Для разблокировки наберите команду *105*00# и нажмите клавишу вызова, новый пароль будет отправлен Вам в SMS.');
+            throw new AnyBalance.Error('Пользователь заблокирован. Для разблокировки наберите команду *105*00# и нажмите клавишу вызова, новый пароль будет отправлен Вам в SMS.', null, true);
 
         //Случилась ошибка, может быть мы можем даже увидеть её описание
 	var error = getParam(html, null, null, /<ERROR_MESSAGE>(.*?)<\/ERROR_MESSAGE>/i, replaceTagsAndSpaces, html_entity_decode);
         if(error){
             AnyBalance.trace('Got error message from sg: ' + error);
-            throw new AnyBalance.Error(error, null, /неправильный пароль|Абонент не найден/i.test(html));
+            throw new AnyBalance.Error(error, null, /неправильный пароль|Абонент не найден|Пользователь заблокирован/i.test(html));
         }
 
         errid = "error_" + Math.abs(parseInt(errid));

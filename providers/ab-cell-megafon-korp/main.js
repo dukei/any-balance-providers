@@ -77,7 +77,7 @@ function main() {
 	getParam(html, result, 'abonCount', /<dt>Абонентов[^]*?class="span28[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, '__tariff', /accountInfo_name[^>]*>([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
 	
-	var href = getParam(html, null, null, /sc_cp_apps\/expenses\/account\/[^"']+/i);
+	var href = getParam(html, null, null, /sc_cp_apps\/expenses\/account\/[^"'&]+/i);
 	if(!href) {
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось найти ссылку на детализацию, сайт изменен?');
@@ -121,10 +121,49 @@ function main() {
 		
 		getParam(account.msisdn, result, 'phone_name', null, replaceTagsAndSpaces);
 		getParam(account.name, result, 'name_name', null, replaceTagsAndSpaces);
+
+		if(AnyBalance.isAvailable('min_left', 'sms_left')){
+			getDiscounts(baseurl, account, result);
+		}
 	} catch (e) {
 		AnyBalance.trace(e.message);
 		AnyBalance.trace('Не удалось получить данные по номеру телефона, свяжитесь, пожалуйста, с разработчиками.');
 	}
 	
 	AnyBalance.setResult(result);
+}
+
+function getDiscounts(baseurl, account, result){
+	var html = AnyBalance.requestGet(baseurl + 'sc_cp_apps/subscriber/info/' + account.subsId + '/discounts', addHeaders({'X-Requested-With':'XMLHttpRequest'}));
+	if(!/^\s*\{/i.test(html)){
+		if(/Сервис временно недоступен/i.test(html)){
+			AnyBalance.trace('Не удаётся получить дискаунты для этого номера: сервис временно недоступен');
+			return;
+		}
+		
+		AnyBalance.trace('Не удаётся получить дискаунты для этого номера: ' + html);
+		return;
+	}
+		
+	AnyBalance.trace('Найдены дискаунты: ' + html);
+	json = getJson(html);
+	for(var discgroup in json.discounts){
+		var group = json.discounts[discgroup];
+		if(!group || !isArray(group)) continue;
+
+		for(var i=0; i<group.length; ++i){
+			var d = group[i];
+			AnyBalance.trace('Найдена скидка: ' + d.name + ' ' + d.volume + ' ' + d.measure);
+			if(/мин/i.test(d.measure)){
+				AnyBalance.trace('Это минуты');
+				sumParam(d.volume, result, 'min_left', null, null, null, aggregate_sum);
+			}else if(/шт|смс|sms/i.test(d.measure)){
+				AnyBalance.trace('Это смс');
+				sumParam(d.volume, result, 'sms_left', null, null, null, aggregate_sum);
+			}else{
+				AnyBalance.trace('неизвестная скидка: ' + JSON.stringify(d));
+			}
+		}
+	}
+
 }

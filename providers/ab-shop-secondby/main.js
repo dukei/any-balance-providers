@@ -37,23 +37,22 @@ function main() {
       }),
       headers = {
         'Referer': baseurl,
-        'X-Requested-With': 'XMLHttpRequest'
+        'X-Requested-With': 'XMLHttpRequest',
+        'Accept': 'application/json'
       };
 	
 	var success = AnyBalance.requestPost(baseurl + loginUrl, loginData, addHeaders(headers));
-  html = AnyBalance.requestGet(baseurl);
 
-  if (!/logout/i.test(html)) {
-
-    // Проверка на неправильный логин/пароль такая, так как на сайте идет ajax запрос,
-    // который потом в случае неудачи на клиента javascript'ом добавляет класс all_error форме
-    if (!success)
+  if (success != 'true') {
+    if (success === 'false') {
       throw new AnyBalance.Error('Неверный логин или пароль!', null, true);
+    }
 
     AnyBalance.trace(html);
     throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
   }
-	
+
+  html = AnyBalance.requestGet(baseurl);
 	var result = {success: true};
 
   getParam(html, result, 'advertisements', getRegex('объявлений'), replaceTagsAndSpaces, parseBalance);

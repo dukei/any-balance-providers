@@ -4,7 +4,7 @@
  Получает баланс для оператора TravelSIM
 
 Operator site: http://travelsim.ua/
-Личный кабинет: http://my.travelsim.ua/billing/
+Личный кабинет: http://my.travelsim.ua/billing_old/
 */
 
 var g_headers = {
@@ -22,10 +22,10 @@ function main(){
 
     AnyBalance.setDefaultCharset('CP1251'); 
 
-    var html = AnyBalance.requestPost(baseurl + 'billing/start.php', {
+    var html = AnyBalance.requestPost(baseurl + 'billing_old/start.php', {
         login:prefs.login,
         pwd:prefs.password
-    }, addHeaders({Referer: baseurl + 'billing/'}));
+    }, addHeaders({Referer: baseurl + 'billing_old/'}));
 
     if(!/src="images\/btn_logout.png"/i.test(html)){
         var error = getParam(html, null, null, /<table[^>]+class="login"[^>]*>(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
@@ -34,7 +34,7 @@ function main(){
         throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
     }
 
-    html = AnyBalance.requestGet(baseurl + 'billing/mynums.php', g_headers);
+    html = AnyBalance.requestGet(baseurl + 'billing_old/mynums.php', g_headers);
 
     if (prefs.number) prefs.number = prefs.number.replace("+", "");
 

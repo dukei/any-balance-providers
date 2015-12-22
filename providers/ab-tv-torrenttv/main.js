@@ -47,8 +47,8 @@ function main() {
 		enter: 'Войти'
 	}, addHeaders({Referer: baseurl + ''}));
 	
-	if (!/document\.location="cabinet\.php"/i.test(html)) {
-		var error = getParam(html, null, null, /"alert alert-error"(?:[^>]*>){4}([\s\S]*?)<\/div/i, replaceTagsAndSpaces, html_entity_decode);
+	if (!/exit\.php/i.test(html)) {
+		var error = getParam(html, null, null, /"alert alert-error"(?:[^>]*>){4}([\s\S]*?)<\/div/i, replaceTagsAndSpaces);
 		if (error)
 			throw new AnyBalance.Error(error);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');

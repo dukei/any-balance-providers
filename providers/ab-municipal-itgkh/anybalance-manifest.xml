@@ -17,14 +17,15 @@
 		<js>main.js</js>
 	</files>
 	<counters>
+		<counter id="min_vznos" name="Минимальный взнос" />
+		<counter id="dop_vznos" name="Дополнительный взнос" />
+		<counter id="owner_part" name="Доля собственника" />
+		
 		<counter id="abonent" name="Абонент" type="text"/>
 		<counter id="address" name="Адрес дома" type="text"/>
 		<counter id="apart_num" name="№ квартиры" type="text" />
 
 		<counter id="space" name="Площадь помещения" />
-		<counter id="min_vznos" name="Минимальный взнос" />
-		<counter id="dop_vznos" name="Дополнительный взнос" />
-		<counter id="owner_part" name="Доля собственника" />
 		
 		<counter id="fund_form_method" name="Способ формирования фонда" type="text"/>
 		<counter id="account_num" name="Номер расчетного счета" type="text"/>

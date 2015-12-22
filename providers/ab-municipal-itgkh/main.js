@@ -1,10 +1,8 @@
 var g_headers = {
-'Host': 'portal-irkutsk.itgkh.ru',
-'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-'Accept-Encoding': 'gzip, deflate, sdch',
-'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
-'Upgrade-Insecure-Requests': 1,
-'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/46.0.2490.86 Safari/537.36',
+	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+	'Accept-Encoding': 'gzip, deflate, sdch',
+	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
+	'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/46.0.2490.86 Safari/537.36',
 };
 
 
@@ -50,21 +48,10 @@ function main(){
 		addHeaders({
 			'X-Requested-With': 'xmlhttprequest',
 			'HTTP_X_REQUESTED_WITH': 'xmlhttprequest',
-			'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
 			Referer: baseurl,
 			Origin: baseurl,
-			'Accept': '*/*',
-			'Accept-Encoding': 'gzip, deflate',
 		})
 	);
-
-	// ошибку > 400 не обрабатываю
-	// потому что при передаче неправильных данных (пароль/логин)
-	// хоть какой нибудь ответ приходит с кодом 500
-	// этот момент обрабатывается ниже
-	if(!html) {
-		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
-	}
 
 	// вдруг вернули не json
 	try{

@@ -4,7 +4,7 @@
 	<api flags="no_browser"/>
 	<name>Фонд капремонта многоквартирных домов Иркутской области</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет данные с аккаунта пользователя (https://portal-irkutsk.itgkh.ru/)</p>
+	<p>Предоставляет данные с аккаунта пользователя <a href="https://portal-irkutsk.itgkh.ru/account/">https://portal-irkutsk.itgkh.ru/account/</a></p>
 	]]></description>
 	<instruction html="true"><![CDATA[
 	

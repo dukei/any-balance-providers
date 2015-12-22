@@ -192,7 +192,7 @@ function getFilial(prefs) {
 		try{	
 			// Мегафон сделал сервис для определения филиала, так что попытаемся обойтись им    
 			// Но этот сервис сдох... 13.03.15, но снова поднялся 14.03.15
-			var html = AnyBalance.requestPost("https://sg.megafon.ru/ps/scc/php/route.php", {
+			var html = AnyBalance.requestPost("https://oldsg.megafon.ru/ps/scc/php/route.php", {
 				 CHANNEL: 'WWW',
 				 ULOGIN: number
 			});
@@ -1030,14 +1030,15 @@ function megafonServiceGuidePhysical(filial, sessionid, text){
     	throw new AnyBalance.Error('Не удалось зайти в сервис-гид. Сайт изменен?');
     }
 	
-    //Теперь получим баланс
-    getParam(text, result, 'balance', /&#1041;&#1072;&#1083;&#1072;&#1085;&#1089;[\s\S]*?<div class="balance_[^>]*>([\S\s]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+    //Теперь получим баланс и кредитный лимит (Уровень кредита|Кредитный лимит):
+	var balance = getParam(text, null, null, /&#1041;&#1072;&#1083;&#1072;&#1085;&#1089;[\s\S]*?<div class="balance_[^>]*>([\S\s]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+    var limit = getParam(text, null, null, /(?:&#1059;&#1088;&#1086;&#1074;&#1077;&#1085;&#1100; &#1082;&#1088;&#1077;&#1076;&#1080;&#1090;&#1072;|&#1050;&#1088;&#1077;&#1076;&#1080;&#1090;&#1085;&#1099;&#1081; &#1083;&#1080;&#1084;&#1080;&#1090;):([\S\s]*?)<\/tr>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(balance-(limit || 0), result, 'balance');
+    getParam(limit, result, 'credit');
     //Теперь получим телефон
     getParam(text, result, 'phone', /<select[^>]*name="SUBSCRIBER_MSISDN"[\s\S]*?<option[^>]+value="([^"]*)[^>]*selected/i, replaceNumber, html_entity_decode);
     //Теперь получим персональный баланс
     getParam(text, result, 'prsnl_balance', /&#1055;&#1077;&#1088;&#1089;&#1086;&#1085;&#1072;&#1083;&#1100;&#1085;&#1099;&#1081; &#1073;&#1072;&#1083;&#1072;&#1085;&#1089;[\s\S]*?<div class="balance_[^>]*>([\S\s]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
-    //Теперь получим кредитный лимит (Уровень кредита|Кредитный лимит):
-    getParam(text, result, 'credit', /(?:&#1059;&#1088;&#1086;&#1074;&#1077;&#1085;&#1100; &#1082;&#1088;&#1077;&#1076;&#1080;&#1090;&#1072;|&#1050;&#1088;&#1077;&#1076;&#1080;&#1090;&#1085;&#1099;&#1081; &#1083;&#1080;&#1084;&#1080;&#1090;):([\S\s]*?)<\/tr>/i, replaceTagsAndSpaces, parseBalance);
     
 
     //Начислено абонентской платы по тарифному плану:
@@ -1111,7 +1112,7 @@ function megafonServiceGuidePhysical(filial, sessionid, text){
 						sumOption(colnum, row, result, 'mins_sng_total', 'mins_sng_left', '.', parseMinutes);
 					else if(/мин по России/i.test(name))
 						sumOption(colnum, row, result, 'mins_country_total', 'mins_country_left', '.', parseMinutes);
-					else if(/внутри сети|\.\s*мегафон/i.test(name) && !/мтс/i.test(name)) //мегафон не должен быть сначала. А то перепутается с названием тарифа
+					else if(/внутри сети|\.\s*мегафон|на мегафон/i.test(name) && !/мтс/i.test(name)) //мегафон не должен быть сначала. А то перепутается с названием тарифа
 						sumOption(colnum, row, result, 'mins_net_total', 'mins_net_left', '.', parseMinutes);
 					else{
 				        AnyBalance.trace('Минуты ' + name + ', относим к просто минутам');

@@ -26,14 +26,12 @@ function main() {
 		'pass':prefs.password,
 	}, g_headers);
 
-	/*
-	if(!/btnout/i.test(html)){
-		var error = getParam(html, null, null, /<span class="auth_error">([\s\S]*?)<\/span>, replaceTagsAndSpaces, html_entity_decode);
+	if(!/\?auth_action=logout/.test(html)){
+		var error = getParam(html, null, null, /<span class="auth_error">([\s\S]*?)<\/span>/, replaceTagsAndSpaces, html_entity_decode);
 		if(error)
 			throw new AnyBalance.Error(error);
 		throw new AnyBalance.Error('Не удалось войти в кабинет');
 	}
-	*/
 
 	var result = {success: true};
 	getParam(html, result, 'TV', /Телевидение<\/td>*?\s*<td[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseBalance);

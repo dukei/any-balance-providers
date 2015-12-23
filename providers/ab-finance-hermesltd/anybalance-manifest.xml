@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-wallet-mobilnik</id>
+	<id version="1">ab-finance-hermesltd</id>
 	<api flags="no_browser"/>
-	<name>Wallet Mobilnik Balance</name>
+	<name>Hermes Management Ltd.</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет из личного кабинета пользователя со страницы <a href="https://hermes-ltd.com/lk/my_ch">https://hermes-ltd.com/lk/my_ch</a></p>
 	]]></description>

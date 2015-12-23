@@ -16,7 +16,7 @@
 	<history>history.xml</history>
   </files>
   <counters>
-    <counter id="TC" name="Телевидение" units= " р"/>
+    <counter id="TV" name="Телевидение" units= " р"/>
     <counter id="Phone" name="Телефония" units= " р"/>
     <counter id="CheckinAccount" name="Расчетный" units= " р"/>
     <counter id="Internet" name="Интернет" units= " р"/>

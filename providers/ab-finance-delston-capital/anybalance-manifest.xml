@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-finance-delston-capital</id>
+	<api flags="no_browser"/>
+	<name>Delston Capital Ltd.</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет данные из личного кабинета пользователя со страницы <a href="https://delston-capital.com/ru/cabinet/">https://delston-capital.com/ru/cabinet/</a></p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	
+	]]></instruction>
+	<author>Bazrov Zaur &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс">
+		<counter id="affiliate" name="Партнёрский счёт">
+		<counter id="invested" name="Инвестировано">
+		<counter id="output" name="Ожидают вывода">
+		<counter id="name" name="Владелец" type="text">
+		<counter id="status" name="Статус" type="text">
+		<counter id="account_num" name="Номер счёта" type="text">
+		<counter id="curator" name="Куратор" type="text">
+	</counters>
+	<keywords>delston, delston-capital, finance, инвестиции, акции, бинарные опционы</keywords>
+	<type>finance</type>
+	<country>ru</country>
+</provider>

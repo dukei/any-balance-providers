@@ -34,12 +34,11 @@ function main() {
 		return value;
 	});
 
-    if (params.hasOwnProperty('username') && params.hasOwnProperty('password')) {
+    if (params.username) {
 
         var postHeaders = AB.addHeaders({
             'Referer': baseurl,
-            'X-Requested-With': 'With:XMLHttpRequest',
-            'Content-Type': 'application/x-www-form-urlencoded'
+            'X-Requested-With': 'XMLHttpRequest'
         });
 
         var res = AnyBalance.requestPost(baseurl + 'login/', params, postHeaders);
@@ -57,13 +56,18 @@ function main() {
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
 
-    var infoHtml = getParam(html, null, null, /personalInfo[\s\S]*?<li>([\s\S]*)<\/li>/i),
-	    result = {success: true};
 
-	AB.getParam(infoHtml, result, 'full_name', /user">(.*)/, AB.replaceTagsAndSpaces);
-	AB.getParam(infoHtml, result, 'phone', /phone">(.*)/, AB.replaceTagsAndSpaces);
-	AB.getParam(infoHtml, result, 'bonuses', /gift">(.*)/, AB.replaceTagsAndSpaces, AB.parseBalance);
-	AB.getParam(infoHtml, result, 'orders', /justify">(.*)/, AB.replaceTagsAndSpaces, AB.parseBalance);
+    var result = {success: true};
+
+	AB.getParam(html, result, 'full_name', getRegEx('user">'), AB.replaceTagsAndSpaces);
+	AB.getParam(html, result, 'phone', getRegEx('phone">'), AB.replaceTagsAndSpaces);
+	AB.getParam(html, result, 'bonuses', getRegEx('gift">'), AB.replaceTagsAndSpaces, AB.parseBalance);
+	AB.getParam(html, result, 'orders', getRegEx('justify">'), AB.replaceTagsAndSpaces, AB.parseBalance);
 	
 	AnyBalance.setResult(result);
+}
+
+function getRegEx(searchValue) {
+    var str = 'personalInfo[\\s\\S]*?' + searchValue + '([\\s\\S]*?)</li>';
+    return new RegExp(str, 'i');
 }

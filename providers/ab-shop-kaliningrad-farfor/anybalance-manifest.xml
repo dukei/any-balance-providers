@@ -3,7 +3,10 @@
 	<id version="1">ab-shop-kaliningrad-farfor</id>
 	<api flags="no_browser"/>
 	<name>Калининград фарфор</name>
-	<description>Предоставляет информацию из личного кабинета http://kaliningrad.farfor.ru</description>
+	<description><![CDATA[
+    Предоставляет информацию о бонусах в магазине Калининград фарфор http://kaliningrad.farfor.ru/
+    Информацию берется из личного кабинета http://kaliningrad.farfor.ru/cabinet/
+  ]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
@@ -13,12 +16,12 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="full_name" name="ФИО" type="text"/>
-		<counter id="phone" name="Телефон" type="text"/>
 		<counter id="bonuses" name="Количество бонусов"/>
 		<counter id="orders" name="Количество заказов"/>
+		<counter id="full_name" name="ФИО" type="text"/>
+		<counter id="phone" name="Телефон" type="text"/>
 	</counters>
 	<keywords>Магазин</keywords>
-	<type>shop</type>
+	<type>bonus</type>
 	<country>ru</country>
 </provider>

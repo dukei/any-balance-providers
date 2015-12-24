@@ -2,20 +2,19 @@
  * 
  * @type undefined
  */
-var AB = (function (str) {
+
+var AB = function (str) {
     var __str = str;
-    
-    
-    
+
     /**
      * Детектирует тип содержимого: text/plain, text/html, text/json
      * 
      * @param {string} str
      * @returns number TYPE_HTML, TYPE_JSON, TYPE_TEXT
      */
-    var _getConentType = function (str) {
-
-    },
+    AB.prototype._getConentType = function (str) {
+        AnyBalance.trace('_getConentType');
+    };
 
     /**
      * Фильтрует содержимое
@@ -24,11 +23,27 @@ var AB = (function (str) {
      * @returns AB
      * @link http://jsonselect.org/#tryit
      */
-    find = function (input) {
+    AB.prototype.find = function (input) {
+        AnyBalance.trace('find');
 
+        return this;
     }
 
-})();
+    AB.prototype.toText = function () {
+        AnyBalance.trace('toText');
+
+    }
+    
+    AB.prototype.htmlToText = function () {
+        AnyBalance.trace('htmlToText');
+        return this;
+    }
+        
+    AB.prototype.toNumeric = function () {
+        AnyBalance.trace('toNumeric');
+        return this;
+    }
+};
 
 
 

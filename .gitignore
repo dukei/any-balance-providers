@@ -5,4 +5,4 @@ provider.zip
 packsend.bat
 debug
 /nbproject/private/
-/nbproject
+*nbproject

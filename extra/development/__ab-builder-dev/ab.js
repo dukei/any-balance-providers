@@ -3,17 +3,19 @@
  * @type undefined
  */
 function AB(str) {
-	var AB = function (any) {
-		var _any = any;
-		var _stack = [];
+	"use strict";
+
+	var AB = function (str) {
+		var _any = str,		//{string|object}  В строке хранится HTML или сериализованный JSON. Объект получается после JSON.parse() или eval()
+			_stack = [];	//массив функций для последовательного исполнения (с контекстом объекта AB)
 
 		/**
 		 * Детектирует тип содержимого: text/plain, text/html, text/json
 		 * 
 		 * @param {string|Object} input
-		 * @returns number TYPE_HTML, TYPE_JSON, TYPE_TEXT
+		 * @returns {number} TYPE_HTML, TYPE_JSON, TYPE_TEXT
 		 */
-		AB.prototype._getConentType = function (input) {
+		this._getConentType = function (input) {
 			AnyBalance.trace('_getConentType');
 
 		};
@@ -25,7 +27,7 @@ function AB(str) {
 		 * @returns AB
 		 * @link http://jsonselect.org/#tryit
 		 */
-		AB.prototype.find = function (input) {
+		this.find = function (input) {
 			AnyBalance.trace('AB::find, input=' + input);
 
 			_stack.push(function () {
@@ -36,25 +38,26 @@ function AB(str) {
 				} else 
 					throw new AnyBalance.Error('Unknown type of input');
 				
-				AnyBalance.trace('find called from stack (processed)' + input);
+				AnyBalance.trace('find called from stack (processed): "' + input + '"');
 
 			}.bind(this, input));
 			return this;
 		}
 
-		AB.prototype.htmlToText = function () {
+		this.htmlToText = function () {
 			AnyBalance.trace('htmlToText');
 			return this;
 		}
 		////////////////////////////////////////////////////////////////////////////////////////////////////
-		// Функции устанавливающие значение в резалт
+		// Функции устанавливающие значение в result
+		// https://github.com/dukei/any-balance-providers/wiki/Manifest#counter
 		////////////////////////////////////////////////////////////////////////////////////////////////////
-		AB.prototype.toText = function () {
+		this.toText = function () {
 			AnyBalance.trace('toText');
 			executeStack();
 		}
 
-		AB.prototype.toNumeric = function () {
+		this.toNumeric = function () {
 			AnyBalance.trace('toNumeric');
 			executeStack();
 

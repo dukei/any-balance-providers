@@ -1,5 +1,5 @@
-/**!
- * Набор полезных методов, дополняющих объект String
+/*!
+ * РќР°Р±РѕСЂ РїРѕР»РµР·РЅС‹С… РјРµС‚РѕРґРѕРІ, РґРѕРїРѕР»РЅСЏСЋС‰РёС… РѕР±СЉРµРєС‚ String
  * 
  * @author	Mukhtarov Rinat <rin-nas@ya.ru>
  */
@@ -32,37 +32,37 @@
 		apos : 0x0027,  //"\x27" ['] &#39; apostrophe
 		//Latin-1 Entities:
 		nbsp   : 0x00A0,  //"\xc2\xa0" [ ] no-break space = non-breaking space
-		iexcl  : 0x00A1,  //"\xc2\xa1" [?] inverted exclamation mark
-		cent   : 0x00A2,  //"\xc2\xa2" [?] cent sign
-		pound  : 0x00A3,  //"\xc2\xa3" [?] pound sign
-		curren : 0x00A4,  //"\xc2\xa4" [¤] currency sign
-		yen    : 0x00A5,  //"\xc2\xa5" [?] yen sign = yuan sign
-		brvbar : 0x00A6,  //"\xc2\xa6" [¦] broken bar = broken vertical bar
-		sect   : 0x00A7,  //"\xc2\xa7" [§] section sign
-		uml    : 0x00A8,  //"\xc2\xa8" [?] diaeresis = spacing diaeresis
-		copy   : 0x00A9,  //"\xc2\xa9" [©] copyright sign
-		ordf   : 0x00AA,  //"\xc2\xaa" [?] feminine ordinal indicator
-		laquo  : 0x00AB,  //"\xc2\xab" [«] left-pointing double angle quotation mark = left pointing guillemet
-		not    : 0x00AC,  //"\xc2\xac" [¬] not sign
+		iexcl  : 0x00A1,  //"\xc2\xa1" [ВЎ] inverted exclamation mark
+		cent   : 0x00A2,  //"\xc2\xa2" [Вў] cent sign
+		pound  : 0x00A3,  //"\xc2\xa3" [ВЈ] pound sign
+		curren : 0x00A4,  //"\xc2\xa4" [В¤] currency sign
+		yen    : 0x00A5,  //"\xc2\xa5" [ВҐ] yen sign = yuan sign
+		brvbar : 0x00A6,  //"\xc2\xa6" [В¦] broken bar = broken vertical bar
+		sect   : 0x00A7,  //"\xc2\xa7" [В§] section sign
+		uml    : 0x00A8,  //"\xc2\xa8" [ВЁ] diaeresis = spacing diaeresis
+		copy   : 0x00A9,  //"\xc2\xa9" [В©] copyright sign
+		ordf   : 0x00AA,  //"\xc2\xaa" [ВЄ] feminine ordinal indicator
+		laquo  : 0x00AB,  //"\xc2\xab" [В«] left-pointing double angle quotation mark = left pointing guillemet
+		not    : 0x00AC,  //"\xc2\xac" [В¬] not sign
 		shy    : 0x00AD,  //"\xc2\xad" [ ] soft hyphen = discretionary hyphen
-		reg    : 0x00AE,  //"\xc2\xae" [®] registered sign = registered trade mark sign
-		macr   : 0x00AF,  //"\xc2\xaf" [?] macron = spacing macron = overline = APL overbar
-		deg    : 0x00B0,  //"\xc2\xb0" [°] degree sign
-		plusmn : 0x00B1,  //"\xc2\xb1" [±] plus-minus sign = plus-or-minus sign
-		sup2   : 0x00B2,  //"\xc2\xb2" [?] superscript two = superscript digit two = squared
-		sup3   : 0x00B3,  //"\xc2\xb3" [?] superscript three = superscript digit three = cubed
-		acute  : 0x00B4,  //"\xc2\xb4" [?] acute accent = spacing acute
-		micro  : 0x00B5,  //"\xc2\xb5" [µ] micro sign
-		para   : 0x00B6,  //"\xc2\xb6" [¶] pilcrow sign = paragraph sign
-		middot : 0x00B7,  //"\xc2\xb7" [·] middle dot = Georgian comma = Greek middle dot
-		cedil  : 0x00B8,  //"\xc2\xb8" [?] cedilla = spacing cedilla
-		sup1   : 0x00B9,  //"\xc2\xb9" [?] superscript one = superscript digit one
-		ordm   : 0x00BA,  //"\xc2\xba" [?] masculine ordinal indicator
-		raquo  : 0x00BB,  //"\xc2\xbb" [»] right-pointing double angle quotation mark = right pointing guillemet
-		frac14 : 0x00BC,  //"\xc2\xbc" [?] vulgar fraction one quarter = fraction one quarter
-		frac12 : 0x00BD,  //"\xc2\xbd" [?] vulgar fraction one half = fraction one half
-		frac34 : 0x00BE,  //"\xc2\xbe" [?] vulgar fraction three quarters = fraction three quarters
-		iquest : 0x00BF,  //"\xc2\xbf" [?] inverted question mark = turned question mark
+		reg    : 0x00AE,  //"\xc2\xae" [В®] registered sign = registered trade mark sign
+		macr   : 0x00AF,  //"\xc2\xaf" [ВЇ] macron = spacing macron = overline = APL overbar
+		deg    : 0x00B0,  //"\xc2\xb0" [В°] degree sign
+		plusmn : 0x00B1,  //"\xc2\xb1" [В±] plus-minus sign = plus-or-minus sign
+		sup2   : 0x00B2,  //"\xc2\xb2" [ВІ] superscript two = superscript digit two = squared
+		sup3   : 0x00B3,  //"\xc2\xb3" [Ві] superscript three = superscript digit three = cubed
+		acute  : 0x00B4,  //"\xc2\xb4" [Вґ] acute accent = spacing acute
+		micro  : 0x00B5,  //"\xc2\xb5" [Вµ] micro sign
+		para   : 0x00B6,  //"\xc2\xb6" [В¶] pilcrow sign = paragraph sign
+		middot : 0x00B7,  //"\xc2\xb7" [В·] middle dot = Georgian comma = Greek middle dot
+		cedil  : 0x00B8,  //"\xc2\xb8" [Вё] cedilla = spacing cedilla
+		sup1   : 0x00B9,  //"\xc2\xb9" [В№] superscript one = superscript digit one
+		ordm   : 0x00BA,  //"\xc2\xba" [Вє] masculine ordinal indicator
+		raquo  : 0x00BB,  //"\xc2\xbb" [В»] right-pointing double angle quotation mark = right pointing guillemet
+		frac14 : 0x00BC,  //"\xc2\xbc" [Вј] vulgar fraction one quarter = fraction one quarter
+		frac12 : 0x00BD,  //"\xc2\xbd" [ВЅ] vulgar fraction one half = fraction one half
+		frac34 : 0x00BE,  //"\xc2\xbe" [Вѕ] vulgar fraction three quarters = fraction three quarters
+		iquest : 0x00BF,  //"\xc2\xbf" [Вї] inverted question mark = turned question mark
 		//Latin capital letter
 		Agrave : 0x00C0,  //"\xc3\x80" Latin capital letter A with grave = Latin capital letter A grave
 		Aacute : 0x00C1,  //"\xc3\x81" Latin capital letter A with acute
@@ -87,7 +87,7 @@
 		Ocirc  : 0x00D4,  //"\xc3\x94" Latin capital letter O with circumflex
 		Otilde : 0x00D5,  //"\xc3\x95" Latin capital letter O with tilde
 		Ouml   : 0x00D6,  //"\xc3\x96" Latin capital letter O with diaeresis
-		times  : 0x00D7,  //"\xc3\x97" [?] multiplication sign
+		times  : 0x00D7,  //"\xc3\x97" [Г—] multiplication sign
 		Oslash : 0x00D8,  //"\xc3\x98" Latin capital letter O with stroke = Latin capital letter O slash
 		Ugrave : 0x00D9,  //"\xc3\x99" Latin capital letter U with grave
 		Uacute : 0x00DA,  //"\xc3\x9a" Latin capital letter U with acute
@@ -120,7 +120,7 @@
 		ocirc  : 0x00F4,  //"\xc3\xb4" Latin small letter o with circumflex
 		otilde : 0x00F5,  //"\xc3\xb5" Latin small letter o with tilde
 		ouml   : 0x00F6,  //"\xc3\xb6" Latin small letter o with diaeresis
-		divide : 0x00F7,  //"\xc3\xb7" [?] division sign
+		divide : 0x00F7,  //"\xc3\xb7" [Г·] division sign
 		oslash : 0x00F8,  //"\xc3\xb8" Latin small letter o with stroke = Latin small letter o slash
 		ugrave : 0x00F9,  //"\xc3\xb9" Latin small letter u with grave
 		uacute : 0x00FA,  //"\xc3\xba" Latin small letter u with acute
@@ -129,14 +129,14 @@
 		yacute : 0x00FD,  //"\xc3\xbd" Latin small letter y with acute
 		thorn  : 0x00FE,  //"\xc3\xbe" Latin small letter thorn
 		yuml   : 0x00FF,  //"\xc3\xbf" Latin small letter y with diaeresis
-		OElig  : 0x0152,  //"\xc5\x92" [?] Latin capital ligature OE
-		oelig  : 0x0153,  //"\xc5\x93" [?] Latin small ligature oe
-		Scaron : 0x0160,  //"\xc5\xa0" [?] Latin capital letter S with caron
-		scaron : 0x0161,  //"\xc5\xa1" [?] Latin small letter s with caron
-		Yuml   : 0x0178,  //"\xc5\xb8" [?] Latin capital letter Y with diaeresis
-		fnof   : 0x0192,  //"\xc6\x92" [?] Latin small f with hook = function = florin
-		circ   : 0x02C6,  //"\xcb\x86" [?] modifier letter circumflex accent
-		tilde  : 0x02DC,  //"\xcb\x9c" [?] small tilde
+		OElig  : 0x0152,  //"\xc5\x92" [Е’] Latin capital ligature OE
+		oelig  : 0x0153,  //"\xc5\x93" [Е“] Latin small ligature oe
+		Scaron : 0x0160,  //"\xc5\xa0" [Е ] Latin capital letter S with caron
+		scaron : 0x0161,  //"\xc5\xa1" [ЕЎ] Latin small letter s with caron
+		Yuml   : 0x0178,  //"\xc5\xb8" [Её] Latin capital letter Y with diaeresis
+		fnof   : 0x0192,  //"\xc6\x92" [Ж’] Latin small f with hook = function = florin
+		circ   : 0x02C6,  //"\xcb\x86" [Л†] modifier letter circumflex accent
+		tilde  : 0x02DC,  //"\xcb\x9c" [Лњ] small tilde
 		//Symbols and Greek Letters:
 		Alpha   : 0x0391,  //"\xce\x91" Greek capital letter alpha
 		Beta    : 0x0392,  //"\xce\x92" Greek capital letter beta
@@ -189,100 +189,100 @@
 		omega   : 0x03C9,  //"\xcf\x89" Greek small letter omega
 		thetasym: 0x03D1,  //"\xcf\x91" Greek small letter theta symbol
 		upsih   : 0x03D2,  //"\xcf\x92" Greek upsilon with hook symbol
-		piv     : 0x03D6,  //"\xcf\x96" [?] Greek pi symbol
+		piv     : 0x03D6,  //"\xcf\x96" [П–] Greek pi symbol
 		//Other chars:
-		ensp    : 0x2002,  //"\xe2\x80\x82" [?] en space
-		emsp    : 0x2003,  //"\xe2\x80\x83" [?] em space
-		thinsp  : 0x2009,  //"\xe2\x80\x89" [?] thin space
-		zwnj    : 0x200C,  //"\xe2\x80\x8c" [?] zero width non-joiner
-		zwj     : 0x200D,  //"\xe2\x80\x8d" [?] zero width joiner
-		lrm     : 0x200E,  //"\xe2\x80\x8e" [?] left-to-right mark
-		rlm     : 0x200F,  //"\xe2\x80\x8f" [?] right-to-left mark
-		ndash   : 0x2013,  //"\xe2\x80\x93" [–] en dash
-		mdash   : 0x2014,  //"\xe2\x80\x94" [—] em dash
-		lsquo   : 0x2018,  //"\xe2\x80\x98" [‘] left single quotation mark
-		rsquo   : 0x2019,  //"\xe2\x80\x99" [’] right single quotation mark (and apostrophe!)
-		sbquo   : 0x201A,  //"\xe2\x80\x9a" [‚] single low-9 quotation mark
-		ldquo   : 0x201C,  //"\xe2\x80\x9c" [“] left double quotation mark
-		rdquo   : 0x201D,  //"\xe2\x80\x9d" [”] right double quotation mark
-		bdquo   : 0x201E,  //"\xe2\x80\x9e" [„] double low-9 quotation mark
-		dagger  : 0x2020,  //"\xe2\x80\xa0" [†] dagger
-		Dagger  : 0x2021,  //"\xe2\x80\xa1" [‡] double dagger
-		bull    : 0x2022,  //"\xe2\x80\xa2" [•] bullet = black small circle
-		hellip  : 0x2026,  //"\xe2\x80\xa6" […] horizontal ellipsis = three dot leader
-		permil  : 0x2030,  //"\xe2\x80\xb0" [‰] per mille sign
-		prime   : 0x2032,  //"\xe2\x80\xb2" [?] prime = minutes = feet (для обозначения минут и футов)
-		Prime   : 0x2033,  //"\xe2\x80\xb3" [?] double prime = seconds = inches (для обозначения секунд и дюймов).
-		lsaquo  : 0x2039,  //"\xe2\x80\xb9" [‹] single left-pointing angle quotation mark
-		rsaquo  : 0x203A,  //"\xe2\x80\xba" [›] single right-pointing angle quotation mark
-		oline   : 0x203E,  //"\xe2\x80\xbe" [?] overline = spacing overscore
-		frasl   : 0x2044,  //"\xe2\x81\x84" [?] fraction slash
-		euro    : 0x20AC,  //"\xe2\x82\xac" [€] euro sign
-		image   : 0x2111,  //"\xe2\x84\x91" [?] blackletter capital I = imaginary part
-		weierp  : 0x2118,  //"\xe2\x84\x98" [?] script capital P = power set = Weierstrass p
-		real    : 0x211C,  //"\xe2\x84\x9c" [?] blackletter capital R = real part symbol
-		trade   : 0x2122,  //"\xe2\x84\xa2" [™] trade mark sign
-		alefsym : 0x2135,  //"\xe2\x84\xb5" [?] alef symbol = first transfinite cardinal
-		larr    : 0x2190,  //"\xe2\x86\x90" [?] leftwards arrow
-		uarr    : 0x2191,  //"\xe2\x86\x91" [?] upwards arrow
-		rarr    : 0x2192,  //"\xe2\x86\x92" [?] rightwards arrow
-		darr    : 0x2193,  //"\xe2\x86\x93" [?] downwards arrow
-		harr    : 0x2194,  //"\xe2\x86\x94" [?] left right arrow
-		crarr   : 0x21B5,  //"\xe2\x86\xb5" [?] downwards arrow with corner leftwards = carriage return
-		lArr    : 0x21D0,  //"\xe2\x87\x90" [?] leftwards double arrow
-		uArr    : 0x21D1,  //"\xe2\x87\x91" [?] upwards double arrow
-		rArr    : 0x21D2,  //"\xe2\x87\x92" [?] rightwards double arrow
-		dArr    : 0x21D3,  //"\xe2\x87\x93" [?] downwards double arrow
-		hArr    : 0x21D4,  //"\xe2\x87\x94" [?] left right double arrow
-		forall  : 0x2200,  //"\xe2\x88\x80" [?] for all
-		part    : 0x2202,  //"\xe2\x88\x82" [?] partial differential
-		exist   : 0x2203,  //"\xe2\x88\x83" [?] there exists
-		empty   : 0x2205,  //"\xe2\x88\x85" [?] empty set = null set = diameter
-		nabla   : 0x2207,  //"\xe2\x88\x87" [?] nabla = backward difference
-		isin    : 0x2208,  //"\xe2\x88\x88" [?] element of
-		notin   : 0x2209,  //"\xe2\x88\x89" [?] not an element of
-		ni      : 0x220B,  //"\xe2\x88\x8b" [?] contains as member
-		prod    : 0x220F,  //"\xe2\x88\x8f" [?] n-ary product = product sign
-		sum     : 0x2211,  //"\xe2\x88\x91" [?] n-ary sumation
-		minus   : 0x2212,  //"\xe2\x88\x92" [?] minus sign
-		lowast  : 0x2217,  //"\xe2\x88\x97" [?] asterisk operator
-		radic   : 0x221A,  //"\xe2\x88\x9a" [?] square root = radical sign
-		prop    : 0x221D,  //"\xe2\x88\x9d" [?] proportional to
-		infin   : 0x221E,  //"\xe2\x88\x9e" [?] infinity
-		ang     : 0x2220,  //"\xe2\x88\xa0" [?] angle
-		and     : 0x2227,  //"\xe2\x88\xa7" [?] logical and = wedge
-		or      : 0x2228,  //"\xe2\x88\xa8" [?] logical or = vee
-		cap     : 0x2229,  //"\xe2\x88\xa9" [?] intersection = cap
-		cup     : 0x222A,  //"\xe2\x88\xaa" [?] union = cup
-		'int'   : 0x222B,  //"\xe2\x88\xab" [?] integral
-		there4  : 0x2234,  //"\xe2\x88\xb4" [?] therefore
-		sim     : 0x223C,  //"\xe2\x88\xbc" [?] tilde operator = varies with = similar to
-		cong    : 0x2245,  //"\xe2\x89\x85" [?] approximately equal to
-		asymp   : 0x2248,  //"\xe2\x89\x88" [?] almost equal to = asymptotic to
-		ne      : 0x2260,  //"\xe2\x89\xa0" [?] not equal to
-		equiv   : 0x2261,  //"\xe2\x89\xa1" [?] identical to
-		le      : 0x2264,  //"\xe2\x89\xa4" [?] less-than or equal to
-		ge      : 0x2265,  //"\xe2\x89\xa5" [?] greater-than or equal to
-		sub     : 0x2282,  //"\xe2\x8a\x82" [?] subset of
-		sup     : 0x2283,  //"\xe2\x8a\x83" [?] superset of
-		nsub    : 0x2284,  //"\xe2\x8a\x84" [?] not a subset of
-		sube    : 0x2286,  //"\xe2\x8a\x86" [?] subset of or equal to
-		supe    : 0x2287,  //"\xe2\x8a\x87" [?] superset of or equal to
-		oplus   : 0x2295,  //"\xe2\x8a\x95" [?] circled plus = direct sum
-		otimes  : 0x2297,  //"\xe2\x8a\x97" [?] circled times = vector product
-		perp    : 0x22A5,  //"\xe2\x8a\xa5" [?] up tack = orthogonal to = perpendicular
-		sdot    : 0x22C5,  //"\xe2\x8b\x85" [?] dot operator
-		lceil   : 0x2308,  //"\xe2\x8c\x88" [?] left ceiling = APL upstile
-		rceil   : 0x2309,  //"\xe2\x8c\x89" [?] right ceiling
-		lfloor  : 0x230A,  //"\xe2\x8c\x8a" [?] left floor = APL downstile
-		rfloor  : 0x230B,  //"\xe2\x8c\x8b" [?] right floor
-		lang    : 0x2329,  //"\xe2\x8c\xa9" [?] left-pointing angle bracket = bra
-		rang    : 0x232A,  //"\xe2\x8c\xaa" [?] right-pointing angle bracket = ket
-		loz     : 0x25CA,  //"\xe2\x97\x8a" [?] lozenge
-		spades  : 0x2660,  //"\xe2\x99\xa0" [?] black spade suit
-		clubs   : 0x2663,  //"\xe2\x99\xa3" [?] black club suit = shamrock
-		hearts  : 0x2665,  //"\xe2\x99\xa5" [?] black heart suit = valentine
-		diams   : 0x2666,  //"\xe2\x99\xa6" [?] black diamond suit
+		ensp    : 0x2002,  //"\xe2\x80\x82" [вЂ‚] en space
+		emsp    : 0x2003,  //"\xe2\x80\x83" [вЂѓ] em space
+		thinsp  : 0x2009,  //"\xe2\x80\x89" [вЂ‰] thin space
+		zwnj    : 0x200C,  //"\xe2\x80\x8c" [вЂЊ] zero width non-joiner
+		zwj     : 0x200D,  //"\xe2\x80\x8d" [вЂЌ] zero width joiner
+		lrm     : 0x200E,  //"\xe2\x80\x8e" [вЂЋ] left-to-right mark
+		rlm     : 0x200F,  //"\xe2\x80\x8f" [вЂЏ] right-to-left mark
+		ndash   : 0x2013,  //"\xe2\x80\x93" [вЂ“] en dash
+		mdash   : 0x2014,  //"\xe2\x80\x94" [вЂ”] em dash
+		lsquo   : 0x2018,  //"\xe2\x80\x98" [вЂ] left single quotation mark
+		rsquo   : 0x2019,  //"\xe2\x80\x99" [вЂ™] right single quotation mark (and apostrophe!)
+		sbquo   : 0x201A,  //"\xe2\x80\x9a" [вЂљ] single low-9 quotation mark
+		ldquo   : 0x201C,  //"\xe2\x80\x9c" [вЂњ] left double quotation mark
+		rdquo   : 0x201D,  //"\xe2\x80\x9d" [вЂќ] right double quotation mark
+		bdquo   : 0x201E,  //"\xe2\x80\x9e" [вЂћ] double low-9 quotation mark
+		dagger  : 0x2020,  //"\xe2\x80\xa0" [вЂ ] dagger
+		Dagger  : 0x2021,  //"\xe2\x80\xa1" [вЂЎ] double dagger
+		bull    : 0x2022,  //"\xe2\x80\xa2" [вЂў] bullet = black small circle
+		hellip  : 0x2026,  //"\xe2\x80\xa6" [вЂ¦] horizontal ellipsis = three dot leader
+		permil  : 0x2030,  //"\xe2\x80\xb0" [вЂ°] per mille sign
+		prime   : 0x2032,  //"\xe2\x80\xb2" [вЂІ] prime = minutes = feet (РґР»СЏ РѕР±РѕР·РЅР°С‡РµРЅРёСЏ РјРёРЅСѓС‚ Рё С„СѓС‚РѕРІ)
+		Prime   : 0x2033,  //"\xe2\x80\xb3" [вЂі] double prime = seconds = inches (РґР»СЏ РѕР±РѕР·РЅР°С‡РµРЅРёСЏ СЃРµРєСѓРЅРґ Рё РґСЋР№РјРѕРІ).
+		lsaquo  : 0x2039,  //"\xe2\x80\xb9" [вЂ№] single left-pointing angle quotation mark
+		rsaquo  : 0x203A,  //"\xe2\x80\xba" [вЂє] single right-pointing angle quotation mark
+		oline   : 0x203E,  //"\xe2\x80\xbe" [вЂѕ] overline = spacing overscore
+		frasl   : 0x2044,  //"\xe2\x81\x84" [вЃ„] fraction slash
+		euro    : 0x20AC,  //"\xe2\x82\xac" [в‚¬] euro sign
+		image   : 0x2111,  //"\xe2\x84\x91" [в„‘] blackletter capital I = imaginary part
+		weierp  : 0x2118,  //"\xe2\x84\x98" [в„] script capital P = power set = Weierstrass p
+		real    : 0x211C,  //"\xe2\x84\x9c" [в„њ] blackletter capital R = real part symbol
+		trade   : 0x2122,  //"\xe2\x84\xa2" [в„ў] trade mark sign
+		alefsym : 0x2135,  //"\xe2\x84\xb5" [в„µ] alef symbol = first transfinite cardinal
+		larr    : 0x2190,  //"\xe2\x86\x90" [в†ђ] leftwards arrow
+		uarr    : 0x2191,  //"\xe2\x86\x91" [в†‘] upwards arrow
+		rarr    : 0x2192,  //"\xe2\x86\x92" [в†’] rightwards arrow
+		darr    : 0x2193,  //"\xe2\x86\x93" [в†“] downwards arrow
+		harr    : 0x2194,  //"\xe2\x86\x94" [в†”] left right arrow
+		crarr   : 0x21B5,  //"\xe2\x86\xb5" [в†µ] downwards arrow with corner leftwards = carriage return
+		lArr    : 0x21D0,  //"\xe2\x87\x90" [в‡ђ] leftwards double arrow
+		uArr    : 0x21D1,  //"\xe2\x87\x91" [в‡‘] upwards double arrow
+		rArr    : 0x21D2,  //"\xe2\x87\x92" [в‡’] rightwards double arrow
+		dArr    : 0x21D3,  //"\xe2\x87\x93" [в‡“] downwards double arrow
+		hArr    : 0x21D4,  //"\xe2\x87\x94" [в‡”] left right double arrow
+		forall  : 0x2200,  //"\xe2\x88\x80" [в€Ђ] for all
+		part    : 0x2202,  //"\xe2\x88\x82" [в€‚] partial differential
+		exist   : 0x2203,  //"\xe2\x88\x83" [в€ѓ] there exists
+		empty   : 0x2205,  //"\xe2\x88\x85" [в€…] empty set = null set = diameter
+		nabla   : 0x2207,  //"\xe2\x88\x87" [в€‡] nabla = backward difference
+		isin    : 0x2208,  //"\xe2\x88\x88" [в€€] element of
+		notin   : 0x2209,  //"\xe2\x88\x89" [в€‰] not an element of
+		ni      : 0x220B,  //"\xe2\x88\x8b" [в€‹] contains as member
+		prod    : 0x220F,  //"\xe2\x88\x8f" [в€Џ] n-ary product = product sign
+		sum     : 0x2211,  //"\xe2\x88\x91" [в€‘] n-ary sumation
+		minus   : 0x2212,  //"\xe2\x88\x92" [в€’] minus sign
+		lowast  : 0x2217,  //"\xe2\x88\x97" [в€—] asterisk operator
+		radic   : 0x221A,  //"\xe2\x88\x9a" [в€љ] square root = radical sign
+		prop    : 0x221D,  //"\xe2\x88\x9d" [в€ќ] proportional to
+		infin   : 0x221E,  //"\xe2\x88\x9e" [в€ћ] infinity
+		ang     : 0x2220,  //"\xe2\x88\xa0" [в€ ] angle
+		and     : 0x2227,  //"\xe2\x88\xa7" [в€§] logical and = wedge
+		or      : 0x2228,  //"\xe2\x88\xa8" [в€Ё] logical or = vee
+		cap     : 0x2229,  //"\xe2\x88\xa9" [в€©] intersection = cap
+		cup     : 0x222A,  //"\xe2\x88\xaa" [в€Є] union = cup
+		'int'   : 0x222B,  //"\xe2\x88\xab" [в€«] integral
+		there4  : 0x2234,  //"\xe2\x88\xb4" [в€ґ] therefore
+		sim     : 0x223C,  //"\xe2\x88\xbc" [в€ј] tilde operator = varies with = similar to
+		cong    : 0x2245,  //"\xe2\x89\x85" [в‰…] approximately equal to
+		asymp   : 0x2248,  //"\xe2\x89\x88" [в‰€] almost equal to = asymptotic to
+		ne      : 0x2260,  //"\xe2\x89\xa0" [в‰ ] not equal to
+		equiv   : 0x2261,  //"\xe2\x89\xa1" [в‰Ў] identical to
+		le      : 0x2264,  //"\xe2\x89\xa4" [в‰¤] less-than or equal to
+		ge      : 0x2265,  //"\xe2\x89\xa5" [в‰Ґ] greater-than or equal to
+		sub     : 0x2282,  //"\xe2\x8a\x82" [вЉ‚] subset of
+		sup     : 0x2283,  //"\xe2\x8a\x83" [вЉѓ] superset of
+		nsub    : 0x2284,  //"\xe2\x8a\x84" [вЉ„] not a subset of
+		sube    : 0x2286,  //"\xe2\x8a\x86" [вЉ†] subset of or equal to
+		supe    : 0x2287,  //"\xe2\x8a\x87" [вЉ‡] superset of or equal to
+		oplus   : 0x2295,  //"\xe2\x8a\x95" [вЉ•] circled plus = direct sum
+		otimes  : 0x2297,  //"\xe2\x8a\x97" [вЉ—] circled times = vector product
+		perp    : 0x22A5,  //"\xe2\x8a\xa5" [вЉҐ] up tack = orthogonal to = perpendicular
+		sdot    : 0x22C5,  //"\xe2\x8b\x85" [в‹…] dot operator
+		lceil   : 0x2308,  //"\xe2\x8c\x88" [вЊ€] left ceiling = APL upstile
+		rceil   : 0x2309,  //"\xe2\x8c\x89" [вЊ‰] right ceiling
+		lfloor  : 0x230A,  //"\xe2\x8c\x8a" [вЊЉ] left floor = APL downstile
+		rfloor  : 0x230B,  //"\xe2\x8c\x8b" [вЊ‹] right floor
+		lang    : 0x2329,  //"\xe2\x8c\xa9" [гЂ€] left-pointing angle bracket = bra
+		rang    : 0x232A,  //"\xe2\x8c\xaa" [гЂ‰] right-pointing angle bracket = ket
+		loz     : 0x25CA,  //"\xe2\x97\x8a" [в—Љ] lozenge
+		spades  : 0x2660,  //"\xe2\x99\xa0" [в™ ] black spade suit
+		clubs   : 0x2663,  //"\xe2\x99\xa3" [в™Ј] black club suit = shamrock
+		hearts  : 0x2665,  //"\xe2\x99\xa5" [в™Ґ] black heart suit = valentine
+		diams   : 0x2666,  //"\xe2\x99\xa6" [в™¦] black diamond suit
 	};
 	
 	//https://mothereff.in/html-entities
@@ -319,12 +319,12 @@
 	};
 	
 	/**
-	 * Вырезает все теги из HTML.
-	 * Гораздо умнее, чем str.replace(/<[^>]*>/, '')
-	 * Корректно обрабатывается "грязный" html: 
-	 *		* в тексте могут втречаться конструкции типа "a < b > c"
-	 *		* в значениях атрибутов тэгов могут встречаться символы < >
-	 * Старается сохранить форматирование
+	 * Р’С‹СЂРµР·Р°РµС‚ РІСЃРµ С‚РµРіРё РёР· HTML.
+	 * Р“РѕСЂР°Р·РґРѕ СѓРјРЅРµРµ, С‡РµРј str.replace(/<[^>]*>/, '')
+	 * РљРѕСЂСЂРµРєС‚РЅРѕ РѕР±СЂР°Р±Р°С‚С‹РІР°РµС‚СЃСЏ "РіСЂСЏР·РЅС‹Р№" html: 
+	 *		* РІ С‚РµРєСЃС‚Рµ РјРѕРіСѓС‚ РІС‚СЂРµС‡Р°С‚СЊСЃСЏ РєРѕРЅСЃС‚СЂСѓРєС†РёРё С‚РёРїР° "a < b > c"
+	 *		* РІ Р·РЅР°С‡РµРЅРёСЏС… Р°С‚СЂРёР±СѓС‚РѕРІ С‚СЌРіРѕРІ РјРѕРіСѓС‚ РІСЃС‚СЂРµС‡Р°С‚СЊСЃСЏ СЃРёРјРІРѕР»С‹ < >
+	 * РЎС‚Р°СЂР°РµС‚СЃСЏ СЃРѕС…СЂР°РЅРёС‚СЊ С„РѕСЂРјР°С‚РёСЂРѕРІР°РЅРёРµ
 	 * 
 	 * @returns {String.prototype.htmlToText.str|String@call;replace}
 	 */
@@ -401,23 +401,23 @@
 	}
 	
 	/**
-	 * Реализация метода String.match() с учётом рекурсии
+	 * Р РµР°Р»РёР·Р°С†РёСЏ РјРµС‚РѕРґР° String.match() СЃ СѓС‡С‘С‚РѕРј СЂРµРєСѓСЂСЃРёРё
 	 * 
 	 * @link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/match
-	 * @param {RegExp} pattern	Регулярное выражение должно быть сконструировано с группой с двумя или более альтернативами. Формат:
+	 * @param {RegExp} pattern	Р РµРіСѓР»СЏСЂРЅРѕРµ РІС‹СЂР°Р¶РµРЅРёРµ РґРѕР»Р¶РЅРѕ Р±С‹С‚СЊ СЃРєРѕРЅСЃС‚СЂСѓРёСЂРѕРІР°РЅРѕ СЃ РіСЂСѓРїРїРѕР№ СЃ РґРІСѓРјСЏ РёР»Рё Р±РѕР»РµРµ Р°Р»СЊС‚РµСЂРЅР°С‚РёРІР°РјРё. Р¤РѕСЂРјР°С‚:
 	 *							`(OpenPattern)|(ClosePattern)`
 	 *							`(OpenPattern)|(ClosePattern)|OuterPattern|InnerPattern|...`
-	 *							Иначе возвращается строка (если совпадение найдено) или Null (если совпадение не найдено).
-	 * @param {Object} options	Объект с опциями. Пример: `{open: 1, close: 2, parts: true}`
-	 *							'open' и 'close' -- номера карманов для открывающего и закрывающего совпадений для регулярного выражения 
-	 *							'parts' -- если true, то вместо строк возвращает объекты 
-	 * @returns {Array|String|Null}	Если передан флаг 'g', то возвращается массив, иначе строка
-	 *								Если в опциях указан флаг 'parts' то вместо вместо строк возвращает объекты в формате:
+	 *							РРЅР°С‡Рµ РІРѕР·РІСЂР°С‰Р°РµС‚СЃСЏ СЃС‚СЂРѕРєР° (РµСЃР»Рё СЃРѕРІРїР°РґРµРЅРёРµ РЅР°Р№РґРµРЅРѕ) РёР»Рё Null (РµСЃР»Рё СЃРѕРІРїР°РґРµРЅРёРµ РЅРµ РЅР°Р№РґРµРЅРѕ).
+	 * @param {Object} options	РћР±СЉРµРєС‚ СЃ РѕРїС†РёСЏРјРё. РџСЂРёРјРµСЂ: `{open: 1, close: 2, parts: true}`
+	 *							'open' Рё 'close' -- РЅРѕРјРµСЂР° РєР°СЂРјР°РЅРѕРІ РґР»СЏ РѕС‚РєСЂС‹РІР°СЋС‰РµРіРѕ Рё Р·Р°РєСЂС‹РІР°СЋС‰РµРіРѕ СЃРѕРІРїР°РґРµРЅРёР№ РґР»СЏ СЂРµРіСѓР»СЏСЂРЅРѕРіРѕ РІС‹СЂР°Р¶РµРЅРёСЏ 
+	 *							'parts' -- РµСЃР»Рё true, С‚Рѕ РІРјРµСЃС‚Рѕ СЃС‚СЂРѕРє РІРѕР·РІСЂР°С‰Р°РµС‚ РѕР±СЉРµРєС‚С‹ 
+	 * @returns {Array|String|Null}	Р•СЃР»Рё РїРµСЂРµРґР°РЅ С„Р»Р°Рі 'g', С‚Рѕ РІРѕР·РІСЂР°С‰Р°РµС‚СЃСЏ РјР°СЃСЃРёРІ, РёРЅР°С‡Рµ СЃС‚СЂРѕРєР°
+	 *								Р•СЃР»Рё РІ РѕРїС†РёСЏС… СѓРєР°Р·Р°РЅ С„Р»Р°Рі 'parts' С‚Рѕ РІРјРµСЃС‚Рѕ РІРјРµСЃС‚Рѕ СЃС‚СЂРѕРє РІРѕР·РІСЂР°С‰Р°РµС‚ РѕР±СЉРµРєС‚С‹ РІ С„РѕСЂРјР°С‚Рµ:
 	 *								```
 	 *								{
-	 *									open: "открывающее_совпадение",
-	 *									inner: "часть между открывающим и закрывающим совпадением", //здесь может быть пусто
-	 *									close: "закрывающее_совпадение",
+	 *									open: "РѕС‚РєСЂС‹РІР°СЋС‰РµРµ_СЃРѕРІРїР°РґРµРЅРёРµ",
+	 *									inner: "С‡Р°СЃС‚СЊ РјРµР¶РґСѓ РѕС‚РєСЂС‹РІР°СЋС‰РёРј Рё Р·Р°РєСЂС‹РІР°СЋС‰РёРј СЃРѕРІРїР°РґРµРЅРёРµРј", //Р·РґРµСЃСЊ РјРѕР¶РµС‚ Р±С‹С‚СЊ РїСѓСЃС‚Рѕ
+	 *									close: "Р·Р°РєСЂС‹РІР°СЋС‰РµРµ_СЃРѕРІРїР°РґРµРЅРёРµ",
 	 *								}
 	 *								```
 	 * @throws {Error} if maximum depth will be reached

@@ -2,48 +2,65 @@
  * 
  * @type undefined
  */
+function AB(str) {
+	var AB = function (str) {
+		var __str = str, 
+			__stack = [];
 
-var AB = function (str) {
-    var __str = str;
+		/**
+		 * Детектирует тип содержимого: text/plain, text/html, text/json
+		 * 
+		 * @param {string} str
+		 * @returns number TYPE_HTML, TYPE_JSON, TYPE_TEXT
+		 */
+		AB.prototype._getConentType = function (str) {
+			AnyBalance.trace('_getConentType');
+		};
 
-    /**
-     * Детектирует тип содержимого: text/plain, text/html, text/json
-     * 
-     * @param {string} str
-     * @returns number TYPE_HTML, TYPE_JSON, TYPE_TEXT
-     */
-    AB.prototype._getConentType = function (str) {
-        AnyBalance.trace('_getConentType');
-    };
+		/**
+		 * Фильтрует содержимое
+		 * 
+		 * @param {string|RegExp} Для строки нужно передать CSS селектор
+		 * @returns AB
+		 * @link http://jsonselect.org/#tryit
+		 */
+		AB.prototype.find = function (input) {
+//			__stack.push((function(input){ 
+//				return function(){
+//					//код для выполнения
+//					AnyBalance.trace('find called from stack (processed)');
+//				}
+//			})(input))
+			
+			__stack.push(function() {
+				AnyBalance.trace('find called from stack (processed)' +input);
+			}.bind(this, input));
+			AnyBalance.trace('find');
 
-    /**
-     * Фильтрует содержимое
-     * 
-     * @param {string|RegExp} Для строки нужно передать CSS селектор
-     * @returns AB
-     * @link http://jsonselect.org/#tryit
-     */
-    AB.prototype.find = function (input) {
-        AnyBalance.trace('find');
+			return this;
+		}
 
-        return this;
-    }
+		AB.prototype.toText = function () {
+			AnyBalance.trace('toText');
 
-    AB.prototype.toText = function () {
-        AnyBalance.trace('toText');
+		}
 
-    }
-    
-    AB.prototype.htmlToText = function () {
-        AnyBalance.trace('htmlToText');
-        return this;
-    }
-        
-    AB.prototype.toNumeric = function () {
-        AnyBalance.trace('toNumeric');
-        return this;
-    }
-};
+		AB.prototype.htmlToText = function () {
+			AnyBalance.trace('htmlToText');
+			return this;
+		}
+
+		AB.prototype.toNumeric = function () {
+			__stack.forEach(function(fun){
+				fun();
+			});
+			AnyBalance.trace('toNumeric');
+			return this;
+		}
+	};
+	return new AB(str);
+}
+
 
 
 

@@ -1,703 +1,1193 @@
-/*! AnyBalance Library (https://github.com/dukei/any-balance-providers/)
-The uncompressed full source code of this library is here: https://github.com/dukei/any-balance-providers/blob/master/extra/development/ab-test-library/library.js
-*/
-;
-/*!
- * XRegExp 3.0.0
- * <http://xregexp.com/>
- * Steven Levithan (c) 2007-2015 MIT License
+/**
+ AnyBalance (https://github.com/dukei/any-balance-providers/)
+
+ Содержит некоторые полезные для извлечения значений с сайтов функции.
+ Для конкретного провайдера рекомендуется оставлять в этом файле только те функции, которые используются.
+
+ library.js v0.21 от 11.12.15
+
+ changelog:
+ 11.12.15 добавлена функция getFormattedDate, на нее переключена fmtDate для сохранения совместимости
+ getFormattedDate на входе получает json: options = {
+	format: 'DD/MM/YYYY', // DD=09, D=9, MM=08, М=8, YYYY=2015, YY=15
+	offsetDay: 0, // Смещение по дням
+	offsetMonth: 0, // Смещение по месяцам
+	offsetYear: 5, // Смещение по годам
+}
+ и вторым параметром Date (необязательно)
+
+ 10.12.15 Добавлена getJsonObject
+
+ 06.12.15 Полностью переработаны html_entity_decode и replaceTagsAndSpaces, добавлен XRegExp (http://xregexp.com/)
+ ВНИМАНИЕ!!! replaceTagsAndSpaces теперь уже включает html_entity_decode, поэтому при использовании replaceTagsAndSpaces уже не надо пользовать html_entity_decode
+ Если значение берется из атрибута, и теги удалять не надо, то заменить сущности можно массивом replaceHtmlEntities
+
+ 27.11.15 createFormParams: доработки для универсальности
+
+ 27.10.15 sumParam: добавлено сообщение об отключенном счетчике
+
+ 16.09.15 добавлены n2, joinUrl, fmtDate
+
+ 05.06.15 добавлена правильная обработка чекбоксов в createFormParams;
+
+ 17.05.15 getElement, getElements - добавлены функции получения HMTL всего элемента, включая вложенные элементы с тем же тегом
+
+ 24.11.14 parseDateWord - улучшено получение дат из строки '10 декабря';
+
+ 24.11.14 capitalFirstLetters - новая функция, делает из строки ИВАноВ - Иванов;
+
+ 07.10.14 safeEval - полностью безопасное исполнение стороннего Javascript (в плане недоступности для него AnyBalance API)
+
+ 18.08.14 requestPostMultipart - эмулируем браузер, генерируя случайный boundary
+
+ 14.07.14 getParam - Фикс (Если !isset(html), а не !html то не падаем, а пишем ошибку в trace)
+
+ 04.06.14 parseBalance - улучшен разбор сложных балансов (,82)
+
+ 27.05.14 getParam - Если !html то не падаем, а пишем ошибку в trace
+
+ 26.03.14 getParam - Добавлено логирование, если счетчик выключен
+
+ 16.01.14 parseMinutes - Улучшена обработка секунд с запятой 2 340,00 сек
+
+ 17.12.13 parseMinutes - улучшена обработка минут с точками (28мин.40сек)
+
+ 05.12.13 parseMinutes - парсинг минут вида 49,25 (т.е. 49 минут и 15 секунд) (Д. Кочин)
+
+ 03.12.13 опять поправил parseMinutes, не парсились значения типа 252:22 мин
+
+ 26.11.13: подправлена parseMinutes(), правильное получение данных, если на входе "300 &#65533;мин"
+
+ 25.11.13: унифицирована parseMinutes() теперь поддерживает все подряд
+
+ 22.11.13: parseDateWord, добавлена локализация (25 jan 2013, 25 января 2013, 25 янв 2013...), удалена parseDateWordEn, т.к. теперь все есть в parseDateWord
+ 22.11.13: parseMinutes, добавлена локализация, 5m3sec, 5хв3сек.
+ 22.11.13: добавлена parseMinutes().
  */
-;
-var XRegExp=(function(m){var g,H="xregexp",h={astral:false,natives:false},F={exec:RegExp.prototype.exec,test:RegExp.prototype.test,match:String.prototype.match,replace:String.prototype.replace,split:String.prototype.split},n={},L={},f={},z=[],k="default",l="class",b={"default":/\\(?:0(?:[0-3][0-7]{0,2}|[4-7][0-7]?)?|[1-9]\d*|x[\dA-Fa-f]{2}|u(?:[\dA-Fa-f]{4}|{[\dA-Fa-f]+})|c[A-Za-z]|[\s\S])|\(\?[:=!]|[?*+]\?|{\d+(?:,\d*)?}\??|[\s\S]/,"class":/\\(?:[0-3][0-7]{0,2}|[4-7][0-7]?|x[\dA-Fa-f]{2}|u(?:[\dA-Fa-f]{4}|{[\dA-Fa-f]+})|c[A-Za-z]|[\s\S])|[\s\S]/},C=/\$(?:{([\w$]+)}|(\d\d?|[\s\S]))/g,o=F.exec.call(/()??/,"")[1]===m,a=(function(){var O=true;
-try{new RegExp("","u")
-}catch(N){O=false
-}return O
-}()),M=(function(){var O=true;
-try{new RegExp("","y")
-}catch(N){O=false
-}return O
-}()),A=/a/.flags!==m,s={g:true,i:true,m:true,u:a,y:M},e={}.toString,c;
-function p(Q,N,O,S,P){var R;
-Q[H]={captureNames:N};
-if(P){return Q
-}if(Q.__proto__){Q.__proto__=g.prototype
-}else{for(R in g.prototype){Q[R]=g.prototype[R]
-}}Q[H].source=O;
-Q[H].flags=S?S.split("").sort().join(""):S;
-return Q
-}function B(N){return F.replace.call(N,/([\s\S])(?=[\s\S]*\1)/g,"")
-}function u(S,Q){if(!g.isRegExp(S)){throw new TypeError("Type RegExp expected")
-}var U=S[H]||{},N=G(S),T="",P="",O=null,R=null;
-Q=Q||{};
-if(Q.removeG){P+="g"
-}if(Q.removeY){P+="y"
-}if(P){N=F.replace.call(N,new RegExp("["+P+"]+","g"),"")
-}if(Q.addG){T+="g"
-}if(Q.addY){T+="y"
-}if(T){N=B(N+T)
-}if(!Q.isInternalOnly){if(U.source!==m){O=U.source
-}if(U.flags!=null){R=T?B(U.flags+T):U.flags
-}}S=p(new RegExp(S.source,N),j(S)?U.captureNames.slice(0):null,O,R,Q.isInternalOnly);
-return S
-}function t(N){return parseInt(N,16)
-}function G(N){return A?N.flags:F.exec.call(/\/([a-z]*)$/i,RegExp.prototype.toString.call(N))[1]
-}function j(N){return !!(N[H]&&N[H].captureNames)
-}function D(N){return parseInt(N,10).toString(16)
-}function r(Q,P){var N=Q.length,O;
-for(O=0;
-O<N;
-++O){if(Q[O]===P){return O
-}}return -1
-}function x(O,N){return e.call(O)==="[object "+N+"]"
-}function w(O,P,N){return F.test.call(N.indexOf("x")>-1?/^(?:\s+|#.*|\(\?#[^)]*\))*(?:[?*+]|{\d+(?:,\d*)?})/:/^(?:\(\?#[^)]*\))*(?:[?*+]|{\d+(?:,\d*)?})/,O.slice(P))
-}function v(N){while(N.length<4){N="0"+N
-}return N
-}function K(P,N){var O;
-if(B(N)!==N){throw new SyntaxError("Invalid duplicate regex flag "+N)
-}P=F.replace.call(P,/^\(\?([\w$]+)\)/,function(R,Q){if(F.test.call(/[gy]/,Q)){throw new SyntaxError("Cannot use flag g or y in mode modifier "+R)
-}N=B(N+Q);
-return""
-});
-for(O=0;
-O<N.length;
-++O){if(!s[N.charAt(O)]){throw new SyntaxError("Unknown regex flag "+N.charAt(O))
-}}return{pattern:P,flags:N}
-}function J(O){var N={};
-if(x(O,"String")){g.forEach(O,/[^\s,]+/,function(P){N[P]=true
-});
-return N
-}return O
-}function q(N){if(!/^[\w$]$/.test(N)){throw new Error("Flag must be a single character A-Za-z0-9_$")
-}s[N]=true
-}function d(R,O,S,V,N){var P=z.length,T=R.charAt(S),W=null,Q,U;
-while(P--){U=z[P];
-if((U.leadChar&&U.leadChar!==T)||(U.scope!==V&&U.scope!=="all")||(U.flag&&O.indexOf(U.flag)===-1)){continue
-}Q=g.exec(R,U.regex,S,"sticky");
-if(Q){W={matchLength:Q[0].length,output:U.handler.call(N,Q,V,O),reparse:U.reparse};
-break
-}}return W
-}function I(N){h.astral=N
-}function E(N){RegExp.prototype.exec=(N?n:F).exec;
-RegExp.prototype.test=(N?n:F).test;
-String.prototype.match=(N?n:F).match;
-String.prototype.replace=(N?n:F).replace;
-String.prototype.split=(N?n:F).split;
-h.natives=N
-}function y(N){if(N==null){throw new TypeError("Cannot convert null or undefined to object")
-}return N
-}g=function(R,P){var N={hasNamedCapture:false,captureNames:[]},W=k,O="",U=0,X,Q,T,S,V;
-if(g.isRegExp(R)){if(P!==m){throw new TypeError("Cannot supply flags when copying a RegExp")
-}return u(R)
-}R=R===m?"":String(R);
-P=P===m?"":String(P);
-if(g.isInstalled("astral")&&P.indexOf("A")===-1){P+="A"
-}if(!f[R]){f[R]={}
-}if(!f[R][P]){X=K(R,P);
-S=X.pattern;
-V=X.flags;
-while(U<S.length){do{X=d(S,V,U,W,N);
-if(X&&X.reparse){S=S.slice(0,U)+X.output+S.slice(U+X.matchLength)
-}}while(X&&X.reparse);
-if(X){O+=X.output;
-U+=(X.matchLength||1)
-}else{Q=g.exec(S,b[W],U,"sticky")[0];
-O+=Q;
-U+=Q.length;
-if(Q==="["&&W===k){W=l
-}else{if(Q==="]"&&W===l){W=k
-}}}}f[R][P]={pattern:F.replace.call(O,/\(\?:\)(?=\(\?:\))|^\(\?:\)|\(\?:\)$/g,""),flags:F.replace.call(V,/[^gimuy]+/g,""),captures:N.hasNamedCapture?N.captureNames:null}
-}T=f[R][P];
-return p(new RegExp(T.pattern,T.flags),T.captures,R,P)
-};
-g.prototype=new RegExp();
-g.version="3.0.0";
-g.addToken=function(R,Q,O){O=O||{};
-var N=O.optionalFlags,P;
-if(O.flag){q(O.flag)
-}if(N){N=F.split.call(N,"");
-for(P=0;
-P<N.length;
-++P){q(N[P])
-}}z.push({regex:u(R,{addG:true,addY:M,isInternalOnly:true}),handler:Q,scope:O.scope||k,flag:O.flag,reparse:O.reparse,leadChar:O.leadChar});
-g.cache.flush("patterns")
-};
-g.cache=function(O,N){if(!L[O]){L[O]={}
-}return L[O][N]||(L[O][N]=g(O,N))
-};
-g.cache.flush=function(N){if(N==="patterns"){f={}
-}else{L={}
-}};
-g.escape=function(N){return F.replace.call(y(N),/[-[\]{}()*+?.,\\^$|#\s]/g,"\\$&")
-};
-g.exec=function(T,Q,U,R){var S="g",O=false,P,N;
-O=M&&!!(R||(Q.sticky&&R!==false));
-if(O){S+="y"
-}Q[H]=Q[H]||{};
-N=Q[H][S]||(Q[H][S]=u(Q,{addG:true,addY:O,removeY:R===false,isInternalOnly:true}));
-N.lastIndex=U=U||0;
-P=n.exec.call(N,T);
-if(R&&P&&P.index!==U){P=null
-}if(Q.global){Q.lastIndex=P?N.lastIndex:0
-}return P
-};
-g.forEach=function(Q,P,S){var R=0,O=-1,N;
-while((N=g.exec(Q,P,R))){S(N,++O,Q,P);
-R=N.index+(N[0].length||1)
-}};
-g.globalize=function(N){return u(N,{addG:true})
-};
-g.install=function(N){N=J(N);
-if(!h.astral&&N.astral){I(true)
-}if(!h.natives&&N.natives){E(true)
-}};
-g.isInstalled=function(N){return !!(h[N])
-};
-g.isRegExp=function(N){return e.call(N)==="[object RegExp]"
-};
-g.match=function(T,R,P){var Q=(R.global&&P!=="one")||P==="all",S=((Q?"g":"")+(R.sticky?"y":""))||"noGY",N,O;
-R[H]=R[H]||{};
-O=R[H][S]||(R[H][S]=u(R,{addG:!!Q,addY:!!R.sticky,removeG:P==="one",isInternalOnly:true}));
-N=F.match.call(y(T),O);
-if(R.global){R.lastIndex=((P==="one"&&N)?(N.index+N[0].length):0)
-}return Q?(N||[]):(N&&N[0])
-};
-g.matchChain=function(O,N){return(function P(Q,V){var T=N[V].regex?N[V]:{regex:N[V]},U=[],R=function(W){if(T.backref){if(!(W.hasOwnProperty(T.backref)||+T.backref<W.length)){throw new ReferenceError("Backreference to undefined group: "+T.backref)
-}U.push(W[T.backref]||"")
-}else{U.push(W[0])
-}},S;
-for(S=0;
-S<Q.length;
-++S){g.forEach(Q[S],T.regex,R)
-}return((V===N.length-1)||!U.length)?U:P(U,V+1)
-}([O],0))
-};
-g.replace=function(Q,V,O,T){var R=g.isRegExp(V),N=(V.global&&T!=="one")||T==="all",P=((N?"g":"")+(V.sticky?"y":""))||"noGY",S=V,U;
-if(R){V[H]=V[H]||{};
-S=V[H][P]||(V[H][P]=u(V,{addG:!!N,addY:!!V.sticky,removeG:T==="one",isInternalOnly:true}))
-}else{if(N){S=new RegExp(g.escape(String(V)),"g")
-}}U=n.replace.call(y(Q),S,O);
-if(R&&V.global){V.lastIndex=0
-}return U
-};
-g.replaceEach=function(Q,O){var N,P;
-for(N=0;
-N<O.length;
-++N){P=O[N];
-Q=g.replace(Q,P[0],P[1],P[2])
-}return Q
-};
-g.split=function(P,O,N){return n.split.call(y(P),O,N)
-};
-g.test=function(P,N,Q,O){return !!g.exec(P,N,Q,O)
-};
-g.uninstall=function(N){N=J(N);
-if(h.astral&&N.astral){I(false)
-}if(h.natives&&N.natives){E(false)
-}};
-g.union=function(N,P){var Q=/(\()(?!\?)|\\([1-9]\d*)|\\[\s\S]|\[(?:[^\\\]]|\\[\s\S])*]/g,O=[],S=0,U,V,T,W=function(Y,Z,aa){var X=V[S-U];
-if(Z){++S;
-if(X){return"(?<"+X+">"
-}}else{if(aa){return"\\"+(+aa+U)
-}}return Y
-},R;
-if(!(x(N,"Array")&&N.length)){throw new TypeError("Must provide a nonempty array of patterns to merge")
-}for(R=0;
-R<N.length;
-++R){T=N[R];
-if(g.isRegExp(T)){U=S;
-V=(T[H]&&T[H].captureNames)||[];
-O.push(F.replace.call(g(T.source).source,Q,W))
-}else{O.push(g.escape(T))
-}}return g(O.join("|"),P)
-};
-n.exec=function(S){var N=this.lastIndex,Q=F.exec.apply(this,arguments),P,O,R;
-if(Q){if(!o&&Q.length>1&&r(Q,"")>-1){O=u(this,{removeG:true,isInternalOnly:true});
-F.replace.call(String(S).slice(Q.index),O,function(){var T=arguments.length,U;
-for(U=1;
-U<T-2;
-++U){if(arguments[U]===m){Q[U]=m
-}}})
-}if(this[H]&&this[H].captureNames){for(R=1;
-R<Q.length;
-++R){P=this[H].captureNames[R-1];
-if(P){Q[P]=Q[R]
-}}}if(this.global&&!Q[0].length&&(this.lastIndex>Q.index)){this.lastIndex=Q.index
-}}if(!this.global){this.lastIndex=N
-}return Q
-};
-n.test=function(N){return !!n.exec.call(this,N)
-};
-n.match=function(O){var N;
-if(!g.isRegExp(O)){O=new RegExp(O)
-}else{if(O.global){N=F.match.apply(this,arguments);
-O.lastIndex=0;
-return N
-}}return n.exec.call(O,y(this))
-};
-n.replace=function(Q,R){var S=g.isRegExp(Q),O,P,N;
-if(S){if(Q[H]){P=Q[H].captureNames
-}O=Q.lastIndex
-}else{Q+=""
-}if(x(R,"Function")){N=F.replace.call(String(this),Q,function(){var T=arguments,U;
-if(P){T[0]=new String(T[0]);
-for(U=0;
-U<P.length;
-++U){if(P[U]){T[0][P[U]]=T[U+1]
-}}}if(S&&Q.global){Q.lastIndex=T[T.length-2]+T[0].length
-}return R.apply(m,T)
-})
-}else{N=F.replace.call(this==null?this:String(this),Q,function(){var T=arguments;
-return F.replace.call(String(R),C,function(V,U,X){var W;
-if(U){W=+U;
-if(W<=T.length-3){return T[W]||""
-}W=P?r(P,U):-1;
-if(W<0){throw new SyntaxError("Backreference to undefined group "+V)
-}return T[W+1]||""
-}if(X==="$"){return"$"
-}if(X==="&"||+X===0){return T[0]
-}if(X==="`"){return T[T.length-1].slice(0,T[T.length-2])
-}if(X==="'"){return T[T.length-1].slice(T[T.length-2]+T[0].length)
-}X=+X;
-if(!isNaN(X)){if(X>T.length-3){throw new SyntaxError("Backreference to undefined group "+V)
-}return T[X]||""
-}throw new SyntaxError("Invalid token "+V)
-})
-})
-}if(S){if(Q.global){Q.lastIndex=0
-}else{Q.lastIndex=O
-}}return N
-};
-n.split=function(R,O){if(!g.isRegExp(R)){return F.split.apply(this,arguments)
-}var T=String(this),Q=[],N=R.lastIndex,S=0,P;
-O=(O===m?-1:O)>>>0;
-g.forEach(T,R,function(U){if((U.index+U[0].length)>S){Q.push(T.slice(S,U.index));
-if(U.length>1&&U.index<T.length){Array.prototype.push.apply(Q,U.slice(1))
-}P=U[0].length;
-S=U.index+P
-}});
-if(S===T.length){if(!F.test.call(R,"")||P){Q.push("")
-}}else{Q.push(T.slice(S))
-}R.lastIndex=N;
-return Q.length>O?Q.slice(0,O):Q
-};
-c=g.addToken;
-c(/\\([ABCE-RTUVXYZaeg-mopqyz]|c(?![A-Za-z])|u(?![\dA-Fa-f]{4}|{[\dA-Fa-f]+})|x(?![\dA-Fa-f]{2}))/,function(N,O){if(N[1]==="B"&&O===k){return N[0]
-}throw new SyntaxError("Invalid escape "+N[0])
-},{scope:"all",leadChar:"\\"});
-c(/\\u{([\dA-Fa-f]+)}/,function(O,P,N){var Q=t(O[1]);
-if(Q>1114111){throw new SyntaxError("Invalid Unicode code point "+O[0])
-}if(Q<=65535){return"\\u"+v(D(Q))
-}if(a&&N.indexOf("u")>-1){return O[0]
-}throw new SyntaxError("Cannot use Unicode code point above \\u{FFFF} without flag u")
-},{scope:"all",leadChar:"\\"});
-c(/\[(\^?)]/,function(N){return N[1]?"[\\s\\S]":"\\b\\B"
-},{leadChar:"["});
-c(/\(\?#[^)]*\)/,function(O,P,N){return w(O.input,O.index+O[0].length,N)?"":"(?:)"
-},{leadChar:"("});
-c(/\s+|#.*/,function(O,P,N){return w(O.input,O.index+O[0].length,N)?"":"(?:)"
-},{flag:"x"});
-c(/\./,function(){return"[\\s\\S]"
-},{flag:"s",leadChar:"."});
-c(/\\k<([\w$]+)>/,function(O){var N=isNaN(O[1])?(r(this.captureNames,O[1])+1):+O[1],P=O.index+O[0].length;
-if(!N||N>this.captureNames.length){throw new SyntaxError("Backreference to undefined group "+O[0])
-}return"\\"+N+(P===O.input.length||isNaN(O.input.charAt(P))?"":"(?:)")
-},{leadChar:"\\"});
-c(/\\(\d+)/,function(N,O){if(!(O===k&&/^[1-9]/.test(N[1])&&+N[1]<=this.captureNames.length)&&N[1]!=="0"){throw new SyntaxError("Cannot use octal escape or backreference to undefined group "+N[0])
-}return N[0]
-},{scope:"all",leadChar:"\\"});
-c(/\(\?P?<([\w$]+)>/,function(N){if(!isNaN(N[1])){throw new SyntaxError("Cannot use integer as capture name "+N[0])
-}if(N[1]==="length"||N[1]==="__proto__"){throw new SyntaxError("Cannot use reserved word as capture name "+N[0])
-}if(r(this.captureNames,N[1])>-1){throw new SyntaxError("Cannot use same name for multiple groups "+N[0])
-}this.captureNames.push(N[1]);
-this.hasNamedCapture=true;
-return"("
-},{leadChar:"("});
-c(/\((?!\?)/,function(O,P,N){if(N.indexOf("n")>-1){return"(?:"
-}this.captureNames.push(null);
-return"("
-},{optionalFlags:"n",leadChar:"("});
-return g
-}());
-(function(){String.prototype.replaceAll=function(k){var m=this,l;
-for(l=0;
-k&&l<k.length;
-++l){if(isArray(k[l])){m=m.replaceAll(k[l])
-}else{m=m.replace(k[l],k[l+1]);
-++l
-}}return m.valueOf()
-};
-String.HTML_ENTITY_TABLE={quot:34,amp:38,lt:60,gt:62,apos:39,nbsp:160,iexcl:161,cent:162,pound:163,curren:164,yen:165,brvbar:166,sect:167,uml:168,copy:169,ordf:170,laquo:171,not:172,shy:173,reg:174,macr:175,deg:176,plusmn:177,sup2:178,sup3:179,acute:180,micro:181,para:182,middot:183,cedil:184,sup1:185,ordm:186,raquo:187,frac14:188,frac12:189,frac34:190,iquest:191,Agrave:192,Aacute:193,Acirc:194,Atilde:195,Auml:196,Aring:197,AElig:198,Ccedil:199,Egrave:200,Eacute:201,Ecirc:202,Euml:203,Igrave:204,Iacute:205,Icirc:206,Iuml:207,ETH:208,Ntilde:209,Ograve:210,Oacute:211,Ocirc:212,Otilde:213,Ouml:214,times:215,Oslash:216,Ugrave:217,Uacute:218,Ucirc:219,Uuml:220,Yacute:221,THORN:222,szlig:223,agrave:224,aacute:225,acirc:226,atilde:227,auml:228,aring:229,aelig:230,ccedil:231,egrave:232,eacute:233,ecirc:234,euml:235,igrave:236,iacute:237,icirc:238,iuml:239,eth:240,ntilde:241,ograve:242,oacute:243,ocirc:244,otilde:245,ouml:246,divide:247,oslash:248,ugrave:249,uacute:250,ucirc:251,uuml:252,yacute:253,thorn:254,yuml:255,OElig:338,oelig:339,Scaron:352,scaron:353,Yuml:376,fnof:402,circ:710,tilde:732,Alpha:913,Beta:914,Gamma:915,Delta:916,Epsilon:917,Zeta:918,Eta:919,Theta:920,Iota:921,Kappa:922,Lambda:923,Mu:924,Nu:925,Xi:926,Omicron:927,Pi:928,Rho:929,Sigma:931,Tau:932,Upsilon:933,Phi:934,Chi:935,Psi:936,Omega:937,alpha:945,beta:946,gamma:947,delta:948,epsilon:949,zeta:950,eta:951,theta:952,iota:953,kappa:954,lambda:955,mu:956,nu:957,xi:958,omicron:959,pi:960,rho:961,sigmaf:962,sigma:963,tau:964,upsilon:965,phi:966,chi:967,psi:968,omega:969,thetasym:977,upsih:978,piv:982,ensp:8194,emsp:8195,thinsp:8201,zwnj:8204,zwj:8205,lrm:8206,rlm:8207,ndash:8211,mdash:8212,lsquo:8216,rsquo:8217,sbquo:8218,ldquo:8220,rdquo:8221,bdquo:8222,dagger:8224,Dagger:8225,bull:8226,hellip:8230,permil:8240,prime:8242,Prime:8243,lsaquo:8249,rsaquo:8250,oline:8254,frasl:8260,euro:8364,image:8465,weierp:8472,real:8476,trade:8482,alefsym:8501,larr:8592,uarr:8593,rarr:8594,darr:8595,harr:8596,crarr:8629,lArr:8656,uArr:8657,rArr:8658,dArr:8659,hArr:8660,forall:8704,part:8706,exist:8707,empty:8709,nabla:8711,isin:8712,notin:8713,ni:8715,prod:8719,sum:8721,minus:8722,lowast:8727,radic:8730,prop:8733,infin:8734,ang:8736,and:8743,or:8744,cap:8745,cup:8746,"int":8747,there4:8756,sim:8764,cong:8773,asymp:8776,ne:8800,equiv:8801,le:8804,ge:8805,sub:8834,sup:8835,nsub:8836,sube:8838,supe:8839,oplus:8853,otimes:8855,perp:8869,sdot:8901,lceil:8968,rceil:8969,lfloor:8970,rfloor:8971,lang:9001,rang:9002,loz:9674,spades:9824,clubs:9827,hearts:9829,diams:9830};
-var e=new XRegExp("&(	[a-zA-Z][a-zA-Z\\d]+		\n		|	\\# (?:	\\d{1,5}			\n				|	x[\\da-fA-F]{2,4}	\n				)						\n		)							#1  \n		;","gx"),j=function(l,k){if(k[0]!=="#"){if(String.HTML_ENTITY_TABLE.hasOwnProperty(k)){return String.fromCharCode(String.HTML_ENTITY_TABLE[k])
-}return"&"+k+";"
-}return String.fromCharCode(k[1]==="x"?parseInt(k.substr(2),16):parseInt(k.substr(1),10))
-},h=[e,j];
-String.REPLACE_HTML_ENTITIES=h;
-String.prototype.htmlEntityDecode=function(){return this.replaceAll(h)
-};
-var c=["address","blockquote","caption","center","dd","div","dl","dt","h[1-6]","hr","li","menu","ol","p","pre","table","tbody","td","tfoot","th","thead","tr","ul","article","aside","audio","canvas","figcaption","figure","footer","header","hgroup","output","progress","section","video","form","title","br"].join("|");
-var d=["script","style","map","iframe","frameset","object","applet","comment","button","textarea","select"].join("|");
-var g="(?:						\n					[^>\"']+		\n				|	\"   [^\"]*    \"	\n				|	'  [^']*  '	\n			)*";
-var b="(?:															\n			#pair tags with content:									\n			<	(?=[a-z])				#speed improve optimization		\n				("+d+")\\b	#1			\n				"+g+"									\n			>															\n				.*?														\n			< (?!script\\b)												\n				#speed improve optimization - atomic group				\n				(?=(/?))\\2									#2			\n				\\1"+g+"									\n			>															\n																	\n			#opened tags:												\n		|	<	(?=[a-z])												\n				(?!(?:"+d+")\\b)			\n				"+g+"									\n			>															\n																	\n		|	</[a-z]"+g+">	#closed tags		\n		|	<![a-z]"+g+">	#<!DOCTYPE ...>		\n		|	<!\\[CDATA\\[  .*?  \\]\\]>		#CDATA				\n		|	<!--  .*?   -->					#comments			\n		|	<\\?  .*?  \\?>					#instructions part1 (PHP, Perl, ASP)	\n		|	<%	  .*?    %>					#instructions part2 (PHP, Perl, ASP)	\n		)";
-var a=new RegExp("^<("+c+")\\b","i"),f=String.REPLACE_TAGS_AND_SPACES=[new XRegExp(b,"igx"),function(l,k){if(l.search(a)>-1){return"\n"
-}return""
-},h,/^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g,"",/\r/g,"\n",/\x20\x20+/g," ",/\n\x20/g,"\n",/\x20\n/g,"\n",/\n\n\n+/g,"\n\n"];
-String.prototype.htmlToText=function(){return str.replaceAll(f)
-}
+
+/**
+ * @namespace AB
+ */
+var AB = (function (global_scope) {
+	"use strict";
+
+    /**
+     * Получает значение, подходящее под регулярное выражение regexp, производит
+     * в нем замены replaces, результат передаёт в функцию parser,
+     * а затем записывает результат в счетчик с именем param в result
+     * Результат в result помещается только если счетчик выбран пользователем
+     * в настройках аккаунта
+     *
+     * если result и param равны null, то значение просто возвращается.
+     * eсли parser == null, то возвращается результат сразу после замен
+     * если replaces == null, то замены не делаются
+     *
+     * replaces - массив, нечетные индексы - регулярные выражения, четные - строки,
+     * на которые надо заменить куски, подходящие под предыдущее регулярное выражение
+     * массивы могут быть вложенными
+     * см. например replaceTagsAndSpaces
+     */
+    function getParam(html, result, param, regexp, replaces, parser) {
+        if (!isset(html)) {
+            AnyBalance.trace('getParam: input ' + (param ? '(' + param + ')' : '') + ' is unset! ' + new Error().stack);
+            return;
+        }
+        if (!isAvailable(param)) {
+            AnyBalance.trace(param + ' is disabled!');
+            return;
+        }
+        var regexps = isArray(regexp) ? regexp : [regexp];
+        for (var i = 0; i < regexps.length; ++i) { //Если массив регэкспов, то возвращаем первый заматченный
+            regexp = regexps[i];
+            var matches = regexp ? html.match(regexp) : [, html], value;
+            if (matches) {
+                //Если нет скобок, то значение - всё заматченное
+                value = replaceAll(isset(matches[1]) ? matches[1] : matches[0], replaces);
+                if (parser)
+                    value = parser(value);
+                if (param && isset(value))
+                    result[__getParName(param)] = value;
+                break;
+            }
+        }
+        return value;
+    }
+
+    /** Бросает фатальную ошибку, если !param, это остановит обновления по расписанию */
+    function checkEmpty(param, error, notfatal) {
+        if (!param)
+            throw new AnyBalance.Error(error, null, !notfatal);
+    }
+
+    function __getParName(param) { //Возвращает для параметра имя после последней точки
+        var name = isArray(param) ? param[0] : param;
+        return name && name.substr(name.lastIndexOf('.') + 1); //Оставляем только хвост до точки
+    }
+
+    /** Проверяет счетчик param на доступность, принимает либо один счетчик, либо массив
+     * __tariff - всегда вернет true */
+    function isAvailable(param) {
+        if (!param)
+            return true;
+        if (/\b__/.test(param.toString())) //Если какой-то параметр начинается на __, то он обязательный, нужно возвращать true
+            return true; //Тариф всегда нужен
+        return AnyBalance.isAvailable(param);
+    }
+
+//Замена пробелов и тэгов
+    var replaceTagsAndSpaces = [String.REPLACE_TAGS_AND_SPACES, /[\uFEFF\xA0]/ig, ' ', /\s{2,}/g, ' ', /^\s+|\s+$/g, ''],
+//Замена для чисел (&minus, &mdash, &ndash)
+        replaceFloat = [/[\u2212\u2013\u2014]/ig, '-', /\s+/g, '', /'/g, '', /,/g, '.', /\.([^.]*)(?=\.)/g, '$1', /^\./, '0.'],
+//Замена для Javascript строк
+        replaceSlashes = [/\\(.?)/g, function (str, n) {
+            switch (n) {
+                case '0':
+                    return '\0';
+                case '':
+                    return '';
+                default:
+                    return n;
+            }
+        }],
+        replaceHtmlEntities = String.REPLACE_HTML_ENTITIES;
+
+    /** Проверяет, определено ли значение переменной */
+    function isset(v) {
+        return typeof(v) != 'undefined';
+    }
+
+    /** Проверяет, является ли объект массивом */
+    function isArray(arr) {
+        return Object.prototype.toString.call(arr) === '[object Array]';
+    }
+
+    /** Делает все замены в строке value. При этом, если элемент replaces массив, то делает замены по нему рекурсивно. */
+    function replaceAll(value, replaces) {
+        if (!replaces) return value;
+        if (typeof value != 'string')
+            value += '';
+        return value.replaceAll(replaces);
+    }
+
+    /** Извлекает числовое значение из переданного текста */
+    function parseBalance(text, silent) {
+        var val = getParam(text.replace(/\s+/g, ''), null, null, /(-?[.,]?\d[\d'.,]*)/, replaceFloat, parseFloat);
+        if (!silent)
+            AnyBalance.trace('Parsing balance (' + val + ') from: ' + text);
+        return val;
+    }
+
+    function parseBalanceSilent(text) {
+        return parseBalance(text, true);
+    }
+
+    /** Извлекает валюту из переданного текста (типичная реализация) */
+    function parseCurrency(text) {
+        var val = getParam(text.replace(/\s+/g, ''), null, null, /-?\d[\d.,]*(\S*)/);
+        AnyBalance.trace('Parsing currency (' + val + ') from: ' + text);
+        return val;
+    }
+
+    /** Извлекает время в секундах из переданного текста, на разных языках, из разных форматов (1:30, 01:02:03, 1 м 3 сек, 3 сек, 1 час...)
+     Если на входе будет просто число - вернет минуты.
+     Если на входе будет 02:03 будет принят формат ММ:СС*/
+    function parseMinutes(_text, silent) {
+        var text = _text.replace(/[\s�]+/g, '');
+        var hour = 0, min = 0, sec = 0;
+        // Это формат ЧЧ:ММ:СС
+        if (/^\d+:\d+:\d+$/i.test(text)) {
+            var regExp = /^(\d+):(\d+):(\d+)$/i.exec(text);
+            hour = parseFloat(regExp[1]);
+            min = parseFloat(regExp[2]);
+            sec = parseFloat(regExp[3]);
+            // Это формат ММ:СС
+        } else if (/^\d+:\d+/i.test(text)) {
+            var regExp = /^(\d+):(\d+)/i.exec(text);
+            hour = 0;
+            min = parseFloat(regExp[1]);
+            sec = parseFloat(regExp[2]);
+            // Это любой другой формат, со словами либо просто число
+        } else {
+            hour = getParam(text, null, null, /(-?\d[\d.,]*)\s*(?:час|ч|hour|h)/i, replaceFloat, parseFloat) || 0;
+            min = getParam(text, null, null, [/(-?\d[\d.,]*)\s*(?:мин|м|хв|min|m)/i, /^-?[\d.,]+$/i], replaceFloat, parseFloat) || 0;
+            sec = getParam(text, null, null, /(-?\d[\d.,]*)\s*(?:сек|c|с|sec|s)/i, replaceFloat, parseFloat) || 0;
+        }
+        var val = (hour * 3600) + (min * 60) + sec;
+        if (!silent)
+            AnyBalance.trace('Parsed seconds (' + val + ') from: ' + _text);
+        return val;
+    }
+
+    function parseMinutesSilent(_text) {
+        return parseMinutes(_text, true);
+    }
+
+    /** Заменяет HTML сущности в строке на соответствующие им символы */
+    function html_entity_decode(string) {
+        return string.htmlEntityDecode();
+    }
+
+    /**
+     * @name callbackCreateFormParams
+     * @function
+     * @param {Array|Object} params Создаваемые параметры
+     * @param {String} str HTML представление инпута или селекта
+     * @param {String} name Имя инпута или селекта (атрибут name)
+     * @param {String} value Текущее значение инпута или селекта (атрибут value)
+     * @returns {String} новое значение
+     */
+
+    /**
+     * Получает объект с параметрами форм (ищет в html все input и select и возвращает объект с их именами-значениями.
+     *
+     * @param {String} html - текст, в котором надо искать элементы формы
+     * @param {callbackCreateFormParams} [process] функция для обработки. Возвращаемое значение будет положено в объект params под именем name. Если возвратит undefined, то ничего не будет сделано.
+     * @param {Boolean} [array=false] если true, то вернуть массив, а не объект
+     * @returns {Array|Object} сформированные параметры
+     *
+     *
+     * Типичное использование:
+     *  <pre>
+     *  var params = createFormParams(html, function(params, str, name, value) {
+     *		if (name == 'login')
+     *			return prefs.login;
+     *		else if (name == 'password')
+     *			return prefs.password;
+     *
+     *		return value;
+     *	});
+     *	</pre>
+     */
+    function createFormParams(html, process, array) {
+        var params = array ? [] : {}, valueRegExp = /value\s*=\s*("[^"]*"|'[^']*'|[\w\-\/\\]+)/i, valueReplace = [/^"([^"]*)"$|^'([^']*)'$/, '$1$2', replaceHtmlEntities], name,
+            inputRegExp = /<input[^>]+name\s*=\s*("[^"]*"|'[^']*'|[\w\-\/\\]+)[^>]*>|<select[^>]+name\s*=\s*("[^"]*"|'[^']*'|[\w\-\/\\]+)[^>]*>[\s\S]*?<\/select>/ig, nullVal = null;
+
+        while (true) {
+            var amatch = inputRegExp.exec(html);
+            if (!amatch)
+                break;
+            var str = amatch[0], nameInp = amatch[1], nameSel = amatch[2], value = '';
+            if (nameInp) {
+                if (/type\s*=\s*['"]?button['"]?/i.test(str))
+                    value = undefined;
+                else if (/type\s*=\s*['"]?checkbox['"]?/i.test(str)) {
+                    //Чекбокс передаёт значение только если он чекед. Если чекед, а значения нет, то передаёт on
+                    value = /[^\w\-]checked[^\w\-]/i.test(str) ? getParam(str, nullVal, nullVal, valueRegExp, valueReplace) || 'on' : undefined;
+                } else
+                    value = getParam(str, nullVal, nullVal, valueRegExp, valueReplace) || '';
+                name = replaceAll(nameInp, valueReplace);
+
+            } else if (nameSel) {
+                var sel = getParam(str, nullVal, nullVal, /^<[^>]*>/i);
+                value = getParam(sel, nullVal, nullVal, valueRegExp, valueReplace);
+                if (typeof(value) == 'undefined') {
+                    var optSel = getParam(str, nullVal, nullVal, /(<option[^>]+selected[^>]*>)/i);
+                    if (!optSel)
+                        optSel = getParam(str, nullVal, nullVal, /(<option[^>]*>)/i);
+                    if (optSel)
+                        value = getParam(optSel, nullVal, nullVal, valueRegExp, valueReplace);
+                }
+                name = replaceAll(nameSel, valueReplace);
+                ;
+            }
+
+            if (process) {
+                value = process(params, str, name, value);
+            }
+            if (typeof(value) != 'undefined') {
+                if (array)
+                    params.push([name, value])
+                else
+                    params[name] = value;
+            }
+        }
+
+        //AnyBalance.trace('Form params are: ' + JSON.stringify(params));
+        return params;
+    }
+
+    /** Получает дату из строки 23.02.13*/
+    function parseDate(str, silent) {
+        var matches = /(?:(\d+)[^\d])?(\d+)[^\d](\d{2,4})(?:[^\d](\d+):(\d+)(?::(\d+))?)?/.exec(str);
+        if (matches) {
+            var year = +matches[3];
+            var date = new Date(year < 1000 ? 2000 + year : year, matches[2] - 1, +(matches[1] || 1), matches[4] || 0, matches[5] || 0, matches[6] || 0);
+            var time = date.getTime();
+            if (!silent)
+                AnyBalance.trace('Parsing date ' + date + ' from value: ' + str);
+            return time;
+        }
+        if (!silent)
+            AnyBalance.trace('Failed to parse date from value: ' + str);
+    }
+
+    function parseDateSilent(str) {
+        return parseDate(str, true);
+    }
+
+    /** Парсит дату из такого вида: 27 июля 2013 без использования сторонних библиотек, результат в мс */
+    function parseDateWord(str) {
+        AnyBalance.trace('Trying to parse date from ' + str);
+        var dateString = replaceAll(str, [replaceTagsAndSpaces, replaceHtmlEntities,
+            /\D*(?:январ(?:я|ь)|янв|january|jan)\D*/i, '.01.',
+            /\D*(?:феврал(?:я|ь)|фев|febrary|feb)\D*/i, '.02.',
+            /\D*(?:марта|март|мар|march|mar)\D*/i, '.03.',
+            /\D*(?:апрел(?:я|ь)|апр|april|apr)\D*/i, '.04.',
+            /\D*(?:ма(?:я|й)|may)\D*/i, '.05.',
+            /\D*(?:июн(?:я|ь)|июн|june|jun)\D*/i, '.06.',
+            /\D*(?:июл(?:я|ь)|июл|july|jul)\D*/i, '.07.',
+            /\D*(?:августа|август|авг|august|aug)\D*/i, '.08.',
+            /\D*(?:сентябр(?:я|ь)|сен|september|sep)\D*/i, '.09.',
+            /\D*(?:октябр(?:я|ь)|окт|october|oct)\D*/i, '.10.',
+            /\D*(?:ноябр(?:я|ь)|ноя|november|nov)\D*/i, '.11.',
+            /\D*(?:декабр(?:я|ь)|dec|december|dec)\D*/i, '.12.', /\s/g, '']);
+        // Если года нет - его надо подставить
+        if (endsWith(dateString, '.')) {
+            dateString += new Date().getFullYear();
+        }
+        return parseDate(dateString);
+    }
+
+    /** Объединяет два объекта. Свойства с общими именами берутся из newObject */
+    function joinObjects(newObject, oldObject) {
+        var obj = {};
+        for (var i in oldObject) {
+            obj[i] = oldObject[i];
+        }
+        if (newObject) {
+            for (i in newObject) {
+                obj[i] = newObject[i];
+            }
+        }
+        return obj;
+    }
+
+    function joinArrays(arr1, arr2) {
+        var narr = arr1.slice();
+        narr.push.apply(narr, arr2);
+        return narr;
+    }
+
+    /** Добавляет хедеры к переданным или к g_headers */
+    function addHeaders(newHeaders, oldHeaders) {
+        oldHeaders = oldHeaders || g_headers;
+        var bOldArray = isArray(oldHeaders);
+        var bNewArray = isArray(newHeaders);
+        if (!bOldArray && !bNewArray)
+            return joinObjects(newHeaders, oldHeaders);
+        if (bOldArray && bNewArray) //Если это массивы, то просто делаем им join
+            return joinArrays(oldHeaders, newHeaders);
+        if (!bOldArray && bNewArray) { //Если старый объект, а новый массив
+            var headers = joinObjects(null, oldHeaders);
+            for (var i = 0; i < newHeaders.length; ++i)
+                headers[newHeaders[i][0]] = newHeaders[i][1];
+
+            return headers;
+        }
+        if (bOldArray && !bNewArray) { //Если старый массив, а новый объект, то это специальный объект {index: [name, value], ...}!
+            var headers = oldHeaders.slice();
+            for (i in newHeaders)
+                headers.push([i, newHeaders[i]]);
+            return headers;
+        }
+    }
+
+    /** Получает JSON из переданного текста, кидает ошибку, если не парсится */
+    function getJson(html) {
+        try {
+            var json = JSON.parse(html);
+            return json;
+        } catch (e) {
+            AnyBalance.trace('Bad json (' + e.message + '): ' + html);
+            throw new AnyBalance.Error('Сервер вернул ошибочные данные: ' + e.message);
+        }
+    }
+
+    /** Получает JSON из переданного текста, выполняя его (требуется для невалидного JSON) */
+    function getJsonEval(html) {
+        try {
+            //Запрещаем использование следующих переменных из функции:
+            var json = safeEval('return ' + html, 'window,document,self');
+            return json;
+        } catch (e) {
+            AnyBalance.trace('Bad json (' + e.message + '): ' + html);
+            throw new AnyBalance.Error('Сервер вернул ошибочные данные: ' + e.message);
+        }
+    }
+
+    /** Выполняет скрипт безопасно, не давая ему доступ к AnyBalance API
+     Пример использования:
+
+     var ret = safeEval("function(input1, input2) { input1.a = 1; input2.b = 3; return 'xxx' }()", "input1,input2", [{a: 5}, {b: 8}]);
+
+     а если входные параметры скрипту не нужны, то можно просто
+
+     var ret = safeEval(" return 'xxx' }");
+     */
+
+    function safeEval(script, argsNamesString, argsArray) {
+        var svAB = AnyBalance, svParams = global_scope.g_AnyBalanceApiParams, svApi = global_scope._AnyBalanceApi;
+        global_scope.AnyBalance = global_scope.g_AnyBalanceApiParams = global_scope._AnyBalanceApi = undefined;
+
+        try {
+            var result = Function(argsNamesString || 'ja0w4yhwphgawht984h', 'AnyBalance', 'g_AnyBalanceApiParams', '_AnyBalanceApi', script).apply(null, argsArray);
+            return result;
+        } catch (e) {
+            throw new svAB.Error('Bad javascript (' + e.message + '): ' + script);
+        } finally {
+            AnyBalance = svAB, global_scope.g_AnyBalanceApiParams = svParams, global_scope._AnyBalanceApi = svApi;
+        }
+    }
+
+    /** Проверяет, не оканчивается ли строка на заданную */
+    function endsWith(str, suffix) {
+        return str.indexOf(suffix, str.length - suffix.length) !== -1;
+    }
+
+    /**
+     * Date.parse with progressive enhancement for ISO 8601 <https://github.com/csnover/js-iso8601>
+     * © 2011 Colin Snover <http://zetafleet.com>
+     * Released under MIT license.
+     */
+    (function (Date, undefined) {
+        var origParse = Date.parse, numericKeys = [1, 4, 5, 6, 7, 10, 11];
+        Date.parse = function (date) {
+            var timestamp, struct, minutesOffset = 0;
+            // ES5 §15.9.4.2 states that the string should attempt to be parsed as a Date Time String Format string
+            // before falling back to any implementation-specific date parsing, so that’s what we do, even if native
+            // implementations could be faster
+            //              1 YYYY                2 MM       3 DD           4 HH    5 mm       6 ss        7 msec        8 Z 9 ±    10 tzHH    11 tzmm
+            if ((struct = /^(\d{4}|[+\-]\d{6})(?:-(\d{2})(?:-(\d{2}))?)?(?:(?:T|\s+)(\d{2}):(\d{2})(?::(\d{2})(?:\.(\d{3})\d*)?)?(?:(Z)|([+\-])(\d{2})(?::(\d{2}))?)?)?$/.exec(date))) {
+                // avoid NaN timestamps caused by “undefined” values being passed to Date.UTC
+                for (var i = 0, k;
+                     (k = numericKeys[i]); ++i) {
+                    struct[k] = +struct[k] || 0;
+                }
+                // allow undefined days and months
+                struct[2] = (+struct[2] || 1) - 1;
+                struct[3] = +struct[3] || 1;
+
+                if (struct[8] !== 'Z' && struct[9] !== undefined) {
+                    minutesOffset = struct[10] * 60 + struct[11];
+
+                    if (struct[9] === '+') {
+                        minutesOffset = 0 - minutesOffset;
+                    }
+                }
+
+                timestamp = Date.UTC(struct[1], struct[2], struct[3], struct[4], struct[5] + minutesOffset, struct[6], struct[7]);
+                Date.lastParse = 'custom';
+            } else {
+                timestamp = origParse ? origParse(date) : NaN;
+                Date.lastParse = 'original';
+            }
+
+            return timestamp;
+        };
+    }(Date));
+
+    /** Парсит дату вида 2013-12-26 */
+    function parseDateISO(str) {
+        var dt = Date.parse(str);
+        if (!dt) {
+            AnyBalance.trace('Could not parse (' + Date.lastParse + ') date from ' + str);
+            return;
+        } else {
+            AnyBalance.trace('Parsed (' + Date.lastParse + ') ' + new Date(dt) + ' from ' + str);
+            return dt;
+        }
+    }
+
+    function parseDateJS(str) {
+        //Рассчитывает на библиотеку date-ru-RU.js
+        var _str = str.replace(/(\d+)\s*г(?:\.|ода?)?,?/i, '$1 '); //Убираем г. после года, чтобы не мешалось
+        var dt = Date.parse(_str);
+        if (!dt) {
+            AnyBalance.trace('Can not parse date from ' + str);
+            return;
+        }
+
+        dt = new Date(dt);
+
+        AnyBalance.trace('Parsed date ' + dt.toString() + ' from ' + str);
+        return dt.getTime();
+    }
+
+    /**
+     * Получает значение, подходящее под регулярное выражение regexp, производит
+     * в нем замены replaces, результат передаёт в функцию parser,
+     * а затем записывает результат в счетчик с именем param в result
+     * Результат в result помещается только если счетчик выбран пользователем
+     * в настройках аккаунта
+     *
+     * Очень похоже на getParam, но может получать несколько значений (при наличии
+     * в регулярном выражении флага g). В этом случае применяет к ним функцию aggregate,
+     * а если она не передана, то возвращает массив всех совпадений.
+     *
+     * если result и param равны null, то значение просто возвращается.
+     * eсли parser == null, то возвращается результат сразу после замен
+     * если regexp == null, то значением является переданный html
+     * если replaces == null, то замены не делаются
+     * do_replace - если true, то найденные значения вырезаются из переданного текста
+     * и новый текст возвращается (только при param != null)
+     *
+     * replaces - массив, нечетные индексы - регулярные выражения, четные - строки,
+     * на которые надо заменить куски, подходящие под предыдущее регулярное выражение. Эти массивы могут быть вложенными.
+     * см. например replaceTagsAndSpaces
+     */
+    function sumParam(html, result, param, regexp, replaces, parser, do_replace, aggregate) {
+        if (!isset(html)) {
+            AnyBalance.trace('sumParam: input ' + (param ? '(' + param + ')' : '') + ' is unset! ' + new Error().stack);
+            return;
+        }
+
+        if (typeof(do_replace) == 'function') {
+            var aggregate_old = aggregate;
+            aggregate = do_replace;
+            do_replace = aggregate_old || false;
+        }
+
+        function replaceIfNeeded() {
+            if (do_replace)
+                return regexp ? html.replace(regexp, '') : '';
+        }
+
+        if (!isAvailable(param)) {
+            AnyBalance.trace(param + ' is disabled!');
+            //Даже если счетчик не требуется, всё равно надо вырезать его матчи, чтобы не мешалось другим счетчикам
+            return replaceIfNeeded();
+        }
+
+        //После того, как проверили нужность счетчиков, кладем результат в первый из переданных счетчиков. Оставляем только первый
+        param = __getParName(param);
+
+        var values = [], matches;
+        if (param && isset(result[param]))
+            values.push(result[param]);
+
+        function replaceAndPush(value) {
+            value = replaceAll(value, replaces);
+            if (parser)
+                value = parser(value);
+            if (isset(value))
+                values.push(value);
+        }
+
+        var regexps = isArray(regexp) ? regexp : [regexp];
+        for (var i = 0; i < regexps.length; ++i) { //Пройдемся по массиву регулярных выражений
+            regexp = regexps[i];
+            if (!regexp) {
+                replaceAndPush(html);
+            } else {
+                regexp.lastIndex = 0; //Удостоверяемся, что начинаем поиск сначала.
+                while (matches = regexp.exec(html)) {
+                    replaceAndPush(isset(matches[1]) ? matches[1] : matches[0]);
+                    if (!regexp.global)
+                        break; //Если поиск не глобальный, то выходим из цикла
+                }
+            }
+            if (do_replace) //Убираем все матчи, если это требуется
+                html = regexp ? html.replace(regexp, '') : '';
+        }
+
+        var total_value;
+        if (aggregate)
+            total_value = aggregate(values);
+        else if (!param) //Если не требуется записывать в резалт, и функция агрегации отсутствует, то вернем массив
+            total_value = values;
+
+        if (param) {
+            if (isset(total_value)) {
+                result[param] = total_value;
+            }
+            return html;
+        } else {
+            return total_value;
+        }
+    }
+
+    function aggregate_sum(values) {
+        if (values.length == 0)
+            return;
+        var total_value = 0;
+        for (var i = 0; i < values.length; ++i) {
+            total_value += values[i];
+        }
+        return total_value;
+    }
+
+    function aggregate_join(values, delimiter, allow_empty) {
+        if (values.length == 0)
+            return;
+        if (!isset(delimiter))
+            delimiter = ', ';
+        var ret = values.join(delimiter);
+        if (!allow_empty) {
+            delimiter = delimiter.trim().replace(/([.?*+^$[\]\\(){}|-])/g, "\\$1");
+            ret = ret.replace(new RegExp('^(?:\\s*' + delimiter + '\\s*)+|(?:\\s*' + delimiter + ']\\s*){2,}|(?:\\s*' + delimiter + '\\s*)+$', 'g'), '');
+        }
+        return ret;
+    }
+
+    function create_aggregate_join(delimiter, allow_empty) {
+        return function (values) {
+            return aggregate_join(values, delimiter, allow_empty);
+        }
+    }
+
+    function aggregate_min(values) {
+        if (values.length == 0)
+            return;
+        var total_value;
+        for (var i = 0; i < values.length; ++i) {
+            if (!isset(total_value) || total_value > values[i]) total_value = values[i];
+        }
+        return total_value;
+    }
+
+    function aggregate_max(values) {
+        if (values.length == 0)
+            return;
+        var total_value;
+        for (var i = 0; i < values.length; ++i) {
+            if (!isset(total_value) || total_value < values[i]) total_value = values[i];
+        }
+        return total_value;
+    }
+
+    /** Вычисляет трафик в мегабайтах из переданной строки. */
+    function parseTraffic(text, defaultUnits) {
+        return parseTrafficEx(text, 1024, 2, defaultUnits);
+    }
+
+    /** Вычисляет трафик в гигабайтах из переданной строки. */
+    function parseTrafficGb(text, defaultUnits) {
+        return parseTrafficEx(text, 1024, 3, defaultUnits);
+    }
+
+    /** Вычисляет трафик в нужных единицах из переданной строки. */
+    function parseTrafficEx(text, thousand, order, defaultUnits) {
+        var _text = text.replace(/\s+/g, '');
+        var val = getParam(_text, null, null, /(-?\.?\d[\d\.,]*)/, replaceFloat, parseFloat);
+        if (!isset(val) || val === '') {
+            AnyBalance.trace("Could not parse traffic value from " + text);
+            return;
+        }
+        var units = getParam(_text, null, null, /([kmgtкмгт][бb]?|[бb](?![\wа-я])|байт|bytes)/i);
+        if (!units && !defaultUnits) {
+            AnyBalance.trace("Could not parse traffic units from " + text);
+            return;
+        }
+        if (!units)
+            units = defaultUnits;
+        switch (units.substr(0, 1).toLowerCase()) {
+            case 'b':
+            case 'б':
+                val = Math.round(val / Math.pow(thousand, order) * 100) / 100;
+                break;
+            case 'k':
+            case 'к':
+                val = Math.round(val / Math.pow(thousand, order - 1) * 100) / 100;
+                break;
+            case 'm':
+            case 'м':
+                val = Math.round(val / Math.pow(thousand, order - 2) * 100) / 100;
+                break;
+            case 'g':
+            case 'г':
+                val = Math.round(val / Math.pow(thousand, order - 3) * 100) / 100;
+                break;
+            case 't':
+            case 'т':
+                val = Math.round(val / Math.pow(thousand, order - 4) * 100) / 100;
+                break;
+        }
+        var textval = '' + val;
+        if (textval.length > 6)
+            val = Math.round(val);
+        else if (textval.length > 5)
+            val = Math.round(val * 10) / 10;
+        var dbg_units = {
+            0: 'b',
+            1: 'kb',
+            2: 'mb',
+            3: 'gb',
+            4: 'tb'
+        };
+        AnyBalance.trace('Parsing traffic (' + val + dbg_units[order] + ') from: ' + text);
+        return val;
+    }
+
+    /** Создаёт мультипарт запрос полностью прикидываясь браузером */
+    function requestPostMultipart(url, data, headers) {
+        var b = '', possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+        for (var i = 0; i < 16; i++) {
+            b += possible.charAt(Math.floor(Math.random() * possible.length));
+        }
+
+        var parts = [];
+
+        var boundary = '------WebKitFormBoundary' + b;
+        for (var name in data) {
+            parts.push(boundary, 'Content-Disposition: form-data; name="' + name + '"', '', data[name]);
+        }
+        parts.push(boundary + '--\r\n');
+        if (!headers)
+            headers = {};
+        headers['Content-Type'] = 'multipart/form-data; boundary=' + boundary.substr(2);
+        return AnyBalance.requestPost(url, parts.join('\r\n'), headers);
+    }
+
+    /** Приводим все к единому виду вместо ИВаНов пишем Иванов */
+    function capitalFirstLetters(str) {
+        var wordSplit = str.toLowerCase().split(' ');
+        var wordCapital = '';
+        for (var i = 0; i < wordSplit.length; i++) {
+            wordCapital += wordSplit[i].substring(0, 1).toUpperCase() + wordSplit[i].substring(1) + ' ';
+        }
+        return wordCapital.replace(/^\s+|\s+$/g, '');
+    }
+
+    /** Все включенные счетчики, значение которых не найдено, становится равным null,
+     что позволяет сохранить в программе прошлые значения для показа, но индицировать, что баланс неактивен */
+    function setCountersToNull(result) {
+        var arr = AnyBalance.getAvailableCounters();
+        for (var i = 0; i < arr.length; ++i) {
+            if (arr[i] !== '--auto--' && !isset(result[arr[i]])) {
+                result[arr[i]] = null;
+            }
+        }
+        if (!isset(result.__tariff))
+            result.__tariff = null;
+    }
+
+    /**
+     Ищет элемент в указанном html, тэг которого совпадает с указанным регулярным выражением
+     Возвращает весь элемент целиком, учитывая вложенные элементы с тем же тегом
+     Например,
+     getElement(html, /<div[^>]+id="somediv"[^>]*>/i)
+     */
+    function getElement(html, re, replaces, parseFunc) {
+        var amatch = re.exec(html);
+        if (!amatch)
+            return;
+        var startIndex = amatch.index;
+        var startTag = html.substr(startIndex, amatch[0].length);
+        var elem = getParam(startTag, null, null, /<(\w+)/);
+        var reStart = new RegExp('<' + elem + '[^>]*>', 'ig');
+        var reEnd = new RegExp('<\/' + elem + '[^>]*>', 'ig');
+        reStart.lastIndex = startIndex;
+
+        elem = getRecursiveMatch(html, reStart, reEnd, replaces, parseFunc);
+        re.lastIndex = reStart.lastIndex;
+        return elem;
+    }
+
+    /**
+     Находит в html JSON объект, начиная с позиции первого вхождения регулярного выражения reStartSearch (если оно указано).
+     Ищется либо массив, либо объект, что встретится ранее
+
+     Возвращается объект (или массив) или undefined, если объект не найден.
+     */
+    function getJsonObject(html, reStartSearch) {
+        var STRING_IN_DOUBLE_QUOTES = /"(?:[^"\\]+|\\[\D\d])*"/,
+            STRING_IN_SINGLE_QUOTES = /'(?:[^'\\]+|\\[\D\d])*'/,
+            STRING_IN_BACKTICK_QUOTES = /`(?:[^`\\]+|\\[\D\d])*`/,		//ECMA6+
+            REGEXP_INLINE = /\/(?![\*\/])(?:[^\/\\]+|\\.)+\//,
+            COMMENT_MULTILINE = /\/\*[\D\d]*?\*\//,
+            COMMENT_SINGLELINE = /\/\/[^\r\n]*/,
+            NOT_SPECIAL_SYMBOL = /[^\{\}\[\]"'`\/]+/,	//any symbol with exceptions
+            AFTER_BRACE_PART = XRegExp.union([
+                NOT_SPECIAL_SYMBOL,
+                STRING_IN_DOUBLE_QUOTES,
+                STRING_IN_SINGLE_QUOTES,
+                STRING_IN_BACKTICK_QUOTES,
+                REGEXP_INLINE,
+                COMMENT_MULTILINE,
+                COMMENT_SINGLELINE
+            ], 'x');
+
+
+        var startIndex = 0;
+        if (reStartSearch) {
+            var amatch = reStartSearch.exec(html);
+            if (!amatch)
+                return;
+            startIndex = amatch.index + amatch[0].length;
+        }
+
+        var source = AFTER_BRACE_PART.source;
+        var reStart = new RegExp('(?:' + source + ')*[\\\{\\\[](?:' + source + ')*', 'g');
+        var rePreStart = new RegExp('(?:' + source + ')*(?=[\\\{\\\[])', 'g'); //Чтобы убрать мусор до первой правильной скобки
+        rePreStart.lastIndex = startIndex;
+        amatch = rePreStart.exec(html);
+        if (!amatch)
+            return;
+        reStart.lastIndex = rePreStart.lastIndex;
+
+        var json = getRecursiveMatch(html, reStart, /[\}\]]/, null, getJsonEval);
+        reStartSearch.lastIndex = reStart.lastIndex;
+
+        return json;
+    }
+
+    function getRecursiveMatch(html, reStart, reEnd, replaces, parseFunc) {
+        var amatch = reStart.exec(html);
+        if (!amatch)
+            return;
+
+        var startIndex = amatch.index;
+
+        var depth = 0;
+        var reStartOrEnd = new RegExp('(?:' + reStart.source + ')|(?:' + reEnd.source + ')', 'ig');
+        var reStartWithEnd = new RegExp('^(?:' + reEnd.source + ')', reEnd.ignoreCase ? 'i' : '');
+
+        reStartOrEnd.lastIndex = startIndex + amatch[0].length;
+
+        while (true) {
+            amatch = reStartOrEnd.exec(html);
+            if (!amatch)
+                break;
+            var matched = amatch[0];
+            if (reStartWithEnd.test(matched)) { //Закрывающий тег
+                if (depth == 0)
+                    break;
+                --depth;
+            } else {
+                ++depth;
+            }
+            reStartOrEnd.lastIndex = amatch.index + matched.length;
+        }
+
+        var endIndex = html.length;
+        if (amatch)
+            endIndex = amatch.index + amatch[0].length;
+
+        reStart.lastIndex = endIndex;
+
+        var str = html.substring(startIndex, endIndex);
+
+        if (replaces)
+            str = replaceAll(str, replaces);
+        if (parseFunc)
+            str = parseFunc(str);
+        return str;
+    }
+
+    /**
+     Ищет все элементы в указанном html, тэг которых совпадает с указанным регулярным выражением
+     Возвращает все элементы целиком, учитывая вложенные элементы с тем же тегом
+     ВНИМАНИЕ! Чтобы вернулись все элементы, надо указывать регулярное выражение с флагом g
+     Например,
+     getElements(html, /<div[^>]+id="somediv"[^>]*>/ig)
+
+     //Найти див somediv, содержащий <div class="title"
+     getElements(html, [/<div[^>]+id="somediv"[^>]*>/ig, /<div[^>]+class="title"/i])
+
+     @returns {Array}
+     */
+    function getElements(html, re, replaces, parseFunc) {
+        var results = [];
+        var regexp = isArray(re) ? re[0] : re;
+        var add_re = isArray(re) ? (re.shift(), re) : null;
+        do {
+            var res = getElement(html, regexp, replaces, parseFunc);
+
+            var good_res = res && !add_re;
+            if (add_re && res) {
+                for (var i = 0; i < add_re.length; ++i) {
+                    good_res = good_res || add_re[i].test(res);
+                    if (good_res)
+                        break;
+                }
+            }
+            if (good_res)
+                results.push(res);
+
+            if (!regexp.global)
+                break; //Экспрешн только на один матч
+        } while (isset(res));
+        return results;
+    }
+
+    function __shouldProcess(counter, info) {
+        if (!AnyBalance.shouldProcess)
+            return !!info.__id;
+        return AnyBalance.shouldProcess(counter, info);
+    }
+
+    function __setLoginSuccessful() {
+        if (AnyBalance.setLoginSuccessful)
+            AnyBalance.setLoginSuccessful();
+    }
+
+    function fmtDate(dt, delimiter) {
+        if (!isset(delimiter))
+            delimiter = '.';
+
+        return getFormattedDate({format: 'DD' + delimiter + 'MM' + delimiter + 'YYYY'}, dt);
+    }
+
+    /**
+     * Преобразует число в двухсимвольную строку, дополняя ведущим нулём по необходимости
+     * @param {int} n
+     * @returns {string}
+     */
+    function n2(n) {
+        return n < 10 ? '0' + n : '' + n;
+    }
+
+    /**
+     * Форматирует дату, как необходимо, при этом предоставляет возможность сместиться от передаваемой даты на заданное время. Полезно использовать при передаче в запросы, требующие указания интервалов дат.
+     *
+     * @param {Object|String} options - формат и смещение
+     * @param [dt=new Date()]
+     * @returns {String}
+     *
+     *  Пример параметра options:
+     *  <pre>
+     *  {
+     *      format: 'DD/MM/YYYY', // DD=09, D=9, MM=08, М=8, YYYY=2015, YY=15
+     *      offsetDay: 0, // Смещение по дням
+     *      offsetMonth: 0, // Смещение по месяцам
+     *      offsetYear: 5, // Смещение по годам
+     *  }
+     *  </pre>
+     *
+     */
+    function getFormattedDate(options, dt) {
+        if (!dt)
+            var dt = new Date();
+        if (typeof options == 'string')
+            options = {format: options};
+
+        //Формируем дату со смещением
+        dt = new Date(dt.getFullYear() - (options.offsetYear || 0), dt.getMonth() - (options.offsetMonth || 0), dt.getDate() - (options.offsetDay || 0));
+        var day = dt.getDate();
+        var month = (dt.getMonth() + 1);
+        var year = dt.getFullYear();
+
+        return replaceAll(options.format, [
+            /DD/, n2(day), /D/, day,
+            /MM/, n2(month), /M/, month,
+            /YYYY/, year, /YY/, (year + '').substring(2, 4)
+        ]);
+    }
+
+    /**
+     * Корректно соединяет базовый урл (например, адрес текущей страницы) и относительную ссылку
+     *
+     * @param {string} url - базовый адрес
+     * @param {string} path - относительная ссылка
+     * @returns {string} результирующий адрес
+     */
+    function joinUrl(url, path) {
+        if (!path) //Пустой путь
+            return url;
+        if (/^\//.test(path)) //Абсолютный путь
+            return url.replace(/^(\w+:\/\/[\w.\-]+).*$/, '$1' + path);
+        if (/^\w+:\/\//.test(path)) //Абсолютный урл
+            return path;
+        //относительный путь
+        url = url.replace(/\?.*$/, ''); //Обрезаем аргументы
+        if (/:\/\/.*\//.test(url))
+            url = url.replace(/\/[^\/]*$/, '/'); //Сокращаем до папки
+        if (!endsWith(url, '/'))
+            url += '/';
+        return url + path;
+    }
+
+    /** Пример использования
+     var colsDef = {
+		type: {
+			re: /Тип/i,
+			result_func: function(str){
+				if(/мобил/i.test(str))
+					return 'mobile';
+				if(/эл/i.test(str))
+					return 'email';
+				if(/домаш/i.test(str))
+					return 'home';
+				if(/рабоч/i.test(str))
+					return 'work';
+				return str;
+			}
+		},
+		sum_out: {
+            re: /Сумма зачисления/i,
+            result_name: 'sum_done',
+            result_sum: true,
+            result_replace: replaceSign,
+        },
+		loan: {
+            re: /Ссуда/i,
+            result_process: function(path, td, result){
+                var info = this; //Остальные параметры
+                td = replaceAll(td, replaceTagsAndSpaces);
+                getParam(td, result, path + 'debt_main', /([^\/]*)/i, null, parseBalance);
+                getParam(td, result, path + 'debt_pct', /[^\/]*\/([^\/]*)/i, null, parseBalance);
+                getParam(td, result, path + 'debt_fee', /(?:[^\/]*\/){2}([^\/]*)/i, null, parseBalance);
+            }
+        },
+		contact: {
+			re: /Контакт/i,
+			result_func: null //Текст
+		}
+	};
+     var table = getElement(html, /<table[^>]+class="card-table"[^>]*>/i);
+     if(table){
+		info.contacts = [];
+		processTable(table, info.contacts, 'info.contacts.', colsDef);
+	}
+     */
+    function processTable(table, result, path, colsDef, onWrongSize, onFilledResult) {
+        var trs = getElements(table, /<tr[^>]*>/ig);
+        var cols, size;
+        for (var i = 0; i < trs.length; i++) {
+            var tr = trs[i];
+            var tds = getElements(tr, /<td[^>]*>/ig);
+            if (tds.length == 0) {
+                //Заголовок
+                var ths = getElements(tr, /<th[^>]*>/ig);
+                size = ths.length;
+                cols = initCols(colsDef, ths);
+            } else if (tds.length == size) {
+                var t = {};
+
+                fillColsResult(colsDef, cols, tds, t, path);
+                if (onFilledResult)
+                    onFilledResult(t, path);
+
+                result.push(t);
+            } else if (onWrongSize) {
+                onWrongSize(tr, tds);
+            }
+        }
+    }
+
+
+    function initCols(colsDef, ths) {
+        var cols = {};
+        for (var i = 0; i < ths.length; i++) {
+            var th = ths[i];
+            for (var name in colsDef) {
+                if (colsDef[name].re.test(th))
+                    cols[name] = i;
+            }
+        }
+        return cols;
+    }
+
+    function fillColsResult(colsDef, cols, tds, result, path) {
+        function getset(val, def) {
+            return isset(val) ? val : def;
+        }
+
+        path = path || '';
+
+        var rts = replaceTagsAndSpaces,
+            pb = parseBalance,
+            as = aggregate_sum;
+
+        for (var name in colsDef) {
+            var cd = colsDef[name];
+            if (isset(cols[name])) {
+                var td = tds[cols[name]];
+                var rn = getset(cd.result_name, name);
+                if (isArray(rn)) {
+                    var rn1 = [];
+                    for (var i = 0; i < rn.length; i++) {
+                        rn1.push(path + rn[i]);
+                    }
+                    rn = rn1;
+                } else {
+                    rn = path + rn;
+                }
+
+                if (cd.result_process) {
+                    cd.result_process(path, td, result);
+                } else if (cd.result_sum) {
+                    cd.result_re && (cd.result_re.lastIndex = 0);
+                    sumParam(td, result, rn, cd.result_re, getset(cd.result_replace, rts), getset(cd.result_func, pb), getset(cd.result_aggregate, as));
+                } else {
+                    getParam(td, result, rn, cd.result_re, getset(cd.result_replace, rts), getset(cd.result_func, pb));
+                }
+            }
+        }
+    }
+
+    return {
+        getParam: getParam,
+        checkEmpty: checkEmpty,
+        isAvailable: isAvailable,
+        /**
+         * Удаление тегов и замена html сущностей
+         * @type {*[]}
+         */
+        replaceTagsAndSpaces: replaceTagsAndSpaces,
+        /**
+         * Замена слешей в js строках
+         * @type {*[]}
+         */
+        replaceSlashes: replaceSlashes,
+        /**
+         * Замена html сущностей
+         * @type {*[]}
+         */
+        replaceHtmlEntities: replaceHtmlEntities,
+        isset: isset,
+        isArray: isArray,
+        replaceAll: replaceAll,
+        parseBalance: parseBalance,
+        parseBalanceSilent: parseBalanceSilent,
+        parseCurrency: parseCurrency,
+        parseMinutes: parseMinutes,
+        parseMinutesSilent: parseMinutesSilent,
+        html_entity_decode: html_entity_decode,
+        createFormParams: createFormParams,
+        parseDate: parseDate,
+        parseDateSilent: parseDateSilent,
+        parseDateWord: parseDateWord,
+        joinObjects: joinObjects,
+        joinArrays: joinArrays,
+        addHeaders: addHeaders,
+        getJson: getJson,
+        getJsonEval: getJsonEval,
+        safeEval: safeEval,
+        endsWith: endsWith,
+        parseDateISO: parseDateISO,
+        sumParam: sumParam,
+        aggregate_sum: aggregate_sum,
+        aggregate_join: aggregate_join,
+        create_aggregate_join: create_aggregate_join,
+        aggregate_min: aggregate_min,
+        aggregate_max: aggregate_max,
+        parseTraffic: parseTraffic,
+        parseTrafficGb: parseTrafficGb,
+        parseTrafficEx: parseTrafficEx,
+        requestPostMultipart: requestPostMultipart,
+        capitalFirstLetters: capitalFirstLetters,
+        setCountersToNull: setCountersToNull,
+        getElement: getElement,
+        getJsonObject: getJsonObject,
+        getRecursiveMatch: getRecursiveMatch,
+        getElements: getElements,
+        __shouldProcess: __shouldProcess,
+        __setLoginSuccessful: __setLoginSuccessful,
+        fmtDate: fmtDate,
+        n2: n2,
+        getFormattedDate: getFormattedDate,
+        joinUrl: joinUrl,
+        processTable: processTable,
+        initCols: initCols,
+        fillColsResult: fillColsResult
+    };
+})(this);
+
+//Скопируем все переменные из AB в глобальный скоуп для совместимости
+(function(){
+	for (var name in AB) {
+    	this[name] = AB[name]; 
+	}
 })();
-function getParam(f,k,b,g,c,a){if(!isset(f)){AnyBalance.trace("getParam: input "+(b?"("+b+")":"")+" is unset! "+new Error().stack);
-return
-}if(!isAvailable(b)){AnyBalance.trace(b+" is disabled!");
-return
-}var h=isArray(g)?g:[g];
-for(var d=0;
-d<h.length;
-++d){g=h[d];
-var e=g?f.match(g):[,f],j;
-if(e){j=replaceAll(isset(e[1])?e[1]:e[0],c);
-if(a){j=a(j)
-}if(b&&isset(j)){k[__getParName(b)]=j
-}break
-}}return j
-}function checkEmpty(c,b,a){if(!c){throw new AnyBalance.Error(b,null,!a)
-}}function __getParName(b){var a=isArray(b)?b[0]:b;
-return a&&a.substr(a.lastIndexOf(".")+1)
-}function isAvailable(a){if(!a){return true
-}if(/\b__/.test(a.toString())){return true
-}return AnyBalance.isAvailable(a)
-}var replaceTagsAndSpaces=[String.REPLACE_TAGS_AND_SPACES,/[\uFEFF\xA0]/ig," ",/\s{2,}/g," ",/^\s+|\s+$/g,""],replaceFloat=[/[\u2212\u2013\u2014]/ig,"-",/\s+/g,"",/'/g,"",/,/g,".",/\.([^.]*)(?=\.)/g,"$1",/^\./,"0."],replaceSlashes=[/\\(.?)/g,function(a,b){switch(b){case"0":return"\0";
-case"":return"";
-default:return b
-}}],replaceHtmlEntities=String.REPLACE_HTML_ENTITIES;
-function isset(a){return typeof(a)!="undefined"
-}function isArray(a){return Object.prototype.toString.call(a)==="[object Array]"
-}function replaceAll(b,a){if(!a){return b
-}if(typeof b!="string"){b+=""
-}return b.replaceAll(a)
-}function parseBalance(c,a){var b=getParam(c.replace(/\s+/g,""),null,null,/(-?[.,]?\d[\d'.,]*)/,replaceFloat,parseFloat);
-if(!a){AnyBalance.trace("Parsing balance ("+b+") from: "+c)
-}return b
-}function parseBalanceSilent(a){return parseBalance(a,true)
-}function parseCurrency(b){var a=getParam(b.replace(/\s+/g,""),null,null,/-?\d[\d.,]*(\S*)/);
-AnyBalance.trace("Parsing currency ("+a+") from: "+b);
-return a
-}function parseMinutes(f,b){var h=f.replace(/[\s�]+/g,"");
-var a=0,d=0,e=0;
-if(/^\d+:\d+:\d+$/i.test(h)){var c=/^(\d+):(\d+):(\d+)$/i.exec(h);
-a=parseFloat(c[1]);
-d=parseFloat(c[2]);
-e=parseFloat(c[3])
-}else{if(/^\d+:\d+/i.test(h)){var c=/^(\d+):(\d+)/i.exec(h);
-a=0;
-d=parseFloat(c[1]);
-e=parseFloat(c[2])
-}else{a=getParam(h,null,null,/(-?\d[\d.,]*)\s*(?:час|ч|hour|h)/i,replaceFloat,parseFloat)||0;
-d=getParam(h,null,null,[/(-?\d[\d.,]*)\s*(?:мин|м|хв|min|m)/i,/^-?[\d.,]+$/i],replaceFloat,parseFloat)||0;
-e=getParam(h,null,null,/(-?\d[\d.,]*)\s*(?:сек|c|с|sec|s)/i,replaceFloat,parseFloat)||0
-}}var g=(a*3600)+(d*60)+e;
-if(!b){AnyBalance.trace("Parsed seconds ("+g+") from: "+f)
-}return g
-}function parseMinutesSilent(a){return parseMinutes(a,true)
-}function html_entity_decode(a){return a.htmlEntityDecode()
-}function createFormParams(k,b,l){var g=l?[]:{},j=/value\s*=\s*("[^"]*"|'[^']*'|[\w\-\/\\]+)/i,m=[/^"([^"]*)"$|^'([^']*)'$/,"$1$2",replaceHtmlEntities],a,q=/<input[^>]+name\s*=\s*("[^"]*"|'[^']*'|[\w\-\/\\]+)[^>]*>|<select[^>]+name\s*=\s*("[^"]*"|'[^']*'|[\w\-\/\\]+)[^>]*>[\s\S]*?<\/select>/ig,h=null;
-while(true){var f=q.exec(k);
-if(!f){break
-}var n=f[0],e=f[1],o=f[2],p="";
-if(e){if(/type\s*=\s*['"]?button['"]?/i.test(n)){p=undefined
-}else{if(/type\s*=\s*['"]?checkbox['"]?/i.test(n)){p=/[^\w\-]checked[^\w\-]/i.test(n)?getParam(n,h,h,j,m)||"on":undefined
-}else{p=getParam(n,h,h,j,m)||""
-}}a=replaceAll(e,m)
-}else{if(o){var c=getParam(n,h,h,/^<[^>]*>/i);
-p=getParam(c,h,h,j,m);
-if(typeof(p)=="undefined"){var d=getParam(n,h,h,/(<option[^>]+selected[^>]*>)/i);
-if(!d){d=getParam(n,h,h,/(<option[^>]*>)/i)
-}if(d){p=getParam(d,h,h,j,m)
-}}a=replaceAll(o,m)
-}}if(b){p=b(g,n,a,p)
-}if(typeof(p)!="undefined"){if(l){g.push([a,p])
-}else{g[a]=p
-}}}return g
-}function parseDate(f,a){var d=/(?:(\d+)[^\d])?(\d+)[^\d](\d{2,4})(?:[^\d](\d+):(\d+)(?::(\d+))?)?/.exec(f);
-if(d){var c=+d[3];
-var b=new Date(c<1000?2000+c:c,d[2]-1,+(d[1]||1),d[4]||0,d[5]||0,d[6]||0);
-var e=b.getTime();
-if(!a){AnyBalance.trace("Parsing date "+b+" from value: "+f)
-}return e
-}if(!a){AnyBalance.trace("Failed to parse date from value: "+f)
-}}function parseDateSilent(a){return parseDate(a,true)
-}function parseDateWord(b){AnyBalance.trace("Trying to parse date from "+b);
-var a=replaceAll(b,[replaceTagsAndSpaces,replaceHtmlEntities,/\D*(?:январ(?:я|ь)|янв|january|jan)\D*/i,".01.",/\D*(?:феврал(?:я|ь)|фев|febrary|feb)\D*/i,".02.",/\D*(?:марта|март|мар|march|mar)\D*/i,".03.",/\D*(?:апрел(?:я|ь)|апр|april|apr)\D*/i,".04.",/\D*(?:ма(?:я|й)|may)\D*/i,".05.",/\D*(?:июн(?:я|ь)|июн|june|jun)\D*/i,".06.",/\D*(?:июл(?:я|ь)|июл|july|jul)\D*/i,".07.",/\D*(?:августа|август|авг|august|aug)\D*/i,".08.",/\D*(?:сентябр(?:я|ь)|сен|september|sep)\D*/i,".09.",/\D*(?:октябр(?:я|ь)|окт|october|oct)\D*/i,".10.",/\D*(?:ноябр(?:я|ь)|ноя|november|nov)\D*/i,".11.",/\D*(?:декабр(?:я|ь)|dec|december|dec)\D*/i,".12.",/\s/g,""]);
-if(endsWith(a,".")){a+=new Date().getFullYear()
-}return parseDate(a)
-}function joinObjects(c,a){var d={};
-for(var b in a){d[b]=a[b]
-}if(c){for(b in c){d[b]=c[b]
-}}return d
-}function joinArrays(c,b){var a=c.slice();
-a.push.apply(a,b);
-return a
-}function addHeaders(c,e){e=e||g_headers;
-var d=isArray(e);
-var a=isArray(c);
-if(!d&&!a){return joinObjects(c,e)
-}if(d&&a){return joinArrays(e,c)
-}if(!d&&a){var f=joinObjects(null,e);
-for(var b=0;
-b<c.length;
-++b){f[c[b][0]]=c[b][1]
-}return f
-}if(d&&!a){var f=e.slice();
-for(b in c){f.push([b,c[b]])
-}return f
-}}function getJson(b){try{var a=JSON.parse(b);
-return a
-}catch(c){AnyBalance.trace("Bad json ("+c.message+"): "+b);
-throw new AnyBalance.Error("Сервер вернул ошибочные данные: "+c.message)
-}}function getJsonEval(b){try{var a=safeEval("return "+b,"window,document,self");
-return a
-}catch(c){AnyBalance.trace("Bad json ("+c.message+"): "+b);
-throw new AnyBalance.Error("Сервер вернул ошибочные данные: "+c.message)
-}}function safeEval(c,g,j){var d=AnyBalance,b=this.g_AnyBalanceApiParams,f=this._AnyBalanceApi;
-AnyBalance=this.g_AnyBalanceApiParams=this._AnyBalanceApi=undefined;
-try{var a=Function(g||"ja0w4yhwphgawht984h","AnyBalance","g_AnyBalanceApiParams","_AnyBalanceApi",c).apply(null,j);
-return a
-}catch(h){throw new d.Error("Bad javascript ("+h.message+"): "+c)
-}finally{AnyBalance=d,g_AnyBalanceApiParams=b,_AnyBalanceApi=f
-}}function endsWith(b,a){return b.indexOf(a,b.length-a.length)!==-1
-}(function(b,d){var c=b.parse,a=[1,4,5,6,7,10,11];
-b.parse=function(f){var j,l,h=0;
-if((l=/^(\d{4}|[+\-]\d{6})(?:-(\d{2})(?:-(\d{2}))?)?(?:(?:T|\s+)(\d{2}):(\d{2})(?::(\d{2})(?:\.(\d{3})\d*)?)?(?:(Z)|([+\-])(\d{2})(?::(\d{2}))?)?)?$/.exec(f))){for(var g=0,e;
-(e=a[g]);
-++g){l[e]=+l[e]||0
-}l[2]=(+l[2]||1)-1;
-l[3]=+l[3]||1;
-if(l[8]!=="Z"&&l[9]!==d){h=l[10]*60+l[11];
-if(l[9]==="+"){h=0-h
-}}j=b.UTC(l[1],l[2],l[3],l[4],l[5]+h,l[6],l[7]);
-b.lastParse="custom"
-}else{j=c?c(f):NaN;
-b.lastParse="original"
-}return j
-}
-}(Date));
-function parseDateISO(b){var a=Date.parse(b);
-if(!a){AnyBalance.trace("Could not parse ("+Date.lastParse+") date from "+b);
-return
-}else{AnyBalance.trace("Parsed ("+Date.lastParse+") "+new Date(a)+" from "+b);
-return a
-}}function parseDateJS(b){var c=b.replace(/(\d+)\s*г(?:\.|ода?)?,?/i,"$1 ");
-var a=Date.parse(c);
-if(!a){AnyBalance.trace("Can not parse date from "+b);
-return
-}a=new Date(a);
-AnyBalance.trace("Parsed date "+a.toString()+" from "+b);
-return a.getTime()
-}function sumParam(k,q,d,n,e,b,f,c){if(!isset(k)){AnyBalance.trace("sumParam: input "+(d?"("+d+")":"")+" is unset! "+new Error().stack);
-return
-}if(typeof(f)=="function"){var a=c;
-c=f;
-f=a||false
-}function p(){if(f){return n?k.replace(n,""):""
-}}if(!isAvailable(d)){AnyBalance.trace(d+" is disabled!");
-return p()
-}d=__getParName(d);
-var o=[],j;
-if(d&&isset(q[d])){o.push(q[d])
-}function l(r){r=replaceAll(r,e);
-if(b){r=b(r)
-}if(isset(r)){o.push(r)
-}}var m=isArray(n)?n:[n];
-for(var g=0;
-g<m.length;
-++g){n=m[g];
-if(!n){l(k)
-}else{n.lastIndex=0;
-while(j=n.exec(k)){l(isset(j[1])?j[1]:j[0]);
-if(!n.global){break
-}}}if(f){k=n?k.replace(n,""):""
-}}var h;
-if(c){h=c(o)
-}else{if(!d){h=o
-}}if(d){if(isset(h)){q[d]=h
-}return k
-}else{return h
-}}function aggregate_sum(a){if(a.length==0){return
-}var c=0;
-for(var b=0;
-b<a.length;
-++b){c+=a[b]
-}return c
-}function aggregate_join(b,a,d){if(b.length==0){return
-}if(!isset(a)){a=", "
-}var c=b.join(a);
-if(!d){a=a.trim().replace(/([.?*+^$[\]\\(){}|-])/g,"\\$1");
-c=c.replace(new RegExp("^(?:\\s*"+a+"\\s*)+|(?:\\s*"+a+"]\\s*){2,}|(?:\\s*"+a+"\\s*)+$","g"),"")
-}return c
-}function create_aggregate_join(a,b){return function(c){return aggregate_join(c,a,b)
-}
-}function aggregate_min(a){if(a.length==0){return
-}var c;
-for(var b=0;
-b<a.length;
-++b){if(!isset(c)||c>a[b]){c=a[b]
-}}return c
-}function aggregate_max(a){if(a.length==0){return
-}var c;
-for(var b=0;
-b<a.length;
-++b){if(!isset(c)||c<a[b]){c=a[b]
-}}return c
-}function parseTraffic(b,a){return parseTrafficEx(b,1024,2,a)
-}function parseTrafficGb(b,a){return parseTrafficEx(b,1024,3,a)
-}function parseTrafficEx(h,j,b,d){var g=h.replace(/\s+/g,"");
-var a=getParam(g,null,null,/(-?\.?\d[\d\.,]*)/,replaceFloat,parseFloat);
-if(!isset(a)||a===""){AnyBalance.trace("Could not parse traffic value from "+h);
-return
-}var f=getParam(g,null,null,/([kmgtкмгт][бb]?|[бb](?![\wа-я])|байт|bytes)/i);
-if(!f&&!d){AnyBalance.trace("Could not parse traffic units from "+h);
-return
-}if(!f){f=d
-}switch(f.substr(0,1).toLowerCase()){case"b":case"б":a=Math.round(a/Math.pow(j,b)*100)/100;
-break;
-case"k":case"к":a=Math.round(a/Math.pow(j,b-1)*100)/100;
-break;
-case"m":case"м":a=Math.round(a/Math.pow(j,b-2)*100)/100;
-break;
-case"g":case"г":a=Math.round(a/Math.pow(j,b-3)*100)/100;
-break;
-case"t":case"т":a=Math.round(a/Math.pow(j,b-4)*100)/100;
-break
-}var e=""+a;
-if(e.length>6){a=Math.round(a)
-}else{if(e.length>5){a=Math.round(a*10)/10
-}}var c={0:"b",1:"kb",2:"mb",3:"gb",4:"tb"};
-AnyBalance.trace("Parsing traffic ("+a+c[b]+") from: "+h);
-return a
-}function requestPostMultipart(c,h,e){var k="",g="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-for(var j=0;
-j<16;
-j++){k+=g.charAt(Math.floor(Math.random()*g.length))
-}var f=[];
-var d="------WebKitFormBoundary"+k;
-for(var a in h){f.push(d,'Content-Disposition: form-data; name="'+a+'"',"",h[a])
-}f.push(d+"--\r\n");
-if(!e){e={}
-}e["Content-Type"]="multipart/form-data; boundary="+d.substr(2);
-return AnyBalance.requestPost(c,f.join("\r\n"),e)
-}function capitalFirstLetters(c){var a=c.toLowerCase().split(" ");
-var b="";
-for(i=0;
-i<a.length;
-i++){b+=a[i].substring(0,1).toUpperCase()+a[i].substring(1)+" "
-}return b.replace(/^\s+|\s+$/g,"")
-}function setCountersToNull(b){var a=AnyBalance.getAvailableCounters();
-for(var c=0;
-c<a.length;
-++c){if(a[c]!=="--auto--"&&!isset(b[a[c]])){b[a[c]]=null
-}}if(!isset(b.__tariff)){b.__tariff=null
-}}function getElement(f,k,e,a){var c=k.exec(f);
-if(!c){return
-}var h=c.index;
-var j=f.substr(h,c[0].length);
-var d=getParam(j,null,null,/<(\w+)/);
-var g=new RegExp("<"+d+"[^>]*>","ig");
-var b=new RegExp("</"+d+"[^>]*>","ig");
-g.lastIndex=h;
-return getRecursiveMatch(f,g,b,e,a)
-}function getJsonObject(c,b,d){var a={"{":{left:"\\{												\n				(?:	[^\"'\\{\\}\\/]+								\n				 |	\"	(?:[^\"\\\\]+|\\\\.)*	\"		#string1	\n				 |	'	(?:[^'\\\\]+|\\\\.)*	'		#string2	\n				 |	\\/	(?:[^\\/\\\\]+|\\\\.)+	\\/		#regexp		\n				)*													\n			",right:/\}/},"[":{left:"\\[												\n				(?:	[^\"'\\[\\]\\/]+								\n				 |	\"	(?:[^\"\\\\]+|\\\\.)*	\"		#string1	\n				 |	'	(?:[^'\\\\]+|\\\\.)*	'		#string2	\n				 |	\\/	(?:[^\\/\\\\]+|\\\\.)+	\\/		#regexp		\n				)*													\n			",right:/\]/}};
-if(!a[d]){d="{"
-}var g=0;
-if(b){var e=b.exec(c);
-if(!e){return
-}g=e.index
-}var f=new XRegExp(a[d].left,"gx");
-f.lastIndex=g;
-return getRecursiveMatch(c,f,a[d].right,null,getJsonEval)
-}function getRecursiveMatch(j,m,d,f,b){var e=m.exec(j);
-if(!e){return
-}var n=e.index;
-var g=0;
-var k=new RegExp("(?:"+m.source+")|(?:"+d.source+")","ig");
-var a=new RegExp("^(?:"+d.source+")",d.ignoreCase?"i":"");
-k.lastIndex=n+e[0].length;
-while(true){e=k.exec(j);
-if(!e){break
-}var c=e[0];
-if(a.test(c)){if(g==0){break
-}--g
-}else{++g
-}k.lastIndex=e.index+c.length
-}var h=j.length;
-if(e){h=e.index+e[0].length
-}m.lastIndex=h;
-var l=j.substring(n,h);
-if(f){l=replaceAll(l,f)
-}if(b){l=b(l)
-}return l
-}function getElements(e,k,b,a){var d=[];
-var g=isArray(k)?k[0]:k;
-var f=isArray(k)?(k.shift(),k):null;
-do{var h=getElement(e,g,b,a);
-var j=h&&!f;
-if(f&&h){for(var c=0;
-c<f.length;
-++c){j=j||f[c].test(h);
-if(j){break
-}}}if(j){d.push(h)
-}if(!g.global){break
-}}while(isset(h));
-return d
-}function __shouldProcess(a,b){if(!AnyBalance.shouldProcess){return !!b.__id
-}return AnyBalance.shouldProcess(a,b)
-}function __setLoginSuccessful(){if(AnyBalance.setLoginSuccessful){AnyBalance.setLoginSuccessful()
-}}function fmtDate(b,a){if(!isset(a)){a="."
-}return getFormattedDate({format:"DD"+a+"MM"+a+"YYYY"},b)
-}function n2(a){return a<10?"0"+a:""+a
-}function getFormattedDate(b,d){if(!d){var d=new Date()
-}var a=d.getDate()-(b.offsetDay||0);
-var e=(d.getMonth()+1)-(b.offsetMonth||0);
-var c=d.getFullYear()-(b.offsetYear||0);
-return getParam(b.format,null,null,null,[/DD/,n2(a),/D/,a,/MM/,n2(e),/M/,e,/YYYY/,c,/YY/,(c+"").substring(2,4)])
-}function joinUrl(a,b){if(!b){return a
-}if(/^\//.test(b)){return a.replace(/^(\w+:\/\/[\w.\-]+).*$/,"$1"+b)
-}if(/^\w+:\/\//.test(b)){return b
-}a=a.replace(/\?.*$/,"");
-if(/:\/\/.*\//.test(a)){a=a.replace(/\/[^\/]*$/,"/")
-}if(!endsWith(a,"/")){a+="/"
-}return a+b
-}function processTable(l,o,n,f,g,d){var e=getElements(l,/<tr[^>]*>/ig);
-var j,m;
-for(var c=0;
-c<e.length;
-c++){var h=e[c];
-var b=getElements(h,/<td[^>]*>/ig);
-if(b.length==0){var a=getElements(h,/<th[^>]*>/ig);
-m=a.length;
-j=initCols(f,a)
-}else{if(b.length==m){var k={};
-fillColsResult(f,j,b,k,n);
-if(d){d(k,n)
-}o.push(k)
-}else{if(g){g(h,b)
-}}}}}function initCols(d,a){var f={};
-for(var c=0;
-c<a.length;
-c++){var e=a[c];
-for(var b in d){if(d[b].re.test(e)){f[b]=c
-}}}return f
-}function fillColsResult(l,m,h,p,o){function f(r,q){return isset(r)?r:q
-}o=o||"";
-var j=replaceTagsAndSpaces,n=parseBalance,c=aggregate_sum;
-for(var a in l){var b=l[a];
-if(isset(m[a])){var d=h[m[a]];
-var k=f(b.result_name,a);
-if(isArray(k)){var e=[];
-for(var g=0;
-g<k.length;
-g++){e.push(o+k[g])
-}k=e
-}else{k=o+k
-}if(b.result_process){b.result_process(o,d,p)
-}else{if(b.result_sum){b.result_re&&(b.result_re.lastIndex=0);
-sumParam(d,p,k,b.result_re,f(b.result_replace,j),f(b.result_func,n),f(b.result_aggregate,c))
-}else{getParam(d,p,k,b.result_re,f(b.result_replace,j),f(b.result_func,n))
-}}}}};

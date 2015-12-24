@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="2" date="2015-12-24">
+	- fix не показывался баланс расчетного счета
+	</change>
 	<change version="1" date="2015-12-18">
 	- Первая версия.
 	</change>

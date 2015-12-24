@@ -18,7 +18,7 @@
   <counters>
     <counter id="TV" name="Телевидение" units= " р"/>
     <counter id="Phone" name="Телефония" units= " р"/>
-    <counter id="CheckinAccount" name="Расчетный" units= " р"/>
+    <counter id="ChekinAccount" name="Расчетный" units= " р"/>
     <counter id="Internet" name="Интернет" units= " р"/>
     <counter id="Hotspot" name="Хотспот" units= " р"/>
     <counter id="PhonePC" name="Телефония на ПК" units= " р"/>

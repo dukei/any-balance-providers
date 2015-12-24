@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<api flags="no_browser"/>
+	<id version="1">ab-internet-cms-air</id>
+	<name>Air</name>
+	<description html="true"><![CDATA[
+  <p>	Предоставляет информацию о балансе CMS Air <a href="http://cms.air.io">cms.air.io</a></p>
+	<p>Информация берется из личного кабинета <a href="http://cms.air.io/statistics/referral_system">cms.air.io/statistics/referral_system</a></p>
+	]]></description>
+	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="income" name="Доход" prefix="$ "/>
+		<counter id="full_name" name="ФИО" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>internet</type>
+	<country>ru</country>
+</provider>

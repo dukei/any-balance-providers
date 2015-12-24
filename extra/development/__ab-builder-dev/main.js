@@ -22,20 +22,25 @@ function main() {
         .find(/\berror\.gif\b[\s\S]*?<td>([\s\S]*?)<\/td>/, 1)
         .toText() //htmlToText(); htmlEntityDecode(); выполняем trim(); делаем приведение типа данных к строке.
 
+    AB(html)
+        .find("table td:has(img[src$=error.gif]) + td")
+        .toText() //htmlToText(); htmlEntityDecode(); выполняем trim(); делаем приведение типа данных к строке.
+
+
     //счётчики, вариант 1
     var result = {success: true};
-
-    html = AB(html).find("h3:contains(Характеристики) + table").htmlToText().toString();
-    AB(html).find(/Уровень:\s+(\d+)/i).toNumeric(result, 'level1')		//получаем последний нумерованный карман (если карманов нет, то получаем всё совпадение); делаем приведение типа данных к целому числу
-    AB(html).find(/(Уровень):\s+(\d+)/i, 2).toNumeric(result, 'level2')	//получаем и указываем нумерованный карман явно; делаем приведение типа данных к числу с плавающей запятой
-
-    //toTimeInterval(), toTime(), toHtml()
-    var json = {'k': 'v'};
-    AB(json).find('');
-
-    //счётчики, вариант 2
-    AB(html).find("span:contains(Уровень) + span").htmlToText().toNumeric(result, 'level');
-    AB(html).find("span:contains(Деньги) + span").htmlToText().find(/\$(\d+)/).toNumeric(result, 'money');
+//
+//    html = AB(html).find("h3:contains(Характеристики) + table").htmlToText().toString();
+//    AB(html).find(/Уровень:\s+(\d+)/i).toNumeric(result, 'level1')		//получаем последний нумерованный карман (если карманов нет, то получаем всё совпадение); делаем приведение типа данных к целому числу
+//    AB(html).find(/(Уровень):\s+(\d+)/i, 2).toNumeric(result, 'level2')	//получаем и указываем нумерованный карман явно; делаем приведение типа данных к числу с плавающей запятой
+//
+//    //toTimeInterval(), toTime(), toHtml()
+//    var json = {'k': 'v'};
+//    AB(json).find('');
+//
+//    //счётчики, вариант 2
+//    AB(html).find("span:contains(Уровень) + span").htmlToText().toNumeric(result, 'level');
+//    AB(html).find("span:contains(Деньги) + span").htmlToText().find(/\$(\d+)/).toNumeric(result, 'money');
 
     AnyBalance.setResult(result);
 }

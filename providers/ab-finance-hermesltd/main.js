@@ -1,7 +1,3 @@
-/**
-Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
-*/
-
 var g_headers = {
 	'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
 	'Accept-Encoding':'gzip, deflate, sdch',

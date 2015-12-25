@@ -19,6 +19,7 @@
 	<counters>
 		<counter id="balance" name="Баланс"/>
 		<counter id="discount" name="Размер скидки в текущем месяце" units=" %"/>
+		<counter id="next_month_discount" name="Размер скидки в следующем месяце" units=" %"/>
 		<counter id="discount_next" name="Размер следующей скидки" units=" %"/>
 		<counter id="discount_bal_next" name="Баллов до следующей скидки"/>
 		<counter id="fio" name="ФИО" type="text"/>

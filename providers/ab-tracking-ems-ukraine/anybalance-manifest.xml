@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<api flags="no_browser"/>
+	<id version="1">ab-tracking-ems-ukraine</id>
+	<name>EMS Украина</name>
+	<description html="true"><![CDATA[
+	Предоставляет информацию о балансе, бонусных баллах, использованных минутах на локальные, мобильные и любимые номера, расходах, статусе блокировки, кредите, номере лицевого счета, ежемесячой плате.
+
+	Информация берется из PDA версии интернет-помощника (http://ip.mts.ru/SELFCAREPDA), из обычного интернет-помощника (http://ihelper.mts.ru/selfcare) и из личного кабинета МТС (http://lk.ssl.mts.ru)
+
+	]]></description>
+	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="track_number" name="Трек номер" type="text"/>
+		<counter id="info" name="Информация по коду" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>tracking</type>
+	<country>ru</country>
+</provider>

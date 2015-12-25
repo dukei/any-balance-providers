@@ -21,10 +21,10 @@
 		<counter id="loan" name="займ" suffix="{@currency}">
 		<counter id="deposit" name="Залог" suffix="{@currency}">
 		<counter id="available" name="Доступно" suffix="{@currency}">
-		<counter id="premium" name="Ажио" type="text">
+		<counter id="premium" name="Ажио" suffix="%">
 		<counter id="currency" name="Валюта счета" type="text">
 		<counter id="contract" name="Контракт" suffix="{@currency}">
-		<counter id="loan_rate" name="Ставка по займу" type="text">
+		<counter id="loan_rate" name="Ставка по займу" suffix="%">
 		<counter id="status" name="Статус счета" type="text">
 		<counter id="profit" name="Прибыль за всё время" suffix="{@currency}">
 		<counter id="name" name="Владелец счета" type="text">

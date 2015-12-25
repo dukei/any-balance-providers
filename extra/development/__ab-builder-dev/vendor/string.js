@@ -354,7 +354,7 @@
 								|	\'  [^\']*  \'	\n\
 							)*';
 		//https://regex101.com/#pcre
-		var HTML_TAG_RE = '(?:															\n\
+		var HTML_RE = '(?:																\n\
 							#pair tags with content:									\n\
 							<	(?=[a-z])				#speed improve optimization		\n\
 								(' + HTML_PAIR_TAGS_WITH_CONTENT + ')\\b	#1			\n\
@@ -381,7 +381,7 @@
 						)';
 		var htmlBlockTagsRe = RegExp('^<('+ HTML_BLOCK_TAGS + ')\\b', 'i');
 		var str = this.replace(
-			XRegExp(HTML_TAG_RE, 'xsig'),
+			XRegExp(HTML_RE, 'xsig'),
 			function (str, entry) {
 				if (str.search(htmlBlockTagsRe) > -1) return '\n';
 				return '';

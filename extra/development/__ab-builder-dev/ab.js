@@ -6,8 +6,24 @@ function AB(str) {
 	"use strict";
 
 	var AB = function (str) {
-		var _any = str,		//{string|object}  В строке хранится HTML или сериализованный JSON. Объект получается после JSON.parse() или eval()
-			_stack = [];	//массив функций для последовательного исполнения (с контекстом объекта AB)
+		
+		//Приватные переменные
+		
+		/**
+		 * `string` -- хранит какой-либо текст (например, HTML или сериализованный JSON). 
+		 * `object` -- результат выполнения JSON.parse() или eval()
+		 * `null` -- если в результате выполнения this.find() ничего не нашлось
+		 * 
+		 * @type {string|object|null}
+		 */
+		var _any = str;		//  
+		
+		/**
+		 * Массив функций для последовательного исполнения (с контекстом объекта AB)
+		 * 
+		 * @type {array}
+		 */
+		var _stack = [];
 
 
 		//Приватные методы
@@ -19,23 +35,31 @@ function AB(str) {
 		}
 
 		/**
-		 * Детектирует тип содержимого: text/plain, text/html, text/json
+		 * Детектирует тип содержимого: text/html, text/json, text/plain
 		 * 
 		 * @param {string|Object} input
 		 * @returns {number} TYPE_HTML, TYPE_JSON, TYPE_TEXT
 		 */
 		function _getConentType(input) {
 			AnyBalance.trace('_getConentType');
-
+			
 		};
-		
-		function _getJSON(str, isGlobal) {
+
+		/**
+		 * Ищет в коде JavaScript массив или объект и возвращет его.
+		 * Или, другими словами, возвращает текст от первой скобки `[{` до последней `]}` с учётом вложенности.
+		 * Может быть использован для поиска JSON, но это это частный случай.
+		 * 
+		 * @param {string} str
+		 * @returns {string|null}	Возвращает строку или `null`, если ничего не найдено
+		 */
+		function _getJsArrayOrObject(str) {
 			//http://hjson.org/
 			//https://regex101.com/#javascript
 			//http://blog.stevenlevithan.com/archives/match-innermost-html-element
 			//We use atomic group (trick with lookahead, capturing group and link after) to speed improve, significantly reduce backtracking!
-			var OPEN						= /([\{\[])/,
-				CLOSE						= /([\}\]])/,
+			var OPEN						= /([\{\[])/,	//карман $1
+				CLOSE						= /([\}\]])/,	//карман $2
 				ANY_WITH_EXCEPTIONS			= /(?= ([^\{\}\[\]"'`\/]+) )\1/,
 				STRING_IN_DOUBLE_QUOTES		= /"				(?= ((?:[^"\\\r\n]+|\\.)*)   )\1	"/,
 				STRING_IN_SINGLE_QUOTES		= /'				(?= ((?:[^'\\\r\n]+|\\.)*)   )\1	'/,
@@ -53,16 +77,13 @@ function AB(str) {
 					REGEXP_INLINE,
 					COMMENT_MULTILINE,
 					COMMENT_SINGLELINE
-				], 'xs' + (isGlobal ? 'g' : ''));
+				], 'xs');
 
-			/*
-			//uncomment JS (prettify purpose)
-			str = str.replace(ALL, function() {
-				return /^\/[\/\*]/.test(arguments[0]) ? '' : arguments[0];
-			});
-			*/
-			return str.matchRecursive(ALL, {open: 1, close: 2, parts: true});
-			//return str.matchRecursive({open: OPEN, close: CLOSE, inner: INNER}, 'xs' + (isGlobal ? 'g' : ''), false);
+			try {
+				return str.matchRecursive(ALL, {open: 1, close: 2, parts: false});
+			} catch(e) {
+				return null;
+			}			
 		}
 		
 		//Публичные методы. Задают правила обработки и выстраивают их в цепочку
@@ -90,6 +111,10 @@ function AB(str) {
 			return this;
 		}
 
+		/**
+		 * 
+		 * @returns {AB}
+		 */
 		this.htmlToText = function () {
 			AnyBalance.trace('htmlToText');
 			return this;
@@ -98,6 +123,10 @@ function AB(str) {
 		// Публичные методы. Делают обработку (при необходимости) по цепочке правил и возвращают значение.
 		// https://github.com/dukei/any-balance-providers/wiki/Manifest#counter
 
+		/**
+		 * 
+		 * @returns {number}
+		 */
 		this.toNumeric = function () {
 			AnyBalance.trace('toNumeric');
 			executeStack();
@@ -106,21 +135,45 @@ function AB(str) {
 			return ret;
 		}
 		
+		/**
+		 * 
+		 * @returns {string}
+		 */
 		this.toText = function () {
 			AnyBalance.trace('toText');
 			executeStack();
 		}
 		
+		/**
+		 * 
+		 * @returns {string}
+		 */
 		this.toHtml = function () {
 			AnyBalance.trace('toText');
 			executeStack();
 		}
 
+		/**
+		 * 
+		 * @returns {number}
+		 */
 		this.toTimeInterval = function() {
 			executeStack();
 		}
 
+		/**
+		 * 
+		 * @returns {number}
+		 */
 		this.toTime = function() {
+			executeStack();
+		}
+		
+		/**
+		 * 
+		 * @returns {string}
+		 */
+		this.toCurrency = function() {
 			executeStack();
 		}
 	};

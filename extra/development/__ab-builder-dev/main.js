@@ -38,7 +38,7 @@ function main() {
 	//получаем ошибки: 
     AB(html)
         //.find("table td:has(img[src$=error.gif]) + td")
-        .find(/\berror\.gif\b[\s\S]*?<td>([\s\S]*?)<\/td>/, 1)
+        .find(/\berror\.gif\b[\s\S]*?<td>([\s\S]*?)<\/td>/i, 1)
         .toText() //htmlToText(); htmlEntityDecode(); выполняем trim(); делаем приведение типа данных к строке.
 
     AB(html)
@@ -49,7 +49,7 @@ function main() {
     /*
 	//счётчики, вариант 1
 
-    html = AB(html).find("h3:contains(Характеристики) + table").htmlToText().toString();
+    html = AB(html).find("h3:contains(Характеристики) + table").toText();
     AB(html).find(/Уровень:\s+(\d+)/i).toNumeric(rc("level1"))		//получаем последний нумерованный карман (если карманов нет, то получаем всё совпадение); делаем приведение типа данных к целому числу
     AB(html).find(/(Уровень):\s+(\d+)/i, 2).toNumeric(result, 'level2')	//получаем и указываем нумерованный карман явно; делаем приведение типа данных к числу с плавающей запятой
 

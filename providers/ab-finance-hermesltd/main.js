@@ -61,7 +61,7 @@ function main(){
 	var result = { success: true };
 
 	getParam(html, result, 'balance', /Баланс:([\s\S]*?)<\/tr>/, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, ['currency', 'balance'], /Баланс:([\s\S]*?)<\/tr>/, replaceTagsAndSpaces, parseCurrency);
+	getParam(html, result, ['currency', 'balance', 'loan', 'deposit', 'available', 'contract', 'profit'], /Баланс:([\s\S]*?)<\/tr>/, replaceTagsAndSpaces, parseCurrency);
 
 	getParam(html, result, 'loan', /Займ:([\s\S]*?)<\/tr>/, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'deposit', /Залог:([\s\S]*?)<\/tr>/i, replaceTagsAndSpaces, parseBalance);

@@ -33,7 +33,7 @@
 		<counter id="korrs" name="Корр/с" type="text"/>
 		<counter id="bik" name="БИК" type="text"/>
 	</counters>
-	<keywords>жкхб квартирыб ремонт</keywords>
+	<keywords>жкх, квартиры, ремонт</keywords>
 	<type>municipal</type>
 	<country>ru</country>
 </provider>

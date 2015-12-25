@@ -40,8 +40,6 @@ function main(){
 		return value;
 	});
 
-
-
 	html = AnyBalance.requestPost(
 		baseurl + 'index/login/', 
 		params,
@@ -53,18 +51,7 @@ function main(){
 		})
 	);
 
-	// вдруг вернули не json
-	try{
-
-		html = JSON.parse(html);
-
-	} catch(e) {
-
-		AnyBalance.trace(html);
-		AnyBalance.trace(e.name + ": " + e.message);
-		throw new AnyBalance.Error("Неправильный ответ сервера.");
-
-	}
+	html = getJson(html);
 
 	if(html.error) {
 		AnyBalance.trace(html.error.message);
@@ -86,33 +73,20 @@ function main(){
 		throw new AnyBalance.Error("Ошибка авторизации");
 	}
 
-
 	var result = {success: true};
 
-	form = getElements(html, /<form[^>]*>/gi);
-	if(!form) {
-		AnyBalance.trace(html);
-		throw new AnyBalance.Error("Данные не найдены. Сайт изменен?");
-	}
-
-	// беру последнюю форму и удаляю коментарии, а то они тоже парсятся в getElements
-
-	form = replaceAll(form[ form.length - 1 ], [[/\n+/gmi, ''], [/<!--.*-->/gmi, '']]);
-
-	var controls = getElements(form, /<div[^>]*class="[^"]*controls[^"]*"[^>]*>/gi);
-
-	getParam(controls[0], result, 'abonent', /value="([^"]*)"/i, [replaceTagsAndSpaces, replaceHtmlEntities]);
-	getParam(controls[1], result, 'address', /value="([^"]*)"/i, [replaceTagsAndSpaces, replaceHtmlEntities]);
-	getParam(controls[2], result, 'apart_num', /value="([^"]*)"/i, [replaceTagsAndSpaces, replaceHtmlEntities]);
-	getParam(controls[3], result, 'space', /value="([^"]*)"/i, [replaceTagsAndSpaces, replaceHtmlEntities], parseBalance);
-	getParam(controls[4], result, 'min_vznos', /value="([^"]*)"/i, [replaceTagsAndSpaces, replaceHtmlEntities], parseBalance);
-	getParam(controls[5], result, 'dop_vznos', /value="([^"]*)"/i, [replaceTagsAndSpaces, replaceHtmlEntities], parseBalance);
-	getParam(controls[6], result, 'owner_part', /value="([^"]*)"/i, [replaceTagsAndSpaces, replaceHtmlEntities], parseBalance);
-	getParam(controls[7], result, 'fund_form_method', /value="([^"]*)"/i, [replaceTagsAndSpaces, replaceHtmlEntities]);
-	getParam(controls[8], result, 'account_num', /value="([^"]*)"/i, [replaceTagsAndSpaces, replaceHtmlEntities]);
-	getParam(controls[9], result, 'bank', /value="([^"]*)"/i, [replaceTagsAndSpaces, replaceHtmlEntities]);
-	getParam(controls[10], result, 'korrs', /value="([^"]*)"/i, [replaceTagsAndSpaces, replaceHtmlEntities]);
-	getParam(controls[11], result, 'bik', /value="([^"]*)"/i, [replaceTagsAndSpaces, replaceHtmlEntities]);
+	getParam(html, result, 'abonent', /абонент:(?:[\s\S]*?<input[^>]*value=")([^"]*)/i, replaceTagsAndSpaces);
+	getParam(html, result, 'address', /Адрес дома:(?:[\s\S]*?<input[^>]*value=")([^"]*)/i, replaceTagsAndSpaces);
+	getParam(html, result, 'apart_num', /№ квартиры:(?:[\s\S]*?<input[^>]*value=")([^"]*)/i, replaceTagsAndSpaces);
+	getParam(html, result, 'space', /Площадь помещения, кв.м.:(?:[\s\S]*?<input[^>]*value=")([^"]*)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'min_vznos', /Размер минимального взноса:(?:[\s\S]*?<input[^>]*value=")([^"]*)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'dop_vznos', /Размер дополнительного взноса:(?:[\s\S]*?<input[^>]*value=")([^"]*)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'owner_part', /Доля помещения, занимаемая собственником:(?:[\s\S]*?<input[^>]*value=")([^"]*)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'fund_form_method', /Способ формирования фонда:(?:[\s\S]*?<input[^>]*value=")([^"]*)/i, replaceTagsAndSpaces);
+	getParam(html, result, 'account_num', /Номер расчетного счета:(?:[\s\S]*?<input[^>]*value=")([^"]*)/i, replaceTagsAndSpaces);
+	getParam(html, result, 'bank', /Банк:(?:[\s\S]*?<input[^>]*value=")([^"]*)/i, replaceTagsAndSpaces);
+	getParam(html, result, 'korrs', /Корр\/с:(?:[\s\S]*?<input[^>]*value=")([^"]*)/i, replaceTagsAndSpaces);
+	getParam(html, result, 'bik', /БИК:(?:[\s\S]*?<input[^>]*value=")([^"]*)/i, replaceTagsAndSpaces);
 
 	AnyBalance.setResult(result);
 }

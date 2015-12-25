@@ -11,12 +11,12 @@ function AB(str) {
 		
 		/**
 		 * `string` -- хранит какой-либо текст (например, HTML или сериализованный JSON). 
-		 * `object` -- результат выполнения JSON.parse() или eval()
-		 * `null` -- если в результате выполнения this.find() ничего не нашлось
+		 * `object` -- результат выполнения `JSON.parse()` или `eval()`
+		 * `null` -- если в результате выполнения `this.find()` ничего не нашлось
 		 * 
 		 * @type {string|object|null}
 		 */
-		var _any = str;		//  
+		var _any = str;
 		
 		/**
 		 * Массив функций для последовательного исполнения (с контекстом объекта AB)
@@ -30,23 +30,71 @@ function AB(str) {
 
 		function executeStack() {
 			_stack.forEach(function (fun) {
+				_any = _transformContent(_any);
+				//console.log(_any);
 				fun();
 			});
 		}
 
 		/**
-		 * Детектирует тип содержимого: text/html, text/json, text/plain
+		 * Детектирует и преобразовывает содержимое
 		 * 
-		 * @param {string|Object} input
-		 * @returns {number} TYPE_HTML, TYPE_JSON, TYPE_TEXT
+		 * @param {string|Object} any
+		 * @returns {string|Object}
 		 */
-		function _getConentType(input) {
-			AnyBalance.trace('_getConentType');
+		function _transformContent(any) {
+			if (typeof any !== 'string') return any;
+			any = any.trim();
+
+			/*
+			HTML detect
+				No needs to check closed tags, because they does not exist without opened tags
+				No needs to check HTML entities, because it is ambiguous
+			*/
+			//fast short implementation
+			var HTML_ATTR_RE = '(?:						\
+										[^>"\']+		\
+									|	"   [^"]*    "	\
+									|	\'  [^\']*  \'	\
+								)*',
+				
+				HTML_RE = [
+					'<[a-zA-Z]' + HTML_ATTR_RE + '>',	//opened tags
+					'<![a-zA-Z]' + HTML_ATTR_RE + '>',	//<!DOCTYPE ...>
+					'<!\\[CDATA\\[  .*?  \\]\\]>',	//CDATA
+					'<!--  .*?   -->'				//comments
+				].join('|'),
+				
+				htmlIndexOf = any.search(XRegExp(HTML_RE, 'xs'));
+		
+			if (htmlIndexOf === 0) return any; //это точно HTML
 			
+			/*
+			JavaScript array or object detect
+			*/
+			var js = _getJsArrayOrObject(any),
+				jsIndexOf = (typeof js === 'string') ? any.indexOf(js) : -1;
+		
+			if (htmlIndexOf === -1 && jsIndexOf === -1) return any;  //не HTML и не JS, вероятно это обычный текст
+			
+			if (htmlIndexOf === -1) htmlIndexOf = Infinity;
+			if (jsIndexOf < htmlIndexOf) {
+				try {
+					any = JSON.parse(js);
+				} catch (e) {
+					try {
+						//При use strict код внутри eval/Function по-прежнему сможет читать и менять внешние переменные, однако переменные и функции, объявленные внутри eval, не попадут наружу.
+						any = Function('return ' + js).apply(null);
+					} catch (e) {
+						any = null;
+					}
+				}				
+			}
+			return any;
 		};
 
 		/**
-		 * Ищет в коде JavaScript массив или объект и возвращет его.
+		 * Ищет в коде JavaScript первый массив или объект и возвращет его.
 		 * Или, другими словами, возвращает текст от первой скобки `[{` до последней `]}` с учётом вложенности.
 		 * Может быть использован для поиска JSON, но это это частный случай.
 		 * 
@@ -60,7 +108,7 @@ function AB(str) {
 			//We use atomic group (trick with lookahead, capturing group and link after) to speed improve, significantly reduce backtracking!
 			var OPEN						= /([\{\[])/,	//карман $1
 				CLOSE						= /([\}\]])/,	//карман $2
-				ANY_WITH_EXCEPTIONS			= /(?= ([^\{\}\[\]"'`\/]+) )\1/,
+				ANY_WITH_EXCEPTIONS			= /(?= ([^\{\}\[\]\(\)"'`\/]+) )\1/,	//в целях безопасности круглых скобок быть не должно!
 				STRING_IN_DOUBLE_QUOTES		= /"				(?= ((?:[^"\\\r\n]+|\\.)*)   )\1	"/,
 				STRING_IN_SINGLE_QUOTES		= /'				(?= ((?:[^'\\\r\n]+|\\.)*)   )\1	'/,
 				STRING_IN_BACKTICK_QUOTES	= /`				(?= ((?:[^`\\]+    |\\.)*)	 )\1	`/,		//ECMA6+
@@ -176,6 +224,7 @@ function AB(str) {
 		this.toCurrency = function() {
 			executeStack();
 		}
+		
 	};
 	return new AB(str);
 }

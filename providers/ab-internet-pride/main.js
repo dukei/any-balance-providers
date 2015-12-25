@@ -36,7 +36,7 @@ function main() {
 	var result = {success: true};
 	getParam(html, result, 'TV', /Телевидение<\/td>*?\s*<td[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'Phone', /Телефония<\/td>*?\s*<td[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'ChekinAccount', /Расчетный<\/td>*?\s*<td[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'CheckinAccount', /Расчетный<\/td>*?\s*<td[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'Internet', /Интернет<\/td>*?\s*<td[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'Hotspot', /Хотспот<\/td>*?\s*<td[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'PhonePC', /Телефония на ПК<\/td>*?\s*<td[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseBalance);

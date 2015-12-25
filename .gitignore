@@ -5,6 +5,6 @@ provider.zip
 packsend.bat
 debug
 /nbproject/private/
-/nbproject
+*nbproject
 !extra/development/ab-nadapter-typical-provider/*-anybalance.html
 !extra/development/ab-nadapter-typical-provider/_history.bat

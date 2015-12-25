@@ -39,7 +39,7 @@ function AB(str) {
 				ANY_WITH_EXCEPTIONS			= /(?= ([^\{\}\[\]"'`\/]+) )\1/,
 				STRING_IN_DOUBLE_QUOTES		= /"				(?= ((?:[^"\\\r\n]+|\\.)*)   )\1	"/,
 				STRING_IN_SINGLE_QUOTES		= /'				(?= ((?:[^'\\\r\n]+|\\.)*)   )\1	'/,
-				STRING_IN_BACKTICK_QUOTES	= /`				(?= ((?:[^`\\]+    |\\.)*)	  )\1	`/,		//ECMA6+
+				STRING_IN_BACKTICK_QUOTES	= /`				(?= ((?:[^`\\]+    |\\.)*)	 )\1	`/,		//ECMA6+
 				REGEXP_INLINE				= /\/	(?![\*\/])	(?= ((?:[^\/\\\r\n]+|\\[^\r\n])+) )\1	\/[gimy]{0,4}/,
 				COMMENT_MULTILINE			= /\/\*				.*?								\*\//,
 				COMMENT_SINGLELINE			= /\/\/				(?= ([^\r\n]*) )\1						/,
@@ -62,9 +62,10 @@ function AB(str) {
 			});
 			*/
 			return str.matchRecursive(ALL, {open: 1, close: 2, parts: true});
+			//return str.matchRecursive({open: OPEN, close: CLOSE, inner: INNER}, 'xs' + (isGlobal ? 'g' : ''), false);
 		}
 		
-		//Публичные методы
+		//Публичные методы. Задают правила обработки и выстраивают их в цепочку
 		
 		/**
 		 * Фильтрует содержимое
@@ -85,7 +86,6 @@ function AB(str) {
 					throw new AnyBalance.Error('Unknown type of input');
 				
 				AnyBalance.trace('find called from stack (processed): "' + input + '"');
-
 			}.bind(this, input));
 			return this;
 		}
@@ -95,13 +95,8 @@ function AB(str) {
 			return this;
 		}
 		
-		// Функции устанавливающие значение в result
+		// Публичные методы. Делают обработку (при необходимости) по цепочке правил и возвращают значение.
 		// https://github.com/dukei/any-balance-providers/wiki/Manifest#counter
-		
-		this.toText = function () {
-			AnyBalance.trace('toText');
-			executeStack();
-		}
 
 		this.toNumeric = function () {
 			AnyBalance.trace('toNumeric');
@@ -109,6 +104,24 @@ function AB(str) {
 
 			var ret = parseBalance(_any);
 			return ret;
+		}
+		
+		this.toText = function () {
+			AnyBalance.trace('toText');
+			executeStack();
+		}
+		
+		this.toHtml = function () {
+			AnyBalance.trace('toText');
+			executeStack();
+		}
+
+		this.toTimeInterval = function() {
+			executeStack();
+		}
+
+		this.toTime = function() {
+			executeStack();
 		}
 	};
 	return new AB(str);

@@ -1,5 +1,6 @@
 /*!
  * Набор полезных методов, дополняющих объект String
+ * Библиотека зависит от XRegExp
  * 
  * @author	Mukhtarov Rinat <rin-nas@ya.ru>
  */
@@ -7,7 +8,10 @@
 (function () {
 	"use strict";
 
-	//HTML special chars table
+	/**
+	 * HTML special chars table
+	 * @var  Object
+	 */
 	String.HTML_SPECIAL_CHARS_TABLE = {
 		quot : 0x0022,  //"\x22" ["] &#34; quotation mark = APL quote
 		amp  : 0x0026,  //"\x26" [&] &#38; ampersand
@@ -20,7 +24,7 @@
 	/**
 	 * HTML entity table
 	 * @link http://www.fileformat.info/format/w3c/entitytest.htm?sort=Unicode%20Character  HTML Entity Browser Test Page
-	 * @var  array
+	 * @var  Object
 	 */
 	String.HTML_ENTITY_TABLE = {
 		//HTML special chars table
@@ -406,7 +410,7 @@
 	 * @link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/match
 	 * @param {RegExp} pattern	Регулярное выражение должно быть сконструировано с группой с двумя или более альтернативами. Формат:
 	 *							`(OpenPattern)|(ClosePattern)`
-	 *							`(OpenPattern)|(ClosePattern)|OuterPattern|InnerPattern|...`
+	 *							`(OpenPattern)|(ClosePattern)|InnerPattern|...`
 	 *							Иначе возвращается строка (если совпадение найдено) или Null (если совпадение не найдено).
 	 * @param {Object} options	Объект с опциями. Пример: `{open: 1, close: 2, parts: true}`
 	 *							'open' и 'close' -- номера карманов для открывающего и закрывающего совпадений для регулярного выражения 

@@ -3,11 +3,8 @@ var g_headers = {
 	'Accept-Encoding':'gzip, deflate, sdch',
 	'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
 	'Connection':'keep-alive',
-	'Host':'evacosmetics.ru',
-	'Upgrade-Insecure-Requests':1,
 	'User-Agent':'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/46.0.2490.86 Safari/537.36'
 };
-
 
 function main(){
 	var prefs = AnyBalance.getPreferences();
@@ -17,14 +14,12 @@ function main(){
 	checkEmpty(prefs.cardnum, 'Введите номер карты!');
 	checkEmpty(prefs.cardpin, 'Введите пин!');
 
-
 	var html = AnyBalance.requestGet(baseurl, g_headers);
 
 	if(!html || AnyBalance.getLastStatusCode() > 400){
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
 	}
-
 
 	html = AnyBalance.requestPost(baseurl + '/orangecard/', {cardnum: prefs.cardnum, cardpin: prefs.cardpin}, addHeaders({
 		Origin: baseurl,
@@ -49,11 +44,9 @@ function main(){
 		throw new AnyBalance.Error("Сервер вернул не верные данные");
 	}
 
-
 	var allBonus = json.buyer.activeBalance*1+json.buyer.inactiveBalance*1,
 		activeBonus = json.buyer.activeBalance*1,
 		inactiveBonus = json.buyer.inactiveBalance*1;
-
 
 	html = AnyBalance.requestGet(baseurl + '/!processing/bonusburn.php');
 	json = getJson(html);
@@ -61,7 +54,6 @@ function main(){
 	// вывод массива сгораемых бонусов,
 	// чтоб при проблемах с ними было понятно, что с ними делать
 	AnyBalance.trace(JSON.stringify(json));
-
 
 	var result = { success: true };
 

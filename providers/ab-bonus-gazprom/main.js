@@ -61,8 +61,8 @@ function main() {
 
 	html = AnyBalance.requestGet(baseurl + 'profile-online/main/');
 
-	if(/newpass/i.test(AnyBalance.getLastUrl())){
-		throw new AnyBalance.Error('Газпромбонус просит сменить пароль. Пожалуйста, зайдите в личный кабинет через браузер и смените пароль.');
+	if(/twopass/i.test(html)){
+		throw new AnyBalance.Error('Газпромбонус просит сменить пароль. Пожалуйста, зайдите в личный кабинет через браузер и смените пароль.', null, true);
 	}
 
 	AnyBalance.trace('Start parsing...');

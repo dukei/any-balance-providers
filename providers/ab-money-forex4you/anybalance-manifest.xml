@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="3">ab-money-forex4you</id>
+	<id version="4">ab-money-forex4you</id>
 	<api flags="no_browser"/>
 	<name>Forex4you</name>
 	<description html="true"><![CDATA[
@@ -21,6 +21,7 @@
 		<counter id="currency" name="Валюта" type="text"/>
 		<counter id="account" name="Торговый счет" type="text"/>
 		<counter id="arm" name="Плечо" type="text"/>
+		<counter id="server" name="Сервер" type="text"/>
 		<counter id="fio" name="Имя" type="text"/>
 	</counters>
 	<keywords></keywords>

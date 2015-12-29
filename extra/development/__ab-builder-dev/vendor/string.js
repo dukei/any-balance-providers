@@ -2,7 +2,9 @@
  * Набор полезных методов, дополняющих объект String
  * Библиотека зависит от XRegExp
  * 
- * @author	Mukhtarov Rinat <rin-nas@ya.ru>
+ * @licence	http://creativecommons.org/licenses/by-sa/4.0/
+ * @author	Nasibullin Rinat <rin-nas@ya.ru>
+ * @version	1.0
  */
 
 (function () {
@@ -289,27 +291,33 @@
 		diams   : 0x2666,  //"\xe2\x99\xa6" [♦] black diamond suit
 	};
 	
-	//https://mothereff.in/html-entities
-	String.prototype.htmlEntityDecode = function (/*bool*/ strict /*= true*/) {
+	/**
+	 * HTML Entity Decode
+	 * @param	{bool}	[strict=true]
+	 * @returns {string}
+	 * @link https://mothereff.in/html-entities
+	 */
+	String.prototype.htmlEntityDecode = function (strict) {
 
 		if (! arguments.length) strict = true;
-
+		
 		//HTML entities, examples: &gt; &Ouml; &#x02DC; &#34;
-		var HTML_ENTITY_RE = strict	? '&(	[a-zA-Z][a-zA-Z\\d]+		\n\
-										|	\\# (?:	\\d{1,5}			\n\
-												|	x[\\da-fA-F]{2,4}	\n\
-												)						\n\
-										)							#1  \n\
+		//We use atomic group (trick with lookahead, capturing group and link after) to speed improve, significantly reduce backtracking!
+		var HTML_ENTITY_RE = strict	? '&(	(?= ([a-zA-Z][a-zA-Z\\d]+) )\\2	\n\
+										|	\\# (?:	\\d{1,5}				\n\
+												|	x[\\da-fA-F]{2,4}		\n\
+												)							\n\
+										)									\n\
 									   ;'
 									//http://stackoverflow.com/questions/15532252/why-is-reg-being-rendered-as-without-the-bounding-semicolon
-									: '&(	[a-zA-Z][a-zA-Z\\d]+  (?!=)	\n\
-										|	\\# (?:	\\d{1,5}			\n\
-												|	x[\\da-fA-F]{2,4}	\n\
-												)						\n\
-										)							#1  \n\
+									: '&(	(?= ([a-zA-Z][a-zA-Z\\d]+) )\\2  (?!=)	\n\
+										|	\\# (?:	\\d{1,5}						\n\
+												|	x[\\da-fA-F]{2,4}				\n\
+												)									\n\
+										)											\n\
 									   ;?';
 		return this.replace(
-			new XRegExp(HTML_ENTITY_RE, 'gx'),
+			new XRegExp(HTML_ENTITY_RE, 'xsg'),
 			function (str, key) {
 				if (key[0] !== '#') {
 					if (String.HTML_ENTITY_TABLE.hasOwnProperty(key))
@@ -323,18 +331,20 @@
 	};
 	
 	/**
-	 * Вырезает все теги из HTML.
-	 * Гораздо умнее, чем str.replace(/<[^>]*>/, '')
+	 * Вырезает все теги из HTML
+	 * Гораздо умнее, чем str.replace(/<[^>]*>/g, '')
 	 * Корректно обрабатывается "грязный" html: 
 	 *		* в тексте могут втречаться конструкции типа "a < b > c"
-	 *		* в значениях атрибутов тэгов могут встречаться символы < >
+	 *		* в значениях атрибутов тегов могут встречаться символы < >
+	 * Вырезает некоторые парные теги вместе с содержимым
+	 * Допускает, что некоторые парные теги могут быть не закрыты
 	 * Старается сохранить форматирование
 	 * 
-	 * @returns {String.prototype.htmlToText.str|String@call;replace}
+	 * @returns {string}
 	 */
 	String.prototype.htmlToText = function () {
 		
-		var HTML_BLOCK_TAGS = [
+		var BLOCK_TAGS = [
 			//Paragraph boundaries are inserted at every block-level HTML tag. Namely, those are (as taken from HTML 4 standard)
 			'address', 'blockquote', 'caption', 'center', 'dd', 'div', 'dl', 'dt', 'h[1-6]', 'hr', 'li', 'menu', 'ol', 'p', 'pre', 'table', 'tbody', 'td', 'tfoot', 'th', 'thead', 'tr', 'ul',
 			//HTML5
@@ -343,45 +353,45 @@
 			'form', 'title', 'br'
 		].join('|');
 
-		var HTML_PAIR_TAGS_WITH_CONTENT = [
+		var PAIR_TAGS_WITH_CONTENT = [
 			'script', 'style', 'map', 'iframe', 'frameset', 'object', 'applet', 'comment', 'button', 'textarea', 'select'
 		].join('|');
 
 		//fast short implementation
-		var HTML_ATTR_RE = '(?:						\n\
-									[^>"\']+		\n\
-								|	"   [^"]*    "	\n\
-								|	\'  [^\']*  \'	\n\
-							)*';
+		var ATTR = '(?:						\n\
+							[^>"\']+		\n\
+						|	"   [^"]*    "	\n\
+						|	\'  [^\']*  \'	\n\
+					)*';
 		//https://regex101.com/#pcre
-		var HTML_TAG_RE = '(?:															\n\
-							#pair tags with content:									\n\
-							<	(?=[a-z])				#speed improve optimization		\n\
-								(' + HTML_PAIR_TAGS_WITH_CONTENT + ')\\b	#1			\n\
-								' + HTML_ATTR_RE + '									\n\
-							>															\n\
-								.*?														\n\
-							< (?!script\\b)												\n\
-								/?														\n\
-								\\1' + HTML_ATTR_RE + '									\n\
-							>															\n\
-																					\n\
-							#opened tags:												\n\
-						|	<	(?=[a-z])												\n\
-								(?!(?:' + HTML_PAIR_TAGS_WITH_CONTENT + ')\\b)			\n\
-								' + HTML_ATTR_RE + '									\n\
-							>															\n\
-																					\n\
-						|	</[a-z]' + HTML_ATTR_RE + '>	#closed tags		\n\
-						|	<![a-z]' + HTML_ATTR_RE + '>	#<!DOCTYPE ...>		\n\
-						|	<!\\[CDATA\\[  .*?  \\]\\]>		#CDATA				\n\
-						|	<!--  .*?   -->					#comments			\n\
-						|	<\\?  .*?  \\?>					#instructions part1 (PHP, Perl, ASP)	\n\
-						|	<%	  .*?    %>					#instructions part2 (PHP, Perl, ASP)	\n\
-						)';
-		var htmlBlockTagsRe = RegExp('^<('+ HTML_BLOCK_TAGS + ')\\b', 'i');
+		var ALL = '(?:														\n\
+						#pair tags with content:							\n\
+						<	(?=[a-z])		#speed improve optimization		\n\
+							(' + PAIR_TAGS_WITH_CONTENT + ')\\b	#1			\n\
+							' + ATTR + '									\n\
+						>													\n\
+							.*?												\n\
+						< (?!script\\b)										\n\
+							/?												\n\
+							\\1\\b' + ATTR + '								\n\
+						>													\n\
+																			\n\
+						#opened tags:									\n\
+					|	<	(?=[a-z])									\n\
+							(?!(?:' + PAIR_TAGS_WITH_CONTENT + ')\\b)	\n\
+							' + ATTR + '								\n\
+						>												\n\
+																		\n\
+					|	</[a-z]' + ATTR + '>	#closed tags		\n\
+					|	<![a-z]' + ATTR + '>	#<!DOCTYPE ...>		\n\
+					|	<!\\[CDATA\\[  .*?  \\]\\]>		#CDATA				\n\
+					|	<!--  .*?   -->					#comments			\n\
+					|	<\\?  .*?  \\?>					#instructions part1 (PHP, Perl, ASP, JSP)	\n\
+					|	<%	  .*?    %>					#instructions part2 (PHP, Perl, ASP, JSP)	\n\
+					)';
+		var htmlBlockTagsRe = RegExp('^<('+ BLOCK_TAGS + ')\\b', 'i');
 		var str = this.replace(
-			XRegExp(HTML_TAG_RE, 'xsig'),
+			XRegExp(ALL, 'xsig'),
 			function (str, entry) {
 				if (str.search(htmlBlockTagsRe) > -1) return '\n';
 				return '';
@@ -411,12 +421,12 @@
 	 * @param {RegExp} pattern	Регулярное выражение должно быть сконструировано с группой с двумя или более альтернативами. Формат:
 	 *							`(OpenPattern)|(ClosePattern)`
 	 *							`(OpenPattern)|(ClosePattern)|InnerPattern|...`
-	 *							Иначе возвращается строка (если совпадение найдено) или Null (если совпадение не найдено).
 	 * @param {Object} options	Объект с опциями. Пример: `{open: 1, close: 2, parts: true}`
-	 *							'open' и 'close' -- номера карманов для открывающего и закрывающего совпадений для регулярного выражения 
-	 *							'parts' -- если true, то вместо строк возвращает объекты 
-	 * @returns {Array|String|Null}	Если передан флаг 'g', то возвращается массив, иначе строка
-	 *								Если в опциях указан флаг 'parts' то вместо вместо строк возвращает объекты в формате:
+	 *							`open` и `close` -- номера карманов для открывающего и закрывающего совпадений для регулярного выражения 
+	 *							`parts` -- если true, то вместо строк возвращает объекты 
+	 * @returns {array|string|null}	Если в регулярное выражение передан флаг `g`, то возвратит массив строк или пустое множество, если ничего не найдено
+	 *								Если в регулярное выражение НЕ передан флаг `g`, то возвратит строку или `null`, если ничего не найдено
+	 *								Если в опциях указан флаг `parts` то вместо вместо строк возвращает объекты в формате:
 	 *								```
 	 *								{
 	 *									open: "открывающее_совпадение",

@@ -58,7 +58,7 @@ function main(){
 				counter_name = 'min_left_city'; // Минуты на город
 			
 			if(counter_name && !/unlim/i.test((counter)))
-				getParam(counter, result, counter_name, /(\d+(:\d+)?)/i, replaceTagsAndSpaces, parseMinutes);
+				getParam(counter, result, counter_name, null, [/<div[^>]+counter-note[\s\S]*?<\/div>/ig, '', replaceTagsAndSpaces], parseMinutes);
 		} else if(/[МГКMGK][бb]/i.test(units)) {
 			// трафик
 			if(/с 08/i.test(counter))

@@ -48,22 +48,23 @@ function main() {
 	params.login = prefs.login;
 	params.password = prefs.password;
 	
-	var html = AnyBalance.requestPost(baseurl + 'profile/login/', params);
-	AnyBalance.trace('После логина мы оказались на ' + AnyBalance.getLastUrl());
-	if(/newpass/i.test(AnyBalance.getLastUrl())){
-		throw new AnyBalance.Error('Газпромбонус просит сменить пароль. Пожалуйста, зайдите в личный кабинет через браузер и смените пароль.');
-	}
-	if(/pass=false/i.test(AnyBalance.getLastUrl())){
-		throw new AnyBalance.Error('Неверный пароль. Пожалуйста, убедитесь, что вы правильно ввели пароль, и попробуйте ещё раз.');
-	}
-	if (!/Персональные данные/.exec(html)){
-		var error = getParam(html.replace(/<!--[\s\S]*?-->/ig, ''), null, null, /<ul[^>]+class="form-errors"[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
-		if(error)
-			throw new AnyBalance.Error(error, null, /Неверные номер карты или пароль/i.test(error));
-		AnyBalance.trace('Что-то не то, возможно проблемы с сайтом');
+	var html = AnyBalance.requestPost(baseurl + 'oneLogin/ru/', params);
+	var json = getJson(html);
+	if(json.action != 'login_ok'){
+		if(json.mess)
+			throw new AnyBalance.Error(json.mess, null, /неверный номер карты/i.test(json.mess));
+	    AnyBalance.trace(html);
 		throw new AnyBalance.Error ('Не удаётся зайти в личный кабинет. Возможно, неправильный логин, пароль или сайт изменен.');
-	};
+	}
+
 	AnyBalance.trace('Authorization was successful');
+
+	html = AnyBalance.requestGet(baseurl + 'profile-online/main/');
+
+	if(/twopass/i.test(html)){
+		throw new AnyBalance.Error('Газпромбонус просит сменить пароль. Пожалуйста, зайдите в личный кабинет через браузер и смените пароль.', null, true);
+	}
+
 	AnyBalance.trace('Start parsing...');
 	
 	var result = {success: true};

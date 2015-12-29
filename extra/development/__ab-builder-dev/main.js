@@ -110,9 +110,11 @@ var content3 = '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" >
 </body>\
 </html>';
 
-var content5 = 'var super = +function ()	\n\
+var content5 = 'var super = 	\n\
 			{						\n\
+				tag: "<a href=&quot;http://krawlly.com/?a=1&b=2&amp;c=3&quot; title=Ссылка&nbsp;1>",	\n\
 				\/* \/{} \\			\n\
+				multiline coment	\n\
 				*\/					\n\
 				"i": 1,				\n\
 				// \/{}	\\	/*comment*/	\n\
@@ -121,7 +123,7 @@ var content5 = 'var super = +function ()	\n\
 				s2: \'_{}} []] \\\' \/\/   /*no-comment*/  \',	\n\
 				s3: `_{}} []] \\`  \/\/   /*no-comment*/   `,	\n\
 				s4: "Left \\\n Right",		\n\
-				//f1 : func()			\n\
+				f : (function(a, b){return someFunc(a + b)}),	\n\
 				r: /[\\/regexp\\n\\\d]{1,}/gi,	\n\
 				a: [				\n\
 					{ff: 2.2},		\n\
@@ -150,24 +152,8 @@ function main() {
     //для теста http://support.anybalance.ru/scp/tickets.php?id=4648
     //для теста http://bananawars.ru/index.php 
 
-
-	function ResultContainer(result) {
-		return function(param) {
-			return function (resultFunc) {
-				if (AnyBalance.isAvailable(param))
-					result[param] = resultFunc();
-			}
-		}.bind(this, result);
-	}
-	var rc = new ResultContainer(result)
-//	function rc(param) {
-//		return function (resultFunc) {
-//			if (AnyBalance.isAvailable(param))
-//				result[param] = resultFunc();
-//		}
-//	}
-	
     var result = {success: true};
+	//AB.setResult({success: true});
 	
 	//получаем ошибки: 
     AB(content5)
@@ -183,13 +169,18 @@ function main() {
 
     /*
 	//счётчики, вариант 1
-
+	
     html = AB(html).find("h3:contains(Характеристики) + table").toText();
-    AB(html).find(/Уровень:\s+(\d+)/i).toNumeric(rc("level1"))		//получаем последний нумерованный карман (если карманов нет, то получаем всё совпадение); делаем приведение типа данных к целому числу
-    AB(html).find(/(Уровень):\s+(\d+)/i, 2).toNumeric(result, 'level2')	//получаем и указываем нумерованный карман явно; делаем приведение типа данных к числу с плавающей запятой
+    AB(html).find(/Уровень:\s+(\d+)/i).toNumeric("level1")		//получаем последний нумерованный карман (если карманов нет, то получаем всё совпадение); делаем приведение типа данных к целому числу
+    AB(html).find(/(Уровень):\s+(\d+)/i, 2).toNumeric('level2')	//получаем и указываем нумерованный карман явно; делаем приведение типа данных к числу с плавающей запятой
 
     var json = {'k': 'v'};
     AB(json).find('');
+	
+	result.cards = [];
+	var card = {};
+	processCard(html, card);
+	result.cards.push(card);
 
     //счётчики, вариант 2
     AB(html).find("span:contains(Уровень) + span").htmlToText().toNumeric(result, 'level');

@@ -75,7 +75,7 @@ function main(){
     if(AnyBalance.isAvailable('cardnum', 'phone', 'userName')){
         html = AnyBalance.requestGet(baseurl + 'personal/club/form/', g_headers);
 
-        getParam(html, result, 'cardnum', /Карта №([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
+        getParam(html, result, 'cardnum', /Карта №([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
     
         var aggragate_join_space = create_aggregate_join(' ');
 

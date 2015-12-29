@@ -8,10 +8,12 @@ var g_headers = {
 	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
 	'Connection': 'keep-alive',
 	'Origin': 'https://i.bankuralsib.ru',
-	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/45.0.2454.101 Safari/537.36',
+	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/47.0.2526.106 Safari/537.36',
 };
 
-var baseurl = 'https://i.bankuralsib.ru/';
+var domain = 'i.bankuralsib.ru';
+var baseurl = 'https://' + domain + '/';
+var g_mainpageurl;
 
 function login(prefs) {
 	checkEmpty(prefs.login, 'Введите логин!');
@@ -22,86 +24,107 @@ function login(prefs) {
 		cookiePolicy: 'netscape'
 	});
 	
-	var html = AnyBalance.requestGet(baseurl + '', g_headers);
-	if(/securemsg/i.test(html)){
-		html = new WellsFargo(AnyBalance.getLastUrl()).executeScript(html);
-	}
-	
-    var authkey = getAuthKey(html);
-	var rsa_N = getRsaN(html);
-	var rsa_E = getRsaE(html);
-	var password = prefs.password;
-	var passwordMD5 = '';
-	var p_instance = getP_instance(html);
-	
-    if (typeof(CryptoJS) != 'undefined' && authkey) {
-    	passwordMD5 = CryptoJS.MD5(password).toString(CryptoJS.enc.Hex).substr(0, 30);
-    	passwordMD5 = ':' + CryptoJS.MD5(authkey + ':' + passwordMD5).toString(CryptoJS.enc.Hex);
-    }
-    password = CryptoJS.SHA1(password).toString(CryptoJS.enc.Hex);
-    password = CryptoJS.SHA1(authkey + ':' + password).toString(CryptoJS.enc.Hex);
-	
-    if (rsa_N && rsa_E && typeof(RSAKey) != undefined) {
-    	var rsa = new RSAKey();
-    	rsa.setPublic(rsa_N, rsa_E);
-    	authkey = authkey + ':' + rsa.encrypt(password + passwordMD5).toLowerCase();
-    	var l = password.length;
-    	password = '';
-    	for (var i = 0; i < l; i++)
-			password += '*';
-    }
-	html = AnyBalance.requestPost(baseurl + 'wwv_flow.show', {
-		p_request: 'APPLICATION_PROCESS=AUTHENTICATE',
-		p_flow_id: getFlowID(html),
-		p_flow_step_id: getFlowStepID(html),
-		p_instance: p_instance,
-		x01: 'AUTH#PASSWORD',
-		x02: prefs.login,
-		x03: password,
-		x04: authkey,
-		x05: 'N',
-		x06: '4' // может понадобится переделать
-	}, addHeaders({Referer: baseurl}));
-	
-    if (!/Авторизация успешна/i.test(html)) {
-    	var error = sumParam(html, null, null, /"err"[^"]+"([^"]+)/ig, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
-    	if (error) 
-			throw new AnyBalance.Error(error, null, /Неверный логин или пароль|неверно указано имя входа/i.test(error));
+	if(!g_mainpageurl){
+		var html = AnyBalance.requestGet(baseurl, g_headers);
+		html = handleBobcmn(AnyBalance.getLastUrl(), html);
 		
-		if(/истёк срок действия пароля/i.test(html)) 
-			throw new AnyBalance.Error('Истёк срок действия пароля. Смените пароль через браузер, а затем введите его в настройки провайдера.', null, true);
+        var authkey = getAuthKey(html);
+		var rsa_N = getRsaN(html);
+		var rsa_E = getRsaE(html);
+		var password = prefs.password;
+		var passwordMD5 = '';
+		var p_instance = getP_instance(html);
 		
-    	AnyBalance.trace(html);
-    	throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
-    }
-	
-	var loginVar = getParam(html, null, null, /afterLogin\(([^)]+)/i);
-	if(!loginVar)
-		throw new AnyBalance.Error('Не удалось найти ссылку на страницу с данными, сайт изменен?');
-	
-	var url = baseurl + 'f?p=10:MAIN:' + loginVar;
-	html = AnyBalance.requestGet(url, g_headers);
-	
-	if(/Необходимо актуализировать e-mail/i.test(html)) {
-		AnyBalance.trace('Необходимо актуализировать e-mail, ок, сделаем...');
-
+        if (typeof(CryptoJS) != 'undefined' && authkey) {
+        	passwordMD5 = CryptoJS.MD5(password).toString(CryptoJS.enc.Hex).substr(0, 30);
+        	passwordMD5 = ':' + CryptoJS.MD5(authkey + ':' + passwordMD5).toString(CryptoJS.enc.Hex);
+        }
+        password = CryptoJS.SHA1(password).toString(CryptoJS.enc.Hex);
+        password = CryptoJS.SHA1(authkey + ':' + password).toString(CryptoJS.enc.Hex);
+		
+        if (rsa_N && rsa_E && typeof(RSAKey) != undefined) {
+        	var rsa = new RSAKey();
+        	rsa.setPublic(rsa_N, rsa_E);
+        	authkey = authkey + ':' + rsa.encrypt(password + passwordMD5).toLowerCase();
+        	var l = password.length;
+        	password = '';
+        	for (var i = 0; i < l; i++)
+				password += '*';
+        }
 		html = AnyBalance.requestPost(baseurl + 'wwv_flow.show', {
-			'p_request':'APPLICATION_PROCESS=confirmEmail',
-			'x01': getParam(html, null, null, /"profile-email"[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces),
-			'x02': 'null',
-			'x03': '#email-confirm-button',
-			'x04': '#profile-email',
-			'p_instance':getP_instance(html) || P_instance,
-			p_flow_id:getFlowID(html) || FlowID,
-			p_flow_step_id:getFlowStepID(html) || FlowStepID,		
-		}, addHeaders({Referer: url, 'X-Requested-With': 'XMLHttpRequest'}));
+			p_request: 'APPLICATION_PROCESS=AUTHENTICATE',
+			p_flow_id: getFlowID(html),
+			p_flow_step_id: getFlowStepID(html),
+			p_instance: p_instance,
+			x01: 'AUTH#PASSWORD',
+			x02: prefs.login,
+			x03: password,
+			x04: authkey,
+			x05: 'N',
+			x06: '4' // может понадобится переделать
+		}, addHeaders({Referer: baseurl}));
+		
+        if (!/Авторизация успешна/i.test(html)) {
+        	var error = sumParam(html, null, null, /"err"[^"]+"([^"]+)/ig, replaceTagsAndSpaces, null, aggregate_join);
+        	if (error) 
+				throw new AnyBalance.Error(error, null, /Неверный логин или пароль|неверно указано имя входа/i.test(error));
+			
+			if(/истёк срок действия пароля/i.test(html)) 
+				throw new AnyBalance.Error('Истёк срок действия пароля. Смените пароль через браузер, а затем введите его в настройки провайдера.', null, true);
+			
+        	AnyBalance.trace(html);
+        	throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
+        }
+		
+		var loginVar = getParam(html, null, null, /afterLogin\(([^)]+)/i);
+		if(!loginVar)
+			throw new AnyBalance.Error('Не удалось найти ссылку на страницу с данными, сайт изменен?');
+		
+		var url = baseurl + 'f?p=10:MAIN:' + loginVar;
+		html = AnyBalance.requestGet(url, g_headers);
+		
+		if(/Необходимо актуализировать e-mail/i.test(html)) {
+			AnyBalance.trace('Необходимо актуализировать e-mail, ок, сделаем...');
+	    
+			html = AnyBalance.requestPost(baseurl + 'wwv_flow.show', {
+				'p_request':'APPLICATION_PROCESS=confirmEmail',
+				'x01': getParam(html, null, null, /"profile-email"[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces),
+				'x02': 'null',
+				'x03': '#email-confirm-button',
+				'x04': '#profile-email',
+				'p_instance':getP_instance(html) || P_instance,
+				p_flow_id:getFlowID(html) || FlowID,
+				p_flow_step_id:getFlowStepID(html) || FlowStepID,		
+			}, addHeaders({Referer: url, 'X-Requested-With': 'XMLHttpRequest'}));
+		}
+
+		renewDB(html);
+
+		g_mainpageurl = url;
+		__setLoginSuccessful();
+	}else{
+		AnyBalance.trace('Должны быть уже залогинены, пытаемся войти');
 	}
-	
+	//Надо получить ещё раз данные, потому что там теперь заполнятся карты и счета
+	html = AnyBalance.requestGet(g_mainpageurl, g_headers);
+	/*
+	// Проверим, может нас бросили не на главную страницу, а нам надо начать с главной!
+	if(!/<title>[^<]*Главная[^<]*<\/title>/i.test(html)) {
+		AnyBalance.trace('Мы не на главной. Переходим на неё');
+		var href = getParam(html, null, null, /<a[^>]+href="([^"]+)"[\s\S]*?Портфель[^<]+<\/a>/i);
+		html = AnyBalance.requestGet(baseurl + href, g_headers);
+	}
+	*/
+	return html;
+}
+
+function renewDB(html){
 	// Теперь надо пнуть базу, чтобы обновилось все
 	var P_instance = getP_instance(html);
 	var FlowID = getFlowID(html);
 	var FlowStepID = getFlowStepID(html);
 	
+	var url = AnyBalance.getLastUrl();
 	var requests = ['AFTER_AUTH', 'APPLICATION_PROCESS=GET_MAIL_COUNT', 'APPLICATION_PROCESS=GET_CRM', 'APPLICATION_PROCESS=LoadPresale', ''];
 	
 	// Запросы посылаются в цикле :)
@@ -115,13 +138,6 @@ function login(prefs) {
 			p_flow_step_id:getFlowStepID(html) || FlowStepID,		
 		}, addHeaders({Referer: url, 'X-Requested-With': 'XMLHttpRequest'}));
 	}
-	// Проверим, может нас бросили не на главную страницу, а нам надо начать с главной!
-	if(!/<title>[^<]*Главная[^<]*<\/title>/i.test(html)) {
-		var href = getParam(html, null, null, /<a href="([^"]+)"[\s\S]*?Портфель[^<]+<\/a>/i);
-		html = AnyBalance.requestGet(baseurl + href, g_headers);
-	}
-	
-	return html;
 }
 
 function processProfile(html, result) {
@@ -200,89 +216,10 @@ function processCard(card, result) {
 		AnyBalance.trace('Не нашли ссылку на дополнительную информацию по счетам, возможно, сайт изменился?');
 	}
 	
-	processCardTransactions(card, html, baseurl + href, result);
+	if(AnyBalance.isAvailable('cards.transactions'))
+		processCardTransactions(card, html, baseurl + href, result);
 }
 
-function processCardTransactions(card, html, url, result) {
-	if(!AnyBalance.isAvailable('cards.transactions'))
-		return;
-	
-	// Похоже, что он всегда такой, т.к. со страницы никогда не приходит такое значение
-	var step = '99';
-	
-	// Старый вариант
-	// html = AnyBalance.requestPost(baseurl + 'wwv_flow.show', [
-		// ['p_request', 'STATEMENT'],
-		// ['p_instance', getP_instance(html)],
-		// ['p_flow_id', getFlowID(html)],
-		// ['p_flow_step_id', step],
-		// ['p_arg_names', 'P' + step + '_ID'],
-		// ['p_arg_values', result.__id],
-		// ['p_arg_names', 'P' + step + '_DATE_FROM'],
-		// ['p_arg_values', getFormattedDate(5)],
-		// ['p_arg_names', 'P' + step + '_DATE_TO'],
-		// ['p_arg_values', getFormattedDate()],
-		// // ['p_arg_names', 'P' + step + '_CURRENCY'],
-		// // ['p_arg_values', 'RUB'],
-		// ['p_arg_names', 'P' + step + '_OPER_TYPE'],
-		// ['p_arg_values', ''],		
-	// ], addHeaders({Referer: url, Accept: '*/*'}));
-	
-	// Попробуем новый
-	html = AnyBalance.requestPost(baseurl + 'wwv_flow.show', [
-		['p_request', 'getpaymentlist'],
-		['p_instance', getP_instance(html)],
-		['p_flow_id', getFlowID(html)],
-		['p_flow_step_id', step],
-		['p_arg_names', 'P' + step + '_ITEM_ID'],
-		['p_arg_values', result.__id],
-		['p_arg_names', 'P' + step + '_DATE_FROM'],
-		['p_arg_values', getFormattedDate(5)],
-		['p_arg_names', 'P' + step + '_DATE_TO'],
-		['p_arg_values', getFormattedDate()],
-		// ['p_arg_names', 'P' + step + '_CURRENCY'],
-		// ['p_arg_values', 'RUB'],
-		['p_arg_names', 'P' + step + '_OPER_TYPE'],
-		['p_arg_values', '0'],
-		['p_arg_names', 'P' + step + '_AUTH_HIDE_OR_SHOW'],
-		['p_arg_values', 'show'],
-	], addHeaders({Referer: url, Accept: '*/*'}));
-	
-	result.transactions = [];
-	
-	var printHref = getParam(html, null, null, /print[^>]*PopUp[^\(]*\(\'([^\']+)/i);
-	if(!printHref)
-		return;
-	
-	html = AnyBalance.requestGet(baseurl + printHref, g_headers);
-	
-    var colsTransactions = {
-        descr: {
-            re: /Сведения об операции/i,
-            result_func: html_entity_decode
-        },
-        date: {
-            re: /Дата операции|Дата и время/i,
-            result_func: parseDate
-        },
-        sum: {
-            re: /Сумма операции/i
-        },
-        currency: {
-            re: /Сумма операции/i,
-			result_func: parseCurrency
-        }
-    };
-
-    var table = getParam(html, null, null, /<table[^>]*class="[^>]*log[\s\S]*?<\/table>/i, [/&ndash;/g, '-']);
-    if(!table){
-        AnyBalance.trace(html);
-        AnyBalance.trace('Не найдена выписка по карте');
-        return;
-    }
-
-    processTable(table, result.transactions, 'cards.transactions.', colsTransactions);
-}
 ////////////////////////////////////////////////////////////////////////////////////////
 // Счета 
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -325,88 +262,8 @@ function processAccount(account, result) {
 		AnyBalance.trace('Не нашли ссылку на дополнительную информацию по счетам, возможно, сайт изменился?');
 	}
 
-	processAccountTransactions(account, html, baseurl + href, result);
-}
-
-function processAccountTransactions(account, html, url, result) {
-	if(!AnyBalance.isAvailable('accounts.transactions'))
-		return;
-	// Похоже, что он всегда такой, т.к. со страницы никогда не приходит такое значение
-	var step = '99';
-	
-	html = AnyBalance.requestPost(baseurl + 'wwv_flow.show', [
-		['p_request', 'STATEMENT'],
-		['p_instance', getP_instance(html)],
-		['p_flow_id', getFlowID(html)],
-		['p_flow_step_id', step],
-		['p_arg_names', 'P' + step + '_ID'],
-		['p_arg_values', result.__id],
-		['p_arg_names', 'P' + step + '_DATE_FROM'],
-		['p_arg_values', getFormattedDate(5)],
-		['p_arg_names', 'P' + step + '_DATE_TO'],
-		['p_arg_values', getFormattedDate()],
-		// ['p_arg_names', 'P' + step + '_CURRENCY'],
-		// ['p_arg_values', 'RUB'],
-		['p_arg_names', 'P' + step + '_OPER_TYPE'],
-		['p_arg_values', ''],		
-	], addHeaders({Referer: url, Accept: '*/*'}));
-	
-	result.transactions = [];
-	
-	var printHref = getParam(html, null, null, /print[^>]*html_PopUp\(\\'([^\\']+)/i);
-	if(!printHref)
-		return;
-	
-	html = AnyBalance.requestGet(baseurl + printHref, g_headers);
-	
-    var colsTransactions = {
-        descr: {
-            re: /Сведения об операции/i,
-            result_func: html_entity_decode
-        },		
-        date: {
-            re: /Дата операции/i,
-            result_func: parseDate
-        },		
-        sum: {
-            re: /Сумма операции/i
-        },
-        currency: {
-            re: /Сумма операции/i,
-			result_func: parseCurrency
-        }		
-    };
-
-    var table = getParam(html, null, null, /<table[^>]*class="[^>]*log[\s\S]*?<\/table>/i, [/&ndash;/g, '-']);
-    if(!table){
-        AnyBalance.trace(html);
-        AnyBalance.trace('Не найдена выписка по счету');
-        return;
-    }
-
-    processTable(table, result.transactions, 'accounts.transactions.', colsTransactions);
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-function getFormattedDate(yearCorr) {
-	var dt = new Date();
-	
-	var day = (dt.getDate() < 10 ? '0' + dt.getDate() : dt.getDate());
-	var month = ((dt.getMonth()+1) < 10 ? '0' + (dt.getMonth()+1) : dt.getMonth()+1);
-	var year = isset(yearCorr) ? dt.getFullYear() - yearCorr : dt.getFullYear();
-	
-	return day + '.' + month + '.' + year;
+	if(AnyBalance.isAvailable('accounts.transactions'))
+		processAccountTransactions(account, html, baseurl + href, result);
 }
 
 function parseCurrencyAndMy(cur) {

@@ -4,8 +4,8 @@
 	<api flags="no_browser"/>
 	<name>Калининград фарфор</name>
 	<description><![CDATA[
-    Предоставляет информацию о бонусах в магазине Калининград фарфор http://kaliningrad.farfor.ru/
-    Информацию берется из личного кабинета http://kaliningrad.farfor.ru/cabinet/
+    <p>Предоставляет информацию о балансе провайдера Калининград фарфор <a href="http://kaliningrad.farfor.ru/"></a></p>
+    <p>Информация берется из личного кабинета <a href="http://kaliningrad.farfor.ru/cabinet/"></a></p>
   ]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>

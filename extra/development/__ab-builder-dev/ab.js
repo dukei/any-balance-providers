@@ -5,43 +5,33 @@
 function AB(any) {
 	"use strict";
 
-	var AB = function (str) {
-		
-		//Приватные переменные
-		
-		/**
-		 * `string` -- хранит какой-либо текст (например, HTML или сериализованный JSON). 
-		 * `object` -- результат выполнения `JSON.parse()` или `eval()`
-		 * `null` -- если в результате выполнения `this.find()` ничего не нашлось
-		 * 
-		 * @type {string|object|null}
-		 */
-		var _any = str;
-		
-		/**
-		 * Массив функций для последовательного исполнения (с контекстом объекта AB)
-		 * 
-		 * @type {array}
-		 */
-		var _stack = [];
+	//Приватные переменные
 
+	/**
+	 * `string` -- хранит какой-либо текст (например, HTML или сериализованный JSON).
+	 * `number` -- хранит число (например, результат вычисления)
+	 * `object` -- результат выполнения `JSON.parse()` или `eval()`
+	 * `null`	-- если в результате выполнения `this.find()` ничего не нашлось или что-то сломалось
+	 * 
+	 * @type {string|number|object|null}
+	 */
+	var _any = any;
+
+	/**
+	 * Массив функций для последовательного исполнения (с контекстом объекта AB)
+	 * 
+	 * @type {array}
+	 */
+	var _stack = [];
 
 		//Приватные методы
 
-		function executeStack() {
-			_stack.forEach(function (fun) {
-				_any = _transformContent(_any, false);
-				console.log(_any);
-				fun();
-			});
-		}
-		
-		/**
+	var	/**
 		 * HTML detect
 		 * @param {string} str
 		 * @returns {number}	result of String.search()
 		 */
-		function _getHtmlIndexOf(str) {
+		_getHtmlIndexOf = function(str) {
 			/*
 			Fast and short implementation.
 			No needs to check closed tags, because they don't exist without opened tags
@@ -56,8 +46,8 @@ function AB(any) {
 				COMMENT = /<!-- .*? -->/,
 				ALL = XRegExp.union([OPENED_OR_DOCTYPE, CDATA, COMMENT], 'xs');
 			return str.search(ALL);
-		}
-		
+		},
+
 		/*
 		function _htmlEntityDecodeRecursive(any, strict) {
 			if ('string' === typeof any) return any.htmlEntityDecode(strict);
@@ -67,18 +57,18 @@ function AB(any) {
 		*/
 
 		/**
-		 * Детектирует и преобразовывает содержимое
+		 * Детектирует и преобразовывает содержимое, при необходимости
 		 * 
 		 * @param {string|number|object|null} any
 		 * @returns {string|number|object|null}
 		 */
-		function _transformContent(any, allowTransformType) {
+		_transformContent = function(any, allowTransformType) {
 			if ('string' !== typeof any) return any;
 			any = any.trim();
 
 			var htmlIndexOf = _getHtmlIndexOf(any);
 			if (htmlIndexOf === 0) return any; //это точно HTML, сразу катапультируемся
-			
+
 			//Если HTML не обнаружен и текст (который может быть JSON) оказался в атрибуте тега, необходимо декодировать HTML сущности
 			if (htmlIndexOf === -1) any = any.htmlEntityDecode(false);
 
@@ -106,7 +96,7 @@ function AB(any) {
 				}
 			}
 			return any;
-		};
+		},
 
 		/**
 		 * Ищет в коде JavaScript первый массив или объект и возвращет его.
@@ -118,7 +108,7 @@ function AB(any) {
 		 * @param {string} str
 		 * @returns {string|null}	Возвращает строку или `null`, если ничего не найдено
 		 */
-		function _getJsArrayOrObject(str) {
+		_getJsArrayOrObject = function(str) {
 			//http://hjson.org/
 			//https://regex101.com/#javascript
 			//http://blog.stevenlevithan.com/archives/match-innermost-html-element
@@ -149,42 +139,68 @@ function AB(any) {
 			} catch(e) {
 				return null;
 			}			
-		}
+		},
 		
+		executeStack = function() {
+			_stack.forEach(function(func) {
+				func();
+				console.log(_any);
+			});
+		};
+
+	return {
+		//_any : any,
+
 		//Публичные методы. Задают правила обработки и выстраивают их в цепочку
-		
+
 		/**
 		 * Фильтрует содержимое
 		 * 
-		 * @param {string|RegExp} input Для строки нужно передать CSS селектор
+		 * @param {string|RegExp} rule Для строки нужно передать CSS селектор
+		 * @param {object} options Для строки нужно передать CSS селектор
 		 * @returns AB
 		 * @link http://jsonselect.org/#tryit
 		 */
-		this.find = function (input) {
-			AnyBalance.trace('AB::find, input=' + input);
+		find: function(rule, options) {
+			//AnyBalance.trace('AB::find, input=' + rule);
 
-			_stack.push(function () {
-				if(typeof input == 'object' && input instanceof RegExp) {
-					AnyBalance.trace('input is RegExp');
-				} else if(typeof input == 'string') {
-					AnyBalance.trace('input is String');
-				} else 
-					throw new AnyBalance.Error('Unknown type of input');
+			//if (typeof rule === 'string' || (typeof rule === 'object' && rule instanceof RegExp)) {
+				_stack.push(function (rule, options) {
+					_any = _transformContent(_any, typeof rule === 'string');
+					if (typeof _any === 'string' && rule instanceof RegExp) {
+						if (typeof options === 'object') {
+							options.parts = true;
+							_any = _any.matchRecursive(rule, options);
+							_any = _any ? _any.inner : null;
+						}
+						else {
+							_any = XRegExp.exec(_any, rule);
+							if (typeof _any === 'object') {
+								if (typeof options === 'number' || typeof options === 'string') {
+									if (!(options in _any)) throw Error('Group ' + options + ' does not exist in regexp ' + rule);
+									_any = _any[options];
+								}
+								else _any = _any.pop();
+							}
+						}
+					}
+				}.bind(this, rule, options));
 				
-				AnyBalance.trace('find called from stack (processed): "' + input + '"');
-			}.bind(this, input));
-			return this;
-		}
+			//} 
+			//else throw TypeError('Unknown type of input');
 
+			return this;
+		},
+		
 		/**
 		 * 
 		 * @returns {AB}
 		 */
-		this.htmlToText = function () {
-			AnyBalance.trace('htmlToText');
+		htmlToText: function() {
+			//AnyBalance.trace('htmlToText');
 			return this;
-		}
-		
+		},
+
 		// Публичные методы. Делают обработку (при необходимости) по цепочке правил и возвращают значение.
 		// https://github.com/dukei/any-balance-providers/wiki/Manifest#counter
 
@@ -192,58 +208,57 @@ function AB(any) {
 		 * 
 		 * @returns {number}
 		 */
-		this.toNumeric = function () {
-			AnyBalance.trace('toNumeric');
+		toNumeric: function() {
+			//AnyBalance.trace('toNumeric');
 			executeStack();
 
 			var ret = parseBalance(_any);
 			return ret;
-		}
-		
+		},
+
 		/**
 		 * 
 		 * @returns {string}
 		 */
-		this.toText = function () {
-			AnyBalance.trace('toText');
+		toText: function() {
+			//AnyBalance.trace('toText');
 			executeStack();
-		}
-		
+		},
+
 		/**
 		 * 
 		 * @returns {string}
 		 */
-		this.toHtml = function () {
-			AnyBalance.trace('toText');
+		toHtml: function() {
+			//AnyBalance.trace('toText');
 			executeStack();
-		}
+		},
 
 		/**
 		 * 
 		 * @returns {number}
 		 */
-		this.toTimeInterval = function() {
+		toTimeInterval: function() {
 			executeStack();
-		}
+		},
 
 		/**
 		 * 
 		 * @returns {number}
 		 */
-		this.toTime = function() {
+		toTime: function() {
 			executeStack();
-		}
-		
+		},
+
 		/**
 		 * 
 		 * @returns {string}
 		 */
-		this.toCurrency = function() {
+		toCurrency: function() {
 			executeStack();
 		}
 		
-	};
-	return new AB(any);
+	}; //return
 }
 
 /*

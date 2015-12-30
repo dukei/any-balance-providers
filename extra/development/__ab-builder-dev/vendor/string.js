@@ -437,9 +437,21 @@
 	 * @throws {Error} if maximum depth will be reached
 	 */
 	String.prototype.matchRecursive = function(pattern, options) {
+		if (!(pattern instanceof RegExp)) throw TypeError('Function matchRecursive(), 1-nd parameter: a RegExp type expected, ' + (typeof options) + ' given!');
+		if (typeof options !== 'object')  throw TypeError('Function matchRecursive(), 2-nd parameter: an object type expected, ' + (typeof options) + ' given!');
+		var optProps = {
+			open  : 'number',
+			close : 'number',
+			parts : 'boolean'
+		};
+		for (var prop in optProps) {
+			if (typeof options[prop] !== optProps[prop]) throw TypeError('Function matchRecursive(), 2-nd parameter: a ' + optProps[prop] + ' type expected in "' + prop + '" property in object, ' + (typeof options[prop]) + ' given!');
+		}
+
 		var match, depth = 0, depthMax = 1000, item = 0, result = [], s, isOpen, isClose, global = pattern.global;
 		if (! global) pattern = RegExp(pattern.source, 'g' + (pattern.ignoreCase ? 'i' : '')
 															+ (pattern.multiline ? 'i' : ''));
+
 		while (match = pattern.exec(this)) {
 			isOpen  = (typeof match[options.open]  === 'string');
 			isClose = (typeof match[options.close] === 'string');

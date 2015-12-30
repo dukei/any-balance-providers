@@ -156,9 +156,10 @@ function main() {
 	//AB.setResult({success: true});
 	
 	//получаем ошибки: 
-    AB(content5)
+    AB(content3)
         //.find("table td:has(img[src$=error.gif]) + td")
-        .find(/\berror\.gif\b[\s\S]*?<td>([\s\S]*?)<\/td>/i, 1)
+		//.find(/\berror\.gif\b[\s\S]*?<td>([\s\S]*?)<\/td>/i, 1)
+        .find(XRegExp('<table border=1 >(?<table>.*?)<\/table>', 'si'), 'table')
         .toText() //htmlToText(); htmlEntityDecode(); выполняем trim(); делаем приведение типа данных к строке.
 
     /*

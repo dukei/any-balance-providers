@@ -1,7 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-money-wellsfargo</id>
 	<api flags="no_browser"/>
+	<id version="13">ab-money-wellsfargo</id>
+	<api flags=""/>
 	<name>WellsFargo (USA)</name>
 	<description html="true"><![CDATA[
 	<p>Gets info on WellsFargo accounts https://www.wellsfargo.com</p>
@@ -15,7 +16,7 @@
 		<js>library.js</js>
 		<js>extract.js</js>
 		<js>ofx.js</js>
-		<js>wellsfargo.js</js>
+		<js>bobcmn.js</js>
 		<js>nadapter.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>

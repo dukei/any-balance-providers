@@ -1,17 +1,20 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="4">ab-service-sape</id>
+	<api flags="no_browser"/>
+  <id version="5">ab-service-sape</id>
   <name>Sape (продвижение сайтов)</name>
   <description>
     Получает баланс для биржи ссылок Sape (http://www.sape.ru).
 
     Информация берется из личного кабинета https://auth.sape.ru
   </description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
+    <js>library.js</js>
     <js>main.js</js>
+  	<history>history.xml</history>
   </files>
   <counters>
     <counter id="balance" name="Баланс" units="р"/>

@@ -12,7 +12,7 @@ var g_headers = {
 
 function main () {
     var prefs = AnyBalance.getPreferences ();
-    var baseurl = 'http://malina.ru/';
+    var baseurl = 'https://malina.ru/';
 
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');	
@@ -27,7 +27,7 @@ function main () {
 		
 		var json = getJson(AnyBalance.requestGet(baseurl + 'captcha/refresh/?_=' + new Date().getTime(), addHeaders({'X-Requested-With': 'XMLHttpRequest'})));
 		AnyBalance.setOptions({forceCharset:'base64'});
-		var captcha = AnyBalance.requestGet(baseurl + 'captcha/image/' + json.key);
+		var captcha = AnyBalance.requestGet(joinUrl(baseurl, json.image_url), g_headers);
 		captchaa = AnyBalance.retrieveCode("Пожалуйста, введите код с картинки", captcha);
 		AnyBalance.setOptions({forceCharset:'utf-8'});
 		AnyBalance.trace('Капча получена: ' + captchaa);
@@ -78,13 +78,13 @@ function main () {
     var result = {success: true};
 	
 	getParam (html, result, 'balance', /"acc-points"(?:[^>]*>){2}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
-	getParam (html, result, 'accountNumber', /Номер счета(?:[^>]*>){2}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam (html, result, 'customer', /Владелец счета(?:[^>]*>){2}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam (html, result, 'status', /Статус счета(?:[^>]*>){2}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam (html, result, 'accountNumber', /Номер счета(?:[^>]*>){2}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+	getParam (html, result, 'customer', /Владелец счета(?:[^>]*>){2}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+	getParam (html, result, 'status', /Статус счета(?:[^>]*>){2}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
 	getParam (html, result, 'availableForPay', /Доступно к обмену на товары и услуги(?:[^>]*>){2}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
 	
     // Накоплено основных баллов
-    //getParam (html, result, 'mainPoints', /<th[^>]*>Владелец счета[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+    //getParam (html, result, 'mainPoints', /<th[^>]*>Владелец счета[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
     // Накоплено EXPRESS-баллов
     //getParam (html, result, 'expressPoints', $table, 'tr:contains("EXPRESS") td', parseBalance);
     // Израсходовано баллов

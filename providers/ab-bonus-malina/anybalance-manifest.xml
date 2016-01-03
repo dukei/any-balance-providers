@@ -1,10 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="2.0" version="13">ab-bonus-malina</id>
+	<id major_version="2.0" version="14">ab-bonus-malina</id>
 	<api flags="no_browser|captcha"/>
 	<name>Бонусы Малина</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о баллах на карте накопительной программы "Малина".</p><p>Информация берется с персональной страницы (http://malina.ru/login.php).</p>
+	<p>Предоставляет информацию о баллах на карте накопительной программы "Малина".</p><p>Информация берется с персональной страницы (https://malina.ru/login.php).</p>
 	]]></description>
 	<author>iReset &lt;ireset.ag@gmail.com&gt;</author>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>

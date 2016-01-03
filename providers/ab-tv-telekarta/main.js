@@ -20,11 +20,11 @@ function main(){
         card: prefs.login
     }, addHeaders({Referer: baseurl + 'index.php'}));
 	
-	var msg = getParam(html, null, null, /<div[^>]+id="msg"[^>]*>([\s\S]*?)<\/div>/i);
-	
-	if (!/<title>Дата окончания подписки<\/title>/i.test(html)) {
+	var msg = getElement(html, /<div[^>]+id="msg"[^>]*>/i);
+	var elements = getElements(msg, /<table[^>]+sublist_table[^>]*>/ig);
+	if (elements.length == 0) {
 		if (msg)
-			throw new AnyBalance.Error(msg, null, /Ошибка в номере карты/i.test(msg));
+			throw new AnyBalance.Error(replaceAll(msg, replaceTagsAndSpaces), null, /Ошибка в номере карты/i.test(msg));
 		
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось получить дату окончания подписки. Сайт изменен?');
@@ -32,16 +32,10 @@ function main(){
 	
     var result = {success: true};
     
-    getParam(msg, result, 'num', /^([\s\S]*?):/i,  replaceTagsAndSpaces, html_entity_decode);
-    getParam(msg, result, '__tariff', /^([\s\S]*?):/i,  replaceTagsAndSpaces, html_entity_decode);
-    getParam(msg, result, 'till', /:\s*<\/span>([^<]*)/i,  replaceTagsAndSpaces, parseDate);
-	
-    if(AnyBalance.isAvailable('till') && !isset(result.till)){
-        //Не удалось получить дату подписки.
-        if(!/нет активной подписки/i.test(msg))
-            throw new AnyBalance.Error(replaceAll(msg, replaceTagsAndSpaces));
-        result.till = 0; //Нет активной подписки. 
-    }
+    getParam(msg, result, 'num', /^([\s\S]*?):/i,  replaceTagsAndSpaces);
+    getParam(elements[elements.length-1], result, '__tariff', /<th[^>]*>\s*Наименование(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i,  replaceTagsAndSpaces);
+    getParam(elements[elements.length-1], result, 'status', /<th[^>]*>\s*Статус(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+    getParam(elements[elements.length-1], result, 'till', /<th[^>]*>\s*Статус(?:[\s\S]*?<td[^>]*>){2}[^<]* по([\s\S]*?)<\/td>/i,  replaceTagsAndSpaces, parseDateWord);
 
     AnyBalance.setResult(result);
 }

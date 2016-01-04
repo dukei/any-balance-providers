@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+    <id version="1">ab-internet-irknet</id>
+    <name>Иркнэт Телеком</name>
+    <description>
+        Предоставляет информацию о текущем балансе, дате и сумме следующего платежа и др. для пользователей интернет-провайдера "Иркнэт Телеком" (http://irknet.ru)
+    </description>
+    <author>Владимир Пахомчик &lt;vladimir@pahomchik.ru&gt;</author>
+    <files>
+        <icon>icon.png</icon> 
+        <preferences>preferences.xml</preferences>
+        <js>library.js</js>
+        <js>main.js</js>
+        <history>history.xml</history> 
+    </files>
+    <counters>
+        <counter id="balance" name="Баланс" units=" р"/>
+        <counter id="date" name="Дата следующего платежа" type="text"/>
+        <counter id="next_payment" name="Сумма к оплате" units=" р"/>
+        <counter id="plan" name="Тарифный план" type="text"/>
+        <counter id="ip" name="Ваш IP-адрес" type="text"/>
+    </counters>
+    <keywords></keywords>
+    <type>internet</type>
+    <country>ru</country>
+</provider>

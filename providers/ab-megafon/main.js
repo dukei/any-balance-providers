@@ -415,7 +415,7 @@ function getTrayXmlText(filial){
 
     if(/SCC-ROBOTS-ERROR/.test(info)){
       AnyBalance.trace("Server returned: " + info);
-      throw new AnyBalance.Error('Сервис гид временно находится на техобслуживании. Зайдите позже.');
+      throw new AnyBalance.Error('Сервис-Гид временно находится на техобслуживании. Зайдите позже.');
     }
 
     var matches;

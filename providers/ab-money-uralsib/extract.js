@@ -141,6 +141,9 @@ function renewDB(html){
 }
 
 function processProfile(html, result) {
+	if(!AnyBalance.isAvailable('info'))
+		return;
+
 	var href = getParam(html, null, null, /href="([^"]*PROFILE[^"]*)/i, replaceTagsAndSpaces);
 	if(!href) {
 		AnyBalance.trace('Не удалось найти ссылку на профиль пользователя');
@@ -165,40 +168,52 @@ function processProfile(html, result) {
 	getParam(html, p, 'profile.mail', /"profile-email"[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces);
 	getParam(html, p, 'profile.dateOfBirth', /"profile-birthday-date"[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseDate);
 	
-	result.profile = p;
+	result.info = p;
 	// getParam(html, result, 'profile.inn', //i, replaceTagsAndSpaces);
 }
 ////////////////////////////////////////////////////////////////////////////////////////
 // Карты
 ////////////////////////////////////////////////////////////////////////////////////////
 function processCards(html, result) {
-	var cards = getElements(html, /<div[^>]+class="product-item type-card"/ig);
+	if(!AnyBalance.isAvailable('cards'))
+		return;
+
+	html = AnyBalance.requestGet(baseurl + 'f?p=10:CARDS:' + getP_instance(html) + '::NO:::', g_headers);
+
+	var cardsGroups = getElements(html, /<ul[^>]+products-list[^>]*card[^>]*>/ig);
 	
-	AnyBalance.trace('Найдено карт: ' + cards.length);
+	AnyBalance.trace('Найдено групп карт: ' + cardsGroups.length);
 	result.cards = [];
-	
-	for(var i=0; i < cards.length; ++i) {
-		var title = getParam(cards[i], null, null, /\d{4}(?:[-\s][\dx]{4}){2}[-\s]\d{4}/i, replaceTagsAndSpaces);
-		var _id = getParam(cards[i], null, null, /acc_id="([^"]+)"/i, replaceTagsAndSpaces);
-		
-		var c = {__id: _id, __name: title};
-		
-		if(__shouldProcess('cards', c)){
-			processCard(cards[i], c);
+
+	for(var j=0; j < cardsGroups.length; ++j){
+	    var group = cardsGroups[j];
+	    var cards = getElements(group, /<div[^>]+class="desc"[^>]*>/ig);
+	    AnyBalance.trace('Найдено ' + cards.length + ' карт в группе');
+
+		for(var i=0; i < cards.length; ++i) {
+			var type = getParam(cards[i], null, null, /<h\d[^>]*>([\s\S]*?)<\/h\d>/i, replaceTagsAndSpaces);
+			var num = getParam(cards[i], null, null, /\d{4}(?:[-\s][\dx]{4}){2}[-\s]\d{4}/, replaceTagsAndSpaces);
+			var id = getParam(cards[i], null, null, /_ITEM_ID:([^:"]*)/i, replaceHtmlEntities);
+			
+			var c = {__id: id, __name: type + ' (' + num.substr(-4) + ')', num: num};
+			
+			if(__shouldProcess('cards', c)){
+				processCard(cards[i], cards[0], c);
+			}
+			
+			result.cards.push(c);
 		}
-		
-		result.cards.push(c);
 	}
 }
 
-function processCard(card, result) {
-	getParam(result.__name, result, 'cards.cardNumber');
-	getParam(card, result, 'cards.balance', /"(?:sum|quant)"(?:[^>]*>){1}([^<]+)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(card, result, ['cards.currency', 'cards.balance'], /"(?:sum|quant)"(?:[^>]*>){1}([^<]+)/i, replaceTagsAndSpaces, parseCurrencyAndMy);
+function processCard(card, mainCard, result) {
+	getParam(mainCard, result, 'cards.balance', /"(?:sum|quant)"(?:[^>]*>){1}([^<]+)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(mainCard, result, ['cards.currency', 'cards.balance'], /"(?:sum|quant)"(?:[^>]*>){1}([^<]+)/i, replaceTagsAndSpaces, parseCurrencyAndMy);
 	getParam(card, result, 'cards.till', /\d{4}[\s-x]{8,}\d{4}[^<]*?(\d{1,2}\/\d{1,2})/i, [replaceTagsAndSpaces, /(.*)/i, '01/$1'], parseDate);
+    getParam(card, result, 'cards.type', /<h\d[^>]*>([\s\S]*?)<\/h\d>/i, replaceTagsAndSpaces);
 
 	// Дополнительная инфа.
-	var href = getParam(card, null, null, /href="(f\?p=[^"]+)"/i);
+	var href = getParam(card, null, null, /href="(f\?p=[^"]+_ITEM_ID[^"]*)"/i);
 	if(href && isAvailable(['cards.limit', 'cards.blocked', 'cards.minpay', 'cards.total_debt', 'cards.minpay', 'cards.minpay', 'cards.gracepay', 'cards.minpay_till', 'cards.gracepay_till'])) {
 		var html = AnyBalance.requestGet(baseurl + href, g_headers);
 		
@@ -206,7 +221,6 @@ function processCard(card, result) {
 		getParam(html, result, 'cards.blocked', /Заблокировано по операциям с картой(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 		getParam(html, result, 'cards.minpay', /cумма минимального платежа(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 		getParam(html, result, 'cards.total_debt', /общая сумма задолженности(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-		getParam(html, result, 'cards.minpay', /cумма минимального платежа(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 		getParam(html, result, 'cards.gracepay', /для выполнения условий льготного периода кредитования(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 		
 		var replaceTill = [replaceTagsAndSpaces, /[\s\S]*?(\d+\.\d+\.\d+$)/i, '$1'];
@@ -224,6 +238,9 @@ function processCard(card, result) {
 // Счета 
 ////////////////////////////////////////////////////////////////////////////////////////
 function processAccounts(html, result) {
+	if(!AnyBalance.isAvailable('accounts'))
+		return;
+
 	var accounts = getElements(html, /<div[^>]+class="product-item type-account"/ig);
 	
 	AnyBalance.trace('Найдено счетов: ' + accounts.length);

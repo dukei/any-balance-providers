@@ -245,7 +245,7 @@ function processAccounts(html, result) {
 
 function processAccount(account, result) {
 	getParam(account, result, 'accounts.total', /class="quant"[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(account, result, ['accounts.currency', 'accounts.balance', 'accounts.total'], /class="quant"[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseCurrency);
+	getParam(account, result, ['accounts.currency', 'accounts.balance', 'accounts.total', 'accounts.blocked'], /class="quant"[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseCurrency);
 	
 	getParam(account, result, 'accounts.accnum', /<div[^>]+class="info"[^>]*>\s*(\d{20})/i, replaceTagsAndSpaces);
 	getParam(account, result, 'accounts.acctype', /ITEM_ID[^>]*>([^<]+)/i, replaceTagsAndSpaces);
@@ -254,9 +254,13 @@ function processAccount(account, result) {
 	var href = getParam(account, null, null, /href="(f\?p=[^"]+)"/i);
 	if(href) {
 		var html = AnyBalance.requestGet(baseurl + href, g_headers);
-		
-		getParam(html, result, 'accounts.blocked', /Заблокировано по операциям с картой([^>]*>){5}/i, replaceTagsAndSpaces, parseBalance);
-		getParam(html, result, 'accounts.balance', /Доступно для операций с картами([^>]*>){5}/i, replaceTagsAndSpaces, parseBalance);
+		var item_data = getJsonObject(html, /var\s+item_data\s*=\s*/i);
+		if(item_data){
+			getParam(item_data.blocked, result, 'accounts.blocked', null, null, parseBalance);
+			getParam(item_data.avail, result, 'accounts.balance', null, null, parseBalance);
+		}else{
+			AnyBalance.trace("Информация о балансе счета не найдена: " + html);
+		}
 		
 	} else {
 		AnyBalance.trace('Не нашли ссылку на дополнительную информацию по счетам, возможно, сайт изменился?');

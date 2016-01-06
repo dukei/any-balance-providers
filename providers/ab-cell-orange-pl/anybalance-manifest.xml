@@ -1,10 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-cell-orange-pl</id>
+	<id version="3">ab-cell-orange-pl</id>
 	<api flags="no_browser"/>
 	<name>Orange (Poland)</name>
 	<description html="true"><![CDATA[
-	<p>Obtains information from Orange personal account in Poland Orange.pl from https://m.orange.pl/portal/lecare/home</p>
+	<p>Obtains information from Orange personal account in <a href="https://m.orange.pl/portal/lecare/home">https://m.orange.pl/portal/lecare/home</a></p>
 	]]></description>
 	<author>Stark &lt;support@starksoft.ru&gt;</author>
 	<files>
@@ -16,8 +16,14 @@
 	</files>
 	<counters>
 		<counter id="balance" name="Balance" units=" {@currency}"/>
-		<counter id="currency" name="Currency" type="text"/>
+		<counter id="skarbonkaLeft" name="Skarbonka Pozostało" units=" {@currency}"/>
+		<counter id="internetTraffic" name="Pakiet Danych" units=" Mb"/>
+		<counter id="bonusTrafficLeft" name="Bonusowa wartość dostępnego limitu transferu danych" units=" Mb"/>
+		<counter id="trafficLeft" name="Wartość dostępnego limitu transferu danych" units=" Mb"/>
 		<counter id="phone" name="Phone" type="text"/>
+		<counter id="incomingCallsDays" name="Incoming calls days left" units=" dni"/>
+		<counter id="outgoingCallsDays" name="Outgoing calls days left" units=" dni"/>
+		<counter id="currency" name="Currency" type="text"/>
 	</counters>
 	<keywords></keywords>
 	<type>cell</type>

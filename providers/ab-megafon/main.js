@@ -415,7 +415,7 @@ function getTrayXmlText(filial){
 
     if(/SCC-ROBOTS-ERROR/.test(info)){
       AnyBalance.trace("Server returned: " + info);
-      throw new AnyBalance.Error('Сервис гид временно находится на техобслуживании. Зайдите позже.');
+      throw new AnyBalance.Error('Сервис-Гид временно находится на техобслуживании. Зайдите позже.');
     }
 
     var matches;
@@ -1916,8 +1916,11 @@ function megafonLK(filial, html){
 	getParam(html, result, 'balance', /Баланс([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'available', /Доступно([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'bonus_balance', /Бонусные баллы([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, '__tariff', />\s*Тариф([\s\S]*?)<\/div>/i, [replaceTagsAndSpaces, /^&laquo;(.*)&raquo;$/, '$1'], html_entity_decode);
+//	getParam(html, result, '__tariff', />\s*Тариф([\s\S]*?)<\/div>/i, [replaceTagsAndSpaces, /^&laquo;(.*)&raquo;$/, '$1'], html_entity_decode);
 
+	html = AnyBalance.requestGet(lk_url + 'tariffs/', g_headers);
+	getParam(html, result, '__tariff', /<div[^>]+gadget-tariff-name[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+	
 	if(AnyBalance.isAvailable('mins_n_free', 'mins_net_left', 'mins_left', 'mins_total', 'mms_left', 'mms_total', 'sms_left', 'sms_total', 
 			'gb_with_you', 'internet_left', 'internet_total', 'internet_cur', 'internet_left_night', 'internet_total_night', 'interent_cur_night')){
 		html = AnyBalance.requestGet(lk_url + 'remainders/', g_headers);

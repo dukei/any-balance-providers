@@ -35,10 +35,16 @@ function main() {
 			action: 'save'
 		}, addHeaders({Referer: url }));
 		
-		getParam(html, result, 'balance', /id="EXTERNAL_RESPONSE"[^>]*value="([^"]*)/i, replaceTagsAndSpaces, parseBalance);
-		if(!isset(result.balance)) {
-			throw new AnyBalance.Error('Неизвестная ошибка получения баланса, свяжитесь с разработчиком и проверьте номер телефона и номер квартиры.');
-		}		
+		if(!/id="EXTERNAL_RESPONSE"[^>]*value="[^"]+/i.test(html)){
+			html = replaceAll(html, [/<noscript>[\s\S]*?<\/noscript>/ig, '']);
+			var error = getElement(html, /<p[^>]+class="errorb"[^>]*>/i, replaceTagsAndSpaces);
+			if(error)
+				throw new AnyBalance.Error(error, null, /Номер не существует/i.test(error));
+			AnyBalance.trace(html);
+			throw new AnyBalance.Error('Не удалось получить баланс. Cайт изменен?');
+		}
+
+		getParam(html, result, 'balance', /id="EXTERNAL_RESPONSE"[^>]*value="([^"]+)/i, replaceTagsAndSpaces, parseBalance);
 	} else {
 		AnyBalance.trace('Входим по логину и паролю...');
 		

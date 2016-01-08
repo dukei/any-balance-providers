@@ -1,4 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?><history>
+	<change version="25" date="2016-01-08">
+	- Улучшена обработка ошибок.
+	</change>
 	<change version="24" date="2016-01-08">
 	- Улучшена обработка ошибок.
 	</change>

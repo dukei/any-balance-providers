@@ -63,10 +63,9 @@ function main(){
 	
     //Выход из кабинета
     if (!/common\/login\.xhtml\?logout/i.test(html)) {
-    	if (html.length < 5000 && AnyBalance.getLevel() < 5) {
-    		throw new AnyBalance.Error("Ваша версия AnyBalance не может получить информацию для этого провайдера. Пожалуйста, установите последнюю версию AnyBalance.");
-    	}
-    	var error = getParam(html, null, null, /class="red[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+    	var error = sumParam(html, null, null, /<td[^>]+class="red[^>]*>([\s\S]*?)<\/td>/ig, [/<[^>]*>/ig, ' ', replaceTagsAndSpaces], null, aggregate_join);
+    	if (/что Вы не робот/i.test(error))
+    		throw new AnyBalance.Error(error + '\nМосэнергосбыт потребовал подтвердить, что вы не робот. Необходимо разок через браузер зайти в личный кабинет https://lkkbyt.mosenergosbyt.ru/.', null, true);
     	if (error)
     		throw new AnyBalance.Error(error, null, /Неверно введен пароль|Вы не зарегистрированы|Неправильный логин/i.test(error));
     	

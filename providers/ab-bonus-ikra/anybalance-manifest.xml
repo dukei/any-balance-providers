@@ -16,7 +16,7 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс икринок"/>
+		<counter id="balance" name="Баллов на счёте"/>
 		<counter id="bonuses" name="Баланс бонусов"/>
 		<counter id="bonuses_avail" name="Доступно бонусов"/>
 		<counter id="cardnum" name="Номер карты" type="text"/>

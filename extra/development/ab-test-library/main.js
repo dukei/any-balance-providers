@@ -31,6 +31,10 @@ function main() {
     
 	getParam('Текущий баланс: <b>-,48</b>', result, 'balance_bad4', /Текущий баланс:[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, parseBalance);
     AnyBalance.trace(result.balance_bad4 == -0.48 ? 'Проверяем функцию parseBalance с противными значениями типа (-,48)... все работает нормально!' : '_________________________________________________Что-то не работает, надо проверить код! ' + result.balance_bad4);
+
+	getParam('Текущий баланс: <b>-238,20 руб.</b>', result, 'balance_bad5', /Текущий баланс:[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, parseBalance);
+    AnyBalance.trace(result.balance_bad5 == -238.20 ? 'Проверяем функцию parseBalance с противными значениями типа (-238,20 руб.)... все работает нормально!' : '_________________________________________________Что-то не работает, надо проверить код! ' + result.balance_bad5);
+    
     
 	getParam("Текущий баланс: <b>1'131,00</b>", result, 'balance', /Текущий баланс:[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, parseBalance);
     AnyBalance.trace(result.balance == 1131 ? 'Проверяем функцию parseBalance... все работает нормально!' : '_________________________________________________Что-то не работает, надо проверить код! ' + result.balance);

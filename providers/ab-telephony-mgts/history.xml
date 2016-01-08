@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="16" date="2016-01-08">
+	Исправление получения баланса
+	</change>
 	<change version="15" date="2016-01-08">
 	Избавление от зависания в редких случаях
 	</change>

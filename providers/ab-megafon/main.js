@@ -579,7 +579,7 @@ function megafonTrayInfo(filial) {
 					var total = getParam(d, null, null, /<VOLUME_TOTAL>([\s\S]*?)<\/VOLUME_TOTAL>/i, replaceTagsAndSpaces, parseMinutes);
 					mins_totals_was['' + total] = true;
 					sumParam(d, result, 'mins_n_free', /<VOLUME_AVAILABLE>([\s\S]*?)<\/VOLUME_AVAILABLE>/i, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
-				} else if ((/вызовы внутри спг|\.\s*МегаФон/i.test(names) && !/МТС/i.test(names)) && /мин/i.test(plan_si)) {
+				} else if ((/вызовы внутри спг|\.\s*МегаФон|на МегаФон|включено\s?/i.test(names) && !/МТС/i.test(names)) && /мин/i.test(plan_si)) {
 					AnyBalance.trace('Найдены минуты внутри группы: ' + names + ', ' + plan_si);
 					var total = getParam(d, null, null, /<VOLUME_TOTAL>([\s\S]*?)<\/VOLUME_TOTAL>/i, replaceTagsAndSpaces, parseMinutes);
 					mins_totals_was['' + total] = true;
@@ -723,7 +723,7 @@ function megafonTrayInfo(filial) {
 							addLeftAndTotal(mins, result, AnyBalance.isAvailable('mins_n_free'), false, 'mins_n_free');
 							new_mins_totals_was[mins.total] = true;
 						}
-					} else if (/мин на номера МегаФон|\.\s*МегаФон/i.test(name) && !/МТС/i.test(name)) {
+					} else if (/мин на номера МегаФон|\.\s*МегаФон|на МегаФон|включено\s?/i.test(name) && !/МТС/i.test(name)) {
 						var mins = getLeftAndTotal(val, result, false, false, 'mins_net_left', null, parseMinutes);
 						if (!isset(mins.left) || mins.left < 1000000) { //Большие значения, считай, безлимит. Че его показывать...
 							if (isset(mins.total) && !isset(mins_totals_was[mins.total])) {
@@ -1113,7 +1113,7 @@ function megafonServiceGuidePhysical(filial, sessionid, text){
 						sumOption(colnum, row, result, 'mins_sng_total', 'mins_sng_left', '.', parseMinutes);
 					else if(/мин по России/i.test(name))
 						sumOption(colnum, row, result, 'mins_country_total', 'mins_country_left', '.', parseMinutes);
-					else if(/внутри сети|\.\s*мегафон|на мегафон/i.test(name) && !/мтс/i.test(name)) //мегафон не должен быть сначала. А то перепутается с названием тарифа
+					else if(/внутри сети|\.\s*мегафон|на МегаФон|включено\s?/i.test(name) && !/мтс/i.test(name)) //мегафон не должен быть сначала. А то перепутается с названием тарифа
 						sumOption(colnum, row, result, 'mins_net_total', 'mins_net_left', '.', parseMinutes);
 					else{
 				        AnyBalance.trace('Минуты ' + name + ', относим к просто минутам');
@@ -1918,8 +1918,13 @@ function megafonLK(filial, html){
 	getParam(html, result, 'bonus_balance', /Бонусные баллы([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
 //	getParam(html, result, '__tariff', />\s*Тариф([\s\S]*?)<\/div>/i, [replaceTagsAndSpaces, /^&laquo;(.*)&raquo;$/, '$1'], html_entity_decode);
 
-	html = AnyBalance.requestGet(lk_url + 'tariffs/', g_headers);
-	getParam(html, result, '__tariff', /<div[^>]+gadget-tariff-name[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+	if(AnyBalance.isAvailable('__tariff')){
+		html = AnyBalance.requestGet(lk_url + '', g_headers);
+	    getParam(html, result, '__tariff', />\s*Тариф([\s\S]*?)<\/div>/i, [replaceTagsAndSpaces, /^&laquo;(.*)&raquo;$/, '$1'], html_entity_decode);
+	}else{
+		html = AnyBalance.requestGet(lk_url + 'tariffs/', g_headers);
+	    getParam(html, result, '__tariff', /<div[^>]+gadget-tariff-name[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+	}
 	
 	if(AnyBalance.isAvailable('mins_n_free', 'mins_net_left', 'mins_left', 'mins_total', 'mms_left', 'mms_total', 'sms_left', 'sms_total', 
 			'gb_with_you', 'internet_left', 'internet_total', 'internet_cur', 'internet_left_night', 'internet_total_night', 'interent_cur_night')){
@@ -1974,7 +1979,7 @@ function megafonLKRemainders(filial, html, result){
 				if(val >= 0){
 					if(/бесплат/i.test(name)) {
 						getParam(left, result, 'mins_n_free', null, replaceTagsAndSpaces, parseMinutes);
-					}else if((/\.\s*МегаФон|на Мегафон/i.test(name) && !/МТС/i.test(name))
+					}else if((/\.\s*МегаФон|на МегаФон|включено\s?/i.test(name) && !/МТС/i.test(name))
 							|| /внутри сети/i.test(name)) {
 						sumParam(left, result, 'mins_net_left', null, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
 					} else {

@@ -81,7 +81,7 @@ function main() {
 		getParam(html, result, 'phone', /Номер телефона:[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
 		getParam(html, result, 'licschet', /Лицевой счет:[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
 
-		var services = getJsonObject(html, /mgts.data.widgets =/, '[');
+		var services = getParam(html, null, null, /mgts.data.widget\s*=\s*(\[[\s\S]*?\]);/, null, getJson);
 		if(services){
 			//Сложим в tariffs все опции, у которых есть value
 			var tariffs = services.reduce(function(arr, cur){

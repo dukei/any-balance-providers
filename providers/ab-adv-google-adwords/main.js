@@ -55,31 +55,52 @@ function main() {
 		secret_id: '0BE59D522F789E9DC14629E0DD231C0A',
 	};
 
-	var permutation = gwtGetStrongName(html, gwtCfg);
 	var info = getJsonObject(html, /var dashboard_clientInfo=/);
 
-	var html = AnyBalance.requestPost(gwtCfg.url + 'modulesgwt?__c=' + info.customerId + '&__u=' + info.effectiveUserId + '&authuser=0', 
-		makeReplaces('7|0|18|%url%|%secret_id%|com.google.ads.apps.mobile.shared.service.desktop.DesktopModuleService|getModules|com.google.ads.apps.mobile.shared.module.desktop.DesktopModuleSelector/2614045478|com.google.ads.apps.common.datepicker.shared.CompareDateRange/3221976067|Отсутствует|NONE|com.google.ads.apps.common.datepicker.shared.CompareDateRange$ComparisonType/1735517792|com.google.ads.apps.common.datepicker.shared.DateRange/358841294|За все время|ALL_TIME|com.google.ads.api.services.common.date.DateRange/1118087507|com.google.ads.api.services.common.date.Date/373224763|com.google.ads.apps.common.datepicker.shared.DateRange$DateRangeType/1228702317|com.google.ads.apps.mobile.shared.module.AccountInfo/3037695802|Europe/Moscow|%PARAMS%|1|2|3|4|1|5|5|6|7|8|0|9|3|10|11|12|13|14|8|1|2016|14|1|1|2001|15|0|0|0|30|3|2|0|16|17|0|8|0|0|1|148|18|1|0|1|0|', gwtCfg)
-			.replace(/%PARAMS%/, info.servletParamsId),
-		gwtHeaders(permutation, gwtCfg));
+	var result = {success: true};
+    getParam(info.accountCurrencyCode, result, ['currency', 'cost', 'balance', 'last_pay_sum', 'average']);
 
-   	var json = gwtGetJSON(html);
-	var arr = findSums(json);
-	if(!arr){
-		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Could not find stats. Is the site changed?');
+    if(AnyBalance.isAvailable('cost', 'views', 'clicks', 'rate', 'average')){
+    	try{
+			var permutation = gwtGetStrongName(html, gwtCfg);
+			var html = AnyBalance.requestPost(gwtCfg.url + 'modulesgwt?__c=' + info.customerId + '&__u=' + info.effectiveUserId + '&authuser=0', 
+				makeReplaces('7|0|18|%url%|%secret_id%|com.google.ads.apps.mobile.shared.service.desktop.DesktopModuleService|getModules|com.google.ads.apps.mobile.shared.module.desktop.DesktopModuleSelector/2614045478|com.google.ads.apps.common.datepicker.shared.CompareDateRange/3221976067|Отсутствует|NONE|com.google.ads.apps.common.datepicker.shared.CompareDateRange$ComparisonType/1735517792|com.google.ads.apps.common.datepicker.shared.DateRange/358841294|За все время|ALL_TIME|com.google.ads.api.services.common.date.DateRange/1118087507|com.google.ads.api.services.common.date.Date/373224763|com.google.ads.apps.common.datepicker.shared.DateRange$DateRangeType/1228702317|com.google.ads.apps.mobile.shared.module.AccountInfo/3037695802|Europe/Moscow|%PARAMS%|1|2|3|4|1|5|5|6|7|8|0|9|3|10|11|12|13|14|8|1|2016|14|1|1|2001|15|0|0|0|30|3|2|0|16|17|0|8|0|0|1|148|18|1|0|1|0|', gwtCfg)
+					.replace(/%PARAMS%/, info.servletParamsId),
+				gwtHeaders(permutation, gwtCfg));
+	        
+   	   	   	var json = gwtGetJSON(html);
+			var arr = findSums(json);
+			if(!arr){
+				AnyBalance.trace(html);
+				throw new AnyBalance.Error('Could not find stats. Is the site changed?');
+			}
+	        
+			AnyBalance.trace('Found stats: ' + JSON.stringify(arr));
+ 	 	 	
+			getParam(arr[4], result, 'cost', null, replaceTagsAndSpaces, parseBalance);
+			getParam(arr[7], result, 'views', null, replaceTagsAndSpaces, parseBalance);
+			getParam(arr[2], result, 'clicks', null, replaceTagsAndSpaces, parseBalance);
+			getParam(arr[6], result, 'rate', null, replaceTagsAndSpaces, parseBalance);
+			getParam(arr[0], result, 'average', null, replaceTagsAndSpaces, parseBalance);
+		}catch(e){
+			AnyBalance.trace('Could not get stats: ' + e.message + '\n' + e.stack);
+		}
 	}
 
-	AnyBalance.trace('Found stats: ' + JSON.stringify(arr));
- 	
-	var result = {success: true};
-	
-	getParam(arr[4], result, 'balance', null, replaceTagsAndSpaces, parseBalance);
-    getParam(info.accountCurrencyCode, result, ['currency', 'balance']);
-	getParam(arr[7], result, 'views', null, replaceTagsAndSpaces, parseBalance);
-	getParam(arr[2], result, 'clicks', null, replaceTagsAndSpaces, parseBalance);
-	getParam(arr[6], result, 'rate', null, replaceTagsAndSpaces, parseBalance);
-	getParam(arr[0], result, 'average', null, replaceTagsAndSpaces, parseBalance);
+	if(AnyBalance.isAvailable('balance', 'last_pay_date', 'last_pay_sum')){
+		html = AnyBalance.requestGet(baseurl + 'payments/u/0/adwords/signup?authuser=0&__c=' + info.customerId + '&__u=' + info.effectiveUserId + '&hl=ru', g_headers);
+		AnyBalance.trace('Getting balance: redirected to ' + AnyBalance.getLastUrl());
+		var pcid = getParam(AnyBalance.getLastUrl(), null, null, /[&?]pcid=([^&]*)/i);
+		if(!pcid){
+			AnyBalance.trace(html);
+			throw new AnyBalance.Error('Could not find required parameter. Is the site changed?');
+		}
+
+		html = AnyBalance.requestGet("https://bpui0.google.com/payments/u/0/transactions?hl=ru&pcid=" + pcid);
+		getParam(html, result, 'balance', /<div[^>]+id="balance"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+		getParam(html, result, 'last_pay_date', /<div[^>]+id="lastSuccessfulPayment"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseDate);
+		getParam(html, result, 'last_pay_sum', /<div[^>]+id="lastSuccessfulPayment"[^>]*>[^(<]*([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+	}
 	
     AnyBalance.setResult(result);
 }

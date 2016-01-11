@@ -19,7 +19,7 @@
 		<counter id="balance" name="Баланс" units="р"/>
 		<counter id="days" name="Остаток дней"/>
 	</counters>
-	<keywords></keywords>
+	<keywords>meedget</keywords>
 	<type>service</type>
 	<country>ru</country>
 </provider>

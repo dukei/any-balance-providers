@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-hosting-atname</id>
+	<api flags="no_browser"/>
+	<name>AtName</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера AtName <a href="http://atname.ru/">http://atname.ru/</a></p>
+	<p>Информация берется из личного кабинета <a href="http://atname.ru/reg/">http://atname.ru/reg/</a></p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="services" name="Заказанных услуг"/>
+		<counter id="domens" name="Заказанных доменов"/>
+		<counter id="domensRenew" name="Домены требующие продления"/>
+		<counter id="fio" name="ФИО"/>
+	</counters>
+	<keywords></keywords>
+	<type>hosting</type>
+	<country>ru</country>
+</provider>

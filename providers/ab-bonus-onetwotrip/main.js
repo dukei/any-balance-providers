@@ -24,7 +24,7 @@ function main() {
 		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
 	}
 
-	html = AnyBalance.requestPost(baseurl + '_api/visitormanager/auth/ ', {
+	html = AnyBalance.requestPost(baseurl + '_api/visitormanager/auth/', {
         email: prefs.login,
         pwd: prefs.password
 	}, addHeaders({

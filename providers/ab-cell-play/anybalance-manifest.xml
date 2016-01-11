@@ -1,0 +1,35 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-cell-play</id>
+	<api flags="no_browser"/>
+	<name>Play</name>
+	<description html="true"><![CDATA[
+	<p>Obtains information from <a href="http://nowy.play.pl/">http://nowy.play.pl/</a></p>
+	<p>Selfcare located at <a href="https://24.play.pl">https://24.play.pl</a></p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Balance" units=" zł"/>
+		<counter id="doladowan" name="Suma doładowań w tym miesiącu" units=" zł"/>
+		<counter id="pakietZlotowek" name="pakietZlotowek" units=" zł"/>
+		<counter id="daysLeft" name="Koniec bieżącego okresu rozliczeniowego za" units=" dni"/>
+		<counter id="min_all" name="Minuty do wszystkich" units=" min"/>
+		<counter id="min_promocyjne" name="Promocyjne minuty do wszystkich" units=" min"/>
+		<counter id="traffic" name="Promocyjne MB" units=" Mb"/>
+		<counter id="account" name="Numer konta" type="text"/>
+		<counter id="promocja" name="Promocja" type="text"/>
+		<counter id="phone" name="Moje numery" type="text"/>
+		<counter id="incomingCallsDeadline" name="Ważność połączeń przychodzących" type="time" format="dd/MM/yyyy"/>
+		<counter id="outgoingCallsDeadline" name="Ważność połączeń wychodzących" type="time" format="dd/MM/yyyy"/>
+	</counters>
+	<keywords></keywords>
+	<type>cell</type>
+	<country>pl</country>
+</provider>

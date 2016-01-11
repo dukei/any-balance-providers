@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-hosting-media-venus</id>
+	<api flags="no_browser"/>
+	<name>Media Venus</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера Media Venus <a href="http://mediavenus.biz/">http://mediavenus.biz/</a></p>
+	<p>Информация берется из личного кабинета <a href="http://mediavenus.biz/webmaster">http://mediavenus.biz/webmaster</a></p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="charged" name="Заработок по всем сайтам" units=" р"/>
+	</counters>
+	<keywords>тизерная сеть</keywords>
+	<type>hosting</type>
+	<country>ru</country>
+</provider>

@@ -1,3 +1,7 @@
+/**
+Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
+*/
+
 var g_headers = {
 	'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
 	'Accept-Encoding':'gzip, deflate, sdch',
@@ -11,8 +15,8 @@ function main(){
 	var baseurl = 'https://evacosmetics.ru';
 	AnyBalance.setDefaultCharset('utf-8');
 
-	checkEmpty(prefs.cardnum, 'Введите номер карты!');
-	checkEmpty(prefs.cardpin, 'Введите пин!');
+	checkEmpty(prefs.login, 'Введите номер карты!');
+	checkEmpty(prefs.password, 'Введите пин!');
 
 	var html = AnyBalance.requestGet(baseurl, g_headers);
 
@@ -20,28 +24,26 @@ function main(){
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
 	}
-
-	html = AnyBalance.requestPost(baseurl + '/orangecard/', {cardnum: prefs.cardnum, cardpin: prefs.cardpin}, addHeaders({
-		Origin: baseurl,
-		Referer: baseurl + "/"
-	}));
-	html = AnyBalance.requestGet(baseurl + '/!processing/login.php?cardNum=' + prefs.cardnum + '&cardPin=' + prefs.cardpin, null, addHeaders({ Referer: baseurl + "/orangecard/" }));
+	
+	html = AnyBalance.requestGet(baseurl + '/!processing/login.php?cardNum=' + prefs.login + '&cardPin=' + prefs.password, null, addHeaders({ Referer: baseurl + "/orangecard/" }));
 	
 	var json = getJson(html);
-	if(json.error) {
+	
+	if (!json.success) {
+		var error = json.error;
+		if (error)
+			throw new AnyBalance.Error(error, null, /номер карты или email|неправильный пароль/i.test(error));
+		
 		AnyBalance.trace(html);
-		throw new AnyBalance.Error(json.error);
+		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
-
-	html = AnyBalance.requestGet(baseurl + '/orangecard/account/my-card/my-shares/', null, addHeaders({ Referer: baseurl + "/orangecard/" }));
-
+	
 	html = AnyBalance.requestGet(baseurl + '/!processing/bill.php');
-
 	json = getJson(html);
 
 	if(!json.buyer) {
 		AnyBalance.trace(html);
-		throw new AnyBalance.Error("Сервер вернул не верные данные");
+		throw new AnyBalance.Error("Не удалось найти информацию о пользователе, сайт изменен?");
 	}
 
 	var allBonus = json.buyer.activeBalance*1+json.buyer.inactiveBalance*1,
@@ -68,7 +70,6 @@ function main(){
 		}
 		if(json.burnings[0] && json.burnings[0].date) {
 			dt = parseDate(json.burnings[0].date) || parseDateWord(json.burnings[0].date) || parseDateISO(json.burnings[0].date) || parseDateJS(json.burnings[0].date);
-
 		}
 
 		if(bonus && dt) {
@@ -76,7 +77,7 @@ function main(){
 			getParam(dt, result, 'first_burn_date');
 		} else {
 			AnyBalance.trace(JSON.stringify(json));
-			throw new AnyBalance.Error("Не удалось обработать данные с сервера. Возможно изменился формат вывода.");
+			throw new AnyBalance.Error("Не удалось обработать данные с сервера. Сайт изменен?");
 		}
 	}
 	AnyBalance.setResult(result);

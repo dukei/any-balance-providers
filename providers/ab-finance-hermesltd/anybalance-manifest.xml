@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-finance-hermesltd</id>
+	<api flags="no_browser"/>
+	<name>Hermes Management Ltd.</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет из личного кабинета пользователя со страницы <a href="https://hermes-ltd.com/lk/my_ch">https://hermes-ltd.com/lk/my_ch</a></p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	
+	]]></instruction>
+	<author>Bazrov Zaur &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+	</files>
+	<counters>
+		<counter id="balance" name="баланс" suffix="{@currency}">
+		<counter id="loan" name="займ" suffix="{@currency}">
+		<counter id="deposit" name="Залог" suffix="{@currency}">
+		<counter id="available" name="Доступно" suffix="{@currency}">
+		<counter id="premium" name="Ажио" suffix="%">
+		<counter id="currency" name="Валюта счета" type="text">
+		<counter id="contract" name="Контракт" suffix="{@currency}">
+		<counter id="loan_rate" name="Ставка по займу" suffix="%">
+		<counter id="status" name="Статус счета" type="text">
+		<counter id="profit" name="Прибыль за всё время" suffix="{@currency}">
+		<counter id="name" name="Владелец счета" type="text">
+	</counters>
+	<keywords>hermes, finance, финансово-аналитическая компания, международная защита, управление активами</keywords>
+	<type>finance, money</type>
+	<country>ru</country>
+</provider>

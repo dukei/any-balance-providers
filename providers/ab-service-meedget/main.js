@@ -11,7 +11,7 @@ function main() {
 	var baseurl = 'https://meedget.ru/';
 	AnyBalance.setDefaultCharset('utf-8');
 	
-	checkEmpty(prefs.email, 'Введите логин!');
+	checkEmpty(prefs.email, 'Введите email!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 	
 	var html = AnyBalance.requestGet(baseurl, g_headers);

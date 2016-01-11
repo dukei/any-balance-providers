@@ -357,7 +357,7 @@
 	let htmlBlockTagsRe = new RegExp('^<('+ HTML_BLOCK_TAGS + ')\\b', 'i'),
 		replaceTagsAndSpaces = String.REPLACE_TAGS_AND_SPACES = [
 		
-		new XRegExp(HTML_TAG_RE, 'igx'), 
+		new XRegExp(HTML_TAG_RE, 'xsig'), 
 		function (str, entry) {
 			if (str.search(htmlBlockTagsRe) > -1) return '\n';
 			return '';

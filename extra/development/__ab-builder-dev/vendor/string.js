@@ -386,7 +386,7 @@
 					|	<![a-z]' + ATTR + '>	#<!DOCTYPE ...>		\n\
 					|	<!\\[CDATA\\[  .*?  \\]\\]>		#CDATA				\n\
 					|	<!--  .*?   -->					#comments			\n\
-					|	<\\?  .*?  \\?>					#instructions part1 (PHP, Perl, ASP, JSP)	\n\
+					|	<\\?  .*?  \\?>					#instructions part1 (PHP, Perl, ASP, JSP, XML)	\n\
 					|	<%	  .*?    %>					#instructions part2 (PHP, Perl, ASP, JSP)	\n\
 					)';
 		var htmlBlockTagsRe = RegExp('^<('+ BLOCK_TAGS + ')\\b', 'i');

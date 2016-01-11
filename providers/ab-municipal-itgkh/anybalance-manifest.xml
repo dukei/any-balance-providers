@@ -4,19 +4,8 @@
 	<api flags="no_browser"/>
 	<name>Фонд капремонта многоквартирных домов Иркутской области</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе провайдера ИмяПровайдера <a href=""></a></p>
-	<p>Информация берется из личного кабинета <a href=""></a></p>
-
-	<b>Особенности:</b>
-	<ul>
-		<li></li>
-		<li></li>
-		<li></li>
-	</ul>
-	]]></description>
-	
-	<description html="true"><![CDATA[
-	<p>Предоставляет данные с аккаунта пользователя https://portal-irkutsk.itgkh.ru/account</p>
+	<p>Предоставляет информацию о балансе в фонде капремонта многоквартирных домов Иркутской области https://portal-irkutsk.itgkh.ru/</p>
+	<p>Информация берется из личного кабинета https://portal-irkutsk.itgkh.ru/account</p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>

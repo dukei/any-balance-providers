@@ -18,6 +18,9 @@ function main() {
 	AnyBalance.setDefaultCharset('UTF-8');
 	
 	var baseurl = 'http://home.nv-net.ru/tvn/acc/services/?page=accs';
+	var ineturl = 'http://home.nv-net.ru/tvn/acc/services/?page=internet_info';
+	var phoneurl = 'http://home.nv-net.ru/tvn/acc/services/?page=phone_info';
+	var tvurl = 'http://home.nv-net.ru/tvn/acc/services/?page=tax_change';
 	
 	
 	var html = AnyBalance.requestPost(baseurl, {
@@ -25,6 +28,7 @@ function main() {
 		'name':prefs.login,
 		'pass':prefs.password,
 	}, g_headers);
+
 
 	if(!/\?auth_action=logout/.test(html)){
 		var error = getParam(html, null, null, /<span class="auth_error">([\s\S]*?)<\/span>/, replaceTagsAndSpaces, html_entity_decode);
@@ -41,6 +45,36 @@ function main() {
 	getParam(html, result, 'Hotspot', /Хотспот<\/td>*?\s*<td[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'PhonePC', /Телефония на ПК<\/td>*?\s*<td[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'Bonus', /Бонусный счет<\/td>*?\s*<td[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'fio', /Абонент:\s*<b><strong><i>([^<]+)*/i, replaceTagsAndSpaces, html_entity_decode);
+
+
+	html = AnyBalance.requestPost(ineturl, {
+		'auth_action':'login',
+		'name':prefs.login,
+		'pass':prefs.password,
+	}, g_headers);
+
+	getParam(html, result, 'TarifInternet', /Текущий тариф:<\/b><\/span><\/td>*?\s*<td[^>]*>([^<]+)*/i, replaceTagsAndSpaces, html_entity_decode); 
+
+	html = AnyBalance.requestPost(phoneurl, {
+		'auth_action':'login',
+		'name':prefs.login,
+		'pass':prefs.password,
+	}, g_headers);
+
+	getParam(html, result, 'TarifPhone', /Текущий тариф:<\/b><\/span><\/td>*?\s*<td[^>]*>([^<]+)*/i, replaceTagsAndSpaces, html_entity_decode); 
+
+	html = AnyBalance.requestPost(tvurl, {
+		'auth_action':'login',
+		'name':prefs.login,
+		'pass':prefs.password,
+	}, g_headers);
+
+	getParam(html, result, 'TarifTV', /Текущий тарифный план: <\/span>\s*?<\/td>\s*?<td[^>]*>([^<]+)*/i, replaceTagsAndSpaces, html_entity_decode); 
+
+
 	
 	AnyBalance.setResult(result);
 }
+
+

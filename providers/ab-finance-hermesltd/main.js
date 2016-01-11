@@ -1,3 +1,7 @@
+/**
+Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
+*/
+
 var g_headers = {
 	'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
 	'Accept-Encoding':'gzip, deflate, sdch',
@@ -29,11 +33,9 @@ function main(){
 		'Referer':baseurl+'/lk/aut'
 	}));
 	
-	var capcha = getElement(html, /<img\b[^>]*id="img_capcha"[^>]*>/i);
-	
-	if(capcha) {
+	if(/<img[^>]*id="img_capcha"/i.test(html)) {
 		var captchaimg = AnyBalance.requestGet(baseurl + '/secpic.php');
-		var value = AnyBalance.retrieveCode("Пожалуйста, введите цифры с картинки.", captchaimg, {inputType: 'string'});
+		var value = AnyBalance.retrieveCode("Пожалуйста, введите проверочный код.", captchaimg);
 		html = AnyBalance.requestPost(baseurl + '/lk/aut?from=autpage', {
 			nomer_s: prefs.login, 
 			pass: prefs.password, 
@@ -45,7 +47,7 @@ function main(){
 	}
 	
 	if (!/logaut/i.test(html)) {
-		var authBox = getElement(html, /<div class="auth_box">/i);
+		var authBox = getElement(html, /<div[^>]+class="auth_box">/i);
 		var error = getParam(authBox, null, null, /<span[^>]*style="display:block;[^>]*font-size:20px[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces);
 		if (error)
 			throw new AnyBalance.Error(error, null, /Введены неверно/i.test(error));

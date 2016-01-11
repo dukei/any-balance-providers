@@ -137,7 +137,7 @@ var AB = (function (global_scope) {
 //Замена пробелов и тэгов
     var replaceTagsAndSpaces = [String.REPLACE_TAGS_AND_SPACES, /[\uFEFF\xA0]/ig, ' ', /\s{2,}/g, ' ', /^\s+|\s+$/g, ''],
 //Замена для чисел (&minus, &mdash, &ndash)
-        replaceFloat = [/[\u2212\u2013\u2014]/ig, '-', /\s+/g, '', /'/g, '', /,/g, '.', /\.([^.]*)(?=\.)/g, '$1', /^\./, '0.'],
+        replaceFloat = [/[\u2212\u2013\u2014–]/ig, '-', /\s+/g, '', /'/g, '', /,/g, '.', /\.([^.]*)(?=\.)/g, '$1', /^\./, '0.'],
 //Замена для Javascript строк
         replaceSlashes = [/\\(.?)/g, function (str, n) {
             switch (n) {
@@ -171,7 +171,8 @@ var AB = (function (global_scope) {
 
     /** Извлекает числовое значение из переданного текста */
     function parseBalance(text, silent) {
-        var val = getParam(text.replace(/\s+/g, ''), null, null, /(-?[.,]?\d[\d'.,]*)/, replaceFloat, parseFloat);
+    	var val = replaceAll(text, [replaceFloat, /\s+/g, '']);
+        val = getParam(val, null, null, /(-?[.,]?\d[\d'.,]*)/, null, parseFloat);
         if (!silent)
             AnyBalance.trace('Parsing balance (' + val + ') from: ' + text);
         return val;
@@ -827,7 +828,8 @@ var AB = (function (global_scope) {
         reStart.lastIndex = rePreStart.lastIndex;
 
         var json = getRecursiveMatch(html, reStart, /[\}\]]/, null, getJsonEval);
-        reStartSearch.lastIndex = reStart.lastIndex;
+        if(reStartSearch)
+        	reStartSearch.lastIndex = reStart.lastIndex;
 
         return json;
     }
@@ -948,7 +950,7 @@ var AB = (function (global_scope) {
      *  Пример параметра options:
      *  <pre>
      *  {
-     *      format: 'DD/MM/YYYY', // DD=09, D=9, MM=08, М=8, YYYY=2015, YY=15
+     *      format: 'DD.MM.YYYY', // DD=09, D=9, MM=08, М=8, YYYY=2015, YY=15
      *      offsetDay: 0, // Смещение по дням
      *      offsetMonth: 0, // Смещение по месяцам
      *      offsetYear: 5, // Смещение по годам
@@ -959,8 +961,10 @@ var AB = (function (global_scope) {
     function getFormattedDate(options, dt) {
         if (!dt)
             var dt = new Date();
-        if (typeof options == 'string')
+        if (!options || typeof options == 'string')
             options = {format: options};
+        if(!options.format)
+        	options.format = 'DD.MM.YYYY';
 
         //Формируем дату со смещением
         dt = new Date(dt.getFullYear() - (options.offsetYear || 0), dt.getMonth() - (options.offsetMonth || 0), dt.getDate() - (options.offsetDay || 0));

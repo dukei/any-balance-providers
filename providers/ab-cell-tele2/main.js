@@ -166,10 +166,10 @@ function doOldCabinet(html, baseurl){
 	
 	var matches = html.match(/(csrf[^:]*):\s*'([^']*)'/i);
 	if (!matches){
-		var error = getParam(html, null, null, /<div[^>]+(?:error-wrapper|popup-message\s+error)[^>]*>([\s\S]*?)<\/?div/i, replaceTagsAndSpaces, html_entity_decode);
+		var error = getParam(html, null, null, /<div[^>]+(?:error-wrapper|popup-message-wrapper)[^>]*>([\s\S]*?)<\/?div/i, replaceTagsAndSpaces, html_entity_decode);
 		if(error)
 			throw new AnyBalance.Error(error);
-		var error = getElement(html, /<div[^>]+popup-message\s+error[^>]*>/i, replaceTagsAndSpaces, html_entity_decode);
+		var error = getElement(html, /<div[^>]+popup-message\s+(?:error|info)[^>]*>/i, replaceTagsAndSpaces, html_entity_decode);
 		if(error)
 			throw new AnyBalance.Error(error);
 		AnyBalance.trace(html);

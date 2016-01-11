@@ -125,6 +125,11 @@ function main() {
 		if(AnyBalance.isAvailable('min_left', 'sms_left')){
 			getDiscounts(baseurl, account, result);
 		}
+
+		if(AnyBalance.isAvailable('prsnl_balance')){
+			html = AnyBalance.requestGet(baseurl + 'sc_cp_apps/subscriber/budget/' + account.subsId, g_headers);
+			getParam(html, result, 'prsnl_balance', /<dt[^>]*>\s*Баланс[\s\S]*?<span[^>]+class="money"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+		}
 	} catch (e) {
 		AnyBalance.trace(e.message);
 		AnyBalance.trace('Не удалось получить данные по номеру телефона, свяжитесь, пожалуйста, с разработчиками.');

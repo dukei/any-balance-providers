@@ -4,7 +4,7 @@
 		obligatory="true"
 		title="Номер телефона/логин"
 		positiveButtonText="ОК"
-		summary="Номер телефона (10 цифр) или логин||{@s}\n"
+		summary="|Номер телефона (10 цифр) или логин|{@s}"
 		dialogTitle="Номер телефона/логин"
 		negativeButtonText="Отмена"
 		dialogMessage="Введите цифры вашего номера телефона с кодом города (10 цифр) или логин."
@@ -16,17 +16,17 @@
 		dialogTitle="PIN-код"
 		negativeButtonText="Отмена"
 		title="PIN-код"
-		summary="Введите PIN-код||************\n"
+		summary="|Введите PIN-код|************"
 		dialogMessage="Получить PIN-код Вы можете по телефону Единого контактного центра 495-636-0-636 или в любом клиентском зале ОАО МГТС."
 		inputType="textPassword">
 	</EditTextPreference>
 	<EditTextPreference
 		title="Номер квартиры"
 		positiveButtonText="ОК"
-		summary="Номер квартиры||{@s}"
+		summary="|Номер квартиры (если нет PIN)|{@s}"
 		dialogTitle="Номер квартиры"
 		negativeButtonText="Отмена"
-		dialogMessage="Введите номер квартиры (для получения данных без пароля). Если у вас есть логин и пароль, здесь ничего указывать не нужно."
+		dialogMessage="Введите номер квартиры (для получения данных без PIN). Если у вас есть логин и PIN, здесь ничего указывать не нужно."
 		key="kvart">
 	</EditTextPreference>	
 </PreferenceScreen>

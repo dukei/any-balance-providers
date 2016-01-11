@@ -28,8 +28,8 @@ function AB(any) {
 
 	var	/**
 		 * HTML detect
-		 * @param {string} str
-		 * @returns {number}	result of String.search()
+		 * @param	{string} str
+		 * @returns	{number}	result of String.search()
 		 */
 		_getHtmlIndexOf = function(str) {
 			/*
@@ -59,8 +59,9 @@ function AB(any) {
 		/**
 		 * Детектирует и преобразовывает содержимое, при необходимости
 		 * 
-		 * @param {string|number|object|null} any
-		 * @returns {string|number|object|null}
+		 * @param	{string|number|object|null}	any
+		 * @param	{bool}						allowTransformType
+		 * @returns	{string|number|object|null}
 		 */
 		_transformContent = function(any, allowTransformType) {
 			if ('string' !== typeof any) return any;
@@ -105,8 +106,8 @@ function AB(any) {
 		 * Скобки `()` внутри JS допускаются, т.к. могут использоваться именованные или анонимные функции, например: 
 		 * `o = {f : (function(a, b){return someFunc(a+b)})}`
 		 * 
-		 * @param {string} str
-		 * @returns {string|null}	Возвращает строку или `null`, если ничего не найдено
+		 * @param	{string}		str
+		 * @returns	{string|null}	Возвращает строку или `null`, если ничего не найдено
 		 */
 		_getJsArrayOrObject = function(str) {
 			//http://hjson.org/
@@ -121,7 +122,7 @@ function AB(any) {
 				STRING_IN_BACKTICK_QUOTES	= /`				(?= ((?:[^`\\]+    |\\.)*) )\1	`/,		//ECMA6+
 				REGEXP_INLINE				= /\/	(?![\*\/])	(?= ((?:[^\/\\\r\n]+|\\[^\r\n])+) )\1	\/[gimy]{0,4}/,
 				COMMENT_MULTILINE			= /\/\*				.*?								\*\//,
-				COMMENT_SINGLELINE			= /\/\/				(?= ([^\r\n]*) )\1						/,
+				COMMENT_SINGLELINE			= /\/\/				(?= ([^\r\n]*) )\1				/,
 				ALL = XRegExp.union([
 					OPEN,
 					CLOSE,
@@ -156,10 +157,10 @@ function AB(any) {
 		/**
 		 * Фильтрует содержимое
 		 * 
-		 * @param {string|RegExp} rule Для строки нужно передать CSS селектор
-		 * @param {object} options Для строки нужно передать CSS селектор
-		 * @returns AB
-		 * @link http://jsonselect.org/#tryit
+		 * @param	{string|RegExp}	rule	Для строки нужно передать CSS селектор
+		 * @param	{object}		options	Для строки нужно передать CSS селектор
+		 * @returns	{AB}
+		 * @link	http://jsonselect.org/#tryit
 		 */
 		find: function(rule, options) {
 			//AnyBalance.trace('AB::find, input=' + rule);
@@ -177,7 +178,7 @@ function AB(any) {
 							_any = XRegExp.exec(_any, rule);
 							if (typeof _any === 'object') {
 								if (typeof options === 'number' || typeof options === 'string') {
-									if (!(options in _any)) throw Error('Group ' + options + ' does not exist in regexp ' + rule);
+									if (!(options in _any)) throw Error('Group "' + options + '" does not exist in regexp ' + rule);
 									_any = _any[options];
 								}
 								else _any = _any.pop();
@@ -194,7 +195,7 @@ function AB(any) {
 		
 		/**
 		 * 
-		 * @returns {AB}
+		 * @returns	{AB}
 		 */
 		htmlToText: function() {
 			//AnyBalance.trace('htmlToText');
@@ -260,18 +261,3 @@ function AB(any) {
 		
 	}; //return
 }
-
-/*
-function AB(){
-	var any;
-	
-	function find() {
-		return AB(any);
-	}
-	
-	return {
-		any: any,
-		
-	};
-}
-*/

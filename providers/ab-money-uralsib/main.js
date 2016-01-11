@@ -12,7 +12,7 @@ var g_countersTable = {
 	card: {
     	"balance": "cards.balance",
 		"currency": "cards.currency",
-		"cardNumber": "cards.cardNumber",
+		"cardNumber": "cards.num",
 		"till": "cards.till",
 		"blocked": "cards.blocked",
 		"limit": "cards.limit",
@@ -87,7 +87,6 @@ function main(){
 
 function shouldProcess(counter, info){
 	var prefs = AnyBalance.getPreferences();
-	var num = info.__name;
 	
 	switch(counter){
 		case 'cards':
@@ -97,7 +96,7 @@ function shouldProcess(counter, info){
 		    if(!prefs.cardnum)
 		    	return true;
 			
-			if(endsWith(num, prefs.cardnum))
+			if(endsWith(info.num, prefs.cardnum))
 				return true;
 		    
 			return false;
@@ -109,7 +108,7 @@ function shouldProcess(counter, info){
 		    if(!prefs.cardnum)
 		    	return true;
 			
-			if(endsWith(num, prefs.cardnum))
+			if(endsWith(info.__name, prefs.cardnum))
 				return true;
 		}
 		default:

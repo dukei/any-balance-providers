@@ -68,6 +68,12 @@ function doNewCabinet(html){
 
 	var baseurl = "https://new.my.tele2.ru/";
 	var html = AnyBalance.requestGet('http://new.my.tele2.ru/login', addHeaders({Referer: AnyBalance.getLastUrl()}));
+	if(AnyBalance.getLastStatusCode() > 400){
+		var error = getElement(html, /<div[^>]+error[^>]*>/i, replaceTagsAndSpaces);
+		if(error)
+			throw new AnyBalance.Error('Новый кабинет: ' + error);
+	    throw new AnyBalance.Error('Новый личный кабинет Теле2 временно недоступен. Попробуйте позже.');
+	}
 
 	var result = {success: true};
 
@@ -156,8 +162,13 @@ function doOldCabinet(html, baseurl){
     var url = getParam(html, null, null, /href="([^"]*%3A%2F%2Fmy.tele2.ru[^"]*)/i, replaceHtmlEntities);
     html = AnyBalance.requestGet(joinUrl(lasturl, url), g_headers);
 
-//	var html = AnyBalance.requestGet(baseurl + 'home', g_headers);
-	
+	if(AnyBalance.getLastStatusCode() > 400){
+		var error = getElement(html, /<div[^>]+error[^>]*>/i, replaceTagsAndSpaces);
+		if(error)
+			throw new AnyBalance.Error('Старый кабинет: ' + error);
+	    throw new AnyBalance.Error('Старый личный кабинет Теле2 временно недоступен. Попробуйте позже.');
+	}
+
 	var result = {success: true};
 	
 	getParam(html, result, "userName", /"wide-header"[\s\S]*?([^<>]*)<\/h1>/i, replaceTagsAndSpaces, html_entity_decode);

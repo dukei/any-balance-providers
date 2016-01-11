@@ -171,8 +171,7 @@ var AB = (function (global_scope) {
 
     /** Извлекает числовое значение из переданного текста */
     function parseBalance(text, silent) {
-    	var val = replaceAll(text, [replaceFloat, /\s+/g, '']);
-        val = getParam(val, null, null, /(-?[.,]?\d[\d'.,]*)/, null, parseFloat);
+        var val = getParam(replaceAll(text, [/\s+/g, '']), null, null, /([\u2212\u2013\u2014–\-]?[.,]?\d[\d'.,]*)/, replaceFloat, parseFloat);
         if (!silent)
             AnyBalance.trace('Parsing balance (' + val + ') from: ' + text);
         return val;

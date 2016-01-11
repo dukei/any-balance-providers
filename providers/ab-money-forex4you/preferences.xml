@@ -25,7 +25,6 @@
 		title="Номер счета"
 		key="digits"
 		summary="||{@s}"
-		obligatory="true"
 		dialogTitle="Номер счета"
 		positiveButtonText="ОК"
 		negativeButtonText="Отмена"

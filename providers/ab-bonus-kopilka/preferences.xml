@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
     <EditTextPreference 
-        title="Номер карты" 
+        title="Логин (e-mail)"
         positiveButtonText="ОК" 
         summary="||{@s}" 
-        dialogTitle="Номер карты" 
+        dialogTitle="Логин"
         negativeButtonText="Отмена" 
-        dialogMessage="Введите все цифры номера карты без пробелов и разделителей"
+        dialogMessage="Введите e-mail адрес, используемый для входа в личный кабинет"
         inputType="number"
         key="login">
     </EditTextPreference>

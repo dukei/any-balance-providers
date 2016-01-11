@@ -1,11 +1,11 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-internet-k-telecom</id>
+	<id version="2">ab-internet-k-telecom</id>
 	<api flags="no_browser"/>
 	<name>K-Telecom</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе интернет-провайдера K-Telecom (http://k-telecom.org/)</p>
-	<p>Информация берется из личного кабинета https://stat.k-telecom.org/cgi-bin/proga/client.pl</p>
+	<p>Предоставляет информацию о балансе интернет-провайдера K-Telecom <a href="http://k-telecom.org/">http://k-telecom.org/</a></p>
+	<p>Информация берется из личного кабинета <a href="https://stat.k-telecom.org/cgi-bin/proga/client.pl">https://stat.k-telecom.org/cgi-bin/proga/client.pl</a></p>
 	]]></description>
 	<author>Stark &lt;support@starksoft.ru&gt;</author>
 	<files>

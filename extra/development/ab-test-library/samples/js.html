@@ -1,0 +1,26 @@
+sample.js = `<script>var super = 
+			{					
+				tag: "<a href=&quot;http://krawlly.com/?a=1&b=2&amp;c=3&quot; title=Ссылка&nbsp;1>",
+				/* /{} \\
+				multiline coment	
+				*/					
+				"i": 1,				
+				// /{}		/*comment*/
+				b: true,			
+				s1: "_{}} []]  \\" //	   /*no-comment*/  ",
+				s2: '_{}} []] \\' //   /*no-comment*/  ',	
+				s3: \`_{}} []] \\\`  //   /*no-comment*/   \`,	
+				s4: "Left \\\n Right",		
+				f : (function(a, b){return someFunc(a + b)}),	
+				r: /[\\/regexp\\n\\d]{1,}/gi,
+				o: {/***/},
+				/* ]} */
+				// ]}
+				a: [				
+					{ff: 2.2},		
+					{/**/oo: {}}	
+				] 
+			}();					
+			var y = "{next:1}";		
+			var z = {a:1}			
+			</script>`;

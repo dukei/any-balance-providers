@@ -1,70 +1,6 @@
 /**
  AnyBalance (https://github.com/dukei/any-balance-providers/)
 
- Содержит некоторые полезные для извлечения значений с сайтов функции.
- Для конкретного провайдера рекомендуется оставлять в этом файле только те функции, которые используются.
-
- library.js v0.21 от 11.12.15
-
- changelog:
- 11.12.15 добавлена функция getFormattedDate, на нее переключена fmtDate для сохранения совместимости
- getFormattedDate на входе получает json: options = {
-	format: 'DD/MM/YYYY', // DD=09, D=9, MM=08, М=8, YYYY=2015, YY=15
-	offsetDay: 0, // Смещение по дням
-	offsetMonth: 0, // Смещение по месяцам
-	offsetYear: 5, // Смещение по годам
-}
- и вторым параметром Date (необязательно)
-
- 10.12.15 Добавлена getJsonObject
-
- 06.12.15 Полностью переработаны html_entity_decode и replaceTagsAndSpaces, добавлен XRegExp (http://xregexp.com/)
- ВНИМАНИЕ!!! replaceTagsAndSpaces теперь уже включает html_entity_decode, поэтому при использовании replaceTagsAndSpaces уже не надо пользовать html_entity_decode
- Если значение берется из атрибута, и теги удалять не надо, то заменить сущности можно массивом replaceHtmlEntities
-
- 27.11.15 createFormParams: доработки для универсальности
-
- 27.10.15 sumParam: добавлено сообщение об отключенном счетчике
-
- 16.09.15 добавлены n2, joinUrl, fmtDate
-
- 05.06.15 добавлена правильная обработка чекбоксов в createFormParams;
-
- 17.05.15 getElement, getElements - добавлены функции получения HMTL всего элемента, включая вложенные элементы с тем же тегом
-
- 24.11.14 parseDateWord - улучшено получение дат из строки '10 декабря';
-
- 24.11.14 capitalFirstLetters - новая функция, делает из строки ИВАноВ - Иванов;
-
- 07.10.14 safeEval - полностью безопасное исполнение стороннего Javascript (в плане недоступности для него AnyBalance API)
-
- 18.08.14 requestPostMultipart - эмулируем браузер, генерируя случайный boundary
-
- 14.07.14 getParam - Фикс (Если !isset(html), а не !html то не падаем, а пишем ошибку в trace)
-
- 04.06.14 parseBalance - улучшен разбор сложных балансов (,82)
-
- 27.05.14 getParam - Если !html то не падаем, а пишем ошибку в trace
-
- 26.03.14 getParam - Добавлено логирование, если счетчик выключен
-
- 16.01.14 parseMinutes - Улучшена обработка секунд с запятой 2 340,00 сек
-
- 17.12.13 parseMinutes - улучшена обработка минут с точками (28мин.40сек)
-
- 05.12.13 parseMinutes - парсинг минут вида 49,25 (т.е. 49 минут и 15 секунд) (Д. Кочин)
-
- 03.12.13 опять поправил parseMinutes, не парсились значения типа 252:22 мин
-
- 26.11.13: подправлена parseMinutes(), правильное получение данных, если на входе "300 &#65533;мин"
-
- 25.11.13: унифицирована parseMinutes() теперь поддерживает все подряд
-
- 22.11.13: parseDateWord, добавлена локализация (25 jan 2013, 25 января 2013, 25 янв 2013...), удалена parseDateWordEn, т.к. теперь все есть в parseDateWord
- 22.11.13: parseMinutes, добавлена локализация, 5m3sec, 5хв3сек.
- 22.11.13: добавлена parseMinutes().
- */
-
 /**
  * @namespace AB
  */
@@ -791,13 +727,13 @@ var AB = (function (global_scope) {
      Возвращается объект (или массив) или undefined, если объект не найден.
      */
     function getJsonObject(html, reStartSearch) {
-        var STRING_IN_DOUBLE_QUOTES = /"(?:[^"\\]+|\\[\D\d])*"/,
-            STRING_IN_SINGLE_QUOTES = /'(?:[^'\\]+|\\[\D\d])*'/,
-            STRING_IN_BACKTICK_QUOTES = /`(?:[^`\\]+|\\[\D\d])*`/,		//ECMA6+
-            REGEXP_INLINE = /\/(?![\*\/])(?:[^\/\\]+|\\.)+\//,
-            COMMENT_MULTILINE = /\/\*[\D\d]*?\*\//,
-            COMMENT_SINGLELINE = /\/\/[^\r\n]*/,
-            NOT_SPECIAL_SYMBOL = /[^\{\}\[\]"'`\/]+/,	//any symbol with exceptions
+        var NOT_SPECIAL_SYMBOL			= /(?= ([^\{\}\[\]"'`\/]+) )\1/,	//any symbol with exceptions
+			STRING_IN_DOUBLE_QUOTES		= /"				(?= ((?:[^"\\\r\n]+|\\.)*) )\1	"/,
+            STRING_IN_SINGLE_QUOTES		= /'				(?= ((?:[^'\\\r\n]+|\\.)*) )\1	'/,
+            STRING_IN_BACKTICK_QUOTES	= /`				(?= ((?:[^`\\]+    |\\.)*) )\1	`/,		//ECMA6+
+            REGEXP_INLINE				= /\/	(?![\*\/])	(?= ((?:[^\/\\\r\n]+|\\[^\r\n])+) )\1	\/[gimy]{0,4}/,
+            COMMENT_MULTILINE			= /\/\*				.*?								\*\//,
+            COMMENT_SINGLELINE			= /\/\/				(?= ([^\r\n]*) )\1				/,
             AFTER_BRACE_PART = XRegExp.union([
                 NOT_SPECIAL_SYMBOL,
                 STRING_IN_DOUBLE_QUOTES,
@@ -806,7 +742,7 @@ var AB = (function (global_scope) {
                 REGEXP_INLINE,
                 COMMENT_MULTILINE,
                 COMMENT_SINGLELINE
-            ], 'x');
+            ], 'xs');
 
 
         var startIndex = 0;
@@ -817,23 +753,28 @@ var AB = (function (global_scope) {
             startIndex = amatch.index + amatch[0].length;
         }
 
-        var source = AFTER_BRACE_PART.source;
-        var reStart = new RegExp('(?:' + source + ')*[\\\{\\\[](?:' + source + ')*', 'g');
-        var rePreStart = new RegExp('(?:' + source + ')*(?=[\\\{\\\[])', 'g'); //Чтобы убрать мусор до первой правильной скобки
-        rePreStart.lastIndex = startIndex;
-        amatch = rePreStart.exec(html);
-        if (!amatch)
-            return;
-        reStart.lastIndex = rePreStart.lastIndex;
+        //var source = AFTER_BRACE_PART.source;
+        //var reStart = XRegExp.union([RegExp('(?:' + source + ')*'), RegExp('(?:' + source + ')*')], 'g', /[\{\[]/.source);
+        //var reStart = new RegExp('(?:' + source + ')*[\\\{\\\[](?:' + source + ')*', 'g');
+        //var rePreStart = new RegExp('(?:' + source + ')*(?=[\\\{\\\[])', 'g'); //Чтобы убрать мусор до первой правильной скобки
+        //rePreStart.lastIndex = startIndex;
+        //amatch = rePreStart.exec(html);
+        //if (!amatch)
+        //    return;
+        //reStart.lastIndex = rePreStart.lastIndex;
+        //var json = getRecursiveMatch(html, reStart, /[\}\]]/, null, getJsonEval);
+		
+		html = html.substring(startIndex).trim();
+		var json = html.matchRecursive(XRegExp.union([/([\{\[])/, /([\}\]])/, AFTER_BRACE_PART]), {open: 1, close: 2, parts: false}); 
+		json = getJsonEval(json);
 
-        var json = getRecursiveMatch(html, reStart, /[\}\]]/, null, getJsonEval);
-        if(reStartSearch)
-        	reStartSearch.lastIndex = reStart.lastIndex;
+		//if(reStartSearch)
+        //	reStartSearch.lastIndex = reStart.lastIndex;
 
-        return json;
+		return json;
     }
-
-    function getRecursiveMatch(html, reStart, reEnd, replaces, parseFunc) {
+	
+	function getRecursiveMatch(html, reStart, reEnd, replaces, parseFunc) {
         var amatch = reStart.exec(html);
         if (!amatch)
             return;

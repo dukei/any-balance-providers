@@ -1,5 +1,70 @@
 (function () {
 	"use strict";
+	
+	/**
+	 * Реализация метода String.match() с учётом рекурсии
+	 * 
+	 * @link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/match
+	 * @param {RegExp} pattern	Регулярное выражение должно быть сконструировано с группой с двумя или более альтернативами. Формат:
+	 *							`(OpenPattern)|(ClosePattern)`
+	 *							`(OpenPattern)|(ClosePattern)|InnerPattern|...`
+	 * @param {Object} options	Объект с опциями. Пример: `{open: 1, close: 2, parts: true}`
+	 *							`open` и `close` -- номера карманов для открывающего и закрывающего совпадений для регулярного выражения 
+	 *							`parts` -- если true, то вместо строк возвращает объекты 
+	 * @returns {array|string|null}	Если в регулярное выражение передан флаг `g`, то возвратит массив строк или пустое множество, если ничего не найдено
+	 *								Если в регулярное выражение НЕ передан флаг `g`, то возвратит строку или `null`, если ничего не найдено
+	 *								Если в опциях указан флаг `parts` то вместо вместо строк возвращает объекты в формате:
+	 *								```
+	 *								{
+	 *									open: "открывающее_совпадение",
+	 *									inner: "часть между открывающим и закрывающим совпадением", //здесь может быть пусто
+	 *									close: "закрывающее_совпадение",
+	 *								}
+	 *								```
+	 * @throws {Error} if maximum depth will be reached
+	 */
+	String.prototype.matchRecursive = function(pattern, options) {
+		if (!(pattern instanceof RegExp)) throw TypeError('Function matchRecursive(), 1-nd parameter: a RegExp type expected, ' + (typeof options) + ' given!');
+		if (typeof options !== 'object')  throw TypeError('Function matchRecursive(), 2-nd parameter: an object type expected, ' + (typeof options) + ' given!');
+		var optProps = {
+			open  : 'number',
+			close : 'number',
+			parts : 'boolean'
+		};
+		for (var prop in optProps) {
+			if (typeof options[prop] !== optProps[prop]) 
+				throw TypeError('Function matchRecursive(), 2-nd parameter: a ' + optProps[prop] + ' type expected in "' + prop + '" property in object, ' + (typeof options[prop]) + ' given!');
+		}
+
+		var match, depth = 0, depthMax = 1000, item = 0, result = [], s, isOpen, isClose, global = pattern.global;
+		if (! global) pattern = RegExp(pattern.source, 'g' + (pattern.ignoreCase ? 'i' : '')
+															+ (pattern.multiline ? 'i' : ''));
+
+		while (match = pattern.exec(this)) {
+			isOpen  = (typeof match[options.open]  === 'string');
+			isClose = (typeof match[options.close] === 'string');
+			if (isOpen) depth++;
+			if (depth > 0) {
+				if (depth > depthMax) throw Error(depthMax + ' depth has been reached');
+				if (isOpen && !(item in result)) result[item] = options.parts ? {open: '', inner: '', close: ''} : '';
+				s = this.substring(match.index, pattern.lastIndex);
+				if (options.parts) {
+					if (isOpen && depth === 1) result[item].open = s;
+					else if (isClose && depth === 1) result[item].close = s;
+					else result[item].inner += s;
+				}
+				else result[item] += s;
+				if (depth === 1 && isClose) {
+					if (! global) break;
+					item++;
+				}
+			}
+			if (isClose) depth--;
+		}
+		if (! global) return result ? result.pop() : null;
+		return result;
+	}
+	
 
 	/** Делает все замены в строке value (четные - регулярное выражение, нечетные - замена). При этом, если элемент replaces массив, то делает замены по нему рекурсивно. */
 	String.prototype.replaceAll = function(replaces) {

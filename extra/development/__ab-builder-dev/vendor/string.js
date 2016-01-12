@@ -445,7 +445,8 @@
 			parts : 'boolean'
 		};
 		for (var prop in optProps) {
-			if (typeof options[prop] !== optProps[prop]) throw TypeError('Function matchRecursive(), 2-nd parameter: a ' + optProps[prop] + ' type expected in "' + prop + '" property in object, ' + (typeof options[prop]) + ' given!');
+			if (typeof options[prop] !== optProps[prop]) 
+				throw TypeError('Function matchRecursive(), 2-nd parameter: a ' + optProps[prop] + ' type expected in "' + prop + '" property in object, ' + (typeof options[prop]) + ' given!');
 		}
 
 		var match, depth = 0, depthMax = 1000, item = 0, result = [], s, isOpen, isClose, global = pattern.global;

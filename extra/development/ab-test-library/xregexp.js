@@ -2,6 +2,8 @@
  * XRegExp 3.0.0
  * <http://xregexp.com/>
  * Steven Levithan (c) 2007-2015 MIT License
+ * 
+ * Rin: я добавил в метод union() параметр delimiter
  */
 
 /**
@@ -1304,13 +1306,14 @@ var XRegExp = (function(undefined) {
  * @memberOf XRegExp
  * @param {Array} patterns Regexes and strings to combine.
  * @param {String} [flags] Any combination of XRegExp flags.
+ * @param {String} [delimiter] Default is "|"
  * @returns {RegExp} Union of the provided regexes and strings.
  * @example
  *
  * XRegExp.union(['a+b*c', /(dogs)\1/, /(cats)\1/], 'i');
  * // -> /a\+b\*c|(dogs)\1|(cats)\2/i
  */
-    self.union = function(patterns, flags) {
+    self.union = function(patterns, flags, delimiter) {
         var parts = /(\()(?!\?)|\\([1-9]\d*)|\\[\s\S]|\[(?:[^\\\]]|\\[\s\S])*]/g,
             output = [],
             numCaptures = 0,
@@ -1356,7 +1359,8 @@ var XRegExp = (function(undefined) {
             }
         }
 
-        return self(output.join('|'), flags);
+		if (! isType(delimiter, 'String')) delimiter = '|';
+        return self(output.join(delimiter), flags);
     };
 
 /* ==============================

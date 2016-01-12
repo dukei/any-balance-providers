@@ -17,6 +17,9 @@
 	</files>
 	<counters>
 		<counter id="balance" name="Баланс" units=" €"/>
+		<counter id="advance_duration" name="Срок действия аванса" type="time_interval" format="{@d}-{@mo}-{@y} {@h}:{@min}"/>
+		<counter id="usage_duration" name="Срок использования" type="time_interval" format="{@d}-{@mo}-{@y} {@h}:{@min}"/>
+		<counter id="service_package" name="Пакет услуг" type="time_interval" format="{@d}-{@mo}-{@y} {@h}:{@min}"/>
 	</counters>
 	<keywords></keywords>
 	<type>cell</type>

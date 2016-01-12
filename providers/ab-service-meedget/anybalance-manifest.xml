@@ -2,7 +2,7 @@
 <provider>
 	<id version="1">ab-service-meedget</id>
 	<api flags="no_browser"/>
-	<name>meedget</name>
+	<name>.MEEDGET</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе и остатке дней абонемента <a href="https://meedget.ru/">https://meedget.ru/</a></p>
 	<p>Информация берется из личного кабинета https://meedget.ru/admpanel/mymeedget</p>
@@ -16,7 +16,7 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units="р"/>
+		<counter id="balance" name="Баланс" units=" р"/>
 		<counter id="days" name="Остаток дней"/>
 	</counters>
 	<keywords>meedget</keywords>

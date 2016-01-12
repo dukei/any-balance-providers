@@ -37,7 +37,7 @@ function main() {
 	
 	var result = {success: true};
 	getParam(html, result, 'balance', /Баланс:[^>]*<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'days', /Хватит ещё на ([\s\S]*?) дня/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'days', /Хватит ещё на ([\s\S]*?) /i, replaceTagsAndSpaces, parseBalance);
 	
 	AnyBalance.setResult(result);
 }

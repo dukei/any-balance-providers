@@ -23,8 +23,9 @@ function main() {
         emptyLogin: 'Введите логин!',
         emptyPass: 'Введите пароль!',
         auth: 'Ошибка авторизации',
-        code: 'Некорректный проверочный код',
-        changed: 'Не удалось зайти в личный кабинет. Сайт изменен?'
+        loginPassIncorrect: 'Некорректный номер или пароль',
+        checkNumIncorrect: 'Некорректный проверочный код',
+        htmlChanged: 'Не удалось зайти в личный кабинет. Сайт изменен?'
     };
 
 
@@ -76,21 +77,14 @@ function main() {
     }
 
     if (json) {
-        var errorMessage = errors.auth;
-        var fatal = false;
-        try {
-            var error = JSON.parse(json);
-            if (error.type == 'error') {
-                errorMessage = error.message || errorMessage;
-                fatal = true;
-            }
-            if (error.type == 'validate') {
-                errorMessage = error.params.checkNum ? errors.code : errorMessage;
-            }
-        } catch (exc) {
-            throw new AnyBalance.Error(errorMessage);
+        var error = AB.getJSON(json);
+        if ((error.type == 'error') && (error.code == 'S100003')) {
+            throw new AnyBalance.Error(errors.loginPassIncorrect, false, true);
         }
-        throw new AnyBalance.Error(errorMessage, false, fatal);
+        if ((error.type == 'validate') && error.params && error.params.checkNum) {
+            throw new AnyBalance.Error(errors.checkNumIncorrect);
+        }
+        throw new AnyBalance.Error(errors.auth);
     }
 
     var html = AnyBalance.requestGet(baseurl + 'mybill/init', g_headers);
@@ -100,32 +94,36 @@ function main() {
     }
 
     //window.__html = html;
-
-    var matchUserInfo = /myeCare[^>]*>[^<!]{1,180}!\s*([^<,]+),[^<0-9]*(\d{9,13})\s*<input[^>]+?inetLogoutId/i.exec(html);
-
-    if (!matchUserInfo) {
-        throw new AnyBalance.Error(errors.changed, false, true);
+    
+    if (!/id="inetLogoutId"/i.test(html)) {
+        AnyBalance.trace(html);
+        throw new AnyBalance.Error(errors.htmlChanged, false, true);
     }
 
     var result = {
-        success: true,
-        fio: matchUserInfo[1],
-        phone: matchUserInfo[2]
+        success: true
     };
+    
+    function select(html, selector) {
+        selector = selector.split('.');
+        var tag = selector[0] || '[a-z1-6]+';
+        var className = selector[1];
+        return AB.getElement(html, RegExp('<' + tag + '\\s[^>]*' + (className ? 'class="[^"]*\\b' + className + '\\b[^"]*"' : '') + '[^>]*>', 'i'));
+    }
+    
+    var userInfo = select(html, 'div.myeCare');
 
-    AB.getParam(html, result, 'balance', /class=['"][^'"]*myBillDes[^'"]*['"][^>]*>\s*<p\s[^>]*class=['"][^'"]*price[^'"]*["'][^>]*>\$<span\s[^>]*>([^<]+)/i, AB.replaceTagsAndSpaces, AB.parseBalance);
-    AB.getParam(html, result, 'offering', /class=['"][^'"]*primaryOffering[^'"]*['"][^>]*>[\s\S]{1,500}?<p\s[^>]*class=['"][^'"]*des[^'"]*["'][^>]*>([\s\S]+?)<\/p>/i, AB.replaceTagsAndSpaces);
+    AB.getParam(userInfo, result, 'fio', /!\s*([^,<]+)/);
+    AB.getParam(userInfo, result, 'phone', /\d{7,12}/);
+    AB.getParam(select(html, 'div.myBillDes'), result, 'balance', null, AB.replaceTagsAndSpaces, AB.parseBalance);
+    AB.getParam(select(select(html, 'div.primaryOffering'), 'p.des'), result, 'offering', null, AB.replaceTagsAndSpaces);
+    AB.getParam(select(html, 'div.billInformation'), result, 'acdate', /<dd>\s*([0-9:\s-]{19})/i, AB.replaceTagsAndSpaces, AB.parseDate);
 
-    AB.getParam(html, result, 'gprs', /<!--\s*GPRS\s*-->[\s\S]{1,100}?id="tabs-12"[\S\s]{1,1000}?class="tc"[\S\s]{1,1000}?<td>\s*(\d+\s*\/\s*\d+)/i, AB.replaceTagsAndSpaces, function (value) {
-        var left = parseInt(value, 10);
-        if (!left) {
-            return 0;
-        }
-        var total = /(\d+)\s*$/.exec(value)[1];
-        return (left / 1024).toFixed(2) + ' mb / ' + (total / 1024).toFixed(2) + ' mb';
-    });
-
-    AB.getParam(html, result, 'acdate', /class=['"][^'"]*billInformation[^'"]*['"][^>]*>[\s\S]+?<dd>\s*(\d\d-\d\d-\d\d\d\d\s+\d\d:\d\d:\d\d)/i, AB.replaceTagsAndSpaces);
-
+    if (AnyBalance.isAvailable(['gprs', 'gprstotal'])) {
+        var gprsInfo = AB.getElement(html, /<tr>\s*<td>GPRS/);
+        AB.getParam(gprsInfo, result, 'gprs', /<td>(\d+)\s*\/\s*\d+<\/td>/, AB.replaceTagsAndSpaces, parseInt);
+        AB.getParam(gprsInfo, result, 'gprstotal', /<td>\s*\d+\s*\/\s*(\d+)\s*<\/td>/, AB.replaceTagsAndSpaces, parseInt);
+    }
+    
     AnyBalance.setResult(result);
 }

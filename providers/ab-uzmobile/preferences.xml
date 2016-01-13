@@ -8,6 +8,7 @@
 		dialogTitle="Логин"
 		positiveButtonText="ОК"
 		negativeButtonText="Отмена"
+                inputType="number"
 		dialogMessage="Введите логин, используемый для входа в личный кабинет.">
 	</EditTextPreference>
 	<EditTextPreference

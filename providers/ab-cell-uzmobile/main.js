@@ -124,8 +124,10 @@ function main() {
         if(gprsInfo) {
             var unitMatch = /(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i.exec(gprsInfo);
             var unit = unitMatch && unitMatch[1] || 'KB';
-            AB.getParam(gprsInfo, result, 'gprs', /<td>(\d+)\s*\/\s*\d+<\/td>/i, [AB.replaceTagsAndSpaces, /$/, unit], parseTraffic);
-            AB.getParam(gprsInfo, result, 'gprstotal', /<td>\s*\d+\s*\/\s*(\d+)\s*<\/td>/i, [AB.replaceTagsAndSpaces, /$/, unit], parseTraffic);
+            var valueMatch = /(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i.exec(gprsInfo);
+            var gprsValue = valueMatch && valueMatch[1] || '';
+            AB.getParam(gprsValue, result, 'gprs', /([^\/<]*)/i, [AB.replaceTagsAndSpaces, /$/, unit], parseTraffic);
+            AB.getParam(gprsValue, result, 'gprstotal', /\/([^<]*)/i, [AB.replaceTagsAndSpaces, /$/, unit], parseTraffic);
         }
     }
     

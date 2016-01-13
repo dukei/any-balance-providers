@@ -22,49 +22,24 @@ function main() {
 	AB.checkEmpty(prefs.password, 'Введите пароль!');
 
 	var baseurl = 'https://stat.progtech.ru/';
-	var helpStr = '';
+
 	AnyBalance.setDefaultCharset('koi8-r');
 	
-	var html = AnyBalance.requestGet(baseurl + helpStr, g_headers);
+	var html = AnyBalance.requestGet(baseurl, g_headers);
 
 	if(!html || AnyBalance.getLastStatusCode() > 400){
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
 	}
-
-	////Находим секретный параметр
-	//var tform = AB.getParam(html, null, null, /<input[^>]*name="form_data\[logname\]"[^>]*>/i, AB.replaceHtmlEntities);
-	//if(!tform){
-	//	AnyBalance.trace(html);
-	//	throw new AnyBalance.Error('Не удалось найти форму входа. Сайт изменен?');
-	//}
-
-	var params = AB.createFormParams(html, function(params, str, name, value) {
-		if (name == 'login') {
-			return prefs.login;
-		}
-		else if (name == 'password') {
-			return prefs.password;
-		}
-		return value;
-	});
 	
-	html = AnyBalance.requestPost(baseurl + helpStr, {
+	html = AnyBalance.requestPost(baseurl, {
 		'form_data[action]': 'startup',
 		'form_data[logname]': prefs.login,
 		'form_data[password]': prefs.password
-	}, AB.addHeaders({Referer: baseurl + helpStr}));
-	
-/*	if (!/logout/i.test(html)) {
-		var error = AB.getParam(html, null, null, /<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, AB.replaceTagsAndSpaces);
-		if (error)
-			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
+	}, AB.addHeaders({Referer: baseurl}));
 
-		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
-	}*/
 	if(!/выход/i.test(html)){
-		var error = AB.getParam(html, null, null, /Личный кабинет пользователя[\s\S]*<p[^>]*>([\s\S]*)<\/p>[\s\S]*<form[\s\S]*method="post"[^>]*>/i, AB.replaceTagsAndSpaces);
+		var error = AB.getParam(html, null, null, /<p[^>]align="center">([\s\S]*?)<\/p>/i, AB.replaceTagsAndSpaces);
 		if(error){
 			throw new AnyBalance.Error(error, null, /Неправильный логин или пароль/i.test());
 		}
@@ -82,7 +57,7 @@ function main() {
     AB.getParam(html, result, 'paymentOut', /Расход\s+за\s+текущий\s+период:\s*<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/i, AB.replaceTagsAndSpaces, AB.parseBalance);
     AB.getParam(html, result, 'currentTariff', /Действующий\s+тариф:\s*<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/i, AB.replaceTagsAndSpaces);
     AB.getParam(html, result, 'futureTariff', /Будущий\s+тариф\s+\([^)]*\)[^<]*<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/i, AB.replaceTagsAndSpaces);
-    AB.getParam(html, result, 'changeTariffDate', /Будущий\s+тариф[^()]*\([^<]*([^)]*)/i, AB.replaceTagsAndSpaces, AB.parseDate);
+    AB.getParam(html, result, 'changeTariffDate', /Будущий\s+тариф([\s\S]*?)<\/td>/i, AB.replaceTagsAndSpaces, AB.parseDate);
     AB.getParam(html, result, 'trafficBalance', /Остаток\s+предоплаченного\sтрафика:\s*<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/i, AB.replaceTagsAndSpaces, AB.parseBalance);
     AB.getParam(html, result, 'currentLimit', /Действующий лимит:\s*<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/i, AB.replaceTagsAndSpaces);
 

@@ -120,10 +120,13 @@ function main() {
     AB.getParam(select(html, 'div.billInformation'), result, 'acdate', /<dd>\s*([0-9:\s-]{19})/i, AB.replaceTagsAndSpaces, AB.parseDate);
 
     if (AnyBalance.isAvailable(['gprs', 'gprstotal'])) {
-        var freeResParent = select(html, 'div.dscharTabCon');
-        var gprsInfo = AB.getElement(freeResParent, /<tr[^>]*>(?=\s*<td[^>]*>\s*GPRS)/);
-        AB.getParam(gprsInfo, result, 'gprs', /<td>(\d+)\s*\/\s*\d+<\/td>/, AB.replaceTagsAndSpaces, parseInt);
-        AB.getParam(gprsInfo, result, 'gprstotal', /<td>\s*\d+\s*\/\s*(\d+)\s*<\/td>/, AB.replaceTagsAndSpaces, parseInt);
+        var gprsInfo = AB.getElement(select(html, 'div.dscharTabCon'), /<tr[^>]*>(?=\s*<td[^>]*>\s*GPRS)/i);
+        if(gprsInfo) {
+            var unitMatch = /(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i.exec(gprsInfo);
+            var unit = unitMatch && unitMatch[1] || 'KB';
+            AB.getParam(gprsInfo, result, 'gprs', /<td>(\d+)\s*\/\s*\d+<\/td>/i, [AB.replaceTagsAndSpaces, /$/, unit], parseTraffic);
+            AB.getParam(gprsInfo, result, 'gprstotal', /<td>\s*\d+\s*\/\s*(\d+)\s*<\/td>/i, [AB.replaceTagsAndSpaces, /$/, unit], parseTraffic);
+        }
     }
     
     AnyBalance.setResult(result);

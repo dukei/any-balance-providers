@@ -19,10 +19,7 @@ function main() {
 	var prefs = AnyBalance.getPreferences();
 
 	var baseurl = 'https://portal-tver.itgkh.ru/';
-	var helpStr = 'index/login/';
-	var heptStrForGet = '';
-	var helpStrAccount = 'account';
-	var helpStrAccrual = 'account/accrual';
+
 	AnyBalance.setDefaultCharset('utf-8');
 
 	AB.checkEmpty(prefs.login, 'Введите логин!');

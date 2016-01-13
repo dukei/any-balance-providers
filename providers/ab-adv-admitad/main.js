@@ -32,9 +32,9 @@ function main() {
 	html = AnyBalance.requestPost(baseurl + 'ru/sign_in/', params, addHeaders({Referer: baseurl + 'ru/sign_in/'}));
 	
 	if (!/sign_out/i.test(html)) {
-		var error = getParam(html, null, null, /"errorlist"[^>]*>([\s\S]*?)<\/ul/i, replaceTagsAndSpaces, html_entity_decode);
+		var error = getParam(html, null, null, /<aside[^>]+(?:error|message)[^>]*>[\s\S]*?<h1[^>]*>([\s\S]*?)<\/h1>/i, replaceTagsAndSpaces);
 		if (error)
-			throw new AnyBalance.Error(error, null, /еправильный логин и\/или пароль/i.test(error));
+			throw new AnyBalance.Error(error, null, /логин или пароль неверны/i.test(error));
 		
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
@@ -45,9 +45,13 @@ function main() {
 	var json = getJson(html);
 	
 	var result = {success: true};
+
+	var mb = json.mixed_balances;
+	if(!mb[0].currency)
+		mb = json.mixed_balances[0];
 	
-	for(var i=0; i<json.mixed_balances.length; i++) {
-		var current = json.mixed_balances[i];
+	for(var i=0; i<mb.length; i++) {
+		var current = mb[i];
 		
 		getParam(current.balance+'', result, 'out_' + current.currency.toLowerCase(), null, replaceTagsAndSpaces, parseBalance);
 	}

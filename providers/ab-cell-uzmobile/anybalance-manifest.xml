@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-    <id version="1">ab-uzmobile</id>
+    <id version="1">ab-cell-uzmobile</id>
     <api flags="no_browser"/>
     <name>UzMobile</name>
     <description html="true"><![CDATA[

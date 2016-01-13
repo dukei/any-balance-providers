@@ -39,7 +39,7 @@ function main() {
 	}, AB.addHeaders({Referer: baseurl}));
 
 	if(!/выход/i.test(html)){
-		var error = AB.getParam(html, null, null, /<p[^>]*>([\s\S]*?)<\/p>/i, AB.replaceTagsAndSpaces);
+		var error = AB.getParam(html, null, null, /<p[^>]*align="center"[^>]*>([\s\S]*?)<\/p>/i, AB.replaceTagsAndSpaces);
 		if(error){
 			throw new AnyBalance.Error(error, null, /Неправильный логин или пароль/i.test());
 		}

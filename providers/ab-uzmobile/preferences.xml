@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
 	<EditTextPreference
-		title="Логин"
+		title="Номер телефона"
 		key="login"
 		summary="||{@s}"
 		obligatory="true"
-		dialogTitle="Логин"
+		dialogTitle="Номер телефона"
 		positiveButtonText="ОК"
 		negativeButtonText="Отмена"
                 inputType="number"
-		dialogMessage="Введите логин, используемый для входа в личный кабинет.">
+		dialogMessage="Введите номер телефона, используемый для входа в личный кабинет.">
 	</EditTextPreference>
 	<EditTextPreference
 		title="Пароль"

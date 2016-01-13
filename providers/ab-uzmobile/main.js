@@ -77,7 +77,7 @@ function main() {
     }
 
     if (json) {
-        var error = AB.getJSON(json);
+        var error = AB.getJson(json);
         if ((error.type == 'error') && (error.code == 'S100003')) {
             throw new AnyBalance.Error(errors.loginPassIncorrect, false, true);
         }
@@ -97,7 +97,7 @@ function main() {
     
     if (!/id="inetLogoutId"/i.test(html)) {
         AnyBalance.trace(html);
-        throw new AnyBalance.Error(errors.htmlChanged, false, true);
+        throw new AnyBalance.Error(errors.htmlChanged);
     }
 
     var result = {
@@ -120,7 +120,8 @@ function main() {
     AB.getParam(select(html, 'div.billInformation'), result, 'acdate', /<dd>\s*([0-9:\s-]{19})/i, AB.replaceTagsAndSpaces, AB.parseDate);
 
     if (AnyBalance.isAvailable(['gprs', 'gprstotal'])) {
-        var gprsInfo = AB.getElement(html, /<tr>\s*<td>GPRS/);
+        var freeResParent = select(html, 'div.dscharTabCon');
+        var gprsInfo = AB.getElement(freeResParent, /<tr[^>]*>(?=\s*<td[^>]*>\s*GPRS)/);
         AB.getParam(gprsInfo, result, 'gprs', /<td>(\d+)\s*\/\s*\d+<\/td>/, AB.replaceTagsAndSpaces, parseInt);
         AB.getParam(gprsInfo, result, 'gprstotal', /<td>\s*\d+\s*\/\s*(\d+)\s*<\/td>/, AB.replaceTagsAndSpaces, parseInt);
     }

@@ -65,7 +65,7 @@ function main() {
 	var prefs = AnyBalance.getPreferences();
 	
 	AnyBalance.trace('Проверяем функцию createFormParams...');
-	var params = createFormParams(formParamsHtml, function(params, str, name, value) {
+	var params = createFormParams(sample.form, function(params, str, name, value) {
 		if (name == 'ULOGIN') 
 			return 'TEST_LOGIN';
 
@@ -172,35 +172,17 @@ function main() {
 		AnyBalance.trace('!!!____________________________________________________________getElements test is failed: should be ' + 3 + ', parsed ' + a.length + '!!!');
 
 
-	var s1 = '<div>some html</div>		\n\
-		<script> var x=				\n\
-			{						\n\
-				\/* \/{} \\			\n\
-				*\/					\n\
-				// \/{}	\\			\n\
-				i: 1,				\n\
-				b: true,			\n\
-				s1: "_{}}  \\" \/\/  ",		\n\
-				s2: \'_{}} \\\' \/\/  \',	\n\
-				s3: `_{}} \\`  \/\/  `,		\n\
-				s4: "_{}}  \\"\\\n\/\/  ",	\n\
-				r: /[\\/regexp\\d]{1,}/ig,	\n\
-				a: [				\n\
-					{ff: 2.2},		\n\
-					{oo: {}}		\n\
-				],					\n\
-				"sdf}sdsdf": 666,   \n\
-				/* check } */		\n\
-				o: {}				\n\
-			};						\n\
-			var x = "{}"			\n\
-			';
-	var str = getJsonObject(s1, /var\s+x\s*=(?=\s*\{)/);
+	var str = getJsonObject(sample.js, /var\s+super\s*=(?=\s*\{)/);
 	if(str && str.i == 1)
-		AnyBalance.trace('getJsonObject is ok');
+		AnyBalance.trace('getJsonObject (part1) is ok');
 	else
-		AnyBalance.trace('!!!____________________________________________________________getJsonObject test is failed!!!');
-
+		AnyBalance.trace('!!!____________________________________________________________getJsonObject (part1) test is failed!!!');
+	
+	var js = getJsonObject(sample.mgts, /mgts.data.widgets =/);
+	if(js.length == 7)
+		AnyBalance.trace('getJsonObject (part2) is ok');
+	else
+		AnyBalance.trace('!!!____________________________________________________________getJsonObject (part2) test is failed!!!');
 	
 		
 	//checkEmpty(prefs.s, 'checkEmpty работает нормально!');
@@ -251,70 +233,3 @@ function main() {
 	
 	AnyBalance.setResult(result);
 }
-
-var formParamsHtml = '<table class="block" border="0" cellspacing="0" cellpadding="0" align="center">\
-<tr>\
-<td>\
-<div id="divInfo" class="group-info">&#1044;&#1083;&#1103; &#1086;&#1087;&#1088;&#1077;&#1076;&#1077;&#1083;&#1077;&#1085;&#1080;&#1103; &#1088;&#1077;&#1075;&#1080;&#1086;&#1085;&#1072; &#1074;&#1074;&#1077;&#1076;&#1080;&#1090;&#1077; &#1042;&#1072;&#1096; &#1085;&#1086;&#1084;&#1077;&#1088; &#1090;&#1077;&#1083;&#1077;&#1092;&#1086;&#1085;&#1072;.</div>\
-</td>\
-</tr>\
-<tr>\
-<td align="center" valign="middle">\
-<noscript>\
-<div class="group-info">\
-<div class="attention">\
-<strong>&#1044;&#1083;&#1103; &#1074;&#1093;&#1086;&#1076;&#1072; &#1074; &#1089;&#1080;&#1089;&#1090;&#1077;&#1084;&#1091; &#1074;&#1082;&#1083;&#1102;&#1095;&#1080;&#1090;&#1077; JavaScript.</strong>\
-</div>\
-</div>\
-</noscript>\
-<div id="divMessage" style="display: none;"></div>\
-</td>\
-</tr>\
-<tr>\
-<td valign="middle">\
-<div id="main_container" style="display: none; width:auto!important;">\
-<form id="LOGIN_FORM" name="LOGIN_FORM" method="POST" onsubmit="return uapLoginFormCheck(this);">\
-<input id="SESSION_ID" type="hidden" name="SESSION_ID" value=""><input id="CHANNEL" type="hidden" name="CHANNEL" value="WWW"><input type="hidden" name="P_ISOC_ID" value=""><input id="CHANNELTYPE" type="hidden" name="CHANNELTYPE" value="COMMON"><input id="pathId" type="hidden" value="/ps/scc/php/"><input id="PREFIX" type="hidden" name="PREFIX"><input type="hidden" id="MAIN_FORM_NAME" value="LOGIN_FORM"><input type="hidden" id="P_USER_LANG_ID" value="1"><input type="hidden" id="P_FLAG_MULTYLANG" value="0">\
-<div class="group-input">\
-<table border="0" cellpadding="3" cellspacing="0">\
-<colgroup>\
-<col width="180">\
-<col width="150">\
-<col width="170">\
-</colgroup>\
-<tbody>\
-<tr>\
-<td height="5" colspan="3"></td>\
-</tr>\
-<tr class="grid-row">\
-<td align="right">\
-<div>\
-<strong>&#1053;&#1086;&#1084;&#1077;&#1088; &#1090;&#1077;&#1083;&#1077;&#1092;&#1086;&#1085;&#1072;:</strong>\
-</div>\
-</td><td><input type="text" id="LOGIN" name="ULOGIN" class="input_text" value="" autocomplete="on"></td><td>\
-<div xmlns:xalan="http://xml.apache.org/xalan" class="field-error-message" id="LOGIN-ErrorMessage" field_id="LOGIN">&nbsp;\
-  </div>\
-</td>\
-</tr>\
-<tr>\
-<td></td><td colspan="2">\
-<div style="margin-top: -5px;">\
-<div>\
-<strong class="login_example">&#1053;&#1072;&#1087;&#1088;&#1080;&#1084;&#1077;&#1088;, 9261110505</strong>\
-</div>\
-</div>\
-</td>\
-</tr>\
-</tbody>\
-</table>\
-</div>\
-<table cellpadding="0" cellspacing="0" border="0" width="100%">\
-<tr>\
-<td align="right"><input xmlns:xalan="http://xml.apache.org/xalan" class="button_forward" onmouseover="$(this).addClass("button_forward-hover")" onmouseout="$(this).removeClass("button_forward-hover")" value="&#1042;&#1086;&#1081;&#1090;&#1080;" type="submit" id="submitBtnId" style=""></td>\
-</tr>\
-</table>\
-</form>\
-</div>\
-</td>\
-</tr>\
-</table>';

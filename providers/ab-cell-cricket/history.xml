@@ -3,4 +3,7 @@
 	<change version="1" date="2015-11-13">
 	- Initial version.
 	</change>
-</history>
+	<change version="2" date="2016-01-13">
+	- Bugfix for the wrong data amount being displayed.
+	</change>
+ </history>

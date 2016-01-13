@@ -51,7 +51,7 @@ function doLogin(login,password)
         redirectURL: "",
         userName: login
     }
-    AnyBalance.trace(JSON.stringify(params),"Lsogin params");
+    AnyBalance.trace(JSON.stringify(params),"Login params");
 	AnyBalance.requestPost(g_login_script, params, addHeaders({Referer: g_login_page}));
     traceCookies();
     if (AnyBalance.getCookie("token")==null)
@@ -77,10 +77,10 @@ function main()
     AnyBalance.trace(info2,"Raw account info 2");
     
     // parse and return
-    getParam(info1, result, "days",    /days_left[\s\S]*?<\/div>/i,                     replaceTagsAndSpaces, parseBalance);
-    getParam(info1, result, "credit",  /Current Credit:[\s\S]*?<\/span>/i,              replaceTagsAndSpaces, parseBalance);
-    getParam(info1, result, "monthly", /Monthly Total:[\s\S]*?<\/span>/i,               replaceTagsAndSpaces, parseBalance);
-    getParam(info2, result, "bonus",   /loyalty_user_points[\s\S]*?<\/div>/i,           replaceTagsAndSpaces, parseBalance);
-    getParam(info2, result, "data",    /<dd.*data_speed[\s\S]*?Used[\s\S]*?<\/label>/i, replaceTagsAndSpaces, parseTraffic);
+    getParam(info1, result, "days",    /days_left[^>]*>([\s\S]*?)<\/div>/i,                          replaceTagsAndSpaces, parseBalance);
+    getParam(info1, result, "credit",  /Current Credit:[\s\S]*?<\/span>/i,                           replaceTagsAndSpaces, parseBalance);
+    getParam(info1, result, "monthly", /Monthly Total:[\s\S]*?<\/span>/i,                            replaceTagsAndSpaces, parseBalance);
+    getParam(info2, result, "bonus",   /loyalty_user_points[^>]*>([\s\S]*?)<\/div>/i,                replaceTagsAndSpaces, parseBalance);
+    getParam(info2, result, "data",    /<dd.*data_speed[\s\S]*?(\S*? of .* Used[\s\S]*?)<\/label>/i, replaceTagsAndSpaces, parseTraffic);
 	AnyBalance.setResult(result);
 }

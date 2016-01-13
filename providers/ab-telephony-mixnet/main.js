@@ -12,7 +12,7 @@ var g_headers = {
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'http://my.mixnet.ua/';
+	var baseurl = 'http://atelecom.biz/';
 	AnyBalance.setDefaultCharset('utf-8');
 	
 	checkEmpty(/^\d{6}$/.test(prefs.login), 'Введите последние 6 цифр номера телефона!');

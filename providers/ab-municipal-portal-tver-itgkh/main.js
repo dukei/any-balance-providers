@@ -71,7 +71,7 @@ function main() {
 
 	var dataForm = AB.getElement(html, /\<form[^>]+class=\"\s*form-horizontal\s*\"[^>]*\>/i);
 
-	AB.getParam(dataForm, result, 'debt', /Задолженность\s+по\s+сч[ёе]ту[\s\S]*?<input[^>]*\bvalue=\"([^"]*)\"/i, AB.replaceHtmlEntities, AB.parseBalance);
+	AB.getParam(dataForm, result, 'debt', /Задолженность\s+по\s+сч[ёе]ту[\s\S]*?<input[^>]*value=\"([^"]*)\"/i, AB.replaceHtmlEntities, AB.parseBalance);
 
 	html = AnyBalance.requestGet(baseurl + 'account/accrual', g_headers);
 

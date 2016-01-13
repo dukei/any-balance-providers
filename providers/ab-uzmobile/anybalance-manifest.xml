@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-uzmobile</id>
+	<api flags="no_browser"/>
+	<name>UzMobile</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет  информацию о балансе и трафик для пользователей оператора сотовой связи "UzMobile". </p>
+	<p>Информация берется из <a href="https://gsm.uzmobile.uz/ecare/inet/subscriber/loginInit?null">личного кабинета</a></p>
+	]]></description>
+        <instruction html="true"><![CDATA[
+	<p>Если у вас нет доступа в Личный кабинет, получите его на странице <a href=""></a></p>
+	]]></instruction>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+                <counter id="phone" name="Телефон" type="text"/>
+		<counter id="balance" name="Баланс" units=" {@currency}"/>
+		<counter id="offering" name="Тарифный план" type="text"/>
+	</counters>
+	<keywords>Сотовый телефон, мобильный, мобильник, uzmobile, интернет</keywords>
+	<type></type>
+	<country>ru</country>
+</provider>

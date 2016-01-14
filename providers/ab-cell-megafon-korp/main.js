@@ -47,9 +47,6 @@ function main() {
     AnyBalance.setDefaultCharset('utf-8');
     var baseurl = 'https://' + (prefs.region || 'center') + '.b2blk.megafon.ru/';
 
-    // getRegions();
-    // return;
-
     var html = AnyBalance.requestGet(baseurl + 'sc_cp_apps/login', g_headers);
 
     if(!html || AnyBalance.getLastStatusCode() > 400){
@@ -72,23 +69,6 @@ function main() {
     }
 
     var result = {success: true};
-
-    /*
-    <counter id="balance" name="Баланс" units=" р"/> +
-    <counter id="abonCount" name="Количество абонентов" type="text"/> +
-    <counter id="name_name" name="Название" type="text"/> +
-
-    <counter id="phone_name" name="Номер телефона" type="text"/> +
-
-    <counter id="amountTotal" name="Расходы с начала периода" units=" р"/>
-    <counter id="amountLocal" name="Трафик" units=" р"/>
-    <counter id="abon" name="Абонентская плата" units=" р"/>
-    <counter id="charges" name="Разовые начисления" units=" р"/>
-
-
-    <counter id="min_left" name="Минуты" units=" мин"/>
-    <counter id="sms_left" name="SMS" units=" шт"/>
-     */
 
     AB.getParam(html, result, 'balance', /<dt>Текущий баланс[^]*?class="money[^>]*>([^<]+)/i, AB.replaceTagsAndSpaces, AB.parseBalance);
     AB.getParam(html, result, 'abonCount', /<dt>Абонентов[^]*?class="span28[^>]*>([^<]+)/i, AB.replaceTagsAndSpaces, AB.parseBalance);
@@ -121,24 +101,14 @@ function main() {
 
         AnyBalance.trace('Успешно получили данные по номеру: ' + curr.msisdn);
         AnyBalance.trace(JSON.stringify(account));
-        /*
-        getParam(account.amountTotal + '', result, 'amountTotal', null, replaceTagsAndSpaces, parseBalance);
-        getParam(account.amountLocal + '', result, 'amountLocal', null, replaceTagsAndSpaces, parseBalance);
-        getParam(account.charges + '', result, 'charges', null, replaceTagsAndSpaces, parseBalance);
-
-        sumParam(account.monthChargeRTPL + '', result, 'abon', null, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-        sumParam(account.monthChargeSRLS + '', result, 'abon', null, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-        */
 
         AB.getParam(account.msisdn, result, 'phone_name', null, AB.replaceTagsAndSpaces);
         AB.getParam(account.account.name, result, 'name_name', null, AB.replaceTagsAndSpaces);
 
-        
-
         if(AnyBalance.isAvailable('min_left', 'sms_left')){
             getDiscounts(baseurl, account, result);
         }
-        
+
         function getDLValue(html, name, title) {
             if (AnyBalance.isAvailable(name)) {
                 var elem = AB.getElement(html, RegExp('<dl[^>]*>(?=\s*<dt[^>]*>\s*' + title.replace(/\s/g, ' ') + '\s*</dt\s*>)', 'i'));
@@ -146,7 +116,7 @@ function main() {
                 AB.getParam(elem, result, name, null, AB.replaceTagsAndSpaces, AB.parseBalance);
             }
         }
-        
+
         if (AnyBalance.isAvailable('amountTotal', 'amountLocal', 'abon', 'charges')) {
             var htmlExp = AnyBalance.requestGet(baseurl + 'sc_cp_apps/subscriber/finances/' + account.id, g_headers);
             getDLValue(htmlExp, 'amountTotal', 'Расходы с начала периода');
@@ -158,7 +128,6 @@ function main() {
         if(AnyBalance.isAvailable('prsnl_balance')){
             var htmlBudget = AnyBalance.requestGet(baseurl + 'sc_cp_apps/subscriber/budget/' + account.id, g_headers);
             getDLValue(htmlBudget, 'prsnl_balance', 'Баланс');
-            //AB.getParam(html, result, 'prsnl_balance', /<dt[^>]*>\s*Баланс[\s\S]*?<span[^>]+class="money"[^>]*>([\s\S]*?)<\/span>/i, AB.replaceTagsAndSpaces, AB.parseBalance);
         }
     } catch (e) {
         AnyBalance.trace(e.message);

@@ -31,10 +31,21 @@ function main() {
         AnyBalance.trace(loginJson);
         throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
     }
-    
+
     var login = AB.getJson(loginJson);
-    if (login.status == 'error') {
-        throw new AnyBalance.Error(login.errors && login.errors[0] || 'Ошибка автризации.', false, true);
+    if (login.status != 'success') {
+        var fatal = false;
+        if (login.status == 'error') {
+            var errorMsg = login.errors && login.errors[0];
+            if (/invalid.*credentials/.test(errorMsg)) {
+                errorMsg = "Неверный логин/пароль";
+            }
+            if (/iplock/.test(errorMsg)) {
+                errorMsg = "Авторизация временно невозможна.";
+            }
+            fatal = /логин|пароль|корректный.*ПИН/.test(errorMsg);
+        }
+        throw new AnyBalance.Error(errorMsg || 'Ошибка авторизации.', false, fatal);
     }
     
     var userDataJson = AnyBalance.requestGet(baseurl + 'ajaxProfileService?dispatch=getUserInfo&_=' + Date.now(), g_headers);
@@ -59,14 +70,15 @@ function main() {
     };
 
     var result = {
-        success: true,
-        balance: userData.c.milesBalance,
-        cardnum: userData.c.cardNumber,
-        qmiles: userData.c.qMiles,
-        flights: userData.c.qFlights,
-        userName: userData.c.firstName + ' ' + userData.c.lastName,
-        type: cardLevels[userData.c.cardLevel] || userData.c.cardLevel
+        success: true
     };
+    
+    AB.getParam(userData.c.milesBalance, result, 'balance');
+    AB.getParam(userData.c.cardNumber, result, 'cardnum');
+    AB.getParam(userData.c.qMiles, result, 'qmiles');
+    AB.getParam(userData.c.qFlights, result, 'flights');
+    AB.getParam(userData.c.firstName + ' ' + userData.c.lastName, result, 'userName');
+    AB.getParam(cardLevels[userData.c.cardLevel] || userData.c.cardLevel, result, 'type');
 
     AnyBalance.setResult(result);
 }

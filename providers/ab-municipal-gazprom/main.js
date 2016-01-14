@@ -24,9 +24,6 @@ function main() {
 	var prefs = AnyBalance.getPreferences();
 	var region = prefs.region;
 
-	var func = regions[region];
-	AnyBalance.trace('Регион: ' + region);
-
 	AB.checkEmpty(prefs.login, 'Введите логин!');
 	AB.checkEmpty(prefs.region, 'Выберите регион!');
 
@@ -34,6 +31,12 @@ function main() {
 		AB.checkEmpty(prefs.houseNumber, 'Введите номер дома!');
 	else
 		AB.checkEmpty(prefs.password, 'Введите пароль!');
+
+	if(!regions[region])
+		throw new AnyBalance.Error("Регион не найден.");
+
+	var func = regions[region];
+	AnyBalance.trace('Регион: ' + region);
 
 	func();
 }

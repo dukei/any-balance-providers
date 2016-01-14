@@ -44,7 +44,7 @@
 		<counter id="address" name="Адрес установки оборудования" type="text"/>
 		<counter id="fio" name="ФИО" type="text"/>
 	</counters>
-	<keywords></keywords>
+	<keywords>газ межрегион</keywords>
 	<type>municipal</type>
 	<country>ru</country>
 </provider>

@@ -60,7 +60,7 @@ function main() {
     }, AB.addHeaders({Referer: baseurl + 'sc_cp_apps/login'}));
 
     if (!/logout/i.test(html)) {
-        var error = AB.getParam(html, null, null, /"error\.message"\s*:\s*"([^"]+)/i, AB.replaceTagsAndSpaces, AB.html_entity_decode);
+        var error = AB.getParam(html, null, null, /"error\.message"\s*:\s*"([^"]+)/i, AB.replaceTagsAndSpaces);
         if (error)
             throw new AnyBalance.Error(error, null, /Вы ввели неправильный логин или пароль/i.test(error));
 

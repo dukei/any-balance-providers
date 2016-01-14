@@ -23,12 +23,18 @@ function main() {
 		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
 	}
 
-	html = AnyBalance.requestGet(baseurl+'/rx_check_order_status.php?num='+prefs.trackNumber+'&_='+new Date().getTime());
+	html = AnyBalance.requestGet(baseurl+'/rx_check_order_status.php?num='+encodeURIComponent(prefs.trackNumber)+'&_='+new Date().getTime());
 
 	var json = getJson(html);
 
-	if (json.found.list[0].statuses.length==1&&!json.found.list[0].statuses[0].timestamp)
-		throw new AnyBalance.Error('Заказ с указанной экспедиторской распиской не найден.', null, true);
+	if(json.found && json.found.list[0] && json.found.list[0].statuses[0]) {
+		if (json.found.list[0].statuses.length==1&&!json.found.list[0].statuses[0].timestamp)
+			throw new AnyBalance.Error('Заказ с указанной экспедиторской распиской не найден.', null, true);
+	}
+	else {
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error("Не удалось получить информацию. Сайт изменён?")
+	}
 
 	var result = {success: true};
 

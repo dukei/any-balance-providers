@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="5">ab-cell-megafon-korp</id>
+	<id version="6">ab-cell-megafon-korp</id>
 	<api flags="no_browser"/>
 	<name>Мегафон корпоративный</name>
 	<description html="true"><![CDATA[
@@ -26,6 +26,7 @@
 		<counter id="charges" name="Разовые начисления" units=" р"/>
 		<counter id="phone_name" name="Номер телефона" type="text"/>
 		<counter id="name_name" name="Название" type="text"/>
+                <counter id="prsnl_balance" name="Персональный баланс" units=" р"/>
 	</counters>
 	<keywords></keywords>
 	<type>cell</type>

@@ -24,19 +24,17 @@ function main() {
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
 	}
-	
-	var params = AB.createFormParams(html, function(params, str, name, value) {
-		if (name == '__EVENTARGUMENT') {
-            return 'btnLogInÝ;' + prefs.login + '±;' + prefs.password + 'Ѿ;';
-        }
 
-        return value;
-	});
+    var params = {
+        '__VIEWSTATE': AB.getParam(html, null, null, /__viewstate[\s\S]*?value="([^"]*?)"/i),
+        '__EVENTTARGET': '__Page',
+        '__EVENTARGUMENT': 'btnLogInÝ;' + prefs.login + '±;' + prefs.password + 'Ѿ;'
+    };
 	
 	html = AnyBalance.requestPost(baseUrl, params, AB.addHeaders({Referer: baseUrl}));
 	
 	if (!/logout/i.test(html)) {
-		var error = AB.getParam(html, null, null, /не\s+найден\s+вкладчик|запрос\s+не\s+может\s+быть\s+обработан/i, AB.replaceTagsAndSpaces);
+		var error = AB.getParam(html, null, null, /не\s+найден\s+вкладчик/i, AB.replaceTagsAndSpaces);
 		if (error)
 			throw new AnyBalance.Error(error, null, true);
 		
@@ -49,11 +47,13 @@ function main() {
     var savingsSum = AB.getParam(html, null, null, getRegEx('Сумма\\s+пенсионных\\s+накоплений'), AB.replaceTagsAndSpaces, AB.parseBalance),
         startDateIncome = AB.getParam(html, null, null, getRegEx('в\\s+том\\s+числе\\s+инвестиционный\\s+доход'), AB.replaceTagsAndSpaces, AB.parseBalance),
         periodIncome = AB.getParam(html, null, null, getRegEx('инвестиционный\\s+доход\\s+за\\s+период'), AB.replaceTagsAndSpaces, AB.parseBalance),
-        total = AB.getParam(html, null, null, getRegEx('Всего'), AB.replaceTagsAndSpaces, AB.parseBalance);
+        total = AB.getParam(html, null, null, getRegEx('Всего'), AB.replaceTagsAndSpaces, AB.parseBalance),
+        contributions = savingsSum - startDateIncome + total,
+        investIncome = startDateIncome + periodIncome;
 
 	AB.getParam(html, result, 'savings', getRegEx('Итого\\s+пенсионных\\s+накоплений'), AB.replaceTagsAndSpaces, AB.parseBalance);
-    result.contributions = savingsSum - startDateIncome + total;
-    result.invest_income = startDateIncome + periodIncome;
+    AB.getParam(contributions, result, 'contributions');
+    AB.getParam(investIncome, result, 'invest_income');
 	AB.getParam(html, result, 'ppa_number', getRegEx('№\\s+ИПС'), AB.replaceTagsAndSpaces, AB.parseBalance);
 	AB.getParam(html, result, 'ppa_start_date', getRegEx('Дата\\s+открытия\\s+ИПС'), AB.replaceTagsAndSpaces, AB.parseDate);
     AB.getParam(html, result, 'uid', getRegEx('ИИН'), AB.replaceTagsAndSpaces, AB.parseBalance);

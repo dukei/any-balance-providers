@@ -7,7 +7,7 @@ var g_headers = {
 	'Accept-Language': 'ru,en-US;q=0.8,en;q=0.6,uk;q=0.4',
 	'Connection': 'keep-alive',
 	'Origin': 'https://online.oschadbank.ua',
-	'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/46.0.2490.80 Safari/537.36',
+	'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/47.0.2526.111 Safari/537.36',
 };
 
 function main() {
@@ -99,8 +99,7 @@ function fetchCard(html, baseurl) {
     getParam(prod.balances.full_crlimit.value, result, 'maxlimit', null, null, parseBalance);
 	getParam(prod.card.expiryDate + '', result, 'till', null, null, parseDate);
     getParam(prod.balances.total_due.value, result, 'debt', null, null, parseBalance);
-    //Поки так, бо prod.balances.06.value видає помилку
-    getParam(html, result, 'mz', /\"06\" \: \{[\s\S]*?\"value\" \: \"([\s\d.,\-]+)\"/i, replaceTagsAndSpaces, parseBalance);
+    getParam(prod.balances['06'].value, result, 'mz', null, null, parseBalance);
     getParam(prod.card.accountNumber, result, 'rr');
     getParam(prod.balances.available.currency, result, ['currency', 'balance', 'maxlimit', 'debt', 'mz']);
     getParam(prod.product.name, result, '__tariff');
@@ -142,8 +141,7 @@ function fetchAcc(html, baseurl) {
     getParam(prod.balances.full_crlimit.value, result, 'maxlimit', null, null, parseBalance);
 //	getParam(prod.card.expiryDate, result, 'till', null, null, parseDate);
     getParam(prod.balances.total_due.value, result, 'debt', null, null, parseBalance);
-    //Поки так, бо prod.balances.06.value видає помилку
-    getParam(html, result, 'mz', /\"06\" \: \{[\s\S]*?\"value\" \: \"([\s\d.,\-]+)\"/i, replaceTagsAndSpaces, parseBalance);
+    getParam(prod.balances['06'].value, result, 'mz', null, null, parseBalance);
     getParam(prod.cardAccount.accountNumber, result, 'rr');
     getParam(prod.balances.available.currency, result, ['currency', 'balance', 'maxlimit', 'debt', 'mz']);
     getParam(prod.product.name, result, '__tariff');

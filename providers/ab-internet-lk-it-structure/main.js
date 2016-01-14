@@ -32,7 +32,7 @@ function main() {
 
   var authForm = AB.getElement(html, /<form[^>]*action="[^"]*cabinet[^"]*"[^>]*>/i);
 
-  var params = AB.createFormParams(html, function(params, str, name, value) { //token
+  var params = AB.createFormParams(authForm, function(params, str, name, value) { //token
     if (name == 'LOGIN')
       return prefs.login;
     else if (name == 'PASSWD')
@@ -46,7 +46,7 @@ function main() {
   }));
 
   if (!/logout/i.test(html)) {
-    var error = AB.getParam(html, null, null, /<div[^>]*class="[^"]*messages[^"]*[^>]*>([\s\S]*)?<\/div>/i, AB.replaceTagsAndSpaces, AB.replaceHtmlEntities);
+    var error = AB.getParam(html, null, null, /<div[^>]*class="[^"]*messages[^"]*[^>]*>([\s\S]*)?<\/div>/i, AB.replaceTagsAndSpaces);
     if (error)
       throw new AnyBalance.Error(error, null, /Неправильный/i.test(error));
 
@@ -58,11 +58,20 @@ function main() {
     success: true
   };
 
+  // AB.getParam(html, result, 'currentTariff', /tarif-current[\s\S]*?(<h4[^>]*>[\s\S]*?<\/h4>)/i, AB.replaceTagsAndSpaces);
+
   var infoSideBar = AB.getElement(html, /<div[^>]*class=["'][^"']*carbon_modules_userinfosidebar[^"']*[^>]+>/i);
   AnyBalance.trace(infoSideBar);
 
-	AB.getParam(infoSideBar, result, 'balance', /Баланс([\s\S]*?class="[^"]*fa-rub[^"]*">)/i, AB.replaceTagsAndSpaces, AB.parseBalance);
+	AB.getParam(infoSideBar, result, 'balance', /Баланс([\s\S]*?class="[^"]*fa-rub[^"]*[^>]*">)/i, AB.replaceTagsAndSpaces, AB.parseBalance);
 	AB.getParam(infoSideBar, result, 'endDate', /Хватит([\s\S]*?)<\/div>/i, AB.replaceTagsAndSpaces, AB.parseDate);
+	AB.getParam(infoSideBar, result, 'licschet', /Договор\s*<\/div>([\s\S]*?)<\/div>/i, AB.replaceTagsAndSpaces);
+
+  html = AnyBalance.requestGet(baseurl + 'Лицевой-счет/', g_headers);
+
+  AB.getParam(html, result, 'licschet', /Номер\s+сч[её]та\s*<\/td>([\s\S]*?)<\/td>/i, AB.replaceTagsAndSpaces);
+  AB.getParam(html, result, '__tariff', /Тариф\s*<\/td>([\s\S]*?)<\/td>/i, AB.replaceTagsAndSpaces);
+
 
   AnyBalance.setResult(result);
 }

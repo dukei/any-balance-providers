@@ -21,9 +21,10 @@
 	</files>
 	<counters>
 		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="licschet" name="Лицевой счёт" type="text"/>
 		<counter id="endDate" name="Хватит до" type="time" format="dd/MM/yyyy"/>
 	</counters>
 	<keywords>структура</keywords>
-	<type>internet IP-telephony</type>
+	<type>internet telephony</type>
 	<country>ru</country>
 </provider>

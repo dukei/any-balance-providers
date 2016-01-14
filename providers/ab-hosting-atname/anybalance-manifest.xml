@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-hosting-atname</id>
+	<id version="2">ab-hosting-atname</id>
 	<api flags="no_browser"/>
 	<name>AtName</name>
 	<description html="true"><![CDATA[
@@ -20,7 +20,7 @@
 		<counter id="services" name="Заказанных услуг"/>
 		<counter id="domens" name="Заказанных доменов"/>
 		<counter id="domensRenew" name="Домены требующие продления"/>
-		<counter id="fio" name="ФИО"/>
+		<counter id="fio" name="ФИО" type="text"/>
 	</counters>
 	<keywords></keywords>
 	<type>hosting</type>

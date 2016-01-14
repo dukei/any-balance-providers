@@ -39,4 +39,13 @@
 		negativeButtonText="Отмена"
 		dialogMessage="Введите номер дома, прикреплённый к данному счёту.">
 	</EditTextPreference>
+	<EditTextPreference
+		title="Номер квартиры"
+		key="flatNumber"
+		summary="|Нужен для входа в ЛК г. Чебоксары|{@s}"
+		dialogTitle="Номер квартиры"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите номер квартиры, прикреплённый к данному счёту. Если такого нет, то просто оставьте поле пустым.">
+	</EditTextPreference>
 </PreferenceScreen>

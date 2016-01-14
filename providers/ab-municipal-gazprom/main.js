@@ -316,10 +316,10 @@ function getCheboksari() {
 			return prefs.houseNumber;
 		else if(name == 'ctl00$BodyContener$ResultHouse')
 			return prefs.houseNumber;
-		else if(name == 'ctl00$BodyContener$ResultHouseCase')
+		/**else if(name == 'ctl00$BodyContener$ResultHouseCase')
 			return prefs.houseCase;
 		else if(name == 'ctl00$BodyContener$ResultRoom')
-			return prefs.roomNumber;
+			return prefs.roomNumber;**/
 		else if(name == '__EVENTTARGET')
 			return 'ctl00$BodyContener$BtnLogIn';
 		return value;

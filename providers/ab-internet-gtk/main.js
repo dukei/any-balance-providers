@@ -47,8 +47,8 @@ function main(){
         })
     );
 
-    if(!/security_logout/i.test(html)){
-        if(/Неправильный логин или пароль/i.test(html)){
+    if (!/security_logout/i.test(html)) {
+        if (/alert-danger"/i.test(html)) {
             throw new AnyBalance.Error('Неправильный логин или пароль', null, true);
         }
 		AnyBalance.trace(html);

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-municipal-gazprom</id>
+	<api flags="no_browser"/>
+	<name>Газпром Межрегионгаз</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера ООО &laquo;Газпром Межрегионгаз&raquo;</p>
+	<p>Поддерживаются регионы:</p>
+	<ul>
+		<li>Брянск (<a href="https://газ.смородина.онлайн/">https://газ.смородина.онлайн/</a>)<br></li>
+		<li>Волгоград (<a href="http://34regiongaz.ru/cabinet/enter/">http://34regiongaz.ru/cabinet/enter/</a>)<br></li>
+		<li>Москва (<a href="https://газ.смородина.онлайн/">https://газ.смородина.онлайн/</a>)<br></li>
+		<li>Пермь (<a href="https://газ.смородина.онлайн/">https://газ.смородина.онлайн/</a>)<br></li>
+		<li>Ростов-на-Дону (<a href="http://www.rostovregiongaz.ru/auth/index.php">http://www.rostovregiongaz.ru/auth/index.php</a>)<br></li>
+		<li>Санкт-Петербург (<a href="http://cfl.peterburgregiongaz.ru">http://cfl.peterburgregiongaz.ru</a>)<br></li>
+		<li>Тверь (<a href="http://lk.tverregiongaz.ru/">http://lk.tverregiongaz.ru/</a>)<br></li>
+		<li>Чебоксары (<a href="http://gmch.ru/user/">http://gmch.ru/user/</a>)<br></li>
+	</ul>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Для добавления вашего региона обратитесь, пожалуйста, к разработчикам</p>
+	]]></instruction>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" p"/>
+		<counter id="advance" name="Аванс" units=" р"/>
+		<counter id="charged" name="Начислено" units=" р"/>
+		<counter id="recalculation" name="Перерасчет" units=" р"/>
+		<counter id="paid" name="Оплачено" units=" р"/>
+		<counter id="total" name="Итого" units=" р"/>
+		<counter id="device" name="Прибор учёта" type="text"/>
+		<counter id="previousCounter" name="Предыдущее показание"/>
+		<counter id="currentCounter" name="Текущее показание счётчика"/>
+		<counter id="consumption" name="Потребление"/>
+		<counter id="date" name="Дата изменения" type="time" format="dd/MM/yyyy"/>
+		<counter id="account" name="Лицевой счет" type="text"/>
+		<counter id="address" name="Адрес установки оборудования" type="text"/>
+		<counter id="fio" name="ФИО" type="text"/>
+	</counters>
+	<keywords>газ межрегион</keywords>
+	<type>municipal</type>
+	<country>ru</country>
+</provider>

@@ -28,17 +28,18 @@ function main(){
     }
 
     if (!/Выход\s*<\/a>/i.test(html)) {
-        var params = {
+        var jSuffix = AB.getParam(html, null, null, /<button\s+id="f_login_abon:([^"]*)"/i),
+            params = {
             'javax.faces.partial.ajax': true,
-            'javax.faces.source': 'f_login_abon:j_idt26',
+            'javax.faces.source': 'f_login_abon:' + jSuffix,
             'javax.faces.partial.execute': 'f_login_abon:pLogin',
             'javax.faces.partial.render:': 'f_login_abon',
-            'f_login_abon:j_idt26': 'f_login_abon:j_idt26',
             'f_login_abon': 'f_login_abon'
         };
+        params['f_login_abon:' + jSuffix] = 'f_login_abon:' + jSuffix;
         params['f_login_abon:eLogin'] = prefs.login;
         params['f_login_abon:ePwd'] = prefs.password;
-        params['javax.faces.ViewState'] = createFormParams(html)['javax.faces.ViewState'];
+        params['javax.faces.ViewState'] = AB.getParam(html, null, null, /javax\.faces\.ViewState[\s\S]*?value="([^"]+)"/i);
 
         html = AnyBalance.requestPost(
             baseurl + 'abonent/login.jsf',
@@ -60,7 +61,7 @@ function main(){
         );
 
         // meta content=2; url=..., поэтому делаем задержку 2 сек, иначу Tomcat вернет ошибку в след. запросе
-        sleep(2000);
+        AnyBalance.sleep(2000);
 
         html = AnyBalance.requestGet(baseurl + '/abonent/lite/accounts/accountInfo.jsf?faces-redirect=true', g_headers);
 
@@ -75,9 +76,4 @@ function main(){
     AB.getParam(html, result, 'debt', /Долг\(\+\)\/переплата\(-\) за период[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, AB.replaceTagsAndSpaces, AB.parseBalance);
 
     AnyBalance.setResult(result);
-}
-
-function sleep(ms) {
-    ms += new Date().getTime();
-    while (new Date() < ms) {}
 }

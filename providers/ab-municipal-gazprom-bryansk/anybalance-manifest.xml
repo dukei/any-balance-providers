@@ -16,8 +16,8 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="period" name="Дата периода счета" type="text"/>
 		<counter id="debt" name="Долг(+)/переплата(-) за период"/>
+		<counter id="period" name="Дата периода счета" type="text"/>
 	</counters>
 	<keywords>Газпром, Брянск</keywords>
 	<type>municipal</type>

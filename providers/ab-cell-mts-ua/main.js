@@ -211,7 +211,9 @@ function main(){
     sumParam (html, result, 'traffic_maxenergy_mb', /<li>Осталось: (\d+,?\d* *(kб|bytes)).<\/li>/ig, null, parseTraffic, aggregate_sum);
     sumParam (html, result, 'traffic_maxenergy_mb', /<li>Осталось (\d+) бесплатных Kб.[^<]*<\/li>/ig, null, parseTrafficMb, aggregate_sum);
     sumParam (html, result, 'traffic_maxenergy_mb', /<li>1500 Mb GPRS Internet для MAX Energy Allo, осталось (\d+) бесплатных Kб.[^<]*<\/li>/ig, null, parseTrafficMb, aggregate_sum);
-	sumParam (html, result, 'traffic_maxenergy_mb', /<li>\d+\s\w*\sGPRS\sInternet\sдля\sMAX\sEnergy,\sосталось:\s(\d+,?\d*\s*(kб|bytes)).<\/li>/ig, null, parseTraffic, aggregate_sum);
+    sumParam (html, result, 'traffic_maxenergy_mb', /<li>\d+\s\w*\sGPRS\sInternet\sдля\sMAX\sEnergy,\sосталось:\s(\d+,?\d*\s*(kб|bytes)).<\/li>/ig, null, parseTraffic, aggregate_sum);
+    sumParam (html, result, 'traffic_maxenergy_mb', /<li>20 Mb в день для Super MTS Energy, осталось: (\d+,?\d* *(kб|bytes|Кб)).[^<]*<\/li>/ig, null, parseTraffic, aggregate_sum);
+    sumParam (html, result, 'termin_maxenergy_mb', /<li>20 Mb в день для Super MTS Energy, осталось: \d+ Кб. До ([^<]*)<\/li>/ig, replaceTagsAndSpaces, parseDate, aggregate_min);
 
     // Интернет за границей в "Команда 3D"
     sumParam (html, result, 'traffic_evropa_mb', /<li>2 МБ в Европе: Осталось:\s*(\d+,?\d* *(Кб|kб|bytes)).<\/li>/ig, null, parseTraffic, aggregate_sum);
@@ -277,6 +279,8 @@ function main(){
     sumParam (html, result, 'min_allo_net', /Kб.<\/li><li>Осталось ([\d\.,]+) бесплатных секунд[^<]*<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
     sumParam (html, result, 'min_allo_net', /секунд<\/li><li>Осталось ([\d\.,]+) бесплатных секунд[^<]*<\/li><li>Осталось/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
     sumParam (html, result, 'min_allo_net', /<li>3000 минут на МТС для MAX Energy Allo, осталось ([\d\.,]+) бесплатных секунд[^<]*<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+    sumParam (html, result, 'min_allo_net', /<li>30 минут в день внутри сети  для Super MTS, осталось ([\d\.,]+) бесплатных секунд[^<]*<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+    sumParam (html, result, 'termin_min_allo_net', /<li>30 минут в день внутри сети  для Super MTS, осталось \d+ бесплатных секунд. До ([^<]*)<\/li>/ig, replaceTagsAndSpaces, parseDate, aggregate_min);
     sumParam (html, result, 'min_allo_other', /Осталось ([\d\.,]+) бесплатных секунд[^<]*<\/li><\/ul>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
     sumParam (html, result, 'min_allo_other', /SMS<\/li><li>Осталось ([\d\.,]+) бесплатных секунд[^<]*<\/li><li>Осталось/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
     sumParam (html, result, 'min_allo_other', /<li>100 минут по Украине для MAX Energy Allo, осталось ([\d\.,]+) бесплатных секунд[^<]*<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);

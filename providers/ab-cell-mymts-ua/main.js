@@ -6,7 +6,7 @@ var g_headers = {
 	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
 	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
 	'Connection': 'keep-alive',
-	'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/47.0.2526.73 Safari/537.36',
+	'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/47.0.2526.111 Safari/537.36',
 };
 
 function parseTrafficMb(str){
@@ -92,6 +92,7 @@ function main() {
 	//Пакетные минуты в сети МТС общенациональные
 	sumParam (html, result, 'hvylyny_net3', /минут (?:внутри сети|в день внутри сети для услуги Супер без пополнения), осталось\s*(\d+)\s*бесплатных секунд/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 	sumParam (html, result, 'hvylyny_net3', /(?:15|30)00 минут на МТС для (?:MAX Energy Allo|MAX Energy), осталось\s*(\d+)\s*бесплатных секунд/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+        sumParam (html, result, 'hvylyny_net3', /30 минут в день внутри сети\s*для Super MTS, осталось\s*(\d+)\s*бесплатных секунд/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 	sumParam (html, result, 'hvylyny_net3', /GSM "Бізнес Оптимальний-2", осталось:\s*([\d\.,]+)\s*мин/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 	sumParam (html, result, 'hvylyny_net3', /<li>Супер МТСОлімпійський Стандарт, осталось:\s*([\d\.,]+)\s*мин.<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
         sumParam (html, result, 'hvylyny_net3', /<li>Супер МТСОлімпійський, осталось:\s*([\d\.,]+)\s*мин.<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
@@ -109,6 +110,7 @@ function main() {
 	}
 
 	sumParam (html, result, 'hvylyny_net3_termin', /минут внутри сети, осталось \d+ бесплатных секунд до\s*([^<]*)\s*<\/span>/ig, replaceTagsAndSpaces, parseDate, aggregate_min);
+        sumParam (html, result, 'hvylyny_net3_termin', /минут в день внутри сети\s*для Super MTS, осталось \d+ бесплатных секунд. До\s*([^<]*)\s*<\/span>/ig, replaceTagsAndSpaces, parseDate, aggregate_min);
 
 	//Минуты по Украине
 	sumParam (html, result, 'hvylyny_all1', /(?:50 хвилин на всi мережi|100 минут по Украине для MAX Energy Allo), осталось\s*(\d+)\s*(?:секунд на все сети|бесплатных секунд)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
@@ -138,6 +140,9 @@ function main() {
 	sumParam (html, result, 'traffic1', /1000 МБ за 10 грн., осталось:\s*(\d+,?\d* *(Кб|kb|mb|gb|кб|мб|гб|байт|bytes)).<\/span>/ig, null, parseTrafficMb, aggregate_sum);
 	//Ежедневный пакет? тут старое описание не работает, нужен номер с таким пакетом, что бы исправить
 	getParam (html, result, 'traffic2', /Кб.<\/span>\s*<\/div>\s*<div[^>]*>\s*<span[^>]*>Осталось:\s*(\d+,?\d* *(Кб|kb|mb|gb|кб|мб|гб|байт|bytes)).<\/span>/i, null, parseTrafficMb);
+        sumParam (html, result, 'traffic2', /20 Mb в день для Super MTS Energy, осталось:\s*(\d+,?\d* *(Кб|kb|mb|gb|кб|мб|гб|байт|bytes)).[^<]*<\/span>/ig, null, parseTrafficMb, aggregate_sum);
+
+        sumParam (html, result, 'traffic2_termin', /Mb в день для Super MTS Energy, осталось: \d+ Кб. До\s*([^<]*)\s*<\/span>/ig, replaceTagsAndSpaces, parseDate, aggregate_min);
 	//Пакет на месяц в тарифе
 	sumParam (html, result, 'traffic3', /(?:15|30)00 Mb GPRS Internet для (?:MAX Energy Allo|MAX Energy), осталось\s*(\d+)\s*(?:бесплатных Kб|kб).<\/span>/ig, null, parseTrafficMb, aggregate_sum);
 	//Смарт.NET

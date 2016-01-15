@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="1.1" version="21">ab-cell-mymts-ua</id>
+	<id major_version="1.1" version="22">ab-cell-mymts-ua</id>
 	<api flags="no_browser"/>
 	<name>Мой МТС (Украина)</name>
 	<description html="true"><![CDATA[
@@ -56,6 +56,7 @@
 		<counter id="bonusy_burn_termin" name="Дата списания бонусов" type="time" format="dd/MM/yyyy"/>
 		<counter id="bonus_balance_termin" name="Срок действия бонусного баланса" type="time" format="dd/MM/yyyy HH:mm:ss"/>
 		<counter id="hvylyny_net3_termin" name="Срок действия минут в сети МТС" type="time" format="dd/MM/yyyy HH:mm:ss"/>
+                <counter id="traffic2_termin" name="Срок действия интернета ежедневный пакет" type="time" format="dd/MM/yyyy HH:mm:ss"/>
 		<counter id="3G_kopiyka_termin" name="Дата підключення 3G Копейка" type="time" format="dd/MM/yyyy"/>
 		<counter id="speed_termin" name="Срок действия ограничения на скорость интернета" type="time" format="dd/MM/yyyy HH:mm"/>
 		<counter id="PZS_MB_opera" name="ПЗС за первое событие для APN opera"/>

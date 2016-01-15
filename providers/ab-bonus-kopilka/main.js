@@ -1,10 +1,5 @@
 ﻿/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
-
-Получает информацию по бонусной карте Копилка
-
-Сайт оператора: http://kopilka-bonus.ru/
-Личный кабинет: https://kopilka-bonus.ru/login/
 */
 
 var g_headers = {
@@ -14,12 +9,12 @@ var g_headers = {
     'Connection': 'keep-alive'
 };
 
-function main(){
+function main() {
     var prefs = AnyBalance.getPreferences();
     AnyBalance.setDefaultCharset('windows-1251');
     var baseurl = "https://kopilka-bonus.ru";
-
-    var html = AnyBalance.requestGet(baseurl, g_headers);
+	
+	var html = AnyBalance.requestGet(baseurl, g_headers);
     if(!html || AnyBalance.getLastStatusCode() > 400){
         AnyBalance.trace(html);
         throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
@@ -27,7 +22,7 @@ function main(){
 
     html = AnyBalance.requestPost(baseurl+'/login/', {
         actmode:'send',
-        auth_altMode:1,
+        auth_altMode:'1',
         auth_cnumber:'',
         auth_altLogin:prefs.login,
         auth_password:prefs.password
@@ -37,12 +32,12 @@ function main(){
         'Referer':baseurl + '/login/'
     }));
 
-    var url = getParam(html, null, null, /<meta[^>]+http-equiv="refresh"[^>]*url=([^"]*)/i, null, html_entity_decode);
-
-    if(!url){
-        var error = getParam(html, null, null, /<h1[^>]*>([\s\S]*?)<\/h1>/i, replaceTagsAndSpaces, html_entity_decode);
+    var url = getParam(html, null, null, /<meta[^>]+http-equiv="refresh"[^>]*url=([^"]*)/i, replaceTagsAndSpaces);
+    if(!url) {
+        var error = getParam(html, null, null, /<h1[^>]*>([\s\S]*?)<\/h1>/i, replaceTagsAndSpaces);
         if(error)
             throw new AnyBalance.Error(error);
+		
         throw new AnyBalance.Error('Не удалось получить баланс карты. Проблемы на сайте или сайт изменен.');
     }
 
@@ -50,7 +45,7 @@ function main(){
 
     var result = {success: true};
 
-    getParam(html, result, 'cardnum', /<span[^>]+class=['"]?pan[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'cardnum', /<span[^>]+class=['"]?pan[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
     getParam(html, result, 'balance', /<span[^>]+class=['"]?bonus[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
 
     if(AnyBalance.isAvailable('total')){

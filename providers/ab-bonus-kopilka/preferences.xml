@@ -7,7 +7,6 @@
         dialogTitle="Логин"
         negativeButtonText="Отмена" 
         dialogMessage="Введите e-mail адрес, используемый для входа в личный кабинет"
-        inputType="number"
         key="login">
     </EditTextPreference>
     <EditTextPreference 

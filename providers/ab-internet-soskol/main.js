@@ -43,20 +43,26 @@ function main() {
     success: true
   };
 
-  html = AnyBalance.requestGet(baseurl + '?mode=aabonent', g_headers);
+  if (AnyBalance.isAvailable('balance', 'licschet')) {
 
-  AB.getParam(html, result, 'balance', /СОСТОЯНИЕ\s+СЧЕТА\s+ИНТЕРНЕТ([\s\S]*?<\/div>)/i, AB.replaceTagsAndSpaces, AB.parseBalance);
-  AB.getParam(html, result, 'licschet', /НОМЕР ЛИЦЕВОГО СЧЕТА([\s\S]*?<\/div>)/i, AB.replaceTagsAndSpaces);
+    html = AnyBalance.requestGet(baseurl + '?mode=aabonent', g_headers);
 
-  html = AnyBalance.requestGet(baseurl + '?mode=state', g_headers);
+    AB.getParam(html, result, 'balance', /СОСТОЯНИЕ\s+СЧЕТА\s+ИНТЕРНЕТ([\s\S]*?<\/div>)/i, AB.replaceTagsAndSpaces, AB.parseBalance);
+    AB.getParam(html, result, 'licschet', /НОМЕР ЛИЦЕВОГО СЧЕТА([\s\S]*?<\/div>)/i, AB.replaceTagsAndSpaces);
+    AB.getParam(html, result, '__tariff', /дата\sсоздания[\s\S]*?(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>[\s\S]*?<\/tr>/i, AB.replaceTagsAndSpaces);
+  }
 
-  var paymentTable = AB.getElement(html, /<div[^>]*id="id3"[^>]*>[\s\S]*?<table>/i);
+  if (AnyBalance.isAvailable('payDate', 'payComment', 'payType', 'payValue')) {
 
-  AB.getParam(paymentTable, result, 'payDate', /СУММА[\s\S]*?<tr>(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>[\s\S]*?<\/tr>/i, AB.replaceTagsAndSpaces, AB.parseDate);
-  AB.getParam(paymentTable, result, 'payComment', /СУММА[\s\S]*?<tr>(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>[\s\S]*?<\/tr>/i,AB.replaceTagsAndSpaces);
-  AB.getParam(paymentTable, result, 'payType', /СУММА[\s\S]*?<tr>(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>[\s\S]*?<\/tr>/i, AB.replaceTagsAndSpaces);
-  AB.getParam(paymentTable, result, 'payValue', /СУММА[\s\S]*?<tr>(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>[\s\S]*?<\/tr>/i, AB.replaceTagsAndSpaces, AB.parseBalance);
+    html = AnyBalance.requestGet(baseurl + '?mode=state', g_headers);
 
+    var paymentTable = AB.getElement(html, /<div[^>]*id="id3"[^>]*>[\s\S]*?<table>/i);
+
+    AB.getParam(paymentTable, result, 'payDate', /СУММА[\s\S]*?<tr>(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>[\s\S]*?<\/tr>/i, AB.replaceTagsAndSpaces, AB.parseDate);
+    AB.getParam(paymentTable, result, 'payComment', /СУММА[\s\S]*?<tr>(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>[\s\S]*?<\/tr>/i, AB.replaceTagsAndSpaces);
+    AB.getParam(paymentTable, result, 'payType', /СУММА[\s\S]*?<tr>(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>[\s\S]*?<\/tr>/i, AB.replaceTagsAndSpaces);
+    AB.getParam(paymentTable, result, 'payValue', /СУММА[\s\S]*?<tr>(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>[\s\S]*?<\/tr>/i, AB.replaceTagsAndSpaces, AB.parseBalance);
+  }
 
   AnyBalance.setResult(result);
 }

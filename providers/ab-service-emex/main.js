@@ -15,44 +15,48 @@ function main() {
 	var baseurl = 'https://www.emex.ru/';
 	AnyBalance.setDefaultCharset('utf-8');
 	
-	checkEmpty(prefs.login, 'Введите логин!');
-	checkEmpty(prefs.password, 'Введите пароль!');
+	AB.checkEmpty(prefs.login, 'Введите логин!');
+	AB.checkEmpty(prefs.password, 'Введите пароль!');
 	
-	var html = AnyBalance.requestGet(baseurl + 'Account.mvc/LogOn?ReturnUrl=%2fbalancePotr', g_headers);
+	var html = AnyBalance.requestGet(baseurl, g_headers);
 	
-	if(!html || AnyBalance.getLastStatusCode() > 400)
-		throw new AnyBalance.Error('Ошибка! Сервер не отвечает! Попробуйте обновить баланс позже.');
+	if(!html || AnyBalance.getLastStatusCode() >= 400)
+            throw new AnyBalance.Error('Ошибка! Сервер не отвечает! Попробуйте обновить баланс позже.');
+            
+    
+        var token = AB.getParam(html, null, null, /<input\s(?=[^>]*name="__RequestVerificationToken")[^>]*value="([^"]+)"/i, replaceTagsAndSpaces);
+        if (!token) {
+            throw new AnyBalance.Error('Невозможно авторизоваться');
+        }
 	
-	var params = createFormParams(html, function(params, str, name, value) {
-		if (name == 'UserName') 
-			return prefs.login;
-		else if (name == 'Password' || name == 'password')
-			return prefs.password;
+	var params = {
+            Login: prefs.login,
+            Password: prefs.password,
+            ReturnUrl: 'https://www.emex.ru/',
+            __RequestVerificationToken: token
+	};
 
-		return value;
-	});
-	
-	params['password'] = prefs.password;
-	
-	html = AnyBalance.requestPost(baseurl + 'Account.mvc/LogOn?ReturnUrl=%2fbalancePotr', params, addHeaders({Referer: baseurl + 'Account.mvc/LogOn?ReturnUrl=%2fbalancePotr'}));
-	
-	if (!/<title>Баланс потребителя<\/title>/i.test(html)) {
-		var error = getParam(html, null, null, /<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
-		if (error)
-			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
-		
-		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
+	html = AnyBalance.requestPost(baseurl + 'Authorization.mvc/Login', params, AB.addHeaders({Referer: baseurl}));
+        if(!html || AnyBalance.getLastStatusCode() >= 400)
+            throw new AnyBalance.Error('Ошибка! Сервер не отвечает! Попробуйте обновить баланс позже.');
+
+        var loginResult = AB.getJson(html);
+        if (loginResult.state != 0) {
+            throw new AnyBalance.Error(loginResult.message || 'Ошибка авторизации', false, /логин|пароль/i.test(loginResult.message));
+        }
+
+        html = AnyBalance.requestGet(baseurl + 'profile', g_headers);
+        var json = AB.getParam(html, null, null, /InitialProfileData\s*=\s*([^;]+?(?=}};)}});/, replaceTagsAndSpaces, AB.getJson);
+        
+        if (!json || !json.User) {
+            AnyBalance.trace(html);
+            throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
-	
-	// html = AnyBalance.requestGet(baseurl + 'balancePotr', g_headers);
 	
 	var result = {success: true};
 	
-	getParam(html, result, 'balance', /На вашем счете:(?:[^>]*>){2}([^<]+)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'in_work', /В работе:(?:[^>]*>){2}([^<]+)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'avail', /Доступно для заказа:(?:[^>]*>){2}([^<]+)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'fio', /"user-info"(?:[^>]*>){2}([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(json.Balance && json.Balance.AvailableBalance, result, 'balance');
+        getParam(json.User.UserI + ' ' + json.User.UserF, result, 'fio');
 	
 	AnyBalance.setResult(result);
 }

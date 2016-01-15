@@ -25,13 +25,11 @@ function main(){
     	throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
     }
 
-    var params = AB.createFormParams(html, function(params, str, name, value){
-        if (name == 'uds_ems_tr') {
-            return prefs.trackNumber;
-        }
-
-        return value;
-    });
+    var params = {
+        'uds_ems_tr': prefs.trackNumber,
+        'ems_tr': '',
+        'track': AB.getParam(html, null, null, /<input[^>]*value="([^"]*)"\s+name="track"/i)
+    };
 
     html = AnyBalance.requestPost(
         baseurl + 'track/ems',
@@ -51,11 +49,11 @@ function main(){
     //Получаем все счетчики
     var result = {success: true};
 
-    result.track_number = prefs.trackNumber;
+    AB.getParam(prefs.trackNumber, result, 'track_number');
     list.forEach(function(item){
         infoText += item + '<br><br>';
     });
 
-    getParam(infoText, result, 'info', null, [/<br><br>$/i, '']);
+    AB.getParam(infoText, result, 'info', null, [/<br><br>$/i, '']);
     AnyBalance.setResult(result);
 }

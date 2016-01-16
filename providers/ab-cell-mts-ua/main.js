@@ -98,6 +98,9 @@ function main(){
     if(fnomer == '2') {
     getParam (html, result, 'phone', /(?:Ваш телефон|phone):.*?>([^<]*)</i, replaceTagsAndSpaces, html_entity_decode);
     }
+    if(fnomer == '4') {
+    getParam (html, result, 'phone', /(?:Ваш телефон|phone):.*?>([^<]*)</i, [replaceTagsAndSpaces, / /ig, '', /-/ig, '', /^\+380/, '0'], html_entity_decode);
+    }
 
     AnyBalance.trace("Fetching status...");
 
@@ -124,6 +127,10 @@ function main(){
     if(fnomer == '1') {
     getParam (html, result, 'phone', /(?:Витрачено по номеру|Израсходовано по номеру|phone)\s*([\s\S]*?)\s*за/i, replaceTagsAndSpaces, html_entity_decode);
     }
+    if(fnomer == '3') {
+    getParam (html, result, 'phone', /(?:Витрачено по номеру|Израсходовано по номеру|phone)\s*([\s\S]*?)\s*за/i, [replaceTagsAndSpaces, / /ig, '', /-/ig, '', /\(/ig, '', /\)/ig, ''], html_entity_decode);
+    }
+
       //Срок действия (баланса) номера (!!!пропал из интернет помощника)
     getParam (html, result, 'termin', /Термін життя балансу:([^<]*)/i, replaceTagsAndSpaces, parseDate);
       //Денежный бонусный счет.

@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+        <change major_version="3" version="34" date="2016-01-16">
+        - Life:) стал Lifecell.
+	- Исправлен вход на сайт всвязи со сменой домена.
+        - Изменена иконка оператора.
+	</change>
         <change major_version="2" version="33" date="2015-12-18">
 	- Исправлено распознавание счетчика "Минуты по сети Life:)" в некоторых тарифах.
 	</change>

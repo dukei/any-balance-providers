@@ -57,8 +57,8 @@ function main() {
 	
 	var result = {success: true};
 	
-	getParam(json.Balance && json.Balance.AvailableBalance, result, 'balance');
-        getParam(json.User.UserI + ' ' + json.User.UserF, result, 'fio');
+	AB.getParam(json.Balance && json.Balance.AvailableBalance, result, 'balance');
+        AB.getParam(json.User.UserI + ' ' + json.User.UserF, result, 'fio');
 	
 	AnyBalance.setResult(result);
 }

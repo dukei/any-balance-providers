@@ -17,9 +17,7 @@ var g_headers = {
 
 function main() {
   var prefs = AnyBalance.getPreferences();
-  // var baseurl = 'https://www.bashesk.ru/';
   var baseurl = 'https://www.bashesk.ru/user/account/debt/';
-  // var loginUrl = 'https://www.bashesk.ru/bitrix/templates/bashesk/ajax/login.php?login=127042102420&password=050155';
   var loginUrl = 'https://www.bashesk.ru/bitrix/templates/bashesk/ajax/login.php?login=';
   AnyBalance.setDefaultCharset('utf-8');
 

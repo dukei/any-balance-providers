@@ -24,8 +24,9 @@ function main() {
             throw new AnyBalance.Error('Ошибка! Сервер не отвечает! Попробуйте обновить баланс позже.');
             
     
-        var token = AB.getParam(html, null, null, /<input\s(?=[^>]*name="__RequestVerificationToken")[^>]*value="([^"]+)"/i, replaceTagsAndSpaces);
+        var token = AB.getParam(html, null, null, /<input\s(?=[^>]*name="__RequestVerificationToken")[^>]*value="([^"]+)"/i, AB.replaceTagsAndSpaces);
         if (!token) {
+            AnyBalance.trace(html);
             throw new AnyBalance.Error('Невозможно авторизоваться');
         }
 	
@@ -42,11 +43,12 @@ function main() {
 
         var loginResult = AB.getJson(html);
         if (loginResult.state != 0) {
+            AnyBalance.trace(html);
             throw new AnyBalance.Error(loginResult.message || 'Ошибка авторизации', false, /логин|пароль/i.test(loginResult.message));
         }
 
         html = AnyBalance.requestGet(baseurl + 'profile', g_headers);
-        var json = AB.getParam(html, null, null, /InitialProfileData\s*=\s*([^;]+?(?=}};)}});/, replaceTagsAndSpaces, AB.getJson);
+        var json = AB.getParam(html, null, null, /InitialProfileData\s*=\s*([^;]+?(?=}};)}});/, AB.replaceTagsAndSpaces, AB.getJson);
         
         if (!json || !json.User) {
             AnyBalance.trace(html);

@@ -12,53 +12,81 @@ var g_headers = {
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'https://lc.rkcgkh.ru/';
+	var baseurl = 'http://lc.rkcgkh.ru';
 	AnyBalance.setDefaultCharset('utf-8');
 
-	checkEmpty(prefs.login, 'Введите логин!');
-	checkEmpty(prefs.password, 'Введите пароль!');
+	AB.checkEmpty(prefs.login, 'Введите логин!');
+	AB.checkEmpty(prefs.password, 'Введите пароль!');
 
-	var html = AnyBalance.requestGet(baseurl + 'app/Cabinet.aspx/LogOn', g_headers);
-	var captchaguid = getParam(html, null, null, /"captcha-guid"[^>]*value="([^"]*)/i);
+	var html = AnyBalance.requestGet(baseurl + '/logon', g_headers);
+        
+        if (!html || AnyBalance.getLastStatusCode() >= 400) {
+            AnyBalance.trace(html);
+            throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
+        }
+        
+        var captchaCode;
+        if(AnyBalance.getLevel() >= 7){
+            AnyBalance.trace('Пытаемся ввести капчу');
+            var captcha = AnyBalance.requestGet(baseurl + '/data/secpic/secpic.gif');
+            captchaCode = AnyBalance.retrieveCode("Пожалуйста, введите код с картинки", captcha);
+            AnyBalance.trace('Капча получена: ' + captchaCode);
+        } else {
+            throw new AnyBalance.Error('Провайдер требует AnyBalance API v7, пожалуйста, обновите AnyBalance!');
+        }
 
-	var captchaa;
-	if(AnyBalance.getLevel() >= 7){
-		AnyBalance.trace('Пытаемся ввести капчу');
-		var captcha = AnyBalance.requestGet(baseurl+ 'app/captcha.ashx?guid='+captchaguid);
-		captchaa = AnyBalance.retrieveCode("Пожалуйста, введите код с картинки", captcha);
-		AnyBalance.trace('Капча получена: ' + captchaa);
-	} else {
-		throw new AnyBalance.Error('Провайдер требует AnyBalance API v7, пожалуйста, обновите AnyBalance!');
-	}
+	html = AnyBalance.requestPost(baseurl + '/data/regs', {
+            action: 7,
+            'els[0][name]': 'form_name',
+            'els[0][value]': 'logon',
+            'els[1][name]': 'name',
+            'els[1][value]': prefs.login,
+            'els[2][name]': 'pass',
+            'els[2][value]': prefs.password,
+            'els[3][name]': 'capcha',
+            'els[3][value]':	captchaCode
+        }, AB.addHeaders({Referer: baseurl + '/logon', Origin: baseurl}));
+        
+        var loginResult = AB.getJson(html);
+        
+        if (loginResult[0] !== true) {
+            throw new AnyBalance.Error(loginResult[1] || 'Ошибка авторизации', false, /логин|пароль/i.test(loginResult[1]));
+        }
 
-	html = AnyBalance.requestPost(baseurl + 'app/Cabinet.aspx/LogOn', {
-		'captcha-guid': captchaguid,
-		UserName: prefs.login,
-		Password: prefs.password,
-		captcha: captchaa
-	}, addHeaders({Referer: baseurl + 'app/Cabinet.aspx/LogOn'}));
-
-	if (!/logout/i.test(html)) {
-		var error = getParam(html, null, null, /Войти не удалось:(?:[^>]*>\s*){1}(<ul[\s\S]*)<\/ul/i, replaceTagsAndSpaces, html_entity_decode);
-		if (error && /Неверный логин или пароль/i.test(error))
-			throw new AnyBalance.Error(error, null, true);
-		if (error)
-			throw new AnyBalance.Error(error);
-		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
-	}
-	var result = {success: true, all:''};
+	html = AnyBalance.requestPost(baseurl + '/data/script', {
+            action: '4',
+            stext: '',
+            hash: '#services'
+        }, AB.addHeaders({Referer: baseurl + '/logon', Origin: baseurl}));
+        
+        var jsonObj = AB.getJson(html);
+        if (jsonObj[0] !== true) {
+            AnyBalance.trace(html);
+            throw new AnyBalance.Error('Не удалось получить сводку по услугам');
+        }
+        
+        html = jsonObj[1];
 	
-	html = AnyBalance.requestGet(baseurl + 'app/Payment.aspx/Next', g_headers);
+        var result = { success: true };
+	AB.sumParam(html, result, 'balance', />\s*(?:Долг|На счету):?\s*<\/span\s*>:?([^<]+)/ig, AB.replaceTagsAndSpaces, AB.parseBalance, AB.aggregate_sum);
 	
-	sumParam(html, result, 'balance', />((?:Долг:|На счету)[\s\S]*?р)/ig, [replaceTagsAndSpaces, /Долг:([\s\S]*?)р/ig, '-$1'], parseBalance, aggregate_sum);
-	
-	var uslugi = sumParam(html, null, null, /<div\s+class="brick-block block-content">\s*<b>([\s\S]*?)<\/div>/ig);
-	for(var i = 0; i<uslugi.length; i++) {
-		var usluga = getParam(uslugi[i], null, null, /([\s\S]*?\d{20})/i, replaceTagsAndSpaces);
-		var balance = getParam(uslugi[i], null, null, /"more-info"[^>]*>([^<]*)р/i);
-		
-		result.all += usluga+ ': <br /><b>' + balance + (i < uslugi.length-1 ? '</b><br /><br />' :'</b>');
-	}
+        if (AB.isAvailable('all')) {
+            result.all = '';
+            var uslugi = AB.getElements(html, /<li\s[^>]*class="[^"]*?\bserv\b[^"]*"/ig);
+                      
+            for(var i = 0; i<uslugi.length; i++) {
+                var balance = 0, usluga, uk = AB.getParam(uslugi[i], null, null, />\s*УК:?\s*<\/span\s*>:?([^<]+)/i, replaceTagsAndSpaces);
+                if (uk) {
+                    usluga = AB.getParam(uslugi[i], null, null, />\s*На:?\s*<\/span\s*>:?([^<]+)/i, replaceTagsAndSpaces);
+                    balance = AB.getParam(uslugi[i], null, null, />\s*(?:Долг|На счету):?\s*<\/span\s*>:?([^<]+)/i, replaceTagsAndSpaces);
+                    result.all += uk + '<br />' + usluga+ ': <br /><b>' + balance + (i < uslugi.length-1 ? '</b><br /><br />' :'</b>');
+                } else {
+                    uk = AB.getParam(uslugi[i], null, null, />УК\.*:\s+([^<]+)/i, replaceTagsAndSpaces);
+                    usluga = AB.getParam(uslugi[i], null, null, />Услуга\.*:\s+([^<]+)/i, replaceTagsAndSpaces);
+                    result.all += uk + '<br />' + usluga + (i < uslugi.length-1 ? '<br /><br />' :'');
+                }
+            }
+        }
 	
 	AnyBalance.setResult(result);
 }

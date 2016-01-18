@@ -1,13 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-municipal-bashesk</id>
+	<id version="2">ab-municipal-bashesk</id>
 	<api flags="no_browser"/>
-	<name>РУСГИДРО</name>
-	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе провайдера РУСГИДРО http://www.bashesk.ru/ex/</p>
-	<p>Информация берется из личного кабинета http://www.bashesk.ru/ex/private/</p>
-	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<name>РУСГИДРО Башкортостан</name>
+	<description html="true">
+	<![CDATA[
+		<p>Предоставляет информацию о балансе из личного кабинета РУСГИДРО Башкортостан <a href="https://www.bashesk.ru/">https://www.bashesk.ru/</a></p>
+		]]></description>
+		<instruction html="true"><![CDATA[
+	<p>Если у вас нет доступа в Личный кабинет, получите его на странице <a href="https://www.bashesk.ru/">https://www.bashesk.ru/</a></p>
+	]]></instruction>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
@@ -17,10 +20,13 @@
 	</files>
 	<counters>
 		<counter id="balance" name="Общая задолженность" units=" р"/>
-		<counter id="pokazaniya" name="Показание прибора учета" units=" кВтч"/>
-		<counter id="perekrut" name="Перекрут (при наличии)" units=" кВтч"/>
 		<counter id="fio" name="ФИО" type="text"/>
-		<counter id="account" name="Точка учета" type="text"/>
+		<counter id="contract" name="Номер договора" type="text"/>
+		<counter id="currentTime" name="Текущий период" type="time" format="dd/MM/yyyy"/>
+		<counter id="counter_1" name="Показание прибора учёта 1" units=" кВтч"/>
+		<counter id="counter_2" name="Показание прибора учёта 2" units=" кВтч"/>
+		<counter id="counter_1_tariff" name="Точка учёта 1" type="text"/>
+		<counter id="counter_2_tariff" name="Точка учёта 2" type="text"/>
 	</counters>
 	<keywords></keywords>
 	<type>municipal</type>

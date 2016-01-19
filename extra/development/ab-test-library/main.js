@@ -142,13 +142,20 @@ function main() {
 		}
 	}
 
-	var html = '<span sl> <div class="test"> parsed <div class="test"></div> <span sdflj> it </span> <div askdfj> ok </div>!</div> test </div>';
+	var html = '<span sl> <div class="test" ID = Test ss > parsed <div class="test"></div> <span sdflj> it </span> <div askdfj> ok </div>!</div> test </div>';
+	
 	var str = getElement(html, /<\w+[^>]+class="test"[^>]*>/i, replaceTagsAndSpaces);
 	var res = /^parsed\sit\sok\s!$/i;
 	if(res.test(str))
 		AnyBalance.trace('getElement is ok');
 	else
 		AnyBalance.trace('!!!____________________________________________________________getElement test is failed: should be ' + res.source + ', parsed ' + str + '!!!');
+
+	var str = getElementById(html, 'Test');
+	if(str)
+		AnyBalance.trace('getElementById is ok');
+	else
+		AnyBalance.trace('!!!____________________________________________________________getElementById test is failed!');
 
 	var html = '<div class="accountDetailTextBlock">\
 									<div class="accountTitle totalAccountUp">\

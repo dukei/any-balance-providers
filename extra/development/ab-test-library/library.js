@@ -8,6 +8,8 @@
  
  Changelog:
 
+ 19.01.2016 Добавлен метод getElementById(), см. KRPROV-8
+
  12.01.16 Исправлена ошибка с зависанием getJsonObject(), см. KRPROV-5
  12.01.16 Исправлена ошибка с некорректным вырезанием HTML тегов, см. KRPROV-6
 
@@ -765,7 +767,84 @@ var AB = (function (global_scope) {
             result.__tariff = null;
     }
 
-    /**
+	/**
+	 * Реализация браузерного метода document.getElementById() без использования DOM
+	 * 
+	 * @param {String} html
+	 * @param {String} id
+	 * @param {Array} replaces
+	 * @param {Function} parseFunc
+	 * @returns {undefined|string}
+	 */
+	function getElementById(html, id, replaces, parseFunc) {
+		//Значение атрибута id может находиться в невалидном HTML (в одинарных вавычках или без них) 
+		//или закодировано через HTML сущности. Поэтому делаем атрибут тега валидным и декодируем сущности.
+		var repairRe = XRegExp('\
+			(?<left>								\n\
+				<[a-zA-Z]								\n\
+				(?=(?<left1>							\n\
+						(?:								\n\
+								(?:	(?!\\b [iI][dD] \\b)\n\
+									[^>"\']				\n\
+								)+						\n\
+							|		"   [^"]*    "		\n\
+							|		\'  [^\']*  \'		\n\
+						)*								\n\
+				))\\k<left1>							\n\
+			)											\n\
+			(?=(?<center>			\n\
+				(?<attrName>[-a-zA-Z]+)	\n\
+				\\s* = \\s*				\n\
+				(?<attrValue>			\n\
+						[^>"\'\\s]+		\n\
+					|	"  [^"]*   "	\n\
+					|	\' [^\']* \'	\n\
+				)						\n\
+			))\\k<center>				\n\
+			(?<right>				\n\
+				(?:						\n\
+						(?=(?<right1>	\n\
+							[^>"\']+	\n\
+						))	\\k<right1>	\n\
+					|	"   [^"]*    "	\n\
+					|	\'  [^\']*  \'	\n\
+				)*						\n\
+				>						\n\
+			)', 'xsg');
+		html = XRegExp.replace(html, repairRe, function (m) {
+			if (/^['"]/.test(m.attrValue)) m.attrValue = m.attrValue.slice(1, -1);
+			return m.left + m.attrName.toLowerCase() + '="' + m.attrValue.htmlEntityDecode().replace('"', '&quot;') + '"' + m.right;
+		})
+
+		//теперь готовим рег. выражение для поиска тега с нужным id
+		var searchRe = XRegExp('\
+			<[a-zA-Z]							\n\
+			(?=(?<left1>						\n\
+					(?:							\n\
+							(?:	(?!\\b id \\b)	\n\
+								[^>"\']			\n\
+							)+					\n\
+						|		"   [^"]*    "	\n\
+						|		\'  [^\']*  \'	\n\
+					)*							\n\
+			))\\k<left1>						\n\
+			(?=(?<center>	\n\
+				[-a-zA-Z]+	\n\
+				=			\n\
+				"{id}"		\n\
+			))\\k<center>			\n\
+			(?:						\n\
+					(?=(?<right1>	\n\
+						[^>"\']+	\n\
+					))	\\k<right1>	\n\
+				|	"   [^"]*    "	\n\
+				|	\'  [^\']*  \'	\n\
+			)*						\n\
+			>'.replace('{id}', XRegExp.escape(id).replace('"', '&quot;')), 'xs');
+		return getElement(html, searchRe, replaces, parseFunc);
+	}
+	
+	/**
      Ищет элемент в указанном html, тэг которого совпадает с указанным регулярным выражением
      Возвращает весь элемент целиком, учитывая вложенные элементы с тем же тегом
      Например,
@@ -1181,6 +1260,7 @@ var AB = (function (global_scope) {
         capitalFirstLetters: capitalFirstLetters,
         setCountersToNull: setCountersToNull,
         getElement: getElement,
+        getElementById: getElementById,
         getJsonObject: getJsonObject,
         getRecursiveMatch: getRecursiveMatch,
         getElements: getElements,

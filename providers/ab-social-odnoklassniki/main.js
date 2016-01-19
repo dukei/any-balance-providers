@@ -7,7 +7,7 @@ var g_headers = {
 	'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
 	'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
 	'Connection':'keep-alive',
-	'Referer':'http://m.odnoklassniki.ru/',
+	'Referer':'http://m.ok.ru/',
 	'User-Agent':'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
 };
 function main() {
@@ -36,9 +36,11 @@ function main() {
 	}
 	
 	var result = {success: true};
+        
+        window.__html = html;
 	
-	getParam(html, result, 'fio', /<a[^>]+id="sm-s-title"[^>]*>([^]*?)<\/a>/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, '__tariff', /<a[^>]+id="sm-s-title"[^>]*>([^]*?)<\/a>/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'fio', /<span\s[^>]*class="[^"]*js-text-username[^"]*"[^>]*>([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, '__tariff', /<span\s[^>]*class="[^"]*js-text-username[^"]*"[^>]*>([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
 	
 	html = AnyBalance.requestGet(baseurl + 'dk?st.cmd=selectPresent&st.or=o%3AM%2C&_prevCmd=userSettings&tkn=4665', g_headers);
 	

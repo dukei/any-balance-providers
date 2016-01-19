@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="8" date="2016-01-19">
+	Исправлено получение имени пользователя
+	</change>
 	<change version="7" date="2015-10-02">
 	Восстановлено получение имени пользователя
 	</change>

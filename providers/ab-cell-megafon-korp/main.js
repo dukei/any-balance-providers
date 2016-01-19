@@ -72,6 +72,14 @@ function main() {
 
     AB.getParam(html, result, 'balance', /<dt>Текущий баланс[^]*?class="money[^>]*>([^<]+)/i, AB.replaceTagsAndSpaces, AB.parseBalance);
     AB.getParam(html, result, 'abonCount', /<dt>Абонентов[^]*?class="span28[^>]*>([^<]+)/i, AB.replaceTagsAndSpaces, AB.parseBalance);
+    
+    if (AB.isAvailable('unpaids')) {
+        var elemUnpaids = AB.getElement(html, /<div\s[^>]*\bunpaidBillsCount\b/);
+        if (elemUnpaids) {
+            elemUnpaids = AB.getElement(elemUnpaids, /<span[^>]+class="[^"']*?\bmoney/, AB.replaceTagsAndSpaces, AB.parseBalance);
+            AB.getParam(elemUnpaids, result, 'unpaids');
+        }
+    }
 
     html = AnyBalance.requestGet(baseurl + 'sc_cp_apps/subscriber/mobile/list?from=0&size=' + 128, AB.addHeaders({'X-Requested-With':'XMLHttpRequest'}));
 

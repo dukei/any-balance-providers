@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-</id>
+	<api flags="no_browser"/>
+	<name>AnyBalance Library Test</name>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<js>main.js</js>
+	</files>
+	<depends>
+		<module id="library" version="source"/>
+	</depends>
+	<counters>
+		<counter id="balance" name="Баланс" units=" {@currency}"/>
+	</counters>
+	<keywords></keywords>
+	<type></type>
+	<country>ru</country>
+</provider>

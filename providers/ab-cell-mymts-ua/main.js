@@ -156,7 +156,7 @@ function main() {
 
         //Использовано трафика в тарифах Vodafone
 	//Пакет на месяц в тарифе
-	sumParam (html, result, 'traffic_used1', /МБ 3G в месяц RED ., использовано:\s*(\d+)\s*(?:Кб|kб).<\/span>/ig, null, parseTrafficMb, aggregate_sum);
+	sumParam (html, result, 'traffic_used1', /(?:Г|М)Б 3G в месяц RED ., использовано:\s*(\d+)\s*(?:Кб|kб).<\/span>/ig, null, parseTrafficMb, aggregate_sum);
 	//Пакет на месяц в тарифе
 	sumParam (html, result, 'traffic_used2', /Мобильный Интернет на день RED, использовано:\s*(\d+)\s*(?:Кб|kб).<\/span>/ig, null, parseTrafficMb, aggregate_sum);
 	//Пакет на месяц в тарифе

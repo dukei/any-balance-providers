@@ -30,7 +30,7 @@ function main() {
 
   if (json.success !== true) {
     AnyBalance.trace(html);
-    throw new AnyBalance.Error('не правильеый логин или пароль');
+    throw new AnyBalance.Error('не правильный логин или пароль', null, true);
   }
 
   if (!json.success) {

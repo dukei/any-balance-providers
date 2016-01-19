@@ -37,7 +37,7 @@ function main() {
 	var result = {success: true};
 
 	html = AnyBalance.requestGet(baseurl + 'setting/balance?_=' + new Date().getTime(), AB.addHeaders({'X-Requested-With':'XMLHttpRequest', Referer: baseurl}));
-		AnyBalance.trace(html);
+
 	AB.getParam(html, result, 'balance', /Ваш Баланс:(.*)/i, AB.replaceTagsAndSpaces, AB.parseBalance);
 
 	// html = AnyBalance.requestGet(baseurl + 'packet/show?_=' + new Date().getTime(), addHeaders({'X-Requested-With':'XMLHttpRequest', Referer: baseurl}));

@@ -10,10 +10,11 @@ var g_headers = {
 };
 
 var regions = {
-	bryansk: getMoscow_Perm_Bryansk,
+	bryansk: getSmorodina,
 	volgograd: getVolgograd,
-	moscow: getMoscow_Perm_Bryansk,
-	perm: getMoscow_Perm_Bryansk,
+	moscow: getSmorodina,
+	kaluga: getSmorodina,
+	perm: getSmorodina,
 	rostov: getRostov,
 	spb: getSPB,
 	tver: getTver,
@@ -82,7 +83,7 @@ function getVolgograd() {
 	AnyBalance.setResult(result);
 }
 
-function getMoscow_Perm_Bryansk() {
+function getSmorodina() {
 	var prefs = AnyBalance.getPreferences();
 	var baseurl = 'https://xn--80afn.xn--80ahmohdapg.xn--80asehdb';
 	AnyBalance.setDefaultCharset('utf-8');
@@ -94,18 +95,29 @@ function getMoscow_Perm_Bryansk() {
 		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
 	}
 
-	var viewState = getParam(html, null, null, /<input[^]+name="javax.faces.ViewState"[^>]+value="([\s\S]*?)"/i);
-	html = AnyBalance.requestPost(baseurl + '/pages/abonent/login.jsf', {
-		'javax.faces.partial.ajax': true,
-		'javax.faces.source': 'f_login_abon:j_idt20',
-		'javax.faces.partial.execute': 'f_login_abon:pLogin',
-		'javax.faces.partial.render': 'f_login_abon',
-		'f_login_abon:j_idt20': 'f_login_abon:j_idt20',
-		'f_login_abon': 'f_login_abon',
-		'f_login_abon:eLogin': prefs.login,
-		'f_login_abon:ePwd': prefs.password,
-		'javax.faces.ViewState': viewState
-	}, AB.addHeaders({
+	var viewState = AB.getParam(html, null, null, /<input[^]+name="javax.faces.ViewState"[^>]+value="([\s\S]*?)"/i);
+	if(!viewState)
+		throw  new AnyBalance.Error("Не удалось найти параметр. Сайт изменён?");
+
+	var loginForm = AB.getParam(html, null, null, /<form[^>]+id="f_login_abon"[^>]*>([\s\S]*?)<\/form>/i);
+	if(!loginForm)
+		throw new AnyBalance.Error("Не удалось найти форму входа. Сайт изменён?");
+
+	var buttonID = AB.getParam(loginForm, null, null, /<button[^>]+id="([\s\S]*?)"/i);
+	if(!buttonID)
+		throw new AnyBalance.Error("Не удалось найти параметр. Сайт изменён?");
+
+	html = AnyBalance.requestPost(baseurl + '/pages/abonent/login.jsf', [
+		['javax.faces.partial.ajax', 'true'],
+		['javax.faces.source', buttonID],
+		['javax.faces.partial.execute', 'f_login_abon:pLogin'],
+		['javax.faces.partial.render', 'f_login_abon'],
+		[buttonID, buttonID],
+		['f_login_abon', 'f_login_abon'],
+		['f_login_abon:eLogin', prefs.login],
+		['f_login_abon:ePwd', prefs.password],
+		['javax.faces.ViewState', viewState]
+	], AB.addHeaders({
 		Referer: baseurl + '/pages/abonent/login.jsf?faces-redirect=true',
 		'X-Requested-With': 'XMLHttpRequest',
 		Origin: baseurl,

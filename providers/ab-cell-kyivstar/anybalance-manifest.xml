@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id major_version="2.0" version="68">ab-cell-kyivstar</id>
+	<id major_version="2.0" version="69">ab-cell-kyivstar</id>
 	<name>Киевстар</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе, бонусных минутах, SMS, MMS, остатке интернет-трафика и других бонусах для пользователей мобильного оператора "Киевстар".</p>
@@ -23,12 +23,14 @@
 	   
 	]]></instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+		<module id="framework/gwt"/>
+		<module id="login/kyivstar"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
-		<js>gwt.js</js>
-		<js>kyivstar_login.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>

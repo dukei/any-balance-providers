@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="16">ab-cell-kyivstar-corp-ua</id>
+  <id version="17">ab-cell-kyivstar-corp-ua</id>
   <name>Киевстар Корпоративный (Украина)</name>
   <description>
     Получает баланс, остаток минут, интернет трафка, SMS для корпоративных тарифов. Информация берется из системы Мой Киевстар https://my.kyivstar.ua
@@ -10,13 +10,15 @@
     ВНИМАНИЕ! Этот провайдер получает значения только для корпоративных тарифных планов. Если у вас не корпоративный тариф, воспользуйтесь провайдером Киевстар.
 </description>
   <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+		<module id="framework/gwt"/>
+		<module id="login/kyivstar"/>
+	</depends>
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
     <js>api:jquery.min.js</js>
-    <js>library.js</js>
-	<js>gwt.js</js>
-	<js>kyivstar_login.js</js>
     <js>main.js</js>
     <history>history.xml</history>
   </files>

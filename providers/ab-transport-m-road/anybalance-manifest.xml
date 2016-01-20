@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-transport-m-road</id>
+	<id version="2">ab-transport-m-road</id>
 	<api flags="no_browser"/>
 	<name>Новое качество дорог (http://m-road.ru)</name>
 	<description html="true"><![CDATA[

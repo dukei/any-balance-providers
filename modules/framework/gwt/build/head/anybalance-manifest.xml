@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+    <id version="1">framework/gwt</id>
+	<api flags="no_browser" />
+    <name>GWT helper</name>
+	<description html="true"><![CDATA[
+		Helps to deal with Google Web Toolkit generated pages
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<js>gwt.min.js</js>
+		<history>history.xml</history>
+	</files>
+	<depends>
+		<module id="library"/>
+	</depends>
+	<type>framework</type>
+</provider>

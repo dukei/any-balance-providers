@@ -142,20 +142,26 @@ function main() {
 		}
 	}
 
-	var html = '<span sl> <div class="test" ID = Test ss > parsed <div class="test"></div> <span sdflj> it </span> <div askdfj> ok </div>!</div> test </div>';
-	
-	var str = getElement(html, /<\w+[^>]+class="test"[^>]*>/i, replaceTagsAndSpaces);
+	var html = '<span sl> <div class="one Test two" ID = "Test" ss > parsed <div class="test"></div> <span sdflj> it </span> <div askdfj> ok </div>!</div> test </div>';
 	var res = /^parsed\sit\sok\s!$/i;
+
+	var str = getElement(html, /<\w+[^>]+class="[^"]*\btest\b[^"]*"[^>]*>/i, replaceTagsAndSpaces);
 	if(res.test(str))
 		AnyBalance.trace('getElement is ok');
 	else
 		AnyBalance.trace('!!!____________________________________________________________getElement test is failed: should be ' + res.source + ', parsed ' + str + '!!!');
 
-	var str = getElementById(html, 'Test');
-	if(str)
+	var str = getElementById(html, 'Test', replaceTagsAndSpaces);
+	if(res.test(str))
 		AnyBalance.trace('getElementById is ok');
 	else
 		AnyBalance.trace('!!!____________________________________________________________getElementById test is failed!');
+
+	var str = getElementsByClassName(html, 'Test', replaceTagsAndSpaces);
+	if(res.test(str[0]))
+		AnyBalance.trace('getElementsByClassName is ok');
+	else
+		AnyBalance.trace('!!!____________________________________________________________getElementsByClassName test is failed!');
 
 	var html = '<div class="accountDetailTextBlock">\
 									<div class="accountTitle totalAccountUp">\

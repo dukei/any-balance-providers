@@ -770,80 +770,89 @@ var AB = (function (global_scope) {
 	/**
 	 * Реализация браузерного метода document.getElementById() без использования DOM
 	 * 
-	 * @param {String} html
-	 * @param {String} id
-	 * @param {Array} replaces
-	 * @param {Function} parseFunc
+	 * @param {string} type
+	 * @param {string} html
+	 * @param {string} id
+	 * @param {array} replaces
+	 * @param {function} parseFunc
+	 * @returns {undefined|string}
+	 */
+	function _getElementBy(type, html, id, replaces, parseFunc) {
+		var searchRe = XRegExp(`
+			<[a-zA-Z]
+			(?=(#1
+					(?:
+							(?:	(?!\\b {attr} \\b)
+								[^>"']
+							)+
+						|	" [^"]* "
+						|	' [^']* '
+					)*
+			))\\1
+			(?=(#2
+				[-a-zA-Z]+
+				\\s* = \\s*
+				(#3
+						[^>"'\\s]+
+					|	" [^"]* "
+					|	' [^']* '
+				)
+			))\\2
+			(?:
+					(?=(#4
+						[^>"']+
+					))\\4
+				|	" [^"]* "
+				|	' [^']* '
+			)*
+			>`.replace('{attr}', type === 'id' ? '[iI][dD]' : '[cC][lL][aA][sS][sS]'), 'xsg');
+		var m, val, found = false;
+		
+		while (m = searchRe.exec(html)) {
+			if (/^['"]/.test(m[3])) m[3] = m[3].slice(1, -1);
+			val = m[3].htmlEntityDecode();
+			if (
+					(type === 'id' && val === id) || 
+					(type === 'class' && RegExp('\\b' + XRegExp.escape(id) + '\\b').test(val) )
+				) {
+				found = true;
+				break;
+			}
+		}
+		if (! found) return type === 'id' ? undefined : [];
+		
+		var re = /<\w+/g;
+		re.lastIndex = m.index;
+		return (type === 'id')	? getElement(html, re, replaces, parseFunc) 
+								: getElements(html, re, replaces, parseFunc);
+	}
+
+	/**
+	 * Реализация браузерного метода document.getElementById() без использования DOM
+	 * 
+	 * @param {string} html
+	 * @param {string} id
+	 * @param {array} replaces
+	 * @param {function} parseFunc
 	 * @returns {undefined|string}
 	 */
 	function getElementById(html, id, replaces, parseFunc) {
-		//Значение атрибута id может находиться в невалидном HTML (в одинарных вавычках или без них) 
-		//или закодировано через HTML сущности. Поэтому делаем атрибут тега валидным и декодируем сущности.
-		var repairRe = XRegExp('\
-			(?<left>								\n\
-				<[a-zA-Z]								\n\
-				(?=(?<left1>							\n\
-						(?:								\n\
-								(?:	(?!\\b [iI][dD] \\b)\n\
-									[^>"\']				\n\
-								)+						\n\
-							|		"   [^"]*    "		\n\
-							|		\'  [^\']*  \'		\n\
-						)*								\n\
-				))\\k<left1>							\n\
-			)											\n\
-			(?=(?<center>			\n\
-				(?<attrName>[-a-zA-Z]+)	\n\
-				\\s* = \\s*				\n\
-				(?<attrValue>			\n\
-						[^>"\'\\s]+		\n\
-					|	"  [^"]*   "	\n\
-					|	\' [^\']* \'	\n\
-				)						\n\
-			))\\k<center>				\n\
-			(?<right>				\n\
-				(?:						\n\
-						(?=(?<right1>	\n\
-							[^>"\']+	\n\
-						))	\\k<right1>	\n\
-					|	"   [^"]*    "	\n\
-					|	\'  [^\']*  \'	\n\
-				)*						\n\
-				>						\n\
-			)', 'xsg');
-		html = XRegExp.replace(html, repairRe, function (m) {
-			if (/^['"]/.test(m.attrValue)) m.attrValue = m.attrValue.slice(1, -1);
-			return m.left + m.attrName.toLowerCase() + '="' + m.attrValue.htmlEntityDecode().replace('"', '&quot;') + '"' + m.right;
-		})
-
-		//теперь готовим рег. выражение для поиска тега с нужным id
-		var searchRe = XRegExp('\
-			<[a-zA-Z]							\n\
-			(?=(?<left1>						\n\
-					(?:							\n\
-							(?:	(?!\\b id \\b)	\n\
-								[^>"\']			\n\
-							)+					\n\
-						|		"   [^"]*    "	\n\
-						|		\'  [^\']*  \'	\n\
-					)*							\n\
-			))\\k<left1>						\n\
-			(?=(?<center>	\n\
-				[-a-zA-Z]+	\n\
-				=			\n\
-				"{id}"		\n\
-			))\\k<center>			\n\
-			(?:						\n\
-					(?=(?<right1>	\n\
-						[^>"\']+	\n\
-					))	\\k<right1>	\n\
-				|	"   [^"]*    "	\n\
-				|	\'  [^\']*  \'	\n\
-			)*						\n\
-			>'.replace('{id}', XRegExp.escape(id).replace('"', '&quot;')), 'xs');
-		return getElement(html, searchRe, replaces, parseFunc);
+		return _getElementBy('id', html, id, replaces, parseFunc);
 	}
-	
+
+	/**
+	 * Реализация браузерного метода document.getElementsByClassName() без использования DOM
+	 * 
+	 * @param {string} html
+	 * @param {string} id
+	 * @param {array} replaces
+	 * @param {function} parseFunc
+	 * @returns {undefined|string}
+	 */
+	function getElementsByClassName(html, id, replaces, parseFunc) {
+		return _getElementBy('class', html, id, replaces, parseFunc);
+	}
+
 	/**
      Ищет элемент в указанном html, тэг которого совпадает с указанным регулярным выражением
      Возвращает весь элемент целиком, учитывая вложенные элементы с тем же тегом
@@ -1261,6 +1270,7 @@ var AB = (function (global_scope) {
         setCountersToNull: setCountersToNull,
         getElement: getElement,
         getElementById: getElementById,
+        getElementsByClassName: getElementsByClassName,
         getJsonObject: getJsonObject,
         getRecursiveMatch: getRecursiveMatch,
         getElements: getElements,

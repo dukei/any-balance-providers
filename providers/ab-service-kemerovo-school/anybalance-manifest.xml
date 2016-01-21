@@ -26,6 +26,6 @@
 		<counter id="complex" name="Комплекс по умолчанию" type="text"/>
 	</counters>
 	<keywords>школьное питание</keywords>
-	<type>service</type>
+	<type>service school</type>
 	<country>ru</country>
 </provider>

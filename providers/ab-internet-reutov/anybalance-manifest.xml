@@ -25,7 +25,6 @@
     <counter id="trafficExtra" name="Трафик сверх АП" units="Gb"/>
     <counter id="period_end" name="Конец расчетного периода" type="time" format="dd/MM/yyyy"/>
     <counter id="fio" name="ФИО" type="text"/>
-    <counter id="tariff" name="Тарифный план" type="text"/>
   </counters>
   <keywords>
     интернет

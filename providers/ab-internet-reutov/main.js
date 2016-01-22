@@ -76,7 +76,7 @@ function main(){
     AB.getParam(select(htmlSideUser, 'td.user-info-balance'), result, 'balance', null, AB.replaceTagsAndSpaces, AB.parseBalance);
     AB.getParam(select(htmlSideUser, 'td.su-price'), result, 'abon', null, AB.replaceTagsAndSpaces, AB.parseBalance);
     AB.getParam(select(htmlSideUser, 'td.su-next_abon'), result, 'period_end', null, AB.replaceTagsAndSpaces, AB.parseDate);
-    AB.getParam(select(htmlSideUser, 'td.su-tp_name'), result, 'tariff', null, AB.replaceTagsAndSpaces);
+    AB.getParam(select(htmlSideUser, 'td.su-tp_name'), result, '__tariff', null, AB.replaceTagsAndSpaces);
     
     if (AnyBalance.isAvailable('trafficAbon', 'trafficExtra')) {
         var statHtml = select(select(html, 'div.statistics'), 'p.lead');

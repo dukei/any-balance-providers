@@ -8,6 +8,8 @@
  
  Changelog:
 
+ 19.01.2016 Добавлен метод getElementById(), см. KRPROV-8
+
  12.01.16 Исправлена ошибка с зависанием getJsonObject(), см. KRPROV-5
  12.01.16 Исправлена ошибка с некорректным вырезанием HTML тегов, см. KRPROV-6
 
@@ -765,7 +767,93 @@ var AB = (function (global_scope) {
             result.__tariff = null;
     }
 
-    /**
+	/**
+	 * Реализация браузерного метода document.getElementById() без использования DOM
+	 * 
+	 * @param {string} type
+	 * @param {string} html
+	 * @param {string} id
+	 * @param {array} replaces
+	 * @param {function} parseFunc
+	 * @returns {undefined|string}
+	 */
+	function _getElementBy(type, html, id, replaces, parseFunc) {
+		var searchRe = XRegExp(`
+			<[a-zA-Z]
+			(?=(#1
+					(?:
+							(?:	(?!\\b {attr} \\b)
+								[^>"']
+							)+
+						|	" [^"]* "
+						|	' [^']* '
+					)*
+			))\\1
+			(?=(#2
+				[-a-zA-Z]+
+				\\s* = \\s*
+				(#3
+						[^>"'\\s]+
+					|	" [^"]* "
+					|	' [^']* '
+				)
+			))\\2
+			(?:
+					(?=(#4
+						[^>"']+
+					))\\4
+				|	" [^"]* "
+				|	' [^']* '
+			)*
+			>`.replace('{attr}', type === 'id' ? '[iI][dD]' : '[cC][lL][aA][sS][sS]'), 'xsg');
+		var m, val, found = false;
+		
+		while (m = searchRe.exec(html)) {
+			if (/^['"]/.test(m[3])) m[3] = m[3].slice(1, -1);
+			val = m[3].htmlEntityDecode();
+			if (
+					(type === 'id' && val === id) || 
+					(type === 'class' && RegExp('\\b' + XRegExp.escape(id) + '\\b').test(val) )
+				) {
+				found = true;
+				break;
+			}
+		}
+		if (! found) return type === 'id' ? undefined : [];
+		
+		var re = /<\w+/g;
+		re.lastIndex = m.index;
+		return (type === 'id')	? getElement(html, re, replaces, parseFunc) 
+								: getElements(html, re, replaces, parseFunc);
+	}
+
+	/**
+	 * Реализация браузерного метода document.getElementById() без использования DOM
+	 * 
+	 * @param {string} html
+	 * @param {string} id
+	 * @param {array} replaces
+	 * @param {function} parseFunc
+	 * @returns {undefined|string}
+	 */
+	function getElementById(html, id, replaces, parseFunc) {
+		return _getElementBy('id', html, id, replaces, parseFunc);
+	}
+
+	/**
+	 * Реализация браузерного метода document.getElementsByClassName() без использования DOM
+	 * 
+	 * @param {string} html
+	 * @param {string} id
+	 * @param {array} replaces
+	 * @param {function} parseFunc
+	 * @returns {undefined|string}
+	 */
+	function getElementsByClassName(html, id, replaces, parseFunc) {
+		return _getElementBy('class', html, id, replaces, parseFunc);
+	}
+
+	/**
      Ищет элемент в указанном html, тэг которого совпадает с указанным регулярным выражением
      Возвращает весь элемент целиком, учитывая вложенные элементы с тем же тегом
      Например,
@@ -1181,6 +1269,8 @@ var AB = (function (global_scope) {
         capitalFirstLetters: capitalFirstLetters,
         setCountersToNull: setCountersToNull,
         getElement: getElement,
+        getElementById: getElementById,
+        getElementsByClassName: getElementsByClassName,
         getJsonObject: getJsonObject,
         getRecursiveMatch: getRecursiveMatch,
         getElements: getElements,

@@ -1,10 +1,6 @@
 ﻿<html>
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <script src="chrome-extension://bjhpeieonkhafpmpkjolifioeodfoiag/json2.js"></script>
-  <script src="chrome-extension://bjhpeieonkhafpmpkjolifioeodfoiag/jquery.min.js"></script>
-  <script src="chrome-extension://bjhpeieonkhafpmpkjolifioeodfoiag/api-adapter.js"></script>
-  <script src="chrome-extension://bjhpeieonkhafpmpkjolifioeodfoiag/api.js"></script>
   <script>
         var g_api_preferences = {
           	num: '1234',
@@ -13,14 +9,15 @@
 			password: 'pass'
         };
   </script>
-  <!-- Перечислите все скрипты, указанные в манифесте вашего провайдера.
-       Указывайте локальные пути к файлам. Библиотека JQuery уже включена,
-       отдельно указывать её не нужно.
-       Например, -->
-  <script src="library.js"></script>
-  <script src="extract.js"></script>
-  <script src="nadapter.js"></script>
-  <script src="main.js"></script>
+  <!-- Если у вас установлен и запущен Fenix Web server (http://fenixwebserver.com/), вам НЕ НУЖНО перечислять здесь скрипты провайдера.
+       Они будут автоматически считаны и загружены согласно манифесту.
+       
+       Если вы предпочитаете отладку в старом стиле и не используете зависимости, то перечислите скрипты провайдера здесь.
+       Используйте локальные пути. JQuery уже включено.
+       Например,
+		  <script src="library.js"></script>
+		  <script src="main.js"></script>
+   -->
 </head>
 <body onload="">
   <div style="display:none" id="AnyBalanceDebuggerRPCContainer"></div>

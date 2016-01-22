@@ -8,7 +8,7 @@ function main() {
 	AnyBalance.trace(capitalFirstLetters('ИвАНоВ и. иваНОВИЧ'));
 	
 	AnyBalance.setCookie('ya.ru', 'somecookie', 'val', {path: 'some/path'});
-	requestPostMultipart('http://ya.ru/some/path', '', '');
+	requestPostMultipart('http://ya.ru/some/path', {}, '');
 
 	var val = AnyBalance.getCookie('somecookie')
     AnyBalance.trace(val == val ? 'Проверяем setCookie и getCookie... все работает нормально!' : '_________________________________________________Что-то не работает, надо проверить код! ' + val);

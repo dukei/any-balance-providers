@@ -1,0 +1,35 @@
+﻿<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<script>
+			var g_api_preferences = {
+				login: 'login',
+				password: 'pass',
+/*				ab$countersSet: [
+					['somecounter', 'somecounter.some.deep-', 'somecounter.some+'],
+					[],
+				]
+*/			};
+		</script>
+  <!-- Если у вас установлен и запущен Fenix Web server (http://fenixwebserver.com/), вам НЕ НУЖНО перечислять здесь скрипты провайдера.
+       Они будут автоматически считаны и загружены согласно манифесту.
+       
+       Если вы предпочитаете отладку в старом стиле и не используете зависимости, то перечислите скрипты провайдера здесь.
+       Используйте локальные пути. JQuery уже включено.
+       Например,
+		  <script src="library.js"></script>
+		  <script src="main.js"></script>
+   -->
+		<script>
+ 			var sample = {};
+		</script>
+		<script src="samples/mgts.html"></script>
+		<script src="samples/form.html"></script>
+		<script src="samples/js.html"></script>
+	</head>
+	<body onload="">
+		<div style="display:none" id="AnyBalanceDebuggerRPCContainer"></div>
+		<button onclick="api_onload()">Execute</button>
+		<div id="AnyBalanceDebuggerLog"></div>
+	</body>
+</html>

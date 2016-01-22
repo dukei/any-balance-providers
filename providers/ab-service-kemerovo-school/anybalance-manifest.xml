@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-service-kemerovo-school</id>
+	<api flags="no_browser"/>
+	<name>Школьное питание (Кемерово)</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера <a href="https://cabinet.ruobr.ru/">Школьное питание</a></p>
+	<p>Информация берется из личного кабинета</p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Если у вас нет доступа в Личный кабинет, получите его на странице <a href="https://cabinet.ruobr.ru/">https://cabinet.ruobr.ru/</a></p>
+	]]></instruction>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Cостояние счёта" units=" {@currency}"/>
+		<counter id="subsidy" name="Субсидия" units=" {@currency}"/>
+		<counter id="num" name="№ Лицевого счёта" type="text"/>
+		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="complex" name="Комплекс по умолчанию" type="text"/>
+	</counters>
+	<keywords>школьное питание</keywords>
+	<type>service school</type>
+	<country>ru</country>
+</provider>

@@ -95,7 +95,7 @@ function processCards(html, result) {
 		var _id = card.id;
 		var title = card.number;
 		
-		var c = {__id: _id, __name: title};
+		var c = {__id: _id, __name: title, num: title};
 		
 		if(__shouldProcess('cards', c)){
 			processCard(card, c);
@@ -135,7 +135,7 @@ function processAccounts(html, result) {
 		var _id = account.id;
 		var title = account.number;
 		
-		var c = {__id: _id, __name: title};
+		var c = {__id: _id, __name: title, num: title};
 		
 		if(__shouldProcess('accounts', c)){
 			processAccount(account, c);

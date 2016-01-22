@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
-    <EditTextPreference 
+    <EditTextPreference
 		obligatory="true"
-        title="Электронный адрес" 
-        positiveButtonText="ОК" 
-        summary="|Логин в Zadarma|{@s}" 
-        dialogTitle="Электронный адрес" 
-        negativeButtonText="Отмена" 
+        title="Электронный адрес"
+        positiveButtonText="ОК"
+        summary="|Логин в Zadarma|{@s}"
+        dialogTitle="Электронный адрес"
+        negativeButtonText="Отмена"
         dialogMessage="Введите ваш электронный адрес для входа в Zadarma"
         inputType="textEmailAddress"
         key="login">
     </EditTextPreference>
-    <EditTextPreference 
+    <EditTextPreference
 		obligatory="true"
         positiveButtonText="ОК"
-        key="password" 
+        key="password"
         dialogTitle="Пароль"
         negativeButtonText="Отмена"
         title="Пароль"
@@ -22,4 +22,12 @@
         dialogMessage="Введите ваш пароль в Zadarma"
         inputType="textPassword">
     </EditTextPreference>
+    <ListPreference
+		key="extraCaptchaAuth"
+		title="Ограничение доступа по IP включено ?"
+		summary="||{@s}"
+		entries="ВКЛ(в настройках аккаунта)|ВЫКЛ no captcha"
+		entryValues="enabled|disabled"
+		defaultValue="enabled">
+	</ListPreference>
 </PreferenceScreen>

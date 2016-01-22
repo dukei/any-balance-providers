@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="2.8" version="20">ab-money-sberbank-ua</id>
+	<id major_version="2.8" version="21">ab-money-sberbank-ua</id>
 	<api flags="no_browser"/>
 	<name>Ощадбанк ОнЛ@йн (Україна)</name>
 	<description html="true"><![CDATA[
@@ -9,12 +9,15 @@
 	<instruction html="true"><![CDATA[
 	<p>Якщо у вас немає доступу до Ощадбанк-онлайн: перейдіть на сторінку <a href="https://online.oschadnybank.com/wb/auth/userlogin?execution=e1s1">https://online.oschadnybank.com/wb/auth/userlogin?execution=e1s1</a></p>
 	]]></instruction>
-	<author>antarey &lt;antarey@gmail.com&gt;</author>
+	<depends>
+		<module id="library"/>
+		<module id="nadapter"/>
+		<module id="extract/abe-money-sberbank-ua"/>
+	</depends>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
@@ -24,11 +27,11 @@
 		<counter id="till" name="Дата закінчення дії" type="time" format="MM/yyyy"/>
 		<counter id="maxlimit" name="Кредитний ліміт" units=" {@currency}"/>
 		<counter id="debt" name="Загальна заборгованість" units=" {@currency}"/>
-                <counter id="mz" name="Мобільні заощадження" units=" {@currency}"/>
+		<counter id="mz" name="Мобільні заощадження" units=" {@currency}"/>
 		<counter id="rr" name="Розрахунковий рахунок" type="text"/>
 		<counter id="cardNumber" name="Номер карти" type="text"/>
 		<counter id="fio" name="ПIБ" type="text"/>
-                <counter id="mess" name="Повідомлення"/>
+		<counter id="mess" name="Повідомлення"/>
 	</counters>
 	<keywords>сбербанк онлайн, sberbank online, сберегательный банк, ощадбанк, ощадний банк</keywords>
 	<type>money, bank</type>

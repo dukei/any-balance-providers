@@ -38,12 +38,12 @@ function main(){
 			throw new Error('Can not create module version folder: ' + version_path);
 	}
 
+	writeStringToFile(version_path + 'anybalance-manifest.xml', new_manifest.replace(/(<files[^>]*>)/i, '$1\n\t\t<js>' + sub_module_id + '.min.js</js>'));
+	fso.CopyFile(basepath + 'source\\history.xml', version_path + 'history.xml', true);
+	
 	var oExec = WshShell.Run(gcccmd + ' --js "' + files.join('" --js "') + '" --js_output_file "' + version_path + sub_module_id + '.min.js"', 0, true);
 	if(oExec != 0)
 		throw new Error('Compilation failed!');
-
-	writeStringToFile(version_path + 'anybalance-manifest.xml', new_manifest.replace(/(<files[^>]*>)/i, '$1\n\t\t<js>' + sub_module_id + '.min.js</js>'));
-	fso.CopyFile(basepath + 'source\\history.xml', version_path + 'history.xml', true);
 }
 
 function readFileToString(file) {

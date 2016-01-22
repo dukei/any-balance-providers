@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-municipal-rcurala</id>
+	<id version="3">ab-municipal-rcurala</id>
 	<api flags="no_browser"/>
 	<name>Расчётный Центр Урала</name>
 	<description html="true"><![CDATA[
@@ -8,10 +8,12 @@
 	<p>Информация берется с сайта https://wk.rcurala.ru/login.aspx</p>
 	]]></description>
 	<author>Stark &lt;support@starksoft.ru&gt;</author>
+        <depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>

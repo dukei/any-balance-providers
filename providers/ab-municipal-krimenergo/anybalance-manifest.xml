@@ -2,17 +2,20 @@
 <provider>
 	<api flags="no_browser" />
 	<id version="9">ab-municipal-krimenergo</id>
-	<name>Интернет-магазин коммунальных услуг (МегаБиллинг)</name>
+	<name>МегаБиллинг Крым</name>
 	<description html="true"><![CDATA[
-	<p>Получает данные в системе Мегасофт, МегаБиллинг (http://www.krymenergo.com/)</p>
-	<p>На данный момент поддерживаются: Крымэнерго, Киевэнерго</p>
-	<p>Информация берется из личного кабинета https://secure.mega-billing.com/byt/ru/energo</p>
+	<p>Предоставляет информацию из личного кабинета  МегаБиллинг <a href="https://www.mega-billing.ru/">https://www.mega-billing.ru/</a></p>
 	]]></description>
+	<instruction html="true"><![CDATA[
+  <p>Если у вас нет доступа в Личный кабинет, получите его на странице <a href="https://www.mega-billing.ru/">https://www.mega-billing.ru/</a></p>
+  ]]></instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
@@ -24,7 +27,7 @@
 		<counter id="acc" name="Лицевой счёт" type="text"/>
 		<!-- <counter id="tarif" name="Тарификация" type="text"/> -->
 	</counters>
-	<keywords>Мегасофт МегаБиллинг</keywords>
+	<keywords>МегаБиллинг Крым Крымэнерго</keywords>
 	<type>municipal</type>
-	<country>ua, ru</country>
+	<country>ru</country>
 </provider>

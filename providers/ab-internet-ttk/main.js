@@ -77,7 +77,7 @@ function main() {
 		
 		json = getJson(html);
 
-		getParam(json.firstName + ' ' + json.lastName, result, 'fio', /"user-panel_button([^>]*>){2}/i, replaceTagsAndSpaces, html_entity_decode);
+		getParam(json.firstName + ' ' + json.lastName, result, 'fio', null, replaceTagsAndSpaces, html_entity_decode);
 	}
 	AnyBalance.setResult(result);
 }

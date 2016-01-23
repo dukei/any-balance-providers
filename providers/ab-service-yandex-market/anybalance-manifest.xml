@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="4">ab-service-yandex-market</id>
+	<id version="5">ab-service-yandex-market</id>
 	<api flags="no_browser"/>
 	<name>Яндекс Маркет</name>
 	<description html="true"><![CDATA[
@@ -19,6 +19,8 @@
 		<counter id="min_price" name="Минимальная цена" units=" {@currency}"/>
 		<counter id="max_price" name="Максимальная цена" units=" {@currency}"/>
 		<counter id="rating_value" name="Рейтинг"/>
+                <counter id="offers" name="Количество предложений (цен)"/>
+                <counter id="reviews" name="Количество отзывов"/>
 	</counters>
 	<keywords></keywords>
 	<type>service</type>

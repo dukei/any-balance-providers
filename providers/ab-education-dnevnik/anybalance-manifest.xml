@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="8">ab-education-dnevnik</id>
+	<id version="9">ab-education-dnevnik</id>
 	<api flags="no_browser"/>
 	<name>Дневник.ру</name>
 	<description html="true"><![CDATA[
@@ -22,6 +22,7 @@
 		<counter id="total3" name="Оценки в четверг" type="html"/>
 		<counter id="total4" name="Оценки в пятницу" type="html"/>
 		<counter id="total5" name="Оценки в субботу" type="html"/>
+                <counter id="fio" name="Пользователь" type="text"/>
 	</counters>
 	<keywords></keywords>
 	<type>education</type>

@@ -10,9 +10,10 @@ var g_headers = {
 	'User-Agent':'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
 	'X-Requested-With':'XMLHttpRequest'
 };
+
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'http://wog.ua/ua/';
+	var baseurl = 'https://wog.ua/ru/';
 	AnyBalance.setDefaultCharset('utf-8');
 	
 	checkEmpty(prefs.login, 'Введите логин!');
@@ -21,11 +22,13 @@ function main() {
 	var html = AnyBalance.requestPost(baseurl + 'profile/login/', {
         "data[login]":prefs.login,
         "data[password]":prefs.password,
-		func:'GetRemains'
-    }, addHeaders({Referer: baseurl + 'profile/login/'}));
-	
+    }, addHeaders({
+		Referer: baseurl + 'profile/login/',
+		'X-Requested-With': 'XMLHttpRequest'
+	}));
+
 	var json = getJson(html);
-	if(!json || json.status !== true) {
+	if(json.status !== true) {
 		if(json){
 			if(json.status == 'card_not_found')
 				throw new AnyBalance.Error('Карта не найдена', null, true);
@@ -44,6 +47,7 @@ function main() {
 	}
 
     var result = {success: true};
+	
     sumParam(json.info.FIRSTNAME, result, 'fio', null, null, null, aggregate_join);
     sumParam(json.info.MIDDLENAME, result, 'fio', null, null, null, aggregate_join);
     sumParam(json.info.LASTNAME, result, 'fio', null, null, null, aggregate_join);
@@ -53,8 +57,9 @@ function main() {
     getParam(json.info.SEX, result, 'sex', null, null, function(str){return str == 2 ? 'ж' : 'м'});
 
     html = AnyBalance.requestGet(json.redirectLink, g_headers);
+	
 	getParam(html, result, 'balance', /<span[^>]+balance_status[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, '__tariff', />Номер картки<[\s\S]*?<div[^>]+class="right"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, '__tariff', />Номер картки<[\s\S]*?<div[^>]+class="right"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
 	
     AnyBalance.setResult(result);
 }

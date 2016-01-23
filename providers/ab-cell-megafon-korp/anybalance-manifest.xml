@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="4">ab-cell-megafon-korp</id>
+	<id version="7">ab-cell-megafon-korp</id>
 	<api flags="no_browser"/>
 	<name>Мегафон корпоративный</name>
 	<description html="true"><![CDATA[
@@ -17,6 +17,8 @@
 	</files>
 	<counters>
 		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="min_left" name="Минуты" units=" мин"/>
+		<counter id="sms_left" name="SMS" units=" шт"/>
 		<counter id="abonCount" name="Количество абонентов" type="text"/>
 		<counter id="amountTotal" name="Расходы с начала периода" units=" р"/>
 		<counter id="amountLocal" name="Трафик" units=" р"/>
@@ -24,6 +26,8 @@
 		<counter id="charges" name="Разовые начисления" units=" р"/>
 		<counter id="phone_name" name="Номер телефона" type="text"/>
 		<counter id="name_name" name="Название" type="text"/>
+                <counter id="unpaids" name="Неоплаченные счета" units=" р"/>
+                <counter id="prsnl_balance" name="Персональный баланс" units=" р"/>
 	</counters>
 	<keywords></keywords>
 	<type>cell</type>

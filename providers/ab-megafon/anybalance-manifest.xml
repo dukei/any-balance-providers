@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="3.1" version="178">ab-megafon</id>
+	<id major_version="3.1" version="182">ab-megafon</id>
 	<api flags="no_browser"/>
 	<name>Мегафон</name>
 	<description html="true"><![CDATA[
@@ -58,7 +58,7 @@
 		<counter id="internet_left_night" name="Интернет ночь (осталось)" units=" Mb"/>
 		<counter id="sms_left" name="SMS включенные" units=" sms"/>
 		<counter id="mms_left" name="MMS включенные" units=" mms"/>
-		<counter id="bonus_balance" name="Бонусный баланс"/>
+		<counter id="bonus_balance" name="Бонусный баланс" units=" Б"/>/>
 		<counter id="prsnl_balance" name="Персональный баланс (корп.)" units=" р"/>
 		<counter id="handygift_left" name="Нужный подарок - осталось (Поволжье)" units=" р"/>
 		<counter id="gb_with_you" name="Гигабайт в дорогу (Столица)" units=" Mb"/>

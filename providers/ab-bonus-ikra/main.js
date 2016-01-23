@@ -18,15 +18,15 @@ function main() {
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 	
-	var html = AnyBalance.requestGet(baseurl + 'ikra/', g_headers);
+	var html = AnyBalance.requestGet(baseurl + 'karusel/', g_headers);
 	
-	html = AnyBalance.requestGet(baseurl + 'ikra/anonymousLogin.do', g_headers);
+	html = AnyBalance.requestGet(baseurl + 'karusel/anonymousLogin.do', g_headers);
 	
 	//4730c9fc5c2bbc897cfef9694c41101dd2358788
 	var pass = calcSHA1(prefs.login + prefs.password);
 	AnyBalance.trace('Пароль: ' + pass);
 	
-	html = AnyBalance.requestPost(baseurl + 'ikra/login.do', {
+	html = AnyBalance.requestPost(baseurl + 'karusel/login.do', {
 		job:'LOGIN',
 		parameter:'2014-02-26 17:31',
 		from:'',
@@ -36,9 +36,9 @@ function main() {
 	}, addHeaders({Referer: baseurl + 'ikra/'}));
 	
 	if (!/logout/i.test(html)) {
-		var error = getParam(html, null, null, /<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
+		var error = getParam(html, null, null, /<div[^>]+class="errorBoldText"[^>]*>([\s\S]*?)<br\/>/i, replaceTagsAndSpaces, html_entity_decode);
 		if (error)
-			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
+			throw new AnyBalance.Error(error, null, /Ошибка авторизации/i.test(error));
 		
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
@@ -49,7 +49,7 @@ function main() {
 	getParam(html, result, 'cardnum', /Номер карты:([^>]*>){4}/i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(html, result, 'bonuses', /Баланс бонусов:([^>]*>){4}/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'bonuses_avail', /Доступно бонусов:([^>]*>){3}/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'balance', /Баланс икринок:([^>]*>){4}/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'balance', /Баллов на счете:([^>]*>){4}/i, replaceTagsAndSpaces, parseBalance);
 	//getParam(html, result, 'last_visit', /Последнее посещение:([^>]*>){4}/i, replaceTagsAndSpaces, html_entity_decode);
 	
 	AnyBalance.setResult(result);

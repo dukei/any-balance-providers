@@ -77,6 +77,8 @@ function main() {
     sumParam(html, result, 'date_bonus_fb', /<td[^>]*>\s*Бонус регистрация АССА\s*<\/td>\s*<td[^>]*>\s*.* \(по ([^<]*)\)\s*<\/td>/ig, replaceTagsAndSpaces, parseDate, aggregate_min);
     //Дата "Бонус при пополнении счета через Portmone"
     sumParam(html, result, 'date_bonus_pr', /<td[^>]*>\s*Бонус при поповненні рахунку через Portmone[^>]*\s*<\/td>\s*<td[^>]*>\s*.* \(по ([^<]*)\)\s*<\/td>/ig, replaceTagsAndSpaces, parseDate, aggregate_min);
+    //Дата минуты
+    sumParam(html, result, 'date_min_uk_mob_uk', /<td[^>]*>[\s\S]*?Украина\+Моб\.Украина[^<]*<\/td>\s*<td[^>]*>[\s\S]*? по ([^<]*)</ig, replaceTagsAndSpaces, parseDate, aggregate_min);
     //Пакетный трафик (получаем в локальную переменную, и независимо от включенности счетчика 'traffic_paket')
     var traffic_paket = sumParam(html, null, null, /<td[^>]*>\s*пакетный трафи(?:к|к \(Rev.A\)|к \(Rev.A\/Rev.B\))\s*<\/td>\s*<td[^>]*>([\s\S]*?)\s/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
     //Пакетный трафик (Rev.B)

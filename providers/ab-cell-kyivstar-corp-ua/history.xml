@@ -1,5 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="17" date="2016-01-20">
+	Поддержка изменений в процедуре входа
+	</change>
+	<change version="16" date="2015-12-21">
+	Исправление входа через мобильный интернет
+	</change>
+	<change version="15" date="2015-12-18">
+	Изменения в процедуре входа
+	</change>
 	<change version="14" date="2014-12-24">
 	- Исправлен на Lollipop
 	- Исправлена обработка ошибки входа

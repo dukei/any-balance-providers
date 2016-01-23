@@ -3,11 +3,10 @@
 */
 
 var g_headers = {
-	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
+	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
 	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
 	'Connection': 'keep-alive',
-	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
+	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/47.0.2526.106 Safari/537.36',
 };
 
 function handleRedirect(html){
@@ -25,10 +24,9 @@ function main() {
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 
-	var html = AnyBalance.requestPost(baseurl + 'index2.php?option=com_module&module=flregionselection&no_html=1&task=getmodule&act=setRegion&reg_id=1000034210371', {}, addHeaders({Referer: baseurl + 'index.php?option=com_user&view=login&lang=ru', 'X-Requested-With':'XMLHttpRequest'}));
-		
-	html = AnyBalance.requestGet(baseurl + 'index.php?option=com_user&view=login&lang=ru', g_headers);
-	
+	var html = AnyBalance.requestGet(baseurl+'index.php?option=com_user&view=login&lang=ru', g_headers);
+	html = handleRedirect(html);
+
 	if(!html || AnyBalance.getLastStatusCode() > 400){
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
@@ -43,10 +41,12 @@ function main() {
 		return value;
 	});
     
-	html = AnyBalance.requestPost(baseurl + 'index.php?option=com_user&view=login&lang=ru', params, addHeaders({Referer: baseurl + 'index.php?option=com_user&view=login&lang=ru'}));
+	html = AnyBalance.requestPost(baseurl + 'index.php?option=com_edit&view=edit&listid=600&task=login&return='+params.return, params, addHeaders({
+		Referer: baseurl + 'index.php?option=com_user&view=login&lang=ru'
+	}));
 	html = handleRedirect(html);
 	
-//    html = AnyBalance.requestGet(baseurl + 'index.php?option=com_user&view=cabinet', g_headers);
+	//html = AnyBalance.requestGet(baseurl + 'index.php?option=com_user&view=cabinet', g_headers);
     
 	if (!/logout/i.test(html)) {
 		var error = getParam(html, null, null, /<div[^>]+alert-danger[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
@@ -63,25 +63,36 @@ function main() {
 	
 	getParam(html, result, 'balance', /Доступно(?:[^>]*>){4}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'topay', /К оплате(?:[^>]*>){4}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'fio', /<span[^>]+fio[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
-    
-    html = AnyBalance.requestGet(baseurl + 'index.php?option=com_list&view=list&listId=84&Itemid=1679&lang=ru', g_headers);
-    
-	getParam(html, result, 'orders_sum', /Итоговая сумма заказов(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'points_sum', /Итоговая сумма баллов(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'points_sum_good', /Итоговая сумма баллов, учтенных в расчете(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
-    
-    html = AnyBalance.requestGet(baseurl + 'index.php?option=com_user&view=cabinet&Itemid=2069&lang=ru', g_headers);
-    var block = getElements(html, [/<div[^>]+period-score-block[^>]*>/ig, /Текущий период/i])[0];
-    
-	getParam(block, result, 'lo', /ЛО[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(block, result, 'olg', /ОЛГ[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(block, result, 'go', /ГО[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
-	
-    html = AnyBalance.requestPost(baseurl + 'index2.php?option=com_module&task=getmodule&module=mod_flmybusiness&no_html=1', {}, addHeaders({Referer: baseurl + 'index.php?option=com_user&view=cabinet&Itemid=2069&lang=ru', 'X-Requested-With':'XMLHttpRequest'}));
-    
-	getParam(html, result, 'personal', /В личных(?:[^>]*>){5}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'group', /В группе(?:[^>]*>){5}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);    
-    
+	getParam(html, result, 'fio', /<span[^>]+rel="tooltip"[^>]+title="([\s\S]*?)"[^>]*>/i);
+
+	if(isAvailable(['orders_sum', 'points_sum', 'points_sum_good'])) {
+
+		html = AnyBalance.requestGet(baseurl + 'index.php?option=com_list&view=list&listId=84&Itemid=1679&lang=ru', g_headers);
+
+		getParam(html, result, 'orders_sum', /Итоговая сумма заказов(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
+		getParam(html, result, 'points_sum', /Итоговая сумма баллов(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
+		getParam(html, result, 'points_sum_good', /Итоговая сумма баллов, учтенных в расчете(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
+	}
+
+	if(isAvailable(['lo', 'olg', 'go'])) {
+
+		html = AnyBalance.requestGet(baseurl + 'index.php?option=com_user&view=cabinet&Itemid=2069&lang=ru', g_headers);
+		var block = getElements(html, [/<div[^>]+period-score-block[^>]*>/ig, /Текущий период/i])[0];
+
+		getParam(block, result, 'lo', /ЛО[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+		getParam(block, result, 'olg', /ОЛГ[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+		getParam(block, result, 'go', /ГО[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+	}
+
+	if(isAvailable(['personal', 'group'])) {
+
+		html = AnyBalance.requestPost(baseurl + 'index2.php?option=com_module&task=getmodule&module=mod_flmybusiness&no_html=1', {}, addHeaders({
+			Referer: baseurl + 'index.php?option=com_user&view=cabinet&Itemid=2069&lang=ru',
+			'X-Requested-With': 'XMLHttpRequest'
+		}));
+
+		getParam(html, result, 'personal', /В личных(?:[^>]*>){5}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+		getParam(html, result, 'group', /В группе(?:[^>]*>){5}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+	}
 	AnyBalance.setResult(result);
 }

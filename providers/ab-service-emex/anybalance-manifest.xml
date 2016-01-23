@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="4">ab-service-emex</id>
+	<id version="5">ab-service-emex</id>
 	<api flags="no_browser"/>
 	<name>Emex.ru</name>
 	<description html="true"><![CDATA[
@@ -17,8 +17,6 @@
 	</files>
 	<counters>
 		<counter id="balance" name="На вашем счете" units=" р"/>
-		<counter id="in_work" name="В работе" units=" р"/>
-		<counter id="avail" name="Доступно для заказа" units=" р"/>
 		<counter id="fio" name="ФИО" type="text"/>
 	</counters>
 	<keywords></keywords>

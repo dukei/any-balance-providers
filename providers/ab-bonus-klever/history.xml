@@ -1,5 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="4" date="2015-12-21">
+	Исправление проблем с процедурой входа
+	</change>
+	<change version="3" date="2015-12-19">
+	- Поддержка изменений на сайте.
+	</change>
 	<change version="2" date="2015-11-20">
 	- Улучшена обработка ошибок.
 	</change>

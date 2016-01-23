@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+	<EditTextPreference
+		title="Логин"
+		key="login"
+		summary="|Введите логин|{@s}"
+		obligatory="true"
+		dialogTitle="Логин"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите логин, используемый для входа в личный кабинет.">
+	</EditTextPreference>
+	<EditTextPreference
+		title="Пароль"
+		key="password"
+		summary="|Введите пароль для входа в личный кабинет|***********"
+		obligatory="true"
+		dialogTitle="Пароль"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите пароль, используемый для входа в личный кабинет."
+		inputType="textPassword">
+	</EditTextPreference>
+	<ListPreference
+		key="region"
+		title="Регион"
+		obligatory="true"
+		summary="|Нужен для определения личного кабинета|{@s}"
+		entries="Брянск|Волгоград|Калуга|Москва|Пермь|Ростов-на-Дону|Санкт-Петербург|Тверь|Чебоксары"
+		entryValues="bryansk|volgograd|kaluga|moscow|perm|rostov|spb|tver|cheboksari">
+	</ListPreference>
+	<EditTextPreference
+		title="Номер дома"
+		key="houseNumber"
+		summary="|Нужен для входа в ЛК г. Чебоксары|{@s}"
+		obligatory="true"
+		dialogTitle="Номер дома"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите номер дома, прикреплённый к данному счёту.">
+	</EditTextPreference>
+	<EditTextPreference
+		title="Номер квартиры"
+		key="flatNumber"
+		summary="|Нужен для входа в ЛК г. Чебоксары|{@s}"
+		dialogTitle="Номер квартиры"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите номер квартиры, прикреплённый к данному счёту. Если такого нет, то просто оставьте поле пустым.">
+	</EditTextPreference>
+</PreferenceScreen>

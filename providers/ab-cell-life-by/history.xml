@@ -1,5 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="2.0" version="30" date="2016-01-19">
+	- Улучшена обработка ошибок.
+	</change>
+	<change major_version="2.0" version="29" date="2015-12-21">
+	- Улучшен поиск основного и бонусного баланса.
+	</change>
 	<change major_version="2.0" version="28" date="2015-11-26">
 	Добавлены Life Points
 	</change>

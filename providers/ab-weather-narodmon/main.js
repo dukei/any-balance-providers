@@ -16,6 +16,10 @@ function main(){
 	var info = getJson(html);
 	
     if(!info.sensors) {
+    	if(info.errno == 429)
+    		throw new AnyBalance.Error('Опрос датчиков возможен не чаще раза в минуту. Попробуйте ещё раз позже.');
+    	if(info.error)
+    		throw new AnyBalance.Error(info.error, null, info.errno == 404);
 		AnyBalance.trace(html);
         throw new AnyBalance.Error("Датчик с номером " + number + " отсутствует. Проверьте номер!");
 	}

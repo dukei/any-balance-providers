@@ -1,10 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="2.0" version="15">ab-bonus-svyaznoy</id>
+	<id major_version="2.0" version="16">ab-bonus-svyaznoy</id>
 	<api flags="no_browser"/>
 	<name>Связной Клуб</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе, последней операции, статусе и количестве сообщений по карте программы "Связной Клуб".</p>   
+	<p>Предоставляет информацию о балансе, последней операции, статусе и количестве сообщений по карте программы "Связной Клуб".</p>
 	]]></description>
 	<instruction><![CDATA[
 	<p>Получить пароль для имеющейся карты Связной клуб или выпустить виртуальную карту Связной клуб можно на сайте http://www.sclub.ru.</p>
@@ -24,7 +24,7 @@
 		<counter id="lastoperationplace" name="Место последней операции" type="text"/>
 		<counter id="lastoperationdate" name="Дата последней операции" type="time" format="dd/MM/yyyy"/>
 		<counter id="cardstate" name="Статус карты" type="text"/>
-		<counter id="messages" name="Количество сообщений" type="text" suffix=" сообщ."/>
+		<!-- <counter id="messages" name="Количество сообщений" type="text" suffix=" сообщ."/> -->
 		<counter id="cardnumber" name="Номер карты" type="text" prefix=" №"/>
 		<counter id="customer" name="Владелец" type="text"/>
 	</counters>

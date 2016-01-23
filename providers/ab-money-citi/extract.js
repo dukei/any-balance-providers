@@ -72,12 +72,23 @@ function login(prefs) {
 			'XXX_Extra': XXX_Extra,
 			'XYZ_Extra': XYZ_Extra,
 		}, g_headers);
+
+		//Устанавливаем куки проверки сессии
+		var sessionCheck = getParam(html, null, null, /"sessionCheck"\s*,\s*['"]([^"']*)/, replaceSlashes);
+		AnyBalance.trace('sessionCheck: ' + sessionCheck);
+		AnyBalance.setCookie('www.citibank.ru', 'sessionCheck', sessionCheck);
 		
 		// Проверяем, надо ли пропустить вход без смс
 		if(/id="nonOtpLogonButton"|Otp-Warning-Skip/i.test(html)) {
-			html = AnyBalance.requestGet(baseurl + 'JSO/signon/uname/HomepagePortal.do?SYNC_TOKEN=' + getToken(html), addHeaders({Referer: baseurl + 'JSO/signon/DisplayUsernameSignon.do'}));
+			html = AnyBalance.requestGet(baseurl + 'JSO/signon/uname/HomepagePortal.do?SYNC_TOKEN=' + getToken(html)+'&JFP_TOKEN=' + JFP_TOKEN, addHeaders({Referer: baseurl + 'JSO/signon/DisplayUsernameSignon.do'}));
 		}
 		
+		if (!/выйти/i.test(html)) {
+			var url = AnyBalance.getLastUrl();
+			url = url.replace(/HomePage.do/i, 'HomepagePortal.do');
+			html = AnyBalance.requestGet(url, addHeaders({Referer: AnyBalance.getLastUrl()}));
+		}
+
 		if (!/выйти/i.test(html)) {
 			var error = getParam(html, null, null, /<span class="[^"]*error[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
 			if (error)

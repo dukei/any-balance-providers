@@ -1,0 +1,35 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="2">ab-municipal-itgkh</id>
+	<api flags="no_browser"/>
+	<name>Фонд капремонта многоквартирных домов Иркутской области</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе в фонде капремонта многоквартирных домов Иркутской области https://portal-irkutsk.itgkh.ru/</p>
+	<p>Информация берется из личного кабинета https://portal-irkutsk.itgkh.ru/account</p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="min_vznos" name="Минимальный взнос" />
+		<counter id="dop_vznos" name="Дополнительный взнос" />
+		<counter id="owner_part" name="Доля собственника" />
+		<counter id="abonent" name="Абонент" type="text"/>
+		<counter id="address" name="Адрес дома" type="text"/>
+		<counter id="apart_num" name="№ квартиры" type="text" />
+		<counter id="space" name="Площадь помещения" />
+		<counter id="fund_form_method" name="Способ формирования фонда" type="text"/>
+		<counter id="account_num" name="Номер расчетного счета" type="text"/>
+		<counter id="bank" name="Банк" type="text"/>
+		<counter id="korrs" name="Корр/с" type="text"/>
+		<counter id="bik" name="БИК" type="text"/>
+	</counters>
+	<keywords>жкх, квартиры, ремонт</keywords>
+	<type>municipal</type>
+	<country>ru</country>
+</provider>

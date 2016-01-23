@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="1.3" version="63">ab-cell-mts-ua</id>
+	<id major_version="1.3" version="66">ab-cell-mts-ua</id>
 	<api flags="no_browser"/>
 	<name>МТС (Украина)</name>
 	<description html="true"><![CDATA[
@@ -70,7 +70,7 @@
 		<counter id="min_unlin_all" name="Минуты Супер безлимит все" type="time_interval" format="{@MIN}" units=" мин"/>
 		<counter id="min_unlin_mts" name="Минуты Супер безлимит в сети МТС" type="time_interval" format="{@MIN}" units=" мин"/>
 		<counter id="min_unlin_other" name="Минуты Супер безлимит на всех кроме Life" type="time_interval" format="{@MIN}" units=" мин"/>
-		<counter id="min_unlin_life" name="Минуты Супер безлимит yf Life" type="time_interval" format="{@MIN}" units=" мин"/>
+		<counter id="min_unlin_life" name="Минуты Супер безлимит на Life" type="time_interval" format="{@MIN}" units=" мин"/>
 		<counter id="min_allo_net" name="Минуты MAX Energy Allo в сети МТС" type="time_interval" format="{@MIN}" units=" мин"/>
 		<counter id="min_allo_other" name="Минуты по Украине линейки тарифов MAX Energy" type="time_interval" format="{@MIN}" units=" мин"/>
 		<counter id="min_all1" name="Минуты по Украине и Европе в месяц" type="time_interval" format="{@MIN}" units=" мин"/>
@@ -110,11 +110,13 @@
 		<counter id="termin_traffic_paket_mb" name="Срок действия пакета интернета" type="time" format="dd/MM/yyyy"/>
 		<counter id="termin_traffic_reg_kop_mb" name="Срок действия интернета за копейку регионального и общенационального" type="time" format="dd/MM/yyyy"/>
 		<counter id="termin_traffic_free_mb" name="Срок действия бесплатного интернета" type="time" format="dd/MM/yyyy HH:mm:ss"/>
+		<counter id="termin_maxenergy_mb" name="Срок действия интернета Energy" type="time" format="dd/MM/yyyy HH:mm:ss"/>
 		<counter id="termin_sms_100" name="Срок действия бесплатных смс для отправки на номера в пределах Украины" type="time" format="dd/MM/yyyy"/>
 		<counter id="termin_sms_net" name="Срок действия СМС в сети МТС" type="time" format="dd/MM/yyyy HH:mm:ss"/>
 		<counter id="termin_sms_others" name="Срок действия СМС на сети других мобильных операторов Украины" type="time" format="dd/MM/yyyy HH:mm:ss"/>
 		<counter id="termin_mms_others" name="Срок действия ММС на сети других мобильных операторов Украины" type="time" format="dd/MM/yyyy HH:mm:ss"/>
 		<counter id="termin_min_unlin" name="Срок действия минут Супер безлимит" type="time" format="dd/MM/yyyy"/>
+		<counter id="termin_min_allo_net" name="Срок действия минут Energy в сети МТС" type="time" format="dd/MM/yyyy"/>
 		<!--    <counter id="usedinprevmonth" name="Расход за прошлый месяц" units="грн"/> Че-то не показывается в лк -->
 		<counter id="phone" name="Номер телефона" type="text"/>
 		<counter id="usedinthismonth" name="Расход за этот месяц" units=" ₴"/>

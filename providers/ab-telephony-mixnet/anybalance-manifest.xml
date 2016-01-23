@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-telephony-mixnet</id>
+	<id version="2">ab-telephony-mixnet</id>
 	<api flags="no_browser"/>
 	<name>mixnet</name>
 	<description html="true"><![CDATA[

@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="2" version="32">ab-cell-life-ukr</id>
+	<id major_version="3" version="35">ab-cell-life-ukr</id>
 	<api flags="no_browser" />
-	<name>Life:) Украина</name>
+	<name>Lifecell</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе для пользователей мобильного оператора Life:) (Украина).</p>
+	<p>Предоставляет информацию о балансе для пользователей мобильного оператора Lifecell (Украина).</p>
 	]]></description>
 	<instruction html="true"><![CDATA[
 	<p>Для входа в личный кабинет требуется СуперПароль.</p> 
 	<p>Три способа получить СуперПароль:</p>
 	<ul>
 	<li>Отправить бесплатное SMS с ключевым словом PAROL на номер 124;</li> 
-	<li>Войти в Life:) меню, позвонив по номеру *124#, выбрать категорию Upravlenie schetom, далее услугу SuperParol;</li> 
+	<li>Войти в Lifecell меню, позвонив по номеру *124#, выбрать категорию Upravlenie schetom, далее услугу SuperParol;</li> 
 	<li>Позвонить по номеру *124*779#. Пароль придет в ответном SMS.</li>
 	</ul>
 	<br>
-	<small>Провайдер получает данные через API для мобильного приложения Life:) ( https://play.google.com/store/apps/details?id=com.life.my ) и через сайт https://my.life.ua/. Если провайдер не показывает данные, которые есть в мобильном приложении или на сайте My.Life, обратитесь, пожалуйста, к автору провайдера.</small>
+	<small>Провайдер получает данные через API для мобильного приложения Lifecell ( https://play.google.com/store/apps/details?id=com.life.my ) и через сайт https://my.lifecell.com.ua/. Если провайдер не показывает данные, которые есть в мобильном приложении или на сайте My.Lifecell, обратитесь, пожалуйста, к автору провайдера.</small>
 	<br> 
 	<br>  
 	<b>ВНИМАНИЕ!</b> Все вышеуказанные действия нужно выполнять с мобильного 
@@ -39,10 +39,10 @@
 		<counter id="gprs" name="Трафик" suffix=" Мб"/>
 		<counter id="hspa" name="Трафик 3G" suffix=" Мб"/>
 		<counter id="sms_uk" name="SMS по Украине" type="numeric" units=" смс"/>
-		<counter id="sms_life" name="SMS в сети Life:)" type="numeric" units=" смс"/>
+		<counter id="sms_life" name="SMS в сети Lifecell" type="numeric" units=" смс"/>
 		<counter id="mms_uk" name="MMS по Украине" type="numeric" units=" ммс"/>
-		<counter id="mms_life" name="MMS в сети Life:)" type="numeric" units=" ммс"/>
-		<counter id="mins_life" name="Минуты по сети Life:)" type="time_interval" format="{@MIN}" units=" мин"/>
+		<counter id="mms_life" name="MMS в сети Lifecell" type="numeric" units=" ммс"/>
+		<counter id="mins_life" name="Минуты по сети Lifecell" type="time_interval" format="{@MIN}" units=" мин"/>
 		<counter id="mins_uk" name="Минуты на номера других операторов и фиксированной связи Украины" type="time_interval" format="{@MIN}" units=" мин"/>
 		<counter id="mins_mob" name="Минуты на номера мобильных операторов Украины" type="time_interval" format="{@MIN}" units=" мин"/>
 		<counter id="mins_fixed" name="Минуты на номера фиксированной связи Украины" type="time_interval" format="{@MIN}" units=" мин"/>
@@ -51,7 +51,7 @@
 		<counter id="till" name="Действителен до" type="time" format="dd/MM/yyyy"/>
 		<counter id="phone" name="Номер телефона" type="text"/>
 	</counters>
-	<keywords>мобильный оператор лайф украина проверка баланса</keywords>
+	<keywords>мобильный оператор Lifecell украина проверка баланса</keywords>
 	<type>cell</type>
 	<country>ua</country>
 </provider>

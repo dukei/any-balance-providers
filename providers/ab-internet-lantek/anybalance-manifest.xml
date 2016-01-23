@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-internet-lantek</id>
+	<api flags="no_browser"/>
+	<name>Лантек</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера Лантек <a href="http://www.lantek.ru/">http://www.lantek.ru/</a></p>
+	<p>Информация берется из личного кабинета <a href="https://lk.lantek.ru/">https://lk.lantek.ru/</a></p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" p"/>
+		<counter id="credit" name="Кредит (обещанный платёж)" units=" p"/>
+		<counter id="blocked" name="Заблокированные средства" units=" p"/>
+		<counter id="paid" name="Списано абонентской платы" units=" p"/>
+		<counter id="status" name="Состояние интернета" type="text"/>
+		<counter id="deadline" name="Конец расчетного периода" type="time" format="dd/MM/yyyy"/>
+	</counters>
+	<keywords></keywords>
+	<type>internet</type>
+	<country>ru</country>
+</provider>

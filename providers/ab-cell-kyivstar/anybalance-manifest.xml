@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id major_version="2.0" version="66">ab-cell-kyivstar</id>
+	<id major_version="2.0" version="70">ab-cell-kyivstar</id>
 	<name>Киевстар</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе, бонусных минутах, SMS, MMS, остатке интернет-трафика и других бонусах для пользователей мобильного оператора "Киевстар".</p>
@@ -9,16 +9,28 @@
 	<br><b>ВНИМАНИЕ!</b> Данные предоставляются только для некорпоративных тарифных планов. Если у вас корпоративный тариф, воспользуйтесь провайдером "Киевстар Корпоративный".
 	]]></description>
 	<instruction html="true"><![CDATA[
-	<p>Как зарегистрироваться:</p>
+	<p>Если у вас ещё нет пароля:</p>
 	<ul>
-	<li>Для регистрации в системе Мой Київстар пройдите по ссылке http://my.kyivstar.ua/tbmb/enroll_ABContr/user/show.do.</li>
-	</ul>   
+	<li>Зайдите через браузер на https://my.kyivstar.ua</li>
+	<li>Введите свой номер телефона и нажмите <b>"Получить пароль по SMS"</b></li>
+	<li>Вам придет временный пароль - зайдите с ним в личный кабинет</li>
+	<li>Перейдите в <b>Профиль</b></li>
+	<li>Нажмите <b>"Редактировать профиль"</b></li>
+	<li>Нажмите <b>"Редактировать пароль"</b></li>
+	<li>Придумайте и введите постоянный пароль.</li>
+	<li>Этот же пароль укажите в настройках провайдера</li>
+	</ul>
+	   
 	]]></instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+		<module id="framework/gwt"/>
+		<module id="login/kyivstar"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>

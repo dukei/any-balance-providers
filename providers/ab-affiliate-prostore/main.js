@@ -22,16 +22,28 @@ function main() {
 	
 	if(!html || AnyBalance.getLastStatusCode() > 400)
 		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
+
+	var form = getElement(html, /<form[^>]+action="[^"]*Login[^>]*>/i);
+	if(!form){
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удалось найти форму входа. Сайт изменен?');
+	}
+
+	var params = AB.createFormParams(html, function(params, str, name, value) {
+		if (name == 'UserName') 
+			return prefs.login;
+		else if (name == 'Password')
+			return prefs.password;
+
+		return value;
+	});
 	
-	html = AnyBalance.requestPost(baseurl + 'Authorization/Login', {
-		UserName: prefs.login,
-		Password: prefs.password
-	}, addHeaders({Referer: baseurl + 'Authorization/Login'}));
+	html = AnyBalance.requestPost(baseurl + 'Authorization/Login', params, addHeaders({Referer: baseurl + 'Authorization/Login'}));
     
 	if (!/logout/i.test(html)) {
 		var error = getParam(html, null, null, /<div[^>]+class="validation-summary-errors"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
 		if (error)
-			throw new AnyBalance.Error(error, null, /Неверный логин или пароль|данный номер карты отсутствует|пароль неправильный/i.test(error));
+			throw new AnyBalance.Error(error, null, /Пользователь не найден|Неверный логин или пароль|данный номер карты отсутствует|пароль неправильный/i.test(error));
 		
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');

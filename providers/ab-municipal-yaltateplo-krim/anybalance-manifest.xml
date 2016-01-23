@@ -1,11 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="3">ab-municipal-yaltateplo-krim</id>
-	<name>Крымтеплокоммунэнерго</name>
-	<description>
-	Получает данные в системе Крымтеплокоммунэнерго (http://yaltateplo.com/)
-	</description>
+	<id version="4">ab-municipal-yaltateplo-krim</id>
+	<name>Крымтеплокоммунэнерго Ялта</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию из личного кабинета «Крымтеплокоммунэнерго» в г.Ялта <a href=""></a></p>
+	<p>Информация берется из личного кабинета <a href="http://yaltateplo.ru/">http://yaltateplo.ru/</a></p>
+	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>

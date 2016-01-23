@@ -25,8 +25,8 @@ function main() {
 	
 	if(!/<div[^>]+class="b-login"[^>]*>/i.test(html)){
 		while(/Ввод пароля из SMS-сообщения/i.test(html)){
-			var err = getParam(html, null, null, /<div[^>]+class="b-errors-message"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
-			var prmpt = getParam(html, null, null, /<label[^>]+for="temp_pass"[^>]*>([\s\S]*?)<\/label>/i, replaceTagsAndSpaces, html_entity_decode);
+			var err = getParam(html, null, null, /<div[^>]+class="b-errors-message"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+			var prmpt = getParam(html, null, null, /<label[^>]+for="temp_pass"[^>]*>([\s\S]*?)<\/label>/i, replaceTagsAndSpaces);
 			var sms_off = 'Для пользования провайдером удобно отключить одноразовый пароль на вход в настройках интернет-банка. Это безопасно, для проведения любых операций SMS-пароль всё равно будет требоваться.';
 			if(err)
 				prmpt = err + '\n\n' + prmpt;
@@ -54,19 +54,28 @@ function main() {
 	}
 
 	if(!/<div[^>]+class="b-login"[^>]*>/i.test(html)){
+		var href = getParam(html, null, null, /window.location\s*=\s*"([^"]*)/i, replaceSlashes);
+		if(href){
+			AnyBalance.trace("Переходим на " + href);
+			html = AnyBalance.requestGet(joinUrl(baseurl, href));
+		}
+
 		if(/Ввод пароля из SMS-сообщения/i.test(html))
 			throw new AnyBalance.Error('У вас настроен вход по паролю из SMS сообщения. Для пользования провайдером удобно отключить этот пароль в настройках интернет-банка. Это безопасно, для проведения любых операций SMS-пароль всё равно будет требоваться.');
 		
-		var error = getParam(html, null, null, /<div[^>]+class="b-frm-warning2"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+		var error = getParam(html, null, null, /<div[^>]+class="b-frm-warning2"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
 
 		if(!error)
-			error = getParam(html, null, null, /<h2[^>]+class="b-auth-error[^>]*>([\s\S]*?)<\/h2>/i, replaceTagsAndSpaces, html_entity_decode);
+			error = getParam(html, null, null, /<h2[^>]+class="b-auth-error[^>]*>([\s\S]*?)<\/h2>/i, replaceTagsAndSpaces);
 
+		if(!error)
+			error = getParam(html, null, null, /<div[^>]+class="b-auth-blocked"[^>]*>\s*<p>([\s\S]*?)<\/p>/i, replaceTagsAndSpaces);
+		
 		if(/необходимо задать новый пароль/i.test('' + error))
 			error += ' Зайдите в интернет-банк https://online.rsb.ru через браузер, задайте новый пароль и введите новый пароль в настройки провайдера.';
 
 		if(error)
-			throw new AnyBalance.Error(error, null, /новый пароль|или пароль/i.test(error));
+			throw new AnyBalance.Error(error, null, /новый пароль|или пароль|Доступ в систему заблокирован/i.test(error));
 		
 		AnyBalance.trace(html);
 	    throw new AnyBalance.Error('Ошибка авторизации. Проверьте логин и пароль');
@@ -117,11 +126,11 @@ function fetchCard(baseurl, json){
                 //Дата заключения договора
                 getParam(html, result, 'contract_date', /&#1044;&#1072;&#1090;&#1072; &#1079;&#1072;&#1082;&#1083;&#1102;&#1095;&#1077;&#1085;&#1080;&#1103; &#1076;&#1086;&#1075;&#1086;&#1074;&#1086;&#1088;&#1072;[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
                 //Статус
-                getParam(html, result, 'status', /&#1057;&#1090;&#1072;&#1090;&#1091;&#1089;[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+                getParam(html, result, 'status', /&#1057;&#1090;&#1072;&#1090;&#1091;&#1089;[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
                 //Номер карты
-                getParam(html, result, 'cardnum', /&#1053;&#1086;&#1084;&#1077;&#1088; &#1082;&#1072;&#1088;&#1090;&#1099;[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/, replaceTagsAndSpaces, html_entity_decode);
+                getParam(html, result, 'cardnum', /&#1053;&#1086;&#1084;&#1077;&#1088; &#1082;&#1072;&#1088;&#1090;&#1099;[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/, replaceTagsAndSpaces);
                 //Договор
-                getParam(html, result, 'contract', />&#1044;&#1086;&#1075;&#1086;&#1074;&#1086;&#1088;<[\s\S]*?<td[^>]*>(?:&#8470; )?([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+                getParam(html, result, 'contract', />&#1044;&#1086;&#1075;&#1086;&#1074;&#1086;&#1088;<[\s\S]*?<td[^>]*>(?:&#8470; )?([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
                 //Сумма для реализации Льготного периода -
                 getParam(html, result, 'gracepay', /&#1057;&#1091;&#1084;&#1084;&#1072; &#1076;&#1083;&#1103; &#1088;&#1077;&#1072;&#1083;&#1080;&#1079;&#1072;&#1094;&#1080;&#1080; &#1083;&#1100;&#1075;&#1086;&#1090;&#1085;&#1086;&#1075;&#1086; &#1087;&#1077;&#1088;&#1080;&#1086;&#1076;&#1072;[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpacesAndBalances, parseBalance);
                 //Дата окончания Льготного периода -
@@ -165,11 +174,11 @@ function fetchAccount(baseurl, json){
                 //Дата заключения договора
                 getParam(html, result, 'contract_date', /&#1044;&#1072;&#1090;&#1072; &#1079;&#1072;&#1082;&#1083;&#1102;&#1095;&#1077;&#1085;&#1080;&#1103; &#1076;&#1086;&#1075;&#1086;&#1074;&#1086;&#1088;&#1072;[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
                 //Статус
-                getParam(html, result, 'status', /&#1057;&#1090;&#1072;&#1090;&#1091;&#1089;[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+                getParam(html, result, 'status', /&#1057;&#1090;&#1072;&#1090;&#1091;&#1089;[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
                 //Номер карты
-                getParam(html, result, 'cardnum', /&#1053;&#1086;&#1084;&#1077;&#1088; &#1082;&#1072;&#1088;&#1090;&#1099;[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/, replaceTagsAndSpaces, html_entity_decode);
+                getParam(html, result, 'cardnum', /&#1053;&#1086;&#1084;&#1077;&#1088; &#1082;&#1072;&#1088;&#1090;&#1099;[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/, replaceTagsAndSpaces);
                 //Договор
-                getParam(html, result, 'contract', />&#1044;&#1086;&#1075;&#1086;&#1074;&#1086;&#1088;<[\s\S]*?<td[^>]*>(?:&#8470; )?([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+                getParam(html, result, 'contract', />&#1044;&#1086;&#1075;&#1086;&#1074;&#1086;&#1088;<[\s\S]*?<td[^>]*>(?:&#8470; )?([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
                 //Сумма для реализации Льготного периода -
                 getParam(html, result, 'gracepay', /&#1057;&#1091;&#1084;&#1084;&#1072; &#1076;&#1083;&#1103; &#1088;&#1077;&#1072;&#1083;&#1080;&#1079;&#1072;&#1094;&#1080;&#1080; &#1083;&#1100;&#1075;&#1086;&#1090;&#1085;&#1086;&#1075;&#1086; &#1087;&#1077;&#1088;&#1080;&#1086;&#1076;&#1072;[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpacesAndBalances, parseBalance);
                 //Дата окончания Льготного периода -
@@ -195,7 +204,7 @@ function fetchDeposit(baseurl){
 
     var html = AnyBalance.requestGet(baseurl + 'rs/LoansAndDeposits.jspx');
 	var sourceData = getParam(html, null, null, /<a[^>]+onclick="submitForm[^"]*source:'([^'"]*)'[^"]*"[^>]*>&#1044;&#1077;&#1087;&#1086;&#1079;&#1080;&#1090;&#1099;/i, replaceTagsAndSpaces);
-    var ViewState = getParam(html, null, null, /<input[^>]+name="javax.faces.ViewState"[^>]*value="([^"]*)/i, null, html_entity_decode);
+    var ViewState = getParam(html, null, null, /<input[^>]+name="javax.faces.ViewState"[^>]*value="([^"]*)/i, replaceHtmlEntities);
 	
 	html = AnyBalance.requestPost(baseurl + 'rs/LoansAndDeposits.jspx', {
 		'org.apache.myfaces.trinidad.faces.FORM': 'mainform',
@@ -220,9 +229,9 @@ function fetchDeposit(baseurl){
     getParam(tr, result, 'contract_date', /&#1044;&#1072;&#1090;&#1072; &#1079;&#1072;&#1082;&#1083;&#1102;&#1095;&#1077;&#1085;&#1080;&#1103; &#1076;&#1086;&#1075;&#1086;&#1074;&#1086;&#1088;&#1072; &#1073;&#1072;&#1085;&#1082;&#1086;&#1074;&#1089;&#1082;&#1086;&#1075;&#1086; &#1074;&#1082;&#1083;&#1072;&#1076;&#1072;\s*-([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, parseDate);
     //Статус
 	//Номер договора банковского вклада
-    getParam(tr, result, 'contract', /&#1053;&#1086;&#1084;&#1077;&#1088; &#1076;&#1086;&#1075;&#1086;&#1074;&#1086;&#1088;&#1072; &#1073;&#1072;&#1085;&#1082;&#1086;&#1074;&#1089;&#1082;&#1086;&#1075;&#1086; &#1074;&#1082;&#1083;&#1072;&#1076;&#1072;\s*-([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(tr, result, '__tariff', /<h3><a[^>]+class="OraLink"[^>]*>([\s\S]*?)<\/a><\/h3>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(tr, result, 'accname', /<h3><a[^>]+class="OraLink"[^>]*>([\s\S]*?)<\/a><\/h3>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(tr, result, 'contract', /&#1053;&#1086;&#1084;&#1077;&#1088; &#1076;&#1086;&#1075;&#1086;&#1074;&#1086;&#1088;&#1072; &#1073;&#1072;&#1085;&#1082;&#1086;&#1074;&#1089;&#1082;&#1086;&#1075;&#1086; &#1074;&#1082;&#1083;&#1072;&#1076;&#1072;\s*-([\s\S]*?)<\/p>/i, replaceTagsAndSpaces);
+    getParam(tr, result, '__tariff', /<h3><a[^>]+class="OraLink"[^>]*>([\s\S]*?)<\/a><\/h3>/i, replaceTagsAndSpaces);
+    getParam(tr, result, 'accname', /<h3><a[^>]+class="OraLink"[^>]*>([\s\S]*?)<\/a><\/h3>/i, replaceTagsAndSpaces);
 
     AnyBalance.setResult(result);
 }
@@ -242,7 +251,7 @@ function fetchDeposit2(baseurl, json){
             var url = getParam(card.link, null, null, /\/hb\/faces\/(.*)/);
             var html = AnyBalance.requestGet(baseurl + url); //Сразу получаем страницу деталей.
 
-            var num = getParam(html, null, null, /&#1053;&#1086;&#1084;&#1077;&#1088; &#1082;&#1088;&#1077;&#1076;&#1080;&#1090;&#1072;[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+            var num = getParam(html, null, null, /&#1053;&#1086;&#1084;&#1077;&#1088; &#1082;&#1088;&#1077;&#1076;&#1080;&#1090;&#1072;[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
             if(prefs.contract && prefs.contract != num){
                 AnyBalance.trace('Первый кредит не подошёл, ищем нужный');
                 //Не угадали с кредитом, надо найти нужный. Для этого надо перейти на список всех кредитов
@@ -267,7 +276,7 @@ function fetchDeposit2(baseurl, json){
             //Остаток на счете
             getParam(html, result, 'account_balance', /&#1054;&#1089;&#1090;&#1072;&#1090;&#1086;&#1082; &#1085;&#1072; &#1089;&#1095;&#1105;&#1090;&#1077;[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpacesAndBalances, parseBalance);
             //Номер кредита
-            getParam(html, result, 'contract', /&#1053;&#1086;&#1084;&#1077;&#1088; &#1082;&#1088;&#1077;&#1076;&#1080;&#1090;&#1072;[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+            getParam(html, result, 'contract', /&#1053;&#1086;&#1084;&#1077;&#1088; &#1082;&#1088;&#1077;&#1076;&#1080;&#1090;&#1072;[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
             //Дата заключения договора
             getParam(html, result, 'contract_date', /&#1044;&#1072;&#1090;&#1072; &#1079;&#1072;&#1082;&#1083;&#1102;&#1095;&#1077;&#1085;&#1080;&#1103; &#1076;&#1086;&#1075;&#1086;&#1074;&#1086;&#1088;&#1072;[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
             //Следующий платеж
@@ -277,8 +286,8 @@ function fetchDeposit2(baseurl, json){
             //До списывания платежа осталось
             getParam(html, result, 'left', /&#1044;&#1086; &#1089;&#1087;&#1080;&#1089;&#1099;&#1074;&#1072;&#1085;&#1080;&#1103; &#1087;&#1083;&#1072;&#1090;&#1077;&#1078;&#1072;\s*(?:<[^>]*>\s*)*&#1086;&#1089;&#1090;&#1072;&#1083;&#1086;&#1089;&#1100;\s*(\d+)\s*&#1076;&#1085;/i, replaceTagsAndSpacesAndBalances, parseBalance);
             //Название продукта
-            getParam(html, result, 'accname', /<div[^>]+class="b-product-item">([\s\S]*?)<\/h2>/i, replaceTagsAndSpaces, html_entity_decode);
-            getParam(html, result, '__tariff', /<div[^>]+class="b-product-item">([\s\S]*?)<\/h2>/i, replaceTagsAndSpaces, html_entity_decode);*/
+            getParam(html, result, 'accname', /<div[^>]+class="b-product-item">([\s\S]*?)<\/h2>/i, replaceTagsAndSpaces);
+            getParam(html, result, '__tariff', /<div[^>]+class="b-product-item">([\s\S]*?)<\/h2>/i, replaceTagsAndSpaces);*/
 
             AnyBalance.setResult(result);
 
@@ -296,8 +305,8 @@ function fetchDeposit2(baseurl, json){
 function followLink(baseurl, html, name, fragment){
     var re = new RegExp('<a[^>]+onclick="submitForm[^"]+source:\'([^\']*)[^>]*>' + name + '</a>', 'i');
     var source = getParam(fragment || html, null, null, re);
-    var token = getParam(html, null, null, /<input[^>]+name="oracle.adf.faces.STATE_TOKEN"[^>]*value="([^"]*)/i, null, html_entity_decode);
-    var action = getParam(html, null, null, /<form[^>]+name="mainform"[^>]*action="\/hb\/faces\/([^"]*)/i, null, html_entity_decode);
+    var token = getParam(html, null, null, /<input[^>]+name="oracle.adf.faces.STATE_TOKEN"[^>]*value="([^"]*)/i, replaceHtmlEntities);
+    var action = getParam(html, null, null, /<form[^>]+name="mainform"[^>]*action="\/hb\/faces\/([^"]*)/i, replaceHtmlEntities);
     return AnyBalance.requestPost(baseurl + action, {
         'oracle.adf.faces.FORM':'mainform',
         'oracle.adf.faces.STATE_TOKEN':token,
@@ -321,7 +330,7 @@ function fetchCredit(baseurl, json){
             var url = getParam(card.link, null, null, /\/hb\/faces\/(.*)/);
             var html = AnyBalance.requestGet(baseurl + url); //Сразу получаем страницу деталей.
 
-            var num = getParam(html, null, null, [/&#1053;&#1086;&#1084;&#1077;&#1088; &#1076;&#1086;&#1075;&#1086;&#1074;&#1086;&#1088;&#1072;(?:[^>]*>){2,4}<td[^>]*>([\s\S]*?)<\/td>/i, /&#1053;&#1086;&#1084;&#1077;&#1088; &#1082;&#1088;&#1077;&#1076;&#1080;&#1090;&#1072;[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i], replaceTagsAndSpaces, html_entity_decode);
+            var num = getParam(html, null, null, [/&#1053;&#1086;&#1084;&#1077;&#1088; &#1076;&#1086;&#1075;&#1086;&#1074;&#1086;&#1088;&#1072;(?:[^>]*>){2,4}<td[^>]*>([\s\S]*?)<\/td>/i, /&#1053;&#1086;&#1084;&#1077;&#1088; &#1082;&#1088;&#1077;&#1076;&#1080;&#1090;&#1072;[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i], replaceTagsAndSpaces);
             if(prefs.contract && prefs.contract != num){
                 AnyBalance.trace('Первый кредит не подошёл, ищем нужный');
                 //Не угадали с кредитом, надо найти нужный. Для этого надо перейти на список всех кредитов
@@ -346,7 +355,7 @@ function fetchCredit(baseurl, json){
             //Остаток на счете
             getParam(html, result, 'account_balance', /&#1054;&#1089;&#1090;&#1072;&#1090;&#1086;&#1082; &#1085;&#1072; &#1089;&#1095;&#1105;&#1090;&#1077;[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpacesAndBalances, parseBalance);
             //Номер кредита
-            getParam(html, result, 'contract', /&#1053;&#1086;&#1084;&#1077;&#1088; &#1082;&#1088;&#1077;&#1076;&#1080;&#1090;&#1072;[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+            getParam(html, result, 'contract', /&#1053;&#1086;&#1084;&#1077;&#1088; &#1082;&#1088;&#1077;&#1076;&#1080;&#1090;&#1072;[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
             //Дата заключения договора
             getParam(html, result, 'contract_date', /&#1044;&#1072;&#1090;&#1072; &#1079;&#1072;&#1082;&#1083;&#1102;&#1095;&#1077;&#1085;&#1080;&#1103; &#1076;&#1086;&#1075;&#1086;&#1074;&#1086;&#1088;&#1072;[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
             //Следующий платеж
@@ -356,8 +365,8 @@ function fetchCredit(baseurl, json){
             //До списывания платежа осталось
             getParam(html, result, 'left', /&#1044;&#1086; &#1089;&#1087;&#1080;&#1089;&#1099;&#1074;&#1072;&#1085;&#1080;&#1103; &#1087;&#1083;&#1072;&#1090;&#1077;&#1078;&#1072;\s*(?:<[^>]*>\s*)*&#1086;&#1089;&#1090;&#1072;&#1083;&#1086;&#1089;&#1100;\s*(\d+)\s*&#1076;&#1085;/i, replaceTagsAndSpacesAndBalances, parseBalance);
             //Название продукта
-            getParam(html, result, 'accname', /<div[^>]+class="b-product-item">([\s\S]*?)<\/h2>/i, replaceTagsAndSpaces, html_entity_decode);
-            getParam(html, result, '__tariff', /<div[^>]+class="b-product-item">([\s\S]*?)<\/h2>/i, replaceTagsAndSpaces, html_entity_decode);
+            getParam(html, result, 'accname', /<div[^>]+class="b-product-item">([\s\S]*?)<\/h2>/i, replaceTagsAndSpaces);
+            getParam(html, result, '__tariff', /<div[^>]+class="b-product-item">([\s\S]*?)<\/h2>/i, replaceTagsAndSpaces);
 
             AnyBalance.setResult(result);
 

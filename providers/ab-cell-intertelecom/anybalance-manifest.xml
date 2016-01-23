@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="40">ab-cell-intertelecom</id>
+  <id version="41">ab-cell-intertelecom</id>
   <api flags="no_browser" />
   <name>Интертелеком</name>
 	<description html="true"><![CDATA[
@@ -53,6 +53,7 @@
     <counter id="date_traffic_action" name="Срок действия трафика по акции" type="time" format="dd/MM/yyyy"/>
     <counter id="date_bezlimit" name="Срок действия безлимита на скорости до 128 Кбит/с" type="time" format="dd/MM/yyyy"/>
     <counter id="date_sms_ukr" name="Срок действия СМС по Украине" type="time" format="dd/MM/yyyy"/>
+    <counter id="date_min_uk_mob_uk" name="Срок действия минут по Украине на мобильные и городские" type="time" format="dd/MM/yyyy"/>
     <counter id="skidka" name="Размер скидки по программе лояльности «Наилучшее общение»" suffix="%" type="numeric"/>
     <counter id="loyalty" name="Лояльный стаж" type="time_interval" format="{@Y}:{@mo}"/>
     <counter id="mobsubscr" name="Абонентский стаж" type="time_interval" format="{@Y}:{@mo}"/>

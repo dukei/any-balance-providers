@@ -11,7 +11,7 @@ var g_headers = {
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'http://www.sbyt.irkutskenergo.ru/';
+	var baseurl = 'https://sbyt.irkutskenergo.ru/';
 	AnyBalance.setDefaultCharset('utf-8');
 	
 	checkEmpty(prefs.login, 'Введите номер лицевого счета/договора!');

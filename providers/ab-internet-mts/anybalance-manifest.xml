@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="99">ab-internet-mts</id>
+	<id version="100">ab-internet-mts</id>
 	<name>Домашний Интернет и Телевидение МТС</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о текущем балансе, номере лицевого счета и договора, ФИО владельца, трафике в текущем месяце, абонентской плате для пользователей провайдера "Домашний Интернет и Телевидение МТС".</p>
@@ -31,6 +31,7 @@
 		<li>Орел (<a href="http://lbc.oreltv.ru/index.php">http://lbc.oreltv.ru/index.php</a>)<br></li>
 		<li>Пенза (<a href="http://client.lanbilling.ptcomm.ru">http://client.lanbilling.ptcomm.ru</a>)<br></li>
 		<li>Ростов (<a href="http://lk.ug.mts.ru">http://lk.ug.mts.ru</a>) - КОМСТАР-Регионы Южный филиал	<br></li>
+		<li>Рязань (<a href="https://lk-ryazan.center.mts.ru/">https://lk-ryazan.center.mts.ru/</a>)<br></li>
 		<li>Санкт-Петербург (<a href="https://lk.spb.mts.ru/index.php">https://lk.spb.mts.ru/index.php</a>)<br></li>
 		<li>Саратов (https://lksrt.pv.mts.ru/internet/ , https://lksrt.pv.mts.ru/ktv/)<br></li>
 		<li>Северодвинск (<a href="https://lk.arkhangelsk.mts.ru/index.php">https://lk.arkhangelsk.mts.ru/index.php</a>)<br></li>

@@ -1,5 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="3.0" version="11" date="2016-01-20">
+	- Поддержка изменений в процедуре входа
+	</change>
+	<change major_version="3.0" version="10" date="2015-12-21">
+	Исправление входа c автологином
+	</change>
+	<change major_version="3.0" version="9" date="2015-12-18">
+	Изменения в процедуре входа
+	</change>
 	<change major_version="2.0" version="8" date="2015-09-10">
 	- Улучшена обработка ошибок
 	- Добавлены счетчики Тарифный план, Статус и Лицевой счет

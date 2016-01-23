@@ -23,30 +23,31 @@ function main(){
     }, addHeaders({Referer: baseurl})); 
 
     if(!/clientCabinet\/logout/i.test(html)){
-        var error = getParam(html, null, null, /<div[^>]+alert-error[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+        var error = getParam(html, null, null, /<div[^>]+alert-error[^>]*>([\s\S]*?)<\/div>/i, [replaceTagsAndSpaces, /\s+/g, ' ']);
         if(error)
-            throw new AnyBalance.Error(error);
+            throw new AnyBalance.Error(error, null, /Неверное имя пользователя или пароль/i.test(error));
         //Если объяснения ошибки не найдено, при том, что на сайт войти не удалось, то, вероятно, произошли изменения на сайте
         throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
     }
     var result = {success: true};
 	
-	getParam(html, result, 'discont', /"Скидка:\s*(\d+)/i, null, parseBalance);
+	getParam(html, result, 'discont', /"Discont":\s*([^,{]*)/i, null, parseBalance);
 	
-	var json = getParam(html, null, null, /user_profile\s*=\s*(\{[\s\S]*?\});/, null, getJson);
+	var json = getJsonObject(html, /user_profile\s*=/);
 	getParam(json.FIO, result, 'fio');
 	getParam(json.FIO, result, '__tariff');
 
-	html = AnyBalance.requestGet(baseurl + 'Services/Taxi.svc/Accounts', g_headers);
+	html = AnyBalance.requestGet(baseurl + 'webapp/index.php?r=clientCabinet/accounts', g_headers);
+	var accid = getParam(html, null, null, /account="([^"]*)/i, replaceHtmlEntities);
+	if(!accid){
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Лицевой счет не найден. У вас нет лицевого счета или сайт изменен');
+	}
+
+	html = AnyBalance.requestGet(baseurl + 'webapp/index.php?r=ClientCabinet/AjaxGate&target=%2FServices%2FPublic.svc%2FAccount&id=' + accid + '&_=' + new Date().getTime(), g_headers);
     json = getJson(html);
-    for(var i=0; i<json.Accounts.length; ++i){
-        var acc = json.Accounts[i];
-        if(AnyBalance.isAvailable('balance'))
-            result.balance = acc.Balance;
-        if(AnyBalance.isAvailable('licschet'))
-            result.licschet = acc.PayCode;
-        break;
-    }
+    getParam(json.Balance, result, 'balance');
+    getParam(json.PayCode, result, 'licschet');
 
     AnyBalance.setResult(result);
 }

@@ -52,16 +52,28 @@ function main() {
 	}
 
 	if(prefs.cabinet == 'new'){
-		doNewCabinet();
+		doNewCabinet(html);
 	}else{
-		doOldCabinet(baseurl);
+		doOldCabinet(html, baseurl);
 	}
 	
 }
 
-function doNewCabinet(){
+function doNewCabinet(html){
+    AnyBalance.trace('Входим в новый кабинет');
+
+    var lasturl = AnyBalance.getLastUrl();
+    var url = getParam(html, null, null, /href="([^"]*%3A%2F%2Fnew.my.tele2.ru[^"]*)/i, replaceHtmlEntities);
+    html = AnyBalance.requestGet(joinUrl(lasturl, url), g_headers);
+
 	var baseurl = "https://new.my.tele2.ru/";
-	var html = AnyBalance.requestGet(baseurl + 'login', g_headers);
+	var html = AnyBalance.requestGet('http://new.my.tele2.ru/login', addHeaders({Referer: AnyBalance.getLastUrl()}));
+	if(AnyBalance.getLastStatusCode() > 400){
+		var error = getElement(html, /<div[^>]+error[^>]*>/i, replaceTagsAndSpaces);
+		if(error)
+			throw new AnyBalance.Error('Новый кабинет: ' + error);
+	    throw new AnyBalance.Error('Новый личный кабинет Теле2 временно недоступен. Попробуйте позже.');
+	}
 
 	var result = {success: true};
 
@@ -78,6 +90,7 @@ function doNewCabinet(){
 		AnyBalance.trace("Searching for resources left");
 
 		html = AnyBalance.requestGet(baseurl + "main/discounts", g_headers);
+		AnyBalance.trace('Got discounts: ' + html);
 		json = JSON.parse(html);
 
 		var arr = [json.discountsIncluded, json.discountsNotIncluded];
@@ -142,9 +155,20 @@ function getDiscount(result, discount){
 }
 
 
-function doOldCabinet(baseurl){
-	var html = AnyBalance.requestGet(baseurl + 'home', g_headers);
-	
+function doOldCabinet(html, baseurl){
+    AnyBalance.trace('Входим в старый кабинет');
+
+    var lasturl = AnyBalance.getLastUrl();
+    var url = getParam(html, null, null, /href="([^"]*%3A%2F%2Fmy.tele2.ru[^"]*)/i, replaceHtmlEntities);
+    html = AnyBalance.requestGet(joinUrl(lasturl, url), g_headers);
+
+	if(AnyBalance.getLastStatusCode() > 400){
+		var error = getElement(html, /<div[^>]+error[^>]*>/i, replaceTagsAndSpaces);
+		if(error)
+			throw new AnyBalance.Error('Старый кабинет: ' + error);
+	    throw new AnyBalance.Error('Старый личный кабинет Теле2 временно недоступен. Попробуйте позже.');
+	}
+
 	var result = {success: true};
 	
 	getParam(html, result, "userName", /"wide-header"[\s\S]*?([^<>]*)<\/h1>/i, replaceTagsAndSpaces, html_entity_decode);
@@ -153,10 +177,10 @@ function doOldCabinet(baseurl){
 	
 	var matches = html.match(/(csrf[^:]*):\s*'([^']*)'/i);
 	if (!matches){
-		var error = getParam(html, null, null, /<div[^>]+(?:error-wrapper|popup-message\s+error)[^>]*>([\s\S]*?)<\/?div/i, replaceTagsAndSpaces, html_entity_decode);
+		var error = getParam(html, null, null, /<div[^>]+(?:error-wrapper|popup-message-wrapper)[^>]*>([\s\S]*?)<\/?div/i, replaceTagsAndSpaces, html_entity_decode);
 		if(error)
 			throw new AnyBalance.Error(error);
-		var error = getElement(html, /<div[^>]+popup-message\s+error[^>]*>/i, replaceTagsAndSpaces, html_entity_decode);
+		var error = getElement(html, /<div[^>]+popup-message\s+(?:error|info)[^>]*>/i, replaceTagsAndSpaces, html_entity_decode);
 		if(error)
 			throw new AnyBalance.Error(error);
 		AnyBalance.trace(html);
@@ -181,8 +205,12 @@ function doOldCabinet(baseurl){
 		params.isBalanceRefresh = false;
 		html = AnyBalance.requestPost(baseurl + "payments/summary/json", params);
 		json = JSON.parse(html);
-		for (var i = 0; i < json.length; ++i) {
-			getCounter(result, json[i]);
+		if(isArray(json)){
+			for (var i = 0; i < json.length; ++i) {
+				getCounter(result, json[i]);
+			}
+		}else{
+			AnyBalance.trace('Tele2 не отдал использованные ресурсы: ' + JSON.stringify(json));
 		}
 	}
 	if (AnyBalance.isAvailable('history')) {

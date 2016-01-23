@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">nadapter</id>
+	<api flags="no_browser"/>
+	<name>New Provider Adapter</name>
+	<description html="true"><![CDATA[
+	<p>Адаптер для превращения ABE провайдера в AB</p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<js>nadapter.min.js</js>
+		<history>history.xml</history>
+	</files>
+	<depends>
+		<module id="library"/>
+	</depends>
+	<keywords></keywords>
+	<type></type>
+	<country>ru</country>
+</provider>

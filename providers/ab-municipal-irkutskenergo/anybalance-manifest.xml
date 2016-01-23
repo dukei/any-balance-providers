@@ -1,11 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="4">ab-municipal-irkutskenergo</id>
+	<id version="5">ab-municipal-irkutskenergo</id>
 	<api flags="no_browser"/>
 	<name>Иркутскэнергосбыт</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе провайдера Иркутскэнергосбыт <a href="http://www.sbyt.irkutskenergo.ru/">http://www.sbyt.irkutskenergo.ru/</a></p>
-	<p>Информация берется из личного кабинета <a href="http://www.sbyt.irkutskenergo.ru/qa/PersonalCabin.html">http://www.sbyt.irkutskenergo.ru/qa/PersonalCabin.html</a></p>
+	<p>Предоставляет информацию о балансе провайдера Иркутскэнергосбыт <a href="https://sbyt.irkutskenergo.ru/">https://sbyt.irkutskenergo.ru/</a></p>
+	<p>Информация берется из личного кабинета <a href="https://sbyt.irkutskenergo.ru/qa/PersonalCabin.html">https://sbyt.irkutskenergo.ru/qa/PersonalCabin.html</a></p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>

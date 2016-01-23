@@ -25,6 +25,11 @@ function callAPI(method, url, params, allowerror) {
     }else
         html = AnyBalance.requestGet(api_url + url, g_api_headers);
 
+    if(AnyBalance.getLastStatusCode() >= 500){
+        AnyBalance.trace(html);
+        throw new AnyBalance.Error('Сервер мобильного API временно недоступен.');
+    }
+
     var json;
     try{
         json = getJson(html);
@@ -53,7 +58,7 @@ function megafonLkAPILogin(options){
     var html = AnyBalance.requestGet('http://api.megafon.ru/mlk/auth/check', g_api_headers);
     if(AnyBalance.getLastStatusCode() >= 400){
         AnyBalance.trace(html);
-        throw new AnyBalance.Error('Сервер мобильного API временно недоступен.');
+        throw new AnyBalance.Error('Сервер мобильного приложения временно недоступен.');
     }
 
     var json = getJson(html);
@@ -85,7 +90,7 @@ function megafonLkAPILogin(options){
             }
 
             if (json.code)
-                throw new AnyBalance.Error('Ошибка вызова API! ' + json.message, null, /Неправильный логин\/пароль/i.test(json.message));
+                throw new AnyBalance.Error('Ошибка вызова API! ' + json.message, null, /Неправильный логин\/пароль|Пользователь заблокирован/i.test(json.message));
         }
 
         __setLoginSuccessful();

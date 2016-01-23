@@ -1,5 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="4.1" version="139" date="2015-12-21">
+	- Улучшена обработка ошибок.
+	</change>
+	<change major_version="4.1" version="138" date="2015-12-19">
+	Исправление получения трафика в некоторых случаях
+	</change>
+	<change major_version="4.1" version="137" date="2015-12-19">
+	Изменения в процедуре входа
+	</change>
 	<change major_version="4.1" version="136" date="2015-12-14">
 	Исправлено получение трафика в некоторых случаях
 	Исправлено получение абонентской платы в некоторых случаях

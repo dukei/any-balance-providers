@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="29">ab-municipal-pitersbyt</id>
+  <id version="30">ab-municipal-pitersbyt</id>
   <api flags="no_browser"/>
   <name>Петербургская сбытовая компания</name>
   <description>
@@ -17,8 +17,9 @@
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
-    <js>main.js</js>
     <js>library.js</js>
+    <js>gwt.js</js>
+    <js>main.js</js>
     <history>history.xml</history>
   </files>
   <counters>

@@ -98,6 +98,9 @@ function main(){
     if(fnomer == '2') {
     getParam (html, result, 'phone', /(?:Ваш телефон|phone):.*?>([^<]*)</i, replaceTagsAndSpaces, html_entity_decode);
     }
+    if(fnomer == '4') {
+    getParam (html, result, 'phone', /(?:Ваш телефон|phone):.*?>([^<]*)</i, [replaceTagsAndSpaces, / /ig, '', /-/ig, '', /^\+380/, '0'], html_entity_decode);
+    }
 
     AnyBalance.trace("Fetching status...");
 
@@ -124,6 +127,10 @@ function main(){
     if(fnomer == '1') {
     getParam (html, result, 'phone', /(?:Витрачено по номеру|Израсходовано по номеру|phone)\s*([\s\S]*?)\s*за/i, replaceTagsAndSpaces, html_entity_decode);
     }
+    if(fnomer == '3') {
+    getParam (html, result, 'phone', /(?:Витрачено по номеру|Израсходовано по номеру|phone)\s*([\s\S]*?)\s*за/i, [replaceTagsAndSpaces, / /ig, '', /-/ig, '', /\(/ig, '', /\)/ig, ''], html_entity_decode);
+    }
+
       //Срок действия (баланса) номера (!!!пропал из интернет помощника)
     getParam (html, result, 'termin', /Термін життя балансу:([^<]*)/i, replaceTagsAndSpaces, parseDate);
       //Денежный бонусный счет.
@@ -211,7 +218,9 @@ function main(){
     sumParam (html, result, 'traffic_maxenergy_mb', /<li>Осталось: (\d+,?\d* *(kб|bytes)).<\/li>/ig, null, parseTraffic, aggregate_sum);
     sumParam (html, result, 'traffic_maxenergy_mb', /<li>Осталось (\d+) бесплатных Kб.[^<]*<\/li>/ig, null, parseTrafficMb, aggregate_sum);
     sumParam (html, result, 'traffic_maxenergy_mb', /<li>1500 Mb GPRS Internet для MAX Energy Allo, осталось (\d+) бесплатных Kб.[^<]*<\/li>/ig, null, parseTrafficMb, aggregate_sum);
-	sumParam (html, result, 'traffic_maxenergy_mb', /<li>\d+\s\w*\sGPRS\sInternet\sдля\sMAX\sEnergy,\sосталось:\s(\d+,?\d*\s*(kб|bytes)).<\/li>/ig, null, parseTraffic, aggregate_sum);
+    sumParam (html, result, 'traffic_maxenergy_mb', /<li>\d+\s\w*\sGPRS\sInternet\sдля\sMAX\sEnergy,\sосталось:\s(\d+,?\d*\s*(kб|bytes)).<\/li>/ig, null, parseTraffic, aggregate_sum);
+    sumParam (html, result, 'traffic_maxenergy_mb', /<li>20 Mb в день для Super MTS Energy, осталось: (\d+,?\d* *(kб|bytes|Кб)).[^<]*<\/li>/ig, null, parseTraffic, aggregate_sum);
+    sumParam (html, result, 'termin_maxenergy_mb', /<li>20 Mb в день для Super MTS Energy, осталось: \d+ Кб. До ([^<]*)<\/li>/ig, replaceTagsAndSpaces, parseDate, aggregate_min);
 
     // Интернет за границей в "Команда 3D"
     sumParam (html, result, 'traffic_evropa_mb', /<li>2 МБ в Европе: Осталось:\s*(\d+,?\d* *(Кб|kб|bytes)).<\/li>/ig, null, parseTraffic, aggregate_sum);
@@ -277,6 +286,8 @@ function main(){
     sumParam (html, result, 'min_allo_net', /Kб.<\/li><li>Осталось ([\d\.,]+) бесплатных секунд[^<]*<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
     sumParam (html, result, 'min_allo_net', /секунд<\/li><li>Осталось ([\d\.,]+) бесплатных секунд[^<]*<\/li><li>Осталось/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
     sumParam (html, result, 'min_allo_net', /<li>3000 минут на МТС для MAX Energy Allo, осталось ([\d\.,]+) бесплатных секунд[^<]*<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+    sumParam (html, result, 'min_allo_net', /<li>30 минут в день внутри сети  для Super MTS, осталось ([\d\.,]+) бесплатных секунд[^<]*<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+    sumParam (html, result, 'termin_min_allo_net', /<li>30 минут в день внутри сети  для Super MTS, осталось \d+ бесплатных секунд. До ([^<]*)<\/li>/ig, replaceTagsAndSpaces, parseDate, aggregate_min);
     sumParam (html, result, 'min_allo_other', /Осталось ([\d\.,]+) бесплатных секунд[^<]*<\/li><\/ul>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
     sumParam (html, result, 'min_allo_other', /SMS<\/li><li>Осталось ([\d\.,]+) бесплатных секунд[^<]*<\/li><li>Осталось/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
     sumParam (html, result, 'min_allo_other', /<li>100 минут по Украине для MAX Energy Allo, осталось ([\d\.,]+) бесплатных секунд[^<]*<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
@@ -342,7 +353,7 @@ function main(){
     // Интернет «Команда 3D»
     sumParam (html, result, 'traffic_used', /<li>МБ GPRS по услуге "Супер МТС Команда 3D", использовано:\s*(\d+,?\d* *(Кб|kb|mb|gb|кб|мб|гб|байт|bytes)).<\/li>/ig, null, parseTraffic, aggregate_sum);
     // Интернет Vodafone
-    sumParam (html, result, 'traffic_used', /<li>\d+ МБ 3G в месяц RED ., использовано:\s*(\d+ *(Кб|kb|mb|gb|кб|мб|гб|байт|bytes)).<\/li>/ig, null, parseTraffic, aggregate_sum);
+    sumParam (html, result, 'traffic_used', /<li>\d+ (?:Г|М)Б 3G в месяц RED ., использовано:\s*(\d+ *(Кб|kb|mb|gb|кб|мб|гб|байт|bytes)).<\/li>/ig, null, parseTraffic, aggregate_sum);
     sumParam (html, result, 'traffic_used1', /<li>Мобильный Интернет на день RED, использовано:\s*(\d+ *(Кб|kb|mb|gb|кб|мб|гб|байт|bytes)).<\/li>/ig, null, parseTraffic, aggregate_sum);
     sumParam (html, result, 'traffic_used2', /<li>Интернет в роуминге \(\d+ гривен в день\), использовано:\s*(\d+ *(Кб|kb|mb|gb|кб|мб|гб|байт|bytes)).<\/li>/ig, null, parseTraffic, aggregate_sum);
     sumParam (html, result, 'traffic_used3', /<li>Мобильный Интернет "Роуминг как дома", использовано:\s*(\d+ *(Кб|kb|mb|gb|кб|мб|гб|байт|bytes)).<\/li>/ig, null, parseTraffic, aggregate_sum);

@@ -21,18 +21,30 @@ function main() {
 		if(!/^\d{10}$/i.test(prefs.login)) {
 			throw new AnyBalance.Error('Необходим ввести номер телефона в десятизначном формате, например 4951234567');
 		}
-		var serviceID = '442';
-		var html = AnyBalance.requestGet('https://oplata.uralsibbank.ru/cityp_eorder.asp?ServiceID=' + serviceID, g_headers);
+
+		//Зачем мешать полезным роботам информацию получать? Зачем такие сложности? Хватит, а?
+		AnyBalance.setCookie('oplata.uralsibbank.ru', 'TS01db9e9f_28', '01403d4e06e38d0fe057dcb52f2ee998045c5396b2116a12967573f07ea9a826266a4178a5a6bf05c506e30553bcda3b982d78da99');
+		AnyBalance.setCookie('oplata.uralsibbank.ru', 'TS01db9e9f', '0118f3d0afce1b9fbaa1479f5755548421a93d22c2452c40b56a563845e933970eefb43c09298850ca6a705c943fc03947af962d76a57794fedbffa1442294a7e57125fead5d5f5896aa0e912baf522b42a6edb18f');
+		var serviceID = '442', csrt = '13775051121879390047';
+
+		var url = 'https://oplata.uralsibbank.ru/cityp_eorder.asp?ServiceID=' + serviceID + '&csrt=' + csrt;
+		var html = AnyBalance.requestGet(url, g_headers);
 		
-		html = AnyBalance.requestPost('https://oplata.uralsibbank.ru/cityp_eorder.asp', {
+		html = AnyBalance.requestPost(url, {
 			extents: 'payment_id="" service_id="'+serviceID+'" customer_id="0" contract_id="0" cliring="MKC" needaddinfo="" PHONE_NUMBER="'+prefs.login+'" PAYER_FLAT1="'+prefs.kvart+'" EXTERNAL_RESPONSE="" main_amount="10.00" PURPOSE_PAYMENT="" action="save"',
 			action: 'save'
-		}, addHeaders({Referer: 'https://oplata.uralsibbank.ru/cityp_eorder.asp?ServiceID=' + serviceID}));
+		}, addHeaders({Referer: url }));
 		
-		getParam(html, result, 'balance', /id="EXTERNAL_RESPONSE"[^>]*value="([^"]*)/i, replaceTagsAndSpaces, parseBalance);
-		if(!isset(result.balance)) {
-			throw new AnyBalance.Error('Неизвестная ошибка получения баланса, свяжитесь с разработчиком и проверьте номер телефона и номер квартиры.');
-		}		
+		if(!/id="EXTERNAL_RESPONSE"[^>]*value="[^"]+/i.test(html)){
+			html = replaceAll(html, [/<noscript>[\s\S]*?<\/noscript>/ig, '']);
+			var error = getElement(html, /<p[^>]+class="errorb"[^>]*>/i, replaceTagsAndSpaces);
+			if(error)
+				throw new AnyBalance.Error(error, null, /Номер не существует/i.test(error));
+			AnyBalance.trace(html);
+			throw new AnyBalance.Error('Не удалось получить баланс. Cайт изменен?');
+		}
+
+		getParam(html, result, 'balance', /id="EXTERNAL_RESPONSE"[^>]*value="([^"]+)/i, replaceTagsAndSpaces, parseBalance);
 	} else {
 		AnyBalance.trace('Входим по логину и паролю...');
 		
@@ -69,7 +81,7 @@ function main() {
 		getParam(html, result, 'phone', /Номер телефона:[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
 		getParam(html, result, 'licschet', /Лицевой счет:[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
 
-		var services = getJsonObject(html, /mgts.data.widgets =/, '[');
+		var services = getParam(html, null, null, /mgts.data.widget\s*=\s*(\[[\s\S]*?\]);/, null, getJson);
 		if(services){
 			//Сложим в tariffs все опции, у которых есть value
 			var tariffs = services.reduce(function(arr, cur){

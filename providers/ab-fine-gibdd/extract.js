@@ -39,13 +39,14 @@ function requestFines(prefs) {
 	
 	html = AnyBalance.requestGet(baseurl + 'proxy/check/getSession.php', g_headers);
 	var dataJson = getJson(html);
+	AnyBalance.setCookie('www.gibdd.ru', 'captchaSessionId', dataJson.id);
 	
 	var captchaWord;
 	
 	if(AnyBalance.getLevel() >= 7){
 		AnyBalance.trace('Пытаемся ввести капчу');
 		
-		var captcha = AnyBalance.requestGet(baseurl + 'proxy/check/getCaptcha.php?PHPSESSID=' + dataJson.id, g_headers);
+		var captcha = AnyBalance.requestGet(baseurl + 'proxy/check/getCaptcha.php?PHPSESSID=' + dataJson.id + '&' + new Date().getTime(), addHeaders({Referer: baseurl + 'check/fines/'}));
 		captchaWord = AnyBalance.retrieveCode("Пожалуйста, введите код с картинки", captcha, {inputType: 'number'});
 		AnyBalance.trace('Капча получена: ' + captchaWord);
 	} else {
@@ -59,7 +60,7 @@ function requestFines(prefs) {
 	var params2 = [
 		['req','fines:' + found[1].toUpperCase()+':'+found[2]+':'+prefs.password.toUpperCase()],
 		['captchaWord',captchaWord],
-		['token',''],
+//		['token',''],
 		['regnum',found[1].toUpperCase()],
 		['regreg',found[2]],
 		['stsnum',prefs.password.toUpperCase()],

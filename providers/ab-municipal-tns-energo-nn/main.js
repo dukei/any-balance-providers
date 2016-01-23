@@ -1,8 +1,4 @@
-﻿/**
-Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
-*/
-
-var g_headers = {
+﻿var g_headers = {
 	'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
 	'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
 	'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
@@ -16,7 +12,7 @@ function main(){
     checkEmpty(prefs.login, 'Введите логин!');
     checkEmpty(prefs.password, 'Введите пароль!');
 
-    var baseurl = "https://www.nsk.elektra.ru/cabinet/";
+    var baseurl = "http://www.nsk.elektra.ru/cabinet/";
 
     AnyBalance.setDefaultCharset('windows-1251'); 
 

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id version="1">ab-municipal-tns-energo-nn</id>
+	<id version="2">ab-municipal-tns-energo-nn</id>
 	<name>ТНС энерго Нижний Новгород</name>
 	<description html="true"><![CDATA[	
     <p>Предоставляет информацию о данных по лицевому счету ПАО «ТНС энерго Нижний Новгород» (ПАО «ТНС энерго НН»)  сайт: <a href="https://www.nsk.elektra.ru/">https://www.nsk.elektra.ru/</a></p>	

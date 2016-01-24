@@ -112,7 +112,7 @@ function main() {
 		adapter.processCards(html, result);
 		
 		if(!adapter.wasProcessed('cards'))
-			throw new AnyBalance.Error(prefs.num ? 'Не найдена карта с последними цифрами ' + prefs.num : 'У вас нет ни одной карты!');
+			throw new AnyBalance.Error(prefs.num ? 'Не найдена карта с последними цифрами ' + prefs.num : 'У вас нет ни одной активной карты!');
 		
 		result = adapter.convert(result);
 	} else if(prefs.type == 'crd') {

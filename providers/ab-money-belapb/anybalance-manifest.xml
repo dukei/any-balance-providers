@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="4">ab-money-belapb</id>
+  <id version="5">ab-money-belapb</id>
   <api flags="no_browser"/>
   <name>Белагропромбанк (Беларусь)</name>
   <description>
@@ -15,14 +15,15 @@
      * получить карточку с логином и паролем, а также карточку с сеансовыми ключами для доступа к системе «Интернет-банкинг».
      * Далее услуга будет активизирована и доступ будет разрешен.
   </instruction>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <author>AnyBalance Team &lt;dco@mail.ru&gt;</author>
+  <depends>
+  	<module id="nadapter"/>
+  	<module id="login/bss"/>
+  	<module id="extract/abe-money-belapb"/>
+  </depends>
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
-    <js>library.js</js>
-    <js>nadapter.js</js>
-    <js>bss.js</js>
-    <js>extract.js</js>
     <js>main.js</js>
     <history>history.xml</history>
   </files>
@@ -39,9 +40,7 @@
   <keywords>
     интернет-банкинг
   </keywords>
-  <type>
-    money
-  , bank</type>
+  <type>money, bank</type>
   <country>
     by
   </country>

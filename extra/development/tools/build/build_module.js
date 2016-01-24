@@ -33,7 +33,7 @@ function main(){
 
 	var version_path = basepath + 'build\\' + version + '\\';
 	if(!fso.FolderExists(version_path)){
-		var ret = WshShell.Run('cmd /c mkdir "' + version_path + '"', 0, true);
+		var ret = exec('cmd /c mkdir "' + version_path + '"');
 		if(ret != 0)
 			throw new Error('Can not create module version folder: ' + version_path);
 	}
@@ -41,9 +41,47 @@ function main(){
 	writeStringToFile(version_path + 'anybalance-manifest.xml', new_manifest.replace(/(<files[^>]*>)/i, '$1\n\t\t<js>' + sub_module_id + '.min.js</js>'));
 	fso.CopyFile(basepath + 'source\\history.xml', version_path + 'history.xml', true);
 	
-	var oExec = WshShell.Run(gcccmd + ' --js "' + files.join('" --js "') + '" --js_output_file "' + version_path + sub_module_id + '.min.js"', 0, true);
+	var oExec = exec(gcccmd + ' --js "' + files.join('" --js "') + '" --js_output_file "' + version_path + sub_module_id + '.min.js"');
 	if(oExec != 0)
 		throw new Error('Compilation failed!');
+}
+
+function exec(cmdline){
+	var oExec = WshShell.Exec(cmdline);
+    
+    function ReadAllFromAny(oExec)
+    {
+         if (!oExec.StdOut.AtEndOfStream)
+              return oExec.StdOut.ReadAll();
+    
+         if (!oExec.StdErr.AtEndOfStream)
+              return oExec.StdErr.ReadAll();
+         
+         return -1;
+    }
+    
+    var allInput = "";
+    var tryCount = 0;
+    
+    while (true)
+    {
+         var input = ReadAllFromAny(oExec);
+         if (-1 == input)
+         {
+              if (tryCount++ > 10 && oExec.Status == 1)
+                   break;
+              WScript.Sleep(100);
+         }
+         else
+         {
+              allInput += input;
+              tryCount = 0;
+         }
+    }
+
+    WScript.Echo(allInput);
+    
+    return oExec.ExitCode;
 }
 
 function readFileToString(file) {

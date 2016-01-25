@@ -13,26 +13,28 @@ function main() {
   var prefs = AnyBalance.getPreferences();
   AnyBalance.setDefaultCharset('utf-8');
   var baseurl = "https://ss.zadarma.com/";
+  var captchaUrl = 'captcha/index.php?form=login&unq=';
 
   AB.checkEmpty(prefs.login, 'Введите логин!');
   AB.checkEmpty(prefs.password, 'Введите пароль!');
 
   var html = AnyBalance.requestGet(baseurl + 'auth/', g_headers);
 
-  var captcha, captchaSrc, captchaKey;
-
-
-  if (prefs.extraCaptchaAuth == 'enabled') {
-    if (AnyBalance.getLevel() >= 7) {
-      AnyBalance.trace('Пытаемся ввести капчу');
-      captcha = AnyBalance.requestGet(baseurl + 'captcha/index.php?form=login&unq=' + Math.random(), g_headers);
-      captchaKey = AnyBalance.retrieveCode("Пожалуйста, введите код с картинки", captcha);
-      AnyBalance.trace('Капча получена: ' + captchaKey);
-    } else {
-      throw new AnyBalance.Error('Провайдер требует AnyBalance API v7, пожалуйста, обновите AnyBalance!');
-    }
+  if (!html || AnyBalance.getLastStatusCode() > 400) {
+    // AnyBalance.trace(html);
+    throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
   }
 
+  var captchaKey = '';
+
+
+  var authForm = AB.getElement(html, /<form[^>]*action="[^"]*auth\/login[^"]*"[^>]*>/i);
+  AnyBalance.trace(authForm);
+  // if(/<img[^>]*id="captcha_login"[^>]*>/i.test(authForm)) {
+  if (!/none[\s\S]*?id="captcha_login/i.test(authForm)) {
+    AnyBalance.trace('captcha discovered');
+    captchaKey = captchaAuth(baseurl, captchaUrl);
+  }
 
   html = AnyBalance.requestPost(baseurl + "auth/login/", {
     redirect: '',
@@ -46,10 +48,17 @@ function main() {
 
   var json = getJson(html);
 
-  if (!json.success) {
-    var error = !json.success ? json.error : null;
-    if (error)
-      throw new AnyBalance.Error(error);
+
+  if (json.success !== true) {
+    var error = json.error;
+
+    // if (json.needCaptcha === true) {
+    //
+    // }
+
+    if (error !== '') {
+      throw new AnyBalance.Error(error, null, /найден/i.test(error));
+    }
 
     AnyBalance.trace(html);
     throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
@@ -61,29 +70,54 @@ function main() {
     success: true
   };
 
-  getParam(html, result, 'balance', /<span class="balance">[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
-  getParam(html, result, ['currency', 'balance'], /<span class="balance">[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces, parseCurrency);
-  getParam(html, result, '__tariff', [/<p><strong>(.*)<\/strong>( \((?:стоимость|вартість|cost) \d+\.\d+.*\))<\/p>/i, /<h2>Текущий тарифный план<\/h2>\s*<p>\s*<strong>(.*)<\/strong>/i], replaceTagsAndSpaces, html_entity_decode);
-  getParam(html, result, 'min', /использовано:[^<]+\[(\d+ мин)/i, replaceTagsAndSpaces, parseMinutes);
+  AB.getParam(html, result, 'balance', /<span class="balance">[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
+  AB.getParam(html, result, ['currency', 'balance'], /<span class="balance">[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces,
+    parseCurrency);
+  AB.getParam(html, result, '__tariff', [/<p><strong>(.*)<\/strong>( \((?:стоимость|вартість|cost) \d+\.\d+.*\))<\/p>/i,
+    /<h2>Текущий тарифный план<\/h2>\s*<p>\s*<strong>(.*)<\/strong>/i
+  ], replaceTagsAndSpaces, html_entity_decode);
+  AB.getParam(html, result, 'min', /использовано:[^<]+\[(\d+ мин)/i, replaceTagsAndSpaces, parseMinutes);
 
   if (isAvailable(['phone0', 'phone0till', 'phone1', 'phone1till', 'phone2', 'phone2till'])) {
     html = AnyBalance.requestGet(baseurl + 'dirnum/', g_headers);
-    var numbers = sumParam(html, null, null, /<h2[^>]*>(?:Бесплатный|Безкоштовний|Free)(?:[^<](?!c донабором|з донабором|with dtmf))*<\/h2>(?:[^>]*>){20,25}(?:<h2|Номер действителен|Номер діє|The number works)/ig);
+    var numbers = sumParam(html, null, null,
+      /<h2[^>]*>(?:Бесплатный|Безкоштовний|Free)(?:[^<](?!c донабором|з донабором|with dtmf))*<\/h2>(?:[^>]*>){20,25}(?:<h2|Номер действителен|Номер діє|The number works)/ig
+    );
     for (var i = 0; i < Math.min(numbers.length, 3); ++i) {
-      getParam(numbers[i], result, 'phone' + i, /(?:Вам подключен прямой номер|Вам надано прямий номер|Your connected number|Вам підключено прямий номер)[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
-      getParam(numbers[i], result, 'phone' + i + 'till', /(?:Действует до|Діє до|Valid till)([^<]*)\./i, replaceTagsAndSpaces, parseDateISO);
-      getParam(numbers[i], result, 'phone' + i + 'status', /(?:Статус)\s*:([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
+      AB.getParam(numbers[i], result, 'phone' + i,
+        /(?:Вам подключен прямой номер|Вам надано прямий номер|Your connected number|Вам підключено прямий номер)[^>]*>([\s\S]*?)<\//i,
+        replaceTagsAndSpaces, html_entity_decode);
+      AB.getParam(numbers[i], result, 'phone' + i + 'till', /(?:Действует до|Діє до|Valid till)([^<]*)\./i,
+        replaceTagsAndSpaces, parseDateISO);
+      AB.getParam(numbers[i], result, 'phone' + i + 'status', /(?:Статус)\s*:([^<]*)/i, replaceTagsAndSpaces,
+        html_entity_decode);
     }
   }
 
   if (isAvailable(['shortphone0', 'shortphone1', 'shortphone2', 'shortphone3', 'shortphone4'])) {
     html = AnyBalance.requestGet(baseurl + 'mysip/', g_headers);
 
-    var numbers = sumParam(html, null, null, /<li>\s*<a href="#\d+"[^>]*>([^<]*)/ig);
+    var numbers = AB.sumParam(html, null, null, /<li>\s*<a href="#\d+"[^>]*>([^<]*)/ig);
     for (var i = 0; i < Math.min(numbers.length, 5); ++i) {
-      getParam(numbers[i], result, 'shortphone' + i, null, replaceTagsAndSpaces, html_entity_decode);
+      AB.getParam(numbers[i], result, 'shortphone' + i, null, replaceTagsAndSpaces, html_entity_decode);
     }
   }
 
   AnyBalance.setResult(result);
+}
+
+//help func
+function captchaAuth(baseurl, captchaUrl) {
+  var captcha, captchaSrc, captchaKey;
+  if (AnyBalance.getLevel() >= 7) {
+    // var captcha, captchaSrc, captchaKey;
+    AnyBalance.trace('Пытаемся ввести капчу');
+    captcha = AnyBalance.requestGet(baseurl + captchaUrl + Math.random(), g_headers);
+    captchaKey = AnyBalance.retrieveCode("Пожалуйста, введите код с картинки", captcha);
+    AnyBalance.trace('Капча получена: ' + captchaKey);
+  } else {
+    throw new AnyBalance.Error('Провайдер требует AnyBalance API v7 или выше, пожалуйста, обновите AnyBalance!', null,
+      true);
+  }
+  return captchaKey;
 }

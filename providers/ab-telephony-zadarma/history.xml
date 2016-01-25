@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
 	<change major_version="2" version="15" date="2016-01-22">
-	- Добавен пункт в настройках для отключения captcha. 
+	- В некоторых случаях captcha не спрашивается.
 	</change>
 	<change major_version="2" version="14" date="2015-07-01">
 	- Поддержка изменений на сайте.

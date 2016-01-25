@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+	<EditTextPreference
+		title="Л/C"
+		key="acc"
+		summary="||{@s}"
+		obligatory="true"
+		dialogTitle="Л/С"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите номер лицевого счета.">
+	</EditTextPreference>
+</PreferenceScreen>

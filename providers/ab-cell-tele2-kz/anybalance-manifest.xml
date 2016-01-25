@@ -1,19 +1,21 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="17">ab-cell-tele2-kz</id>
+	<id version="18">ab-cell-tele2-kz</id>
 	<api flags="no_browser|captcha"/>
 	<name>Теле2 Казахстан</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе и остатке пакетов из личного кабинета Теле2 Казахстан (http://www.tele2.kz/)</p>
-	]]></description>	
+	<p>Предоставляет информацию из личного кабинета Теле2 Казахстан (http://www.tele2.kz/)</p>
+	]]></description>
 	<instruction html="true"><![CDATA[
 	<p>Чтобы получить пароль перейдите по ссылке https://iself.tele2.kz/login и введите свой номер телефона в поле "Регистрация", затем нажмите получить пароль.</p>
 	]]></instruction>
 	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
@@ -25,8 +27,9 @@
 		<counter id="internet_trafic_night" name="Интернет-пакеты (ночь)" units=" Мб"/>
 		<counter id="sms_left" name="Остаток СМС" units=" sms"/>
 		<counter id="min_left" name="Остаток минут" units=" мин"/>
+		<counter id="bonusInfo" name="Бонусы и скидки" type="text"/>
 	</counters>
-	<keywords>теле2</keywords>
+	<keywords>теле2 Казахстан</keywords>
 	<type>cell</type>
 	<country>kz</country>
 </provider>

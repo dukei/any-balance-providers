@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="22" major_version="3.0">ab-cell-skylink</id>
+	<id version="23" major_version="3.0">ab-cell-skylink</id>
 	<name>Skylink</name>
 	<api flags="no_browser"/>
 	<description html="true"><![CDATA[
@@ -22,12 +22,14 @@
 	</ul>
 	]]></instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+        <depends>
+   		<module id="library"/>
+   	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
 		<js>sha256.js</js>
 		<js>enc-base64-min.js</js>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>

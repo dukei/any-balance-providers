@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="5">ab-money-belapb</id>
+  <id version="6">ab-money-belapb</id>
   <api flags="no_browser"/>
   <name>Белагропромбанк (Беларусь)</name>
   <description>

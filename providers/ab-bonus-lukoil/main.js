@@ -26,7 +26,7 @@ function main() {
 
 		var params = [];
 
-		var captcha = getParam(html, null, null, /<img[^>]+src="\/([^"]*)"[^>]*class="captcha-pic/i, null, html_entity_decode);
+		var captcha = getParam(html, null, null, /<img[^>]+src="\/([^"]*)"[^>]*class="captcha-pic/i);
 		if(captcha){
 			var img = AnyBalance.requestGet(baseurl + captcha, addHeaders({Referer:baseurl + 'ru/login'}));
 			captcha = AnyBalance.retrieveCode('Пожалуйста, введите код с картинки', img);
@@ -47,9 +47,9 @@ function main() {
         //получим id пользователя
         var usedId = /\/([\s\S]{1,15})\/client/i.exec(html);
         if (!usedId){
-        	var error = getParam(html, null, null, /<div[^>]+common-errors[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+        	var error = getParam(html, null, null, /<div[^>]+common-errors[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
         	if(error)
-        		throw new AnyBalance.Error(error);
+        		throw new AnyBalance.Error(error, false, /Информация о пользователе отсутствует|пароль/i.test(error));
 			throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 		}
 		
@@ -59,7 +59,7 @@ function main() {
         getParam(html, result, 'name', /class="value user-name">\s*<b>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces);
         getParam(html, result, 'status', /<th[^>]*>\s*Статус[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
     } else {
-    	checkEmpty(/^\d{18}$|^\d{19}$/.test(prefs.login), 'Номер карты введен неверно!');
+    	checkEmpty(/^\d{18,19}$/.test(prefs.login), 'Номер карты введен неверно!');
 
 		if(prefs.type == 'clubby')
 			baseurlFizik = baseurlFizik.replace(/\.ru/i, '.by');
@@ -72,9 +72,9 @@ function main() {
         }, g_headers);
 		
         if (!/logout/i.test(html)) {
-            var error = getParam(html, null, null, [/<p[^>]+class="err"[^>]*>([\s\S]*?)<\/p>/i, /class="error">([\s\S]*?)<\//i], replaceTagsAndSpaces, html_entity_decode);
+            var error = getParam(html, null, null, [/<p[^>]+class="err"[^>]*>([\s\S]*?)<\/p>/i, /class="error">([\s\S]*?)<\//i], replaceTagsAndSpaces);
             if (error)
-				throw new AnyBalance.Error(error);
+				throw new AnyBalance.Error(error, false, /Неверный номер карты или пароль/i.test(error));
 			
 			AnyBalance.trace(html);
             throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
@@ -82,11 +82,11 @@ function main() {
 		
         getParam(html, result, 'balance', /Количество&nbsp;баллов(?:[^>]*>){3}([^<]+)/i, replaceTagsAndSpaces, parseBalance);
         getParam(html, result, 'cardnum', /cardNumber"(?:[^>]*>){1}([^<]+)/i, replaceTagsAndSpaces, null);
-		getParam(html, result, 'name', /"user-FIO"(?:[^>]*>){1}([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
-		getParam(html, result, 'phonenumber', /"userPhoneTableCell"(?:[^>]*>){1}([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
+		getParam(html, result, 'name', /"user-FIO"(?:[^>]*>){1}([^<]+)/i, replaceTagsAndSpaces);
+		getParam(html, result, 'phonenumber', /"userPhoneTableCell"(?:[^>]*>){1}([^<]+)/i, replaceTagsAndSpaces);
 		
         //getParam(html, result, '__tariff', /<li><span>Ваш статус в Программе:<\/span>([\s\S]*?)<\/li>/i, replaceTagsAndSpaces, null);
-        //getParam(html, result, 'region', /Регион Программы:([\s\S]*?)<\/li>/i, replaceTagsAndSpaces, html_entity_decode);
+        //getParam(html, result, 'region', /Регион Программы:([\s\S]*?)<\/li>/i, replaceTagsAndSpaces);
     }
 	
     AnyBalance.setResult(result);

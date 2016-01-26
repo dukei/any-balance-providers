@@ -31,7 +31,8 @@ function main(){
 		password: prefs.password
 	}, addHeaders({ Referer: baseurl + 'user/session/login.do' }));
 
-	if (!/userId/i.test(html) || /<input\s[^>]*type="password"/i.test(html)) {
+    //if (!/userId/i.test(html) || /<input\s[^>]*type="password"/i.test(html)) {
+    if (!/<a\s[^>]*?data-bind="[^"]*?username"[^>]*>([^<]+)/i.test(html)) {
         var error = getParam(html, null, null, /<div[^>]+class="sm-form__errors-block"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
         if (error)
             throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));

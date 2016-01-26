@@ -7,118 +7,82 @@
 Личный кабинет: https://www.reutov.ru/cabinet/
 */
 
-function getParam (html, result, param, regexp, replaces, parser) {
-	if (param && (param != '__tariff' && !AnyBalance.isAvailable (param)))
-		return;
-
-	var matches = regexp.exec (html), value;
-	if (matches) {
-		value = matches[1];
-		if (replaces) {
-			for (var i = 0; i < replaces.length; i += 2) {
-				value = value.replace (replaces[i], replaces[i+1]);
-			}
-		}
-		if (parser)
-			value = parser (value);
-
-    if(param)
-      result[param] = value;
-	}
-   return value
-}
-
-var replaceTagsAndSpaces = [/&nbsp;/g, ' ', /<[^>]*>/g, ' ', /\s{2,}/g, ' ', /^\s+|\s+$/g, ''];
-var replaceFloat = [/\s+/g, '', /,/g, '.'];
-
-function parseBalance(text){
-    var val = getParam(text.replace(/\s+/g, ''), null, null, /(-?\d[\d\s.,]*)/, replaceFloat, parseFloat);
-    AnyBalance.trace('Parsing balance (' + val + ') from: ' + text);
-    return val;
-}
-
-function parseTrafficGb(str){
-  var val = getParam(str.replace(/\s+/g, ''), null, null, /(-?\d[\d\s.,]*)/, replaceFloat, parseFloat);
-  return parseFloat((val/1024).toFixed(2));
-}
-
-function parseDate(str){
-    var matches = /(\d+)[^\d](\d+)[^\d](\d+)/.exec(str);
-    if(matches){
-          var date = new Date(+matches[3], matches[2]-1, +matches[1]);
-	  var time = date.getTime();
-          AnyBalance.trace('Parsing date ' + date + ' from value: ' + str);
-          return time;
-    }
-    AnyBalance.trace('Failed to parse date from value: ' + str);
-}
+var g_headers = {
+    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+    'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
+    'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
+    'Connection': 'keep-alive',
+    'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36'
+};
 
 function main(){
     var prefs = AnyBalance.getPreferences();
+    
+    AB.checkEmpty(prefs.login, 'Введите логин!');
+    AB.checkEmpty(prefs.password, 'Введите пароль!');
+    
     AnyBalance.setDefaultCharset('utf-8');
 
-    var baseurl = "https://www.reutov.ru/";
-
-    var html = AnyBalance.requestGet(baseurl + 'proxy.php?ws_session_id=&from=reutov.ru&action=auth&login=' + prefs.login + 
-           '&secret=' + MD5(prefs.login + prefs.password) + '&_=' + new Date().getTime());
-
-    try{
-	    var json = JSON.parse(html);
-    }catch(e){
-            AnyBalance.trace('Неверный ответ сервера: ' + html);
-            throw new AnyBalance.Error('Неверный ответ сервера. Временные неполадки или сайт изменен.');
+    var baseurl = "https://my.reutov.ru";
+    
+    var loginEnc = encodeURIComponent(prefs.login);
+    
+    var html = AnyBalance.requestGet(baseurl + '/ws/auth/prepare-login/?login=' + loginEnc, AB.addHeaders({ 'X-Requested-With': 'XMLHttpRequest'}));
+    
+    if (!html || (AnyBalance.getLastStatusCode() >= 400)) {
+        AnyBalance.trace(html);
+        throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
+    }
+    
+    var jsonPL = AB.getJson(html);
+    
+    if (jsonPL.header.error_code != 0) {
+        AnyBalance.trace(jsonPL.header.error_message);
+        throw new AnyBalance.Error(jsonPL.header.error_message || 'Ошибка авторизации', false, jsonPL.header.error_code == 1002);
+    }
+    
+    var cnonce = Math.floor(Math.random()*1000000000);
+    var digest = MD5(MD5(jsonPL.data.login + ':' + jsonPL.data.realm + ':' + prefs.password) + ':' + jsonPL.data.nonce + ':' + cnonce.toString());
+    
+    html = AnyBalance.requestGet(baseurl + '/ws/auth/login/?login=' + loginEnc + '&nonce=' + jsonPL.data.nonce + '&cnonce=' + cnonce + '&digest=' + digest + '&status=regular', AB.addHeaders({ 'X-Requested-With': 'XMLHttpRequest'}));
+    
+    var jsonLogin = AB.getJson(html);
+    
+    if (jsonLogin.header.error_code != 0) {
+        AnyBalance.trace(jsonLogin.header.error_message);
+        throw new AnyBalance.Error(jsonLogin.header.error_message || 'Ошибка авторизации', false, jsonPL.header.error_code == 1002);
     }
 
-    if(json.auth_result != 1)
-            throw new AnyBalance.Error('Неверный логин или пароль.');
-
+    html = AnyBalance.requestGet(baseurl + '/statistics/internet', g_headers);
+    
+    function select(html, selector) {
+        selector = selector.split('.');
+        var tag = selector[0] || '[a-z1-6]+';
+        var className = selector[1];
+        return AB.getElement(html, RegExp('<' + tag + '\\s[^>]*' + (className ? 'class="[^"]*\\b' + className + '\\b[^"]*"' : '') + '[^>]*>', 'i'));
+    }
+    
     var result = {success: true};
     
-    if(AnyBalance.isAvailable('fio'))
-        result.fio = json.fio;
+    var htmlSideUser = select(html, 'div.side-user');
     
-    result.__tariff = json.tariff;
+    if (!htmlSideUser) {
+        AnyBalance.trace(html);
+        throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
+    }
     
-    if(AnyBalance.isAvailable('abon'))
-        result.abon = parseFloat(json.tariff_price);
+    AB.getParam(select(htmlSideUser, 'a.su-name'), result, 'fio', null, AB.replaceTagsAndSpaces);
+    AB.getParam(select(htmlSideUser, 'span.su-statetitle'), result, 'status', null, AB.replaceTagsAndSpaces);
+    AB.getParam(select(htmlSideUser, 'td.user-info-balance'), result, 'balance', null, AB.replaceTagsAndSpaces, AB.parseBalance);
+    AB.getParam(select(htmlSideUser, 'td.su-price'), result, 'abon', null, AB.replaceTagsAndSpaces, AB.parseBalance);
+    AB.getParam(select(htmlSideUser, 'td.su-next_abon'), result, 'period_end', null, AB.replaceTagsAndSpaces, AB.parseDate);
+    AB.getParam(select(htmlSideUser, 'td.su-tp_name'), result, '__tariff', null, AB.replaceTagsAndSpaces);
     
-    if(AnyBalance.isAvailable('period_end'))
-        result.period_end = parseDate(json.displaystopdate);
-
-    if(AnyBalance.isAvailable('balance'))
-        result.balance = parseFloat(json.balance);
-
-    if(AnyBalance.isAvailable('status'))
-        result.status = json.status == 'A' ? 'Активен' : 'Неактивен';
-
-    if(AnyBalance.isAvailable('trafficAbon', 'trafficExtra')){
-        var dtStart = new Date(parseDate(json.startdate));
-        var dtEnd = new Date(parseDate(json.stopdate));
-        var html = AnyBalance.requestPost(baseurl + 'proxy.php', {
-            ws_session_id:json.session_id,
-            from:'reutov.ru',
-            action:'stat',
-            year1:dtStart.getFullYear(),
-            year2:dtEnd.getFullYear(),
-            month1:dtStart.getMonth()+1,
-            month2:dtEnd.getMonth()+1
-       });
-       var json = JSON.parse(html);
-
-       if(AnyBalance.isAvailable('trafficAbon'))
-           result.trafficAbon = parseTrafficGb(json.traf_quoted);
-       if(AnyBalance.isAvailable('trafficExtra'))
-           result.trafficExtra = parseTrafficGb(json.traf_overquoted);
+    if (AnyBalance.isAvailable('trafficAbon', 'trafficExtra')) {
+        var statHtml = select(select(html, 'div.statistics'), 'p.lead');
+        AB.getParam(statHtml, result, 'trafficAbon', /Tрафик,\s+включенный\s+в\s+абонентскую\s+плату\s*:?\s*<b[^>]*>([^<]+<[^>]*>[^<]+)/i, AB.replaceTagsAndSpaces, AB.parseTraffic);
+        AB.getParam(statHtml, result, 'trafficExtra', /Трафик,\s+не\s+включенный\s+в\s+абонентскую\s+плату\s*:?\s*<b[^>]*>([^<]+<[^>]*>[^<]+)/i, AB.replaceTagsAndSpaces, AB.parseTraffic);
     }
     
     AnyBalance.setResult(result);
 }
-
-function html_entity_decode(str)
-{
-    //jd-tech.net
-    var tarea=document.createElement('textarea');
-    tarea.innerHTML = str;
-    return tarea.value;
-}
-

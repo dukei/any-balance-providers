@@ -358,38 +358,51 @@
 		].join('|');
 
 		//fast short implementation
-		var ATTR = '(?:						\n\
-							[^>"\']+		\n\
-						|	"   [^"]*    "	\n\
-						|	\'  [^\']*  \'	\n\
-					)*';
+		/*
+		var ATTR = `(?:
+							[^>"']+
+						|	"  [^"]*  "
+						|	'  [^']*  '
+					)*`;
+		*/
+		var ATTR = function (a, b, c) {
+			return `(?:
+							(?= ([^>"']+) )\\a
+						|	"  (?= ([^"]*) )\\b  "
+						|	'  (?= ([^']*) )\\c  '
+					)*`
+					.replace('a', a)
+					.replace('b', b)
+					.replace('c', c);
+		}
 		//https://regex101.com/#pcre
-		var ALL = '(?:														\n\
-						#pair tags with content:							\n\
-						<	(?=[a-z])		#speed improve optimization		\n\
-							(' + PAIR_TAGS_WITH_CONTENT + ')\\b	#1			\n\
-							' + ATTR + '									\n\
-						>													\n\
-							.*?												\n\
-						< (?!script\\b)										\n\
-							/?												\n\
-							\\1\\b' + ATTR + '								\n\
-						>													\n\
-																			\n\
-						#opened tags:									\n\
-					|	<	(?=[a-z])									\n\
-							(?!(?:' + PAIR_TAGS_WITH_CONTENT + ')\\b)	\n\
-							' + ATTR + '								\n\
-						>												\n\
-																		\n\
-					|	</[a-z]' + ATTR + '>	#closed tags		\n\
-					|	<![a-z]' + ATTR + '>	#<!DOCTYPE ...>		\n\
-					|	<!\\[CDATA\\[  .*?  \\]\\]>		#CDATA				\n\
-					|	<!--  .*?   -->					#comments			\n\
-					|	<\\?  .*?  \\?>					#instructions part1 (PHP, Perl, ASP, JSP, XML)	\n\
-					|	<%	  .*?    %>					#instructions part2 (PHP, Perl, ASP, JSP)	\n\
-					)';
+		var ALL = `(?:
+						#pair tags with content:
+						<	(?=[a-z])		#speed improve optimization
+							(` + PAIR_TAGS_WITH_CONTENT + `)\\b	#1
+							` + ATTR(2, 3, 4) + `
+						>
+							.*?
+						< (?!script\\b)
+							/?
+							\\1\\b` + ATTR(5, 6, 7) + `
+						>								
+
+						#opened tags:
+					|	<	(?=[a-z])
+							(?!(?:` + PAIR_TAGS_WITH_CONTENT + `)\\b)
+							` + ATTR(8, 9, 10) + `
+						>
+												
+					|	</[a-z]` + ATTR(11, 12, 13) + `>	#closed tags
+					|	<![a-z]` + ATTR(14, 15, 16) + `>	#<!DOCTYPE ...>
+					|	<!\\[CDATA\\[  .*?  \\]\\]>		#CDATA
+					|	<!--  .*?   -->					#comments
+					|	<\\?  .*?  \\?>					#instructions part1 (PHP, Perl, ASP, JSP, XML)
+					|	<%	  .*?    %>					#instructions part2 (PHP, Perl, ASP, JSP)
+					)`;
 		var htmlBlockTagsRe = RegExp('^<('+ BLOCK_TAGS + ')\\b', 'i');
+		console.log(XRegExp(ALL, 'xsig'));
 		var str = this.replace(
 			XRegExp(ALL, 'xsig'),
 			function (str, entry) {
@@ -404,6 +417,7 @@
 		str = str
 			.trim()
 			.replace(/\r/g, '\n')
+			.replace(/\t+/g, ' ')
 			.replace(/\x20\x20+/g, ' ')
 			//remove a spaces before and after new lines
 			.replace(/\n\x20/g, '\n')

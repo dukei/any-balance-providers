@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+    <id version="1">abm-library</id>
+    <api flags="no_browser"/>
+    <name>Стандартная библиотека AB</name>
+    <description html="true"><![CDATA[
+    <p>Предоставляет доп. полезную функциональность для работы AnyBalance провайдеров</p>
+    ]]></description>
+    <author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+    <files>
+        <js>vendor/xregexp.js</js>
+        <js>vendor/jsonselect.js</js>
+        <js>vendor/string.js</js>
+    </files>
+    <keywords></keywords>
+    <type>module</type>
+</provider>

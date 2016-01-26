@@ -1,6 +1,11 @@
 /**
+ * CSS parsers
+ * https://github.com/subtleGradient/slick#slick-css-selector-parser		http://mootools.net/core/docs/1.6.0/Slick/Slick
+ * https://github.com/fb55/css-what
+ * 
  * 
  * @param {string|number|object|null} any  description
+ * @link  https://developers.google.com/closure/compiler/docs/js-for-compiler
  */
 function AB(any) {
 	"use strict";

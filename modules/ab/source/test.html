@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>TEST</title>
+        <meta charset="UTF-8">
+		
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/mocha/2.1.0/mocha.css">
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/mocha/2.1.0/mocha.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/chai/2.0.0/chai.js"></script>
+		<script>
+			mocha.setup('bdd');  //настраиваем Mocha: предстоит BDD-тестирование
+			var assert = chai.assert;  //в chai есть много всего, выносим assert в глобальную область
+		</script>
+
+		<script src="vendor/xregexp.js"></script>
+		<script src="vendor/jsonselect.js"></script>
+		<script src="vendor/string.js"></script>
+		
+		<script>
+ 			var sample = {};
+		</script>
+		<script src="../../library/test/samples/form.html"></script>
+		<script src="../../library/test/samples/googledoc.html"></script>
+		<script src="../../library/test/samples/js.html"></script>
+		<script src="../../library/test/samples/mgts.html"></script>
+		<script src="../../library/test/samples/ugly.html"></script>
+		<script src="../../library/test/samples/yandex.html"></script>
+    </head>
+    <body>
+		<div id="mocha"></div>
+
+		<script>
+			
+			//console.log(html2.htmlToText());
+			//s = getJSON(s1, true);
+			//console.log(s);
+			//console.log(s.open);
+			//console.log(s.close);
+			//console.log(s.inner);
+			//r = JSON.parse(s);
+			
+			describe("String", function() {
+
+				describe("htmlEntityDecode()", function() {
+
+					it("Декодирование сущностей в URL", function() {
+						assert.equal('&http://krawlly.com/vacancies/js.html?&amp=1&&#65=2&&#x65=3&amp;test=4'.htmlEntityDecode(false), '&http://krawlly.com/vacancies/js.html?&amp=1&A=2&e=3&test=4');
+					});
+
+				});			
+				
+				describe("htmlToText()", function() {
+
+					it("Вырезание всех тегов", function() {
+						assert.equal(sample.yandex.htmlToText(), 'Яндекс\n\nСделать стартовой\n\nВойти&nbsp;в&nbsp;почту'.htmlEntityDecode());
+					});
+
+					it("Вырезание всех тегов 2", function() {
+						var s = sample.ugly.htmlToText();
+						//console.log(s);
+						assert.equal(s, 'TODO');
+					});
+
+				});			
+
+			});			
+			
+			mocha.run();
+		</script>		
+		
+    </body>
+</html>

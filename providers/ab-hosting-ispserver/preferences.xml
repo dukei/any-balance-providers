@@ -21,7 +21,7 @@
 		dialogMessage="Введите пароль, используемый для входа в личный кабинет."
 		inputType="textPassword">
 	</EditTextPreference>
-	<EditTextPreference
+	<!-- <EditTextPreference
 		title="Номер счета"
 		key="account"
 		summary="||{@s}"
@@ -30,5 +30,5 @@
 		positiveButtonText="ОК"
 		negativeButtonText="Отмена"
 		dialogMessage="Введите номер счета по которому надо получать данные или оставьте поле пустым, чтобы получить данные по первому счету.">
-	</EditTextPreference>	
+	</EditTextPreference> -->
 </PreferenceScreen>

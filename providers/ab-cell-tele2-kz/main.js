@@ -1,4 +1,5 @@
-﻿/**
+﻿
+/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 */
 
@@ -8,23 +9,23 @@ var g_headers = {
 	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.5,en;q=0.3',
 	'X-Requested-With': 'XMLHttpRequest',
 	'Content-Type': 'application/json;charset=UTF-8',
-	'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
-	'Connection':'keep-alive',
+	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
+	'Connection': 'keep-alive',
 };
 
 var errors = {
 	1: "Ошибка доступа. Введен неверный логин или пароль!",
-	
-}
+};
 
-function main(){
-    var prefs = AnyBalance.getPreferences();
-	checkEmpty(prefs.password, 'Введите пароль!');
-	if(!/\d{10}/i.test(prefs.login)) throw new AnyBalance.Error('Номер телефона должен быть без пробелов и разделителей, в формате 707XXXXXXX или 747XXXXXXX!');
-	
-    var baseurl = "https://iself.tele2.kz/";
-    AnyBalance.setDefaultCharset('utf-8'); 
-	
+function main() {
+	var prefs = AnyBalance.getPreferences();
+	AB.checkEmpty(prefs.password, 'Введите пароль!');
+	if (!/\d{10}/i.test(prefs.login)) throw new AnyBalance.Error(
+		'Номер телефона должен быть без пробелов и разделителей, в формате 707XXXXXXX или 747XXXXXXX!');
+
+	var baseurl = "https://iself.tele2.kz/";
+	AnyBalance.setDefaultCharset('utf-8');
+
 	// Значала зачем-то проверяем номер, какую-то куку ставит еще...
 	/*var json = {msisdn: prefs.login};
     var html = AnyBalance.requestPost(baseurl + 'auth/checkMsisdn.json', JSON.stringify(json), g_headers);
@@ -35,20 +36,25 @@ function main(){
     if(json.oCurrState != '2' && json.oCurrState != '1')
         throw new AnyBalance.Error('К сожалению, ваш номер обслуживается старым кабинетом и требует капчу. Поддержка этого кабинета появится позднее.');
 */
-	if(!prefs.debug) {
+	if (!prefs.debug) {
 		var html = AnyBalance.requestGet(baseurl + 'login', g_headers);
-		
-		var token = getParam(html, null, null, /constant\("csrf_token",\s+['"]([^"']*)/i);
-		checkEmpty(token, 'Не удалось найти токен авторизации, сайт изменен?', true);
-		
-		var html = AnyBalance.requestPost(baseurl + 'captcha', JSON.stringify({same_origin_token: token}), addHeaders({Referer: baseurl + 'login'})); 
-		
-		var json = getJson(html);
-		
-		if(json.capcha64) {
-			if(AnyBalance.getLevel() >= 7) {
+
+		var token = AB.getParam(html, null, null, /constant\("csrf_token",\s+['"]([^"']*)/i);
+		AB.checkEmpty(token, 'Не удалось найти токен авторизации, сайт изменен?', true);
+
+		html = AnyBalance.requestPost(baseurl + 'captcha', JSON.stringify({
+			same_origin_token: token
+		}), addHeaders({
+			Referer: baseurl + 'login'
+		}));
+
+		var json = AB.getJson(html);
+
+		if (json.capcha64) {
+			if (AnyBalance.getLevel() >= 7) {
 				AnyBalance.trace('Пытаемся ввести капчу');
-				captchaa = AnyBalance.retrieveCode("Пожалуйста, введите код с картинки", getParam(json.capcha64 || '', null, null, /,([\s\S]+)/i));
+				captchaa = AnyBalance.retrieveCode("Пожалуйста, введите код с картинки", getParam(json.capcha64 || '', null, null,
+					/,([\s\S]+)/i));
 				AnyBalance.trace('Капча получена: ' + captchaa);
 			} else {
 				throw new AnyBalance.Error('Провайдер требует AnyBalance API v7, пожалуйста, обновите AnyBalance!');
@@ -56,74 +62,157 @@ function main(){
 		} else {
 			AnyBalance.trace('Похоже что капча не требуется...');
 		}
-		
-		var json = {msisdn: prefs.login, password: prefs.password, same_origin_token: token, answer: captchaa};
-		html = AnyBalance.requestPost(baseurl + 'auth/tele2', JSON.stringify(json), addHeaders({Referer: baseurl + 'login'})); 
-		
-		if(/"err"/i.test(html)){
+
+		json = {
+			msisdn: prefs.login,
+			password: prefs.password,
+			same_origin_token: token,
+			answer: captchaa
+		};
+
+		html = AnyBalance.requestPost(baseurl + 'auth/tele2', JSON.stringify(json), addHeaders({
+			Referer: baseurl + 'login'
+		}));
+
+		if (/"err"/i.test(html)) {
 			//Если в кабинет войти не получилось, то в первую очередь надо поискать в ответе сервера объяснение ошибки
 			var error = getParam(html, null, null, /err":"([\s\S]*?)"/i, replaceTagsAndSpaces, html_entity_decode);
-			if(error in errors)
+			if (error in errors)
 				throw new AnyBalance.Error(errors[error]);
-			if(error)
+			if (error)
 				throw new AnyBalance.Error(error);
 			AnyBalance.trace(html);
 			throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 		}
 	}
+
 	// Получаем данные о балансе
 	html = AnyBalance.requestGet(baseurl + 'profile');
-	
-    var result = {success: true};
-    getParam(html, result, 'fio', /"profile">[\s\S]*?([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'balance', /class="profile-balance">([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, '__tariff', /class="header"[^>]*>([^<]*?)<\/div[^>]*>\s*<a href="tariffs"/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'phone', /"profile-phonenum"[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
-	
-	try{
-		if(isAvailable('internet_trafic', 'internet_trafic_night', 'min_left', 'sms_left', 'mms_left')) {
-			token = getParam(html, null, null, /constant\("csrf_token",\s+['"]([^"']*)/i);
-			var requestJson = {same_origin_token: token};
-			// Сайт возвращает JSON c доп. балансами, они -то нам и нужны
-			html = AnyBalance.requestPost(baseurl + 'balanceres', JSON.stringify(requestJson), addHeaders({Referer: baseurl + 'profile'}));
-			json = getJson(html);
 
-			for(var i=0; i<json.returns.length; ++i){
+	var result = {
+		success: true
+	};
+
+	AB.getParam(html, result, 'fio', /"profile">[\s\S]*?([\s\S]*?)<\//i, AB.replaceTagsAndSpaces);
+	AB.getParam(html, result, 'balance', /class="profile-balance">([\s\S]*?)<\//i, AB.replaceTagsAndSpaces, AB.parseBalance);
+	AB.getParam(html, result, '__tariff', /class="header"[^>]*>([^<]*?)<\/div[^>]*>\s*<a href="tariffs"/i,
+		AB.replaceTagsAndSpaces);
+	AB.getParam(html, result, 'phone', /"profile-phonenum"[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
+
+	try {
+		if (AnyBalance.isAvailable('internet_trafic', 'internet_trafic_night', 'min_left', 'sms_left', 'mms_left')) {
+			token = AB.getParam(html, null, null, /constant\("csrf_token",\s+['"]([^"']*)/i);
+			var requestJson = {
+				same_origin_token: token
+			};
+			// Сайт возвращает JSON c доп. балансами, они -то нам и нужны
+			html = AnyBalance.requestPost(baseurl + 'balanceres', JSON.stringify(requestJson), AB.addHeaders({
+				Referer: baseurl + 'profile'
+			}));
+			json = AB.getJson(html);
+
+			for (var i = 0; i < json.returns.length; ++i) {
 				var it = json.returns[i];
-				var name = it.balanceName[0], units = it.unitName[0];
+				var name = it.balanceName[0],
+					units = it.unitName[0];
 				var value = it.volume[0];
 				sumDiscount(result, name, units, value);
 			}
 
-			html = AnyBalance.requestPost(baseurl + 'balancedis', JSON.stringify(requestJson), addHeaders({Referer: baseurl + 'profile'}));
-			json = getJson(html);
+			html = AnyBalance.requestPost(baseurl + 'balancedis', JSON.stringify(requestJson), addHeaders({
+				Referer: baseurl + 'profile'
+			}));
 
-			for(var i=0; i<json.returns.length; ++i){
+			json = AB.getJson(html);
+
+			for (var i = 0; i < json.returns.length; ++i) {
 				var it = json.returns[i];
-				var name = it.dvtpName[0] + ' ' + it.name[0], units = '';
+				var name = it.dvtpName[0] + ' ' + it.name[0],
+					units = '';
 				var value = it.balance[0];
 				sumDiscount(result, name, units, value);
 			}
 		}
-	} catch(e){
+	} catch (e) {
 		AnyBalance.trace('Ошибка при получении Интернет-пакетов: ' + e);
 	}
-    AnyBalance.setResult(result);
+
+	//added 25.01.2016 rr
+	try {
+		receiveBonusInfo(html, token, json, baseurl, result);
+	} catch (e) {
+		AnyBalance.trace('Ошибка при получении бонусной информации: ' + e);
+	}
+	AnyBalance.setResult(result);
 }
 
-function sumDiscount(result, name, units, value){
+function sumDiscount(result, name, units, value) {
 	var bigname = name + units;
 	AnyBalance.trace('Найдено ' + name + ' ' + value + ' ' + units);
-	if(/шт|sms|смс/i.test(bigname)){
+	if (/шт|sms|смс/i.test(bigname)) {
 		sumParam(value + '', result, 'sms_left', null, null, parseBalance, aggregate_sum);
-	}else if(/mms|ммс/i.test(bigname)){
+	} else if (/mms|ммс/i.test(bigname)) {
 		sumParam(value + '', result, 'mms_left', null, null, parseBalance, aggregate_sum);
-	}else if(/минут/i.test(bigname)){
+	} else if (/минут/i.test(bigname)) {
 		sumParam(value + '', result, 'min_left', null, [/[\.,].*/, ''], parseBalance, aggregate_sum);
-	}else if(/[гкмgkm][бb]/i.test(bigname) || /интернет/i.test(name)){
+	} else if (/[гкмgkm][бb]/i.test(bigname) || /интернет/i.test(name)) {
 		var night = /ноч/i.test(bigname) ? '_night' : '';
 		sumParam(value + 'мб', result, 'internet_trafic' + night, null, null, parseTraffic, aggregate_sum);
-	}else{
+	} else {
 		AnyBalance.trace('Неизвестная опция: ' + name);
 	}
+}
+
+//added 25.01.2016 rr
+function receiveBonusInfo(html, token, json, baseurl, result) {
+	if (AnyBalance.isAvailable('bonusInfo')) {
+		html = AnyBalance.requestGet(baseurl + 'profile');
+		token = AB.getParam(html, null, null, /constant\("csrf_token",\s+['"]([^"']*)/i);
+		AnyBalance.trace(token);
+
+		var requestYetAnotherJson = {
+			same_origin_token: token
+		};
+
+		html = AnyBalance.requestPost(baseurl + 'balancedis', JSON.stringify(requestYetAnotherJson), AB.addHeaders({
+			Referer: baseurl + 'profile'
+		}));
+
+		json = AB.getJson(html);
+
+		var
+			bonusInfoObj = {},
+			bonusInfoArr = [];
+
+		for (var j = 0; j < json.return.length; ++j) {
+			bonusInfoObj = json.return[j];
+			bonusInfoArr.push(' ' + bonusInfoObj.name + ': ' + bonusInfoObj.balance + ' ' + setUnit(bonusInfoObj.dvtpName) +
+				' до ' +
+				setDate(bonusInfoObj.endDate) + '.');
+		}
+		AnyBalance.trace(bonusInfoArr);
+		AB.getParam(bonusInfoArr.join('<br/>'), result, 'bonusInfo');
+	}
+}
+
+//helpfunc's added 25.01.2016 rr
+function setUnit(str) {
+	var
+		unitsRegs = [/мин/i, /пак/i, /звон/i],
+		unitsValue = ['мин', 'мб', 'шт'],
+		currentValue = 'шт';
+
+	for (var i = 0; i < unitsRegs.length; i++) {
+		if (unitsRegs[i].test(str)) {
+			currentValue = unitsValue[i];
+			break;
+		}
+	}
+
+	return currentValue;
+}
+
+function setDate(str) {
+	var date = new Date(str);
+	return date.toLocaleDateString();
 }

@@ -392,8 +392,7 @@
 					|	<\\?  .*?  \\?>					#instructions part1 (PHP, Perl, ASP, JSP, XML)
 					|	<%	  .*?    %>					#instructions part2 (PHP, Perl, ASP, JSP)
 					)`;
-		var htmlBlockTagsRe = RegExp('^<('+ BLOCK_TAGS + ')\\b', 'i');
-		//console.log(XRegExp(ALL, 'xsig'));
+		var htmlBlockTagsRe = RegExp('^<(?=[a-z])(?:'+ BLOCK_TAGS + ')\\b', 'i');
 		var str = this.replace(
 			XRegExp(ALL, 'xsig'),
 			function (str, entry) {
@@ -430,7 +429,7 @@
 	String.prototype.clean = function () {
 		//&shy; = soft hyphen = discretionary hyphen
 		//&acute; = acute accent = spacing acute
-		return this.replace(/[\xAD\xB4]/g, '');
+		return this.replace(/[\xAD\xB4]+/g, '');
 	}
 
 	/**

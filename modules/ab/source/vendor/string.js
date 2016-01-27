@@ -365,37 +365,35 @@
 						|	'  [^']*  '
 					)*`;
 		*/
-		var ATTR = function (a, b, c) {
+		var ATTR = function (a) {
 			return `(?:
 							(?= ([^>"']+) )\\a
-						|	"  (?= ([^"]*) )\\b  "
-						|	'  (?= ([^']*) )\\c  '
+						|	"  [^"]*  "
+						|	'  [^']*  '
 					)*`
-					.replace('a', a)
-					.replace('b', b)
-					.replace('c', c);
-		}
+					.replace('a', a);
+		};
 		//https://regex101.com/#pcre
 		var ALL = `(?:
 						#pair tags with content:
 						<	(?=[a-z])		#speed improve optimization
 							(` + PAIR_TAGS_WITH_CONTENT + `)\\b	#1
-							` + ATTR(2, 3, 4) + `
+							` + ATTR(2) + `
 						>
 							.*?
 						< (?!script\\b)
 							/?
-							\\1\\b` + ATTR(5, 6, 7) + `
+							\\1\\b` + ATTR(3) + `
 						>								
 
 						#opened tags:
 					|	<	(?=[a-z])
 							(?!(?:` + PAIR_TAGS_WITH_CONTENT + `)\\b)
-							` + ATTR(8, 9, 10) + `
+							` + ATTR(4) + `
 						>
 												
-					|	</[a-z]` + ATTR(11, 12, 13) + `>	#closed tags
-					|	<![a-z]` + ATTR(14, 15, 16) + `>	#<!DOCTYPE ...>
+					|	</[a-z]` + ATTR(5) + `>	#closed tags
+					|	<![a-z]` + ATTR(6) + `>	#<!DOCTYPE ...>
 					|	<!\\[CDATA\\[  .*?  \\]\\]>		#CDATA
 					|	<!--  .*?   -->					#comments
 					|	<\\?  .*?  \\?>					#instructions part1 (PHP, Perl, ASP, JSP, XML)

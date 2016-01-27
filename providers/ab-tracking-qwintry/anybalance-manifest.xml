@@ -1,26 +1,29 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-tracking-qwintry</id>
-	<api flags="no_browser"/>
-	<name>Qwintry</name>
+  <id version="3">ab-tracking-qwintry</id>
+  <api flags="no_browser"/>
+  <name>Бандеролька Qwintry logistics</name>
 	<description html="true"><![CDATA[
-	<p>Helps to track your package via <a href="http://logistics.qwintry.com/">http://logistics.qwintry.com/</a></p>
+	<p>Helps to track your package via <a href="http://logistics.qwintry.com/">http://logistics.qwintry.com/</a> to Russia, Belarus & Kazakhstan</p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
-	<files>
-		<icon>icon.png</icon>
-		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
-		<js>main.js</js>
-		<history>history.xml</history>
-	</files>
-	<counters>
-		<counter id="tracking" name="Tracking number" type="text"/>
-		<counter id="create_time" name="Create Time" type="time" format="dd/MM/yyyy"/>
-		<counter id="status" name="Status" type="text"/>
-		<counter id="message" name="Message" type="text"/>
-	</counters>
-	<keywords>Бандеролька</keywords>
-	<type>tracking</type>
-	<country></country>
+  <author>Stark &lt;support@starksoft.ru&gt;</author>
+  <depends>
+    <module id="library"/>
+  </depends>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+    <history>history.xml</history>
+  </files>
+  <counters>
+    <counter id="tracking" name="Tracking number" type="text"/>
+    <counter id="create_time" name="Create Time" type="time" format="dd/MM/yyyy"/>
+    <counter id="status" name="Status" type="text"/>
+    <counter id="message" name="Message" type="text"/>
+    <counter id="trackingLog" name="Tracking log" type="text"/>
+  </counters>
+  <keywords>Бандеролька Qwintry logistics tracking отслеживание отправлений</keywords>
+  <type>tracking</type>
+  <country></country>
 </provider>

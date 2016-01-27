@@ -81,7 +81,7 @@ function AB(any) {
 			if (! allowTransformType) return any;
 
 			//JavaScript array/object detect
-			var js = _getJsArrayOrObject(any),
+			var js = any.getJsArrayOrObject(),
 				jsIndexOf = ('string' === typeof js) ? any.indexOf(js) : -1;
 
 			//для корректного сравнения смещений
@@ -104,49 +104,6 @@ function AB(any) {
 			return any;
 		},
 
-		/**
-		 * Ищет в коде JavaScript первый массив или объект и возвращет его.
-		 * Или, другими словами, возвращает текст от первой скобки `[{` до последней `]}` с учётом вложенности.
-		 * Может быть использован для поиска JSON, но это это частный случай.
-		 * Скобки `()` внутри JS допускаются, т.к. могут использоваться именованные или анонимные функции, например: 
-		 * `o = {f : (function(a, b){return someFunc(a+b)})}`
-		 * 
-		 * @param	{string}		str
-		 * @returns	{string|null}	Возвращает строку или `null`, если ничего не найдено
-		 */
-		_getJsArrayOrObject = function(str) {
-			//http://hjson.org/
-			//https://regex101.com/#javascript
-			//http://blog.stevenlevithan.com/archives/match-innermost-html-element
-			//We use atomic group (trick with lookahead, capturing group and link after) to speed improve, significantly reduce backtracking!
-			var OPEN						= /([\{\[])/,	//group $1
-				CLOSE						= /([\}\]])/,	//group $2
-				ANY_WITH_EXCEPTIONS			= /(?= ([^\{\}\[\]"'`\/]+) )\1/,
-				STRING_IN_DOUBLE_QUOTES		= /"				(?= ((?:[^"\\\r\n]+|\\.)*) )\1	"/,
-				STRING_IN_SINGLE_QUOTES		= /'				(?= ((?:[^'\\\r\n]+|\\.)*) )\1	'/,
-				STRING_IN_BACKTICK_QUOTES	= /`				(?= ((?:[^`\\]+    |\\.)*) )\1	`/,		//ECMA6+
-				REGEXP_INLINE				= /\/	(?![\*\/])	(?= ((?:[^\/\\\r\n]+|\\[^\r\n])+) )\1	\/[gimy]{0,4}/,
-				COMMENT_MULTILINE			= /\/\*				.*?								\*\//,
-				COMMENT_SINGLELINE			= /\/\/				(?= ([^\r\n]*) )\1				/,
-				ALL = XRegExp.union([
-					OPEN,
-					CLOSE,
-					ANY_WITH_EXCEPTIONS,
-					STRING_IN_DOUBLE_QUOTES,
-					STRING_IN_SINGLE_QUOTES,
-					STRING_IN_BACKTICK_QUOTES,
-					REGEXP_INLINE,
-					COMMENT_MULTILINE,
-					COMMENT_SINGLELINE
-				], 'xs');
-
-			try {
-				return str.matchRecursive(ALL, {open: 1, close: 2, parts: false});
-			} catch(e) {
-				return null;
-			}			
-		},
-		
 		executeStack = function() {
 			_stack.forEach(function(func) {
 				func();

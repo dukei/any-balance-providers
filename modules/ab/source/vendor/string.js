@@ -357,21 +357,14 @@
 			'script', 'style', 'map', 'iframe', 'frameset', 'object', 'applet', 'comment', 'button', 'textarea', 'select'
 		].join('|');
 
-		//fast short implementation
-		/*
-		var ATTR = `(?:
-							[^>"']+
-						|	"  [^"]*  "
-						|	'  [^']*  '
-					)*`;
-		*/
-		var ATTR = function (a) {
+		var ATTR = function (n) {
+			//fast short implementation
 			return `(?:
-							(?= ([^>"']+) )\\a
+							(?= ([^>"']+) )\\n
 						|	"  [^"]*  "
 						|	'  [^']*  '
 					)*`
-					.replace('a', a);
+					.replace('n', n);
 		};
 		//https://regex101.com/#pcre
 		var ALL = `(?:
@@ -400,7 +393,7 @@
 					|	<%	  .*?    %>					#instructions part2 (PHP, Perl, ASP, JSP)
 					)`;
 		var htmlBlockTagsRe = RegExp('^<('+ BLOCK_TAGS + ')\\b', 'i');
-		console.log(XRegExp(ALL, 'xsig'));
+		//console.log(XRegExp(ALL, 'xsig'));
 		var str = this.replace(
 			XRegExp(ALL, 'xsig'),
 			function (str, entry) {
@@ -411,11 +404,14 @@
 
 		str = str.htmlEntityDecode(false);
 
-		//remove a duplicate spaces
+		//remove a duplicate spaces and some chars + normalize spaces and newlines
 		str = str
 			.trim()
 			.replace(/\r/g, '\n')
-			.replace(/\t+/g, ' ')
+			.replace(/\f/g, '\n\n') //разрыв страницы
+			//It's adopted from trim() polyfill on https://developer.mozilla.org/ru/docs/Web/JavaScript/Reference/Global_Objects/String/Trim 
+			//and https://developer.mozilla.org/en/docs/Web/JavaScript/Guide/Regular_Expressions#special-white-space
+			.replace(/[\t\v​\xA0\u1680​\u180e\u2000-\u200a​\u2028\u2029​\u202f\u205f​\u3000\ufeff]+/g, ' ')
 			.replace(/\x20\x20+/g, ' ')
 			//remove a spaces before and after new lines
 			.replace(/\n\x20/g, '\n')
@@ -425,7 +421,18 @@
 
 		return str;
 	}
-	
+
+	/**
+	 * Removes hyphens and accents
+	 * 
+	 * @returns {string}
+	 */
+	String.prototype.clean = function () {
+		//&shy; = soft hyphen = discretionary hyphen
+		//&acute; = acute accent = spacing acute
+		return this.replace(/[\xAD\xB4]/g, '');
+	}
+
 	/**
 	 * Реализация метода String.match() с учётом рекурсии
 	 * 

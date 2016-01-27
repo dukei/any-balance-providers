@@ -65,5 +65,6 @@ function main() {
 	AB.getParam(html, result, 'account', /deposit_info(?:[\s\S]*?<span[^>]*>){2}([\s\S]*?)<b1/i, AB.replaceTagsAndSpaces);
 	AB.getParam(html, result, 'monthlyPayment', /deposit_info(?:[\s\S]*?<span[^>]*>){3}([\s\S]*?)<b1/i, AB.replaceTagsAndSpaces,
 		AB.parseBalance);
+
 	AnyBalance.setResult(result);
 }

@@ -357,52 +357,43 @@
 			'script', 'style', 'map', 'iframe', 'frameset', 'object', 'applet', 'comment', 'button', 'textarea', 'select'
 		].join('|');
 
-		//fast short implementation
-		/*
-		var ATTR = `(?:
-							[^>"']+
+		var ATTR = function (n) {
+			//fast short implementation
+			return `(?:
+							(?= ([^>"']+) )\\n
 						|	"  [^"]*  "
 						|	'  [^']*  '
-					)*`;
-		*/
-		var ATTR = function (a, b, c) {
-			return `(?:
-							(?= ([^>"']+) )\\a
-						|	"  (?= ([^"]*) )\\b  "
-						|	'  (?= ([^']*) )\\c  '
 					)*`
-					.replace('a', a)
-					.replace('b', b)
-					.replace('c', c);
-		}
+					.replace('n', n);
+		};
 		//https://regex101.com/#pcre
 		var ALL = `(?:
 						#pair tags with content:
 						<	(?=[a-z])		#speed improve optimization
 							(` + PAIR_TAGS_WITH_CONTENT + `)\\b	#1
-							` + ATTR(2, 3, 4) + `
+							` + ATTR(2) + `
 						>
 							.*?
 						< (?!script\\b)
 							/?
-							\\1\\b` + ATTR(5, 6, 7) + `
+							\\1\\b` + ATTR(3) + `
 						>								
 
 						#opened tags:
 					|	<	(?=[a-z])
 							(?!(?:` + PAIR_TAGS_WITH_CONTENT + `)\\b)
-							` + ATTR(8, 9, 10) + `
+							` + ATTR(4) + `
 						>
 												
-					|	</[a-z]` + ATTR(11, 12, 13) + `>	#closed tags
-					|	<![a-z]` + ATTR(14, 15, 16) + `>	#<!DOCTYPE ...>
+					|	</[a-z]` + ATTR(5) + `>	#closed tags
+					|	<![a-z]` + ATTR(6) + `>	#<!DOCTYPE ...>
 					|	<!\\[CDATA\\[  .*?  \\]\\]>		#CDATA
 					|	<!--  .*?   -->					#comments
 					|	<\\?  .*?  \\?>					#instructions part1 (PHP, Perl, ASP, JSP, XML)
 					|	<%	  .*?    %>					#instructions part2 (PHP, Perl, ASP, JSP)
 					)`;
 		var htmlBlockTagsRe = RegExp('^<('+ BLOCK_TAGS + ')\\b', 'i');
-		console.log(XRegExp(ALL, 'xsig'));
+		//console.log(XRegExp(ALL, 'xsig'));
 		var str = this.replace(
 			XRegExp(ALL, 'xsig'),
 			function (str, entry) {
@@ -413,11 +404,14 @@
 
 		str = str.htmlEntityDecode(false);
 
-		//remove a duplicate spaces
+		//remove a duplicate spaces and some chars + normalize spaces and newlines
 		str = str
 			.trim()
 			.replace(/\r/g, '\n')
-			.replace(/\t+/g, ' ')
+			.replace(/\f/g, '\n\n') //разрыв страницы
+			//It's adopted from trim() polyfill on https://developer.mozilla.org/ru/docs/Web/JavaScript/Reference/Global_Objects/String/Trim 
+			//and https://developer.mozilla.org/en/docs/Web/JavaScript/Guide/Regular_Expressions#special-white-space
+			.replace(/[\t\v​\xA0\u1680​\u180e\u2000-\u200a​\u2028\u2029​\u202f\u205f​\u3000\ufeff]+/g, ' ')
 			.replace(/\x20\x20+/g, ' ')
 			//remove a spaces before and after new lines
 			.replace(/\n\x20/g, '\n')
@@ -427,7 +421,18 @@
 
 		return str;
 	}
-	
+
+	/**
+	 * Removes hyphens and accents
+	 * 
+	 * @returns {string}
+	 */
+	String.prototype.clean = function () {
+		//&shy; = soft hyphen = discretionary hyphen
+		//&acute; = acute accent = spacing acute
+		return this.replace(/[\xAD\xB4]/g, '');
+	}
+
 	/**
 	 * Реализация метода String.match() с учётом рекурсии
 	 * 
@@ -491,5 +496,48 @@
 		if (! global) return result ? result.pop() : null;
 		return result;
 	}
+	
+	/**
+	 * Ищет в коде JavaScript первый массив или объект и возвращет его.
+	 * Или, другими словами, возвращает текст от первой скобки `[{` до последней `]}` с учётом вложенности.
+	 * Может быть использован для поиска JSON, но это это частный случай.
+	 * Скобки `()` внутри JS допускаются, т.к. могут использоваться именованные или анонимные функции, например: 
+	 * `o = {f : (function(a, b){return someFunc(a+b)})}`
+	 * 
+	 * @returns	{string|null}	Возвращает строку или `null`, если ничего не найдено
+	 */
+	String.prototype.getJsArrayOrObject = function() {
+		//http://hjson.org/
+		//https://regex101.com/#javascript
+		//http://blog.stevenlevithan.com/archives/match-innermost-html-element
+		//We use atomic group (trick with lookahead, capturing group and link after) to speed improve, significantly reduce backtracking!
+		var OPEN						= /([\{\[])/,	//group $1
+			CLOSE						= /([\}\]])/,	//group $2
+			ANY_WITH_EXCEPTIONS			= /(?= ([^\{\}\[\]"'`\/]+) )\1/,
+			STRING_IN_DOUBLE_QUOTES		= /"				(?= ((?:[^"\\\r\n]+|\\.)*) )\1	"/,
+			STRING_IN_SINGLE_QUOTES		= /'				(?= ((?:[^'\\\r\n]+|\\.)*) )\1	'/,
+			STRING_IN_BACKTICK_QUOTES	= /`				(?= ((?:[^`\\]+    |\\.)*) )\1	`/,		//ECMA6+
+			REGEXP_INLINE				= /\/	(?![\*\/])	(?= ((?:[^\/\\\r\n]+|\\[^\r\n])+) )\1	\/[gimy]{0,4}/,
+			COMMENT_MULTILINE			= /\/\*				.*?								\*\//,
+			COMMENT_SINGLELINE			= /\/\/				(?= ([^\r\n]*) )\1				/,
+			ALL = XRegExp.union([
+				OPEN,
+				CLOSE,
+				ANY_WITH_EXCEPTIONS,
+				STRING_IN_DOUBLE_QUOTES,
+				STRING_IN_SINGLE_QUOTES,
+				STRING_IN_BACKTICK_QUOTES,
+				REGEXP_INLINE,
+				COMMENT_MULTILINE,
+				COMMENT_SINGLELINE
+			], 'xs');
+
+		try {
+			return this.matchRecursive(ALL, {open: 1, close: 2, parts: false});
+		} catch(e) {
+			return null;
+		}			
+	}
+	
 	
 })();

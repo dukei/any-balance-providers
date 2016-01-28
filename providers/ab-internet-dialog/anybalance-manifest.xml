@@ -4,7 +4,7 @@
 	<api flags="no_browser"/>
 	<name>Диалог г. Калининград</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию  из личного кабинета интернет провайдера Диалог <a href="http://tis-dialog.ru/">http://tis-dialog.ru/</a> г. Калининград</p>
+	<p>Предоставляет информацию  из личного кабинета интернет провайдера Диалог (ООО "ТИС-Диалог") <a href="http://tis-dialog.ru/">http://tis-dialog.ru/</a> г. Калининград</p>
 	]]></description>
 	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
 	<depends>

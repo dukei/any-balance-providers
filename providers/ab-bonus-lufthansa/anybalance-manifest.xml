@@ -7,7 +7,7 @@
 	<p>Obtains information on Lufthansa Miles&amp;More bonus program (http://www.miles-and-more.com)</p>
 	<p>This provider uses mobile version of the site: http://mobile.lufthansa.com.</p>
 	]]></description>
-	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>
 		<module id="library"/>
 	</depends>
@@ -28,7 +28,7 @@
 		<counter id="nextfs" name="Flights segments to next status"/>
 		<counter id="dateRange" name="Time Range" type="text"/>
 	</counters>
-	<keywords>Люфтганза</keywords>
+	<keywords>Люфтганза Miles More Авиакомпания Lufthansa мили </keywords>
 	<type>bonus</type>
 	<country></country>
 </provider>

@@ -1,17 +1,18 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="4">ab-internet-dialog</id>
+	<id version="5">ab-internet-dialog</id>
 	<api flags="no_browser"/>
-	<name>Диалог (Калининград)</name>
+	<name>Диалог г. Калининград</name>
 	<description html="true"><![CDATA[
-	<p>Получает баланс и информацию о тарифном плане для калининградского интернет провайдера Диалог (http://tis-dialog.ru).</p>
-	<p>Информация берется из личного кабинета https://stats.tis-dialog.ru.</p>
+	<p>Предоставляет информацию  из личного кабинета интернет провайдера Диалог <a href="http://tis-dialog.ru/">http://tis-dialog.ru/</a> г. Калининград</p>
 	]]></description>
 	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<depends>
+	<module id="library"/>
+</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
@@ -31,7 +32,7 @@
 		<counter id="ip" name="IP-адрес" type="text"/>
 		<counter id="user_address" name="Адрес подключения" type="text"/>
 	</counters>
-	<keywords>интернет, калининград</keywords>
+	<keywords>интернет, калининград, диалог</keywords>
 	<type>internet</type>
 	<country>ru</country>
 </provider>

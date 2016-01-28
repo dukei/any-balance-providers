@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+    <id version="1">parsers/easysax/</id>
+	<api flags="no_browser" />
+    <name>Easysax parser</name>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<js>easysax.js</js>
+		<history>history.xml</history>
+	</files>
+</provider>

@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="35" major_version="3">ab-money-teleinfo</id>
+	<id version="36" major_version="3">ab-money-teleinfo</id>
 	<name>ВТБ24: Телебанк</name>
 	<api flags="no_browser"/>
 	<description html="true"><![CDATA[
@@ -9,16 +9,18 @@
 	<instruction html="true"><![CDATA[
 	<p>Для подключения к системе «Телебанк» Вам необходимо один раз посетить любой офис банка с  документом, удостоверяющим личность.</p>
 	]]></instruction>
-	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+		<module id="nadapter"/>
+		<module id="extract/abe-money-teleinfo"/>
+		<module id="parsers/easysax"/>
+	</depends>	
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
 		<js>core.js</js>
 		<js>enc-base64.js</js>
-		<js>easysax.js</js>
-		<js>library.js</js>
-		<js>nadapter.js</js>
-		<js>extract.js</js>
 		<js>mainweb.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>

@@ -12,6 +12,8 @@ var g_headers = {
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
+	// TODO Возможно, лучше оставить только новый кабинет, т.к. в старый перестало ходить
+	prefs.cabinet = 'new';
 	
 	checkEmpty(/^\d{10}$/.test(prefs.login), 'Введите логин - номера телефона из 10 цифр!');
 	checkEmpty(prefs.password, 'Введите пароль!');
@@ -32,7 +34,7 @@ function main() {
 		throw new AnyBalance.Error('Не удалось найти форму входа, сайт изменен?');
 	}
 	
-	html = AnyBalance.requestPost(baseurlLogin + 'wap/auth/submitLoginAndPassword?serviceId=301', {
+	html = AnyBalance.requestPost(baseurlLogin + 'wap/auth/submitLoginAndPassword', {
 		pNumber: prefs.login,
 		password: prefs.password,
 		'_csrf': token

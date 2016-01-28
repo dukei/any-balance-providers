@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="32" date="2016-01-28">
+	- Убрана поддержка старого кабинета.
+	</change>
 	<change version="31" date="2016-01-27">
 	- Поддержка изменений в процедуре входа.
 	</change>

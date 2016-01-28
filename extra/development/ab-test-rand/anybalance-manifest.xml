@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="7">ab-test-rand</id>
+	<id version="8">ab-test-rand</id>
 	<api flags="no_browser"/>
 	<name>Test Provider</name>
 	<description html="true"><![CDATA[

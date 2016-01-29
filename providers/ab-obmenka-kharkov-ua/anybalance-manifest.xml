@@ -1,11 +1,11 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <provider>
   <api flags="no_browser"/>
-  <id version="3">ab-obmenka-kharkov-ua</id>
+  <id version="4">ab-obmenka-kharkov-ua</id>
   <name>Обмен валют Харьков (obmenka.kharkov.ua)</name>
-	<description html="true"><![CDATA[
-<p>Предоставляет информацию о курсе валют с сайта <a href="https://kharkov.obmenka.ua/">https://kharkov.obmenka.ua/</a> для г. Харьков.</p>
-]]></description>
+  <description html="true"><![CDATA[
+    <p>Предоставляет информацию о курсе валют с сайта <a href="https://kharkov.obmenka.ua/">https://kharkov.obmenka.ua/</a> для г. Харьков.</p>
+  ]]></description>
   <author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
   <depends>
     <module id="library"/>

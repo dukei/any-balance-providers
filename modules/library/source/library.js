@@ -882,13 +882,13 @@ var AB = (function (global_scope) {
      Возвращается объект (или массив) или undefined, если объект не найден.
      */
     function getJsonObject(html, reStartSearch) {
-        var NOT_SPECIAL_SYMBOL			= /(?= ([^\{\}\[\]"'`\/]+) )\1/,	//any symbol with exceptions
-			STRING_IN_DOUBLE_QUOTES		= /"				(?= ((?:[^"\\\r\n]+|\\.)*) )\1	"/,
-            STRING_IN_SINGLE_QUOTES		= /'				(?= ((?:[^'\\\r\n]+|\\.)*) )\1	'/,
-            STRING_IN_BACKTICK_QUOTES	= /`				(?= ((?:[^`\\]+    |\\.)*) )\1	`/,		//ECMA6+
-            REGEXP_INLINE				= /\/	(?![\*\/])	(?= ((?:[^\/\\\r\n]+|\\[^\r\n])+) )\1	\/[gimy]{0,4}/,
-            COMMENT_MULTILINE			= /\/\*				.*?								\*\//,
-            COMMENT_SINGLELINE			= /\/\/				(?= ([^\r\n]*) )\1				/,
+        var NOT_SPECIAL_SYMBOL           = /(?= ([^\{\}\[\]"'`\/]+) )\1/,    //any symbol with exceptions
+            STRING_IN_DOUBLE_QUOTES      = /"                (?= ((?:[^"\\\r\n]+|\\.)*) )\1  "/,
+            STRING_IN_SINGLE_QUOTES      = /'                (?= ((?:[^'\\\r\n]+|\\.)*) )\1  '/,
+            STRING_IN_BACKTICK_QUOTES    = /`                (?= ((?:[^`\\]+    |\\.)*) )\1  `/,        //ECMA6+
+            REGEXP_INLINE                = /\/   (?![\*\/])  (?= ((?:[^\/\\\r\n]+|\\[^\r\n])+) )\1   \/[gimy]{0,4}/,
+            COMMENT_MULTILINE            = /\/\*             .*?                             \*\//,
+            COMMENT_SINGLELINE           = /\/\/             (?= ([^\r\n]*) )\1              /,
             AFTER_BRACE_PART = XRegExp.union([
                 NOT_SPECIAL_SYMBOL,
                 STRING_IN_DOUBLE_QUOTES,

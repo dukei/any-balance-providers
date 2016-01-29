@@ -5,6 +5,13 @@
 function main() {
     var result = {success: true};
 	
+	var testGetJsonObjectText = '<br />\
+	<b>Warning</b>:  Invalid argument supplied for foreach() in <b>C:\Bitrix\www\ajax\card.php</b> on line <b>104</b><br />\
+	{"usage":"\u041a\u0430\u0440\u0442\u0430 \u043d\u0435 \u043d\u0430\u0439\u0434\u0435\u043d\u0430.","level":null,"last_date":"\u043d\u0435 \u043e\u043f\u0440\u0435\u0434\u0435\u043b\u0435\u043d\u043e"}';
+
+	var json = getJsonObject(testGetJsonObjectText);
+	AnyBalance.trace('getJsonObject output: ' + JSON.stringify(json));
+	
 	AnyBalance.trace(capitalFirstLetters('ИвАНоВ и. иваНОВИЧ'));
 	
 	AnyBalance.setCookie('ya.ru', 'somecookie', 'val', {path: 'some/path'});

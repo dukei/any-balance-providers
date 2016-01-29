@@ -5,7 +5,6 @@
 var g_headers = {
 	'Accept': 'text/html, application/xhtml+xml, image/jxr, */*',
 	'Accept-Language': 'ru,en-US;q=0.7,en;q=0.3',
-	
 	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
 	'Connection': 'Keep-Alive',
 	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.10240',
@@ -79,35 +78,39 @@ function main(){
 			break;
 		}
 	}
-	
+
 	var result = {success: true};
 	
-	if(/>\s*Штрафов не найдено\s*<\//i.test(html)) {
+	/**if(/>\s*Штрафов не найдено\s*<\//i.test(html)) {
 		AnyBalance.trace('Не найдено штрафов..');
 		getParam('0', result, 'balance', null, replaceTagsAndSpaces, parseBalance);
-	} else {
+	} else {**/
 		/*var finesTable = getParam(html, null, null, /<table[^>]*class="extra-table"[^>]*>([\s\S]*?)<\/table>/i) || '';
-		
+
 		getParam(html, result, 'count', /Найдено\s*(\d+)/i, replaceTagsAndSpaces, parseBalance);
 		getParam(html, result, 'balance', /штраф[^<]*?на сумму ([^<]*)/i, replaceTagsAndSpaces, parseBalance);
 		sumParam(finesTable, result, 'lastdate', /<tr[^>]*>\s*(?:(?:[\s\S](?!<\/tr))*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate, aggregate_max);
 		sumParam(finesTable, result, 'firstdate', /<tr[^>]*>\s*(?:(?:[\s\S](?!<\/tr))*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate, aggregate_min);*/
-		if(!isset(json.response.fines)) {
+
+	if(!isset(json.response.fines)) {
 			AnyBalance.trace('Не найдено штрафов..');
-			getParam('0', result, 'balance', null, replaceTagsAndSpaces, parseBalance);		
+			getParam('0', result, 'balance', null, replaceTagsAndSpaces, parseBalance);
 		}
+	else {
 		try {
 			getParam(json.response.fines.length + '', result, 'count', null, replaceTagsAndSpaces, parseBalance);
 		} catch(e){}
-		
+
 		for(var z = 0; z < json.response.fines.length; z++) {
 			var current = json.response.fines[z];
-			
+
 			sumParam(current.amount+'', result, 'balance', null, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 			sumParam(current.date+'', result, 'lastdate', null, replaceTagsAndSpaces, parseDate, aggregate_max);
 			sumParam(current.date+'', result, 'firstdate', null, replaceTagsAndSpaces, parseDate, aggregate_min);
 		}
 	}
+
+	//}
 	
     AnyBalance.setResult(result);
 }

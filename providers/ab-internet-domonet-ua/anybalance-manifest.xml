@@ -1,23 +1,28 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
-	<api flags="no_browser" />
-	<id version="2">ab-internet-domonet-ua</id>
-	<name>Домонет (Киев)</name>
-	<description>Получает данные из личного кабинета интернет-провайдера Украины Домонет г. Киев (https://my.domonet.ua/)</description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
-	<files>
-		<icon>icon.png</icon>
-		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
-		<js>main.js</js>
-		<history>history.xml</history>
-	</files>
-	<counters>
-		<counter id="balance" name="Баланс"/>
-		<counter id="days" name="Дней до отключения"/>
-	</counters>
-	<keywords></keywords>
-	<type>internet</type>
-	<country>ua</country>
+  <api flags="no_browser"/>
+  <id version="3">ab-internet-domonet-ua</id>
+  <name>Домонет (domonet.ua)</name>
+	<description html="true"><![CDATA[
+<p>Предоставляет информацию о из личного кабинета интернет провайдера Домонет <a href="https://domonet.ua/">https://domonet.ua/</a> в Киеве, Одессе, Харькове</p>
+]]></description>
+  <author>Stark &lt;support@starksoft.ru&gt;</author>
+  <depends>
+    <module id="library"/>
+  </depends>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+    <history>history.xml</history>
+  </files>
+  <counters>
+  <counter id="balance" name="Баланс" units=" {@currency}"/>
+  <counter id="monthlyPayment" name="Сумма ежемесячного платежа" units=" {@currency}"/>
+  <counter id="__tariff" name="Текущий тариф" type="text"/>
+  <counter id="account" name="Номер счёта" type="text"/>
+  </counters>
+  <keywords>Домонет Киев Одесса Харьков</keywords>
+  <type>internet</type>
+  <country>ua</country>
 </provider>

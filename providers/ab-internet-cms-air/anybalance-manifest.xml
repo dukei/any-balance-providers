@@ -7,7 +7,7 @@
   <p>	Предоставляет информацию о балансе CMS Air <a href="http://cms.air.io">cms.air.io</a></p>
 	<p>Информация берется из личного кабинета <a href="http://cms.air.io/statistics/referral_system">cms.air.io/statistics/referral_system</a></p>
 	]]></description>
-	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

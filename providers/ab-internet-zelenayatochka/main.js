@@ -1,5 +1,7 @@
-﻿/**
+﻿
+/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
+Зелёная точка
 */
 
 var g_headers = {
@@ -19,101 +21,136 @@ var g_regions = {
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	
 	AnyBalance.setDefaultCharset('utf-8');
 
-	checkEmpty(prefs.login, 'Введите логин!');
-	checkEmpty(prefs.password, 'Введите пароль!');
-	checkEmpty(prefs.region, 'Выберите регион!');
-	
+	AB.checkEmpty(prefs.login, 'Введите логин!');
+	AB.checkEmpty(prefs.password, 'Введите пароль!');
+	AB.checkEmpty(prefs.region, 'Выберите регион!');
+
 	AnyBalance.trace('Регион: ' + prefs.region);
 	g_regions[prefs.region](prefs);
 }
 
 function getUnified(prefs) {
 	var baseurl = 'https://lk.' + prefs.region + '.zelenaya.net/';
-	
-	var html = AnyBalance.requestGet(baseurl + 'login', g_headers);
+	var html = AnyBalance.requestGet(baseurl, g_headers);
 
-	html = AnyBalance.requestPost(baseurl + 'login_func.php', {
-		user: prefs.login,
-		pass: prefs.password,
-		login_uri: '',
-		AuthSubmit: 'ВОЙТИ'
-	}, addHeaders({Referer: baseurl + 'login'}));
+	if (!html || AnyBalance.getLastStatusCode() > 400) {
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
+	}
+
+	var authObj = {
+			user: prefs.login,
+			pass: prefs.password,
+			AuthSubmit: 'ВОЙТИ'
+		},
+		urlAuthPart = 'login_func.php';
+
+	if (prefs.region === 'ufa') {
+		urlAuthPart = 'login'
+		authUrl = 'uri';
+		authObj.uri = 'https://lk.ufa.zelenaya.net/'
+	} else {
+		authObj.login_uri = ''
+	}
+
+
+
+	html = AnyBalance.requestPost(baseurl + urlAuthPart, authObj, AB.addHeaders({
+		Referer: baseurl + urlAuthPart
+	}));
 
 	if (!/logout/i.test(html)) {
-		var error = getParam(html, null, null, /<div[^>]*class="alert alert-danger"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
-		if(error)
-			throw new AnyBalance.Error(error, null, /Ошибка с паролем или пользователем/i.test(error));
-		
+		var error = AB.getParam(html, null, null, /<div[^>]*class="alert alert-danger"[^>]*>([\s\S]*?)<\/div>/i,
+			AB.replaceTagsAndSpaces);
+		if (error) {
+			throw new AnyBalance.Error(error, null, /пользовател|парол/i.test(error));
+		}
+
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
-	
-	var result = {success: true};
-	
-	getParam(html, result, 'fio', /Клиент:\s*<\/td>\s*<td[^>]*>([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'balance', /Баланс счета:\s*<\/td>\s*<td[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'cred_balance', /необходимо оплатить:\s*<strong>([^<]+)/i, replaceTagsAndSpaces, parseBalance);
-	
+
+	var result = {
+		success: true
+	};
+
+	AB.getParam(html, result, 'fio', /Клиент:\s*<\/td>\s*<td[^>]*>([^<]+)/i, AB.replaceTagsAndSpaces);
+	AB.getParam(html, result, 'balance', /Баланс счета:\s*<\/td>\s*<td[^>]*>([^<]+)/i, AB.replaceTagsAndSpaces, AB.parseBalance);
+	AB.getParam(html, result, 'cred_balance', /необходимо оплатить:\s*<strong>([^<]+)/i, AB.eplaceTagsAndSpaces, AB.parseBalance);
+
 	AnyBalance.setResult(result);
 }
 
 function getNal(prefs) {
 	var baseurl = 'http://abonent.naltel.ru/';
-	
+
 	var html = AnyBalance.requestGet(baseurl, g_headers);
 
 	html = AnyBalance.requestPost(baseurl, {
 		login: prefs.login,
 		password: prefs.password,
-	}, addHeaders({Referer: baseurl}));
+	}, addHeaders({
+		Referer: baseurl
+	}));
 
 	if (!/logout/i.test(html)) {
-		var error = getParam(html, null, null, /<p style='color:red'>([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
+		var error = getParam(html, null, null, /<p style='color:red'>([\s\S]*?)<\//i, replaceTagsAndSpaces,
+			html_entity_decode);
 		if (error && /Неверно указаны логин или пароль/i.test(error))
 			throw new AnyBalance.Error(error, null, true);
 		if (error)
 			throw new AnyBalance.Error(error);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
-	var result = {success: true};
-	
+	var result = {
+		success: true
+	};
+
 	getParam(html, result, 'fio', /ФИО(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(html, result, 'balance', /Баланс(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'cred_balance', /Кредит(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
-	
+
 	AnyBalance.setResult(result);
 }
 
 function getStavr(prefs) {
 	var baseurl = 'https://personal.ooonet.ru/';
-	
+
 	var html = AnyBalance.requestGet(baseurl, g_headers);
 
 	html = AnyBalance.requestPost(baseurl, {
 		login: prefs.login,
 		password: prefs.password,
 		uri: '/',
-		'submit':'Войти',
-	}, addHeaders({Referer: baseurl}));
+		'submit': 'Войти',
+	}, addHeaders({
+		Referer: baseurl
+	}));
 
 	if (!/logout/i.test(html)) {
-		var error = getParam(html, null, null, /<\/form>\s*<div[^>]*color\s*:\s*#cd0a0a[^>]*>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
+		var error = getParam(html, null, null, /<\/form>\s*<div[^>]*color\s*:\s*#cd0a0a[^>]*>([^<]*)/i, replaceTagsAndSpaces,
+			html_entity_decode);
 		if (error && /Неверный логин\/ЛС или пароль/i.test(error))
 			throw new AnyBalance.Error(error, null, true);
 		if (error)
 			throw new AnyBalance.Error(error);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
-	var result = {success: true};
-	
-	getParam(html, result, 'fio', /<tr[^>]*>((?:[\s\S](?!<\/tr>))*).<\/tr>\s*<tr[^>]*>\s*<td[^>]*>\s*№ счета/i, replaceTagsAndSpaces, html_entity_decode);
+	var result = {
+		success: true
+	};
+
+	getParam(html, result, 'fio', /<tr[^>]*>((?:[\s\S](?!<\/tr>))*).<\/tr>\s*<tr[^>]*>\s*<td[^>]*>\s*№ счета/i,
+		replaceTagsAndSpaces, html_entity_decode);
 	getParam(html, result, 'acc_num', /№ счета([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'balance', /<tr[^>]*>((?:[\s\S](?!<\/tr>))*?).<\/tr>\s*<tr[^>]*>(?:[\s\S](?!<\/tr>))*?refresh\/account/i, replaceTagsAndSpaces, parseBalance);
-//	getParam(html, result, 'bonuses', /\d+\s*бону/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'cred_balance', /Рекомендуемая сумма к оплате:([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'balance',
+		/<tr[^>]*>((?:[\s\S](?!<\/tr>))*?).<\/tr>\s*<tr[^>]*>(?:[\s\S](?!<\/tr>))*?refresh\/account/i, replaceTagsAndSpaces,
+		parseBalance);
+	//	getParam(html, result, 'bonuses', /\d+\s*бону/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'cred_balance', /Рекомендуемая сумма к оплате:([\s\S]*?)<\/div>/i, replaceTagsAndSpaces,
+		parseBalance);
 	getParam(html, result, 'status', /Статус([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
 
 	AnyBalance.setResult(result);

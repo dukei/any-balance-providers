@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-municipal-fondgkh-nso</id>
+	<api flags="no_browser"/>
+	<name>Фонд модернизации ЖКХ Новосибирской области</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию из личного кабинета Фонда модернизации ЖКХ <a href="http://www.fondgkh-nso.ru/">http://www.fondgkh-nso.ru/</a> Новосибирской области</p>
+	<b>Фонд модернизации ЖКХ – Региональный оператор капитального ремонта общего имущества многоквартирных домов, расположенных на территории Новосибирской области.</b>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Если у вас нет доступа в Личный кабинет, получите его на странице <a href="https://kabinet.fondgkh-nso.ru/#/registration">https://kabinet.fondgkh-nso.ru/#/registration</a></p>
+	]]></instruction>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="saldo" name="Сальдо по ЛС" units=" р."/>
+		<counter id="penalty" name="Пеня" units=" р."/>
+		<counter id="name" name="Имя" type="text"/>
+		<counter id="personalAccountNumber" name="Номер ЛС" type="text"/>
+		<counter id="address" name="Адрес" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>municipal</type>
+	<country>ru</country>
+</provider>

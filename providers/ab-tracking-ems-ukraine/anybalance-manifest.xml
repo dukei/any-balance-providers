@@ -17,7 +17,7 @@
 	</files>
 	<counters>
 		<counter id="track_number" name="Трек номер" type="text"/>
-		<counter id="info" name="Информация по коду" type="text"/>
+		<counter id="info" name="Информация по коду" type="html"/>
 	</counters>
 	<keywords></keywords>
 	<type>tracking</type>

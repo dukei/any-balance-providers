@@ -39,7 +39,7 @@ function main(){
 
     var error = AB.getParam(html, null, null, /Отправление\s+не\s+найдено/i);
     if (error) {
-        throw new AnyBalance.Error('Отправление не найлено по коду ' + prefs.trackNumber);
+        throw new AnyBalance.Error('Отправление не найдено по коду ' + prefs.trackNumber);
     }
 
     var infoHtml = AB.getParam(html, null, null, /информация по коду[\s\S]*?<ul>([\s\S]*?)<\/ul>/i),

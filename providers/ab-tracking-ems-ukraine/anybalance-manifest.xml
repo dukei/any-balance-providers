@@ -7,7 +7,7 @@
 	<p>Предоставляет информацию о географии курьерской доставки, тарифной политике ГПСС, предельном весе отправлений, сроках доставки "из рук в руки".</p>
 	<p>Информация берется из сервиса <a href="http://dpsz.ua/ru/">EMS Ukraine</a>
 	]]></description>
-	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

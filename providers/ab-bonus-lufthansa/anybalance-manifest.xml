@@ -1,31 +1,34 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="6">ab-bonus-lufthansa</id>
+	<id version="7">ab-bonus-lufthansa</id>
 	<api flags="no_browser"/>
 	<name>Lufthansa Miles&amp;More</name>
 	<description html="true"><![CDATA[
 	<p>Obtains information on Lufthansa Miles&amp;More bonus program (http://www.miles-and-more.com)</p>
 	<p>This provider uses mobile version of the site: http://mobile.lufthansa.com.</p>
 	]]></description>
-	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
 		<js>jstz.timezone.min.js</js>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
 	<counters>
 		<counter id="balance" name="Award miles"/>
 		<counter id="qbalance" name="Status miles"/>
-		<counter id="hon" name="HON Circle miles"/>
+		<!-- <counter id="hon" name="HON Circle miles"/> -->
 		<counter id="cardnum" name="Customer number" type="text"/>
 		<counter id="nextstatus" name="Next status" type="text"/>
 		<counter id="nextstatusmiles" name="Status miles to next status"/>
 		<counter id="nextfs" name="Flights segments to next status"/>
+		<counter id="dateRange" name="Time Range" type="text"/>
 	</counters>
-	<keywords>Люфтганза</keywords>
+	<keywords>Люфтганза Miles More Авиакомпания Lufthansa мили </keywords>
 	<type>bonus</type>
 	<country></country>
 </provider>

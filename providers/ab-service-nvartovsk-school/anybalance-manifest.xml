@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-service-nvartovsk-school</id>
+  <name>Информация о состоянии лицевого счета "Школьника" г. Нижневартовск</name>
+  <description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера "Информация о состоянии лицевого счета "Школьника""</p> 
+	<p>Информация берется из личного кабинета <a href="http://edu-nv.ru/l-s-po-detyam/list/84?resetfilters=0">http://edu-nv.ru/l-s-po-detyam/list/84?resetfilters=0</a></p>
+	]]>
+  </description>
+  <author>Denis Volkov &lt;vda@32768.ru&gt;</author>
+  <files>
+    <preferences>preferences.xml</preferences>
+    <js>library.js</js>
+	<js>main.js</js>
+	<history>history.xml</history>
+  </files>
+  <counters>
+	<counter id="balanceSP" name="Школьное питание - остаток на л/с" units= " р"/>
+	<counter id="topaySP" name="Школьное питание - к оплате на л/с" units= " р"/>
+	<counter id="balanceGPD" name="Группа продленного дня - остаток на л/с" units= " р"/>
+    <counter id="topayGPD" name="Группа продленного дня - к оплате" units= " р"/>
+  </counters>
+  <keywords/>
+  <type>service</type>
+  <country>ru</country>
+</provider>

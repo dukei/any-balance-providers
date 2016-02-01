@@ -126,7 +126,7 @@ function request(m) {
     var sizesSize = words.sigBytes;
     words.concat(wordsVer).concat(wordsStr);
 
-    var ret = AnyBalance.requestPost("https://mb.telebank.ru/mobilebanking/burlap/", CryptoJS.enc.Base64.stringify(words), {
+    var ret = AnyBalance.requestPost("https://mb.vtb24.ru/mobilebanking/burlap/", CryptoJS.enc.Base64.stringify(words), {
         'mb-protocol-version': ver,
         'mb-app-version': '0.1.46',
         Connection: 'Keep-Alive'

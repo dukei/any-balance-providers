@@ -1,5 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="6" date="2016-01-28">
+	- Мелкие улучшения и исправления. (AnyBalance Team)
+	- Добавлено отображение тарифа. (AnyBalance Team)
+	</change>
 	<change version="5" date="2015-11-28">
 	- Поддержка изменений на сайте.(ViktorSinitsyn)
 	</change>

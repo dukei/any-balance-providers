@@ -1,88 +1,68 @@
-﻿/**
+﻿
+/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
+Диалог (Калининград)
 */
-
-function getTrafficGb(str){
-  return parseFloat((parseFloat(str)/1024/1024/1024).toFixed(2));
-}
+var g_headers = {
+  'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+  'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
+  'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
+  'Connection': 'keep-alive',
+  'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
+};
 
 function main() {
-	var prefs = AnyBalance.getPreferences();
-	var baseurl = "https://stats.tis-dialog.ru/";
-	
+  var prefs = AnyBalance.getPreferences();
+  var baseurl = "https://stats.tis-dialog.ru/";
   AnyBalance.setDefaultCharset('windows-1251');
-	AnyBalance.setAuthentication(prefs.login, prefs.password);
-	
-	var html = AnyBalance.requestPost(baseurl + 'index.php?phnumber=' + prefs.login, {
-    login: prefs.login,
-    passv: prefs.password
-  });
-	
-	var error = getParam(html, null, null, /Ф\.И\.О\.[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-	var licschet = getParam(html, null, null, /Лицевой счет[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-	if (!licschet) {
-		if(!error)
-			error = getParam(html, null, null, /<span[^>]+color:\s*#dd0000[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
-		if(error)
-			throw new AnyBalance.Error(error, null, /Неправильный логин или пароль/i.test(error));
-			
-		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Не удалось войти в личный кабинет. Сайт изменен?');
-	}
-	
-	var result = {success: true};
-	
-	getParam(html, result, '__tariff', /Тарифный план[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'balance', /Баланс[\s\S]*?<td[^>]*>(-?\d[\d\.,\s]*)/i, replaceFloat, parseFloat);
 
-	if (AnyBalance.isAvailable('userName')) {
-	  getParam(html, result, 'userName', /Ф\.И\.О\.[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-  }
-	
-  if (AnyBalance.isAvailable('licschet')) {
-  	getParam(html, result, 'licschet', /Лицевой счет[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-  }
-	
-  if (AnyBalance.isAvailable('status')) {
-	  getParam(html, result, 'status', /Состояние[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-  }
-	
-  if (AnyBalance.isAvailable('online')) {
-  	getParam(html, result, 'online', /Online\ ([0-9]{1,2}\.[0-9]{1,2}\.[0-9]{4}\ [0-9]{1,2}:[0-9]{1,2}:[0-9]{1,2})\ IP:/i, replaceTagsAndSpaces, html_entity_decode);
+  AB.checkEmpty(prefs.login, 'Введите логин!');
+  AB.checkEmpty(prefs.password, 'Введите пароль!');
+
+  var html = AnyBalance.requestGet(baseurl, g_headers);
+
+  if (!html || AnyBalance.getLastStatusCode() > 400) {
+    AnyBalance.trace(html);
+    throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
   }
 
-	if (AnyBalance.isAvailable('ip')) {
-	  getParam(html, result, 'ip', /IP:([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3})/i, replaceTagsAndSpaces, html_entity_decode);
+  html = AnyBalance.requestPost(baseurl + 'index.php', {
+    'login': prefs.login,
+    'passv': prefs.password,
+  }, AB.addHeaders({
+    Referer: baseurl + 'index.php'
+  }));
+
+  if (!/выход/i.test(html)) {
+    var error = AB.getParam(html, null, null, /loginLinks[^"]*"[^>]*>([\s\S]*?)<\/span>/i, AB.replaceTagsAndSpaces);
+    if (error) {
+      throw new AnyBalance.Error(error, null, /пароль/i.test(error));
+    }
+    AnyBalance.trace(html);
+    throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
   }
 
-	if (AnyBalance.isAvailable('user_address')) {
-  	getParam(html, result, 'user_address', /Адрес подключения[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-  }
+  var result = {
+    success: true
+  };
 
-	if (AnyBalance.isAvailable('speed')) {
-	  getParam(html, result, 'speed', /Скорость подключения[\s\S]*?<td[^>]*>([\s\S]*?\/с)/i, replaceTagsAndSpaces, html_entity_decode);
-  }
+  AB.getParam(html, result, 'licschet', /Лицевой счет[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, AB.replaceTagsAndSpaces);
+  AB.getParam(html, result, '__tariff', /Тарифный план[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, AB.replaceTagsAndSpaces);
+  AB.getParam(html, result, 'balance', /Баланс[\s\S]*?<td[^>]*>(-?\d[\d\.,\s]*)/i, AB.replaceTagsAndSpaces, AB.parseBalance);
+  AB.getParam(html, result, 'userName', /Ф\.И\.О\.[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, AB.replaceTagsAndSpaces);
+  AB.getParam(html, result, 'status', /Состояние[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, AB.replaceTagsAndSpaces);
+  AB.getParam(html, result, 'online',
+    /Online\ ([0-9]{1,2}\.[0-9]{1,2}\.[0-9]{4}\ [0-9]{1,2}:[0-9]{1,2}:[0-9]{1,2})\ IP:/i, AB.replaceTagsAndSpaces);
+  AB.getParam(html, result, 'ip', /IP:([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3})/i, AB.replaceTagsAndSpaces);
+  AB.getParam(html, result, 'user_address', /Адрес подключения[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i,
+    AB.replaceTagsAndSpaces);
+  AB.getParam(html, result, 'speed', /Скорость подключения[\s\S]*?<td[^>]*>([\s\S]*?\/с)/i, AB.replaceTagsAndSpaces);
+  AB.getParam(html, result, 'trafficExtIn', /внешний(?:[\s\S]*?<td[^>]*){1}([\s\S]*?)<\/td>/i, AB.replaceTagsAndSpaces);
+  AB.getParam(html, result, 'trafficExtOut', /внешний(?:[\s\S]*?<td[^>]*){2}([\s\S]*?)<\/td>/i, AB.replaceTagsAndSpaces);
+  AB.getParam(html, result, 'trafficCityIn', /внешний(?:[\s\S]*?<td[^>]*){4}([\s\S]*?)<\/td>/i, AB.replaceTagsAndSpaces);
+  AB.getParam(html, result, 'trafficCityOut', /внешний(?:[\s\S]*?<td[^>]*){5}([\s\S]*?)<\/td>/i, AB.replaceTagsAndSpaces);
 
-	if (AnyBalance.isAvailable('trafficExt', 'trafficExtIn', 'trafficExtOut')) {
-		var t_in = getParam(html, null, null, /Внешний[\s\S]*?<td[^>]*>(-?\d[\d\.,\s]*)/i, replaceFloat, getTrafficGb);
-		var t_out = getParam(html, null, null, /Внешний[\s\S]*?<td[^>]*>[\s\S]*?<td[^>]*>(-?\d[\d\.,\s]*)/i, replaceFloat, getTrafficGb);
-		if (AnyBalance.isAvailable('trafficExt'))
-			result.trafficExt = t_in + t_out;
-		if (AnyBalance.isAvailable('trafficExtIn'))
-			result.trafficExtIn = t_in;
-		if (AnyBalance.isAvailable('trafficExtOut'))
-			result.trafficExtOut = t_out;
-	}
-	
-	if (AnyBalance.isAvailable('trafficCity', 'trafficCityIn', 'trafficCityOut')) {
-		var t_in = getParam(html, null, null, /Городской[\s\S]*?<td[^>]*>(-?\d[\d\.,\s]*)/i, replaceFloat, getTrafficGb);
-		var t_out = getParam(html, null, null, /Городской[\s\S]*?<td[^>]*>[\s\S]*?<td[^>]*>(-?\d[\d\.,\s]*)/i, replaceFloat, getTrafficGb);
-		if (AnyBalance.isAvailable('trafficCity'))
-			result.trafficCity = t_in + t_out;
-		if (AnyBalance.isAvailable('trafficCityIn'))
-			result.trafficCityIn = t_in;
-		if (AnyBalance.isAvailable('trafficCityOut'))
-			result.trafficCityOut = t_out;
-	}
-	AnyBalance.setResult(result);
+
+  AnyBalance.setResult(result);
+
 }

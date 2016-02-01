@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="8">ab-tracking-gdeposylka</id>
+	<id version="9">ab-tracking-gdeposylka</id>
 	<api flags="no_browser"/>
 	<name>Где посылка</name>
 	<description html="true"><![CDATA[
@@ -9,12 +9,13 @@
 	<p>Сервис уже умеет полноценно отслеживать РПО (регистрируемые почтовые отправления) на Почте США, Почте Китая, Почте Гонконга, Почте России, Почте Украины и Почте Казахстана, а также отображать путь прохождения посылки на карте.</p> 
 	<p>Частично поддерживается отслеживание почтовых отправлений из Германии, Великобритании, Сингапура, Тайваня, Японии, Польши, Таиланда, Австрии, Франции, Кореи.</p>     
 	]]></description>
-	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
@@ -25,6 +26,6 @@
 		<counter id="days" name="Время в пути" units=" д"/>
 		<counter id="fulltext" name="Сводка" type="html"/>
 	</counters>
-	<keywords>Почтовое отправление, почта России</keywords>
+	<keywords>Почтовое отправление, почта России, почта китая, почта малазии</keywords>
 	<type>tracking, post</type>
 </provider>

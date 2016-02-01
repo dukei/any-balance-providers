@@ -18,8 +18,8 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units=" грн."/>
-		<counter id="cost" name="Стоимость" units=" грн./мес."/>
+		<counter id="balance" name="Баланс" units=" грн"/>
+		<counter id="cost" name="Стоимость" units=" грн/мес"/>
 		<counter id="agreement" name="Договор"/>
 		<counter id="status" name="Статус" type="text"/>
 	</counters>

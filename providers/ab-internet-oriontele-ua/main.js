@@ -34,9 +34,10 @@ function main() {
 	
 	html = AnyBalance.requestPost(baseurl + 'login', params, AB.addHeaders({Referer: baseurl + 'login'}));
 	
-	if (!/logout/i.test(html)) {
-		if (/id="login_error"/i.test(html))
-			throw new AnyBalance.Error('Неверный логин или пароль', null, true);
+	if (!/\/logout/i.test(html)) {
+        var error = Ab.getParam(html, null, null, /<div id="login_error"[^>]*>([\s\S]*?)<\/div>/i, AB.replaceTagsAndSpaces);
+		if (error)
+			throw new AnyBalance.Error(error, null, true);
 		
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');

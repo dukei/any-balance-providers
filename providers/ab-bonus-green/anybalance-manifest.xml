@@ -7,7 +7,7 @@
 	<p>Предоставляет информацию о бонусных баллах с сайта http://www.green-bonus.ru</p>
 	<p>Информация берется из личного кабинета http://www.green-bonus.ru/operations/</p>
 	]]></description>
-	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

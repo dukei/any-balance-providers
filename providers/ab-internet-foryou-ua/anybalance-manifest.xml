@@ -7,7 +7,7 @@
 	<p>Предоставляет информацию о балансе, тарифе, номере лицевого счета интернет провайдера http://foryou.net.ua/</p>
 	<p>Информация берется из личного кабинета https://stat.foryou.net.ua/cgi-bin/my.pl</p>
 	]]></description>
-	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

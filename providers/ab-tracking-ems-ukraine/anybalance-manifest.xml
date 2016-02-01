@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<api flags="no_browser"/>
+	<id version="1">ab-tracking-ems-ukraine</id>
+	<name>EMS Украина</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о географии курьерской доставки, тарифной политике ГПСС, предельном весе отправлений, сроках доставки "из рук в руки".</p>
+	<p>Информация берется из сервиса <a href="http://dpsz.ua/ru/">EMS Ukraine</a>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="track_number" name="Трек номер" type="text"/>
+		<counter id="info" name="Информация по коду" type="html"/>
+	</counters>
+	<keywords></keywords>
+	<type>tracking</type>
+	<country>ru</country>
+</provider>

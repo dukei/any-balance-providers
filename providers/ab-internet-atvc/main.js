@@ -55,14 +55,14 @@ function main(){
 
     getParam(html, result, '__tariff', /Тариф[\s\S]*?<td[^>]*>([\s\S]*?)<div[^>]*>/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, 'balance', /Баланс[\s\S]*?<td[^>]*>([\s\S]*?)<div[^>]*>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'contract', /Номер договора[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'license_fee', /Ежемесячный платёж[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'number', /Номер договора[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'licenseFee', /Ежемесячный платёж[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'payment', /К оплате[\s\S]*?<td[^>]*>([\s\S]*?)<div[^>]*>/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'virtual_payment', /Виртуальный платеж[\s\S]*?<td[^>]*>([\s\S]*?)<div[^>]*>/i, replaceTagsAndSpaces, html_entity_decode);
 
     getParam(html, result, 'status', /Статус[\s\S]*?<td[^>]*>([\s\S]*?)<div[^>]*>/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, 'login', /Логин[\s\S]*?<td[^>]*>([\s\S]*?)<div[^>]*>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'mailbox', /Почтовый ящик[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'mailnumber', /Почтовый ящик[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
 
     AnyBalance.setResult(result);
 }

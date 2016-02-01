@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-internet-atvc</id>
+  <id version="2">ab-internet-atvc</id>
   <name>АТК (Архангельск, Новодвинск)</name>
   <description>
     Получает баланс для провайдера АТК (http://atvc.ru/)
 
     Информация берется из личного кабинета (https://support.atknet.ru/)
   </description>
-  <author>Alexandra Shalamova &lt;alexandrashalamova@gmail.com&gt;</author>
+  <author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
@@ -17,13 +17,13 @@
   </files>
   <counters>
     <counter id="balance" name="Баланс" units="р"/>
-    <counter id="license_fee" name="Ежемесячный платеж" units="р"/>
+    <counter id="licenseFee" name="Ежемесячный платеж" units="р"/>
     <counter id="payment" name="К оплате" units="р"/>
     <counter id="virtual_payment" name="Виртуальный платеж" type="text"/>
     <counter id="status" name="Статус" type="text"/>
     <counter id="login" name="Логин" type="text"/>
-    <counter id="contract" name="Номер договора" type="text"/>
-    <counter id="mailbox" name="Адрес почтового ящика" type="text"/>
+    <counter id="number" name="Номер договора" type="text"/>
+    <counter id="mailnumber" name="Адрес почтового ящика" type="text"/>
   </counters>
   <keywords>
     atvc

@@ -46,7 +46,7 @@ function main() {
 
 	var params;
 
-	if (/error/i.test(html)) {
+	if (!!html) {
 		var errorForm = AB.getParam(html, null, null, /<form[^>]*>([\s\S]*?)<\/form>/i);
 		if(!errorForm)
 			throw new AnyBalance.Error("Can't find form with error. Site changed?");

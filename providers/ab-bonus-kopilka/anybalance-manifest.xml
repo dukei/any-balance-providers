@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id version="3">ab-bonus-kopilka</id>
+	<id version="4">ab-bonus-kopilka</id>
 	<name>Копилка</name>
 	<description html="true"><![CDATA[
 	<p>Получает баланс баллов на карте бонусной программы Копилка <a href="http://kopilka-bonus.ru">http://kopilka-bonus.ru</a></p>

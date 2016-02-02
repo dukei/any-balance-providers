@@ -53,28 +53,30 @@ function main() {
 	var result = {success: true};
 
 	json = getJson(html);
-	if(json.ewallets[0] && json.ewallets[0].balances) {
 
-		AnyBalance.trace("Найдено счётов по кошельку " +(json.ewallets[0].ePid || '')+ ": "+json.ewallets[0].balances.length);
-		AB.getParam(json.ewallets[0].ePid || undefined, result, 'ePid');
+	if(!json.ewallets || !json.ewallets.length < 1)
+		throw new AnyBalance.Error("Не удалось найти ни одного кошелька, сайт изменён?");
 
-		for(var i=0; i<json.ewallets[0].balances.length; i++) {
+	// пока есть только один кошелек, возможно добавим в дальнейшем еще
+	var wallet = json.ewallets[0];
 
-			var counter_name = null;
+	AnyBalance.trace("Найдено счётов по кошельку " +wallet.ePid+ ": "+wallet.balances.length);
+	AB.getParam(wallet.ePid, result, 'ePid');
 
-			if(json.ewallets[0].balances[i].currency == 'usd')
-				counter_name = 'e_wal_USD';
-			else if(json.ewallets[0].balances[i].currency == 'eur')
-				counter_name = 'e_wal_EUR';
+	for(var i=0; i<wallet.balances.length; i++) {
+		var counter_name;
 
-			if(!counter_name)
-				AnyBalance.trace("Неизвестная опция: "+ json.ewallets[0].balances[i].currency);
-			else
-				AB.getParam(json.ewallets[0].balances[i].currentBalance, result, counter_name);
+		if(wallet.balances[i].currency == 'usd')
+			counter_name = 'e_wal_USD';
+		else if(wallet.balances[i].currency == 'eur')
+			counter_name = 'e_wal_EUR';
 
-		}
+		if(!counter_name)
+			AnyBalance.trace("Неизвестная опция: "+ wallet.balances[i].currency);
+		else
+			AB.getParam(wallet.balances[i].currentBalance, result, counter_name);
+
 	}
-	else AnyBalance.trace("Не смогли найти открытые счета по электронному кошельку");
 	
 	AnyBalance.setResult(result);
 }

@@ -1,48 +1,83 @@
 ﻿/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
+**/
 
-Получает информацию по бонусной карте UTair
-
-Сайт оператора: http://utair.ru
-Личный кабинет: https://ffp.utair.ru/css/index.action
-*/
+var g_headers = {
+    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+    'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
+    'Connection': 'keep-alive',
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/47.0.2526.80 Safari/537.36'
+};
 
 function main(){
     var prefs = AnyBalance.getPreferences();
     AnyBalance.setDefaultCharset('utf-8');
+    var baseurl = "https://clm.utair.ru/";
 
-    var baseurl = "https://ffp.utair.ru/css/";
+    AB.checkEmpty(prefs.login, 'Введите логин!');
+    AB.checkEmpty(prefs.password, 'Введите пароль!');
 
-    var html = AnyBalance.requestPost(baseurl + 'CssLogin.action?request_locale=ru', {
-        username:prefs.login,
+    var html = AnyBalance.requestGet(baseurl+'web/utair/login', g_headers);
+
+    if(!html || AnyBalance.getLastStatusCode() > 400) {
+        AnyBalance.trace(html);
+        throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
+    }
+
+    html = AnyBalance.requestPost(baseurl + 'web/utair-login', JSON.stringify({
+        login:prefs.login,
         password:prefs.password
-    });
+    }), AB.addHeaders({
+        'X-Requested-With': 'XMLHttpRequest'
+    }));
 
-    if(!/CssLogout.action/.test(html)){
-        var error = getParam(html, null, null, /<font[^>]*color="red"[^>]*>([\s\S]*?)<\/font>/, replaceTagsAndSpaces, html_entity_decode);
-        if(error)
-            throw new AnyBalance.Error(error);
-        throw new AnyBalance.Error('Не удалось войти в личный кабинет. Проблемы на сайте или сайт изменен.');
+    var json = getJson(html);
+
+    if(!json.access_token){
+
+        if(json.errors[0]) {
+            var field = json.errors[0].field || undefined;
+            var errorCode = json.errors[0].code || undefined;
+            if(!field || !errorCode)
+                throw new AnyBalance.Error("Не удалось найти параметр ошибки. Сайт изменён?");
+
+            var err_html = AnyBalance.requestGet(baseurl+'utair-cwa-theme/locale/ru_RU.json', g_headers); //Получаем список ошибок
+            var err_json = getJson(err_html);
+
+            var error = err_json.errors[errorCode] && err_json.errors[errorCode][field] ? err_json.errors[errorCode][field].tmpl : undefined;
+            if(error)
+                throw new AnyBalance.Error(error, null, /Неправильный логин или пароль/i.test(error));
+        }
+
+        AnyBalance.trace(html);
+        throw new AnyBalance.Error('Не удалось войти в личный кабинет. Сайт изменён?.');
     }
 
     var result = {success: true};
 
-    getParam(html, result, 'balance', /<strong[^>]*>([^<]*)<\/strong>\s*Наградные мили/i, replaceTagsAndSpaces, parseBalance);
-    if(AnyBalance.isAvailable('balance') && !isset(result.balance))
-        getParam(html, result, 'balance', /<td[^>]*>Состояние счета[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+    var req_headers = {
+        'X-Requested-With': 'XMLHttpRequest',
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + json.access_token,
+        'Referer': 'https://clm.utair.ru/group/utair'
+    };
 
-    getParam(html, result, '__tariff', /<td[^>]*>(?:Вид программы|Уровень участия)[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'cardnum', /Номер карты[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+    if(isAvailable('cardnum')) {
+        html = AnyBalance.requestGet(baseurl+'utair-rest/customers?_='+new Date().getTime(),req_headers);
+        json = getJson(html);
 
-	getParam(html, result, 'miles_thisyear', /<strong>([\s\S]{1,100})Статусные мили в текущем году/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'miles_lastyear', /<strong>([\s\S]{1,100})Статусные мили в прошлом году/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'miles_to_erase', /<strong>([\s\S]{1,100})Наградые мили к следующему аннулированию/i, replaceTagsAndSpaces, parseBalance);
-	
-	getParam(html, result, 'miles_to_erase_date', /Наградые мили к следующему аннулированию([\s\S]{1,20})/i, replaceTagsAndSpaces, parseDate);
-	
-	
-	
-	
-	
+        AB.getParam(json.cardNo, result, 'cardnum');
+    }
+
+    if(isAvailable(['fio', 'redemptionMiles', 'nextExpDate', 'qualifyingMiles'])) {
+        html = AnyBalance.requestGet(baseurl+'utair-rest/profileInfo?_='+new Date().getTime(), req_headers);
+        json = getJson(html);
+
+        AB.getParam((json.firstName || '') + ' ' + (json.secondName || '') + ' ' + (json.lastName || ' '), result, 'fio');
+        AB.getParam(json.redemptionMiles + '', result, 'redemptionMiles', null, null, AB.parseBalance);
+        AB.getParam(json.qualifyingMiles + '', result, 'qualifyingMiles', null, null, AB.parseBalance);
+        AB.getParam(json.nextExpDate, result, 'nextExpDate', null, null, AB.parseDate);
+    }
+
     AnyBalance.setResult(result);
 }

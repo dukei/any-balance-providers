@@ -5,7 +5,7 @@
 	<name>Пенсионный фонд АО "ЕНПФ"</name>
 	<description html="true"><![CDATA[
   <p>Предоставляет информацию из личного кабинета Пенсионного фонда АО "ЕНПФ" на сайте: <a href="https://enpf.kz/">https://enpf.kz</a></p>
-  <p>Информация берется из личного кабинета Пенсионного фонда АО "ЕНПФ" <a href="http://kaliningrad.farfor.ru/cabinet/">http://kaliningrad.farfor.ru/cabinet/</a></p>
+  <p>Информация берется из личного кабинета Пенсионного фонда АО "ЕНПФ" <a href="https://cabinet.enpf.kz">https://cabinet.enpf.kz</a></p>
 	]]></description>
 	<instruction html="true"><![CDATA[
 	<p>Если у вас нет доступа в Личный кабинет, получите его на странице <a href="https://cabinet.enpf.kz">https://cabinet.enpf.kz</a></p>
@@ -30,5 +30,5 @@
 	</counters>
 	<keywords>Пенсионный фонд</keywords>
 	<type>municipal</type>
-	<country>ru</country>
+	<country>kz</country>
 </provider>

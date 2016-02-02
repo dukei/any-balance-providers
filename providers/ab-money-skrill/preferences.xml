@@ -1,25 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
 	<EditTextPreference
-		title="Номер телефона"
+		title="Логин"
 		key="login"
-		summary="Номер телефона для доступа к личному кабинету||{@s}\n"
+		summary="||{@s}"
 		obligatory="true"
-		inputType="number"
-		dialogTitle="Номер телефона"
+		dialogTitle="Логин"
 		positiveButtonText="ОК"
 		negativeButtonText="Отмена"
-		dialogMessage="Введите номер телефона без префикса для входа в личный кабинет, например, 9163456789.">
+		dialogMessage="Введите логин, используемый для входа в личный кабинет.">
 	</EditTextPreference>
 	<EditTextPreference
 		title="Пароль"
 		key="password"
-		summary="Пароль для входа в личный кабинет||**********\n"
+		summary="||***********"
 		obligatory="true"
 		dialogTitle="Пароль"
 		positiveButtonText="ОК"
 		negativeButtonText="Отмена"
 		dialogMessage="Введите пароль, используемый для входа в личный кабинет."
 		inputType="textPassword">
+	</EditTextPreference>
+	<EditTextPreference
+		title="Дата рождения"
+		key="day"
+		summary="||{@s}"
+		obligatory="true"
+		dialogTitle="Дата рождения"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите дату Вашего рождения в формате: dd.mm.yyyy">
 	</EditTextPreference>
 </PreferenceScreen>

@@ -1,5 +1,7 @@
-﻿/**
+﻿
+/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
+интернет МТС Беларусь
 */
 
 var g_headers = {
@@ -14,44 +16,91 @@ function main() {
 	var prefs = AnyBalance.getPreferences();
 	var baseurl = 'https://internet.mts.by/';
 	AnyBalance.setDefaultCharset('utf-8');
-	
-	checkEmpty(prefs.login, 'Введите логин!');
-	checkEmpty(prefs.password, 'Введите пароль!');
-	
-	var html = AnyBalance.requestGet(baseurl + 'login', g_headers);
-	
-	if(!html || AnyBalance.getLastStatusCode() > 400)
+
+	AB.checkEmpty(prefs.login, 'Введите логин!');
+	AB.checkEmpty(prefs.password, 'Введите пароль!');
+
+	if (!/\d{9}/i.test(prefs.login)) {
+		throw new AnyBalance.Error(
+			'Номер телефона должен состоять из 9 цифр (как на сайте), например 001234567, и быть без пробелов, разделителей и кода +375 '
+		);
+	}
+
+
+	var html = AnyBalance.requestGet(baseurl + '', g_headers);
+
+	if (!html || AnyBalance.getLastStatusCode() > 400) {
+		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
-	
-    var token = getParam(html, null, null, /authenticity_token(?:[\s\S]*?)value="([\s\S]*?)"/i);
-    
-	html = AnyBalance.requestPost(baseurl + 'login', {
-		login: prefs.login,
-		password: prefs.password,
-		'authenticity_token': token,
-        referer: '',
-        commit: '',
-        utf8: ''
-	}, addHeaders({Referer: baseurl + 'login'}));
-	
-	if (!/logout/i.test(html)) {
-		var error = getParam(html, null, null, /<div[^>]+class="b_error"[^>]*>[\s\S]*?([\s\S]*?)<\/tr>/i, replaceTagsAndSpaces, html_entity_decode);
-		if (error)
-			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
-		
+	}
+
+	var authToken = AB.getParam(html, null, null, /name="[^"]*authenticity[^"]*"[\s\S]*?value="([^"]*)"/i);
+
+	if (!authToken) {
+		throw new AnyBalance.Error('не удалось получить токен для входа', null, true);
+	}
+
+	AnyBalance.trace(authToken);
+
+	html = AnyBalance.requestPost(baseurl + 'session', {
+		'utf8': '',
+		'authenticity_token': authToken,
+		'phone_number': prefs.login,
+		'password': prefs.password,
+		'commit': 'Войти'
+	}, AB.addHeaders({
+		Referer: baseurl + 'session'
+	}));
+
+
+	if (!/выйти/i.test(html)) {
+		var error = AB.getParam(html, null, null, /<div[^>]*class="[^"]*error[^"]*"[^>]*>([\s\S]*?)<\/div>/i,
+			AB.replaceTagsAndSpaces);
+		if (error) {
+			throw new AnyBalance.Error(error, null, /пароль|заблокирован/i.test(error));
+		}
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
-	
-	var result = {success: true};
-	
-	getParam(html, result, 'balance', /баланс:(?:[^>]*>){1}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'number', /Мой номер:(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, '__tariff', /Мой тарифный план:(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'network', /Сеть:(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'ip', /IP-адрес:(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'traffic', /Остаток трафика:(?:[\s\S]*?)data-text="([\s\S]*?)"/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'next_topup', /Следующее пополнение трафика:(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseDateWord);
-	
+
+	var result = {
+		success: true
+	};
+
+	var data = AB.getElement(html, /<div[^>]*class="[^"]*box-list[^"]*"[^>]*>/i);
+
+	AB.getParam(data, result, 'name', /пользователь(?:[\s\S]*?<div[^>]*>){2}([\s\S]*?)<\/div>/i, AB.replaceTagsAndSpaces);
+	AB.getParam(data, result, 'phoneNumber', /номер\sтелефона(?:[\s\S]*?<div[^>]*>){2}([\s\S]*?)<\/div>/i, AB.replaceTagsAndSpaces);
+	AB.getParam(data, result, 'balance', /баланс(?:[\s\S]*?<div[^>]*>){3}([\s\S]*?)<\/div>/i, AB.replaceTagsAndSpaces, AB.parseBalance);
+	AB.getParam(html, result, ['currency', 'balance'], /баланс(?:[\s\S]*?<div[^>]*>){3}([\s\S]*?)<\/div>/i, AB.replaceTagsAndSpaces,
+		AB.parseCurrency);
+	AB.getParam(data, result, '__tariff', /тарифный(?:[\s\S]*?<div[^>]*>){2}([\s\S]*?)<\/div>/i, AB.replaceTagsAndSpaces);
+	AB.getParam(data, result, 'status', /статус(?:[\s\S]*?<div[^>]*>){2}([\s\S]*?)<\/div>/i, AB.replaceTagsAndSpaces);
+
+	if (AnyBalance.isAvailable('servicesInfo')) {
+
+		var
+			table = AB.getElement(html, /<table[^>]*class="[^"]*info[^"]*"[^>]*>/i),
+			trArray = AB.sumParam(table, null, null, /<tr[^>]*>([\s\S]*?)<\/tr>/gi),
+			tdArray = [],
+			servicesInfo = [],
+			service = '',
+			date1 = '',
+			status = '',
+			date2 = '';
+
+		for (var i = 1; i < trArray.length; i++) {
+			tdArray = AB.sumParam(trArray[i], null, null, /<td[^>]*>([\s\S]*?)<\/td>/gi);
+
+			service = AB.getParam(tdArray[0], null, null, null, AB.replaceTagsAndSpaces);
+			date1 = AB.getParam(tdArray[1], null, null, null, AB.replaceTagsAndSpaces);
+			status = AB.getParam(tdArray[2], null, null, null, AB.replaceTagsAndSpaces);
+			date2 = AB.getParam(tdArray[3], null, null, null, AB.replaceTagsAndSpaces);
+			servicesInfo.push(service + ' | ' + status + ' | ' + date2);
+		}
+		AB.getParam(servicesInfo.join('<br/>'), result, 'servicesInfo');
+
+	}
+
 	AnyBalance.setResult(result);
 }

@@ -1,18 +1,21 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <history>
-	<change version="6" date="2015-07-16">
-	- Добавлена поддержка новых регионов: Уфа, Белгород, Томск, Владивосток.
-	</change>
-	<change version="5" date="2015-04-07">
-	- Добавлена поддержка Липецка
-	</change>
-	<change version="4" date="2015-01-02">
-	- Поддержка изменений на сайте.
-	</change>
-	<change version="3" date="2014-06-08">
-	- Исправлена ошибка.
-	</change>
-	<change version="2" date="2014-06-06">
-	- Добавлен регион: Нальчик.
-	</change>
+  <change version="7" date="2016-02-01">
+    - Для региона Уфа улучшена обработка ошибок и исправлена работа с авторизацией.
+  </change>
+  <change version="6" date="2015-07-16">
+    - Добавлена поддержка новых регионов: Уфа, Белгород, Томск, Владивосток.
+  </change>
+  <change version="5" date="2015-04-07">
+    - Добавлена поддержка Липецка
+  </change>
+  <change version="4" date="2015-01-02">
+    - Поддержка изменений на сайте.
+  </change>
+  <change version="3" date="2014-06-08">
+    - Исправлена ошибка.
+  </change>
+  <change version="2" date="2014-06-06">
+    - Добавлен регион: Нальчик.
+  </change>
 </history>

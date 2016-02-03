@@ -1,11 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="6">ab-internet-zelenayatochka</id>
+	<id version="7">ab-internet-zelenayatochka</id>
 	<api flags="no_browser"/>
-	<name>Зеленая точка</name>
+	<name>Зелёная точка</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе интернет-провайдера Зеленая точка  <a href="http://zelenaya.net">http://zelenaya.net</a><.</p>
-	<p>Информация берется из личных кабинетов:</p>
+	<p>Предоставляет информацию из личного кабинета интернет-провайдера Зелёная точка  <a href="http://zelenaya.net">http://zelenaya.net</a><.</p>
+	<p>Информация предоставляется для пользователей следущих городов:</p>
 	<ul>
 		<li>Липецк <a href="https://lk.lipetsk.zelenaya.net/">https://lk.lipetsk.zelenaya.net/</a></li>
 		<li>Ставрополь <a href="https://personal.ooonet.ru/">https://personal.ooonet.ru/</a></li>
@@ -17,20 +17,21 @@
 	</ul>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
 	<counters>
 		<counter id="balance" name="Баланс" units=" р"/>
 		<counter id="cred_balance" name="Кредит/К оплате" units=" р"/>
-<!--	<counter id="bonuses" name="Бонусы" units=" б"/> -->
 		<counter id="fio" name="ФИО" type="text"/>
 		<counter id="status" name="Статус" type="text"/>
-		<counter id="acc_num" name="Номер счета" type="text"/>
+		<counter id="acc_num" name="Номер счёта" type="text"/>
 	</counters>
 	<keywords></keywords>
 	<type>internet</type>

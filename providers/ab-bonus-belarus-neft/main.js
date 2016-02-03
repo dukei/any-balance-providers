@@ -22,14 +22,14 @@ function main(){
 	var pass = prefs.password;
 	var key = prefs.login;
     
-    pass = rstr2hex(rstr_hmac_sha1(pass, key));
+    var passHash = rstr2hex(rstr_hmac_sha1(pass, key));
 	
 	AnyBalance.requestGet(baseurl + 'lprogram/index.jsp', g_headers);
 	
 	var html = AnyBalance.requestPost(baseurl + 'lprogram/login', {
-        loginName:prefs.login,
-		loginPwd:'',
-        passHesh:pass,
+        loginName: prefs.login,
+		txtPassword: pass,
+        passHesh: passHash
     }, addHeaders({Referer: baseurl + 'lprogram/index.jsp', Origin:baseurl})); 
 	
     if(!/lprogram\/logout/i.test(html)){
@@ -48,6 +48,7 @@ function main(){
     getParam(html, result, 'fio', /Здравствуйте,[^>]*>([^\(<]*)/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, 'balance', /НА ВАШЕМ СЧЕТУ(?:[^>]*>){4}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'discount', /РАЗМЕР ВАШЕЙ СКИДКИ(?:[^>]*>){6}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'next_month_discount', /в следующем месяце(?:[^>]*>){4}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'card_num', /№ карты([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(html, result, '__tariff', /№ карты([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(html, result, 'discount_next', /СЛЕДУЮЩЕЙ СКИДКИ(?:[^>]*>){4}([^<]*)/i, replaceTagsAndSpaces, parseBalance);

@@ -3,17 +3,19 @@
 */
 
 var g_headers = {
-	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
-	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
+	// 'Cache-Control': 'max-age=0',
+	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+	'Accept-Language': 'ru,en;q=0.8',
 	'Connection': 'keep-alive',
-	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
+	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/48.0.2564.97 Safari/537.36',
 };
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
+	
 	// TODO Возможно, лучше оставить только новый кабинет, т.к. в старый перестало ходить
-	prefs.cabinet = 'new';
+	if(!prefs.cabinet)
+		prefs.cabinet = 'new';
 	
 	checkEmpty(/^\d{10}$/.test(prefs.login), 'Введите логин - номера телефона из 10 цифр!');
 	checkEmpty(prefs.password, 'Введите пароль!');
@@ -55,56 +57,92 @@ function main() {
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
-	if (prefs.cabinet == 'new') {
+	
+	if (prefs.cabinet == 'new')
 		doNewCabinet(html);
-	} else {
+	else
 		doOldCabinet(html, baseurl);
-	}
 }
 
 function doNewCabinet(html) {
-	AnyBalance.trace('Входим в новый кабинет');
-	var lasturl = AnyBalance.getLastUrl();
-	var url = getParam(html, null, null, /href="([^"]*%3A%2F%2Fnew.my.tele2.ru[^"]*)/i, replaceHtmlEntities);
-	html = AnyBalance.requestGet(joinUrl(lasturl, url), g_headers);
 	var baseurl = "https://new.my.tele2.ru/";
-	var html = AnyBalance.requestGet('http://new.my.tele2.ru/login', addHeaders({
-		Referer: AnyBalance.getLastUrl()
-	}));
+	
+	AnyBalance.trace('Входим в новый кабинет');
+	
+	var html = AnyBalance.requestGet('http://new.my.tele2.ru/', g_headers);
+	html = AnyBalance.requestGet('http://new.my.tele2.ru/login', addHeaders({Referer: baseurl}));
+	
+	
 	if (AnyBalance.getLastStatusCode() > 400) {
+		// Пержде, чем переходить, надо сохранить ошибку, на всякий
 		var error = getElement(html, /<div[^>]+error[^>]*>/i, replaceTagsAndSpaces);
-		if (error) throw new AnyBalance.Error('Новый кабинет: ' + error);
-		throw new AnyBalance.Error('Новый личный кабинет Теле2 временно недоступен. Попробуйте позже.');
-	}
-	var result = {
-		success: true
-	};
-	getParam(html, result, "userName", /<div[^>]+class="user-name"[^>]*>([^]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, "phone", /<div[^>]+class="user-phone"[^>]*>([^]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
-	html = AnyBalance.requestGet(baseurl + 'main/tariffAndBalance', g_headers);
-	var json = getJson(html);
-	getParam(json.currentTariffPlan.name, result, '__tariff');
-	getParam(json.balance.amount, result, 'balance', null, null, parseBalance);
-	if (AnyBalance.isAvailable('sms_used', 'min_used', 'traffic_used', 'mms_used', 'sms_left', 'min_left', 'traffic_left', 'mms_left')) {
-		AnyBalance.trace("Searching for resources left");
-		html = AnyBalance.requestGet(baseurl + "main/discounts", g_headers);
-		AnyBalance.trace('Got discounts: ' + html);
-		json = JSON.parse(html);
-		var arr = [json.discountsIncluded, json.discountsNotIncluded];
-		for (var k = 0; k < arr.length; ++k) {
-			var discounts = arr[k];
-			for (var i = 0; discounts && i < discounts.length; ++i) {
-				var discount = discounts[i];
-				if (isArray(discount)) {
-					for (var j = 0; j < discount.length; ++j) {
-						getDiscount(result, discount[j]);
-					}
-				} else {
-					getDiscount(result, discount);
-				}
-			}
+		
+		// Попробуем, иногда помогает :)
+		if(AnyBalance.getLastStatusCode() == 503)
+			html = AnyBalance.requestGet('http://new.my.tele2.ru/', g_headers);
+		
+		if (AnyBalance.getLastStatusCode() > 400) {
+			if (error) 
+				throw new AnyBalance.Error('Новый кабинет: ' + error);
+			
+			AnyBalance.trace(html);
+			throw new AnyBalance.Error('Новый личный кабинет Теле2 временно недоступен. Попробуйте позже.');
 		}
 	}
+	
+	var result = {success: true};
+	
+	getParam(html, result, "userName", /<div[^>]+class="user-name"[^>]*>([^]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, "phone", /<div[^>]+class="user-phone"[^>]*>([^]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+	
+	var maxTries = 3;
+	
+	for(var i = 0; i < maxTries; i++) {
+		try {
+			AnyBalance.trace('Пытаемся получить баланс, попытка: ' + (i+1));
+			html = AnyBalance.requestGet(baseurl + 'main/tariffAndBalance', g_headers);
+			
+			var json = getJson(html);
+			
+			// Иногда приходит пустой тариф
+			if(json.currentTariffPlan.name)
+				getParam(json.currentTariffPlan.name, result, '__tariff');
+			
+			getParam(json.balance.amount, result, 'balance', null, null, parseBalance);
+			
+			AnyBalance.trace('Успешно получили баланс');
+			break;
+		}
+		catch(e) {
+			AnyBalance.trace('Не удалось получить баланс, пробуем еще раз...');
+		}
+	}
+	
+	if (AnyBalance.isAvailable('sms_used', 'min_used', 'traffic_used', 'mms_used', 'sms_left', 'min_left', 'traffic_left', 'mms_left')) {
+		try {
+			AnyBalance.trace("Searching for resources left");
+			html = AnyBalance.requestGet(baseurl + "main/discounts", g_headers);
+			AnyBalance.trace('Got discounts: ' + html);
+			json = JSON.parse(html);
+			var arr = [json.discountsIncluded, json.discountsNotIncluded];
+			for (var k = 0; k < arr.length; ++k) {
+				var discounts = arr[k];
+				for (var i = 0; discounts && i < discounts.length; ++i) {
+					var discount = discounts[i];
+					if (isArray(discount)) {
+						for (var j = 0; j < discount.length; ++j) {
+							getDiscount(result, discount[j]);
+						}
+					} else {
+						getDiscount(result, discount);
+					}
+				}
+			}			
+		} catch(e) {
+			AnyBalance.trace("Не удалось получить данные об остатках пакетов и услуг, попробуйте позже " + e);
+		}
+	}
+	
 	if (AnyBalance.isAvailable('history')) {
 		AnyBalance.trace("Searching for history");
 		html = AnyBalance.requestGet(baseurl + "payments/history?filter=LAST_10");
@@ -121,6 +159,7 @@ function doNewCabinet(html) {
 			}
 		}
 	}
+	
 	AnyBalance.setResult(result);
 }
 
@@ -151,18 +190,32 @@ function getDiscount(result, discount) {
 }
 
 function doOldCabinet(html, baseurl) {
+	var baseurl = 'https://my.tele2.ru/';
+	
 	AnyBalance.trace('Входим в старый кабинет');
+	
 	var lasturl = AnyBalance.getLastUrl();
 	var url = getParam(html, null, null, /href="([^"]*%3A%2F%2Fmy.tele2.ru[^"]*)/i, replaceHtmlEntities);
-	html = AnyBalance.requestGet(joinUrl(lasturl, url), g_headers);
+	
+	var html = AnyBalance.requestGet(joinUrl(lasturl, url), addHeaders({
+		Referer: AnyBalance.getLastUrl()
+	}));
+	
+	html = AnyBalance.requestGet(baseurl + 'home', addHeaders({
+		Referer: baseurl + 'public/loginfailed-nocookies'
+	}));
+
 	if (AnyBalance.getLastStatusCode() > 400) {
 		var error = getElement(html, /<div[^>]+error[^>]*>/i, replaceTagsAndSpaces);
-		if (error) throw new AnyBalance.Error('Старый кабинет: ' + error);
+		if (error) 
+			throw new AnyBalance.Error('Старый кабинет: ' + error);
+		
+		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Старый личный кабинет Теле2 временно недоступен. Попробуйте позже.');
 	}
-	var result = {
-		success: true
-	};
+	
+	var result = {success: true};
+	
 	getParam(html, result, "userName", /"wide-header"[\s\S]*?([^<>]*)<\/h1>/i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(html, result, '__tariff', /Тариф<\/h2>[\s\S]*?>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(html, result, "phone", /"top-profile-subscriber-phone"[^>]*>([^<>]*)<\//i, replaceTagsAndSpaces, html_entity_decode);

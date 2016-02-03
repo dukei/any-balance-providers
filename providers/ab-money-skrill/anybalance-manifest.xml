@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-money-skrill</id>
+	<api flags="no_browser"/>
+	<name>Skrill</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера Skrill <a href="https://www.skrill.com/">https://www.skrill.com/</a></p>
+	<p>Информация берется из личного кабинета <a href="https://account.skrill.com/login">https://account.skrill.com/login</a></p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" {@currency}"/>
+		<counter id="id" name="ID" type="text"/>
+		<counter id="currency" name="Валюта" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>money, wallet</type>
+	<country>ru</country>
+</provider>

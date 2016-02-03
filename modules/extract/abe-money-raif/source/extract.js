@@ -66,6 +66,9 @@ function login(prefs, result) {
 // Карты
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 function processCards(html, result) {
+	if(!isAvailable('cards'))
+		return;
+	
     html = AnyBalance.requestPost(baseurl + 'RCCardService', g_xml_cards, addHeaders({SOAPAction: ''}));
    
 	var cards = getElements(html, /<return>/ig);
@@ -175,6 +178,9 @@ function processCard(info, result) {
 // Счета
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 function processAccounts(html, result) {
+	if(!isAvailable('accounts'))
+		return;
+	
     html = AnyBalance.requestPost(baseurl + 'RCAccountService', g_xml_accounts, addHeaders({SOAPAction: ''})); 
    
 	var accounts = getElements(html, /<return>/ig);
@@ -219,6 +225,9 @@ function processAccount(info, result) {
 // Депозиты
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 function processDeposits(html, result) {
+	if(!isAvailable('deposits'))
+		return;
+	
     html = AnyBalance.requestPost(baseurl + 'RCDepositService', g_xml_deposits, addHeaders({SOAPAction: ''})); 
    
 	var deposits = getElements(html, /<return>/ig);
@@ -257,6 +266,9 @@ function processDeposit(info, result){
 // Кредиты
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 function processLoans(html, result) {
+	if(!isAvailable('loans'))
+		return;
+
     html = AnyBalance.requestPost(baseurl + 'RCLoanService', g_xml_loans, addHeaders({SOAPAction: ''})); 
    
 	var loans = getElements(html, /<return>/ig);

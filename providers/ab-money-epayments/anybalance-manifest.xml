@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-money-epayments</id>
+	<api flags="no_browser"/>
+	<name>Epayments</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера Epayments <a href="https://my.epayments.com/">https://my.epayments.com/</a></p>
+	<p>Информация берется из личного кабинета</p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="e_wal_USD" name="Баланс USD кошелька" units=" $"/>
+		<counter id="e_wal_EUR" name="Баланс EUR кошелька" units=" €"/>
+		<counter id="ePid" name="Номер кошелька" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>money, wallet</type>
+	<country>ru</country>
+</provider>

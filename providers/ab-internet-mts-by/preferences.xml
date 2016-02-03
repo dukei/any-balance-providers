@@ -8,12 +8,12 @@
 		dialogTitle="Номер телефона"
 		positiveButtonText="ОК"
 		negativeButtonText="Отмена"
-		dialogMessage="Введите номер телефона без кода.">
+		dialogMessage="Введите 9 цифр номера телефона без кода +375. Например 001234567">
 	</EditTextPreference>
 	<EditTextPreference
 		title="Пароль"
 		key="password"
-		summary="||***********"
+		summary="||****"
 		obligatory="true"
 		dialogTitle="Пароль"
 		positiveButtonText="ОК"

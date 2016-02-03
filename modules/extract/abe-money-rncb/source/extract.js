@@ -17,6 +17,10 @@ var g_token;
 var appVersion = '1.9.1'
 var device_name = 'AnyBalance API';
 
+var errorsDesc = {
+	invalid_grant: 'Неверный логин или пароль!'
+}
+
 function apiCall(action, params) {
 	var act = action.split(':');
 	var method = act[0];
@@ -41,7 +45,7 @@ function apiCall(action, params) {
 		
 		if(html) {
 			var json = getJson(html);
-			var error = json.error_description;
+			var error = json.error_description || (json.error ? errorsDesc[json.error] : json.error);
 			
 			if (error)
 				throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));

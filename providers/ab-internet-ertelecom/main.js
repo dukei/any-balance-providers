@@ -30,7 +30,7 @@ function main() {
 
 	AB.checkEmpty(prefs.login, 'Введите логин!');
 	AB.checkEmpty(prefs.password, 'Введите пароль!');
-	AB.checkEmpty(prefs.region, 'Введите пароль!');
+
 
 	AnyBalance.trace('Selected region: ' + domain);
 	var baseurl = 'https://lk.domru.ru/';

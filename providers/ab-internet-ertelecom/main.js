@@ -16,37 +16,51 @@ var g_region_change = {
 	novosib: 'nsk'
 };
 
-function main(){
+function main() {
 	AnyBalance.setDefaultCharset('utf-8');
 
-//	makeRegions();
-//	return;
+	//	makeRegions();
+	//	return;
 
 	var prefs = AnyBalance.getPreferences();
 	var domain = prefs.region || 'kzn'; // Казань по умолчанию
-	
-	if(g_region_change[domain])
+
+	if (g_region_change[domain])
 		domain = g_region_change[domain];
-	
+
+	AB.checkEmpty(prefs.login, 'Введите логин!');
+	AB.checkEmpty(prefs.password, 'Введите пароль!');
+	AB.checkEmpty(prefs.region, 'Введите пароль!');
+
 	AnyBalance.trace('Selected region: ' + domain);
 	var baseurl = 'https://lk.domru.ru/';
 
-	var info = AnyBalance.requestGet(baseurl + "login", g_headers);
-	
+	info = AnyBalance.requestGet(baseurl + "login", g_headers);
+
+
+	if (!info || AnyBalance.getLastStatusCode() > 400) {
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
+	}
+
 	var form = getElement(info, /<form[^>]+login-form[^>]*>/i);
-	if(!form)
+	if (!form)
 		throw new AnyBalance.Error('Не удалось найти форму входа. Сайт изменен?');
-	
+
 	AnyBalance.setCookie('domru.ru', 'citydomain'); //Удаляем старую куку
 	AnyBalance.setCookie('.domru.ru', 'service', '0');
-	AnyBalance.setCookie('.domru.ru', 'citydomain', domain, {path: '/'});
-	AnyBalance.setCookie('.domru.ru', 'cityconfirm', '1', {path: '/'});
+	AnyBalance.setCookie('.domru.ru', 'citydomain', domain, {
+		path: '/'
+	});
+	AnyBalance.setCookie('.domru.ru', 'cityconfirm', '1', {
+		path: '/'
+	});
 
 	var params = createFormParams(form, function(params, str, name, value) {
-		if (/username/i.test(name)) 
-			return prefs.log;
+		if (/username/i.test(name))
+			return prefs.login;
 		else if (/password/i.test(name))
-			return prefs.pwd;
+			return prefs.password;
 
 		return value;
 	}, true);
@@ -54,54 +68,67 @@ function main(){
 	// Заходим на главную страницу
 	var info = AnyBalance.requestPost(baseurl + "login", params, g_headers);
 
- 	if(!/\/logout/.test(info)) {
-		var error = sumParam(info, null, null, /<div[^>]+class="b-login__errormessage"[^>]*>([\s\S]*?)<\/div>/ig, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
-		if (error)
-			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
-
-		if(AnyBalance.getLastStatusCode() >= 500){
-			AnyBalance.trace(info);
-			throw new AnyBalance.Error('Ошибка сервера. Подождите немного и попробуйте ещё раз. Если ошибка сохраняется долгое время, попробуйте войти в личный кабинет через браузер. Если там то же самое, обращайтесь в поддержку Дом.ру.');
+	if (!/\/logout|выход/.test(info)) {
+		var error = AB.getParam(info, null, null, /<div[^>]*class="[^"]*lk-form-block-error[^"]*"[^>]*>([\s\S]*?)<\/div>/i,
+			AB.replaceTagsAndSpaces);
+		if (error) {
+			throw new AnyBalance.Error(error, null, /парол/i.test(error));
 		}
-		
+
+
+		if (AnyBalance.getLastStatusCode() >= 500) {
+			AnyBalance.trace(info);
+			throw new AnyBalance.Error(
+				'Ошибка сервера. Подождите немного и попробуйте ещё раз. Если ошибка сохраняется долгое время, попробуйте войти в личный кабинет через браузер. Если там то же самое, обращайтесь в поддержку Дом.ру.'
+			);
+		}
+
 		AnyBalance.trace(info);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
-	
-	var result = {success: true};
-	
-	if(isAvailable(['balance', 'pay_till'])){
+
+	var result = {
+		success: true
+	};
+
+	if (AnyBalance.isAvailable(['balance', 'pay_till'])) {
 		var token = getParam(info, null, null, /<input[^>]+value="([^"]*)"[^>]*name="YII_CSRF_TOKEN"/i);
 		var res = AnyBalance.requestPost(baseurl + 'user', [
 			['needProperties[]', 'balance'],
 			['needProperties[]', 'dataPay'],
 			['needProperties[]', 'paymentAmount'],
 			['YII_CSRF_TOKEN', token]
-		], addHeaders({ 'X-Requested-With': 'XMLHttpRequest' }));
+		], addHeaders({
+			'X-Requested-With': 'XMLHttpRequest'
+		}));
 
 		var user = {};
-		try{
+		try {
 			user = getJson(res);
-		} catch(e) { }
+		} catch (e) {}
 
 		getParam(user.bill.balance, result, 'balance', null, replaceTagsAndSpaces, parseBalance);
 		getParam(user.bill.datePay, result, 'pay_till', null, replaceTagsAndSpaces, parseDateWord);
 	}
 
-	getParam(info, result, 'tariff_number', /<span[^>]+account-data-item_link[^>]*>([^]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(info, result, 'name', /b-head__account-data-item[^>]*data-name="([^"]*)/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(info, result, 'tariff_number', /<span[^>]+account-data-item_link[^>]*>([^]*?)<\/span>/i, replaceTagsAndSpaces,
+		html_entity_decode);
+	getParam(info, result, 'name', /b-head__account-data-item[^>]*data-name="([^"]*)/i, replaceTagsAndSpaces,
+		html_entity_decode);
 	getParam(info, result, '__tariff', /Ваш пакет[^<]*<a[^>]*>([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(info, result, 'bits', /status[^>]*bonus"[^>]*>([^]*?)<\/a>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(info, result, 'status', /<a[^>]+href="[^"]*status.domru.ru"[^>]*>([\s\S]*?)<\/a>/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(info, result, 'status', /<a[^>]+href="[^"]*status.domru.ru"[^>]*>([\s\S]*?)<\/a>/i, replaceTagsAndSpaces,
+		html_entity_decode);
 
 	AnyBalance.setResult(result);
-};
+}
 
-function makeRegions(){
+function makeRegions() {
 	var html = AnyBalance.requestGet('https://lk.domru.ru/login', g_headers);
 	var elems = getElements(html, /<div[^>]+data-domain[^>]*>/ig);
-	var values=[], names=[];
-	for(var i=0; i<elems.length; ++i){
+	var values = [],
+		names = [];
+	for (var i = 0; i < elems.length; ++i) {
 		var elem = elems[i];
 		var name = getParam(elem, null, null, null, replaceTagsAndSpaces, html_entity_decode);
 		var id = getParam(elem, null, null, /data-domain="([^"]*)/i, null, html_entity_decode);
@@ -109,5 +136,8 @@ function makeRegions(){
 		names.push(name);
 	}
 
-	AnyBalance.setResult({values: values.join('|'), names: names.join('|')});
+	AnyBalance.setResult({
+		values: values.join('|'),
+		names: names.join('|')
+	});
 }

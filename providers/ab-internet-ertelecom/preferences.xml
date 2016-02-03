@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
     <ListPreference
         title="Регион"
@@ -6,18 +6,19 @@
         key="region"
         defaultValue="kzn"
         entries="Барнаул|Брянск|Волгоград|Волжский|Воронеж|Дзержинск|Екатеринбург|Ижевск|Иркутск|Йошкар-Ола|Казань|Киров|Красноярск|Курган|Курск|Липецк|Магнитогорск|Набережные Челны|Нижнекамск|Нижний Новгород|Новосибирск|Омск|Оренбург|Пенза|Пермь|Ростов-на-Дону|Рязань|Самара|Санкт-Петербург|Саратов|Сызрань|Тверь|Томск|Тула|Тюмень|Ульяновск|Уфа|Чебоксары|Челябинск|Энгельс|Ярославль"
-        entryValues="barnaul|bryansk|volgograd|vlz|voronezh|dzr|ekat|izhevsk|irkutsk|yola|kzn|kirov|krsk|kurgan|kursk|lipetsk|mgn|nch|nk|nn|novosib|omsk|oren|penza|perm|rostov|ryazan|samara|spb|saratov|syzran|tver|tomsk|tula|tmn|ulsk|ufa|cheb|chel|engels|yar" />
-    <EditTextPreference 
+        entryValues="barnaul|bryansk|volgograd|vlz|voronezh|dzr|ekat|izhevsk|irkutsk|yola|kzn|kirov|krsk|kurgan|kursk|lipetsk|mgn|nch|nk|nn|novosib|omsk|oren|penza|perm|rostov|ryazan|samara|spb|saratov|syzran|tver|tomsk|tula|tmn|ulsk|ufa|cheb|chel|engels|yar"
+        />
+    <EditTextPreference
         key="log"
-        title="Логин" 
-        summary="Учетная запись в Личном кабинете||{@s}\n" 
-        dialogTitle="Логин" 
-        negativeButtonText="Отмена" 
+        title="Логин"
+        summary="Учетная запись в Личном кабинете||{@s}\n"
+        dialogTitle="Логин"
+        negativeButtonText="Отмена"
         dialogMessage="Введите номер вашего договора или псевдоним"
         positiveButtonText="ОК">
     </EditTextPreference>
-    <EditTextPreference 
-        key="pwd" 
+    <EditTextPreference
+        key="pwd"
         title="Пароль"
         summary="Пароль для входа в Личный кабинет||***********\n"
         dialogTitle="Пароль"

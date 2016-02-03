@@ -1,5 +1,35 @@
+/*
+var invalidHtml = {
+	//input (broken)				//output (repaired)
+	'<p>1<b>2<i>3</b>4</i>5</p>' : '<p>1<b>2<i>3</i></b><i>4</i>5</p>',
+	'<b>1<p>2</b>3</p>'			 : '<b>1</b><p><b>2</b>3</p>',
+	'<p><i>1<p><i>2<p><i>3'		 : '<p><i>1</i></p>'+'<p><i><i>2</i></i></p>'+'<p><i><i><i>3</i></i></i></p>'
+};
+*/
+
+/* Автоматические тесты при помощи chai и mocha
+ * https://learn.javascript.ru/testing
+ */
 describe("String", function() {
 
+	describe("htmlParser()", function() {
+
+		it("test1", function() {
+			var s = '<p>1<b>2<i>3</b>4</i>5</p>';
+			var s = sample.ugly;
+
+			s.htmlParser({
+				open: function(tag, attrs, unary) {
+					console.log(tag);
+				},
+				close: function(tag) {},
+				text: function(text) {},
+				comment: function(text) {}
+			});
+		});
+		
+	});
+	
 	describe("getJsArrayOrObject()", function() {
 
 		it("Захват объекта или массива из JavaScript в строку и её выполнение в JSON.parse()", function() {
@@ -63,8 +93,8 @@ describe("String", function() {
 			console.log(r);
 		});
 
-	});			
+	});
 
-});			
+});
 
 mocha.run();

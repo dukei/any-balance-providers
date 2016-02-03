@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-money-rncb</id>
+	<id version="2">ab-money-rncb</id>
 	<api flags="no_browser"/>
 	<name>РНКБ</name>
 	<description html="true"><![CDATA[

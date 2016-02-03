@@ -45,7 +45,14 @@ function apiCall(action, params) {
 		
 		if(html) {
 			var json = getJson(html);
-			var error = json.error_description || (json.error ? errorsDesc[json.error] : json.error);
+			
+			var error = json.error;
+			if(error == 'invalid_grant') {
+				setToken();
+				error = 'Неверный логин или пароль';
+			} else {
+				error = json.error_description || (json.error ? errorsDesc[json.error] : json.error);
+			}
 			
 			if (error)
 				throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
@@ -84,7 +91,7 @@ function setCredentials(web_mobile_login, web_mobile_password) {
 }
 
 function getCredentials() {
-	return AnyBalance.getData('credentials') || {};
+	return AnyBalance.getData('credentials');
 }
 
 function getToken() {
@@ -143,6 +150,10 @@ function login(prefs) {
 		AnyBalance.trace('Устройство уже привязано, отлично, используем существующую сессию');
 		
 		var credentials = getCredentials();
+		if(!credentials) {
+			setToken();
+			throw new AnyBalance.Error('Устройство привязано неправильно, сбрасываем сессию.');
+		}
 		
 		var json = apiCall('POST:authentication/oauth2', {
 			platform: 'Android',

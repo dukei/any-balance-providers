@@ -10,33 +10,42 @@ var g_headers = {
 	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
 };
 
+function phoneNumberFormat(num) {
+    var m = /^(\d\d)(\d{3})(\d\d)(\d\d)$/.exec(num);
+    return m ? '+375 (' + m[1] + ') ' + m[2] + ' ' + m[3] + ' ' + m[4] : '';
+}
+
 function main() {
 	var prefs = AnyBalance.getPreferences();
 	var baseurl = 'https://internet.mts.by/';
 	AnyBalance.setDefaultCharset('utf-8');
-	
+    
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
-	
+    
+    var login = phoneNumberFormat(prefs.login);
+    checkEmpty(login, 'Введите корректный логин!');
+   
 	var html = AnyBalance.requestGet(baseurl + 'login', g_headers);
 	
 	if(!html || AnyBalance.getLastStatusCode() > 400)
 		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
 	
-    var token = getParam(html, null, null, /authenticity_token(?:[\s\S]*?)value="([\s\S]*?)"/i);
+    var inputParams = {
+        phone_number: login,
+        password: prefs.password
+    };
+    var params = AB.createFormParams(html, function (params, str, name, value) {
+        return inputParams[name] || value;
+    });
     
-	html = AnyBalance.requestPost(baseurl + 'login', {
-		login: prefs.login,
-		password: prefs.password,
-		'authenticity_token': token,
-        referer: '',
-        commit: '',
-        utf8: ''
-	}, addHeaders({Referer: baseurl + 'login'}));
+	html = AnyBalance.requestPost(baseurl + 'session', params, addHeaders({
+        Referer: baseurl
+    }));
 	
 	if (!/logout/i.test(html)) {
-		var error = getParam(html, null, null, /<div[^>]+class="b_error"[^>]*>[\s\S]*?([\s\S]*?)<\/tr>/i, replaceTagsAndSpaces, html_entity_decode);
-		if (error)
+		var error = AB.getElement(html, /<div[^>]+?class="[^"]*?flash-error/i, replaceTagsAndSpaces);
+        if (error)
 			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
 		
 		AnyBalance.trace(html);

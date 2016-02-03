@@ -1,17 +1,19 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-internet-mts-by</id>
+	<id version="2">ab-internet-mts-by</id>
 	<api flags="no_browser"/>
 	<name>Домашний Интернет и Телевидение МТС (Беларусь)</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе провайдера "Домашний Интернет и Телевидение МТС (Беларусь)" <a href="http://mts.by/">http://mts.by/</a></p>
 	<p>Информация берется из личного кабинета <a href="https://internet.mts.by/login">https://internet.mts.by/login</a></p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+    <depends>
+        <module id="library"/>
+    </depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>

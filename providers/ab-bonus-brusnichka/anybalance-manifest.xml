@@ -1,22 +1,24 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-bonus-brusnichka</id>
+	<id version="3">ab-bonus-brusnichka</id>
 	<api flags="no_browser"/>
-	<name>FreshCard</name>
+	<name>Брусничка FreshCard</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о бонусной программе фрешмаркета Брусничка <a href="http://brusnichka.com.ua/">http://brusnichka.com.ua/</a></p>
 	<p>Информация берется из личного кабинета <a href="http://brusnichka.com.ua/pokupatelyam/freshcard/">http://brusnichka.com.ua/pokupatelyam/freshcard/</a></p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units=" бонусов"/>
+		<counter id="balance" name="Активный баланс" units=" бонусов"/>
 		<counter id="card" name="Карта" type="text"/>
 	</counters>
 	<keywords></keywords>

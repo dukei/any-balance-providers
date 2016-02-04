@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="21" date="2016-02-04">
+	- Исправлено отслеживание появления новых объявлений без входа в аккаунт.
+	</change>
 	<change version="20" date="2015-04-07">
 	- Мелкие улучшения.
 	</change>

@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="2.0" version="9">ab-cell-altel4g</id>
+	<id major_version="2.0" version="10">ab-cell-altel4g</id>
 	<api flags="no_browser"/>
 	<name>ALTEL 4G (Казахстан)</name>
 	<description html="true"><![CDATA[
@@ -11,10 +11,12 @@
 	<p>Если вы ещё ни разу не входили в личный кабинет, то в качестве пароля используйте PIN1.</p>
 	]]></instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
@@ -31,6 +33,8 @@
 		<counter id="traffic_left" name="Остаток трафика" units=" Мб"/>
 		<counter id="day_traffic_left" name="Остаток дневного трафика" units=" Мб"/>
 		<counter id="night_traffic_left" name="Остаток ночного трафика" units=" Мб"/>
+		<counter id="additionalServices" name="Дополнительные услуги" type="text"/>
+
 	</counters>
 	<keywords>мобильный лте</keywords>
 	<type>cell</type>

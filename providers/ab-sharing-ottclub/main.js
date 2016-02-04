@@ -17,7 +17,7 @@ function main() {
 	
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
-	var html = AnyBalance.requestGet(baseurl + 'auth/logout', g_headers);
+	var html = AnyBalance.requestGet(baseurl + 'auth/login', g_headers);
 	
 	if(!html || AnyBalance.getLastStatusCode() > 400)
 		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');

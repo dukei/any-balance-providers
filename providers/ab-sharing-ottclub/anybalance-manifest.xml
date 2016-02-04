@@ -18,6 +18,7 @@
 		<counter id="balance" name="Баланс" units=" USD"/>
 		<counter id="partnerBalance" name="Баланс партнёрки" units=" USD"/>
 		<counter id="charged" name="Заработано сегодня" units=" USD"/>
+		<counter id="key" name="Ваш ключ" type="text"/>
 	</counters>
 	<keywords></keywords>
 	<type>sharing</type>

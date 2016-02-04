@@ -17,7 +17,7 @@ function main() {
 	
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
-	var html = AnyBalance.requestGet(baseurl + 'auth/login', g_headers);
+	var html = AnyBalance.requestGet(baseurl + 'auth/logout', g_headers);
 	
 	if(!html || AnyBalance.getLastStatusCode() > 400)
 		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
@@ -43,6 +43,15 @@ function main() {
 	getParam(html, result, 'balance', /Ваш баланс:([\s\S]*?)<\/h2>/i, [replaceTagsAndSpaces, '', '0'], parseBalance);
 	getParam(html, result, 'partnerBalance', /Статистика[\s\S]*?<tbody>[\s\S]*?<td>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'charged', /Статистика[\s\S]*?<tbody>[\s\S]*?(?:<td>[\s\S]*?<\/td>[\s\S]*?){3}<td>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'key', /Ваш ключ:([\s\S]*?)<\/p>/i, replaceTagsAndSpaces);
+
+    var tarrif = AnyBalance.requestPost(
+        baseurl + 'setting/get_plan',
+        {'showlist': 'plan'},
+        addHeaders({'Referer': baseurl, 'X-Requested-With': 'XMLHttpRequest'})
+    );
+
+	getParam(tarrif, result, '__tariff', /<p>Тарифный план:([\s\S]*?)<\/p>/i, replaceTagsAndSpaces);
 
 	AnyBalance.setResult(result);
 }

@@ -28,8 +28,8 @@ function main() {
 	if (g_region_change[domain])
 		domain = g_region_change[domain];
 
-	AB.checkEmpty(prefs.login, 'Введите логин!');
-	AB.checkEmpty(prefs.password, 'Введите пароль!');
+	AB.checkEmpty(prefs.log, 'Введите логин!');
+	AB.checkEmpty(prefs.pwd, 'Введите пароль!');
 
 
 	AnyBalance.trace('Selected region: ' + domain);
@@ -58,9 +58,9 @@ function main() {
 
 	var params = createFormParams(form, function(params, str, name, value) {
 		if (/username/i.test(name))
-			return prefs.login;
+			return prefs.log;
 		else if (/password/i.test(name))
-			return prefs.password;
+			return prefs.pwd;
 
 		return value;
 	}, true);
@@ -111,14 +111,11 @@ function main() {
 		getParam(user.bill.datePay, result, 'pay_till', null, replaceTagsAndSpaces, parseDateWord);
 	}
 
-	getParam(info, result, 'tariff_number', /<span[^>]+account-data-item_link[^>]*>([^]*?)<\/span>/i, replaceTagsAndSpaces,
-		html_entity_decode);
-	getParam(info, result, 'name', /b-head__account-data-item[^>]*data-name="([^"]*)/i, replaceTagsAndSpaces,
-		html_entity_decode);
-	getParam(info, result, '__tariff', /Ваш пакет[^<]*<a[^>]*>([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(info, result, 'tariff_number', /<span[^>]+account-data-item_link[^>]*>([^]*?)<\/span>/i, replaceTagsAndSpaces);
+	getParam(info, result, 'name', /b-head__account-data-item[^>]*data-name="([^"]*)/i, replaceTagsAndSpaces);
+	getParam(info, result, '__tariff', /Ваш пакет[^<]*<a[^>]*>([^<]+)/i, replaceTagsAndSpaces);
 	getParam(info, result, 'bits', /status[^>]*bonus"[^>]*>([^]*?)<\/a>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(info, result, 'status', /<a[^>]+href="[^"]*status.domru.ru"[^>]*>([\s\S]*?)<\/a>/i, replaceTagsAndSpaces,
-		html_entity_decode);
+	getParam(info, result, 'status', /<a[^>]+href="[^"]*status.domru.ru"[^>]*>([\s\S]*?)<\/a>/i, replaceTagsAndSpaces);
 
 	AnyBalance.setResult(result);
 }
@@ -130,8 +127,8 @@ function makeRegions() {
 		names = [];
 	for (var i = 0; i < elems.length; ++i) {
 		var elem = elems[i];
-		var name = getParam(elem, null, null, null, replaceTagsAndSpaces, html_entity_decode);
-		var id = getParam(elem, null, null, /data-domain="([^"]*)/i, null, html_entity_decode);
+		var name = getParam(elem, null, null, null, replaceTagsAndSpaces);
+		var id = getParam(elem, null, null, /data-domain="([^"]*)/i, null);
 		values.push(id);
 		names.push(name);
 	}

@@ -9,7 +9,7 @@
         entryValues="barnaul|bryansk|volgograd|vlz|voronezh|dzr|ekat|izhevsk|irkutsk|yola|kzn|kirov|krsk|kurgan|kursk|lipetsk|mgn|nch|nk|nn|novosib|omsk|oren|penza|perm|rostov|ryazan|samara|spb|saratov|syzran|tver|tomsk|tula|tmn|ulsk|ufa|cheb|chel|engels|yar"
         />
     <EditTextPreference
-        key="login"
+        key="log"
         title="Логин"
         summary="Учетная запись в Личном кабинете||{@s}\n"
         dialogTitle="Логин"
@@ -18,7 +18,7 @@
         positiveButtonText="ОК">
     </EditTextPreference>
     <EditTextPreference
-        key="password"
+        key="pwd"
         title="Пароль"
         summary="Пароль для входа в Личный кабинет||***********\n"
         dialogTitle="Пароль"

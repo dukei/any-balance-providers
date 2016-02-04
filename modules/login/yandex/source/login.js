@@ -37,6 +37,27 @@ function loginYandex(login, password, html, retpath, from) {
 			passwd: password,
 		}, addHeaders({Referer: baseurl}));
 	}
+
+	var captchaUrl = getParam(html, null, null, /<img[^>]+captcha__text[^>]*src="([^"]*)/i, replaceHtmlEntities);
+	if (!/logout/i.test(html) && captchaUrl) {
+		var pageUrl = AnyBalance.getLastUrl();
+		AnyBalance.trace('Затребована капча, придется показывать');
+		var params = AB.createFormParams(html, function(params, str, name, value) {
+			if (name == 'login') 
+				return login;
+			else if (name == 'passwd')
+				return password;
+			else if (name == 'answer'){
+				var img = AnyBalance.requestGet(captchaUrl, g_headers);
+				return AnyBalance.retrieveCode("Пожалуйста, введите символы с картинки", img);
+			}
+	    
+			return value;
+		});
+
+		html = AnyBalance.requestPost(pageUrl, params, addHeaders({Referer: pageUrl}));
+	}
+
 	if (!/logout/i.test(html)) {
 		var error = getParam(html, null, null, [/b\-login\-error[^>]*>([\s\S]*?)<\/strong>/i, /error-msg[^>]*>([^<]+)/i], replaceTagsAndSpaces, html_entity_decode);
 		if (error)

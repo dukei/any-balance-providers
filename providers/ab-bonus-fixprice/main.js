@@ -38,7 +38,7 @@ function main() {
 
 	var json = AB.getJson(html);
 
-	if (!json.success === true) {
+	if (!json.success) {
 		var error = json.message;
 		if (error) {
 			throw new AnyBalance.Error(error, null, /найден|пароль/i.test(error));

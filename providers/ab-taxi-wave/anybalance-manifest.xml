@@ -6,9 +6,6 @@
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию для клиента из личного кабинета службы заказа такси Волна<a href="http://taxivolna.com/">http://taxivolna.com/</a></p>
 	]]></description>
-	<instruction html="true"><![CDATA[
-	<p>Если у вас нет доступа в Личный кабинет, получите его на странице <a href=""></a></p>
-	]]></instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>
 		<module id="library"/>

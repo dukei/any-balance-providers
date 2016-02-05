@@ -23,21 +23,24 @@ function main() {
 	if(AnyBalance.getLastStatusCode() > 400) {
 		throw new AnyBalance.Error('Ошибка! Сервер не отвечает! Попробуйте обновить баланс позже.');
 	}
-	
-	html = AnyBalance.requestPost(baseurl, {
-		'bootstrap[username]': prefs.login,
-		'bootstrap[password]': prefs.password,
-		'bootstrap[send]': '<i class="icon-ok"></i>\nВойти'
-	}, addHeaders({Referer: baseurl}));
-	
-	if (!/logout/i.test(html)) {
-		var error = getParam(html, null, null, /(Ошибка авторизации[\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
-		if (error)
-			throw new AnyBalance.Error(error, null, /Ошибка авторизации/i.test(error));
-		
-		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
-	}
+
+    if (!/logout/i.test(html)) {
+        html = AnyBalance.requestPost(baseurl, {
+            'username': prefs.login,
+            'password': prefs.password,
+            'send': ''
+        }, addHeaders({Referer: baseurl}));
+
+        if (!/logout/i.test(html)) {
+            var error = getParam(html, null, null, /(Ошибка авторизации[\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
+            if (error) {
+                throw new AnyBalance.Error(error, null, /Ошибка авторизации/i.test(error));
+            }
+
+            AnyBalance.trace(html);
+            throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
+        }
+    }
 	
 	var result = {success: true};
 	

@@ -13,8 +13,10 @@ var g_headers = {
 function main() {
 	var prefs = AnyBalance.getPreferences();
 	var baseurlLogin = 'https://login.dnevnik.ru/login';
-        var baseurlChildren = 'https://children.dnevnik.ru';
+    var baseurlChildren = 'https://children.dnevnik.ru';
+    var baseurlSchool = 'https://schools.dnevnik.ru';
 	AnyBalance.setDefaultCharset('utf-8');
+    
 	
 	AB.checkEmpty(prefs.login, 'Введите логин!');
 	AB.checkEmpty(prefs.password, 'Введите пароль!');
@@ -27,8 +29,8 @@ function main() {
             'Captcha.Input': '',
             'Captcha.Id': ''
         };
-        
         var html = AnyBalance.requestPost(baseurlLogin, params, AB.addHeaders({Referer: baseurlLogin}));
+        
         if (!html || AnyBalance.getLastStatusCode() >= 400) {
             AnyBalance.trace(html);
             throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
@@ -47,15 +49,21 @@ function main() {
 		AnyBalance.trace('Ищем дневник ребенка с идентификатором ' + prefs.id);
 		html = AnyBalance.requestGet(baseurlChildren + '/marks.aspx?child=' + prefs.id, g_headers);
 	} else {
-		AnyBalance.trace('Идентификатор ребенка не указан, ищем без него');
-                html = AnyBalance.requestGet(baseurlChildren, g_headers);
-		var href = AB.getParam(html, null, null, /<a\s[^>]*\bhref="(https?:\/\/children\.dnevnik\.ru\/marks\.aspx\?[^'"\s#>]*?child=[^'"\s#>]+)/i);
-                if (!href) {
-                    href = baseurlChildren + '/marks.aspx';
-                }
-                AnyBalance.trace(href);
-		html = AnyBalance.requestGet(href, g_headers);
-	}
+        AnyBalance.trace('Идентификатор ребенка не указан, ищем без него');
+
+        html = AnyBalance.requestGet(baseurlChildren, g_headers);
+        if (!html || AnyBalance.getLastStatusCode() >= 400) {
+            // в каких-то случаях children.dnevnik.ru закрыт (403), смотрим schools.dnevnik.ru
+            html = AnyBalance.requestGet(baseurlSchool + '/marks.aspx', g_headers);
+        } else {
+            var href = AB.getParam(html, null, null, /<a\s[^>]*\bhref="(https?:\/\/children\.dnevnik\.ru\/marks\.aspx\?[^'"\s#>]*?child=[^'"\s#>]+)/i);
+            if (!href) {
+                href = baseurlChildren + '/marks.aspx';
+            }
+            AnyBalance.trace(href);
+            html = AnyBalance.requestGet(href, g_headers);
+        }
+    }
         
         var daysHtml = AB.getElement(html, /<div\s[^>]*id="diarydays"/);
         if (!daysHtml) {

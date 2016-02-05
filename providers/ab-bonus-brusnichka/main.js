@@ -1,4 +1,5 @@
-﻿/**
+﻿
+/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 */
 
@@ -12,40 +13,50 @@ var g_headers = {
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'https://brusnichka.com.ua/';
+	var baseurl = 'https://brusnichka.com.ua/pokupatelyam/freshcard/';
+
 	AnyBalance.setDefaultCharset('utf-8');
-	
-	checkEmpty(prefs.login, 'Введите логин!');
-	checkEmpty(prefs.password, 'Введите пароль!');
-	
-	var html = AnyBalance.requestGet(baseurl + 'pokupatelyam/freshcard/', g_headers);
-	
-	if(!html || AnyBalance.getLastStatusCode() > 400)
+
+	AB.checkEmpty(prefs.login, 'Введите логин!');
+	AB.checkEmpty(prefs.password, 'Введите пароль!');
+
+	var html = AnyBalance.requestGet(baseurl + '', g_headers);
+
+	if (!html || AnyBalance.getLastStatusCode() > 400) {
+		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
-	
-	AnyBalance.setCookie('brusnichka.com.ua', 'openstat_test', 1);
+	}
 
-	AnyBalance.requestPost(baseurl + 'pokupatelyam/freshcard/', {
+	html = AnyBalance.requestPost(baseurl + '', {
 		login: prefs.login,
-        password: prefs.password,
-        action: 'Authenticate'
-	}, addHeaders({Referer: baseurl + 'pokupatelyam/freshcard/'}));
+		password: prefs.password,
+		action: 'Authenticate'
+	}, AB.addHeaders({
+		Referer: baseurl + ''
+	}));
 
-	html = AnyBalance.requestGet(baseurl + 'pokupatelyam/freshcard/', g_headers);
-	
-	if (!/exit/i.test(html)) {
-		var error = getParam(html, null, null, /Ошибка[^>]*>([\s\S]*?)<br>/i, replaceTagsAndSpaces, html_entity_decode);
-		if (error)
-			throw new AnyBalance.Error(error, null, /Неправильные логин или пароль/i.test(error));
-		
+	var error = AB.getParam(html, null, null, /error[^"]*"[^>]*>([\s\S]*?)<\/p>/i, AB.replaceTagsAndSpaces);
+	if (error) {
+		throw new AnyBalance.Error(error, null, /найден|пароль/i.test(error));
+	}
+
+	// html = AnyBalance.requestGet(baseurl + '', g_headers);
+	AnyBalance.sleep(3000);
+	html = AnyBalance.requestGet(baseurl + '', g_headers);
+	// html = AnyBalance.requestGet(baseurl + 'pokupatelyam/freshcard/', g_headers);
+
+	if (!/exit|выход|logout/i.test(html)) {
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
-	
-	var result = {success: true};
-	
-	getParam(html, result, 'card', /Карта[\s]*?<b>№([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'balance', /Активный баланс бонусов(?:[^>]*>){1}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
-	
+
+	var result = {
+		success: true
+	};
+
+	AB.getParam(html, result, 'card', /Карта[\s]*?<b>№([\s\S]*?)<\//i, AB.replaceTagsAndSpaces);
+	AB.getParam(html, result, 'balance', /Активный баланс бонусов(?:[^>]*>){1}([\s\S]*?)<\//i, AB.replaceTagsAndSpaces,
+		AB.parseBalance);
+
 	AnyBalance.setResult(result);
 }

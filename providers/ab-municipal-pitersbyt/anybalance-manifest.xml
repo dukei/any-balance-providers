@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="30">ab-municipal-pitersbyt</id>
+  <id version="31">ab-municipal-pitersbyt</id>
   <api flags="no_browser"/>
   <name>Петербургская сбытовая компания</name>
   <description>
@@ -13,7 +13,7 @@
        http://www.pesc.ru/lk/poryadok_registracii (для Петербургской Сбытовой Компании),
        http://www.pes.spb.ru/consumers/11/ (для Петроэлектросбыта) 
   </instruction>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>

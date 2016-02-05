@@ -53,7 +53,7 @@ function main(){
     ]), addHeaders({Referer: baseurl + 'index.cfm', 'Content-Type': 'application/x-www-form-urlencoded'})); */
 	
 	if(!/\?logout=true/i.test(html)){
-		if(/location.href\s*=\s*'https?:\/\/cabinet.idport.kz(?::\d+)?\/IdPort\/index_error.html'/.test(html))
+		if(/location\.href\s*=\s*'https?:\/\/cabinet\.idport\.kz(?::\d+)?\/IdPort\/\/login\/login\.cfm\?error=true/.test(html))
             throw new AnyBalance.Error('Неверно указаны логин или пароль');
 			
 		var error = getParam(html, null, null, /<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
@@ -78,9 +78,13 @@ function main(){
     getParam(html, result, 'login', [/(?:Логин|Логин)([^>]*>){3}/i, /<td[^>]*>\s*(?:Логин|Логин)[\s\S]*?<td[^>]*>([\s\S]*?)(?:<a|<\/td>)/i], replaceTagsAndSpaces, html_entity_decode);
 	
 	if(isAvailable('balance')) {
-		html = AnyBalance.requestGet(baseurl + 'presentation/billing/index.cfm?show_only_balance=true', g_headers);
+		html = AnyBalance.requestGet(baseurl + 'presentation/billing/divReqSubAcc.cfm?sSelectDate=' + (new Date().getMonth()+1), g_headers);
 		
-		getParam(html, result, 'balance', /"pay_amount"[^>]*value="([^"]*)/i, replaceTagsAndSpaces, parseBalance);
+		getParam(html, result, 'balance', /<table[^>]+class="table[^>]*>(?:[\s\S]*?<td[^>]*>){8}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+		getParam(html, result, 'overpayment', /<table[^>]+class="table[^>]*>(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+		getParam(html, result, 'accrued', /<table[^>]+class="table[^>]*>(?:[\s\S]*?<td[^>]*>){6}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+		getParam(html, result, 'paid', /<table[^>]+class="table[^>]*>(?:[\s\S]*?<td[^>]*>){7}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+		getParam(html, result, 'bill', /<table[^>]+class="table[^>]*>(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
 	}
 	//Возвращаем результат
     AnyBalance.setResult(result);

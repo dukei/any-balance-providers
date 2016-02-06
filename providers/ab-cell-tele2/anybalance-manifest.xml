@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="30">ab-cell-tele2</id>
+	<id version="34">ab-cell-tele2</id>
 	<api flags="no_browser"/>
 	<name>Tele2</name>
 	<description html="true"><![CDATA[
@@ -12,7 +12,6 @@
 	<ul>
 		<li>Если у вас ещё нет пароля в личный кабинет, получите его на сайте http://my.tele2.ru.</li>
 	</ul>
-
 	<p>Для работы провайдера необходимо отключить двухфакторную авторизацию (запрос СМС кода при каждом входе в личный кабинет):</p>
 	<ol>
 		<li>Войдите в ЛК Tele2 через браузер: https://my.tele2.ru</li>
@@ -21,11 +20,13 @@
 		<li>Снимите галочку "Включить двухфакторную авторизацию" и нажмите кнопку "Сохранить"</li>
 	</ol>
 	]]></instruction>
-	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>

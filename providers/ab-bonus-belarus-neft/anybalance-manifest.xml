@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="5">ab-bonus-belarus-neft</id>
+	<id version="6">ab-bonus-belarus-neft</id>
 	<name>Беларусь Нефть</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию по карте Беларусь Нефть http://beloil.by/.</p>
@@ -19,6 +19,7 @@
 	<counters>
 		<counter id="balance" name="Баланс"/>
 		<counter id="discount" name="Размер скидки в текущем месяце" units=" %"/>
+		<counter id="next_month_discount" name="Размер скидки в следующем месяце" units=" %"/>
 		<counter id="discount_next" name="Размер следующей скидки" units=" %"/>
 		<counter id="discount_bal_next" name="Баллов до следующей скидки"/>
 		<counter id="fio" name="ФИО" type="text"/>

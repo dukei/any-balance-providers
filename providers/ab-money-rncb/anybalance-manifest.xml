@@ -1,0 +1,40 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="3">ab-money-rncb</id>
+	<api flags="no_browser"/>
+	<name>РНКБ</name>
+	<description html="true"><![CDATA[
+	<p>Получает текущий остаток и другие параметры продуктов банка РНКБ http://www.rncb.ru/, используя API мобильного приложения.</p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Если у вас нет доступа к интернет-банку: для получения пароля перейдите на сайт http://www.rncb.ru/ru/internet-bank/</p>
+	]]></instruction>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+		<module id="nadapter"/>
+		<module id="extract/abe-money-rncb"/>
+	</depends>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Остаток" units=" {@currency}"/>
+		<counter id="availableAmount" name="Доступно" units=" {@currency}"/>
+		<counter id="lockedAmount" name="Заблокировано" units=" {@currency}"/>
+		<counter id="contractNumber" name="Номер счета" type="text"/>
+		<counter id="currency" name="Валюта" type="text"/>
+		<counter id="statusDescription" name="Статус" type="text"/>
+		<counter id="number" name="Номер карты" type="text"/>
+		<counter id="formattedName" name="Форматированное имя" type="text"/>
+		<counter id="type" name="Тип карты" type="text"/>
+		<counter id="expireDate" name="Срок действия" type="time" format="MM/yy"/>
+		<counter id="fio" name="ФИО" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>money, bank</type>
+	<country>ru</country>
+</provider>

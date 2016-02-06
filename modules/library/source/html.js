@@ -433,6 +433,7 @@
 		//remove a duplicate spaces
 		/^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g, '', //It's just trim: https://developer.mozilla.org/ru/docs/Web/JavaScript/Reference/Global_Objects/String/Trim
 		/\r/g, '\n',
+		/\t+/g, ' ',
 		/\x20\x20+/g, ' ',
 		//remove a spaces before and after new lines
 		/\n\x20/g, '\n',

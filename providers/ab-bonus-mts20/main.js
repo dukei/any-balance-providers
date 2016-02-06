@@ -10,27 +10,68 @@ var g_headers = {
 	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
 };
 
+var g_baseurl = 'https://20.ssl.mts.ru/';
+
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'http://www.20.mts.ru/';
+	var baseurl = 'https://login.mts.ru/';
 	AnyBalance.setDefaultCharset('utf-8');
 
-	checkEmpty(prefs.login, 'Введите логин!');
+	checkEmpty(/^.{10}$/.test(prefs.login), 'Введите номер телефона (10 цифр)!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 
-	var html = AnyBalance.requestGet(baseurl + 'auth/login', g_headers);
+	var html = AnyBalance.requestGet(baseurl, g_headers);
 
-	html = AnyBalance.requestPost(baseurl + 'auth/login', {
-		phone: prefs.login,
-		password: prefs.password,
-	}, addHeaders({Referer: baseurl + 'auth/login'}));
+	if(!html || AnyBalance.getLastStatusCode() > 401){
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
+	}
+
+	var params = createFormParams(html, function(params, str, name, value) {
+				if (name == 'IDToken1')
+						return prefs.login;
+				else if (name == 'IDToken2')
+						return prefs.password;
+
+					return value;
+			});
+
+	html = AnyBalance.requestPost(baseurl + 'amserver/UI/Login?goto='+encodeURIComponent(g_baseurl+'#!/login'), params, addHeaders({
+		Referer: baseurl + 'amserver/UI/Login'
+	}));
 
 	if (!/logout/i.test(html)) {
+		var error = getParam(html, null, null, /passwordErr\s*=\s*['"]([\s\S]*?)['"]/i);
+		if(error)
+			throw  new AnyBalance.Error(error, null, /Неверный пароль/i.test(error));
+
+		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
+
 	var result = {success: true};
-	
-	getParam(html, result, 'balance', /Начислено(?:[^>]*>){1}([^<]+)/i, replaceTagsAndSpaces, parseBalance);
-	
+	var json;
+
+	if(isAvailable(['fio', 'balance'])) {
+		html = AnyBalance.requestGet(g_baseurl+'api/user ', g_headers);
+		json = getJson(html);
+
+		getParam(json.fullName || '', result, 'fio');
+		getParam(json.balance ? json.balance.toFixed(2) : '', result, 'balance', null, null, parseBalance);
+	}
+	if(isAvailable(['lastCharge', 'allAccrued', 'date'])) {
+		html = AnyBalance.requestGet(g_baseurl+'api/user/history', g_headers);
+		json = getJson(html);
+
+		var sumAllAccured = 0;
+		for(var i=0; i< json.length; i++)
+			sumAllAccured +=json[i].value;
+		result.allAccured = sumAllAccured;
+
+		getParam(json[0] ? json[0].value + '' : '', result, 'lastCharge', null, null, parseBalance);
+		getParam(json[0] ? json[0].date : '', result, 'date', null, null, parseDate);
+	}
+
 	AnyBalance.setResult(result);
+
 }

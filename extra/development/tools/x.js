@@ -178,11 +178,15 @@ function writeManifest(objStream, manifest, mainJs, WshShell) {
 		manifest = manifest.replace(/<\/type>/, ', ' + result + '</type>');
 	}
 
-	if(!/nadapter\.js/i.test(manifest) && /NAdapter/.test(mainJs)){
+	if(!/nadapter\.js|<module[^>]+id="nadapter"/i.test(manifest) && /NAdapter/.test(mainJs)){
 		var intDoIt = WshShell.Popup('You seem to use NAdapter, but you have forgot to include it in manifest.\nDo you want to do this?', 0, "Result", vbYesNo + vbInformation + stayOnTop);
 		if(intDoIt == vbYes) {
-			manifest = manifest.replace(/(<js[^>]*>\s*library\.js\s*<\/js>)/i, '$1\n\t\t<js>nadapter.js</js>');
-		}
+			if(/<depends/i.test(manifest)){
+				manifest = manifest.replace(/(<depends[^>]*>)/i, '$1\n\t\t<module id="nadapter"/>');
+			}else{
+				manifest = manifest.replace(/(<files[^>]*>)/i, '<depends>\n\t\t<module id="nadapter"/>\n\t</depends>\n\t$1');
+			}
+		}	
 	}
 
 	if(!g_history_file)

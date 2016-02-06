@@ -1,0 +1,98 @@
+sample.ugly = `<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" >
+<!--[if IE 7 ]>		 <html class="no-js ie ie7 lte7 lte8 lte9" lang="en-US"> <![endif]-->
+<!--[if IE 8 ]>		 <html class="no-js ie ie8 lte8 lte9" lang="en-US"> <![endif]-->
+<!--[if IE 9 ]>		 <html class="no-js ie ie9 lte9>" lang="en-US"> <![endif]-->
+<!--[if (gt IE 9)|!(IE)]><!--> <html class="no-js" lang="en-US"> <!--<![endif]-->
+<head>
+	<meta charset="utf-8" />
+	<meta name="description" content="Личный кабинет провайдера" />
+	<meta name="keywords" content="текущий тариф, текущий баланс, обещаный платёж, бонусных баллов" />
+	<title>Личный кабинет провайдера</title>
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+	<script>window.jQuery || document.write('<script src="//jquery.com/jquery-wp-content/themes/jquery/js/jquery-1.11.2.min.js"><\\/script>')</script>
+	<!--[if lte IE 7]>
+	  <script src=""></script>
+	<![endif]-->
+	<style>
+		.bad {
+			color: red;
+		}
+		.good {
+			color: green;
+		}
+		.currency {
+			color: blue;
+		}
+	</style>
+</head>
+<body>
+	<form>
+	<table border=0 >
+	<tr>
+		<td class = caption2 align=center  ><strong> "&#x442;&#x435;&#x43A;&#x443;&#x449;&#x438;&#x439;&nbsp;&#x442;&#x430;&#x440;&#x438;&#x444;&quot; </strong> </td>
+		<td>
+		<script>
+			//текущий тариф 599 Promo
+			//текущий баланс 0
+			//обещаный платёж 200
+			//бонусных баллов 0
+		</script>			
+		<select name="tariff" >
+				<option class="selected" value="599" >599&nbsp;Promo</option>
+				<option class="selected" value="399" >399&nbsp;Promo</option>
+				<option class="selected" selected value="299" >299&nbsp;Promo</option>
+			<select>
+			<button title="Изменить текущий тариф">Изменить</button>
+			(изменится с 01 числа следующего месяца)
+		</td>
+	</tr>
+	<tr>
+		<td colspan=2>
+					   
+	<TABLE border=1 >   
+	<tr>
+		<td class = caption2 align=center  ><strong> "&#x442;&#x435;&#x43A;&#x443;&#x449;&#x438;&#x439;&nbsp;&#x442;&#x430;&#x440;&#x438;&#x444;&quot; </strong> </td>
+		<td> <em>299&nbsp;Promo</em> </td>
+	</tr>
+	<tr>
+		<th class="caption2" title="&#x442;&#x435;&#x43A;&#x443;&#x449;&#x438;&#x439;&nbsp;&#x431;&#x430;&#x43B;&#x430;&#x43D;&#x441;" alt ="0">
+			&quot;&#x442;&#x435;&#x43A;&#x443;&#x449;&#x438;&#x439;&nbsp;&#x431;&#x430;&#x43B;&#x430;&#x43D;&#x441;"
+		</th >
+		<td CLASS = "bad caption2"
+			title = 'Для включения услуги "&#x442;&#x435;&#x43A;&#x443;&#x449;&#x438;&#x439;&nbsp;&#x431;&#x430;&#x43B;&#x430;&#x43D;&#x441;" должен быть > 0, 
+сейчас &quot;&#x442;&#x435;&#x43A;&#x443;&#x449;&#x438;&#x439;&nbsp;&#x431;&#x430;&#x43B;&#x430;&#x43D;&#x441;&quot; < 0! Бонусы не начисляются, если баланс<100!' 
+		>
+			<!--
+				Картинка (тег <img> ниже) есть только при отрицательном балансе!
+				Например: <span style="font-family:monospace" alt="<Warning!&gt;">
+				&minus;10.44</span>&nbsp;<span class="currency">руб.</span>
+			--><IMG src="data:image/gif;base64,R0lGODlhEAAQAOZxAP+7rf9HEO2zsv9TIfW3sP9GFP9IE/9dKv+6rfU9Et0oCuc1EP9XJfE6ELwfE/9xQv9uPv9wQf9MGP8/C+w2EMAZCr4fEsAdDu43EP8+Cf9rO/9HEf9jMtEjC7gbEv9hMOqzsv9LGvU8Ef9rPv9YJ/9MFf9IEeyzsP9IFv9RHP9QH8okDva1sOIyEcghDP9ZJf9vQeQtC9gnDf9PGf9gLv+7sP+4sP9nNv9DD/9OHLgcEP9JE/9dK/9uPf9GE/9HEv9yR8MfDPQ8EsMZCtwsEP9GEP9xP/9LGPi2sP9EDv9XJuo3Ev8/B/9cLP9IFP9ZKP9jNL4ZCvg9EcwfC/9BC7gdEec2Ef9IF/A5Ef9EC84mD/9NGP9FEf9fL/9PG/9UH94uELAZE/27sP90Sf9dKOiysv9KE/9TH/9KGP9YJP9OHeowDbseENUqEP9UI/9AC////////wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH5BAEAAHEALAAAAAAQABAAAAepgHGCg4SFhQBCDVgYFAtihnEAUkYaNxw0B2s1hwkPMCNQTU9KDDE2gwgiERBAY3BwJG4DZwoEgks9PGkfXa8BP1RJW1qCVm/Hx6/Ib1krgi3Lb8rITC6CYNHTx0VBgkTR4DsXgm1kOQZHTq8ZbxM4GzqCBDIvAypqr1cFPgFDIINIOnzxEgINigJcAlQQUIjFlBQzJJQwYyIKQ0MnHFhgU8VDmDKQQhYKBAA7" align=absmiddle title="<Внимание!&gt;" style=padding-bottom:2px;padding-right:2px;><span style="font-family:monospace" alt="<Warning!&gt;" data-balance-html="<span>&minus;33.44</span>&nbsp;<span class=&quot;currency&quot;>руб.</span>">
+			&minus;100.33</span>&nbsp;<span class="currency">руб.</span>
+		</td>
+	</tr>
+	<tr>
+		<TH class="caption2" title='обещаный платёж' alt =0 >
+			&quot;обещаный платёж"
+		</TH>
+		<td class = "caption2">
+			<span style="font-family:monospace">100</span>&nbsp;<span class="currency">руб.</span>
+		</td>
+	</tr>
+	<tr>
+		<td align=center class="caption2">
+			<span style="font-weight:bold">&quot;бонусных баллов"</span><br/>
+			<small>(бонусы не начисляются, если баланс<100!)</small>
+		</td>
+		<td class = "good">
+			77
+		</td>
+	</tr>
+</table>
+		 
+		  
+		</td>
+	</tr>
+	</table>
+</form>
+</body>
+</html>`

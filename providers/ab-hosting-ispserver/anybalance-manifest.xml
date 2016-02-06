@@ -1,27 +1,30 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-hosting-ispserver</id>
-	<api flags="no_browser"/>
-	<name>ISPServer (Хостинг)</name>
+  <id version="3">ab-hosting-ispserver</id>
+  <api flags="no_browser"/>
+  <name>ISPServer (Хостинг)</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе провайдера http://ispserver.com</p>
-	<p>Информация берется из личного кабинета https://my.ispserver.com/manager/billmgr?startpage=accountinfo</p>
-	]]></description>
-	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
-	<files>
-		<icon>icon.png</icon>
-		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
-		<js>main.js</js>
-		<history>history.xml</history>
-	</files>
-	<counters>
-		<counter id="balance" name="Баланс"/>
-		<counter id="acc_num" name="Номер счета" type="text"/>
-		<counter id="acc_name" name="Название счета" type="text"/>
-		<counter id="avail_till" name="Оплачено до" type="text"/>
-	</counters>
-	<keywords></keywords>
-	<type>hosting</type>
-	<country>ru</country>
+<p>Предоставляет информацию из личного кабинета хостинг-провайдера ISPserver <a href="http://ispserver.com/">http://ispserver.com/</a></p>
+]]></description>
+  <author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+  <depends>
+    <module id="library"/>
+  </depends>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+    <history>history.xml</history>
+  </files>
+  <counters>
+    <counter id="code" name="Код клиента" type="text"/>
+    <counter id="provider" name="Провайдер" type="text"/>
+    <counter id="acc_num" name="Код лицевого счёта" type="text"/>
+    <counter id="balance" name="Баланс" units=" {@currency}"/>
+    <counter id="allBalances" name="Провайдеры" type="text"/>
+    <counter id="allServices" name="Услуги" type="text"/>
+  </counters>
+  <keywords>ISPserver хостинг</keywords>
+  <type>hosting</type>
+  <country>ru</country>
 </provider>

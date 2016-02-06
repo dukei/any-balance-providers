@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-bonus-auto49</id>
+	<api flags="no_browser"/>
+	<name>Авто49 (Бонусы)</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию об участнике бонусной программы по номеру карты с сайта http://bonus.auto49.ru/</p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баллы" units=" б"/>
+		<counter id="level" name="Уровень участия" type="text"/>
+		<counter id="last_time" name="Дата покупки" type="time" format="dd/MM/yyyy"/>
+	</counters>
+	<keywords></keywords>
+	<type>bonus</type>
+	<country>ru</country>
+</provider>

@@ -13,29 +13,31 @@ var g_headers = {
 function main() {
 	var prefs = AnyBalance.getPreferences();
 	var baseurlLogin = 'https://login.dnevnik.ru/login';
+    var baseurlChildren = 'https://children.dnevnik.ru';
+    var baseurlSchool = 'https://schools.dnevnik.ru';
 	AnyBalance.setDefaultCharset('utf-8');
+    
 	
-	checkEmpty(prefs.login, 'Введите логин!');
-	checkEmpty(prefs.password, 'Введите пароль!');
-	
-	var html = AnyBalance.requestGet(baseurlLogin, g_headers);
-	
-	var params = createFormParams(html, function(params, str, name, value) {
-		if (name == 'login')
-			return prefs.login;
-		else if (name == 'password')
-			return prefs.password;
-		return value;
-	});
-	
-	try {
-		html = AnyBalance.requestPost(baseurlLogin, params, addHeaders({Referer: baseurlLogin}));
-	} catch(e) {
-		html = AnyBalance.requestGet('http://dnevnik.ru/user/', g_headers);
-	}
+	AB.checkEmpty(prefs.login, 'Введите логин!');
+	AB.checkEmpty(prefs.password, 'Введите пароль!');
+        
+        var params = {
+            exceededAttempts: 'False',
+            ReturnUrl: '',
+            login: prefs.login,
+            password: prefs.password,
+            'Captcha.Input': '',
+            'Captcha.Id': ''
+        };
+        var html = AnyBalance.requestPost(baseurlLogin, params, AB.addHeaders({Referer: baseurlLogin}));
+        
+        if (!html || AnyBalance.getLastStatusCode() >= 400) {
+            AnyBalance.trace(html);
+            throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
+        }
 	
 	if (!/logout/i.test(html)) {
-		var error = getParam(html, null, null, /<div[^>]+class="message\s*"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+		var error = AB.getParam(html, null, null, /<div[^>]+class="message\s*"[^>]*>([\s\S]*?)<\/div>/i, AB.replaceTagsAndSpaces);
 		if (error)
 			throw new AnyBalance.Error(error, null, /Ошибка в логине или пароле/i.test(error));
 		
@@ -45,32 +47,47 @@ function main() {
 	
 	if(prefs.id) {
 		AnyBalance.trace('Ищем дневник ребенка с идентификатором ' + prefs.id);
-		html = AnyBalance.requestGet('http://children.dnevnik.ru/marks.aspx?child=' + prefs.id, g_headers);
+		html = AnyBalance.requestGet(baseurlChildren + '/marks.aspx?child=' + prefs.id, g_headers);
 	} else {
-		AnyBalance.trace('Идентификатор ребенка не указан, ищем без него');
-		var href = getParam(html, null, null, /<a href="(https?:\/\/schools[^"]+)[^>]*>\s*Мой дневник/i);
-		checkEmpty(href, 'Не удалось найти ссылку на оценки, сайт изменен?', true);
-		html = AnyBalance.requestGet(href, g_headers);
-	}
+        AnyBalance.trace('Идентификатор ребенка не указан, ищем без него');
+
+        html = AnyBalance.requestGet(baseurlChildren, g_headers);
+        if (!html || AnyBalance.getLastStatusCode() >= 400) {
+            // в каких-то случаях children.dnevnik.ru закрыт (403), смотрим schools.dnevnik.ru
+            html = AnyBalance.requestGet(baseurlSchool + '/marks.aspx', g_headers);
+        } else {
+            var href = AB.getParam(html, null, null, /<a\s[^>]*\bhref="(https?:\/\/children\.dnevnik\.ru\/marks\.aspx\?[^'"\s#>]*?child=[^'"\s#>]+)/i);
+            if (!href) {
+                href = baseurlChildren + '/marks.aspx';
+            }
+            AnyBalance.trace(href);
+            html = AnyBalance.requestGet(href, g_headers);
+        }
+    }
+        
+        var daysHtml = AB.getElement(html, /<div\s[^>]*id="diarydays"/);
+        if (!daysHtml) {
+            AnyBalance.trace(html);
+            throw new AnyBalance.Error('Не удалось найти оценки, сайт изменен?');
+        }
 	
 	var result = {success: true};
 	
-	//<a\s*class="strong\s*" title="[^"]+" href="http://(?:schools|children).dnevnik.ru/lesson.aspx(?:[^>]*>){15,20}</tr>
 	var regLesson = '<a\\s*class="strong\\s*" title="[^"]+" href="https?://(?:schools|children).dnevnik.ru/lesson.aspx(?:[^>]*>){15,30}</tr>';
 	// Бывает от 1 до 6 уроков
 	//var regDay = new RegExp('<div class="panel blue2 clear">(?:[\\s\\S]*?' + regLesson + '){1,6}', 'ig');
 
 	var regDay = new RegExp('<div class="panel blue2 clear">[^]+?<table class="grid vam marks">[^]*?<\/table>', 'ig');
-	var days = sumParam(html, null, null, regDay);
+	var days = AB.sumParam(daysHtml, null, null, regDay);
 	
 	for(var i = 0; i < days.length; i++) {
 		var currentDay = days[i];
 		
-		var day = getParam(currentDay, null, null, /<h3>([\s\S]*?)<\/h3>/i, replaceTagsAndSpaces, html_entity_decode);
+		var day = AB.getParam(currentDay, null, null, /<h3>([\s\S]*?)<\/h3>/i, AB.replaceTagsAndSpaces);
 		if(!day)
 			continue;
 
-		var lessons = sumParam(currentDay, null, null, new RegExp(regLesson, 'ig'));
+		var lessons = AB.sumParam(currentDay, null, null, new RegExp(regLesson, 'ig'));
 		
 		var total = '<b>' + day + '</b><br/>';
 		var totalLessons = '';
@@ -78,18 +95,18 @@ function main() {
 		for(var z = 0; z < lessons.length; z++) {
 			var currentLesson = lessons[z];
 			
-			var name = getParam(currentLesson, null, null, /title="([^"]+)/i, replaceTagsAndSpaces, html_entity_decode);
-			var mark = getParam(currentLesson, null, null, /class="mark([^>]*>){2}/i, replaceTagsAndSpaces, html_entity_decode);
+			var name = AB.getParam(currentLesson, null, null, /title="([^"]+)/i, AB.replaceTagsAndSpaces);
+			var mark = AB.getParam(currentLesson, null, null, /class="mark([^>]*>){2}/i, AB.replaceTagsAndSpaces);
 			if(mark && name) {
 				totalLessons += name + ': ' + mark + '<br/>';
 			}
 			//total += name + (mark ? ': ' + mark : 'нет оценок') + '<br/>';
 		}
 		if(totalLessons != '')
-			getParam('<b>' + day + '</b><br/><br/>' + totalLessons, result, 'total' + i);
+			AB.getParam('<b>' + day + '</b><br/><br/>' + totalLessons, result, 'total' + i);
 	}
 	
-	getParam(html, result, 'fio', /header-profile__name[^>]+>([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
+	AB.getParam(html, result, 'fio', /header-profile__name[^>]+>([^<]+)/i, AB.replaceTagsAndSpaces);
 	
 	AnyBalance.setResult(result);
 }

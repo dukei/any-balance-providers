@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id version="13">ab-bonus-sportmaster</id>
+	<id version="16">ab-bonus-sportmaster</id>
 	<name>Спортмастер</name>
 	<description html="true"><![CDATA[
    <p>Предоставляет информацию по бонусной карте "Спортмастер".</p> 
@@ -11,10 +11,12 @@
 	<p>C ноября 2013 на сайте невозможно проверить баланс по номеру карты без подтверждения по смс, поэтому поддерживается только вход по логину и паролю.</p>
 	]]></instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+        <depends>
+   		<module id="library"/>
+   	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>

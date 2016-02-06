@@ -16,9 +16,13 @@ function img2status(str){
     return statuses[str] || str;
 }
 
-function num2(n){
-	return n < 10 ? '0' + n : '' + n;
-}
+var g_headers = {
+	'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+	'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
+	'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
+	'Connection':'keep-alive',
+	'User-Agent':'Mozilla/5.0 (BlackBerry; U; BlackBerry 9900; en-US) AppleWebKit/534.11+ (KHTML, like Gecko) Version/7.0.0.187 Mobile Safari/534.11+'
+};
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
@@ -26,7 +30,7 @@ function main() {
 	AnyBalance.trace('Sending a request for authorization');
 	AnyBalance.setDefaultCharset('utf-8');
 	
-	var html = AnyBalance.requestGet(baseurl + 'login/');
+	var html = AnyBalance.requestGet(baseurl + 'login/', g_headers);
 	
 	var form = getParam(html, null, null, /<form[^>]+id="login_form"[^>]*>([\s\S]*?)<\/form>/i);
 	if(!form)
@@ -48,7 +52,7 @@ function main() {
 	params.login = prefs.login;
 	params.password = prefs.password;
 	
-	var html = AnyBalance.requestPost(baseurl + 'oneLogin/ru/', params);
+	var html = AnyBalance.requestPost(baseurl + 'oneLogin/ru/', params, g_headers);
 	var json = getJson(html);
 	if(json.action != 'login_ok'){
 		if(json.mess)
@@ -59,7 +63,7 @@ function main() {
 
 	AnyBalance.trace('Authorization was successful');
 
-	html = AnyBalance.requestGet(baseurl + 'profile-online/main/');
+	html = AnyBalance.requestGet(baseurl + 'profile-online/main/', g_headers);
 
 	if(/twopass/i.test(html)){
 		throw new AnyBalance.Error('Газпромбонус просит сменить пароль. Пожалуйста, зайдите в личный кабинет через браузер и смените пароль.', null, true);
@@ -68,47 +72,35 @@ function main() {
 	AnyBalance.trace('Start parsing...');
 	
 	var result = {success: true};
-	var balance = getParam(html, null, null, /Бонусов доступно[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(balance, result, 'balance');
+	
+        
+        var reStatus = /Текущий статус карты[\s\S]{1,100}?<img[^>]+src="[^"]*images\/([^\/"]*)\.png"[^>]*>/i;
+        var reSave = /Для подтверждения статуса[\s\S]{1,50}?необходимо совершить покупки на сумму[\s\S]{1,100}?<div[^>]*>([^]+?)<\/div\s*>/i;
+        var reHeighten = /Для повышения статуса[\s\S]{1,50}?необходимо совершить покупки на сумму[\s\S]{1,100}?<div[^>]*>([^]+?)<\/div\s*>/i;
 
-	//getParam(html, result, 'balance', /Бонусов доступно[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
-	var reStatus = prefs.zone == 1 ? /Текущий статус карты в 1[\s\S]*?<img[^>]+src="[^"]*images\/([^\/"]*)\.png"[^>]*>/i : /Текущий статус карты в 2[\s\S]*?<img[^>]+src="[^"]*images\/([^\/"]*)\.png"[^>]*>/i;
-	var reSave = prefs.zone == 1 ? /Для подтверждения статуса в 1(?:[\s\S](?!<\/p>))*необходимо совершить покупки на сумму[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i : /Для подтверждения статуса в 2(?:[\s\S](?!<\/p>))*необходимо совершить покупки на сумму[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i;
-	var reHeighten = prefs.zone == 1 ? /Для повышения статуса в 1(?:[\s\S](?!<\/p>))*необходимо совершить покупки на сумму[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i : /Для повышения статуса в 2(?:[\s\S](?!<\/p>))*необходимо совершить покупки на сумму[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i;
-	getParam(html, result, 'status', reStatus, replaceTagsAndSpaces, img2status);
+        getParam(html, result, 'balance', /Бонусов доступно[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+        getParam(html, result, 'status', reStatus, replaceTagsAndSpaces, img2status);
 	getParam(html, result, '__tariff', reStatus, replaceTagsAndSpaces, img2status);
 	getParam(html, result, 'month_need', reSave, replaceTagsAndSpaces, parseBalance);
-	
-	var dt = new Date();
-	var curMonth = num2(dt.getMonth() + 1) + '.' + dt.getFullYear();
+        getParam(html, result, 'customer', /<div[^>]+class="[^"]*PersonalName"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+        getParam(html, result, 'month_need_up', reHeighten, replaceTagsAndSpaces, parseBalance);
 
-	getParam(html, result, 'customer', /<div[^>]+class="[^"]*PersonalName"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'month_need_up', reHeighten, replaceTagsAndSpaces, parseBalance);
-
-	if(prefs.zone != 1 && AnyBalance.isAvailable('month2', 'month')){
-		html = AnyBalance.requestPost(baseurl + 'profile-online/statistics/handler.php', {year: '0', month: '0'});
-		sumParam(html, result, ['month2', 'month'], new RegExp('<tr[^>]*>\\s*<td[^>]*>\\d+\\.' + curMonth + '(?:(?:[\\s\\S](?!</tr>))*?<td[^>]*>){3}([\\s\\S]*?)</td>', 'ig'), replaceTagsAndSpaces, parseBalance, aggregate_sum);
-	}
-
-	if(prefs.zone == 1 && AnyBalance.isAvailable('month1', 'month')){
-		html = AnyBalance.requestGet(baseurl + 'profile-online/statistics/index-online.php');
-		sumParam(html, result, ['month1', 'month'], new RegExp('<tr[^>]*>\\s*<td[^>]*>\\d+\\.' + curMonth + '(?:(?:[\\s\\S](?!</tr>))*?<td[^>]*>){3}([\\s\\S]*?)</td>', 'ig'), replaceTagsAndSpaces, parseBalance, aggregate_sum);
-	}
-	
 	if(AnyBalance.isAvailable('month')){
-		getParam((result.month1 || 0) + (result.month2 || 0), result, 'month');
+                var currDate = new Date();
+            
+                html = AnyBalance.requestPost(baseurl + 'profile-online/statistics/handler.php', {
+                    year: currDate.getFullYear(),
+                    month: currDate.getMonth() + 1
+                }, g_headers);
+                
+                var monthSum = 0;
+                var jsonStat = AB.getJson(html)
+                for (var i = 0; i < jsonStat.length; ++i) {
+                    monthSum += parseFloat(jsonStat[i].sum);
+                }
+		getParam(Math.round(monthSum * 100) / 100, result, 'month');
 	}
 	
-	//Баланс по курсу в рублях
-    /* Курс теперь 1:1, так что неинтересно смотреть.	
-	if(AnyBalance.isAvailable('balance_money', 'kurs')) {
-		html=AnyBalance.requestGet("https://www.gpnbonus.ru/on_the_way/");
-		var regexp = /Наш курс:\D*(\d+)\s*бонус[^=]*=\s*(\d+)\s*руб/;
-		if (res = regexp.exec(html)) {
-			result.balance_money = Math.floor(((result.balance*res[2])/res[1])*100)/100;
-		}
-		getParam(html, result, 'kurs', /Наш курс:\s*<b>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
-	} */
 	AnyBalance.trace('End parsing...');
 	AnyBalance.setResult(result);
 }

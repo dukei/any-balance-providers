@@ -1,17 +1,21 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="3">ab-money-absolut</id>
+	<id version="4">ab-money-absolut</id>
 	<api flags="no_browser"/>
 	<name>Банк Абсолют</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе на счетах банка Абсолют <a href="http://www.absolutbank.ru/">http://www.absolutbank.ru/</a></p>
-	<p>Информация берется из личного кабинета <a href="https://server105.ibank.absolutbank.ru/">https://server105.ibank.absolutbank.ru/</a></p>
+	<p>Предоставляет информацию о балансе на счетах банка Абсолют http://www.absolutbank.ru/</p>
+	<p>Информация берется из личного кабинета https://online.absolutbank.ru/app/main</p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+		<module id="nadapter"/>
+		<module id="extract/abe-money-absolut"/>
+	</depends>	
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>

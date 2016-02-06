@@ -4,7 +4,13 @@ _packsend.bat
 provider.zip
 packsend.bat
 debug
+.idea
 /nbproject/private/
 *nbproject
-!extra/development/ab-nadapter-typical-provider/*-anybalance.html
+!**/test/*-anybalance.html
+!extra/development/ab-typical-provider/_history.bat
+!extra/development/ab-stark-typical-provider/_history.bat
 !extra/development/ab-nadapter-typical-provider/_history.bat
+!extra/development/ab-typical-provider/_debug-anybalance.html
+!extra/development/ab-stark-typical-provider/_debug-anybalance.html
+!extra/development/ab-nadapter-typical-provider/_debug-anybalance.html

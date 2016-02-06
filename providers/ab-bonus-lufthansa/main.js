@@ -1,4 +1,5 @@
-﻿/**
+﻿
+/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 
 Получает информацию по бонусной программе Lufthansa Miles and More
@@ -8,77 +9,92 @@
 */
 
 var g_headers = {
-        'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-        'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
-        'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
-        'Cache-Control':'max-age=0',
-        'Connection':'keep-alive',
-        'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.17 (KHTML, like Gecko) Chrome/24.0.1312.56 Safari/537.17'
+  'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+  'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
+  'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
+  'Connection': 'keep-alive',
+  'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
 };
 
-function main(){
-    var prefs = AnyBalance.getPreferences();
-    AnyBalance.setDefaultCharset('utf-8');
+function main() {
+  var prefs = AnyBalance.getPreferences();
+  var baseurl = 'https://mobile.lufthansa.com/';
+  AnyBalance.setDefaultCharset('utf-8');
 
-    var baseurl = 'https://mobile.lufthansa.com';
-    //Need to enter a country
-    var html = AnyBalance.requestGet(baseurl + "/hpg/cor.do?l=en", g_headers);
-	//return makeCountries(html);
-	
-	var country = prefs.country || 'DE';
-    var action = getParam(html, null, null, /action="(\/hpg\/cor.do[^"]*)/i, null, html_entity_decode);
-    if(!action)
-        throw new AnyBalance.Error('Can not find country form!');
+  AB.checkEmpty(prefs.login, 'Введите логин!');
+  AB.checkEmpty(prefs.password, 'Введите пароль!');
+  //Need to enter a country
+  var html = AnyBalance.requestGet(baseurl + 'hpg/cor.do?l=en', g_headers);
 
-    html = AnyBalance.requestPost(baseurl + action, {
-        country: country,
-        timezone: jstz.determine_timezone().name()
-    }, g_headers);
-	
-    html = AnyBalance.requestPost(baseurl + "/hpg/login.do?l=en", {
-        user:prefs.login,
-        pass:prefs.password,
-        step:'search'
-    }, g_headers);
-	
-    if(!/step=logout|\/logout\?/.test(html)){
-        var error = getParam(html, null, null, /<span[^>]*class="feedback_neg"[^>]*>([\s\S]*?)<\/span>/, replaceTagsAndSpaces, html_entity_decode);
-        if(error)
-            throw new AnyBalance.Error(error);
-        var message = getParam(html, null, null, /<h1>Miles[\s\S]*?More[\s\S]*?Message[\s\S]*?<\/h1>[\s\S]*?<div[\s\S]*?>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
-        if(message)
-            throw new AnyBalance.Error(message);
-        throw new AnyBalance.Error('Could not enter miles&more site. Is the site changed?');
+  if (!html || AnyBalance.getLastStatusCode() > 400) {
+    AnyBalance.trace(html);
+    throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
+  }
+  //return makeCountries(html);
+  var country = prefs.country || 'DE';
+  var action = AB.getParam(html, null, null, /action="(\/hpg\/cor.do[^"]*)/i, AB.replaceTagsAndSpaces);
+  if (!action) {
+    throw new AnyBalance.Error('Can not find country form!');
+  }
+
+  html = AnyBalance.requestPost(baseurl + action, {
+    country: country,
+    timezone: jstz.determine_timezone().name()
+  }, g_headers);
+
+  html = AnyBalance.requestPost(baseurl + "hpg/login.do?l=en", {
+    user: prefs.login,
+    pass: prefs.password,
+    step: 'search'
+  }, g_headers);
+
+  if (!/step=logout|\/logout\?/.test(html)) {
+    var error = AB.getParam(html, null, null,
+      /class="[^"]*error[^"]*">[\s\S]*?class="[^"]*error[^"]*"[^>]*>([\s\S]*?)<\/div>/i, AB.replaceTagsAndSpaces);
+    if (error) {
+      throw new AnyBalance.Error(error, null, /id/i.test(error));
     }
-	
-    var result = {success: true};
-	
-    if(!/<div[^>]*>Award miles/i.test(html)) //Язык не всегда переключается с первого раза. Если баланс не нашли, переключаем силой
-        html = AnyBalance.requestGet(baseurl + '/mma/account.do?l=en', g_headers);
-	
-    getParam(html, result, 'balance', /<div[^>]*>Award miles[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, [replaceTagsAndSpaces, /\D/ig, ''], parseBalance);
-    getParam(html, result, 'qbalance', /<div[^>]*>Status miles[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, [replaceTagsAndSpaces, /\D/ig, ''], parseBalance);
-    getParam(html, result, 'hon', /<div[^>]*>HON Circle miles[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, [replaceTagsAndSpaces, /\D/ig, ''], parseBalance);
-    getParam(html, result, '__tariff', /<div[^>]+class="[^"]*account_box[^>]*>(?:[\s\S]*?<br[^>]*>){2}([\s\S]*?)(?:<\/td>|<br)/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'cardnum', /<div[^>]*>Customer number:([^<]*)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'nextstatus', /To achieve (.*?) status, you still/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'nextstatusmiles', /To achieve (?:.*?) status, you still need (\d+) status miles/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'nextfs', /To achieve (?:.*?) status, you still need (?:.*?)(\d+) flight segments/i, replaceTagsAndSpaces, parseBalance);
-	
-    AnyBalance.setResult(result);
+    AnyBalance.trace(html);
+    throw new AnyBalance.Error('Could not enter miles&more site. Is the site changed?');
+  }
+
+  var result = {
+    success: true
+  };
+
+  AnyBalance.trace(AnyBalance.getLastUrl());
+  html = AnyBalance.requestGet(baseurl + 'rs/account-statement?l=en', g_headers);
+  AnyBalance.trace(AnyBalance.getLastUrl());
+
+  AB.getParam(html, result, 'balance', /Award\s+miles([\s\S]*?)<\/li>/i, AB.replaceTagsAndSpaces, AB.parseBalance);
+  AB.getParam(html, result, 'qbalance', /Award\s+miles[\s\S]*?Status\s+miles([\s\S]*?)<\/li>/i, AB.replaceTagsAndSpaces,
+    AB.parseBalance);
+  AB.getParam(html, result, 'cardnum', /Account\s+balance[\s\S]*?<p[^>]*>[\s\S]*?<\/b>([\s\S]*?)<span/i, AB.replaceTagsAndSpaces);
+  AB.getParam(html, result, 'nextstatus', /To\s+achieve([\s\S]*?)status/i, AB.replaceTagsAndSpaces);
+  AB.getParam(html, result, 'nextstatusmiles', /To\s+achieve[\s\S]*?status([\s\S]*?)status\s+miles/i, AB.replaceTagsAndSpaces,
+    AB.parseBalance);
+  AB.getParam(html, result, 'nextfs', /To\s+achieve[\s\S]*?status\s+miles([\s\S]*?)flight/i, AB.replaceTagsAndSpaces,
+    AB.parseBalance);
+
+  AB.getParam(html, result, 'dateRange', /To\s+achieve[\s\S]*?flight\s+segments([\s\S]*?)<\/p>/i, AB.replaceTagsAndSpaces);
+
+  AnyBalance.setResult(result);
 }
 
-function makeCountries(html){
-    var result = {success: true};
-    
-    var countries = sumParam(html, null, null, /(<option[^>]+value="\w+"[^>]*>[^<]*<\/option>)/ig);
-    var codes = [], names = [];
-    for(var i=0; i<countries.length; ++i){
-        codes[codes.length] = getParam(countries[i], null, null, /value="([^"]*)/i, replaceTagsAndSpaces, html_entity_decode);
-        names[names.length] = getParam(countries[i], null, null, /<option[^>]*>([^<]*)<\/option>/i, replaceTagsAndSpaces, html_entity_decode);
-    }
+function makeCountries(html) {
+  var result = {
+    success: true
+  };
 
-    result.codes = codes.join('|');
-    result.names = names.join('|');
-    AnyBalance.setResult(result);
+  var countries = AB.sumParam(html, null, null, /(<option[^>]+value="\w+"[^>]*>[^<]*<\/option>)/ig);
+  var codes = [],
+    names = [];
+  for (var i = 0; i < countries.length; ++i) {
+    codes[codes.length] = AB.getParam(countries[i], null, null, /value="([^"]*)/i, AB.replaceTagsAndSpaces);
+    names[names.length] = AB.getParam(countries[i], null, null, /<option[^>]*>([^<]*)<\/option>/i, AB.replaceTagsAndSpaces);
+  }
+
+  result.codes = codes.join('|');
+  result.names = names.join('|');
+  AnyBalance.setResult(result);
 }

@@ -10,52 +10,11 @@ var g_headers = {
 	'User-Agent': 'Mozilla/5.0 (BlackBerry; U; BlackBerry 9900; en-US) AppleWebKit/534.11+ (KHTML, like Gecko) Version/7.0.0.187 Mobile Safari/534.11+'
 };
 
-function getMyJson(info) {
-	try {
-		var json = new Function('return ' + info)();
-		return json;
-	} catch (e) {
-		AnyBalance.trace('Неверный json: ' + info);
-		throw new AnyBalance.Error('Неверный ответ сервера!');
-	}
-}
-
-function findParam(params, name) {
-	for (var i = 0; i < params.length; ++i) {
-		if (params[i][0] == name) 
-			return i;
-	}
-	return -1;
-}
-
-function createSignedParams(params, arData) {
-	var key = new rsasec_key(arData.key.E, arData.key.M, arData.key.chunk);
-	var data = '__RSA_RAND=' + arData.rsa_rand;
-	for (var i = 0; i < arData.params.length; i++) {
-		var param = arData.params[i];
-		var idx = findParam(params, param);
-		if (idx >= 0) {
-			data += '&' + param + '=' + encodeURIComponent(params[idx][1]);
-			params[idx] = undefined;
-		}
-	}
-	data = data + '&__SHA=' + SHA1(data);
-	params.push(['__RSA_DATA', rsasec_crypt(data, key)]);
-	var out = [];
-	for (var i = 0; i < params.length; ++i) {
-		var p = params[i];
-		if (!p)
-			continue;
-		out.push(encodeURIComponent(p[0]) + '=' + encodeURIComponent(p[1]));
-	}
-	return out.join('&');
-}
-
 function main(){
     var prefs = AnyBalance.getPreferences();
 	
-	checkEmpty(prefs.login, 'Введите логин!');
-	checkEmpty(prefs.password, 'Введите пароль!');
+	AB.checkEmpty(prefs.login, 'Введите логин!');
+	AB.checkEmpty(prefs.password, 'Введите пароль!');
 	
     AnyBalance.setDefaultCharset('utf-8');
 	
@@ -70,12 +29,12 @@ function main(){
     	['USER_LOGIN', prefs.login],
     	['USER_PASSWORD', prefs.password],
     	['Login', 'Войти']
-    ], addHeaders({'Content-Type': 'application/x-www-form-urlencoded',Referer: baseurl + 'personal/'}));
+    ], AB.addHeaders({'Content-Type': 'application/x-www-form-urlencoded',Referer: baseurl + 'personal/'}));
 	
     if(!/\?logout=yes/i.test(html)){
-        var error = getParam(html, null, null, [/<font[^>]+class="errortext"[^>]*>([\s\S]*?)<\/font>/i,
+        var error = AB.getParam(html, null, null, [/<font[^>]+class="errortext"[^>]*>([\s\S]*?)<\/font>/i,
 			/alert-error([^>]*>){2}/i,
-			/<h2[^>]+style="color:\s*#933"[^>]*>([\s\S]*?)<\/h2>/i], replaceTagsAndSpaces, html_entity_decode);
+			/<h2[^>]+style="color:\s*#933"[^>]*>([\s\S]*?)<\/h2>/i], AB.replaceTagsAndSpaces);
 		
         if(error)
             throw new AnyBalance.Error(error, null, /Ошибка авторизации/i.test(error));
@@ -86,19 +45,30 @@ function main(){
 	
     var result = {success: true};
 	
-    getParam(html, result, 'fio', /<div[^>]+class="b_private_cab_info"[^>]*>\s*<p[^>]*>([\s\S]*?)<br>/i, replaceTagsAndSpaces, html_entity_decode);
-//    getParam(html, result, 'phone', /div[^>]+class="b_private_cab_info"[^>]*>\s*<p[^>]*>[^<]*[\s\S]*?<br>([\s\S]*?)<br>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'balance', /Общая сумма баллов:([\s\S]*?)<br>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(prefs.login, result, 'number', null, replaceTagsAndSpaces, html_entity_decode);
+    var privateCabHtml = AB.getElement(html, /<div[^>]+class="[^"]*?b_private_cab_info/i);
+    
+    if (!privateCabHtml) {
+        AnyBalance.trace(html);
+        throw new AnyBalance.Error('Не удалось получить данные. Сайт изменен?');
+    }
+
+    AB.getParam(privateCabHtml, result, 'fio', /<div[^>]+class="b_private_cab_info"[^>]*>\s*<p[^>]*>([\s\S]*?)<br>/i, AB.replaceTagsAndSpaces);
+    AB.sumParam(privateCabHtml, result, 'balance', /Общая сумма баллов([\s\S]*?)<br/ig, AB.replaceTagsAndSpaces, AB.parseBalance, AB.aggregate_sum);
+    AB.getParam(prefs.login, result, 'number');
 	
     html = AnyBalance.requestGet(baseurl + "personal/transactions/", g_headers);
-	
-    getParam(html, result, 'dateLast', /Дата транзакци(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
-    getParam(html, result, 'regionLast', /Дата транзакци(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'typeLast', /Тип операции(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'sumLast',  /Сумма сделки(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, ['sumCurrencyLast', 'sumLast'],  /Сумма сделки(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseCurrency);
-    getParam(html, result, 'balanceLast',  /Начислено \/ Списано баллов(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+
+    var divContentHtml = AB.getElement(html, /<div[^>]+id="content"/i);
+    var tbodyHtml = AB.getElement(divContentHtml, /<tbody/i);
+    var trHtml = AB.getElement(tbodyHtml, /<tr/i);
+    var tdArray = AB.getElements(trHtml, /<td/ig);
+
+    AB.getParam(tdArray[0], result, 'dateLast', null, AB.replaceTagsAndSpaces, AB.parseDate);
+    AB.getParam(tdArray[1], result, 'regionLast', null, AB.replaceTagsAndSpaces);
+    AB.getParam(tdArray[2], result, 'typeLast', null, AB.replaceTagsAndSpaces);
+    AB.getParam(tdArray[3], result, 'sumLast',  null, AB.replaceTagsAndSpaces, AB.parseBalance);
+    AB.getParam(tdArray[3], result, ['sumCurrencyLast', 'sumLast'],  null, AB.replaceTagsAndSpaces, AB.parseCurrency);
+    AB.getParam(tdArray[4], result, 'balanceLast',  null, AB.replaceTagsAndSpaces, AB.parseBalance);
 	
     AnyBalance.setResult(result);
 }

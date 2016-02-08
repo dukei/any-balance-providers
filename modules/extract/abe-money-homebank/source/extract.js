@@ -168,9 +168,11 @@ function processCard(card, result) {
     getParam(card, result, ['cards.currency', 'cards.balance'], /<span[^>]+class="account_amount_val"[\s\S]*?<\/span>/i, replaceTagsAndSpaces, parseCurrency);
     var id = getParam(card, null, null, /fid=([^&"'\s]+)/i, replaceHtmlEntities);
 
-    if(AnyBalance.isAvailable('cards.accnum', 'cards.till', 'cards.status', 'cards.balance_kzt', 'cards.balance_usd', 'cards.balance_eur', 'cards.transactions')){
+    if(AnyBalance.isAvailable('cards.available', 'cards.minpay', 'cards.accnum', 'cards.till', 'cards.status', 'cards.balance_kzt', 'cards.balance_usd', 'cards.balance_eur', 'cards.transactions')){
         var html = AnyBalance.requestGet(baseurl + 'finance/accounts/overview.htm?fid=' + id, g_headers);
 
+        getParam(html, result, 'cards.available', /Доступно[\s\S]*?<div[^>]+class="cell"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+        getParam(html, result, 'cards.minpay', /К погашению[\s\S]*?<div[^>]+class="cell"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
         getParam(html, result, 'cards.accnum', /ИИК[\s\S]*?<div[^>]+class="cell"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
         getParam(html, result, 'cards.till', /Срок действия[\s\S]*?<div[^>]+class="cell"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseDate);
         getParam(html, result, 'cards.status', /Срок действия[\s\S]*?<div[^>]+class="cell"[^>]*>([\s\S]*?)<\/div>/i, [/[^\-]*-/, '', replaceTagsAndSpaces]); //заблокирована

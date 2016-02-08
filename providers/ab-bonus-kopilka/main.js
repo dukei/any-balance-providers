@@ -13,6 +13,9 @@ function main() {
     var prefs = AnyBalance.getPreferences();
     AnyBalance.setDefaultCharset('windows-1251');
 
+    checkLogin(prefs.login);
+    checkEmpty(prefs.password, 'Введите пароль!');
+
     var baseurl = 'http://kopilka-bonus.ru/',
         sslUrl = 'https://kopilka-bonus.ru/';
 	
@@ -78,7 +81,7 @@ function getParams(prefs) {
             'auth_password': prefs.password
         };
 
-    if (prefs.login.match(/77800016/)) {
+    if (prefs.login.match(/^77800016/)) {
         params['auth_altMode'] = modes.CARD;
         params['auth_cnumber'] = prefs.login;
     }
@@ -92,6 +95,34 @@ function getParams(prefs) {
     }
 
     return params;
+}
+
+/**
+ * Проверяет формат логина (телефон|номер карты|email)
+ * @param login
+ */
+function checkLogin(login) {
+    checkEmpty(login, 'Введите логин!');
+
+    var errorCommon = 'Указан неправильный формат ';
+
+    if (/^\d+$/.test(login) && login.length > 11) {
+        if (!/^77800016/.test(login) || !/^\d{19}$/.test(login)) {
+            throw new AnyBalance.Error(
+                errorCommon + 'карты, должен начинаться с 77800016 и состоять из 19 цифр', null, true
+            );
+        }
+    }
+    else if (/^\+?\d+$/.test(login)) {
+        if (!/^8\d{10}$/.test(login)) {
+            throw new AnyBalance.Error(
+                errorCommon + 'телефона, укажите полный федеральный номер в соответствующем формате', null, true
+            );
+        }
+    }
+    else if (!/^[\w\.\-]+@[a-z\d\.\-]+\.[a-z\d\.\-]\w+$/i.test(login)) {
+        throw new AnyBalance.Error(errorCommon + 'email', null, true);
+    }
 }
 
 function isLoggedIn(html) {

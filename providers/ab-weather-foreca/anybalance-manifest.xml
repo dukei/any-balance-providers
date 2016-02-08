@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-weather-foreca</id>
+	<api flags="no_browser"/>
+	<name>Foreca</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о прогнозе погоды с сайта <a href="http://www.foreca.ru">http://www.foreca.ru</a></p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="city" name="Город" type="text"/>
+		<counter id="temp" name="Температура" suffix=" °C" type="numeric"/>
+		<counter id="rf_temp" name="Ощущается как" suffix=" °C" type="numeric"/>
+		<counter id="wind" name="Скорость ветра" suffix=" м/с" type="numeric"/>
+		<counter id="wind_dir" name="Направление ветра" type="text"/>
+		<counter id="atmo_conditions" name="Атмосферные явления" type="text"/>
+		<counter id="pressure" name="Барометр" suffix=" мм рт.ст." type="numeric"/>
+		<counter id="point_dew" name="Точка росы" suffix=" °C" type="numeric"/>
+		<counter id="humidity" name="От. влажность" suffix=" %" type="numeric"/>
+		<counter id="line_of_sight" name="Видимость" suffix=" км" type="numeric"/>
+		<counter id="rising" name="Восход солнца" type="time_interval" format="{@MIN}:{@sec}"/>
+		<counter id="setting" name="Закат солнца" type="time_interval" format="{@MIN}:{@sec}"/>
+		<counter id="dayLength" name="Долгота дня" type="time_interval" format="{@H} ч {@min} мин"/>
+	</counters>
+	<keywords>форека, прогноз, погода, осадки, ветер, влажность, давление, солнце, температура, воздух, видимость, долгота дня</keywords>
+	<type>weather</type>
+	<country>ru</country>
+</provider>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-internet-putilovka</id>
+	<id version="2">ab-internet-putilovka</id>
 	<api flags="no_browser"/>
 	<name>PUTILOVKA.NET (Украина)</name>
 	<description html="true"><![CDATA[
@@ -10,7 +10,7 @@
 	<instruction html="true"><![CDATA[
 	<p>Если у вас нет доступа в Личный кабинет, получите его на странице https://login.mts.ru/amserver/password</p>
 	]]></instruction>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
@@ -19,7 +19,7 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Депозит" units=" грн"/>
+		<counter id="balance" name="Депозит" units=" р"/>
 		<counter id="fio" name="ФИО" type="text"/>
 		<counter id="status" name="Статус" type="text"/>
 		<counter id="dogovor" name="Договор" type="text"/>

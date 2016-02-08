@@ -15,17 +15,6 @@ var g_headers = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
 };
 
-function parseDateMoment(str){
-    var mom = moment(str, ['D MMM YYYY', 'HH:mm-D MMM YYYY']);
-    if(!mom.isValid()){
-        AnyBalance.trace('Failed to parse date from ' + str);
-    }else{
-        var val = mom.toDate();
-        AnyBalance.trace('Parsed date ' + val + ' from ' + str);
-        return val.getTime();
-    }
-}
-
 function main(){
     var prefs = AnyBalance.getPreferences(),
         baseurl = 'https://stats.iformula.ru/';

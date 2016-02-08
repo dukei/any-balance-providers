@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="30">ab-municipal-pitersbyt</id>
+  <id version="31">ab-municipal-pitersbyt</id>
   <api flags="no_browser"/>
   <name>Петербургская сбытовая компания</name>
   <description>
@@ -14,11 +14,12 @@
        http://www.pes.spb.ru/consumers/11/ (для Петроэлектросбыта) 
   </instruction>
   <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <depends>
+  	<module id="framework/gwt"/>
+  </depends>
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
-    <js>library.js</js>
-    <js>gwt.js</js>
     <js>main.js</js>
     <history>history.xml</history>
   </files>

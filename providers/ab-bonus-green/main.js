@@ -46,8 +46,9 @@ function main(){
     );
 
     if(!/\/logout/i.test(html)) {
-        if (/errorlist/i.test(html)) {
-            throw new AnyBalance.Error('Неправильный номер телефона или пароль!', null, true);
+        var error = AB.getParam(html, null, null, /<ul\s+class="errorlist">([\s\S]+?)<\/ul>/i, AB.replaceTagsAndSpaces);
+        if (error) {
+            throw new AnyBalance.Error(error, null, /номер телефона или пароль/i.test(error));
         }
         AnyBalance.trace(html);
         throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');

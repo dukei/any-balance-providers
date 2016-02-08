@@ -2,7 +2,7 @@
 <provider>
 	<api flags="no_browser"/>
 	<id version="1">ab-bonus-green</id>
-	<name>Гринн карта, бонусная программа</name>
+	<name>Гринкарта (Бонусы)</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о бонусных баллах с сайта http://www.green-bonus.ru</p>
 	<p>Информация берется из личного кабинета http://www.green-bonus.ru/operations/</p>

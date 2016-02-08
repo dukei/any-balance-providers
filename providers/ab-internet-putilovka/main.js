@@ -37,11 +37,11 @@ function main() {
 	}
 	var result = {success: true};
 	
-	getParam(html, result, 'balance', /Депозит:(?:[^>]*>){6}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'status', /Статус:(?:[^>]*>){3}([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, '__tariff', /Тарифный план:[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, [replaceTagsAndSpaces, /-{2,}/i, ''], html_entity_decode);
+	getParam(html, result, 'balance', /Счёт:([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'status', /<td>Статус:[\s\S]*?<font[^>]*>([\s\S]*?)<\/font>/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, '__tariff', /тарифный план[\s\S]*?<td>[\s\S]*?<b>([\s\S]*?)<\/b>/i, [replaceTagsAndSpaces, /-{2,}/i, ''], html_entity_decode);
 	getParam(html, result, 'fio', /ФИО:(?:[^>]*>){3}([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'dogovor', /Договор:(?:[^>]*>){5}([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'dogovor', /Договор:(?:[^>]*>){5}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
 	
 	AnyBalance.setResult(result);
 }

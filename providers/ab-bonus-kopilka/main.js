@@ -81,11 +81,11 @@ function getParams(prefs) {
             'auth_password': prefs.password
         };
 
-    if (prefs.login.match(/^77800016/)) {
+    if (isCardNumber(prefs.login)) {
         params['auth_altMode'] = modes.CARD;
         params['auth_cnumber'] = prefs.login;
     }
-    else if (prefs.login.match(/^8\d+$/)) {
+    else if (isPhone(prefs.login)) {
         params['auth_altMode'] = modes.PHONE;
         params['auth_altLogin'] = prefs.login;
     }
@@ -106,23 +106,35 @@ function checkLogin(login) {
 
     var errorCommon = 'Указан неправильный формат ';
 
-    if (/^\d+$/.test(login) && login.length > 11) {
-        if (!/^77800016/.test(login) || !/^\d{19}$/.test(login)) {
+    if (isCardNumber(login)) {
+        if (!/^\d{19}$/.test(login)) {
             throw new AnyBalance.Error(
                 errorCommon + 'карты, должен начинаться с 77800016 и состоять из 19 цифр', null, true
             );
         }
     }
     else if (/^\+?\d+$/.test(login)) {
-        if (!/^8\d{10}$/.test(login)) {
+        if (!isPhone(login)) {
             throw new AnyBalance.Error(
-                errorCommon + 'телефона, укажите полный федеральный номер в соответствующем формате', null, true
+                errorCommon + 'телефона, укажите полный федеральный номер (начинается с 8-ки)', null, true
             );
         }
     }
-    else if (!/^[\w\.\-]+@[a-z\d\.\-]+\.[a-z\d\.\-]\w+$/i.test(login)) {
+    else if (!isEmail(login)) {
         throw new AnyBalance.Error(errorCommon + 'email', null, true);
     }
+}
+
+function isCardNumber(login) {
+    return /^77800016/.test(login);
+}
+
+function isPhone(login) {
+    return /^8\d{10}$/.test(login);
+}
+
+function isEmail(login) {
+    return /^[\w\.\-]+@[a-z\d\.\-]+\.[a-z\d\.\-]\w+$/i.test(login);
 }
 
 function isLoggedIn(html) {

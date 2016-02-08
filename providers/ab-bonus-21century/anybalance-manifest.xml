@@ -1,27 +1,31 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
-	<id version="3">ab-bonus-21century</id>
-	<api flags="no_browser" />
-	<name>21 Век Бонус (Беларусь)</name>
-	<description html="true"><![CDATA[
-	<p>Получает данные по бонусным картам 21 Век Бонус Беларусь <a href="http://bonus.21vek.by/">http://bonus.21vek.by/</a></p>
-	]]></description>    
-	<instruction html="true"><![CDATA[
+  <id version="4">ab-bonus-21century</id>
+  <api flags="no_browser"/>
+  <name>21 Век Бонус (21vek.by)</name>
+  <description html="true"><![CDATA[
+	<p>Получает данные по бонусным картам 21 Век Бонус онлайн-гипермаркета 21vek.by  в Беларуси с сайта <a href="https://bonus.21vek.by/">https://bonus.21vek.by/</a>.</p>
+	]]></description>
+  <instruction html="true"><![CDATA[
 	<p>Обратите внимание, дату рождения необходимо вводить без пробелов и точек, только цифры подряд.</p>
 	]]></instruction>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
-	<files>
-		<icon>icon.png</icon>
-		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
-		<js>main.js</js>
-		<history>history.xml</history>
-	</files>
-	<counters>
-		<counter id="balance" name="Баланс" units=" {@curr}"/>
-	</counters>
-	<keywords></keywords>
-	<type>bonus</type>
-	<country>by</country>
+  <author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+  <depends>
+    <module id="library"/>
+  </depends>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+    <history>history.xml</history>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units=" {@curr}"/>
+    <counter id="discount" name="% от общей суммы на счёт" units=" %"/>
+    <counter id="textInfo" name="Общая информация" type="text"/>
+    <counter id="cardNumber" name="Текущая карта" type="text"/>
+  </counters>
+  <keywords>Беларусь</keywords>
+  <type>bonus</type>
+  <country>by</country>
 </provider>

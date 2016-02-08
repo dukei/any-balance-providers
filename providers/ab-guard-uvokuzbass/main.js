@@ -37,7 +37,8 @@ function main(){
 	
     var result = {success: true};
 	
-	getParam(html, result, 'balance', /(?:Переплата|Задолженность) по штрафам(?:[^>]*>){7}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'balance', /Задолженность по начислениям[\s\S]*?<tbody>[\s\S]*?<td[^>]*>[\s\S]*?<\/td>[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'outstanding_charges', /Задолженность по начислениям[\s\S]*?<tbody>[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'licschet', /На дату[^<]*(?:задолженность|переплата)\s+по\s+договору([^<]*)составляет/i, replaceTagsAndSpaces, html_entity_decode);
 	
     AnyBalance.setResult(result);

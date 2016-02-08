@@ -48,8 +48,9 @@ function main(){
     );
 
     if (!/security_logout/i.test(html)) {
-        if (/alert-danger"/i.test(html)) {
-            throw new AnyBalance.Error('Неправильный логин или пароль', null, true);
+        var error = AB.getParam(html, null, null, /<div class="alert alert-danger">([\s\S]+?)<\/div>/i, AB.replaceTagsAndSpaces);
+        if (error) {
+            throw new AnyBalance.Error(error, null, /логин или пароль/.test(error));
         }
 		AnyBalance.trace(html);
         throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');

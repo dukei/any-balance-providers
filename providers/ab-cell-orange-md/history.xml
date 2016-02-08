@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="4" date="2016-02-08">
+	- Support changes of personal account.
+	</change>
 	<change version="3" date="2014-10-27">
 	- Improved balance parsing.
 	</change>

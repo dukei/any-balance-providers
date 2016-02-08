@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<api flags="no_browser"/>
+	<id version="1">ab-municipal-gazprom-braynsk</id>
+	<name>Газпром Межрегион Брянск</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера Газпром Межрегион Брянкс <a href="https://газ.смородина.онлайн"></a></p>
+  <p>Информация берется из личного кабинета <a href="https://газ.смородина.онлайн/pages/abonent/login.jsf"></a></p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="debt" name="Долг(+)/переплата(-) за период"/>
+		<counter id="period" name="Дата периода счета" type="text"/>
+	</counters>
+	<keywords>Газпром, Брянск</keywords>
+	<type>municipal</type>
+	<country>ru</country>
+</provider>

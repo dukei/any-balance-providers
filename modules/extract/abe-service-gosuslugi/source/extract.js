@@ -260,6 +260,9 @@ function processFinesForCurrentPlate(result, prefs, currentPlate, showPaidFines)
 	var fines = getElements(html, /<div[^>]+class="[^"]*tabs-dd[^>]*>/ig);
 	AnyBalance.trace('Найдено штрафов: ' + fines.length);
 	
+	result['fines_unpaid'] = 0;
+	result['fines_total'] = 0;
+	
 	for(var i = 0; i < fines.length; i++) {
 		var current = fines[i];
 		var feeName = getParam(current, null, null, /<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);

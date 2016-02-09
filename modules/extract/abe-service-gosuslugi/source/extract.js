@@ -169,6 +169,9 @@ function processFines(result, prefs, showPaidFines) {
 	
 	AnyBalance.trace('Указан номер автомобиля, значит надо получать штрафы...');
 	result.fines = [];
+	// Обнулим общие счетчики
+	result['fines_unpaid'] = 0;
+	result['fines_total'] = 0;
 	
 	var plates = prefs.gosnumber.split(';');
 	AnyBalance.trace('Автомобилей: ' + plates.length);
@@ -259,9 +262,6 @@ function processFinesForCurrentPlate(result, prefs, currentPlate, showPaidFines)
 	// Все теперь у нас есть данные, наконец-то..
 	var fines = getElements(html, /<div[^>]+class="[^"]*tabs-dd[^>]*>/ig);
 	AnyBalance.trace('Найдено штрафов: ' + fines.length);
-	
-	result['fines_unpaid'] = 0;
-	result['fines_total'] = 0;
 	
 	for(var i = 0; i < fines.length; i++) {
 		var current = fines[i];

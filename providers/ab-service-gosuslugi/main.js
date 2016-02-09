@@ -7,8 +7,10 @@ var g_countersTable = {
 	'__tariff': 'profile.fio',
 	'mails': 'profile.mails',
 	// Штрафы
-	'gibdd_balance': 'fines.ammount',
-	'gibdd_balance': 'fines.break',
+	'__': 'fines',
+	'__': 'fines.ammount',
+	'__': 'fines.break',
+	'gibdd_balance': 'fines.fines_unpaid',
 }
 
 function shouldProcess(counter, info) {
@@ -30,21 +32,16 @@ function main() {
 	
 	// Штрафы
 	processFines(result, prefs);
-	var gibdd_balance = 0;
 	var gibdd_info = '';
 	// Создадим сводку
 	for(var i = 0; i < result.fines.length; i++) {
 		var fine = result.fines[i];
-		var feeSum = fine['ammount'];
-
-		gibdd_balance += feeSum;
-		gibdd_info += fine['__name'] + ' (' + fine['break'] + '): ' + feeSum + ' р - <b>Не оплачен</b><br/><br/>';
+		gibdd_info += fine['__name'] + ' (' + fine['break'] + '): ' + fine['ammount'] + ' р - <b>Не оплачен</b><br/><br/>';
 	}
 	// Конвертер
 	result = adapter.convert(result);
-		// Сводка по штрафам
+	// Сводка по штрафам
 	getParam(gibdd_info, result, 'gibdd_info', null, g_replaceSpacesAndBrs);
-	getParam(gibdd_balance, result, 'gibdd_balance');
 	
 	// Налоги получаем по-старому
     if (prefs.inn) {

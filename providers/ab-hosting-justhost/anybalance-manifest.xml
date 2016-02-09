@@ -21,10 +21,7 @@
 	</files>
 	<counters>
 		<counter id="balance" name="Баланс" units=" {@currency}"/>
-		<counter id="fio" name="ФИО" type="text"/>
-		<counter id="status" name="Статус" type="text"/>
-		<counter id="phone" name="Телефон" type="text"/>
-		<counter id="deadline" name="Дата отключения" type="time" format="dd/MM/yyyy"/>
+		<counter id="activeServices" name="Активные услуги" type="text"/>
 	</counters>
 	<keywords>виртуальные, выделенные сервера, VDI</keywords>
 	<type>hosting</type>

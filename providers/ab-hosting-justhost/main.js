@@ -67,17 +67,21 @@ function main() {
 
 		html = AnyBalance.requestGet('https://justhost.ru/billing/active', g_headers);
 
-		var items = AB.getElement(html, /<table[^>]*class=['"][^'"]*items[^'"]*['"]>/i);
-		AnyBalance.trace(items);
-		var trArray = AB.sumParam(items, null, null, /<tr[^>]*>([\s\S]*?)<\/tr>/gi);
 		var
-			id, date, office, status, activeServices = [];
-
-		var tdArray = [];
+			items = AB.getElement(html, /<table[^>]*class=['"][^'"]*items[^'"]*['"]>/i),
+			trArray = AB.sumParam(items, null, null, /<tr[^>]*>([\s\S]*?)<\/tr>/gi),
+			id,
+			status,
+			name,
+			date,
+			tariff,
+			activeServices = [],
+			tdArray = [];
 
 		for (var i = trArray.length - 1; i > 1; i--) {
+
 			tdArray = AB.sumParam(trArray, null, null, /<td[^>]*>([\s\S]*?)<\/td>/gi);
-			AnyBalance.trace(tdArray);
+
 			id = AB.getParam(tdArray[2], null, null, /<b[^>]*>([\s\S]*?)<\/b>/i, AB.replaceTagsAndSpaces);
 			status = AB.getParam(tdArray[2], null, null, /<div[^>]*>([\s\S]*?)<\/div>/i, AB.replaceTagsAndSpaces);
 			name = AB.getParam(tdArray[3], null, null, /([\s\S]*?)<[bs]/i, AB.replaceTagsAndSpaces);
@@ -85,6 +89,7 @@ function main() {
 			tariff = AB.getParam(tdArray[5], null, null, null, AB.replaceTagsAndSpaces);
 			activeServices.push(id + ' | ' + status + ' | ' + name + ' | ' + date + ' | ' + tariff);
 		}
+
 		AB.getParam(activeServices.join('<br/>'), result, 'activeServices');
 	}
 	AnyBalance.setResult(result);

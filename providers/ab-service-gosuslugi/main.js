@@ -4,6 +4,7 @@
 
 var g_countersTable = {
 	'fio': 'profile.fio',
+	'__tariff': 'profile.fio',
 	'mails': 'profile.mails',
 	// Штрафы
 	'gibdd_balance': 'fines.ammount',

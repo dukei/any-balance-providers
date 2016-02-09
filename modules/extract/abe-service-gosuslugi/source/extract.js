@@ -28,7 +28,6 @@ var g_baseurl = 'https://www.gosuslugi.ru/';
 var g_betaBaseurl = 'https://beta.gosuslugi.ru/';
 
 var g_replaceSpacesAndBrs = [/^\s+|\s+$/g, '', /<br\/><br\/>$/i, ''];
-var g_gibdd_info = '';
 // Максимальное количество автомобилей, по которым получать данные.
 var g_max_plates_num = 10;
 // Максимальное количество ИНН, по которым получать данные.
@@ -141,10 +140,10 @@ function processProfile(html, result) {
 		getParam(license, result.profile, 'profile.license_till', /действительно до([^<]+)/i, null, parseDate);
 	}
 	
-	var vehiclesContainer = getElement(html, /<div id="person:vehicleInf">/i);
+	var vehiclesContainer = getElement(html, /<div[^>]+id="person:vehicleInf">/i);
 	if(vehiclesContainer) {
-		var vehicles = getElements(vehiclesContainer, /<dl class="line-link">/ig);
-
+		var vehicles = getElements(vehiclesContainer, /<dl[^>]+class="line-link">/ig);
+		
 		AnyBalance.trace('Найдено автомобилей: ' + vehicles.length);
 		result.profile.vehicles = [];
 		
@@ -155,11 +154,11 @@ function processProfile(html, result) {
 			getParam(vehicles[i], vehicle, ['profile.vehicles.plate', 'fines'], /государственный регистрационный знак\s*([^,]+)/i, [replaceTagsAndSpaces, /\s/g, '']);
 			getParam(vehicles[i], vehicle, ['profile.vehicles.plate_id', 'fines'], /свидетельство о регистрации\s*([^<]+)/i, [replaceTagsAndSpaces, /\s/g, '']);
 			
-			result.profile.vehicles.push(vehicle);
+			if(isset(vehicle.name) || isset(vehicle.plate) || isset(vehicle.plate_id))
+				result.profile.vehicles.push(vehicle);
 		}
 	}
 }
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Штрафы
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -321,23 +320,6 @@ function findIdInArray(jsonArray, currId) {
 	}
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     // // Налоги
     // if (prefs.inn) {
     	// try {
@@ -360,16 +342,6 @@ function findIdInArray(jsonArray, currId) {
     	// }
     // }
     
-	
-	
-	
-	
-	
-	
-	
-	
-	
-
 function processNalogi(result, html, prefs) {
 	if(isAvailable(['nalog_balance', 'nalog_info'])) {
 		// Id сервиса в системе, может меняться в будущем - вынесем отдельно.

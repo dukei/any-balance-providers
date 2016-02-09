@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+	<EditTextPreference
+		title="Логин"
+		key="login"
+		summary="||{@s}"
+		obligatory="true"
+		dialogTitle="Логин"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите логин, используемый для входа в личный кабинет.">
+	</EditTextPreference>
+	<EditTextPreference
+		title="Пароль"
+		key="password"
+		summary="||***********"
+		obligatory="true"
+		dialogTitle="Пароль"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите пароль, используемый для входа в личный кабинет."
+		inputType="textPassword">
+	</EditTextPreference>
+	<EditTextPreference
+		title="Номер почтового отправления"
+		positiveButtonText="ОК"
+		summary="Весь номер без скобок и пробелов!||{@s}\n"
+		dialogTitle="Номер почтового отправления"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите почтовый идентификатор. Почтовый идентификатор находится в чеке, выдаваемом при приеме почтового отправления. Вид номера: 115127(80)15138 4. Следует вводить: 11512780151384 (весь номер, цифры и латинские буквы без скобок и пробелов). Вид международного идентификатора: например, CJ247232575US"
+		key="track_id">
+	</EditTextPreference>
+</PreferenceScreen>

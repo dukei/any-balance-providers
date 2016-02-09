@@ -2,7 +2,7 @@
 <provider>
 	<id version="9">ab-tracking-gdeposylka</id>
 	<api flags="no_browser"/>
-	<name>Где посылка</name>
+	<name>Где посылка (по номеру отправления)</name>
 	<description html="true"><![CDATA[
 	<p>Отслеживает почтовое отправление с помощью сервиса http://gdeposylka.ru.</p>
 	<p>ГдеПосылка.ру - это универсальный сервис для отслеживания посылок, который позволяет отслеживать все Ваши посылки.</p>  

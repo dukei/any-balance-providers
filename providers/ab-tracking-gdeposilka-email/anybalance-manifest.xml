@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-tracking-gdeposilka-email</id>
+	<api flags="no_browser"/>
+	<name>Где посылка</name>
+	<description html="true"><![CDATA[
+	<p>Отслеживает почтовое отправление с помощью сервиса ГдеПосылка http://gdeposylka.ru.</p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="status" name="Статус" type="text"/>
+		<counter id="geo" name="Место" type="text"/>
+		<counter id="date" name="Дата" type="time" format="dd/MM/yyyy"/>
+		<counter id="days" name="Время в пути" units=" д"/>
+		<counter id="fulltext" name="Сводка" type="html"/>
+	</counters>
+	<keywords></keywords>
+	<type>tracking</type>
+	<country>ru</country>
+</provider>

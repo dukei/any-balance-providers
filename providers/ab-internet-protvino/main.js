@@ -32,7 +32,7 @@ function main() {
         }, addHeaders({Referer: baseurl}));
 
         if (!/logout/i.test(html)) {
-            var error = getParam(html, null, null, /(Ошибка авторизации[\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
+            var error = getParam(html, null, null, /<div class="alert[^>]*>[\s\S]*?<a[^>]*>[\s\S]*?<\/a>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
             if (error) {
                 throw new AnyBalance.Error(error, null, /Ошибка авторизации/i.test(error));
             }

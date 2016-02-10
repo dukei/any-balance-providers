@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-municipal-tek-energo</id>
+	<api flags="no_browser"/>
+	<name>Тэк-Энерго</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о начислениях в "Тэк-Энерго" <a href="http://office.elektro-32.ru">http://office.elektro-32.ru</a></p>
+	<p>Информация берется из личного кабинета <a href="http://office.elektro-32.ru/office.aspx">http://office.elektro-32.ru/office.aspx</a></p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Если у вас нет доступа в Личный кабинет, получите его на странице <a href="http://office.elektro-32.ru/registration.aspx">http://office.elektro-32.ru/registration.aspx</a></p>
+	]]></instruction>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="licschet" name="Номер лицевого счета" type="text"/>
+		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="balance" name="Сумма к оплате" units=" руб."/>
+		<counter id="last_month" name="Квитанция за" type="time" format="MMM yyyy"/>
+	</counters>
+	<keywords>оплата электроэнергии, филиал, Брянскэнергосбыт</keywords>
+	<type>municipal</type>
+	<country>ru</country>
+</provider>

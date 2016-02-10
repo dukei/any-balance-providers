@@ -16,7 +16,7 @@ function main(){
     AB.checkEmpty(prefs.login, 'Введите логин!');
     AB.checkEmpty(prefs.password, 'Введите пароль!');
 
-    var baseUrl = "http://cms.air.io/",
+    var baseUrl = 'http://cms.air.io/',
         referralUrl = 'statistics/referral_system',
         loginUrl = 'index.php/welcome/enter_form';
 
@@ -52,14 +52,14 @@ function main(){
         );
         res = AB.getJson(res);
 
-        if (!res.success || res.success != 'ok') {
-            throw new AnyBalance.Error('Неверный логин или пароль!', null, true);
-        }
-
         html = AnyBalance.requestGet(baseUrl + referralUrl);
     }
 
-    if(!/logout/i.test(html)){
+    if (!/logout/i.test(html)) {
+        var error = AB.getParam(html, null, null, /<div class="block-recovery">[\s\S]*?<label[^>]*error[^>]*>([\s\S]+?)<\/label>/i, AB.replaceTagsAndSpaces);
+        if (error) {
+            throw new AnyBalance.Error(error, null, /пользователь/i.test(error));
+        }
 		AnyBalance.trace(html);
         throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
     }

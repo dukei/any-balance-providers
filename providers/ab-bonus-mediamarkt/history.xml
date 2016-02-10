@@ -1,5 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="3" date="2016-02-08">
+	- капча
+	- fatal для неправильного логина/пароля
+	</change>
 	<change version="2" date="2015-12-11">
 	- Улучшена обработка ошибок.
 	</change>

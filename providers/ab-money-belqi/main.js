@@ -58,7 +58,7 @@ function main() {
 		success: true
 	};
 
-    var balance = AnyBalance.requestGet(baseurl + '.GetBalanceT?b_curr=974&password=&token=&ClientAuth2=1&_=1454663135057');
+    var balance = AnyBalance.requestGet(baseurl + '.GetBalanceT?b_curr=974&password=&token=&ClientAuth2=1&_=' + new Date().getTime());
 
 	AB.getParam(balance, result, 'balance', /\('#id_balance'\)\.html\('([\s\S]*?)'\)/i, AB.replaceTagsAndSpaces, AB.parseBalance);
 	AB.getParam(html, result, 'user_name', /Пользователь[\s\S]*?<span>([\s\S]*?)<\/span>/i, AB.replaceTagsAndSpaces);

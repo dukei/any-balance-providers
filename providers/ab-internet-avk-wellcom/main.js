@@ -18,26 +18,26 @@ var g_headers = {
 function main(){
     var prefs = AnyBalance.getPreferences();
 
-    var baseurl = "http://www.avk-wellcom.ru/";
+    var baseurl = "http://avk-wellcom.ru/";
 
     AnyBalance.setDefaultCharset('utf-8'); 
 
-    var html = AnyBalance.requestPost(baseurl + 'stat_beta/auth/auth/', {
+    var html = AnyBalance.requestPost(baseurl + 'lk/auth/auth/', {
         login:prefs.login,
         password:prefs.password,
         auth:'1',
         x: '19',
         y: '6'
-    }, addHeaders({Referer: baseurl + 'stat_beta/auth/auth/'}));
+    }, addHeaders({Referer: baseurl + 'lk/auth/auth/'}));
 
-    if(!/stat_beta\/auth\/exit/i.test(html)){
+    if(!/lk\/auth\/exit/i.test(html)){
         var error = getParam(html, null, null, /<div[^>]+id="auth_error"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
         if(error)
             throw new AnyBalance.Error(error);
         throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
     }
 
-    html = AnyBalance.requestGet(baseurl + 'stat_beta/account/info/', g_headers);
+    html = AnyBalance.requestGet(baseurl + 'lk/account/info/', g_headers);
 
     var result = {success: true};
     getParam(html, result, 'fio', /<div[^>]*>ФИО:<\/div>\s*<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);

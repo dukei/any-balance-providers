@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="52" date="2016-02-04">
+	- Улучшена обработка ошибок.
+	</change>
 	<change version="51" date="2015-10-24">
 	Улучшено распознавание минут на любимый номер
 	</change>

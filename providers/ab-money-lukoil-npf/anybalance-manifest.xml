@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-money-lukoil-npf</id>
+	<id version="2">ab-money-lukoil-npf</id>
 	<api flags="no_browser"/>
 	<name>НПФ "Лукойл-Гарант"</name>
 	<description html="true"><![CDATA[
@@ -11,19 +11,22 @@
 	<p>Если у вас нет доступа в Личный кабинет, прочитайте информацию на странице <a href="https://lk.lukoil-garant.ru/Connect.html">https://lk.lukoil-garant.ru/Connect.html</a></p>
 	]]></instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+    <depends>
+  		<module id="library"/>
+  	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
 	<counters>
 		<counter id="balance" name="Сумма накоплений" units=" р"/>
 		<counter id="account" name="Номер договора" type="text"/>
-		<counter id="status" name="Статус договора" type="text"/>
+		<!--<counter id="status" name="Статус договора" type="text"/>-->
+        <counter id="messages" name="Новые сообщения"/>
 	</counters>
 	<keywords></keywords>
-	<type>money</type>
+	<type>municipal npf</type>
 	<country>ru</country>
 </provider>

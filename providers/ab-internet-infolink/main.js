@@ -32,21 +32,27 @@ function main(){
 	html = AnyBalance.requestPost(baseurl + 'login', params, addHeaders({Referer: baseurl+ 'login'})); 
 	
     if(!/\/Logout/i.test(html)){
-        var error = getParam(html, null, null, /<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+        var error = getParam(html, null, null, /<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
         if(error)
-            throw new AnyBalance.Error(error);
+            throw new AnyBalance.Error(error, false, /логин|парол/i.test(error));
         throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
     }
     var result = {success: true};
+    
+    if (AnyBalance.isAvailable('balance')) {
+        var balanceParent = AB.getElement(html, /<div[^>]*?panel[^>]*>(?=\s*<div[^>]*?heading[^>]*>\s*Баланс)/i);
+        var balanceBody = AB.getElement(balanceParent, /<div[^>]*?body/i);
+        getParam(balanceBody, result, 'balance', null, replaceTagsAndSpaces, parseBalance);
+    }
 	
-    getParam(html, result, 'balance', /'panel-heading'[^>]*>\s*Баланс(?:[^>]*>){10}([\s\d.,]+)руб/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'acc_num', /ID абонента[^]+?(\d+)\s+<span class=['"]caret['"]>/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'fio', /user\/info[^>]*>([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'bonuses', /'panel-heading'[^>]*>\s*Бонусный счёт(?:[^>]*>){14}([\s\d.,]+)<\/big/i, replaceTagsAndSpaces, html_entity_decode);
+    //getParam(html, result, 'balance', /'panel-heading'[^>]*>\s*Баланс(?:[^>]*>){10}([\s\d.,]+)руб/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'acc_num', /ID абонента[^]+?(\d+)\s+<span class=['"]caret['"]>/i, replaceTagsAndSpaces);
+	getParam(html, result, 'fio', /user\/info[^>]*>([^<]+)/i, replaceTagsAndSpaces);
+	getParam(html, result, 'bonuses', /'panel-heading'[^>]*>\s*Бонусный счёт(?:[^>]*>){14}([\s\d.,]+)<\/big/i, replaceTagsAndSpaces);
     
     html = AnyBalance.requestGet(baseurl + 'services/index', g_headers);
     
-	getParam(html, result, '__tariff', /Текущий тариф(?:[^>]*>){1}([\s\S]*?)<\/div/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, '__tariff', /Текущий тариф(?:[^>]*>){1}([\s\S]*?)<\/div/i, replaceTagsAndSpaces);
 	
     AnyBalance.setResult(result);
 }

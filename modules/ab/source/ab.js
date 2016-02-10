@@ -5,7 +5,9 @@
  * 
  * 
  * TODO
- * Декодировать автоматически \u041e\u0448\u0438\u0431\u043a\u0430 \u043f\u0440\u0438 \u0440\u0430\u0437\u0431\u043e\u0440\u0435 \u043e\u0442\u0432\u0435\u0442\u0430 \u0441 \u0441\u0430\u0439\u0442\u0430."
+ * Декодировать автоматически JSON.parse('"\\u041e\\u0448\\u0438\\u0431\\u043a\\u0430"');
+ * Предусмотреть вытаскивание информера из атрибута тега
+ * Предусмотреть обработку CSS селекторов за 1 проход
  * 
  * @param {string|number|object|null} any  description
  * @link  https://developers.google.com/closure/compiler/docs/js-for-compiler
@@ -34,29 +36,7 @@ function AB(any) {
 
 		//Приватные методы
 
-	var	/**
-		 * HTML detect
-		 * @param	{string} str
-		 * @returns	{number}	result of String.search()
-		 */
-		_getHtmlIndexOf = function(str) {
-			/*
-			Fast and short implementation.
-			No needs to check closed tags, because they don't exist without opened tags
-			No needs to check HTML entities, because it is ambiguous
-			We use atomic group (trick with lookahead, capturing group and link after) to speed improve, significantly reduce backtracking!
-			*/
-			var ANY_WITH_EXCEPTIONS	= /(?= ([^>"']+) )\1/,
-				IN_DOUBLE_QUOTES	= /" (?= ([^"]*) )\1 "/,
-				IN_SINGLE_QUOTES	= /' (?= ([^']*) )\1 '/,
-				OPENED_OR_DOCTYPE	= RegExp('<!?[a-zA-Z](?:' + XRegExp.union([ANY_WITH_EXCEPTIONS, IN_DOUBLE_QUOTES, IN_SINGLE_QUOTES], 'xs').source + ')*>'),
-				CDATA	= /<!\[CDATA\[ .*? \]\]>/,
-				COMMENT = /<!-- .*? -->/,
-				ALL = XRegExp.union([OPENED_OR_DOCTYPE, CDATA, COMMENT], 'xs');
-			return str.search(ALL);
-		},
-
-		/*
+	var	/*
 		function _htmlEntityDecodeRecursive(any, strict) {
 			if ('string' === typeof any) return any.htmlEntityDecode(strict);
 			if ('object' === typeof any) for (var prop in any) any[prop] = _htmlEntityDecodeRecursive(any[prop], strict);
@@ -75,7 +55,7 @@ function AB(any) {
 			if ('string' !== typeof any) return any;
 			any = any.trim();
 
-			var htmlIndexOf = _getHtmlIndexOf(any);
+			var htmlIndexOf = any.htmlIndexOf();
 			if (htmlIndexOf === 0) return any; //это точно HTML, сразу катапультируемся
 
 			//Если HTML не обнаружен и текст (который может быть JSON) оказался в атрибуте тега, необходимо декодировать HTML сущности

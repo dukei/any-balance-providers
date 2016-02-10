@@ -291,6 +291,27 @@
 		hearts  : 0x2665,  //"\xe2\x99\xa5" [♥] black heart suit = valentine
 		diams   : 0x2666,  //"\xe2\x99\xa6" [♦] black diamond suit
 	};
+
+	/**
+	 * HTML detect
+	 * @returns	{number}	result of String.search()
+	 */
+	String.prototype.htmlIndexOf = function() {
+		/*
+		Fast and short implementation.
+		No needs to check closed tags, because they don't exist without opened tags
+		No needs to check HTML entities, because it is ambiguous
+		We use atomic group (trick with lookahead, capturing group and link after) to speed improve, significantly reduce backtracking!
+		*/
+		var ANY_WITH_EXCEPTIONS	= /(?= ([^>"']+) )\1/,
+			IN_DOUBLE_QUOTES	= /" [^"]* "/,
+			IN_SINGLE_QUOTES	= /' [^']* '/,
+			OPENED_OR_DOCTYPE	= RegExp('<!?[a-zA-Z]  [^>"\']*  (?:' + XRegExp.union([ANY_WITH_EXCEPTIONS, IN_DOUBLE_QUOTES, IN_SINGLE_QUOTES], 'xs').source + ')*>'),
+			CDATA	= /<!\[CDATA\[  [^\]]*  .*?  \]\]>/,
+			COMMENT = /<!--  [^-]*  .*?  -->/,
+			ALL = XRegExp.union([OPENED_OR_DOCTYPE, CDATA, COMMENT], 'xs');
+		return this.search(ALL);
+	}	
 	
 	/**
 	 * HTML SAX parser
@@ -299,7 +320,7 @@
 	 * @returns {number} parsed offset
 	 */
 	String.prototype.htmlParser = function () {
-		
+
 		var tagsRawRe = 'script|style|xmp' +	//raw text elements
 						'|textarea|title';		//escapable raw text elements
 
@@ -343,8 +364,8 @@
 						|	(?:
 									[^<]+
 								|	< (?! /? [a-z]
-										| !(?: \\[CDATA\\[ | -- ) 
-										| [\\?%] 
+										| !(?: \\[CDATA\\[ | -- )
+										| [\\?%]
 										)
 							)+`;
 

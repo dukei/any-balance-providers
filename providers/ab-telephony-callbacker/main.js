@@ -32,10 +32,10 @@ function main(){
     if (hasLoginLink(html)) {
         var error = getParam(html, null, null, /<div[^>]*class="[^"]*alert-danger[^"]*">(blocked account[\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
         if(error) {
-            throw new AnyBalance.Error(error, null, true);
+            throw new AnyBalance.Error(error, null, /blocked/i.test(error));
         }
 
-        throw new AnyBalance.Error('Не удалось войти в личный кабинет. Неправильный логин-пароль?');
+        throw new AnyBalance.Error('Не удалось войти в личный кабинет. Сайт изменен?');
     }
 
     var result = {success: true};

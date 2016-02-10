@@ -31,18 +31,19 @@ function main() {
 	
 	// Штрафы
 	processFines(result, prefs);
-	var gibdd_info = '';
-	// Создадим сводку
-	for(var i = 0; i < result.fines.length; i++) {
-		var fine = result.fines[i];
-		gibdd_info += fine['__name'] + ' (' + fine['break'] + '): ' + fine['ammount'] + ' р - <b>Не оплачен</b><br/><br/>';
+	if(result.fines) {
+		var gibdd_info = '';
+		// Создадим сводку
+		for(var i = 0; i < result.fines.length; i++) {
+			var fine = result.fines[i];
+			gibdd_info += fine['__name'] + ' (' + fine['break'] + '): ' + fine['ammount'] + ' р - <b>Не оплачен</b><br/><br/>';
+		}
+		// Конвертер
+		result = adapter.convert(result);
+		// Сводка по штрафам
+		if(gibdd_info)
+			getParam(gibdd_info, result, 'gibdd_info', null, g_replaceSpacesAndBrs);
 	}
-	// Конвертер
-	result = adapter.convert(result);
-	// Сводка по штрафам
-	if(gibdd_info)
-		getParam(gibdd_info, result, 'gibdd_info', null, g_replaceSpacesAndBrs);
-	
 	// Налоги получаем по-старому
     if (prefs.inn) {
     	try {

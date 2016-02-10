@@ -37,8 +37,9 @@ function main(){
     );
 
     if(!/zz_logout/i.test(html)){
-        if (/Неверно указаны логин или пароль/i.test(html)) {
-            throw new AnyBalance.Error('Неверно указаны логин или пароль', null, true);
+        var error = AB.getParam(html, null, null, /<p\s+style='color:red'>([\s\S]+?)<\/p>/i, AB.replaceTagsAndSpaces);
+        if (error) {
+            throw new AnyBalance.Error(error, null, /логин или пароль/i.test(error));
         }
 
 		AnyBalance.trace(html);

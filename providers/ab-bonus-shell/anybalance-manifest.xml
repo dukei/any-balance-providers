@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="3">ab-bonus-shell</id>
+	<id version="4">ab-bonus-shell</id>
 	<api flags="no_browser"/>
 	<name>Shell CLUBSMART</name>
 	<description html="true"><![CDATA[
@@ -8,10 +8,12 @@
 	<p>Бонусную карту программы Shell CLUBSMART вы можете получить на любой АЗС Shell.</p>
 	]]></description>
 	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+        <depends>
+   		<module id="library"/>
+   	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>

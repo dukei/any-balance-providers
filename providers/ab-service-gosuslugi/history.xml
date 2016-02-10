@@ -1,5 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="1.0" version="33" date="2016-02-10">
+	- Улучшена обработка ошибок неправильного логина и пароля.
+	</change>
+	<change major_version="1.0" version="32" date="2016-02-10">
+	- Исправлена ошибка.
+	</change>
+	<change major_version="1.0" version="31" date="2016-02-09">
+	- Улучшено отображение данных по штрафам.
+	</change>
+	<change major_version="1.0" version="29" date="2016-02-09">
+	- Поддержка изменений на сайте.
+	</change>
 	<change major_version="1.0" version="28" date="2015-08-26">
 	- Восстановлено получение данных по налогам.
 	</change>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-service-m11</id>
+	<api flags="no_browser"/>
+	<name>Автомобильная дорога М11</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера <a href="15-58m11.ru">Скоростная автомобильная дорога M11</a></p>
+	<p>Информация берется из личного кабинета <a href="https://private.15-58m11.ru/onyma/">Автомобильной дороги M11</a></p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс"/>
+		<counter id="status" name="Статус" type="text"/>
+		<counter id="contract" name="Договор" type="text"/>
+		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="contacts" name="Контакты" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>service</type>
+	<country>ru</country>
+</provider>

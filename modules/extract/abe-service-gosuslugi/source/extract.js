@@ -28,7 +28,6 @@ var g_baseurl = 'https://www.gosuslugi.ru/';
 var g_betaBaseurl = 'https://beta.gosuslugi.ru/';
 
 var g_replaceSpacesAndBrs = [/^\s+|\s+$/g, '', /<br\/><br\/>$/i, ''];
-var g_gibdd_info = '';
 // Максимальное количество автомобилей, по которым получать данные.
 var g_max_plates_num = 10;
 // Максимальное количество ИНН, по которым получать данные.
@@ -79,25 +78,25 @@ function login(prefs) {
 			'command': command
 		}, addHeaders({Referer: 'https://esia.gosuslugi.ru/idp/rlogin?cc=bp'}));
 		
-		//Попытаемся получить ошибку авторизации на раннем этапе. Тогда она точнее.
-		var errorCode = getParam(html, null, null, /authn\.error\.([^"']+)/i);
-		if (errorCode) {
-			var jsonLocalizationMsg = getParam(html, null, null, /var jsonLocalizationMsg\s*=\s*(\{[\s\S]*?\})\s*;/i, null, getJson);
-			var message = getParam(jsonLocalizationMsg.authn.error[errorCode], null, null, null, replaceTagsAndSpaces);
-			
-			throw new AnyBalance.Error(message, null, /invalidCredentials/i.test(errorCode));
+		if(!isLoggedIn(html)) {
+			//Попытаемся получить ошибку авторизации на раннем этапе. Тогда она точнее.
+			var errorCode = getParam(html, null, null, [/new LoginViewModel\([^,]+,'([^']+)/i,/authn\.error\.([^"']+)/i]);
+			if (errorCode) {
+				var jsonLocalizationMsg = getJsonObject(html, /var jsonLocalizationMsg/i);
+				var message = getParam(jsonLocalizationMsg.d.error[errorCode], null, null, null, replaceTagsAndSpaces);
+				
+				throw new AnyBalance.Error(message, null, /account_is_locked|certificate_user_not_found|invalid_credentials|invalid_signature|no_subject_found/i.test(errorCode));
+			}
 		}
-
+		
 		// Возможно мы попадем в кабинет где есть ИП и физ лицо, надо проверить
 		if(/<h1[^>]*>\s*Выбор роли\s*<\/h1>|Войти как/i.test(html)) {
 			html = AnyBalance.requestGet('https://esia.gosuslugi.ru/idp/globalRoleSelection?orgID=P', g_headers);
 		}
 		
 		html = checkForRedirect(AnyBalance.requestGet('https://www.gosuslugi.ru/pgu/personcab', g_headers));
-		// Поскольку Ваш браузер не поддерживает JavaScript, для продолжения Вам необходимо нажать кнопку "Продолжить".
-		//var params = createFormParams(html);
 		
-		//html = performRedirect2(AnyBalance.requestPost('https://www.gosuslugi.ru/pgu/saml/SAMLAssertionConsumer', params, addHeaders({Referer: g_baseurl + 'idp/profile/SAML2/Redirect/SSO'})));
+		// Поскольку Ваш браузер не поддерживает JavaScript, для продолжения Вам необходимо нажать кнопку "Продолжить".
 		html = checkForJsOff(html);
 	}
 
@@ -141,10 +140,10 @@ function processProfile(html, result) {
 		getParam(license, result.profile, 'profile.license_till', /действительно до([^<]+)/i, null, parseDate);
 	}
 	
-	var vehiclesContainer = getElement(html, /<div id="person:vehicleInf">/i);
+	var vehiclesContainer = getElement(html, /<div[^>]+id="person:vehicleInf">/i);
 	if(vehiclesContainer) {
-		var vehicles = getElements(vehiclesContainer, /<dl class="line-link">/ig);
-
+		var vehicles = getElements(vehiclesContainer, /<dl[^>]+class="line-link">/ig);
+		
 		AnyBalance.trace('Найдено автомобилей: ' + vehicles.length);
 		result.profile.vehicles = [];
 		
@@ -155,11 +154,11 @@ function processProfile(html, result) {
 			getParam(vehicles[i], vehicle, ['profile.vehicles.plate', 'fines'], /государственный регистрационный знак\s*([^,]+)/i, [replaceTagsAndSpaces, /\s/g, '']);
 			getParam(vehicles[i], vehicle, ['profile.vehicles.plate_id', 'fines'], /свидетельство о регистрации\s*([^<]+)/i, [replaceTagsAndSpaces, /\s/g, '']);
 			
-			result.profile.vehicles.push(vehicle);
+			if(isset(vehicle.name) || isset(vehicle.plate) || isset(vehicle.plate_id))
+				result.profile.vehicles.push(vehicle);
 		}
 	}
 }
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Штрафы
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -170,6 +169,9 @@ function processFines(result, prefs, showPaidFines) {
 	
 	AnyBalance.trace('Указан номер автомобиля, значит надо получать штрафы...');
 	result.fines = [];
+	// Обнулим общие счетчики
+	result['fines_unpaid'] = 0;
+	result['fines_total'] = 0;
 	
 	var plates = prefs.gosnumber.split(';');
 	AnyBalance.trace('Автомобилей: ' + plates.length);
@@ -321,23 +323,6 @@ function findIdInArray(jsonArray, currId) {
 	}
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     // // Налоги
     // if (prefs.inn) {
     	// try {
@@ -360,16 +345,6 @@ function findIdInArray(jsonArray, currId) {
     	// }
     // }
     
-	
-	
-	
-	
-	
-	
-	
-	
-	
-
 function processNalogi(result, html, prefs) {
 	if(isAvailable(['nalog_balance', 'nalog_info'])) {
 		// Id сервиса в системе, может меняться в будущем - вынесем отдельно.

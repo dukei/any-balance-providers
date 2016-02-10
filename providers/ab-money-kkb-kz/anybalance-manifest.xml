@@ -1,28 +1,36 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-money-kkb-kz</id>
+	<id version="2">ab-money-kkb-kz</id>
 	<api flags="no_browser"/>
 	<name>Казкоммерцбанк</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о текущем остатке и других параметрах счетов и карт для клиентов банка Казкоммерцбанк <a href="http://www.kkb.kz/">http://www.kkb.kz/</a></p>
+	<p>Предоставляет информацию о текущем остатке и других параметрах счетов, карт и кредитов для клиентов банка Казкоммерцбанк <a href="http://www.kkb.kz/">http://www.kkb.kz/</a></p>
 	<p>Информация берется из Интернет-банка <a href="https://www.homebank.kz/">https://www.homebank.kz/</a></p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<instruction html="true"><![CDATA[
+	<p>Если у вас нет доступа к интернет-банку, зарегистрируйтесь здесь: https://www.homebank.kz/new/login/registration.htm </p>
+	]]></instruction>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+		<module id="nadapter"/>
+		<module id="extract/abe-money-homebank"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
 	<counters>
 		<counter id="balance" name="Остаток" units=" {@currency}"/>
+		<counter id="bonus" name="Бонусы Go!" units=" Go!"/>
 		<counter id="available" name="Доступно" units=" {@currency}"/>
-		<counter id="blocked" name="Блок." units=" {@currency}"/>
 		<counter id="repayment" name="К погашению" units=" {@currency}"/>
-		<counter id="account" name="Номер счета/карты" type="text"/>
+		<counter id="account" name="Номер счета/карты/кредита" type="text"/>
+		<counter id="currency" name="Валюта" type="text"/>
 	</counters>
 	<keywords>КАЗКОМ</keywords>
-	<type>money</type>
+	<type>money, bank</type>
 	<country>kz</country>
 </provider>

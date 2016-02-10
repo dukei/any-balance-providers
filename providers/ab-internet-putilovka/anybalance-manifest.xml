@@ -19,7 +19,7 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Депозит" units=" грн"/>
+		<counter id="balance" name="Депозит" units=" р"/>
 		<counter id="fio" name="ФИО" type="text"/>
 		<counter id="status" name="Статус" type="text"/>
 		<counter id="dogovor" name="Договор" type="text"/>

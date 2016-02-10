@@ -1,5 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="6" date="2016-02-10">
+	- Исправлено отображение счетчиков: Баланс партнёрки, Заработано сегодня.
+	</change>
+	<change version="5" date="2016-02-10">
+	- Поддержка изменений на сайте.
+	</change>
 	<change version="4" date="2015-12-21">
 	- Поддержка изменений на сайте.
 	</change>
@@ -9,9 +15,4 @@
 	<change version="2" date="2015-12-07">
 	- Поддержка изменений на сайте.
 	</change>
-<!--
-	<change version="2" date="2014-09-03">
-	- 
-	</change>
--->
 </history>

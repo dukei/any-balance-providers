@@ -27,10 +27,10 @@ function main() {
 		password: prefs.password
 	}, addHeaders({Referer: baseurl, 'X-Requested-With': 'XMLHttpRequest'}));
     
-	if (/Ошибка авторизации/i.test(html)) {
-		var error = getParam(html, null, null, /<fieldset>([\s\S]*?)<\/fieldset>/i, replaceTagsAndSpaces, html_entity_decode);
+	if (html != '1') {
+		var error = getParam(html, null, null, /<h1>\s*АВТОРИЗАЦИЯ\s*<\/h1>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
 		if (error)
-			throw new AnyBalance.Error(error, null, /Неверный логин или пароль|Ошибка авторизации/i.test(error));
+			throw new AnyBalance.Error(error, null, /Ошибка авторизации/i.test(html));
 		
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
@@ -40,11 +40,20 @@ function main() {
 	
 	var result = {success: true};
 	
-	getParam(html, result, 'balance', /Ваш баланс:([\s\S]*?)<\/li>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'partnerBalance', /баланс партнерки:(?:[^>]*>){1}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'charged', /Заработано сегодня:(?:[^>]*>){1}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'status', /Услуга:[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces);
+	getParam(html, result, 'partnerBalance', /Статистика[\s\S]*?<tbody>[\s\S]*?<td>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'charged', /Статистика[\s\S]*?<tbody>[\s\S]*?(?:<td>[\s\S]*?<\/td>[\s\S]*?){3}<td>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'key', /Ваш ключ:([\s\S]*?)<\/p>/i, replaceTagsAndSpaces);
 
-
+	if(isAvailable('balance')) {
+		html = AnyBalance.requestGet(baseurl + 'setting/get_balance?_=' + new Date().getTime(), g_headers);
+		getParam(html, result, 'balance', null, replaceTagsAndSpaces, parseBalance);
+	}
+	
+	html = AnyBalance.requestPost(baseurl + 'setting/get_plan', {
+		'showlist': 'plan'
+	}, addHeaders({'Referer': baseurl, 'X-Requested-With': 'XMLHttpRequest'}));
+	
+	getParam(html, result, '__tariff', /<p>Тарифный план:([\s\S]*?)<\/p>/i, replaceTagsAndSpaces);
+	
 	AnyBalance.setResult(result);
 }

@@ -1,18 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="2">ab-affiliate-amway</id>
-	<name>AmWay</name>
-	<description>
-Получает данные из партнерской программы AmWay http://www.amway.ru/
-
-Личный кабинет находится по адресу: http://www.amway.ru/login
-	</description>
+	<id version="3">ab-affiliate-amway</id>
+	<name>Amway</name>
+	<description html="true"><![CDATA[
+		<p>Получает данные из партнерской программы Amway <a href="http://www.amway.ru">http://www.amway.ru</a></p>
+		<p>Информация берется из личного кабинета</p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+		<p>Если у вас нет доступа в Личный кабинет, получите его на странице <a href="http://www.amway.ru/login">http://www.amway.ru/login</a></p>
+	]]></instruction>
 	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
@@ -22,7 +26,7 @@
 		<counter id="personal_sales" name="Личная Величина Оборота"/>
 		<counter id="leader_sales" name="Лидерская Величина Оборота"/>
 	</counters>
-	<keywords>Амвей</keywords>
+	<keywords>Амвей, красота, здоровье, уход за телом, товары для дома</keywords>
 	<type>affiliate</type>
 	<country>ru</country>
 </provider>

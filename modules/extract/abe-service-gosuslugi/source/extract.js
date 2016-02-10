@@ -78,25 +78,25 @@ function login(prefs) {
 			'command': command
 		}, addHeaders({Referer: 'https://esia.gosuslugi.ru/idp/rlogin?cc=bp'}));
 		
-		//Попытаемся получить ошибку авторизации на раннем этапе. Тогда она точнее.
-		var errorCode = getParam(html, null, null, /authn\.error\.([^"']+)/i);
-		if (errorCode) {
-			var jsonLocalizationMsg = getParam(html, null, null, /var jsonLocalizationMsg\s*=\s*(\{[\s\S]*?\})\s*;/i, null, getJson);
-			var message = getParam(jsonLocalizationMsg.authn.error[errorCode], null, null, null, replaceTagsAndSpaces);
-			
-			throw new AnyBalance.Error(message, null, /invalidCredentials/i.test(errorCode));
+		if(!isLoggedIn(html)) {
+			//Попытаемся получить ошибку авторизации на раннем этапе. Тогда она точнее.
+			var errorCode = getParam(html, null, null, [/new LoginViewModel\([^,]+,'([^']+)/i,/authn\.error\.([^"']+)/i]);
+			if (errorCode) {
+				var jsonLocalizationMsg = getJsonObject(html, /var jsonLocalizationMsg/i);
+				var message = getParam(jsonLocalizationMsg.d.error[errorCode], null, null, null, replaceTagsAndSpaces);
+				
+				throw new AnyBalance.Error(message, null, /account_is_locked|certificate_user_not_found|invalid_credentials|invalid_signature|no_subject_found/i.test(errorCode));
+			}
 		}
-
+		
 		// Возможно мы попадем в кабинет где есть ИП и физ лицо, надо проверить
 		if(/<h1[^>]*>\s*Выбор роли\s*<\/h1>|Войти как/i.test(html)) {
 			html = AnyBalance.requestGet('https://esia.gosuslugi.ru/idp/globalRoleSelection?orgID=P', g_headers);
 		}
 		
 		html = checkForRedirect(AnyBalance.requestGet('https://www.gosuslugi.ru/pgu/personcab', g_headers));
-		// Поскольку Ваш браузер не поддерживает JavaScript, для продолжения Вам необходимо нажать кнопку "Продолжить".
-		//var params = createFormParams(html);
 		
-		//html = performRedirect2(AnyBalance.requestPost('https://www.gosuslugi.ru/pgu/saml/SAMLAssertionConsumer', params, addHeaders({Referer: g_baseurl + 'idp/profile/SAML2/Redirect/SSO'})));
+		// Поскольку Ваш браузер не поддерживает JavaScript, для продолжения Вам необходимо нажать кнопку "Продолжить".
 		html = checkForJsOff(html);
 	}
 

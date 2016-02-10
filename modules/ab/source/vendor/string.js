@@ -315,11 +315,11 @@
 	
 	/**
 	 * HTML SAX parser
-	 * 
+	 * @param {function|null}
 	 * @link https://www.w3.org/TR/html5/
 	 * @returns {number} parsed offset
 	 */
-	String.prototype.htmlParser = function () {
+	String.prototype.htmlParser = function(reviver) {
 
 		var tagsRawRe = 'script|style|xmp' +	//raw text elements
 						'|textarea|title';		//escapable raw text elements
@@ -369,16 +369,69 @@
 										)
 							)+`;
 
-		var match, i = 0, limit = 100;
+		var match, 
+			i = 0, 
+			s,
+			maxSteps = 100;
 
 		htmlRe = XRegExp(htmlRe, 'xsig');
-		console.log(htmlRe);
+		//console.log(htmlRe);
 
 		while (true) {
-			if (++i > limit) throw Error(limit + ' steps has been reached!');
-			match = htmlRe.exec(this)
+			if (++i > maxSteps) throw Error(maxSteps + ' steps has been reached!');
+			match = htmlRe.exec(this);
 			if (! match) break;
-			console.log(match);
+
+			//console.log(match);
+
+			//pairs raw tags with content:
+			if (typeof match[1] === 'string') {
+				reviver('open', match[1]);
+				reviver('raw', match[4]);
+				reviver('close', match[2]);
+			}
+
+			//opened tags:
+			else if (typeof match[6] === 'string') {
+				reviver('open', match[6]);
+			}
+			
+			//closed tags:
+			else if (typeof match[8] === 'string') {
+				reviver('close', match[8]);
+			}
+			
+			//<!DOCTYPE ...>
+			else if (typeof match[10] === 'string') {
+				reviver('doctype', match[10]);
+			}
+
+			//CDATA
+			else if (typeof match[12] === 'string') {
+				reviver('cdata', match[12]);
+			}
+
+			//comments
+			else if (typeof match[13] === 'string') {
+				reviver('comment', match[13]);
+			}
+			
+			//instructions part1
+			else if (typeof match[14] === 'string') {
+				reviver('instruct', match[14]);
+			}
+			
+			//instructions part2
+			else if (typeof match[15] === 'string') {
+				reviver('instruct', match[15]);
+			}
+
+			//text
+			else {
+				s = match[0].htmlEntityDecode(false).trim();
+				if (s.length) reviver('text', s);
+			}
+					
 		}
 		
 	}

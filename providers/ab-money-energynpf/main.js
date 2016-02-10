@@ -40,7 +40,7 @@ function main() {
         if (!isLoggedIn(html)) {
             var error = getParam(html, null, null, /<span class="mess">([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
             if (error) {
-                throw new AnyBalance.Error(error, null, true);
+                throw new AnyBalance.Error(error, null, /(?:не\s+найдены|неверный)/i.test(error));
             }
             throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
         }

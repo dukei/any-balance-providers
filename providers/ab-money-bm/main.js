@@ -17,6 +17,7 @@ var g_countersTable = {
 		"type": "cards.type",
 		"sms": "cards.sms",
 		"minpay": "cards.minpay",
+		"limit": "cards.limit",
 		"gracepay": "cards.gracepay",
 		"gracepay_till": "cards.gracepay_till",
     },

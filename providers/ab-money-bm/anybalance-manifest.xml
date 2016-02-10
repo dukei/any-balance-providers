@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="4">ab-money-bm</id>
+	<id version="5">ab-money-bm</id>
 	<api flags="no_browser|sms"/>
 	<name>Банк Москвы</name>
 	<description html="true"><![CDATA[
@@ -28,6 +28,7 @@
 		<counter id="gracepay_till" name="Срок льготного платежа" type="time" format="dd/MM/yyyy"/>
 		<counter id="till" name="Срок действия" type="time" format="dd/MM/yyyy"/>
 		<counter id="blocked" name="Заблокировано" units=" {@currency}"/>
+		<counter id="limit" name="Кредитный лимит" units=" {@currency}"/>
 		<counter id="sms" name="Телефон SMS оповещения" type="text"/>
 		<counter id="num" name="Номер карты" type="text"/>
 		<counter id="type" name="Тип карты" type="text"/>

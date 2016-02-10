@@ -34,8 +34,9 @@ function main(){
     html = AnyBalance.requestGet(loginUrl, AB.addHeaders({Referer: loginUrl}));
 
     if (!/Выход\s*<\/a>/i.test(html)) {
-        if (/Неверная авторизация/i.test(html)) {
-            throw new AnyBalance.Error('Неправильный логин или пароль!', null, true);
+        var error = AB.getParam(html, null, null, /<span[^>]*class=error>[\s\S]*?<b>([\s\S]+?)<\/b>/i, AB.replaceTagsAndSpaces);
+        if (error) {
+            throw new AnyBalance.Error(error, null, /Неверная авторизация/i.test(html));
         }
 
 		AnyBalance.trace(html);

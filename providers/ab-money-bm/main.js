@@ -7,9 +7,9 @@
 */
 
 var g_countersTable = {
-	accounts: {
-    	"balance": "accounts.balance",
-    	"currency": "accounts.currency",
+	card: {
+    	"balance": "cards.balance",
+    	"currency": "cards.currency",
 		"till": "cards.till",
 		"blocked": "cards.blocked",
 		"num": "cards.num",
@@ -20,9 +20,9 @@ var g_countersTable = {
 		"gracepay": "cards.gracepay",
 		"gracepay_till": "cards.gracepay_till",
     },
-	cards: {
-    	"balance": "cards.balance",
-    	"currency": "cards.currency",
+	acc: {
+    	"balance": "accounts.balance",
+    	"currency": "accounts.currency",
 		"num": "accounts.num",
 		"__tariff": "accounts.__name",
 		"type": "accounts.name",

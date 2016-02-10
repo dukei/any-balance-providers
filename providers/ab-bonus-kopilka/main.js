@@ -46,9 +46,9 @@ function main() {
         }
 
         if (!isLoggedIn(html)) {
-            var error = getParam(html, null, null, /<h1[^>]*>([\s\S]*?)<\/h1>/i, replaceTagsAndSpaces);
+            var error = getParam(html, null, null, /<div class=head>([\s\S]+?)<\/div>/i, replaceTagsAndSpaces);
             if(error)
-                throw new AnyBalance.Error(error, null, true);
+                throw new AnyBalance.Error(error, null, /неверный номер/i.test(error));
 
             throw new AnyBalance.Error('Не удалось получить баланс карты. Проблемы на сайте или сайт изменен.');
         }

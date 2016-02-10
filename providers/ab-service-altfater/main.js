@@ -32,8 +32,10 @@ function main() {
 
     html = AB.requestPostMultipart(baseurl + '?chronoform=Proverka-dolgov&event=submit', payload);
 
-	if (/Данные по лицевому счету не найдены/i.test(html)) {
-		throw new AnyBalance.Error('Данные по лицевому счету не найдены.');
+    var error = AB.getParam(html, null, null, /<div class="gbs3"[\s\S]*?<form[^>]*>[\s\S]*?<\/form>([\s\S]+?)</i, AB.replaceTagsAndSpaces);
+
+	if (error) {
+		throw new AnyBalance.Error(error);
 	}
 
 	var result = {

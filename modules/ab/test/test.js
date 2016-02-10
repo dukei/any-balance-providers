@@ -63,6 +63,22 @@ describe("String", function() {
 
 	});			
 
+	describe("htmlIndexOf()", function() {
+
+		it("Смещение для <img />", function() {
+			var r = '12345\n<img />***'.htmlIndexOf();
+			console.log(r);
+			assert.equal(r, 6);
+		});
+
+		it("Смещение для <!DOCTYPE>", function() {
+			var r = sample.ugly.htmlIndexOf();
+			console.log(r);
+			assert.equal(r, 0);
+		});
+
+	});			
+
 	describe("htmlToText()", function() {
 
 		it("Вырезание всех тегов (yandex)", function() {

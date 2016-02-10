@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-hosting-justhost</id>
+	<api flags="no_browser"/>
+	<name>JustHost</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию из личного кабинета хостинг провайдера JustHost.ru <a href="https://justhost.ru/hosting/">https://justhost.ru/hosting/</a></p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Если у вас нет доступа в Личный кабинет, получите его на странице <a href="https://justhost.ru/auth/register?returl=%2Fbilling%2Frenew">https://justhost.ru/auth/register?returl=%2Fbilling%2Frenew</a></p>
+	]]></instruction>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" {@currency}"/>
+		<counter id="activeServices" name="Активные услуги" type="text"/>
+	</counters>
+	<keywords>виртуальные, выделенные сервера, VDI</keywords>
+	<type>hosting</type>
+	<country>ru</country>
+</provider>

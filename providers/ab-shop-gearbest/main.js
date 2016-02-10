@@ -42,8 +42,9 @@ function main() {
         })
     );
 
-    if (/Your email\/password is incorrect/i.test(html)) {
-        throw new AnyBalance.Error('Неверный логин или пароль', null, true);
+    // POST возвращает голый текст
+    if (/incorrect/i.test(html)) {
+        throw new AnyBalance.Error(html, null, /email|password/i.test(html));
     }
 
     html = AnyBalance.requestGet(userUrl, g_headers);

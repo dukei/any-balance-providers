@@ -12,7 +12,7 @@ function generateImei(val, mask) {
 	return mask;
 }
 
-function generateSimId(val, mask) {
+function generateSimSN(val, mask) {
 	var g_simsn_default = '897010266********L'; //билайн
 	var serial = (Math.abs(crc32(val + 'simSN') % 100000000)) + '';
 	

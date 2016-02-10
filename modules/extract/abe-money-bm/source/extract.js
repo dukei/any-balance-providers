@@ -79,8 +79,8 @@ function tryLogin(html){
 	});
 
 	var submit = getParam(form, null, null, /<input[^>]+id="[^"]*:saveLogin"[^>]*>/i);
-	var submitid = getParam(submit, null, null, /input[^>]+id="([^"]*)/i, null, html_entity_decode);
-	var render = getParam(submit, null, null, /render:\\?'([^'\\]*)/, null, html_entity_decode);
+	var submitid = getParam(submit, null, null, /input[^>]+id="([^"]*)/i);
+	var render = getParam(submit, null, null, /render:\\?'([^'\\]*)/);
 
 	params = joinObjects(params, {
 	    'javax.faces.behavior.event': 'action',
@@ -93,7 +93,7 @@ function tryLogin(html){
 
 	params[submitid] = submitid;
 
-	var action = getParam(form, null, null, /<form[^>]+action="([^"]*)/i, null, html_entity_decode);
+	var action = getParam(form, null, null, /<form[^>]+action="([^"]*)/i);
 
 	var frmhtml = AnyBalance.requestPost(g_baseurl + action, params, addHeaders({Origin: g_baseurl, Referer: g_baseurl + '/scoring/protected/welcome.jsf', 'Faces-Request': 'partial/ajax'}));
 
@@ -109,7 +109,7 @@ function tryLogin(html){
 }
 
 function findErrors(html){
-    var elements = getElements(html, /<(?:[^>](?!display:\s*none))+class="error"(?:[^>](?!display:\s*none))*>/ig, replaceTagsAndSpaces, html_entity_decode);
+    var elements = getElements(html, /<(?:[^>](?!display:\s*none))+class="error"(?:[^>](?!display:\s*none))*>/ig, replaceTagsAndSpaces);
     var error = elements.join('\n');
     return error;
 }
@@ -117,7 +117,7 @@ function findErrors(html){
 function getCaptcha(html){
     var captcha = '';
     if(hasCaptcha(html)) //Если капча показана, надо её ввести...
-    	captcha = getParam(html, null, null, /<img[^>]+id="[^"]*:jcaptcha"[^>]*src="([^"]*)/i, null, html_entity_decode) || '';
+    	captcha = getParam(html, null, null, /<img[^>]+id="[^"]*:jcaptcha"[^>]*src="([^"]*)/i) || '';
 
     if(captcha){
     	AnyBalance.trace('Надо капчу вводить...');
@@ -174,8 +174,8 @@ function login(){
     }
 
 	//Потребовалось otp
-    var otpType = getParam(form, null, null, /<input[^>]+name="otp_type"[^>]*value+"([^"]*)/i, null, html_entity_decode);
-    var msg = getParam(html, null, null, new RegExp('<span[^>]+id="otp_type_' + otpType + '"[^>]*confirmType[^>]*>([\\s\\S]*?)</span>', 'i'), replaceTagsAndSpaces, html_entity_decode);
+    var otpType = getParam(form, null, null, /<input[^>]+name="otp_type"[^>]*value+"([^"]*)/i);
+    var msg = getParam(html, null, null, new RegExp('<span[^>]+id="otp_type_' + otpType + '"[^>]*confirmType[^>]*>([\\s\\S]*?)</span>', 'i'), replaceTagsAndSpaces);
 
     //Запрос смс
     var sessionid = AnyBalance.requestPost(g_baseurl + '/scoring/smsPasswordLoginAjaxServlet', {smsSentTime: new Date().getTime()}, addHeaders({
@@ -210,6 +210,9 @@ function login(){
 }
 
 function processCards(html, result){
+    if(!AnyBalance.isAvailable('cards'))
+        return;
+
 	AnyBalance.trace('Читаем карты');
 
 	var cardsBlock = getElement(html, /<div[^>]+class="cardsBlock"[^>]*>/i);
@@ -229,14 +232,15 @@ function processCards(html, result){
 		var id = getParam(card, null, null, /statement\/card\/(\d+)/i);
 		//Ищем <td> содержащую два спана, второй с номером карты
 		var namecontainer = getParam(card, null, null, /<td[^>]*>\s*<span[^>]*>[^<]*<\/span>\s*<span[^>]*>[^<]*\d{4}\s*<\/span>\s*<\/td>/i);
-		var name = getParam(namecontainer, null, null, null, [replaceTagsAndSpaces, /\*[*\s]+\*/g, '*'], html_entity_decode);
+		var name = getParam(namecontainer, null, null, null, [replaceTagsAndSpaces, /\*[*\s]+\*/g, '*']);
+		var num = getParam(card, null, null, /[\*\d]{4}\s+[\*\d]{4}\s+[\*\d]{4}\s+\d{4}/i, replaceTagsAndSpaces);
 		var c = {
 			__id: id, 
-			__name: name
+			__name: name,
+			num: num
 		};
 		if(__shouldProcess('cards', c)){
-			getParam(namecontainer, c, 'cards.num', /<span[^>]*>([^<]*)<\/span>\s*<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-			getParam(namecontainer, c, 'cards.type', /<span[^>]*>([^<]*)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
+			getParam(namecontainer, c, 'cards.type', /<span[^>]*>([^<]*)<\/span>/i, replaceTagsAndSpaces);
 			processCard(card, c);
 		}
 
@@ -245,109 +249,102 @@ function processCards(html, result){
 }
 
 function processInfo(html, result){
+    if(!AnyBalance.isAvailable('info'))
+        return;
+
+    result.info = {};
+
 	var prefs = AnyBalance.getPreferences();
-	getParam(html, result, 'fio', /<div[^>]*class="clientName"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(prefs.login, result, 'email');
+	getParam(html, result.info, 'info.fio', /<div[^>]*class="clientName"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+	getParam(prefs.login, result.info, 'info.login');
 }
 
 function processCard(html, result){
+	AnyBalance.trace('Обрабатываем карту ' + result.__name);
+
 	getParam(html, result, 'cards.balance', /<span[^>]+amountBox[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'cards.currency', /<span[^>]+amountBox[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseCurrency);
-	getParam(html, result, 'cards.name', /<div[^>]+aliasBox[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'cards.name', /<div[^>]+aliasBox[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
 
-	if(AnyBalance.isAvailable('cards.blocked', 'cards.sms', 'cards.till', 'cards.transactions')){
+	if(AnyBalance.isAvailable('cards.late', 'cards.minpay', 'cards.debt', 'cards.gracepay', 'cards.gracepay_till', 'cards.limit', 'cards.blocked', 'cards.sms', 'cards.till', 'cards.transactions')){
 		html = AnyBalance.requestGet(g_baseurl + '/scoring/protected/statement/card/' + result.__id, g_headers);
+		var table = getElement(html, /<table[^>]+bigCardShadow[^>]*>/i, replaceHtmlEntities);
 
-		//Заблокировано:
-		getParam(html, result, 'cards.blocked', /&#1047;&#1072;&#1073;&#1083;&#1086;&#1082;&#1080;&#1088;&#1086;&#1074;&#1072;&#1085;&#1086;:[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
-		//Подключено SMS-информирование на номера:
-		getParam(html, result, 'cards.sms', /&#1055;&#1086;&#1076;&#1082;&#1083;&#1102;&#1095;&#1077;&#1085;&#1086; SMS-&#1080;&#1085;&#1092;&#1086;&#1088;&#1084;&#1080;&#1088;&#1086;&#1074;&#1072;&#1085;&#1080;&#1077; &#1085;&#1072; &#1085;&#1086;&#1084;&#1077;&#1088;&#1072;:[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
-		getParam(html, result, 'cards.till', /&#1044;&#1077;&#1081;&#1089;&#1090;&#1074;&#1080;&#1090;&#1077;&#1083;&#1100;&#1085;&#1072; &#1076;&#1086;:([^<]*)/i, replaceTagsAndSpaces, parseDate);
-		
+		getParam(table, result, 'cards.late', /Просроченная задолженность:[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+        getParam(table, result, 'cards.minpay', /Минимальный платеж:[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+        getParam(table, result, 'cards.debt', /Всего задолженность:[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+
+		getParam(table, result, 'cards.blocked', /Заблокировано:[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+		getParam(table, result, 'cards.sms', /Подключено SMS-информирование на номера:[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
+		getParam(table, result, 'cards.till', /Действительна до:([^<]*)/i, replaceTagsAndSpaces, parseDate);
+        getParam(table, result, 'cards.limit', /Кредитный лимит:[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+        getParam(table, result, 'cards.gracepay', /Сумма платежа в льготном периоде:[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+        getParam(table, result, 'cards.gracepay_till', /Сумма платежа в льготном периоде:[\s\S]*?<span[^>]*>\s*до([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseDate);
+
 		if(AnyBalance.isAvailable('cards.transactions')){
 			processCardTransactions(html, result);
 		}
 	}
 }
 
-function n2(n) { return n < 10 ? '0' + n : '' + n; }
+function processAccounts(html, result){
+    if(!AnyBalance.isAvailable('accounts'))
+        return;
 
-function getViewState(html){
-	return getParam(html, null, null, /<input[^>]+name="javax.faces.ViewState"[^>]*value="([^"]*)/i, null, html_entity_decode);
+    AnyBalance.trace('Читаем счета');
+
+    var cardsBlock = getElements(html, [/<div[^>]+class="productShort[^>]*>/i, /statement\/account\/./i])[0];
+    if(!cardsBlock){
+        AnyBalance.trace(html);
+        AnyBalance.trace('Не удалось найти блок счетов. счета отсутствуют?');
+        return;
+    }
+
+    var cards = getElements(cardsBlock, /<div[^>]+productShort[^>]*>/ig);
+    AnyBalance.trace('Найдено ' + cards.length + ' счетов');
+
+    result.accounts = [];
+
+    for(var i=0; i<cards.length; ++i){
+        var card = cards[i];
+        var id = getParam(card, null, null, /statement\/account\/(\d+)/i);
+        //Ищем <td> содержащую два спана, второй с номером карты
+        var num = getParam(card, null, null, /(?:\d(?:\s+|&nbsp;|&#160;)*){20}/i, replaceTagsAndSpaces);
+        var c = {
+            __id: id,
+            __name: num,
+            num: num.replace(/\s+/g, '')
+        };
+        if(__shouldProcess('accounts', c)){
+            processAccount(card, c);
+        }
+
+        result.accounts.push(c);
+    }
 }
 
-function processCardTransactions(html, result){
-	var form = getElement(html, /<form[^>]+id="tableForm"[^>]*>/i);
-	var dt = new Date();
-	var dtFrom = new Date(dt.getFullYear() - 3, dt.getMonth(), dt.getDate());
-	var params = createFormParams(form, function(params, str, name, value) {
-		if ('beginDate' == name) 
-			return n2(dtFrom.getDate()) + '.' + n2(dtFrom.getMonth()) + '.' + n2(dtFrom.getYear());
-		else if ('endDate' == name)
-			return n2(dt.getDate()) + '.' + n2(dt.getMonth()) + '.' + n2(dt.getYear());
-		else if (/ViewState/i.test(name))
-			return getViewState(html);
-		else if (/\w+Button/.test(name))
-			return;
+function processAccount(html, result){
+    AnyBalance.trace('Обрабатываем счет ' + result.__name);
 
-		return value;
-	});
-	
-	var printid = getParam(html, null, null, /<a[^>]+id="([^"]*:printBtn)"/i, null, html_entity_decode);
-	params['tableForm:_idcl'] = printid;
+    getParam(html, result, 'accounts.balance', /<span[^>]+amountBox[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'accounts.currency', /<span[^>]+amountBox[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseCurrency);
+    getParam(html, result, 'accounts.name', /<div[^>]+aliasBox[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
 
-	html = AnyBalance.requestPost(g_baseurl + '/scoring/protected/statement/card/' + result.__id, params, addHeaders({Origin: g_baseurl, Referer: AnyBalance.getLastUrl()}));
+    if(AnyBalance.isAvailable('accounts.date_start', 'accounts.contract')){
+        html = AnyBalance.requestGet(g_baseurl + '/scoring/protected/statement/account/' + result.__id, g_headers);
+        var table = getElement(html, /<table[^>]+productFull[^>]*>/i, replaceHtmlEntities);
 
-	var trs = getElements(html, [/<tr[^>]*>/ig, /<td[^>]+border:\s*1[^>]*>/i]);
-	
-	result.transactions = [];
+        getParam(table, result, 'accounts.date_start', /Дата открытия счета:([^<]*)/i, replaceTagsAndSpaces, parseDate);
+        getParam(table, result, 'accounts.contract', /Номер договора:[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
 
-	var cols = null;
-	for(var j=0; j<trs.length; ++j){
-		var tr = trs[j];
-		
-		if(/ИТОГО:/i.test(tr))
-			break; //Последняя строка
-		
-		if(!cols && /Дата(\s|<[^>]*>)+операции/i.test(tr)){ //Заголовок
-			var colsa = getElements(tr, /<td[^>]*>/ig);
-			cols = {}
-			for(var i=0; i<colsa.length; ++i){
-				var col = replaceAll(colsa[i], [replaceTagsAndSpaces, replaceHtmlEntities]);
-				if(/Дата операции/i.test(col))
-					cols.date = i;
-				else if(/Сумма операции/i.test(col))
-					cols.sum = i;
-				else if(/Валюта операции/i.test(col))
-					cols.currency = i;
-				else if(/Дата оплаты/i.test(col))
-					cols.date_done = i;
-				else if(/Комиссия/i.test(col))
-					cols.fee = i;
-				else if(/Описание/i.test(col))
-					cols.descr = i;
-			}
-			continue;
-		}
+        if(AnyBalance.isAvailable('accounts.transactions')){
+            processAccountTransactions(html, result);
+        }
+    }
+}
 
-		var tds = getElements(tr, /<td[^>]*>/ig);
-		
-		var t = {};
-		if(cols.hasOwnProperty('date'))
-			getParam(tds[cols.date], t, 'cards.transactions.date', null, replaceTagsAndSpaces, parseDate);
-		if(cols.hasOwnProperty('date_done'))
-			getParam(tds[cols.date_done], t, 'cards.transactions.date_done', null, replaceTagsAndSpaces, parseDate);
-		if(cols.hasOwnProperty('sum'))
-			getParam(tds[cols.sum], t, 'cards.transactions.sum', null, replaceTagsAndSpaces, parseBalance);
-		if(cols.hasOwnProperty('currency'))
-			getParam(tds[cols.currency], t, ['cards.transactions.currency', 'cards.transactions.sum'], null, replaceTagsAndSpaces, html_entity_decode);
-		if(cols.hasOwnProperty('fee'))
-			getParam(tds[cols.fee], t, 'cards.transactions.fee', null, replaceTagsAndSpaces, parseBalance);
-		if(cols.hasOwnProperty('descr'))
-			getParam(tds[cols.descr], t, 'cards.transactions.descr', null, replaceTagsAndSpaces, html_entity_decode);
-
-		result.transactions.push(t);
-	}
+function getViewState(html){
+	return getParam(html, null, null, /<input[^>]+name="javax.faces.ViewState"[^>]*value="([^"]*)/i);
 }
 
 function transliterate(word){
@@ -379,10 +376,10 @@ function extractRegions(){
 	var valsite = {};
 
 	for(var i=0; i<options.length; ++i){
-		var name = getParam(options[i], null, null, null, replaceTagsAndSpaces, html_entity_decode);
+		var name = getParam(options[i], null, null, null, replaceTagsAndSpaces);
 		var val = replaceAll(name, [/Республика\s*/i, '', /\s+.*$/, '']).substr(0, 5);
 		val = transliterate(val);
-		var site = getParam(options[i], null, null, /<option[^>]+value="([^"]*)/i, null, html_entity_decode);
+		var site = getParam(options[i], null, null, /<option[^>]+value="([^"]*)/i);
 
 		valsite[val] = site;
 		names.push(name);

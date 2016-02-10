@@ -22,46 +22,60 @@ function main(){
 
     AnyBalance.setDefaultCharset('utf-8'); 
 
-    var html = AnyBalance.requestGet(baseurl + 'login', g_headers);
+    var html = AnyBalance.requestGet(baseurl, g_headers);
 
-    var tform = getParam(html, null, null, /<input[^>]+name='csrfmiddlewaretoken'[^>]+value='([^']*)/i, null, html_entity_decode);
-    console.log(tform);
-    if(!tform) 
-        throw new AnyBalance.Error('Не удалось найти форму входа. Сайт изменен?');
+    if (!isLoggedIn(html)) {
+        var csrf = getParam(html, null, null, /<input[^>]+name=(?:'|")csrfmiddlewaretoken(?:'|")[^>]+value=(?:'|")([^(?:'|")]*)/i, null, html_entity_decode);
+        if (!csrf)
+            throw new AnyBalance.Error('Не удалось найти форму входа. Сайт изменен?');
 
-    html = AnyBalance.requestPost(baseurl + 'login', {
-        'csrfmiddlewaretoken':tform,      
-        username:prefs.login,
-        password:prefs.password,
-        next:'http://127.0.0.1:8081/'
-    }, addHeaders({Referer: baseurl + 'login'})); 
+        html = AnyBalance.requestPost(
+            baseurl + 'account/login/',
+            {
+                'csrfmiddlewaretoken': csrf,
+                'username': prefs.login,
+                'password': prefs.password,
+                'next': ''
+            },
+            addHeaders({Referer: baseurl + 'account/login/?next=/'})
+        );
 
-    if(!/\/logout/i.test(html)){
-        var error = getParam(html, null, null, /<div[^>]+class='login-error'[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
-        if(error)
-            throw new AnyBalance.Error(error);
-        throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
+        if (!isLoggedIn(html)) {
+            defineError(html);
+        }
+    }
+
+    html = AnyBalance.requestGet(baseurl + 'internet/' + prefs.login + '/');
+
+    if (!isLoggedIn(html)) {
+        defineError(html);
     }
 
     var result = {success: true};
 
-    getParam(html, result, '__tariff', /Тарифный\s*план:\s*<b[^>]*>([\s\S]*?)<\/b>[\s\S]*<a[^>]+>сменить тариф<\/a>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'licenseFee', /Абонентская плата за трафик:\s*([\s\S]*?)<\/li>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'externalTraffic', /Внешний трафик по выделенной линии:\s*([\s\S]*?)<\/li>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'reservPort', /Резервирование порта абонента: \s*([\s\S]*?)<\/li>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, '__tariff', /Тариф[\s\S]*?<td[^>]*>([\s\S]*?)<div[^>]*>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'balance', /Баланс[\s\S]*?<td[^>]*>([\s\S]*?)<div[^>]*>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'number', /Номер договора[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'licenseFee', /Ежемесячный платёж[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'payment', /К оплате[\s\S]*?<td[^>]*>([\s\S]*?)<div[^>]*>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'virtual_payment', /Виртуальный платеж[\s\S]*?<td[^>]*>([\s\S]*?)<div[^>]*>/i, replaceTagsAndSpaces, html_entity_decode);
 
-    getParam(html, result, 'mailbox', /<h3>Почтовый ящик[\s\S]*-\s*([\s\S]*?)<\/h3>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'mailnumber', /<h3>Почтовый ящик\s*\(([\s\S]*?)\)/i, replaceTagsAndSpaces, html_entity_decode);
-
-
-    html = AnyBalance.requestGet(baseurl + 'api/base_info', g_headers);
-
-    getParam(html, result, 'number', /"login":\s*"([^"]*)/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'fio', /"name":\s*"([^"]*)/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'contractService', /"contract_service":\s*"([^"]*)/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'balance', /"state":\s*"([^"]*)/i, replaceTagsAndSpaces, parseBalance);
-
-
+    getParam(html, result, 'status', /Статус[\s\S]*?<td[^>]*>([\s\S]*?)<div[^>]*>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'login', /Логин[\s\S]*?<td[^>]*>([\s\S]*?)<div[^>]*>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'mailnumber', /Почтовый ящик[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
 
     AnyBalance.setResult(result);
+}
+
+function isLoggedIn(html) {
+    return /\/logout/i.test(html);
+}
+
+function defineError(html) {
+    var error = getParam(html, null, null, /<div class="alert alert-danger[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+    if (error) {
+        throw new AnyBalance.Error(error, null, true);
+    }
+
+    throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 }

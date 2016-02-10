@@ -1,16 +1,18 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-bonus-thy-com</id>
+	<id version="2">ab-bonus-thy-com</id>
 	<api flags="no_browser"/>
 	<name>Turkish airlines (Miles)</name>
 	<description html="true"><![CDATA[
 	<p>Obtains information from Turkish airlines personal account https://www4.thy.com/tkmiles/</p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+  </depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
@@ -19,7 +21,7 @@
 		<counter id="total_miles" name="Total miles"/>
 		<counter id="miles_from_enrolment" name="Total miles since enrollment"/>
 	</counters>
-	<keywords></keywords>
+	<keywords>Турция Мили, Турецкие Авиалинии</keywords>
 	<type>bonus</type>
 	<country>ru</country>
 </provider>

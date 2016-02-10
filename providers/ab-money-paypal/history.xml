@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="3.0" version="16" date="2016-02-10">
+	Исправление ошибки скрипта
+	</change>
 	<change major_version="3.0" version="15" date="2016-02-10">
 	Поддержка нового API
 	</change>

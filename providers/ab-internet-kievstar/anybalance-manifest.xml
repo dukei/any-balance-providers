@@ -21,13 +21,12 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="name" name="Имя" type="text"/>
 		<counter id="balance" name="Баланс" units=" {@currency}"/>
-		<counter id="licschet" name="Лицевой счёт" type="text"/>
-		<counter id="__tariff" name="Тариф" type="text"/>
-		<counter id="status" name="Статус" type="text"/>
 		<counter id="bonusValue" name="Бонусный баланс" units=" б"/>
 		<counter id="bonusDate" name="Срок действия бонусов" type="text"/>
+		<counter id="licschet" name="Лицевой счёт" type="text"/>
+		<counter id="status" name="Статус" type="text"/>
+		<counter id="name" name="Имя" type="text"/>
 	</counters>
 	<keywords>Домашний интернет, интернет, kyivstar, киевстар, украина</keywords>
 	<type>internet</type>

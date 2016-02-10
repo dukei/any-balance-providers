@@ -40,14 +40,14 @@ function main() {
 	
 	var result = {success: true};
 	
+	getParam(html, result, 'partnerBalance', /Статистика[\s\S]*?<tbody>[\s\S]*?<td>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'charged', /Статистика[\s\S]*?<tbody>[\s\S]*?(?:<td>[\s\S]*?<\/td>[\s\S]*?){3}<td>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'key', /Ваш ключ:([\s\S]*?)<\/p>/i, replaceTagsAndSpaces);
+
 	if(isAvailable('balance')) {
 		html = AnyBalance.requestGet(baseurl + 'setting/get_balance?_=' + new Date().getTime(), g_headers);
 		getParam(html, result, 'balance', null, replaceTagsAndSpaces, parseBalance);
 	}
-	
-	getParam(html, result, 'partnerBalance', /Статистика[\s\S]*?<tbody>[\s\S]*?<td>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'charged', /Статистика[\s\S]*?<tbody>[\s\S]*?(?:<td>[\s\S]*?<\/td>[\s\S]*?){3}<td>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'key', /Ваш ключ:([\s\S]*?)<\/p>/i, replaceTagsAndSpaces);
 	
 	html = AnyBalance.requestPost(baseurl + 'setting/get_plan', {
 		'showlist': 'plan'

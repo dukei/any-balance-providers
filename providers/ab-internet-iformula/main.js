@@ -45,7 +45,7 @@ function main(){
         if (!isLoggedIn(html)) {
             var error = getParam(html, null, null, /<div class="[^"]*alert-danger[^"]*"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
             if (error) {
-                throw new AnyBalance.Error(error, null, true);
+                throw new AnyBalance.Error(error, null, /логин|парол/i.test(error));
             }
             throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
         }

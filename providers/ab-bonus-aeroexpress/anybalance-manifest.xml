@@ -4,11 +4,11 @@
 	<api flags="no_browser"/>
 	<name>Аэроэкспресс</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о количестве бонусных баллов в программе "Аэроэкспресс Бонус" компании ООО «Аэроэкспресс» <a href="https://aeroexpress.ru">https://aeroexpress.ru</a></p>
-	<p>Информация берется из <a href="https://aeroexpress.ru/ru/aero/user/profile">личного кабинета</a></p>
+	<p>Предоставляет информацию о количестве бонусных баллов в программе "Аэроэкспресс Бонус" компании ООО «Аэроэкспресс» https://aeroexpress.ru</p>
+	<p>Информация берется из личного кабинета https://aeroexpress.ru/ru/aero/user/profile</p>
 	]]></description>
 	<instruction html="true"><![CDATA[
-	<p>Если у вас нет доступа в Личный кабинет, получите его на странице <a href="https://aeroexpress.ru/ru/aero/user/register">https://aeroexpress.ru/ru/aero/user/register</a></p>
+	<p>Если у вас нет доступа в Личный кабинет, получите его на странице https://aeroexpress.ru/ru/aero/user/register</p>
 	]]></instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>

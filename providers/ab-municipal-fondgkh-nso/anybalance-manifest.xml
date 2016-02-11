@@ -13,6 +13,7 @@
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>
 		<module id="library"/>
+		<module id="crypt/base64"/>
 	</depends>
 	<files>
 		<icon>icon.png</icon>

@@ -20,15 +20,17 @@ function main() {
 	AB.checkEmpty(prefs.login, 'Введите логин!');
 	AB.checkEmpty(prefs.password, 'Введите пароль!');
 
-	var html = AnyBalance.requestGet(baseurl + '', g_headers);
+	var html = AnyBalance.requestGet(baseurl, g_headers);
 
 	if (!html || AnyBalance.getLastStatusCode() > 400) {
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
 	}
 
-	AnyBalance.setAuthentication(prefs.login, prefs.password);
-
+	//AnyBalance.setAuthentication не работает, потому что сервер не возвращает заголовок WWW-Authenticate
+	//поэтому устанавливаем заголовок авторизации явно
+	g_headers.Authorization = 'Basic ' + Base64.encode(prefs.login + ':' + prefs.password);
+	
 	html = AnyBalance.requestGet(baseurl + 'api/auth', g_headers);
 
 	var json = AB.getJson(html);

@@ -33,7 +33,7 @@ function makeGuid(hash){
 }
 
 function logInAPI(prefs) {
-	var baseurl = 'http://api.paypal.com/v1/';
+	var baseurl = 'https://api.paypal.com/v1/';
 	var hex = hex_md5(prefs.login + ' android id');
 
 	var deviceId = hex.substr(0, 16);

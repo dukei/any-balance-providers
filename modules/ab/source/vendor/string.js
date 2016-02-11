@@ -321,8 +321,8 @@
 	 */
 	String.prototype.htmlParser = function(reviver) {
 
-		var tagsRawRe = 'script|style|xmp' +	//raw text elements
-						'|textarea|title';		//escapable raw text elements
+		var tagsRawRe = 'script|style|xmp' +	//raw text elements (as is)
+						'|textarea|title';		//escapable raw text elements (can have html entities)
 
 		var spacesRe = /\x00-\x20\x7f\xA0\s/.source;
 
@@ -341,99 +341,67 @@
 		var htmlRe = `<(?:
 							#pairs raw tags with content:
 							((` + tagsRawRe + `) (?=[>` + spacesRe + `])` + attrsRe(3) + `)>  #(1) opened tag
-								(	#(4) inner
+								(	#(4) raw inner
 									[^<]*  #speed improve
 									.*?
 								)
-							</\\2 (?=[>` + spacesRe + `])` + attrsRe(5) + `>
+							</(\\2) (?=[>` + spacesRe + `])` + attrsRe(6) + `>  #(5) closed tag
 
-							#(6) opened tags:
+							#(7) opened tags:
 						|	(	(?=[a-z])
 								(?! (?:` + tagsRawRe + `) (?=[>` + spacesRe + `]) )
-								` + attrsRe(7) + `
+								` + attrsRe(8) + `
 							)>
 
-						|	/([a-z]` + attrsRe(9) + `)>		#(8) closed tags
-						|	!([a-z]` + attrsRe(11) + `)>	#(10) <!DOCTYPE ...>
-						|	!\\[CDATA\\[	([^\\]]*  .*?)	\\]\\] >	#(12) CDATA
-						|	!--				([^-]*    .*?)	    -- >	#(13) comments
-						|	\\?				([^\\?]*  .*?)	   \\? >	#(14) instructions part1 (PHP, Perl, ASP, JSP, XML)
-						|	%				([^%]*    .*?)		 % >	#(15) instructions part2 (PHP, Perl, ASP, JSP)
+						|	/([a-z]` + attrsRe(10) + `)>	#(9) closed tags
+						|	!([a-z]` + attrsRe(12) + `)>	#(11) <!DOCTYPE ...>
+						|	!\\[CDATA\\[	([^\\]]*  .*?)	\\]\\] >	#(13) CDATA
+						|	!--				([^-]*    .*?)	    -- >	#(14) comments
+						|	\\?				([^\\?]*  .*?)	   \\? >	#(15) instructions part1 (PHP, Perl, ASP, JSP, XML)
+						|	%				([^%]*    .*?)		 % >	#(16) instructions part2 (PHP, Perl, ASP, JSP)
 						) [` + spacesRe + `]*
-							#text:
-						|	(?:
+							#(17) text:
+						|	((?:
 									[^<]+
 								|	< (?! /? [a-z]
 										| !(?: \\[CDATA\\[ | -- )
 										| [\\?%]
 										)
-							)+`;
+							)+)`;
 
 		var match, 
-			i = 0, 
-			s,
-			maxSteps = 100;
+			steps = 0, 
+			stepsMax = 100,
+			typesMap = {
+				//1, 4, 5 = pairs raw tags with content
+				1  : 'open',
+				4  : 'raw',
+				5  : 'close',
+				7  : 'open',
+				9  : 'close',
+				11 : 'doctype',
+				13 : 'cdata',
+				14 : 'comment',
+				15 : 'instruct',
+				16 : 'instruct',
+				17 : 'text'
+			};
 
 		htmlRe = XRegExp(htmlRe, 'xsig');
 		//console.log(htmlRe);
+		//console.log(typesMap);
 
 		while (true) {
-			if (++i > maxSteps) throw Error(maxSteps + ' steps has been reached!');
+			if (++steps > stepsMax) throw Error(stepsMax + ' steps has been reached!');
 			match = htmlRe.exec(this);
 			if (! match) break;
-
-			//console.log(match);
-
-			//pairs raw tags with content:
-			if (typeof match[1] === 'string') {
-				reviver('open', match[1]);
-				reviver('raw', match[4]);
-				reviver('close', match[2]);
-			}
-
-			//opened tags:
-			else if (typeof match[6] === 'string') {
-				reviver('open', match[6]);
-			}
-			
-			//closed tags:
-			else if (typeof match[8] === 'string') {
-				reviver('close', match[8]);
-			}
-			
-			//<!DOCTYPE ...>
-			else if (typeof match[10] === 'string') {
-				reviver('doctype', match[10]);
-			}
-
-			//CDATA
-			else if (typeof match[12] === 'string') {
-				reviver('cdata', match[12]);
-			}
-
-			//comments
-			else if (typeof match[13] === 'string') {
-				reviver('comment', match[13]);
-			}
-			
-			//instructions part1
-			else if (typeof match[14] === 'string') {
-				reviver('instruct', match[14]);
-			}
-			
-			//instructions part2
-			else if (typeof match[15] === 'string') {
-				reviver('instruct', match[15]);
-			}
-
-			//text
-			else {
-				s = match[0].htmlEntityDecode(false).trim();
-				if (s.length) reviver('text', s);
-			}
-					
-		}
-		
+			for (var i in typesMap) {
+				if (typeof match[i] === 'string') {
+					if (! reviver(typesMap[i], match[i], match['index'])) return;
+					if (i > 5) break;  //1, 4, 5 = pairs raw tags with content
+				}
+			}//for
+		}//while
 	}
 	
 	/**
@@ -444,6 +412,7 @@
 	 */
 	String.prototype.htmlEntityDecode = function (strict) {
 
+		if (this.indexOf('&') === -1) return this;  //speed improve
 		if (! arguments.length) strict = true;
 		
 		//HTML entities, examples: &gt; &Ouml; &#x02DC; &#34;
@@ -489,6 +458,8 @@
 	 */
 	String.prototype.htmlToText = function () {
 		
+		if (this.indexOf('<') === -1) return this;  //speed improve
+
 		//https://developer.mozilla.org/ru/docs/Web/HTML/Block-level_elements
 		//http://www.tutorialchip.com/tutorials/html5-block-level-elements-complete-list/
 		var BLOCK_TAGS = [

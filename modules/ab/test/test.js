@@ -23,6 +23,16 @@ describe("String", function() {
 				}
 			);
 		});
+
+		it("test (form)", function() {
+			sample.form.htmlParser(
+				function(type, node, offset) {
+					if (type === 'text') node = node.htmlEntityDecode(false).trim();
+					//console.log([type, node, offset]);
+					return true;
+				}
+			);
+		});
 		
 		it("test (yandex)", function() {
 			sample.yandex.htmlParser(

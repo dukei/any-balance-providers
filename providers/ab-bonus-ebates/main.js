@@ -61,6 +61,10 @@ function doCom(baseurl, prefs) {
 	getParam(json.CashPaid + '', result, 'CashPaid', null, replaceTagsAndSpaces, parseBalance);
 	getParam(json.CashPending + '', result, 'CashPending', null, replaceTagsAndSpaces, parseBalance);
 	getParam(json.TotalCashBack + '', result, 'TotalCashBack', null, replaceTagsAndSpaces, parseBalance);
+	// getParam(json.TotalCashBack + '', result, ['currency', 'TotalCashBack', 'CashPending', 'CashPaid'], null,
+	// 	replaceTagsAndSpaces, parseCurrency);
+	getParam('$', result, 'currency');
+
 
 	AnyBalance.setResult(result);
 }

@@ -17,7 +17,7 @@ describe("String", function() {
 		it("test (ugly)", function() {
 			sample.ugly.htmlParser(
 				function(type, node, offset) {
-					if (type === 'text') node = node.htmlEntityDecode(false).trim();
+					if (type === 'text') node = node.htmlEntityDecode(false).normalize().clean();
 					//console.log([type, node, offset]);
 					return true;
 				}
@@ -27,7 +27,7 @@ describe("String", function() {
 		it("test (form)", function() {
 			sample.form.htmlParser(
 				function(type, node, offset) {
-					if (type === 'text') node = node.htmlEntityDecode(false).trim();
+					if (type === 'text') node = node.htmlEntityDecode(false).normalize().clean();
 					//console.log([type, node, offset]);
 					return true;
 				}
@@ -37,7 +37,7 @@ describe("String", function() {
 		it("test (yandex)", function() {
 			sample.yandex.htmlParser(
 				function(type, node, offset) {
-					if (type === 'text') node = node.htmlEntityDecode(false).trim();
+					if (type === 'text') node = node.htmlEntityDecode(false).normalize().clean();
 					//console.log([type, node, offset]);
 					return true;
 				}
@@ -47,7 +47,7 @@ describe("String", function() {
 		it("test (mgts)", function() {
 			sample.mgts.htmlParser(
 				function(type, node, offset) {
-					if (type === 'text') node = node.htmlEntityDecode(false).trim();
+					if (type === 'text') node = node.htmlEntityDecode(false).normalize().clean();
 					//console.log([type, node, offset]);
 					return true;
 				}
@@ -57,7 +57,7 @@ describe("String", function() {
 		it("test (googledoc)", function() {
 			sample.googledoc.htmlParser(
 				function(type, node, offset) {
-					if (type === 'text') node = node.htmlEntityDecode(false).trim();
+					if (type === 'text') node = node.htmlEntityDecode(false).normalize().clean();
 					//console.log([type, node, offset]);
 					return true;
 				}

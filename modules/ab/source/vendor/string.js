@@ -296,7 +296,7 @@
 	 * HTML detect
 	 * @returns	{number}	result of String.search()
 	 */
-	String.prototype.htmlIndexOf = function() {
+	String.prototype.htmlIndexOf = function () {
 		/*
 		Fast and short implementation.
 		No needs to check closed tags, because they don't exist without opened tags
@@ -319,7 +319,7 @@
 	 * @link https://www.w3.org/TR/html5/
 	 * @returns {undefined}
 	 */
-	String.prototype.htmlParser = function(reviver) {
+	String.prototype.htmlParser = function (reviver) {
 
 		var tagsRawRe = 'script|style|xmp' +	//raw text elements (as is)
 						'|textarea|title';		//escapable raw text elements (can have html entities)
@@ -521,11 +521,16 @@
 			}
 		);
 
-		str = str.htmlEntityDecode(false);
+		return str.htmlEntityDecode(false).normalize();
+	}
 
-		//remove a duplicate spaces and some chars + normalize spaces and newlines
-		str = str
-			.trim()
+	/**
+	 * Remove a duplicate spaces and some chars + normalize spaces and newlines
+	 * 
+	 * @returns {string}
+	 */
+	String.prototype.normalize = function () {
+		return this
 			.replace(/\r/g, '\n')
 			.replace(/\f/g, '\n\n') //разрыв страницы
 			//It's adopted from trim() polyfill on https://developer.mozilla.org/ru/docs/Web/JavaScript/Reference/Global_Objects/String/Trim 
@@ -536,9 +541,8 @@
 			.replace(/\n\x20/g, '\n')
 			.replace(/\x20\n/g, '\n')
 			//replace 3 and more new lines to 2 new lines
-			.replace(/\n\n\n+/g, '\n\n');
-
-		return str;
+			.replace(/\n\n\n+/g, '\n\n')
+			.trim();
 	}
 
 	/**
@@ -575,7 +579,7 @@
 	 *								```
 	 * @throws {Error} if maximum depth will be reached
 	 */
-	String.prototype.matchRecursive = function(pattern, options) {
+	String.prototype.matchRecursive = function (pattern, options) {
 		if (!(pattern instanceof RegExp)) throw TypeError('Function matchRecursive(), 1-nd parameter: a RegExp type expected, ' + (typeof options) + ' given!');
 		if (typeof options !== 'object')  throw TypeError('Function matchRecursive(), 2-nd parameter: an object type expected, ' + (typeof options) + ' given!');
 		var optProps = {
@@ -626,7 +630,7 @@
 	 * 
 	 * @returns	{string|null}	Возвращает строку или `null`, если ничего не найдено
 	 */
-	String.prototype.getJsArrayOrObject = function() {
+	String.prototype.getJsArrayOrObject = function () {
 		//http://hjson.org/
 		//https://regex101.com/#javascript
 		//http://blog.stevenlevithan.com/archives/match-innermost-html-element

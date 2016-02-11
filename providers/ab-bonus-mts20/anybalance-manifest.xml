@@ -1,17 +1,20 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-bonus-mts20</id>
+	<id version="3">ab-bonus-mts20</id>
 	<api flags="no_browser"/>
 	<name>МТС -20% (Бонусы)</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе бонусов в Программе МТС «20% Возвращаются»</p>
 	<p>Информация берется из личного кабинета http://www.20.mts.ru/auth/login</p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
+		<js>login.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>

@@ -1,12 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="3.0" version="11">ab-internet-kievstar</id>
-	<!-- <api flags="no_browser|captcha"/> -->
+	<id major_version="3.0" version="12">ab-internet-kievstar</id>
 	<api flags="no_browser"/>
 	<name>Киевстар (домашний интернет)</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе и бонусных баллах для пользователей интернет-провайдера "Киевстар".</p> 
-	<p>Информация берется из личного кабинета (http://my.kyivstar.ua).</p>   
+	<p>Предоставляет информацию о балансе и бонусных баллах для пользователей интернет-провайдера "Киевстар".</p>
+	<p>Информация берется из личного кабинета (http://my.kyivstar.ua).</p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<author>Viacheslav Sychov &lt;viacheslav.sychov@gmail.com&gt;</author>
@@ -18,14 +17,16 @@
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>main.js</js>		
+		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units=" ₴"/>
-		<counter id="bonuses" name="Бонусный счет" units=" б"/>
+		<counter id="balance" name="Баланс" units=" {@currency}"/>
+		<counter id="bonusValue" name="Бонусный баланс" units=" б"/>
+		<counter id="bonusDate" name="Срок действия бонусов" type="text"/>
+		<counter id="licschet" name="Лицевой счёт" type="text"/>
 		<counter id="status" name="Статус" type="text"/>
-		<counter id="licschet" name="Лицевой счет" type="text"/>
+		<counter id="name" name="Имя" type="text"/>
 	</counters>
 	<keywords>Домашний интернет, интернет, kyivstar, киевстар, украина</keywords>
 	<type>internet</type>

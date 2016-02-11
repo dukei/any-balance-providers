@@ -315,9 +315,9 @@
 	
 	/**
 	 * HTML SAX parser
-	 * @param {function|null}
+	 * @param {function}
 	 * @link https://www.w3.org/TR/html5/
-	 * @returns {number} parsed offset
+	 * @returns {undefined}
 	 */
 	String.prototype.htmlParser = function(reviver) {
 
@@ -389,8 +389,6 @@
 			};
 
 		htmlRe = XRegExp(htmlRe, 'xsig');
-		//console.log(htmlRe);
-		//console.log(typesMap);
 
 		while (true) {
 			if (++steps > stepsMax) throw Error(stepsMax + ' steps has been reached!');

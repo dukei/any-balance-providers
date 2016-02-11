@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="3">ab-guard-uvokuzbass</id>
+	<id version="4">ab-guard-uvokuzbass</id>
 	<name>УВО МВД Кемерово</name>
 	<api flags="no_browser"/>
 	<description html="true"><![CDATA[
@@ -9,7 +9,7 @@
 	<p>Информация берется со страницы http://www.uvokuzbass.ru/zadolg/</p>
 	<p>Баланс пока можно получить только по лицевому счету. Если вам нужно получать баланс по фамилии и номеру договора, то обращайтесь к автору провайдера для доработки.</p>
 	]]></description>
-	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
@@ -18,7 +18,8 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="balance" name="Задолженность по штрафам" units=" р"/>
+		<counter id="outstanding_charges" name="Задолженность по начислениям" units=" р"/>
 		<counter id="licschet" name="Договоро (Лицевой счет)" type="text"/>
 	</counters>
 	<keywords></keywords>

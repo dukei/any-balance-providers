@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="1.0" version="28">ab-service-gosuslugi</id>
+	<id major_version="1.0" version="33">ab-service-gosuslugi</id>
 	<api flags="no_browser"/>
 	<name>Госуслуги (Штрафы, Налоги)</name>
 	<description html="true"><![CDATA[
@@ -14,11 +14,15 @@
 	<instruction html="true"><![CDATA[
 	<p>Если у вас нет доступа в Личный кабинет Госуслуг, пройдите регистрацию на странице <a href="https://esia.gosuslugi.ru/sia-web/rf/registration/lp/Index.spr">https://esia.gosuslugi.ru/sia-web/rf/registration/lp/Index.spr</a></p>
 	]]></instruction>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+		<module id="nadapter"/>
+		<module id="extract/abe-service-gosuslugi"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>

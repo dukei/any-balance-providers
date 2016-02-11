@@ -15,64 +15,68 @@ function main(){
         rus: 'ru',
         kaz: 'kk'
     };
-	
+
     var prefs = AnyBalance.getPreferences();
     checkEmpty(/^\d{10}$/.test(prefs.login), 'Введите номер телефона');
     checkEmpty(prefs.password, 'Введите пароль');
-	
+
     var baseurl = "https://www.activ.kz/";
-	
+
     AnyBalance.setDefaultCharset('utf-8');
-	
+
     AnyBalance.trace("Trying to enter ics at address: " + baseurl);
     var lang = prefs.lang || 'ru';
     lang = langMap[lang] || lang; //Переведем старые настройки в новые.
-	
+
     var html;
     if(!prefs.__dbg) {
         html = AnyBalance.requestPost(baseurl + lang + "/ics.security/authenticate", {
             'msisdn': '+7 (' + prefs.login.substr(0, 3) + ') ' + prefs.login.substr(3, 3) + '-' + prefs.login.substr(6, 4),
             'password': prefs.password
         }, addHeaders({'Referer': baseurl + lang + '/ics.security/login'}));
-		
+
 		//AnyBalance.trace(html);
-        
+
         if(!/security\/logout/i.test(html)){
 			var error = getParam(html, null, null, /<div[^>]*class="[^"]*alert[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
 			if(error)
 				throw new AnyBalance.Error(error);
-			
+
 			throw new AnyBalance.Error("Не удалось зайти в личный кабинет. Если вы уверены, что правильно ввели логин-пароль, то это может быть из-за проблем на сервере или изменения личного кабинета.");
         }
-		
+
 		if(/icons\/503\.png/i.test(html))
 			throw new AnyBalance.Error("Проблемы на сервере, сайт изменен или, возможно, вы ввели неправильный номер телефона.");
-		
+
 		if(/<title>\s*Смена пароля\s*<\/title>/i.test(html))
 			throw new AnyBalance.Error("Необходимо сменить пароль, зайдите на сайт через браузер и смените пароль.");
     } else {
 		html = AnyBalance.requestGet(baseurl + lang + '/ics.account/dashboard', {'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/536.11 (KHTML, like Gecko) Chrome/20.0.1132.57 Safari/536.11'});
     }
-    
+
     var result = {success: true};
+    //На казахском языке описание каких-то значений идёт перед ними, а на английском и в русском - после.
+
     //(?:Теңгерім|Баланс|Balance):
-    getParam(html, result, 'balance', /<h5[^>]*>(?:Ваш баланс|Сіздің теңгеріміңіз|Your balance is)([\s\d,.-]+)/i, replaceTagsAndSpaces, parseBalance);
-    //(?:интернет плюс|internet plus)
-    getParam(html, result, 'internet_plus', /(?:Ваш баланс|Сіздің теңгеріміңіз|Your balance is)[^<]*?\+\s*([\d\s.,]*\s*[Mм][Bб])/i, replaceTagsAndSpaces, parseTraffic);
+    getParam(html, result, 'balance', /<h5[^>]*?>\s*?(?:Баланс|Теңгерім|Balance)\s*?<\/h5>\s*?<h5[^>]*?>([\s\S]*?)<\/h5/i, replaceTagsAndSpaces, parseBalance);
+     //(?:интернет плюс|internet plus)
+    sumParam(html, result, 'internet_plus', /(?:\+|дейін)([\d\s.,]*\s*[МмMm][БбBb])/ig, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
     //(?:бонусные единицы)
-    getParam(html, result, 'bonus', /(\d+)\s*(?:бонусных единиц|бонустық бірлік|bonus units)/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'bonus', /(\d+)\s*(?:бонусных ед.|бонустық бірліктер|bonus units)/i, replaceTagsAndSpaces, parseBalance);
     //(?:Шот қалпы|Статус номера|Account status):
     getParam(html, result, 'status', /<h5>(?:Статус|Қалпы|Status)(?:[^>]*>){2}([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
     //(?:Шот қалпы|Статус номера|Account status):
     getParam(html, result, 'min_roaming', /([\d\.]+)\s*(?:Бонусных минут в роуминге|Роумингтегі бонус минут|Bonus minutes in roaming)/i, replaceTagsAndSpaces, parseBalance);
+    //Локальные минуты, минуты на ВСЕ сети по РК (внутри сети и на другие сети по РК):
+    sumParam(html, result, 'min_local', /(?:дейін желі ішінде|дейін БАРЛЫҚ желілерге[\s\S]*?)?\s*([\d\.]+)\s*(?:мин\. внутри сети|мин\.|on-net min|all-net min)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
     //Тариф:
     getParam(html, result, '__tariff', /<h[^>]*>(?:Тарифный план|Тариф|Tariff)[\s\S]*?<h[^>]*>([\s\S]*?)<\/h/i, replaceTagsAndSpaces, html_entity_decode);
     //минуты
-    getParam(html, result, 'min_left', /(?:Ваш баланс|Сіздің теңгеріміңіз|Your balance is)[^<]*?\+\s*([\d\s.,]*)\s*(?:Бонусных|Бонустық|Bonus)?\s+(?:мин|min)/i, replaceTagsAndSpaces, parseBalance);
+    sumParam(html, result, 'min_left', /(?:Ваш баланс|Сіздің теңгеріміңіз|Your balance is)[^<]*?\+\s*([\d\s.,]*)\s*(?:Бонусных|Бонустық|Bonus)?\s+(?:мин|min)/ig, replaceTagsAndSpaces, parseBalance);
     //Бонусных секунд/Бонустық секунд/Bonus seconds
     sumParam(html, result, 'min_left', /(?:Ваш баланс|Сіздің теңгеріміңіз|Your balance is)[^<]*?\+\s*([\d\s.,]*)\s*(?:Бонусных|Бонустық|Bonus)?\s+(?:сек|sec)/i, replaceTagsAndSpaces, function(str){ var s = parseBalance(str); return s && s/60 }, aggregate_sum );
     //SMS
-    getParam(html, result, 'sms_net', /(?:Ваш баланс|Сіздің теңгеріміңіз|Your balance is)[^<]*?\+\s*([\d\s.,]*)\s*(?:SMS\s+в\s+сети|желiдегi\s+SMS|onnet\s+SMS)/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'sms_net', /(?:Ваш баланс|Сіздің теңгеріміңіз|Your balance is)[^<]*?\+?\s*([\d\s.,]*)\s*(?:SMS\s+в\s+сети|желiдегi\s+SMS|onnet\s+SMS|SMS\+)/i, replaceTagsAndSpaces, parseBalance);
 
     if(AnyBalance.isAvailable('internet_plus')){
         html = AnyBalance.requestGet(baseurl + lang + '/ics.account/getconnectedservices', g_headers);

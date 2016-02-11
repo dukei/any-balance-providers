@@ -1,24 +1,26 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="4">ab-sharing-ottclub</id>
+	<id version="6">ab-sharing-ottclub</id>
 	<api flags="no_browser"/>
 	<name>OTTCLUB</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе провайдера OTTCLUB <a href="http://ottclub.no-ip.org/">http://ottclub.no-ip.org/</a></p>
+	<p>Предоставляет информацию о балансе провайдера OTTCLUB http://ottclub.no-ip.org/</p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units=" USD"/>
-		<counter id="partnerBalance" name="Баланс партнёрки" units=" USD"/>
-		<counter id="charged" name="Заработано сегодня" units=" USD"/>
-		<counter id="status" name="Статус услуги" type="text"/>
+		<counter id="balance" name="Баланс" units=" $"/>
+		<counter id="partnerBalance" name="Баланс партнёрки" units=" $"/>
+		<counter id="charged" name="Заработано сегодня" units=" $"/>
+		<counter id="key" name="Ключ" type="text"/>
 	</counters>
 	<keywords></keywords>
 	<type>sharing</type>

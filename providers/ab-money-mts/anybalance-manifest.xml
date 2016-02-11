@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="9">ab-money-mts</id>
+	<id version="10">ab-money-mts</id>
 	<api flags="no_browser"/>
 	<name>МТС Банк</name>
 	<description html="true"><![CDATA[
@@ -35,12 +35,21 @@
 	</files>
 	<counters>
 		<counter id="balance" name="Остаток" units=" {@currency}"/>
-		<counter id="currency" name="Валюта" type="text"/>
 		<counter id="minpay" name="Минимальный платеж" units=" {@currency}"/>
+		<counter id="debt" name="Использовано в кредит" units=" {@currency}"/>
+		<counter id="overdraft" name="Сумма технического овердрафта" units=" {@currency}"/>
+		<counter id="pct_sum" name="Сумма процентов к уплате" units=" {@currency}"/>
+		<counter id="peni" name="Штрафы, пени, платы" units=" {@currency}"/>
+		<counter id="pct" name="Процентная ставка" units=" %"/>
+		<counter id="limit" name="Лимит по договору" units=" {@currency}"/>
+		<counter id="currency" name="Валюта" type="text"/>
 		<counter id="minpay_till" name="Срок минимального платежа" type="time" format="dd/MM/yyyy"/>
+		<counter id="date_start" name="Дата начала действия кредитного договора" type="time" format="dd/MM/yyyy"/>
 		<counter id="accnum" name="Номер счета" type="text"/>
+		<counter id="agreement" name="Номер договора" type="text"/>
 		<counter id="type" name="Тип" type="text"/>
 		<counter id="cardnum" name="Номер" type="text"/>
+		<counter id="status" name="Статус карты" type="text"/>
 		<counter id="fio" name="Владелец" type="text"/>
 		<counter id="till" name="Срок действия" type="time" format="MM/yy"/>
 	</counters>

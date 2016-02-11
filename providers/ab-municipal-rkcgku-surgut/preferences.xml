@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    
+    <ListPreference 
+        entries="УСЛУГИ ЖКУ|ОПЛАТА ВЗНОСА НА КАП.РЕМОНТ"
+        entryValues="500065|500284"
+        title="Услуга"
+		key="service"
+		obligatory="true"
+		dialogTitle="Услуга"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		dialogMessage="Выберите услугу.">
+    </ListPreference>
+    
+	<EditTextPreference
+		title="Организация"
+		key="company"
+		obligatory="true"
+		dialogTitle="Организация"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		dialogMessage="Укажите название организации">
+	</EditTextPreference>
+    
+    <EditTextPreference
+		title="Улица"
+		key="street"
+		obligatory="true"
+		dialogTitle="Улица"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		dialogMessage="Укажите улицу">
+	</EditTextPreference>
+    
+    <EditTextPreference
+		title="Дом"
+		key="house"
+		obligatory="true"
+		dialogTitle="Дом"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		dialogMessage="Укажите номер дома">
+	</EditTextPreference>
+    
+    <EditTextPreference
+		title="Квартира"
+		key="flat"
+		obligatory="true"
+		dialogTitle="Квартира"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		dialogMessage="Укажите номер квартиры">
+	</EditTextPreference>
+</PreferenceScreen>

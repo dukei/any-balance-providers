@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-money-bm</id>
+	<id version="5">ab-money-bm</id>
 	<api flags="no_browser|sms"/>
 	<name>Банк Москвы</name>
 	<description html="true"><![CDATA[
@@ -10,23 +10,29 @@
 	<p>Вход в интернет банк требует ввода одноразового кода по СМС!</p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+		<module id="nadapter"/>
+		<module id="extract/abe-money-bm"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
-		<js>nadapter.js</js>
-		<js>extract.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
 	<counters>
 		<counter id="balance" name="Баланс" units=" {@currency}"/>
-		<counter id="currency" name="Валюта" type="text"/>
+		<counter id="minpay" name="Минимальный платеж" units=" {@currency}"/>
+		<counter id="gracepay" name="Льготный платеж" units=" {@currency}"/>
+		<counter id="gracepay_till" name="Срок льготного платежа" type="time" format="dd/MM/yyyy"/>
 		<counter id="till" name="Срок действия" type="time" format="dd/MM/yyyy"/>
 		<counter id="blocked" name="Заблокировано" units=" {@currency}"/>
+		<counter id="limit" name="Кредитный лимит" units=" {@currency}"/>
 		<counter id="sms" name="Телефон SMS оповещения" type="text"/>
 		<counter id="num" name="Номер карты" type="text"/>
 		<counter id="type" name="Тип карты" type="text"/>
+		<counter id="currency" name="Валюта" type="text"/>
 	</counters>
 	<keywords></keywords>
 	<type>money, bank</type>

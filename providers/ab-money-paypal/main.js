@@ -3,119 +3,193 @@
 */
 
 var g_headers = {
-	'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-	'Accept-Language':'en-US,en;q=0.8,ru;q=0.6',
-	'Connection':'keep-alive',
-	'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/28.0.1500.95 Safari/537.36',
-	//'Origin':'https://mobile.paypal.com'
+	Accept: 'application/json',
+	'User-Agent': 'Dalvik/2.1.0 (Linux; U; Android 5.1.1; D6503 Build/23.4.A.1.232)',
+	Authorization: 'Basic QVY4aGRCQk04MHhsZ0tzRC1PYU9ReGVlSFhKbFpsYUN2WFdnVnB2VXFaTVRkVFh5OXBtZkVYdEUxbENxOg==',
+	Connection: 'Keep-Alive'
 };
-
-function followLink(html, signature){
-	var re = new RegExp('<a[^>]+href="([^"]*' + signature + ')"[^<]*>', 'i');
-	var href = getParam(html, null, null, re, null, html_entity_decode);
-	if(!href) {
-		AnyBalance.trace(html_entity_decode(html));
-		throw new AnyBalance.Error('Can not find reference ' + signature + '. Is the site changed?');
-	}
-	return AnyBalance.requestGet(href, g_headers);
-}
 
 function main(){
     var prefs = AnyBalance.getPreferences();
+
+    AnyBalance.setDefaultCharset('utf-8');
 	
 	checkEmpty(prefs.login, 'Enter e-mail!');
 	checkEmpty(prefs.password, 'Enter password!');
     
 	logInAPI(prefs);
 	return;
-	
-	var baseurl = 'https://mobile.paypal.com/cgi-bin/wapapp';
-	var html = AnyBalance.requestGet(baseurl, g_headers);
-	
-	if(/&(?:amp;)?login="/i.test(html)) {
-		AnyBalance.trace('Требуется дополнительный шаг авторизации - выполняем...');
-		html = followLink(html, 'login=');
-	}
-	
-	if(/&(?:amp;)?view_balance\.x="/i.test(html)) {
-		AnyBalance.trace('Идем в просмотр баланса...');
-		html = followLink(html, 'view_balance.x=');
-	}
-	
-	var form = getParam(html, null, null, /<form[^>]+name="Login"[\s\S]*?<\/form>/i);
-	if(!form)
-        throw new AnyBalance.Error('Can not find login form! Site is changed?');
-	
-    var params = createFormParams(form);
-    params.login_email = prefs.login;
-    params.login_password = prefs.password;
-    
-    var action = getParam(form, null, null, /<form[^>]+action="([^"]*)/i, null, html_entity_decode);
-    html = AnyBalance.requestPost(action, params, g_headers);
-	
-	if (!/cmd=_wapapp-logout/i.test(html)) {
-		var error = getParam(html, null, null, /<div[^>]+id="crit"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
-		if (error)
-			throw new AnyBalance.Error(error, null, /Неверный логин или пароль|нужно указать действительный номер телефона или адрес электронной почты|a valid phone number or email address to log in|un número de teléfono o una dirección de correo electrónico válidos para iniciar sesión/i.test(error));
-		
-		AnyBalance.trace(html_entity_decode(html));
-		throw new AnyBalance.Error('Can not login to PayPal. Is the site changed?');
-	}
-	if(!/<\/h4>([^<]*)<hr/i.test(html)){
-		if(/You can't access View Balance in your country/i.test(html)) {
-			AnyBalance.trace('You can\'t access View Balance in your country...');
-			logIntoFullVersion(prefs);
-			return;
-		}
-		AnyBalance.trace(html);
-        throw new AnyBalance.Error('Can not find PayPal balance. Is the site changed?');
-    }
-	
-	var result = {success: true};
-	
-	getParam(html, result, ['currency','balance'], /<\/h4>([^<]*)<hr/i, [replaceTagsAndSpaces, /\b(?:in|в|en)\b/i, ''], parseCurrency);
-    getParam(html, result, 'balance', /<\/h4>([^<]*)<hr/i, replaceTagsAndSpaces, parseBalance);
-	
-    AnyBalance.setResult(result);
 }
 
-var g_apiHeaders = {
-	'Authorization': 'Basic ZDNhYWNmNDUwZGQ2YWE5OTJjZmJhNzcwNjc1NjA3MzM6N2NlYmJhMWJmMTRjYjg1OA==',
-	'Accept': 'application/json',
-	'Accept-Language': 'en_US',
-	'Origin': 'https://api.paypal.com/'
+function generateHex(mask, digits){
+	var i=0;
+	return mask.replace(/x/ig, function(){
+		return digits[i++];
+	});
+}
+
+function makeGuid(hash){
+	return hash.replace(/(\w{8})(\w{4})(\w{4})(\w{4})(\w{12})/, '$1-$2-$3-$4-$5');
 }
 
 function logInAPI(prefs) {
-	var baseurl = 'https://api.paypal.com/v1';
+	var baseurl = 'http://api.paypal.com/v1/';
+	var hex = hex_md5(prefs.login + ' android id');
+
+	var deviceId = hex.substr(0, 16);
+	var visitId = 'd3aacf450dd6aa992cfba77067560733'; //В программе клиенте это хардкод
+	var bssid = generateHex('5c:f4:ab:xx:xx:xx', hex.substr(16, 6));
+	var mac = generateHex('44:d4:e0:xx:xx:xx', hex.substr(22, 6));
+	var imei = generateImei(prefs.login, '35472406******L');
+	var simsn = generateSimSN(prefs.login, '897010266********L');
+	var pairing_id = hex_md5(prefs.login + ' pairing id'); 
+	var gsfid = hex_md5(prefs.login + ' gsf id').substr(0, 16); 
+	var linkerid = makeGuid(hex_md5(prefs.login + ' linker id'));
+	var appguid = makeGuid(hex_md5(prefs.login + ' app guid'));
+	var risk_session = makeGuid(hex_md5(prefs.login + ' risk session'));
+	var timestamp = new Date().getTime();
+	var ip = "192.168.1." + Math.floor(30 + Math.random()*30);
 	
-	var json = requestAPI('post', baseurl + '/oauth2/token', {'grant_type': 'client_credentials'}, g_apiHeaders);
+	var cac = {
+  		"visitId": visitId,
+  		"visitorId": deviceId,
+  		"deviceLanguage": "ru",
+  		"deviceLocale": "ru_RU",
+  		"appName": "com.paypal.android.p2pmobile",
+  		"appGuid": appguid,
+  		"appVersion": "5.15",
+  		"sdkVersion": "1.7.5",
+  		"deviceOS": "Android",
+  		"deviceOSVersion": "5.1.1",
+  		"deviceMake": "Sony",
+  		"deviceModel": "D6503",
+  		"deviceType": "Android",
+  		"deviceNetworkType": "LTE",
+  		"deviceNetworkCarrier": "MegaFon"
+	};
+
+	var deviceInfo = {
+		"device_identifier":cac.visitorId,
+		"device_os":"Android",
+		"device_os_version":"5.1.1",
+		"device_name":"D6503",
+		"device_model":"D6503",
+		"device_type":"Android",
+		"device_key_type":"ANDROIDGSM_PHONE",
+		"pp_app_id":"APP-5LW75608UK041945U",
+		"is_device_simulator":false
+	};
+/*
+	var json = requestAPI('get', baseurl + 'mwf/config', null, addHeaders({
+		'X-PayPal-ConsumerApp-Context': encodeURIComponent(JSON.stringify(cac)),
+		Authorization: 'Basic d3aacf450dd6aa992cfba77067560733'
+	}));
+
+	var json = requestAPI('post', baseurl + 'oauth2/token', {
+		grant_type:	'client_credentials',
+		response_type:	'token id_token',
+		deviceInfo:	JSON.stringify(deviceInfo),
+		return_authn_schemes:	true,
+		app_info:	JSON.stringify({
+			"device_app_id": deviceInfo.pp_app_id,
+			"client_platform":"AndroidGSM",
+			"app_version":"1.75",
+			"app_category":"3"
+		})
+	}, addHeaders({
+		'X-PayPal-ConsumerApp-Context': encodeURIComponent(JSON.stringify(cac)),
+		Authorization: 'Basic QVY4aGRCQk04MHhsZ0tzRC1PYU9ReGVlSFhKbFpsYUN2WFdnVnB2VXFaTVRkVFh5OXBtZkVYdEUxbENx'
+	}));
+*/
+	var json = requestAPI('post', baseurl + 'mwf/proxy-auth/token', {
+		password: prefs.password,
+		appInfo: JSON.stringify({"device_app_id":"PayPal","client_platform":"AndroidGSM","app_version":cac.appVersion,"app_category":"3"}),
+		rememberMe:	false,
+		email:	prefs.login,
+		grantType:	'password',
+		riskData:	JSON.stringify({
+			"app_guid":cac.appGuid,
+			"app_id":cac.appName,
+			"app_version":cac.appVersion,
+			"bssid":bssid,
+			"cell_id":10000000 + Math.floor(Math.random()*10000000),
+			"comp_version":"3.3.2.release",
+			"conf_url":"https:\/\/www.paypalobjects.com\/webstatic\/risk\/dyson_config_android_v3.json",
+			"conf_version":"3.0",
+			"conn_type":"WIFI",
+			"device_id":imei,
+			"device_model":"D6503",
+			"device_name":"D6503",
+			"device_uptime":1330327547,
+			"ip_addrs":ip,
+			"ip_addresses":[ip],
+			"linker_id":linkerid,
+			"locale_country":"RU",
+			"locale_lang":"ru",
+			"location":{"lat":55 + Math.random(),"lng":37 + Math.random(),"acc":51,"timestamp":timestamp - Math.floor(Math.random()*1000000)},
+			"location_area_code":9722,
+			"mac_addrs":mac,
+			"os_type":"Android",
+			"os_version":"5.1.1",
+			"payload_type":"full",
+			"phone_type":"gsm",
+			"risk_comp_session_id":risk_session,
+			"roaming":false,
+			"sim_operator_name":"MegaFon",
+			"sim_serial_number":simsn,
+			"sms_enabled":true,
+			"ssid":"\"Krawlly\"",
+			"subscriber_id":"25002" + Math.abs(crc32(prefs.login + ' subs id')),
+			"timestamp":timestamp,
+			"total_storage_space":12426248192,
+			"tz_name":"Москва, стандартное время",
+			"network_operator":"25002",
+			"source_app":0,
+			"source_app_version":"5.15",
+			"is_emulator":false,
+			"is_rooted":false,
+			"pairing_id":pairing_id,
+			"app_first_install_time":1454948952033,
+			"app_last_update_time":1454948952033,
+			"android_id":cac.visitorId,
+			"serial_number":"BH90TCH" + hex.substr(28,3).toUpperCase(),
+			"gsf_id":gsfid,
+			"proxy_setting":"" 
+		}),
+		deviceInfo:	JSON.stringify(deviceInfo),
+		firstPartyClientId: cac.visitId,
+		redirectUri: 'http://authenticator.live.paypal.com/response.jsp'
+	}, addHeaders({
+		'X-PayPal-ConsumerApp-Context': encodeURIComponent(JSON.stringify(cac))
+	}));
+
+	cac.visitId = json.result.firstPartyUserAccessToken.tokenValue;
+	cac.riskVisitorId = json.result.riskVisitorId;
 	
-	json = requestAPI('post', baseurl + '/oauth2/login', {
-		'grant_type': 'password',
-		'email': prefs.login,
-		'password': prefs.password,
-		'redirect_uri': 'https://www.paypalmobiletest.com',
-	}, addHeaders({'Authorization': json.token_type + ' ' + json.access_token}, g_apiHeaders));
-	
-	json = requestAPI('get', baseurl + '/wallet/@me/financial-instruments', null, addHeaders({'Authorization': json.token_type + ' ' + json.access_token}, g_apiHeaders));
+	json = requestAPI('get', baseurl + 'mwf/wallet/@me/paypal-account', null, addHeaders({
+		'Authorization': json.result.firstPartyUserAccessToken.tokenType + ' ' + json.result.firstPartyUserAccessToken.tokenValue,
+		'X-PayPal-ConsumerApp-Context': encodeURIComponent(JSON.stringify(cac))
+
+	}));
 	
 	var result = {success: true};
 	
-	for(var i=0; i<json.account_balance.balances.length; i++) {
-		var curr = json.account_balance.balances[i];
-		if(curr.currency == 'USD') {
-			getParam(curr.available.total.amount + '', result, 'balance', null, replaceTagsAndSpaces, parseBalance);
-		} else if(curr.currency == 'EUR') {
-			getParam(curr.available.total.amount + '', result, 'balance_eur', null, replaceTagsAndSpaces, parseBalance);
-		} else if(curr.currency == 'SEK') {
-			getParam(curr.available.total.amount + '', result, 'balance_sek', null, replaceTagsAndSpaces, parseBalance);
-		} else if(curr.currency == 'RUB') {
-			getParam(curr.available.total.amount + '', result, 'balance_rub', null, replaceTagsAndSpaces, parseBalance);
+	for(var i=0; i<json.result.balance.currencyBalances.length; i++) {
+		var curr = json.result.balance.currencyBalances[i];
+		if(curr.currencyCode == 'USD') {
+			getParam(curr.available.value/curr.available.scale, result, 'balance');
+		} else if(curr.currencyCode == 'EUR') {
+			getParam(curr.available.value/curr.available.scale, result, 'balance_eur');
+		} else if(curr.currencyCode == 'SEK') {
+			getParam(curr.available.value/curr.available.scale, result, 'balance_sek');
+		} else if(curr.currencyCode == 'RUB') {
+			getParam(curr.available.value/curr.available.scale, result, 'balance_rub');
 		}else{
-		    AnyBalance.trace('Unknown currency ' + curr.currency + ': ' + JSON.stringify(curr));
+		    AnyBalance.trace('Unknown currency ' + curr.currencyCode + ': ' + JSON.stringify(curr));
 		}
 	}
+
+	result.__tariff = json.result.details.displayName;
 	
     AnyBalance.setResult(result);
 }
@@ -127,48 +201,13 @@ function requestAPI(method, url, params, headers) {
 		var html = AnyBalance.requestGet(url, headers);
 	
 	json = getJson(html);
-	if(!json.access_token && !/\/wallet/.test(url)) {
+	if(!json.access_token && (!json.result || json.result.code)) {
+		var error = json.result && json.result.message;
+		if(error)
+			throw new AnyBalance.Error(error, null, /проверьте свои данные|Invalid user credentials/i.test((json.result && json.result.debugMessage) || error));
 		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Error calling API method! ' + json.error);
+		throw new AnyBalance.Error('Error calling API method!');
 	}
 	
 	return json;
-}
-
-function logIntoFullVersion(prefs) {
-	var baseurl = 'https://www.paypal.com/';
-	var html = AnyBalance.requestGet(baseurl + 'cgi-bin/webscr?cmd=_login-run', g_headers);
-	
-	var action = getParam(html, null, null, /action="([^"]*login-submit[^"]*)/i);
-	checkEmpty(action, 'Can\'t find action, is the site changed?');
-	
-	AnyBalance.trace('Entering full version...');
-	
-	var form = getParam(html, null, null, /<form[^>]+name="login_form"[\s\S]*?<\/form>/i);
-	if(!form)
-        throw new AnyBalance.Error('Can not find login form! Site is changed?');
-	
-    var params = createFormParams(form);
-    params.login_email = prefs.login;
-    params.login_password = prefs.password;
-	
-	html = AnyBalance.requestPost(action, params, addHeaders({Referer: baseurl + 'cgi-bin/webscr?cmd=_login-run'}));
-	
-	if (!/>\s*Logging in\s*</i.test(html)) {
-		var error = getParam(html, null, null, /messageBox error"(?:[^>]*>){4}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
-		if (error)
-			throw new AnyBalance.Error(error, null, /Please make sure you enter your email address and password correctly/i.test(error));
-		
-		AnyBalance.trace(html_entity_decode(html));
-		throw new AnyBalance.Error('Can not login to PayPal. Is the site changed?');
-	}
-	
-	html = AnyBalance.requestGet(baseurl + 'cgi-bin/webscr?cmd=_login-done&login_access=', g_headers);
-	
-	var result = {success: true};
-	
-	getParam(html, result, ['currency','balance'], /PayPal balance\s*:([^>]*>){5}/i, replaceTagsAndSpaces, parseCurrency);
-    getParam(html, result, 'balance', /PayPal balance\s*:([^>]*>){5}/i, replaceTagsAndSpaces, parseBalance);
-	
-    AnyBalance.setResult(result);
 }

@@ -5,7 +5,7 @@
 	<name>Икра (Карусель)</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе в бонусной программе Икра сети супермаркетов Карусель</p>
-	<p>Информация берется из личного кабинета http://prcab.x5club.ru/ikra</p>
+	<p>Информация берется из личного кабинета https://prcab.x5club.ru/karusel/</p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>

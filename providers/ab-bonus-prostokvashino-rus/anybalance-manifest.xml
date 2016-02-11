@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-bonus-prostokvashino-rus</id>
+	<id version="3">ab-bonus-prostokvashino-rus</id>
 	<api flags="no_browser|captcha"/>
 	<name>Простоквашино (Россия)</name>
 	<description html="true"><![CDATA[

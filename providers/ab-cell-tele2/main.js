@@ -95,31 +95,51 @@ function doNewCabinet(html) {
 	getParam(html, result, "userName", /<div[^>]+class="user-name"[^>]*>([^]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(html, result, "phone", /<div[^>]+class="user-phone"[^>]*>([^]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
 	
-	html = AnyBalance.requestGet(baseurl + 'main/tariffAndBalance', g_headers);
+	var maxTries = 3;
 	
-	var json = getJson(html);
-	
-	getParam(json.currentTariffPlan.name, result, '__tariff');
-	getParam(json.balance.amount, result, 'balance', null, null, parseBalance);
+	for(var i = 0; i < maxTries; i++) {
+		try {
+			AnyBalance.trace('Пытаемся получить баланс, попытка: ' + (i+1));
+			html = AnyBalance.requestGet(baseurl + 'main/tariffAndBalance', g_headers);
+			
+			var json = getJson(html);
+			
+			// Иногда приходит пустой тариф
+			if(json.currentTariffPlan.name)
+				getParam(json.currentTariffPlan.name, result, '__tariff');
+			
+			getParam(json.balance.amount, result, 'balance', null, null, parseBalance);
+			
+			AnyBalance.trace('Успешно получили баланс');
+			break;
+		}
+		catch(e) {
+			AnyBalance.trace('Не удалось получить баланс, пробуем еще раз...');
+		}
+	}
 	
 	if (AnyBalance.isAvailable('sms_used', 'min_used', 'traffic_used', 'mms_used', 'sms_left', 'min_left', 'traffic_left', 'mms_left')) {
-		AnyBalance.trace("Searching for resources left");
-		html = AnyBalance.requestGet(baseurl + "main/discounts", g_headers);
-		AnyBalance.trace('Got discounts: ' + html);
-		json = JSON.parse(html);
-		var arr = [json.discountsIncluded, json.discountsNotIncluded];
-		for (var k = 0; k < arr.length; ++k) {
-			var discounts = arr[k];
-			for (var i = 0; discounts && i < discounts.length; ++i) {
-				var discount = discounts[i];
-				if (isArray(discount)) {
-					for (var j = 0; j < discount.length; ++j) {
-						getDiscount(result, discount[j]);
+		try {
+			AnyBalance.trace("Searching for resources left");
+			html = AnyBalance.requestGet(baseurl + "main/discounts", g_headers);
+			AnyBalance.trace('Got discounts: ' + html);
+			json = JSON.parse(html);
+			var arr = [json.discountsIncluded, json.discountsNotIncluded];
+			for (var k = 0; k < arr.length; ++k) {
+				var discounts = arr[k];
+				for (var i = 0; discounts && i < discounts.length; ++i) {
+					var discount = discounts[i];
+					if (isArray(discount)) {
+						for (var j = 0; j < discount.length; ++j) {
+							getDiscount(result, discount[j]);
+						}
+					} else {
+						getDiscount(result, discount);
 					}
-				} else {
-					getDiscount(result, discount);
 				}
-			}
+			}			
+		} catch(e) {
+			AnyBalance.trace("Не удалось получить данные об остатках пакетов и услуг, попробуйте позже " + e);
 		}
 	}
 	

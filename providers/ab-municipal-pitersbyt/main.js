@@ -141,8 +141,10 @@ function main(){
     var result = { success: true };
 
     var num = getParam(html, null, null, /\d+\.\d+,(\d+),/);
-    if(!isset(num))
-    	throw new AnyBalance.Error('Не удаётся найти баланс. Сайт изменен?');
+    if(!isset(num)){
+    	AnyBalance.trace(html);
+    	throw new AnyBalance.Error('Не удаётся найти баланс. Зайдите в личный кабинет через браузер и убедитесь, что вы подключили абонентов.');
+    }
 
     var balanceRe = new RegExp('(-?\\d+\\.\\d+),' + num + '\\b', 'g');
     var balances = sumParam(html, null, null, balanceRe, null, parseBalance);

@@ -187,10 +187,16 @@ var AB = (function (global_scope) {
     }
 
     /** Извлекает валюту из переданного текста (типичная реализация) */
-    function parseCurrency(text) {
+    function parseCurrency(text, silent) {
         var val = getParam(text.replace(/\s+/g, ''), null, null, /-?\d[\d.,]*(\S*)/);
-        AnyBalance.trace('Parsing currency (' + val + ') from: ' + text);
+        if(!silent)
+            AnyBalance.trace('Parsing currency (' + val + ') from: ' + text);
         return val;
+    }
+
+    /** Извлекает валюту из переданного текста (типичная реализация) */
+    function parseCurrencySilent(text){
+        return parseCurrency(text, true);
     }
 
     /** Извлекает время в секундах из переданного текста, на разных языках, из разных форматов (1:30, 01:02:03, 1 м 3 сек, 3 сек, 1 час...)
@@ -1241,6 +1247,7 @@ var AB = (function (global_scope) {
         parseBalance: parseBalance,
         parseBalanceSilent: parseBalanceSilent,
         parseCurrency: parseCurrency,
+        parseCurrencySilent: parseCurrencySilent,
         parseMinutes: parseMinutes,
         parseMinutesSilent: parseMinutesSilent,
         html_entity_decode: html_entity_decode,

@@ -12,6 +12,7 @@ var g_headers = {
 var regions = {
 	bryansk: getSmorodina,
 	volgograd: getVolgograd,
+	voronej: getVoronej,
 	moscow: getSmorodina,
 	kaluga: getSmorodina,
 	perm: getSmorodina,
@@ -362,4 +363,68 @@ function getCheboksari() {
 	AB.getParam(html, result, 'date', /дата(?:[\s\S]*?<div[^>]*>){6}\d+:\d+([\s\S]*?)<\/div>/i, AB.replaceTagsAndSpaces, AB.parseDate);
 
 	AnyBalance.setResult(result);
+}
+
+function getVoronej () {
+	var prefs = AnyBalance.getPreferences();
+	var baseurl = 'http://www.vrgaz.ru/lk/';
+	AnyBalance.setOptions({forceCharset: 'windows-1251'});
+
+	var html = AnyBalance.requestGet(baseurl+'index.php?page=main', g_headers);
+
+	if(!html || AnyBalance.getLastStatusCode() > 400){
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
+	}
+
+	var params = AB.createFormParams(html, function(params, str, name, value) {
+		if (name == 'avl')
+			return prefs.login;
+		else if (name == 'avp')
+			return prefs.password;
+
+		return value;
+	});
+
+	html = AnyBalance.requestPost(baseurl+'index.php?page=main', params, addHeaders({
+		Referer: baseurl+'lk/index.php?page=main'
+	}));
+
+	if (!/выйти/i.test(html)) {
+		var error = AB.getParam(html, null, null, /<p[^>]+class="error-message"[^>]*>([\s\S]*?)<\/p>/i, AB.replaceTagsAndSpaces);
+		if (error)
+			throw new AnyBalance.Error(error, null, /Неверный логин и пароль/i.test(error));
+
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
+	}
+
+	var result = {success: true};
+
+	//Получаем ссылку на первый счёт текущего аккаунта.
+	var accHREF = AB.getParam(html, null, null, /Список Ваших счетов[\s\S]*?<a[^>]+href="([\s\S]*?)"/i, AB.replaceHtmlEntities);
+	if(!accHREF)
+		throw  new AnyBalance.Error("Не удалось найти ссылку на счёт. Сайт изменён?");
+
+	html = AnyBalance.requestGet(baseurl + accHREF, g_headers);
+	AB.getParam(html, result, 'account', /№ лицевого счета:([\s\S]*?)<\/label/i, AB.replaceTagsAndSpaces);
+	AB.getParam(html, result, 'fio', /ФИО абонента:([\s\S]*?)<\/label/i, AB.replaceTagsAndSpaces);
+	AB.getParam(html, result, 'address', /<label[^>]+for="id"[^>]*>Адрес:([\s\S]*?)<\/label/i, AB.replaceTagsAndSpaces);
+	AB.getParam(html, result, 'currentCounter', /<form[^>]+id="myform"[\s\S]*?последние показания:\s*(\d+)/i, AB.replaceTagsAndSpaces);
+
+	var data = AB.getParam(html, null, null, /data(?:\s+|\s*):[\s\S]*?(\[[\s\S]*?\])/i);
+	if(!data)
+		AnyBalance.trace("Не удалось получить детализацию лицевого счёта. Сайт изменён?");
+	else {
+		var json = AB.getJsonEval(data);
+		AB.getParam(json[0] ? json[0].dt_mes : undefined, result, 'date', null, null, AB.parseDateWord);
+		AB.getParam(json[0] ? json[0].Saldo_n : undefined, result, 'paid', null, null, AB.parseBalance);
+		AB.getParam(json[0] ? json[0].Nach_mes : undefined, result, 'charged', null, null, AB.parseBalance);
+	}
+
+	AnyBalance.setResult(result);
+
+
+
+
 }

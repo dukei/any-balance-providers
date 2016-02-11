@@ -1,23 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
     <EditTextPreference 
-        title="№ карты" 
+        title="Логин"
         positiveButtonText="ОК" 
         summary="||{@s}" 
-        dialogTitle="№ карты" 
+        dialogTitle="Логин"
         negativeButtonText="Отмена" 
-        dialogMessage="Введите номер карты для входа в личный кабинет UTair."
-        inputType="number"
+        dialogMessage="Введите логин для входа в личный кабинет UTair."
         key="login">
     </EditTextPreference>
     <EditTextPreference 
         positiveButtonText="ОК"
         key="password" 
-        dialogTitle="ПИН"
+        dialogTitle="Пароль"
         negativeButtonText="Отмена"
-        title="ПИН"
+        title="Пароль"
         summary="||***********"
-        dialogMessage="Введите ПИН, используемый для входа в личный кабинет UTair."
+        dialogMessage="Введите пароль, используемый для входа в личный кабинет UTair."
         inputType="textPassword">
     </EditTextPreference>
 </PreferenceScreen>

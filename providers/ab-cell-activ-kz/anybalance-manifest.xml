@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="15">ab-cell-activ-kz</id>
+	<id version="17">ab-cell-activ-kz</id>
 	<api flags="no_browser"/>
 	<name>Activ (Казахстан)</name>
 	<description html="true"><![CDATA[
@@ -28,6 +28,7 @@
 		<counter id="balance" name="Баланс" units=" 〒"/>
 		<counter id="internet_plus" name="Интернет плюс" units=" Mb"/>
 		<counter id="min_roaming" name="Минуты в роуминге" units=" мин"/>
+		<counter id="min_local" name="Локальные минуты" units=" мин"/>
 		<counter id="min_left" name="Минуты" units=" мин"/>
 		<counter id="sms_net" name="СМС в сети" units=" смс"/>
 		<counter id="bonus" name="Бонусные единицы" units=" Б"/>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-internet-sirenko-isp</id>
+	<api flags="no_browser"/>
+	<name>Sirenko ISP</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе Sirenko ISP <a href="http://stat.dan.net.ua/">http://stat.dan.net.ua/</a></p>
+        ]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" {@bcurrency}"/>
+                <counter id="userstatus" name="Статус пользователя" type="text"/>
+		<counter id="servicestatus" name="Статус услуги" type="text"/>
+		<counter id="fio" name="ФИО" type="text"/>
+                <counter id="abon" name="Абонплата по тарифу" units=" {@acurrency}"/>
+		<counter id="contract" name="Договор" type="text"/>
+	</counters>
+	<keywords>internet, интернет, Sirenko</keywords>
+	<type>internet</type>
+	<country>ru</country>
+</provider>

@@ -29,22 +29,16 @@ function main(){
 	html = AnyBalance.requestPost(baseurl + 'login?site=ru-ru', params, addHeaders({Referer: baseurl + 'index.html'})); 
 
     if(!/user\/LogOut.html/i.test(html)){
-        var error = getParam(html, null, null, /<span[^>]+class="errorMsgText"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
-        if(error)
-            throw new AnyBalance.Error(error);
+        var error = AB.getElement(html, /<span[^>]+?class="[^"]*?errorMsgText/i, replaceTagsAndSpaces);
+        error = error || AB.getElement(html, /<div[^>]+?id="system_message"/i, replaceTagsAndSpaces);
+        if(error) {
+            throw new AnyBalance.Error(error, false, /не\s+смогли\s+распознать|логин|парол/i.test(error));
+        }
         throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
     }
-    var result = {success: true, __tariff:prefs.login};
+    
+    var result = {success: true, __tariff: prefs.login};
     getParam(html, result, 'balance', /mobile_point_amount[^>]*>(\d+)/i, replaceTagsAndSpaces, parseBalance);
-	
-    //getParam(html, result, '__tariff', /<p[^>]+id="name_label"[^>]*>([\s\S]*?)<\/(?:p|td)>/i, replaceTagsAndSpaces, html_entity_decode);
-
-    /*if(AnyBalance.isAvailable('reserved', 'available')){
-        html = AnyBalance.requestGet(baseurl + 'AccountDetail.html?mod=SMART', g_headers);
-        getParam(html, result, 'reserved', /Зарезервировано баллов:(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-        getParam(html, result, 'available', /Доступно баллов:(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-    }*/
-
-    //Возвращаем результат
+    
     AnyBalance.setResult(result);
 }

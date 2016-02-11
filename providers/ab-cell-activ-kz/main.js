@@ -15,54 +15,54 @@ function main(){
         rus: 'ru',
         kaz: 'kk'
     };
-	
+
     var prefs = AnyBalance.getPreferences();
     checkEmpty(/^\d{10}$/.test(prefs.login), 'Введите номер телефона');
     checkEmpty(prefs.password, 'Введите пароль');
-	
+
     var baseurl = "https://www.activ.kz/";
-	
+
     AnyBalance.setDefaultCharset('utf-8');
-	
+
     AnyBalance.trace("Trying to enter ics at address: " + baseurl);
     var lang = prefs.lang || 'ru';
     lang = langMap[lang] || lang; //Переведем старые настройки в новые.
-	
+
     var html;
     if(!prefs.__dbg) {
         html = AnyBalance.requestPost(baseurl + lang + "/ics.security/authenticate", {
             'msisdn': '+7 (' + prefs.login.substr(0, 3) + ') ' + prefs.login.substr(3, 3) + '-' + prefs.login.substr(6, 4),
             'password': prefs.password
         }, addHeaders({'Referer': baseurl + lang + '/ics.security/login'}));
-		
+
 		//AnyBalance.trace(html);
-        
+
         if(!/security\/logout/i.test(html)){
 			var error = getParam(html, null, null, /<div[^>]*class="[^"]*alert[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
 			if(error)
 				throw new AnyBalance.Error(error);
-			
+
 			throw new AnyBalance.Error("Не удалось зайти в личный кабинет. Если вы уверены, что правильно ввели логин-пароль, то это может быть из-за проблем на сервере или изменения личного кабинета.");
         }
-		
+
 		if(/icons\/503\.png/i.test(html))
 			throw new AnyBalance.Error("Проблемы на сервере, сайт изменен или, возможно, вы ввели неправильный номер телефона.");
-		
+
 		if(/<title>\s*Смена пароля\s*<\/title>/i.test(html))
 			throw new AnyBalance.Error("Необходимо сменить пароль, зайдите на сайт через браузер и смените пароль.");
     } else {
 		html = AnyBalance.requestGet(baseurl + lang + '/ics.account/dashboard', {'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/536.11 (KHTML, like Gecko) Chrome/20.0.1132.57 Safari/536.11'});
     }
-    
+
     var result = {success: true};
     //На казахском языке описание каких-то значений идёт перед ними, а на английском и в русском - после.
 
     //(?:Теңгерім|Баланс|Balance):
-    getParam(html, result, 'balance', /<h5[^>]*>(?:Ваш баланс|Сіздің теңгеріміңіз|Your balance is)([\s\d,.-]+)/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'balance', /<h5[^>]*?>\s*?(?:Баланс|Теңгерім|Balance)\s*?<\/h5>\s*?<h5[^>]*?>([\s\S]*?)<\/h5/i, replaceTagsAndSpaces, parseBalance);
      //(?:интернет плюс|internet plus)
     sumParam(html, result, 'internet_plus', /(?:\+|дейін)([\d\s.,]*\s*[МмMm][БбBb])/ig, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
     //(?:бонусные единицы)
-    getParam(html, result, 'bonus', /(\d+)\s*(?:бонусных единиц|бонустық бірлік|bonus units)/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'bonus', /(\d+)\s*(?:бонусных ед.|бонустық бірліктер|bonus units)/i, replaceTagsAndSpaces, parseBalance);
     //(?:Шот қалпы|Статус номера|Account status):
     getParam(html, result, 'status', /<h5>(?:Статус|Қалпы|Status)(?:[^>]*>){2}([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
     //(?:Шот қалпы|Статус номера|Account status):

@@ -4,11 +4,12 @@
 
 var g_headers = {
 	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-	'Accept-Language': 'ru,en;q=0.8',
+	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
 	'Connection': 'keep-alive',
 	'Origin': 'https://my.velcom.by',
-	'Cache-Control': 'max-age=0',
-	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/36.0.1985.143 Safari/537.36',
+	'Cache-Control': 'no-cache',
+        'Upgrade-Insecure-Requests': '1',
+	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/48.0.2564.97 Safari/537.36',
 };
 
 //var velcomOddPeople = 'Velcom сознательно противодействует оперативному получению вами баланса через сторонние программы! Вот и снова они специально ввели изменения, которые сломали получение баланса. Пожалуйста, позвоните в службу поддержки Velcom (411 и 410 с мобильного телефона в сети velcom без взимания оплаты) и оставьте претензию, что вы не можете пользоваться любимой программой. Проявите активную позицию, они скрывают ваш баланс от вас же. Зачем, интересно? МТС и Life своих абонентов уважают значительно больше...';
@@ -25,7 +26,7 @@ function main(){
 	
     var matches;
     if(!(matches = /^\+(375\d\d)(\d{7})$/.exec(prefs.login)))
-		throw new AnyBalance.Error('Неверный номер телефона. Необходимо ввести номер в международном формате без пробелов и разделителей!');
+		throw new AnyBalance.Error('Неверный номер телефона. Необходимо ввести номер в международном формате без пробелов и разделителей!', false, true);
 	
     var phone = matches[2];
     var prefix = matches[1];
@@ -79,10 +80,10 @@ function main(){
 			value = '0';
 		return value || '';
     });
-    params.user_submit = undefined;
+    delete params.user_submit;
 
 	try {
-		html = requestPostMultipart(baseurl + 'work.html', params, addHeaders({Referer: baseurl}));
+		html = requestPostMultipart(baseurl + 'work.html', params, addHeaders({Referer: baseurl + 'work.html'}));
 	} catch(e) {
 		AnyBalance.trace('Error executing multipart request: ' + e.message);
 		if(/Read error|failed to respond/i.test(e.message)){
@@ -112,12 +113,15 @@ function main(){
 	
 	AnyBalance.trace('Cabinet type: ' + kabinetType);
 	
-	if(!kabinetType){
+    if(!kabinetType){
         var error = sumParam(html, null, null, /<td[^>]+class="INFO(?:_Error|_caption)?"[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, html_entity_decode, create_aggregate_join(' '))
 		|| sumParam(html, null, null, /<span[^>]+style="color:\s*red[^>]*>[\s\S]*?<\/span>/ig, replaceTagsAndSpaces, html_entity_decode, create_aggregate_join(' '))
 	        || getParam(html, null, null, /<td[^>]+class="info_caption"[^>]*>[\s\S]*?<\/td>/ig, replaceTagsAndSpaces, html_entity_decode);
+        if (!error) {
+            error = AB.getElement(html, /<p\s[^>]+?info_error_caption/i, AB.replaceTagsAndSpaces);
+        }
         if(error)
-            throw new AnyBalance.Error(error, null, /Неверный пароль или номер телефона|Пароль должен состоять из 8 цифр|Если вы забыли пароль/i.test(error));
+            throw new AnyBalance.Error(error, null, /Неверно указан номер|номер телефона|парол/i.test(error));
         if(/Сервис временно недоступен/i.test(html))
             throw new AnyBalance.Error('ИССА Velcom временно недоступна. Пожалуйста, попробуйте позже.');
         

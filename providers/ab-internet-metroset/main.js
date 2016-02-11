@@ -25,10 +25,10 @@ function main() {
 	}
 
 	html = AnyBalance.requestPost(baseurl + 'get/ajax.php', {
-		get: toBase64('auth'),
-		regnum: toBase64(prefs.login),
-		pass: toBase64(hex_md5(prefs.password)),
-		auto: toBase64('0')
+		get: Base64.encode('auth'),
+		regnum: Base64.encode(prefs.login),
+		pass: Base64.encode(hex_md5(prefs.password)),
+		auto: Base64.encode('0')
 	}, AB.addHeaders({
 		'X-Requested-With': 'XMLHttpRequest',
 		Referer: baseurl + 'index.php?',
@@ -37,7 +37,7 @@ function main() {
 
 	var json = AB.getJson(html);
 	if (!json.result) {
-		var error = fromBase64(json.error_text);
+		var error = Base64.decode(json.error_text);
 		if (error)
 			throw new AnyBalance.Error(error, null, /(Ошибка в формате номера договора|Номер договора и\/или пароль указаны не верно)/i.test(error));
 
@@ -57,13 +57,4 @@ function main() {
 	AB.getParam(html, result, 'metrosetStatus', /<span[^>]*>статус(?:[^>]*>){2}([\s\S]*?)<\//i, AB.replaceTagsAndSpaces);
 
 	AnyBalance.setResult(result);
-}
-
-function toBase64 (str) {
-	var wordArray = CryptoJS.enc.Utf8.parse(str);
-	return CryptoJS.enc.Base64.stringify(wordArray);
-}
-function fromBase64(str) {
-	var parsedWordArray = CryptoJS.enc.Base64.parse(str);
-	return parsedWordArray.toString(CryptoJS.enc.Utf8);
 }

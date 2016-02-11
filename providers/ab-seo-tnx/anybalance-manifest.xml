@@ -9,7 +9,7 @@
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
-		<preferences>vv</preferences>
+		<preferences>preferences.xml</preferences>
 		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>

@@ -14,18 +14,44 @@ describe("String", function() {
 
 	describe("htmlParser()", function() {
 
-		it("test1", function() {
-			var s = '<p>1<b>2<i>3</b>4</i>5</p>';
-			var s = sample.ugly;
-
-			s.htmlParser({
-				open: function(tag, attrs, unary) {
-					console.log(tag);
-				},
-				close: function(tag) {},
-				text: function(text) {},
-				comment: function(text) {}
-			});
+		it("test (ugly)", function() {
+			sample.ugly.htmlParser(
+				function(type, node, offset) {
+					if (type === 'text') node = node.htmlEntityDecode(false).trim();
+					//console.log([type, node, offset]);
+					return true;
+				}
+			);
+		});
+		
+		it("test (yandex)", function() {
+			sample.yandex.htmlParser(
+				function(type, node, offset) {
+					if (type === 'text') node = node.htmlEntityDecode(false).trim();
+					//console.log([type, node, offset]);
+					return true;
+				}
+			);
+		});
+		
+		it("test (mgts)", function() {
+			sample.mgts.htmlParser(
+				function(type, node, offset) {
+					if (type === 'text') node = node.htmlEntityDecode(false).trim();
+					//console.log([type, node, offset]);
+					return true;
+				}
+			);
+		});
+		
+		it("test (googledoc)", function() {
+			sample.googledoc.htmlParser(
+				function(type, node, offset) {
+					if (type === 'text') node = node.htmlEntityDecode(false).trim();
+					//console.log([type, node, offset]);
+					return true;
+				}
+			);
 		});
 		
 	});

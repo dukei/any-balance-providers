@@ -13,7 +13,7 @@
 	</depends>
 	<files>
 		<icon>icon.png</icon>
-		<preferences>preferences.xml</preferences>
+		<!-- <preferences>preferences.xml</preferences> -->
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>

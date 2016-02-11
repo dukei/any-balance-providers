@@ -26,14 +26,14 @@ function main() {
 
 	html = AnyBalance.requestPost(baseurl + 'loyalty/personal/', {
 		userLoginForm_login: prefs.login,
-		userLoginForm_pswrd: prefs.password,
-		'Remember': 'false'
+		userLoginForm_pswrd: prefs.password
 	}, addHeaders({Referer: baseurl + 'loyalty/personal/'}));
 	
 	if (!/Выход/i.test(html)) {
-		var error = getParam(html, null, null, /<p[^>]+style\s*=\s*"color:red[^>]*>([\s\S]*?)<\/p/i, replaceTagsAndSpaces);
-		if (error)
-			throw new AnyBalance.Error(error, null,/данные не верны!/i.test(error));
+		var error = getParam(html, null, null, /<div\s+class="error_block">([\s\S]+?)<\/div>/i, replaceTagsAndSpaces);
+		if (error) {
+            throw new AnyBalance.Error(error, null, /данные неверны!/i.test(error));
+        }
 		
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
@@ -41,10 +41,9 @@ function main() {
 	
 	var result = {success: true};
 	
-	getParam(html, result, 'balance', /<div[^>]+class\s*=\s*"lk_left_info_block"[^>]*>(?:[\s\S]*?<div[^>]*>){9}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, ['currency', 'balance'], /<div[^>]+class\s*=\s*"lk_left_info_block"[^>]*>(?:[\s\S]*?<div[^>]*>){9}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseCurrency);
-	getParam(html, result, 'fio', /<div[^>]+class\s*=\s*"lk_left_info_block"[^>]*>(?:[\s\S]*?<div[^>]*>){3}([\s\S]*?)<\//i, replaceTagsAndSpaces);
-	getParam(html, result, 'cardNumber', /<div[^>]+class\s*=\s*"lk_left_info_block"[^>]*>(?:[\s\S]*?<div[^>]*>){6}[\s\S]*?(\d+)<\//i, replaceTagsAndSpaces);
+	getParam(html, result, 'balance', /Ваш баланс[\s\S]*?<div[^>]*>([\s\S]+?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'fio', /<div\s+class="lk_left_info_block">[\s\S]*?<div\s+class="text">([\s\S]+?)<\/div>/i, replaceTagsAndSpaces);
+	getParam(html, result, 'cardNumber', /Ваша карта[\s\S]*?<div[^>]*>([\s\S]+?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
 
 	AnyBalance.setResult(result);
 }

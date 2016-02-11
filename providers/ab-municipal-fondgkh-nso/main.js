@@ -4,7 +4,7 @@
 Фонд модернизации ЖКХ – Регионального оператора капитального ремонта общего имущества многоквартирных домов, расположенных на территории Новосибирской области.
 */
 
-var g_headers = { //уникальный
+var g_headers = { 
 	'Accept': 'application/json, text/plain, */*',
 	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
 	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
@@ -23,7 +23,7 @@ function main() {
 	var html = AnyBalance.requestGet(baseurl + '', g_headers);
 
 	if (!html || AnyBalance.getLastStatusCode() > 400) {
-		AnyBalhance.trace(html);
+		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
 	}
 

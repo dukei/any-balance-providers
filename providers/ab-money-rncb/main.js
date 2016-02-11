@@ -47,7 +47,7 @@ function shouldProcess(counter, info){
 		    if(!prefs.num)
 		    	return true;
 			
-			if(endsWith(info.num, prefs.num))
+			if(endsWith(info.__name, prefs.num))
 				return true;
 		    
 			return false;
@@ -59,7 +59,7 @@ function shouldProcess(counter, info){
 		    if(!prefs.num)
 		    	return true;
 			
-			if(endsWith(info.num, prefs.num))
+			if(endsWith(info.__name, prefs.num))
 				return true;
 		}
 		case 'credits':
@@ -69,7 +69,7 @@ function shouldProcess(counter, info){
 		    if(!prefs.num)
 		    	return true;
 			
-			if(endsWith(info.num, prefs.num))
+			if(endsWith(info.__name, prefs.num))
 				return true;
 		}	
 		case 'deposits':
@@ -79,7 +79,7 @@ function shouldProcess(counter, info){
 		    if(!prefs.num)
 		    	return true;
 			
-			if(endsWith(info.num, prefs.num))
+			if(endsWith(info.__name, prefs.num))
 				return true;
 		}
 		default:

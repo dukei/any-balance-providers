@@ -24,9 +24,6 @@ function main() {
 		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
 	}
 
-	AnyBalance.setOptions({forceCharset: 'utf-8'});
-
-
 	html = AnyBalance.requestPost(baseurl + 'get/ajax.php', {
 		get: toBase64('auth'),
 		regnum: toBase64(prefs.login),
@@ -36,8 +33,6 @@ function main() {
 		'X-Requested-With': 'XMLHttpRequest',
 		Referer: baseurl + 'index.php?',
 		Origin: baseurl,
-		Accept: 'application/json, text/javascript, */*; q=0.01',
-		'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
 	}));
 
 	var json = AB.getJson(html);

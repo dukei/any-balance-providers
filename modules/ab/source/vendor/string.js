@@ -371,7 +371,8 @@
 
 		var match, 
 			steps = 0, 
-			stepsMax = 100,
+			stepsMax  = 10000,
+			offsetMax = 5000000,
 			typesMap = {
 				//1, 4, 5 = pairs raw tags with content
 				1  : 'open',
@@ -395,6 +396,7 @@
 			if (++steps > stepsMax) throw Error(stepsMax + ' steps has been reached!');
 			match = htmlRe.exec(this);
 			if (! match) break;
+			if (match['index'] > offsetMax) throw Error(offsetMax + ' offset has been reached!');
 			for (var i in typesMap) {
 				if (typeof match[i] === 'string') {
 					if (! reviver(typesMap[i], match[i], match['index'])) return;

@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="10" date="2016-02-11">
+	- Добавлена возможность входа по логину/паролю.
+	</change>
 	<change version="9" date="2016-02-01">
 	- Поддержка изменений на сайте.
 	</change>

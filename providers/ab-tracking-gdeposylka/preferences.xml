@@ -1,16 +1,42 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
-    <EditTextPreference
-		obligatory="true"
+	<EditTextPreference
+		title="Логин"
+		key="login"
+		summary="||{@s}"
+		dialogTitle="Логин"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите логин, используемый для входа в личный кабинет или оставьте это поле пустым, если хотите выполнить поиск по номеру почтового отправления без входа в ЛК.">
+	</EditTextPreference>
+	<EditTextPreference
+		title="Пароль"
+		key="password"
+		summary="||***********"
+		dialogTitle="Пароль"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите пароль, используемый для входа в личный кабинет или оставьте это поле пустым, если хотите выполнить поиск по номеру почтового отправления без входа в ЛК."
+		inputType="textPassword">
+	</EditTextPreference>
+	<EditTextPreference
 		title="Номер почтового отправления"
 		positiveButtonText="ОК"
 		summary="Весь номер без скобок и пробелов!||{@s}\n"
 		dialogTitle="Номер почтового отправления"
 		negativeButtonText="Отмена"
-		dialogMessage="Введите почтовый идентификатор. Почтовый идентификатор находится в чеке, выдаваемом при приеме почтового отправления. Вид номера: 115127(80)15138 4. Следует вводить: 11512780151384 (весь номер, цифры и латинские буквы без скобок и пробелов). Вид международного идентификатора: например, CJ247232575US"
+		dialogMessage="Введите почтовый идентификатор или оставьте его пустым, чтобы получить информацию по первому отправлению при входе в ЛК. Почтовый идентификатор находится в чеке, выдаваемом при приеме почтового отправления. Вид номера: 115127(80)15138 4. Следует вводить: 11512780151384 (весь номер, цифры и латинские буквы без скобок и пробелов). Вид международного идентификатора: например, CJ247232575US"
 		key="track_id">
 	</EditTextPreference>
-	
+	<ListPreference
+		key="type"
+		title="Осуществить поиск"
+		obligatory="true"
+		summary="|Нужен для определения личного кабинета|{@s}"
+		entries="со входом в личный кабинет|по номеру отправления"
+		entryValues="logpas|track"
+		defaultValue="track">
+	</ListPreference>
 	<!--<ListPreference
 		key="track_origin"
 		title="Тип отправления"

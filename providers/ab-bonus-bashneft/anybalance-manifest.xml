@@ -19,7 +19,7 @@
 		<counter id="balance" name="Баланс"/>
 		<counter id="currency" name="Валюта" type="text"/>
 		<counter id="fio" name="ФИО" type="text"/>
-		<counter id="cardNumber" name="Номер карты"/>
+		<counter id="cardNumber" name="Номер карты" type="text"/>
 	</counters>
 	<keywords></keywords>
 	<type>bonus</type>

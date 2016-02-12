@@ -43,7 +43,7 @@ function main() {
 	
 	getParam(html, result, 'balance', /Ваш баланс[\s\S]*?<div[^>]*>([\s\S]+?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'fio', /<div\s+class="lk_left_info_block">[\s\S]*?<div\s+class="text">([\s\S]+?)<\/div>/i, replaceTagsAndSpaces);
-	getParam(html, result, 'cardNumber', /Ваша карта[\s\S]*?<div[^>]*>([\s\S]+?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'cardNumber', /Ваша карта[\s\S]*?<div[^>]*>№?([\s\S]+?)<\/div>/i, replaceTagsAndSpaces);
 
 	AnyBalance.setResult(result);
 }

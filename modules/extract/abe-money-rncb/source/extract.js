@@ -90,11 +90,21 @@ function setCredentials(web_mobile_login, web_mobile_password) {
 	AnyBalance.saveData();
 }
 
-function getCredentials() {
+function getCredentials(prefs) {
+	if(prefs['__debugData']) {
+		AnyBalance.trace('Используем данные из преференсов...');
+		return prefs['__debugData'].credentials;
+	}
+	
 	return AnyBalance.getData('credentials');
 }
 
-function getToken() {
+function getToken(prefs) {
+	if(prefs['__debugData']) {
+		AnyBalance.trace('Используем данные из преференсов...');
+		return g_token = prefs['__debugData']['access_token'];
+	}	
+	
 	return g_token = AnyBalance.getData('access_token');
 }
 
@@ -104,7 +114,7 @@ function login(prefs) {
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 
-	if(!getToken()) {
+	if(!getToken(prefs)) {
 		// Еще не привязано устройство, надо привязать
 		var json = apiCall('POST:authentication/oauth2', [
 			['grant_type', 'password'],
@@ -149,7 +159,7 @@ function login(prefs) {
 	} else {
 		AnyBalance.trace('Устройство уже привязано, отлично, используем существующую сессию');
 		
-		var credentials = getCredentials();
+		var credentials = getCredentials(prefs);
 		if(!credentials) {
 			setToken();
 			throw new AnyBalance.Error('Устройство привязано неправильно, сбрасываем сессию.');
@@ -232,8 +242,8 @@ function processCards(html, result) {
 	for(var i=0; i < cards.length; ++i) {
 		var card = cards[i];
 		
-		var id = card.id
-		var title = card.alias
+		var id = card.id;
+		var title = card.contractNumber;
 
 		var c = {__id: id, __name: title};
 

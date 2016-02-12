@@ -10,11 +10,11 @@
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>
 		<module id="library"/>
+		<module id="login/mts"/>
 	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>login.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>

@@ -20,6 +20,9 @@
     <counter id="route" name="Маршрут" type="text"/>
     <counter id="trackid" name="№ накладной" type="text"/>
     <counter id="delivery_address" name="Адрес доставки" type="text"/>
+    <counter id="back" name="Обратная доставка" type="text"/>
+    <counter id="weight" name="Вес отправления" type="text"/>
+    <counter id="payment" name="Сумма к оплате" type="text"/>
   </counters>
   <keywords>
     Почтовое отправление, почта Украины

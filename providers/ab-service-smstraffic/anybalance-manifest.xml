@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-service-smstraffic</id>
+	<api flags="no_browser"/>
+	<name>Sms Traffic</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера <a href="https://www.smstraffic.ru/">Sms Traffic</a></p>
+	<p>Информация берется из <a href="https://lk.smstraffic.ru/">Личного кабинета Sms Traffic</a></p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс"/>
+	</counters>
+	<keywords>sms, email, рассылки</keywords>
+	<type>service</type>
+	<country>ru</country>
+</provider>

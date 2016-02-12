@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-money-ipb</id>
+	<id version="3">ab-money-ipb</id>
 	<api flags="no_browser"/>
 	<name>Интерпрогрессбанк</name>
 	<description html="true"><![CDATA[
@@ -8,18 +8,26 @@
 	<p>Информация берется из личного кабинета https://on-line.ipb.ru/Login/login.aspx</p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+		<module id="nadapter"/>
+		<module id="extract/abe-money-ipb"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
 	<counters>
 		<counter id="balance" name="Баланс" units=" {@currency}"/>
+		<counter id="limit" name="Лимит" units=" {@currency}"/>
+		<counter id="pct" name="Процентная ставка" units=" %"/>
+		<counter id="currency" name="Валюта" type="text"/>
+		<counter id="status" name="Статус" type="text"/>
 		<counter id="cardnum" name="№ Карты" type="text"/>
 		<counter id="accnum" name="№ Счета" type="text"/>
-		<counter id="deadline" name="Срок действия" type="time" format="dd/MM/yyyy"/>
+		<counter id="till" name="Срок действия" type="time" format="dd/MM/yyyy"/>
 	</counters>
 	<keywords></keywords>
 	<type>money, bank</type>

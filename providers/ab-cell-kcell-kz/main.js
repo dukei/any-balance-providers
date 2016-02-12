@@ -27,8 +27,9 @@ function main() {
 		if (error) {
 			if (/Activ/i.test(error)) 
 				error += ' Пожалуйста, воспользуйтесь отдельным провайдером для Activ (Казахстан).';
-			
-			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
+
+            var isFatal = /(?:неверный номер телефона или пароль|енгізген телефон нөміріңіз немесе пароліңіз|incorrect phone number or password)/i.test(error);
+			throw new AnyBalance.Error(error, null, isFatal);
 		}
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
@@ -36,16 +37,14 @@ function main() {
 	
 	var result = {success: true, balance: null};
 	
-	getParam(html, result, 'balance', /(?:Доступные средства|Пайдалануға болатын қаржы|Available:|Ваш баланс|Сіздің теңгеріміңіз|Your balance is|Текущий баланс:|Ағымдағы теңгерім:|Your balance:)([\s\d.,\-]*(?:тг|tg))/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'limit', /(?:Ваш кредитный лимит:|Сіздің несиелік лимитіңіз:|Your credit limit:)([\s\d.,\-]*(?:тг|tg))/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'balance', /(?:Баланс|Теңгерім|Balance)[\s\S]*?<font[^>]*>([\s\S]+?)<\/font>/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'licschet', /(?:Номер лицевого счета|Дербес шот нөмірі|Account):[\s\S]*?<font[^>]*>([\s\S]*?)<\/font>/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'userName', [/"cvet account_name"[^>]*>([^<]+)/i, /<h2[^>]*>([\s\S]*?)<\/h2>/i], replaceTagsAndSpaces, html_entity_decode);
-	// Не отображается
-	getParam(html, result, '__tariff', /(?:Тарифный план|Тариф|Tariff):[\s\S]*?<font[^>]*>([\s\S]*?)<\/font>/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'userName', '<span[^>]*class="cvet\s+account_name">([\s\S]+?)<\/span>', replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'bonuses', /(?:Бонусы|Бонустар|Bonuses):[\s\S]*?<font[^>]*>([^<]+?)<\/font>/, replaceTagsAndSpaces, html_entity_decode);
+
+	getParam(html, result, '__tariff', /(?:Тарифный план|Тариф|Tariff):[\s\S]*?<font[^>]*>([^<]+?)</i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(html, result, 'internet', /(?:Остатки по доп. услугам|Қосымша қызметтер бойынша қалдық|Available for VAS):[^<]*?GPRS\s*-?([^<]*)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'sms_left', /(?:Остатки по доп. услугам|Қосымша қызметтер бойынша қалдық|Available for VAS):[^<]*?(?:Бонусные смс|Бонустық SMS|Bonus SMS)\s*-?([^<]*)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'min_left', [/(?:Остатки по доп. услугам|Қосымша қызметтер бойынша қалдық|Available for VAS):[^<]*?(\d+)\s*(?:бонусных мин|бонустық минут|bonus on-net min)/i, /(?:Остатки по доп. услугам|Қосымша қызметтер бойынша қалдық|Available for VAS):[^<]*?(?:Бонустық минуттар|Бонусные минуты|Bonus Minutes)\s*-?([^<]*)\s*(?:мин|min)/i], replaceTagsAndSpaces, parseBalance);
-	
+
 	if(isAvailable(['internet']) && !isset(result.internet)) {
 		try {
 			html = AnyBalance.requestGet('https://www.kcell.kz/ru/ics.account/getconnectedservices/1200', g_headers);
@@ -61,18 +60,6 @@ function main() {
 			AnyBalance.trace('Не удалось получить данные по подключенным услугам.');
 		}
 	}
-	
-	// PUK получаем в переменную, но не отображаем из соображений безопасности
-	// var puk = getParam(html, result, null, /PUK[\s\S]*?(\d+)/i, replaceTagsAndSpaces, html_entity_decode);
-	// if (puk) {
-		// AnyBalance.trace('Нашли puk-код, пробуем зайти на i.kcell.kz...');
-		// // Нашли PUK код
-		// html = AnyBalance.requestPost(ibaseurl + 'enter', {
-			// 'msisdn': prefs.login,
-			// 'puk': puk,
-			// token: ''
-		// }, g_headers);
-		// getParam(html, result, 'inet_unlim', /До снижения скорости\s*-([\s\S]*?)<\//i, replaceTagsAndSpaces, parseTraffic);
-	// }
+
 	AnyBalance.setResult(result);
 }

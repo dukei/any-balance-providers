@@ -144,7 +144,7 @@ function processCard(card, result) {
 // Обработка депозитов
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 function processDeposits(html, result) {
-	if(!AnyBalance.isAvailable('cards'))
+	if(!AnyBalance.isAvailable('deposits'))
 		return;
 	var html = AnyBalance.requestGet(baseurl + 'deposits.aspx', g_headers);
 	

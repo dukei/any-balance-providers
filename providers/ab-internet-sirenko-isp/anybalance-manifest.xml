@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-internet-sirenko-isp</id>
+	<id version="2">ab-internet-sirenko-isp</id>
 	<api flags="no_browser"/>
 	<name>Sirenko ISP</name>
 	<description html="true"><![CDATA[
@@ -26,5 +26,5 @@
 	</counters>
 	<keywords>internet, интернет, Sirenko</keywords>
 	<type>internet</type>
-	<country>ru</country>
+	<country>ua</country>
 </provider>

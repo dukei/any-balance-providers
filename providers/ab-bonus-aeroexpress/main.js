@@ -47,15 +47,8 @@ function main() {
 	}
 
 	// по наличию ссылки 'Выход' проверяем залогинились или нет
-
 	var exitLinks = getElementsByClassName(html, 'close', replaceTagsAndSpaces);
-	if (!exitLinks || !exitLinks.length) {
-		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
-	}
-
-	var exitLink = exitLinks[0];
-	if (!/Выход/i.test(exitLink)) {
+	if (!exitLinks || !exitLinks.length || !/Выход/i.test(exitLinks[0])) {
 		// определяем ошибку
 		var error = getElementById(html, 'page-intro', replaceTagsAndSpaces);
 		if (error) {

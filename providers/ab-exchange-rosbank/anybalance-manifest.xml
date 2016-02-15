@@ -7,7 +7,7 @@
 	Для тех, у кого кредит/ипотека в DeltaCredit или BSGV или РОСБАНК:
 	Возможность ввести в настройках свою сумму (напр.платеж по кредиту) в валюте и получать пересчет в рубли по курсу продажи. Удобно прогнозировать ден.средства для оплаты.
   </description>
-  <author>Serg Repin &lt;serg.repin@gmail.com&gt;</author>
+  <author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>

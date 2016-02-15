@@ -1,24 +1,26 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id major_version="1.0" version="4">ab-municipal-activecitizen</id>
+	<id major_version="1.0" version="5">ab-municipal-activecitizen</id>
 	<name>Активный гражданин</name>
 	<description html="true"><![CDATA[
-	<p>Получает текущее количество баллов из личного кабинета <a href="http://ag.mos.ru/">http://ag.mos.ru/</a></p>
+	<p>Получает текущее количество баллов из личного кабинета <a href="https://ag.mos.ru/">https://ag.mos.ru/</a></p>
+	<p>Электронные референдумы правительства Москвы</p>
 	]]></description>
-	<author>KiLLer13&lt;killer_kondor@pisem.net&gt;</author>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+  </depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
 	<counters>
 		<counter id="points" name="Количество баллов" units=" б"/>
 	</counters>
-	<keywords></keywords>
+	<keywords>Система электронных референдумов</keywords>
 	<type>municipal</type>
 	<country>ru</country>
 </provider>

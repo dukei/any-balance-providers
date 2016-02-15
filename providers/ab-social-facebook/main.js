@@ -19,8 +19,10 @@ function main() {
 	checkEmpty(prefs.password, 'Please, enter password');
 	
 	var html = AnyBalance.requestGet(baseurl, g_headers);
+    
+    var form = AB.getElement(html, /<form[^>]*?mobile-login-form/i);
 	
-	var params = createFormParams(html, function(params, str, name, value){
+	var params = createFormParams(form, function(params, str, name, value){
 		if(name == 'email')
 			return prefs.login;
 		if(name == 'pass')
@@ -32,13 +34,19 @@ function main() {
 		
 		return value;
 	});
+    
+    var url = getParam(form, null, null, /^<[^>]*?action="([^"]+)/);
+    if (!/https?:/.test(url)) {
+        url = baseurl + url.replace(/^\//, '');
+    }
 	
-	html = AnyBalance.requestPost(baseurl + 'login.php?refsrc=https%3A%2F%2Fm.facebook.com%2F&lwv=100&refid=8', params, addHeaders({Referer: baseurl}));
-	
-	if (!/requests_jewel/i.test(html)) {
+	html = AnyBalance.requestPost(url, params, addHeaders({Referer: baseurl}));
+    
+    var lastUrl = AnyBalance.getLastUrl();
+	if (!/login\/save-device/i.test(lastUrl) && !/requests_jewel/i.test(html)) {
 		var error = getParam(html, null, null, /<div[^>]+id="root"[^>]*>([\s\S]*?)<\/form>/i, [replaceTagsAndSpaces, /Зарегистрируйте аккаунт.*/i, ''], html_entity_decode);
 		if (error)
-			throw new AnyBalance.Error(error, null, /Нам не удалось опознать|не соответствует ни одному аккаунту/i.test(error));
+			throw new AnyBalance.Error(error, null, /Нам не удалось опознать|не соответствует ни одному аккаунту|заблокирова[нл]/i.test(error));
 		
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Can`t login. Site has been changed?');

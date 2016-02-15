@@ -1177,8 +1177,19 @@ var AB = (function (global_scope) {
         for (var i = 0; i < ths.length; i++) {
             var th = ths[i];
             for (var name in colsDef) {
-                if (colsDef[name].re.test(th))
+                var def = colsDef[name];
+                if (def.re.test(th)) {
+                    //if_assigned указывает, после какой колонки должна быть эта колонка, если у них одинаковые названия.
+                    //Для первой такой колонки null, каждая следующая ссылается на предыдущую
+                    var if_assigned = def.if_assigned;
+                    if(isset(if_assigned)){
+                        if(isset(cols[name]))
+                            continue;
+                        if(if_assigned && (!isset(cols[if_assigned]) || cols[if_assigned] == i))
+                            continue;
+                    }
                     cols[name] = i;
+                }
             }
         }
         return cols;

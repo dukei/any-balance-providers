@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<api flags="no_browser"/>
+	<id version="1">ab-internet-usk-net</id>
+	<name>Usk net</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе, состоянии интернета, номере лицевого счета интренет провайдера http://www.usk1.net/</p>
+	<p>Информация берется из личного кабинета http://31.40.99.210/</p>
+	]]></description>
+	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="account" name="Лицевой счет"/>
+		<counter id="login" name="Логин" type="text"/>
+		<counter id="state" name="Состояние интернета" type="text"/>
+		<counter id="id" name="ID"/>
+		<counter id="full_name" name="Фио" type="text"/>
+	</counters>
+	<keywords>Internet, provider, Moscow</keywords>
+	<type>internet</type>
+	<country>ru</country>
+</provider>

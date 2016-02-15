@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-municipal-rkcgku-surgut</id>
+	<id version="2">ab-municipal-rkcgku-surgut</id>
 	<api flags="no_browser"/>
 	<name>РКЦ ЖКУ г. Сургута</name>
 	<description html="true"><![CDATA[
@@ -18,9 +18,9 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units=" р"/>
-        <counter id="date" name="Баланс" units=" р"/>
-        <counter id="balance" name="Баланс" units=" р"/>
+		<counter id="balance" name="Переплата/Долг" units=" р"/>
+        <counter id="date" name="Дата" type="time" format="dd/MM/yyyy"/>
+        <counter id="ls" name="Лицевой счет" type="text"/>
 	</counters>
 	<keywords></keywords>
 	<type>municipal</type>

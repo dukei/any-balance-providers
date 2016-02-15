@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+    <id version="1">parsers/xls</id>
+	<api flags="no_browser" />
+    <name>XLS parser</name>
+	<description html="true"><![CDATA[
+		XLS parser by http://sheetjs.com
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<js>xls.js</js>
+		<js>misc.js</js>
+		<history>history.xml</history>
+	</files>
+	<type>parser, xls</type>
+</provider>

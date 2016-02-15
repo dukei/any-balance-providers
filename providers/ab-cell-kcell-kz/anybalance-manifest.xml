@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="13">ab-cell-kcell-kz</id>
+	<id version="14">ab-cell-kcell-kz</id>
 	<api flags="no_browser"/>
 	<name>Kcell (Казахстан)</name>
 	<description html="true"><![CDATA[
@@ -14,7 +14,7 @@
 		<strong>●</strong> Если сервис 245 для Вас недоступен, Вы можете получить временный пароль, обратившись в Kcell Center или позвонив в Call Center с номера, по которому необходим пароль, для прохождения сверки данных. После успешного прохождения сверки данных, оператор предоставит Вам временный пароль.<br>
 		<strong>●</strong> После входа в Мой Kcell по временному паролю, Вам необходимо установить собственный пароль, для этого укажите свой электронный адрес и следуйте дальнейшим инструкциям.<br>
 	]]></instruction>
-	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
@@ -30,6 +30,7 @@
 		<counter id="inet_unlim" name="Безлимитный интернет (Мб до снижения скорости)" units=" Мб"/>
 		<counter id="licschet" name="Лицевой счет" type="text"/>
 		<counter id="userName" name="Имя" type="text"/>
+		<counter id="bonuses" name="Бонусы" type="text"/>
 	</counters>
 	<keywords>Сотовый телефон, мобильный, мобильник, kcell, кселл</keywords>
 	<type>cell</type>

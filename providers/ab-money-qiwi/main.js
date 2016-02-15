@@ -6,6 +6,8 @@ var g_countersTable = {
 	"balance": "accounts.balance",
 	"balance2": "accounts.balance",
 	"balance3": "accounts.balance",
+	"balance4": "accounts.balance",
+	"balance5": "accounts.balance",
 
 	"megafon_balance": "megafon_balance",
 	"megafon_can_pay": "megafon_can_pay",

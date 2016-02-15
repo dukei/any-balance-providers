@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">extract/abe-money-ipb</id>
+	<api flags="no_browser"/>
+	<name>Extract for Интерпрогрессбанк</name>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<js>abe-money-ipb.min.js</js>
+		<history>history.xml</history>
+	</files>
+	<depends>
+		<module id="library"/>
+	</depends>
+	<type>money, bank</type>
+	<country>ru</country>
+</provider>

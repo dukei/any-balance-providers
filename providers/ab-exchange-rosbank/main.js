@@ -7,43 +7,27 @@
 var currencylist = {usd:''};
 
 function main(){
-    
     var prefs = AnyBalance.getPreferences();
     AnyBalance.setDefaultCharset('utf-8');    
 	var baseurl = 'http://www.rosbank.ru/ru/currency.php';
-	var htmlinfo = AnyBalance.requestGet(baseurl,
-	{
-		"Accept-Encoding": "deflate"
-	}
-	);
-    var result = {success: true};
-    
-    var res,regexp = /currency\W*h2\W*h2\D*USD\D*([\d\.,]*)\/([\d\.,]*)\D*([\d\.,]*)\D*EUR\D*([\d\.,]*)\/([\d\.,]*)\D*([\d\,]*)\D*([\d\.\/]*)\./;
-	//AnyBalance.trace(htmlinfo);
-	if(res=regexp.exec(htmlinfo)) {
-		result.USD = parseFloat(res[3].split(',').join('.'));
-		result.USD_out = parseFloat(res[2].split(',').join('.'));
-		result.USD_in = parseFloat(res[1].split(',').join('.'));
-		result.EUR = parseFloat(res[6].split(',').join('.'));
-		result.EUR_out = parseFloat(res[5].split(',').join('.'));
-		result.EUR_in = parseFloat(res[4].split(',').join('.'));
-		result.date = res[7];
-		result.RUB_summa = result[prefs.currency.toUpperCase()+'_out']*parseFloat(prefs.cur_summa);
-	}
-	//AnyBalance.trace(result[prefs.currency.toUpperCase()+'_out']);
-	//AnyBalance.trace(prefs.cur_summa);
-	
-	
-	
-	// Баланс
-	//getParam (htmlinfo, result, 'balance', />Текущий баланс[\D]*[\d{2}:]*\):[\D]*>([-\d\.]*)/, [/ |\xA0/, "", ",", "."], parseFloat);
-	
- 	// Абоненская плата
-	//getParam (htmltarif, result, 'monthlypay', /Абон.плата - ([\d\.]*)/, [/ |\xA0/, "", ",", "."], parseFloat);
-	
-	// Лицевой счет
-	//getParam (htmlinfo, result, 'license', /><TD[\D]*\d*>Лицевой счёт[:<>\D]*(\d{6})</);
- 
+	var htmlinfo = AnyBalance.requestGet(baseurl, {"Accept-Encoding": "deflate" });
+    var result = {
+        success: true
+    };
+
+    AB.getParam(htmlinfo, result, 'USD', /USD\D*\d*\D*([\d\.,]*)/i, AB.replaceTagsAndSpaces, AB.parseBalance);
+    AB.getParam(htmlinfo, result, 'EUR', /EUR\D*\d*\D*([\d\.,]*)/i, AB.replaceTagsAndSpaces, AB.parseBalance);
+    AB.getParam(htmlinfo, result, 'USD_in', /безналичных операций[\s\S]*?<td>([\d,.]+)/i, AB.replaceTagsAndSpaces, AB.parseBalance);
+    AB.getParam(htmlinfo, result, 'USD_out', /безналичных операций[\s\S]*?<td>[\d,.]+\D+([\d,.]+)/i, AB.replaceTagsAndSpaces, AB.parseBalance);
+    AB.getParam(htmlinfo, result, 'EUR_in', /безналичных операций[\s\S]*?<td>[^<]+[^/]*\D+([\d.,]+)/i, AB.replaceTagsAndSpaces, AB.parseBalance);
+    AB.getParam(htmlinfo, result, 'EUR_out', /безналичных операций[\s\S]*?<td>[^<]+[^/]*\D+[\d.,]+\D+([\d.,]+)/i, AB.replaceTagsAndSpaces, AB.parseBalance);
+    AB.getParam(htmlinfo, result, 'date', /Центральный банк[^<]+<b>([^<]+)/i, AB.replaceTagsAndSpaces, AB.parseDate);
+
+    if (prefs.currency && prefs.cur_summa) {
+        var curr = result[prefs.currency.toUpperCase() + '_out'];
+        AB.getParam(curr * parseFloat(prefs.cur_summa), result, 'RUB_summa');
+    }
+
  	AnyBalance.setResult(result);
 
  }

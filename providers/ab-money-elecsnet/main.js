@@ -13,22 +13,39 @@ var g_headers = {
 
 function main(){
     var prefs = AnyBalance.getPreferences();
-    var baseurl = 'https://1.elecsnet.ru/';
+    var baseurl = 'https://1.elecsnet.ru';
     AnyBalance.setDefaultCharset('utf-8'); 
+    
+    AB.checkEmpty(prefs.login, 'Введите логин!');
+	AB.checkEmpty(prefs.password, 'Введите пароль!');
 
-    var html = AnyBalance.requestGet(baseurl + 'NotebookFront/Default.aspx', g_headers);
+    var html = AnyBalance.requestGet(baseurl + '/notebookfront', g_headers);
+    
+    if (!html || AnyBalance.getLastStatusCode() >= 400) {
+        AnyBalance.trace(html);
+        throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
+    }
 
-	var params = createFormParams(html, function(params, str, name, value){
-		if(name == 'ctl00$MainLogin2$UserName' || name == 'ctl00$MainLogin$UserName')
-			return prefs.login;
-		else if(name == 'ctl00$MainLogin2$Password' || name == 'ctl00$MainLogin$Password')
-			return prefs.password;
+    var form = AB.getElement(html, /<form[^>]*?NotebookFront\/Account/i);
+    if (!form) {
+        AnyBalance.trace(html);
+        throw new AnyBalance.Error('Не найдена форма авторизации. Сайт изменен?');
+    }
+    
+    var params = createFormParams(form, function(params, str, name, value){
+        if(name == 'Login.Value')
+            return prefs.login;
+        else if(name == 'Password.Value')
+            return prefs.password;
         return value;
     });
-	html = AnyBalance.requestPost(baseurl + 'NotebookFront/Default.aspx', params, addHeaders({Referer: baseurl+'NotebookFront/Default.aspx'})); 
+    
+    html = AnyBalance.requestPost(baseurl + '/NotebookFront/Account', params, addHeaders({
+        Referer: baseurl + '/notebookfront'
+    })); 
 
-	if (!/ExitButton/i.test(html)) {
-		var error = getParam(html, null, null, /"ctl00_MainLogin2?_Password"(?:[^>]*>){3}([\s\S]*?)<div/i, replaceTagsAndSpaces, html_entity_decode);
+	if (!/logoutBtn/i.test(html)) {
+		var error = getElement(html, /<div[^>]*?validation-message/i, replaceTagsAndSpaces);
 		if (error)
 			throw new AnyBalance.Error(error, null, /Неправильно введены учетные данные/i.test(error));
 		
@@ -38,7 +55,7 @@ function main(){
 	
     var result = {success: true};
 	
-    getParam(html, result, 'balance', /Остаток на кошельке:[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'balance', /Доступно:?\s*<\/span\s*>\s*<div[^>]*?count[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseBalance);
 	getParam(prefs.login, result, 'phone');
 	
     AnyBalance.setResult(result);

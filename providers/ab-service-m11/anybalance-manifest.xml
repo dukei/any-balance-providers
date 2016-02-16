@@ -18,7 +18,7 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс"/>
+		<counter id="balance" name="Баланс" units=" ₽"/>
 		<counter id="status" name="Статус" type="text"/>
 		<counter id="contract" name="Договор" type="text"/>
 		<counter id="fio" name="ФИО" type="text"/>

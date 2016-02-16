@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1" version="6">ab-exchange-rosbank</id>
+  <id major_version="2" version="6">ab-exchange-rosbank</id>
   <name>Курсы валют РОСБАНК</name>
   <description>
     Текущие курсы покупки/продажи, установленные РОСБАНК на текущую дату. Содержит курс доллара и евро.
 	Для тех, у кого кредит/ипотека в DeltaCredit или BSGV или РОСБАНК:
 	Возможность ввести в настройках свою сумму (напр.платеж по кредиту) в валюте и получать пересчет в рубли по курсу продажи. Удобно прогнозировать ден.средства для оплаты.
   </description>
-  <author>Serg Repin &lt;serg.repin@gmail.com&gt;</author>
+  <author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>

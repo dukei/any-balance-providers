@@ -314,9 +314,39 @@
 	}	
 	
 	/**
-	 * HTML SAX parser
-	 * @param {function}
+	 * HTML attribute SAX parser
+	 * Этот парсер не делает массив всех атрибутов тега, а делает обработку последовательно.
+	 * 
+	 * @param {function}  Если в процессе обработки нужная информация нашлась, нет смысла продолжать анализ остальных атрибутов.
+	 *					  Поэтому, если пользовательская callback функция возвращает true, то обработка продолжится, иначе прервётся.
 	 * @link https://www.w3.org/TR/html5/
+	 * @link http://html5sec.org/
+	 * @returns {undefined}
+	 */
+	String.prototype.htmlAttrParser = function (reviver) {
+		var spacesRe = /\x00-\x20\x7f\xA0\s/.source;
+		//https://developer.mozilla.org/en/docs/Web/JavaScript/Guide/Regular_Expressions#special-word
+		var attrRe = `	([-\\w:]+)  #(1) name
+						(?:
+							[` + spacesRe + `]* = [` + spacesRe + `]*
+							(?:
+									( [^"'] [^` + spacesRe + `]* ) #(2) value
+								|	"  ([^"]*)  "	#(3) value
+								|	'  ([^']*)  '	#(4) value
+							)
+						)?`;
+		attrRe = XRegExp(attrRe, 'xsg');
+		console.log(attrRe);
+	}
+	
+	/**
+	 * HTML SAX parser
+	 * Этот парсер не строит DOM дерево сразу целиком, а делает обработку HTML узлов последовательно.
+	 * 
+	 * @param {function}  Если в процессе обработки нужная информация нашлась, нет смысла продолжать анализ HTML документа.
+	 *					  Поэтому, если пользовательская callback функция возвращает true, то обработка продолжится, иначе прервётся.
+	 * @link https://www.w3.org/TR/html5/
+	 * @link http://html5sec.org/
 	 * @returns {undefined}
 	 */
 	String.prototype.htmlParser = function (reviver) {
@@ -369,11 +399,14 @@
 										)
 							)+)`;
 
-		var match, 
+		var tagRe = XRegExp('^([-\\w:]+) [' + spacesRe + ']* (.*)$', 'xs');
+
+		var match, m, tag, attrs,
 			steps = 0, 
 			stepsMax  = 10000,
 			offsetMax = 5000000,
 			typesMap = {
+				//elements order is important!
 				//1, 4, 5 = pairs raw tags with content
 				1  : 'open',
 				4  : 'raw',
@@ -397,7 +430,12 @@
 			if (match['index'] > offsetMax) throw Error(offsetMax + ' offset has been reached!');
 			for (var i in typesMap) {
 				if (typeof match[i] === 'string') {
-					if (! reviver(typesMap[i], match[i], match['index'])) return;
+					tag = match[i], attrs = '';
+					if (typesMap[i] === 'open') {
+						m = tagRe.exec(match[i]);
+						if (m) tag = m[1], attrs = m[2];
+					}
+					if (! reviver(typesMap[i], tag, attrs, match['index'])) return;
 					if (i > 5) break;  //1, 4, 5 = pairs raw tags with content
 				}
 			}//for

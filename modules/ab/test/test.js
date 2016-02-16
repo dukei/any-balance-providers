@@ -12,13 +12,27 @@ var invalidHtml = {
  */
 describe("String", function() {
 
+	describe("htmlAttrParser()", function() {
+		
+		it("test (form)", function() {
+			sample.form.htmlAttrParser(
+				function(type, node, attrs, offset) {
+					if (type === 'text') node = node.htmlEntityDecode(false).normalize().clean();
+					//console.log([type, node, attrs, offset]);
+					return true;
+				}
+			);
+		});
+		
+	});
+
 	describe("htmlParser()", function() {
 
 		it("test (ugly)", function() {
 			sample.ugly.htmlParser(
-				function(type, node, offset) {
+				function(type, node, attrs, offset) {
 					if (type === 'text') node = node.htmlEntityDecode(false).normalize().clean();
-					//console.log([type, node, offset]);
+					//console.log([type, node, attrs, offset]);
 					return true;
 				}
 			);
@@ -26,9 +40,9 @@ describe("String", function() {
 
 		it("test (form)", function() {
 			sample.form.htmlParser(
-				function(type, node, offset) {
+				function(type, node, attrs, offset) {
 					if (type === 'text') node = node.htmlEntityDecode(false).normalize().clean();
-					//console.log([type, node, offset]);
+					//console.log([type, node, attrs, offset]);
 					return true;
 				}
 			);
@@ -36,9 +50,9 @@ describe("String", function() {
 		
 		it("test (yandex)", function() {
 			sample.yandex.htmlParser(
-				function(type, node, offset) {
+				function(type, node, attrs, offset) {
 					if (type === 'text') node = node.htmlEntityDecode(false).normalize().clean();
-					//console.log([type, node, offset]);
+					//console.log([type, node, attrs, offset]);
 					return true;
 				}
 			);
@@ -46,9 +60,9 @@ describe("String", function() {
 		
 		it("test (mgts)", function() {
 			sample.mgts.htmlParser(
-				function(type, node, offset) {
+				function(type, node, attrs, offset) {
 					if (type === 'text') node = node.htmlEntityDecode(false).normalize().clean();
-					//console.log([type, node, offset]);
+					//console.log([type, node, attrs, offset]);
 					return true;
 				}
 			);
@@ -56,9 +70,9 @@ describe("String", function() {
 		
 		it("test (googledoc)", function() {
 			sample.googledoc.htmlParser(
-				function(type, node, offset) {
+				function(type, node, attrs, offset) {
 					if (type === 'text') node = node.htmlEntityDecode(false).normalize().clean();
-					//console.log([type, node, offset]);
+					//console.log([type, node, attrs, offset]);
 					return true;
 				}
 			);

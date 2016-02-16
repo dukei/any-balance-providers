@@ -36,8 +36,10 @@ function main() {
         return value;
     });
     
+    AnyBalance.sleep(2000);
     html = AnyBalance.requestPost(baseurl, params, addHeaders({
-        Referer: baseurl
+        Referer: baseurl,
+        Origin: 'https://lk.lukoil-garant.ru'
     }));
     
     if (!/logout/.test(html)) {
@@ -49,27 +51,22 @@ function main() {
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
     }
     
-    function getDefValue(name) {
-        var m = RegExp(name + '\\s*:\\s*\\{[^\\}]*?defaultValue\\s*:\\s*([^\\s,]+)', 'i').exec(html);
-        if (m) {
-            return parseBalance(m[1]);
-        }
-        return 0;
-    }
-    
     var result = {success: true};
+
+    var GraphDataMatch = /var\s+GraphData\s+=\s+(\{[\s\S]+?\})\s*;/.exec(html);
+    var GraphData = AB.getJsonEval(GraphDataMatch[1]);
     
-    if (AnyBalance.isAvailable('balance')) {
-        result.balance = getDefValue('StartNPO') + 
-            getDefValue('StartNCHTP') + 
-            getDefValue('StartDSV');
-    }
+    getParam(GraphData.StartNPO.defaultValue, result, 'balancenpo');
+    getParam(GraphData.StartNCHTP.defaultValue, result, 'balancench');
+    getParam(GraphData.StartNPO.defaultValue + GraphData.StartNCHTP.defaultValue + GraphData.StartDSV.defaultValue, result, 'balance');
     
     getParam(getElement(html, /<a\s[^>]*?message_link/, replaceTagsAndSpaces, parseBalance), result, 'messages');
-    
-	html = AnyBalance.requestGet(baseurl + 'ru/savings/pension/', g_headers);
+
+    if (AnyBalance.isAvailable('account')) {
+        html = AnyBalance.requestGet(baseurl + 'ru/savings/pension/', g_headers);
+        getParam(html, result, 'account', /Номер\s+договора:?\s*<span[^>]*>([^<]+)/i, replaceTagsAndSpaces);
+    }
 	
-	getParam(html, result, 'account', /Номер\s+договора:?\s*<span[^>]*>([^<]+)/i, replaceTagsAndSpaces);
-	
-	AnyBalance.setResult(result);
+    AnyBalance.setResult(result);
 }
+

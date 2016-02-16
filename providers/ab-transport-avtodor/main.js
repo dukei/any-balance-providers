@@ -34,9 +34,9 @@ function main(){
 	}, addHeaders({Referer: baseurl + 'account/login'}));
 
     if(!/account\/logout/i.test(html)){
-        var error = getParam(html, null, null, /<div[^>]+class="block_thanks"[^>]*>[\s\S]*?<div[^>]+class="text"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+        var error = getParam(html, null, null, /alert-danger[^>]*>([\s\S]+?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
 		if (error)
-			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
+			throw new AnyBalance.Error(error, null, /неправильные реквизиты/i.test(error));
 		
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');

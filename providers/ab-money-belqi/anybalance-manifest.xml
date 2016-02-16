@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-money-belqi</id>
+	<api flags="no_browser"/>
+	<name>Belqi</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера <a href="https://www.belqi.by">Belqi</a></p>
+	<p>Информация берется из <a href="https://www.belqi.by/belqi/!iSOU.ShowPage?name=zero_page">личного кабинета Belqi</a></p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" BYR"/>
+		<counter id="user_name" name="Пользователь" type="text"/>
+		<counter id="wallet" name="Номер кошелька"/>
+	</counters>
+	<keywords></keywords>
+	<type>money</type>
+	<country>by</country>
+</provider>

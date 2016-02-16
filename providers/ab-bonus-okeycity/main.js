@@ -35,9 +35,9 @@ function main(){
     }, addHeaders({Referer: baseurl + 'site/login'})); 
 	
 	if (!/logout/i.test(html)) {
-		var error = getParam(html, null, null, /"errorMessage">([\s\S]*?)<\/div/i, replaceTagsAndSpaces, html_entity_decode);
+		var error = getParam(html, null, null, /errorSummary[^>]*>[\s\S]*?<ul>([\s\S]+?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
 		if (error)
-			throw new AnyBalance.Error(error, null, /Некорректен логин или пароль/i.test(error));
+			throw new AnyBalance.Error(error, null, /пароль/i.test(error));
 		
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
@@ -45,9 +45,9 @@ function main(){
 	
     var result = {success: true};
 	
-    getParam(html, result, 'balance', /Баланс:([^>]*>){3}/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, '__tariff', /Карта:([^>]*>){3}/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'fio', /([^>]+)<a href[^>]*logout/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'balance', /Баланс:([\s\S]+?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, '__tariff', /Карта:([\s\S]+?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'fio', /leftuserinfo[^>]*>([\s\S]+?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
 	
     AnyBalance.setResult(result);
 }

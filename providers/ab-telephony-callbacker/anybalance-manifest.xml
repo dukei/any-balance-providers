@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-telephony-callbacker</id>
+  <id version="2">ab-telephony-callbacker</id>
   <name>Callbacker</name>
   <api min_level="4"/>
   <description>
@@ -8,7 +8,7 @@
     
     Данные берутся из личного кабинета https://customer.callbacker.com/cabinet/
   </description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
@@ -19,6 +19,7 @@
   <counters>
     <counter id="balance" name="Баланс" prefix="$"/>
     <counter id="phone" name="Телефон" type="text"/>
+    <counter id="calls" name="Звонки"/>
   </counters>
   <keywords>
     колбэкер

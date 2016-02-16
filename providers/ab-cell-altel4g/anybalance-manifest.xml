@@ -30,7 +30,7 @@
 		<counter id="min_left_gsm" name="Остаток минут на GSM" type="time_interval" format="{@MIN}:{@sec}"/>
 		<counter id="min_left_city" name="Остаток минут на город" type="time_interval" format="{@MIN}:{@sec}"/>
 		<counter id="sms_left" name="Остаток смс" units=" шт"/>
-                <counter id="traffic_used" name="Использовано траффика" units=" Мб"/>
+                <counter id="traffic_used" name="Использовано трафика" units=" Мб"/>
 		<counter id="traffic_left" name="Остаток трафика" units=" Мб"/>
 		<counter id="day_traffic_left" name="Остаток дневного трафика" units=" Мб"/>
 		<counter id="night_traffic_left" name="Остаток ночного трафика" units=" Мб"/>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-shop-gearbest</id>
+	<api flags="no_browser"/>
+	<name>GearBest Shop</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера <a href="http://www.gearbest.com/">GearBest Shop</a></p>
+	<p>Информация берется из личного кабинета <a href="http://user.gearbest.com">http://user.gearbest.com</a></p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="my_points" name="My Points"/>
+		<counter id="points" name="Points" prefix="$"/>
+		<counter id="gb_wallet" name="My GB Wallet" prefix="$"/>
+	</counters>
+	<keywords></keywords>
+	<type>shop</type>
+	<country>us</country>
+</provider>

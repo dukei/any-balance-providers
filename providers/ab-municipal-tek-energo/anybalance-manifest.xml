@@ -2,9 +2,9 @@
 <provider>
 	<id version="1">ab-municipal-tek-energo</id>
 	<api flags="no_browser"/>
-	<name>Тэк-Энерго</name>
+	<name>ООО "Тэк-Энерго", филиал "Брянскэнергосбыт"</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о начислениях в "Тэк-Энерго" <a href="http://office.elektro-32.ru">http://office.elektro-32.ru</a></p>
+	<p>Предоставляет информацию о начислениях в ООО "Тэк-Энерго" для Брянской области <a href="http://office.elektro-32.ru">http://office.elektro-32.ru</a></p>
 	<p>Информация берется из личного кабинета <a href="http://office.elektro-32.ru/office.aspx">http://office.elektro-32.ru/office.aspx</a></p>
 	]]></description>
 	<instruction html="true"><![CDATA[

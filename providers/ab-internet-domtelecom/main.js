@@ -13,7 +13,9 @@ var g_headers = {
 function main() {
 	var prefs = AnyBalance.getPreferences();
 	var baseurl = 'https://my.domtele.com/';
-	AnyBalance.setDefaultCharset('utf-8');
+	
+	//AnyBalance.setDefaultCharset('utf-8');
+	AnyBalance.setDefaultCharset('windows-1251');	
 	
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
@@ -23,11 +25,15 @@ function main() {
 	if(!html || AnyBalance.getLastStatusCode() > 400)
 		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
 	
-	html = AnyBalance.requestPost(baseurl, {
-		login: prefs.login,
-		password: prefs.password
-	}, addHeaders({Referer: baseurl}));	
 	
+	if(/Вход в личный кабинет/i.test(html)){
+		html = AnyBalance.requestPost(baseurl, {
+			login: prefs.login,
+			password: prefs.password
+		}, addHeaders({Referer: baseurl}));	
+	}
+	
+		
 	if (!/exit_form/i.test(html)) {
 		var error = getParam(html, null, null, /color:red(?:[^>]*>){1}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
 		if (error)
@@ -42,13 +48,13 @@ function main() {
 	}, addHeaders({Referer: baseurl}));
 	
 	var result = {success: true};
-	
+		
 	getParam(html, result, 'balance', /Баланс:(?:[^>]*>){2}([\s\S]*?)грн/i, [replaceTagsAndSpaces, /Долг([\s\d.,]+)/i, '- $1'], parseBalance);
 	getParam(html, result, 'fio', /Абонент:(?:[^>]*>){1}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(html, result, 'account', /Номер договора:(?:[^>]*>){1}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(html, result, 'lic_account', /Лицевой Счет:(?:[^>]*>){1}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(html, result, 'connection', /Подключение:(?:[^>]*>){1}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'status', /Статус:(?:[^>]*>){1}([\s\S]*?)<span/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'status', /Статус:(?:[^>]*>){1}([\s\S]*?)<\/\w/i, replaceTagsAndSpaces, html_entity_decode);
      
 	html = AnyBalance.requestPost(baseurl, {
         'where_to': 4

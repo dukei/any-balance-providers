@@ -313,6 +313,10 @@
 		return this.search(ALL);
 	}
 	
+	String.prototype.htmlDOMParser = function (id) {
+		
+	}
+
 	/**
 	 * HTML attribute SAX parser
 	 * Этот парсер не делает массив всех атрибутов тега, а делает обработку последовательно.
@@ -371,6 +375,20 @@
 	 */
 	String.prototype.htmlParser = function (reviver) {
 
+		var makeMap = function (str) {
+			var obj = {}, items = str.split(',');
+			for (var i = 0; i < items.length; i++) obj[ items[i] ] = true;
+			return obj;
+		};
+
+		//void (empty, self-closing) elements
+		var voidTags = makeMap(
+			//https://www.w3.org/TR/html5/syntax.html#elements-0 HTML5
+			'area,base,br,col,command,embed,hr,img,input,keygen,link,meta,param,source,track,wbr'
+			//HTML 4.01
+			+ ',basefont,frame,img,input,isindex,meta,param,embed'
+		);
+
 		var tagsRawRe = 'script|style|xmp' +	//raw text elements (as is)
 						'|textarea|title';		//escapable raw text elements (can have html entities)
 
@@ -421,7 +439,7 @@
 
 		var tagRe = XRegExp('^([-\\w:]+) [' + spacesRe + ']* (.*)$', 'xs');
 
-		var match, m, tag, attrs,
+		var match, m, type, node, attrs, offset,
 			nodes = 0, 
 			nodesMax  = 10000,
 			offsetMax = 5000000,
@@ -450,12 +468,17 @@
 			if (match['index'] > offsetMax) throw Error(offsetMax + ' offset has been reached!');
 			for (var i in typesMap) {
 				if (typeof match[i] === 'string') {
-					tag = match[i], attrs = '';
-					if (typesMap[i] === 'open') {
+					type  = typesMap[i]; 
+					node  = match[i]; 
+					attrs = '';
+					offset = match['index'];
+					if (type === 'open') {
 						m = tagRe.exec(match[i]);
-						if (m) tag = m[1], attrs = m[2];
+						if (m) node = m[1].toLowerCase(), attrs = m[2];
+						if (voidTags[node]) type = 'void';
 					}
-					if (! reviver(typesMap[i], tag.toLowerCase(), attrs, match['index'])) return;
+					else if (type === 'close') node = node.toLowerCase();
+					if (! reviver(type, node, attrs, offset)) return;
 					if (i > 5) break;  //1, 4, 5 = pairs raw tags with content
 				}
 			}//for

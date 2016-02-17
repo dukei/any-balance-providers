@@ -23,20 +23,21 @@ function main() {
 		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
 
     var plainParams = {
-        Home:true,
-        No:prefs.login,
-        FIO:prefs.password,
-        Rooms_Count:"",
+        //Home:true,
+        AccountNo:prefs.login,
+        AccountFIO:prefs.password,
+        //Rooms_Count:"",
         PostAddress:"",
         IsApproved:false,
         Residents:"",
         FullArea:"",
-        FullArea_All:"",
-        Balanses:[],
-        IsMonthButton:false,
-        IsYearButton:false,
-        CreditList:[]
-    }
+        //FullArea_All:"",
+        SaveDataFlag:false,
+        //Balanses:[],
+        //IsMonthButton:false,
+        //IsYearButton:false,
+        //CreditList:[]
+    };
     
     var par = 'EnergoSales@LoginPL(\''+ JSON.stringify(plainParams) +'\'#string)';
     
@@ -56,8 +57,27 @@ function main() {
 	}
 	
 	var result = {success: true};
-	
-	getParam(json.Credentials.balanses[0].Balans, result, 'balance', null, null, parseBalance);
+
+    if(json.Credentials && json.Credentials.balanses) {
+
+        var accounts = json.Credentials.balanses;
+        for(var i = 0; i < accounts.length; i++) {
+            var counter_name;
+            if(/электроэнергия/i.test(accounts[i].ServiceName))
+                counter_name = 'balanceElec';
+            else if(/отопление/i.test(accounts[i].ServiceName))
+                counter_name = 'balanceHeat';
+            else if(/ГВС/i.test(accounts[i].ServiceName))
+                counter_name = 'balanceGVS';
+
+            if(!counter_name)
+                AnyBalance.trace("Неизвестная опция: "+ accounts[i].ServiceName);
+            else
+                getParam(accounts[i].Balans, result, counter_name);
+        }
+    }
+    else AnyBalance.trace("Не удалось найти балансы по услугам.");
+	//getParam(json.Credentials.balanses[0].Balans, result, 'balance', null, null, parseBalance);
     
     var today = new Date();
     to_month = today.getMonth() + 1;

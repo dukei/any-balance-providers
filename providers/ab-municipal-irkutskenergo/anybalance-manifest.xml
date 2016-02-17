@@ -1,22 +1,26 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="5">ab-municipal-irkutskenergo</id>
+	<id version="6">ab-municipal-irkutskenergo</id>
 	<api flags="no_browser"/>
 	<name>Иркутскэнергосбыт</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе провайдера Иркутскэнергосбыт <a href="https://sbyt.irkutskenergo.ru/">https://sbyt.irkutskenergo.ru/</a></p>
-	<p>Информация берется из личного кабинета <a href="https://sbyt.irkutskenergo.ru/qa/PersonalCabin.html">https://sbyt.irkutskenergo.ru/qa/PersonalCabin.html</a></p>
+	<p>Предоставляет информацию о балансе провайдера Иркутскэнергосбыт https://sbyt.irkutskenergo.ru/ </p>
+	<p>Информация берется из личного кабинета https://sbyt.irkutskenergo.ru/qa/PersonalCabin.html </p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Электроэнергия" units=" р"/>
+		<counter id="balanceElec" name="Электроэнергия" units=" р"/>
+		<counter id="balanceHeat" name="Отопление" units=" р"/>
+		<counter id="balanceGVS" name="ГВС" units=" р"/>
 		<counter id="to_pay" name="Итого к оплате" units=" р"/>
 		<counter id="credited" name="Начислено" units=" р"/>
 		<counter id="paid" name="Оплачено" units=" р"/>

@@ -15,10 +15,19 @@ describe("String", function() {
 	describe("htmlAttrParser()", function() {
 		
 		it("test (form)", function() {
-			sample.form.htmlAttrParser(
-				function(type, node, attrs, offset) {
-					if (type === 'text') node = node.htmlEntityDecode(false).normalize().clean();
-					//console.log([type, node, attrs, offset]);
+			var r = ` type="checkbox" 
+						 xmlns:xalan =  
+						class="button_forward" 
+						onmouseover="$(this).addClass('button_forward-hover')" 
+						Checked
+						onmouseout='$(this).removeClass("button_forward-hover")' 
+						value=&#1042;&#1086;&#1081;&#1090;&#1080;
+						Id = "submitBtnId" 
+						style=""`;
+			r.htmlAttrParser(
+				function(name, value, offset) {
+					value = value.htmlEntityDecode(false).normalize().clean();
+					console.log([name, value, offset]);
 					return true;
 				}
 			);

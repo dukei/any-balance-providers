@@ -13,6 +13,13 @@ var g_headers = {
 function main() {
     //для теста http://support.anybalance.ru/scp/tickets.php?id=4648
     //для теста http://bananawars.ru/index.php 
+	
+	//вариант от Саши Самсонова
+	var parser = new Parser(...);
+	parser.getValue('balance', 'div#mybalance', ...);
+	parent.getValue('traffic', 'div.container span.qqqqqq', ...);
+	parent.getAttr('url', 'div.container img.icon', 'src', ...);  //http://api.jquery.com/attr/
+	parser.run(html, result);	
 
     var result = {success: true};
 	//AB.setResult({success: true});

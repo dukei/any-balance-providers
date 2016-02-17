@@ -311,7 +311,7 @@
 			COMMENT = /<!--  [^-]*  .*?  -->/,
 			ALL = XRegExp.union([OPENED_OR_DOCTYPE, CDATA, COMMENT], 'xs');
 		return this.search(ALL);
-	}	
+	}
 	
 	/**
 	 * HTML attribute SAX parser
@@ -324,7 +324,9 @@
 	 * @returns {undefined}
 	 */
 	String.prototype.htmlAttrParser = function (reviver) {
+
 		var spacesRe = /\x00-\x20\x7f\xA0\s/.source;
+
 		//https://developer.mozilla.org/en/docs/Web/JavaScript/Guide/Regular_Expressions#special-word
 		var attrRe = `	([-\\w:]+)  #(1) name
 						(?:
@@ -335,8 +337,26 @@
 								|	'  ([^']*)  '	#(4) value
 							)
 						)?`;
+
+		var match, value,
+			attrs = 0,
+			attrsMax  = 100,
+			offsetMax = 50000;
+
 		attrRe = XRegExp(attrRe, 'xsg');
-		console.log(attrRe);
+
+		while (true) {
+			if (++attrs > attrsMax) throw Error(attrsMax + ' attributes has been reached!');
+			match = attrRe.exec(this);
+			if (! match) break;
+			if (match['index'] > offsetMax) throw Error(offsetMax + ' offset has been reached!');
+			//console.log(match); 
+			if (typeof match[2] === 'string')      value = match[2];
+			else if (typeof match[3] === 'string') value = match[3];
+			else if (typeof match[4] === 'string') value = match[4];
+			else value = '';
+			if (! reviver(match[1].toLowerCase(), value, match['index'])) return;
+		}//while
 	}
 	
 	/**
@@ -402,8 +422,8 @@
 		var tagRe = XRegExp('^([-\\w:]+) [' + spacesRe + ']* (.*)$', 'xs');
 
 		var match, m, tag, attrs,
-			steps = 0, 
-			stepsMax  = 10000,
+			nodes = 0, 
+			nodesMax  = 10000,
 			offsetMax = 5000000,
 			typesMap = {
 				//elements order is important!
@@ -424,7 +444,7 @@
 		htmlRe = XRegExp(htmlRe, 'xsig');
 
 		while (true) {
-			if (++steps > stepsMax) throw Error(stepsMax + ' steps has been reached!');
+			if (++nodes > nodesMax) throw Error(nodesMax + ' nodes has been reached!');
 			match = htmlRe.exec(this);
 			if (! match) break;
 			if (match['index'] > offsetMax) throw Error(offsetMax + ' offset has been reached!');
@@ -435,7 +455,7 @@
 						m = tagRe.exec(match[i]);
 						if (m) tag = m[1], attrs = m[2];
 					}
-					if (! reviver(typesMap[i], tag, attrs, match['index'])) return;
+					if (! reviver(typesMap[i], tag.toLowerCase(), attrs, match['index'])) return;
 					if (i > 5) break;  //1, 4, 5 = pairs raw tags with content
 				}
 			}//for

@@ -291,17 +291,38 @@
 		hearts  : 0x2665,  //"\xe2\x99\xa5" [♥] black heart suit = valentine
 		diams   : 0x2666,  //"\xe2\x99\xa6" [♦] black diamond suit
 	};
+
+	/**
+	 * HTML detect
+	 * @returns	{number}	result of String.search()
+	 */
+	String.prototype.htmlIndexOf = function () {
+		/*
+		Fast and short implementation.
+		No needs to check closed tags, because they don't exist without opened tags
+		No needs to check HTML entities, because it is ambiguous
+		We use atomic group (trick with lookahead, capturing group and link after) to speed improve, significantly reduce backtracking!
+		*/
+		var ANY_WITH_EXCEPTIONS	= /(?= ([^>"']+) )\1/,
+			IN_DOUBLE_QUOTES	= /" [^"]* "/,
+			IN_SINGLE_QUOTES	= /' [^']* '/,
+			OPENED_OR_DOCTYPE	= RegExp('<!?[a-zA-Z]  [^>"\']*  (?:' + XRegExp.union([ANY_WITH_EXCEPTIONS, IN_DOUBLE_QUOTES, IN_SINGLE_QUOTES], 'xs').source + ')*>'),
+			CDATA	= /<!\[CDATA\[  [^\]]*  .*?  \]\]>/,
+			COMMENT = /<!--  [^-]*  .*?  -->/,
+			ALL = XRegExp.union([OPENED_OR_DOCTYPE, CDATA, COMMENT], 'xs');
+		return this.search(ALL);
+	}	
 	
 	/**
 	 * HTML SAX parser
-	 * 
+	 * @param {function}
 	 * @link https://www.w3.org/TR/html5/
-	 * @returns {number} parsed offset
+	 * @returns {undefined}
 	 */
-	String.prototype.htmlParser = function () {
-		
-		var tagsRawRe = 'script|style|xmp' +	//raw text elements
-						'|textarea|title';		//escapable raw text elements
+	String.prototype.htmlParser = function (reviver) {
+
+		var tagsRawRe = 'script|style|xmp' +	//raw text elements (as is)
+						'|textarea|title';		//escapable raw text elements (can have html entities)
 
 		var spacesRe = /\x00-\x20\x7f\xA0\s/.source;
 
@@ -320,46 +341,67 @@
 		var htmlRe = `<(?:
 							#pairs raw tags with content:
 							((` + tagsRawRe + `) (?=[>` + spacesRe + `])` + attrsRe(3) + `)>  #(1) opened tag
-								(	#(4) inner
+								(	#(4) raw inner
 									[^<]*  #speed improve
 									.*?
 								)
-							</\\2 (?=[>` + spacesRe + `])` + attrsRe(5) + `>
+							</(\\2) (?=[>` + spacesRe + `])` + attrsRe(6) + `>  #(5) closed tag
 
-							#(6) opened tags:
+							#(7) opened tags:
 						|	(	(?=[a-z])
 								(?! (?:` + tagsRawRe + `) (?=[>` + spacesRe + `]) )
-								` + attrsRe(7) + `
+								` + attrsRe(8) + `
 							)>
 
-						|	/([a-z]` + attrsRe(9) + `)>		#(8) closed tags
-						|	!([a-z]` + attrsRe(11) + `)>	#(10) <!DOCTYPE ...>
-						|	!\\[CDATA\\[	([^\\]]*  .*?)	\\]\\] >	#(12) CDATA
-						|	!--				([^-]*    .*?)	    -- >	#(13) comments
-						|	\\?				([^\\?]*  .*?)	   \\? >	#(14) instructions part1 (PHP, Perl, ASP, JSP, XML)
-						|	%				([^%]*    .*?)		 % >	#(15) instructions part2 (PHP, Perl, ASP, JSP)
+						|	/([a-z]` + attrsRe(10) + `)>	#(9) closed tags
+						|	!([a-z]` + attrsRe(12) + `)>	#(11) <!DOCTYPE ...>
+						|	!\\[CDATA\\[	([^\\]]*  .*?)	\\]\\] >	#(13) CDATA
+						|	!--				([^-]*    .*?)	    -- >	#(14) comments
+						|	\\?				([^\\?]*  .*?)	   \\? >	#(15) instructions part1 (PHP, Perl, ASP, JSP, XML)
+						|	%				([^%]*    .*?)		 % >	#(16) instructions part2 (PHP, Perl, ASP, JSP)
 						) [` + spacesRe + `]*
-							#text:
-						|	(?:
+							#(17) text:
+						|	((?:
 									[^<]+
 								|	< (?! /? [a-z]
-										| !(?: \\[CDATA\\[ | -- ) 
-										| [\\?%] 
+										| !(?: \\[CDATA\\[ | -- )
+										| [\\?%]
 										)
-							)+`;
+							)+)`;
 
-		var match, i = 0, limit = 100;
+		var match, 
+			steps = 0, 
+			stepsMax  = 10000,
+			offsetMax = 5000000,
+			typesMap = {
+				//1, 4, 5 = pairs raw tags with content
+				1  : 'open',
+				4  : 'raw',
+				5  : 'close',
+				7  : 'open',
+				9  : 'close',
+				11 : 'doctype',
+				13 : 'cdata',
+				14 : 'comment',
+				15 : 'instruct',
+				16 : 'instruct',
+				17 : 'text'
+			};
 
 		htmlRe = XRegExp(htmlRe, 'xsig');
-		console.log(htmlRe);
 
 		while (true) {
-			if (++i > limit) throw Error(limit + ' steps has been reached!');
-			match = htmlRe.exec(this)
+			if (++steps > stepsMax) throw Error(stepsMax + ' steps has been reached!');
+			match = htmlRe.exec(this);
 			if (! match) break;
-			console.log(match);
-		}
-		
+			if (match['index'] > offsetMax) throw Error(offsetMax + ' offset has been reached!');
+			for (var i in typesMap) {
+				if (typeof match[i] === 'string') {
+					if (! reviver(typesMap[i], match[i], match['index'])) return;
+					if (i > 5) break;  //1, 4, 5 = pairs raw tags with content
+				}
+			}//for
+		}//while
 	}
 	
 	/**
@@ -370,6 +412,7 @@
 	 */
 	String.prototype.htmlEntityDecode = function (strict) {
 
+		if (this.indexOf('&') === -1) return this;  //speed improve
 		if (! arguments.length) strict = true;
 		
 		//HTML entities, examples: &gt; &Ouml; &#x02DC; &#34;
@@ -415,6 +458,8 @@
 	 */
 	String.prototype.htmlToText = function () {
 		
+		if (this.indexOf('<') === -1) return this;  //speed improve
+
 		//https://developer.mozilla.org/ru/docs/Web/HTML/Block-level_elements
 		//http://www.tutorialchip.com/tutorials/html5-block-level-elements-complete-list/
 		var BLOCK_TAGS = [
@@ -476,11 +521,16 @@
 			}
 		);
 
-		str = str.htmlEntityDecode(false);
+		return str.htmlEntityDecode(false).normalize();
+	}
 
-		//remove a duplicate spaces and some chars + normalize spaces and newlines
-		str = str
-			.trim()
+	/**
+	 * Remove a duplicate spaces and some chars + normalize spaces and newlines
+	 * 
+	 * @returns {string}
+	 */
+	String.prototype.normalize = function () {
+		return this
 			.replace(/\r/g, '\n')
 			.replace(/\f/g, '\n\n') //разрыв страницы
 			//It's adopted from trim() polyfill on https://developer.mozilla.org/ru/docs/Web/JavaScript/Reference/Global_Objects/String/Trim 
@@ -491,9 +541,8 @@
 			.replace(/\n\x20/g, '\n')
 			.replace(/\x20\n/g, '\n')
 			//replace 3 and more new lines to 2 new lines
-			.replace(/\n\n\n+/g, '\n\n');
-
-		return str;
+			.replace(/\n\n\n+/g, '\n\n')
+			.trim();
 	}
 
 	/**
@@ -530,7 +579,7 @@
 	 *								```
 	 * @throws {Error} if maximum depth will be reached
 	 */
-	String.prototype.matchRecursive = function(pattern, options) {
+	String.prototype.matchRecursive = function (pattern, options) {
 		if (!(pattern instanceof RegExp)) throw TypeError('Function matchRecursive(), 1-nd parameter: a RegExp type expected, ' + (typeof options) + ' given!');
 		if (typeof options !== 'object')  throw TypeError('Function matchRecursive(), 2-nd parameter: an object type expected, ' + (typeof options) + ' given!');
 		var optProps = {
@@ -581,7 +630,7 @@
 	 * 
 	 * @returns	{string|null}	Возвращает строку или `null`, если ничего не найдено
 	 */
-	String.prototype.getJsArrayOrObject = function() {
+	String.prototype.getJsArrayOrObject = function () {
 		//http://hjson.org/
 		//https://regex101.com/#javascript
 		//http://blog.stevenlevithan.com/archives/match-innermost-html-element

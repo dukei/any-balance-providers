@@ -29,14 +29,22 @@
 		entryValues="Moskv|Sankt|Volgo|Voron|Irkut|Kalin|Kemer|Krasn|Krasn|Kursk|Nizheg|Novos|Omska|Orenb|Perms|Primo|adige|Bashko|Sever|Tatar|Rosto|Samar|Sahal|Sverd|Stavr|Tul_s|Tyumen|Habar|Hanti|Yamalo|Yarosl"
 		defaultValue="Moskv">
 	</ListPreference>
+	<ListPreference
+		key="type"
+		title="Банковский продукт"
+		summary="||{@s}\n"
+		entries="Карта|Счет"
+		entryValues="card|acc"
+		defaultValue="card">
+	</ListPreference>
 	<EditTextPreference
 		positiveButtonText="ОК"
 		key="num"
 		dialogTitle="Номер карты"
 		negativeButtonText="Отмена"
 		title="Номер карты"
-		summary="Последние 4 цифры карты|Автоматически\n|{@s}\n"
-		dialogMessage="Введите последние цифры карты, по которой вы хотите получить информацию. Если это поле оставить пустым, то будет показана информация по первой карте."
+		summary="Последние 4 цифры карты/счета|Автоматически\n|{@s}\n"
+		dialogMessage="Введите последние цифры карты/счета, по которой вы хотите получить информацию. Если это поле оставить пустым, то будет показана информация по первой карте/счету."
 		inputType="number">
 	</EditTextPreference>
 </PreferenceScreen>

@@ -14,18 +14,54 @@ describe("String", function() {
 
 	describe("htmlParser()", function() {
 
-		it("test1", function() {
-			var s = '<p>1<b>2<i>3</b>4</i>5</p>';
-			var s = sample.ugly;
+		it("test (ugly)", function() {
+			sample.ugly.htmlParser(
+				function(type, node, offset) {
+					if (type === 'text') node = node.htmlEntityDecode(false).normalize().clean();
+					//console.log([type, node, offset]);
+					return true;
+				}
+			);
+		});
 
-			s.htmlParser({
-				open: function(tag, attrs, unary) {
-					console.log(tag);
-				},
-				close: function(tag) {},
-				text: function(text) {},
-				comment: function(text) {}
-			});
+		it("test (form)", function() {
+			sample.form.htmlParser(
+				function(type, node, offset) {
+					if (type === 'text') node = node.htmlEntityDecode(false).normalize().clean();
+					//console.log([type, node, offset]);
+					return true;
+				}
+			);
+		});
+		
+		it("test (yandex)", function() {
+			sample.yandex.htmlParser(
+				function(type, node, offset) {
+					if (type === 'text') node = node.htmlEntityDecode(false).normalize().clean();
+					//console.log([type, node, offset]);
+					return true;
+				}
+			);
+		});
+		
+		it("test (mgts)", function() {
+			sample.mgts.htmlParser(
+				function(type, node, offset) {
+					if (type === 'text') node = node.htmlEntityDecode(false).normalize().clean();
+					//console.log([type, node, offset]);
+					return true;
+				}
+			);
+		});
+		
+		it("test (googledoc)", function() {
+			sample.googledoc.htmlParser(
+				function(type, node, offset) {
+					if (type === 'text') node = node.htmlEntityDecode(false).normalize().clean();
+					//console.log([type, node, offset]);
+					return true;
+				}
+			);
 		});
 		
 	});
@@ -59,6 +95,22 @@ describe("String", function() {
 			var r = '&http://krawlly.com/vacancies/js.html?&amp=1&&#65=2&&#x65=3&amp;test=4'.htmlEntityDecode(false);
 			console.log(r);
 			assert.equal(r, '&http://krawlly.com/vacancies/js.html?&amp=1&A=2&e=3&test=4');
+		});
+
+	});			
+
+	describe("htmlIndexOf()", function() {
+
+		it("Смещение для <img />", function() {
+			var r = '12345\n<img />***'.htmlIndexOf();
+			console.log(r);
+			assert.equal(r, 6);
+		});
+
+		it("Смещение для <!DOCTYPE>", function() {
+			var r = sample.ugly.htmlIndexOf();
+			console.log(r);
+			assert.equal(r, 0);
 		});
 
 	});			

@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id version="3">ab-bonus-kopilka</id>
+	<id version="4">ab-bonus-kopilka</id>
 	<name>Копилка</name>
 	<description html="true"><![CDATA[
 	<p>Получает баланс баллов на карте бонусной программы Копилка <a href="http://kopilka-bonus.ru">http://kopilka-bonus.ru</a></p>
@@ -9,7 +9,7 @@
 	<instruction html="true"><![CDATA[
 	<p>Если у вас есть карта, но ещё нет доступа в личный кабинет, зарегистрируйтесь здесь: <a href="https://kopilka-bonus.ru/join/preform.html">https://kopilka-bonus.ru/join/preform.html</a></p>
 	]]></instruction>
-	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

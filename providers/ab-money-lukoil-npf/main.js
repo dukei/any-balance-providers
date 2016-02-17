@@ -20,46 +20,56 @@ function main() {
 	
 	var html = AnyBalance.requestGet(baseurl, g_headers);
 	
-	if(!html || AnyBalance.getLastStatusCode() > 400){
+	if(!html || AnyBalance.getLastStatusCode() >= 400){
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
 	}
-
-	html = AnyBalance.requestGet(baseurl + '/ajax/get1.ashx', g_headers);
-
-	var sesId = AnyBalance.requestGet(baseurl + '/ajax/get1.ashx', addHeaders({
-		'X-Requested-With': 'XMLHttpRequest'
-	}));
-
-	if(!html.length)
-		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
+    
+    var form = getElement(html, /<form[^>]*?name[^>]{1,6}?form/i);
+    var params = createFormParams(form, function(params, str, name, value) {
+        if(/login/i.test(name)) {
+            return prefs.login;
+        }
+        if(/password/i.test(name)) {
+            return prefs.password;
+        }
+        return value;
+    });
+    
+    html = AnyBalance.requestPost(baseurl, params, addHeaders({
+        Referer: baseurl
+    }));
+    
+    if (!/logout/.test(html)) {
+        var error = getElement(getElement(html, /<div[^>]*?error/i), /<span[^>]*?mess/i, replaceTagsAndSpaces);
+        if (error) {
+            throw new AnyBalance.Error(error, false, /парол|Проверьте\s+правильность|не\s+найден/i.test(error));
+        }
+        AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
+    }
+    
+    function getDefValue(name) {
+        var m = RegExp(name + '\\s*:\\s*\\{[^\\}]*?defaultValue\\s*:\\s*([^\\s,]+)', 'i').exec(html);
+        if (m) {
+            return parseBalance(m[1]);
+        }
+        return 0;
+    }
+    
+    var result = {success: true};
+    
+    if (AnyBalance.isAvailable('balance')) {
+        result.balance = getDefValue('StartNPO') + 
+            getDefValue('StartNCHTP') + 
+            getDefValue('StartDSV');
+    }
+    
+    getParam(getElement(html, /<a\s[^>]*?message_link/, replaceTagsAndSpaces, parseBalance), result, 'messages');
+    
+	html = AnyBalance.requestGet(baseurl + 'ru/savings/pension/', g_headers);
 	
-	html = AnyBalance.requestGet(baseurl + 
-		'/ajax/conn1.ashx?pbs2=0&id=' + sesId +
-		'&name=' + prefs.login +
-		'&pwd=' + prefs.password,  
-		addHeaders({
-		'X-Requested-With': 'XMLHttpRequest'
-	}));
-
-	if(html !== '1'){
-		if(html === '0')
-			throw new AnyBalance.Error('Неверный СНИЛС или пароль.', null, null, true);
-		else if(html === '-1')
-			throw new AnyBalance.Error('Нет доступа в личный кабинет. Обратитесь, пожалуйста, на "Горячую линию" НПФ "ЛУКОЙЛ-ГАРАНТ" по телефону: 8-800-200-5-999 (Звонок бесплатный).');
-		else if(html === '-2')
-			throw new AnyBalance.Error('Разрешение ПФР на перевод средств накопительной части Вашей трудовой пенсии в НПФ "Лукойл-гарант" еще не получено.');
-		else
-			throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
-	}
-	
-	html = AnyBalance.requestGet(baseurl + '/Details.aspx', g_headers);
-	
-	var result = {success: true};
-	
-	getParam(html, result, 'balance', /SALDO>([^&]+)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'account', /PRZY_NUMER>([^&]+)/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'status', /PRZY_STATUS>([^&]+)/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'account', /Номер\s+договора:?\s*<span[^>]*>([^<]+)/i, replaceTagsAndSpaces);
 	
 	AnyBalance.setResult(result);
 }

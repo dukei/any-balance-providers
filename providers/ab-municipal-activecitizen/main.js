@@ -1,4 +1,5 @@
-﻿/**
+﻿
+/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 */
 
@@ -10,46 +11,62 @@ var g_headers = {
 	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
 };
 
-function main(){
-	var baseurl = 'http://ag.mos.ru';
-
+function main() {
 	var prefs = AnyBalance.getPreferences();
+	var baseurl = 'https://ag.mos.ru/';
 	AnyBalance.setDefaultCharset('utf-8');
-	
+
 	var phone = getParam(prefs.phone || '', null, null, /^\d{10}$/i, [/^(\d{3})(\d{3})(\d{2})(\d{2})$/, '+7 ($1) $2-$3-$4']);
 	checkEmpty(phone, 'Введите номер телефона, 10 цифр подряд!');
 	checkEmpty(prefs.password, 'Введите пароль!');
-	
+
 	var html = AnyBalance.requestGet(baseurl + '/site/index', g_headers);
 
-	html = AnyBalance.requestPost(baseurl + '/site/login',{
-		"LoginForm[username]": phone,
-		"LoginForm[password]": prefs.password,
-		"LoginForm[verifyCode]": "",
-		"LoginForm[offer]": "true",
-	}, addHeaders({'X-Requested-With': 'XMLHttpRequest', Origin: baseurl, Referer: baseurl + '/site/index'}));
-	
-	// Нужно завернуть в try/catch иначе будет падать при неверно
-	var json = getJson(html);
-	
-	if(!json.redirect) {
-		var errorJson = [];
-		for(var key in json) {
-			errorJson.push(json[key]);
-		}
-		var error = errorJson.join(', ');
-		if (error)
-			throw new AnyBalance.Error(error, null, /Неверный номер телефона или пароль/i.test(error));
-		
+	if (!html || AnyBalance.getLastStatusCode() > 400) {
 		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');		
+		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
 	}
-	
+
+	var token = getParam(html, null, null, /<input[^>]*value="([^"]*)"[^>]*name="[^"]*Token[^"]*"[^>]*>/i);
+
+	html = AnyBalance.requestPost(baseurl + 'site/login', {
+		'YII_CSRF_TOKEN': token,
+		'LoginForm[username]': phone,
+		'LoginForm[password]': prefs.password,
+		'LoginForm[verifyCode]': '',
+		"LoginForm[offer]": "true",
+	}, addHeaders({
+		'X-Requested-With': 'XMLHttpRequest',
+		Origin: 'https://ag.mos.ru',
+		Referer: baseurl
+	}));
+
+	var json = getJson(html);
+
+	if (!json.redirect) {
+		var
+			error,
+			errorrsArr = [];
+		for (var key in json) {
+			errorrsArr.push(json[key]);
+		}
+
+		error = errorrsArr.join(', ');
+
+		if (error) {
+			throw new AnyBalance.Error(error, null, /парол/i.test(error));
+		}
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
+	}
+
 	html = AnyBalance.requestGet(baseurl);
-	
-	var result = {success: true};
-	
+
+	var result = {
+		success: true
+	};
+
 	getParam(html, result, 'points', /"current_points"[^>]*>\s*(\d+)/i, replaceTagsAndSpaces, parseBalance);
-	
+
 	AnyBalance.setResult(result);
 }

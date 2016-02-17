@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change major_version="2.0" version="11" date="2016-02-09">
+	Исправлено получение минут, траффика и смс
+	</change>
 	<change major_version="2.0" version="10" date="2016-02-02">
 	- Добавлено отображение подключённых дополнительных услуг.
 	</change>

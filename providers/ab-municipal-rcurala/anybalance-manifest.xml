@@ -1,13 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="3">ab-municipal-rcurala</id>
+	<id version="4">ab-municipal-rcurala</id>
 	<api flags="no_browser"/>
 	<name>Расчётный Центр Урала</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе из аккаунта расчётного центра Урала</p>
 	<p>Информация берется с сайта https://wk.rcurala.ru/login.aspx</p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
         <depends>
 		<module id="library"/>
 	</depends>

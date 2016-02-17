@@ -1,17 +1,21 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="2.0" version="14">ab-money-paypal</id>
+	<id major_version="3.0" version="17">ab-money-paypal</id>
 	<api flags="no_browser"/>
 	<name>PayPal</name>
 	<description html="true"><![CDATA[
 	<p>Retrieves balance on your PayPal account.</p>
 	]]></description>
 	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+		<module id="mobile/imei"/>
+		<module id="crypt/md5"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
 		<history>history.xml</history>
-		<js>library.js</js>
 		<js>main.js</js>
 	</files>
 	<counters>
@@ -21,5 +25,5 @@
 		<counter id="balance_sek" name="Balance SEK" units=" SEK"/>
 	</counters>
 	<keywords>пейпал</keywords>
-	<type>money</type>
+	<type>money, wallet</type>
 </provider>

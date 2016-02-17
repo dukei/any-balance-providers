@@ -19,4 +19,14 @@
         dialogMessage="Введите ваш пароль в абонентский портал МТТ"
         inputType="textPassword">
     </EditTextPreference>
+    <EditTextPreference
+        title="Лицевой счет"
+        positiveButtonText="ОК"
+        summary="|Автоматически|{@s}"
+        dialogTitle="Лицевой счет"
+        negativeButtonText="Отмена"
+        dialogMessage="Введите последние 7 цифр лицевого счета для получения информации по нему или не вводите ничего, чтобы получить информацию по первому лицевому счету."
+        inputType="number"
+        key="num">
+    </EditTextPreference>
 </PreferenceScreen>

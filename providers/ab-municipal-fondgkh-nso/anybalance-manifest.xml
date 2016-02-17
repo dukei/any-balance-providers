@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-municipal-fondgkh-nso</id>
+	<id version="2">ab-municipal-fondgkh-nso</id>
 	<api flags="no_browser"/>
 	<name>Фонд модернизации ЖКХ Новосибирской области</name>
 	<description html="true"><![CDATA[
@@ -13,6 +13,7 @@
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>
 		<module id="library"/>
+		<module id="crypt/base64"/>
 	</depends>
 	<files>
 		<icon>icon.png</icon>

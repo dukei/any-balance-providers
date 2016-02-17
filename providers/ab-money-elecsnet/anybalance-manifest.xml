@@ -1,18 +1,20 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="4">ab-money-elecsnet</id>
+	<id version="5">ab-money-elecsnet</id>
 	<name>Элекснет</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе в кошельке Элекснет (http://elecsnet.ru)</p>
 	<p>Информация берется из личного кабинета https://1.elecsnet.ru/</p>
 	<p>ВНИМАНИЕ! Для работы провайдера требуется пароль для ВХОДА в кабинет. Платежный пароль вводить НЕ НУЖНО!</p>
 	]]></description>	
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
@@ -21,6 +23,6 @@
 		<counter id="phone" name="Телефон" type="text"/>
 	</counters>
 	<keywords></keywords>
-	<type>money</type>
+	<type>money, wallet</type>
 	<country>ru</country>
 </provider>

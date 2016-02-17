@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">crypt/md5</id>
+	<api flags="no_browser"/>
+	<name>md5 hash algorithm</name>
+	<description html="true"><![CDATA[
+	<p>Подсчет md5 хэша</p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<js>md5.min.js</js>
+		<history>history.xml</history>
+	</files>
+	<keywords></keywords>
+	<type>crypt md5</type>
+	<country></country>
+</provider>

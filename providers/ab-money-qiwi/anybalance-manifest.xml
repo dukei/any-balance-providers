@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="2.3" version="31">ab-money-qiwi</id>
+	<id major_version="2.3" version="32">ab-money-qiwi</id>
 	<api flags="no_browser"/>
 	<name>QIWI Кошелек</name>
 	<description html="true"><![CDATA[
@@ -8,12 +8,13 @@
 	<p>Информация берется из личного кабинета <a href="https://qiwi.com/">https://qiwi.com/</a></p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="nadapter"/>
+		<module id="extract/abe-money-qiwi"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
-		<js>nadapter.js</js>
-		<js>extract.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
@@ -21,6 +22,8 @@
 		<counter id="balance" name="Баланс" units=" {@currency}"/>
 		<counter id="balance2" name="Баланс 2" units=" {@currency2}"/>
 		<counter id="balance3" name="Баланс 3" units=" {@currency3}"/>
+		<counter id="balance4" name="Баланс 4" units=" {@currency4}"/>
+		<counter id="balance5" name="Баланс 5" units=" {@currency5}"/>
 		
 		<counter id="megafon_balance" name="Баланс Мегафон" units=" р"/>
 		<counter id="megafon_can_pay" name="Доступно для платежей Мегафон" units=" р"/>

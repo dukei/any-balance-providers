@@ -313,7 +313,25 @@
 		return this.search(ALL);
 	}
 	
-	String.prototype.htmlDOMParser = function (id) {
+	String.prototype.htmlDOMParser = function () {
+		
+		
+		this.htmlParser(
+			function(type, node, attrs) {
+				if (type === 'text') node = node.htmlEntityDecode(false).normalize().clean();
+				
+				attrs.htmlAttrParser(
+					function(name, value, offset) {
+						value = value.htmlEntityDecode(false).normalize().clean();
+						console.log([name, value, offset]);
+						return true;
+					}
+				);
+				
+				console.log([type, node, attrs]);
+				return true;
+			}
+		);
 		
 	}
 
@@ -342,7 +360,7 @@
 							)
 						)?`;
 
-		var match, value,
+		var match, name, value, offset,
 			attrs = 0,
 			attrsMax  = 100,
 			offsetMax = 50000;
@@ -354,12 +372,13 @@
 			match = attrRe.exec(this);
 			if (! match) break;
 			if (match['index'] > offsetMax) throw Error(offsetMax + ' offset has been reached!');
-			//console.log(match); 
+			offset = match['index'];
+			name = match[1].toLowerCase();
 			if (typeof match[2] === 'string')      value = match[2];
 			else if (typeof match[3] === 'string') value = match[3];
 			else if (typeof match[4] === 'string') value = match[4];
 			else value = '';
-			if (! reviver(match[1].toLowerCase(), value, match['index'])) return;
+			if (! reviver(name, value, offset)) return;
 		}//while
 	}
 	
@@ -382,12 +401,15 @@
 		};
 
 		//void (empty, self-closing) elements
-		var voidTags = makeMap(
+		var tagsVoid = makeMap(
 			//https://www.w3.org/TR/html5/syntax.html#elements-0 HTML5
-			'area,base,br,col,command,embed,hr,img,input,keygen,link,meta,param,source,track,wbr'
+			'area,base,br,col,command,embed,hr,img,input,keygen,link,meta,param,source,track,wbr' +
 			//HTML 4.01
-			+ ',basefont,frame,img,input,isindex,meta,param,embed'
+			',basefont,frame,img,input,isindex,meta,param,embed'
 		);
+
+		//escapable raw text elements (can have html entities)
+		var tagsRawEsc = makeMap('textarea,title');
 
 		var tagsRawRe = 'script|style|xmp' +	//raw text elements (as is)
 						'|textarea|title';		//escapable raw text elements (can have html entities)
@@ -475,9 +497,17 @@
 					if (type === 'open') {
 						m = tagRe.exec(match[i]);
 						if (m) node = m[1].toLowerCase(), attrs = m[2];
-						if (voidTags[node]) type = 'void';
+						if (tagsVoid[node]) type = 'void';
 					}
-					else if (type === 'close') node = node.toLowerCase();
+					else if (type === 'close') {
+						node = node.toLowerCase();
+						if (i == 5) offset += (match[1].length + 1) + match[4].length;
+					}
+					else if (type === 'raw') {
+						if (tagsRawEsc[ match[2].toLowerCase() ]) type = 'text';
+						offset += match[1].length + 1;
+					}
+					if (! node.length) continue;
 					if (! reviver(type, node, attrs, offset)) return;
 					if (i > 5) break;  //1, 4, 5 = pairs raw tags with content
 				}

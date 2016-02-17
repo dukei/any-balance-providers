@@ -25,13 +25,10 @@ function main() {
 	if(!html || AnyBalance.getLastStatusCode() > 400)
 		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
 	
-	
-	if(/Вход в личный кабинет/i.test(html)){
-		html = AnyBalance.requestPost(baseurl, {
-			login: prefs.login,
-			password: prefs.password
-		}, addHeaders({Referer: baseurl}));	
-	}
+	html = AnyBalance.requestPost(baseurl, {
+		login: prefs.login,
+		password: prefs.password
+	}, addHeaders({Referer: baseurl}));	
 	
 		
 	if (!/exit_form/i.test(html)) {

@@ -4,7 +4,7 @@
 	<api flags="no_browser"/>
 	<name>Смс Дисконт</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе провайдера ИмяПровайдера http://iqsms.ru</p>
+	<p>Предоставляет информацию о балансе провайдера Смс Дисконт http://iqsms.ru</p>
 	<p>Информация берется из личного кабинета http://web.iqsms.ru/</p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>

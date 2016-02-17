@@ -27,9 +27,10 @@ function main() {
 	}, addHeaders({Referer: baseurl + 'reguser.php'}));
 	
 	if (!/logout/i.test(html)) {
-		var error = getParam(html, null, null, /<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
-		if (error)
-			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
+		var error = getParam(html, null, null, /<div[^>]*errormessage[^]>*>([\s\S]+?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+		if (error) {
+            throw new AnyBalance.Error(error, null, /(?:неправильный\s+пароль|восстановить\s+логин)/i.test(error));
+        }
 		
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
@@ -37,12 +38,16 @@ function main() {
 	
 	var result = {success: true};
 	
-	getParam(html, result, 'balance', />([^<]+)(?:<[^<]*){3}ксапов/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'balance', />([^<]+)(?:<[^<]*){3}рублей/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'account', /ID в системе:(?:[^>]*>){1}([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'zakazov', /заказов:(?:[^>]*>){2}([^<]+)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'zadaniy', /заданий:(?:[^>]*>){2}([^<]+)/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'kompany', /кампаний:(?:[^>]*>){2}([^<]+)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'sites', /сайтов:(?:[^>]*>){2}([^<]+)/i, replaceTagsAndSpaces, parseBalance);
-	
+    getParam(html, result, 'sites', /сайтов:(?:[^>]*>){2}([^<]+)/i, replaceTagsAndSpaces, parseBalance);
+
+    html = AnyBalance.requestGet(baseurl + 'reguser.php?mod=order_content');
+    sumParam(html, result, 'zakazov', /Ваши текущие заказы[^<]*([\s\S]+?)</ig, replaceTagsAndSpaces, parseBalance, null, aggregate_sum);
+
+    html = AnyBalance.requestGet(baseurl + 'reguser.php?mod=jobs_in_content');
+    getParam(html, result, 'zadaniy', /Выполняемые[\s\S]*?<b>(\d+)<\/b>/i, replaceTagsAndSpaces, parseBalance);
+
 	AnyBalance.setResult(result);
 }

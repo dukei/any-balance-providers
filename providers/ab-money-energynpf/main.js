@@ -12,37 +12,56 @@ var g_headers = {
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'https://online.npfe.ru/';
+	var baseurl = 'https://lk.npfe.ru/';
 	AnyBalance.setDefaultCharset('utf-8');
 
-	var loginRegexp = /(\d{3})(\d{3})(\d{3})(\d{2})/i.exec(prefs.login);
-		
-	if(!loginRegexp) {
-		throw new AnyBalance.Error('Введите логин без разделителей, 11 цифр подряд.', null, true);
-	}
+	checkEmpty(prefs.login, 'Введите пароль!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 
-	var html = AnyBalance.requestGet(baseurl + 'poffice/login', g_headers);
+	var html = AnyBalance.requestGet(baseurl, g_headers);
 
-	html = AnyBalance.requestPost(baseurl + 'poffice/j_spring_security_check', {
-		j_username: loginRegexp[1]+'-'+loginRegexp[2]+'-'+loginRegexp[3]+' '+ loginRegexp[4],
-		j_password: prefs.password,
-		submit: 'Вход'
-	}, addHeaders({Referer: baseurl + 'poffice/login'}));
+    if (!isLoggedIn(html)) {
 
-	if (!/logout/i.test(html)) {
-		var error = getParam(html, null, null, /<strong>(Ошибка авторизации:<\/strong>[^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
-		if (error)
-			throw new AnyBalance.Error(error);
-		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
-	}
+        var params = createFormParams(html, function (params, str, name, value) {
+            if (name == '_nonempty_login4')
+                return prefs.login;
+            else if (name == '_nonempty_password4')
+                return prefs.password;
+
+            return value;
+        });
+
+        html = AnyBalance.requestPost(
+            baseurl,
+            params,
+            addHeaders({Referer: baseurl})
+        );
+
+        if (!isLoggedIn(html)) {
+            var error = getParam(html, null, null, /<span class="mess">([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
+            if (error) {
+                throw new AnyBalance.Error(error, null, /(?:не\s+найдены|неверный)/i.test(error));
+            }
+            throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
+        }
+    }
+
 	var result = {success: true};
 	
-	var table = getElement(html, /<div class="block-table">/i);
-	
-	getParam(table, result, 'balance', /Текущий баланс(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
-	getParam(table, result, 'balance_income', /Инвестиционный(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
-	getParam(table, result, '__tariff', /Номер договора(?:[\s\S]*?<td[^>]*>)([\s\S]*?)<\//i, replaceTagsAndSpaces);
-	
+	getParam(html, result, 'balance', /всего накоплено(?:[\s\S]*?)<td class="format-sum">([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, '__tariff', /номер договора(?:[\s\S]*?<\/tr>[\s\S]*?)<td>\s*<a[^>]*>([\s\S]*?)<\/a>/i, replaceTagsAndSpaces);
+
+    if (AnyBalance.isAvailable('balance_income')) {
+        var url = getParam(html, null, null, /href="(\/ru\/savings\/nonstate\/[^"]*?)"/i);
+        if (url) {
+            html = AnyBalance.requestGet(baseurl + url);
+            getParam(html, result, 'balance_income', /<div class="top">[\s\S]*?<span class="summ">([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+        }
+    }
+
 	AnyBalance.setResult(result);
+}
+
+function isLoggedIn(html) {
+    return /logout/i.test(html);
 }

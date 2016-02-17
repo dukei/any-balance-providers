@@ -1,6 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="2">ab-internet-atvc</id>
+	<api flags="no_browser"/>
+  <id version="3">ab-internet-atvc</id>
   <name>АТК (Архангельск, Новодвинск)</name>
   <description>
     Получает баланс для провайдера АТК (http://atvc.ru/)
@@ -8,10 +9,12 @@
     Информация берется из личного кабинета (https://support.atknet.ru/)
   </description>
   <author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+  <depends>
+		<module id="library"/>
+	</depends>
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
-    <js>library.js</js>
     <js>main.js</js>
     <history>history.xml</history>
   </files>

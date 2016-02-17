@@ -244,40 +244,44 @@ function processTemplates(result) {
 }
 
 function processTemplate(result, _id) {
-	AnyBalance.trace('Обработка шаблона ' + _id);
-	
-	html = AnyBalance.requestGet(baseurl + 'payment/favorite/open.action?payment=' + _id);
-	
-	getParam(html, result, 'templates.sum', /<input\s+type="hidden"\s+name="amount"\s+value="([^"]+)/i, replaceTagsAndSpaces, parseBalance);
-	
-	var dataParams = getParam(html, null, null, /<div\s+data-widget="payment-form"\s+data-params='([^']+)/i, replaceTagsAndSpaces, getJson);
-	
-	if(!dataParams)
-		throw new AnyBalance.Error('Не удалось получить данные по шаблону ' + _id);
-	
-	getParam(dataParams.provider.id, result, 'templates.prov_id');
-	getParam(dataParams.provider.name, result, 'templates.prov_name');
-	
-	var fields = sumParam(html, null, null, /<input[^>]*data-title[^>]*class=['"][^"']+dataField[^>]*>/ig);
-	
-	AnyBalance.trace('Найдено полей: ' + fields.length);
-	
-	result.fields = [];
-	
-	for(var i = 0; i < fields.length; i++) {
-		var extraJson = getParam(fields[i], null, null, /data-form-field='([^']+)/i,replaceTagsAndSpaces, html_entity_decode);
-		var name = getParam(fields[i], null, null, /data-title="([^'"]+)/i, replaceTagsAndSpaces);
-		var id = getParam(fields[i], null, null, /name="([^"]+)/i, replaceTagsAndSpaces);
-		var value = getParam(fields[i], null, null, /value="([^"]+)/i, replaceTagsAndSpaces);
+	try{
+		AnyBalance.trace('Обработка шаблона ' + _id);
 		
-		var f = {
-			'name': name,
-			'id': id,
-			'value': value,
-			'extra': extraJson
-		};
+		html = AnyBalance.requestGet(baseurl + 'payment/favorite/open.action?payment=' + _id);
 		
-		result.fields.push(f);
+		getParam(html, result, 'templates.sum', /<input\s+type="hidden"\s+name="amount"\s+value="([^"]+)/i, replaceTagsAndSpaces, parseBalance);
+		
+		var dataParams = getParam(html, null, null, /<div\s+data-widget="payment-form"\s+data-params='([^']+)/i, replaceTagsAndSpaces, getJson);
+		
+		if(!dataParams)
+			throw new AnyBalance.Error('Не удалось получить данные по шаблону ' + _id);
+		
+		getParam(dataParams.provider.id, result, 'templates.prov_id');
+		getParam(dataParams.provider.name, result, 'templates.prov_name');
+		
+		var fields = sumParam(html, null, null, /<input[^>]*data-title[^>]*class=['"][^"']+dataField[^>]*>/ig);
+		
+		AnyBalance.trace('Найдено полей: ' + fields.length);
+		
+		result.fields = [];
+		
+		for(var i = 0; i < fields.length; i++) {
+			var extraJson = getParam(fields[i], null, null, /data-form-field='([^']+)/i,replaceTagsAndSpaces, html_entity_decode);
+			var name = getParam(fields[i], null, null, /data-title="([^'"]+)/i, replaceTagsAndSpaces);
+			var id = getParam(fields[i], null, null, /name="([^"]+)/i, replaceTagsAndSpaces);
+			var value = getParam(fields[i], null, null, /value="([^"]+)/i, replaceTagsAndSpaces);
+			
+			var f = {
+				'name': name,
+				'id': id,
+				'value': value,
+				'extra': extraJson
+			};
+			
+			result.fields.push(f);
+		}
+	}catch(e){
+		AnyBalance.trace(e.message + '\n' + e.stack);
 	}
 }
 

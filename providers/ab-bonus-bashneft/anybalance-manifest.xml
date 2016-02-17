@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-bonus-bashneft</id>
+	<id version="2">ab-bonus-bashneft</id>
 	<api flags="no_browser"/>
 	<name>БАШНЕФТЬ (сеть АЗС)</name>
 	<description html="true"><![CDATA[
@@ -16,7 +16,7 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units=" {@currency}"/>
+		<counter id="balance" name="Баланс"/>
 		<counter id="currency" name="Валюта" type="text"/>
 		<counter id="fio" name="ФИО" type="text"/>
 		<counter id="cardNumber" name="Номер карты" type="text"/>

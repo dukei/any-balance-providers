@@ -1,4 +1,4 @@
-sample.form = `<table class="block" border="0" cellspacing="0" cellpadding="0" align="center">
+sample.form = `<br /><table class="block" border="0" cellspacing="0" cellpadding="0" align="center">
 	<tr>
 		<td>
 			<div id="divInfo" class="group-info">&#1044;&#1083;&#1103; &#1086;&#1087;&#1088;&#1077;&#1076;&#1077;&#1083;&#1077;&#1085;&#1080;&#1103; &#1088;&#1077;&#1075;&#1080;&#1086;&#1085;&#1072; &#1074;&#1074;&#1077;&#1076;&#1080;&#1090;&#1077; &#1042;&#1072;&#1096; &#1085;&#1086;&#1084;&#1077;&#1088; &#1090;&#1077;&#1083;&#1077;&#1092;&#1086;&#1085;&#1072;.</div>
@@ -56,14 +56,21 @@ sample.form = `<table class="block" border="0" cellspacing="0" cellpadding="0" a
 					</div>
 					<table cellpadding="0" cellspacing="0" border="0" width="100%">
 						<tr>
-							<td align="right"><input xmlns:xalan="http://xml.apache.org/xalan" 
-													 class="button_forward" 
-													 onmouseover="$(this).addClass('button_forward-hover')" 
-													 onmouseout="$(this).removeClass('button_forward-hover')" 
-													 value="&#1042;&#1086;&#1081;&#1090;&#1080;" 
-													 type="submit" 
-													 id="submitBtnId" 
-													 style=""></td>
+							<td align="right">
+								<!-- 
+									<input class="button_forward" title="OLD" value="&#1042;&#1086;&#1081;&#1090;&#1080;" type="submit" />
+								-->
+								<INPUT	xmlns:xalan="http://xml.apache.org/xalan" 
+										onmouseover='$(this).addClass("button_forward-hover")' 
+										onmouseout="$(this).removeClass('button_forward-hover')" 
+										value=&#1042;&#1086;&#1081;&#1090;&#1080; 
+										data-test-single
+										type = submit
+										data-test-broken =
+										title = "caption"
+										Id="submitBtnId" 
+										Class="button_forward" 
+										style="" /></td>
 						</tr>
 					</table>
 				</form>

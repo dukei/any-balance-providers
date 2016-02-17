@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="4">ab-bonus-ebates</id>
+	<id version="5">ab-bonus-ebates</id>
 	<api flags="no_browser"/>
 	<name>Ebates</name>
 	<description html="true"><![CDATA[
@@ -8,17 +8,19 @@
 	<p>Selfcare located at https://www.ebates.com/auth/logon.do</p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="CashPaid" name="Cash Paid" units=" $"/>
-		<counter id="CashPending" name="Cash Pending" units=" $"/>
-		<counter id="TotalCashBack" name="Total Cash Back" units=" $"/>
+		<counter id="CashPaid" name="Cash Paid" units=" {@currency}"/>
+		<counter id="CashPending" name="Cash Pending" units=" {@currency}"/>
+		<counter id="TotalCashBack" name="Total Cash Back" units=" {@currency}"/>
 		<counter id="fio" name="Ebates Member" type="text"/>
 	</counters>
 	<keywords></keywords>

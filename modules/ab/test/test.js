@@ -12,13 +12,36 @@ var invalidHtml = {
  */
 describe("String", function() {
 
+	describe("htmlAttrParser()", function() {
+		
+		it("test (form)", function() {
+			var r = ` type="checkbox" 
+						 xmlns:xalan =  
+						class="button_forward" 
+						onmouseover="$(this).addClass('button_forward-hover')" 
+						Checked
+						onmouseout='$(this).removeClass("button_forward-hover")' 
+						value=&#1042;&#1086;&#1081;&#1090;&#1080;
+						Id = "submitBtnId" 
+						style=""`;
+			r.htmlAttrParser(
+				function(name, value, offset) {
+					value = value.htmlEntityDecode(false).normalize().clean();
+					console.log([name, value, offset]);
+					return true;
+				}
+			);
+		});
+		
+	});
+
 	describe("htmlParser()", function() {
 
 		it("test (ugly)", function() {
 			sample.ugly.htmlParser(
-				function(type, node, offset) {
+				function(type, node, attrs, offset) {
 					if (type === 'text') node = node.htmlEntityDecode(false).normalize().clean();
-					//console.log([type, node, offset]);
+					//console.log([type, node, attrs, offset]);
 					return true;
 				}
 			);
@@ -26,9 +49,9 @@ describe("String", function() {
 
 		it("test (form)", function() {
 			sample.form.htmlParser(
-				function(type, node, offset) {
+				function(type, node, attrs, offset) {
 					if (type === 'text') node = node.htmlEntityDecode(false).normalize().clean();
-					//console.log([type, node, offset]);
+					//console.log([type, node, attrs, offset]);
 					return true;
 				}
 			);
@@ -36,9 +59,9 @@ describe("String", function() {
 		
 		it("test (yandex)", function() {
 			sample.yandex.htmlParser(
-				function(type, node, offset) {
+				function(type, node, attrs, offset) {
 					if (type === 'text') node = node.htmlEntityDecode(false).normalize().clean();
-					//console.log([type, node, offset]);
+					//console.log([type, node, attrs, offset]);
 					return true;
 				}
 			);
@@ -46,9 +69,9 @@ describe("String", function() {
 		
 		it("test (mgts)", function() {
 			sample.mgts.htmlParser(
-				function(type, node, offset) {
+				function(type, node, attrs, offset) {
 					if (type === 'text') node = node.htmlEntityDecode(false).normalize().clean();
-					//console.log([type, node, offset]);
+					//console.log([type, node, attrs, offset]);
 					return true;
 				}
 			);
@@ -56,9 +79,9 @@ describe("String", function() {
 		
 		it("test (googledoc)", function() {
 			sample.googledoc.htmlParser(
-				function(type, node, offset) {
+				function(type, node, attrs, offset) {
 					if (type === 'text') node = node.htmlEntityDecode(false).normalize().clean();
-					//console.log([type, node, offset]);
+					//console.log([type, node, attrs, offset]);
 					return true;
 				}
 			);

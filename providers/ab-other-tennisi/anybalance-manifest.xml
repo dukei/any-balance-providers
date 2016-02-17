@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-other-tennisi</id>
+	<api flags="no_browser"/>
+	<name>Tennisi.Com</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера <a href="https://kg.tennisi.com">Тотализатор Tennisi.Com</a></p>
+	<p>Информация берется из <a href="https://kg.tennisi.com/mtg2/cgi/sec.Welcome">личного кабинета</a> тотализатора</p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<js>moment.min.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" kgs"/>
+		<counter id="available" name="Доступный баланс" units=" kgs"/>
+		<counter id="stake" name="В ставках"/>
+		<counter id="taking_down" name="Заявлено на снятие"/>
+		<counter id="bonus" name="Бонус"/>
+		<counter id="login" name="Логин" type="text"/>
+		<counter id="stake_count" name="Количество ставок"/>
+		<counter id="wins" name="Выигрыши" type="text"/>
+		<counter id="defeats" name="Поражения" type="text"/>
+		<counter id="total" name="Всего" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>other</type>
+	<country>kg</country>
+</provider>

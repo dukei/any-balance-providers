@@ -4,8 +4,8 @@
 	<api flags="no_browser"/>
 	<name>Delor</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе провайдера http://bonus.xtk19.ru</p>
-	<p>Информация берется из личного кабинета http://bonus.xtk19.ru/cards</p>
+	<p>Предоставляет информацию о балансе провайдера Delor http://bonus.xtk19.ru</p>
+	<p>Информация берется из личного кабинета Delor http://bonus.xtk19.ru/cards</p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>

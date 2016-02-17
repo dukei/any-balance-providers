@@ -36,16 +36,16 @@ function main() {
         enteruser: 'ВХОД'
     };
 
-	html = AnyBalance.requestPost(baseurl, params, AB.addHeaders({Referer: baseurl}));
-
-    var error = AB.getParam(html, null, null, /enter_message[^>]*>([\s\S]+?)<\/div>/i, AB.replaceTagsAndSpaces);
-    if (error) {
-        throw new AnyBalance.Error(error, null, /(?:логин|пароль)/i.test(error));
-    }
+	var postHtml = AnyBalance.requestPost(baseurl, params, AB.addHeaders({Referer: baseurl}));
 
     html = AnyBalance.requestGet(baseurl + 'cards', g_headers);
 
 	if (!/logout/i.test(html)) {
+        var error = AB.getParam(postHtml, null, null, /enter_message[^>]*>([\s\S]+?)<\/div>/i, AB.replaceTagsAndSpaces);
+        if (error) {
+            throw new AnyBalance.Error(error, null, /(?:логин|пароль)/i.test(error));
+        }
+
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}

@@ -1,13 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="5">ab-tracking-novaposhta</id>
+  <id version="6">ab-tracking-novaposhta</id>
   <api flags="no_browser"/>
   <name>Нова пошта</name>
   <description>
     Отслеживание почтового отправления украинской службой доставки грузов Нова Пошта (http://novaposhta.ua).
     Рекомендуется показывать местоположение в текстовом виджете не менее 1х2.
   </description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
   <files>
     <icon>icon.png</icon>
     <js>library.js</js>
@@ -19,6 +19,7 @@
     <counter id="location" name="Текущее местоположение" type="text"/>
     <counter id="route" name="Маршрут" type="text"/>
     <counter id="trackid" name="№ накладной" type="text"/>
+    <counter id="delivery_address" name="Адрес доставки" type="text"/>
     <counter id="back" name="Обратная доставка" type="text"/>
     <counter id="weight" name="Вес отправления" type="text"/>
     <counter id="payment" name="Сумма к оплате" type="text"/>

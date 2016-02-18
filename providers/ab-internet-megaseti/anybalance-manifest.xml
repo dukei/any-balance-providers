@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-internet-megaseti</id>
+	<api flags="no_browser"/>
+	<name>Мегасети</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет данные аккаунта абонента интернет-провайдера Мегасети™ <a href="http://megaseti.net">http://megaseti.net</a></p>
+	<p>Информация берется из личного кабинета <a href="http://lk.megaseti.net">http://lk.megaseti.net</a></p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" type="numeric" units=" руб."/>
+		<counter id="name" name="ФИО" type="text" />
+		<counter id="contract" name="Номер договора" type="text" />
+		<counter id="code" name="Код оплаты" type="text" />
+	</counters>
+	<keywords>передача данных, домашний, internet, сеть, ООО Мегасети, Megaseti, Владимир, Покров</keywords>
+	<type>internet</type>
+	<country>ru</country>
+</provider>

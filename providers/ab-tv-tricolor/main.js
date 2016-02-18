@@ -87,6 +87,7 @@ function main(){
             var serviceId = json.value[idx].ServiceId;
             if (serviceId && services.indexOf(serviceId) > -1) {
                 getParam(json.value[idx].Balance, result, 'balance');
+                break;
             }
         }
     }

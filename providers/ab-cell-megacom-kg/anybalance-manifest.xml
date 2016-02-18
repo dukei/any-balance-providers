@@ -33,6 +33,6 @@
 		<counter id="balance_login" name="Актуальный баланс на момент входа в Личный кабинет" type="numeric" />
 	</counters>
 	<keywords>cотовый, телефон, мобильный, мобильник, Мегаком</keywords>
-	<type>bonus</type>
+	<type>cell</type>
 	<country>kg</country>
 </provider>

@@ -312,23 +312,24 @@
 			ALL = XRegExp.union([OPENED_OR_DOCTYPE, CDATA, COMMENT], 'xs');
 		return this.search(ALL);
 	}
-	
-	String.prototype.htmlDOMParser = function () {
-		
-		
-		this.htmlParser(
+
+	//TODO
+	String.prototype.htmlSelector = function () {
+		//TODO
+		return this.htmlParser(
 			function(type, node, attrs) {
 				if (type === 'text') node = node.htmlEntityDecode(false).normalize().clean();
+				console.log([type, node, attrs]);
 				
-				attrs.htmlAttrParser(
+				if (! attrs.length) return true;
+				if (! attrs.htmlAttrParser(
 					function(name, value, offset) {
 						value = value.htmlEntityDecode(false).normalize().clean();
 						console.log([name, value, offset]);
 						return true;
 					}
-				);
+				)) return false;
 				
-				console.log([type, node, attrs]);
 				return true;
 			}
 		);
@@ -343,7 +344,7 @@
 	 *					  Поэтому, если пользовательская callback функция возвращает true, то обработка продолжится, иначе прервётся.
 	 * @link https://www.w3.org/TR/html5/
 	 * @link http://html5sec.org/
-	 * @returns {undefined}
+	 * @returns bool
 	 */
 	String.prototype.htmlAttrParser = function (reviver) {
 
@@ -378,8 +379,9 @@
 			else if (typeof match[3] === 'string') value = match[3];
 			else if (typeof match[4] === 'string') value = match[4];
 			else value = '';
-			if (! reviver(name, value, offset)) return;
+			if (! reviver(name, value, offset)) return false;
 		}//while
+		return true;
 	}
 	
 	/**
@@ -390,7 +392,7 @@
 	 *					  Поэтому, если пользовательская callback функция возвращает true, то обработка продолжится, иначе прервётся.
 	 * @link https://www.w3.org/TR/html5/
 	 * @link http://html5sec.org/
-	 * @returns {undefined}
+	 * @returns bool
 	 */
 	String.prototype.htmlParser = function (reviver) {
 
@@ -508,11 +510,12 @@
 						offset += match[1].length + 1;
 					}
 					if (! node.length) continue;
-					if (! reviver(type, node, attrs, offset)) return;
+					if (! reviver(type, node, attrs, offset)) return false;
 					if (i > 5) break;  //1, 4, 5 = pairs raw tags with content
 				}
 			}//for
 		}//while
+		return true;
 	}
 	
 	/**

@@ -1,10 +1,5 @@
 /**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
-
-Статус почтового отправления с сайта novaposhta.ua
-
-Сайт оператора: http://novaposhta.ua
-Личный кабинет: http://novaposhta.ua/frontend/tracking/ru
 */
 
 var g_headers = {
@@ -20,24 +15,25 @@ function main(){
 
     AnyBalance.setDefaultCharset('utf-8');
 	AnyBalance.trace('Connecting to novaposhta...');
-
-	var baseurl = 'https://novaposhta.ua/tracking';
+	
+	var baseurl = 'https://novaposhta.ua/ru/tracking';
 	var html = AnyBalance.requestGet(baseurl + '/?cargo_number=' + encodeURIComponent(prefs.track_id), addHeaders({Origin:baseurl}));
 
-	if (/не найден|не знайдено/i.test(html)) {
-        var error = getParam(html, null, null, /<div\s+class="highlight">([\s\S]*?(?:не знайдено|не найден)[\s\S]*?)<\/p>/i, replaceTagsAndSpaces, html_entity_decode);
-        if(error) {
-            throw new AnyBalance.Error(error);
-        }
+	if (!/Маршрут/i.test(html)) {
+        var error = getParam(html, null, null, /Текущее местоположение:?([\s\S]*?)<\/p>/i, replaceTagsAndSpaces);
+        if(error)
+            throw new AnyBalance.Error(error, null, /не найден/i.test(html));
+		
+		AnyBalance.trace(html);
         throw new AnyBalance.Error('Не найден статус отправления. Неверный код отправления или произошли изменения на сайте.');
     }
      
 	var result = {success: true};
 
-    getParam(html, result, 'trackid', /(?:Результат пошуку[^№]+|Результат поиска[^№]+)(?:[№])([^<:]*)/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'route', /Маршрут:(?:[^>]*>){1}([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'location', /(?:Текущее местоположение|Поточне місцезнаходження):([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'delivery_address', /(?:Адрес доставки|Адреса доставки):([\s\S]+?)<\/p>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'trackid', /(?:Результат пошуку[^№]+|Результат поиска[^№]+)(?:[№])([^<:]*)/i, replaceTagsAndSpaces);
+    getParam(html, result, 'route', /Маршрут:(?:[^>]*>){1}([^<]+)/i, replaceTagsAndSpaces);
+    getParam(html, result, 'location', /(?:Текущее местоположение|Поточне місцезнаходження):([\s\S]*?)<\/p>/i, replaceTagsAndSpaces);
+    getParam(html, result, 'delivery_address', /(?:Адрес доставки|Адреса доставки):([\s\S]+?)<\/p>/i, replaceTagsAndSpaces);
 
 	AnyBalance.setResult(result);
 }

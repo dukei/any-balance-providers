@@ -1,18 +1,18 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
-  <change version="6" date="2016-02-08">
-    - Поддержка изменений на сайте.
-  </change>
-	<change version="5" date="2015-10-30">
-	  - Поддержка изменений на сайте.
+	<change version="6" date="2016-02-18">
+	- Поддержка изменений на сайте.
 	</change>
-  <change version="4" date="2014-09-29">
-    - Поддержка изменений на сайте
-  </change>
-  <change version="3" date="2013-08-23">
-    - Исправлено получение информации по отправлению
-  </change>
-  <change version="2" date="2013-08-04">
-    - Исправлено отображение номера накладной
-  </change>
+	<change version="5" date="2015-10-30">
+	- Поддержка изменений на сайте.
+	</change>
+	<change version="4" date="2014-09-29">
+	- Поддержка изменений на сайте
+	</change>
+	<change version="3" date="2013-08-23">
+	- Исправлено получение информации по отправлению
+	</change>
+	<change version="2" date="2013-08-04">
+	- Исправлено отображение номера накладной
+	</change>
 </history>

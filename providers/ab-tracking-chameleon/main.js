@@ -10,10 +10,10 @@ function main() {
 	var baseurl = 'http://gde.mychameleon.ru/';
 
 	var prefs = AnyBalance.getPreferences();
-
+	
 	AB.checkEmpty(prefs.login, 'Введите логин!');
 	AB.checkEmpty(prefs.password, 'Введите пароль!');
-	AB.checkEmpty(prefs.watchId, 'ID объекта наблюдения!');
+	AB.checkEmpty(prefs.watchId, 'Введите ID объекта наблюдения из ссылки http://gde.mychameleon.ru/#watches/<ID>');
 
 	AnyBalance.setDefaultCharset('utf-8');
 
@@ -91,7 +91,8 @@ function main() {
 	javacriptStr.split('\n').forEach(function (lineStr) {
 		var line = lineStr.match(/window\.parent\.[\w]+\(([^\n]+)\);/);
 		if (line) {
-			var data = getJson(line[1].replace(/'/g, '"').replace(/([\{\s,])(\w+):/gi, '$1"$2":'));
+			//var data = getJson(line[1].replace(/'/g, '"').replace(/([\{\s,])(\w+):/gi, '$1"$2":'));
+			var data = getJsonEval(line[1]);
 			if (data && data.watchId == prefs.watchId) {
 				if (data.loc) {
 					result.loc = data.loc;

@@ -27,27 +27,12 @@ function main() {
 		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
 	}
 
-	var params = createFormParams(html, function(params, str, name, value) {
-				if (name == 'IDToken1')
-						return prefs.login;
-				else if (name == 'IDToken2')
-						return prefs.password;
-
-					return value;
-			});
-
-	html = AnyBalance.requestPost(baseurl + 'amserver/UI/Login?goto='+encodeURIComponent(g_baseurl+'#!/login'), params, addHeaders({
-		Referer: baseurl + 'amserver/UI/Login'
-	}));
-
-	if (!/logout/i.test(html)) {
-		var error = getParam(html, null, null, /passwordErr\s*=\s*['"]([\s\S]*?)['"]/i);
-		if(error)
-			throw  new AnyBalance.Error(error, null, /Неверный пароль/i.test(error));
-
-		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
-	}
+	html = enterMTS({
+		baseurl: g_baseurl,
+		url: baseurl+'amserver/UI/Login?goto='+encodeURIComponent(g_baseurl+'#!/login'),
+		login: prefs.login,
+		password: prefs.password,
+	});
 
 	var result = {success: true};
 	var json;
@@ -56,8 +41,8 @@ function main() {
 		html = AnyBalance.requestGet(g_baseurl+'api/user ', g_headers);
 		json = getJson(html);
 
-		getParam(json.fullName || '', result, 'fio');
-		getParam(json.balance ? json.balance.toFixed(2) : '', result, 'balance', null, null, parseBalance);
+		getParam(json.fullName || undefined, result, 'fio');
+		getParam(json.balance ? json.balance.toFixed(2) : undefined, result, 'balance', null, null, parseBalance);
 	}
 	if(isAvailable(['lastCharge', 'allAccrued', 'date'])) {
 		html = AnyBalance.requestGet(g_baseurl+'api/user/history', g_headers);
@@ -68,8 +53,8 @@ function main() {
 			sumAllAccured +=json[i].value;
 		result.allAccured = sumAllAccured;
 
-		getParam(json[0] ? json[0].value + '' : '', result, 'lastCharge', null, null, parseBalance);
-		getParam(json[0] ? json[0].date : '', result, 'date', null, null, parseDate);
+		getParam(json[0] ? json[0].value + '' : undefined, result, 'lastCharge', null, null, parseBalance);
+		getParam(json[0] ? json[0].date : undefined, result, 'date');
 	}
 
 	AnyBalance.setResult(result);

@@ -53,6 +53,9 @@ function main() {
 		},
 		json;
 
+
+	AB.getParam(html, result, '__tariff', /<h2[^>]*id="[^"]*company[^"]*"[^>]*>([\s\S]*?)<\/h2>/i, AB.replaceTagsAndSpaces);
+
 	if (AnyBalance.isAvailable('balance', 'billsForCurrentYear')) {
 		try {
 

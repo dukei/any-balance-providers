@@ -2,16 +2,20 @@
 <provider>
 	<id version="3">ab-service-ivideon</id>
 	<api flags="no_browser"/>
-	<name>IVIDEON</name>
+	<name>Ivideon</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе провайдера IVIDEON http://ru.ivideon.com/</p>
-	<p>Информация берется из личного кабинета https://ru.ivideon.com/my/service/login</p>
+		<p>Предоставляет информацию из личного кабинета облачного видеонаблюдения от компании Ivideon<a href="https://ru.ivideon.com/">https://ru.ivideon.com/</a></p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<instruction html="true"><![CDATA[
+	<p>Если у вас нет доступа в Личный кабинет, получите его на странице <a href="https://ru.ivideon.com/registraciya/">https://ru.ivideon.com/registraciya/</a></p>
+	]]></instruction>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
@@ -19,7 +23,7 @@
 		<counter id="balance" name="Баланс" units=" {@currency}"/>
 		<counter id="currency" name="Валюта" type="text"/>
 	</counters>
-	<keywords></keywords>
+	<keywords>Облачное видеонаблюдение от компании Ivideon айвидеон</keywords>
 	<type>service</type>
 	<country>ru</country>
 </provider>

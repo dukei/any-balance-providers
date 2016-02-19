@@ -18,7 +18,7 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balanceElec" name="Электроэнергия" units=" р"/>
+		<counter id="balance" name="Электроэнергия" units=" р"/>
 		<counter id="balanceHeat" name="Отопление" units=" р"/>
 		<counter id="balanceGVS" name="ГВС" units=" р"/>
 		<counter id="to_pay" name="Итого к оплате" units=" р"/>

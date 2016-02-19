@@ -64,7 +64,7 @@ function main() {
         for(var i = 0; i < accounts.length; i++) {
             var counter_name;
             if(/электроэнергия/i.test(accounts[i].ServiceName))
-                counter_name = 'balanceElec';
+                counter_name = 'balance';
             else if(/отопление/i.test(accounts[i].ServiceName))
                 counter_name = 'balanceHeat';
             else if(/ГВС/i.test(accounts[i].ServiceName))

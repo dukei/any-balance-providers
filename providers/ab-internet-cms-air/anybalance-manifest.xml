@@ -1,22 +1,25 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id version="1">ab-internet-cms-air</id>
+	<id version="2">ab-internet-cms-air</id>
 	<name>Air</name>
 	<description html="true"><![CDATA[
-  <p>	Предоставляет информацию о балансе CMS Air <a href="http://cms.air.io">cms.air.io</a></p>
-	<p>Информация берется из личного кабинета <a href="http://cms.air.io/statistics/referral_system">cms.air.io/statistics/referral_system</a></p>
+	<p>Предоставляет информацию о балансе CMS Air http://cms.air.io </p>
+	<p>Информация берется из личного кабинета http://cms.air.io/statistics/referral_system </p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="income" name="Доход" prefix="$ "/>
+		<counter id="balance" name="Баланс" prefix="$ "/>
+		<counter id="income" name="Общий доход партнера" prefix="$ "/>
 		<counter id="full_name" name="ФИО" type="text"/>
 	</counters>
 	<keywords></keywords>

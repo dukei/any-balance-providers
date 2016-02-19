@@ -86,12 +86,10 @@ function main() {
 	var result = { success: true };
 
 	var javacriptStr = AnyBalance.requestGet(baseurl + '/ds.p/' + (new Date().getTime()), AB.addHeaders({ Referer: baseurl }));
-	javacriptStr = unescape(javacriptStr.replace(/\\u/g, '%u'));
 	var dataJson = [];
 	javacriptStr.split('\n').forEach(function (lineStr) {
 		var line = lineStr.match(/window\.parent\.[\w]+\(([^\n]+)\);/);
 		if (line) {
-			//var data = getJson(line[1].replace(/'/g, '"').replace(/([\{\s,])(\w+):/gi, '$1"$2":'));
 			var data = getJsonEval(line[1]);
 			if (data && data.watchId == prefs.watchId) {
 				if (data.loc) {

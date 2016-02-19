@@ -16,12 +16,10 @@ function main() {
 	AnyBalance.setDefaultCharset('utf-8');
 
 	/* Проверяем не забыл ли пользователь ввести данные */
-
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 
 	/* Проверяем доступность ресурса */
-
 	var html = AnyBalance.requestGet(baseurl + 'login.xhtml', g_headers);
 
 	if(!html || AnyBalance.getLastStatusCode() > 400){
@@ -46,12 +44,12 @@ function main() {
 		var captcha = AnyBalance.retrieveCode('Введите код с картинки', img);
 		params['captchaText'] = captcha;
 	}
-
+	
 	params.submitButton = 'submitButton';
-
+	
 	html = AnyBalance.requestPost(baseurl + 'login.xhtml', params, g_headers);
-
-	if(!html || AnyBalance.getLastStatusCode() > 400){
+	
+	if(!html || AnyBalance.getLastStatusCode() > 400) {
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Ошибка при входе в личный кабинет! Попробуйте обновить данные позже.');
 	}
@@ -61,13 +59,12 @@ function main() {
 	if (!/Выход/i.test(exitLink)) {
 		// определяем ошибку
 		var error = getElementsByClassName(html, 'ui-messages-error-summary', replaceTagsAndSpaces);
-		if (error.length) {
+		if (error.length)
 			throw new AnyBalance.Error(error[0], null, /Введен неверный логин или пароль|Введите логин в формате|Пользователя не существует/i.test(error[0]));
-		} else {
-			// если не смогли определить ошибку, то показываем дефолтное сообщение
-			AnyBalance.trace(html);
-			throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
-		}
+		
+		// если не смогли определить ошибку, то показываем дефолтное сообщение
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
 
 	/* Получаем данные */

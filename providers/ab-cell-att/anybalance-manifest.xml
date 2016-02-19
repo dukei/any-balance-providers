@@ -1,6 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-cell-att</id>
+	<api flags="no_browser"/>
+	<id version="2">ab-cell-att</id>
 	<name>AT&amp;T (USA)</name>
 	<description html="true"><![CDATA[
 	<p>Obtains information from AT&amp;T personal account <a href=""></a></p>
@@ -10,10 +11,12 @@
 	<p>If you are not registered for AT&amp;T you can register here: <a href="https://www.att.com/olam/slidRegistrationAction.olamexecute">https://www.att.com/olam/slidRegistrationAction.olamexecute</a></p>
 	]]></instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+    <depends>
+  		<module id="library"/>
+  	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>

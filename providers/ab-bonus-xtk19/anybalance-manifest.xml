@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-bonus-xtk19</id>
+	<api flags="no_browser"/>
+	<name>Delor</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера Delor http://bonus.xtk19.ru</p>
+	<p>Информация берется из личного кабинета Delor http://bonus.xtk19.ru/cards</p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
+	<files>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="bonuses" name="Остаток бонусов"/>
+		<counter id="full_name" name="ФИО" type="text"/>
+		<counter id="card_number" name="Номер карты" type="text"/>
+		<counter id="status" name="Статус" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>bonus</type>
+	<country>ru</country>
+</provider>

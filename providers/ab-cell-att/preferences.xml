@@ -23,10 +23,11 @@
     <EditTextPreference 
         positiveButtonText="OK"
         key="code" 
-        dialogTitle="Code"
+        dialogTitle="Passcode"
         negativeButtonText="Cancel"
-        title="Code"
-        summary="||{@s}"
-        dialogMessage="Please, enter code for your AT&amp;T account.">
+        title="Passcode"
+        summary="||**********"
+        dialogMessage="Please, enter passcode for your AT&amp;T account."
+        inputType="textPassword">
     </EditTextPreference>
 </PreferenceScreen>

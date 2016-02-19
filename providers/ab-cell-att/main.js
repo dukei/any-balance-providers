@@ -16,15 +16,15 @@ function main(){
     var prefs = AnyBalance.getPreferences();
     var baseurl = 'https://m.att.com/';
 
-    checkEmpty(prefs.login, 'Введите логин!');
-    checkEmpty(prefs.password, 'Введите пароль!');
-    checkEmpty(prefs.password, 'Введите проверочный код!');
+    checkEmpty(prefs.login, 'Please enter your login!');
+    checkEmpty(prefs.password, 'Please enter your password!');
+    checkEmpty(prefs.code, 'Please enter your passcode!');
 
     var html = AnyBalance.requestGet(baseurl + 'myatt/', g_headers);
 
     if(!html || AnyBalance.getLastStatusCode() > 400){
         AnyBalance.trace(html);
-        throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
+        throw new AnyBalance.Error("Error connecting to the provider's website! Try to refresh the data later.");
     }
 
     var params = {
@@ -221,20 +221,6 @@ function main(){
         getParam(json.UverseAccountDetails.BillingDetails.BillingEndtDate, result, 'uverseenddate', null, null, AB.parseDateISO);
         getParam(json.UverseAccountDetails.AccountStatus, result, 'uversestatus');
     }
-	
-    // getParam(findTagWithClass(html,'div','plan-name'), result, 'planName', /^.*$/, replaceTagsAndSpaces, html_entity_decode);
-    // getParam(findTagWithClass(html,'p','sup'), result, 'balance', /^.*$/, replaceTagsAndSpaces, parseBalance);
-    // getParam(html, result, 'expires', /Expires on (\S+\s+\d+)/, replaceTagsAndSpaces, parseDate);
-    // getParam(html, result, 'minPerMonth', /<strong>\d+ of (\d+) minutes<\/strong>/i, replaceTagsAndSpaces, parseBalance);
-    // getParam(html, result, 'minAvailable', /<strong>(\d+) of \d+ minutes<\/strong>/i, replaceTagsAndSpaces, parseBalance);
-    // getParam(html, result, 'till', /Plan\s+Renews\s+On\s+<p[^>]*>\s*(\S+\s\d+)\D.{30}/, replaceTagsAndSpaces, parseDate);
-
-    // getParam(html, result, 'smsPerMonth', /<strong>\d+ of (\d+) messages<\/strong>/i, replaceTagsAndSpaces, parseBalance);
-    // getParam(html, result, 'smsAvailable', /<strong>(\d+) of \d+ messages<\/strong>/i, replaceTagsAndSpaces, parseBalance);
-    // getParam(html, result, 'trafficPerMonth', /<strong>[.\d]+ MB\s+of\s+([.\d]+ MB)\s*<\/strong>/i, replaceTagsAndSpaces, html_entity_decode);
-    // getParam(html, result, 'trafficAvaliable', /<strong>([.\d]+ MB)\s+of\s+[.\d]+ MB\s*<\/strong>/i, replaceTagsAndSpaces, html_entity_decode);
-
-    // getParam(html, result, 'status', /Plan Status\s*:[\s\S]*?<var[^>]*>([\s\S]*?)<\/var>/i, replaceTagsAndSpaces, html_entity_decode);
 	
     AnyBalance.setResult(result);
 }

@@ -55,10 +55,10 @@ function main() {
 
 	var result = {success: true};
 
-	getParam(html, result, 'balanceSP', /Школьное питание [\s\S]*Остаток на 01[\s\S]*Остаток на [\s\S]*<td class="month_summ___saldoN fabrik_element fabrik_list_84_group_100" >([^<]+)[\s\S]*<td class="month_summ___saldoN fabrik_element fabrik_list_84_group_100" >[\s\S]*Группа продленного дня/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'topaySP', /Школьное питание [\s\S]*<td class="month_summ___saldoN fabrik_element fabrik_list_84_group_100" >([^<]+)[\s\S]*Группа продленного дня/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'balanceGPD', /Группа продленного дня[\s\S]*Остаток на 01[\s\S]*Остаток на [\s\S]*<td class="month_summ___saldoN fabrik_element fabrik_list_84_group_100" >([^<]+)[\s\S]*<tr id="list_84_com_fabrik_84/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'topayGPD', /Группа продленного дня[\s\S]*Остаток на 01[\s\S]*Остаток на [\s\S]*<td class="month_summ___saldoN fabrik_element fabrik_list_84_group_100" >([^<]+)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'balanceSP', /Школьное питание [\s\S]*?Остаток на 01[\s\S]*?Остаток на [\s\S]*?<td class="month_summ___saldoN fabrik_element fabrik_list_84_group_100" >([^<]+)[\s\S]*?<\/td/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'topaySP', /Школьное питание [\s\S]*?Остаток на 01[\s\S]*?Остаток на [\s\S]*?Сумма к оплате[\s\S]*?<td class="month_summ___saldoN fabrik_element fabrik_list_84_group_100" >([^<]+)[\s\S]*?<\/td/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'balanceGPD', /Группа продленного дня[\s\S]*Остаток на 01[\s\S]*Остаток на [\s\S]*?<td class="month_summ___saldoN fabrik_element fabrik_list_84_group_100" >([^<]+)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'topayGPD', /Группа продленного дня[\s\S]*Остаток на 01[\s\S]*Остаток на [\s\S]*Сумма к оплате[\s\S]*?<td class="month_summ___saldoN fabrik_element fabrik_list_84_group_100" >([^<]+)/i, replaceTagsAndSpaces, parseBalance);
 	AnyBalance.trace(result);
 
 

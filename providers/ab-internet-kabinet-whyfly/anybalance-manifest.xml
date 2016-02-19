@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<api flags="no_browser"/>
+	<id version="1">ab-internet-kabinet-whyfly</id>
+	<name>Оператора связи WHYFLY</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе и выбранном лицевом счете для пользователей оператора связи "WHYFLY".</p> 
+	<p>Информация берется из личного кабинета https://lk.whyfly.ru/</p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="tariff" name="Тариф" type="text"/>
+		<counter id="month_fee" name="Абонентская плата, в мес." type="number" units=" р"/>
+		<counter id="sms" name="MMS и SMS" type="text" units=" шт"/>
+		<counter id="calls" name="Местные вызовы" type="text" units=" мин"/>
+		<counter id="internet" name="Мобильный интернет" type="text"  units=" ГБ"/>
+		<counter id="status" name="Cтатус" type="text"/>
+	</counters>
+	<keywords>интернет</keywords>
+	<type>internet, telephony</type>
+	<country>ru</country>
+</provider>

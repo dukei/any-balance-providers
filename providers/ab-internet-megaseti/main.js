@@ -51,7 +51,7 @@ function main() {
 	if (!/Выход/i.test(exitLink)) {
 		// определяем ошибку
 		var error = getElementsByClassName(html, 'alert alert-block alert-error', replaceTagsAndSpaces);
-		if (error.length) {
+		if (error && error.length) {
 			// substring(1) - удаляет 'x' от кнопки закрытия сообщения
 			throw new AnyBalance.Error(error[0].substring(1), null, /Неверное имя пользователя или пароль/i.test(error[0]));
 		} else {
@@ -85,13 +85,19 @@ function main() {
 	};
 
 	var table = getElement(html, /<table[^>]*?panel-grid[^>]*?>/i);
-	if (table) {
+	if (table && AnyBalance.isAvailable('balance', 'code', 'contract')) {
 		var info = [];
 		processTable(table, info, 'info.', colsDef);
 		if (info.length) {
-			result.balance = info[0].balance;
-			result.code = info[0].code;
-			result.contract = info[0].contract;
+			if(AnyBalance.isAvailable('balance')) {
+				result.balance = info[0].balance;
+			}
+			if(AnyBalance.isAvailable('code')) {
+				result.code = info[0].code;
+			}
+			if(AnyBalance.isAvailable('contract')) {
+				result.contract = info[0].contract;
+			}
 		}
 	}
 

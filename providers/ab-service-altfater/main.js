@@ -32,11 +32,14 @@ function main() {
 
     html = AB.requestPostMultipart(baseurl + '?chronoform=Proverka-dolgov&event=submit', payload);
 
-    var error = AB.getParam(html, null, null, /<div class="gbs3"[\s\S]*?<form[^>]*>[\s\S]*?<\/form>([\s\S]+?)</i, AB.replaceTagsAndSpaces);
+    if (!/<p>лицевой счет/i.test(html)) {
+        var error = AB.getParam(html, null, null, /<div class="gbs3"[\s\S]*?<form[^>]*>[\s\S]*?<\/form>([\s\S]+?)</i, AB.replaceTagsAndSpaces);
+        if (error) {
+            throw new AnyBalance.Error(error);
+        }
 
-	if (error) {
-		throw new AnyBalance.Error(error);
-	}
+        throw new AnyBalance.Error('Не удалось получить данные по лицевому счету. Сайт изменен?');
+    }
 
 	var result = {
 		success: true

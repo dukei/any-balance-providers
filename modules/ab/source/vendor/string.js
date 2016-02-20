@@ -457,13 +457,13 @@
 			var tagRe = '^([-\\w:]+) [' + spacesRe + ']* (.*)$';
 
 			htmlRe = RegExp(XRegExp(htmlRe, 'xs').source.replace(/\(\?:\)/g, ''), 'gi');
-			tagRe  = RegExp(XRegExp(tagRe, 'xs').source.replace(/\(\?:\)/g, ''), 'g');
+			tagRe  = RegExp(XRegExp(tagRe, 'xs').source.replace(/\(\?:\)/g, ''), '');
 			console.log(htmlRe);
 			console.log(tagRe);
 		}
 		else { //production mode
 			var htmlRe = /<(?:((script|style|xmp|textarea|title)(?=[>\x00-\x20\x7f\xA0\s])[^>"']*(?:(?=([^>"']+))\3|"[^"]*"|'[^']*')*)>([^<]*[\s\S]*?)<\/(\2)(?=[>\x00-\x20\x7f\xA0\s])[^>"']*(?:(?=([^>"']+))\6|"[^"]*"|'[^']*')*>|((?=[a-z])(?!(?:script|style|xmp|textarea|title)(?=[>\x00-\x20\x7f\xA0\s]))[^>"']*(?:(?=([^>"']+))\8|"[^"]*"|'[^']*')*)>|\/([a-z][^>"']*(?:(?=([^>"']+))\10|"[^"]*"|'[^']*')*)>|!([a-z][^>"']*(?:(?=([^>"']+))\12|"[^"]*"|'[^']*')*)>|!\[CDATA\[([^\]]*[\s\S]*?)\]\]>|!--([^-]*[\s\S]*?)-->|\?([^\?]*[\s\S]*?)\?>|%([^%]*[\s\S]*?)%>)[\x00-\x20\x7f\xA0\s]*|((?:[^<]+|<(?!\/?[a-z]|!(?:\[CDATA\[|--)|[\?%]))+)/gi,
-				tagRe  = /^([-\w:]+)[\x00-\x20\x7f\xA0\s]*([\s\S]*)$/g;
+				tagRe  = /^([-\w:]+)[\x00-\x20\x7f\xA0\s]*([\s\S]*)$/;
 		}
 		var match, m, type, node, attrs, offset,
 			nodes = 0, 

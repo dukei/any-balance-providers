@@ -491,28 +491,28 @@
 			if (! match) break;
 			if (match['index'] > offsetMax) throw Error(offsetMax + ' offset has been reached!');
 			for (var i in typesMap) {
-				if (typeof match[i] === 'string') {
-					type  = typesMap[i]; 
-					node  = match[i]; 
-					attrs = '';
-					offset = match['index'];
-					if (type === 'open') {
-						m = tagRe.exec(match[i]);
-						if (m) node = m[1].toLowerCase(), attrs = m[2];
-						if (tagsVoid[node]) type = 'void';
-					}
-					else if (type === 'close') {
-						node = node.toLowerCase();
-						if (i == 5) offset += (match[1].length + 1) + match[4].length;
-					}
-					else if (type === 'raw') {
-						if (tagsRawEsc[ match[2].toLowerCase() ]) type = 'text';
-						offset += match[1].length + 1;
-					}
-					if (! node.length) continue;
-					if (! reviver(type, node, attrs, offset)) return false;
-					if (i > 5) break;  //1, 4, 5 = pairs raw tags with content
+				if (typeof match[i] !== 'string') continue;
+				type  = typesMap[i];
+				node  = match[i].trim();
+				if (! node.length) continue;  //skip empties
+				if (type !== 'text') node = match[i];
+				attrs = '';
+				offset = match['index'];
+				if (type === 'open') {
+					m = tagRe.exec(match[i]);
+					if (m) node = m[1].toLowerCase(), attrs = m[2];
+					if (tagsVoid[node]) type = 'void';
 				}
+				else if (type === 'close') {
+					node = node.toLowerCase();
+					if (i == 5) offset += (match[1].length + 1) + match[4].length;
+				}
+				else if (type === 'raw') {
+					if (tagsRawEsc[ match[2].toLowerCase() ]) type = 'text';
+					offset += match[1].length + 1;
+				}
+				if (! reviver(type, node, attrs, offset)) return false;
+				if (i > 5) break;  //1, 4, 5 = pairs raw tags with content
 			}//for
 		}//while
 		return true;

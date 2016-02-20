@@ -131,7 +131,7 @@ function processCard(card, result) {
 
 	AnyBalance.trace('Обработка карты ' + result.__name);
 
-	getParam(card, result, 'cards.balance', /(?:[\s\S]*?<\/table>){1}(?:[^]*?<td[^>]*>){1}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
+	getParam(card, result, 'cards.balance', /(?:[\s\S]*?<\/table>){2}(?:[^]*?<span[^>]*>){1}([\s\S]*?)<\//i, null, parseBalance);
 	getParam(card, result, 'cards.limit', /(?:[\s\S]*?<\/table>){2}(?:[^]*?<td[^>]*>){4}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
 	getParam(card, result, 'cards.available', /(?:[\s\S]*?<\/table>){2}(?:[^]*?<td[^>]*>){1}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
 	getParam(card, result, ['cards.currency', 'cards.balance', 'cards.limit', 'cards.available'], /<span[^>]+id="ctl00_ContentPlaceHolder1_listDocs_ctl02_lblCurrency"[^>]*>([\s\S]*?)<\/span>/i, [replaceTagsAndSpaces, /(.*?)/, '0'+ '$1'], parseCurrency);

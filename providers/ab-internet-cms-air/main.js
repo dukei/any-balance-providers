@@ -3,11 +3,11 @@
 */
 
 var g_headers = {
-    'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+    'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
     'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
     'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
     'Connection':'keep-alive',
-    'User-Agent':'Mozilla/5.0 (BlackBerry; U; BlackBerry 9900; en-US) AppleWebKit/534.11+ (KHTML, like Gecko) Version/7.0.0.187 Mobile Safari/534.11+'
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/48.0.2564.109 Safari/537.36'
 };
 
 function main(){
@@ -24,8 +24,8 @@ function main(){
 
     var html = AnyBalance.requestGet(baseUrl + referralUrl, g_headers);
 
-    if(!html || AnyBalance.getLastStatusCode() > 400){ //Если главная страница возвращает ошибку, то надо отреагировать
-    	AnyBalance.trace(html); //В непонятных случаях лучше сделать распечатку в лог, чтобы можно было понять, что случилось
+    if(!html || AnyBalance.getLastStatusCode() > 400){
+    	AnyBalance.trace(html);
     	throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
     }
 
@@ -68,6 +68,25 @@ function main(){
 
     AB.getParam(html, result, 'income', /Общий\s+доход\s+партнера([\s\S]*?)<\/div>/i, AB.replaceTagsAndSpaces, AB.parseBalance);
     AB.getParam(html, result, 'full_name', /user-name([\s\S]*?)<\/span>/i, [AB.replaceTagsAndSpaces, /[">\(\)]*/ig, '']);
+
+    if(isAvailable('balance')) {
+        html = AnyBalance.requestGet(baseUrl+'payments/partner_payments', g_headers);
+        var partnerID = AB.getParam(html, null, null, /<input[^>]+name="globalPartnerId"[^>]+value="([\s\S]*?)"/i);
+        if(!partnerID)
+            AnyBalance.trace("Не смогли найти ID по которому нужно получать баланс. Сайт изменён?");
+        else {
+            html = AnyBalance.requestPost(baseUrl+'AirMessageBus/PartnerEarningsCalculated', {
+                globalPartnerId: partnerID
+            }, AB.addHeaders({
+                'X-Requested-With': 'XMLHttpRequest'
+            }));
+            var json  = AB.getJson(html);
+
+            AB.getParam(json.Earnings ? json.Earnings.InDollars + '' : undefined, result, 'balance', null, AB.replaceTagsAndSpaces, AB.parseBalance);
+        }
+
+    }
+
 
     AnyBalance.setResult(result);
 }

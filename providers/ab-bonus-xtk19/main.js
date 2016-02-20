@@ -28,6 +28,10 @@ function main() {
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
 	}
+    
+    if (/<meta[^>]*url=/i.test(html)) {
+        html = AnyBalance.requestGet(baseurl, g_headers);
+    }
 
 	var params = {
         login: prefs.login,

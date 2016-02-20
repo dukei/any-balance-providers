@@ -45,27 +45,22 @@ function main(){
     AnyBalance.setResult(result);
 }
 
-function defineBaseUrl(index) {
-    var urls = ['https://btc-e.com/', 'https://btc-e.nz/', 'http://0s.mj2ggllffzrw63i.cmle.ru/'];
+function defineBaseUrl() {
+    var urls = ['https://btc-e.com/', 'https://btc-e.nz/', 'http://0s.mj2ggllffzrw63i.cmle.ru/'],
+        html,
+        idx;
 
-    index = index || 0;
-
-    try {
-        var html = AnyBalance.requestGet(urls[index], g_headers);
-    }
-    catch(e) {
-        index++;
-        if (index < urls.length) {
-            return defineBaseUrl(index);
+    for (idx = 0; idx < urls.length; idx++) {
+        try {
+            html = AnyBalance.requestGet(urls[idx], g_headers);
+            break;
         }
-        else {
-            throw e;
-        }
+        catch(e){}
     }
 
     if(!html || AnyBalance.getLastStatusCode() > 400) {
         throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
     }
 
-    return urls[index];
+    return urls[idx];
 }

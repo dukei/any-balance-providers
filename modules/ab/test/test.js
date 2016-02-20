@@ -1,6 +1,7 @@
 /*
 var invalidHtml = {
 	//input (broken)				//output (repaired)
+	'<ul><li>1<li>2</ul>'		 : '<ul><li>1</li><li>2</li></ul>',
 	'<p>1<b>2<i>3</b>4</i>5</p>' : '<p>1<b>2<i>3</i></b><i>4</i>5</p>',
 	'<b>1<p>2</b>3</p>'			 : '<b>1</b><p><b>2</b>3</p>',
 	'<p><i>1<p><i>2<p><i>3'		 : '<p><i>1</i></p>'+'<p><i><i>2</i></i></p>'+'<p><i><i><i>3</i></i></i></p>'

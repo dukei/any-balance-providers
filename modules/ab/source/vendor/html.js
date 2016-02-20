@@ -63,14 +63,14 @@ function htmlTraversal(html) {
 						attrs : attrs,
 						children : []
 					});
-					stack[level] = DOM;
+					stack[level] = DOM; //запоминаем текущий DOM в стеке
 					DOM = [];
 					level++;
 					break;
 				case 'close':
 					level--;
 					i = stack[level].length - 1;  //last element index
-					stack[level][i].children = DOM;  //присоединяем текущий DOM к родительском узлу
+					stack[level][i].children = DOM;  //присоединяем текущий DOM к родительскому DOM
 					DOM = stack[level];  //делаем родительский DOM текущим
 					stack.pop();  //необязательно, но освобождаем память
 					break;

@@ -1,8 +1,12 @@
 /**
- * CSS parsers
- * https://github.com/subtleGradient/slick#slick-css-selector-parser		http://mootools.net/core/docs/1.6.0/Slick/Slick
- * https://github.com/fb55/css-what
+ * CSS parser Slick
+ * https://github.com/subtleGradient/slick#slick-css-selector-parser
+ * http://mootools.net/core/docs/1.6.0/Slick/Slick
+ * http://jsfiddle.net/rpflorence/pHLyk/
+ * https://davidwalsh.name/css4-preview
  * 
+ * https://www.w3.org/TR/css3-selectors/
+ * https://drafts.csswg.org/selectors-4/#pseudo-elements
  * 
  * TODO
  * Декодировать автоматически JSON.parse('"\\u041e\\u0448\\u0438\\u0431\\u043a\\u0430"');

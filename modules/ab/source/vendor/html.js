@@ -1,6 +1,6 @@
 
 function htmlTraversal(html) {
-	var DOM = [
+	var DOM_struct = [
 		{
 			type    : 'comment',
 			content : 'тело комментария',
@@ -48,54 +48,56 @@ function htmlTraversal(html) {
 			]
 		}
 	];
-	DOM = [];
 
-	var stack = [], level = 0, i, nodes = [];
+	var stack = [], level = 0, DOM = [], i;
 
-	//TODO
 	html.htmlParser(
 		function(type, node, attrs) {
-			//console.log(type, node, attrs);
+			//console.log([type, node, attrs]);
 			switch (type) {
-				case 'text' :
-				case 'raw'  :
-					nodes.push({
-						type    : 'text',
-						content : node,
-						decoded : (type === 'raw')
-					});
-					break;
-				case 'void' :
-					nodes.push({
-						type  : 'tag',
-						name  : node,
-						attrs : attrs
-					});
-					break;
-				case 'open' :
-					nodes.push({
+				case 'open':
+					DOM.push({
+						level : level,
 						type  : 'tag',
 						name  : node,
 						attrs : attrs,
 						children : []
 					});
-					stack[level] = nodes;
+					stack[level] = DOM;
+					DOM = [];
 					level++;
-					nodes = [];
 					break;
-				case 'close' :
+				case 'close':
 					level--;
-					i = stack[level].length - 1;
-					stack[level][i].children = nodes;
-					nodes = stack[level];
+					i = stack[level].length - 1;  //last element index
+					stack[level][i].children = DOM;  //присоединяем текущий DOM к родительском узлу
+					DOM = stack[level];  //делаем родительский DOM текущим
+					stack.pop();  //необязательно, но освобождаем память
 					break;
-				case 'comment' :
-				case 'cdata' :
-					nodes.push({
+				case 'void':
+					DOM.push({
+						level : level,
+						type  : 'tag',
+						name  : node,
+						attrs : attrs
+					});
+					break;
+				case 'text':
+				case 'comment':
+				case 'cdata':
+					DOM.push({
+						level   : level,
 						type    : type,
 						content : node
 					});
-					stack[level] = nodes;
+					break;
+				case 'raw':
+					DOM.push({
+						level   : level,
+						type    : 'text',
+						content : node,
+						decoded : true
+					});
 					break;
 				default:
 					throw Error('Unknown node type: ' + type);
@@ -118,5 +120,5 @@ function htmlTraversal(html) {
 			return true;
 		}
 	);
-	return nodes;
+	return DOM;
 }

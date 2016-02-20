@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">email</id>
+	<api flags="no_browser"/>
+	<name>Получение емейл с присоединенным файлом</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет возможность сгенерировать временный емейл и получить на него файл</p>
+	]]></description>
+	<instruction><![CDATA[
+		
+		Usage:
+		   var email = new Email();
+		   //email.email <- generated address is here :)
+
+	]]></instruction>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<js>email.js</js>
+		<history>history.xml</history>
+	</files>
+	<keywords></keywords>
+	<type>email e-mail</type>
+</provider>

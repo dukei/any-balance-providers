@@ -23,6 +23,11 @@ function main(){
     var baseurl = 'https://uslugi.tatarstan.ru/';
 	
     var html = AnyBalance.requestGet(baseurl, g_headers);
+
+    if (!html || AnyBalance.getLastStatusCode() > 400) {
+        AnyBalance.trace(html);
+        throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
+    }
 	
     var form = getParam(html, null, null, /<form[^>]+action="[^"]+user\/login"[^>]*>([\s\S]*?)<\/form>/i, null, html_entity_decode);
     if(!form)

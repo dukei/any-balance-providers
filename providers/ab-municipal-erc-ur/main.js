@@ -1,4 +1,5 @@
-﻿/**
+﻿
+/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 
 Получает информацию о комунальных платежах из системы Единый Расчетный Центр
@@ -116,34 +117,6 @@ function main() {
     console.log(e);
   }
 
-  /*html = AnyBalance.requestGet(baseurl + '/client/private_office/mprivate_office.htp?receipt=' + number + "&info", g_headers);
-
-  if (!getParam(html, null, null, /<td[^>]*>\s*ВСЕГО<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance)) {
-    throw new AnyBalance.Error('Не удается найти информацию по указанному номеру счета. Возможно ни один счет не подключен.');
-  }
-
-  var result = {
-    success: true
-  };
-  getParam(html, result, 'balance', /<td[^>]*>Содержание\s*жилья\s*\(с\s*лифтом\)\s*<\/td>(?:[\s\S]*?<td[^>]*>){9}([\s\S]*?)<\/td>/i,
-    replaceTagsAndSpaces, parseBalance);
-  getParam(html, result, 'balance2', /<td[^>]*>Капитальный ремонт<\/td>(?:[\s\S]*?<td[^>]*>){9}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces,
-    parseBalance);
-  getParam(html, result, 'balance3', /<td[^>]*>Отопление<\/td>(?:[\s\S]*?<td[^>]*>){9}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces,
-    parseBalance);
-  getParam(html, result, 'balance4', /<td[^>]*>подача воды<\/td>(?:[\s\S]*?<td[^>]*>){9}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces,
-    parseBalance);
-  getParam(html, result, 'balance5', /<td[^>]*>нагрев воды<\/td>(?:[\s\S]*?<td[^>]*>){9}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces,
-    parseBalance);
-  getParam(html, result, 'balance6', /<td[^>]*>Холодное водоснабжение<\/td>(?:[\s\S]*?<td[^>]*>){9}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces,
-    parseBalance);
-  getParam(html, result, 'balance7', /<td[^>]*>Водоотведение<\/td>(?:[\s\S]*?<td[^>]*>){9}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces,
-    parseBalance);
-  getParam(html, result, 'balance8', /<td[^>]*>Электроэнергия<\/td>(?:[\s\S]*?<td[^>]*>){9}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces,
-    parseBalance);
-  getParam(html, result, 'balance9', /<td[^>]*>Газ<\/td>(?:[\s\S]*?<td[^>]*>){9}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-  getParam(html, result, 'balance10', /<td[^>]*>\s*ВСЕГО<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-*/
   AnyBalance.setResult(result);
 }
 

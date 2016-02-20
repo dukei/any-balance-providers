@@ -12,8 +12,8 @@ var g_headers = {
 
 function main(){
     var prefs = AnyBalance.getPreferences();
-    var baseurl = 'http://stat.indikom.ru/';
-	
+    var baseurl = 'https://stat.indikom.ru/';
+
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 	
@@ -28,8 +28,8 @@ function main(){
     html = AnyBalance.requestPost(baseurl, {
         login:prefs.login,
         password:prefs.password,
-	}, addHeaders({Referer: 'http://indikom.ru/index.php'})); 
-	
+	}, addHeaders({Referer: 'https://stat.indikom.ru/'}));
+
     if(!/logout/i.test(html)) {
         var error = getParam(html, null, null, /<p[^>]*style='color:red'[^>]*>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
         if(error)

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-service-nvartovsk-school</id>
+  <id version="2">ab-service-nvartovsk-school</id>
   <name>Информация о состоянии лицевого счета "Школьника" г. Нижневартовск</name>
   <description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе провайдера "Информация о состоянии лицевого счета "Школьника""</p> 

@@ -1,6 +1,6 @@
 /*!
  * Набор полезных методов, дополняющих объект String
- * Библиотека зависит от XRegExp
+ * Библиотека зависит от XRegExp только в режиме разработки
  * 
  * @licence	http://creativecommons.org/licenses/by-sa/4.0/
  * @author	Nasibullin Rinat <rin-nas@ya.ru>
@@ -297,22 +297,29 @@
 	 * @returns	{number}	result of String.search()
 	 */
 	String.prototype.htmlIndexOf = function () {
-		/*
-		Fast and short implementation.
-		No needs to check closed tags, because they don't exist without opened tags
-		No needs to check HTML entities, because it is ambiguous
-		We use atomic group (trick with lookahead, capturing group and link after) to speed improve, significantly reduce backtracking!
-		*/
-		var ANY_WITH_EXCEPTIONS	= /(?= ([^>"']+) )\1/,
-			IN_DOUBLE_QUOTES	= /" [^"]* "/,
-			IN_SINGLE_QUOTES	= /' [^']* '/,
-			OPENED_OR_DOCTYPE	= RegExp('<!?[a-zA-Z]  [^>"\']*  (?:' + XRegExp.union([ANY_WITH_EXCEPTIONS, IN_DOUBLE_QUOTES, IN_SINGLE_QUOTES], 'xs').source + ')*>'),
-			CDATA	= /<!\[CDATA\[  [^\]]*  .*?  \]\]>/,
-			COMMENT = /<!--  [^-]*  .*?  -->/,
-			ALL = XRegExp.union([OPENED_OR_DOCTYPE, CDATA, COMMENT], 'xs');
+		if (false) { //development mode
+			/*
+			Fast and short implementation.
+			No needs to check closed tags, because they don't exist without opened tags
+			No needs to check HTML entities, because it is ambiguous
+			We use atomic group (trick with lookahead, capturing group and link after) to speed improve, significantly reduce backtracking!
+			*/
+			var ANY_WITH_EXCEPTIONS	= /(?= ([^>"']+) )\1/,
+				IN_DOUBLE_QUOTES	= /" [^"]* "/,
+				IN_SINGLE_QUOTES	= /' [^']* '/,
+				OPENED_OR_DOCTYPE	= RegExp('<!?[a-zA-Z]  [^>"\']*  (?:' + XRegExp.union([ANY_WITH_EXCEPTIONS, IN_DOUBLE_QUOTES, IN_SINGLE_QUOTES], 'xs').source + ')*>'),
+				CDATA	= /<!\[CDATA\[  [^\]]*  .*?  \]\]>/,
+				COMMENT = /<!--  [^-]*  .*?  -->/,
+				ALL = XRegExp.union([OPENED_OR_DOCTYPE, CDATA, COMMENT], 'xs');
+			ALL = RegExp(ALL.source.replace(/\(\?:\)/g, ''), '');
+			console.log(ALL);
+		}
+		else { //production mode
+			var ALL = /<!?[a-zA-Z][^>"']*(?:(?=([^>"']+))\1|"[^"]*"|'[^']*')*>|<!\[CDATA\[[^\]]*[\s\S]*?\]\]>|<!--[^-]*[\s\S]*?-->/;
+		}
 		return this.search(ALL);
 	}
-	
+
 	/**
 	 * HTML attribute SAX parser
 	 * Этот парсер не делает массив всех атрибутов тега, а делает обработку последовательно.
@@ -321,42 +328,50 @@
 	 *					  Поэтому, если пользовательская callback функция возвращает true, то обработка продолжится, иначе прервётся.
 	 * @link https://www.w3.org/TR/html5/
 	 * @link http://html5sec.org/
-	 * @returns {undefined}
+	 * @returns bool
 	 */
 	String.prototype.htmlAttrParser = function (reviver) {
 
-		var spacesRe = /\x00-\x20\x7f\xA0\s/.source;
+		if (false) { //development mode
+			var spacesRe = /\x00-\x20\x7f\xA0\s/.source;
 
-		//https://developer.mozilla.org/en/docs/Web/JavaScript/Guide/Regular_Expressions#special-word
-		var attrRe = `	([-\\w:]+)  #(1) name
-						(?:
-							[` + spacesRe + `]* = [` + spacesRe + `]*
+			//https://developer.mozilla.org/en/docs/Web/JavaScript/Guide/Regular_Expressions#special-word
+			var attrRe = `	([-\\w:]+)  #(1) name
 							(?:
-									( [^"'] [^` + spacesRe + `]* ) #(2) value
-								|	"  ([^"]*)  "	#(3) value
-								|	'  ([^']*)  '	#(4) value
-							)
-						)?`;
+								[` + spacesRe + `]* = [` + spacesRe + `]*
+								(?:
+										( [^"'] [^` + spacesRe + `]* ) #(2) value
+									|	"  ([^"]*)  "	#(3) value
+									|	'  ([^']*)  '	#(4) value
+								)
+							)?`;
 
-		var match, value,
+			attrRe = RegExp(XRegExp(attrRe, 'xs').source.replace(/\(\?:\)/g, ''), 'g');
+			console.log(attrRe);
+		}
+		else { //production mode
+			var attrRe = /([-\w:]+)(?:[\x00-\x20\x7f\xA0\s]*=[\x00-\x20\x7f\xA0\s]*(?:([^"'][^\x00-\x20\x7f\xA0\s]*)|"([^"]*)"|'([^']*)'))?/g;
+		}
+		
+		var match, name, value, offset,
 			attrs = 0,
 			attrsMax  = 100,
 			offsetMax = 50000;
-
-		attrRe = XRegExp(attrRe, 'xsg');
 
 		while (true) {
 			if (++attrs > attrsMax) throw Error(attrsMax + ' attributes has been reached!');
 			match = attrRe.exec(this);
 			if (! match) break;
 			if (match['index'] > offsetMax) throw Error(offsetMax + ' offset has been reached!');
-			//console.log(match); 
+			offset = match['index'];
+			name = match[1].toLowerCase();
 			if (typeof match[2] === 'string')      value = match[2];
 			else if (typeof match[3] === 'string') value = match[3];
 			else if (typeof match[4] === 'string') value = match[4];
 			else value = '';
-			if (! reviver(match[1].toLowerCase(), value, match['index'])) return;
+			if (! reviver(name, value, offset)) return false;
 		}//while
+		return true;
 	}
 	
 	/**
@@ -367,61 +382,90 @@
 	 *					  Поэтому, если пользовательская callback функция возвращает true, то обработка продолжится, иначе прервётся.
 	 * @link https://www.w3.org/TR/html5/
 	 * @link http://html5sec.org/
-	 * @returns {undefined}
+	 * @returns bool
 	 */
 	String.prototype.htmlParser = function (reviver) {
 
-		var tagsRawRe = 'script|style|xmp' +	//raw text elements (as is)
-						'|textarea|title';		//escapable raw text elements (can have html entities)
-
-		var spacesRe = /\x00-\x20\x7f\xA0\s/.source;
-
-		var attrsRe = function (n) {
-			//fast short implementation
-			return `[^>"']*  #speed improve
-					(?:
-							(?= ([^>"']+) )\\n
-						|	"  [^"]*  "
-						|	'  [^']*  '
-					)*`
-					.replace('n', n);
+		var makeMap = function (str) {
+			var obj = {}, items = str.split(',');
+			for (var i = 0; i < items.length; i++) obj[ items[i] ] = true;
+			return obj;
 		};
 
-		//https://regex101.com/#pcre
-		var htmlRe = `<(?:
-							#pairs raw tags with content:
-							((` + tagsRawRe + `) (?=[>` + spacesRe + `])` + attrsRe(3) + `)>  #(1) opened tag
-								(	#(4) raw inner
-									[^<]*  #speed improve
-									.*?
-								)
-							</(\\2) (?=[>` + spacesRe + `])` + attrsRe(6) + `>  #(5) closed tag
+		//void (empty, self-closing) elements
+		var tagsVoid = makeMap(
+			//https://www.w3.org/TR/html5/syntax.html#elements-0 HTML5
+			'area,base,br,col,command,embed,hr,img,input,keygen,link,meta,param,source,track,wbr' +
+			//HTML 4.01
+			',basefont,frame,img,input,isindex,meta,param,embed'
+		);
 
-							#(7) opened tags:
-						|	(	(?=[a-z])
-								(?! (?:` + tagsRawRe + `) (?=[>` + spacesRe + `]) )
-								` + attrsRe(8) + `
-							)>
+		//escapable raw text elements (can have html entities)
+		var tagsRawEsc = makeMap('textarea,title');
 
-						|	/([a-z]` + attrsRe(10) + `)>	#(9) closed tags
-						|	!([a-z]` + attrsRe(12) + `)>	#(11) <!DOCTYPE ...>
-						|	!\\[CDATA\\[	([^\\]]*  .*?)	\\]\\] >	#(13) CDATA
-						|	!--				([^-]*    .*?)	    -- >	#(14) comments
-						|	\\?				([^\\?]*  .*?)	   \\? >	#(15) instructions part1 (PHP, Perl, ASP, JSP, XML)
-						|	%				([^%]*    .*?)		 % >	#(16) instructions part2 (PHP, Perl, ASP, JSP)
-						) [` + spacesRe + `]*
-							#(17) text:
-						|	((?:
-									[^<]+
-								|	< (?! /? [a-z]
-										| !(?: \\[CDATA\\[ | -- )
-										| [\\?%]
-										)
-							)+)`;
+		if (false) { //development mode
+			
+			var tagsRawRe = 'script|style|xmp' +	//raw text elements (as is)
+							'|textarea|title';		//escapable raw text elements (can have html entities)
 
-		var tagRe = XRegExp('^([-\\w:]+) [' + spacesRe + ']* (.*)$', 'xs');
+			var spacesRe = /\x00-\x20\x7f\xA0\s/.source;
 
-		var match, m, tag, attrs,
+			var attrsRe = function (n) {
+				//fast short implementation
+				return `[^>"']*  #speed improve
+						(?:
+								(?= ([^>"']+) )\\n
+							|	"  [^"]*  "
+							|	'  [^']*  '
+						)*`
+						.replace('n', n);
+			};
+
+			//https://regex101.com/#pcre
+			var htmlRe = `<(?:
+								#pairs raw tags with content:
+								((` + tagsRawRe + `) (?=[>` + spacesRe + `])` + attrsRe(3) + `)>  #(1) opened tag
+									(	#(4) raw inner
+										[^<]*  #speed improve
+										.*?
+									)
+								</(\\2) (?=[>` + spacesRe + `])` + attrsRe(6) + `>  #(5) closed tag
+
+								#(7) opened tags:
+							|	(	(?=[a-z])
+									(?! (?:` + tagsRawRe + `) (?=[>` + spacesRe + `]) )
+									` + attrsRe(8) + `
+								)>
+
+							|	/([a-z]` + attrsRe(10) + `)>	#(9) closed tags
+							|	!([a-z]` + attrsRe(12) + `)>	#(11) <!DOCTYPE ...>
+							|	!\\[CDATA\\[	([^\\]]*  .*?)	\\]\\] >	#(13) CDATA
+							|	!--				([^-]*    .*?)	    -- >	#(14) comments
+							|	\\?				([^\\?]*  .*?)	   \\? >	#(15) instructions part1 (PHP, Perl, ASP, JSP, XML)
+							|	%				([^%]*    .*?)		 % >	#(16) instructions part2 (PHP, Perl, ASP, JSP)
+							) [` + spacesRe + `]*
+								#(17) text:
+							|	((?:
+										[^<]+
+									|	< (?! /? [a-z]
+											| !(?: \\[CDATA\\[ | -- )
+											| [\\?%]
+											)
+								)+)`;
+
+			//https://developer.mozilla.org/en/docs/Web/JavaScript/Guide/Regular_Expressions#special-word
+			var tagRe = '^([-\\w:]+) [' + spacesRe + ']* (.*)$';
+
+			htmlRe = RegExp(XRegExp(htmlRe, 'xs').source.replace(/\(\?:\)/g, ''), 'gi');
+			tagRe  = RegExp(XRegExp(tagRe, 'xs').source.replace(/\(\?:\)/g, ''), '');
+			console.log(htmlRe);
+			console.log(tagRe);
+		}
+		else { //production mode
+			var htmlRe = /<(?:((script|style|xmp|textarea|title)(?=[>\x00-\x20\x7f\xA0\s])[^>"']*(?:(?=([^>"']+))\3|"[^"]*"|'[^']*')*)>([^<]*[\s\S]*?)<\/(\2)(?=[>\x00-\x20\x7f\xA0\s])[^>"']*(?:(?=([^>"']+))\6|"[^"]*"|'[^']*')*>|((?=[a-z])(?!(?:script|style|xmp|textarea|title)(?=[>\x00-\x20\x7f\xA0\s]))[^>"']*(?:(?=([^>"']+))\8|"[^"]*"|'[^']*')*)>|\/([a-z][^>"']*(?:(?=([^>"']+))\10|"[^"]*"|'[^']*')*)>|!([a-z][^>"']*(?:(?=([^>"']+))\12|"[^"]*"|'[^']*')*)>|!\[CDATA\[([^\]]*[\s\S]*?)\]\]>|!--([^-]*[\s\S]*?)-->|\?([^\?]*[\s\S]*?)\?>|%([^%]*[\s\S]*?)%>)[\x00-\x20\x7f\xA0\s]*|((?:[^<]+|<(?!\/?[a-z]|!(?:\[CDATA\[|--)|[\?%]))+)/gi,
+				tagRe  = /^([-\w:]+)[\x00-\x20\x7f\xA0\s]*([\s\S]*)$/;
+		}
+		var match, m, type, node, attrs, offset,
 			nodes = 0, 
 			nodesMax  = 10000,
 			offsetMax = 5000000,
@@ -441,55 +485,76 @@
 				17 : 'text'
 			};
 
-		htmlRe = XRegExp(htmlRe, 'xsig');
-
 		while (true) {
 			if (++nodes > nodesMax) throw Error(nodesMax + ' nodes has been reached!');
 			match = htmlRe.exec(this);
 			if (! match) break;
 			if (match['index'] > offsetMax) throw Error(offsetMax + ' offset has been reached!');
 			for (var i in typesMap) {
-				if (typeof match[i] === 'string') {
-					tag = match[i], attrs = '';
-					if (typesMap[i] === 'open') {
-						m = tagRe.exec(match[i]);
-						if (m) tag = m[1], attrs = m[2];
-					}
-					if (! reviver(typesMap[i], tag.toLowerCase(), attrs, match['index'])) return;
-					if (i > 5) break;  //1, 4, 5 = pairs raw tags with content
+				if (typeof match[i] !== 'string') continue;
+				type  = typesMap[i];
+				node  = match[i].trim();
+				if (! node.length) continue;  //skip empties
+				if (type !== 'text') node = match[i];
+				attrs = '';
+				offset = match['index'];
+				if (type === 'open') {
+					m = tagRe.exec(match[i]);
+					if (m) node = m[1].toLowerCase(), attrs = m[2];
+					if (tagsVoid[node]) type = 'void';
 				}
+				else if (type === 'close') {
+					node = node.toLowerCase();
+					if (i == 5) offset += (match[1].length + 1) + match[4].length;
+				}
+				else if (type === 'raw') {
+					if (tagsRawEsc[ match[2].toLowerCase() ]) type = 'text';
+					offset += match[1].length + 1;
+				}
+				if (! reviver(type, node, attrs, offset)) return false;
+				if (i > 5) break;  //1, 4, 5 = pairs raw tags with content
 			}//for
 		}//while
+		return true;
 	}
-	
+
 	/**
 	 * HTML Entity Decode
+	 * HTML entities examples: &gt; &Ouml; &#x02DC; &#34;
+	 * 
 	 * @param	{bool}	[strict=true]
 	 * @returns {string}
 	 * @link https://mothereff.in/html-entities
 	 */
 	String.prototype.htmlEntityDecode = function (strict) {
 
-		if (this.indexOf('&') === -1) return this;  //speed improve
+		if (this.indexOf('&') < 0) return this;  //speed improve
 		if (! arguments.length) strict = true;
 		
-		//HTML entities, examples: &gt; &Ouml; &#x02DC; &#34;
-		//We use atomic group (trick with lookahead, capturing group and link after) to speed improve, significantly reduce backtracking!
-		var HTML_ENTITY_RE = strict	? '&(	(?= ([a-zA-Z][a-zA-Z\\d]+) )\\2	\n\
-										|	\\# (?:	\\d{1,5}				\n\
-												|	x[\\da-fA-F]{2,4}		\n\
-												)							\n\
-										)									\n\
-									   ;'
-									//http://stackoverflow.com/questions/15532252/why-is-reg-being-rendered-as-without-the-bounding-semicolon
-									: '&(	(?= ([a-zA-Z][a-zA-Z\\d]+) )\\2  (?!=)	\n\
-										|	\\# (?:	\\d{1,5}						\n\
-												|	x[\\da-fA-F]{2,4}				\n\
-												)									\n\
-										)											\n\
-									   ;?';
+		if (false) { //development mode
+			//We use atomic group (trick with lookahead, capturing group and link after) to speed improve, significantly reduce backtracking!
+			var htmlEntityRe = strict	? '&(	(?= ([a-zA-Z][a-zA-Z\\d]+) )\\2	\n\
+											|	\\# (?:	\\d{1,5}				\n\
+													|	x[\\da-fA-F]{2,4}		\n\
+													)							\n\
+											)									\n\
+										   ;'
+										//http://stackoverflow.com/questions/15532252/why-is-reg-being-rendered-as-without-the-bounding-semicolon
+										: '&(	(?= ([a-zA-Z][a-zA-Z\\d]+) )\\2  (?!=)	\n\
+											|	\\# (?:	\\d{1,5}						\n\
+													|	x[\\da-fA-F]{2,4}				\n\
+													)									\n\
+											)											\n\
+										   ;?';
+			htmlEntityRe = RegExp(XRegExp(htmlEntityRe, 'xs').source.replace(/\(\?:\)/g, ''), 'g');
+			console.log(htmlEntityRe);
+		}
+		else { //production mode
+			var htmlEntityRe = strict	? /&((?=([a-zA-Z][a-zA-Z\d]+))\2|\#(?:\d{1,5}|x[\da-fA-F]{2,4}));/g 
+										: /&((?=([a-zA-Z][a-zA-Z\d]+))\2(?!=)|\#(?:\d{1,5}|x[\da-fA-F]{2,4}));?/g;
+		}
 		return this.replace(
-			new XRegExp(HTML_ENTITY_RE, 'xsg'),
+			htmlEntityRe,
 			function (str, key) {
 				if (key[0] !== '#') {
 					if (String.HTML_ENTITY_TABLE.hasOwnProperty(key))
@@ -515,12 +580,64 @@
 	 * @returns {string}
 	 */
 	String.prototype.htmlToText = function () {
+
+		if (this.indexOf('<') < 0) return this;  //speed improve
+
+		if (false) { //development mode
 		
-		if (this.indexOf('<') === -1) return this;  //speed improve
+			var pairTagsWithContentRe = [
+				'script', 'style', 'map', 'iframe', 'frameset', 'object', 'applet', 'comment', 'button', 'textarea', 'select'
+			].join('|');
+
+			var attrsRe = function (n) {
+				//fast short implementation
+				return `[^>"']*  #speed improve
+						(?:
+								(?= ([^>"']+) )\\n
+							|	"  [^"]*  "
+							|	'  [^']*  '
+						)*`
+						.replace('n', n);
+			};
+			
+			//https://regex101.com/#pcre
+			var htmlRe = `(?:
+							#pair tags with content:
+							<	(?=[a-z])		#speed improve optimization
+								(` + pairTagsWithContentRe + `)\\b	#1
+								` + attrsRe(2) + `
+							>
+								[^<]*  #speed improve
+								.*?
+							< (?!script\\b|style\\b)
+								/?
+								\\1\\b` + attrsRe(3) + `
+							>								
+
+							#opened tags:
+						|	<	(?=[a-z])
+								(?!(?:` + pairTagsWithContentRe + `)\\b)
+								` + attrsRe(4) + `
+							>
+
+						|	</[a-z]` + attrsRe(5) + `>		#closed tags
+						|	<![a-z]` + attrsRe(6) + `>		#<!DOCTYPE ...>
+						|	<!\\[CDATA\\[  [^\\]]*  .*?  \\]\\]>	#CDATA
+						|	<!--  [^-]*    .*?   -->	#comments
+						|	<\\?  [^\\?]*  .*?  \\?>	#instructions part1 (PHP, Perl, ASP, JSP, XML)
+						|	<%	  [^%]*    .*?    %>	#instructions part2 (PHP, Perl, ASP, JSP)
+						)`;
+
+			htmlRe = RegExp(XRegExp(htmlRe, 'xs').source.replace(/\(\?:\)/g, ''), 'ig');
+			console.log(htmlRe);
+		}
+		else { //production mode
+			var htmlRe = /(?:<(?=[a-z])(script|style|map|iframe|frameset|object|applet|comment|button|textarea|select)\b[^>"']*(?:(?=([^>"']+))\2|"[^"]*"|'[^']*')*>[^<]*[\s\S]*?<(?!script\b|style\b)\/?\1\b[^>"']*(?:(?=([^>"']+))\3|"[^"]*"|'[^']*')*>|<(?=[a-z])(?!(?:script|style|map|iframe|frameset|object|applet|comment|button|textarea|select)\b)[^>"']*(?:(?=([^>"']+))\4|"[^"]*"|'[^']*')*>|<\/[a-z][^>"']*(?:(?=([^>"']+))\5|"[^"]*"|'[^']*')*>|<![a-z][^>"']*(?:(?=([^>"']+))\6|"[^"]*"|'[^']*')*>|<!\[CDATA\[[^\]]*[\s\S]*?\]\]>|<!--[^-]*[\s\S]*?-->|<\?[^\?]*[\s\S]*?\?>|<%[^%]*[\s\S]*?%>)/gi;
+		}
 
 		//https://developer.mozilla.org/ru/docs/Web/HTML/Block-level_elements
 		//http://www.tutorialchip.com/tutorials/html5-block-level-elements-complete-list/
-		var BLOCK_TAGS = [
+		var blockTagsRe = [
 			//Paragraph boundaries are inserted at every block-level HTML tag. Namely, those are (as taken from HTML 4 standard)
 			'blockquote', 'caption', 'center', 'dd', 'div', 'dl', 'dt', 'h[1-6]', 'hr', 'li', 'menu', 'ol', 'p', 'pre', 'table', 'tbody', 'td', 'tfoot', 'th', 'thead', 'tr', 'ul',
 			//HTML5
@@ -528,51 +645,10 @@
 			//Extended
 			'form', 'title', 'br'
 		].join('|');
-
-		var PAIR_TAGS_WITH_CONTENT = [
-			'script', 'style', 'map', 'iframe', 'frameset', 'object', 'applet', 'comment', 'button', 'textarea', 'select'
-		].join('|');
-
-		var ATTR = function (n) {
-			//fast short implementation
-			return `[^>"']*  #speed improve
-					(?:
-							(?= ([^>"']+) )\\n
-						|	"  [^"]*  "
-						|	'  [^']*  '
-					)*`
-					.replace('n', n);
-		};
-		//https://regex101.com/#pcre
-		var ALL = `(?:
-						#pair tags with content:
-						<	(?=[a-z])		#speed improve optimization
-							(` + PAIR_TAGS_WITH_CONTENT + `)\\b	#1
-							` + ATTR(2) + `
-						>
-							[^<]*  #speed improve
-							.*?
-						< (?!script\\b|style\\b)
-							/?
-							\\1\\b` + ATTR(3) + `
-						>								
-
-						#opened tags:
-					|	<	(?=[a-z])
-							(?!(?:` + PAIR_TAGS_WITH_CONTENT + `)\\b)
-							` + ATTR(4) + `
-						>
-												
-					|	</[a-z]` + ATTR(5) + `>		#closed tags
-					|	<![a-z]` + ATTR(6) + `>		#<!DOCTYPE ...>
-					|	<!\\[CDATA\\[  [^\\]]*  .*?  \\]\\]>	#CDATA
-					|	<!--  [^-]*    .*?   -->	#comments
-					|	<\\?  [^\\?]*  .*?  \\?>	#instructions part1 (PHP, Perl, ASP, JSP, XML)
-					|	<%	  [^%]*    .*?    %>	#instructions part2 (PHP, Perl, ASP, JSP)
-					)`;
-		var htmlBlockTagsRe = RegExp('^<(?=[a-z])(?:'+ BLOCK_TAGS + ')\\b', 'i');
+		var htmlBlockTagsRe = RegExp('^<(?=[a-z])(?:'+ blockTagsRe + ')\\b', 'i');
+		
 		var str = this.replace(
-			XRegExp(ALL, 'xsig'),
+			htmlRe,
 			function (str, entry) {
 				if (str.search(htmlBlockTagsRe) > -1) return '\n';
 				return '';
@@ -689,30 +765,37 @@
 	 * @returns	{string|null}	Возвращает строку или `null`, если ничего не найдено
 	 */
 	String.prototype.getJsArrayOrObject = function () {
-		//http://hjson.org/
-		//https://regex101.com/#javascript
-		//http://blog.stevenlevithan.com/archives/match-innermost-html-element
-		//We use atomic group (trick with lookahead, capturing group and link after) to speed improve, significantly reduce backtracking!
-		var OPEN						= /([\{\[])/,	//group $1
-			CLOSE						= /([\}\]])/,	//group $2
-			ANY_WITH_EXCEPTIONS			= /(?= ([^\{\}\[\]"'`\/]+) )\1/,
-			STRING_IN_DOUBLE_QUOTES		= /"				(?= ((?:[^"\\\r\n]+|\\.)*) )\1	"/,
-			STRING_IN_SINGLE_QUOTES		= /'				(?= ((?:[^'\\\r\n]+|\\.)*) )\1	'/,
-			STRING_IN_BACKTICK_QUOTES	= /`				(?= ((?:[^`\\]+    |\\.)*) )\1	`/,		//ECMA6+
-			REGEXP_INLINE				= /\/	(?![\*\/])	(?= ((?:[^\/\\\r\n]+|\\[^\r\n])+) )\1	\/[gimy]{0,4}/,
-			COMMENT_MULTILINE			= /\/\*				.*?								\*\//,
-			COMMENT_SINGLELINE			= /\/\/				(?= ([^\r\n]*) )\1				/,
-			ALL = XRegExp.union([
-				OPEN,
-				CLOSE,
-				ANY_WITH_EXCEPTIONS,
-				STRING_IN_DOUBLE_QUOTES,
-				STRING_IN_SINGLE_QUOTES,
-				STRING_IN_BACKTICK_QUOTES,
-				REGEXP_INLINE,
-				COMMENT_MULTILINE,
-				COMMENT_SINGLELINE
-			], 'xs');
+		if (false) { //development mode
+			//http://hjson.org/
+			//https://regex101.com/#javascript
+			//http://blog.stevenlevithan.com/archives/match-innermost-html-element
+			//We use atomic group (trick with lookahead, capturing group and link after) to speed improve, significantly reduce backtracking!
+			var OPEN						= /([\{\[])/,	//group $1
+				CLOSE						= /([\}\]])/,	//group $2
+				ANY_WITH_EXCEPTIONS			= /(?= ([^\{\}\[\]"'`\/]+) )\1/,
+				STRING_IN_DOUBLE_QUOTES		= /"				(?= ((?:[^"\\\r\n]+|\\.)*) )\1	"/,
+				STRING_IN_SINGLE_QUOTES		= /'				(?= ((?:[^'\\\r\n]+|\\.)*) )\1	'/,
+				STRING_IN_BACKTICK_QUOTES	= /`				(?= ((?:[^`\\]+    |\\.)*) )\1	`/,		//ECMA6+
+				REGEXP_INLINE				= /\/	(?![\*\/])	(?= ((?:[^\/\\\r\n]+|\\[^\r\n])+) )\1	\/[gimy]{0,4}/,
+				COMMENT_MULTILINE			= /\/\*				.*?								\*\//,
+				COMMENT_SINGLELINE			= /\/\/				(?= ([^\r\n]*) )\1				/,
+				ALL = XRegExp.union([
+					OPEN,
+					CLOSE,
+					ANY_WITH_EXCEPTIONS,
+					STRING_IN_DOUBLE_QUOTES,
+					STRING_IN_SINGLE_QUOTES,
+					STRING_IN_BACKTICK_QUOTES,
+					REGEXP_INLINE,
+					COMMENT_MULTILINE,
+					COMMENT_SINGLELINE
+				], 'xs');
+			ALL = RegExp(ALL.source.replace(/\(\?:\)/g, ''), '');
+			console.log(ALL);
+		}
+		else { //production mode
+			var ALL = /([\{\[])|([\}\]])|(?=([^\{\}\[\]"'`\/]+))\3|"(?=((?:[^"\\\r\n]+|\\[\s\S])*))\4"|'(?=((?:[^'\\\r\n]+|\\[\s\S])*))\5'|`(?=((?:[^`\\]+|\\[\s\S])*))\6`|\/(?![\*\/])(?=((?:[^\/\\\r\n]+|\\[^\r\n])+))\7\/[gimy]{0,4}|\/\*[\s\S]*?\*\/|\/\/(?=([^\r\n]*))\8/;
+		}
 
 		try {
 			return this.matchRecursive(ALL, {open: 1, close: 2, parts: false});

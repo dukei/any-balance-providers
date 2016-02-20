@@ -13,33 +13,50 @@ var g_headers = {
 function main(){
     var prefs = AnyBalance.getPreferences();
 
-    var baseurl = "https://discounttelecom.ru/";
-    AnyBalance.setDefaultCharset('utf-8'); 
-	// запрашиваем форму входа, чтобы получить параметры авторизации
-	var html = AnyBalance.requestGet(baseurl + 'register/login/?return=/cabinet/', g_headers);
-	
-	var __VIEWSTATE = getParam(html, null, null, /name="__VIEWSTATE".*?value="([^"]*)"/);
-	var __EVENTVALIDATION = getParam(html, null, null, /name="__EVENTVALIDATION".*?value="([^"]*)"/);
+    var baseurl = "http://discounttelecom.ru/";
+    AnyBalance.setDefaultCharset('utf-8');
+	var html = AnyBalance.requestGet(baseurl, g_headers);
 
-    html = AnyBalance.requestPost(baseurl + 'register/login/default.aspx?return=/cabinet/', {
-		'__CURRENTREFRESHTICKET':'0',
-		'__EVENTARGUMENT':'',
-		'__EVENTTARGET':'',
-		'__EVENTVALIDATION':__EVENTVALIDATION,
-		'__VIEWSTATE':__VIEWSTATE,
-		'ctl00$ctl00$MainContentHolder$MainContentHolder$SmallLogin$btnLogin':'',
-		'ctl00$ctl00$MainContentHolder$MainContentHolder$SmallLogin$tbLogin':prefs.login,
-		'ctl00$ctl00$MainContentHolder$MainContentHolder$SmallLogin$tbPwd':prefs.password,
-	}, addHeaders({Referer: baseurl +'register/login/default.aspx?return=/cabinet/'})); 
+    if (!html || AnyBalance.getLastStatusCode() > 400) {
+        AnyBalance.trace(html);
+        throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
+    }
 
-    if(!/act=logout/i.test(html)){
+    var params = {
+        'form-selects': {},
+        'contract': prefs.login,
+        'pass': prefs.password
+    };
+
+    var postHtml = AnyBalance.requestPost(
+        baseurl + 'scripts/WSDL-AUTH.php',
+        {
+            formdata: JSON.stringify(params)
+        },
+        addHeaders({
+            'Accept': 'application/json, text/javascript, */*; q=0.01',
+            'Referer': baseurl,
+            'X-Requested-With': 'XMLHttpRequest'
+        })
+    );
+    var res = getJson(postHtml);
+
+    if (/success/i.test(res.mess) && res.redirect) {
+        html = AnyBalance.requestGet(res.redirect);
+    }
+
+	html = AnyBalance.requestGet('https://lk.diskonttelecom.ru/cabinet/account/', g_headers);
+
+    if(!/Выйти/i.test(html)){
+        if (/error/i.test(res.mess) && res.redirect) {
+            throw new AnyBalance.Error(res.redirect, null, /(?:неверный номер|пароль)/i.test(res.redirect));
+        }
+
         throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Проверьте Ваш логин и пароль');
     }
-	
-	html = AnyBalance.requestGet(baseurl + 'cabinet/account/', g_headers);
 
     var result = {success: true};
-	getParam(html, result, 'account', /Договор:[\s\S]{1,100}">([\s\S]*?)<\/a>/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'account', /Договор[^>]+>([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(html, result, 'balance', /Состояние лицевого счета[\s\S]*?([\s\S]*?)р./i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'bonus', /Из них [\s\S]*?([\s\S]*?)р./i, replaceTagsAndSpaces, parseBalance);
 

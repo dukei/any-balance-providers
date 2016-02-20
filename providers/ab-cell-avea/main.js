@@ -47,9 +47,6 @@ function main() {
 	
 	params[getXLogin(html)] = prefs.login;
 	params[getXpass(html)] = prefs.password;
-        
-        //AnyBalance.setCookie('www.avea.com.tr', 'pwdChg', '0');
-        //AnyBalance.setCookie('www.avea.com.tr', '_ga', 'GA1.3.186210095.1455873865');
 	
 	html = AnyBalance.requestPost(baseurl + 'mps/portal?cmd=Login', params, addHeaders({Referer: baseurl + 'mps/portal?cmd=Login'}));
 

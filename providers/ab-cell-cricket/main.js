@@ -81,6 +81,8 @@ function main()
     getParam(info1, result, "credit",  /Current Credit:[\s\S]*?<\/span>/i,                           replaceTagsAndSpaces, parseBalance);
     getParam(info1, result, "monthly", /Monthly Total:[\s\S]*?<\/span>/i,                            replaceTagsAndSpaces, parseBalance);
     getParam(info2, result, "bonus",   /loyalty_user_points[^>]*>([\s\S]*?)<\/div>/i,                replaceTagsAndSpaces, parseBalance);
-    getParam(info2, result, "data",    /<dd.*data_speed[\s\S]*?(\S*? of .* Used[\s\S]*?)<\/label>/i, replaceTagsAndSpaces, parseTraffic);
+    getParam(info2, result, "udata",   /<dd.*data_speed[\s\S]*?(\S*? of .* Used[\s\S]*?)<\/label>/i, replaceTagsAndSpaces, parseTraffic);
+    getParam(info2, result, "tdata",   /<dd.*data_speed[\s\S]*?\S*? of (.* Used[\s\S]*?)<\/label>/i, replaceTagsAndSpaces, parseTraffic);
+    result.data = prefs.datamode!=0 ? result.tdata - result.udata : result.udata;
 	AnyBalance.setResult(result);
 }

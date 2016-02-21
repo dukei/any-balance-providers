@@ -6,4 +6,7 @@
 	<change version="2" date="2016-01-13">
 	- Bugfix for the wrong data amount being displayed.
 	</change>
+	<change version="3" date="2016-02-21">
+	- Option to show remainig amount of data instead of the currently consumed amount.
+	</change>
  </history>

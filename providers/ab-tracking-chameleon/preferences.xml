@@ -30,6 +30,6 @@
 		positiveButtonText="ОК"
 		negativeButtonText="Отмена"
 		dialogMessage="ID объекта наблюдения, из ссылки http://gde.mychameleon.ru/#watches/&lt;ID&gt;"
-		inputType="number"
+		inputType="number">
 	</EditTextPreference>
 </PreferenceScreen>

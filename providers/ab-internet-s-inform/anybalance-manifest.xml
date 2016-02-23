@@ -18,9 +18,9 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="internet_balance" name="Баланс интернета" units="₽"/>
-		<counter id="tv_balance" name="Баланс ТВ" units="₽"/>
-		<counter id="phone_balance" name="Баланс телефонии" units="₽"/>
+		<counter id="internet_balance" name="Баланс интернета" units=" р"/>
+		<counter id="tv_balance" name="Баланс ТВ" units=" р"/>
+		<counter id="phone_balance" name="Баланс телефонии" units=" р"/>
 		<counter id="full_name" name="ФИО" type="text"/>
 		<counter id="address" name="Адрес" type="text"/>
 	</counters>

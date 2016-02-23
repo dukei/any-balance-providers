@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="8">ab-internet-Galaxy-net</id>
+  <name>Galaxy-Net</name>
+  <description>
+    Galaxy-Net в Туапсе
+  </description>
+  <author>Сергей Барбаянов &lt;k008nm@gmail.com&gt;</author>
+  <files>
+    <js>main.js</js>
+    <js>library.js</js>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units=" р"/>
+    <counter id="tariff" name="Тариф" type="text"/>
+    <counter id="dogovor" name="Договор" type="text"/>
+    <counter id="account" name="Учётная запись" type="text"/>
+    <counter id="status" name="Статус" type="text"/>
+  </counters>
+  <type>internet</type>
+  <country>ru</country>
+</provider>

@@ -19,6 +19,11 @@ function main(){
     var html = AnyBalance.requestPost(baseurl + 'check.php', {
         card: prefs.login
     }, addHeaders({Referer: baseurl + 'index.php'}));
+
+    if (!html || AnyBalance.getLastStatusCode() > 400) {
+        AnyBalance.trace(html);
+        throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
+    }
 	
 	var msg = getElement(html, /<div[^>]+id="msg"[^>]*>/i);
 	var elements = getElements(msg, /<table[^>]+sublist_table[^>]*>/ig);

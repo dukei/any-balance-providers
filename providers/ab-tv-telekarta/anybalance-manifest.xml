@@ -1,13 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="4">ab-tv-telekarta</id>
+	<id version="5">ab-tv-telekarta</id>
 	<api flags="no_browser"/>
 	<name>Телекарта</name>
 	<description html="true"><![CDATA[
 	<p>Получает срок действия подписки по карте ТЕЛЕКАРТА (http://telekarta.tv)</p>
 	<p>Информация берется из системы проверки подписки http://act.telekarta.tv/chkcard/. Достаточно указать только номер карты.</p>
 	]]></description>
-	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="2.0" version="12" date="2016-02-12">
+	- исправлено получение каунтеров трафика
+	</change>
     <change major_version="2.0" version="11" date="2016-02-09">
 	Исправлено получение минут, траффика и смс
 	</change>

@@ -1,17 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-internet-wbt</id>
+	<id version="2">ab-internet-wbt</id>
 	<api flags="no_browser"/>
 	<name>ВБТелеком (Калининград)</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе провайдера ВБТелеком г. Калиниград http://wbt.ru</p>
-	<p>Информация берется из личного кабинета https://billing.wbt.ru/?section=account</p>
+	Предоставляет информацию о балансе провайдера ВБТелеком г. Калиниград http://wbt.ru
+  Информация берется из личного кабинета https://cabinet.beeline.ru/
+  Личный кабинет теперь на https://cabinet.beeline.ru/ ,
+  используйте провайдер <a href="http://anybalance.ru/catalog.php?id=ab-internet-beeline">Beeline интернет</a>!
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>

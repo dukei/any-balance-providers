@@ -1,5 +1,7 @@
 /**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
+
+24.02.2016  добавлена функция getSimple() для города Норильск
 */
 
 var g_headers = {

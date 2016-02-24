@@ -26,10 +26,10 @@ var g_lks = {
 	user_nocache: 'userPhysical/userPhysical.nocache.js',
 	user_file: 'com.sigma.personal.client.physical.ClientService.gwt',
 	user_class: 'com.sigma.personal.client.physical.ClientService',
-	user_data: "7|0|4|%url%%user_url%|%auth_uid%|%user_class%|getAbonsList|1|2|3|4|0|",
-	re_account: /electric.model.AbonentModel[^"]*","([^"]*)/,
-	re_address: /electric.model.AbonentModel[^"]*"(?:,"[^"]*"){2},"([^"]*)/,
-	counters: ['peni', 'balance'],
+	user_data: "7|0|4|%url%%user_url%|%auth_uid%|%user_class%|getAllAbons|1|2|3|4|0|",
+	re_account: /model.Abonent[^"]*"(?:,"[^"]*"){5},"([^"]*)/,
+	re_address: /model.Abonent[^"]*"(?:,"[^"]*"){9},"([^"]*)/,
+	counters: ['balance', 'peni']
     },
     pes: {
 	url: 'https://ikus.pes.spb.ru/IKUSUser/',
@@ -49,9 +49,9 @@ var g_lks = {
 	user_data: "7|0|4|%url%%user_url%|%auth_uid%|%user_class%|getAbonsList|1|2|3|4|0|",
 	re_account: /electric.model.AbonentModel[^"]*","([^"]*)/,
 	re_address: /electric.model.AbonentModel[^"]*"(?:,"[^"]*"){1},"([^"]*)/,
-	counters: ['peni', 'balance'],
+	counters: ['peni', 'balance']
     }
-}
+};
 
 function main(){
     var prefs = AnyBalance.getPreferences();
@@ -94,7 +94,7 @@ function main(){
         
         //Тут получаем что-то вроде //OK[[],0,6]
         var auth = gwtGetJSON(html);
-        if(!auth[0]){
+        if (cfg.url.match(/pes\./) && !auth[0]){
         	AnyBalance.trace(html);
             throw new AnyBalance.Error("error");
         }
@@ -140,7 +140,7 @@ function main(){
 
     var result = { success: true };
 
-    var num = getParam(html, null, null, /\d+\.\d+,(\d+),/);
+    var num =  cfg.url.match(/pesc/) ? '\\d+,' : getParam(html, null, null, /\d+\.\d+,(\d+),/);
     if(!isset(num)){
     	AnyBalance.trace(html);
     	throw new AnyBalance.Error('Не удаётся найти баланс. Зайдите в личный кабинет через браузер и убедитесь, что вы подключили абонентов.');

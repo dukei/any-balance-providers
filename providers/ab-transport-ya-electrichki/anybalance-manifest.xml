@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="1.0" version="8">ab-transport-ya-electrichki</id>
+	<id major_version="1.0" version="9">ab-transport-ya-electrichki</id>
 	<api flags="no_browser"/>
 	<name>Яндекс.Электрички</name>
 	<description html="true"><![CDATA[
@@ -14,12 +14,13 @@
 	<p>Слева есть колонка с уточнением станции отправления, нажимаем на вкз. Пушкино (г. Пушкино) и после перехода в адресной строке браузера будет нужный ID fromId=s9600701</p>
 	<p>Вводим его в настройки и все будет работать.</p>
 	]]></instruction>	
-	<author>theneedtocode &lt;theneedtocode@gmail.com&gt;</author>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>

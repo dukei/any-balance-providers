@@ -1,11 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="7">ab-internet-mts-sib</id>
+	<id version="8">ab-internet-mts-sib</id>
 	<name>МТС Комстар-регионы (Сибирь, Урал)</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе и тарифном плане для пользователей Комстар-регионы (МТС) <a href="http://ural.mts.ru">http://ural.mts.ru</a></p>
-	<p>Информация берется из личного кабинета <a href="http://lka.ural.mts.ru">http://lka.ural.mts.ru</a></p> 
+	<p>Предоставляет информацию о балансе и тарифном плане для пользователей Комстар-регионы (МТС) http://ural.mts.ru</p>
+	<p>Информация берется из личного кабинета http://lka.ural.mts.ru</p> 
 	<p>Провайдер предоставляет услуги только при входе в личный кабинет.</p>
 	<p>Поддерживаются города:</p>
 	<ul>
@@ -28,10 +28,12 @@
 	<p>Обратите внимание, в свзяи с изменениями на сайте возможны проблемы с определением региона, свзяывайтесь с разработчиками для исправления ситуации.</p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>

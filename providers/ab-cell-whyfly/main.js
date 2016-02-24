@@ -13,12 +13,11 @@ function main() {
 	var baseadd = 'auth/login?next=%252F';
 
 	var prefs = AnyBalance.getPreferences();
+	AB.checkEmpty(prefs.login, 'Введите логин!');
+	AB.checkEmpty(prefs.password, 'Введите пароль!');
 
 	prefs.login = prefs.login.substr(0, 2) == '+7' ? prefs.login.slice(-10) : prefs.login;
 	if (prefs.login.length != 10) AB.checkEmpty(prefs.login, 'Укажите логин корректно: +71234567890');
-
-	AB.checkEmpty(prefs.login, 'Введите логин!');
-	AB.checkEmpty(prefs.password, 'Введите пароль!');
 
 	AnyBalance.setDefaultCharset('utf-8');
 

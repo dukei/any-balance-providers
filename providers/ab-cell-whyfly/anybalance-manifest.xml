@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id version="1">ab-internet-kabinet-whyfly</id>
-	<name>Оператора связи WHYFLY</name>
-	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе и выбранном лицевом счете для пользователей оператора связи "WHYFLY".</p> 
+	<id version="1">ab-cell-whyfly</id>
+	<name>WhyFly</name>
+	<description html="true">
+		<![CDATA[
+	<p>Предоставляет информацию о балансе и выбранном лицевом счете для пользователей оператора связи WhyFly https://whyfly.ru/.</p>
 	<p>Информация берется из личного кабинета https://lk.whyfly.ru/</p>
-	]]></description>
+	]]>
+	</description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>
 		<module id="library"/>
@@ -27,6 +29,6 @@
 		<counter id="status" name="Cтатус" type="text"/>
 	</counters>
 	<keywords>интернет</keywords>
-	<type>internet, telephony</type>
+	<type>cell</type>
 	<country>ru</country>
 </provider>

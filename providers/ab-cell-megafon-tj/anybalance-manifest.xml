@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-cell-megafon-tj</id>
+	<api flags="no_browser"/>
+	<name>Мегафон Таджикистан</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера Мегафон Таджикистан https://sg.megafon.tj/</p>
+	<p>Информация берется из личного кабинета Мегафон Таджикистан https://sg.megafon.tj/SCC/SC_BASE_LOGIN</p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс на текущую дату" units="сом"/>
+		<counter id="credit_limit" name="Кредитный лимит" units="сом"/>
+		<counter id="full_name" name="ФИО" type="text"/>
+		<counter id="account" name="Лицевой счет" type="text"/>
+		<counter id="status" name="Статус абонента" type="text"/>
+		<counter id="activation_date" name="Дата активации/подключения абонента" type="time" format="dd/MM/yyyy"/>
+		<counter id="bonus" name="Бонусные баллы"/>
+	</counters>
+	<keywords></keywords>
+	<type>cell</type>
+	<country>tj</country>
+</provider>

@@ -25,6 +25,7 @@
 		<counter id="date" name="Дата" type="time" format="dd/MM/yyyy"/>
 		<counter id="days" name="Время в пути" units=" д"/>
 		<counter id="fulltext" name="Сводка" type="html"/>
+		<counter id="allTracksText" name="Сводка по всем трекам" type="html"/>
 	</counters>
 	<keywords>Почтовое отправление, почта России, почта китая, почта малазии</keywords>
 	<type>tracking, post</type>

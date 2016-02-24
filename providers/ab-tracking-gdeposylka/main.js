@@ -10,33 +10,24 @@ var g_headers = {
 	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
 };
 
-var types = {
-	logpas: doLogin,
-	track: doTrack,
-};
-
 
 function main(){
 	var prefs = AnyBalance.getPreferences();
-	var type = prefs.type;
+	var result = {};
 
-	if(!types[type])
-		throw new AnyBalance.Error("Тип входа не найден.");
-
-	if(prefs.type == 'logpas') {
-		checkEmpty(prefs.login, "Введите логин!");
-		checkEmpty(prefs.password, "Введите пароль!");
+	if((!prefs.login || !prefs.password) && prefs.track_id) {
+		AnyBalance.trace("Получаем информацию без входа в ЛК.");
+		doTrack(result, prefs);
+	} else if(prefs.login && prefs.password) {
+		AnyBalance.trace("Получаем информацию со входом в ЛК.");
+		doLogin(result, prefs);
+	} else {
+		throw new AnyBalance.Error("Для получения данных об отправлении вы должны ввести логин/пароль и (необязательно) трек-код для поиска с авторизацией, либо просто трек-код для поиска без авторизации.");
 	}
-	else if(prefs.type == 'track')
-		checkEmpty(prefs.track_id, "Введите номер почтового отправленяи!");
 
-	var func = types[type];
-	AnyBalance.trace('Тип входа: ' + type);
-
-	func();
+	AnyBalance.setResult(result);
 }
-function doTrack() {
-	var prefs = AnyBalance.getPreferences();
+function doTrack(result, prefs) {
 	var baseurl = "https://gdeposylka.ru/";
 
 	var html = AnyBalance.requestGet(baseurl, g_headers);
@@ -52,21 +43,21 @@ function doTrack() {
 
 	if (!/Посылка в пути/i.test(html)) {
 		var error = getParam(html, null, null, [/<div class="errorBox"[^>]*>([\s\S]*?)<\/div>/i, /<span class="error"[^>]*>([\s\S]*?)<\/span>/i, /div[^>]+class="alert alert-warning"[^>]*>([\s\S]*?)<\/div>/i], replaceTagsAndSpaces);
-		if (error)
+		if (error)  {
 			throw new AnyBalance.Error(error, null, /Возможно, вы ошиблись в написании номера/i.test(error));
-
+		}
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось найти данные по отправлению ' + prefs.track_id);
 	}
-	var result = {success: true};
+	result.success = true;
 
-	getInfo(result, html)
+	return getInfo(result, html)
 }
 
-function doLogin() {
-	var prefs = AnyBalance.getPreferences();
+function doLogin(result, prefs) {
 	AnyBalance.setDefaultCharset('utf-8');
 	var baseurl = 'https://gdeposylka.ru';
+
 	var html = AnyBalance.requestGet(baseurl+'/auth/login', g_headers);
 
 	if(!html || AnyBalance.getLastStatusCode() > 400){
@@ -92,16 +83,31 @@ function doLogin() {
 
 	html = AnyBalance.requestGet(baseurl+'/tracks', g_headers);
 
-	var result = {success: true};
+	result.success = true;
 
 	var trackingTable = AB.getParam(html, null, null, /<div[^>]+class="trackings-list"[^>]*>([\s\S]*?)<footer[^>]*>/i);
-	if(!trackingTable)
-		throw new AnyBalance.Error("Не удалось найти таблицу с трек-номерами. Сайт изменён?");
-
-	var tracks = getElements(trackingTable, /<div[^>]+class="tracking-number"[^>]*>/ig);
+	var tracks = getElements(trackingTable, /<div[^>]+class="tracking clearfix[^>]*>/ig);
 	if(tracks.length == 0)
 		throw new AnyBalance.Error("Не удалось найти почтовые отправления.");
+
 	AnyBalance.trace("Найдено посылок: " + tracks.length);
+
+	if(isAvailable('allTracksText')) {
+		result.allTracksText = '';
+
+		for(var i=0; i< tracks.length; i++) {
+			var day = getParam(tracks[i], null, null, /"checkpoint-time"(?:[^>]*>)([^<]+)/i, replaceTagsAndSpaces) || '';
+			var time = getParam(tracks[i], null, null, /"muted"[^>]*>([^<]+)/i, replaceTagsAndSpaces) || '';
+			var status = getParam(tracks[i], null, null, /"checkpoint-status"(?:[^>]*>)([\s\S]*?)<\/div/i, replaceTagsAndSpaces) || '';
+			var name = getParam(tracks[i], null, null, /"tracking-number"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces) || '';
+			var geo = getParam(tracks[i], null, null, /class="text-muted"[^>]*>([\s\S]*?)<\/div/i, replaceTagsAndSpaces) || '';
+
+
+			result.allTracksText += '<b>' + name + ', ' + status + ' (' + geo + ')</b><br/>' + '<small>' + day + ' ' + time + '</small><br/><br/>';
+		}
+
+		result.allTracksText = result.allTracksText.replace(/<br\/><br\/>$/i, '');
+	}
 
 	if(prefs.track_id) {
 		var regExp = new RegExp('<a[^>]+href="([\\s\\S]*?' + prefs.track_id + ')"', 'i');
@@ -110,21 +116,29 @@ function doLogin() {
 
 			if(href) {
 				html = AnyBalance.requestGet(baseurl+href, g_headers);
-				getInfo(result, html);
+				return getInfo(result, html);
 				break;
 			}
 		}
 
-		if(!href)
-			AnyBalance.trace("Не нашли посылку с номером " + prefs.track_id + ' пытаемся получить информацию по первому номеру...');
+		if(!href) {
+			AnyBalance.trace("Не нашли посылку с номером " + prefs.track_id + ' в ЛК. Пытаемся получить информацию напрямую..');
+			try {
+				return doTrack(result, prefs);
+			} catch (e) {
+				AnyBalance.trace(e.message);
+				return result;
+			}
+		}
 	}
 
-	if(!AnyBalance.isSetResultCalled()) {
-		var href = AB.getParam(tracks[0], null, null, /<a[^>]+href="([\s\S]*?)"/i);
-		if(!href)
-			throw new AnyBalance.Error("Не удалось найти ссылку на почтовое отправление. Сайт изменён?");
+	var href = AB.getParam(tracks[0], null, null, /<a[^>]+href="([\s\S]*?)"/i);
+	if(!href) {
+		AnyBalance.trace("Не удалось найти ссылку на почтовое отправление. Сайт изменён?");
+		return result;
+	} else {
 		html = AnyBalance.requestGet(baseurl+href, g_headers);
-		getInfo(result, html);
+		return getInfo(result, html);
 	}
 }
 
@@ -164,7 +178,9 @@ function getInfo(result, html) {
 			result.fulltext = result.fulltext.replace(/<br\/><br\/>$/i, '');
 		}
 	}
+	return result;
 
+	//AnyBalance.setResult(result);
 	// var days = getParam(html, null, null, /"parcelin-days"(?:[^>]*>){1}([^<\|]*)/i, replaceTagsAndSpaces, parseBalance);
 
 	// var table = getParam(html, null, null, /class="parcelin-table"([\s\S]*?)<\/table>/i);
@@ -189,7 +205,6 @@ function getInfo(result, html) {
 	// }
 	// }
 
-	AnyBalance.setResult(result);
 }
 function getDateString(dt) {
     if (typeof dt != 'object') 

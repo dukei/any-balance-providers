@@ -1,5 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="1.0" version="9" date="2016-02-24">
+	- Мелкие улучшения.
+	</change>
 	<change major_version="1.0" version="8">
 	- Доработана обработка конфликтных станций.
 	- Переименован в Яндекс.Электрички.

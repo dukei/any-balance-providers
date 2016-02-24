@@ -11,45 +11,45 @@ var g_userAgent = 'mozilla/5.0 (windows nt 10.0; win64; x64) applewebkit/537.36 
 
 var g_lks = {
     pesc: {
-    protocols: ['TLSv1.2'],
-	url: 'https://ikus.pesc.ru/IKUSUser/',
-	uid: 'E85D8BB4C101FFBB462908DEC5BC61A6',
-	auth_uid: 'AE742241A0A8AD76E4877D96DE250A42',
-	strong_name: '\\b%VARNAME_BROWSER%,\\w+\\],(\\w+)\\)',
-	auth_url: 'userAuth/',
-	auth_nocache: 'userAuth/userAuth.nocache.js',
-	auth_file: 'com.sigma.personal.client.auth.AuthService.gxt',
-	auth_class: 'com.sigma.personal.client.auth.AuthService',
-	auth_data: "7|0|8|%url%%auth_url%|%uid%|%auth_class%|login|java.lang.String/2004016611|%LOGIN%|%PASSWORD%|%USER_AGENT%|1|2|3|4|4|5|5|5|5|6|7|0|8|",
-	auth_data_captcha: "7|0|9|%url%%auth_url%|%uid%|%auth_class%|login|java.lang.String/2004016611|%LOGIN%|%PASSWORD%|%CAPTCHA%|%USER_AGENT%|1|2|3|4|4|5|5|5|5|6|7|8|9|",
-	user_url: 'userPhysical/',
-	user_nocache: 'userPhysical/userPhysical.nocache.js',
-	user_file: 'com.sigma.personal.client.physical.ClientService.gwt',
-	user_class: 'com.sigma.personal.client.physical.ClientService',
-	user_data: "7|0|4|%url%%user_url%|%auth_uid%|%user_class%|getAllAbons|1|2|3|4|0|",
-	re_account: /model.Abonent[^"]*"(?:,"[^"]*"){5},"([^"]*)/,
-	re_address: /model.Abonent[^"]*"(?:,"[^"]*"){9},"([^"]*)/,
-	counters: ['balance', 'peni']
+        protocols: ['TLSv1.2'],
+		url: 'https://ikus.pesc.ru/IKUSUser/',
+		uid: '137C3934919BAFF59CDBF95466D04C83',
+		auth_uid: 'AE742241A0A8AD76E4877D96DE250A42',
+		strong_name: '\\b%VARNAME_BROWSER%,\\w+\\],(\\w+)\\)',
+		auth_url: 'userAuth/',
+		auth_nocache: 'userAuth/userAuth.nocache.js',
+		auth_file: 'com.sigma.personal.client.auth.AuthService.gxt',
+		auth_class: 'com.sigma.personal.client.auth.AuthService',
+		auth_data: "7|0|8|%url%%auth_url%|%uid%|%auth_class%|login|java.lang.String/2004016611|%LOGIN%|%PASSWORD%|%USER_AGENT%|1|2|3|4|4|5|5|5|5|6|7|0|8|",
+		auth_data_captcha: "7|0|9|%url%%auth_url%|%uid%|%auth_class%|login|java.lang.String/2004016611|%LOGIN%|%PASSWORD%|%CAPTCHA%|%USER_AGENT%|1|2|3|4|4|5|5|5|5|6|7|8|9|",
+		user_url: 'userPhysical/',
+		user_nocache: 'userPhysical/userPhysical.nocache.js',
+		user_file: 'com.sigma.personal.client.physical.ClientService.gwt',
+		user_class: 'com.sigma.personal.client.physical.ClientService',
+		user_data: "7|0|4|%url%%user_url%|%auth_uid%|%user_class%|getAllAbons|1|2|3|4|0|",
+		re_account: /"Аб\.\s+№","([^"]*)/,
+		re_address: /"Адрес","([^"]*)/,
+		counters: ['balance', 'peni']
     },
     pes: {
-	url: 'https://ikus.pes.spb.ru/IKUSUser/',
-	uid: 'E85D8BB4C101FFBB462908DEC5BC61A6',
-	auth_uid: 'AE742241A0A8AD76E4877D96DE250A42',
-	strong_name: '\\b%VARNAME_BROWSER%,\\w+\\],(\\w+)\\)',
-	auth_url: 'userAuth/',
-	auth_nocache: 'userAuth/userAuth.nocache.js',
-	auth_file: 'com.sigma.personal.client.auth.AuthService.gxt',
-	auth_class: 'com.sigma.personal.client.auth.AuthService',
-	auth_data: "7|0|8|%url%%auth_url%|%uid%|%auth_class%|login|java.lang.String/2004016611|%LOGIN%|%PASSWORD%|%USER_AGENT%|1|2|3|4|4|5|5|5|5|6|7|0|8|",
-	auth_data_captcha: "7|0|9|%url%%auth_url%|%uid%|%auth_class%|login|java.lang.String/2004016611|%LOGIN%|%PASSWORD%|%CAPTCHA%|%USER_AGENT%|1|2|3|4|4|5|5|5|5|6|7|8|9|",
-	user_url: 'userPhysical/',
-	user_nocache: 'userPhysical/userPhysical.nocache.js',
-	user_file: 'com.sigma.personal.client.physical.ClientService.gwt',
-	user_class: 'com.sigma.personal.client.physical.ClientService',
-	user_data: "7|0|4|%url%%user_url%|%auth_uid%|%user_class%|getAbonsList|1|2|3|4|0|",
-	re_account: /electric.model.AbonentModel[^"]*","([^"]*)/,
-	re_address: /electric.model.AbonentModel[^"]*"(?:,"[^"]*"){1},"([^"]*)/,
-	counters: ['peni', 'balance']
+		url: 'https://ikus.pes.spb.ru/IKUSUser/',
+		uid: 'E85D8BB4C101FFBB462908DEC5BC61A6',
+		auth_uid: 'AE742241A0A8AD76E4877D96DE250A42',
+		strong_name: '\\b%VARNAME_BROWSER%,\\w+\\],(\\w+)\\)',
+		auth_url: 'userAuth/',
+		auth_nocache: 'userAuth/userAuth.nocache.js',
+		auth_file: 'com.sigma.personal.client.auth.AuthService.gxt',
+		auth_class: 'com.sigma.personal.client.auth.AuthService',
+		auth_data: "7|0|8|%url%%auth_url%|%uid%|%auth_class%|login|java.lang.String/2004016611|%LOGIN%|%PASSWORD%|%USER_AGENT%|1|2|3|4|4|5|5|5|5|6|7|0|8|",
+		auth_data_captcha: "7|0|9|%url%%auth_url%|%uid%|%auth_class%|login|java.lang.String/2004016611|%LOGIN%|%PASSWORD%|%CAPTCHA%|%USER_AGENT%|1|2|3|4|4|5|5|5|5|6|7|8|9|",
+		user_url: 'userPhysical/',
+		user_nocache: 'userPhysical/userPhysical.nocache.js',
+		user_file: 'com.sigma.personal.client.physical.ClientService.gwt',
+		user_class: 'com.sigma.personal.client.physical.ClientService',
+		user_data: "7|0|4|%url%%user_url%|%auth_uid%|%user_class%|getAbonsList|1|2|3|4|0|",
+		re_account: /electric.model.AbonentModel[^"]*","([^"]*)/,
+		re_address: /electric.model.AbonentModel[^"]*"(?:,"[^"]*"){1},"([^"]*)/,
+		counters: ['peni', 'balance']
     }
 };
 
@@ -94,7 +94,7 @@ function main(){
         
         //Тут получаем что-то вроде //OK[[],0,6]
         var auth = gwtGetJSON(html);
-        if (cfg.url.match(/pes\./) && !auth[0]){
+        if (!isset(auth[0])){
         	AnyBalance.trace(html);
             throw new AnyBalance.Error("error");
         }
@@ -140,7 +140,12 @@ function main(){
 
     var result = { success: true };
 
-    var num =  cfg.url.match(/pesc/) ? '\\d+,' : getParam(html, null, null, /\d+\.\d+,(\d+),/);
+    //Для песк подряд идущие числа, похоже, вспомогательные балансы
+    if(cfg.url.match(/pesc/))
+    	html = html.replace(/-?\d+\.\d+,-?\d+\.\d+/g, 'extrabalance','extrapeni');
+    	 
+    //Для песк балансы и пени лежат \d.\d,\d (и следующие цифры разные)
+    var num =  cfg.url.match(/pesc/) ? '\\d+' : getParam(html, null, null, /\d+\.\d+,(\d+),/);
     if(!isset(num)){
     	AnyBalance.trace(html);
     	throw new AnyBalance.Error('Не удаётся найти баланс. Зайдите в личный кабинет через браузер и убедитесь, что вы подключили абонентов.');

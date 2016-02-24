@@ -1,6 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-    <id version="1">ab-internet-irknet</id>
+	<api flags="no_browser"/>
+    <id version="2">ab-internet-irknet</id>
     <name>Иркнэт Телеком</name>
     <description>
         Предоставляет информацию о текущем балансе, дате и сумме следующего платежа и др. для пользователей интернет-провайдера "Иркнэт Телеком" (http://irknet.ru)

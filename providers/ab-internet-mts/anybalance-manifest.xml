@@ -52,7 +52,7 @@
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-	  <!-- <js>api:jquery.min.js</js>  -->
+	  <js>api:jquery.min.js</js> 
 		<!-- <js>library.js</js> -->
 		<js>login.js</js>
 		<js>main.js</js>

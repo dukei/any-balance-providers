@@ -8,6 +8,9 @@
 	<p>Информация берется из системы проверки подписки http://act.telekarta.tv/chkcard/. Достаточно указать только номер карты.</p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

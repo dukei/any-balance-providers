@@ -19,28 +19,30 @@ function main(){
     var html = AnyBalance.requestPost(baseurl + 'check.php', {
         card: prefs.login
     }, addHeaders({Referer: baseurl + 'index.php'}));
-
-    if (!html || AnyBalance.getLastStatusCode() > 400) {
+	
+	if (!html || AnyBalance.getLastStatusCode() > 400) {
         AnyBalance.trace(html);
         throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
     }
-	
-	var msg = getElement(html, /<div[^>]+id="msg"[^>]*>/i);
-	var elements = getElements(msg, /<table[^>]+sublist_table[^>]*>/ig);
+
+	var elements = getElements(html, /<table[^>]+sublist_table[^>]*>/ig);
 	if (elements.length == 0) {
-		if (msg)
-			throw new AnyBalance.Error(replaceAll(msg, replaceTagsAndSpaces), null, /Ошибка в номере карты/i.test(msg));
+		var error = getElement(html, /<div[^>]+id="msg">/i, replaceTagsAndSpaces)
+		if (error)
+			throw new AnyBalance.Error(error, null, /Ошибка в номере карты/i.test(error));
 		
 		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Не удалось получить дату окончания подписки. Сайт изменен?');
+		throw new AnyBalance.Error('Не удалось получить данные по карте ' + prefs.login + '. Сайт изменен?');
 	}
 	
-    var result = {success: true};
-    
-    getParam(msg, result, 'num', /^([\s\S]*?):/i,  replaceTagsAndSpaces);
+	var result = {success: true};
+	
+	getParam(html, result, 'num', /id="card"[^>]*value="([^"]+)/i,  replaceTagsAndSpaces);
+	
     getParam(elements[elements.length-1], result, '__tariff', /<th[^>]*>\s*Наименование(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i,  replaceTagsAndSpaces);
     getParam(elements[elements.length-1], result, 'status', /<th[^>]*>\s*Статус(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
     getParam(elements[elements.length-1], result, 'till', /<th[^>]*>\s*Статус(?:[\s\S]*?<td[^>]*>){2}[^<]* по([\s\S]*?)<\/td>/i,  replaceTagsAndSpaces, parseDateWord);
 
     AnyBalance.setResult(result);
 }
+

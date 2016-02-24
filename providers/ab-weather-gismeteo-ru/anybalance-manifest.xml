@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="2.2" version="22">ab-weather-gismeteo-ru</id>
+	<id major_version="2.2" version="23">ab-weather-gismeteo-ru</id>
 	<name>Gismeteo</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о прогнозе погоды, текущей погоде, температуре водоемов, времени восхода/захода Солнца, фаз Луны для выбранного города.</p>
@@ -14,12 +14,15 @@
 	]]></instruction>
 	<author>iReset &lt;ireset.ag@gmail.com&gt;</author>
 	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+  </depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
 		<js>api:jquery.min.js</js>
 		<js>main.js</js>
-		<js>library.js</js>
+		<!-- <js>library.js</js> -->
 		<history>history.xml</history>
 	</files>
 	<counters>

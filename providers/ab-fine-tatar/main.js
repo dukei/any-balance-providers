@@ -86,7 +86,7 @@ function main(){
 
 	var result = {success: true};
 
-	if(!json.response.fines.length) {
+	if (!isset(json.response) || !isset(json.response.fines) || !json.response.fines.length) {
 			AnyBalance.trace('Не найдено штрафов..');
 			getParam('0', result, 'balance', null, replaceTagsAndSpaces, parseBalance);
 		}

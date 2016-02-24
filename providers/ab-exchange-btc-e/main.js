@@ -13,7 +13,7 @@ var g_headers = {
 function main(){
     var prefs = AnyBalance.getPreferences();
     AnyBalance.setDefaultCharset('utf-8');
-    var baseurl = defineBaseUrl();
+    var baseurl = 'https://btc-e.nz/';
 
     var html = AnyBalance.requestGet(baseurl + 'api/2/' + prefs.curs + '/ticker', g_headers); 
 
@@ -43,24 +43,4 @@ function main(){
     getParam(json.ticker.vol_cur, result, 'vol_cur', null, null, parseBalance);
 
     AnyBalance.setResult(result);
-}
-
-function defineBaseUrl() {
-    var urls = ['https://btc-e.com/', 'https://btc-e.nz/', 'http://0s.mj2ggllffzrw63i.cmle.ru/'],
-        html,
-        idx;
-
-    for (idx = 0; idx < urls.length; idx++) {
-        try {
-            html = AnyBalance.requestGet(urls[idx], g_headers);
-            break;
-        }
-        catch(e){}
-    }
-
-    if(!html || AnyBalance.getLastStatusCode() > 400) {
-        throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
-    }
-
-    return urls[idx];
 }

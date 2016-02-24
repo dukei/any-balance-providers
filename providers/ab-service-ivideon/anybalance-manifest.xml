@@ -20,8 +20,7 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units=" {@currency}"/>
-		<counter id="currency" name="Валюта" type="text"/>
+		<counter id="balance" name="Состояние счёта" units=" {@currency}"/>
 	</counters>
 	<keywords>Облачное видеонаблюдение от компании Ivideon айвидеон</keywords>
 	<type>service</type>

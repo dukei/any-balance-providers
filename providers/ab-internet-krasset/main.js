@@ -12,7 +12,6 @@ var g_headers = {
 
 var g_loginErrors = {
 	'logged':'Вы уже авторизованы',
-	
 	'wrong':'Неправильный логин или пароль',
 };
 

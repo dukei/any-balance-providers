@@ -33,17 +33,7 @@ function main () {
 	if(/\d{3,}/.test(prefs.station_to))
 		href += '&toId=' + prefs.station_to;
 	
-	// var htmlFrom = AnyBalance.requestGet('https://suggests.rasp.yandex.ru/suburban?callback=jQuery&format=old&field=from&query=' + encodeURIComponent(prefs.station_from), g_headers);
-	// var htmlTo = AnyBalance.requestGet('https://suggests.rasp.yandex.ru/suburban?callback=jQuery&format=old&field=to&query=' + encodeURIComponent(prefs.station_to), g_headers);
-	
-	
-	// html = AnyBalance.requestGet('http://mobile.rasp.yandex.net/export/suburban/search/?station_from=235904&city_to=213&date=2015-12-11&tomorrow_upto=6&uuid=81b8760a06667f357ac9d52f6590dee1', g_headers);
-
-	// return;
-	html = AnyBalance.requestGet(href, addHeaders({
-		'Referer': g_baseurl
-	}));
-	
+	html = AnyBalance.requestGet(href, addHeaders({'Referer': g_baseurl}));
 	
 	// Иногда требуется уточнить место отправления или прибытия, при совпадении названий станций, например Царицино - Весенняя
 	// Оставлено для совместимости, с теми, у кого введен region в настройках
@@ -101,12 +91,6 @@ function getTrainDepartureTime(inputText) {
 	} catch(e) {
 		
 	}
-	
-	
-	// 
-	
-	// AnyBalance.trace(JSON.stringify(json));
-	// return 'Н/Д';
 	
 	var re = /<td class="b-timetable__cell.+?b-timetable__cell_type_departure".+?<strong>.+?<\/strong>/;
 	var cell = re.exec(inputText);

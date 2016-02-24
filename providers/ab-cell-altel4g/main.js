@@ -84,11 +84,13 @@
  				counter_name = 'day_traffic_left';
  			else if (/с 00/i.test(counter))
  				counter_name = 'night_traffic_left';
- 			else
- 				counter_name = 'traffic_left';
+ 			else if (/Израсходованного трафика/i.test(note))
+ 				counter_name = 'traffic_used';
+                        else 
+                                counter_name = 'traffic_left';
 
  			if (counter_name)
- 				AB.getParam(value, result, counter_name, null, null, parseTraffic);
+ 				AB.getParam(value + ' ' + units, result, counter_name, null, null, parseTraffic);
  		} else if (/СМС|SMS/i.test(units)) {
  			// Смс внутри сети
  			counter_name = 'sms_left';

@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-money-lukoil-npf</id>
+	<id version="3">ab-money-lukoil-npf</id>
 	<api flags="no_browser"/>
 	<name>НПФ "Лукойл-Гарант"</name>
 	<description html="true"><![CDATA[
@@ -21,7 +21,9 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Сумма накоплений" units=" р"/>
+		<counter id="balance" name="Сумма всех поступлений" units=" р"/>
+        <counter id="balancench" name="Поступления по накопительной пенсии" units=" р"/>
+        <counter id="balancenpo" name="Поступления по негосударственной пенсии" units=" р"/>
 		<counter id="account" name="Номер договора" type="text"/>
 		<!--<counter id="status" name="Статус договора" type="text"/>-->
         <counter id="messages" name="Новые сообщения"/>

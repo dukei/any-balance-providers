@@ -1,12 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="5">ab-municipal-energosbyt</id>
+	<id version="6">ab-municipal-energosbyt</id>
 	<name>Энергосбыт (ЭК "Восток")</name>
 	<description>
-    Получает информацию в системе Энергосбыт (ОАО "Энергосбытовая компания "Восток") сайт: http://www.ensbyt.ru/
+    Получает информацию в системе Энергосбыт (ОАО "Энергосбытовая компания "Восток") сайт: https://lk.erc-progress.ru/
 	
-	Получает данные из личного кабинета https://lk.ensbyt.ru/
+	Получает данные из личного кабинета https://lk.erc-progress.ru/
 	</description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
     <depends>

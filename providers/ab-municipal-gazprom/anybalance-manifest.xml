@@ -1,38 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="3">ab-municipal-gazprom</id>
+	<id version="4">ab-municipal-gazprom</id>
 	<api flags="no_browser"/>
 	<name>Газпром Межрегионгаз</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе провайдера ООО &laquo;Газпром Межрегионгаз&raquo;</p>
 	<p>Поддерживаются регионы:</p>
 	<ul>
-		<li>Брянск (<a href="https://газ.смородина.онлайн/">https://газ.смородина.онлайн/</a>)<br></li>
-		<li>Волгоград (<a href="http://34regiongaz.ru/cabinet/enter/">http://34regiongaz.ru/cabinet/enter/</a>)<br></li>
-		<li>Воронеж (<a href="http://www.vrgaz.ru/lk/index.php">http://www.vrgaz.ru/lk/index.php</a>)<br></li>
-		<li>Калуга (<a href="https://газ.смородина.онлайн/">https://газ.смородина.онлайн/</a>)<br></li>
-		<li>Москва (<a href="https://газ.смородина.онлайн/">https://газ.смородина.онлайн/</a>)<br></li>
-		<li>Пермь (<a href="https://газ.смородина.онлайн/">https://газ.смородина.онлайн/</a>)<br></li>
-		<li>Ростов-на-Дону (<a href="http://www.rostovregiongaz.ru/auth/index.php">http://www.rostovregiongaz.ru/auth/index.php</a>)<br></li>
-		<li>Санкт-Петербург (<a href="http://cfl.peterburgregiongaz.ru">http://cfl.peterburgregiongaz.ru</a>)<br></li>
-		<li>Тверь (<a href="http://lk.tverregiongaz.ru/">http://lk.tverregiongaz.ru/</a>)<br></li>
-		<li>Чебоксары (<a href="http://gmch.ru/user/">http://gmch.ru/user/</a>)<br></li>
+		<li>Брянск (https://газ.смородина.онлайн/)<br></li>
+		<li>Волгоград (http://34regiongaz.ru/cabinet/enter/)<br></li>
+		<li>Воронеж (http://www.vrgaz.ru/lk/index.php)<br></li>
+		<li>Калуга (https://газ.смородина.онлайн/)<br></li>
+		<li>Москва (https://газ.смородина.онлайн/)<br></li>
+		<li>Пермь (https://газ.смородина.онлайн/)<br></li>
+		<li>Ростов-на-Дону (http://www.rostovregiongaz.ru/auth/index.php)<br></li>
+		<li>Санкт-Петербург (http://cfl.peterburgregiongaz.ru)<br></li>
+		<li>Тверь (http://lk.tverregiongaz.ru/)<br></li>
+		<li>Уфа (https://lk.bashgaz.ru/)<br></li>
+		<li>Чебоксары (http://gmch.ru/user/)<br></li>
 	</ul>
 	]]></description>
 	<instruction html="true"><![CDATA[
-	<p>Для добавления вашего региона обратитесь, пожалуйста, к разработчикам</p>
+	<p>Для добавления вашего региона обратитесь, пожалуйста, к разработчикам.</p>
+	<p>При вводе логина для региона "Уфа" логин нужно вводить с префиксом Вашего отделения.</p>
 	]]></instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
 	<counters>
 		<counter id="balance" name="Баланс" units=" p"/>
 		<counter id="advance" name="Аванс" units=" р"/>
+		<counter id="toPay" name="К оплате" units=" р"/>
 		<counter id="charged" name="Начислено" units=" р"/>
 		<counter id="recalculation" name="Перерасчет" units=" р"/>
 		<counter id="paid" name="Оплачено" units=" р"/>

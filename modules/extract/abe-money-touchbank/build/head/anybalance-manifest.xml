@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">extract/abe-money-ipb</id>
+	<id version="1">extract/abe-money-touchbank</id>
 	<api flags="no_browser"/>
 	<name>Extract for TouchBank</name>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>

@@ -1,0 +1,41 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-money-touchbank</id>
+	<api flags="no_browser"/>
+	<name>Touch Bank</name>
+	<description html="true"><![CDATA[
+	<p>Получает текущий остаток и другие параметры карт, счетов и депозитов Touch Bank'а, используя интернет-банк https://www.touchbank.com/lk </p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+		<module id="nadapter"/>
+		<module id="extract/abe-money-touchbank"/>
+	</depends>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Остаток" units=" {@currency}"/>
+		<counter id="borrowed" name="Задолженность по карте" units=" {@currency}"/>
+		<counter id="charged" name="Получено в текущем месяце" units=" {@currency}"/>
+		<counter id="locked" name="Заморожено" units=" {@currency}"/>
+		<counter id="limit" name="Кредитный лимит" units=" {@currency}"/>
+		<counter id="pct" name="Процентная ставка" units=" %"/>
+		<counter id="currency" name="Валюта" type="text"/>
+		<counter id="cardnum" name="Номер карты/счёта/депозита" type="text"/>
+		<counter id="accnum" name="Номер счета" type="text"/>
+		<counter id="name" name="Тип карты/счёта/депозита" type="text"/>
+		<counter id="status" name="Статус" type="text"/>
+		<counter id="period" name="Срок вклада" type="text"/>
+		<counter id="date_start" name="Дата открытия" type="time" format="dd/MM/yyyy"/>
+		<counter id="till" name="Срок действия" type="time" format="dd/MM/yyyy"/>
+		<counter id="fio" name="ФИО" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>money, bank</type>
+	<country>ru</country>
+</provider>

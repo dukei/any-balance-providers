@@ -2,7 +2,7 @@
 <provider>
 	<api flags="no_browser"/>
 	<id version="1">ab-cell-beeline-kg</id>
-	<name>Beeline Кыргызстан - beeline.kg</name>
+	<name>Beeline (Кыргызстан)</name>
 	<description html="true">
 		<![CDATA[
 	<p>Предоставляет информацию о балансе и бонусных баллах.</p>
@@ -14,7 +14,7 @@
 	<p>Если у вас нет доступа в Личный кабинет, получите его на странице https://services.beeline.kg/ </p>
 	]]>
 	</instruction>
-	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<author>Ivan Dogaev &lt;azecm@mail.ru&gt;</author>
 	<depends>
 		<module id="library"/>
 	</depends>

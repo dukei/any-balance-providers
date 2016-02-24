@@ -24,12 +24,11 @@ function main() {
 		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
 	}
 
-	var ViewState = html.match(/name="javax.faces.ViewState"[^>]+value="([^"]+)"/i);
+	var ViewState = AB.getParam(html, null, null, /name="javax.faces.ViewState"[^>]+value="([^"]+)"/i);
 	if (!ViewState) {
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось найти форму входа. Сайт изменен?');
 	}
-	ViewState = ViewState[1];
 
 	var captchaCode='';
 	if (/\/simpleCaptcha\.png/i.test(html)) {
@@ -50,24 +49,26 @@ function main() {
 	}, AB.addHeaders({ Referer: baseurl + 'views/index.xhtml' }));
 
 	var result = { success: true };
-	AB.getParam(html, result, 'balance', /Ваш баланс[^<]*<[^>]+>\s*([\d\.]+)/i, AB.parseBalance);
-	AB.getParam(html, result, 'bonus', /Накопленные баллы[\D]+([\d\.]+)/i, AB.parseBalance);
+	
+	AB.getParam(html, result, 'balance', /Ваш баланс[^<]*<[^>]+>\s*([\s\S]*?)<\//i, AB.replaceTagsAndSpaces, AB.parseBalance);
+	AB.getParam(html, result, 'bonus', /Накопленные баллы[\D]+([\d\.\s,]+)/i, AB.replaceTagsAndSpaces, AB.parseBalance);
 
 	html = AnyBalance.requestGet(baseurl + 'views/subscrInfo.xhtml', g_headers);
 	var text = AB.getParam(html, null, null, null, AB.replaceTagsAndSpaces);
 
-	AB.getParam(html, result, 'fio', /Фамилия Имя Отчество[^<]*<[^>]+>[^<]*<[^>]+>[^<]*<[^>]+>([^<]*)/i, AB.replaceTagsAndSpaces);
-	AB.getParam(html, result, 'address', /Адрес абонента[^<]*<[^>]+>[^<]*<[^>]+>[^<]*<[^>]+>([^<]*)/i, AB.replaceTagsAndSpaces);
-	AB.getParam(html, result, 'phone2', /Контактный телефон[^<]*<[^>]+>[^<]*<[^>]+>[^<]*<[^>]+>([^<]*)/i, AB.replaceTagsAndSpaces);
+	//AB.getParam(html, result, 'fio', /Фамилия Имя Отчество[^<]*<[^>]+>[^<]*<[^>]+>[^<]*<[^>]+>([^<]*)/i, AB.replaceTagsAndSpaces);
+	//AB.getParam(html, result, 'address', /Адрес абонента[^<]*<[^>]+>[^<]*<[^>]+>[^<]*<[^>]+>([^<]*)/i, AB.replaceTagsAndSpaces);
+	//AB.getParam(html, result, 'phone2', /Контактный телефон[^<]*<[^>]+>[^<]*<[^>]+>[^<]*<[^>]+>([^<]*)/i, AB.replaceTagsAndSpaces);
 
 	if (/Активный/i.test(text)) result.status = 'активный';
+	AB.getParam(text, result, 'fio', /Фамилия Имя Отчество\s+([^<]*)Адрес/i, AB.replaceTagsAndSpaces);
+	AB.getParam(text, result, 'address', /Адрес абонента\s+([^<]*)Контактный/i, AB.replaceTagsAndSpaces);
+	AB.getParam(text, result, 'phone2', /Контактный телефон\s+(\d+)/i, AB.replaceTagsAndSpaces);
 	AB.getParam(text, result, 'dogovor', /Номер договора\s*(\d+)/i);
 	AB.getParam(text, result, 'phone', /номер телефона\s+(\d+)/i);
 	AB.getParam(text, result, 'sim1', /активации сим карты\s*([\d\.]+\s[\d:]+)/i);
 	AB.getParam(text, result, 'sim2', /окончания активного режима\s*([\d\.]+\s[\d:]+)/i);
 	AB.getParam(text, result, 'sim3', /окончания режима ожидания\s*([\d\.]+\s[\d:]+)/i);
-
-	if (result.address) result.address = result.address.replace(/null/ig, '');
 
 	AnyBalance.setResult(result);
 }

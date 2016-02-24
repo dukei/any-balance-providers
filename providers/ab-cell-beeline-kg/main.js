@@ -62,7 +62,7 @@ function main() {
 
 	if (/Активный/i.test(text)) result.status = 'активный';
 	AB.getParam(text, result, 'fio', /Фамилия Имя Отчество\s+([^<]*)Адрес/i, AB.replaceTagsAndSpaces);
-	AB.getParam(text, result, 'address', /Адрес абонента\s+([^<]*)Контактный/i, AB.replaceTagsAndSpaces);
+	AB.getParam(text, result, 'address', /Адрес абонента\s+([^<]*)Контактный/i, [AB.replaceTagsAndSpaces, /null/ig, '']);
 	AB.getParam(text, result, 'phone2', /Контактный телефон\s+(\d+)/i, AB.replaceTagsAndSpaces);
 	AB.getParam(text, result, 'dogovor', /Номер договора\s*(\d+)/i);
 	AB.getParam(text, result, 'phone', /номер телефона\s+(\d+)/i);

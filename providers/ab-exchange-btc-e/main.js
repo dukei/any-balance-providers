@@ -12,10 +12,8 @@ var g_headers = {
 
 function main(){
     var prefs = AnyBalance.getPreferences();
-
-    var baseurl = "https://btc-e.com/";
-
-    AnyBalance.setDefaultCharset('utf-8'); 
+    AnyBalance.setDefaultCharset('utf-8');
+    var baseurl = 'https://btc-e.nz/';
 
     var html = AnyBalance.requestGet(baseurl + 'api/2/' + prefs.curs + '/ticker', g_headers); 
 

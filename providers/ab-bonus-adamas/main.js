@@ -15,8 +15,8 @@ function main() {
 	var baseurl = 'http://www.adamas.ru/';
 	AnyBalance.setDefaultCharset('utf-8');
 	
-	checkEmpty(prefs.login, 'Введите логин!');
-	checkEmpty(prefs.password, 'Введите пароль!');
+	AB.checkEmpty(prefs.login, 'Введите логин!');
+    AB.checkEmpty(prefs.password, 'Введите пароль!');
 	
 	var html = AnyBalance.requestGet(baseurl, g_headers);
 	
@@ -25,20 +25,25 @@ function main() {
 		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
 	}
 	
-	var params = createFormParams(html, function(params, str, name, value) {
-		if (name == 'LOGIN')
-			return prefs.login;
-		else if (name == 'PASSWORD')
-			return prefs.password;
-		return value;
-	});
+	var params = {
+        'BACK_LINK': '',
+        'yakor': AB.getParam(html, null, null, /<input[^>]*yakor[^>]*value="([^"]+)/i),
+        'LOGIN': prefs.login,
+        'PASSWORD': prefs.password,
+        'n2': 'Войти'
+    };
 	
-	html = AnyBalance.requestPost(baseurl + 'index.php', params, addHeaders({Referer: baseurl}));
+	var postHtml = AnyBalance.requestPost(baseurl + 'index.php', params, AB.addHeaders({Referer: baseurl}));
+    html = AnyBalance.requestGet(baseurl + 'personal/', g_headers);
 	
 	if (!/logout/i.test(html)) {
-		var error = getParam(html, null, null, /<div[^>]+class="erorrs"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
-		if (error)
-			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
+		var error = AB.getParam(
+            postHtml, null, null, /<div class="cont-input">[\s\S]*?<p[^>]*>([^<]+)/i, AB.replaceTagsAndSpaces
+        );
+
+		if (error) {
+            throw new AnyBalance.Error(error, null, /Проверьте данные/i.test(error));
+        }
 		
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
@@ -46,17 +51,15 @@ function main() {
 	
 	var result = {success: true};
 
-	html = AnyBalance.requestGet(baseurl + 'personal/', g_headers);
+	var fName = AB.getParam(html, null, null, /name="name"[^>]+value="([\s\S]*?)"/i, AB.replaceTagsAndSpaces) || '';
+	var lName = AB.getParam(html, null, null, /name="last_name"[^>]+value="([\s\S]*?)"/i, AB.replaceTagsAndSpaces) || '';
+	var patronymic = AB.getParam(html, null, null, /name="SECOND_NAME"[^>]+value="([\s\S]*?)"/i, AB.replaceTagsAndSpaces) || '';
 
-	var fName = getParam(html, null, null, /name="name"[^>]+value="([\s\S]*?)"/i, replaceTagsAndSpaces, html_entity_decode) || '';
-	var lName = getParam(html, null, null, /name="last_name"[^>]+value="([\s\S]*?)"/i, replaceTagsAndSpaces, html_entity_decode) || '';
-	var patronymic = getParam(html, null, null, /name="SECOND_NAME"[^>]+value="([\s\S]*?)"/i, replaceTagsAndSpaces, html_entity_decode) || '';
-
-	getParam(lName + ' ' + fName + ' ' + patronymic, result, 'fio');
-	getParam(html, result, 'phone', /Мобильный телефон:([\s\S]*?)<\/div>/i, [replaceTagsAndSpaces, /(.*?)/, '+7$1'], html_entity_decode);
-	getParam(html, result, 'discount', /name="DISCOUNT"[^>]+value="([\s\S]*?)"/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'balance', /name="BONUS"[^>]+value="([\s\S]*?)"/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'cardNumber', /Номер карты:[\s\S]*?(\d+)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+    AB.getParam(lName + ' ' + fName + ' ' + patronymic, result, 'fio');
+    AB.getParam(html, result, 'phone', /Мобильный телефон:([\s\S]*?)<\/div>/i, [AB.replaceTagsAndSpaces, /(.*?)/, '+7$1']);
+    AB.getParam(html, result, 'discount', /name="DISCOUNT"[^>]+value="([\s\S]*?)"/i, AB.replaceTagsAndSpaces, AB.parseBalance);
+    AB.getParam(html, result, 'balance', /name="BONUS"[^>]+value="([\s\S]*?)"/i, AB.replaceTagsAndSpaces, AB.parseBalance);
+    AB.getParam(html, result, 'cardNumber', /Номер карты:[\s\S]*?(\d+)<\/div>/i, AB.replaceTagsAndSpaces);
 
 	AnyBalance.setResult(result);
 }

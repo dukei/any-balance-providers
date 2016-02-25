@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+  <change version="10" date="2016-02-17">
+  - Правки обработки лицевого счета.
+  </change>
 	<change version="9" date="2016-01-21">
 	- Адаптация для https://www.mega-billing.ru/
 	- Добавлен ввод номера лицевого счёта

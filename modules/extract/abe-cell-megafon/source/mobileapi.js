@@ -222,7 +222,7 @@ function processRemaindersApi(result){
                         var val = getParam(current.available, null, null, null, replaceTagsAndSpaces, parseBalance);
                         if(/бесплат/i.test(name)) {
                             getParam(current.available, remainders, 'remainders.mins_n_free', null, replaceTagsAndSpaces, parseMinutes);
-                        }else if((/\.\s*МегаФон|на мегафон/i.test(name) && !/МТС/i.test(name))
+                        }else if((/\.\s*МегаФон|на мегафон/i.test(name) && !/МТС/i.test(name) && !/стационар/i.test(name))
                             || /внутри сети/i.test(name)) {
                             sumParam(current.available, remainders, 'remainders.mins_net_left', null, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
                         } else {
@@ -241,7 +241,8 @@ function processRemaindersApi(result){
                             sumParam(current.total, remainders, 'remainders.sms_total', null, replaceTagsAndSpaces, parseBalance, aggregate_sum);
                         }
                         // Трафик
-                    } else if(/([kmgкмгт][бb]?|[бb](?![\wа-я])|байт|byte)/i.test(units)) {
+						// kmgкмгт - удалено, т.к. есть тариa с 25 600 кб у которого название юнитов "Тар. Ед."
+                    } else if(/([kmgкмг][бb]?|[бb](?![\wа-я])|байт|byte)/i.test(units)) {
                         AnyBalance.trace('Parsing data...' + JSON.stringify(current));
 
                         if(/Гигабайт в дорогу/i.test(name)) {

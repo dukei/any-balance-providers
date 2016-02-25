@@ -344,3 +344,18 @@ function processInfo(html, result){
 function processCredits(html, result) {
 	throw new AnyBalance.Error('Обработка кредитов пока не поддерживается. Пожалуйста, обратитесь к разработчикам.');
 }
+
+function processBonuses(html, result){
+	if(!AnyBalance.isAvailable('bonuses'))
+		return;
+
+	html = AnyBalance.requestGet(baseurl + '/proxy?pipe=loyaltyPipe&action=operations_history');
+	var json = getJson(html);
+	if(!json.data || !json.data.operations) {
+		AnyBalance.trace(html);
+		AnyBalance.trace("Не удалось найти бонусы.");
+		return;
+	}
+
+	getParam(json.data.operations[0]? json.data.operations[0].bonusAvailable + '' : undefined, result, 'bonuses', null, null, null, parseBalance);
+}

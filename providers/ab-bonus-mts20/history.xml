@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="4" date="2016-02-25">
+	- Исправлена ошибка получения информации о балансе.
+	</change>
 	<change version="3" date="2016-02-11">
 	- Исправлена ошибка входа в личный кабинет.
 	</change>

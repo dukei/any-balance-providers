@@ -1,24 +1,26 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="4">ab-municippal-mosenergosbyt-eirkc</id>
+	<id version="5">ab-municippal-mosenergosbyt-eirkc</id>
 	<api flags="no_browser"/>
-	<name>Мособлеирц</name>
+	<name>МосОблЕИРЦ</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о задолженности или переплате в Мособлеирц <a href="http://xn----ltbmfz1a5c.xn--p1ai/">мэс-жкх.рф</a></p>
-	<p>Информация берется из личного кабинета https://www.lkmo.ru или <a href="https://xn--l1ae.xn--80ahmohdapg.xn--80asehdb">мо.смородина.онлайн</a></p>
+	<p>Предоставляет информацию но номерам лицевого счёта в Мособлеирц <a href="http://xn--90aijkdmaud0d.xn--p1ai/">мособлеирц.рф</a></p>
+	<p>Информация берется из личного кабинета <a href="https://xn--l1ae.xn--80ahmohdapg.xn--80asehdb/pages/abonent/login.jsf?faces-redirect=true">мо.смородина.онлайн</a></p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="balance" name="Баланс" units=" {@currency}"/>
 		<counter id="fio" name="ФИО" type="text"/>
-		<counter id="licschet" name="Лицевой счет" type="text"/>
+		<counter id="licschet" name="Лицевой счёт" type="text"/>
 	</counters>
 	<keywords></keywords>
 	<type>municipal</type>

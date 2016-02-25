@@ -1,5 +1,4 @@
-﻿
-/**
+﻿/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 Диалог (Калининград)
 */
@@ -57,10 +56,10 @@ function main() {
   AB.getParam(html, result, 'user_address', /Адрес подключения[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i,
     AB.replaceTagsAndSpaces);
   AB.getParam(html, result, 'speed', /Скорость подключения[\s\S]*?<td[^>]*>([\s\S]*?\/с)/i, AB.replaceTagsAndSpaces);
-  AB.getParam(html, result, 'trafficExtIn', /внешний(?:[\s\S]*?<td[^>]*){1}([\s\S]*?)<\/td>/i, AB.replaceTagsAndSpaces);
-  AB.getParam(html, result, 'trafficExtOut', /внешний(?:[\s\S]*?<td[^>]*){2}([\s\S]*?)<\/td>/i, AB.replaceTagsAndSpaces);
-  AB.getParam(html, result, 'trafficCityIn', /внешний(?:[\s\S]*?<td[^>]*){4}([\s\S]*?)<\/td>/i, AB.replaceTagsAndSpaces);
-  AB.getParam(html, result, 'trafficCityOut', /внешний(?:[\s\S]*?<td[^>]*){5}([\s\S]*?)<\/td>/i, AB.replaceTagsAndSpaces);
+  AB.getParam(html, result, 'trafficExtIn', /внешний(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, AB.replaceTagsAndSpaces);
+  AB.getParam(html, result, 'trafficExtOut', /внешний(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, AB.replaceTagsAndSpaces);
+  AB.getParam(html, result, 'trafficCityIn', /внешний(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, AB.replaceTagsAndSpaces);
+  AB.getParam(html, result, 'trafficCityOut', /внешний(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\/td>/i, AB.replaceTagsAndSpaces);
 
 
   AnyBalance.setResult(result);

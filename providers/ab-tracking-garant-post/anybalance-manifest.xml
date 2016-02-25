@@ -20,7 +20,6 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="code" name="Направление" type="text"/>
 		<counter id="direct" name="Направление" type="text"/>
 		<counter id="date" name="Дата/время" type="text"/>
 		<counter id="event" name="Событие" type="text"/>

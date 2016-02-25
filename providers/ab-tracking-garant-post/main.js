@@ -23,7 +23,7 @@ function main() {
 		y: 8,
 	}, AB.addHeaders({ Referer: baseurl + 'tools/track' }));
 
-	if (!new RegExp(prefs.code, 'i').test(html)) {
+	if (/<form[^>]+\/tools\/track/i.test(html)) {
 		throw new AnyBalance.Error('Неверный почтовый идентификатор!');
 	}
 
@@ -35,13 +35,15 @@ function main() {
 	var table = html.match(/<table[^>]+tnt[^>]+>((?:.(?!\/table>))+)/i);
 	if(!table){
 		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Сайт изменен?');
+		throw new AnyBalance.Error('Не удалось найти таблицу с данными. Сайт изменен?');
 	}
-	var tr = table[1].match(/<tr>((?:.(?!\/tr>))+)/ig);
+	// Получили таблицу, и теперь получим все tr
+	var tr = table[1].match(/<tr[^>]*>((?:.(?!\/tr>))+)/ig);
 	if (!tr) {
 		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Сайт изменен?');
+		throw new AnyBalance.Error('Не удалось получить строки из таблицы. Сайт изменен?');
 	}
+
 	var data = [];
 	tr.forEach(function (lineStr, i) {
 		var line = lineStr.match(/<td[^>]*>((?:.(?!\/td>))*)/ig);
@@ -53,27 +55,26 @@ function main() {
 			);
 		}
 	});
-	//дата/время
-	//событие
-	//место ввода информации *
-	//комментарий
-	//в получении расписался
 	if (data[0][0] == prefs.code) {
 		var first = data.shift();
-		result.code = first[0];
-		result.direct = first[1];
+		getParam(first[1], result, 'direct');
 		var last = data.pop();
 		if (data.length > 1 && last.length == 5) {
-			result.date = last[0];
-			result.event = last[1];
-			result.place = last[2];
-			result.comment = last[3];
-			result.sign = last[4];
+			//дата/время
+			//событие
+			//место ввода информации *
+			//комментарий
+			//в получении расписался
+			getParam(last[0], result, 'date');
+			getParam(last[1], result, 'event');
+			getParam(last[2], result, 'place');
+			getParam(last[3], result, 'comment');
+			getParam(last[4], result, 'sign');
 		}
 	}
 	else {
 		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Сайт изменен?');
+		throw new AnyBalance.Error('Не удалось найти информацию по отправлению ' + prefs.code + '. Сайт изменен?');
 	}
 
 	AnyBalance.setResult(result);

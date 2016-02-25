@@ -4,15 +4,15 @@
 
 function parseBalanceRK(_text){
 	var text = _text.replace(/\s+/g, '');
-	var rub = getParam(text, null, null, /(-?\d[\d\.,]*)руб/i, replaceFloat, parseFloat) || 0;
-	var kop = getParam(text, null, null, /(-?\d[\d\.,]*)коп/i, replaceFloat, parseFloat) || 0;
-	var val = rub+kop/100;
+	var rub = getParam(text, null, null, /(-?\d[\d\.,]*)руб/i, replaceTagsAndSpaces, parseBalance) || 0;
+	var kop = getParam(text, null, null, /(-?\d[\d\.,]*)коп/i, replaceTagsAndSpaces, parseBalance) || 0;
+	var val = rub + kop/100;
 	AnyBalance.trace('Parsing balance (' + val + ') from: ' + _text);
 	return val;
 }
 
 function parseTrafficGb(str){
-	var val = getParam(str.replace(/\s+/g, ''), null, null, /(-?\d[\d\s.,]*)/, replaceFloat, parseFloat);
+	var val = getParam(str.replace(/\s+/g, ''), null, null, /(-?\d[\d\s.,]*)/, replaceTagsAndSpaces, parseBalance);
 	return parseFloat((val/1024).toFixed(2));
 }
 

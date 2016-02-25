@@ -28,6 +28,6 @@
         summary="Укажите регион, если не удалось определить его автоматически||{@s}\n"
         entries="Автоматически|Столичный филиал|Сибирский филиал|Северо-западный филиал|Дальневосточный филиал|Поволжский филиал|Кавказский филиал|Центральный филиал|Уральский филиал"
         entryValues="|moscowsg|sibsg|szfsg|dvsg|volgasg|kavkazsg|centersg|uralsg"
-	defaultValue="">
+		defaultValue="">
     </ListPreference>
 </PreferenceScreen>

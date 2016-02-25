@@ -61,8 +61,6 @@ function main() {
     var yetRegExp = setPaRegExp(prefs.personalAccount, ['value="[^"]*№\\s+', '[\\s\\S]*?dac_([^"]*)"']);
     var urlPart = AB.getParam(html, null, null, yetRegExp, AB.replaceTagsAndSpaces);
     html = AnyBalance.requestGet(baseurl + 'accounts/' + urlPart);
-  } else {
-    throw new AnyBalance.Error('Указанный лицевой счёт не найден, проверьте правильность ввода', null, true);
   }
 
   result = {

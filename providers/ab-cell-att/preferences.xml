@@ -10,7 +10,6 @@
 		negativeButtonText="Cancel"
 		dialogMessage="Please, enter login for your AT&amp;T account.">
 	</EditTextPreference>
-    </EditTextPreference>
     <EditTextPreference 
         positiveButtonText="OK"
         key="password" 
@@ -19,6 +18,16 @@
         title="Password"
         summary="||**********"
         dialogMessage="Please, enter password for your AT&amp;T account."
+        inputType="textPassword">
+    </EditTextPreference>
+    <EditTextPreference 
+        positiveButtonText="OK"
+        key="code" 
+        dialogTitle="Passcode"
+        negativeButtonText="Cancel"
+        title="Passcode"
+        summary="||**********"
+        dialogMessage="Please, enter passcode for your AT&amp;T account."
         inputType="textPassword">
     </EditTextPreference>
 </PreferenceScreen>

@@ -45,26 +45,20 @@ function processSite() {
 	}
 
 	var result = {
-		success: true
-	};
-
-	// 	{
-	// success: true,
-	// name: "Харченко Виктор",
-	// __tariff: "СВОБОДНЫЙ СМАРТФОН. РЕГИОН 2",
-	// bonusDate: "+380682834365 Настройки телефона",
-	// till: 1486501200000
-	// }
+			success: true
+		},
+		current_balance = '',
+		current_currency = '';
 
 	//тип ЛК
 	if (/(?:мобильного|мобільного|Mobile\s+phone\s+number)/i.test(html)) {
 		AnyBalance.trace('тип лк: Домашний интернет');
 
 		// Баланс
-		getParam(html, result, 'balance',
+		current_balance = getParam(html, null, null,
 			/(?:Текущий\s+баланс|Поточний\s+баланс|Current\s+balance)[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces,
 			parseBalance);
-		getParam(html, result, ['currency', 'balance'],
+		current_currency = getParam(html, null, null,
 			/(?:Текущий\s+баланс|Поточний\s+баланс|Current\s+balance)[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i,
 			replaceTagsAndSpaces, parseCurrency);
 
@@ -100,10 +94,10 @@ function processSite() {
 			replaceTagsAndSpaces, parseDate, aggregate_sum);
 
 		// Баланс (лк Телефон)
-		getParam(html, result, 'balance',
+		current_balance = getParam(html, null, null,
 			/(?:Остаток\s+на\s+сч[её]ту|Залишок\s+на\s+рахунку:)[\s\S]*?<tr[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces,
 			parseBalance);
-		getParam(html, result, ['currency', 'balance'],
+		current_currency = getParam(html, null, null,
 			/(?:Остаток\s+на\s+сч[её]ту|Залишок\s+на\s+рахунку:)[\s\S]*?<tr[^>]*>([\s\S]*?)<\/td>/i,
 			replaceTagsAndSpaces, parseCurrency);
 
@@ -111,7 +105,25 @@ function processSite() {
 		getParam(html, result, 'phone',
 			/Номер:[\s\S]*?<td[^>]*>([^<]*)/i,
 			replaceTagsAndSpaces);
+
+
+		//все основные бонусы в виде текста
+		getFullBonusText(html, result);
+
 	}
+
+
+	if (!current_balance) {
+		current_balance = getParam(html, null, null,
+			/(?:Поточний\s+баланс|Текущий\s+баланс):[\s\S]*?<\/td>([\s\S]*?)<a/i, replaceTagsAndSpaces, parseBalance);
+
+		current_currency = getParam(html, null, null,
+			/(?:Поточний\s+баланс|Текущий\s+баланс):[\s\S]*?<\/td>([\s\S]*?)<a/i, replaceTagsAndSpaces, parseCurrency);
+	}
+
+
+	getParam(current_balance, result, 'balance');
+	getParam(current_currency, result, 'currency');
 
 	getParam(html, result, 'name',
 		/(?:Фамилия|Прізвище|First\s+name)[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
@@ -505,5 +517,32 @@ function processBonus(bonus, name, result) {
 		}
 	} else {
 		AnyBalance.trace('Пропускаем суммарный бонус ' + name + ': ' + bonus);
+	}
+}
+
+
+
+function getFullBonusText(html, result) {
+	if (AnyBalance.isAvailable('mainBonusInfoText')) {
+		try {
+			var
+				table = html.match(/<h2[^>]*>\s*(?:Бонусный\s+баланс|Бонусний\s+баланс|Bonuses)\s*<\/h2>[\s\S]*?(<tr[\s\S]*?)<\/table/i)[1],
+				tr = AB.sumParam(table, null, null, /<tr[^>]*>([\s\S]*?)<\/tr>/gi),
+				td = [],
+				mainBonusInfoText = [];
+
+			for (var i = 0; i < tr.length; i++) {
+				td = AB.sumParam(tr[i], null, null, /<td[^>]*>([\s\S]*?)<\/td>/gi, replaceTagsAndSpaces);
+				mainBonusInfoText.push(
+					'Тип бонуса:«' + td[0] + '» Остаток:' + td[1] + ' Срок действия:' + td[2]
+				);
+
+			}
+
+			AB.getParam(mainBonusInfoText.join(', '), result, 'mainBonusInfoText');
+
+		} catch (e) {
+			AnyBalance.trace('не удалось получить текстовую информацию по бонусам ' + e);
+		}
 	}
 }

@@ -9,7 +9,7 @@
 	<p>Получает данные с сайта http://garantpost.ru/</p>
 	]]>
 	</description>
-	<author>Ivan Dogaev &lt;azecm@mail.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>
 		<module id="library"/>
 	</depends>

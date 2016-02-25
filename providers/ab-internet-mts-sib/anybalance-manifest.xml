@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="8">ab-internet-mts-sib</id>
+	<id version="9">ab-internet-mts-sib</id>
 	<name>МТС Комстар-регионы (Сибирь, Урал)</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе и тарифном плане для пользователей Комстар-регионы (МТС) http://ural.mts.ru</p>

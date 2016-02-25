@@ -1,30 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-    <id major_version="1.0" version="8">ab-exchange-sbrf</id>
-    <name>Курсы валют СБ РФ</name>
+  <id major_version="1.0" version="9">ab-exchange-sbrf</id>
+  <name>Курсы валют СБ РФ</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о курсах валют от банка "Сбербанк".</p>
 	]]></description>
-    <author>BArtWell &lt;web@bartwell.ru&gt;</author>
-    <files>
-	<icon>icon.png</icon>
-        <preferences>preferences.xml</preferences>
-        <history>history.xml</history>
-        <js>library.js</js>
-        <js>main.js</js>
-    </files>
-    <counters>
-        <counter id="usd_purch" name="USD покупка" units=" р"/>
-        <counter id="usd_sell" name="USD продажа" units=" р"/>
-        <counter id="eur_purch" name="EUR покупка" units=" р"/>
-        <counter id="eur_sell" name="EUR продажа" units=" р"/>
-		
-        <!-- <counter id="gbp_purch" name="GBP покупка" units=" р"/>
-        <counter id="gbp_sell" name="GBP продажа" units=" р"/> -->
-        <counter id="date" name="Дата курса" type="time" format="dd/MM/yyyy"/>
-    </counters>
-    <keywords>Курсы, валюта, доллар, евро, фунт, сбербанк</keywords>
+  <author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+  <depends>
+    <module id="library"/>
+  </depends>
+  <files>
+	  <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <history>history.xml</history>
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="usd_purch" name="USD покупка" units=" р"/>
+    <counter id="usd_sell" name="USD продажа" units=" р"/>
+    <counter id="eur_purch" name="EUR покупка" units=" р"/>
+    <counter id="eur_sell" name="EUR продажа" units=" р"/>
+    <counter id="date" name="Дата курса" type="time" format="dd/MM/yyyy"/>
+  </counters>
+  <keywords>Курсы, валюта, доллар, евро, фунт, сбербанк</keywords>
 	<type>exchange</type>
 	<country>ru</country>
 </provider>

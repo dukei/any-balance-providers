@@ -12,8 +12,7 @@
 	<br /><small>Индекс города Москвы 27612_1.</small>
 	</ul>
 	]]></instruction>
-	<author>iReset &lt;ireset.ag@gmail.com&gt;</author>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>
 		<module id="library"/>
   </depends>

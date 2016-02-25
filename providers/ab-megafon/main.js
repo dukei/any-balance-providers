@@ -15,82 +15,82 @@ var lk_url = 'https://lk.megafon.ru/';
 
 //http://ru.wikipedia.org/wiki/%D0%9C%D0%B5%D0%B3%D0%B0%D0%A4%D0%BE%D0%BD#.D0.A4.D0.B8.D0.BB.D0.B8.D0.B0.D0.BB.D1.8B_.D0.BA.D0.BE.D0.BC.D0.BF.D0.B0.D0.BD.D0.B8.D0.B8
 var filial_info = {
-	moscowsg: MEGA_FILIAL_MOSCOW,
-	sibsg1: MEGA_FILIAL_SIBIR,
-	sibsg: MEGA_FILIAL_SIBIR,
-	szfsg: MEGA_FILIAL_NW,
-	dvsg: MEGA_FILIAL_FAREAST,
-	volgasg: MEGA_FILIAL_VOLGA,
-	kavkazsg: MEGA_FILIAL_KAVKAZ,
-	centersg: MEGA_FILIAL_CENTRAL,
-	uralsg: MEGA_FILIAL_URAL
+	oldmoscowsg: MEGA_FILIAL_MOSCOW,
+	oldsibsg1: MEGA_FILIAL_SIBIR,
+	oldsibsg: MEGA_FILIAL_SIBIR,
+	oldszfsg: MEGA_FILIAL_NW,
+	olddvsg: MEGA_FILIAL_FAREAST,
+	oldvolgasg: MEGA_FILIAL_VOLGA,
+	oldkavkazsg: MEGA_FILIAL_KAVKAZ,
+	oldcentersg: MEGA_FILIAL_CENTRAL,
+	olduralsg: MEGA_FILIAL_URAL
 };
 filial_info[MEGA_FILIAL_MOSCOW] = {
 	name: 'Столичный филиал',
 	id: 'mos',
-    sg: "https://moscowsg.megafon.ru/",
-	widget: 'https://moscowsg.megafon.ru/WIDGET_INFO/GET_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%&CHANNEL=WYANDEX&LANG_ID=1&P_RATE_PLAN_POS=1&P_PAYMENT_POS=2&P_ADD_SERV_POS=4&P_DISCOUNT_POS=3',
-//	tray: "https://moscowsg.megafon.ru/TRAY_INFO/TRAY_INFO?LOGIN=%LOGIN%&PASSWORD=%PASSWORD%",
+    sg: "https://oldmoscowsg.megafon.ru/",
+	widget: 'https://oldmoscowsg.megafon.ru/WIDGET_INFO/GET_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%&CHANNEL=WYANDEX&LANG_ID=1&P_RATE_PLAN_POS=1&P_PAYMENT_POS=2&P_ADD_SERV_POS=4&P_DISCOUNT_POS=3',
+//	tray: "https://oldmoscowsg.megafon.ru/TRAY_INFO/TRAY_INFO?LOGIN=%LOGIN%&PASSWORD=%PASSWORD%",
 	internet: "http://user.moscow.megafon.ru/",
-	internetRobot: "https://moscowsg.megafon.ru/MEGAFON_BALANCE/MGFSTF_GET_QOS_PACK_STATUS?MSISDN=%LOGIN%&PASSWORD=%PASSWORD%",
-	balanceRobot: "https://moscowsg.megafon.ru/MEGAFON_BALANCE/MGFSTF_GET_BALANCE?MSISDN=%LOGIN%&PASSWORD=%PASSWORD%"
+	internetRobot: "https://oldmoscowsg.megafon.ru/MEGAFON_BALANCE/MGFSTF_GET_QOS_PACK_STATUS?MSISDN=%LOGIN%&PASSWORD=%PASSWORD%",
+	balanceRobot: "https://oldmoscowsg.megafon.ru/MEGAFON_BALANCE/MGFSTF_GET_BALANCE?MSISDN=%LOGIN%&PASSWORD=%PASSWORD%"
 };
 filial_info[MEGA_FILIAL_SIBIR] = {
 	name: 'Сибирский филиал',
 	id: 'sib',
-    sg: "https://sibsg.megafon.ru/",
-	tray: "https://sibsg.megafon.ru/ROBOTS/SC_TRAY_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%",
-	widget: 'https://sibsg.megafon.ru/WIDGET_INFO/GET_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%&CHANNEL=WYANDEX&LANG_ID=1&P_RATE_PLAN_POS=1&P_PAYMENT_POS=2&P_ADD_SERV_POS=4&P_DISCOUNT_POS=3',
+    sg: "https://oldsibsg.megafon.ru/",
+	tray: "https://oldsibsg.megafon.ru/ROBOTS/SC_TRAY_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%",
+	widget: 'https://oldsibsg.megafon.ru/WIDGET_INFO/GET_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%&CHANNEL=WYANDEX&LANG_ID=1&P_RATE_PLAN_POS=1&P_PAYMENT_POS=2&P_ADD_SERV_POS=4&P_DISCOUNT_POS=3',
 	sgCaptchaInputType: 'text',
 };
 filial_info[MEGA_FILIAL_NW] = {
 	name: 'Северо-западный филиал',
 	id: 'nw',
-    sg: "https://szfsg.megafon.ru/",
-	tray: 'https://szfsg.megafon.ru/ROBOTS/SC_TRAY_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%',
-	widget: 'https://szfsg.megafon.ru/WIDGET_INFO/GET_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%&CHANNEL=WYANDEX&LANG_ID=1&P_RATE_PLAN_POS=1&P_PAYMENT_POS=2&P_ADD_SERV_POS=4&P_DISCOUNT_POS=3',
+    sg: "https://oldszfsg.megafon.ru/",
+	tray: 'https://oldszfsg.megafon.ru/ROBOTS/SC_TRAY_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%',
+	widget: 'https://oldszfsg.megafon.ru/WIDGET_INFO/GET_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%&CHANNEL=WYANDEX&LANG_ID=1&P_RATE_PLAN_POS=1&P_PAYMENT_POS=2&P_ADD_SERV_POS=4&P_DISCOUNT_POS=3',
 	sgCaptchaInputType: 'text',
 };
 filial_info[MEGA_FILIAL_FAREAST] = {
 	name: 'Дальневосточный филиал',
 	id: 'dv',
-    sg: "https://dvsg.megafon.ru/",
-	tray: 'https://dvsg.megafon.ru/ROBOTS/SC_TRAY_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%',
-	widget: 'https://dvsg.megafon.ru/WIDGET_INFO/GET_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%&CHANNEL=WYANDEX&LANG_ID=1&P_RATE_PLAN_POS=1&P_PAYMENT_POS=2&P_ADD_SERV_POS=4&P_DISCOUNT_POS=3',
+    sg: "https://olddvsg.megafon.ru/",
+	tray: 'https://olddvsg.megafon.ru/ROBOTS/SC_TRAY_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%',
+	widget: 'https://olddvsg.megafon.ru/WIDGET_INFO/GET_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%&CHANNEL=WYANDEX&LANG_ID=1&P_RATE_PLAN_POS=1&P_PAYMENT_POS=2&P_ADD_SERV_POS=4&P_DISCOUNT_POS=3',
 };
 filial_info[MEGA_FILIAL_VOLGA] = {
 	name: 'Поволжский филиал',
 	id: 'vlg',
-	//  site: "https://volgasg.megafon.ru/",
+	//  site: "https://oldvolgasg.megafon.ru/",
 	//  func: megafonServiceGuide,
-    sg: "https://volgasg.megafon.ru/",
-	widget: 'https://volgasg.megafon.ru/WIDGET_INFO/GET_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%&CHANNEL=WYANDEX&LANG_ID=1&P_RATE_PLAN_POS=1&P_PAYMENT_POS=2&P_ADD_SERV_POS=4&P_DISCOUNT_POS=3',
-	tray: 'https://volgasg.megafon.ru/ROBOTS/SC_TRAY_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%'
+    sg: "https://oldvolgasg.megafon.ru/",
+	widget: 'https://oldvolgasg.megafon.ru/WIDGET_INFO/GET_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%&CHANNEL=WYANDEX&LANG_ID=1&P_RATE_PLAN_POS=1&P_PAYMENT_POS=2&P_ADD_SERV_POS=4&P_DISCOUNT_POS=3',
+	tray: 'https://oldvolgasg.megafon.ru/ROBOTS/SC_TRAY_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%'
 };
 filial_info[MEGA_FILIAL_KAVKAZ] = {
 	name: 'Кавказский филиал',
 	id: 'kv',
-    sg: "https://kavkazsg.megafon.ru/",
-	tray: "https://kavkazsg.megafon.ru/ROBOTS/SC_TRAY_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%",
-	widget: 'https://kavkazsg.megafon.ru/WIDGET_INFO/GET_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%&CHANNEL=WYANDEX&LANG_ID=1&P_RATE_PLAN_POS=1&P_PAYMENT_POS=2&P_ADD_SERV_POS=4&P_DISCOUNT_POS=3',
+    sg: "https://oldkavkazsg.megafon.ru/",
+	tray: "https://oldkavkazsg.megafon.ru/ROBOTS/SC_TRAY_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%",
+	widget: 'https://oldkavkazsg.megafon.ru/WIDGET_INFO/GET_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%&CHANNEL=WYANDEX&LANG_ID=1&P_RATE_PLAN_POS=1&P_PAYMENT_POS=2&P_ADD_SERV_POS=4&P_DISCOUNT_POS=3',
 };
 filial_info[MEGA_FILIAL_CENTRAL] = {
 	name: 'Центральный филиал',
 	id: 'ctr',
-	sg: "https://moscowsg.megafon.ru/",
+	sg: "https://oldmoscowsg.megafon.ru/",
 	lk: "https://lk.megafon.ru/",
-	widget: 'https://moscowsg.megafon.ru/WIDGET_INFO/GET_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%&CHANNEL=WYANDEX&LANG_ID=1&P_RATE_PLAN_POS=1&P_PAYMENT_POS=2&P_ADD_SERV_POS=4&P_DISCOUNT_POS=3',
-//	tray: "https://moscowsg.megafon.ru/TRAY_INFO/TRAY_INFO?LOGIN=%LOGIN%&PASSWORD=%PASSWORD%",
+	widget: 'https://oldmoscowsg.megafon.ru/WIDGET_INFO/GET_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%&CHANNEL=WYANDEX&LANG_ID=1&P_RATE_PLAN_POS=1&P_PAYMENT_POS=2&P_ADD_SERV_POS=4&P_DISCOUNT_POS=3',
+//	tray: "https://oldmoscowsg.megafon.ru/TRAY_INFO/TRAY_INFO?LOGIN=%LOGIN%&PASSWORD=%PASSWORD%",
 	internet: "http://user.moscow.megafon.ru/",
-	internetRobot: "https://moscowsg.megafon.ru/MEGAFON_BALANCE/MGFSTF_GET_QOS_PACK_STATUS?MSISDN=%LOGIN%&PASSWORD=%PASSWORD%",
-	balanceRobot: "https://moscowsg.megafon.ru/MEGAFON_BALANCE/MGFSTF_GET_BALANCE?MSISDN=%LOGIN%&PASSWORD=%PASSWORD%"
+	internetRobot: "https://oldmoscowsg.megafon.ru/MEGAFON_BALANCE/MGFSTF_GET_QOS_PACK_STATUS?MSISDN=%LOGIN%&PASSWORD=%PASSWORD%",
+	balanceRobot: "https://oldmoscowsg.megafon.ru/MEGAFON_BALANCE/MGFSTF_GET_BALANCE?MSISDN=%LOGIN%&PASSWORD=%PASSWORD%"
 };
 filial_info[MEGA_FILIAL_URAL] = {
 	name: 'Уральский филиал',
 	id: 'url',
-	sg: 'https://uralsg.megafon.ru/',
-	tray: 'https://uralsg.megafon.ru/ROBOTS/SC_TRAY_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%',
-	widget: 'https://uralsg.megafon.ru/WIDGET_INFO/GET_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%&CHANNEL=WYANDEX&LANG_ID=1&P_RATE_PLAN_POS=1&P_PAYMENT_POS=2&P_ADD_SERV_POS=4&P_DISCOUNT_POS=3',
+	sg: 'https://olduralsg.megafon.ru/',
+	tray: 'https://olduralsg.megafon.ru/ROBOTS/SC_TRAY_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%',
+	widget: 'https://olduralsg.megafon.ru/WIDGET_INFO/GET_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%&CHANNEL=WYANDEX&LANG_ID=1&P_RATE_PLAN_POS=1&P_PAYMENT_POS=2&P_ADD_SERV_POS=4&P_DISCOUNT_POS=3',
 	old_server: true
 };
 
@@ -193,10 +193,11 @@ function getFilial(prefs) {
 			// Мегафон сделал сервис для определения филиала, так что попытаемся обойтись им    
 			// Но этот сервис сдох... 13.03.15, но снова поднялся 14.03.15
 			var html = AnyBalance.requestPost("https://oldsg.megafon.ru/ps/scc/php/route.php", {
-				 CHANNEL: 'WWW',
-				 ULOGIN: number
+				CHANNEL: 'WWW',
+				ULOGIN: number
 			});
 			var region = getParam(html, null, null, /<URL>https?:\/\/(\w+)\./i);
+			
 			if (region && filial_info[region]) {
 				 return filial_info[region];
 			}else{
@@ -1487,7 +1488,7 @@ function parseTrafficExMega(text, thousand, order, defaultUnits){
         AnyBalance.trace("Could not parse traffic value from " + text);
         return;
     }
-    var units = getParam(_text, null, null, /([kmgкмгт][бb]?|[бb](?![\wа-я])|байт|byte)/i);
+    var units = getParam(_text, null, null, /([kmgкмг][бb]?|[бb](?![\wа-я])|байт|byte)/i);
     if(!units && !defaultUnits){
         AnyBalance.trace("Could not parse traffic units from " + text);
         return;
@@ -1937,10 +1938,13 @@ function megafonLK(filial, html){
 		getParam(html, result, 'bonus_burn', /<div[^>]+gadget-bonus-summ-2[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
 	}
 
-	if(AnyBalance.isAvailable('sub_soi', 'sub_smit', 'sub_smio', 'sub_scl', 'sub_scr', 'internet_cost',
-			'last_pay_sum', 'last_pay_date')){
-//		html = AnyBalance.requestGet(lk_url + 'historyNew/', g_headers);
-		megafonLKFinance(filial, html, result);
+	if(AnyBalance.isAvailable('sub_soi', 'sub_smit', 'sub_smio', 'sub_scl', 'sub_scr', 'internet_cost',	'last_pay_sum', 'last_pay_date')) {
+		//html = AnyBalance.requestGet(lk_url + 'historyNew/', g_headers);
+		try {
+			megafonLKFinance(filial, html, result);
+		} catch(e) {
+			AnyBalance.trace('Не удалось получить данные по финансовым остаткам.');
+		}
 	}
 
 	megafonLKTurnOffSMSNotification(html);
@@ -1979,7 +1983,7 @@ function megafonLKRemainders(filial, html, result){
 				if(val >= 0){
 					if(/бесплат/i.test(name)) {
 						getParam(left, result, 'mins_n_free', null, replaceTagsAndSpaces, parseMinutes);
-					}else if((/\.\s*МегаФон|на МегаФон/i.test(name) && !/МТС/i.test(name))
+					}else if((/\.\s*МегаФон|на МегаФон/i.test(name) && !/МТС/i.test(name) && !/стационар/i.test(name))
 							|| /внутри сети/i.test(name)) {
 						sumParam(left, result, 'mins_net_left', null, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
 					} else {
@@ -2006,7 +2010,7 @@ function megafonLKRemainders(filial, html, result){
 					sumParam(total, result, 'sms_total', null, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 				}
 			// Трафик
-			} else if(/([kmgкмгт][бb]?|[бb](?![\wа-я])|байт|byte)/i.test(units)) {
+			} else if(/([kmgкмг][бb]?|[бb](?![\wа-я])|байт|byte)/i.test(units)) {
 				if(/Гигабайт в дорогу/i.test(name)) {
 					getParam(left, result, 'gb_with_you', null, replaceTagsAndSpaces, parseTraffic);
 				} else {

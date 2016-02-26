@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id major_version="3.0" version="16">ab-money-faktura</id>
+	<id major_version="3.0" version="17">ab-money-faktura</id>
 	<name>Фактура</name>
 	<description html="true"><![CDATA[
 	<p>Получает текущий остаток, бонусные баллы и другие параметры карт банков, работающих через factura.ru, используя систему Интернет-банк https://www.faktura.ru/lite/app</p>
@@ -24,12 +24,14 @@
 	<p>Если у вас нет доступа к интернет-банку, выполните условия на странице https://www.faktura.ru/lite/app/pub/Register</p>
 	]]></instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+    <depends>
+		<module id="library"/>
+		<module id="nadapter"/>
+		<module id="extract/abe-money-faktura"/>
+	</depends>	
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
-		<js>nadapter.js</js>
-		<js>extract.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>

@@ -15,11 +15,11 @@ function main() {
 	
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
-	
-	if(prefs.type == 'cab') {
-		proceedCab(prefs);
-	} else {
-		proceedLk(prefs);
+
+	switch (prefs.type) {
+		case 'cab': proceedCab(prefs); break;
+		case 'office': proceedOffice(prefs); break;
+		default: proceedLk(prefs); break;
 	}
 }
 
@@ -34,22 +34,55 @@ function requestJson(url, data, headers) {
 	return json;
 }
 
+function proceedOffice(prefs) {
+
+	var baseurl = 'https://cabinet.beeline.ru/';
+	AnyBalance.setDefaultCharset('windows-1251');
+
+	var html = AnyBalance.requestGet(baseurl + 'myoffice/', g_headers);
+
+	var enter = getParam(html, null, null, /<input[^>]+__SAVE[^>]+value=['"]([^'"]*)/i, replaceTagsAndSpaces);
+
+	html = AnyBalance.requestPost(baseurl + 'myoffice/', {
+		login: prefs.login,
+		passwd: prefs.password,
+		__SAVE: enter
+	}, { Referer: baseurl + 'myoffice/' });
+
+	if (!/logout/i.test(html)) {
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удалось зайти на сайт. Сайт изменен?');
+	}
+
+	var result = { success: true };
+
+	getParam(html, result, '__tariff', /Тариф(?:[^<]*<[^>]+>){3}([^<]+)/i, replaceTagsAndSpaces);
+	getParam(html, result, 'bill', /<b>Лицевой счет(?:[^<]*<[^>]+>){3}([^<]+)/i, replaceTagsAndSpaces);
+	getParam(html, result, 'balance', /Текущее состояние лицевого счёта(?:[^<]*<[^>]+>){3}([^<]+)/i, replaceTagsAndSpaces);
+
+	if (AnyBalance.isAvailable('status')) {
+		html = AnyBalance.requestGet(baseurl + 'myoffice/?section=num_info', g_headers);
+		getParam(html, result, 'status', /Статус(?:[^<]*<[^>]+>){2}([^<]+)/i, replaceTagsAndSpaces);
+	}
+
+	AnyBalance.setResult(result);
+}
+
 function proceedCab(prefs) {
 	var baseurl = 'https://cabinet.beeline.ru/';
 	AnyBalance.setDefaultCharset('utf-8');
 	
-	var html = AnyBalance.requestGet(baseurl + 'lk', g_headers);
+	var html = AnyBalance.requestGet(baseurl + 'lk/', g_headers);
 	
 	var json = requestJson(baseurl + 'lk/ajax.php', {
 		module:'bee_lk.auth',
 		action:'login',
 		v_login: prefs.login,
 		v_password: prefs.password,
-	}, addHeaders({Referer: baseurl + 'lk'}));
+	}, addHeaders({ Referer: baseurl + 'lk/', 'X-Requested-With': 'XMLHttpRequest'}));
 	
 	var result = {success: true};
-	
-	// Интернет
+
 	var current;
 	for(var i = 0; i < json.client.net.nums.length; i++) {
 		current = json.client.net.nums[i];

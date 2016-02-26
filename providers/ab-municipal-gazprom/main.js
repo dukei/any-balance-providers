@@ -19,6 +19,7 @@ var regions = {
 	rostov: getRostov,
 	spb: getSPB,
 	tver: getTver,
+	ufa: getUfa,
 	cheboksari: getCheboksari
 };
 
@@ -294,6 +295,49 @@ function getTver() {
 	AnyBalance.setResult(result);
 }
 
+function getUfa() {
+	var prefs = AnyBalance.getPreferences();
+	var baseurl = 'https://lk.bashgaz.ru/';
+	AnyBalance.setDefaultCharset('utf-8');
+
+	var html = AnyBalance.requestGet(baseurl + 'main.php?c=login', g_headers);
+
+	if(!html || AnyBalance.getLastStatusCode() > 400){
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
+	}
+
+	html = AnyBalance.requestPost(baseurl + 'main.php?c=login', {
+		id_rc: prefs.login.substr(0,2),
+		login: prefs.login.substr(2),
+		password: prefs.password,
+	}, AB.addHeaders({
+		Referer: baseurl + 'main.php?c=login'
+	}));
+
+	if (!/logout/i.test(html)) {
+		var error = AB.getParam(html, null, null, /Предупреждение:(?:[^>]*>)([\s\S]*?)<\/div>/i, AB.replaceTagsAndSpaces);
+		if (error)
+			throw new AnyBalance.Error(error, null, /неправильный логин\/пароль/i.test(error));
+
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
+	}
+
+	var result = {success: true};
+
+	AB.getParam(html, result, 'toPay', /сумма к оплате(?:[^>]*>){3}([\s\S]*?)<\//i, AB.replaceTagsAndSpaces, AB.parseBalance);
+	AB.getParam(html, result, 'account', /ЛС\s*#([^<]+)/i, AB.replaceTagsAndSpaces);
+	AB.getParam(html, result, '__tariff', /ЛС\s*#([^<]+)/i, AB.replaceTagsAndSpaces);
+	AB.getParam(html, result, 'fio', /<h3[^>]*>([\s\S]*?)<\/h3>/i, AB.replaceTagsAndSpaces);
+	AB.getParam(html, result, 'device', /счетчик\s*№([^<]+)/i, AB.replaceTagsAndSpaces);
+	AB.getParam(html, result, 'previousCounter', /Предыдущее показание(?:[^>]*>){2}(\d+)/i, AB.replaceTagsAndSpaces);
+	AB.getParam(html, result, 'currentCounter', /<input[^>]+name="value"[^>]+value="([^"]*)"/i, AB.replaceTagsAndSpaces);
+	AB.getParam(html, result, 'date', /Дата предыдущего показания(?:[^>]*>){2}([\s\S]*?)<\//i, AB.replaceTagsAndSpaces, AB.parseDate);
+
+	AnyBalance.setResult(result);
+}
+
 function getCheboksari() {
 	var prefs = AnyBalance.getPreferences();
 	var baseurl = 'http://gmch.ru/';
@@ -423,8 +467,4 @@ function getVoronej () {
 	}
 
 	AnyBalance.setResult(result);
-
-
-
-
 }

@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="9">ab-municipal-krimenergo</id>
+	<id version="10">ab-municipal-krimenergo</id>
 	<name>МегаБиллинг Крым</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию из личного кабинета  МегаБиллинг <a href="https://www.mega-billing.ru/">https://www.mega-billing.ru/</a></p>

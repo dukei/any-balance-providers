@@ -1,4 +1,5 @@
-﻿/**
+﻿
+/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 */
 
@@ -14,33 +15,52 @@ function main() {
 	var prefs = AnyBalance.getPreferences();
 	var baseurl = 'https://ru.ivideon.com/';
 	AnyBalance.setDefaultCharset('utf-8');
-	
+
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
-	
+
 	var html = AnyBalance.requestGet(baseurl + 'my/service/login', g_headers);
-	
+
+	if (!html || AnyBalance.getLastStatusCode() > 400) {
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
+	}
+
+	var token = getParam(html, null, null, /<input[^>]*value="([^"]*)"[^>]*name="[^"]*TOKEN[^"]*"/i);
+
 	html = AnyBalance.requestPost(baseurl + 'my/service/login', {
+		'IVIDEON_CSRF_TOKEN': token,
 		'LoginForm[username]': prefs.login,
-		'LoginForm[password]': prefs.password,
-		yt0: ''
-	}, addHeaders({Referer: baseurl + 'my/service/login'}));
-	
+		'LoginForm[password]': prefs.password
+	}, addHeaders({
+		Referer: baseurl + 'my/service/login'
+	}));
+
 	if (!/logout/i.test(html)) {
-		var error = getParam(html, null, null, /"errorSummary"([^>]*>){2}/i, replaceTagsAndSpaces, html_entity_decode);
-		if (error)
-			throw new AnyBalance.Error(error, null, /Неправильная пара логин\/пароль/i.test(error));
-		
+		var error = getParam(html, null, null, /<div[^>]*class="[^"]*errorSummary[^"]*"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+		if (error) {
+			throw new AnyBalance.Error(error, null, /пароль/i.test(error));
+		}
+
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
-	
-	html = AnyBalance.requestPost(baseurl + 'my/api/get_user_account_info', addHeaders({'X-Requested-With':'XMLHttpRequest'}));
-	var json = getJson(html);
-	
-	var result = {success: true};
-	getParam(json.currency+'', result, ['currency', 'balance'], null, replaceTagsAndSpaces);
-	getParam(json.balance+'', result, 'balance', null, [replaceTagsAndSpaces, /(\d{2})$/i, '.$1'], parseBalance);
+
+	var result = {
+		success: true
+	};
+
+	if (AnyBalance.isAvailable('balance')) {
+		try {
+			html = AnyBalance.requestGet(baseurl + 'my/billing/fill', g_headers);
+
+			AB.getParam(html, result, 'balance', /Состояние\s+сч[её]та([\s\S]*?)<\/div>/i, AB.replaceTagsAndSpaces, AB.parseBalance);
+			AB.getParam(html, result, ['currency', 'balance'], /Состояние\s+сч[её]та([\s\S]*?)<\/div>/i, AB.replaceTagsAndSpaces, AB.parseCurrency);
+
+		} catch (e) {
+			AnyBalance.trace('Не удалось получить данные по балансам ' + e);
+		}
+	}
 
 	AnyBalance.setResult(result);
 }

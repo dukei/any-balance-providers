@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="100">ab-internet-mts</id>
+	<id version="101">ab-internet-mts</id>
 	<name>Домашний Интернет и Телевидение МТС</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о текущем балансе, номере лицевого счета и договора, ФИО владельца, трафике в текущем месяце, абонентской плате для пользователей провайдера "Домашний Интернет и Телевидение МТС".</p>
@@ -45,12 +45,15 @@
 	<instruction html="true"><![CDATA[
 	<p>Для добавления вашего региона обратитесь, пожалуйста, к разработчикам</p>
 	]]></instruction>
-	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>api:jquery.min.js</js> <!-- Используем библиотеку, которая и так входит в AnyBalance -->
-		<js>library.js</js>
+	  <js>api:jquery.min.js</js> 
+		<!-- <js>library.js</js> -->
 		<js>login.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>

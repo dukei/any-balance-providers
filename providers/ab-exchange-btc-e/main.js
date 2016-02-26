@@ -18,7 +18,7 @@ function main(){
     var html = AnyBalance.requestGet(baseurl + 'api/2/' + prefs.curs + '/ticker', g_headers); 
 
     if(!/"ticker"/i.test(html)){
-        var error = getParam(html, null, null, /"error":\"([\s\S]*?)\"/i, replaceTagsAndSpaces, html_entity_decode);
+        var error = AB.getParam(html, null, null, /"error":\"([\s\S]*?)\"/i, AB.replaceTagsAndSpaces);
         if(error)
             throw new AnyBalance.Error(error);
         throw new AnyBalance.Error('Can`t login personal account. Maybe site is changed?');
@@ -28,19 +28,19 @@ function main(){
 
     var result = {success: true};
     prefs.curs = prefs.curs.toUpperCase().split("_");
-    getParam(prefs.curs[0], result, ['currency_1', 'vol_cur'], null, null, html_entity_decode);
-    getParam(prefs.curs[1], result, ['currency_2', 'high', 'low', 'last', 'buy', 'sell'], null, null, html_entity_decode);
+    AB.getParam(prefs.curs[0], result, ['currency_1', 'vol_cur'], null, null, AB.html_entity_decode);
+    AB.getParam(prefs.curs[1], result, ['currency_2', 'high', 'low', 'last', 'buy', 'sell'], null, null, AB.html_entity_decode);
 
-    getParam(json.ticker.avg, result, 'avg', null, null, parseBalance);
-    getParam(json.ticker.high, result, 'high', null, null, parseBalance);
-    getParam(json.ticker.low, result, 'low', null, null, parseBalance);
-    getParam(json.ticker.last, result, 'last', null, null, parseBalance);
-    getParam(json.ticker.buy, result, 'buy', null, null, parseBalance);
-    getParam(json.ticker.sell, result, 'sell', null, null, parseBalance);
-    getParam(json.ticker['server_time'] * 1000, result, 'servertime', null, null, null);
+    AB.getParam(json.ticker.avg, result, 'avg', null, null, AB.parseBalance);
+    AB.getParam(json.ticker.high, result, 'high', null, null, AB.parseBalance);
+    AB.getParam(json.ticker.low, result, 'low', null, null, AB.parseBalance);
+    AB.getParam(json.ticker.last, result, 'last', null, null, AB.parseBalance);
+    AB.getParam(json.ticker.buy, result, 'buy', null, null, AB.parseBalance);
+    AB.getParam(json.ticker.sell, result, 'sell', null, null, AB.parseBalance);
+    AB.getParam(json.ticker['server_time'] * 1000, result, 'servertime');
 
-    getParam(json.ticker.vol, result, 'vol', null, null, parseBalance);
-    getParam(json.ticker.vol_cur, result, 'vol_cur', null, null, parseBalance);
+    AB.getParam(json.ticker.vol, result, 'vol', null, null, AB.parseBalance);
+    AB.getParam(json.ticker.vol_cur, result, 'vol_cur', null, null, AB.parseBalance);
 
     AnyBalance.setResult(result);
 }

@@ -337,8 +337,9 @@ var AB = (function (global_scope) {
     }
 
     /** Парсит дату из такого вида: 27 июля 2013 без использования сторонних библиотек, результат в мс */
-    function parseDateWord(str) {
-        AnyBalance.trace('Trying to parse date from ' + str);
+    function parseDateWord(str, silent) {
+        if(!silent)
+            AnyBalance.trace('Trying to parse date from ' + str);
         var dateString = replaceAll(str, [replaceTagsAndSpaces, replaceHtmlEntities,
             /\D*(?:январ(?:я|ь)|янв|january|jan)\D*/i, '.01.',
             /\D*(?:феврал(?:я|ь)|фев|febrary|feb)\D*/i, '.02.',
@@ -356,7 +357,11 @@ var AB = (function (global_scope) {
         if (endsWith(dateString, '.')) {
             dateString += new Date().getFullYear();
         }
-        return parseDate(dateString);
+        return parseDate(dateString, silent);
+    }
+
+    function parseDateWordSilent(str) {
+        return parseDateWord(str, true);
     }
 
     /** Объединяет два объекта. Свойства с общими именами берутся из newObject */
@@ -1266,6 +1271,7 @@ var AB = (function (global_scope) {
         parseDate: parseDate,
         parseDateSilent: parseDateSilent,
         parseDateWord: parseDateWord,
+        parseDateWordSilent: parseDateWordSilent,
         joinObjects: joinObjects,
         joinArrays: joinArrays,
         addHeaders: addHeaders,

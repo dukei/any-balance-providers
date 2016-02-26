@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<api flags="no_browser"/>
+	<id version="1">ab-internet-seven-sky</id>
+	<name>Seven Sky (Москва)</name>
+	<description html="true">
+	<![CDATA[
+	<p>Получает баланс и информацию о тарифном плане для московского интернет-провайдера Seven Sky (http://www.seven-sky.net/) бывший ИСКРАТЕЛЕКОМ http://iskratelecom.ru, и бывший Горком http://gorcomnet.ru</p>
+	<p>Предоставляет интернет в районах Текстильщики, Кузьминки, Люблино, Марьино, Братеево, Люберцы, Котельники.</p>
+	<p>Информация берется из личного кабинета https://lk.seven-sky.net/ulogin.jsp </p>
+	]]>
+	</description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="account" name="Лицевой счет" type="number"/>
+	</counters>
+	<keywords>интернет севен скай, 7, sky</keywords>
+	<type>internet</type>
+	<country>ru</country>
+</provider>

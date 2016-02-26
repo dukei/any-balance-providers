@@ -394,10 +394,10 @@
 
 		//void (empty, self-closing) elements
 		var tagsVoid = makeMap(
-			//https://www.w3.org/TR/html5/syntax.html#elements-0 HTML5
+			//HTML5 https://www.w3.org/TR/html5/syntax.html#elements-0
 			'area,base,br,col,command,embed,hr,img,input,keygen,link,meta,param,source,track,wbr' +
-			//HTML 4.01
-			',basefont,frame,img,input,isindex,meta,param,embed'
+			//HTML 4.01 deprecated
+			',basefont,frame,isindex'
 		);
 
 		//escapable raw text elements (can have html entities)

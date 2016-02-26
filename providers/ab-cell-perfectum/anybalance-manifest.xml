@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-cell-perfectum</id>
+	<api flags="no_browser"/>
+	<name>Perfectum Узбекистан</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию для абонентов оператора сотовой связи и интернет-провайдера  Perfectum <a href="http://www.perfectum.uz/">http://www.perfectum.uz/</a> в Узбекистане</p>
+	<p>Информация берется из персонального кабинета кабинета <a href="http://my.cdma.uz/">http://my.cdma.uz/</a></p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Если у вас нет доступа в Личный кабинет, получите его на странице <a href="http://my.cdma.uz/">http://my.cdma.uz/</a></p>
+	]]></instruction>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+    <!-- Телефон -->
+    <counter id="phone_balance" name="Баланс (телефон)" units=" UZS"/>
+    <counter id="phone_number" name="Телефон" type="text"/>
+    <counter id="status" name="Статус" type="text"/>
+    <counter id="date_connection" name="Дата подключения" type="text"/>
+    <counter id="date_yet_another" name="Дата" type="text"/>
+    <!-- Контракт -->
+    <counter id="begin_balance" name="Начальное сальдо (контракт)" />
+    <counter id="accrued" name="Начислено (контракт)" />
+    <counter id="paid" name="Оплачено (контракт)" />
+    <counter id="current_balance" name="Текущее сальдо (контракт)" />
+    <counter id="prePayment" name="Предоплата (контракт)" />
+    <counter id="payment_usd" name="К оплате (контракт)" units=" USD"/>
+    <counter id="payment_uzs" name="К оплате (контракт)" units=" UZS"/>
+	</counters>
+	<keywords></keywords>
+	<type>cell</type>
+	<country>uz</country>
+</provider>

@@ -7,6 +7,8 @@
  library.js v0.22 от 12.01.16
  
  Changelog:
+ 
+ 27.02.2016 В методах getElement/getElements добавлена возможность указать группу в регексе
 
  19.01.2016 Добавлен метод getElementById(), см. KRPROV-8
 

@@ -869,13 +869,19 @@ var AB = (function (global_scope) {
      Возвращает весь элемент целиком, учитывая вложенные элементы с тем же тегом
      Например,
      getElement(html, /<div[^>]+id="somediv"[^>]*>/i)
+     Если в конце регекса есть группа (match[0] оканчивается на match[1]), то сам тег берется ез match[1],
+     а все что перед группой будет как условие lookbehind, коих в js регексах до сих пор нет.
      */
     function getElement(html, re, replaces, parseFunc) {
         var amatch = re.exec(html);
         if (!amatch)
             return;
         var startIndex = amatch.index;
-        var startTag = html.substr(startIndex, amatch[0].length);
+        var startTag = amatch[0];
+        if (amatch[1] && (amatch[0].indexOf(amatch[1], amatch[0].length - amatch[1].length) > 0)) {
+            startIndex += amatch[0].length - amatch[1].length;
+            startTag = amatch[1];
+        }
         var elem = getParam(startTag, null, null, /<(\w+)/);
         var reStart = new RegExp('<' + elem + '[^>]*>', 'ig');
         var reEnd = new RegExp('<\/' + elem + '[^>]*>', 'ig');

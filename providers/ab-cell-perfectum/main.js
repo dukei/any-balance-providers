@@ -1,5 +1,4 @@
-﻿
-/**
+﻿/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 */
 
@@ -77,16 +76,8 @@ function main() {
 		AnyBalance.trace(dialog_msg);
 	}
 
-
-
 	//пароль только раз в час
-
-
 	user_input = AnyBalance.retrieveCode('Введите пароль к личному кабинету из СМС. ' + dialog_msg, null);
-
-	if (!user_input) {
-		throw new AnyBalance.Error('Не удалось получить ввод пользователя');
-	}
 
 	html = AnyBalance.requestPost(baseurl + 'auth.php', {
 		'login': prefs.login,

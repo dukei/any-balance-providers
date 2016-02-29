@@ -1,6 +1,6 @@
 /*
 var invalidHtml = {
-	//input (broken)				//output (repaired)
+	//input (broken)				//output (repaired by Chrome v48)
 	'<ul><li>1<li>2</ul>'		 : '<ul><li>1</li><li>2</li></ul>',
 	'<p>1<b>2<i>3</b>4</i>5</p>' : '<p>1<b>2<i>3</i></b><i>4</i>5</p>',
 	'<b>1<p>2</b>3</p>'			 : '<b>1</b><p><b>2</b>3</p>',
@@ -63,15 +63,27 @@ var invalidHtml = {
 
 describe("HTML", function() {
 
+	describe("htmlRepair()", function() {
+		var s = `
+<ul>
+  <li><!--c0--> 1 < 2
+    <ul><!--c1--> 3 < 4
+      <li>5 < 6<!--</li>-->
+      <li>7 < 8<!--</li>-->
+    </ul>
+  <!--</li>-->
+</ul>`;
+		it("test1", function() {
+			var r = htmlRepair(s);
+			console.log(s);
+			assert.equal(s.length + 3*5, r.length);
+		});
+	});
+
 	describe("htmlTraversal()", function() {
 
-		var s = `0000
-				<ul ID = "news" title="&#x041D;&#x043E;&#x0432;&#x043E;&#x0441;&#x0442;&#x0438;"> 
-					1111111
-					<li> &#x041D;&#x043E;&#x0432;&#x043E;&#x0441;&#x0442;&#x0438; </li>
-					2222222
-				</ul>
-				3333`;
+		var s = `<b><i></b></i>`;
+		//var s = `<b> <i></i> </b> <i></i>`;
 
 		it(s, function() {
 			//var r = htmlTraversal(sample.form);
@@ -136,7 +148,7 @@ describe("String", function() {
 			sample.form.htmlParser(
 				function(type, node, attrs, offset) {
 					if (type === 'text') node = node.htmlEntityDecode(false).normalize().clean();
-					console.log([type, node, attrs, offset]);
+					//console.log([type, node, attrs, offset]);
 					return true;
 				}
 			);

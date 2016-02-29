@@ -128,6 +128,27 @@ function getCaptcha(html){
     return captcha;
 }
 
+function checkForPasswordChange(html){
+	var form = getElements(html, [/<form[^>]*>/ig, /<div[^>]+changePasswordBox/i])[0];
+    if(!form)
+        return html;
+
+    throw new AnyBalance.Error('Банк требует изменить параметры безопасности. Пожалуйста, войдите в интернет-банк ' + g_baseurl + ' через браузер, выполните требования банка, затем введите логин и новый пароль в настройки провайдера.', null, true);
+/*
+    var prefs = AnyBalance.getPreferences();
+    var params = createFormParams(html, function (params, str, name, value) {
+        if (/newPassword/i.test(name))
+            return prefs.password;
+        else if (/repeatPassword/i.test(name))
+            return prefs.password;
+        return value;
+    });
+
+    var action = getParam(form, null, null, /<form[^>]+action="([^"]*)/i, replaceHtmlEntities);
+    html = AnyBalance.requestPost(joinUrl(g_baseurl, action), params, g_headers);
+*/
+}
+
 function login(){
 	var prefs = AnyBalance.getPreferences();
 	AnyBalance.setDefaultCharset('windows-1251');
@@ -141,10 +162,10 @@ function login(){
 	g_baseurl = g_baseurls[prefs.region];
 	AnyBalance.trace('Region is ' + prefs.region + ': ' + g_baseurl);
 
-
 	var html = AnyBalance.requestGet(g_baseurl + '/scoring/protected/welcome.jsf', g_headers);
 	if(isLoggedIn(html)){
 		//Уже залогинены
+        html = checkForPasswordChange(html);
 		return html;
 	}
 
@@ -159,8 +180,10 @@ function login(){
     if(!form && hasCaptcha(html) && !wasCaptcha){
     	tryLogin(html);
 	    
-		if(isLoggedIn(html))
-			return html;
+		if(isLoggedIn(html)) {
+            html = checkForPasswordChange(html);
+            return html;
+        }
 
     	form = getElements(html, [/<form[^>]+submitForm[^>]*>/ig, /<input[^>]+name="otp_type"/i])[0];
     }
@@ -206,7 +229,8 @@ function login(){
 		throw AnyBalance.Error('Не удалось войти в интернет банк. Сайт изменен?');
 	}
 
-	return html; 
+    html = checkForPasswordChange(html);
+	return html;
 }
 
 function processCards(html, result){

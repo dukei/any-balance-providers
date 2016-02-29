@@ -6,7 +6,7 @@ var g_headers = {
 	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
 	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
 	'Connection': 'keep-alive',
-	'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/47.0.2526.111 Safari/537.36',
+	'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/48.0.2564.116 Safari/537.36',
 };
 
 function parseTrafficMb(str){
@@ -156,13 +156,13 @@ function main() {
 
         //Использовано трафика в тарифах Vodafone
 	//Пакет на месяц в тарифе
-	sumParam (html, result, 'traffic_used1', /(?:Г|М)Б 3G в месяц RED ., использовано:\s*(\d+)\s*(?:Кб|kб).<\/span>/ig, null, parseTrafficMb, aggregate_sum);
+	sumParam (html, result, 'traffic_used1', /(?:Г|М)Б 3G в месяц RED ., использовано:\s*(\d+,?\d*)\s*(?:Кб|kб).<\/span>/ig, null, parseTrafficMb, aggregate_sum);
 	//Пакет на месяц в тарифе
-	sumParam (html, result, 'traffic_used2', /Мобильный Интернет на день RED, использовано:\s*(\d+)\s*(?:Кб|kб).<\/span>/ig, null, parseTrafficMb, aggregate_sum);
+	sumParam (html, result, 'traffic_used2', /Мобильный Интернет на день RED, использовано:\s*(\d+,?\d*)\s*(?:Кб|kб).<\/span>/ig, null, parseTrafficMb, aggregate_sum);
 	//Пакет на месяц в тарифе
-	sumParam (html, result, 'traffic_used3', /Интернет в роуминге \(\d+ гривен в день\), использовано:\s*(\d+)\s*(?:Кб|kб).<\/span>/ig, null, parseTrafficMb, aggregate_sum);
+	sumParam (html, result, 'traffic_used3', /Интернет в роуминге \(\d+ гривен в день\), использовано:\s*(\d+,?\d*)\s*(?:Кб|kб).<\/span>/ig, null, parseTrafficMb, aggregate_sum);
 	//Пакет на месяц в тарифе
-	sumParam (html, result, 'traffic_used4', /Мобильный Интернет "Роуминг как дома", использовано:\s*(\d+)\s*(?:Кб|kб).<\/span>/ig, null, parseTrafficMb, aggregate_sum);
+	sumParam (html, result, 'traffic_used4', /Мобильный Интернет "Роуминг как дома", использовано:\s*(\d+,?\d*)\s*(?:Кб|kб).<\/span>/ig, null, parseTrafficMb, aggregate_sum);
 
 	//Политика скорости
 	getParam (html, result, 'speed', /Поточна швидкість:\s*<\/span>\s*<\/td>\s*<td>\s*<div[^>]*>\s*<span>([^<]*)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);

@@ -22,7 +22,7 @@
 	<counters>
 		<counter id="balance" name="Баланс" units=" р"/>
 		<counter id="tariff" name="Тариф" type="text"/>
-		<counter id="month_fee" name="Абонентская плата, в мес." type="number" units=" р"/>
+		<counter id="month_fee" name="Абонентская плата, в мес." units=" р"/>
 		<counter id="sms" name="MMS и SMS" type="text" units=" шт"/>
 		<counter id="calls" name="Местные вызовы" type="text" units=" мин"/>
 		<counter id="internet" name="Мобильный интернет" type="text"  units=" ГБ"/>

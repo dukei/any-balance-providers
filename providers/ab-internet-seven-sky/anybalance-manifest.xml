@@ -22,7 +22,7 @@
 	</files>
 	<counters>
 		<counter id="balance" name="Баланс" units=" р"/>
-		<counter id="account" name="Лицевой счет" type="number"/>
+		<counter id="account" name="Лицевой счет"/>
 	</counters>
 	<keywords>интернет севен скай, 7, sky</keywords>
 	<type>internet</type>

@@ -15,8 +15,8 @@ function main() {
 	var baseurl = 'https://online.bcs.ru/';
 	AnyBalance.setDefaultCharset('utf-8');
 	
-	checkEmpty(prefs.login, 'Введите логин!');
-	checkEmpty(prefs.password, 'Введите пароль!');
+	AB.checkEmpty(prefs.login, 'Введите логин!');
+	AB.checkEmpty(prefs.password, 'Введите пароль!');
 	
 	var html = AnyBalance.requestGet(baseurl + 'bank/web/guest/home', g_headers);
 	
@@ -35,19 +35,17 @@ function main() {
 			throw new AnyBalance.Error('Провайдер требует AnyBalance API v7, пожалуйста, обновите AnyBalance!');
 		}
 	}
-	
-	// AnyBalance.sleep(5000);
 
 	html = AnyBalance.requestPost(baseurl + 'bank/web/guest/home?p_p_id=LoginPortlet_WAR_bcsinternetserverportalapp&p_p_lifecycle=2&p_p_state=normal&p_p_mode=view&p_p_resource_id=login&p_p_cacheability=cacheLevelPage', {
 		'login':prefs.login,
 		'password':prefs.password,
 		'_LoginPortlet_WAR_bcsinternetserverportalapp_captchaText': captchaa
-	}, addHeaders({Referer: baseurl + 'bank/web/guest/home', 'X-Requested-With':'XMLHttpRequest'}));
+	}, AB.addHeaders({Referer: baseurl + 'bank/web/guest/home', 'X-Requested-With':'XMLHttpRequest'}));
 	
-	var json = getJson(html);
+	var json = AB.getJson(html);
 	
 	if (!json.success) {
-		var error = getParam(html, null, null, /<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
+		var error = json.message && AB.getParam(json.message, null, null, null, AB.replaceTagsAndSpaces);
 		if (error)
 			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
 		
@@ -57,46 +55,64 @@ function main() {
 	
 	html = AnyBalance.requestGet(baseurl + json.redirect, g_headers);
 	
-	var result = {success: true};
+	var result = {success: true},
+        plid = getPlid(html);
 	
 	if(prefs.type == 'brok_acc')
-		processBrokerAcc(baseurl, prefs, html, result);
+		processBrokerAcc(baseurl, prefs, plid, result);
 	else
-		processCard(baseurl, prefs, result);
+		processCard(baseurl, prefs, plid, result);
 	
 	AnyBalance.setResult(result);
 }
 
-function processCard(baseurl, prefs, result) {
-	var html = AnyBalance.requestGet(baseurl + 'bank/group/bcs/accountsandcards', g_headers);
-	
-	var card = getParam(html, null, null, new RegExp('<tr class="ui-widget-content(?:[^>]*>){3}[^>]*'+ (prefs.cardnum || '') +'(?:[^>]*>){46}\\s*</tr>','i'));
+function processCard(baseurl, prefs, plid, result) {
+	var html = AnyBalance.requestPost(
+        baseurl + 'bank/c/portal/render_portlet?p_l_id=' + plid + '&p_p_id=AccountListCompactForm_WAR_bcsinternetserverportalapp',
+        {},
+        AB.addHeaders({Referer: baseurl + 'bank/web/guest/home', 'X-Requested-With':'XMLHttpRequest'})
+    );
+
+    var cardRe = new RegExp(
+        '<table[^>]*acc-and-card-table">[\\s\\S]*?(<tr[^>]*>[\\s\\S]*?</tr>[\\s\\S]*?"card-name">[^<]*\\*' +
+        (prefs.cardnum || '') + '[^>]+>)',
+        'i'
+    );
+
+	var card = AB.getParam(html, null, null, cardRe);
 	if(!card) {
 		throw new AnyBalance.Error('Не удалось найти ' + (prefs.cardnum ? 'карту/счет с последними цифрами' + prefs.cardnum: 'ни одной карты или счета!'));
 	}
-	
-	getParam(card, result, '__tariff', /<tr class="ui-widget-content(?:[^>]*>){3}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(card, result, 'cardname', /<tr class="ui-widget-content(?:[^>]*>){3}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(card, result, 'accnumber', /<tr class="ui-widget-content(?:[^>]*>){5}([\s\S]*?)</i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(card, result, 'balance', /<tr class="ui-widget-content(?:[^>]*>){10}([\s\S]*?)</i, replaceTagsAndSpaces, parseBalance);
-	getParam(card, result, ['currency', 'balance'], /<tr class="ui-widget-content(?:[^>]*>){10}([\s\S]*?)</i, replaceTagsAndSpaces, parseCurrency);
+
+    AB.getParam(card, result, '__tariff', /<td[^>]*>\s*<a[^>]*>([^<]+)/i, AB.replaceTagsAndSpaces);
+    AB.getParam(card, result, 'cardname', /"card-name">([^<]+)/i, AB.replaceTagsAndSpaces);
+    AB.getParam(card, result, 'accnumber', /<td[^>]*>\s*<a[^>]*>[^<]*?(\d+)/i, AB.replaceTagsAndSpaces);
+    AB.getParam(card, result, 'balance', /<td class="balance">([\s\S]+?)<\/td>/i, AB.replaceTagsAndSpaces, AB.parseBalance);
+    AB.getParam(card, result, ['currency', 'balance'], /<td class="balance">([\s\S]+?)<\/td>/i, AB.replaceTagsAndSpaces, AB.parseCurrency);
 }
 
-function processBrokerAcc(baseurl, prefs, html, result) {
-	var plid = getParam(html, null, null, /getPlid:function\(\)\{return"(\d+)"/i, replaceTagsAndSpaces);
-	if(!plid) {
-		throw new AnyBalance.Error('Не удалось найти PLID');
-	}
-
-	html = AnyBalance.requestPost(baseurl + 'bank/c/portal/render_portlet?p_l_id='+plid+'&p_p_id=GeneralAgreementListCompactForm_WAR_bcsinternetserverportalapp', {}, addHeaders({Referer: baseurl + 'bank/web/guest/home', 'X-Requested-With':'XMLHttpRequest'}));
+function processBrokerAcc(baseurl, prefs, plid, result) {
+	var html = AnyBalance.requestPost(
+        baseurl + 'bank/c/portal/render_portlet?p_l_id=' + plid + '&p_p_id=GeneralAgreementListCompactForm_WAR_bcsinternetserverportalapp',
+        {},
+        AB.addHeaders({Referer: baseurl + 'bank/web/guest/home', 'X-Requested-With':'XMLHttpRequest'})
+    );
 	
-	var acc = getParam(html, null, null, new RegExp('<tr>(?:[^>]*>){1}[^>]*PrimeFaces.ab(?:[^>]*>){3}[^<]+' + (prefs.cardnum || '') +'от(?:[^>]*>){10}','i'));
+	var acc = AB.getParam(html, null, null, new RegExp('<tr>[\\s\\S]*?(PrimeFaces.ab[^<]*' + (prefs.cardnum || '') + '(?:[^>]*>){12})','i'));
 	if(!acc) {
 		throw new AnyBalance.Error('Не удалось найти ' + (prefs.cardnum ? 'счет с последними цифрами' + prefs.cardnum: 'ни одного счета!'));
 	}
-	
-	getParam(acc, result, '__tariff', /<tr>(?:[^>]*>){4}([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(acc, result, 'accnumber', /<tr>(?:[^>]*>){4}([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(acc, result, 'balance', /<tr>(?:[^>]*>){7}([^<]+)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(acc, result, ['currency', 'balance'], /<tr>(?:[^>]*>){7}([^<]+)/i, replaceTagsAndSpaces, parseCurrency);
+
+    AB.getParam(acc, result, '__tariff', /(?:[^>]*>)([^>]*>)/i, AB.replaceTagsAndSpaces);
+    AB.getParam(acc, result, 'accnumber', /(?:[^>]*>)\D*([^>]*)от/i, AB.replaceTagsAndSpaces);
+    AB.getParam(acc, result, 'balance', /balance([^>]*>(?:[^>]*>){5})/i, AB.replaceTagsAndSpaces, AB.parseBalance);
+    AB.getParam(acc, result, ['currency', 'balance'], /balance([^>]*>(?:[^>]*>){5})/i, AB.replaceTagsAndSpaces, AB.parseCurrency);
+}
+
+function getPlid(html) {
+    var plid = AB.getParam(html, null, null, /getPlid:function\(\)\{return"(\d+)"/i, AB.replaceTagsAndSpaces);
+    if(!plid) {
+        throw new AnyBalance.Error('Не удалось найти PLID');
+    }
+    return plid;
 }

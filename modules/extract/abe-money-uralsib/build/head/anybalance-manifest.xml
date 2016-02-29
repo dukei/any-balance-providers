@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+    <id version="1">extract/abe-money-uralsib</id>
+	<api flags="no_browser" />
+    <name>Extract for Уралсиббанк</name>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<js>abe-money-uralsib.min.js</js>
+		<history>history.xml</history>
+	</files>
+	<depends>
+		<module id="framework/bobcmn"/>
+	</depends>
+	<type>money, bank</type>
+	<country>ru</country>
+</provider>

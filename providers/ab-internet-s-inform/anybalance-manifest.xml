@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-internet-s-inform</id>
+	<api flags="no_browser"/>
+	<name>СвязьИнформ</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера СвязьИнформ http://s-inform.net/</p>
+	<p>Информация берется из личного кабинета http://s-inform.net/private-office/</p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="internet_balance" name="Баланс интернета" units=" р"/>
+		<counter id="tv_balance" name="Баланс ТВ" units=" р"/>
+		<counter id="phone_balance" name="Баланс телефонии" units=" р"/>
+		<counter id="full_name" name="ФИО" type="text"/>
+		<counter id="address" name="Адрес" type="text"/>
+	</counters>
+	<keywords>internet, tv, phone</keywords>
+	<type>internet</type>
+	<country>ru</country>
+</provider>

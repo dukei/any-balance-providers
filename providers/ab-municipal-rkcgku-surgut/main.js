@@ -36,8 +36,8 @@ function main() {
     
     function norm(str, b) {
         return (b && str 
-            ? str.replace(/^[\s\(\)\.]*|[\s\(\)\.]*$/g, '').replace(/[\s\(\)\.]{2,}/g, ' ')
-            : str || '').toUpperCase();
+            ? str.replace(/^[\s\(\)\.]+|[\s\(\)\.]+$/g, '').replace(/[\s\(\)\.]{2,}/g, ' ')
+            : (str || '').replace(/^\s+|\s+$/g, '')).toUpperCase();
     }
     
     var field = 'serviceId';

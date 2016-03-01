@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="2" date="2016-02-25">
+	- Добавлена поддержка бонусов.
+	</change>
 	<change version="1" date="2016-02-24">
 	- Первая версия провайдера.
 	</change>

@@ -35,26 +35,31 @@ function main() {
 	});
 
 	var result = {success: true};
-	var json;
+	//Обязательно нужно получить эту информацию, т.к. она содержит информацию о статусе аккаунта.
+	html = AnyBalance.requestGet(g_baseurl+'api/user', g_headers);
+	var json = getJson(html);
 
-	if(isAvailable(['fio', 'balance'])) {
-		html = AnyBalance.requestGet(g_baseurl+'api/user ', g_headers);
-		json = getJson(html);
+	getParam(json.fullName || '', result, 'fio');
+	getParam(json.balance ? json.balance.toFixed(2) : undefined, result, 'balance', null, null, parseBalance);
 
-		getParam(json.fullName || undefined, result, 'fio');
-		getParam(json.balance ? json.balance.toFixed(2) : undefined, result, 'balance', null, null, parseBalance);
-	}
 	if(isAvailable(['lastCharge', 'allAccrued', 'date'])) {
-		html = AnyBalance.requestGet(g_baseurl+'api/user/history', g_headers);
-		json = getJson(html);
+		//Если статус аккаунта "closed", то регистрация в программе МТС "20%" невозможна.
+		//=> у user'a нет информации о бонусах и мы упадём с ошибкой при получении json'a. А это ата-та, т.к. баланс мы получили
+		if(json.status != 'closed') {
+			html = AnyBalance.requestGet(g_baseurl+'api/user/history', g_headers);
+			json = getJson(html);
 
-		var sumAllAccured = 0;
-		for(var i=0; i< json.length; i++)
-			sumAllAccured +=json[i].value;
-		result.allAccured = sumAllAccured;
+			var sumAllAccured = 0;
+			for(var i=0; i< json.length; i++)
+				sumAllAccured +=json[i].value;
+			result.allAccured = sumAllAccured;
 
-		getParam(json[0] ? json[0].value + '' : undefined, result, 'lastCharge', null, null, parseBalance);
-		getParam(json[0] ? json[0].date : undefined, result, 'date');
+			getParam(json[0] ? json[0].value + '' : undefined, result, 'lastCharge', null, null, parseBalance);
+			getParam(json[0] ? json[0].date : undefined, result, 'date');
+		} else {
+			AnyBalance.trace('Ваш номер не может быть зарегистрирован в программе бонусов "20% возвращаются"');
+		}
+
 	}
 
 	AnyBalance.setResult(result);

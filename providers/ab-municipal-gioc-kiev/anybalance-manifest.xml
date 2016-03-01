@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-municipal-gioc-kiev</id>
+	<api flags="no_browser"/>
+	<name>ГІОЦ КМДА 2016</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера ГІОЦ КМДА 2016 (Киев) https://www.gioc.kiev.ua/</p>
+	<p>Получает данные из личного кабинета ГІОЦ КМДА 2016 (Киев) https://www.gioc.kiev.ua/cabinet/login/</p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="debt" name="Сумма к оплате" units=" грн"/>
+		<counter id="payed" name="Оплачено" units=" грн"/>
+		<counter id="address" name="Адрес" type="text"/>
+		<counter id="pay_period" name="За период" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>municipal</type>
+	<country>ua</country>
+</provider>

@@ -23,10 +23,8 @@ function apiCall(params) {
 	var json = getJson(html);
 
 	if(!json.success) {
-		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Запрос завершился с ошибкой: '
-			+ (json.error.code || JSON.stringify(json.error) || 'Неизвестная ошибка!')
-			+ '. Проверьте правильно ли вы ввели номер почтового отправления.');
+		AnyBalance.trace(JSON.stringify(json));
+		throw new AnyBalance.Error('Не удалось получить данные из-за ошибке на сервере, попробуйте обновить данные позже.');
 	}
 	return json;
 }

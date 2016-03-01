@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-municipal-104ua</id>
+	<api flags="no_browser"/>
+	<name>104.ua</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера 104.ua https://104.ua/ru/</p>
+	<p>Информация берется из личного кабинета https://104.ua/ru/cabinet/info</p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" грн"/>
+		<counter id="full_name" name="ФИО" type="text"/>
+		<counter id="account_number" name="Лицевой счет" type="text"/>
+		<counter id="agreement" name="Договор" type="text"/>
+		<counter id="address" name="Адрес" type="text"/>
+		<counter id="email" name="email" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>municipal</type>
+	<country>ua</country>
+</provider>

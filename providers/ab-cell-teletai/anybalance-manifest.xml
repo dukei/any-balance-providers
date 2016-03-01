@@ -20,6 +20,9 @@
 		<counter id="balance2" name="Расходы по номеру за текущий период" units=" р"/>
 		<counter id="status" name="Статус" type="text"/>
 		<counter id="phone" name="Телефон" type="text"/>
+		<counter id="rest_local" name="Вызовы" units=" мин"/>
+		<counter id="rest_sms" name="SMS/MMS" units=" шт"/>
+		<counter id="rest_internet" name="Интернет" units=" Мб"/>
 	</counters>
 	<keywords></keywords>
 	<type>cell</type>

@@ -65,5 +65,13 @@ function main() {
 	getParam(html, result, 'status', />\s*Статус(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(html, result, '__tariff', />\s*Ваш тариф(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
 	
+	var html = AnyBalance.requestGet(baseurl + 'tariff_description_rests', addHeaders({ Referer: baseurl + 'menu', 'If-None-Match': new Date().getTime()+'' }));
+	var param = html.match(/<[^>]+progress-bar-text[^>]+>([^<]+)/ig);
+	if (param && param.length == 3) {
+		getParam(param[0], result, 'rest_local', null, replaceTagsAndSpaces, parseBalance);
+		getParam(param[1], result, 'rest_sms', null, replaceTagsAndSpaces, parseBalance);
+		getParam(param[2], result, 'rest_internet', null, replaceTagsAndSpaces, parseBalance);
+	}
+
 	AnyBalance.setResult(result);
 }

@@ -41,7 +41,7 @@ var postKey;
 		params.__EVENTTARGET = getParam(form, null, null, /<a[^>]+class="submit"[^>]+postbackoptions\(([\s\S]*?),/i, [/&quot;/g, '']);
 		if(!params.__EVENTTARGET) {
 			AnyBalance.trace(html);
-			throw new AnyBalance.Error("Не удалось найти параметр запроса. Сайт изменён?");
+			throw new AnyBalance.Error("Не удалось найти параметр авторизации. Сайт изменён?");
 		}
 
 		html = AnyBalance.requestPost(baseurl + 'Pages/Security/LogOn.aspx', params, addHeaders({

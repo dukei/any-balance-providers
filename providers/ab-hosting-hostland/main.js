@@ -30,7 +30,7 @@ function main() {
 	}, AB.addHeaders({ Referer: baseurl }));
 
 	if (!/exit\.png/.test(html)) {
-		var error = AB.getParam(text, null, null, /error_login[^>]+>([^<]+)</i, AB.replaceTagsAndSpaces);
+		var error = AB.getParam(html, null, null, /error_login[^>]+>([^<]+)</i, AB.replaceTagsAndSpaces);
 		if (error) 
 			throw new AnyBalance.Error(error, null, /логин|пароль/i.test(error));
 		AnyBalance.trace(html);

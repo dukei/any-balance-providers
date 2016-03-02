@@ -1,35 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="5">ab-cell-tele2-corp</id>
-  <name>Tele2 - корпоративный</name>
-  <description>
-    Получает баланс и информацию об абоненте для корпоративных тарифов Tele2. Информация берется из https://webcare.tele2.ru.
-    
-    Если у вас ещё нет личного кабинета, зарегистрируйте его на странице https://webcare.tele2.ru/group/public/caregister .
-  </description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>library.js</js>
-    <js>main.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="balance" name="Баланс" units="р"/>
-    <counter id="balance_personal" name="Персональный баланс" units="р"/>
-    <counter id="balance_corp" name="Корпоративный баланс" units="р"/>
-    <counter id="company" name="Компания" type="text"/>
-    <counter id="userName" name="Абонент" type="text"/>
-    <counter id="status" name="Статус абонента" type="text"/>
-  </counters>
-  <keywords>
-    Сотовый телефон, мобильный, мобильник, теле2, россия, корпоратив
-  </keywords>
-  <type>
-    cell
-  </type>
-  <country>
-    ru
-  </country>
+	<id version="6">ab-cell-tele2-corp</id>
+	<api flags="no_browser"/>
+	<name>Tele2 Business</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию для бизнес или корпоративных тарифов оператора мобильной связи Tele2 <a href="http://tele2.ru/business/">http://tele2.ru/business/</a></p>
+	<p>Информация берется из личного кабинета <a href="https://lk.tele2.ru/">https://lk.tele2.ru/</a></p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Если у вас нет доступа в Личный кабинет, получите его на странице <a href="https://lk.tele2.ru">https://lk.tele2.ru</a></p>
+	]]></instruction>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+	  <!-- Персональный баланс -->
+		<counter id="personalBalance" name="Личный основной баланс" units=" {@currency}"/>
+		<counter id="personalFunds" name="Доступные личные средства" units=" {@currency}"/>
+		<!-- Данные абонента -->
+		<counter id="personalStatus" name="Статус абонента" type="text"/>
+		<counter id="personalPhone" name="Номер телефона" type="text"/>
+		<counter id="personalTimestamp" name="Дата активации" type="text"/>
+		<counter id="personalType" name="Вид абонента" type="text"/>
+	  <!-- Баланс -->
+	  <counter id="balance" name="Остаток средств (контракт)" units=" {@currency}"/>
+	  <counter id="creditLimit" name="Лимит кредита (контракт)" units=" {@currency}"/>
+	  <!-- Абоненты -->
+	  <counter id="subscribersNumber" name="Количество абонентов организации"/>
+	  <counter id="subscribersList" name="Список абонентов организации" type="text"/>
+	  <!-- Общая информация -->
+	  <counter id="contractNumber" name="Номер контракта" type="text"/>
+	  <counter id="accountNumber" name="Номер лицевого счёта (контракт)" type="text"/>
+	  <counter id="contractName" name="Контактное лицо" type="text"/>
+	  <counter id="contractEmail" name="Электронная почта" type="text"/>
+	  <counter id="contractPhone" name="Контактный телефон (контракт)" type="text"/>
+	</counters>
+	<keywords>Теле2 Бизнес Корпоративный</keywords>
+	<type>cell</type>
+	<country>ru</country>
 </provider>

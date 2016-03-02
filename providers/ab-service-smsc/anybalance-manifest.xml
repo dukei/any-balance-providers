@@ -1,17 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-service-smsc</id>
+  <id version="2">ab-service-smsc</id>
   <name>SMSC - сервис SMS-рассылок</name>
   <description>
     Получает баланс и статистику на сервисе рассылки SMS сообщений http://smsc.ru.
     
     ВНИМАНИЕ! При ошибочном вводе пароля может начать требовать ввести циферки. В этом случае на некоторое время автоматический вход будет недоступен.
   </description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+  <depends>
+    <module id="library"/>
+  </depends>
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
     <js>main.js</js>
+    <history>history.xml</history>
   </files>
   <counters>
     <counter id="balance" name="Баланс" units="р"/>

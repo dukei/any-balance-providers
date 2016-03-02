@@ -21,6 +21,10 @@ function main () {
         throw new AnyBalance.Error('Введите № карты');
 	
     var html = AnyBalance.requestGet(baseurl + 'otchet-po-diskontnoj-karte-2', g_headers);
+    if (!html || AnyBalance.getLastStatusCode() > 400) {
+        AnyBalance.trace(html);
+        throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
+    }
     var form = getParam(html, null, null, /<div[^>]+class="enter_number_form"[^>]*>([\s\S]*?)<\/form>/i);
     if(!form){
 	AnyBalance.trace(html);

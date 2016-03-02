@@ -18,17 +18,19 @@ function main(){
     moment.lang('ru');
     var prefs = AnyBalance.getPreferences();
 
-    var baseurl = "https://my.tiera.ru/";
+   var baseurl = "https://my.tiera.ru/";
 
-    AnyBalance.setDefaultCharset('cp1251'); 
+    AnyBalance.setDefaultCharset('utf-8');
 
     var html = AnyBalance.requestPost(baseurl, {
         action: 'logon',      
         login:prefs.login,
         password:prefs.password,
-        x:'64',        
-        y:'17'
-    }, addHeaders({Referer: baseurl})); 
+        //x:'64',        
+        //y:'17'
+    }, addHeaders({ Referer: baseurl }));
+
+    html = AnyBalance.requestGet(baseurl, addHeaders({ Referer: baseurl }));
 
     if(!/\/Logout/i.test(html)){
         throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Возможно не правильно введен логин или пароль. Либо сайт изменен.');

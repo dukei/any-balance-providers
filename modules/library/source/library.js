@@ -7,6 +7,8 @@
  library.js v0.22 от 12.01.16
  
  Changelog:
+ 
+ 27.02.2016 В методах getElement/getElements добавлена возможность указать группу в регексе
 
  19.01.2016 Добавлен метод getElementById(), см. KRPROV-8
 
@@ -337,8 +339,9 @@ var AB = (function (global_scope) {
     }
 
     /** Парсит дату из такого вида: 27 июля 2013 без использования сторонних библиотек, результат в мс */
-    function parseDateWord(str) {
-        AnyBalance.trace('Trying to parse date from ' + str);
+    function parseDateWord(str, silent) {
+        if(!silent)
+            AnyBalance.trace('Trying to parse date from ' + str);
         var dateString = replaceAll(str, [replaceTagsAndSpaces, replaceHtmlEntities,
             /\D*(?:январ(?:я|ь)|янв|january|jan)\D*/i, '.01.',
             /\D*(?:феврал(?:я|ь)|фев|febrary|feb)\D*/i, '.02.',
@@ -356,7 +359,11 @@ var AB = (function (global_scope) {
         if (endsWith(dateString, '.')) {
             dateString += new Date().getFullYear();
         }
-        return parseDate(dateString);
+        return parseDate(dateString, silent);
+    }
+
+    function parseDateWordSilent(str) {
+        return parseDateWord(str, true);
     }
 
     /** Объединяет два объекта. Свойства с общими именами берутся из newObject */
@@ -864,13 +871,19 @@ var AB = (function (global_scope) {
      Возвращает весь элемент целиком, учитывая вложенные элементы с тем же тегом
      Например,
      getElement(html, /<div[^>]+id="somediv"[^>]*>/i)
+     Если в конце регекса есть группа (match[0] оканчивается на match[1]), то сам тег берется ез match[1],
+     а все что перед группой будет как условие lookbehind, коих в js регексах до сих пор нет.
      */
     function getElement(html, re, replaces, parseFunc) {
         var amatch = re.exec(html);
         if (!amatch)
             return;
         var startIndex = amatch.index;
-        var startTag = html.substr(startIndex, amatch[0].length);
+        var startTag = amatch[0];
+        if (amatch[1] && (amatch[0].indexOf(amatch[1], amatch[0].length - amatch[1].length) > 0)) {
+            startIndex += amatch[0].length - amatch[1].length;
+            startTag = amatch[1];
+        }
         var elem = getParam(startTag, null, null, /<(\w+)/);
         var reStart = new RegExp('<' + elem + '[^>]*>', 'ig');
         var reEnd = new RegExp('<\/' + elem + '[^>]*>', 'ig');
@@ -1266,6 +1279,7 @@ var AB = (function (global_scope) {
         parseDate: parseDate,
         parseDateSilent: parseDateSilent,
         parseDateWord: parseDateWord,
+        parseDateWordSilent: parseDateWordSilent,
         joinObjects: joinObjects,
         joinArrays: joinArrays,
         addHeaders: addHeaders,

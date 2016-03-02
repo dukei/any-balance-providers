@@ -1,5 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="35" date="2016-02-29">
+	- Мелкие улучшения.
+	- Изменена иконка.
+	</change>
 	<change version="34" date="2016-02-01">
 	- Поддержка очередных изменений в личном кабинете.
 	</change>

@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-money-touchbank</id>
+	<id version="2">ab-money-touchbank</id>
 	<api flags="no_browser"/>
 	<name>Touch Bank</name>
 	<description html="true"><![CDATA[
@@ -20,6 +20,7 @@
 	</files>
 	<counters>
 		<counter id="balance" name="Остаток" units=" {@currency}"/>
+		<counter id="bonuses" name="Бонусы" units=" Б"/>
 		<counter id="borrowed" name="Задолженность по карте" units=" {@currency}"/>
 		<counter id="charged" name="Получено в текущем месяце" units=" {@currency}"/>
 		<counter id="locked" name="Заморожено" units=" {@currency}"/>

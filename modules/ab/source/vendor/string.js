@@ -406,7 +406,8 @@
 		if (false) { //development mode
 			
 			var tagsRawRe = 'script|style|xmp' +	//raw text elements (as is)
-							'|textarea|title';		//escapable raw text elements (can have html entities)
+							'|textarea|title' +		//escapable raw text elements (can have html entities)
+							'|math|svg';			//raw text elements (as is)
 
 			var spacesRe = /\x00-\x20\x7f\xA0\s/.source;
 
@@ -462,7 +463,7 @@
 			console.log(tagRe);
 		}
 		else { //production mode
-			var htmlRe = /<(?:((script|style|xmp|textarea|title)(?=[>\x00-\x20\x7f\xA0\s])[^>"']*(?:(?=([^>"']+))\3|"[^"]*"|'[^']*')*)>([^<]*[\s\S]*?)<\/(\2)(?=[>\x00-\x20\x7f\xA0\s])[^>"']*(?:(?=([^>"']+))\6|"[^"]*"|'[^']*')*>|((?=[a-z])(?!(?:script|style|xmp|textarea|title)(?=[>\x00-\x20\x7f\xA0\s]))[^>"']*(?:(?=([^>"']+))\8|"[^"]*"|'[^']*')*)>|\/([a-z][^>"']*(?:(?=([^>"']+))\10|"[^"]*"|'[^']*')*)>|!([a-z][^>"']*(?:(?=([^>"']+))\12|"[^"]*"|'[^']*')*)>|!\[CDATA\[([^\]]*[\s\S]*?)\]\]>|!--([^-]*[\s\S]*?)-->|\?([^\?]*[\s\S]*?)\?>|%([^%]*[\s\S]*?)%>)[\x00-\x20\x7f\xA0\s]*|((?:[^<]+|<(?!\/?[a-z]|!(?:\[CDATA\[|--)|[\?%]))+)/gi,
+			var htmlRe = /<(?:((script|style|xmp|textarea|title|math|svg)(?=[>\x00-\x20\x7f\xA0\s])[^>"']*(?:(?=([^>"']+))\3|"[^"]*"|'[^']*')*)>([^<]*[\s\S]*?)<\/(\2)(?=[>\x00-\x20\x7f\xA0\s])[^>"']*(?:(?=([^>"']+))\6|"[^"]*"|'[^']*')*>|((?=[a-z])(?!(?:script|style|xmp|textarea|title)(?=[>\x00-\x20\x7f\xA0\s]))[^>"']*(?:(?=([^>"']+))\8|"[^"]*"|'[^']*')*)>|\/([a-z][^>"']*(?:(?=([^>"']+))\10|"[^"]*"|'[^']*')*)>|!([a-z][^>"']*(?:(?=([^>"']+))\12|"[^"]*"|'[^']*')*)>|!\[CDATA\[([^\]]*[\s\S]*?)\]\]>|!--([^-]*[\s\S]*?)-->|\?([^\?]*[\s\S]*?)\?>|%([^%]*[\s\S]*?)%>)[\x00-\x20\x7f\xA0\s]*|((?:[^<]+|<(?!\/?[a-z]|!(?:\[CDATA\[|--)|[\?%]))+)/gi,
 				tagRe  = /^([-\w:]+)[\x00-\x20\x7f\xA0\s]*([\s\S]*)$/;
 		}
 		var match, m, type, node, attrs, offset,
@@ -501,14 +502,14 @@
 				if (type === 'open') {
 					m = tagRe.exec(match[i]);
 					if (m) node = m[1].toLowerCase(), attrs = m[2];
-					if (tagsVoid[node]) type = 'void';
+					if (node in tagsVoid) type = 'void';
 				}
 				else if (type === 'close') {
 					node = node.toLowerCase();
 					if (i == 5) offset += (match[1].length + 1) + match[4].length;
 				}
 				else if (type === 'raw') {
-					if (tagsRawEsc[ match[2].toLowerCase() ]) type = 'text';
+					if (match[2].toLowerCase() in tagsRawEsc) type = 'text';
 					offset += match[1].length + 1;
 				}
 				if (! reviver(type, node, attrs, offset)) return false;
@@ -585,9 +586,7 @@
 
 		if (false) { //development mode
 		
-			var pairTagsWithContentRe = [
-				'script', 'style', 'map', 'iframe', 'frameset', 'object', 'applet', 'comment', 'button', 'textarea', 'select'
-			].join('|');
+			var pairTagsWithContentRe = 'script|style|map|iframe|frameset|object|applet|comment|button|textarea|select|math|svg';
 
 			var attrsRe = function (n) {
 				//fast short implementation
@@ -632,19 +631,18 @@
 			console.log(htmlRe);
 		}
 		else { //production mode
-			var htmlRe = /(?:<(?=[a-z])(script|style|map|iframe|frameset|object|applet|comment|button|textarea|select)\b[^>"']*(?:(?=([^>"']+))\2|"[^"]*"|'[^']*')*>[^<]*[\s\S]*?<(?!script\b|style\b)\/?\1\b[^>"']*(?:(?=([^>"']+))\3|"[^"]*"|'[^']*')*>|<(?=[a-z])(?!(?:script|style|map|iframe|frameset|object|applet|comment|button|textarea|select)\b)[^>"']*(?:(?=([^>"']+))\4|"[^"]*"|'[^']*')*>|<\/[a-z][^>"']*(?:(?=([^>"']+))\5|"[^"]*"|'[^']*')*>|<![a-z][^>"']*(?:(?=([^>"']+))\6|"[^"]*"|'[^']*')*>|<!\[CDATA\[[^\]]*[\s\S]*?\]\]>|<!--[^-]*[\s\S]*?-->|<\?[^\?]*[\s\S]*?\?>|<%[^%]*[\s\S]*?%>)/gi;
+			var htmlRe = /(?:<(?=[a-z])(script|style|map|iframe|frameset|object|applet|comment|button|textarea|select|math|svg)\b[^>"']*(?:(?=([^>"']+))\2|"[^"]*"|'[^']*')*>[^<]*[\s\S]*?<(?!script\b|style\b)\/?\1\b[^>"']*(?:(?=([^>"']+))\3|"[^"]*"|'[^']*')*>|<(?=[a-z])(?!(?:script|style|map|iframe|frameset|object|applet|comment|button|textarea|select)\b)[^>"']*(?:(?=([^>"']+))\4|"[^"]*"|'[^']*')*>|<\/[a-z][^>"']*(?:(?=([^>"']+))\5|"[^"]*"|'[^']*')*>|<![a-z][^>"']*(?:(?=([^>"']+))\6|"[^"]*"|'[^']*')*>|<!\[CDATA\[[^\]]*[\s\S]*?\]\]>|<!--[^-]*[\s\S]*?-->|<\?[^\?]*[\s\S]*?\?>|<%[^%]*[\s\S]*?%>)/gi;
 		}
 
 		//https://developer.mozilla.org/ru/docs/Web/HTML/Block-level_elements
 		//http://www.tutorialchip.com/tutorials/html5-block-level-elements-complete-list/
-		var blockTagsRe = [
+		var blockTagsRe = 
 			//Paragraph boundaries are inserted at every block-level HTML tag. Namely, those are (as taken from HTML 4 standard)
-			'blockquote', 'caption', 'center', 'dd', 'div', 'dl', 'dt', 'h[1-6]', 'hr', 'li', 'menu', 'ol', 'p', 'pre', 'table', 'tbody', 'td', 'tfoot', 'th', 'thead', 'tr', 'ul',
+			'blockquote|caption|center|dd|div|dl|dt|h[1-6]|hr|li|menu|ol|p|pre|table|tbody|td|tfoot|th|thead|tr|ul' +
 			//HTML5
-			'article', 'aside', 'audio', 'canvas', 'figcaption', 'figure', 'footer', 'header', 'hgroup', 'output', 'progress', 'section', 'video',
+			'|article|aside|audio|canvas|figcaption|figure|footer|header|hgroup|output|progress|section|video' +
 			//Extended
-			'form', 'title', 'br'
-		].join('|');
+			'|form|title|br';
 		var htmlBlockTagsRe = RegExp('^<(?=[a-z])(?:'+ blockTagsRe + ')\\b', 'i');
 		
 		var str = this.replace(
@@ -803,5 +801,5 @@
 			return null;
 		}			
 	}
-	
+
 })();

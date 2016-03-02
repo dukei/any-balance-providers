@@ -12,199 +12,77 @@ var g_headers = {
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	
-	// TODO Возможно, лучше оставить только новый кабинет, т.к. в старый перестало ходить
-	if(!prefs.cabinet)
-		prefs.cabinet = 'new';
-	
-	checkEmpty(/^\d{10}$/.test(prefs.login), 'Введите логин - номера телефона из 10 цифр!');
 	checkEmpty(prefs.password, 'Введите пароль!');
-	
-	var baseurl = "https://my.tele2.ru/";
-	var baseurlLogin = 'https://login.tele2.ru/ssotele2/';
-	AnyBalance.setDefaultCharset('utf-8');
-	
-	var html = AnyBalance.requestGet(baseurlLogin + 'wap/auth/', g_headers);
-	if (!html || AnyBalance.getLastStatusCode() > 400) {
-		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
-	}
-	
-	var token = getParam(html, null, null, /<input[^>]+value="([^"]+)"[^>]*name="_csrf"/i, replaceTagsAndSpaces);
-	if (!token) {
-		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Не удалось найти форму входа, сайт изменен?');
-	}
-	
-	html = AnyBalance.requestPost(baseurlLogin + 'wap/auth/submitLoginAndPassword', {
-		pNumber: prefs.login,
-		password: prefs.password,
-		'_csrf': token
-	}, g_headers);
-	
-	if (!/profile\/logout/i.test(html)) {
-		if (/<input[^>]+id\s*=\s*"smsCode"/i.test(html)) throw new AnyBalance.Error(
-			'У вас настроена двухфакторная авторизация с вводом SMS кода при входе в личный кабинет Теле2. Для работы провайдера требуется запрос СМС кода для входа в ЛК отключить. Инструкцию по отключению см. в описании провайдера.',
-			null, true);
-		var error = sumParam(html, null, null, /class="error"[^>]*>([\s\S]*?)</gi, replaceTagsAndSpaces, html_entity_decode, aggregate_join) || '';
-		if (/не найден/i.test(error)) {
-			//Сайт теле2 иногда глючит и не пускает. Сделаем в этом случае несколько попыток.
-			throw new AnyBalance.Error(error +
-				'.\nTele2 обновили процедуру входа в личный кабинет с 26 февраля 2015.\nЧтобы войти в него, всем пользователям необходимо заново пройти регистрацию. Зайдите в личный кабинет https://my.tele2.ru с копьютера и зарегистрируйетсь заново.\nЕсли вы уже перерегистрировались и опять видите это сообщение, пожалуйста, обратитесь в поддержку Теле2, сообщите им, что личный кабинет периодически не может найти ваш номер несмотря на перерегистрацию. Абсолютно такая же проблема наблюдается и при входе в кабинет через браузер.',
-				true);
-		}
-		if (error) throw new AnyBalance.Error(error, null, /Неверный пароль/i.test(error));
-		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
-	}
-	
-	if (prefs.cabinet == 'new')
+
+	var html = login();
+
+	if (prefs.cabinet == 'new'){
 		doNewCabinet(html);
-	else
+	}else{
 		doOldCabinet(html, baseurl);
+	}
 }
 
 function doNewCabinet(html) {
-	var baseurl = "https://new.my.tele2.ru/";
-	
-	AnyBalance.trace('Входим в новый кабинет');
-	
-	var html = AnyBalance.requestGet('http://new.my.tele2.ru/', g_headers);
-	html = AnyBalance.requestGet('http://new.my.tele2.ru/login', addHeaders({Referer: baseurl}));
-	
-	
-	if (AnyBalance.getLastStatusCode() > 400) {
-		// Пержде, чем переходить, надо сохранить ошибку, на всякий
-		var error = getElement(html, /<div[^>]+error[^>]*>/i, replaceTagsAndSpaces);
-		
-		// Попробуем, иногда помогает :)
-		if(AnyBalance.getLastStatusCode() == 503)
-			html = AnyBalance.requestGet('http://new.my.tele2.ru/', g_headers);
-		
-		if (AnyBalance.getLastStatusCode() > 400) {
-			if (error) 
-				throw new AnyBalance.Error('Новый кабинет: ' + error);
-			
-			AnyBalance.trace(html);
-			throw new AnyBalance.Error('Новый личный кабинет Теле2 временно недоступен. Попробуйте позже.');
+	var countersTable = {
+		common: {
+			"__forceAvailable": ["payments.sum", "payments.date"],
+			"balance": "balance",
+			"__tariff": "tariff",
+			"min_left": "remainders.min_left",
+			"traffic_left": "remainders.traffic_left",
+			"sms_left": "remainders.sms_left",
+			"mms_left": "remainders.mms_left",
+			"min_used": "remainders.min_used",
+			"traffic_used": "remainders.traffic_used",
+			"sms_used": "remainders.sms_used",
+			"mms_used": "remainders.mms_used",
+//			"history_income": "payments.sum",
+//			"history_out": "payments.sum",
+//			"history": "payments.sum",
+			"phone": "info.mphone",
+			"userName": "info.fio",
 		}
-	}
-	
-	var result = {success: true};
-	
-	getParam(html, result, "userName", /<div[^>]+class="user-name"[^>]*>([^]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, "phone", /<div[^>]+class="user-phone"[^>]*>([^]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
-	
-	var maxTries = 3;
-	
-	for(var i = 0; i < maxTries; i++) {
-		try {
-			AnyBalance.trace('Пытаемся получить баланс, попытка: ' + (i+1));
-			html = AnyBalance.requestGet(baseurl + 'main/tariffAndBalance', g_headers);
-			
-			var json = getJson(html);
-			
-			// Иногда приходит пустой тариф
-			if(json.currentTariffPlan.name)
-				getParam(json.currentTariffPlan.name, result, '__tariff');
-			
-			getParam(json.balance.amount, result, 'balance', null, null, parseBalance);
-			
-			AnyBalance.trace('Успешно получили баланс');
-			break;
-		}
-		catch(e) {
-			AnyBalance.trace('Не удалось получить баланс, пробуем еще раз...');
-		}
-	}
-	
-	if (AnyBalance.isAvailable('sms_used', 'min_used', 'traffic_used', 'mms_used', 'sms_left', 'min_left', 'traffic_left', 'mms_left')) {
-		try {
-			AnyBalance.trace("Searching for resources left");
-			html = AnyBalance.requestGet(baseurl + "main/discounts", g_headers);
-			AnyBalance.trace('Got discounts: ' + html);
-			json = JSON.parse(html);
-			var arr = [json.discountsIncluded, json.discountsNotIncluded];
-			for (var k = 0; k < arr.length; ++k) {
-				var discounts = arr[k];
-				for (var i = 0; discounts && i < discounts.length; ++i) {
-					var discount = discounts[i];
-					if (isArray(discount)) {
-						for (var j = 0; j < discount.length; ++j) {
-							getDiscount(result, discount[j]);
-						}
-					} else {
-						getDiscount(result, discount);
-					}
-				}
-			}			
-		} catch(e) {
-			AnyBalance.trace("Не удалось получить данные об остатках пакетов и услуг, попробуйте позже " + e);
-		}
-	}
-	
-	if (AnyBalance.isAvailable('history')) {
-		AnyBalance.trace("Searching for history");
-		html = AnyBalance.requestGet(baseurl + "payments/history?filter=LAST_10");
-		var json = getParam(html, null, null, /JS_DATA\s*=\s*JSON.parse\s*\(('(?:[^\\']+|\\.)*')/, null, function(str) {
-			return getJson(safeEval("return " + str))
-		});
-		for (var i = 0; i < json.payments.length; ++i) {
-			var p = json.payments[i];
-			sumParam(p.date + ' ' + p.amount, result, 'history', null, null, null, aggregate_join);
-			if (/^-/.test(p.amount)) {
-				sumParam(p.amount, result, 'history_out', null, null, parseBalance, aggregate_sum);
-			} else {
-				sumParam(p.amount, result, 'history_income', null, null, parseBalance, aggregate_sum);
-			}
-		}
-	}
-	
-	AnyBalance.setResult(result);
-}
+	};
 
-function getDiscount(result, discount) {
-	var name = discount.name;
-	var units = discount.limitMeasureCode;
-	AnyBalance.trace('Найден дискаунт: ' + name + ' (' + units + ')');
-	if (/мин/i.test(units)) {
-		//Минуты
-		getParam(discount.rest.value, result, 'min_left');
-		getParam(discount.limit.value - discount.rest.value, result, 'min_used');
-	} else if (/[кмгkmg][bб]/i.test(units)) {
-		//трафик
-		getParam(discount.rest.value + discount.rest.measure, result, 'traffic_left', null, null, parseTraffic);
-		getParam((discount.limit.value - discount.rest.value) + discount.limit.measure, result, 'traffic_used', null, null, parseTraffic);
-	} else if (/шт/i.test(units)) {
-		//СМС/ММС
-		if (/ммс|mms/i.test(name)) {
-			getParam(discount.rest.value, result, 'mms_left');
-			getParam(discount.limit.value - discount.rest.value, result, 'mms_used');
-		} else {
-			getParam(discount.rest.value, result, 'sms_left');
-			getParam(discount.limit.value - discount.rest.value, result, 'sms_used');
-		}
-	} else {
-		AnyBalance.trace("Неизвестный дискаунт: " + JSON.stringify(discount));
+	function shouldProcess(counter, info){
+		return true;
 	}
-}
+
+    var adapter = new NAdapter(countersTable.common, shouldProcess);
+	
+    adapter.processInfo = adapter.envelope(processInfo);
+    adapter.processRemainders = adapter.envelope(processRemainders);
+    adapter.processPayments = adapter.envelope(processPayments);
+    adapter.processBalance = adapter.envelope(processBalance);
+
+	var result = {success: true};
+    adapter.processInfo(html, result);
+    adapter.processBalance(html, result);
+    adapter.processRemainders(html, result);
+    adapter.processPayments(html, result);
+
+    var newresult = adapter.convert(result);
+	for (var i = 0; i < result.payments.length; ++i) {
+		var p = result.payments[i];
+
+		sumParam(fmtDate(new Date(p.date), '.') + ' ' + p.sum, newresult, 'history', null, null, null, aggregate_join);
+		if (/^-/.test(p.sum)) {
+			sumParam(p.sum, newresult, 'history_out', null, null, null, aggregate_sum);
+		} else {
+			sumParam(p.sum, newresult, 'history_income', null, null, null, aggregate_sum);
+		}
+	}
+    
+    AnyBalance.setResult(newresult);
+};
 
 function doOldCabinet(html, baseurl) {
 	var baseurl = 'https://my.tele2.ru/';
-	
-	AnyBalance.trace('Входим в старый кабинет');
-	
-	var lasturl = AnyBalance.getLastUrl();
-	var url = getParam(html, null, null, /href="([^"]*%3A%2F%2Fmy.tele2.ru[^"]*)/i, replaceHtmlEntities);
-	
-	var html = AnyBalance.requestGet(joinUrl(lasturl, url), addHeaders({
-		Referer: AnyBalance.getLastUrl()
-	}));
-	
-	html = AnyBalance.requestGet(baseurl + 'home', addHeaders({
-		Referer: baseurl + 'public/loginfailed-nocookies'
-	}));
 
+	AnyBalance.trace('Входим в старый кабинет');
+	html = reenterOld();
+	
 	if (AnyBalance.getLastStatusCode() > 400) {
 		var error = getElement(html, /<div[^>]+error[^>]*>/i, replaceTagsAndSpaces);
 		if (error) 

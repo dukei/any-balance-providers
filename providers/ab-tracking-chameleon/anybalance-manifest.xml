@@ -14,20 +14,19 @@
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
 	<counters>
 		<counter id="watchName" name="Объект наблюдения" type="text"/>
 		<counter id="loc" name="Местоположение" type="text"/>
-		<counter id="voltage" name="Заряд батареи" type="number"/>
-		<counter id="balance" name="Баланс" type="number"/>
-		<counter id="time" name="Время опроса" type="number"/>
-		<counter id="gps_strength" name="Cигнал GPS/Glonass" type="number"/>
-		<counter id="gsm_strength" name="Cигнал GSM" type="number"/>
-		<counter id="altitude" name="Высота" type="number"/>
-		<counter id="temperature" name="Температура" type="number"/>
+		<counter id="voltage" name="Заряд батареи"/>
+		<counter id="balance" name="Баланс"/>
+		<counter id="time" name="Время опроса" type="text"/>
+		<counter id="gps_strength" name="Cигнал GPS/Glonass"/>
+		<counter id="gsm_strength" name="Cигнал GSM"/>
+		<counter id="altitude" name="Высота"/>
+		<counter id="temperature" name="Температура"/>
 	</counters>
 	<keywords>автомобильный трекер, автономный маяк, персональный трекер</keywords>
 	<type>tracking</type>

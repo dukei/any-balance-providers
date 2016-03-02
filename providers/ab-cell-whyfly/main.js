@@ -13,6 +13,7 @@ function main() {
 	var baseadd = 'auth/login?next=%252F';
 
 	var prefs = AnyBalance.getPreferences();
+
 	AB.checkEmpty(prefs.login, 'Введите логин!');
 	AB.checkEmpty(prefs.password, 'Введите пароль!');
 
@@ -54,18 +55,18 @@ function main() {
 	var result = {success: true}, data;
 
 	data = getJsonObject(AnyBalance.requestGet(baseurl + 'api/profile/phone/', headers));
-	if (data && 'is_active' in data) result.status = data.is_active ? 'активен' : 'заблокирован';
+	if (data && 'is_active' in data && AnyBalance.isAvailable('status')) result.status = data.is_active ? 'активен' : 'заблокирован';
 
 	data = getJsonObject(AnyBalance.requestGet(baseurl + 'api/profile/balance/', headers));
-	if (data && 'balance' in data) result.balance = data.balance;
+	if (data && 'balance' in data && AnyBalance.isAvailable('balance')) result.balance = data.balance;
 
 	data = getJsonObject(AnyBalance.requestGet(baseurl + 'api/tariff/current/', headers));
 	if (data) {
 		if (data.name) {
-			result.tariff = data.name;
-			if (data.provider_name) result.tariff += ' / ' + data.provider_name;
+			result.__tariff = data.name;
+			if (data.provider_name) result.__tariff += ' / ' + data.provider_name;
 		}
-		if (data.month_fee) result.month_fee = data.month_fee;
+		if (data.month_fee && AnyBalance.isAvailable('month_fee')) result.month_fee = data.month_fee;
 	}
 
 	var keys = {
@@ -75,13 +76,11 @@ function main() {
 	data = getJsonObject(AnyBalance.requestGet(baseurl + 'api/counters/', headers));
 	if (data && data.length) {
 		data.forEach(function (line) {
-			var key = line.description.toLowerCase();
-			if (keys[key]) {
-				if (line.is_unlimited) {
-					result[keys[key]] = 'без ограничений';
-				}
-				else {
-					result[keys[key]] = line.counter_val + ' из ' + line.counter_max;
+			var keyStr = line.description.toLowerCase();
+			var key = keys[key];
+			if (key) {
+				if (!line.is_unlimited && line.counter_max && line.counter_val && AnyBalance.isAvailable(key)) {
+					result[key] = line.counter_max - line.counter_val;
 				}
 			}
 		});

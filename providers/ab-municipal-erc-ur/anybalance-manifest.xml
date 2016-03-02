@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="2">ab-municipal-erc-ur</id>
+  <id version="3">ab-municipal-erc-ur</id>
   <name>Единый Расчётный Центр (Екатеринбург)</name>
   <description html="true"><![CDATA[
   <p>Предоставляет информацию о балансах из личного кибинета системы Единый Расчётный Центр <a href="http://www.erc.ur.ru/">http://www.erc.ur.ru/</a></p>
@@ -19,16 +19,16 @@
     <history>history.xml</history>
   </files>
   <counters>
-    <counter id="debtBegin" name="Задолженность / переплата на начало месяца" units="р"/>
-    <counter id="accrued" name="Начислено" units="р"/>
-    <counter id="recalculation" name="Перерасчёты" units="р"/>
+    <counter id="debtBegin" name="Задолженность / переплата на начало месяца" units=" р"/>
+    <counter id="accrued" name="Начислено" units=" р"/>
+    <counter id="recalculation" name="Перерасчёты" units=" р"/>
     <counter id="account" name="Номер счёта" type="text"/>
     <counter id="timeRange" name="Период" type="text"/>
-    <counter id="paymentDate" name="Дата оплаты" type="text"/>
-    <counter id="payment" name="Оплата" units="р"/>
-    <counter id="paymentPenalty" name="Поступление в счёт оплаты пеней" units="р"/>
-    <counter id="received" name="Поступление в счёт оплаты ЖКУ" units="р"/>
-    <counter id="debtEnd" name="Задолженность / переплата на конец месяца" units="р"/>
+    <counter id="paymentDate" name="Дата оплаты" type="time" format="dd/MM/yyyy"/>
+    <counter id="payment" name="Оплата" units=" р"/>
+    <counter id="paymentPenalty" name="Поступление в счёт оплаты пеней" units=" р"/>
+    <counter id="received" name="Поступление в счёт оплаты ЖКУ" units=" р"/>
+    <counter id="debtEnd" name="Задолженность / переплата на конец месяца" units=" р"/>
     <counter id="info" name="Информация по счёту" type="text"/>
   </counters>
   <keywords>erc.ur.ru ЕРЦ Екатеринбург</keywords>

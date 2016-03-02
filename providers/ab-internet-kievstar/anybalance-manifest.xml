@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="3.0" version="12">ab-internet-kievstar</id>
+	<id major_version="3.0" version="13">ab-internet-kievstar</id>
 	<api flags="no_browser"/>
 	<name>Киевстар (домашний интернет)</name>
 	<description html="true"><![CDATA[
@@ -24,9 +24,11 @@
 		<counter id="balance" name="Баланс" units=" {@currency}"/>
 		<counter id="bonusValue" name="Бонусный баланс" units=" б"/>
 		<counter id="bonusDate" name="Срок действия бонусов" type="text"/>
+		<counter id="phone" name="Номер мобильного телефона" type="text"/>
 		<counter id="licschet" name="Лицевой счёт" type="text"/>
 		<counter id="status" name="Статус" type="text"/>
 		<counter id="name" name="Имя" type="text"/>
+		<counter id="connection_date" name="Дата подключения" type="time" format="dd/MM/yyyy"/>
 	</counters>
 	<keywords>Домашний интернет, интернет, kyivstar, киевстар, украина</keywords>
 	<type>internet</type>

@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-cell-perfectum</id>
+	<id version="2">ab-cell-perfectum</id>
 	<api flags="no_browser"/>
 	<name>Perfectum Узбекистан</name>
 	<description html="true"><![CDATA[
@@ -23,6 +23,7 @@
 	<counters>
     <!-- Телефон -->
     <counter id="phone_balance" name="Баланс (телефон)" units=" UZS"/>
+    <counter id="charges_mobile_internet" name="Мобильный интернет (начисления на телефон)" units=" Минут/Мб"/>
     <counter id="phone_number" name="Телефон" type="text"/>
     <counter id="status" name="Статус" type="text"/>
     <counter id="date_connection" name="Дата подключения" type="text"/>

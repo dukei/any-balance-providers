@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-exchange-aliexpress</id>
+  <id version="2">ab-exchange-aliexpress</id>
   <api flags="no_browser"/>
   <name>Курс доллара AliExpress</name>
   <description html="true"><![CDATA[

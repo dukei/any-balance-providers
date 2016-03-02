@@ -11,7 +11,32 @@ var g_headers = {
   'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
 };
 
-function main(){
+function main() {
+  // На некоторых смартфонах появляется ошибка 'Cannot find function find'
+  // поэтому добавим этот полифилл
+  if (!Array.prototype.find) {
+    Array.prototype.find = function(predicate) {
+      if (this === null) {
+        throw new TypeError('Array.prototype.find called on null or undefined');
+      }
+      if (typeof predicate !== 'function') {
+        throw new TypeError('predicate must be a function');
+      }
+      var list = Object(this);
+      var length = list.length >>> 0;
+      var thisArg = arguments[1];
+      var value;
+
+      for (var i = 0; i < length; i++) {
+        value = list[i];
+        if (predicate.call(thisArg, value, i, list)) {
+          return value;
+        }
+      }
+      return undefined;
+    };
+  }
+
   var baseUrl = "http://superdeals.aliexpress.com/en";
   var apiBaseUrl = "http://api.dos.aliexpress.com/aliexpress/";
   AnyBalance.setDefaultCharset('utf-8');

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<api flags="no_browser"/>
+	<id version="1">ab-hosting-hostland</id>
+	<name>HostLand.ru</name>
+	<description html="true">
+	<![CDATA[
+	<p>Предоставляет информацию из личного кабинета хостинг-провайдера HostLand.ru</p>
+	<p>Информация берется по адресу https://panel.hostland.ru/</p>
+	]]>
+	</description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="server" name="Сервер №"/>
+		<counter id="registration" name="Дата регистрации" type="text"/>
+		<counter id="total" name="Общий объем" type="text"/>
+		<counter id="used" name="Всего занято" type="text"/>
+		<counter id="usedMySQL" name="Занято базами данных" type="text"/>
+		<counter id="used_proc" name="Всего занято (доля)" units=" %"/>
+		<counter id="yearly_month" name="Стоимость при оплате за год" units=" руб./мес"/>
+		<counter id="monthly_month" name="Стоимость при оплате ежемесячно" units=" руб./мес"/>
+		<counter id="option_month" name="Дополнительные услуги" units=" руб./мес"/>
+		<counter id="count_domain" name="Домены на аккаунте" units=" шт."/>
+		<counter id="count_ftp" name="FTP аккаунты" units=" шт."/>
+		<counter id="count_db" name="Базы на аккаунте" units=" шт."/>
+		<counter id="count_email" name="Почтовые ящики" units=" шт."/>
+		<counter id="count_bonus" name="Доменные бонусы" units=" шт."/>
+		<counter id="account" name="Всего на счету" units=" руб."/>
+		<counter id="account_bonus" name="В том числе бонусных" units=" руб."/>
+		<counter id="account_day" name="Средств хватит на" units=" дн."/>
+		<counter id="client_name" name="Контактное лицо" type="text"/>
+		<counter id="client_org" name="Организация" type="text"/>
+		<counter id="client_adress" name="Адрес" type="text"/>
+		<counter id="client_phone" name="Контактный телефон" type="text"/>
+		<counter id="client_email" name="Контактный e-mail" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>hosting</type>
+	<country>ru</country>
+</provider>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-internet-tiera</id>
+  <id version="2">ab-internet-tiera</id>
   <name>Tiera (Санкт-Петербург)</name>
   <description>
     Получается баланс для интернет провайдера Tiera (https://my.tiera.ru/)

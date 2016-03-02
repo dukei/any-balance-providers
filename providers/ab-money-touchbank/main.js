@@ -4,6 +4,7 @@
 
 var g_countersTable = {
 	common: {
+		'bonuses' : 'bonuses',
 		'fio': 'info.fio'
 	}, 
 	card: {
@@ -111,11 +112,14 @@ function main() {
     adapter.processCredits = adapter.envelope(processCredits);
     adapter.processDeposits = adapter.envelope(processDeposits);
     adapter.processInfo = adapter.envelope(processInfo);
+	adapter.processBonuses = adapter.envelope(processBonuses);
+
 
 	var html = login(prefs);
 	
 	var result = {success: true};
 
+	adapter.processBonuses(html, result);
 	adapter.processInfo(html, result);
 
 	if(prefs.type == 'card') {

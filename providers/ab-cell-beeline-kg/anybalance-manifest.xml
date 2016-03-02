@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<api flags="no_browser"/>
+	<id version="1">ab-cell-beeline-kg</id>
+	<name>Beeline (Кыргызстан)</name>
+	<description html="true">
+		<![CDATA[
+	<p>Предоставляет информацию о балансе и бонусных баллах.</p>
+	<p>Информация берется из личного кабинета https://services.beeline.kg/ </p>
+	]]>
+	</description>
+	<instruction html="true">
+		<![CDATA[
+	<p>Если у вас нет доступа в Личный кабинет, получите его на странице https://services.beeline.kg/ </p>
+	]]>
+	</instruction>
+	<author>Ivan Dogaev &lt;azecm@mail.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" сом"/>
+		<counter id="bonus" name="Бонусный баланс" units=" балл"/>
+		<counter id="phone" name="Номер телефона" type="text"/>
+		<counter id="status" name="Статус" type="text"/>
+		<counter id="address" name="Адрес" type="text"/>
+		<counter id="fio" name="Фамилия Имя Отчество" type="text"/>
+		<counter id="phone2" name="Контактный телефон" type="text"/>
+		<counter id="dogovor" name="Номер договора" type="text"/>
+		<counter id="sim1" name="Активации сим карты" type="text"/>
+		<counter id="sim2" name="Окончания активного режима" type="text"/>
+		<counter id="sim3" name="Окончания режима ожидания" type="text"/>
+	</counters>
+	<keywords>Beeline, Кыргызстан, сотовый телефон, мобильный, мобильник</keywords>
+	<type>cell</type>
+	<country>ru, kg</country>
+</provider>

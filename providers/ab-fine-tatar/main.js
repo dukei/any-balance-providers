@@ -23,6 +23,11 @@ function main(){
     var baseurl = 'https://uslugi.tatarstan.ru/';
 	
     var html = AnyBalance.requestGet(baseurl, g_headers);
+
+    if (!html || AnyBalance.getLastStatusCode() > 400) {
+        AnyBalance.trace(html);
+        throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
+    }
 	
     var form = getParam(html, null, null, /<form[^>]+action="[^"]+user\/login"[^>]*>([\s\S]*?)<\/form>/i, null, html_entity_decode);
     if(!form)
@@ -80,19 +85,8 @@ function main(){
 	}
 
 	var result = {success: true};
-	
-	/**if(/>\s*Штрафов не найдено\s*<\//i.test(html)) {
-		AnyBalance.trace('Не найдено штрафов..');
-		getParam('0', result, 'balance', null, replaceTagsAndSpaces, parseBalance);
-	} else {**/
-		/*var finesTable = getParam(html, null, null, /<table[^>]*class="extra-table"[^>]*>([\s\S]*?)<\/table>/i) || '';
 
-		getParam(html, result, 'count', /Найдено\s*(\d+)/i, replaceTagsAndSpaces, parseBalance);
-		getParam(html, result, 'balance', /штраф[^<]*?на сумму ([^<]*)/i, replaceTagsAndSpaces, parseBalance);
-		sumParam(finesTable, result, 'lastdate', /<tr[^>]*>\s*(?:(?:[\s\S](?!<\/tr))*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate, aggregate_max);
-		sumParam(finesTable, result, 'firstdate', /<tr[^>]*>\s*(?:(?:[\s\S](?!<\/tr))*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate, aggregate_min);*/
-
-	if(!isset(json.response.fines)) {
+	if (!isset(json.response) || !isset(json.response.fines) || !json.response.fines.length) {
 			AnyBalance.trace('Не найдено штрафов..');
 			getParam('0', result, 'balance', null, replaceTagsAndSpaces, parseBalance);
 		}
@@ -109,8 +103,6 @@ function main(){
 			sumParam(current.date+'', result, 'firstdate', null, replaceTagsAndSpaces, parseDate, aggregate_min);
 		}
 	}
-
-	//}
 	
     AnyBalance.setResult(result);
 }

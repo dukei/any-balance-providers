@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id major_version="2.0" version="152">ab-money-uralsib</id>
+	<id major_version="2.0" version="153">ab-money-uralsib</id>
 	<name>Банк УРАЛСИБ</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о текущем остатке и других параметрах счетов банка УРАЛСИБ <a href="http://www.bankuralsib.ru">http://www.bankuralsib.ru</a></p>
@@ -15,20 +15,13 @@
 	</ol>
 	]]></instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="extract/abe-money-uralsib"/>
+		<module id="nadapter"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>env.js</js>
-		<js>jsbn.js</js>
-		<js>prng4.js</js>
-		<js>rng.js</js>
-		<js>rsa.js</js>
-		<js>base64.js</js>
-		<js>hash.js</js>
-		<js>library.js</js>
-		<js>bobcmn.js</js>
-		<js>nadapter.js</js>
-		<js>extract.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>

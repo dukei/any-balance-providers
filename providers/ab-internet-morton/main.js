@@ -52,7 +52,7 @@ function main() {
 	var result = {success: true},
         persAccount;
     
-    if (json.data.personal_accounts && json.data.personal_accounts.length) {
+    if (json.data && json.data.personal_accounts && json.data.personal_accounts.length) {
         persAccount = json.data.personal_accounts[0];
     } else {
         AnyBalance.trace('Не найдено информации о личных данных.');

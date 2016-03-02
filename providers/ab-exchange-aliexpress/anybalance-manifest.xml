@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-exchange-aliexpress</id>
+  <api flags="no_browser"/>
+  <name>Курс доллара AliExpress</name>
+  <description html="true"><![CDATA[
+  <p>Определяет внутренний курс доллара в интернет-магазине AliExpress http://www.aliexpress.com/</p>
+  ]]></description>
+  <author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+  <depends>
+    <module id="library"/>
+  </depends>
+  <files>
+    <icon>icon.png</icon>
+    <js>main.js</js>
+    <history>history.xml</history>
+  </files>
+  <counters>
+    <counter id="rate" name="Курс" units=" р за $1"/>
+    <counter id="date" name="Дата" type="time" format="dd/MM/yyyy"/>
+  </counters>
+  <keywords>алиэкспресс, покупки, шоппинг, обмен валют</keywords>
+  <type>exchange, shop</type>
+  <country>ru</country>
+</provider>

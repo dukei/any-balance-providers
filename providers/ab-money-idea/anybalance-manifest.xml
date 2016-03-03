@@ -1,6 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-money-idea</id>
+  <id version="2">ab-money-idea</id>
+  <api flags="no_browser"/>
   <name>Идея Банк (Украина)</name>
   <description>
     Получает текущий остаток и другие параметры счетов, депозитов и кредитов Идея Банка (http://ideabank.com.ua), используя интернет-банк https://online.ideabank.com.ua
@@ -12,34 +13,33 @@
 
     Можно попробовать работу провайдера на тестовой версии интернет-банка, введя логин 1 и пароль 1 в настройки аккаунта.
   </description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+  <depends>
+    <module id="library"/>
+    <module id="extract/abe-money-idea"/>
+    <module id="nadapter"/>
+  </depends>
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
-    <js>library.js</js>
     <js>main.js</js>
     <history>history.xml</history>
   </files>
   <counters>
     <counter id="balance" name="Остаток" units=" {@currency}"/>
     <counter id="available" name="Доступно" units=" {@currency}"/>
-    <counter id="pay" name="Ближайший платеж" units=" {@currency}"/>
-    <counter id="paytill" name="Заплатить до" type="time" format="dd/MM/yyyy"/>
+    <counter id="profit" name="Доходность депозита" units=" {@currency}"/>
     <counter id="till" name="Срок" type="time" format="dd/MM/yyyy"/>
-    <counter id="limit" name="Кредитный лимит" units=" {@currency}"/>
     <counter id="pct" name="Проценты" units="%"/>
     <counter id="accname" name="Продукт" type="text"/>
     <counter id="accnum" name="Номер счета/ID продукта" type="text"/>
     <counter id="currency" name="Валюта" type="text"/>
-    <counter id="all" name="Сводка" type="text"/>
+    <counter id="status" name="Статус" type="text"/>
+    <counter id="sign" name="Вид" type="text"/>
+    <counter id="type" name="Тип" type="text"/>
+    <counter id="cardholder" name="Держатель карты" type="text"/>
   </counters>
-  <keywords>
-    Идея
-  </keywords>
-  <type>
-    money
-  </type>
-  <country>
-    ua
-  </country>
+  <keywords>Идея</keywords>
+  <type>money, bank</type>
+  <country>ua</country>
 </provider>

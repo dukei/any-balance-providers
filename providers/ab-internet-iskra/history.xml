@@ -1,5 +1,9 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="10" date="2016-03-02">
+	- Добавлен выбор кабинета в настройках.
+	- Новый счетчик: ФИО.
+	</change>
 	<change version="9" date="2016-02-16">
 	- Поддержка изменений на сайте.
 	</change>

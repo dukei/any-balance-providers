@@ -19,12 +19,12 @@ function apiCall(params) {
 		Referer: g_baseurl + '/',
 		'X-Apps-Request': 'MoyaPosylka'
 	}));
-	
+
 	var json = getJson(html);
-	
+
 	if(!json.success) {
-		AnyBalance.trace(html);
-		throw new AnyBalance.Error(json.error.code || JSON.stringify(json.error) || 'Неизвестная ошибка!');
+		AnyBalance.trace(JSON.stringify(json));
+		throw new AnyBalance.Error('Не удалось получить данные из-за ошибке на сервере, попробуйте обновить данные позже. Код ошибки: ' + json.code.error);
 	}
 	return json;
 }
@@ -32,33 +32,33 @@ function apiCall(params) {
 function getMyPosylkaResult(prefs) {
 	AnyBalance.trace('Connecting to moyaposylka...');
 	checkEmpty(prefs.track_id, 'Введите код почтового отправления!');
-	
+
 	var dest = prefs.track_dest || "RU"; //Страна назначения
 	var html = AnyBalance.requestGet(g_baseurl, g_headers);
-	
+
 	if(!html || AnyBalance.getLastStatusCode() > 400)
 		throw new AnyBalance.Error('Сайт временно не работает! Попробуйте обновить данные позже.');
-	
+
 	AnyBalance.setCookie('moyaposylka.ru', 'trackerNumber', prefs.track_id);
 	AnyBalance.setCookie('moyaposylka.ru', 'countryCode', dest);
-	
+
 	var json = apiCall({
 		"method":"getTrackerTypesByNumber",
 		"params":{
 			"number":prefs.track_id,
 		}
 	});
-	
+
 	// вот такие варианты возвращаются в разных случаях...
 	//json = {"success":true,"error":null,"result":[],"debug":"0.0004"};
 	//json = {"success":true,"error":null,"result":'',"debug":"0.0004"};
 	//json = {"success":true,"error":null,"result":null,"debug":"0.0004"};
-	
+
 	if(!isArray(json.result) || !json.result || !json.result[0] || !json.result[0].code) {
 		AnyBalance.trace(JSON.stringify(json));
 		throw new AnyBalance.Error('Неизвестный тип почтового отправления, проверьте правильность введенных данных.');
 	}
-	
+
 	json = apiCall({
 		"method":"createRequest",
 		"params":{
@@ -67,15 +67,15 @@ function getMyPosylkaResult(prefs) {
 			"countryCode":dest
 		}
 	});
-	
+
 	var token = json.result;
 	AnyBalance.trace("Получили токен: " + token);
-	
+
 	if(!token) {
 		AnyBalance.trace(JSON.stringify(json));
 		throw new AnyBalance.Error('Не удалось получить токен, сайт изменен?');
-	}	
-	
+	}
+
 	var retryCount = 10;
 	for(var i = 0; i < retryCount; i++) {
 		try {
@@ -107,29 +107,29 @@ function getMyPosylkaResult(prefs) {
 			}
 		}
 	}
-	
+
 	if(!json.result) {
 		AnyBalance.trace(JSON.stringify(json));
 		throw new AnyBalance.Error('Не удалось за ' + retryCount + ' запросов получить данные по отправлению, попробуйте обновить данные позже.');
 	}
-	
+
 	var result = {success: true};
-	
+
 	try{
 		var tracker = json.result;
 		var ls = tracker.statuses[0];
-		
+
 		var lsdate = (ls && ls.date) || '',
 			lsplace = (ls && ls.place) || '',
 			lsstatus = (ls && ls.operation.name) || '???';
-		
+
 		getParam(tracker.number, result, 'trackid');
 		getParam(tracker.trackTime + '', result, 'days', null, null, parseBalance);
 		getParam(tracker.weight + '', result, 'weight', null, null, parseBalance);
 		getParam(lsdate, result, 'date', null, null, parseDateISO);
 		getParam(lsplace, result, 'address');
 		getParam(lsstatus, result, 'status');
-		
+
 		if (AnyBalance.isAvailable('fulltext')) {
 			var date = getParam(lsdate, null, null, null, null, parseDateISO) || (new Date().getTime());
 			var address = lsplace;

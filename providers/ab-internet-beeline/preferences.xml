@@ -7,7 +7,7 @@
         summary="Логин в личный кабинет:||{@s}\n" 
         dialogTitle="Логин" 
         negativeButtonText="Отмена" 
-        dialogMessage="Введите логин в личный кабинет https://lk.beeline.ru."
+        dialogMessage="Введите логин в личный кабинет."
         key="login">
     </EditTextPreference>
     <EditTextPreference 
@@ -18,15 +18,15 @@
         negativeButtonText="Отмена"
         title="Пароль"
         summary="Пароль для входа в личный кабинет||***********\n"
-        dialogMessage="Введите пароль, используемый для входа в личный кабинет https://lk.beeline.ru."
+        dialogMessage="Введите пароль, используемый для входа в личный кабинет."
         inputType="textPassword">
     </EditTextPreference>
 	<ListPreference
 		key="type"
 		title="Какой кабинет использовать"
 		summary="||{@s}"
-		entries="lk.beeline.ru|cabinet.beeline.ru"
-		entryValues="lk|cab"
+		entries="lk.beeline.ru|cabinet.beeline.ru|cabinet.beeline.ru/myoffice/"
+		entryValues="lk|cab|office"
 		defaultValue="lk">
 	</ListPreference>	
 </PreferenceScreen>

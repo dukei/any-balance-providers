@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
-	<change version="2" date="2016-02-24"></change>
-<!--    <change version="2" date="2012-12-26">
-      Исправлено название тарифа и формат даты (спасибо Valeriy Vyshnyak)
-    </change> -->
+  <change version="3" date="2016-03-03">
+    - Добавлена проверка на недоступность ресурса
+    - Улучшена обработка ошибки
+  </change>
+	<change version="2" date="2016-02-24">
+
+  </change>
 </history>

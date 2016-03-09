@@ -22,9 +22,9 @@ function requestApiInner(url, params, no_default_params, ignoreErrors) {
 		newParams = params;
 	} else {
 		newParams = joinObjects(params, {
-			'version':'11.00',
+			'version':'9.00',
 			'appType':'android',
-			'appVersion':'7.1.0',
+			'appVersion':'6.0.0',
 			'deviceName':'AnyBalanceAPI',
 		});
 	}

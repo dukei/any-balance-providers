@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="3.1" version="185" date="2016-03-09">
+	Улучшено распознавание минут на стационарные телефоны
+	</change>
 	<change major_version="3.1" version="184" date="2016-02-25">
 	- Исправлено отображение тарифа.
 	</change>

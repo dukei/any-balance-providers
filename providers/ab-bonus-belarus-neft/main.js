@@ -12,8 +12,8 @@ var g_headers = {
 
 function main(){
     var prefs = AnyBalance.getPreferences();
-	checkEmpty(prefs.login, 'Введите логин!');
-	checkEmpty(prefs.password, 'Введите пароль!');
+    AB.checkEmpty(prefs.login, 'Введите логин!');
+    AB.checkEmpty(prefs.password, 'Введите пароль!');
 	
     var baseurl = "http://www.belorusneft.by/";
     AnyBalance.setDefaultCharset('utf-8'); 
@@ -30,29 +30,25 @@ function main(){
         loginName: prefs.login,
 		txtPassword: pass,
         passHesh: passHash
-    }, addHeaders({Referer: baseurl + 'lprogram/index.jsp', Origin:baseurl})); 
+    }, AB.addHeaders({Referer: baseurl + 'lprogram/index.jsp', Origin:baseurl}));
 	
     if(!/lprogram\/logout/i.test(html)){
-        var error = getParam(html, null, null, /id="login_error"[^>]*>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
-		if (error && /Данной комбинации логина и пароля не существует/i.test(error))
-			throw new AnyBalance.Error(error, null, true);		
-        if(error)
-            throw new AnyBalance.Error(error);
+        var error = AB.getParam(html, null, null, /id="login_error"[^>]*>((?:[^>]*>){3})/i, AB.replaceTagsAndSpaces);
+		if (error) {
+            throw new AnyBalance.Error(error, null, /(?:логин|пароль)/i.test(error));
+        }
 		
 		AnyBalance.trace(html);
         throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
     }
 	
     var result = {success: true};
-	
-    getParam(html, result, 'fio', /Здравствуйте,[^>]*>([^\(<]*)/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'balance', /НА ВАШЕМ СЧЕТУ(?:[^>]*>){4}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'discount', /РАЗМЕР ВАШЕЙ СКИДКИ(?:[^>]*>){6}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'next_month_discount', /в следующем месяце(?:[^>]*>){4}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'card_num', /№ карты([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, '__tariff', /№ карты([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'discount_next', /СЛЕДУЮЩЕЙ СКИДКИ(?:[^>]*>){4}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'discount_bal_next', /СЛЕДУЮЩЕЙ СКИДКИ(?:[^>]*>){15}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+
+    AB.getParam(html, result, 'fio', /Здравствуйте,[^>]*>([^\(<]*)/i, AB.replaceTagsAndSpaces);
+    AB.getParam(html, result, 'balance', /баллы:([^>]+>){3}/i, AB.replaceTagsAndSpaces, AB.parseBalance);
+    AB.getParam(html, result, 'discount', /скидка на топливо([^>]+>){3}/i, AB.replaceTagsAndSpaces, AB.parseBalance);
+    AB.getParam(html, result, 'card_num', /info_label[\s\S]*?карта\D+(\d+)/i, AB.replaceTagsAndSpaces);
+    AB.getParam(html, result, '__tariff', /info_label[\s\S]*?карта\D+(\d+)/i, AB.replaceTagsAndSpaces);
 	
     AnyBalance.setResult(result);
 }

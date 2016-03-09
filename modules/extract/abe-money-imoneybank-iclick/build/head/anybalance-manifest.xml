@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+    <id version="1">extract/abe-money-bspb</id>
+	<api flags="no_browser" />
+    <name>Extract for БСПБ</name>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
+	<files>
+		<js>abe-money-imoneybank-iclick.min.js</js>
+		<history>history.xml</history>
+	</files>
+	<type>money, bank</type>
+</provider>

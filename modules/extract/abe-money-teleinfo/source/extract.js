@@ -518,10 +518,6 @@ function processCard(p, result){
     }
 }
 
-function processCardTransactions(p, result){
-    processIdentityTransactions('cards.', p, result);
-}
-
 function processAccounts(result){
     if(!AnyBalance.isAvailable('accounts'))
         return;
@@ -582,52 +578,6 @@ function processAccount(p, result) {
 
     if (AnyBalance.isAvailable('accounts.transactions')) {
         processAccountTransactions(p, result);
-    }
-}
-
-function processAccountTransactions(p, result){
-    processIdentityTransactions('accounts.', p, result);
-}
-
-function processIdentityTransactions(path, p, result){
-    var dt = new Date();
-    AnyBalance.trace('openDate: ' + p.openDate + ', issueDate: ' + p.issueDate + ', currentDate: ' + dt); 
-    var params = {
-        __type: 'ru.vtb24.mobilebanking.protocol.statement.StatementRequest',
-        endDate: dt,
-        startDate: p.openDate || p.issueDate || new Date(dt.getFullYear()-2, dt.getMonth(), dt.getDate()),
-        products: [
-            //__type: '[ru.vtb24.mobilebanking.protocol.ObjectIdentityMto', //поставим позже
-            {
-                __type: 'ru.vtb24.mobilebanking.protocol.ObjectIdentityMto',
-                id: p.id,
-                type: p.__type
-            }
-        ]
-    };
-    params.products.__type = '[ru.vtb24.mobilebanking.protocol.ObjectIdentityMto';
-
-    var obj = request(new Message(params, null, g_commonProperties));
-
-    AnyBalance.trace('Найдено ' + obj.payload.transactions.length + ' транзакций по ' + result.__name);
-    result.transactions = [];
-
-    for (var i = 0; i < obj.payload.transactions.length; i++) {
-        var trns = obj.payload.transactions[i];
-
-        var t = {};
-        getParam(trns.id, t, path + 'transactions.id');
-        if(trns.transactionDate)
-            getParam(trns.transactionDate.getTime(), t, path + 'transactions.date');
-        if(trns.processedDate)
-            getParam(trns.processedDate.getTime(), t, path + 'transactions.date_done');
-        getParam(trns.transactionAmount.sum, t, path + 'transactions.sum');
-        getParam(trns.details, t, path + 'transactions.descr');
-        getParam(trns.status.id, t, path + 'transactions.status'); //SUCCESS
-        getParam(trns.feeAmount.sum, t, path + 'transactions.fee');
-        getParam(trns.transactionAmount.currency.currencyCode, t, path + 'transactions.currency');
-
-        result.transactions.push(t);
     }
 }
 
@@ -814,43 +764,6 @@ function processCredit(p, result){
         processCreditTransactions(p, result);
     }
 }
-
-function processCreditSchedule(p, result){
-    var dt = new Date();
-    var obj = request(new Message({
-        __type: 'ru.vtb24.mobilebanking.protocol.product.LoanAcquittanceScheduleRequest',
-        endDate: p.endDate || new Date(dt.getFullYear() + 5, dt.getMonth(), dt.getDate()),
-        startDate: dt,
-        userObject: {
-            __type: 'ru.vtb24.mobilebanking.protocol.ObjectIdentityMto',
-            id: p.id,
-            type: p.__type
-        }
-    }, null, g_commonProperties));
-
-    AnyBalance.trace('Найдено ' + obj.payload.acquittances.length + ' планируемых платежей по кредиту ' + result.__name);
-    result.schedule = [];
-
-    for (var i = 0; i < obj.payload.acquittances.length; i++) {
-        var trns = obj.payload.acquittances[i];
-
-        var t = {};
-        getParam(trns.date.getTime(), t, 'credits.schedule.date');
-        getParam(trns.number, t, 'credits.schedule.id');
-        getParam(trns.total, t, 'credits.schedule.sum');
-        getParam(trns.principal, t, 'credits.schedule.debt');
-        getParam(trns.interest, t, 'credits.schedule.pct');
-        getParam(trns.fee, t, 'credits.schedule.fee');
-        getParam(trns.currency.currencyCode, t, 'credits.schedule.currency');
-
-        result.schedule.push(t);
-    }
-}
-
-function processCreditTransactions(p, result){
-    processIdentityTransactions('credits.', p, result);
-}
-
 
 
 

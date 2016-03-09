@@ -505,15 +505,21 @@ var AB = (function (global_scope) {
     }(Date));
 
     /** Парсит дату вида 2013-12-26 */
-    function parseDateISO(str) {
+    function parseDateISO(str, silent) {
         var dt = Date.parse(str);
         if (!dt) {
-            AnyBalance.trace('Could not parse (' + Date.lastParse + ') date from ' + str);
+        	if(!silent)
+            	AnyBalance.trace('Could not parse (' + Date.lastParse + ') date from ' + str);
             return;
         } else {
-            AnyBalance.trace('Parsed (' + Date.lastParse + ') ' + new Date(dt) + ' from ' + str);
+        	if(!silent)
+            	AnyBalance.trace('Parsed (' + Date.lastParse + ') ' + new Date(dt) + ' from ' + str);
             return dt;
         }
+    }
+
+    function parseDateISOSilent(str) {
+    	return parseDateISO(str, true);
     }
 
     function parseDateJS(str) {
@@ -1288,6 +1294,7 @@ var AB = (function (global_scope) {
         safeEval: safeEval,
         endsWith: endsWith,
         parseDateISO: parseDateISO,
+        parseDateISOSilent: parseDateISOSilent,
         sumParam: sumParam,
         aggregate_sum: aggregate_sum,
         aggregate_join: aggregate_join,

@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+    <id version="1">extract/abe-money-tcs</id>
+	<api flags="no_browser" />
+    <name>Extract for Тинькофф Банк</name>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+		<module id="parsers/jsonpath"/>
+		<module id="crypt/md5"/>
+	</depends>
+	<files>
+		<js>abe-money-tcs.min.js</js>
+		<history>history.xml</history>
+	</files>
+	<type>money, bank</type>
+</provider>

@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+    <id version="1">extract/abe-cell-mts</id>
+	<api flags="no_browser" />
+    <name>Mobile API parsing for MTS</name>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+		<module id="login/mts"/>
+	</depends>
+	<files>
+		<js>abe-cell-mts.min.js</js>
+		<history>history.xml</history>
+	</files>
+	<type>cell</type>
+	<country>ru</country>
+</provider>

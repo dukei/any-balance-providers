@@ -4,12 +4,14 @@
 	<api flags="no_browser" />
     <name>Extract for ВТБ24</name>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+		<module id="parsers/easysax"/>
+		<module id="crypt/cryptojs/base64"/>
+	</depends>
 	<files>
 		<js>extract.js</js>
 		<history>history.xml</history>
 	</files>
-	<depends>
-		<module id="library"/>
-	</depends>
 	<type>money, bank</type>
 </provider>

@@ -670,9 +670,22 @@ function processDeposits(result){
 }
 
 function processDeposit(p, result){
-    getParam(p.account.amount.sum, result, 'deposits.balance');
-    getParam(p.account.amount.currency.currencyCode, result, ['deposits.currency', 'deposits.balance']);
-    getParam(p.endDate.getTime(), result, 'deposits.till');
+	if(p.account && p.account.amount){
+    	getParam(p.account.amount.sum, result, 'deposits.balance');
+    	getParam(p.account.amount.currency.currencyCode, result, ['deposits.currency', 'deposits.balance']);
+    }
+	if(p.amount){
+    	getParam(p.amount.sum, result, 'deposits.balance');
+    	getParam(p.amount.currency.currencyCode, result, ['deposits.currency', 'deposits.balance']);
+    }
+
+    if(p.openDate)
+    	getParam(p.openDate.getTime(), result, 'deposits.date_start');
+    if(p.endDate || p.closeDate)
+    	getParam((p.endDate || p.closeDate).getTime(), result, 'deposits.till');
+    
+    if(p.status)
+    	getParam(p.status.id, result, 'deposits.status'); //OPEN
 
     if(AnyBalance.isAvailable('deposits.pct', 'deposits.own')){
         var obj = request(new Message({
@@ -685,8 +698,12 @@ function processDeposit(p, result){
         }, null, g_commonProperties));
 
         var info = obj.payload.info;
-        getParam(info.interestRate, result, 'deposits.pct');
-        getParam(info.depositSum, result, 'deposits.own');
+        if(info){
+        	getParam(info.interestRate, result, 'deposits.pct');
+        	getParam(info.depositSum, result, 'deposits.own');
+        }else{
+        	AnyBalance.trace('Не найдена доп. информация по депозиту');
+        }
     }
 }
 

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id version="1">ab-cell-whyfly</id>
+	<id version="2">ab-cell-whyfly</id>
 	<name>WhyFly</name>
 	<description html="true">
 		<![CDATA[
@@ -21,11 +21,10 @@
 	</files>
 	<counters>
 		<counter id="balance" name="Баланс" units=" р"/>
-		<counter id="tariff" name="Тариф" type="text"/>
 		<counter id="month_fee" name="Абонентская плата, в мес." units=" р"/>
-		<counter id="sms" name="MMS и SMS" type="text" units=" шт"/>
-		<counter id="calls" name="Местные вызовы" type="text" units=" мин"/>
-		<counter id="internet" name="Мобильный интернет" type="text"  units=" ГБ"/>
+		<counter id="sms" name="MMS и SMS (остаток)" units=" шт"/>
+		<counter id="calls" name="Местные вызовы (остаток)" units=" мин"/>
+		<counter id="internet" name="Мобильный интернет (остаток)" units=" ГБ"/>
 		<counter id="status" name="Cтатус" type="text"/>
 	</counters>
 	<keywords>интернет</keywords>

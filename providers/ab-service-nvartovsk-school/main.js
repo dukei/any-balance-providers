@@ -16,30 +16,31 @@ function main() {
 	
 	AnyBalance.setDefaultCharset('UTF-8');
 	
-	var baseurl = 'http://edu-nv.ru/l-s-po-detyam/list/84?resetfilters=0';
+	var baseurl = 'http://edu-nv.ru/onlajn-servis-shkolnoe-pitanie?resetfilters=0&clearordering=0&clearfilters=0';
 	
 	var html = AnyBalance.requestPost(baseurl, {
-		'fabrik___filter[list_84_com_fabrik_84][value][0]':prefs.acc,
-		'fabrik___filter[list_84_com_fabrik_84][condition][0]':'=',
-		'fabrik___filter[list_84_com_fabrik_84][join][0]':'AND',
-		'fabrik___filter[list_84_com_fabrik_84][key][0]':'`month_summ`.`NomerLC`',
-		'fabrik___filter[list_84_com_fabrik_84][search_type][0]':'normal',
-		'fabrik___filter[list_84_com_fabrik_84][match][0]':'1',
-		'fabrik___filter[list_84_com_fabrik_84][eval][0]':'0',
-		'fabrik___filter[list_84_com_fabrik_84][grouped_to_previous][0]':'0',
-		'fabrik___filter[list_84_com_fabrik_84][hidden][0]':'0',
-		'fabrik___filter[list_84_com_fabrik_84][elementid][0]':'845',
+		'fabrik___filter[list_2_com_fabrik_2][value][0]':prefs.acc,
+		'fabrik___filter[list_2_com_fabrik_2][condition][0]':'=',
+		'fabrik___filter[list_2_com_fabrik_2][join][0]':'AND',
+		'fabrik___filter[list_2_com_fabrik_2][key][0]':'`schol_pit`.`NomerLC`',
+		'fabrik___filter[list_2_com_fabrik_2][search_type][0]':'normal',
+		'fabrik___filter[list_2_com_fabrik_2][match][0]':'1',
+		'fabrik___filter[list_2_com_fabrik_2][full_words_only][0]':'0',
+		'fabrik___filter[list_2_com_fabrik_2][eval][0]':'0',
+		'fabrik___filter[list_2_com_fabrik_2][grouped_to_previous][0]':'0',
+		'fabrik___filter[list_2_com_fabrik_2][hidden][0]':'0',
+		'fabrik___filter[list_2_com_fabrik_2][elementid][0]':'13',
 		'option':'com_fabrik',
 		'orderdir':'',
 		'orderby':'',
 		'view':'list',
-		'listid':'84',
-		'listref':'84_com_fabrik_84',
-		'Itemid':'513',
-		'fabrik_referrer':'/l-s-po-detyam/list/84?resetfilters=0',
-		'50c4b05da1a945968e059a12f8259a41':'1',
+		'listid':'2',
+		'listref':'2_com_fabrik_2',
+		'Itemid':'505',
+		'fabrik_referrer':'/onlajn-servis-shkolnoe-pitanie?resetfilters=0&amp;clearordering=0&amp;clearfilters=0',
+		'855b940861007eb46ea65db6d9382a36':'1',
 		'format':'html',
-		'_packageId':'0',
+		'packageId':'0',
 		'task':'',
 		'fabrik_listplugin_name':'',
 		'fabrik_listplugin_renderOrder':'',
@@ -55,10 +56,10 @@ function main() {
 
 	var result = {success: true};
 
-	getParam(html, result, 'balanceSP', /Школьное питание [\s\S]*?Остаток на 01[\s\S]*?Остаток на [\s\S]*?<td class="month_summ___saldoN fabrik_element fabrik_list_84_group_100" >([^<]+)[\s\S]*?<\/td/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'topaySP', /Школьное питание [\s\S]*?Остаток на 01[\s\S]*?Остаток на [\s\S]*?Сумма к оплате[\s\S]*?<td class="month_summ___saldoN fabrik_element fabrik_list_84_group_100" >([^<]+)[\s\S]*?<\/td/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'balanceGPD', /Группа продленного дня[\s\S]*Остаток на 01[\s\S]*Остаток на [\s\S]*?<td class="month_summ___saldoN fabrik_element fabrik_list_84_group_100" >([^<]+)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'topayGPD', /Группа продленного дня[\s\S]*Остаток на 01[\s\S]*Остаток на [\s\S]*Сумма к оплате[\s\S]*?<td class="month_summ___saldoN fabrik_element fabrik_list_84_group_100" >([^<]+)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'balanceSP', /Школьное питание [\s\S]*?Остаток на 01[\s\S]*?Остаток на [\s\S]*?<td class="schol_pit___saldoN fabrik_element fabrik_list_2_group_2" >([^<]+)[\s\S]*?<\/td/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'topaySP', /Школьное питание [\s\S]*?Остаток на 01[\s\S]*?Остаток на [\s\S]*?Сумма к оплате[\s\S]*?<td class="schol_pit___saldoN fabrik_element fabrik_list_2_group_2" >([^<]+)[\s\S]*?<\/td/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'balanceGPD', /Группа продленного дня[\s\S]*Остаток на 01[\s\S]*Остаток на [\s\S]*?<td class="schol_pit___saldoN fabrik_element fabrik_list_2_group_2" >([^<]+)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'topayGPD', /Группа продленного дня[\s\S]*Остаток на 01[\s\S]*Остаток на [\s\S]*Сумма к оплате[\s\S]*?<td class="schol_pit___saldoN fabrik_element fabrik_list_2_group_2" >([^<]+)/i, replaceTagsAndSpaces, parseBalance);
 	AnyBalance.trace(result);
 
 

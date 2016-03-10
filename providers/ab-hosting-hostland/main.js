@@ -30,7 +30,7 @@ function main() {
 	}, AB.addHeaders({ Referer: baseurl }));
 
 	if (!/exit\.png/.test(html)) {
-		var error = AB.getParam(text, null, null, /error_login[^>]+>([^<]+)</i, AB.replaceTagsAndSpaces);
+		var error = AB.getParam(html, null, null, /error_login[^>]+>([^<]+)</i, AB.replaceTagsAndSpaces);
 		if (error) 
 			throw new AnyBalance.Error(error, null, /логин|пароль/i.test(error));
 		AnyBalance.trace(html);
@@ -54,11 +54,11 @@ function main() {
 	AB.getParam(html, result, 'server', /Сервер(?:[^>]+>){2}([^<]+)/i, AB.replaceTagsAndSpaces, AB.parseBalance);
 	AB.getParam(html, result, 'registration', /Дата регистрации(?:[^>]+>){2}([^<]+)/i, AB.replaceTagsAndSpaces);
 	AB.getParam(html, result, '__tariff', /Тарифный план(?:[^>]+>){3}([^<]+)/i, AB.replaceTagsAndSpaces);
-	AB.getParam(html, result, 'total', /Место на сервере(?:[^>]+>){3}([^<]+)/i, AB.replaceTagsAndSpaces);
+	AB.getParam(html, result, 'total', /Место на сервере(?:[^>]+>){3}([^<]+)/i, AB.replaceTagsAndSpaces, AB.parseTraffic);
 
 	var temp = AB.getParam(html, null, null, /Занимаемого места:((?:[\s\S](?!\/td>))+)/i, AB.replaceTagsAndSpaces);
-	AB.getParam(temp, result, 'used', /(^[^\(]+)/i, AB.replaceTagsAndSpaces);
-	AB.getParam(temp, result, 'usedMySQL', /\(из них ([^\)\-]+)/i, AB.replaceTagsAndSpaces);
+	AB.getParam(temp, result, 'used', /(^[^\(]+)/i, AB.replaceTagsAndSpaces, AB.parseTraffic);
+	AB.getParam(temp, result, 'usedMySQL', /\(из них ([^\)\-]+)/i, AB.replaceTagsAndSpaces, AB.parseTraffic);
 	AB.getParam(temp, result, 'used_proc', /\s(\S+)%$/i, AB.replaceTagsAndSpaces, AB.parseBalance);
 	
 	temp = AB.getParam(html, null, null, /Стоимость тарифного плана в месяц:((?:[\s\S](?!\/td>))+)/i, AB.replaceTagsAndSpaces);

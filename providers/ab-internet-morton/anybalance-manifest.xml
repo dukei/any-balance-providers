@@ -1,17 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-internet-morton</id>
+	<id version="2">ab-internet-morton</id>
 	<api flags="no_browser"/>
 	<name>Мортон Телеком</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе провайдера Мортон Телеком <a href="http://www.mtel.ru/">http://www.mtel.ru/</a></p>
 	<p>Информация берется из личного кабинета <a href="https://lk.mtel.ru/login">https://lk.mtel.ru/login</a></p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+  <depends>
+    <module id="library"/>
+  </depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>

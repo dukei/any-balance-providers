@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<api flags="no_browser"/>
+	<id version="1">ab-municipal-minsk-gov</id>
+	<name>МГИК - очередь на жилье</name>
+	<description html="true">
+	<![CDATA[
+	<p>Информация об очереди на улучшение жилищных условий - Беларусь, г. Минск</p>
+	<p>Данные берутся со страницы http://minsk.gov.by/ru/och - Минский городской исполнительный комитет (МГИК).</p>
+	]]>
+	</description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="family" name="Состав семьи" unit=" чел"/>
+		<counter id="general_date" name="В общем списке c" type="text"/>
+		<counter id="general_number" name="Номер в общем списке"/>
+		<counter id="separate_date" name="В отдельном список c" type="text"/>
+		<counter id="separate_number" name="Номер в отдельном списке"/>
+		<counter id="provider" name="Источник информации" type="text"/>
+		<counter id="updated" name="Дата обновления" type="text"/>
+	</counters>
+	<keywords>Беларусь</keywords>
+	<type>municipal</type>
+	<country>by</country>
+</provider>

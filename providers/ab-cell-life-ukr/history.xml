@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="3" version="36" date="2016-03-10">
+        - Мелкие изменения.
+	</change>
 	<change major_version="3" version="35" date="2016-01-16">
         - Мелкие изменения.
 	</change>

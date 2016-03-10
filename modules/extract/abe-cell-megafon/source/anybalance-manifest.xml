@@ -11,5 +11,5 @@
 	<depends>
 		<module id="library"/>
 	</depends>
-	<type>money, bank</type>
+	<type>cell</type>
 </provider>

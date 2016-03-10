@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<api flags="no_browser"/>
+	<id version="1">ab-municipal-sibeco</id>
+	<name>СИБЭКО</name>
+	<description html="true">
+	<![CDATA[
+	<p>Получает баланс и информацию о последнем платеже в АО "Сибирская энергетическая компания".</p>
+	<p>Данные из личного кабинета https://online.sibeco.su/</p>
+	]]>
+	</description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="heat_pay" name="Отопление (к оплате)" units=" руб"/>
+		<counter id="heat_peni" name="Отопление (пеня)" units=" руб"/>
+		<counter id="heat_date" name="Отопление (данные на дату)" type="time" format="dd/MM/yyyy"/>
+		<counter id="heat_lastpay" name="Отопление (последний платёж)" units=" руб"/>
+		<counter id="heat_lastdate" name="Отопление (дата платежа)" type="time" format="dd/MM/yyyy"/>
+		<counter id="water_pay" name="Гор. вода (к оплате)" units=" руб"/>
+		<counter id="water_peni" name="Гор. вода (пеня)" units=" руб"/>
+		<counter id="water_date" name="Гор. вода (данные на дату)" type="time" format="dd/MM/yyyy"/>
+		<counter id="water_lastpay" name="Гор. вода (последний платёж)" units=" руб"/>
+		<counter id="water_lastdate" name="Гор. вода (дата платежа)" type="time" format="dd/MM/yyyy"/>
+	</counters>
+	<keywords>новосибирск, куйбышев, горячая вода, отопление</keywords>
+	<type>municipal</type>
+	<country>ru</country>
+</provider>

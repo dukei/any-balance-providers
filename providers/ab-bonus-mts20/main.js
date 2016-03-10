@@ -50,12 +50,14 @@ function main() {
 			json = getJson(html);
 
 			var sumAllAccured = 0;
-			for(var i=0; i< json.length; i++)
+			for(var i = 0; i < json.length; i++) {
 				sumAllAccured +=json[i].value;
+				if(i == (json.length - 1)) {
+					getParam(json[i].value, result, 'lastCharge', null, null, parseBalance);
+					getParam(json[i].date, result, 'date');
+				}
+			}
 			result.allAccured = sumAllAccured;
-
-			getParam(json[0] ? json[0].value + '' : undefined, result, 'lastCharge', null, null, parseBalance);
-			getParam(json[0] ? json[0].date : undefined, result, 'date');
 		} else {
 			AnyBalance.trace('Ваш номер не может быть зарегистрирован в программе бонусов "20% возвращаются"');
 		}

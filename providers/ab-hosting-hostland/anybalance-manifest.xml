@@ -22,9 +22,9 @@
 	<counters>
 		<counter id="server" name="Сервер №"/>
 		<counter id="registration" name="Дата регистрации" type="text"/>
-		<counter id="total" name="Общий объем" type="text"/>
-		<counter id="used" name="Всего занято" type="text"/>
-		<counter id="usedMySQL" name="Занято базами данных" type="text"/>
+		<counter id="total" name="Общий объем" units=" Мб"/>
+		<counter id="used" name="Всего занято" units=" Мб"/>
+		<counter id="usedMySQL" name="Занято базами данных" units=" Мб"/>
 		<counter id="used_proc" name="Всего занято (доля)" units=" %"/>
 		<counter id="yearly_month" name="Стоимость при оплате за год" units=" руб./мес"/>
 		<counter id="monthly_month" name="Стоимость при оплате ежемесячно" units=" руб./мес"/>

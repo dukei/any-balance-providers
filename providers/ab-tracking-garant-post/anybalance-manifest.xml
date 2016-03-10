@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<api flags="no_browser"/>
+	<id version="1">ab-tracking-garant-post</id>
+	<name>ЕМС Гарантпост</name>
+	<description html="true">
+	<![CDATA[
+	<p>Отслеживает почтовое отправление ООО "ЕМС Гарантпост" его идентификатору.</p>
+	<p>Получает данные с сайта http://garantpost.ru/</p>
+	]]>
+	</description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="direct" name="Направление" type="text"/>
+		<counter id="date" name="Дата/время" type="text"/>
+		<counter id="event" name="Событие" type="text"/>
+		<counter id="place" name="Место ввода информации" type="text"/>
+		<counter id="comment" name="Комментарий" type="text"/>
+		<counter id="sign" name="В получении расписался" type="text"/>
+	</counters>
+	<keywords>Почтовое отправление, почта</keywords>
+	<type>tracking, post</type>
+	<country>ru</country>
+</provider>

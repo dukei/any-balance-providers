@@ -35,7 +35,7 @@ function main() {
     'username': prefs.login,
     'password': prefs.password,
     smth: ''
-  }, addHeaders({
+  }, AB.addHeaders({
     Referer: baseurl + 'client/private_office/private_office.htp'
   }));
 
@@ -84,7 +84,7 @@ function main() {
       'show': 2,
       's_Date': s_Date,
       'e_Date': e_Date
-    }, addHeaders({
+    }, AB.addHeaders({
       Referer: baseurl + 'client/private_office/private_office.htp?ls=' + account
     }));
 

@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+  <change version="3" date="2016-03-02">
+  - Изменен формат отображения даты.
+  </change>
 	<change version="2" date="2016-02-20">
 	- Поддержка изменений на сайте.
 	</change>

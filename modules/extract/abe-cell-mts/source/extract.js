@@ -132,6 +132,7 @@ function fetchOrdinary(html, baseurl, result) {
     getParam(html, result, 'tariff', /Тарифный план.*?>([^<]*)/i, replaceTagsAndSpaces);
     // Баланс
     getParam(html, result, 'balance', /<span[^>]*id="customer-info-balance[^>]*>([\s\S]*?)(?:\(|<\/span>)/i, replaceTagsAndSpaces, parseBalance);
+
     // Телефон
     if(AnyBalance.isAvailable('info.phone')){
         if(!result.info)
@@ -150,7 +151,7 @@ function fetchOrdinary(html, baseurl, result) {
         }
         fetchAccountStatus(html, result);
     }
-    if (AnyBalance.isAvailable('tourist')) {
+    if (AnyBalance.isAvailable('remainders.tourist')) {
         AnyBalance.trace("Fetching accumulated counters...");
         html = AnyBalance.requestGet(baseurl + "accumulated-counters.aspx", g_headers);
         fetchAccumulatedCounters(html, result);
@@ -204,10 +205,11 @@ function isAvailableIH() {
 
 function fetchAccumulatedCounters(html, result) {
     AnyBalance.trace("Parsing accumulated counters...");
-    if(!result.remainders)
-        result.remainders = {};
 
     checkIHError(html, result);
+
+    if(!result.remainders)
+        result.remainders = {};
     getParam(html, result.remainders, 'remainders.tourist', /Счетчик Туристическая СИМ-карта от МТС\.[\s\S]*?<td[^>]+class="counter-value"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 }
 
@@ -272,6 +274,7 @@ function fetchAccountStatus(html, result) {
         html = sumParam(html, result.remainders, 'remainders.min_left', /Осталось по опции[^<]*?:\s*([\d\.,]+)\s+мин/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum, true);
         // Бизнес пакеты
         html = sumParam(html, result.remainders, 'remainders.min_left', /местные минуты[^<]*?:\s*([\d\.,]+)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum, true);
+        html = sumParam(html, result.remainders, 'remainders.min_left', /пакет местных минут[^<]*?:\s*([\d\.,]+)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum, true);
         html = sumParam(html, result.remainders, 'remainders.min_left_mezh', /междугородные минуты[^<]*?:\s*([\d\.,]+)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum, true);
         // <li>Остаток пакета "Пакет МГ минут в дом. регионе":13мин МГ</li>
         html = sumParam(html, result.remainders, 'remainders.min_left_mezh', /Пакет МГ[^<]*?([\d\.,]+?)\s*мин/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum, true);
@@ -386,6 +389,9 @@ function getLKJson1(html) {
     json.phone_formatted = getElement(html, /<div[^>]+b-header_lk__phone[^>]*>/i, replaceTagsAndSpaces);
     json.phone = replaceAll(json.phone_formatted, [/\+7/, '', /\D/g, '']);
     json.balance = getElement(html, /<div[^>]+b-header_balance[^>]*>/i, replaceTagsAndSpaces, parseBalance);
+    if(!json.balance){
+    	AnyBalance.trace('Нулевой баланс! Возможно, что-то не так! ' + html);
+    }
 
     if(!json.phone){
     	AnyBalance.trace('Не удаётся получить информацию о текущем пользователе. Сайт изменен?\n' + html);
@@ -427,6 +433,10 @@ function getLKJson2(html) {
 
         if (isset(rel.target.displayNameNat))
             json.fio = rel.target.displayNameNat;
+    }
+
+    if(!json.balance){
+    	AnyBalance.trace('Нулевой баланс! Возможно, что-то не так! ' + html);
     }
 
     return json;

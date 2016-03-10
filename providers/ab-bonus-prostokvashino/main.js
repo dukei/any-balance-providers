@@ -15,8 +15,8 @@ function main() {
 	var baseurl = 'http://prostokvashino.by/';
 	AnyBalance.setDefaultCharset('utf-8');
 	
-	checkEmpty(prefs.login, 'Введите логин!');
-	checkEmpty(prefs.password, 'Введите пароль!');
+	AB.checkEmpty(prefs.login, 'Введите логин!');
+    AB.checkEmpty(prefs.password, 'Введите пароль!');
 	
 	var html = AnyBalance.requestGet(baseurl, g_headers);
 	
@@ -25,7 +25,7 @@ function main() {
 		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
 	}
 
-	var params = createFormParams(html, function(params, str, name, value) {
+	var params = AB.createFormParams(html, function(params, str, name, value) {
 		if (name == 'user[email]') 
 			return prefs.login;
 		else if (name == 'user[password]')
@@ -34,25 +34,26 @@ function main() {
 		return value;
 	});
 	
-	html = AnyBalance.requestPost(baseurl + 'users/login', params, addHeaders({Referer: baseurl}));
+	html = AnyBalance.requestPost(baseurl + 'users/sign_in', params, AB.addHeaders({Referer: baseurl}));
 	
 	if (!/logout/i.test(html)) {
-		var error = getParam(html, null, null, /<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
-		if (error)
-			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
+		var error = AB.getParam(html, null, null, /notification-message[^>]*>([^<]+)/i, AB.replaceTagsAndSpaces);
+		if (error) {
+            throw new AnyBalance.Error(error, null, /email или пароль/i.test(error));
+        }
 		
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
 
-	html = AnyBalance.requestGet(baseurl + 'user/profile', g_headers);
+	html = AnyBalance.requestGet(baseurl + 'profile', g_headers);
 	
 	var result = {success: true};
-	
-	getParam(html, result, 'balance', /Баллов на счету:[^>]+>([^<]+)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'fio', /userInfo[\s\S]+?<strong>([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'email', /E-mail:[^>]+>([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'gender', /Пол:[^>]+>([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
+
+    AB.getParam(html, result, 'balance', /Баллов на счету:([^<]+)/i, AB.replaceTagsAndSpaces, AB.parseBalance);
+    AB.getParam(html, result, 'fio', /<a[^>]*profile[^>]*name[^>]*>([^<]+)/i, AB.replaceTagsAndSpaces);
+    AB.getParam(html, result, 'email', /E-mail:([^<]+)/i, AB.replaceTagsAndSpaces);
+    AB.getParam(html, result, 'gender', /Пол:([^<]+)/i, AB.replaceTagsAndSpaces);
 	
 	AnyBalance.setResult(result);
 }

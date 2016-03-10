@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+	<EditTextPreference
+		obligatory="true"
+		title="Почтовый идентификатор"
+		positiveButtonText="ОК"
+		summary="Весь номер без скобок и пробелов!||{@s}\n"
+		dialogTitle="Почтовый идентификатор"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите почтовый идентификатор."
+		key="code">
+	</EditTextPreference>
+</PreferenceScreen>

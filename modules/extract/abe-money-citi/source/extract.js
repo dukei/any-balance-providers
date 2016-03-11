@@ -177,6 +177,7 @@ function processSmsAuth(html) {
 	for(var i=0; i < json.accountDetailList.length; ++i) {
 		var account = json.accountDetailList[i];
 		checkSmsAuth(html, account.instanceID);
+		// Авторизация нужна только один раз, можно переделать и оптимизировать, но нужно тестировать ввод смс кода
 		return;
 	}
 }

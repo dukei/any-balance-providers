@@ -22,9 +22,9 @@ function requestApiInner(url, params, no_default_params, ignoreErrors) {
 		newParams = params;
 	} else {
 		newParams = joinObjects(params, {
-			'version':'9.00',
+			'version':'9.10',
 			'appType':'android',
-			'appVersion':'6.0.0',
+			'appVersion':'7.1.0',
 			'deviceName':'AnyBalanceAPI',
 		});
 	}
@@ -55,6 +55,64 @@ function getToken(html) {
 	return token;
 }
 
+function generateHex(mask, digits){
+	var i=0;
+	return mask.replace(/x/ig, function(){
+		return digits[i++];
+	});
+}
+
+function createSdkData(){
+  	var dt = new Date(), prefs = AnyBalance.getPreferences();
+  	var hex = hex_md5(prefs.login + 'sdk_data');
+  	var rsa_app_key = hex_md5(prefs.login + 'rsa app key').toUpperCase();
+
+	var obj = {
+		"TIMESTAMP": dt.getUTCFullYear() + '-' + n2(dt.getUTCMonth()) + '-' + n2(dt.getUTCDate()) + 'T' + dt.getUTCHours() + ':' + dt.getUTCMinutes() + ':' + dt.getUTCSeconds() + 'Z',
+		"HardwareID": generateImei(prefs.login, '35472406******L'),
+		"SIM_ID": generateSimSN(prefs.login, '2500266********L'),
+		"PhoneNumber": "",
+		"GeoLocationInfo": [
+			{
+				"Longitude": "" + (37 + Math.random()),
+				"Latitude": "" + (55 + Math.random()),
+				"HorizontalAccuracy": "5",
+				"Altitude": "" + (150 + Math.floor(Math.random()*20)),
+				"AltitudeAccuracy": "5",
+				"Timestamp": "" + (dt.getTime() - Math.floor(Math.random()*1000000)),
+				"Heading": "" + (Math.random()*90),
+				"Speed": "3",
+				"Status": "3"
+			}
+		],
+		"DeviceModel": "D6503",
+		"MultitaskingSupported": true,
+		"DeviceName": "Xperia Z2",
+		"DeviceSystemName": "Android",
+		"DeviceSystemVersion": "22",
+		"Languages": "ru",
+		"WiFiMacAddress": generateHex('44:d4:e0:xx:xx:xx', hex.substr(0, 6)),
+		"WiFiNetworksData": {
+			"BBSID": generateHex('5c:f4:ab:xx:xx:xx', hex.substr(6, 12)),
+			"SignalStrength": "" + Math.floor(-30 - Math.random() * 20),
+			"Channel": "null",
+			"SSID": "TPLink"
+		},
+		"CellTowerId": "" + (12875 + Math.floor(Math.random()*10000)),
+		"LocationAreaCode": "9722",
+		"ScreenSize": "1080x1776",
+		"RSA_ApplicationKey": rsa_app_key,
+		"MCC": "250",
+		"MNC": "02",
+		"OS_ID": hex.substring(12, 16),
+		"SDK_VERSION": "2.0.1",
+		"Compromised": 0,
+		"Emulator": 0
+	};
+	
+	return obj;
+}
+
 function loginAPI() {
 	var prefs = AnyBalance.getPreferences();
 	AnyBalance.trace('Входим через API мобильного приложения...');
@@ -83,7 +141,8 @@ function loginAPI() {
 				'operation':'button.login',
 				'mGUID':guid,
 				'devID': devid,
-				'password': pin
+				'password': pin,
+				'mobileSdkData': JSON.stringify(createSdkData())
 			});
 		}catch(e){
 			if(e.code == 7){
@@ -134,7 +193,8 @@ function loginAPI() {
 			'mGUID':mGUID,
 			'password':pin,
 			'isLightScheme':'true',
-			'devID':devid
+			'devID':devid,
+			'mobileSdkData': JSON.stringify(createSdkData())
 		});
 
 		AnyBalance.saveData();

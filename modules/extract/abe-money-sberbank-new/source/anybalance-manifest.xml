@@ -6,6 +6,7 @@
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>
 		<module id="crypt/md5"/>
+		<module id="mobile/imei"/>
 		<module id="library"/>
 	</depends>
 	<files>

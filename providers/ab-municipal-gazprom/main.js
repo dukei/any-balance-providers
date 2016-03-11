@@ -241,10 +241,10 @@ function getSPB() {
 
 function getTver() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'http://lk.tverregiongaz.ru';
+	var baseurl = 'http://lk.tverregiongaz.ru/';
 	AnyBalance.setDefaultCharset('utf-8');
 
-	var html = AnyBalance.requestGet(baseurl+'/lk/login', g_headers);
+	var html = AnyBalance.requestGet(baseurl, g_headers);
 
 	if(!html || AnyBalance.getLastStatusCode() > 400){
 		AnyBalance.trace(html);
@@ -260,12 +260,12 @@ function getTver() {
 		return value;
 	});
 
-	if (/<input[^>]+name="captcha_token"/i.test(html)) {
-		var captchaSRC = AB.getParam(html, null, null, /<div[^>]+class\s*=\s*"captcha"[^>]*>[\s\S]*?src="([\s\S]*?)"/i);
+	if (/<input[^>]+name="CaptchaCode"/i.test(html)) {
+		var captchaSRC = AB.getParam(html, null, null, /<img[^>]+captchaimage[^>]+src="([^"]*)"/i);
 		var captchaIMG = AnyBalance.requestGet(baseurl + captchaSRC, g_headers);
 		if (captchaIMG) {
-			params.captcha_response = AnyBalance.retrieveCode("Введите код с картинки.", captchaIMG);
-			html = AnyBalance.requestPost(baseurl + '/lk/login', params, AB.addHeaders({
+			params.CaptchaCode = AnyBalance.retrieveCode("Введите код с картинки.", captchaIMG);
+			html = AnyBalance.requestPost(baseurl, params, AB.addHeaders({
 				Referer: baseurl
 			}))
 		}
@@ -274,23 +274,26 @@ function getTver() {
 		}
 	}
 	else {
-		html = AnyBalance.requestPost(baseurl+'/lk/login', params, AB.addHeaders({Referer: baseurl}));
+		html = AnyBalance.requestPost(baseurl, params, AB.addHeaders({Referer: baseurl}));
 	}
 
-	if (!/submit_exit/i.test(html)) {
-		var error = AB.getParam(html, null, null, /<div[^>]+class="messages error"[^>]*>[\s\S]*?<\/div>/i, AB.replaceTagsAndSpaces);
+	if (!/exit/i.test(html)) {
+		var error = AB.getParam(html, null, null, /<div[^>]+message_error[^>]*>([\s\S]*?)<\/div>/i, AB.replaceTagsAndSpaces);
 		if (error)
-			throw new AnyBalance.Error(error, null, true);
+			throw new AnyBalance.Error(error, null, /Вы ввели неправильный временный пароль/i.test(error));
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
 
 	var result = {success: true};
-	AB.getParam(html, result, 'balance', /Информация о расчетах(?:[\s\S]*?<tr[^>]*>){3}(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, [AB.replaceTagsAndSpaces, /^-$/i, '0'], AB.parseBalance);
-	AB.getParam(html, result, 'charged', /Информация о расчетах(?:[\s\S]*?<tr[^>]*>){3}(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, [AB.replaceTagsAndSpaces, /^-$/i, '0'], AB.parseBalance);
-	AB.getParam(html, result, 'recalculation', /Информация о расчетах(?:[\s\S]*?<tr[^>]*>){3}(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, [AB.replaceTagsAndSpaces, /^-$/i, '0'], AB.parseBalance);
-	AB.getParam(html, result, 'paid', /Информация о расчетах(?:[\s\S]*?<tr[^>]*>){3}(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\/td>/i, [AB.replaceTagsAndSpaces, /^-$/i, '0'], AB.parseBalance);
-	AB.getParam(html, result, 'total', /Информация о расчетах(?:[\s\S]*?<tr[^>]*>){3}(?:[\s\S]*?<td[^>]*>){6}([\s\S]*?)<\/td>/i, [AB.replaceTagsAndSpaces, /^-$/i, '0'], AB.parseBalance);
+	AB.getParam(html, result, 'fio', /абонент:(?:[^>]*>){3}([\s\S]*?)<\//i, AB.replaceTagsAndSpaces);
+	AB.getParam(html, result, 'address', /адрес:(?:[^>]*>){3}([\s\S]*?)<\//i, AB.replaceTagsAndSpaces);
+	AB.getParam(html, result, 'date', /Дата последней оплаты:([^<]*)/i, AB.replaceTagsAndSpaces, AB.parseDate);
+	AB.getParam(html, result, 'balance', /долг(?:[\s\S]*?<td[^>]*>){6}([\s\S]*?)<\/td>/i, [AB.replaceTagsAndSpaces, /^-$/i, '0'], AB.parseBalance);
+	AB.getParam(html, result, 'charged', /начислено(?:[\s\S]*?<td[^>]*>){6}([\s\S]*?)<\/td>/i, [AB.replaceTagsAndSpaces, /^-$/i, '0'], AB.parseBalance);
+	AB.getParam(html, result, 'recalculation', /перерасчёт(?:[\s\S]*?<td[^>]*>){6}([\s\S]*?)<\/td>/i, [AB.replaceTagsAndSpaces, /^-$/i, '0'], AB.parseBalance);
+	AB.getParam(html, result, 'paid', /оплачено(?:[\s\S]*?<td[^>]*>){6}([\s\S]*?)<\/td>/i, [AB.replaceTagsAndSpaces, /^-$/i, '0'], AB.parseBalance);
+	AB.getParam(html, result, 'total', /итого(?:[\s\S]*?<td[^>]*>){6}([\s\S]*?)<\/td>/i, [AB.replaceTagsAndSpaces, /^-$/i, '0'], AB.parseBalance);
 
 	AnyBalance.setResult(result);
 }

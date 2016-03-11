@@ -16,10 +16,10 @@ function main() {
 
 	var html = login();
 
-	if (prefs.cabinet == 'new'){
-		doNewCabinet(html);
+	if (prefs.cabinet == 'old'){
+		doOldCabinet(html);
 	}else{
-		doOldCabinet(html, baseurl);
+		doNewCabinet(html);
 	}
 }
 
@@ -77,7 +77,7 @@ function doNewCabinet(html) {
     AnyBalance.setResult(newresult);
 };
 
-function doOldCabinet(html, baseurl) {
+function doOldCabinet(html) {
 	var baseurl = 'https://my.tele2.ru/';
 
 	AnyBalance.trace('Входим в старый кабинет');

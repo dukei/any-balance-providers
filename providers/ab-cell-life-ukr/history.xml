@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="3" version="37" date="2016-03-12">
+        - Улучшено распознавание счетчиков "SMS в сети Lifecell" и "MMS в сети Lifecell".
+	</change>
 	<change major_version="3" version="36" date="2016-03-10">
         - Мелкие изменения.
 	</change>

@@ -110,8 +110,10 @@ function mainSite(prefs, baseurl) {
 	sumParam(html, result, 'gprs', /Интернет(?:[\s\S]*?<td[^>]*>){1}\s*([\s\d.,\-]+)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 	//MMS по Life
     	sumParam(html, result, 'mms_life', /MMS \[сеть <span class="life">life:\)<\/span>](?:[\s\S]*?<td[^>]*>){1}\s*([\s\d.,\-]+)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+    	sumParam(html, result, 'mms_life', /MMS \[сеть life:\)](?:[\s\S]*?<td[^>]*>){1}\s*([\s\d.,\-]+)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
     	//SMS по Life
     	sumParam(html, result, 'sms_life', /SMS \[сеть <span class="life">life:\)<\/span>](?:[\s\S]*?<td[^>]*>){1}\s*([\s\d.,\-]+)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+    	sumParam(html, result, 'sms_life', /SMS \[сеть life:\)](?:[\s\S]*?<td[^>]*>){1}\s*([\s\d.,\-]+)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 	//MMS по Украине
     	sumParam(html, result, 'mms_uk', /MMS \[в пределах Украины\](?:[\s\S]*?<td[^>]*>){1}\s*([\s\d.,\-]+)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
     	//SMS по Украине

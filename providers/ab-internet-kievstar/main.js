@@ -57,7 +57,13 @@ function main() {
 		/(?:Бонусный\s+баланс|Бонусний\s+баланс|Bonuses)(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\/td>/i,
 		replaceTagsAndSpaces);
 
+	getParam(html, result, 'date_start',
+		/(?:Дата\s+подключения|Дата\s+підключення|Connection\s+date):[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i,
+		replaceTagsAndSpaces, parseDate);
 
+	getParam(html, result, 'phone',
+		/(?:Номер\s+мобильного\s+телефона|Номер\s+мобільного\s+телефону|Mobile\s+phone\s+number):[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i,
+		replaceTagsAndSpaces);
 
 	AnyBalance.setResult(result);
 }

@@ -27,6 +27,8 @@
 		<counter id="licschet" name="Лицевой счёт" type="text"/>
 		<counter id="status" name="Статус" type="text"/>
 		<counter id="name" name="Имя" type="text"/>
+		<counter id="phone" name="Номер телефона" type="text"/>
+		<counter id="date_start" name="Дата подключения" type="time" format="dd/MM/yyyy"/>
 	</counters>
 	<keywords>Домашний интернет, интернет, kyivstar, киевстар, украина</keywords>
 	<type>internet</type>

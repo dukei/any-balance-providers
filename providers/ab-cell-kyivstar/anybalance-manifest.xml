@@ -35,7 +35,6 @@
 	</files>
 	<counters>
 		<counter id="balance" name="Баланс" units=" {@currency}"/>
-		<counter id="mainBonusInfoText" name="Бонусные балансы" type="text"/>
 		<counter id="bonusValue" name="Бонусный баланс" units=" б"/>
 		<counter id="bonusDate" name="Срок действия бонусов" type="text"/>
 		<counter id="phone" name="Номер мобильного телефона" type="text"/>
@@ -64,6 +63,9 @@
 		<counter id="sms_packet_left" name="Остаток SMS" />
 		<counter id="bonus_mins_1_till" name="Срок действия бонусных минут (1)" type="time" format="dd/MM/yyyy"/>
 		<counter id="bonus_mins_2_till" name="Срок действия бонусных минут (2)" type="time" format="dd/MM/yyyy"/>
+		<counter id="other_costs" name="Начисление абонентской платы по услуге «-33%»" units=" {@currency}"/>
+		<counter id="mainBonusInfoText" name="Бонусные балансы" type="text"/>
+		<counter id="connection_date" name="Дата подключения" type="time" format="dd/MM/yyyy"/>
 	</counters>
 	<keywords>Сотовый телефон, мобильный, мобильник, kyivstar, киевстар, Украина</keywords>
 	<type>cell</type>

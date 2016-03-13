@@ -50,6 +50,8 @@ function processSite() {
 		current_balance = '',
 		current_currency = '';
 
+	baseurl = 'https://my.kyivstar.ua/';
+
 	//тип ЛК
 	if (/(?:мобильного|мобільного|Mobile\s+phone\s+number)/i.test(html)) {
 		AnyBalance.trace('тип лк: Домашний интернет');
@@ -107,11 +109,12 @@ function processSite() {
 			replaceTagsAndSpaces);
 
 
-		//все основные бонусы в виде текста
-		getFullBonusText(html, result);
+		getYetAnotherInfo(html, baseurl, result); //Начисление абонентской платы по услуге "-33%" 3.02.2016
 
 	}
 
+	//все основные бонусы в виде текста
+	getFullBonusText(html, result);
 
 	if (!current_balance) {
 		current_balance = getParam(html, null, null,
@@ -132,6 +135,11 @@ function processSite() {
 	getParam(html, result, '__tariff',
 		/(?:Тарифный\s+план|Тарифний\s+план|Rate\s+Plan)[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i,
 		replaceTagsAndSpaces);
+
+	//Дата подключения
+	getParam(html, result, 'connection_date',
+		/(?:Дата\s+подключения|Дата\s+підключення|Connection\s+date)[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i,
+		replaceTagsAndSpaces, parseDate);
 
 
 
@@ -544,5 +552,15 @@ function getFullBonusText(html, result) {
 		} catch (e) {
 			AnyBalance.trace('не удалось получить текстовую информацию по бонусам ' + e);
 		}
+	}
+}
+
+function getYetAnotherInfo(html, baseurl, result) {
+	if (AnyBalance.isAvailable('other_costs')) {
+		// html = AnyBalance.requestGet(baseurl + 'tbmb/b2c/view/wireless_number_summary.do', g_headers);
+		html = AnyBalance.requestGet(baseurl + 'tbmb/view/wireless_number_chrgs.do', g_headers);
+		getParam(html, result, 'other_costs',
+			/Начисление\s+абонентской\s+платы\s+по\s+услуге\s+&#34;-33%&#34;[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i,
+			replaceTagsAndSpaces, parseBalance);
 	}
 }

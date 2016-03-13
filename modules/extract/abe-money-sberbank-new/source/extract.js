@@ -348,7 +348,7 @@ function processLoans(html, result) {
 		var title = getParam(loans[i], null, null, /<span[^>]*title="([^"]+)/i, replaceTagsAndSpaces);
 		
 		html = AnyBalance.requestGet(nodeUrl + '/PhizIC/private/loans/detail.do?id=' + _id);
-		var acc_num = getParam(html, null, null, /Номер ссудного счета:[^]*?<td[^>]*>([^]*?)<\/td>/i, replaceTagsAndSpaces);
+		var acc_num = getParam(html, null, null, /Номер ссудного сч[её]та[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
 
 		var c = {__id: _id, num: acc_num, __name: title};
 		
@@ -363,17 +363,18 @@ function processLoan(html, result){
 	var _id = result.__id;
     AnyBalance.trace('Обработка кредита ' + result.__name);
 	
-	getParam(html, result, 'loans.balance', /Осталось оплатить:[^]*?<td[^>]*>([^]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, ['loans.currency', 'loans.balance', 'loans.loan_ammount', 'loans.minpay'], /Осталось оплатить:[^]*?<td[^>]*>([^]*?)<\/td>/i, replaceTagsAndSpaces, parseCurrency);
-	getParam(html, result, 'loans.minpaydate', /Внести до:[^]*?<td[^>]*>([^]*?)<\/td>/i, replaceTagsAndSpaces, parseDateWord);
-	getParam(html, result, 'loans.minpay', /<span[^>]*detailAmount[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'loans.loan_ammount', /Сумма кредита:[^]*?<td[^>]*>([^]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'loans.userName', /ФИО заемщика:[^]*?<td[^>]*>([^]*?)<\/td>/i, replaceTagsAndSpaces, capitalFirstLetters);
-	getParam(html, result, 'loans.agreement', /Номер договора:[^]*?<td[^>]*>([^]*?)<\/td>/i, replaceTagsAndSpaces);
-	getParam(html, result, 'loans.return_type', /Способ погашения:[^]*?<td[^>]*>([^]*?)<\/td>/i, replaceTagsAndSpaces);
-	getParam(html, result, 'loans.date_start', /Кредит открыт:[^]*?<td[^>]*>([^]*?)<\/td>/i, replaceTagsAndSpaces, parseDateWord);
-	getParam(html, result, 'loans.till', /Дата закрытия кредита:[^]*?<td[^>]*>([^]*?)<\/td>/i, replaceTagsAndSpaces, parseDateWord);
-	getParam(html, result, 'loans.place', /Место оформления:[^]*?<td[^>]*>([^]*?)<\/td>/i, replaceTagsAndSpaces);
+	getParam(html, result, 'loans.balance', /Осталось (?:погасить|оплатить)[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, ['loans.currency', 'loans.balance', 'loans.loan_ammount', 'loans.minpay'], /Осталось (?:погасить|оплатить)[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseCurrency);
+	getParam(html, result, 'loans.minpaydate', /<td[^>]+field[^>]*>\s*Плат[ёе]ж([^<]*)/i, replaceTagsAndSpaces, parseDateWord);
+	getParam(html, result, 'loans.minpay', /<td[^>]+field[^>]*>\s*Плат[ёе]ж[\s\S]*?<td[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'loans.loan_ammount', /(?:Сумма кредита|Первоначальная сумма)[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'loans.userName', /<td[^>]+field[^>]*>\s*Заемщик[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, capitalFirstLetters);
+	getParam(html, result, 'loans.agreement', /Номер кредитного договора[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+	getParam(html, result, 'loans.return_type', /Способ погашения[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+	getParam(html, result, 'loans.date_start', /Дата открытия[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDateWord);
+	getParam(html, result, 'loans.till', /Срок окончания кредита[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDateWord);
+	getParam(html, result, 'loans.place', /Отделение обслуживания кредита[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+	getParam(html, result, 'loans.pct', /Процентная ставка[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Обработка металлических счетов
@@ -408,9 +409,9 @@ function processMetalAccount(html, result){
 	
 	getParam(html, result, 'accounts_met.weight', /"overallAmount"([^>]*>){2}/i, replaceTagsAndSpaces, parseBalance);
 	getParam('г.', result, ['accounts_met.weight_units', 'accounts_met.weight']);
-    getParam(html, result, 'accounts_met.balance', /По курсу покупки Банка:([^]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'accounts_met.currency', /По курсу покупки Банка:([^]*?)<\/div>/i, replaceTagsAndSpaces, parseCurrency);
-    getParam(html, result, 'accounts_met.date_start', /Открыт:[^]*?<td[^>]*>([^]*?)<\/td>/i, replaceTagsAndSpaces, parseDateWord);
+    getParam(html, result, 'accounts_met.balance', /По курсу покупки Банка:([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'accounts_met.currency', /По курсу покупки Банка:([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseCurrency);
+    getParam(html, result, 'accounts_met.date_start', /Открыт:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDateWord);
 
     if(AnyBalance.isAvailable('accounts_met.transactions')){
         processMetalAccountTransactions(html, result);
@@ -430,13 +431,13 @@ function processProfile(html, result) {
 	
 	html = AnyBalance.requestGet(nodeUrl + '/PhizIC/private/userprofile/userSettings.do');
 	
-	getParam(html, info, 'info.fio', /<span[^>]+"userFIO"[^>]*>([^]*?)<\/span>/i, replaceTagsAndSpaces, capitalFirstLetters);
-	getParam(html, info, 'info.hphone', /Домашний телефон:[^]*?<span[^>]+"phoneNumber"[^>]*>([^]*?)<\/span>/i, replaceTagsAndSpaces);
-    getParam(html, info, 'info.phone', /Мобильный телефон:[^]*?<span[^>]+"phoneNumber"[^>]*>([^]*?)<\/span>/i, replaceTagsAndSpaces);
-	getParam(html, info, 'info.email', /<span[^>]+userEmail[^>]*>([^]*?)<\/span>/i, replaceTagsAndSpaces);
-	getParam(html, info, 'info.passport', /Паспорт гражданина РФ[^]*?<td[^>]+class="docNumber"[^>]*>([^]*?)<\/td>/i, replaceTagsAndSpaces);
-    getParam(html, info, 'info.snils', /Страховое свидетельство[^]*?<div[^>]+class="documentNumber"[^>]*>([^]*?)<\/div>/i, replaceTagsAndSpaces);
-    getParam(html, info, 'info.inn', /<div[^>]*documentTitle[^>]*>\s*ИНН[^]*?<div[^>]+class="documentNumber"[^>]*>([^]*?)<\/div>/i, replaceTagsAndSpaces);
+	getParam(html, info, 'info.fio', /<span[^>]+"userFIO"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, capitalFirstLetters);
+	getParam(html, info, 'info.hphone', /Домашний телефон:[\s\S]*?<span[^>]+"phoneNumber"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
+    getParam(html, info, 'info.phone', /Мобильный телефон:[\s\S]*?<span[^>]+"phoneNumber"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
+	getParam(html, info, 'info.email', /<span[^>]+userEmail[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
+	getParam(html, info, 'info.passport', /Паспорт гражданина РФ[\s\S]*?<td[^>]+class="docNumber"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+    getParam(html, info, 'info.snils', /Страховое свидетельство[\s\S]*?<div[^>]+class="documentNumber"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+    getParam(html, info, 'info.inn', /<div[^>]*documentTitle[^>]*>\s*ИНН[\s\S]*?<div[^>]+class="documentNumber"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

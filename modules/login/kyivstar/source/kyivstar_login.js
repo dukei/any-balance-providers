@@ -69,7 +69,7 @@ function loginBasic(html) {
 		gwtHeaders(strongName, g_gwtCfg));
 
 	var json = checkGwtError(html);
-	if (json[7])
+	if (json[9])
 		throw new AnyBalance.Error(
 			'К сожалению, Киевстар потребовал ввода капчи для этого номера. Зайдите в личный кабинет один раз через браузер.',
 			null, true);

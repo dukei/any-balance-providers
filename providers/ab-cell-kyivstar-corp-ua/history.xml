@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="19" date="2016-03-13">
+	Поддержка изменений в определении требования капчи
+	</change>
 	<change version="18" date="2016-03-13">
 	поддержка изменений в процедуре входа
 	</change>

@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="2.0" version="74" date="2016-03-13">
+	поддержка изменений в процедуре входа
+	</change>
 	<change major_version="2.0" version="73" date="2016-02-25">
 	- Мелкие улучшения и исправления
 	</change>

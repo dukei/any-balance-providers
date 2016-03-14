@@ -5,7 +5,7 @@
 	<api flags="no_browser" min_level="5"/>
 	<description html="true"><![CDATA[
 	<p>Предоставляет  информацию о балансе и тарифном плане для пользователей сотового оператора "Билайн".</p>
-	<p>Поддерживаются регионы:</p>
+	<p>Информация берётся из личных кабинетов:</p>
 	<ul>
 		<li>Россия <a href="https://my.beeline.ru">https://my.beeline.ru</a></li>
 		<li>Казахстан <a href="https://my.beeline.kz">https://my.beeline.kz</a></li>

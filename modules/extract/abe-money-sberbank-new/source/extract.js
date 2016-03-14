@@ -527,3 +527,37 @@ function parseSmallDateInternal(str) {
 	}
 }
 
+function processCardLast10Transactions(result) {
+	if(!AnyBalance.isAvailable('cards.transactions10'))
+		return;
+
+	var _id = result.__id;
+	AnyBalance.trace('Получаем последние 10 операций по карте...');
+	
+	html = AnyBalance.requestGet(nodeUrl + '/PhizIC/private/cards/info.do?id=' + _id);
+	
+	if(!/<table[^>]*class="tblInf"/i.test(html)) {
+	    AnyBalance.trace(html);
+	    AnyBalance.trace('Не удалось найти таблицу операций!');
+		return;
+	}
+
+    result.transactions10 = [];
+	
+    var ops = sumParam(html, null, null, /<tr[^>]*class="ListLine\d+">(?:[^>]*>){6}\s*<\/tr>/ig);
+	
+    AnyBalance.trace('У карты ' + _id + ' найдено транзакций: ' + ops.length);
+    for(var i=0; i<ops.length; ++i){
+    	var o = {};
+
+		getParam(ops[i], o, 'cards.transactions10.sum', /([^>]*>){7}/i, replaceTagsAndSpaces, parseBalanceSilent);
+		getParam(ops[i], o, 'cards.transactions10.currency', /([^>]*>){7}/i, replaceTagsAndSpaces, parseCurrencySilent);
+		getParam(ops[i], o, 'cards.transactions10.name', /([^>]*>){3}/i, replaceTagsAndSpaces);
+    	getParam(ops[i], o, 'cards.transactions10.time', /([^>]*>){5}/i, replaceTagsAndSpaces, parseSmallDateSilent);
+
+    	result.transactions10.push(o);
+    }
+	
+	result.transactions10 = sortObject(result.transactions10, 'time');
+}
+

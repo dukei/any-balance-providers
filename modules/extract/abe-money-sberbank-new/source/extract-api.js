@@ -38,7 +38,7 @@ function requestApiInner(url, params, no_default_params, ignoreErrors) {
 		AnyBalance.trace(html);
 		if(!ignoreErrors){
 			var error = sumParam(html, null, null, /<error>\s*<text>\s*(?:<!\[CDATA\[)?([\s\S]*?)(?:\]\]>)?\s*<\/text>\s*<\/error>/ig, replaceTagsAndSpaces, null, aggregate_join);
-			var ex = new AnyBalance.Error(error || "Ошибка при обработке запроса!", null, /неправильный идентификатор/i.test(error));
+			var ex = new AnyBalance.Error(error || "Ошибка при обработке запроса!", null, /неправильный идентификатор|неправильный пароль/i.test(error));
 			ex.code = code;
 			throw ex;
 		}
@@ -428,4 +428,18 @@ function processRatesAPI(result) {
         getParam(html, result, 'usdPurch', /RUB<\/code>\s*<amount>([^<]+)<\/amount>\s*<\/from>\s*<to>\s*<code>USD/i, null, parseBalance);
         getParam(html, result, 'usdSell', /USD<\/code>\s*<\/from>\s*<to>\s*<code>RUB<\/code>([\s\S]*?)<\//i, null, parseBalance);
     }
+}
+
+function processThanksAPI(result){
+	if (AnyBalance.isAvailable('spasibo')) {
+		var html = requestApi('private/profile/loyaltyURL.do');
+		
+		var url = getParam(html, null, null, /<url>([^<]{10,})/i, replaceTagsAndSpaces);
+		if(url) {
+			html = AnyBalance.requestGet(url);
+			getParam(html, result, 'spasibo', /Баланс:\s*<strong[^>]*>\s*([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+		} else {
+			AnyBalance.trace("Не удалось найти ссылку на программу спасибо, сайт изменен?");
+		}
+	}
 }

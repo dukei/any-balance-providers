@@ -29,6 +29,17 @@
 		entryValues="site|app"
 		defaultValue="site">
 	</ListPreference>	
+	<EditTextPreference
+		positiveButtonText="ОК"
+		key="pin"
+		dialogTitle="ПИН"
+		negativeButtonText="Отмена"
+		title="ПИН"
+		summary="Только для источника данных Мобильное приложение|Сгенерировать ПИН\n|***********\n"
+		obligatory="true"
+		dialogMessage="Введите ПИН, используемый для входа в мобильное приложение Сбербанк-онлайн. Если вы не укажете ПИН, будет сгенерирован ПИН по умолчанию"
+		inputType="numberPassword">
+	</EditTextPreference>
 	<ListPreference
 		key="type"
 		title="Что смотреть"

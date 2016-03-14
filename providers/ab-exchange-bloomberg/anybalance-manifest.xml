@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="6">ab-exchange-bloomberg</id>
+	<id version="7">ab-exchange-bloomberg</id>
 	<api flags="no_browser"/>
 	<name>Bloomberg</name>
 	<description html="true"><![CDATA[
@@ -10,11 +10,13 @@
 	<p>To use this provider you must know the symbols of indexes.</p>
 	<p>You can find them on http://www.bloomberg.com/markets/symbolsearch, if you don`t know any</p>
 	]]></instruction>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>

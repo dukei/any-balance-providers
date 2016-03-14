@@ -1,7 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="7" date="2016-03-14">
+	- Minor changes, improved stability.
+	</change>
 	<change version="6" date="2015-07-27">
-	- Поддержка изменений на сайте.
+	- Support site changes.
 	</change>
 	<change version="5" date="2015-06-04">
 	- Support site changes.

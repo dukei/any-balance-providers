@@ -1,26 +1,81 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-statistics-pr-cy</id>
+  <id version="2">ab-statistics-pr-cy</id>
   <name>PR-CY</name>
   <description>
-    Получается статисту Яндекса и Google с сайта PR-CY (http://pr-cy.ru/)
+    Получается статисту Яндекса и Google с сайта PR-CY (http://a.pr-cy.ru/)
   </description>
-  <author>Alexandra Shalamova &lt;alexandrashalamova@gmail.com&gt;</author>
+  <author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+  <depends>
+    <module id="library"/>
+  </depends>
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
-    <js>library.js</js>
     <js>main.js</js>
     <history>history.xml</history>
   </files>
   <counters>
-    <counter id="yandexTic" name="Яндекс тИЦ" type="text"/>
-    <counter id="yandexCatalog" name="Яндекс Каталог" type="text"/>
-    <counter id="yandexIndex" name="Проиндексировано Яндекс" type="text"/>
+    <counter id="searchSystems_mainParams_yandexTic" name="Яндекс ТИЦ"/>
+    <counter id="searchSystems_mainParams_yandexRank" name="Яндекс Rank"/>
+    <counter id="searchSystems_mainParams_googleRank" name="Google Rank"/>
 
-    <counter id="googlePR" name="Google Page Rank" type="text"/>
-    <counter id="googleCatalog" name="DMOZ.org каталог" type="text"/>
-    <counter id="googleIndex" name="Проиндексировано Google" type="text"/>
+    <counter id="searchSystems_indexing_yandexIndex" name="Индексация Яндекс"/>
+    <counter id="searchSystems_indexing_googleIndex" name="Индексация Google"/>
+
+    <counter id="searchSystems_catalog_yandexCatalog" name="Яндекс.Каталог" type="text"/>
+    <counter id="searchSystems_catalog_dmozCatalog" name="DMOZ.org каталог" type="text"/>
+    <counter id="searchSystems_catalog_mailRuCatalog" name="Mail.ru каталог" type="text"/>
+    <counter id="searchSystems_catalog_ramblerCatalog" name="Rambler каталог" type="text"/>
+
+    <counter id="searchSystems_sanction_domainSplicing" name="Склейка домена" type="text"/>
+    <counter id="searchSystems_sanction_agsFilter" name="Фильтр АГС" type="text"/>
+
+    <counter id="searchSystems_virusCheck_yandexVirusCheck" name="Вирусы от Яндекс" type="text"/>
+    <counter id="searchSystems_virusCheck_googleVirusCheck" name="Вирусы от Google" type="text"/>
+
+    <counter id="traffic_alexRating_alexWorldRating" name="Рейтинг Аlexa место в мире"/>
+    <counter id="traffic_alexRating_alexCountryRating" name="Рейтинг Аlexa место в стране"/>
+
+    <counter id="traffic_gender_male" name="Посещаемость мужчин"/>
+    <counter id="traffic_gender_female" name="Посещаемость женщин"/>
+
+    <counter id="links_linkPad_referPages" name="LinkPad ссылается страниц"/>
+    <counter id="links_linkPad_referDomains" name="LinkPad ссылается доменов"/>
+
+    <counter id="links_majesticSeo_referPages" name="MajesticSEO ссылается страниц"/>
+    <counter id="links_majesticSeo_referDomains" name="MajesticSEO ссылается доменов"/>
+    <counter id="links_majesticSeo_trust" name="MajesticSEO траст"/>
+    <counter id="links_majesticSeo_quoting" name="MajesticSEO цитирование"/>
+
+    <counter id="links_socialNetwork_commonSocialActivity" name="Общая социальная активность"/>
+    <counter id="links_socialNetwork_vkActivity" name="Вконтакте"/>
+    <counter id="links_socialNetwork_facebookLikes" name="Facebook лайки"/>
+    <counter id="links_socialNetwork_facebookShared" name="Facebook шареды"/>
+    <counter id="links_socialNetwork_googlePlus" name="Google+"/>
+
+    <counter id="optimization_content_pageTitle" name="Заголовок страницы" type="text"/>
+    <counter id="optimization_content_pageDescription" name="Описание страницы" type="text"/>
+    <counter id="optimization_heading_pageHeaders" name="Заголовки" type="text"/>
+    <counter id="optimization_heading_wordsAmount" name="Количество слов" type="text"/>
+    <counter id="optimization_heading_textLength" name="Длина текста" type="text"/>
+    <counter id="optimization_heading_loathing" name="Тошнота(без стоп слов)" type="text"/>
+    <counter id="optimization_heading_pageSize" name="Размер HTML страницы" type="text"/>
+
+    <counter id="optimization_serverInfo_ip" name="IP севрера" type="text"/>
+    <counter id="optimization_serverInfo_location" name="Местоположение севрера" type="text"/>
+    <counter id="optimization_serverInfo_dataCenter" name="Датацентр" type="text"/>
+    <counter id="optimization_serverInfo_domainAge" name="Возраст домена" type="text"/>
+    <counter id="optimization_serverInfo_domainTermination" name="Окончание домена" type="text"/>
+    <counter id="optimization_serverInfo_sslCertificate" name="SSL-сертификат" type="text"/>
+    <counter id="optimization_serverInfo_redirect" name="Редирект с WWW" type="text"/>
+    <counter id="optimization_serverInfo_encoding" name="Кодировка" type="text"/>
+    <counter id="optimization_serverInfo_robotsFile" name="Файл robots.txt" type="text"/>
+    <counter id="optimization_serverInfo_sitemap" name="Наличие Sitemap" type="text"/>
+
+    <counter id="usability_main_favicon" name="Favicon" type="text"/>
+    <counter id="usability_main_responseCode404" name="Код ответа страницы 404" type="text"/>
+    <counter id="usability_main_linkFrom404Page" name="Ссылка со страницы 404" type="text"/>
   </counters>
   <keywords>
     рп су

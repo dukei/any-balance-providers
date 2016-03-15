@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="15">ab-tracking-moyaposylka</id>
+	<id version="16">ab-tracking-moyaposylka</id>
 	<api flags="no_browser"/>
 	<name>Моя посылка</name>
 	<description html="true"><![CDATA[
@@ -8,10 +8,12 @@
 	<p>Сервис «Моя посылка» предоставляет возможность в одном месте автоматически отслеживать от имени пользователя регистрируемые почтовые отправления (РПО) на сайтах почтовых служб.</p>
 	<p>Информация о статусах прохождения посылки берётся из открытых источников и агрегируется на одной странице.</p>
 	]]></description>
-	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+  <depends>
+    <module id="library"/>
+  </depends>
 	<files>
 		<icon>icon.png</icon>
-		<js>library.js</js>
 		<js>main.js</js>
 		<preferences>preferences.xml</preferences>
 		<history>history.xml</history>

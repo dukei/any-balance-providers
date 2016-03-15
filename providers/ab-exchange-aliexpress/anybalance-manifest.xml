@@ -2,9 +2,9 @@
 <provider>
   <id version="2">ab-exchange-aliexpress</id>
   <api flags="no_browser"/>
-  <name>Курс доллара AliExpress</name>
+  <name>Курс Алиэкспресс</name>
   <description html="true"><![CDATA[
-  <p>Определяет внутренний курс доллара в интернет-магазине AliExpress http://www.aliexpress.com/</p>
+  <p>Определяет внутренний курс доллара в интернет-магазине Алиэкспресс (AliExpress) http://www.aliexpress.com/</p>
   ]]></description>
   <author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
   <depends>

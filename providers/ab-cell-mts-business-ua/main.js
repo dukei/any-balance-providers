@@ -53,9 +53,6 @@ function main() {
 		},
 		json;
 
-
-	AB.getParam(html, result, '__tariff', /<h2[^>]*id="[^"]*company[^"]*"[^>]*>([\s\S]*?)<\/h2>/i, AB.replaceTagsAndSpaces);
-
 	if (AnyBalance.isAvailable('balance', 'billsForCurrentYear')) {
 		try {
 
@@ -83,8 +80,8 @@ function main() {
 
 			var freshest = json.Data.length - 1;
 
-			AB.getParam(json.Data[freshest].SpentAmount, result, 'balance', null, AB.replaceTagsAndSpaces, AB.parseBalance);
-			AB.getParam(json.Data[freshest].PaymentAmount, result, 'paymentAmount', null, AB.replaceTagsAndSpaces, AB.parseBalance);
+			AB.getParam(json.Data[freshest].SpentAmount, result, 'paymentAmount', null, AB.replaceTagsAndSpaces, AB.parseBalance);
+			AB.getParam(json.Data[freshest].PaymentAmount, result, 'balance', null, AB.replaceTagsAndSpaces, AB.parseBalance);
 			AB.getParam(json.Data[freshest].ItemsCount, result, 'itemsCount', null, AB.replaceTagsAndSpaces, AB.parseBalance);
 			AB.getParam(json.Data[freshest].AccountNumber, result, 'account', null, AB.replaceTagsAndSpaces);
 			AB.getParam(json.Data[freshest].BillNumber, result, 'billNumber', null, AB.replaceTagsAndSpaces);
@@ -121,6 +118,8 @@ function main() {
 
 			html = AnyBalance.requestGet(baseurl + 'Ncih/Users.mvc', g_headers);
 
+            var objectId = AB.getParam(html, null, null, /"objectId":(\d+)/i);
+
 			html = AnyBalance.requestPost(baseurl + 'Ncih/Users.mvc/GetUsers', {
 				'sort': 'FullName',
 				'dir': 'ASC',
@@ -146,6 +145,28 @@ function main() {
 			}
 
 			AB.getParam(users.join(', '), result, 'users');
+
+            var now = new Date();
+            var timezone = now.getTimezoneOffset() / -60;
+            if (timezone > 0) {
+                timezone = '+' + timezone;
+            }
+            var localTime = now.toISOString().replace(/\.\d+Z$/, timezone);
+
+            html = AnyBalance.requestPost(
+                baseurl + 'Ncih/ObjectInfo.mvc/CurrentUser',
+                {
+                    'objectId': objectId,
+                    '__LOCAL_DATETIME__': localTime
+                },
+                AB.addHeaders({'X-Requested-With': 'XMLHttpRequest'})
+            );
+            json = AB.getJson(html);
+
+            AB.getParam(json.infoHtml, result, '__tariff', /тарифный план([^>]+>){3}/i, AB.replaceTagsAndSpaces);
+            AB.getParam(json.infoHtml, result, 'smsRemained', /название пакета услуг[\s\S]*?Осталось\D*(\d+)\D*sms/i, AB.replaceTagsAndSpaces, AB.parseBalance);
+            AB.getParam(json.infoHtml, result, 'minRemained', /название пакета услуг[\s\S]*?Осталось\D*(\d+)\D*мин/i, AB.replaceTagsAndSpaces, AB.parseBalance);
+
 		} catch (e) {
 			AnyBalance.trace(' не удалось получать данные по пользователям ' + e);
 		}

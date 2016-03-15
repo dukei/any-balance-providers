@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-cell-mts-business-ua</id>
+	<id version="2">ab-cell-mts-business-ua</id>
 	<api flags="no_browser"/>
 	<name>МТС Business Украина</name>
 	<description html="true"><![CDATA[
@@ -30,6 +30,8 @@
 		<counter id="account" name="№ ЛС" type="text"/>
 		<counter id="billsForCurrentYear" name="Выставленные счета за текущий год" type="text"/>
 		<counter id="users" name="Пользователи" type="text"/>
+		<counter id="smsRemained" name="Осталось SMS по Украине"/>
+		<counter id="minRemained" name="Осталось минут на других операторов по Украине"/>
 	</counters>
 	<keywords>МТС Корпоративный Украина</keywords>
 	<type>cell</type>

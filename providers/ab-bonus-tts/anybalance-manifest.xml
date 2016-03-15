@@ -1,18 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-bonus-tts</id>
+	<id version="3">ab-bonus-tts</id>
 	<api flags="no_browser|captcha"/>
 	<name>Тюменская транспортная система</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию по карте Тюменской транспортной системы <a href="http://oao-tts.ru">http://oao-tts.ru</a></p>
 	<p>Информация берется со страницы <a href="http://oao-tts.ru/index.php/balans-karty"></a>http://oao-tts.ru/index.php/balans-karty</p>
 	]]></description>
-	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+  <depends>
+    <module id="library"/>
+  </depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>

@@ -5,7 +5,7 @@
 	<name>Амвей</name>
 	<description html="true"><![CDATA[
 		<p>Получает данные из партнерской программы Амвей (Amway) http://www.amway.ru</p>
-		<p>Информация берется из личного кабинета</p>
+		<p>Информация берется из личного кабинета http://www.amway.ru/ru/login</p>
 	]]></description>
 	<instruction html="true"><![CDATA[
 		<p>Если у вас нет доступа в Личный кабинет, получите его на странице http://www.amway.ru/login</p>

@@ -1,17 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
-    <ListPreference 
-                entries="Не указан|Обычная|Серебряная|Золотая" 
-                entryValues="0|1|2|3"
-                defaultValue="0"
-                title="Статус карты"
+	<ListPreference
+		key="cardType"
+		title="Статус карты"
+		obligatory="true"
+		summary="|Укажите статус карты, для авторизации по номеру карты|{@s}"
+		entries="Не указан|Обычная|Серебряная|Золотая"
 		positiveButtonText="ОК"
-		summary="||{@s}"
-		dialogTitle="Статус карты"
 		negativeButtonText="Отмена"
-		dialogMessage="Укажите статус карты, для авторизации по номеру карты."
-		key="cardType">
-    </ListPreference>
+		entryValues="0|1|2|3"
+		defaultValue="0">
+	</ListPreference>
     <EditTextPreference
 		obligatory="true"
 		title="E-mail или номер карты"

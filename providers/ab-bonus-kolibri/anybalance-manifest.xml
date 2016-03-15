@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-bonus-kolibri</id>
+	<api flags="no_browser"/>
+	<name>Kolibri United System</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера Kolibri United System https://my-kolibri.com/</p>
+	<p>Информация берется из личного кабинета https://my-kolibri.com/lk</p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс"/>
+		<counter id="purchase" name="Мои покупки"/>
+		<counter id="service_package" name="Пакет услуг" type="text"/>
+		<counter id="full_name" name="ФИО" type="text"/>
+		<counter id="cash_back" name="Cash Back"/>
+		<counter id="money_back_plus" name="Money Back Plus"/>
+		<counter id="friend_bounty" name="Премия друзей"/>
+		<counter id="partner_bounty" name="Премия партнёр"/>
+		<counter id="team_bounty" name="Премия команда"/>
+	</counters>
+	<keywords></keywords>
+	<type>bonus</type>
+	<country>ru</country>
+</provider>

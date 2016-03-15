@@ -1,16 +1,19 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-wallet-mobilnik</id>
+	<id version="3">ab-wallet-mobilnik</id>
 	<api flags="no_browser"/>
 	<name>Wallet Mobilnik Balance</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет ФИО, номер счета и баланс пользователя mobilnik.kg со страницы https://wallet.mobilnik.kg/wallet/</p>
+	<p>Предоставляет ФИО, номер счета и баланс пользователя mobilnik.kg со страницы https://wallet.mobilnik.kg/#/welcome</p>
+	<p>Информация берется из личного кабинета https://wallet.mobilnik.kg/#/app/home</p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+  <depends>
+    <module id="library"/>
+  </depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>

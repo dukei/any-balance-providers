@@ -2,13 +2,13 @@
 <provider>
 	<api flags="no_browser" />
 	<id version="3">ab-affiliate-amway</id>
-	<name>Amway</name>
+	<name>Амвей</name>
 	<description html="true"><![CDATA[
-		<p>Получает данные из партнерской программы Amway <a href="http://www.amway.ru">http://www.amway.ru</a></p>
+		<p>Получает данные из партнерской программы Амвей (Amway) http://www.amway.ru</p>
 		<p>Информация берется из личного кабинета</p>
 	]]></description>
 	<instruction html="true"><![CDATA[
-		<p>Если у вас нет доступа в Личный кабинет, получите его на странице <a href="http://www.amway.ru/login">http://www.amway.ru/login</a></p>
+		<p>Если у вас нет доступа в Личный кабинет, получите его на странице http://www.amway.ru/login</p>
 	]]></instruction>
 	<author>Stark &lt;support@starksoft.ru&gt;</author>
 	<depends>

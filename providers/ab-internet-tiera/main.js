@@ -18,39 +18,49 @@ function main(){
     moment.lang('ru');
     var prefs = AnyBalance.getPreferences();
 
-   var baseurl = "https://my.tiera.ru/";
+    var baseurl = 'https://my.tiera.ru/';
 
     AnyBalance.setDefaultCharset('utf-8');
 
-    var html = AnyBalance.requestPost(baseurl, {
+    var html = AnyBalance.requestGet(baseurl, AB.addHeaders({ Referer: baseurl }));
+
+    if (!html || AnyBalance.getLastStatusCode() > 400) {
+        AnyBalance.trace(html);
+        throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
+    }
+
+    html = AnyBalance.requestPost(baseurl, {
         action: 'logon',      
         login:prefs.login,
-        password:prefs.password,
-        //x:'64',        
-        //y:'17'
-    }, addHeaders({ Referer: baseurl }));
+        password:prefs.password
+    }, AB.addHeaders({ Referer: baseurl }));
 
-    html = AnyBalance.requestGet(baseurl, addHeaders({ Referer: baseurl }));
+    html = AnyBalance.requestGet(baseurl, AB.addHeaders({ Referer: baseurl }));
 
-    if(!/\/Logout/i.test(html)){
-        throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Возможно не правильно введен логин или пароль. Либо сайт изменен.');
+    if(!/\/logout/i.test(html)){
+        var error = AB.getParam(html, null, null, /lostpassword[^>]*>([^<]+)/i, AB.replaceTagsAndSpaces);
+        if (error) {
+            throw new AnyBalance.Error(error, null, /пароль/i.test(error));
+        }
+
+        throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
     }
 
     var result = {success: true};
-    getParam(html, result, 'fio', /<td[^>]*>ФИО<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'prognoz', /<td[^>]*>Прогноз отключения<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDateMoment);
-    getParam(html, result, 'number', /<td[^>]*>Лицевой счет<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'balance', /<td[^>]*>Баланс<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalanceRK);
-    getParam(html, result, 'status', /<td[^>]*>Статус<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+    AB.getParam(html, result, 'fio', /<td[^>]*>ФИО<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/i, AB.replaceTagsAndSpaces);
+    AB.getParam(html, result, 'prognoz', /<td[^>]*>Прогноз отключения<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/i, AB.replaceTagsAndSpaces, parseDateMoment);
+    AB.getParam(html, result, 'number', /<td[^>]*>Лицевой счет<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/i, AB.replaceTagsAndSpaces);
+    AB.getParam(html, result, 'balance', /<td[^>]*>Баланс<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/i, AB.replaceTagsAndSpaces, parseBalanceRK);
+    AB.getParam(html, result, 'status', /<td[^>]*>Статус<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/i, AB.replaceTagsAndSpaces);
 
     AnyBalance.setResult(result);
 }
 
 function parseBalanceRK(_text){
     var text = _text.replace(/\s+/g, '');
-    var rub = getParam(text, null, null, /(-?\d[\d\.,]*)руб/i, replaceFloat, parseFloat) || 0;
-    var kop = getParam(text, null, null, /(-?\d[\d\.,]*)коп/i, replaceFloat, parseFloat) || 0;
-    var val = rub+kop/100;
+    var rub = AB.getParam(text, null, null, /(-?\d[\d\.,]*)\s*руб/i, null, AB.parseBalance) || 0;
+    var kop = AB.getParam(text, null, null, /(-?\d[\d\.,]*)\s*коп/i, null, AB.parseBalance) || 0;
+    var val = rub + kop/100;
     AnyBalance.trace('Parsing balance (' + val + ') from: ' + _text);
     return val;
 }

@@ -1,34 +1,34 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="6">ab-affiliate-faberlic</id>
-  <api flags="no_browser"/>
-  <name>Faberlic</name>
-	<description html="true"><![CDATA[
-	<p>Получает информацию для консультанта Faberlic <a href="https://faberlic.com/">https://faberlic.com/</a></p>
-	<p>Информация берется из личного кабинета <a href="https://faberlic.com/index.php?option=com_user&view=login&lang=ru">https://faberlic.com/index.php?option=com_user&view=login&lang=ru</a></p>
-	]]></description>
-  <author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>library.js</js>
-    <js>main.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="balance" name="Состояние счета" units=" р"/>
-    <counter id="topay" name="К оплате" units=" р"/>
-    <counter id="fio" name="ФИО" type="text"/>
-    <counter id="orders_sum" name="Итоговая сумма заказов" units=" р"/>
-    <counter id="points_sum" name="Итоговая сумма баллов"/>
-    <counter id="points_sum_good" name="Итоговая сумма баллов, учтенных в расчете"/>
-    <counter id="lo" name="ЛО(текущий период)"/>
-    <counter id="olg" name="ОЛГ(текущий период)"/>
-    <counter id="go" name="ГО(текущий период)"/>
-    <counter id="personal" name="Неоплаченные личные баллы"/>
-    <counter id="group" name="Неоплаченные групповые баллы"/>
-  </counters>
-  <keywords>Фаберлик</keywords>
-  <type>affiliate</type>
-  <country>ru</country>
+    <id version="6">ab-affiliate-faberlic</id>
+    <api flags="no_browser"/>
+    <name>Фаберлик</name>
+    <description html="true"><![CDATA[
+    <p>Получает информацию для консультанта партнёрской программы Faberlic (Фаберлик) https://faberlic.com/</p>
+    <p>Информация берется из личного кабинета https://faberlic.com/index.php?option=com_user&view=login&lang=ru</p>
+    ]]></description>
+    <author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+    <files>
+        <icon>icon.png</icon>
+        <preferences>preferences.xml</preferences>
+        <js>library.js</js>
+        <js>main.js</js>
+        <history>history.xml</history>
+    </files>
+    <counters>
+        <counter id="balance" name="Состояние счета" units=" р"/>
+        <counter id="topay" name="К оплате" units=" р"/>
+        <counter id="fio" name="ФИО" type="text"/>
+        <counter id="orders_sum" name="Итоговая сумма заказов" units=" р"/>
+        <counter id="points_sum" name="Итоговая сумма баллов"/>
+        <counter id="points_sum_good" name="Итоговая сумма баллов, учтенных в расчете"/>
+        <counter id="lo" name="ЛО(текущий период)"/>
+        <counter id="olg" name="ОЛГ(текущий период)"/>
+        <counter id="go" name="ГО(текущий период)"/>
+        <counter id="personal" name="Неоплаченные личные баллы"/>
+        <counter id="group" name="Неоплаченные групповые баллы"/>
+    </counters>
+    <keywords>Фаберлик</keywords>
+    <type>affiliate</type>
+    <country>ru</country>
 </provider>

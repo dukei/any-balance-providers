@@ -1,35 +1,48 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="5">ab-money-otp</id>
+	<api flags="no_browser"/>
+	<id version="6">ab-money-otp</id>
 	<name>ОТП Банк</name>
 	<description html="true"><![CDATA[
 	<p>Получает текущий остаток и другие параметры карт ОТП Банка ( http://otpbank.ru ), используя систему ОТПдирект ( https://direkt.otpbank.ru ).</p>
 	<p>Если Вы уже являетесь клиентом ОТП Банка, но к Интернет-банку ОТПдирект не подключены, то Вам достаточно просто заключить договор дистанционного банковского обслуживания в любом отделении ОТП Банка.</p>
 	]]></description>
-	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+		<module id="extract/abe-money-otp"/>
+		<module id="nadapter"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
-		<js>api:jquery.min.js</js>
 		<history>history.xml</history>
 	</files>
 	<counters>
 		<counter id="balance" name="Остаток" units=" {@currency}"/>
+		<counter id="available" name="Доступная сумма" units=" {@currency}"/>
+		<counter id="aBalance" name="Доступный остаток" units=" {@currency}"/>
+		<counter id="cPct" name="Текущие проценты" units=" {@currency}"/>
+		<counter id="blocked" name="Заблокированные средства" units=" {@currency}"/>
 		<counter id="minpay" name="Мин.платеж" units=" {@currency}"/>
 		<counter id="minpaytill" name="Дата очередного платежа" type="time" format="dd/MM/yyyy"/>
 		<counter id="gracepay" name="Платеж льготного периода" units=" {@currency}"/>
 		<counter id="gracepaytill" name="Дата вхождения в льготный период" type="time" format="dd/MM/yyyy"/>
+		<counter id="date_start" name="Начало действия" type="time" format="dd/MM/yyyy"/>
 		<counter id="debt" name="Сумма долга к уплате" units=" {@currency}"/>
 		<counter id="own" name="Остаток собственных средств" units=" {@currency}"/>
+		<counter id="oDebt" name="Просроченный долг" units=" {@currency}"/>
 		<counter id="limit" name="Кредитный лимит" units=" {@currency}"/>
 		<!-- Лучше разделить на номер счета и карты, для оплаты нужен номер счета -->
 		<counter id="cardnum" name="Номер" type="text"/>
 		<counter id="cardname" name="Имя на карте" type="text"/>
-		<counter id="till" name="Срок действия" type="text"/>
+		<counter id="till" name="Срок действия" type="time" format="dd/MM/yyyy"/>
 		<counter id="type" name="Тип" type="text"/>
 		<counter id="currency" name="Валюта" type="text"/>
+		<counter id="status" name="Статус" type="text"/>
+		<counter id="pct" name="Проценты" units="%"/>
+		<counter id="agreement" name="Номер договора" type="text"/>
 	</counters>
 	<keywords>otp bank</keywords>
 	<type>money, bank</type>

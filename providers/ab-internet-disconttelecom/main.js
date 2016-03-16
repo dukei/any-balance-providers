@@ -42,7 +42,14 @@ function main(){
     var res = getJson(postHtml);
 
     if (/success/i.test(res.mess) && res.redirect) {
-        html = AnyBalance.requestGet(res.redirect);
+    	try{
+        	html = AnyBalance.requestGet(res.redirect);
+        }catch(e){
+        	var loc = getParam(res.redirect, null, null, /return=([^&]*)/);
+        	var url = joinUrl(baseurl, loc);
+        	AnyBalance.trace('Говносайт содержит пробелы в редиректе. Придется придумывать обход. Переадресуем явно на ' + url);
+        	html = AnyBalance.requestGet(url);
+        }
     }
 
 	html = AnyBalance.requestGet('https://lk.diskonttelecom.ru/cabinet/account/', g_headers);

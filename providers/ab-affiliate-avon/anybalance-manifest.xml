@@ -2,9 +2,9 @@
 <provider>
 	<api flags="no_browser" />
 	<id version="2">ab-affiliate-avon</id>
-	<name>AVON</name>
+	<name>Эйвон</name>
 	<description>
-	Получает баланс и другую информацию по представителю AVON (http://www.avon.ru)
+	Получает баланс и другую информацию по представителю Эйвон (http://www.avon.ru)
 	
 	Информация берется из личного кабинета: https://www.avon.ru/REPSuite/
 	</description>

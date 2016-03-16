@@ -53,6 +53,7 @@ function main () {
         html = AnyBalance.requestGet (baseurl + 'balanceStructure.do');
 		var table = getParam(html, null, null, /<table[^>]*id=[^>]*class="results"[\s\S]*?<\/table>/i);
 		if(table){
+			getParam(html, result, 'burnDate', /Дата списания баллов(?:[\s\S]*?<td[^>]*>){1}([^<]*)/i, replaceTagsAndSpaces, parseDate);
 			getParam(html, result, 'burnInThisMonth', /Кол-во баллов,\s*подлежащих списанию(?:[\s\S]*?<td[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
 		}else{
 			AnyBalance.trace ('Не найдено аннулированных баллов');

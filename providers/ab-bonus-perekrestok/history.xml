@@ -1,5 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="1.0" version="7" date="2016-03-16">
+	Добавлен счетчик даты ближайшего сгорания баллов
+	</change>
 <change major_version="1.0" version="6" date="2013-09-20">
 - Избавление от jquery
 - Исправлена процедура входа

@@ -1,6 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="0">ab-internet-Galaxy-net</id>
+	<api flags="no_browser"/>
+  <id version="1">ab-internet-galaxy-net</id>
   <name>Galaxy-Net</name>
   <description>
     Galaxy-Net в Туапсе
@@ -11,6 +12,7 @@
     <js>library.js</js>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
+  	<history>history.xml</history>
   </files>
   <counters>
     <counter id="balance" name="Баланс" units=" р"/>

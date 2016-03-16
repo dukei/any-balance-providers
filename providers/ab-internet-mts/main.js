@@ -103,7 +103,7 @@ function getRostov() {
   getParam(html, result, '__tariff', /"with-border">(?:[\s\S]*?<td[^>]*>){3}(.*?)<\/td>/i, replaceTagsAndSpaces);
   /*if(AnyBalance.isAvailable('abon')){
         html = AnyBalance.requestGet(baseurl + 'account/stat');
-        getParam(html, result, 'abon', /Абон[а-я\.]* плата(?:[\s\S]*?<td[^>]*>){2}\s*(-?\d[\d\s\.,]*)/i, replaceFloat, parseFloat);
+        getParam(html, result, 'abon', /Абон[а-я\.]* плата(?:[\s\S]*?<td[^>]*>){2}\s*(-?\d[\d\s\.,]*)/i, replaceTagsAndSpaces, parseBalance);
     }*/
   AnyBalance.setResult(result);
 }
@@ -217,7 +217,7 @@ function getMoscow() {
       throw new AnyBalance.Error("Невозможно найти ссылку на Расход средств");
 
     var html = AnyBalance.requestGet(baseurl + $url.attr('href'));
-    getParam(html, result, 'abon', /Абон[а-я\.]*плата[\s\S]*?<span[^>]*>\s*(-?\d[\d\s\.,]*)/i, replaceFloat, parseFloat);
+    getParam(html, result, 'abon', /Абон[а-я\.]*плата[\s\S]*?<span[^>]*>\s*(-?\d[\d\s\.,]*)/i, replaceTagsAndSpaces, parseBalance);
   }
 
 
@@ -335,8 +335,8 @@ function getPrmOld() {
 
 function parseBalanceRK(_text) {
   var text = _text.replace(/\s+/g, '');
-  var rub = getParam(text, null, null, /(-?\d[\d\.,]*)руб/i, replaceFloat, parseFloat) || 0;
-  var kop = getParam(text, null, null, /(-?\d[\d\.,]*)коп/i, replaceFloat, parseFloat) || 0;
+  var rub = getParam(text, null, null, /(-?\d[\d\.,]*)руб/i, replaceTagsAndSpaces, parseBalance) || 0;
+  var kop = getParam(text, null, null, /(-?\d[\d\.,]*)коп/i, replaceTagsAndSpaces, parseBalance) || 0;
   var val = rub + kop / 100;
   AnyBalance.trace('Parsing balance (' + val + ') from: ' + _text);
   return val;

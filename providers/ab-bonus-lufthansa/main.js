@@ -31,22 +31,23 @@ function main() {
     throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
   }
   //return makeCountries(html);
-  var country = prefs.country || 'DE';
+  //var country = prefs.country || 'DE';
   var action = AB.getParam(html, null, null, /action="(\/hpg\/cor.do[^"]*)/i, AB.replaceTagsAndSpaces);
   if (!action) {
     throw new AnyBalance.Error('Can not find country form!');
   }
 
   html = AnyBalance.requestPost(baseurl + action, {
-    country: country,
-    timezone: jstz.determine_timezone().name()
-  }, g_headers);
+    country: 'DE',
+    language: 'en',
+  	timezone: jstz.determine_timezone().name()
+  }, AB.addHeaders({ Referer: AnyBalance.getLastUrl() }));
 
   html = AnyBalance.requestPost(baseurl + "hpg/login.do?l=en", {
     user: prefs.login,
     pass: prefs.password,
     step: 'search'
-  }, g_headers);
+  }, AB.addHeaders({ Referer: AnyBalance.getLastUrl() }));
 
   if (!/step=logout|\/logout\?/.test(html)) {
     var error = AB.getParam(html, null, null,

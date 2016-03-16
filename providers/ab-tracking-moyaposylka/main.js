@@ -12,7 +12,7 @@ var g_headers = {
 var g_baseurl = 'https://moyaposylka.ru';
 
 function apiCall(params) {
-	html = AnyBalance.requestPost(g_baseurl + '/apps/tracker/v2', JSON.stringify(params), addHeaders({
+	html = AnyBalance.requestPost(g_baseurl + '/apps/tracker/v2', JSON.stringify(params), AB.addHeaders({
 		Accept: 'application/json, text/plain, */*',
 		'Content-Type': 'application/json;charset=UTF-8',
 		Origin: g_baseurl,
@@ -20,18 +20,18 @@ function apiCall(params) {
 		'X-Apps-Request': 'MoyaPosylka'
 	}));
 
-	var json = getJson(html);
+	var json = AB.getJson(html);
 
 	if(!json.success) {
 		AnyBalance.trace(JSON.stringify(json));
-		throw new AnyBalance.Error('Не удалось получить данные из-за ошибке на сервере, попробуйте обновить данные позже. Код ошибки: ' + json.code.error);
+		throw new AnyBalance.Error('Не удалось получить данные из-за ошибке на сервере, попробуйте обновить данные позже. Код ошибки: ' + json.error.code);
 	}
 	return json;
 }
 
 function getMyPosylkaResult(prefs) {
 	AnyBalance.trace('Connecting to moyaposylka...');
-	checkEmpty(prefs.track_id, 'Введите код почтового отправления!');
+    AB.checkEmpty(prefs.track_id, 'Введите код почтового отправления!');
 
 	var dest = prefs.track_dest || "RU"; //Страна назначения
 	var html = AnyBalance.requestGet(g_baseurl, g_headers);
@@ -54,7 +54,7 @@ function getMyPosylkaResult(prefs) {
 	//json = {"success":true,"error":null,"result":'',"debug":"0.0004"};
 	//json = {"success":true,"error":null,"result":null,"debug":"0.0004"};
 
-	if(!isArray(json.result) || !json.result || !json.result[0] || !json.result[0].code) {
+	if(!AB.isArray(json.result) || !json.result || !json.result[0] || !json.result[0].code) {
 		AnyBalance.trace(JSON.stringify(json));
 		throw new AnyBalance.Error('Неизвестный тип почтового отправления, проверьте правильность введенных данных.');
 	}
@@ -123,15 +123,15 @@ function getMyPosylkaResult(prefs) {
 			lsplace = (ls && ls.place) || '',
 			lsstatus = (ls && ls.operation.name) || '???';
 
-		getParam(tracker.number, result, 'trackid');
-		getParam(tracker.trackTime + '', result, 'days', null, null, parseBalance);
-		getParam(tracker.weight + '', result, 'weight', null, null, parseBalance);
-		getParam(lsdate, result, 'date', null, null, parseDateISO);
-		getParam(lsplace, result, 'address');
-		getParam(lsstatus, result, 'status');
+        AB.getParam(tracker.number, result, 'trackid');
+        AB.getParam(tracker.trackTime + '', result, 'days', null, null, AB.parseBalance);
+        AB.getParam(tracker.weight + '', result, 'weight', null, null, AB.parseBalance);
+        AB.getParam(lsdate, result, 'date', null, null, AB.parseDateISO);
+        AB.getParam(lsplace, result, 'address');
+        AB.getParam(lsstatus, result, 'status');
 
 		if (AnyBalance.isAvailable('fulltext')) {
-			var date = getParam(lsdate, null, null, null, null, parseDateISO) || (new Date().getTime());
+			var date = AB.getParam(lsdate, null, null, null, null, AB.parseDateISO) || (new Date().getTime());
 			var address = lsplace;
 			var status = lsstatus;
 			var days = tracker.trackTime;

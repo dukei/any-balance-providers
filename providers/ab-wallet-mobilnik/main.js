@@ -15,45 +15,48 @@ function main(){
 	var baseurl = 'https://wallet.mobilnik.kg/';
 	AnyBalance.setDefaultCharset('utf-8');
 	
-	checkEmpty(prefs.login, 'Введите логин!');
-	checkEmpty(prefs.password, 'Введите пароль!');
+	AB.checkEmpty(prefs.login, 'Введите логин!');
+    AB.checkEmpty(prefs.password, 'Введите пароль!');
 	
-	var html = AnyBalance.requestGet(baseurl, g_headers);
+	var html = AnyBalance.requestGet(baseurl + 'views/welcome.html', g_headers);
 	
 	if(!html || AnyBalance.getLastStatusCode() > 400){
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
 	}
 	
-	var form = getElement(html, /<form[^>]+id="login_form"[^>]*>/i);
-	if(!form) {
-		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Не удалось найти форму входа, сайт изменен?');
-	}
-	
-	var params = createFormParams(form, function(params, str, name, value) {
-		if (name == 'login') 
-			return prefs.login;
-		else if (name == 'passwd')
-			return prefs.password;
-		return value;
-	});
+	var params = {
+        client: 1,
+        phone_number: prefs.login,
+        password: prefs.password,
+        model: g_headers['User-Agent']
+    };
 
-	html = AnyBalance.requestPost(baseurl + 'login', params, addHeaders({ Referer: baseurl, Origin: baseurl }));
+	html = AnyBalance.requestPost(
+        baseurl + 'api2/authenticate/',
+        JSON.stringify(params),
+        AB.addHeaders({
+            Referer: baseurl,
+            Accept: 'application/json, text/plain, */*'
+        })
+    );
+    var json = AB.getJson(html);
 	
-	if (!/logout/i.test(html)) {
-		var error = AB.getParam(html, null, null, /<div[^>]*class="[^\"]*error[^\"]*">([\s\S]*?)<\/div>/i, AB.replaceTagsAndSpaces);
-		if (error)
-			throw new AnyBalance.Error(error, null, /Пользователь не найден|Неправильный логин\/пароль/i.test(error));
-		
+	if (!json.user_info) {
+		if (json.message) {
+            throw new AnyBalance.Error(json.message, null, /Пользователь не найден|Неправильный логин\/пароль/i.test(json.message));
+        }
+
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
+
+	var result = {success: true},
+        fullName = json.user_info.first_name + ' ' + json.user_info.last_name + ' ' + json.user_info.patronymic;
 	
-	var result = {success: true};
-	
-	AB.getParam(html, result, 'balance', /Баланс:([\s\S]*?)<\/dd>/i, AB.replaceTagsAndSpaces, AB.parseBalance);
-	AB.getParam(html, result, 'account_num', /Лицевой счет:([\s\S]*?)<\/dd>/i, AB.replaceTagsAndSpaces);
-	
+	AB.getParam(json.user_info.balance[0].amount, result, 'balance', null, null, AB.parseBalance);
+	AB.getParam(json.user_info.sub_code, result, 'account_num');
+	AB.getParam(fullName, result, 'username');
+
 	AnyBalance.setResult(result);
 }

@@ -46,6 +46,9 @@ function main() {
 	};
 
 	AB.getParam(html, result, 'balance', /Внес(?:ё|е)н\s*аванс\s*=([\s\S]*?)</i, AB.replaceTagsAndSpaces, AB.parseBalance);
+    if (result.balance == undefined) {
+        AB.getParam(html, result, 'balance', /<p>лицевой счет[\s\S]+?задолженность([^<]+)/i, [/=/, '-', AB.replaceTagsAndSpaces], AB.parseBalance);
+    }
 	AB.getParam(html, result, 'personal_account', /<p>лицевой счет([\s\S]*?)<\/p>/i, AB.replaceTagsAndSpaces, AB.parseBalance);
 	AB.getParam(html, result, 'address', /<p>адрес:([\s\S]*?)<\/p>/i, AB.replaceTagsAndSpaces);
 

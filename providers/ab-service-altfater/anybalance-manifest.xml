@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-service-altfater</id>
+	<id version="2">ab-service-altfater</id>
 	<api flags="no_browser"/>
 	<name>Альтфатер Крым</name>
 	<description html="true"><![CDATA[

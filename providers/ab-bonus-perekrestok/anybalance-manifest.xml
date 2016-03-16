@@ -1,23 +1,27 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="1.0" version="6">ab-bonus-perekrestok</id>
+	<id major_version="1.0" version="7">ab-bonus-perekrestok</id>
 	<api flags="no_browser"/>
 	<name>Перекресток</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о бонусном балансе на карте ""Клуба Перекресток"" (http://x5club.ru/about/).</p>
+	<p>Предоставляет информацию о бонусном балансе на карте "Клуба Перекресток" (http://x5club.ru/about/).</p>
 	<p>Информация берется из личного кабинета (http://prcab.x5club.ru).</p>
 	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<author>iReset &lt;ireset.ag@gmail.com&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
 	<counters>
 		<counter id="balance" name="Баланс" units="б"/>
-		<counter id="burnInThisMonth" name="Сгорает в этом месяце" units="б"/>
+		<counter id="burnInThisMonth" name="Сгорание баллов" units="б"/>
+		<counter id="burnDate" name="Дата сгорания баллов" type="time" format="dd/MM/yyyy"/>
 		<counter id="customer" name="Владелец" type="text"/>
 	</counters>
 	<keywords>клуб, перекресток, накопительная программа, накопительная карта, бонус, бонусная карта, продукты, покупки, баллы</keywords>

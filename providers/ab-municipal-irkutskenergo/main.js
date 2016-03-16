@@ -14,43 +14,43 @@ function main() {
 	var baseurl = 'https://sbyt.irkutskenergo.ru/';
 	AnyBalance.setDefaultCharset('utf-8');
 	
-	checkEmpty(prefs.login, 'Введите номер лицевого счета/договора!');
-	checkEmpty(prefs.password, 'Введите фамилию!');
+	AB.checkEmpty(prefs.login, 'Введите номер лицевого счета/договора!');
+    AB.checkEmpty(prefs.password, 'Введите фамилию!');
 	
 	var html = AnyBalance.requestGet(baseurl + 'qa/PersonalCabin.html', g_headers);
 	
-	if(!html || AnyBalance.getLastStatusCode() > 400)
-		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
+	if (!html || AnyBalance.getLastStatusCode() > 400) {
+        throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
+    }
 
     var plainParams = {
-        //Home:true,
         AccountNo:prefs.login,
         AccountFIO:prefs.password,
-        //Rooms_Count:"",
         PostAddress:"",
         IsApproved:false,
         Residents:"",
         FullArea:"",
-        //FullArea_All:"",
-        SaveDataFlag:false,
-        //Balanses:[],
-        //IsMonthButton:false,
-        //IsYearButton:false,
-        //CreditList:[]
+        SaveDataFlag:false
     };
     
     var par = 'EnergoSales@LoginPL(\''+ JSON.stringify(plainParams) +'\'#string)';
     
-	html = AnyBalance.requestPost(baseurl + 'asp/srvproxy.aspx', {
-        Parameters: par
-    }, addHeaders({Referer: baseurl + 'qa/PersonalCabin.html', 'X-Requested-With': 'XMLHttpRequest'}));
+	html = AnyBalance.requestPost(
+        baseurl + 'asp/srvproxy.aspx',
+        {Parameters: par},
+        AB.addHeaders({
+            Referer: baseurl + 'qa/PersonalCabin.html',
+            'X-Requested-With': 'XMLHttpRequest'
+        })
+    );
 	
-    var json = getJson(html);
+    var json = AB.getJson(html);
     
 	if (json.LoginError) {
-		var error = getParam(html, null, null, json.LoginError, replaceTagsAndSpaces, html_entity_decode);
-		if (error)
-			throw new AnyBalance.Error(error, null, /Ошибка авторизации/i.test(error));
+		var error = AB.getParam(html, null, null, json.LoginError, AB.replaceTagsAndSpaces);
+		if (error) {
+            throw new AnyBalance.Error(error, null, /Ошибка авторизации/i.test(error));
+        }
 		
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
@@ -58,10 +58,10 @@ function main() {
 	
 	var result = {success: true};
 
-    if(json.Credentials && json.Credentials.balanses) {
+    if (json.Credentials && json.Credentials.balanses) {
 
         var accounts = json.Credentials.balanses;
-        for(var i = 0; i < accounts.length; i++) {
+        for (var i = 0; i < accounts.length; i++) {
             var counter_name;
             if(/электроэнергия/i.test(accounts[i].ServiceName))
                 counter_name = 'balance';
@@ -73,37 +73,44 @@ function main() {
             if(!counter_name)
                 AnyBalance.trace("Неизвестная опция: "+ accounts[i].ServiceName);
             else
-                getParam(accounts[i].Balans, result, counter_name);
+                AB.getParam(accounts[i].Balans, result, counter_name, null, null, AB.parseBalance);
         }
     }
-    else AnyBalance.trace("Не удалось найти балансы по услугам.");
-	//getParam(json.Credentials.balanses[0].Balans, result, 'balance', null, null, parseBalance);
+    else {
+        AnyBalance.trace("Не удалось найти балансы по услугам.");
+    }
     
-    var today = new Date();
-    to_month = today.getMonth() + 1;
-    to_date = today.getDate() + '.' + to_month + '.' + today.getFullYear();
-    from_date = to_month + '.' + today.getFullYear();
+    var today = new Date(),
+        to_month = today.getMonth() + 1,
+        to_date = today.getDate() + '.' + to_month + '.' + today.getFullYear(),
+        from_date = to_month + '.' + today.getFullYear();
+
     AnyBalance.trace(from_date);
     AnyBalance.trace(to_date);
     
     var date_par = "EnergoSales@GetPLCreditsMonthSummary('00000000-0000-0000-0000-000000000000'#guid,'01." + from_date + "'#string,'" + to_date + "'#string'true'#bool)";
     
-	html = AnyBalance.requestPost(baseurl + 'asp/srvproxy.aspx', {
-        Parameters: date_par
-    }, addHeaders({Referer: baseurl + 'qa/PersonalCabin.html', 'X-Requested-With': 'XMLHttpRequest'}));  
+	html = AnyBalance.requestPost(
+        baseurl + 'asp/srvproxy.aspx',
+        { Parameters: date_par },
+        AB.addHeaders({
+            Referer: baseurl + 'qa/PersonalCabin.html',
+            'X-Requested-With': 'XMLHttpRequest'
+        })
+    );
     
-    var json = getJson(html);
+    json = AB.getJson(html);
 
-    if(!json.Credits || !json.Credits[0]){
+    if (!json.Credits || !json.Credits[0]) {
     	AnyBalance.trace(html);
     	throw new AnyBalance.Error('Информация временно недоступна. Попробуйте позднее');
     }
-    
-    getParam(json.Credits[0].Balance, result, 'to_pay', null, null, parseBalance);
-    getParam(json.Credits[0].Month, result, 'month', null, null, null);
-    getParam(json.Credits[0].Year, result, 'year', null, null, null);
-    getParam(json.Credits[0].Pay, result, 'credited', null, null, parseBalance);
-    getParam(json.Credits[0].Purchase, result, 'paid', null, null, parseBalance);
+
+    AB.getParam(json.Credits[0].Balance, result, 'to_pay', null, null, AB.parseBalance);
+    AB.getParam(json.Credits[0].Month, result, 'month');
+    AB.getParam(json.Credits[0].Year, result, 'year');
+    AB.getParam(json.Credits[0].Pay, result, 'credited', null, null, AB.parseBalance);
+    AB.getParam(json.Credits[0].Purchase, result, 'paid', null, null, AB.parseBalance);
 	
 	AnyBalance.setResult(result);
 }

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+	<EditTextPreference
+		title="Домен"
+		key="domain"
+		summary="||{@s}"
+		obligatory="true"
+		dialogTitle="Домен"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		dialogMessage="Укажите ваш домен. Например: yaca.yandex.ru"
+		inputType="textUri">
+	</EditTextPreference>
+</PreferenceScreen>

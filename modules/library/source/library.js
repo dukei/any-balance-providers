@@ -786,6 +786,10 @@ var AB = (function (global_scope) {
             result.__tariff = null;
     }
 
+    function regexEscape(str){
+    	return str.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
+    }
+
 	/**
 	 * Реализация браузерного метода document.getElementById() без использования DOM
 	 * 
@@ -797,6 +801,7 @@ var AB = (function (global_scope) {
 	 * @returns {undefined|string}
 	 */
 	function _getElementBy(type, html, id, replaces, parseFunc) {
+	/*
 		var searchRe = XRegExp(`
 			<[a-zA-Z]
 			(?=(#1
@@ -825,6 +830,10 @@ var AB = (function (global_scope) {
 				|	' [^']* '
 			)*
 			>`.replace('{attr}', type === 'id' ? '[iI][dD]' : '[cC][lL][aA][sS][sS]'), 'xsg');
+	*/
+		var searchRe = type === 'id' ? 
+			/<[a-zA-Z](?=((?:(?:(?!\b[iI][dD]\b)[^>"'])+|"[^"]*"|'[^']*')*))\1(?=([-a-zA-Z]+\s*=\s*([^>"'\s]+|"[^"]*"|'[^']*')))\2(?:(?=([^>"']+))\4|"[^"]*"|'[^']*')*>/g :
+			/<[a-zA-Z](?=((?:(?:(?!\b[cC][lL][aA][sS][sS]\b)[^>"'])+|"[^"]*"|'[^']*')*))\1(?=([-a-zA-Z]+\s*=\s*([^>"'\s]+|"[^"]*"|'[^']*')))\2(?:(?=([^>"']+))\4|"[^"]*"|'[^']*')*>/g;
 		var m, val, found = false;
 		
 		while (m = searchRe.exec(html)) {
@@ -832,7 +841,7 @@ var AB = (function (global_scope) {
 			val = m[3].htmlEntityDecode();
 			if (
 					(type === 'id' && val === id) || 
-					(type === 'class' && RegExp('\\b' + XRegExp.escape(id) + '\\b').test(val) )
+					(type === 'class' && RegExp('\\b' + regexEscape(id) + '\\b').test(val) )
 				) {
 				found = true;
 				break;
@@ -907,23 +916,37 @@ var AB = (function (global_scope) {
      Возвращается объект (или массив) или undefined, если объект не найден.
      */
     function getJsonObject(html, reStartSearch) {
-        var NOT_SPECIAL_SYMBOL           = /(?= ([^\{\}\[\]"'`\/]+) )\1/,    //any symbol with exceptions
-            STRING_IN_DOUBLE_QUOTES      = /"                (?= ((?:[^"\\\r\n]+|\\.)*) )\1  "/,
-            STRING_IN_SINGLE_QUOTES      = /'                (?= ((?:[^'\\\r\n]+|\\.)*) )\1  '/,
-            STRING_IN_BACKTICK_QUOTES    = /`                (?= ((?:[^`\\]+    |\\.)*) )\1  `/,        //ECMA6+
-            REGEXP_INLINE                = /\/   (?![\*\/])  (?= ((?:[^\/\\\r\n]+|\\[^\r\n])+) )\1   \/[gimy]{0,4}/,
-            COMMENT_MULTILINE            = /\/\*             .*?                             \*\//,
-            COMMENT_SINGLELINE           = /\/\/             (?= ([^\r\n]*) )\1              /,
-            AFTER_BRACE_PART = XRegExp.union([
-                NOT_SPECIAL_SYMBOL,
-                STRING_IN_DOUBLE_QUOTES,
-                STRING_IN_SINGLE_QUOTES,
-                STRING_IN_BACKTICK_QUOTES,
-                REGEXP_INLINE,
-                COMMENT_MULTILINE,
-                COMMENT_SINGLELINE
-            ], 'xs');
-
+		if (false) { //development mode
+			//http://hjson.org/
+			//https://regex101.com/#javascript
+			//http://blog.stevenlevithan.com/archives/match-innermost-html-element
+			//We use atomic group (trick with lookahead, capturing group and link after) to speed improve, significantly reduce backtracking!
+			var OPEN						= /([\{\[])/,	//group $1
+				CLOSE						= /([\}\]])/,	//group $2
+				ANY_WITH_EXCEPTIONS			= /(?= ([^\{\}\[\]"'`\/]+) )\1/,
+				STRING_IN_DOUBLE_QUOTES		= /"				(?= ((?:[^"\\\r\n]+|\\.)*) )\1	"/,
+				STRING_IN_SINGLE_QUOTES		= /'				(?= ((?:[^'\\\r\n]+|\\.)*) )\1	'/,
+				STRING_IN_BACKTICK_QUOTES	= /`				(?= ((?:[^`\\]+    |\\.)*) )\1	`/,		//ECMA6+
+				REGEXP_INLINE				= /\/	(?![\*\/])	(?= ((?:[^\/\\\r\n]+|\\[^\r\n])+) )\1	\/[gimy]{0,4}/,
+				COMMENT_MULTILINE			= /\/\*				.*?								\*\//,
+				COMMENT_SINGLELINE			= /\/\/				(?= ([^\r\n]*) )\1				/,
+				ALL = XRegExp.union([
+					OPEN,
+					CLOSE,
+					ANY_WITH_EXCEPTIONS,
+					STRING_IN_DOUBLE_QUOTES,
+					STRING_IN_SINGLE_QUOTES,
+					STRING_IN_BACKTICK_QUOTES,
+					REGEXP_INLINE,
+					COMMENT_MULTILINE,
+					COMMENT_SINGLELINE
+				], 'xs');
+			ALL = RegExp(ALL.source.replace(/\(\?:\)/g, ''), '');
+			console.log(ALL);
+		}
+		else { //production mode
+			var ALL = /([\{\[])|([\}\]])|(?=([^\{\}\[\]"'`\/]+))\3|"(?=((?:[^"\\\r\n]+|\\[\s\S])*))\4"|'(?=((?:[^'\\\r\n]+|\\[\s\S])*))\5'|`(?=((?:[^`\\]+|\\[\s\S])*))\6`|\/(?![\*\/])(?=((?:[^\/\\\r\n]+|\\[^\r\n])+))\7\/[gimy]{0,4}|\/\*[\s\S]*?\*\/|\/\/(?=([^\r\n]*))\8/;
+		}
 
         var startIndex = 0;
         if (reStartSearch) {
@@ -945,7 +968,7 @@ var AB = (function (global_scope) {
         //var json = getRecursiveMatch(html, reStart, /[\}\]]/, null, getJsonEval);
 		
 		html = html.substring(startIndex).trim();
-		var json = html.matchRecursive(XRegExp.union([/([\{\[])/, /([\}\]])/, AFTER_BRACE_PART]), {open: 1, close: 2, parts: false}); 
+		var json = html.matchRecursive(ALL, {open: 1, close: 2, parts: false}); 
 		json = getJsonEval(json);
 
 		//if(reStartSearch)

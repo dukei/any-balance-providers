@@ -9,6 +9,7 @@
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<js>library.min.js</js>
+		<!--js>xregexp.js</js-->
 		<history>history.xml</history>
 	</files>
 	<keywords></keywords>

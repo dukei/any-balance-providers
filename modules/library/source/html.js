@@ -348,13 +348,14 @@
 		diams   : 0x2666  //"\xe2\x99\xa6" [♦] black diamond suit
 	};
 	
-	var HTML_ENTITY_RE = new XRegExp(
+	var HTML_ENTITY_RE = /*new XRegExp(
 		'&(	[a-zA-Z][a-zA-Z\\d]+		\n\
 		|	\\# (?:	\\d{1,5}			\n\
 				|	x[\\da-fA-F]{2,4}	\n\
 				)						\n\
 		)							#1  \n\
 		;', 'gx'),
+		*/ /&([a-zA-Z][a-zA-Z\d]+|\#(?:\d{1,5}|x[\da-fA-F]{2,4}));/g,
     entityReplace = function (str, key) {
 		if (key[0] !== '#') {
 			if (HTML_ENTITY_TABLE.hasOwnProperty(key))
@@ -390,8 +391,8 @@
 	].join('|');
 
 	//fast short implementation
-	var HTML_ATTR_RE = /(?:[^>"']+|"[^"]*"|'[^']*')*/.source; //Регулярное выражение для пропуска атрибутов
-	var HTML_TAG_RE = `(?:
+	//var HTML_ATTR_RE = /(?:[^>"']+|"[^"]*"|'[^']*')*/.source; //Регулярное выражение для пропуска атрибутов
+	/*var HTML_TAG_RE = `(?:
 			#pair tags with content:
 			<	(?=[a-z])	#speed improve optimization
 				(` + HTML_PAIR_TAGS_WITH_CONTENT + `)\\b	#1`
@@ -417,12 +418,13 @@
 		|	<\\?  .*?  \\?>					#instructions part1 (PHP, Perl, ASP)
 		|	<%	  .*?    %>					#instructions part2 (PHP, Perl, ASP)
 		)`;
-
+	*/
 
 	let htmlBlockTagsRe = new RegExp('^<('+ HTML_BLOCK_TAGS + ')\\b', 'i'),
 		replaceTagsAndSpaces = String.REPLACE_TAGS_AND_SPACES = [
 		
-		new XRegExp(HTML_TAG_RE, 'xsig'), 
+		/*new XRegExp(HTML_TAG_RE, 'xsig')*/
+		/(?:<(?=[a-z])(script|style|map|iframe|frameset|object|applet|comment|button|textarea|select)\b[\s\S]*?<(?!script\b)(?=(\/?))\2\1(?:[^>"']+|"[^"]*"|'[^']*')*>|<(?=[a-z])(?!(?:script|style|map|iframe|frameset|object|applet|comment|button|textarea|select)\b)(?:[^>"']+|"[^"]*"|'[^']*')*>|<\/[a-z](?:[^>"']+|"[^"]*"|'[^']*')*>|<![a-z](?:[^>"']+|"[^"]*"|'[^']*')*>|<!\[CDATA\[[\s\S]*?\]\]>|<!--[\s\S]*?-->|<\?[\s\S]*?\?>|<%[\s\S]*?%>)/gi, 
 		function (str, entry) {
 			if (str.search(htmlBlockTagsRe) > -1) return '\n';
 			return '';

@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-service-yandex-tic</id>
+	<api flags="no_browser"/>
+	<name>Яндекс ТИЦ</name>
+	<description html="true"><![CDATA[
+	<p>Следите за популярностью (авторитетностью) Вашего сайта и сайтов конкурентов у пользователей.</p>
+	<p>Смотрите на динамику изменений индекса цитирования (ТИЦ) Яндекса домена на экране Вашего смартфона/планшета.</p>
+	<p>Информация о ТИЦ берётся с сайта <a href="https://yaca.yandex.ru/">"Яндекс.Каталог"</a>.</p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="index" name="Индекс цитирования"/>
+	</counters>
+	<keywords></keywords>
+	<type>service</type>
+	<country>ru</country>
+</provider>

@@ -1,13 +1,13 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="6">ab-internet-2kom</id>
+	<id version="7">ab-internet-2kom</id>
 	<name>2КОМ</name>
 	<api flags="no_browser"/>
 	<description html="true"><![CDATA[
 	<p>Получает баланс и информацию о тарифном плане для московского интернет-провайдера 2КОМ.</p>
 	<p>Информация берется из личного кабинета https://portal.2kom.ru/lk/</p>
 	]]></description>
-	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
@@ -25,6 +25,8 @@
 		<counter id="userName" name="ФИО" type="text"/>
 		<counter id="period" name="Дата отключения" type="time" format="dd/MM/yyyy"/>
 		<counter id="daysleft" name="Дней до отключения" units=" д"/>
+		<counter id="ip" name="IP адрес" type="text"/>
+		<counter id="speed" name="Текущая скорость" type="text"/>
 	</counters>
 	<keywords>интернет, 2kom, 2com</keywords>
 	<type>internet</type>

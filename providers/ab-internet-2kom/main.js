@@ -55,11 +55,13 @@ function main() {
 	
 	getParam(html, result, 'balance', />\s*Баланс[\s\S]*?>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'bonus', /Бонус\s*<strong[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'userName', /<label>Абонент\s*(.*)/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'licschet', /<label>№ договора\s*(.*)/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, '__tariff', /<label>Тариф\s*(.*)/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'status', /<label>Состояние\s*(.*)/i, replaceTagsAndSpaces, html_entity_decode);
-	
+	getParam(html, result, 'userName', /<label>Абонент\s*(.*)/i, replaceTagsAndSpaces);
+	getParam(html, result, 'licschet', /<label>№ договора\s*(.*)/i, replaceTagsAndSpaces);
+	getParam(html, result, '__tariff', /<label>Тариф\s*(.*)/i, replaceTagsAndSpaces);
+	getParam(html, result, 'status', /<label>Состояние\s*(.*)/i, replaceTagsAndSpaces);
+	getParam(html, result, 'ip', /Доступ в Интернет(?:[^>]*>)([\s\S]*?)<\//i, replaceTagsAndSpaces);
+	getParam(html, result, 'speed', /Текущая скорость\s*([^\]]*)/i, replaceTagsAndSpaces);
+
 	if (AnyBalance.isAvailable('trafficIn', 'trafficOut', 'period', 'daysleft')) {
 		var href = getParam(html, null, null, /<a[^>]*href="(lk\/stat.php[^"]*)/i);
 		if (href) {

@@ -13,8 +13,8 @@ var g_headers = {
 function main(){
 	var prefs = AnyBalance.getPreferences();
 
-	checkEmpty(prefs.email, 'Введите логин!');
-	checkEmpty(prefs.password, 'Введите пароль!');
+	AB.checkEmpty(prefs.email, 'Введите логин!');
+    AB.checkEmpty(prefs.password, 'Введите пароль!');
 
 	AnyBalance.setDefaultCharset('utf-8');
 
@@ -22,7 +22,7 @@ function main(){
 
 	var html = AnyBalance.requestGet(baseurl + '/login', g_headers);
 
-	var params = createFormParams(html, function(params, str, name, value) {
+	var params = AB.createFormParams(html, function(params, str, name, value) {
 		if (name == 'user[email]') 
 			return prefs.email;
 		else if (name == 'user[password]')
@@ -33,10 +33,11 @@ function main(){
 
 	html = AnyBalance.requestPost(baseurl + '/sessions', params, g_headers);
 
-	if (!/logout/i.test(html)) {
-		var error = getParam(html, null, null, /<ul[^>]+class=['"]notice errors['"][^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
-		if (error)
-			throw new AnyBalance.Error(error, null, /Invalid email or password/i.test(error));
+	if (!/currentUser[^{]+(?:{[^}]+})/i.test(html)) {
+		var error = AB.getParam(html, null, null, /<ul[^>]+class=['"]notice errors['"][^>]*>([\s\S]*?)<\/ul>/i, AB.replaceTagsAndSpaces);
+		if (error) {
+            throw new AnyBalance.Error(error, null, /Invalid email or password/i.test(error));
+        }
 		
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
@@ -58,8 +59,8 @@ function main(){
 
 	var result = {success: true};
 
-	getParam(html, result, 'balance', /Your Credit([\s\S]*?)<\//i, null, parseBalance);
-	getParam(html, result, 'usage', /Usage([\s\S]*?)<\//i, null, parseBalance);
+    AB.getParam(html, result, 'balance', /Your Credit([\s\S]*?)<\//i, null, AB.parseBalance);
+    AB.getParam(html, result, 'usage', /Usage([\s\S]*?)<\//i, null, AB.parseBalance);
 	
 	AnyBalance.setResult(result);
 }

@@ -25,7 +25,7 @@ function main() {
     throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
   }
 
-  var captchaKey = captchaAuth(baseurl, captchaUrl);
+  var captchaKey;
 
   html = AnyBalance.requestPost(baseurl + "auth/login/", {
     redirect: '',
@@ -39,8 +39,24 @@ function main() {
 
   var json = getJson(html);
 
+  if (!json.success && json.needCaptcha){
+  	AnyBalance.trace('Потребовалась капча...');
+    captchaKey = captchaAuth(baseurl, captchaUrl);
 
-  if (json.success !== true) {
+    html = AnyBalance.requestPost(baseurl + "auth/login/", {
+      redirect: '',
+      answer: 'json',
+      captcha: captchaKey || '',
+      email: prefs.login,
+      password: prefs.password
+    }, AB.addHeaders({
+      Referer: baseurl
+    }));
+    
+    json = getJson(html);
+  }
+
+  if (!json.success) {
     var error = json.error;
 
     if (error !== '') {

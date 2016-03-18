@@ -561,3 +561,28 @@ function processCardLast10Transactions(result) {
 	result.transactions10 = sortObject(result.transactions10, 'time');
 }
 
+function processMetalAccountTransactions(html, result){
+    html = AnyBalance.requestGet(nodeUrl + '/PhizIC/private/async/extract.do?type=ima&id=' + result.__id);
+
+    var trs = getElements(html, /<tr[^>]+ListLine[^>]*>/ig);
+    if(!trs.length){
+        AnyBalance.trace('Не удалось найти последние транзакции по мет. счету');
+        AnyBalance.trace(html);
+        return;
+    }
+
+    result.transactions = [];
+
+    for (var i = 0; i < trs.length; i++) {
+        var tr = trs[i];
+        var t = {};
+
+        getParam(tr, t, 'accounts_met.transactions.time', /([^]*?<\/td>){1}/i, replaceTagsAndSpaces, parseDateSilent);
+        getParam(tr, t, 'accounts_met.transactions.descr', /([^]*?<\/td>){2}/i, replaceTagsAndSpaces);
+        getParam(tr, t, 'accounts_met.transactions.weight', /([^]*?<\/td>){3}/i, replaceTagsAndSpaces, parseBalanceSilent);
+        getParam(tr, t, 'accounts_met.transactions.sum', /([^]*?<\/td>){4}/i, [/<span[^>]+minus-amount[^>]*>/i, '-', replaceTagsAndSpaces], parseBalanceSilent);
+
+        result.transactions.push(t);
+    }
+}
+

@@ -26,7 +26,7 @@ function main() {
 
 	html = AnyBalance.requestGet(baseurl + '/cy/ch/' + prefs.domain, g_headers);
 
-	var result = {succes: true, __tariff: prefs.domain};
+	var result = {success: true, __tariff: prefs.domain};
 
 	if(!/<img[^>]+arr-hilite[^>]*>/i.test(html)) {
 		var notFound = getParam(html, null, null, /<p[^>]+error-cy[^>]*>([\s\S]*?)<\/p>/, replaceTagsAndSpaces);

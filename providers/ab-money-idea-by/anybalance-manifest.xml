@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-money-idea-by</id>
+	<api flags="no_browser"/>
+	<name>Идея Банк (Беларусь)</name>
+	<description html="true"><![CDATA[
+	<p>Получает текущий остаток и другие параметры карт, счетов и депозитов Идея Банков (Беларусь) https://ideabank.by/, используя интернет-банк (https://ideabank24.by/)</p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+		<module id="nadapter"/>
+		<module id="extract/abe-money-idea-by"/>
+	</depends>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Остаток" units=" {@currency}"/>
+		<counter id="profit" name="Доходность" units=" {@currency}"/>
+		<counter id="pct" name="Процентная ставка" units="%"/>
+		<counter id="currency" name="Валюта" type="text"/>
+		<counter id="num" name="Номер карты/счёта/депозита" type="text"/>
+		<counter id="duration" name="Продолжительность" type="text"/>
+		<counter id="name" name="Название карты/счёта/депозита" type="text"/>
+		<counter id="type" name="Тип карты" type="text"/>
+		<counter id="status" name="Статус" type="text"/>
+		<counter id="till" name="Срок действия" type="time" format="dd/MM/yyyy"/>
+		<counter id="date_start" name="Начало действия" type="time" format="dd/MM/yyyy"/>
+		<counter id="fio" name="ФИО" type="text"/>
+	</counters>
+	<keywords>idea bank, ideabank</keywords>
+	<type>money, bank</type>
+	<country>by</country>
+</provider>

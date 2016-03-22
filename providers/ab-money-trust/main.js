@@ -5,8 +5,7 @@
 
 var g_countersTable = {
 	common: {
-		
-		
+		"fioMain": "profile.name"
 	}, 
 	card: {
 		"__tariff": "cards.cardnum",
@@ -54,9 +53,13 @@ function main(){
     adapter.processAccounts = adapter.envelope(processAccounts);
     adapter.processCards = adapter.envelope(processCards);
     adapter.processDeposits = adapter.envelope(processDeposits);
+    adapter.processCredits = adapter.envelope(processCredits);
+	adapter.processProfile = adapter.envelope(processProfile);
 	
 	var result = {success: true};
-	
+
+	adapter.processProfile(json, result);
+
 	if(prefs.type == 'card') {
 		adapter.processCards(json, result);
 		
@@ -72,7 +75,13 @@ function main(){
 
 		if(!adapter.wasProcessed('deposits'))
 			throw new AnyBalance.Error(prefs.cardnum ? 'Не найден депозит с последними цифрами ' + prefs.cardnum : 'У вас нет ни одного депозита!');
+	} else if(prefs.type == 'crd') {
+		adapter.processCredits(html, result);
+
+		if(!adapter.wasProcessed('credits'))
+			throw new AnyBalance.Error(prefs.num ? 'Не найден кредит с последними цифрами ' + prefs.num : 'У вас нет ни одного кредита!');
 	}
+
 	result = adapter.convert(result);
 	
 	AnyBalance.setResult(result);
@@ -102,6 +111,16 @@ function shouldProcess(counter, info){
 		    if(!prefs.cardnum)
 		    	return true;
 			
+			if(endsWith(info.__id, prefs.cardnum))
+				return true;
+		}
+		case 'credits':
+		{
+			if(prefs.type != 'crd')
+				return false;
+			if(!prefs.cardnum)
+				return true;
+
 			if(endsWith(info.__id, prefs.cardnum))
 				return true;
 		}

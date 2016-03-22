@@ -12,6 +12,8 @@ var g_headers = {
 	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
 };
 
+var g_tokenPrefix;
+
 function main() {
 	var prefs = AnyBalance.getPreferences();
 	var baseurl = 'https://lk.tele2.ru/';
@@ -71,7 +73,8 @@ function main() {
 		throw new AnyBalance.Error(error, null, /логин|пароль/i.test(error));
 	}
 
-	html = AnyBalance.requestGet(baseurl + 't2bsc/start', g_headers);
+	var htmlMain = AnyBalance.requestGet(baseurl + 't2bsc/start', g_headers);
+	html = htmlMain;
 
 	if (!/logout|Выход/i.test(html)) {
 		AnyBalance.trace(html);
@@ -79,6 +82,9 @@ function main() {
 	}
 
 	AnyBalance.trace('Успешная авторизация');
+
+	g_tokenPrefix = getParam(html, null, null, /<div[^>]+id="([^"]*)_"[^>]*class="z-temp"/i, replaceHtmlEntities);
+	AnyBalance.trace('Global token prefix: ' + g_tokenPrefix);
 
 	var
 		json,
@@ -92,11 +98,9 @@ function main() {
 	AB.getParam(html, result, 'contractEmail', /лицо[\s\S]*?Email[\s\S]*?value:['"]([^'"]*)['"]/i, AB.replaceTagsAndSpaces);
 	AB.getParam(html, result, 'contractPhone', /Контактный\s+телефон[\s\S]*?value:['"]([^'"]*)['"]/i, AB.replaceTagsAndSpaces);
 
-
 	if (AnyBalance.isAvailable('balance', 'creditLimit')) {
 		try {
-
-			html = AnyBalance.requestGet(baseurl + 't2bsc/base_bsc.zul?page=start', g_headers);
+			html = htmlMain;
 
 			var
 				balancePageToken = AB.getParam(html, null, null, /dt:['"]([^'"]*)['"]/i, AB.replaceTagsAndSpaces),
@@ -136,13 +140,15 @@ function main() {
 			'personalFunds', 'personalBalance', 'personalPhone', 'personalStatus', 'personalName', 'personalTimestamp', 'personalType')) {
 		try {
 
-			html = AnyBalance.requestGet(baseurl + 't2bsc/base_bsc.zul?page=start', g_headers);
+			html = htmlMain;
 
 			var
-				subscribersPageToken = AB.getParam(html, null, null, /dt:['"]([^'"]*)['"]/i, AB.replaceTagsAndSpaces),
-				subscribersTabToken = AB.getParam(html, null, null, /['"]([^']*)['"],{id:['"]subscribersTab/i, AB.replaceTagsAndSpaces);
+				subscribersPageToken = AB.getParam(html, null, null, /dt:['"]([^'"]*)['"]/i),
+				subscribersTabToken = AB.getParam(html, null, null, /['"]([^']*)['"],{id:['"]subscribersTab/i, AB.replaceTagsAndSpaces),
+				editToken = AB.getParam(html, null, null, /'zul.wgt.Label'[^\]]*value:'Номер'[\s\S]*?'zul.inp.Textbox',\s*'([^']*)/i), 
+				buttonSearchToken = AB.getParam(html, null, null, /['"]([^'"]*)['"],{id:['"]subscribersListSearchButton/i);
 
-			AnyBalance.trace(subscribersPageToken + ' | ' + subscribersTabToken);
+			AnyBalance.trace(subscribersPageToken + ' | ' + subscribersTabToken + ' | ' + editToken + ' | ' + buttonSearchToken);
 
 			data_0 = {
 				'items': [subscribersTabToken],
@@ -160,11 +166,34 @@ function main() {
 				Referer: baseurl + 't2bsc/base_bsc.zul?page=start'
 			}));
 
+			setPersonalBalance(html, result);
+
+			if(prefs.phone){
+				AnyBalance.trace('Пробуем получить информацию по номеру ' + prefs.phone);
+
+				html = AnyBalance.requestPost(baseurl + 't2bsc/zkau', {
+					dtid: subscribersPageToken,
+					cmd_0: 'onChange',
+					uuid_0:	editToken,
+                    data_0:	JSON.stringify({"value":prefs.phone,"start":prefs.phone.length}),
+					cmd_1:	'onClick',
+					uuid_1:	buttonSearchToken,
+					data_1:	JSON.stringify({"pageX":1358,"pageY":246,"which":1,"x":41.5,"y":22})
+				}, AB.addHeaders({
+					Referer: baseurl + 't2bsc/base_bsc.zul?page=start'
+				}));
+
+				var size = getParam(html, null, null, /id:'subscribersListBox'[^}]*_totalSize:(\d+)/i, null, parseBalance);
+				AnyBalance.trace('Найдено ' + size + ' совпадений');
+				if(size < 1)
+					throw new AnyBalance.Error('Абонент с номером ' + prefs.phone + ' не найден');
+			}
+
 			setSubscribersList(html, result);
 			setPersonalBalance(html, result);
 
 		} catch (e) {
-			AnyBalance.trace('Не удалось получить данные по абонентам ' + e);
+			AnyBalance.trace('Не удалось получить данные по абонентам ' + e.message);
 		}
 
 	}
@@ -225,20 +254,19 @@ function setPersonalBalance(html, result) {
 				type: ['xh', '[\'"][\\s\\S]*?value[\'"],[\'"]([^\'"]*)[\'"]'],
 				funds: ['bj', '[\'"][\\s\\S]*?value[\'"],[\'"]([^\'"]*)[\'"]'],
 				balance: ['ej', '[\'"][\\s\\S]*?value[\'"],[\'"]([^\'"]*)[\'"]']
-			},
-			elements = AB.sumParam(html, null, null, /['"]([^'"]*)x3['"]/gi);
+			};
 
-		AB.getParam(html, result, 'personalFunds', setRegular(elements[0], data.funds[0], [data.prefix, data.funds[1]]), AB.replaceTagsAndSpaces,
+		AB.getParam(html, result, 'personalFunds', setRegular(g_tokenPrefix, data.funds[0], [data.prefix, data.funds[1]]), AB.replaceTagsAndSpaces,
 			AB.parseBalance);
-		AB.getParam(html, result, 'personalBalance', setRegular(elements[0], data.balance[0], [data.prefix, data.balance[1]]),
+		AB.getParam(html, result, 'personalBalance', setRegular(g_tokenPrefix, data.balance[0], [data.prefix, data.balance[1]]),
 			AB.replaceTagsAndSpaces, AB.parseBalance);
-		AB.getParam(html, result, '__tariff', setRegular(elements[0], data.tariff[0], [data.prefix, data.tariff[1]]), AB.replaceTagsAndSpaces);
-		AB.getParam(html, result, 'personalPhone', setRegular(elements[0], data.phone[0], [data.prefix, data.phone[1]]), AB.replaceTagsAndSpaces);
-		AB.getParam(html, result, 'personalStatus', setRegular(elements[0], data.status[0], [data.prefix, data.status[1]]),
+		AB.getParam(html, result, '__tariff', setRegular(g_tokenPrefix, data.tariff[0], [data.prefix, data.tariff[1]]), AB.replaceTagsAndSpaces);
+		AB.getParam(html, result, 'personalPhone', setRegular(g_tokenPrefix, data.phone[0], [data.prefix, data.phone[1]]), AB.replaceTagsAndSpaces);
+		AB.getParam(html, result, 'personalStatus', setRegular(g_tokenPrefix, data.status[0], [data.prefix, data.status[1]]),
 			AB.replaceTagsAndSpaces);
-		AB.getParam(html, result, 'personalName', setRegular(elements[0], data.name[0], [data.prefix, data.name[1]]), AB.replaceTagsAndSpaces);
-		AB.getParam(html, result, 'personalTimestamp', setRegular(elements[0], data.timestamp[0], [data.prefix, data.timestamp[1]]), AB.replaceTagsAndSpaces);
-		AB.getParam(html, result, 'personalType', setRegular(elements[0], data.type[0], [data.prefix, data.type[1]]), AB.replaceTagsAndSpaces);
+		AB.getParam(html, result, 'personalName', setRegular(g_tokenPrefix, data.name[0], [data.prefix, data.name[1]]), AB.replaceTagsAndSpaces);
+		AB.getParam(html, result, 'personalTimestamp', setRegular(g_tokenPrefix, data.timestamp[0], [data.prefix, data.timestamp[1]]), AB.replaceTagsAndSpaces, parseDate);
+		AB.getParam(html, result, 'personalType', setRegular(g_tokenPrefix, data.type[0], [data.prefix, data.type[1]]), AB.replaceTagsAndSpaces);
 	} catch (e) {
 		AnyBalance.trace('Не удалось получить персональные данные ' + e);
 	}

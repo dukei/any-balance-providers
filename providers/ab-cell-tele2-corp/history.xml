@@ -1,5 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="7" date="2016-03-22">
+	Получение информации по определенному номеру
+	</change>
   <change version="6" date="2016-02-16">
     - Провайдер полностью переработан для личного кабинета  lk.tele2.ru
   </change>

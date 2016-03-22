@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="6">ab-cell-tele2-corp</id>
+	<id version="7">ab-cell-tele2-corp</id>
 	<api flags="no_browser"/>
 	<name>Tele2 Business</name>
 	<description html="true"><![CDATA[
@@ -27,7 +27,7 @@
 		<!-- Данные абонента -->
 		<counter id="personalStatus" name="Статус абонента" type="text"/>
 		<counter id="personalPhone" name="Номер телефона" type="text"/>
-		<counter id="personalTimestamp" name="Дата активации" type="text"/>
+		<counter id="personalTimestamp" name="Дата активации" type="time" format="dd/MM/yyyy"/>
 		<counter id="personalType" name="Вид абонента" type="text"/>
 	  <!-- Баланс -->
 	  <counter id="balance" name="Остаток средств (контракт)" units=" {@currency}"/>

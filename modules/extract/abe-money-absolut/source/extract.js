@@ -237,3 +237,62 @@ function processAccount(html, result) {
 	if(typeof processAccountTransactions != 'undefined')
 		processAccountTransactions(html, result);
 }
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Кредиты
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+function processCredits(html, result) {
+	if(!isAvailable('credits'))
+		return;
+	
+	var html = AnyBalance.requestGet(baseurl + 'main?main=priv', g_headers);
+	html = requestGetWicketAction(html, /<div[^>]+class="inner"[^>]+id="(id[^"]+)"(?:[^>]*>){3,7}\s*Кредиты/i);
+	
+	var credits = getElements(html, /<div[^>]+class=['"]account inner[^>]*>/ig);
+	
+	AnyBalance.trace('Найдено кредитов: ' + credits.length);
+	result.credits = [];
+	
+	for(var i=0; i < credits.length; ++i) {
+		var title = getParam(credits[i], null, null, /<span[^>]*class=['"]index['"](?:[^>]*>){2}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+		// Ну нет тут возможности определить id 
+		var _id = title;
+		
+		var c = {__id: _id, __name: title};
+		
+		if(__shouldProcess('credits', c)) {
+			processCredit(credits[i], c, html);
+		}
+		
+		result.credits.push(c);
+	}
+}
+
+function processCredit(credit, result, html) {
+	getParam(credit, result, 'credits.balance', /class="sum"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);	
+	getParam(credit, result, ['credits.currency', 'credits'], /class="sum"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseCurrency);	
+	
+	getParam(credit, result, 'credits.minpay_till', /К оплате([\s\S]*?)<\//i, replaceTagsAndSpaces, parseDate);
+	getParam(credit, result, 'credits.minpay', /К оплате[\s\S]*?class="sum"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);	
+	
+	
+	// var html = requestGetWicketAction(html, /<div[^>]+class="account inner"[^>]+id="(id[^"]+)"/i);
+	
+	// getParam(html, result, 'cards.limit', /Кредитный лимит((?:[\s\S]*?<\/div[^>]*>){2})/i, replaceTagsAndSpaces, parseBalance);
+	// getParam(html, result, 'cards.debt', /Общая задолженность((?:[\s\S]*?<\/div[^>]*>){2})/i, replaceTagsAndSpaces, parseBalance);
+	// getParam(html, result, 'cards.ovedraft', /Текущий овердрафт((?:[\s\S]*?<\/div[^>]*>){2})/i, replaceTagsAndSpaces, parseBalance);
+	
+	// getParam(html, result, 'cards.ovedraft_pcts', /Сумма начисленных процентов по овердрафту((?:[\s\S]*?<\/div[^>]*>){2})/i, replaceTagsAndSpaces, parseBalance);
+	// getParam(html, result, 'cards.ovedraft_overdue', /Просроченный овердрафт((?:[\s\S]*?<\/div[^>]*>){2})/i, replaceTagsAndSpaces, parseBalance);
+	// getParam(html, result, 'cards.overlimit', /Сверхлимитная задолженность((?:[\s\S]*?<\/div[^>]*>){2})/i, replaceTagsAndSpaces, parseBalance);
+	// getParam(html, result, 'cards.commissions', /Cумма комиссий((?:[\s\S]*?<\/div[^>]*>){2})/i, replaceTagsAndSpaces, parseBalance);
+	// getParam(html, result, 'cards.penalty', /Сумма штрафов((?:[\s\S]*?<\/div[^>]*>){2})/i, replaceTagsAndSpaces, parseBalance);
+	// getParam(html, result, 'cards.billing_date', /Расчетная дата((?:[\s\S]*?<\/div[^>]*>){2})/i, replaceTagsAndSpaces, parseBalance);
+	// getParam(html, result, 'cards.minpay', /Минимальный платеж((?:[\s\S]*?<\/div[^>]*>){2})/i, replaceTagsAndSpaces, parseBalance);
+	// getParam(html, result, 'cards.minpay_overdue', /в том числе просроченные минимальные платежи((?:[\s\S]*?<\/div[^>]*>){2})/i, replaceTagsAndSpaces, parseBalance);
+	// getParam(html, result, 'cards.till', /Срок действия((?:[\s\S]*?<\/div[^>]*>){2})/i, replaceTagsAndSpaces, parseDate);
+	// getParam(html, result, 'cards.holderName', /Имя владельца((?:[\s\S]*?<\/div[^>]*>){2})/i, replaceTagsAndSpaces);
+	// getParam(html, result, 'cards.status', /Статус карты((?:[\s\S]*?<\/div[^>]*>){2})/i, replaceTagsAndSpaces);
+	
+	// if(typeof processCardTransactions != 'undefined')
+		// processCardTransactions(html, result);
+}

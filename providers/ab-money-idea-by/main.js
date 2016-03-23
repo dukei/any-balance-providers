@@ -7,35 +7,35 @@ var g_countersTable = {
 		'fio': 'info.fio'
 	}, 
 	card: {
-    	"balance": "cards.balance",
-		"blocked_balance": "cards.blocked",
-		"debt": "cards.debt",
-		"oPct": "cards.overduePct",
-		"limit": "cards.limit",
-		"currency": "cards.currency",
+		"name": "cards.__name",
+		"num": "cards.num",
 		"__tariff": "cards.num",
-		"cardNumber": "cards.num",
-		"cardName": "cards.__name",
-		"accNum": "cards.accnum",
+		"balance": "cards.balance",
+		"currency": "cards.currency",
+		"type": "cards.type",
 		"status": "cards.status",
 		"till": "cards.till",
-		"date_start": "cards.date_start",
+		"date_start": "cards.date_start"
 	},
     acc: {
-		"balance": "accounts.balance",
-		"blocked_balance": "accounts.blocked",
-		"currency": "accounts.currency",
-		"accNum": "accounts.num",
-		"available": "accounts.available",
+		"name": "accounts.__name",
+		"num": "accounts.num",
 		"__tariff": "accounts.num",
+		"balance": "accounts.balance",
+		"currency": "accounts.currency",
+		"pct": "accounts.pct",
+		"date_start": "accounts.date_start",
     },
 	dep: {
-    	"balance": "deposits.balance",
-    	"currency": "deposits.currency",
-		"accNum": "deposits.accnum",
-		"status": "deposits.status",
-		"till": "deposits.till",
+    	"name": "deposits.__name",
+		"num": "deposits.num",
 		"__tariff": "deposits.num",
+		"balance": "deposits.balance",
+    	"currency": "deposits.currency",
+    	"duration": "deposits.duration",
+		"pct": "deposits.pct",
+		"profit": "deposits.profit",
+		"date_start": "deposits.date_start",
     }
 };
 
@@ -105,7 +105,7 @@ function main() {
     adapter.processAccounts = adapter.envelope(processAccounts);
     adapter.processCredits = adapter.envelope(processCredits);
     adapter.processDeposits = adapter.envelope(processDeposits);
-    adapter.processInfo = adapter.envelope(processInfo);
+	adapter.processInfo = adapter.envelope(processInfo);
 
 	var html = login(prefs);
 	

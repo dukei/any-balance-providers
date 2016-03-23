@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+    <id version="1">extract/abe-money-fortebank</id>
+	<api flags="no_browser" />
+    <name>Extract for Fotrebank</name>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<js>abe-money-fortebank.min.js</js>
+		<history>history.xml</history>
+	</files>
+	<depends>
+		<module id="login/bss"/>
+	</depends>
+	<type>money, bank</type>
+	<country>kz</country>
+</provider>

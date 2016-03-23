@@ -19,9 +19,10 @@ function shouldProcess(counter, info) {
 function main() {
 	var prefs = AnyBalance.getPreferences();
 	
-    var adapter = new NAdapter(g_countersTable, shouldProcess);
+    var adapter = new NAdapter(g_countersTable, shouldProcess, {shouldProcessMultipleCalls: true});
 	
     adapter.processProfile = adapter.envelope(processProfile);
+    adapter.processFines = adapter.envelope(processFines);
 	
 	var result = {success: true};
 	
@@ -30,12 +31,17 @@ function main() {
 	adapter.processProfile(html, result);
 	
 	// Штрафы
-	processFines(result, prefs);
+	adapter.processFines(result, prefs);
 	if(result.fines) {
 		var gibdd_info = '';
 		// Создадим сводку
 		for(var i = 0; i < result.fines.length; i++) {
 			var fine = result.fines[i];
+			if(!isset(fine['break']) || !isset(fine['ammount'])) {
+				AnyBalance.trace('Не хватает данных для формирования сводки...');
+				continue;
+			}
+			
 			gibdd_info += fine['__name'] + ' (' + fine['break'] + '): ' + fine['ammount'] + ' р - <b>Не оплачен</b><br/><br/>';
 		}
 		// Конвертер

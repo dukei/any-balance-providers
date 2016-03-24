@@ -1,11 +1,11 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-internet-sharq-uz</id>
+	<id version="2">ab-internet-sharq-uz</id>
 	<api flags="no_browser"/>
 	<name>SHARQ TELEKOM</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию для абонентов интернет провайдера SHARQ TELEKOM в Узбекистане <a href="https://st.uz/">https://st.uz/</a></p>
-	<p>Информация берется из личного кабинета <a href="https://cabinet.st.uz/">https://cabinet.st.uz/</a></p>
+	<p>Предоставляет информацию для абонентов интернет провайдера SHARQ TELEKOM в Узбекистане https://st.uz/</p>
+	<p>Информация берется из личного кабинета https://cabinet.st.uz/</p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>
@@ -22,12 +22,22 @@
 		<counter id="c_p_b_balance" name="Состояние Л/С на начало текущего отчётного периода" units=" {@currency}"/>
 		<counter id="c_balance" name="Текущее состояние лицевого счёта" units=" {@currency}"/>
 		<counter id="expense" name="Расход в текущем отчётном периоде" units=" {@currency}"/>
-		<!-- Yet Another -->
-		<counter id="traffic" name="Трафик" type="text"/>
+		<!-- Трафик -->
+		<counter id="traffic" name="Лимит трафика" units=" Mb"/>
+		<counter id="iTraffic" name="Входящий трафик" units=" Mb"/>
+		<counter id="oTraffic" name="Исходящий трафик" units=" Mb"/>
+		<counter id="iTrafficTAS" name="Входящий TAS-IX" units=" Mb"/>
+		<counter id="oTrafficTAS" name="Исходящий TAS-IX" units=" Mb"/>
+		<counter id="iTrafficST" name="Входящий ST" units=" Mb"/>
+		<counter id="oTrafficST" name="Исходящий ST" units=" Mb"/>
 		<counter id="exchange" name="Обменный курс" type="text"/>
+		<counter id="status" name="Состояние услуги" type="text"/>
 		<!-- Персональные данные -->
 		<counter id="id" name="Регистрационный номер (ID)" type="text"/>
 		<counter id="login" name="Логин" type="text"/>
+		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="adress" name="Адрес" type="text"/>
+		<counter id="email" name="E-mail" type="text"/>
 		<counter id="phone" name="Мобильный телефон" type="text"/>
 		<counter id="date" name="Дата регистрации" type="time" format="dd/MM/yyyy"/>
 	</counters>

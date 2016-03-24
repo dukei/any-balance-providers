@@ -114,11 +114,13 @@ function processCard(card, result) {
 	
 	var html = AnyBalance.requestGet(baseurl + 'retail/Folder/Default.aspx?fld=CardInfo&id=' + result.__id, g_headers);
 	
+	// num всегда нужен, для shouldProcess
+	result.num = getParam(html, null, null, /\w+\s+№\s*([\d\*]+),/i, replaceTagsAndSpaces);
+	
     getParam(html, result, 'cards.balance', /Доступный баланс:(?:[^>]*>){4}([^<]+)/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'cards.limit', /Кредитный лимит:(?:[^>]*>){4}([^<]+)/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, ['cards.currency', 'cards'], /Валюта карточного счета:(?:[^>]*>){4}([^<]+)/i, replaceTagsAndSpaces);
-	
-    getParam(html, result, 'cards.num', /Номер карточного счета:(?:[^>]*>){5}([^<]+)/i, replaceTagsAndSpaces);
+    getParam(html, result, 'cards.accnum', /Номер карточного счета:(?:[^>]*>){5}([^<]+)/i, replaceTagsAndSpaces);
     getParam(html, result, 'cards.status', /Состояние карты:(?:[^>]*>){4}([^<]+)/i, replaceTagsAndSpaces);
     getParam(html, result, 'cards.till', /Срок действия:(?:[^>]*>){4}([^<]+)/i, replaceTagsAndSpaces, parseDateWord);
     getParam(html, result, 'cards.owner', /\d+[*]+\d{4}\s*,([^<]+)/i, replaceTagsAndSpaces);

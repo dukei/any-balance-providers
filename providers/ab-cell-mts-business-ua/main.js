@@ -146,18 +146,11 @@ function main() {
 
 			AB.getParam(users.join(', '), result, 'users');
 
-            var now = new Date();
-            var timezone = now.getTimezoneOffset() / -60;
-            if (timezone > 0) {
-                timezone = '+' + timezone;
-            }
-            var localTime = now.toISOString().replace(/\.\d+Z$/, timezone);
-
             html = AnyBalance.requestPost(
                 baseurl + 'Ncih/ObjectInfo.mvc/CurrentUser',
                 {
                     'objectId': objectId,
-                    '__LOCAL_DATETIME__': localTime
+                    '__LOCAL_DATETIME__': getLocalDateTime()
                 },
                 AB.addHeaders({'X-Requested-With': 'XMLHttpRequest'})
             );
@@ -167,6 +160,19 @@ function main() {
             AB.getParam(json.infoHtml, result, 'smsRemained', /название пакета услуг[\s\S]*?Осталось\D*(\d+)\D*sms/i, AB.replaceTagsAndSpaces, AB.parseBalance);
             AB.getParam(json.infoHtml, result, 'minRemained', /название пакета услуг[\s\S]*?Осталось\D*(\d+)\D*мин/i, AB.replaceTagsAndSpaces, AB.parseBalance);
 
+            html = AnyBalance.requestPost(
+                baseurl + 'Ncih/ObjectInfo.mvc/PersonalAccount',
+                {
+                    'objectId': getPersonalAccountObjectId(baseurl),
+                    '__LOCAL_DATETIME__': getLocalDateTime()
+                },
+                AB.addHeaders({
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Referer': baseurl + 'Ncih/Hierarchy.mvc'
+                })
+            );
+            AB.getParam(html, result, 'realBalance', /Баланс([^>]+>){3}/i, AB.replaceTagsAndSpaces, AB.parseBalance);
+
 		} catch (e) {
 			AnyBalance.trace(' не удалось получать данные по пользователям ' + e);
 		}
@@ -175,6 +181,61 @@ function main() {
 	AnyBalance.setResult(result);
 }
 
+function getPersonalAccountObjectId(baseurl) {
+    var url = baseurl + 'Ncih/Hierarchy.mvc/GetHierarchyNodes',
+        nodes = [],
+        lastNode,
+        iterations = 10, // to prevent eternal loop if something goes wrong
+        html,
+        json,
+        hierarchyId;
+
+    html = AnyBalance.requestGet(baseurl + 'Ncih/Hierarchy.mvc', g_headers);
+    hierarchyId = AB.getParam(html, null, null, /availableHierarchy:[\s\S]*?id:\D+(\d+)/i);
+
+    while (iterations--) {
+        var params = {
+            from: 0,
+            to: 299,
+            'objectSubtypeCodesFilter[0': 'Mobile',
+            'objectSubtypeCodesFilter[1]': 'Virtual',
+            'hierarchyType': 'Billing',
+            'id': hierarchyId,
+            'markCurrentSelection': true,
+            '__LOCAL_DATETIME__': getLocalDateTime()
+
+        };
+
+        for (var i = 0; i < nodes.length; i++) {
+            params['expanded[' + i + ']'] = nodes[i].data.id;
+        }
+
+        html = AnyBalance.requestPost(
+            url,
+            params,
+            AB.addHeaders({'X-Requested-With': 'XMLHttpRequest'})
+        );
+        json = AB.getJson(html);
+
+        nodes = json.nodes;
+        lastNode = nodes.slice(-1)[0];
+
+        if (lastNode.type == 'Account') {
+            return lastNode.data.objectId;
+        }
+    }
+
+    return 0;
+}
+
+function getLocalDateTime() {
+    var now = new Date();
+    var timezone = now.getTimezoneOffset() / -60;
+    if (timezone > 0) {
+        timezone = '+' + timezone;
+    }
+    return now.toISOString().replace(/\.\d+Z$/, timezone);
+}
 
 function setIsoYear(milliseconds) {
 

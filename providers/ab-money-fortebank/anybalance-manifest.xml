@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-money-fortebank</id>
+	<api flags="no_browser"/>
+	<name>ForteBank</name>
+	<description html="true"><![CDATA[
+	<p>Получает текущий остаток и другие параметры продуктов ForteBank Банка http://www.fortebank.com/, используя интернет-банк (http://mybank.fortebank.com/retail/).</p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+		<module id="nadapter"/>
+		<module id="extract/abe-money-fortebank"/>
+	</depends>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Остаток" units=" {@currency}"/>
+		<counter id="limit" name="Кредитный лимит" units=" {@currency}"/>
+		<counter id="currency" name="Валюта" type="text"/>
+		<counter id="num" name="Номер карты" type="text"/>
+		<counter id="status" name="Статус" type="text"/>
+		<counter id="owner" name="Владелец" type="text"/>
+		<counter id="till" name="Срок действия" type="time" format="MM/yy"/>
+	</counters>
+	<keywords></keywords>
+	<type>money, bank</type>
+	<country>kz</country>
+</provider>

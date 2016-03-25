@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="143" date="2016-03-25">
+	- Улучшено определение минут на местные номера.
+	</change>
 	<change version="142" date="2015-12-18">
 	- Исправлено получение бонусов в предоплатном кабинете.
 	</change>

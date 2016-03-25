@@ -99,7 +99,7 @@ function mainSite(prefs, baseurl) {
         // Бонусный счет
 	getParam(html, result, 'Bbalance', />Бонусный счет(?:[\s\S]*?<td[^>]*>){1}\s*([\s\d.,\-]+)/i, replaceTagsAndSpaces, parseBalance);
 	//Минуты по сети Life:)
-    	sumParam(html, result, 'mins_life', /минуты \[сеть <span class="life">life:\)<\/span>](?:[\s\S]*?<td[^>]*>){1}\s*([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseSec, aggregate_sum);
+    	sumParam(html, result, 'mins_life', /минуты \[сеть (?:<span class="life">life:\)<\/span>|life:\))](?:[\s\S]*?<td[^>]*>){1}\s*([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseSec, aggregate_sum);
     	//Минуты по сети Life:) тариф Life 25
     	sumParam(html, result, 'mins_life', /25 - 3000 мин.(?:[\s\S]*?<td[^>]*>){1}\s*([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseBalanceSecLeft, aggregate_sum);
         //Минуты на других операторов

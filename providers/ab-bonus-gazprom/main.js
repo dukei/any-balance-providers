@@ -74,31 +74,36 @@ function main() {
 	var result = {success: true};
 	
         
-        var reStatus = /Текущий статус карты[\s\S]{1,100}?<img[^>]+src="[^"]*images\/([^\/"]*)\.png"[^>]*>/i;
-        var reSave = /Для подтверждения статуса[\s\S]{1,50}?необходимо совершить покупки на сумму[\s\S]{1,100}?<div[^>]*>([^]+?)<\/div\s*>/i;
-        var reHeighten = /Для повышения статуса[\s\S]{1,50}?необходимо совершить покупки на сумму[\s\S]{1,100}?<div[^>]*>([^]+?)<\/div\s*>/i;
+	var reStatus = /Текущий статус карты[\s\S]{1,100}?<img[^>]+src="[^"]*images\/([^\/"]*)\.png"[^>]*>/i;
+	var reSave = /Для подтверждения статуса[\s\S]{1,50}?необходимо совершить покупки на сумму[\s\S]{1,100}?<div[^>]*>([^]+?)<\/div\s*>/i;
+	var reHeighten = /Для повышения статуса[\s\S]{1,50}?необходимо совершить покупки на сумму[\s\S]{1,100}?<div[^>]*>([^]+?)<\/div\s*>/i;
 
-        getParam(html, result, 'balance', /Бонусов доступно[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
-        getParam(html, result, 'status', reStatus, replaceTagsAndSpaces, img2status);
+	getParam(html, result, 'balance', /Бонусов доступно[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'status', reStatus, replaceTagsAndSpaces, img2status);
 	getParam(html, result, '__tariff', reStatus, replaceTagsAndSpaces, img2status);
 	getParam(html, result, 'month_need', reSave, replaceTagsAndSpaces, parseBalance);
-        getParam(html, result, 'customer', /<div[^>]+class="[^"]*PersonalName"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
-        getParam(html, result, 'month_need_up', reHeighten, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'customer', /<div[^>]+class="[^"]*PersonalName"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+	getParam(html, result, 'month_need_up', reHeighten, replaceTagsAndSpaces, parseBalance);
 
 	if(AnyBalance.isAvailable('month')){
-                var currDate = new Date();
+		var currDate = new Date();
             
-                html = AnyBalance.requestPost(baseurl + 'profile-online/statistics/handler.php', {
-                    year: currDate.getFullYear(),
-                    month: currDate.getMonth() + 1
-                }, g_headers);
+		html = AnyBalance.requestPost(baseurl + 'profile-online/statistics/handler.php', {
+			year: currDate.getFullYear(),
+			month: currDate.getMonth() + 1
+			}, g_headers);
                 
-                var monthSum = 0;
-                var jsonStat = AB.getJson(html)
-                for (var i = 0; i < jsonStat.length; ++i) {
-                    monthSum += parseFloat(jsonStat[i].sum);
-                }
-		getParam(Math.round(monthSum * 100) / 100, result, 'month');
+		var monthSum = 0;
+		var jsonStat = AB.getJson(html)
+		if(!jsonStat) {
+			AnyBalance.trace("В текущем месяце покупок не найдено.");
+		} else {
+			for (var i = 0; i < jsonStat.length; ++i) {
+				monthSum += parseFloat(jsonStat[i].sum);
+			}
+			getParam(Math.round(monthSum * 100) / 100, result, 'month');
+		}
+
 	}
 	
 	AnyBalance.trace('End parsing...');

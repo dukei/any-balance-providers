@@ -1,13 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="2.0" version="21">ab-bonus-gazprom</id>
+	<id major_version="2.0" version="22">ab-bonus-gazprom</id>
 	<api flags="captcha|no_browser"/>
 	<name>Газпромнефть Бонус</name>
 	<description html="true"><![CDATA[
 	<p>Получает информацию о бонусных баллах, текущем статусе в программе, сумме, необходимой для повышения статуса по бонусной карте "Газпромнефть".</p>    
 	]]></description>
 	<author>KiLLer13&lt;killer_kondor@pisem.net&gt;</author>
-	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
         <depends>
  		<module id="library"/>
  	</depends>

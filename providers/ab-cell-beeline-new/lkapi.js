@@ -158,7 +158,7 @@ function getBonusesPostAPI(baseurl, payType, encodedLogin, result) {
 				// Минуты
 				if(curr.unitType == 'VOICE') {
 					//Приоритет билайна не случаен, их минуты определить сложнее
-					if(/номера других|на других|на все номера|других операторов|всех/i.test(curr.restName)) {
+					if(/номера других|на других|на все номера|других операторов|всех|любых/i.test(curr.restName)) {
 						sumParam(curr.currValue + ' ', result, 'min_local', null, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
 					} else {
 						sumParam(curr.currValue + ' ', result, 'min_bi', null, replaceTagsAndSpaces, parseMinutes, aggregate_sum);

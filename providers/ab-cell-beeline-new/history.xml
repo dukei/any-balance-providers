@@ -1,5 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="144" date="2016-03-28">
+	- Исправлено получение минут.
+	- Переход на модули.
+	</change>
 	<change version="143" date="2016-03-25">
 	- Улучшено определение минут на местные номера.
 	</change>

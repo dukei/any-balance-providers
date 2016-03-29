@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-money-kicb</id>
+	<api flags="no_browser"/>
+	<name>Кыргызский инвестиционно-кредитный банк</name>
+	<description html="true"><![CDATA[
+	<p>Получает текущий остаток и другие параметры продуктов Кыргызского Инвестиционно-Кредитного Банка http://www.kicb.net/, используя интернет-банк (https://ibank.kicb.net/)</p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+		<module id="extract/abe-money-kicb"/>
+		<module id="nadapter"/>
+	</depends>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Остаток" units=" {@currency}"/>
+		<counter id="available" name="Доступная сумма" units=" {@currency}"/>
+		<counter id="currency" name="Валюта" type="text"/>
+		<counter id="cardnum" name="Номер карты" type="text"/>
+		<counter id="accnum" name="Номер счёта" type="text"/>
+		<counter id="name" name="Название счёта/карты" type="text"/>
+		<counter id="last_operation_date" name="Дата последней операции" type="time" format="dd/MM/yyyy"/>
+		<counter id="fio" name="ФИО" type="text"/>
+	</counters>
+	<keywords>КИКБ, KICB</keywords>
+	<type>money, bank</type>
+	<country>ru</country>
+</provider>

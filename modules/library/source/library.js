@@ -4,9 +4,11 @@
  Содержит некоторые полезные для извлечения значений с сайтов функции.
  Для конкретного провайдера рекомендуется оставлять в этом файле только те функции, которые используются.
  
- library.js v0.22 от 12.01.16
+ library.js v0.23 от 29.03.2016
  
  Changelog:
+ 
+ 29.03.2016 Добавлен метод getJsonObjSafe(where, what)
  
  27.02.2016 В методах getElement/getElements добавлена возможность указать группу в регексе
 
@@ -1274,6 +1276,31 @@ var AB = (function (global_scope) {
             }
         }
     }
+	
+	/**
+	where - json object
+	what - string or array
+	*/
+	function getJsonObjSafe(where, what) {
+		if(isArray(what)) {
+			for(var i = 0; i < what.length; i++) {
+				var k = what[i];
+				var val = where[k];
+				
+				// object - going deeper
+				if(typeof val === 'object') {
+					where = val;
+				// Not an object - returning result
+				} else {
+					return val;
+				}
+			}
+			// In case if we need an object to return
+			return where;
+		} else {
+			return isset(where) ? where[what] : '';
+		}
+	}
 
     return {
         getParam: getParam,
@@ -1344,7 +1371,8 @@ var AB = (function (global_scope) {
         joinUrl: joinUrl,
         processTable: processTable,
         initCols: initCols,
-        fillColsResult: fillColsResult
+        fillColsResult: fillColsResult,
+        getJsonObjSafe: getJsonObjSafe
     };
 })(this);
 

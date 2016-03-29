@@ -251,5 +251,24 @@ function main() {
 			AnyBalance.trace('!!!____________________________________________________________getFormattedDate test is failed!!!');
 	}
 	
+	var obj = {
+		key: {
+			objKey: 1
+		},
+		key2: {
+			key3: {
+				key4: "строка"
+			}
+		}
+	}
+	
+	var ret = getJsonObjSafe(obj, ['key', 'objKey']); // должен вернуть 1
+	var ret2 = getJsonObjSafe(obj, ['key2', 'key3', 'key4']); // должен вернуть "строка"
+	var ret3 = getJsonObjSafe(obj, ['key2', 'key3']); // должен вернуть "{key4: "строка"}"
+	
+	AnyBalance.trace(ret);
+	AnyBalance.trace(ret2);
+	AnyBalance.trace(JSON.stringify(ret3));
+	
 	AnyBalance.setResult(result);
 }

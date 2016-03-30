@@ -51,6 +51,13 @@ function main() {
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
 
+    html = AnyBalance.requestGet(baseurl + 'ru/cabinet/info', g_headers);
+
+    if (!html || AnyBalance.getLastStatusCode() > 400) {
+        AnyBalance.trace(html);
+        throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
+    }
+
 	var result = {
 		success: true
 	};

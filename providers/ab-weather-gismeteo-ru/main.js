@@ -79,39 +79,35 @@ function getWeatherFromHTML(prefs) {
   }
 
   // Проверка на корректный вход
-  var error = getParam(html, null, null, /Страница не найдена/i);
-
-  if (error) {
-    throw new AnyBalance.Error('Неизвестная ошибка. Пожалуйста, свяжитесь с автором провайдера.');
+  if (/(Ошибка 404|Klaida 404)/i.test(html)) {
+    throw new AnyBalance.Error('Страница не найдена. Проверьте правильность введённого индекса/названия города.');
   }
 
-  if (getParam(html, null, null, /Почасовой прогноз погоды/i)) {
+  if (/(почасовой прогноз погоды|давление и влажность|Prognozė kas valandą)/i.test(html)) {
     AnyBalance.trace('It looks like we are in selfcare...');
   } else {
     AnyBalance.trace('Have not found weather info... Unknown error. Please contact author.');
-    throw new AnyBalance.Error('Неизвестная ошибка. Пожалуйста, свяжитесь с автором провайдера.');
+    throw new AnyBalance.Error('Не удалось найти прогноз погоды. Сайт изменён?');
   }
 
-  var result = {
-    success: true
-  };
+  var result = {success: true};
+
   // Город
-  getParam(html, result, '__tariff', /<h2[^>]*>([^<]*)/i);
+  getParam(html, result, '__tariff', [/<h2[^>]*>([^<]*)/i, /<span[^>]+nav_title[^>]*>([\s\S]*?)<\/span>/i], replaceTagsAndSpaces);
 
   result = (prefs.tod == '-1') ? getCurrentWeather(html, result) : getWeatherForecast(html, result, prefs.tod);
   // Температура воды
-  getParam(html, result, 'waterTemperature', /<div[^>]+class="wicon water"[^>]*>\s*<dd[^>]+class="value m_temp c">([-+]?\d+)/i, null,
-    parseFloat);
+  getParam(html, result, 'waterTemperature', [/<div[^>]+class="wicon water"[^>]*>\s*<dd[^>]+class="value m_temp c">([-+]?\d+)/i,
+                                              /<div[^>]+info[^>]*>Температура воды(?:[^>]*>){3}([^<]*)/i], null, parseFloat);
   // Восход Солнца
-  getParam(html, result, 'rising', /Восход[^\d]*(\d{2}:\d{2})/i, null, parseMinutes);
+  getParam(html, result, 'rising', /Восход[^\d]*(\d+:\d+)/i, null, parseMinutes);
   // Закат Солнца
   getParam(html, result, 'setting', /Заход[^\d]*(\d{2}:\d{2})/i, null, parseMinutes);
   // Долгота дня
-  getParam(html, result, 'dayLength', /Долгота[^\d]*(\d{2}:\d{2})/i, null, parseMinutes);
+  getParam(html, result, 'dayLength', /Долгота[^\d]*(\d+\s*(?::|ч)\s*\d+)/i, [/\s*ч\s*/i, ':'], parseMinutes);
   // Фаза Луны
-  getParam(html, result, 'moonPhase', /Фаза[^\d]*((\d+%)[\s\S]*?<span[^>]+class="astronomy_title">([^<]*))/i, [
-    /(\d+%)[\s\S]*?<span[^>]+class="astronomy_title">([^<]*)/, '$2 $1'
-  ]);
+  getParam(html, result, 'moonPhase', [/Фаза[^\d]*((\d+%)[\s\S]*?<span[^>]+class="astronomy_title">([^<]*))/i, /<div[^>]+moon[^>]*>(?:[^>]*>){8}([^<]*)/i], [
+    /(\d+%)[\s\S]*?<span[^>]+class="astronomy_title">([^<]*)/, '$2 $1', replaceTagsAndSpaces]);
 
   return result;
 }
@@ -120,14 +116,14 @@ function getCurrentWeather(html, result) {
   // Атмосферные явления
   getParam(html, result, 'atmosphericConditions', /class="cloudness">[\s\S]*?>([^\s<]+[^<]*)/i);
   // Температура
-  getParam(html, result, 'temperature', /class='value\sm_temp\sc'>((?:[-+]?|&minus;|&plus;)\d+[,.]?\d*)/i, ['&minus;', '-', '&plus;', '+'],
+  getParam(html, result, 'temperature', [/class='value\sm_temp\sc'>((?:[-+]?|&minus;|&plus;)\d+[,.]?\d*)/i, /<div[^>]+container\s*temperature(?:[^>]*>){2}([^<]*)/i], ['&minus;', '-', '&plus;', '+'],
     parseFloat);
   // Атмосферное давление
-  getParam(html, result, 'pressure', /class='value m_press torr'>(\d+)/i, [], parseInt);
+  getParam(html, result, 'pressure', [/class='value m_press torr'>(\d+)/i, /<div[^>]+info[^>]*>Давление(?:[^>]*>){3}(\d+)/i], [], parseInt);
   // Ветер
-  getParam(html, result, 'wind', /<dd[^>]* ms'[^>]*>((\d+)[\s\S]*?<dt>([^<]*))/i, [/(\d+)[\s\S]*?<dt>([^<]*)/, '$2 $1м/с']);
+  getParam(html, result, 'wind', [/<dd[^>]* ms'[^>]*>((\d+)[\s\S]*?<dt>([^<]*))/i, /<div[^>]+information\s*_additional[^>]*>(?:[^>]*>){4}([\s\S]*?)<\/div>/i], [/(\d+)[\s\S]*?<dt>([^<]*)/, '$2 $1м/с', replaceTagsAndSpaces]);
   // Влажность
-  getParam(html, result, 'humidity', /title="Влажность">(\d+)/i, [], parseInt);
+  getParam(html, result, 'humidity', [/title="Влажность">(\d+)/i, /<div[^>]+info[^>]*>влажность(?:[^>]*>){3}(\d+)/i], [], parseInt);
   // Время обновления
   getParam(html, result, 'time', /class="icon date">([^<]*)/i, [/(\d{1,2})\s+(\S+)\s+(\d{4})\s+(.*)/, '$3/$2/$1 $4',
       'января', '01',

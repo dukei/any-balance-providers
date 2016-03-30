@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="75" date="2016-03-30">
+	- Мелкие улучшения.
+	</change>
 	<change version="74" date="2016-03-18">
 	Исправление иногда возникающей ошибки с Invalid duplicated flag gx
 	</change>

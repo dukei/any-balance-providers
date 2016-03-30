@@ -1,5 +1,9 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="3" date="2016-03-24">
+	- Прекращена поддержка старого личного кабинета (https://billing.dream-net.ru/).
+	- Убраны счётчики: кредит, вх. трафик, исх. трафик.
+	</change>
 	<change version="2" date="2014-02-01">
 	- Добавлена поддержка нового кабинета.
 	</change>

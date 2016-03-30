@@ -14,10 +14,10 @@ function main() {
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 	
-	if (prefs.type == 'new') 
+	//if (prefs.type == 'new')
 		doNew(prefs);
-	else 
-		doOld(prefs);
+	//else
+	//	doOld(prefs);
 }
 
 function doNew(prefs) {

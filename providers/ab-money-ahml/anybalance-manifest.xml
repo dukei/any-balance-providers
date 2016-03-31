@@ -1,0 +1,37 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-money-ahml</id>
+	<api flags="no_browser"/>
+	<name>Агенство по ипотечному жилищному кредитованию</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера АИЖК http://www.ahml.ru/ </p>
+	<p>Информация берется из личного кабинета https://lkz.ahml.ru/borrower/ </p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="pay_sum" name="Сумма ближайшего платежа по кредиту" units=" р"/>
+		<counter id="insurance_sum" name="Сумма ближайшего страхового платежа" units=" р"/>
+		<counter id="pay_left" name="Остаток основного долга" units=" р"/>
+		<counter id="credit_sum" name="Сумма долга" units=" р"/>
+		<counter id="pct" name="Процентная ставка" units="%"/>
+		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="credit_agreement" name="Кредитный договор" type="text"/>
+		<counter id="mortgage_num" name="Закладная" type="text"/>
+		<counter id="credit_pay_till" name="Ближайщий платёж по кредиту" type="time" format="dd/MM/yyyy"/>
+		<counter id="mortgage_till" name="Срок погашения кредита" type="time" format="dd/MM/yyyy"/>
+		<counter id="insurance_till" name="Ближайший страховой платёж" type="time" format="dd/MM/yyyy"/>
+	</counters>
+	<keywords>ahml, аижк</keywords>
+	<type>money</type>
+	<country>ru</country>
+</provider>

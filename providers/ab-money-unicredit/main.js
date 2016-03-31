@@ -26,6 +26,7 @@ var g_countersTable = {
 		"pay":          		"credits.pay",
 		"paytill":          "credits.paytill",
 		"pct":              "credits.pct",
+		"till":             "credits.till",
 		"paynum":    				"credits.paymentsLeft",
 		"credit":           "credits.limit",
 		"currency":         "credits.currency",
@@ -43,6 +44,17 @@ var g_countersTable = {
 		"accnum":         	"accounts.num",
 		"date_start":       "accounts.date_start",
 	},
+  dep: {
+    "balance":    "deposits.balance",
+    "currency":   "deposits.currency",
+    "status":     "deposits.status",
+    "accnum":     "deposits.num",
+    "__tariff":   "deposits.__name",
+    "period":     "deposits.period",
+    "pct":        "deposits.pct",
+    "till":       "deposits.till",
+
+  }
 };
 
 function shouldProcess(counter, info){

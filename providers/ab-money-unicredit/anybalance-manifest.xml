@@ -42,7 +42,6 @@
     <counter id="statustill" name="Срок действия" type="time" format="dd/MM/yyyy"/>
     <counter id="date_start" name="Начало действия" type="time" format="dd/MM/yyyy"/>
     <counter id="type" name="Тип" type="text"/>
-    <counter id="till" name="Срок действия" type="time" format="dd/MM/yyyy"/>
     <counter id="status" name="Статус" type="text"/>
     <counter id="cardnum" name="Номер карты" type="text"/>
     <counter id="accnum" name="№ счета/сделки" type="text"/>

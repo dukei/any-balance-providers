@@ -26,7 +26,7 @@ var g_countersTable = {
 		"pay":          		"credits.pay",
 		"paytill":          "credits.paytill",
 		"pct":              "credits.pct",
-		"till":             "credits.till",
+		"statustill":       "credits.till",
 		"paynum":    				"credits.paymentsLeft",
 		"credit":           "credits.limit",
 		"currency":         "credits.currency",
@@ -52,7 +52,7 @@ var g_countersTable = {
     "__tariff":   "deposits.__name",
     "period":     "deposits.period",
     "pct":        "deposits.pct",
-    "till":       "deposits.till",
+    "statustill":       "deposits.till",
 
   }
 };

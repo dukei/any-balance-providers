@@ -42,7 +42,7 @@ function main() {
     );
 
 	if (!/logout/i.test(html)) {
-		var error = AB.getParam(html, null, null, /\serror[^>]*>((?:[^>]*>){2})/i, AB.replaceTagsAndSpaces);
+		var error = AB.getParam(html, null, null, /title error[^>]*>((?:[^>]*>){2})/i, AB.replaceTagsAndSpaces);
 		if (error) {
 			throw new AnyBalance.Error(error, null, /(?:логін|пароль)/i.test(error));
 		}

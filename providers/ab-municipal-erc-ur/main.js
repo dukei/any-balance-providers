@@ -109,7 +109,7 @@ function main() {
     AB.getParam(table, result, 'payment', /(?:[\s\S]*?<td[^>]*>){6}([\s\S]*?)<\/td>/i, AB.replaceTagsAndSpaces, AB.parseBalance);
     AB.getParam(table, result, 'paymentPenalty', /(?:[\s\S]*?<td[^>]*>){7}([\s\S]*?)<\/td>/i, AB.replaceTagsAndSpaces, AB.parseBalance);
     AB.getParam(table, result, 'received', /(?:[\s\S]*?<td[^>]*>){8}([\s\S]*?)<\/td>/i, AB.replaceTagsAndSpaces, AB.parseBalance);
-    AB.getParam(table, result, 'debtEnd', /(?:[\s\S]*?<td[^>]*>){8}([\s\S]*?)<\/td>/i, AB.replaceTagsAndSpaces, AB.parseBalance);
+    AB.getParam(table, result, 'debtEnd', /(?:[\s\S]*?<td[^>]*>){9}([\s\S]*?)<\/td>/i, AB.replaceTagsAndSpaces, AB.parseBalance);
 
 
   } catch (e) {

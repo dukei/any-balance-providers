@@ -7,21 +7,22 @@ var g_countersTable = {
 		'fio': 'profile.fio'
 	}, 
 	card: {
-    	"balance": "cards.balance",
-		"currency": "cards.currency",
-		"card_num": "cards.__id",
-		"limit": "cards.limit",
-		
-		"__tariff": "cards.__id",
+    "balance":    "cards.balance",
+		"currency":   "cards.currency",
+		"card_num":   "cards.__id",
+		"limit":      "cards.limit",
+		"till":       "cards.till",
+		"status":     "cards.status",
+		"holder":     "cards.holderName",
+		"__tariff":   "cards.__name",
 	},
-    acc: {
-    	"balance": "accounts.balance",
-		"currency": "accounts.currency",
-		"accnum": "accounts.__id",
-		"accname": "accounts.__name",
-		
-		"__tariff": "accounts.__id",
-    },
+  acc: {
+    "balance":  "accounts.balance",
+    "currency": "accounts.currency",
+    "accnum":   "accounts.__id",
+    "accname":  "accounts.__name",
+    "__tariff": "accounts.__id",
+  },
 };
 
 function shouldProcess(counter, info){

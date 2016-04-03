@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-municipal-ekgaz</id>
+	<api flags="no_browser"/>
+	<name>Екатеринбурггаз</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера ПАО "Екатеринбурггаз" http://www.ekgas.ru/ </p>
+	<p>Информация берется из личного кабинета https://pc.ekgas.ru/login.php </p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="debt" name="Задолженность за предыдущие периоды" units=" р"/>
+		<counter id="a_payment" name="Аванс на начало расчетного период" units=" р"/>
+		<counter id="to_pay" name="Всего к оплате" units=" р"/>
+		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="address" name="Адрес" type="text"/>
+		<counter id="phone" name="Телефон" type="text"/>
+		<counter id="last_payment_date" name="Дата последней поступившей оплаты" type="time" format="dd/MM/yyyy"/>
+	</counters>
+	<keywords></keywords>
+	<type>municipal</type>
+	<country>ru</country>
+</provider>

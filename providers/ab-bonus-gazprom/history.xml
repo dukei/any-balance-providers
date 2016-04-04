@@ -1,4 +1,8 @@
-﻿<?xml version="1.0" encoding="utf-8"?><history>
+﻿<?xml version="1.0" encoding="utf-8"?>
+<history>
+	<change major_version="2.0" version="22" date="2016-03-28">
+	- Исправлена ошибка, выпадающая в случае отсутствия покупок в текущем месяце.
+	</change>
 	<change major_version="2.0" version="21" date="2016-01-25">
 	- Поддержка изменений на сайте.
 	</change>
@@ -6,27 +10,58 @@
 	- Улучшена обработка ошибок.
 	</change>
 	<change major_version="2.0" version="19" date="2015-12-26">
-	Изменения в процедуре входа
+	- Изменения в процедуре входа.
 	</change>
 	<change major_version="2.0" version="18" date="2015-12-21">
 	- Улучшена обработка ошибок.
 	</change>
 	<change major_version="2.0" version="17" date="2015-09-07">
-	Исправление получения суммы покупок за месяц
+	- Исправление получения суммы покупок за месяц.
 	</change>
 	<change major_version="2.0" version="16" date="2015-08-25">
 	- Получение данных в заданной зоне обслуживания
 	- Исправлено получение трат за месяц
 	</change>
 	<change major_version="2.0" version="15" date="2015-07-08">
-	Подсчет покупок за текущий месяц из истории
+	- Подсчет покупок за текущий месяц из истории.
 	</change>
 	<change major_version="2.0" version="14" date="2015-06-30">
-	- Улучшено распознавание суммы для поддержания статуса
+	- Улучшено распознавание суммы для поддержания статуса.
 	</change>
 	<change major_version="2.0" version="13" date="2015-05-25">
 	- Поддержка изменений на сайте.
 	</change>
 	<change version="12" date="2014-11-10">
 	- Поддержка изменений на сайте.
-	</change>	<change major_version="2.0" version="11">	- Улучшенная обработка ошибок.	</change>	<change major_version="2.0" version="10">	- Переименован в Газпромнефть Бонус	</change>	<change major_version="2.0" version="9">	- Поддержка ввода капчи	</change>	<change major_version="1.0" version="8">	- Сообщение о введении капчи на сайте	</change>	<change major_version="1.0" version="7">	- (Dmitry Kochin) Перевод всех ссылок на https, а то жаловались, что не работает.	</change>	<change major_version="1.0" version="6">	- Изменения на сайте. Округление баланса в рублях.	</change>	<change major_version="1.0" version="5">	- Изменения на сайте.	</change>	<change major_version="1.0" version="4">	- Косметические доработки. Добавил курс бонусной программы. Изменил пароль на фамилию.	</change>	<change major_version="1.0" version="3">	- Изменения на сайте gpnbonus. Для экономии трафика теперь у них есть мобильная версия, с неё в основном и берется вся информация.	</change>	<change major_version="1.0" version="2">	- Добавил баланс в рублях по курсу программы.	</change></history>
+	</change>
+	<change major_version="2.0" version="11">
+	- Улучшенная обработка ошибок.
+	</change>
+	<change major_version="2.0" version="10">
+	- Переименован в Газпромнефть Бонус.
+	</change>
+	<change major_version="2.0" version="9">
+	- Поддержка ввода капчи.
+	</change>
+	<change major_version="1.0" version="8">
+	- Сообщение о введении капчи на сайте.
+	</change>
+	<change major_version="1.0" version="7">
+	- (Dmitry Kochin) Перевод всех ссылок на https, а то жаловались, что не работает.
+	</change>
+	<change major_version="1.0" version="6">
+	- Изменения на сайте. Округление баланса в рублях.
+	</change>
+	<change major_version="1.0" version="5">
+	- Изменения на сайте.
+	</change>
+	<change major_version="1.0" version="4">
+	- Косметические доработки. Добавил курс бонусной программы. Изменил пароль на фамилию.
+	</change>
+	<change major_version="1.0" version="3">
+	- Изменения на сайте gpnbonus. Для экономии трафика теперь у них есть мобильная версия, с неё в основном и берется вся информация.
+	</change>
+	<change major_version="1.0" version="2">
+	- Добавил баланс в рублях по курсу программы.
+	</change>
+</history>

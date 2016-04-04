@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-cell-mts-business-ua</id>
+	<id version="3">ab-cell-mts-business-ua</id>
 	<api flags="no_browser"/>
 	<name>МТС Business Украина</name>
 	<description html="true"><![CDATA[
@@ -22,6 +22,7 @@
 	</files>
 	<counters>
 		<counter id="balance" name="Израсходовано за период" units=" {@currency}"/>
+		<counter id="realBalance" name="Баланс" units=" {@currency}"/>
 		<counter id="paymentAmount" name="К оплате" units=" {@currency}"/>
 		<counter id="billNumber" name="№ счёта" type="text"/>
 		<counter id="issueDate" name="Дата выставления" type="time" format="dd/MM/yyyy"/>

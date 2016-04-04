@@ -13,6 +13,7 @@ var g_regions = {
 	lobnya: mainLobnya,
     murmansk: mainUniversal,
 	cheboksary: mainUniversal,
+	lenobl: mainUniversal,
 };
 
 function main(){
@@ -38,7 +39,7 @@ function mainCenter(){
     });
 
     if(!/logout/i.test(html)){
-        var error = getParam(html, null, null, /class="error"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
+        var error = getParam(html, null, null, /class="error"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
         if (error){
             throw new AnyBalance.Error (error);
         }
@@ -56,8 +57,8 @@ function mainCenter(){
 		result.__tariff = value[1];
 
     getParam (html, result, 'balance', /<span[^>]+class="balance"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
-    getParam (html, result, 'subscriber', /Абонент[^>]*>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam (html, result, 'contract', /Договор([^<(]*)/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam (html, result, 'subscriber', /Абонент[^>]*>([^<]*)/i, replaceTagsAndSpaces);
+    getParam (html, result, 'contract', /Договор([^<(]*)/i, replaceTagsAndSpaces);
     getParam (html, result, 'day_left', /Осталось[^\d]*([\d]+)/i, replaceTagsAndSpaces, parseBalance);
 
     var table = getParam(html, null, null, /<table[^>]*>(?:[\s\S](?!<\/table>))*?<th[^>]*>Договор(?:[\s\S](?!<\/table>))*?<th[^>]*>Текущий тариф[\s\S]*?<\/table>/i, [/<!--[\S\s]*?-->/g, '']);
@@ -65,12 +66,12 @@ function mainCenter(){
     if(table) {
         if(/<th[^>]*>\s*Остаток трафика/i.test(table)) {
             AnyBalance.trace('Найден остаток трафика');
-            getParam(table, result, '__tariff', /(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-            getParam(table, result, 'status', /(?:[\s\S]*?<td[^>]*>){6}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+            getParam(table, result, '__tariff', /(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+            getParam(table, result, 'status', /(?:[\s\S]*?<td[^>]*>){6}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
             getParam(table, result, 'trafficLeft', /(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseTrafficGb);
         } else {
-            getParam(table, result, '__tariff', /(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-            getParam(table, result, 'status', /(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+            getParam(table, result, '__tariff', /(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+            getParam(table, result, 'status', /(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
         }
     } else {
 		AnyBalance.trace('Не удалось найти таблицу с тарифным планом. Сайт изменен?');
@@ -93,7 +94,7 @@ function mainCenter(){
         AnyBalance.trace ("Fetching traffic periods...");
         html = AnyBalance.requestGet(baseurl + "ajax/ajax.php?action=contrSelector");
         AnyBalance.trace("Parsing traffic periods...");
-        var periodId = getParam(html, null, null, /<select[^>]+name="selper"[^>]*>\s*<option[^>]+value="([^"]*)/i, null, html_entity_decode);
+        var periodId = getParam(html, null, null, /<select[^>]+name="selper"[^>]*>\s*<option[^>]+value="([^"]*)/i, replaceHtmlEntities);
         if(periodId){
             html = AnyBalance.requestGet(baseurl + "ajax/ajax.php?action=period&period_id=" + periodId);
             getParam(html, result, 'trafficIn', /<table[^>]+id="periods_details"(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseTrafficGb);
@@ -136,9 +137,9 @@ function mainVoronezh(){
     getParam (html, result, 'subscriber', /Приветствуем Вас,([^<]*)/i, replaceTagsAndSpaces);
     getParam (html, result, 'contract', /<span[^>]*>\s*ЛС:(?:[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces);
     getParam (html, result, 'day_left', /дней до ухода в финансовую блокировку:[^>]*>\s*(\d+)/i, replaceTagsAndSpaces, parseBalance);
-	sumParam(html, result, '__tariff', /Тарифный план:([\s\S]*?)(?:<\/span>|<a)/i, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
+	sumParam(html, result, '__tariff', /Тарифный план:([\s\S]*?)(?:<\/span>|<a)/i, replaceTagsAndSpaces, null, aggregate_join);
     getParam (html, result, 'bonus_balance', /Баланс:([^<]*)балл/i, replaceTagsAndSpaces, parseBalance);
-    sumParam (html, result, '__tariff', /(<strong[^>]*>\s*Бонусный счет[\s\S]*?)Баланс/i, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
+    sumParam (html, result, '__tariff', /(<strong[^>]*>\s*Бонусный счет[\s\S]*?)Баланс/i, replaceTagsAndSpaces, null, aggregate_join);
 
     AnyBalance.setResult(result);
 }
@@ -170,9 +171,13 @@ function mainUniversal(region){
     getParam (html, result, 'subscriber', /Приветствуем Вас,([^<]*)/i, replaceTagsAndSpaces);
     getParam (html, result, 'contract', /<b>\s*Лицевой счет:|ЛС:(?:[^>]*>){2}([^<,]*)/i, replaceTagsAndSpaces);
     getParam (html, result, 'day_left', /(?:дней до ухода в финансовую блокировку:|до списания абонентской платы осталось)(?:[^>]*>){1,3}\s*(\d+)/i, replaceTagsAndSpaces, parseBalance);
-	sumParam(html, result, '__tariff', /Тарифный план:([\s\S]*?)(?:<\/span>|<a)/i, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
+	sumParam(html, result, '__tariff', /Тарифный план:([\s\S]*?)(?:<\/span>|<a)/i, replaceTagsAndSpaces, null, aggregate_join);
     getParam (html, result, 'bonus_balance', /Баланс:([^<]*)балл/i, replaceTagsAndSpaces, parseBalance);
-    sumParam (html, result, '__tariff', /(<strong[^>]*>\s*Бонусный счет[\s\S]*?)Баланс/i, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
+    sumParam (html, result, '__tariff', /(<strong[^>]*>\s*Бонусный счет[\s\S]*?)Баланс/i, replaceTagsAndSpaces, null, aggregate_join);
+
+    getParam (html, result, 'abon', /Ежемесячная абонентская плата:([\s\S]*?)(?:<br|<font|<\/div)/i, replaceTagsAndSpaces, parseBalance);
+    getParam (html, result, 'status', /Текущий статус договора:([\s\S]*?)(?:<br|<font|<\/div)/i, replaceTagsAndSpaces);
+    getParam (html, result, 'abonday', /Суточная абонентская плата:([\s\S]*?)(?:<br|<font|<\/div)/i, replaceTagsAndSpaces, parseBalance);
 
     AnyBalance.setResult(result);
 }
@@ -212,11 +217,11 @@ function mainBelgorod(region){
     getParam (html, result, 'contract', /<b[^>]*>Лицевой счет:([\s\S]*?),/i, replaceTagsAndSpaces);
     getParam (html, result, 'day_left', /(?:Количество дней до ухода в финансовую блокировку|До списания абонентской платы осталось):([\s\S]*?)<br/i, replaceTagsAndSpaces, parseBalance);
     getParam (html, result, 'bonus_balance', /Баланс:([^<]+)\s*балл/i, replaceTagsAndSpaces, parseBalance);
-    sumParam(html, result, '__tariff', /Тарифный план:([\s\S]*?)(?:<\/span>|<a)/i, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
-    sumParam (html, result, '__tariff', /(<strong[^>]*>\s*Бонусный счет[\s\S]*?)Баланс/i, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
+    sumParam(html, result, '__tariff', /Тарифный план:([\s\S]*?)(?:<\/span>|<a)/i, replaceTagsAndSpaces, null, aggregate_join);
+    sumParam (html, result, '__tariff', /(<strong[^>]*>\s*Бонусный счет[\s\S]*?)Баланс/i, replaceTagsAndSpaces, null, aggregate_join);
 	
     // Статус договора 
-    getParam (html, result, 'status', /Текущий статус договора:([\s\S]*?)<br/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam (html, result, 'status', /Текущий статус договора:([\s\S]*?)<br/i, replaceTagsAndSpaces);
     getParam (html, result, 'abonday', /Суточная абонентская плата:([\s\S]*?)<br/i, replaceTagsAndSpaces, parseBalance);
     getParam (html, result, 'abon', /Ежемесячная абонентская плата:([\s\S]*?)<br/i, replaceTagsAndSpaces, parseBalance);
 
@@ -250,9 +255,9 @@ function mainLobnya(region){
     getParam (html, result, 'subscriber', /Приветствуем Вас,([^<]+)/i, replaceTagsAndSpaces);
     getParam (html, result, 'contract', />\s*(?:ЛС|Лицевой счет):([^<,]+)/i, replaceTagsAndSpaces);
     getParam (html, result, 'day_left', /дней до ухода в финансовую блокировку:(?:[^>]*>){1,2}\s*(\d+)/i, replaceTagsAndSpaces, parseBalance);
-	//sumParam(html, result, '__tariff', /Тарифный план:([\s\S]*?)(?:<\/span>|<a)/i, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
+	//sumParam(html, result, '__tariff', /Тарифный план:([\s\S]*?)(?:<\/span>|<a)/i, replaceTagsAndSpaces, null, aggregate_join);
     //getParam (html, result, 'bonus_balance', /Баланс:([^<]*)балл/i, replaceTagsAndSpaces, parseBalance);
-    //sumParam (html, result, '__tariff', /(<strong[^>]*>\s*Бонусный счет[\s\S]*?)Баланс/i, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
+    //sumParam (html, result, '__tariff', /(<strong[^>]*>\s*Бонусный счет[\s\S]*?)Баланс/i, replaceTagsAndSpaces, null, aggregate_join);
 
     AnyBalance.setResult(result);
 }

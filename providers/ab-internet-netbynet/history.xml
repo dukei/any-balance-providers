@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="2.0" version="25" date="2016-04-04">
+	Добавлен регион Санкт-Петербург и Ленинградская область
+	</change>
 	<change major_version="2.0" version="24" date="2015-07-07">
 	- Новый регион: Чебоксары.
 	</change>

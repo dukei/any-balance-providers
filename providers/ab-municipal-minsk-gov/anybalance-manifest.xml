@@ -1,7 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id version="1">ab-municipal-minsk-gov</id>
+	<id version="2">ab-municipal-minsk-gov</id>
 	<name>МГИК - очередь на жилье</name>
 	<description html="true">
 	<![CDATA[

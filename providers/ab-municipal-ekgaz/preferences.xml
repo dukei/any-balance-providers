@@ -21,22 +21,4 @@
 		dialogMessage="Введите пароль, используемый для входа в личный кабинет."
 		inputType="textPassword">
 	</EditTextPreference>
-	<ListPreference
-		key="type"
-		title="Что смотреть"
-		summary="||{@s}"
-		entries="Карта|Счет|Кредит"
-		entryValues="card|acc|crd"
-		defaultValue="acc">
-	</ListPreference>	
-	<EditTextPreference
-		title="Номер счета"
-		key="lastdigits"
-		summary="||{@s}"
-		obligatory="true"
-		dialogTitle="Номер счета"
-		positiveButtonText="ОК"
-		negativeButtonText="Отмена"
-		dialogMessage="Введите последние 4 цифры номера счета или не вводите ничего.">
-	</EditTextPreference>	
 </PreferenceScreen>

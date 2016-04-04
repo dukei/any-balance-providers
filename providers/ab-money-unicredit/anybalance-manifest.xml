@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="9">ab-money-unicredit</id>
+  <id version="10">ab-money-unicredit</id>
   <name>UniCredit</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о текущем остатке и других параметрах карт, счетов, кредитов и вкладов для клиентов банка UniCredit.</p>
@@ -42,7 +42,7 @@
     <counter id="statustill" name="Срок действия" type="time" format="dd/MM/yyyy"/>
     <counter id="date_start" name="Начало действия" type="time" format="dd/MM/yyyy"/>
     <counter id="type" name="Тип" type="text"/>
-   <!-- <counter id="status" name="Статус" type="text"/>-->
+    <counter id="status" name="Статус" type="text"/>
     <counter id="cardnum" name="Номер карты" type="text"/>
     <counter id="accnum" name="№ счета/сделки" type="text"/>
     <counter id="cardname" name="Имя на карте" type="text"/>

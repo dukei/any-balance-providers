@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="4">ab-money-absolut</id>
+	<id version="6">ab-money-absolut</id>
 	<api flags="no_browser"/>
 	<name>Банк Абсолют</name>
 	<description html="true"><![CDATA[
@@ -22,10 +22,18 @@
 	<counters>
 		<counter id="balance" name="Баланс" units=" {@currency}"/>
 		<counter id="limit" name="Лимит" units=" {@currency}"/>
+        <counter id="pay_sum" name="Минимальный платеж" units=" {@currency}"/>
+        <counter id="pay_debt" name="В том числе: основной долг" units=" {@currency}"/>
+        <counter id="pay_pct" name="В том числе: проценты" units=" {@currency}"/>
+        <counter id="currency" name="Валюта" type="text"/>
 		<counter id="accname" name="Название" type="text"/>
 		<counter id="accnum" name="Номер счета" type="text"/>
 		<counter id="card_num" name="Номер карты" type="text"/>
-	</counters>
+        <counter id="till" name="Срок действия" type="time" format="dd/MM/yyyy"/>
+        <counter id="pay_till" name="Дата минимального платежа" type="time" format="dd/MM/yyyy"/>
+        <counter id="status" name="Статус карты" type="text"/>
+        <counter id="holder" name="Имя владельца" type="text"/>
+    </counters>
 	<keywords></keywords>
 	<type>money, bank</type>
 	<country>ru</country>

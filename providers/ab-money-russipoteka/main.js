@@ -4,57 +4,17 @@
 
 var g_countersTable = {
 	common: {
-		"fio":              "info.fullFIO"
-	},
+		'fio': 'info.fio'
+	}, 
 	card: {
-		"balance":          "cards.balance",
-		"currency":         "cards.currency",
-		"sum_in_progress":  "cards.sumInProgress",
-		"cardnum":          "cards.num",
-		"__tariff":         "cards.__name",
-		"type":             "cards.type",
-		"statustill":       "cards.till",
-		"cardname":         "cards.onCardName",
-		"accnum":           "cards.accnum",
-		"own":              "cards.own",
-		"pct":              "cards.pct",
-		"credit":           "cards.limit",
-		"o_limit":          "cards.overdraftLimit",
-	},
-	crd: {
-		"balance":          "credits.balance",
-		"pay":          		"credits.pay",
-		"paytill":          "credits.paytill",
-		"pct":              "credits.pct",
-		"statustill":       "credits.till",
-		"paynum":    				"credits.paymentsLeft",
-		"credit":           "credits.limit",
-		"currency":         "credits.currency",
-		"date_start":       "credits.date_start",
-		"statustill":       "credits.till",
-		"period":           "credits.period",
-		"__tariff":         "credits.num",
-	},
-	acc: {
-		"balance":          "accounts.balance",
-		"currency":         "accounts.currency",
-		"type":             "accounts.type",
-		"receiver":         "accounts.receiver",
-		"__tariff":         "accounts.num",
-		"accnum":         	"accounts.num",
-		"date_start":       "accounts.date_start",
-	},
-  dep: {
-    "balance":    "deposits.balance",
-    "currency":   "deposits.currency",
-    "status":     "deposits.status",
-    "accnum":     "deposits.num",
-    "__tariff":   "deposits.__name",
-    "period":     "deposits.period",
-    "pct":        "deposits.pct",
-    "statustill":       "deposits.till",
-
-  }
+    "balance":    "cards.balance",
+		"currency":   "cards.currency",
+		"full_num":   "cards.full_num",
+		"__tariff":   "cards.__name",
+		"holder":     "cards.holder",
+		"agreement":  "cards.agreement",
+		"till":       "cards.till",
+	}
 };
 
 function shouldProcess(counter, info){
@@ -119,17 +79,17 @@ function main() {
 	
     var adapter = new NAdapter(joinObjects(g_countersTable[prefs.type], g_countersTable.common), shouldProcess);
 	
-    adapter.processCards    = adapter.envelope(processCards);
+    adapter.processCards = adapter.envelope(processCards);
     adapter.processAccounts = adapter.envelope(processAccounts);
-    adapter.processCredits  = adapter.envelope(processCredits);
+    adapter.processCredits = adapter.envelope(processCredits);
     adapter.processDeposits = adapter.envelope(processDeposits);
-    adapter.processInfo     = adapter.envelope(processInfo);
-	
+    adapter.processInfo = adapter.envelope(processInfo);
+
 	var html = login(prefs);
 	
 	var result = {success: true};
 
-    adapter.processInfo(html, result);
+  processInfo(html, result);
 
 	if(prefs.type == 'card') {
 		adapter.processCards(html, result);
@@ -160,6 +120,8 @@ function main() {
 		
 		result = adapter.convert(result);
 	}
+	
+	// getParam(html, result, 'bonuses', /МКБ Бонус\s*<span[^>]*>([\s\d]+)&nbsp;баллов/i, replaceTagsAndSpaces, parseBalance);
 	
 	AnyBalance.setResult(result);
 }

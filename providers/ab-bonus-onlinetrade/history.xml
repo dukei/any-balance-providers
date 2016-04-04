@@ -1,11 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="3" date="2016-04-04">
+	- Новые счетчики: Клиентский номер, Статус, E-mail.
+	</change>
 	<change version="2" date="2015-08-01">
 	- Поддержка изменений в процедуре входа
 	</change>
-<!--
-	<change version="2" date="2014-02-01">
-	- 
-	</change>
--->
 </history>

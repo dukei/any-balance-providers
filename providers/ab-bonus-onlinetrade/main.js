@@ -15,19 +15,18 @@ function main() {
 	var baseurl = 'http://www.onlinetrade.ru/';
 	AnyBalance.setDefaultCharset('windows-1251');
 	
-	checkEmpty(prefs.login, 'Введите логин!');
-	checkEmpty(prefs.password, 'Введите пароль!');
+	AB.checkEmpty(prefs.login, 'Введите логин!');
+	AB.checkEmpty(prefs.password, 'Введите пароль!');
 	
 	AnyBalance.setCookie('www.onlinetrade.ru', 'beget', 'begetok');
-
-	try {
-		var html = AnyBalance.requestGet(baseurl + 'member/login.html', g_headers);
-	} catch(e){}
 	
-	if(AnyBalance.getLastStatusCode() > 400 || !html) {
-		throw new AnyBalance.Error('Ошибка! Сервер не отвечает! Попробуйте обновить баланс позже.');
+	var html = AnyBalance.requestGet(baseurl + 'member/login.html', g_headers);
+	
+	if(!html || AnyBalance.getLastStatusCode() > 400){
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
 	}
-	
+
 	html = AnyBalance.requestPost(baseurl + 'member/login.html', {
 		login: prefs.login,
 		password: prefs.password,
@@ -36,9 +35,9 @@ function main() {
 	}, addHeaders({Referer: baseurl + 'member/login.html'}));
 	
 	if (!/member\/\?log_out=1/i.test(html)) {
-		var error = getParam(html, null, null, /<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
+		var error = AB.getParam(html, null, null, /MessageError[^>]*>([\s\S]*?)<\/div>/i, AB.replaceTagsAndSpaces);
 		if (error)
-			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
+			throw new AnyBalance.Error(error, null, /неверный/i.test(error));
 		
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
@@ -46,8 +45,11 @@ function main() {
 	
 	var result = {success: true};
 	
-	getParam(html, result, 'balance', /ON-бонусов:([^>]+>){2}/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'price', /Цена:([^>]+>){2}/i, replaceTagsAndSpaces, html_entity_decode);
+	AB.getParam(html, result, 'balance', /ON-бонусов:([^>]+>){2}/i, AB.replaceTagsAndSpaces, AB.parseBalance);
+	AB.getParam(html, result, 'price', /Цена:([^>]+>){2}/i, AB.replaceTagsAndSpaces);
+	AB.getParam(html, result, 'userId', /Клиентский номер([^>]+>){2}/i, AB.replaceTagsAndSpaces);
+	AB.getParam(html, result, 'status', /Статус:([^>]+>){2}/i, AB.replaceTagsAndSpaces);
+	AB.getParam(html, result, 'email', /E-mail:([^>]+>){2}/i, AB.replaceTagsAndSpaces);
 	
 	AnyBalance.setResult(result);
 }

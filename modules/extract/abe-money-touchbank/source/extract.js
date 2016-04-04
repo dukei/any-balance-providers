@@ -1,16 +1,17 @@
-/**
+  /**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 */
 
 var g_headers = {
-	'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-	'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
-	'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
-	'Connection':'keep-alive',
-	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/48.0.2564.109 Safari/537.36'
+	'Accept':           'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+	'Accept-Charset':   'windows-1251,utf-8;q=0.7,*;q=0.3',
+	'Accept-Language':  'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
+	'Connection':       'keep-alive',
+	'User-Agent':       'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/49.0.2623.110 Safari/537.36'
 };
 
 var baseurl = 'https://www.touchbank.com';
+var csrf_token;
 
 function login(prefs) {
 	AnyBalance.setDefaultCharset('utf-8');
@@ -27,15 +28,7 @@ function login(prefs) {
 
 	if (!/logout/i.test(html)) {
 
-		//Получаем CSRF token
-		html = AnyBalance.requestGet(baseurl+'/proxy?pipe=dummyPipe&action=get_csrf_token', addHeaders({
-			'X-Requested-With': 'XMLHttpRequest',
-			'Referer': baseurl+'/lk'
-		}));
-		var json = getJson(html);
-		var csrf_token = json.data ? json.data.token : undefined;
-		if(!csrf_token)
-			throw new AnyBalance.Error("Не удалось найти токен авторизации. Сайт изменён?");
+    csrf_token = getToken();
 
 		html = AnyBalance.requestPost(baseurl + '/j_spring_security_check', {
 			j_username: prefs.login,
@@ -43,13 +36,11 @@ function login(prefs) {
 			captcha_challenge: ''
 		}, addHeaders({
 			Referer: baseurl + '/lk',
-			'Accept': 'application/json, text/plain, */*',
+      'Accept': 'application/json, text/plain, */*',
 			'X-CSRF-TOKEN': csrf_token,
-			'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
-			Origin: baseurl
-		}));
+  		}));
 
-		json = getJson(html);
+		var json = getJson(html);
 
 	} else {
 		AnyBalance.trace('Уже залогинены, используем существующую сессию')
@@ -64,6 +55,7 @@ function login(prefs) {
 		throw new AnyBalance.Error('Не удалось зайти в интернет-банк. Сайт изменен?');
 	}
 
+  csrf_token = getToken();
 
 	__setLoginSuccessful();
 	
@@ -78,7 +70,11 @@ function processAccounts(html, result) {
 
 	html = AnyBalance.requestPost(baseurl + '/proxy?pipe=userDataPipe&action=PRODUCTS', {
 		syncOff: true
-	}, addHeaders({'Referer': baseurl + '/lk/cards'}));
+	}, addHeaders({
+    'Referer': baseurl + '/lk/dashboard',
+    'X-CSRF-TOKEN': csrf_token,
+
+  }));
 
 	var json = getJson(html);
 	if(!json.data && !json.data.accounts) {
@@ -130,9 +126,12 @@ function processCards(html, result) {
 	if(!AnyBalance.isAvailable('cards'))
 		return;
 
-	html = AnyBalance.requestPost(baseurl + '/proxy?pipe=userDataPipe&action=PRODUCTS', {
+  html = AnyBalance.requestPost(baseurl + '/proxy?pipe=userDataPipe&action=PRODUCTS', {
 		syncOff: true
-	}, addHeaders({'Referer': baseurl + '/lk/cards'}));
+	}, addHeaders({
+    'Referer': baseurl + '/lk/dashboard',
+    'X-CSRF-TOKEN': csrf_token,
+  }));
 
 	var json = getJson(html);
 	if(!json.data && !json.data.cards) {
@@ -188,11 +187,12 @@ function searchMultiCards(card, result) {
 	var html = AnyBalance.requestPost(baseurl + '/proxy?pipe=multicardPipe&action=get_multicard_data', {
 		'cardId': card.id
 	}, addHeaders({
-		'Referer': baseurl + '/lk/cards/multicard'
-	}));
+		'Referer': baseurl + '/lk/cards/multicard',
+    'X-CSRF-TOKEN': csrf_token,
+  }));
 
 	var json = getJson(html);
-	if(!json.data || !json.data.multiCardList || !json.data.multiCardList.extCard) {
+	if(!json.data || !json.data.multiCardList || !json.data.multiCardList.extCard.length) {
 		AnyBalance.trace(html);
 		AnyBalance.trace('Не удалось найти мультикарты!');
 		return;
@@ -226,7 +226,10 @@ function processDeposits(html, result) {
 
 	html = AnyBalance.requestPost(baseurl + '/proxy?pipe=userDataPipe&action=PRODUCTS', {
 		syncOff: true
-	}, addHeaders({'Referer': baseurl + '/lk/cards'}));
+	}, addHeaders({
+    'Referer': baseurl + '/lk/dashboard',
+    'X-CSRF-TOKEN': csrf_token,
+  }));
 
 	var json = getJson(html);
 	if(!json.data && !json.data.deposits) {
@@ -266,76 +269,77 @@ function processDeposit(deposit, result) {
     getParam(deposit.closeDate, result, 'deposits.till', null, null, parseDateSilent);
     getParam(deposit.info, result, 'deposits.agreement', /дог\.[^\d]*(\d+)/i);
     getParam(deposit.info, result, 'deposits.period', /Депозит[\s\S]*?\./i);
-	getParam(deposit.statusLocale, result, 'deposits.status');
+	  getParam(deposit.statusLocale, result, 'deposits.status');
 
-	if(isAvailable('deposits.transactions'))
-		processDepositTransactions(deposit, result);
+    if(isAvailable('deposits.transactions')) {
+      processDepositTransactions(deposit, result);
+    }
 
 }
 
 
 function processInfo(html, result){
     html = AnyBalance.requestGet(baseurl + '/proxy?pipe=userDataPipe&action=PERSON_DATA', g_headers);
-	var json = getJson(html);
+	  var json = getJson(html);
     var info = result.info = {};
 
-	if(!json.data || !json.data.personData) {
-		AnyBalance.trace(html);
-		AnyBalance.trace("Не удалось получить персональную информацию. Сайт изменён?");
-		return;
-	}
-	var data = json.data.personData;
+    if(!json.data || !json.data.personData) {
+      AnyBalance.trace(html);
+      AnyBalance.trace("Не удалось получить персональную информацию. Сайт изменён?");
+      return;
+    }
+    var data = json.data.personData;
     getParam((data.surname + ' ' || '') + (data.firstName + ' ' || '') + (data.patronymic|| ''), info, 'info.fio');
     getParam(data.personId, info, 'info.personID');
-	getParam(data.mobilePhone, info, 'info.mphone');
+	  getParam(data.mobilePhone, info, 'info.mphone');
 
-	//Получаем адреса постоянной регистрации и фактического проживания
-	for(var i = 0; i < data.addressList.length; i++) {
-		var counter_name;
-		var adr = data.addressList[i];
+    //Получаем адреса постоянной регистрации и фактического проживания
+    for(var i = 0; i < data.addressList.length; i++) {
+      var counter_name;
+      var adr = data.addressList[i];
 
-		if(/адрес постоянной регистрации/i.test(adr.type)) {
-			counter_name = 'raddress';
-		} else if (/Адрес фактического проживания/i.test(adr.type)) {
-			counter_name = 'faddress'
-		}
+      if(/адрес постоянной регистрации/i.test(adr.type)) {
+        counter_name = 'raddress';
+      } else if (/Адрес фактического проживания/i.test(adr.type)) {
+        counter_name = 'faddress'
+      }
 
-		if(!counter_name) {
-			AnyBalance.trace("Неизвестный тип адреса: " + data.addressList[i].type);
-		} else {
-			result.info[counter_name] = (adr.postIndex + ', ' || '') + (adr.regionName + ', ' || '') + (adr.city + ', ' || '') + (adr.street + ', ' || '') + (adr.house + ', ' || '') + (adr.apartment || '');
-		}
-	}
+      if(!counter_name) {
+        AnyBalance.trace("Неизвестный тип адреса: " + data.addressList[i].type);
+      } else {
+        result.info[counter_name] = (adr.postIndex + ', ' || '') + (adr.regionName + ', ' || '') + (adr.city + ', ' || '') + (adr.street + ', ' || '') + (adr.house + ', ' || '') + (adr.apartment || '');
+      }
+    }
 
-	//Получаем список email'ов. Их может быть несколько.
-	if(data.emailList) {
-		var emails = [];
-		var source = isArray(data.emailList) ? data.emailList : [data.emailList];
+    //Получаем список email'ов. Их может быть несколько.
+    if(data.emailList) {
+      var emails = [];
+      var source = isArray(data.emailList) ? data.emailList : [data.emailList];
 
-		for(var i = 0; i < source.length; i++) {
-			emails.push(source[i].email);
-		}
+      for(var i = 0; i < source.length; i++) {
+        emails.push(source[i].email);
+      }
 
-		result.info.email = emails.join(', ');
-	} else {
-		AnyBalance.trace("Не удалось получить список email'ов.");
-	}
+      result.info.email = emails.join(', ');
+    } else {
+      AnyBalance.trace("Не удалось получить список email'ов.");
+    }
 
-	//Получаем список документов. docTypeId = 1 - паспорт
-	if(data.documentList) {
-		var docs = isArray(data.documentList) ? data.documentList : [data.documentList];
+    //Получаем список документов. docTypeId = 1 - паспорт
+    if(data.documentList) {
+      var docs = isArray(data.documentList) ? data.documentList : [data.documentList];
 
-		for(var i = 0; i < docs.length; i++) {
-			if(docs[i].docTypeId == 1) {
-				AnyBalance.trace("Нашли паспорт...");
-				result.info.passport = docs[i].serial + docs[i].number;
-			} else {
-				AnyBalance.trace("Неизвестный тип документа " + JSON.stringify(docs[i]));
-			}
-		}
-	} else {
-		AnyBalance.trace("Не удалось получить список документов.");
-	}
+      for(var i = 0; i < docs.length; i++) {
+        if(docs[i].docTypeId == 1) {
+          AnyBalance.trace("Нашли паспорт...");
+          result.info.passport = docs[i].serial + docs[i].number;
+        } else {
+          AnyBalance.trace("Неизвестный тип документа " + JSON.stringify(docs[i]));
+        }
+      }
+    } else {
+      AnyBalance.trace("Не удалось получить список документов.");
+    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -357,5 +361,19 @@ function processBonuses(html, result){
 		return;
 	}
 
-	getParam(json.data.operations[0]? json.data.operations[0].bonusAvailable + '' : undefined, result, 'bonuses', null, null, null, parseBalance);
+	getParam(json.data.operations[0]? json.data.operations[0].bonusAvailable + '' : undefined, result, 'bonuses', null, null, parseBalance);
+}
+
+function getToken() {
+  //Получаем CSRF token
+  var html = AnyBalance.requestPost(baseurl+'/proxy?pipe=dummyPipe&action=get_csrf_token', null, addHeaders({
+    'X-Requested-With': 'XMLHttpRequest',
+    'Referer': baseurl
+  }));
+  var json = getJson(html),
+      token = json.data ? json.data.token : undefined;
+  if(!token)
+    throw new AnyBalance.Error("Не удалось найти токен авторизации. Сайт изменён?");
+
+  return token;
 }

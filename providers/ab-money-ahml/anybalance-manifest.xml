@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-money-ahml</id>
+	<id version="2">ab-money-ahml</id>
 	<api flags="no_browser"/>
 	<name>Агенство по ипотечному жилищному кредитованию</name>
 	<description html="true"><![CDATA[
@@ -32,6 +32,6 @@
 		<counter id="insurance_till" name="Ближайший страховой платёж" type="time" format="dd/MM/yyyy"/>
 	</counters>
 	<keywords>ahml, аижк</keywords>
-	<type>money</type>
+	<type>money, wallet</type>
 	<country>ru</country>
 </provider>

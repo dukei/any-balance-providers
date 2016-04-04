@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="6">ab-money-bm</id>
+	<id version="7">ab-money-bm</id>
 	<api flags="no_browser|sms"/>
 	<name>Банк Москвы</name>
 	<description html="true"><![CDATA[

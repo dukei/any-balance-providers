@@ -1,26 +1,37 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-  <id version="2">ab-municipal-svenergo</id>
+  <id version="3">ab-municipal-svenergo</id>
   <name>Свердловэнергосбыт</name>
   <description>
     Получает баланс и информацию о тарифах в Свердловэнергосбыт. Получает данные из личного кабинета http://lk.sesb.ru.
 
     Если у вас еще нет доступа к этому личному кабинету, зарегистрируйтесь здесь: http://lk.sesb.ru/Registration.aspx. 
   </description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+  <depends>
+    <module id="library"/>
+  </depends>
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
     <js>main.js</js>
-    <js>library.js</js>
     <history>history.xml</history>
   </files>
   <counters>
-    <counter id="balance" name="Баланс" units="р"/>
+    <counter id="balance" name="Баланс" units=" р"/>
+    <counter id="period" name="Период" type="text"/>
+    <counter id="startBalance" name="Состояние счета на начало месяца" units=" р"/>
+    <counter id="payed" name="Оплачено" units=" р"/>
+    <counter id="charged" name="Начислено" units=" р"/>
+    <counter id="endBalance" name="Состояние счета на конец месяца" units=" р"/>
     <counter id="licschet" name="Лицевой счет" type="text"/>
     <counter id="cost" name="Стоимость услуг" type="text"/>
     <counter id="fio" name="ФИО" type="text"/>
+    <counter id="address" name="Адрес" type="text"/>
+    <counter id="residents" name="Количество проживающих"/>
+    <counter id="rooms" name="Количество комнат"/>
+    <counter id="area" name="Площадь"/>
   </counters>
   <keywords>
     свердлов, екатеринбург, электричество

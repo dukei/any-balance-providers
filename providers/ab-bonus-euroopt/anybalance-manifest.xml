@@ -1,18 +1,21 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="12">ab-bonus-euroopt</id>
+  <id version="13">ab-bonus-euroopt</id>
   <api flags="no_browser|captcha" min_level="3"/>
   <name>Евроопт (Беларусь)</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о скидке и сумме покупок в текущем месяце в белорусской компании "Евроопт" (http://www.euroopt.by).</p>
-	<p>Требует ввода защитного кода.</p> <p>Информация берется со страницы http://www.euroopt.by/otchet-po-diskontnoj-karte-2.</p>   
+	<p>Требует ввода защитного кода.</p>
+	<p>Информация берется со страницы http://eplus.evroopt.by/cabinet/report/</p>   
 	]]></description>
   <author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+  <depends>
+  	<module id="library"/>
+  </depends>
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
     <js>main.js</js>
-    <js>library.js</js>
     <history>history.xml</history>
   </files>
   <counters>

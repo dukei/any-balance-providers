@@ -61,13 +61,19 @@ function doNewCabinet(prefs){
 	
     var result = {success: true};
     getParam(html, result, 'balance', /b-user-info__balance[^>]*>([\s\S]*?)</i, null, parseBalance);
-	getParam(html, result, 'bonus', />\s*Начислено(?:[^>]*>){4,6}\s*<span[^>]*b-user-info__balance[^>]*>([\s\S]*?)</i, null, parseBalance);
-	getParam(html, result, 'bonus_avail', />\s*Доступно(?:[^>]*>){4,6}\s*<span[^>]*b-user-info__balance[^>]*>([\s\S]*?)</i, null, parseBalance);	
-	// Пока не было такого
-	getParam(html, result, 'limit', />\s*Кредитный лимит(?:[^>]*>){4,6}\s*<span[^>]*b-user-info__balance[^>]*>([\s\S]*?)</i, null, parseBalance);
-	getParam(html, result, 'own', />\s*Собственные(?:[^>]*>|\s*)?средства(?:[^>]*>){4,6}\s*<span[^>]*b-user-info__balance[^>]*>([\s\S]*?)</i, null, parseBalance);
-	
-	result.__tariff = prefs.login;
+    getParam(html, result, 'bonus', />\s*Начислено(?:[^>]*>){4,6}\s*<span[^>]*b-user-info__balance[^>]*>([\s\S]*?)</i, null, parseBalance);
+    getParam(html, result, 'bonus_avail', />\s*Доступно(?:[^>]*>){4,6}\s*<span[^>]*b-user-info__balance[^>]*>([\s\S]*?)</i, null, parseBalance);
+    // Пока не было такого
+    getParam(html, result, 'limit', />\s*Кредитный лимит(?:[^>]*>){4,6}\s*<span[^>]*b-user-info__balance[^>]*>([\s\S]*?)</i, null, parseBalance);
+    getParam(html, result, 'own', />\s*Собственные(?:[^>]*>|\s*)?средства(?:[^>]*>){4,6}\s*<span[^>]*b-user-info__balance[^>]*>([\s\S]*?)</i, null, parseBalance);
+
+    if(isAvailable('minpay', 'minpay_till')) {
+      html = AnyBalance.requestGet(baseurl + 'personal/credit-limit', g_headers);
+      getParam(html, result, 'minpay', /<div[^>]+b-credit__notice[^>]*>(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
+      getParam(html, result, 'minpay_till', /<div[^>]+b-credit__notice[^>]*>(?:[^>]*>){5}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseDate);
+
+    }
+    result.__tariff = prefs.login;
 
     AnyBalance.setResult(result);
 }

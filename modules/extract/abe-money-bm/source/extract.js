@@ -55,6 +55,7 @@ function hasCaptcha(html){
 
 function tryLogin(html){
 	var prefs = AnyBalance.getPreferences();
+	AnyBalance.setDefaultCharset('utf-8');
 
     var captcha = getCaptcha(html);
 
@@ -78,20 +79,23 @@ function tryLogin(html){
 		return value;
 	});
 
-	var submit = getParam(form, null, null, /<input[^>]+id="[^"]*:saveLogin"[^>]*>/i);
-	var submitid = getParam(submit, null, null, /input[^>]+id="([^"]*)/i);
+	var submit = getParam(form, null, null, /<input[^>]+id="[^"]*:loginBtn"[^>]*>/i);
+	var btnid = getParam(submit, null, null, /<input[^>]+id="([^"]*)>/i, replaceHtmlEntities);
+	var submitid = getParam(submit, null, null, /execute:\\?'([^'\\]*)/i);
 	var render = getParam(submit, null, null, /render:\\?'([^'\\]*)/);
+	var formid = getParam(form, null, null, /<form[^>]+id="([^"]*)/i, replaceHtmlEntities);
 
 	params = joinObjects(params, {
 	    'javax.faces.behavior.event': 'action',
 		'javax.faces.partial.event': 'click',
-		'javax.faces.source': submitid,
+		'javax.faces.source': btnid,
 		'javax.faces.partial.ajax': 'true',
 		'javax.faces.partial.execute': submitid,
-		'javax.faces.partial.render': render
+		'javax.faces.partial.render': render,
+		'javax.faces.source': formid
 	});
 
-	params[submitid] = submitid;
+	params[formid] = formid;
 
 	var action = getParam(form, null, null, /<form[^>]+action="([^"]*)/i);
 
@@ -191,7 +195,7 @@ function login(){
     if(!form){
         var error = findErrors(html);
         if(error)
-        	throw new AnyBalance.Error(error, null, /Неверно указаны данные для входа/i);
+        	throw new AnyBalance.Error(error, null, /Неверно указаны данные для входа/i.test(error));
         AnyBalance.trace(html);
         throw new AnyBalance.Error('Не удалось войти в интернет-банк. Сайт изменен?');
     }

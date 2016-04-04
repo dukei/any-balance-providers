@@ -82,93 +82,93 @@ function processAccounts(jsonInfo, result) {
     if(!AnyBalance.isAvailable('accounts'))
         return;
 
-	var html = AnyBalance.requestPost(baseurl, {
-		SID:jsonInfo.SID,
-		tic:1,
-		T:'RT_2IC.form',
-		nvgt:1,
-		SCHEMENAME:'ACCOUNTSLIST',
-		XACTION:''
-	}, g_headers);
+    var html = AnyBalance.requestPost(baseurl, {
+      SID:jsonInfo.SID,
+      tic:1,
+      T:'RT_2IC.form',
+      nvgt:1,
+      SCHEMENAME:'ACCOUNTSLIST',
+      XACTION:''
+    }, g_headers);
 
-	var error = getParam(html, null, null, /<REDIRECT>[\s\S]*?'(NO)ACCOUNTS'/i);
-	if(error) {
-        AnyBalance.trace('У Вас нет ни одного счёта!');
+    var error = getParam(html, null, null, /<REDIRECT>[\s\S]*?'(NO)ACCOUNTS'/i);
+    if(error) {
+          AnyBalance.trace('У Вас нет ни одного счёта!');
+          return;
+      }
+
+    var accounts = getElements(html, /<div[^>]+div-corner div-cards[^>]*>/ig);
+    if(!accounts.length) {
+      var accID = getParam(html, null, null, /<REDIRECT>[\s\S]*?AccID=(\d+)/i);
+      if(!accID) {
+        AnyBalance.trace(html);
+        AnyBalance.trace("Не удалось найти cчета!");
         return;
+      }
+
+      accounts[0] = AnyBalance.requestPost(baseurl, {
+        SID:		jsonInfo.SID,
+        tic:		1,
+        T:			'RT_2IC.form',
+        nvgt:		1,
+        SCHEMENAME:	'ACCOUNT',
+        XACTION:	'',
+        AccID: 		accID
+      }, g_headers);
     }
 
-	var accounts = getElements(html, /<div[^>]+div-corner div-accounts[^>]*>/ig);
-	if(!accounts.length) {
-		var accID = getParam(html, null, null, /<REDIRECT>[\s\S]*?AccID=(\d+)/i);
-		if(!accID) {
-			AnyBalance.trace(html);
-			AnyBalance.trace("Не удалось найти cчета!");
-			return;
-		}
+    AnyBalance.trace("Найдено счетов: " + accounts.length);
+    result.accounts = [];
 
-		accounts[0] = AnyBalance.requestPost(baseurl, {
-			SID:		jsonInfo.SID,
-			tic:		1,
-			T:			'RT_2IC.form',
-			nvgt:		1,
-			SCHEMENAME:	'ACCOUNT',
-			XACTION:	'',
-			AccID: 		accID
-		}, g_headers);
-	}
+    for(var i = 0; i < accounts.length; i++) {
+      var acc   = accounts[i];
 
-	AnyBalance.trace("Найдено счетов: " + accounts.length);
-	result.accounts = [];
+      var id    = getParam(acc, null, null, [/Номер счета[\s\S]*?<span[^>]+fat[^>]*>([^<]*)/i, /Номер счета:\s*([^<]*)/i]);
+      var num   = getParam(acc, null, null, [/Номер счета[\s\S]*?<span[^>]+fat[^>]*>([^<]*)/i, /Номер счета:\s*([^<]*)/i]);
+      var title = getParam(acc, null, null, [/<div[^>]+formheader(?:[^>]*>){8}([\s\S]*?)<\//i, /<span[^>]+div-b-span point[^>]*>([^<]*)/i], [replaceTagsAndSpaces, /"/ig, '']);
 
-	for(var i = 0; i < accounts.length; i++) {
-		var acc   = accounts[i];
+      var c     = {__id: id, __name: title, num: num};
 
-		var id    = getParam(acc, null, null, /Номер счета(?:[^>]*>){3}([\s\S]*?)<\//i);
-		var num   = getParam(acc, null, null, /Номер счета(?:[^>]*>){3}([\s\S]*?)<\//i);
-		var title = getParam(acc, null, null, /<div[^>]+formheader(?:[^>]*>){8}([\s\S]*?)<\//i, replaceTagsAndSpaces);
+      if (__shouldProcess('accounts', c)) {
+        processAccount(acc, c, jsonInfo, accID);
+      }
 
-		var c     = {__id: id, __name: title, num: num};
+      result.accounts.push(c);
 
-		if (__shouldProcess('accounts', c)) {
-			processAccount(acc, c, jsonInfo, accID);
-		}
-
-		result.accounts.push(c);
-
-	}
+    }
 }
 
 function processAccount(account, result, jsonInfo, accID){
     AnyBalance.trace('Обработка счета ' + result.__name);
 
-	if(!accID) {
-		accID = getParam(card, null, null, /cardID=(\d+)/i);
-		if(!accID) {
-			AnyBalance.trace(account);
-			AnyBalance.trace("Не удалось найти ID счёта для запроса!");
-			return;
-		}
+    if(!accID) {
+      accID = getParam(account, null, null, /AccID=(\d+)/i);
+      if(!accID) {
+        AnyBalance.trace(account);
+        AnyBalance.trace("Не удалось найти ID счёта для запроса!");
+        return;
+      }
 
-		account = AnyBalance.requestPost(baseurl, {
-			SID:		jsonInfo.SID,
-			tic:		1,
-			T:			'RT_2IC.form',
-			nvgt:		1,
-			SCHEMENAME:	'ACCOUNT',
-			XACTION:	'',
-			AccID: 		accID
-		}, g_headers)
-	}
+      account = AnyBalance.requestPost(baseurl, {
+        SID:		jsonInfo.SID,
+        tic:		1,
+        T:			'RT_2IC.form',
+        nvgt:		1,
+        SCHEMENAME:	'ACCOUNT',
+        XACTION:	'',
+        AccID: 		accID
+      }, g_headers)
+    }
 
-	getParam(account, result, 'accounts.balance', /<span[^>]+veryBig fat[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(account, result, ['accounts.currency', 'accounts.balance'], /<span[^>]+veryBig fat[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseCurrency);
-	getParam(account, result, 'accounts.date_start', /Дата открытия(?:[^>]*>){3}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseDateWord);
-	getParam(account, result, 'accounts.receiver', /Получатель(?:[^>]*>){3}([\s\S]*?)<\//i, replaceTagsAndSpaces);
-	getParam(account, result, 'accounts.receiversINN', /ИНН получателя(?:[^>]*>){3}([\s\S]*?)<\//i, replaceTagsAndSpaces);
-	getParam(account, result, 'accounts.type', /accRest(?:[^>]*>){7}([\s\S]*?)<\//i, replaceTagsAndSpaces);
+    getParam(account, result, 'accounts.balance', /<span[^>]+veryBig fat[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(account, result, ['accounts.currency', 'accounts.balance'], /<span[^>]+veryBig fat[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseCurrency);
+    getParam(account, result, 'accounts.date_start', /Дата открытия(?:[^>]*>){3}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseDateWord);
+    getParam(account, result, 'accounts.receiver', /Получатель(?:[^>]*>){3}([\s\S]*?)<\//i, replaceTagsAndSpaces);
+    getParam(account, result, 'accounts.receiversINN', /ИНН получателя(?:[^>]*>){3}([\s\S]*?)<\//i, replaceTagsAndSpaces);
+    getParam(account, result, 'accounts.type', /accRest(?:[^>]*>){7}([\s\S]*?)<\//i, replaceTagsAndSpaces);
 
-	if(AnyBalance.isAvailable('accounts.transactions')) {
-		processAccountTransactions(accID, jsonInfo, result);
+    if(AnyBalance.isAvailable('accounts.transactions')) {
+      processAccountTransactions(accID, jsonInfo, result);
     }
 }
 
@@ -282,56 +282,96 @@ function processCard(card, result, jsonInfo, cardID) {
 // Обработка депозитов
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 function processDeposits(jsonInfo, result) {
-	throw new AnyBalance.Error("Обработка депозитов пока не поддерживается. Пожалуйста, обратитесь к разработчикам.");
-
-    //То, что было в старой версии положим пока сюда. Понадобится, когда нужно будет доделать депозиты.
     var html = AnyBalance.requestPost(baseurl, {
-        SID:jsonInfo.SID,
-        tic:1,
-        T:'RT_2IC.form',
-        nvgt:1,
-        SCHEMENAME:'DEPOSITSLIST',
-        XACTION:''
-    }, headers);
+        SID:        jsonInfo.SID,
+        tic:        1,
+        T:          'RT_2IC.form',
+        nvgt:       1,
+        SCHEMENAME: 'DEPOSITSLIST',
+        XACTION:    ''
+    }, g_headers);
 
     var error = getParam(html, null, null, /<REDIRECT>[\s\S]*?'(NO)DEPOSITS'/i);
-    if(error)
-        throw new AnyBalance.Error('У вас нет ни одного вклада');
-
-    var depid = getParam(html, null, null, /<REDIRECT>[\s\S]*?DepID=([0-9A-Z]+)/i);
-    if(!depid){
-        var tpl = prefs.cardnum ? prefs.cardnum.toUpperCase() : '';
-        var $html = $(html);
-
-        var $dep = $html.find('div.div-b:has(span[onclick*="DepID=' + (tpl || '') + '"])').first();
-        if(!$dep.size())
-            throw new AnyBalance.Error('Не удаётся найти ' + (tpl ? 'сделку вклада №' + tpl : 'ни одного вклада'));
-
-        depid = getParam($dep.html(), null, null, /DepID=([0-9A-Z]+)/i);
-        if(!depid)
-            throw new AnyBalance.Error('Не удаётся найти номер сделки для вклада. Интернет-банк изменился?');
+    if(error) {
+      throw new AnyBalance.Error('У вас нет ни одного вклада');
     }
 
-    html = AnyBalance.requestPost(baseurl, {
-        SID:jsonInfo.SID,
-        tic:1,
-        T:'RT_2IC.form',
-        nvgt:1,
-        SCHEMENAME:'DEPOSIT',
-        XACTION:'',
-        DepID:depid
-    }, headers);
+    var deposits = getElements(html, /<div[^>]+div-corner div-cards[^>]*>/ig);
+    if(!deposits.length){
+      var depID = getParam(html, null, null, /<REDIRECT>[\s\S]*?DepID=([0-9A-Z]+)/i);
+      if(!depID) {
+        AnyBalance.trace(html);
+        AnyBalance.trace("Не удалось найти депозиты!");
+        return;
+      }
 
-    var result = {success: true};
-    getParam(html, result, 'type', /<h1>([\s\S]*?)<\/h1>/i, replaceTagsAndSpaces);
-    getParam(html, result, '__tariff', /<h1>([\s\S]*?)<\/h1>/i, replaceTagsAndSpaces);
-    getParam(html, result, 'balance', /Текущая сумма вклада[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'currency', /Текущая сумма вклада[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseCurrency);
-    getParam(html, result, 'pct', /Проценты:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'period', /Срок вклада:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(depid, result, 'accnum', /(.*)/i);
-    getParam(html, result, 'status', /Статус:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
-    getParam(jsonInfo.USR, result, 'fio', /(.*)/i, replaceTagsAndSpaces);
+      deposits[0] = AnyBalance.requestPost(baseurl, {
+        SID:		    jsonInfo.SID,
+        tic:		    1,
+        T:			    'RT_2IC.form',
+        nvgt:		    1,
+        SCHEMENAME:	'DEPOSIT',
+        XACTION:	  '',
+        DepID: 	    depID
+      }, g_headers);
+
+    }
+
+    AnyBalance.trace('Найдено депозитов: ' + deposits.length);
+    result.deposits = [];
+
+    for(var i = 0; i < deposits.length; i++) {
+      var id    = getParam(deposits[i], null, null, /Номер сделки[\s\S]*?<span[^>]+fat[^>]*>([^<]*)/i);
+      var num   = getParam(deposits[i], null, null, /Номер сделки[\s\S]*?<span[^>]+fat[^>]*>([^<]*)/i,      replaceTagsAndSpaces);
+      var title = getParam(deposits[i], null, null, /<span[^>]+span-actual(?:[^>]*>){4}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+
+      var c = {__id: id, __name: title, num: num};
+
+      if (__shouldProcess('deposits', c)) {
+        processDeposit(deposits[i], c, jsonInfo, depID);
+      }
+
+      result.deposits.push(c);
+    }
+}
+
+function processDeposit(deposit, result, jsonInfo, depID) {
+    AnyBalance.trace('Обработка депозита ' + result.__name);
+
+    if(!depID) {
+      depID = getParam(deposit, null, null, /AccID=(\d+)/i);
+      if(!depID) {
+        AnyBalance.trace(deposit);
+        AnyBalance.trace("Не удалось найти ID депозита для запроса!");
+        return;
+      }
+
+      deposit = AnyBalance.requestPost(baseurl, {
+        SID:		    jsonInfo.SID,
+        tic:		    1,
+        T:			    'RT_2IC.form',
+        nvgt:		    1,
+        SCHEMENAME:	'DEPOSIT',
+        XACTION:	  '',
+        DepID: 	    depID
+      }, g_headers)
+    }
+
+   getParam(deposit, result, 'deposits.balance',        /<span[^>]+veryBig fat[^>]*>([\s\S]*?)<\/span>/i,  replaceTagsAndSpaces, parseBalance);
+   getParam(deposit, result, 'deposits.pct',            /<span[^>]+fat toLowerCase[^>]*>([^%]*)/i,         replaceTagsAndSpaces, parseBalance);
+   getParam(deposit, result, 'deposits.pct_condition',  /<span[^>]+fat toLowerCase[^>]*>[^]*?\(([^\)]*)/i, replaceTagsAndSpaces, parseBalance);
+   getParam(deposit, result, 'deposits.start_sum',      /Начальная сумма(?:[^>]*>){3}([^<]*)/i,            replaceTagsAndSpaces, parseBalance);
+   getParam(deposit, result, 'deposits.period',         /Срок вклада(?:[^>]*>){3}([^\(]*)/i,               replaceTagsAndSpaces, parseBalance);
+   getParam(deposit, result, ['deposits.currency', 'deposits.balance', 'deposits.start_sum'], /<span[^>]+veryBig fat[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseCurrency);
+
+   getParam(deposit, result, 'deposits.status',  /Статус(?:[^>]*>){3}([^<]*)/i,              replaceTagsAndSpaces);
+   getParam(deposit, result, 'deposits.till',    /Срок вклада(?:[^>]*>){3}[^-]*-([^<\)]*)/i, replaceTagsAndSpaces, parseDateWord);
+
+   getParam(deposit, result, 'deposits.topup',     /Доступные действия в системе(?:[^>]*>){3}([^<]*)/i, replaceTagsAndSpaces);
+   getParam(deposit, result, 'deposits.withdraw',  /Доступные действия в системе(?:[^>]*>){5}([^<]*)/i, replaceTagsAndSpaces);
+   getParam(deposit, result, 'deposits.e_withdraw',/Доступные действия в системе(?:[^>]*>){7}([^<]*)/i, replaceTagsAndSpaces);
+   getParam(deposit, result, 'deposits.prolong',   /Доступные действия в системе(?:[^>]*>){9}([^<]*)/i, replaceTagsAndSpaces);
+
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

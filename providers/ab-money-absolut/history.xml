@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="6" date="2016-04-04">
+	- Исправлен счётчик "Валюта".
+	</change>
 	<change version="5" date="2016-04-01">
 	- Исправлена ошибка с wicketID.
 	- Добавлены счётчики: статус карты, имя владельца, срок действия.

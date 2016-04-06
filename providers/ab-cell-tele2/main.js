@@ -63,14 +63,17 @@ function doNewCabinet(html) {
     adapter.processPayments(html, result);
 
     var newresult = adapter.convert(result);
-	for (var i = 0; i < result.payments.length; ++i) {
-		var p = result.payments[i];
+	
+	if(result.payments) {
+		for (var i = 0; i < result.payments.length; ++i) {
+			var p = result.payments[i];
 
-		sumParam(fmtDate(new Date(p.date), '.') + ' ' + p.sum, newresult, 'history', null, null, null, aggregate_join);
-		if (/^-/.test(p.sum)) {
-			sumParam(p.sum, newresult, 'history_out', null, null, null, aggregate_sum);
-		} else {
-			sumParam(p.sum, newresult, 'history_income', null, null, null, aggregate_sum);
+			sumParam(fmtDate(new Date(p.date), '.') + ' ' + p.sum, newresult, 'history', null, null, null, aggregate_join);
+			if (/^-/.test(p.sum)) {
+				sumParam(p.sum, newresult, 'history_out', null, null, null, aggregate_sum);
+			} else {
+				sumParam(p.sum, newresult, 'history_income', null, null, null, aggregate_sum);
+			}
 		}
 	}
     
@@ -78,7 +81,7 @@ function doNewCabinet(html) {
 };
 
 function doOldCabinet(html) {
-	var baseurl = 'https://my.tele2.ru/';
+	var baseurl = 'https://old.my.tele2.ru/';
 
 	AnyBalance.trace('Входим в старый кабинет');
 	html = reenterOld();

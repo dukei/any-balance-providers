@@ -10,7 +10,7 @@ var g_headers = {
 	'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/48.0.2564.116 Safari/537.36'
 };
 
-var baseurl = "https://new.my.tele2.ru/";
+var baseurl = "https://my.tele2.ru/";
 var baseurlLogin = 'https://login.tele2.ru/ssotele2/';
 
 function login() {
@@ -99,7 +99,7 @@ function login() {
  * (если уже осуществлен вход в новый)
  */
 function reenterOld(html){
-    var baseurl = "https://my.tele2.ru/";
+    var baseurl = "https://old.my.tele2.ru/";
 
     html = AnyBalance.requestGet(baseurl, g_headers);
     if(/<form[^>]+id="sso-modal-login-form"/i.test(html)){
@@ -267,7 +267,7 @@ function getDiscount(result, discount) {
         //трафик
         getParam(discount.rest.value + discount.rest.measure, result, 'remainders.traffic_left', null, null, parseTraffic);
         getParam((discount.limit.value - discount.rest.value) + discount.limit.measure, result, 'remainders.traffic_used', null, null, parseTraffic);
-    } else if (/шт/i.test(units)) {
+    } else if (/шт|SMS|MMS/i.test(units)) {
         //СМС/ММС
         if (/ммс|mms/i.test(name)) {
             getParam(discount.rest.value, result, 'remainders.mms_left');
@@ -286,21 +286,35 @@ function processPayments(html, result){
         return;
 
     AnyBalance.trace("Searching for payments");
-    html = AnyBalance.requestGet(baseurl + "payments/history?filter=LAST_10");
-    var json = getParam(html, null, null, /JS_DATA\s*=\s*JSON.parse\s*\(('(?:[^\\']+|\\.)*')/, null, function(str) {
-        return getJson(safeEval("return " + str))
-    });
-
-    AnyBalance.trace('History json: ' + JSON.stringify(json));
+	
+	try {
+		html = AnyBalance.requestGet(baseurl + "payments/history?filter=LAST_10");
+		
+		var json = getParam(html, null, null, /JS_DATA\s*=\s*JSON.parse\s*\(('(?:[^\\']+|\\.)*')/, null, function(str) {
+			return getJson(safeEval("return " + str))
+		});
+	} catch (e) {}
+	
+	if(!json || !json.payments) {
+		AnyBalance.trace(html);
+		AnyBalance.trace('Не удолось получить последние платежи, может их просто нет?');
+		return;
+	}
+	
+	AnyBalance.trace('History json: ' + JSON.stringify(json));
     result.payments = [];
-
+	
     for (var i = 0; i < json.payments.length; ++i) {
         var pmnt = json.payments[i];
         var p = {};
 
         getParam(pmnt.amount, p, 'payments.sum', null, null, parseBalanceSilent);
-        getParam(pmnt.date, p, 'payments.date', null, null, parseDateWordSilent);
-        getParam(pmnt.type, p, 'payments.descr');
+		getParam(pmnt.type, p, 'payments.descr');
+		
+        getParam(pmnt.date, p, 'payments.date', null, null, function (str) {
+			var match = /^(\d+\s+[а-яa-z]+)/i.exec(str) || [];
+			return parseDateWordSilent(match[1]);
+		});
 
         result.payments.push(p);
     }
@@ -312,7 +326,7 @@ function processInfo(html, result){
 
     var info = result.info = {};
 
-    getParam(html, info, "info.fio", /<div[^>]+class="user-name"[^>]*>([^]*?)<\/div>/i, replaceTagsAndSpaces);
+    getParam(html, info, "info.fio", /<div[^>]+class="user-name"[^>]*>([^]*?)<\/div>/i, replaceTagsAndSpaces, capitalFirstLetters);
     getParam(html, info, "info.mphone", /<div[^>]+class="user-phone"[^>]*>([^]*?)<\/div>/i, replaceTagsAndSpaces);
 
     if(AnyBalance.isAvailable("info.email", "info.address")){

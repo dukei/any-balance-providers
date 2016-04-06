@@ -21,7 +21,7 @@ function main () {
     if(!prefs.login)
         throw new AnyBalance.Error('Введите № карты');
 	
-    var html = AnyBalance.requestGet(baseurl + 'cabinet/report/', g_headers);
+    var html = AnyBalance.requestGet(baseurl + 'cabinet/enter/', g_headers);
     if (!html || AnyBalance.getLastStatusCode() > 400) {
         AnyBalance.trace(html);
         throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
@@ -45,9 +45,9 @@ function main () {
         return value;
     });
 	
-    html = AnyBalance.requestPost(baseurl + 'cabinet/report/', params, addHeaders({Referer: baseurl + 'cabinet/report/'}));
+    html = AnyBalance.requestPost(baseurl + 'cabinet/enter/', params, addHeaders({Referer: baseurl + 'cabinet/enter/'}));
 
-    if(!/<div[^>]+class="main_info"/i.test(html)){
+    if(!/\/cabinet\/report\//i.test(html)){
         var error = sumParam(html, null, null, /<ul[^>]+class="errors"[^>]*>([\s\S]*?)<\/ul>/ig, replaceTagsAndSpaces, null, aggregate_join);
         if(error)
             throw new AnyBalance.Error(error, null, /Карточка с таким номером не найдена/i.test(error));

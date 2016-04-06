@@ -10,6 +10,7 @@
 	</files>
 	<depends>
 		<module id="library"/>
+		<module id="parsers/jsonpath"/>
 	</depends>
 	<type>money, bank</type>
 </provider>

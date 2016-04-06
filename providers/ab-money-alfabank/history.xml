@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="53" date="2016-04-06">
+	Исправлено получение имени пользователя
+	</change>
 	<change version="52" date="2015-12-08">
 	Исправление работы банка на устаревших платформах
 	</change>

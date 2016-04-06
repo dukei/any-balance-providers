@@ -176,6 +176,58 @@ function clickGoToUrl(urlOrHtml, options){
     return html;
 }
 
+function paramToCookie(name) {
+	var url = AnyBalance.getLastUrl();
+    var param = url.match(new RegExp('[?&]' + name + '=([^&]*)'));
+    if (param && param.length > 1) {
+    	AnyBalance.setCookie(g_baseurl.replace(/https?:\/\//i, ''), name, param[1], {path: '/ALFAIBSR'}); 
+    }
+}
+
+function clickFollowUrl(url){
+	var maxCounter = 5;
+	while(--maxCounter){
+		var html = AnyBalance.requestGet(url, g_headers);
+
+        var afr = getParam(html, null, null, /"_afrLoop",\s*"(\d+)"/i);
+        if (!afr)
+            break;
+        
+        url = AnyBalance.getLastUrl();
+        
+        html = AnyBalance.requestGet(url + '&_afrLoop=' + afr + '&_afrWindowMode=0&_afrWindowId=null', g_headers);
+
+        //Проверим, нет ли нового токена
+    	var ct = getParam(html, null, null, /<div[^>]+id="ct"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+    	if(ct){
+    		AnyBalance.trace('CSRF token found: ' + ct);
+    		g_csrfToken = ct;
+    	}
+
+    	//Проверим, не надо ли какой параметр загнать в куки
+    	var cookies = sumParam(html, null, null, /paramToCookie\s*\(\s*['"]([^'"]*)/ig);
+    	for(var i=0; i<cookies.length; ++i){
+    		paramToCookie(cookies[i]);
+    	}
+        
+        //Проверим, не надо ли дополнительной переадресации
+        url = getParam(html, null, null, /location\.href\s*=\s*'(\/ALFA[^']*)/, replaceSlashes);
+        if(!url)
+        	break;
+
+        url = g_baseurl + url;
+
+    }
+
+    if(maxCounter == 0){
+    	AnyBalance.trace('Не удалось перейти на ссылку: ' + html);
+    	throw new AnyBalance.Error('Не удалось перейти на ссылку');
+    }
+
+    return html;
+}
+
+
 function processCards2(html, result) {
     if (!AnyBalance.isAvailable('cards'))
         return;
@@ -553,49 +605,54 @@ function processInfo2(html, result) {
         result = result.info = {};
         getParam(html, result, 'info.mphone', /<div[^>]*>([^<]*)<div[^>]+id="[^"]*mymobilePopup/i, replaceTagsAndSpaces);
 
-        //настройки
-        var event = getParam(html, null, null, /<a[^>]+id="([^"]*)[^>]*>\s*&#1085;&#1072;&#1089;&#1090;&#1088;&#1086;&#1081;&#1082;&#1080;\s*<\/a>/i, replaceHtmlEntities);
-        html = getNextPage(html, event, [
-            ['event', '%EVENT%'],
-            ['event.%EVENT%', g_some_action],
-            ['oracle.adf.view.rich.PPR_FORCED', 'true']
-        ]);
+        var baseurl = 'https://settings.alfabank.ru/';
+
+        html = clickFollowUrl(baseurl + 'settings/profile');
+        
+        var info = getJsonObject(html, /window.initialState\s*=\s*JSON.parse\s*\(\s*'/);
+        if(!info){
+        	AnyBalance.trace('Не удалось получить json с именем: ' + html);
+        	throw new AnyBalance.Error('Не удалось получить json с именем, сайт изменен?');
+        }
 
         var join_space = create_aggregate_join(' '), replaceValue = [/<input[^>]+value="([^"]*)".*/i, '$1', replaceHtmlEntities, /<input.*/i, ''];
 
-        //Логин
-        getParam(html, result, 'info.login', /<label[^>]*>\s*&#1051;&#1086;&#1075;&#1080;&#1085;[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
-        //Клиент
-        getParam(html, result, 'info.fio', /<label[^>]*>\s*&#1050;&#1083;&#1080;&#1077;&#1085;&#1090;[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
-        //Дополнительный логин
-        getParam(html, result, 'info.login2', /<label[^>]*>\s*&#1044;&#1086;&#1087;&#1086;&#1083;&#1085;&#1080;&#1090;&#1077;&#1083;&#1100;&#1085;&#1099;&#1081; &#1083;&#1086;&#1075;&#1080;&#1085;[\s\S]*?(<input[^>]+)/i, replaceValue);
-        //Е-mail
-        getParam(html, result, 'info.email', /<label[^>]*>\s*(?:&#1045;|E)-mail[\s\S]*?<table[^>]*>([^]*?)<\/table>/i, replaceTagsAndSpaces);
-        //Рабочий телефон
-        getParam(html, result, 'info.wphone', /<label[^>]*>\s*&#1056;&#1072;&#1073;&#1086;&#1095;&#1080;&#1081; &#1090;&#1077;&#1083;&#1077;&#1092;&#1086;&#1085;[\s\S]*?<table[^>]*>([^]*?)<\/table>/i, replaceTagsAndSpaces);
-        //Телефон по месту жительства
-        getParam(html, result, 'info.hphone', /<label[^>]*>\s*&#1058;&#1077;&#1083;&#1077;&#1092;&#1086;&#1085; &#1087;&#1086; &#1084;&#1077;&#1089;&#1090;&#1091; &#1078;&#1080;&#1090;&#1077;&#1083;&#1100;&#1089;&#1090;&#1074;&#1072;[\s\S]*?<table[^>]*>([^]*?)<\/table>/i, replaceTagsAndSpaces);
-        //Телефон по месту регистрации
-        getParam(html, result, 'info.rphone', /<label[^>]*>\s*&#1058;&#1077;&#1083;&#1077;&#1092;&#1086;&#1085; &#1087;&#1086; &#1084;&#1077;&#1089;&#1090;&#1091; &#1088;&#1077;&#1075;&#1080;&#1089;&#1090;&#1088;&#1072;&#1094;&#1080;&#1080;[\s\S]*?<table[^>]*>([^]*?)<\/table>/i, replaceTagsAndSpaces);
-        //Услуга «Альфа-Чек» подключена к следующим картам:
-        var check = getParam(html, null, null, /&#1059;&#1089;&#1083;&#1091;&#1075;&#1072; &laquo;&#1040;&#1083;&#1100;&#1092;&#1072;-&#1063;&#1077;&#1082;&raquo; &#1087;&#1086;&#1076;&#1082;&#1083;&#1102;&#1095;&#1077;&#1085;&#1072; &#1082; &#1089;&#1083;&#1077;&#1076;&#1091;&#1102;&#1097;&#1080;&#1084; &#1082;&#1072;&#1088;&#1090;&#1072;&#1084;:[\s\S]*?<table[^>]*>([^]*?)<\/table>/i);
-        if (check && AnyBalance.isAvailable('info.check')) {
-            var cs = [];
-            var rows = getElements(check, [/<tr[^>]*>/ig, /<span[^>]+class="mediumHeader"/i]);
-            for (var i = 0; i < rows.length; i++) {
-                var row = rows[i];
-                var c = {};
-                getParam(row, c, 'info.check.card', /(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
-                getParam(row, c, 'info.check.phone', /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
-                cs.push(c);
-            }
-            result.check = cs;
-        }
+        sumParam(jspath1(info, '$.profileInfo.customer.lastName'), result, 'info.fio', null, null, null, join_space);
+        sumParam(jspath1(info, '$.profileInfo.customer.firstName'), result, 'info.fio', null, null, null, join_space);
+        sumParam(jspath1(info, '$.profileInfo.customer.middleName'), result, 'info.fio', null, null, null, join_space);
 
-        //Услуга «Альфа-Мобайл ... подключена
-        getParam(html, result, 'info.mobile', /&#1059;&#1089;&#1083;&#1091;&#1075;&#1072; &laquo;&#1040;&#1083;&#1100;&#1092;&#1072;-&#1052;&#1086;&#1073;&#1072;&#1081;[^<]*&#8212; &#1087;&#1086;&#1076;&#1082;&#1083;&#1102;&#1095;&#1077;&#1085;&#1072;/i, null, function (str) {
-            return !!str
-        });
+        getParam(jspath1(info, '$.profileInfo.customer.email'), result, 'info.email');
+
+        if(AnyBalance.isAvailable('info.mphone', 'info.rphone', 'info.wphone', 'info.hphone', 'info.login', 'info.login2', 'info.check', 'info.mobile')){
+            html = AnyBalance.requestGet(baseurl + 'settings/api/load?_=' + new Date().getTime(), g_headers);
+            info = getJson(html);
+            
+            getParam(jspath1(info, '$[*].contacts.clickPhone'), result, 'info.mphone');
+            getParam(jspath1(info, '$[*].contacts.registrationPhone'), result, 'info.rphone');
+            getParam(jspath1(info, '$[*].contacts.workPhone'), result, 'info.wphone');
+            getParam(jspath1(info, '$[*].contacts.homePhone'), result, 'info.hphone');
+            
+            getParam(jspath1(info, '$[*].channels[?(@.id=="C2")].login'), result, 'info.login');
+            getParam(jspath1(info, '$[*].channels[?(@.id=="C2")].alternativeLogin'), result, 'info.login2');
+            
+            //Услуга «Альфа-Чек» подключена к следующим картам:
+            var cards = jspath(info, '$[*].cards[?(@.alfaCheck.enabled==true)]');
+            
+            if (cards && AnyBalance.isAvailable('info.check')) {
+                var cs = [];
+                for (var i = 0; i < cards.length; i++) {
+                    var row = cards[i];
+                    var c = {};
+                    getParam(jspath1(row, '$.maskedNumber'), c, 'info.check.card');
+                    getParam(jspath1(row, '$.alfaCheck.phone'), c, 'info.check.phone');
+                    cs.push(c);
+                }
+                result.check = cs;
+            }
+            
+            //Услуга «Альфа-Мобайл ... подключена
+            getParam(!jspath1(info, '$[*].channels[?(@.id=="M2")].isBlocked'), result, 'info.mobile');
+        }
     }
 }
 

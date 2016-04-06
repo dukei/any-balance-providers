@@ -1,5 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="37" date="2016-04-06">
+	- Исправлен вход в ЛК.
+	- Исправлено получение остатка смс.
+	</change>
 	<change version="36" date="2016-03-11">
 	По-умолчанию работа с новым кабинетом
 	</change>

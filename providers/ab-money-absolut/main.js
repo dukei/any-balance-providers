@@ -24,13 +24,18 @@ var g_countersTable = {
     "__tariff": "accounts.__id",
   },
   crd: {
-    "pay_till":   "credits.minpay_till",
-    "pay_sum":    "credits.minpay",
-    "pay_debt":   "credits.minpay_main_debt",
-    "pay_pct":    "credits.minpay_pct",
-    "currency":   "credits.currency",
-    "limit":      "credits.balance",
-    "__tariff":   "credits.__name",
+    "pay_till":         "credits.minpay_till",
+    "pay_sum":          "credits.minpay",
+    "pay_debt":         "credits.minpay_main_debt",
+    "pay_pct":          "credits.minpay_pct",
+    "currency":         "credits.currency",
+    "limit":            "credits.balance",
+    "credit_main":      "credits.debt_main",
+    "credit_pct":       "credits.pct_sum",
+    "credit_expired":   "credits.debt_expired",
+    "credit_pExpired":  "credits.pct_expired",
+    "credit_penalty":   "credits.penalty",
+    "__tariff":         "credits.__name",
 
   }
 };

@@ -1,17 +1,19 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="2">ab-internet-istranet</id>
+	<id version="3">ab-internet-istranet</id>
 	<name>Истранет (Истра)</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе провайдера Истранет http://istranet.ru/</p>
-	<p>Информация берется из личного кабинета http://lk.istranet.ru/</p>
+	<p>Информация берется из личного кабинета https://lk.istranet.ru/</p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>

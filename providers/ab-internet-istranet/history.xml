@@ -1,5 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="3" date="2016-04-06">
+	Переезд личного кабинета на https
+	</change>
 	<change version="2" date="2014-03-05">
 	- Новый счетчик: Состояние интернета.
 	</change>

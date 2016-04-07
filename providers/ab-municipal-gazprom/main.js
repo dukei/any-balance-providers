@@ -18,6 +18,7 @@ var regions = {
 	perm: getSmorodina,
 	rostov: getRostov,
 	spb: getSPB,
+  sever: getSever,
 	tver: getTver,
 	ufa: getUfa,
 	cheboksari: getCheboksari
@@ -237,6 +238,53 @@ function getSPB() {
 	AB.getParam(html, result, 'account', /Лицевой счет №([^<]+)/i, AB.replaceTagsAndSpaces);
 
 	AnyBalance.setResult(result);
+}
+
+function getSever() {
+  var prefs   = AnyBalance.getPreferences(),
+      baseurl = 'https://severrg.ru/';
+
+  AnyBalance.setDefaultCharset('utf-8');
+
+  var html = AnyBalance.requestGet(baseurl + 'CustomerService/Login.aspx', g_headers);
+
+  if(!html || AnyBalance.getLastStatusCode() > 400){
+      AnyBalance.trace(html);
+      throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
+    }
+
+  var params = AB.createFormParams(html, function(params, str, name, value) {
+    if (name == 'login')
+      return prefs.login;
+    else if (name == 'password')
+      return prefs.password;
+
+    return value;
+  });
+
+  html = AnyBalance.requestPost(baseurl + 'CustomerService/Login.aspx', params, addHeaders({
+    'Referer': baseurl + 'CustomerService/Login.aspx'
+  }));
+
+  if (!/logout/i.test(html)) {
+    var error = AB.getParam(html, null, null, /<td[^>]+error[^>]*>([\s\S]*?)<\/td>/i, AB.replaceTagsAndSpaces);
+    if (error) {
+      throw new AnyBalance.Error(error, null, /Логин или пароль указан неверно/i.test(error));
+    }
+
+    AnyBalance.trace(html);
+    throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
+  }
+
+  var result = {success: true};
+
+  AB.getParam(html, result, 'address', /Адрес(?:[^>]*>){2}([\s\S]*?)<\/td>/i, AB.replaceTagsAndSpaces);
+  AB.getParam(html, result, 'charged', /Начислено(?:[^>]*>){2}([\s\S]*?)<\/td>/i, AB.replaceTagsAndSpaces, AB.parseBalance);
+  AB.getParam(html, result, 'paid', /Оплачено(?:[^>]*>){2}([\s\S]*?)<\/td>/i, AB.replaceTagsAndSpaces, AB.parseBalance);
+  AB.getParam(html, result, 'balance', /Итоговый остаток на счёте(?:[^>]*>){2}([\s\S]*?)<\//i, AB.replaceTagsAndSpaces, AB.parseBalance);
+  AB.getParam(html, result, 'fio', /Наименование(?:[^>]*>){2}([\s\S]*?)<\//i, AB.replaceTagsAndSpaces);
+
+  AnyBalance.setResult(result);
 }
 
 function getTver() {

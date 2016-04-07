@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change version="6" date="2016-04-07">
+    - Добавлен новый регион: Север.
+    </change>
 	<change version="5" date="2016-03-07">
 	- Тверь: поддержка изменений на сайте.
 	</change>

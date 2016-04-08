@@ -5,7 +5,7 @@
 	<name>0kopeek.ru</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе провайдера 0kopeek.ru <a href="http://www.0kopeek.ru/">http://www.0kopeek.ru/</a></p>
-	<p>Информация берется из личного кабинета <a href="http://www.0kopeek.ru/partner">http://www.0kopeek.ru/partner</a></p>
+	<p>Информация берется из личного кабинета http://partner.0kopeek.ru/Lk</p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>

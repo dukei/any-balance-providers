@@ -12,53 +12,59 @@ var g_headers = {
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'http://www.0kopeek.ru/';
+	var baseurl = 'http://partner.0kopeek.ru/';
 	AnyBalance.setDefaultCharset('utf-8');
 	
-	checkEmpty(prefs.login, 'Введите логин!');
-	checkEmpty(prefs.password, 'Введите пароль!');
+	AB.checkEmpty(prefs.login, 'Введите логин!');
+    AB.checkEmpty(prefs.password, 'Введите пароль!');
 	
-	var html = AnyBalance.requestGet(baseurl + 'partner', g_headers);
+	var html = AnyBalance.requestGet(baseurl, g_headers);
 	
-	if(!html || AnyBalance.getLastStatusCode() > 400){
+	if (!html || AnyBalance.getLastStatusCode() > 400) {
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
 	}
+
+    var params = {
+        Email: prefs.login,
+        Password: prefs.password
+    };
 	
-	html = AnyBalance.requestPost(baseurl + 'Account/LogOn?ReturnUrl=%2fpartner', {
-		UserName: prefs.login,
-		Password: prefs.password,
-		'RememberMe': 'false'
-	}, addHeaders({Referer: baseurl + 'Account/LogOn?ReturnUrl=%2fpartner'}));
+	html = AnyBalance.requestPost(
+        baseurl + 'Account/SignIn',
+		params,
+        AB.addHeaders({ Referer: baseurl })
+    );
 	
-	if (!/LogOff/i.test(html)) {
-		var error = getParam(html, null, null, /<div[^>]+class="validation-summary-errors"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
-		if (error)
-			throw new AnyBalance.Error(error, null, /Имя пользователя или пароль неверные/i.test(error));
+	if (!/SignOut/i.test(html)) {
+		var error = AB.getParam(html, null, null, /field-validation-error[^>]*>([^>]+>)/i, AB.replaceTagsAndSpaces);
+		if (error) {
+            throw new AnyBalance.Error(error, null, /e-mail или пароль/i.test(error));
+        }
 		
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
 	
 	var result = {success: true};
+
+    AB.getParam(html, result, 'balance', /баланс:(?:[^>]*>){1}([\s\S]*?)<\//i, AB.replaceTagsAndSpaces, AB.parseBalance);
+    AB.getParam(html, result, 'paid', /Выплачено(?:[^>]*>){6}([\s\S]*?)<\//i, AB.replaceTagsAndSpaces, AB.parseBalance);
+    AB.getParam(html, result, 'earned', /Заработано(?:[^>]*>){10}([\s\S]*?)<\//i, AB.replaceTagsAndSpaces, AB.parseBalance);
+    AB.getParam(html, result, 'not_paid', /Ещё не выплачено(?:[^>]*>){6}([\s\S]*?)<\//i, AB.replaceTagsAndSpaces, AB.parseBalance);
+    AB.getParam(html, result, 'fio', /Здравствуйте,(?:[^>]*>){1}([\s\S]*?)<\//i, AB.replaceTagsAndSpaces);
+    AB.getParam(html, result, 'user_id', /Ваш ID:(?:[^>]*>){1}([\s\S]*?)<\//i, AB.replaceTagsAndSpaces);
 	
-	getParam(html, result, 'balance', /баланс:(?:[^>]*>){1}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'paid', /Выплачено(?:[^>]*>){6}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'earned', /Заработано(?:[^>]*>){10}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'not_paid', /Ещё не выплачено(?:[^>]*>){6}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'fio', /Здравствуйте,(?:[^>]*>){1}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'user_id', /Ваш ID:(?:[^>]*>){1}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
-	
-    var table = getParam(html, null, null, /table class="referral-program-table"([\s\S]*?)<\/table>/i);
-    var trs = sumParam(table, null, null, /<tr>\s*?<td>[\s\S]*?<\/tr>/ig);
+    var table = AB.getParam(html, null, null, /table class="referral-program-table"([\s\S]*?)<\/table>/i);
+    var trs = AB.sumParam(table, null, null, /<tr>\s*?<td>[\s\S]*?<\/tr>/ig);
     
 	if (AnyBalance.isAvailable('fulltext')) {
         var res = [];
         for (var i = 0; i < trs.length; i++) {       
-            var refer = getParam(trs[i], null, null, /<td>[\s\S]*?<\/td>{1}/i, replaceTagsAndSpaces, html_entity_decode);
-            var people = getParam(trs[i], null, null, /<td>([^>]*>){3}/i, replaceTagsAndSpaces, html_entity_decode);
-            var reward = getParam(trs[i], null, null, /<td>([^>]*>){5}/i, replaceTagsAndSpaces, html_entity_decode);
-            var money = getParam(trs[i], null, null, /<td>([^>]*>){7}/i, replaceTagsAndSpaces, html_entity_decode);
+            var refer = AB.getParam(trs[i], null, null, /<td>[\s\S]*?<\/td>{1}/i, AB.replaceTagsAndSpaces);
+            var people = AB.getParam(trs[i], null, null, /<td>([^>]*>){3}/i, AB.replaceTagsAndSpaces);
+            var reward = AB.getParam(trs[i], null, null, /<td>([^>]*>){5}/i, AB.replaceTagsAndSpaces);
+            var money = AB.getParam(trs[i], null, null, /<td>([^>]*>){7}/i, AB.replaceTagsAndSpaces);
             res.push('<b>' + refer + ':</b> ' + 'Привлечено ' + people + ' Вознаграждение ' + reward + '. Заработано ' + money);
         }
         result.fulltext = res.join('<br/>');

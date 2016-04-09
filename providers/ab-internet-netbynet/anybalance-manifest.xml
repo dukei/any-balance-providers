@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="2.0" version="25">ab-internet-netbynet</id>
+	<id major_version="2.0" version="26">ab-internet-netbynet</id>
 	<api flags="no_browser"/>
 	<name>NetByNet</name>
 	<description html="true"><![CDATA[
@@ -11,6 +11,7 @@
 		<li>Санкт-Петербург и Ленинградская область</li>
 		<li>Воронеж</li>
 		<li>Белгород</li>
+		<li>Екатеринбург</li>
 		<li>Липецк</li>
 		<li>Орел</li>
 		<li>Старый Оскол</li>

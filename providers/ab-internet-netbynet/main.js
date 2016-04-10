@@ -5,6 +5,7 @@
 var g_regions = {
     voronezh: mainVoronezh,
     belgorod: mainBelgorod,
+  ekaterinburg: mainEkaterinburg,
     center: mainCenter,
     orel: mainBelgorod,
     oskol: mainBelgorod,
@@ -226,6 +227,34 @@ function mainBelgorod(region){
     getParam (html, result, 'abon', /Ежемесячная абонентская плата:([\s\S]*?)<br/i, replaceTagsAndSpaces, parseBalance);
 
     AnyBalance.setResult(result);
+}
+
+function mainEkaterinburg(region) {
+  var prefs = AnyBalance.getPreferences();
+  var baseurl = 'https://selfcare.netbynet.ru/'+region+'/';
+
+  var html = requestPostMultipart (baseurl + "index.php", {
+    'pr[form][auto][form_save_to_link]': 0,
+    'pr[form][auto][login]': prefs.login,
+    'pr[form][auto][password]': prefs.password,
+    'pr[form][auto][form_event]': 'Войти'
+  }, {'Accept-Charset': 'windows-1251'});
+
+  if(!/'\?exit=1'/i.test(html)){
+    var error = sumParam (html, null, null, /<font[^>]+color=['"]red['"][^>]*>([\s\S]*?)<\/font>/ig, replaceTagsAndSpaces, null, aggregate_join);
+    if (error){
+      throw new AnyBalance.Error(error);
+    }
+    throw new AnyBalance.Error ("Не удаётся войти в личный кабинет. Сайт изменен?");
+  }
+
+  var result = {success: true};
+
+  getParam (html, result, 'balance', /баланс:([\s\d.,-]+)руб/i, replaceTagsAndSpaces, parseBalance);
+  getParam (html, result, 'subscriber', /Приветствуем Вас,([^<]+)/i, replaceTagsAndSpaces);
+  getParam (html, result, 'day_left', /дней до ухода в финансовую блокировку:(?:[^>]*>){1,2}\s*(\d+)/i, replaceTagsAndSpaces, parseBalance);
+
+  AnyBalance.setResult(result);
 }
 
 function mainLobnya(region){

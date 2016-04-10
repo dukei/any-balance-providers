@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-transport-social-card</id>
+	<api flags="no_browser"/>
+	<name>Социальная карта</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера Социальная карта http://social-card.ru/</p>
+	<p>Информация берется из личного кабинета http://social-card.ru/proverka-balansa-transportnoy-karty/</p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="resource" name="Ресурс сейчас"/>
+		<counter id="chargedResource" name="Ресурс пополнен на"/>
+		<counter id="ticket" name="Электронный кошелек" type="text"/>
+		<counter id="activePeriod" name="Действует" type="text"/>
+		<counter id="documentPresentDate" name="Последнее предъявление" type="time" format="dd/MM/yyyy"/>
+		<counter id="route" name="Маршрут" type="text"/>
+		<counter id="transportType" name="Вид транспорта" type="text"/>
+		<counter id="operation" name="Операция" type="text"/>
+		<counter id="chargeDate" name="Дата и время пополнения" type="time" format="dd/MM/yyyy"/>
+		<counter id="chargePlace" name="Пункт пополнения" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>transport</type>
+	<country>ru</country>
+</provider>

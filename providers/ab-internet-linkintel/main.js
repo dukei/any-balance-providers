@@ -1,11 +1,7 @@
 ﻿/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
-
-Интернет провайдер LINKINTEL
-
-Сайт оператора: http://www.linkintel.ru
-Личный кабинет: http://login.linkintel.ru
 */
+
 var g_headers = {
     'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
     'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
@@ -28,14 +24,7 @@ function main(){
         throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
     }
     
-    var form = AB.getElement(html, /<form\s(?=[^>]*?method="post)(?=[^>]*?cms_form)(?=[^>]*?action="https?:\/\/linkintel.ru\/?")/i);
-    
-    if (!form) {
-        AnyBalance.trace(html);
-        throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
-    }
-
-    var params = AB.createFormParams(form, function (params, str, name, value) {
+    var params = AB.createFormParams(html, function (params, str, name, value) {
         if (/user$/i.test(name)) {
             return prefs.login;
         }
@@ -64,33 +53,29 @@ function main(){
     html = AnyBalance.requestPost(baseurl + '/Cabinet/index.php', params, AB.addHeaders({ Referer: baseurl }));
     
     var usercart = AB.getElement(html, /<div[^>]*?user_card/i);
-    
     if (!usercart) {
         AnyBalance.trace(html);
-        throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
+        throw new AnyBalance.Error('Не удалось найти информацию о пользователе. Сайт изменен?');
     }
 
     getParam(usercart, result, '__tariff', /Тариф:(.*?)<br/i, AB.replaceTagsAndSpaces);
     getParam(usercart, result, 'balance', /Баланс на данный момент:.*?>([^<>]+)<\/a/i, AB.replaceTagsAndSpaces, AB.parseBalance);
     getParam(usercart, result, 'bonus_balance', /Баллов на данный момент:\s*<a[^>]*>([^<]*)/i, AB.replaceTagsAndSpaces, AB.parseBalance);
     
-    if(AnyBalance.isAvailable('traffic_in', 'traffic_out', 'traffic_total')){
-      AnyBalance.trace('Getting traffic info');
-      html = AnyBalance.requestGet(baseurl + '/Cabinet/traffic.php');
-      
-      var matches = /Месяц<\/th>.*?<td[^>]*>[^<]*<\/td><td[^>]*>([\d\.\s,]*)<\/td><td[^>]*>([\d\.\s,]*)<\/td>/i.exec(html);
-      if(matches){
-        var traffic_in = parseFloat(matches[1].replace(/\s+/g, '').replace(/,/g, '.'));
-        var traffic_out = parseFloat(matches[2].replace(/\s+/g, '').replace(/,/g, '.'));
-        if(AnyBalance.isAvailable('traffic_in'))
-          result.traffic_in = Math.round(traffic_in/1024*100)/100;
-        if(AnyBalance.isAvailable('traffic_out'))
-          result.traffic_out = Math.round(traffic_out/1024*100)/100;
-        if(AnyBalance.isAvailable('traffic_total'))
-          result.traffic_total = Math.round((traffic_in + traffic_out)/1024*100)/100;
-      }
+    if(AnyBalance.isAvailable('traffic_in', 'traffic_out', 'traffic_total')) {
+		AnyBalance.trace('Getting traffic info');
+		html = AnyBalance.requestGet(baseurl + '/Cabinet/traffic.php');
+		
+		getParam(html, result, ['traffic_in', 'traffic_total'], /Входящий трафик, Мбайт(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, AB.replaceTagsAndSpaces, parseTrafficMy);
+		getParam(html, result, ['traffic_out', 'traffic_total'], /Исходящий трафик, Мбайт(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, AB.replaceTagsAndSpaces, parseTrafficMy);
+		
+		if(isset(result.traffic_in) && isset(result.traffic_out))
+			getParam(result.traffic_in + result.traffic_out, result, 'traffic_total');
     }
     
     AnyBalance.setResult(result);
 }
 
+function parseTrafficMy(text) {
+	return AB.parseTrafficGb(text, 'mb');
+}

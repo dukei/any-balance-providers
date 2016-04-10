@@ -1,38 +1,35 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-  <id version="3">ab-internet-linkintel</id>
-  <name>LINKINTEL (Лобня)</name>
-  <description>
-    Получает баланс, бонусы, тарифный план и трафик в текущем месяце у интернет-провайдера LINKINTEL (http://linkintel.ru).
-  </description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-  <depends>
-        <module id="library"/>
-  </depends>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>main.js</js>
-    <icon>icon.png</icon>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="balance" name="Баланс" units="р"/>
-    <counter id="bonus_balance" name="Бонусы"/>
-    <counter id="traffic_total" name="Трафик" units="Гб"/>
-    <counter id="traffic_in" name="Входящий трафик" units="Гб"/>
-    <counter id="traffic_out" name="Исходящий трафик" units="Гб"/>
-    <counter id="account" name="Номер счета" type="text"/>
-    <counter id="userName" name="ФИО владельца" type="text"/>
-  </counters>
-  <keywords>
-    интернет провайдер, Лобня, телефон
-  </keywords>
-  <type>
-    internet, telephony
-  </type>
-  <country>
-    ru
-  </country>
+  <id version="4">ab-internet-linkintel</id>
+	<name>LINKINTEL (Лобня)</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе интернет-провайдера LINKINTEL http://linkintel.ru</p>
+	<p>Информация берется из личного кабинета http://linkintel.ru/Cabinet/index.php</p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Если у вас нет доступа в Личный кабинет, получите его на странице <a href=""></a></p>
+	]]></instruction>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="bonus_balance" name="Бонусы"/>
+		<counter id="traffic_total" name="Трафик" units=" Гб"/>
+		<counter id="traffic_in" name="Входящий трафик" units=" Гб"/>
+		<counter id="traffic_out" name="Исходящий трафик" units=" Гб"/>
+		<counter id="account" name="Номер счета" type="text"/>
+		<counter id="userName" name="ФИО владельца" type="text"/>
+	</counters>
+	<keywords>интернет провайдер, Лобня, телефон</keywords>
+	<type>internet, telephony</type>
+	<country>ru</country>
 </provider>

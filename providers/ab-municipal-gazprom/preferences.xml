@@ -26,8 +26,8 @@
 		title="Регион"
 		obligatory="true"
 		summary="|Нужен для определения личного кабинета|{@s}"
-		entries="Брянск|Волгоград|Воронеж|Калуга|Москва|Пермь|Ростов-на-Дону|Санкт-Петербург|Тверь|Уфа|Чебоксары"
-		entryValues="bryansk|volgograd|voronej|kaluga|moscow|perm|rostov|spb|tver|ufa|cheboksari">
+		entries="Брянск|Волгоград|Воронеж|Калуга|Москва|Пермь|Ростов-на-Дону|Санкт-Петербург|Север|Тверь|Уфа|Чебоксары"
+		entryValues="bryansk|volgograd|voronej|kaluga|moscow|perm|rostov|spb|sever|tver|ufa|cheboksari">
 	</ListPreference>
 	<EditTextPreference
 		title="Номер дома"

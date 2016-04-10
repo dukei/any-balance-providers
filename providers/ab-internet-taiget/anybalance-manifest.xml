@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <api flags="no_browser"/>
+  <id version="1">ab-internet-Taiget</id>
+  <name>Taiget</name>
+  <description>
+    Тайгет (Taiget) в Туапсе
+  </description>
+  <author>Сергей Барбаянов &lt;k008nm@gmail.com&gt;</author>
+  <files>
+    <js>main.js</js>
+    <js>library.js</js>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <history>history.xml</history>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units=" р"/>
+    <counter id="currency" name="Валюта" type="text"/>
+    <counter id="Dogovor" name="Номер договора" type="text"/>
+  </counters>
+  <type>internet</type>
+  <country>ru</country>
+</provider>

@@ -1,15 +1,16 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="5">ab-municippal-mosenergosbyt-eirkc</id>
+	<id version="6">ab-municippal-mosenergosbyt-eirkc</id>
 	<api flags="no_browser"/>
 	<name>МосОблЕИРЦ</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию но номерам лицевого счёта в Мособлеирц <a href="http://xn--90aijkdmaud0d.xn--p1ai/">мособлеирц.рф</a></p>
-	<p>Информация берется из личного кабинета <a href="https://xn--l1ae.xn--80ahmohdapg.xn--80asehdb/pages/abonent/login.jsf?faces-redirect=true">мо.смородина.онлайн</a></p>
+	<p>Предоставляет информацию но номерам лицевого счёта в Мособлеирц https://lkk-zkh.ru/</p>
+	<p>Информация берется из личного кабинета https://lkk-zkh.ru/</p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>
 		<module id="library"/>
+		<module id="crypt/md5"/>
 	</depends>
 	<files>
 		<icon>icon.png</icon>

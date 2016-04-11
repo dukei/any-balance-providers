@@ -13,13 +13,117 @@ var g_headers = {
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	mainSmorodina();
+	mainLKKZKH();
+//	mainSmorodina();
 	// if(prefs.site == 'smor'){
 	// 	mainSmorodina();
 	// }else{
 	// 	mainLKMO();
 	// }
 }
+
+var baseurl; 
+
+function getApiData(url, params){
+	var html = AnyBalance.requestPost(baseurl + url + '&_dc=' + new Date().getTime(), params, addHeaders({
+		Referer: baseurl + 'main/'
+	}));
+
+	var json = getJson(html);
+
+    if(!json.success){
+    	AnyBalance.trace(html);
+    	throw new AnyBalance.Error('Ошибка апи');
+    } 
+
+	return json.data[0];
+}
+
+function mainLKKZKH() {
+	var prefs = AnyBalance.getPreferences();
+
+	baseurl = 'https://lkk-zkh.ru/';
+	AnyBalance.setDefaultCharset('utf-8');
+
+	checkEmpty(prefs.login, 'Введите е-mail!');
+	checkEmpty(prefs.password, 'Введите пароль!');
+
+	var html = AnyBalance.requestGet(baseurl + 'auth/', g_headers);
+
+	if (!html || AnyBalance.getLastStatusCode() > 400) {
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
+	}
+
+	html = AnyBalance.requestPost(baseurl + 'lkcom_data?action=auth', {
+		nm_email:	prefs.login,
+        nm_psw: hex_md5(prefs.password),
+		nm_captcha_res:	'ok'
+	}, addHeaders({
+		Referer: baseurl + 'auth/'
+	}));
+
+	var json = getJson(html);
+	if(!json.success){
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
+	}
+
+	var sid = json.data[0].session;
+	if(!sid){
+		var error = json.data[0].nm_result;
+		if (error) 
+			throw new AnyBalance.Error(error, null, /неверный логин/i.test(error));
+		
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удалось получить сессию. Сайт изменен?');
+	}
+	var id_abonent;
+
+	var result = {
+		success: true
+	};
+
+	if(isAvailable('licschet', 'balance', 'currency', '__tariff')){
+		json = getApiData('lkcom_data?action=sql&query=lka_get_houses', {
+			page:	'1',
+			start:	'0',
+			limit:	'25',
+			session: sid
+		});
+
+		json = getJson(json.house);
+		getParam(json.nm_address, result, '__tariff');
+		getParam('' + json.services[0].nn_ls, result, 'licschet');
+
+		var jsonProvider = getJson(json.services[0].vl_provider);
+		id_abonent = jsonProvider.id_abonent;
+	}
+
+	if(AnyBalance.isAvailable('fio')){
+		json = getApiData('lkcom_data?action=sql&query=lka_get_profile_attributes', {
+			session: sid
+		});
+
+		var aggregate_space = create_aggregate_join(' ');
+		sumParam(json.nm_first || undefined, result, 'fio', null, null, null, aggregate_space);
+		sumParam(json.nm_middle || undefined, result, 'fio', null, null, null, aggregate_space);
+		sumParam(json.nm_last || undefined, result, 'fio', null, null, null, aggregate_space);
+	}
+
+	if(AnyBalance.isAvailable('balance', 'currency')){
+		json = getApiData('lkcom_data?action=sql&query=SmorodinaProxy&plugin=smorodinaProxy', {
+			json:	JSON.stringify({"name":"qLkkUtilAbonentBalance","org":-1,"params":{"id_abonent":id_abonent,"dt_period":""},"out_params":{}}),
+			session: sid
+		});
+
+		getParam(json.sm_all, result, 'balance');
+		getParam('руб', result, 'currency');
+	}
+
+	AnyBalance.setResult(result);
+}
+
 
 function mainSmorodina() {
 	var prefs = AnyBalance.getPreferences();

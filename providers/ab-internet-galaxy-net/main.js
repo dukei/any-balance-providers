@@ -43,7 +43,7 @@ function main(){
     AnyBalance.trace('search table...');
     
     var balance,tariff,dogovor,account,status,matchall;
-    if(matchall = html.match(/Номер договора:<\/small>[\s\S]*;(\d*.\d*)[\s\S]*Текущий баланс:.*?(\d*?,\d*).*[\s\S]*<tr>\s*<th[^>].*?>Учетная запись<\/th>\s*<th>Тарифный план<\/th>\s*<th>Подключенные услуги<\/th>\s*<th>Состояние<\/th>\s*?<\/tr>\s*<\/thead>\s*\s*<tr.*?>\s*<td.*?>\s*.*\s*?<a.*?>(\d*.\d*.\d*.\d*).*<\/a>[\s\S]*?<td>\s*.*>\d*<\/a>.*\s*?<br\/>Абонентская плата: (\d*,\d*..*).<br\/>Текущая скорость: (\d* .*\/с) [\s\S]*?Состояние: (.*?) \s*?<br\/>/)){
+    if(matchall = html.match(/Номер договора:<\/small>[\s\S]*;(\d*.\d*)[\s\S]*Текущий баланс:.*?<span>(.*?,\d*).*[\s\S]*<tr>\s*<th[^>].*?>Учетная запись<\/th>\s*<th>Тарифный план<\/th>\s*<th>Подключенные услуги<\/th>\s*<th>Состояние<\/th>\s*?<\/tr>\s*<\/thead>\s*\s*<tr.*?>\s*<td.*?>\s*.*\s*?<a.*?>(\d*.\d*.\d*.\d*).*<\/a>[\s\S]*?<td>\s*.*>\d*<\/a>.*\s*?<br\/>Абонентская плата: (\d*,\d*..*).<br\/>Текущая скорость: (\d* .*\/с) [\s\S]*?Состояние: (.*?) \s*?<br\/>/)){
         AnyBalance.trace('found table');
         AnyBalance.trace(matchall[0]);
         AnyBalance.trace(matchall[1]);
@@ -53,6 +53,7 @@ function main(){
         AnyBalance.trace(matchall[5]);
         AnyBalance.trace(matchall[6]);
         balance = replaceSpacesAndFloat(matchall[2]);
+        AnyBalance.trace(balance);
         tariff = (matchall[5] + ' ' + matchall[4]);
         dogovor = matchall[1];
         account = matchall[3];
@@ -64,7 +65,7 @@ function main(){
 
 function replaceSpacesAndFloat(string) {
 var sOut;
-    sOut=string.replace (' ', '');
+    sOut=string.replace (/\s/g,'');
     sOut=sOut.replace (',', '.');
     return sOut;
 }

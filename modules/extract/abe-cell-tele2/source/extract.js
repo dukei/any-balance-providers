@@ -236,7 +236,7 @@ function processRemainders(html, result){
         html = AnyBalance.requestGet(baseurl + "main/discounts", g_headers);
         AnyBalance.trace('Got discounts: ' + html);
         json = JSON.parse(html);
-        var arr = [json.discountsIncluded, json.discountsNotIncluded];
+        var arr = [json.discountsIncluded, json.discountsNotIncluded/** не ясно, для чего это включено */];
         for (var k = 0; k < arr.length; ++k) {
             var discounts = arr[k];
             for (var i = 0; discounts && i < discounts.length; ++i) {
@@ -259,10 +259,13 @@ function getDiscount(result, discount) {
     var name = discount.name;
     var units = discount.limitMeasureCode;
     AnyBalance.trace('Найден дискаунт: ' + name + ' (' + units + ')');
+	
+	getParam(discount.endDateString, result, 'remainders.endDate', null, null, parseDateWordSilent);
+	
     if (/мин/i.test(units)) {
         //Минуты
-        getParam(discount.rest.value, result, 'remainders.min_left');
-        getParam(discount.limit.value - discount.rest.value, result, 'remainders.min_used');
+        sumParam(discount.rest.value, result, 'remainders.min_left', null, null, null, aggregate_sum);
+        sumParam(discount.limit.value - discount.rest.value, result, 'remainders.min_used', null, null, null, aggregate_sum);
     } else if (/[кмгkmg][bб]/i.test(units)) {
         //трафик
         getParam(discount.rest.value + discount.rest.measure, result, 'remainders.traffic_left', null, null, parseTraffic);
@@ -312,6 +315,13 @@ function processPayments(html, result){
 		getParam(pmnt.type, p, 'payments.descr');
 		
         getParam(pmnt.date, p, 'payments.date', null, null, function (str) {
+			// Вчера в 17:09
+			if(/Вчера/i.test(str))
+				return parseDate(getFormattedDate({offsetDay: 1}));
+			// Сегодня в 11:00
+			if(/Сегодня/i.test(str))
+				return parseDate(getFormattedDate({offsetDay: 0}));
+			
 			var match = /^(\d+\s+[а-яa-z]+)/i.exec(str) || [];
 			return parseDateWordSilent(match[1]);
 		});

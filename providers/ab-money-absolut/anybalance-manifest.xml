@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="6">ab-money-absolut</id>
+	<id version="7">ab-money-absolut</id>
 	<api flags="no_browser"/>
 	<name>Банк Абсолют</name>
 	<description html="true"><![CDATA[
@@ -25,6 +25,11 @@
         <counter id="pay_sum" name="Минимальный платеж" units=" {@currency}"/>
         <counter id="pay_debt" name="В том числе: основной долг" units=" {@currency}"/>
         <counter id="pay_pct" name="В том числе: проценты" units=" {@currency}"/>
+        <counter id="credit_penalty" name="Штрафы/комиссии/сборы" units=" {@currency}"/>
+        <counter id="credit_pExpired" name="Просроченные проценты" units=" {@currency}"/>
+        <counter id="credit_expired" name="Просроченный основной долг" units=" {@currency}"/>
+        <counter id="credit_pct" name="Начисленные проценты" units=" {@currency}"/>
+        <counter id="credit_main" name="Основной долг" units=" {@currency}"/>
         <counter id="currency" name="Валюта" type="text"/>
 		<counter id="accname" name="Название" type="text"/>
 		<counter id="accnum" name="Номер счета" type="text"/>

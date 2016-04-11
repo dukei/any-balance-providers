@@ -2,6 +2,14 @@
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 */
 
+var g_headers = {
+    'Accept':           'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+    'Accept-Charset':   'windows-1251,utf-8;q=0.7,*;q=0.3',
+    'Accept-Language':  'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
+    'Connection':       'keep-alive',
+    'User-Agent':       'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/49.0.2623.110 Safari/537.36'
+};
+
 function parseTrafficGb(str) {
 	var val = parseBalance(str);
 	if (isset(val)) 
@@ -14,10 +22,11 @@ function main() {
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 	
-	//if (prefs.type == 'new')
-		doNew(prefs);
-	//else
-	//	doOld(prefs);
+	if (prefs.type == 'new') {
+        doNew(prefs);
+    } else {
+        doOld(prefs);
+    }
 }
 
 function doNew(prefs) {
@@ -25,7 +34,7 @@ function doNew(prefs) {
 	
     var baseurl = "http://lk.iflat.ru/";
 	
-	html = AnyBalance.requestGet(baseurl + 'login');
+	var html = AnyBalance.requestGet(baseurl + 'login', g_headers);
 
 	function getToken(html) {
 		var token = getParam(html, null, null, /"authenticity_token"[^>]*value="([^"]+)"/i);
@@ -59,7 +68,7 @@ function doNew(prefs) {
     var result = {success: true};
 	
     getParam(data.n_sum_bal+'', result, 'balance', null, replaceTagsAndSpaces, parseBalance);
-	getParam(data.vc_account+'', result, 'licschet', null, replaceTagsAndSpaces, html_entity_decode);
+	getParam(data.vc_account+'', result, 'licschet', null, replaceTagsAndSpaces);
     getParam(userJson.data.servs[0].vc_name+'', result, '__tariff', null, replaceTagsAndSpaces);
 	
     AnyBalance.setResult(result);	
@@ -68,43 +77,38 @@ function doNew(prefs) {
 function doOld(prefs) {
     AnyBalance.setDefaultCharset('UTF-8');
 
-    var baseurl = "https://billing.dream-net.ru/cgi-bin/utm5/";
+    var baseurl = "http://91.224.206.6/";
 
-    html = AnyBalance.requestPost(baseurl + 'aaa5', {
+    var html = AnyBalance.requestPost(baseurl, {
         login:prefs.login,
         password:prefs.password,
-        cmd:'login'
     });
 
-    //AnyBalance.trace(html);
-    if(!/cmd=logout/i.test(html)){
-        var error = getParam(html, null, null, /<BR[^>]*>\s*Ошибка:([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
+    if(!/logout/i.test(html)){
+        var error = getParam(html, null, null, /<p[^>]+red[^>]*>([\s\S]*?)<\/p>/i, replaceTagsAndSpaces);
         if(error)
-            throw new AnyBalance.Error(error);
+            throw new AnyBalance.Error(error, null, /Неверно указаны логин или пароль/i.test(error));
+
+        AnyBalance.trace(html);
         throw new AnyBalance.Error('Не удалось войти в личный кабинет. Проблемы на сайте или сайт изменен.');
     }
 
     var result = {success: true};
 
-    getParam(html, result, 'balance', /Баланс основного счета[\S\s]*?<td[^>]*>([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'licschet', /Основной счет[\S\s]*?<td[^>]*>([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'credit', /Кредит основного счета[\S\s]*?<td[^>]*>([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'status', /Блокировка[\S\s]*?<td[^>]*>([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'balance', /Баланс(?:[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'licschet', /Основной лицевой счет(?:[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces);
+    getParam(html, result, 'credit', /Кредит(?:[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'nds', /НДС(?:[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'status', /Состояние интернета(?:[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces);
 
-    var skey = getParam(html, null, null, /skey=([0-9a-f]{32})/i);
-
-    html = AnyBalance.requestGet(baseurl + "user5?cmd=user_services_list&skey=" + skey);
-    getParam(html, result, '__tariff', /Тарифный план(?:[\S\s]*?<td[^>]*>){7}([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-
-    if(AnyBalance.isAvailable('trafficIn', 'trafficOut')){
-        var now = new Date();
-        var begin = new Date(now.getFullYear(), now.getMonth(), 1);
-        html = AnyBalance.requestGet(baseurl + "user5?s_hour=0&s_min=0&s_mday=1&s_mon=" + begin.getMonth() + "&s_year=" + begin.getFullYear() + 
-                      "&e_hour=23&e_min=59&e_mday=" + now.getDate() + "&e_mon=" + now.getMonth() + "&e_year=" + now.getFullYear() + "&cmd=user_reports_traffic&skey=" + skey);
-
-       getParam(html, result, 'trafficIn', /Входящий[\s\S]*?<td[^>]*>([\S\s]*?)<\/td>/i, replaceFloat, parseTrafficGb);
-       getParam(html, result, 'trafficOut', /Исходящий[\s\S]*?<td[^>]*>([\S\s]*?)<\/td>/i, replaceFloat, parseTrafficGb);
+    var tariffHREF = getParam(html, null, null, /<a[^>]+href='\/([^']*)[^>]*>Тарифы/i);
+    if(!tariffHREF) {
+        AnyBalance.trace(html);
+        AnyBalance.trace("Не удалось найти ссылку на тарифы.");
+    } else {
+        html = AnyBalance.requestGet(baseurl + tariffHREF, g_headers);
+        getParam(html, result, '__tariff', /текущий ТП(?:[\s\S]*?<td[^>]*>){6}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
     }
-	
-	AnyBalance.setResult(result);	
+
+	AnyBalance.setResult(result);
 }

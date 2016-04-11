@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-municipal-ekgaz</id>
+	<id version="2">ab-municipal-ekgaz</id>
 	<api flags="no_browser"/>
 	<name>Екатеринбурггаз</name>
 	<description html="true"><![CDATA[
@@ -19,6 +19,7 @@
 	</files>
 	<counters>
 		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="accrued" name="Начислено за расчетный период" units=" р"/>
 		<counter id="debt" name="Задолженность за предыдущие периоды" units=" р"/>
 		<counter id="a_payment" name="Аванс на начало расчетного период" units=" р"/>
 		<counter id="to_pay" name="Всего к оплате" units=" р"/>

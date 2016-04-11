@@ -50,13 +50,6 @@ function main(){
         success: true
     };
 
-    var balanceHtml = AB.getParam(html, null, null, /NameBalance[^>]*>((?:[^>]+>){5})/i, AB.replaceTagsAndSpaces);
-    AB.getParam(balanceHtml, result, 'balance', null, null, AB.parseBalance);
-
-    if (/долг/i.test(balanceHtml)) {
-        result.balance *= -1;
-    }
-
     AB.getParam(html, result, 'fio', /ФИО[^>]*>([^>]+>){2}/i, AB.replaceTagsAndSpaces);
     AB.getParam(html, result, 'address', /Адрес[^>]*>([^>]+>){2}/i, AB.replaceTagsAndSpaces);
     AB.getParam(html, result, 'residents', /проживающих[^>]*>([^>]+>){2}/i, AB.replaceTagsAndSpaces, AB.parseBalance);
@@ -85,6 +78,13 @@ function main(){
                 break;
             }
         }
+    }
+
+    var balanceHtml = AB.getParam(html, null, null, /NameBalance[^>]*>((?:[^>]+>){5})/i, AB.replaceTagsAndSpaces);
+    AB.getParam(balanceHtml, result, 'balance', null, null, AB.parseBalance);
+
+    if (/долг/i.test(balanceHtml)) {
+        result.balance *= -1;
     }
 
     AB.getParam(html, result, 'licschet', /№(?:[^>]*>){2}([\S\s]*?)<\//i, AB.replaceTagsAndSpaces);

@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="7">ab-cell-tele2-corp</id>
+	<id version="8">ab-cell-tele2-corp</id>
 	<api flags="no_browser"/>
 	<name>Tele2 Business</name>
 	<description html="true"><![CDATA[
@@ -35,7 +35,7 @@
 	  <!-- Абоненты -->
 	  <counter id="subscribersNumber" name="Количество абонентов организации"/>
 	  <counter id="subscribersList" name="Список абонентов организации" type="text"/>
-	  <!-- Общая информация -->
+        <!-- Общая информация -->
 	  <counter id="contractNumber" name="Номер контракта" type="text"/>
 	  <counter id="accountNumber" name="Номер лицевого счёта (контракт)" type="text"/>
 	  <counter id="contractName" name="Контактное лицо" type="text"/>

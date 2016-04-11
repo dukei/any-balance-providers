@@ -28,6 +28,17 @@ var g_countersTable = {
 		"__tariff": "accounts.__name",
 		"type": "accounts.name",
     },
+	crd: {
+    	"balance": "credits.balance",
+    	"currency": "credits.currency",
+		"num": "credits.accnum",
+		"__tariff": "credits.__name",
+		"type": "credits.name",
+		"till": "credits.till",
+		"minpay": "credits.minpay",
+		"minpay_till": "credits.minpay_till",
+//		"limit": "credits.limit",
+    },
 };
 
 function shouldProcess(counter, info){
@@ -63,7 +74,7 @@ function shouldProcess(counter, info){
 		    if(!prefs.num)
 		    	return true;
 			
-			if(endsWith(info.num, prefs.num))
+			if(endsWith(info.num.replace(/\D+/g, ''), prefs.num))
 				return true;
 		}	
 		case 'deposits':
@@ -87,14 +98,14 @@ function main(){
     if(!/^(card|crd|dep|acc)$/i.test(prefs.type || ''))
     	prefs.type = 'card';
 
-    if(/(crd|dep)$/i.test(prefs.type))
-    	throw new AnyBalance.Error('Не удалось получить информацию по кредиту или депозиту. Сайт изменен?');
+    if(/(dep)$/i.test(prefs.type))
+    	throw new AnyBalance.Error('Не удалось получить информацию по депозиту. Сайт изменен?');
 
     var adapter = new NAdapter(g_countersTable[prefs.type], shouldProcess);
     adapter.processInfo = adapter.envelope(processInfo);
     adapter.processCards = adapter.envelope(processCards);
     adapter.processAccounts = adapter.envelope(processAccounts);
-//    adapter.processCredits = adapter.envelope(processCredits);
+    adapter.processCredits = adapter.envelope(processCredits);
 //    adapter.processDeposits = adapter.envelope(processDeposits);
 
 	var html = login();

@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="7">ab-money-bm</id>
+	<id version="8">ab-money-bm</id>
 	<api flags="no_browser|sms"/>
 	<name>Банк Москвы</name>
 	<description html="true"><![CDATA[
@@ -24,6 +24,7 @@
 	<counters>
 		<counter id="balance" name="Баланс" units=" {@currency}"/>
 		<counter id="minpay" name="Минимальный платеж" units=" {@currency}"/>
+		<counter id="minpay_till" name="Срок минимального платежа" type="time" format="dd/MM/yyyy"/>
 		<counter id="gracepay" name="Льготный платеж" units=" {@currency}"/>
 		<counter id="gracepay_till" name="Срок льготного платежа" type="time" format="dd/MM/yyyy"/>
 		<counter id="till" name="Срок действия" type="time" format="dd/MM/yyyy"/>

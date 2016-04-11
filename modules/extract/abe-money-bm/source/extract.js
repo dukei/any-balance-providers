@@ -243,14 +243,18 @@ function processCards(html, result){
 
 	AnyBalance.trace('Читаем карты');
 
-	var cardsBlock = getElement(html, /<div[^>]+class="cardsBlock"[^>]*>/i);
-	if(!cardsBlock){
+	var cardsBlocks = getElements(html, /<div[^>]+class="cardsBlock"[^>]*>/ig);
+	if(cardsBlocks.length == 0){
 		AnyBalance.trace(html);
 		AnyBalance.trace('Не удалось найти блок карт. Карты отсутствуют?');
 		return;
 	}
 
-	var cards = getElements(cardsBlock, /<div[^>]+productShort[^>]*>/ig);
+	var cards = [];
+	for(var i=0; i<cardsBlocks.length; ++i){
+		cards = cards.concat(getElements(cardsBlocks[i], /<div[^>]+productShort[^>]*>/ig));
+	}
+
 	AnyBalance.trace('Найдено ' + cards.length + ' карт');
 
 	result.cards = [];
@@ -294,13 +298,15 @@ function processCard(html, result){
 	getParam(html, result, 'cards.currency', /<span[^>]+amountBox[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseCurrency);
 	getParam(html, result, 'cards.name', /<div[^>]+aliasBox[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
 
-	if(AnyBalance.isAvailable('cards.late', 'cards.minpay', 'cards.debt', 'cards.gracepay', 'cards.gracepay_till', 'cards.limit', 'cards.blocked', 'cards.sms', 'cards.till', 'cards.transactions')){
+	if(AnyBalance.isAvailable('cards.debt_late', 'cards.minpay', 'cards.debt', 'cards.gracepay', 'cards.gracepay_till', 'cards.limit', 'cards.blocked', 'cards.sms', 'cards.till', 'cards.transactions')){
 		html = AnyBalance.requestGet(g_baseurl + '/scoring/protected/statement/card/' + result.__id, g_headers);
 		var table = getElement(html, /<table[^>]+bigCardShadow[^>]*>/i, replaceHtmlEntities);
 
-		getParam(table, result, 'cards.late', /Просроченная задолженность:[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+		getParam(table, result, 'cards.debt_late', /Просроченная задолженность:[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
         getParam(table, result, 'cards.minpay', /Минимальный платеж:[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
         getParam(table, result, 'cards.debt', /Всего задолженность:[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+        getParam(table, result, 'cards.date_start', /Дата открытия карты:([^<]*)/i, replaceTagsAndSpaces, parseDate);
+        getParam(table, result, 'cards.pct', /Процентная ставка:([^<]*)/i, replaceTagsAndSpaces, parseBalance);
 
 		getParam(table, result, 'cards.blocked', /Заблокировано:[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
 		getParam(table, result, 'cards.sms', /Подключено SMS-информирование на номера:[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
@@ -321,14 +327,13 @@ function processAccounts(html, result){
 
     AnyBalance.trace('Читаем счета');
 
-    var cardsBlock = getElements(html, [/<div[^>]+class="productShort[^>]*>/i, /statement\/account\/./i])[0];
-    if(!cardsBlock){
+    var cards = getElements(html, [/<div[^>]+productShort[^>]*>/ig, /statement\/account\/./i]);
+    if(!cards.length){
         AnyBalance.trace(html);
         AnyBalance.trace('Не удалось найти блок счетов. счета отсутствуют?');
         return;
     }
 
-    var cards = getElements(cardsBlock, /<div[^>]+productShort[^>]*>/ig);
     AnyBalance.trace('Найдено ' + cards.length + ' счетов');
 
     result.accounts = [];
@@ -370,6 +375,75 @@ function processAccount(html, result){
         }
     }
 }
+
+function processCredits(html, result){
+    if(!AnyBalance.isAvailable('credits'))
+        return;
+
+    AnyBalance.trace('Читаем кредиты');
+
+    var cards = getElements(html, [/<div[^>]+productShort[^>]*>/ig, /statement\/credit\/./i]);
+    if(!cards.length){
+        AnyBalance.trace(html);
+        AnyBalance.trace('Не удалось найти блок кредитов. Кредиты отсутствуют?');
+        return;
+    }
+
+    AnyBalance.trace('Найдено ' + cards.length + ' кредитов');
+
+    result.credits = [];
+
+    for(var i=0; i<cards.length; ++i){
+        var card = cards[i];
+        var id = getParam(card, null, null, /statement\/credit\/(\d+)/i);
+        var title = getElement(card, /<span[^>]+id="[^"]*:aliasText"[^>]*>/i, replaceTagsAndSpaces);
+        //Договор N
+        var num = getParam(card, null, null, /&#1044;&#1086;&#1075;&#1086;&#1074;&#1086;&#1088; [N№]([^<]*)/i, replaceTagsAndSpaces);
+        var c = {
+            __id: id,
+            __name: title + ' ' + num,
+            num: num
+        };
+        if(__shouldProcess('credits', c)){
+            processCredit(card, c);
+        }
+
+        result.credits.push(c);
+    }
+}
+
+function processCredit(html, result){
+    AnyBalance.trace('Обрабатываем кредит ' + result.__name);
+
+    getParam(html, result, 'credits.balance', /<span[^>]+amountBox[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'credits.currency', /<span[^>]+amountBox[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseCurrency);
+    getParam(html, result, 'credits.name', /<div[^>]+aliasBox[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+
+    //Ежемесячный платеж:
+    getParam(html, result, 'credits.minpay', /&#1045;&#1078;&#1077;&#1084;&#1077;&#1089;&#1103;&#1095;&#1085;&#1099;&#1081; &#1087;&#1083;&#1072;&#1090;&#1077;&#1078;:[\s\S]*?<span[^>]+amountBox[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+    //Дата списания:
+    getParam(html, result, 'credits.minpay_till', /&#1044;&#1072;&#1090;&#1072; &#1089;&#1087;&#1080;&#1089;&#1072;&#1085;&#1080;&#1103;:([^<]*)/i, replaceTagsAndSpaces, parseDate);
+
+    if(AnyBalance.isAvailable('credits.debt_late', 'credits.pct', 'credits.date_start', 'credits.period', 'credits.cardnum', 'credits.accnum')){
+        html = AnyBalance.requestGet(g_baseurl + '/scoring/protected/statement/credit/' + result.__id, g_headers);
+        var table = getElement(html, /<table[^>]+productFull[^>]*>/i, replaceHtmlEntities);
+
+        getParam(table, result, 'credits.debt_late', /Просроченная задолженность:[\s\S]*?<span[^>]+amountBox[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+        getParam(table, result, 'credits.pct', /Процентная ставка:([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+        getParam(table, result, 'credits.date_start', /Дата выдачи кредита:([^<]*)/i, replaceTagsAndSpaces, parseDate);
+        getParam(table, result, 'credits.till', /Дата окончания кредита:([^<]*)/i, replaceTagsAndSpaces, parseDate);
+        getParam(table, result, 'credits.period', /Срок кредита:([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+        getParam(table, result, 'credits.contract', /Номер Договора: N?([^<]*)/i, replaceTagsAndSpaces);
+        getParam(table, result, 'credits.cardnum', /Карта для погашения кредита:[\s\S]*?<a[^>]*>([\s\S]*?)(?:\(|<\/a>)/i, replaceTagsAndSpaces);
+        getParam(table, result, 'credits.accnum', /Счет для погашения кредита:[\s\S]*?<a[^>]*>([\s\S]*?)(?:\(|<\/a>)/i, replaceTagsAndSpaces);
+/*
+        if(AnyBalance.isAvailable('accounts.transactions')){
+            processAccountTransactions(html, result);
+        } */
+    }
+
+}
+
 
 function getViewState(html){
 	return getParam(html, null, null, /<input[^>]+name="javax.faces.ViewState"[^>]*value="([^"]*)/i);

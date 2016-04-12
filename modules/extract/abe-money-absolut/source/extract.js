@@ -285,6 +285,7 @@ function processCredit(credit, result, html) {
     var html = requestGetWicketAction(html, /<div[^>]+class="account inner[^>]+id="(id[^"]+)"/i);
 
     getParam(html, result, 'credits.debt_main', /Общая задолженность(?:[^>]*>){3}([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'credits.principal_debt', /Сумма основного долга(?:[^>]*>){3}([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'credits.pct_sum', /Cумма начисленных процентов(?:[^>]*>){3}([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'credits.debt_expired', /Сумма просроченного основного долга(?:[^>]*>){3}([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'credits.pct_expired', /Сумма просроченных процентов(?:[^>]*>){3}([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);

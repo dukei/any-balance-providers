@@ -62,6 +62,7 @@ function main() {
       AB.getParam(html, result, 'debt',              /Задолженность за предыдущие периоды([^<]*)/i, AB.replaceTagsAndSpaces, AB.parseBalance);
       AB.getParam(html, result, 'a_payment',         /Аванс на начало расчетного период([^<]*)/i,   AB.replaceTagsAndSpaces, AB.parseBalance);
       AB.getParam(html, result, 'to_pay',            /<b[^>]*>Всего к оплате([^<]*)/i,              AB.replaceTagsAndSpaces, AB.parseBalance);
+      AB.getParam(html, result, 'accrued',           /Итого:(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\/td>/i, AB.replaceTagsAndSpaces, AB.parseBalance);
       AB.getParam(html, result, 'last_payment_date', /Дата последней поступившей оплаты([^<]*)/i,   AB.replaceTagsAndSpaces, AB.parseDate);
     }
   }

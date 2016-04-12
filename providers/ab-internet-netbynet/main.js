@@ -250,9 +250,9 @@ function mainEkaterinburg(region) {
 
   var result = {success: true};
 
-  getParam (html, result, 'balance', /баланс:([\s\d.,-]+)руб/i, replaceTagsAndSpaces, parseBalance);
-  getParam (html, result, 'subscriber', /Приветствуем Вас,([^<]+)/i, replaceTagsAndSpaces);
-  getParam (html, result, 'day_left', /дней до ухода в финансовую блокировку:(?:[^>]*>){1,2}\s*(\d+)/i, replaceTagsAndSpaces, parseBalance);
+  getParam (html, result, 'balance', /баланс:(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
+  getParam (html, result, 'status', /Текущий статус договора:([\s\S]*?)<br/i, replaceTagsAndSpaces);
+  getParam (html, result, 'abon', /Ежемесячная абонентская плата:([\s\S]*?)<br/i, replaceTagsAndSpaces, parseBalance);
 
   AnyBalance.setResult(result);
 }

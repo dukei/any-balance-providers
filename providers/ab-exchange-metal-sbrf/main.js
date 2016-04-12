@@ -29,6 +29,7 @@ function main(){
   if (allRegionsNew.indexOf(region) < 0) {
     region = allRegionsNew[allRegionsOld.indexOf(region)];
   }
+  if(!region) region = 'moscow';
 
   var html = AnyBalance.requestGet(baseurl + region + '/ru/quotes/metal/', g_headers);
 
@@ -46,17 +47,18 @@ function main(){
     throw new AnyBalance.Error('Не удается найти котировки. Сайт изменен?.');
   }
 
+  //Чтобы счетчики были получены независимо от включенности, добавим им два подчеркивания
   var colsDef = {
-    buy: {
+    __buy: {
       re: /Покупка/i
     },
-    sell: {
+    __sell: {
       re: /Продажа/i
     },
   };
 
   var info = [];
-  processTable(tables[0], info, 'info.', colsDef);
+  processTable(tables[0], info, '', colsDef);
   if (info.length) {
     info[0].name = 'Au';
     info[1].name = 'Ag';
@@ -66,11 +68,11 @@ function main(){
       var name = metal.name;
       var weight = undefined;
       if(AnyBalance.isAvailable(name + '_buy'))
-        result[name + '_buy'] = metal.buy;
+        result[name + '_buy'] = metal.__buy;
       if(AnyBalance.isAvailable(name + '_sell'))
-        result[name + '_sell'] = metal.sell;
+        result[name + '_sell'] = metal.__sell;
       if(AnyBalance.isAvailable(name + '_weight') && (weight = getWeight(name)))
-        result[name + '_weight'] = metal.buy * weight;
+        result[name + '_weight'] = metal.__buy * weight;
     });
   }
 

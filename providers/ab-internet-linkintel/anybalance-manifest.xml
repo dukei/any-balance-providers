@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-  <id version="4">ab-internet-linkintel</id>
+  <id version="5">ab-internet-linkintel</id>
 	<name>LINKINTEL (Лобня)</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе интернет-провайдера LINKINTEL http://linkintel.ru</p>

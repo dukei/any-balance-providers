@@ -59,7 +59,7 @@ function main(){
     }
 
     getParam(usercart, result, '__tariff', /Тариф:(.*?)<br/i, AB.replaceTagsAndSpaces);
-    getParam(usercart, result, 'balance', /Баланс на данный момент:.*?>([^<>]+)<\/a/i, AB.replaceTagsAndSpaces, AB.parseBalance);
+    getParam(usercart, result, 'balance', /На данный момент:(?:[^>]*>){3}([\s\S]*?)<\//i, AB.replaceTagsAndSpaces, AB.parseBalance);
     getParam(usercart, result, 'bonus_balance', /Баллов на данный момент:\s*<a[^>]*>([^<]*)/i, AB.replaceTagsAndSpaces, AB.parseBalance);
     
     if(AnyBalance.isAvailable('traffic_in', 'traffic_out', 'traffic_total')) {

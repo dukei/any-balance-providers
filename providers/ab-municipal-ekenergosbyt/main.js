@@ -51,8 +51,9 @@ function main() {
 
     if(isAvailable(['balance', 'reporting'])) {
       html = AnyBalance.requestGet(baseurl + encodeURIComponent('финансы') + '/' + encodeURIComponent('счета'), g_headers);
-      AB.getParam(html, result, 'balance', /<table[^>]+type_1[^>]*>(?:[\s\S]*?<td[^>]*>){8}([\s\S]*?)<\/td>/i, AB.replaceTagsAndSpaces, AB.parseBalance);
-      AB.getParam(html, result, 'accrued', /<table[^>]+type_1[^>]*>(?:[\s\S]*?<td[^>]*>){7}([\s\S]*?)<\/td>/i, AB.replaceTagsAndSpaces, AB.parseBalance);
+      AB.getParam(html, result, 'cm_balance', /<table[^>]+type_1[^>]*>(?:[\s\S]*?<td[^>]*>){8}([\s\S]*?)<\/td>/i, AB.replaceTagsAndSpaces, AB.parseBalance);
+      AB.getParam(html, result, 'balance',    /Итого задолженность:(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\/td>/i,    AB.replaceTagsAndSpaces, AB.parseBalance);
+      AB.getParam(html, result, 'accrued',    /<table[^>]+type_1[^>]*>(?:[\s\S]*?<td[^>]*>){7}([\s\S]*?)<\/td>/i, AB.replaceTagsAndSpaces, AB.parseBalance);
     }
 
     AnyBalance.setResult(result);

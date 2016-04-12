@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-municipal-ekenergosbyt</id>
+	<id version="2">ab-municipal-ekenergosbyt</id>
 	<api flags="no_browser"/>
 	<name>ЕкатеринбургЭнергоСбыт</name>
 	<description html="true"><![CDATA[
@@ -19,6 +19,7 @@
 	</files>
 	<counters>
 		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="cm_balance" name="Неоплаченный остаток (за последний месяц)" units=" р"/>
 		<counter id="accrued" name="Начислено" units=" р"/>
 		<counter id="fio" name="ФИО" type="text"/>
 		<counter id="email" name="E-mail" type="text"/>

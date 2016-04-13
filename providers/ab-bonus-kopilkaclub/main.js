@@ -21,8 +21,8 @@ function main(){
 
 	var html = AnyBalance.requestPost(baseurl + 'account/login', {
 		card_no:'+7' + prefs.login,
-		pin:prefs.password,
-		api:1
+		pin: prefs.password,
+		api: 1
 	}, addHeaders({'X-Requested-With':'XMLHttpRequest'}));
 	
 	var json = getJson(html);
@@ -41,7 +41,15 @@ function main(){
 	
     var result = {success: true};
 	
-    getParam(html, result, 'balance', /"balance"[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'balance', /transaction[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'fio', /\/dashboard(?:[^>]*>){5}([\s\S]*?)<\//i, replaceTagsAndSpaces);
 
+	if(isAvailable(['phone', 'cardNum'])) {
+		html = AnyBalance.requestGet(baseurl + 'profile/dashboard', g_headers);
+		
+		getParam(html, result, 'phone', /"profile-phone"[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces);
+		getParam(html, result, 'cardNum', /Карта &laquo;Копилка&raquo;[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces);
+	}
+	
     AnyBalance.setResult(result);
 }

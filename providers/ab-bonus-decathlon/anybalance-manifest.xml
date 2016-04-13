@@ -1,38 +1,33 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="7">ab-bonus-decathlon</id>
-  <api flags="no_browser"/>
-  <name>Бонусная карта Декатлон</name>
-  <description>
-    Получает количество баллов на карте накопительной программы Декатлон с сайта http://www.mydecathlon.com/
-  </description>
-  <instruction>
-    Если у вас ещё нет кабинета, но есть карта, вы можете создать его по ссылке: http://www.mydecathlon.com/mydecathlon.html?ppays=RU&amp;langue=RU#nomPage=creationCompte1
-
-    Если у вас ещё нет карты, вы можете создать её вместе с кабинетом по ссылке: http://www.mydecathlon.com/mydecathlon.html?ppays=RU&amp;langue=RU#nomPage=creationCompte1SansCarte
-  </instruction>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>x.js</js>
-    <js>library.js</js>
-    <js>main.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="balance" name="Баланс" units=" Б"/>
-    <counter id="left2kupon" name="Осталось для получения купона" units=" Б"/>
-    <counter id="lastchange" name="Последнее изменение баланса" type="time"/>
-    <counter id="fio" name="ФИО" type="text"/>
-  </counters>
-  <keywords>
-    бонус, баллы, bonus, бонусная накопительная программа, Decathlon, карта клиента
-  </keywords>
-  <type>
-    bonus
-  </type>
-  <country>
-    ru
-  </country>
+	<id version="8">ab-bonus-decathlon</id>
+	<api flags="no_browser"/>
+	<name>Бонусная карта Декатлон</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе баллов на карте накопительной программы Декатлон с сайта http://www.mydecathlon.com/</p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Если у вас ещё нет кабинета, но есть карта, вы можете создать его по ссылке: http://www.mydecathlon.com/mydecathlon.html?ppays=RU&amp;langue=RU#nomPage=creationCompte1</p>
+	<p>Если у вас ещё нет карты, вы можете создать её вместе с кабинетом по ссылке: http://www.mydecathlon.com/mydecathlon.html?ppays=RU&amp;langue=RU#nomPage=creationCompte1SansCarte</p>
+	]]></instruction>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>x.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" Б"/>
+		<counter id="left2kupon" name="Осталось для получения купона" units=" Б"/>
+		<counter id="lastchange" name="Последнее изменение баланса" type="time"/>
+		<counter id="fio" name="ФИО" type="text"/>
+	</counters>
+	<keywords>бонус, баллы, bonus, бонусная накопительная программа, Decathlon, карта клиента</keywords>
+	<type>bonus</type>
+	<country>ru</country>
 </provider>

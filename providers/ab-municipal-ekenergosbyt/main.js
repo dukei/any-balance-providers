@@ -49,7 +49,7 @@ function main() {
     AB.getParam(html, result, 'fio', /ФИО ответственного лица(?:[^>]*>){2}([^<]*)/i, AB.replaceTagsAndSpaces);
     AB.getParam(html, result, 'email', /E-mail ответственного лица(?:[^>]*>){2}([^<]*)/i, AB.replaceTagsAndSpaces);
 
-    if(isAvailable(['balance', 'reporting'])) {
+    if(isAvailable(['balance', 'reporting', 'cm_balance'])) {
       html = AnyBalance.requestGet(baseurl + encodeURIComponent('финансы') + '/' + encodeURIComponent('счета'), g_headers);
       AB.getParam(html, result, 'cm_balance', /<table[^>]+type_1[^>]*>(?:[\s\S]*?<td[^>]*>){8}([\s\S]*?)<\/td>/i, AB.replaceTagsAndSpaces, AB.parseBalance);
       AB.getParam(html, result, 'balance',    /Итого задолженность:(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\/td>/i,    AB.replaceTagsAndSpaces, AB.parseBalance);

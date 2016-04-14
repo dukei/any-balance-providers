@@ -78,15 +78,11 @@ function main() {
 		AB.getParam(html, result, 'agreement', /Информация по договору:([\s\S]*?)<\//i, replaceTagsAndSpaces);
 	}
 
-	if(isAvailable(['fio', 'phone', 'email'])) {
-		html = AnyBalance.requestGet(baseurl + 'site/get-assigned', addHeaders({
-			'X-Requested-With': 'XMLHttpRequest'
-		}));
-		json = getJson(html);
+	if(isAvailable(['fio', 'phone'])) {
+		html = AnyBalance.requestGet(baseurl + 'profile/account', g_headers);
 
-		AB.getParam(json.fio, 	result, 'fio');
-		AB.getParam(json.phone, result, 'phone');
-		AB.getParam(json.email, result, 'email');
+		AB.getParam(html, result, 'fio', /фио(?:[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+		AB.getParam(html, result, 'phone', /Телефонный номер(?:[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
 	}
 	AnyBalance.setResult(result);
 }

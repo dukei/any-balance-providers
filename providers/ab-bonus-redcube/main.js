@@ -60,7 +60,7 @@ function main () {
     	'data[ClientInfoUser][BirthDate][year]': res[3]
     });
 
-    html = AnyBalance.reqeustGet(baseurl + 'client_info/balance/', g_headers);
+    html = AnyBalance.requestGet(baseurl + 'client_info/balance/', g_headers);
 
     // Проверка на корректный вход
     if (/Номер Вашей карты:</.exec(html)) {

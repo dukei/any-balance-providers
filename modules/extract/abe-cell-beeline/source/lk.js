@@ -282,7 +282,7 @@ function getLKType(html){
         //Если в кабинет войти не получилось, то в первую очередь надо поискать в ответе сервера объяснение ошибки
         var error = getParam(html, null, null, [/<div[^>]+class="error-page[\s|"][^>]*>([\s\S]*?)<\/div>/i, /<span[^>]+class="ui-messages-error-summary"[^>]*>([\s\S]*?)<\/span>/i], replaceTagsAndSpaces);
         if(error)
-            throw new AnyBalance.Error(error, null, /Неправильные логин и\s*(?:\(или\)\s*)?пароль/i.test(error));
+            throw new AnyBalance.Error(error, null, /Неправильные логин и\s*(?:\(или\)\s*)?пароль|Пользователь не найден/i.test(error));
 
         if (AnyBalance.getLastStatusCode() > 400) {
             AnyBalance.trace('Beeline returned: ' + AnyBalance.getLastStatusString());

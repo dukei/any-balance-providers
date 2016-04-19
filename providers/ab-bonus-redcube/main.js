@@ -25,9 +25,9 @@ function enter(url, data) {
         })
     );
 
-	var error = AB.getParam(html, null, null, /<div[^>]+id="dangerMessage"[^>]*>([\s\S]*?)<\/div>/i, AB.replaceTagsAndSpaces);
+	var error = AB.getParam(html, null, null, /<div[^>]+class="error-message"[^>]*>([\s\S]*?)<\/div>/i, AB.replaceTagsAndSpaces);
 	if (error) {
-        throw new AnyBalance.Error(error);
+        throw new AnyBalance.Error(error, null, /неверн/i.test(error));
     }
 
 	return html;
@@ -53,21 +53,21 @@ function main () {
     }
 	
     enter(baseurl + 'client_info/check/', {'data[ClientInfoUser][bcard]': prefs.number});
+    if(!/login/i.test(AnyBalance.getLastUrl()))
+    	throw new AnyBalance.Error('Не удаётся войти. Проверьте номер карты.');
 	
-    html = enter(baseurl + 'client_info/login', {
+    html = enter(baseurl + 'client_info/login/', {
     	'data[ClientInfoUser][BirthDate][day]': res[1],
     	'data[ClientInfoUser][BirthDate][month]': res[2],
     	'data[ClientInfoUser][BirthDate][year]': res[3]
     });
 
-    html = AnyBalance.requestGet(baseurl + 'client_info/balance/', g_headers);
-
     // Проверка на корректный вход
     if (/Номер Вашей карты:</.exec(html)) {
 		AnyBalance.trace('It looks like we are in selfcare...');
     } else {
-    	//AnyBalance.trace('Have not found logOff... Unknown error. Please contact author.');
-    	throw new AnyBalance.Error('Неизвестная ошибка. Пожалуйста, свяжитесь с автором провайдера.');
+    	AnyBalance.trace(html);
+    	throw new AnyBalance.Error('Не удалось получить информацию по карте. Сайт изменен?');
     }
 	
     var result = {success: true};

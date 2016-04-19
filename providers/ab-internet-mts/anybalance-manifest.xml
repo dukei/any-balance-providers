@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="102">ab-internet-mts</id>
+	<id version="103">ab-internet-mts</id>
 	<name>Домашний Интернет и Телевидение МТС</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о текущем балансе, номере лицевого счета и договора, ФИО владельца, трафике в текущем месяце, абонентской плате для пользователей провайдера "Домашний Интернет и Телевидение МТС".</p>
@@ -52,7 +52,7 @@
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-	  <js>api:jquery.min.js</js> 
+	    <js>api:jquery.min.js</js>
 		<!-- <js>library.js</js> -->
 		<js>login.js</js>
 		<js>main.js</js>
@@ -61,12 +61,14 @@
 	<counters>
 		<counter id="balance" name="Баланс" units=" р"/>
 		<counter id="balance_tv" name="Баланс ТВ" units=" р"/>
+		<counter id="last_payment_sum" name="Сумма последнего платежа" units=" р"/>
 		<counter id="internet_cur" name="Трафик в этом месяце" suffix=" Mb"/>
 		<counter id="abon" name="Абонентская плата" suffix=" р"/>
 		<counter id="daysleft" name="Хватит на" suffix=" дн"/>
 		<counter id="license" name="Лицевой счет" type="text"/>
 		<counter id="agreement" name="Номер договора" type="text"/>
 		<counter id="username" name="ФИО" type="text"/>
+		<counter id="last_payment_date" name="Дата платежа" type="time" format="dd/MM/yyyy"/>
 	</counters>
 	<keywords>провайдер интернет СитиХоумНет комстар регионы</keywords>
 	<type>internet, tv</type>

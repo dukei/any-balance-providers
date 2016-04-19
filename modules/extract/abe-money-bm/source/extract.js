@@ -61,6 +61,9 @@ function tryLogin(html){
 
 	var form = getElement(html, /<form[^>]*loginForm[^>]*>/i);
 	if(!form){
+		var error = getElement(html, /<div[^>]+id="mainContent"[^>]*>/i, replaceTagsAndSpaces);
+		if(error && error.length < 255) //А то вдруг тут будет слишком много текста...
+			throw new AnyBalance.Error(error);
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удаётся найти форму входа. Сайт изменен?');
 	}
@@ -153,6 +156,19 @@ function checkForPasswordChange(html){
 */
 }
 
+function redirectIfNeeded(html){
+	if(AnyBalance.getLastStatusCode() >= 300){
+		var redirect = getParam(html, null, null, /location.href\s*=\s*['"]([^'"]*)/);
+		if(redirect){
+			AnyBalance.trace('redirect: ' + redirect);
+			var url = joinUrl(g_baseurl, redirect);
+			return AnyBalance.requestGet(url, g_headers);
+		}
+	}
+
+	return html;
+}
+
 function login(){
 	var prefs = AnyBalance.getPreferences();
 	AnyBalance.setDefaultCharset('windows-1251');
@@ -167,6 +183,8 @@ function login(){
 	AnyBalance.trace('Region is ' + prefs.region + ': ' + g_baseurl);
 
 	var html = AnyBalance.requestGet(g_baseurl + '/scoring/protected/welcome.jsf', g_headers);
+	html = redirectIfNeeded(html);
+
 	if(isLoggedIn(html)){
 		//Уже залогинены
         html = checkForPasswordChange(html);

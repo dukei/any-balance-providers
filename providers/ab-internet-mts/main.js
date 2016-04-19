@@ -225,11 +225,15 @@ function getMoscow() {
 }
 
 function getNsk() {
-  var prefs = AnyBalance.getPreferences();
-  AnyBalance.setDefaultCharset('utf-8');
-
   var baseurl = 'https://kabinet.nsk.mts.ru/';
-  //TODO: Лучше перевести на typicalApiInetTv!!!
+  typicalApiInetTv(baseurl);
+
+  /*
+   var prefs = AnyBalance.getPreferences();
+   AnyBalance.setDefaultCharset('utf-8');
+
+   var baseurl = 'https://kabinet.nsk.mts.ru/';
+   //TODO: Лучше перевести на typicalApiInetTv!!!
 
   var html = AnyBalance.requestPost(baseurl + 'res/modules/AjaxRequest.php?Method=Login', {
     BasicAuth: true,
@@ -271,7 +275,7 @@ function getNsk() {
     sumParam(name, result, '__tariff', /,\s([\d\-]{5,})/i, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
   }
 
-  AnyBalance.setResult(result);
+  AnyBalance.setResult(result);*/
 
 }
 
@@ -426,7 +430,7 @@ function getArkh() {
 }
 
 function getPnz() {
-  newTypicalLanBillingInetTv('https://lkpenza.pv.mts.ru/index.php');
+  newTypicalLanBillingInetTv('https://lkpenza.pv.mts.ru/index.php', true);
 }
 
 function getNnovTv() {
@@ -850,6 +854,8 @@ function typicalApiInetTv(baseurl) {
     html = JSON.stringify(json); //Чтобы русские буквы стали русскими
 
     getParam(html, result, 'abon', /Ежемесячная плата за пакет услуг[^<]*?:([^<]*)/, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'last_payment_date', /Последний платеж[^<]*?:([^<]*)/, replaceTagsAndSpaces, parseDate);
+    getParam(html, result, 'last_payment_sum', /Последний платеж[\s\S]*?Сумма:([^<]*)/, replaceTagsAndSpaces, parseBalance);
   }
 
   AnyBalance.setResult(result);
@@ -867,7 +873,10 @@ function getMiass() {
 }
 
 function getKurgan() {
-  newTypicalLanBillingInetTv('https://lkkurgan.ural.mts.ru/index.php');
+  AnyBalance.setOptions({
+    SSL_ENABLED_PROTOCOLS: ['TLSv1'],
+  });
+  newTypicalLanBillingInetTv('https://lkkurgan.ural.mts.ru/index.php', true);
 }
 
 function getBarnaul() {
@@ -1010,7 +1019,7 @@ function getKursk() {
   newTypicalLanBillingInetTv('https://lk-kursk.center.mts.ru/index.php');
 }
 
-function newTypicalLanBillingInetTv(baseurl) {
+function newTypicalLanBillingInetTv(baseurl, need_token) {
   var urlAjax = baseurl + '?r=account/vgroups&agrmid=';
   var urlIndex = baseurl + '?r=site/login';
 
@@ -1022,11 +1031,28 @@ function newTypicalLanBillingInetTv(baseurl) {
   } else {
     var html = AnyBalance.requestGet(urlIndex);
 
-    html = AnyBalance.requestPost(urlIndex, {
+    var params = {
       'LoginForm[login]': prefs.login,
       'LoginForm[password]': prefs.password,
       'yt0': 'Войти'
-    });
+    };
+
+    if(need_token) {
+      var cookies = AnyBalance.getCookies();
+      for (var i = 0; i < cookies.length; i++) {
+        if (cookies[i].name == "YII_CSRF_TOKEN") {
+          var cookie_value = cookies[i].value;
+          break;
+        }
+      }
+
+      if (!cookie_value) {
+        throw new AnyBalance.Error("Не удалось получить токен.");
+      }
+
+      params['YII_CSRF_TOKEN'] = cookie_value;
+    }
+      html = AnyBalance.requestPost(urlIndex, params);
   }
 
   if (!/r=site\/logout/i.test(html)) {

@@ -874,7 +874,7 @@ function getMiass() {
 
 function getKurgan() {
   AnyBalance.setOptions({
-    SSL_ENABLED_PROTOCOLS: ['TLSv1'], // от присутствия TLSv1.1 и TLSv1.2
+    SSL_ENABLED_PROTOCOLS: ['TLSv1'],
   });
   newTypicalLanBillingInetTv('https://lkkurgan.ural.mts.ru/index.php', true);
 }
@@ -1030,32 +1030,29 @@ function newTypicalLanBillingInetTv(baseurl, need_token) {
     var html = AnyBalance.requestGet(baseurl + '?r=account/index');
   } else {
     var html = AnyBalance.requestGet(urlIndex);
+
+    var params = {
+      'LoginForm[login]': prefs.login,
+      'LoginForm[password]': prefs.password,
+      'yt0': 'Войти'
+    };
+
     if(need_token) {
       var cookies = AnyBalance.getCookies();
-      for(var i = 0; i < cookies.length; i++) {
-        if(cookies[i].name == "YII_CSRF_TOKEN") {
+      for (var i = 0; i < cookies.length; i++) {
+        if (cookies[i].name == "YII_CSRF_TOKEN") {
           var cookie_value = cookies[i].value;
           break;
         }
       }
 
-      if(!cookie_value) {
+      if (!cookie_value) {
         throw new AnyBalance.Error("Не удалось получить токен.");
       }
 
-      html = AnyBalance.requestPost(urlIndex, {
-        'LoginForm[login]': prefs.login,
-        'LoginForm[password]': prefs.password,
-        'yt0': 'Войти',
-        'YII_CSRF_TOKEN': cookie_value,
-      })
-    } else {
-      html = AnyBalance.requestPost(urlIndex, {
-        'LoginForm[login]': prefs.login,
-        'LoginForm[password]': prefs.password,
-        'yt0': 'Войти'
-      });
+      params['YII_CSRF_TOKEN'] = cookie_value;
     }
+      html = AnyBalance.requestPost(urlIndex, params);
   }
 
   if (!/r=site\/logout/i.test(html)) {

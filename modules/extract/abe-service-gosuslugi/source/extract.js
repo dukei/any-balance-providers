@@ -179,7 +179,7 @@ function processFinesBeta(result, prefs, showPaidFines) {
 		var stsNums = (prefs.sts_num || '').split(';');
 		AnyBalance.trace('Свидетельств о регистрации: ' + stsNums.length);
 
-		if (plates.length != stsNums.length)
+		if ((plates.length != stsNums.length) || !stsNums[0])
 			throw new AnyBalance.Error('Введите номера автомобилей и свидетельств о регистрации!');
 
 		html = AnyBalance.requestGet(g_betaBaseurl + '10001', g_headers);

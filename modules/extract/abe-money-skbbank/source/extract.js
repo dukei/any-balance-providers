@@ -34,6 +34,8 @@ function login() {
 
     checkEmpty(prefs.login, 'Введите логин!');
     checkEmpty(prefs.password, 'Введите пароль!');
+	
+	AnyBalance.setOptions({SSL_ENABLED_PROTOCOLS: ['TLSv1.2']});
 
     prefs.login = prefs.login.toLowerCase();
 

@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="2" date="2016-04-20">
+	Исправлено описание (список предприятий)
+	</change>
 	<change version="1" date="2016-04-20">
 	- Первая версия провайдера.
 	</change>

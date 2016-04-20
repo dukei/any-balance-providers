@@ -1,15 +1,31 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="1">ab-municipal-kievenergo</id>
-	<name>Киевэнерго</name>
+	<id version="2">ab-municipal-kievenergo</id>
+	<name>МегаБиллинг: Киевэнерго и пр.</name>
 	<description html="true"><![CDATA[
-	<p>Получает данные в системе МегаБиллинг для Киевэнерго (http://kyivenergo.ua)</p>
-	<p>Информация берется из личного кабинета https://secure.mega-billing.com/byt/ua</p>
+	<p>Получает данные в системе МегаБиллинг для Киевэнерго (http://kyivenergo.ua) и других предприятий</p>
+	<ul>
+		<li>КП «Артемовская управляющая компания жилищно-коммунальных услуг»</li>
+		<li>ДПЭС ЧАО «АТОМСЕРВИС»</li>
+		<li>Компания «Вода Донбасса»</li>
+		<li>ООО «Водоканал-сервис»</li>
+		<li>ПАО «Волыньоблэнерго»</li>
+		<li>ПАО «ДТЭК ПЭС-Энергоуголь»</li>
+		<li>ПАО «ДТЭК Днепрооблэнерго»</li>
+		<li>ПАО «Донецкгоргаз»</li>
+		<li>ПАО «Закарпатьеоблэнерго»</li>
+		<li>ПАО «Киевэнерго»</li>
+		<li>ООО «Луганское энергетическое объединение»</li>
+		<li>ПАО «Николаевоблэнерго»</li>
+		<li>ДФ ГП «Региональные электрические сети»</li>
+		<li>КП «Водоканал г.Ужгород»</li>
+	</ul>
+	<p>Информация берется из личного кабинета https://secure.mega-billing.com/byt/ua </p>
 	]]></description>	
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>
-		<module id="library"/>
+		<module id="extract/ab-municipal-megabilling"/>
 	</depends>
 	<files>
 		<icon>icon.png</icon>

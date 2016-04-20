@@ -126,8 +126,8 @@ function processAccountTransactions(html, result){
 
 	html = AnyBalance.requestGet(g_baseurl + "/priv/" + href);
 
-	getParam(html, result, 'accounts.minpay', /<td[^>]*>Оплатить до([^<]*)/g, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'accounts.minpay_till', /<td[^>]*>Оплатить до[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/g, replaceTagsAndSpaces, parseDate);
+	getParam(html, result, 'accounts.minpay', /<td[^>]*>Оплатить до[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, [replaceTagsAndSpaces, /-/, ','], parseBalance);
+	getParam(html, result, 'accounts.minpay_till', /<td[^>]*>Оплатить до([^<]+)/i, replaceTagsAndSpaces, parseDate);
 
 	if(!AnyBalance.isAvailable('accounts.transactions', 'accounts.address'))
 		return; //Дальше только транзакции

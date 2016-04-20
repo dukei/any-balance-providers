@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="3.0" version="20" date="2016-04-20">
+	- Исправлено получение даты и суммы минимального платежа.
+	</change>
 	<change major_version="3.0" version="19" date="2016-04-13">
 	- Поддержка изменений на сайте.
 	</change>

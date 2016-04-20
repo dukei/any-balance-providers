@@ -224,12 +224,13 @@ function processCard(card, result) {
 
     getParam(card.amount, result, 'cards.amount', null, replaceTagsAndSpaces, parseBalanceSilent);
     getParam(card.balance, result, 'cards.balance', null, replaceTagsAndSpaces, parseBalanceSilent);
-    getParam(card.balanceLimit, result, 'cards.balanceLimit', null, replaceTagsAndSpaces, parseBalanceSilent);
-    getParam(card.currCode, result, ['cards.currency', 'cards.balance', 'cards.amount', 'cards.balanceLimit'], null, replaceTagsAndSpaces);
+    getParam(card.creditLimit, result, 'cards.limit', null, replaceTagsAndSpaces, parseBalanceSilent);
+    getParam(card.currCode, result, ['cards.currency', 'cards.balance', 'cards.amount', 'cards.limit'], null, replaceTagsAndSpaces);
 
     getParam(card.validDate + '', result, 'cards.till', null, replaceTagsAndSpaces, parseDateWord);
     getParam(card.holderName, result, 'cards.holderName', null, replaceTagsAndSpaces);
-    getParam(card.cardAccount + '', result, 'cards.acc_num');
+    getParam(card.cardAccount, result, 'cards.acc_num');
+    getParam(card.name, result, 'cards.name');
     getParam(card.cardSort, result, 'cards.type', null, replaceTagsAndSpaces);
 
     if (isAvailable('cards.transactions'))
@@ -274,7 +275,7 @@ function processDeposit(deposit, result) {
 
     getParam(deposit.amount, result, 'deposits.balance', null, replaceTagsAndSpaces, parseBalanceSilent);
     getParam(deposit.currIso, result, ['deposits.currency', 'deposits.balance']);
-    getParam(deposit.dateClose, result, 'deposits.till', null, replaceTagsAndSpaces);
+    getParam(deposit.dateClose, result, 'deposits.till', null, replaceTagsAndSpaces, parseDateSilent);
     getParam(deposit.interestRate, result, 'deposits.pct', null, replaceTagsAndSpaces, parseBalanceSilent);
 
     if (isAvailable('deposits.transactions'))

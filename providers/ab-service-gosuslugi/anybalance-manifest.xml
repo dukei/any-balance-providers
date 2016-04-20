@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="1.0" version="34">ab-service-gosuslugi</id>
+	<id major_version="1.0" version="35">ab-service-gosuslugi</id>
 	<api flags="no_browser"/>
 	<name>Госуслуги (Штрафы, Налоги)</name>
 	<description html="true"><![CDATA[
@@ -28,6 +28,7 @@
 	</files>
 	<counters>
 		<counter id="gibdd_balance" name="Сумма штрафов" units=" р"/>
+		<counter id="gibdd_balance_full" name="Сумма штрафов без скидки" units=" р"/>
 		<counter id="gibdd_info" name="Сводка по штрафам" type="html"/>
 		<counter id="nalog_balance" name="Сумма налогов" units=" р"/>
 		<counter id="nalog_info" name="Сводка по налогам" type="html"/>

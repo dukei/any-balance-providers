@@ -9,7 +9,10 @@ var g_countersTable = {
 	// Штрафы
 	'__1': 'fines.ammount',
 	'__2': 'fines.break',
+	'__3': 'fines.time',
+	'__4': 'fines.carNumber',
 	'gibdd_balance': 'fines_unpaid',
+	'gibdd_balance_full': 'fines_unpaid_full',
 }
 
 function shouldProcess(counter, info) {
@@ -22,27 +25,28 @@ function main() {
     var adapter = new NAdapter(g_countersTable, shouldProcess, {shouldProcessMultipleCalls: true});
 	
     adapter.processProfile = adapter.envelope(processProfile);
-    adapter.processFines = adapter.envelope(processFines);
+    adapter.processFinesBeta = adapter.envelope(processFinesBeta);
 	
 	var result = {success: true};
 	
 	var html = login(prefs);
 	
-	adapter.processProfile(html, result);
+	adapter.processProfile(result);
 	
 	// Штрафы
-	adapter.processFines(result, prefs);
+	adapter.processFinesBeta(result, prefs);
 	if(result.fines) {
 		var gibdd_info = '';
 		// Создадим сводку
 		for(var i = 0; i < result.fines.length; i++) {
 			var fine = result.fines[i];
-			if(!isset(fine['break']) || !isset(fine['ammount'])) {
+			if(!isset(fine['break']) || !isset(fine['ammount']) || !fine['carNumber']) {
 				AnyBalance.trace('Не хватает данных для формирования сводки...');
 				continue;
 			}
 			
-			gibdd_info += fine['__name'] + ' (' + fine['break'] + '): ' + fine['ammount'] + ' р - <b>Не оплачен</b><br/><br/>';
+			var date = fmtDate(new Date(fine['time']), '/');
+			gibdd_info += fine['carNumber'].toUpperCase() + ' '+ date + ': ' + fine['__id'] + ' - <b>' + fine['ammount'] + ' р</b><br/>' + fine['break'] + '<br/><br/>';
 		}
 		// Конвертер
 		result = adapter.convert(result);

@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="11" date="2016-04-20">
+	- Поддержка изменений на сайте.
+	</change>
   <change version="10" date="2016-02-17">
   - Правки обработки лицевого счета.
   </change>

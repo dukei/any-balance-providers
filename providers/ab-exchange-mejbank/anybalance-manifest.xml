@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="6">ab-exchange-mejbank</id>
+	<id version="7">ab-exchange-mejbank</id>
 	<api flags="no_browser"/>
 	<name>Курсы валют Межбанка Украины</name>
 	<description html="true"><![CDATA[
@@ -14,6 +14,7 @@
 		<icon>icon.png</icon>
 		<js>main.js</js>
 		<history>history.xml</history>
+		<preferences>preferences.xml</preferences>
 	</files>
 	<counters>
 		<counter id="purchase_usd" name="USD Покупка" units=" UAH"/>

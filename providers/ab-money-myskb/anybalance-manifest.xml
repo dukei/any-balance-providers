@@ -1,22 +1,31 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-money-myskb</id>
+	<id version="3">ab-money-myskb</id>
 	<api flags="no_browser"/>
 	<name>СКБ-БАНК</name>
-	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе на картах и счетах СКБ-БАНК (Банк на диване) https://retail.myskb.ru/</p>
+    <description html="true"><![CDATA[
+	<p>Получает текущий остаток и другие параметры продуктов СКБ-Банка http://skbbank.ru/, используя интернет-банк (https://online.skbbank.ru/).</p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+        <module id="library"/>
+        <module id="nadapter"/>
+        <module id="extract/abe-money-skbbank"/>
+    </depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Остаток" units=" {@currency}"/>
+		<counter id="balance" name="Баланс" units=" {@currency}"/>
+		<counter id="amount" name="Остаток" units=" {@currency}"/>
+		<counter id="limit" name="Кредитный лимит" units=" {@currency}"/>
 		<counter id="cardnum" name="Номер карты" type="text"/>
+		<counter id="till" name="Срок действия" type="time" format="MM/yy"/>
+		<counter id="pct" name="Процентная ставка" units=" %"/>
+		<counter id="acc_num" name="Номер счета" type="text"/>
 		<counter id="fio" name="Владелец" type="text"/>
 		<counter id="currency" name="Валюта" type="text"/>
 		<counter id="type" name="Название" type="text"/>

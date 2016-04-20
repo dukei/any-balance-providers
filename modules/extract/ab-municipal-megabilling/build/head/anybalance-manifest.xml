@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+    <id version="1">extract/ab-municipal-megabilling</id>
+	<api flags="no_browser" />
+    <name>MegaBilling - личный кабинет счетов для различных предприятий</name>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<js>ab-municipal-megabilling.min.js</js>
+		<history>history.xml</history>
+	</files>
+	<depends>
+		<module id="library"/>
+	</depends>
+	<type>municipal</type>
+</provider>

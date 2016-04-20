@@ -3,6 +3,6 @@
 */
 
 function main(){
-    var baseurl = "https://www.mega-billing.ru/ru/";
+    var baseurl = "https://secure.mega-billing.com/byt/ua/";
     doMegabilling(baseurl);
 }

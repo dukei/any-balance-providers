@@ -1,17 +1,25 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="10">ab-municipal-krimenergo</id>
-	<name>МегаБиллинг Крым</name>
+	<id version="11">ab-municipal-krimenergo</id>
+	<name>МегаБиллинг (Крымэнерго и др.)</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию из личного кабинета  МегаБиллинг <a href="https://www.mega-billing.ru/">https://www.mega-billing.ru/</a></p>
+	<p>Предоставляет информацию по задолженности перед различными предприятиями</p>
+	<ul>
+		<li>Крымэнерго</li>
+		<li>Восточно-Крымская энергетическая компания</li>
+		<li>Зерноград</li>
+		<li>УК Центр</li>
+		<li>Полный список предприятий здесь: https://www.mega-billing.ru/ru/420 </li>
+	</ul>
+	<p>Информация берется из личного кабинета МегаБиллинг https://www.mega-billing.ru/</p>
 	]]></description>
 	<instruction html="true"><![CDATA[
-  <p>Если у вас нет доступа в Личный кабинет, получите его на странице <a href="https://www.mega-billing.ru/">https://www.mega-billing.ru/</a></p>
+  <p>Если у вас нет доступа в Личный кабинет, получите его на странице https://www.mega-billing.ru/ru/registration/instruction</p>
   ]]></instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>
-		<module id="library"/>
+		<module id="extract/ab-municipal-megabilling"/>
 	</depends>
 	<files>
 		<icon>icon.png</icon>
@@ -25,7 +33,7 @@
 		<counter id="lastcounter" name="Последние показания счётчика" type="text"/>
 		<counter id="lastpay" name="Последняя оплата" type="text"/>
 		<counter id="acc" name="Лицевой счёт" type="text"/>
-		<!-- <counter id="tarif" name="Тарификация" type="text"/> -->
+		<counter id="tarif" name="Тарификация" type="text"/>
 	</counters>
 	<keywords>МегаБиллинг Крым Крымэнерго</keywords>
 	<type>municipal</type>

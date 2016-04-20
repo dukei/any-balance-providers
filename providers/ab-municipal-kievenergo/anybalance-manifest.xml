@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<api flags="no_browser" />
+	<id version="1">ab-municipal-kievenergo</id>
+	<name>Киевэнерго</name>
+	<description html="true"><![CDATA[
+	<p>Получает данные в системе МегаБиллинг для Киевэнерго (http://kyivenergo.ua)</p>
+	<p>Информация берется из личного кабинета https://secure.mega-billing.com/byt/ua</p>
+	]]></description>	
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" грн"/>
+		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="lastcounter" name="Последние показания счетчика" type="text"/>
+		<counter id="lastpay" name="Последняя оплата" type="text"/>
+		<counter id="acc" name="Лицевой счет" type="text"/>
+		<counter id="tarif" name="Тарификация" type="text"/>
+	</counters>
+	<keywords>Мегасофт megabilling</keywords>
+	<type>municipal</type>
+	<country>ua</country>
+</provider>

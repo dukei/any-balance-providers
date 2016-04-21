@@ -225,11 +225,15 @@ function getMoscow() {
 }
 
 function getNsk() {
-  var prefs = AnyBalance.getPreferences();
-  AnyBalance.setDefaultCharset('utf-8');
-
   var baseurl = 'https://kabinet.nsk.mts.ru/';
-  //TODO: Лучше перевести на typicalApiInetTv!!!
+  typicalApiInetTv(baseurl);
+
+  /*
+   var prefs = AnyBalance.getPreferences();
+   AnyBalance.setDefaultCharset('utf-8');
+
+   var baseurl = 'https://kabinet.nsk.mts.ru/';
+   //TODO: Лучше перевести на typicalApiInetTv!!!
 
   var html = AnyBalance.requestPost(baseurl + 'res/modules/AjaxRequest.php?Method=Login', {
     BasicAuth: true,
@@ -271,7 +275,7 @@ function getNsk() {
     sumParam(name, result, '__tariff', /,\s([\d\-]{5,})/i, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
   }
 
-  AnyBalance.setResult(result);
+  AnyBalance.setResult(result);*/
 
 }
 
@@ -850,6 +854,8 @@ function typicalApiInetTv(baseurl) {
     html = JSON.stringify(json); //Чтобы русские буквы стали русскими
 
     getParam(html, result, 'abon', /Ежемесячная плата за пакет услуг[^<]*?:([^<]*)/, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'last_payment_date', /Последний платеж[^<]*?:([^<]*)/, replaceTagsAndSpaces, parseDate);
+    getParam(html, result, 'last_payment_sum', /Последний платеж[\s\S]*?Сумма:([^<]*)/, replaceTagsAndSpaces, parseBalance);
   }
 
   AnyBalance.setResult(result);
@@ -867,6 +873,9 @@ function getMiass() {
 }
 
 function getKurgan() {
+  AnyBalance.setOptions({
+    SSL_ENABLED_PROTOCOLS: ['TLSv1'],
+  });
   newTypicalLanBillingInetTv('https://lkkurgan.ural.mts.ru/index.php');
 }
 

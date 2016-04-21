@@ -53,19 +53,21 @@
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-	  <js>api:jquery.min.js</js> 
+	    <js>api:jquery.min.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
 	<counters>
 		<counter id="balance" name="Баланс" units=" р"/>
 		<counter id="balance_tv" name="Баланс ТВ" units=" р"/>
+		<counter id="last_payment_sum" name="Сумма последнего платежа" units=" р"/>
 		<counter id="internet_cur" name="Трафик в этом месяце" suffix=" Mb"/>
 		<counter id="abon" name="Абонентская плата" suffix=" р"/>
 		<counter id="daysleft" name="Хватит на" suffix=" дн"/>
 		<counter id="license" name="Лицевой счет" type="text"/>
 		<counter id="agreement" name="Номер договора" type="text"/>
 		<counter id="username" name="ФИО" type="text"/>
+		<counter id="last_payment_date" name="Дата платежа" type="time" format="dd/MM/yyyy"/>
 	</counters>
 	<keywords>провайдер интернет СитиХоумНет комстар регионы</keywords>
 	<type>internet, tv</type>

@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="2.0" version="30">ab-cell-life-by</id>
+	<id major_version="2.0" version="31">ab-cell-life-by</id>
 	<api flags="no_browser" />
 	<name>Life:) Беларусь</name>
 	<description html="true"><![CDATA[
@@ -14,10 +14,12 @@
 	</ul>
 	]]></instruction>
 	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
@@ -27,6 +29,7 @@
 		<counter id="balance_corent" name="Оплаченные обязательства" suffix=" ед"/>
 		<counter id="traffic_left" name="Остаток трафика" suffix=" Мб"/>
 		<counter id="traffic_night_left" name="Остаток ночного трафика" suffix=" Мб"/>
+		<counter id="traffic_msg_left" name="Трафик (Viber, Whatsapp)" suffix=" ед"/>
 		<counter id="min_left" name="Минуты внутри сети" units=" мин" type="time_interval" format="{@MIN}:{@sec}"/>
 		<counter id="min_left_other" name="Минуты на другие сети" units=" мин" type="time_interval" format="{@MIN}:{@sec}"/>
 		<counter id="sms_left" name="Остаток СМС" suffix=" смс"/>

@@ -14,50 +14,80 @@ function main() {
 	var prefs = AnyBalance.getPreferences();
 	checkEmpty(prefs.login, 'Введите ID счетчика, информацию по которому вы хотите посмотреть');
 	checkEmpty(/^\d+$/.test(prefs.login), 'ID счетчика должен состоять только из цифр!');
-	var baseurl = 'https://old.metrika.yandex.ru/';
+	var baseurl = 'https://metrika.yandex.ru/';
+	
+	
+	var now = new Date();
+	var dateTo = getFormattedDate({format: 'YYYY-MM-DD', offsetDay: 0}, now);
+	var dateFrom = getFormattedDate({format: 'YYYY-MM-DD', offsetDay: 2}, now);
+	var counter_url = baseurl + "stat/traffic?group=day&period=" + dateFrom + "%3A" + dateTo + "&id=" + prefs.login;
+
 	AnyBalance.setDefaultCharset('utf-8');
 	var html = '';
-	if (!prefs.debug) html = AnyBalance.requestGet(baseurl + 'stat/?counter_id=' + prefs.login, g_headers);
+	if (!prefs.debug)
+		html = AnyBalance.requestGet(counter_url, g_headers);
+
 	if (prefs.debug || /<form[^>]+name="MainLogin"|К сожалению, у вас нет прав доступа к этому объекту|Авторизация|войдите под своим именем/i.test(html)) {
 		AnyBalance.trace('Требуется залогиниться... ');
 		//Не залогинены в яндекс... Надо залогиниться
 		checkEmpty(prefs.yalogin && prefs.password, 'Для просмотра информации по счетчику Яндекс требует авторизации. Введите в настройки логин и пароль.');
-		html = loginYandex(prefs.yalogin, prefs.password, html, baseurl + 'stat/?counter_id=' + prefs.login, 'metrika');
+		html = loginYandex(prefs.yalogin, prefs.password, html, counter_url, 'metrika');
 	}
-	var repl = getParam(html, null, null, /http-equiv="refresh"[^>]+content="[^"]*url=([^"]*)/i, null, html_entity_decode);
-	if (repl) {
-		AnyBalance.trace('Переадресация на ' + repl);
-		html = AnyBalance.requestGet(repl, g_headers);
-	}
-	var title = getParam(html, null, null, /<h1 class="b-page-title__title">([\s\S]*?)<a title/i, replaceTagsAndSpaces, html_entity_decode);
-	if (!title) {
+
+	var meta = getParam(html, null, null, /<body[^>]*data-bem="([^"]*)/i, replaceHtmlEntities, getJson);
+	if(!meta){
 		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Не удалось получить информацию по счетчику. Сайт изменен?');
+		throw new AnyBalance.Error('Не удалось получить метаинформацию по счетчику. Сайт изменен?');
 	}
-	html = AnyBalance.requestGet(baseurl + 'api/stat/traffic.json?offset=1&group=day&reverse=0&id=' + prefs.login + '&table_mode=tree&mticket=', g_headers);
-	var json = getJson(html);
-	var len = json.data ? json.data.length : 0,
-		today, yesterday;
-	if (len > 0) today = json.data[len - 1];
-	if (len > 1) yesterday = json.data[len - 2];
+
 	var result = {
 		success: true
 	};
-	getParam(title, result, '__tariff', null, replaceTagsAndSpaces, html_entity_decode);
-	if (today) {
-		AnyBalance.trace('Сегодняшняя дата: ' + today.date);
-		getParam('' + today.page_views, result, 'views_today', null, null, parseBalance);
-		getParam('' + today.visits, result, 'visits_today', null, null, parseBalance);
-		getParam('' + today.visitors, result, 'visitors_today', null, null, parseBalance);
+	getParam(getElement(html, /<span[^>]+counter-toolbar__caption[^>]*>/i), result, '__tariff', null, replaceTagsAndSpaces);
+
+	var key = meta['i-global'].jsParams['i-api-request'].skv2;
+	var data = [{"ids":prefs.login,"group":"day","calcHash":true,"sort":{"field":"ym:s:datePeriod<group>","direction":"desc"},"mode":"list","offset":0,"limit":50,"parents":null,"metrics":["ym:s:visits","ym:s:users","ym:s:pageviews","ym:s:percentNewVisitors","ym:s:bounceRate","ym:s:pageDepth","ym:s:avgVisitDurationSeconds"],"dimensions":["ym:s:datePeriod<group>"],"segments":[{"period":{"from":dateFrom,"to":dateTo},"filter":"ym:s:datePeriod<group>!n and ym:s:datePeriod<group>!n"}],"accuracy":"medium"}];
+
+	html = AnyBalance.requestPost(baseurl + 'i-proxy/i-data-api-comparable/getData?lang=ru', {
+		args: JSON.stringify(data),
+		key: key,
+		lang: 'ru'
+	},
+	addHeaders({
+		'X-Requested-With': 'XMLHttpRequest',
+		Referer: counter_url,
+		'Content-Type': 'application/json'
+	}));
+
+	var json = getJson(html);
+	if(!json.result){
+		var error;
+		if(json.error)
+			error = json.error.args[1].errors[0].message;
+		if(error)
+			throw new AnyBalance.Error('Ошибка запроса информации: ' + error);
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Неизвестная ошибка запроса информации. Сайт изменен?');
+	}
+
+	if(json.result.data[0]){
+		var it = json.result.data[0];
+		AnyBalance.trace('Сегодняшняя дата: ' + it.dimensions[0].name);
+		getParam(it.metrics[2], result, 'views_today');
+		getParam(it.metrics[0], result, 'visits_today');
+		getParam(it.metrics[1], result, 'visitors_today');
 	} else {
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Данные не найдены. Возможно, следует накопить данные в течение пары дней.');
 	}
-	if (yesterday) {
-		AnyBalance.trace('Вчерашняя дата: ' + yesterday.date);
-		getParam('' + yesterday.page_views, result, 'views_yesterday', null, null, parseBalance);
-		getParam('' + yesterday.visits, result, 'visits_yesterday', null, null, parseBalance);
-		getParam('' + yesterday.visitors, result, 'visitors_yesterday', null, null, parseBalance);
+	
+	if (json.result.data[1]) {
+		var it = json.result.data[1];
+		AnyBalance.trace('Вчерашняя дата: ' + it.dimensions[0].name);
+		getParam(it.metrics[2], result, 'views_yesterday');
+		getParam(it.metrics[0], result, 'visits_yesterday');
+		getParam(it.metrics[1], result, 'visitors_yesterday');
 	}
+
 	AnyBalance.setResult(result);
 }

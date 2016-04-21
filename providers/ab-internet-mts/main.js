@@ -1022,9 +1022,16 @@ function newTypicalLanBillingInetTv(baseurl) {
   } else {
     var html = AnyBalance.requestGet(urlIndex);
 
+    var csrfToken = getParam(html, null, null, /<input[^>]+value="([^"]*)[^>]+id="YII_CSRF_TOKEN"/i, replaceHtmlEntities);
+    if(csrfToken){
+    	var domain = getParam(baseurl, null, null, /https?:\/\/([^\/]*)/i);
+    	AnyBalance.setCookie(domain, 'YII_CSRF_TOKEN', csrfToken);
+    }
+
     html = AnyBalance.requestPost(urlIndex, {
       'LoginForm[login]': prefs.login,
       'LoginForm[password]': prefs.password,
+      'YII_CSRF_TOKEN': csrfToken,
       'yt0': 'Войти'
     });
   }

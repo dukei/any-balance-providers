@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="102">ab-internet-mts</id>
+	<id version="103">ab-internet-mts</id>
 	<name>Домашний Интернет и Телевидение МТС</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о текущем балансе, номере лицевого счета и договора, ФИО владельца, трафике в текущем месяце, абонентской плате для пользователей провайдера "Домашний Интернет и Телевидение МТС".</p>
@@ -14,6 +14,7 @@
 		<li>Великий Новгород (<a href="https://lk.nov.mts.ru/">https://lk.nov.mts.ru/</a>)<br></li>
 		<li>Владимир (<a href="https://lk-vladimir.center.mts.ru/">https://lk-vladimir.center.mts.ru/</a>)<br></li>
 		<li>Волжск (<a href="https://internet.mari-el.mts.ru/index.php?r=site/login">https://internet.mari-el.mts.ru/index.php?r=site/login</a>)<br></li>
+		<li>Волгоград (<a href="http://lk.ug.mts.ru">http://lk.ug.mts.ru</a>) - КОМСТАР-Регионы Южный филиал<br></li>
 		<li>Вологда (<a href="http://lk.vologda.mts.ru">http://lk.vologda.mts.ru</a>)<br></li>
 		<li>Ижевск (<a href="http://lk.izhnt.ru">http://lk.izhnt.ru</a>)<br></li>
 		<li>Киров (<a href="http://lk.kirovnet.net">http://lk.kirovnet.net</a>)<br></li>
@@ -48,25 +49,26 @@
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>
 		<module id="library"/>
+		<module id="login/mts"/>
 	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-	  <js>api:jquery.min.js</js> 
-		<!-- <js>library.js</js> -->
-		<js>login.js</js>
+	    <js>api:jquery.min.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
 	<counters>
 		<counter id="balance" name="Баланс" units=" р"/>
 		<counter id="balance_tv" name="Баланс ТВ" units=" р"/>
+		<counter id="last_payment_sum" name="Сумма последнего платежа" units=" р"/>
 		<counter id="internet_cur" name="Трафик в этом месяце" suffix=" Mb"/>
 		<counter id="abon" name="Абонентская плата" suffix=" р"/>
 		<counter id="daysleft" name="Хватит на" suffix=" дн"/>
 		<counter id="license" name="Лицевой счет" type="text"/>
 		<counter id="agreement" name="Номер договора" type="text"/>
 		<counter id="username" name="ФИО" type="text"/>
+		<counter id="last_payment_date" name="Дата платежа" type="time" format="dd/MM/yyyy"/>
 	</counters>
 	<keywords>провайдер интернет СитиХоумНет комстар регионы</keywords>
 	<type>internet, tv</type>

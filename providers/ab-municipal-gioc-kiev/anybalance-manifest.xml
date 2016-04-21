@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-municipal-gioc-kiev</id>
+	<id version="2">ab-municipal-gioc-kiev</id>
 	<api flags="no_browser"/>
 	<name>ГІОЦ КМДА 2016</name>
 	<description html="true"><![CDATA[
@@ -22,6 +22,24 @@
 		<counter id="payed" name="Оплачено" units=" грн"/>
 		<counter id="address" name="Адрес" type="text"/>
 		<counter id="pay_period" name="За период" type="text"/>
+
+		<counter id="type0" name="Тип счета 1" type="text"/>
+		<counter id="value0" name="К оплате 1" units=" грн"/>
+		<counter id="type1" name="Тип счета 2" type="text"/>
+		<counter id="value1" name="К оплате 2" units=" грн"/>
+		<counter id="type2" name="Тип счета 3" type="text"/>
+		<counter id="value2" name="К оплате 3" units=" грн"/>
+		<counter id="type3" name="Тип счета 4" type="text"/>
+		<counter id="value3" name="К оплате 4" units=" грн"/>
+		<counter id="type4" name="Тип счета 5" type="text"/>
+		<counter id="value4" name="К оплате 5" units=" грн"/>
+		<counter id="type5" name="Тип счета 6" type="text"/>
+		<counter id="value5" name="К оплате 6" units=" грн"/>
+		<counter id="type6" name="Тип счета 7" type="text"/>
+		<counter id="value6" name="К оплате 7" units=" грн"/>
+		<counter id="type7" name="Тип счета 8" type="text"/>
+		<counter id="value7" name="К оплате 8" units=" грн"/>
+
 	</counters>
 	<keywords></keywords>
 	<type>municipal</type>

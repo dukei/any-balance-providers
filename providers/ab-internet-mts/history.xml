@@ -1,33 +1,39 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="103" date="2016-04-20">
+	- Исправлена ошибка авторизации для регионов: Пенза, Курган.
+    - Изменён метод получения данных для региона Новосибирск.
+    - Добавлены счётчики: сумма последнего платежа, дата платежа.
+	- Исправлен регион Северодвинск (и некоторые другие) в связи с изменениями в процедуре входа
+	</change>
 	<change version="102" date="2016-03-16">
-	Убрана ошибка с undefined replaceFloat
+	- Убрана ошибка с undefined replaceFloat.
 	</change>
 	<change version="101" date="2016-02-17">
-	- Внесены правки для г. Норильск
+	- Внесены правки для г. Норильск.
 	</change>
 	<change version="100" date="2015-12-21">
-	Добавлена Рязань
+	- Добавлена Рязань.
 	</change>
 	<change version="99" date="2015-12-17">
-	Исправлен норильский личный кабинет
+	- Исправлен норильский личный кабинет.
 	</change>
 	<change version="98" date="2015-11-20">
-	Добавлен Великий Новгород
+	- Добавлен Великий Новгород.
 	</change>
 	<change version="97" date="2015-11-07">
-	Добавлен Курск
-	Исправлен Северодвинск, Архангельск
+	- Добавлен Курск.
+	- Исправлен Северодвинск, Архангельск.
 	</change>
 	<change version="96" date="2015-09-13">
-	Исправлен Миасс (переезд личного кабинета)
+	- Исправлен Миасс (переезд личного кабинета).
 	</change>
 	<change version="95" date="2015-09-10">
-	- Исправлен логин в московском регионе
+	- Исправлен логин в московском регионе.
 	</change>
 	<change version="94" date="2015-09-10">
-	Добавлен Саратов (ТВ)
-	Исправлен Нижний Новгород (интернет)
+	- Добавлен Саратов (ТВ).
+	- Исправлен Нижний Новгород (интернет).
 	</change>
 	<change version="93" date="2015-09-09">
 	- Улучшена обработка ошибок.
@@ -143,7 +149,7 @@
 	- Исправлен регион: Новосибирск.
 	</change>
 	<change version="56" date="2014-04-10">
-	- Добавлен г. Ярославль
+	- Добавлен г. Ярославль.
 	</change>
 	<change version="55" date="2014-04-04">
 	- Исправлен регион: Ижевск.
@@ -176,106 +182,106 @@
 	- Исправлен г. Санкт-Петербург.
 	</change>
 	<change version="45" date="2014-01-13">
-	- Показ баланса ТВ в нескольких регионах
+	- Показ баланса ТВ в нескольких регионах.
 	</change>
 	<change version="44" date="2014-01-09">
-	- Добавлен г. Санкт-Петербург
+	- Добавлен г. Санкт-Петербург.
 	</change>
 	<change version="43" date="2013-12-05">
-	- Исправлен г. Северодвинск
+	- Исправлен г. Северодвинск.
 	</change>
 	<change version="42" date="2013-11-18">
-	- Добавлен г. Орел
+	- Добавлен г. Орел.
 	</change>
 	<change version="41" date="2013-11-04">
-	- Исправлена Пенза в связи с изменениями в ЛК
+	- Исправлена Пенза в связи с изменениями в ЛК.
 	</change>
 	<change version="40" date="2013-11-01">
-	- Добавлена Амурская область г. Благовещенск; г. Белогорск (https://clb.amur.mts.ru/cblg/)
+	- Добавлена Амурская область г. Благовещенск; г. Белогорск (https://clb.amur.mts.ru/cblg/).
 	</change>
 	<change version="39" date="2013-10-31">
-	- Добавлена Чита (https://clb.chita.mts.ru/chita/index.php?r=site/login)
+	- Добавлена Чита (https://clb.chita.mts.ru/chita/index.php?r=site/login).
 	- Исправлен Комсомольск-на-Амуре
 	</change>
 	<change version="38" date="2013-10-01">
-	- Добавлен Саратов (http://stat.saratov.comstar.ru/)
+	- Добавлен Саратов (http://stat.saratov.comstar.ru/).
 	</change>
 	<change version="37" date="2013-07-17">
-	- Добавлен Белгород (http://stat.belgorod-net.ru/)
+	- Добавлен Белгород (http://stat.belgorod-net.ru/).
 	</change>
 	<change version="36" date="2013-07-04">
-	- Добавлен Барнаул (https://kabinet.barnaul.mts.ru/)
+	- Добавлен Барнаул (https://kabinet.barnaul.mts.ru/).
 	</change>
 	<change version="35" date="2013-07-03">
-	- Добавлен Курган (https://infocentr.ru/)
+	- Добавлен Курган (https://infocentr.ru/).
 	</change>
 	<change version="34" date="2013-06-09">
-	- Изменена Вологда (https://lk.vologda.mts.ru)
+	- Изменена Вологда (https://lk.vologda.mts.ru).
 	</change>
 	<change version="33" date="2013-06-01">
-	- Добавлен Миасс (http://stat.miass.multinex.ru)
+	- Добавлен Миасс (http://stat.miass.multinex.ru).
 	</change>
 	<change version="32" date="2013-05-10">
-	- Добавлен Норильск (https://kabinet.norilsk.mts.ru), Магнитогорск (https://stat.magnitogorsk.multinex.ru)
+	- Добавлен Норильск (https://kabinet.norilsk.mts.ru), Магнитогорск (https://stat.magnitogorsk.multinex.ru).
 	</change>
 	<change version="31" date="2013-05-07">
-	- Добавлен Ульяновск (https://ess.netroad.ru)
+	- Добавлен Ульяновск (https://ess.netroad.ru).
 	</change>
 	<change version="30" date="2013-05-04">
 	- Поддержка ТВ баланса для Новосибирска. И счетчик трафика исправлен.
 	</change>
 	<change version="29" date="2013-04-18">
-	- Исправлена Тула (изменен личный кабинет), добавлено Балаково (http://stat.balakovo.comstar-r.ru)
+	- Исправлена Тула (изменен личный кабинет), добавлено Балаково (http://stat.balakovo.comstar-r.ru).
 	</change>
 	<change version="28" date="2013-04-16">
-	- Изменение процедуры входа в московском регионе
+	- Изменение процедуры входа в московском регионе.
 	</change>
 	<change version="27" date="2013-04-04">
-	- Изменен адрес личного кабинета в ростовском регионе
+	- Изменен адрес личного кабинета в ростовском регионе.
 	</change>
 	<change version="26" date="2013-03-26">
-	- Исправление Комсомольска-на-Амуре и добавлена Тула (http://balance.altair-tv.ru/client/)
+	- Исправление Комсомольска-на-Амуре и добавлена Тула (http://balance.altair-tv.ru/client/).
 	</change>
 	<change version="25" date="2013-03-12">
-	- Изменение адреса личного кабинета для Перми и Екатеринбурга (https://lka.ural.mts.ru)
+        - Изменение адреса личного кабинета для Перми и Екатеринбурга (https://lka.ural.mts.ru).
 	</change>
 	<change version="24" date="2013-03-04">
-	- Добавлен новый регион - Комсомольск-на-Амуре (http://issa.kms.multinex.ru)
+	- Добавлен новый регион - Комсомольск-на-Амуре (http://issa.kms.multinex.ru).
 	</change>
 	<change version="23" date="2013-02-21">
-	- Добавлен новый регион - Пенза (http://client.lanbilling.ptcomm.ru)
+	- Добавлен новый регион - Пенза (http://client.lanbilling.ptcomm.ru).
 	</change>
 	<change version="22" date="2013-01-16">
-	- Добавлен новый регион - Ижевск (https://lk.izhnt.ru)
+	- Добавлен новый регион - Ижевск (https://lk.izhnt.ru).
 	</change>
 	<change version="21" date="2012-12-27">
-	- Добавлен новый регион - Вологда (https://stats.vologda.comstar-r.ru)
+	- Добавлен новый регион - Вологда (https://stats.vologda.comstar-r.ru).
 	</change>
 	<change version="20" date="2012-12-15">
-	- Исправлен счетчик "Хватит на" в московском регионе
+	- Исправлен счетчик "Хватит на" в московском регионе.
 	</change>
 	<change version="19" date="2012-12-11">
-	- Исправлен Киров (изменения в личном кабинете)
+	- Исправлен Киров (изменения в личном кабинете).
 	</change>
 	<change version="18" date="2012-10-09">
-	- Добавлен новый регион - Северодвинск (http://severodvinsk.stream-info.ru/client2)
+	- Добавлен новый регион - Северодвинск (http://severodvinsk.stream-info.ru/client2).
 	</change>
 	<change version="17" date="2012-10-09">
-	- Добавлен новый регион - Нижний Новгород (http://stat.nnov.comstar-r.ru)
+	- Добавлен новый регион - Нижний Новгород (http://stat.nnov.comstar-r.ru).
 	</change>
 	<change version="16" date="2012-10-06">
-	- Изменения процедуры входа в столичном регионе
+	- Изменения процедуры входа в столичном регионе.
 	</change>
 	<change version="15" date="2012-09-23">
-	- Добавлен новый регион - Киров (https://lk.kirovnet.net)
+	- Добавлен новый регион - Киров (https://lk.kirovnet.net).
 	</change>
 	<change version="14" date="2012-08-30">
-	- Для Перми и Екатеринбурга добавлен счетчик Баланс ТВ (требуется AnyBalance 2.8+) и ФИО
+	- Для Перми и Екатеринбурга добавлен счетчик Баланс ТВ (требуется AnyBalance 2.8+) и ФИО.
 	</change>
 	<change version="13" date="2012-08-29">
-	- Добавлен новый регион - Пермь и Екатеринбург (https://bill.utk.ru/uportf/arm.pl)
+	- Добавлен новый регион - Пермь и Екатеринбург (https://bill.utk.ru/uportf/arm.pl).
 	</change>
 	<change version="12" date="2012-08-16">
-	- Добавлен новый регион - Новосибирск (https://my.citynsk.ru)
+	- Добавлен новый регион - Новосибирск (https://my.citynsk.ru).
 	</change>
 </history>

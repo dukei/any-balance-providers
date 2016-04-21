@@ -87,7 +87,7 @@ function main() {
   sumParam(html, result, 'traffic_msg_left', />интернет[^<]*(?:viber|whatsapp)(?:[^>]+>){2}([^<]+ед)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
   // Баланс
 
-  getParam(html, result, 'balance', /<tr>\s*<td[^>]*>\s*Основной (?:сч(?:е|ё)т|баланс:)([\s\S]*?)<\/tr>/i, replaceTagsAndSpaces, parseBalance);
+  getParam(html, result, 'balance', /<tr>\s*<td[^>]*>\s*Основной (?:сч(?:е|ё)т\s*(?=<)|баланс:)([\s\S]*?)<\/tr>/i, replaceTagsAndSpaces, parseBalance);
   // Баланс для постоплаты
   if (!isset(result.balance) || result.balance === 0)
     getParam(html, result, 'balance', /Задолженность на линии(?:[^>]*>){2}([^<]+)/i, replaceTagsAndSpaces, parseBalance);

@@ -228,17 +228,65 @@ function processFinesBeta(result, prefs, showPaidFines) {
 		});
 
 		if (response.error.code != 0) {
-
 			AnyBalance.trace(html);
 			throw new AnyBalance.Error('Не удалось запросить информацию о штрафах, ошибка в запросе!');
 		}
 		// Для удобства
 		var data = response.form.content || {total: 0};
 
-//		getParam(data.total.total + '', result, 'fines_with_discount', null, null, parseBalance);
+		for(var k in data) {
+			var current = data[k];
+			
+			// Это не штраф, пропускаем
+			if(!current || !current.billSource)
+				continue;
+			
+			var _id = current.bID || current.billId;
+			var _name = current.fkNumber;
+			
+			var isPaid = parseBool(current.isPaid);
 
+			// У очень старых штрафов нету поля originalAmount, запишем его руками
+			if (!current.originalAmount)
+				current.originalAmount = current.violationSum;
+
+			// Сумма неоплаченных штрафов
+			if (!isPaid) {
+				// Сумма неоплаченных штрафов
+				sumParam(current.violationSum + '', result, 'fines_unpaid', null, null, parseBalance, aggregate_sum);
+				// Сумма неоплаченных штрафов без учета скидок
+				sumParam(current.originalAmount + '', result, 'fines_unpaid_full', null, null, parseBalance, aggregate_sum);
+			}
+
+			// Сумма всех штрафов
+			sumParam(current.violationSum + '', result, 'fines_total', null, null, parseBalance, aggregate_sum);
+			// Сумма всех штрафов без учета скидок
+			sumParam(current.originalAmount + '', result, 'fines_total_full', null, null, parseBalance, aggregate_sum);
+
+			if (!showPaidFines && isPaid)
+				continue;
+
+			var f = {__id: _id, __name: _name};
+
+			if (__shouldProcess('fines', f)) {
+				getParam(current.violationSum + '', f, 'fines.ammount', null, replaceTagsAndSpaces, parseBalance);
+				getParam(current.violationReason, f, 'fines.break', null, replaceTagsAndSpaces);
+				getParam(current.violationDate + ' ' + current.violationTime, f, 'fines.time', null, replaceTagsAndSpaces, parseDate);
+//					getParam(current, f, 'fines.fio', null, replaceTagsAndSpaces);
+				getParam(current.reportPlace, f, 'fines.place', null, replaceTagsAndSpaces);
+				getParam(current.carModel, f, 'fines.vehicle', null, replaceTagsAndSpaces);
+				getParam(current.offense, f, 'fines.proto_place', null, replaceTagsAndSpaces);
+				getParam(current.carNumber, f, 'fines.carNumber', null, replaceTagsAndSpaces);
+//					getParam(current, f, 'fines.department', null, replaceTagsAndSpaces);
+				getParam(isPaid, f, 'fines.paid');
+			}
+
+			result.fines.push(f);
+		}
+
+		// Старый вариант, не учитывает штрафы выписанные на права
 		// Всего может быть 10 машин для abe и 3 для ab ну и неизвестное количество штрафов
-		for (var i = 0; i < g_max_plates_num; i++) {
+		/*for (var i = 0; i < g_max_plates_num; i++) {
 			// 30 штрафов должно хватить, я думаю
 			for (var z = 0; z < 30; z++) {
 				var current = data['simpleMode' + i + '_' + z];
@@ -287,7 +335,7 @@ function processFinesBeta(result, prefs, showPaidFines) {
 
 				result.fines.push(f);
 			}
-		}
+		}*/
 	}
 }
 

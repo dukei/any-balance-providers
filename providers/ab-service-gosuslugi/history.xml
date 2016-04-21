@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="1.0" version="37" date="2016-04-21">
+	- Улучшено получение штрафов.
+	</change>
 	<change major_version="1.0" version="36" date="2016-04-20">
 	- Добавлено поле Свидетельство о регистрации в настройки.
 	</change>

@@ -17,6 +17,7 @@ var g_headers = {
 var regions = {
   moscow: getMoscow,
   rostov: getRostov,
+  vlggrd: getRostov,
   nsk: getNsk,
   prm: getPrm,
   ekt: getPrm,

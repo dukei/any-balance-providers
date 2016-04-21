@@ -25,8 +25,8 @@
         key="region" 
         title="Регион"
         summary="|Нужен для определения личного кабинета|{@s}"
-        entries="Архангельск|Амурская область|Барнаул|Балаково|Белгород|Великий Новгород|Владимир|Вологда|Волжск|Екатеринбург|Ижевск|Киров|Комсомольск-на-Амуре|Курган|Курск|Магнитогорск|Миасс|Москва|Находка|Нижний Новгород|Нижний Новгород (ТВ)|Новокузнецк|Новосибирск|Норильск|Орел|Пенза|Пермь|Ростов|Рязань|Санкт-Петербург|Саратов|Саратов (ТВ)|Северодвинск|Смоленск|Тула|Ульяновск|Чита|Ярославль"
-        entryValues="arkh|amur|barnaul|bal|belgorod|vnov|vladimir|vlgd|volzhsk|ekt|izh|krv|kms|kurgan|kursk|mag|miass|moscow|nahodka|nnov|nnov_tv|novokuz|nsk|nor|orel|pnz|prm|rostov|ryazan|piter|saratov|saratov_tv|sdv|smolensk|tula|uln|chita|yar"
+        entries="Архангельск|Амурская область|Барнаул|Балаково|Белгород|Великий Новгород|Владимир|Волгоград|Вологда|Волжск|Екатеринбург|Ижевск|Киров|Комсомольск-на-Амуре|Курган|Курск|Магнитогорск|Миасс|Москва|Находка|Нижний Новгород|Нижний Новгород (ТВ)|Новокузнецк|Новосибирск|Норильск|Орел|Пенза|Пермь|Ростов|Рязань|Санкт-Петербург|Саратов|Саратов (ТВ)|Северодвинск|Смоленск|Тула|Ульяновск|Чита|Ярославль"
+        entryValues="arkh|amur|barnaul|bal|belgorod|vnov|vladimir|vlggrd|vlgd|volzhsk|ekt|izh|krv|kms|kurgan|kursk|mag|miass|moscow|nahodka|nnov|nnov_tv|novokuz|nsk|nor|orel|pnz|prm|rostov|ryazan|piter|saratov|saratov_tv|sdv|smolensk|tula|uln|chita|yar"
 		defaultValue="volzhsk">
     </ListPreference>
 </PreferenceScreen>

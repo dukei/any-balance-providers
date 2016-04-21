@@ -69,9 +69,11 @@ function main() {
     balance: null
   };
 
+//  html = AnyBalance.requestGet(baseurl + 'ru/informaciya/abonent/', g_headers);
+
   getParam(html, result, '__tariff', [/Тарифный план([^<]+)/i, /Наименование тарифного плана(?:[^>]*>){2}([\s\S]*?)<\/td>/i], replaceTagsAndSpaces);
   getParam(html, result, 'fio', /ФИО(?:[^>]+>){2}([^<]+)/i, replaceTagsAndSpaces);
-  getParam(html, result, 'phone', /Номер life(?:[^>]+>){2}([^<]+)/i, replaceTagsAndSpaces);
+  getParam(html, result, 'phone', /Номер (?:life|телефона)(?:[^>]+>){2}([^<]+)/i, replaceTagsAndSpaces);
   // СМС/ММС
   sumParam(html, result, 'sms_left_other', /SMS на все сети(?:[^>]+>){2}([^<]+)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
   sumParam(html, result, 'sms_left', /SMS внутри сети(?:[^>]+>){2}([^<]+)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
@@ -80,8 +82,9 @@ function main() {
   sumParam(html, result, 'min_left_other', /Звонки (?:на|во) (?:все|другие) сети(?:[^>]+>){2}([^<]+)/ig, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
   sumParam(html, result, 'min_left', /Звонки внутри сети(?:[^>]+>){2}([^<]+)/ig, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
   // Трафик
-  sumParam(html, result, 'traffic_night_left', />\s*Ночной интернет(?:[^>]+>){2}([^<]+МБ)/ig, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
-  sumParam(html, result, 'traffic_left', />(?:Безлимитный)?\s*интернет(?:[^>]+>){2}([^<]+МБ)/ig, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
+  sumParam(html, result, 'traffic_night_left', />\s*Ночной интернет(?:[^>]+>){2}([^<]+(?:МБ|Гб|Кб|Байт))/ig, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
+  sumParam(html, result, 'traffic_left', />(?:Безлимитный)?\s*интернет(?:[^>]+>){2}([^<]+(?:МБ|Гб|Кб|Байт))/ig, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
+  sumParam(html, result, 'traffic_msg_left', />интернет[^<]*(?:viber|whatsapp)(?:[^>]+>){2}([^<]+ед)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
   // Баланс
 
   getParam(html, result, 'balance', /<tr>\s*<td[^>]*>\s*Основной (?:сч(?:е|ё)т|баланс:)([\s\S]*?)<\/tr>/i, replaceTagsAndSpaces, parseBalance);

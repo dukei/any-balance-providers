@@ -1,5 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="2.0" version="31" date="2016-04-21">
+	Исправлено отображение трафика в некоторых случаях
+	Добавлено отображение интернета на Viber, Whatsapp
+	</change>
 	<change major_version="2.0" version="30" date="2016-01-19">
 	- Улучшена обработка ошибок.
 	</change>

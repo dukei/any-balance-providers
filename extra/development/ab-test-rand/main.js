@@ -12,6 +12,9 @@ function main() {
 		bad/100;
 	}
 	
+	if(prefs.fatal_error)
+		throw new AnyBalance.Error('Тест фатальной ошибки', null, true);
+	
 	var result = {
 		success: true,
 		balance: null,

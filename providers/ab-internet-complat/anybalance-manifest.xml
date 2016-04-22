@@ -1,17 +1,20 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="3">ab-internet-complat</id>
+	<api flags="no_browser"/>
+  <id version="4">ab-internet-complat</id>
   <name>COMPL@T (Москва)</name>
   <description>
     Получает баланс и информацию о тарифном плане для московского интернет-провайдера COMPL@T (http://www.complat.ru).
 
     Информация берется из личного кабинета https://stat.complat.ru/login.dhtml.
   </description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+  <depends>
+  	<module id="library"/>	
+  </depends>
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
-    <js>library.js</js>
     <js>main.js</js>
     <history>history.xml</history>
   </files>

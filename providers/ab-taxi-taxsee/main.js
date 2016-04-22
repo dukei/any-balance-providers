@@ -14,11 +14,15 @@ function main(){
     var prefs = AnyBalance.getPreferences();
     var baseurl = "http://cabinet.taximaxim.ru/";
 
+//    createCityList();
+
     AnyBalance.setDefaultCharset('utf-8'); 
     var html = AnyBalance.requestPost(baseurl + 'webapp/index.php?r=clientCabinet/login', {
+    	'NewLoginForm[city]':prefs.city || '6',
         'NewLoginForm[phone]':prefs.login,
         'NewLoginForm[password]':prefs.password,
         'NewLoginForm[rememberMe]':0,
+        'NewLoginForm[uuid]': hex_md5(prefs.login),
         yt0:''
     }, addHeaders({Referer: baseurl})); 
 
@@ -50,4 +54,24 @@ function main(){
     getParam(json.PayCode, result, 'licschet');
 
     AnyBalance.setResult(result);
+}
+
+function createCityList(){
+	var html = AnyBalance.requestGet('http://cabinet.taximaxim.ru/webapp/index.php?r=clientCabinet/login', g_headers);
+	var list = getElement(html, /<div[^>]+id="cityList"[^>]*>/i);
+	var items = getElements(list, /<li[^>]*>/ig);
+
+	var values = [];
+	var names = [];
+	for(var i=0; i<items.length; ++i){
+		var it = items[i];
+		values.push(getParam(it, null, null, /value="([^"]*)/i, replaceHtmlEntities));
+		names.push(getParam(it, null, null, null, replaceTagsAndSpaces));
+	}
+
+	AnyBalance.setResult({
+		success: true,
+		entries: names.join('|'),
+		entryValues: values.join('|')
+	});
 }

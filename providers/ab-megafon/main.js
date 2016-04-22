@@ -1614,7 +1614,7 @@ function enterLK(filial, options){
 		}
 	}
 	if(!isLoggedInLK(html)){
-		var token = getParam(html, null, null, /name=CSRF value="([^"]+)/i);
+		var token = getParam(html, null, null, /name="?CSRF?"[^>]*value="([^"]+)/i);
 		if(!token)
 			AnyBalance.trace(html);
 		

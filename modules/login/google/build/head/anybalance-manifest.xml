@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+    <id version="1">login/google</id>
+	<api flags="no_browser" />
+    <name>Google Login</name>
+	<description html="true"><![CDATA[
+		Предоставляет функции для логина в Google
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<js>google.min.js</js>
+		<history>history.xml</history>
+	</files>
+	<depends>
+		<module id="library"/>
+	</depends>
+	<type>login</type>
+</provider>

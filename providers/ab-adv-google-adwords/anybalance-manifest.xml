@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-    <id version="10">ab-adv-google-adwords</id>
+    <id version="11">ab-adv-google-adwords</id>
 	<api flags="no_browser" />
     <name>Google Adwords</name>
 	<description html="true"><![CDATA[
@@ -8,12 +8,14 @@
 	<p>Stats are shown for a period selected in personal account</a>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+		<module id="login/google"/>
+		<module id="framework/gwt"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
-		<js>gwt.js</js>
-		<js>login.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>

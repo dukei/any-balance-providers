@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">crypt/cryptojs/pbkdf2</id>
+	<api flags="no_browser"/>
+	<name>CryptoJS pbkdf2 module</name>
+	<description html="true"><![CDATA[
+	<p>CryptoJS pbkdf2 codec</p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="crypt/cryptojs/hmac"/>
+		<module id="crypt/cryptojs/sha1"/>
+	</depends>
+	<files>
+		<js>pbkdf2.min.js</js>
+		<history>history.xml</history>
+	</files>
+	<keywords></keywords>
+	<type>crypt cryptojs pbkdf2</type>
+	<country></country>
+</provider>

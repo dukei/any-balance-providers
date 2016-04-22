@@ -64,7 +64,7 @@ function googleLogin(prefs) {
 		if(!isset(code))
 			throw new AnyBalance.Error('Two-factor authorization is enabled. Just now we can`t deal with this. Login attempt has failed.');
 
-		var params = createFormParams(form);
+		let params = createFormParams(form);
 		params.Pin = code;
 		
 		html = AnyBalance.requestPost(baseurlLogin + 'signin/challenge', params, addHeaders({Referer: baseurlLogin + 'ServiceLoginAuth'}));
@@ -77,7 +77,23 @@ function googleLogin(prefs) {
 	}
 	// Еще раз проверим правильность входа
 	isLoginSuccesful(html);
+
+	//Проверим, не хочет ли гугл проверить данные
+	form = getElement(html, /<form[^>]+action="SmsAuthInterstitial"[^>]*>/i);
+	if(form){
+		AnyBalance.trace('Needs 2-factor parameters review, skipping it to view later');
+        let params = createFormParams(html, function(params, str, name, value) {
+        	if(/type="submit"/i.test(str) && name != "remind")
+        		return; //Только remind - Напомнить позже
+         	return value;
+        });
+		
+		html = AnyBalance.requestPost(baseurlLogin + 'SmsAuthInterstitial', params, addHeaders({Referer: AnyBalance.getLastUrl()}));
+	}
 	
+	// Еще раз проверим правильность входа
+	isLoginSuccesful(html);
+
 	AnyBalance.saveCookies();
 	AnyBalance.saveData();
 	return html;

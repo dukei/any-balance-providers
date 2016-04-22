@@ -90,7 +90,7 @@ function main() {
 	if(AnyBalance.isAvailable('balance', 'last_pay_date', 'last_pay_sum')){
 		html = AnyBalance.requestGet(baseurl + 'payments/u/0/adwords/signup?authuser=0&__c=' + info.customerId + '&__u=' + info.effectiveUserId + '&hl=ru', g_headers);
 		AnyBalance.trace('Getting balance: redirected to ' + AnyBalance.getLastUrl());
-		var pcid = getParam(AnyBalance.getLastUrl(), null, null, /[&?]pcid=([^&]*)/i);
+		var pcid = getParam(html, null, null, /billingProductCorrelationId':\s*'([^']*)/i);
 		if(!pcid){
 			AnyBalance.trace(html);
 			throw new AnyBalance.Error('Could not find required parameter. Is the site changed?');
@@ -98,8 +98,12 @@ function main() {
 
 		html = AnyBalance.requestGet("https://bpui0.google.com/payments/u/0/transactions?hl=ru&pcid=" + pcid);
 		getParam(html, result, 'balance', /<div[^>]+id="balance"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
-		getParam(html, result, 'last_pay_date', /<div[^>]+id="lastSuccessfulPayment"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseDate);
-		getParam(html, result, 'last_pay_sum', /<div[^>]+id="lastSuccessfulPayment"[^>]*>[^(<]*([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+		//Последний платеж был совершен 21.04.2016, 3:21:52 Лос-Анджелес. Его размер составил 10 000,00 ₽. 
+		var lastPaymentInfo = getParam(html, null, null, /<div[^>]+id="lastSuccessfulPayment"[^>]*>([\s\S]*?)<\/div>/i);
+		AnyBalance.trace('Информация о последнем платеже: ' + lastPaymentInfo);
+		getParam(lastPaymentInfo, result, 'last_pay_date', null, replaceTagsAndSpaces, parseDate);
+		//Чтобы найти сумму, удаляем из строки первое предложение
+		getParam(lastPaymentInfo, result, 'last_pay_sum', null, [/[\s\S]*?\.\s+/, '', replaceTagsAndSpaces], parseBalance);
 	}
 	
     AnyBalance.setResult(result);

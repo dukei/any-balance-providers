@@ -12,7 +12,7 @@ var g_headers = {
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'https://cp.beget.ru/';
+	var baseurl = 'https://cp.beget.com/';
 	AnyBalance.setDefaultCharset('utf-8');
 	
 	checkEmpty(prefs.login, 'Введите логин!');

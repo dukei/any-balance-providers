@@ -230,7 +230,7 @@ function processRemaindersApi(result){
                             sumParam(current.total, remainders, 'remainders.mins_total', null, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
                         }
                         // Сообщения
-                    } else if(/шт|sms|смс|mms|ммс/i.test(units)) {
+                    } else if(/шт|sms|смс|mms|ммс/i.test(units) || (/шт/i.test(units) && /минут/i.test(name))) {
                         if(/mms|ММС/i.test(name)){
                             AnyBalance.trace('Parsing mms...' + JSON.stringify(current));
                             sumParam(current.available, remainders, 'remainders.mms_left', null, replaceTagsAndSpaces, parseBalance, aggregate_sum);

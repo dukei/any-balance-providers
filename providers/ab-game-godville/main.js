@@ -10,7 +10,7 @@ var g_headers = {
 	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
 };
 
-var baseurl = 'http://godville.net/';
+var baseurl = 'https://godville.net/';
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
@@ -21,10 +21,67 @@ function main() {
 		mainOld(prefs);
 	} else {
 		AnyBalance.trace('Входим по имени Бога и паролю...');
-		mainNew(prefs);
+		mainMobile(prefs);
+//		mainNew(prefs); //Теперь тут капча...
 		AnyBalance.trace('Авторизовались, переходим к получению данных...');
 		mainOld(prefs);
 	}
+}
+
+function encodeRSA(str){
+	var key = 
+		'-----BEGIN RSA PUBLIC KEY-----\n' +
+		'MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA2XJHRqc6X2AMEwX9fxrp\n' +
+		'sJX7XSbZIGtuAxGhu+4TqhMS7S8s2M8LZWTawkqRo1JTHmaqUxu8eRWYSOfu/KT+\n' +
+		'hxLMV6o/KSL3ef2D84F44LlePcU/6hoaBxCyz9REVFTr2icUBVh/PrenkCiPiDHq\n' +
+		'BMZyaPFRYcBWUBToBkNEG0yKbuJ76V/EwS8IXNmk30DK+G6CmXXkuVciQpU+NTT3\n' +
+		'9mltILRUhWPoBWNEqfFv768EIVOokYGKTyuXGDH2BFHsUcZsB0yRMqWVJiHyaGVV\n' +
+		'hoYQ0izYN44+SzvZIE9djyTtc4JrnKMv3laUWArH7BdVcwSnQ6L73SrTX2uUuHSY\n' +
+		'vwIDAQAB' +
+		'-----END RSA PUBLIC KEY-----';
+
+	var encrypt = new JSEncrypt();
+    encrypt.setPublicKey(key);
+    var encrypted = encrypt.encrypt(str);
+    return encrypted;
+}
+
+function mainMobile(prefs){
+	checkEmpty(prefs.login, 'Введите ваше имя бога!');
+	checkEmpty(prefs.password, 'Введите пароль!');
+
+	var params = {
+		"name":prefs.login,
+		"password":prefs.password,
+		"api":"sOf2kSsmRk9f",
+		"fl":1
+	};
+
+	var headers = {
+		'User-Agent': 'godville.android 5.5.5(556)'
+	};
+
+	var encoded = encodeRSA(JSON.stringify(params));
+
+	var html = AnyBalance.requestPost(baseurl + 'login/login_mob', {
+		client_id: 'android',
+		json: encoded,
+		v: '5.5.5'
+	}, headers);
+
+	var json = getJson(html);
+	
+	if (json.status != 'success') {
+		var error = json.description;
+		if (error)
+			throw new AnyBalance.Error(error, null, /парол/i.test(error));
+		
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
+	}
+	
+	//просто на всякий случай, чтобы не было просто входа
+	html = AnyBalance.requestGet(baseurl + 'mob/hero', headers);
 }
 
 function mainNew(prefs) {
@@ -38,6 +95,7 @@ function mainNew(prefs) {
 		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
 	}
 	
+	//А тут теперь капча :(
 	html = AnyBalance.requestPost(baseurl + 'login/login', {
 		username: prefs.login,
 		password: prefs.password,
@@ -45,7 +103,7 @@ function mainNew(prefs) {
 	}, addHeaders({Referer: baseurl + 'login/login'}));
 	
 	if (!/logout/i.test(html)) {
-		var error = getParam(html, null, null, /<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
+		var error = getParam(html, null, null, /<div[^>]+class="t-error"[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces);
 		if (error)
 			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
 		

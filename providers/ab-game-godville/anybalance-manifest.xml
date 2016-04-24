@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id version="12">ab-game-godville</id>
+	<id version="13">ab-game-godville</id>
 	<name>Godville.net</name>
 	<description html="true"><![CDATA[
 	<p>Отображает некоторые параметры игры (здоровье, прана, количество кирпичей, бревен, уровень героя и др.)</p>
@@ -10,12 +10,14 @@
 		По умолчанию провайдер получает только базовый набор сведений о герое, примерно совпадающий с содержимым персональной страницы. 
 		Если за героем хочется наблюдать в реальном времени, то необходимо включить в профиле игры галочку "Оперативные данные в API", добавляющую десять с лишним часто меняющихся полей наподобие инвентаря, текущего здоровья и т.п.
 	</instruction>
-	<author>Vitaliy Poluphanov &lt;hetleven@yandex.ua&gt;</author>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="crypt/rsa"/>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>

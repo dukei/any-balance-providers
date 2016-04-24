@@ -52,10 +52,6 @@ function main () {
         if(error)
             throw new AnyBalance.Error(error, null, /Карточка с таким номером не найдена/i.test(error));
     
-        error = getParam(html, null, null, /Вы не заполнили сведения о себе|Для идентификации пользователя/);
-        if(error)
-            throw new AnyBalance.Error("Евроопт требует заполнить форму регистрации. Вам необходимо зайти на сайт http://www.euroopt.by/otchet-po-diskontnoj-karte-2 через браузер и заполнить форму");
-
         error = getParam(html, null, null, /<h1[^>]*>\s*An error occurred/i);
         if(error){
         	error = getParam(html, null, null, /<b[^>]*>\s*Message:([\s\S]*?)<\/p>/i, replaceTagsAndSpaces);
@@ -69,8 +65,13 @@ function main () {
 
     html = AnyBalance.requestGet(baseurl + 'cabinet/report/', addHeaders({Referer: AnyBalance.getLastUrl()}));
 
-    form = getParam(html, null, null, /<form[^>]+id="form_report"[^>]*>([\s\S]*?)<\/form>/i);
+    form = getElement(html, /<form[^>]+id="form_report"[^>]*>/i);
     if(!form){
+
+        var error = getParam(html, null, null, /Вы не заполнили сведения о себе|Для идентификации пользователя|form_registration/);
+        if(error)
+            throw new AnyBalance.Error("Евроопт требует заполнить форму регистрации. Вам необходимо зайти на сайт http://eplus.evroopt.by/cabinet/enter/ через браузер и заполнить форму");
+
 		AnyBalance.trace(html);
         throw new AnyBalance.Error('Не удалось найти форму ввода периода отчета. Сайт изменен?');
     }

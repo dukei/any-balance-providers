@@ -1489,7 +1489,7 @@ function aggregate_sum_minutes(values){
  */
 function parseTrafficExMega(text, thousand, order, defaultUnits){
     var _text = html_entity_decode(text.replace(/\s+/g, ''));
-    var val = getParam(_text, null, null, /(-?\.?\d[\d\.,]*)/, replaceFloat, parseFloat);
+    var val = getParam(_text, null, null, /(-?\.?\d[\d\.,]*)/, replaceTagsAndSpaces, parseBalance);
     if(!isset(val)){
         AnyBalance.trace("Could not parse traffic value from " + text);
         return;
@@ -1632,7 +1632,7 @@ function enterLK(filial, options){
 		if (!error)
 			error = getParam(html, null, null, /<div[^>]+mf-error[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
 		if (error)
-			throw new AnyBalance.Error(error, null, /(?:Неверный|Неправильный) логин\/пароль|Пользователь заблокирован/i.test(error));
+			throw new AnyBalance.Error(error, null, /парол|заблокирован/i.test(error));
 		
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в новый личный кабинет. Сайт изменен или на этом номере он не поддерживается.');

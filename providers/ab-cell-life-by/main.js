@@ -60,7 +60,7 @@ function main() {
     if (error) {
       throw new AnyBalance.Error(error, null, /пароль/i.test(error));
     }
-
+    AnyBalance.trace(html);
     throw new AnyBalance.Error("Не удалось зайти в личный кабинет. Сайт изменен?");
   }
 

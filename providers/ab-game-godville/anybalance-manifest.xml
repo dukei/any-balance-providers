@@ -37,6 +37,6 @@
 		<counter id="wood" name="Бревна, шт" suffix=" шт" type="numeric"/>
 		<counter id="inventory" name="Инвентарь, шт" suffix=" шт" type="numeric"/>
 	</counters>
-	<keywords>игра, game, godville</keywords>
+	<keywords>игра, game, годвиль, годвилль</keywords>
 	<type>game</type>
 </provider>

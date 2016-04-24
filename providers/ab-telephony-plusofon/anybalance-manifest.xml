@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-telephony-plusofon</id>
+	<id version="2">ab-telephony-plusofon</id>
 	<api flags="no_browser"/>
 	<name>Плюсофон</name>
 	<description html="true"><![CDATA[
@@ -26,6 +26,7 @@
 		<counter id="agreement" name="Договор" type="text"/>
 		<counter id="fio" name="ФИО" type="text"/>
 		<counter id="phone" name="Телефон" type="text"/>
+		<counter id="all_nums" name="Подключённые номера" type="text"/>
 		<counter id="email" name="E-mail" type="text"/>
 	</counters>
 	<keywords></keywords>

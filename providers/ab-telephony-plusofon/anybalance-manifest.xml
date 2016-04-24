@@ -26,6 +26,8 @@
 		<counter id="agreement" name="Договор" type="text"/>
 		<counter id="fio" name="ФИО" type="text"/>
 		<counter id="phone" name="Телефон" type="text"/>
+		<counter id="all_nums" name="Подключённые номера" type="text"/>
+		<counter id="email" name="E-mail" type="text"/>
 	</counters>
 	<keywords></keywords>
 	<type>telephony</type>

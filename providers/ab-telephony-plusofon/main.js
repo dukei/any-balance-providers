@@ -78,11 +78,53 @@ function main() {
 		AB.getParam(html, result, 'agreement', /Информация по договору:([\s\S]*?)<\//i, replaceTagsAndSpaces);
 	}
 
-	if(isAvailable(['fio', 'phone'])) {
-		html = AnyBalance.requestGet(baseurl + 'profile/account', g_headers);
+	if(isAvailable(['fio', 'email'])) {
+		html = AnyBalance.requestGet(baseurl + 'agreement/contacts', g_headers);
 
-		AB.getParam(html, result, 'fio', /фио(?:[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
-		AB.getParam(html, result, 'phone', /Телефонный номер(?:[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+    var table_customer = AB.getParam(html, null, null, /Контакты заказчика(?:[\s\S]*?<tr[^>]*>){2}([\s\S]*?)<\/tr>/);
+    if(/ничего не найдено/i.test(table_customer)) {
+      AnyBalance.trace("Персональные данные отсутствуют в таблице 'Контакты заказчика'");
+    } else {
+      var last_name   = AB.getParam(html, null, null, /Контакты заказчика(?:[\s\S]*?<td[^>]*>){2}([^<]*)/i) || '',
+          first_name  = AB.getParam(html, null, null, /Контакты заказчика(?:[\s\S]*?<td[^>]*>){3}([^<]*)/i) || '';
+
+      AB.getParam(last_name + ' ' + first_name, result, 'fio');
+      AB.getParam(html, result, 'email', /Контакты заказчика(?:[\s\S]*?<td[^>]*>){4}([^<]*)/i, replaceTagsAndSpaces);
+    }
 	}
+
+  if(isAvailable('phone')) {
+    html = AnyBalance.requestGet(baseurl + 'profile/account', g_headers);
+
+    AB.getParam(html, result, 'phone', /Телефонный номер(?:[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+  }
+
+  if(isAvailable('all_nums')) {
+    html = AnyBalance.requestGet(baseurl + 'phone/number/my', g_headers);
+
+    var phones_table = AB.getElement(html, /Подключенные номера[\s\S]*?(<table[^>]*>)/i),
+        phones       = AB.getElements(phones_table, /<tr[^>]+data-key[^>]*>/ig);
+
+    if(!phones.length) {
+      if(/ничего не найдено/i.test(phones_table)) {
+        AnyBalance.trace("Номера телефонов отсутствуют в таблице 'Подключённые номера'");
+      } else {
+        AnyBalance.trace(html);
+        AnyBalance.trace("Не удалось найти номера телефонов. Сайт изменён?");
+      }
+    } else {
+      var list = [];
+
+      for(var i = 0; i < phones.length; i++) {
+        var city   = AB.getParam(phones[i], null, null, /(?:[\s\S]*?<td[^>]*>){2}([^<]*)/i) || '-',
+            number = AB.getParam(phones[i], null, null, /(?:[\s\S]*?<td[^>]*>){3}([^<]*)/i) || '-',
+            user   = AB.getParam(phones[i], null, null, /(?:[\s\S]*?<td[^>]*>){4}([^<]*)/i) || '-';
+
+        list.push('#' + (i+1) + ' ' + city + ', ' + number + ', ' + user);
+      }
+
+      AB.getParam(list.join(';\n'), result, 'all_nums');
+    }
+  }
 	AnyBalance.setResult(result);
 }

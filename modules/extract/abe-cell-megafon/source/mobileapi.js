@@ -217,7 +217,7 @@ function processRemaindersApi(result){
                     }
 
                     // Минуты
-                    if(/мин/i.test(units)) {
+                    if((/мин/i.test(units) && !/интернет/i.test(name)) || (/шт/i.test(units) && /минут/i.test(name))) {
                         AnyBalance.trace('Parsing minutes...' + JSON.stringify(current));
                         var val = getParam(current.available, null, null, null, replaceTagsAndSpaces, parseBalance);
                         if(/бесплат/i.test(name)) {
@@ -230,7 +230,7 @@ function processRemaindersApi(result){
                             sumParam(current.total, remainders, 'remainders.mins_total', null, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
                         }
                         // Сообщения
-                    } else if(/шт|sms|смс|mms|ммс/i.test(units) || (/шт/i.test(units) && /минут/i.test(name))) {
+                    } else if(/шт|sms|смс|mms|ммс/i.test(units)) {
                         if(/mms|ММС/i.test(name)){
                             AnyBalance.trace('Parsing mms...' + JSON.stringify(current));
                             sumParam(current.available, remainders, 'remainders.mms_left', null, replaceTagsAndSpaces, parseBalance, aggregate_sum);
@@ -241,8 +241,7 @@ function processRemaindersApi(result){
                             sumParam(current.total, remainders, 'remainders.sms_total', null, replaceTagsAndSpaces, parseBalance, aggregate_sum);
                         }
                         // Трафик
-						// kmgкмгт - удалено, т.к. есть тариa с 25 600 кб у которого название юнитов "Тар. Ед."
-                    } else if(/([kmgкмг][бb]?|[бb](?![\wа-я])|байт|byte)/i.test(units)) {
+                    } else if(/([kmgtкмгт][бb]|[бb](?![\wа-я])|байт|byte)/i.test(units)) {
                         AnyBalance.trace('Parsing data...' + JSON.stringify(current));
 
                         if(/Гигабайт в дорогу/i.test(name)) {
@@ -250,9 +249,17 @@ function processRemaindersApi(result){
                         } else {
                             var suffix = '';
                             if(/ноч/i.test(name)) suffix = '_night';
+                            
                             var unlim = /^9{7,}$/i.test(current.total); //Безлимитные значения только из девяток состоят
+                            
                             var internet_left = getParam(current.available + current.unit, null, null, null, replaceTagsAndSpaces, parseTraffic);
                             var internet_total = getParam(current.total + current.unit, null, null, null, replaceTagsAndSpaces, parseTraffic);
+                            
+							if(!unlim)
+								unlim = (internet_total >= 5000000); //Больше 5000 ТБ это же явно безлимит
+							if(unlim)
+								AnyBalance.trace('пропускаем безлимит трафика: ' + name + ' ' + (current.available + current.unit) + '/' + (current.total + current.unit));
+                            
                             if(isset(internet_left) && !unlim)
                                 sumParam(internet_left, remainders, 'remainders.internet_left' + suffix, null, null, null, aggregate_sum);
                             if(isset(internet_total) && !unlim)

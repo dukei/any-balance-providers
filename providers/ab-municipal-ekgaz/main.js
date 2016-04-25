@@ -52,18 +52,18 @@ function main() {
 	AB.getParam(html, result, 'fio',        /ФИО:([\s\S]*?)<\//i,     AB.replaceTagsAndSpaces);
 	AB.getParam(html, result, 'address',     /Адрес:([\s\S]*?)<\//i,   AB.replaceTagsAndSpaces);
 
-  if(isAvailable([''])) {
+  if(isAvailable(['debt', 'a_payment', 'to_pay', 'accrued', 'last_payment_date'])) {
     var kvHREF = AB.getParam(html, null, null, /<a[^>]+href='.\/([^']*)'[^>]*>Квитанция/i);
     if(!kvHREF) {
-      AnyBalance.trace(html);
-      AnyBalance.trace("Не удалось найти ссылку на квитанцию.");
+		AnyBalance.trace(html);
+		AnyBalance.trace("Не удалось найти ссылку на квитанцию.");
     } else {
-      html = AnyBalance.requestGet(baseurl + kvHREF, g_headers);
-      AB.getParam(html, result, 'debt',              /Задолженность за предыдущие периоды([^<]*)/i, AB.replaceTagsAndSpaces, AB.parseBalance);
-      AB.getParam(html, result, 'a_payment',         /Аванс на начало расчетного период([^<]*)/i,   AB.replaceTagsAndSpaces, AB.parseBalance);
-      AB.getParam(html, result, 'to_pay',            /<b[^>]*>Всего к оплате([^<]*)/i,              AB.replaceTagsAndSpaces, AB.parseBalance);
-      AB.getParam(html, result, 'accrued',           /Итого:(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\/td>/i, AB.replaceTagsAndSpaces, AB.parseBalance);
-      AB.getParam(html, result, 'last_payment_date', /Дата последней поступившей оплаты([^<]*)/i,   AB.replaceTagsAndSpaces, AB.parseDate);
+		html = AnyBalance.requestGet(baseurl + kvHREF, g_headers);
+		AB.getParam(html, result, 'debt',              /Задолженность за предыдущие периоды([^<]*)/i, AB.replaceTagsAndSpaces, AB.parseBalance);
+		AB.getParam(html, result, 'a_payment',         /Аванс на начало расчетного период([^<]*)/i,   AB.replaceTagsAndSpaces, AB.parseBalance);
+		AB.getParam(html, result, 'to_pay',            /<b[^>]*>Всего к оплате([^<]*)/i,              AB.replaceTagsAndSpaces, AB.parseBalance);
+		AB.getParam(html, result, 'accrued',           /Итого:(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\/td>/i, AB.replaceTagsAndSpaces, AB.parseBalance);
+		AB.getParam(html, result, 'last_payment_date', /Дата последней поступившей оплаты([^<]*)/i,   AB.replaceTagsAndSpaces, AB.parseDate);
     }
   }
 

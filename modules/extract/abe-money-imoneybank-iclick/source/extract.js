@@ -15,7 +15,7 @@ var g_baseurl = 'https://iclick.imoneybank.ru/';
 
 function login(){
     AnyBalance.setOptions({cookiePolicy: 'netscape'});
-    var prefs = AnyBalance.getPreferences();
+	var prefs = AnyBalance.getPreferences();
 
 	checkEmpty(prefs.login, 'Введите логин! Логин должен быть в формате 9001234567!');
 	checkEmpty(prefs.password, 'Введите пароль!');
@@ -105,14 +105,15 @@ function fetchInfo(result, html){
     if(!AnyBalance.isAvailable('info'))
     	return;
 
+	var prefs = AnyBalance.getPreferences();
     var info = result.info = {};
 
-	getParam(html, result, 'info.fio', /<a[^>]+href="[^"]*\/profile[^>]*>([\s\S]*?)<\/a>/i, replaceTagsAndSpaces);
-	getParam(prefs.login, result, 'info.mphone');
+	getParam(html, info, 'info.fio', /<a[^>]+href="[^"]*\/profile[^>]*>([\s\S]*?)<\/a>/i, replaceTagsAndSpaces);
+	getParam(prefs.login, info, 'info.mphone');
 	
 	if(AnyBalance.isAvailable('info.email')){
 		var html = AnyBalance.requestGet(g_baseurl + 'profile/alerts/email', addHeaders({Referer: g_baseurl}));
-		getParam(html, result, 'info.email', /<input[^>]+id="change_alert_data_email"[^>]*value="([^"]*)/i, replaceHtmlEntities);
+		getParam(html, info, 'info.email', /<input[^>]+id="change_alert_data_email"[^>]*value="([^"]*)/i, replaceHtmlEntities);
 	}
 }
 
@@ -142,26 +143,7 @@ function fetchAccount(result, acc){
 	}*/
 
 	if(AnyBalance.isAvailable('accounts.transactions')){
-		var dt = new Date();
-		var dtFrom = new Date(dt.getFullYear()-3, dt.getMonth(), dt.getDate());
-
-		html = AnyBalance.requestGet(g_baseurl + 'account/' + acc.id + '/statement?from=' + (n2(dtFrom.getDate()) + '.' + n2(dtFrom.getMonth()+1) + '.' + dtFrom.getFullYear()) + '&to=' + (n2(dt.getDate()) + '.' + n2(dt.getMonth()+1) + '.' + dt.getFullYear()), addHeaders({Referer: g_baseurl, 'X-Requested-With':'XMLHttpRequest'}));
-		if(/<div[^>]+class="items"[^>]*>/i.test(html))
-			result.transactions = [];
-
-		var trns = getElements(html, /<div[^>]+class="item"[^>]*>/ig);
-		for(var i=0; i<trns.length; ++i){
-			var trn = trns[i];
-			var t = {};
-
-			var spans = getElements(trn, /<span[^>]*>/ig);
-			getParam(spans[0], t, 'accounts.transactions.date', null, replaceTagsAndSpaces, parseDateSilent);
-			getParam(spans[1], t, 'accounts.transactions.sum', null, replaceTagsAndSpaces, parseBalanceSilent);
-			getParam(spans[2], t, 'accounts.transactions.descr', null, replaceTagsAndSpaces);
-
-			result.transactions.push(t);
-		}
-		
+		processAccountTransactions(acc, result);
 	}
 }
 
@@ -218,26 +200,7 @@ function fetchCard(result, card){
 	}
 
 	if(AnyBalance.isAvailable('cards.transactions')){
-		var dt = new Date();
-		var dtFrom = new Date(dt.getFullYear()-3, dt.getMonth(), dt.getDate());
-
-		html = AnyBalance.requestGet(g_baseurl + 'card/' + card.id + '/statement?from=' + (n2(dtFrom.getDate()) + '.' + n2(dtFrom.getMonth()+1) + '.' + dtFrom.getFullYear()) + '&to=' + (n2(dt.getDate()) + '.' + n2(dt.getMonth()+1) + '.' + dt.getFullYear()), addHeaders({Referer: g_baseurl, 'X-Requested-With':'XMLHttpRequest'}));
-		if(/<div[^>]+class="items"[^>]*>/i.test(html))
-			result.transactions = [];
-
-		var trns = getElements(html, /<div[^>]+class="item"[^>]*>/ig);
-		for(var i=0; i<trns.length; ++i){
-			var trn = trns[i];
-			var t = {};
-
-			var spans = getElements(trn, /<span[^>]*>/ig);
-			getParam(spans[0], t, 'cards.transactions.date', null, replaceTagsAndSpaces, parseDateSilent);
-			getParam(spans[1], t, 'cards.transactions.sum', null, replaceTagsAndSpaces, parseBalanceSilent);
-			getParam(spans[2], t, 'cards.transactions.descr', null, replaceTagsAndSpaces);
-
-			result.transactions.push(t);
-		}
-		
+		processCardTransactions(card, result);
 	}
 }
 

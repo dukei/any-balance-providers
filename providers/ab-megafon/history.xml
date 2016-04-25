@@ -1,5 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="3.1" version="188" date="2016-04-25">
+	- игнорирование безлимитного трафика
+	- игнорирование трафика в минутах
+	</change>
 	<change major_version="3.1" version="187" date="2016-04-22">
 	Исправлено распознавание минут, когда они прикидываются смс
 	</change>

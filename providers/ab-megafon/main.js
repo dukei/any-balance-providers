@@ -1990,7 +1990,7 @@ function megafonLKRemainders(filial, html, result){
 			AnyBalance.trace('Обработка услуги ' + gname + ':' + rname);
 
 			// Минуты
-			if(/мин/i.test(units) || (/шт/i.test(units) && /минут/i.test(name))) {
+			if((/мин/i.test(units) && !/интернет/i.test(name)) || (/шт/i.test(units) && /минут/i.test(name))) {
 				var val = getParam(left, null, null, null, replaceTagsAndSpaces, parseBalance);
 				if(val >= 0){
 					if(/бесплат/i.test(name)) {
@@ -2022,7 +2022,7 @@ function megafonLKRemainders(filial, html, result){
 					sumParam(total, result, 'sms_total', null, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 				}
 			// Трафик
-			} else if(/([kmgкмг][бb]?|[бb](?![\wа-я])|байт|byte)/i.test(units)) {
+			} else if(/([kmgtкмгт][бb]|[бb](?![\wа-я])|байт|byte)/i.test(units)) {
 				if(/Гигабайт в дорогу/i.test(name)) {
 					getParam(left, result, 'gb_with_you', null, replaceTagsAndSpaces, parseTraffic);
 				} else {
@@ -2033,6 +2033,12 @@ function megafonLKRemainders(filial, html, result){
 					
 					var internet_left = getParam(left, null, null, null, replaceTagsAndSpaces, parseTraffic);
 					var internet_total = getParam(total, null, null, null, replaceTagsAndSpaces, parseTraffic);
+
+					if(!unlim)
+						unlim = (internet_total >= 5000000); //Больше 5000 ТБ это же явно безлимит
+					if(unlim)
+						AnyBalance.trace('пропускаем безлимит трафика: ' + name + ' ' + left + '/' + total);
+
 					if(isset(internet_left) && !unlim)
 						sumParam(internet_left, result, 'internet_left' + suffix, null, null, null, aggregate_sum);
 					if(isset(internet_total) && !unlim)

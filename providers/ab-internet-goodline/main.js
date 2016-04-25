@@ -11,7 +11,7 @@ var g_headers = {
 };
 
 function main(){
-	var baseurl = 'https://lk.goodline.info/';
+	var baseurl = 'https://old-lk.goodline.info/';
     var prefs = AnyBalance.getPreferences();
     AnyBalance.setDefaultCharset('windows-1251');
 

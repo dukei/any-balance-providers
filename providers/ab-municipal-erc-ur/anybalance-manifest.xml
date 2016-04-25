@@ -1,6 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="4">ab-municipal-erc-ur</id>
+	<api flags="no_browser"/>
+  <id version="5">ab-municipal-erc-ur</id>
   <name>Единый Расчётный Центр (Екатеринбург)</name>
   <description html="true"><![CDATA[
   <p>Предоставляет информацию о балансах из личного кибинета системы Единый Расчётный Центр <a href="http://www.erc.ur.ru/">http://www.erc.ur.ru/</a></p>

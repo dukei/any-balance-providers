@@ -18,7 +18,7 @@ var g_headers = {
 
 function main() {
   var prefs = AnyBalance.getPreferences();
-  var baseurl = "http://www.erc.ur.ru/";
+  var baseurl = "https://www.erc.ur.ru/";
   AnyBalance.setDefaultCharset('windows-1251');
 
   AB.checkEmpty(prefs.login, 'Введите логин!');

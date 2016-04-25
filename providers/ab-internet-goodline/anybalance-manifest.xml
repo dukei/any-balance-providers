@@ -1,12 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="5">ab-internet-goodline</id>
+	<id version="6">ab-internet-goodline</id>
 	<api flags="no_browser"/>
 	<name>GoodLine (Кемерово)</name>
 	<description html="true"><![CDATA[
 	<p>Получает баланс и информацию о тарифном плане для Кемеровского интернет-провайдера Good Line, торговая марка ООО "Е-Лайт-Телеком" (http://goodline.info).</p>
-	<p>Информация берется из личного кабинета https://old-lk.goodline.info. Если вы не помните логин-пароль в личный кабинет, получите его здесь: https://old-lk.goodline.info/users/reminder</p>
-	<p>ВНИМАНИЕ! Личный кабинет недоступен извне сети Good Line, вы не сможете получать баланс через мобильный интернет. Для получения баланса требуется соединиться с домашним роутером по WiFi. Можете смело запретить мобильный интернет для аккаунта, основанном на этом провайдере.</p>
+	<p>Информация берется из личного кабинета https://old-lk.goodline.info и https://lk.goodline.info. Если вы не помните логин-пароль в личный кабинет, получите его здесь: https://old-lk.goodline.info/users/reminder</p>
+	<p>ВНИМАНИЕ! Личный кабинет https://old-lk.goodline.info недоступен извне сети Good Line, вы не сможете получать баланс через мобильный интернет. Для получения баланса требуется соединиться с домашним роутером по WiFi. Можете смело запретить мобильный интернет для аккаунта, основанном на этом провайдере.</p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>

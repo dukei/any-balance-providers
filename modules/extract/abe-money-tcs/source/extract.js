@@ -202,8 +202,10 @@ function processAccounts(result){
 function processAccount(acc, result){
 	AnyBalance.trace('Обработка счета ' + result.__name);
 
-    getParam(jspath1(acc, '$.accountBalance.value'), result, 'accounts.balance');
-    getParam(jspath1(acc, '$.accountBalance.currency.name'), result, 'accounts.currency');
+	var balance = jspath1(acc, '$.accountBalance') || jspath1(acc, '$.moneyAmount');
+
+    getParam(jspath1(balance, '$.value'), result, 'accounts.balance');
+    getParam(jspath1(balance, '$.currency.name'), result, 'accounts.currency');
     getParam(jspath1(acc, '$.creationDate.milliseconds'), result, 'accounts.date_start');
     getParam(jspath1(acc, '$.accountGroup'), result, 'accounts.type');
     getParam(jspath1(acc, '$.accountType'), result, 'accounts.type_code');

@@ -1,24 +1,30 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="3">ab-telephony-ums</id>
+	<id version="4">ab-telephony-ums</id>
 	<api flags="no_browser"/>
 	<name>UMS (Узбекистан)</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе провайдера UMS <a href="http://ums.uz/ru/">http://ums.uz/</a></p>
-	<p>Информация берется из личного кабинета <a href="https://ip.ums.uz/selfcare/">https://ip.ums.uz/selfcare/</a></p>
+	<p>Предоставляет информацию о балансе провайдера UMS http://ums.uz/</p>
+	<p>Информация берется из личного кабинета https://ip.ums.uz/selfcare/</p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
 	<counters>
 		<counter id="balance" name="Баланс" units=" {@currency}"/>
+		<counter id="traffic2" name="Доп. трафик" units=" Mb"/>
+		<counter id="traffic2_till" name="Срок действия доп. трафика" type="time" format="dd/MM/yyyy"/>
 		<counter id="traffic" name="Остаток трафика" units=" Mb"/>
-		<counter id="traffic2" name="Остаток трафика 2" units=" Mb"/>
+		<counter id="minutes_net" name="Остаток минут внутри сети" units=" мин"/>
+		<counter id="minutes2" name="Доп. минуты" units=" мин"/>
+		<counter id="minutes2_till" name="Срок действия доп. минут" type="time" format="dd/MM/yyyy"/>
 		<counter id="minutes" name="Остаток минут" units=" мин"/>
 		<counter id="sms" name="Остаток смс" units=" смс"/>
 		<counter id="fio" name="ФИО" type="text"/>

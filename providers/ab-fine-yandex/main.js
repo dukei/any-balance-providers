@@ -23,14 +23,8 @@ function main() {
 
 	var tries = 0;
 	do{
-		html = AnyBalance.requestPost(baseurl + '/debts/index.xml', {
-			action: 'checkDebts',
-			driverLicense: prefs.prava,
-			registrationCertificate: prefs.regcert,
-			dataChanged: '1',
-			payerName: '',
-			ref: ''
-		}, addHeaders({'X-Requested-With': 'XMLHttpRequest', Origin: baseurl, Referer: url}));
+		html = AnyBalance.requestGet(baseurl + '/ajax/search-debts?ref=&driverLicense=' + encodeURIComponent(prefs.prava) + '&registrationCertificate=' + encodeURIComponent(prefs.regcert), 
+			addHeaders({'X-Requested-With': 'XMLHttpRequest', Origin: baseurl, Referer: url}));
 
 		var info = getJson(html);
 		if(info.status == 'inProgress' && tries < 10){
@@ -42,7 +36,7 @@ function main() {
 		}
 	}while(true);
 
-	if(info.status != 'ok' && !isArray(info.data)){
+	if(info.status != 'success' && !isArray(info.fines)){
 		if(info.error)
 			throw new AnyBalance.Error(info.error, null, /length must be/i.test(info.error));
 		
@@ -51,25 +45,26 @@ function main() {
 
 	var result = {success: true};
 	
-	var length = info.data ? info.data.length : 0;
+	var length = info.fines ? info.fines.length : 0;
 	getParam(length, result, 'count');
 	getParam(0, result, 'balance');
 
 	var fine, all='';
-	for(var i=0; i<length; ++i) {
-	    fine = info.data[i];
-		sumParam(fine.PayUntil, result, 'payTill', null, null, parseDateISO, aggregate_min);
-		sumParam(fine.TotalAmount, result, 'balance', null, null, parseBalance, aggregate_sum);
+	for(var i=length-1; i>=0; --i) {
+	    fine = info.fines[i].content;
+		sumParam(fine.payUntil, result, 'payTill', null, null, parseDate, aggregate_min);
+		sumParam(fine.sum, result, 'balance', null, null, null, aggregate_sum);
 
-		all += '<b>' + fine.TotalAmount + '</b> - ' + fine.SupplierBillID + ' от ' + fine.BillDate + '<br\><br\>';
+		all += '<b>' + fine.sum + '</b> - ' + fine.billFor + ' от ' + fine.billDate + '<br\><br\>';
 	}
 
 	if(fine) {
 		getParam(all, result, 'all', null, [/<br\><br\>$/, '']);
-		getParam(fine.TotalAmount, result, 'summ', null, null, parseBalance);
-		getParam(fine.BillDate, result, 'date', null, null, parseDate);
-		getParam(fine.BillFor, result, 'descr');
-		getParam(fine.SupplierBillID, result, 'postanovlenie');
+		getParam(fine.sum, result, 'summ');
+		getParam(fine.billDate, result, 'date', null, null, parseDate);
+		getParam(fine.discountDate, result, 'discountDate', null, null, parseDate);
+		getParam(fine.billFor, result, 'descr');
+		getParam(fine.payLink, result, 'postanovlenie', /uin=([^&]*)/i, null, decodeURIComponent);
 	}
 
     AnyBalance.setResult(result);

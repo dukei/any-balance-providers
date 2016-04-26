@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="3">ab-fine-yandex</id>
+	<id version="4">ab-fine-yandex</id>
 	<name>Штрафы ГИБДД (Яндекс)</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о наличии штрафов с сайта https://money.yandex.ru/gibdd-debts/</p>
@@ -11,10 +11,12 @@
 	<p>Для получения информации по штрафам необходимо ввести номер водительского удостверения и номер свидетельства о регистрации.</p>
 	]]></instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
@@ -22,9 +24,11 @@
 		<counter id="balance" name="Общая сумма штрафов" units=" р"/>
 		<counter id="count" name="Количество штрафов" units=" шт"/>
 		<counter id="date" name="Дата последнего нарушения" type="time" format="dd/MM/yyyy"/>
+		<counter id="summ" name="Сумма последнего штрафа" units=" р"/>
+		<counter id="discountDate" name="Срок действия скидки 50%" type="time" format="dd/MM/yyyy"/>
+		<counter id="payTill" name="Заплатить до" type="time" format="dd/MM/yyyy"/>
 		<counter id="descr" name="Описание последнего штрафа" type="text"/>
 		<counter id="postanovlenie" name="Постановление последнего штрафа" type="text"/>
-		<counter id="summ" name="Сумма последнего штрафа" units=" р"/>
 		<counter id="all" name="Сводка" type="html"/>
 	</counters>
 	<keywords>штрафы, гаи, гибдд, мвд, увд, штраф</keywords>

@@ -29,7 +29,7 @@ function main() {
 
 	var token = getParam(html, null, null, /<input[^>]*value="([^"]*)"[^>]*name="[^"]*Token[^"]*"[^>]*>/i);
 
-	html = AnyBalance.requestPost(baseurl + 'site/login', {
+	html = AnyBalance.requestPost(baseurl + 'user/login', {
 		'YII_CSRF_TOKEN': token,
 		'LoginForm[username]': phone,
 		'LoginForm[password]': prefs.password,

@@ -1,17 +1,19 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id version="3">ab-municipal-mpkvc</id>
+	<id version="4">ab-municipal-mpkvc</id>
 	<name>КВЦ (Рязань)</name>
 	<description html="true"><![CDATA[
 	<p>Получается информацию о начислениях для Кустового Вычислительного Центра города Рязани (http://мпквц.рф/)</p>
 	<p>Информация берется из личного кабинета (http://мпквц.рф/component/private/)</p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
-	<files>
+    <author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+    <depends>
+        <module id="library"/>
+    </depends>
+    <files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
@@ -31,6 +33,7 @@
 		<counter id="balance87" name="ОДН ГВС" units=" р"/>
 		<counter id="balance08" name="Домофон" units=" р"/>
 		<counter id="balance12" name="Кабельное ТВ" units=" р"/>
+		<counter id="balance15" name="Вывоз ТБО" units=" р"/>
 	</counters>
 	<keywords>мпквц Кустового Вычислительного Центра Рязань</keywords>
 	<type>municipal</type>

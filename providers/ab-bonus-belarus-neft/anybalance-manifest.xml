@@ -1,7 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="7">ab-bonus-belarus-neft</id>
+	<id version="8">ab-bonus-belarus-neft</id>
 	<name>Беларусь Нефть</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию по карте Беларусь Нефть http://beloil.by/.</p>
@@ -20,13 +20,19 @@
 	</files>
 	<counters>
 		<counter id="balance" name="Баланс"/>
-		<counter id="discount" name="Размер скидки в текущем месяце" units=" %"/>
-		<counter id="next_month_discount" name="Размер скидки в следующем месяце" units=" %"/>
+        <counter id="discount_sum" name="Сумма предоставленной скидки" units=" р"/>
+        <counter id="products" name="Сопут. товары (услуги)" units=" p"/>
+        <counter id="chance_1" name="Шансы приз 1"/>
+        <counter id="chance_2" name="Шансы приз 2"/>
+        <counter id="discount" name="Размер скидки в текущем месяце" units=" %"/>
+		<!--<counter id="next_month_discount" name="Размер скидки в следующем месяце" units=" %"/>
 		<counter id="discount_next" name="Размер следующей скидки" units=" %"/>
 		<counter id="discount_bal_next" name="Баллов до следующей скидки"/>
+		<counter id="all" name="Сводка" type="text"/>-->
 		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="status" name="Статус" type="text"/>
 		<counter id="card_num" name="№ карты" type="text"/>
-		<counter id="all" name="Сводка" type="text"/>
+
 	</counters>
 	<keywords>Беларусь, Нефть, бензин, топливо</keywords>
 	<type>bonus</type>

@@ -18,7 +18,7 @@
 		<counter id="name" name="Игровой ник[клан]" type="text"/>
 		<counter id="wins" name="Победы" type="numeric"/>
 		<counter id="battles" name="Бои" type="numeric"/>
-		<counter id="win_percent" name="Процент побед" suffix="℅" type="numeric"/>
+		<counter id="win_percent" name="Процент побед" suffix="%" type="numeric"/>
 		<counter id="tank_wins" name="Победы танка" type="numeric"/>
 		<counter id="tank_battles" name="Бои танка" type="numeric"/>
 		<counter id="tank_win_percent" name="Процент побед танка" suffix="℅" type="numeric"/>

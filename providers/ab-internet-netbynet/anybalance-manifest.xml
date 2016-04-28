@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<id major_version="2.0" version="27">ab-internet-netbynet</id>
 	<api flags="no_browser"/>
@@ -20,6 +20,7 @@
 		<li>Мурманск</li>
 		<li>Чебоксары</li>
 	</ul>
+  <p>Также поддерживается предоставление данных о мобильном интернете WiFire от NetByNet.</p>
 	<p><small>В разных регионах личные кабинеты отличаются, в связи с чем могут быть доступны не все счетчики.</small></p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
@@ -27,6 +28,7 @@
 		<module id="library"/>
 	</depends>
 	<files>
+		<js>library.min.js</js>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
 		<js>main.js</js>
@@ -38,13 +40,14 @@
 		<counter id="trafficLeft" name="Остаток трафика" units=" Гб"/>
 		<counter id="day_left" name="Осталось дней" suffix=" дн."/>
 		<counter id="subscriber" name="Абонент" type="text"/>
+		<counter id="due" name="Дата блокировки" type="text"/>
 		<counter id="contract" name="Номер договора" type="text" prefix="№ "/>
 		<counter id="status" name="Статус" type="text"/>
 		<counter id="promised_payment" name="Обещанный платеж" units=" р"/>
 		<counter id="abonday" name="Суточная абонплата" units=" р"/>
 		<counter id="abon" name="Ежемесячная абонплата" units=" р"/>
 	</counters>
-	<keywords>интернет, москва, санкт-петербург, россия, netbynet, нетбайнет</keywords>
+	<keywords>интернет, москва, санкт-петербург, россия, netbynet, нетбайнет, wifire</keywords>
 	<type>internet</type>
 	<country>ru</country>
 </provider>

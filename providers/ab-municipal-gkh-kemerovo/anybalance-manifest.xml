@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-municipal-gkh-kemerovo</id>
+	<id version="3">ab-municipal-gkh-kemerovo</id>
 	<api flags="no_browser"/>
 	<name>ЖКХ Кемерово</name>
 	<description html="true"><![CDATA[
@@ -11,16 +11,19 @@
 	<p>Если у вас нет доступа в Личный кабинет, получите его на странице <a href="https://www.gkh-kemerovo.ru/portal/index.php">https://www.gkh-kemerovo.ru/portal/index.php</a></p>
 	]]></instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+    <depends>
+        <module id="library"/>
+    </depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
 	<counters>
 		<counter id="balance" name="Баланс" units=" р"/>
 		<counter id="fio" name ="ФИО" type="text"/>
+		<counter id="email" name ="E-mail" type="text"/>
 		<counter id="adress" name ="Адрес" type="text"/>
 		<counter id="acc_num" name ="Лицевой счёт" type="text"/>
 	</counters>

@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-municipal-atomsbt-tver</id>
+	<id version="2">ab-municipal-atomsbt-tver</id>
 	<api flags="no_browser"/>
 	<name>АТОМЭНЕРГОСБЫТ (Тверь)</name>
 	<description html="true"><![CDATA[
@@ -8,17 +8,21 @@
 	<p>Информация берется из личного кабинета <a href="http://atomsbt.ru/klientam/kabinet_tver/">http://atomsbt.ru/klientam/kabinet_tver/</a></p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+    <depends>
+        <module id="library"/>
+    </depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
 	<counters>
 		<counter id="accrued" name="Начислено в текущем месяце" units=" p"/>
 		<counter id="paid" name="Оплачено в текущем месяце" units=" p"/>
-		<counter id="adress" name="Адрес" type="text"/>
+        <counter id="saldo" name="Исходящее сальдо" units=" p"/>
+        <counter id="adress" name="Адрес" type="text"/>
+		<counter id="device_value" name="Показание счётчика"/>
 	</counters>
 	<keywords></keywords>
 	<type>municipal</type>

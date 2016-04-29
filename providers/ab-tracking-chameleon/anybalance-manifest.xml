@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="2">ab-tracking-chameleon</id>
+	<id version="3">ab-tracking-chameleon</id>
 	<name>Поисковый маяк Хамелеон</name>
 	<description html="true"><![CDATA[
 	<p>Автомобильный трекер, автономный поисковый маяк и персональный трекер «Хамелеон».</p>

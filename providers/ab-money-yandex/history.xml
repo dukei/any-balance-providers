@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="24" date="2016-04-29">
+	Восстановлен показ баланса, если баланс скрыт
+	</change>
 	<change version="23" date="2016-02-03">
 	- поддержка капчи, если логин в яндекс её покажет
 	</change>

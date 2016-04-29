@@ -126,7 +126,5 @@ function main() {
 		result = adapter.convert(result);
 	}
 	
-	// getParam(html, result, 'bonuses', /МКБ Бонус\s*<span[^>]*>([\s\d]+)&nbsp;баллов/i, replaceTagsAndSpaces, parseBalance);
-	
 	AnyBalance.setResult(result);
 }

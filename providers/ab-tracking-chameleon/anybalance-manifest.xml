@@ -21,7 +21,7 @@
 		<counter id="watchName" name="Объект наблюдения" type="text"/>
 		<counter id="loc" name="Местоположение" type="text"/>
 		<counter id="voltage" name="Заряд батареи"/>
-		<counter id="balance" name="Баланс"/>
+		<counter id="balance" name="Баланс" units="р"/>
 		<counter id="time" name="Время опроса" type="text"/>
 		<counter id="gps_strength" name="Cигнал GPS/Glonass"/>
 		<counter id="gsm_strength" name="Cигнал GSM"/>

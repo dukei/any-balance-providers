@@ -3,7 +3,7 @@
 		'fio': 'info.fio'
 	},
 	card: {
-		"balance": "cards.balance",
+		"balance": "cards.available",
 		"currency": "cards.currency",
 		"cardnum": "cards.num",
 		"__tariff": "cards.__id",

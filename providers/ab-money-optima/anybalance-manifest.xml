@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-money-optima</id>
+	<api flags="no_browser"/>
+	<name>Optima Банк</name>
+	<description html="true"><![CDATA[
+	<p>Получает текущий остаток и другие параметры карт и счетов Optima Банка https://www.optimabank.kg/, используя интернет-банк (https://www.optima24.kg/).</p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+		<module id="nadapter"/>
+		<module id="extract/abe-money-optima"/>
+	</depends>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Остаток" units=" {@currency}"/>
+		<counter id="blocked" name="Заблокированные средства" units=" {@currency}"/>
+		<counter id="currency" name="Валюта" type="text"/>
+		<counter id="cardnum" name="Номер карты/кредита/депозита" type="text"/>
+		<counter id="accnum" name="Номер счета" type="text"/>
+		<counter id="type" name="Вид карты" type="text"/>
+		<counter id="till" name="Срок действия карты" type="time" format="dd/MM/yyyy"/>
+		<counter id="fio" name="ФИО" type="text"/>
+	</counters>
+	<keywords>оптима</keywords>
+	<type>money, bank</type>
+	<country>kg</country>
+</provider>

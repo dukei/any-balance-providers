@@ -79,7 +79,7 @@ function main() {
 		ALTITUDE: 605
 	}
 	*/
-	var params = { '605': 'altitude', '613': 'temperature', '614': 'gsm_strength', '615': 'gps_strength', '616': 'voltage' }
+	var params = { 605: 'altitude', 613: 'temperature', 614: 'gsm_strength', 615: 'gps_strength', 616: 'voltage', 617: 'balance' }
 
 	//var result = {success: true, watchName: null, loc: null, voltage: null, balance: null, time: null, gps_strength: null, gsm_strength: null, altitude: null, temperature: null};
 	// нет данных для определения баланса

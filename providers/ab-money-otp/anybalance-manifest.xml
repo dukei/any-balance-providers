@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id version="6">ab-money-otp</id>
+	<id version="7">ab-money-otp</id>
 	<name>ОТП Банк</name>
 	<description html="true"><![CDATA[
 	<p>Получает текущий остаток и другие параметры карт ОТП Банка ( http://otpbank.ru ), используя систему ОТПдирект ( https://direkt.otpbank.ru ).</p>

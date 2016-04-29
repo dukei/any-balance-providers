@@ -39,7 +39,14 @@ var g_countersTable = {
 		"cardname": "deposits.__name",
 		"till": "deposits.till",
 		"__tariff": "deposits.num",
-	}
+  },
+  acc: {
+    "balance": "accounts.balance",
+    "currency": "accounts.currency",
+    'date_start': 'accounts.date_start',
+    "__tariff": "accounts.num",
+    "blocked": "accounts.blocked",
+  }
 };
 
 function shouldProcess(counter, info){

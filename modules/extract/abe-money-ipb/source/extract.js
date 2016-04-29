@@ -100,14 +100,14 @@ function processCards(html, result) {
 
 	var html = AnyBalance.requestGet(baseurl + 'cards.aspx', g_headers);
 
-	var cardList = getParam(html, null, null, /<table[^>]+class="GridTable"[^>]*>[^]*?<\/div>/i);
-	if(!cardList){
+	var cardList = getElement(html, /<table[^>]+class="GridTable"[^>]*>/i);
+	var cards = getElements(cardList, /<tr[^>]+class="normal[^>]*>/ig);
+	if(!cards.length) {
 		AnyBalance.trace(html);
-		AnyBalance.trace('Не удалось найти таблицу с картами.');
+		AnyBalance.trace('Не удалось найти карты.');
 		return;
 	}
 
-	var cards = getElements(cardList, /<tr[^>]+class="normal[^>]+>/ig);
 	AnyBalance.trace('Найдено карт: ' + cards.length);
 	result.cards = [];
 
@@ -131,7 +131,8 @@ function processCard(card, result) {
 
 	AnyBalance.trace('Обработка карты ' + result.__name);
 
-	getParam(card, result, 'cards.balance', /(?:[\s\S]*?<\/table>){2}(?:[^]*?<span[^>]*>){1}([\s\S]*?)<\//i, null, parseBalance);
+	//Делся куда-то, нема его теперь
+	//getParam(card, result, 'cards.balance', /(?:[\s\S]*?<\/table>){2}(?:[^]*?<span[^>]*>){1}([\s\S]*?)<\//i, null, parseBalance);
 	getParam(card, result, 'cards.limit', /(?:[\s\S]*?<\/table>){2}(?:[^]*?<td[^>]*>){4}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
 	getParam(card, result, 'cards.available', /(?:[\s\S]*?<\/table>){2}(?:[^]*?<td[^>]*>){1}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
 	getParam(card, result, ['cards.currency', 'cards.balance', 'cards.limit', 'cards.available'], /<span[^>]+id="ctl00_ContentPlaceHolder1_listDocs_ctl02_lblCurrency"[^>]*>([\s\S]*?)<\/span>/i, [replaceTagsAndSpaces, /(.*?)/, '0'+ '$1'], parseCurrency);
@@ -148,14 +149,14 @@ function processDeposits(html, result) {
 		return;
 	var html = AnyBalance.requestGet(baseurl + 'deposits.aspx', g_headers);
 	
-	var list = getParam(html, null, null, /<table[^>]+class="GridTable"[^>]*>[^]*?<\/div>/i);
-	if(!list){
+	var list = getElement(html, /<table[^>]+class="GridTable"[^>]*>/i);
+	var deposits = getElements(list,  /<tr[^>]+class="normal[^>]*>/ig);
+	if(!deposits.length) {
 		AnyBalance.trace(html);
-		AnyBalance.trace('Не удалось найти таблицу с депозитами.');
+		AnyBalance.trace('Не удалось найти депозиты.');
 		return;
 	}
 
-	var deposits = getElements(list,  /<tr[^>]+class="normal[^>]+>/ig);
 	AnyBalance.trace('Найдено депозитов: ' + deposits.length);
 	result.deposits = [];
 

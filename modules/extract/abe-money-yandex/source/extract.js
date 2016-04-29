@@ -39,9 +39,11 @@ function loginAndGetBalance(prefs, result) {
 			throw new AnyBalance.Error('Не удаётся найти ключ для получения баланса! Сайт изменен?');
 		}
 		
-		text = AnyBalance.requestGet(baseurl + "internal/index-ajax.xml?action=updateSumVisibility&sk=" + sk + "&showSum=1", addHeaders({Referer: baseurl, 'X-Requested-With':'XMLHttpRequest'}));
+		text = AnyBalance.requestGet(baseurl + "ajax/sum-visibility?sk=" + sk + "&flag-hide-sum=false", addHeaders({Referer: baseurl, 'X-Requested-With':'XMLHttpRequest'}));
 		var json = getJson(text);
 	    getParam('' + json.sum, result, 'balance', null, null, parseBalance);
+	    AnyBalance.trace('Скрываем баланс обратно, чтобы стало, как было...');
+		AnyBalance.requestGet(baseurl + "ajax/sum-visibility?sk=" + sk + "&flag-hide-sum=true", addHeaders({Referer: baseurl, 'X-Requested-With':'XMLHttpRequest'}));
 	} else {
 	    getParam(textsum, result, 'balance', null, replaceTagsAndSpaces, parseBalance);
 	}

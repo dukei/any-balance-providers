@@ -53,13 +53,32 @@ function main() {
 	getParam(html, result, 'acc', /Лицевой счет:(?:[^>]*>){1}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(html, result, 'status', /lock-status(?:[^>]*>){1}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
     
-	if(isAvailable(['traffic', 'minutes', 'sms'])) {
+	if(isAvailable(['traffic', 'minutes', 'minutes_net', 'traffic2', 'traffic2_till', 'sms'])) {
 		html = AnyBalance.requestGet(baseurl + 'selfcare/account-status.aspx', g_headers);
-		
-		getParam(html, result, 'traffic', /У Вас осталось([\s\S]*?)mb/i, replaceTagsAndSpaces, parseBalance);
-		getParam(html, result, 'traffic2', /У Вас осталось([^<]+)mb[^<]+Действует до/i, replaceTagsAndSpaces, parseBalance);
-		getParam(html, result, 'minutes', /Осталось([^<]+)минут/i, replaceTagsAndSpaces, parseBalance);  
-		getParam(html, result, 'sms', /Осталось([^<]+)(?:смс|sms)/i, replaceTagsAndSpaces, parseBalance);  
+
+		var status = getElement(html, /<ul[^>]+account-status[^>]*>/i);
+		var items = getElements(status, /<li[^>]*>/ig);
+		for(var i=0; i<items.length; ++i){
+			var opt = items[i], matches;
+			AnyBalance.trace('Разбираем ' + opt);
+			if(matches = /(?:У Вас осталось|U Vas ostalos)([^<]+mb)[^<]+(?:Действует до|Dejstvuet do)([^<]*)/i.exec(opt)){
+				sumParam(matches[1], result, 'traffic2', null, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
+				sumParam(matches[2], result, 'traffic2_till', null, replaceTagsAndSpaces, parseDate, aggregate_min);
+			}else if(matches = /(?:У Вас осталось|U Vas ostalos)([\s\S]*?)mb/i.exec(opt)){
+				getParam(matches[1], result, 'traffic', null, replaceTagsAndSpaces, parseBalance);
+			}else if(matches = /Осталось([^<]+)минут[^<]+Действует до([^>]*)/i.exec(opt)){
+				sumParam(matches[1], result, 'minutes2', null, replaceTagsAndSpaces, parseBalance, aggregate_sum);  
+				sumParam(matches[2], result, 'minutes2_till', null, replaceTagsAndSpaces, parseDate, aggregate_min);  
+			}else if(matches = /Осталось([^<]+)минут[^<]+UMS/i.exec(opt)){
+				sumParam(matches[1], result, 'minutes_net', null, replaceTagsAndSpaces, parseBalance, aggregate_sum);  
+			}else if(matches = /Осталось([^<]+)минут[^<]/i.exec(opt)){
+				sumParam(matches[1], result, 'minutes', null, replaceTagsAndSpaces, parseBalance, aggregate_sum);  
+			}else if(matches = /Осталось([^<]+)(?:смс|sms)/i.exec(opt)){
+				sumParam(matches[1], result, 'sms', /Осталось([^<]+)(?:смс|sms)/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);  
+			}else{
+				AnyBalance.trace('Не удалось разобрать эту опцию :(');
+			}
+		}
 	}
 	
 	AnyBalance.setResult(result);

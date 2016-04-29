@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="23">ab-money-yandex</id>
+	<id version="24">ab-money-yandex</id>
 	<api flags="no_browser" />
 	<name>Яндекс.Деньги</name>
 	<description html="true"><![CDATA[
@@ -15,13 +15,12 @@
 	]]></instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>
-		<module id="login/yandex"/>
+		<module id="extract/abe-money-yandex"/>
 	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
 		<history>history.xml</history>
-		<js>extract.js</js>
 		<js>main.js</js>
 	</files>
 	<counters>

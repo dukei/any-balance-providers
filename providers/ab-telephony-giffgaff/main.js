@@ -61,7 +61,7 @@ function main() {
 	};
 
 	AB.getParam(html, result, 'balance', /balance-box([^>]+>){4}/i, AB.replaceTagsAndSpaces, AB.parseBalance);
-	AB.getParam(html, result, 'fio', /user-details([^>]+>){4}/i, AB.replaceTagsAndSpaces);
+	AB.getParam(html, result, 'accountName', /user-details([^>]+>){4}/i, AB.replaceTagsAndSpaces);
 	AB.getParam(html, result, 'phone', /user-details([^>]+>){14}/i, AB.replaceTagsAndSpaces);
 
 	AnyBalance.setResult(result);

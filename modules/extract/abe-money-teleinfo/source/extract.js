@@ -484,7 +484,7 @@ function processCard(p, result){
     getParam(p.status.id, result, 'cards.status'); //ACTIVE
 
     //Для кредитной карты получаем больше параметров
-    if(/Credit/.test(p.__type) && AnyBalance.isAvailable('cards.limit', 'cards.pct', 'cards.minpay', 'cards.gracepay', 'cards.credit_till', 'cards.minpaytill', 'cards.gracetill')){
+    if(/Credit/.test(p.__type) && AnyBalance.isAvailable('cards.limit', 'cards.pct', 'cards.minpay', 'cards.gracepay', 'cards.credit_till', 'cards.minpay_till', 'cards.grace_till')){
         var obj = request(new Message({
             __type: 'ru.vtb24.mobilebanking.protocol.ObjectRequest',
             identity: {

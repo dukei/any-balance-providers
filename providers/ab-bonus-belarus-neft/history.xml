@@ -1,12 +1,15 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
-  <change version="7" date="2016-03-09">
+	<change version="8" date="2016-04-27">
+	- Добавлены счётчики: сумма предоставленной скидки, шансы приз 1, шансы приз 2, сопут. товары (услуги), статус.
+	</change>
+    <change version="7" date="2016-03-09">
     - Поддержка изменений на сайте.
-  </change>
-  <change version="6" date="2016-01-17">
+    </change>
+    <change version="6" date="2016-01-17">
     - Добавлен счетчик: Размер скидки в следующем месяце.
-  </change>
-  <change version="5" date="2014-02-17">
+    </change>
+    <change version="5" date="2014-02-17">
 	- Поддержка изменений на сайте.
 	</change>
 	<change version="3" date="2013-07-11">

@@ -484,7 +484,7 @@ function processCard(p, result){
     getParam(p.status.id, result, 'cards.status'); //ACTIVE
 
     //Для кредитной карты получаем больше параметров
-    if(/Credit/.test(p.__type) && AnyBalance.isAvailable('cards.limit', 'cards.pct', 'cards.minpay', 'cards.gracepay', 'cards.credit_till', 'cards.minpaytill', 'cards.gracetill')){
+    if(/Credit/.test(p.__type) && AnyBalance.isAvailable('cards.limit', 'cards.pct', 'cards.minpay', 'cards.gracepay', 'cards.credit_till', 'cards.minpay_till', 'cards.grace_till')){
         var obj = request(new Message({
             __type: 'ru.vtb24.mobilebanking.protocol.ObjectRequest',
             identity: {
@@ -724,8 +724,10 @@ function processCredit(p, result){
     getParam(p.creditSum.sum, result, 'credits.limit');
     getParam(p.creditSum.currency.currencyCode, result, ['credits.currency', 'credits.balance', 'credits.limit']);
     getParam(p.account.amount.sum, result, 'credits.balance');
-    getParam(p.account.contract.contractPeriod.unit.id, result, 'credits.period_unit'); //MONTH
-    getParam(p.account.contract.contractPeriod.value, result, 'credits.period');
+    if(p.account.contract.contractPeriod){
+    	getParam(p.account.contract.contractPeriod.unit.id, result, 'credits.period_unit'); //MONTH
+    	getParam(p.account.contract.contractPeriod.value, result, 'credits.period');
+    }
     if(p.issueDate)
         getParam(p.issueDate.getTime(), result, 'credits.date_start');
     if(p.endDate)
@@ -757,11 +759,19 @@ function processCredit(p, result){
     }
 
     if(AnyBalance.isAvailable('credits.schedule')){
-        processCreditSchedule(p, result);
+    	try{
+        	processCreditSchedule(p, result);
+        }catch(e){
+        	AnyBalance.trace('Ошибка получения графика погашения: ' + e.message);
+        }
     }
 
     if(AnyBalance.isAvailable('credits.transactions')){
-        processCreditTransactions(p, result);
+    	try{
+        	processCreditTransactions(p, result);
+        }catch(e){
+        	AnyBalance.trace('Ошибка получения графика погашения: ' + e.message);
+        }
     }
 }
 

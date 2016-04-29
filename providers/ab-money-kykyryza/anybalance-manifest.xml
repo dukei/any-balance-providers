@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="19" major_version="1.0">ab-money-kykyryza</id>
+	<id version="20" major_version="1.0">ab-money-kykyryza</id>
 	<api flags="no_browser" />
 	<name>Платежный кабинет Кукуруза</name>
 	<description html="true"><![CDATA[
@@ -19,11 +19,13 @@
 	<counters>
 		<counter id="balance" name="Баланс" units=" р"/>
 		<counter id="minpay" name="Сумма минимального платежа" units=" р"/>
+		<counter id="curr_credit" name="Текущая задолженность по кредиту" units=" р"/>
 		<counter id="bonus" name="Бонусы" units="балла"/>
 		<counter id="bonus_avail" name="Бонусы доступные" units=" балла"/>
 		<counter id="limit" name="Кредитный лимит" units=" р"/>
 		<counter id="own" name="Собственные средства" units=" р"/>
         <counter id="minpay_till" name="Оплатить минимальный платёж до" type="time" format="dd/MM/yyyy"/>
+        <counter id="minpay_date_end" name="Дата окончания платежного периода" type="time" format="dd/MM/yyyy"/>
     </counters>
 	<keywords>Кукуруза, Платёжный кабинет</keywords>
 	<type>money, wallet</type>

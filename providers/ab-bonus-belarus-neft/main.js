@@ -28,7 +28,7 @@ function main(){
 	
 	var html = AnyBalance.requestPost(baseurl + 'lprogram/login', {
         loginName: prefs.login,
-		txtPassword: pass,
+		    txtPassword: pass,
         passHesh: passHash
     }, AB.addHeaders({Referer: baseurl + 'lprogram/index.jsp', Origin:baseurl}));
 	
@@ -44,11 +44,23 @@ function main(){
 	
     var result = {success: true};
 
-    AB.getParam(html, result, 'fio', /Здравствуйте,[^>]*>([^\(<]*)/i, AB.replaceTagsAndSpaces);
-    AB.getParam(html, result, 'balance', /баллы:([^>]+>){3}/i, AB.replaceTagsAndSpaces, AB.parseBalance);
-    AB.getParam(html, result, 'discount', /скидка на топливо([^>]+>){3}/i, AB.replaceTagsAndSpaces, AB.parseBalance);
+    AB.getParam(html, result, 'fio',      /Здравствуйте,[^>]*>([^\(<]*)/i, AB.replaceTagsAndSpaces);
+    AB.getParam(html, result, 'status',   /статус(?:[^>]*>){2}([^<]*)/i, AB.replaceTagsAndSpaces);
+    AB.getParam(html, result, 'products', /Сопут\. товары(?:[^>]*>){2}([^<]*)/i, AB.replaceTagsAndSpaces, AB.parseBalance);
+    AB.getParam(html, result, 'chance_1', /Шансы приз 1(?:[^>]*>){2}([^<]*)/i, AB.replaceTagsAndSpaces, AB.parseBalance);
+    AB.getParam(html, result, 'chance_2', /Шансы приз 2(?:[^>]*>){2}([^<]*)/i, AB.replaceTagsAndSpaces, AB.parseBalance);
+    AB.getParam(html, result, 'balance',  /баллы:([^>]+>){3}/i, AB.replaceTagsAndSpaces, AB.parseBalance);
     AB.getParam(html, result, 'card_num', /info_label[\s\S]*?карта\D+(\d+)/i, AB.replaceTagsAndSpaces);
     AB.getParam(html, result, '__tariff', /info_label[\s\S]*?карта\D+(\d+)/i, AB.replaceTagsAndSpaces);
-	
+
+    if(isAvailable(['discount', 'discount_sum'])) {
+      html = AnyBalance.requestGet(baseurl + 'lprogram/cabinet/bonus.jsp', g_headers);
+
+      AB.getParam(html, result, 'discount',     /Размер скидки(?:[\s\S]*?<td[^>]*>){6}([\s\S]*?)<\/td>/i,                AB.replaceTagsAndSpaces, AB.parseBalance);
+      AB.getParam(html, result, 'discount_sum', /Сумма предоставленной скидки(?:[\s\S]*?<td[^>]*>){6}([\s\S]*?)<\/td>/i, AB.replaceTagsAndSpaces, AB.parseBalance);
+
+    }
+
+    //AB.getParam(html, result, 'discount', /скидка на топливо([^>]+>){3}/i, AB.replaceTagsAndSpaces, AB.parseBalance);
     AnyBalance.setResult(result);
 }

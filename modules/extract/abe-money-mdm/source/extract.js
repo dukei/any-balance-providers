@@ -504,7 +504,7 @@ function processInfo(html, result){
         getParam(html, info, 'info.name', /Имя:[\s\S]*?<input[^>]+value="([^"]*)/i, replaceHtmlEntities);
         getParam(html, info, 'info.pname', /Отчество[\s\S]*?<input[^>]+value="([^"]*)/i, replaceHtmlEntities);
         getParam(html, info, 'info.birth_place', /Место рождения[\s\S]*?<input[^>]+value="([^"]*)/i, replaceHtmlEntities);
-        getParam(html, info, 'info.birthday', /Дата рождения[\s\S]*?<input[^>]+value="([^"]*)/i, replaceHtmlEntities);
+        getParam(html, info, 'info.birthday', /Дата рождения[\s\S]*?<input[^>]+value="([^"]*)/i, replaceHtmlEntities, parseDate);
         getParam(html, info, 'info.inn', /ИНН:[\s\S]*?<input[^>]+value="([^"]*)/i, replaceHtmlEntities);
         getParam(html, info, 'info.resident', /Резидентность:[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, function(str){return /да/i.test(str)});
     }

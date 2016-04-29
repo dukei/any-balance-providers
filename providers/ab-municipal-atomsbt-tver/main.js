@@ -70,6 +70,16 @@ function main() {
 	getParam(html, result, 'accrued', /Начислено(?:[^>]*>){4}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'paid', /Оплачено(?:[^>]*>){4}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'adress', /Адрес(?:[^>]*>){4}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+
+  if(isAvailable('saldo')) {
+    html = AnyBalance.requestGet(baseurl + 'cabinet_tver/cabinet.php?nachisl', g_headers);
+    getParam(html, result, 'saldo', /Начисления и платежи(?:[\s\S]*?<tr[^>]*>){15}(?:[\s\S]*?<td[^>]*>){5}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+  }
+
+  if(isAvailable('device_value')) {
+    html = AnyBalance.requestGet(baseurl + 'cabinet_tver/cabinet.php?hist_counters', g_headers);
+    getParam(html, result, 'device_value', /История показаний счетчиков(?:[\s\S]*?<tr[^>]*>){2}(?:[\s\S]*?<td[^>]*>){3}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+  }
 	
 	AnyBalance.setResult(result);
 }

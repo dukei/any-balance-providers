@@ -6,7 +6,7 @@ var g_headers = {
 	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
 	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
 	'Connection': 'keep-alive',
-	'User-Agent': 'User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/48.0.2564.116 Safari/537.36'
+	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/48.0.2564.116 Safari/537.36'
 };
 
 var baseurl = 'https://direkt.otpbank.ru';
@@ -71,7 +71,60 @@ function login() {
 // Обработка счетов
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 function processAccounts(html, result) {
-    throw new AnyBalance.Error("Обработка счетов пока не поддерживается, пожалуйста обратитесь к разработчику.");
+    if(!AnyBalance.isAvailable('accounts'))
+      return;
+
+    var table    = getParam(html, null, null, /<table[^>]+id="szamlaT"[^>]*>((?:[\s\S](?!<table)|[\s\S]<table[\s\S]*?<\/table>)*?)<\/table>/i),
+        accounts = sumParam(table, null, null, /<tr[^>]+class="(?:paratlan|paros)[^>]*>((?:[\s\S](?!<table)|[\s\S]<table[\s\S]*?<\/table>)*?)<\/tr>/ig) || [];
+
+    if(!accounts.length) {
+      AnyBalance.trace(html);
+      AnyBalance.trace("Не удалось найти счета.");
+      return;
+    }
+
+    AnyBalance.trace("Найдено счетов: " + accounts.length);
+    result.accounts = [];
+
+    for(var i = 0; i < accounts.length; ++i) {
+      var id    = getParam(accounts[i], null, null, /<input[^>]+NumberInput[^>]+value\s*=\s*"([^"]*)/i, replaceTagsAndSpaces),
+          num   = getParam(accounts[i], null, null, /<input[^>]+NumberInput[^>]+value\s*=\s*"([^"]*)/i, replaceTagsAndSpaces),
+          title = getParam(accounts[i], null, null, /<div[^>]+nagyelsooszlop_1[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+
+      var c = {__id: id, __name: title, num: num};
+
+      if (__shouldProcess('accounts', c)) {
+        processAccount(accounts[i], c);
+      }
+
+      result.accounts.push(c);
+    }
+}
+
+function processAccount(account, result) {
+    AnyBalance.trace('Обработка счёта ' + result.__id);
+
+    var href = getParam(account, null, null, /<a[^>]+href="([^"]*)[^>]+id="reszleteslink/i, replaceHtmlEntities);
+    if(!href) {
+      AnyBalance.trace("Не удалось найти ссылку на детальную информацию по счёту " + result.__id);
+      return;
+    }
+
+    getParam(account, result, 'accounts.balance', /<div[^>]+hatodikoszlop[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+    getParam(account, result, ['accounts.currency', 'accounts.balance'], /<div[^>]+hatodikoszlop[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseCurrency);
+
+    var html = AnyBalance.requestGet(baseurl + href, addHeaders({
+      Referer: baseurl + 'homebank/do/bankszamla/bankszamlaMuvelet'
+    }));
+    html = waitForTransactionEx(html);
+
+    getParam(html, result, 'accounts.date_start', /Дата открытия(?:[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
+    getParam(html, result, 'accounts.blocked', /Заблокированная сумма(?:[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'accounts.product', /Наименование продукта(?:[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+
+    if(isAvailable('accounts.transactions')) {
+      processAccountTransactions(html, account, result);
+    }
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Обработка карт
@@ -81,10 +134,10 @@ function processCards(html, result) {
 		return;
 
 	var cards = getParam(html, null, null, /<table[^>]+id="kartyaT"[^>]*>((?:[\s\S](?!<table)|[\s\S]<table[\s\S]*?<\/table>)*?)<\/table>/i);
-
 	//В строках таблицы продуктов могут быть вложенные таблицы. Извращенцы...
 	var rows = sumParam(cards, null, null, /<tr[^>]+class="(?:paratlan|paros)[^>]*>((?:[\s\S](?!<table)|[\s\S]<table[\s\S]*?<\/table>)*?)<\/tr>/ig) || [];
-	if(!rows.length) {
+
+  if(!rows.length) {
 		AnyBalance.trace(html);
 		AnyBalance.trace("Карты не найдены.");
 		return;
@@ -94,9 +147,9 @@ function processCards(html, result) {
 	result.cards = [];
 	
 	for(var i=0; i < rows.length; ++i){
-		var id = getParam(rows[i], null, null, /<div[^>]+nagyharmadikoszlop_1[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
-		var num = getParam(rows[i], null, null, /<div[^>]+nagyharmadikoszlop_1[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
-		var title = getParam(rows[i], null, null, /<input[^>]+nameinput[^>]+value\s*=\s*"([^"]*)/i, replaceTagsAndSpaces);
+		var id    = getParam(rows[i], null, null, /<div[^>]+nagyharmadikoszlop_1[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces),
+        num   = getParam(rows[i], null, null, /<div[^>]+nagyharmadikoszlop_1[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces),
+        title = getParam(rows[i], null, null, /<input[^>]+nameinput[^>]+value\s*=\s*"([^"]*)/i, replaceTagsAndSpaces);
 
 		var c = {__id: id, __name: title, num: num};
 
@@ -117,7 +170,7 @@ function processCard(card, result) {
 		return;
 	}
 
-	getParam(card, result, 'cards.balance', /<span[^>]+nonbold[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(card, result, 'cards.balance', /<div[^>]+hatodikoszlop[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
 
 	var html = AnyBalance.requestGet(baseurl + href, g_headers);
 	html = waitForTransactionEx(html);
@@ -142,13 +195,14 @@ function processCard(card, result) {
 	getParam(html, result, 'cards.date_start', /дата выпуска карты(?:[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
 	getParam(html, result, 'cards.till', /Дата окончания действия карты(?:[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
 
-	getParam(html, result, 'cards.pPct', /при оплате товаров(?:[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
-	getParam(html, result, 'cards.wPct', /при снятии наличных(?:[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+	getParam(html, result, 'cards.pPct', /при оплате товаров(?:[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'cards.wPct', /при снятии наличных(?:[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'cards.aCard', /дополнительная карта(?:[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
 
 
-	if(isAvailable('cards.transactions'))
-		processCardTransactions(html, card, result);
+	if(isAvailable('cards.transactions')) {
+    processCardTransactions(html, card, result);
+  }
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -158,9 +212,10 @@ function processDeposits(html, result) {
 	if(!AnyBalance.isAvailable('deposits'))
 		return;
 
-	var table = getParam(html, null, null, /<table[^>]+id="betetT"[^>]*>((?:[\s\S](?!<table)|[\s\S]<table[\s\S]*?<\/table>)*?)<\/table>/i);
-	var deposits = sumParam(table, null, null, /<tr[^>]+class="(?:paratlan|paros)[^>]*>((?:[\s\S](?!<table)|[\s\S]<table[\s\S]*?<\/table>)*?)<\/tr>/ig) || [];
-	if(!deposits.length) {
+	var table    = getParam(html, null, null, /<table[^>]+id="betetT"[^>]*>((?:[\s\S](?!<table)|[\s\S]<table[\s\S]*?<\/table>)*?)<\/table>/i),
+      deposits = sumParam(table, null, null, /<tr[^>]+class="(?:paratlan|paros)[^>]*>((?:[\s\S](?!<table)|[\s\S]<table[\s\S]*?<\/table>)*?)<\/tr>/ig) || [];
+
+  if(!deposits.length) {
 		AnyBalance.trace(html);
 		AnyBalance.trace("Не удалось найти депозиты.");
 		return;
@@ -170,9 +225,9 @@ function processDeposits(html, result) {
 	result.deposits = [];
 	
 	for(var i=0; i < deposits.length; ++i){
-		var id = getParam(deposits[i], null, null, /<div[^>]+class="harmadikmegnagyoszlop_1[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
-		var num = getParam(deposits[i], null, null, /<div[^>]+class="harmadikmegnagyoszlop_1[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
-		var title = getParam(deposits[i], null, null, /<div[^>]+class="nagyelsooszlop_1"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+		var id    = getParam(deposits[i], null, null, /<div[^>]+class="harmadikmegnagyoszlop_1[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces),
+        num   = getParam(deposits[i], null, null, /<div[^>]+class="harmadikmegnagyoszlop_1[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces),
+        title = getParam(deposits[i], null, null, /<div[^>]+class="nagyelsooszlop_1"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
 		
 		var c = {__id: id, __name: title, num: num};
 		
@@ -198,6 +253,7 @@ function processDeposit(deposit, result) {
 
 	getParam(html, result, 'deposits.till', /Дата закрытия вклада[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
 	getParam(html, result, 'deposits.available', /Доступная сумма для расхода[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, ['deposits.currency', 'deposits.balance', 'deposits.available', 'deposits.aBalance', 'deposits.mindep', 'deposits.blocked', 'deposits.minsaldo'], /Доступная сумма для расхода[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseCurrency);
 	getParam(html, result, 'deposits.aBalance', /Доступный остаток[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'deposits.topup', /Возможность пополнения[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
 	getParam(html, result, 'deposits.withdraw', /Возможность расходных операций[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);

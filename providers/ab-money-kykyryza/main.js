@@ -69,8 +69,10 @@ function doNewCabinet(prefs){
 
     if(isAvailable('minpay', 'minpay_till')) {
       html = AnyBalance.requestGet(baseurl + 'personal/credit-limit', g_headers);
-      getParam(html, result, 'minpay', /<div[^>]+b-credit__notice[^>]*>(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
-      getParam(html, result, 'minpay_till', /<div[^>]+b-credit__notice[^>]*>(?:[^>]*>){5}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseDate);
+      getParam(html, result, 'curr_credit', /Текущая задолженность по кредиту(?:[^>]*>)([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+      getParam(html, result, 'minpay', /Задолженность по минимальному обязательному платежу[\s\S]*?<b[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+      getParam(html, result, 'minpay_till', /необходимо погасить до[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseDate);
+      getParam(html, result, 'minpay_date_end', /Дата окончания платежного периода(?:[^>]*>)([^<]*)/i, replaceTagsAndSpaces, parseDate);
 
     }
     result.__tariff = prefs.login;

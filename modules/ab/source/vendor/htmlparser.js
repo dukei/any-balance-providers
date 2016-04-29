@@ -1,4 +1,6 @@
 /*
+ * https://gist.github.com/cburgmer/2877758   John Resig's JavasScript HTML parser with bug fixes for parsing <script> & <style>
+ * 
  * HTML Parser By John Resig (ejohn.org)
  * Original code by Erik Arvidsson, Mozilla Public License
  * http://erik.eae.net/simplehtmlparser/simplehtmlparser.js
@@ -104,7 +106,7 @@
 				}
 
 			} else {
-				html = html.replace(new RegExp("(.*)<\/" + stack.last() + "[^>]*>"), function(all, text){
+				html = html.replace(new RegExp("^((?:.|\n)*?)<\/" + stack.last() + "[^>]*>"), function(all, text){
 					text = text.replace(/<!--(.*?)-->/g, "$1")
 						.replace(/<!\[CDATA\[(.*?)]]>/g, "$1");
 
@@ -198,8 +200,16 @@
 					results += " " + attrs[i].name + '="' + attrs[i].escaped + '"';
 		
 				results += (unary ? "/" : "") + ">";
+
+				if ( special[ tag ] ) {
+					results += '<![CDATA[';
+				}
 			},
 			end: function( tag ) {
+				if ( special[ tag ] ) {
+				    results += ']]>';
+				}
+
 				results += "</" + tag + ">";
 			},
 			chars: function( text ) {
@@ -266,9 +276,6 @@
 				// its construction
 				if ( one[ tagName ] ) {
 					curParentNode = one[ tagName ];
-					if ( !unary ) {
-						elems.push( curParentNode );
-					}
 					return;
 				}
 			

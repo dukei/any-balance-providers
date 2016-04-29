@@ -50,6 +50,7 @@
 		}
 	];
 
+	//https://habrahabr.ru/post/279409/ Анализируем и тестируем существующие HTML парсеры
 	function htmlTraversal(html) {
 
 		var DOM   = [],	//дерево элементов

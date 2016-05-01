@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+    <id version="1">extract/abe-money-smp</id>
+	<api flags="no_browser" />
+    <name>Extract for СМП Банк</name>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<js>extract.js</js>
+		<history>history.xml</history>
+	</files>
+	<type>money, bank</type>
+	<country>ru</country>
+</provider>

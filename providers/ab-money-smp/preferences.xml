@@ -26,8 +26,8 @@
         key="type" 
         title="Продукт"
         summary="||{@s}"
-        entries="Счет|Карта"
-        entryValues="acc|card"
+        entries="Счет|Карта|Депозит|Кредит"
+        entryValues="acc|card|dep|crd"
 		defaultValue="card">
     </ListPreference> 
     <EditTextPreference
@@ -36,7 +36,7 @@
         summary="|Автоматически|{@s}" 
         dialogTitle="Номер карты" 
         negativeButtonText="Отмена" 
-        dialogMessage="Введите сюда последние цифры номера карты/счета. Если оставить поле пустым, то будет показана информация по первой карте/счету."
-        key="contract">
+        dialogMessage="Введите сюда последние цифры номера карты/счета/депозита/кредита. Если оставить поле пустым, то будет показана информация по первой карте/счету/депозиту/кредиту."
+        key="num">
     </EditTextPreference>
 </PreferenceScreen>

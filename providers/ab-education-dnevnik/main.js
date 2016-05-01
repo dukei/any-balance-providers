@@ -13,8 +13,8 @@ var g_headers = {
 function main() {
 	var prefs = AnyBalance.getPreferences();
 	var baseurlLogin = 'https://login.dnevnik.ru/login';
-    var baseurlChildren = 'https://children.dnevnik.ru';
-    var baseurlSchool = 'https://schools.dnevnik.ru';
+  var baseurlChildren = 'https://children.dnevnik.ru';
+  var baseurlSchool = 'https://schools.dnevnik.ru';
 	AnyBalance.setDefaultCharset('utf-8');
     
 	
@@ -64,16 +64,53 @@ function main() {
             html = AnyBalance.requestGet(href, g_headers);
         }
     }
-        
-        var daysHtml = AB.getElement(html, /<div\s[^>]*id="diarydays"/);
-        if (!daysHtml) {
-            AnyBalance.trace(html);
-            throw new AnyBalance.Error('Не удалось найти оценки, сайт изменен?');
-        }
-	
-	var result = {success: true};
-	
-	var regLesson = '<a\\s*class="strong\\s*" title="[^"]+" href="https?://(?:schools|children).dnevnik.ru/lesson.aspx(?:[^>]*>){15,30}</tr>';
+
+
+
+  var left = getElement(html, /<div[^>]+diarydaysleft[^>]*>/i),
+      right = getElement(html, /<div[^>]+diarydaysright[^>]*>/i);
+
+  if(!left || !right) {
+    AnyBalance.trace(html);
+    throw new AnyBalance.Error("Не удалось найти столбцы с расписанием. Сайт изменён?");
+  }
+
+  var result = {success: true};
+
+  var left_columm   = getElements(left, /<div[^>]+"col24"[^>]*>/ig),
+      right_column  = getElements(right, /<div[^>]+"col24 first"[^>]*>/ig);
+
+  var schedule = left_columm.concat(right_column);
+
+  for(var i = 0; i < schedule.length; i++) {
+    var day = AB.getParam(schedule[i], null, null, /<h3>([\s\S]*?)<\/h3>/i, AB.replaceTagsAndSpaces);
+    if(!day)
+      continue;
+
+    var lessons 	 = getElements(schedule[i], /<tr[^>]*>/ig),
+      total 		 = '<b>' + day + '</b><br/>',
+      totalLessons = '';
+
+    for(var j = 0; j < lessons.length; j++) {
+      var subject = AB.getParam(lessons[j], null, null, /title="([^"]+)/i, AB.replaceTagsAndSpaces);
+      var mark	= AB.getParam(lessons[j], null, null, /class="mark[^>]*>([^<]*)/i, AB.replaceTagsAndSpaces);
+
+      if(mark && subject) {
+        totalLessons += subject + ': ' + mark + '<br/>';
+      }
+    }
+
+    if(totalLessons != '')
+      AB.getParam('<b>' + day + '</b><br/><br/>' + totalLessons, result, 'total' + i);
+  }
+
+	/*var daysHtml = AB.getElement(html, /<div\s[^>]*id="diarydays"/);
+	 if (!daysHtml) {
+	 AnyBalance.trace(html);
+	 throw new AnyBalance.Error('Не удалось найти оценки, сайт изменен?');
+	 }*/
+
+	/*var regLesson = '<a\\s*class="strong\\s*" title="[^"]+" href="https?://(?:schools|children).dnevnik.ru/lesson.aspx(?:[^>]*>){15,30}</tr>';
 	// Бывает от 1 до 6 уроков
 	//var regDay = new RegExp('<div class="panel blue2 clear">(?:[\\s\\S]*?' + regLesson + '){1,6}', 'ig');
 
@@ -104,7 +141,7 @@ function main() {
 		}
 		if(totalLessons != '')
 			AB.getParam('<b>' + day + '</b><br/><br/>' + totalLessons, result, 'total' + i);
-	}
+	}*/
 	
 	AB.getParam(html, result, 'fio', /header-profile__name[^>]+>([^<]+)/i, AB.replaceTagsAndSpaces);
 	

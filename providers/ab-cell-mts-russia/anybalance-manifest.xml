@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id major_version="4.1" version="141">ab-cell-mts-russia</id>
+	<id major_version="4.1" version="142">ab-cell-mts-russia</id>
 	<name>МТС (Россия)</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе, бонусных баллах, использованных минутах на локальные, мобильные и любимые номера, расходах, статусе блокировки, кредите, номере лицевого счета, ежемесячной плате.</p>
@@ -49,6 +49,8 @@
 		<counter id="sms_till" name="Срок действия пакета SMS" type="time" format="dd/MM/yyyy"/>
 		<counter id="mms_till" name="Срок действия пакета MMS" type="time" format="dd/MM/yyyy"/>
 		<counter id="traffic_used_mb" name="Истрачено трафика" units=" Mb"/>
+		<counter id="last_pay_sum" name="Последний платеж" units=" р"/>
+		<counter id="last_pay_date" name="Дата последнего платежа" type="time" format="dd/MM/yyyy"/>
 		<counter id="statuslock" name="Статус блокировки" type="text"/>
 		<counter id="credit" name="Кредит" units=" р"/>
 		<counter id="usedinthismonth" name="Расход за этот месяц" units=" р"/>

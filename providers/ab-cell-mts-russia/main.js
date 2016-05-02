@@ -64,6 +64,8 @@ var g_countersTable = {
 		"phone": "info.phone",
 		"bonus_balance": "remainders.bonus_balance",
 		"sms_left_perezvoni": "remainders.sms_left_perezvoni",
+		"last_pay_date": "payments.date",
+		"last_pay_sum": "payments.sum",
 		"__tariff": "tariff"
 	}
 };

@@ -52,13 +52,12 @@ function main () {
         if(error)
             throw new AnyBalance.Error(error, null, /Карточка с таким номером не найдена/i.test(error));
     
-        error = getParam(html, null, null, /<h1[^>]*>\s*An error occurred/i);
+        error = getElement(html, /<div[^>]+class="warning"[^>]*>/i, replaceTagsAndSpaces);
         if(error){
-        	error = getParam(html, null, null, /<b[^>]*>\s*Message:([\s\S]*?)<\/p>/i, replaceTagsAndSpaces);
-        	AnyBalance.trace('Системная ошибка на стороне Евроопта: ' + error);
+        	AnyBalance.trace('Ошибка на стороне Евроопта: ' + error);
         	throw new AnyBalance.Error("Системная ошибка на сайте евроопт. Обращайтесь в их службу поддержки.");
         }
-		
+
         AnyBalance.trace(html);
         throw new AnyBalance.Error('Не удалось получить данные по карте. Сайт изменен?');
     }

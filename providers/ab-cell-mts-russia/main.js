@@ -77,7 +77,7 @@ function initialize(){
 
     checkEmpty(prefs.login, 'Введите телефон (логин)!');
 
-	var ret = loginWithoutPassword();
+	var ret = loginWithoutPassword(); 
 
 	var result = {success: true, __initialization: true, login: prefs.login, password: ret.password};
 

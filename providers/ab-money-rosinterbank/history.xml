@@ -1,5 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="5" date="2016-05-02">
+	- Поддержка изменений на сайте (новый ИБ).
+    - Переход на модули.
+	</change>
 	<change version="4" date="2015-07-01">
 	- Улучшен поиск депозитов по номеру договора.
 	</change>
@@ -9,9 +13,4 @@
 	<change version="2" date="2015-05-14">
 	- Поддержка изменений на сайте.
 	</change>
-<!--
-	<change version="2" date="2014-02-01">
-	- 
-	</change>
--->
 </history>

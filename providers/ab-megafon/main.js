@@ -1934,10 +1934,8 @@ function megafonLK(filial, html){
 	    // getParam(html, result, '__tariff', /<div[^>]+gadget-tariff-name[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
 	// }
 	
-	if(AnyBalance.isAvailable('__tariff')){
-		html = AnyBalance.requestGet(lk_url + 'tariffs/', g_headers);
-		getParam(html, result, '__tariff', /<div[^>]+gadget-tariff-name[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
-	}
+	html = AnyBalance.requestGet(lk_url + 'tariffs/', g_headers);
+	getParam(html, result, '__tariff', /<div[^>]+gadget-tariff-name[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
 	
 	if(AnyBalance.isAvailable('mins_n_free', 'mins_net_left', 'mins_left', 'mins_total', 'mms_left', 'mms_total', 'sms_left', 'sms_total', 
 			'gb_with_you', 'internet_left', 'internet_total', 'internet_cur', 'internet_left_night', 'internet_total_night', 'interent_cur_night')){

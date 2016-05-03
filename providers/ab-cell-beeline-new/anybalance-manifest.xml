@@ -55,14 +55,14 @@
 		<counter id="rub_bonus" name="Рублей БОНУС" units=" руб"/>
 		<counter id="rub_bonus2" name="Денежный бонус" units=" руб"/>
 		<counter id="rub_bonus2_till" name="Денежный бонус доступен до" units=" руб"/>
-		<counter id="min_bi" name="Минуты на Билайн" type="time_interval" format="{@MIN}:{@sec}"/>
-		<counter id="min_local" name="Минуты на местные номера" type="time_interval" format="{@MIN}:{@sec}"/>
+		<counter id="min_bi" name="Минуты на Билайн" type="time_interval" format="{@MIN}" units=" мин"/>
+		<counter id="min_local" name="Минуты на местные номера" type="time_interval" format="{@MIN}" units=" мин"/>
 		<counter id="rub_opros" name="Бонусы по программе Счастливое время" units=" руб"/>
 		<counter id="traffic_left" name="Остаток трафика" units=" Mb"/>
 		<counter id="traffic_left_night" name="Остаток ночного трафика" units=" Mb"/>
 		<counter id="traffic_bonus" name="Бонусный трафик" units=" Mb"/>
-		<counter id="min_left_1" name="Остаток минут 1" type="time_interval" format="{@MIN}:{@sec}"/>
-		<counter id="min_left_2" name="Остаток минут 2" type="time_interval" format="{@MIN}:{@sec}"/>
+		<counter id="min_left_1" name="Остаток минут 1" type="time_interval" format="{@MIN}" units=" мин"/>
+		<counter id="min_left_2" name="Остаток минут 2" type="time_interval" format="{@MIN}" units=" мин"/>
 		<counter id="credit" name="Кредит" units=" {@currency}"/>
 		<counter id="fio" name="ФИО" type="text"/>
 		<counter id="phone" name="Телефон" type="text"/>

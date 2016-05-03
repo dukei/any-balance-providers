@@ -52,9 +52,13 @@ function proceedWithMobileAppAPI(baseurl, prefs, failover) {
 		}
 			
 		if(isAvailable('overpay')) {
-			json = callAPIProc(baseurl + 'info/postpaidDebt?ctn=' + encodedLogin);
+			try{
+				json = callAPIProc(baseurl + 'info/postpaidDebt?ctn=' + encodedLogin);
 			
-			getParam(json.balance + '', result, 'overpay', null, replaceTagsAndSpaces, function (str) {return (apiParseBalanceRound(str) || 0)*-1;});
+				getParam(json.balance + '', result, 'overpay', null, replaceTagsAndSpaces, function (str) {return (apiParseBalanceRound(str) || 0)*-1;});
+			}catch(e){
+				AnyBalance.trace('Не удалось получить переплату: ' + e.message);
+			}
 		}
 	} else {
 		throw new AnyBalance.Error('Неизвестный тип кабинета: ' + payType);
@@ -81,7 +85,7 @@ function proceedWithMobileAppAPI(baseurl, prefs, failover) {
 				// Минуты
 				if(curr.unit == 'SECONDS') {
 					//Приоритет билайна не случаен, их минуты определить сложнее
-					if(/номера других|на других|на все номера/i.test(curr.accName)) {
+					if(/номера других|на других|на все номера|местные.*вызовы/i.test(curr.restName)) {
 						sumParam(curr.rest + ' ' + curr.unit, result, 'min_local', null, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
 					} else {
 						sumParam(curr.rest + ' ' + curr.unit, result, 'min_bi', null, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
@@ -158,7 +162,7 @@ function getBonusesPostAPI(baseurl, payType, encodedLogin, result) {
 				// Минуты
 				if(curr.unitType == 'VOICE') {
 					//Приоритет билайна не случаен, их минуты определить сложнее
-					if(/номера других|на других|на все номера|других операторов|всех|любых/i.test(curr.restName)) {
+					if(/номера других|на других|на все номера|других операторов|всех|любых|местные.*вызовы/i.test(curr.restName)) {
 						sumParam(curr.currValue + ' ', result, 'min_local', null, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
 					} else {
 						sumParam(curr.currValue + ' ', result, 'min_bi', null, replaceTagsAndSpaces, parseMinutes, aggregate_sum);

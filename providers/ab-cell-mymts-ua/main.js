@@ -6,7 +6,7 @@ var g_headers = {
 	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
 	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
 	'Connection': 'keep-alive',
-	'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/48.0.2564.116 Safari/537.36',
+	'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.94 Safari/537.36',
 };
 
 function parseTrafficMb(str){
@@ -118,6 +118,7 @@ function main() {
         sumParam (html, result, 'hvylyny_all1', /40 минут на другие сети, осталось\s*(\d+)\s*секунд на другие сети/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 	//Минуты по Украине и Европы Vodafone
 	sumParam (html, result, 'hvylyny_all2', /минут в месяц RED ., осталось (\d+) бесплатных минут/ig, replaceTagsAndSpaces, parseTime, aggregate_sum);
+        sumParam (html, result, 'hvylyny_all2', /<li>\d+\s*Хвилин на інших операторів по Україні \(RED .\), осталось:\s*([\d\.,]+)\s*мин.<\/li>/ig, replaceTagsAndSpaces, parseTime, aggregate_sum);
 	sumParam (html, result, 'hvylyny_all3', /минуты? в день RED ., осталось (\d+) бесплатных минут/ig, replaceTagsAndSpaces, parseTime, aggregate_sum);
 	sumParam (html, result, 'hvylyny_all4', /минут "Роуминг как дома", осталось (\d+) бесплатных минут/ig, replaceTagsAndSpaces, parseTime, aggregate_sum);
 
@@ -132,6 +133,7 @@ function main() {
 	sumParam (html, result, 'sms_mms_all', /1000 SMS\/MMS по Украине, осталось: (\d+) SMS\/MMS/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 	//СМС и ММС по Украине и Европы Vodafone
 	sumParam (html, result, 'sms_mms_all1', /SMS\/MMS в месяц RED ., осталось (\d+) sms\/mms/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+        sumParam (html, result, 'sms_mms_all1', /<li>\d+\s*SMS\/MMS по Україні \(RED .\), осталось:\s*(\d+)\s*(?:sms|смс|сообщений)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 	sumParam (html, result, 'sms_mms_all2', /SMS\/MMS в день RED ., осталось (\d+) sms\/mms/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 	sumParam (html, result, 'sms_mms_all3', /SMS\/MMS "Роуминг как дома", осталось (\d+) sms\/mms/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 
@@ -157,10 +159,12 @@ function main() {
         //Использовано трафика в тарифах Vodafone
 	//Пакет на месяц в тарифе
 	sumParam (html, result, 'traffic_used1', /(?:Г|М)Б 3G в месяц RED ., использовано:\s*(\d+,?\d*)\s*(?:Кб|kб).<\/span>/ig, null, parseTrafficMb, aggregate_sum);
+        sumParam (html, result, 'traffic_used1', /<li>Передача даних в Україні, використано:\s*(\d+,?\d* *(Кб|Мб|Гб|kb|mb|gb|кб|мб|гб|байт|bytes)).<\/li>/ig, null, parseTraffic, aggregate_sum);
 	//Пакет на месяц в тарифе
 	sumParam (html, result, 'traffic_used2', /Мобильный Интернет на день RED, использовано:\s*(\d+,?\d*)\s*(?:Кб|kб).<\/span>/ig, null, parseTrafficMb, aggregate_sum);
 	//Пакет на месяц в тарифе
 	sumParam (html, result, 'traffic_used3', /Интернет в роуминге \(\d+ гривен в день\), использовано:\s*(\d+,?\d*)\s*(?:Кб|kб).<\/span>/ig, null, parseTrafficMb, aggregate_sum);
+        sumParam (html, result, 'traffic_used3', /<li>Передача даних у Роумінгу, використано:\s*(\d+,?\d* *(Кб|Мб|Гб|kb|mb|gb|кб|мб|гб|байт|bytes)).<\/li>/ig, null, parseTraffic, aggregate_sum);
 	//Пакет на месяц в тарифе
 	sumParam (html, result, 'traffic_used4', /Мобильный Интернет "Роуминг как дома", использовано:\s*(\d+,?\d*)\s*(?:Кб|kб).<\/span>/ig, null, parseTrafficMb, aggregate_sum);
 

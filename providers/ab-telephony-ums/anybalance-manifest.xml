@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="4">ab-telephony-ums</id>
+	<id version="5">ab-telephony-ums</id>
 	<api flags="no_browser"/>
 	<name>UMS (Узбекистан)</name>
 	<description html="true"><![CDATA[

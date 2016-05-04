@@ -1,33 +1,38 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="4">ab-money-rosinterbank</id>
+	<id version="5">ab-money-rosinterbank</id>
 	<api flags="no_browser"/>
 	<name>Росинтербанк</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе на картах и счетах Росинтербанка http://www.rosinterbank.ru/</p>
-	<p>Информация берется из Интернет-банка https://b2c.rosinterbank.ru/lite/app/</p>
+	<p>Информация берется из Интернет-банка https://b2c.rosinterbank.ru/app/</p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+    <depends>
+        <module id="library"/>
+        <module id="nadapter"/>
+        <module id="extract/abe-money-rosinterbank"/>
+    </depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
 	<counters>
 		<counter id="balance" name="Остаток" units=" {@currency}"/>
-		<counter id="credit_used" name="Использованный кредит" units=" {@currency}"/>
-		<counter id="credit_pay_to" name="Оплатить до" type="time" format="dd/MM/yyyy"/>
-		<counter id="credit_pay_sum" name="Сумма платежа по кредиту" units=" {@currency}"/>
-		<counter id="accamount" name="Средств на счете" units=" {@currency}"/>
-		<counter id="currency" name="Валюта" type="text"/>
-		<counter id="free" name="Свободных средств (не на картах)"/>
-		<counter id="blocked" name="Необработанные операции"/>
+		<counter id="pct_charged" name="Сумма выплаченных процентов" units=" {@currency}"/>
+		<counter id="income_tax" name="Налог на доход" units=" {@currency}"/>
+        <counter id="pct" name="Процентная ставка" units="%"/>
+        <counter id="currency" name="Валюта" type="text"/>
 		<counter id="cardnum" name="Номер карты" type="text"/>
-		<counter id="cardname" name="Тип карты" type="text"/>
 		<counter id="accnum" name="Номер счета" type="text"/>
-		<counter id="accname" name="Имя счета" type="text"/>
+		<counter id="status" name="Статус" type="text"/>
+		<counter id="holder" name="Держатель карты" type="text"/>
+		<counter id="name" name="Название карты/счёта/депозита" type="text"/>
+		<counter id="till" name="Срок действия" type="time" format="MM/yy"/>
+		<counter id="date_start" name="Дата открытия" type="time" format="dd/MM/yyyy"/>
+		<counter id="topup_till" name="Пополнение вклада возможно до" type="time" format="dd/MM/yyyy"/>
 	</counters>
 	<keywords></keywords>
 	<type>money, bank</type>

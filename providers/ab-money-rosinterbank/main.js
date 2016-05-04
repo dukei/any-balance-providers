@@ -1,144 +1,146 @@
 ﻿/**
-Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
-*/
+ Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
+ */
 
-var g_phrases = {
-   karty: {card: 'карты', acc: 'счета', dep: 'договора на вклад'},
-   kartu: {card: 'карту', acc: 'счет', dep: 'договор на вклад'},
-   karte1: {card: 'первой карте', acc: 'первому счету', dep: 'первому вкладу'},
-   karty1: {card: 'одной карты', acc: 'одного счета', dep: 'одного вклада'}
+var g_countersTable = {
+  common: {
+    'fio': 'info.fio'
+  },
+  card: {
+    "__tariff": "cards.num",
+    "currency": "cards.currency",
+    "balance":  "cards.balance",
+    "cardnum":  "cards.num",
+    "status":   "cards.status",
+    "holder":   "cards.holderName",
+    "name":     "cards.__name",
+    "till":     "cards.till"
+  },
+  acc: {
+    "__tariff": "accounts.num",
+    "currency": "accounts.currency",
+    "balance":  "accounts.balance",
+    "accnum":   "accounts.num",
+    "name":     "accounts.__name",
+  },
+  dep: {
+    "pct_charged":"deposits.pct_charged",
+    "date_start": "deposits.date_start",
+    "income_tax": "deposits.income_tax",
+    "topup_till": "deposits.topup_till",
+    "__tariff":   "deposits.num",
+    "currency":   "deposits.currency",
+    "balance":    "deposits.balance",
+    "name":       "deposits.__name",
+    "pct":        "deposits.pct",
+  }
+};
+
+function shouldProcess(counter, info){
+  var prefs = AnyBalance.getPreferences();
+
+  if(!info || (!info.__id || !info.__name))
+    return false;
+
+  switch(counter){
+    case 'cards':
+    {
+      if(prefs.type != 'card')
+        return false;
+      if(!prefs.num)
+        return true;
+
+      if(endsWith(info.num, prefs.num))
+        return true;
+
+      return false;
+    }
+    case 'accounts':
+    {
+      if(prefs.type != 'acc')
+        return false;
+      if(!prefs.num)
+        return true;
+
+      if(endsWith(info.num, prefs.num))
+        return true;
+    }
+    case 'credits':
+    {
+      if(prefs.type != 'crd')
+        return false;
+      if(!prefs.num)
+        return true;
+
+      if(endsWith(info.num, prefs.num))
+        return true;
+    }
+    case 'deposits':
+    {
+      if(prefs.type != 'dep')
+        return false;
+      if(!prefs.num)
+        return true;
+
+      if(endsWith(info.num, prefs.num))
+        return true;
+    }
+    default:
+      return false;
+  }
 }
 
-//Заменяем системную строку замен
-var myReplaceTagsAndSpaces = [replaceTagsAndSpaces, /(\d)\-(\d)/g, '$1.$2'];
+function main() {
+  var prefs = AnyBalance.getPreferences();
 
-function main(){
-    var prefs = AnyBalance.getPreferences();
-    var baseurl = "https://b2c.rosinterbank.ru/lite/app";
-    AnyBalance.setDefaultCharset("utf-8");
-	
-    var what = prefs.what || 'card';
-    if(prefs.num && !/\d{4}/.test(prefs.num))
-        throw new AnyBalance.Error("Введите 4 последних цифры номера " + g_phrases.karty[what] + " или не вводите ничего, чтобы показать информацию по " + g_phrases.karte1[what]);
-	
-    var html = AnyBalance.requestGet(baseurl + "/pub/Login");
-    
-    var matches = /Wicket.Ajax.ajax\(\{"f":"id([^"]+)","\w":".\/([^"]+)/i.exec(html);
-    if(!matches){
-        var prof = getParam(html, null, null, /<title>(Профилактические работы)<\/title>/i);
-        if(prof)
-            throw new AnyBalance.Error("В настоящее время в системе Интернет-банк проводятся профилактические работы. Пожалуйста, попробуйте ещё раз позже.");
-        throw new AnyBalance.Error("Не удаётся найти форму входа в интернет-банк! Сайт недоступен или изменения на сайте.");
-    }
+  if(!/^(card|crd|dep|acc)$/i.test(prefs.type || ''))
+    prefs.type = 'card';
 
-    var id=matches[1], href=matches[2];
-    var params = {};
-    params[id + "_hf_0"] = '';
-    params.hasData = 'X';
-    params.login=prefs.login;
-    params.password=prefs.password;
+  var adapter = new NAdapter(joinObjects(g_countersTable[prefs.type], g_countersTable.common), shouldProcess);
 
-    html = AnyBalance.requestPost(baseurl + '/pub/' + href, params);
+  adapter.processCards    = adapter.envelope(processCards);
+  adapter.processAccounts = adapter.envelope(processAccounts);
+  adapter.processCredits  = adapter.envelope(processCredits);
+  adapter.processDeposits = adapter.envelope(processDeposits);
+  adapter.processInfo     = adapter.envelope(processInfo);
 
-    var error = getParam(html, null, null, /<span[^>]*class="feedbackPanelERROR"[^>]*>([\s\S]*?)(<script|<\/span>)/i, replaceTagsAndSpaces);
-    if(error)
-        throw new AnyBalance.Error(error);
+  var html = login(prefs);
 
-    var needsms = getParam(html, null, null, /(sms-message-panel|Введите SMS-код)/i);
-    if(needsms)
-        throw new AnyBalance.Error("Для работы этого провайдера требуется отключить в настройках интернет-банка подтверждение входа по СМС. Это безопасно, для совершения операций все равно будет требоваться подтверждение по СМС.");
+  var result = {success: true};
 
-    AnyBalance.trace("We seem to enter the bank...");
+  adapter.processInfo(html, result);
 
-    if(what == 'dep')
-        mainDep(what, baseurl);
-    else
-        mainCardAcc(what, baseurl);
-}
+  if(prefs.type == 'card') {
+    adapter.processCards(html, result);
 
-function mainCardAcc(what, baseurl){
-    var prefs = AnyBalance.getPreferences();
-    var html = AnyBalance.requestGet(baseurl + "/priv/accounts");
-	
-    var pattern;
-    if(what == 'card')
-		// Я маньяк :)
-		// <div\s+class="account-block"(?:[^>]*>){3}[^>]*acc_\d+(?:[^>]*>){1,200}\d{4}\s*(?:\*{4}\s*){1,3}3998[\s\S]*?class="account-amounts"(?:[\s\S]*?</div[^>]*>){12}
-        pattern = new RegExp('<div\\s+class="account-block"(?:[^>]*>){3}[^>]*acc_\\d+(?:[^>]*>){1,200}\\d{4}\\s*(?:\\*{4}\\s*){1,3}' + (prefs.num || '\\d{4}')+ '[\\s\\S]*?class="account-amounts"(?:[\\s\\S]*?</div[^>]*>){12}');
-    else
-		// <div\s+class="account-block"(?:[^>]*>){3}[^>]*acc_\d+221738(?:[\s\S]*?</div[^>]*>){12}
-        pattern = new RegExp('<div\\s+class="account-block"(?:[^>]*>){3}[^>]*acc_\\d+' + (prefs.num || '') + '[\\s\\S]*?class="account-amounts"(?:[\\s\\S]*?</div[^>]*>){12}', 'i');
-	
-	AnyBalance.trace('Pattern is: ' + pattern);
-	var account = getParam(html, null, null, pattern);
-	if(!account) {
-        if(prefs.num)
-            throw new AnyBalance.Error('Не удалось найти ' + g_phrases.kartu[what] + ' с последними цифрами ' + prefs.num);
-		else
-            throw new AnyBalance.Error('Не удалось найти ни ' + g_phrases.karty1[what] + '!');
-    }
-	AnyBalance.trace('Found account block: ' + account);
-	AnyBalance.trace('Card num was: ' + prefs.num);
-	
-	var result = {success: true};
-	
-	getParam(account, result, 'accnum', /Номер:(?:[^>]*>){3}\s*(\d{16,20})/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(account, result, 'accname', /bind\(this\)\);">([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
-	
-	getParam(account, result, '__tariff', new RegExp('\\d{4}\\s*(?:\\*{4}\\s*){2}' + (prefs.num || '\\d{4}'), 'i'), replaceTagsAndSpaces, html_entity_decode);
-	getParam(result.__tariff, result, 'cardnum');
-	
-	var balancesArray = [/Средств на счете[\s\S]*?<span[^>]+class="amount"[^>]*>([\s\S]*?)<\/div/i, /Доступно по картам(?:[^>]*>){2}([\s\S]*?)<\/div/i, 
-		/"card-amounts[^>]*>[^>]*class="amount">[^>]*>((?:[\s\S]*?<\/span>){2})/i, 
-		/Остаток собственных средств на карте(?:[^>]*>){4}([^<]*)/i];
-	
-	getParam(account, result, ['currency', 'balance'], balancesArray, myReplaceTagsAndSpaces, parseCurrency);
-	getParam(account, result, 'balance', balancesArray, myReplaceTagsAndSpaces, parseBalance);
-	// Это актуально только для счета
-	if(what == 'acc')
-		getParam(account, result, 'accamount', balancesArray, myReplaceTagsAndSpaces, parseBalance);
-	// Это только для кредита
-	getParam(account, result, 'credit_used', /Использованный кредит(?:[^>]*>){4}([^<]*)/i, myReplaceTagsAndSpaces, parseBalance);
-	getParam(account, result, 'credit_pay_to', /Оплатить до([^<]*)/i, myReplaceTagsAndSpaces, parseDate);
-	getParam(account, result, 'credit_pay_sum', /Оплатить до(?:[^>]*>){4}([^<]*)/i, myReplaceTagsAndSpaces, parseBalance);
-	
-	// пока не знаю откуда это
-	getParam(account, result, 'blocked', /Сумма необработанных операций[\s\S]{1,70}class="amount">([\s\S]*?)<\/span>/i, myReplaceTagsAndSpaces, parseBalance);
-	
-    AnyBalance.setResult(result);
-}
+    if(!adapter.wasProcessed('cards'))
+      throw new AnyBalance.Error(prefs.num ? 'Не найдена карта с последними цифрами ' + prefs.num : 'У вас нет ни одной карты!');
 
-function mainDep(what, baseurl){
-    var prefs = AnyBalance.getPreferences();
-    var html = AnyBalance.requestGet(baseurl + "/priv/deposits");
-	
-	pattern = new RegExp('<tr>\\s*<td>\\s*<div class="black"(?:[^>]*>){5}[^<]*' + (prefs.num || '') + '(?:[^>]*>){20,30}\\s*</td>\\s*</tr>', 'i');
-	
-	AnyBalance.trace('Pattern is: ' + pattern);
-	var deposit = getParam(html, null, null, pattern);
-	if(!deposit) {
-        if(prefs.num)
-            throw new AnyBalance.Error('Не удалось найти ' + g_phrases.kartu[what] + ' с номером договора ' + prefs.num);
-		else
-            throw new AnyBalance.Error('Не удалось найти ни ' + g_phrases.karty1[what] + '!');
-    }
-	AnyBalance.trace('Found deposit block: ' + deposit);
-	AnyBalance.trace('Deposit num was: ' + prefs.num);
-	
-	var result = {success: true};
-	
-	getParam(deposit, result, '__tariff', /<div class="black"([^>]*>){2}/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(deposit, result, 'accname', /<div class="black"([^>]*>){2}/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(deposit, result, 'cardnum', /class="deposit-link"([^>]*>){4}/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(deposit, result, 'balance', /<div class="black"([^>]*>){17}/i, replaceTagsAndSpaces, parseBalance);
-	getParam(deposit, result, 'currency', /<div class="black"([^>]*>){13}/i, replaceTagsAndSpaces, html_entity_decode);
-	
-    if(AnyBalance.isAvailable('accnum')){
-        var href = getParam(html, null, null, /class="deposit-link" href="[.\/]*([^"]+)/i);
-		
-        html = AnyBalance.requestGet(baseurl + '/' + href);
-        getParam(html, result, 'accnum', /Счет вклада[\s\S]*?<td[^>]*>\s*(\d+)/i);
-    }
+    result = adapter.convert(result);
+  } else if(prefs.type == 'acc') {
+    adapter.processAccounts(html, result);
 
-    AnyBalance.setResult(result);
+    if(!adapter.wasProcessed('accounts'))
+      throw new AnyBalance.Error(prefs.num ? 'Не найден счет с последними цифрами ' + prefs.num : 'У вас нет ни одного счета!');
+
+    result = adapter.convert(result);
+  } else if(prefs.type == 'crd') {
+    adapter.processCredits(html, result);
+
+    if(!adapter.wasProcessed('credits'))
+      throw new AnyBalance.Error(prefs.num ? 'Не найден кредит с последними цифрами ' + prefs.num : 'У вас нет ни одного кредита!');
+
+    result = adapter.convert(result);
+  } else if(prefs.type == 'dep') {
+    adapter.processDeposits(html, result);
+
+    if(!adapter.wasProcessed('deposits'))
+      throw new AnyBalance.Error(prefs.num ? 'Не найден депозит с последними цифрами ' + prefs.num : 'У вас нет ни одного депозита!');
+
+    result = adapter.convert(result);
+  }
+
+  // getParam(html, result, 'bonuses', /МКБ Бонус\s*<span[^>]*>([\s\d]+)&nbsp;баллов/i, replaceTagsAndSpaces, parseBalance);
+
+  AnyBalance.setResult(result);
 }

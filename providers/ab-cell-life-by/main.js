@@ -78,6 +78,8 @@ function main() {
   sumParam(html, result, 'sms_left_other', /SMS на все сети(?:[^>]+>){2}([^<]+)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
   sumParam(html, result, 'sms_left', /SMS внутри сети(?:[^>]+>){2}([^<]+)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
   sumParam(html, result, 'mms_left', /MMS внутри сети(?:[^>]+>){2}([^<]+)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+  // Карманы
+  html = sumParam(html, result, 'carmani_min_left', /(?:&#34;|"|\()карманы(?:&#34;|"|\))(?:[^>]*>){2}([\s\S]*?)<\//ig, replaceTagsAndSpaces, parseBalance, aggregate_sum, true);
   // Минуты
   sumParam(html, result, 'min_left_other', /Звонки (?:на|во) (?:все|другие) сети(?:[^>]+>){2}([^<]+)/ig, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
   sumParam(html, result, 'min_left', /Звонки внутри сети(?:[^>]+>){2}([^<]+)/ig, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
@@ -94,8 +96,6 @@ function main() {
   getParam(html, result, 'balance_bonus', /<tr>\s*<td[^>]*>\s*Бонусный (?:сч(?:е|ё)т\s*(?=<)|баланс:)([\s\S]*?)<\/tr>/i, replaceTagsAndSpaces, parseBalance);
   // Оплаченные обязательства
   getParam(html, result, 'balance_corent', /Оплаченные обязательства(?:[^>]*>){2}([^<]+)/i, replaceTagsAndSpaces, parseBalance);
-  // Карманы
-  getParam(html, result, 'carmani_min_left', /(?:&#34;|")карманы(?:&#34;|")(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
 
   // Life points
   getParam(html, result, 'life_points', /Бонусный счет для участников клуба my life(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);

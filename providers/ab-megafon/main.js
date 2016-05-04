@@ -1934,10 +1934,8 @@ function megafonLK(filial, html){
 	    // getParam(html, result, '__tariff', /<div[^>]+gadget-tariff-name[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
 	// }
 	
-	if(AnyBalance.isAvailable('__tariff')){
-		html = AnyBalance.requestGet(lk_url + 'tariffs/', g_headers);
-		getParam(html, result, '__tariff', /<div[^>]+gadget-tariff-name[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
-	}
+	html = AnyBalance.requestGet(lk_url + 'tariffs/', g_headers);
+	getParam(html, result, '__tariff', /<div[^>]+gadget-tariff-name[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
 	
 	if(AnyBalance.isAvailable('mins_n_free', 'mins_net_left', 'mins_left', 'mins_total', 'mms_left', 'mms_total', 'sms_left', 'sms_total', 
 			'gb_with_you', 'internet_left', 'internet_total', 'internet_cur', 'internet_left_night', 'internet_total_night', 'interent_cur_night')){
@@ -1948,6 +1946,7 @@ function megafonLK(filial, html){
 	if(AnyBalance.isAvailable('bonus_burn')){
 		html = AnyBalance.requestGet(lk_url + 'bonus/', g_headers);
 		getParam(html, result, 'bonus_burn', /<div[^>]+gadget-bonus-summ-2[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+		getParam(html, result, 'bonus_status', /<div[^>]+ui-label-status[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
 	}
 
 	if(AnyBalance.isAvailable('sub_soi', 'sub_smit', 'sub_smio', 'sub_scl', 'sub_scr', 'internet_cost',	'last_pay_sum', 'last_pay_date')) {
@@ -2149,7 +2148,7 @@ function megafonLKFinance(filial, html, result){
 	}
 
 	if(AnyBalance.isAvailable('last_pay_sum', 'last_pay_date')){
-		json = requestPipe(csrf, 'payment/history/list', {OFFSET: 0, SIZE: 5});
+		json = requestPipe(csrf, 'payment/history/list', {offset: 0, size: 5});
 		if(json.payments && json.payments.length){
 			getParam(json.payments[0].amount, result, 'last_pay_sum');
 			getParam(json.payments[0].date, result, 'last_pay_date', null, null, parseDate);
@@ -2221,6 +2220,8 @@ var g_countersTable = {
 		"sms_left": "remainders.sms_left",
 		"mms_left": "remainders.mms_left",
 		"bonus_balance": "bonus_balance",
+		"bonus_status": "bonus_status",
+		"bonus_burn": "bonus_burn",
 		"gb_with_you": "remainders.gb_with_you",
 		"internet_cur": "remainders.internet_cur",
 		"internet_cur_night": "remainders.internet_cur_night",

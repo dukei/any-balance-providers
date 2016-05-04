@@ -976,3 +976,65 @@ function generatePassword() {
     }
     return pass;
 }
+
+function processPayments(baseurl, result) {
+    try{
+        AnyBalance.trace('Получаем платежи...');
+
+        var html = AnyBalance.requestGet(baseurl + 'payment-full-history.aspx', g_headers);
+        checkIHError(html, true);
+        var form = getElement(html, /<form[^>]+aspnetForm[^>]*>/i);
+
+        var dt = new Date();
+        var dtFrom = new Date(dt.getFullYear()-1, dt.getMonth(), dt.getDate());
+        var params = createFormParams(form, function (params, str, name, value) {
+            if (/from$/i.test(name))
+                return fmtDate(dtFrom);
+            if (/to$/i.test(name))
+                return fmtDate(dt);
+
+            return value;
+        });
+
+        setCsrfCookie(baseurl, html);
+
+        html = AnyBalance.requestPost(baseurl + 'payment-full-history.aspx', params, addHeaders({Referer: AnyBalance.getLastUrl()}));
+        checkIHError(html, true);
+
+        var tbl = getElement(html, /<div[^>]+paymentsGridium[^>]*>/i);
+        if(!tbl){
+            var error = getElement(html, /<div[^>]+panelMessage[^>]*>/i, replaceTagsAndSpaces, html_entity_decode);
+            if(error && /платежей не было/i.test(error)){
+                AnyBalance.trace(error);
+                result.payments = [];
+                return;
+            }else{
+                AnyBalance.trace(html);
+                throw new AnyBalance.Error('Не найдена таблица платежей. Сайт изменен?');
+            }
+        }
+
+        tbl = replaceAll(tbl, [/<tfoot[^>]*>[\s\S]*?<\/tfoot>/i, '']);
+
+        result.payments = [];
+
+        var colsDef = {
+            date: {
+                re: /Дата/i,
+                result_func: parseDate
+            },
+            sum: {
+                re: /Сумма/i
+            },
+            descr: {
+                re: /Тип платежа/i,
+                result_func: html_entity_decode
+            }
+        };
+
+        processTable(tbl, result.payments, 'payments.', colsDef);
+    }catch(e){
+        AnyBalance.trace('Не удалось получить платежи: ' + e.message + '\nStack: ' + e.stack);
+    }
+}
+

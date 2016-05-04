@@ -92,7 +92,7 @@ var g_countersTable = {
 function mainRu(baseurl){
 	var prefs = AnyBalance.getPreferences();
 
-	checkEmpty(prefs.password, 'Введите пароль!');
+	checkEmpty(prefs.password, 'Введите пароль!' );
 
 	var ret = login(baseurl);
 

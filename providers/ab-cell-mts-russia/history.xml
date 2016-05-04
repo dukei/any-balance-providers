@@ -1,5 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="4.1" version="142" date="2016-05-02">
+	Добавлены дата и сумма последнего платежа
+	Исправлена дата действия трафика в некоторых случаях
+	Исправлена ошибка  Invalid duplicate regex flag gx
+	</change>
 	<change major_version="4.1" version="141" date="2016-03-10">
 	Исправление получения туристической симкарты
 	Получение минут в некоторых случаях

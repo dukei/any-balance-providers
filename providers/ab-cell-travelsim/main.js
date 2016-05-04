@@ -18,7 +18,7 @@ var g_headers = {
 function main(){
     var prefs = AnyBalance.getPreferences();
 
-    var baseurl = "http://my.travelsim.ua/";
+    var baseurl = "https://my.travelsim.ua/";
 
     AnyBalance.setDefaultCharset('CP1251'); 
 

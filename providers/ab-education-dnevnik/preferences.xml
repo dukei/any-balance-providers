@@ -21,7 +21,7 @@
 		dialogMessage="Введите пароль, используемый для входа в личный кабинет."
 		inputType="textPassword">
 	</EditTextPreference>
-	<EditTextPreference
+	<!--<EditTextPreference
 		title="Идентификатор"
 		key="id"
 		summary="||{@s}"
@@ -29,5 +29,5 @@
 		positiveButtonText="ОК"
 		negativeButtonText="Отмена"
 		dialogMessage="Введите идентификатор ребенка, если он требуется.">
-	</EditTextPreference>
+	</EditTextPreference>-->
 </PreferenceScreen>

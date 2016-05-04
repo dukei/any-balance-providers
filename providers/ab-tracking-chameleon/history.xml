@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="4" date="2016-05-04">
+        Изменил иконку
+	</change>
 	<change version="3" date="2016-04-29">
-	- Для баланса добавлено отображение "р"
+        Для баланса добавлено отображение "р"
 	</change>
 	<change version="2" date="2016-04-29">
-	- Добавлен баланс счёта
+        Добавлен баланс счёта
 	</change>
 	<change version="1" date="2016-02-19">
-	- Первая версия
+        Первая версия
 	</change>
 </history>

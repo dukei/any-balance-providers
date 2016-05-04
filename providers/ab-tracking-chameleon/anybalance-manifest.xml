@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="4">ab-tracking-chameleon</id>
-	<name>Поисковый маяк Хамелеон</name>
+	<id version="5">ab-tracking-chameleon</id>
+	<name>Устройство GPS/ГЛОНАСС мониторинга объектов «Хамелеон»</name>
 	<description html="true"><![CDATA[
-	<p>Автомобильный трекер, автономный поисковый маяк и персональный трекер <a href="http://mychameleon.ru/">«Хамелеон»</a>.</p>
-	<p>Информация берётся из личного кабинета http://gde.mychameleon.ru/</p>
+        <p><a href="http://mychameleon.ru/">Хамелеон</a> совмещает в себе несколько функций: автомобильный трекер, автономный поисковый маяк и персональный трекер.</p>
+        <p>Информация берётся из личного кабинета http://gde.mychameleon.ru/</p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>

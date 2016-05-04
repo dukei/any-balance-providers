@@ -61,9 +61,9 @@ function main(){
     }
 
     var result = {success: true};
-    getParam(html, result, '__tariff', /Статус(?:\s|<[^>]*>)*:([^<]*)/i, replaceTagsAndSpaces);
-    getParam(html, result, 'balance', /Бонусы(?:\s|<[^>]*>)*:([^<]*)/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'wishes', /Желания(?:\s|<[^>]*>)*:([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, '__tariff', /Статус(?:\s|<[^>]*>)*:([^<]*)/i,  replaceTagsAndSpaces);
+    getParam(html, result, 'balance',  /Бонусы(?:\s|<[^>]*>)*:([^<]*)/i,  replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'wishes',   /Желания(?:\s|<[^>]*>)*:([^<]*)/i, replaceTagsAndSpaces, parseBalance);
 
     if(AnyBalance.isAvailable('num', 'sum')){
     	html = AnyBalance.requestGet(baseurl + '/profile/', g_headers);
@@ -72,19 +72,32 @@ function main(){
     	getParam(html, result, 'sum', [/товар\S* на сумму:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, /Учт[ёе]нных покупок нет/i], [replaceTagsAndSpaces, /Учт[ёе]нных покупок нет/i, '0'], parseBalance);
     }
 	
-	if(isAvailable(['obrabotannie', 'pomosh', 'reshennie', 'zhalobi', 'rating', 'position', 'nachisleno'])) {
-		AnyBalance.trace('Переходим на страницу эксперта..');
-//		html = AnyBalance.requestGet(baseurl + '/profile/expert/', g_headers);
-		
-		AnyBalance.trace('Но кабинет новый, можем счетчиков не найти... Если что, присылайте лог');
-		getParam(html, result, 'obrabotannie', /Количество обработанных вопросов(?:[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
-		getParam(html, result, 'pomosh', /Скольким людям помогли ответы(?:[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
-		getParam(html, result, 'reshennie', /Количество решенных вопросов(?:[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
-		getParam(html, result, 'zhalobi', /Количество жалоб на эксперта(?:[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
-		getParam(html, result, 'rating', /Ваш рейтинг(?:[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
-		getParam(html, result, 'position', /Ваше место(?:[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
-		getParam(html, result, 'nachisleno', /Начислено бонусов(?:[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
-	}
+    if(isAvailable(['obrabotannie', 'pomosh', 'reshennie', 'zhalobi', 'rating', 'position', 'nachisleno'])) {
+      AnyBalance.trace('Переходим на страницу эксперта..');
+  //		html = AnyBalance.requestGet(baseurl + '/profile/expert/', g_headers);
+
+      AnyBalance.trace('Но кабинет новый, можем счетчиков не найти... Если что, присылайте лог');
+      getParam(html, result, 'obrabotannie', /Количество обработанных вопросов(?:[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+      getParam(html, result, 'pomosh',       /Скольким людям помогли ответы(?:[^>]*>){2}([^<]*)/i,    replaceTagsAndSpaces, parseBalance);
+      getParam(html, result, 'reshennie',    /Количество решенных вопросов(?:[^>]*>){2}([^<]*)/i,     replaceTagsAndSpaces, parseBalance);
+      getParam(html, result, 'zhalobi',      /Количество жалоб на эксперта(?:[^>]*>){2}([^<]*)/i,     replaceTagsAndSpaces, parseBalance);
+      getParam(html, result, 'rating',       /Ваш рейтинг(?:[^>]*>){2}([^<]*)/i,                      replaceTagsAndSpaces, parseBalance);
+      getParam(html, result, 'position',     /Ваше место(?:[^>]*>){2}([^<]*)/i,                       replaceTagsAndSpaces, parseBalance);
+      getParam(html, result, 'nachisleno',   /Начислено бонусов(?:[^>]*>){2}([^<]*)/i,                replaceTagsAndSpaces, parseBalance);
+    }
+
+    if(isAvailable(['wo_date', 'wo_sum', 'activation_date', 'activation_sum', 'activation_type'])) {
+      html = AnyBalance.requestGet(baseurl + '/profile/club/', g_headers);
+
+      getParam(html, result, 'wo_date', /дата списания(?:[\s\S]*?<td[^>]*>){1}([^<]*)/i, replaceTagsAndSpaces, parseDateWord);
+      getParam(html, result, 'wo_sum',  /дата списания(?:[\s\S]*?<td[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+
+      getParam(html, result, 'activation_date',  /Детализация активации бонусов(?:[\s\S]*?<td[^>]*>){1}([^<]*)/i, replaceTagsAndSpaces, parseDateWord);
+      getParam(html, result, 'activation_sum',   /Детализация активации бонусов(?:[\s\S]*?<td[^>]*>){3}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+      getParam(html, result, 'activation_type',  /Детализация активации бонусов(?:[\s\S]*?<td[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces);
+
+    }
 
     AnyBalance.setResult(result);
 }
+

@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<api flags="no_browser"/>
-  <id version="5">ab-municipal-erc-ur</id>
+    <api flags="no_browser"/>
+  <id version="6">ab-municipal-erc-ur</id>
   <name>Единый Расчётный Центр (Екатеринбург)</name>
   <description html="true"><![CDATA[
   <p>Предоставляет информацию о балансах из личного кибинета системы Единый Расчётный Центр <a href="http://www.erc.ur.ru/">http://www.erc.ur.ru/</a></p>
@@ -11,8 +11,8 @@
   ]]></instruction>
   <author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
   <depends>
-		<module id="library"/>
-	</depends>
+        <module id="library"/>
+  </depends>
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
@@ -23,13 +23,22 @@
     <counter id="debtBegin" name="Задолженность / переплата на начало месяца" units=" р"/>
     <counter id="accrued" name="Начислено" units=" р"/>
     <counter id="recalculation" name="Перерасчёты" units=" р"/>
+    <counter id="paymentPenalty" name="Поступление в счёт оплаты пеней" units=" р"/>
+    <counter id="debtEnd" name="Задолженность / переплата на конец месяца" units=" р"/>
+    <counter id="received" name="Поступление в счёт оплаты ЖКУ" units=" р"/>
+    <counter id="payment" name="Оплата" units=" р"/>
+    <counter id="balance01" name="Содержание жилого помещения" units="p "/>
+    <counter id="balance02" name="Найм" units="p "/>
+    <counter id="balance03" name="Электроэнергия" units="p "/>
+    <counter id="balance04" name="Холодное водоснабжение" units="p "/>
+    <counter id="balance05" name="Водоотведение" units="p "/>
+    <counter id="balance06" name="Отопление" units="p "/>
+    <counter id="balance07" name="Подача воды" units="p "/>
+    <counter id="balance08" name="Нагрев воды" units="p "/>
+    <counter id="balance09" name="Всего" units="p "/>
     <counter id="account" name="Номер счёта" type="text"/>
     <counter id="timeRange" name="Период" type="text"/>
     <counter id="paymentDate" name="Дата оплаты" type="time" format="dd/MM/yyyy"/>
-    <counter id="payment" name="Оплата" units=" р"/>
-    <counter id="paymentPenalty" name="Поступление в счёт оплаты пеней" units=" р"/>
-    <counter id="received" name="Поступление в счёт оплаты ЖКУ" units=" р"/>
-    <counter id="debtEnd" name="Задолженность / переплата на конец месяца" units=" р"/>
     <counter id="info" name="Информация по счёту" type="text"/>
   </counters>
   <keywords>erc.ur.ru ЕРЦ Екатеринбург</keywords>

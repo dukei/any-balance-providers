@@ -26,5 +26,15 @@
 		entries="Все регионы|Якутск"
 		entryValues="all|yak"
 		defaultValue="all">
-	</ListPreference>	
+	</ListPreference>
+    <EditTextPreference
+        positiveButtonText="ОК"
+        key="acc"
+        dialogTitle="Номер счёта"
+        negativeButtonText="Отмена"
+        title="Счёт"
+        summary="|Автоматически|{@s}"
+        dialogMessage="Введите последние 4 цифры лицевого счета, по которому вы хотите посмотреть информацию, или оставьте пустым, чтобы получить информацию по первому счёту."
+        inputType="text">
+    </EditTextPreference>
 </PreferenceScreen>

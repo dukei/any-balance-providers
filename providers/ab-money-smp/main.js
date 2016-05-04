@@ -1,104 +1,151 @@
 /**
-Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
-*/
+ Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
+ */
 
-var g_headers = {
-    Accept:'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-    'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
-    'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
-    Connection:'keep-alive',
-    'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.11'
+var g_countersTable = {
+  common: {
+    'fio': 'info.fio'
+  },
+  card: {
+    "balance": "cards.balance",
+    "bonus": "cards.bonus",
+    "currency": "cards.currency",
+    "cardnum": "cards.num",
+    "__tariff": "cards.num",
+    "till": "cards.till",
+    "accnum": "cards.accnum",
+    "cardname": "cards.type",
+    'payNext': 'cards.minpay',
+    'payTill': 'cards.minpay_till',
+  },
+  acc: {
+    "balance": "accounts.balance",
+    "currency": "accounts.currency",
+    "status": "accounts.status",
+    "type": "accounts.type",
+    "__tariff": "accounts.num",
+    "accnum": "accounts.num",
+    "date_start": "accounts.date_start",
+  }
 };
 
+function shouldProcess(counter, info){
+  var prefs = AnyBalance.getPreferences();
+
+  if(!info || (!info.__id || !info.__name))
+    return false;
+
+  switch(counter){
+    case 'cards':
+    {
+      if(prefs.type != 'card')
+        return false;
+      if(!prefs.num)
+        return true;
+
+      if(endsWith(info.num, prefs.num))
+        return true;
+
+      return false;
+    }
+    case 'accounts':
+    {
+      if(prefs.type != 'acc')
+        return false;
+      if(!prefs.num)
+        return true;
+
+      if(endsWith(info.num, prefs.num))
+        return true;
+    }
+    case 'credits':
+    {
+      if(prefs.type != 'crd')
+        return false;
+      if(!prefs.num)
+        return true;
+
+      if(endsWith(info.num, prefs.num))
+        return true;
+    }
+    case 'deposits':
+    {
+      if(prefs.type != 'dep')
+        return false;
+      if(!prefs.num)
+        return true;
+
+      if(endsWith(info.num, prefs.num))
+        return true;
+    }
+    default:
+      return false;
+  }
+}
+
 function main() {
-	AnyBalance.setDefaultCharset('utf-8');
-    var prefs = AnyBalance.getPreferences();
-	
-	checkEmpty(prefs.login, 'Введите логин!');
-	checkEmpty(prefs.password, 'Введите пароль!');
-	
-    var baseurl = 'https://smponbank.ru/';
-	
-	var html = AnyBalance.requestGet(baseurl + 'Authorize/LogOn', g_headers);
-	
-	var action = 'Authorize/LogOn';//getParam(html, null, null, /<form action="\/([^"]+)/i);
-	//checkEmpty(action, 'Не удалось найти форму входа, сайт изменен?', true);
-	
-    html = AnyBalance.requestPost(baseurl + action, {
-        Login:prefs.login,
-        Password:prefs.password
-    }, addHeaders({Referer: baseurl + action}));
-	
-	var table = getParam(html, null, null, />Курсы и обмен валюты([\s\S]*?)<\/table>/i);
-	
-    if(!/Authorize\/Logout/i.test(html)){
-        var error = getParam(html, null, null, /<div[^>]+validation-summary-errors[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
-        if(error)
-            throw new AnyBalance.Error(error, null, /неверное имя пользователя или пароль/i.test(error));
-        throw new AnyBalance.Error('Не удалось войти в интернет-банк. Сайт изменен?');
-    }
-	
-    html = AnyBalance.requestPost(baseurl + 'Update/RunCustomerUpdate', addHeaders({
-        Accept:'application/json, text/javascript, */*; q=0.01',
-        'X-Requested-With':'XMLHttpRequest'
-    }));
+  var prefs = AnyBalance.getPreferences();
 
-    try{
-        AnyBalance.trace('Обновляем данные...');
-        var json = getJson(html);
-        if(!json.isSuccessful)
-            throw new AnyBalance.Error(html);
-        AnyBalance.trace('Обновление данных произведено успешно!');
-    }catch(e){
-        AnyBalance.trace('Обновление данных не удалось: ' + e.message);
-    }
-	
-	var result = {success: true};
-	
-	if(AnyBalance.isAvailable('usd','eur','gbp') && table) {
-		getParam(table, result, 'usd', /USD(?:[^>]*>){5,10}\s*<\/tr>/i, [replaceTagsAndSpaces, /(\d)\s/, '$1/'], html_entity_decode);
-		getParam(table, result, 'eur', /EUR(?:[^>]*>){5,10}\s*<\/tr>/i, [replaceTagsAndSpaces, /(\d)\s/, '$1/'], html_entity_decode);
-		getParam(table, result, 'gbp', /GBP(?:[^>]*>){5,10}\s*<\/tr>/i, [replaceTagsAndSpaces, /(\d)\s/, '$1/'], html_entity_decode);
-	}
-	
-    AnyBalance.trace('Получаем все счета...');
-    html = AnyBalance.requestGet(baseurl + 'Ib/ViewAccounts', g_headers);
+  if(!/^(card|crd|dep|acc)$/i.test(prefs.type || ''))
+    prefs.type = 'card';
 
-    if(prefs.type == 'card')
-        fetchCard(baseurl, html, result);
-    else if(prefs.type == 'acc')
-        fetchAccount(baseurl, html, result);
-    else
-        fetchCard(baseurl, html, result); //По умолчанию карта
-		
-	AnyBalance.setResult(result);
+  var adapter = new NAdapter(joinObjects(g_countersTable[prefs.type], g_countersTable.common), shouldProcess);
+
+  adapter.processCards    = adapter.envelope(processCards);
+  adapter.processAccounts = adapter.envelope(processAccounts);
+  adapter.processCredits  = adapter.envelope(processCredits);
+  adapter.processDeposits = adapter.envelope(processDeposits);
+  adapter.processInfo     = adapter.envelope(processInfo);
+
+  var html = login(prefs);
+
+  var result = {success: true};
+
+  processInfo(html, result);
+
+  if(prefs.type == 'card') {
+    adapter.processCards(html, result);
+
+    if(!adapter.wasProcessed('cards'))
+      throw new AnyBalance.Error(prefs.num ? 'Не найдена карта с последними цифрами ' + prefs.num : 'У вас нет ни одной карты!');
+
+    result = adapter.convert(result);
+  } else if(prefs.type == 'acc') {
+    adapter.processAccounts(html, result);
+
+    if(!adapter.wasProcessed('accounts'))
+      throw new AnyBalance.Error(prefs.num ? 'Не найден счет с последними цифрами ' + prefs.num : 'У вас нет ни одного счета!');
+
+    result = adapter.convert(result);
+  } else if(prefs.type == 'crd') {
+    adapter.processCredits(html, result);
+
+    if(!adapter.wasProcessed('credits'))
+      throw new AnyBalance.Error(prefs.num ? 'Не найден кредит с последними цифрами ' + prefs.num : 'У вас нет ни одного кредита!');
+
+    result = adapter.convert(result);
+  } else if(prefs.type == 'dep') {
+    adapter.processDeposits(html, result);
+
+    if(!adapter.wasProcessed('deposits'))
+      throw new AnyBalance.Error(prefs.num ? 'Не найден депозит с последними цифрами ' + prefs.num : 'У вас нет ни одного депозита!');
+
+    result = adapter.convert(result);
+  }
+
+  html = AnyBalance.requestGet('https://smponbank.ru/', g_headers);
+
+  var table = getParam(html, null, null, />Курсы и обмен валюты([\s\S]*?)<\/table>/i);
+  if(AnyBalance.isAvailable('usd','eur','gbp') && table) {
+    getParam(table, result, 'usd', /USD(?:[^>]*>){5,10}\s*<\/tr>/i, [replaceTagsAndSpaces, /(\d)\s/, '$1/']);
+    getParam(table, result, 'eur', /EUR(?:[^>]*>){5,10}\s*<\/tr>/i, [replaceTagsAndSpaces, /(\d)\s/, '$1/']);
+    getParam(table, result, 'gbp', /GBP(?:[^>]*>){5,10}\s*<\/tr>/i, [replaceTagsAndSpaces, /(\d)\s/, '$1/']);
+  }
+
+  AnyBalance.setResult(result);
 }
 
-function fetchAccount(baseurl, html, result){
-    //throw new AnyBalance.Error('Получение счетов пока не поддерживается. Пожалуйста, обратитесь к автору провайдера.');
-
-    var prefs = AnyBalance.getPreferences();
-    if(prefs.contract && !/^\d{4,20}$/.test(prefs.contract))
-        throw new AnyBalance.Error('Пожалуйста, введите не менее 4 последних цифр номера счета, по которому вы хотите получить информацию, или не вводите ничего, чтобы получить информацию по первому счету.');
-
-    var table = getParam(html, null, null, /id="blckListAccountsCurrent"[^>]*>\s*<table[^>]*>([\s\S]*?)<\/table>/i);
-    if(!table)
-        throw new AnyBalance.Error('Не удалось найти список счетов. Сайт изменен?');
-	
-	// <tr class="[^"]*">\s*<td[^>]*>\s*\d{14,}2065(?:[^>]*>){20}\s*<\/tr>
-    var re = new RegExp('<tr class="[^"]*">\\s*<td[^>]*>\\s*\\d*' + (prefs.contract || '\\d{4}') + '\\s*<br[^>]*>[\\s\\S]*?</tr>', 'i');
-    var tr = getParam(table, null, null, re);
-    if(!tr)
-        throw new AnyBalance.Error('Не удаётся найти ' + (prefs.contract ? 'счет с последними цифрами ' + prefs.contract : 'ни одного счета!'));
-
-    getParam(tr, result, 'balance', /(?:[^>]*>){18}([\s\S]*?)<\/td/i, replaceTagsAndSpaces, parseBalance);
-	getParam(tr, result, ['currency', 'balance'], /(?:[^>]*>){18}([\s\S]*?)<\/td/i, replaceTagsAndSpaces, parseCurrency);
-	getParam(tr, result, 'accnum', /(?:[^>]*>){2}([\s\S]*?)</i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(tr, result, '__tariff', /(?:[^>]*>){2}([\s\S]*?)</i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(tr, result, 'accname', /(?:[^>]*>){4}([\s\S]*?)</i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'fio', /"userIndicationName"(?:[^>]*>){1}([\s\S]*?)</i, replaceTagsAndSpaces, html_entity_decode);
-}
-
+/* Оставим на случай, если что-то пойдёт не так
 function fetchCard(baseurl, html, result){
     var prefs = AnyBalance.getPreferences();
 
@@ -143,4 +190,4 @@ function fetchCard(baseurl, html, result){
             getParam(html, result, 'type', /Тип карты(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
         }
     }
-}
+}*/

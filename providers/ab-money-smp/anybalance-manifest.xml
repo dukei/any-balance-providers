@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="7">ab-money-smp</id>
+	<id version="8">ab-money-smp</id>
 	<api min_level="5" flags="no_browser"/>
 	<name>СМП Банк</name>
 	<description html="true"><![CDATA[
@@ -11,11 +11,15 @@
 	<p>Если Вы не зарегистрированы в системе СМП ON-Банк, вам нужно пройти регистрацию на странице https://smponbank.ru/Account/Register</p>
 	<p>ВНИМАНИЕ! Для работы провайдера необходимо в настройках отключить подтверждения входа в интернет-банк SMS-паролями. Это безопасно, эта опция НЕ ОТКЛЮЧАЕТ подтверждение SMS-паролями всех операций. То есть, для всех операций с вашими средствами всё равно будет требоваться SMS-подтверждение, а баланс вы сможете смотреть без SMS-подтверждения.</p>
 	]]></instruction>
-	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+    <depends>
+        <module id="library"/>
+        <module id="nadapter"/>
+        <module id="extract/abe-money-smp"/>
+    </depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
@@ -25,10 +29,12 @@
 		<counter id="payNext" name="Минимальный платеж"/>
 		<counter id="bonus" name="Бонусные баллы" units=" б"/>
 		<counter id="till" name="Срок действия" type="time" format="dd/MM/yyyy"/>
+		<counter id="date_start" name="Начало действия" type="time" format="dd/MM/yyyy"/>
 		<counter id="accnum" name="Номер счета" type="text"/>
 		<counter id="cardnum" name="Номер карты" type="text"/>
 		<counter id="cardname" name="Название карты" type="text"/>
 		<counter id="type" name="Тип" type="text"/>
+		<counter id="status" name="Статус" type="text"/>
 		<counter id="fio" name="Владелец" type="text"/>
 		<counter id="currency" name="Валюта" type="text"/>
 		
@@ -37,6 +43,6 @@
 		<counter id="gbp" name="Курс GBP" type="text"/>
 	</counters>
 	<keywords>Кредит, банк, смп, smp</keywords>
-	<type>money</type>
+	<type>money, bank</type>
 	<country>ru</country>
 </provider>

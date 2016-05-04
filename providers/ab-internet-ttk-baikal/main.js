@@ -71,6 +71,10 @@ function processCabinet(baseurl, prefs){
           form_name   = getParam(html, null, null, /ArrayListTranslator[\s\S]*?<input[^>]+name="([^"]*)/i),
           form_value  = getParam(html, null, null, /ArrayListTranslator[\s\S]*?<input[^>]+value="([^"]*)/i);
 
+      if(!value) {
+        throw new AnyBalance.Error("Не удалось найти счёт с цифрами " + prefs.acc);
+      }
+
       params[action_name] = true;
       params[option_name] = value;
       params[form_name]   = form_value;

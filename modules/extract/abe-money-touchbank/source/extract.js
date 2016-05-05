@@ -19,7 +19,7 @@ function login(prefs) {
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 
-	var html = AnyBalance.requestGet(baseurl + '/lk/dashboard#/', g_headers);
+	var html = AnyBalance.requestGet(baseurl + '/lk/dashboard', g_headers);
 
 	if(!html || AnyBalance.getLastStatusCode() > 400){
 		AnyBalance.trace(html);

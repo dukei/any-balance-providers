@@ -1,4 +1,4 @@
-  /**
+/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 */
 
@@ -366,7 +366,7 @@ function processBonuses(html, result){
 
 function getToken() {
   //Получаем CSRF token
-  var html = AnyBalance.requestPost(baseurl+'/proxy?pipe=dummyPipe&action=get_csrf_token', null, addHeaders({
+  var html = AnyBalance.requestPost(baseurl+'/proxy?pipe=dummyPipe&action=get_csrf_token', {}, addHeaders({
     'X-Requested-With': 'XMLHttpRequest',
     'Referer': baseurl
   }));

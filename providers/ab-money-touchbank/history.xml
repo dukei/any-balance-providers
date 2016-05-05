@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="5" date="2016-05-05">
+	Исправлена ошибка JSON
+	</change>
 	<change version="4" date="2016-05-05">
 	- Улучшена обработка ошибок.
 	</change>

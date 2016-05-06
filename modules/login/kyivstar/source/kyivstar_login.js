@@ -82,7 +82,7 @@ function loginBasic(html) {
 	var type = getParam(html, null, null, /"([^"]*)"\]/i, replaceSlashes);
 	if (!types[type]) {
 		AnyBalance.trace('Неизвестный тип входа: ' + type + '\n' + html);
-		type = msisdn;
+		type = 'msisdn';
 	}
 
 	//Получаем токен для входа
@@ -138,17 +138,6 @@ function loginSite(baseurl) {
 
 	AnyBalance.trace('Логин на сайт.');
 
-	//09.02.2016/ Интернет и Cвязь общий сайт для авторизации
-	// if (!baseurl) {
-	// 	baseurl = "https://my.kyivstar.ua/";
-	// }
-
-	var
-		paURL = 'https://my.kyivstar.ua/',
-		buffer = baseurl;
-
-	baseurl = paURL;
-
 	AnyBalance.trace('Соединение с ' + baseurl);
 	// var html = AnyBalance.requestGet(baseurl + 'tbmb/login/show.do', g_headers);
 	var html = AnyBalance.requestGet(baseurl + 'tbmb/disclaimer/show.do', g_headers);
@@ -170,12 +159,11 @@ function loginSite(baseurl) {
 			AnyBalance.trace('Не тот аккаунт, выход.');
 
 			html = AnyBalance.requestGet(baseurl + 'tbmb/logout/perform.do', g_headers);
-			html = AnyBalance.requestGet(baseurl + 'tbmb/service/logout.do', g_headers);
-
-			AnyBalance.trace('Переход на страницу входа.');
-
-			baseurl = buffer;
-			html = AnyBalance.requestGet(baseurl + 'cas/login', g_headers);
+			var anotherLogoutPage = getParam(html, null, null, /<a[^>]+id="submitBtn"[^>]*href="([^"]*)/i, replaceHtmlEntities);
+			if(anotherLogoutPage){
+				AnyBalance.trace('Переход на страницу входа.');
+				html = AnyBalance.requestGet(anotherLogoutPage, g_headers);
+			}
 		}
 	}
 

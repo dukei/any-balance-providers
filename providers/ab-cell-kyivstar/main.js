@@ -160,12 +160,15 @@ function processSite() {
 		/(?:Залишок:|Остаток минут на сеть Киевстар:)[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces,
 		parseMinutes, aggregate_sum); //обратить внимание на "Залишок:", может измениться
 	sumParam(html, result, 'bonus_mins_1',
-		/(?:"\d+ хвилин на міські номери":|"\d+ минут на городские номера":)[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/ig,
+		/(?:хвилин на міські номери"?:|минут на городские номера"?:)[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/ig,
 		replaceTagsAndSpaces, parseMinutes, aggregate_sum);
 	//Срок действия бонусных минут (1)
 	sumParam(html, result, 'bonus_mins_1_till',
 		/(?:Залишок хвилин для дзвінків на Ки.встар:|Остаток минут для звонков на Ки.встар:)[\s\S]*?<td[^>]*>[\s\S]*?<\/td>([\s\S]*?)<\/td>/i,
-		replaceTagsAndSpaces, parseDate, aggregate_sum);
+		replaceTagsAndSpaces, parseDate, aggregate_min);
+	sumParam(html, result, 'bonus_mins_1_till',
+		/(?:хвилин на міські номери"?:|минут на городские номера"?:)[\s\S]*?<td[^>]*>[\s\S]*?<\/td>([\s\S]*?)<\/td>/i,
+		replaceTagsAndSpaces, parseDate, aggregate_min);
 	//Бонусные минуты (2) на любые номера
 	sumParam(html, result, 'bonus_mins_2',
 		/(?:Залишок хвилин для дзвінків абонентам Ки.встар та DJUICE:|Остаток минут для звонков абонентам Ки.встар и DJUICE:)[\s\S]*?<b>([^<]*)/ig,
@@ -201,16 +204,16 @@ function processSite() {
 	//Срок действия бонусных минут (2)
 	sumParam(html, result, 'bonus_mins_2_till',
 		/(?:Залишок хвилин на інші мобільні мережі в межах України:|Остаток минут на другие мобильные сети в пределах Украины:)[\s\S]*?<td[^>]*>[\s\S]*?<\/td>([\s\S]*?)<\/td>/i,
-		replaceTagsAndSpaces, parseDate, aggregate_sum);
+		replaceTagsAndSpaces, parseDate, aggregate_min);
 	sumParam(html, result, 'bonus_mins_2_till',
 		/(?:Залишок хвилин на інші мережі по Україні:|Остаток минут на другие сети по Украине:)[\s\S]*?<td[^>]*>[\s\S]*?<\/td>([\s\S]*?)<\/td>/i,
-		replaceTagsAndSpaces, parseDate, aggregate_sum);
+		replaceTagsAndSpaces, parseDate, aggregate_min);
 	sumParam(html, result, 'bonus_mins_2_till',
 		/(?:Залишок хвилин для дзвінків на інші мережі|Остаток минут для звонков на другие сети)[\s\S]*?<td[^>]*>[\s\S]*?<\/td>([\s\S]*?)<\/td>/i,
-		replaceTagsAndSpaces, parseDate, aggregate_sum);
+		replaceTagsAndSpaces, parseDate, aggregate_min);
 	sumParam(html, result, 'bonus_mins_2_till',
 		/(?:Хвилини на інші мобільні|Минуты на другие мобильные)[\s\S]*?<td[^>]*>[\s\S]*?<\/td>([\s\S]*?)<\/td>/i,
-		replaceTagsAndSpaces, parseDate, aggregate_sum);
+		replaceTagsAndSpaces, parseDate, aggregate_min);
 	//Тарифные минуты:
 	sumParam(html, result, 'mins_tariff', /(?:Тарифні хвилини:|Тарифные минуты:)[\s\S]*?<b>([^<]*)/ig,
 		replaceTagsAndSpaces, parseMinutes, aggregate_sum);

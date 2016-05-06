@@ -21,6 +21,13 @@
 		dialogMessage="Введите пароль, используемый для входа в личный кабинет."
 		inputType="textPassword">
 	</EditTextPreference>
+	<ListPreference
+		key="type"
+		title="Кабинет"
+		summary="|Выберите по какому личному кабинету вы хотите получить информацию|{@s}\n"
+		entries="login.dnevnik.ru|school.mosreg.ru"
+		entryValues="dnevnik|school">
+	</ListPreference>
 	<!--<EditTextPreference
 		title="Идентификатор"
 		key="id"

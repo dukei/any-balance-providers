@@ -1,18 +1,20 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="3">ab-bonus-eva</id>
+  <id version="4">ab-bonus-eva</id>
   <api flags="no_browser"/>
   <name>EVA (Украина)</name>
   <description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе бонусной карты сети магазинов EVA (Украина) http://www.eva.dp.ua/</p>
 	]]>
   </description>
-  <author>Stark &lt;support@starksoft.ru&gt;</author>
+  <author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
   <author>Ignatiy Goloviznin &lt;igoloviznin@gmail.com&gt;</author>
+  <depends>
+  	<module id="library"/>
+  </depends>
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
-    <js>library.js</js>
     <js>main.js</js>
     <history>history.xml</history>
   </files>
@@ -21,9 +23,9 @@
     <counter id="balance_available" name="Баланс доступный к списанию"/>
     <counter id="balance_inactive" name="Баланс доступный в ближайшее время"/>
     <counter id="balance_discount" name="Баланс сгорающий"/>
-    <counter id="cards" name="Номер карты"/>
+    <counter id="cards" name="Номер карты" type="text"/>
   </counters>
-  <keywords>магазин EVA косметика парфумерия побутова хімія</keywords>
+  <keywords>магазин EVA косметика парфумерия побутова хімія мозаика МОЗАΪКА</keywords>
   <type>bonus</type>
   <country>ua</country>
 </provider>

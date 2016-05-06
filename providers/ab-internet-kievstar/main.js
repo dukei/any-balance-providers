@@ -15,10 +15,7 @@ var headers = {
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	// var baseurl = "https://my.kyivstar.ua/";
-	var
-		baseurl = 'https://account.kyivstar.ua/';
-	// var paUrl = 'https://my.kyivstar.ua/tbmb/disclaimer/show.do';
+	var baseurl = "https://my.kyivstar.ua/";
 
 	var html = loginSite(baseurl);
 

@@ -27,8 +27,7 @@ function main() {
 function processSite() {
 	var prefs = AnyBalance.getPreferences();
 
-	// var baseurl = "https://my.kyivstar.ua/";
-	var baseurl = 'https://account.kyivstar.ua/';
+ 	var baseurl = "https://my.kyivstar.ua/";
 	var html = loginSite(baseurl);
 
 	/**
@@ -49,8 +48,6 @@ function processSite() {
 		},
 		current_balance = '',
 		current_currency = '';
-
-	baseurl = 'https://my.kyivstar.ua/';
 
 	//тип ЛК
 	if (/(?:мобильного|мобільного|Mobile\s+phone\s+number)/i.test(html)) {

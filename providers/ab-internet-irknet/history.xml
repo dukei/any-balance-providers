@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="3" date="2016-05-06">
+	- Исправлено неверное отображение даты оплаты
+	</change>
 	<change version="2" date="2016-02-24">
 	- Исправлены неправильные настройки
 	</change>

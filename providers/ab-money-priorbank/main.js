@@ -55,7 +55,7 @@ function main() {
 function fetchCard(prefs, result) {
 	html = AnyBalance.requestPost(g_baseurl + 'GateWay&Target=Android', {Template: 'CardList'}, addHeaders({Base64Fields: 'XML'}));
 	
-	var re = new RegExp('<Card\\s+[^>]*>\\s*<Synonym>' + (prefs.num || '[^]+?') + '<\/Synonym>[^]*?<\/Card>', 'i');
+	var re = new RegExp('<Card\\s+[^>]*>\\s*<Synonym><\\!\\[CDATA\\[' + (prefs.num || '[^]+?') + '\\]\\]><\/Synonym>[^]*?<\/Card>', 'i');
 	var card = getParam(html, null, null, re);
 	if(!card){
 		AnyBalance.trace(html);

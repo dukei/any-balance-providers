@@ -1,4 +1,4 @@
-﻿/**
+/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 */
 
@@ -43,7 +43,7 @@ function main(){
         return value;
     });
 	
-    html = AnyBalance.requestPost(baseurl + 'user/login', params, addHeaders({Referer: baseurl + '#'}));
+    html = AnyBalance.requestPost(baseurl + 'user/login', params, addHeaders({Referer: baseurl}));
 	
 	/*
 	cookie:PHPSESSID=mrg7pon70a6ciuap2km3etv877; user_id=1033048; passwd_hash=95765202e373b801890672567c466c4d2e01b4f5; _ga=GA1.3.333398957.1440405474; _gat=1; _pk_id.48.53d4=e921c84074a5110d.1440405474.1.1440405474.1440405474.; _pk_ses.48.53d4=*; _ym_visorc_13106635=w
@@ -71,8 +71,9 @@ function main(){
 	
 	var json = getJson(finesHtml);
 	var message_id = json.message_id;
-	
-	for(var i = 0; i < 10; i++) {
+
+	var max_tries = 60;	
+	for(var i = 0; i < max_tries; i++) {
 		AnyBalance.sleep(1000);
 		
 		finesHtml = AnyBalance.requestGet(baseurl + 'gibdd/fines/getBy/message_id/' + message_id, addHeaders({'X-Requested-With': 'XMLHttpRequest'}));
@@ -82,6 +83,14 @@ function main(){
 			AnyBalance.trace('Данные успешно обновлены за ' + (i+1) + ' попыток.');
 			break;
 		}
+		if(json.status == 'error') {
+			throw new AnyBalance.Error(error);
+		}
+	}
+
+	if(i>=max_tries){
+		AnyBalance.trace(finesHtml);
+		throw new AnyBalance.Error('Не удалось получить данные по штрафам за приемлемое время. Попробуйте ещё раз позже');
 	}
 
 	var result = {success: true};

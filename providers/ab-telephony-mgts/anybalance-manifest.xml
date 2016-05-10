@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="16">ab-telephony-mgts</id>
+	<id version="17">ab-telephony-mgts</id>
 	<name>МГТС</name>
 	<api flags="no_browser"/>
 	<description html="true"><![CDATA[
@@ -15,11 +15,13 @@
 	<li>Обратитесь в любой Центр услуг связи ОАО МГТС http://mgts.ru/service-centres.</li>
 	</ul>
 	]]></instruction>
-	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>

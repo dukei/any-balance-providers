@@ -44,7 +44,12 @@ function main() {
 			throw new AnyBalance.Error('Не удалось получить баланс. Cайт изменен?');
 		}
 
-		getParam(html, result, 'balance', /id="EXTERNAL_RESPONSE"[^>]*value="([^"]+)/i, replaceTagsAndSpaces, parseBalance);
+		var value = getParam(html, null, null, /id="EXTERNAL_RESPONSE"[^>]*value="([^"]+)/i, replaceHtmlEntities);
+		AnyBalance.trace('Ответ от внешней системы: ' + value);
+		if(/Баланс_не_может_быть_получен/i.test(value))
+			throw new AnyBalance.Error('Баланс временно недоступен. Попробуйте позднее или воспользуйтесь получением баланса по логину и паролю.');
+		getParam(value, result, 'balance', null, null, parseBalance);
+
 	} else {
 		AnyBalance.trace('Входим по логину и паролю...');
 		

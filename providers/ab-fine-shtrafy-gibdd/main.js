@@ -27,8 +27,10 @@ function main(){
 			throw new AnyBalance.Error('Сервис проверки штрафов временно недоступен, скоро все снова будет работать.');
 		}
 		// Попробуем объяснить почему
-		// if(/Работа сервиса проверки[^<]*временно приостановлена/i.test(html))
-			// throw new AnyBalance.Error('Работа сервиса временно приостановлена! Попробуйте зайти позже.');
+		var error = getElement(html, /<div[^>]+FineForm[^>]*>/i, replaceTagsAndSpaces);
+		if(error)
+			throw new AnyBalance.Error(error);
+		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось найти форму для запроса!');
 	}
 	var found = /(\D{0,1}\d+\D{2})(\d{2,3})/i.exec(prefs.login);

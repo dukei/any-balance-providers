@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="2">ab-fine-shtrafy-gibdd</id>
+	<id version="3">ab-fine-shtrafy-gibdd</id>
 	<name>Штрафы ГИБДД (shtrafy-gibdd.ru)</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о наличии штрафов с сайта http://shtrafy-gibdd.ru/</p>
@@ -10,11 +10,13 @@
 	<instruction html="true"><![CDATA[
 	<p>Для получения информации по штрафам необходимо ввести номер транспортного средства, номер водительского удостоверения и номер свидетельства о регистрации.</p>
 	]]></instruction>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>

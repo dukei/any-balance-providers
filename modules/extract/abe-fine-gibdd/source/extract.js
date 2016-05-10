@@ -10,6 +10,21 @@ var g_headers = {
 	'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/31.0.1650.57 Safari/537.36'
 };
 
+function getGibddJson(html){
+	try {
+		var json = getJson(html);
+	} catch(e) {
+		AnyBalance.trace(html);
+		
+		if(/При загрузке страницы произошла ошибка|Страницу загрузить не удалось/i.test(html))
+			throw new AnyBalance.Error('Сайт временно работает с перебоями, попробуйте обновить данные позже.');
+		
+		throw new AnyBalance.Error('Не удалось получить информацию, свяжитесь, пожалуйста, с разработчиками.');
+	}
+
+	return json;
+}
+
 function requestFines(prefs) {
     var baseurl = 'http://www.gibdd.ru/';
     AnyBalance.setDefaultCharset('utf-8');
@@ -38,7 +53,7 @@ function requestFines(prefs) {
 	g_headers = addHeaders({'X-Csrf-Token':token});
 	
 	html = AnyBalance.requestGet(baseurl + 'proxy/check/getSession.php', g_headers);
-	var dataJson = getJson(html);
+	var dataJson = getGibddJson(html);
 	AnyBalance.setCookie('www.gibdd.ru', 'captchaSessionId', dataJson.id);
 	
 	var captchaWord;
@@ -75,16 +90,7 @@ function requestFines(prefs) {
 		'Connection': 'keep-alive'
 	}));
 	
-	try {
-		var json = getJson(html);
-	} catch(e) {
-		AnyBalance.trace(html);
-		
-		if(/При загрузке страницы произошла ошибка/i.test(html))
-			throw new AnyBalance.Error('Сайт временно работает с перебоями, попробуйте обновить данные позже.');
-		
-		throw new AnyBalance.Error('Не удалось получить информацию, свяжитесь, пожалуйста, с разработчиками.');
-	}
+	var json = getGibddJson(html);
 	
 	return json;
 }
@@ -97,6 +103,7 @@ function parseFines(result, json) {
 		if(json.status == 1) 
 			throw new AnyBalance.Error("Цифры с картинки введены не верно!");
 		
+		AnyBalance.trace(JSON.stringify(json));
 		throw new AnyBalance.Error("Не удалось получить данные по штрафам, сайт изменен?");
 	}
 	

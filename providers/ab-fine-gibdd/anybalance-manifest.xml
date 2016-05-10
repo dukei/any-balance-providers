@@ -1,11 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser|captcha" />
-	<id major_version="2.0" version="29">ab-fine-gibdd</id>
+	<id major_version="2.0" version="30">ab-fine-gibdd</id>
 	<name>Штрафы ГИБДД</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о наличии штрафов с сайта <a href="http://www.gibdd.ru/check/fines/">http://www.gibdd.ru/check/fines/</a></p>
-	<p>Наиболее точная информация доступна в провайдере <a href="http://anybalance.ru/catalog.php?id=ab-service-gosuslugi">Госуслуги (Штрафы, Налоги)</a>.</p>
+	<p>Наиболее точная информация доступна в провайдере <a href="https://anybalance.ru/catalog/ab-service-gosuslugi">Госуслуги (Штрафы, Налоги)</a>.</p>
 	]]></description>
 	<instruction html="true"><![CDATA[
 	<p>Для получения информации по штрафам необходимо ввести номер транспортного средства и номер свидетельства о регистрации.</p>

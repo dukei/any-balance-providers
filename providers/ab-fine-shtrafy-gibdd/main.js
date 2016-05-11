@@ -11,21 +11,130 @@ var g_headers = {
 
 function main(){
     var prefs = AnyBalance.getPreferences();
-    var baseurl = 'http://shtrafy-gibdd.ru/';
     AnyBalance.setDefaultCharset('utf-8');
-	
+
 	checkEmpty(prefs.login, 'Введите гос. номер! Номер должен быть в формате а351со190 либо 1234ав199, буквы русские!');
 	checkEmpty(prefs.password, 'Введите номер свидетельства о регистрации в формате 50ХХ123456!');
-	checkEmpty(prefs.license, 'Введите номер водительского удостоверения в формате 50ХХ028333!');	
+	checkEmpty(prefs.license, 'Введите номер водительского удостоверения в формате 50ХХ028333!');
+
+	try{
+		mainOld();
+	}catch(e){
+		if(e.fatal)
+			throw e;
+		mainBeta();
+	}
+}
+
+function mainBeta(){
+	AnyBalance.trace('Входим через beta');
+    var prefs = AnyBalance.getPreferences();
+    var baseurl = 'http://beta.shtrafy-gibdd.ru/';
+
+	var html = AnyBalance.requestGet(baseurl, g_headers);
+	if (AnyBalance.getLastStatusCode() > 400) {
+		AnyBalance.trace('Server returned: ' + AnyBalance.getLastStatusString());
+		throw new AnyBalance.Error('Сервис проверки штрафов временно недоступен, скоро все снова будет работать.');
+	}
+
+	var session = AnyBalance.requestGet(baseurl + 'frontend/authorize', addHeaders({Referer: baseurl}));
+	if (AnyBalance.getLastStatusCode() > 400) {
+		AnyBalance.trace('Server session returned: ' + AnyBalance.getLastStatusString());
+		throw new AnyBalance.Error('Сервис проверки штрафов сейчас временно недоступен, скоро все снова будет работать.');
+	}
+
+	session = getJson(session);
+
+	var found = /(\D{0,1}\d+\D{2})(\d{2,3})/i.exec(prefs.login);
+	if(!found)
+		throw new AnyBalance.Error('Номер должен быть в формате а351со190 либо 1234ав199, буквы русские.', null, true);
+
+	var driver = AnyBalance.requestPost(baseurl + 'rest/drivers', JSON.stringify({
+		"access_token": session.data.access_token, 
+		"driver_license": prefs.license
+	}), addHeaders({Referer: baseurl, 'Content-Type': 'application/json;charset=UTF-8'}));
+	driver = getJson(driver);
+
+	if(!driver.success){
+		AnyBalance.trace(JSON.stringify(driver));
+		if(driver.error && driver.error.message)
+			throw new AnyBalance.Error(driver.error.message);
+		throw new AnyBalance.Error('Не удалось получить информацию по штрафам водителя');
+	}
+
+	var car = AnyBalance.requestPost(baseurl + 'rest/automobiles', JSON.stringify({
+		"access_token": session.data.access_token, 
+		"auto_number":found[1],
+		"region":found[2],
+		"registration_full":prefs.password
+	}), addHeaders({Referer: baseurl, 'Content-Type': 'application/json;charset=UTF-8'}));
+	car = getJson(car);
+
+	if(!car.success){
+		AnyBalance.trace(JSON.stringify(car));
+		if(car.error && car.error.message)
+			throw new AnyBalance.Error(car.error.message);
+		throw new AnyBalance.Error('Не удалось получить информацию по штрафам на автомобиль');
+	}
+
+	var fines = [];
+	if(driver.data.requisites.fines)
+		for(var key in driver.data.requisites.fines) fines.push(driver.data.requisites.fines[key]);
+	if(car.data.requisites.fines)
+		for(var key in car.data.requisites.fines) fines.push(car.data.requisites.fines[key]);
+
+	var result = {success: true, balance:null} ;
+	
+	getParam(fines.length, result, 'count');
+	getParam(0, result, 'balance');
+
+	fines.sort(function(f1, f2){ return f1.date > f2.date ? 1 : (f1.date < f2.date ? -1 : 0); });
+
+	if(fines && fines.length > 0) {
+		result.all = '';
+		for(var i = 0; i< fines.length; i++) {
+			var curr = fines[i];
+			sumParam(curr.sum, result, ['balance', 'all'], null, null, null, aggregate_sum);
+			
+			var date = getParam(curr.date);
+			var sum = getParam(curr.sum);
+			var descr = 'Нет описания';
+			var koap = 'Нет статьи';
+			
+			// Создаем сводку
+			result.all += '<b>' + date + ':</b> ' + descr + ' (' + koap + '): <b>' + sum + ' р</b>' + 
+				(i >= fines.length-1 ? '<br/><br/><b>Итого:</b> ' + fines.length + ' шт. на сумму: <b>' + result.balance + ' р</b>' : '<br/><br/>');
+			
+			// Только последний интересует
+			if(i >= fines.length-1) {
+				getParam(curr.date, result, 'date', null, null, parseDateISO);
+				getParam(curr.protocol, result, 'postanovlenie');
+//				getParam(curr, result, 'koap', /"ArticleTip[^>]*>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
+//				getParam(curr, result, 'descr', /"ArticleTip[^>]*title=['"]([^'"]*)/i, replaceTagsAndSpaces, html_entity_decode);
+				getParam(curr.sum, result, 'summ');
+			}
+		}
+	} else {
+		AnyBalance.trace('Не найдено информации о штрафах. Скорее всего их нет.');
+	}
+
+	AnyBalance.setResult(result);
+}
+
+function mainOld(){
+	AnyBalance.trace('Входим через основной сайт');
+    var prefs = AnyBalance.getPreferences();
+    var baseurl = 'http://shtrafy-gibdd.ru/';
 	
 	var html = AnyBalance.requestGet(baseurl, g_headers);
-	
+
 	var formid = getParam(html, null, null, /"form_build_id"[^>]*value="([^"]*)/i);
 	if(!formid){
 		if (AnyBalance.getLastStatusCode() > 400) {
 			AnyBalance.trace('Server returned: ' + AnyBalance.getLastStatusString());
 			throw new AnyBalance.Error('Сервис проверки штрафов временно недоступен, скоро все снова будет работать.');
 		}
+
 		// Попробуем объяснить почему
 		var error = getElement(html, /<div[^>]+FineForm[^>]*>/i, replaceTagsAndSpaces);
 		if(error)
@@ -35,7 +144,7 @@ function main(){
 	}
 	var found = /(\D{0,1}\d+\D{2})(\d{2,3})/i.exec(prefs.login);
 	if(!found)
-		throw new AnyBalance.Error('Номер должен быть в формате а351со190 либо 1234ав199, буквы русские.');
+		throw new AnyBalance.Error('Номер должен быть в формате а351со190 либо 1234ав199, буквы русские.', null, true);
 	
 	html = AnyBalance.requestPost(baseurl, {
 		'auto_number':found[1],
@@ -56,7 +165,7 @@ function main(){
 		AnyBalance.trace(html);
 		
 		if(json.message)
-			throw new AnyBalance.Error(json.message);
+			throw new AnyBalance.Error(replaceAll(json.message, replaceTagsAndSpaces));
 		
 		throw new AnyBalance.Error('Не удалось получить данные о штрафах, проверьте правильность ввода.');
 	}

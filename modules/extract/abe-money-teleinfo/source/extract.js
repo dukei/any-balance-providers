@@ -433,6 +433,7 @@ function getCardsAndAccounts(){
             processProductsArray(p.masterAccountCards);
             processProductsArray(p.cards);
             processProductsArray(p.cardAccount && [p.cardAccount]);
+            processProductsArray(p.mainCard && [p.mainCard]);
         }
     }
 
@@ -457,7 +458,7 @@ function processCards(result){
     var cards = [];
     for(var i=0; i<obj.payload.products.length; ++i){
         var p = obj.payload.products[i];
-        if(/Card/i.test(p.__type)){
+        if(/Card(?!Account)/i.test(p.__type)){
             cards.push(p);
         }
     }
@@ -541,7 +542,7 @@ function processAccounts(result){
     var accs = [];
     for(var i=0; i<obj.payload.products.length; ++i){
         var p = obj.payload.products[i];
-        if(!/Card/i.test(p.__type)){
+        if(!/Card/i.test(p.__type) || /CardAccount/i.test(p.__type)){
             accs.push(p);
         }
     }

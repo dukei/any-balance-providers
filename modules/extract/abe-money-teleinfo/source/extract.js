@@ -418,14 +418,28 @@ function getCardsAndAccounts(){
     }, null, g_commonProperties));
 
     obj.payload.products = [];
+    var products = {};
+
+    //Некоторые продукты ВТБ теперь прячет рекурсивно. Надо их все найти
+    function processProductsArray(arr){
+        for (var j = 0; arr && j < arr.length; j++) {
+            var p = arr[j];
+        	if(products[p.id])
+        		continue; //Уже обработали
+
+            obj.payload.products.push(p);
+            products[p.id] = p;
+
+            processProductsArray(p.masterAccountCards);
+            processProductsArray(p.cards);
+            processProductsArray(p.cardAccount && [p.cardAccount]);
+        }
+    }
 
     //Приводим к плоскому виду, как MainPageProductsRequest
     for(var i=0; i<obj.payload.portfolio.productGroups.length; ++i){
         var group = obj.payload.portfolio.productGroups[i];
-        for (var j = 0; j < group.items.length; j++) {
-            var p = group.items[j];
-            obj.payload.products.push(p);
-        }
+        processProductsArray(group.items);
     }
 
     AnyBalance.trace('Найдено ' + obj.payload.products.length + ' карт и счетов');

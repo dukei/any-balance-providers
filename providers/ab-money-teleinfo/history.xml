@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="3" version="38" date="2016-05-11">
+	Исправление ошибки получения карт
+	</change>
 	<change major_version="3" version="37" date="2016-05-11">
 	Исправление получения счетов и карт
 	</change>

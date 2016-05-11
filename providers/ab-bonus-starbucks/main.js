@@ -12,13 +12,13 @@ var g_headers = {
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'https://cabinet.plas-tek.ru/default.aspx?';
+	var baseurl = 'https://starbuckscard.ru/';
 	AnyBalance.setDefaultCharset('UTF-8');
 	
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 	
-	var html = AnyBalance.requestGet(baseurl + 'mainlogin=true&style=starbucks', g_headers);
+	var html = AnyBalance.requestGet(baseurl + 'Account/LogOn', g_headers);
 	
 	if(!html || AnyBalance.getLastStatusCode() > 400){
 		AnyBalance.trace(html);
@@ -26,19 +26,19 @@ function main() {
 	}
 
 	var params = createFormParams(html, function(params, str, name, value) {
-		if (name == 'LoginTextBox1')
+		if (name == 'username')
 			return prefs.login;
-		else if (name == 'PasswordTextBox2')
+		else if (name == 'password')
 			return prefs.password;
 		return value;
 	});
 
-	html = AnyBalance.requestPost(baseurl + 'mainlogin=true&style=starbucks', params, addHeaders({Referer: baseurl + 'mainlogin=true&style=starbucks'}));
+	html = AnyBalance.requestPost(baseurl + 'Account/LogOn', params, addHeaders({Referer: baseurl + 'Account/LogOn'}));
 
-	if (!/Баланс карты/i.test(html)) {
-		var error = getParam(html, null, null, /<div[^>]+id="pnlMessage"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+	if (!/not-me-link/i.test(html)) {
+		var error = getElement(html, /<div[^>]+validation-summary-errors[^>]*>/i, replaceTagsAndSpaces);
 		if (error)
-			throw new AnyBalance.Error(error, null, /Ошибка входа/i.test(error));
+			throw new AnyBalance.Error(error, null, /пароль/i.test(error));
 		
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
@@ -46,25 +46,17 @@ function main() {
 
 	var result = {success: true};
 	
-	getParam(html, result, 'stars', /pnlCardInfo[^>]*>[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'cardNumber', /lblCardNumber[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'balance', /lblCardBalance[^>]*>[\s\S]*?<\//i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'status', /lblCardStatus[^>]*>([^;]*);/i, replaceTagsAndSpaces);
+	getParam(html, result, 'stars', /<div[^>]*bd-star-count[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'balance', /<span[^>]+dynamic-card-balance-value[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'status', /Ваш уровень:([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
+	getParam(html, result, 'fio', /<ul[^>]+bd-customer-info[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces);
 
-	var eventValidation = getParam(html, null, null,/id="__EVENTVALIDATION"[^>]*value="([^"]+)/i);
-	var viewState = getParam(html, null, null, /id="__VIEWSTATE"[^>]*value="([^"]+)/i);
-	html = AnyBalance.requestPost(baseurl+'style=starbucks',{
-		__VIEWSTATEGENERATOR: params['__VIEWSTATEGENERATOR'],
-		__VIEWSTATE: viewState,
-		offset:3,
-		__EVENTVALIDATION:eventValidation,
-		__EVENTTARGET: 'CardsEnableForm'
-	}, addHeaders({Referer: baseurl+ 'style=starbucks'}));
+	if(AnyBalance.isAvailable('cardNumber')){
+		html = AnyBalance.requestGet(baseurl + 'card/page/CardInformation', g_headers);
+		var cardinfo = getElement(html, /<ul[^>]+my-card-container[^>]*>/i);
 
-	var fName = getParam(html, null, null, /name="tbProfileFirstName"[^>]+value="([^"]+)/i, replaceTagsAndSpaces, html_entity_decode) || '';
-	var sName = getParam(html, null, null, /name="tbProfileSurname"[^>]+value="([^"]+)/i, replaceTagsAndSpaces, html_entity_decode || '');
-
-	getParam(fName + ' ' + sName, result, 'fio');
+		sumParam(cardinfo, result, 'cardNumber', /<li[^>]+title="[^"]*?(\d+)\s*\|/ig, replaceTagsAndSpaces, null, aggregate_join);
+	}
 
 	AnyBalance.setResult(result);
 }

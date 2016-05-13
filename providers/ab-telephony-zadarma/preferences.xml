@@ -2,12 +2,12 @@
 <PreferenceScreen>
     <EditTextPreference
 		obligatory="true"
-        title="Электронный адрес"
+        title="Ключ пользователя"
         positiveButtonText="ОК"
-        summary="|Логин в Zadarma|{@s}"
-        dialogTitle="Электронный адрес"
+        summary="|Ключ пользователя в API|{@s}"
+        dialogTitle="Ключ пользователя"
         negativeButtonText="Отмена"
-        dialogMessage="Введите ваш электронный адрес для входа в Zadarma"
+        dialogMessage="Введите ваш ключ пользователя (получить его можно на https://my.zadarma.com/api/)"
         inputType="textEmailAddress"
         key="login">
     </EditTextPreference>
@@ -15,11 +15,11 @@
 		obligatory="true"
         positiveButtonText="ОК"
         key="password"
-        dialogTitle="Пароль"
+        dialogTitle="Секретный ключ"
         negativeButtonText="Отмена"
-        title="Пароль"
+        title="Секретный ключ"
         summary="||************"
-        dialogMessage="Введите ваш пароль в Zadarma"
+        dialogMessage="Введите ваш секретный ключ (получить его можно на https://my.zadarma.com/api/)"
         inputType="textPassword">
     </EditTextPreference>
 </PreferenceScreen>

@@ -1,17 +1,32 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
   <api flags="no_browser|captcha"/>
-  <id major_version="2" version="18">ab-telephony-zadarma</id>
+  <id major_version="2" version="19">ab-telephony-zadarma</id>
   <name>Zadarma</name>
   <description html="true">
     <![CDATA[
 	<p>Предоставляет информацию о текущем балансе в Zadarma (http://zadarma.com).</p>
-	<p>Информация берется из личного кабинета.</p>
+	<p>Информация берется из API: https://zadarma.com/ru/support/api.</p>
 	]]>
   </description>
+  <instruction html="true">
+    <![CDATA[
+  	<p>Для получения ключей к API необходимо</p>
+  	<ol>
+  		<li>Войти в личный кабинет https://my.zadarma.com<li>
+  		<li>Перейти в меню Настройки/API: https://my.zadarma.com/api/<li>
+  		<li>Нажать кнопку Получить ключи и следовать инструкциям<li>
+  		<li>Полученные ключи ввести в настройки провайдера<li>
+  	</ol>
+	]]>
+  </instruction>
   <author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
   <depends>
 		<module id="library"/>
+		<module id="crypt/cryptojs/hmac"/>
+		<module id="crypt/cryptojs/sha1"/>
+		<module id="crypt/cryptojs/md5"/>
+		<module id="crypt/cryptojs/base64"/>
 	</depends>
   <files>
     <icon>icon.png</icon>

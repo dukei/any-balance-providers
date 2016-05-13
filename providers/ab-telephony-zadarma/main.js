@@ -9,7 +9,9 @@ var g_headers = {
   'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
 };
 
-function main() {
+function mainLK() {
+	AnyBalance.trace('Получаем данные из ЛК');
+
   var prefs = AnyBalance.getPreferences();
   AnyBalance.setDefaultCharset('utf-8');
   var baseurl = "https://ss.zadarma.com/";
@@ -41,6 +43,8 @@ function main() {
 
   if (!json.success && json.needCaptcha){
   	AnyBalance.trace('Потребовалась капча...');
+  	throw new AnyBalance.Error('Задарма потребовал капчу. Вместо входа по логину и паролю получите ключ API и секретный ключ на https://my.zadarma.com/api/ и введите их в настройки провайдера.', null, true);
+
     captchaKey = captchaAuth(baseurl, captchaUrl);
 
     html = AnyBalance.requestPost(baseurl + "auth/login/", {
@@ -121,4 +125,117 @@ function captchaAuth(baseurl, captchaUrl) {
       true);
   }
   return captchaKey;
+}
+
+function ZadarmaAPI(key, secret){
+	var baseurl = 'https://api.zadarma.com';
+
+	function callApi(method, params, requestType /*='get'*/, format /*='json'*/, isAuth /*=true*/){
+		if(!requestType)
+			requestType = 'get';
+	    if(!format)
+	    	format = 'json';
+	    if(typeof isAuth == 'undefined')
+	    	isAuth = true;
+	    if(!params)
+	    	params = {};
+
+	    params.format = format;
+	    var url = baseurl + method;
+	    var nobody = /get/i.test(requestType);
+	    if(nobody)
+	    	url += '?' + getQueryString(params);
+
+	    var str = AnyBalance.requestPost(url, nobody ? '' : params, {
+	    	Authorization: isAuth ? getAuthHeaderValue(method, params) : undefined
+	    }, {
+	    	HTTP_METHOD: requestType
+	    });
+
+	    return str;
+	}
+
+	function getQueryString(params){
+		var ps = [];
+		for(p in params){
+			ps.push([p, params[p]]);
+		}
+		ps.sort(function(p1, p2){ return p1[0] > p2[0] ? 1 : (p1[0] < p2[0] ? -1 : 0); });
+		var query = [];
+		for(var i=0; i<ps.length; ++i){
+			query.push(encodeURIComponent(ps[i][0]) + '=' + encodeURIComponent(ps[i][1]));
+		}
+		var queryString = query.join('&');
+		return queryString;
+	}
+
+	function getAuthHeaderValue(method, params){
+		var queryString = getQueryString(params);
+//		AnyBalance.trace('Query string: ' + queryString);
+//		AnyBalance.trace('Query string md5: ' + CryptoJS.MD5(queryString));
+//		AnyBalance.trace('To hmac: ' + method + queryString + CryptoJS.MD5(queryString));
+
+		var hash = CryptoJS.HmacSHA1(method + queryString + CryptoJS.MD5(queryString), secret);
+		hash = hash.toString();
+		// Converts a String to word array
+		var words = CryptoJS.enc.Utf8.parse(hash); //Они зачем-то hex строку кодируют в base64
+		hash = CryptoJS.enc.Base64.stringify(words);
+
+//		AnyBalance.trace('Hmac: ' + hash);
+  		return key + ':' + hash;
+	}
+
+	return {
+		call: function(method, params, requestType){
+			var str = callApi(method, params, requestType);
+			var json = getJson(str);
+			if(json.status != 'success')
+				throw new AnyBalance.Error(json.message, null, /Not authorized/i.test(json.message));
+			return json;
+		}
+	};
+}
+
+function mainApi() {
+	AnyBalance.trace('Получаем данные по API');
+  var prefs = AnyBalance.getPreferences();
+  AnyBalance.setDefaultCharset('utf-8');
+
+  var api = new ZadarmaAPI(prefs.login, prefs.password);
+
+  var result = {success: true};
+  
+  var json = api.call('/v1/info/balance/');
+  getParam(json.balance, result, 'balance');
+  getParam(json.currency, result, ['currency', 'balance']);
+
+  json = api.call('/v1/tariff/');
+  getParam(json.info.tariff_name, result, '__tariff');
+  getParam(json.info.used_seconds, result, 'min');
+
+  json = api.call('/v1/direct_numbers/');
+  for(var i=0; i<json.info.length; ++i){
+  	var info = json.info[i];
+  	getParam(info.number, result, 'phone' + i);
+  	getParam(info.status, result, 'phone' + i + 'status');
+  	getParam(info.stop_date, result, 'phone' + i + 'till', null, null, parseDateISO);
+  }
+  
+  json = api.call('/v1/sip/');
+  for(var i=0; i<json.sips.length; ++i){
+  	var info = json.sips[i];
+  	getParam(info.id, result, 'shortphone' + i);
+  }
+
+  AnyBalance.setResult(result);
+}
+
+function main(){
+  var prefs = AnyBalance.getPreferences();
+  if(/@/i.test(prefs.login)){
+  	//Введен е-мейл
+	mainLK();
+  }else{
+  	mainApi();
+  }
 }

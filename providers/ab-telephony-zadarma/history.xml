@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="2" version="19" date="2016-05-13">
+	Переход на использование API, чтобы капчу не вводить
+	</change>
 	<change major_version="2" version="18" date="2016-03-18">
 	Капча теперь запрашивается только по требованию сайта. Иногда она необязательна
 	</change>

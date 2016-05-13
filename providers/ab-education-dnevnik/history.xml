@@ -1,8 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
-	<change version="11" date="2016-05-01">
+	<change version="12" date="2016-05-13">
+	Возврат к получению информации с dnevnik.ru
+	schools.mosreg.ru не работает!
+	</change>
+	<change version="11" date="2016-04-15">
 	- Улучшено определение дней в расписании.
-    - Поддержка изменений на сайте (переезд на новую страницу).
 	</change>
 	<change version="10" date="2016-02-03">
 	- Мелкие улучшения.

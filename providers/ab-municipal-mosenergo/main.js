@@ -45,7 +45,7 @@ function main(){
 		if (/:t_login$/i.test(name)) 
 			return prefs.login;
 		else if (/:t_pwd$/i.test(name)) 
-			return prefs.password;
+			return prefs.password.substr(0, 20); //В поле ввода maxlength 20
 
 		return value;
 	});

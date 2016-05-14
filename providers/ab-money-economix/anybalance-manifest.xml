@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-money-economix</id>
+	<id version="2">ab-money-economix</id>
 	<api flags="no_browser"/>
 	<name>Экономикс-Банк</name>
 	<description html="true"><![CDATA[
@@ -28,7 +28,6 @@
 		<counter id="name_last" name="Фамилия" type="text"/>
 		<counter id="agreement" name="Номер договора" type="text"/>
 		<counter id="date_start" name="Дата открытия" type="time" format="dd/MM/yyyy"/>
-
 	</counters>
 	<keywords>economiks</keywords>
 	<type>money, bank</type>

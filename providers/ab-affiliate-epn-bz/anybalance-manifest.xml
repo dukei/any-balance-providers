@@ -1,0 +1,35 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-affiliate-epn-bz</id>
+	<api flags="no_browser"/>
+	<name>e-Commerce Partners Network</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера e-Commerce Partners Network https://epn.bz/ru/</p>
+	<p>Информация берется из личного кабинета https://epn.bz/ru/cabinet</p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" $"/>
+		<counter id="balance_hold" name="В обработке" units=" $"/>
+        <counter id="epc" name="Доход с клика" units=" $"/>
+        <counter id="pct" name="Текущая ставка" units="%"/>
+        <counter id="cr" name="CR" units="%"/>
+        <counter id="impressions" name="Показы"/>
+        <counter id="leads_hold" name="Лиды (в обработке)"/>
+        <counter id="leads" name="Лиды"/>
+        <counter id="hosts" name="Хосты"/>
+        <counter id="clicks" name="Клики"/>
+	</counters>
+	<keywords></keywords>
+	<type>affiliate</type>
+	<country>ru</country>
+</provider>

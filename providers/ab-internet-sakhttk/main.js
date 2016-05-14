@@ -45,6 +45,7 @@ function parseBalance(text){
 }
 
 function main(){
+	throw new AnyBalance.Error('Личный кабинет переехал в Единый Личный Кабинет ТТК. Пользуйтесь провайдером ТТК (Единый кабинет) https://anybalance.ru/catalog/ab-internet-ttk', null, true);
     var prefs = AnyBalance.getPreferences();
     var baseurl = 'http://issa.sakhttk.ru/';
     

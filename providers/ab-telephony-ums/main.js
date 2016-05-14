@@ -61,7 +61,7 @@ function main() {
 		for(var i=0; i<items.length; ++i){
 			var opt = items[i], matches;
 			AnyBalance.trace('Разбираем ' + opt);
-			if(matches = /(?:У Вас осталось|U Vas ostalos)([^<]+mb)[^<]+(?:Действует до|Dejstvuet do)([^<]*)/i.exec(opt)){
+			if(matches = /(?:У Вас осталось|U Vas ostalos|Sizda)([^<]+mb)[^<]+(?:Действует до|Dejstvuet do|Amal qilish muddati)([^<]*)/i.exec(opt)){
 				sumParam(matches[1], result, 'traffic2', null, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
 				sumParam(matches[2], result, 'traffic2_till', null, replaceTagsAndSpaces, parseDate, aggregate_min);
 			}else if(matches = /(?:У Вас осталось|U Vas ostalos)([\s\S]*?)mb/i.exec(opt)){

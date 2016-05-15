@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="3.0" version="24" date="2016-05-15">
+	- Улучшена обработка ошибок.
+	</change>
 	<change major_version="3.0" version="23" date="2016-01-26">
 	- исправления в авторизации
 	</change>

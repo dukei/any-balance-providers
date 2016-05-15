@@ -229,14 +229,15 @@ var g_regions = {
 function mainMoscow(){
 	var prefs = AnyBalance.getPreferences();
 	try {
+		throw new AnyBalance.Error('SkyPoint, похоже, давно мертв, пропускаем его...');
 	    mainSkyPoint(prefs);
-        } catch(exc) {
-            if (exc.fatal) {
-                throw exc;
-            } else {
-                mainMoscowSP(prefs);
-            }
+    } catch(exc) {
+        if (exc.fatal) {
+            throw exc;
+        } else {
+            mainMoscowSP(prefs);
         }
+    }
 }
 
 function mainMoscowSP(prefs){

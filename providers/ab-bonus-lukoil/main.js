@@ -29,7 +29,7 @@ function main() {
 		var captcha = getParam(html, null, null, /<img[^>]+src="\/([^"]*)"[^>]*class="captcha-pic/i);
 		if(captcha){
 			var img = AnyBalance.requestGet(baseurl + captcha, addHeaders({Referer:baseurl + 'ru/login'}));
-			captcha = AnyBalance.retrieveCode('Пожалуйста, введите код с картинки', img);
+			captcha = AnyBalance.retrieveCode('Пожалуйста, введите код с картинки', img, {inputType: 'number'});
 			params.push(['keystring', captcha]);
 		}
 		

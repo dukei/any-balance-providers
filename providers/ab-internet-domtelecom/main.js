@@ -46,12 +46,12 @@ function main() {
 	
 	var result = {success: true};
 		
-	getParam(html, result, 'balance', /Баланс:(?:[^>]*>){2}([\s\S]*?)грн/i, [replaceTagsAndSpaces, /Долг([\s\d.,]+)/i, '- $1'], parseBalance);
-	getParam(html, result, 'fio', /Абонент:(?:[^>]*>){1}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'account', /Номер договора:(?:[^>]*>){1}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'lic_account', /Лицевой Счет:(?:[^>]*>){1}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'connection', /Подключение:(?:[^>]*>){1}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'status', /Статус:(?:[^>]*>){1}([\s\S]*?)<\/\w/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'balance', /Баланс:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, [replaceTagsAndSpaces, /Долг([\s\d.,]+)/i, '- $1'], parseBalance);
+	getParam(html, result, 'fio', /Абонент:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+	getParam(html, result, 'account', /Номер договора:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+	getParam(html, result, 'lic_account', /Лицевой Счет:[\s\S]*?<td[^>]*>([\s\S]*?)(?:<\/b|<\/td>)/i, replaceTagsAndSpaces);
+	getParam(html, result, 'connection', /Подключение:[\s\S]*?<td[^>]*>([\s\S]*?)(?:\*|<\/td>)/i, replaceTagsAndSpaces);
+	getParam(html, result, 'status', /Статус:[\s\S]*?<td[^>]*>([\s\S]*?)(?:<\/b|<\/td>)/i, replaceTagsAndSpaces);
      
 	html = AnyBalance.requestPost(baseurl, {
         'where_to': 4

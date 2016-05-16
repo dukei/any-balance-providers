@@ -24,7 +24,7 @@
 	<counters>
 		<counter id="balance" name="Баланс" units=" {@currency}"/>
 		<counter id="available_cash" name="Доступно для снятия наличных" units=" {@currency}"/>
-		<counter id="minpay_till" name="Ближайший платеж" type="dd/MM/yyyy"/>
+		<counter id="minpay_till" name="Ближайший платеж" type="time" format="dd/MM/yyyy"/>
 		<counter id="debt" name="Предварительная задолженность на текущий момент" units=" {@currency}"/>
 		<counter id="bonus" name="Баланс бонусных баллов" units=" Б"/>
 		<counter id="limit" name="Кредитный лимит" units=" {@currency}"/>

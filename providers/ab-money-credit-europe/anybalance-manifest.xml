@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<api flags="no_browser" />
+	<api flags="no_browser|sms" />
     <id version="1">ab-money-credit-europe</id>
 	<name>Кредит Европа Банк</name>
 	<description html="true"><![CDATA[

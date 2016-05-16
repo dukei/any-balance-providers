@@ -1,0 +1,43 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<api flags="no_browser" />
+    <id version="1">ab-money-credit-europe</id>
+	<name>Кредит Европа Банк</name>
+	<description html="true"><![CDATA[
+	<p>Получает текущий остаток и другие параметры продуктов Кредит Европа Банка http://crediteurope.ru/, используя интернет-банк (https://online.crediteurope.ru/).</p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Если у вас нет доступа к интернет-банку: получите пароль онлайн на странице https://online.crediteurope.ru/FWFIB/register.jsp</p>
+	]]></instruction>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+		<module id="extract/abe-money-credit-europe"/>
+		<module id="nadapter"/>
+	</depends>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" {@currency}"/>
+		<counter id="available_cash" name="Доступно для снятия наличных" units=" {@currency}"/>
+		<counter id="minpay_till" name="Ближайший платеж" type="dd/MM/yyyy"/>
+		<counter id="debt" name="Предварительная задолженность на текущий момент" units=" {@currency}"/>
+		<counter id="bonus" name="Баланс бонусных баллов" units=" Б"/>
+		<counter id="limit" name="Кредитный лимит" units=" {@currency}"/>
+		<counter id="limit_cash" name="Лимит выдачи наличных" units=" {@currency}"/>
+		<counter id="cardnum" name="Номер карты/кредита" type="text"/>
+		<counter id="accnum" name="Номер счета" type="text"/>
+		<counter id="name" name="Название" type="text"/>
+		<counter id="till" name="Срок действия" type="dd/MM/yyyy"/>
+		<counter id="fio" name="Владелец" type="text"/>
+		<counter id="status" name="Статус" type="text"/>
+		<counter id="currency" name="Валюта" type="text"/>
+	</counters>
+	<keywords>Кредит, банк, citi</keywords>
+	<type>money, bank</type>
+	<country>ru</country>
+</provider>

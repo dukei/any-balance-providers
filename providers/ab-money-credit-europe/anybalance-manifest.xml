@@ -32,7 +32,7 @@
 		<counter id="cardnum" name="Номер карты/кредита" type="text"/>
 		<counter id="accnum" name="Номер счета" type="text"/>
 		<counter id="name" name="Название" type="text"/>
-		<counter id="till" name="Срок действия" type="dd/MM/yyyy"/>
+		<counter id="till" name="Срок действия" type="time" format="dd/MM/yyyy"/>
 		<counter id="fio" name="Владелец" type="text"/>
 		<counter id="status" name="Статус" type="text"/>
 		<counter id="currency" name="Валюта" type="text"/>

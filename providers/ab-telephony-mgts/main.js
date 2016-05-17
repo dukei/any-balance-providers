@@ -50,7 +50,7 @@ function main() {
 		if(/Баланс_не_может_быть_получен/i.test(value))
 			throw new AnyBalance.Error('Баланс временно недоступен. Попробуйте позднее или воспользуйтесь получением баланса по логину и паролю.');
 
-		getParam(value, result, 'balance', '[^=]+$', null, parseBalance);
+		getParam(value, result, 'balance', /МГТС-\d+-(.*)$/i, null, parseBalance);
 
 	} else {
 		AnyBalance.trace('Входим по логину и паролю...');

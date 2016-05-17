@@ -83,7 +83,7 @@ function tryLogin(html){
 	});
 
 	var submit = getParam(form, null, null, /<input[^>]+id="[^"]*:loginBtn"[^>]*>/i);
-	var btnid = getParam(submit, null, null, /<input[^>]+id="([^"]*)>/i, replaceHtmlEntities);
+	var btnid = getParam(submit, null, null, /<input[^>]+id="([^"]*)/i, replaceHtmlEntities);
 	var submitid = getParam(submit, null, null, /execute:\\?'([^'\\]*)/i);
 	var render = getParam(submit, null, null, /render:\\?'([^'\\]*)/);
 	var formid = getParam(form, null, null, /<form[^>]+id="([^"]*)/i, replaceHtmlEntities);
@@ -94,8 +94,7 @@ function tryLogin(html){
 		'javax.faces.source': btnid,
 		'javax.faces.partial.ajax': 'true',
 		'javax.faces.partial.execute': submitid,
-		'javax.faces.partial.render': render,
-		'javax.faces.source': formid
+		'javax.faces.partial.render': render
 	});
 
 	params[formid] = formid;
@@ -103,13 +102,34 @@ function tryLogin(html){
 	var action = getParam(form, null, null, /<form[^>]+action="([^"]*)/i);
 
 	var frmhtml = AnyBalance.requestPost(g_baseurl + action, params, addHeaders({Origin: g_baseurl, Referer: g_baseurl + '/scoring/protected/welcome.jsf', 'Faces-Request': 'partial/ajax'}));
+	var json = getParam(frmhtml, null, null, /<message[^>]*>([\s\S]*?)<\/message>/i, null, getJson);
+	if(json.showCaptcha && !captcha){ //Если требуется включить капчу, а она не была включена
+		AnyBalance.trace("Потребовался ввод капчи");
+		return html.replace(/(captchaBlock"[^>]*)display:\s*none/i, '$1display:block'); //Надо включить капчу
+	}
+	if(json.error){
+		var msgs = {incorrectCaptcha: 'Неверно введены символы с картинки'};
+		throw new AnyBalance.Error(msgs[json.error] || json.error);
+	}
 
-	html = AnyBalance.requestPost(g_baseurl + '/scoring/j_security_check', {
-		j_username: prefs.login,
-		j_password: prefs.password,
-		locale: 'ru',
-		captcha: captcha
-	}, addHeaders({Origin: g_baseurl, Referer: g_baseurl + '/scoring/protected/welcome.jsf'}));
+	form = getElement(html, /<form[^>]+j_security_check[^>]*>/i);
+	if(!form){
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удаётся найти форму передачи логина-пароля. Сайт изменен?');
+	}
+
+	params = createFormParams(form, function(params, str, name, value) {
+		if (/username/i.test(name)) 
+			return prefs.login;
+		else if (/password/i.test(name))
+			return prefs.password;
+		else if (/captcha/i.test(name))
+			return captcha || '';
+
+		return value;
+	});
+
+	html = AnyBalance.requestPost(g_baseurl + '/scoring/j_security_check', params, addHeaders({Origin: g_baseurl, Referer: g_baseurl + '/scoring/protected/welcome.jsf'}));
 
 	return html;
 
@@ -200,7 +220,7 @@ function login(){
 
     form = getElements(html, [/<form[^>]+submitForm[^>]*>/ig, /<input[^>]+name="otp_type"/i])[0];
     if(!form && hasCaptcha(html) && !wasCaptcha){
-    	tryLogin(html);
+    	html = tryLogin(html);
 	    
 		if(isLoggedIn(html)) {
             html = checkForPasswordChange(html);
@@ -228,7 +248,7 @@ function login(){
     	Referer: g_baseurl + '/scoring/j_security_check', 
     	'X-Requested-With': 'XMLHttpRequest'
     }));
-    var code = AnyBalance.retrieveCode(msg || 'Введите код подтверждения входа');
+    var code = AnyBalance.retrieveCode(msg || 'Введите код подтверждения входа', null, {inputType: 'number'});
     
 	var params = createFormParams(form, function(params, str, name, value) {
 		if ('otp' == name) 
@@ -305,8 +325,21 @@ function processInfo(html, result){
     result.info = {};
 
 	var prefs = AnyBalance.getPreferences();
-	getParam(html, result.info, 'info.fio', /<div[^>]*class="clientName"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+	getParam(html, result.info, 'info.io', /<div[^>]*class="clientName"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
 	getParam(prefs.login, result.info, 'info.login');
+
+    if(AnyBalance.isAvailable('info.fio')){
+        var url = getParam(html, null, null, /<a[^>]+href="([^"]*\/scoring\/protected\/statement\/account\/[^"]*)/i, replaceHtmlEntities);
+        if(!url)
+            url = getParam(html, null, null, /<a[^>]+href="([^"]*\/scoring\/protected\/statement\/card\/[^"]*)/i, replaceHtmlEntities);
+        html = AnyBalance.requestGet(joinUrl(g_baseurl, url), g_headers);
+        var requisites = getElement(html, /<form[^>]+detailsDialog:detailsDialog[^>]*>/i, replaceHtmlEntities);
+        if(/account/i.test(url)){
+            getParam(requisites, result.info, 'info.fio', /Получатель платежа:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+        }else {
+            getParam(requisites, result.info, 'info.fio', /Назначение платежа:[\s\S]*?<td[^>]*>([\s\S]*?)(?:,|<\/td>)/i, replaceTagsAndSpaces);
+        }
+    }
 }
 
 function processCard(html, result){

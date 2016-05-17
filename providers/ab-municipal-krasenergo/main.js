@@ -3,9 +3,10 @@
 */
 
 var g_headers = {
+	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
   'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
   'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
-  'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Intel Mac OS X 10.6; rv:7.0.1) Gecko/20100101 Firefox/7.0.1',
+  'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36',
   Connection: 'keep-alive'
 };
 
@@ -26,11 +27,16 @@ function main(){
         fam: prefs.password  || prefs.fam,
         showpass: 'on',
         main: 'Войти'
-    }, g_headers);
+    }, addHeaders({Referer: baseurl}));
+
+	if (!html || AnyBalance.getLastStatusCode() > 400) {
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Сайт провайдера временно недоступен! Попробуйте обновить данные позже.');
+	}
 
     //Ссылка на печать квитанции
     if(!/Лицевой cчет N/i.test(html)){
-        var error = getParam(html, null, null, [/<div[^>]+class="error"[^>]*>([\s\S]*?)<\/div>/i, /<\/form>(?:\s+|<br[^>]*>)*<b[^>]*>([\s\S]*?)<\/b>/i], replaceTagsAndSpaces, html_entity_decode);
+        var error = getParam(html, null, null, [/<strong[^>]+color:\s*red[^>]*>([\s\S]*?)<\/strong>/i, /<div[^>]+class="error"[^>]*>([\s\S]*?)<\/div>/i, /<\/form>(?:\s+|<br[^>]*>)*<b[^>]*>([\s\S]*?)<\/b>/i], replaceTagsAndSpaces);
         if(error)
             throw new AnyBalance.Error(error, null, /некорректные данные/i.test(html));
         AnyBalance.trace(html);
@@ -39,8 +45,8 @@ function main(){
 
     var result = {success: true}, tr;
 
-    getParam(html, result, 'fio', /Абонент:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'licschet', /Лицевой cчет N:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'fio', /Абонент:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+    getParam(html, result, 'licschet', /Лицевой cчет N:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
     getParam(html, result, 'balance', /((?:Переплата|Задолженность):[\s\S]*?<td[^>]*>[\s\S]*?)<\/td>/i, [/:[\s\S]*?<\/th>/i, '', /Задолженность/ig, '-', replaceTagsAndSpaces], parseBalance);
 	
 	if(AnyBalance.isAvailable('lastpaydate', 'lastpaysum')){

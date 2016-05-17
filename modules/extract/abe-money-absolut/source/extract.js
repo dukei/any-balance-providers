@@ -93,7 +93,7 @@ function processProfile(html, result) {
 	if(!isAvailable('profile'))
 		return;
 
-	var html = requestGetWicketAction(html, /<span[^>]+class="link" id="(id[^"]+)/i)
+	var html = AnyBalance.requestGet(baseurl + 'main?main=priv&replace=profile_view&item=0', g_headers);
 	
 	result.profile = {};
 	
@@ -124,15 +124,19 @@ function findExactWickeAction(actions, exactId) {
 	}
 }
 
-function requestGetWicketAction(html, regex) {
+function requestGetWicketAction(html, regex, params) {
 	var wicketId = getParam(html, null, null, regex);
-	if(!wicketId)
-		throw new AnyBalance.Error('Не нашли wicketId!');
+	if(!wicketId){
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не нашли wicketId ' + regex.source);
+	}
 	
 	var actions = findWicketActions(html);
 	var action = findExactWickeAction(actions, wicketId);
 	
-	return AnyBalance.requestGet(baseurl + action + '&_=' + new Date().getTime(), addHeaders(g_Xml_Headers));
+	return params ? 
+		AnyBalance.requestPost(baseurl + action + '&_=' + new Date().getTime(), params, addHeaders(g_Xml_Headers)) :
+		AnyBalance.requestGet(baseurl + action + '&_=' + new Date().getTime(), addHeaders(g_Xml_Headers));
 }
 
 function checkForRedirect(html) {
@@ -220,10 +224,16 @@ function processAccounts(html, result) {
 	
 	for(var i=0; i < accounts.length; ++i) {
 		var htmlLocal = requestGetWicketAction(accounts[i] + html, /id="(id[^"]+)"/i);
+
+		var id = getParam(htmlLocal, null, null, /№(?:[^>]*>)?(\d{20})/i, replaceTagsAndSpaces);
+		var name = getParam(htmlLocal, null, null, /class="dashed active"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
+		var title = name + ' ' + id.substr(-4);
 		
 		var c = {
-			__id: getParam(htmlLocal, null, null, /№(?:[^>]*>)?(\d{20})/i, replaceTagsAndSpaces), 
-			__name: getParam(htmlLocal, null, null, /class="dashed active"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces)
+			__id: id,
+			__name: title,
+			num: id,
+			name: name
 		};
 		
 		if(__shouldProcess('accounts', c)){
@@ -252,11 +262,20 @@ function processCredits(html, result) {
 	var html = AnyBalance.requestGet(baseurl + 'main?main=priv', g_headers);
   html = requestGetWicketAction(html, /wicket.event.add\([^"]*?"load"[\s\S]*?"c":"([^"]*)/i);
 
-	html = requestGetWicketAction(html, /<div[^>]+class="inner"[^>]+id="(id[^"]+)"(?:[^>]*>){3,7}\s*Кредиты/i);
+  var credits = [];
+  	try{
+		html = requestGetWicketAction(html, /<div[^>]+class="inner"[^>]+id="(id[^"]+)"(?:[^>]*>){3,7}\s*Кредиты/i);
 
-	var credits = getElements(html, /<div[^>]+class=['"]account inner[^>]*>/ig);
+		credits = getElements(html, /<div[^>]+class=['"]account inner[^>]*>/ig);
 	
-	AnyBalance.trace('Найдено кредитов: ' + credits.length);
+		AnyBalance.trace('Найдено кредитов: ' + credits.length);
+	}catch(e){
+		if(/Заявка на кредит/i.test(html)){
+			AnyBalance.trace('Кредитов нет');
+		}else{
+			AnyBalance.trace('Не удалось найти ссылку на кредиты.');
+		}
+	}
 	result.credits = [];
 	
 	for(var i=0; i < credits.length; ++i) {
@@ -298,6 +317,6 @@ function processCredit(credit, result, html) {
     getParam(html, result, 'credits.minpay_debt_expried', /К оплате[\s\S]*?Сумма просроченного основного долга([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
 
 	 if(typeof processCreditSchedule != 'undefined') {
-     processCreditSchedule(html, result);
+     	processCreditSchedule(html, result);
    }
 }

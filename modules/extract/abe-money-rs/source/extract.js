@@ -356,26 +356,64 @@ function processCredits(json, result) {
         var p = products[i];
         var id = p.id;
         var num = p.num;
+        var info;
+        if(!num){
+        	//Нет номера. Надо тогда достать номер счета
+        	var url = getActionUrl(/Информация по кредиту/i, p.actions);
+        	info = AnyBalance.requestGet(url, g_headers);
+        	var props = getElement(info, /<div[^>]+h-content-inner[^>]*>/i, replaceHtmlEntities);
+        	num = getParam(props, null, null, /Номер договора[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+        }
+
         var title = p.title + ' ' + num.substr(-4);
 
         var c = {__id: id, __name: title, num: num};
 
         if(__shouldProcess('credits', c)) {
-            processCredit(p, c);
+            processCredit(p, c, info);
         }
 
         result.credits.push(c);
     }
 }
 
+function getActionUrl(re, actions){
+	for(var i=0; i<actions.length; ++i){
+		var action = actions[i];
+		if(re.test(action.title))
+			return joinUrl(baseurl, action.link);
+	}
+}
+
 function parseBool(str){
     return /включено/i.test(str);
 }
 
-function processCredit(credit, result){
+function processCredit(credit, result, info){
     AnyBalance.trace('Обработка кредита ' + result.__name);
 
-	getParam(credit.loan.amount, result, 'credits.limit', null, replaceTagsAndSpacesAndBalances, parseBalance);
+	getParam(credit.loan.amount, result, 'credits.limit', null, replaceTagsAndSpaces, parseBalance);
+	getParam(credit.acc[0].available, result, 'credits.balance', null, replaceTagsAndSpaces, parseBalance);
+	getParam(credit.acc[0].currency, result, 'credits.currency', null, replaceTagsAndSpaces);
+	getParam(credit.title, result, 'credits.name');
+
+	getParam(credit.next.amount, result, 'credits.minpay', null, replaceTagsAndSpaces, parseBalance);
+	getParam(credit.next.date, result, 'credits.minpay_till', null, replaceTagsAndSpaces, parseDate);
+
+    if(!info){
+       	var url = getActionUrl(/Информация по кредиту/i, p.actions);
+       	info = AnyBalance.requestGet(url, g_headers);
+    } 
+    
+    var props = getElement(info, /<div[^>]+h-content-inner[^>]*>/i, replaceHtmlEntities);
+   	getParam(props, result, 'credits.own', /Остаток на счёте[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+   	getParam(props, result, 'credits.date_start', /Дата заключения договора[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
+   	getParam(props, result, 'credits.accnum', /Номер счета в банке:([\s\S]*?)<\/p>/i, replaceTagsAndSpaces);
+
+   	if(AnyBalance.isAvailable('credits.schedule')){
+   		var url = getActionUrl(/График платежей/i, credit.actions);
+   		processCreditSchedule(url, result);
+   	}
 }
 
 function processInfo(html, result){

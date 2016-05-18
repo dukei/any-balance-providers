@@ -255,8 +255,12 @@ function processCard(card, result) {
     }
 
     if(AnyBalance.isAvailable('cards.accnum', 'cards.main', 'cards.status', 'cards.contract', 'cards.excerpt')) {
-        html = followDetailsLink(html, /<table[^>]+prod-balance_var2[\s\S]*?(<a[^>]+link_more[^>]*>)/i);
         var props = getElement(html, /<div[^>]+b-prod-props[^>]*>/i, replaceHtmlEntities);
+        if(!props){
+        	html = followDetailsLink(html, /<table[^>]+prod-balance_var2[\s\S]*?(<a[^>]+link_more[^>]*>)/i);
+        	props = getElement(html, /<div[^>]+b-prod-props[^>]*>/i, replaceHtmlEntities);
+        }
+
         getParam(props, result, 'cards.accnum', /Номер счета в банке:([\s\S]*?)<\/p>/i, replaceTagsAndSpaces);
 
         var details = getElement(html, /<table[^>]+prod-balance_var2[^>]*>/i, replaceHtmlEntities);

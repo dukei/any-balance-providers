@@ -336,15 +336,15 @@ function processInfo(html, result){
 
     var info = result.info = {};
 
-    getParam(html, info, "info.fio", /<div[^>]+class="user-name"[^>]*>([^]*?)<\/div>/i, replaceTagsAndSpaces, capitalFirstLetters);
-    getParam(html, info, "info.mphone", /<div[^>]+class="user-phone"[^>]*>([^]*?)<\/div>/i, replaceTagsAndSpaces);
+    getParam(html, info, "info.fio", /<div[^>]+class="user-name"[^>]*>([\s\S]*?)(?:<\/div>|<a)/i, replaceTagsAndSpaces, capitalFirstLetters);
+    getParam(html, info, "info.mphone", /<div[^>]+class="user-phone"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
 
     if(AnyBalance.isAvailable("info.email", "info.address")){
         html = AnyBalance.requestGet(baseurl + 'account');
 
         getParam(html, info, "info.phone_model", /Модель телефона:([\s\S]*?)<\/p>/i, replaceTagsAndSpaces);
         getParam(html, info, "info.address", /<div[^>]+id="js-view-element-address-view"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
-        getParam(html, info, "info.email", /<div[^>]+id="js-view-element-email-view"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+        getParam(html, info, "info.email", /<div[^>]+id="js-view-element-email-view"[^>]*>([\s\S]*?)<\/div>/i, [/unknown@email.com/i, '', replaceTagsAndSpaces]);
 
     }
 }

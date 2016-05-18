@@ -19,23 +19,17 @@ var g_countersTable = {
         "__tariff": "cards.__name"
 	},
 	crd: {
-		"credit_balance": "credit_balance",
-		"payment_sum": "payment_sum",
-		"writeoff_date": "writeoff_date",
-        "left": "left",
-        "account_balance": "account_balance",
-		"account_blocked_balance": "account_blocked_balance",
-        "gracepay": "gracepay",
-        "gracetill": "gracetill",
-        "currency": "currency",
-        "contract": "contract",
-        "cardnum": "cardnum",
-        "contract_date": "contract_date",
-        "credit_sum": "credit_sum",
-        "till": "till",
-        "status": "status",
-        "accname": "accname",
-        "__tariff": "__tariff"
+		"credit_balance": "credits.balance",
+		"payment_sum": "credits.minpay",
+		"writeoff_date": "credits.minpay_till",
+        "account_balance": "credits.own",
+        "currency": "credits.currency",
+        "contract": "credits.num",
+        "contract_date": "credits.date_start",
+        "cardnum": "credits.accnum",
+        "credit_sum": "credits.limit",
+        "accname": "credits.name",
+        "__tariff": "credits.__name"
 	},
     acc: {
         "account_balance": "accounts.balance",
@@ -119,9 +113,6 @@ function main() {
     if(!/^(card|crd|dep|acc)$/i.test(prefs.type || ''))
     	prefs.type = 'card';
 
-    if(/crd/i.test(prefs.type))
-    	throw new AnyBalance.Error('Не удаётся получить информацию по кредиту. Сайт изменен?');
-	
     var adapter = new NAdapter(g_countersTable[prefs.type], shouldProcess);
 	
     adapter.processCards = adapter.envelope(processCards);

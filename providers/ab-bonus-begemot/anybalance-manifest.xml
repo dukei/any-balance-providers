@@ -7,7 +7,7 @@
 	<p>Предоставляет информацию о состоянии бонусного счета провайдера БЕГЕМОТ <a href="http://xn--c1ajbh3as9a.xn--p1ai/">игрушки.рф</a></p>
 	<p>Информация берется со страницы <a href="http://bonus.xn--c1ajbh3as9a.xn--p1ai/ru.grandtoys.bonus_account.web/accountDoc">http://bonus.xn--c1ajbh3as9a.xn--p1ai/ru.grandtoys.bonus_account.web/accountDoc</a></p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

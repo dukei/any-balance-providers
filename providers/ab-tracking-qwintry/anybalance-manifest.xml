@@ -6,7 +6,7 @@
 	<description html="true"><![CDATA[
 	<p>Helps to track your package via <a href="http://logistics.qwintry.com/">http://logistics.qwintry.com/</a> to Russia, Belarus & Kazakhstan</p>
 	]]></description>
-  <author>Stark &lt;support@starksoft.ru&gt;</author>
+  <author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
   <depends>
     <module id="library"/>
   </depends>

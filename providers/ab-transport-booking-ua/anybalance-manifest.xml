@@ -6,7 +6,7 @@
 	<description html="true"><![CDATA[
 	<p>Предоставляет возможность мониторинга расписания поездов согласно сайту <a href="http://booking.uz.gov.ua/ru/">http://booking.uz.gov.ua/ru/</a></p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

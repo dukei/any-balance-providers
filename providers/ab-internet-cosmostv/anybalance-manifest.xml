@@ -7,7 +7,7 @@
 	<p>Предоставляет информацию о балансе провайдера Космос ТВ (Беларусь) http://cosmostv.by</p>
 	<p>Информация берется из личного кабинета https://private.cosmostv.by:8443/lk_auth</p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

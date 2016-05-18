@@ -7,7 +7,7 @@
 	<p>Предоставляет информацию о балансе провайдера Reggi <a href="https://www.reggi.ru/">https://www.reggi.ru/</a></p>
 	<p>Информация берется из личного кабинета <a href="https://www.reggi.ru/signin/">https://www.reggi.ru/signin/</a></p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

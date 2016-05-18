@@ -7,7 +7,7 @@
 	<p>Предоставляет информацию о балансе провайдера FREE-KASSA <a href="http://www.free-kassa.ru/">http://www.free-kassa.ru/</a></p>
 	<p>Информация берется из личного кабинета <a href="http://www.free-kassa.ru/merchant/cabinet/login.php">http://www.free-kassa.ru/merchant/cabinet/login.php</a></p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

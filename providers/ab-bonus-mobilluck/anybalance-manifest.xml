@@ -7,7 +7,7 @@
 	<p>Предоставляет информацию по бонусной карте сети магазинов Мобиллак Украина http://www.mobilluck.com.ua</p>
 	<p>Информация берется из личного кабинета http://www.mobilluck.com.ua/user_room.php</p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

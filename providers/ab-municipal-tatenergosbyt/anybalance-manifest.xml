@@ -7,7 +7,7 @@
 	<p>Предоставляет информацию о балансе провайдера Татэнергосбыт <a href="http://www.tatenergosbyt.ru/">http://www.tatenergosbyt.ru/</a></p>
 	<p>Информация берется из личного кабинета <a href="https://lkfl.tatenergosbyt.ru/">https://lkfl.tatenergosbyt.ru/</a></p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

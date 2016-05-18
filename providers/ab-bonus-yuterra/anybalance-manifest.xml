@@ -7,7 +7,7 @@
 	<p>Предоставляет информацию о балансе по карте «Уютерра Клуб» <a href="http://www.yuterra.ru/">http://www.yuterra.ru/</a></p>
 	<p>Информация берется со страницы <a href="http://www.yuterra.ru/klubnye_karty/balance/">http://www.yuterra.ru/klubnye_karty/balance/</a></p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

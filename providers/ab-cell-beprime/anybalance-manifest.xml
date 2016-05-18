@@ -5,7 +5,7 @@
 	<id version="1">ab-cell-beprime</id>
 	<name>Би-Прайм</name>
 	<description>Получает данные для М2М провайдера Би-Прайм http://control.b-prime.ru/</description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

@@ -7,7 +7,7 @@
 	<p>Предоставляет информацию о балансе провайдера WifiDag р. Дагестан <a href="http://www.wifidag.ru/">www.wifidag.ru</a></p>
 	<p>Информация берется из личного кабинета <a href="https://stat.wifidag.ru:8443/bgbilling/webexecuter">Wifidag личный кабинет</a></p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 `		<preferences>preferences.xml</preferences>

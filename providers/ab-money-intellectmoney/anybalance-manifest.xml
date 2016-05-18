@@ -7,7 +7,7 @@
 	<p>Предоставляет информацию о балансе провайдера IntellectMoney http://intellectmoney.ru/</p>
 	<p>Информация берется из личного кабинета https://intellectmoney.ru/ru/</p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

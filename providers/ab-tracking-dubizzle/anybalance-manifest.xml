@@ -7,7 +7,7 @@
 	<p>Obtains information from http://dubizzle.com.</p>
 	<p>Enter key word to find, and regeion where to find.</p>	
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

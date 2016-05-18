@@ -9,7 +9,7 @@
 	<instruction html="true"><![CDATA[
 	<p>Чтобы получить пароль перейдите по ссылке https://iself.tele2.kz/login и введите свой номер телефона в поле "Регистрация", затем нажмите получить пароль.</p>
 	]]></instruction>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>
 		<module id="library"/>
 	</depends>

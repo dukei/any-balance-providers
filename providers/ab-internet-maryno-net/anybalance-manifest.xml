@@ -7,7 +7,7 @@
 	<p>Получает текущий баланс, бонусный баланс, номера лицевого счета и договора, статус у провайдера "Maryno.net" (http://maryno.net) из личного кабинета https://my.maryno.net.</p>
 	]]></description>
 	<author>KiLLer13&lt;killer_kondor@pisem.net&gt;</author>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

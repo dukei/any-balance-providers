@@ -5,7 +5,7 @@
 	<id version="1">ab-internet-m2c</id>
 	<name>M2C (Мурманск)</name>
 	<description>Получает данные для интернет-провайдера М2С г. Мурманск (ООО Мурманские Мультисервисные Сети) http://stat.m2c.ru/index.php</description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

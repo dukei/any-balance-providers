@@ -7,7 +7,7 @@
 	<p>Предоставляет информацию о балансе провайдера ProStore <a href="http://www.prostore.by/">http://www.prostore.by/</a></p>
 	<p>Информация берется из личного кабинета <a href="https://prostorevprok.eps.lt/Authorization/Login">https://prostorevprok.eps.lt/Authorization/Login</a></p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

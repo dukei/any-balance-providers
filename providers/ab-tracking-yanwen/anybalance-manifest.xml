@@ -6,7 +6,7 @@
 	<description html="true"><![CDATA[
 	<p>Получает данные по номеру почтового отправления на сайте <a href="http://track.yw56.com.cn/en-US/">http://track.yw56.com.cn/en-US/</a></p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<preferences>preferences.xml</preferences>
 		<js>library.js</js>

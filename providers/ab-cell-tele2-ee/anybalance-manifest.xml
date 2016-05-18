@@ -7,7 +7,7 @@
 	<p>Предоставляет информацию о балансе провайдера Tele2 Smart (Эстония) http://www.tele2.ee/ru/index.html</p>
 	<p>Информация берется из личного кабинета https://smart.tele2.ee/</p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

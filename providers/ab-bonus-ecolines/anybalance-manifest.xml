@@ -7,7 +7,7 @@
 	<p>Предоставляет информацию о балансе в системе Ecolines</p>
 	<p>Информация берется из личного кабинета http://legacy.ecolines.net/index.php?s=791</p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

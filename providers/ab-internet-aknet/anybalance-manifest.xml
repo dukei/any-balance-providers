@@ -5,7 +5,7 @@
 	<id version="1">ab-internet-aknet</id>
 	<name>AkNet</name>
 	<description>Получает данные для интернет-провайдера AkNet г. Москва (http://stat.aknet.ru/)</description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

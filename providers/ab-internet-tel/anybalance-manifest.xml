@@ -7,7 +7,7 @@
 	<p>Предоставляет информацию о балансе интернет-провайдера TEL г. Москва (http://www.tel.ru/)</p>
 	<p>Информация берется из личного кабинета https://uhome.tel.ru/auth/login</p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

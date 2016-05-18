@@ -7,7 +7,7 @@
 	<description>
 		Получает данные по картам сети кинотеатров Пять Звёзд. Информация берется из личного кабинета http://www.5zvezd.ru/profile/edit/
 	</description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

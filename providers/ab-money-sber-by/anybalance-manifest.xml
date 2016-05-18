@@ -6,7 +6,7 @@
 	<description html="true"><![CDATA[
 	<p>Получает текущий остаток карт банка БПС Сбербанк (https://ibank.bpsb.by, http://www.bps-sberbank.by), используя интернет-банк https://ibank.bps-sberbank.by/v1/cgi/bsi.dll?T=RT_2Auth.BF</p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

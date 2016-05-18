@@ -10,7 +10,7 @@
 	<p>Информация берется с сайта https://service.nalog.ru/debt/req.do</p>
 	<p>Наиболее точная информация доступна в провайдере Госуслуги (Штрафы, Налоги).</p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

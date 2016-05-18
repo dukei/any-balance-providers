@@ -7,7 +7,7 @@
 	<p>Предоставляет информацию о балансе провайдера Региональная Цифровая Телекоммуникационная компания (РЦТК, Новокузнецк) http://www.rdtc.ru/</p>
 	<p>Информация берется из личного кабинета http://stat.rdtc.ru/</p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

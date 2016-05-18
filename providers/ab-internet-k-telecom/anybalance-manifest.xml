@@ -7,7 +7,7 @@
 	<p>Предоставляет информацию о балансе интернет-провайдера K-Telecom <a href="http://k-telecom.org/">http://k-telecom.org/</a></p>
 	<p>Информация берется из личного кабинета <a href="https://stat.k-telecom.org/cgi-bin/proga/client.pl">https://stat.k-telecom.org/cgi-bin/proga/client.pl</a></p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

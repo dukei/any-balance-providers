@@ -6,7 +6,7 @@
 	<description html="true"><![CDATA[
 	<p>Obtains information about last order and DX Points from https://my.dx.com/</p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

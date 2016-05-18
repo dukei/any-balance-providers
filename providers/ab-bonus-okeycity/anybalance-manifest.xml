@@ -7,7 +7,7 @@
 	<p>Предоставляет информацию по бонусным картам ОКейСити</p>
 	<p>Информация берется из личного кабинета <a href="https://okeycity.ru/user">https://okeycity.ru/user</a></p>
 	]]></description>	
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

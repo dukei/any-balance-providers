@@ -7,7 +7,7 @@
 	<p>Предоставляет информацию о балансе инетрнет-провайдера Кузбассвязьуголь (Дочерняя компания ООО УГМК–Телеком) http://ksu42.ru</p>
 	<p>Информация берется из личного кабинета https://stats.ksu42.ru/bgbilling/webexecuter</p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

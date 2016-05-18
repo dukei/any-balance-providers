@@ -6,7 +6,7 @@
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе из личного кабинета Charterbilet http://www.charterbilet.ru/priv/pay/pay_deposit_totals.php</p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

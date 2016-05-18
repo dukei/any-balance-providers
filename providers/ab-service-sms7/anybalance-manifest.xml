@@ -7,7 +7,7 @@
 	<p>Предоставляет информацию о балансе провайдера SMS-7 http://sms-7.ru/</p>
 	<p>Информация берется из личного кабинета http://my.sms-7.ru/</p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

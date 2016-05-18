@@ -7,7 +7,7 @@
 	<p>Предоставляет информацию о балансе провайдера CCS <a href="http://stav.ru/">http://stav.ru/</a></p>
 	<p>Информация берется из личного кабинета <a href="http://rhb.stav.ru/login">http://rhb.stav.ru/login</a></p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

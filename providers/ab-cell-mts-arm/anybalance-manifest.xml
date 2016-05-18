@@ -7,7 +7,7 @@
 	<description>
 	Получает информацию о балансе и тарифном плане сотового оператора МТС в Армении по адресу https://cabinet.mts.am/.
 	</description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

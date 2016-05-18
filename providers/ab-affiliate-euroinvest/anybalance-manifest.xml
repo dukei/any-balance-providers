@@ -6,7 +6,7 @@
 	Получает данные из кабинета инвестора (https://www.eic-ee.com/my/)
 	
   </description>
-  <author>Stark &lt;support@starksoft.ru&gt;</author>
+  <author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>

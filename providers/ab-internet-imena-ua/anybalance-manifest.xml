@@ -5,7 +5,7 @@
 	<id version="1">ab-internet-imena-ua</id>
 	<name>Imena.ua</name>
 	<description>Получает данные для интернет провайдера Имена в Украине (https://control.imena.ua/)</description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

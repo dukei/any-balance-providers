@@ -7,7 +7,7 @@
 	<p>Предоставляет информацию о балансе провайдера Cetelem <a href="https://www.cetelem.ru/">https://www.cetelem.ru/</a></p>
 	<p>Информация берется из личного кабинета <a href="https://online.cetelem.ru/login.jsp">https://online.cetelem.ru/login.jsp</a></p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

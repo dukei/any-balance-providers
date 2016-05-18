@@ -6,7 +6,7 @@
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе интернет-провайдера WestLan https://bill.westlan.ru/cp/?</p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

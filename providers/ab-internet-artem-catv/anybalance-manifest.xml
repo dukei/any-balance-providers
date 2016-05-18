@@ -7,7 +7,7 @@
 	<p>Предоставляет информацию о балансе провайдера ARTEM-CATV <a href="http://www.artem-catv.ru/">http://www.artem-catv.ru/</a> в г. Артем</p>
 	<p>Информация берется из личного кабинета <a href="https://bill.artem-catv.net/">https://bill.artem-catv.net/</a></p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

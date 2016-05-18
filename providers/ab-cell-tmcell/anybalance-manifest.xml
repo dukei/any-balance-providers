@@ -7,7 +7,7 @@
 	<p>Предоставляет информацию о балансе провайдера TMCELL <a href="http://tmcell.tm/">http://tmcell.tm/</a></p>
 	<p>Информация берется из личного кабинета <a href="https://hyzmat.tmcell.tm">https://hyzmat.tmcell.tm</a></p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

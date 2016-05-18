@@ -7,7 +7,7 @@
 	<p>Предоставляет информацию о бонусной программе провайдера Robokassa <a href="http://robokassa.ru/ru/">http://robokassa.ru/ru/</a></p>
 	<p>Информация берется из личного кабинета <a href="https://auth.robokassa.ru/My/Account/Login">https://auth.robokassa.ru/My/Account/Login</a></p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

@@ -8,7 +8,7 @@
 	<p>Информация берется из личного кабинета (https://stat.vintem.ru/cgi-bin/utm5/aaa5)</p>
 	<p>Счетчик Предполагаемая дата отключения расчитывает дату основываясь на абонентской плате по текущему тарифу, этот подсчет может быть не точный.</p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

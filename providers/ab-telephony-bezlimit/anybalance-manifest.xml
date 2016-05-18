@@ -7,7 +7,7 @@
 	<p>Предоставляет информацию о балансе провайдера Безлимит.РУ <a href="http://bezlimit.ru/">http://bezlimit.ru/</a></p>
 	<p>Информация берется из личного кабинета <a href="http://my.bezlimit.ru/index.php?r=user/login">http://my.bezlimit.ru/index.php?r=user/login</a></p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

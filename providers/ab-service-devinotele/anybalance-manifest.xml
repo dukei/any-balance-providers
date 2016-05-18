@@ -7,7 +7,7 @@
 	<p>Предоставляет информацию о балансе провайдера DEVINO Telecom <a href="http://www.devinotele.com/">http://www.devinotele.com/</a></p>
 	<p>Информация берется из личного кабинета <a href="https://my.devinotele.com/Account/LogOn">https://my.devinotele.com/Account/LogOn</a></p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

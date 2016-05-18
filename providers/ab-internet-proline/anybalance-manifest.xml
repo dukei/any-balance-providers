@@ -7,7 +7,7 @@
 	<p>Предоставляет информацию о балансе провайдера Proline <a href="http://proline.net.ua/">http://proline.net.ua/</a></p>
 	<p>Информация берется из личного кабинета <a href="http://proline.net.ua/site/login">http://proline.net.ua/site/login</a></p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

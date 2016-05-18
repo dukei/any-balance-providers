@@ -7,7 +7,7 @@
 	<p>Получает данные для провайдера O3, бывший Freenet в Украине http://o3.ua/</p>
 	<p>Личный кабинет находится по адресу http://my.o3.ua/</p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

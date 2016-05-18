@@ -7,7 +7,7 @@
 	<p>Предоставляет информацию о балансе провайдера Тетя Шура https://forum.shura.tv/</p>
 	<p>Информация берется из личного кабинета https://shura.tv/b/</p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<preferences>preferences.xml</preferences>
 		<js>library.js</js>

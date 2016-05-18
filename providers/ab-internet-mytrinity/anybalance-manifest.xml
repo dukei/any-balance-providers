@@ -7,7 +7,7 @@
 	<p>Предоставляет информацию о балансе инетрнет-провайдера TRINITY (http://www.mytrinity.com.ua/)</p>
 	<p>Информация берется из личного кабинета http://www.mytrinity.com.ua/cab/info.php</p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

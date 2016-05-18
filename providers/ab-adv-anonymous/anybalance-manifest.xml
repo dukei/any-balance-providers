@@ -9,7 +9,7 @@
 	<instruction html="true"><![CDATA[
 	<p>В настройках необходимо ввести № рекламного места (обычно последние цифры в адресной строке https://a-ads.com/ad_units/<b>0000</b>)</p>
 	]]></instruction>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

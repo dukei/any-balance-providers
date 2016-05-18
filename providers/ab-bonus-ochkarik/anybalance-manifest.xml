@@ -6,7 +6,7 @@
 	<description>
 		Получает бонусы и размер скидки на карте в сети магазинов Очкарик (http://www.ochkarik.ru/salons/clubkarta)
 	</description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
         <depends>
   		<module id="library"/>
   	</depends>

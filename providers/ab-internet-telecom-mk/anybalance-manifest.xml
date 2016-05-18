@@ -7,7 +7,7 @@
 	<p>Предоставляет информацию о балансе провайдера Телеком-МК г. Нижний Новгород http://www.t-mk.ru</p>
 	<p>Информация берется из личного кабинета https://abonent.telecom-mk.ru/</p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

@@ -6,7 +6,7 @@
 	<description html="true"><![CDATA[
 	<p>Obtains information of current Gold Prices from http://www.bloomberg.com/markets/commodities/futures/metals/</p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

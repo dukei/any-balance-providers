@@ -10,7 +10,7 @@
         <instruction>
 	  Для регистрации в Личном кабинете необходимо зайти на сайт http://my.3mob.ua/ и на главной страничке нажать кнопку «Реєстрація». В появившемся окне заполнить все данные и нажать кнопку "Зареєструватись". После чего нужно будет ввести код активации, который прийдет в СМС на регистрируємый номер.
 	</instruction>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<author>Ignatiy Goloviznin &lt;igoloviznin@gmail.com&gt;</author>
 	<files>
 		<icon>icon.png</icon>

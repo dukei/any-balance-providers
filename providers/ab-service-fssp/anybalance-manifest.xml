@@ -8,7 +8,7 @@
 	<p>Для получения данных необходимо ввести ФИО и выбрать территориальные органы.</p>
 	<b>Данный провайдер требует AnyBalance API v7+ с поддержкой капчи.</b>
 	]]></description>	
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

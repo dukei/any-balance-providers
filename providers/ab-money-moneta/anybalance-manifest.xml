@@ -7,7 +7,7 @@
 	<p>Предоставляет информацию о балансе USD RUB и EUR счетов в платежной системе Монета</p>
 	<p>Информация берется из личного кабинета https://moneta.ru/desktop.htm</p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

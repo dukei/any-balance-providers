@@ -68,11 +68,11 @@ function Email(){
 		var html = AnyBalance.requestGet(baseurl + '/readmail.html?mid=' + encodeURIComponent(email.id), addHeaders({Referer: baseurl + '/'}));
 		email.text = getElement(html, /<div[^>]+id="tabs-1"[^>]*>/i, replaceTagsAndSpaces);
 		email.html = getElement(html, /<div[^>]+id="mailinhtml"[^>]*>/i);
-        var atts = getElement(html, /<div[^>]+id="tabs-5"[^>]*>/i);
-        if(atts) {
-            //Получим аттачменты
-            atts = getElements(atts, /<a[^>]+href="attachment[^>]*>/ig);
-            AnyBalance.trace('Email ' + email.name + ' has ' + atts.length + ' attachments');
+
+        //Получим аттачменты
+        var atts = getElements(html, /<a[^>]+href="attachment[^>]*>/ig);
+        AnyBalance.trace('Email ' + email.name + ' has ' + atts.length + ' attachments');
+        if(atts.length){
             var attachments = email.attachments = [];
             for (var i = 0; i < atts.length; i++) {
                 var att = atts[i];

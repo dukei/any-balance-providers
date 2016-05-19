@@ -8,6 +8,8 @@
  
  Changelog:
  
+ 01.05.2016 Убрана привязка к началу/концу строки и parseDateISO
+
  29.03.2016 Добавлен метод getJsonObjSafe(where, what)
  
  27.02.2016 В методах getElement/getElements добавлена возможность указать группу в регексе
@@ -477,7 +479,7 @@ var AB = (function (global_scope) {
             // before falling back to any implementation-specific date parsing, so that’s what we do, even if native
             // implementations could be faster
             //              1 YYYY                2 MM       3 DD           4 HH    5 mm       6 ss        7 msec        8 Z 9 ±    10 tzHH    11 tzmm
-            if ((struct = /^(\d{4}|[+\-]\d{6})(?:-(\d{2})(?:-(\d{2}))?)?(?:(?:T|\s+)(\d{2}):(\d{2})(?::(\d{2})(?:\.(\d{3})\d*)?)?(?:(Z)|([+\-])(\d{2})(?::(\d{2}))?)?)?$/.exec(date))) {
+            if ((struct = /(\d{4}|[+\-]\d{6})(?:-(\d{2})(?:-(\d{2}))?)?(?:(?:T|\s+)(\d{2}):(\d{2})(?::(\d{2})(?:\.(\d{3})\d*)?)?(?:(Z)|([+\-])(\d{2})(?::(\d{2}))?)?)?/.exec(date))) {
                 // avoid NaN timestamps caused by “undefined” values being passed to Date.UTC
                 for (var i = 0, k;
                      (k = numericKeys[i]); ++i) {

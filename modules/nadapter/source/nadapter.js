@@ -50,7 +50,7 @@ function NAdapter(countersMap, shouldProcess, options){
 	}
 
 	function wasProcessed(counter){
-		return !!productIds[counter];
+		return productIds[counter];
 	}
 
 	function setTraverseCallbacks(callbacks){
@@ -96,16 +96,21 @@ function NAdapter(countersMap, shouldProcess, options){
 		return prop;
 	}
 
+	function findEntityById(arr, id){
+		//Находим entity с нужным __id
+		return arr.reduce(function(previousValue, currentValue){
+			if(!previousValue){
+				if(currentValue.__id == id)
+					return currentValue;
+			}
+			return previousValue;
+		}, null);
+	}
+
 	function traverseArray(prop, path){
 		if(productIds[path] && prop[0] && prop[0].__id){
 			//Находим entity с нужным __id
-			return prop.reduce(function(previousValue, currentValue){
-				if(!previousValue){
-					if(currentValue.__id == productIds[path])
-						return currentValue;
-				}
-				return previousValue;
-			}, null);
+			return findEntityById(prop, productIds[path]);
 		}else{
 			return prop[0];
 		}
@@ -179,6 +184,7 @@ function NAdapter(countersMap, shouldProcess, options){
 		traverse: traverse,
 
 		wasProcessed: wasProcessed,
-		setTraverseCallbacks: setTraverseCallbacks
+		setTraverseCallbacks: setTraverseCallbacks,
+		findEntityById: findEntityById
 	};
 }

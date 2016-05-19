@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-money-bspb</id>
+	<id version="3">ab-money-bspb</id>
 	<api flags="no_browser"/>
 	<name>Банк Санкт Петербург (БСПБ)</name>
 	<description html="true"><![CDATA[
@@ -12,16 +12,19 @@
 	<p>Если ввести логин demo и пароль demo, то данные будут получены из демо-версии интернет-банка https://idemo.bspb.ru/</p>
 	]]></instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+		<module id="extract/abe-money-bspb"/>
+		<module id="nadapter"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
-		<js>nadapter.js</js>
-		<js>extract.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
 	<counters>
+		<counter id="available" name="Доступно" units=" {@currency}"/>
 		<counter id="balance" name="Остаток" units=" {@currency}"/>
 		<counter id="bonus" name="Бонусы ЯРКО"/>
 		<counter id="needpay" name="Обязательный платеж" units=" {@currency}"/>

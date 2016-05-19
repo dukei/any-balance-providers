@@ -18,41 +18,89 @@ function main() {
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 	
-	var html = AnyBalance.requestGet(baseurl + '?logonSessionData=MyAccount&returnUrl=ru', g_headers);
+	var html = AnyBalance.requestGet(baseurl, g_headers);
 	
 	if(!html || AnyBalance.getLastStatusCode() > 400)
 		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
+
+	var url = AnyBalance.getLastUrl();
+
+	html = AnyBalance.requestPost(baseurl + 'SignIn/SignIn', {
+		ReturnUrl: '',
+		EMail:	prefs.login,
+		Password:	prefs.password,
+		'X-Requested-With':	'XMLHttpRequest'
+	}, addHeaders({Referer: url, 'X-Requested-With': 'XMLHttpRequest'}));
+
+	if(!/^\{[\s\S]*\}$/.test(html)){
+		if(/<div[^>]+id="ExpiredPasswordForm"/i.test(html)){
+			throw new AnyBalance.Error('Касперский сообщает, что ваш пароль давно не менялся и устарел. Зайдите на https://my.kaspersky.ru, поменяйте пароль и введите новый пароль в настройки провайдера.', null, true);
+		}
+
+		var error = getElement(html, /<div[^>]+forms__message__error[^>]*>/i, replaceTagsAndSpaces);
+		if(error)
+			throw new AnyBalance.Error(error, null, /пароль/i.test(error));
+
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
+	}
 	
-	html = AnyBalance.requestPost('https://uis.kaspersky.com/Logon', {
-        failureUrl:'index.html?error=1&logonSessionData=MyAccount&returnUrl=ru%2Factivations&login=' + encodeURIComponent(prefs.login) + '&rememberMe=false',
-        returnUrl:'ru/activations',
-        logonSessionData:'MyAccount',
-		'user': prefs.login,
-		'password': prefs.password
-	}, addHeaders({Referer: baseurl + '?logonSessionData=MyAccount&returnUrl=ru'}));
-	
+	var json = getJson(html);
+	html = AnyBalance.requestPost(json.EndPoint, {
+		User: prefs.login,
+		Password: prefs.password,
+		logonContext: getParam(url, null, null, /logonContext=([^&]*)/i, null, decodeURIComponent),
+		failureUrl: json.FailureUrl
+	}, addHeaders({Referer: url}));
+
 	var params = createFormParams(html);
-	params.wresult = getParam(html, null, null, /"wresult"[^>]*value="([^"]+)/i, null, html_entity_decode);
+	params.wresult = getParam(html, null, null, /"wresult"[^>]*value="([^"]+)/i, replaceHtmlEntities);
 	
-    html = AnyBalance.requestPost('https://my.kaspersky.com/', params, addHeaders({Referer: baseurl + '?logonSessionData=MyAccount&returnUrl=ru'}));
-    
-    html = AnyBalance.requestGet(baseurl, g_headers);
-    
-	var accId = AnyBalance.getCookie('MyAccount2');
-    checkEmpty(accId , 'Не удалось найти ID аккаунта, сайт изменен?',true);
-    
-    html = AnyBalance.requestGet(baseurl + 'ru/activations?ajax_block=' + accId + '&_=' + new Date().getTime(), addHeaders({'X-Requested-With':'XMLHttpRequest'}));
-    
-    var id = prefs.lic_id || '[A-Z0-9]';
-    
-    var license = getParam(html, null, null, new RegExp('<h2\\s*>[^<]+' + id +'(?:[^>]*>){13}\\s*</div>', 'i'));
-    checkEmpty(license , 'Не удалось найти ' + (prefs.lic_id ? 'лицензию с номером ' + prefs.lic_id : 'ни одной лицензии!'),true);
+  	html = AnyBalance.requestPost(baseurl, params, addHeaders({Referer: AnyBalance.getLastUrl()}));
 
-	var result = {success: true};
+	if(!/MyLicenses/i.test(AnyBalance.getLastUrl()))
+    	html = AnyBalance.requestGet(baseurl + 'MyLicenses', g_headers);
 
-	getParam(license, result, '__tariff', /<h2\s*>[^<]+/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(license, result, 'devices', /<h2\s*>(?:[^>]*>){6}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(license, result, 'expires_date', /Дата окончания лицензии:(?:[^>]*>){1}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseDate);
-	
+    json = getJsonObject(html, /licensesAndViewSettings\s*=/);
+    if(!json){
+    	AnyBalance.trace(html);
+    	throw new AnyBalance.Error('Информация о лицензиях не найдена!');
+    }
+
+    if(!json.ServiceUsages.length)
+    	throw new AnyBalance.Error('У вас нет ни одной лицензии!');
+
+    var result = {success: true};
+
+    var svcSelected, svcDefault;
+    for(var i=0; i<json.ServiceUsages.length; ++i){
+    	var svc = json.ServiceUsages[i];
+
+    	if(!prefs.lic_id && !svcDefault)
+    		svcDefault = svc;
+
+    	if(!svcSelected && prefs.lic_id && new RegExp(prefs.lic_id, 'i').test(svc.ServiceName)){
+    		svcSelected = svc;
+    		break;
+    	}
+
+    	if(!prefs.lic_id){ //Хотим найти неустаревшую лицензию в первую очередь
+    		var till = getParam(svc.ExpirationDate || undefined, null, null, null, null, parseBalance);
+    		if(till > new Date().getTime()){
+    			svcSelected = svc;
+    			break;
+    		}
+    	}
+    }
+
+    if(i >= json.ServiceUsages.length)
+    	throw new AnyBalance.Error('Не удалось найти ' + (prefs.lic_id ? 'лицензию с названием ' + prefs.lic_id : 'ни одной лицензии!'));
+
+    var svc = svcSelected || svcDefault;
+
+	getParam(svc.ServiceName, result, '__tariff');
+	getParam(svc.AvailableSlotsCount, result, 'devices');
+	getParam(svc.ExpirationDate || undefined, result, 'expires_date', null, null, parseBalance);
+    
 	AnyBalance.setResult(result);
 }

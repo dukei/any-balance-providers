@@ -117,7 +117,8 @@ function processAccount(html, result){
     AnyBalance.trace('Обработка счета ' + result.__name);
 
     getParam(html, result, 'accounts.balance', /<label[^>]*>\s*Остаток[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, ['accounts.currency' , 'accounts.balance'], /<label[^>]*>\s*Остаток[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseCurrency);
+    getParam(html, result, 'accounts.available', /<label[^>]*>\s*Доступно[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, ['accounts.currency' , 'accounts.balance', 'accounts.available'], /<label[^>]*>\s*Остаток[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseCurrency);
     getParam(html, result, 'accounts.office', /Офис счёта[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
     getParam(html, result, 'accounts.owner', /Получатель[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
 
@@ -157,8 +158,8 @@ function processCards(html, result) {
             var id = getParam(card, null, null, /accountId=([^"&]*)/i, replaceHtmlEntities);
             var name = getParam(card, null, null, /<a[^>]+accountId=[^>]*>([\s\S]*?)<\/a>/i, replaceTagsAndSpaces);
             accresult = findAccount(result, id, name);
-            getParam(card, accresult, 'accounts.balance', /(?:[\s\S]*?<td[^>]*>){6}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-            getParam(card, accresult, 'accounts.currency', /(?:[\s\S]*?<td[^>]*>){6}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseCurrency);
+            getParam(card, accresult, 'accounts.available', /(?:[\s\S]*?<td[^>]*>){6}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+            getParam(card, accresult, ['accounts.currency', 'accounts.balance', 'accounts.available'], /(?:[\s\S]*?<td[^>]*>){6}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseCurrency);
         }else{
             var id = getParam(card, null, null, /cardId=([^"&]*)/i, replaceHtmlEntities);
             var name = getParam(card, null, null, /<a[^>]+class="alias"[^>]*>([\s\S]*?)<\/a>/i, replaceTagsAndSpaces);

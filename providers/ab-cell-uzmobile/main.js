@@ -15,7 +15,7 @@ var g_headers = {
 
 function main() {
     var prefs = AnyBalance.getPreferences();
-    var baseurl = 'https://gsm.uzmobile.uz/ecare/inet/';
+    var baseurl = 'https://gsm.uzmobile.uz/ecare/';
     AnyBalance.setDefaultCharset('utf-8');
 
     var errors = {
@@ -32,7 +32,7 @@ function main() {
     AB.checkEmpty(prefs.login, errors.emptyLogin);
     AB.checkEmpty(prefs.password, errors.emptyPass);
 
-    var html = AnyBalance.requestGet(baseurl + 'subscriber/loginInit?null', g_headers);
+    var html = AnyBalance.requestGet(baseurl + 'subscriber/loginInit', g_headers);
 
     if (!html || AnyBalance.getLastStatusCode() >= 400) {
         AnyBalance.trace(html);

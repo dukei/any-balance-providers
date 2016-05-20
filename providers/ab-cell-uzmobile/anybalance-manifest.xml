@@ -1,11 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-    <id version="2">ab-cell-uzmobile</id>
+    <id version="3">ab-cell-uzmobile</id>
     <api flags="no_browser"/>
     <name>UzMobile</name>
     <description html="true"><![CDATA[
     <p>Предоставляет  информацию о балансе и трафик для пользователей оператора сотовой связи <a href="https://uzmobile.uz/">UzMobile</a>.</p>
-    <p>Информация берется из <a href="https://gsm.uzmobile.uz/ecare/inet/subscriber/loginInit?null">личного кабинета</a></p>
+    <p>Информация берется из <a href="https://gsm.uzmobile.uz/ecare/subscriber/loginInit">личного кабинета</a></p>
     ]]></description>
     <instruction html="true"><![CDATA[
     <p>Если у вас нет доступа в Личный кабинет, получите его на странице <a href="https://uzmobile.uz/">UzMobile</a></p>

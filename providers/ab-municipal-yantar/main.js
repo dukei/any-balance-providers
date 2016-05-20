@@ -38,9 +38,11 @@ function main() {
 		} else if (name == 'pwd') {
 			return prefs.password;
 		} else if (name == 'vpb_captcha_code'){
+		/* //Вроде пускает и без капчи
 			var img_url = getParam(form, null, null, /<img[^>]+src="([^"]*)[^>]*captchaimg/i, replaceHtmlEntities);
 			var img = AnyBalance.requestGet(joinUrl(baseurl, img_url), addHeaders({Referer: AnyBalance.getLastUrl()}));
 			return AnyBalance.retrieveCode('Пожалуйста, введите код с картинки', img, {inputType: 'number'});
+		*/
 		}
 
 		return value;
@@ -64,7 +66,7 @@ function main() {
 		success: true
 	};
 
-	AB.getParam(html, result, 'licschet', /Номер счета:([^<]*)/i, AB.replaceTagsAndSpaces, AB.parseBalance);
+	AB.getParam(html, result, 'licschet', /Номер счета:([^<]*)/i, AB.replaceTagsAndSpaces);
 	AB.getParam(html, result, 'fio', /Гражданин-потребитель:([^<]*)/i, AB.replaceTagsAndSpaces);
 	AB.getParam(html, result, 'address', /<div[^>]+info-text[^>]*12pt[^>]*>([\s\S]*?)<\/div>/i, AB.replaceTagsAndSpaces);
 

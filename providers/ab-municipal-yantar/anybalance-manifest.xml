@@ -2,10 +2,10 @@
 <provider>
 	<id version="1">ab-municipal-yantar</id>
 	<api flags="no_browser"/>
-	<name>Янтарьэнергосбыт</name>
+	<name>Янтарьэнергосбыт (физ. лица)</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о последних начислениях и платежах в Янтарьэнергосбыт http://yantarenergosbyt.ru/</p>
-	<p>Информация берется из личного кабинета https://fl.yantarenergosbyt.ru/</p>
+	<p>Информация берется из личного кабинета для физических лиц https://fl.yantarenergosbyt.ru/</p>
 	]]></description>
 	<instruction html="true"><![CDATA[
 	<p>Если у вас нет доступа в Личный кабинет, получите его на странице https://fl.yantarenergosbyt.ru/page.php?page=lk-reg-nach . Для этого вам понадобятся данные из одной из квитанций.</p>
@@ -25,7 +25,7 @@
 		<counter id="spent" name="Начислено в текущем периоде" type="text"/>
 		<counter id="payment_date" name="Дата последнего платежа" type="time" format="dd/MM/yyyy"/>
 		<counter id="payment_sum" name="Сумма последнего платежа" units=" р"/>
-		<counter id="payment_source" name="Источник оплаты" units=" р"/>
+		<counter id="payment_source" name="Источник оплаты" type="text"/>
 		<counter id="licschet" name="Лицевой счет" type="text"/>
 		<counter id="fio" name="ФИО" type="text"/>
 		<counter id="address" name="Адрес" type="text"/>

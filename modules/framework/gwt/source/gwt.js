@@ -9,7 +9,7 @@ var g_gwtCfg = {
 */
 
 function gwtEscape(str){
-    return str.replace(/\\/g, '\\\\').replace(/\|/g, '\!');
+    return str.replace(/\\/g, '\\\\').replace(/\|/g, '\\!');
 }
 
 function gwtGetStrongName(js, cfg){

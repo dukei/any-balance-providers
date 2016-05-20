@@ -14,7 +14,7 @@ var g_gwtCfg = {
 	url: 'https://account.kyivstar.ua/cas/auth/',
 	strong_name: '\\b%VARNAME_BROWSER%],(\\w+)\\)',
 	auth_nocache: 'auth.nocache.js',
-	magic_id: 'E683F33724964A315C8F4F5B3BE2DEFF'
+	magic_id: '703CC21949E0CA4038E6194B8CAEA98B'
 };
 
 function isLoggedIn(html) {
@@ -25,7 +25,7 @@ function checkGwtError(html) {
 	try {
 		return gwtGetJSON(html);
 	} catch (e) {
-		if (/accountNotFound/i.test(e.message))
+		if (/accountNotFound|AccountException/i.test(e.message))
 			throw new AnyBalance.Error('Пользователь с таким логином не найден!', null, true);
 		throw e;
 	}
@@ -59,7 +59,7 @@ function loginBasic(html) {
 		checkRequest =
 		'7|0|6|%url%|%magic_id%|ua.kyivstar.cas.shared.rpc.AuthSupportRPCService|getAccountShortDetails|java.lang.String/2004016611|%LOGIN%|1|2|3|4|1|5|6|',
 		authRequest =
-		'7|0|7|%url%|%magic_id%|ua.kyivstar.cas.shared.rpc.AuthSupportRPCService|authenticate|java.lang.String/2004016611|%LOGIN%|%PASSWORD%|1|2|3|4|3|5|5|5|6|7|0|';
+		'7|0|8|%url%|%magic_id%|ua.kyivstar.cas.shared.rpc.AuthSupportRPCService|authenticate|java.lang.String/2004016611|Z|%LOGIN%|%PASSWORD%|1|2|3|4|4|5|5|5|6|7|8|0|0|'
 
 	//Проверяем телефон
 	//https://account.kyivstar.ua/cas/auth/authSupport.rpc
@@ -69,7 +69,7 @@ function loginBasic(html) {
 		gwtHeaders(strongName, g_gwtCfg));
 
 	var json = checkGwtError(html);
-	if (json[9])
+	if (json[10] >= 3)
 		throw new AnyBalance.Error(
 			'К сожалению, Киевстар потребовал ввода капчи для этого номера. Зайдите в личный кабинет один раз через браузер.',
 			null, true);

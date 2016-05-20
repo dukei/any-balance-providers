@@ -169,12 +169,12 @@ function mainOld(){
 		
 		throw new AnyBalance.Error('Не удалось получить данные о штрафах, проверьте правильность ввода.');
 	}
-	html = AnyBalance.requestGet(baseurl + href, g_headers);
+	html = AnyBalance.requestGet(joinUrl(baseurl, href), g_headers);
 	
 	var result = {success: true, balance:null} ;
 	
 	getParam(html, result, 'count', /Всего[^>]*>[^>]*"Amount"[^>]*>\s*(\d+)/i, null, parseBalance);
-	getParam(html, result, ['balance', 'all'], [/Неоплаченные\s+штрафы[\s\S]{1,7}не\s*найдены/i, /на сумму[^>]*>([^<]*)/i], [replaceTagsAndSpaces, /Неоплаченные штрафы не найдены/i, '0'], parseBalance);
+	getParam(html, result, ['balance', 'all'], [/Неоплаченные\s+штрафы[\s\S]{1,7}не\s*найдены/i, /на сумму[^>]*>([^<]*)/i], [replaceTagsAndSpaces, /Неоплаченные\s+штрафы\s+не\s+найдены/i, '0'], parseBalance);
 	
 	var fines = sumParam(html, null, null, /<tr[^>]*"\s*FineDetails\s*"(?:[\s\S]*?<\/div[^>]*>){4}\s*<\/td>/ig);
 	if(fines && fines.length > 0) {

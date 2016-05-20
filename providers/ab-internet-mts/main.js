@@ -51,6 +51,7 @@ var regions = {
   vladimir: getVladimir,
   volzhsk: getVolzhsk,
   novokuz: getNovokuz,
+  kem: getNovokuz,
   nahodka: getNahodka,
   kursk: getKursk,
   ryazan: getRyazan,
@@ -228,56 +229,6 @@ function getMoscow() {
 function getNsk() {
   var baseurl = 'https://kabinet.nsk.mts.ru/';
   typicalApiInetTv(baseurl);
-
-  /*
-   var prefs = AnyBalance.getPreferences();
-   AnyBalance.setDefaultCharset('utf-8');
-
-   var baseurl = 'https://kabinet.nsk.mts.ru/';
-   //TODO: Лучше перевести на typicalApiInetTv!!!
-
-  var html = AnyBalance.requestPost(baseurl + 'res/modules/AjaxRequest.php?Method=Login', {
-    BasicAuth: true,
-    'Client': 'mts',
-    'Data[Login]': prefs.login,
-    'Data[Passwd]': prefs.password,
-    'Service': 'API.User.Service'
-  });
-
-  var json = getJson(html);
-
-  if (json.Error == true) {
-    throw new AnyBalance.Error("Не удалось войти в личный кабинет. Неправильный логин-пароль?");
-  }
-  var token = json.Result.Result.Token[0];
-  html = AnyBalance.requestPost(baseurl + 'res/modules/AjaxRequest.php?Method=GetContainerByPath', {
-    'AccessToken': token,
-    'Client': 'mts',
-    'Service': 'API.Interface.Service'
-  });
-  json = getJson(html);
-  html = JSON.stringify(json);
-
-  var accounts = sumParam(html, null, null, /("Param":\[\{"_":"API.User.Service:ReloadUserCard[\s\S]*?Name[\s\S]*?})/ig);
-  checkEmpty(accounts && accounts.length > 0, 'Не удалось найти ни одного счета', true);
-
-  AnyBalance.trace('Аккаунтов: ' + accounts.length);
-
-  var result = {
-    success: true
-  };
-
-  sumParam(html, result, 'balance', /"([\d.,-]+)(?:&nbsp;)?\s*(?:руб|\\u0440\\u0443\\u0431)/ig, replaceTagsAndSpaces, parseBalance,
-    aggregate_sum);
-
-  for (var i = 0; i < accounts.length; i++) {
-    var name = getParam(accounts[i], null, null, /Name":"([^"]+)/i);
-
-    sumParam(name, result, '__tariff', /,\s([\d\-]{5,})/i, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
-  }
-
-  AnyBalance.setResult(result);*/
-
 }
 
 function getPrmOld() {
@@ -886,49 +837,8 @@ function getBarnaul() {
 }
 
 function getNovokuz() {
-  var prefs = AnyBalance.getPreferences();
-  AnyBalance.setDefaultCharset('utf-8');
-
   var baseurl = 'https://kabinet.kemerovo.mts.ru/';
-  //TODO: Лучше перевести на typicalApiInetTv!!!
-
-  var html = AnyBalance.requestPost(baseurl + 'res/modules/AjaxRequest.php?Method=Login', {
-    'Data[LoginType]': 'PPPoE',
-    'BasicAuth': true,
-    'Client': 'mts',
-    'Data[Login]': prefs.login,
-    'Data[Passwd]': prefs.password,
-    'Service': 'API.User.Service'
-  }, addHeaders({
-    Referer: baseurl + 'auth',
-    'X-Requested-With': 'XMLHttpRequest'
-  }));
-
-  var json = getJson(html);
-
-  if (json.Error == true) {
-    throw new AnyBalance.Error("Не удалось войти в личный кабинет. Неправильный логин-пароль?");
-  }
-  var token = json.Result.Result.Token[0];
-  html = AnyBalance.requestPost(baseurl + 'res/modules/AjaxRequest.php?Method=GetContainerByPath', {
-    'AccessToken': token,
-    'Client': 'mts',
-    'Service': 'API.Interface.Service'
-  });
-  json = getJson(html);
-  html = JSON.stringify(json);
-
-  AnyBalance.trace(html);
-
-  var result = {
-    success: true
-  };
-
-  getParam(html, result, '__tariff', /TarifGroupId[\s\S]*?Name["']:["']([^"']+)"/i, replaceTagsAndSpaces, html_entity_decode);
-  getParam(html, result, 'balance', /([\d.\-,]{1,10})(?:\&nbsp;|\s)руб/i, replaceTagsAndSpaces, parseBalance2);
-  getParam(html, result, 'agreement', /GeneralContract[\s\S]*?Value["']:["']([^"']+)"/i, replaceTagsAndSpaces, html_entity_decode);
-
-  AnyBalance.setResult(result);
+  typicalApiInetTv(baseurl);
 }
 
 function getVladimir() {

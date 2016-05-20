@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="104">ab-internet-mts</id>
+	<id version="105">ab-internet-mts</id>
 	<name>Домашний Интернет и Телевидение МТС</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о текущем балансе, номере лицевого счета и договора, ФИО владельца, трафике в текущем месяце, абонентской плате для пользователей провайдера "Домашний Интернет и Телевидение МТС".</p>
@@ -18,6 +18,7 @@
 		<li>Вологда (<a href="http://lk.vologda.mts.ru">http://lk.vologda.mts.ru</a>)<br></li>
 		<li>Ижевск (<a href="http://lk.izhnt.ru">http://lk.izhnt.ru</a>)<br></li>
 		<li>Киров (<a href="http://lk.kirovnet.net">http://lk.kirovnet.net</a>)<br></li>
+		<li>Кемерово (<a href="https://kabinet.kemerovo.mts.ru/">https://kabinet.kemerovo.mts.ru/</a>)<br></li>
 		<li>Комсомольск-на-Амуре (<a href="https://clb.komsomolsk.mts.ru/kom/">https://clb.komsomolsk.mts.ru/kom/</a>)<br></li>
 		<li>Курган (<a href="http://infocentr.ru/lk/index.php?r=site/login">http://infocentr.ru/lk/index.php?r=site/login</a>)<br></li>
 		<li>Курск (<a href="https://lk-kursk.center.mts.ru/index.php?r=site/login">https://lk-kursk.center.mts.ru/index.php?r=site/login</a>)<br></li>

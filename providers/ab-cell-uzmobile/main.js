@@ -91,7 +91,7 @@ function main() {
         AnyBalance.trace(html);
         throw new AnyBalance.Error(errors.http);
     }
-    
+
     if (!/id="inetLogoutId"/i.test(html)) {
         AnyBalance.trace(html);
         throw new AnyBalance.Error(errors.htmlChanged);
@@ -112,7 +112,6 @@ function main() {
 
     AB.getParam(userInfo, result, 'fio', /!\s*([^,<]+)/);
     AB.getParam(userInfo, result, 'phone', /\d{7,12}/);
-    AB.getParam(select(html, 'div.myBillDes'), result, 'balance', null, AB.replaceTagsAndSpaces, AB.parseBalance);
     AB.getParam(select(select(html, 'div.primaryOffering'), 'p.des'), result, 'offering', null, AB.replaceTagsAndSpaces);
     AB.getParam(select(html, 'div.billInformation'), result, 'acdate', /<dd>\s*([0-9:\s-]{19})/i, AB.replaceTagsAndSpaces, AB.parseDate);
 
@@ -131,6 +130,19 @@ function main() {
             AB.sumParam(gprsValue, result, 'gprstotal', /\/([^<]*)/i, [AB.replaceTagsAndSpaces, /$/, unit], parseTraffic, aggregate_sum);
         }
     }
+
+    var csrf = getParam(html, null, null, /<input[^>]+name="_csrf"[^>]*value="([^"]*)/i, replaceHtmlEntities);
+    html = AnyBalance.requestPost(baseurl + 'mybill/queryBalance', {
+    	_csrf:	csrf,
+		modelName:	'qryMyBillModel',
+		'userInfoModel.subIVR':	'2052',
+		_eventId: '',
+		ajaxSource: '',
+		nc: new Date().getTime()
+    }, addHeaders({Referer: baseurl + 'mybill/init', 'X-Requested-With': 'XMLHttpRequest'}));
+    var json = getJson(html);
+
+    getParam('' + json.params.totalBalanceAmount, result, 'balance', null, null, parseBalance);
     
     AnyBalance.setResult(result);
 }

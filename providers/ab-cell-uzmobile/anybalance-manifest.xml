@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-    <id version="4">ab-cell-uzmobile</id>
+    <id version="5">ab-cell-uzmobile</id>
     <api flags="no_browser"/>
     <name>UzMobile</name>
     <description html="true"><![CDATA[
@@ -25,9 +25,15 @@
         <counter id="phone" name="Телефон" type="text"/>   
         <counter id="balance" name="Баланс" type="numeric" prefix="$"/>
         <counter id="offering" name="Тарифный план" type="text"/>
-        <counter id="gprs" name="Мобильный GPRS" type="numeric"/>
-        <counter id="gprstotal" name="Мобильный GPRS (всего)" type="numeric"/>
+        <counter id="min" name="Голосовой трафик" type="time_interval" format="{@MIN}" units=" мин"/>
+        <counter id="gprs" name="Мобильный GPRS" type="numeric" units=" Мб"/>
+        <counter id="sms" name="SMS" type="numeric" units=" sms"/>
+        <counter id="mms" name="MMS" type="numeric" units=" mms"/>
         <counter id="acdate" name="Дата активации" type="time" format="dd/MM/yyyy"/>
+        <counter id="min_total" name="Голосовой трафик (всего)" type="time_interval" format="{@MIN}" units=" мин"/>
+        <counter id="gprstotal" name="Мобильный GPRS (всего)" type="numeric" units=" Мб"/>
+        <counter id="sms_total" name="SMS (всего)" type="numeric" units=" sms"/>
+        <counter id="mms_total" name="MMS (всего)" type="numeric" units=" mms"/>
     </counters>
     <keywords>Сотовый телефон, мобильный, мобильник, uzmobile, интернет</keywords>
     <type>cell</type>

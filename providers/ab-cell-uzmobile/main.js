@@ -131,6 +131,54 @@ function main() {
         }
     }
 
+    if (AnyBalance.isAvailable(['min', 'min_total'])) {
+        var divTabsGPRS = AB.getElement(select(html, 'div.dscharTabCon'), /<div\s[^>]*?id="tabs-11"/i);
+        var tbody = AB.getElement(divTabsGPRS, /<tbody[^>]*?class="[^"]*?\btc\b/i);
+        var rows = AB.getElements(tbody, /<tr/ig) || [];
+        
+        for (var i = 0; i < rows.length; ++i) {
+            var gprsInfo = rows[i];
+            var unitMatch = /(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i.exec(gprsInfo);
+            var unit = unitMatch && unitMatch[1] || 'Seconds';
+            var valueMatch = /(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i.exec(gprsInfo);
+            var gprsValue = valueMatch && valueMatch[1] || '';
+            AB.sumParam(gprsValue, result, 'min', /([^\/<]*)/i, [AB.replaceTagsAndSpaces, /$/, unit], parseBalance, aggregate_sum);
+            AB.sumParam(gprsValue, result, 'min_total', /\/([^<]*)/i, [AB.replaceTagsAndSpaces, /$/, unit], parseBalance, aggregate_sum);
+        }
+    }
+
+    if (AnyBalance.isAvailable(['sms', 'sms_total'])) {
+        var divTabsGPRS = AB.getElement(select(html, 'div.dscharTabCon'), /<div\s[^>]*?id="tabs-13"/i);
+        var tbody = AB.getElement(divTabsGPRS, /<tbody[^>]*?class="[^"]*?\btc\b/i);
+        var rows = AB.getElements(tbody, /<tr/ig) || [];
+        
+        for (var i = 0; i < rows.length; ++i) {
+            var gprsInfo = rows[i];
+            var unitMatch = /(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i.exec(gprsInfo);
+            var unit = unitMatch && unitMatch[1] || 'Items';
+            var valueMatch = /(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i.exec(gprsInfo);
+            var gprsValue = valueMatch && valueMatch[1] || '';
+            AB.sumParam(gprsValue, result, 'sms', /([^\/<]*)/i, [AB.replaceTagsAndSpaces, /$/, unit], parseBalance, aggregate_sum);
+            AB.sumParam(gprsValue, result, 'sms_total', /\/([^<]*)/i, [AB.replaceTagsAndSpaces, /$/, unit], parseBalance, aggregate_sum);
+        }
+    }
+
+    if (AnyBalance.isAvailable(['mms', 'mms_total'])) {
+        var divTabsGPRS = AB.getElement(select(html, 'div.dscharTabCon'), /<div\s[^>]*?id="tabs-14"/i);
+        var tbody = AB.getElement(divTabsGPRS, /<tbody[^>]*?class="[^"]*?\btc\b/i);
+        var rows = AB.getElements(tbody, /<tr/ig) || [];
+        
+        for (var i = 0; i < rows.length; ++i) {
+            var gprsInfo = rows[i];
+            var unitMatch = /(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i.exec(gprsInfo);
+            var unit = unitMatch && unitMatch[1] || 'Items';
+            var valueMatch = /(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i.exec(gprsInfo);
+            var gprsValue = valueMatch && valueMatch[1] || '';
+            AB.sumParam(gprsValue, result, 'mms', /([^\/<]*)/i, [AB.replaceTagsAndSpaces, /$/, unit], parseBalance, aggregate_sum);
+            AB.sumParam(gprsValue, result, 'mms_total', /\/([^<]*)/i, [AB.replaceTagsAndSpaces, /$/, unit], parseBalance, aggregate_sum);
+        }
+    }
+
     var csrf = getParam(html, null, null, /<input[^>]+name="_csrf"[^>]*value="([^"]*)/i, replaceHtmlEntities);
     html = AnyBalance.requestPost(baseurl + 'mybill/queryBalance', {
     	_csrf:	csrf,

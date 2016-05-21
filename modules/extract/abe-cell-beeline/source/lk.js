@@ -657,7 +657,7 @@ function fetchPost(baseurl, html, result) {
     var multi = /onclick\s*=\s*"\s*selectAccount\('\d{10}|<span[^>]+class="selected"[^>]*>/i.test(html), xhtml='';
 
     // Пытаемся исправить всякую ерунду в балансе и валюте
-    var balancesReplaces = [replaceTagsAndSpaces, /информация[^<]*недоступна|недоступна|временно недоступен/ig, ''];
+    var balancesReplaces = [replaceTagsAndSpaces, /информация[^<]*недоступна|недоступна|(?:баланс)?\s*временно недоступен/ig, ''];
 
     getParam(html, result, 'agreement', /<h2[^>]*>\s*Договор №([\s\S]*?)<\/h2>/i, replaceTagsAndSpaces);
     getParam(html, result, 'tariff', /<h2[^>]*>(?:[\s\S](?!<\/h2>))*?Текущий тариф([\s\S]*?)<\/h2>/i, replaceTagsAndSpaces);
@@ -734,8 +734,8 @@ function fetchPost(baseurl, html, result) {
     if (!multi && AnyBalance.isAvailable('balance', 'currency')) {
         xhtml = refreshBalance(baseurl + 'c/post/index.xhtml', html);
 
-        getParam(xhtml + html, result, 'balance', [/class="price[^>]*>((?:[\s\S]*?span[^>]*>){3})/i, /Расходы по номеру за текущий период с НДС[\s\S]*?<div[^>]+class="[^>]*balan?ce-summ"[^>]*>([\s\S]*?)<\/div>/i,], balancesReplaces, parseBalance);
-        getParam(xhtml + html, result, ['currency', 'balance'], [/class="price[^>]*>((?:[\s\S]*?span[^>]*>){3})/i, /Расходы по номеру за текущий период с НДС[\s\S]*?<div[^>]+class="[^>]*balan?ce-summ"[^>]*>([\s\S]*?)<\/div>/i,], balancesReplaces, myParseCurrency);
+        getParam(xhtml + html, result, 'balance', /Расходы по номеру за текущий период с НДС[\s\S]*?<div[^>]+class="[^>]*balan?ce-summ"[^>]*>([\s\S]*?)<\/div>/i, balancesReplaces, parseBalance);
+        getParam(xhtml + html, result, ['currency', 'balance'], /Расходы по номеру за текущий период с НДС[\s\S]*?<div[^>]+class="[^>]*balan?ce-summ"[^>]*>([\s\S]*?)<\/div>/i, balancesReplaces, myParseCurrency);
     }
 
     if(prefs.__debug){

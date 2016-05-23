@@ -21,10 +21,10 @@ function main() {
 		mainOld(prefs);
 	} else {
 		AnyBalance.trace('Входим по имени Бога и паролю...');
-		mainMobile(prefs);
+		var json = mainMobile(prefs);
 //		mainNew(prefs); //Теперь тут капча...
 		AnyBalance.trace('Авторизовались, переходим к получению данных...');
-		mainOld(prefs);
+		mainOld(prefs, json.hero);
 	}
 }
 
@@ -80,8 +80,9 @@ function mainMobile(prefs){
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
 	
-	//просто на всякий случай, чтобы не было просто входа
+	//Получаем инфу по герою
 	html = AnyBalance.requestGet(baseurl + 'mob/hero', headers);
+	return getJson(html);
 }
 
 function mainNew(prefs) {
@@ -112,18 +113,20 @@ function mainNew(prefs) {
 	}
 }
 
-function mainOld(prefs) {
+function mainOld(prefs, json) {
 	checkEmpty(prefs.login, 'Введите ваше имя бога!');
 	
-	var pd = AnyBalance.requestGet(baseurl + 'gods/api/' + encodeURIComponent(prefs.login) + '.json');
-	
-	if(!pd)
-		throw new AnyBalance.Error('Не удалось получить данные!');
-
-	if(pd == 'Not found')
-		throw new AnyBalance.Error('Герой не найден');
-	
-	var json = getJson(pd);
+	if(!json){
+		var pd = AnyBalance.requestGet(baseurl + 'gods/api/' + encodeURIComponent(prefs.login) + '.json');
+		
+		if(!pd)
+			throw new AnyBalance.Error('Не удалось получить данные!');
+	    
+		if(pd == 'Not found')
+			throw new AnyBalance.Error('Герой не найден');
+		
+		json = getJson(pd);
+	}
 
 	if(json.health === undefined)
 		AnyBalance.trace('API вернуло не все данные. Если хотите все данные, необходимо включить в профиле игры галочку "Оперативные данные в API"');

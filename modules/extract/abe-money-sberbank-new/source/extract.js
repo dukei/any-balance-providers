@@ -12,12 +12,15 @@ var g_headers = {
 
 var nodeUrl = ''; // Подставляется при авторизации, обычно имеет вид https://node1.online.sberbank.ru/
 
-function getLoggedInHtml(){
+function getLoggedInHtml(lastChance){
     var nurl = (nodeUrl || 'https://node1.online.sberbank.ru');
     var html = AnyBalance.requestGet(nurl + '/PhizIC/private/userprofile/userSettings.do', g_headers);
     if(/accountSecurity.do/i.test(html)){
         nodeUrl = nurl;
         return html;
+    }
+    if(lastChance){
+    	AnyBalance.trace('Last chance logging in failed: ' + html);
     }
 }
 
@@ -164,10 +167,10 @@ function doNewAccount(page) {
 		}
 
 		if(!/accountSecurity.do/i.test(html)){
-			var html1 = getLoggedInHtml();
+			var html1 = getLoggedInHtml(true);
 
 			if(!/accountSecurity.do/i.test(html1)){
-				AnyBalance.trace(html);
+				AnyBalance.trace('html: ' + html);
 				throw new AnyBalance.Error('Не удалось зайти в Cбербанк-онлайн. Сайт изменен?');
 			}
 

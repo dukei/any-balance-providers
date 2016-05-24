@@ -17,9 +17,23 @@ function main() {
 	checkEmpty(prefs.password, 'Введите пароль!');
 
 	switch (prefs.type) {
-		case 'cab': proceedCab(prefs); break;
-		case 'office': proceedOffice(prefs); break;
-		default: proceedLk(prefs); break;
+		case 'cab': 
+			try{
+				proceedCab(prefs);
+				break;
+			}catch(e){
+				if(!/ни одного активного счета/i.test(e.message)){
+					throw e;
+				}
+				AnyBalance.trace('Логин пароль подошел, а счет не найден. Наверное, это офис...');
+				//breakthrough;
+			}
+		case 'office':
+			proceedOffice(prefs);
+			break;
+		default:
+			proceedLk(prefs);
+			break;
 	}
 }
 
@@ -28,7 +42,7 @@ function requestJson(url, data, headers) {
 	
 	if(!json.success) {
 		AnyBalance.trace(JSON.stringify(json));
-		throw new AnyBalance.Error('Возникла ошибка при выполнении запроса: ' + json.error);
+		throw new AnyBalance.Error('Возникла ошибка при выполнении запроса: ' + json.error, null, /парол/i.test(json.error));
 	}
 	
 	return json;
@@ -41,24 +55,26 @@ function proceedOffice(prefs) {
 
 	var html = AnyBalance.requestGet(baseurl + 'myoffice/', g_headers);
 
-	var enter = getParam(html, null, null, /<input[^>]+__SAVE[^>]+value=['"]([^'"]*)/i, replaceTagsAndSpaces);
-
-	html = AnyBalance.requestPost(baseurl + 'myoffice/', {
-		login: prefs.login,
-		passwd: prefs.password,
-		__SAVE: enter
-	}, { Referer: baseurl + 'myoffice/' });
+	if (!/logout/i.test(html)) {
+		var enter = getParam(html, null, null, /<input[^>]+__SAVE[^>]+value=['"]([^'"]*)/i, replaceTagsAndSpaces);
+	    
+		html = AnyBalance.requestPost(baseurl + 'myoffice/', {
+			login: prefs.login,
+			passwd: prefs.password,
+			__SAVE: enter
+		}, { Referer: baseurl + 'myoffice/' });
+	}
 
 	if (!/logout/i.test(html)) {
 		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Не удалось зайти на сайт. Сайт изменен?');
+		throw new AnyBalance.Error('Не удалось зайти на сайт. Проверьте логин пароль и правильность выбора личного кабинета.');
 	}
 
 	var result = { success: true };
 
 	getParam(html, result, '__tariff', /Тариф(?:[^<]*<[^>]+>){3}([^<]+)/i, replaceTagsAndSpaces);
 	getParam(html, result, 'bill', /<b>Лицевой счет(?:[^<]*<[^>]+>){3}([^<]+)/i, replaceTagsAndSpaces);
-	getParam(html, result, 'balance', /Текущее состояние лицевого счёта(?:[^<]*<[^>]+>){3}([^<]+)/i, replaceTagsAndSpaces);
+	getParam(html, result, 'balance', /Текущее состояние лицевого счёта(?:[^<]*<[^>]+>){3}([^<]+)/i, replaceTagsAndSpaces, parseBalance);
 
 	if (AnyBalance.isAvailable('status')) {
 		html = AnyBalance.requestGet(baseurl + 'myoffice/?section=num_info', g_headers);
@@ -114,13 +130,13 @@ function proceedCab(prefs) {
 	
 	if(current) {
 		getParam(current['v_saldo'], result, 'balance', null, replaceTagsAndSpaces, parseBalance);
-		getParam(current['v_nmbplan'], result, '__tariff', null, replaceTagsAndSpaces, html_entity_decode);
-		sumParam(current['v_nmbillgroup'], result, 'bill', null, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
+		getParam(current['v_nmbplan'], result, '__tariff', null, replaceTagsAndSpaces);
+		sumParam(current['v_nmbillgroup'], result, 'bill', null, replaceTagsAndSpaces, null, aggregate_join);
 	}
 	
 	if(current_phone) {
 		getParam(current_phone['v_saldo'], result, 'balance_phone', null, replaceTagsAndSpaces, parseBalance);
-		sumParam('ТФ:' + current_phone['v_nmbillgroup'], result, 'bill', null, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
+		sumParam('ТФ:' + current_phone['v_nmbillgroup'], result, 'bill', null, replaceTagsAndSpaces, null, aggregate_join);
 	}
 	
 	AnyBalance.setResult(result);
@@ -157,25 +173,25 @@ function proceedLk(prefs) {
 	if (AnyBalance.isAvailable('status', 'status_internet', 'status_tv', 'userName', 'till', 'topay', 'abon', 'bill')) {
 		html = AnyBalance.requestGet(baseurl + 'personal/');
 		
-		getParam(html, result, 'status', /usluga_name">Текущий статус[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
-		getParam(html, result, 'status_internet', /usluga_name">Интернет[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
-		getParam(html, result, 'status_tv', /usluga_name">Телевидение[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
-		getParam(html, result, 'userName', /usluga_name">Владелец договора[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
+		getParam(html, result, 'status', /usluga_name">Текущий статус[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
+		getParam(html, result, 'status_internet', /usluga_name">Интернет[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
+		getParam(html, result, 'status_tv', /usluga_name">Телевидение[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
+		getParam(html, result, 'userName', /usluga_name">Владелец договора[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
 		getParam(html, result, 'till', /Дата окончания расчетного периода[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
-		getParam(html, result, 'topay', /Сумма к оплате[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance, html_entity_decode);
+		getParam(html, result, 'topay', /Сумма к оплате[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 		getParam(html, result, 'abon', /Сумма ежемесячного платежа[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-		getParam(html, result, 'bill', />Лицевой счет(?:[^>]*>){3}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
+		getParam(html, result, 'bill', />Лицевой счет(?:[^>]*>){3}([\s\S]*?)<\//i, replaceTagsAndSpaces);
 	}
 	
 	html = AnyBalance.requestGet(baseurl + 'internet/');
 	
-	getParam(html, result, '__tariff', /Тарифный план[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, '__tariff', /Тарифный план[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
 	getParam(html, result, 'traffic', /Предоплаченный трафик[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseTrafficGb);
 	
 	AnyBalance.setResult(result);
 }
 
 function parseTrafficGb(str) {
-	var val = getParam(str.replace(/\s+/g, ''), null, null, /(-?\d[\d\s.,]*)/, replaceFloat, parseFloat);
+	var val = getParam(str.replace(/\s+/g, ''), null, null, /(-?\d[\d\s.,]*)/, replaceTagsAndSpaces, parseBalance);
 	return parseFloat((val / 1000).toFixed(2));
 }

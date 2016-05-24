@@ -1,17 +1,19 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id version="12">ab-internet-beeline</id>
-	<name>Beeline интернет</name>
+	<id version="13">ab-internet-beeline</id>
+	<name>Билайн интернет</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе, бонусах и тарифном плане для пользователей Beeline интернет.</p>       
+	<p>Предоставляет информацию о балансе, бонусах и тарифном плане для пользователей Билайн интернет.</p>       
 	<p>Информация берется из личного кабинета http://lk.beeline.ru либо из https://cabinet.beeline.ru</p>
 	]]></description>
-	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
@@ -30,7 +32,7 @@
 		<counter id="status_internet" name="Интернет (статус)" type="text"/>
 		<counter id="status_tv" name="Телевидение (статус)" type="text"/>
 	</counters>
-	<keywords>интернет, билайн</keywords>
+	<keywords>интернет, билайн, beeline</keywords>
 	<type>internet</type>
 	<country>ru</country>
 </provider>

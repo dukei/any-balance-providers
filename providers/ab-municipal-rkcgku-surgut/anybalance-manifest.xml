@@ -2,7 +2,7 @@
 <provider>
 	<id version="4">ab-municipal-rkcgku-surgut</id>
 	<api flags="no_browser"/>
-	<name>РКЦ ЖКУ г. Сургута</name>
+	<name>РКЦ ЖКУ г. Сургута (rkc-gku.ru)</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе РКЦ ЖКУ г. Сургута http://www.rkc-gku.ru/</p>
 	<p>Информация берется со страницы приема платежей https://pay.rkc-gku.ru/app_main_pay</p>

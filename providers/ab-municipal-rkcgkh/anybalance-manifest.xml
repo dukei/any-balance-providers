@@ -2,7 +2,7 @@
 <provider>
 	<id version="2">ab-municipal-rkcgkh</id>
 	<api flags="no_browser|captcha"/>
-	<name>РКЦ ЖКХ г. Сургута</name>
+	<name>РКЦ ЖКХ г. Сургута (rkcgkh.ru)</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе РКЦ ЖКХ г. Сургута http://rkcgkh.ru/</p>
 	<p>Информация берется из личного кабинета https://lc.rkcgkh.ru/</p>

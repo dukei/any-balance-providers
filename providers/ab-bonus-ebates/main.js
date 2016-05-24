@@ -31,14 +31,16 @@ function doCom(baseurl, prefs) {
 	html = AnyBalance.requestPost(baseurl + 'auth/logon.do', {
 		username: prefs.login,
 		password: prefs.password,
-		'urlIdentifier': '/auth/getLogonForm.do?pageName=/common_templates/login.vm',
-		'terms': 'checked',
+		'urlIdentifier': '/auth/logon.do',
+		type: 'legacy-signuplogin',
+		_csrf: getParam(html, null, null, /<input[^>]+name="_csrf"[^>]*value="([^"]*)/i, replaceHtmlEntities),
+		'terms': 'checked'
 	}, addHeaders({
 		Referer: baseurl + 'auth/logon.do'
 	}));
 
 	if (!/>(?:Log|Sign) Out</i.test(html)) {
-		var error = getParam(html, null, null, /class="error"[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
+		var error = getParam(html, null, null, /class="error"[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces);
 		if (error)
 			throw new AnyBalance.Error(error, null, /is incorrect/i.test(error));
 
@@ -57,7 +59,7 @@ function doCom(baseurl, prefs) {
 		success: true
 	};
 
-	getParam(json.EbatesMember + '', result, 'fio', null, replaceTagsAndSpaces, html_entity_decode);
+	getParam(json.EbatesMember + '', result, 'fio', null, replaceTagsAndSpaces);
 	getParam(json.CashPaid + '', result, 'CashPaid', null, replaceTagsAndSpaces, parseBalance);
 	getParam(json.CashPending + '', result, 'CashPending', null, replaceTagsAndSpaces, parseBalance);
 	getParam(json.TotalCashBack + '', result, 'TotalCashBack', null, replaceTagsAndSpaces, parseBalance);

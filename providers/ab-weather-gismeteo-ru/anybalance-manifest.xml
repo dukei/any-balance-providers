@@ -1,6 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<id major_version="2.2" version="25">ab-weather-gismeteo-ru</id>
+	<api flags="no_browser"/>
 	<name>Gismeteo</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о прогнозе погоды, текущей погоде, температуре водоемов, времени восхода/захода Солнца, фаз Луны для выбранного города.</p>
@@ -19,7 +20,6 @@
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>api:jquery.min.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>

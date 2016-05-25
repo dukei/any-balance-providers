@@ -156,7 +156,7 @@ function processAccount(acc, result){
 	getParam(acc, result, 'accounts.balance', /"balanceAmountM"[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
 	getParam(acc, result, ['accounts.currency', 'accounts.balance', 'accounts.blocked', 'accounts.balance_own'], /"balanceAmountCurrencyM"[^>]*>([^<]*)/i, replaceTagsAndSpaces);
 
-	if(AnyBalance.isAvailable('accounts.blocked', 'accounts.balance_own','accounts.unused_credit', 'accounts.minpay', 'accounts.minpaytill', 'accounts.gracepay', 'accounts.gracepaytill', 'accounts.contract', 'accounts.limit', 'accounts.pct', 'accounts.transactions')){
+	if(AnyBalance.isAvailable('accounts.blocked', 'accounts.balance_own','accounts.unused_credit', 'accounts.minpay', 'accounts.minpay_till', 'accounts.gracepay', 'accounts.gracepay_till', 'accounts.contract', 'accounts.limit', 'accounts.pct', 'accounts.transactions')){
 		processAccountDetails(acc, result);
 	}
 }
@@ -171,9 +171,9 @@ function processAccountDetails(acc, result){
 	getParam(html, result, 'accounts.blocked', /"ctl00_ctl00_mainArea_main_lblReserved"[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'accounts.unused_credit', /"ctl00_ctl00_mainArea_main_lblUnusedCredit"[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'accounts.minpay', /"ctl00_ctl00_mainArea_main_CreditNextRepayment_lblNextRepaymentSum"[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'accounts.minpaytill', /"ctl00_ctl00_mainArea_main_CreditNextRepayment_lblConditionDate"[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseDateWord);
+	getParam(html, result, 'accounts.minpay_till', /"ctl00_ctl00_mainArea_main_CreditNextRepayment_lblConditionDate"[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseDateWord);
 	getParam(html, result, 'accounts.gracepay', /"ctl00_ctl00_mainArea_main_lblGraceRepaymentSum"[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'accounts.gracepaytill', /"ctl00_ctl00_mainArea_main_lblGraceRepaymentDate"[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseDateWord);
+	getParam(html, result, 'accounts.gracepay_till', /"ctl00_ctl00_mainArea_main_lblGraceRepaymentDate"[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseDateWord);
 
 	getParam(html, result, 'accounts.contract', /"ctl00_ctl00_mainArea_right_lblContract"[^>]*>([^<]*)/i, replaceTagsAndSpaces);
 	getParam(html, result, 'accounts.limit', /"ctl00_ctl00_mainArea_right_lblCreditLimit"[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
@@ -213,7 +213,7 @@ function processAccountsPreliminaryDetails(html, result, path){
 		getParam(html, result, path + 'name', /<div[^>]+class="infoUnitCaption[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
 	}
 
-	getParam(html, result, path + 'minpaytill', /ближайший платеж:([^>,]*)/i, replaceTagsAndSpaces, parseDate);
+	getParam(html, result, path + 'minpay_till', /ближайший платеж:([^>,]*)/i, replaceTagsAndSpaces, parseDate);
 	getParam(html, result, path + 'minpay', /ближайший платеж:[^>]*сумма:([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
 
 }
@@ -330,8 +330,8 @@ function processInfo(html, result){
 		html = AnyBalance.requestGet(g_baseurl + '/n/Settings/Settings.aspx', g_headers);
 
 		getParam(html, info, 'info.mphone', /Номер телефона:[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
-		getParam(html, info, 'info.smsphone', /E-mail:[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
-		getParam(html, info, 'info.email', /<span[^>]+id="[^"]*lblSmsPhone"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
+		getParam(html, info, 'info.email', /E-mail:[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
+		getParam(html, info, 'info.smsphone', /<span[^>]+id="[^"]*lblSmsPhone"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
 		getParam(html, info, 'info.alias', /<input[^>]+vtcUserAlias[^>]*value="([^"]*)/i, replaceHtmlEntities);
 	}
 }

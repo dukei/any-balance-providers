@@ -224,7 +224,7 @@ function processAccount(acc, result){
     getParam(jspath1(acc, '$.debtAmount.value'), result, 'accounts.debt');
     getParam(jspath1(acc, '$.currentRecommendedPayment.value'), result, 'accounts.recompay');
     getParam(jspath1(acc, '$.currentMinimalPayment.value'), result, 'accounts.minpay');
-    getParam(jspath1(acc, '$.duedate.milliseconds'), result, 'accounts.minpaytill');
+    getParam(jspath1(acc, '$.duedate.milliseconds'), result, 'accounts.minpay_till');
     getParam(jspath1(acc, '$.marketingName'), result, 'accounts.name');
     getParam(jspath1(acc, '$.loyalty[0].amount'), result, 'accounts.cashback');
 

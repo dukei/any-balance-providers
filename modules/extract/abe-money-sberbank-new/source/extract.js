@@ -12,16 +12,21 @@ var g_headers = {
 
 var nodeUrl = ''; // Подставляется при авторизации, обычно имеет вид https://node1.online.sberbank.ru/
 
+function isLoggedIn(html){
+	return /accountSecurity.do/i.test(html);
+}
+
 function getLoggedInHtml(lastChance){
     var nurl = (nodeUrl || 'https://node1.online.sberbank.ru');
     var html = AnyBalance.requestGet(nurl + '/PhizIC/private/userprofile/userSettings.do', g_headers);
-    if(/accountSecurity.do/i.test(html)){
+    if(isLoggedIn(html)){
         nodeUrl = nurl;
         return html;
     }
     if(lastChance){
     	AnyBalance.trace('Last chance logging in failed: ' + html);
     }
+    return html;
 }
 
 function login(prefs) {
@@ -32,7 +37,7 @@ function login(prefs) {
 	checkEmpty(prefs.password, "Пожалуйста, укажите пароль для входа в Сбербанк-Онлайн!");
 
 	var html = getLoggedInHtml();
-    if(html){
+    if(isLoggedIn(html)){
         AnyBalance.trace("Уже залогинены, используем текущую сессию");
         return html;
     }
@@ -79,6 +84,38 @@ function login(prefs) {
     __setLoginSuccessful();
 	
 	return html;
+}
+
+function checkNext(html){
+	if((html || '').trim() == 'next'){
+		AnyBalance.trace('У нас next, обновляем страницу.');
+    	html = getLoggedInHtml();
+	}
+	return html;
+}
+
+function checkAdditionalQuestions(html){
+	if (/internetSecurity/.test(html)) {
+		AnyBalance.trace('Требуется принять соглашение о безопасности... Принимаем...');
+		
+		html = AnyBalance.requestPost(baseurl + '/PhizIC/internetSecurity.do', {
+			'field(selectAgreed)': 'on',
+			'PAGE_TOKEN': getParamByName(html, 'PAGE_TOKEN'),
+			'operation': 'button.confirm'
+		}, addHeaders({Referer: baseurl, 'X-Requested-With': 'XMLHttpRequest'}));
+	}
+	html = checkNext(html);	
+
+	if (/Откроется справочник регионов, в котором щелкните по названию выбранного региона/.test(html)) {
+		AnyBalance.trace('Выбираем все регионы оплаты...');
+		//Тупой сбер предлагает обязательно выбрать регион оплаты. Вот навязчивость...
+		//Ну просто выберем все регионы
+		html = AnyBalance.requestPost(baseurl + '/PhizIC/region.do', {
+			id: -1,
+			operation: 'button.save'
+		}, addHeaders({Referer: baseurl, 'X-Requested-With': 'XMLHttpRequest'}));
+	}
+	html = checkNext(html);
 }
 
 function doNewAccount(page) {
@@ -137,39 +174,22 @@ function doNewAccount(page) {
 				'PAGE_TOKEN': getParamByName(origHtml, 'PAGE_TOKEN'),
 				'operation': 'button.confirm'
 			}, addHeaders({Referer: baseurl, 'X-Requested-With': 'XMLHttpRequest'}));
-			
-			
-			// throw new AnyBalance.Error("Ваш личный кабинет требует одноразовых паролей для входа. Пожалуйста, отмените в настройках кабинета требование одноразовых паролей при входе. Это безопасно: для совершения денежных операций требование одноразового пароля всё равно останется.");
-		}
-		if (/internetSecurity/.test(html)) {
-			AnyBalance.trace('Требуется принять соглашение о безопасности... Принимаем...');
-			
-			html = AnyBalance.requestPost(baseurl + '/PhizIC/internetSecurity.do', {
-				'field(selectAgreed)': 'on',
-				'PAGE_TOKEN': getParamByName(html, 'PAGE_TOKEN'),
-				'operation': 'button.confirm'
-			}, addHeaders({Referer: baseurl, 'X-Requested-With': 'XMLHttpRequest'}));
-		}
-		
-		if (/Откроется справочник регионов, в котором щелкните по названию выбранного региона/.test(html)) {
-			//Тупой сбер предлагает обязательно выбрать регион оплаты. Вот навязчивость...
-			//Ну просто выберем все регионы
-			html = AnyBalance.requestPost(baseurl + '/PhizIC/region.do', {
-				id: -1,
-				operation: 'button.save'
-			}, addHeaders({Referer: baseurl, 'X-Requested-With': 'XMLHttpRequest'}));
+
+			html = checkNext(html);
 		}
 
-		if(!/accountSecurity.do/i.test(html)){
+		if(!isLoggedIn(html)){
 			var error = getElement(html, /<div[^>]+warningMessages[^>]*>/i, [replaceTagsAndSpaces, /Получите новый пароль, нажав.*/i, '']);
 			if(error)
 				throw new AnyBalance.Error(error);
 		}
 
-		if(!/accountSecurity.do/i.test(html)){
+		checkAdditionalQuestions(html);
+
+		if(!isLoggedIn(html)){
 			var html1 = getLoggedInHtml(true);
 
-			if(!/accountSecurity.do/i.test(html1)){
+			if(!isLoggedIn(html1)){
 				AnyBalance.trace('html: ' + html);
 				throw new AnyBalance.Error('Не удалось зайти в Cбербанк-онлайн. Сайт изменен?');
 			}

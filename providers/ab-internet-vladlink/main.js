@@ -38,7 +38,7 @@ function main() {
 	}, addHeaders({Referer: baseurl + 'authvl/step1.php?login=yes'}));
 	
 	if (!/logout/i.test(html)) {
-		var error = getParam(html, null, null, /"errortext"[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
+		var error = getParam(html, null, null, /"errortext"[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces);
 		if (error)
 			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
 		
@@ -48,10 +48,10 @@ function main() {
 	
 	var result = {success: true};
 
-	getParam(html, result, 'balance', /<h3>\s*([\d\s,.-]+)руб/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'bonus', /<h3>\s*([\d\s,.-]+)бал/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'status', /Текущий статус:(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'acc_num', /Номер лицевого счета:(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'balance', /<h3[^>]*>\s*([\d\s,.-]+)руб/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'bonus', /<h3[^>]*>\s*([\d\s,.-]+)бал/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'status', /Текущий статус:(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces);
+	getParam(html, result, 'acc_num', /Номер лицевого счета:(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces);
 	
 	AnyBalance.setResult(result);
 }

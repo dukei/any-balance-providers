@@ -154,9 +154,9 @@ function processAccount(acc, result){
     AnyBalance.trace('Обработка счета ' + result.__name);
 
 	getParam(acc, result, 'accounts.balance', /"balanceAmountM"[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(acc, result, ['accounts.currency', 'accounts.balance', 'accounts.blocked', 'accounts.balance_own'], /"balanceAmountCurrencyM"[^>]*>([^<]*)/i, replaceTagsAndSpaces);
+	getParam(acc, result, ['accounts.currency', 'accounts.balance', 'accounts.blocked', 'accounts.own'], /"balanceAmountCurrencyM"[^>]*>([^<]*)/i, replaceTagsAndSpaces);
 
-	if(AnyBalance.isAvailable('accounts.blocked', 'accounts.balance_own','accounts.unused_credit', 'accounts.minpay', 'accounts.minpay_till', 'accounts.gracepay', 'accounts.gracepay_till', 'accounts.contract', 'accounts.limit', 'accounts.pct', 'accounts.transactions')){
+	if(AnyBalance.isAvailable('accounts.blocked', 'accounts.own','accounts.unused_credit', 'accounts.minpay', 'accounts.minpay_till', 'accounts.gracepay', 'accounts.gracepay_till', 'accounts.contract', 'accounts.limit', 'accounts.pct', 'accounts.transactions')){
 		processAccountDetails(acc, result);
 	}
 }
@@ -167,7 +167,7 @@ function processAccountDetails(acc, result){
 	var href = getParam(acc, null, null, /"infoUnitObject"[^>]*href="([^"]*)/i);
 	var html = AnyBalance.requestGet(g_baseurl + href, g_headers);
 
-	getParam(html, result, 'accounts.balance_own', /"ctl00_ctl00_mainArea_main_lblAccountBalance"[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'accounts.own', /"ctl00_ctl00_mainArea_main_lblAccountBalance"[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'accounts.blocked', /"ctl00_ctl00_mainArea_main_lblReserved"[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'accounts.unused_credit', /"ctl00_ctl00_mainArea_main_lblUnusedCredit"[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'accounts.minpay', /"ctl00_ctl00_mainArea_main_CreditNextRepayment_lblNextRepaymentSum"[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
@@ -193,10 +193,10 @@ function processAccountsPreliminaryDetails(html, result, path){
 		for (var i = 0; i < divTexts.length; i++) {
 			var d = divTexts[i], v = divValues[i];
 			if(/ИТОГО/i.test(d)) {
-				getParam(v, result, [path + 'currency', path + 'balance', path + 'blocked', path + 'balance_own'], /<div[^>]+curNameISO[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+				getParam(v, result, [path + 'currency', path + 'balance', path + 'blocked', path + 'own'], /<div[^>]+curNameISO[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
 				getParam(v, result, path + 'balance', null, replaceTagsAndSpaces, parseBalance);
 			}else if(/собственные средства/i.test(d))
-				getParam(v, result, path + 'balance_own', null, replaceTagsAndSpaces, parseBalance);
+				getParam(v, result, path + 'own', null, replaceTagsAndSpaces, parseBalance);
 			else if(/кредитные средства/i.test(d))
 				getParam(v, result, path + 'unused_credit', null, replaceTagsAndSpaces, parseBalance);
 		}
@@ -204,7 +204,7 @@ function processAccountsPreliminaryDetails(html, result, path){
 
 	//А если не нашли блок, то надо попытаться баланс взять из обычного места.
 	getParam(html, result, path + 'balance', /"balanceAmountM"[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, [path + 'currency', path + 'balance', path + 'blocked', path + 'balance_own'], /"balanceAmountCurrencyM"[^>]*>([^<]*)/i, replaceTagsAndSpaces);
+	getParam(html, result, [path + 'currency', path + 'balance', path + 'blocked', path + 'own'], /"balanceAmountCurrencyM"[^>]*>([^<]*)/i, replaceTagsAndSpaces);
 
 	if(path == 'cards.') {
 		getParam(html, result, path + 'accnum', /<a[^>]+class="infoUnitObject[^>]*>([\s\S]*?)<\/a>/i, [replaceTagsAndSpaces, /\D/g, '']);

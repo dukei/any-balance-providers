@@ -234,13 +234,13 @@ function processAccount(html, result, pageToken){
 
     if(!isTarget){
 		getParam(html, result, 'accounts.balance', /overallAmount\b[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
-		getParam(html, result, 'accounts.rate', /descriptionRight[^>]*>\s*([\d.,]+%)/i, replaceTagsAndSpaces, parseBalance);
+		getParam(html, result, 'accounts.pct', /descriptionRight[^>]*>\s*([\d.,]+%)/i, replaceTagsAndSpaces, parseBalance);
 		getParam(html, result, ['accounts.currency', 'accounts.balance'], /overallAmount\b[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseCurrency);
 		getParam(html, result, 'accounts.till', /<[^>]*class="(?:product|account)Number\b[^"]*">[^<]+,\s+действует (?:до|по)([^<]+)/i, replaceTagsAndSpaces, parseDateWord);
 	}else{
 		//Целевой
 		getParam(html, result, 'accounts.balance', /dribbleCenter\b[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
-		getParam(html, result, 'accounts.rate', /ставка:\s*([\d.,]+%)/i, replaceTagsAndSpaces, parseBalance);
+		getParam(html, result, 'accounts.pct', /ставка:\s*([\d.,]+%)/i, replaceTagsAndSpaces, parseBalance);
 		getParam(html, result, ['accounts.currency', 'accounts.balance'], /dribbleCenter\b[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseCurrency);
 		getParam(html, result, 'accounts.till', /Дата покупки\s*<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseDate);
 	}
@@ -301,15 +301,15 @@ function processCard(html, result){
     getParam(html, result, 'cards.status', /<[^>]*class="detailStatus\b[^"]*">([^<]+)/i, replaceTagsAndSpaces);
     getParam(html, result, 'cards.is_blocked', /Blocked.jpg/i, null, function(str) { return !!str});
 
-	if (AnyBalance.isAvailable('cards.userName', 'cards.own', 'cards.cash', 'cards.electrocash', 'cards.minpay', 'cards.minpaydate', 'cards.maxlimit', 'cards.debt', 'cards.debt_date')) {
+	if (AnyBalance.isAvailable('cards.userName', 'cards.own', 'cards.cash', 'cards.electrocash', 'cards.minpay', 'cards.minpay_till', 'cards.limit', 'cards.debt', 'cards.debt_date')) {
 		html = AnyBalance.requestGet(nodeUrl + '/PhizIC/private/cards/detail.do?id=' + _id);
 		getParam(html, result, 'cards.userName', /Держатель карты:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/, replaceTagsAndSpaces, capitalFirstLetters);
         getParam(html, result, 'cards.accnum', /Номер счета карты:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/, replaceTagsAndSpaces);
 		getParam(html, result, 'cards.cash', /Для снятия наличных:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 		getParam(html, result, 'cards.electrocash', /для покупок:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 		getParam(html, result, 'cards.minpay', /Обязательный платеж[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-		getParam(html, result, 'cards.minpaydate', /Дата платежа:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/, replaceTagsAndSpaces, parseDateWord);
-		getParam(html, result, 'cards.maxlimit', /Кредитный лимит[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+		getParam(html, result, 'cards.minpay_till', /Дата платежа:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/, replaceTagsAndSpaces, parseDateWord);
+		getParam(html, result, 'cards.limit', /Кредитный лимит[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
         getParam(html, result, 'cards.own', /Собственные средства:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 
 		getParam(html, result, 'cards.debt', /Общая задолженность[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
@@ -338,13 +338,13 @@ function processCard(html, result){
 // Обработка кредитов
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 function processLoans(html, result) {
-	if(!AnyBalance.isAvailable('loans'))
+	if(!AnyBalance.isAvailable('credits'))
 		return;
 
 	html = AnyBalance.requestGet(nodeUrl + '/PhizIC/private/loans/list.do');
 	var loans = getElements(html, /<div[^>]+class="productCover[^"]*activeProduct[^>]*">/ig);
 	AnyBalance.trace('Найдено кредитов: ' + loans.length);
-	result.loans = [];
+	result.credits = [];
 	
 	for(var i=0; i < loans.length; ++i){
 		var _id = getParam(loans[i], null, null, /id=(\d+)/i);
@@ -355,10 +355,10 @@ function processLoans(html, result) {
 
 		var c = {__id: _id, num: acc_num, __name: title};
 		
-		if(__shouldProcess('loans', c)) {
+		if(__shouldProcess('credits', c)) {
 			processLoan(html, c);
 		}
-		result.loans.push(c);
+		result.credits.push(c);
 	}
 }
 
@@ -366,18 +366,18 @@ function processLoan(html, result){
 	var _id = result.__id;
     AnyBalance.trace('Обработка кредита ' + result.__name);
 	
-	getParam(html, result, 'loans.balance', /Осталось (?:погасить|оплатить)[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, ['loans.currency', 'loans.balance', 'loans.loan_ammount', 'loans.minpay'], /Осталось (?:погасить|оплатить)[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseCurrency);
-	getParam(html, result, 'loans.minpaydate', /<td[^>]+field[^>]*>\s*Плат[ёе]ж([^<]*)/i, replaceTagsAndSpaces, parseDateWord);
-	getParam(html, result, 'loans.minpay', /<td[^>]+field[^>]*>\s*Плат[ёе]ж[\s\S]*?<td[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'loans.loan_ammount', /(?:Сумма кредита|Первоначальная сумма)[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'loans.userName', /<td[^>]+field[^>]*>\s*Заемщик[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, capitalFirstLetters);
-	getParam(html, result, 'loans.agreement', /Номер кредитного договора[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
-	getParam(html, result, 'loans.return_type', /Способ погашения[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
-	getParam(html, result, 'loans.date_start', /Дата открытия[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDateWord);
-	getParam(html, result, 'loans.till', /Срок окончания кредита[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDateWord);
-	getParam(html, result, 'loans.place', /Отделение обслуживания кредита[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
-	getParam(html, result, 'loans.pct', /Процентная ставка[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'credits.balance', /Осталось (?:погасить|оплатить)[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, ['credits.currency', 'credits.balance', 'credits.limit', 'credits.minpay'], /Осталось (?:погасить|оплатить)[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseCurrency);
+	getParam(html, result, 'credits.minpay_till', /<td[^>]+field[^>]*>\s*Плат[ёе]ж([^<]*)/i, replaceTagsAndSpaces, parseDateWord);
+	getParam(html, result, 'credits.minpay', /<td[^>]+field[^>]*>\s*Плат[ёе]ж[\s\S]*?<td[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'credits.limit', /(?:Сумма кредита|Первоначальная сумма)[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'credits.userName', /<td[^>]+field[^>]*>\s*Заемщик[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, capitalFirstLetters);
+	getParam(html, result, 'credits.agreement', /Номер кредитного договора[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+	getParam(html, result, 'credits.return_type', /Способ погашения[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+	getParam(html, result, 'credits.date_start', /Дата открытия[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDateWord);
+	getParam(html, result, 'credits.till', /Срок окончания кредита[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDateWord);
+	getParam(html, result, 'credits.place', /Отделение обслуживания кредита[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+	getParam(html, result, 'credits.pct', /Процентная ставка[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Обработка металлических счетов
@@ -555,8 +555,8 @@ function processCardLast10Transactions(result) {
 
 		getParam(ops[i], o, 'cards.transactions10.sum', /([^>]*>){7}/i, replaceTagsAndSpaces, parseBalanceSilent);
 		getParam(ops[i], o, 'cards.transactions10.currency', /([^>]*>){7}/i, replaceTagsAndSpaces, parseCurrencySilent);
-		getParam(ops[i], o, 'cards.transactions10.name', /([^>]*>){3}/i, replaceTagsAndSpaces);
-    	getParam(ops[i], o, 'cards.transactions10.time', /([^>]*>){5}/i, replaceTagsAndSpaces, parseSmallDateSilent);
+		getParam(ops[i], o, 'cards.transactions10.descr', /([^>]*>){3}/i, replaceTagsAndSpaces);
+    	getParam(ops[i], o, 'cards.transactions10.date', /([^>]*>){5}/i, replaceTagsAndSpaces, parseSmallDateSilent);
 
     	result.transactions10.push(o);
     }
@@ -580,7 +580,7 @@ function processMetalAccountTransactions(html, result){
         var tr = trs[i];
         var t = {};
 
-        getParam(tr, t, 'accounts_met.transactions.time', /([^]*?<\/td>){1}/i, replaceTagsAndSpaces, parseDateSilent);
+        getParam(tr, t, 'accounts_met.transactions.date', /([^]*?<\/td>){1}/i, replaceTagsAndSpaces, parseDateSilent);
         getParam(tr, t, 'accounts_met.transactions.descr', /([^]*?<\/td>){2}/i, replaceTagsAndSpaces);
         getParam(tr, t, 'accounts_met.transactions.weight', /([^]*?<\/td>){3}/i, replaceTagsAndSpaces, parseBalanceSilent);
         getParam(tr, t, 'accounts_met.transactions.sum', /([^]*?<\/td>){4}/i, [/<span[^>]+minus-amount[^>]*>/i, '-', replaceTagsAndSpaces], parseBalanceSilent);

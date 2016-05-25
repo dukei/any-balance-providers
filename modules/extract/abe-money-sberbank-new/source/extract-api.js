@@ -287,10 +287,10 @@ function processCardAPITransactions(result) {
         for (var i = 0; i < elements.length; i++) {
             var elem = elements[i];
             var t = {};
-            getParam(elem, t, 'cards.transactions10.time', /<date>([\s\S]*?)<\/date>/i, replaceTagsAndSpaces, parseDate);
+            getParam(elem, t, 'cards.transactions10.date', /<date>([\s\S]*?)<\/date>/i, replaceTagsAndSpaces, parseDate);
             getParam(elem, t, 'cards.transactions10.sum', /<amount>([\s\S]*?)<\/amount>/i, replaceTagsAndSpaces, parseBalance);
             getParam(elem, t, ['cards.transactions10.currency', 'cards.transactions10.sum'], /<currency>\s*<code>([\s\S]*?)<\/code>/i, replaceTagsAndSpaces);
-            getParam(elem, t, 'cards.transactions10.name', /<description>\s*(?:<!\[CDATA\[)?([\s\S]*?)(?:\]\]>)?\s*<\/description>/i, replaceTagsAndSpaces);
+            getParam(elem, t, 'cards.transactions10.descr', /<description>\s*(?:<!\[CDATA\[)?([\s\S]*?)(?:\]\]>)?\s*<\/description>/i, replaceTagsAndSpaces);
 
             result.transactions.push(t);
         }
@@ -378,10 +378,10 @@ function processAccountAPITransactions(result) {
         for (var i = 0; i < elements.length; i++) {
             var elem = elements[i];
             var t = {};
-            getParam(elem, t, 'accounts.transactions10.time', /<date>([\s\S]*?)<\/date>/i, replaceTagsAndSpaces, parseDate);
+            getParam(elem, t, 'accounts.transactions10.date', /<date>([\s\S]*?)<\/date>/i, replaceTagsAndSpaces, parseDate);
             getParam(elem, t, 'accounts.transactions10.sum', /<amount>([\s\S]*?)<\/amount>/i, replaceTagsAndSpaces, parseBalance);
             getParam(elem, t, ['accounts.transactions10.currency', 'accounts.transactions10.sum'], /<currency>\s*<code>([\s\S]*?)<\/code>/i, replaceTagsAndSpaces);
-            getParam(elem, t, 'accounts.transactions10.name', /<description>\s*(?:<!\[CDATA\[)?([\s\S]*?)(?:\]\]>)?\s*<\/description>/i, replaceTagsAndSpaces);
+            getParam(elem, t, 'accounts.transactions10.descr', /<description>\s*(?:<!\[CDATA\[)?([\s\S]*?)(?:\]\]>)?\s*<\/description>/i, replaceTagsAndSpaces);
 
             result.transactions.push(t);
         }
@@ -396,9 +396,9 @@ function processInfoAPI(result) {
 
         var xml = requestApi('private/profile/info.do');
         var joinSpaces = create_aggregate_join(' ');
-        sumParam(xml, info, 'info.fio', /<surName>([\s\S]*?)<\/surName>/i, replaceTagsAndSpaces, null, joinSpaces);
         sumParam(xml, info, 'info.fio', /<firstName>([\s\S]*?)<\/firstName>/i, replaceTagsAndSpaces, null, joinSpaces);
         sumParam(xml, info, 'info.fio', /<patrName>([\s\S]*?)<\/patrName>/i, replaceTagsAndSpaces, null, joinSpaces);
+        sumParam(xml, info, 'info.fio', /<surName>([\s\S]*?)<\/surName>/i, replaceTagsAndSpaces, null, joinSpaces);
 
         getParam(xml, info, 'info.phone', /<mobilePhone>([\s\S]*?)<\/mobilePhone>/i, replaceTagsAndSpaces);
         getParam(xml, info, 'info.email', /<email>([\s\S]*?)<\/email>/i, replaceTagsAndSpaces);

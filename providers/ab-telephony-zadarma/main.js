@@ -14,7 +14,7 @@ function mainLK() {
 
   var prefs = AnyBalance.getPreferences();
   AnyBalance.setDefaultCharset('utf-8');
-  var baseurl = "https://ss.zadarma.com/";
+  var baseurl = "https://my.zadarma.com/";
   var captchaUrl = 'captcha/index.php?form=login&unq=';
 
   AB.checkEmpty(prefs.login, 'Введите логин!');

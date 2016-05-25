@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="2" version="20" date="2016-05-25">
+	- переезд личного кабинета
+	</change>
 	<change major_version="2" version="19" date="2016-05-13">
 	Переход на использование API, чтобы капчу не вводить
 	</change>

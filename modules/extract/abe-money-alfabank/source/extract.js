@@ -1,4 +1,4 @@
-﻿/**
+/**
  Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
  */
 
@@ -563,11 +563,11 @@ function processCredit2(html, result) {
         } else if (/Неподтверждённые операции/i.test(name)) {
             getParam(value, result, 'credits.blocked', null, null, parseBalance);
         } else if (/Льготный период/i.test(name)) {
-            getParam(value, result, 'credits.grace', null, null, parseBalance);
+            getParam(value, result, 'credits.gracepay', null, null, parseBalance);
         } else if (/Дата начала льготного периода/i.test(name)) {
             getParam(value, result, 'credits.grace_start', null, null, parseDateWord);
         } else if (/Дата окончания льготного периода/i.test(name)) {
-            getParam(value, result, 'credits.grace_till', null, null, parseDateWord);
+            getParam(value, result, 'credits.gracepay_till', null, null, parseDateWord);
         } else if (/дата платежа|Оплатить до/i.test(name)) {
             getParam(value, result, 'credits.pay_till', null, null, parseDateWord);
         } else if (/Ближайший плат[её]ж|Минимальный плат[её]ж|Ежемесячный плат[её]ж/i.test(name)) {
@@ -583,7 +583,7 @@ function processCredit2(html, result) {
             getParam(value, result, 'credits.period');
         } else if (/День платежа/i.test(name)) {
             getParam(value, result, 'credits.payment_day');
-            getParam(value, result, 'credits.pay_till', null, null, parseNDay);
+            getParam(value, result, 'credits.minpay_till', null, null, parseNDay);
         } else if (/Уже внесено/i.test(name)) {
             getParam(value, result, ['credits.minpay_paid', 'credits.minpay_left'], null, null, parseBalance);
         } else {

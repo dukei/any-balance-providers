@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="78" date="2016-05-25">
+	- Исправление входа в случае смс и запроса на ознакомление с правилами безопасности
+	</change>
 	<change version="77" date="2016-05-25">
 	- Мелкие улучшения.
 	</change>

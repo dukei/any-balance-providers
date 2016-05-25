@@ -284,7 +284,7 @@ function processLoans(html, result) {
 		var _id = getParam(loans[i], null, null, /<id>([\s\S]*?)<\/id>/i, replaceTagsAndSpaces);
 		var title = 'Кредит ' + _id;
 
-		var c = {__id: _id, __name: title};
+		var c = {__id: _id, __name: title, num: _id};
 
 		if (__shouldProcess('credits', c)) {
 			processLoan(loans[i], c);

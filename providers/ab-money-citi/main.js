@@ -4,22 +4,21 @@
 
 var g_countersTable = {
 	common: {
-		"fio": "profile.USERNAME",
+		"fio": "info.fio",
 	}, 
     acc: {
 		"__tariff": "accounts.__name",
 		"accnum": "accounts.__name",
 		
-		"balance": "accounts.avail",
+		"balance": "accounts.available",
 		"ondeposit": "accounts.balance",
 		"currency": "accounts.currency",
 		"credit": "accounts.loanUsed",
-		"credit_next_payment_till": "accounts.minpay_date",
+		"credit_next_payment_till": "accounts.minpay_till",
 		"credit_next_payment": "accounts.minpay",
-		"rewardPoints": "accounts.rewardPoints",
+		"rewardPoints": "accounts.bonus",
 		"ibanAccuntNo": "accounts.ibanAccuntNo",
-		"onhold": "accounts.onhold",
-		"ondeposit": "accounts.ondeposit",
+		"onhold": "accounts.blocked",
 		"limit": "accounts.limit",
 		"incash": "accounts.incash",
 		"balance_lastEx": "accounts.balance_lastEx",

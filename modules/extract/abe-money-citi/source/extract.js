@@ -140,11 +140,11 @@ function processProfile(html, result) {
 		
 		result.profile = {};
 		
-		getParam(json.USERNAME, result.profile, 'profile.USERNAME', null, replaceTagsAndSpaces, capitalFirstLetters);
-		getParam(json.EMAIL, result.profile, 'profile.EMAIL', null, replaceTagsAndSpaces);
-		getParam(json.MOBILENUMBER, result.profile, 'profile.MOBILENUMBER', null, replaceTagsAndSpaces);
-		getParam(json.COMPANYNAMEPHRASE, result.profile, 'profile.COMPANYNAMEPHRASE', null, replaceTagsAndSpaces);
-		getParam(json.COMPANYNAME, result.profile, 'profile.COMPANYNAME', null, replaceTagsAndSpaces);
+		getParam(json.USERNAME, result.profile, 'info.fio', null, replaceTagsAndSpaces, capitalFirstLetters);
+		getParam(json.EMAIL, result.profile, 'info.email', null, replaceTagsAndSpaces);
+		getParam(json.MOBILENUMBER, result.profile, 'info.mphone', null, replaceTagsAndSpaces);
+		getParam(json.COMPANYNAMEPHRASE, result.profile, 'info.COMPANYNAMEPHRASE', null, replaceTagsAndSpaces);
+		getParam(json.COMPANYNAME, result.profile, 'info.COMPANYNAME', null, replaceTagsAndSpaces);
 		
 		AnyBalance.trace('Получили данные профиля');		
 	} catch(e) {
@@ -268,7 +268,7 @@ function processAccount(html, info, result) {
 	getParam(info.relatedAccountNumber, result, 'accounts.relatedAccountNumber');
 	getParam(info.productName, result, 'accounts.productName');
 	getParam(info.inactive, result, 'accounts.inactive');
-	getParam(info.accountType, result, 'accounts.accountType');
+	getParam(info.accountType, result, 'accounts.type');
 	
 	if(info.elementEntryMap) {
 		for(var k in info.elementEntryMap) {
@@ -306,7 +306,7 @@ function processAccount(html, info, result) {
 		
 		info = getJson(jsonStr);
 		
-		getParam(info.rewardPoints + '', result, 'accounts.rewardPoints', null, null, parseBalance);
+		getParam(info.rewardPoints + '', result, 'accounts.bonus', null, null, parseBalance);
 		getParam(info.categoryCode, result, 'accounts.categoryCode');
 		getParam(info.ibanAccuntNo, result, 'accounts.ibanAccuntNo');
 		
@@ -329,22 +329,23 @@ function processAccount(html, info, result) {
 
 function processPhrases(phrase, value, result) {
 	if(/Доступно сейчас/i.test(phrase)) {
-		getParam(value, result, 'accounts.avail', null, replaceTagsAndSpaces, parseBalance);
-		getParam(value, result, ['accounts.currency', 'accounts'], null, replaceTagsAndSpaces, parseCurrency);
+		getParam(value, result, 'accounts.available', null, replaceTagsAndSpaces, parseBalance);
+		getParam(value, result, ['accounts.currency', 'accounts.balance', 'accounts.available'], null, replaceTagsAndSpaces, parseCurrency);
 	} else if(/Текущий баланс/i.test(phrase)) {
 		getParam(value, result, 'accounts.balance', null, replaceTagsAndSpaces, parseBalance);
+		getParam(value, result, ['accounts.currency', 'accounts.balance', 'accounts.available'], null, replaceTagsAndSpaces, parseCurrency);
 	} else if(/Баланс по последней выписке/i.test(phrase)) {
 		getParam(value, result, 'accounts.balance_lastEx', null, replaceTagsAndSpaces, parseBalance);
 	} else if(/Минимальный платеж/i.test(phrase)) {
 		getParam(value, result, 'accounts.minpay', null, replaceTagsAndSpaces, parseBalance);
 	} else if(/Дата оплаты минимального платежа/i.test(phrase)) {
-		getParam(value, result, 'accounts.minpay_date', null, replaceTagsAndSpaces, parseDate);
+		getParam(value, result, 'accounts.minpay_till', null, replaceTagsAndSpaces, parseDate);
 	} else if(/Использованный кредит/i.test(phrase)) {
 		getParam(value, result, 'accounts.loanUsed', null, replaceTagsAndSpaces, parseBalance);
 	} else if(/Доступно для выдачи наличными/i.test(phrase)) {
 		getParam(value, result, 'accounts.incash', null, replaceTagsAndSpaces, parseBalance);
 	} else if(/замороженные суммы/i.test(phrase)) {
-		getParam(value, result, 'accounts.onhold', null, replaceTagsAndSpaces, parseBalance);
+		getParam(value, result, 'accounts.blocked', null, replaceTagsAndSpaces, parseBalance);
 	} else if(/Кредитный лимит/i.test(phrase)) {
 		getParam(value, result, 'accounts.limit', null, replaceTagsAndSpaces, parseBalance);
 	}

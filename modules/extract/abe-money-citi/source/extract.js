@@ -138,13 +138,13 @@ function processProfile(html, result) {
 		
 		var json = getJson(jsonStr);
 		
-		result.profile = {};
+		result.info = {};
 		
-		getParam(json.USERNAME, result.profile, 'info.fio', null, replaceTagsAndSpaces, capitalFirstLetters);
-		getParam(json.EMAIL, result.profile, 'info.email', null, replaceTagsAndSpaces);
-		getParam(json.MOBILENUMBER, result.profile, 'info.mphone', null, replaceTagsAndSpaces);
-		getParam(json.COMPANYNAMEPHRASE, result.profile, 'info.COMPANYNAMEPHRASE', null, replaceTagsAndSpaces);
-		getParam(json.COMPANYNAME, result.profile, 'info.COMPANYNAME', null, replaceTagsAndSpaces);
+		getParam(json.USERNAME, result.info, 'info.fio', null, replaceTagsAndSpaces, capitalFirstLetters);
+		getParam(json.EMAIL, result.info, 'info.email', null, replaceTagsAndSpaces);
+		getParam(json.MOBILENUMBER, result.info, 'info.mphone', null, replaceTagsAndSpaces);
+		getParam(json.COMPANYNAMEPHRASE, result.info, 'info.COMPANYNAMEPHRASE', null, replaceTagsAndSpaces);
+		getParam(json.COMPANYNAME, result.info, 'info.COMPANYNAME', null, replaceTagsAndSpaces);
 		
 		AnyBalance.trace('Получили данные профиля');		
 	} catch(e) {

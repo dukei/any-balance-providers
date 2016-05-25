@@ -278,7 +278,7 @@ function processCard2(html, row, result) {
     //Баланс счета
     getParam(html, result, 'cards.balance', /&#1041;&#1072;&#1083;&#1072;&#1085;&#1089; &#1089;&#1095;&#(?:1077|1105);&#1090;&#1072;[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, ['cards.currency', 'cards.balance', 'cards.topay', 'cards.debt', 'cards.minpay', 'cards.penalty', 'cards.late', 'cards.overdraft', 'cards.limit'],
-        /&#1041;&#1072;&#1083;&#1072;&#1085;&#1089; &#1089;&#1095;&#1077;&#1090;&#1072;[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseCurrency);
+        /&#1041;&#1072;&#1083;&#1072;&#1085;&#1089; &#1089;&#1095;&#(?:1077|1105);&#1090;&#1072;[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseCurrency);
     //Срок действия
     getParam(html, result, 'cards.till', /&#1057;&#1088;&#1086;&#1082; &#1076;&#1077;&#1081;&#1089;&#1090;&#1074;&#1080;&#1103;[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
     //Номер

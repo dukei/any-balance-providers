@@ -170,8 +170,10 @@ function getWeatherForecast(html, result, tod) {
     var regExp = new RegExp('(?:Фактические данные|Прогноз)(?:[^>]*>){1}[^>]*' + regExpPrefix + '[\\s\\S]*?</tr>', 'i');
 
     var tr = getParam(html, null, null, regExp);
-    if (!tr)
-      throw new AnyBalance.Error('Не найден прогноз погоды. Пожалуйста, обратитесь к разработчикам.');
+    if (!tr){
+    	AnyBalance.trace(html);
+      	throw new AnyBalance.Error('Не найден прогноз погоды. Пожалуйста, обратитесь к разработчикам.');
+    }
 
     getParam(tr, result, 'atmosphericConditions', /"cltext"[^>]*>([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(tr, result, 'temperature', /temp\s*c[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseBalance);

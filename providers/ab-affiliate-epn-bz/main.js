@@ -62,16 +62,25 @@ function main() {
       Referer: baseurl + 'cabinet/'
     }));
 
-    var json = getJson(html),
-        last = isArray(json) ? (json.length - 1)  : [json].length - 1;
-
-    AB.getParam(json[last].clicks + '',       result, 'clicks',       null, null, parseBalance);
-    AB.getParam(json[last].hosts + '',        result, 'hosts',        null, null, parseBalance);
-    AB.getParam(json[last].leads + '',        result, 'leads',        null, null, parseBalance);
-    AB.getParam(json[last].leads_hold + '',   result, 'leads_hold',   null, null, parseBalance);
-    AB.getParam(json[last].impressions + '',  result, 'impressions',  null, null, parseBalance);
-    AB.getParam(json[last].epc + '',          result, 'epc',          null, null, parseBalance);
-    AB.getParam(json[last].cr + '',           result, 'cr',           null, null, parseBalance);
+    var json = getJson(html), last;
+    if(isArray(json)){
+    	last = json.length -1;
+    }else{
+        last = 0;
+        json = [json];
+    }
+    
+    if(last >= 0){
+        AB.getParam(json[last].clicks + '',       result, 'clicks',       null, null, parseBalance);
+        AB.getParam(json[last].hosts + '',        result, 'hosts',        null, null, parseBalance);
+        AB.getParam(json[last].leads + '',        result, 'leads',        null, null, parseBalance);
+        AB.getParam(json[last].leads_hold + '',   result, 'leads_hold',   null, null, parseBalance);
+        AB.getParam(json[last].impressions + '',  result, 'impressions',  null, null, parseBalance);
+        AB.getParam(json[last].epc + '',          result, 'epc',          null, null, parseBalance);
+        AB.getParam(json[last].cr + '',           result, 'cr',           null, null, parseBalance);
+    }else{
+    	AnyBalance.trace('Статистика пуста!');
+    }
   }
 
   if(isAvailable('pct')) {

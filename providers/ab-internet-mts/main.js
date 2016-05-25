@@ -570,76 +570,8 @@ function getUln() {
 }
 
 function getNorilsk() {
-  //https://kabinet.norilsk.mts.ru/auth
   var baseurl = "https://kabinet.norilsk.mts.ru/";
-  // typicalApiInetTv(baseurl);
-  getSimple(baseurl);
-}
-
-function getSimple(baseurl) {
-  var prefs = AnyBalance.getPreferences();
-  AnyBalance.setDefaultCharset('utf-8');
-
-  var html = AnyBalance.requestGet(baseurl + '', g_headers);
-
-  if (!html || AnyBalance.getLastStatusCode() > 400) {
-    AnyBalance.trace(html);
-    throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
-  }
-
-  html = AnyBalance.requestPost(baseurl + 'res/modules/AjaxRequest.php?Method=Login', {
-    'Data[LoginType]': 'Login',
-    'Data[Login]': prefs.login,
-    'Data[Passwd]': prefs.password,
-    'Service': 'API.User.Service',
-    'Client': 'mts',
-    BasicAuth: 'true',
-  });
-
-  var json = getJson(html);
-
-  if (json.Error) {
-    var error = json.SoapFault.Text;
-    if (error) {
-      throw new AnyBalance.Error(error, null, /неверный логин или пароль/i.test(error));
-    }
-    AnyBalance.trace(JSON.stringify(json));
-    throw new AnyBalance.Error("Не удалось войти в личный кабинет. Неправильный логин-пароль?");
-  }
-
-  var token = json.Result.Result.Token[0];
-  html = AnyBalance.requestPost(baseurl + 'res/modules/AjaxRequest.php?Method=GetContainerByPath', {
-    'AccessToken': token,
-    'Client': 'mts',
-    'Service': 'API.Interface.Service'
-  });
-  json = getJson(html);
-
-  html = JSON.stringify(json);
-
-  var result = {
-    success: true
-  };
-
-  AB.getParam(html, result, 'balance', /"clientId":"Balance"[\s\S]*?Value":"([^"]*)"/i, AB.replaceTagsAndSpaces, AB.parseBalance);
-  AB.getParam(html, result, 'username', /Description=\\"[^"]*фио[\s\S]*?Value=\\"([^"]*)/i, AB.replaceTagsAndSpaces);
-  AB.getParam(html, result, 'license', /Description=\\"[^"]*фио[\s\S]*?(?:[\s\S]*?Name=\\){3}"([^"\\]*)[\\"]/i, AB.replaceTagsAndSpaces);
-  AB.getParam(html, result, 'agreement', /"Name":"Договор"[\s\S]*?Value":"([^"]*)"/i, AB.replaceTagsAndSpaces);
-
-  if (AnyBalance.isAvailable('abon')) {
-    html = AnyBalance.requestPost(baseurl + 'res/modules/AjaxRequest.php?Method=GetPageByPath', {
-      'Data[ServerPath]': 'HomePage',
-      'AccessToken': token,
-      'Client': 'mts',
-      'Service': 'API.Interface.Service'
-    });
-    json = getJson(html);
-    html = JSON.stringify(json);
-    AnyBalance.trace(html);
-
-    getParam(html, result, 'abon', /Ежемесячная плата за пакет услуг[^<]*?:([^<]*)/, replaceTagsAndSpaces, parseBalance);
-  }
-  AnyBalance.setResult(result);
+  typicalApiInetTv(baseurl);
 }
 
 function typicalApiInetTv(baseurl) {

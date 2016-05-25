@@ -119,7 +119,7 @@ function request(m) {
 
     AnyBalance.trace('Requesting ' + getParam(m.payload.__type, null, null, /\.(\w+)$/));
 
-    var ver = "2.5.0";
+    var ver = "2.6.0";
     var wordsStr = CryptoJS.enc.Utf8.parse(sm);
     var wordsVer = CryptoJS.enc.Utf8.parse(ver);
     var words = new CryptoJS.lib.WordArray.init([wordsStr.sigBytes + wordsVer.sigBytes + 1, wordsVer.sigBytes << 24], 5);

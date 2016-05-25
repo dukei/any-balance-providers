@@ -54,13 +54,15 @@ function login(prefs, result) {
 		throw new AnyBalance.Error('Не удалось зайти в интернет банк. Обратитесь к разработчикам.');
 	}
 
-	result.profile = {};
-
-	getParam(html, result.profile, 'profile.fio', /<name>([\s\S]*?)<\/name>/i, replaceTagsAndSpaces, capitalFirstLetters);
-	getParam(html, result.profile, 'profile.passportnumber', /<passportnumber>([\s\S]*?)<\/passportnumber>/i, replaceTagsAndSpaces);
-	getParam(html, result.profile, 'profile.passportissuer', /<passportissuer>([\s\S]*?)<\/passportissuer>/i, replaceTagsAndSpaces);
-	getParam(html, result.profile, 'profile.passportissuedate', /<passportissuedate>([\s\S]*?)<\/passportissuedate>/i, replaceTagsAndSpaces, parseDateISO);
-	getParam(html, result.profile, 'profile.login', /<login>([\s\S]*?)<\/login>/i, replaceTagsAndSpaces);
+	if(AnyBalance.isAvailable('info')){
+		result.info = {};
+	    
+		getParam(html, result.info, 'info.fio', /<name>([\s\S]*?)<\/name>/i, replaceTagsAndSpaces, capitalFirstLetters);
+		getParam(html, result.info, 'info.passport', /<passportnumber>([\s\S]*?)<\/passportnumber>/i, replaceTagsAndSpaces);
+		getParam(html, result.info, 'info.passportissuer', /<passportissuer>([\s\S]*?)<\/passportissuer>/i, replaceTagsAndSpaces);
+		getParam(html, result.info, 'info.passportissuedate', /<passportissuedate>([\s\S]*?)<\/passportissuedate>/i, replaceTagsAndSpaces, parseDateISO);
+		getParam(html, result.info, 'info.login', /<login>([\s\S]*?)<\/login>/i, replaceTagsAndSpaces);
+	}
 
 	return html;
 }

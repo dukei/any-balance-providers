@@ -18,9 +18,9 @@ var g_countersTable = {
 		"till": "cards.till",
 		"status": "cards.status",
 		"cardName": "cards.cardName",
-		"minpaydate": "cards.minpaydate",
+		"minpaydate": "cards.minpay_till",
 		"minpay": "cards.minpay",
-		"maxlimit": "cards.maxlimit",
+		"maxlimit": "cards.limit",
 		"debt": "cards.debt",
 		"debt_date": "cards.debt_date",
 		"cash": "cards.cash",
@@ -30,27 +30,27 @@ var g_countersTable = {
 		"__tariff": "cards.cardNumber",
 		
 		"lastPurchSum": "cards.transactions10.sum",
-		"lastPurchPlace": "cards.transactions10.name",
-		"lastPurchDate": "cards.transactions10.time"
+		"lastPurchPlace": "cards.transactions10.descr",
+		"lastPurchDate": "cards.transactions10.date"
 		
 	},
 	loan: {
-    	"balance": "loans.balance",
-		"currency": "loans.currency",
-		"till": "loans.till",
+    	"balance": "credits.balance",
+		"currency": "credits.currency",
+		"till": "credits.till",
 		
-		"minpaydate": "loans.minpaydate",
-		"minpay": "loans.minpay",
-		"maxlimit": "loans.maxlimit",
-		"loan_ammount": "loans.loan_ammount",
-		"userName": "loans.userName",
-		"cardNumber": "loans.num",
-		"__tariff": "loans.num",
+		"minpaydate": "credits.minpay_till",
+		"minpay": "credits.minpay",
+		"maxlimit": "credits.maxlimit",
+		"loan_ammount": "credits.limit",
+		"userName": "credits.userName",
+		"cardNumber": "credits.num",
+		"__tariff": "credits.num",
 	},
     acc: {
     	"balance": "accounts.balance",
 		"currency": "accounts.currency",
-		"rate": "accounts.rate",
+		"rate": "accounts.pct",
 		"cardNumber": "accounts.num",
 		"__tariff": "accounts.num",
 		"till": "accounts.till",
@@ -65,7 +65,7 @@ var g_countersTable = {
 
 		"lastPurchSum": "accounts_met.transactions.sum",
 		"lastPurchPlace": "accounts_met.transactions.descr",
-		"lastPurchDate": "accounts_met.transactions.time"
+		"lastPurchDate": "accounts_met.transactions.date"
 
     }
 };
@@ -113,7 +113,7 @@ function main(){
 	} else if(prefs.type == 'loan') {
 		adapter.processLoans(html, result);
 
-		if(!adapter.wasProcessed('loans'))
+		if(!adapter.wasProcessed('credits'))
 			throw new AnyBalance.Error(prefs.lastdigits ? 'Не найден кредит с последними цифрами ' + prefs.lastdigits : 'У вас нет ни одного кредита!');
 		
 		result = adapter.convert(result);
@@ -156,7 +156,7 @@ function shouldProcess(counter, info){
 			if(endsWith(info.num, prefs.lastdigits))
 				return true;
 		}
-		case 'loans':
+		case 'credits':
 		{
 			if(prefs.type != 'loan')
 				return false;

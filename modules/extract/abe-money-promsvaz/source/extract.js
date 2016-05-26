@@ -234,29 +234,28 @@ function processCards(html, result) {
 	AnyBalance.trace('Найдено карт и карточных счетов: ' + cards.length);
 	var cardAccount = null;
 
+	function delayedProcessAccount(cardAccount) {
+		if(!AnyBalance.isAvailable('accounts'))
+			return;
+		if(!cardAccount)
+			return;
+
+		var name = getElement(cardAccount, /<div[^>]+"infoUnitCaption[^>]*>/i, replaceTagsAndSpaces);
+		var id = getElement(cardAccount, /<a[^>]+"infoUnitObject[^>]*>/i, [replaceTagsAndSpaces, /\s+/g, '']);
+		var a = {__id: id, __name: name + ' *' + id.substr(-4), num: id};
+
+		if (__shouldProcess('accounts', a)) {
+			processAccountsPreliminaryDetails(cardAccount, a, 'accounts.');
+			processAccount(cardAccount, a);
+		}
+
+		result.accounts.push(a);
+	}
+
 	for(var i=0; i<cards.length; ++i){
 		var card = cards[i];
 
 		if(/cardAccountBlock/i.test(card)) {
-
-			function delayedProcessAccount(cardAccount) {
-				if(!AnyBalance.isAvailable('accounts'))
-					return;
-				if(!cardAccount)
-					return;
-
-				var name = getElement(cardAccount, /<div[^>]+"infoUnitCaption[^>]*>/i, replaceTagsAndSpaces);
-				var id = getElement(cardAccount, /<a[^>]+"infoUnitObject[^>]*>/i, [replaceTagsAndSpaces, /\s+/g, '']);
-				var a = {__id: id, __name: name + ' *' + id.substr(-4), num: id};
-
-				if (__shouldProcess('accounts', a)) {
-					processAccountsPreliminaryDetails(cardAccount, a, 'accounts.');
-					processAccount(cardAccount, a);
-				}
-
-				result.accounts.push(a);
-			}
-
 			//Чтобы обработка счета всегда была после обработки всех карт счета
 			delayedProcessAccount(cardAccount);
 			cardAccount = card;

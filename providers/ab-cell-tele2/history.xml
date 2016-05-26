@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="39" date="2016-05-26">
+	Исправлено получение недавних дат из истории платежей
+	</change>
 	<change version="38" date="2016-04-08">
 	- Исправлены ошибки.
 	</change>

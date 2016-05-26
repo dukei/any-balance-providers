@@ -22,7 +22,7 @@ function main() {
 	
 	html = AnyBalance.requestGet(baseurl + '/po/accounts?account=' + prefs.login, g_headers);
 	
-	var j_username = getParam(html, null, null, /"value(?:[^"]*"){2}([^"]+)"/i, replaceTagsAndSpaces, html_entity_decode);
+	var j_username = getParam(html, null, null, /"value(?:[^"]*"){2}([^"]+)"/i, replaceTagsAndSpaces);
 	checkEmpty(j_username, 'Не удалось найти id пользователя с номером счета ' + prefs.login);
 	
 	html = AnyBalance.requestPost(baseurl + '/po/LoginSSO', {
@@ -33,7 +33,7 @@ function main() {
 	}, addHeaders({Origin: baseurl, Referer: baseurl + 'po/LoginForm.jsp'}));
 
 	if(/errLogin/i.test(AnyBalance.getLastUrl())){
-		var error = getParam(html, null, null, /<em[^>]+id="[^"]*error(?:[^>](?!display:\s*none))*>([\s\S]*?)<\/em>/i, replaceTagsAndSpaces, html_entity_decode);
+		var error = getParam(html, null, null, /<em[^>]+id="[^"]*error(?:[^>](?!display:\s*none))*>([\s\S]*?)<\/em>/i, replaceTagsAndSpaces);
 		if (error)
 			throw new AnyBalance.Error(error, null, /Неверный пароль|Неверный лицевой/i.test(error));
 
@@ -68,16 +68,16 @@ function main() {
 		currAcc = json[0];
 	}
 
-	getParam(currAcc.accountNumber + '', result, '__tariff', null, replaceTagsAndSpaces, html_entity_decode);
-	getParam(currAcc.accountNumber + '', result, 'account', null, replaceTagsAndSpaces, html_entity_decode);
-	getParam(currAcc.accountBalance + '', result, 'balance', null, replaceTagsAndSpaces, parseBalance);
+	getParam(currAcc.accountNumber + '', result, '__tariff', null, replaceTagsAndSpaces);
+	getParam(currAcc.accountNumber + '', result, 'account', null, replaceTagsAndSpaces);
+	getParam(currAcc.accountBalance && Math.round(currAcc.accountBalance * 100)/100, result, 'balance');
 	
 	if(isAvailable('fio')) {
 		html = AnyBalance.requestGet(baseurl + '/po/rest/client/info/', g_headers);
 		
 		json = getJson(html);
 
-		getParam(json.firstName + ' ' + json.lastName, result, 'fio', null, replaceTagsAndSpaces, html_entity_decode);
+		getParam(json.firstName + ' ' + json.lastName, result, 'fio', null, replaceTagsAndSpaces);
 	}
 	AnyBalance.setResult(result);
 }

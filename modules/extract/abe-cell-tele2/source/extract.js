@@ -317,10 +317,16 @@ function processPayments(html, result){
         getParam(pmnt.date, p, 'payments.date', null, null, function (str) {
 			// Вчера в 17:09
 			if(/Вчера/i.test(str))
-				return parseDate(getFormattedDate({offsetDay: 1}));
+				return parseDate(str.replace(/Вчера(?:\s+в)?/i, getFormattedDate({offsetDay: 1})));
 			// Сегодня в 11:00
 			if(/Сегодня/i.test(str))
-				return parseDate(getFormattedDate({offsetDay: 0}));
+				return parseDate(str.replace(/Сегодня(?:\s+в)?/i, getFormattedDate({offsetDay: 0})));
+			//37 мин. назад
+			if(/назад/i.test(str)){
+				var time = new Date().getTime() - parseMinutes(str)*1000;
+				AnyBalance.trace('Parsed ' + new Date(time).getTime() + ' from ' + str);
+				return time;
+			}
 			
 			var match = /^(\d+\s+[а-яa-z]+)/i.exec(str) || [];
 			return parseDateWordSilent(match[1]);

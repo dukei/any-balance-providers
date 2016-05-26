@@ -1989,7 +1989,7 @@ function megafonLKRemainders(filial, html, result){
 			AnyBalance.trace('Обработка услуги ' + gname + ':' + rname);
 
 			// Минуты
-			if((/мин/i.test(units) && !/интернет/i.test(name)) || (/шт/i.test(units) && /минут/i.test(name))) {
+			if((/мин/i.test(units) && !/интернет/i.test(name)) || (/шт/i.test(units) && /минут/i.test(rname) && !/СМС|SMS|ММС|MMS/i.test(rname))) {
 				var val = getParam(left, null, null, null, replaceTagsAndSpaces, parseBalance);
 				if(val >= 0){
 					if(/бесплат/i.test(name)) {

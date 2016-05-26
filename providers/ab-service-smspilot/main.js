@@ -3,7 +3,7 @@
 */
 
 var g_headers = {
-	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+	'': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
 	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
 	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
 	'Connection': 'keep-alive',
@@ -29,7 +29,7 @@ function main() {
 	}
 	
 	if (!/logout/i.test(html)) {
-		var error = getParam(html, null, null, /<div[^>]+class="error"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+		var error = getParam(html, null, null, /<div[^>]+class="error"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
 		if (error)
 			throw new AnyBalance.Error(error, null, /Пользователь не найден|Неверный пароль/i.test(error));
 		
@@ -39,9 +39,11 @@ function main() {
 	
 	var result = {success: true};
 	
-	getParam(html, result, 'balance', /<strong[^>]+user_balance_str[^>]*>([\s\S]*?)<\/strong>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'agreement', /Договор(?:\s|<[^>]*>)+№\s*<big[^>]*>([\s\S]*?)<\/big>/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, '__tariff', /Тариф:[\s\S]*?<strong[^>]*>([\s\S]*?)<\/strong>/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'balance', /<a[^>]+user_balance_str[^>]*>([\s\S]*?)<\/a>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'agreement', /Договор (?:\s|<[^>]*>)+№\s*<a[^>]*>([\s\S]*?)<\/a>/i, replaceTagsAndSpaces);
+
+	html = AnyBalance.requestGet(baseurl + 'my-order.php', g_headers);
+	getParam(html, result, '__tariff', /Текущий тариф\s*:([^<]*)/i, [replaceTagsAndSpaces, /\s*\|\s*$/, '']);
 	
 	AnyBalance.setResult(result);
 }

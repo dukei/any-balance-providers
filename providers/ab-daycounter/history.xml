@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<history>
+    <change version="3" date="2016-05-06">
+      - Исправлены баги
+    </change>
+    <change version="2" date="2015-12-18">
+      - Исправлены баги
+	  - Добавлен отсчет в любую сторону
+    </change>
+    <change version="1" date="2014-11-27">
+      - Релиз
+    </change>
+</history>

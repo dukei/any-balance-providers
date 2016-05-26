@@ -1029,9 +1029,9 @@ function getBonuses(xhtml, result, nopath) {
                 sumParam(values, remainders, path + 'min_left_1', null, replaceMinutes, parseMinutes, aggregate_sum);
                 sumParam(services[i], remainders, path + 'min_local_till', /Доступно до([^<]{10,20})/i, replaceTagsAndSpaces, parseDateWord, aggregate_min);
                 // Это новый вид отображения данных
-            } else if (/Минут общения по (?:тарифу|услуге)|вызовы|на местные номера/i.test(name)) {
+            } else if (/Минут общения|вызовы|на местные номера|Остаток разговоров/i.test(name)) {
                 // Очень внимательно надо матчить
-                if(/местные.*вызовы|любые номера Вашего региона|^Минут общения по тарифу$|(?:всех|других) (?:сотовых\s+)?операторов|все номера|На номера домашнего региона|Минут общения по тарифу Все для бизнеса Бронза|кроме номеров .?Билайн.?|на местные номера других операторов|любые местные/i.test(name))
+                if(/местные.*вызовы|любые номера Вашего региона|^Минут общения по тарифу$|(?:всех|других|любых)\s*(?:сотовых|мобильных)?\s*операторов|все номера|На номера домашнего региона|Минут общения по тарифу Все для бизнеса Бронза|кроме номеров .?Билайн.?|на местные номера других операторов|любые местные/i.test(name))
                     sumParam(values, remainders, path + 'min_local', null, replaceMinutes, parseMinutes, aggregate_sum);
                 else
                     sumParam(values, remainders, path + 'min_bi', null, replaceMinutes, parseMinutes, aggregate_sum);

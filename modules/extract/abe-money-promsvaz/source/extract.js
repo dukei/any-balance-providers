@@ -313,6 +313,75 @@ function processCard(card, c) {
 // Обработка депозитов
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+function processDeposits(html, result) {
+	if(!AnyBalance.isAvailable('deposits'))
+		return;
+
+	html = AnyBalance.requestGet(g_baseurl + '/n/Main/Deposits.aspx', addHeaders({Referer: g_baseurl + '/n/Main/Home.aspx'}));
+
+	var list = getElement(html, /<div[^>]*infoSectionContents[^>]*>/i);
+	if(!list){
+		if(/У вас нет депозитов/i.test(html)){
+			AnyBalance.trace('У вас нет депозитов');
+			result.deposits = [];
+		}else {
+			AnyBalance.trace(html);
+			AnyBalance.trace('Не удалось найти таблицу с депозитами.');
+		}
+		return;
+	}
+
+	var deposits = getElements(list, /<div[^>]+infoUnit[^>]*>/ig);
+	AnyBalance.trace('Найдено депозитов: ' + deposits.length);
+	result.deposits = [];
+
+	for(var i=0; i < deposits.length; ++i){
+		var dep = deposits[i];
+		var url = getParam(dep, null, null, /<a[^>]+?infoUnitObject[^>]*?href="([^"]*)/i, replaceHtmlEntities);
+        url = joinUrl(g_baseurl, url);
+
+		var name = getElement(dep, /<a[^>]+infoUnitObject[^>]*>/i, replaceTagsAndSpaces);
+
+		var info = AnyBalance.requestGet(url, addHeaders({Referer: g_baseurl + '/n/Main/Deposits.aspx'}));
+        var num = getElement(info, /<span[^>]+lblContract\b[^>]*>/i, replaceTagsAndSpaces);
+        var accnum = getParam(info, null, null, /Депозитный счет[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+        var title = name + ' ' + num.substr(-4);
+
+		var c = {__id: num, __name: title, num: accnum, contract: num};
+
+		if(__shouldProcess('deposits', c)) {
+			processDeposit(info, c, url);
+		}
+
+		result.deposits.push(c);
+	}
+}
+
+function processDeposit(info, result, url) {
+	AnyBalance.trace('Обработка депозита ' + result.__name);
+
+	getParam(info, result, 'deposits.balance', /<span[^>]+balanceMainAmountR[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(info, result, ['deposits.currency', 'deposits.balance'], /<span[^>]+balanceMainCurrencyS[^>]*>([\s\S]*?)<\/span>/, replaceTagsAndSpaces);
+    getParam(info, result, 'deposits.date_start', /<span[^>]+lblContractDates[^>]*>([\s\S]*?)<\/span>/, replaceTagsAndSpaces, parseDateWord);
+    getParam(info, result, 'deposits.period', /<span[^>]+lblDepositPeriod[^>]*>([\s\S]*?)<\/span>/, replaceTagsAndSpaces, parseBalance);
+    getParam(info, result, 'deposits.till', /<span[^>]+lblContractDates[^>]*>[^\-]*([\s\S]*?)<\/span>/, replaceTagsAndSpaces, parseDateWord);
+    getParam(info, result, 'deposits.name', /<span[^>]+lblCaption[^>]*>([\s\S]*?)<\/span>/, replaceTagsAndSpaces);
+
+    getParam(info, result, 'deposits.balance_start', /Первоначальный взнос[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(info, result, 'deposits.add', />\s*Пополнение\s*<[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(info, result, 'deposits.add_till', /Последняя дата возможного пополнения[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDateWord);
+    getParam(info, result, 'deposits.sub', /Списание[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(info, result, 'deposits.pcts', /Капитализация[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(info, result, 'deposits.pct', /Годовая ставка[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(info, result, 'deposits.pct_condition', /Тип выплаты[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+    getParam(info, result, 'deposits.pct_period', /Период выплаты[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+    getParam(info, result, 'deposits.estimated_value', /Ожидаемый доход[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+
+	if(isAvailable('deposits.transactions'))
+		processDepositTransactions(info, result, url);
+}
+
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Обработка кредитов
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -329,7 +398,7 @@ function processInfo(html, result){
 		html = AnyBalance.requestGet(g_baseurl + '/n/Settings/Settings.aspx', g_headers);
 
 		getParam(html, info, 'info.mphone', /Номер телефона:[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
-		getParam(html, info, 'info.email', /E-mail:[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
+		getParam(html, info, 'info.email', /E-mail:[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i, [replaceTagsAndSpaces, /<не заполнено>/i, '']);
 		getParam(html, info, 'info.smsphone', /<span[^>]+id="[^"]*lblSmsPhone"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
 		getParam(html, info, 'info.alias', /<input[^>]+vtcUserAlias[^>]*value="([^"]*)/i, replaceHtmlEntities);
 	}

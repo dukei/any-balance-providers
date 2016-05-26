@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="21" date="2016-05-26">
+	Добавлены депозиты
+	</change>
 	<change version="20" date="2016-05-26">
 	- Исправление ошибки JS
 	</change>

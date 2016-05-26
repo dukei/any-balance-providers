@@ -223,7 +223,7 @@ function processRemaindersApi(result){
                     }
 
                     // Минуты
-                    if((/мин/i.test(units) && !/интернет/i.test(name)) || (/шт/i.test(units) && /минут/i.test(name))) {
+                    if((/мин/i.test(units) && !/интернет/i.test(name)) || (/шт/i.test(units) && /минут/i.test(name) && !/СМС|SMS|MMS|ММС/i.test(name))) {
                         AnyBalance.trace('Parsing minutes...' + JSON.stringify(current));
                         var val = getParam(current.available, null, null, null, replaceTagsAndSpaces, parseBalance);
                         if(/бесплат/i.test(name)) {

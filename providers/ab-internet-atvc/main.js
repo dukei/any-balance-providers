@@ -12,7 +12,7 @@ var g_headers = {
 'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
 'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
 'Connection':'keep-alive',
-'User-Agent':'Mozilla/5.0 (BlackBerry; U; BlackBerry 9900; en-US) AppleWebKit/534.11+ (KHTML, like Gecko) Version/7.0.0.187 Mobile Safari/534.11+'
+'User-Agent':'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36'
 };
 
 function main(){
@@ -21,7 +21,7 @@ function main(){
     AB.checkEmpty(prefs.login, 'Введите логин!');
     AB.checkEmpty(prefs.password, 'Введите пароль!');
 
-    var baseurl = "https://support.atknet.ru/";
+    var baseurl = "https://lk.atvc.ru/";
 
     AnyBalance.setDefaultCharset('utf-8'); 
 
@@ -62,21 +62,25 @@ function main(){
         throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
     }
 
-    AnyBalance.sleep(2500);
-    html = AnyBalance.requestGet(baseurl + 'internet/' + prefs.login + '/');
+    AnyBalance.sleep(3000);
+    html = AnyBalance.requestGet(baseurl + 'internet/' + prefs.login + '/', g_headers);
 
     var result = {success: true};
 
-    getParam(html, result, '__tariff', /Тариф[\s\S]*?<td[^>]*>([\s\S]*?)<div[^>]*>/i, replaceTagsAndSpaces);
-    getParam(html, result, 'balance', /Баланс[\s\S]*?<td[^>]*>([\s\S]*?)<div[^>]*>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'number', /Номер договора[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
-    getParam(html, result, 'licenseFee', /Ежемесячный платёж[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'payment', /К оплате[\s\S]*?<td[^>]*>([\s\S]*?)<div[^>]*>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'virtual_payment', /Виртуальный платеж[\s\S]*?<td[^>]*>([\s\S]*?)<div[^>]*>/i, replaceTagsAndSpaces);
+    function getRe(name){
+    	return new RegExp(/<td[^>]*service-title[^>]*>(?:\s+|<(?:strong|b|a)[^>]*>)*%NAME%[\s\S]*?<td[^>]*>([\s\S]*?)(?:<ul|<\/td>)/.source.replace(/%NAME%/, name), 'i');
+    }
 
-    getParam(html, result, 'status', /Статус[\s\S]*?<td[^>]*>([\s\S]*?)<div[^>]*>/i, replaceTagsAndSpaces);
-    getParam(html, result, 'login', /Логин[\s\S]*?<td[^>]*>([\s\S]*?)<div[^>]*>/i, replaceTagsAndSpaces);
-    getParam(html, result, 'mailnumber', /Почтовый ящик[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
+    getParam(html, result, '__tariff', getRe('Тариф'), replaceTagsAndSpaces);
+    getParam(html, result, 'balance', getRe('Баланс'), replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'number', getRe('Номер договора'), replaceTagsAndSpaces);
+    getParam(html, result, 'licenseFee', getRe('Ежемесячный платёж'), replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'payment', getRe('К оплате'), replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'virtual_payment', getRe('Виртуальный платеж'), replaceTagsAndSpaces);
+
+    getParam(html, result, 'status', getRe('Статус'), replaceTagsAndSpaces);
+    getParam(html, result, 'login', getRe('Логин'), replaceTagsAndSpaces);
+    getParam(html, result, 'mailnumber', getRe('Почтовый ящик'), replaceTagsAndSpaces);
 
     AnyBalance.setResult(result);
 }

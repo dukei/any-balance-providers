@@ -1,12 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-  <id version="3">ab-internet-atvc</id>
+  <id version="4">ab-internet-atvc</id>
   <name>АТК (Архангельск, Новодвинск)</name>
   <description>
     Получает баланс для провайдера АТК (http://atvc.ru/)
 
-    Информация берется из личного кабинета (https://support.atknet.ru/)
+    Информация берется из личного кабинета (https://lk.atvc.ru/)
   </description>
   <author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
   <depends>

@@ -50,7 +50,7 @@ function main(){
             params.cardType = g_cardTypes[prefs.cardType].auth;
             params.cardNumber = prefs.login;
         } else {
-            checkEmpty(prefs.login, 'Введите логин!');
+    		throw new AnyBalance.Error('В качестве логина надо ввести либо е-мейл, либо номер карты, содержащий только цифры. Убедитесь, что в логине нет лишних символов, например, пробелов.', null, true);
         }
     }
     

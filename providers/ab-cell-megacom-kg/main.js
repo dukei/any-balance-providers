@@ -21,6 +21,7 @@ function main() {
 
 	/* Проверяем доступность ресурса */
 	var html = AnyBalance.requestGet(baseurl + 'login.xhtml', g_headers);
+	var loginPage = html;
 
 	if(!html || AnyBalance.getLastStatusCode() > 400){
 		AnyBalance.trace(html);
@@ -32,7 +33,7 @@ function main() {
 	var params = createFormParams(html, function(params, str, name, value) {
 		if (name == 'abonLogin')
 			return prefs.login;
-		else if (name == 'abonPass')
+		else if (name == 'pw')
 			return prefs.password;
 		return value;
 	});
@@ -44,45 +45,62 @@ function main() {
 		var captcha = AnyBalance.retrieveCode('Введите код с картинки', img);
 		params['captchaText'] = captcha;
 	}
+
+	params["javax.faces.partial.ajax"] = "true";
+	params["javax.faces.source"] = 'submit-login-form';
+	params["javax.faces.partial.execute"] = "@all";
+	params["submit-login-form"] = 'submit-login-form';
 	
-	params.submitButton = 'submitButton';
-	
-	html = AnyBalance.requestPost(baseurl + 'login.xhtml', params, g_headers);
-	
+	html = AnyBalance.requestPost(baseurl + 'login.xhtml', params, addHeaders({Referer: baseurl + 'login.xhtml', "X-Requested-With": "XMLHttpRequest"}));
+
 	if(!html || AnyBalance.getLastStatusCode() > 400) {
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Ошибка при входе в личный кабинет! Попробуйте обновить данные позже.');
 	}
 
-	// по наличию ссылки 'Выход' проверяем залогинились или нет
-	var exitLink = getParam(html, null, null, /<button[^>]*?id\s*?=\s*?['"]logout['"][^>]*?>[\s\S]*?>\s*?<span[^>]*?>([\s\S]*?)<\/span[^>]*?>\s*?<\/button/i, replaceTagsAndSpaces);
-	if (!/Выход/i.test(exitLink)) {
+	var redirect = getParam(html, null, null, /<redirect[^>]+url="([^"]*)/i, replaceHtmlEntities);
+	if(!redirect){
 		// определяем ошибку
-		var error = getElementsByClassName(html, 'ui-messages-error-summary', replaceTagsAndSpaces);
-		if (error.length)
-			throw new AnyBalance.Error(error[0], null, /Введен неверный логин или пароль|Введите логин в формате|Пользователя не существует/i.test(error[0]));
-		
+		var error = getParam(html, null, null, /\.form-info_messages-item'\)\.text\('([^']*)/i);
+		if(error)
+			throw new AnyBalance.Error(error, null, /не существует|парол/i.test(error));
+
+		error = getParam(html, null, null, /'#([^']+)'\)\.show/);
+		if(error)
+			error = getElement(loginPage, new RegExp('<div[^>]+id="' + error + '"[^>]*>', 'i'), replaceTagsAndSpaces);
+		if(error)
+			throw new AnyBalance.Error(error, null, /парол/i.test(error));
+
 		// если не смогли определить ошибку, то показываем дефолтное сообщение
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
+	}
+
+	AnyBalance.trace('redirected to ' + redirect);
+	html = AnyBalance.requestGet(joinUrl(baseurl, redirect), addHeaders({Referer: baseurl}));
+
+	// по наличию ссылки 'Выход' проверяем залогинились или нет
+	if (!/template-logout/i.test(html)) {
+		// если не смогли определить ошибку, то показываем дефолтное сообщение
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удалось зайти в личный кабинет после авторизации. Сайт изменен?');
 	}
 
 	/* Получаем данные */
 
 	var result = {success: true};
 
-	var html = AnyBalance.requestGet(baseurl + 'view/account/account-state.xhtml', g_headers);
 
 	getParam(html, result, 'balance', /Баланс[\s\S]*?templateBalance[^>]*?>([\s\S]*?)</i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, '__tariff', /Текущий\s*?тарифный\s*?план[\s\S]*?<a[^>]*?>([\s\S]*?)<\/a/i, replaceTagsAndSpaces);
-	getParam(html, result, 'status', /Статус\s*?абонента[\s\S]*?<label[^>]*?>([\s\S]*?)<\/label/i, replaceTagsAndSpaces);
+	getParam(html, result, 'status', /Статус[\s\S]*?<label[^>]*?>([\s\S]*?)<\/label/i, replaceTagsAndSpaces);
 	getParam(html, result, 'account', /Лицевой\s*?счет[\s\S]*?<span[^>]*?templateAccount[^>]*?>([\s\S]*?)<\/span/i, replaceTagsAndSpaces);
-	getParam(html, result, 'date_activation', /Дата\s*?активации\s*?подключения\s*?абонента[\s\S]*?<label[^>]*?[^>]*?>([\s\S]*?)<\/label/i, replaceTagsAndSpaces, parseDate);
+	getParam(html, result, 'date_activation', /Дата\s*?активации:[\s\S]*?<label[^>]*?[^>]*?>([\s\S]*?)<\/label/i, replaceTagsAndSpaces, parseDate);
 	getParam(html, result, 'balance_month', /Баланс\s*?на\s*?первое\s*?число\s*?текущего\s*?месяца[\s\S]*?<span[^>]*?[^>]*?>([\s\S]*?)<\/span/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'balance_month_calls', /Расходы\s*?на\s*?звонки\s*?с\s*?начала\s*?текущего\s*?месяца[\s\S]*?<span[^>]*?[^>]*?>([\s\S]*?)<\/span/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'balance_month_calls', /Расходы\s*?на\s*?звонки\s*?с\s*?начала\s*?месяца[\s\S]*?<span[^>]*?[^>]*?>([\s\S]*?)<\/span/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'balance_month_fee', /Абонентская\s*?плата\s*?за\s*?услуги\s*?с\s*?начала\s*?месяца[\s\S]*?<span[^>]*?[^>]*?>([\s\S]*?)<\/span/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'balance_month_services', /Начисления\s*?за\s*?дополнительные\s*?услуги\s*?с\s*?начала\s*?месяца[\s\S]*?<span[^>]*?[^>]*?>([\s\S]*?)<\/span/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'balance_month_pay', /Получено\s*?платежей\s*?с\s*?начала\s*?месяца[\s\S]*?<span[^>]*?[^>]*?>([\s\S]*?)<\/span/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'balance_month_pay', /Платежи\s*?с\s*?начала\s*?месяца[\s\S]*?<span[^>]*?[^>]*?>([\s\S]*?)<\/span/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'balance_login', /Актуальный\s*?баланс\s*?на\s*?момент\s*?входа\s*?в\s*?Личный\s*?кабинет[\s\S]*?<span[^>]*?[^>]*?>([\s\S]*?)<\/span/i, replaceTagsAndSpaces, parseBalance);
 
 	AnyBalance.setResult(result);

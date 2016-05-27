@@ -509,7 +509,7 @@ function fetchPreKz(baseurl, html) {
                 getParam(html + xhtml, result, ['currency', 'balance'], balanceRegExp, replaceTagsAndSpaces, myParseCurrency);
         }
         // Пробуем получить со страницы, при обновлении через мобильный интернет, он там есть
-        var balanceRegExp = /<h3>[^>]*class="price[^>]*>((?:[\s\S]*?span[^>]*>){3})/i;
+        var balanceRegExp = /<h3>[^>]*class="price[^>]*>([\s\S]*?)<\/h3>/i;
         getParam(html, result, 'balance', balanceRegExp, replaceTagsAndSpaces, parseBalance);
         l_getCurrency();
 

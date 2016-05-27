@@ -44,7 +44,7 @@ function main() {
 
 	var result = {success: true};
 
-	AB.getParam(html, result, 'balance', /Долг на конец периода[\s\S]*?<span[^>]*>[\s\S]*?<\/span>/i, [/<span[^>]+color:red[^>]*>/i, '-'], AB.parseBalance);
+	AB.getParam(html, result, 'balance', /Долг на конец периода[\s\S]*?<span[^>]*>[\s\S]*?<\/span>/i, [/<span[^>]+color:green[^>]*>/i, '-'], AB.parseBalance);
 	AB.getParam(html, result, 'fio', /Ф. И. О. абонента:([^<]*)/i, AB.replaceTagsAndSpaces);
 	AB.getParam(html, result, 'address', /Адрес абонента:([^<]*)/i, AB.replaceTagsAndSpaces);
 	AnyBalance.setResult(result);

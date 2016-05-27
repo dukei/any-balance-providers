@@ -202,7 +202,7 @@ function requestAPI(method, url, params, headers) {
 	
 	json = getJson(html);
 	if(!json.access_token && (!json.result || json.result.code)) {
-		var error = json.result && json.result.message;
+		var error = (json.result && json.result.message) || json.message;
 		if(error)
 			throw new AnyBalance.Error(error, null, /проверьте свои данные|Invalid user credentials/i.test((json.result && json.result.debugMessage) || error));
 		AnyBalance.trace(html);

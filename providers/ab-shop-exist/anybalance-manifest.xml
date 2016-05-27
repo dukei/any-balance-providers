@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="14">ab-shop-exist</id>
+	<id version="15">ab-shop-exist</id>
 	<name>Exist.ru</name>
 	<api flags="no_browser"/>
 	<description html="true"><![CDATA[
@@ -8,10 +8,12 @@
 	<p>Информация берется из личного кабинета <a href="http://www.exist.ru/profile/Balance.aspx">http://www.exist.ru/profile/Balance.aspx</a></p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
@@ -25,8 +27,26 @@
 		<counter id="orderdesc" name="Описание заказа" type="html"/>
 		<counter id="ordernum" name="Номер заказа" type="text"/>
 		<counter id="ordersum" name="Сумма заказа" type="numeric" units=" р"/>
-		<counter id="code" name="Код клиента" type="text"/>
 		<counter id="parts_count" name="Деталей в заказе" units=" шт"/>
+		<counter id="place" name="Место заказа" type="text"/>
+
+		<counter id="orderstatus1" name="Статус заказа 2" type="text"/>
+		<counter id="orderexpect1" name="Ожидается 2" type="time" format="dd/MM/yyyy"/>
+		<counter id="orderdesc1" name="Описание заказа 2" type="html"/>
+		<counter id="ordernum1" name="Номер заказа 2" type="text"/>
+		<counter id="ordersum1" name="Сумма заказа 2" type="numeric" units=" р"/>
+		<counter id="parts_count1" name="Деталей в заказе 2" units=" шт"/>
+		<counter id="place1" name="Место заказа 2" type="text"/>
+
+		<counter id="orderstatus2" name="Статус заказа 3" type="text"/>
+		<counter id="orderexpect2" name="Ожидается 3" type="time" format="dd/MM/yyyy"/>
+		<counter id="orderdesc2" name="Описание заказа 3" type="html"/>
+		<counter id="ordernum2" name="Номер заказа 3" type="text"/>
+		<counter id="ordersum2" name="Сумма заказа 3" type="numeric" units=" р"/>
+		<counter id="parts_count2" name="Деталей в заказе 3" units=" шт"/>
+		<counter id="place2" name="Место заказа 3" type="text"/>
+
+		<counter id="code" name="Код клиента" type="text"/>
 	</counters>
 	<keywords>экзист</keywords>
 	<type>shop</type>

@@ -1,5 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="15" date="2016-05-27">
+	- Поддержка изменений на сайте.
+	- Поддержка вывода до 3 заказов
+	</change>
 	<change version="14" date="2015-07-29">
 	- Поддержка изменений на сайте.
 	</change>

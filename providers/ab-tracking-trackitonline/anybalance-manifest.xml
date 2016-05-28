@@ -1,16 +1,18 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-tracking-trackitonline</id>
+	<id version="2">ab-tracking-trackitonline</id>
 	<api flags="no_browser"/>
 	<name>Track It</name>
 	<description html="true"><![CDATA[
 	<p>Получает данные по номеру почтового отправления с помощью сервиса Track It <a href="http://trackitonline.ru/">http://trackitonline.ru/</a></p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>

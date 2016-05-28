@@ -25,7 +25,7 @@ function main(){
         regionFunc();
     } catch(e) {
         if (!e.fatal) {
-            AnyBalance.trace('Старый логин не сработал, пробуем на my.skylink');
+            AnyBalance.trace('Старый логин не сработал, пробуем на mycdma.skylink');
             mainMySkylink(prefs);
         } else {
             throw e;
@@ -35,7 +35,7 @@ function main(){
 
 function mainMySkylink(prefs){
     AnyBalance.setDefaultCharset('utf-8');
-    var baseurl = 'https://my.skylink.ru/';
+    var baseurl = 'https://mycdma.skylink.ru/';
     var headers = {
         'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
         'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',

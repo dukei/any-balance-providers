@@ -5,10 +5,10 @@
 
 var g_countersTable = {
 	common: {
-		"fio": "profile.fio",
+		"fio": "info.fio",
 	}, 
 	card: {
-		"__tariff": "cards.cardnum",
+		"__tariff": "cards.num",
 		
     	"balance": "cards.balance",
 		"currency": "cards.currency",
@@ -27,7 +27,7 @@ var g_countersTable = {
 		"gracePeriodEnd": "cards.gracepay_till",
 	},
     acc: {
-		"__tariff": "accounts.accnum",
+		"__tariff": "accounts.num",
 		
 		"balance": "accounts.balance",
 		"currency": "accounts.currency",

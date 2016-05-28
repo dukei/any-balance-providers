@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="4">ab-cell-idc</id>
+	<id version="5">ab-cell-idc</id>
 	<api flags="no_browser|captcha"/>
 	<name>СЗАО Интерднестрком</name>
 	<description html="true"><![CDATA[
@@ -8,10 +8,12 @@
 	<p>Информация берется из личного кабинета http://my.idc.md/</p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
@@ -23,7 +25,7 @@
 		<counter id="minutes" name="Минут" type="time_interval" format="{@MIN}:{@sec}" units=" мин"/>
 		<counter id="traf" name="Трафик" units=" Мб"/>
 		<counter id="simple" name="Мини-пакет Simple" units=" {@currency}"/>
-		<counter id="traf_used" name="Израсходовано трафика" units=" Мб"/>
+		<counter id="traf_used_sum" name="Израсходовано трафика на сумму" units=" р"/>
 	</counters>
 	<keywords></keywords>
 	<type>cell</type>

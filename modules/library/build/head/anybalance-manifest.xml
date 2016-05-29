@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">abm-library</id>
+	<id version="1">library</id>
 	<api flags="no_browser"/>
 	<name>Стандартная библиотека AnyBalance</name>
 	<description html="true"><![CDATA[

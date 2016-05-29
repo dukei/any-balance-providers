@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<job id="IncludeExample">
+<job id="history">
 	<script language="VBScript" src="mb.vbs" encoding="UTF-8"></script>
+	<script language="JScript" src="build\polyfill.js" encoding="UTF-8"></script>
+	<script language="JScript" src="build\modules.js" encoding="UTF-8"></script>
+	<script language="JScript" src="build\misc.js" encoding="UTF-8"></script>
 	<script language="JScript" src="x.js" encoding="UTF-8"></script>
 </job>

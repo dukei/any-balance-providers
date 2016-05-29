@@ -35,88 +35,89 @@ try{
 	var WshShell = WScript.CreateObject("WScript.Shell");
 	// Open the input dialog box using a function in the .wsf file.
 	// Test whether the Cancel button was clicked.
-	if (result) {
-		var objStream = new ActiveXObject("ADODB.Stream");
-		objStream.CharSet = "utf-8";
+	var objStream = new ActiveXObject("ADODB.Stream");
+	objStream.CharSet = "utf-8";
+	
+	var manifest = openManifest(objStream);
+	getManifestData(manifest);
+	
+	// Проверим не заменены ли преференсы в файле
+	var mainJs = readFileToString('main.js');
+	if(g_prefs_file) {
+		var msg = ' Check you main.js file for stupid errors!';
 		
-		var manifest = openManifest(objStream);
-		getManifestData(manifest);
 		
-		// Проверим не заменены ли преференсы в файле
-		var mainJs = readFileToString('main.js');
-		if(g_prefs_file) {
-			var msg = ' Check you main.js file for stupid errors!';
-			
-			
-			var prefsName = searchRegExpSafe(/(?:var\s+)?([^\s]+)\s*=\s*AnyBalance\.getPreferences\s*\(\)/i, mainJs);
-			//var prefsName = /(?:var\s+)?([^\s]+)\s*=\s*AnyBalance\.getPreferences\s*\(\)/i.exec(mainJs)[1];
-			if(prefsName) {
-				// Нельзя хардкодить преференсы!
-				var reg = new RegExp('(?:var\\s+)?' + prefsName + '\\s*=\\s*([^,;]+)', 'ig');
-				var r_result;
-				while((r_result = reg.exec(mainJs)) !== null) {
-					if(!/AnyBalance\.getPreferences\s*\(\)/i.test(r_result[1])) {
-						throw new Error('You have overrided your preferences!' + msg);
-					}
+		var prefsName = searchRegExpSafe(/(?:var\s+)?([^\s]+)\s*=\s*AnyBalance\.getPreferences\s*\(\)/i, mainJs);
+		//var prefsName = /(?:var\s+)?([^\s]+)\s*=\s*AnyBalance\.getPreferences\s*\(\)/i.exec(mainJs)[1];
+		if(prefsName) {
+			// Нельзя хардкодить преференсы!
+			var reg = new RegExp('(?:var\\s+)?' + prefsName + '\\s*=\\s*([^,;]+)', 'ig');
+			var r_result;
+			while((r_result = reg.exec(mainJs)) !== null) {
+				if(!/AnyBalance\.getPreferences\s*\(\)/i.test(r_result[1])) {
+					throw new Error('You have overrided your preferences!' + msg);
 				}
 			}
-
-			//Обработать ошибку входа!
-			if(mainJs.indexOf('<div[^>]+class="t-error"[^>]*>[\\s\\S]*?<ul[^>]*>([\\s\\S]*?)<\\/ul>') > 0){
-					throw new Error('You have to check for login error and show appropriate message!');
-			}
 		}
-		
-		// var intDoIt = WshShell.Popup('Do you want to use new library.js?', 0, "Result", vbYesNo + vbInformation + stayOnTop);
-		// if(intDoIt == vbYes) {
-			
-		// }
-		
-		// Запишем манифест
-		writeManifest(objStream, manifest, mainJs, WshShell);
-		
-		// История 
-		var originalHistory = '<?xml version="1.0" encoding="utf-8"?>\n\
-		<history>\n\
-		</history>';
 
-		if(g_history_file)
-			originalHistory = readFileToString(g_history_file);
-			
-		var dt = new Date();
-		
-		var major_version_str = (g_prov_major_version ? 'major_version="' + g_prov_major_version + '" ' : '');
-		
-		originalHistory = originalHistory.replace(/<history>/, '<history>\n\t<change ' + major_version_str + 'version="' + g_prov_version + '" date="' + dt.getYear() + '-' + addZeros(dt.getMonth()+1) + '-' + addZeros(dt.getDate()) + '">\n\t' + result.replace(/\n/g, '\n\t') + '\n\t</change>');
-		originalHistory = originalHistory.replace(/^\s*|\s*$/g, '');
-		
-		objStream.Open();
-		objStream.WriteText(originalHistory);
-		if(g_history_file)
-			objStream.SaveToFile (g_history_file, 2);
-		else
-			objStream.SaveToFile (g_history_file || g_new_history_file_name, 1);
-		objStream.Close();
-		
-		var intDoIt = WshShell.Popup('Provider: ' + g_prov_text_id + ' v.' + g_prov_major_version + '.' + g_prov_version + ' edited.\nAdded new history line: ' + result + '\n\nDo you want to commit via TortoiseGit?', 0, "Result", vbYesNo + vbInformation + stayOnTop);
-		
-		if(intDoIt == vbYes) {
-			// Want to commit
-			commit(WshShell, result);
+		//Обработать ошибку входа!
+		if(mainJs.indexOf('<div[^>]+class="t-error"[^>]*>[\\s\\S]*?<ul[^>]*>([\\s\\S]*?)<\\/ul>') > 0){
+				throw new Error('You have to check for login error and show appropriate message!');
 		}
-	} else { // Cancel button was clicked.
-		//var intDoIt = WshShell.Popup("Sorry, no input", 0, "Result", vbOKOnly + vbInformation + stayOnTop);
+	}
+	
+	// var intDoIt = WshShell.Popup('Do you want to use new library.js?', 0, "Result", vbYesNo + vbInformation + stayOnTop);
+	// if(intDoIt == vbYes) {
+		
+	// }
+	WScript.Echo('Checking for dependencies change...');
+	var commitDirs = checkModulesIfAreCompiledAndCommitted();
+	
+	// Запишем манифест
+	writeManifest(objStream, manifest, mainJs, WshShell);
+	
+	// История 
+	var originalHistory = '<?xml version="1.0" encoding="utf-8"?>\n\
+	<history>\n\
+	</history>';
+
+	if(g_history_file)
+		originalHistory = readFileToString(g_history_file);
+		
+	var dt = new Date();
+	
+	var major_version_str = (g_prov_major_version ? 'major_version="' + g_prov_major_version + '" ' : '');
+	
+	originalHistory = originalHistory.replace(/<history>/, '<history>\n\t<change ' + major_version_str + 'version="' + g_prov_version + '" date="' + dt.getYear() + '-' + addZeros(dt.getMonth()+1) + '-' + addZeros(dt.getDate()) + '">\n\t' + result.replace(/\n/g, '\n\t') + '\n\t</change>');
+	originalHistory = originalHistory.replace(/^\s*|\s*$/g, '');
+	
+	objStream.Open();
+	objStream.WriteText(originalHistory);
+	if(g_history_file)
+		objStream.SaveToFile (g_history_file, 2);
+	else
+		objStream.SaveToFile (g_history_file || g_new_history_file_name, 1);
+	objStream.Close();
+
+	var intDoIt = WshShell.Popup('Provider: ' + g_prov_text_id + ' v.' + g_prov_major_version + '.' + g_prov_version + ' edited.\nAdded new history line: ' + result + '\n\nDo you want to commit via TortoiseGit?', 0, "Result", vbYesNo + vbInformation + stayOnTop);
+	
+	if(intDoIt == vbYes) {
+		// Want to commit
+		commitDirs.push(WshShell.CurrentDirectory);
+		commit(commitDirs, result);
 	}
 }catch(e){
-	if(e.message != cancel)
-		throw e;		
+	if(e.message != cancel){
+		messageBox(e.message, vbOKOnly, 'Error');
+		throw e;
+	}
 }
 
-function commit(WshShell, mesg) {
+function commit(commitDirs, mesg) {
 	// SVN
-	// WshShell.Run('tortoiseproc /command:commit /logmsg:"' + g_prov_name + ' (' + g_prov_text_id + '):\n' + mesg + '" /path:"'+WshShell.CurrentDirectory+'"');
+	// WshShell.Run('tortoiseproc /command:commit /logmsg:"' + g_prov_name + ' (' + g_prov_text_id + '):\n' + mesg + '" /path:"'+commitDirs.join('*')+'"');
 	// GIT
-	WshShell.Run('TortoiseGitProc /command:commit /logmsg:"' + g_prov_name + ' (' + g_prov_text_id + '):\n' + mesg + '" /path:"'+WshShell.CurrentDirectory+'"');
+	WshShell.Run('TortoiseGitProc /command:commit /logmsg:"' + g_prov_name + ' (' + g_prov_text_id + '):\n' + mesg + '" /path:"'+commitDirs.join('*')+'"');
 }
 
 function readFileToString(file) {
@@ -207,3 +208,40 @@ function searchRegExpSafe(regExp, where) {
 function addZeros(val) {
 	return val < 10 ? '0' + val : '' + val;
 } 
+
+function checkModulesIfAreCompiledAndCommitted(){
+	var curDir = WshShell.CurrentDirectory;
+	var provider = Modules.createModule(curDir, '__self');
+
+	var modules = {}; //просто список используемых модулей
+	var deps = []; //Модули, от которых зависим.
+	var pathsToCommit = [];
+
+	Modules.traverseDependencies(provider, {
+		after: function(module){
+			var id = module.getFullId();
+			if(modules[id])
+				return;
+			if(module.isRoot())
+				return;
+			modules[id] = module;
+			deps.push(module); 
+		}
+	});
+
+	for(var i=0; i<deps.length; ++i){
+		var module = deps[i];
+		WScript.Echo('Checking ' + module.getFullId() + '...');
+		if(!Modules.checkIfBuilt(module)){
+			WScript.Echo('Module ' + module.getFullId() + ' source is newer than head. Building head...');
+			Modules.buildModule(module);
+		}
+
+		if(!Modules.checkIfCommitted(module)){
+			WScript.Echo('Module ' + module.getFullId() + ' has uncommitted changes. Adding it to commit path.');
+			pathsToCommit.push(module.getFilePath().replace(/[\\\/]+$/, ''));
+		}
+	}
+
+	return pathsToCommit;
+}

@@ -57,7 +57,7 @@ function main() {
 	var link = getParam(linkdiv, null, null, /<a[^>]+href="([^"]*)/i, replaceHtmlEntities);
 	html = AnyBalance.requestGet(joinUrl(baseurl, link), g_headers);
 
-	var table = getElements(html, [/<table[^>]*>/ig, /Дата и время/i])[0];
+	var table = getElements(html, [/<table[^>]*>/ig, /Дата и время|Дата і час/i])[0];
 	if(!table){
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось найти таблицу статусов. Сайт изменен?');
@@ -65,20 +65,20 @@ function main() {
 		
     var colsDef = {
         date: {
-            re: /Дата и время/i,
+            re: /Дата и время|Дата і час/i,
             result_replace: null,
             result_func: null
         },
         descr: {
-            re: /Событие/i,
+            re: /Событие|Подія/i,
             result_replace: null,
             result_func: null
         },
         weight: {
-            re: /Вес/i,
+            re: /Вес|Вага/i,
         },
         extra: {
-            re: /Дополнительно/i,
+            re: /Дополнительно|Додатково/i,
             result_func: null,
         },
     };
@@ -97,7 +97,7 @@ function main() {
     getParam(row.__date, result, 'trace_date', /<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseDate);
     getParam(row.__date, result, 'index', /<div[^>]*center[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
     getParam(row.__descr, result, 'status', /<a[^>]*>([\s\S]*?)<\/a>/i, replaceTagsAndSpaces);
-    getParam(row.__descr, result, 'place', /<div[^>]*место[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+    getParam(row.__descr, result, 'place', /<div[^>]*(?:место|Місце)[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
     sumParam(row.__extra, result, 'place', null, null, null, aggregate_join);
 
 	if (AnyBalance.isAvailable('fulltext')) {
@@ -105,7 +105,7 @@ function main() {
         for (var i = 0; i < rows.length; i++) {
         	var row = rows[i];
             var trace_date = getParam(row.__date, null, null, /<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
-            var place = getParam(row.__descr, null, null, /<div[^>]*место[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+            var place = getParam(row.__descr, null, null, /<div[^>]*(?:место|Місце)[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
             var status = getParam(row.__descr, null, null, /<a[^>]*>([\s\S]*?)<\/a>/i, replaceTagsAndSpaces);
             res.push('<b>' + trace_date + '</b> ' + status + '. Место: ' + (place || '-'));
         }

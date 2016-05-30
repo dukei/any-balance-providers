@@ -4,6 +4,7 @@ var Modules = (function(){
 
 	var repositories = initRepositories();
 	var modulesCache = {};
+	var defaultVersion = 'head';
 
 	function backSlashes(path){
 		return path.replace(/[\/\\]+/g, '\\');
@@ -104,7 +105,7 @@ var Modules = (function(){
 			guessModuleIdAndRepo(this);
 		}else{
 			this.id = idOrPath;
-			this.version = version || 'head';
+			this.version = version || defaultVersion;
 			this.type = Module.TYPE.MODULE;
 		}
 
@@ -238,7 +239,7 @@ var Modules = (function(){
 		module.load();
 		if(typeof callback == 'function')
 			callback(module);
-		if(typeof callback.before == 'function')
+		if(callback && typeof callback.before == 'function')
 			callback.before(module);
 		
 		for(var i=0; i<module.modules.length; ++i){
@@ -246,7 +247,7 @@ var Modules = (function(){
 			traverseDependencies(m, callback);
 		}
 
-		if(typeof callback.after == 'function')
+		if(callback && typeof callback.after == 'function')
 			callback.after(module);
 	}
 
@@ -363,6 +364,10 @@ var Modules = (function(){
 		}while(path);
 	}
 
+	function setDefaultVersion(version){
+		defaultVersion = version;
+	}
+
 	return {
 		createModule: createModule,
 		clearModulesCache: clearModulesCache,
@@ -371,7 +376,8 @@ var Modules = (function(){
 		buildModule: buildModule,
 		checkIfBuilt: checkIfBuilt,
 		checkIfCommitted: checkIfCommitted,
-		findGitRoot: findGitRoot
+		findGitRoot: findGitRoot,
+		setDefaultVersion: setDefaultVersion
 	};
 
 })();

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<job id="build_provider" error="true" debug="true">
+	<script language="JScript" src="polyfill.js" encoding="UTF-8"></script>
+	<script language="JScript" src="modules.js" encoding="UTF-8"></script>
+	<script language="JScript" src="misc.js" encoding="UTF-8"></script>
+	<script language="JScript" src="assemble_provider.js" encoding="UTF-8"></script>
+</job>

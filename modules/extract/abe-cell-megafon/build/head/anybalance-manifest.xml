@@ -5,7 +5,7 @@
     <name>Mobile API parsing for Megafon</name>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
-		<js>abe-cell-megafon.min.js</js>
+		<js>extract.abe-cell-megafon.min.js</js>
 		<history>history.xml</history>
 	</files>
 	<depends>

@@ -15,6 +15,9 @@ function main() {
 	AB.checkEmpty(prefs.surname, 'Укажите фамилию!');
 	AB.checkEmpty(prefs.username, 'Укажите имя!');
 	AB.checkEmpty(prefs.patronymic, 'Укажите отчество!');
+	AB.checkEmpty(prefs.surname.trim() == prefs.surname, 'В фамилии не допускаются пробелы в начале и конце! Удалите их.');
+	AB.checkEmpty(prefs.username.trim() == prefs.username, 'В имени не допускаются пробелы в начале и конце! Удалите их.');
+	AB.checkEmpty(prefs.patronymic.trim() == prefs.patronymic, 'В отчестве не допускаются пробелы в начале и конце! Удалите их.');
 	AB.checkEmpty(/^\d\d\.\d\d\.\d\d\d\d$/.test(prefs.birthday), 'Укажите дату рождения в формате ДД.ММ.ГГГГ (например 12.01.1982)!');
 	AB.checkEmpty(/^\d\d\d\d$/.test(prefs.become), 'Укажите год постановки на учет в формате ГГГГ (например 2002)!');
 	AB.checkEmpty(prefs.rn, 'Укажите район!');
@@ -44,6 +47,9 @@ function main() {
 		var error = AB.getParam(html, null, null, /(По вашему запросу(?:.(?!\/div>))+)/i, AB.replaceTagsAndSpaces);
 		if(error)
 			throw new AnyBalance.Error(error, null, /По вашему запросу/i.test(error));
+		error = getParam(html, null, null, /<\/form>([\s\S]*?)<div[^>]+id="foot-bar"/i, AB.replaceTagsAndSpaces);
+		if(error)
+			throw new AnyBalance.Error(error, null, /все поля/i.test(error));
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось войти в личный кабинет. Проблемы на сайте или сайт изменен.');
 	}

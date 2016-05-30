@@ -756,9 +756,13 @@ function fetchPost(baseurl, html, result) {
         var upd = getBlockInner(baseurl + 'c/post/fininfo/report/detailUnbilledCalls.xhtml', html, 'retrieveSubCurPeriodDataDetails');
         xhtml = extractFromUpdate(upd, 'retrieveSubCurPeriodDataDetails');
 
-        if(need_traffic){
-            result.remainders = result.remainders || {};
-            getParam(xhtml, result.remainders, 'remainders.traffic_used', /Итоговый объем данных \(MB\):([^>]*>){3}/i, [replaceTagsAndSpaces, /([\s\S]*?)/, '$1 мб'], parseTraffic);
+        if(/unbilledLoader:form:notifEmail/i.test(xhtml)){
+            AnyBalance.trace('Отчет получился слишком большой показа онлайн. Посылаем на почту');
+        }else {
+            if (need_traffic) {
+                result.remainders = result.remainders || {};
+                getParam(xhtml, result.remainders, 'remainders.traffic_used', /Итоговый объем данных \(MB\):([^>]*>){3}/i, [replaceTagsAndSpaces, /([\s\S]*?)/, '$1 мб'], parseTraffic);
+            }
         }
 
         //Получаем детализацию

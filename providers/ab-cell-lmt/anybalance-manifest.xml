@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="3">ab-cell-lmt</id>
+	<id version="4">ab-cell-lmt</id>
 	<api flags="no_browser"/>
 	<name>LMT (Латвия)</name>
 	<description html="true"><![CDATA[
@@ -8,6 +8,9 @@
 	<p>Информация берется из личного кабинета <a href="https://mans.lmt.lv/ru/index.php">https://mans.lmt.lv/ru/index.php</a></p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
@@ -17,9 +20,9 @@
 	</files>
 	<counters>
 		<counter id="balance" name="Баланс" units=" €"/>
-		<counter id="advance_duration" name="Срок действия аванса" type="time_interval" format="{@d}-{@mo}-{@y} {@h}:{@min}"/>
-		<counter id="usage_duration" name="Срок использования" type="time_interval" format="{@d}-{@mo}-{@y} {@h}:{@min}"/>
-		<counter id="service_package" name="Пакет услуг" type="time_interval" format="{@d}-{@mo}-{@y} {@h}:{@min}"/>
+		<counter id="advance_duration" name="Срок действия аванса" type="time" format="dd-MM-yyyy HH:mm"/>
+		<counter id="usage_duration" name="Срок использования" type="time" format="dd-MM-yyyy HH:mm"/>
+		<counter id="service_package" name="Пакет услуг" type="time" format="dd-MM-yyyy HH:mm"/>
 	</counters>
 	<keywords></keywords>
 	<type>cell</type>

@@ -26,10 +26,16 @@ function main() {
 
 	if (!html || AnyBalance.getLastStatusCode() > 400) {
 		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
+		throw new AnyBalance.Error('Сайт провайдера временно недоступен! Попробуйте обновить данные позже.');
 	}
 
-	var params = AB.createFormParams(html, function(params, str, name, value) {
+	var form = AB.getElement(html, /<form[^>]+loginForm[^>]*>/i);
+	if(!form){
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удаётся найти форму входа! Сайт изменен?');
+	}
+
+	var params = AB.createFormParams(form, function(params, str, name, value) {
 		if (name == 'login') {
 			return prefs.login;
 		} else if (name == 'password') {

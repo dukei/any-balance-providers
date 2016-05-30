@@ -39,9 +39,9 @@ function main() {
 	}));
 	
 	if (!/logout/i.test(html)) {
-		var error = getParam(html, null, null, /<div[^>]+class="txt_errore_login"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+		var error = getElement(html, /<div[^>]+error-wrap[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
 		if (error)
-			throw new AnyBalance.Error(error, null, /Verifica che username e password siano stati inseriti correttamente./i.test(error));
+			throw new AnyBalance.Error(error, null, /password/i.test(error));
 		
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Can`t login to selfcare. Site changed?');

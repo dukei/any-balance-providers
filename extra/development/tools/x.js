@@ -116,8 +116,23 @@ try{
 function commit(commitDirs, mesg) {
 	// SVN
 	// WshShell.Run('tortoiseproc /command:commit /logmsg:"' + g_prov_name + ' (' + g_prov_text_id + '):\n' + mesg + '" /path:"'+commitDirs.join('*')+'"');
-	// GIT
-	WshShell.Run('TortoiseGitProc /command:commit /logmsg:"' + g_prov_name + ' (' + g_prov_text_id + '):\n' + mesg + '" /path:"'+commitDirs.join('*')+'"');
+
+	//Отдельные репозитории надо отдельными диалогами комиттить. Поэтому разделяем их
+	var repos = {};
+	for(var i=0; i<commitDirs.length; ++i){
+		var repo = Modules.findGitRoot(commitDirs[i]) || '-';
+		repo = repo.toLowerCase().replace(/\/+/g, '\\');
+		var dirs = repos[repo];
+		if(!dirs)
+			dirs = repos[repo] = [];
+		dirs.push(commitDirs[i]);
+	}
+
+	for(var repo in repos){
+		WScript.Echo('Committing paths for repo ' + repo + ': ' + repos[repo].join('\n    '));
+		// GIT
+		WshShell.Run('TortoiseGitProc /command:commit /logmsg:"' + g_prov_name + ' (' + g_prov_text_id + '):\n' + mesg + '" /path:"'+repos[repo].join('*')+'"');
+	}
 }
 
 function readFileToString(file) {

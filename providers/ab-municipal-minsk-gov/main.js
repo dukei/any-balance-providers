@@ -13,7 +13,7 @@ function main() {
 	var prefs = AnyBalance.getPreferences();
 
 	AB.checkEmpty(prefs.surname, 'Укажите фамилию!');
-	AB.checkEmpty(prefs.name, 'Укажите имя!');
+	AB.checkEmpty(prefs.username, 'Укажите имя!');
 	AB.checkEmpty(prefs.patronymic, 'Укажите отчество!');
 	AB.checkEmpty(/^\d\d\.\d\d\.\d\d\d\d$/.test(prefs.birthday), 'Укажите дату рождения в формате ДД.ММ.ГГГГ (например 12.01.1982)!');
 	AB.checkEmpty(/^\d\d\d\d$/.test(prefs.become), 'Укажите год постановки на учет в формате ГГГГ (например 2002)!');
@@ -30,7 +30,7 @@ function main() {
 
 	html = AnyBalance.requestPost(baseurl, {
 		surname: prefs.surname,
-		name: prefs.name,
+		name: prefs.username,
 		patronymic: prefs.patronymic,
 		day: prefs.birthday.substr(0,2),
 		month: prefs.birthday.substr(3, 2),

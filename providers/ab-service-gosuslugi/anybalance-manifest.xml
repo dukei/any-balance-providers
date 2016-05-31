@@ -36,6 +36,6 @@
 		<counter id="mails" name="Госпочта" units=" шт"/>
 	</counters>
 	<keywords>штрафы, электронное правительство, гос услуги, Налоги, ФНС, МВД, ГИБДД</keywords>
-	<type>service, government</type>
+	<type>service, government, tax, fine</type>
 	<country>ru</country>
 </provider>

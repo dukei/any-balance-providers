@@ -22,6 +22,6 @@
 		<counter id="all" name="Сводка" type="html"/>
 	</counters>
 	<keywords>ФССП</keywords>
-	<type>service</type>
+	<type>service, fine</type>
 	<country>ru</country>
 </provider>

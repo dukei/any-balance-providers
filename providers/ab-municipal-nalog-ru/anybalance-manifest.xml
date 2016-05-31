@@ -28,6 +28,6 @@
 		<counter id="fio" name="ФИО" type="text"/>
 	</counters>
 	<keywords></keywords>
-	<type>municipal</type>
+	<type>municipal, tax</type>
 	<country>ru</country>
 </provider>

@@ -713,14 +713,14 @@ function typicalApiInetTv(baseurl) {
     getParam(ctl && ctl.Value, result, 'balance', null, null, parseBalance);
 
     tariff = findControl(data.internet.taragr.ControlList.Control, /_LK$/);
-    sumTariffNames(tariff.ChildrenList.Control, result);
+   	sumTariffNames(tariff.ChildrenList ? tariff.ChildrenList.Control : [tariff], result);
   }
   if (data.tv) {
     ctl = findControl(data.tv.taragr.ControlList.Control, /Balance/i);
     getParam(ctl && ctl.Value, result, 'balance_tv', null, null, parseBalance);
 
     tariff = findControl(data.tv.taragr.ControlList.Control, /_LK$/);
-    sumTariffNames(tariff.ChildrenList.Control, result);
+    sumTariffNames(tariff.ChildrenList ? tariff.ChildrenList.Control : [tariff], result);
   }
 
   ctl = findControl(activeData.taragr.ControlList.Control, /GeneralContract/i);

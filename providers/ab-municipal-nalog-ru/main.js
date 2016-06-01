@@ -32,7 +32,7 @@ function main(){
     }
 	var result = {success: true};
 	result.__tariff = prefs.login;
-    getParam(html, result, 'fio', / <div>ФИО:\s*([\s\S]*?)\s*<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'fio', / <div>ФИО:\s*([\s\S]*?)\s*<\/div>/i, replaceTagsAndSpaces);
 	
 	var json;
 	for(var i = 0; i < 5; i++) {
@@ -42,7 +42,7 @@ function main(){
 		json = getJson(html);
 		
 		if(!json.totals) {
-			sleep(2000);
+			AnyBalance.sleep(2000);
 		} else {
 			AnyBalance.trace('Данные успешно получены!');
 			break;
@@ -63,21 +63,9 @@ function main(){
 
 function parseBalanceRK(_text){
     var text = _text.replace(/\s+/g, '');
-    var rub = getParam(text, null, null, /(-?\d[\d\.,]*)\s*руб/i, replaceFloat, parseFloat) || 0;
-    var kop = getParam(text, null, null, /(-?\d[\d\.,]*)\s*коп/i, replaceFloat, parseFloat) || 0;
+    var rub = getParam(text, null, null, /(-?\d[\d\.,]*)\s*руб/i, replaceTagsAndSpaces, parseBalance) || 0;
+    var kop = getParam(text, null, null, /(-?\d[\d\.,]*)\s*коп/i, replaceTagsAndSpaces, parseBalance) || 0;
     var val = rub+kop/100;
     AnyBalance.trace('Parsing balance (' + val + ') from: ' + _text);
     return val;
-}
-
-function sleep(delay) {
-	if(AnyBalance.getLevel() < 6) {
-		var startTime = new Date();
-		var endTime = null;
-		do {
-			endTime = new Date();
-		} while (endTime.getTime() - startTime.getTime() < delay);
-	} else {
-		AnyBalance.sleep(delay);
-	}
 }

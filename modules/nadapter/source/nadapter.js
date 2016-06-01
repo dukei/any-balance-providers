@@ -6,7 +6,7 @@
 	Setting traverse callback example:
 
 	//Возвращаем транзакцию, находящуюся в середине, например.
-	adapter.setTraverseCallbacks({"cards.transactions", function(prop, path){ return prop[Math.floor(prop.length/2)] }});
+	adapter.setTraverseCallbacks({"cards.transactions": function(prop, path){ return prop[Math.floor(prop.length/2)] }});
 
 	options: {
 		//Вызывать shouldProcess для каждого ID, даже если предыдущий уже вернул true

@@ -1034,9 +1034,12 @@ var CurrencyISO = (function () {
     };
 
     function getCurrencyByCode(code) {
-        if(/^\d+$/.test(code))
-            code = digitsToLetters[code];
+        code = convertDigitsToLetters(code);
         return currencies[code.toUpperCase()];
+    }
+
+    function convertDigitsToLetters(code){
+    	return digitsToLetters[code] || code;
     }
 
     return {
@@ -1068,6 +1071,8 @@ var CurrencyISO = (function () {
         getCurrencySymbol: function(code){
             var info = getCurrencyByCode(code);
             return info.symbol || digitsToLetters[code] || code;
-        }
+        },
+
+        digitsToLetters: convertDigitsToLetters
     };
 })();

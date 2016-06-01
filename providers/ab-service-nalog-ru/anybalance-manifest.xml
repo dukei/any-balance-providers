@@ -23,6 +23,6 @@
 		<counter id="all" name="Сводка" type="html"/>
 	</counters>
 	<keywords>налоги, долги, пени, пеня</keywords>
-	<type>service</type>
+	<type>service, tax</type>
 	<country>ru</country>
 </provider>

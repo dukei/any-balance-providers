@@ -67,6 +67,11 @@ function login() {
 			throw new AnyBalance.Error(error, null, /(пароль неправильный|cимволы введены неверно)/i.test(error));
 		}
 
+		if(/smsAuthFormId/i.test(html)){
+			AnyBalance.trace(html);
+			throw new AnyBalance.Error("Вход с использованием одноразового пароля по СМС пока не поддерживается. Отключите одноразовый пароль на вход в настройках интернет-банка.");
+		}
+
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в интернет-банк. Сайт изменен?');
 	}

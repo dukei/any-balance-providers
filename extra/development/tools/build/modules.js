@@ -4,6 +4,11 @@ var Modules = (function(){
 
 	var repositories = initRepositories();
 	var modulesCache = {};
+	var defaultVersion = 'head';
+
+	function backSlashes(path){
+		return path.replace(/[\/\\]+/g, '\\');
+	}
 
 	function normalizeFolderPath(path){
 		return path.replace(/[\/\\]*$/, '\\'); //Всегда на конце палка
@@ -60,9 +65,9 @@ var Modules = (function(){
 		if(fso.FileExists(path)){
 			module.type = Module.TYPE.PROVIDER; //Или конвертер. Но это, наверное, потом различим
 			xml = openXMLFile(path);
-		}else if(fso.FolderExists(module.path + 'source/')){
+		}else if(fso.FolderExists(module.path + 'source\\')){
 			module.type = Module.TYPE.MODULE;
-			xml = openXMLFile(path.replace(/([^\/\\]+$)/, 'source/$1'));
+			xml = openXMLFile(path.replace(/([^\/\\]+$)/, 'source\\$1'));
 		}else{
 			throw new Error('Unknown module type: ' + module.path);
 		}
@@ -75,14 +80,14 @@ var Modules = (function(){
 		if(!id)
 			throw new Error(path + ' contains empty id node!');
 
-		if(module.path.substr(module.path.length-id.length-1, id.length) != id)
-			throw new Error(path + ': id should match the path name to ' + (module.type == Module.TYPE.MODULE ? 'module' : 'provider') + '!');
+		if(backSlashes(module.path.substr(module.path.length-id.length-1, id.length)).toLowerCase() != backSlashes(id).toLowerCase())
+			throw new Error(path + ' != ' + id + ': id should match the path name to ' + (module.type == Module.TYPE.MODULE ? 'module' : 'provider') + '!');
 
 		module.id = id;
-		var repoPath = module.path.substring(0, module.path.length - id.length - 1).toLowerCase().replace(/[\/\\]+/g, '\\'); //Путь до репо (без ID модуля)
+		var repoPath = backSlashes(module.path.substring(0, module.path.length - id.length - 1)).toLowerCase(); //Путь до репо (без ID модуля)
 
 		for(var repo in repositories){
-			var rPath = repositories[repo].toLowerCase().replace(/[\/\\]+/g, '\\');
+			var rPath = backSlashes(repositories[repo]).toLowerCase();
 			if(rPath == repoPath){
 				module.repo = repo;
 				break;
@@ -100,7 +105,7 @@ var Modules = (function(){
 			guessModuleIdAndRepo(this);
 		}else{
 			this.id = idOrPath;
-			this.version = version || 'head';
+			this.version = version || defaultVersion;
 			this.type = Module.TYPE.MODULE;
 		}
 
@@ -212,7 +217,7 @@ var Modules = (function(){
 		var basepath = this.isRoot() ? 
 			this.path : 
 			repositories[this.repo] && repositories[this.repo] 
-				+ this.id.replace(/[\\\/]+/, '\\') + '\\';
+				+ backSlashes(this.id) + '\\';
 
 		if(this.type != Module.TYPE.MODULE){ //Провайдер или конвертер
 			return basepath + name;
@@ -234,7 +239,7 @@ var Modules = (function(){
 		module.load();
 		if(typeof callback == 'function')
 			callback(module);
-		if(typeof callback.before == 'function')
+		if(callback && typeof callback.before == 'function')
 			callback.before(module);
 		
 		for(var i=0; i<module.modules.length; ++i){
@@ -242,7 +247,7 @@ var Modules = (function(){
 			traverseDependencies(m, callback);
 		}
 
-		if(typeof callback.after == 'function')
+		if(callback && typeof callback.after == 'function')
 			callback.after(module);
 	}
 
@@ -283,6 +288,7 @@ var Modules = (function(){
 				throw new Error('Can not create module version folder: ' + version_path);
 		}
 	    
+	    fso.DeleteFile(version_path + '*.js', true); //Удаляем старые файлы
 		var oExec = Misc.exec(gcccmd + ' --js "' + files.join('" --js "') + '" --js_output_file "' + version_path + sub_module_id + '.min.js"');
 		if(oExec != 0)
 			throw new Error('Compilation failed!');
@@ -349,6 +355,19 @@ var Modules = (function(){
 		return false;
 	}
 
+	function findGitRoot(path){
+		do{
+			path = normalizeFolderPath(path);
+			if(fso.FolderExists(path + '.git'))
+			    return path;
+			path = path.replace(/[^\/\\]+[\/\\]+$/, ''); //Перешли на уровень вверх
+		}while(path);
+	}
+
+	function setDefaultVersion(version){
+		defaultVersion = version;
+	}
+
 	return {
 		createModule: createModule,
 		clearModulesCache: clearModulesCache,
@@ -356,7 +375,9 @@ var Modules = (function(){
 		traverseDependencies: traverseDependencies,
 		buildModule: buildModule,
 		checkIfBuilt: checkIfBuilt,
-		checkIfCommitted: checkIfCommitted
+		checkIfCommitted: checkIfCommitted,
+		findGitRoot: findGitRoot,
+		setDefaultVersion: setDefaultVersion
 	};
 
 })();

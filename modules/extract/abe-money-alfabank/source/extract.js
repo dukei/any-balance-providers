@@ -290,7 +290,7 @@ function processCard2(html, row, result) {
     //Название счета
     getParam(html, result, 'cards.acctype', /&#1053;&#1072;&#1079;&#1074;&#1072;&#1085;&#1080;; &#1089;&#1095;&#(?:1077|1105);&#1090;&#1072;<[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
     //Рады вас видеть
-    getParam(html, result, 'cards.userName', /&#1056;&#1072;&#1076;&#1099; &#1042;&#1072;&#1089; &#1074;&#1080;&#1076;&#1077;&#1090;&#1100;,([^<(]*)/i, replaceTagsAndSpaces);
+    getParam(html, result, 'cards.holder', /&#1056;&#1072;&#1076;&#1099; &#1042;&#1072;&#1089; &#1074;&#1080;&#1076;&#1077;&#1090;&#1100;,([^<(]*)/i, replaceTagsAndSpaces);
     //Статус
     getParam(html, result, 'cards.status', /&#1057;&#1090;&#1072;&#1090;&#1091;&#1089;<[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
     //Номер счета
@@ -342,15 +342,13 @@ function n2(n) {
 }
 
 function processAccount2(html, row, result) {
-    //Рады вас видеть
-    //getParam(html, result, 'userName', /&#1056;&#1072;&#1076;&#1099; &#1042;&#1072;&#1089; &#1074;&#1080;&#1076;&#1077;&#1090;&#1100;,([^<(]*)/i, replaceTagsAndSpaces);
     var tds = getElements(row, /<td[^>]*>/ig);
     getParam(tds[4], result, ['accounts.currency', 'accounts.balance'], null, replaceTagsAndSpaces);
     getParam(tds[3], result, 'accounts.balance', null, replaceTagsAndSpaces, parseBalance);
     getParam(tds[0], result, 'accounts.type', null, replaceTagsAndSpaces);
     getParam(tds[1], result, 'accounts.num', null, replaceTagsAndSpaces);
 
-    if (AnyBalance.isAvailable('accounts.dateStart', 'accounts.transactions', 'accounts.own', 'accounts.limit', 'accounts.blocked')) {
+    if (AnyBalance.isAvailable('accounts.date_start', 'accounts.transactions', 'accounts.own', 'accounts.limit', 'accounts.blocked')) {
         var event = getParam(tds[0], null, null, /<a[^>]+id="([^"]*)/i, replaceTagsAndSpaces);
         html = getNextPage(html, event, [
             ['event', '%EVENT%'],
@@ -363,7 +361,7 @@ function processAccount2(html, row, result) {
         //Овердрафт
         getParam(html, result, 'accounts.limit', /&#1054;&#1074;&#1077;&#1088;&#1076;&#1088;&#1072;&#1092;&#1090;[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
         //Дата открытия счета
-        getParam(html, result, 'accounts.dateStart', /&#1044;&#1072;&#1090;&#1072; &#1086;&#1090;&#1082;&#1088;&#1099;&#1090;&#1080;&#1103; &#1089;&#1095;&#1105;&#1090;&#1072;[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
+        getParam(html, result, 'accounts.date_start', /&#1044;&#1072;&#1090;&#1072; &#1086;&#1090;&#1082;&#1088;&#1099;&#1090;&#1080;&#1103; &#1089;&#1095;&#1105;&#1090;&#1072;[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
         //Заблокировано средств
         getParam(html, result, 'accounts.blocked', /&#1047;&#1072;&#1073;&#1083;&#1086;&#1082;&#1080;&#1088;&#1086;&#1074;&#1072;&#1085;&#1086; &#1089;&#1088;&#1077;&#1076;&#1089;&#1090;&#1074;[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 

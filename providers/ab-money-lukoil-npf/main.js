@@ -15,7 +15,7 @@ function main() {
 	var baseurl = 'https://lk.lukoil-garant.ru/';
 	AnyBalance.setDefaultCharset('utf-8');
 
-	checkEmpty(/^\d{11}$/.test(prefs.login), 'Не верный формат СНИЛС. Укажите 11 цифр без тире и пробелов, например 01234567891!');
+	checkEmpty(prefs.login, 'Не верный формат СНИЛС. Укажите 11 цифр без тире и пробелов, например 01234567891!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 	
 	var html = AnyBalance.requestGet(baseurl, g_headers);

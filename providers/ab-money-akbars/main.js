@@ -8,19 +8,13 @@ var g_countersTable = {
 		'fio': 'info.fio'
 	}, 
 	accounts: {
-    	"balance": "cards.available",
-    	"balance": "accounts.available",
-    	"debt": "cards.total_due",
-    	"debt": "accounts.total_due",
-		"currency": "cards.currency",
-		"currency": "accounts.currency",
-		"card_type": "cards.name",
-		"card_type": "accounts.name",
-		"__tariff": "cards.__name",
-		"__tariff": "accounts.__name",
-		"card_num": "cards.__name",
-		"card_num": "accounts.__name",
-		"card_exp": "cards.expire",
+    	"balance": ["cards.balance", "accounts.balance"],
+    	"debt": ["cards.debt", "accounts.debt"],
+		"currency": ["cards.currency","accounts.currency"],
+		"card_type": ["cards.name","accounts.name"],
+		"__tariff": ["cards.__name","accounts.__name"],
+		"card_num": ["cards.num","accounts.num"],
+		"card_exp": "cards.till",
 	}
 };
 
@@ -52,13 +46,13 @@ function main() {
 function shouldProcess(counter, info){
 	var prefs = AnyBalance.getPreferences();
 	
-	if(!info || (!info.__id || !info.__name))
+	if(!info || (!info.__id || !info.num))
 		return false;
 	
 	if(!prefs.cardnum)
 		return true;
 	
-	if(endsWith(info.__name, prefs.cardnum))
+	if(endsWith(info.num, prefs.cardnum))
 		return true;
 	
 	return false;

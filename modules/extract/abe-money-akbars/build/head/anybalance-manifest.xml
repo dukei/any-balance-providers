@@ -9,7 +9,7 @@
 		<module id="parsers/jsonpath"/>
 	</depends>
 	<files>
-		<js>abe-money-akbars.min.js</js>
+		<js>extract.abe-money-akbars.min.js</js>
 		<history>history.xml</history>
 	</files>
 	<type>money, bank</type>

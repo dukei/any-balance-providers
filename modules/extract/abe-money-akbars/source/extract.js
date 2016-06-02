@@ -46,6 +46,9 @@ function login(prefs) {
 		var json = apiCall('GET:api/v2/session');
     }
 
+	if(json._status == 'confirmationRequired')
+		throw new AnyBalance.Error('Для входа потребовался одноразовый пароль. Такой вход пока не поддерживается. Пожалуйста, отключите требование подтверждения для входа в настройках интернет-банка.');
+
     __setLoginSuccessful();
 
     return json;
@@ -110,9 +113,12 @@ function getCardsAccountDataJson(filter) {
 
 function getAllBalances(account, result, resultPath) {
 	// Получение балансов типично
-	var balances = ['available','cr_limit','blocked','interests','minpay','overdue','overlimit','total_due'];
-	for(var i = 0; i < balances.length; i++)
-		getParam(jspath1(account, 'balances.' + balances[i] + '.value'), result, resultPath + '.' + balances[i], null, null, parseBalance)
+	var balances = ['available>balance','cr_limit>limit','blocked','interests>pct','minpay','overdue','overlimit','total_due>debt'];
+	for(var i = 0; i < balances.length; i++){
+		var arr = balances[i].split(/>/);
+		var balanceFrom = arr[0], balanceTo = arr[1] || balancesFrom;
+		getParam(jspath1(account, 'balances.' + balanceFrom + '.value'), result, resultPath + '.' + balanceTo, null, null, parseBalance)
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -132,7 +138,7 @@ function processAccounts(json, result) {
         var id = acc.id;
         var title = acc.number;
 		
-		var c = {__id: id, __name: title};
+		var c = {__id: id, __name: title, num: acc.number};
 		
 		if (__shouldProcess('accounts', c)) {
             processAccount(acc, c);
@@ -150,7 +156,7 @@ function processAccount(account, result) {
 	getAllBalances(account, result, 'accounts');
 
     if (isAvailable('accounts.transactions')) {
-        processCardOrAccountTransactions(result);
+        processCardOrAccountTransactions(result, 'accounts.transactions.');
     }
 }
 
@@ -172,7 +178,7 @@ function processCards(json, result) {
         var id = acc.id;
         var title = acc.number;
 
-        var c = {__id: id, __name: title};
+        var c = {__id: id, __name: title, num: acc.number};
 
         if (__shouldProcess('cards', c)) {
             processCard(acc, c);
@@ -187,13 +193,13 @@ function processCard(card, result, cardDetailsJson) {
 	// Остальное типично
 	getAllBalances(card, result, 'cards');
 	
-	getParam(jspath1(card, 'addData.NICE_CARD_EXPIRE'), result, 'cards.expire', null, null, parseDate);
-	getParam(jspath1(card, 'addData.CARDHOLDER_NAME'), result, 'cards.cardHolder', null, replaceTagsAndSpaces);
+	getParam(jspath1(card, 'addData.NICE_CARD_EXPIRE'), result, 'cards.till', null, null, parseDate);
+	getParam(jspath1(card, 'addData.CARDHOLDER_NAME'), result, 'cards.holder', null, replaceTagsAndSpaces);
 	getParam(jspath1(card, 'addData.PROD_NAME'), result, 'cards.name');
 	getParam(jspath1(card, 'addData.CARD_ID'), result, 'cards.id');
 	
     if (isAvailable('cards.transactions')) {
-        processCardOrAccountTransactions(result);
+        processCardOrAccountTransactions(result, 'cards.transactions.');
     }
 }
 

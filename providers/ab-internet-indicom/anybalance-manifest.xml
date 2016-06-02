@@ -1,7 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="4">ab-internet-indicom</id>
+	<id version="5">ab-internet-indicom</id>
 	<name>Индиком (Мытищи)</name>
 	<description html="true"><![CDATA[
 	<p>Получает баланс для интернет провайдера Индиком http://indikom.ru/</p>
@@ -9,10 +9,12 @@
 	<p>Счетчик Предполагаемая дата отключения расчитывает дату основываясь на абонентской плате по текущему тарифу, этот подсчет может быть не точный.</p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>

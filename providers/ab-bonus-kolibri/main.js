@@ -47,9 +47,12 @@ function main() {
             'X-Requested-With': 'XMLHttpRequest'
 	    })
     );
-    html = AnyBalance.requestGet(baseurl + 'lk', AB.addHeaders({Referer: baseurl}));
 
-	if (!/logout/i.test(html)) {
+    var url = getParam(postHtml, null, null, /window.location.href\s*=\s*'([^']*)/);
+
+    html = AnyBalance.requestGet(joinUrl(baseurl, url), AB.addHeaders({Referer: baseurl}));
+
+	if (!url) {
 
         try {
             var json = AB.getJson(postHtml);
@@ -69,15 +72,36 @@ function main() {
 		success: true
 	};
 
-	AB.getParam(html, result, 'balance', /((?:[^>]+>){2})текущий баланс/i, AB.replaceTagsAndSpaces, AB.parseBalance);
-	AB.getParam(html, result, 'purchase', /<div class="number">((?:[^>]+>){2})мои покупки/i, AB.replaceTagsAndSpaces, AB.parseBalance);
-	AB.getParam(html, result, 'service_package', /пакет услуг:([^<]+)/i, AB.replaceTagsAndSpaces);
-	AB.getParam(html, result, 'full_name', /пакет услуг:([^>]+>){3}/i, AB.replaceTagsAndSpaces);
-	AB.getParam(html, result, 'cash_back', /<div class="number">((?:[^>]+>){2})cash back/i, AB.replaceTagsAndSpaces, AB.parseBalance);
-	AB.getParam(html, result, 'money_back_plus', /<div class="number">((?:[^>]+>){2})money back plus/i, AB.replaceTagsAndSpaces, AB.parseBalance);
-	AB.getParam(html, result, 'friend_bounty', /<div class="number">((?:[^>]+>){2})премия друзья/i, AB.replaceTagsAndSpaces, AB.parseBalance);
-	AB.getParam(html, result, 'partner_bounty', /<div class="number">((?:[^>]+>){2})премия партнер/i, AB.replaceTagsAndSpaces, AB.parseBalance);
-	AB.getParam(html, result, 'team_bounty', /<div class="number">((?:[^>]+>){2})премия команда/i, AB.replaceTagsAndSpaces, AB.parseBalance);
+	AB.getParam(html, result, 'full_name', /<div[^>]+user-place[^>]*>([\s\S]*?)<\/div>/i, AB.replaceTagsAndSpaces);
+	AB.getParam(html, result, 'balance', /<div[^>]+coints-place[^>]*>([\s\S]*?)<\/div>/i, AB.replaceTagsAndSpaces, AB.parseBalance);
+	AB.getParam(html, result, 'service_package', /Мой пакет:([\s\S]*?)<\/p>/i, AB.replaceTagsAndSpaces);
+	AB.getParam(html, result, '__tariff', /Мой пакет:([\s\S]*?)<\/p>/i, AB.replaceTagsAndSpaces);
+	AB.getParam(getElement(html, /<div[^>]+my-buy[^>]*>/i), result, 'money_back_plus', /<div[^>]+progress[^>]*>([\s\S]*?)<\/div>/i, AB.replaceTagsAndSpaces, AB.parseBalance);
+
+	var cashList = getElement(html, /<div[^>]+cash-list[^>]*>/i);
+	var rows = getElements(cashList, /<div[^>]+row[^>]*>/ig);
+	for(var i=0; i<rows.length; ++i){
+		var row = replaceAll(rows[i], [/<div[^>]+success[\s\S]*?<\/div>/ig, '']);
+
+		AB.getParam(row, result, 'friend_bounty', /Друзья[\s\S]*?<div[^>]+col[^>]*>([\s\S]*?)<\/div>/i, AB.replaceTagsAndSpaces, AB.parseBalance);
+		AB.getParam(row, result, 'friend_count', /Друзья(?:[\s\S]*?<div[^>]+col[^>]*>){2}([\s\S]*?)<\/div>/i, AB.replaceTagsAndSpaces, AB.parseBalance);
+	    
+		AB.getParam(row, result, 'team_bounty', /Команда[\s\S]*?<div[^>]+col[^>]*>([\s\S]*?)<\/div>/i, AB.replaceTagsAndSpaces, AB.parseBalance);
+		AB.getParam(row, result, 'team_count', /Команда(?:[\s\S]*?<div[^>]+col[^>]*>){2}([\s\S]*?)<\/div>/i, AB.replaceTagsAndSpaces, AB.parseBalance);
+	    
+		AB.getParam(row, result, 'partner_bounty', /Партнеры[\s\S]*?<div[^>]+col[^>]*>([\s\S]*?)<\/div>/i, AB.replaceTagsAndSpaces, AB.parseBalance);
+		AB.getParam(row, result, 'partner_count', /Партнеры(?:[\s\S]*?<div[^>]+col[^>]*>){2}([\s\S]*?)<\/div>/i, AB.replaceTagsAndSpaces, AB.parseBalance);
+
+		AB.getParam(row, result, 'internetshop_bounty', /Интернет-магазин[\s\S]*?<div[^>]+col[^>]*>([\s\S]*?)<\/div>/i, AB.replaceTagsAndSpaces, AB.parseBalance);
+		AB.getParam(row, result, 'internetshop_count', /Интернет-магазин(?:[\s\S]*?<div[^>]+col[^>]*>){2}([\s\S]*?)<\/div>/i, AB.replaceTagsAndSpaces, AB.parseBalance);
+
+		AB.getParam(row, result, 'shop_bounty', /Розничные[\s\S]*?<div[^>]+col[^>]*>([\s\S]*?)<\/div>/i, AB.replaceTagsAndSpaces, AB.parseBalance);
+		AB.getParam(row, result, 'shop_count', /Розничные(?:[\s\S]*?<div[^>]+col[^>]*>){2}([\s\S]*?)<\/div>/i, AB.replaceTagsAndSpaces, AB.parseBalance);
+	}
+
+	html = AnyBalance.requestGet(baseurl + 'private/orders/web', g_headers);
+	AB.getParam(html, result, 'purchase', /Подтверждённые:([\s\S]*?)<\/div>/i, AB.replaceTagsAndSpaces, AB.parseBalance);
+	AB.getParam(html, result, 'purchase_wait', /В ожидании:([\s\S]*?)<\/div>/i, AB.replaceTagsAndSpaces, AB.parseBalance);
 
 	AnyBalance.setResult(result);
 }

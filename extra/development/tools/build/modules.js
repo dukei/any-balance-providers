@@ -158,7 +158,7 @@ var Modules = (function(){
 			for(var j=0; j<attrs.length; ++j){
 				if(!file.attrs)
 					file.attrs = {};
-				file.attrs[attrs.item(i).name] = attrs.item(i).text;
+				file.attrs[attrs.item(j).name] = attrs.item(j).text;
 			}
 
 			files.push(file);

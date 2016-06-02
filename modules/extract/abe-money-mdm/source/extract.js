@@ -73,6 +73,18 @@ function login() {
 		throw new AnyBalance.Error('Не удалось войти в интернет-банк. Сайт изменен?');
 	}
 
+	var confrm = getElements(html, [/<form[^>]+>/ig, /Ознакомлен/i])[0];
+	if(confrm){ 
+		AnyBalance.trace(html);
+		AnyBalance.trace("МДМ требует с чем-то ознакомиться... Ознакомливаемся");
+		var params = createFormParams(confrm, function(params, str, name, value) {
+            if (/<input[^>]+checkbox/i.test(str))
+                return getParam(html, null, null, /<input[^>]+value="([^"]*)/i, replaceHtmlEntities);
+            return value;
+        });
+		html = AnyBalance.requestPost(g_baseurl + '/alerts.asp', params, addHeaders({Referer: g_baseurl + '/alerts.asp'}));
+	}
+
     __setLoginSuccessful();
 
     return html;

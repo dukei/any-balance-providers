@@ -18,7 +18,7 @@ function main()
 	var html = AnyBalance.requestGet(baseurl + prefs.wallet, g_headers);
 	var result = {success: true};
 	
-	// parse errors reported by nicehash, convert into AnyBalance exceptions if any
+	// parse errors reported by blockchain.info, convert into AnyBalance exceptions if any
 	var errdiv = /(<div\s*class="alert alert-error"\s*>[\s\S]*?<\/div>)/i.exec(html);
 	if (errdiv!=null)
 		throw new AnyBalance.Error("blockchain.info: "+replaceAll(errdiv[1],replaceTagsAndSpaces));
@@ -28,5 +28,14 @@ function main()
 	getParam(html, result, 'total_received', /(<td id="total_received">.*?<\/td>)/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'n_transactions', /(<td id="n_transactions">.*?<\/td>)/i, replaceTagsAndSpaces, parseBalance);
 
+    // convert if needed
+    if ((typeof prefs.currency!="undefined") && (prefs.currency!=""))
+    {
+        var exchange = getExchangeRate(prefs.currency);
+        result['currency'] = exchange.code;
+        result['exchange_rate'] = exchange.rate_float;
+        result['value'] = result['balance']*exchange.rate_float;
+    }
+    
 	AnyBalance.setResult(result);
 }

@@ -2070,7 +2070,12 @@ function megafonLKRemainders(filial, html, result){
 	for(i=0; i<discounts.length; ++i){
 		var discount = discounts[i];
 		if(/до ограничения скорости осталось/i.test(discount)){
-			sumParam(discount, result, 'internet_left', /до ограничения скорости осталось(.*?)(?:-|$)/i, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
+			if(AnyBalance.isAvailable('internet_left') && isset(result.internet_left)){
+				AnyBalance.trace(discount);
+				AnyBalance.trace('Интернет встретился второй раз. Скорее всего дублирование, пропускаем');
+			}else{
+				sumParam(discount, result, 'internet_left', /до ограничения скорости осталось(.*?)(?:-|$)/i, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
+			}
 			sumParam(discount, result, 'internet_till', /действует до(.*)/i, replaceTagsAndSpaces, parseDate, aggregate_min);
 		}else{
 			AnyBalance.trace('Неизвестная скидка: ' + discount);

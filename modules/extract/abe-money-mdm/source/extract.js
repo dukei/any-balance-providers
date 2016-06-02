@@ -281,55 +281,6 @@ function processCardTransactions(html, result){
     });
 }
 
-function initCols(colsDef, ths){
-    var cols = {};
-    for (var i = 0; i < ths.length; i++) {
-        var th = ths[i];
-        for(var name in colsDef){
-            if(colsDef[name].re.test(th))
-                cols[name] = i;
-        }
-    }
-    return cols;
-}
-
-function fillColsResult(colsDef, cols, tds, result, path){
-    function getset(val, def){
-        return isset(val) ? val : def;
-    }
-    path = path || '';
-
-    var rts = replaceTagsAndSpaces,
-        pb = parseBalance,
-        as = aggregate_sum;
-
-    for(var name in colsDef){
-        var cd = colsDef[name];
-        if(isset(cols[name])){
-            var td = tds[cols[name]];
-            var rn = getset(cd.result_name, name);
-            if(isArray(rn)){
-                var rn1 = [];
-                for (var i = 0; i < rn.length; i++) {
-                    rn1.push(path + rn[i]);
-                }
-                rn = rn1;
-            }else{
-                rn = path + rn;
-            }
-
-            if(cd.result_process) {
-                cd.result_process(path, td, result);
-            }else if(cd.result_sum){
-                cd.result_re && (cd.result_re.lastIndex = 0);
-                sumParam(td, result, rn, cd.result_re, getset(cd.result_replace, rts), getset(cd.result_func, pb), getset(cd.result_aggregate, as));
-            }else {
-                getParam(td, result, rn, cd.result_re, getset(cd.result_replace, rts), getset(cd.result_func, pb));
-            }
-        }
-    }
-}
-
 function processCredits(html, result){
     if(!AnyBalance.isAvailable('credits'))
         return;
@@ -357,7 +308,7 @@ function processCredits(html, result){
 
         var id = getParam(row, null, null, /<a[^>]+href=["'][^"']*loan-statement.asp\?id=([^'"&]*)/i, null, html_entity_decode);
         var name = getParam(row, null, null, /<a[^>]+href=["'][^"']*loan-statement.asp[^>]*>([\s\S]*?)<\/a>/i, replaceTagsAndSpaces, html_entity_decode);
-        var num = getParam(row, null, null, /№\s*(\S+)/i);
+        var num = getParam(row, null, null, /№\s*(\S[^<\s]+)/i);
 
         var c = {
             __id: id,
@@ -403,31 +354,6 @@ function processCredit(tr, result){
     }
 
     return result;
-}
-
-function processTable(table, result, path, colsDef, onWrongSize, onFilledResult){
-    var trs = getElements(table, /<tr[^>]*>/ig);
-    var cols, size;
-    for (var i = 0; i < trs.length; i++) {
-        var tr = trs[i];
-        var tds = getElements(tr, /<td[^>]*>/ig);
-        if(tds.length == 0) {
-            //Заголовок
-            var ths = getElements(tr, /<th[^>]*>/ig);
-            size = ths.length;
-            cols = initCols(colsDef, ths);
-        }else if(tds.length == size){
-            var t = {};
-
-            fillColsResult(colsDef, cols, tds, t, path);
-            if(onFilledResult)
-                onFilledResult(t, path);
-
-            result.push(t);
-        }else if(onWrongSize){
-            onWrongSize(tr, tds);
-        }
-    }
 }
 
 function processCreditSchedule(html, result){
@@ -509,12 +435,12 @@ function processInfo(html, result){
     var info = result.info = {};
 
 	getParam(html, info, 'info.fio', /<span[^>]+id="clientname"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
-    if(AnyBalance.isAvailable('info.fam', 'info.name', 'info.pname', 'info.birth_place', 'info.birthday', 'info.inn', 'info.resident')){
+    if(AnyBalance.isAvailable('info.name_last', 'info.name', 'info.name_patronymic', 'info.birth_place', 'info.birthday', 'info.inn', 'info.resident')){
         html = AnyBalance.requestGet(g_baseurl + '/services.asp', addHeaders({Referer: g_baseurl + '/index.asp'}));
 
-        getParam(html, info, 'info.fam', /Фамилия:[\s\S]*?<input[^>]+value="([^"]*)/i, replaceHtmlEntities);
+        getParam(html, info, 'info.name_last', /Фамилия:[\s\S]*?<input[^>]+value="([^"]*)/i, replaceHtmlEntities);
         getParam(html, info, 'info.name', /Имя:[\s\S]*?<input[^>]+value="([^"]*)/i, replaceHtmlEntities);
-        getParam(html, info, 'info.pname', /Отчество[\s\S]*?<input[^>]+value="([^"]*)/i, replaceHtmlEntities);
+        getParam(html, info, 'info.name_patronymic', /Отчество[\s\S]*?<input[^>]+value="([^"]*)/i, replaceHtmlEntities);
         getParam(html, info, 'info.birth_place', /Место рождения[\s\S]*?<input[^>]+value="([^"]*)/i, replaceHtmlEntities);
         getParam(html, info, 'info.birthday', /Дата рождения[\s\S]*?<input[^>]+value="([^"]*)/i, replaceHtmlEntities, parseDate);
         getParam(html, info, 'info.inn', /ИНН:[\s\S]*?<input[^>]+value="([^"]*)/i, replaceHtmlEntities);

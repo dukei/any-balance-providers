@@ -206,9 +206,9 @@ function processCard(card, result, cardDetailsJson) {
 function processInfo(json, result) {
     var info = result.info = {};
 	
-    getParam(jspath1(json, 'user.displayName'), info, 'profile.fio');
-    getParam(jspath1(json, 'user.login'), info, 'profile.login');
-    getParam(jspath1(json, 'user.id'), info, 'profile.id');
-    getParam(jspath1(json, 'user.w4cClientId'), info, 'profile.w4cClientId');
-    getParam(jspath1(json, 'user.w4cClientId.phoneNumbers.displayValue'), info, 'profile.phone');
+    getParam(jspath1(json, 'user.displayName'), info, 'info.fio');
+    getParam(jspath1(json, 'user.login'), info, 'info.login');
+    getParam(jspath1(json, 'user.id'), info, 'info.id');
+    getParam(jspath1(json, 'user.w4cClientId'), info, 'info.w4cClientId');
+    getParam(jspath1(json, 'user.w4cClientId.phoneNumbers.displayValue'), info, 'info.mphone');
 }

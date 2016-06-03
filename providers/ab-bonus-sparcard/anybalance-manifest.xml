@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="7">ab-bonus-sparcard</id>
+	<id version="12">ab-bonus-sparcard</id>
 	<api flags="no_browser"/>
 	<name>sparcard.ru</name>
 	<description html="true"><![CDATA[

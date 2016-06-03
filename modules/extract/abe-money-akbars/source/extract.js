@@ -116,7 +116,7 @@ function getAllBalances(account, result, resultPath) {
 	var balances = ['available>balance','cr_limit>limit','blocked','interests>pct','minpay','overdue','overlimit','total_due>debt'];
 	for(var i = 0; i < balances.length; i++){
 		var arr = balances[i].split(/>/);
-		var balanceFrom = arr[0], balanceTo = arr[1] || balancesFrom;
+		var balanceFrom = arr[0], balanceTo = arr[1] || balanceFrom;
 		getParam(jspath1(account, 'balances.' + balanceFrom + '.value'), result, resultPath + '.' + balanceTo, null, null, parseBalance)
 	}
 }

@@ -67,7 +67,7 @@ function main() {
 		}
 		
 		if (error && error != '')
-			throw new AnyBalance.Error(error, null, /несуществующий номер|неверный пароль или номер/i.test(error));
+			throw new AnyBalance.Error(error, null, /несуществующий номер|пароль/i.test(error));
 		
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');		
@@ -77,17 +77,17 @@ function main() {
 	var bonuses, tries=0;
 	do{
 		html = AnyBalance.requestGet(baseurl + 'personal/main', g_headers);
+		if(!/b-exit_link/i.test(html)){
+			AnyBalance.trace(html);
+			throw new AnyBalance.Error('Не удалось зайти в личный кабинет.. Сайт изменен?');
+		}
+
 		bonuses = getElement(html, /<table[^>]+b-user-info_bonus[^>]*>/i);
 		if(bonuses || ++tries >= 5)
 			break;
 		AnyBalance.trace('Ожидаем бонусы, попытка ' + tries);
 		AnyBalance.sleep(3000); //Бонусы появляются не сразу
 	}while(true);
-
-	if(!/b-exit_link/i.test(html)){
-		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Не удалось зайти в личный кабинет.. Сайт изменен?');
-	}
 
 	
 	var result = {success: true};

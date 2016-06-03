@@ -74,38 +74,40 @@ function main() {
 		
 	}
 	
-	html = AnyBalance.requestGet(baseurl + 'personal/main', g_headers);
+	var bonuses, tries=0;
+	do{
+		html = AnyBalance.requestGet(baseurl + 'personal/main', g_headers);
+		bonuses = getElement(html, /<table[^>]+b-user-info_bonus[^>]*>/i);
+		if(bonuses || ++tries >= 5)
+			break;
+		AnyBalance.trace('Ожидаем бонусы, попытка ' + tries);
+		AnyBalance.sleep(3000); //Бонусы появляются не сразу
+	}while(true);
 
 	if(!/b-exit_link/i.test(html)){
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет.. Сайт изменен?');
 	}
-		
+
+	
 	var result = {success: true};
 	
-	getParam(html, result, 'balance', />Баланс([^>]*>){7}/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'fio', /name__user[^>]*>([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, '__tariff', />Номер карты([^>]*>){3}/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'balance', />Баланс[\s\S]*?<span[^>]*b-user-info_value[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'fio', /name__user[^>]*>([^<]+)/i, replaceTagsAndSpaces);
+	getParam(html, result, '__tariff', />Номер карты<span[^>]*b-user-info_value[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
+	getParam(bonuses, result, 'extra', /Доступные([\s\S]*?)<\/tr>/i, replaceTagsAndSpaces, parseBalance);
 
 	if(AnyBalance.isAvailable('last_op_date', 'last_op_sum', 'last_op_descr')){
 		var ops = sumParam(html, null, null, /<tbody[^>]+class="[^"]*operation-item[^>]*>([\s\S]*)<\/tbody>/ig);
 		if(ops.length > 0){
 			getParam(ops[0], result, 'last_op_date', /<td[^>]+class="b-history-detail_date[^>]*>([\s\S]*?)<\/td>/i, [replaceTagsAndSpaces, /^(\d+\D\d+)$/, '$1.'+new Date().getFullYear()], parseDate);
 			getParam(ops[0], result, 'last_op_sum', /<td[^>]+class="b-history-detail_sum[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-			sumParam(ops[0], result, 'last_op_descr', /<td[^>]+class="b-history_description[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
-			sumParam(ops[0], result, 'last_op_descr', /<td[^>]+class="b-history-detail_comment[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
+			sumParam(ops[0], result, 'last_op_descr', /<td[^>]+class="b-history_description[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, null, aggregate_join);
+			sumParam(ops[0], result, 'last_op_descr', /<td[^>]+class="b-history-detail_comment[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, null, aggregate_join);
 		}else{
 			AnyBalance.trace('Недавних операций не найдено...');
 		}
 	}
 	
-	if(AnyBalance.isAvailable('extra')) {
-		var act = getParam(html, null, null, /wicketAjaxGet\('(\?x=[^']+)/i);
-		if(act) {
-			html = AnyBalance.requestGet(baseurl + 'personal/main' + act + '&random=' + Math.random(), g_headers);
-			getParam(html, result, 'extra', /Экстра-бонусы(?:[^>]*>){7}\s*Доступные([^>]*>){10}/i, replaceTagsAndSpaces, parseBalance);		
-		}
-	}
-
 	AnyBalance.setResult(result);
 }

@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="8">ab-money-smp</id>
+	<id version="9">ab-money-smp</id>
 	<api min_level="5" flags="no_browser"/>
 	<name>СМП Банк</name>
 	<description html="true"><![CDATA[
@@ -13,7 +13,6 @@
 	]]></instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
     <depends>
-        <module id="library"/>
         <module id="nadapter"/>
         <module id="extract/abe-money-smp"/>
     </depends>

@@ -4,38 +4,42 @@
 
 var g_countersTable = {
 	common: {
-		'fio': 'profile.fio'
+		'fio': 'info.fio'
 	}, 
 	card: {
     "balance":    "cards.balance",
 		"currency":   "cards.currency",
-		"card_num":   "cards.__id",
+		"card_num":   "cards.num",
 		"limit":      "cards.limit",
 		"till":       "cards.till",
 		"status":     "cards.status",
-		"holder":     "cards.holderName",
+		"holder":     "cards.holder",
+    	"accnum":   "cards.accnum",
 		"__tariff":   "cards.__name",
 	},
   acc: {
     "balance":  "accounts.balance",
     "currency": "accounts.currency",
-    "accnum":   "accounts.__id",
+    "accnum":   "accounts.num",
     "accname":  "accounts.__name",
     "__tariff": "accounts.__id",
   },
   crd: {
+    "balance":          "credits.balance",
     "pay_till":         "credits.minpay_till",
     "pay_sum":          "credits.minpay",
     "pay_debt":         "credits.minpay_main_debt",
     "pay_pct":          "credits.minpay_pct",
     "currency":         "credits.currency",
-    "limit":            "credits.balance",
+    "limit":            "credits.limit",
     "credit_main":      "credits.principal_debt",
     "credit_total":     "credits.debt_main",
     "credit_pct":       "credits.pct_sum",
     "credit_expired":   "credits.debt_expired",
     "credit_pExpired":  "credits.pct_expired",
     "credit_penalty":   "credits.penalty",
+	"card_num":   		"credits.contract",
+   	"accnum":   		"credits.accnum",
     "__tariff":         "credits.__name",
 
   }
@@ -77,7 +81,7 @@ function shouldProcess(counter, info){
       if(!prefs.lastdigits)
         return true;
 
-      if(endsWith(info.num, prefs.lastdigits))
+      if(endsWith(info.__id, prefs.lastdigits))
         return true;
     }
     default:

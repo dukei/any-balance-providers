@@ -30,7 +30,7 @@ function main(){
 	
     var result = {success: true};
     getParam(html, result, '__tariff', /id="ctl00_ddlAccounts"[\s\S]*?>([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'balance', /Баланс Карты:[\s\S]*?"TextFieldText">([\s\S]*?)<\//i, null, parseBalance);
+    getParam(html, result, 'balance', /BalanceTableCell[\s\S]*?<strong>([\s\S]*?)<\//i, null, parseBalance);
 	
     AnyBalance.setResult(result);
 }

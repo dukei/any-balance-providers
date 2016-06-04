@@ -85,14 +85,14 @@ function main() {
 
 	var result = { success: true };
 
-	AB.getParam(html, result, 'heat_pay', /_lbLeftPay[^>]*>([^<]*)/i, AB.replaceTagsAndSpaces, AB.parseBalance);
+	AB.getParam(html, result, 'heat_pay', /_lbLeftName[^>]*>([\s\S]*?)<\/td>/i, [/Переплата:/i, '-', AB.replaceTagsAndSpaces], AB.parseBalance);
 	AB.getParam(html, result, 'heat_peni', /_lbLeftPeni[^>]*>([^<]*)/i, AB.replaceTagsAndSpaces, AB.parseBalance);
 	AB.getParam(html, result, 'heat_date', /_lbLeftDate[^>]*>\(на([^\)]*)/i, AB.replaceTagsAndSpaces, AB.parseDate);
 	
 	AB.getParam(html, result, 'heat_lastpay', /_lbLeftLastPay[^>]*>([^<]*)/i, AB.replaceTagsAndSpaces, AB.parseBalance);
 	AB.getParam(html, result, 'heat_lastdate', /_lbLeftDay[^>]*>\(([^\)]*)/i, AB.replaceTagsAndSpaces, AB.parseDate);
 
-	AB.getParam(html, result, 'water_pay', /_lbRightPay[^>]*>([^<]*)/i, AB.replaceTagsAndSpaces, AB.parseBalance);
+	AB.getParam(html, result, 'water_pay', /_lbRightName[^>]*>([\s\S]*?)<\/td>/i, [/Переплата:/i, '-', AB.replaceTagsAndSpaces], AB.parseBalance);
 	AB.getParam(html, result, 'water_peni', /_lbRightPeni[^>]*>([^<]*)/i, AB.replaceTagsAndSpaces, AB.parseBalance);
 	AB.getParam(html, result, 'water_date', /_lbRightDate[^>]*>\(на([^\)]*)/i, AB.replaceTagsAndSpaces, AB.parseDate);
 

@@ -41,10 +41,10 @@ function main() {
 		}
 	}
 
-	if (matches = html.match(/\<span class=\"lkuibalance\"\>([\-\d\.\,]+?|[\-\d][\s\d\.\,]+\d)[^\d\<]*\<\/span\>/)) {
+	if (matches = html.match(/\<span class=\"lkuibalance\"\>\s*(\-?[\s\d\.]*?\d)[^\d\<]*\<\/span\>/)) {
 		result['success'] = true;
 		if(AnyBalance.isAvailable('card_bonus')) {
-			result['card_bonus'] = parseFloat(matches[1]);
+			result['card_bonus'] = parseFloat(matches[1].replace(' ', ''));
 		}
 		AnyBalance.setResult(result);
 	} else {

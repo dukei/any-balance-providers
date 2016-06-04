@@ -86,6 +86,7 @@ function shouldProcess(counter, info){
 function main() {
   var prefs = AnyBalance.getPreferences();
 
+  prefs.num = prefs.contract;
   if(!/^(card|crd|dep|acc)$/i.test(prefs.type || ''))
     prefs.type = 'card';
 

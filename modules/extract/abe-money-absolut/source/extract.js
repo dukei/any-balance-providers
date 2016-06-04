@@ -90,18 +90,18 @@ function login(prefs, result) {
 }
 
 function processProfile(html, result) {
-	if(!isAvailable('profile'))
+	if(!isAvailable('info'))
 		return;
 
 	var html = AnyBalance.requestGet(baseurl + 'main?main=priv&replace=profile_view&item=0', g_headers);
 	
-	result.profile = {};
+	result.info = {};
 	
-	getParam(html, result.profile, 'profile.fio', /ФИО((?:[\s\S]*?<\/div[^>]*>){2})/i, replaceTagsAndSpaces);
-	getParam(html, result.profile, 'profile.birthday', /Дата рождения((?:[\s\S]*?<\/div[^>]*>){2})/i, replaceTagsAndSpaces);
-	getParam(html, result.profile, 'profile.phone', /Телефон((?:[\s\S]*?<\/div[^>]*>){2})/i, replaceTagsAndSpaces);
-	getParam(html, result.profile, 'profile.adress', /Адрес регистрации((?:[\s\S]*?<\/div[^>]*>){2})/i, replaceTagsAndSpaces);
-	getParam(html, result.profile, 'profile.adressHome', /Домашний адрес((?:[\s\S]*?<\/div[^>]*>){2})/i, replaceTagsAndSpaces);
+	getParam(html, result.info, 'info.fio', /ФИО((?:[\s\S]*?<\/div[^>]*>){2})/i, replaceTagsAndSpaces);
+	getParam(html, result.info, 'info.birthday', /Дата рождения((?:[\s\S]*?<\/div[^>]*>){2})/i, replaceTagsAndSpaces);
+	getParam(html, result.info, 'info.mphone', /Телефон((?:[\s\S]*?<\/div[^>]*>){2})/i, replaceTagsAndSpaces);
+	getParam(html, result.info, 'info.address', /Адрес регистрации((?:[\s\S]*?<\/div[^>]*>){2})/i, replaceTagsAndSpaces);
+	getParam(html, result.info, 'info.addressHome', /Домашний адрес((?:[\s\S]*?<\/div[^>]*>){2})/i, replaceTagsAndSpaces);
 }
 
 // Wicket-ajax actions search
@@ -133,6 +133,8 @@ function requestGetWicketAction(html, regex, params) {
 	
 	var actions = findWicketActions(html);
 	var action = findExactWickeAction(actions, wicketId);
+	if(!action)
+		throw new AnyBalance.Error('Не удалось найти action: ' + wicketId);
 	
 	return params ? 
 		AnyBalance.requestPost(baseurl + action + '&_=' + new Date().getTime(), params, addHeaders(g_Xml_Headers)) :
@@ -171,7 +173,7 @@ function processCards(html, result) {
 		var _id = getParam(cards[i], null, null, /<small[^>]+class="gray"[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces);
 		var title = getParam(cards[i], null, null, /"card-name"[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces);
 		
-		var c = {__id: _id, __name: title + ' ' + _id};
+		var c = {__id: _id, num: _id, __name: title + ' ' + _id};
 		
 		if(__shouldProcess('cards', c)) {
 			processCard(cards[i], c, html);
@@ -187,6 +189,9 @@ function processCard(card, result, html) {
 	
 	var html = requestGetWicketAction(html, /<div[^>]+class="card inner"[^>]+id="(id[^"]+)"/i);
 	
+	var name = getElement(html, /<h1[^>]+class="title"[^>]*>/i, replaceTagsAndSpaces);
+	getParam(name, result, 'cards.num', /[\d\*\s]{6,}/, replaceTagsAndSpaces);
+
 	getParam(html, result, 'cards.limit', /Кредитный лимит((?:[\s\S]*?<\/div[^>]*>){2})/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'cards.debt', /Общая задолженность((?:[\s\S]*?<\/div[^>]*>){2})/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'cards.ovedraft', /Текущий овердрафт((?:[\s\S]*?<\/div[^>]*>){2})/i, replaceTagsAndSpaces, parseBalance);
@@ -200,8 +205,20 @@ function processCard(card, result, html) {
 	getParam(html, result, 'cards.minpay', /Минимальный платеж((?:[\s\S]*?<\/div[^>]*>){2})/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'cards.minpay_overdue', /в том числе просроченные минимальные платежи((?:[\s\S]*?<\/div[^>]*>){2})/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'cards.till', /Срок действия((?:[\s\S]*?<\/div[^>]*>){2})/i, replaceTagsAndSpaces, parseDate);
-	getParam(html, result, 'cards.holderName', /Имя владельца((?:[\s\S]*?<\/div[^>]*>){2})/i, replaceTagsAndSpaces);
+	getParam(html, result, 'cards.holder', /Имя владельца((?:[\s\S]*?<\/div[^>]*>){2})/i, replaceTagsAndSpaces);
 	getParam(html, result, 'cards.status', /Статус карты((?:[\s\S]*?<\/div[^>]*>){2})/i, replaceTagsAndSpaces);
+
+	if(AnyBalance.isAvailable('cards.accnum')){
+    	var _html = requestGetWicketAction(html, /<small[^>]+id="([^"]*)[^>]*>\s*Реквизиты/i);
+    	getParam(_html, result, 'credits.accnum', /Номер[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+    }
+
+	if(AnyBalance.isAvailable('cards.contract', 'cards.date_start', 'cards.pct')){
+    	var _html = requestGetWicketAction(html, /<small[^>]+id="([^"]*)[^>]*>\s*Условия/i);
+    	getParam(_html, result, 'cards.contract', /Договор №\s*<span[^>]*>([^<]*)<\/span>/i, replaceTagsAndSpaces);
+    	getParam(_html, result, 'cards.date_start', /Договор №[\s\S]*?от\s*<span[^>]*>([^<]*)<\/span>/i, replaceTagsAndSpaces, parseDate);
+    	getParam(_html, result, 'cards.pct', /Процентная ставка[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+    }
 	
 	if(typeof processCardTransactions != 'undefined')
 		processCardTransactions(html, result);
@@ -251,6 +268,11 @@ function processAccount(html, result) {
     if(typeof processAccountTransactions != 'undefined') {
       processAccountTransactions(html, result);
     }
+
+	if(AnyBalance.isAvailable('accounts.date_start')){
+    	var _html = requestGetWicketAction(html, /<small[^>]+id="([^"]*)[^>]*>\s*Реквизиты/i);
+    	getParam(_html, result, 'accounts.date_start', /Открыт[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseDate);
+    }
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Кредиты
@@ -294,21 +316,22 @@ function processCredits(html, result) {
 }
 
 function processCredit(credit, result, html) {
-	  getParam(credit, result, 'credits.balance', /class="sum"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
-	  getParam(credit, result, ['credits.currency', 'credits'], /class="sum"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseCurrency);
+	getParam(credit, result, 'credits.limit', /class="sum"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(credit, result, ['credits.currency', 'credits.limit', 'credits.balance'], /class="sum"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseCurrency);
 	
-	  getParam(credit, result, 'credits.minpay_till', /К оплате([\s\S]*?)<\//i, replaceTagsAndSpaces, parseDate);
-	  getParam(credit, result, 'credits.minpay', /К оплате[\s\S]*?class="sum"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(credit, result, 'credits.minpay_till', /К оплате([\s\S]*?)<\//i, replaceTagsAndSpaces, parseDate);
+	getParam(credit, result, 'credits.minpay', /К оплате[\s\S]*?class="sum"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
 	
-	
-    var html = requestGetWicketAction(html, /<div[^>]+class="account inner[^>]+id="(id[^"]+)"/i);
+    html = requestGetWicketAction(html, /<div[^>]+class="account inner[^>]+id="(id[^"]+)"/i);
 
-    getParam(html, result, 'credits.debt_main', /Общая задолженность(?:[^>]*>){3}([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'credits.balance', /Общая задолженность(?:[^>]*>){3}([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'credits.principal_debt', /Сумма основного долга(?:[^>]*>){3}([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'credits.pct_sum', /Cумма начисленных процентов(?:[^>]*>){3}([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'credits.debt_expired', /Сумма просроченного основного долга(?:[^>]*>){3}([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'credits.pct_expired', /Сумма просроченных процентов(?:[^>]*>){3}([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'credits.penalty', /Штрафы(?:[^>]*>){3}([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'credits.minpay_till', /К оплате([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseDate);
+    getParam(html, result, 'credits.minpay', /К оплате[\s\S]*?<div[^>]+total-amounts[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'credits.minpay_main_debt', /К оплате[\s\S]*?Сумма основного долга([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'credits.minpay_pct', /К оплате[\s\S]*?Сумма процентов([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'credits.minpay_others', /К оплате[\s\S]*?Другие комиссии([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
@@ -316,7 +339,16 @@ function processCredit(credit, result, html) {
     getParam(html, result, 'credits.minpay_pct_expired', /К оплате[\s\S]*?Сумма просроченных процентов([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'credits.minpay_debt_expried', /К оплате[\s\S]*?Сумма просроченного основного долга([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
 
-	 if(typeof processCreditSchedule != 'undefined') {
-     	processCreditSchedule(html, result);
-   }
+    var _html = requestGetWicketAction(html, /<small[^>]+id="([^"]*)[^>]*>\s*Условия договора/i);
+    getParam(_html, result, 'credits.contract', /Договор №\s*<span[^>]*>([^<]*)<\/span>/i, replaceTagsAndSpaces);
+    getParam(_html, result, 'credits.date_start', /Договор №[\s\S]*?от\s*<span[^>]*>([^<]*)<\/span>/i, replaceTagsAndSpaces, parseDate);
+    getParam(_html, result, 'credits.till', /Дата планового закрытия[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseDate);
+    getParam(_html, result, 'credits.payment', /Размер ежемесячного платежа[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(_html, result, 'credits.pct', /Процентная ставка[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(_html, result, 'credits.accnum', /Счет для погашения[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+    getParam(_html, result, 'credits.pct_effective', /Полная стоимость кредита[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+
+	if(typeof processCreditSchedule != 'undefined') {
+    	processCreditSchedule(html, result);
+    }
 }

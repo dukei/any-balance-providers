@@ -18,7 +18,7 @@ function main() {
 	AB.checkEmpty(prefs.login, 'Введите логин!');
 	AB.checkEmpty(prefs.password, 'Введите пароль!');
 	
-	var html = AnyBalance.requestGet(baseurl + '', g_headers);
+	var html = AnyBalance.requestGet(baseurl, g_headers);
 	
 	if(!html || AnyBalance.getLastStatusCode() > 400){
 		AnyBalance.trace(html);
@@ -28,7 +28,7 @@ function main() {
 	html = AnyBalance.requestPost(baseurl + 'registration/getPassword/', {
 		'f_login': prefs.login,
 		'f_password': prefs.password
-	}, AB.addHeaders({Referer: baseurl + ''}));
+	}, AB.addHeaders({Referer: baseurl}));
 	
 	if (!/logout/i.test(html)) {
 		var error = AB.getParam(html, null, null, /alertsBlock\.create\(["']([^"']+)/i, AB.replaceTagsAndSpaces);
@@ -41,7 +41,12 @@ function main() {
 	
 	var result = {success: true};
 	
-	AB.getParam(html, result, 'balance', /class="ob-lk__money[^>]*>([\s\S]*?)<\//i, AB.replaceTagsAndSpaces, AB.parseBalance);
+	if(isAvailable('balance')) {
+		html = AnyBalance.requestGet(baseurl + 'staff/balance', g_headers);
+		
+		AB.getParam(html, result, 'balance', /Свободных средств(?:[^>]*>){2}([\s\S]*?)<\//i, AB.replaceTagsAndSpaces, AB.parseBalance);
+	}
+	
 	AB.getParam(html, result, 'fio', /class="ob-lk__name[^>]*>([\s\S]*?)<\//i, AB.replaceTagsAndSpaces);
 	AB.getParam(html, result, '__tariff', /class="ob-company-lk__name[^>]*>([\s\S]*?)<\//i, AB.replaceTagsAndSpaces);
 	

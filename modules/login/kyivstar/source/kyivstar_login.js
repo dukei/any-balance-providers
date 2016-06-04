@@ -43,11 +43,16 @@ function initializeLogin() {
 	});
 }
 
+function isThereLoginForm(html){
+	var form = getElement(html, /<form[^>]+id="auth-form"[^>]*>/i);
+	return form;
+}
+
 function loginBasic(html) {
 	var prefs = AnyBalance.getPreferences();
 	var referer = AnyBalance.getLastUrl();
 
-	var form = getElement(html, /<form[^>]+id="auth-form"[^>]*>/i);
+	var form = isThereLoginForm(html);
 	if (!form) {
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось найти форму входа. Сайт изменен?');
@@ -168,6 +173,8 @@ function loginSite(baseurl) {
 	}
 
 	if (!isLoggedIn(html)) {
+		if(!isThereLoginForm(html)) //А то иногда показывается реклама нового ЛК
+			html = AnyBalance.requestGet('https://account.kyivstar.ua/cas/login?service=http%3A%2F%2Fmy.kyivstar.ua%3A80%2Ftbmb%2Fdisclaimer%2Fshow.do&locale=ua', g_headers);
 		html = loginBasic(html);
 	}
 

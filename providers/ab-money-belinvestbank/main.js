@@ -37,7 +37,7 @@ function main() {
 	    }, addHeaders({Referer: baseurl + 'signin'}));
 
 		if(!/На Ваш номер телефона/i.test(html)){
-			var error = getParam(html, null, null, /<div[^>]+id="error"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+			var error = getParam(html, null, null, /<div[^>]+id="error"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
 			if(error)
 				throw new AnyBalance.Error(error, null, /Пароль введен неверно|Имя пользователя или пароль введены неверно/i.test(error));
 			AnyBalance.trace(html);
@@ -46,7 +46,7 @@ function main() {
 
 		var smsKey;
 		AnyBalance.trace('Пытаемся ввести смс код.');
-		smsKey = AnyBalance.retrieveCode("Пожалуйста, введите код из смс");
+		smsKey = AnyBalance.retrieveCode("Пожалуйста, введите код из смс", null, {inputType: 'number', time: 180000});
 		AnyBalance.trace('Код из смс получен: ' + smsKey);
 
 		html = AnyBalance.requestPost(baseurl + 'signin2', {
@@ -56,7 +56,7 @@ function main() {
 
 		// ПРОВЕРКА НА НЕВЕРНЫЙ КОД ИЗ СМС!
 		if(!/logout/i.test(html)) {
-			var error = getParam(html, null, null, /class="attention"[^>]*>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
+			var error = getParam(html, null, null, /class="attention"[^>]*>([^<]*)/i, replaceTagsAndSpaces);
 			if(error)
 				throw new AnyBalance.Error(error, null, /Пароль введен неверно/i.test(error));
 
@@ -81,11 +81,11 @@ function main() {
 			throw new AnyBalance.Error('Не удалось найти' + ( prefs.cardnum ? ' карту с последними цифрами ' + prefs.cardnum : ' ни одной карты!' ));
 		}
 		
-		getParam(card, result, '__tariff', /(\*\*\*\*\s*\*\*\*\*\s*\*\*\*\*\s*\d{4})/i, replaceTagsAndSpaces, html_entity_decode);
+		getParam(card, result, '__tariff', /(\*\*\*\*\s*\*\*\*\*\s*\*\*\*\*\s*\d{4})/i, replaceTagsAndSpaces);
 		getParam(card, result, 'balance', /card-sum[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseBalance);
-		getParam(card, result, 'currency', /item-card-currency[^>]*>([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
+		getParam(card, result, 'currency', /item-card-currency[^>]*>([^<]+)/i, replaceTagsAndSpaces);
 		getParam(card, result, 'validto', /item-card-expdate[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseDate);
-		getParam(card, result, 'status', /(?:[\s\S]*?<td[^>]*>){6}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
+		getParam(card, result, 'status', /(?:[\s\S]*?<td[^>]*>){6}([\s\S]*?)<\//i, replaceTagsAndSpaces);
 
 	} finally {
 		// Выходим, чтобы закончить сессию. Нужно, так как запрещено 2 одновременных подключения.

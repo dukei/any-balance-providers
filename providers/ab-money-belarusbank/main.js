@@ -33,9 +33,9 @@ function main(){
         throw new AnyBalance.Error("Неправильно введены коды 31-40! Необходимо ввести 10 четырехзначных кодов через пробел.");
       
     var html = AnyBalance.requestGet(baseurl + 'wps/portal/ibank/');
-    var url = getParam(html, null, null, /<form[^>]+action="\/([^"]*)"[^>]*name="LoginForm1"/i, null, html_entity_decode);
+    var url = getParam(html, null, null, /<form[^>]+action="\/([^"]*)"[^>]*name="LoginForm1"/i, replaceHtmlEntities);
     if(!url){
-        var error = getParam(html, null, null, /<font[^>]+color="#FF0000"[^>]*>([\s\S]*?)<\/font>/i, replaceTagsAndSpaces, html_entity_decode);
+        var error = getParam(html, null, null, /<font[^>]+color="#FF0000"[^>]*>([\s\S]*?)<\/font>/i, replaceTagsAndSpaces);
         if(error)
             throw new AnyBalance.Error(error);
         AnyBalance.trace(html);
@@ -51,7 +51,7 @@ function main(){
 
     var codenum = getParam(html, null, null, /Введите[^>]*>код [N№]\s*(\d+)/i, null, parseBalance);
     if(!codenum){
-        var error = getParam(html, null, null, /<p[^>]+class="(?:warning|error)"[^>]*>([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, html_entity_decode);
+        var error = getParam(html, null, null, /<p[^>]+class="(?:warning|error)"[^>]*>([\s\S]*?)<\/p>/i, replaceTagsAndSpaces);
         if(error)
             throw new AnyBalance.Error(error);
         AnyBalance.trace(html);
@@ -72,7 +72,7 @@ function main(){
 		throw new AnyBalance.Error('Не удалось найти форму ввода кода. Сайт изменен?');
 	}
 
-	var url = getParam(form, null, null, /<form[^>]+action="\/([^"]*)"[^>]*name="LoginForm1"/i, null, html_entity_decode);
+	var url = getParam(form, null, null, /<form[^>]+action="\/([^"]*)"[^>]*name="LoginForm1"/i, replaceHtmlEntities);
     /*if(!url)
         throw new AnyBalance.Error('Не удалось найти форму ввода кода. Сайт изменен?');*/
 
@@ -93,7 +93,7 @@ function main(){
     html = AnyBalance.requestPost(baseurl + url, params);
 
     if(!/portalLogoutLink/i.test(html)){
-        var error = getParam(html, null, null, /<p[^>]+class="warning"[^>]*>([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, html_entity_decode);
+        var error = getParam(html, null, null, /<p[^>]+class="warning"[^>]*>([\s\S]*?)<\/p>/i, replaceTagsAndSpaces);
         if(error)
             throw new AnyBalance.Error(error + '( код №' + (codenum+1) + ': ' + code + ')');
 
@@ -107,7 +107,7 @@ function main(){
         throw new AnyBalance.Error('Не удалось войти в интернет-банк после ввода кода (№' + (codenum+1) + ': ' + code + ') . Сайт изменен?');
     }
 	
-	var href = getParam(html, null, null, /href="\/([^"]+)">\s*Счета/i, replaceTagsAndSpaces, html_entity_decode);
+	var href = getParam(html, null, null, /href="\/([^"]+)">\s*Счета/i, replaceTagsAndSpaces);
 	checkEmpty(href, 'Не удалось найти ссылку на счета, сайт изменен?', true);
 	html = AnyBalance.requestGet(baseurl + href, addHeaders({'Referer': baseurl}));
 	
@@ -130,14 +130,14 @@ function findAccount(html){
 
     for(var i=0; i<accounts.length; ++i){
     	account = accounts[i];
-    	accnum = getParam(account, null, null, /<td[^>]+class="tdId"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+    	accnum = getParam(account, null, null, /<td[^>]+class="tdId"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
     	cards = getElements(account, [/<table[^>]+id="[^"]*ClientCardsDataForm:accountContainer:[^>]*>/ig, /<td[^>]+class="tdNumber"/i]);
-    	var cardnums = sumParam(account, null, null, /<td[^>]+class="tdNumber"[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, html_entity_decode);
+    	var cardnums = sumParam(account, null, null, /<td[^>]+class="tdNumber"[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces);
     	
     	var ok = !prefs.lastdigits || endsWith(accnum, prefs.lastdigits);
     	for(var j=0; !ok && j<cards.length; ++j){
     		card = cards[j];
-    		cardnum = getParam(card, null, null, /<td[^>]+class="tdNumber"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+    		cardnum = getParam(card, null, null, /<td[^>]+class="tdNumber"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
     		ok = ok || endsWith(cardnum, prefs.lastdigits);
     	}
 
@@ -161,7 +161,7 @@ function fetchCard(baseurl, html){
     if(prefs.lastdigits && !/^\d{4,}$/.test(prefs.lastdigits))
         throw new AnyBalance.Error("Надо указывать 4 последних цифры карты или счета или не указывать ничего");
 
-	var href = getParam(html, null, null, /href="\/([^"]+)"(?:[^>]*>){1,2}\s*Счета с карточкой/i, replaceTagsAndSpaces, html_entity_decode);
+	var href = getParam(html, null, null, /href="\/([^"]+)"(?:[^>]*>){1,2}\s*Счета с карточкой/i, replaceTagsAndSpaces);
 	checkEmpty(href, 'Не удалось найти ссылку на счета, сайт изменен?', true);
 	html = AnyBalance.requestGet(baseurl + href, addHeaders({'Referer': baseurl}));
 
@@ -172,9 +172,9 @@ function fetchCard(baseurl, html){
 
     if(info.accnum == 'ExtraCardsAccount'){
     	//Надо заново получить всё.
-    	var cardId = getParam(info.card, null, null, /<td[^>]+class="tdId"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+    	var cardId = getParam(info.card, null, null, /<td[^>]+class="tdId"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
     	var form = getParam(html, null, null, /<form[^>]+id="[^"]*:ClientCardsDataForm"[^>]*>[\s\S]*?<\/form>/i);
-    	var action = getParam(form, null, null, /<form[^>]+action="([^"]*)/i, null, html_entity_decode);
+    	var action = getParam(form, null, null, /<form[^>]+action="([^"]*)/i, replaceHtmlEntities);
 		var params = createFormParams(form, function(params, str, name, value) {
 			if (/acctIdSelField/i.test(name) || name == 'accountNumber') 
 				return info.accnum;
@@ -194,15 +194,15 @@ function fetchCard(baseurl, html){
 	
     var result = {success: true};
 	
-    getParam(info.card, result, 'cardnum', /<td[^>]*class="tdNumber">([^]*?)<\/td>/, replaceTagsAndSpaces, html_entity_decode);
-    getParam(info.card, result, 'cardaccnum', /<td[^>]+class="tdId"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(info.account, result, '__tariff', /<td[^>]*class="tdAccountText">([^]*?)<\/td>/, replaceTagsAndSpaces, html_entity_decode);
+    getParam(info.card, result, 'cardnum', /<td[^>]*class="tdNumber">([^]*?)<\/td>/, replaceTagsAndSpaces);
+    getParam(info.card, result, 'cardaccnum', /<td[^>]+class="tdId"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+	getParam(info.account, result, '__tariff', /<td[^>]*class="tdAccountText">([^]*?)<\/td>/, replaceTagsAndSpaces);
 	if(info.accnum == 'ExtraCardsAccount'){
     	getParam(info.card, result, 'balance', /\(<nobr[^>]*>[^<]*<\/nobr>\s+\w+\)/i, replaceTagsAndSpaces, parseBalance);
-    	getParam(info.card, result, ['currency', 'balance'], /\(<nobr[^>]*>([^<]*<\/nobr>\s+\w+)\)/i, replaceTagsAndSpaces, parseCurrency);
+    	getParam(info.card, result, ['currency', 'balance'], /\(<nobr[^>]*>([^<]*<\/nobr>\s+\w+)\)/i, [replaceTagsAndSpaces, /на дату.*/i, ''], parseCurrency);
     }else{
     	getParam(info.account, result, 'balance', /<td[^>]*class="tdBalance">([\s\S]*?)<\/td>/, replaceTagsAndSpaces, parseBalance);
-    	getParam(info.account, result, ['currency', 'balance'], /<td[^>]*class="tdBalance">([\s\S]*?)<\/td>/, replaceTagsAndSpaces, parseCurrency);
+    	getParam(info.account, result, ['currency', 'balance'], /<td[^>]*class="tdBalance">([\s\S]*?)<\/td>/, [replaceTagsAndSpaces, /на дату.*/i, ''], parseCurrency);
     	getParam(info.accnum, result, 'accnum');
     }
     

@@ -25,11 +25,11 @@ function main() {
 		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
 	}
     
-    var loginForm = AB.getElement(html, /<form[^>]+?form-user-enter/i);
+    var loginForm = AB.getElement(html, /<form[^>]+?mini_login/i);
     
     if (!loginForm) {
         AnyBalance.trace(html);
-		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
+		throw new AnyBalance.Error('Не удалось найти форму входа. Сайт изменен?');
 	}
     
     var captchaCode = '';
@@ -95,7 +95,7 @@ function main() {
 	
 	json = getJson(html);
 	
-	getParam(json.html, result, 'balance', /<a href="#" class="link border-dotted">([\s\S]*?)&nbsp;баллов<\/a>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(json.html, result, 'balance', /class="mm-user__scores"[^>]*>([\s\S]*?)&nbsp;баллов/i, replaceTagsAndSpaces, parseBalance);
 	getParam(json.html, result, 'available', /Можно потратить: <b>([\s\S]*?)&nbsp;баллов<\/b>/i, replaceTagsAndSpaces, parseBalance);
 	getParam(json.html, result, 'inactive', /Неактивных: <b>([\s\S]*?)&nbsp;баллов<\/b>/i, replaceTagsAndSpaces, parseBalance);
 

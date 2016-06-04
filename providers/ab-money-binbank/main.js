@@ -12,7 +12,7 @@ var g_countersTable = {
 		"credit_pay_sum": "accounts.minpay",
 		"cardnum": "accounts.cards.num",
 		"accnum": "accounts.num",
-		"fio": "fio",
+		"fio": "info.fio_if",
 		"__tariff": "accounts.cards.num"
     },
 /*	acc: {

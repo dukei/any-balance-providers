@@ -5,7 +5,7 @@
     <name>Extract for factura.ru</name>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
-		<js>abe-money-faktura.min.js</js>
+		<js>extract.abe-money-faktura.min.js</js>
 		<history>history.xml</history>
 	</files>
 	<depends>

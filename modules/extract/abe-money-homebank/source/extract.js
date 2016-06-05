@@ -14,6 +14,11 @@ var baseurl = 'https://www.homebank.kz/new/';
 
 function login(prefs) {
 	AnyBalance.setDefaultCharset('utf-8');
+
+	AnyBalance.setOptions({
+		SSL_ENABLED_PROTOCOLS: ['TLSv1.2'] //Очень защищен казкоммерц...
+	});
+	
 	
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');

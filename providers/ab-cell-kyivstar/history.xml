@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="2.0" version="80" date="2016-06-05">
+	- Улучшена обработка ошибок входа.
+	</change>
 	<change major_version="2.0" version="79" date="2016-06-04">
 	Попытка исправить вход с моб. интернета другого номера
 	</change>

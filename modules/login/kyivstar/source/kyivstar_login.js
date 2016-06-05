@@ -1,4 +1,4 @@
-/**
+b/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 Киевстар мобильная связь и интернет
 */
@@ -157,24 +157,33 @@ function loginSite(baseurl) {
 	//https://my.kyivstar.ua/tbmb/service/logout.do
 	//https://my.kyivstar.ua/tbmb/disclaimer/show.do
 
+	function doLogout(){
+		AnyBalance.trace('Пытаемся выйти...');
+		var html = AnyBalance.requestGet(baseurl + 'tbmb/logout/perform.do', g_headers);
+		var anotherLogoutPage = getParam(html, null, null, /<a[^>]+id="submitBtn"[^>]*href="([^"]*)/i, replaceHtmlEntities);
+		if(anotherLogoutPage){
+			AnyBalance.trace('Переход на страницу входа.');
+			html = AnyBalance.requestGet(anotherLogoutPage, g_headers);
+		}
+		return html;
+	}
+
 	if (isLoggedIn(html)) {
 		AnyBalance.trace('Уже в системе.');
 		if (html.indexOf(prefs.login) < 0) {
-
 			AnyBalance.trace('Не тот аккаунт, выход.');
-
-			html = AnyBalance.requestGet(baseurl + 'tbmb/logout/perform.do', g_headers);
-			var anotherLogoutPage = getParam(html, null, null, /<a[^>]+id="submitBtn"[^>]*href="([^"]*)/i, replaceHtmlEntities);
-			if(anotherLogoutPage){
-				AnyBalance.trace('Переход на страницу входа.');
-				html = AnyBalance.requestGet(anotherLogoutPage, g_headers);
-			}
+			html = doLogout();
 		}
 	}
 
 	if (!isLoggedIn(html)) {
-		if(!isThereLoginForm(html)) //А то иногда показывается реклама нового ЛК
+		if(!isThereLoginForm(html)){ 
+			AnyBalance.trace(html); //А то иногда показывается реклама нового ЛК
+			AnyBalance.trace('Не найдена форма входа. Выходим и явно переходим на авторизацию.');
+			html = doLogout();
+			AnyBalance.trace('Сейчас мы на ' + AnyBalance.getLastUrl() + '. Переходим на авторизацию.');
 			html = AnyBalance.requestGet('https://account.kyivstar.ua/cas/login?service=http%3A%2F%2Fmy.kyivstar.ua%3A80%2Ftbmb%2Fdisclaimer%2Fshow.do&locale=ua', g_headers);
+		}
 		html = loginBasic(html);
 	}
 

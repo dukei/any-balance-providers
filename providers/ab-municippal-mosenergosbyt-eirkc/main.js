@@ -92,11 +92,15 @@ function mainLKKZKH() {
 			session: sid
 		});
 
-		json = getJson(json.house);
-		getParam(json.nm_address, result, '__tariff');
-		getParam('' + json.services[0].nn_ls, result, 'licschet');
+		var jsonHouse = json.houses[0];
+		if(!jsonHouse){
+			AnyBalance.trace(JSON.stringify(json));
+			throw new AnyBalance.Error('У вас в кабинете не подключен ни один дом');
+		}
+		getParam(jsonHouse.nm_address, result, '__tariff');
+		getParam('' + jsonHouse.services[0].nn_ls, result, 'licschet');
 
-		var jsonProvider = getJson(json.services[0].vl_provider);
+		var jsonProvider = jsonHouse.services[0].vl_provider;
 		id_abonent = jsonProvider.id_abonent;
 	}
 

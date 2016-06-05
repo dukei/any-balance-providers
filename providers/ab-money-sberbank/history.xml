@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="79" date="2016-06-05">
+	Исправлена ошибка undefined baseurl
+	</change>
 	<change version="78" date="2016-05-25">
 	- Исправление входа в случае смс и запроса на ознакомление с правилами безопасности
 	</change>

@@ -94,7 +94,7 @@ function checkNext(html){
 	return html;
 }
 
-function checkAdditionalQuestions(html){
+function checkAdditionalQuestions(html, baseurl){
 	if (/internetSecurity/.test(html)) {
 		AnyBalance.trace('Требуется принять соглашение о безопасности... Принимаем...');
 		
@@ -184,7 +184,7 @@ function doNewAccount(page) {
 				throw new AnyBalance.Error(error);
 		}
 
-		checkAdditionalQuestions(html);
+		checkAdditionalQuestions(html, baseurl);
 
 		if(!isLoggedIn(html)){
 			var html1 = getLoggedInHtml(true);

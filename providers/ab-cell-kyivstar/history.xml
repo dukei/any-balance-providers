@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="2.0" version="81" date="2016-06-05">
+	Исправлена ошибка JS
+	</change>
 	<change major_version="2.0" version="80" date="2016-06-05">
 	- Улучшена обработка ошибок входа.
 	</change>

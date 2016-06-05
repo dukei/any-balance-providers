@@ -14,6 +14,7 @@ function main() {
 	});
 
 	try {
+//	throw new AnyBalance.Error('тест мобайл');
 		processSite();
 	} catch (e) {
 		if (e.fatal)

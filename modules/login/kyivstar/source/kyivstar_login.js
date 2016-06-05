@@ -1,4 +1,4 @@
-b/**
+/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 Киевстар мобильная связь и интернет
 */
@@ -153,9 +153,6 @@ function loginSite(baseurl) {
 	}
 
 	AnyBalance.trace('Успешное соединение.');
-
-	//https://my.kyivstar.ua/tbmb/service/logout.do
-	//https://my.kyivstar.ua/tbmb/disclaimer/show.do
 
 	function doLogout(){
 		AnyBalance.trace('Пытаемся выйти...');

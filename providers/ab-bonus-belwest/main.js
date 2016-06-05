@@ -21,7 +21,7 @@ function main() {
 	var html = AnyBalance.requestGet(baseurl + 'account/login', g_headers);
 	
 	if(!html || AnyBalance.getLastStatusCode() > 400)
-		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
+		throw new AnyBalance.Error('Сайт belwest.com на реконструкции! Попробуйте обновить данные позже.');
 	
 	html = AnyBalance.requestPost(baseurl + 'account/login', {
 		'users[form_back]':'http://belwest.com/account/login',
@@ -31,7 +31,8 @@ function main() {
 	}, addHeaders({Referer: baseurl + 'account/login'}));
 	
 	if (!/logout/i.test(html)) {
-		var error = getParam(html, null, null, /<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
+		//TODO: заменить обработку ошибки!
+		var error = getParam(html, null, null, /<div[^>]+class="t-e rror"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces);
 		if (error)
 			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
 		
@@ -43,7 +44,7 @@ function main() {
 	
 	getParam(html, result, 'balance', /Накопленная сумма(?:[^>]*>){1}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'discount', /процент скидки(?:[^>]*>){1}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, '__tariff', /Номер вашей дисконтной карты:(?:[^>]*>){1}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, '__tariff', /Номер вашей дисконтной карты:(?:[^>]*>){1}([\s\S]*?)<\//i, replaceTagsAndSpaces);
 	
 	AnyBalance.setResult(result);
 }

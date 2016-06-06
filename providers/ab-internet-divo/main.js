@@ -20,7 +20,7 @@ function getEventValidation(html){
 
 function main(){
     var prefs = AnyBalance.getPreferences();
-    var baseurl = 'http://lc.divo.ru/';
+    var baseurl = 'https://lc.divo.ru/';
 
     AnyBalance.setDefaultCharset('utf-8'); 
 
@@ -32,7 +32,7 @@ function main(){
 
     if(!/id="Exit"/i.test(html)){
         //Если в кабинет войти не получилось, то в первую очередь надо поискать в ответе сервера объяснение ошибки
-        var error = getParam(html, null, null, /<h1>Ошибка авторизации<\/h1>\s*<p[^>]*>([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, html_entity_decode);
+        var error = getParam(html, null, null, /<h1>Ошибка авторизации<\/h1>\s*<p[^>]*>([\s\S]*?)<\/p>/i, replaceTagsAndSpaces);
         if(error)
             throw new AnyBalance.Error(error);
         //Если объяснения ошибки не найдено, при том, что на сайт войти не удалось, то, вероятно, произошли изменения на сайте
@@ -75,7 +75,7 @@ function main(){
     
     var table = getParam(html, null, null, /<th[^>]*>\s*Тариф([\s\S]*?)<\/table>/i);
 
-    sumParam(table, result, '__tariff', /<tr[^>]*>(?:(?:[\s\S](?!<\/tr>))*?<td[^>]*>){2}((?:[\s\S](?!<\/tr>))*?)<\/td>(?:[\s\S](?!<\/tr>))*?<td[^>]*>Текущий<\/td>\s*<\/tr>/ig, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
+    sumParam(table, result, '__tariff', /<tr[^>]*>(?:(?:[\s\S](?!<\/tr>))*?<td[^>]*>){2}((?:[\s\S](?!<\/tr>))*?)<\/td>(?:[\s\S](?!<\/tr>))*?<td[^>]*>Текущий<\/td>\s*<\/tr>/ig, replaceTagsAndSpaces, null, aggregate_join);
 
     //Возвращаем результат
     AnyBalance.setResult(result);

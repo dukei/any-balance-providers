@@ -6,7 +6,7 @@
 var g_headers = {
 	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
 	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
-	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Intel Mac OS X 10.6; rv:7.0.1) Gecko/20100101 Firefox/7.0.1',
+	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36',
 	Connection: 'keep-alive'
 };
 
@@ -39,7 +39,7 @@ function initializeLogin() {
 	checkEmpty(prefs.password, 'Введите пароль!');
 
 	AnyBalance.setOptions({
-		SSL_ENABLED_PROTOCOLS: ['TLSv1'], // https://my.kyivstar.ua очень смущается от присутствия TLSv1.1 и TLSv1.2
+		SSL_ENABLED_PROTOCOLS: ['TLSv1'] // https://my.kyivstar.ua очень смущается от присутствия TLSv1.1 и TLSv1.2
 	});
 }
 
@@ -136,6 +136,14 @@ function loginBasic(html) {
 	return html;
 }
 
+function loadAuthorizationPage(paramstr){
+	//Куки надо удалить, иначе посчитает, что авторизация уже есть
+	AnyBalance.setCookie('account.kyivstar.ua', 'JSESSIONID', null);
+	AnyBalance.setCookie('my.kyivstar.ua', 'JSESSIONID', null);
+	var html = AnyBalance.requestGet('https://account.kyivstar.ua/cas/login?' + paramstr, g_headers);
+	return html;
+}
+
 function loginSite(baseurl) {
 	var prefs = AnyBalance.getPreferences();
 
@@ -179,7 +187,7 @@ function loginSite(baseurl) {
 			AnyBalance.trace('Не найдена форма входа. Выходим и явно переходим на авторизацию.');
 			html = doLogout();
 			AnyBalance.trace('Сейчас мы на ' + AnyBalance.getLastUrl() + '. Переходим на авторизацию.');
-			html = AnyBalance.requestGet('https://account.kyivstar.ua/cas/login?service=http%3A%2F%2Fmy.kyivstar.ua%3A80%2Ftbmb%2Fdisclaimer%2Fshow.do&locale=ua', g_headers);
+			html = loadAuthrizationPage('service=http%3A%2F%2Fmy.kyivstar.ua%3A80%2Ftbmb%2Fdisclaimer%2Fshow.do&locale=ua');
 		}
 		html = loginBasic(html);
 	}
@@ -211,9 +219,7 @@ function loginMobile(baseurl) {
 		baseurl = "https://my.kyivstar.ua/";
 
 	AnyBalance.trace('Логин в мобильное приложение.');
-	var html = AnyBalance.requestGet(
-		'https://account.kyivstar.ua/cas/login?locale=ru_ru&service=https://my.kyivstar.ua/tbmb/_assets_mobconv/portmone/index.html&renew=true&compact=1',
-		g_headers);
+	var html = loadAuthorizationPage('locale=ru_ru&service=https://my.kyivstar.ua/tbmb/_assets_mobconv/portmone/index.html&renew=true&compact=1');
 
 	if (!html || AnyBalance.getLastStatusCode() > 400) {
 		AnyBalance.trace(html);

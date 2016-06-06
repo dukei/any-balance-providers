@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-  <id version="2">ab-internet-avk-wellcom</id>
+  <id version="3">ab-internet-avk-wellcom</id>
   <name>АВК-ВЕЛЛКОМ</name> 
   <description>
     Получает баланс для интернет провайдера АВК-ВЕЛЛКОМ (http://www.avk-wellcom.ru/)
@@ -10,11 +10,13 @@
     
     Провайдер работает только в локальной сети.
   </description>
-  <author>Alexandra Shalamova &lt;alexandrashalamova@gmail.com&gt;</author>
+  <author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+  <depends>
+  	<module id="library"/>
+  </depends>
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
-    <js>library.js</js>
     <js>main.js</js>
     <history>history.xml</history>
   </files>

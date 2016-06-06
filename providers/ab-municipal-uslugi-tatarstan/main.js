@@ -35,7 +35,7 @@ function main() {
 	html = AnyBalance.requestPost(baseurl + 'user/login', params, addHeaders({Referer: baseurl}));
 	
 	if (!/logout/i.test(html)) {
-		var error = getParam(html, null, null, /error_explanation[^>]*>[\s\S]*?([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
+		var error = getParam(html, null, null, /error_explanation[^>]*>[\s\S]*?([\s\S]*?)<\//i, replaceTagsAndSpaces);
 		if (error)
 			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
 		
@@ -48,12 +48,12 @@ function main() {
     
 	var result = {success: true};
     
-    var lastname = getParam(html, null, null, /Фамилия(?:[^>]*>){4}([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
-    var firstname = getParam(html, null, null, /Имя(?:[^>]*>){4}([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
-    // var snils = getParam(html, null, null, /СНИЛС(?:[^>]*>){3}([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
-    var inn = getParam(html, null, null, /ИНН(?:[^>]*>){3}([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
+    var lastname = getParam(html, null, null, /Фамилия(?:[^>]*>){4}([^<]*)/i, replaceTagsAndSpaces);
+    var firstname = getParam(html, null, null, /Имя(?:[^>]*>){4}([^<]*)/i, replaceTagsAndSpaces);
+    // var snils = getParam(html, null, null, /СНИЛС(?:[^>]*>){3}([^<]*)/i, replaceTagsAndSpaces);
+    var inn = getParam(html, null, null, /ИНН(?:[^>]*>){3}([^<]*)/i, replaceTagsAndSpaces);
     
-    getParam(html, result, 'fio', /information[\s\S]*?<span>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'fio', /information[\s\S]*?<span>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
     
 	// Определяем что нам нужно получать
 	processGibdd(html, baseurl, prefs, result);
@@ -117,6 +117,12 @@ function processNalog(html, baseurl, prefs, result, lastname, firstname, inn) {
 	if(isAvailable('nalog_info')) {
 		// получаем данные о налоговой задолженности
 		var html = AnyBalance.requestGet(baseurl + 'taxes/index', g_headers);
+		if(AnyBalance.getLastStatusCode() >= 400){
+			AnyBalance.trace(html);
+			AnyBalance.trace('Ошибка при получении налогов: ' + AnyBalance.getLastStatusCode());
+			return;
+		}
+
 		params = createFormParams(html, function(params, str, name, value) {
 			if (name == 'inn')
 				return prefs.inn || inn;

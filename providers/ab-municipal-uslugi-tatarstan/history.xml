@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="7" date="2016-06-06">
+	- Улучшена обработка ошибок.
+	</change>
 	<change version="6" date="2016-05-31">
 	Вынесен в отдельный раздел каталога
 	</change>

@@ -77,9 +77,7 @@ function main() {
         sumParam(html, result, 'userName', /<input[^>]+name="CLUB_USER_FORM_NAME_FIRST"[^>]*value="([^"]*)/i, replaceTagsAndSpaces, null, aggragate_join_space);
         sumParam(html, result, 'userName', /<input[^>]+name="CLUB_USER_FORM_NAMEMIDDLE"[^>]*value="([^"]*)/i, replaceTagsAndSpaces, null, aggragate_join_space);
 		
-		sumParam(html, result, 'phone', /<span[^>]+class=['"]phone_country['"][^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, null, aggragate_join_space);
-        sumParam(html, result, 'phone', /<input[^>]+name="CLUB_USER_FORM_MOBPHONE_CODE"[^>]*value="([^"]*)/i, replaceTagsAndSpaces, null, aggragate_join_space);
-        sumParam(html, result, 'phone', /<input[^>]+name="CLUB_USER_FORM_MOBPHONE_NUMBER"[^>]*value="([^"]*)/i, replaceTagsAndSpaces, null, aggragate_join_space);
+		sumParam(html, result, 'phone', /<label[^>]+placeholder-mobile-phone[^>]*>([\s\S]*?)<\/label>/i, replaceTagsAndSpaces, null, aggragate_join_space);
     }
 
     AnyBalance.setResult(result);

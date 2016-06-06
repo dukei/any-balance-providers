@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="14" date="2016-06-06">
+	- Улучшена обработка ошибок.
+	</change>
 	<change version="13" date="2016-01-13">
 	- Исправлена возможность заходить в кабинет с помощью логина и пароля.
 	</change>

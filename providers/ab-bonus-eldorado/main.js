@@ -48,6 +48,9 @@ function main() {
     if(!json.data && !json.success) {
         throw new AnyBalance.Error(json.message || 'Не удаётся войти в личный кабинет. Сайт изменен?');
     }
+
+    if(json.pinToPass)
+        throw new AnyBalance.Error('Эльдорадо просит сменить ПИН на пароль. Для этого войдите в личный кабинет Эльдорадо через браузер, выполните инструкции и введите новый пароль в настройки провайдера.', null, true);
 	
     html = AnyBalance.requestGet(baseurl + '_ajax/getUserCardBonus.php', addHeaders({Referer: baseurl + 'personal/?loyalty', 'X-Requested-With': 'XMLHttpRequest'}));
     json = getJson(html);

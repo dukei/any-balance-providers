@@ -187,7 +187,7 @@ function loginSite(baseurl) {
 			AnyBalance.trace('Не найдена форма входа. Выходим и явно переходим на авторизацию.');
 			html = doLogout();
 			AnyBalance.trace('Сейчас мы на ' + AnyBalance.getLastUrl() + '. Переходим на авторизацию.');
-			html = loadAuthrizationPage('service=http%3A%2F%2Fmy.kyivstar.ua%3A80%2Ftbmb%2Fdisclaimer%2Fshow.do&locale=ua');
+			html = loadAuthorizationPage('service=http%3A%2F%2Fmy.kyivstar.ua%3A80%2Ftbmb%2Fdisclaimer%2Fshow.do&locale=ua');
 		}
 		html = loginBasic(html);
 	}

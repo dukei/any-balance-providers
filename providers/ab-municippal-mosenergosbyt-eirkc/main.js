@@ -78,13 +78,14 @@ function mainLKKZKH() {
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось получить сессию. Сайт изменен?');
 	}
+
 	var id_abonent;
 
 	var result = {
 		success: true
 	};
 
-	if(isAvailable('licschet', 'balance', 'currency', '__tariff')){
+	if(isAvailable('licschet', 'balance', 'currency', '__tariff', 'balance', 'currency')){
 		json = getApiData('lkcom_data?action=sql&query=lka_get_houses', {
 			page:	'1',
 			start:	'0',
@@ -92,15 +93,24 @@ function mainLKKZKH() {
 			session: sid
 		});
 
-		var jsonHouse = json.houses[0];
-		if(!jsonHouse){
-			AnyBalance.trace(JSON.stringify(json));
-			throw new AnyBalance.Error('У вас в кабинете не подключен ни один дом');
+		for(var i=0; i<json.houses.length; ++i){
+			var h = json.houses[i];
+			if(!h.services || !h.services.length){
+				AnyBalance.trace('Дом ' + h.nm_house + ' не содержит подключенных сервисов');
+				continue;
+			}
+			house = h; //Находим первый с сервисами
+			break; 
 		}
-		getParam(jsonHouse.nm_address, result, '__tariff');
-		getParam('' + jsonHouse.services[0].nn_ls, result, 'licschet');
 
-		var jsonProvider = jsonHouse.services[0].vl_provider;
+		if(!house){
+			AnyBalance.trace(JSON.stringify(json));
+			throw new AnyBalance.Error('У вас в кабинете нет подключенных домов или нет подключенных к ним лицевых счетов');
+		}
+		getParam(house.nm_address || house.nm_house, result, '__tariff');
+		getParam('' + house.services[0].nn_ls, result, 'licschet');
+
+		var jsonProvider = house.services[0].vl_provider;
 		id_abonent = jsonProvider.id_abonent;
 	}
 

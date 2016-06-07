@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="8" date="2016-06-07">
+	Исправление для случая, когда к дому не подключен лицевой счет
+	</change>
 	<change version="7" date="2016-06-05">
 	- Поддержка изменений на сайте.
 	</change>

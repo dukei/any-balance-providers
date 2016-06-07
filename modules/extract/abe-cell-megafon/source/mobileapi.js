@@ -303,7 +303,8 @@ function processInfoApi(result){
 
         var info = result.info = {};
 
-        getParam(json.contractStart, info, 'info.time_start', null, null, parseDate);
+        getParam(json.contractStart, info, 'info.date_start', null, null, parseDate);
+        getParam(json.birthdate, info, 'info.birthday', null, null, parseDate);
         getParam(json.email, info, 'info.email');
         getParam(json.name, info, 'info.fio');
         getParam(json.region.id, info, 'info.region_id');

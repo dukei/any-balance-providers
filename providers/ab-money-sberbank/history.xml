@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="80" date="2016-06-08">
+	Поддержка паролей длиннее 30 символов (оказывается, сбербанк использует только первые 30 символов)
+	</change>
 	<change version="79" date="2016-06-05">
 	Исправлена ошибка undefined baseurl
 	</change>

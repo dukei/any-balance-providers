@@ -46,7 +46,7 @@ function login(prefs) {
 	AnyBalance.setDefaultCharset('windows-1251');
 	html = AnyBalance.requestPost(baseurl, {
 		'field(login)': prefs.login,
-		'field(password)': prefs.password,
+		'field(password)': prefs.password.substr(0, 30), //Максимальная длина - 30 символов
 		operation: 'button.begin'
 	}, addHeaders({Referer: baseurl, 'X-Requested-With': 'XMLHttpRequest', Origin: 'https://online.sberbank.ru'}));
 	AnyBalance.setDefaultCharset('utf-8');

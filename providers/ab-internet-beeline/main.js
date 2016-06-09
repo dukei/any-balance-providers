@@ -177,7 +177,7 @@ function proceedLk(prefs) {
 
 	do{
 		html = AnyBalance.requestPost(action, params, addHeaders({Referer: AnyBalance.getLastUrl()}));
-		var form = getElement(html, /<form[^>]*logincallback[^>]*>/i);
+		var form = getElement(html, /<form[^>]*(?:logincallback|oferta)[^>]*>/i);
 	    
 		if (!form) {
 			var json = getParam(html, null, null, /<script[^>]*modelJson[^>]*>([\s\S]*?)<\/script>/i, replaceHtmlEntities, getJson);
@@ -190,8 +190,9 @@ function proceedLk(prefs) {
 	    
 		params = AB.createFormParams(form);
 		action = getParam(form, null, null, /\baction="([^"]*)/i, replaceHtmlEntities);
-		AnyBalance.trace('Posting form to ' + action);
-		html = AnyBalance.requestPost(action, params, addHeaders({Referer: AnyBalance.getLastUrl()}));
+		var url = joinUrl(AnyBalance.getLastUrl(), action);
+		AnyBalance.trace('Posting form to ' + url);
+		html = AnyBalance.requestPost(url, params, addHeaders({Referer: AnyBalance.getLastUrl()}));
 	}while(/<form[^>]*logincallback/i.test(html));
 
 	var token = getParam(html, null, null, /QA.Identity.setToken\('([^']*)/);

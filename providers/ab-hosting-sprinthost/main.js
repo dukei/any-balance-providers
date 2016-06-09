@@ -12,7 +12,7 @@ var g_headers = {
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'http://cp.sprinthost.ru/';
+	var baseurl = 'https://cp.sprinthost.ru/';
 	AnyBalance.setDefaultCharset('utf-8');
 
 	checkEmpty(prefs.login, 'Введите логин!');
@@ -44,7 +44,7 @@ function main() {
 	if (!json.status)
 		throw new AnyBalance.Error("Неправильный логин или пароль.");
 	else if (json.newip) {
-		var error = getParam(json.content, null, null, null, replaceTagsAndSpaces, html_entity_decode);
+		var error = getParam(json.content, null, null, null, replaceTagsAndSpaces);
 		if (error)
 			throw new AnyBalance.Error(error, null, /подозрительного IP/i.test(error));
 		AnyBalance.trace(html);
@@ -55,12 +55,12 @@ function main() {
 	var result = {success: true};
 
 	getParam(html, result, 'balance', /<div[^>]+id="user_info"[^>]*>(?:[\s\S]*?<td[^>]*>){8}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'currentTariff', /<div[^>]+id="user_info"[^>]*>(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'currentTariff', /<div[^>]+id="user_info"[^>]*>(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
 	getParam(html, result, 'tariffCost', /<div[^>]+id="user_info"[^>]*>(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'dBonus', /<div[^>]+id="user_info"[^>]*>(?:[\s\S]*?<td[^>]*>){6}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'bonus', /<div[^>]+id="user_info"[^>]*>(?:[\s\S]*?<td[^>]*>){10}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'daysLeft', /<div[^>]+id="user_info"[^>]*>(?:[\s\S]*?<td[^>]*>){12}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'accountID', /<div[^>]+="index_menu"[^>]*>(?:[\s\S]*?<strong[^>]*>){2}([\s\S]*?)<\/strong>/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'accountID', /<div[^>]+="index_menu"[^>]*>(?:[\s\S]*?<strong[^>]*>){2}([\s\S]*?)<\/strong>/i, replaceTagsAndSpaces);
 
 	var totalDisckSpace = getParam(html, null, null, /<span[^>]+id="usage_param_quota"[^>]*>[\s\S]*?<\/span>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 	getParam(totalDisckSpace+'mb', result, 'totalDiskSpace', null, null, parseTraffic);
@@ -81,7 +81,7 @@ function main() {
 	if (isAvailable('fio'))
 	{
 		html = AnyBalance.requestGet(baseurl+'HTM_ACCOUNT_INFO', g_headers);
-		getParam(html, result, 'fio', /<div[^>]+class="thin"[^>]*>(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+		getParam(html, result, 'fio', /<div[^>]+class="thin"[^>]*>(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
 	}
 
 	AnyBalance.setResult(result);

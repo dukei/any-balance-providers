@@ -25,7 +25,7 @@
 		key="type"
 		title="Какой кабинет использовать"
 		summary="||{@s}"
-		entries="lk.beeline.ru|cabinet.beeline.ru|cabinet.beeline.ru/myoffice/"
+		entries="beeline.ru/login|cabinet.beeline.ru|cabinet.beeline.ru/myoffice/"
 		entryValues="lk|cab|office"
 		defaultValue="lk">
 	</ListPreference>	

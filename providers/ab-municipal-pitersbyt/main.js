@@ -48,7 +48,7 @@ var g_lks = {
 		user_class: 'com.sigma.personal.client.physical.ClientService',
 		user_data: "7|0|4|%url%%user_url%|%auth_uid%|%user_class%|getAbonsList|1|2|3|4|0|",
 		re_account: /electric.model.AbonentModel[^"]*","([^"]*)/,
-		re_address: /electric.model.AbonentModel[^"]*"(?:,"[^"]*"){1},"([^"]*)/,
+		re_address: /electric.model.AbonentModel[^"]*"(?:,"[^"]*"){2},"([^"]*)/,
 		counters: ['peni', 'balance']
     }
 };

@@ -14,7 +14,7 @@ var g_gwtCfg = {
 	url: 'https://account.kyivstar.ua/cas/auth/',
 	strong_name: '\\b%VARNAME_BROWSER%],(\\w+)\\)',
 	auth_nocache: 'auth.nocache.js',
-	magic_id: '3C2FAAE6333770F2B47B410E4C6F5B94'
+	magic_id: '703CC21949E0CA4038E6194B8CAEA98B'
 };
 
 function isLoggedIn(html) {
@@ -137,8 +137,7 @@ function loginBasic(html) {
 
 function loadAuthorizationPage(paramstr){
 	//Куки надо удалить, иначе посчитает, что авторизация уже есть
-	AnyBalance.setCookie('account.kyivstar.ua', 'JSESSIONID', null);
-	AnyBalance.setCookie('my.kyivstar.ua', 'JSESSIONID', null);
+	clearAllCookies();
 	var html = AnyBalance.requestGet('https://account.kyivstar.ua/cas/login?' + paramstr, g_headers);
 	return html;
 }
@@ -229,4 +228,12 @@ function loginMobile(baseurl) {
 
 	html = loginBasic(html);
 	return html;
+}
+
+function clearAllCookies(){
+	var cookies = AnyBalance.getCookies();
+	for(var i=0; i<cookies.length; ++i){
+		var cookie = cookies[i];
+		AnyBalance.setCookie(cookie.domain, cookie.name, null);
+	}
 }

@@ -54,34 +54,29 @@ function main() {
 	html = AnyBalance.requestPost(baseurl + 'CMD_LOGIN', params, addHeaders({Referer: baseurl}));
 	var result = {success: true};
 
-	getParam(html, result, 'balance', /<div[^>]+id="user_info"[^>]*>(?:[\s\S]*?<td[^>]*>){8}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'currentTariff', /<div[^>]+id="user_info"[^>]*>(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
-	getParam(html, result, 'tariffCost', /<div[^>]+id="user_info"[^>]*>(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'dBonus', /<div[^>]+id="user_info"[^>]*>(?:[\s\S]*?<td[^>]*>){6}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'bonus', /<div[^>]+id="user_info"[^>]*>(?:[\s\S]*?<td[^>]*>){10}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'daysLeft', /<div[^>]+id="user_info"[^>]*>(?:[\s\S]*?<td[^>]*>){12}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'accountID', /<div[^>]+="index_menu"[^>]*>(?:[\s\S]*?<strong[^>]*>){2}([\s\S]*?)<\/strong>/i, replaceTagsAndSpaces);
+	var userinfo = getElement(html, /<div[^>]+id="user_info"[^>]*>/i);
 
-	var totalDisckSpace = getParam(html, null, null, /<span[^>]+id="usage_param_quota"[^>]*>[\s\S]*?<\/span>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(totalDisckSpace+'mb', result, 'totalDiskSpace', null, null, parseTraffic);
+	getParam(userinfo, result, 'balance', /Баланс(?:[\s\S]*?<th[^>]*>){1}([\s\S]*?)<\/th>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(userinfo, result, '__tariff', /Тарифный план(?:[\s\S]*?<th[^>]*>){1}([\s\S]*?)<\/th>/i, replaceTagsAndSpaces);
+	getParam(userinfo, result, 'tariffCost', /По тарифу(?:[\s\S]*?<th[^>]*>){1}([\s\S]*?)<\/th>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(userinfo, result, 'dBonus', /Бонусов на домены(?:[\s\S]*?<th[^>]*>){1}([\s\S]*?)<\/th>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(userinfo, result, 'bonus', /В т.ч. бонус(?:[\s\S]*?<th[^>]*>){1}([\s\S]*?)<\/th>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(userinfo, result, 'daysLeft', /Осталось дней(?:[\s\S]*?<th[^>]*>){1}([\s\S]*?)<\/th>/i, replaceTagsAndSpaces, parseBalance);
 
-	if(isAvailable(['diskSpaceUsed', 'filesOnAcc', 'FTPs', 'dataBases', 'domains', 'vdomains']))
-	{
-		html = AnyBalance.requestPost(baseurl+'HTM_HOME?action=updateCounters');
-		json=getJson(html);
+	getParam(html, result, 'accountID', /лицевой счет №(?:[\s\S]*?<strong[^>]*>){1}([\s\S]*?)<\/strong>/i, replaceTagsAndSpaces);
 
-		getParam(json.quota+'mb', result, 'diskSpaceUsed', null, null, parseTraffic);
-		getParam(json.files_num, result, 'filesOnAcc');
-		getParam(json.ftp, result, 'FTPs', null, replaceTagsAndSpaces, parseBalance);
-		getParam(json.mysql, result, 'dataBases', null, replaceTagsAndSpaces, parseBalance);
-		getParam(json.domainptr, result, 'domains');
-		getParam(json.vdomains, result, 'vdomains');
-	}
+	getParam(html, result, 'diskSpaceUsed', /Диск, Мб[\s\S]*?<span[^>]+text-primary[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'totalDiskSpace', /Диск, Мб[\s\S]*?\/(\d+)/i, replaceTagsAndSpaces, parseBalance);
+
+	getParam(html, result, 'FTPs', /Входов FTP[\s\S]*?<h1[^>]*>([\s\S]*?)<\/h1>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'dataBases', /Баз данных[\s\S]*?<h1[^>]*>([\s\S]*?)<\/h1>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'domains', /Доменов[\s\S]*?<h1[^>]*>([\s\S]*?)<\/h1>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'vdomains', /Сайтов[\s\S]*?<h1[^>]*>([\s\S]*?)<\/h1>/i, replaceTagsAndSpaces, parseBalance);
 
 	if (isAvailable('fio'))
 	{
 		html = AnyBalance.requestGet(baseurl+'HTM_ACCOUNT_INFO', g_headers);
-		getParam(html, result, 'fio', /<div[^>]+class="thin"[^>]*>(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+		getParam(html, result, 'fio', /Фамилия, имя, отчество(?:[\s\S]*?<th[^>]*>){1}([\s\S]*?)<\/th>/i, replaceTagsAndSpaces);
 	}
 
 	AnyBalance.setResult(result);

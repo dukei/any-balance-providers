@@ -12,7 +12,7 @@ function login(){
 	
     var html = AnyBalance.requestGet(g_baseurl + "/pub/Login");
     
-    var matches = /Wicket.Ajax.ajax\(\{"f":"id([^"]+)","\w":".\/([^"]+)/i.exec(html);
+    var matches = /"u":".\/([^"]+)[^}]*"f":"(id\w+)/i.exec(html);
     if(!matches){
         var prof = getParam(html, null, null, /<title>(Профилактические работы)<\/title>/i);
         if(prof)
@@ -20,12 +20,13 @@ function login(){
         throw new AnyBalance.Error("Не удаётся найти форму входа в интернет-банк! Сайт недоступен или изменения на сайте.");
     }
 	
-    var id = matches[1], href = matches[2];
+    var id = matches[2], href = matches[1];
     var params = {};
     params[id + "_hf_0"] = '';
     params.hasData = 'X';
     params.login = prefs.login;
     params.password = prefs.password;
+    params['p::submit'] = '1';
 	
     html = AnyBalance.requestPost(g_baseurl + '/pub/' + href, params);
 	

@@ -142,51 +142,87 @@ function proceedCab(prefs) {
 	AnyBalance.setResult(result);
 }
 
+function getStatus(status){
+	switch(status){
+		case 0: 
+			return 'Активен';
+		default:
+			return status;
+	}
+}
+
 function proceedLk(prefs) {
 	AnyBalance.setDefaultCharset('utf-8');
-	var baseurl = "https://lk.beeline.ru/";
-	
-	if (!prefs.__dbg) {
-		var html = AnyBalance.requestGet(baseurl); //Чтобы кука установилась
-		html = AnyBalance.requestPost(baseurl, {
-			login: prefs.login,
-			password: prefs.password
-		});
-	} else {
-		//Из-за ошибки в Хроме логин не может быть выполнен, потому что там используется переадресация с безопасного на обычное соединение.
-		//Чтобы отлаживать в отладчике, зайдите в свой аккаунт вручную, и раскоментарьте эти строчки. Не забудьте закоментарить обратно потом!
-		var html = AnyBalance.requestGet(baseurl + 'news/');
-	}
-	
-	if (!/\/logout\//.test(html)) {
-		var error = getParam(html, null, null, /<ul class="errorlist">([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
-		if (error) throw new AnyBalance.Error(error, null, /Логин или пароль неправильные/i.test(error));
+	var baseurl = "https://www.beeline.ru/login/";
+
+	var html = AnyBalance.requestGet(baseurl, g_headers); //Чтобы кука установилась
+
+	var form = AB.getElement(html, /<form[^>]+MobileLoginForm[^>]*>/i);
+	if(!form){
 		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
+		throw new AnyBalance.Error('Не удаётся найти форму входа! Сайт изменен?');
 	}
+
+	var action = getParam(form, null, null, /\baction="([^"]*)/i, replaceHtmlEntities);
+
+	var params = AB.createFormParams(form, function(params, str, name, value) {
+		if (name == 'login') {
+			return prefs.login;
+		} else if (name == 'password') {
+			return prefs.password;
+		}
+
+		return value;
+	});
+
+	do{
+		html = AnyBalance.requestPost(action, params, addHeaders({Referer: AnyBalance.getLastUrl()}));
+		var form = getElement(html, /<form[^>]*logincallback[^>]*>/i);
+	    
+		if (!form) {
+			var json = getParam(html, null, null, /<script[^>]*modelJson[^>]*>([\s\S]*?)<\/script>/i, replaceHtmlEntities, getJson);
+			if (json && json.errorMessage)
+				throw new AnyBalance.Error(json.errorMessage, null, /парол/i.test(json.errorMessage));
+	    
+			AnyBalance.trace(html);
+			throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
+		}
+	    
+		params = AB.createFormParams(form);
+		action = getParam(form, null, null, /\baction="([^"]*)/i, replaceHtmlEntities);
+		AnyBalance.trace('Posting form to ' + action);
+		html = AnyBalance.requestPost(action, params, addHeaders({Referer: AnyBalance.getLastUrl()}));
+	}while(/<form[^>]*logincallback/i.test(html));
+
+	var token = getParam(html, null, null, /QA.Identity.setToken\('([^']*)/);
+	if(!token){
+		AnyBalance.trace(AnyBalance.getLastUrl() + ':\n' + html);
+		throw new AnyBalance.Error('Не удалось получить токен авторизации. Сайт изменен?');
+	}
+
+	html = AnyBalance.requestGet('https://widgets.beeline.ru/api/Profile/Index', addHeaders({
+		 OamAuthToken: token,
+		 Referer: AnyBalance.getLastUrl()
+	}));
+	var json = getJson(html);
 	
 	var result = {success: true};
-	
-	getParam(html, result, 'balance', /Баланс:[\s\S]*?<span[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+
+	var topay = json.BalanceWidget.SubscriptionFee - json.BalanceWidget.Balance;
+	getParam(json.BalanceWidget.Balance, result, 'balance');
+	getParam(json.BalanceWidget.DueDate, result, 'till', null, null, parseDateISO);
+	getParam(topay > 0 ? topay : 0, result, 'topay');
 	getParam(html, result, 'bonus', /Бонусы:[\s\S]*?<span[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
-	
-	if (AnyBalance.isAvailable('status', 'status_internet', 'status_tv', 'userName', 'till', 'topay', 'abon', 'bill')) {
-		html = AnyBalance.requestGet(baseurl + 'personal/');
-		
-		getParam(html, result, 'status', /usluga_name">Текущий статус[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
-		getParam(html, result, 'status_internet', /usluga_name">Интернет[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
-		getParam(html, result, 'status_tv', /usluga_name">Телевидение[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
-		getParam(html, result, 'userName', /usluga_name">Владелец договора[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
-		getParam(html, result, 'till', /Дата окончания расчетного периода[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
-		getParam(html, result, 'topay', /Сумма к оплате[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-		getParam(html, result, 'abon', /Сумма ежемесячного платежа[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-		getParam(html, result, 'bill', />Лицевой счет(?:[^>]*>){3}([\s\S]*?)<\//i, replaceTagsAndSpaces);
-	}
-	
-	html = AnyBalance.requestGet(baseurl + 'internet/');
-	
-	getParam(html, result, '__tariff', /Тарифный план[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
-	getParam(html, result, 'traffic', /Предоплаченный трафик[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseTrafficGb);
+	getParam(json.BalanceWidget.SubscriptionFee, result, 'abon');
+	getParam(json.ContractStatusWidget.Ctn, result, 'bill');
+	getParam(getStatus(json.ContractStatusWidget.Status), result, 'status');
+	getParam(json.ContactDataWidget.AddressBlock, result, 'userName');
+
+	sumParam(jspath1(json, '$.BundlePanel.BundleServiceWidget.Name'), result, '__tariff', null, null, null, aggregate_join);
+	sumParam(jspath1(json, '$.FttbPanel.FttbPricePlanWidget.Name'), result, '__tariff', null, null, null, aggregate_join);
+
+	var tvs = jspath(json, '$.TvPanel.IpTvPricePlanWidgets[*].Name');
+	sumParam(tvs && tvs.join(', '), result, '__tariff', null, null, null, aggregate_join);
 	
 	AnyBalance.setResult(result);
 }

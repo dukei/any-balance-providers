@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="14" date="2016-06-09">
+	- Поддержка совершенно нового личного кабинета
+	</change>
 	<change version="13" date="2016-05-24">
 	- Автоматический вход в /myoffice, если подошел пароль к cabinet.beeline.ru
 	- Улучшена обработка ошибок

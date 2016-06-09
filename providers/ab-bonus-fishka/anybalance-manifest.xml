@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="3">ab-bonus-fishka</id>
+	<id version="4">ab-bonus-fishka</id>
 	<api flags="no_browser"/>
 	<name>FiSHKA</name>
 	<description html="true"><![CDATA[
@@ -9,11 +9,13 @@
 	<p>Программа FISHKA позволяет накапливать баллы за каждую покупку,  зарабатывать дополнительные очки во время акций, обмениваться бонусными баллами,  пользоваться выгодными предложениями и привилегиями.</p>
 	<p>Информация берется с персональной страницы (http://cwa.myfishka.com/).</p>
 	]]></description>
-	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>

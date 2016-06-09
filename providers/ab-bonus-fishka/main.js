@@ -15,10 +15,10 @@ function main(){
     var baseurl = "https://cwa.myfishka.com/";
     AnyBalance.setDefaultCharset('utf-8'); 
 
-    var html = AnyBalance.requestGet(baseurl + 'login.do', g_headers);
+    var html = AnyBalance.requestGet(baseurl + 'cwa/login.do', g_headers);
 
     //Находим секретный параметр
-    var tform = getParam(html, null, null, /<form[^>]+name="LoginForm"[^>]*>[\s\S]*?<\/form>/i, null, html_entity_decode);
+    var tform = getParam(html, null, null, /<form[^>]+name="LoginForm"[^>]*>[\s\S]*?<\/form>/i);
     if(!tform) //Если параметр не найден, то это, скорее всего, свидетельствует об изменении сайта или о проблемах с ним
         throw new AnyBalance.Error('Не удалось найти форму входа. Сайт изменен?');
 
@@ -26,13 +26,13 @@ function main(){
     params.crdNo = prefs.login;
     params.PIN = prefs.password;
 
-    var action = getParam(tform, null, null, /<form[^>]+action="([^"]*)/i, null, html_entity_decode);
+    var action = getParam(tform, null, null, /<form[^>]+action="([^"]*)/i, replaceHtmlEntities);
 
-    html = AnyBalance.requestPost(baseurl + action, params, addHeaders({Referer: baseurl + 'login.do'})); 
+    html = AnyBalance.requestPost(joinUrl(baseurl, action), params, addHeaders({Referer: baseurl + 'cwa/login.do'})); 
 
     if(!/logOut.do/i.test(html)){
         //Если в кабинет войти не получилось, то в первую очередь надо поискать в ответе сервера объяснение ошибки
-        var error = getParam(html, null, null, /<ul[^>]+wrong[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
+        var error = getParam(html, null, null, /<ul[^>]+wrong[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces);
         if(error)
             throw new AnyBalance.Error(error);
         //Если объяснения ошибки не найдено, при том, что на сайт войти не удалось, то, вероятно, произошли изменения на сайте
@@ -43,10 +43,10 @@ function main(){
     getParam(html, result, 'balance', /на Вашому рахунку\s*<span[^>]+class="points"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
 
     if(AnyBalance.isAvailable('fio','licschet','std','extra','used','corr','out')){
-        html = AnyBalance.requestGet(baseurl + 'yourAccount.do?menuId=yourAccount', g_headers);
+        html = AnyBalance.requestGet(baseurl + 'cwa/yourAccount.do?menuId=yourAccount', g_headers);
 		
-        getParam(html, result, 'fio', /Основний учасник[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-        getParam(html, result, 'licschet', /Номер рахунку[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+        getParam(html, result, 'fio', /Основний учасник[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+        getParam(html, result, 'licschet', /Номер рахунку[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
         getParam(html, result, 'std', /Набрано стандартних балів[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
         getParam(html, result, 'extra', /Набрано додаткових балів[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
         getParam(html, result, 'used', /Всього використаних балів[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);

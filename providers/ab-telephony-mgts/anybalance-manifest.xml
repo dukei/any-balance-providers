@@ -1,11 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="21">ab-telephony-mgts</id>
+	<id version="22">ab-telephony-mgts</id>
 	<name>МГТС</name>
 	<api flags="no_browser"/>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о текущем балансе в МГТС.</p>
-	<p>Информация берется из Интернет-помощника (http://ihelper.mgts.ru/CustomerSelfCare2).</p>
+	<p>Информация берется из личного кабинета (http://lk.mgts.ru/).</p>
 	]]></description>
 	<instruction html="true"><![CDATA[
 	<p>Для входа в Интернет-помощник вам понадобится PIN-код.</p>
@@ -27,9 +27,10 @@
 	</files>
 	<counters>
 		<counter id="balance" name="Баланс" units=" р"/>
-		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="bonus" name="Бонус" units=" Б"/>
 		<counter id="licschet" name="Лицевой счет" type="text"/>
 		<counter id="phone" name="Номер телефона" type="text"/>
+		<counter id="fio" name="ФИО" type="text"/>
 	</counters>
 	<keywords>mgts, московская городская телефонная сеть, проводной телефон</keywords>
 	<type>telephony</type>

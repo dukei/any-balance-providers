@@ -83,7 +83,7 @@ function main() {
 			throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 		}
 		
-		getParam(html, result, 'fio', /<div[^>]+account-info_header[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+		getParam(getElement(html, /<div[^>]+account-info_header[^>]*>/i), result, 'fio', null, replaceTagsAndSpaces);
 		getParam(html, result, 'balance', /<div[^>]+account-info_balance_value[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
 		getParam(html, result, 'phone', /Номер телефона:[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
 		getParam(html, result, 'licschet', /Лицевой счет:[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
@@ -103,6 +103,11 @@ function main() {
 				return arr;
 			}, []);
 			getParam(tariffs.join(', '), result, '__tariff');
+		}
+
+		if(AnyBalance.isAvailable('bonus')){
+			html = AnyBalance.requestGet('https://bonus.mgts.ru/', g_headers);
+			getParam(html, result, 'bonus', /<span[^>]+bonus-number[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
 		}
 	}
 	

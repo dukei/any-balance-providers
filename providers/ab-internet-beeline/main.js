@@ -209,9 +209,17 @@ function proceedLk(prefs) {
 	
 	var result = {success: true};
 
+	var offset = -new Date().getTimezoneOffset()/60;
+	offset = (offset > 0 ? '+' : '-') + n2(Math.abs(offset)) + ':00';
+
+	if(!json.BalanceWidget){
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Пожалуйста, введите в качестве логина номер лицевого счета домашнего интернета Билайн, а не номер телефона!', null, true);
+	}
+
 	var topay = json.BalanceWidget.SubscriptionFee - json.BalanceWidget.Balance;
 	getParam(json.BalanceWidget.Balance, result, 'balance');
-	getParam(json.BalanceWidget.DueDate, result, 'till', null, null, parseDateISO);
+	getParam(json.BalanceWidget.DueDate + offset, result, 'till', null, null, parseDateISO); //Без временной зоны, заразы, показывают
 	getParam(topay > 0 ? topay : 0, result, 'topay');
 	getParam(html, result, 'bonus', /Бонусы:[\s\S]*?<span[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
 	getParam(json.BalanceWidget.SubscriptionFee, result, 'abon');

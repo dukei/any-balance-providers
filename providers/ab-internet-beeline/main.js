@@ -217,8 +217,14 @@ function proceedLk(prefs) {
 		throw new AnyBalance.Error('Пожалуйста, введите в качестве логина номер лицевого счета домашнего интернета Билайн, а не номер телефона!', null, true);
 	}
 
-	var topay = json.BalanceWidget.SubscriptionFee - json.BalanceWidget.Balance;
-	getParam(json.BalanceWidget.Balance, result, 'balance');
+	function round(val){
+		if(val)
+			return Math.round(val*100)/100;
+		return val;
+	}
+
+	var topay = round(json.BalanceWidget.SubscriptionFee - json.BalanceWidget.Balance);
+	getParam(round(json.BalanceWidget.Balance), result, 'balance');
 	getParam(json.BalanceWidget.DueDate + offset, result, 'till', null, null, parseDateISO); //Без временной зоны, заразы, показывают
 	getParam(topay > 0 ? topay : 0, result, 'topay');
 	getParam(html, result, 'bonus', /Бонусы:[\s\S]*?<span[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);

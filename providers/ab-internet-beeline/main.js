@@ -229,9 +229,9 @@ function proceedLk(prefs) {
 	getParam(topay > 0 ? topay : 0, result, 'topay');
 	getParam(html, result, 'bonus', /Бонусы:[\s\S]*?<span[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
 	getParam(json.BalanceWidget.SubscriptionFee, result, 'abon');
-	getParam(json.ContractStatusWidget.Ctn, result, 'bill');
+	getParam(json.ContractStatusWidget.Ctn, result, 'bill', /(\d{10})/g, [/(\d{3})(\d{3})(\d{4})/, '$1-$2-$3']);
 	getParam(getStatus(json.ContractStatusWidget.Status), result, 'status');
-	getParam(json.ContactDataWidget.AddressBlock, result, 'userName');
+	getParam(json.ContactDataWidget.AddressBlock, result, 'address'); //Теперь этот счётчик отображает адрес подключения, а не ФИО
 
 	sumParam(jspath1(json, '$.BundlePanel.BundleServiceWidget.Name'), result, '__tariff', null, null, null, aggregate_join);
 	sumParam(jspath1(json, '$.FttbPanel.FttbPricePlanWidget.Name'), result, '__tariff', null, null, null, aggregate_join);

@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="21" date="2016-06-11">
+	Задолженность теперь показывается с минусом
+	</change>
 	<change version="20" date="2016-06-09">
 	Баланс переназван как Задолженность
 	</change>

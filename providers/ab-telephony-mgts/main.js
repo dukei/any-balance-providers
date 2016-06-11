@@ -50,7 +50,7 @@ function main() {
 		if(/Баланс_не_может_быть_получен/i.test(value))
 			throw new AnyBalance.Error('Баланс временно недоступен. Попробуйте позднее или воспользуйтесь получением баланса по логину и паролю.');
 
-		getParam(value, result, 'balance', /МГТС-\d+-(.*)$/i, null, parseBalance);
+		getParam(value, result, 'balance', /МГТС-\d+-(.*)$/i, [/=/, '-'], parseBalance);
 
 	} else {
 		AnyBalance.trace('Входим по логину и паролю...');
@@ -87,6 +87,12 @@ function main() {
 		getParam(html, result, 'balance', /<div[^>]+account-info_balance_value[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
 		getParam(html, result, 'phone', /Номер телефона:[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
 		getParam(html, result, 'licschet', /Лицевой счет:[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+
+		var json = getJsonObject(html, /mgts.data.widgets\s*=\s*/);
+		for(var i=0; json && i<json.length; ++i){
+			if(json[i].value)
+				sumParam(json[i].value, result, '__tariff', null, null, null, aggregate_join);
+		}
 
 		var services = getParam(html, null, null, /mgts.data.widget\s*=\s*(\[[\s\S]*?\]);/, null, getJson);
 		if(services){

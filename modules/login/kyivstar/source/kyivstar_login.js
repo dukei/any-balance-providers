@@ -178,6 +178,11 @@ function loginSite(baseurl) {
 			html = doLogout();
 		}
 	}
+	    
+	if(/<a[^>]+new.kyivstar.ua[^>]+ks-button|FMK2.do/i.test(html)){
+		AnyBalance.trace('Новый лк или его реклама, переходим на старый');
+		html = AnyBalance.requestGet('https://account.kyivstar.ua/cas/login?service=http%3A%2F%2Fmy.kyivstar.ua%3A80%2Ftbmb%2FMK2.do', g_headers);
+	}
 
 	if (!isLoggedIn(html)) {
 		if(!isThereLoginForm(html)){ 

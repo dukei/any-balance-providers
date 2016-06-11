@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id major_version="2.0" version="86">ab-cell-kyivstar</id>
+	<id major_version="2.0" version="87">ab-cell-kyivstar</id>
 	<name>Киевстар</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе, бонусных минутах, SMS, MMS, остатке интернет-трафика и других бонусах для пользователей мобильного оператора "Киевстар".</p>
@@ -42,8 +42,9 @@
 		<counter id="status" name="Статус тарифа" type="text"/>
 		<counter id="personal_account" name="Лицевой счёт" type="text"/>
 		<counter id="name" name="Имя" type="text"/>
-		<counter id="bonus_mins_1" name="Бонусные минуты (1)" type="time_interval" format="{@MIN}:{@s}"/>
-		<counter id="bonus_mins_2" name="Бонусные минуты (2)" type="time_interval" format="{@MIN}:{@s}"/>
+		<counter id="bonus_mins_1" name="Минуты на Киевстар" type="time_interval" format="{@MIN}:{@s}"/>
+		<counter id="bonus_mins_2" name="Минуты по Украине" type="time_interval" format="{@MIN}:{@s}"/>
+		<counter id="bonus_mins_other_mobile" name="Минуты на другие мобильные" type="time_interval" format="{@MIN}:{@s}"/>
 		<counter id="mins_tariff" name="Тарифные минуты" units=" мин" type="time_interval" format="{@MIN}"/>
 		<counter id="mms" name="MMS" />
 		<counter id="sms" name="SMS" />
@@ -52,8 +53,8 @@
 		<counter id="bonus_money_till" name="Срок действия бонусных средств" type="time" format="dd/MM/yyyy"/>
 		<counter id="bonus_left" name="Остаток бонусов" suffix=" ₴" />
 		<counter id="internet" name="Интернет" units=" Mb"/>
-    <counter id="bonus_internet" name="Бонусный интернет" units=" Mb"/>
-    <counter id="bonus_internet_till" name="Срок действия бонусного интернета" type="time" format="dd/MM/yyyy"/>
+    	<counter id="bonus_internet" name="Бонусный интернет" units=" Mb"/>
+    	<counter id="bonus_internet_till" name="Срок действия бонусного интернета" type="time" format="dd/MM/yyyy"/>
 		<counter id="home_internet" name="Домашний Интернет" suffix=" ₴" />
 		<counter id="home_internet_date" name="Домашний Интернет, срок действия" type="time" format="dd/MM/yyyy"/>
 		<counter id="limit" name="Порог отключения" suffix=" ₴" />
@@ -63,9 +64,10 @@
 		<counter id="sms_packet_left" name="Остаток SMS" />
 		<counter id="bonus_mins_1_till" name="Срок действия бонусных минут (1)" type="time" format="dd/MM/yyyy"/>
 		<counter id="bonus_mins_2_till" name="Срок действия бонусных минут (2)" type="time" format="dd/MM/yyyy"/>
+		<counter id="bonus_mins_other_mobile" name="Срок действия минут на другие мобильные" type="time" format="dd/MM/yyyy"/>
 		<counter id="other_costs" name="Начисление абонентской платы по услуге «-33%»" units=" {@currency}"/>
-		<counter id="mainBonusInfoText" name="Бонусные балансы" type="text"/>
 		<counter id="connection_date" name="Дата подключения" type="time" format="dd/MM/yyyy"/>
+		<counter id="mainBonusInfoText" name="Бонусные балансы" type="text"/>
 	</counters>
 	<keywords>Сотовый телефон, мобильный, мобильник, kyivstar, киевстар, Украина</keywords>
 	<type>cell</type>

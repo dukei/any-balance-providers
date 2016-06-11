@@ -14,7 +14,7 @@ function main() {
 	});
 
 	try {
-//	throw new AnyBalance.Error('тест мобайл');
+	//throw new AnyBalance.Error('тест мобайл');
 		processSite();
 	} catch (e) {
 		if (e.fatal)
@@ -112,7 +112,7 @@ function processSite() {
 	}
 
 	//все основные бонусы в виде текста
-	getFullBonusText(html, result);
+//	getFullBonusText(html, result);
 
 	if (!current_balance) {
 		current_balance = getParam(html, null, null,
@@ -160,19 +160,14 @@ function processSite() {
 	sumParam(html, result, 'bonus_mins_1',
 		/(?:Залишок:|Остаток минут на сеть Киевстар:)[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces,
 		parseMinutes, aggregate_sum); //обратить внимание на "Залишок:", может измениться
-	sumParam(html, result, 'bonus_mins_1',
-		/(?:хвилин на міські номери"?:|минут на городские номера"?:)[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/ig,
-		replaceTagsAndSpaces, parseMinutes, aggregate_sum);
 	//Срок действия бонусных минут (1)
 	sumParam(html, result, 'bonus_mins_1_till',
 		/(?:Залишок хвилин для дзвінків на Ки.встар:|Остаток минут для звонков на Ки.встар:)[\s\S]*?<td[^>]*>[\s\S]*?<\/td>([\s\S]*?)<\/td>/i,
 		replaceTagsAndSpaces, parseDate, aggregate_min);
-	sumParam(html, result, 'bonus_mins_1_till',
-		/(?:хвилин на міські номери"?:|минут на городские номера"?:)[\s\S]*?<td[^>]*>[\s\S]*?<\/td>([\s\S]*?)<\/td>/i,
-		replaceTagsAndSpaces, parseDate, aggregate_min);
+
 	//Бонусные минуты (2) на любые номера
 	sumParam(html, result, 'bonus_mins_2',
-		/(?:Залишок хвилин для дзвінків абонентам Ки.встар та DJUICE:|Остаток минут для звонков абонентам Ки.встар и DJUICE:)[\s\S]*?<b>([^<]*)/ig,
+		/(?:хвилин на міські номери"?:|минут на городские номера"?:)[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/ig,
 		replaceTagsAndSpaces, parseMinutes, aggregate_sum);
 	sumParam(html, result, 'bonus_mins_2',
 		/(?:Залишок Хвилини на КС 500 хв:|Остаток Минуты на КС 500 мин:)[\s\S]*?<b>([^<]*)/ig, replaceTagsAndSpaces,
@@ -186,35 +181,46 @@ function processSite() {
 	sumParam(html, result, 'bonus_mins_2',
 		/(?:Залишок хвилин для дзвінків по Україні:|Остаток минут для звонков по Украине:)[\s\S]*?<b>([^<]*)/ig,
 		replaceTagsAndSpaces, parseMinutes, aggregate_sum);
-	sumParam(html, result, 'bonus_mins_2',
-		/(?:Залишок хвилин для дзвінків на інших операторів та номери фіксованого зв"язку|Остаток минут для звонков на других операторов)(?:[^>]*>){3}(.*)/ig,
-		replaceTagsAndSpaces, parseMinutes, aggregate_sum);
-	sumParam(html, result, 'bonus_mins_2', /(?:Залишок хвилин|Остаток минут):(?:[^>]*>){3}(.*)/ig, replaceTagsAndSpaces,
-		parseMinutes, aggregate_sum);
-	sumParam(html, result, 'bonus_mins_2',
-		/(?:Залишок хвилин на інші мобільні мережі в межах України|Остаток минут на другие мобильные сети в пределах Украины):(?:[^>]*>){3}(.*)/ig,
-		replaceTagsAndSpaces, parseMinutes, aggregate_sum);
-	sumParam(html, result, 'bonus_mins_2',
-		/(?:Залишок хвилин на інші мережі по Україні:|Остаток минут на другие сети по Украине:)[\s\S]*?<b>([^<]*)/ig,
-		replaceTagsAndSpaces, parseMinutes, aggregate_sum);
-	sumParam(html, result, 'bonus_mins_2',
-		/(?:Залишок хвилин для дзвінків на інші мережі|Остаток минут для звонков на другие сети)[\s\S]*?<b>([^<]*)/ig,
-		replaceTagsAndSpaces, parseMinutes, aggregate_sum);
-	sumParam(html, result, 'bonus_mins_2', /(?:Хвилини на інші мобільні|Минуты на другие мобильные):(?:[^>]*>){3}(.*)/ig,
-		replaceTagsAndSpaces, parseMinutes, aggregate_sum);
+
 	//Срок действия бонусных минут (2)
 	sumParam(html, result, 'bonus_mins_2_till',
+		/(?:хвилин на міські номери"?:|минут на городские номера"?:)[\s\S]*?<td[^>]*>[\s\S]*?<\/td>([\s\S]*?)<\/td>/i,
+		replaceTagsAndSpaces, parseDate, aggregate_min);
+
+	//Минуты на другие сети
+	sumParam(html, result, 'bonus_mins_other_mobile',
+		/(?:Залишок хвилин для дзвінків на інших операторів|Остаток минут для звонков на других операторов)(?:[^>]*>){3}(.*)/ig,
+		replaceTagsAndSpaces, parseMinutes, aggregate_sum);
+	sumParam(html, result, 'bonus_mins_other_mobile',
+		/(?:Залишок хвилин для дзвінків абонентам Ки.встар та DJUICE:|Остаток минут для звонков абонентам Ки.встар и DJUICE:)[\s\S]*?<b>([^<]*)/ig,
+		replaceTagsAndSpaces, parseMinutes, aggregate_sum);
+	sumParam(html, result, 'bonus_mins_other_mobile', /(?:Залишок хвилин|Остаток минут):(?:[^>]*>){3}(.*)/ig, replaceTagsAndSpaces,
+		parseMinutes, aggregate_sum);
+	sumParam(html, result, 'bonus_mins_other_mobile',
+		/(?:Залишок хвилин на інші мобільні мережі в межах України|Остаток минут на другие мобильные сети в пределах Украины):(?:[^>]*>){3}(.*)/ig,
+		replaceTagsAndSpaces, parseMinutes, aggregate_sum);
+	sumParam(html, result, 'bonus_mins_other_mobile',
+		/(?:Залишок хвилин на інші мережі по Україні:|Остаток минут на другие сети по Украине:)[\s\S]*?<b>([^<]*)/ig,
+		replaceTagsAndSpaces, parseMinutes, aggregate_sum);
+	sumParam(html, result, 'bonus_mins_other_mobile',
+		/(?:Залишок хвилин для дзвінків на інші мережі|Остаток минут для звонков на другие сети)[\s\S]*?<b>([^<]*)/ig,
+		replaceTagsAndSpaces, parseMinutes, aggregate_sum);
+	sumParam(html, result, 'bonus_mins_other_mobile', /(?:Хвилини на інші мобільні|Минуты на другие мобильные):(?:[^>]*>){3}(.*)/ig,
+		replaceTagsAndSpaces, parseMinutes, aggregate_sum);
+	//Срок действия минут на другие сети
+	sumParam(html, result, 'bonus_mins_other_mobile_till',
 		/(?:Залишок хвилин на інші мобільні мережі в межах України:|Остаток минут на другие мобильные сети в пределах Украины:)[\s\S]*?<td[^>]*>[\s\S]*?<\/td>([\s\S]*?)<\/td>/i,
 		replaceTagsAndSpaces, parseDate, aggregate_min);
-	sumParam(html, result, 'bonus_mins_2_till',
+	sumParam(html, result, 'bonus_mins_other_mobile_till',
 		/(?:Залишок хвилин на інші мережі по Україні:|Остаток минут на другие сети по Украине:)[\s\S]*?<td[^>]*>[\s\S]*?<\/td>([\s\S]*?)<\/td>/i,
 		replaceTagsAndSpaces, parseDate, aggregate_min);
-	sumParam(html, result, 'bonus_mins_2_till',
+	sumParam(html, result, 'bonus_mins_other_mobile_till',
 		/(?:Залишок хвилин для дзвінків на інші мережі|Остаток минут для звонков на другие сети)[\s\S]*?<td[^>]*>[\s\S]*?<\/td>([\s\S]*?)<\/td>/i,
 		replaceTagsAndSpaces, parseDate, aggregate_min);
-	sumParam(html, result, 'bonus_mins_2_till',
+	sumParam(html, result, 'bonus_mins_other_mobile_till',
 		/(?:Хвилини на інші мобільні|Минуты на другие мобильные)[\s\S]*?<td[^>]*>[\s\S]*?<\/td>([\s\S]*?)<\/td>/i,
 		replaceTagsAndSpaces, parseDate, aggregate_min);
+
 	//Тарифные минуты:
 	sumParam(html, result, 'mins_tariff', /(?:Тарифні хвилини:|Тарифные минуты:)[\s\S]*?<b>([^<]*)/ig,
 		replaceTagsAndSpaces, parseMinutes, aggregate_sum);
@@ -494,14 +500,25 @@ function processBonuses(bonuses, result) {
 	}
 }
 
+function getDateValue(bonus){
+	if(/\d\d\D\d\d\D\d{4}/.test(bonus[2]))
+		return bonus[2];
+}
+
+function getUnitsValue(bonus){
+	if(/\d\d\D\d\d\D\d{4}/.test(bonus[2]))
+		return bonus[3];
+	return bonus[2];
+}
+
 function processBonus(bonus, name, result) {
 	if (isArray(bonus)) {
 		if (/От Домашнего Интернета/i.test(bonus[0])) {
 			getParam(bonus[1], result, 'home_internet', null, null, parseBalance);
-			getParam(bonus[2], result, 'home_internet_till', null, g_replace_date, parseDate);
-		} else if (/Экстра деньги|Бонусные средства|Остаток бонусов/i.test(bonus[0])) {
+			getParam(getDateValue(bonus), result, 'home_internet_till', null, g_replace_date, parseDate);
+		} else if (/Экстра деньги|Бонусные средства/i.test(bonus[0])) {
 			sumParam(bonus[1], result, 'bonus_money', null, null, parseBalance, aggregate_sum);
-			sumParam(bonus[2], result, 'bonus_money_till', null, g_replace_date, parseDate, aggregate_min);
+			sumParam(getDateValue(bonus), result, 'bonus_money_till', null, g_replace_date, parseDate, aggregate_min);
 		} else if (/Остаток бонусов/i.test(bonus[0])) {
 			getParam(bonus[1], result, 'bonus_left', null, null, parseBalance);
 		} else if (/SMS|смс|Остаток сообщений/i.test(bonus[0])) {
@@ -513,14 +530,17 @@ function processBonus(bonus, name, result) {
 			sumParam(bonus[1], result, 'sms', null, null, parseBalance, aggregate_sum);
 		} else if (/TIME/i.test(name) && /на Киевстар|В сети Киевстар/i.test(bonus[0])) {
 			sumParam(bonus[1], result, 'bonus_mins_1', null, null, parseMinutes, aggregate_sum);
-			sumParam(bonus[2], result, 'bonus_mins_1_till', null, g_replace_date, parseDate, aggregate_min);
+			sumParam(getDateValue(bonus), result, 'bonus_mins_1_till', null, g_replace_date, parseDate, aggregate_min);
+		} else if (/TIME/i.test(name) && /на другие мобильные/i.test(bonus[0])) {
+			sumParam(bonus[1], result, 'bonus_mins_other_mobile', null, null, parseMinutes, aggregate_sum);
+			sumParam(getDateValue(bonus), result, 'bonus_mins_other_mobile_till', null, g_replace_date, parseDate, aggregate_min);
 		} else if (/TIME/i.test(name)) {
 			if (!/В пределах Укр|по Украине|на другие сети/i.test(bonus[0]))
 				AnyBalance.trace('Неизвестные минуты ' + name + ', относим к минутам на все сети: ' + JSON.stringify(bonus));
 			sumParam(bonus[1], result, 'bonus_mins_2', null, null, parseMinutes, aggregate_sum);
-			sumParam(bonus[2], result, 'bonus_mins_2_till', null, g_replace_date, parseDate, aggregate_min);
+			sumParam(getDateValue(bonus), result, 'bonus_mins_2_till', null, g_replace_date, parseDate, aggregate_min);
 		} else if (/INET/i.test(name)) {
-			sumParam(bonus[1] + bonus[3], result, 'internet', null, null, parseTraffic, aggregate_sum);
+			sumParam(bonus[1] + getUnitsValue(bonus), result, 'internet', null, null, parseTraffic, aggregate_sum);
 		} else {
 			AnyBalance.trace('Неизвестный бонус ' + name + ': ' + JSON.stringify(bonus));
 		}
@@ -530,7 +550,7 @@ function processBonus(bonus, name, result) {
 }
 
 
-
+/*
 function getFullBonusText(html, result) {
 	if (AnyBalance.isAvailable('mainBonusInfoText')) {
 		try {
@@ -555,6 +575,7 @@ function getFullBonusText(html, result) {
 		}
 	}
 }
+*/
 
 function getYetAnotherInfo(html, baseurl, result) {
 	if (AnyBalance.isAvailable('other_costs')) {

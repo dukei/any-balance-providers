@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="2.0" version="88" date="2016-06-11">
+	Исправлена проблема с установкой
+	</change>
 	<change major_version="2.0" version="87" date="2016-06-11">
 	Разделены минуты по украине (городские), на других мобильных и на киевстар
 	Убран сводный счетчик по бонусам

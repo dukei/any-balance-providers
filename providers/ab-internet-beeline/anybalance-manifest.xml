@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id version="18">ab-internet-beeline</id>
+	<id version="19">ab-internet-beeline</id>
 	<name>Билайн интернет</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе, бонусах и тарифном плане для пользователей Билайн интернет.</p>       
@@ -27,7 +27,7 @@
 		<counter id="topay" name="Сумма к оплате" units=" р"/>
 		<counter id="abon" name="Ежемесячный платеж" units=" р"/>
 		<counter id="till" name="Конец расчетного периода" type="time"/>
-		<counter id="userName" name="ФИО" type="text"/>
+		<counter id="address" name="Адрес подключения" type="text"/>
 		<counter id="bill" name="Счет" type="text"/>
 		<counter id="status" name="Статус" type="text"/>
 		<counter id="status_internet" name="Интернет (статус)" type="text"/>

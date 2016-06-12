@@ -4,7 +4,7 @@
 	<api flags="no_browser"/>
 	<name>Emex.ru</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе провайдера Emex.ru</p>
+	<p>Предоставляет информацию о балансе Emex.ru - торговой интернет-площадки автозапчастей</p>
 	<p>Информация берется из личного кабинета <a href="http://www.emex.ru/balancePotr">http://www.emex.ru/balancePotr</a></p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>

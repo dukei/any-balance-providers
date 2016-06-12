@@ -48,7 +48,7 @@ function main() {
         }
 
         html = AnyBalance.requestGet(baseurl + 'profile', g_headers);
-        var json = AB.getParam(html, null, null, /InitialProfileData\s*=\s*([^;]+?(?=}};)}});/, AB.replaceTagsAndSpaces, AB.getJson);
+        var json = AB.getJsonObject(html, /var\s+InitialProfileData\s*=/);
         
         if (!json || !json.User) {
             AnyBalance.trace(html);

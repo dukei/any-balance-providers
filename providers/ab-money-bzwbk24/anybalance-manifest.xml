@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-money-bzwbk24</id>
+	<id version="2">ab-money-bzwbk24</id>
 	<api flags="no_browser"/>
 	<name>Bank Zachodni WBK</name>
 	<description html="true"><![CDATA[
@@ -29,11 +29,12 @@
 	<counters>
 		<counter id="balance" name="Saldo" units=" {@currency}"/>
 		<counter id="available" name="Available" units=" {@currency}"/>
-		<counter id="num" name="Number"/>
-		<counter id="name" name="Name"/>
 		<counter id="last_transaction_date" name="Last transaction date" type="time" format="dd/MM/yyyy"/>
 		<counter id="pct" name="Interest rate" units=" {@currency}"/>
 		<counter id="limit" name="Credit limit" units=" {@currency}"/>
+		<counter id="num" name="Card number"/>
+		<counter id="accnum" name="Account number"/>
+		<counter id="name" name="Name"/>
 		<counter id="currency" name="Currency" type="text"/>
 		<counter id="fio" name="User name" type="text"/>
 	</counters>

@@ -7,6 +7,18 @@ var g_countersTable = {
 		'fio': 'info.fio'
 	}, 
 	card: {
+		"__forceAvailable": ["cards.accnum"],
+		"balance": "accounts.balance",
+		"available": "accounts.available",
+		"last_transaction_date": "accounts.last_transaction_date",
+		"pct": "accounts.pct",
+		"limit": "accounts.limit",
+		"num": "cards.num",
+		"accnum": "accounts.num",
+		"name": "cards.name",
+		"fio": "accounts.fio",
+		"currency": "cards.currency",
+		"__tariff": "cards.__name"
 	},
 	crd: {
 	},
@@ -16,10 +28,11 @@ var g_countersTable = {
 		"last_transaction_date": "accounts.last_transaction_date",
 		"pct": "accounts.pct",
 		"limit": "accounts.limit",
-		"num": "accounts.num",
+		"accnum": "accounts.num",
 		"name": "accounts.name",
 		"fio": "accounts.fio",
 		"currency": "accounts.currency",
+		"__tariff": "accounts.__name"
     },
 	dep: {
     }
@@ -46,13 +59,18 @@ function shouldProcess(counter, info){
 		}
 		case 'accounts':
 		{
-			if(prefs.type != 'acc')
-				return false;
-		    if(!prefs.num)
-		    	return true;
+			if(prefs.type == 'acc'){
+		    	if(!prefs.num)
+		    		return true;
 			
-			if(endsWith(info.num, prefs.num))
-				return true;
+				if(endsWith(info.num, prefs.num))
+					return true;
+			}else if(prefs.type == 'card'){
+				if(info.num.replace(/\s+/g, '') == shouldProcess.cardAccNum.replace(/\s+/g, ''))
+					return true;
+			}
+
+			return false;
 		}
 		case 'credits':
 		{
@@ -63,6 +81,8 @@ function shouldProcess(counter, info){
 			
 			if(endsWith(info.num, prefs.num))
 				return true;
+
+		    return false;
 		}	
 		case 'deposits':
 		{
@@ -73,6 +93,8 @@ function shouldProcess(counter, info){
 			
 			if(endsWith(info.num, prefs.num))
 				return true;
+		    
+		    return false;
 		}
 		default:
 			return false;
@@ -85,7 +107,7 @@ function main() {
     if(!/^(card|crd|dep|acc)$/i.test(prefs.type || ''))
     	prefs.type = 'acc';
 
-    if('acc' != prefs.type)
+    if(!/acc|card/i.test(prefs.type))
     	throw new AnyBalance.Error('Can not find selected bank product. Is the site changed?');
 	
     var adapter = new NAdapter(joinObjects(g_countersTable[prefs.type], g_countersTable.common), shouldProcess);
@@ -104,6 +126,9 @@ function main() {
 		
 		if(!adapter.wasProcessed('cards'))
 			throw new AnyBalance.Error(prefs.num ? 'Could not find a card with last digits ' + prefs.num : 'You have no cards!');
+
+        shouldProcess.cardAccNum = adapter.findEntityById(result.cards, adapter.wasProcessed('cards')).accnum;
+		adapter.processAccounts(html, result);
 		
 		result = adapter.convert(result);
 	} else if(prefs.type == 'acc') {

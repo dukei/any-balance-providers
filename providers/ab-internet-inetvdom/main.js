@@ -33,7 +33,7 @@ function main() {
 	
 	html = AnyBalance.requestPost(baseurl, params, addHeaders({Referer: baseurl + 'welcome'}));
 	
-	if (!/cabinet_logout/i.test(html)) {
+	if (!/<div[^>]+cabinet-content/i.test(html)) {
 		var error = getParam(html, null, null, /<div[^>]*class="alert alert-danger"[^>]*>[\s\S]*?<\/button>([\s\S]+?)<\/div>/i, replaceTagsAndSpaces);
 
 		if (error) {

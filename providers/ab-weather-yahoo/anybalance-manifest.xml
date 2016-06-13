@@ -1,16 +1,18 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="4">ab-weather-yahoo</id>
+	<id version="5">ab-weather-yahoo</id>
 	<api flags="no_browser"/>
 	<name>Yahoo! Weather</name>
 	<description html="true"><![CDATA[
 	<p>Shows current weather in entered city. Obtains information from http://weather.yahoo.com/</a></p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>

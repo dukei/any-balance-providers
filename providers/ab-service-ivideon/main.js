@@ -54,8 +54,8 @@ function main() {
 		try {
 			html = AnyBalance.requestGet(baseurl + 'my/billing/fill', g_headers);
 
-			AB.getParam(html, result, 'balance', /Состояние\s+сч[её]та([\s\S]*?)<\/div>/i, AB.replaceTagsAndSpaces, AB.parseBalance);
-			AB.getParam(html, result, ['currency', 'balance'], /Состояние\s+сч[её]та([\s\S]*?)<\/div>/i, AB.replaceTagsAndSpaces, AB.parseCurrency);
+			AB.getParam(html, result, 'balance', /<span[^>]+iv-balance__value[^>]*>([\s\S]*?)<\/span>/i, AB.replaceTagsAndSpaces, AB.parseBalance);
+			AB.getParam(html, result, ['currency', 'balance'], /<span[^>]+iv-balance__value[^>]*>([\s\S]*?)<\/span>/i, AB.replaceTagsAndSpaces, AB.parseCurrency);
 
 		} catch (e) {
 			AnyBalance.trace('Не удалось получить данные по балансам ' + e);

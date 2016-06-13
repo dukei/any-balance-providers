@@ -13,7 +13,7 @@ var g_headers = {
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'http://altfater.ru/index.php/proverit-zadolzhennost/proverit-zadolzhennost-naselenie';
+	var baseurl = 'http://altvater.ru/index.php/proverit-zadolzhennost/proverit-zadolzhennost-naselenie';
 	AnyBalance.setDefaultCharset('utf-8');
 
 	AB.checkEmpty(prefs.login, 'Введите номер лицевого счета!');
@@ -33,7 +33,7 @@ function main() {
     html = AB.requestPostMultipart(baseurl + '?chronoform=Proverka-dolgov&event=submit', payload);
 
     if (!/<p>лицевой счет/i.test(html)) {
-        var error = AB.getParam(html, null, null, /<div class="gbs3"[\s\S]*?<form[^>]*>[\s\S]*?<\/form>([\s\S]+?)</i, AB.replaceTagsAndSpaces);
+        var error = AB.getParam(html, null, null, /<div[^>]+class="gbs3"[\s\S]*?<form[^>]*>[\s\S]*?<\/form>([\s\S]+?)</i, AB.replaceTagsAndSpaces);
         if (error) {
             throw new AnyBalance.Error(error);
         }

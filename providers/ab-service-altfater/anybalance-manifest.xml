@@ -1,12 +1,12 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-service-altfater</id>
+	<id version="3">ab-service-altfater</id>
 	<api flags="no_browser"/>
 	<name>Альтфатер Крым</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе провайдера <a href="http://altfater.ru/"></a>Альтфатер Крым</p>
+	<p>Предоставляет информацию о балансе провайдера Альтфатер Крым (http://altvater.ru/)</p>
 	<p>Информация берется из
-	  <a href="http://altfater.ru/index.php/proverit-zadolzhennost/proverit-zadolzhennost-naselenie">
+	  <a href="http://altvater.ru/index.php/proverit-zadolzhennost/proverit-zadolzhennost-naselenie">
 	    личного кабинета Альтфатер Крым
 	  </a>
 	</p>

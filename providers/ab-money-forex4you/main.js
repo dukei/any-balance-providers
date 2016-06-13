@@ -37,18 +37,19 @@ function main() {
 		throw new AnyBalance.Error("Не удалось найти XSRF токен.");
 	}
 
-	html = AnyBalance.requestPost(baseurl + 'authentication', JSON.stringify({
-		username: prefs.login,
-		password: prefs.password
-	}), addHeaders({
+	var add_headers = {
 		'Content-Type': 'application/json;charset=UTF-8',
 		'Accept': 'application/json;version=1.0',
 		'X-Requested-With': 'XMLHttpRequest',
 		Referer: baseurl+'login/',
 		Origin: 'https://account.forex4you.org',
 		'X-XSRF-TOKEN': XSRF_value
+	};
 
-	}));
+	html = AnyBalance.requestPost(baseurl + 'authentication', JSON.stringify({
+		username: prefs.login,
+		password: prefs.password
+	}), addHeaders(add_headers));
 
 	var json = getJson(html);
 	if (!json.token) {
@@ -62,26 +63,49 @@ function main() {
 
 	html = AnyBalance.requestGet(baseurl+'trader-account/start', g_headers);
 
-	if(prefs.digits) {
-		var re 		= new RegExp('<a[^>]+id="acc-\\d*' + prefs.digits + '"[^>]+href="([^"]*)', 'i');
-		var account = getParam(html, null, null, re, replaceTagsAndSpaces);
-		if(!account) {
+	var accounts = AnyBalance.requestGet(baseurl + 'utils/accounts.js', addHeaders(add_headers));
+	var curaccid = getParam(accounts, null, null, /FxAccountManagerProvider\.\$currentAccountId\s*=\s*(\d+)/);
+
+	accounts = getJsonObject(accounts, /FxAccountManagerProvider\.\$initialData\s*=/i);
+
+	if(prefs.digits || curaccid) {
+		for(var i=0; i<accounts.length; ++i){
+			var a = accounts[i];
+			if(prefs.digits){
+				if(endsWith('' + a.user_account_id, prefs.digits)){
+					account = a;
+					break;
+				}
+			}else if(curaccid){
+				if(endsWith('' + a.id, curaccid)){
+					account = a;
+					break;
+				}
+			}
+		}
+		
+		if(i >= accounts.length){
 			throw new AnyBalance.Error("Не удалось найти ссылку на счёт с последними цифрами '" + prefs.digits + "'");
 		}
 
-		html = AnyBalance.requestGet(account, addHeaders({
-			'Referer': baseurl + 'trader-account/start'
-		}))
+		if(account.id != curaccid){
+			html = AnyBalance.requestPost(baseurl + 'trader-account/account/' + account.id + '/set-active', '', addHeaders(add_headers));
+			html = AnyBalance.requestGet(baseurl+'trader-account/start', g_headers);
+		};
 	}
 
 	var result = {success: true};
-	getParam(html, result, 'balance', /<span[^>]+account-balance[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
 	//getParam(html, result, 'cred', /Кредитные Бонусы(?:[^>]*>){1}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, ['currency', 'balance', 'cred'], /<span[^>]+account-balance[^>]*>([\s\S]*?)<\/a>/i, [replaceTagsAndSpaces, /\s*центов\s*/i, ''], parseCurrency);
-	getParam(html, result, 'server', /<span[^>]+account-terminal[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
-	getParam(html, result, 'account', /<option[^>]+id="acc-(\d+)"[^>]+selected[^>]*>/i, replaceTagsAndSpaces);
-	getParam(html, result, 'arm', /<li[^>]+account-leverage[^>]*>([\s\S]*?)<\/li>/i, replaceTagsAndSpaces);
+	getParam(account.currency, result, ['currency', 'balance', '']);
+	getParam(account.trade_server.terminal_title + account.trade_server.server_suffix, result, 'server');
+	getParam('' + account.user_account_id, result, 'account');
+	getParam(account.leverage.leverage, result, 'arm');
 	getParam(html, result, 'fio', /<a[^>]+user-profile(?:[^>]*>){2}([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
+
+	if(AnyBalance.isAvailable('balance', 'cred')){
+		html = AnyBalance.requestGet(baseurl + 'trader-account/account/' + account.id + '/details?filter%5B%5D=Balance&filter%5B%5D=Bonus', addHeaders(add_headers));
+		getParam(getJson(html).balance, result, 'balance', null, null, parseBalance);
+	}
 	
 	AnyBalance.setResult(result);
 }

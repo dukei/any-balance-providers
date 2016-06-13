@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="5">ab-money-forex4you</id>
+	<id version="6">ab-money-forex4you</id>
 	<api flags="no_browser"/>
 	<name>Forex4you</name>
 	<description html="true"><![CDATA[
@@ -27,6 +27,6 @@
 		<counter id="fio" name="Имя" type="text"/>
 	</counters>
 	<keywords></keywords>
-	<type>money</type>
+	<type>exchange trade forex</type>
 	<country>ru</country>
 </provider>

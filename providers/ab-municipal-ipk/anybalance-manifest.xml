@@ -6,7 +6,7 @@
     <description>
         Предоставляет сводную информацию о лицевом счете и балансе в системе "Иркутская процессинговая компания" (https://portalgkh.ru)
     </description>
-    <author>Владимир Пахомчик &lt;v.pahomchik@gmail.com&gt;</author>
+    <author>Владимир Пахомчик &lt;vladimir@pahomchik.ru&gt;</author>
     <depends>
         <module id="library"/>
     </depends>

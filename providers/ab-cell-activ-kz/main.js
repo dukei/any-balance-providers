@@ -59,24 +59,63 @@ function main(){
 
     //(?:Теңгерім|Баланс|Balance):
     getParam(html, result, 'balance', /<h5[^>]*?>\s*?(?:Баланс|Теңгерім|Balance)\s*?<\/h5>\s*?<h5[^>]*?>([\s\S]*?)<\/h5/i, replaceTagsAndSpaces, parseBalance);
-     //(?:интернет плюс|internet plus)
-    sumParam(html, result, 'internet_plus', /(?:\+|дейін)([\d\s.,]*\s*[МмMm][БбBb])/ig, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
-    //(?:бонусные единицы)
-    getParam(html, result, 'bonus', /(\d+)\s*(?:бонусных ед.|бонустық бірліктер|bonus units)/i, replaceTagsAndSpaces, parseBalance);
-    //(?:Шот қалпы|Статус номера|Account status):
-    getParam(html, result, 'status', /<h5>(?:Статус|Қалпы|Status)(?:[^>]*>){2}([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
-    //(?:Шот қалпы|Статус номера|Account status):
-    getParam(html, result, 'min_roaming', /([\d\.]+)\s*(?:Бонусных минут в роуминге|Роумингтегі бонус минут|Bonus minutes in roaming)/i, replaceTagsAndSpaces, parseBalance);
-    //Локальные минуты, минуты на ВСЕ сети по РК (внутри сети и на другие сети по РК):
-    sumParam(html, result, 'min_local', /(?:дейін желі ішінде|дейін БАРЛЫҚ желілерге[\s\S]*?)?\s*([\d\.]+)\s*(?:мин\. внутри сети|мин\.|on-net min|all-net min)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
     //Тариф:
     getParam(html, result, '__tariff', /<h[^>]*>(?:Тарифный план|Тариф|Tariff)[\s\S]*?<h[^>]*>([\s\S]*?)<\/h/i, replaceTagsAndSpaces, html_entity_decode);
-    //минуты
-    sumParam(html, result, 'min_left', /(?:Ваш баланс|Сіздің теңгеріміңіз|Your balance is)[^<]*?\+\s*([\d\s.,]*)\s*(?:Бонусных|Бонустық|Bonus)?\s+(?:мин|min)/ig, replaceTagsAndSpaces, parseBalance);
-    //Бонусных секунд/Бонустық секунд/Bonus seconds
-    sumParam(html, result, 'min_left', /(?:Ваш баланс|Сіздің теңгеріміңіз|Your balance is)[^<]*?\+\s*([\d\s.,]*)\s*(?:Бонусных|Бонустық|Bonus)?\s+(?:сек|sec)/i, replaceTagsAndSpaces, function(str){ var s = parseBalance(str); return s && s/60 }, aggregate_sum );
-    //SMS
-    getParam(html, result, 'sms_net', /(?:Ваш баланс|Сіздің теңгеріміңіз|Your balance is)[^<]*?\+?\s*([\d\s.,]*)\s*(?:SMS\s+в\s+сети|желiдегi\s+SMS|onnet\s+SMS|SMS\+)/i, replaceTagsAndSpaces, parseBalance);
+    //(?:Шот қалпы|Статус номера|Account status):
+    getParam(html, result, 'status', /<h5>(?:Статус|Қалпы|Status)(?:[^>]*>){2}([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
+
+    var bonuses = getParam(html, null, null, /<h5[^>]*>\s*(?:Бонусы|Bonuses|Бонустар)[\s\S]*?<h5[^>]*>([\s\S]*?)<\/h5>/i);
+    AnyBalance.trace('Найдены бонусы: ' + bonuses);
+
+    bonuses = getElements(bonuses, /<li[^>]*>/ig);
+    for(var i=0; i<bonuses.length; ++i){
+    	var bonus = bonuses[i], val;
+    	AnyBalance.trace('Разбираем ' + bonus);
+
+    	if(val = getParam(bonus, null, null, /\d[\d\s.,]*\s*[МмMm][БбBb]/i)){
+    	
+    		var night = /01:00/i.test(bonus) ? '_night' : '';
+    		AnyBalance.trace('это трафик ' + night);
+    		sumParam(val, result, 'internet_plus' + night, null, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
+
+    	}else if(val =  getParam(bonus, null, null, /(\d+)\s*(?:бонусных ед.|бонустық бірлік|bonus units)/i)){
+    		
+    		AnyBalance.trace('это бонусные единицы');
+		    sumParam(val, result, 'bonus', null, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+
+    	}else if(val =  getParam(bonus, null, null, /([\d\.]+)\s*(?:Бонусных минут в роуминге|Роумингтегі бонус минут|Bonus minutes in roaming)/i)){
+
+    		AnyBalance.trace('это минуты в роуминге');
+		    sumParam(val, result, 'min_roaming', null, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+
+    	}else if(/all-net|ВСЕ сети|БАРЛЫҚ желілерге/i.test(bonus) && /мин\.|min\./i.test(bonus)){
+
+    		AnyBalance.trace('это локальные минуты на все сети');
+		    sumParam(bonus, result, 'min_local', /\d+[^\d<]*(?:мин\.|min\.)/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+
+    	}else if(/on-net|внутри сети|желі ішінде/i.test(bonus) && /мин\.|min\.|сек|sec/i.test(bonus)){
+
+    	    var sec = /сек|sec/i.test(bonus);
+    		AnyBalance.trace('это внутрисетевые ' + (sec ? 'секунды' : 'минуты'));
+		    sumParam(bonus, result, 'min_left', /\d+[^\d<]*(?:мин\.|min\.|сек|sec)/i, replaceTagsAndSpaces, function(str){ var s = parseBalance(str); return (s && sec) ? s/60 : s }, aggregate_sum);
+
+    	}else if(val =  getParam(bonus, null, null, /(\d[\d\s.,]*)[^\d<]*SMS/i)){
+
+    		AnyBalance.trace('это SMS');
+		    sumParam(val, result, 'sms_net', null, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+
+    	}else if(/мин\.|min\.|сек|sec/i.test(bonus)){
+
+    	    var sec = /сек|sec/i.test(bonus);
+    		AnyBalance.trace('это какие-то ' + (sec ? 'секунды' : 'минуты'));
+		    sumParam(bonus, result, 'min_local', /\d+[^\d<]*(?:мин\.|min\.|сек|sec)/i, replaceTagsAndSpaces, function(str){ var s = parseBalance(str); return (s && sec) ? s/60 : s }, aggregate_sum);
+
+    	}else{
+    		AnyBalance.trace('!!! Неизвестный бонус: ' + bonus);
+
+    	}
+
+    }
 
     if(AnyBalance.isAvailable('internet_plus')){
         html = AnyBalance.requestGet(baseurl + lang + '/ics.account/getconnectedservices', g_headers);

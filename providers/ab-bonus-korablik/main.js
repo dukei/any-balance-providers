@@ -49,17 +49,24 @@ function main() {
     var result = {success: true};
 	
 	html = AnyBalance.requestGet(baseurl + 'detskaya/mycards', addHeaders({Referer: baseurl + 'detskaya/profile'}));
-	
-	var cards = sumParam(html, null, null, /"my_card_numb"[^>]*>\s*\d+(?:[^>]*>){9,13}[^>]*"my_card_ballans"(?:[^>]*>){2,4}/ig);
-	if(!cards || cards.length < 1) {
+
+	var cardsBlock = getElement(html, /<div[^>]+class="jcarousel"[^>]*>/i);
+	var cardBlocks = getElements(cardsBlock, /<li[^>]+row[^>]*>/ig);
+	AnyBalance.trace('Найдено ' + cardBlocks.length + ' карт');
+
+	if(!cardBlocks.length){
+		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось найти ни одной карты. Сайт изменен?');
 	}
 	
-	for(var i = 0; i < cards.length; i++) {
-		getParam(cards[i], result, (i > 0) ? 'cardnum' + i : 'cardnum', /"my_card_numb"[^>]*>([^<]+)/i, replaceTagsAndSpaces);
-		getParam(cards[i], result, (i > 0) ? 'cardbalance' + i : 'cardbalance', /"my_card_ballans"[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseBalance);
+	for(var i = 0; i < cardBlocks.length; i++) {
+		var cb = cardBlocks[i];
+		getParam(cb, result, (i > 0) ? 'cardnum' + i : 'cardnum', /№\s*([^<]*)/i, replaceTagsAndSpaces);
+		getParam(cb, result, (i > 0) ? 'cardbalance' + i : 'cardbalance', /Баланс:([^<]+)/i, replaceTagsAndSpaces, parseBalance);
 	}
-	//getParam(html, result, 'balance', null, replaceTagsAndSpaces, parseBalance);
+	
+	getParam(html, result, 'status_balance', /<span[^>]+statSum[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, '__tariff', /<span[^>]+statName[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
 	
     AnyBalance.setResult(result);
 }

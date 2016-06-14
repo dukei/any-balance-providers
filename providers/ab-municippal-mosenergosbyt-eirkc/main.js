@@ -93,24 +93,42 @@ function mainLKKZKH() {
 			session: sid
 		});
 
+		var house, service;
+
+outer:
 		for(var i=0; i<json.houses.length; ++i){
 			var h = json.houses[i];
 			if(!h.services || !h.services.length){
 				AnyBalance.trace('Дом ' + h.nm_house + ' не содержит подключенных сервисов');
 				continue;
 			}
-			house = h; //Находим первый с сервисами
-			break; 
+
+			if(prefs.account){
+				for(var j=0; j<h.services.length; ++j){
+					var s = h.services[j];
+					if(endsWith('' + s.nn_ls, prefs.account)){
+						house = h;
+						service = s;
+						break outer;
+					}
+				}
+			}else{
+				house = h; //Находим первый с сервисами
+				service = h.services[0];
+				break; 
+			}
 		}
 
 		if(!house){
 			AnyBalance.trace(JSON.stringify(json));
+			if(prefs.account)
+				throw new AnyBalance.Error('У вас в кабинете нет подключенного лицевого счета с последними цифрами ' + prefs.account);
 			throw new AnyBalance.Error('У вас в кабинете нет подключенных домов или нет подключенных к ним лицевых счетов');
 		}
 		getParam(house.nm_address || house.nm_house, result, '__tariff');
-		getParam('' + house.services[0].nn_ls, result, 'licschet');
+		getParam('' + service.nn_ls, result, 'licschet');
 
-		var jsonProvider = house.services[0].vl_provider;
+		var jsonProvider = service.vl_provider;
 		id_abonent = jsonProvider.id_abonent;
 	}
 

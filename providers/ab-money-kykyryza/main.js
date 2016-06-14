@@ -69,10 +69,16 @@ function doNewCabinet(prefs){
 
     if(isAvailable('minpay', 'minpay_till')) {
       html = AnyBalance.requestGet(baseurl + 'personal/credit-limit', g_headers);
+
       getParam(html, result, 'curr_credit', /Текущая задолженность по кредиту(?:[^>]*>)([^<]*)/i, replaceTagsAndSpaces, parseBalance);
       getParam(html, result, 'minpay', /Задолженность по минимальному обязательному платежу[\s\S]*?<b[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
       getParam(html, result, 'minpay_till', /необходимо погасить до[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseDate);
       getParam(html, result, 'minpay_date_end', /Дата окончания платежного периода(?:[^>]*>)([^<]*)/i, replaceTagsAndSpaces, parseDate);
+
+      //Для ренессанс-кредит
+      getParam(html, result, 'minpay', /Сумма минимального обязательного платежа составляет [\s\S]*?<b[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+      getParam(html, result, 'minpay_till', / Минимальный обязательный платеж должен поступить в банк[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseDate);
+
 
     }
     result.__tariff = prefs.login;

@@ -15,7 +15,7 @@ function main(){
 		throw new AnyBalance.Error('Провайдер требует AnyBalance API v9, пожалуйста, дождитесь выхода новой версии приложения!');
 	}
     var prefs = AnyBalance.getPreferences();
-    var baseurl = 'https://m.okeycity.ru/';
+    var baseurl = 'https://okeycity.ru/';
     AnyBalance.setDefaultCharset('utf-8'); 
 	
 	checkEmpty(prefs.login, 'Введите логин!');
@@ -27,7 +27,7 @@ function main(){
 		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
 	
 	var html = AnyBalance.requestPost(baseurl + 'site/login', {
-		'LoginForm[redirect]':'',
+		'LoginForm[redirect]':'/',
 		'LoginForm[login]': prefs.login,
 		'LoginForm[password]': prefs.password,
 		'LoginForm[rememberMe]':'0',

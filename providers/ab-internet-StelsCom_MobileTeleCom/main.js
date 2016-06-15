@@ -31,12 +31,13 @@ function main(){
 	}
 	
 	html = AnyBalance.requestPost(baseurl + 'index.php', {
-		login: prefs.login,
+		username: prefs.login,
 		password: prefs.password,
+		send: ''
 	}, addHeaders({Referer: baseurl + 'index.php'}));
 
-	if (!/\/\?module=zz_logout/i.test(html)) {
-		var error = sumParam(html, null, null, /<br><p[^>]*>([\s\S]*?)<\/p>/gi, replaceTagsAndSpaces, html_entity_decode, aggregate_join) || '';
+	if (!/\/logout/i.test(html)) {
+		var error = sumParam(html, null, null, /<br><p[^>]*>([\s\S]*?)<\/p>/gi, replaceTagsAndSpaces, null, aggregate_join) || '';
 		if (error)
 			throw new AnyBalance.Error(error, null, /Неверно указаны логин или пароль/i.test(error));
 		AnyBalance.trace(error);
@@ -44,41 +45,28 @@ function main(){
 	}
 	
 	var result = {success: true};
-	getParam(html, result, 'ID', /ID<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'login', /Логин<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'main_expense', /Основной лицевой счет<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'balance', /Баланс<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'credit', /Кредит<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'nds', /НДС<\/td>\s*<td[^>]*>([\s\S]*?)\%<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'date', /Дата создания<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'fio', /ФИО<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'status', /Состояние интернета<\/td>\s*<td[^>]*>([\s\S]*?)<A[^>]*>/i, replaceTagsAndSpaces, html_entity_decode);
-	
-	html = AnyBalance.requestGet(baseurl + '/?module=40_tariffs', g_headers);
-	getParam(html, result, 'TP', /Изменить<\/td>\s*<\/tr>\s*<tr>\s*<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-	html = AnyBalance.requestGet(baseurl + '/?module=30_traffic_report', g_headers);
-	
-	var now = new Date();
-	var m = 0;
-        var y = 0;
-        if(now.getMonth() + 1 - m <= 0){
-            m = 12 + now.getMonth() + 1 - m;
-        } else {
-            m = now.getMonth() + 1 - m;
-        }
-        if(now.getYear() < 1900){
-            var year = 1900 + now.getYear();
-        } else {
-            var year = now.getYear();
-        }
-	var info = AnyBalance.requestPost('http://utm.xn--80aa3a0ag.xn--80asehdb/?module=30_traffic_report', {
-       date1:Date.UTC(year - y, m-1, 1) / 1000 + now.getTimezoneOffset()*60,
-       date2:Date.UTC(year - y, m, 1) / 1000 + now.getTimezoneOffset()*60,});
-       getParam(info, result, 'incoming', /Входящий<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-       getParam(info, result, 'outgoing', /Исходящий<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-       getParam(info, result, 'local', /Локальный<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-       getParam(info, result, 'File_archive', /Файловый архив<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-       getParam(info, result, 'total', /Итого<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'login', /<td[^>]*>\s*Логин:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+	getParam(html, result, 'main_expense', /<td[^>]*>\s*Основной лицевой счёт:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+	getParam(html, result, 'balance', /<td[^>]*>\s*Баланс[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'credit', /Кредит<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+	getParam(html, result, 'date', /<td[^>]*>\s*Дата подключения:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+	getParam(html, result, 'fio', /<div[^>]+well[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+	getParam(html, result, 'status', /<td[^>]*>\s*Статус интернета[\s\S]*?<td[^>]*>([\s\S]*?)(?:<a|<\/td>)/i, replaceTagsAndSpaces);
+	getParam(html, result, 'TP', /<th[^>]*>\s*Название тарифа[\s\S]*?<td[^>]*>([\s\S]*?)(?:<\/strong>|<\/td>)/i, replaceTagsAndSpaces);
+	getParam(html, result, '__tariff', /<th[^>]*>\s*Название тарифа[\s\S]*?<td[^>]*>([\s\S]*?)(?:<\/strong>|<\/td>)/i, replaceTagsAndSpaces);
+
+	if(AnyBalance.isAvailable('incoming', 'outgoing', 'local')){
+		var info = AnyBalance.requestPost(baseurl + 'user/traffic', {
+			startDate: getFormattedDate({offsetDay: new Date().getDate()}),
+			endDate: getFormattedDate(),
+			serviceType: 1,
+			submit: 'Показать'
+		}, g_headers);
+
+        getParam(info, result, 'incoming', /Входящий<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/i, [replaceTagsAndSpaces, /$/, 'Мб'], parseTraffic);
+        getParam(info, result, 'outgoing', /Исходящий<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/i, [replaceTagsAndSpaces, /$/, 'Мб'], parseTraffic);
+        getParam(info, result, 'local', /Локальный<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/i, [replaceTagsAndSpaces, /$/, 'Мб'], parseTraffic);
+	}
        
 	AnyBalance.setResult(result);
 }

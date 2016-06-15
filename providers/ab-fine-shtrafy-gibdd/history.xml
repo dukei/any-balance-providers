@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="6" date="2016-06-15">
+	- Бета сайт стал основным
+	</change>
 	<change version="5" date="2016-05-20">
 	- Правильное отображение отсутствия штрафов
 	</change>

@@ -226,8 +226,8 @@ function checkCorrectNumberLogin(baseurl, html) {
     return true;
 }
 
-function loginProc(baseurl, action, params, prefs) {
-    var html;
+function loginProc(baseurl, action, params) {
+    var html, prefs = AnyBalance.getPreferences();
     //Теперь, когда секретный параметр есть, можно попытаться войти
     try {
         html = AnyBalance.requestPost(baseurl + (action || 'login.xhtml'), params, addHeaders({Referer: baseurl + 'login.xhtml'}));
@@ -305,12 +305,7 @@ function getLKType(html){
     }
 }
 
-function loginWithPassword(baseurl){
-    var prefs = AnyBalance.getPreferences();
-
-    checkEmpty(prefs.login, 'Введите логин!');
-    checkEmpty(prefs.password, 'Введите пароль!');
-
+function doLogin(baseurl, login, password){
     var html = AnyBalance.requestGet(baseurl, g_headers);
     var tform = getParam(html, null, null, /<form[^>]+name="loginFormB2C:loginForm"[^>]*>[\s\S]*?<\/form>/i);
 
@@ -329,16 +324,16 @@ function loginWithPassword(baseurl){
         AnyBalance.trace('Похоже, что форма авторизации присутствует.');
 
         var params = createFormParams(tform);
-        params['loginFormB2C:loginForm:login'] = prefs.login;
-        params['loginFormB2C:loginForm:password'] = prefs.password;
-        params['loginFormB2C:loginForm:passwordVisible'] = prefs.password;
+        params['loginFormB2C:loginForm:login'] = login;
+        params['loginFormB2C:loginForm:password'] = password;
+        params['loginFormB2C:loginForm:passwordVisible'] = password;
         params['loginFormB2C:loginForm:loginButton'] = '';
 
         var action = getParam(tform, null, null, /<form[^>]+action="\/([^"]*)/i, replaceHtmlEntities);
 
         //Теперь, когда секретный параметр есть, можно попытаться войти
         for(var i = 1 ; i < 6; i++) {
-            var html = loginProc(baseurl, action, params, prefs);
+            var html = loginProc(baseurl, action, params);
             // Если нет показывают ошибки входа, надо попробовать еще раз
             if(/Вход в личный кабинет/i.test(html) && !/<span[^>]+class="ui-messages-error-summary"/i.test(html)) {
                 AnyBalance.trace('Войти не удалось, сайт не сообщает ни о каких ошибках, попытка №' + i);
@@ -357,6 +352,17 @@ function loginWithPassword(baseurl){
         AnyBalance.trace(html);
         throw new AnyBalance.Error('Не удаётся найти форму входа. Сайт изменен?');
     }
+
+    return html;
+}
+
+function loginWithPassword(baseurl){
+    var prefs = AnyBalance.getPreferences();
+
+    checkEmpty(prefs.login, 'Введите логин!');
+    checkEmpty(prefs.password, 'Введите пароль!');
+
+    var html = doLogin(baseurl, prefs.login, prefs.password);
 
     // Иногда билайн нормальный пароль считает временным и предлагает его изменить, но если сделать еще один запрос, пускает и показывает баланс
     if (/Ваш пароль временный\.\s*Необходимо изменить его на постоянный/i.test(html)) {
@@ -1121,44 +1127,51 @@ function createNewPassword(baseurl){
     var viewState = extractFromUpdate(output, 'ViewState:0');
     html = extractFromUpdate(output, 'loginInnerBlock', true);
 
-    //Вводим смс
-    var form = getParam(html, null, null, /<form[^>]+id="tokenForm"[^>]*>[\s\S]*?<\/form>/i);
-    if(!form){
-        var error = getParam(html, null, null, /<div[^>]*ui-message-error[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
-        if(error)
-            throw new AnyBalance.Error(error);
-        AnyBalance.trace(html);
-        throw new AnyBalance.Error('Не удаётся найти форму ввода смс пароля. Проблемы на сайте или сайт изменен');
-    }
-
-    var params = createFormParams(form, function (params, input, name, value) {
-        if (/smsToken/i.test(name))
-            value = AnyBalance.retrieveCode('Введите временный пароль, который пришел на номер ' + prefs.login + ' по SMS <!--#instruction:{"sms":{"number_in":"My Beeline","regexp_in":"Временный пароль:\\s*(\\w+)"}}#-->', null, {time: 300000});
-        return value;
-    });
-
-    var button = getParam(form, null, null, /<button[^>]+loginInnerBlock[^>]*>/i);
-    if(!button){
-        AnyBalance.trace(form);
-        throw new AnyBalance.Error('Не удаётся найти кнопку подтверждения ввода SMS кода. Проблемы на сайте или сайт изменен');
-    }
-    var formId = getParam(button, null, null, /name="([^"]*)/i, replaceHtmlEntities);
-
-    params['javax.faces.partial.ajax'] = 'true';
-    params['javax.faces.source'] = formId;
-    params['javax.faces.partial.execute'] = '@all';
-    params['javax.faces.partial.render'] = 'loginInnerBlock';
-    params[formId] = formId;
-    params['javax.faces.ViewState'] = viewState;
-
-    html = AnyBalance.requestPost(url, params, addHeaders({'X-Requested-With': 'XMLHttpRequest'}));
-    var go_to = getParam(html, null, null, /<redirect[^>]+url="([^"]*)/i, replaceHtmlEntities);
-    if(!go_to){
-    	var error = getElement(html, /<div[^>]+ui-messages-error[^>]*>/i, replaceTagsAndSpaces);
-    	if(error)
-    		throw new AnyBalance.Error(error);
-    	AnyBalance.trace(html);
-    	throw new AnyBalance.Error('Не удаётся найти адрес входа в личный кабинет. Сайт изменен?');
+    if(/emailToken/i.test(html)){
+    	AnyBalance.trace('Уже зарегистрированы, билайн выслал емейл...');
+    	var temppass = AnyBalance.retrieveCode('Вы уже были зарегистрированы в личном кабинете. Если вы помните пароль, нажмите Отмена и введите в настройки провайдера правильный пароль. Если нет, наберите на номере ' + prefs.login + ' команду *110*9# (вызов) и введите сюда временный пароль, который придет вам по SMS <!--#instruction:{"sms":{"number_in":"My Beeline","regexp_in":"пароль:\\s*(\\w+)"}}#-->', null, {time: 300000});
+    	html = doLogin(baseurl, prefs.login, temppass);
+    }else{
+    	AnyBalance.trace('Похоже, отправили временный пароль в смс...');
+        //Вводим смс
+        var form = getParam(html, null, null, /<form[^>]+id="tokenForm"[^>]*>[\s\S]*?<\/form>/i);
+        if(!form){
+            var error = getParam(html, null, null, /<div[^>]*ui-message-error[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+            if(error)
+                throw new AnyBalance.Error(error);
+            AnyBalance.trace(html);
+            throw new AnyBalance.Error('Не удаётся найти форму ввода смс пароля. Проблемы на сайте или сайт изменен');
+        }
+        
+        var params = createFormParams(form, function (params, input, name, value) {
+            if (/smsToken/i.test(name))
+                value = AnyBalance.retrieveCode('Введите временный пароль, который пришел на номер ' + prefs.login + ' по SMS <!--#instruction:{"sms":{"number_in":"My Beeline","regexp_in":"пароль:\\s*(\\w+)"}}#-->', null, {time: 300000});
+            return value;
+        });
+        
+        var button = getParam(form, null, null, /<button[^>]+loginInnerBlock[^>]*>/i);
+        if(!button){
+            AnyBalance.trace(form);
+            throw new AnyBalance.Error('Не удаётся найти кнопку подтверждения ввода SMS кода. Проблемы на сайте или сайт изменен');
+        }
+        var formId = getParam(button, null, null, /name="([^"]*)/i, replaceHtmlEntities);
+        
+        params['javax.faces.partial.ajax'] = 'true';
+        params['javax.faces.source'] = formId;
+        params['javax.faces.partial.execute'] = '@all';
+        params['javax.faces.partial.render'] = 'loginInnerBlock';
+        params[formId] = formId;
+        params['javax.faces.ViewState'] = viewState;
+        
+        html = AnyBalance.requestPost(url, params, addHeaders({'X-Requested-With': 'XMLHttpRequest'}));
+        var go_to = getParam(html, null, null, /<redirect[^>]+url="([^"]*)/i, replaceHtmlEntities);
+        if(!go_to){
+        	var error = getElement(html, /<div[^>]+ui-messages-error[^>]*>/i, replaceTagsAndSpaces);
+        	if(error)
+        		throw new AnyBalance.Error(error);
+        	AnyBalance.trace(html);
+        	throw new AnyBalance.Error('Не удаётся найти адрес входа в личный кабинет. Сайт изменен?');
+        }
     }
 
     //Меняем пароль на постоянный

@@ -66,8 +66,10 @@ function Email(){
 	function fetch(email){
         AnyBalance.trace('Fetching email ' + email.name + ' from ' + email.from);
 		var html = AnyBalance.requestGet(baseurl + '/readmail.html?mid=' + encodeURIComponent(email.id), addHeaders({Referer: baseurl + '/'}));
-		email.text = getElement(html, /<div[^>]+id="tabs-1"[^>]*>/i, replaceTagsAndSpaces);
-		email.html = getElement(html, /<div[^>]+id="mailinhtml"[^>]*>/i);
+		email.text = getElement(html, /<div[^>]+id="tab3"[^>]*>/i, replaceTagsAndSpaces);
+		if(!email.text)
+			email.text = getElement(html, /<div[^>]+id="tab2"[^>]*>/i, replaceTagsAndSpaces);
+		email.html = getElement(html, /<div[^>]+id="tab1"[^>]*>/i);
 
         //Получим аттачменты
         var atts = getElements(html, /<a[^>]+href="attachment[^>]*>/ig);

@@ -35,8 +35,8 @@ function login(prefs) {
 			j_password: prefs.password,
 			captcha_challenge: ''
 		}, addHeaders({
-			Referer: baseurl + '/lk',
-      'Accept': 'application/json, text/plain, */*',
+			Referer: baseurl + '/lk/login',
+      		'Accept': 'application/json, text/plain, */*',
 			'X-CSRF-TOKEN': csrf_token,
   		}));
 
@@ -68,7 +68,7 @@ function processAccounts(html, result) {
     if(!AnyBalance.isAvailable('accounts'))
         return;
 
-	html = AnyBalance.requestPost(baseurl + '/proxy?pipe=userDataPipe&action=PRODUCTS', {
+	html = AnyBalance.requestPost(baseurl + '/lk/proxy/userDataPipe/products', {
 		syncOff: true
 	}, addHeaders({
     'Referer': baseurl + '/lk/dashboard',
@@ -126,7 +126,7 @@ function processCards(html, result) {
 	if(!AnyBalance.isAvailable('cards'))
 		return;
 
-  html = AnyBalance.requestPost(baseurl + '/proxy?pipe=userDataPipe&action=PRODUCTS', {
+  html = AnyBalance.requestPost(baseurl + '/lk/proxy/userDataPipe/products', {
 		syncOff: true
 	}, addHeaders({
     'Referer': baseurl + '/lk/dashboard',
@@ -184,7 +184,7 @@ function processCard(card, result) {
 function searchMultiCards(card, result) {
 	AnyBalance.trace("Ищем мультикарты по карте " + card.cardNumber);
 
-	var html = AnyBalance.requestPost(baseurl + '/proxy?pipe=multicardPipe&action=get_multicard_data', {
+	var html = AnyBalance.requestPost(baseurl + '/lk/proxy/multicardPipe/get_multicard_data', {
 		'cardId': card.id
 	}, addHeaders({
 		'Referer': baseurl + '/lk/cards/multicard',
@@ -224,7 +224,7 @@ function processDeposits(html, result) {
 	if(!AnyBalance.isAvailable('deposits'))
 		return;
 
-	html = AnyBalance.requestPost(baseurl + '/proxy?pipe=userDataPipe&action=PRODUCTS', {
+	html = AnyBalance.requestPost(baseurl + '/lk/proxy/userDataPipe/products', {
 		syncOff: true
 	}, addHeaders({
     'Referer': baseurl + '/lk/dashboard',
@@ -279,7 +279,7 @@ function processDeposit(deposit, result) {
 
 
 function processInfo(html, result){
-    html = AnyBalance.requestGet(baseurl + '/proxy?pipe=userDataPipe&action=PERSON_DATA', g_headers);
+    html = AnyBalance.requestGet(baseurl + '/lk/proxy/userDataPipe/person_data', g_headers);
 	  var json = getJson(html);
     var info = result.info = {};
 
@@ -353,7 +353,7 @@ function processBonuses(html, result){
 	if(!AnyBalance.isAvailable('bonuses'))
 		return;
 
-	html = AnyBalance.requestGet(baseurl + '/proxy?pipe=loyaltyPipe&action=operations_history');
+	html = AnyBalance.requestGet(baseurl + '/lk/proxy/loyaltyPipe/operations_history');
 	var json = getJson(html);
 	if(!json.data || !json.data.operations) {
 		AnyBalance.trace(html);
@@ -366,9 +366,9 @@ function processBonuses(html, result){
 
 function getToken() {
   //Получаем CSRF token
-  var html = AnyBalance.requestPost(baseurl+'/proxy?pipe=dummyPipe&action=get_csrf_token', {}, addHeaders({
+  var html = AnyBalance.requestPost(baseurl+'/lk/proxy/dummyPipe/get_csrf_token', {}, addHeaders({
     'X-Requested-With': 'XMLHttpRequest',
-    'Referer': baseurl
+    'Referer': baseurl + '/lk/login'
   }));
   var json = getJson(html),
       token = json.data ? json.data.token : undefined;

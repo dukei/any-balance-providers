@@ -79,5 +79,36 @@ function main(){
 	getParam(html, result, 'korrs', /Корр\/с:(?:[\s\S]*?<input[^>]*value=")([^"]*)/i, replaceTagsAndSpaces);
 	getParam(html, result, 'bik', /БИК:(?:[\s\S]*?<input[^>]*value=")([^"]*)/i, replaceTagsAndSpaces);
 
+	html = AnyBalance.requestGet(baseurl + 'account/accrual');
+	var table = getElementsByClassName(html, 'data_table');
+
+	if (!table || !table.length) {
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удалось получить информацию о платежах. Сайт изменен?');
+	}
+
+	var items = parseTable(table[0]);
+	result['current_period'] = items[0];
+	result['accrued'] = parseBalance(items[1]);
+	result['paid'] = parseBalance(items[4]);
+	result['to_pay'] = parseBalance(items[5]);
+
 	AnyBalance.setResult(result);
+}
+
+function parseTable(html)
+{
+	var items = [],
+		match = 1,
+		i = 0,
+		regexp = /<td>(.*)<\/td>/g;
+
+	while (match != null) {
+		i++;
+		match = regexp.exec(html);
+		if (match) items.push(replaceAll(match[1], replaceTagsAndSpaces));
+		if (i > 5) break;
+	}
+
+	return items;
 }

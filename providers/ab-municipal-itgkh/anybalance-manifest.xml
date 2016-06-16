@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-municipal-itgkh</id>
+	<id version="3">ab-municipal-itgkh</id>
 	<api flags="no_browser"/>
 	<name>Фонд капремонта многоквартирных домов Иркутской области</name>
 	<description html="true"><![CDATA[
@@ -8,14 +8,20 @@
 	<p>Информация берется из личного кабинета https://portal-irkutsk.itgkh.ru/account</p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
 	<counters>
+		<counter id="to_pay" name="Долг/переплата" units=" р"/>
+		<counter id="accrued" name="Начислено к оплате" units=" р"/>
+		<counter id="paid" name="Оплачено" units=" р"/>
+		<counter id="current_period" name="Текущий период" type="text"/>
 		<counter id="min_vznos" name="Минимальный взнос" />
 		<counter id="dop_vznos" name="Дополнительный взнос" />
 		<counter id="owner_part" name="Доля собственника" />

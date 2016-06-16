@@ -1,5 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="15" date="2016-06-16">
+	- Автовоскрешение
+	- Добавлен счетчик смертей
+	</change>
 	<change version="14" date="2016-05-23">
 	- При авторизации получение данных без API, а то оно сломалось внезапно
 	</change>

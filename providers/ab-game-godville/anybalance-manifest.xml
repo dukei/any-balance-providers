@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id version="14">ab-game-godville</id>
+	<id version="15">ab-game-godville</id>
 	<name>Godville.net</name>
 	<description html="true"><![CDATA[
 	<p>Отображает некоторые параметры игры (здоровье, прана, количество кирпичей, бревен, уровень героя и др.)</p>
@@ -35,6 +35,7 @@
 		<counter id="savings" name="Сбережения, тыс." suffix=" тыс." type="numeric"/>
 		<counter id="wood_p" name="Бревна, %" suffix="%" type="numeric"/>
 		<counter id="wood" name="Бревна, шт" suffix=" шт" type="numeric"/>
+		<counter id="death_count" name="Смертей" type="numeric" prefix="💀"/>
 		<counter id="inventory" name="Инвентарь, шт" suffix=" шт" type="numeric"/>
 	</counters>
 	<keywords>игра, game, годвиль, годвилль</keywords>

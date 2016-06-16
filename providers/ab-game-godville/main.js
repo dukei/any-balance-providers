@@ -82,7 +82,27 @@ function mainMobile(prefs){
 	
 	//Получаем инфу по герою
 	html = AnyBalance.requestGet(baseurl + 'mob/hero', headers);
-	return getJson(html);
+	json = getJson(html);
+
+	if(!json.health){
+		AnyBalance.trace('Герой мёртв, воскрешаем');
+
+		html = AnyBalance.requestPost(baseurl + '/mob/god_command', {
+			json: JSON.stringify({action: 'resurrect'})
+		}, headers);
+
+		var rjson = getJson(html);
+		AnyBalance.trace(html);
+		
+		if(rjson.status){
+			//Если удалось воскресить, надо получить новые данные по герою
+			AnyBalance.trace('Воскрешение успешно: ' + rjson.display_string);
+			html = AnyBalance.requestGet(baseurl + 'mob/hero', headers);
+			json = getJson(html);
+		}
+	}
+
+	return json;
 }
 
 function mainNew(prefs) {
@@ -141,13 +161,14 @@ function mainOld(prefs, json) {
 	getParam(json.bricks_cnt/10 + '', result, 'bricks_p', null, replaceTagsAndSpaces, parseBalance);
 	getParam(json.bricks_cnt + '', result, 'bricks', null, replaceTagsAndSpaces, parseBalance);
 	getParam(json.godpower + '', result, 'godpower', null, replaceTagsAndSpaces, parseBalance);
+	getParam(json.death_count + '', result, 'death_count', null, replaceTagsAndSpaces, parseBalance);
 	getParam(json.wood_cnt ? (json.wood_cnt / 10) + '' : 0 + '', result, 'wood_p', null, replaceTagsAndSpaces, parseBalance);
 	getParam(json.wood_cnt + '', result, 'wood', null, replaceTagsAndSpaces, parseBalance);
 	getParam(json.inventory_num + '', result, 'inventory', null, replaceTagsAndSpaces, parseBalance);
 	getParam(((json.health / json.max_health) * 100).toFixed(1) + '', result, 'health_p', null, replaceTagsAndSpaces, parseBalance);
 	getParam(json.exp_progress + '', result, 'level_p', null, replaceTagsAndSpaces, parseBalance);
 	getParam(json.quest_progress + '', result, 'quest_p', null, replaceTagsAndSpaces, parseBalance);
-	
+
 	if(AnyBalance.isAvailable('savings')) {
 		var html = AnyBalance.requestGet(baseurl + 'gods/' + encodeURIComponent(prefs.login));
 		

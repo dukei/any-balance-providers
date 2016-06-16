@@ -28,7 +28,7 @@
 		negativeButtonText="Отмена"
 		title="Пароль"
 		summary="||***********"
-		dialogMessage="Введите пароль, используемый для входа в личный кабинет."
+		dialogMessage="Введите пароль, используемый для входа в личный кабинет. Вход с паролем капчу не требует. Без пароля (или с неправильным паролем) потребуется капча."
 		inputType="textPassword">
 	</EditTextPreference>
 </PreferenceScreen>

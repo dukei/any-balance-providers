@@ -65,6 +65,8 @@ function main(){
             var fatal = /Неверный логин или пароль/i.test(error);
             if (fatal) {
                 if (params.cardNumber) {
+        			AnyBalance.trace('ОШИБКА: ' + error);
+        			AnyBalance.trace('Пробуем получить данные только по номеру карты');
                     getDataByCardNum(baseurl, prefs);
                 } else {
                     throw new AnyBalance.Error(error, false, true);

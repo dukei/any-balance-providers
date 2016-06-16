@@ -80,11 +80,23 @@ function mainMobile(prefs){
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
 	
-	//Получаем инфу по герою
-	html = AnyBalance.requestGet(baseurl + 'mob/hero', headers);
-	json = getJson(html);
+	function getHero(){
+		var cnt = 1;
+	    do{
+			//Получаем инфу по герою
+			var html = AnyBalance.requestGet(baseurl + 'mob/hero', headers);
+			var json = getJson(html);
+			if(json.hero.expired){
+				AnyBalance.trace('Неполная информация (попытка ' + cnt + '): ' + html);
+				AnyBalance.sleep(1000);
+			}
+		}while(json.hero.expired && cnt++ < 5);
+		return json;
+	}
 
-	if(!json.health){
+	json = getHero();
+
+	if(!json.hero.health){
 		AnyBalance.trace('Герой мёртв, воскрешаем');
 
 		html = AnyBalance.requestPost(baseurl + '/mob/god_command', {
@@ -97,8 +109,7 @@ function mainMobile(prefs){
 		if(rjson.status){
 			//Если удалось воскресить, надо получить новые данные по герою
 			AnyBalance.trace('Воскрешение успешно: ' + rjson.display_string);
-			html = AnyBalance.requestGet(baseurl + 'mob/hero', headers);
-			json = getJson(html);
+			json = getHero();
 		}
 	}
 

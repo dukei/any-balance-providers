@@ -120,6 +120,8 @@ function checkAdditionalQuestions(html, baseurl){
 
 function doNewAccount(page) {
 	var html = AnyBalance.requestGet(page, addHeaders({Referer: baseurl}));
+	var baseurl = getParam(page, null, null, /^(https?:\/\/.*?)\//i);
+	nodeUrl = baseurl;
 
 	if(!html){
 		AnyBalance.trace('Почему-то получили пустую страницу... Попробуем ещё раз');
@@ -131,7 +133,7 @@ function doNewAccount(page) {
 		var pageToken = getParamByName(html, 'PAGE_TOKEN');
 		checkEmpty(pageToken, 'Попытались отказаться от подключения мобильного банка, но не удалось найти PAGE_TOKEN!', true);
 		
-		html = AnyBalance.requestPost('https://online.sberbank.ru/PhizIC/login/register-mobilebank/start.do', {
+		html = AnyBalance.requestPost(nodeUrl + '/PhizIC/login/register-mobilebank/start.do', {
 			PAGE_TOKEN: pageToken,
 			operation: 'skip'
 		}, addHeaders({Referer: baseurl}));
@@ -142,8 +144,6 @@ function doNewAccount(page) {
 		checkEmpty(null, getParam(html, null, null, /Ранее вы[^<]*уже создали свой собственный логин для входа[^<]*/i, replaceTagsAndSpaces));
 	}
 	
-	var baseurl = getParam(page, null, null, /^(https?:\/\/.*?)\//i);
-	nodeUrl = baseurl;
 	if (/PhizIC/.test(html)) {
 		AnyBalance.trace('Entering physic account...: ' + baseurl);
 		if (/confirmTitle/.test(html)) {

@@ -21,7 +21,8 @@ function login(prefs) {
 
 	AnyBalance.setOptions({
 		DEFAULT_CHARSET: 'utf-8',
-		cookiePolicy: 'netscape'
+		cookiePolicy: 'netscape',
+		SSL_ENABLED_PROTOCOLS: ['TLSv1.1', 'TLSv1.2']
 	});
 	
 	if(!g_mainpageurl){

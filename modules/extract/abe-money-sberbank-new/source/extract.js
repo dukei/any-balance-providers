@@ -197,6 +197,9 @@ function doNewAccount(page) {
 			html = html1;
 		}
 
+	} else if(AnyBalance.getLastStatusCode() >= 400){
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Временные технические проблемы в Сбербанк-онлайн. Пожалуйста, попробуйте ещё раз позже.');
 	} else {
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Ваш тип личного кабинета не поддерживается. Свяжитесь, пожалуйста, с разработчиками.');

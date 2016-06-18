@@ -39,6 +39,7 @@ try{
 	objStream.CharSet = "utf-8";
 	
 	var manifest = openManifest(objStream);
+	var isConverter = /<api[^>]+flags="[^"]*\bconverter\b/i.test(manifest);
 	getManifestData(manifest);
 	
 	// Проверим не заменены ли преференсы в файле
@@ -96,7 +97,7 @@ try{
 	if(g_history_file)
 		objStream.SaveToFile (g_history_file, 2);
 	else
-		objStream.SaveToFile (g_history_file || g_new_history_file_name, 1);
+		objStream.SaveToFile (g_history_file || g_new_history_file_name, 2);
 	objStream.Close();
 
 	var intDoIt = WshShell.Popup('Provider: ' + g_prov_text_id + ' v.' + g_prov_major_version + '.' + g_prov_version + ' edited.\nAdded new history line: ' + result + '\n\nDo you want to commit via TortoiseGit?', 0, "Result", vbYesNo + vbInformation + stayOnTop);
@@ -152,8 +153,10 @@ function getManifestData(manifest) {
 	if(!g_prov_text_id)
 		throw new Error('No text_id specified in the manifest!');
 	g_prov_name = searchRegExpSafe(/<name>([^<]+)/i, manifest);
-	if(!g_prov_name)
-		throw new Error('No name specified in the manifest!');		
+	if(!g_prov_name && !isConverter)
+		throw new Error('No name specified in the manifest!');
+	g_prov_name = g_prov_name || 'Converter for ' + g_prov_text_id;
+
 	g_history_file = searchRegExpSafe(/<history>([^<]+)<\/history>/i, manifest);
 	if(!g_history_file){
 		g_new_history_file_name = VBInputBox("No history file specified in the manifest! Would you like to create it? Enter the name of history file.", "history.xml")

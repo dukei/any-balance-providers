@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="24" date="2016-06-18">
+	Увеличено время ожидания смс кода на вход
+	</change>
 	<change version="23" date="2015-09-28">
 	Исправлены данные по кредитам
 	</change>

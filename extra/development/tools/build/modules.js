@@ -288,7 +288,12 @@ var Modules = (function(){
 				throw new Error('Can not create module version folder: ' + version_path);
 		}
 	    
-	    fso.DeleteFile(version_path + '*.js', true); //Удаляем старые файлы
+	    try{
+	    	fso.DeleteFile(version_path + '*.js', true); //Удаляем старые файлы
+	    }catch(e){
+	    	WScript.Echo('Удаление файлов: ' + e.message);
+	    }
+
 		var oExec = Misc.exec(gcccmd + ' --js "' + files.join('" --js "') + '" --js_output_file "' + version_path + sub_module_id + '.min.js"');
 		if(oExec != 0)
 			throw new Error('Compilation failed!');

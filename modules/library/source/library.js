@@ -1304,6 +1304,29 @@ var AB = (function (global_scope) {
 		}
 	}
 
+	function createUrlEncodedParams(params){
+		var out = [];
+		if(Array.isArray(params)){
+			for(var i=0; i<params.length; ++i){
+				var p = params[i];
+				out.push(encodeURIComponent(p[0]) + '=' + encodeURIComponent(p[1]));
+			}
+		}else{
+			for(var p in params){
+				out.push(encodeURIComponent(p) + '=' + encodeURIComponent(params[p]));
+			}
+		}
+		return out.join('&');
+	}
+
+	function clearAllCookies(){
+		var cookies = AnyBalance.getCookies();
+		for(var i=0; i<cookies.length; ++i){
+			var cookie = cookies[i];
+			AnyBalance.setCookie(cookie.domain, cookie.name, null);
+		}
+	}
+
     return {
         getParam: getParam,
         checkEmpty: checkEmpty,
@@ -1374,7 +1397,9 @@ var AB = (function (global_scope) {
         processTable: processTable,
         initCols: initCols,
         fillColsResult: fillColsResult,
-        getJsonObjSafe: getJsonObjSafe
+        getJsonObjSafe: getJsonObjSafe,
+        createUrlEncodedParams: createUrlEncodedParams,
+        clearAllCookies: clearAllCookies
     };
 })(this);
 

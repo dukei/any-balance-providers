@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">email/mailru</id>
+	<api flags="no_browser"/>
+	<name>Получение емейл с mail.ru</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет возможность получить email с mail.ru</p>
+	]]></description>
+	<instruction><![CDATA[
+		
+		Usage:
+		   var email = new Email(login, password);
+		   //email.email <- generated address is here :)
+
+	]]></instruction>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+		<module id="login/mailru"/>
+	</depends>
+	<files>
+		<js>email.mailru.min.js</js>
+		<history>history.xml</history>
+	</files>
+	<keywords></keywords>
+	<type>email e-mail</type>
+</provider>

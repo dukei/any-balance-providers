@@ -1614,17 +1614,24 @@ function enterLK(filial, options){
 		}
 	}
 	if(!isLoggedInLK(html)){
-		var token = getParam(html, null, null, /name="?CSRF?"[^>]*value="([^"]+)/i);
-		if(!token)
+		var form = getElement(html, /<form[^>]+dologin[^>]*>/i);
+		if(!form){
 			AnyBalance.trace(html);
+		    throw new AnyBalance.Error('Не удалось найти форму авторизации. Сайт изменен?', true);
+		}
+
+		var params = AB.createFormParams(form, function(params, str, name, value) {
+			if (/login/i.test(name)) {
+				return prefs.login;
+			} else if (/password/i.test(name)) {
+				return prefs.password;
+			}
+	    
+			return value;
+		});
+
 		
-		checkEmpty(token, 'Не удалось найти токен авторизации ЛК!', true);
-		
-		html = AnyBalance.requestPost(baseurl + 'dologin/', {
-			j_username:options.login,
-			j_password:options.password,
-			CSRF:token,
-		}, addHeaders({Referer: baseurl + 'login/'}));
+		html = AnyBalance.requestPost(baseurl + 'dologin/', params, addHeaders({Referer: baseurl + 'login/'}));
 	}	
 
 	if (!isLoggedInLK(html) && !isLoggedInSG(html)) {

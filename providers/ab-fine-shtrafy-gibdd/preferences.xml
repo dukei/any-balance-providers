@@ -30,4 +30,12 @@
         summary="||{@s}" 
         dialogMessage="Введите номер свидетельства о регистрации в формате 50ХХ123456.">
     </EditTextPreference>
+	<ListPreference 
+        key="type" 
+        title="Источник данных"
+        summary="||{@s}"
+        entries="Автоматически|Новый сайт|Старый сайт"
+        entryValues="auto|new|old"
+	    defaultValue="auto">
+    </ListPreference>
 </PreferenceScreen>

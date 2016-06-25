@@ -1,10 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="6">ab-fine-shtrafy-gibdd</id>
+	<id version="7">ab-fine-shtrafy-gibdd</id>
 	<name>Штрафы ГИБДД (shtrafy-gibdd.ru)</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о наличии штрафов с сайта http://shtrafy-gibdd.ru/</p>
+	<p>Предоставляет информацию о наличии штрафов с сайта https://shtrafy-gibdd.ru/ или его старой версии http://old.shtrafy-gibdd.ru/.</p>
 	<p>Наиболее точная информация доступна в провайдере Госуслуги (Штрафы, Налоги).</p>
 	]]></description>
 	<instruction html="true"><![CDATA[
@@ -15,6 +15,7 @@
 		<module id="library"/>
 	</depends>
 	<files>
+		<js>library.min.js</js>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
 		<js>main.js</js>

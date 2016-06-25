@@ -60,7 +60,6 @@ function mainSite(prefs, baseurl) {
 			return prefs.phone;
 		else if (name == 'super_password')
 			return prefs.pass;
-
 		else if (name == 'msisdn_code')
 			return prefs.prefph;			
 			
@@ -70,14 +69,10 @@ function mainSite(prefs, baseurl) {
 	// Если показывают картинку - надо запросить капчу
 	var href = getParam(html, null, null, /<img src="\/(captcha\/image[^"]+)/i);
 	if(href) {
-		if(AnyBalance.getLevel() >= 7){
-			AnyBalance.trace('Пытаемся ввести капчу');
-			var captcha = AnyBalance.requestGet(baseurl + href);
-			params.captcha_1 = AnyBalance.retrieveCode("Пожалуйста, введите код с картинки", captcha, {time: 180000, inputType: 'number'});
-			AnyBalance.trace('Капча получена: ' + params.captcha_1);
-		}else{
-			throw new AnyBalance.Error('Провайдер требует AnyBalance API v7, пожалуйста, обновите AnyBalance!');
-		}
+		AnyBalance.trace('Пытаемся ввести капчу');
+		var captcha = AnyBalance.requestGet(baseurl + href);
+		params.captcha_1 = AnyBalance.retrieveCode("Пожалуйста, введите код с картинки", captcha, {time: 180000, inputType: 'number'});
+		AnyBalance.trace('Капча получена: ' + params.captcha_1);
 	}
 
 	html = AnyBalance.requestPost(baseurl + 'ru/?locale=ru', params, addHeaders({Referer: baseurl + 'ru/?locale=ru'}));
@@ -93,7 +88,7 @@ function mainSite(prefs, baseurl) {
 
 	var result = {success: true};
 
-	html = AnyBalance.requestPost(baseurl + 'ru/osnovnaya-informaciya/osnobnaya-informaciya/', params, addHeaders({Referer: baseurl + 'ru/osnovnaya-informaciya/osnobnaya-informaciya/'}));
+	html = AnyBalance.requestGet(baseurl + 'ru/osnovnaya-informaciya/osnobnaya-informaciya/', addHeaders({Referer: baseurl}));
         // Основной счет
 	getParam(html, result, 'Mbalance', /<td>Основной счет:(?:[\s\S]*?<td[^>]*>){5}\s*([\s\d.,\-]+)/i, replaceTagsAndSpaces, parseBalance);
         // Бонусный счет
@@ -126,15 +121,15 @@ function mainSite(prefs, baseurl) {
 	getParam(html, result, 'phone', /class="user-number"[^>]*>(380\d+)/i, [replaceTagsAndSpaces, /^380/, '+380'], html_entity_decode);
         // Тариф
 	if(lang == 'ru') {
-	  html = AnyBalance.requestPost(baseurl + 'ru/osnovnaya-informaciya/osnobnaya-informaciya/', params, addHeaders({Referer: baseurl + 'ru/osnovnaya-informaciya/osnobnaya-informaciya/'}));
+	  html = AnyBalance.requestGet(baseurl + 'ru/osnovnaya-informaciya/osnobnaya-informaciya/', addHeaders({Referer: baseurl}));
 	  getParam(html, result, '__tariff', /<td>Тариф:(?:[\s\S]*?<td[^>]*>){5}\s*([\s\S]*?)<\/td/i, replaceTagsAndSpaces, html_entity_decode);
 	}
 	if(lang == 'uk') {
-	  html = AnyBalance.requestPost(baseurl + 'uk/osnovna-informacia/osnovna-informacia/', params, addHeaders({Referer: baseurl + 'uk/osnovna-informacia/osnovna-informacia/'}));
+	  html = AnyBalance.requestGet(baseurl + 'uk/osnovnaya-informaciya/osnobnaya-informaciya/', addHeaders({Referer: baseurl}));
 	  getParam(html, result, '__tariff', /<td>Тариф:(?:[\s\S]*?<td[^>]*>){5}\s*([\s\S]*?)<\/td/i, replaceTagsAndSpaces, html_entity_decode);
 	}
 	if(lang == 'en') {
-	  html = AnyBalance.requestPost(baseurl + 'en/general-info/general-info/', params, addHeaders({Referer: baseurl + 'en/general-info/general-info/'}));
+	  html = AnyBalance.requestGet(baseurl + 'en/osnovnaya-informaciya/osnobnaya-informaciya/', addHeaders({Referer: baseurl}));
 	  getParam(html, result, '__tariff', /<td>Tariff:(?:[\s\S]*?<td[^>]*>){5}\s*([\s\S]*?)<\/td/i, replaceTagsAndSpaces, html_entity_decode);
 	}
 

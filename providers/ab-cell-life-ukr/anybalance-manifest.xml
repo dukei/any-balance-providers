@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="3" version="38">ab-cell-life-ukr</id>
+	<id major_version="3" version="39">ab-cell-life-ukr</id>
 	<api flags="no_browser" />
 	<name>Lifecell</name>
 	<description html="true"><![CDATA[
@@ -24,12 +24,15 @@
 	<author>Ignatiy Goloviznin &lt;igoloviznin@gmail.com&gt;</author>
 	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="crypt/cryptojs/sha1"/>
+		<module id="crypt/cryptojs/hmac"/>
+		<module id="crypt/cryptojs/base64"/>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>hmac-sha1.js</js>
-		<js>enc-base64-min.js</js>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>

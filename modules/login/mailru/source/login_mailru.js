@@ -23,6 +23,8 @@
 		var error = getParam(html, null, null, /<div[^>]+login-page__external_error[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
 		if(error)
 			throw new AnyBalance.Error(error, null, /Неверное имя пользователя или пароль/i.test(error));
+		if(/passremind/i.test(AnyBalance.getLastUrl()))
+			throw new AnyBalance.Error('Ящик временно заблокирован. Mail.ru требует подтвердить e-mail по SMS. Войдите в вашу почту через браузер и подтвердите.');
 		AnyBalance.trace(html);
         throw new AnyBalance.Error('Не удалось войти в личный кабинет. Неправильный логин-пароль?');
     }

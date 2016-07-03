@@ -38,7 +38,7 @@ function Email_mailru(login, password, timeback){
 		var json = getParam(html, null, null, /arMailRuMessages\s*=\s*(\(\s*function[\s\S]*?\)\(\);)/, [/^/, 'return ', /ajs.Html.unescape/, 'html_unescape'], function(script){
 			return safeEval(script, 'html_unescape', [html_entity_decode]);
 		});
-		AnyBalance.trace(JSON.stringify(json));
+		AnyBalance.trace('Existing emails: ' + JSON.stringify(json));
 		return json;
 	}
 

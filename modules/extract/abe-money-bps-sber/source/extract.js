@@ -129,7 +129,7 @@ function login() {
 		LOGIN: prefs.login,
 		PASSWORD: prefs.password,
 		DEVICEID: hex_md5(prefs.login).substr(0, 16),
-		VERSION: 'v2.29'
+		VERSION: 'v2.35'
 	};
 
 	var xml = makeRequest('login', g_baseparams);

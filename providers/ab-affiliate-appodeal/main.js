@@ -27,8 +27,8 @@ function main() {
 		var post={
 			utf8:'✓',
 			authenticity_token:authenticityToken,
-			'session[email]':prefs.login,
-			'session[password]':prefs.password,
+			'user[email]':prefs.login,
+			'user[password]':prefs.password,
 			commit:'Вход'
 			};
 		

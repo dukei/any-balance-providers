@@ -1598,7 +1598,7 @@ function enterLK(filial, options){
 	
 	var html = AnyBalance.requestGet(baseurl, g_headers);
 	if(isLoggedInLK(html)){
-		var phone = getParam(html, null, null, /<div[^>]+private-office-info-phone[^>]*>([\s\S]*?)<\/div>/i, [replaceTagsAndSpaces, replaceHtmlEntities, /\D/g, '']);
+		var phone = getParam(getElement(html, /<div[^>]+gadget_account_block[^>]*>/i), null, null, /<h3[^>]*>([\s\S]*?)<\/h3>/i, [replaceTagsAndSpaces, /\D/g, '']);
 		AnyBalance.trace('Автоматически зашли в личный кабинет на номер ' + phone);
 		if(!phone){
 			AnyBalance.trace(html);
@@ -1925,72 +1925,83 @@ function allowRobotsSG(filial, sessionid, login){
 function megafonLK(filial, html){
 	var result = {success: true, filial: filial_info[filial].id};
 
-	getParam(html, result, 'phone', /<div[^>]*private-office-info-phone[^>]*>([\s\S]*?)<\/div>/i, replaceNumber, html_entity_decode);
-	getParam(html, result, 'credit', /<div[^>]*private-office-limit[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'balance', /Баланс([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'available', /Доступно([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'bonus_balance', /Бонусные баллы([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
-	// getParam(html, result, '__tariff', />\s*Тариф([\s\S]*?)<\/div>/i, [replaceTagsAndSpaces, /^&laquo;(.*)&raquo;$/, '$1']);
+	getParam(getElement(html, /<div[^>]+gadget_account_block[^>]*>/i), result, 'phone', /<h3[^>]*>([\s\S]*?)<\/h3>/i, replaceNumber);
 
-	// Не понял зачем сделано именно так, переделал по-своему (Stark)
-	// if(AnyBalance.isAvailable('__tariff')){
-		// html = AnyBalance.requestGet(lk_url + 'tariff', g_headers);
-	    // getParam(html, result, '__tariff', />\s*Тариф([\s\S]*?)<\/div>/i, [replaceTagsAndSpaces, /^&laquo;(.*)&raquo;$/, '$1']);
-	// } else {
-		// html = AnyBalance.requestGet(lk_url + 'tariffs/', g_headers);
-	    // getParam(html, result, '__tariff', /<div[^>]+gadget-tariff-name[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
-	// }
+	var info = getJsonObject(html, /var\s+HISTONE_ENV\s*=\s*/);
+	var csrf = info.CSRF;
+	if(!csrf){
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удалось найти параметр запросов к API личного кабинета');
+	}
+
+	if(AnyBalance.isAvailable('available', 'bonus_balance')){
+		info = requestPipe(csrf, 'main/info');
+		getParam(info.balance, result, 'available');
+		getParam(info.bonusBalance, result, 'bonus_balance');
+	}
+
+	if(AnyBalance.isAvailable('balance', 'credit')){
+		info = requestPipe(csrf, 'main/atourexpense');
+		getParam(info.balance, result, 'balance');
+		getParam(info.limit, result, 'credit');
+	}
 	
-	html = AnyBalance.requestGet(lk_url + 'tariffs/', g_headers);
-	getParam(html, result, '__tariff', /<div[^>]+gadget-tariff-name[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
-	
+	if(isAvailable(['__tariff'])){
+		info = requestPipe(csrf, 'mini/options');
+		getParam(info.tariffName, result, '__tariff');
+	}
+		
 	if(AnyBalance.isAvailable('mins_n_free', 'mins_net_left', 'mins_left', 'mins_total', 'mms_left', 'mms_total', 'sms_left', 'sms_total', 
 			'gb_with_you', 'internet_left', 'internet_total', 'internet_cur', 'internet_left_night', 'internet_total_night', 'interent_cur_night')){
 		html = AnyBalance.requestGet(lk_url + 'remainders/', g_headers);
 		megafonLKRemainders(filial, html, result);
 	}
 
-	if(AnyBalance.isAvailable('bonus_burn')){
+	if(AnyBalance.isAvailable(/*'bonus_burn', */'bonus_status')){
 		html = AnyBalance.requestGet(lk_url + 'bonus/', g_headers);
-		getParam(html, result, 'bonus_burn', /<div[^>]+gadget-bonus-summ-2[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
-		getParam(html, result, 'bonus_status', /<div[^>]+ui-label-status[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+//		getParam(html, result, 'bonus_burn', /<div[^>]+gadget-bonus-summ-2[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+		getParam(html, result, 'bonus_status', /<div[^>]+gadget_bonus_status[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
 	}
 
 	if(AnyBalance.isAvailable('sub_soi', 'sub_smit', 'sub_smio', 'sub_scl', 'sub_scr', 'internet_cost',	'last_pay_sum', 'last_pay_date')) {
 		//html = AnyBalance.requestGet(lk_url + 'historyNew/', g_headers);
 		try {
-			megafonLKFinance(filial, html, result);
+			megafonLKFinance(csrf, filial, html, result);
 		} catch(e) {
 			AnyBalance.trace('Не удалось получить данные по финансовым остаткам.');
 		}
 	}
 
-	megafonLKTurnOffSMSNotification(html);
+	megafonLKTurnOffSMSNotification(csrf);
 
 	setCountersToNull(result);
 	AnyBalance.setResult(result);
 }
 
 function megafonLKRemainders(filial, html, result){
-	var remGroups = getElements(html, /<div[^>]+class="gadget-remainders-color[^>]*>/ig);
+	var remGroups = getElements(html, /<div[^>]+class="mf-gadget-remainders"[^>]*>/ig);
 	AnyBalance.trace('Найдено ' + remGroups.length + ' групп остатков услуг');
 
 	for(var i=0; i<remGroups.length; ++i){
 		var rg = remGroups[i];
-		var gname = getElement(rg, /<h1[^>]*>/i, replaceTagsAndSpaces);
+		var gname = getElement(rg, /<h2[^>]*>/i, replaceTagsAndSpaces);
 		
-		var rows = getElements(rg, /<div[^>]+gadget-remainders-row[^>]*>/ig);
-		AnyBalance.trace('Группа ' + gname + ' содержит ' + (rows.length-1) + ' подуслуг');
+		var rows = getElements(rg, /<div[^>]+mf-gadget-remainders-box[^>]*>/ig);
+		AnyBalance.trace('Группа ' + gname + ' содержит ' + rows.length + ' подуслуг');
 
 		for(var j=0; j<rows.length; ++j){
 			var row = rows[j];
-			if(/gadget-remainders-mobile-del/i.test(row))
-				continue; //Заголовок пропускаем
+//			if(/gadget-remainders-mobile-del/i.test(row))
+//				continue; //Заголовок пропускаем
 
-			var rname = getElement(row, /<div[^>]+gadget-remainders-td-name[^>]*>/i, replaceTagsAndSpaces);
-			var total = getParam(row, null, null, /<div[^>]+gadget-remainders-td-2[^>]*>([\s\S]*?)<\/div>/i, [/<span[^>]+gadget-remainders-mobile-name[^>]*>[\s\S]*?<\/span>/i, '']);
-			var left = getParam(row, null, null, /<div[^>]+gadget-remainders-td-3[^>]*>([\s\S]*?)<\/div>/i, [/<span[^>]+gadget-remainders-mobile-name[^>]*>[\s\S]*?<\/span>/i, '']);
-			var units = getParam(left, null, null, /<span[^>]*>([^<]*)<\/span>\s*$/i, replaceTagsAndSpaces);
+			var rname = getParam(row, null, null, /<h5[^>]*>\s*Услуга[\s\S]*?<p[^>]*>([\s\S]*?)<\/p>/i, replaceTagsAndSpaces);
+			var vol = getParam(row, null, null, /<h5[^>]*>\s*Остаток[\s\S]*?<p[^>]*>([\s\S]*?)<\/p>/i, replaceTagsAndSpaces);
+
+			var total = getParam(vol, null, null, /\/([\s\S]*)/);
+			var units = parseCurrency(total);
+
+			var left = getParam(vol, null, null, /[^\/]*/) + units;
+
 			var name = gname + ' ' + rname;
 
 			AnyBalance.trace('Обработка услуги ' + gname + ':' + rname);
@@ -2097,12 +2108,7 @@ function requestPipe(csrf, addr, get, post){
 	if(!post)
 		get._ = new Date().getTime();
 
-    var url = lk_url + 'pipes/lk/' + addr + '?';
-    var params = '';
-	for(var name in get){
-		params += (params ? '&' : '') + encodeURIComponent(name) + '=' + encodeURIComponent('' + get[name]);
-	}
-	url += params;
+    var url = lk_url + 'pipes/lk/' + addr + '?' + AB.createUrlEncodedParams(get || {});
 
 	var html;
 	if(post){
@@ -2115,9 +2121,7 @@ function requestPipe(csrf, addr, get, post){
 	return json;
 }
 
-function megafonLKFinance(filial, html, result){
-	var csrf = getParam(html, null, null, /CSRF_PARAM\s*=\s*"([^"]*)/, replaceSlashes);
-	 
+function megafonLKFinance(csrf, filial, html, result){
 	if(AnyBalance.isAvailable('sub_soi', 'sub_smit', 'sub_smio', 'sub_scl', 'sub_scr', 'internet_cost')){
 		var json = requestPipe(csrf, 'reports/expenses');
 		AnyBalance.trace('Parsing expenses: ' + JSON.stringify(json));
@@ -2176,15 +2180,13 @@ function removeAllLKCookies(){
 	}
 }
 
-function megafonLKTurnOffSMSNotification(html){
+function megafonLKTurnOffSMSNotification(csrf){
 
     function getSMSHash(csrf){
 		var json = requestPipe(csrf, 'check/sms');
 		return json.hash;
 	}
 
-//	var html = AnyBalance.requestGet(lk_url + 'settings/notification/', g_headers);
-	var csrf = getParam(html, null, null, /CSRF_PARAM\s*=\s*"([^"]*)/, replaceSlashes);
 	var json = requestPipe(csrf, 'userProfile/settings/notifications');
 	
 	var on = json.notify;

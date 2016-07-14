@@ -206,7 +206,11 @@ function processSite() {
 		/(?:Залишок хвилин для дзвінків на інші мережі|Остаток минут для звонков на другие сети)[\s\S]*?<b>([^<]*)/ig,
 		replaceTagsAndSpaces, parseMinutes, aggregate_sum);
 	sumParam(html, result, 'bonus_mins_other_mobile', /(?:Хвилини на інші мобільні|Минуты на другие мобильные):(?:[^>]*>){3}(.*)/ig,
-		replaceTagsAndSpaces, parseMinutes, aggregate_sum);
+		replaceTagsAndSpaces, parseMinutes, aggregate_sum); 
+  // правки antarey
+	sumParam(html, result, 'bonus_mins_other_networks', /(?:"availableAmount":.{"value":")(\d+)(?:","unit":)(?:"мин."|"хв."}.)/ig,
+		replaceTagsAndSpaces, parseMinutes, aggregate_sum); 
+  //  
 	//Срок действия минут на другие сети
 	sumParam(html, result, 'bonus_mins_other_mobile_till',
 		/(?:Залишок хвилин на інші мобільні мережі в межах України:|Остаток минут на другие мобильные сети в пределах Украины:)[\s\S]*?<td[^>]*>[\s\S]*?<\/td>([\s\S]*?)<\/td>/i,
@@ -219,7 +223,12 @@ function processSite() {
 		replaceTagsAndSpaces, parseDate, aggregate_min);
 	sumParam(html, result, 'bonus_mins_other_mobile_till',
 		/(?:Хвилини на інші мобільні|Минуты на другие мобильные)[\s\S]*?<td[^>]*>[\s\S]*?<\/td>([\s\S]*?)<\/td>/i,
-		replaceTagsAndSpaces, parseDate, aggregate_min);
+		replaceTagsAndSpaces, parseDate, aggregate_min); 
+  // правки antarey 
+	sumParam(html, result, 'bonus_mins_other_networks_till',
+		/(?:Минуты на другие мобильные|Хвилини на інші мобільні)(?:","bonusExpirationDate":")(\d{2}.\d{2}.\d{4})/i,
+		replaceTagsAndSpaces, parseDate, aggregate_min);   
+  //    
 
 	//Тарифные минуты:
 	sumParam(html, result, 'mins_tariff', /(?:Тарифні хвилини:|Тарифные минуты:)[\s\S]*?<b>([^<]*)/ig,
@@ -539,7 +548,14 @@ function processBonus(bonus, name, result) {
 				AnyBalance.trace('Неизвестные минуты ' + name + ', относим к минутам на все сети: ' + JSON.stringify(bonus));
 			sumParam(bonus[1], result, 'bonus_mins_2', null, null, parseMinutes, aggregate_sum);
 			sumParam(getDateValue(bonus), result, 'bonus_mins_2_till', null, g_replace_date, parseDate, aggregate_min);
-		} else if (/INET/i.test(name)) {
+		} 
+    // правка antarey
+		else if (/TIME/i.test(name) && /Минуты на другие мобильные|Хвилини на інші мобільні/i.test(bonus[0])) {
+			sumParam(bonus[1], result, 'bonus_mins_other_networks', null, null, parseMinutes, aggregate_sum);
+			sumParam(getDateValue(bonus), result, 'bonus_mins_other_networks_till', null, g_replace_date, parseDate, aggregate_min);
+		}
+    //
+    else if (/INET/i.test(name)) {
 			sumParam(bonus[1] + getUnitsValue(bonus), result, 'internet', null, null, parseTraffic, aggregate_sum);
 		} else {
 			AnyBalance.trace('Неизвестный бонус ' + name + ': ' + JSON.stringify(bonus));

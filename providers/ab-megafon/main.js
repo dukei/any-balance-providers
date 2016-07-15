@@ -1598,7 +1598,7 @@ function enterLK(filial, options){
 	
 	var html = AnyBalance.requestGet(baseurl, g_headers);
 	if(isLoggedInLK(html)){
-		var phone = getParam(getElement(html, /<div[^>]+gadget_account_block[^>]*>/i), null, null, /<h3[^>]*>([\s\S]*?)<\/h3>/i, [replaceTagsAndSpaces, /\D/g, '']);
+		var phone = getParam(getElement(html, /<div[^>]+class="gadget_account_block"[^>]*>/i), null, null, /<h3[^>]*>([\s\S]*?)<\/h3>/i, [replaceTagsAndSpaces, /\D/g, '']);
 		AnyBalance.trace('Автоматически зашли в личный кабинет на номер ' + phone);
 		if(!phone){
 			AnyBalance.trace(html);
@@ -1925,7 +1925,7 @@ function allowRobotsSG(filial, sessionid, login){
 function megafonLK(filial, html){
 	var result = {success: true, filial: filial_info[filial].id};
 
-	getParam(getElement(html, /<div[^>]+gadget_account_block[^>]*>/i), result, 'phone', /<h3[^>]*>([\s\S]*?)<\/h3>/i, replaceNumber);
+	getParam(getElement(html, /<div[^>]+class="gadget_account_block"[^>]*>/i), result, 'phone', /<h3[^>]*>([\s\S]*?)<\/h3>/i, replaceNumber);
 
 	var info = getJsonObject(html, /var\s+HISTONE_ENV\s*=\s*/);
 	var csrf = info.CSRF;
@@ -1934,10 +1934,14 @@ function megafonLK(filial, html){
 		throw new AnyBalance.Error('Не удалось найти параметр запросов к API личного кабинета');
 	}
 
-	if(AnyBalance.isAvailable('available', 'bonus_balance')){
-		info = requestPipe(csrf, 'main/info');
+	if(AnyBalance.isAvailable('available')){
+		info = requestPipe(csrf, 'balance/get');
 		getParam(info.balance, result, 'available');
-		getParam(info.bonusBalance, result, 'bonus_balance');
+	}
+
+	if(AnyBalance.isAvailable('bonus_balance')){
+		info = requestPipe(csrf, 'main/bonuses');
+		getParam(info.balance, result, 'bonus_balance');
 	}
 
 	if(AnyBalance.isAvailable('balance', 'credit')){

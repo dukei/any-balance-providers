@@ -57,7 +57,7 @@ function main () {
 	}
 	
     // var trainRows = getTrainTableRows(html);
-	var trainRows = getElements(html, /<tr[^>]*class="[^"]*b-timetable__row b-timetable__row_sortable_yes[^>]*>/ig);
+	var trainRows = getElements(html, /<div[^>]+\bSearchSegment\b[^>]*>/ig);
     
     if (trainRows.length < 1)
 		throw new AnyBalance.Error("Не найдена информация о поездах!");
@@ -67,12 +67,12 @@ function main () {
     var result = {success: true};
 	
     for (var t = 0; t < numResults; t++) {
-		getParam(trainRows[t], result, 'train' + t, null, replaceHtmlEntities, getTrainDepartureTime);
+		getParam(getElement(trainRows[t], /<div[^>]+SearchSegment__time\b[^>]*>/i), result, 'train' + t, /<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
 	}
 	
-	getParam(html, result, '__tariff', /Расписание электричек (из[^<]+)/i, replaceTagsAndSpaces, capitalFirstLetters);
-	getParam(html, result, 'start', /Откуда(?:[^>]*>){3}[^>]*value="([^"]+)/i, null, capitalFirstLetters);
-	getParam(html, result, 'finish', />Куда(?:[^>]*>){3}[^>]*value="([^"]+)/i, null, capitalFirstLetters);
+	getParam(html, result, '__tariff', /Расписание электричек ([^<]+)/i, [replaceTagsAndSpaces, /–\s*Яндекс.Расписания/i, ''], capitalFirstLetters);
+	getParam(html, result, 'start', /<input[^>]+id="from"[^>]*value="([^"]+)/i, null, capitalFirstLetters);
+	getParam(html, result, 'finish', /input[^>]+id="to"[^>]*value="([^"]+)/i, null, capitalFirstLetters);
 	
     AnyBalance.setResult(result);
 }
@@ -81,27 +81,6 @@ function performPrecision(html, prefs) {
 	var accurate = getParam(html, null, null, new RegExp('<a class="b-link"[^>]*href="([^"]+)(?:[^>]*>){1,4}[^<]*?' + prefs.region, 'i'), replaceTagsAndSpaces);
 	checkEmpty(accurate, 'Не удалось найти таблицу с уточнением местоположений!', true);
 	return AnyBalance.requestGet(g_baseurl + accurate);
-}
-
-function getTrainDepartureTime(inputText) {
-	try {
-		var json = getJsonObject(inputText);
-
-		return  getParam(json['b-timetable__row'].stabilizers[0] + '', null, null, /(\d+:\d+)/) + (json['b-timetable__row']['filter-values'].express == 'y' ? 'э' : '');
-	} catch(e) {
-		
-	}
-	
-	var re = /<td class="b-timetable__cell.+?b-timetable__cell_type_departure".+?<strong>.+?<\/strong>/;
-	var cell = re.exec(inputText);
-	if (cell === null) {
-		return "н/д";
-	} else {
-		var express = isExpress(inputText) ? "э" : "";
-		return /<strong>.+?<\/strong>/.exec(cell[0])[0].substr(8, 5) + express + getPlatformInfo(inputText);
-	}
-	
-	
 }
 
 function isExpress(inputText) {

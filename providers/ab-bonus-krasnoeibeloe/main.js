@@ -18,27 +18,25 @@ function main(){
 
     var baseurl = "http://krasnoeibeloe.ru/";
 	
-    var incapsule = Cloudflare(baseurl + 'discount/?old=Y');
-	var html = AnyBalance.requestGet(baseurl + 'discount/?old=Y', g_headers);
+    var incapsule = Cloudflare(baseurl + 'discount/?discount=Y');
+	var html = AnyBalance.requestGet(baseurl + 'discount/?discount=Y', g_headers);
     if(incapsule.isCloudflared(html))
         html = incapsule.executeScript(html);
 	
 	var form = getElements(html, [/<form[^>]*card_reg_form[^>]*>/ig, /<input[^>]+sessid/i])[0];
     var sessid = getParam(form, null, null, /name="sessid"[\s\S]*?value="([^"]+)/i);
     	
-    html = AnyBalance.requestPost(baseurl + 'discount/?old=Y', {
+    html = AnyBalance.requestPost(baseurl + 'discount/?discount=Y', {
         'sessid': sessid,
-        'card_number1': '2',
-        'card_number2': prefs.login.substr(1, 6),
-        'card_number3': prefs.login.substr(7, 6),
+        'card_number_one': prefs.login.replace(/(\d)(\d{6})(\d{6})/i, '$1  $2  $3'),
         'card_number': '',
         'card_submit': 'Узнать'
     }, addHeaders({Referer: baseurl + 'discount/?old=Y'}));
 	
 	if (!/По данным на/i.test(getElement(html, /<div[^>]+bl_result_nomer_text[^>]*>/i))) {
-		var error = getParam(html, null, null, /<div[^>]+bl_result_nomer_text[^>]*>([\s\S]*?)(?:<br|<\/div>)/i, replaceTagsAndSpaces);
-		if (error)
-			throw new AnyBalance.Error(error, null, /Данных по карте не найдено/i.test(error));
+		var error = getJsonObject(html, /var\s+header_message\s*=/);
+		if (error && error.message)
+			throw new AnyBalance.Error(replaceAll(error.message, [/Активируйте карту по.*/i, '']), null, /неверный/i.test(error.message));
 		
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');

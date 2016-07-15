@@ -69,8 +69,9 @@
 	getParam(info, result, '__tariff', /<div\s+id="overviewSkypeName"[^>]*>([^<]*)/i, replaceTagsAndSpaces);
  	
 	if (AnyBalance.isAvailable('inactivein', 'inactivedate')) {
- 		info = AnyBalance.requestGet('https://secure.skype.com/account/credit-reactivate?setlang=ru');
- 		var date = getParam(info, null, null, /<span[^>]+class="expiryDate"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseDate);
+ 		info = AnyBalance.requestGet('https://secure.skype.com/portal/settings/credit/reactivate?setlang=ru');
+ 		//По-русски дата странная, типа Декабрь 5, 2017
+ 		var date = getParam(info, null, null, /<span[^>]+class="expiryDate"[^>]*>([\s\S]*?)<\/span>/i, [replaceTagsAndSpaces, /([а-я]+)\s+(\d+)/i, '$2 $1'], parseDateWord);
  		if (date) {
  			if (AnyBalance.isAvailable('inactivedate'))
 				result.inactivedate = date;

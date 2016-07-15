@@ -1,16 +1,18 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="2" version="25">ab-telephony-skype</id>
+	<id major_version="2" version="26">ab-telephony-skype</id>
 	<api flags="no_browser" />
 	<name>Skype</name>
 	<description html="true"><![CDATA[
 	<p>Obtains information from Skype personal account at http://skype.com</p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>

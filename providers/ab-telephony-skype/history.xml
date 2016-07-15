@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="2" version="26" date="2016-07-15">
+	- Восстановлено получение даты деактивации средств
+	</change>
 	<change major_version="2" version="25" date="2015-09-19">
 	- Поддержка изменений в процедуре входа
 	</change>

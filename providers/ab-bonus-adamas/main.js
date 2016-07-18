@@ -30,24 +30,26 @@ function main() {
         'yakor': AB.getParam(html, null, null, /<input[^>]*yakor[^>]*value="([^"]+)/i),
         'LOGIN': prefs.login,
         'PASSWORD': prefs.password,
-        'n2': 'Войти'
+        'n2': 'Войти',
+        empis_form: 'Y'
     };
 	
-	var postHtml = AnyBalance.requestPost(baseurl + 'index.php', params, AB.addHeaders({Referer: baseurl}));
-    html = AnyBalance.requestGet(baseurl + 'personal/', g_headers);
+	html = AnyBalance.requestPost(baseurl, params, AB.addHeaders({Referer: baseurl}));
 	
 	if (!/logout/i.test(html)) {
 		var error = AB.getParam(
-            postHtml, null, null, /<div class="cont-input">[\s\S]*?<p[^>]*>([^<]+)/i, AB.replaceTagsAndSpaces
+            html, null, null, /<p[^>]*color:\s*#A0A0A0[^>]*>([\s\S]*?)<\/p>/i, AB.replaceTagsAndSpaces
         );
 
 		if (error) {
-            throw new AnyBalance.Error(error, null, /Проверьте данные/i.test(error));
+            throw new AnyBalance.Error(error, null, /Неверный логин или пароль|Не заполнено поле/i.test(error));
         }
 		
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
+
+    html = AnyBalance.requestGet(baseurl + 'personal/', AB.addHeaders({Referer: baseurl}));
 	
 	var result = {success: true};
 

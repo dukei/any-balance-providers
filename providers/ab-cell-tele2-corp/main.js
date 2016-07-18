@@ -117,8 +117,8 @@ function main() {
 
       var json = AB.getJsonEval(html_data);
       //Опять таки надо искать кей с HTML и потом по нему искать баланс и кредитный лимит
-      var balance_key       = getParam(html, null, null, /Остаток средств(?:[^']*'){10}([^']*)/i),
-          credit_limit_key  = getParam(html, null, null, /Лимит кредита(?:[^']*'){10}([^']*)/i);
+      var balance_key       = getParam(html, null, null, /(?:Остаток средств|Остаток на счете)(?:[^']*'){10}([^']*)/i),
+          credit_limit_key  = getParam(html, null, null, /(?:Лимит кредита|Кредитный лимит)(?:[^']*'){10}([^']*)/i);
 
       if(!balance_key || !credit_limit_key) {
         throw new AnyBalance.Error("Не удалось найти ключи балансов по контракту.");
@@ -135,7 +135,7 @@ function main() {
       AB.getParam('50 руб', result, ['currency', 'balance'], null, AB.replaceTagsAndSpaces, AB.parseCurrency);
 
     } catch (e) {
-      AnyBalance.trace('Не удалось получить данные об остатке средств: ' + e);
+      AnyBalance.trace('Не удалось получить данные об остатке средств: ' + e.message);
     }
   }
 
@@ -151,7 +151,8 @@ function main() {
 
       data_0 = {
         'items': [subscribersTabToken],
-        'reference': subscribersTabToken
+        'reference': subscribersTabToken,
+        "clearFirst":false,"pageX":668,"pageY":297,"which":1,"x":176.5,"y":99
       };
 
       authData = {

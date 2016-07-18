@@ -60,9 +60,11 @@ function main(){
 
     //if (!/userId/i.test(html) || /<input\s[^>]*type="password"/i.test(html)) {
     if (!/<a\s[^>]*?data-bind="[^"]*?username"[^>]*>([^<]+)/i.test(html)) {
-        var error = getParam(html, null, null, /<div[^>]+class="sm-form__errors-block"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
+        var error = getParam(html, null, null, /<div[^>]+class="sm-form__errors-block"[^>]*>[\s\S]*?<ul[^>]*>(.*?)<\/ul>/i, replaceTagsAndSpaces);
+        if (!error)
+        	error = getParam(html, null, null, /content:\s*'<div[^>]+clr-red[^>]*>([\s\S]*?)'/i, replaceTagsAndSpaces);
         if (error) {
-            var fatal = /Неверный логин или пароль/i.test(error);
+            var fatal = /Неверный логин или пароль|пароль устарел/i.test(error);
             if (fatal) {
                 if (params.cardNumber) {
         			AnyBalance.trace('ОШИБКА: ' + error);
@@ -85,8 +87,8 @@ function main(){
     
     var result = {success: true};
 	
-	getParam(html, result, '__tariff', /smProfile__level[^>]*>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'cardnum', /<h3>\s*Номер карты\s*<\/h3>\s*<div>\s*([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, '__tariff', /smProfile__level[^>]*>([^<]*)/i, replaceTagsAndSpaces);
+	getParam(html, result, 'cardnum', /<h3>\s*Номер карты\s*<\/h3>\s*<div>\s*([^<]+)/i, replaceTagsAndSpaces);
     getParam(html, result, 'balance', /smProfile__total-amount[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'nextlevel', /Совершите покупки еще на([^<]*?)руб/i, replaceTagsAndSpaces, parseBalance);
 	

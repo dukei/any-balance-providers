@@ -15,6 +15,10 @@ var g_baseurl = 'https://client.mdmbank.ru';
 function login() {
     var prefs = AnyBalance.getPreferences();
 	
+	AnyBalance.setOptions({
+		SSL_ENABLED_PROTOCOLS: ['TLSv1.1', 'TLSv1.2']
+	});
+
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 	

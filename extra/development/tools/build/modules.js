@@ -270,7 +270,7 @@ var Modules = (function(){
 
 		provider.load();
 	    
-		var sub_module_id = provider.id.replace(/[\\\/]+/, '.');
+		var sub_module_id = provider.id.replace(/[\\\/]+/g, '.');
 	    
 		if(!version) version = 'head';
 	    

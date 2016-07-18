@@ -182,7 +182,7 @@ function processFinesBeta(result, prefs, showPaidFines) {
 		if ((plates.length != stsNums.length) || !stsNums[0])
 			throw new AnyBalance.Error('Введите номера автомобилей и свидетельств о регистрации!');
 
-		html = AnyBalance.requestGet(g_betaBaseurl + '10001', g_headers);
+		html = AnyBalance.requestGet(g_baseurl + '10001', g_headers);
 
 		var trackId = AnyBalance.getLastResponseHeader('X-Atmosphere-tracking-id');
 		checkEmpty(trackId, 'X-Atmosphere-tracking-id header missing', true);
@@ -218,13 +218,13 @@ function processFinesBeta(result, prefs, showPaidFines) {
 		};
 
 		var response = apiCallBetaCabinet('POST', 'a/wsapi/?_=' + new Date().getTime(), JSON.stringify(json), {
-			'Origin': 'https://beta.gosuslugi.ru',
+			'Origin': g_baseurl,
 			'X-Atmosphere-tracking-id': trackId,
 			'X-Atmosphere-Framework': '1.0',
 			'Content-Type': 'application/json',
 			'X-Cache-Date': '0',
 			'X-Atmosphere-Transport': 'long-polling',
-			'Referer': 'https://beta.gosuslugi.ru/10001/result',
+			'Referer': g_baseurl + '10001/result',
 		});
 
 		if (response.error.code != 0) {
@@ -759,9 +759,9 @@ function processNalogiBeta(result, html, inn) {
 function apiCallBetaCabinet(method, action, params, addOnHeaders) {
 	var ret;
 	if (method == 'GET')
-		ret = AnyBalance.requestGet(g_betaBaseurl + action, isset(addOnHeaders) ? addHeaders(g_betaApiHeaders, addOnHeaders) : g_betaApiHeaders);
+		ret = AnyBalance.requestGet(g_baseurl + action, isset(addOnHeaders) ? addHeaders(g_betaApiHeaders, addOnHeaders) : g_betaApiHeaders);
 	else if (method == 'POST')
-		ret = AnyBalance.requestPost(g_betaBaseurl + action, params, isset(addOnHeaders) ? addHeaders(g_betaApiHeaders, addOnHeaders) : g_betaApiHeaders);
+		ret = AnyBalance.requestPost(g_baseurl + action, params, isset(addOnHeaders) ? addHeaders(g_betaApiHeaders, addOnHeaders) : g_betaApiHeaders);
 	else
 		throw new AnyBalance.Error('Unexpected type of method: ' + method);
 

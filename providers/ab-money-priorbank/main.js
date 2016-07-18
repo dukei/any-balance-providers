@@ -30,8 +30,10 @@ function main() {
 		UserPassword: passHash.toString(), 
 		Token: encodedToken.toString(), 
 		'@OSType': '2', 
-		'@OSVersion': '19', 
-		'@AppVersion': '2.15.06.18'}, g_headers);
+		'@OSVersion': '16', 
+		'@AppVersion': '2.16.7.12',
+		'@isNewApp': 'true'
+	}, g_headers);
 	
 	if (!/UserSession/i.test(xml)) {
 		var error = sumParam(xml, null, null, /<Error>([\s\S]*?)<\/Error/i, replaceTagsAndSpaces, html_entity_decode, aggregate_join);

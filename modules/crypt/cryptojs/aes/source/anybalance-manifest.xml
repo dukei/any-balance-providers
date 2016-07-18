@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">crypt/cryptojs/aes</id>
+	<api flags="no_browser"/>
+	<name>CryptoJS aes module</name>
+	<description html="true"><![CDATA[
+	<p>CryptoJS aes codec</p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="crypt/cryptojs/core"/>
+		<module id="crypt/cryptojs/base64"/>
+		<module id="crypt/cryptojs/md5"/>
+	</depends>
+	<files>
+		<js>evpkdf.js</js>
+		<js>cipher-core.js</js>
+		<js>aes.js</js>
+		<history>history.xml</history>
+	</files>
+	<keywords></keywords>
+	<type>crypt cryptojs aes</type>
+	<country></country>
+</provider>

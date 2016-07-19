@@ -52,144 +52,129 @@ function hex_md5(str){
 
 function logInAPI(prefs) {
 	var baseurl = 'https://api-m.paypal.com/v1/';
-	var hex = hex_md5(prefs.login + ' android id');
+	var hex = hex_md5(prefs.login + ' android_id');
 
 	var deviceId = hex.substr(0, 16);
 	var visitId = 'd3aacf450dd6aa992cfba77067560733'; //В программе клиенте это хардкод
 	var bssid = generateHex('5c:f4:ab:xx:xx:xx', hex.substr(16, 6));
-	var mac = generateHex('44:d4:e0:xx:xx:xx', hex.substr(22, 6));
-	var imei = generateImei(prefs.login, '35472406******L');
-	var simsn = generateSimSN(prefs.login, '897010266********L');
+	var mac = generateHex('98:0d:2e:xx:xx:xx', hex.substr(22, 6));
+	var imei = generateImei(prefs.login, '35721005******L');
+	var simsn = generateSimSN(prefs.login, '897019913********L');
 	var pairing_id = hex_md5(prefs.login + ' pairing id'); 
 	var gsfid = hex_md5(prefs.login + ' gsf id').substr(0, 16); 
-	var linkerid = makeGuid(hex_md5(prefs.login + ' linker id'));
-	var appguid = makeGuid(hex_md5(prefs.login + ' app guid'));
+	var linkerid = makeGuid(hex_md5(prefs.login + ' linker_id'));
+	var appguid = "636cdf5c-585f-4e3f-bf8f-33df6454b526"; //makeGuid(hex_md5(prefs.login + ' app_guid'));
 	var risk_session = makeGuid(hex_md5(prefs.login + ' risk session'));
 	var timestamp = new Date().getTime();
 	var ip = "192.168.1." + Math.floor(30 + Math.random()*30);
 
-	g_headers['paypal-client-metadata-id'] = pairing_id;
+	g_headers['paypal-client-metadata-id'] = '8bd1708fcfe7493ab8c07e9e1452681c';
 
 	
 	var cac = {
-  		"appName": "com.paypal.android.p2pmobile",
-  		"appGuid": appguid,
-  		"appVersion": "6.4.2",
-  		"sdkVersion": "2.5.9.2",
-  		"visitId": visitId,
-  		"visitorId": deviceId,
   		"deviceLanguage": "ru",
+  		"deviceNetworkType": "Unknown",
   		"deviceLocale": "ru_RU",
-  		"deviceMake": "Sony",
-  		"deviceModel": "D6503",
-  		"deviceNetworkType": "LTE",
-  		"deviceNetworkCarrier": "MegaFon",
-  		"deviceOS": "Android",
-  		"deviceOSVersion": "5.1.1",
-  		"deviceMake": "Sony",
-  		"deviceModel": "D6503",
+  		"deviceNetworkCarrier": "Unknown",
+  		"deviceModel": "HTC Desire 600 dual sim",
+  		"visitId": "d3aacf450dd6aa992cfba77067560733",
+  		"sdkVersion": "2.5.9.2",
+  		"usageTrackerSessionId": "07164020",
+  		"appName": "com.paypal.android.p2pmobile",
+  		"deviceMake": "HTC",
+  		"deviceOSVersion": "4.1.2",
+  		"appVersion": "6.4.2",
   		"deviceType": "Android",
-  		"riskVisitorId": "idJ_LGMKIoLL8k_AkFyCxM4UbWZFF5lTHzG_LB7NYDHlzuEpcY-AeKtUGEqNMXkr1ZC_cZRnxMua32BK",
+  		"visitorId": deviceId,
+  		"appGuid": appguid,
+  		"deviceId": deviceId,
+  		"deviceOS": "Android"
 	};
 
 	var deviceInfo = {
-		"device_identifier":cac.visitorId,
-		"device_os":"Android",
-		"device_os_version":"5.1.1",
-		"device_name":"D6503",
-		"device_model":"D6503",
-		"device_type":"Android",
-		"device_key_type":"ANDROIDGSM_PHONE",
-		"pp_app_id":"APP-3P637985EF709422H",
-		"is_device_simulator":false
+  		"is_device_simulator": false,
+  		"device_os": "Android",
+  		"device_model": cac.deviceModel,
+  		"device_os_version": "4.1.2",
+  		"device_name": "cp3dug",
+  		"device_identifier": deviceId,
+  		"device_type": "Android",
+  		"pp_app_id": "APP-3P637985EF709422H",
+  		"device_key_type": "ANDROIDGSM_UNDEFINED"
 	};
-/*
-	var json = requestAPI('get', baseurl + 'mwf/config', null, addHeaders({
-		'X-PayPal-ConsumerApp-Context': encodeURIComponent(JSON.stringify(cac)),
-		Authorization: 'Basic d3aacf450dd6aa992cfba77067560733'
-	}));
 
-	var json = requestAPI('post', baseurl + 'oauth2/token', {
-		grant_type:	'client_credentials',
-		response_type:	'token id_token',
-		deviceInfo:	JSON.stringify(deviceInfo),
-		return_authn_schemes:	true,
-		app_info:	JSON.stringify({
-			"device_app_id": deviceInfo.pp_app_id,
-			"client_platform":"AndroidGSM",
-			"app_version":"1.75",
-			"app_category":"3"
-		})
-	}, addHeaders({
-		'X-PayPal-ConsumerApp-Context': encodeURIComponent(JSON.stringify(cac)),
-		Authorization: 'Basic QVY4aGRCQk04MHhsZ0tzRC1PYU9ReGVlSFhKbFpsYUN2WFdnVnB2VXFaTVRkVFh5OXBtZkVYdEUxbENx'
-	}));
-*/
-
-//    var json = requestAI('get', baseurl + 'mfsconsumer/config?sn=true'
 	var timestamp = new Date().getTime();
 	var json = requestAPI('post', baseurl + 'mfsauth/proxy-auth/token', {
-		adsChallengeId: makeGuid(hex_md5(prefs.login + ' challenge_id')),
-		appInfo: JSON.stringify({"device_app_id":"PayPal","client_platform":"AndroidGSM","app_version":cac.appVersion,"app_category":"3"}),
-		authNonce: getAuthChecksum(cac, timestamp),
+		adsChallengeId:	'0ce844f8-381d-40ab-9fbb-0b00d6c26d7c',
+		appInfo:	JSON.stringify({"app_version":cac.appVersion,"app_category":"3","client_platform":"AndroidGSM","device_app_id":"PayPal"}),
+		authNonce:	getAuthChecksum(cac, timestamp),
 		compatProgress:	'IC_ER-DC_AF-8',
-		deviceInfo:	JSON.stringify(deviceInfo),
+		deviceInfo:	JSON.stringify(deviceInfo), //'{"is_device_simulator":false,"device_os":"Android","device_model":"HTC Desire 600 dual sim","device_os_version":"4.1.2","device_name":"cp3dug","device_identifier":deviceId,"device_type":"Android","pp_app_id":"APP-3P637985EF709422H","device_key_type":"ANDROIDGSM_UNDEFINED"}',
 		email:	prefs.login,
-		firstPartyClientId: cac.visitId,
+		firstPartyClientId:	'd3aacf450dd6aa992cfba77067560733',
 		grantType:	'password',
-		password: prefs.password,
-		rememberMe:	false,
-		redirectUri: 'http://authenticator.live.paypal.com/response.jsp',
+		password:	prefs.password,
+		redirectUri:	'http://authenticator.live.paypal.com/response.jsp',
+		rememberMe:	'false',
 		riskData:	JSON.stringify({
-			"android_id":cac.visitorId, 
-			"app_first_install_time":1468234707906,
-			"app_guid":cac.appGuid,
-			"app_id":cac.appName,
-			"app_last_update_time":1468235938133,
-			"app_version":cac.appVersion,
-			"bssid":bssid,
-			"comp_version": "3.5.4.release",
-			"conf_url":"https:\/\/www.paypalobjects.com\/webstatic\/risk\/dyson_config_android_v3.json",
-			"conf_version":"3.0",
-			"conn_type":"WIFI",
-			"dc_id": "0f79316d4bdde4ce9c276650dc89dc17",
-			"device_id":imei,
-			"device_model":"D6503",
-			"device_name":"D6503",
-			"device_uptime":1330327547,
-			"ds": false,
-			"ip_addrs":ip,
-			"ip_addresses":[ip],
-			"is_emulator":false,
-			"is_rooted": "false",
-			"linker_id":linkerid,
-			"locale_country":"RU",
-			"locale_lang":"ru",
-			"location":{"lat":55 + Math.random(),"lng":37 + Math.random(),"acc":51,"timestamp":timestamp - Math.floor(Math.random()*1000000)},
-			"mac_addrs":mac,
-			"network_operator":"25002",
-			"os_type":"Android",
-			"os_version":"5.1.1",
-			"pairing_id": pairing_id,
-			"payload_type":"full",
-			"phone_type":"gsm",
-			"pm": "70835891",
-			"proxy_setting":"",
-			"risk_comp_session_id":risk_session,
-			"roaming":false,
-			"serial_number":"BH90TCH" + hex.substr(28,3).toUpperCase(),
-			"sim_operator_name":"MegaFon",
-			"sim_serial_number":simsn,
-			"sms_enabled":true,
-			"source_app":0,
-			"source_app_version": cac.appVersion,
-			"ssid":"\"Krawlly\"",
-			"subscriber_id":"25002" + Math.abs(crc32(prefs.login + ' subs id')),
-			"timestamp":timestamp,
-			"total_storage_space":12426248192,
-			"tz_name":"Москва, стандартное время",
+  			"sms_enabled": true,
+  			"app_first_install_time": 1468234707906,
+  			"location": {
+  			  "timestamp": timestamp - Math.round(Math.random() * 1000000), //До 15 мин раньше запроса
+  			  "acc": 23.3 + Math.round(Math.random()*100)/1000,
+  			  "lng": 37.5 + Math.round(Math.random()*1000000)/10000000,
+  			  "lat": 55.8 + Math.round(Math.random()*1000000)/10000000
+  			},
+  			"source_app": 0,
+  			"conf_url": "https:\/\/www.paypalobjects.com\/webstatic\/risk\/dyson_config_android_v3.json",
+  			"is_rooted": false,
+  			"network_operator": "",
+  			"payload_type": "full",
+  			"ip_addrs": "192.168.1.34",
+  			"app_version": cac.appVersion,
+  			"is_emulator": false,
+  			"source_app_version": cac.appVersion,
+  			"conn_type": "WIFI",
+  			"comp_version": "3.5.4.release",
+  			"os_type": "Android",
+  			"timestamp": 1468867638611, //Math.ceil(Math.random()*3), //На пару миллисекунд раньше посылки апроса
+  			"risk_comp_session_id": risk_session,//"c0d4da0b-0e77-423e-b6d6-4a1843ae3484",
+  			"android_id": deviceId,
+  			"app_last_update_time": 1468867256162,
+  			"device_model": cac.deviceModel,
+  			"device_name": deviceInfo.device_name,
+  			"sim_serial_number": simsn,
+  			"sim_operator_name": "Beeline",
+  			"ssid": "Krawlly",
+  			"roaming": false,
+  			"ds": false,
+  			"device_uptime": 549400000 + Math.round(Math.random()*10000),
+  			"phone_type": "unknown (5)",
+  			"mac_addrs": mac,
+  			"dc_id": "bfa4741e045caec0b9ec1f33933e7122",
+//  			"proxy_setting": "host=192.168.1.48,port=8888",
+  			"subscriber_id": "250991613654679",
+  			"ip_addresses": [
+  			  "192.168.1.34"
+  			],
+  			"device_id": imei,
+  			"app_guid": cac.appGuid,
+  			"locale_lang": "ru",
+  			"serial_number": "FA37WWB01680",
+  			"os_version": "4.1.2",
+  			"locale_country": "RU",
+  			"bssid": bssid,
+  			"pairing_id": "6af64f13a75e46f7933bfcaff58eba3b",
+  			"tz": 10800000,
+  			"linker_id": linkerid,
+  			"pm": "bf137b47",
+  			"conf_version": "3.0",
+  			"app_id": "com.paypal.android.p2pmobile",
+  			"total_storage_space": 5044297728,
+  			"tz_name": "East Africa Time"
 		}),
-		timeStamp: timestamp
+		timeStamp:	timestamp
+
 	}, addHeaders({
 		'X-PayPal-ConsumerApp-Context': encodeURIComponent(JSON.stringify(cac)),
 		'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'

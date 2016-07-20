@@ -6,7 +6,7 @@ var g_headers = {
 	Accept: 'application/json',
 	'Accept-Language': 'en_US',
 	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36',
-	Origin: null
+//	Origin: null //Для отладчика
 };
 
 function main(){

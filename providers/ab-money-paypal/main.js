@@ -6,7 +6,6 @@ var g_headers = {
 	Accept: 'application/json',
 	'Accept-Language': 'en_US',
 	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36',
-//	Origin: null //Для отладчика
 };
 
 function main(){
@@ -24,6 +23,8 @@ function main(){
 function logInOpenAuth(){
 	var prefs = AnyBalance.getPreferences();
 	var baseurl = 'https://api.paypal.com/v1/';
+	if(prefs.__dbg)
+		g_headers.Origin = null; //Для отладчика
 
 	var html = AnyBalance.requestPost(baseurl + 'oauth2/token', {
 		grant_type:	'client_credentials'
@@ -44,7 +45,7 @@ function logInOpenAuth(){
     }));
 
     json = getJson(html);
-    if(!json.access_token){
+    if(!json.access_token || json.error){
     	if(json.error)
     		throw new AnyBalance.Error(json.error_description||json.error, null, /invalid_user/i.test(json.error));
     	AnyBalance.trace(html);

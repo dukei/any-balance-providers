@@ -4,9 +4,9 @@
 
 var g_headers = {
 	Accept: 'application/json',
-	'User-Agent': 'Dalvik/2.1.0 (Linux; U; Android 5.1.1; D6503 Build/23.4.A.1.232)',
-	Authorization: 'Basic QVY4aGRCQk04MHhsZ0tzRC1PYU9ReGVlSFhKbFpsYUN2WFdnVnB2VXFaTVRkVFh5OXBtZkVYdEUxbENxOg==',
-	Connection: 'Keep-Alive'
+	'Accept-Language': 'en_US',
+	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36',
+	Origin: null
 };
 
 function main(){
@@ -17,8 +17,67 @@ function main(){
 	checkEmpty(prefs.login, 'Enter e-mail!');
 	checkEmpty(prefs.password, 'Enter password!');
     
-	logInAPI(prefs);
+	logInOpenAuth();
 	return;
+}
+
+function logInOpenAuth(){
+	var prefs = AnyBalance.getPreferences();
+	var baseurl = 'https://api.paypal.com/v1/';
+
+	var html = AnyBalance.requestPost(baseurl + 'oauth2/token', {
+		grant_type:	'client_credentials'
+    }, addHeaders({
+    	Authorization: 'Basic ZDNhYWNmNDUwZGQ2YWE5OTJjZmJhNzcwNjc1NjA3MzM6N2NlYmJhMWJmMTRjYjg1OA=='
+    }));
+
+    var json = getJson(html);
+
+	html = AnyBalance.requestPost(baseurl + 'oauth2/login', {
+		email:	prefs.login,
+		grant_type:	'password',
+		password:	prefs.password,
+		redirect_uri:	'https://www.paypalmobiletest.com'
+    }, addHeaders({
+    	Referer: baseurl + 'oauth2/token',
+    	Authorization: 'Bearer ' + json.access_token
+    }));
+
+    json = getJson(html);
+    if(!json.access_token){
+    	if(json.error)
+    		throw new AnyBalance.Error(json.error_description||json.error, null, /invalid_user/i.test(json.error));
+    	AnyBalance.trace(html);
+    	throw new AnyBalance.Error('Не удалось войти в личный кабинет. Сайт изменен?');
+    }
+
+	html = AnyBalance.requestGet(baseurl + 'wallet/@me/financial-instruments', addHeaders({
+		Referer: baseurl + 'oauth2/login',
+    	Authorization: 'Bearer ' + json.access_token
+    }));
+
+    json = getJson(html);
+	var result = {success: true};
+	
+	for(var i=0; i<json.account_balance.balances.length; i++) {
+		var curr = json.account_balance.balances[i];
+		if(curr.currency == 'USD') {
+			getParam(curr.available.total.amount, result, 'balance', null, null, parseBalance);
+		} else if(curr.currency == 'EUR') {
+			getParam(curr.available.total.amount, result, 'balance_eur', null, null, parseBalance);
+		} else if(curr.currency == 'SEK') {
+			getParam(curr.available.total.amount, result, 'balance_sek', null, null, parseBalance);
+		} else if(curr.currency == 'RUB') {
+			getParam(curr.available.total.amount, result, 'balance_rub', null, null, parseBalance);
+		}else{
+		    AnyBalance.trace('Unknown currency ' + curr.currency + ': ' + JSON.stringify(curr));
+		}
+	}
+
+	result.__tariff = prefs.login;
+	
+    AnyBalance.setResult(result);
+
 }
 
 function generateHex(mask, digits){

@@ -1,18 +1,18 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="3.0" version="19">ab-money-paypal</id>
+	<id major_version="4.0" version="20">ab-money-paypal</id>
 	<api flags="no_browser"/>
 	<name>PayPal</name>
 	<description html="true"><![CDATA[
 	<p>Retrieves balance on your PayPal account.</p>
 	]]></description>
-	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>
 		<module id="library"/>
-		<module id="mobile/imei"/>
+<!--		<module id="mobile/imei"/>
 		<module id="crypt/cryptojs/md5"/>
 		<module id="crypt/cryptojs/base64"/>
-		<module id="crypt/cryptojs/sha256"/>
+		<module id="crypt/cryptojs/sha256"/> -->
 	</depends>
 	<files>
 		<icon>icon.png</icon>

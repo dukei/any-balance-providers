@@ -257,6 +257,8 @@ function fetchAccountStatus(html, result) {
         html = sumParam(html, result.remainders, 'remainders.min_left', /Остаток ежемесячных пакетов\s*(?:минут\s*)?:?\s*([\d\.,]+)\s*мин/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum, true);
         // Остаток ежемесячного пакета: 296 мин
         html = sumParam(html, result.remainders, 'remainders.min_left', /Остаток ежемесячного пакета\s*(?:минут\s*)?:?\s*([\d\.,]+)\s*мин/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum, true);
+        // Остаток ежемесячного пакета: 296
+        html = sumParam(html, result.remainders, 'remainders.min_left', /Остаток ежемесячного пакета минут:?\s*([\d\.,]+)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum, true);
         // Остаток пакета: 24 минут
         html = sumParam(html, result.remainders, 'remainders.min_left', /Остаток пакета:?\s*([\d\.,]+)\s*мин/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum, true);
         html = sumParam(html, result.remainders, 'remainders.min_left', /Пакет минут[^:]*:\s*Оста[^\d]*([\d\.,]+)\s*мин/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum, true);
@@ -294,6 +296,8 @@ function fetchAccountStatus(html, result) {
         html = sumParam(html, result.remainders, 'remainders.sms_left', /Остаток ежемесячных пакетов\s*:?\s*([\d\.,]+)\s*(?:смс|sms)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum, true);
         // Остаток ежемесячного пакета : 98 смс
         html = sumParam(html, result.remainders, 'remainders.sms_left', /Остаток ежемесячного пакета\s*:?\s*([\d\.,]+)\s*(?:смс|sms)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum, true);
+        // Остаток ежемесячного пакета SMS: 98
+        html = sumParam(html, result.remainders, 'remainders.sms_left', /Остаток ежемесячного пакета (?:смс|sms):?\s*([\d\.,]+)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum, true);
         // Остаток СМС
         html = sumParam(html, result.remainders, 'remainders.sms_left', /(?:Осталось|Остаток)(?: пакета)? (?:sms|смс):\s*(\d+)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum, true);
         // Остаток СМС

@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="4.1" version="143" date="2016-07-20">
+	Улучшено распознавание минут и СМС
+	</change>
 	<change major_version="4.1" version="142" date="2016-05-02">
 	Добавлены дата и сумма последнего платежа
 	Исправлена дата действия трафика в некоторых случаях

@@ -9,7 +9,7 @@
 		<module id="login/mts"/>
 	</depends>
 	<files>
-		<js>abe-cell-mts.min.js</js>
+		<js>extract.abe-cell-mts.min.js</js>
 		<history>history.xml</history>
 	</files>
 	<type>cell</type>

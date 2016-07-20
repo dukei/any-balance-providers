@@ -9,7 +9,7 @@ var g_regionsById = {
 
 var g_regionsByUrl = {
     'https://stat.ultranet.ru/login/': 'ultranet',
-    'https://dpfl.cifra1.ru/': 'ultranet',
+    'https://dpfl.cifra1.ru/login/': 'ultranet',
     'http://stat.cifra1.ru/amsc/auth.jsf': 'cifra1',
 };
 

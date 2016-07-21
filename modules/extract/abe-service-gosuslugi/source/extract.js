@@ -113,6 +113,9 @@ function login(prefs) {
 }
 
 function processProfile(result) {
+	if(!AnyBalance.isAvailable('profile', 'fines', 'nalog'))
+		return;
+
 	result.profile = {};
 
 	getParam(html, result.profile, 'profile.fio', /title="Личный кабинет"(?:[^>]*>){3}([^<]+)</i, replaceTagsAndSpaces);
@@ -128,7 +131,7 @@ function processProfile(result) {
 	getParam(html, result.profile, 'profile.birth_day', /Дата рождения(?:[\s\S]*?<dd[^>]*>)([\s\S]*?)<\/dd>/i, replaceTagsAndSpaces, parseDate);
 	getParam(html, result.profile, 'profile.document', /Документ, удостоверяющий личность(?:[\s\S]*?<dd[^>]*>)([\s\S]*?)<\/dd>/i, replaceTagsAndSpaces);
 	getParam(html, result.profile, 'profile.snils', /Страховой номер индивидуального лицевого счёта(?:[\s\S]*?<dd[^>]*>)([\s\S]*?)<\/dd>/i, replaceTagsAndSpaces);
-	getParam(html, result.profile, 'profile.inn', /id="person:innInf[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces);
+	getParam(html, result.profile, ['profile.inn', 'nalog'], /id="person:innInf[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces);
 	getParam(html, result.profile, 'profile.adress_fakt', /id="person:liveAddrInf"[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces);
 	getParam(html, result.profile, 'profile.adress', /id="person:regAddrInf"[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces);
 	getParam(html, result.profile, 'profile.email', /Адрес электронной почты(?:[\s\S]*?<dd[^>]*>)([\s\S]*?)<\//i, replaceTagsAndSpaces);
@@ -136,6 +139,7 @@ function processProfile(result) {
 
 	var license = getParam(html, null, null, /id="person:drLicenseInf"[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces);
 	if (isset(license)) {
+		getParam(license, result.profile, ['profile.license_number', 'fines'], /[^,]*/, [/\s+/g, '']);
 		getParam(license, result.profile, 'profile.license');
 		getParam(license, result.profile, 'profile.license_till', /действительно до([^<]+)/i, null, parseDate);
 	}
@@ -163,8 +167,34 @@ function processProfile(result) {
 // Штрафы
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 function processFinesBeta(result, prefs, showPaidFines) {
-	if (!prefs.gosnumber)
+	var plates = [], stsNums = [], vehicles = [];
+	if(prefs.gosnumber)
+		plates = (prefs.gosnumber || '').split(/\s*;[\s;]*/g);
+
+	if(prefs.sts_num)
+		stsNums = (prefs.sts_num || '').split(';');
+
+	AnyBalance.trace('Автомобилей: ' + plates.length);
+	AnyBalance.trace('Свидетельств о регистрации: ' + stsNums.length);
+
+	if (plates.length != stsNums.length)
+		throw new AnyBalance.Error('Введите одинаковое количество номеров автомобилей и свидетельств о регистрации!', null, true);
+
+    for(var i=0; i<plates.length; ++i){
+    	vehicles.push({
+    		plate: plates[i],
+    		plate_id: stsNums[i]
+    	});
+    }
+
+    processFinesBetaVehicles(result, vehicles, prefs.licensenumber, showPaidFines);
+}
+
+function processFinesBetaVehicles(result, vehicles, license_number, showPaidFines) {
+	if ((!vehicles || !vehicles.length) && !license_number){
+		AnyBalance.trace('Нет автомобилей или прав, штрафы не получаем');
 		return;
+	}
 
 	if (isAvailable(['fines', 'fines_total', 'fines_unpaid'])) {
 		AnyBalance.trace('Указан номер автомобиля, значит надо получать штрафы...');
@@ -172,15 +202,6 @@ function processFinesBeta(result, prefs, showPaidFines) {
 		// Обнулим общие счетчики
 		result['fines_unpaid'] = 0;
 		result['fines_total'] = 0;
-
-		var plates = (prefs.gosnumber || '').split(';');
-		AnyBalance.trace('Автомобилей: ' + plates.length);
-
-		var stsNums = (prefs.sts_num || '').split(';');
-		AnyBalance.trace('Свидетельств о регистрации: ' + stsNums.length);
-
-		if ((plates.length != stsNums.length) || !stsNums[0])
-			throw new AnyBalance.Error('Введите номера автомобилей и свидетельств о регистрации!');
 
 		html = AnyBalance.requestGet(g_baseurl + '10001', g_headers);
 
@@ -192,18 +213,18 @@ function processFinesBeta(result, prefs, showPaidFines) {
 		function createRequestParams(template) {
 			if (template.form.content) {
 				// Добавим водительское удостоверение
-				if (prefs.licensenumber) {
+				if (license_number) {
 					template.form.content['GibddFines.FormStep1.Panel1.vuNumber'] = {
-						value: prefs.licensenumber
+						value: license_number
 					};
 				}
 				// Теперь машины
-				for (var i = 0; i < plates.length; i++) {
+				for (var i = 0; i < vehicles.length; i++) {
 					template.form.content['GibddFines.FormStep1.Panel1.carNumber' + i] = {
-						"value": plates[i]
+						"value": vehicles[i].plate
 					};
 					template.form.content['GibddFines.FormStep1.Panel1.stsNumber' + i] = {
-						"value": stsNums[i]
+						"value": vehicles[i].plate_id
 					};
 				}
 			}
@@ -284,327 +305,11 @@ function processFinesBeta(result, prefs, showPaidFines) {
 			result.fines.push(f);
 		}
 
-		// Старый вариант, не учитывает штрафы выписанные на права
-		// Всего может быть 10 машин для abe и 3 для ab ну и неизвестное количество штрафов
-		/*for (var i = 0; i < g_max_plates_num; i++) {
-			// 30 штрафов должно хватить, я думаю
-			for (var z = 0; z < 30; z++) {
-				var current = data['simpleMode' + i + '_' + z];
-
-				if (!isset(current))
-					break;
-
-				var _id = current.bID;
-				var _name = current.bID + ' ' + current.carNumber;
-				var isPaid = parseBool(current.isPaid);
-
-				// У очень старых штрафов нету поля originalAmount, запишем его руками
-				if (!current.originalAmount)
-					current.originalAmount = current.violationSum;
-
-				// Сумма неоплаченных штрафов
-				if (!isPaid) {
-					// Сумма неоплаченных штрафов
-					sumParam(current.violationSum + '', result, 'fines_unpaid', null, null, parseBalance, aggregate_sum);
-					// Сумма неоплаченных штрафов без учета скидок
-					sumParam(current.originalAmount + '', result, 'fines_unpaid_full', null, null, parseBalance, aggregate_sum);
-				}
-
-				// Сумма всех штрафов
-				sumParam(current.violationSum + '', result, 'fines_total', null, null, parseBalance, aggregate_sum);
-				// Сумма всех штрафов без учета скидок
-				sumParam(current.originalAmount + '', result, 'fines_total_full', null, null, parseBalance, aggregate_sum);
-
-				if (!showPaidFines && isPaid)
-					continue;
-
-				var f = {__id: _id, __name: _name};
-
-				if (__shouldProcess('fines', f)) {
-					getParam(current.violationSum + '', f, 'fines.ammount', null, replaceTagsAndSpaces, parseBalance);
-					getParam(current.violationReason, f, 'fines.break', null, replaceTagsAndSpaces);
-					getParam(current.violationDate + ' ' + current.violationTime, f, 'fines.time', null, replaceTagsAndSpaces, parseDate);
-//					getParam(current, f, 'fines.fio', null, replaceTagsAndSpaces);
-					getParam(current.reportPlace, f, 'fines.place', null, replaceTagsAndSpaces);
-					getParam(current.carModel, f, 'fines.vehicle', null, replaceTagsAndSpaces);
-					getParam(current.offense, f, 'fines.proto_place', null, replaceTagsAndSpaces);
-					getParam(current.carNumber, f, 'fines.carNumber', null, replaceTagsAndSpaces);
-//					getParam(current, f, 'fines.department', null, replaceTagsAndSpaces);
-					getParam(isPaid, f, 'fines.paid');
-				}
-
-				result.fines.push(f);
-			}
-		}*/
 	}
 }
 
 function parseBool(str) {
 	return !/0/.test(str);
-}
-
-function processFines(result, prefs, showPaidFines) {
-	// Штрафы ГИБДД
-	if (!prefs.gosnumber)
-		return;
-
-	AnyBalance.trace('Указан номер автомобиля, значит надо получать штрафы...');
-	result.fines = [];
-	// Обнулим общие счетчики
-	result['fines_unpaid'] = 0;
-	result['fines_total'] = 0;
-
-	var plates = prefs.gosnumber.split(';');
-	AnyBalance.trace('Автомобилей: ' + plates.length);
-	// Добавим машины из профиля
-	if (result.profile && result.profile.vehicles) {
-		AnyBalance.trace('Добавим автомобили из профиля: ' + result.profile.vehicles.length);
-		for (var i = 0; i < result.profile.vehicles.length; i++) {
-			var currPlate = result.profile.vehicles[i].plate.toLowerCase();
-			var currPlateName = result.profile.vehicles[i].name;
-
-			var contains = plates.some(function (element, i) {
-				if (currPlate === element.toLowerCase()) {
-					return true;
-				}
-			});
-
-			if (!contains) {
-				plates.push(currPlate);
-				AnyBalance.trace('Добавили автомобиль ' + currPlateName + ' (' + currPlate + ')');
-			} else {
-				AnyBalance.trace('Автомобиль ' + currPlateName + ' (' + currPlate + ') уже добавлен..');
-			}
-		}
-	}
-	var len = Math.min(plates.length, g_max_plates_num);
-	for (var i = 0; i < len; i++) {
-		var currentPlate = plates[i];
-		if (currentPlate) {
-			AnyBalance.trace('Получаем данные по автомобилю с номером ' + currentPlate);
-			try {
-				processFinesForCurrentPlate(result, prefs, currentPlate, showPaidFines);
-			} catch (e) {
-				AnyBalance.trace('Не удалось получить данные по штрафам из-за ошибки: ' + e.message);
-				if (e.fatal)
-					throw e;
-			}
-		}
-	}
-}
-
-function processFinesForCurrentPlate(result, prefs, currentPlate, showPaidFines) {
-	checkEmpty(currentPlate = getParam(currentPlate, null, null, /^\D?\d{3,4}\D{2}\d{2,3}$/), 'Введите номер автомобиля в формате х123хх50 или 1234хх50!', true);
-	// Права не обязательны для заполнения
-	if (prefs.licensenumber)
-		checkEmpty(prefs.licensenumber = getParam(prefs.licensenumber, null, null, /^.{10}$/), 'Введите серию и номер водительского удостоверения в формате 50км123456!', true);
-
-	// Id сервиса в системе, может меняться в будущем - вынесем отдельно.
-	var serviceID = '10000581563';
-	var url = 'https://www.gosuslugi.ru/pgu/service/' + serviceID + '_26.html'
-
-	var html = AnyBalance.requestGet(url, g_headers);
-	var json = getJson(postAPICall('https://www.gosuslugi.ru/fed/service/' + serviceID + '_26/checkStatus.json', {}, url));
-
-	if (json.errorCode != 0)
-		throw new AnyBalance.Error('Система ответила сообщением: ' + json.errorMessage);
-
-	var mainLink = 'https://www.gosuslugi.ru/fed/services/s26/initForm?serviceTargetExtId=' + serviceID + '&userSelectedRegion=00000000000&rURL=https://www.gosuslugi.ru/pgu/personcab/orders&srcFormProviderId=9952354';
-	// Иногда возвращается пустая страница
-	for (var tries = 3; tries > 0; tries--) {
-		html = AnyBalance.requestGet(mainLink, addHeaders({Referer: url}));
-		if (html)
-			break;
-	}
-	//html = AnyBalance.requestGet(mainLink, addHeaders({Referer: mainLink}));
-	// Здесь проверим на ошибки
-	var action = getParam(html, null, null, /'action'[^'"]*['"]\/([^'"]*)/i);
-	if (!action) {
-		var error = getParam(html, null, null, /Услуга недоступна<(?:[^>]*>){3}([\s\S]*?)<\/div/i, replaceTagsAndSpaces);
-		if (error)
-			throw new AnyBalance.Error(error);
-
-		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Не удалось найти форму для запроса штрафов, скорее всего услуга недоступна!');
-	}
-
-	var params = createFormParams(html, function (params, str, name, value) {
-		if (name == 'tsRz')
-			return currentPlate;
-		else if (name == 'VU')
-			return prefs.licensenumber;
-		return value;
-	});
-
-	html = AnyBalance.requestPost(g_baseurl + action, params, addHeaders({Referer: mainLink}));
-
-	// Проверить что статус у заявления исполнено
-	if (!/>\s*Исполнено\s*</i.test(html))
-		throw new AnyBalance.Error('Не удалось обработать заявление, сайт изменен?');
-
-	html = getXmlFileResult(html);
-
-	// Все теперь у нас есть данные, наконец-то..
-	var fines = getElements(html, /<div[^>]+class="[^"]*tabs-dd[^>]*>/ig);
-	AnyBalance.trace('Найдено штрафов: ' + fines.length);
-
-	for (var i = 0; i < fines.length; i++) {
-		var current = fines[i];
-		var feeName = getParam(current, null, null, /<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
-		var isPaid = /Оплачено/i.test(current);
-
-		AnyBalance.trace('Нашли ' + (isPaid ? 'оплаченный' : 'неоплаченный') + 'оплаченный штраф: ' + feeName);
-
-		var feeSum = getParam(current, null, null, /Штраф,?\s*руб(?:[\s\S]*?<td[^>]*>)([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-
-		// Сумма неоплаченных штрафов
-		if (!isPaid)
-			sumParam(feeSum, result, 'fines_unpaid', null, null, null, aggregate_sum);
-		// Сумма всех штрафов
-		sumParam(feeSum, result, 'fines_total', null, null, null, aggregate_sum);
-
-		if (!showPaidFines && isPaid)
-			continue;
-
-		var _id = getParam(current, null, null, /Постановление\/протокол([\s\S]*?)от/i, replaceTagsAndSpaces);
-		var _name = getParam(current, null, null, /Дата и номер постановления\/протокола(?:[\s\S]*?<td[^>]*>)([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
-
-		// Проверим, может уже есть такой энтити
-		if (findIdInArray(result.fines, _id)) {
-			AnyBalance.trace('Этот штраф привязан к номеру ВУ и уже был добавлен');
-			continue;
-		}
-
-		var f = {__id: _id, __name: _name};
-
-		if (__shouldProcess('fines', f)) {
-			getParam(current, f, 'fines.ammount', /Штраф,?\s*руб(?:[\s\S]*?<td[^>]*>)([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-			getParam(current, f, 'fines.break', /Нарушение(?:[\s\S]*?<td[^>]*>)([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
-			getParam(current, f, 'fines.time', /Дата и время нарушения(?:[\s\S]*?<td[^>]*>)([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
-			getParam(current, f, 'fines.fio', /Нарушитель(?:[\s\S]*?<td[^>]*>)([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
-			getParam(current, f, 'fines.place', /Место нарушения(?:[\s\S]*?<td[^>]*>)([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
-			getParam(current, f, 'fines.vehicle', /Марка, модель ТС(?:[\s\S]*?<td[^>]*>)([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
-			getParam(current, f, 'fines.proto_place', /Место составления протокола(?:[\s\S]*?<td[^>]*>)([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
-			getParam(current, f, 'fines.department', /Подразделение(?:[\s\S]*?<td[^>]*>)([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
-			getParam(isPaid, f, 'fines.paid');
-		}
-
-		result.fines.push(f);
-	}
-	// Сводка по штрафам
-	// getParam(g_gibdd_info, result, 'gibdd_info', null, g_replaceSpacesAndBrs);
-}
-
-function findIdInArray(jsonArray, currId) {
-	if (!jsonArray || jsonArray.length < 1)
-		return false;
-
-	for (var i = 0; i < jsonArray.length; i++) {
-		var json = jsonArray[i];
-		var __id = json['__id'];
-
-		if (currId == __id)
-			return true;
-	}
-}
-
-// // Налоги
-// if (prefs.inn) {
-// try {
-// AnyBalance.trace('Указан ИНН, значит надо получать данные по налогам...');
-
-// var inns = prefs.inn.split(';');
-// AnyBalance.trace('Указано ИНН: ' + inns.length);
-// var len = Math.min(inns.length, g_max_inns_num);
-// for(var i = 0; i < len; i++) {
-// var current = inns[i];
-// if(current) {
-// AnyBalance.trace('Получаем данные по ИНН: ' + current);
-// processNalogiBeta(result, html, current);
-// }
-// }
-// } catch (e) {
-// AnyBalance.trace('Не удалось получить данные по налогам из-за ошибки: ' + e.message);
-// if(e.fatal)
-// throw e;
-// }
-// }
-
-function processNalogi(result, html, prefs) {
-	if (isAvailable(['nalog_balance', 'nalog_info'])) {
-		// Id сервиса в системе, может меняться в будущем - вынесем отдельно.
-		var serviceID = '10001761551', servicesubId = '99';
-
-		var url = g_baseurl + 'pgu/service/' + serviceID + '_' + servicesubId + '.html'
-
-		html = AnyBalance.requestGet(url, g_headers);
-
-		var json = postAPICall(g_baseurl + 'fed/service/' + serviceID + '_' + servicesubId + '/checkStatus.json', {}, url);
-		json = getJson(json);
-
-		if (json.errorCode != 0) {
-			throw new AnyBalance.Error('Система ответила сообщением: ' + json.errorMessage);
-		}
-
-		var mainLink = g_baseurl + 'fed/services/s' + servicesubId + '/initForm?serviceTargetExtId=' + serviceID + '&userSelectedRegion=00000000000&rURL=https://www.gosuslugi.ru/pgu/personcab/orders&srcFormProviderId=9952354';
-		// Иногда возвращается пустая страница
-		for (var tries = 3; tries > 0; tries--) {
-			html = AnyBalance.requestGet(mainLink, addHeaders({Referer: url}));
-
-			if (html)
-				break;
-		}
-		//html = AnyBalance.requestGet(mainLink, addHeaders({Referer: url}));
-
-		var stepId = 0;
-		// Нужно подтвердить пользовательское соглашение...
-		var serviceUrl = g_baseurl + 'fed/services/s' + servicesubId + '/s' + (++stepId) + '?serviceTargetExtId=' + serviceID;
-		html = AnyBalance.requestPost(serviceUrl, createFormParamsById(html, servicesubId), addHeaders({Referer: mainLink}));
-
-		var params = createFormParamsById(html, servicesubId);
-
-		params.inn = prefs.inn;
-		// По всем регионам
-		params['region[0]'] = '99';
-
-		serviceUrl = g_baseurl + 'fed/services/s' + servicesubId + '/s' + (++stepId) + '?serviceTargetExtId=' + serviceID;
-		html = AnyBalance.requestPost(serviceUrl, params, addHeaders({Referer: serviceUrl}));
-
-		// Проверить что статус у заявления исполнено
-		if (!/>\s*Исполнено\s*</i.test(html)) {
-			throw new AnyBalance.Error('Не удалось обработать заявление, сайт изменен?');
-		}
-
-		html = getXmlFileResult(html);
-
-		// Все теперь у нас есть данные, наконец-то..
-		var array = sumParam(html, null, null, /<tr>(\s*<td>(?:[\s\S]*?<td[^>]*){4}[^<]*)<\/t/ig);
-
-		AnyBalance.trace('Найдено налогов: ' + array.length);
-		var html_resonse = '';
-
-		for (var i = 0; i < array.length; i++) {
-			var current = array[i];
-
-			var nalog = getParam(current, null, null, /<td(?:[^>]*>){1}([^<]*)/i) || 'Неизвестный тип налога'; // Транспортный налог
-			//var agency = getParam(current, null, null, /<td(?:[^>]*>){3}([^<]+)/i); // УПРАВЛЕНИЕ ФЕДЕРАЛЬНОГО КАЗНАЧЕЙСТВА ПО МОСКОВСКОЙ ОБЛАСТИ (Межрайонная ИФНС России № 3 по Московской области)
-			var type = getParam(current, null, null, /<td(?:[^>]*>){5}([^<]+)/i); // Пени
-			var summ = getParam(current, null, null, /<td(?:[^>]*>){7}([^<]+)/i); // 5.62
-			//var date = getParam(current, null, null, /<td(?:[^>]*>){9}([^<]+)/i); // 23.01.2014
-			sumParam(summ, result, 'nalog_balance', null, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-			// Формируем html
-			html_resonse += nalog + ': ' + type + ' <b>' + summ + '</b><br/><br/>';
-		}
-		getParam(html_resonse, result, 'nalog_info', null, g_replaceSpacesAndBrs);
-	}
-}
-
-function getLocalizedMsg(msgs, path) {
-	var paths = path.split(/\./g);
-	for (var i = 0; i < paths.length; ++i) {
-		msgs = msgs[paths[i]];
-	}
-	return html_entity_decode(msgs);
 }
 
 function isLoggedIn(html) {
@@ -708,12 +413,25 @@ function getXmlFileResult(html) {
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Бета версия кабинета гос услуг
 function processNalogiBeta(result, html, inn) {
-	if (isAvailable(['nalog_balance', 'nalog_info'])) {
-		html = AnyBalance.requestGet(g_betaBaseurl + '10002', g_headers);
+	if(!inn){
+		AnyBalance.trace('Не указан ИНН, налоги не получаем...');
+		return;
+	}
+
+	if (isAvailable(['nalog'])) {
+		result.nalog = {};
+
+		html = AnyBalance.requestGet(g_baseurl + '10002/form', g_headers);
+
+		var forminfo = getJsonObject(html, /rootScope.fns.requestTemplate\s*=/);
+		if(!forminfo){
+			AnyBalance.trace(html);
+			throw new AnyBalance.Error('Не удалось найти форму ввода инн. Сайт изменен?');
+		}
+
+		var mnemonic = forminfo.form.mnemonic;
 
 		var trackId = AnyBalance.getLastResponseHeader('X-Atmosphere-tracking-id');
-		var mnemonic = getParam(html, null, null, /fns\.requestTemplate\s*=\s*(?:[\s\S]*?{){2}\s*"mnemonic":\s*"([^"]+)/i);
-
 		checkEmpty(trackId, 'X-Atmosphere-tracking-id header missing', true);
 
 		var json = {
@@ -724,16 +442,16 @@ function processNalogiBeta(result, html, inn) {
 		}
 
 		var fns = apiCallBetaCabinet('POST', 'a/wsapi/?_=' + new Date().getTime(), JSON.stringify(json), {
-			'Origin': 'https://beta.gosuslugi.ru',
+			'Origin': g_baseurl,
 			'X-Atmosphere-tracking-id': trackId,
 			'X-Atmosphere-Framework': '1.0',
 			'Content-Type': 'application/json',
 			'X-Cache-Date': '0',
 			'X-Atmosphere-Transport': 'long-polling',
-			'Referer': 'https://beta.gosuslugi.ru/10002/result',
+			'Referer': g_baseurl + '10002/result',
 		});
 		// Общая сумма
-		sumParam(fns.form.content.total.total + '', result, 'nalog_balance', null, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+		sumParam(fns.form.content.total.total + '', result.nalog, 'nalog.debt', null, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 
 		var details = '';
 
@@ -747,7 +465,7 @@ function processNalogiBeta(result, html, inn) {
 		}
 
 		if (details != '')
-			sumParam(details, result, 'nalog_info', null, replaceTagsAndSpaces, null, aggregate_join);
+			sumParam(details, result.nalog, 'nalog.info', null, replaceTagsAndSpaces, null, aggregate_join);
 	}
 }
 

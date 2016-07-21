@@ -38,7 +38,7 @@ function login(prefs) {
 
 	var formattedLogin = getParam(prefs.login || '', null, null, /^\d{11}$/, [/^(\d{3})(\d{3})(\d{3})(\d{2})$/i, '$1-$2-$3 $4']);
 	var loginType = 'snils';
-	if (!isset(formattedLogin) || !formattedLogin) {
+	if (/@/.test(prefs.login)) {
 		formattedLogin = getParam(prefs.login || '', null, null, /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/);
 		loginType = 'email';
 	}

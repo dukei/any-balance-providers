@@ -55,7 +55,7 @@ function main(){
 	
     var result = {success: true};
 	
-    getParam(html, result, 'balance', /Доступно:?\s*<\/span\s*>\s*<div[^>]*?count[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'balance', /<div[^>]+class="available"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
 	getParam(prefs.login, result, 'phone');
 	
     AnyBalance.setResult(result);

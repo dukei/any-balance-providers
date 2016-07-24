@@ -73,7 +73,7 @@ function proceedWithMobileAppAPI(baseurl, prefs, failover) {
 			AnyBalance.trace('Фио не указано в настройках...');
 	}
 	// Номер телефона
-	getParam(prefs.login, result, 'phone', /^\d{10}$/, [/(\d{3})(\d{3})(\d{2})(\d{2})/, '+7 $1 $2 $3 $4']);
+	getParam(prefs.login, result, 'phone', /^\d{10}$/, [/(\d{3})(\d{3})(\d{2})(\d{2})/, '+7 $1 $2-$3-$4']);
 	// Бонусы
 	if(AnyBalance.isAvailable('min_local', 'min_bi', 'sms_left', 'mms_left', 'traffic_left', 'traffic_used', 'traffic_total', 'rub_opros', 'min_left_1', 'min_local')) {
 		try {

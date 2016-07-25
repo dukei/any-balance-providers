@@ -8,28 +8,9 @@
 */
 
 
-function getParam (html, result, param, regexp, replaces, parser) {
-	if (!AnyBalance.isAvailable (param))
-		return;
-
-	var value = regexp.exec (html);
-	if (value) {
-		value = value[1];
-		if (replaces) {
-			for (var i = 0; i < replaces.length; i += 2) {
-				value = value.replace (replaces[i], replaces[i+1]);
-			}
-		}
-		if (parser)
-			value = parser (value);
-		result[param] = value;
-	}
-}
-
-
 function main(){
     var prefs = AnyBalance.getPreferences();
-    var baseurl = 'http://www.ntvplus.ru/';
+    var baseurl = 'http://service.ntvplus.ru/';
 
     if (!prefs.login || prefs.login == '')
         throw new AnyBalance.Error ('Введите логин.');

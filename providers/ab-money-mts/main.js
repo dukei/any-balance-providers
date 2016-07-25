@@ -6,18 +6,6 @@ function parseStatus(str){
     return getParam(str, null, null, /^([^\(]*)/, replaceTagsAndSpaces);
 }
 
-function sleep(delay) {
-   if(AnyBalance.getLevel() < 6){
-      var startTime = new Date();
-      var endTime = null;
-      do {
-          endTime = new Date();
-      } while (endTime.getTime() - startTime.getTime() < delay);
-   }else{
-      AnyBalance.sleep(delay);
-   }
-} 
-
 function encryptPass(pass, map) {
 	if (map) {
 		var ch = '', i = 0, k = 0, TempPass = '', PassTemplate = map.split(','), Pass = '';
@@ -41,6 +29,11 @@ function main(){
     var prefs = AnyBalance.getPreferences();
 
     var baseurl = "https://personalbank.ru/v1/cgi/bsi.dll?";
+
+	AnyBalance.setOptions({
+		SSL_ENABLED_PROTOCOLS: ['TLSv1'], 
+		SSL_ENABLED_CIPHER_SUITES_ADD: ['SSL_RSA_WITH_3DES_EDE_CBC_SHA']
+	});
     
     var html = AnyBalance.requestGet(baseurl + 'T=RT_2Auth.BF');
     var mapId = getParam(html, null, null, /<input[^>]*name="MapID"[^>]*value="([^"]*)"/i);
@@ -102,7 +95,7 @@ function main(){
             AnyBalance.trace('Не удалось за 30 секунд обновить баланс, получаем старое значение...');
             break;
         }
-        sleep(3000);
+        AnyBalance.sleep(3000);
     }while(true);
 
 

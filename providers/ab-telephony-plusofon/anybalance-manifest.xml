@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-telephony-plusofon</id>
+	<id version="3">ab-telephony-plusofon</id>
 	<api flags="no_browser"/>
 	<name>Плюсофон</name>
 	<description html="true"><![CDATA[
@@ -18,16 +18,23 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units=" {@currency}"/>
-		<counter id="limit" name="Кредитный лимит" units=" {@currency}"/>
-		<counter id="currency" name="Валюта" type="text"/>
-		<counter id="available_nums" name="Доступно номеров"/>
-		<counter id="on_nums" name="Подключено номеров"/>
-		<counter id="agreement" name="Договор" type="text"/>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="spent_the_day" name="Средний расход на разговоры" units=" р"/>
+		<counter id="subscriber_customer" name="Абонентская плата" units=" р"/>
+		<counter id="subscriber_accounts" name="Абонентская плата за номера и доп. услуги" units=" р"/>
+		<counter id="calls_missed" name="Не отвеченных вызовов"/>
+		<counter id="redirected_to_mobile" name="Переадресованно на мобильный"/>
+		<counter id="redirected_to_voicemail" name="Переадресованно на voicemail"/>
+		<counter id="c_outside" name="Городские номера"/>
+		<counter id="c_mobile" name="Мобильные номера"/>
+		<counter id="c_800" name="Номера 8-800"/>
+		<counter id="fio_manager" name="ФИО менеджера" type="text"/>
+		<counter id="email_manager" name="E-mail менеджера" type="text"/>
+		<counter id="phone_manager" name="Телефон менеджера" type="text"/>
+		<counter id="agreement" name="Номер договора" type="text"/>
 		<counter id="fio" name="ФИО" type="text"/>
-		<counter id="phone" name="Телефон" type="text"/>
-		<counter id="all_nums" name="Подключённые номера" type="text"/>
-		<counter id="email" name="E-mail" type="text"/>
+		<counter id="sip" name="SIP аккаунт" type="text"/>
+		<counter id="phone" name="Номер телефона" type="text"/>
 	</counters>
 	<keywords></keywords>
 	<type>telephony</type>

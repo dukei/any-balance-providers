@@ -666,7 +666,7 @@ function fetchPost(baseurl, html, result) {
     var balancesReplaces = [replaceTagsAndSpaces, /информация[^<]*недоступна|недоступна|(?:баланс)?\s*временно недоступен/ig, ''];
 
     getParam(html, result, 'agreement', /<h2[^>]*>\s*Договор №([\s\S]*?)<\/h2>/i, replaceTagsAndSpaces);
-    getParam(html, result, 'tariff', /<h2[^>]*>(?:[\s\S](?!<\/h2>))*?Текущий тариф[^>]*>&laquo;([\s\S]*?)&raquo;/i, replaceTagsAndSpaces);
+    getParam(html, result, 'tariff', /<h2[^>]*>(?:[\s\S](?!<\/h2>))*?Текущий тариф[^>]*>(?:&laquo;)?([\s\S]*?)(?:&raquo;)?(?:\s*?)?<\/h2>/i, replaceTagsAndSpaces);
 
     if (!multi) {
         AnyBalance.trace('Похоже на кабинет с одним номером.');
@@ -891,7 +891,7 @@ function fetchPre(baseurl, html, result) {
     var phone = getParam(html, null, null, /<h1[^>]+class="phone-number"[^>]*>([\s\S]*?)<\/h1>/i, replaceTagsAndSpaces), xhtml;
     processInfoPre_basic(baseurl, html, result);
 
-    getParam(html, result, 'tariff', /Текущий тариф[^>]*>&laquo;([\s\S]*?)&raquo;/i, replaceTagsAndSpaces);
+    getParam(html, result, 'tariff', /Текущий тариф[^>]*>(?:&laquo;)?([\s\S]*?)(?:&raquo;)?(?:\s*?)?<\/h2>/i, replaceTagsAndSpaces);
 
     if (AnyBalance.isAvailable('balance', 'currency', 'limit')) {
         // Если нет баланса, валюту не нужно получать

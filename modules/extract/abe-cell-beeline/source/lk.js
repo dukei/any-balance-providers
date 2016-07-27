@@ -666,7 +666,7 @@ function fetchPost(baseurl, html, result) {
     var balancesReplaces = [replaceTagsAndSpaces, /информация[^<]*недоступна|недоступна|(?:баланс)?\s*временно недоступен/ig, ''];
 
     getParam(html, result, 'agreement', /<h2[^>]*>\s*Договор №([\s\S]*?)<\/h2>/i, replaceTagsAndSpaces);
-    getParam(html, result, 'tariff', /<h2[^>]*>(?:[\s\S](?!<\/h2>))*?Текущий тариф([\s\S]*?)<\/h2>/i, replaceTagsAndSpaces);
+    getParam(html, result, 'tariff', /<h2[^>]*>(?:[\s\S](?!<\/h2>))*?Текущий тариф[^>]*>(?:&laquo;)?([\s\S]*?)(?:&raquo;)?(?:\s*?)?<\/h2>/i, replaceTagsAndSpaces);
 
     if (!multi) {
         AnyBalance.trace('Похоже на кабинет с одним номером.');
@@ -891,7 +891,7 @@ function fetchPre(baseurl, html, result) {
     var phone = getParam(html, null, null, /<h1[^>]+class="phone-number"[^>]*>([\s\S]*?)<\/h1>/i, replaceTagsAndSpaces), xhtml;
     processInfoPre_basic(baseurl, html, result);
 
-    getParam(html, result, 'tariff', /Текущий тариф[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces);
+    getParam(html, result, 'tariff', /Текущий тариф[^>]*>(?:&laquo;)?([\s\S]*?)(?:&raquo;)?(?:\s*?)?<\/h2>/i, replaceTagsAndSpaces);
 
     if (AnyBalance.isAvailable('balance', 'currency', 'limit')) {
         // Если нет баланса, валюту не нужно получать
@@ -1029,7 +1029,7 @@ function getBonuses(xhtml, result, nopath) {
                 getParam(services[i], remainders, path + 'rub_bonus2_till', /<div[^>]+class="column3[^"]*"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseDateWord);
             } else if (/Рублей за участие в опросе|Счастливое время|Бонусы по программе|Счастливого времени/i.test(name)) {
                 sumParam(values, remainders, path + 'rub_opros', null, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-            } else if (/Минут[^<]+на номера вашего региона|Времени общения|Включенные минуты|Пакет минут|Минут общения на номера вашего региона|минут в месяц|мин\.|Голосовой трафик|Разговор.*вне сети/i.test(name)) {
+            } else if (/Минут[^<]+на\s*(?:все\s*)номера вашего региона|Времени общения|Включенные минуты|Пакет минут|Минут общения на номера вашего региона|минут в месяц|мин\.|Голосовой трафик|Разговор.*вне сети/i.test(name)) {
                 sumParam(values, remainders, path + 'min_local', null, replaceMinutes, parseMinutes, aggregate_sum);
                 sumParam(services[i], remainders, path + 'min_local_till', /Доступно до([^<]{10,20})/i, replaceTagsAndSpaces, parseDateWord, aggregate_min);
 

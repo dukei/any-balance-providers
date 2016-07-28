@@ -1,16 +1,20 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="1.0" version="4">ab-tv-ntvplus</id>
+	<api flags="no_browser"/>
+	<id major_version="1.0" version="5">ab-tv-ntvplus</id>
 	<name>НТВ+</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе, бонусных баллах, сумме доплаты и пакетах услуг НТВ+ (http://ntvplus.ru).</p>
-	<p>Информация берется из личного кабинета.</p>
+	<p>Информация берется из личного кабинета http://service.ntvplus.ru/ .</p>
 	]]></description>
 	<instruction html="true"><![CDATA[
-	<p>Чтобы получить логин и пароль, зарегистрируйтесь здесь: http://www.ntvplus.ru/register.xl.</p>
+	<p>Чтобы получить логин и пароль, зарегистрируйтесь здесь: http://service.ntvplus.ru/</p>
 	<p>В процессе регистрации потребуется ввести номер вашего договора и серийный номер смарт-карты НТВ-ПЛЮС, расположенной в вашем ресивере.</p>
 	]]></instruction>
-	<author>iReset &lt;ireset.ag@gmail.com&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
@@ -20,8 +24,7 @@
 	<counters>
 		<counter id="balance" name="Баланс" units="р"/>
 		<counter id="bonus" name="Бонус" units="балл"/>
-		<counter id="recom_pay" name="Рекомендуемая доплата" units="р"/>
-		<counter id="abonent" name="ФИО" type="text"/>
+		<counter id="agreement" name="Номер договора" type="text"/>
 		<counter id="state" name="Состояние" type="text"/>
 		<counter id="packets" name="Пакеты услуг" type="text"/>
 	</counters>

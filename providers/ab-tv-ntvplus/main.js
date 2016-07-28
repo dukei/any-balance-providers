@@ -8,8 +8,17 @@
 */
 
 
+var g_headers = {
+	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
+	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
+	'Connection': 'keep-alive',
+	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
+};
+
 function main(){
     var prefs = AnyBalance.getPreferences();
+    var baseurlLogin = 'http://ntvplus.ru/';
     var baseurl = 'http://service.ntvplus.ru/';
 
     if (!prefs.login || prefs.login == '')
@@ -19,82 +28,65 @@ function main(){
         throw new AnyBalance.Error ('Введите пароль.');
 
 
+    var html = AnyBalance.requestGet (baseurl, g_headers);
+
     AnyBalance.trace ("Trying to enter selfcare at address: " + baseurl);
-    var html = AnyBalance.requestPost (baseurl + "login-page.xl", {
-        'goto': '/',
-        login: prefs.login,
-        password: prefs.password
-    });
+    html = AnyBalance.requestPost (baseurlLogin + "/users/ajax/login.xl", {
+        email: prefs.login,
+        pass: prefs.password,
+        expire: 'on'
+    }, addHeaders({
+    	Referer: baseurl
+    }));
 
-    var value = html.match (/class="errorblock".*?>[ \s]*([^<]*?)[ \s]*</i);
-    if (value)
-        throw new AnyBalance.Error (value[1]);
+    var json = getJson(html);
+    if(json.error){
+		throw new AnyBalance.Error(json.error.value, null, json.error.name == 'siteusers.login');
+    }
 
-    AnyBalance.trace ("It looks like we are in selfcare...");
+	html = AnyBalance.requestGet(baseurl + 'account/', addHeaders({Referer: baseurl}));
+	if(!/logout/i.test(html)){
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
+	}
 
+	var contracts = getElements(html, /<div[^>]+panel[^>]+data-contract-id[^>]*>/ig);
+	AnyBalance.trace('Найдено ' + contracts.length + ' договоров');
     var result = {success: true};
 
-    AnyBalance.trace ("Fetching accounts...");
+	for(var i=0; i<contracts.length; ++i){
+		var c = contracts[i];
+		var num = getElement(c, /<span[^>]*contract--number-label[^>]*>/i, replaceTagsAndSpaces);
+		
 
-    html = AnyBalance.requestGet (baseurl + "abonents/account/index.xl");
+		if(prefs.contract && !endsWith(num, prefs.contract)){
+			AnyBalance.trace('Договор ' + num + ' не подходит по номеру, пропускаем');
+			continue;
+		}
 
-    AnyBalance.trace ("Parsing accounts...");
+		AnyBalance.trace('Найден нужный договор: ' + num);
 
-    // Поиск идентификатора договора
-    if (!prefs.contract || prefs.contract == '')
-      prefs.contract = '\\d+';
-    var regexp = 'class="contractnum" .*?toggleContract.*?\'c(\\d+)\'[^>]*>' + prefs.contract;
-    value = html.match (regexp);
-    var id;
-    if (value)
-        id = value[1];
-    else
-        throw new AnyBalance.Error ("Неверный номер договора");
+		getParam(num, result, 'agreement');
+		getParam(getElements(c, [/<div[^>]+contract--balance-item[^>]*>/ig, />\s*Баланс/i]), result, 'balance', null, replaceTagsAndSpaces, parseBalance);
+		getParam(getElements(c, [/<div[^>]+contract--balance-item[^>]*>/ig, />\s*Бонусный баланс/i]), result, 'bonus', null, replaceTagsAndSpaces, parseBalance);
+		getParam(getElements(c, /<[^>]+contract--description[^>]*>/i), result, '__tariff', null, replaceTagsAndSpaces);
+		getParam(getElements(c, /<[^>]+status--label[^>]*>/i), result, 'state', null, replaceTagsAndSpaces);
 
+		if(AnyBalance.isAvailable('packets')){
+			var ref = getParam(c, null, null, /<a[^>]+href="([^"]*\/info\?id=[^"]*)/i, replaceHtmlEntities);
+			if(!ref){
+				AnyBalance.trace('Не удалось найти ссылку на расширенную информацию: ' + c);
+			}else{
+				var url = joinUrl(baseurl + 'account/', ref);
+				html = AnyBalance.requestGet(url, addHeaders({Referer: baseurl + 'account/'}));
+				var tagsContainer = getElement(html, /<div[^>]+tags[^>]*>/i);
+				var tags = getElements(tagsContainer, /<span[^>]+tags--item[^>]*>/ig, replaceTagsAndSpaces);
+				getParam(tags.join(', '), result, 'packets');
+			}
+		}
 
-    if (AnyBalance.isAvailable ('abonent')) {
-
-        AnyBalance.trace ("Fetching settings...");
-
-        html = AnyBalance.requestGet (baseurl + "settings.xl");
-
-        AnyBalance.trace ("Parsing settings...");
-
-        // ФИО
-        getParam (html, result, 'abonent', /name="fio"[^>]*value="([^"]+)/i);
-
-    }
-
-
-    if (AnyBalance.isAvailable ('state',
-                                'balance',
-                                'bonus',
-                                'recom_pay',
-                                'packets')) {
-
-        AnyBalance.trace ("Fetching check-account...");
-
-        html = AnyBalance.requestGet (baseurl + "abonents/account/check-account.xl?id=" + id);
-
-        AnyBalance.trace ("Parsing check-account...");
-
-        // Состояние
-        getParam (html, result, 'state', /Состояние:.*?<td>.*?<div[^>]*>([^<]*)/i);
-
-        // Баланс
-        getParam (html, result, 'balance', /Баланс:.*?<div>(-?\d+\.?\d*)/i, [], parseFloat);
-
-        // Бонус
-        getParam (html, result, 'bonus', /Бонус:.*?<td>(\d+)/i, [], parseInt);
-
-        // Рекомендуемая сумма доплаты
-        getParam (html, result, 'recom_pay', /Рекомендуемая сумма доплаты:.*?<td>(\d+\.?\d*)/i, [], parseFloat);
-
-        // Пакеты услуг
-        getParam (html, result, 'packets', /Пакеты:.*?<td>([^<]*)/i);
-
-    }
-
+		break;
+	}
 
     AnyBalance.setResult(result);
 }

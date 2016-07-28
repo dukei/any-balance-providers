@@ -418,7 +418,7 @@ function processMetalAccounts(html, result) {
 		var _id = getParam(accounts[i], null, null, /id=(\d+)/i);
 		var title = getParam(accounts[i], null, null, /<span[^>]*title="([^"]+)/i, replaceTagsAndSpaces);
 		// Заменим ID на номер счета, чтобы выполнять поиск по счетам
-		var acc_num = getParam(html, null, null, /"productNumberBlock"(?:[^>]*>){2}\s*([^<]+)/i, [/\D/g, '']);
+		var acc_num = getParam(accounts[i], null, null, /"productNumberBlock"(?:[^>]*>){2}\s*([^<]+)/i, [/\D/g, '']);
 
 		var c = {__id: _id, num: acc_num, __name: title};
 		

@@ -1,7 +1,7 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id major_version="2.0" version="90">ab-cell-kyivstar</id>
+	<id major_version="2.0" version="91">ab-cell-kyivstar</id>
 	<name>Киевстар</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе, бонусных минутах, SMS, MMS, остатке интернет-трафика и других бонусах для пользователей мобильного оператора "Киевстар".</p>
@@ -28,6 +28,9 @@
 		<module id="login/kyivstar"/>
 	</depends>
 	<files>
+		<js>library.min.js</js>
+		<js>gwt.min.js</js>
+		<js>login.kyivstar.min.js</js>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
 		<js>main.js</js>
@@ -45,6 +48,7 @@
 		<counter id="bonus_mins_1" name="Минуты на Киевстар" type="time_interval" format="{@MIN}:{@s}"/>
 		<counter id="bonus_mins_2" name="Минуты по Украине" type="time_interval" format="{@MIN}:{@s}"/>
 		<counter id="bonus_mins_other_mobile" name="Минуты на другие мобильные" type="time_interval" format="{@MIN}:{@s}"/>
+    <counter id="bonus_mins_other_networks" name="Минуты в других сетях" type="time_interval" format="{@MIN}:{@s}"/>
 		<counter id="mins_tariff" name="Тарифные минуты" units=" мин" type="time_interval" format="{@MIN}"/>
 		<counter id="mms" name="MMS" />
 		<counter id="sms" name="SMS" />
@@ -65,6 +69,7 @@
 		<counter id="bonus_mins_1_till" name="Срок действия бонусных минут (1)" type="time" format="dd/MM/yyyy"/>
 		<counter id="bonus_mins_2_till" name="Срок действия бонусных минут (2)" type="time" format="dd/MM/yyyy"/>
 		<counter id="bonus_mins_other_mobile_till" name="Срок действия минут на другие мобильные" type="time" format="dd/MM/yyyy"/>
+    <counter id="bonus_mins_other_networks_till" name="Срок действия минут других сетях" type="time" format="dd/MM/yyyy"/>
 		<counter id="other_costs" name="Начисление абонентской платы по услуге «-33%»" units=" {@currency}"/>
 		<counter id="connection_date" name="Дата подключения" type="time" format="dd/MM/yyyy"/>
 		<counter id="mainBonusInfoText" name="Бонусные балансы" type="text"/>

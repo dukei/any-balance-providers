@@ -1,18 +1,24 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-bonus-novex</id>
+	<api flags="no_browser"/>
+  <id version="2">ab-bonus-novex</id>
   <name>НОВЭКС</name>
   <description>
     Получает баланс бонусов на карте бонусной программы НОВЭКС ( http://www.novex-trade.ru/bonus-card-program/ ).
-
-    Как получить карту? Вы можете купить карту за 95 рублей в сети магазинов НОВЭКС.
   </description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <instruction>
+    Как получить карту? Обменять старую карту на новую или купить карту за 49 рублей в сети магазинов НОВЭКС.
+
+    Правила регистрации карты в личном кабинете (чтобы создать логин и пароль для получения баланса) описаны здесь: http://www.novex-trade.ru/bonus-card-program/
+  </instruction>
+  <author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+  <depends>
+  	<module id="library"/>
+  </depends>
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
     <js>main.js</js>
-    <js>library.js</js>
     <history>history.xml</history>
   </files>
   <counters>

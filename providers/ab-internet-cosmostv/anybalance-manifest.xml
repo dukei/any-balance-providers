@@ -1,23 +1,31 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-internet-cosmostv</id>
+	<id version="3">ab-internet-cosmostv</id>
 	<api flags="no_browser"/>
 	<name>Космос ТВ (Беларусь)</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе провайдера Космос ТВ (Беларусь) http://cosmostv.by</p>
-	<p>Информация берется из личного кабинета https://private.cosmostv.by:8443/lk_auth</p>
+	<p>Информация берется из личного кабинета https://private.cosmostv.by/login</p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
 	<counters>
 		<counter id="balance" name="Баланс" units=" р"/>
-		<counter id="status" name="Статус" type="text"/>
+		<counter id="reserved" name="Зарезервировано" units=" р"/>
+		<counter id="recommended" name="Рекомендуемый платёж" units=" р"/>
+		<counter id="cost" name="Стоимость тарифа" units=" р"/>
+		<counter id="date_start" name="Начало расчетного периода" type="time" format="dd/MM/yyyy"/>
+		<counter id="date_end" name="Окончание расчетного периода" type="time" format="dd/MM/yyyy"/>
+		<counter id="account" name="Номер счёта" type="text"/>
+		<counter id="fio" name="ФИО" type="text"/>
 	</counters>
 	<keywords></keywords>
 	<type>internet, tv</type>

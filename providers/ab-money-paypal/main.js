@@ -71,7 +71,7 @@ function executeChallenge(script, baseurl, loginPage){
 		},
 
 		getElementById: function(id){
-			return elements[id];
+			return this.elements[id];
 		},
 
 		lastModified: new Date().toString(),

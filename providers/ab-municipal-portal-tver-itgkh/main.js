@@ -69,12 +69,14 @@ function main() {
 	var dataForm = AB.getElement(html, /\<form[^>]+class=\"\s*form-horizontal\s*\"[^>]*\>/i);
 
 	AB.getParam(dataForm, result, 'debt', /Задолженность\s+по\s+сч[ёе]ту[\s\S]*?<input[^>]*value=\"([^"]*)\"/i, AB.replaceHtmlEntities, AB.parseBalance);
+	AB.getParam(dataForm, result, 'balance', /Остаток\s+на\s+сч[ёе]те[\s\S]*?<input[^>]*value=\"([^"]*)\"/i, AB.replaceHtmlEntities, AB.parseBalance);
 
 	html = AnyBalance.requestGet(baseurl + 'account/accrual', g_headers);
 
 	var tableData = AB.getElement(html, /<table\s+class="[^"]*data_table[^"]*"[^>]*>/i);
 
 	AB.getParam(tableData, result, 'freshPeriod', /<td[^>]*>([\s\S]*?)<\/td>/i, AB.replaceTagsAndSpaces, AB.parseDateWord);
+	AB.getParam(tableData, result, 'inSaldo', /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, AB.replaceTagsAndSpaces, AB.parseBalance);
 	AB.getParam(tableData, result, 'accruedMoney', /<a[^>]*href="[^"]*credit[^"]*">([^<]*)/i, AB.replaceTagsAndSpaces, AB.parseBalance);
 	AB.getParam(tableData, result, 'paidMoney', /<a[^>]*href="[^"]*paid[^"]*">([^<]*)/i, AB.replaceTagsAndSpaces, AB.parseBalance);
 

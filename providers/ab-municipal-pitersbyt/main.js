@@ -34,7 +34,7 @@ var g_lks = {
     pes: {
 		url: 'https://ikus.pes.spb.ru/IKUSUser/',
 		uid: 'E85D8BB4C101FFBB462908DEC5BC61A6',
-		auth_uid: 'AE742241A0A8AD76E4877D96DE250A42',
+		auth_uid: '64CB37418EFF33FAED7D9C1C973060FC',
 		strong_name: '\\b%VARNAME_BROWSER%,\\w+\\],(\\w+)\\)',
 		auth_url: 'userAuth/',
 		auth_nocache: 'userAuth/userAuth.nocache.js',
@@ -46,10 +46,10 @@ var g_lks = {
 		user_nocache: 'userPhysical/userPhysical.nocache.js',
 		user_file: 'com.sigma.personal.client.physical.ClientService.gwt',
 		user_class: 'com.sigma.personal.client.physical.ClientService',
-		user_data: "7|0|4|%url%%user_url%|%auth_uid%|%user_class%|getAbonsList|1|2|3|4|0|",
-		re_account: /electric.model.AbonentModel[^"]*","([^"]*)/,
-		re_address: /electric.model.AbonentModel[^"]*"(?:,"[^"]*"){2},"([^"]*)/,
-		counters: ['peni', 'balance']
+		user_data: "7|0|4|%url%%user_url%|%auth_uid%|%user_class%|getAllAbons|1|2|3|4|0|",
+		re_account: /"Аб\.\s+№","([^"]*)/,
+		re_address: /"Адрес","([^"]*)/,
+		counters: ['balance', 'peni']
     }
 };
 
@@ -140,12 +140,12 @@ function main(){
 
     var result = { success: true };
 
-    //Для песк подряд идущие числа, похоже, вспомогательные балансы
-    if(cfg.url.match(/pesc/))
-    	html = html.replace(/-?\d+\.\d+,-?\d+\.\d+/g, 'extrabalance','extrapeni');
+    //Для песк и pes подряд идущие числа, похоже, вспомогательные балансы
+    if(cfg.url.match(/pes/))
+    	html = html.replace(/-?\d+\.\d+,-?\d+\.\d+/g, 'extrabalance,extrapeni');
     	 
     //Для песк балансы и пени лежат \d.\d,\d (и следующие цифры разные)
-    var num =  cfg.url.match(/pesc/) ? '\\d+' : getParam(html, null, null, /\d+\.\d+,(\d+),/);
+    var num =  cfg.url.match(/pes/) ? '\\d+' : getParam(html, null, null, /\d+\.\d+,(\d+),/);
     if(!isset(num)){
     	AnyBalance.trace(html);
     	throw new AnyBalance.Error('Не удаётся найти баланс. Зайдите в личный кабинет через браузер и убедитесь, что вы подключили абонентов.');

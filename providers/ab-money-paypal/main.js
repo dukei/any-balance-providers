@@ -31,11 +31,16 @@ function executeChallenge(script, baseurl, loginPage){
 
 	function Element(tag){
 		this.tagName = tag;
+		this.style = {};
 		return this;
 	}
 
 	var doc = {
 		_cookie: '',
+		elements: {
+			main: new Element('div')
+		}, 
+
 		forms: {
 			challenge: {
 				appendChild: function(elem){
@@ -63,6 +68,10 @@ function executeChallenge(script, baseurl, loginPage){
 
 		createElement: function(tag){
 			return new Element(tag);
+		},
+
+		getElementById: function(id){
+			return elements[id];
 		},
 
 		lastModified: new Date().toString(),
@@ -101,6 +110,10 @@ function executeChallenge(script, baseurl, loginPage){
 	};
 
 	safeEval(script, 'window,document,XMLHttpRequest', [win, doc, XHR]);
+
+	if(doc.elements.main.style.display) //Строго требуется капча...
+		formParams.captchaRequired = true;
+
 	return formParams;
 }
 
@@ -128,17 +141,23 @@ function faceCaptchaChallenge(json, baseurl, loginPage, debugId){
 	}
 
 	var params_challenge = executeChallenge(script, baseurl, loginPage);
+	var captchaRequired = params_challenge.captchaRequired;
+	params_challenge.captchaRequired = undefined;
 
 	var params = AB.createFormParams(json.htmlResponse, function(params, str, name, value) {
 		if (name == 'captcha') {
-/*			var imageUrl = getParam(json.htmlResponse, null, null, /<img[^>]+src="([^"]*)[^>]*Security Image/i, replaceHtmlEntities);
-			if(!imageUrl){
-				AnyBalance.trace(json.htmlResponse);
-				throw new AnyBalance.Error("Could not find captcha. Is the site changed?");
-			}
-			var image = AnyBalance.requestGet(imageUrl, addHeaders({Referer: loginPage}));
-			return AnyBalance.retrieveCode("Type the characters you see in the image for security purposes.", image);
-*/          return ''; //Они тупо пустую капчу сабмитят...
+			if(captchaRequired){
+				AnyBalance.trace('Captcha строго требуется. Надо её ввести');
+				var imageUrl = getParam(json.htmlResponse, null, null, /<img[^>]+src="([^"]*)[^>]*Security Image/i, replaceHtmlEntities);
+				if(!imageUrl){
+					AnyBalance.trace(json.htmlResponse);
+					throw new AnyBalance.Error("Could not find captcha. Is the site changed?");
+				}
+				var image = AnyBalance.requestGet(imageUrl, addHeaders({Referer: loginPage}));
+				return AnyBalance.retrieveCode("Type the characters you see in the image for security purposes.", image);
+			}else{
+          		return ''; //Они тупо пустую капчу сабмитят...
+          	}
 		}
 	
 		return value;

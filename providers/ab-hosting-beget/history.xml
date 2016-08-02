@@ -1,14 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="4" date="2016-08-02">
+	- Поддержка изменений на сайте.
+	- Добавлены новые счётчики.
+	</change>
 	<change version="3" date="2016-04-22">
-	Изменение адреса личного кабинета
+	- Изменение адреса личного кабинета.
 	</change>
 	<change version="2" date="2015-04-29">
 	- Новый счетчик: Дисковое пространство, мб.
 	</change>
-<!--
-	<change version="2" date="2014-09-03">
-	- 
-	</change>
--->
 </history>

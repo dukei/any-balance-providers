@@ -16,11 +16,273 @@ function main(){
 	checkEmpty(prefs.login, 'Enter e-mail!');
 	checkEmpty(prefs.password, 'Enter password!');
     
-	logInOpenAuth();
+    try{
+		logInSite();
+	}catch(e){
+		AnyBalance.trace('Could not enter site: ' + e.message);
+		logInOpenAuth();
+	}
 	return;
 }
 
+function executeChallenge(script, baseurl, loginPage){
+	var ABSave = AnyBalance;
+	var formParams = {};
+
+	function Element(tag){
+		this.tagName = tag;
+		return this;
+	}
+
+	var doc = {
+		_cookie: '',
+		forms: {
+			challenge: {
+				appendChild: function(elem){
+					formParams[elem.name] = elem.value;
+				}
+			}
+		},
+		
+		get cookie(){
+			return this._cookie;
+		},
+		
+		set cookie(str){
+			try{
+				AnyBalance = ABSave;
+				AnyBalance.trace('Setting cookie: ' + str);
+				var name = getParam(str, null, null, /[^=\s]+/i);
+				var val = getParam(str, null, null, /=\s*([^;]*)/i);
+				AnyBalance.setCookie('www.paypal.com', name, val);
+				this._cookie = name + '=' + val;
+			}finally{
+				AnyBalance = undefined;
+			}
+		},
+
+		createElement: function(tag){
+			return new Element(tag);
+		},
+
+		lastModified: new Date().toString(),
+	};
+	
+	var XHR = function(){
+		this.method = "POST";
+		this.url = '';
+		this.headers = {Referer: loginPage};
+		this.body = '';
+
+		this.open = function(method, url){
+			this.method = method;
+			this.url = joinUrl(baseurl, url);
+		}
+
+		this.setRequestHeader = function(name, val){
+			this.headers[name] = val;
+		}
+
+		this.send = function(body){
+			try{
+				AnyBalance = ABSave;
+				this.body = body;
+				AnyBalance.trace('Requesting ' + this.url + ' with ' + body);
+				AnyBalance.requestPost(this.url, body, addHeaders(this.headers), {HTTP_METHOD: this.method});
+			}finally{
+				AnyBalance = undefined;
+			}
+		}
+	}
+
+	var win = {
+		document: doc,
+		XMLHttpRequest: XHR
+	};
+
+	safeEval(script, 'window,document,XMLHttpRequest', [win, doc, XHR]);
+	return formParams;
+}
+
+function faceChallenge(html, baseurl){
+	var challengeUrl = getParam(html, null, null, /data-ads-challenge-url="([^"]*)/i, replaceHtmlEntities);
+	if(!challengeUrl){
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Could not find challenge url. Is site changed?');
+	}
+	var loginPage = AnyBalance.getLastUrl();
+
+	challengeUrl = joinUrl(baseurl, challengeUrl);
+
+	AnyBalance.trace('challange url: ' + challengeUrl);
+	var script = AnyBalance.requestGet(challengeUrl, addHeaders({'X-Requested-With': 'XMLHttpRequest', Referer: loginPage}));
+
+	executeChallenge(script, baseurl, loginPage);
+}
+
+function faceCaptchaChallenge(json, baseurl, loginPage, debugId){
+	var script = getElements(json.htmlResponse, [/<script[^>]*>/ig, /autosubmit/], [/^<script[^>]*>|<\/script>/ig, '', replaceHtmlEntities], decodeURIComponent)[0];
+	if(!script){
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Could not find challenge script. Is site changed?');
+	}
+
+	var params_challenge = executeChallenge(script, baseurl, loginPage);
+
+	var params = AB.createFormParams(json.htmlResponse, function(params, str, name, value) {
+		if (name == 'captcha') {
+/*			var imageUrl = getParam(json.htmlResponse, null, null, /<img[^>]+src="([^"]*)[^>]*Security Image/i, replaceHtmlEntities);
+			if(!imageUrl){
+				AnyBalance.trace(json.htmlResponse);
+				throw new AnyBalance.Error("Could not find captcha. Is the site changed?");
+			}
+			var image = AnyBalance.requestGet(imageUrl, addHeaders({Referer: loginPage}));
+			return AnyBalance.retrieveCode("Type the characters you see in the image for security purposes.", image);
+*/          return ''; //Они тупо пустую капчу сабмитят...
+		}
+	
+		return value;
+	});
+	
+	var submitUrl = getParam(json.htmlResponse, null, null, /<form[^>]+action="([^"]*)/i, replaceHtmlEntities);
+	if(!submitUrl){
+		AnyBalance.trace(json.htmlResponse);
+		throw new AnyBalance.Error("Could not find captcha submit url. Is the site changed?");
+	}
+
+	html = AnyBalance.requestPost(joinUrl(baseurl, submitUrl), joinObjects(params, params_challenge), addHeaders({
+		Accept: 'application/json, text/javascript, */*; q=0.01',
+		Referer: loginPage,
+		Origin: baseurl,
+		'X-Requested-With': 'XMLHttpRequest',
+		'x-pp-ads-client-context': 'ul',
+		'x-pp-ads-client-context-data': '{"contextCorrelationId":"' + debugId + '"}'
+	}));
+
+	json = getJson(html);
+	return json;
+}
+
+function getBalanceInfo(html){
+	var json = getParam(html, null, null, /data-balance="([^"]*)/i, replaceHtmlEntities, getJson);
+	return json;
+}
+
+function logInSite(){
+	AnyBalance.trace('Пытаемся зайти через сайт...');
+
+	var prefs = AnyBalance.getPreferences();
+	var baseurl = 'https://www.paypal.com';
+	
+	g_headers = {
+		Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+		'Accept-Language': 'ru,en-US;q=0.8,en;q=0.6',
+		'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 9_1 like Mac OS X) AppleWebKit/601.1.46 (KHTML, like Gecko) Version/9.0 Mobile/13B143 Safari/601.1'
+	};
+
+	AnyBalance.restoreCookies();
+
+	var html = AnyBalance.requestGet(baseurl + '/myaccount/wallet', g_headers);
+	var jsonBalances = getBalanceInfo(html);
+	if(!jsonBalances){
+		var loginPage = AnyBalance.getLastUrl();
+	    
+		var debugId = AnyBalance.getLastResponseHeader('Paypal-Debug-Id');
+		if(debugId) debugId = debugId.replace(/,.*/, '');
+	    
+		faceChallenge(html, baseurl);
+	    
+		var form = getElement(html, /<form[^>]+name="login"[^>]*>/i);
+		if(!form){
+			AnyBalance.trace(html);
+			throw new AnyBalance.Error('Could not find login form. Is the site changed?');
+		}
+	    
+		var params = AB.createFormParams(form, function(params, str, name, value) {
+			if (name == 'login_email') {
+				return prefs.login;
+			} else if (name == 'login_password') {
+				return prefs.password;
+			}
+	    
+			return value;
+		});
+	    
+		params.bp_mid = 'v=1;a1=na~a2=na~a3=na~a4=Mozilla~a5=Netscape~a6=5.0 (iPhone; CPU iPhone OS 9_1 like Mac OS X) AppleWebKit/601.1.46 (KHTML, like Gecko) Version/9.0 Mobile/13B143 Safari/601.1~a7=20030107~a8=na~a9=true~a10=~a11=true~a12=Win32~a13=na~a14=Mozilla/5.0 (iPhone; CPU iPhone OS 9_1 like Mac OS X) AppleWebKit/601.1.46 (KHTML, like Gecko) Version/9.0 Mobile/13B143 Safari/601.1~a15=false~a16=ru~a17=na~a18=www.paypal.com~a19=na~a20=na~a21=na~a22=na~a23=414~a24=736~a25=24~a26=736~a27=na~a28=' + new Date() + '~a29=3~a30=na~a31=yes~a32=na~a33=yes~a34=no~a35=no~a36=yes~a37=no~a38=online~a39=no~a40=Win32~a41=yes~a42=no~';
+	    
+		AnyBalance.sleep(2000);
+	    
+		html = AnyBalance.requestPost(baseurl + '/signin', params, addHeaders({
+			Accept: 'application/json, text/javascript, */*; q=0.01',
+			Referer: loginPage,
+			Origin: baseurl,
+			'X-Requested-With': 'XMLHttpRequest',
+			'x-pp-ads-client-context': 'ul',
+			'x-pp-ads-client-context-data': '{"contextCorrelationId":"' + debugId + '"}'
+		}));
+
+		var json = getJson(html), cnt = 3;
+		while(json.htmlResponse){
+			if(cnt-- <= 0){
+				AnyBalance.trace(JSON.stringify(json));
+				throw new AnyBalance.Error('Could not pass captcha challenge...');
+			}
+			AnyBalance.trace('Пытаемся пройти captcha challenge (осталось ' + cnt + ' попыток...');
+			json = faceCaptchaChallenge(json, baseurl, loginPage, debugId);
+		}
+
+		if(json.notifications){
+			AnyBalance.trace('There are some notifications: ' + JSON.stringify(json.notifications));
+			var n = json.notifications;
+			if(n.type == 'notification-critical')
+				throw new AnyBalance.Error(n.msg);
+		}
+
+		html = AnyBalance.requestGet(baseurl + '/myaccount/wallet', addHeaders({Referer: loginPage}));
+		jsonBalances = getBalanceInfo(html);
+
+		if(!jsonBalances){
+			AnyBalance.trace(html);
+			throw new AnyBalance.Error('Could not enter PayPal personal account...');
+		}
+
+		AnyBalance.saveCookies();
+		AnyBalance.saveData();
+		__setLoginSuccessful();
+	}else{
+		AnyBalance.trace('Вошли через существующую сессию');
+	}
+
+	if(!jsonBalances){
+		throw new AnyBalance.Error('Не удалось войти в личный кабинет PayPal...');
+	}
+	
+	var result = {success: true};
+	
+	for(var i=0; i<jsonBalances.balanceDetails.length; i++) {
+		var curr = jsonBalances.balanceDetails[i];
+		if(curr.currency == 'USD') {
+			getParam(curr.available.amount, result, 'balance', null, null, parseBalance);
+		} else if(curr.currency == 'EUR') {
+			getParam(curr.available.amount, result, 'balance_eur', null, null, parseBalance);
+		} else if(curr.currency == 'SEK') {
+			getParam(curr.available.amount, result, 'balance_sek', null, null, parseBalance);
+		} else if(curr.currency == 'RUB') {
+			getParam(curr.available.amount, result, 'balance_rub', null, null, parseBalance);
+		}else{
+		    AnyBalance.trace('Unknown currency ' + curr.currency + ': ' + JSON.stringify(curr));
+		}
+	}
+
+	result.__tariff = prefs.login;
+	
+    AnyBalance.setResult(result);
+}
+
+
 function logInOpenAuth(){
+	AnyBalance.trace('Пытаемся зайти через OAuth...');
+
 	var prefs = AnyBalance.getPreferences();
 	var baseurl = 'https://api.paypal.com/v1/';
 	if(prefs.__dbg)

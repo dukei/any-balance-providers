@@ -238,6 +238,8 @@ function logInSite(){
 				throw new AnyBalance.Error(n.msg);
 		}
 
+		AnyBalance.trace('Got json on enter: ' + JSON.stringify(json));
+
 		html = AnyBalance.requestGet(baseurl + '/myaccount/wallet', addHeaders({Referer: loginPage}));
 		jsonBalances = getBalanceInfo(html);
 

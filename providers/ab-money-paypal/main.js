@@ -238,13 +238,12 @@ function logInSite(){
 				throw new AnyBalance.Error(n.msg);
 		}
 
-		AnyBalance.trace('Got json on enter: ' + JSON.stringify(json));
-
 		html = AnyBalance.requestGet(baseurl + '/myaccount/wallet', addHeaders({Referer: loginPage}));
 		jsonBalances = getBalanceInfo(html);
 
 		if(!jsonBalances){
-			AnyBalance.trace(html);
+			AnyBalance.trace('Got json on enter: ' + JSON.stringify(json));
+			AnyBalance.trace("wallet page: " + html);
 			throw new AnyBalance.Error('Could not enter PayPal personal account...');
 		}
 

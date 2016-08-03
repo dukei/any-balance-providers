@@ -4,21 +4,21 @@
 
 var g_countersTable = {
 	common: {
-		"p": "profile.fio",
+		"phone": "info.mphone",
 	}, 
 	card: {
 		"__tariff": "cards.__name",
 		
     	"balance": "cards.balance",
-		"card_number": "cards.cardnum",
+		"card_number": "cards.num",
 		"card_name": "cards.__name",
 		"type": "cards.type",
 		"status": "cards.status",
 		"currency": "cards.currency",
 		"limit": "cards.limit",
-		"min_pay": "cards.min_pay",
+		"min_pay": "cards.minpay",
 		"is_credit": "cards.is_credit",
-		"rate": "cards.rate",
+		"rate": "cards.pct",
 	},
 };
 
@@ -59,7 +59,7 @@ function shouldProcess(counter, info){
 		    if(!prefs.cardnum)
 		    	return true;
 			
-			if(endsWith(info.__name, prefs.cardnum))
+			if(endsWith(info.num, prefs.cardnum))
 				return true;
 		    
 			return false;

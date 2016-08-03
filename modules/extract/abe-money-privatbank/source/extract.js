@@ -73,10 +73,7 @@ function login(prefs, result) {
 		AnyBalance.trace('Login imei param is: ' + g_login_hash);
 
 		g_imei = generateImei(prefs.login, g_imei);
-		AnyBalance.trace('imei param is: ' + g_imei);
-
 		g_simsn = generateSimSN(prefs.login, g_simsn);
-		AnyBalance.trace('simSN param is: ' + g_simsn);
 
 		var json = requestJson({registration_id: g_registrationId}, 'props_full');
 		// Если еще привязка не выполнялась, надо привязать

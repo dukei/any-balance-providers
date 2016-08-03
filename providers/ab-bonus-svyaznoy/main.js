@@ -76,7 +76,7 @@ function main() {
       var lastOperation = json.operations[0];
 
       AB.getParam(lastOperation.amount + '', result, 'pointsinlastoper', null, AB.replaceTagsAndSpaces, AB.parseBalance);
-      AB.getParam(lastOperation.partnerName + '', result, 'lastoperationplace', null, AB.replaceTagsAndSpaces);
+      AB.getParam(lastOperation.brandName + '', result, 'lastoperationplace', null, AB.replaceTagsAndSpaces);
       AB.getParam(lastOperation.operationDate + '', result, 'lastoperationdate', null, AB.replaceTagsAndSpaces, AB.parseDateISO);
     }
   }

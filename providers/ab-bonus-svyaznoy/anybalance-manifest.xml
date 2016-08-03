@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="2.0" version="16">ab-bonus-svyaznoy</id>
+	<id major_version="2.0" version="17">ab-bonus-svyaznoy</id>
 	<api flags="no_browser"/>
 	<name>Связной Клуб</name>
 	<description html="true"><![CDATA[
@@ -10,10 +10,12 @@
 	<p>Получить пароль для имеющейся карты Связной клуб или выпустить виртуальную карту Связной клуб можно на сайте http://www.sclub.ru.</p>
 	]]></instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>

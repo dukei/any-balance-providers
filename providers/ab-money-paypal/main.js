@@ -15,13 +15,19 @@ function main(){
 	
 	checkEmpty(prefs.login, 'Enter e-mail!');
 	checkEmpty(prefs.password, 'Enter password!');
-    
+
     try{
-		logInSite();
-	}catch(e){
-		AnyBalance.trace('Could not enter site: ' + e.message);
 		logInOpenAuth();
+	}catch(e){
+		AnyBalance.trace('Could not enter OAuth: ' + e.message);
+        try{
+			logInSite();
+		}catch(e){
+			AnyBalance.trace('Could not enter site: ' + e.message);
+			logInOpenAuth();
+		}
 	}
+
 	return;
 }
 
@@ -109,10 +115,13 @@ function executeChallenge(script, baseurl, loginPage){
 		XMLHttpRequest: XHR
 	};
 
-	safeEval(script, 'window,document,XMLHttpRequest', [win, doc, XHR]);
+	script += "\nreturn typeof autosubmit != 'undefined' ? autosubmit : undefined;";
 
-	if(doc.elements.main.style.display) //Строго требуется капча...
-		formParams.captchaRequired = true;
+	var autosubmit = safeEval(script, 'window,document,XMLHttpRequest', [win, doc, XHR]);
+	AnyBalance.trace('autosubmit = ' + autosubmit);
+
+	//Строго требуется капча...
+	formParams.captchaRequired = !!doc.elements.main.style.display || (autosubmit === false);
 
 	return formParams;
 }
@@ -134,6 +143,8 @@ function faceChallenge(html, baseurl){
 }
 
 function faceCaptchaChallenge(json, baseurl, loginPage, debugId){
+	AnyBalance.trace('Challenge in: ' + JSON.stringify(json));
+
 	var script = getElements(json.htmlResponse, [/<script[^>]*>/ig, /autosubmit/], [/^<script[^>]*>|<\/script>/ig, '', replaceHtmlEntities], decodeURIComponent)[0];
 	if(!script){
 		AnyBalance.trace(html);
@@ -148,7 +159,7 @@ function faceCaptchaChallenge(json, baseurl, loginPage, debugId){
 		if (name == 'captcha') {
 			if(captchaRequired){
 				AnyBalance.trace('Captcha строго требуется. Надо её ввести');
-				var imageUrl = getParam(json.htmlResponse, null, null, /<img[^>]+src="([^"]*)[^>]*Security Image/i, replaceHtmlEntities);
+				var imageUrl = getParam(json.htmlResponse, null, null, /<img[^>]+src="([^"]*secret.jpe?g)"/i, replaceHtmlEntities);
 				if(!imageUrl){
 					AnyBalance.trace(json.htmlResponse);
 					throw new AnyBalance.Error("Could not find captcha. Is the site changed?");
@@ -178,6 +189,7 @@ function faceCaptchaChallenge(json, baseurl, loginPage, debugId){
 		'x-pp-ads-client-context-data': '{"contextCorrelationId":"' + debugId + '"}'
 	}));
 
+	AnyBalance.trace('Challenge out: ' + html);
 	json = getJson(html);
 	return json;
 }
@@ -185,6 +197,61 @@ function faceCaptchaChallenge(json, baseurl, loginPage, debugId){
 function getBalanceInfo(html){
 	var json = getParam(html, null, null, /data-balance="([^"]*)/i, replaceHtmlEntities, getJson);
 	return json;
+}
+
+function handleStepUpErrors(data){
+	if(data.errors){
+		for(var err in (data.errors.fieldError || {})){
+			var e = data.errors.fieldError[err];
+			throw new AnyBalance.Error(e.msg);
+		}
+		AnyBalance.trace(JSON.stringify(data.errors));
+		throw new AnyBalance.Error('Error during stepup. Is site changed?');
+	}
+}
+
+function faceStepUp(json, baseurl, loginPage){
+	var url = joinUrl(baseurl, json.returnUrl);
+	var html = AnyBalance.requestGet(url, addHeaders({Referer: loginPage}));
+
+	var data = getParam(html, null, null, /\bdata-data="([^"]*)/i, replaceHtmlEntities, getJson);
+	AnyBalance.trace('StepUp data 1: ' + JSON.stringify(data));
+	handleStepUpErrors(data);
+
+	var sms = data.challengeSetModel.selectOptionList.indexOf('SMS');
+	if(sms < 0)
+		throw new AnyBalance.Error('PayPal required stepup, but SMS authorization is not available');
+
+	var number = data.challengeSetModel.challengeMap.SMS.verifier[0].value;
+
+	html = AnyBalance.requestPost(joinUrl(baseurl, data.flowExecutionUrl), {
+		selectOption: 'SMS',
+		textOption: 0,
+		jsEnabled: 1,
+		execution: data.flowExecutionKey,
+		_sms_ivr_continue_btn_label: 'Continue',
+		_default_continue_btn_label: 'Continue',
+		_eventId_continue: 'Continue'
+	}, addHeaders({Referer: AnyBalance.getLastUrl()}));
+	
+	data = getParam(html, null, null, /\bdata-data="([^"]*)/i, replaceHtmlEntities, getJson);
+	AnyBalance.trace('StepUp data 2: ' + JSON.stringify(data));
+	handleStepUpErrors(data);
+
+	html = AnyBalance.requestPost(joinUrl(baseurl, data.flowExecutionUrl), {
+		selectOption: data.challengeSetModel.inputModel.selectOption,
+		verificationCode: AnyBalance.retrieveCode('PayPal required SMS authorization to log in to your account. Please enter verification SMS sent to ' + number, null, {inputType: 'number', time: 300000}),
+		jsEnabled: 1,
+		execution: data.flowExecutionKey,
+		_sms_ivr_continue_btn_label: 'Continue',
+		_default_continue_btn_label: 'Continue',
+		_eventId_continue: 'Continue'
+	}, addHeaders({Referer: AnyBalance.getLastUrl()}));
+	
+	data = getParam(html, null, null, /\bdata-data="([^"]*)/i, replaceHtmlEntities, getJson);
+	AnyBalance.trace('StepUp data 3: ' + JSON.stringify(data));
+	handleStepUpErrors(data);
+
 }
 
 function logInSite(){
@@ -255,6 +322,14 @@ function logInSite(){
 			var n = json.notifications;
 			if(n.type == 'notification-critical')
 				throw new AnyBalance.Error(n.msg);
+		}
+
+		if(json.safeRequired){
+			throw AnyBalance.Error('PayPal required to change password.');
+		}
+
+		if(json.stepupRequired){
+			faceStepUp(json, baseurl, loginPage);
 		}
 
 		html = AnyBalance.requestGet(baseurl + '/myaccount/wallet', addHeaders({Referer: loginPage}));

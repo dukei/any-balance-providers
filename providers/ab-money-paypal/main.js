@@ -20,10 +20,12 @@ function main(){
 		logInOpenAuth();
 	}catch(e){
 		AnyBalance.trace('Could not enter OAuth: ' + e.message);
+		if(e.fatal) throw e;
         try{
 			logInSite();
 		}catch(e){
 			AnyBalance.trace('Could not enter site: ' + e.message);
+			if(e.fatal) throw e;
 			logInOpenAuth();
 		}
 	}

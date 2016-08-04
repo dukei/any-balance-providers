@@ -26,7 +26,7 @@ function main(){
 function callApi(verb, params, method){
     var baseurl = 'https://api.ulmart.ru/api/u/';
     
-   	var html = AnyBalance.requestPost(baseurl + verb, params ? JSON.stringify(params) : null, {
+   	var html = AnyBalance.requestPost(baseurl + verb, params ? JSON.stringify(params) : '', {
 		'Content-Type': 'application/json; charset=utf-8',
 		'User-Agent': 'Dalvik/2.1.0 (Linux; U; Android 6.0.1; D6503 Build/23.5.A.0.575)'
    	}, {HTTP_METHOD: method || (params ? 'POST' : 'GET')});

@@ -18,7 +18,7 @@ var velcomOddPeople = 'Не удалось войти в личный кабин
 function parseBalanceRK(_text) {
   var text = _text.replace(/\s+/g, '');
   var rub = getParam(text, null, null, /(-?\d[\d\.,]*)руб/i, replaceTagsAndSpaces, parseBalance) || 0;
-  var _sign = rub < 0 ? -1 : 1;
+  var _sign = rub < 0 || /-\d[\d\.,]*руб/i.test(text) ? -1 : 1;
   var kop = getParam(text, null, null, /(-?\d[\d\.,]*)коп/i, replaceTagsAndSpaces, parseBalance) || 0;
   var val = _sign*(Math.abs(rub) + kop / 100);
   AnyBalance.trace('Parsing balance (' + val + ') from: ' + _text);

@@ -19,8 +19,97 @@ function main(){
 
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
-	
-    var baseurl = 'http://www.ulmart.ru/';
+
+	mainApi();
+}
+
+function callApi(verb, params, method){
+    var baseurl = 'https://api.ulmart.ru/api/u/';
+    
+   	var html = AnyBalance.requestPost(baseurl + verb, params ? JSON.stringify(params) : null, {
+		'Content-Type': 'application/json; charset=utf-8',
+		'User-Agent': 'Dalvik/2.1.0 (Linux; U; Android 6.0.1; D6503 Build/23.5.A.0.575)'
+   	}, {HTTP_METHOD: method || (params ? 'POST' : 'GET')});
+
+   	var json = getJson(html);
+   	if(json.error){
+   		AnyBalance.trace('Error calling ' + verb + ': ' + html);
+   		throw new AnyBalance.Error(json.message);
+   	}
+   		
+   	return json;
+}
+
+function mainApi(){
+    var prefs = AnyBalance.getPreferences();
+
+    AnyBalance.restoreCookies();
+
+    var json = callApi('v1_0/meta/partnerLogin', {
+    	"login":"mobile_app",
+    	"password":"wj78a73kF2kch",
+    	"clientInfo": {
+    		"ip":"192.168.1.35",
+    		"agent":"mobile-app-android"
+    	}
+    });
+
+    json = callApi('v1_0/app/common/guessCity?show_post_cities=false');
+    json = callApi('v1_0/app/common/city/' + json.id, null, 'PUT');
+
+    try{
+    	if(!AnyBalance.getData('login'))
+    		throw new AnyBalance.Error('Вход ещё не был осуществлен');
+
+    	if(AnyBalance.getData('login') != prefs.login)
+    		throw new AnyBalance.Error('Вход ранее был осуществлен на другой логин');
+
+    	json = callApi('v1_0/app/user');
+
+    	AnyBalance.trace('Вошли с сохраненной сессией');
+    }catch(e){
+    	AnyBalance.trace('Не удалось войти автоматически: ' + e.message);
+
+        json = callApi('authcaptcha');
+        var code = AnyBalance.retrieveCode('Пожалуйста, введите код с картинки', json.captchaBase64);
+        
+        json = callApi('v1_0/app/user/login', {
+        	"email": prefs.login,
+        	"password": prefs.password,
+        	"captcha": code
+        });
+
+        AnyBalance.setData('login', prefs.login);
+    }
+
+    AnyBalance.saveCookies();
+    AnyBalance.saveData();
+
+    var result = {success: true};
+
+    var clientTypes = {
+    	RETAIL_CUSTOMER: {name: "Розничный клиент", price: 1},
+        REGULAR_CUSTOMER: {name: "Постоянный клиент", price: 2},
+        FRIEND: {name: "Для друзей", price: 3},
+        BIG_WHOLESALE_CUSTOMER: {name: "Крупнооптовый клиент", price: 4},
+        DEALER: {name: "Дилер", price: 5},
+        SUPERDEALER: {name: "Супер дилер", price: 6},
+        PURCHASE: {name: "Закупочная", price: 7},
+        RETAIL_CUSTOMER_TERMINAL: {name: "Розничный клиент (КМ)", price: 1},
+    };
+    
+    getParam(json.xxlBonus, result, 'balance');
+    getParam(json.fio, result, 'fio');
+    getParam(json.agentId, result, 'agentId');
+    getParam(clientTypes[json.userType].price, result, 'price');
+    getParam(clientTypes[json.userType].name, result, '__tariff');
+
+    AnyBalance.setResult(result);
+}
+
+function mainSite(){
+    var prefs = AnyBalance.getPreferences();
+    var baseurl = 'https://www.ulmart.ru/';
 	
 	var html = AnyBalance.requestGet(baseurl + 'login', g_headers);
 

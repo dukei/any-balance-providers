@@ -8,7 +8,7 @@ var g_headers = {
 };
 
 var g_appKey = 'afhgfgfdg56ujdj6rtymr67yjrt76tyherhdbryj6r46df57';
-var g_registrationId = 'APA91bH8FeDpuVIxtiMvmG4Vxj1NksVvTlWtfR1a62aYLkZyiznaLWDzSrbW1xNVpT3LPvL8qSOuiej0UvGhOxswicz2';
+//var g_registrationId = 'APA91bH8FeDpuVIxtiMvmG4Vxj1NksVvTlWtfR1a62aYLkZyiznaLWDzSrbW1xNVpT3LPvL8qSOuiej0UvGhOxswicz2';
 var g_baseurl = 'https://napi.privatbank.ua/';
 var g_login_hash = '';
 var g_imei = '35374906******L';
@@ -54,9 +54,11 @@ function login(prefs, result) {
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 
+	var normalized_login = '+' + prefs.login.replace(/\D+/g, '');
+
 	if(g_session) {
 		AnyBalance.trace('Найдена активная сессия, проверим её.')
-		var json = requestJson({registration_id: g_registrationId}, 'props_full');
+		var json = requestJson({/*registration_id: g_registrationId*/}, 'props_full');
 		if(json.st != 'ok') {
 			AnyBalance.trace('Сессия испорчена, будем заново авторизовываться');
 			g_session = '';
@@ -66,22 +68,22 @@ function login(prefs, result) {
 	}
 
 	if(!g_session) {
-		var login_hash = hex_md5(prefs.login); //Чтобы на сервере работало
+		var login_hash = hex_md5(normalized_login); //Чтобы на сервере работало
 		AnyBalance.trace(login_hash + ' ' + typeof(login_hash));
 
 		g_login_hash = getParam(login_hash, null, null, null, [/([\s\S]{8})([\s\S]{4})([\s\S]{4})([\s\S]{4})([\s\S]{12})/, '$1-$2-$3-$4-$5']);
 		AnyBalance.trace('Login imei param is: ' + g_login_hash);
 
-		g_imei = generateImei(prefs.login, g_imei);
-		g_simsn = generateSimSN(prefs.login, g_simsn);
+		g_imei = generateImei(normalized_login, g_imei);
+		g_simsn = generateSimSN(normalized_login, g_simsn);
 
-		var json = requestJson({registration_id: g_registrationId}, 'props_full');
+		var json = requestJson({/*registration_id: g_registrationId*/}, 'props_full');
 		// Если еще привязка не выполнялась, надо привязать
 		if (/phone not linked to imei/i.test(json.err)) {
 			AnyBalance.trace('Устройство нужно привязать.');
 			json = requestJson({}, 'unlink_phone');
 
-			json = requestJson({login: prefs.login}, 'auth_phone', 'Не удалось начать процесс привязки');
+			json = requestJson({login: normalized_login}, 'auth_phone', 'Не удалось начать процесс привязки');
 			var id = json.id;
 			json = requestJson({id: id, pass: prefs.password}, 'auth_pass', 'Не удалось зайти с паролем');
 			// Все, тут надо дождаться смс кода
@@ -110,7 +112,7 @@ function login(prefs, result) {
 		throw new AnyBalance.Error('Не удалось получить токен авторизации!');
 
 	json = requestJson({}, 'banks');
-	json = requestJson({registration_id: g_registrationId}, 'props_full');
+	json = requestJson({/*registration_id: g_registrationId*/}, 'props_full');
 
 	if(AnyBalance.isAvailable('info.mphone')){
 		result.info = {};

@@ -1,12 +1,14 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="2">ab-statistics-pr-cy</id>
+	<api flags="no_browser"/>
+  <id version="3">ab-statistics-pr-cy</id>
   <name>PR-CY</name>
   <description>
-    Получается статисту Яндекса и Google с сайта PR-CY (http://a.pr-cy.ru/)
+    Получает статистику Яндекса и Google с сайта PR-CY (http://a.pr-cy.ru/)
   </description>
   <author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
   <depends>
+    <module id="crypt/punicode"/>
     <module id="library"/>
   </depends>
   <files>

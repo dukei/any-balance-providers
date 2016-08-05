@@ -1,5 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="3" date="2016-08-05">
+	Поддержка кириллических доменов
+	</change>
   <change version="2" date="2016-03-14">
     - Изменен адрес сайта (https://a.pr-cy.ru/).
     - Добавлены новые счетчики.

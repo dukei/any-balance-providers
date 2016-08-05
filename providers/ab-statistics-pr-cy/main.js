@@ -16,19 +16,19 @@ var g_headers = {
 
 function main(){
     var prefs = AnyBalance.getPreferences(),
-        siteUrl = prefs.login.replace('http://', ''),
+        siteUrl = prefs.login.replace(/(?:https?:\/\/)?([^\/]*).*/i, '$1'),
         baseurl = 'https://a.pr-cy.ru/';
 
     AnyBalance.setDefaultCharset('utf-8'); 
 
-    var html = AnyBalance.requestGet(baseurl + siteUrl, g_headers);
+    var html = AnyBalance.requestGet(baseurl + Punicode.toASCII(siteUrl), g_headers);
 
     if (!html || AnyBalance.getLastStatusCode() > 400) {
         AnyBalance.trace(html);
         throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
     }
 
-    var result = {success: true};
+    var result = {success: true, __tariff: Punicode.toUnicode(siteUrl)};
     AB.getParam(html, result, 'searchSystems_mainParams_yandexTic', /Яндекс ТИЦ([^>]+>){5}/i, AB.replaceTagsAndSpaces, AB.parseBalance);
     AB.getParam(html, result, 'searchSystems_mainParams_yandexRank', /Яндекс Rank(?:[^>]+>){3}\D*(\d+)/i, AB.replaceTagsAndSpaces, AB.parseBalance);
     AB.getParam(html, result, 'searchSystems_mainParams_googleRank', /Google PageRank(?:[^>]+>){3}\D*(\d+)/i, AB.replaceTagsAndSpaces, AB.parseBalance);

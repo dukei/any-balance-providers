@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="3">ab-hosting-beget</id>
+	<id version="4">ab-hosting-beget</id>
 	<api flags="no_browser"/>
 	<name>beget</name>
 	<description html="true"><![CDATA[
@@ -19,10 +19,20 @@
 	</files>
 	<counters>
 		<counter id="balance" name="Баланс" units=" р"/>
-		<counter id="payment" name="Стоимость услу" units=" р"/>
+		<counter id="payment" name="Суммарная стоимость" units=" р"/>
+		<counter id="user_id" name="ID пользователя" type="text"/>
+		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="IP" name="IP сервера" type="text"/>
+		<counter id="server_name" name="Имя сервера" type="text"/>
+		<counter id="date_delete" name="Дата удаления" type="time" format="dd/MM/yyyy"/>
+		<counter id="date_block" name="Дата блокировки" type="time" format="dd/MM/yyyy"/>
 		<counter id="daysleft" name="Дней до блокировки" units=" д"/>
-		<counter id="disk" name="Дисковое пространство" units=" %"/>
-		<counter id="disk_mb" name="Дисковое пространство, мб" units=" Мб"/>
+		<counter id="ftp" name="FTP"/>
+		<counter id="mysql" name="MySQL"/>
+		<counter id="sites" name="Сайты"/>
+		<counter id="mail" name="Почта"/>
+		<counter id="plan_quota" name="Дисковое пространство (всего)" units=" Mb"/>
+		<counter id="used_quota" name="Дисковое пространство (использовано)" units=" Mb"/>
 	</counters>
 	<keywords></keywords>
 	<type>hosting</type>

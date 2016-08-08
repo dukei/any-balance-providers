@@ -27,8 +27,8 @@ function callApi(verb, params, method){
     var baseurl = 'https://api.ulmart.ru/api/u/';
     
    	var html = AnyBalance.requestPost(baseurl + verb, params ? JSON.stringify(params) : '', {
-		'Content-Type': 'application/json; charset=utf-8',
-		'User-Agent': 'Dalvik/2.1.0 (Linux; U; Android 6.0.1; D6503 Build/23.5.A.0.575)'
+		'Content-Type': verb == 'authcaptcha' ? undefined : 'application/json; charset=utf-8',
+		'User-Agent': 'Dalvik/1.6.0 (Linux; U; Android 4.1.2; HTC Desire 600 dual sim Build/JZO54K)'
    	}, {HTTP_METHOD: method || (params ? 'POST' : 'GET')});
 
    	var json = getJson(html);
@@ -69,7 +69,7 @@ function mainApi(){
     	AnyBalance.trace('Вошли с сохраненной сессией');
     }catch(e){
     	AnyBalance.trace('Не удалось войти автоматически: ' + e.message);
-
+    	AnyBalance.sleep(10000);
         json = callApi('authcaptcha');
         var code = AnyBalance.retrieveCode('Пожалуйста, введите код с картинки', json.captchaBase64);
         

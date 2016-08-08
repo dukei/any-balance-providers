@@ -96,8 +96,10 @@ function findWicketActions(html) {
 
 function requestGetWicketAction(html, regex) {
   var wicketId = getParam(html, null, null, regex);
-  if(!wicketId)
-    throw new AnyBalance.Error('Не нашли wicketId!');
+  if(!wicketId){
+    AnyBalance.trace('Error stack: ' + new Error().stack);
+    throw new AnyBalance.Error('Не нашли wicketId ' + regex.source);
+  }
 
   var actions = findWicketActions(html);
   var action = findExactWicketAction(actions, wicketId);
@@ -128,7 +130,7 @@ function processAccounts(html, result) {
     var html = AnyBalance.requestGet(baseurl + 'main?main=priv', g_headers);
     html = requestGetWicketAction(html, /wicket.event.add\([^"]*?"load"[\s\S]*?"c":"([^"]*)/i);
 
-    html = requestGetWicketAction(html, /<div[^>]+class="inner"[^>]+id="(id[^"]+)"/i);
+    html = requestGetWicketAction(html, /<div[^>]+class="inner[^>]+id="(id[^"]+)"/i);
     var accounts = getElements(html, /<div[^>]+class=['"]account inner single-account['"][^>]*>/ig);
 
     AnyBalance.trace('Найдено счетов: ' + accounts.length);
@@ -173,7 +175,7 @@ function processCards(html, result) {
     var html = AnyBalance.requestGet(baseurl + 'main?main=priv', g_headers);
     html = requestGetWicketAction(html, /wicket.event.add\([^"]*?"load"[\s\S]*?"c":"([^"]*)/i);
 
-    html = requestGetWicketAction(html, /<div[^>]+class="inner"[^>]+id="(id[^"]+)"/i);
+    html = requestGetWicketAction(html, /<div[^>]+class="inner[^>]+id="(id[^"]+)"/i);
 
     var cards = getElements(html, /<div[^>]+class=['"]card inner['"][^>]*>/ig);
 
@@ -201,7 +203,7 @@ function processCard(card, result, html) {
     getParam(card, result, 'cards.balance', /class="amount"[^>]*>([\s\S]*?)<\/div>/i,             replaceTagsAndSpaces, parseBalance);
     getParam(card, result, ['cards.currency', 'cards.balance'], /class="amount"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseCurrency);
 
-    var html = requestGetWicketAction(html, /<div[^>]+class="card inner"[^>]+id="(id[^"]+)"/i);
+    var html = requestGetWicketAction(html, /<div[^>]+class="card inner[^>]+id="(id[^"]+)"/i);
 
     getParam(html, result, 'cards.till',       /Срок действия((?:[\s\S]*?<\/div[^>]*>){2})/i, replaceTagsAndSpaces, parseDate);
     getParam(html, result, 'cards.holderName', /Имя владельца((?:[\s\S]*?<\/div[^>]*>){2})/i, replaceTagsAndSpaces);
@@ -220,7 +222,7 @@ function processDeposits(html, result) {
 
     var html = AnyBalance.requestGet(baseurl + 'main?main=priv', g_headers);
     html = requestGetWicketAction(html, /wicket.event.add\([^"]*?"load"[\s\S]*?"c":"([^"]*)/i);
-    html = requestGetWicketAction(html, /<div[^>]+class="inner"[^>]+id="(id[^"]+)"(?:[^>]*>){3,7}\s*Вклады/i);
+    html = requestGetWicketAction(html, /<div[^>]+class="inner[^>]+id="(id[^"]+)"(?:[^>]*>){3,7}\s*Вклады/i);
 
     var deposits = getElements(html, /<div[^>]+class=['"]account inner[^>]*>/ig);
 

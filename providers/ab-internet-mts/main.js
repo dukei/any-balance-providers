@@ -76,17 +76,20 @@ function getRostov() {
   var prefs = AnyBalance.getPreferences();
   var baseurl = 'https://lk.ug.mts.ru/';
 
+  var headers = addHeaders({'Content-Type': 'application/json', Accept: 'application/json'});
   // Заходим на главную страницу
-  var html = AnyBalance.requestPost(baseurl + "auth/login", {
+  var html = AnyBalance.requestPost(baseurl + "api/auth", JSON.stringify({
     login: prefs.login,
-    password: prefs.password
-  });
+    password: prefs.password,
+    type: 'personalAccount'
+  }), headers);
 
-  if (!/auth\/logout/i.test(html)) {
-    var error = getParam(html, null, null, /"b_error"(?:[^>]*>){8}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
+  var json = getJson(html);
+
+  if (json.error) {
+    var error = json.message;
     if (error)
-      throw new AnyBalance.Error(error, null,
-        /Неправильный лицевой счет или пароль|Допустимыми символами для лицевого счета являются цифры/i.test(error));
+      throw new AnyBalance.Error(error, null, /парол|format/i.test(error));
 
     AnyBalance.trace(html);
     throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
@@ -96,17 +99,27 @@ function getRostov() {
     success: true
   };
 
-  getParam(html, result, 'username', /"customer-info"([^>]*>){6}/i, replaceTagsAndSpaces);
-  getParam(html, result, 'agreement', /Договор №([^<]+)/i, replaceTagsAndSpaces);
-  getParam(html, result, 'license', /Номер лицевого счета:([^>]*>){2}/i, replaceTagsAndSpaces);
-  getParam(html, result, 'balance', /Баланс:\s*<[^>]*>(-?\d[\d\.,\s]*)/i, replaceTagsAndSpaces, parseBalance);
+  var data = json.data[0];
+  getParam(data.session.user.client, result, 'username');
+  getParam(data.session.user.contrNum, result, 'agreement');
+  getParam(data.session.user.personalAccount, result, 'license');
+  getParam(data.session.user.balance, result, 'balance', null, null, parseBalance);
+  getParam(data.session.user.feeDiscount, result, 'abon', null, null, parseBalance);
 
-  html = AnyBalance.requestGet(baseurl + 'account/resources');
-  getParam(html, result, '__tariff', /"with-border">(?:[\s\S]*?<td[^>]*>){3}(.*?)<\/td>/i, replaceTagsAndSpaces);
-  /*if(AnyBalance.isAvailable('abon')){
-        html = AnyBalance.requestGet(baseurl + 'account/stat');
-        getParam(html, result, 'abon', /Абон[а-я\.]* плата(?:[\s\S]*?<td[^>]*>){2}\s*(-?\d[\d\s\.,]*)/i, replaceTagsAndSpaces, parseBalance);
-    }*/
+  for(var i=0; i<data.resources.length; ++i){
+  	var r = data.resources[i];
+  	sumParam(r.tariff.name, result, '__tariff', null, null, null, aggregate_join);
+  }
+
+  if(AnyBalance.isAvailable('last_payment_sum', 'last_payment_date')){
+  	html = AnyBalance.requestGet(baseurl + 'api/payments/history?start=' + getFormattedDate({format: 'YYYY-MM-DD', offsetMonth: 6}) + '&end=' + getFormattedDate('YYYY-MM-DD'), headers);
+  	var json = getJson(html);
+
+  	data = json.data[0];
+  	getParam(data.rows[0] && data.rows[0].amount, result, 'last_payment_sum', null, null, parseBalance);
+  	getParam(data.rows[0] && data.rows[0].date, result, 'last_payment_date', null, null, parseDateISO);
+  }
+
   AnyBalance.setResult(result);
 }
 
@@ -228,7 +241,7 @@ function getMoscow() {
 
 function getNsk() {
   var baseurl = 'https://kabinet.nsk.mts.ru/';
-  typicalApiInetTv(baseurl);
+  typicalApiInetTvNew(baseurl);
 }
 
 function getPrmOld() {
@@ -571,8 +584,128 @@ function getUln() {
 
 function getNorilsk() {
   var baseurl = "https://kabinet.norilsk.mts.ru/";
-  typicalApiInetTv(baseurl);
+  typicalApiInetTvNew(baseurl);
 }
+
+function typicalApiInetTvNew(baseurl) {
+  var prefs = AnyBalance.getPreferences();
+  AnyBalance.setDefaultCharset('utf-8');
+
+  var html = AnyBalance.requestPost(baseurl + 'res/modules/AjaxRequest.php?Method=Login', {
+    'Data[LoginType]': 'Login',
+    'Data[Login]': prefs.login,
+    'Data[Passwd]': prefs.password,
+    'Service': 'API.User.Service',
+    'Client': 'mts',
+    BasicAuth: 'true',
+  });
+
+  var json = getJson(html);
+
+  if (json.Error) {
+    var error = json.Status.Text;
+    if (error) {
+      throw new AnyBalance.Error(error, null, /Парол/i.test(error));
+    }
+    AnyBalance.trace(JSON.stringify(json));
+    throw new AnyBalance.Error("Не удалось войти в личный кабинет. Неправильный логин-пароль?");
+  }
+
+  var token = json.Result.Result[0];
+  html = AnyBalance.requestPost(baseurl + 'res/modules/AjaxRequest.php?Method=GetPageByPath', {
+  	'Data[ServerPath]': 'ServiceState',
+    'AccessToken': token,
+    'Client': 'mts',
+    'Service': 'API.Interface.Service'
+  });
+  json = getJson(html);
+
+  var result = {
+    success: true
+  };
+  /**
+  	Находим все наиболее высокие чайлды, чьё поле удовлетворяет регулярному выражению
+  */
+  function findChildren(child, re, field) {
+    if (!field) field = "ClientId";
+    if (re.test(child[field]))
+      return [child];
+
+    var children = [];
+    var childrenList = [child];
+    if(!Array.isArray(child)){
+    	childrenList = (child.ChildrenList || [])
+    		.concat(child.ControlList || [])
+    		.concat(child.ContainerLinkList || [])
+    		.concat(child.Container || []);
+    }
+
+    for (var i = 0; childrenList && i < childrenList.length; ++i) {
+      var ch = findChildren(childrenList[i], re);
+      if (ch)
+      	children = children.concat(ch);
+    }
+    return children;
+  }
+
+  /**
+  	Находим контрол, чьё поле удовлетворяет регулярному выражению
+  */
+  function findChild(child, re, field) {
+  	return findChildren(child, re, field)[0];
+  }
+
+  var fio = findChild(json.Result.Result, /FIO/i);
+  var tar = findChildren(json.Result.Result, /ServiceState_MainBody_/i);
+  var bal = findChild(json.Result.Result, /ServiceState_Balance/i);
+
+  getParam(fio.Value, result, 'fio');
+
+  var curbal = findChild(bal, /Current_Balance/i);
+  getParam(curbal.Value, result, 'balance', null, null, parseBalance);
+  getParam(curbal.Value, result, 'balance_tv', null, null, parseBalance);
+
+  var abon = findChild(bal, /MonthPayment/i);
+  getParam(abon.Value, result, 'abon', null, null, parseBalance);
+
+  for(var i=0; i<tar.length; ++i){
+  	var t = findChild(tar[i], /^CurTarif$/i);
+  	sumParam(t.Value, result, '__tariff', null, null, null, aggregate_join);
+  }
+
+  var agr = findChild(json.Result.Result, /^GeneralContract$/i);
+  getParam(agr.Value, result, 'agreement', null, replaceTagsAndSpaces);
+
+  var licschet = findChild(json.Result.Result, /^AccountIdOne$/i);
+  getParam(licschet.Value, result, 'license', /[^,]*$/i, replaceTagsAndSpaces);
+
+  if(AnyBalance.isAvailable('last_payment_sum', 'last_payment_date')){
+  	var accountId = findChild(json.Result.Result, /^AccountId$/i).Value;
+
+    html = AnyBalance.requestPost(baseurl + 'res/modules/AjaxRequest.php?Method=GetPaymentHistoryBodyWeb', {
+      'Data[DateBegin]': getFormattedDate({format: 'YYYY-MM-DD', offsetMonth: 6}),
+      'Data[DateEnd]': getFormattedDate({format: 'YYYY-MM-DD'}),
+      'Data[AccountId]': accountId,
+      'AccessToken': token,
+      'Client': 'mts',
+      'Service': 'API.Payment.Service'
+    });
+    json = getJson(html);
+
+    var tbl = findChild(json.Result, /PaymentHistory_body/i), row;
+    if(tbl)
+    	row = findChild(tbl, /GroupCtrlBody/i);
+    if(row){
+    	getParam(row.ChildrenList[0].Value, result, 'last_payment_date', null, null, parseDateISO);
+    	getParam(row.ChildrenList[2].Value, result, 'last_payment_sum', null, null, parseBalance);
+    }else{
+    	AnyBalance.trace('Не удалось найти историю платежей...');
+    }
+  }
+
+  AnyBalance.setResult(result);
+}
+
 
 function typicalApiInetTv(baseurl) {
   var prefs = AnyBalance.getPreferences();
@@ -598,8 +731,9 @@ function typicalApiInetTv(baseurl) {
     throw new AnyBalance.Error("Не удалось войти в личный кабинет. Неправильный логин-пароль?");
   }
 
-  var token = json.Result.Result.Token[0];
-  html = AnyBalance.requestPost(baseurl + 'res/modules/AjaxRequest.php?Method=GetContainerByPath', {
+  var token = json.Result.Result[0];
+  html = AnyBalance.requestPost(baseurl + 'res/modules/AjaxRequest.php?Method=GetContainerByServerId', {
+  	'Data[Value]': 'Menu',
     'AccessToken': token,
     'Client': 'mts',
     'Service': 'API.Interface.Service'
@@ -642,7 +776,7 @@ function typicalApiInetTv(baseurl) {
 
   var fioacc = findControls(json.Result.Result, /UserCardPart1/i);
   var taragr = findControls(json.Result.Result, /UserCardPart2/i);
-  if (!fioacc || !fioacc) {
+  if (!fioacc || !taragr) {
     AnyBalance.trace(JSON.stringify(json));
     throw AnyBalance.Error('Не удалось найти карточку пользователя');
   }
@@ -686,7 +820,7 @@ function typicalApiInetTv(baseurl) {
 
     fioacc = findControls(json.Result.Container, /UserCardPart1/i);
     taragr = findControls(json.Result.Container, /UserCardPart2/i);
-    if (!fioacc || !fioacc) {
+    if (!fioacc || !taragr) {
       AnyBalance.trace(JSON.stringify(json));
       throw AnyBalance.Error('Не удалось найти карточку пользователя для второго лицевого счета');
     }
@@ -765,7 +899,7 @@ function getKurgan() {
 
 function getBarnaul() {
   var baseurl = 'https://kabinet.barnaul.mts.ru/';
-  typicalApiInetTv(baseurl);
+  typicalApiInetTvNew(baseurl);
 }
 
 function getNovokuz() {

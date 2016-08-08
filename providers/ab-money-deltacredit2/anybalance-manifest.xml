@@ -1,42 +1,44 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-    <id version="1">ab-money-deltacredit2</id>
+	<api flags="no_browser"/>
+    <id version="2">ab-money-deltacredit2</id>
     <name>ДельтаКредит (Webby 2.0)</name>
     <description>Информация о счете, кредите в банке ДельтаКредит (http://www.deltacredit.ru).
 В настройках провайдера требуется указать логин и пароль к Интернет-банку https://info.deltacredit.ru/webby/.
-
+ВНИМАНИЕ! В настоящее время поддерживаются только кредиты и счета. Если вам нужна поддержка еще чего-нибудь, обращайтесь к автору провайдера по е-мейл.
+	</description>
+	<instruction>
 Как получить логин и пароль:
 Шаг 1. Получите Логин: Для получения Логина Вам необходимо заполнить заявление в приемной офиса банка ДельтаКредит.
 Шаг 2. Регистрация и получение пароля: Перейдите по ссылке https://info.deltacredit.ru/webby/ и выберите «Получить пароль».
-
-ВНИМАНИЕ! В настоящее время поддерживаются только кредиты и счета. Если вам нужна поддержка еще чего-нибудь, обращайтесь к автору провайдера по е-мейл.
-</description>
-    <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+</instruction>
+    <author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+    <depends>
+    	<module id="library"/>
+    </depends>
     <files>
-	<icon>icon.png</icon>
+		<icon>icon.png</icon>
         <preferences>preferences.xml</preferences>
         <js>main.js</js>
-        <js>library.js</js>
         <history>history.xml</history>
     </files>
     <counters>
-	<counter id="balance" name="Остаток"/>
-        <counter id="currency" name="Валюта" type="text"/>
+		<counter id="balance" name="Остаток" units=" {@currency}"/>
         <counter id="payTill" name="Срок платежа по кредиту" type="time" format="dd/MM/yyyy"/>
         <counter id="payNext" name="Сумма платежа по кредиту"/>
-        <counter id="payTillStrakh" name="Срок платежа по страхованию" type="time" format="dd/MM/yyyy"/>
-        <counter id="payNextStrakh" name="Сумма платежа по страхованию"/>
         <counter id="till" name="Срок действия" type="time" format="dd/MM/yyyy"/>
+		<counter id="pct" name="Процентная ставка" units="%"/>
         <counter id="accnum" name="Номер" type="text"/>
         <counter id="accname" name="Название" type="text"/>
         <counter id="fio" name="ФИО" type="text"/>
+        <counter id="currency" name="Валюта" type="text"/>
     </counters>
     <keywords>
         Кредит, банк, delta credit
     </keywords>
     <type>
         money
-    </type>
+    , bank</type>
     <country>
         ru
     </country>

@@ -1,5 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="2" date="2016-08-08">
+	- Поддержка изменений на сайте.
+	</change>
 <!--    <change version="2" date="2013-01-12">
       - Исправлена ошибка провайдера на андроид 4+. Для этого требуется AnyBalance 2.9.606 (API 6+).
     </change> -->

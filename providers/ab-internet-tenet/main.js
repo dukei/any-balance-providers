@@ -19,6 +19,10 @@ function main(){
     var prefs = AnyBalance.getPreferences();
     AnyBalance.setDefaultCharset('utf-8');
 
+	AnyBalance.setOptions({
+		SSL_ENABLED_PROTOCOLS: ['TLSv1.2'] //Ну конечно же. Это интернет провайдер, надо быть очень безопасным...
+	});
+	
     var baseurl = "https://stats.tenet.ua/";
 
     var html = AnyBalance.requestGet(baseurl);

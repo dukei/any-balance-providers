@@ -40,7 +40,7 @@ var regions = {
   barnaul: getBarnaul,
   belgorod: getBelgorod,
   saratov: getSaratov,
-  saratov_tv: getSaratovTv,
+  saratov_tv: getSaratov,
   smolensk: getSmolensk,
   chita: getChita,
   amur: getAmur,
@@ -362,8 +362,7 @@ function getPrm() {
   });
 
   if (!/\/index\/logout/i.test(html)) {
-    var error = getParam(html, null, null, /<div[^>]*background-color:\s*Maroon[^>]*>([\s\S]*?)<\/div>/, replaceTagsAndSpaces,
-      html_entity_decode);
+    var error = getParam(html, null, null, /<div[^>]*background-color:\s*Maroon[^>]*>([\s\S]*?)<\/div>/, replaceTagsAndSpaces);
     if (error)
       throw new AnyBalance.Error(error);
     AnyBalance.trace(html);
@@ -375,9 +374,9 @@ function getPrm() {
   };
 
   getParam(html, result, 'balance', /Баланс:[\S\s]*?<strong[^>]*>([\S\s]*?)<\/strong>/i, replaceTagsAndSpaces, parseBalanceRK);
-  getParam(html, result, 'status', /Статус:[\S\s]*?<strong[^>]*>([\S\s]*?)<\/strong>/i, replaceTagsAndSpaces, html_entity_decode);
-  getParam(html, result, 'licschet', /Лицевой счёт:[\S\s]*?<strong[^>]*>([\S\s]*?)<\/strong>/i, replaceTagsAndSpaces, html_entity_decode);
-  getParam(html, result, '__tariff', /Тарифный план:[\S\s]*?<strong[^>]*>([\S\s]*?)<\/strong>/i, replaceTagsAndSpaces, html_entity_decode);
+  getParam(html, result, 'status', /Статус:[\S\s]*?<strong[^>]*>([\S\s]*?)<\/strong>/i, replaceTagsAndSpaces);
+  getParam(html, result, 'licschet', /Лицевой счёт:[\S\s]*?<strong[^>]*>([\S\s]*?)<\/strong>/i, replaceTagsAndSpaces);
+  getParam(html, result, '__tariff', /Тарифный план:[\S\s]*?<strong[^>]*>([\S\s]*?)<\/strong>/i, replaceTagsAndSpaces);
 
   AnyBalance.setResult(result);
 }
@@ -424,13 +423,13 @@ function getNnov() {
 
   getParam(html, result, 'license', /Лицевой счёт([^<]*)/i, replaceTagsAndSpaces);
   getParam(html, result, 'balance', /Текущий остаток:([\s\S]*?)<br[^>]*>/i, replaceTagsAndSpaces, parseBalance2);
-  getParam(html, result, '__tariff', /Текущий тарифный план:([\s\S]*?)<\/strong>/i, replaceTagsAndSpaces, html_entity_decode);
+  getParam(html, result, '__tariff', /Текущий тарифный план:([\s\S]*?)<\/strong>/i, replaceTagsAndSpaces);
   getParam(html, result, 'abon', /Абонентcкая плата:([^<]*)/i, replaceTagsAndSpaces, parseBalance2);
   getParam(html, result, 'username', /Лицевой счёт[^<]*(?:<[^>]*>\s*)*([^<]*)/i, replaceTagsAndSpaces);
   getParam(html, result, 'daysleft', /Этой суммы вам хватит[\s\S]*?<span[^>]+class="imp"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces,
     parseBalance2);
 
-  var url = getParam(html, null, null, /<a[^>]+href="\/stat\/([^"]*)"[^>]*>Информация об услугах/i, null, html_entity_decode);
+  var url = getParam(html, null, null, /<a[^>]+href="\/stat\/([^"]*)"[^>]*>Информация об услугах/i, null);
   if (!url) {
     AnyBalance.trace("Не удалось найти ссылку на информацию об услугах.");
   } else {
@@ -439,7 +438,7 @@ function getNnov() {
     if (!tr) {
       AnyBalance.trace("Не удалось найти ссылку на информацию об интернет.");
     } else {
-      url = getParam(tr, null, null, /<a[^>]+href="\/stat\/([^"]*)/i, null, html_entity_decode);
+      url = getParam(tr, null, null, /<a[^>]+href="\/stat\/([^"]*)/i);
       html = AnyBalance.requestGet(baseurl + url);
       getParam(html, result, 'agreement', /Договор:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
       getParam(html, result, '__tariff', /Описание услуги:[\s\S]*?<td[^>]*>(?:\s*<b[^>]*>[^<]*<\/b>)?([\s\S]*?)<\/td>/i,
@@ -530,14 +529,14 @@ function typicalLanBillingInetTv(url) {
 
       if (tr) {
         sumParam(tr, result, '__tariff', [/<!-- Работа с тарифом -->[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/ig], replaceTagsAndSpaces,
-          html_entity_decode, aggregate_join);
+          null, aggregate_join);
         if (isInet) {
           getParam(tr, result, 'abon', /Абонентская плата:([^<]*)/i, replaceTagsAndSpaces, parseBalance2);
           getParam(tr, result, 'internet_cur', /Израсходовано:([^<]*)/i, replaceTagsAndSpaces, parseBalance2);
         }
       }
 
-      sumParam(html, result, 'agreement', /Номер договора:[^<]*<[^>]*>([^<]*)/ig, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
+      sumParam(html, result, 'agreement', /Номер договора:[^<]*<[^>]*>([^<]*)/ig, replaceTagsAndSpaces, null, aggregate_join);
       getParam(html, result, isInet ? 'balance' : 'balance_tv', /Текущий баланс:[^<]*<[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance2);
     }
   }
@@ -550,8 +549,7 @@ function typicalLanBillingInetTv(url) {
 
   readAccByPriority(accInet, true);
   readAccByPriority(accTv);
-  getParam(html, result, 'username', /<div[^>]+class="content-aside"[^>]*>[\s\S]*?<p[^>]*>([\s\S]*?)<\/p>/i, replaceTagsAndSpaces,
-    html_entity_decode);
+  getParam(html, result, 'username', /<div[^>]+class="content-aside"[^>]*>[\s\S]*?<p[^>]*>([\s\S]*?)<\/p>/i, replaceTagsAndSpaces);
 
   AnyBalance.setResult(result);
 }
@@ -919,10 +917,6 @@ function getSaratov() {
   newTypicalLanBillingInetTv('https://lksrt.pv.mts.ru/internet/index.php');
 }
 
-function getSaratovTv() {
-  newTypicalLanBillingInetTv('https://lksrt.pv.mts.ru/ktv/index.php');
-}
-
 function getChita() {
   newTypicalLanBillingInetTv('https://clb.primorye.mts.ru/chita/index.php');
 }
@@ -984,7 +978,7 @@ function newTypicalLanBillingInetTv(baseurl) {
   if (!/r=site\/logout/i.test(html)) {
     var error = getParam(html, null, null, [/alert-error[^>]*"(?:[^>]*>){2}([\s\S]*?)<\/div>/i,
       /Необходимо исправить следующие ошибки:([\s\S]*?)<\/ul>/i
-    ], replaceTagsAndSpaces, html_entity_decode);
+    ], replaceTagsAndSpaces);
     if (error)
       throw new AnyBalance.Error(error, null, /Неверное имя пользователя или пароль/i.test(error));
 
@@ -1063,7 +1057,7 @@ function newTypicalLanBillingInetTv(baseurl) {
     if (json) {
       getParam(json.bal, result, isInet ? 'balance' : 'balance_tv');
       if (!usedAccs['acc_' + json.acc]) { //аккаунты только уникальные собираем
-        sumParam(json.acc, result, 'agreement', null, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
+        sumParam(json.acc, result, 'agreement', null, replaceTagsAndSpaces, null, aggregate_join);
         usedAccs['acc_' + json.acc] = true;
       }
 
@@ -1083,8 +1077,7 @@ function newTypicalLanBillingInetTv(baseurl) {
   readAccByPriority(accInet, true);
   readAccByPriority(accTv);
 
-  getParam(html, result, 'username', /<div[^>]+class="content-aside"[^>]*>[\s\S]*?<p[^>]*>([\s\S]*?)<\/p>/i, replaceTagsAndSpaces,
-    html_entity_decode);
+  getParam(html, result, 'username', /<div[^>]+class="content-aside"[^>]*>[\s\S]*?<p[^>]*>([\s\S]*?)<\/p>/i, replaceTagsAndSpaces);
 
   AnyBalance.setResult(result);
 }

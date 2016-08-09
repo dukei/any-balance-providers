@@ -1,10 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="6">ab-sharing-ottclub</id>
+	<id version="7">ab-sharing-ottclub</id>
 	<api flags="no_browser"/>
 	<name>OTTCLUB</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе провайдера OTTCLUB http://ottclub.no-ip.org/</p>
+	<p>Предоставляет информацию о балансе провайдера OTTCLUB https://www.ottclub.cc </p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>

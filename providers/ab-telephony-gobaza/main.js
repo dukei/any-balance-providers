@@ -35,9 +35,9 @@ function main(){
 
 
     if(!/replace/i.test(html)){
-        var error = getParam(html, null, null, /alert\("([^"]*)/i, AB.replaceTagsAndSpaces);
+        var error = getParam(html, null, null, /alert\s*\(\s*["']([^"']*)/i, AB.replaceTagsAndSpaces);
         if(error) {
-            throw new AnyBalance.Error(error, null, /Неверное имя/i.test(error));
+            throw new AnyBalance.Error(error, null, /имя|парол/i.test(error));
 
         }
 

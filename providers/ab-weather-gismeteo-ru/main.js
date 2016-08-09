@@ -172,7 +172,7 @@ function getWeatherForecast(html, result, tod) {
     var tr = getParam(html, null, null, regExp);
     if (!tr){
     	AnyBalance.trace(html);
-      	throw new AnyBalance.Error('Не найден прогноз погоды. Пожалуйста, обратитесь к разработчикам.');
+      	throw new AnyBalance.Error('Не найден прогноз погоды (временная проблема). Пожалуйста, попробуйте позднее.');
     }
 
     getParam(tr, result, 'atmosphericConditions', /"cltext"[^>]*>([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);

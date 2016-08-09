@@ -33,7 +33,7 @@ function callAPI(method, url, params, allowerror) {
     }
 
     if(json.code && !allowerror) {
-        throw new AnyBalance.Error('Ошибка вызова API! ' + json.message);
+        throw new AnyBalance.Error('Ошибка вызова API! ' + json.message, null, /парол/i.test(json.message));
     }
     return json;
 }
@@ -85,7 +85,7 @@ function megafonLkAPILogin(options){
             }
 
             if (json.code)
-                throw new AnyBalance.Error('Ошибка вызова API! ' + json.message, null, /Неправильный логин\/пароль/i.test(json.message));
+                throw new AnyBalance.Error('Ошибка вызова API! ' + json.message, null, /парол/i.test(json.message));
         }
 
         __setLoginSuccessful();

@@ -967,7 +967,7 @@ function megafonBalanceInfo(filial) {
     if(!/<BALANCE>([^<]*)<\/BALANCE>/i.test(html)){
         var error = getParam(html, null, null, /<ERROR_MESSAGE>([\s\S]*?)<\/ERROR_MESSAGE>/i, replaceTagsAndSpaces);
         if(error)
-            throw new AnyBalance.Error(error, null, /Wrong password/i.test(error));
+            throw new AnyBalance.Error(error, null, /Wrong password|The user is not found/i.test(error));
         AnyBalance.trace(html);
         throw new AnyBalance.Error('Сервис временно недоступен');
     }
@@ -1637,7 +1637,7 @@ function enterLK(filial, options){
 	if (!isLoggedInLK(html) && !isLoggedInSG(html)) {
 		var error = getParam(html, null, null, /login-warning[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces);
 		if (!error)
-			error = getParam(html, null, null, /<div[^>]+mf-error[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+			error = getElement(html, /<div[^>]+mf-error[^>]*>/i, replaceTagsAndSpaces);
 		if (error)
 			throw new AnyBalance.Error(error, null, /парол|заблокирован/i.test(error));
 		
@@ -2011,7 +2011,7 @@ function megafonLKRemainders(filial, html, result){
 			AnyBalance.trace('Обработка услуги ' + gname + ':' + rname);
 
 			// Минуты
-			if((/мин/i.test(units) && !/интернет/i.test(name)) || (/шт/i.test(units) && /минут/i.test(rname) && !/СМС|SMS|ММС|MMS/i.test(rname))) {
+			if((/мин/i.test(units) && (!/интернет/i.test(name) || /больше Интернета/i.test(name))) || (/шт/i.test(units) && /минут/i.test(rname) && !/СМС|SMS|ММС|MMS/i.test(rname))) {
 				var val = getParam(left, null, null, null, replaceTagsAndSpaces, parseBalance);
 				if(val >= 0){
 					if(/бесплат/i.test(name)) {
@@ -2081,7 +2081,7 @@ function megafonLKRemainders(filial, html, result){
 				}
 			// Ошибка 
 			} else {
-				AnyBalance.trace('Неизвестные единицы измерений: ' + units + ' опция: ' + name + ': '  + row);
+				AnyBalance.trace('Неизвестные единицы измерений: ' + units + ', опция: ' + name + ': '  + row);
 			}
 		}
 	}

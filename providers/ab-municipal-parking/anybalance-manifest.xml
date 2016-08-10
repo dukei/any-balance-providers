@@ -1,16 +1,18 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="5">ab-municipal-parking</id>
+	<id version="6">ab-municipal-parking</id>
 	<name>Московский паркинг</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе и сроках действия разрешений на парковку из личного кабинета Московского паркинга https://parkingcab.mos.ru</p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>

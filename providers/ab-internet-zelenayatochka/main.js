@@ -11,10 +11,14 @@ var g_headers = {
 };
 
 var g_regions = {
-	'lipetsk': getUnified,
-	'stavr': getStavr,
-	'nal': getNal,
-	'ufa': getUnified
+	lipetsk: getUnified,
+	stavr: getStavr,
+	nal: getNal,
+	ufa: getUnified,
+	belgorod: getUnified,
+	tomsk: getUnified,
+	vladivostok: getUnified
+
 };
 
 function main() {

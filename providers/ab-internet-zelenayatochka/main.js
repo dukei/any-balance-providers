@@ -43,7 +43,7 @@ function getUnified(prefs) {
 	}, addHeaders({Referer: baseurl + 'login'}));
 
 	if (!/logout/i.test(html)) {
-		var error = getParam(html, null, null, /<div[^>]*class="alert alert-danger"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+		var error = getParam(html, null, null, /<div[^>]*class="alert alert-danger"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
 		if(error) {
 			throw new AnyBalance.Error(error, null, /пользовател|логин|парол/i.test(error));
                     }
@@ -54,7 +54,7 @@ function getUnified(prefs) {
 	
 	var result = {success: true};
 	
-	getParam(html, result, 'fio', /Клиент:\s*<\/td>\s*<td[^>]*>([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'fio', /Клиент:\s*<\/td>\s*<td[^>]*>([^<]+)/i, replaceTagsAndSpaces);
 	getParam(html, result, 'balance', /Баланс счета:\s*<\/td>\s*<td[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'cred_balance', /необходимо оплатить:\s*<strong>([^<]+)/i, replaceTagsAndSpaces, parseBalance);
 	
@@ -72,7 +72,7 @@ function getNal(prefs) {
 	}, addHeaders({Referer: baseurl}));
 
 	if (!/logout/i.test(html)) {
-		var error = getParam(html, null, null, /<p style='color:red'>([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
+		var error = getParam(html, null, null, /<p style='color:red'>([\s\S]*?)<\//i, replaceTagsAndSpaces);
 		if (error && /Неверно указаны логин или пароль/i.test(error))
 			throw new AnyBalance.Error(error, null, true);
 		if (error)
@@ -81,7 +81,7 @@ function getNal(prefs) {
 	}
 	var result = {success: true};
 	
-	getParam(html, result, 'fio', /ФИО(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'fio', /ФИО(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces);
 	getParam(html, result, 'balance', /Баланс(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'cred_balance', /Кредит(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
 	
@@ -101,7 +101,7 @@ function getStavr(prefs) {
 	}, addHeaders({Referer: baseurl}));
 
 	if (!/logout/i.test(html)) {
-		var error = getParam(html, null, null, /<\/form>\s*<div[^>]*color\s*:\s*#cd0a0a[^>]*>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
+		var error = getParam(html, null, null, /<\/form>\s*<div[^>]*color\s*:\s*#cd0a0a[^>]*>([^<]*)/i, replaceTagsAndSpaces);
 		if (error && /Неверный логин\/ЛС или пароль/i.test(error))
 			throw new AnyBalance.Error(error, null, true);
 		if (error)
@@ -110,12 +110,12 @@ function getStavr(prefs) {
 	}
 	var result = {success: true};
 	
-	getParam(html, result, 'fio', /<tr[^>]*>((?:[\s\S](?!<\/tr>))*).<\/tr>\s*<tr[^>]*>\s*<td[^>]*>\s*№ счета/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'acc_num', /№ счета([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'balance', /<tr[^>]*>((?:[\s\S](?!<\/tr>))*?).<\/tr>\s*<tr[^>]*>(?:[\s\S](?!<\/tr>))*?refresh\/account/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'fio', /<span[^>]+navbar-second-user[^>]*>([\s\S]*?)(?:»|<\/span>)/i, [/[«»]+/g, '', replaceTagsAndSpaces]);
+	getParam(html, result, 'acc_num', /<span[^>]+account-id[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
+	getParam(html, result, 'balance', /<span[^>]+navbar-second-refresh[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
 //	getParam(html, result, 'bonuses', /\d+\s*бону/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'cred_balance', /Рекомендуемая сумма к оплате:([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'status', /Статус([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+//	getParam(html, result, 'cred_balance', /Рекомендуемая сумма к оплате:([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'status', /<span[^>]+navbar-second-is-active[^>]*>([\s\S]*?)<\/span>/i, [/Статус:/ig, '', replaceTagsAndSpaces]);
 
 	AnyBalance.setResult(result);
 }

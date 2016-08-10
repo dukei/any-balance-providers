@@ -12,51 +12,63 @@ var g_headers = {
 
 function main(){
     var prefs = AnyBalance.getPreferences();
-    var baseurl = 'http://client2.intercon.ru/';
+    var baseurl = 'https://myintercon.ru/';
     AnyBalance.setDefaultCharset('utf-8'); 
 
-    var html = AnyBalance.requestGet(baseurl + 'Login.aspx', g_headers);
+    var html = AnyBalance.requestGet(baseurl + 'login', g_headers);
+
+    var form = getElement(html, /<form[^>]+login[^>]*>/i);
+    if(!form){
+    	AnyBalance.trace(html);
+    	throw new AnyBalance.Error('Не удалось найти форму входа. Сайт изменен?');
+    }
 
 	var params = createFormParams(html, function(params, str, name, value){
-		if(name == 'ctl00$m$lc$tbLogin')
+		if(name == 'user[login]')
 			return prefs.login;
-		else if(name == 'ctl00$m$lc$tbPassword')
+		else if(name == 'user[password]')
 			return prefs.password;			
 		return value;
 	});
 		
-	html = AnyBalance.requestPost(baseurl + 'Login.aspx', params, addHeaders({Referer: baseurl + 'Login.aspx'})); 
+	html = AnyBalance.requestPost(baseurl + 'login', params, addHeaders({Referer: baseurl + 'login'})); 
 
-    if(!/logoff=1/i.test(html)){
+    if(!/new HupoApp/i.test(html)){
+    	var error = getElement(html, /<div[^>]+error_container[^>]*>/i, replaceTagsAndSpaces);
+    	if(error)
+    		throw new AnyBalance.Error(error, null, /парол/i.test(error));
+    	AnyBalance.trace(html);
         throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
     }
 
-    var result = {success: true, nextbonuses: ''};
-	
-	getParam(html, result, 'fio', /font[^>]*class="t_b6"[^>]*>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
-	
-	// <div(?:[^>]+>){3}\d+6275(?:[\s\S]*?<\/table){1,2}
-	var digits = prefs.digits || '';
-	var tr = getParam(html, null, null, new RegExp('<div(?:[^>]+>){3}\\d+'+ digits +'(?:[\\s\\S]*?</table){1,2}', 'i'));
-	if(!tr)
-		throw new AnyBalance.Error('Не удалось найти ' + (prefs.digits ? 'счет с последними цифрами ' + prefs.digits : 'ни одного счета. Сайт изменен?'));
+    var result = {success: true};
 
-	getParam(tr, result, 'balance', /баланс<(?:[\s\S]*?[^>]*>){3}([\s\S]*?)<\/span>/, replaceTagsAndSpaces, parseBalance);
-	getParam(tr, result, 'dogovor', /ctl00_m_rc_ctl01_c_lContract"[^>]*class="tb_1"[^>]*>([^:]+)/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(tr, result, 'acc-num', /ctl00_m_rc_ctl01_c_lContract"[^>]*class="tb_1"[^>]*>[^>]+>(\d+)/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(tr, result, '__tariff', /ТП:([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
+    var json = getJsonObject(html, /new HupoApp/);
 	
-	if(isAvailable('nextbonuses_summ')) {
-		var table = getParam(html, null, null, /Бонусы будущих периодов[^>]*>\s*(<table[\s\S]*?<\/table>)/i);
-		if(table) {
-			sumParam(table, result, 'nextbonuses_summ', /(?:[\s\S]*?<td[^>]*>){4}([^<]*)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-		
-			var tr = sumParam(table, null, null, /(<tr>[\s\S]*?<\/tr>)/ig, replaceTagsAndSpaces, html_entity_decode);
-			for(i = 0; i < tr.length; i++) {
-				result.nextbonuses += tr[i] + '\n';
-			}
-			result.nextbonuses = result.nextbonuses.replace(/^\s+|\s+$/g, '');
-		}	
+	getParam(json.data.person.vc_name, result, 'fio');
+
+	for(var i=0; i<json.data.personal_accounts.length; ++i){
+		var pa = json.data.personal_accounts[i];
+		AnyBalance.trace('Найден аккаунт ' + pa.vc_account);
+		if(!prefs.digits || endsWith(pa.vc_account, prefs.digits)){
+			AnyBalance.trace('Это интересующий нас аккаунт.');
+
+			getParam(pa.n_sum_bal, result, 'balance', null, replaceTagsAndSpaces, parseBalance);
+			getParam(pa.n_good_base_sum, result, 'abon', null, replaceTagsAndSpaces, parseBalance);
+			getParam(pa.vc_name, result, 'dogovor');
+			getParam(pa.vc_account, result, 'acc-num');
+			break;
+		}
 	}
+
+	if(i >= json.data.personal_accounts.length)
+		throw new AnyBalance.Error(prefs.digits ? 'Не удалось найти лицевого счета с последними цифрами ' + prefs.digits : 'У вас нет ни одного лицевого счета');
+
+	for(var i=0; i<json.data.servs.length; i++){
+		var s = json.data.servs[i];
+		sumParam(s.vc_name, result, '__tariff', null, null, null, aggregate_join);
+		sumParam(s.n_good_base_sum, result, 'abon', null, null, parseBalance, aggregate_sum);
+	}
+
     AnyBalance.setResult(result);
 }

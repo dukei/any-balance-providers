@@ -41,7 +41,7 @@ function main() {
 	}, baseurl);
 
 	if(json.username)
-		throw new AnyBalance.Error(json.username, null, true);
+		throw new AnyBalance.Error(json.username + '', null, true);
 
 	// Получаем данные по всем картам
 	var data = makeRequest('Get', lkurl + 'api/cards/', null, lkurl + '/cards');
@@ -78,11 +78,11 @@ function main() {
 	if(isAvailable(['history', 'total_outcome', 'total_income'])) {
 		var count = 5, history = [], item, last, i, date, summ;
 		
-		data = makeRequest('Get', lkurl + 'api/cards/' + card.cardid + '/history/all/', null, lkurl + '/cards');
+		data = makeRequest('Get', lkurl + 'api/cards/' + card.cardid + '/history/all/' + getFormattedDate({offsetDay: 90}) + '/' + getFormattedDate() + '/', null, lkurl + '/cards');
 		if(data.items){
 			for(last = i = data.items.length - 1; i >= 0 && i > last - count; i--){
 				item = data.items[i];
-				date = getFormattedDate(item.date);
+				date = getFormattedDate1(item.date);
 				summ = '<b>' + (item.row_type === 1 ? '-' : '+') + (item.sum / 100) + ' руб.</b>';
 				history.push([summ, date, item.title].join(' '));
 			}
@@ -100,13 +100,13 @@ function main() {
 }
 
 function makeRequest(type, url, data, referer){
-	var res = AnyBalance['request' + type](url, data ? JSON.stringify(data) : '',
+	var res = AnyBalance.requestPost(url, data ? JSON.stringify(data) : '',
 		addHeaders({
 			'X-CSRFToken': AnyBalance.getCookie('csrftoken'),
 			'X-Requested-With': 'XMLHttpRequest',
 			'Content-Type': 'application/json;charset=UTF-8',
 			'Referer': referer
-		}));
+		}), {HTTP_METHOD: type});
 
 	var json = getJson(res);
 
@@ -119,7 +119,7 @@ function makeRequest(type, url, data, referer){
 	return json;
 }
 
-function getFormattedDate(sdate){
+function getFormattedDate1(sdate){
 	var data = /(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})/i.exec(sdate);
 	return [data[4], data[5]].join(':') + ' ' + [data[3], data[2], data[1]].join('-');
 }

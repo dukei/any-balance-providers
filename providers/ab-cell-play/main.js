@@ -66,7 +66,7 @@ function main() {
 		getParam(html, result, 'phone', /MyNumbersMain(?:[\s\S]*?[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
 	}
 
-	if(isAvailable(['balance, pakietZolotowek, min_all, min_promocyjne, traffic, doladowan, incomingCallsDate, outgoingCallsDate']))
+	if(isAvailable(['balance', 'pakietZolotowek', 'min_all', 'min_promocyjne', 'traffic', 'doladowan', 'incomingCallsDate', 'outgoingCallsDate']))
 	{
 		var href = getParam(html, null, null, /<ul[^>]*class\s*=\s*"nav"[^>]*>(?:[\s\S]*?<li[^>]*>){3}<a[^>]+href="([\s\S]*?)"/i);
 		if(!href)

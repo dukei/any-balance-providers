@@ -109,13 +109,25 @@ function getStavr(prefs) {
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
 	var result = {success: true};
-	
-	getParam(html, result, 'fio', /<span[^>]+navbar-second-user[^>]*>([\s\S]*?)(?:»|<\/span>)/i, [/[«»]+/g, '', replaceTagsAndSpaces]);
-	getParam(html, result, 'acc_num', /<span[^>]+account-id[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
-	getParam(html, result, 'balance', /<span[^>]+navbar-second-refresh[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
-//	getParam(html, result, 'bonuses', /\d+\s*бону/i, replaceTagsAndSpaces, parseBalance);
-//	getParam(html, result, 'cred_balance', /Рекомендуемая сумма к оплате:([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'status', /<span[^>]+navbar-second-is-active[^>]*>([\s\S]*?)<\/span>/i, [/Статус:/ig, '', replaceTagsAndSpaces]);
+
+	if(/navbar-main-container/i.test(html)){
+		//Новый кабинет
+	    AnyBalance.trace('Обнаружен новый дизайн');
+		getParam(html, result, 'fio', /<span[^>]+navbar-second-user[^>]*>([\s\S]*?)(?:»|<\/span>)/i, [/[«»]+/g, '', replaceTagsAndSpaces]);
+		getParam(html, result, 'acc_num', /<span[^>]+account-id[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
+		getParam(html, result, 'balance', /<span[^>]+navbar-second-refresh[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+	//	getParam(html, result, 'bonuses', /\d+\s*бону/i, replaceTagsAndSpaces, parseBalance);
+	//	getParam(html, result, 'cred_balance', /Рекомендуемая сумма к оплате:([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+		getParam(html, result, 'status', /<span[^>]+navbar-second-is-active[^>]*>([\s\S]*?)<\/span>/i, [/Статус:/ig, '', replaceTagsAndSpaces]);
+	}else{
+	    AnyBalance.trace('Обнаружен старый дизайн');
+		getParam(html, result, 'fio', /<tr[^>]*>((?:[\s\S](?!<\/tr>))*).<\/tr>\s*<tr[^>]*>\s*<td[^>]*>\s*№ счета/i, replaceTagsAndSpaces, html_entity_decode);
+		getParam(html, result, 'acc_num', /№ счета([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+		getParam(html, result, 'balance', /<tr[^>]*>((?:[\s\S](?!<\/tr>))*?).<\/tr>\s*<tr[^>]*>(?:[\s\S](?!<\/tr>))*?refresh\/account/i, replaceTagsAndSpaces, parseBalance);
+	//	getParam(html, result, 'bonuses', /\d+\s*бону/i, replaceTagsAndSpaces, parseBalance);
+		getParam(html, result, 'cred_balance', /Рекомендуемая сумма к оплате:([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+		getParam(html, result, 'status', /Статус([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+	}
 
 	AnyBalance.setResult(result);
 }

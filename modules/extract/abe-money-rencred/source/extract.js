@@ -72,6 +72,7 @@ function initDetailsUrls(html){
     g_url.detailsDep = getParam(html, null, null, /"([^"]*deposit-details\?[^"]*\{\{id\}\}[^"]*)/, replaceHtmlEntities);
     g_url.detailsAcc = getParam(html, null, null, /"([^"]*current-account-details\?[^"]*\{\{id\}\}[^"]*)/, replaceHtmlEntities);
     g_url.detailsLoan = getParam(html, null, null, /"([^"]*loan-detail\?[^"]*\{\{id\}\}[^"]*)/, replaceHtmlEntities);
+    g_url.scheduleLoan = getParam(html, null, null, /"([^"]*payment-schedule\?[^"]*\{\{id\}\}[^"]*)/, replaceHtmlEntities);
 }
 
 function fetchUrl(url, what){
@@ -105,6 +106,19 @@ function fetchCardsJson(){
 
     g_cardsJson = fetchUrl(g_baseurl + 'group/ibs/product-list?p_p_id=MyCards_WAR_bscbankserverportalapp&p_p_lifecycle=2&p_p_state=normal&p_p_mode=view&p_p_resource_id=update&p_p_cacheability=cacheLevelPage&p_p_col_id=column-2-bottom&p_p_col_pos=1&p_p_col_count=4', 'карты');
     return g_cardsJson;
+}
+
+var g_loansJson;
+function fetchLoansJson(){
+    if(g_loansJson)
+        return g_loansJson;
+
+    g_loansJson = fetchUrl(g_baseurl + 'group/ibs/product-list?p_p_id=LoansList_WAR_bscbankserverportalapp&p_p_lifecycle=2&p_p_state=normal&p_p_mode=view&p_p_resource_id=COMMAND_UPDATE_LOANS&p_p_cacheability=cacheLevelPage&p_p_col_id=column-2-bottom&p_p_col_pos=3&p_p_col_count=4', 'кредиты');
+    if(g_loansJson.JSON_CLOSED_LOANS_HIDDEN_FLAG){ //Показываем в списке и закрытые кредиты
+    	g_loansJson = fetchUrl(g_baseurl + 'group/ibs/product-list?p_p_id=LoansList_WAR_bscbankserverportalapp&p_p_lifecycle=2&p_p_state=normal&p_p_mode=view&p_p_resource_id=COMMAND_HIDE_UNHIDE_CLOSED_LOANS&p_p_cacheability=cacheLevelPage&p_p_col_id=column-2-bottom&p_p_col_pos=3&p_p_col_count=4', 'все кредиты');
+    }
+
+    return g_loansJson;
 }
 
 function processCards(html, result) {
@@ -155,7 +169,7 @@ function processCard(card, result){
     getParam(card.typeCode, result, 'cards.type_code'); //DBTO
     //Статус
     getParam(card.status, result, 'cards.status');
-    getParam(card.statusCode, result, 'cards.status_code'); //ACTIVE
+    getParam(card.statusCode, result, 'cards.status_code'); //ACTIVE|CLOSED
     getParam(card.closed, result, 'cards.closed');
 
     if(g_url.detailsCard && AnyBalance.isAvailable('cards.minpay', 'cards.minpaytill', 'cards.limit', 'cards.userName', 'cards.own', 'cards.accnum', 'cards.contract', 'cards.cash', 'cards.blocked', 'cards.type_product')){
@@ -178,6 +192,65 @@ function processCard(card, result){
 
     
 }
+
+function processCredits(html, result) {
+    if (!AnyBalance.isAvailable('credits'))
+        return;
+
+    var json = fetchLoansJson();
+    result.credits = [];
+    for (var i = 0; i < json.loans.length; ++i) {
+        var credit = json.loans[i];
+        var c = {
+            __id: credit.id,
+            __name: credit.name + ', ' + credit.contractNumber,
+            num: credit.contractNumber
+        }
+
+        if (__shouldProcess('credits', c)) {
+            processCredit(credit, c);
+        }
+
+        result.credits.push(c);
+    }
+}
+
+function processCredit(credit, result){
+    //Доступный лимит
+	getParam(credit.creditAmount, result, 'credits.balance', null, null, parseBalance);
+	//Валюта
+	getParam(credit.currency, result, ['credits.currency', 'credits.balance', 'credits.minpay', 'credits.limit']);
+    //Тип
+    getParam(credit.name, result, 'credits.name');
+
+   	getParam(credit.nextInstallmentAmount, result, 'credits.minpay', null, null, parseBalance);
+   	getParam(credit.nextInstallmentDate, result, 'credits.minpay_till', null, null, parseDate);
+   	getParam(credit.openingDate, result, 'credits.date_start', null, null, parseDate);
+    //Статус
+    getParam(credit.status, result, 'credits.status'); //Открыт
+    getParam(credit.closed_or_not_paid, result, 'credits.close_reason'); //closed|not_paid?
+
+    if(g_url.detailsLoan && AnyBalance.isAvailable('credits.accnum', 'credits.date_end', 'credits.period', 'credits.pct', 'credits.limit')){
+    	var html = AnyBalance.requestGet(g_url.detailsLoan.replace('{{id}}', credit.id), g_headers);
+
+    	getParam(html, result, 'credits.accnum', /<div[^>]+class="cell[^>]*>Номер текущего счета[\s\S]*?<div[^>]+class="cell[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+    	getParam(html, result, 'credits.date_end', /<div[^>]+class="cell[^>]*>Дата закрытия кредитного договора[\s\S]*?<div[^>]+class="cell[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseDate);
+    	getParam(html, result, 'credits.limit', /<div[^>]+class="cell[^>]*>Сумма кредита[\s\S]*?<div[^>]+class="cell[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+    	getParam(html, result, 'credits.period', /<div[^>]+class="cell[^>]*>Срок кредита[\s\S]*?<div[^>]+class="cell[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+        getParam(html, result, 'credits.pct', /<div[^>]+class="cell[^>]*>Годовая процентная ставка по кредиту[\s\S]*?<div[^>]+class="cell[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+    }
+
+    if(AnyBalance.isAvailable('credits.transactions')){
+    	processCreditsTransactions(credit, result);
+    }
+
+    if(AnyBalance.isAvailable('credits.schedule')){
+    	processCreditsSchedule(credit, result);
+    }
+
+    
+}
+
 
 function processInfo(html, result){
     var info = result.info = {};

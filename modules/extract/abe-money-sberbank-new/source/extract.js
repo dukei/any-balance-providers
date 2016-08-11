@@ -459,7 +459,9 @@ function processProfile(html, result) {
 	
 	getParam(html, info, 'info.fio', /<span[^>]+"userFIO"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, capitalFirstLetters);
 	getParam(html, info, 'info.hphone', /Домашний телефон:[\s\S]*?<span[^>]+"phoneNumber"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
+	//Для совместимости и phone получаем. Но вообще, надо будет избавиться от него потом.
     getParam(html, info, 'info.phone', /Мобильный телефон:[\s\S]*?<span[^>]+"phoneNumber"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
+    getParam(html, info, 'info.mphone', /Мобильный телефон:[\s\S]*?<span[^>]+"phoneNumber"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
 	getParam(html, info, 'info.email', /<span[^>]+userEmail[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
 	getParam(html, info, 'info.passport', /Паспорт гражданина РФ[\s\S]*?<td[^>]+class="docNumber"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
     getParam(html, info, 'info.snils', /Страховое свидетельство[\s\S]*?<div[^>]+class="documentNumber"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);

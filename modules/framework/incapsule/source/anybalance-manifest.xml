@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+    <id version="1">framework/incapsule</id>
+	<api flags="no_browser" />
+    <name>Incapsule helper</name>
+	<description html="true"><![CDATA[
+		Helps to deal with incapsule protected pages
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
+	<files>
+		<js>incapsule.js</js>
+		<history>history.xml</history>
+	</files>
+	<type>obfuscator, antirobot</type>
+</provider>

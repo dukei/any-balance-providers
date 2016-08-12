@@ -9,10 +9,41 @@ var g_headers = {
 	'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/37.0.2062.120 Safari/537.36',
 };
 
-function login(baseurl, html){
+function processLoginResponse(html){
+	var json = getJson(html).main;
+	if(json && json.location){
+		html = AnyBalance.requestGet(json.location, g_headers);
+	}else if(json.error){
+		var error = json.error, errText = '';
+		if(Array.isArray(error)){
+			errText = replaceAll(error.reduce(function(prev, cur){return prev += (prev ? ', ' : '') + cur.text}, ''), replaceTagsAndSpaces);
+		}else{
+			for(var i in error){
+				errText += (errText ? ', ' : '') + error[i]; 
+			}
+		}
+		throw new AnyBalance.Error(errText, null, /Login\/Password incorrect|Логин\/Пароль введен неверно|Пользователь не найден|User not found/i.test(errText));
+	}else if(json && json.html){
+		html = json.html;
+	}else{
+	    AnyBalance.trace(html);
+	    throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
+	}
+
+	return html;
+}
+
+function login(baseurl, _html){
 	var prefs = AnyBalance.getPreferences();
 
-	var form = getParam(html, null, null, /<form[^>]+id="(?:auth_captcha|authd)"[^>]*>([\s\S]*?)<\/form>/i);
+	var html = AnyBalance.requestGet(baseurl + 'bitrix/components/payeer/system.auth.form/templates/index_list/ajax.php?cmd=Authorization&backurl=%252Fru%252Faccount%252F', addHeaders({
+		Accept: 'application/json, text/javascript, */*; q=0.01',
+		'X-Requested-With': 'XMLHttpRequest',
+		Referer: baseurl + 'ru/account/'
+	}));
+	var json = getJson(html);
+
+	var form = getParam(json.main.html, null, null, /<form[^>]+id="(?:auth_captcha|authd)"[^>]*>([\s\S]*?)<\/form>/i);
 	
 	if(!form) {
 		if(/403 Forbidden/i.test(html))
@@ -35,17 +66,17 @@ function login(baseurl, html){
 
 	html = AnyBalance.requestPost(baseurl + 'bitrix/components/payeer/system.auth.form/templates/index_list/ajax.php', params, addHeaders({Referer: baseurl, 'X-Requested-With':'XMLHttpRequest'}));
 
-	var json = getJson(html).main;
-	if(json && json.location)
-		html = AnyBalance.requestGet(json.location, g_headers);
-	else if(json && json.html)
-		html = json.html;
-	else if(json.error){
-	    var errText = json.error.reduce(function(prev, cur){return prev += (prev ? ', ' : '') + cur.text}, '');
-		throw new AnyBalance.Error(errText, null, /Login\/Password incorrect|Логин\/Пароль введен неверно|Пользователь не найден|User not found/i.test(errText));
-	}else{
-	    AnyBalance.trace(html);
-	    throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
+	html = processLoginResponse(html);
+
+	if(/auth_conf/i.test(html)){
+		AnyBalance.trace('Подтверждение на e-mail потребовалось...');
+		
+		var params = createFormParams(html);
+		params.verify_code = AnyBalance.retrieveCode('Пожалуйста, введите код, высланный вам на ' + params.send_type + '\n\nВы можете отключить подтверждение авторизации при входе в личном кабинете Payeer.com в настройках на вкладке Безопасность', null, {inputType: 'number', time: 180000});
+		params.send_type = undefined;
+		
+		html = AnyBalance.requestPost(baseurl + 'bitrix/components/payeer/system.auth.form/templates/index_list/ajax.php', params, addHeaders({Referer: baseurl, 'X-Requested-With':'XMLHttpRequest'}));
+		html = processLoginResponse(html);
 	}
 
 	return html;
@@ -63,15 +94,12 @@ function main() {
 	AnyBalance.setCookie('payeer.com', 'BITRIX_SM_SOUND_LOGIN_PLAYED', 'Y');
 	AnyBalance.setCookie('payeer.com', 'BITRIX_SM_SALE_UID', '0');
 	
-	var incapsule = Incapsule(baseurl + 'ru/');
-	var html = AnyBalance.requestGet(baseurl + 'ru/', g_headers);
+	var incapsule = Incapsule(baseurl + 'ru/account/');
+	var html = AnyBalance.requestGet(baseurl + 'ru/account/', g_headers);
 	if(incapsule.isIncapsulated(html))
 	    html = incapsule.executeScript(html);
 
 	html = login(baseurl, html);
-	if (!/logout=yes/i.test(html)) {  //Возможно, нужна всё-таки капча
-		html = login(baseurl, html);
-	}
 
 	if (!/logout=yes/i.test(html)) {  //А после капчи уже окончательно проверяем вход.
 		var error = getParam(html, null, null, /"form_error"[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);

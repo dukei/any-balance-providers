@@ -95,6 +95,8 @@ function requestAPI(actionObj, params, addOnHeaders) {
 		if (!response.entity || !response.entity.ticket) {
 			if(response.entity){
 				var error = response.entity.error.message;
+				if(/робот/i.test(error))
+					error = 'Qiwi просит подтвердить, что вы не робот. Зайдите с вашим логином и паролем на вебсайт https://w.qiwi.com, пройдите проверку, что вы не робот. После этого ещё раз обновите провайдер.';
 				if(error)
 					throw new AnyBalance.Error(error, null, /Неверный логин или пароль|Неправильный номер телефона или пароль/i.test(error));
 			}

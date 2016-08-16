@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="2.3" version="33" date="2016-08-16">
+	Пояснение, что нужно делать в случае появления капчи
+	</change>
 	<change major_version="2.3" version="32" date="2016-02-15">
 	Добавлена возможность отображения до 5 балансов
 	</change>

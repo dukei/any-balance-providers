@@ -26,67 +26,42 @@ function getGibddJson(html){
 }
 
 function requestFines(prefs) {
-    var baseurl = 'http://www.gibdd.ru/';
+    var baseurlUser = 'http://www.gibdd.ru/';
+    var baseurl = 'http://check.gibdd.ru/';
     AnyBalance.setDefaultCharset('utf-8');
 	
-	var html = AnyBalance.requestGet(baseurl + 'check/fines/', g_headers);
+	var html = AnyBalance.requestGet(baseurlUser + 'check/fines/', g_headers);
 	
-	var token = getParam(html, null, null, /var _token\s*=\s*[^'"]+['"]([a-f\d]+)/i);
-	
-	var form = getParam(html, null, null, /(<form method="POST" id="tsdataform"[\s\S]*?<\/form>)/i);
-	if(!form || !token) {
-		if (AnyBalance.getLastStatusCode() > 400) {
-			AnyBalance.trace('Server returned: ' + AnyBalance.getLastStatusString());
-			throw new AnyBalance.Error('Сервис проверки штрафов временно недоступен, скоро все снова будет работать.');
-		}
-		// Попробуем объяснить почему
-		if(/временно приостановлена/i.test(html))
-			throw new AnyBalance.Error('Работа сервиса временно приостановлена! Попробуйте обновить данные позже.');
-		
-		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Не удалось найти форму для запроса!');
+	if (AnyBalance.getLastStatusCode() > 400) {
+		AnyBalance.trace('Server returned: ' + AnyBalance.getLastStatusString());
+		throw new AnyBalance.Error('Сервис проверки штрафов временно недоступен, скоро все снова будет работать.');
 	}
+
 	checkEmpty(prefs.login, 'Введите гос. номер. Номер должен быть в формате а351со190 либо 1234ав199, буквы русские!');
 	checkEmpty(prefs.password, 'Введите номер свидетельства о регистрации в формате 50ХХ123456!');
-	
-	AnyBalance.trace('token = ' + token);
-	g_headers = addHeaders({'X-Csrf-Token':token});
-	
-	html = AnyBalance.requestGet(baseurl + 'proxy/check/getSession.php', g_headers);
-	var dataJson = getGibddJson(html);
-	AnyBalance.setCookie('www.gibdd.ru', 'captchaSessionId', dataJson.id);
-	
-	var captchaWord;
-	
-	if(AnyBalance.getLevel() >= 7){
-		AnyBalance.trace('Пытаемся ввести капчу');
-		
-		var captcha = AnyBalance.requestGet(baseurl + 'proxy/check/getCaptcha.php?PHPSESSID=' + dataJson.id + '&' + new Date().getTime(), addHeaders({Referer: baseurl + 'check/fines/'}));
-		captchaWord = AnyBalance.retrieveCode("Пожалуйста, введите код с картинки", captcha, {inputType: 'number'});
-		AnyBalance.trace('Капча получена: ' + captchaWord);
-	} else {
-		throw new AnyBalance.Error('Провайдер требует AnyBalance API v7, пожалуйста, обновите AnyBalance!');
-	}
-	
 	var found = /(\D{0,1}\d+\D{2})(\d{2,3})/i.exec(prefs.login);
 	if(!found)
 		throw new AnyBalance.Error('Номер должен быть в формате а123вс190 либо 1234ав199, буквы русские.');
 	
+	var captcha = AnyBalance.requestGet(baseurl + 'proxy/captcha.jpg?', addHeaders({
+		Referer: baseurlUser + 'check/fines/',
+	}));
+
+	var captchaWord = AnyBalance.retrieveCode("Пожалуйста, введите код с картинки", captcha, {inputType: 'number'});
+	AnyBalance.trace('Капча получена: ' + captchaWord);
+	
 	var params2 = [
-		['req','fines:' + found[1].toUpperCase()+':'+found[2]+':'+prefs.password.toUpperCase()],
-		['captchaWord',captchaWord],
-//		['token',''],
 		['regnum',found[1].toUpperCase()],
 		['regreg',found[2]],
 		['stsnum',prefs.password.toUpperCase()],
+		['captchaWord',captchaWord],
 	];
 	
 	AnyBalance.trace('Пробуем запросить информацию с данными: '+prefs.login+', ' + prefs.password);
 	
-	html = AnyBalance.requestPost(baseurl + 'proxy/check/fines/2.0/client.php', params2, addHeaders({
-		'X-Requested-With': 'XMLHttpRequest',
-		'Referer': baseurl + 'check/fines/',
+	html = AnyBalance.requestPost(baseurl + 'proxy/check/fines', params2, addHeaders({
 		'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+		'Referer': baseurl + 'check/fines/',
 		'Connection': 'keep-alive'
 	}));
 	
@@ -96,48 +71,48 @@ function requestFines(prefs) {
 }
 
 function parseFines(result, json) {
-	if(json.status != 200) {
-		if(json.error)
-			throw new AnyBalance.Error(json.error);	
-		
-		if(json.status == 1) 
-			throw new AnyBalance.Error("Цифры с картинки введены не верно!");
+	var code = json.code || json.status;
+	if(code != 200) {
+		var error = json.error || json.message;
+		if(error)
+			throw new AnyBalance.Error(error, null, code == 404);	
 		
 		AnyBalance.trace(JSON.stringify(json));
 		throw new AnyBalance.Error("Не удалось получить данные по штрафам, сайт изменен?");
 	}
 	
-	if(!json.request || json.request.error != '0') {
-		throw new AnyBalance.Error("Указанное Вами свидетельство о регистрации транспортного средства не соответствует государственным регистрационным знакам или более недействительно. Вероятно, Вами допущена ошибка при заполнении полей запроса.");
+	if(!json.data) {
+		AnyBalance.trace(JSON.stringify(json));
+		throw new AnyBalance.Error("Вероятно, Вами допущена ошибка при заполнении полей запроса.");
 	}
 	
-	AnyBalance.trace('Штрафов: ' + json.request.count);
+	AnyBalance.trace('Штрафов: ' + json.data.count);
 	
-	if(json.request.count > 0) {
+	if(json.data.length > 0) {
 		result.fines = [];
 		
-		for(var i = 0; i< json.request.count; i++) {
-			var curr = json.request.data[i];
+		for(var i = 0; i< json.data.length; i++) {
+			var curr = json.data[i];
 			var fine = {__id: curr.id, __name: curr.NumPost};
 			
 			if(__shouldProcess('fines', fine)) {
 				getParam(curr.Summa + '', fine, 'fines.summ', null, null, parseBalance);
 				getParam(curr.SummaDiscount + '', fine, 'fines.summDiscount', null, null, parseBalance);
 
-				getParam(curr.DateDecis + '', fine, 'fines.date', null, replaceTagsAndSpaces, parseDateGibdd);
-				getParam(curr.DateDiscount + '', fine, 'fines.dateDiscount', null, replaceTagsAndSpaces, parseDateGibdd);
-				getParam(curr.DatePost + '', fine, 'fines.datePost', null, replaceTagsAndSpaces, parseDateGibdd);
+				getParam(curr.DateDecis + '', fine, 'fines.date', null, null, parseDateGibdd);
+				getParam(curr.DateDiscount + '', fine, 'fines.dateDiscount', null, null, parseDateGibdd);
+				getParam(curr.DatePost + '', fine, 'fines.datePost', null, null, parseDateGibdd);
 				
-				getParam(curr.KoAPcode, fine, 'fines.koap', null, replaceTagsAndSpaces);
-				getParam(curr.KoAPtext.toUpperCase().substring(0,1) + curr.KoAPtext.toLowerCase().substring(1), fine, 'fines.descr', null, replaceTagsAndSpaces);
-				getParam(curr.NumPost, fine, 'fines.postanovlenie', null, replaceTagsAndSpaces);
-				getParam(json.request.cacheDiv[curr.Division], fine, 'fines.podrazdel', null, replaceTagsAndSpaces);
+				getParam(curr.KoAPcode, fine, 'fines.koap');
+				getParam(curr.KoAPtext.toUpperCase().substring(0,1) + curr.KoAPtext.toLowerCase().substring(1), fine, 'fines.descr');
+				getParam(curr.NumPost, fine, 'fines.postanovlenie');
+				getParam(json.divisions[curr.Division].name, fine, 'fines.podrazdel');
 			}
 			
 			result.fines.push(fine);
 			sumParam(curr.Summa + '', result, 'balance', null, null, parseBalance, aggregate_sum);
 		}
-		getParam(json.request.count + '', result, 'count', null, null, parseBalance);
+		getParam(json.data.length, result, 'count');
 		// Нет штрафов
 	} else {
 		result.descr = 'Неуплаченных штрафов в федеральной информационной системе ГИБДД по указанным данным не найдено.';

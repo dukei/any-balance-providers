@@ -5,7 +5,7 @@
     <name>Extract for Штрафы ГИБДД</name>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
-		<js>abe-fine-gibdd.min.js</js>
+		<js>extract.abe-fine-gibdd.min.js</js>
 		<history>history.xml</history>
 	</files>
 	<depends>

@@ -35,8 +35,8 @@ function main() {
 	// Теперь нужна сводка
 	if(isAvailable('all')) {
 		var all = '';
-		for(var i = 0; i< json.request.count; i++) {
-			var curr = json.request.data[i];
+		for(var i = 0; i< json.data.length; i++) {
+			var curr = json.data[i];
 			
 			all += detailsPattern;
 			all = all.replace('%POSTANOVLENIE%', curr.NumPost);

@@ -42,8 +42,12 @@ function main() {
 		'X-Requested-With':'XMLHttpRequest'
 	}));
 
-	if(/false/i.test(html)){
-		throw new AnyBalance.Error('Неверный номер карты!', null, true);
+	var str = getJson(html);
+	var json = getJson(str);
+
+	if(!/true/i.test(json.card)){
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удалось получить информацию по карте. Попробуйте ещё раз.');
 	}
 
 	var params = createFormParams(form, function(params, str, name, value) {

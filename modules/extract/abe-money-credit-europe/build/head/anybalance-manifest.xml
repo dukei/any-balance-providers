@@ -8,7 +8,7 @@
 		<module id="library"/>
 	</depends>
 	<files>
-		<js>abe-money-credit-europe.min.js</js>
+		<js>extract.abe-money-credit-europe.min.js</js>
 		<history>history.xml</history>
 	</files>
 	<type>money, bank</type>

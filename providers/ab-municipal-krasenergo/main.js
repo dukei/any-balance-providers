@@ -12,7 +12,7 @@ var g_headers = {
 
 function main(){
     var prefs = AnyBalance.getPreferences();
-    var baseurl = "http://krsk-sbit.ru/quasar.php";
+    var baseurl = "http://old.krsk-sbit.ru/quasar.php";
     var now = new Date();
     var threeMonthsAgo = new Date(now.getFullYear(), now.getMonth()-3, 1);
     AnyBalance.setDefaultCharset('windows-1251');

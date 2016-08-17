@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id version="4">ab-internet-aist</id>
+	<id version="5">ab-internet-aist</id>
 	<name>AIST (Самара, Тольятти)</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе провайдера интернет-провайдера АИСТ http://aist.net.ru</p>

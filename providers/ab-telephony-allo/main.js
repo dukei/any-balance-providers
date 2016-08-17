@@ -55,10 +55,14 @@ function doNewCabinet(prefs) {
 			task: 'offer.acceptOffer'
 		}, addHeaders({Referer: baseurl + 'contract-offer','Origin': baseurl}));
 	}
+
 	if (!/logout/i.test(html)) {
 		var error = getParam(html, null, null, />\s*Ошибка([\s\S]*?)<\/div/i, replaceTagsAndSpaces);
 		if (error)
 			throw new AnyBalance.Error(error, null, /Не найден|парол/i.test(error));
+		error = getElement(html, /<div[^>]+notfound[^>]*>/i, replaceTagsAndSpaces);
+		if(error) //Сервис временно недоступен
+			throw new AnyBalance.Error(error);
 		
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');

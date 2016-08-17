@@ -1,5 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="5.0" version="29" date="2016-08-17">
+	- Исправление получения баланса в некоторых случаях
+	- Отменено получение по API (приложение устарело)
+	</change>
 	<change major_version="5.0" version="28" date="2016-08-03">
 	- Улучшена обработка ошибок.
 	</change>

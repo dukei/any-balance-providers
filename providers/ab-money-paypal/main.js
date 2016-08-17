@@ -16,21 +16,7 @@ function main(){
 	checkEmpty(prefs.login, 'Enter e-mail!');
 	checkEmpty(prefs.password, 'Enter password!');
 
-    try{
-		logInOpenAuth();
-	}catch(e){
-		AnyBalance.trace('Could not enter OAuth: ' + e.message);
-		if(e.fatal) throw e;
-        try{
-			logInSite();
-		}catch(e){
-			AnyBalance.trace('Could not enter site: ' + e.message);
-			if(e.fatal) throw e;
-			logInOpenAuth();
-		}
-	}
-
-	return;
+	logInSite();
 }
 
 function executeChallenge(script, baseurl, loginPage){
@@ -198,6 +184,20 @@ function faceCaptchaChallenge(json, baseurl, loginPage, debugId){
 
 function getBalanceInfo(html){
 	var json = getParam(html, null, null, /data-balance="([^"]*)/i, replaceHtmlEntities, getJson);
+	if(!json){
+		var currencies = getElement(html, /<div[^>]+balanceInCurrencies[^>]*>/i);
+		if(currencies){
+			AnyBalance.trace('Данные вернулись в html, преобразовываем в json');
+			var balances = [];
+			var elems = getElements(currencies, /<li[^>]*>/ig);
+			for(var i=0; i<elems.length; ++i){
+				var curr = getElement(elems[i], /<[^>]*countryCurrencyCode[^>]*>/i, replaceTagsAndSpaces);
+				var amount = getElement(elems[i], /<[^>]*countryCurrencyAmount[^>]*>/i, replaceTagsAndSpaces, parseBalance);
+				balances.push({currency: curr, available: {amount: amount}});
+			}
+			json = {balanceDetails: balances};
+		}
+	}
 	return json;
 }
 

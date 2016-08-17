@@ -37,12 +37,12 @@ function main() {
 			tries++;
 			AnyBalance.trace('Штрафы запрашиваются (попытка ' + (tries+1) + '/10)');
 			AnyBalance.sleep(3000);
-		}else{
+		}else {
 			break;
 		}
 	}while(true);
 
-	if(info.status != 'ok'){
+	if(info.status != 'ok' && !isArray(info.data)){
 		if(info.error)
 			throw new AnyBalance.Error(info.error, null, /length must be/i.test(info.error));
 		
@@ -60,7 +60,7 @@ function main() {
 	    fine = info.data[i];
 		sumParam(fine.PayUntil, result, 'payTill', null, null, parseDateISO, aggregate_min);
 		sumParam(fine.TotalAmount, result, 'balance', null, null, parseBalance, aggregate_sum);
-		
+
 		all += '<b>' + fine.TotalAmount + '</b> - ' + fine.SupplierBillID + ' от ' + fine.BillDate + '<br\><br\>';
 	}
 

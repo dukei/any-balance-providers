@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="12">ab-internet-ertelecom</id>
+	<id version="13">ab-internet-ertelecom</id>
 	<api flags="no_browser"/>
 	<name>Дом.ру (Эр-телеком)</name>
 	<description html="true"><![CDATA[
@@ -9,11 +9,13 @@
 	<p>Провайдер предоставляет интернет для городов: Барнаул, Брянск, Волгоград, Волжский, Воронеж, Дзержинск, Екатеринбург, Ижевск, Иркутск, Йошкар-Ола, Казань, Киров, Красноярск, Курган, Курск, Липецк, Магнитогорск, Набережные Челны, Нижнекамск, Нижний Новгород, Новосибирск, Омск, Оренбург, Пенза, Пермь, Ростов-на-Дону, Рязань, Самара, Санкт-Петербург, Саратов, Сызрань, Тверь, Томск, Тула, Тюмень, Ульяновск, Уфа, Чебоксары, Челябинск, Энгельс, Ярославль</p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
 		<js>main.js</js>
-		<js>library.js</js>
 		<history>history.xml</history>
 	</files>
 	<counters>

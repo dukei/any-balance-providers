@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="2">ab-fine-yandex</id>
+	<id version="3">ab-fine-yandex</id>
 	<name>Штрафы ГИБДД (Яндекс)</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о наличии штрафов с сайта https://money.yandex.ru/gibdd-debts/</p>

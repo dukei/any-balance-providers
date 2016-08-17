@@ -24,7 +24,8 @@
 	};
 
 	/**
-	 * HTML entity table
+	 * HTML4 entity table
+	 * TODO? HTML5 entity table https://www.w3.org/TR/html5/entities.json
 	 * @link http://www.fileformat.info/format/w3c/entitytest.htm?sort=Unicode%20Character  HTML Entity Browser Test Page
 	 * @var  Object
 	 */
@@ -292,6 +293,76 @@
 	};
 	
 	/**
+	 * HTML SAX parser
+	 * 
+	 * @link https://www.w3.org/TR/html5/
+	 * @returns {number} parsed offset
+	 */
+	String.prototype.htmlParser = function () {
+		
+		var tagsRawRe = 'script|style|xmp' +	//raw text elements
+						'|textarea|title';		//escapable raw text elements
+
+		var spacesRe = /\x00-\x20\x7f\xA0\s/.source;
+
+		var attrsRe = function (n) {
+			//fast short implementation
+			return `[^>"']*  #speed improve
+					(?:
+							(?= ([^>"']+) )\\n
+						|	"  [^"]*  "
+						|	'  [^']*  '
+					)*`
+					.replace('n', n);
+		};
+
+		//https://regex101.com/#pcre
+		var htmlRe = `<(?:
+							#pairs raw tags with content:
+							((` + tagsRawRe + `) (?=[>` + spacesRe + `])` + attrsRe(3) + `)>  #(1) opened tag
+								(	#(4) inner
+									[^<]*  #speed improve
+									.*?
+								)
+							</\\2 (?=[>` + spacesRe + `])` + attrsRe(5) + `>
+
+							#(6) opened tags:
+						|	(	(?=[a-z])
+								(?! (?:` + tagsRawRe + `) (?=[>` + spacesRe + `]) )
+								` + attrsRe(7) + `
+							)>
+
+						|	/([a-z]` + attrsRe(9) + `)>		#(8) closed tags
+						|	!([a-z]` + attrsRe(11) + `)>	#(10) <!DOCTYPE ...>
+						|	!\\[CDATA\\[	([^\\]]*  .*?)	\\]\\] >	#(12) CDATA
+						|	!--				([^-]*    .*?)	    -- >	#(13) comments
+						|	\\?				([^\\?]*  .*?)	   \\? >	#(14) instructions part1 (PHP, Perl, ASP, JSP, XML)
+						|	%				([^%]*    .*?)		 % >	#(15) instructions part2 (PHP, Perl, ASP, JSP)
+						) [` + spacesRe + `]*
+							#text:
+						|	(?:
+									[^<]+
+								|	< (?! /? [a-z]
+										| !(?: \\[CDATA\\[ | -- ) 
+										| [\\?%] 
+										)
+							)+`;
+
+		var match, i = 0, limit = 100;
+
+		htmlRe = XRegExp(htmlRe, 'xsig');
+		console.log(htmlRe);
+
+		while (true) {
+			if (++i > limit) throw Error(limit + ' steps has been reached!');
+			match = htmlRe.exec(this)
+			if (! match) break;
+			console.log(match);
+		}
+		
+	}
+	
+	/**
 	 * HTML Entity Decode
 	 * @param	{bool}	[strict=true]
 	 * @returns {string}
@@ -344,9 +415,11 @@
 	 */
 	String.prototype.htmlToText = function () {
 		
+		//https://developer.mozilla.org/ru/docs/Web/HTML/Block-level_elements
+		//http://www.tutorialchip.com/tutorials/html5-block-level-elements-complete-list/
 		var BLOCK_TAGS = [
 			//Paragraph boundaries are inserted at every block-level HTML tag. Namely, those are (as taken from HTML 4 standard)
-			'address', 'blockquote', 'caption', 'center', 'dd', 'div', 'dl', 'dt', 'h[1-6]', 'hr', 'li', 'menu', 'ol', 'p', 'pre', 'table', 'tbody', 'td', 'tfoot', 'th', 'thead', 'tr', 'ul',
+			'blockquote', 'caption', 'center', 'dd', 'div', 'dl', 'dt', 'h[1-6]', 'hr', 'li', 'menu', 'ol', 'p', 'pre', 'table', 'tbody', 'td', 'tfoot', 'th', 'thead', 'tr', 'ul',
 			//HTML5
 			'article', 'aside', 'audio', 'canvas', 'figcaption', 'figure', 'footer', 'header', 'hgroup', 'output', 'progress', 'section', 'video',
 			//Extended
@@ -359,7 +432,8 @@
 
 		var ATTR = function (n) {
 			//fast short implementation
-			return `(?:
+			return `[^>"']*  #speed improve
+					(?:
 							(?= ([^>"']+) )\\n
 						|	"  [^"]*  "
 						|	'  [^']*  '
@@ -373,8 +447,9 @@
 							(` + PAIR_TAGS_WITH_CONTENT + `)\\b	#1
 							` + ATTR(2) + `
 						>
+							[^<]*  #speed improve
 							.*?
-						< (?!script\\b)
+						< (?!script\\b|style\\b)
 							/?
 							\\1\\b` + ATTR(3) + `
 						>								
@@ -385,15 +460,14 @@
 							` + ATTR(4) + `
 						>
 												
-					|	</[a-z]` + ATTR(5) + `>	#closed tags
-					|	<![a-z]` + ATTR(6) + `>	#<!DOCTYPE ...>
-					|	<!\\[CDATA\\[  .*?  \\]\\]>		#CDATA
-					|	<!--  .*?   -->					#comments
-					|	<\\?  .*?  \\?>					#instructions part1 (PHP, Perl, ASP, JSP, XML)
-					|	<%	  .*?    %>					#instructions part2 (PHP, Perl, ASP, JSP)
+					|	</[a-z]` + ATTR(5) + `>		#closed tags
+					|	<![a-z]` + ATTR(6) + `>		#<!DOCTYPE ...>
+					|	<!\\[CDATA\\[  [^\\]]*  .*?  \\]\\]>	#CDATA
+					|	<!--  [^-]*    .*?   -->	#comments
+					|	<\\?  [^\\?]*  .*?  \\?>	#instructions part1 (PHP, Perl, ASP, JSP, XML)
+					|	<%	  [^%]*    .*?    %>	#instructions part2 (PHP, Perl, ASP, JSP)
 					)`;
-		var htmlBlockTagsRe = RegExp('^<('+ BLOCK_TAGS + ')\\b', 'i');
-		//console.log(XRegExp(ALL, 'xsig'));
+		var htmlBlockTagsRe = RegExp('^<(?=[a-z])(?:'+ BLOCK_TAGS + ')\\b', 'i');
 		var str = this.replace(
 			XRegExp(ALL, 'xsig'),
 			function (str, entry) {
@@ -423,14 +497,15 @@
 	}
 
 	/**
-	 * Removes hyphens and accents
+	 * Removes soft hyphens and acute accents
+	 * Вырезает мягкие дефисы знаки ударения
 	 * 
 	 * @returns {string}
 	 */
 	String.prototype.clean = function () {
 		//&shy; = soft hyphen = discretionary hyphen
 		//&acute; = acute accent = spacing acute
-		return this.replace(/[\xAD\xB4]/g, '');
+		return this.replace(/[\xAD\xB4]+/g, '');
 	}
 
 	/**
@@ -538,6 +613,5 @@
 			return null;
 		}			
 	}
-	
 	
 })();

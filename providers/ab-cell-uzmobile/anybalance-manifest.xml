@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-    <id version="1">ab-cell-uzmobile</id>
+    <id version="2">ab-cell-uzmobile</id>
     <api flags="no_browser"/>
     <name>UzMobile</name>
     <description html="true"><![CDATA[
@@ -11,10 +11,12 @@
     <p>Если у вас нет доступа в Личный кабинет, получите его на странице <a href="https://uzmobile.uz/">UzMobile</a></p>
     ]]></instruction>
     <author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+    <depends>
+        <module id="library"/>
+    </depends>
     <files>
         <icon>icon.png</icon>
         <preferences>preferences.xml</preferences>
-        <js>library.js</js>
         <js>main.js</js>
         <history>history.xml</history>
     </files>

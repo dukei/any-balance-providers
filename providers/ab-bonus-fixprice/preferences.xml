@@ -8,7 +8,7 @@
 		dialogTitle="Логин"
 		positiveButtonText="ОК"
 		negativeButtonText="Отмена"
-		dialogMessage="Введите логин, используемый для входа в личный кабинет.">
+		dialogMessage="Введите номер телефона или E-mail, используемые для входа в личный кабинет.">
 	</EditTextPreference>
 	<EditTextPreference
 		title="Пароль"

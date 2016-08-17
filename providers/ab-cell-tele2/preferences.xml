@@ -22,12 +22,12 @@
         dialogMessage="Введите пароль, используемый для входа в личный кабинет Мой Tele2. Если Вы не знаете свой пароль, пройдите регистрацию или восстановите пароль на сайте https://my.tele2.ru."
         inputType="textPassword">
     </EditTextPreference>
- <!--    <ListPreference 
+    <ListPreference 
         key="cabinet" 
         title="Личный кабинет"
         summary="||{@s}"
         entries="Старый кабинет|Новый кабинет"
-        entryValues="|new"
+        entryValues="old|new"
 		defaultValue="">
-    </ListPreference> -->
+    </ListPreference>
 </PreferenceScreen>

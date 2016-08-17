@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="3" date="2016-08-17">
+	Поддержка капчи при входе
+	</change>
 	<change version="2" date="2016-02-11">
 	- Исправлено описание.
 	</change>

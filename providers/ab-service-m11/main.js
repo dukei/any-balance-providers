@@ -30,6 +30,11 @@ function main() {
 			return prefs.login;
 		else if (name == 'password')
 			return prefs.password;
+		else if (name == 'captcha_1'){
+			var img = getParam(html, null, null, /<img[^>]+src="([^"]*captcha[^"]*)/i, replaceHtmlEntities);
+			img = AnyBalance.requestGet(joinUrl(baseurl, img), addHeaders({Referer: baseurl}));
+			return AnyBalance.retrieveCode('Пожалуйста, введите текст с картинки', img);
+		}
 
 		return value;
 	});

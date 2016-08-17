@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-service-m11</id>
+	<id version="3">ab-service-m11</id>
 	<api flags="no_browser"/>
 	<name>Автомобильная дорога М11</name>
 	<description html="true"><![CDATA[

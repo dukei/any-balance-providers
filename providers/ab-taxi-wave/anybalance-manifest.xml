@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-taxi-wave</id>
+	<api flags="no_browser"/>
+	<name>Волна</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию для клиента из личного кабинета службы заказа такси Волна<a href="http://taxivolna.com/">http://taxivolna.com/</a></p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" .р"/>
+		<counter id="bonus" name="Бонусы"/>
+		<counter id="name" name="Имя" type="text"/>
+		<counter id="orders" name="Количество заказов"/>
+		<counter id="discount" name="Скидка"/>
+		<counter id="adress" name="Адрес" type="text"/>
+		<counter id="phone" name="Телефон" type="text"/>
+	</counters>
+	<keywords>служба заказа такси Волна</keywords>
+	<type>taxi</type>
+	<country>ru</country>
+</provider>

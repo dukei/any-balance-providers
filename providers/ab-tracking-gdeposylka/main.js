@@ -24,8 +24,8 @@ function main(){
 	}
 	
 	html = AnyBalance.requestPost(baseurl + 'form', {
-		'tracking[tracking_number]': prefs.track_id,
-		'tracking[track]': '',	
+		'tracking_form[tracking_number]': prefs.track_id,
+		'tracking_form[track]': '',	
 	}, addHeaders({Referer: baseurl + 'form'}));
 	
 	if (!/Посылка в пути/i.test(html)) {

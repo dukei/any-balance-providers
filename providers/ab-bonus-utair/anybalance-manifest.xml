@@ -1,12 +1,12 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="4">ab-bonus-utair</id>
+  <id version="5">ab-bonus-utair</id>
+  <api flags="no_browser"/>
   <name>UTair</name>
-  <description>
-    Получает баланс баллов и другую информацию по бонусной карте авиакомпании UTair (http://www.utair.ru).
-
-    Информация берется из личного кабинета https://ffp.utair.ru/css/index.action.
-  </description>
+  <description html="true"><![CDATA[
+	<p>Получает баланс баллов и другую информацию по бонусной карте авиакомпании UTair <a href="http://www.utair.ru">http://www.utair.ru</a></p>
+    <p>Информация берется из личного кабинета <a href="https://clm.utair.ru/group/utair">https://clm.utair.ru/group/utair</a></p>
+	]]></description>
   <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
   <files>
     <icon>icon.png</icon>
@@ -16,27 +16,13 @@
     <history>history.xml</history>
   </files>
   <counters>
-    <counter id="balance" name="Баланс"/>
-	
-	<counter id="miles_thisyear" name="Статусные мили в текущем году"/>
-	<counter id="miles_lastyear" name="Статусные мили в прошлом году"/>
-	<counter id="miles_to_erase" name="Наградые мили к следующему аннулированию "/>
-	
-	<counter id="miles_to_erase_date" format="dd/MM/yyyy" type="time" name="Дата аннулирования"/>
-	
-	
+	<counter id="redemptionMiles" name="Наградные мили" units=" М"/>
+	<counter id="qualifyingMiles" name="Квалификационные мили" units=" М"/>
+	<counter id="nextExpDate" format="dd/MM/yyyy" type="time" name="Дата аннулирования"/>
     <counter id="cardnum" name="Номер карты" type="text"/>
-	
-	
-	
+    <counter id="fio" name="ФИО" type="text"/>
   </counters>
-  <keywords>
-    уютное небо
-  </keywords>
-  <type>
-    bonus
-  </type>
-  <country>
-    ru
-  </country>
+  <keywords>уютное небо</keywords>
+  <type>bonus</type>
+  <country>ru</country>
 </provider>

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-municipal-enpf-kz</id>
+	<api flags="no_browser"/>
+	<name>Пенсионный фонд АО "ЕНПФ"</name>
+	<description html="true"><![CDATA[
+  <p>Предоставляет информацию из личного кабинета Пенсионного фонда АО "ЕНПФ" на сайте: <a href="https://enpf.kz/">https://enpf.kz</a></p>
+  <p>Информация берется из личного кабинета Пенсионного фонда АО "ЕНПФ" <a href="https://cabinet.enpf.kz">https://cabinet.enpf.kz</a></p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Если у вас нет доступа в Личный кабинет, получите его на странице <a href="https://cabinet.enpf.kz">https://cabinet.enpf.kz</a></p>
+	]]></instruction>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="savings" name="Накопления"/>
+		<counter id="contributions" name="Взносы"/>
+		<counter id="invest_income" name="Инвестдоход"/>
+		<counter id="ppa_number" name="№ ИПС"/>
+		<counter id="ppa_start_date" name="Дата открытия ИПС" type="time" format="dd/MM/yyyy"/>
+		<counter id="uid" name="ИИН"/>
+		<counter id="full_name" name="ФИО" type="text"/>
+		<counter id="birth_date" name="Дата рождения" type="time" format="dd/MM/yyyy"/>
+	</counters>
+	<keywords>Пенсионный фонд</keywords>
+	<type>municipal</type>
+	<country>kz</country>
+</provider>

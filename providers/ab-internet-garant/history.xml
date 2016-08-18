@@ -1,5 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="5" date="2016-02-04">
+	- Улучшена обработка ошибок.
+	- Мелкие исправления и улучшения.
+	</change>
 	<change version="4" date="2015-02-17">
 	- Поддержка изменений на сайте.
 	</change>
@@ -11,7 +15,7 @@
 	</change>
 <!--
 <change version="2" date="2013-09-21">
-- 
+-
 </change>
 -->
 </history>

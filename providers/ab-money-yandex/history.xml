@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="23" date="2016-02-03">
+	- поддержка капчи, если логин в яндекс её покажет
+	</change>
 	<change version="22" date="2016-01-07">
 	- Улучшена обработка ошибок.
 	</change>

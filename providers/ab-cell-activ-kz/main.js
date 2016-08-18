@@ -55,24 +55,28 @@ function main(){
     }
     
     var result = {success: true};
+    //На казахском языке описание каких-то значений идёт перед ними, а на английском и в русском - после.
+
     //(?:Теңгерім|Баланс|Balance):
     getParam(html, result, 'balance', /<h5[^>]*>(?:Ваш баланс|Сіздің теңгеріміңіз|Your balance is)([\s\d,.-]+)/i, replaceTagsAndSpaces, parseBalance);
-    //(?:интернет плюс|internet plus)
-    getParam(html, result, 'internet_plus', /(?:Ваш баланс|Сіздің теңгеріміңіз|Your balance is)[^<]*?\+\s*([\d\s.,]*\s*[Mм][Bб])/i, replaceTagsAndSpaces, parseTraffic);
+     //(?:интернет плюс|internet plus)
+    sumParam(html, result, 'internet_plus', /(?:\+|дейін)([\d\s.,]*\s*[МмMm][БбBb])/ig, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
     //(?:бонусные единицы)
     getParam(html, result, 'bonus', /(\d+)\s*(?:бонусных единиц|бонустық бірлік|bonus units)/i, replaceTagsAndSpaces, parseBalance);
     //(?:Шот қалпы|Статус номера|Account status):
     getParam(html, result, 'status', /<h5>(?:Статус|Қалпы|Status)(?:[^>]*>){2}([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
     //(?:Шот қалпы|Статус номера|Account status):
     getParam(html, result, 'min_roaming', /([\d\.]+)\s*(?:Бонусных минут в роуминге|Роумингтегі бонус минут|Bonus minutes in roaming)/i, replaceTagsAndSpaces, parseBalance);
+    //Локальные минуты, минуты на ВСЕ сети по РК (внутри сети и на другие сети по РК):
+    sumParam(html, result, 'min_local', /(?:дейін желі ішінде|дейін БАРЛЫҚ желілерге[\s\S]*?)?\s*([\d\.]+)\s*(?:мин\. внутри сети|мин\.|on-net min|all-net min)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
     //Тариф:
     getParam(html, result, '__tariff', /<h[^>]*>(?:Тарифный план|Тариф|Tariff)[\s\S]*?<h[^>]*>([\s\S]*?)<\/h/i, replaceTagsAndSpaces, html_entity_decode);
     //минуты
-    getParam(html, result, 'min_left', /(?:Ваш баланс|Сіздің теңгеріміңіз|Your balance is)[^<]*?\+\s*([\d\s.,]*)\s*(?:Бонусных|Бонустық|Bonus)?\s+(?:мин|min)/i, replaceTagsAndSpaces, parseBalance);
+    sumParam(html, result, 'min_left', /(?:Ваш баланс|Сіздің теңгеріміңіз|Your balance is)[^<]*?\+\s*([\d\s.,]*)\s*(?:Бонусных|Бонустық|Bonus)?\s+(?:мин|min)/ig, replaceTagsAndSpaces, parseBalance);
     //Бонусных секунд/Бонустық секунд/Bonus seconds
     sumParam(html, result, 'min_left', /(?:Ваш баланс|Сіздің теңгеріміңіз|Your balance is)[^<]*?\+\s*([\d\s.,]*)\s*(?:Бонусных|Бонустық|Bonus)?\s+(?:сек|sec)/i, replaceTagsAndSpaces, function(str){ var s = parseBalance(str); return s && s/60 }, aggregate_sum );
     //SMS
-    getParam(html, result, 'sms_net', /(?:Ваш баланс|Сіздің теңгеріміңіз|Your balance is)[^<]*?\+\s*([\d\s.,]*)\s*(?:SMS\s+в\s+сети|желiдегi\s+SMS|onnet\s+SMS)/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'sms_net', /(?:Ваш баланс|Сіздің теңгеріміңіз|Your balance is)[^<]*?\+?\s*([\d\s.,]*)\s*(?:SMS\s+в\s+сети|желiдегi\s+SMS|onnet\s+SMS|SMS\+)/i, replaceTagsAndSpaces, parseBalance);
 
     if(AnyBalance.isAvailable('internet_plus')){
         html = AnyBalance.requestGet(baseurl + lang + '/ics.account/getconnectedservices', g_headers);

@@ -1,15 +1,21 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="2">ab-internet-linkintel</id>
+	<api flags="no_browser"/>
+  <id version="3">ab-internet-linkintel</id>
   <name>LINKINTEL (Лобня)</name>
   <description>
     Получает баланс, бонусы, тарифный план и трафик в текущем месяце у интернет-провайдера LINKINTEL (http://linkintel.ru).
   </description>
   <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <depends>
+        <module id="library"/>
+  </depends>
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
     <js>main.js</js>
+    <icon>icon.png</icon>
+    <history>history.xml</history>
   </files>
   <counters>
     <counter id="balance" name="Баланс" units="р"/>

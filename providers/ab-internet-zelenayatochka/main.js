@@ -35,17 +35,18 @@ function getUnified(prefs) {
 	
 	var html = AnyBalance.requestGet(baseurl + 'login', g_headers);
 
-	html = AnyBalance.requestPost(baseurl + 'login_func.php', {
+	html = AnyBalance.requestPost(baseurl + 'login', {
 		user: prefs.login,
 		pass: prefs.password,
-		login_uri: '',
+		uri: '',
 		AuthSubmit: 'ВОЙТИ'
 	}, addHeaders({Referer: baseurl + 'login'}));
 
 	if (!/logout/i.test(html)) {
 		var error = getParam(html, null, null, /<div[^>]*class="alert alert-danger"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
-		if(error)
-			throw new AnyBalance.Error(error, null, /Ошибка с паролем или пользователем/i.test(error));
+		if(error) {
+			throw new AnyBalance.Error(error, null, /пользовател|логин|парол/i.test(error));
+                    }
 		
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');

@@ -6,92 +6,77 @@
 Сайт оператора: http://www.linkintel.ru
 Личный кабинет: http://login.linkintel.ru
 */
-
-function getParam (html, result, param, regexp, replaces, parser) {
-	if (param && !AnyBalance.isAvailable (param))
-		return;
-
-	var value = regexp.exec (html);
-	if (value) {
-		value = value[1];
-		if (replaces) {
-			for (var i = 0; i < replaces.length; i += 2) {
-				value = value.replace (replaces[i], replaces[i+1]);
-			}
-		}
-		if (parser)
-			value = parser (value);
-
-    if(param)
-      result[param] = value;
-    else
-      return value
-        }
-}
+var g_headers = {
+    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+    'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
+    'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
+    'Connection': 'keep-alive',
+    'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
+};
 
 function main(){
     var prefs = AnyBalance.getPreferences();
-    var baseurl = "http://login.linkintel.ru/Cabinet/";
+    var baseurl = "http://linkintel.ru";
     
-//    html = AnyBalance.requestGet(baseurl + 'login_form.php');
+    AB.checkEmpty(prefs.login, 'Введите логин!');
+    AB.checkEmpty(prefs.password, 'Введите пароль!');
     
-    AnyBalance.trace('Trying to login');
+    var html = AnyBalance.requestGet(baseurl, g_headers);
     
-    var html = AnyBalance.requestPost(baseurl + "confirm.php", {
-      seenform: 'y',
-      AccountID_form: prefs.login,
-      Password_form: prefs.password,
-      UserName: "",
-      TownID: "",
-      Status: "",
-      Street: "",
-      House: "",
-      Nick: "",
-      MobilePhone: "",
-      Bonus: "",
-      TariffID: "",
-      Email: "",
-      TariffName: "",
-      StreetID: "",
-      Ballance: "",
-      Town: "",
-      Floor: "",
-      AccountID: "",
-      Phone: "",
-      Building1: "",
-      Flat: "",
-      Building: "",
-      Overdraft: "",
-      MonthStartActiveBallance: "",
-      MonthStartIncludedInboundTraffic: "",
-      MonthStartBonusBallance: "",
-      MonthInboundTraffic: "",
-      MonthOutboundTraffic: "",
-      MonthCreditInboundTraffic: "",
-      MonthIncludedInboundTraffic: "",
-      MonthEndIncludedInboundTraffic: "",
-      sub_pass: "Войти"
+    if(!html || AnyBalance.getLastStatusCode() > 400) {
+        AnyBalance.trace(html);
+        throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
+    }
+    
+    var form = AB.getElement(html, /<form\s(?=[^>]*?method="post)(?=[^>]*?cms_form)(?=[^>]*?action="https?:\/\/linkintel.ru\/?")/i);
+    
+    if (!form) {
+        AnyBalance.trace(html);
+        throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
+    }
+
+    var params = AB.createFormParams(form, function (params, str, name, value) {
+        if (/user$/i.test(name)) {
+            return prefs.login;
+        }
+        if (/pass(?:word)?$/i.test(name)) {
+            return prefs.password;
+        }
+        return value;
     });
     
-    if(!/<form [^>]*name="myform">/i.test(html)){
-      throw new AnyBalance.Error("Не удалось войти в личный кабинет: " + html.replace(/<[\s\S]*>/g, ''));
+    html = AnyBalance.requestPost(baseurl, params, AB.addHeaders({ Referer: baseurl }));
+    
+    if (!/confirm\.php/i.test(AnyBalance.getLastUrl())) {
+        var error = AB.getElement(html, /<div[^>]*?class="[^"]*?logerror/i, replaceTagsAndSpaces);
+        if (error) {
+            throw new AnyBalance.Error(error, false, /парол|некорректные\s+значения/.test(error));
+        }
+        AnyBalance.trace(html);
+        throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
     }
     
     var result = {success: true};
     
-    getParam(html, result, 'userName', /Уважаемый клиент\s*([^\(]*)/i, [/\s*$/, '']);
-    getParam(html, result, 'account', /лицевой счет:\s*(\S*)/i, [/[.,:]+$/, '']);
+    getParam(html, result, 'userName', /Уважаемый клиент\s*([^\(]*)/i, AB.replaceTagsAndSpaces);
+    getParam(html, result, 'account', /лицевой счет:\s*([^,\)\s]*)/i, AB.replaceTagsAndSpaces);
     
-    AnyBalance.trace('Confirming oferta');
-    html = AnyBalance.requestPost(baseurl + 'index.php');
-    result.__tariff = getParam(html, null, null, /Тариф:(.*?)<br/i, [/<[^>]*>/g, '', /^\s*|\s*$/g, '']);
+    html = AnyBalance.requestPost(baseurl + '/Cabinet/index.php', params, AB.addHeaders({ Referer: baseurl }));
     
-    getParam(html, result, 'balance', /Баланс на данный момент:.*?>([\s\d\.,]*)</, [/^[\s\.,]*|[\s\.,]*$/g, '', /\s+/g, '', /,/g, '.'], parseFloat);
-    getParam(html, result, 'bonus_balance', /Баллов на данный момент:.*?>([\s\d\.,]*)</, [/\s+/g, ''], parseInt);
+    var usercart = AB.getElement(html, /<div[^>]*?user_card/i);
+    
+    if (!usercart) {
+        AnyBalance.trace(html);
+        throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
+    }
+
+    getParam(usercart, result, '__tariff', /Тариф:(.*?)<br/i, AB.replaceTagsAndSpaces);
+    getParam(usercart, result, 'balance', /Баланс на данный момент:.*?>([^<>]+)<\/a/i, AB.replaceTagsAndSpaces, AB.parseBalance);
+    getParam(usercart, result, 'bonus_balance', /Баллов на данный момент:\s*<a[^>]*>([^<]*)/i, AB.replaceTagsAndSpaces, AB.parseBalance);
     
     if(AnyBalance.isAvailable('traffic_in', 'traffic_out', 'traffic_total')){
       AnyBalance.trace('Getting traffic info');
-      html = AnyBalance.requestGet(baseurl + 'traffic.php');
+      html = AnyBalance.requestGet(baseurl + '/Cabinet/traffic.php');
       
       var matches = /Месяц<\/th>.*?<td[^>]*>[^<]*<\/td><td[^>]*>([\d\.\s,]*)<\/td><td[^>]*>([\d\.\s,]*)<\/td>/i.exec(html);
       if(matches){

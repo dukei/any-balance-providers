@@ -4,6 +4,9 @@
  * https://github.com/fb55/css-what
  * 
  * 
+ * TODO
+ * Декодировать автоматически \u041e\u0448\u0438\u0431\u043a\u0430 \u043f\u0440\u0438 \u0440\u0430\u0437\u0431\u043e\u0440\u0435 \u043e\u0442\u0432\u0435\u0442\u0430 \u0441 \u0441\u0430\u0439\u0442\u0430."
+ * 
  * @param {string|number|object|null} any  description
  * @link  https://developers.google.com/closure/compiler/docs/js-for-compiler
  */

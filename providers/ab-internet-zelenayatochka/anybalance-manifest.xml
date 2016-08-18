@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="6">ab-internet-zelenayatochka</id>
+	<id version="7">ab-internet-zelenayatochka</id>
 	<api flags="no_browser"/>
 	<name>Зеленая точка</name>
 	<description html="true"><![CDATA[
@@ -17,10 +17,12 @@
 	</ul>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+        <depends>
+            <module id="library"/>
+        </depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>

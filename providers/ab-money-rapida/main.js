@@ -7,6 +7,15 @@
 Адрес кошелька: https://wallet.rapida.ru/
 */
 
+var g_headers = {
+	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
+	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
+	'Connection': 'keep-alive',
+	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
+};
+
+
 function findValue(html, regexp) {
 	var r = new RegExp(regexp);
 	var matches=r.exec(html);
@@ -20,12 +29,13 @@ function main() {
         success: true
     };
 
-	var html = AnyBalance.requestGet('https://wallet.rapida.ru/');
+    var baseurl = 'https://wallet.rapida.ru/';
+	var html = AnyBalance.requestGet(baseurl);
 	
 	if(html.indexOf('<a href="/exit/" class="exit">')==-1) {
 		var codes = {"TJ":"+ 992","MD":"+ 373","LT":"+ 370","LV":"+ 371","KG":"+ 996","KZ":"+ 77","GE":"+ 995","BY":"+ 375","AM":"+ 374","AZ":"+ 994","RU":"+ 7","TM":"+ 993","UZ":"+ 998","UA":"+ 380","EE":"+ 372"};
 	
-		var csrfmiddlewaretoken=findValue(html, "<input type='hidden' name='csrfmiddlewaretoken' value='([a-zA-Z0-9]+)'");
+		var csrfmiddlewaretoken=findValue(html, "<input[^>]+name='csrfmiddlewaretoken'[^>]*value='([a-zA-Z0-9]+)");
 		if(csrfmiddlewaretoken==null) throw new AnyBalance.Error('Ошибка предварительного разбора 1');
 
 		var prefs = AnyBalance.getPreferences();
@@ -39,17 +49,17 @@ function main() {
 
 		var captchaHash=findValue(html, "<input.+name=\"captcha_0\" value=\"([a-zA-Z0-9]+)\" id=\"id_captcha_0\"");
 		if(captchaHash!=null) {
-			var captchaimg = AnyBalance.requestGet("https://wallet.rapida.ru/captcha/image/"+captchaHash+"/");
+			var captchaimg = AnyBalance.requestGet(baseurl + "captcha/image/"+captchaHash+"/");
 			var captcha = AnyBalance.retrieveCode("Пожалуйста, введите код с картинки", captchaimg);
 			loginRequest.captcha_0=captchaHash;
 			loginRequest.captcha_1=captcha;
 		}
 	
-		html = AnyBalance.requestPost('https://wallet.rapida.ru/auth/', loginRequest, {
-			Referer: "https://wallet.rapida.ru/"
+		html = AnyBalance.requestPost(baseurl + 'auth/', loginRequest, {
+			Referer: baseurl
 		  });
 		  
-		if(html.indexOf('<ul class="errorlist"><li>Неверный код</li></ul>')!=-1) {
+		if(html.indexOf('<ul[^>]+class="errorlist"><li>Неверный код</li></ul>')!=-1) {
 			throw new AnyBalance.Error('Неверно введено число с картинки');
 		}
 	}
@@ -64,10 +74,17 @@ function main() {
 		
 		if(tmp==null) throw new AnyBalance.Error('Ошибка получения значения статуса');
 		result.status=tmp;
-		
-		tmp=findValue(html, "<span id=\"balance\">([0-9.]+)</span>");
-		if(tmp==null) throw new AnyBalance.Error('Ошибка получения значения баланса');
-		result.balance=parseFloat(tmp);
+
+		if(AnyBalance.isAvailable('balance')){
+			html = AnyBalance.requestPost(baseurl + 'ajax/_balance/', 'getbalance', addHeaders({
+				Referer: baseurl + 'dashboard/',
+				'X-CSRFToken': AnyBalance.getCookie('csrftoken'),
+				'X-Requested-With': 'XMLHttpRequest'
+			}));
+
+			var json = getJson(html);
+			getParam(json.balance, result, 'balance', null, null, parseBalance);
+		}
 		
 	} else {
 		throw new AnyBalance.Error('Ошибка авторизации. Проверьте логин и пароль.');

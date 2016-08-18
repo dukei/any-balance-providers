@@ -1,9 +1,14 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-    <id version="7">ab-money-rapida</id>
+	<api flags="no_browser"/>
+    <id version="8">ab-money-rapida</id>
     <name>Кошелек Rapida</name>
     <description>Баланс кошелька Rapida</description>
     <author>BArtWell &lt;web@bartwell.ru&gt;</author>
+    <author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+    <depends>
+    	<module id="library"/>
+    </depends>
     <files>
 		<icon>icon.png</icon>
         <preferences>preferences.xml</preferences>
@@ -20,5 +25,5 @@
     </keywords>
     <type>
         money
-    </type>
+    , wallet</type>
 </provider>

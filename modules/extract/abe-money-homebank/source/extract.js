@@ -60,6 +60,15 @@ function login(prefs) {
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в интернет-банк. Сайт изменен?');
 	}
+	
+	if (/content_wrapper_campaign/i.test(html)) { // Казком вместо главной страницы показал какой-то рекламный оффер
+		var offerId = getParam(html, null, null, /id="offer_id"[^>]*value="(\d+)"/);
+		// Скрываем этот оффер
+		AnyBalance.requestGet(baseurl + 'campaign/check_ajax.htm?r=1&l=after-login&id=' + offerId, g_headers);
+		
+		// Повторно загружаем главную страницу
+		html = AnyBalance.requestGet(baseurl + 'main.htm', g_headers);
+	}
 
     __setLoginSuccessful();
 	

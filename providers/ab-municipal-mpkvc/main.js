@@ -48,7 +48,33 @@ function main(){
 
         if (preg.test(html)) {
             preg = new RegExp('<table[^>]+class="bottom_border"[^>]*>[\\s\\S]*?<td[^>]*>' + categories[i] + '<\/td>(?:[\\s\\S]*?<td[^>]*>){8}([\\s\\S]*?)<\/td>', "i");
-            getParam(html, result, 'balance' + categories[i], preg, replaceTagsAndSpaces, parseBalance);
+            AB.getParam(html, result, 'balance' + categories[i], preg, AB.replaceTagsAndSpaces, parseBalance);
+
+            // Если вывоз ТБО. Не уверена, что для других категорий будет работать (для электроснабжения не работает), поэтому выносим отдельно.
+            if(categories[i] == 15) {
+                //Тариф
+                preg = new RegExp('<table[^>]+class="bottom_border"[^>]*>[\\s\\S]*?<td[^>]*>' + categories[i] + '<\/td>(?:[\\s\\S]*?<td[^>]*>){6}([\\s\\S]*?)<\/td>', "i");
+                AB.getParam(html, result, 'balance' + categories[i] + '_tariff', preg, AB.replaceTagsAndSpaces, AB.parseBalance);
+
+                //Переплата(-),недоплата
+                preg = new RegExp('<table[^>]+class="bottom_border"[^>]*>[\\s\\S]*?<td[^>]*>' + categories[i] + '<\/td>(?:[\\s\\S]*?<td[^>]*>){3}([\\s\\S]*?)<\/td>', "i");
+                AB.getParam(html, result, 'balance' + categories[i] + '_diff', preg, AB.replaceTagsAndSpaces, AB.parseBalance);
+
+                //Начислено
+                preg = new RegExp('<table[^>]+class="bottom_border"[^>]*>[\\s\\S]*?<td[^>]*>' + categories[i] + '<\/td>(?:[\\s\\S]*?<td[^>]*>){7}([\\s\\S]*?)<\/td>', "i");
+                AB.getParam(html, result, 'balance' + categories[i] + '_accrued', preg, AB.replaceTagsAndSpaces, AB.parseBalance);
+            }
+
+            //Если Эл. снабжение
+            if(categories[i] == 03) {
+                //Показания на начало месяца
+                preg = new RegExp('<table[^>]+class="bottom_border"[^>]*>[\\s\\S]*?<td[^>]*>' + categories[i] + '<\/td>(?:[\\s\\S]*?<td[^>]*>){3}([\\s\\S]*?)<\/td>', "i");
+                AB.getParam(html, result, 'balance' + categories[i] + '_counter', preg, AB.replaceTagsAndSpaces, AB.parseBalance);
+
+                //Тариф
+                preg = new RegExp('<table[^>]+class="bottom_border"[^>]*>[\\s\\S]*?<td[^>]*>' + categories[i] + '<\/td>(?:[\\s\\S]*?<td[^>]*>){5}([\\s\\S]*?)<\/td>', "i");
+                AB.getParam(html, result, 'balance' + categories[i] + '_tariff', preg, AB.replaceTagsAndSpaces, AB.parseBalance);
+            }
         }
     }
 

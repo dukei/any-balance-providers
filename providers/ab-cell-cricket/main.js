@@ -24,9 +24,12 @@ function doLogin(login,password)
 {
     var reply = AnyBalance.requestPost(g_login_script, JSON.stringify({username: login, password: password}), g_headers);
     AnyBalance.trace(reply,"Auth Reply");
-    reply = JSON.parse(reply);
     if (reply=="")
         throw new AnyBalance.Error("No Auth Reply");
+	var err = /.*<title>([\S\s]*?)<\/title>.*/i.exec(reply);
+	if (err)
+		throw new AnyBalance.Error(err[1],false,false);
+    reply = JSON.parse(reply);
     if (reply.status!="success")
         throw new AnyBalance.Error("Unable to login, please check your username/password.");    
     AnyBalance.trace(reply.sessionToken,"Session Token");

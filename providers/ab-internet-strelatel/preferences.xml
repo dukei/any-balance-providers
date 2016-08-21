@@ -21,4 +21,12 @@
 		dialogMessage="Введите пароль, используемый для входа в личный кабинет."
 		inputType="textPassword">
 	</EditTextPreference>
+    <ListPreference 
+        key="city" 
+        title="Город"
+        summary="|Выберите ваш город|{@s}"
+        entries="Ангарск|Димитровград|Иркутск|Улан-Удэ|Усолье-Сибирское|Тайшет|Нижнеудинск|Хабаровск|Селенгинск"
+        entryValues="ang|dim|irk|ude|us|tai|nud|kha|slg"
+	    defaultValue="irk">
+    </ListPreference>
 </PreferenceScreen>

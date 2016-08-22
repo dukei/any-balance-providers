@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="3">ab-municipal-itgkh</id>
+	<id version="4">ab-municipal-itgkh</id>
 	<api flags="no_browser"/>
 	<name>Фонд капремонта многоквартирных домов Иркутской области</name>
 	<description html="true"><![CDATA[
@@ -18,7 +18,8 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="to_pay" name="Долг/переплата" units=" р"/>
+		<counter id="out_saldo" name="Исходящее сальдо" units=" р"/>
+		<counter id="in_saldo" name="Входящее сальдо" units=" р"/>
 		<counter id="accrued" name="Начислено к оплате" units=" р"/>
 		<counter id="paid" name="Оплачено" units=" р"/>
 		<counter id="current_period" name="Текущий период" type="text"/>

@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-municipal-atomsbt-tver</id>
+	<id version="3">ab-municipal-atomsbt-tver</id>
 	<api flags="no_browser"/>
 	<name>АТОМЭНЕРГОСБЫТ (Тверь)</name>
 	<description html="true"><![CDATA[
@@ -21,7 +21,9 @@
 		<counter id="accrued" name="Начислено в текущем месяце" units=" p"/>
 		<counter id="paid" name="Оплачено в текущем месяце" units=" p"/>
         <counter id="saldo" name="Исходящее сальдо" units=" p"/>
+        <counter id="in_saldo" name="Входящее сальдо" units=" p"/>
         <counter id="adress" name="Адрес" type="text"/>
+        <counter id="period" name="Текущий период" type="time" format="MM/yyyy"/>
 		<counter id="device_value" name="Показание счётчика"/>
 	</counters>
 	<keywords></keywords>

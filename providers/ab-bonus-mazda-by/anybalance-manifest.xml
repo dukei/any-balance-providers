@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-bonus-mazda-by</id>
+	<api flags="no_browser"/>
+	<name>Атлант-М Холпи MAZDA</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера Атлант-М Холпи MAZDA http://www.mazda.by/ </p>
+	<p>Информация берется из личного кабинета http://www.mazda.by/lk/ </p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Сумма бонусов" units=" Б"/>
+		<counter id="car" name="Автомобиль" type="text"/>
+		<counter id="lb_document" name="Номер документа последнего бонуса" type="text"/>
+		<counter id="lb_type" name="Вид бонуса" type="text"/>
+		<counter id="lb_sum" name="Сумма последнего бонуса" units=" Б"/>
+		<counter id="lb_date" name="Дата последнего бонуса" type="time" format="dd/MM/yyyy"/>
+	</counters>
+	<keywords>мазда</keywords>
+	<type>bonus</type>
+	<country>by</country>
+</provider>

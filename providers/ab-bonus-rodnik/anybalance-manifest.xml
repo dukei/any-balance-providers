@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-bonus-rodnik</id>
+	<api flags="no_browser"/>
+	<name>АГЗС «Род-Ник»</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера АГЗС «Род-Ник» http://rodnik.ua/ </p>
+	<p>Информация берется из личного кабинета http://my.rodnik.ua/</p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="spent_now" name="Потрачено за этот месяц" units=" грн"/>
+		<counter id="spent_prev" name="Потрачено за прошлый месяц" units=" грн"/>
+		<counter id="discount_now" name="Скидка в этом месяце" units=" грн/ед"/>
+		<counter id="discount_prev" name="Скидка в прошлом месяце" units=" грн/ед"/>
+		<counter id="discount_next" name="Предполагаемая скидка в следующем месяце" units=" грн/ед"/>
+		<counter id="used_prev" name="Использовано в прошлом месяце" units=" л"/>
+		<counter id="used_now" name="Использовано в этом месяце" units=" л"/>
+		<counter id="used_total" name="Использовано за всё время" units=" л"/>
+		<counter id="need_use_now" name="Дозаправить до текущего порога скидки" units=" л"/>
+		<counter id="need_use_next" name="Дозаправить до следующего порога скидки" units=" л"/>
+		<counter id="accumulated" name="Накоплено литров" units=" л"/>
+		<counter id="left_to_accumulate" name="Осталось накопить" units=" л"/>
+		<counter id="limit" name="Порог накопления" units=" л"/>
+		<counter id="name" name="Номенклатура" type="text"/>
+		<counter id="category" name="Категория авто" type="text"/>
+	</counters>
+	<keywords>заправки, род-ник, rod-nik</keywords>
+	<type>bonus</type>
+	<country>ru</country>
+</provider>

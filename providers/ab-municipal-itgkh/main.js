@@ -3,10 +3,10 @@
 */
 
 var g_headers = {
-	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-	'Accept-Encoding': 'gzip, deflate, sdch',
-	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
-	'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/46.0.2490.86 Safari/537.36',
+	'Accept': 			'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+	'Accept-Encoding': 	'gzip, deflate, sdch',
+	'Accept-Language': 	'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
+	'User-Agent': 		'Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.0.2743.116 Safari/537.36',
 };
 
 function main(){
@@ -57,7 +57,7 @@ function main(){
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
 
-	html = AnyBalance.requestGet(baseurl + 'account/');
+	html = AnyBalance.requestGet(baseurl + 'account/', g_headers);
 
 	if(!/logout/i.test(html)) {
 		AnyBalance.trace(html);
@@ -89,9 +89,10 @@ function main(){
 
 	var items = parseTable(table[0]);
 	result['current_period'] = items[0];
-	result['accrued'] = parseBalance(items[1]);
+	result['in_saldo'] = parseBalance(items[1]);
+	result['accrued'] = parseBalance(items[2]);
 	result['paid'] = parseBalance(items[4]);
-	result['to_pay'] = parseBalance(items[5]);
+	result['out_saldo'] = parseBalance(items[5]);
 
 	AnyBalance.setResult(result);
 }

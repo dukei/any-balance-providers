@@ -54,7 +54,6 @@ function login(prefs) {
 			Origin: baseurl
 		}));
 
-		__setLoginSuccessful();
 
 	}else{
 		AnyBalance.trace('Уже залогинены, используем существующую сессию')
@@ -75,14 +74,16 @@ function login(prefs) {
 	}
 
 	if (!/sExit/i.test(html)) {
-		var error = getParam(html, null, null, /<span[^>]+id="lerrortext"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
-		if (error)
-			throw new AnyBalance.Error(error, null, /(Пароль неверен|не зарегистрирован)/i.test(error));
-		
+		var error = getParam(html, null, null, [/<span[^>]+id="lerrortext"[^>]*>([\s\S]*?)<\/span>/i, /<div[^>]+panel2[^>]*>[\s\S]*?<span[^>]+lError[^>]*>([\s\S]*?)<\/span>/i], replaceTagsAndSpaces);
+		if (error) {
+			throw new AnyBalance.Error(error, null, /(Пароль неверен|не зарегистрирован|Срок действия пароля абонента истек)/i.test(error));
+		}
+
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в интернет-банк. Сайт изменен?');
 	}
 
+	__setLoginSuccessful();
 
 	return html;
 }

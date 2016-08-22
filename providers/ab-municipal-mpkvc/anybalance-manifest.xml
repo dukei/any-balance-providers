@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id version="4">ab-municipal-mpkvc</id>
+	<id version="5">ab-municipal-mpkvc</id>
 	<name>КВЦ (Рязань)</name>
 	<description html="true"><![CDATA[
 	<p>Получается информацию о начислениях для Кустового Вычислительного Центра города Рязани (http://мпквц.рф/)</p>
@@ -25,6 +25,8 @@
 		<counter id="balance34" name="ВзнКапРем" units=" р"/>
 		<counter id="balance02" name="Газоснабжение" units=" р"/>
 		<counter id="balance03" name="Электроснабжение" units=" р"/>
+		<counter id="balance03_tariff" name="Электроснабжение (тариф)" units=" р"/>
+		<counter id="balance03_counter" name="Электроснабжение (показания на начало месяца)"/>
 		<counter id="balance06" name="Отопление" units=" р"/>
 		<counter id="balance07" name="ГВС" units=" р"/>
 		<counter id="balance05" name="ХВС" units=" р"/>
@@ -34,6 +36,9 @@
 		<counter id="balance08" name="Домофон" units=" р"/>
 		<counter id="balance12" name="Кабельное ТВ" units=" р"/>
 		<counter id="balance15" name="Вывоз ТБО" units=" р"/>
+		<counter id="balance15_tariff" name="Вывоз ТБО (тариф)" units=" р"/>
+		<counter id="balance15_diff" name="Вывоз ТБО (переплата/недоплата)" units=" р"/>
+		<counter id="balance15_accrued" name="Вывоз ТБО (начислено)" units=" р"/>
 	</counters>
 	<keywords>мпквц Кустового Вычислительного Центра Рязань</keywords>
 	<type>municipal</type>

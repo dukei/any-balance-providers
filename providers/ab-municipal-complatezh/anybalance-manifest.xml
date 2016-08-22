@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-municipal-complatezh</id>
+	<api flags="no_browser"/>
+	<name>Городские коммунальные платежи (Днепропетровск)</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера Городские коммунальные платежи (Днепропетровск) http://complatezh.info/</p>
+	<p>Информация берется из личного кабинета http://complatezh.info/eao/show.php</p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="gorsety" name="ГОРЭЛЕКТРОСЕТИ ДНЕПРОПЕТРОВСКА" units=" грн"/>
+		<counter id="jilserv" name="КП 'Жилсервис-1'" units=" грн"/>
+		<counter id="vodokanal" name="Водоканал" units=" грн"/>
+		<counter id="teploenergo" name="КП 'ТЕПЛОЭНЕРГО'" units=" грн"/>
+		<counter id="komuttrans" name="ТДВ 'Дніпрокомунтранс'" units=" грн"/>
+		<counter id="liftmontage" name="ООО СП 'ЛИФТРЕММОНТАЖ ДНЕПР'" units=" грн"/>
+	</counters>
+	<keywords></keywords>
+	<type>municipal</type>
+	<country>ua</country>
+</provider>

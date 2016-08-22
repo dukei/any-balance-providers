@@ -1,39 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
-  <api flags="no_browser" />
-  <id version="2">ab-municipal-chelyabenergosbyt</id>
-  <name>Челябэнергосбыт</name>
-  <description>
+    <api flags="no_browser" />
+    <id version="3">ab-municipal-chelyabenergosbyt</id>
+    <name>Челябэнергосбыт</name>
+    <description>
     Получает информацию в системе Челябэнергосбыт из личного кабинета https://cabinet.esbt.ru/Present-web/appLaunch.action
 	</description>
-  <author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>main.js</js>
-    <js>library.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-	<counter id="balance" name="Баланс" units="р"/>
-	<counter id="agreement" name="Договор" type="text"/>
-	<counter id="lastpaydate" name="Дата последнего платежа" type="text"/>
-	<counter id="lastpaysum" name="Сумма последнего платежа"/>
-	<counter id="lastcounterdate" name="Дата показаний счетчика" type="text"/>	
-	<counter id="lastcounterday" name="Показания ДЕНЬ"/>
-	<counter id="lastcounternight" name="Показания НОЧЬ"/>
-	<counter id="lastcounterpik" name="Показания ПИК"/>
-	<counter id="lastcounterstatus" name="Статус показаний счетчика" type="text"/>
-	<counter id="fio" name="ФИО" type="text"/>
-  </counters>
-  <keywords>
-    энерго, Челябинск, электричество
-  </keywords>
-  <type>
-    municipal
-  </type>
-  <country>
-    ru
-  </country>
+    <author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+    <depends>
+        <module id="library"/>
+    </depends>
+    <files>
+        <icon>icon.png</icon>
+        <preferences>preferences.xml</preferences>
+        <js>main.js</js>
+        <history>history.xml</history>
+    </files>
+    <counters>
+	    <counter id="penya" name="Пеня" units="р"/>
+	    <counter id="ODN" name="Потребление ОДН"/>
+	    <counter id="byt" name="Бытовое потребление"/>
+	    <counter id="agreement" name="Договор" type="text"/>
+	    <counter id="lastpaydate" name="Дата последнего платежа" type="time" format="dd/MM/yyyy"/>
+	    <counter id="lastpaysum" name="Сумма последнего платежа"/>
+	    <counter id="lastcounterdate" name="Дата показаний счетчика" type="time" format="dd/MM/yyyy"/>
+	    <counter id="lastcounterday" name="Показания ДЕНЬ"/>
+	    <counter id="lastcounternight" name="Показания НОЧЬ"/>
+	    <counter id="lastcounterpik" name="Показания ПИК"/>
+	    <counter id="lastcounterstatus" name="Статус показаний счетчика" type="text"/>
+	    <counter id="fio" name="ФИО" type="text"/>
+    </counters>
+    <keywords>энерго, Челябинск, электричество</keywords>
+    <type>municipal</type>
+    <country>ru</country>
 </provider>

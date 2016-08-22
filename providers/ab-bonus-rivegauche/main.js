@@ -21,7 +21,7 @@ function main(){
 	
 	var html = AnyBalance.requestGet(baseurl, g_headers);
 	// Ищем токен
-	var form_build_id = getParam(html, null, null, /form_build_id"[^>]*id="([^"]*)/i);
+	var form_build_id = AB.getParam(html, null, null, /form_build_id"[^>]*id="([^"]*)/i);
 	if(!form_build_id)
 		throw new AnyBalance.Error('Не удалось найти форму для запроса. Сайт изменен?');
 	
@@ -31,23 +31,28 @@ function main(){
 		'op':'',
 		'form_build_id':form_build_id,
 		'form_id':"savings_check_form"
-	}, addHeaders({Referer: baseurl}));
+	}, addHeaders({
+		Referer: baseurl
+	}));
 	
 	if (!/статус карты/i.test(html)) {
-		var error = getParam(html, null, null, /"carderrors"[^>]*>([\s\S]*?)<\/ul/i, replaceTagsAndSpaces, html_entity_decode);
-		if (error)
-			throw new AnyBalance.Error(error);
+		var error = AB.getParam(html, null, null, [/"carderrors"[^>]*>([\s\S]*?)<\/ul/i, /<div[^>]+class="text"[^>]*>([^<]*)/i], AB.replaceTagsAndSpaces);
+		if (error) {
+			throw new AnyBalance.Error(error, null, /Неверный номер карты/i.test(error));
+		}
+
+		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
 
 	var result = {success: true};
 
-	getParam(html, result, '__tariff', /На[^<]*карте\s*№([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'db_balance', /class="savingsAmmount">([^<]*)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'db_date', [/последняя операция по карте (.*)<br>/m, /дата последней[^<]*по карте([^<]*)/i], replaceTagsAndSpaces, parseDate);
-	getParam(html, result, 'db_status', /"card-status"[^>]*>\s*статус карты([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
-	
-	getParam(html, result, 'db_bonus', /бонус на(?:[^>]*>)?День Рождения(?:[^>]*>){4}\s*<div[^>]*savingsAmmount[^>]*>([^<]+)<\//i, replaceTagsAndSpaces, parseBalance);
+	AB.getParam(html, result, '__tariff', /На[^<]*карте\s*№([^<]*)/i, AB.replaceTagsAndSpaces);
+	AB.getParam(html, result, 'db_balance', /class="savingsAmmount">([^<]*)/i, AB.replaceTagsAndSpaces, AB.parseBalance);
+	AB.getParam(html, result, 'db_date', [/последняя операция по карте (.*)<br>/m, /дата последней[^<]*по карте([^<]*)/i], AB.replaceTagsAndSpaces, AB.parseDate);
+	AB.getParam(html, result, 'db_status', /"card-status"[^>]*>\s*статус карты([^<]*)/i, AB.replaceTagsAndSpaces);
+
+	AB.getParam(html, result, 'db_bonus', /бонус на(?:[^>]*>)?День Рождения(?:[^>]*>){4}\s*<div[^>]*savingsAmmount[^>]*>([^<]+)<\//i, AB.replaceTagsAndSpaces, AB.parseBalance);
 
 	//Обычная карта
 	/*if (prefs.cardtype == 0){	

@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="4" date="2016-08-19">
+	Скрытие рекламных предложений банка
+	</change>
 	<change version="3" date="2016-06-05">
 	Исправление проблем со связью по HTTPS
 	</change>

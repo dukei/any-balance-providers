@@ -73,7 +73,9 @@ function main() {
 
   if(isAvailable('saldo')) {
     html = AnyBalance.requestGet(baseurl + 'cabinet_tver/cabinet.php?nachisl', g_headers);
-    getParam(html, result, 'saldo', /Начисления и платежи(?:[\s\S]*?<tr[^>]*>){15}(?:[\s\S]*?<td[^>]*>){5}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'saldo', /Начисления и платежи(?:[\s\S]*?<tr[^>]*>){14}(?:[\s\S]*?<td[^>]*>){5}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'in_saldo', /Начисления и платежи(?:[\s\S]*?<tr[^>]*>){14}(?:[\s\S]*?<td[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'period', /Начисления и платежи(?:[\s\S]*?<tr[^>]*>){14}(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
   }
 
   if(isAvailable('device_value')) {

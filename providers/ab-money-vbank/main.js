@@ -48,9 +48,12 @@ function main(){
 	}
     try{
         html = AnyBalance.requestGet(baseurl + 'client/contracts');
-        var reCard = new RegExp('<a[^>]+href=[\'"](/client/?[^\'"]*)[\'"][^>]*>\\s*\\d{4}\\s*XXXX\\s*XXXX\\s*' + (prefs.num ? prefs.num : '\\d{4}'), 'i');
-        var href = getParam(html, null, null, reCard, null, html_entity_decode);
-        
+     //   AnyBalance.trace(html)
+		var reCard = new RegExp('<a\\shref="(\/client\/contracts\/detail\/.+)">.+' + (prefs.num ? prefs.num : '\\d{4}'), 'i');
+     //   AnyBalance.trace(reCard)
+		
+		var href = getParam(html, null, null, reCard, null, html_entity_decode);
+     //   AnyBalance.trace(href)
         if(!href){
             if(prefs.num)
                 throw new AnyBalance.Error('Не удалось найти карты с последними цифрами ' + prefs.num);
@@ -69,6 +72,14 @@ function main(){
         getParam(html, result, 'till', /Срок действия:(?:[\s\S]*?<[^>]*td[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces, parseDate);
         getParam(html, result, 'status', /Статус:\s*(?:[\s\S]*?<[^>]*td[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces);
         getParam(html, result, 'balance', /Доступные средства:(?:[\s\S]*?<[^>]*td[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+		// Добавление счетчиков по кредитам
+		getParam(html, result, 'creditname', /Название кредита:(?:[\s\S]*?<[^>]*td[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces);
+		getParam(html, result, 'creditnumber', /Номер договора:(?:[\s\S]*?<[^>]*td[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces);
+		getParam(html, result, 'percent', /Процентная ставка:(?:[\s\S]*?<[^>]*td[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces);
+		getParam(html, result, 'creditdate', /Дата ближайшего платежа:(?:[\s\S]*?<[^>]*td[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces, parseDate);
+		getParam(html, result, 'creditpay', /Сумма ближайшего платежа(?:[\s\S]*?<[^>]*td[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+		getParam(html, result, 'creditdebt', /Текущая задолженность(?:[\s\S]*?<[^>]*td[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+		getParam(html, result, 'creditfine', /Сумма просроченной задолженности(?:[\s\S]*?<[^>]*td[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
     }finally{
         AnyBalance.requestGet(baseurl + 'client/logoff');
         AnyBalance.trace("Вышли из системы");

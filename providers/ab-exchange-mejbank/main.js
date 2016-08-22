@@ -3,11 +3,11 @@
 */
 
 var g_headers = {
-	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
-	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
-	'Connection': 'keep-alive',
-	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36'
+	'Accept':           'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+	'Accept-Charset':   'windows-1251,utf-8;q=0.7,*;q=0.3',
+	'Accept-Language':  'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
+	'Connection':       'keep-alive',
+	'User-Agent':       'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36'
 };
 
 function getIfAvailable(counters, url){
@@ -24,8 +24,9 @@ function getIfAvailable(counters, url){
 
 function getCRFromHeader(result, sellCounter, purchaseCounter, url){
     var html;
+
     if (html = getIfAvailable([sellCounter, purchaseCounter], url)) {
-        AB.getParam(html, result, sellCounter, /Средняя покупка([^>]*>){2}/i, AB.replaceTagsAndSpaces, AB.parseBalance);
+        AB.getParam(html, result, sellCounter,     /Средняя покупка([^>]*>){2}/i, AB.replaceTagsAndSpaces, AB.parseBalance);
         AB.getParam(html, result, purchaseCounter, /Средняя продажа([^>]*>){2}/i, AB.replaceTagsAndSpaces, AB.parseBalance);
     }
 }
@@ -39,29 +40,48 @@ function main() {
         html;
 
 	AnyBalance.setDefaultCharset('utf-8');
-	
-    if (course == '1') {
+	if(course == '0') {
+        // Курсы от Межбанка
+        html = AnyBalance.requestGet(baseurl + 'currency/mb/', g_headers);
+        AnyBalance.trace("Парсим курсы валют от Межбанка.");
+
+        AB.getParam(html, result, 'sell_usd',     /Продажа[^>]*>(?:[\s\S]*?<td[^>]*>){1}([^<]*)/i, AB.replaceTagsAndSpaces, AB.parseBalance);
+        AB.getParam(html, result, 'purchase_usd', /Покупка[^>]*>(?:[\s\S]*?<td[^>]*>){1}([^<]*)/i, AB.replaceTagsAndSpaces, AB.parseBalance);
+
+        AB.getParam(html, result, 'sell_eur',     /Продажа[^>]*>(?:[\s\S]*?<td[^>]*>){2}([^<]*)/i, AB.replaceTagsAndSpaces, AB.parseBalance);
+        AB.getParam(html, result, 'purchase_eur', /Покупка[^>]*>(?:[\s\S]*?<td[^>]*>){2}([^<]*)/i, AB.replaceTagsAndSpaces, AB.parseBalance);
+
+        AB.getParam(html, result, 'sell_rub',     /Продажа[^>]*>(?:[\s\S]*?<td[^>]*>){3}([^<]*)/i, AB.replaceTagsAndSpaces, AB.parseBalance);
+        AB.getParam(html, result, 'purchase_rub', /Покупка[^>]*>(?:[\s\S]*?<td[^>]*>){3}([^<]*)/i, AB.replaceTagsAndSpaces, AB.parseBalance);
+
+    } else if (course == '1') {
         // Курсы от банков
         html = AnyBalance.requestGet(baseurl + 'currency/banks/', g_headers);
+        AnyBalance.trace("Парсим курсы валют от банков.");
 
-        AB.getParam(html, result, 'sell_usd', /<a href="\/currency\/banks\/usd\/">ДОЛЛАР<\/a>[^]*?<td[^>]*>([^<]+)/i, AB.replaceTagsAndSpaces, AB.parseBalance);
-        AB.getParam(html, result, 'purchase_usd', /<a href="\/currency\/banks\/usd\/">ДОЛЛАР<\/a>[^]*?<td[^>]*>[^]*?([\d.\s]+)<\/td>/i, AB.replaceTagsAndSpaces, AB.parseBalance);
-        AB.getParam(html, result, 'sell_eur', /<a href="\/currency\/banks\/eur\/">ЕВРО<\/a>[^]*?<td[^>]*>([^<]+)/i, AB.replaceTagsAndSpaces, AB.parseBalance);
-        AB.getParam(html, result, 'purchase_eur', /<a href="\/currency\/banks\/eur\/">ЕВРО<\/a>[^]*?<td[^>]*>[^]*?([\d.\s]+)<\/td>/i, AB.replaceTagsAndSpaces, AB.parseBalance);
-        AB.getParam(html, result, 'sell_rub', /<a href="\/currency\/banks\/rub\/">РУБЛЬ<\/a>[^]*?<td[^>]*>([^<]+)/i, AB.replaceTagsAndSpaces, AB.parseBalance);
-        AB.getParam(html, result, 'purchase_rub', /<a href="\/currency\/banks\/rub\/">РУБЛЬ<\/a>[^]*?<td[^>]*>[^]*?([\d.\s]+)<\/td>/i, AB.replaceTagsAndSpaces, AB.parseBalance);
+
+        AB.getParam(html, result, 'sell_usd',     /<a href="\/currency\/banks\/usd\/">ДОЛЛАР<\/a>[^]*?<td[^>]*>[^]*?([\d.\s]+)<\/td>/i,   AB.replaceTagsAndSpaces, AB.parseBalance);
+        AB.getParam(html, result, 'purchase_usd', /<a href="\/currency\/banks\/usd\/">ДОЛЛАР<\/a>[^]*?<td[^>]*>([^<]+)/i,                 AB.replaceTagsAndSpaces, AB.parseBalance);
+
+        AB.getParam(html, result, 'sell_eur',     /<a href="\/currency\/banks\/eur\/">ЕВРО<\/a>[^]*?<td[^>]*>[^]*?([\d.\s]+)<\/td>/i,     AB.replaceTagsAndSpaces, AB.parseBalance);
+        AB.getParam(html, result, 'purchase_eur', /<a href="\/currency\/banks\/eur\/">ЕВРО<\/a>[^]*?<td[^>]*>([^<]+)/i,                   AB.replaceTagsAndSpaces, AB.parseBalance);
+
+        AB.getParam(html, result, 'sell_rub',     /<a href="\/currency\/banks\/rub\/">РУБЛЬ<\/a>[^]*?<td[^>]*>[^]*?([\d.\s]+)<\/td>/i,    AB.replaceTagsAndSpaces, AB.parseBalance);
+        AB.getParam(html, result, 'purchase_rub', /<a href="\/currency\/banks\/rub\/">РУБЛЬ<\/a>[^]*?<td[^>]*>([^<]+)/i,                  AB.replaceTagsAndSpaces, AB.parseBalance);
+
     } else if (course == '2') {
         // Карточные курсы
         html = AnyBalance.requestGet(baseurl + 'currency/cards/', g_headers);
+        AnyBalance.trace("Парсим карточные курсы.");
 
-        AB.getParam(html, result, 'purchase_usd', /\/cards\/usd[^>]*>Доллар([^>]+>){4}/i, AB.replaceTagsAndSpaces, AB.parseBalance);
-        AB.getParam(html, result, 'sell_usd', /\/cards\/usd[^>]*>Доллар([^>]+>){10}/i, AB.replaceTagsAndSpaces, AB.parseBalance);
+        AB.getParam(html, result, 'sell_usd',     /\/cards\/usd[^>]*>Доллар([^>]+>){10}/i, AB.replaceTagsAndSpaces, AB.parseBalance);
+        AB.getParam(html, result, 'purchase_usd', /\/cards\/usd[^>]*>Доллар([^>]+>){4}/i,  AB.replaceTagsAndSpaces, AB.parseBalance);
 
-        AB.getParam(html, result, 'purchase_eur', /\/cards\/eur[^>]*>([^>]+>){4}/i, AB.replaceTagsAndSpaces, AB.parseBalance);
-        AB.getParam(html, result, 'sell_eur', /\/cards\/eur[^>]*>([^>]+>){10}/i, AB.replaceTagsAndSpaces, AB.parseBalance);
+        AB.getParam(html, result, 'sell_eur',     /\/cards\/eur[^>]*>([^>]+>){10}/i,       AB.replaceTagsAndSpaces, AB.parseBalance);
+        AB.getParam(html, result, 'purchase_eur', /\/cards\/eur[^>]*>([^>]+>){4}/i,        AB.replaceTagsAndSpaces, AB.parseBalance);
 
-        AB.getParam(html, result, 'purchase_rub', /\/cards\/rub[^>]*>([^>]+>){4}/i, AB.replaceTagsAndSpaces, AB.parseBalance);
-        AB.getParam(html, result, 'sell_rub', /\/cards\/rub[^>]*>([^>]+>){10}/i, AB.replaceTagsAndSpaces, AB.parseBalance);
+        AB.getParam(html, result, 'sell_rub',     /\/cards\/rub[^>]*>([^>]+>){10}/i,       AB.replaceTagsAndSpaces, AB.parseBalance);
+        AB.getParam(html, result, 'purchase_rub', /\/cards\/rub[^>]*>([^>]+>){4}/i,        AB.replaceTagsAndSpaces, AB.parseBalance);
     } else if (course == '3') {
         // Индикативные курсы НБУ
         if (html = getIfAvailable(['course_USD', 'course_EUR', 'course_RUB'], baseurl + 'currency/nbu/')) {

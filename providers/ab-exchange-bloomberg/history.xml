@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="8" date="2016-08-19">
+	- Support site changes.
+	</change>
 	<change version="7" date="2016-03-14">
 	- Minor changes, improved stability.
 	</change>

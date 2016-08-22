@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-telephony-sevstar</id>
+	<api flags="no_browser"/>
+	<name>СевСтар</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера СевСтар http://sevstar.net/ </p>
+	<p>Информация берется из личного кабинета https://stat.sevstar.net/ </p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="block_sum" name="Сумма блокировки" units=" р"/>
+		<counter id="auto_block" name="Автоблокировка" type="text"/>
+		<counter id="uniq_num" name="Уникальный номер" type="text"/>
+		<counter id="pay_day" name="Расчётный день" type="text"/>
+		<counter id="status_internet" name="Статус интерета" type="text"/>
+		<counter id="status_network" name="Статус сети" type="text"/>
+		<counter id="date_start" name="Дата подключения" type="time" format="dd/MM/yyyy"/>
+	</counters>
+	<keywords></keywords>
+	<type>telephony</type>
+	<country>ru</country>
+</provider>

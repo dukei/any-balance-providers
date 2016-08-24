@@ -346,19 +346,19 @@ var AB = (function (global_scope) {
     function parseDateWord(str, silent) {
         if(!silent)
             AnyBalance.trace('Trying to parse date from ' + str);
-        var dateString = replaceAll(str, [replaceTagsAndSpaces, replaceHtmlEntities,
-            /\D*(?:январ(?:я|ь)|янв|january|jan)\D*/i, '.01.',
-            /\D*(?:феврал(?:я|ь)|фев|febrary|feb)\D*/i, '.02.',
-            /\D*(?:марта|март|мар|march|mar)\D*/i, '.03.',
-            /\D*(?:апрел(?:я|ь)|апр|april|apr)\D*/i, '.04.',
-            /\D*(?:ма(?:я|й)|may)\D*/i, '.05.',
-            /\D*(?:июн(?:я|ь)|июн|june|jun)\D*/i, '.06.',
-            /\D*(?:июл(?:я|ь)|июл|july|jul)\D*/i, '.07.',
-            /\D*(?:августа|август|авг|august|aug)\D*/i, '.08.',
-            /\D*(?:сентябр(?:я|ь)|сен|september|sep)\D*/i, '.09.',
-            /\D*(?:октябр(?:я|ь)|окт|october|oct)\D*/i, '.10.',
-            /\D*(?:ноябр(?:я|ь)|ноя|november|nov)\D*/i, '.11.',
-            /\D*(?:декабр(?:я|ь)|dec|december|dec)\D*/i, '.12.', /\s/g, '']);
+        var dateString = replaceAll(str, [replaceTagsAndSpaces,
+            /\D*(?:январ(?:я|ь)|янв|january|jan|Січ(?:ень)?)\D*/i, '.01.',
+            /\D*(?:феврал(?:я|ь)|фев|febrary|feb|Лют(?:ий)?)\D*/i, '.02.',
+            /\D*(?:марта|март|мар|march|mar|Бер(?:езень)?)\D*/i, '.03.',
+            /\D*(?:апрел(?:я|ь)|апр|april|apr|Кві(?:тень)?)\D*/i, '.04.',
+            /\D*(?:ма(?:я|й)|may|Тра(?:вень)?)\D*/i, '.05.',
+            /\D*(?:июн(?:я|ь)|июн|june|jun|Чер(?:вень)?)\D*/i, '.06.',
+            /\D*(?:июл(?:я|ь)|июл|july|jul|Лип(?:ень)?)\D*/i, '.07.',
+            /\D*(?:августа|август|авг|august|aug|Сер(?:пень)?)\D*/i, '.08.',
+            /\D*(?:сентябр(?:я|ь)|сен|september|sep|Вер(?:есень)?)\D*/i, '.09.',
+            /\D*(?:октябр(?:я|ь)|окт|october|oct|Жов(?:тень)?)\D*/i, '.10.',
+            /\D*(?:ноябр(?:я|ь)|ноя|november|nov|Лис(?:топад)?)\D*/i, '.11.',
+            /\D*(?:декабр(?:я|ь)|dec|december|dec|Гру(?:день)?)\D*/i, '.12.', /\s+/g, '']);
         // Если года нет - его надо подставить
         if (endsWith(dateString, '.')) {
             dateString += new Date().getFullYear();

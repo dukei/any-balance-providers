@@ -72,7 +72,7 @@ function main() {
 		if(!href)
 			AnyBalance.trace("Can't find page with information. Site changed?");
 
-		html = AnyBalance.requestGet(baseurlMobile+'home'+href, g_headers);
+		html = AnyBalance.requestGet(joinUrl(baseurlMobile, href), g_headers);
 		getParam(html, result, 'balance', /col left-col[^>]*>(?:[\s\S]*?[^>]*>){5}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
 		getParam(html, result, 'pakietZlotowek', /Pakiet Złotówek(?:[\s\S]*?[^>]*>){3}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
 		getParam(html, result, 'min_all', /Minuty do wszystkich(?:[\s\S]*?[^>]*>){3}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseMinutes);

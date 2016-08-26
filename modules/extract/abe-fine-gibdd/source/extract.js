@@ -7,7 +7,7 @@ var g_headers = {
 	'Accept-Language':'ru,en;q=0.8',
 	'Connection':'keep-alive',
 	'Origin':'http://www.gibdd.ru',
-	'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/31.0.1650.57 Safari/537.36'
+	'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.0.2743.116 Safari/537.36'
 };
 
 function getGibddJson(html){
@@ -61,7 +61,7 @@ function requestFines(prefs) {
 	
 	html = AnyBalance.requestPost(baseurl + 'proxy/check/fines', params2, addHeaders({
 		'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
-		'Referer': baseurl + 'check/fines/',
+		'Referer': baseurlUser + 'check/fines/',
 		'Connection': 'keep-alive'
 	}));
 	

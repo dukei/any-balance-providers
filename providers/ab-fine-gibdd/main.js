@@ -29,8 +29,13 @@ function main() {
 	
 	adapter.requestFines = adapter.envelope(requestFines);
 	adapter.parseFines = adapter.envelope(parseFines);
-	var json = adapter.requestFines(prefs);
-	adapter.parseFines(result, json);
+	try{
+		var json = adapter.requestFines(prefs);
+		adapter.parseFines(result, json);
+	}catch(e){
+		if(/access denied/i.test(e.message))
+			throw new AnyBalance.Error('Похоже, ваш текущий IP заблокирован на www.gibdd.ru/check/fines. Попробуйте сменить тип соединения (Wifi/Мобильный интернет) или подключиться к другой WiFi сети, а затем обновите данные ещё раз. Можете также воспользоваться другим провайдером штрафов.');
+	}
 	
 	// Теперь нужна сводка
 	if(isAvailable('all')) {

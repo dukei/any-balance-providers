@@ -58,7 +58,7 @@ function main() {
         getParam(html, result, 'last_payment', /Последний платёж[\s\S]*?payments">([\s\S]*?)<\/a/i, replaceTagsAndSpaces, parseBalance);
         getParam(html, result, 'name', /class="value user-name">\s*<b>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces);
         getParam(html, result, 'status', /<th[^>]*>\s*Статус[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
-    } else {
+    } else if(prefs.type == 'clubby'){
     	checkEmpty(/^\d{18,19}$/.test(prefs.login), 'Номер карты введен неверно!');
 
 		if(prefs.type == 'clubby')
@@ -87,7 +87,51 @@ function main() {
 		
         //getParam(html, result, '__tariff', /<li><span>Ваш статус в Программе:<\/span>([\s\S]*?)<\/li>/i, replaceTagsAndSpaces, null);
         //getParam(html, result, 'region', /Регион Программы:([\s\S]*?)<\/li>/i, replaceTagsAndSpaces);
+    }else{
+    	mainPhysicNew(result);
     }
 	
     AnyBalance.setResult(result);
+}
+
+function callApi(verb, params){
+    var baseurl = 'https://customer.licard.ru/';
+
+    var html = AnyBalance.requestPost(baseurl + 'api/' + verb, JSON.stringify(params), addHeaders({
+    	Accept: 'application/vnd.licard-b2c.v1+json',
+    	'Content-Type': 'application/json;charset=UTF-8',
+    	Referer: baseurl
+    }));
+    var json = getJson(html);
+   	var errors = [];
+    if(json.status_code && json.status_code >= 400){
+    	if(json.errors) for(var e in json.errors){
+    		errors = errors.concat(json.errors[e]);
+    	}
+
+    	if(!errors.length && json.message)
+    		errors.push(json.message)
+
+    	var error = errors.join(' ');
+    	throw new AnyBalance.Error(error, null, /Логин|не найден/i.test(error));
+    }
+    	
+    return json;
+}
+
+function mainPhysicNew(result){
+    var prefs = AnyBalance.getPreferences();
+
+    var json = callApi('user/login', {"login":prefs.login,"password":prefs.password});
+
+    var aggregate_join_space = create_aggregate_join(' ');
+    
+    getParam(json.user.cardbalance, result, 'balance', null, null, parseBalance);
+    getParam(json.user.cardnumber, result, 'cardnum');
+	
+	sumParam(json.user.lastname, result, 'name', null, null, null, aggregate_join_space);
+	sumParam(json.user.firstname, result, 'name', null, null, null, aggregate_join_space);
+	sumParam(json.user.middlename, result, 'name', null, null, null, aggregate_join_space);
+
+	getParam(json.user.mobilephone, result, 'phonenumber');
 }

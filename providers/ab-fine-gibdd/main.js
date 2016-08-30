@@ -33,8 +33,11 @@ function main() {
 		var json = adapter.requestFines(prefs);
 		adapter.parseFines(result, json);
 	}catch(e){
-		if(/access denied/i.test(e.message))
-			throw new AnyBalance.Error('Похоже, ваш текущий IP заблокирован на www.gibdd.ru/check/fines. Попробуйте сменить тип соединения (Wifi/Мобильный интернет) или подключиться к другой WiFi сети, а затем обновите данные ещё раз. Можете также воспользоваться другим провайдером штрафов.');
+		if(/access denied/i.test(e.message)){
+			var html = AnyBalance.requestGet('http://myip.ru/index_small.php', g_headers);
+			var ip = getParam(html, null, null, /Ваш IP-адрес[\S\s]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+			throw new AnyBalance.Error('Похоже, ваш текущий IP ' + ip + ' заблокирован на www.gibdd.ru/check/fines. Попробуйте сменить тип соединения (Wifi/Мобильный интернет) или подключиться к другой WiFi сети, а затем обновите данные ещё раз. Можете также воспользоваться другим провайдером штрафов.');
+		}
 	}
 	
 	// Теперь нужна сводка

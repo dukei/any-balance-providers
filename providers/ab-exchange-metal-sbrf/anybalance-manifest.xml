@@ -1,10 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="7">ab-exchange-metal-sbrf</id>
+  <id version="8">ab-exchange-metal-sbrf</id>
   <api flags="no_browser"/>
   <name>Курсы драгоценных металлов Сбербанка</name>
   <description html="true"><![CDATA[
-  <p>Текущие курсы покупки и продажи драгоценных металлов ОМС, установленные Сбербанком РФ. Содержит цены золота, серебра, платины и палладия. Получает данные со страницы http://data.sberbank.ru/moscow/ru/quotes/metal</p>
+  <p>Текущие курсы покупки и продажи драгоценных металлов ОМС, установленные Сбербанком РФ. Содержит цены золота, серебра, платины и палладия. Получает данные со страницы http://www.sberbank.ru/ru/quotes/metal/</p>
   <p>Позволяет также ввести вес имеющегося у вас металла и выводит ваш капитал в случае продажи всего металла Сбербанку по текущей цене покупки.</p>
   ]]></description>
   <author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>

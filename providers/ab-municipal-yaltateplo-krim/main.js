@@ -17,7 +17,7 @@ function main() {
   var baseurl = 'http://yaltateplo.ru/';
   AnyBalance.setDefaultCharset('utf-8');
 
-  AB.checkEmpty(/\d{2}\/\d{5}/i.test(prefs.login), 'Введите номер лицевой счет в формате 02/04545!');
+  AB.checkEmpty(/^\d+\/\d+$/.test(prefs.login), 'Введите номер лицевой счет в формате 02/12345!');
 
   var html = AnyBalance.requestGet(baseurl, g_headers);
 

@@ -27,7 +27,14 @@ function main() {
 		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
 	}
 
-	var captchaUrl = getParam(html, null, null, /<img[^>]+id="captcha"[^>]*src="([^"]*)/i, null, html_entity_decode);
+	var captchaUrl = getParam(html, null, null, /<img[^>]+id="captcha"[^>]*src="([^"]*)/i);
+	if(!captchaUrl){
+		var error = sumParam(html, null, null, /<h4[^>]*>([\s\S]*?)<\/h4>/ig, replaceTagsAndSpaces, null, create_aggregate_join(' '));
+		if(error)
+			throw new AnyBalance.Error(error);
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удалось получить ссылку на капчу. Сайт изменен?');
+	}
 	var img = AnyBalance.requestGet(baseurl + captchaUrl, g_headers);
 	var captcha = AnyBalance.retrieveCode('Введите код с картинки', img);
 	
@@ -40,7 +47,7 @@ function main() {
 	}, addHeaders({Referer: baseurl + '/custom_scripts/abonent.php'}));
 	
 	if (!/<input[^>]+id="fam_res"/i.test(html)) {
-		var error = getParam(html, null, null, /<div[^>]+class="err"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+		var error = getParam(html, null, null, /<div[^>]+class="err"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
 		if (error)
 			throw new AnyBalance.Error(error, null, /Пользователь не найден/i.test(error));
 		
@@ -51,8 +58,8 @@ function main() {
 	var result = {success: true};
 	
 	getParam(html, result, 'balance', /Долг на (?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'fio', /<input[^>]+id="fam_res"[^>]*value="([^"]*)/i, null, html_entity_decode);
-	sumParam(html, result, '__tariff', /<input[^>]+id="fam_res"[^>]*value="([^"]*)/i, null, html_entity_decode, aggregate_join);
+	getParam(html, result, 'fio', /<input[^>]+id="fam_res"[^>]*value="([^"]*)/i, replaceHtmlEntities);
+	sumParam(html, result, '__tariff', /<input[^>]+id="fam_res"[^>]*value="([^"]*)/i, replaceHtmlEntities, null, aggregate_join);
 	sumParam(prefs.licschet, result, '__tariff', null, null, null, aggregate_join);
 	
 	AnyBalance.setResult(result);
@@ -66,8 +73,8 @@ function createList(){
 	var options = getElements(html, /<option[^>]*>/ig);
 	var values = [], names = [];
 	for(var i=0; i< options.length; ++i){
-		var name = getParam(options[i], null, null, null, replaceTagsAndSpaces, html_entity_decode);
-		var value = getParam(options[i], null, null, /<option[^>]+value="([^"]*)/i, null, html_entity_decode);
+		var name = getParam(options[i], null, null, null, replaceTagsAndSpaces);
+		var value = getParam(options[i], null, null, /<option[^>]+value="([^"]*)/i, replaceHtmlEntities);
 		values.push(value);
 		names.push(name);
 	}

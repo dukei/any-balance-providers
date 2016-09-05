@@ -238,6 +238,7 @@ function processCard(card, result) {
     getParam(card.acc[0].available, result, 'cards.balance', null, null, parseBalance);
     getParam(card.acc[0].lock, result, 'cards.blocked', null, null, parseBalance);
     getParam(card.acc[0].own, result, 'cards.own', null, null, parseBalance);
+    getParam(card.acc[0].credit, result, 'cards.limit', null, null, parseBalance);
     getParam(card.acc[0].currency, result, ['cards.currency', 'cards.balance', 'cards.blocked', 'cards.own']);
 
 	getParam(card.enddate, result, 'cards.till', null, replaceTagsAndSpaces, parseDate);
@@ -247,8 +248,12 @@ function processCard(card, result) {
     var url = joinUrl(baseurl, card.link);
     var html = AnyBalance.requestGet(url, g_headers)
 
-    var finDetails = getElement(html, /<table[^>]+mb60[^>]*>/i, html_entity_decode);
-    getParam(finDetails, result, 'cards.limit', /Лимит[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+    var details = getElement(html, /<div[^>]+b-cash_back[^>]*>/i, replaceHtmlEntities);
+    getParam(details, result, 'cards.bonus', /Доступный баланс[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+
+    details = getElement(html, /<table[^>]+prod-balance_var2[^>]*>/i, replaceHtmlEntities);
+    getParam(details, result, 'cards.gracepay', /Сумма для реализации Льготного периода[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(details, result, 'cards.gracepay_till', /Дата окончания Льготного периода[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
 
     if(AnyBalance.isAvailable('cards.transactions')) {
         processCardTransactions(html, result);
@@ -267,15 +272,12 @@ function processCard(card, result) {
         getParam(details, result, 'cards.main', />\s*Тип[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseMain);
         getParam(details, result, 'cards.status', />\s*Статус[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces); //Активирована
         getParam(details, result, 'cards.contract', />\s*Договор[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, [/№/ig, '', replaceTagsAndSpaces]);
-        getParam(details, result, 'cards.gracepay', /Сумма для реализации Льготного периода[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-        getParam(details, result, 'cards.gracepay_till', /Дата окончания Льготного периода[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
 
         //Счета-выписки по карте
         if(AnyBalance.isAvailable('cards.excerpt')) {
             processCardExerpt(html, result);
         }
     }
-
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

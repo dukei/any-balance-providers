@@ -14,6 +14,7 @@ var g_countersTable = {
         "contract_date": "cards.date_start",
         "credit_sum": "cards.limit",
         "till": "cards.till",
+        "bonus": "cards.bonus",
         "status": "cards.status",
         "accname": "cards.accnum",
         "__tariff": "cards.__name"

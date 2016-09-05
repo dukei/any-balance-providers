@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-    <id major_version="5.0" version="23">ab-money-rs</id>
+    <id major_version="5.0" version="24">ab-money-rs</id>
     <api flags="no_browser"/>
     <name>Русский стандарт</name>
 	<description html="true"><![CDATA[
@@ -39,6 +39,7 @@
 		<counter id="account_blocked_balance" name="Заблокированная сумма" units=" {@currency}"/>
         <counter id="gracepay" name="Льготный платеж"/>
         <counter id="gracetill" name="Дата окончания льготного периода" type="time" format="dd/MM/yyyy"/>
+		<counter id="bonus" name="Кэшбэк бонусы" units=" Б"/>
         <counter id="currency" name="Валюта" type="text"/>
         <counter id="contract" name="Номер договора" type="text"/>
         <counter id="cardnum" name="Номер карты/счета" type="text"/>

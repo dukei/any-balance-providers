@@ -249,11 +249,20 @@ function processCard(card, result) {
     var html = AnyBalance.requestGet(url, g_headers)
 
     var details = getElement(html, /<div[^>]+b-cash_back[^>]*>/i, replaceHtmlEntities);
-    getParam(details, result, 'cards.bonus', /Доступный баланс[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+    if(details)
+    	getParam(details, result, 'cards.bonus', /Доступный баланс[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+    else
+    	getParam(html, result, 'cards.bonus', /<td[^>]+cashback-card-block__block-bonus[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+    
 
-    details = getElement(html, /<table[^>]+prod-balance_var2[^>]*>/i, replaceHtmlEntities);
-    getParam(details, result, 'cards.gracepay', /Сумма для реализации Льготного периода[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(details, result, 'cards.gracepay_till', /Дата окончания Льготного периода[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
+    //Ищем таблицу с льготным периодом
+    details = getElements(html, [/<table[^>]+prod-balance[^>]*>/ig, /ьготного периода/i], replaceHtmlEntities)[0];
+    if(details){
+    	getParam(details, result, 'cards.gracepay', /Сумма для реализации Льготного периода[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+    	getParam(details, result, 'cards.gracepay_till', /Дата окончания Льготного периода[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
+    }else{
+    	AnyBalance.trace('Данные о льготном периоде отсуствуют');
+    }
 
     if(AnyBalance.isAvailable('cards.transactions')) {
         processCardTransactions(html, result);

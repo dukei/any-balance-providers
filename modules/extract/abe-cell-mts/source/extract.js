@@ -685,27 +685,94 @@ function processBonusLK(result){
 
 function processTraffic(result){
 	try{
-	    AnyBalance.trace('Пробуем получить трафик из интернет-кабинета');
-	    processTrafficInternet(result);
-	    return;
-    } catch (e) {
-        AnyBalance.trace('Не удалось получить трафик из интернет-кабинета: ' + e.message + '\n' + e.stack);
-    }
-/* //Не получаем отсюда больше ничего
-	try{
 	    AnyBalance.trace('Пробуем получить трафик из ЛК');
 	    processTrafficLK(result);
 	    return;
     } catch (e) {
         AnyBalance.trace('Не удалось получить трафик из ЛК: ' + e.message + '\n' + e.stack);
     }
-*/
+
+	try{
+	    AnyBalance.trace('Пробуем получить трафик из интернет-кабинета');
+	    processTrafficInternet(result);
+	    return;
+    } catch (e) {
+        AnyBalance.trace('Не удалось получить трафик из интернет-кабинета: ' + e.message + '\n' + e.stack);
+    }
     //Сюда попадаем только если во всех случаях случилась ошибка
     result.were_errors = true;
 }
 
 function parseTrafficFromKb(str){
     return parseTraffic(str, 'kb');
+}
+
+function processTrafficH2O(h2oProfile, result){
+    AnyBalance.trace('H2O profile: ' + JSON.stringify(h2oProfile));
+
+    if(!result.remainders)
+        result.remainders = {};
+    var remainders = result.remainders;
+
+    //Теперь надо сделать сложные манипуляции с трафиком, как они делают их на сайте (http://internet.mts.ru/Scripts/mtsinternet/widgets/availableTraffic-valid.js). Извращенцы, почему нельзя было проще?
+    var isAcceptor = typeof (h2oProfile.H2O.p.Muia) != 'undefined' && h2oProfile.H2O.p.Muia.Acceptor;
+
+    function anyActive(prev, x){
+    	return prev || x.IsActive
+    }
+
+    function getTrafficInfo(trafficItem, isAcceptor) { //http://internet.mts.ru/Scripts/mtsinternet/widgets/availableTraffic-invalid.js
+        var quota = 0;
+        if (isAcceptor && trafficItem.Muia) {
+            quota = trafficItem.Muia.PersonalQuota > 0 ? trafficItem.Muia.PersonalQuota : trafficItem.Muia.SharedQuotaSize;
+        }
+        if (trafficItem.Limits) {
+            for (var i = 0; i < trafficItem.Limits.length; i++) {
+                var curr = trafficItem.Limits[i].floor > trafficItem.Limits[i].Ceiling || isNaN(trafficItem.Limits[i].Ceiling)
+                    ? trafficItem.Limits[i].floor
+                    : trafficItem.Limits[i].Ceiling;
+                quota = quota < curr ? curr : quota;
+            }
+        } else {
+            quota = 'Infinity';
+        }
+
+        var unavailable = isAcceptor && trafficItem.Muia
+                ? quota - trafficItem.Muia.QuantumRemaining - trafficItem.Muia.QuotaRemaining
+                : 0;
+        return {
+            quota: quota,
+            unavailable: unavailable,
+            consumed: trafficItem.Value,
+            available: quota - unavailable - trafficItem.Value
+        };
+    }
+
+    var trafficExt = h2oProfile.PersonalTrafficExtended;
+    var paoExt = h2oProfile.PersonalOptionExtended;
+    if(trafficExt){ //Valid
+    	AnyBalance.trace('найден валидный трафик');
+        if (!isAcceptor && ((paoExt.AutoProlongations && paoExt.AutoProlongations.reduce(anyActive, false)) 
+        		|| (paoExt.ExtraPackages && paoExt.ExtraPackages.reduce(anyActive, false)))) {
+        	sumParam('' + (trafficExt.Consumed),
+        		remainders, 'remainders.traffic_used_mb', null, null, parseTrafficFromKb, aggregate_sum);
+        	sumParam('' + (trafficExt.Consumed > paoExt.Quotas.BaseQuota ? 0 : paoExt.Quotas.BaseQuota - trafficExt.Consumed),
+        		remainders, 'remainders.traffic_left_mb', null, null, parseTrafficFromKb, aggregate_sum);
+        } else {
+        	sumParam(trafficExt.Available + '', remainders, 'remainders.traffic_left_mb', null, null, parseTrafficFromKb, aggregate_sum);
+        	sumParam(trafficExt.Consumed + '', remainders, 'remainders.traffic_used_mb', null, null, parseTrafficFromKb, aggregate_sum);
+        }
+    }else if(h2oProfile.PersonalTrafficItem){ //Invalid
+    	var ti = getTrafficInfo(h2oProfile.PersonalTrafficItem, isAcceptor);
+    	AnyBalance.trace('найден невалидный трафик ' + JSON.stringify(ti));
+     	sumParam(ti.available + '', remainders, 'remainders.traffic_left_mb', null, null, parseTrafficFromKb, aggregate_sum);
+       	sumParam(ti.consumed + '', remainders, 'remainders.traffic_used_mb', null, null, parseTrafficFromKb, aggregate_sum);
+    }else{
+    	AnyBalance.trace('Трафик не найден: ' + JSON.stringify(h2oProfile));
+    }
+
+    if(h2oProfile.personalTrafficItem)
+    	getParam(h2oProfile.PersonalTrafficItem.ExpirationTime, remainders, 'remainders.traffic_left_till', null, null, parseDateISO);
 }
 
 function processTrafficInternet(result){
@@ -717,71 +784,7 @@ function processTrafficInternet(result){
 
     	var script = AnyBalance.requestGet(baseurl + '/sitesettings/H2OProfile.js', addHeaders({Referer: baseurl+'/'}));
     	var obj = getJsonObject(script, /_profile:(?=\s*\{)/i);
-    	AnyBalance.trace('H2O profile: ' + JSON.stringify(obj));
-
-        if(!result.remainders)
-            result.remainders = {};
-        var remainders = result.remainders;
-
-        //Теперь надо сделать сложные манипуляции с трафиком, как они делают их на сайте (http://internet.mts.ru/Scripts/mtsinternet/widgets/availableTraffic-valid.js). Извращенцы, почему нельзя было проще?
-        var isAcceptor = typeof (obj.h2O.p.muia) != 'undefined' && obj.h2O.p.muia.acceptor;
-
-        function anyActive(prev, x){
-        	return prev || x.isActive
-        }
-
-        function getTrafficInfo(trafficItem, isAcceptor) { //http://internet.mts.ru/Scripts/mtsinternet/widgets/availableTraffic-invalid.js
-            var quota = 0;
-            if (isAcceptor && trafficItem.muia) {
-                quota = trafficItem.muia.personalQuota > 0 ? trafficItem.muia.personalQuota : trafficItem.muia.sharedQuotaSize;
-            }
-            if (trafficItem.limits) {
-                for (var i = 0; i < trafficItem.limits.length; i++) {
-                    var curr = trafficItem.limits[i].floor > trafficItem.limits[i].ceiling || isNaN(trafficItem.limits[i].ceiling)
-                        ? trafficItem.limits[i].floor
-                        : trafficItem.limits[i].ceiling;
-                    quota = quota < curr ? curr : quota;
-                }
-            } else {
-                quota = 'Infinity';
-            }
-
-            var unavailable = isAcceptor && trafficItem.muia
-                    ? quota - trafficItem.muia.quantumRemaining - trafficItem.muia.quotaRemaining
-                    : 0;
-            return {
-                quota: quota,
-                unavailable: unavailable,
-                consumed: trafficItem.value,
-                available: quota - unavailable - trafficItem.value
-            };
-        }
-
-        var trafficExt = obj.personalTrafficExtended;
-        var paoExt = obj.personalOptionExtended;
-        if(trafficExt){ //Valid
-        	AnyBalance.trace('найден валидный трафик');
-            if (!isAcceptor && ((paoExt.autoProlongations && paoExt.autoProlongations.reduce(anyActive, false)) 
-            		|| (paoExt.extraPackages && paoExt.extraPackages.reduce(anyActive, false)))) {
-            	sumParam('' + (trafficExt.consumed),
-            		remainders, 'remainders.traffic_used_mb', null, null, parseTrafficFromKb, aggregate_sum);
-            	sumParam('' + (trafficExt.consumed > paoExt.quotas.baseQuota ? 0 : paoExt.quotas.baseQuota - trafficExt.consumed),
-            		remainders, 'remainders.traffic_left_mb', null, null, parseTrafficFromKb, aggregate_sum);
-            } else {
-            	sumParam(trafficExt.available + '', remainders, 'remainders.traffic_left_mb', null, null, parseTrafficFromKb, aggregate_sum);
-            	sumParam(trafficExt.consumed + '', remainders, 'remainders.traffic_used_mb', null, null, parseTrafficFromKb, aggregate_sum);
-            }
-        }else if(obj.personalTrafficItem){ //Invalid
-        	var ti = getTrafficInfo(obj.personalTrafficItem, isAcceptor);
-        	AnyBalance.trace('найден невалидный трафик ' + JSON.stringify(ti));
-         	sumParam(ti.available + '', remainders, 'remainders.traffic_left_mb', null, null, parseTrafficFromKb, aggregate_sum);
-           	sumParam(ti.consumed + '', remainders, 'remainders.traffic_used_mb', null, null, parseTrafficFromKb, aggregate_sum);
-        }else{
-        	AnyBalance.trace('Трафик не найден: ' + JSON.stringify(obj));
-        }
-
-        if(obj.personalTrafficItem)
-        	getParam(obj.personalTrafficItem.expirationTime, remainders, 'remainders.traffic_left_till', null, null, parseDateISO);
+    	processTrafficH2O(obj, result);
     }
 }
 
@@ -796,12 +799,12 @@ function processTrafficLK(result){
             AnyBalance.trace('Пробуем получить трафик, попытка: ' + (i + 1));
             var html = AnyBalance.requestGet(g_baseurl, addHeaders({Referer: g_baseurl}));
 
-            var widgetJson = getParam(html, null, null, /myInternet.diagram\s*=\s*(\{[\s\S]*?\});/i, null, getJsonEval);
-            var href = widgetJson.widgetDataUrl;
-            if (!href)
+            var widgetUrl = getParam(html, null, null, /'\/miwidgettrafficavailable\/[^']*'/i, null, getJsonEval);
+            if (!widgetUrl)
                 throw new AnyBalance.Error('Не удалось найти ссылку на трафик.');
+            var href = joinUrl(g_baseurl, widgetUrl);
 
-            info = AnyBalance.requestGet(g_baseurl + href + '&_=' + new Date().getTime(), addHeaders({
+            info = AnyBalance.requestGet(href + '&_=' + new Date().getTime(), addHeaders({
                 'X-Requested-With': 'XMLHttpRequest',
                 'Accept': '*/*',
                 'Referer': g_baseurl + '/'
@@ -813,16 +816,8 @@ function processTrafficLK(result){
                 continue;
             }
             var json = getJson(info);
-            if (json.OptionName != 'null' && isset(json.OptionName)) {
-                AnyBalance.trace('Нашли трафик...');
-
-                sumParam(json.TrafficLeft + '', remainders, 'remainders.traffic_left_mb', null, null, parseTrafficFromKb, aggregate_sum);
-                sumParam(json.TrafficConsumed + '', remainders, 'remainders.traffic_used_mb', null, null, parseTrafficFromKb, aggregate_sum);
-                getParam(json.PackageUpdated + '', remainders, 'remainders.traffic_left_till', null, null, parseDateISO);
-                return;
-            } else {
-                AnyBalance.trace('Трафика нет...');
-            }
+    		processTrafficH2O(json.H2OExtended, result);
+    		return;
         }
         throw new AnyBalance.Error('Трафик не найден!');
     }

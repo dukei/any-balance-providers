@@ -27,17 +27,17 @@ function main() {
 	}, addHeaders({Referer: baseurl + 'login'}));
 	
 	if (!/logout/i.test(html)) {
-		var error = getParam(html, null, null, /Ошибка!(?:[^>]*>){1}([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
+		var error = getParam(html, null, null, /Ошибка!(?:[^>]*>){1}([^<]*)/i, replaceTagsAndSpaces);
 		if (error)
-			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
+			throw new AnyBalance.Error(error, null, /парол/i.test(error));
 		
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
 	
 	var result = {success: true};
 	
-	getParam(html, result, 'fio', /"userName"(?:[^>]*>){1}([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'balance', /Ваш текущий скоринг:(?:[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'fio', /"userName"(?:[^>]*>){1}([^<]*)/i, replaceTagsAndSpaces);
+	getParam(html, result, 'balance', /<div[^>]+score-center[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
 	
 	AnyBalance.setResult(result);
 }

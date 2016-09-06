@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="4.1" version="145" date="2016-09-06">
+	Исправлено получение срока действия трафика
+	</change>
 	<change major_version="4.1" version="144" date="2016-09-05">
 	Исправлено отображение трафика
 	</change>

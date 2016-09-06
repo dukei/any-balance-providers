@@ -41,6 +41,7 @@ function main() {
     sumParam(html, result, 'min_uk_mob', /<td>[^<]*Украина\s*\(моб.?\)\s*(?:\[.00\s*мин?\][^<]*<\/td>|[^<]*<\/td>)\s*<td[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseSeconds, aggregate_sum);
     //Украина+Моб.Украина
     sumParam(html, result, 'min_uk_mob_uk', /<td>[^<]*Украина\+Моб\.Украина[^<]*<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseSeconds, aggregate_sum);
+    sumParam(html, result, 'min_uk_mob_uk', /<td>[^<]*Вся\s*Украина\s*\[Подарок\][^<]*<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseSeconds, aggregate_sum);
     //Россия [100 мин]
     getParam(html, result, 'min_rus', /<td[^>]*>\s*Минуты\s*<\/td>[\s\S]*?<td[^>]*>[^<]*Россия[^<]*<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseSeconds);
     //Бонус по программе лояльности «Наилучшее общение»
@@ -79,6 +80,7 @@ function main() {
     sumParam(html, result, 'date_bonus_pr', /<td[^>]*>\s*Бонус при поповненні рахунку через Portmone[^>]*\s*<\/td>\s*<td[^>]*>\s*.* \(по ([^<]*)\)\s*<\/td>/ig, replaceTagsAndSpaces, parseDate, aggregate_min);
     //Дата минуты
     sumParam(html, result, 'date_min_uk_mob_uk', /<td[^>]*>[\s\S]*?Украина\+Моб\.Украина[^<]*<\/td>\s*<td[^>]*>[\s\S]*? по ([^<]*)</ig, replaceTagsAndSpaces, parseDate, aggregate_min);
+    sumParam(html, result, 'date_min_uk_mob_uk', /<td>[^<]*Вся\s*Украина\s*\[Подарок\][^<]*<\/td>\s*<td[^>]*>[\s\S]*? по ([^<]*)/ig, replaceTagsAndSpaces, parseDate, aggregate_min);
     sumParam(html, result, 'date_min_uk_mob', /<td>[^<]*Украина\s*\(моб.?\)\s*[^<]*<\/td>\s*<td[^>]*>[\s\S]*? по ([^<]*)</ig, replaceTagsAndSpaces, parseDate, aggregate_min);
     //Пакетный трафик (получаем в локальную переменную, и независимо от включенности счетчика 'traffic_paket')
     var traffic_paket = sumParam(html, null, null, /<td[^>]*>\s*пакетный трафи(?:к|к \(Rev.A\)|к \(Rev.A\/Rev.B\))\s*<\/td>\s*<td[^>]*>([\s\S]*?)\s/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);

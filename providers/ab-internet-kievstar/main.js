@@ -23,6 +23,10 @@ function main() {
 		success: true
 	};
 
+	if(isLoggedInNew(html)){
+		return processNew(result);
+	}
+
 	getParam(html, result, 'name',
 		/(?:Фамилия|Прізвище|First\s+name)[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
 
@@ -61,6 +65,44 @@ function main() {
 	getParam(html, result, 'phone',
 		/(?:Номер\s+мобильного\s+телефона|Номер\s+мобільного\s+телефону|Mobile\s+phone\s+number):[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i,
 		replaceTagsAndSpaces);
+
+	AnyBalance.setResult(result);
+}
+
+function processNew(result){
+	var baseurl = 'https://new.kyivstar.ua/ecare/';
+	var html = AnyBalance.requestGet(baseurl, g_headers);
+
+	var pageData = getJsonObject(html, /var\s+pageData\s*=\s*/);
+
+	getParam(jspath1(pageData, "$.slots.TopContent[?(@.template='balancePanelComponent')].data.accountData.balance"), result, 'balance', null, null, parseBalance);
+	getParam(jspath1(pageData, "$.slots.TopContent[?(@.template='balancePanelComponent')].data.currencyName"), result, ['currency', 'balance']);
+	getParam(jspath1(pageData, "$.slots.TopContent[?(@.template='balancePanelComponent')].data.accountData.accountNumber"), result, 'licschet');
+
+	getParam(jspath1(pageData, "$.slots.TopContent[?(@.template='planPanelComponent')].data.servicePlan"), result, '__tariff');
+	getParam(jspath1(pageData, "$.slots.TopContent[?(@.template='planPanelComponent')].data.subscriptionStatus"), result, 'status');
+	getParam(jspath1(pageData, "$.slots.TopContent[?(@.template='balancePanelComponent')].data.currentSubscription.bonusBalance"), result, 'bonusValue', null, null, parseBalance);
+
+//	getParam(html, result, 'bonusDate',
+//		/(?:Бонусный\s+баланс|Бонусний\s+баланс|Bonuses)(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\/td>/i,
+//		replaceTagsAndSpaces);
+
+//	getParam(html, result, 'date_start',
+//		/(?:Дата\s+подключения|Дата\s+підключення|Connection\s+date):[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i,
+//		replaceTagsAndSpaces, parseDate);
+
+	if(AnyBalance.isAvailable('name', 'phone')){
+		html = AnyBalance.requestGet(baseurl + 'profileSettings', g_headers);
+		pageData = getJsonObject(html, /var\s+pageData\s*=\s*/);
+	
+	    var joinspace = create_aggregate_join(' ');
+
+		sumParam(jspath1(pageData, "$.pageData.profileData.currentCustomer.firstName.value"), result, 'name', null, null, null, joinspace);
+		sumParam(jspath1(pageData, "$.pageData.profileData.currentCustomer.middleName.value"), result, 'name', null, null, null, joinspace);
+		sumParam(jspath1(pageData, "$.pageData.profileData.currentCustomer.lastName.value"), result, 'name', null, null, null, joinspace);
+
+		sumParam(jspath1(pageData, "$.pageData.profileData.currentCustomer.contactPhone.value"), result, 'phone');
+	}
 
 	AnyBalance.setResult(result);
 }

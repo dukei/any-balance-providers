@@ -18,7 +18,12 @@ var g_gwtCfg = {
 };
 
 function isLoggedIn(html) {
-	return /\/tbmb\/logout\/perform/i.test(html);
+	return /\/tbmb\/logout\/perform/i.test(html) ||
+		isLoggedInNew(html);
+}
+
+function isLoggedInNew(html){
+	return /var\s+pageData\s*=/.test(html) || /new.kyivstar.ua\/ecare\//i.test(html);
 }
 
 function checkGwtError(html) {

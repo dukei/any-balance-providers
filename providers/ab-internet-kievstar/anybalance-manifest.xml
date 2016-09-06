@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="3.0" version="20">ab-internet-kievstar</id>
+	<id major_version="3.0" version="21">ab-internet-kievstar</id>
 	<api flags="no_browser"/>
 	<name>Киевстар (домашний интернет)</name>
 	<description html="true"><![CDATA[
@@ -13,6 +13,7 @@
 		<module id="library"/>
 		<module id="framework/gwt"/>
 		<module id="login/kyivstar"/>
+		<module id="parsers/jsonpath"/>
 	</depends>
 	<files>
 		<icon>icon.png</icon>

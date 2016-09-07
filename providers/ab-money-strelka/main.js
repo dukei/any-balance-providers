@@ -78,7 +78,7 @@ function main() {
 	if(isAvailable(['history', 'total_outcome', 'total_income'])) {
 		var count = 5, history = [], item, last, i, date, summ;
 		
-		data = makeRequest('Get', lkurl + 'api/cards/' + card.cardid + '/history/all/' + getFormattedDate({offsetDay: 90}) + '/' + getFormattedDate() + '/', null, lkurl + '/cards');
+		data = makeRequest('Get', lkurl + 'api/cards/' + card.cardid + '/history/all/' + getFormattedDate({offsetMonth: 1}) + '/' + getFormattedDate() + '/', null, lkurl + '/cards');
 		if(data.items){
 			for(last = i = data.items.length - 1; i >= 0 && i > last - count; i--){
 				item = data.items[i];

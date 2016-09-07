@@ -57,7 +57,10 @@ function main() {
 	
 	var result = {success: true};
 	
-	getParam(html, result, 'balance', /Долг на (?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'balance', /(?:Переплата|Долг) на (?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+	if(result.balance && /Долг на/i.test(html))
+		result.balance = -result.balance;
+
 	getParam(html, result, 'fio', /<input[^>]+id="fam_res"[^>]*value="([^"]*)/i, replaceHtmlEntities);
 	sumParam(html, result, '__tariff', /<input[^>]+id="fam_res"[^>]*value="([^"]*)/i, replaceHtmlEntities, null, aggregate_join);
 	sumParam(prefs.licschet, result, '__tariff', null, null, null, aggregate_join);

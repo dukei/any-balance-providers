@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="7">ab-internet-2kom</id>
+	<id version="8">ab-internet-2kom</id>
 	<name>2КОМ</name>
 	<api flags="no_browser"/>
 	<description html="true"><![CDATA[
@@ -8,10 +8,12 @@
 	<p>Информация берется из личного кабинета https://portal.2kom.ru/lk/</p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>

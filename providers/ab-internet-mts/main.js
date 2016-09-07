@@ -429,7 +429,7 @@ function getNnov() {
   getParam(html, result, 'daysleft', /Этой суммы вам хватит[\s\S]*?<span[^>]+class="imp"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces,
     parseBalance2);
 
-  var url = getParam(html, null, null, /<a[^>]+href="\/stat\/([^"]*)"[^>]*>Информация об услугах/i, null);
+  var url = getParam(html, null, null, /<a[^>]+href="\/stat\/([^"]*)"[^>]*>Информация об услугах/i, replaceHtmlEntities);
   if (!url) {
     AnyBalance.trace("Не удалось найти ссылку на информацию об услугах.");
   } else {
@@ -438,7 +438,7 @@ function getNnov() {
     if (!tr) {
       AnyBalance.trace("Не удалось найти ссылку на информацию об интернет.");
     } else {
-      url = getParam(tr, null, null, /<a[^>]+href="\/stat\/([^"]*)/i);
+      url = getParam(tr, null, null, /<a[^>]+href="\/stat\/([^"]*)/i, replaceHtmlEntities);
       html = AnyBalance.requestGet(baseurl + url);
       getParam(html, result, 'agreement', /Договор:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
       getParam(html, result, '__tariff', /Описание услуги:[\s\S]*?<td[^>]*>(?:\s*<b[^>]*>[^<]*<\/b>)?([\s\S]*?)<\/td>/i,
@@ -902,7 +902,7 @@ function getBarnaul() {
 
 function getNovokuz() {
   var baseurl = 'https://kabinet.kemerovo.mts.ru/';
-  typicalApiInetTv(baseurl);
+  typicalApiInetTvNew(baseurl);
 }
 
 function getVladimir() {

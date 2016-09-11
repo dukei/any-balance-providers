@@ -1,4 +1,4 @@
-﻿/**
+/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 
 Получает текущий остаток и другие параметры карт банка Тинькофф Кредитные Системы, используя мобильное приложение.
@@ -287,6 +287,7 @@ function processSavings(result){
         var c = {
             __id: acc.id,
             __name: (acc.marketingName || acc.name),
+            num: acc.externalAccountNumber
         };
 
         if(__shouldProcess('savings', c)){

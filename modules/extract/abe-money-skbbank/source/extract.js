@@ -98,6 +98,9 @@ function login() {
         html = AnyBalance.requestGet(baseurl + 'def/retail/login.rt', AB.addHeaders({
             'Referer': baseurl + 'ru/html/login.html'
         }));
+
+        //Обновим данные из АБС
+        refreshFromABS(html);
     } else {
         AnyBalance.trace('Уже залогинены, используем существующую сессию');
     }
@@ -116,14 +119,48 @@ function login() {
     return html;
 }
 
-function getInfoJson(href, jsid) {
-    var html = AnyBalance.requestPost(baseurl + href, {
+function refreshFromABS(html){
+    var JSID = getParam(html, null, null, /var\s+JSID\s*=\s*'([^']+)/i);
+    if(!JSID){
+    	AnyBalance.trace(html);
+    	throw new AnyBalance.Error('Не удалось найти идентификатор сессии. Сайт изменен?');
+    }
+
+	AnyBalance.trace('Обновляем данные из АБС');
+	var tries = 1, maxtries = 10;
+    do{
+    	var info = getInfoJson('ru/retail/importabs.rt', JSID, {
+			product:	'mainpage',
+			forceUpdate: 'false'
+		});
+
+		if(info.data[0].flag){
+			AnyBalance.trace('Обновление успешно');
+			break;
+		}
+
+		if(tries > maxtries){
+			AnyBalance.trace('Обновление неуспешно. Показываем, что есть.');
+			break;
+		}
+
+		AnyBalance.trace('Пока не обновилось. Делаем попытку ' + (++tries));
+		AnyBalance.sleep(3000);
+    }while(true);
+}
+
+function getInfoJson(href, jsid, params) {
+	if(!params)
+		params = {};
+
+    var html = AnyBalance.requestPost(baseurl + href, joinObjects(params, {
         JSID: jsid,
-    }, addHeaders({Referer: baseurl + 'auto/html/index.html', 'X-Requested-With': 'XMLHttpRequest'}));
+    }), addHeaders({Referer: baseurl + 'auto/html/index.html', 'X-Requested-With': 'XMLHttpRequest'}));
 
     try {
         var userInfo = getJson(html);
     } catch (e) {
+    	AnyBalance.trace('Error calling bank api (' + href + '): ' + e.message);
         var userInfo = {
             data: {}
         };

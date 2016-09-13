@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="5" date="2016-09-13">
+	Обновление данных при каждом заходе
+	</change>
 	<change version="4" date="2016-04-20">
 	- Исправлено подключение к сайту на Android ниже версии 5.0.
 	</change>

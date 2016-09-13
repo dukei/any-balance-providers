@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="21">ab-money-avangard</id>
+	<id version="22">ab-money-avangard</id>
 	<api flags="no_browser"/>
 	<name>Банк Авангард</name>
 	<description html="true"><![CDATA[
@@ -18,10 +18,12 @@
 	<p>Когда происходит вход в Интернет-банк, банк присылает SMS на ваш телефон. Так как для получения счетчиков этот провайдер входит в Интернет-банк, вы будете получать SMS каждый раз, когда провайдер делает запрос счетчиков.</p>   
 	]]></instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>

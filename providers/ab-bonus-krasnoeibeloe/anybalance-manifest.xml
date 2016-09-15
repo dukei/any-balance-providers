@@ -1,11 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="8">ab-bonus-krasnoeibeloe</id>
+	<id version="9">ab-bonus-krasnoeibeloe</id>
 	<api flags="no_browser"/>
 	<name>Красное&amp;Белое (Урал)</name>
 	<description html="true"><![CDATA[
 	<p>Получает баланс и скидку по дисконтной карте компании «Красное&amp;Белое» в Уральском регионе.</p>
-	<p>Информация берется с сайта http://krasnoeibeloe.ru/discount</p>
+	<p>Информация берется с сайта https://krasnoeibeloe.ru/discount</p>
 	]]></description>
 	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
 	<depends>

@@ -16,7 +16,7 @@ function main(){
     
     AnyBalance.setDefaultCharset('utf-8');
 
-    var baseurl = "http://krasnoeibeloe.ru/";
+    var baseurl = "https://krasnoeibeloe.ru/";
 	
     var incapsule = Cloudflare(baseurl + 'discount/?discount=Y');
 	var html = AnyBalance.requestGet(baseurl + 'discount/?discount=Y', g_headers);

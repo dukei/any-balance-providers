@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-internet-vistlink</id>
+	<id version="3">ab-internet-vistlink</id>
 	<api flags="no_browser"/>
 	<name>ВИСТлинк</name>
 	<description html="true"><![CDATA[
@@ -21,6 +21,9 @@
 		<counter id="balance" name="Баланс" units=" р"/>
 		<counter id="account_num" name="Номер лицевого счета" type="text"/>
 		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="status" name="Статус" type="text"/>
+		<counter id="days_left" name="Дней до отключения" units=" дн."/>
+		<counter id="till" name="Срок действия услуг" type="time" format="dd/MM/yyyy"/>
 	</counters>
 	<keywords></keywords>
 	<type>internet</type>

@@ -39,6 +39,9 @@ function main() {
 	getParam(html, result, 'account_num', /Договор:(?:[\s\S]*?<td[^>]*>)([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
 	getParam(html, result, '__tariff', /Тариф:(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
 	getParam(html, result, 'fio', /Ф.И.О.:(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+	getParam(html, result, 'status', /Статус пользователя:(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+	getParam(html, result, 'days_left', /Интернет отключится через:(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'till', /Дата окончания услуг:(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
 	
 	AnyBalance.setResult(result);
 }

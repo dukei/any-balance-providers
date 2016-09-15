@@ -386,63 +386,63 @@
 		'form', 'title', 'br'
 	].join('|');
 
-	var HTML_PAIR_TAGS_WITH_CONTENT = [
-		'script', 'style', 'map', 'iframe', 'frameset', 'object', 'applet', 'comment', 'button', 'textarea', 'select'
-	].join('|');
-
-	//fast short implementation
-	//var HTML_ATTR_RE = /(?:[^>"']+|"[^"]*"|'[^']*')*/.source; //Регулярное выражение для пропуска атрибутов
-	/*var HTML_TAG_RE = `(?:
-			#pair tags with content:
-			<	(?=[a-z])	#speed improve optimization
-				(` + HTML_PAIR_TAGS_WITH_CONTENT + `)\\b	#1`
-				+ HTML_ATTR_RE +
-			`>
-				.*?
-			< (?!script\\b)
-				#speed improve optimization - atomic group
-				(?=(/?))\\2									#2
-				\\1` + HTML_ATTR_RE + 
-			`>
-
-			#opened tags:
-		|	<	(?=[a-z])
-				(?!(?:` + HTML_PAIR_TAGS_WITH_CONTENT + `)\\b)`
-				+ HTML_ATTR_RE + 
-			`>
-
-		|	</[a-z]` + HTML_ATTR_RE + `>	#closed tags
-		|	<![a-z]` + HTML_ATTR_RE + `>	#<!DOCTYPE ...>
-		|	<!\\[CDATA\\[  .*?  \\]\\]>		#CDATA
-		|	<!--  .*?   -->					#comments
-		|	<\\?  .*?  \\?>					#instructions part1 (PHP, Perl, ASP)
-		|	<%	  .*?    %>					#instructions part2 (PHP, Perl, ASP)
+	var reTag = /(?:(?:)<(?:)(?=[a-z])(?:)(script|style|map|iframe|frameset|object|applet|comment)\b(?:)[\s\S]*?(?:)<(?:)(?!script\b)(?:)(?=(\/?))\2(?:)\1(?:[^>"']+|"[^"]*"|'[^']*')*>(?:)|(?:)<(?:)(?=[a-z])(?:)(?!(?:script|style|map|iframe|frameset|object|applet|comment)\b)(?:[^>"']+|"[^"]*"|'[^']*')*>(?:)|(?:)<\/[a-z](?:[^>"']+|"[^"]*"|'[^']*')*>(?:)|(?:)<![a-z](?:[^>"']+|"[^"]*"|'[^']*')*>(?:)|(?:)<!\[CDATA\[(?:)[\s\S]*?(?:)\]\]>(?:)|(?:)<!--(?:)[\s\S]*?(?:)-->(?:)|(?:)<\?(?:)[\s\S]*?(?:)\?>(?:)|(?:)<%(?:)[\s\S]*?(?:)%>(?:))/gi;
+	if(false){
+		//fast short implementation
+		let HTML_ATTR_RE = /(?:[^>"']+|"[^"]*"|'[^']*')*/.source; //Регулярное выражение для пропуска атрибутов
+		let HTML_PAIR_TAGS_WITH_CONTENT = [
+			'script', 'style', 'map', 'iframe', 'frameset', 'object', 'applet', 'comment'/*, 'button', 'textarea', 'select'*/ //из кнопок и инпутов хочется текст получать
+		].join('|');
+		let HTML_TAG_RE = `(?:
+				#pair tags with content:
+				<	(?=[a-z])	#speed improve optimization
+					(` + HTML_PAIR_TAGS_WITH_CONTENT + `)\\b	#1`
+					+ HTML_ATTR_RE +
+				`>
+					.*?
+				< (?!script\\b)
+					#speed improve optimization - atomic group
+					(?=(/?))\\2									#2
+					\\1` + HTML_ATTR_RE + 
+				`>
+	    
+				#opened tags:
+			|	<	(?=[a-z])
+					(?!(?:` + HTML_PAIR_TAGS_WITH_CONTENT + `)\\b)`
+					+ HTML_ATTR_RE + 
+				`>
+	    
+			|	</[a-z]` + HTML_ATTR_RE + `>	#closed tags
+			|	<![a-z]` + HTML_ATTR_RE + `>	#<!DOCTYPE ...>
+			|	<!\\[CDATA\\[  .*?  \\]\\]>		#CDATA
+			|	<!--  .*?   -->					#comments
+			|	<\\?  .*?  \\?>					#instructions part1 (PHP, Perl, ASP)
+			|	<%	  .*?    %>					#instructions part2 (PHP, Perl, ASP)
 		)`;
-	*/
+		reTag = new XRegExp(HTML_TAG_RE, 'xsig');
+	}
 
 	let htmlBlockTagsRe = new RegExp('^<('+ HTML_BLOCK_TAGS + ')\\b', 'i'),
 		replaceTagsAndSpaces = String.REPLACE_TAGS_AND_SPACES = [
-		
-		/*new XRegExp(HTML_TAG_RE, 'xsig')*/
-		/(?:<(?=[a-z])(script|style|map|iframe|frameset|object|applet|comment|button|textarea|select)\b[\s\S]*?<(?!script\b)(?=(\/?))\2\1(?:[^>"']+|"[^"]*"|'[^']*')*>|<(?=[a-z])(?!(?:script|style|map|iframe|frameset|object|applet|comment|button|textarea|select)\b)(?:[^>"']+|"[^"]*"|'[^']*')*>|<\/[a-z](?:[^>"']+|"[^"]*"|'[^']*')*>|<![a-z](?:[^>"']+|"[^"]*"|'[^']*')*>|<!\[CDATA\[[\s\S]*?\]\]>|<!--[\s\S]*?-->|<\?[\s\S]*?\?>|<%[\s\S]*?%>)/gi, 
-		function (str, entry) {
-			if (str.search(htmlBlockTagsRe) > -1) return '\n';
-			return '';
-		},
+			reTag,
+			function (str, entry) {
+				if (str.search(htmlBlockTagsRe) > -1) return '\n';
+				return '';
+			},
 
-		replaceEntities,
-
-		//remove a duplicate spaces
-		/^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g, '', //It's just trim: https://developer.mozilla.org/ru/docs/Web/JavaScript/Reference/Global_Objects/String/Trim
-		/\r/g, '\n',
-		/\t+/g, ' ',
-		/\x20\x20+/g, ' ',
-		//remove a spaces before and after new lines
-		/\n\x20/g, '\n',
-		/\x20\n/g, '\n',
-		//replace 3 and more new lines to 2 new lines
-		/\n\n\n+/g, '\n\n'
-	];
+			replaceEntities,
+	    
+			//remove a duplicate spaces
+			/^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g, '', //It's just trim: https://developer.mozilla.org/ru/docs/Web/JavaScript/Reference/Global_Objects/String/Trim
+			/\r/g, '\n',
+			/\t+/g, ' ',
+			/\x20\x20+/g, ' ',
+			//remove a spaces before and after new lines
+			/\n\x20/g, '\n',
+			/\x20\n/g, '\n',
+			//replace 3 and more new lines to 2 new lines
+			/\n\n\n+/g, '\n\n'
+		];
 
 	String.prototype.htmlToText = function () {
 		return this.replaceAll(replaceTagsAndSpaces);

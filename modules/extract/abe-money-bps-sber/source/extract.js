@@ -163,24 +163,24 @@ function processAccounts(xml, result) {
 
     xml = getProducts();
 
-	var accounts = getElement(xml, /<cardAccounts>/i);
+	var accounts = getElement(xml, /<cardAccounts[^>]*>/i);
 	if(!accounts){
 		AnyBalance.trace(xml);
 		AnyBalance.trace('Не удалось найти карточные счета');
 		return;
 	}
 
-	accounts = getElements(accounts, /<cardAccount>/ig);
+	accounts = getElements(accounts, /<cardAccount[^>]*>/ig);
 	AnyBalance.trace('Найдено ' + accounts.length + ' счетов');
 
 	result.accounts = [];
 	
 	for(var i=0; i < accounts.length; ++i){
         var acc = accounts[i];
-		var id = getElement(acc, /<accountId>/i, replaceTagsAndSpaces);
-		var num = getElement(acc, /<additionalAccountId>/i, replaceTagsAndSpaces);
+		var id = getElement(acc, /<accountId[^>]*>/i, replaceTagsAndSpaces);
+		var num = getElement(acc, /<additionalAccountId[^>]*>/i, replaceTagsAndSpaces);
 		var depoinfo = getElement(acc, /<depoAccountInfo[^>]*>/i);
-		var name = getElement(depoinfo, /<name>/i, replaceTagsAndSpaces);
+		var name = getElement(depoinfo, /<name[^>]*>/i, replaceTagsAndSpaces);
 
 		var title = name + ' ' + num.substr(-4);
 		
@@ -206,7 +206,7 @@ function requestCardBalance(cardHash, currency){
     	CURTIME: '' + dt.getFullYear() + n2(dt.getMonth()+1) + n2(dt.getDate()) + n2(dt.getHours()) + n2(dt.getMinutes()) + n2(dt.getSeconds())
     });
     var ret = makeRequest('cardBalance', params);
-    ret = getElement(ret, /<ns2:result>/i, replaceTagsAndSpaces);
+    ret = getElement(ret, /<ns2:result[^>]*>/i, replaceTagsAndSpaces);
     AnyBalance.trace('Got card response: ' + ret);
     hashes[cardHash] = ret;
     requestCardBalance.hashes = hashes;
@@ -216,16 +216,16 @@ function requestCardBalance(cardHash, currency){
 function processAccount(account, result){
     AnyBalance.trace('Обработка счета ' + result.__name);
 	
-    getParam(account, result, 'accounts.type', /<accountType>([\s\S]*?)<\/accountType>/i, replaceTagsAndSpaces); //1 - карточный счет?
-    getParam(account, result, 'accounts.status', /<status>([\s\S]*?)<\/status>/i, replaceTagsAndSpaces); //0 - активный?
-    getParam(account, result, ['accounts.currency', 'accounts.balance'], /<currency>([\s\S]*?)<\/currency>/i, replaceTagsAndSpaces, CurrencyISO.digitsToLetters); 
-    getParam(account, result, 'accounts.date_start', /<openDate>([\s\S]*?)<\/openDate>/i, replaceTagsAndSpaces, parseDateISO); 
-    getParam(account, result, 'accounts.pct', /<percentRate>([\s\S]*?)<\/percentRate>/i, replaceTagsAndSpaces, parseBalance); 
+    getParam(account, result, 'accounts.type', /<accountType[^>]*>([\s\S]*?)<\/accountType>/i, replaceTagsAndSpaces); //1 - карточный счет?
+    getParam(account, result, 'accounts.status', /<status[^>]*>([\s\S]*?)<\/status>/i, replaceTagsAndSpaces); //0 - активный?
+    getParam(account, result, ['accounts.currency', 'accounts.balance'], /<currency[^>]*>([\s\S]*?)<\/currency>/i, replaceTagsAndSpaces, CurrencyISO.digitsToLetters); 
+    getParam(account, result, 'accounts.date_start', /<openDate[^>]*>([\s\S]*?)<\/openDate>/i, replaceTagsAndSpaces, parseDateISO); 
+    getParam(account, result, 'accounts.pct', /<percentRate[^>]*>([\s\S]*?)<\/percentRate>/i, replaceTagsAndSpaces, parseBalance); 
 
     if(AnyBalance.isAvailable('accounts.balance')){
-        var cardHash = getElement(account, /<cardHash>/i, replaceTagsAndSpaces);
+        var cardHash = getElement(account, /<cardHash[^>]*>/i, replaceTagsAndSpaces);
         if(cardHash){
-        	var currency = getElement(account, /<currency>/i, replaceTagsAndSpaces);
+        	var currency = getElement(account, /<currency[^>]*>/i, replaceTagsAndSpaces);
         	var xml = requestCardBalance(cardHash, currency);
         	getParam(xml, result, 'accounts.balance', /<Amount[^>]*>([\s\S]*?)<\/Amount>/i, replaceTagsAndSpaces, parseBalance);
         }else{
@@ -244,30 +244,30 @@ function processCards(xml, result) {
 
     xml = getProducts();
 
-	var accounts = getElement(xml, /<cardAccounts>/i);
+	var accounts = getElement(xml, /<cardAccounts[^>]*>/i);
 	if(!accounts){
 		AnyBalance.trace(xml);
 		AnyBalance.trace('Не удалось найти карточные счета');
 		return;
 	}
 
-	accounts = getElements(accounts, /<cardAccount>/ig);
+	accounts = getElements(accounts, /<cardAccount[^>]*>/ig);
 	AnyBalance.trace('Найдено ' + accounts.length + ' карточных счетов');
 
 	result.cards = [];
 	
 	for(var i=0; i <accounts.length; ++i){
         var acc = accounts[i];
-		var accid = getElement(acc, /<accountId>/i, replaceTagsAndSpaces);
-		var accnum = getElement(acc, /<additionalAccountId>/i, replaceTagsAndSpaces);
+		var accid = getElement(acc, /<accountId[^>]*>/i, replaceTagsAndSpaces);
+		var accnum = getElement(acc, /<additionalAccountId[^>]*>/i, replaceTagsAndSpaces);
 
 		var cards = getElements(acc, /<card\b[^>]*>/ig);
 		AnyBalance.trace('Счет ' + accnum + ' содержит ' + cards.length + ' карт');
 		for(var j=0; j<cards.length; ++j){
 			var card = cards[j];
-			var id = getElement(card, /<cardHash>/i, replaceTagsAndSpaces);
-			var num = getElement(card, /<maskedCard>/i, replaceTagsAndSpaces);
-			var name = getElement(card, /<personalizedName>/i, replaceTagsAndSpaces);
+			var id = getElement(card, /<cardHash[^>]*>/i, replaceTagsAndSpaces);
+			var num = getElement(card, /<maskedCard[^>]*>/i, replaceTagsAndSpaces);
+			var name = getElement(card, /<personalizedName[^>]*>/i, replaceTagsAndSpaces);
 			if(!name) name = getParam(card, null, null, /<cardType[^>]*name="([^"]*)/i, replaceHtmlEntities); 
 			var title = name + ' ' + num.substr(-4);
 
@@ -288,12 +288,12 @@ function processCard(card, result, acc) {
 
     getParam(card, result, 'cards.type', /<cardType[^>]*name="([^"]*)/i, replaceHtmlEntities); 
     getParam(card, result, 'cards.type_code', /<cardType[^>]*>([\s\S]*?)<\/cardType>/i, replaceTagsAndSpaces); 
-    getParam(card, result, 'cards.status', /<status>([\s\S]*?)<\/status>/i, replaceTagsAndSpaces); //0 - активный?
-    getParam(card, result, 'cards.till', /<exprireDate>([\s\S]*?)<\/exprireDate>/i, replaceTagsAndSpaces, parseDateISO); 
-    getParam(acc, result, ['cards.currency', 'cards.balance'], /<currency>([\s\S]*?)<\/currency>/i, replaceTagsAndSpaces, CurrencyISO.digitsToLetters); 
+    getParam(card, result, 'cards.status', /<status[^>]*>([\s\S]*?)<\/status>/i, replaceTagsAndSpaces); //0 - активный?
+    getParam(card, result, 'cards.till', /<exprireDate[^>]*>([\s\S]*?)<\/exprireDate>/i, replaceTagsAndSpaces, parseDateISO); 
+    getParam(acc, result, ['cards.currency', 'cards.balance'], /<currency[^>]*>([\s\S]*?)<\/currency>/i, replaceTagsAndSpaces, CurrencyISO.digitsToLetters); 
 
     if(AnyBalance.isAvailable('cards.balance')){
-      	var currency = getElement(acc, /<currency>/i, replaceTagsAndSpaces);
+      	var currency = getElement(acc, /<currency[^>]*>/i, replaceTagsAndSpaces);
       	var xml = requestCardBalance(result.__id, currency);
        	getParam(xml, result, 'cards.balance', /<Amount[^>]*>([\s\S]*?)<\/Amount>/i, replaceTagsAndSpaces, parseBalance);
     }
@@ -326,14 +326,14 @@ function processCredits(xml, result) {
 
     xml = getProducts();
 
-	var credits = getElement(xml, /<credits>/i);
+	var credits = getElement(xml, /<credits[^>]*>/i);
 	if(!credits){
 		AnyBalance.trace(xml);
 		AnyBalance.trace('Не удалось найти кредиты');
 		return;
 	}
 
-	credits = getElements(credits, /<credit>/ig);
+	credits = getElements(credits, /<credit[^>]*>/ig);
 	AnyBalance.trace('Найдено ' + credits.length + ' кредитов');
 
 	result.credits = [];
@@ -341,9 +341,9 @@ function processCredits(xml, result) {
 	for(var i=0; i < credits.length; ++i){
 		var credit = credits[i];
 
-		var id = getElement(credit, /<contract_id>/i, replaceTagsAndSpaces);
-		var num = getElement(credit, /<contractNumber>/i, replaceTagsAndSpaces);
-		var name = getElement(credit, /<contract_name>/i, replaceTagsAndSpaces);
+		var id = getElement(credit, /<contract_id[^>]*>/i, replaceTagsAndSpaces);
+		var num = getElement(credit, /<contractNumber[^>]*>/i, replaceTagsAndSpaces);
+		var name = getElement(credit, /<contract_name[^>]*>/i, replaceTagsAndSpaces);
 		var title = name + ' ' + num.substr(-4);
 		
 		var c = {__id: id, __name: title, num: num, name: name};
@@ -359,14 +359,14 @@ function processCredits(xml, result) {
 function processCredit(credit, result){
     AnyBalance.trace('Обработка кредита ' + result.__name);
 
-    getParam(credit, result, 'credits.status', /<status>([\s\S]*?)<\/status>/i, replaceTagsAndSpaces); //0 - активный?
-    getParam(credit, result, 'credits.date_start', /<contract_date>([\s\S]*?)<\/contract_date>/i, replaceTagsAndSpaces, parseDateISO); 
-    getParam(credit, result, 'credits.till', /<contract_close_date>([\s\S]*?)<\/contract_close_date>/i, replaceTagsAndSpaces, parseDateISO); 
-    getParam(credit, result, ['credits.currency', 'credits.balance'], /<currency>([\s\S]*?)<\/currency>/i, replaceTagsAndSpaces, CurrencyISO.digitsToLetters); 
-    getParam(credit, result, 'credits.balance', /<residualAmount>([\s\S]*?)<\/residualAmount>/i, replaceTagsAndSpaces, parseBalance); 
-    getParam(credit, result, 'credits.accid', /<relatedAccount>([\s\S]*?)<\/relatedAccount>/i, replaceTagsAndSpaces); 
-    getParam(credit, result, 'credits.limit', /<overdraftLimit>([\s\S]*?)<\/overdraftLimit>/i, replaceTagsAndSpaces, parseBalance); 
-    getParam(credit, result, 'credits.pct', /<percRate>([\s\S]*?)<\/percRate>/i, replaceTagsAndSpaces, parseBalance); 
+    getParam(credit, result, 'credits.status', /<status[^>]*>([\s\S]*?)<\/status>/i, replaceTagsAndSpaces); //0 - активный?
+    getParam(credit, result, 'credits.date_start', /<contract_date[^>]*>([\s\S]*?)<\/contract_date>/i, replaceTagsAndSpaces, parseDateISO); 
+    getParam(credit, result, 'credits.till', /<contract_close_date[^>]*>([\s\S]*?)<\/contract_close_date>/i, replaceTagsAndSpaces, parseDateISO); 
+    getParam(credit, result, ['credits.currency', 'credits.balance'], /<currency[^>]*>([\s\S]*?)<\/currency>/i, replaceTagsAndSpaces, CurrencyISO.digitsToLetters); 
+    getParam(credit, result, 'credits.balance', /<residualAmount[^>]*>([\s\S]*?)<\/residualAmount>/i, replaceTagsAndSpaces, parseBalance); 
+    getParam(credit, result, 'credits.accid', /<relatedAccount[^>]*>([\s\S]*?)<\/relatedAccount>/i, replaceTagsAndSpaces); 
+    getParam(credit, result, 'credits.limit', /<overdraftLimit[^>]*>([\s\S]*?)<\/overdraftLimit>/i, replaceTagsAndSpaces, parseBalance); 
+    getParam(credit, result, 'credits.pct', /<percRate[^>]*>([\s\S]*?)<\/percRate>/i, replaceTagsAndSpaces, parseBalance); 
 
     if(AnyBalance.isAvailable('credits.transactions')) {
         processCreditTransactions(credit, result);
@@ -376,7 +376,7 @@ function processCredit(credit, result){
 function processInfo(xml, result){
     var info = result.info = {};
 
-    getParam(xml, info, 'info.fio', /<LAST_NAME>([\s\S]*?)<\/LAST_NAME>/i, replaceTagsAndSpaces);
-    getParam(xml, info, 'info.passport', /<PASSPORT_NUMBER>([\s\S]*?)<\/PASSPORT_NUMBER>/i, replaceTagsAndSpaces);
-    getParam(xml, info, 'info.paidup', /<PAID_UP>([\s\S]*?)<\/PAID_UP>/i, replaceTagsAndSpaces, parseBalance); //Оплачено до (у них платный интернет-банк?)
+    getParam(xml, info, 'info.fio', /<LAST_NAME[^>]*>([\s\S]*?)<\/LAST_NAME>/i, replaceTagsAndSpaces);
+    getParam(xml, info, 'info.passport', /<PASSPORT_NUMBER[^>]*>([\s\S]*?)<\/PASSPORT_NUMBER>/i, replaceTagsAndSpaces);
+    getParam(xml, info, 'info.paidup', /<PAID_UP[^>]*>([\s\S]*?)<\/PAID_UP>/i, replaceTagsAndSpaces, parseBalance); //Оплачено до (у них платный интернет-банк?)
 }

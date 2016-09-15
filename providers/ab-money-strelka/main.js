@@ -76,11 +76,11 @@ function main() {
 	getParam(card.cardalias, result, 'alias', /[\s\S]{2,}/, replaceTagsAndSpaces);
 	
 	if(isAvailable(['history', 'total_outcome', 'total_income'])) {
-		var count = 5, history = [], item, last, i, date, summ;
+		var count = 5, history = [], item, i, date, summ;
 		
 		data = makeRequest('Get', lkurl + 'api/cards/' + card.cardid + '/history/all/' + getFormattedDate({offsetMonth: 1}) + '/' + getFormattedDate() + '/', null, lkurl + '/cards');
 		if(data.items){
-			for(last = i = data.items.length - 1; i >= 0 && i > last - count; i--){
+			for(i=0; i<data.items.length && i<count; ++i){
 				item = data.items[i];
 				date = getFormattedDate1(item.date);
 				summ = '<b>' + (item.row_type === 1 ? '-' : '+') + (item.sum / 100) + ' руб.</b>';

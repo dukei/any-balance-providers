@@ -13,7 +13,8 @@ var g_headers = {
 var g_region_change = {
 	kzn: 'kazan',
 	nch: 'chelny',
-	novosib: 'nsk'
+	novosib: 'nsk',
+	spb: 'interzet',
 };
 
 function main() {

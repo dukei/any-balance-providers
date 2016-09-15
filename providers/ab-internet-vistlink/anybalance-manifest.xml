@@ -1,17 +1,19 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-internet-vistlink</id>
+	<id version="2">ab-internet-vistlink</id>
 	<api flags="no_browser"/>
 	<name>ВИСТлинк</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе провайдера ВИСТлинк http://vistlink.ru</p>
-	<p>Информация берется из личного кабинета http://vistlink.ru/stat_kulebaki/</p>
+	<p>Информация берется из личного кабинета http://stat.vistlink.ru/</p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>

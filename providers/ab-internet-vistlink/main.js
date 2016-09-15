@@ -12,24 +12,22 @@ var g_headers = {
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'http://vistlink.ru/stat_kulebaki/';
-	AnyBalance.setDefaultCharset('windows-1251');
+	var baseurl = 'http://stat.vistlink.ru/';
+	AnyBalance.setDefaultCharset('utf-8');
 	
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 	
-	var html = AnyBalance.requestGet(baseurl + 'login.php', g_headers);
-	
-	html = AnyBalance.requestPost(baseurl + 'login.php', {
-		user: prefs.login,
+	var html = AnyBalance.requestPost(baseurl + 'main.php', {
+		login: prefs.login,
 		password: prefs.password,
-		'show_lang': 'lang_ru_w1251.php'
-	}, addHeaders({Referer: baseurl + 'login.php'}));
+		auth_login: 1
+	}, addHeaders({Referer: baseurl}));
 	
-	if (!/exit\.php/i.test(html)) {
-		var error = getParam(html, null, null, /<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
+	if (!/action=exit/i.test(html)) {
+		var error = getElement(html, /<div[^>]+alert[^>]*>/i, replaceTagsAndSpaces);
 		if (error)
-			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
+			throw new AnyBalance.Error(error, null, /парол/i.test(error));
 		
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
@@ -37,10 +35,10 @@ function main() {
 	
 	var result = {success: true};
 	
-	getParam(html, result, 'balance', /Депозит\+Бонус(?:[\s\S]*?<td[^>]*>){10}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'account_num', /Номер\s+лицевого счета(?:[\s\S]*?<tr[^>]*>)([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, '__tariff', /Пакет(?:[\s\S]*?<td[^>]*>){10}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'fio', /ФИО(?:[\s\S]*?<td[^>]*>){10}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'balance', /Текущий баланс:(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'account_num', /Договор:(?:[\s\S]*?<td[^>]*>)([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+	getParam(html, result, '__tariff', /Тариф:(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+	getParam(html, result, 'fio', /Ф.И.О.:(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
 	
 	AnyBalance.setResult(result);
 }

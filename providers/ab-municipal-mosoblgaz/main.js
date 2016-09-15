@@ -12,7 +12,7 @@ var g_headers = {
 
 function main(){
     var prefs = AnyBalance.getPreferences();
-    var baseurl = 'http://lkkc.mosoblgaz.ru/';
+    var baseurl = 'https://lkk.mosoblgaz.ru/';
     AnyBalance.setDefaultCharset('utf-8'); 
 
     var html = AnyBalance.requestGet(baseurl + 'auth/login', g_headers);

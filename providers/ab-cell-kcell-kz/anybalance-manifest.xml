@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="15">ab-cell-kcell-kz</id>
+	<id version="16">ab-cell-kcell-kz</id>
 	<api flags="no_browser"/>
 	<name>Kcell (Казахстан)</name>
 	<description html="true"><![CDATA[
@@ -15,11 +15,13 @@
 		<strong>●</strong> После входа в Мой Kcell по временному паролю, Вам необходимо установить собственный пароль, для этого укажите свой электронный адрес и следуйте дальнейшим инструкциям.<br>
 	]]></instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
 		<js>main.js</js>
-		<js>library.js</js>
 		<history>history.xml</history>
 	</files>
 	<counters>

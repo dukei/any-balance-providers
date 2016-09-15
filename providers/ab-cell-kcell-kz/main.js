@@ -37,12 +37,12 @@ function main() {
 	
 	var result = {success: true, balance: null};
 	
-	getParam(html, result, 'balance', /(?:Баланс|Теңгерім|Balance):[\s\S]*?<font[^>]*>([\s\S]*?)<\/font>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'licschet', /(?:Номер лицевого счета|Дербес шот нөмірі|Account):[\s\S]*?<font[^>]*>([\s\S]*?)<\/font>/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'userName', '<span[^>]*class="cvet\s+account_name">([\s\S]+?)<\/span>', replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'bonuses', /(?:Бонусы|Бонустар|Bonuses):[\s\S]*?<font[^>]*>([^<]+?)<\/font>/, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'balance', /(?:Баланс|Теңгерім|Balance):([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, parseBalance);
+//	getParam(html, result, 'licschet', /(?:Номер лицевого счета|Дербес шот нөмірі|Account):[\s\S]*?<font[^>]*>([\s\S]*?)<\/font>/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'userName', /<div[^>]+class="preamble"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
+	getParam(html, result, 'bonuses', /(?:Бонусы|Бонустар|Bonuses):([\s\S]*?)<\/p>/, replaceTagsAndSpaces);
 
-	getParam(html, result, '__tariff', /(?:Тарифный план|Тариф|Tariff):[\s\S]*?<font[^>]*>([^<]+?)</i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, '__tariff', /(?:Тарифный план|Тариф|Tariff):([\s\S]*?)<\/p>/i, replaceTagsAndSpaces);
 	getParam(html, result, 'internet', /(?:Остатки по доп. услугам|Қосымша қызметтер бойынша қалдық|Available for VAS):[^<]*?GPRS\s*-?([^<]*)/i, replaceTagsAndSpaces, parseBalance);
 
 	if(isAvailable(['internet']) && !isset(result.internet)) {

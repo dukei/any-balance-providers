@@ -126,18 +126,18 @@ function processProfile(result) {
 	// Детальная инфа
 	var html = checkForRedirect(AnyBalance.requestGet('https://esia.gosuslugi.ru/profile/user/', g_headers));
 
-	getParam(html, result.profile, 'profile.fio', /ФИО(?:[\s\S]*?<dd[^>]*>)([\s\S]*?)<\/dd>/i, replaceTagsAndSpaces);
-	getParam(html, result.profile, 'profile.birth_place', /Место рождения(?:[\s\S]*?<dd[^>]*>)([\s\S]*?)<\/dd>/i, replaceTagsAndSpaces);
-	getParam(html, result.profile, 'profile.birth_day', /Дата рождения(?:[\s\S]*?<dd[^>]*>)([\s\S]*?)<\/dd>/i, replaceTagsAndSpaces, parseDate);
-	getParam(html, result.profile, 'profile.document', /Документ, удостоверяющий личность(?:[\s\S]*?<dd[^>]*>)([\s\S]*?)<\/dd>/i, replaceTagsAndSpaces);
+	getParam(html, result.profile, 'profile.fio', /ФИО(?:[\s\S]*?<dd[^>]*>)([\s\S]*?)(?:<\/dd>|<span[^>]+status-verify)/i, replaceTagsAndSpaces);
+	getParam(html, result.profile, 'profile.birth_place', /Место рождения(?:[\s\S]*?<dd[^>]*>)([\s\S]*?)(?:<\/dd>|<span[^>]+status-verify)/i, replaceTagsAndSpaces);
+	getParam(html, result.profile, 'profile.birth_day', /Дата рождения(?:[\s\S]*?<dd[^>]*>)([\s\S]*?)(?:<\/dd>|<span[^>]+status-verify)/i, replaceTagsAndSpaces, parseDate);
+	getParam(html, result.profile, 'profile.document', /Документ, удостоверяющий личность(?:[\s\S]*?<dd[^>]*>)([\s\S]*?)(?:<\/dd>|<span[^>]+status-verify)/i, replaceTagsAndSpaces);
 	getParam(html, result.profile, 'profile.snils', /Страховой номер индивидуального лицевого счёта(?:[\s\S]*?<dd[^>]*>)([\s\S]*?)<\/dd>/i, replaceTagsAndSpaces);
-	getParam(html, result.profile, ['profile.inn', 'nalog'], /id="person:innInf[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces);
-	getParam(html, result.profile, 'profile.adress_fakt', /id="person:liveAddrInf"[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces);
-	getParam(html, result.profile, 'profile.adress', /id="person:regAddrInf"[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces);
-	getParam(html, result.profile, 'profile.email', /Адрес электронной почты(?:[\s\S]*?<dd[^>]*>)([\s\S]*?)<\//i, replaceTagsAndSpaces);
-	getParam(html, result.profile, 'profile.phone', /Мобильный телефон(?:[\s\S]*?<dd[^>]*>)([\s\S]*?)<\//i, replaceTagsAndSpaces);
+	getParam(html, result.profile, ['profile.inn', 'nalog'], /id="person:someInnLinkId[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces);
+	getParam(html, result.profile, 'profile.adress_fakt', /openAltAddress[^<]+'PRG'[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces);
+	getParam(html, result.profile, 'profile.adress', /openAltAddress[^<]+'PLV'[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces);
+	getParam(html, result.profile, 'profile.email', /altEmailWgt[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces);
+	getParam(html, result.profile, 'profile.phone', /altMobileWgt[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces);
 
-	var license = getParam(html, null, null, /id="person:drLicenseInf"[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces);
+	var license = getElement(html, /<[^>]+altDrLicenceWgt.show[^>]*>/i, replaceTagsAndSpaces);
 	if (isset(license)) {
 		getParam(license, result.profile, ['profile.license_number', 'fines'], /[^,]*/, [/\s+/g, '']);
 		getParam(license, result.profile, 'profile.license');
@@ -155,8 +155,9 @@ function processProfile(result) {
 			var vehicle = {};
 
 			getParam(vehicles[i], vehicle, ['profile.vehicles.name', 'fines'], /<dt>([^<]+)/i, replaceTagsAndSpaces);
-			getParam(vehicles[i], vehicle, ['profile.vehicles.plate', 'fines'], /государственный регистрационный знак\s*([^,]+)/i, [replaceTagsAndSpaces, /\s/g, '']);
-			getParam(vehicles[i], vehicle, ['profile.vehicles.plate_id', 'fines'], /свидетельство о регистрации\s*([^<]+)/i, [replaceTagsAndSpaces, /\s/g, '']);
+			var dd = getElement(vehicles[i], /<dd[^>]*>/i, replaceTagsAndSpaces);
+			getParam(dd, vehicle, ['profile.vehicles.plate', 'fines'], /([^,]+)/i, [/\s+/g, '']);
+			getParam(dd, vehicle, ['profile.vehicles.plate_id', 'fines'], /свидетельство о регистрации\s*([^<]+)/i, [/\s+/g, '']);
 
 			if (isset(vehicle.name) || isset(vehicle.plate) || isset(vehicle.plate_id))
 				result.profile.vehicles.push(vehicle);
@@ -203,7 +204,7 @@ function processFinesBetaVehicles(result, vehicles, license_number, showPaidFine
 		result['fines_unpaid'] = 0;
 		result['fines_total'] = 0;
 
-		html = AnyBalance.requestGet(g_baseurl + '10001', g_headers);
+		html = AnyBalance.requestGet(g_baseurl + '10001/form', g_headers);
 
 		var trackId = AnyBalance.getLastResponseHeader('X-Atmosphere-tracking-id');
 		checkEmpty(trackId, 'X-Atmosphere-tracking-id header missing', true);
@@ -221,10 +222,10 @@ function processFinesBetaVehicles(result, vehicles, license_number, showPaidFine
 				// Теперь машины
 				for (var i = 0; i < vehicles.length; i++) {
 					template.form.content['GibddFines.FormStep1.Panel1.carNumber' + i] = {
-						"value": vehicles[i].plate
+						"value": vehicles[i].plate.replace(/\s+/g, '')
 					};
 					template.form.content['GibddFines.FormStep1.Panel1.stsNumber' + i] = {
-						"value": vehicles[i].plate_id
+						"value": vehicles[i].plate_id.replace(/\s+/g, '')
 					};
 				}
 			}

@@ -36,25 +36,21 @@ function main(){
 	}, addHeaders({Referer: baseurl + 'login.aspx'})); 
 
     if(!/LogoutPanel/i.test(html)){
-        var error = getParam(html, null, null, /<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
+        var error = getParam(html, null, null, /window\.alert\s*\(\s*'([^']*)/i, replaceTagsAndSpaces);
         if(error)
-            throw new AnyBalance.Error(error);
-
-        error = getParam(html, null, null, /В доступе отказано. Проверьте правильность логина и пароля./i);
-        if(error)
-            throw new AnyBalance.Error('В доступе отказано. Проверьте правильность логина и пароля. Возможно нажат CAPS LOCK или выбран не правильный язык ввода.', null, true);
+            throw new AnyBalance.Error(error, null, /парол/i.test(error));
 
         throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
     }
 	
     var result = {success: true};
-    getParam(html, result, 'account', /<input[^>]*id="cbLschetList_I"[^>]*value="([^>]*?)"[^>]*>/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'adress', /Адрес(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'beginperiod', /Начало(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'account', /<input[^>]*id="cbLschetList_I"[^>]*value="([^>]*?)"[^>]*>/i, replaceTagsAndSpaces);
+	getParam(html, result, 'adress', /Адрес(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+	getParam(html, result, 'beginperiod', /Начало(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
 	// Получаем таблицу платежей
-	__VIEWSTATE = getParam(html, null, null, /__VIEWSTATE[^>]*value="([\s\S]*?)"/i, null, null);
-	__EVENTVALIDATION = getParam(html, null, null, /__EVENTVALIDATION[^>]*value="([\s\S]*?)"/i, null, null);
-	var callback = getParam(html, null, null, /ASPxGridView1_CallbackState[^>]*value="([^"]*)/i, null, null);
+	__VIEWSTATE = getParam(html, null, null, /__VIEWSTATE[^>]*value="([\s\S]*?)"/i, replaceHtmlEntities);
+	__EVENTVALIDATION = getParam(html, null, null, /__EVENTVALIDATION[^>]*value="([\s\S]*?)"/i, replaceHtmlEntities);
+	var callback = getParam(html, null, null, /ASPxGridView1_CallbackState[^>]*value="([^"]*)/i, replaceHtmlEntities);
 	
 	html = AnyBalance.requestPost(baseurl + 'security/MainPage.aspx', {
 		'__LASTFOCUS':'',
@@ -66,7 +62,9 @@ function main(){
 		'DXScript':'1_42,1_74,2_15,1_40,1_67,1_64,1_41,1_72,1_58,1_52,1_65,3_8,3_7,2_22,2_29,1_57',
 	}, addHeaders({Referer: baseurl + 'security/MainPage.aspx'})); 
 	
-	getParam(html, result, 'balance', /<tr id="ASPxGridView1_DXDataRow0(?:[^>]*>){15,25}([^<]+)<\/td>\s*<\/tr>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'balance', /<tr[^>]+id="ASPxGridView1_DXDataRow0(?:[\s\S](?!<\/tr>))*?<td[^>]*>([^<]+)<\/td>\s*<\/tr>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'month_pay', /<tr[^>]+id="ASPxGridView1_DXDataRow0(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, '__tariff', /<tr[^>]+id="ASPxGridView1_DXDataRow0(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
 
     AnyBalance.setResult(result);
 }

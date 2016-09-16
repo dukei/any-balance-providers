@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="25" date="2016-09-16">
+	Исправлено получение спрятанного баланса
+	</change>
 	<change version="24" date="2016-04-29">
 	Восстановлен показ баланса, если баланс скрыт
 	</change>

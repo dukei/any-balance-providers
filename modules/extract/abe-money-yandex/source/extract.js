@@ -32,18 +32,17 @@ function loginAndGetBalance(prefs, result) {
 
 	if(/\*{3}/.test(textsum)) {
 	    AnyBalance.trace('Сумма спрятана. Будем пытаться найти...');
-		var text = AnyBalance.requestGet(baseurl + "tunes.xml", g_headers);
-		var sk = getParam(text, null, null, /name="sk"[^>]*value="([^"]+)/i, replaceTagsAndSpaces);
-		if(!sk){
+//		var text = AnyBalance.requestGet(baseurl + "tunes.xml", g_headers);
+		//Теперь ключ и баланс в такой структурке: 
+		//<div class="balance i-bem" data-bem="{&quot;balance&quot;:{&quot;amount&quot;:{&quot;sum&quot;:112.88,&quot;code&quot;:&quot;643&quot;},&quot;isHidden&quot;:true,&quot;setSumFlagUrl&quot;:&quot;/ajax/sum-visibility?sk=u8c9727f96af623dcb0814a3da5451cd6&quot;}}">
+	    var params = getParam(html, null, null, /<div[^>]+class="[^>]*\bbalance\b[^>]+data-bem="([^"]*)/i, replaceHtmlEntities, getJson);
+	    AnyBalance.trace('Получаем баланс из ' + JSON.stringify(params));
+	    if(params && params.balance && params.balance.amount && isset(params.balance.amount.sum)){
+	    	getParam(params.balance.amount.sum, result, 'balance');
+	    }else{
 			AnyBalance.trace(html);
-			throw new AnyBalance.Error('Не удаётся найти ключ для получения баланса! Сайт изменен?');
+			throw new AnyBalance.Error('Не удаётся найти спрятанный баланс! Сайт изменен?');
 		}
-		
-		text = AnyBalance.requestGet(baseurl + "ajax/sum-visibility?sk=" + sk + "&flag-hide-sum=false", addHeaders({Referer: baseurl, 'X-Requested-With':'XMLHttpRequest'}));
-		var json = getJson(text);
-	    getParam('' + json.sum, result, 'balance', null, null, parseBalance);
-	    AnyBalance.trace('Скрываем баланс обратно, чтобы стало, как было...');
-		AnyBalance.requestGet(baseurl + "ajax/sum-visibility?sk=" + sk + "&flag-hide-sum=true", addHeaders({Referer: baseurl, 'X-Requested-With':'XMLHttpRequest'}));
 	} else {
 	    getParam(textsum, result, 'balance', null, replaceTagsAndSpaces, parseBalance);
 	}

@@ -1,45 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1.0" version="1">ab-weather-meteoperm</id>
+  <id major_version="1.0" version="2">ab-weather-meteoperm</id>
   <name>Температура в Перми(ПГУ)</name>
   <description>
-   Получает текущую погоду с сайта http://meteo.perm.ru. Для измерения температуры используется температурный датчик собственного производства, расположенный в ПГУ г. Перми и защищенный от воздействия внешних факторов, что позволяет довольно точно определять температуру воздуха. 
+   Получает текущую погоду с сайта http://meteo.psu.ru/. Для измерения температуры используется температурный датчик собственного производства, расположенный в ПГУ г. Перми и защищенный от воздействия внешних факторов, что позволяет довольно точно определять температуру воздуха.
   </description>
-  <author>Sancho Vyatchanin&lt;mail@sancho.pw&gt;</author>
+  <author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+  <depends>
+    <module id="library"/>
+  </depends>
   <files>
     <icon>icon.png</icon>
-    <!--<preferences>preferences.xml</preferences>-->
-    <!--<js>api:jquery.min.js</js>-->
-    <js>library.js</js>
     <js>main.js</js>
   </files>
   <counters>
     <counter id="temperature" name="Температура воздуха" units="°C"/>
     <counter id="o_temp" name="Ощущаемая температура" units="°C"/>
     <counter id="point_dew" name="Точка росы" units="°C"/>
-
     <counter id="atm_davl" name="Атмосферное давление" units="мм рт.ст."/>
     <counter id="otn_vl_vozd" name="Относительная влажность воздуха" units="%"/>
     <counter id="v_vetra" name="Скорость ветра" units="м/с"/>
-    <counter id="sr_v_vetra_10" name="Средняя скорость ветра за 10 минут" units="м/с"/>
-    <counter id="sr_v_vetra_1" name="Скорость ветра за последний час" units="м/с"/>
-    <counter id="napr_vetra" name="Направление ветра" type="html"/>
-    <counter id="ur_osad_1" name="Уровень осадков за день" units="мм"/>
+    <counter id="p_vetra" name="Порывы ветра до" units="м/с"/>
+    <counter id="napr_vetra" name="Направление ветра" type="text"/>
+
+   <!-- <counter id="ur_osad_1" name="Уровень осадков за день" units="мм"/>
     <counter id="ur_osad_tek" name="Уровень осадков за текущий дождь(снег)" units="мм"/>
     <counter id="date_osad" name="Дата начала дождя" type="html"/>
     <counter id="intens_osad" name="Интенсивность осадков" units="мм/час"/>
     <counter id="sum_ispar" name="Суммарная испаряемость за день" units="мм"/>
     <counter id="intens_potoka" name="Интенсивность потока солнечного излучения" units="Вт/м2"/>
     <counter id="index" name="Индекс ультрафиолетового излучения" units=""/>
-    <counter id="sut_doza" name="Суточная доза ультрафиолетового излучения" units="МЭД"/>
+    <counter id="sut_doza" name="Суточная доза ультрафиолетового излучения" units="МЭД"/>-->
   </counters>
-  <keywords>
-    прогноз, погода, температура, воздух, meteoperm, пермь
-  </keywords>
-  <type>
-    weather
-  </type>
-  <country>
-    ru
-  </country>
+  <keywords>прогноз, погода, температура, воздух, meteoperm, пермь</keywords>
+  <type>weather</type>
+  <country>ru</country>
 </provider>

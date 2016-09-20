@@ -1,25 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="2">ab-affiliate-avon</id>
+	<id version="3">ab-affiliate-avon</id>
 	<name>Эйвон</name>
 	<description>
 	Получает баланс и другую информацию по представителю Эйвон (http://www.avon.ru)
 	
 	Информация берется из личного кабинета: https://www.avon.ru/REPSuite/
 	</description>
-	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units="р"/>
-		<counter id="credit" name="Кредит" units="р"/>
-		<counter id="lastpay" name="Последний платеж" units="р"/>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="credit" name="Кредит" units=" р"/>
+		<counter id="limit" name="Доступный лимит кредита по ценам каталога" units=" р"/>
+		<counter id="bonus" name="Доступные баллы" units=" б"/>
+		<counter id="p_bonus" name="Потенциальные баллы" units=" б"/>
+		<counter id="h_bonus" name="Горящие баллы" units=" б"/>
+		<counter id="lastpay" name="Последний платеж" units=" р"/>
 		<counter id="daysleft" name="До сдачи заказа" units=" дн."/>
 		<counter id="orderdate" name="Дата заказа" type="time" format="dd/MM/yyyy"/>
 		<counter id="paytill" name="Срок оплаты" type="time" format="dd/MM/yyyy"/>

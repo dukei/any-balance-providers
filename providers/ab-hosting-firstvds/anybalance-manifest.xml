@@ -1,23 +1,28 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="4">ab-hosting-firstvds</id>
+	<id version="5">ab-hosting-firstvds</id>
 	<api flags="no_browser"/>
 	<name>FirstVDS (Хостинг)</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе хостинг-провайдера FirstVDS <a href="http://firstvds.ru">http://firstvds.ru</a></p>
-	<p>Информация берется из личного кабинета <a href="https://my.firsvds.ru">https://my.firsvds.ru</a></p>
+	<p>Предоставляет информацию о балансе хостинг-провайдера FirstVDS http://firstvds.ru </p>
+	<p>Информация берется из личного кабинета https://my.firsvds.ru </p>
 	]]></description>
-	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
 	<counters>
 		<counter id="balance" name="Баланс" units=" р"/>
 		<counter id="forecast" name="Прогноз отключения" type="time" format="dd/MM/yyyy"/>
+		<counter id="date_start" name="Дата регистрации" type="time" format="dd/MM/yyyy"/>
+		<counter id="provider" name="Провайдер" type="text"/>
+		<counter id="subacc" name="Код лицевого счёта" type="text"/>
 	</counters>
 	<keywords>интернет hosting</keywords>
 	<type>hosting</type>

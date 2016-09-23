@@ -3,11 +3,11 @@
 */
 
 var g_headers = {
-	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
-	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
-	'Connection': 'keep-alive',
-	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
+	'Accept': 			'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+	'Accept-Charset': 	'windows-1251,utf-8;q=0.7,*;q=0.3',
+	'Accept-Language': 	'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
+	'Connection': 		'keep-alive',
+	'User-Agent': 		'Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/53.0.2785.116 Safari/537.36',
 };
 
 function main() {
@@ -20,24 +20,26 @@ function main() {
 
 	var html = AnyBalance.requestGet(baseurl + 'cabinet', g_headers);
 
-	html = AnyBalance.requestPost(baseurl + 'cabinet?auth=false', {
+	html = AnyBalance.requestPost(baseurl + 'cabinet', {
 		account_num: prefs.login,
 		password: prefs.password,
-		authorize: 'Войти'
-	}, addHeaders({Referer: baseurl + 'cabinet?auth=false'}));
+		auth: 'Войти'
+	}, addHeaders({
+		Referer: baseurl + 'cabinet'
+		}));
 
 	if (!/logout/i.test(html)) {
-		var error = getParam(html, null, null, /Личный кабинет(?:[^>]*>){4}[^<]*<strong>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
-		if (error && /Неверный логин или пароль/i.test(error))
-			throw new AnyBalance.Error(error, null, true);
-		if (error)
-			throw new AnyBalance.Error(error);
+		var error = AB.getParam(html, null, null, /jalert\("([^"]*)/i, AB.replaceTagsAndSpaces);
+		if (error) {
+			throw new AnyBalance.Error(error, null, /проверьте правильность/i.test(error));
+
+		}
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
 	
-	html = AnyBalance.requestGet(baseurl + 'cabinet?auth=false&info=&p=info', addHeaders({'X-Requested-With': 'XMLHttpRequest'}));
-	
-//	html = AnyBalance.requestGet(baseurl + 'cabinet#url=info', g_headers);
+	html = AnyBalance.requestGet(baseurl + 'cabinet?info=&p=info', addHeaders({
+		'X-Requested-With': 'XMLHttpRequest'
+	}));
 	
 	var json = getJson(html);
 	

@@ -92,7 +92,7 @@ function login(prefs, result) {
 
 			g_session = json.cookie;
 
-			AnyBalance.trace('Успешно привязали устройство.');
+			AnyBalance.trace('Успешно привязали устройство: ' + JSON.stringify(json));
 		} else {
 			AnyBalance.trace('Похоже что устройство уже привязано.');
 

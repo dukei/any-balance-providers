@@ -71,7 +71,7 @@ function main() {
 
 //  html = AnyBalance.requestGet(baseurl + 'ru/informaciya/abonent/', g_headers);
 
-  getParam(html, result, '__tariff', [/Тарифный план([^<]+)/i, /Наименование тарифного плана(?:[^>]*>){2}([\s\S]*?)<\/td>/i], replaceTagsAndSpaces);
+  getParam(html, result, '__tariff', [/Тарифный план([^<]+)/i, /(?:Тарифный план|Наименование тарифного плана)[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i], replaceTagsAndSpaces);
   getParam(html, result, 'fio', /ФИО(?:[^>]+>){2}([^<]+)/i, replaceTagsAndSpaces);
   getParam(html, result, 'phone', /Номер (?:life|телефона)(?:[^>]+>){2}([^<]+)/i, replaceTagsAndSpaces);
   // СМС/ММС
@@ -88,8 +88,11 @@ function main() {
   sumParam(html, result, 'traffic_left', />(?:Безлимитный)?\s*интернет(?:[^>]+>){2}([^<]+(?:МБ|Гб|Кб|Байт))/ig, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
   sumParam(html, result, 'traffic_msg_left', />интернет[^<]*(?:viber|whatsapp)(?:[^>]+>){2}([^<]+ед)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
   // Баланс
+  getParam(html, result, 'balance', /<tr>\s*<td[^>]*>\s*(?:Общий|Основной) (?:сч(?:е|ё)т\s*(?=<)|баланс:)([\s\S]*?)<\/tr>/i, replaceTagsAndSpaces, parseBalance);
 
-  getParam(html, result, 'balance', /<tr>\s*<td[^>]*>\s*Основной (?:сч(?:е|ё)т\s*(?=<)|баланс:)([\s\S]*?)<\/tr>/i, replaceTagsAndSpaces, parseBalance);
+  getParam(html, result, 'limit', /<td[^>]*>\s*Корпоративный лимит(?:[\s\S]*?<td[^>]*>)([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseBalance);
+  getParam(html, result, 'limit_used', /Использованный корпоративный лимит(?:[\s\S]*?<td[^>]*>)([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseBalance);
+
   // Баланс для постоплаты
   if (!isset(result.balance) || result.balance === 0)
     getParam(html, result, 'balance', /Задолженность на линии(?:[^>]*>){2}([^<]+)/i, replaceTagsAndSpaces, parseBalance);

@@ -1,12 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="16">ab-bonus-euroopt</id>
+  <id version="17">ab-bonus-euroopt</id>
   <api flags="no_browser|captcha" min_level="3"/>
   <name>Евроопт (Беларусь)</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о скидке и сумме покупок в текущем месяце в белорусской компании "Евроопт" (http://www.euroopt.by).</p>
 	<p>Требует ввода защитного кода.</p>
-	<p>Информация берется со страницы http://eplus.evroopt.by/cabinet/report/</p>   
+	<p>Информация берется со страницы http://igra.evroopt.by/cabinet/report/</p>   
 	]]></description>
   <author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
   <depends>

@@ -17,7 +17,7 @@ function main () {
     var prefs = AnyBalance.getPreferences ();
     AnyBalance.setDefaultCharset('utf-8');
 	
-    var baseurl = 'http://eplus.evroopt.by/';
+    var baseurl = 'http://igra.evroopt.by/';
     if(!prefs.login)
         throw new AnyBalance.Error('Введите № карты');
 	
@@ -47,7 +47,7 @@ function main () {
 	
     html = AnyBalance.requestPost(baseurl + 'cabinet/enter/', params, addHeaders({Referer: baseurl + 'cabinet/enter/'}));
 
-    if(!/\/cabinet\/report\//i.test(html)){
+    if(!/ЗДРАВСТВУЙТЕ,\s+/i.test(html)){
         var error = sumParam(html, null, null, /<ul[^>]+class="errors"[^>]*>([\s\S]*?)<\/ul>/ig, replaceTagsAndSpaces, null, aggregate_join);
         if(error)
             throw new AnyBalance.Error(error, null, /Карточка с таким номером не найдена/i.test(error));

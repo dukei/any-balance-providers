@@ -5,6 +5,7 @@
 var g_countersTable = {
 	card: {
     	"balance": "cards.balance",
+    	"own": "cards.own",
 		"currency": "cards.currency",
 		"cardnum": "cards.num",
 		"__tariff": "cards.__name",

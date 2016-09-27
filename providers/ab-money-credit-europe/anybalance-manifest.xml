@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser|sms" />
-    <id version="2">ab-money-credit-europe</id>
+    <id version="3">ab-money-credit-europe</id>
 	<name>Кредит Европа Банк</name>
 	<description html="true"><![CDATA[
 	<p>Получает текущий остаток и другие параметры продуктов Кредит Европа Банка http://crediteurope.ru/, используя интернет-банк (https://online.crediteurope.ru/).</p>
@@ -23,6 +23,7 @@
 	</files>
 	<counters>
 		<counter id="balance" name="Баланс" units=" {@currency}"/>
+		<counter id="own" name="Собственные средства" units=" {@currency}"/>
 		<counter id="available_cash" name="Доступно для снятия наличных" units=" {@currency}"/>
 		<counter id="minpay_till" name="Ближайший платеж" type="time" format="dd/MM/yyyy"/>
 		<counter id="debt" name="Предварительная задолженность на текущий момент" units=" {@currency}"/>

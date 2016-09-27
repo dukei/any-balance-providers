@@ -425,6 +425,11 @@ function processCard(html, tbl, cardsParams, result) {
             getParam(prop.text, result, 'cards.bonus', null, null, parseBalance);
     }
 
+    if (AnyBalance.isAvailable('cards.transactions')) {
+        html = processCardTransactions(html, result);
+    }
+
+
     return html;
 }
 

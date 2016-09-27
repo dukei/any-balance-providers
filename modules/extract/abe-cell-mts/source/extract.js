@@ -685,13 +685,21 @@ function processBonusLK(result){
 
 function processTraffic(result){
 	try{
+	    AnyBalance.trace('Пробуем получить трафик из ЛК по API');
+	    processTrafficLKApi(result);
+	    return;
+    } catch (e) {
+        AnyBalance.trace('Не удалось получить трафик из ЛК по API: ' + e.message + '\n' + e.stack);
+    }
+/*
+	try{
 	    AnyBalance.trace('Пробуем получить трафик из ЛК');
 	    processTrafficLK(result);
 	    return;
     } catch (e) {
         AnyBalance.trace('Не удалось получить трафик из ЛК: ' + e.message + '\n' + e.stack);
     }
-
+*/
 	try{
 	    AnyBalance.trace('Пробуем получить трафик из интернет-кабинета');
 	    processTrafficInternet(result);
@@ -708,19 +716,26 @@ function parseTrafficFromKb(str){
 }
 
 function keysToLowerCase(obj) {
-	var t = typeof(obj);
-    if (!(t === "object") || obj === null || t === "string" || t === "number" || t === "boolean") {
-        return obj;
+	function isComplexObject(obj){
+		var t = typeof(obj);
+    	if (!(t === "object") || obj === null || t === "string" || t === "number" || t === "boolean") {
+        	return false;
+    	}
+    	return true;
     }
+    if(!isComplexObject(obj))
+    	return obj;
     var keys = Object.keys(obj);
     var n = keys.length;
     var lowKey;
     while (n--) {
         var key = keys[n];
-        if (key === (lowKey = key.toLowerCase()))
+        var key_unchanged = (key === (lowKey = key.toLowerCase()));
+        if (key_unchanged && !isComplexObject(obj[key]))
             continue;
         obj[lowKey] = keysToLowerCase(obj[key]);
-        delete obj[key];
+        if(!key_unchanged)
+        	delete obj[key];
     }
     return (obj);
 }
@@ -805,6 +820,15 @@ function processTrafficInternet(result){
     	var obj = getJsonObject(script, /_profile:(?=\s*\{)/i);
     	processTrafficH2O(obj, result);
     }
+}
+
+function processTrafficLKApi(result){
+    if (isAvailable('remainders.traffic_left_mb', 'remainders.traffic_used_mb', 'remainders.traffic_left_till')) {
+		AnyBalance.trace('Пробуем получить трафик по апи из ЛК..');
+		var html = AnyBalance.requestGet(g_baseurl + '/api/myInternet/trafficAvailable', addHeaders({Referer: g_baseurl, 'X-Requested-With': 'XMLHttpRequest'}));
+		var json = getJson(html);
+		processTrafficH2O(json.h2OExtended, result);
+	}
 }
 
 function processTrafficLK(result){

@@ -20,51 +20,42 @@ function login(prefs, result) {
 	checkEmpty(prefs.password, 'Введіть пароль!');
 	
 	var html = AnyBalance.requestGet(baseurl + 'wb/', g_headers);
-	
-	if (!/logout/i.test(html)) {
-		var execKey = getParam(html, null, null, /execution=([\s\S]{4})/i);
-	  
-		var href = getParam(html, null, null, /id="FORM_FAST_LOGIN"[^>]*action="\/([^"]*)/i);
-		if(!href) {
-			AnyBalance.trace(html);
-			throw new AnyBalance.Error('Не удалось найти ссылку на вход в кабинет, сайт изменен?');
+
+	html = AnyBalance.requestGet(baseurl + 'wb/api/v2/session', addHeaders({
+		Referer: baseurl + 'wb/',
+		'X-Requested-With': 'XMLHttpRequest'
+	}));
+
+	var json = getJson(html);
+	if(json.status != 'authenticated'){
+		html = AnyBalance.requestPost(baseurl + 'wb/api/v2/session', JSON.stringify({
+			login: prefs.login,
+			password: prefs.password,
+			captcha: '',
+			_error: null		
+		}), addHeaders({
+			Referer: baseurl + 'wb/',
+			'Content-Type': 'application/json',
+			'X-Requested-With': 'XMLHttpRequest'
+		}));
+		
+		json = getJson(html);
+
+		if(json.status != 'authenticated'){
+			if(json._error){
+				throw new AnyBalance.Error(json._error.code == 'INVALID_LOGIN_OR_PASSWORD' ? 'Невірний логін або пароль' : json._error.code, null, /INVALID_LOGIN_OR_PASSWORD/i.test(json._error.code));
+
+				AnyBalance.trace(html);
+				throw new AnyBalance.Error('Не удалось войти в интернет банк. Сайт изменен?');
+			}
 		}
-		
-		var params = createFormParams(html, function(params, str, name, value) {  
-			if (name == 'AUTH_METHOD') 
-				return 'FAST_PWA';  
-			if (name == 'Login') 
-				return prefs.login;
-			else if (name == 'password')
-				return prefs.password;
-			else if (name == '_flowExecutionKey')
-				return execKey; 
-			else if (name == '_eventId')
-				return 'submitUserId'; 
-			return value;
-		});
-		
-		html = AnyBalance.requestPost(baseurl + href, params, addHeaders({Referer: baseurl + 'wb/auth/userlogin?execution=' + execKey}));
-		AnyBalance.trace(baseurl + 'wb/auth/userlogin?execution=' + execKey);
-		
-		__setLoginSuccessful();
+	}else{
+		AnyBalance.trace('Используем существующую сессию');
 	}
+
+	__setLoginSuccessful();
 	
-	if (!/logout/i.test(html)) {
-		var error = getParam(html, null, null, /Смена Пароля(?:[\s\S]*?<[^>]*>){2}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
-		if (error) 
-			throw new AnyBalance.Error(error);
-		error = getElement(html, /<div[^>]+form-error[^>]*>/i);
-		if(error)
-			error = replaceAll(error, replaceTagsAndSpaces);
-		if (error) 
-			throw new AnyBalance.Error(error, null, /неправильный логин или пароль/i.test(error));
-		
-		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Не вдалося зайти в особистий кабінет. Сайт змінено?');
-	}
-	
-	return html;
+	return json;
 }
 
 function processProfile(html, result) {
@@ -160,7 +151,7 @@ function processAccount(prod, result) {
 // Служебные функции
 function getProductJson(type) {
 	if(!gDataJson) {
-		var html = AnyBalance.requestGet(baseurl + 'wb/api/v1/contracts?system=W4C', addHeaders({'X-Requested-With':'XMLHttpRequest'}));
+		var html = AnyBalance.requestGet(baseurl + 'wb/api/v2/contracts?system=W4C', addHeaders({'X-Requested-With':'XMLHttpRequest'}));
 		var json = gDataJson = getJson(html);
 	} else {
 		var json = gDataJson;

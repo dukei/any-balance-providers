@@ -218,7 +218,7 @@ function login(){
 	if(isLoggedIn(html))
 		return html;
 
-    form = getElements(html, [/<form[^>]+submitForm[^>]*>/ig, /<input[^>]+name="otp_type"/i])[0];
+    form = getElements(html, [/<form[^>]+(?:login|submitForm)[^>]*>/ig, /<input[^>]+name="otp_type"/i])[0];
     if(!form && hasCaptcha(html) && !wasCaptcha){
     	html = tryLogin(html);
 	    
@@ -227,7 +227,7 @@ function login(){
             return html;
         }
 
-    	form = getElements(html, [/<form[^>]+submitForm[^>]*>/ig, /<input[^>]+name="otp_type"/i])[0];
+    	form = getElements(html, [/<form[^>]+(?:login|submitForm)[^>]*>/ig, /<input[^>]+name="otp_type"/i])[0];
     }
 
     if(!form){
@@ -240,7 +240,7 @@ function login(){
 
 	//Потребовалось otp
     var otpType = getParam(form, null, null, /<input[^>]+name="otp_type"[^>]*value+"([^"]*)/i);
-    var msg = getParam(html, null, null, new RegExp('<span[^>]+id="otp_type_' + otpType + '"[^>]*confirmType[^>]*>([\\s\\S]*?)</span>', 'i'), replaceTagsAndSpaces);
+    var msg = getElements(form, /<[^>]+id="(?:smsWasSentText|labelShortPassword)"/ig, replaceTagsAndSpaces).join('. ');
 
     //Запрос смс
     var sessionid = AnyBalance.requestPost(g_baseurl + '/scoring/smsPasswordLoginAjaxServlet', {smsSentTime: new Date().getTime()}, addHeaders({
@@ -252,6 +252,8 @@ function login(){
     
 	var params = createFormParams(form, function(params, str, name, value) {
 		if ('otp' == name) 
+			return code;
+		if ('otp_type_' + otpType + '_input' == name) 
 			return code;
 		if ('captcha' == name)
 			return getCaptcha(html);

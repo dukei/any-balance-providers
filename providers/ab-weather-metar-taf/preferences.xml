@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference
+        key="fieldCode"
+        title="Код станции(аэропорта)"
+        summary="|Укажите код ИКАО|{@s}"
+        dialogTitle="Код станции(аэропорта)"
+        negativeButtonText="Отмена"
+        positiveButtonText="OK"
+        inputType="text"
+        dialogMessage="Укажите код станции(аэропорта) ИКАО">
+    </EditTextPreference>
+</PreferenceScreen>

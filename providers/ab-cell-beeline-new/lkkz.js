@@ -538,14 +538,14 @@ function fetchPreKz(baseurl, html) {
     }
     if (AnyBalance.isAvailable('fio')) {
         AnyBalance.trace('Переходим в настройки для получения ФИО.');
-        var href = getParam(html, null, null, /[^"]*settings.html/i);
+        var href = getParam(html, null, null, /[^"]*numbers.xhtml/i);
         if(href) {
             if(!/http/i.test(href))
                 href = baseurl.replace(/\/$/, '') + href;
 
             html = AnyBalance.requestGet(href, g_headers);
 
-            getParam(html, result, 'fio', /personal_info(?:[^>]*>){5}[^>]*class="value"[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces, capitalFirstLetters);
+            getParam(html, result, 'fio', /userNameOverrideForm(?:[^>]*>){5}[^>]*class="value"[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces, capitalFirstLetters);
             // А у некоторых ФИО не введен, поэтому и беда
             if(/\d{5,}/i.test(result.fio) || /^\s*$/i.test(result.fio)) {
                 result.fio = undefined;

@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="152" date="2016-08-22">
+	Исправлено получение ФИО в Казахстане
+	</change>
 	<change version="151" date="2016-08-01">
 	Исправление обновления минут в некоторых случаях
 	</change>

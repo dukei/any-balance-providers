@@ -5,16 +5,15 @@ ab-internet-soskol
 */
 
 var g_headers = {
-  'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-  'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
-  'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
-  'Connection': 'keep-alive',
-  'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
+  'Accept':           'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+  'Accept-Charset':   'windows-1251,utf-8;q=0.7,*;q=0.3',
+  'Accept-Language':  'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
+  'User-Agent':       'Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/53.0.2785.116 Safari/537.36',
 };
 
 function main() {
   var prefs = AnyBalance.getPreferences();
-  var baseurl = 'http://stat.soskol.info/';
+  var baseurl = 'https://stat.soskol.info/';
   AnyBalance.setDefaultCharset('windows-1251');
 
   AB.checkEmpty(prefs.login, 'Введите логин!');
@@ -39,9 +38,7 @@ function main() {
     throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
   }
 
-  var result = {
-    success: true
-  };
+  var result = {success: true};
 
   if (AnyBalance.isAvailable('balance', 'licschet')) {
 

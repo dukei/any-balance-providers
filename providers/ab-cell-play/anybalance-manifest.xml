@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="3">ab-cell-play</id>
+	<id version="4">ab-cell-play</id>
 	<api flags="no_browser"/>
 	<name>Play</name>
 	<description html="true"><![CDATA[

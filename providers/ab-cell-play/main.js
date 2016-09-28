@@ -29,8 +29,10 @@ function main() {
 	var params = getFormParams(html);
 	//забираем с ответа URL, куда нужно делать POST запрос для перехода на страницу входа в ЛК
 	var postHref = getParam(html, null,null, /action\s*=\s*"([\s\S]*?)"/i);
-	if(!postHref)
+	if(!postHref){
+		AnyBalance.trace(html);
 		throw new AnyBalance.Error("Can't find login page URL adress. Site changed?");
+	}
 
 	html = AnyBalance.requestPost(postHref, params, addHeaders({
 		Referer: baseurlMobile+'home?wicket'
@@ -69,8 +71,10 @@ function main() {
 	if(isAvailable(['balance', 'pakietZolotowek', 'min_all', 'min_promocyjne', 'traffic', 'doladowan', 'incomingCallsDate', 'outgoingCallsDate']))
 	{
 		var href = getParam(html, null, null, /<ul[^>]*class\s*=\s*"nav"[^>]*>(?:[\s\S]*?<li[^>]*>){3}<a[^>]+href="([\s\S]*?)"/i);
-		if(!href)
+		if(!href){
+			AnyBalance.trace(html);
 			AnyBalance.trace("Can't find page with information. Site changed?");
+		}
 
 		html = AnyBalance.requestGet(joinUrl(baseurlMobile, href), g_headers);
 		getParam(html, result, 'balance', /col left-col[^>]*>(?:[\s\S]*?[^>]*>){5}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);

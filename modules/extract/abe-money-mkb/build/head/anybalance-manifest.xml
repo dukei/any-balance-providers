@@ -5,6 +5,7 @@
     <name>Extract for МКБ</name>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>
+		<module id="crypt/cryptojs/md5"/>
 		<module id="library"/>
 	</depends>
 	<files>

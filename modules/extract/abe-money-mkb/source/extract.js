@@ -12,6 +12,57 @@ var g_headers = {
 
 var baseurl = 'https://online.mkb.ru/';
 
+function cryptParams(html, params){
+	var prefs = AnyBalance.getPreferences(),
+		userName = prefs.login,
+		password = prefs.password;
+
+	if(typeof(window) == 'undefined')
+		window = {};
+
+	var authInit = getParam(html, null, null, /Auth.init\s*\([^)]+\)/i);
+	if(!authInit){
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удалось найти ключи авторизации. Сайт изменен?');
+	}
+	
+	safeEval(authInit);
+
+	var passHash = Auth.getMd5Hash(password);
+    var nonceC = Auth.getnonсeC();
+
+    var info = AnyBalance.requestPost(baseurl + 'auth?m=l', JSON.stringify({
+    	l: userName,
+    	nc: nonceC
+    }), addHeaders({
+    	'X-Requested-With': 'XMLHttpRequest',
+    	'Content-Type': 'application/json; charset=UTF-8',
+    	'Referer': baseurl + 'secure/login.aspx?ReturnUrl=%2fsecure%2fmain.aspx'
+    }));
+
+    var serv = getJson(info).d;
+    if(!serv){
+		AnyBalance.trace(info);
+		throw new AnyBalance.Error('Не удалось получить ключи авторизации. Сайт изменен?');
+    }
+    serv = getJson(serv);
+
+    var proof = Auth.getClientProof(userName, passHash, serv.Salt, serv.IterationsCount, serv.NonceS, serv.SessionId);
+   	var addParams = {
+        sid: serv.SessionId,
+        l: userName,
+        cp: proof,
+        ns: serv.NonceS,
+        am: Auth.exports.authMessage,
+        sp: Auth.exports.saltedPassword
+    };
+
+    for(var n in addParams){
+    	params[n] = addParams[n];
+    }
+    params.txtPassword = '';
+}
+
 function login(prefs) {
 	AnyBalance.setDefaultCharset('utf-8');
 	
@@ -36,7 +87,10 @@ function login(prefs) {
                 return prefs.password;
             return value;
         });
-		html = AnyBalance.requestPost(baseurl + 'secure/login.aspx', params, addHeaders({Referer: baseurl + 'secure/login.aspx'}));
+
+        cryptParams(html, params);
+
+		html = AnyBalance.requestPost(baseurl + 'secure/login.aspx?ReturnUrl=%2fsecure%2fmain.aspx', params, addHeaders({Referer: baseurl + 'secure/login.aspx?ReturnUrl=%2fsecure%2fmain.aspx'}));
 	}else{
 		AnyBalance.trace('Уже залогинены, используем существующую сессию')
 	}

@@ -36,9 +36,9 @@ function main()
     getParam(html, result, 'current_period', /<select id="period"[\s\S]+selected>(.{1,20})<\/option>/);
 
     var balances = getBalances(html);
-    result['accrued'] = balances[3];
-    result['paid'] = balances[5];
-    result['to_pay'] = balances[6];
+    result['accrued'] = balances[4];
+    result['paid'] = balances[7];
+    result['to_pay'] = balances[8];
 
     AnyBalance.setResult(result);
 }

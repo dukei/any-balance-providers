@@ -69,15 +69,13 @@ function main(){
 	}
 */
 
-	if(isAvailable('income', 'nachisl', 'recomended', 'balance')){
+	if(isAvailable('income', 'nachisl', 'recomended', 'balance')) {
 		html = AnyBalance.requestGet(baseurl + 'balance', g_headers);
-		var balance_start = getParam(html, null, null, /Баланс на[\s\S]*?<div[^>]+balance-value[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
-		var income = getParam(html, null, null, /ПОСТУПЛЕНИЯ НА СЧЕТ В ТЕКУЩЕМ МЕСЯЦЕ[\s\S]*?<div[^>]+balance-value[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
-		var nachisl = getParam(html, null, null, /НАЧИСЛЕНИЯ ТЕКУЩЕГО МЕСЯЦА[\s\S]*?<div[^>]+balance-value[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
-		getParam(html, result, 'recomended', /РЕКОМЕНДУЕМАЯ СУММА К ОПЛАТЕ[\s\S]*?<div[^>]+balance-value[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
-		getParam(income, result, 'income');
-		getParam(nachisl, result, 'nachisl');
-		getParam(-balance_start + income - nachisl, result, 'balance');
+
+		AB.getParam(html, result, 'balance', 	/Баланс на[\s\S]*?<div[^>]+balance-value[^>]*>([\s\S]*?)<\/div>/i, 						   		AB.replaceTagsAndSpaces, AB.parseBalance);
+		AB.getParam(html, result, 'income',  	/ПОСТУПЛЕНИЯ НА СЧЕТ В ТЕКУЩЕМ МЕСЯЦЕ[\s\S]*?<div[^>]+balance-value[^>]*>([\s\S]*?)<\/div>/i, 	AB.replaceTagsAndSpaces, AB.parseBalance);
+		AB.getParam(html, result, 'nachisl', 	/НАЧИСЛЕНИЯ ТЕКУЩЕГО МЕСЯЦА[\s\S]*?<div[^>]+balance-value[^>]*>([\s\S]*?)<\/div>/i, 		 	AB.replaceTagsAndSpaces, AB.parseBalance);
+		AB.getParam(html, result, 'recomended', /РЕКОМЕНДУЕМАЯ СУММА К ОПЛАТЕ[\s\S]*?<div[^>]+balance-value[^>]*>([\s\S]*?)<\/div>/i, 			AB.replaceTagsAndSpaces, AB.parseBalance);
 	}
 
     AnyBalance.setResult(result);

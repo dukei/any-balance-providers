@@ -238,7 +238,9 @@ function getColsCredit(thead){
 }
 
 function processInfo(jsonInfo, result){
-	getParam(jsonInfo.USR, result, 'fio');
+	if(!result.info)
+		result.info = {};
+	getParam(jsonInfo.USR, result.info, 'fio');
 }
 
 function processAccount(cols, tds, c){

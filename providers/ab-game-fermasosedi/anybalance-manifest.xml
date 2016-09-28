@@ -1,16 +1,18 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-game-fermasosedi</id>
+	<id version="3">ab-game-fermasosedi</id>
 	<api flags="no_browser|captcha"/>
 	<name>Fermasosedi</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о рейтинге в игре Fermasosedi (http://fermasosedi.ru/)</p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
@@ -18,6 +20,8 @@
 		<counter id="balance_pay" name="Баланс для оплаты"/>
 		<counter id="balance_out" name="Баланс для вывода"/>
 		<counter id="energy" name="Энергия" type="text"/>
+		<counter id="level" name="Уровень" type="text"/>
+		<counter id="experience" name="Опыт" type="text"/>
 	</counters>
 	<keywords></keywords>
 	<type>game</type>

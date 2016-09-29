@@ -73,7 +73,7 @@
  				counter_name = 'min_left'; // Минуты внутри сети
  			else if (/GSM/i.test(note))
  				counter_name = 'min_left_gsm'; // Минуты на GSM
- 			else if (/на город/i.test(note))
+ 			else if (/на город|на др\.\s*сети/i.test(note))
  				counter_name = 'min_left_city'; // Минуты на город
 
  			if (counter_name && !/unlim/i.test(value))
@@ -82,12 +82,12 @@
  			// трафик
  			if (/с 08/i.test(counter))
  				counter_name = 'day_traffic_left';
- 			else if (/с 00/i.test(counter))
+ 			else if (/с 00|ноч/i.test(counter))
  				counter_name = 'night_traffic_left';
  			else if (/Израсходованного трафика/i.test(note))
  				counter_name = 'traffic_used';
-                        else 
-                                counter_name = 'traffic_left';
+            else 
+                counter_name = 'traffic_left';
 
  			if (counter_name)
  				AB.getParam(value + ' ' + units, result, counter_name, null, null, parseTraffic);

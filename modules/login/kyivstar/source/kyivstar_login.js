@@ -78,7 +78,7 @@ function loginBasic(html) {
 		gwtHeaders(strongName, g_gwtCfg));
 
 	var json = checkGwtError(html);
-	if (json[10] >= 3)
+	if (json[11] >= 3)
 		throw new AnyBalance.Error(
 			'К сожалению, Киевстар потребовал ввода капчи для этого номера. Зайдите в личный кабинет один раз через браузер.',
 			null, true);
@@ -147,6 +147,14 @@ function loadAuthorizationPage(paramstr){
 	return html;
 }
 
+function goToOldSite(html){
+	if(/<a[^>]+new.kyivstar.ua[^>]+ks-button|FMK2.do/i.test(html)){
+		AnyBalance.trace('Новый лк или его реклама, переходим на старый');
+		html = AnyBalance.requestGet('https://account.kyivstar.ua/cas/login?service=http%3A%2F%2Fmy.kyivstar.ua%3A80%2Ftbmb%2FMK2.do', g_headers);
+	}
+	return html;
+}
+
 function loginSite(baseurl) {
 	var prefs = AnyBalance.getPreferences();
 
@@ -183,11 +191,8 @@ function loginSite(baseurl) {
 			html = doLogout();
 		}
 	}
-	    
-	if(/<a[^>]+new.kyivstar.ua[^>]+ks-button|FMK2.do/i.test(html)){
-		AnyBalance.trace('Новый лк или его реклама, переходим на старый');
-		html = AnyBalance.requestGet('https://account.kyivstar.ua/cas/login?service=http%3A%2F%2Fmy.kyivstar.ua%3A80%2Ftbmb%2FMK2.do', g_headers);
-	}
+
+    html = goToOldSite(html); 
 
 	if (!isLoggedIn(html)) {
 		if(!isThereLoginForm(html)){ 
@@ -198,6 +203,7 @@ function loginSite(baseurl) {
 			html = loadAuthorizationPage('service=http%3A%2F%2Fmy.kyivstar.ua%3A80%2Ftbmb%2Fdisclaimer%2Fshow.do&locale=ua');
 		}
 		html = loginBasic(html);
+    	html = goToOldSite(html); 
 	}
 
 	if (!isLoggedIn(html)) {

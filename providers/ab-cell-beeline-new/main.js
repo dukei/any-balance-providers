@@ -67,7 +67,7 @@ var g_countersTable = {
 		"credit": "credit",
 		"sms_left": "remainders.sms_left",
 		"mms_left": "remainders.mms_left",
-		"rub_bonus": "remainders.bonus",
+		"rub_bonus": "remainders.rub_bonus",
 		"rub_bonus2": "remainders.rub_bonus2",
 		"rub_bonus2_till": "remainders.rub_bonus2_till",
 		"min_bi": "remainders.min_bi",

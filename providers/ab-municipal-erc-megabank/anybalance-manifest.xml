@@ -1,46 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1.0" version="10">ab-municipal-erc-megabank</id>
+  <id major_version="1.0" version="11">ab-municipal-erc-megabank</id>
   <name>ЕРЦ Мегабанк</name>
   <description>
-    Единый расчетный центр "Мегабанка" – банковский продукт по оплате жилищно-коммунальных услуг, который разработан и внедрен в Харькове, Кировограде, Полтаве, Чернигове, Черкассах, Новой Каховке Херсонской области, Львове, Донецке, Борисполе. Идет работа по внедрению технологии ЕРЦ в Симферополе и Феодосии (АР Крым). Через систему ЕРЦ "Мегабанка" оплачивают коммунальные услуги более 12% всех плательщиков Украины.
-    Провайдер позволяет получать общую задолженность по коммунальным услугам и по каждой из услуг отдельно. Для того чтобы воспользоваться провайдером нужно зарегистрироваться на сайте ЕРЦ https://erc.megabank.net/ и ввести в разделе "Мои лицевые счета" номер лицевого счета.
-    Провайдер работает только с русским языком интерфейса сайта.
-    
-    Долг по каждой из услуг считается как (Долг - Зачисл. после - Оплачено после). Общий долг считается как сумма всех долгов без учета переплат. Логика расчета может поменяться в будущих версиях провайдера.
+    <p>Единый расчетный центр "Мегабанка" – банковский продукт по оплате жилищно-коммунальных услуг, который разработан и внедрен в Харькове, Кировограде, Полтаве, Чернигове, Черкассах, Новой Каховке Херсонской области, Львове, Донецке, Борисполе. Идет работа по внедрению технологии ЕРЦ в Симферополе и Феодосии (АР Крым). Через систему ЕРЦ "Мегабанка" оплачивают коммунальные услуги более 12% всех плательщиков Украины.
+      Провайдер позволяет получать общую задолженность по коммунальным услугам и по каждой из услуг отдельно. Для того чтобы воспользоваться провайдером нужно зарегистрироваться на сайте ЕРЦ https://erc.megabank.net/ и ввести в разделе "Мои лицевые счета" номер лицевого счета.
+      Провайдер работает только с русским языком интерфейса сайта.</p>
+    <p>Предоставляет информацию о балансе провайдера ЕРЦ Мегабанк https://erc.megabank.net/</p>
+    <p>Информация берется из личного кабинета https://erc.megabank.net/ru</p>
   </description>
-  <author>Sergey Bashmanov &lt;sergey.bashmanov@gmail.com&gt;</author>
+  <author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+  <depends>
+    <module id="library"/>
+  </depends>
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
     <js>main.js</js>
-    <js>library.js</js>
     <history>history.xml</history>
   </files>
   <counters>
-    <counter id="debt" name="Общий долг" suffix=" ₴" type="numeric"/>
-    <counter id="rent" name="Квартплата" suffix=" ₴" type="numeric"/>
-    <counter id="heating" name="Отопление" suffix=" ₴" type="numeric"/>
-    <counter id="sewerage" name="Канализация" suffix=" ₴" type="numeric"/>
-    <counter id="gas" name="Газ" suffix=" ₴" type="numeric"/>
+    <counter id="debt_accrued" name="Общий долг (графа 'Начислено')" units=" ₴"/>
+    <counter id="debt_saldo" name="Общий долг (графа 'Долг/переплата')" units=" ₴"/>
+    <counter id="elec_accrued" name="Электричество (начислено)" units=" ₴"/>
+    <counter id="elec_paid" name="Электричество (оплачено)" units=" ₴"/>
+    <counter id="elec_saldo" name="Электричество (долг/переплата)" units=" ₴"/>
+    <counter id="rent_accrued" name="Квартплата (начислено)" units=" ₴"/>
+    <counter id="rent_paid" name="Квартплата (оплачено)" units=" ₴"/>
+    <counter id="rent_saldo" name="Квартплата (долг/переплата)" units=" ₴"/>
+    <counter id="heating_accrued" name="Отопление (начислено)" units=" ₴"/>
+    <counter id="heating_paid" name="Отопление (оплачено)" units=" ₴"/>
+    <counter id="heating_saldo" name="Отопление (долг/переплата)" units=" ₴"/>
+    <counter id="hot_water_accrued" name="Горячая вода(начислено)" units=" ₴"/>
+    <counter id="hot_water_paid" name="Горячая вода (оплачено)" units=" ₴"/>
+    <counter id="hot_water_saldo" name="Горячая вода (долг/переплата)" units=" ₴"/>
+    <counter id="cold_water_accrued" name="Холодная вода (начислено)" units=" ₴"/>
+    <counter id="cold_water_paid" name="Холодная вода (оплачено)" units=" ₴"/>
+    <counter id="cold_water_saldo" name="Холодная вода (долг/переплата)" units=" ₴"/>
+    <counter id="sewerage_accrued" name="Канализация (начислено)" units=" ₴"/>
+    <counter id="sewerage_paid" name="Канализация (оплачено)" units=" ₴"/>
+    <counter id="sewerage_saldo" name="Канализация (долг/переплата)" units=" ₴"/>
+
+   <!-- <counter id="gas" name="Газ" suffix=" ₴" type="numeric"/>
     <counter id="garbage" name="Вывоз ТБО" suffix=" ₴" type="numeric"/>
-    <counter id="cold_water" name="Холодная вода" suffix=" ₴" type="numeric"/>
-    <counter id="hot_water" name="Горячая вода" suffix=" ₴" type="numeric"/>
     <counter id="ukrtelekom" name="Укртелеком" suffix=" ₴" type="numeric"/>
-    <counter id="volya" name="Воля" suffix=" ₴" type="numeric"/>
+    <counter id="volya" name="Воля" suffix=" ₴" type="numeric"/>-->
+
     <counter id="account" name="Лицевой счет" type="text"/>
     <counter id="address" name="Адрес" type="text"/>
     <counter id="name" name="Ф.И.О." type="text"/>
     <counter id="month" name="Месяц" type="text"/>
   </counters>
-  <keywords>
-    ЕРЦ, Единый расчетный центр, Мегабанк, коммунальные услуги, задолженость, долг, Украина
-  </keywords>
-  <type>
-    municipal
-  </type>
-  <country>
-    ua
-  </country>
+  <keywords>ЕРЦ, Единый расчетный центр, Мегабанк, коммунальные услуги, задолженость, долг, Украина</keywords>
+  <type>municipal</type>
+  <country>ua</country>
 </provider>
 

@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="6">ab-sharing-cbilling</id>
+	<id version="7">ab-sharing-cbilling</id>
 	<api flags="no_browser"/>
 	<name>Cardsharing-Server LLC (cbilling.bz)</name>
 	<description html="true"><![CDATA[

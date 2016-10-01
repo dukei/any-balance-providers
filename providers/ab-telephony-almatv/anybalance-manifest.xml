@@ -4,7 +4,7 @@
 	<api flags="no_browser"/>
 	<name>Alma TV</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе провайдера Alma TV https://www.almatv.kz/?city=49 </p>
+	<p>Предоставляет информацию о балансе провайдера Alma TV https://www.almatv.kz/</p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>

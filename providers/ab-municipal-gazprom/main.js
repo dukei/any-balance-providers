@@ -17,8 +17,9 @@ var regions = {
 	kaluga: getSmorodina,
 	perm: getSmorodina,
 	rostov: getRostov,
+	ryazan: getSmorodina,
 	spb: getSPB,
-  sever: getSever,
+    sever: getSever,
 	tver: getTver,
 	ufa: getUfa,
 	cheboksari: getCheboksari

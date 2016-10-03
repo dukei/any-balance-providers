@@ -45,7 +45,7 @@ function main(){
 	var result = {success: true};
 
 	result.__tariff = prefs.login;
-    getParam(html, result, 'fio', / <div>ФИО:\s*([\s\S]*?)\s*<\/div>/i, replaceTagsAndSpaces);
+	getParam(html, result, 'fio', /<div[^>]*>ФИО:\s*([\s\S]*?)\s*<\/div>/i, replaceTagsAndSpaces);
 	
 	var json;
 	for(var i = 0; i < 5; i++) {

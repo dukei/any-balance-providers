@@ -52,7 +52,8 @@ function main(){
     if(!json.sessionKey)
         throw new AnyBalance.Error("Не удалось получить идентификатор сессии!");
 
-    AnyBalance.setCookie('lk.rt.ru', 'sessionHashKey', json.sessionKey);
+    var domain = getParam(baseurl, null, null, /https?:\/\/([^\/]*)/i);
+    AnyBalance.setCookie(domain, 'sessionHashKey', json.sessionKey);
 
     html = AnyBalance.requestGet(baseurl, g_headers);
 	

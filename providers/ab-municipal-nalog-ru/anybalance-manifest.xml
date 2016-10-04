@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="7">ab-municipal-nalog-ru</id>
+	<id version="8">ab-municipal-nalog-ru</id>
 	<name>Федеральная Налоговая Служба (ФНС)</name>
 	<description>
 	Пролучает данные на сайте Федеральной Налоговой Службы (ФНС) http://nalog.ru/.

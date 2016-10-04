@@ -12,7 +12,7 @@ var g_headers = {
 
 function main(){
     var prefs = AnyBalance.getPreferences();
-    var baseurl = 'https://lk2.service.nalog.ru/';
+    var baseurl = 'https://lkfl.nalog.ru/';
     AnyBalance.setDefaultCharset('utf-8'); 
 
     var html = AnyBalance.requestGet(baseurl + 'lk/index.html', g_headers);
@@ -28,6 +28,10 @@ function main(){
     }, addHeaders({Referer: baseurl + 'lk/index.html'})); 
 
     if(!/logout/i.test(html)){
+    	var error = getElement(html, /<div[^>]+class="err"/i, replaceTagsAndSpaces);
+    	if(error)
+    		throw new AnyBalance.Error(error, null, /имя|парол/i.test(error));
+    	AnyBalance.trace(html);
         throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Проверьте правильность ввода логина или пароля. Так же возможно, что сайт изменен.');
     }
 	var result = {success: true};

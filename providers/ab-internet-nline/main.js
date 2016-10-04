@@ -16,7 +16,7 @@ function main(){
     var prefs = AnyBalance.getPreferences();
     AnyBalance.setDefaultCharset('utf-8');
 
-    var baseurl = "http://www.nline.ru/cabineti/";
+    var baseurl = "http://nline.ru/cabineti/";
 
     var html = AnyBalance.requestPost(baseurl + 'index.cgi?login', {
         prefix:'005',
@@ -29,7 +29,7 @@ function main(){
         //AnyBalance.trace(html);
         var error = getParam(html, null, null, /alert\s*\(\s*'([^']*)/, replaceTagsAndSpaces);
         if(error)
-            throw new AnyBalance.Error(error);
+            throw new AnyBalance.Error(error, null, /парол/i.test(error));
         
         html = AnyBalance.requestGet(baseurl + 'index.cgi');
 

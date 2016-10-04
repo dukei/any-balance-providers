@@ -11,7 +11,7 @@ var g_headers = {
 
 function main(){
     var prefs = AnyBalance.getPreferences();
-    var baseurl = 'https://lk2.service.nalog.ru/';
+    var baseurl = 'https://lkfl.nalog.ru/';
     AnyBalance.setDefaultCharset('utf-8'); 
 
     var html = AnyBalance.requestGet(baseurl + 'lk/index.html', g_headers);

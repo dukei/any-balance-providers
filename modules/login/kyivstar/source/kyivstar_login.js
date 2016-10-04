@@ -14,7 +14,7 @@ var g_gwtCfg = {
 	url: 'https://account.kyivstar.ua/cas/auth/',
 	strong_name: '\\b%VARNAME_BROWSER%],(\\w+)\\)',
 	auth_nocache: 'auth.nocache.js',
-	magic_id: '41CDE69BC499E299359C6686E05B86FC'
+	magic_id: 'EA945586091314A442FD08465A3F5A9D'
 };
 
 function isLoggedIn(html) {
@@ -78,7 +78,7 @@ function loginBasic(html) {
 		gwtHeaders(strongName, g_gwtCfg));
 
 	var json = checkGwtError(html);
-	if (json[11] >= 3)
+	if (json[12] >= 3)
 		throw new AnyBalance.Error(
 			'К сожалению, Киевстар потребовал ввода капчи для этого номера. Зайдите в личный кабинет один раз через браузер.',
 			null, true);

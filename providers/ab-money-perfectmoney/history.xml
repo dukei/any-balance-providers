@@ -1,5 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="4" date="2016-10-07">
+	Поддержка кириллицы в пароле
+	</change>
     <change version="2" date="2013-06-18">
       - Security alert added.
     </change>

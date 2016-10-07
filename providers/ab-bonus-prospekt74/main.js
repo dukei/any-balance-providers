@@ -19,7 +19,7 @@ var myReplaceTagsAndSpaces = [/,/g, '', replaceTagsAndSpaces];
 
 function main(){
     var prefs = AnyBalance.getPreferences();
-    var baseurl = "http://www.prospect74.ru/buyers/bonus/";
+    var baseurl = "http://www.prospect74.su/buyers/bonus/";
     AnyBalance.setDefaultCharset('windows-1251'); 
 
     var bd = '', psw = prefs.password;
@@ -35,16 +35,16 @@ function main(){
     //Проверяем, что есть поле для смены пароля
     if(!/id="chpsw"/i.test(html)){
         //Если в кабинет войти не получилось, то в первую очередь надо поискать в ответе сервера объяснение ошибки
-        var error = getParam(html, null, null, /<span[^>]+style="color:\s*rgb\(0,\s*166,\s*80\);?"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
+        var error = getParam(html, null, null, /<span[^>]+style="color:\s*rgb\(0,\s*166,\s*80\);?"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
         if(error)
-            throw new AnyBalance.Error(error);
+            throw new AnyBalance.Error(error, null, /отсутствует|парол|ERROR_AUTH_FAILED/i.test(error));
         //Если объяснения ошибки не найдено, при том, что на сайт войти не удалось, то, вероятно, произошли изменения на сайте
         throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
     }
 
     var result = {success: true};
-    getParam(html, result, 'fio', /<h1[^>]*>Ваш личный кабинет[\s\S]*?<b[^>]*>([\s\S]*?)(?:\(|<\/b>)/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, '__tariff', /Информация о карте([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'fio', /<h1[^>]*>Ваш личный кабинет[\s\S]*?<b[^>]*>([\s\S]*?)(?:\(|<\/b>)/i, replaceTagsAndSpaces);
+    getParam(html, result, '__tariff', /Информация о карте([^<]*)/i, replaceTagsAndSpaces);
     getParam(html, result, 'balance', /Общее количество бонусных баллов:([^<]*)/i, myReplaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'available', /Доступные бонусные баллы:([^<]*)/i, myReplaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'delayed', /Отложенные бонусные баллы:([^<]*)/i, myReplaceTagsAndSpaces, parseBalance);

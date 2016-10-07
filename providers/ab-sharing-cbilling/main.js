@@ -70,14 +70,12 @@ function main() {
 		success: true
 	};
 
-	AB.getParam(html, result, 'balance', /Ваш баланс:([^<]*)/i, AB.replaceTagsAndSpaces, AB.parseBalance);
-	AB.getParam(html, result, ['currency', 'balance'], /Ваш баланс:([^<]*)/i, AB.replaceTagsAndSpaces, AB.parseCurrency);
-	AB.getParam(html, result, '__tariff', /<fieldset[^>]*>[^>]*>Ваши пакеты(?:[\s\S]*?<td[^>]*>){6}([\s\S]*?)<\//i,
-		AB.replaceTagsAndSpaces);
-	AB.getParam(html, result, 'date', /<fieldset[^>]*>[^>]*>Ваши пакеты(?:[\s\S]*?<td[^>]*>){8}([\s\S]*?)<\//i,
-		AB.replaceTagsAndSpaces, AB.parseDateISO);
-	AB.getParam(html, result, 'server', /Ваш сервер:([^<]+)/i, AB.replaceTagsAndSpaces);
-	AB.getParam(html, result, 'days', /Осталось дней([\s\S]*?)<\//i, AB.replaceTagsAndSpaces, AB.parseBalance);
+	AB.getParam(html, result, 'balance', 				/Ваш баланс:([^<]*)/i, 													  AB.replaceTagsAndSpaces, AB.parseBalance);
+	AB.getParam(html, result, ['currency', 'balance'], 	/Ваш баланс:([^<]*)/i, 													  AB.replaceTagsAndSpaces, AB.parseCurrency);
+	AB.getParam(html, result, '__tariff', 				/<fieldset[^>]*>[^>]*>Ваши пакеты(?:[\s\S]*?<td[^>]*>){6}([\s\S]*?)<\//i, AB.replaceTagsAndSpaces);
+	AB.getParam(html, result, 'date', 					/Дата завершения(?:[\s\S]*?<div[^>]*>){3}([^<]*)/i, 					  AB.replaceTagsAndSpaces, AB.parseDateISO);
+	AB.getParam(html, result, 'server', 				/Ваш сервер:([^<]+)/i, 													  AB.replaceTagsAndSpaces);
+	AB.getParam(html, result, 'days', 					/Осталось дней([\s\S]*?)<\//i, 											  AB.replaceTagsAndSpaces, AB.parseBalance);
 
 	AnyBalance.setResult(result);
 }

@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="7" date="2016-09-30">
+	- Исправлено получение счётчика "Дата окончания".
+	</change>
 	<change version="6" date="2016-01-28">
 	- Мелкие улучшения и исправления. (AnyBalance Team)
 	- Добавлено отображение тарифа. (AnyBalance Team)
@@ -13,7 +16,7 @@
 	<change version="3" date="2014-12-08">
 	- Поддержка изменений на сайте.
 	</change>
-<change version="2" date="2014-07-20">
+	<change version="2" date="2014-07-20">
    - Улучшенная обработка ошибок
-</change>
+	</change>
 </history>

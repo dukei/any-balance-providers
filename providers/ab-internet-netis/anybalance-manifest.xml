@@ -1,18 +1,22 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id version="2">ab-internet-netis</id>
+	<id version="3">ab-internet-netis</id>
 	<name>NETIS (Ярославль)</name>
 	<description html="true"><![CDATA[
 	<p>Получает баланс и информацию о тарифном плане для ярославского интернет-провайдера НЕТИС Телеком (http://netis.ru).</p>
-	<p>Информация берется из личного кабинета http://www.netis.ru/clients/stat.php.</p>
-	<p>Для входа на сервер статистики по услугам NETIS вам нужно получить идентификатор и пароль в службе технической поддержки. Этот идентификатор и пароль могут не совпадать с вашим логином и паролем, который вы используете для подключения.</p>
+	<p>Информация берется из личного кабинета https://www.netis.ru/clients/stat.php.</p>
 	]]></description>
-	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<instruction html="true"><![CDATA[
+	<p>Для входа на сервер статистики по услугам NETIS вам нужно получить идентификатор и пароль в службе технической поддержки. Этот идентификатор и пароль могут не совпадать с вашим логином и паролем, который вы используете для подключения.</p>
+	]]></instruction>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>

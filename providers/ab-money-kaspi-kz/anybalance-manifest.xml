@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="8">ab-money-kaspi-kz</id>
+	<id version="9">ab-money-kaspi-kz</id>
 	<api flags="no_browser"/>
 	<name>Kaspi bank</name>
 	<description html="true"><![CDATA[
@@ -8,26 +8,43 @@
 	<p>Информация берется из личного кабинета https://www.kaspi.kz/Default.aspx?action=standing</p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+		<module id="nadapter"/>
+		<module id="extract/abe-money-kaspi-kz"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
 	<counters>
 		<counter id="balance" name="Остаток" units=" {@currency}"/>
-		<!-- <counter id="currency" name="Валюта" type="text"/> -->
+		<counter id="limit" name="Кредитный лимит" units=" {@currency}"/>
+		<counter id="debt" name="Задолженность" units=" {@currency}"/>
+		<counter id="next_pay" name="Сумма следующего платежа" units=" {@currency}"/>
+		<counter id="paid" name="Выплачено" units=" {@currency}"/>
+		<counter id="pct" name="Процентная ставка" units=" %"/>
+		<counter id="bonuses" name="Бонусы" units=" Б"/>
+		<counter id="wallet" name="Баланс кошелька" units=" {@currency}"/>
+		<counter id="currency" name="Валюта" type="text"/>
+		<counter id="fio" name="ФИО" type="text"/>
 		<counter id="card_num" name="Номер карты" type="text"/>
-		<counter id="validto" name="Срок действия карты" type="time" format="dd/MM/yyyy"/>
-		<counter id="cred_balance" name="Кредитные средства" units=" {@currency}"/>
+		<counter id="name" name="Наименование кредита/депозита/карты" type="text"/>
+		<counter id="status" name="Статус" type="text"/>
+		<counter id="period_left" name="Осталось выплачивать" units=" мec"/>
+		<counter id="till" name="Срок действия" type="time" format="dd/MM/yyyy"/>
+		<counter id="pay_till" name="Оплатить до" type="time" format="dd/MM/yyyy"/>
+		<counter id="date_start" name="Дата открытия" type="time" format="dd/MM/yyyy"/>
+
+		<!--<counter id="cred_balance" name="Кредитные средства" units=" {@currency}"/>
 		<counter id="card_debt" name="Задолженность по карте" units=" {@currency}"/>
 		<counter id="main_debt" name="Основной долг" units=" {@currency}"/>
 		<counter id="pcts" name="Проценты к оплате" units=" {@currency}"/>
 		<counter id="payment_ammount" name="Платеж по карте" units=" {@currency}"/>
 		<counter id="payment_left" name="Осталось внести" units=" {@currency}"/>
-		<counter id="limit" name="Кредитный лимит" units=" {@currency}"/>
-		<counter id="pay_in" name="Платеж через" units=" дн"/>
+		<counter id="pay_in" name="Платеж через" units=" дн"/>-->
 	</counters>
 	<keywords></keywords>
 	<type>money, bank</type>

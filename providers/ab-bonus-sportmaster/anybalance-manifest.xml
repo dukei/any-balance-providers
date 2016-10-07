@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id version="20">ab-bonus-sportmaster</id>
+	<id version="21">ab-bonus-sportmaster</id>
 	<name>Спортмастер</name>
 	<description html="true"><![CDATA[
    <p>Предоставляет информацию по бонусной карте "Спортмастер".</p> 
@@ -25,6 +25,7 @@
 		<counter id="cardnum" name="Номер карты" type="text"/>
 		<counter id="nextlevel" name="Покупок до след уровня" units=" р"/>
 		<counter id="all" name="Сводка по бонусам" type="text"/>
+		<counter id="till" name="Дата сгорания" type="time" format="dd/MM/yyyy"/>
 	</counters>
 	<keywords>sportmaster, карта, бонус</keywords>
 	<type>bonus</type>

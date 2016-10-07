@@ -1,7 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="3" version="40" date="2016-10-07">
+	    - Исправлен вход на сайт всвязи со сменой домена.
+	</change>
 	<change major_version="3" version="39" date="2016-06-25">
-	Исправлено получение данных с сайта
+	    - Исправлено получение данных с сайта.
 	</change>
 	<change major_version="3" version="38" date="2016-03-25">
         - Исправлено распознавание счетчика "Минуты по сети Life:)".

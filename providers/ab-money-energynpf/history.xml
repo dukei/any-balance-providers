@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="5" date="2016-10-07">
+	Обход защиты от роботов
+	</change>
     <change version="4" date="2016-08-18">
     - Поддержка изменений на сайте.
     - Изменена иконка.

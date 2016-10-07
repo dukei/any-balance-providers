@@ -4,10 +4,9 @@
 
 var g_headers = {
 	'Accept':           'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-	'Accept-Language':  'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
-    'Accept-Encoding':  'gzip, deflate, br',
+	'Accept-Language':  'ru,en-US;q=0.8,en;q=0.6',
 	'Connection':       'keep-alive',
-	'User-Agent':       'Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.0.2743.116 Safari/537.36',
+	'User-Agent':       'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/53.0.2785.143 Safari/537.36',
 };
 
 function main() {
@@ -22,7 +21,7 @@ function main() {
 	checkEmpty(prefs.login, 'Введите пароль!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 
-	var html = AnyBalance.requestGet(baseurl, g_headers);
+	var html = AnyBalance.requestGet(baseurl + '/', g_headers);
     if(!html || AnyBalance.getLastStatusCode() > 400){
         AnyBalance.trace(html);
         throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
@@ -38,9 +37,10 @@ function main() {
     });
 
     try {
-        html = AnyBalance.requestPost(baseurl, params, addHeaders({
-            Referer: baseurl,
-            'Cache-Control': 'max-age=0'
+    	AnyBalance.sleep(3000); //Иначе не пускает
+        html = AnyBalance.requestPost(baseurl + '/', params, addHeaders({
+        	Origin: baseurl,
+            Referer: baseurl + '/'
         }));
     } catch (e) {
         html = AnyBalance.requestGet(baseurl + '/ru/calc/', g_headers);

@@ -36,7 +36,7 @@ function main(){
     if(!/logout/i.test(html)){
 		var error = AB.getParam(html, null, null, /<div[^>]+class="err"[^>]*>([\s\S]*?)<\/div>/i);
 		if(error) {
-			throw new AnyBalance.Error(error, null, /имя|парол)/i.test(error));
+			throw new AnyBalance.Error(error, null, /имя|парол/i.test(error));
 		}
 
 		AnyBalance.trace(html);

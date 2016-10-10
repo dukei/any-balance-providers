@@ -1,22 +1,23 @@
-﻿/**
+/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 */
 
 var g_headers = {
 	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/47.0.2526.111 Safari/537.36',
+	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/53.0.2785.143 Safari/537.36',
+	'Accept-Language': 'ru,en-US;q=0.8,en;q=0.6'
 };
+
+var baseurl = 'https://online.absolutbank.ru/app/';
 
 var g_Xml_Headers = {
 	'Accept': 'application/xml, text/xml, */*; q=0.01',
 	'X-Requested-With': 'XMLHttpRequest',
 	'Wicket-Ajax': 'true',
-	'Wicket-Ajax-BaseURL': 'main',
-	'Wicket-FocusedElementId': 'id19',
-	'Origin': 'https://online.absolutbank.ru'
+	'Wicket-Ajax-BaseURL': 'main?main=priv&amp;replace=main&amp;context=0&amp;payments=templates',
+	'Origin': 'https://online.absolutbank.ru',
+	'Referer': baseurl + 'main?main=priv'
 }
-
-var baseurl = 'https://online.absolutbank.ru/app/';
 
 function login(prefs, result) {
 	AnyBalance.setDefaultCharset('utf-8');
@@ -135,9 +136,9 @@ function requestGetWicketAction(html, regex, params) {
 	var action = findExactWickeAction(actions, wicketId);
 	if(!action)
 		throw new AnyBalance.Error('Не удалось найти action: ' + wicketId);
-	
+
 	return params ? 
-		AnyBalance.requestPost(baseurl + action + '&_=' + new Date().getTime(), params, addHeaders(g_Xml_Headers)) :
+		AnyBalance.requestPost(baseurl + action, params, addHeaders({'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}, addHeaders(g_Xml_Headers))) :
 		AnyBalance.requestGet(baseurl + action + '&_=' + new Date().getTime(), addHeaders(g_Xml_Headers));
 }
 
@@ -162,7 +163,7 @@ function processCards(html, result) {
 	var html = AnyBalance.requestGet(baseurl + 'main?main=priv', g_headers);
   html = requestGetWicketAction(html, /wicket.event.add\([^"]*?"load"[\s\S]*?"c":"([^"]*)/i);
 
-	html = requestGetWicketAction(html, /<div[^>]+class="inner"[^>]+id="(id[^"]+)"/i);
+	html = requestGetWicketAction(html, /<div[^>]+class="inner\b[^>]+id="(id[^"]+)"/i);
 	
 	var cards = getElements(html, /<div[^>]+class=['"]card inner['"][^>]*>/ig);
 	
@@ -229,12 +230,13 @@ function processCard(card, result, html) {
 function processAccounts(html, result) {
 	if(!isAvailable('accounts'))
 		return;
-	
+
 	var html = AnyBalance.requestGet(baseurl + 'main?main=priv', g_headers);
   html = requestGetWicketAction(html, /wicket.event.add\([^"]*?"load"[\s\S]*?"c":"([^"]*)/i);
 
-	html = requestGetWicketAction(html, /<div[^>]+class="inner"[^>]+id="(id[^"]+)"/i);
-	var accounts = getElements(html, /<div[^>]+class=['"]account inner single-account['"][^>]*>/ig);
+	html = requestGetWicketAction(html, /<div[^>]+class="inner\b[^>]+id="(id[^"]+)"/i);
+		
+	var accounts = getElements(html, /<div[^>]+class=['"]account inner[^"]+single-account['"][^>]*>/ig);
 	
 	AnyBalance.trace('Найдено счетов: ' + accounts.length);
 	result.accounts = [];
@@ -242,8 +244,8 @@ function processAccounts(html, result) {
 	for(var i=0; i < accounts.length; ++i) {
 		var htmlLocal = requestGetWicketAction(accounts[i] + html, /id="(id[^"]+)"/i);
 
-		var id = getParam(htmlLocal, null, null, /№(?:[^>]*>)?(\d{20})/i, replaceTagsAndSpaces);
-		var name = getParam(htmlLocal, null, null, /class="dashed active"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
+		var id = getParam(htmlLocal, null, null, /№(?:\s|<[^>]*>)*(\d{20})/i, replaceTagsAndSpaces);
+		var name = getParam(htmlLocal, null, null, /class="editable"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
 		var title = name + ' ' + id.substr(-4);
 		
 		var c = {
@@ -286,16 +288,16 @@ function processCredits(html, result) {
 
   var credits = [];
   	try{
-		html = requestGetWicketAction(html, /<div[^>]+class="inner"[^>]+id="(id[^"]+)"(?:[^>]*>){3,7}\s*Кредиты/i);
+		html = requestGetWicketAction(html, /<div[^>]+class="inner\b[^>]+id="(id[^"]+)"(?:[^>]*>){3,7}\s*Кредиты/i);
 
 		credits = getElements(html, /<div[^>]+class=['"]account inner[^>]*>/ig);
 	
 		AnyBalance.trace('Найдено кредитов: ' + credits.length);
 	}catch(e){
 		if(/Заявка на кредит/i.test(html)){
-			AnyBalance.trace('Кредитов нет');
+			AnyBalance.trace('Кредитов нет: ' + e.message);
 		}else{
-			AnyBalance.trace('Не удалось найти ссылку на кредиты.');
+			AnyBalance.trace('Не удалось найти ссылку на кредиты.' + e.message);
 		}
 	}
 	result.credits = [];

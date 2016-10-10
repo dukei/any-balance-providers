@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser|captcha"/>
-    <id version="2">ab-money-mib</id>
+    <id version="3">ab-money-mib</id>
     <name>Московский Индустриальный Банк</name>
 	<description html="true"><![CDATA[
 	<p>Информация о карте, счете в Московском Индустриальном Банке (http://minbank.ru).</p>
@@ -11,11 +11,13 @@
 	<p>Подключиться к интернет-банку Московского индустриального банка?</p>
 	<p>Для подключения обратитесь с паспортом в любое отделение Московского индустриального банка.</p>
 	]]></instruction>
-    <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+    <author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+    <depends>
+    	<module id="library"/>
+    </depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
@@ -34,6 +36,6 @@
 		<counter id="status" name="Статус" type="text"/>
 	</counters>
 	<keywords>МИБ минбанк</keywords>
-	<type>money</type>
+	<type>money, bank</type>
 	<country>ru</country>
 </provider>

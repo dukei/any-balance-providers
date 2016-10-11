@@ -17,7 +17,13 @@ function main() {
   }
   checkEmpty(prefs.city, 'Введите индекс или название города!');
   // Базовый линк
-  var baseurl = 'https://www.gismeteo.' + prefs.domen + '/';
+  var domain = 'www.gismeteo.' + prefs.domen;
+  var baseurl = 'https://' + domain + '/';
+
+  //Чтобы всегда был старый дизайн
+  AnyBalance.setCookie(domain, 'old', '1');
+  AnyBalance.setCookie(domain, 'old_auto', '1');
+
   // Если не числа, значит надо сделать доп запрос для поиска индекса города
   if (!/^\d+$/i.test(prefs.city)) {
     AnyBalance.trace('Ищем ID города ' + prefs.city);

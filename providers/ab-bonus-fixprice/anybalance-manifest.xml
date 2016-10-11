@@ -1,11 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-bonus-fixprice</id>
+	<id version="3">ab-bonus-fixprice</id>
 	<api flags="no_browser"/>
 	<name>FixPrice Бонус</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о бонусных баллах Fix Price <a href="http://www.fix-price.ru/">http://www.fix-price.ru/</a></p>
-	<p>Информация берется из личного кабинета <a href="http://bonus.fix-price.ru/profile">http://bonus.fix-price.ru/profile</a></p>
+	<p>Предоставляет информацию о бонусных баллах Fix Price http://www.fix-price.ru/</p>
+	<p>Информация берется из личного кабинета https://bonus.fix-price.ru/profile</p>
 	<p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>

@@ -14,26 +14,25 @@ var g_headers = {
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'http://bonus.fix-price.ru/';
+	var baseurl = 'https://bonus.fix-price.ru/';
 	AnyBalance.setDefaultCharset('utf-8');
 
 	AB.checkEmpty(prefs.login, 'Введите логин!');
 	AB.checkEmpty(prefs.password, 'Введите пароль!');
 
-	var html = AnyBalance.requestGet(baseurl + '', g_headers);
+	var html = AnyBalance.requestGet(baseurl + 'ulogin', g_headers);
 
 	if (!html || AnyBalance.getLastStatusCode() > 400) {
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
 	}
 
-	html = AnyBalance.requestPost(baseurl + 'login', {
+	html = AnyBalance.requestPost(baseurl + 'ulogin', {
 		login: prefs.login,
 		password: prefs.password,
 	}, AB.addHeaders({
 		'X-Requested-With': 'XMLHttpRequest',
-		Referer: baseurl + 'login'
-
+		Referer: baseurl + 'ulogin'
 	}));
 
 	var json = AB.getJson(html);
@@ -52,8 +51,8 @@ function main() {
 		success: true
 	};
 
-	AB.getParam(html, result, 'balance', /<div[^>]*class="[^"]*bonus-info[^"]*"[\s\S]*?(<h2[\s\S]*?<\/h2>)/i, AB.replaceTagsAndSpaces,
-		AB.parseBalance);
+	var balanceInfo = getElement(html, /<div[^>]*class="[^"]*bonus-info/i);
+	AB.getParam(balanceInfo, result, 'balance', [/<h2[^>]*>[\s\S]*?<\/h2>/i, /У меня накоплено(.*?)балл/i], AB.replaceTagsAndSpaces, AB.parseBalance);
 	AB.getParam(html, result, 'fio', /<div[^>]*class="[^"]*user[^"]*"[^>]*>[\s\S]*?(<p[\s\S]*?)<\/a>/i, AB.replaceTagsAndSpaces);
 	AB.getParam(html, result, 'card', /на\s+вашей\s+карте\s+№([\s\S]*?)<\/p>/i, AB.replaceTagsAndSpaces);
 

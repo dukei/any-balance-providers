@@ -1,26 +1,29 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="6">ab-transport-whsd</id>
+	<id version="7">ab-transport-whsd</id>
 	<name>Западный Скоростной Диаметр</name>
 	<description html="true"><![CDATA[
 	<p>Получает данные для оператора платной автомагистрали "Западный Скоростной Диаметр" в г. Санкт-Петербург. http://www.whsd.ru/</p>
+	<p>Данные получает из личного кабинета https://cabinet.nch-spb.com/onyma/</p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
 	<counters>
 		<counter id="balance" name="Баланс" units=" р"/>
-		<counter id="bsk" name="Количество БСК/транспондеров"/>
 		<counter id="acc" name="Договор №" type="text"/>
+<!--		<counter id="bsk" name="Количество БСК/транспондеров"/>
 		<counter id="thismonthtravel" name="Поездок за текущий месяц" type="text"/>
 		<counter id="thismonthtravelpay" name="Общая стоимость поездок за текущий месяц" units=" р"/>
-		<counter id="lasttraveldate" name="Дата последней поездки" type="time" format="dd/MM/yyyy"/>
+		<counter id="lasttraveldate" name="Дата последней поездки" type="time" format="dd/MM/yyyy"/> -->
 		<counter id="status" name="Статус" type="text"/>
 	</counters>
 	<keywords></keywords>

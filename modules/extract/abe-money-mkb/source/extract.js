@@ -20,13 +20,13 @@ function cryptParams(html, params){
 	if(typeof(window) == 'undefined')
 		window = {};
 
-	var authInit = getParam(html, null, null, /Auth.init\s*\([^)]+\)/i);
+	var authInit = getJsonObject(html, /var\s+PageConfig\s*=\s*/);
 	if(!authInit){
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось найти ключи авторизации. Сайт изменен?');
 	}
 	
-	safeEval(authInit);
+	Auth.init(authInit.ClientKey, authInit.ServerKey);
 
 	var passHash = Auth.getMd5Hash(password);
     var nonceC = Auth.getnonсeC();

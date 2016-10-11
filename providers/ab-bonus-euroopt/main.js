@@ -11,84 +11,60 @@ var g_headers = {
 };
 
 function main () {
-    if (AnyBalance.getLevel () < 3)
-        throw new AnyBalance.Error ('Для этого провайдера необходима версия программы не ниже 1.2.436. Пожалуйста, обновите программу.');
-	
     var prefs = AnyBalance.getPreferences ();
-    AnyBalance.setDefaultCharset('utf-8');
 	
-    var baseurl = 'http://igra.evroopt.by/';
+    var baseurl = 'http://evroopt.by/';
     if(!prefs.login)
         throw new AnyBalance.Error('Введите № карты');
 	
-    var html = AnyBalance.requestGet(baseurl + 'cabinet/enter/', g_headers);
+    var html = AnyBalance.requestGet(baseurl + 'otchet-po-diskontnoj-karte-2', g_headers);
     if (!html || AnyBalance.getLastStatusCode() > 400) {
         AnyBalance.trace(html);
         throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
     }
-    var form = getParam(html, null, null, /<form[^>]+id="form_card"[^>]*>([\s\S]*?)<\/form>/i);
+    var form = getParam(html, null, null, /<div[^>]+class="enter_number_form"[^>]*>([\s\S]*?)<\/form>/i);
     if(!form){
-		AnyBalance.trace(html);
+	AnyBalance.trace(html);
         throw new AnyBalance.Error('Не удалось найти форму ввода номера карты. Сайт изменен?');
     }
 
     var params = createFormParams(form, function(params, input, name, value){
         var dt = new Date();
-        if(name == 'card_number')
+        if(name == 'cardnum')
             value = prefs.login;
+        else if(name == 'from_date')
+            value = '1.' + (dt.getMonth()+1) + '.' + dt.getFullYear();
+        else if(name == 'to_date')
+            value = dt.getDate() + '.' + (dt.getMonth()+1) + '.' + dt.getFullYear();
         else if(name == 'captcha[input]'){
-            var captchaid = getParam(form, null, null, /<input[^>]+name="captcha\[id\]"[^>]*value="([^"]*)/i, replaceHtmlEntities);
-            var captchaimg = AnyBalance.requestGet(baseurl + 'Temp/Captcha/' + captchaid + '.png');
+            var captchaid = getParam(form, null, null, /<input[^>]+value="([^"]*)"[^>]*id="captcha-id"/i, null, html_entity_decode);
+            var captchaimg = AnyBalance.requestGet(baseurl + 'images/captcha/' + captchaid + '.png');
             value = AnyBalance.retrieveCode("Пожалуйста, введите код с картинки.", captchaimg);
         }
        
         return value;
     });
 	
-    html = AnyBalance.requestPost(baseurl + 'cabinet/enter/', params, addHeaders({Referer: baseurl + 'cabinet/enter/'}));
-
-    if(!/ЗДРАВСТВУЙТЕ,\s+/i.test(html)){
-        var error = sumParam(html, null, null, /<ul[^>]+class="errors"[^>]*>([\s\S]*?)<\/ul>/ig, replaceTagsAndSpaces, null, aggregate_join);
+    var html = AnyBalance.requestPost(baseurl + 'otchet-po-diskontnoj-karte-2', params, addHeaders({Referer: baseurl + 'otchet-po-diskontnoj-karte-2'}));
+    
+    if(!/<div[^>]*id="discount_report"/i.test(html)){
+        var error = getParam(html, null, null, /<ul[^>]+class="errors"[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
         if(error)
             throw new AnyBalance.Error(error, null, /Карточка с таким номером не найдена/i.test(error));
     
-        error = getElement(html, /<div[^>]+class="warning"[^>]*>/i, replaceTagsAndSpaces);
+        error = getParam(html, null, null, /Вы не заполнили сведения о себе|Для идентификации пользователя/);
+        if(error)
+            throw new AnyBalance.Error("Евроопт требует заполнить форму регистрации. Вам необходимо зайти на сайт http://www.euroopt.by/otchet-po-diskontnoj-karte-2 через браузер и заполнить форму");
+
+        error = getParam(html, null, null, /<h1[^>]*>\s*An error occurred/i);
         if(error){
-        	AnyBalance.trace('Ошибка на стороне Евроопта: ' + error);
+        	error = getParam(html, null, null, /<b[^>]*>\s*Message:([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, html_entity_decode);
+        	AnyBalance.trace('Системная ошибка на стороне Евроопта: ' + error);
         	throw new AnyBalance.Error("Системная ошибка на сайте евроопт. Обращайтесь в их службу поддержки.");
         }
-
+		
         AnyBalance.trace(html);
         throw new AnyBalance.Error('Не удалось получить данные по карте. Сайт изменен?');
-    }
-
-    html = AnyBalance.requestGet(baseurl + 'cabinet/report/', addHeaders({Referer: AnyBalance.getLastUrl()}));
-
-    form = getElement(html, /<form[^>]+id="form_report"[^>]*>/i);
-    if(!form){
-
-        var error = getParam(html, null, null, /Вы не заполнили сведения о себе|Для идентификации пользователя|form_registration/);
-        if(error)
-            throw new AnyBalance.Error("Евроопт требует заполнить форму регистрации. Вам необходимо зайти на сайт http://eplus.evroopt.by/cabinet/enter/ через браузер и заполнить форму");
-
-		AnyBalance.trace(html);
-        throw new AnyBalance.Error('Не удалось найти форму ввода периода отчета. Сайт изменен?');
-    }
-
-    var params = createFormParams(form, function(params, input, name, value){
-        if(name == 'from_date'){
-        	var dt = new Date();
-            value = '01.' + n2(dt.getMonth()+1) + '.' + n2(dt.getFullYear());
-        }else if(name == 'to_date')
-            value = getFormattedDate();
-        return value;
-    });
-
-    html = AnyBalance.requestPost(baseurl + 'cabinet/report/', params, addHeaders({Referer: baseurl + 'cabinet/report/'}));
-
-    if(!/<div[^>]*class="report_data"/i.test(html)){
-        AnyBalance.trace(html);
-        throw new AnyBalance.Error('Не удалось получить отчет по карте. Сайт изменен?');
     }
 
     var result = {success: true};

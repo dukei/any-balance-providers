@@ -4,6 +4,8 @@ var Misc = (function(){
 	objStream.CharSet = "utf-8";
 
 	function exec(cmdline, options){
+//		WScript.Echo('Executing: ' + cmdline);
+
 		if(!options)
 			options = {};
 
@@ -43,6 +45,7 @@ var Misc = (function(){
 		if(!options.silent)
 			WScript.Echo(allInput);
 		
+//		WScript.Echo('Exit code: ' + oExec.ExitCode);
 		return oExec.ExitCode;
 	}
 

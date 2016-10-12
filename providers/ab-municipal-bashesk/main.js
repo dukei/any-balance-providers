@@ -17,14 +17,15 @@ var g_headers = {
 
 function main() {
   var prefs = AnyBalance.getPreferences();
-  var baseurl = 'https://www.bashesk.ru/user/account/debt/';
-  var loginUrl = 'https://www.bashesk.ru/bitrix/templates/bashesk/ajax/login.php?login=';
+  var baseurl = 'https://www.bashesk.ru/';
+  var lkUrl = 'user/main/';
+  var loginUrl = 'local/templates/bashesk/ajax/login.php?login=';
   AnyBalance.setDefaultCharset('utf-8');
 
   AB.checkEmpty(prefs.login, 'Введите логин!');
   AB.checkEmpty(prefs.password, 'Введите пароль!');
 
-  var html = AnyBalance.requestGet(loginUrl + prefs.login + '&password=' + prefs.password, g_headers);
+  var html = AnyBalance.requestGet(baseurl + loginUrl + encodeURIComponent(prefs.login) + '&password=' + encodeURIComponent(prefs.password), g_headers);
 
   var json = AB.getJson(html);
 
@@ -38,23 +39,40 @@ function main() {
     throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
   }
 
-  html = AnyBalance.requestGet(baseurl, g_headers);
+  html = AnyBalance.requestGet(baseurl + lkUrl, g_headers);
+  if(/check/i.test(AnyBalance.getLastUrl())){
+  	AnyBalance.trace('Надо подождать загрузки ЛК');
+  	html = AnyBalance.requestPost(baseurl + 'local/templates/bashesk/components/openregion/bashesk.integration.soap/individual.checksoap/ajax/checksoap.php', '', addHeaders({
+  		Referer: AnyBalance.getLastUrl(),
+  		'X-Requested-With': 'XMLHttpRequest'
+  	}));
+  	html = AnyBalance.requestGet(baseurl + lkUrl, g_headers);
+  }
 
   var result = {
     success: true
   };
 
   AB.getParam(html, result, 'fio', /Приветствуем\s+вас,([\s\S]*?)<\/div>/i, AB.replaceTagsAndSpaces);
-  AB.getParam(html, result, 'contract', /№\s+договора([\s\S]*?)<\/div>/i, AB.replaceTagsAndSpaces);
+  AB.getParam(html, result, 'contract', /№\s+договора([^<]*)/i, AB.replaceTagsAndSpaces);
+  var balance = AB.getParam(html, null, null, /<div[^>]+pa-balance__value[^>]*>([\s\S]*?)<\/div>/i, AB.replaceTagsAndSpaces, AB.parseBalance);
+  getParam(balance, result, 'balance');
+  var debt = -balance;
+
   AB.getParam(html, result, 'currentTime', /общая\s+задолженность([\s\S]*?)<\/td>/i, AB.replaceTagsAndSpaces, AB.parseDate);
-  AB.getParam(html, result, 'balance', /общая\s+задолженность[\s\S]*?<\/td>([\s\S]*?)<\/td>/i, AB.replaceTagsAndSpaces, AB.parseBalance);
 
-  var dataTable = AB.getElement(html, /<div[^>]*class="[^"]*debt-list[^>]*>/i);
+  var counters = sumParam(html, null, null, /<input[^>]+pa-value__input[^>]*>/ig);
+  for(var i=0; i<counters.length; ++i){
+  	var curval = AB.getParam(counters[i], null, null, /value="([^"]*)/i, AB.replaceHtmlEntities, AB.parseBalance);
+  	var rate = AB.getParam(counters[i], null, null, /data-rate="([^"]*)/i, AB.replaceHtmlEntities, AB.parseBalance);
+  	var oldval = AB.getParam(counters[i], null, null, /data-readings="([^"]*)/i, AB.replaceHtmlEntities, AB.parseBalance);
+  	debt += (curval - oldval)*rate;
 
-  AB.getParam(dataTable, result, 'counter_1', /показания[\s\S]*?<\/td>([\s\S]*?<\/td>)/i, AB.replaceTagsAndSpaces, AB.parseBalance);
-  AB.getParam(dataTable, result, 'counter_2', /показания[\s\S]*?показания[\s\S]*?<\/td>([\s\S]*?<\/td>)/i, AB.replaceTagsAndSpaces, AB.parseBalance);
-  AB.getParam(dataTable, result, 'counter_1_tariff', /точка\s+уч[её]та([\s\S]*?)<\/td>/i, AB.replaceTagsAndSpaces);
-  AB.getParam(dataTable, result, 'counter_2_tariff', /уч[её]та[\s\S]*?уч[её]та([\s\S]*?)<\/td>/i, AB.replaceTagsAndSpaces);
+  	AB.getParam(curval, result, 'counter_' + (i+1));
+  	AB.getParam(rate, result, 'counter_' + (i+1) + '_tariff');
+  }
+
+  getParam(debt >= 0 ? debt : 0, result, 'currentTime');
 
   AnyBalance.setResult(result);
 }

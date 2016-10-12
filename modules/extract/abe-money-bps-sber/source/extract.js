@@ -163,14 +163,18 @@ function processAccounts(xml, result) {
 
     xml = getProducts();
 
-	var accounts = getElement(xml, /<cardAccounts[^>]*>/i);
+	var accounts = getElement(xml, /<cardAccounts[^>\/]*>/i);
 	if(!accounts){
-		AnyBalance.trace(xml);
-		AnyBalance.trace('Не удалось найти карточные счета');
-		return;
+		if(/<cardAccounts\s*\/>/i.test(xml)){
+			accounts = '';
+		}else{
+			AnyBalance.trace(xml);
+			AnyBalance.trace('Не удалось найти счета');
+			return;
+		}
 	}
 
-	accounts = getElements(accounts, /<cardAccount[^>]*>/ig);
+	accounts = getElements(accounts, /<cardAccount\b[^>]*>/ig);
 	AnyBalance.trace('Найдено ' + accounts.length + ' счетов');
 
 	result.accounts = [];
@@ -244,14 +248,18 @@ function processCards(xml, result) {
 
     xml = getProducts();
 
-	var accounts = getElement(xml, /<cardAccounts[^>]*>/i);
+	var accounts = getElement(xml, /<cardAccounts[^>\/]*>/i);
 	if(!accounts){
-		AnyBalance.trace(xml);
-		AnyBalance.trace('Не удалось найти карточные счета');
-		return;
+		if(/<cardAccounts\s*\/>/i.test(xml)){
+			accounts = '';
+		}else{
+			AnyBalance.trace(xml);
+			AnyBalance.trace('Не удалось найти карточные счета');
+			return;
+		}
 	}
 
-	accounts = getElements(accounts, /<cardAccount[^>]*>/ig);
+	accounts = getElements(accounts, /<cardAccount\b[^>]*>/ig);
 	AnyBalance.trace('Найдено ' + accounts.length + ' карточных счетов');
 
 	result.cards = [];
@@ -326,11 +334,15 @@ function processCredits(xml, result) {
 
     xml = getProducts();
 
-	var credits = getElement(xml, /<credits[^>]*>/i);
+	var credits = getElement(xml, /<credits[^>\/]*>/i);
 	if(!credits){
-		AnyBalance.trace(xml);
-		AnyBalance.trace('Не удалось найти кредиты');
-		return;
+		if(/<credits\s*\/>/i.test(xml)){
+			credits = '';
+		}else{
+			AnyBalance.trace(xml);
+			AnyBalance.trace('Не удалось найти кредиты');
+			return;
+		}
 	}
 
 	credits = getElements(credits, /<credit[^>]*>/ig);

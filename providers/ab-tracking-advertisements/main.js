@@ -30,10 +30,9 @@ function main() {
 		}));
 
 		if (!/logout|profile\/exit/i.test(html)) {
-			var error = getParam(html, null, null, /class="error-description"[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces,
-				html_entity_decode);
-			if (error && /Неправильная пара электронная почта/i.test(error)) throw new AnyBalance.Error(error, null, true);
-			if (error) throw new AnyBalance.Error(error);
+			var error = getParam(html, null, null, /class="[^"]*alert-red[^>]*>([\s\S]*?)<\/(?:p|div)>/i, replaceTagsAndSpaces);
+			if (error)
+				throw new AnyBalance.Error(error, null, /парол/i.test(error));
 			throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 		}
 

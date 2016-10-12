@@ -21,11 +21,10 @@ function main() {
 
 		var html = AnyBalance.requestGet(baseurl + 'profile', g_headers);
 
-		html = requestPostMultipart(baseurl + 'profile', {
+		html = requestPostMultipart(baseurl + 'profile/login', {
 			'next': '/profile',
-			login: prefs.login,
-			password: prefs.password,
-			quick_expire: 'on'
+			login: prefs.login.trim(),
+			password: prefs.password
 		}, addHeaders({
 			Referer: baseurl + 'profile'
 		}));
@@ -37,31 +36,37 @@ function main() {
 			if (error) throw new AnyBalance.Error(error);
 			throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 		}
-		var req = prefs.pattern ? prefs.pattern : '';
-		//                   (<div\s+class="[^"]*title"(?:[^>]*>){2}[^>]*Перейти на страницу объявления[^>]*>[^>]*АКПП tiptronik(?:[\s\S]*?<\/div){4})
-		var re = new RegExp(
-			'(<div\\s+class=\\"[^\\"]*description\\"(?:[^>]*>){2}[^>]*Перейти на страницу объявления[^>]*>[^>]*' + req +
-			'(?:[\\s\\S]*?</div){4})', 'i');
-		var div = getParam(html, null, null, re);
-		if (!div)
-			throw new AnyBalance.Error('Не удаётся найти ' + (prefs.pattern ? 'объявления с именем ' + prefs.pattern :
-				'ни одного объявления'));
 
-		var result = {
-			success: true
-		};
+		var ads = getElements(html, /<div[^>]+js-profile-item/ig);
+		AnyBalance.trace('Нашли ' + ads.length + ' активных объявлений');
+		var pattern = prefs.pattern && prefs.pattern.toLowerCase();
+		for(var i=0; i<ads.length; ++i){
+			var ad = ads[i];
+			var name = getElement(ad, /<[^>]+profile-item-title/i, replaceTagsAndSpaces);
+			if(pattern && name.toLowerCase().indexOf(pattern) < 0){
+				AnyBalance.trace('Объявление ' + name + ' не содержит ' + pattern);
+				continue;
+			}
+			AnyBalance.trace('Объявление ' + name + ' подошло');
+			break;
+		}
 
-		getParam(div, result, 'views', /Перейти на страницу объявления[^>]*просмотров:\s*(\d+)/i, replaceTagsAndSpaces,
-			parseBalance);
-		getParam(div, result, 'views_today', /Перейти на страницу объявления[^>]*просмотров:[^>]*сегодня\s+(\d+)/i,
-			replaceTagsAndSpaces, parseBalance);
-		//getParam(div, result, '__tariff', /Перейти на страницу объявления[^>]*>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
-		getParam(div, result, 'adv_title', /Перейти на страницу объявления[^>]*>([^<]*)/i, replaceTagsAndSpaces,
-			html_entity_decode);
-		getParam(div, result, 'price', /<p\s*class="[^"]*price">([^<]*)/i, replaceTagsAndSpaces, parseBalance);
-		getParam(div, result, ['currency', 'price'], /<p\s*class="[^"]*price">([^<]*)/i, replaceTagsAndSpaces, parseCurrency);
-		getParam(div, result, 'days_left', /До истечения срока размещения осталось\s*(\d+)\s*д/i, replaceTagsAndSpaces,
-			parseBalance);
+		if(i < ads.length){
+
+			var result = {
+				success: true
+			};
+
+			getParam(ad, result, 'views', /<span[^>]+profile-item-views-count[^\-][\s\S]*?<\/span>/i, replaceTagsAndSpaces, parseBalance);
+			getParam(ad, result, 'views_today', /<span[^>]+profile-item-views-count-today[\s\S]*?<\/span>/i, replaceTagsAndSpaces, parseBalance);
+			getParam(name, result, 'adv_title');
+			getParam(name, result, '__tariff');
+			getParam(ad, result, 'price', /<div[^>]+profile-item-data-price[\s\S]*?<\/div>/i, replaceTagsAndSpaces, parseBalance);
+			getParam(ad, result, ['currency', 'price'], /<div[^>]+profile-item-data-price[\s\S]*?<\/div>/i, replaceTagsAndSpaces, parseCurrency);
+			getParam(ad, result, 'days_left', /<div[^>]+profile-item-lifetime[\s\S]*?<\/div>/i, replaceTagsAndSpaces,	parseBalance);
+		}else{
+			 throw new AnyBalance.Error('Не удаётся найти ни одного объявления');
+		}
 
 		AnyBalance.setResult(result);
 		// Если нет ни логина ни пароля - просто ищем объявление
@@ -75,6 +80,8 @@ function main() {
 
 		AnyBalance.trace('Starting search: ' + baseurl);
 		var info = AnyBalance.requestGet(baseurl);
+		if(AnyBalance.getLastStatusCode() == 404)
+			throw new AnyBalance.Error('Возможно, вы неправильно указали город. Чтобы его узнать, зайдите в браузере на avito.ru и перейдите на нужный город. Он появится в адресной строке браузера, например, ekaterinburg в http://www.avito.ru/ekaterinburg', null, true);
 
 		/*var error = $('#errHolder', info).text();
 		if(error){
@@ -91,10 +98,10 @@ function main() {
 			return;
 		}
 
-		getParam(info, result, 'found', /<div[^>]*class="[^"]*nav-helper-text[^"]*"[^>]*>([\s\S]*?)<\/div>/i,
-			replaceTagsAndSpaces, parseBalance);
+		var found = getParam(info, null, null, /<div[^>]*class="[^"]*nav-helper-text[^"]*"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+		getParam(found, result, 'found');
 
-		if (!result.found) {
+		if (!found) {
 			throw new AnyBalance.Error("Ошибка при получении данных с сайта.");
 		}
 		if ((matches = info.match(/<article[^>]*class="[^"]*b-item[^"]*"[^>]*>[\s\S]*?<\/article>/ig))) {

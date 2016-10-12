@@ -208,6 +208,9 @@ function main() {
 		result = results[0];
 		makeAdditionalBalances(result, results, 'accnum');
 	}
+
+	if(result.currency)
+		result.currency = CurrencyISO.getCurrencySymbol(result.currency);
 	
 	AnyBalance.setResult(result);
 }
@@ -217,7 +220,7 @@ function makeAdditionalBalances(result, results, numname){
 		if(i > 0){
 			getParam(results[i].balance, result, 'balance' + i);
 			getParam(results[i][numname], result, numname + i);
-			getParam(results[i].currency, result, ['currency' + i, 'balance' + i]);
+			getParam(results[i].currency, result, ['currency' + i, 'balance' + i], null, null, CurrencyISO.getCurrencySymbol);
 		}
 		var balance = results[i]['balance'];
 		if(typeof balance == 'undefined')

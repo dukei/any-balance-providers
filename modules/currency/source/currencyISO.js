@@ -851,6 +851,11 @@ var CurrencyISO = (function () {
             text: 'Zimbabwe Dollar',
             fraction: 2,
             symbol: '$'
+        },
+        'BYN': {
+        	text: 'Belorussian Roubles (New)',
+            fraction: 2,
+            symbol: 'p.'
         }
     };
 
@@ -1030,7 +1035,8 @@ var CurrencyISO = (function () {
         "959": "XAU",
         "964": "XPD",
         "962": "XPT",
-        "961": "XAG"
+        "961": "XAG",
+        "933": "BYN"
     };
 
     function getCurrencyByCode(code) {
@@ -1070,7 +1076,7 @@ var CurrencyISO = (function () {
          */
         getCurrencySymbol: function(code){
             var info = getCurrencyByCode(code);
-            return info.symbol || digitsToLetters[code] || code;
+            return (info && info.symbol) || digitsToLetters[code] || code;
         },
 
         digitsToLetters: convertDigitsToLetters

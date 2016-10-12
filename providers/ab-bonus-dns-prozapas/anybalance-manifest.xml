@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-bonus-dns-prozapas</id>
+	<id version="3">ab-bonus-dns-prozapas</id>
 	<api flags="no_browser"/>
 	<name>ProZaPass бонусы от DNS-shop</name>
 	<description html="true"><![CDATA[
@@ -21,11 +21,10 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units=" {@currency}"/>
+		<counter id="balance" name="Баланс" units=" Б"/>
+		<counter id="inactive" name="Неактивные бонусы" units=" б"/>
 		<counter id="fio" name="ФИО" type="text"/>
-		<counter id="status" name="Статус" type="text"/>
-		<counter id="phone" name="Телефон" type="text"/>
-		<counter id="deadline" name="Дата отключения" type="time" format="dd/MM/yyyy"/>
+		<counter id="till" name="Дата сгорания" type="time" format="dd/MM/yyyy"/>
 	</counters>
 	<keywords>днс шоп прозапас</keywords>
 	<type>bonus</type>

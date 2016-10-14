@@ -48,7 +48,7 @@ function login(prefs, result) {
 			html = AnyBalance.requestPost(baseurl + 'RCAuthorizationService', g_xml_login.replace(/%LOGIN%/g, html_encode(prefs.login)).replace(/%PASSWORD%/g, html_encode(prefs.password)), addHeaders({SOAPAction: ''}));
 			break;
 		}catch(e){
-			if(/SSLHandshakeException/i.test(e)){
+			if(/SSLHandshakeException/i.test(e.message)){
 				if(++tries < maxtries){
 					AnyBalance.trace('Райффайзен дурит, выдаёт ошибку SSL. Пробуем ещё раз (попытка ' + (tries+1) + ')');
 					continue;

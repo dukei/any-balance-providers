@@ -14,47 +14,52 @@ var g_headers = {
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'https://bonus.fix-price.ru/';
+	var baseurl = 'https://fix-price.ru/';
 	AnyBalance.setDefaultCharset('utf-8');
 
 	AB.checkEmpty(prefs.login, 'Введите логин!');
 	AB.checkEmpty(prefs.password, 'Введите пароль!');
 
-	var html = AnyBalance.requestGet(baseurl + 'ulogin', g_headers);
+	var html = AnyBalance.requestGet(baseurl, g_headers);
 
 	if (!html || AnyBalance.getLastStatusCode() > 400) {
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
 	}
 
-	html = AnyBalance.requestPost(baseurl + 'ulogin', {
-		login: prefs.login,
-		password: prefs.password,
+	html = AnyBalance.requestPost(baseurl + 'ajax/crm1.php', {
+		mail: prefs.login,
+		pass: prefs.password,
+		uri: '/',
+		action: /@/.test(prefs.login) ? 'auth_by_email' : 'auth_by_phone'
 	}, AB.addHeaders({
 		'X-Requested-With': 'XMLHttpRequest',
-		Referer: baseurl + 'ulogin'
+		Referer: baseurl
 	}));
 
-	var json = AB.getJson(html);
-
-	if (!json.success) {
-		var error = json.message;
-		if (error) {
-			throw new AnyBalance.Error(error, null, /найден|пароль/i.test(error));
-		}
+	if(html != '0'){
+		if(html == '1')
+			throw new AnyBalance.Error('Неправильный логин или пароль', null, true);
+	    
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
 
-	html = AnyBalance.requestGet(baseurl + 'profile', g_headers);
 	var result = {
 		success: true
 	};
 
-	var balanceInfo = getElement(html, /<div[^>]*class="[^"]*bonus-info/i);
-	AB.getParam(balanceInfo, result, 'balance', [/<h2[^>]*>[\s\S]*?<\/h2>/i, /У меня накоплено(.*?)балл/i], AB.replaceTagsAndSpaces, AB.parseBalance);
-	AB.getParam(html, result, 'fio', /<div[^>]*class="[^"]*user[^"]*"[^>]*>[\s\S]*?(<p[\s\S]*?)<\/a>/i, AB.replaceTagsAndSpaces);
-	AB.getParam(html, result, 'card', /на\s+вашей\s+карте\s+№([\s\S]*?)<\/p>/i, AB.replaceTagsAndSpaces);
+	if(AnyBalance.isAvailable('fio')){
+		html = AnyBalance.requestGet(baseurl + 'account/', g_headers);
+		AB.getParam(html, result, 'fio', /Здравствуйте,([\s\S]*?)<\/h1>/i, AB.replaceTagsAndSpaces);
+	}
+
+	if(AnyBalance.isAvailable('balance', 'card')){
+		html = AnyBalance.requestGet(baseurl + 'account/bonuses/', g_headers);
+	    
+		AB.getParam(html, result, 'balance', /У меня накоплено(.*?)балл/i, AB.replaceTagsAndSpaces, AB.parseBalance);
+		AB.getParam(html, result, 'card', /на\s+вашей\s+карте\s+№([\s\S]*?)<\/p>/i, AB.replaceTagsAndSpaces);
+	}
 
 	AnyBalance.setResult(result);
 }

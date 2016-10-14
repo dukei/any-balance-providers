@@ -16,6 +16,10 @@ function login(prefs) {
 	
 	checkEmpty(prefs.login, 'Введите номер телефона!');
 	checkEmpty(prefs.password, 'Введите пароль!');
+
+	AnyBalance.setOptions({
+		SSL_ENABLED_PROTOCOLS: ['TLSv1.2'] //QIWI только на этом протоколе теперь работает
+	});
 	
     AnyBalance.requestGet(baseurl + 'payment/main.action'); //Надо сессию поставить
 	

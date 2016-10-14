@@ -32,7 +32,7 @@ function requestFines(prefs) {
 	
 	var html = AnyBalance.requestGet(baseurlUser + 'check/fines/', g_headers);
 	
-	if (AnyBalance.getLastStatusCode() > 400) {
+	if (AnyBalance.getLastStatusCode() >= 400) {
 		AnyBalance.trace('Server returned: ' + AnyBalance.getLastStatusString());
 		throw new AnyBalance.Error('Сервис проверки штрафов временно недоступен, скоро все снова будет работать.');
 	}
@@ -46,6 +46,12 @@ function requestFines(prefs) {
 	var captcha = AnyBalance.requestGet(baseurl + 'proxy/captcha.jpg?', addHeaders({
 		Referer: baseurlUser + 'check/fines/',
 	}));
+	if (AnyBalance.getLastStatusCode() >= 400) {
+		AnyBalance.trace('Server returned for captcha: ' + AnyBalance.getLastStatusString());
+		throw new AnyBalance.Error('Капча на сервисе штрафов временно недоступна, скоро все снова будет работать.');
+	}
+	if(!captcha)
+		throw new AnyBalance.Error('Не удалось получить капчу. Временные проблемы на сайте или сайт изменен.');
 
 	var captchaWord = AnyBalance.retrieveCode("Пожалуйста, введите код с картинки", captcha, {inputType: 'number'});
 	AnyBalance.trace('Капча получена: ' + captchaWord);

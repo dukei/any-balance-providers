@@ -38,6 +38,7 @@ function main() {
 			var ip = getParam(html, null, null, /Ваш IP-адрес[\S\s]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
 			throw new AnyBalance.Error('Похоже, ваш текущий IP ' + ip + ' заблокирован на www.gibdd.ru/check/fines. Попробуйте сменить тип соединения (Wifi/Мобильный интернет) или подключиться к другой WiFi сети, а затем обновите данные ещё раз. Можете также воспользоваться другим провайдером штрафов.');
 		}
+		throw e;
 	}
 	
 	// Теперь нужна сводка

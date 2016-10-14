@@ -15,7 +15,7 @@ var g_headers = {
 };
 
 var regions = {
-  moscow: getMoscow,
+//  moscow: getMoscow,
   rostov: getRostov,
   vlggrd: getRostov,
   nsk: getNsk,
@@ -589,21 +589,45 @@ function typicalApiInetTvNew(baseurl) {
   var prefs = AnyBalance.getPreferences();
   AnyBalance.setDefaultCharset('utf-8');
 
-  var html = AnyBalance.requestPost(baseurl + 'res/modules/AjaxRequest.php?Method=Login', {
+  var params = {
     'Data[LoginType]': 'Login',
+    'Data[CheckLogin]': '1',
     'Data[Login]': prefs.login,
     'Data[Passwd]': prefs.password,
     'Service': 'API.User.Service',
     'Client': 'mts',
     BasicAuth: 'true',
-  });
+  }
 
-  var json = getJson(html);
+  var loginTypes = ['Login', 'AccountNumber', 'PPPoE'], html, json, jsonLogin;
+  AnyBalance.trace('Определим тип введенного логина');
+  for(var i=0; i<loginTypes.length; ++i){
+  	params['Data[LoginType]'] = loginTypes[i];
+  	html = AnyBalance.requestPost(baseurl + 'res/modules/AjaxRequest.php?Method=Login', params);
+  	json = getJson(html);
+  	if(!jsonLogin)
+  		jsonLogin = json;
+  	if(json.Error){
+  	  AnyBalance.trace('Ошибка проверки ' + loginTypes[i] + ': ' + html);
+  	  continue;
+  	}else{
+  	  AnyBalance.trace('Введенный логин это ' + loginTypes[i]);
+  	  break;
+  	}
+  }
+
+  if(json.Error){
+  	json = jsonLogin; //Чтобы ошибку показывать из логина
+  }else{
+  	delete params['Data[CheckLogin]'];
+    html = AnyBalance.requestPost(baseurl + 'res/modules/AjaxRequest.php?Method=Login', params);
+  	json = getJson(html);
+  }
 
   if (json.Error) {
     var error = json.Status.Text;
     if (error) {
-      throw new AnyBalance.Error(error, null, /Парол/i.test(error));
+      throw new AnyBalance.Error(error, null, /Парол|не существует/i.test(error));
     }
     AnyBalance.trace(JSON.stringify(json));
     throw new AnyBalance.Error("Не удалось войти в личный кабинет. Неправильный логин-пароль?");
@@ -653,32 +677,68 @@ function typicalApiInetTvNew(baseurl) {
   	return findChildren(child, re, field)[0];
   }
 
-  var fio = findChild(json.Result.Result, /FIO/i);
-  var tar = findChildren(json.Result.Result, /ServiceState_MainBody_/i);
-  var bal = findChild(json.Result.Result, /ServiceState_Balance/i);
+  var initialContainer = json.Result.Result;
+
+  var fio = findChild(initialContainer, /FIO/i);
 
   getParam(fio.Value, result, 'fio');
 
-  var curbal = findChild(bal, /Current_Balance/i);
-  getParam(curbal.Value, result, 'balance', null, null, parseBalance);
-  getParam(curbal.Value, result, 'balance_tv', null, null, parseBalance);
+  var accs = [], curAcc;
 
-  var abon = findChild(bal, /MonthPayment/i);
-  getParam(abon.Value, result, 'abon', null, null, parseBalance);
-
-  for(var i=0; i<tar.length; ++i){
-  	var t = findChild(tar[i], /^CurTarif$/i);
-  	sumParam(t.Value, result, '__tariff', null, null, null, aggregate_join);
+  var licschet = findChild(json.Result.Result, /^AccountId$/i);
+  if(licschet){
+  	var value = licschet.Value;
+  	for(var i=0; i<licschet.ChildrenList.length; ++i){
+  		var child = licschet.ChildrenList[i];
+  		accs.push(child);
+  		if(child.Value == value){
+  			AnyBalance.trace('Найден лицевой счет (текущий) ' + child.Name);
+  			curAcc = child;
+  		}else{
+  			AnyBalance.trace('Найден лицевой счет ' + child.Name);
+  		}
+  	}
   }
 
-  var agr = findChild(json.Result.Result, /^GeneralContract$/i);
-  getParam(agr.Value, result, 'agreement', null, replaceTagsAndSpaces);
+  var container;
+  for(var ia=0; ia<accs.length; ++ia){
+  	  var acc = accs[ia];
+  	  if(acc === curAcc){
+  	  	container = initialContainer;
+  	  }else{
+        html = AnyBalance.requestPost(baseurl + 'res/modules/AjaxRequest.php?Method=GetServiceState', {
+        	'Data[AccountId]': acc.Value,
+          'AccessToken': token,
+          'Client': 'mts',
+          'Service': 'API.Contract.Service'
+        });
+        container = getJson(html).Result.Result;
+  	  }
 
-  var licschet = findChild(json.Result.Result, /^AccountIdOne$/i);
-  getParam(licschet.Value, result, 'license', /[^,]*$/i, replaceTagsAndSpaces);
+  	  AnyBalance.trace('Разбираем ' + acc.Name);
+  	  var tar = findChildren(container, /ServiceState_MainBody_/i);
+      var bal = findChild(container, /ServiceState_Balance/i);
+
+  	  var curbal = findChild(bal, /Current_Balance/i);
+  	  var balName = /телевид|тв/i.test(acc.Name) && !/шпд/i.test(acc.Name) ? 'balance_tv' : 'balance';
+  	  sumParam(curbal.Value, result, balName, null, null, parseBalance, aggregate_sum);
+
+ 	  var abon = findChild(bal, /MonthPayment/i);
+      sumParam(abon.Value, result, 'abon', null, null, parseBalance, aggregate_sum);
+
+      for(var i=0; i<tar.length; ++i){
+      	var t = findChild(tar[i], /^CurTarif$/i);
+      	sumParam(t.Value, result, '__tariff', null, null, null, aggregate_join);
+      }
+
+  	  var agr = findChild(container, /^GeneralContract$/i);
+  	  sumParam(agr.Value, result, 'agreement', null, replaceTagsAndSpaces, null, aggregate_join);
+
+	  sumParam(acc.Name, result, 'license', /[^,]*$/i, replaceTagsAndSpaces, null, aggregate_join);
+  }
 
   if(AnyBalance.isAvailable('last_payment_sum', 'last_payment_date')){
-  	var accountId = findChild(json.Result.Result, /^AccountId$/i).Value;
+  	var accountId = findChild(initialContainer, /^AccountId$/i).Value;
 
     html = AnyBalance.requestPost(baseurl + 'res/modules/AjaxRequest.php?Method=GetPaymentHistoryBodyWeb', {
       'Data[DateBegin]': getFormattedDate({format: 'YYYY-MM-DD', offsetMonth: 6}),

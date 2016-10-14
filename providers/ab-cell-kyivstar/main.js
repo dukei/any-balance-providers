@@ -132,7 +132,7 @@ function processSite() {
 	//Тарифный план
 	getParam(html, result, '__tariff',
 		/(?:Тарифный\s+план|Тарифний\s+план|Rate\s+Plan)[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i,
-		replaceTagsAndSpaces);
+		[/<span[^>]+hidden[^>]*>[\s\S]*?<\/span>/i, '', replaceTagsAndSpaces]);
 
 	//Дата подключения
 	getParam(html, result, 'connection_date',

@@ -54,8 +54,8 @@ function login(prefs, result) {
 					continue;
 				}
 				AnyBalance.trace('За ' + tries + ' попыток не удалось соединиться...');
-				throw e;
 			}
+			throw e;
 		}
 	}while(true);
 

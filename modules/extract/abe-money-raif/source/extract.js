@@ -41,7 +41,23 @@ function login(prefs, result) {
 
 	AnyBalance.setDefaultCharset('utf-8');
 
-	var html = AnyBalance.requestPost(baseurl + 'RCAuthorizationService', g_xml_login.replace(/%LOGIN%/g, html_encode(prefs.login)).replace(/%PASSWORD%/g, html_encode(prefs.password)), addHeaders({SOAPAction: ''}));
+	//Пытаемся обойти ошибку ssl
+	var html, tries = 0, maxtries = 10;
+	do{
+		try{
+			html = AnyBalance.requestPost(baseurl + 'RCAuthorizationService', g_xml_login.replace(/%LOGIN%/g, html_encode(prefs.login)).replace(/%PASSWORD%/g, html_encode(prefs.password)), addHeaders({SOAPAction: ''}));
+			break;
+		}catch(e){
+			if(/SSLHandshakeException/i.test(e)){
+				if(++tries < maxtries){
+					AnyBalance.trace('Райффайзен дурит, выдаёт ошибку SSL. Пробуем ещё раз (попытка ' + (tries+1) + ')');
+					continue;
+				}
+				AnyBalance.trace('За ' + tries + ' попыток не удалось соединиться...');
+				throw e;
+			}
+		}
+	}while(true);
 
 	if (!/loginResponse/i.test(html)) {
 		var error = getParam(html, null, null, /<faultstring>([\s\S]*?)<\/faultstring>/i, replaceTagsAndSpaces);

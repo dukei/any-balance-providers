@@ -33,12 +33,12 @@ function main() {
     AnyBalance.trace('Client-Version: ' + clientVersion);
 
     html = AnyBalance.requestPost('https://www.google.com/adsense/m/data/home?hl=ru', {}, addHeaders({
-	'X-Lightfe-Auth': 1, 
-	'Client-Version': clientVersion,
+		'X-Lightfe-Auth': '1', 
+		'Client-Version': clientVersion,
         'Referer': 'https://www.google.com/adsense/m/?hl=ru'
     }));
 
-    var json = getJson(html);
+    var json = getJson(replaceAll(html, [/^\)\]\}\'/, '']));
 
     if(!json.earnings)
        throw new AnyBalance.Error('Google returned no earnings.');

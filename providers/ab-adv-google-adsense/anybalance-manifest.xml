@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-    <id version="4">ab-adv-google-adsense</id>
+    <id version="5">ab-adv-google-adsense</id>
 	<api flags="no_browser" />
     <name>Google AdSense</name>
 	<description html="true"><![CDATA[

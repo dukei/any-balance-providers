@@ -69,9 +69,9 @@ function main() {
 		success: true
 	};
 
-	AB.getParam(html, result, 'balance', /Баланс\s+лицевого\s+счета:(?:[^>]*>){1}([\s\S]*?)<\//i, AB.replaceTagsAndSpaces,
+	AB.getParam(html, result, 'balance', /Баланс\s+лицевого\s+счета[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, AB.replaceTagsAndSpaces,
 		AB.parseBalance);
-	AB.getParam(html, result, 'deadline', /Текущая подписка:(?:[^>]*>){4}([\s\S]*?)<\//i, AB.replaceTagsAndSpaces,
+	AB.getParam(html, result, 'deadline', /Текущая подписка[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, AB.replaceTagsAndSpaces,
 		AB.parseDate);
 
 	AnyBalance.setResult(result);

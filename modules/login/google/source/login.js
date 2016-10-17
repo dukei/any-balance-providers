@@ -108,6 +108,11 @@ function googleLogin(prefs) {
 		var form = getElement(html, /<form[^>]+id="challenge"/i);
 		if(form) {
 			// throw new AnyBalance.Error('Two-factor authorization is enabled. Just now we can`t deal with this. Login attempt has failed.');
+			if(!/<input[^>]+name="Pin"/i.test(form)){
+				AnyBalance.trace(form);
+				throw new AnyBalance.Error('Google requested confirmation code, but you have not setup confirmation parameters yet. Enter your google account via browser and attach your phone to send confirmation to.');
+			}
+
 			let promtArea = getParam(form, null, null, /accounts\/marc\/\w+\.png[^>]*>([\s\S]*?)<input[^>]+name="Pin"/i), promt;
 			if(promtArea){
 				let divs = getElements(promtArea, /<div/ig, replaceTagsAndSpaces);

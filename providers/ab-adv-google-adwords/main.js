@@ -75,7 +75,13 @@ function main() {
 	}
 
 	if(AnyBalance.isAvailable('balance', 'last_pay_date', 'last_pay_sum')){
+		var url = baseurl + 'payments/u/0/adwords/signup?authuser=0&__c=' + info.customerId + '&__u=' + info.effectiveUserId + '&hl=ru';
 		html = AnyBalance.requestGet(baseurl + 'payments/u/0/adwords/signup?authuser=0&__c=' + info.customerId + '&__u=' + info.effectiveUserId + '&hl=ru', g_headers);
+		var urlRedir = getParam(html, null, null, /<meta[^>]+http-equiv="refresh"[^>]*url='([^']*)/i, replaceHtmlEntities);
+		if(urlRedir){
+			AnyBalance.trace('Soft redirected to ' + urlRedir);
+			html = AnyBalance.requestGet(urlRedir, addHeaders({Referer: url}));
+		}
 		AnyBalance.trace('Getting balance: redirected to ' + AnyBalance.getLastUrl());
 		var pcid = getParam(html, null, null, /billingProductCorrelationId':\s*'([^']*)/i);
 		if(!pcid){
@@ -83,7 +89,7 @@ function main() {
 			throw new AnyBalance.Error('Could not find required parameter. Is the site changed?');
 		}
 
-		html = AnyBalance.requestGet("https://bpui0.google.com/payments/u/0/transactions?hl=ru&pcid=" + pcid);
+		html = AnyBalance.requestGet("https://payments.google.com/payments/u/0/transactions?hl=ru&pcid=" + pcid);
 		getParam(html, result, 'balance', /<div[^>]+id="balance"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
 		//Последний платеж был совершен 21.04.2016, 3:21:52 Лос-Анджелес. Его размер составил 10 000,00 ₽. 
 		var lastPaymentInfo = getParam(html, null, null, /<div[^>]+id="lastSuccessfulPayment"[^>]*>([\s\S]*?)<\/div>/i);

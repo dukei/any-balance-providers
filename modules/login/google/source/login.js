@@ -160,3 +160,20 @@ function googleLogin(prefs) {
 	AnyBalance.saveData();
 	return html;
 }
+
+function reenterPasswordIfGoogleNeeds(html, prefs){
+	var form = getElement(html, /<form[^>]+id="gaia_loginform"[^>]*>/i);
+	if(form){
+		//Надо ещё разок ввести пароль
+		var params = AB.createFormParams(html, function(params, str, name, value) {
+			if (name == 'Passwd') 
+				return prefs.password;
+	    
+			return value;
+		});
+
+		var action = getParam(form, null, null, /<form[^>]+action="([^"]*)/i, replaceHtmlEntities);
+		html = AnyBalance.requestPost(joinUrl(AnyBalance.getLastUrl(), action), params, addHeaders({Referer: AnyBalance.getLastUrl()})); 
+	}
+	return html;
+}

@@ -24,20 +24,7 @@ function main() {
 	var html = googleLogin(prefs);
 	
 	html = AnyBalance.requestGet(baseurl + 'um/identity?authuser=0&dst=/dashboard/Dashboard?authuser%3D0%26mode%3Dreal%26type%3Ddesktop', g_headers);
-
-	var form = getElement(html, /<form[^>]+id="gaia_loginform"[^>]*>/i);
-	if(form){
-		//Надо ещё разок ввести пароль
-		var params = AB.createFormParams(html, function(params, str, name, value) {
-			if (name == 'Passwd') 
-				return prefs.password;
-	    
-			return value;
-		});
-
-		var action = getParam(form, null, null, /<form[^>]+action="([^"]*)/i, replaceHtmlEntities);
-		html = AnyBalance.requestPost(joinUrl(AnyBalance.getLastUrl(), action), params, addHeaders({Referer: AnyBalance.getLastUrl()})); 
-	}
+	html = reenterPasswordIfGoogleNeeds(html, prefs);
 	
 	if(/<form[^>]+name="tcaccept"/i.test(html)){
         //Надо че-то принять, че-то у них изменилось.

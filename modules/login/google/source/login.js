@@ -14,12 +14,9 @@ function googleLogin(prefs) {
 
 	function isLoginSuccesful(html) {
 		if (!isLoggedIn(html)) {
-			var error = getParam(html, null, null, /<span[^>]+id="errormsg[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
+			var error = getParam(html, null, null, /<span[^>]+id="errormsg[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
 			if (error)
-				throw new AnyBalance.Error(error);
-			error = getParam(html, null, null, /<form[^>]+id="challenge"/i, replaceTagsAndSpaces, html_entity_decode);
-			if (error)
-				throw new AnyBalance.Error('This account requires 2-step authorization. Turn off 2-step authorization to use this provider.');
+				throw new AnyBalance.Error(error, null, /парол|password/i.test(error));
 			
 			AnyBalance.trace(html);
 			throw new AnyBalance.Error('Can`t log in, is the site changed?');

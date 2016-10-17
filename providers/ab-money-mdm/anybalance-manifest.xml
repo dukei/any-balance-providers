@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-    <id version="11">ab-money-mdm</id>
+    <id version="12">ab-money-mdm</id>
     <api flags="no_browser"/>
     <name>МДМ-Банк</name>
 	<description html="true"><![CDATA[
@@ -9,7 +9,7 @@
 	<instruction html="true"><![CDATA[
 	<p>Настройки:</p>
 	<ul>
-		<li>Укажите логин и пароль к Интернет-банку (http://client.mdmbank.ru) в настройках провайдера.</li>
+		<li>Укажите логин и пароль к Интернет-банку (http://oldclient.mdmbank.ru) в настройках провайдера.</li>
 	</ul>
 	<p>Как подключить Интернет-банк «МДМ online»:</p>
 	<ol>

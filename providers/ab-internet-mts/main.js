@@ -720,7 +720,7 @@ function typicalApiInetTvNew(baseurl) {
       var bal = findChild(container, /ServiceState_Balance/i);
 
   	  var curbal = findChild(bal, /Current_Balance/i);
-  	  var balName = /телевид|тв/i.test(acc.Name) && !/шпд/i.test(acc.Name) ? 'balance_tv' : 'balance';
+  	  var balName = /телевид|тв/i.test(acc.Name) && !/шпд|интернет/i.test(acc.Name) ? 'balance_tv' : 'balance';
   	  sumParam(curbal.Value, result, balName, null, null, parseBalance, aggregate_sum);
 
  	  var abon = findChild(bal, /MonthPayment/i);

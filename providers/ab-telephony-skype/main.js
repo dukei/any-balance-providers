@@ -22,6 +22,8 @@ function redirectIfNeeded(html){
 
 function main() {
  	var prefs = AnyBalance.getPreferences();
+
+    AnyBalance.setOptions({cookiePolicy: 'netscape'});
 	
 	checkEmpty(prefs.login, 'Please, enter login!');
 	checkEmpty(prefs.password, 'Please, enter password!');	

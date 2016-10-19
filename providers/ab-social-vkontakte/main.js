@@ -103,7 +103,12 @@ function main(){
     
     getParam(getElement(html, /<li[^>]+id="l_msg"[^>]*>/i), result, 'messages', /<span[^>]+left_count[^>]*>([\s\S]*?)<\/span>/i, [replaceTagsAndSpaces, /^$/, '0'], parseBalance);
 	getParam(getElement(html, /<li[^>]+id="l_fr"[^>]*>/i), result, 'new_friends', /<span[^>]+left_count[^>]*>([\s\S]*?)<\/span>/i, [replaceTagsAndSpaces, /^$/, '0'], parseBalance);
-		
+
+	if(AnyBalance.isAvailable('friends_requests_in', 'friends_requests_out')){
+		html = AnyBalance.requestGet(baseurl + '/friends?section=all_requests', g_headers);
+    	getParam(getElement(html, /<a[^>]+out_requests/i), result, 'friends_requests_out', null, replaceTagsAndSpaces, parseBalance);
+    	getParam(getElement(html, /<a[^>]+all_requests/i), result, 'friends_requests_in', null, replaceTagsAndSpaces, parseBalance);
+	}
 	
 	if(isAvailable('vk_name')) {
 		var href = getParam(html, null, null, /<a[^>]*href="([^"]*)[^>]*>[^>]*>\s*Моя Страница/i);

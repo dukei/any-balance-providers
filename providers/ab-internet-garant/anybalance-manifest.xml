@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="5">ab-internet-garant</id>
+	<id version="6">ab-internet-garant</id>
 	<api flags="no_browser|captcha"/>
 	<name>Гарант (Беларусь)</name>
 	<description html="true"><![CDATA[
@@ -14,6 +14,7 @@
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
+		<js>library.min.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>

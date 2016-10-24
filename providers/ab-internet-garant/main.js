@@ -11,6 +11,16 @@ var g_headers = {
 	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
 };
 
+function parseBalanceRK(_text) {
+	var text = _text.replace(/\s+/g, '');
+	var rub = getParam(text, null, null, /(-?\d[\d\.,]*)р\./i, replaceTagsAndSpaces, parseBalance) || 0;
+	var _sign = rub < 0 ? -1 : 1;
+	var kop = getParam(text, null, null, /(-?\d[\d\.,]*)к\./i, replaceTagsAndSpaces, parseBalance) || 0;
+	var val = _sign*(Math.abs(rub) + kop / 100);
+	AnyBalance.trace('Parsing balance (' + val + ') from: ' + _text);
+	return val;
+}
+
 function main() {
 	var prefs = AnyBalance.getPreferences();
 	var baseurl = 'https://garant-tv.by/';
@@ -68,7 +78,7 @@ function main() {
 	};
 
 	getParam(html, result, 'balance', /Остаток на счету(?:[^>]*>){6}[^>]*value="([^"]*)/i, replaceTagsAndSpaces,
-		parseBalance);
+		parseBalanceRK);
 	getParam(html, result, 'acc_num', /Лицевой счет(?:[^>]*>){6}[^>]*value="([^"]*)/i, replaceTagsAndSpaces,
 		html_entity_decode);
 	getParam(html, result, 'fio', /Ф\.И\.О\.(?:[^>]*>){4}[^>]*value="([^"]*)/i, replaceTagsAndSpaces, html_entity_decode);

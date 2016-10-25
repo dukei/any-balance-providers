@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-  <id version="2">ab-bonus-kegel</id>
+  <id version="3">ab-bonus-kegel</id>
   <name>КеГеЛьБУМ</name>
   <description>
     Получает баланс КеГЛей в бонусной программе магазинов ОТДОХНИ и МЯСНОВЪ (http://www.kegelbum.ru).
@@ -10,12 +10,14 @@
 
     Если у вас ещё нет доступа к личному кабинету, зарегистрируйтесь здесь: http://www.kegelbum.ru/register.
   </description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+  <depends>
+  	<module id="library"/>
+  </depends>
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
     <js>main.js</js>
-    <js>library.js</js>
     <history>history.xml</history>
   </files>
   <counters>

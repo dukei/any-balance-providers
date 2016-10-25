@@ -7,29 +7,58 @@
 Личный кабинет: www.kegelbum.ru/login/
 */
 
+var g_headers = {
+	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/53.0.2785.143 Safari/537.36',
+	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+	'Accept-Language': 'ru,en-US;q=0.8,en;q=0.6',
+	'Origin': 'http://www.kegelbum.ru'
+}
+
 function main(){
     var prefs = AnyBalance.getPreferences();
     AnyBalance.setDefaultCharset('utf-8');
 
-    var baseurl = "http://www.kegelbum.ru/";
+	AB.checkEmpty(prefs.login, 'Введите логин!');
+	AB.checkEmpty(prefs.password, 'Введите пароль!');
 
-    var html = AnyBalance.requestPost(baseurl + 'login/?login=yes', {
-        AUTH_FORM:'Y',
-        TYPE:'AUTH',
-        backurl:'/login/',
-        USER_LOGIN:prefs.login,
-        USER_PASSWORD:prefs.password,
-        Login:'Вход'
-    });
+    var baseurl = "http://www.kegelbum.ru/";
+    
+    var html = AnyBalance.requestGet(baseurl + 'login/', g_headers);
+
+	if (!html || AnyBalance.getLastStatusCode() > 400) {
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Сайт провайдера временно недоступен! Попробуйте обновить данные позже.');
+	}
+
+	var form = AB.getElement(html, /<form[^>]+form_auth[^>]*>/i);
+	if(!form){
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удаётся найти форму входа! Сайт изменен?');
+	}
+
+	var params = AB.createFormParams(form, function(params, str, name, value) {
+		if (name == 'USER_LOGIN') {
+			return prefs.login;
+		} else if (name == 'USER_PASSWORD') {
+			return prefs.password;
+		}
+
+		return value;
+	});
+
+	//Надо задержку
+	AnyBalance.sleep(5000 + Math.random()*3000);
+
+    html = AnyBalance.requestPost(baseurl + 'login/?login=yes', params, addHeaders({Referer: baseurl + 'login/'}));
 
     if(!/logout=yes/.test(html)){
         var error = getParam(html, null, null, /<div[^>]+class="errortext"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
         if(error)
-            throw new AnyBalance.Error(error);
+            throw new AnyBalance.Error(error, null, /парол/i.test(error));
         throw new AnyBalance.Error('Не удалось войти в личный кабинет. Проблемы на сайте или сайт изменен.');
     }
 
-    html = AnyBalance.requestPost(baseurl + 'personal/cards/');
+    html = AnyBalance.requestPost(baseurl + 'personal/cards/', '', addHeaders({Referer: AnyBalance.getLastUrl()}));
 
     var result = {success: true};
 

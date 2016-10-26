@@ -9,7 +9,7 @@ var g_headers = {
 	'User-Agent':		'Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/53.0.2785.116 Safari/537.36'
 };
 
-var baseurl = 'https://www.kaspi.kz';
+var baseurl = 'https://kaspi.kz';
 
 function login() {
 	var prefs = AnyBalance.getPreferences();

@@ -33,7 +33,7 @@ function main(){
 		else if (name == 'pass')
 			return prefs.password;
 	    else if (name == 'token'){
-	    	var json = getParam(html, null, null, /window\s*\[\s*'globalSettings'\s*\]\s*=\s*(\{[^}]*\})/, null, getJson);
+	    	var json = getJsonObject(html, /window\s*\[\s*'globalSettings'\s*\]\s*=\s*/);
 	    	var obj = new te(json);
 	    	return pg({a: obj}); //Весьма сложные преобразования токена
 	    }

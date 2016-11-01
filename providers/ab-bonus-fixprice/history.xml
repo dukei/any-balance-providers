@@ -1,5 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="5" date="2016-11-01">
+	Поддержка рекапчи
+	Улучшена обработка ошибок
+	</change>
 	<change version="4" date="2016-10-14">
 	Обход капчи
 	</change>

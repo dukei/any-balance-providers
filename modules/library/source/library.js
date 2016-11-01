@@ -1327,6 +1327,20 @@ var AB = (function (global_scope) {
 		}
 	}
 
+	function solveRecaptcha(text, url, sitekey, time){
+		if(AnyBalance.getCapabilities().recaptcha2){
+			var grc_response = AnyBalance.retrieveCode(text, null, {
+				type: 'recaptcha2',
+				time: time || 120000,
+				sitekey: sitekey,
+				url: url
+			});
+			return grc_response;
+		}else{
+			throw new AnyBalance.Error('Провайдер требует распознавания ReCaptcha, но текущая версия AnyBalance API не позволяет это сделать. Обновите программу или обратитесь к разработчикам.');
+		}
+	}
+
     return {
         getParam: getParam,
         checkEmpty: checkEmpty,
@@ -1399,7 +1413,8 @@ var AB = (function (global_scope) {
         fillColsResult: fillColsResult,
         getJsonObjSafe: getJsonObjSafe,
         createUrlEncodedParams: createUrlEncodedParams,
-        clearAllCookies: clearAllCookies
+        clearAllCookies: clearAllCookies,
+        solveRecaptcha: solveRecaptcha
     };
 })(this);
 

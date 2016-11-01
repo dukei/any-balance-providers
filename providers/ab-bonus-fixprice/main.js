@@ -27,15 +27,19 @@ function main() {
 		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
 	}
 
+	var grc_response = solveRecaptcha('Пожалуйста, подтвердите, что вы не робот', baseurl, '6LcxEwkUAAAAAHluJu_MhGMLI2hbzWPNAATYetWH');
+
 	html = AnyBalance.requestPost(baseurl + 'ajax/crm1.php', {
 		mail: prefs.login,
 		pass: prefs.password,
 		uri: '/',
+		recaptcha: grc_response,
 		action: /@/.test(prefs.login) ? 'auth_by_email' : 'auth_by_phone'
 	}, AB.addHeaders({
 		'X-Requested-With': 'XMLHttpRequest',
 		Referer: baseurl
 	}));
+
 
 	if(html != '0'){
 		if(html == '1')
@@ -44,6 +48,9 @@ function main() {
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
+
+	if(/062139c3908199a.png/i.test(html))
+		throw new AnyBalance.Error('FixPrice временно приостановил бонусную программу. Более подробная информация на https://bonus.fix-price.ru/rules#bt_regulations1');
 
 	var result = {
 		success: true

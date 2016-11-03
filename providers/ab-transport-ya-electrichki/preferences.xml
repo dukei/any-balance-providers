@@ -22,6 +22,24 @@
         positiveButtonText="ОК" 
         inputType="text">
     </EditTextPreference>
+    <CheckBoxPreference
+        title="Электрички"
+        defaultValue="true"
+        summaryOn="Показывать электрички"
+        summaryOff="Игнорировать электрички"
+        key="suburbans" />
+    <CheckBoxPreference
+        title="Автобусы"
+        defaultValue="false"
+        summaryOn="Показывать автобусы"
+        summaryOff="Игнорировать автобусы"
+        key="buses" />
+    <CheckBoxPreference
+        title="Поезда"
+        defaultValue="false"
+        summaryOn="Искать поезда"
+        summaryOff="Игнорировать поезда"
+        key="trains" />
 <!--     <EditTextPreference
         key="region"
         title="Регион"

@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="1.0" version="10">ab-transport-ya-electrichki</id>
+	<id major_version="1.0" version="11">ab-transport-ya-electrichki</id>
 	<api flags="no_browser"/>
 	<name>Яндекс.Электрички</name>
 	<description html="true"><![CDATA[

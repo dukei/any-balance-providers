@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="14" date="2016-11-04">
+	Исправлен показ валюты
+	</change>
 	<change version="13" date="2016-06-04">
 	Время ожидания СМС увеличена до 3 минут
 	</change>

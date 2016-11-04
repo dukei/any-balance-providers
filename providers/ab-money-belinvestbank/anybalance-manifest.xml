@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="13">ab-money-belinvestbank</id>
+	<id version="14">ab-money-belinvestbank</id>
 	<api flags="no_browser|sms"/>
 	<name>Белинвестбанк (Беларусь)</name>
 	<description html="true"><![CDATA[
@@ -18,7 +18,7 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units="{@currency}"/>
+		<counter id="balance" name="Баланс" units=" {@currency}"/>
 		<counter id="currency" name="Валюта" type="text"/>
 		<counter id="validto" name="Срок действия" type="time" format="dd/MM/yyyy"/>
 		<counter id="status" name="Статус" type="text"/>

@@ -73,7 +73,7 @@ function fetchCard(html, baseurl, prefs){
 		if(href){
 			html = AnyBalance.requestGet(baseurl + 'miPWD/' + href, g_headers);
 			getParam(html, result, 'balance', /Доступно: [^<]+/i, replaceTagsAndSpaces, parseBalance);
-			getParam(html, result, 'currency', /Доступно: [^<]+/i, replaceTagsAndSpaces, parseCurrency);
+			getParam(html, result, ['currency', 'balance'], /Доступно: [^<]+/i, replaceTagsAndSpaces, parseCurrency);
 		} else {
 			AnyBalance.trace('Ошибка при получении ссылки на страницу баланса.');
 		}

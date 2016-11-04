@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-money-belgazprombank</id>
+	<id version="2">ab-money-belgazprombank</id>
 	<api flags="no_browser"/>
 	<name>Белгазпромбанк (Беларусь)</name>
 	<description html="true"><![CDATA[
@@ -11,10 +11,12 @@
 	<p>Если у вас нет доступа в Личный кабинет, получите его на странице <a href="https://www.e-bgpb.by/">https://www.e-bgpb.by/</a></p>
 	]]></instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
@@ -25,6 +27,6 @@
 		<counter id="cardnum" name="Номер карты" type="text"/>
 	</counters>
 	<keywords></keywords>
-	<type>money</type>
+	<type>money, bank</type>
 	<country>by</country>
 </provider>

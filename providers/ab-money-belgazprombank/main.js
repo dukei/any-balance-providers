@@ -69,7 +69,7 @@ function fetchCard(html, baseurl, prefs){
 	}
 
 	if(isAvailable('balance')){
-		var href = getParam(cardInfo, null, null, /<a href=['"]([^'"]*)['"][^<]*title="Баланс"/i, replaceTagsAndSpaces, html_entity_decode);
+		var href = getParam(cardInfo, null, null, /<a href=['"]([^'"]*)['"][^<]*title="Баланс"/i, replaceTagsAndSpaces);
 		if(href){
 			html = AnyBalance.requestGet(baseurl + 'miPWD/' + href, g_headers);
 			getParam(html, result, 'balance', /Доступно: [^<]+/i, replaceTagsAndSpaces, parseBalance);
@@ -80,15 +80,15 @@ function fetchCard(html, baseurl, prefs){
 	}
 	
 	getParam(cardInfo, result, 'end_date', /Окончание действия[^<]+/i, replaceTagsAndSpaces, parseDate);
-	getParam(cardInfo, result, 'cardname', /card_text[^>]*>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(cardInfo, result, 'cardnum', /cardName[^>]*>([\d*]{16})/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(cardInfo, result, 'cardname', /card_text[^>]*>([^<]*)/i, replaceTagsAndSpaces);
+	getParam(cardInfo, result, 'cardnum', /cardName[^>]*>([\d*]{16})/i, replaceTagsAndSpaces);
 	
 	AnyBalance.setResult(result);
 }
 
 function checkErrors(html){
-	var error = getParam(html, null, null, /<font[^>]+class="error_text"[^>]*>([^<]+)/i, replaceTagsAndSpaces, html_entity_decode),
-		isFatal = /Незарегистрированное имя пользователя/i.test(error) || /Неправильный пароль/i.test(error);
+	var error = getElement(html, /<h1[^>]+alert-title/i, replaceTagsAndSpaces),
+		isFatal = /имя пользователя|парол/i.test(error);
 
 	if(error)
 		throw new AnyBalance.Error(error, null, isFatal);

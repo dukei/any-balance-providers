@@ -24,6 +24,8 @@ function main(){
     var baseurl = "http://www.kegelbum.ru/";
     
     var html = AnyBalance.requestGet(baseurl + 'login/', g_headers);
+	var timeToWait = 5000 + Math.random()*3000;
+	var startTime = +(new Date());
 
 	if (!html || AnyBalance.getLastStatusCode() > 400) {
 		AnyBalance.trace(html);
@@ -36,6 +38,10 @@ function main(){
 		throw new AnyBalance.Error('Не удаётся найти форму входа! Сайт изменен?');
 	}
 
+
+	var sitekey = getParam(form, null, null, /data-sitekey=['"]([^'"]*)/i, replaceHtmlEntities);
+	var grc_response = solveRecaptcha('Пожалуйста, подтвердите, что вы не робот', baseurl, sitekey);
+
 	var params = AB.createFormParams(form, function(params, str, name, value) {
 		if (name == 'USER_LOGIN') {
 			return prefs.login;
@@ -45,9 +51,13 @@ function main(){
 
 		return value;
 	});
+	params['g-recaptcha-response'] = grc_response;
 
 	//Надо задержку
-	AnyBalance.sleep(5000 + Math.random()*3000);
+	var toWait = Math.floor(timeToWait - (+new Date() - startTime));
+	AnyBalance.trace('Ждем ' + toWait + ' мс');
+	if(toWait > 0)
+		AnyBalance.sleep(toWait);
 
     html = AnyBalance.requestPost(baseurl + 'login/?login=yes', params, addHeaders({Referer: baseurl + 'login/'}));
 

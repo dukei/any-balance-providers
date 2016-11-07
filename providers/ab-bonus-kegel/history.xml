@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="4" date="2016-11-07">
+	Поддержка ReCaptcha
+	</change>
 	<change version="3" date="2016-10-25">
 	- Поддержка изменений на сайте.
 	</change>

@@ -4,7 +4,7 @@
 
 var g_headers = {
     'Accept': 'application/vnd.qiwi.sso-v1+json',
-	'Origin': 'https://w.qiwi.com',
+	'Origin': 'https://qiwi.com',
 	'Accept-Language': 'ru;q=0.8,en-US;q=0.6,en;q=0.4',
     'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/43.0.2357.132 Safari/537.36',
 	'Content-Type': 'application/json',
@@ -30,14 +30,29 @@ function login(prefs) {
 	} else if(!/^\s*\+/.test(prefs.login)) {
 		login = '+' + prefs.login;
 	}
-	
-    var response = requestAPI({
-		action: 'cas/tgts',
-		isAuth: true
-	}, {
-        login: login,
-        password: prefs.password
-    });
+
+	var response;
+	try{	
+        response = requestAPI({
+			action: 'cas/tgts',
+			isAuth: true
+		}, {
+            login: login,
+            password: prefs.password
+        });
+    }catch(e){
+    	AnyBalance.trace('Киви затребовало капчу...');
+    	if(/робот|robot/i.test(e.message)){
+            response = requestAPI({
+				action: 'cas/tgts',
+				isAuth: true
+			}, {
+                login: login,
+                password: prefs.password,
+                captcha: solveRecaptcha('Пожалуйста, докажите, что вы не робот.', baseurl, "6LfjX_4SAAAAAFfINkDklY_r2Q5BRiEqmLjs4UAC")
+            });
+    	}
+    }
 	
 	response = requestAPI({
 		action: 'cas/sts',
@@ -99,8 +114,6 @@ function requestAPI(actionObj, params, addOnHeaders) {
 		if (!response.entity || !response.entity.ticket) {
 			if(response.entity){
 				var error = response.entity.error.message;
-				if(/робот/i.test(error))
-					error = 'Qiwi просит подтвердить, что вы не робот. Зайдите с вашим логином и паролем на вебсайт https://w.qiwi.com, пройдите проверку, что вы не робот. После этого ещё раз обновите провайдер.';
 				if(error)
 					throw new AnyBalance.Error(error, null, /Неверный логин или пароль|Неправильный номер телефона или пароль/i.test(error));
 			}

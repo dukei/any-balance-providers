@@ -27,6 +27,7 @@ function main() {
 		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
 	}
 
+//	AnyBalance.trace(JSON.stringify(AnyBalance.getCapabilities()));
 	var grc_response = solveRecaptcha('Пожалуйста, подтвердите, что вы не робот', baseurl, '6LcxEwkUAAAAAHluJu_MhGMLI2hbzWPNAATYetWH');
 
 	html = AnyBalance.requestPost(baseurl + 'ajax/crm1.php', {
@@ -62,7 +63,11 @@ function main() {
 	}
 
 	if(AnyBalance.isAvailable('balance', 'card')){
-		html = AnyBalance.requestGet(baseurl + 'account/bonuses/', g_headers);
+		for(var i=0; i<5; ++i){
+			html = AnyBalance.requestGet(baseurl + 'account/bonuses/', g_headers);
+			if(/У меня накоплено/i.test(html))
+				break; //Дождемся появления баланса. Что-то он тормозит появиться.
+		}
 	    
 		AB.getParam(html, result, 'balance', /У меня накоплено(.*?)балл/i, AB.replaceTagsAndSpaces, AB.parseBalance);
 		AB.getParam(html, result, 'card', /на\s+вашей\s+карте\s+№([\s\S]*?)<\/p>/i, AB.replaceTagsAndSpaces);

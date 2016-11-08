@@ -88,8 +88,11 @@ function main () {
 	var idx = 0;
 	for(var i=0; i<json.search.segments.length; ++i){
 		var segment = json.search.segments[i];
-		var departure = new Date(parseDateISO(segment.departure));
-		var time = n2(departure.getHours()) + ':' + n2(departure.getMinutes());
+//		var departure = new Date(parseDateISO(segment.departure));
+//		var tz = segment.timezoneFrom;
+		var time = moment(segment.departure).tz(segment.timezoneFrom).format('HH:mm');
+
+//		var time = n2(departure.getHours()) + ':' + n2(departure.getMinutes());
 		var name = segment.transport.title + ' ' + segment.title + ' ' + time;
 
 		if(!types[segment.transport.code]){

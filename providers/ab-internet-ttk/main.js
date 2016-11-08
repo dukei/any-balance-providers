@@ -25,15 +25,15 @@ function main() {
 	var j_username = getParam(html, null, null, /"value(?:[^"]*"){2}([^"]+)"/i, replaceTagsAndSpaces);
 	checkEmpty(j_username, 'Не удалось найти id пользователя с номером счета ' + prefs.login);
 	
-	html = AnyBalance.requestPost(baseurl + '/po/LoginSSO', {
+	html = AnyBalance.requestPost(baseurl + '/po/login', {
 		'username':prefs.login,
 		'j_username':j_username,
-		'j_password':prefs.password,
+		'password':prefs.password,
 		'loginSource':'form'
 	}, addHeaders({Origin: baseurl, Referer: baseurl + 'po/LoginForm.jsp'}));
 
-	if(/errLogin/i.test(AnyBalance.getLastUrl())){
-		var error = getParam(html, null, null, /<em[^>]+id="[^"]*error(?:[^>](?!display:\s*none))*>([\s\S]*?)<\/em>/i, replaceTagsAndSpaces);
+	if(/failed=true/i.test(AnyBalance.getLastUrl())){
+		var error = getElement(html, /<em[^>]+id="[^"]*error(?:[^>](?!display:\s*none))*>/i, replaceTagsAndSpaces);
 		if (error)
 			throw new AnyBalance.Error(error, null, /Неверный пароль|Неверный лицевой/i.test(error));
 

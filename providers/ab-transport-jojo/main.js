@@ -78,9 +78,10 @@ function main(){
 	}
 
 	getParam(html, result, ['currency','balance','balancenow','balancedownload'], /"balance"[^>]*>\s*([\d.,-]+\skr)/i, replaceTagsAndSpaces, parseCurrency);
-	// getParam(html, result, 'validfrom', /Periodkort fr:<\/h4>[\s\S]*?<p>([\s\S]*?) till/i, replaceTagsAndSpaces, parseDateISO);
-	// getParam(html, result, 'validtill', /Periodkort fr:<\/h4>[\s\S]*? till ([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, parseDateISO);
-	// getParam(html, result, 'zonesnum', /Antal zoner:<\/h4>[\s\S]*?<p>([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, parseBalance);
+
+	getParam(html, result, 'validfrom', /"validity"[^>]*>\s*([\d.,-]+)\s-\s[\d.,-]+\s*</i, replaceTagsAndSpaces, parseDateISO);
+	getParam(html, result, 'validtill', /"validity"[^>]*>\s*[\d.,-]+\s-\s([\d.,-]+)\s*</i, replaceTagsAndSpaces, parseDateISO);
+	getParam(html, result, 'zonesnum', /"zone-box-\d+-title"[^>]*>\s*([\d.,-]+)\szoner/i, replaceTagsAndSpaces, parseBalance);
 	
 	
 	if (prefs.cardnum && isAvailable(['expiresat', 'expiresin', 'expirestate'])) {

@@ -65,9 +65,18 @@ function main(){
 	getParam(prefs.cardnum, result, '__tariff');
 	getParam(prefs.cardnum, result, 'cardnum');
 	
-	getParam(html, result, 'balance', /"balance"[^>]*>\s*([\d.,-]+)\skr/i, replaceTagsAndSpaces, parseBalance);
-	// getParam(html, result, 'balancenow', /Tillg.ngligt nu:<\/h4>[\s\S]*?<p>([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, parseBalance);
-	// getParam(html, result, 'balancedownload', /Att h.mta:[\s\S]*?<p>.([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, parseBalance);
+	balnow = getParam(html, null, null, /"balance"[^>]*>\s*([\d.,-]+)\skr/i, replaceTagsAndSpaces, parseBalance);
+	baldown = getParam(html, null, null, /"fetch-balance"[^>]*>\s*([\d.,-]+)\skr/i, replaceTagsAndSpaces, parseBalance);
+	if (isset(balnow) || isset(baldown)) {
+		getParam((isset(balnow) ? balnow : 0) + (isset(baldown) ? baldown : 0), result, 'balance');
+	}
+	if (isset(balnow)) {
+		getParam(balnow, result, 'balancenow');
+	}
+	if (isset(baldown)) {
+		getParam(baldown, result, 'balancedownload');
+	}
+
 	getParam(html, result, ['currency','balance','balancenow','balancedownload'], /"balance"[^>]*>\s*([\d.,-]+\skr)/i, replaceTagsAndSpaces, parseCurrency);
 	// getParam(html, result, 'validfrom', /Periodkort fr:<\/h4>[\s\S]*?<p>([\s\S]*?) till/i, replaceTagsAndSpaces, parseDateISO);
 	// getParam(html, result, 'validtill', /Periodkort fr:<\/h4>[\s\S]*? till ([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, parseDateISO);

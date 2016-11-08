@@ -87,6 +87,12 @@ function main() {
  	info = redirectIfNeeded(info);
 
  	if (!/skype\.com\/(?:portal\/)?logout/i.test(info)) {
+	 	var json = getJsonObject(info, /var\s+\$Config\s*=\s*/);
+	 	if(json && json.WLXAccount && json.WLXAccount.confirmIdentity){
+	 		//Need otp authorization
+	 		throw new AnyBalance.Error('Skype required additional authorization. Please login to Skype with browser (https://skype.com) first.');
+	 	}
+
  		var error = getElement(info, /<div[^>]+message_error[^>]*>/i, [/<div[^>]+messageIcon[^>]*>[\s\S]*?<\/div>/ig, '', replaceTagsAndSpaces], html_entity_decode);
  		if (error)
 			throw new AnyBalance.Error(error, null, /your password|ваш пароль|введіть пароль/i.test(error)); //Надо бы и другие языки поддержать, конечно, но хотя бы 3

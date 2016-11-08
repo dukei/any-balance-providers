@@ -8,11 +8,14 @@
 */
 
 var g_headers = {
-	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
 	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
-	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
+	'Accept-Language': 'en-US,en;q=0.8,ru;q=0.6',
+	Origin: 'https://wallet.rapida.ru',
 	'Connection': 'keep-alive',
-	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
+	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.87 Safari/537.36',
+	'Upgrade-Insecure-Requests': '1',
+
 };
 
 
@@ -44,28 +47,17 @@ function main() {
 			def_code: prefs.code,
 			def_code_shdw: codes[prefs.code],
 			login: prefs.login,
-			pin: prefs.password
+			pin: prefs.password,
+			'g-recaptcha-response': solveRecaptcha('Пожалуйста, докажите, что вы не робот', baseurl, '6LeCviMTAAAAAME2syQsk3f95voQMz9Fh1MmzGGB')
 		  };
 
-		var captchaHash=findValue(html, "<input.+name=\"captcha_0\" value=\"([a-zA-Z0-9]+)\" id=\"id_captcha_0\"");
-		if(captchaHash!=null) {
-			var captchaimg = AnyBalance.requestGet(baseurl + "captcha/image/"+captchaHash+"/");
-			var captcha = AnyBalance.retrieveCode("Пожалуйста, введите код с картинки", captchaimg);
-			loginRequest.captcha_0=captchaHash;
-			loginRequest.captcha_1=captcha;
-		}
-	
-		html = AnyBalance.requestPost(baseurl + 'auth/', loginRequest, {
+		html = AnyBalance.requestPost(baseurl + 'auth/', loginRequest, addHeaders({
 			Referer: baseurl
-		  });
+		  }));
 		  
-		if(html.indexOf('<ul[^>]+class="errorlist"><li>Неверный код</li></ul>')!=-1) {
-			throw new AnyBalance.Error('Неверно введено число с картинки');
-		}
 	}
 
-	if(html.indexOf('<a href="/exit/" class="exit">')!=-1) {
-		
+	if(/<a[^>]+class="exit"/i.test(html)) {
 		var tmp=findValue(html, "<div class=\"hello_title\">(.+?)</div>");
 		if(tmp==null) throw new AnyBalance.Error('Ошибка получения значения имени');
 		result.name=tmp;
@@ -87,6 +79,11 @@ function main() {
 		}
 		
 	} else {
+		var json = getJsonObject(html, /\$\.msg\(/);
+		var error = json && json.content;
+		if(error)
+			throw new AnyBalance.Error(error, null, /вас не знаем|парол/i.test(error));
+		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Ошибка авторизации. Проверьте логин и пароль.');
 	}
     

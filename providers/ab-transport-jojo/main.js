@@ -62,8 +62,8 @@ function main(){
 		throw new AnyBalance.Error('Card balance get error. Website design is changed?');
 	}
 	
-	getParam(prefs.cardnum, result, '__tariff');
-	getParam(prefs.cardnum, result, 'cardnum');
+	getParam(html, result, '__tariff', /"type"[^>]*>\s*([\s\S]*?)\s*</i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'cardnum', /"card-number"[^>]*>\s*([\d.,-]+)\s*</i, replaceTagsAndSpaces, html_entity_decode);
 	
 	balnow = getParam(html, null, null, /"balance"[^>]*>\s*([\d.,-]+)\skr/i, replaceTagsAndSpaces, parseBalance);
 	baldown = getParam(html, null, null, /"fetch-balance"[^>]*>\s*([\d.,-]+)\skr/i, replaceTagsAndSpaces, parseBalance);

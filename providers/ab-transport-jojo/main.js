@@ -34,11 +34,11 @@ function main(){
 	checkEmpty(prefs.cardnum, 'Enter card number!');
 	checkEmpty(prefs.cardcvc, 'Enter card CVC!');
 	
-	var html = AnyBalance.requestGet(baseurl + 'e-tjanster/se-saldo-och-ladda-kort', g_headers);
+	var html = AnyBalance.requestGet(baseurl + 'e-tjanster/se-saldo-och-ladda-kort1', g_headers);
 	
 	if(!html || AnyBalance.getLastStatusCode() > 400){
 		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
+		throw new AnyBalance.Error("Can't open skanetrafiken.se! Try to refresh later.");
 	}	
 	
 	var token = getParam(html, null, null, /"__RequestVerificationToken"[^>]*value="([^"]+)/i);

@@ -15,7 +15,7 @@ var g_headers = {
 };
 
 var regions = {
-//  moscow: getMoscow,
+  moscow: getMoscow,
   rostov: getRostov,
   vlggrd: getRostov,
   nsk: getNsk,
@@ -144,97 +144,49 @@ function getMoscow() {
     password: prefs.password
   });
 
-  $parse = $(info.replace(/^[^<]+/, ''));
-
-  if (!/src=exit/i.test(info)) {
-    var error = $.trim($parse.find('div.logon-result-block>p').text());
-    if (!error)
-      error = getParam(info, null, null, /<label[^>]+validate="IDToken1"[^>]*>([\s\S]*?)<\/label>/i, replaceTagsAndSpaces);
-    if (!error)
-      error = getParam(info, null, null, /<label[^>]+validate="IDToken2"[^>]*>([\s\S]*?)<\/label>/i, replaceTagsAndSpaces);
-
-    if (error)
-      throw new AnyBalance.Error(error);
-
-    throw new AnyBalance.Error("Не удалось зайти в личный кабинет. Неверный логин-пароль, регион или сайт изменен.");
+  function goToRef(info, name){
+    var urls = getElements(info, [/<a\b/ig, typeof(name) == 'string' ? new RegExp(name, 'i') : name]);
+    if (urls.length < 1)
+      throw new AnyBalance.Error("Невозможно найти ссылку на " + (typeof(name) == 'string' ? name : name.source));
+    
+    var html = AnyBalance.requestGet(baseurl + getParam(urls[0], null, null, /href="([^"]*)/i, replaceHtmlEntities));
+    return html;
   }
 
-  //    info = AnyBalance.requestGet(baseurl);
-
-
-  //    AnyBalance.trace(info);
-
   // Находим ссылку "Счетчики услуг"
-  var $url = $parse.find("A:contains('Счетчики услуг')").first();
-  if ($url.length != 1)
-    throw new AnyBalance.Error("Невозможно найти ссылку на счетчики услуг");
-
-  var html = AnyBalance.requestGet(baseurl + $url.attr('href'));
+  var html = goToRef(info, 'Счетчики услуг');
   var result = {
     success: true
   };
 
-  var matches;
-
   //Тарифный план
-  if (matches = /Тарифный план:[\s\S]*?>(.*?)</.exec(html)) {
-    result.__tariff = matches[1];
-  }
-
+  getParam(html, result, '__tariff', /Тарифный план:[\s\S]*?>(.*?)</i, replaceTagsAndSpaces);
   getParam(html, result, 'daysleft', /(\d+) дн\S+ до списания абонентской платы/i, null, parseBalance3);
 
   // Баланс
-  if (AnyBalance.isAvailable('balance')) {
-    if (matches = /customer-info-balance"><strong>\s*(.*?)\s/.exec(html)) {
-      var tmpBalance = matches[1].replace(/ |\xA0/, ""); // Удаляем пробелы
-      tmpBalance = tmpBalance.replace(",", "."); // Заменяем запятую на точку
-      result.balance = parseFloat(tmpBalance);
-    }
-  }
+  getParam(html, result, 'balance', /<span[^>]+customer-info-balance[^>]*>([\s\S]*?)(?:<\/strong>|<\/span>)/i, replaceTagsAndSpaces, parseBalance);
 
   // Лицевой счет
-  if (AnyBalance.isAvailable('license')) {
-    if (matches = /Лицевой счет:[\s\S]*?>(.*?)</.exec(html)) {
-      result.license = matches[1];
-    }
-  }
-
+  getParam(html, result, 'license', /Лицевой счет:[\s\S]*?>(.*?)</i, replaceTagsAndSpaces);
   // Номер договора
-  if (AnyBalance.isAvailable('agreement')) {
-    if (matches = /Договор:[\s\S]*?>(.*?)</.exec(html)) {
-      result.agreement = matches[1];
-    }
-  }
-
+  getParam(html, result, 'agreement', /Договор:[\s\S]*?>(.*?)</i, replaceTagsAndSpaces);
   // ФИО
-  if (AnyBalance.isAvailable('username')) {
-    if (matches = /<h3>([^<]*)<\/h3>/i.exec(html)) {
-      result.username = matches[1];
-    }
-  }
+  getParam(html, result, 'username', /<h3[^>]*>([\s\S]*?)<\/h3>/i, replaceTagsAndSpaces);
 
   if (AnyBalance.isAvailable('internet_cur')) {
     // Находим ссылку "Счетчики услуг"
-    matches = html.match(/<div class="gridium sg">\s*(<table>[\s\S]*?<\/table>)/i);
+    var matches = html.match(/<div class="gridium sg">\s*(<table>[\s\S]*?<\/table>)/i);
     if (matches) {
-      var counter = $(matches[1]).find("tr.gm-row-item:contains('трафик')").find('td:nth-child(3)').first().text();
-      if (counter)
-        counter = $.trim(counter);
-      if (counter)
-        result.internet_cur = parseFloat(counter);
+      	var row = getElements(matches[1], [/<tr/ig, /<td[^>]*>(?:[\s\S](?!<\/td>))*трафик/i])[0];
+   	 	getParam(row, result, 'internet_cur', /(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
     }
   }
 
   if (AnyBalance.isAvailable('abon')) {
     // Находим ссылку "Расход средств"
-    var $url = $parse.find("A:contains('Расход средств')").first();
-    if ($url.length != 1)
-      throw new AnyBalance.Error("Невозможно найти ссылку на Расход средств");
-
-    var html = AnyBalance.requestGet(baseurl + $url.attr('href'));
+ 	html = goToRef(info, 'Расход средств');
     getParam(html, result, 'abon', /Абон[а-я\.]*плата[\s\S]*?<span[^>]*>\s*(-?\d[\d\s\.,]*)/i, replaceTagsAndSpaces, parseBalance);
   }
-
 
   AnyBalance.setResult(result);
 }
@@ -998,7 +950,7 @@ function getPiter() {
 }
 
 function getBalakovo() {
-  newTypicalLanBillingInetTv('https://lksrt.pv.mts.ru/bal/index.php');
+  newTypicalLanBillingInetTv_1('https://lksrt.pv.mts.ru/bal/index.php');
 }
 
 function getYar() {
@@ -1138,6 +1090,143 @@ function newTypicalLanBillingInetTv(baseurl) {
   readAccByPriority(accTv);
 
   getParam(html, result, 'username', /<div[^>]+class="content-aside"[^>]*>[\s\S]*?<p[^>]*>([\s\S]*?)<\/p>/i, replaceTagsAndSpaces);
+
+  AnyBalance.setResult(result);
+}
+
+function newTypicalLanBillingInetTv_1(baseurl) {
+  var urlAjax = baseurl + '?r=account/vgroups&agrmid=';
+  var urlIndex = baseurl + '?r=site/login';
+
+  var prefs = AnyBalance.getPreferences();
+  AnyBalance.setDefaultCharset('utf-8');
+
+  if (prefs.__dbg) {
+    var html = AnyBalance.requestGet(baseurl + '?r=account/index');
+  } else {
+    var html = AnyBalance.requestGet(urlIndex);
+
+    var csrfToken = getParam(html, null, null, /<input[^>]+value="([^"]*)[^>]+id="YII_CSRF_TOKEN"/i, replaceHtmlEntities);
+    if(csrfToken){
+    	var domain = getParam(baseurl, null, null, /https?:\/\/([^\/]*)/i);
+    	AnyBalance.setCookie(domain, 'YII_CSRF_TOKEN', csrfToken);
+    }
+
+    html = AnyBalance.requestPost(urlIndex, {
+      'LoginForm[login]': prefs.login,
+      'LoginForm[password]': prefs.password,
+      'YII_CSRF_TOKEN': csrfToken,
+      'yt0': 'Войти'
+    });
+  }
+
+  if (!/r=site\/logout/i.test(html)) {
+    var error = getElement(html, /<div[^>]+b-error_hint/i, replaceTagsAndSpaces);
+    if (error)
+      throw new AnyBalance.Error(error, null, /парол/i.test(error));
+
+    AnyBalance.trace(html);
+    throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
+  }
+
+  var result = {
+    success: true
+  };
+  var priority = {
+    active: 0,
+    inactive: 1
+  };
+
+  //Вначале попытаемся найти интернет лиц. счет
+  var accTv = [],
+    accInet = [];
+
+  var agreementSelect = getElement(html, /<select[^>]+locationsList/i);
+  var agrs = getElements(agreementSelect, /<option/ig);
+  var agreements = [];
+  for(var i=0; i<agrs.length; ++i){
+  	var agr = agrs[i];
+  	var id = getParam(agr, null, null, /<option[^>]+value="([^"]*)/i, replaceHtmlEntities);
+  	var num = replaceAll(agr, replaceTagsAndSpaces);
+  	var selected = getParam(agr, null, null, /<option[^>]+(selected)/i, null, function(){return true});
+  	var info = selected && html;
+  	agreements.push({id: id, num: num, selected: selected, info: info});
+  	
+  }
+
+  AnyBalance.trace('Найдено счетов: ' + agreements.length);
+
+  for (var i = 0; i < agreements.length; ++i) {
+  	var agr = agreements[i];
+  	var html = agr.info || AnyBalance.requestGet(baseurl + '?r=account/index&agrmid=' + agr.id);
+
+    var balance = getElement(html, /<div[^>]+fix-balance__tarif/i, replaceTagsAndSpaces, parseBalance);
+    var abon = getElement(html, /<div[^>]+fix-block__tarif/i, replaceTagsAndSpaces, parseBalance);
+
+    var tariff_blocks = getElements(html, /<div[^>]+fix-tarif__inner/ig);
+    // Может быть несколько услуг по одному счету
+    AnyBalance.trace('Услуг по счету ' + agr.num + ': ' + tariff_blocks.length);
+
+    for(var j=0; j<tariff_blocks.length; ++j){
+    	var tariff_block = tariff_blocks[j];
+        var tariff = getElement(tariff_block, /<div[^>]+fix-tarif__name/i, replaceTagsAndSpaces);
+        if(tariff == 'Разовые и периодические услуги')
+        	continue; //Неинтересная услуга
+	    var status = getElement(tariff_block, /<span[^>]+tarif__activated/i, replaceTagsAndSpaces);
+	    var servicesBlock = getElement(html, /<ul[^>]+fix-services__drop/i);
+	    var services = sumParam(servicesBlock, null, null, /<div[^>]+fix-services__name[^>]*>([\s\S]*?)<\/div>/ig, replaceTagsAndSpaces, null, aggregate_join);
+
+	    var act = /услуга активна/i.test(status) ? 'active' : 'inactive';
+      	var pri = priority[act];
+
+      	var response = {
+        	bal: balance,
+        	abon: abon,
+        	acc: agr.num,
+        	accId: agr.id,
+        	tarifdescr: tariff,
+        	state: status,
+        	services: services || ''
+      	};
+
+      	if (/\BТВ\B|Телевидение/.test(tariff) && !/ШПД/.test(tariff)) {
+        	if (!isset(accTv[pri]))
+          		accTv[pri] = response;
+	        // Это интернет
+    	} else {
+        	if (!isset(accInet[pri]))
+          		accInet[pri] = response;
+      	}
+    }
+  }
+
+  var usedAccs = {}; //аккаунты только уникальные собираем
+
+  function readAcc(json, isInet) {
+    if (json) {
+      getParam(json.bal, result, isInet ? 'balance' : 'balance_tv');
+      if (!usedAccs['acc_' + json.acc]) { //аккаунты только уникальные собираем
+        sumParam(json.acc, result, 'agreement', null, replaceTagsAndSpaces, null, aggregate_join);
+        usedAccs['acc_' + json.acc] = true;
+      }
+
+      if (!/Выключен|неактив/i.test(json.state) && !/не\s*доступно/i.test(json.services)) {
+        sumParam(json.abon, result, 'abon', null, null, parseBalance, aggregate_sum);
+        sumParam(json.tarifdescr, result, '__tariff', null, null, null, aggregate_join);
+      }
+    }
+  }
+
+  function readAccByPriority(arr, isInet) {
+    for (var i = 0; i < arr.length; ++i)
+      if (arr[i])
+        return readAcc(arr[i], isInet);
+  }
+
+  readAccByPriority(accInet, true);
+  readAccByPriority(accTv);
+
+  getParam(html, result, 'username', /Персональная информация[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
 
   AnyBalance.setResult(result);
 }

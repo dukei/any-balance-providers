@@ -1,20 +1,23 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-internet-arbital</id>
+	<api flags="no_browser"/>
+  <id version="2">ab-internet-arbital</id>
   <name>Arbital (Санкт-Петербург)</name>
   <description>
     Получает баланс и информацию о тарифном плане для питерского интернет провайдера Arbital (http://arbital.ru).
 
-    Информация берется из личного кабинета http://my.arbital.ru.
+    Информация берется из личного кабинета https://my.arbital.ru.
 
     При первом входе требуется ввести номер договора в виде Lxxxx и пароль, указанный в договоре.
   </description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+  <depends>
+  	<module id="library"/>
+  </depends>
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
     <history>history.xml</history>
-    <js>library.js</js>
     <js>main.js</js>
   </files>
   <counters>

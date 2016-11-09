@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="23" date="2016-11-09">
+	Исправление отображения карт в некоторых случаях
+	</change>
 	<change version="22" date="2016-09-13">
 	Исправлено получение счетов у юр.лиц
 	</change>

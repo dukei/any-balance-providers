@@ -78,6 +78,11 @@ function main() {
 	
     baseurl += bankType;
     html = AnyBalance.requestGet(baseurl + "/" + firstpage, g_headers);
+
+    if(/blocking_warning/i.test(html)){
+    	AnyBalance.trace('Банк выдаёт какое-то сообщение. Пропускаем его');
+    	html = AnyBalance.requestGet(baseurl + '/faces/pages/blocking_warning.jspx');
+    }
 	
     if (bankType == 'clbAvn') {
         fetchBankYur(html, baseurl);

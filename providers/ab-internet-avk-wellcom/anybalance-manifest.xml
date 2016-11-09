@@ -1,12 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-  <id version="3">ab-internet-avk-wellcom</id>
+  <id version="4">ab-internet-avk-wellcom</id>
   <name>АВК-ВЕЛЛКОМ</name> 
   <description>
     Получает баланс для интернет провайдера АВК-ВЕЛЛКОМ (http://www.avk-wellcom.ru/)
 
-    Информация берется из личного кабинета (http://avk-wellcom.ru/lk/account/info/)
+    Информация берется из личного кабинета (http://lk.avk-wellcom.ru/account/info/)
     
     Провайдер работает только в локальной сети.
   </description>

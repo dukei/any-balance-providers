@@ -18,26 +18,26 @@ var g_headers = {
 function main(){
     var prefs = AnyBalance.getPreferences();
 
-    var baseurl = "http://avk-wellcom.ru/";
+    var baseurl = "http://lk.avk-wellcom.ru/";
 
     AnyBalance.setDefaultCharset('utf-8'); 
 
-    var html = AnyBalance.requestGet(baseurl + 'internet/lichnyij-kabinet.html', g_headers);
+    var html = AnyBalance.requestGet(baseurl, g_headers);
     if(/403/i.test(AnyBalance.getLastUrl())){
-    	var error = getElement(html, /<h1[^>]*>/i, replaceTagsAndSpaces);
+    	var error = getElement(html, /<body[^>]*>/i, replaceTagsAndSpaces);
     	if(error)
     		throw new AnyBalance.Error(error);
     	AnyBalance.trace(html);
     	throw new AnyBalance.Error('Доступ запрещен. Сайт изменен?');
     }
 
-    var html = AnyBalance.requestPost(baseurl + 'lk/auth/auth/', {
+    var html = AnyBalance.requestPost(baseurl + 'auth/auth/', {
         login:prefs.login,
         password:prefs.password,
         auth:'1',
         x: '19',
         y: '6'
-    }, addHeaders({Referer: baseurl + 'lk/auth/auth/'}));
+    }, addHeaders({Referer: baseurl + 'auth/auth/'}));
 
     if(!/lk\/auth\/exit/i.test(html)){
         var error = getParam(html, null, null, /<div[^>]+id="auth_error"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
@@ -46,7 +46,7 @@ function main(){
         throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
     }
 
-    html = AnyBalance.requestGet(baseurl + 'lk/account/info/', g_headers);
+    html = AnyBalance.requestGet(baseurl + 'account/info/', g_headers);
 
     var result = {success: true};
     getParam(html, result, 'fio', /<div[^>]*>ФИО:<\/div>\s*<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);

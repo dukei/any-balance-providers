@@ -16,6 +16,7 @@ var regions = {
 	moscow: getSmorodina,
 	kaluga: getSmorodina,
 	perm: getSmorodina,
+	pyatigorsk: getSmorodina,
 	rostov: getRostov,
 	ryazan: getSmorodina,
 	spb: getSPB,

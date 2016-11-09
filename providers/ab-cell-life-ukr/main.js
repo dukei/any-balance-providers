@@ -315,11 +315,11 @@ function mainMobileApp(prefs, baseurl){
     	//Минуты на родные номера в старом варианте Свободного Лайфа
     	sumParam(xml, result, 'mins_family', /<balance[^>]+code="Bundle_UsageN_FF_FREE[^>]*amount="([^"]*)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
     	//Минуты по сети Life:)
-    	sumParam(xml, result, 'mins_life', /<balance[^>]+code="Bundle_Voice_Onnet"[^>]*amount="([^"]*)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+    	sumParam(xml, result, 'mins_life', /<balance[^>]+code="Bundle_Voice_Onnet[^>]*amount="([^"]*)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
     	//Минуты по сети Life:) западных тарифов
-	if (result.__tariff != 'Вільний life:) 2016' && result.__tariff != 'Свободный life:) 2016' && result.__tariff != 'Free life:) 2016') {
-    	sumParam(xml, result, 'mins_life', /<balance[^>]+code="Bundle_Voice_Onnet_West"[^>]*amount="([^"]*)/ig, replaceTagsAndSpaces, parseBalanceLeft, aggregate_sum);
-	}
+		if (result.__tariff != 'Вільний life:) 2016' && result.__tariff != 'Свободный life:) 2016' && result.__tariff != 'Free life:) 2016') {
+    		sumParam(xml, result, 'mins_life', /<balance[^>]+code="Bundle_Voice_Onnet_West"[^>]*amount="([^"]*)/ig, replaceTagsAndSpaces, parseBalanceLeft, aggregate_sum);
+		}
     	//Минуты на номера фиксированной связи Украины
     	sumParam(xml, result, 'mins_fixed', /<balance[^>]+code="Bundle_Voice_Pstn[^>]*amount="([^"]*)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
     	//Минуты на номера других операторов и фиксированной связи Украины

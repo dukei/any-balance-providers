@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="3" version="41" date="2016-11-09">
+	Учет безлимита на лайф в минутах на лайф.
+	</change>
 	<change major_version="3" version="40" date="2016-10-07">
 	    - Исправлен вход на сайт всвязи со сменой домена.
 	</change>

@@ -81,7 +81,9 @@ function main() {
 
     if(/blocking_warning/i.test(html)){
     	AnyBalance.trace('Банк выдаёт какое-то сообщение. Пропускаем его');
-    	html = AnyBalance.requestGet(baseurl + '/faces/pages/blocking_warning.jspx');
+    	var a = getParam(html, null, null, /<a[^>]+>\s*<img[^>]+&#1055;&#1088;&#1086;&#1076;&#1086;&#1083;&#1078;&#1080;&#1090;&#1100;/i); //Продолжить
+    	var source = getParam(a, null, null, /source:\s*'([^']*)/i, replaceHtmlEntities);
+        html = submitForm(html, baseurl, source);
     }
 	
     if (bankType == 'clbAvn') {

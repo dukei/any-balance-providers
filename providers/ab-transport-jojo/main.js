@@ -16,6 +16,9 @@ var headersJSON = {
 	"User-Agent": "Mozilla/5.0 (Windows NT 6.1; WOW64)"
 };
 
+//Remove all spaces and tags
+var removeTagsAndSpaces = [/&nbsp;/ig,"",/&minus;/ig,"-",/<!--[\s\S]*?-->/g,"",/<[^>]*>/g,"",/\s{2,}/g,"",/^\s+|\s+$/g,""];
+
 if (typeof String.prototype.trim != 'function') { // detect native implementation
 	String.prototype.trim = function () {
 		return this.replace(/^\s+/, '').replace(/\s+$/, '');
@@ -82,6 +85,7 @@ function main(){
 	getParam(html, result, 'validfrom', /"validity"[^>]*>\s*([\d.,-]+)\s-\s[\d.,-]+\s*</i, replaceTagsAndSpaces, parseDateISO);
 	getParam(html, result, 'validtill', /"validity"[^>]*>\s*[\d.,-]+\s-\s([\d.,-]+)\s*</i, replaceTagsAndSpaces, parseDateISO);
 	getParam(html, result, 'zonesnum', /"zone-box-\d+-title"[^>]*>\s*([\d.,-]+)\szoner/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'zoneslist', /"info-box-content hidden"[\s\S]*?"zone-box-[^>]*>\s*([\s\S]*?)\s*</i, removeTagsAndSpaces, html_entity_decode);
 	
 	
 	if (prefs.cardnum && isAvailable(['expiresat', 'expiresin', 'expirestate'])) {

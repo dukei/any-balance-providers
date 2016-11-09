@@ -1,5 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="2" version="6" date="2016-11-09">
+	- Fixed the problems with updating the card balance due to change of the address of skanetrafiken web page.
+	- Correct balance calculation including the not downloaded amount.
+	- Fixed reading the amount to download and currently available amount.
+	- Fixes for periodkort: fixed reading period validity and valid zones number.
+	- Parse card type and number from web page.
+	- Read list of zones for periodkort.
+	</change>
 	<change major_version="2" version="5" date="2015-07-31">
 	- Support of the site changes.
 	</change>

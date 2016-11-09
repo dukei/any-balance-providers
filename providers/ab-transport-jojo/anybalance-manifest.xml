@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id major_version="2" version="5">ab-transport-jojo</id>
+	<id major_version="2" version="6">ab-transport-jojo</id>
 	<name>Skanetrafiken Jojo card</name>
 	<description>
 	Retrieves the balance and other info of the Skånetrafiken Jojo transport card.

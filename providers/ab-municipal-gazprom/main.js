@@ -66,13 +66,9 @@ function getVolgograd() {
 	}, AB.addHeaders({Referer: baseurl + 'cabinet/enter/'}));
 
 	if (!/logout/i.test(html)) {
-		var error = AB.getParam(html, null, null, /<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, AB.replaceTagsAndSpaces);
+		var error = AB.getParam(html, null, null, /<div[^>]+registration[^>]*>\s*<p[^>]*>\s*<label[^>]*>([\s\S]*?)<\/label>/i, AB.replaceTagsAndSpaces);
 		if (error)
-			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
-
-		error = AB.getParam(html, null, null, /Ошибки при вводе\. Пожалуйста, проверьте введённые данные и попробуйте ещё раз\./i);
-		if(error)
-			throw new AnyBalance.Error(error, null, true);
+			throw new AnyBalance.Error(error, null, /вводе/i.test(error));
 
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
@@ -139,8 +135,18 @@ function getSmorodina() {
 	var result = {success: true};
 	html = AnyBalance.requestGet(baseurl+'/pages/abonent/lite/accounts/accountInfo.jsf?faces-redirect=true', g_headers);
 
-	AB.getParam(html, result, 'balance', /за период(?:[^>]*>){3}([\s\S]*?)<\/td>/i, AB.replaceTagsAndSpaces, AB.parseBalance);
+	AB.getParam(html, result, 'balance', /за период(?:[^>]*>){3}([\s\S]*?)<\/td>/i, AB.replaceTagsAndSpaces, function(str){return -AB.parseBalance(str)});
 	AB.getParam(html, result, 'account', /лицевой счет:(?:[^>]*>){3}([\s\S]*?)<\/span>/i, AB.replaceTagsAndSpaces);
+
+	if(AnyBalance.isAvailable('address', 'device', 'currentCounter', 'date')){
+		html = AnyBalance.requestGet(baseurl + '/pages/abonent/full/accounts/accountInfo.jsf?faces-redirect=true', g_headers);
+		getParam(html, result, 'address', /Адрес регистрации:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+
+		var counters = getElements(html, [/<table/ig, /заводской номер/i])[0];
+		getParam(counters, result, 'device', /(?:[\S\s]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+		getParam(counters, result, 'currentCounter', /(?:[\S\s]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+		getParam(counters, result, 'date', /(?:[\S\s]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
+	}
 
 	AnyBalance.setResult(result);
 }
@@ -217,9 +223,9 @@ function getSPB() {
 	var href = AB.getParam(html, null, null, /<redirect url="([^"]+)/i);
 
 	if (!href) {
-		var error = AB.getParam(html, null, null, /<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, AB.replaceTagsAndSpaces);
+		var error = AB.sumParam(html, null, null, /<div[^>]+error[^>]*>[\s\S]*?<\/div>/ig, AB.replaceTagsAndSpaces, null, aggregate_join);
 		if (error)
-			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
+			throw new AnyBalance.Error(error, null, /парол/i.test(error));
 
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');

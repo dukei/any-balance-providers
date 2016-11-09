@@ -62,5 +62,16 @@ function main() {
 	AB.getParam(html, result, 'fio', /ФИО[\s\S]*?<span[^>]*>([\s\S]*?)Контакты/i, [AB.replaceTagsAndSpaces, /RU/g, '']);
 	AB.getParam(html, result, 'contacts', /Телефон:([\s\S]*?)<\/span>/i, AB.replaceTagsAndSpaces);
 
+	var abons = getParam(html, null, null, /<input[^>]+type="button"[^>]*value="Подключить абонемент[\s\S]*?(<table[\s\S]*?<\/table)/i);
+	if(!/остаток поездок/i.test(abons)){
+		AnyBalance.trace('Найденная таблица абонементов не содержит остаток поездок. Пропускаем:\n' + abons);
+	}else if(/Ни одного абонемента не подключено/i.test(abons)){
+		AnyBalance.trace('Ни одного абонемента не подключено');
+	}else{
+		var trs = getElements(abons, /<tr/ig);
+		AB.getParam(trs[1], result, 'abon_till', /(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
+		AB.getParam(trs[1], result, 'abon_left', /(?:[\s\S]*?<td[^>]*>){6}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+	}
+
 	AnyBalance.setResult(result);
 }

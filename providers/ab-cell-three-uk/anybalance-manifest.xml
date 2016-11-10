@@ -5,7 +5,7 @@
 	<name>Three (UK)</name>
 	<description html="true"><![CDATA[
 	<p>Shows balance and allowances for Three http://www.three.co.uk/</p>
-	<p>Obtains information for personal account https://www.three.co.uk/My3Account/Login</p>
+	<p>Obtains information from personal account https://www.three.co.uk/My3Account/Login</p>
 	]]></description>
 	<instruction html="true"><![CDATA[
 	<p>If you don't remember you password get a new one here: https://www.three.co.uk/My3Account/Forgotten_password</p>

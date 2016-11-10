@@ -1,0 +1,24 @@
+﻿<? version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+	<EditTextPreference
+		obligatory="true"
+		title="Mobile/device number"
+		positiveButtonText="OK"
+		summary="||{@s}"
+		dialogTitle="Mobile/device number"
+		negativeButtonText="Cancel"
+		dialogMessage="Enter your Mobile/device number. Your number is listed on any bills or letters from Three. It may also be in your device's settings."
+		key="login">
+	</EditTextPreference>
+	<EditTextPreference
+		obligatory="true"
+		positiveButtonText="OK"
+		key="password"
+		dialogTitle="Password"
+		negativeButtonText="Cancel"
+		title="Password"
+		summary="|Enter password|************"
+		dialogMessage="Enter your password. Your password should be 7-12 characters long."
+		inputType="textPassword">
+	</EditTextPreference>
+</PreferenceScreen>

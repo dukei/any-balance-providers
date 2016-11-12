@@ -1,29 +1,28 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="3">ab-bonus-dnk</id>
+	<id version="4">ab-bonus-dnk</id>
 	<api flags="no_browser"/>
 	<name>ДНК</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о бонусной программе провайдера ДНК(Дом натуральной косметики) <a href="http://www.dnk.by/">http://www.dnk.by/</a></p>
-	<p>Информация берется из личного кабинета <a href="http://www.dnk.by/personal/bonus_discount/">http://www.dnk.by/personal/bonus_discount/</a></p>
+	<p>Информация берется из личного кабинета <a href="http://www.dnk.by/personal/">http://www.dnk.by/personal/</a></p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
 	<counters>
 		<counter id="balance" name="Баланс" units=" р"/>
 		<counter id="account" name="Код дисконтной карты" type="text"/>
-		<counter id="personal_discount" name="Скидка на персональную продукцию" type="text"/>
-		<counter id="prof_discount" name="Скидка на профессиональную продукцию" type="text"/>
 		<counter id="name" name="ФИО" type="text"/>
-		<counter id="bonus" name="Бонусные баллы" type="text"/>
-		<counter id="next_discount_percent" name="Следующая скидка" type="text"/>
-		<counter id="next_discount_sum" name="До следующей скидки осталось" units=" р"/>
+		<counter id="bonus" name="Доступные бонусные баллы" units=" Б"/>
+		<counter id="last_buy" name="Последняя покупка" type="time" format="dd/MM/yyyy"/>
 	</counters>
 	<keywords></keywords>
 	<type>bonus</type>

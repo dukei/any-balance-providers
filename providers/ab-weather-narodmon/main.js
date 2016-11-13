@@ -9,9 +9,23 @@ function main(){
 	
     var number = prefs.number;
 
-    var baseurl = "http://narodmon.ru/client.php";
+    var baseurl = "http://narodmon.ru/api";
 
-    var html = AnyBalance.requestPost(baseurl,'{"cmd":"sensorDev","id":"'+number+'","api_key":"90FeOzSOINuLI","uuid":"5d41402abc4b2a76b9719d911017c592"}');
+    var uuid = AnyBalance.getData('uuid');
+    if(!uuid){
+    	//Генерируем идентификатор для данного пользователя
+    	uuid = hex_md5('' + Math.random());
+    	AnyBalance.setData('uuid', uuid);
+    	AnyBalance.saveData();
+    }
+
+    var html = AnyBalance.requestPost(baseurl, JSON.stringify({
+    	cmd: 'sensorsOnDevice',
+    	uuid: uuid,
+    	api_key: '13UymB4dRWgv.',
+    	id: +number,
+    	lang: 'ru'
+    }), {'User-Agent': 'AnyBalance'});
 	
 	var info = getJson(html);
 	
@@ -37,6 +51,8 @@ function main(){
 	else
 		AnyBalance.trace("unknown sensor type: " + JSON.stringify(s));
     }
+
+    result.__tariff = info.name;
 	
     AnyBalance.setResult(result);
 }

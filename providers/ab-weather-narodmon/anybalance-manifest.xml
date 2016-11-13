@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="1.0" version="6">ab-weather-narodmon</id>
+	<id major_version="2.0" version="7">ab-weather-narodmon</id>
 	<api flags="no_browser"/>
 	<name>Народный монитор</name>
 	<description html="true"><![CDATA[
@@ -16,11 +16,14 @@
 		<ul>Введите номер в настройки провайдера, чтобы получить значение.</ul>
 	</ol>
 	]]></instruction>
-	<author>Egor Anisimov &lt;support@ak-26.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="crypt/md5"/>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>

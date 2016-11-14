@@ -43,10 +43,19 @@ function main() {
   	timezone: jstz.determine_timezone().name()
   }, AB.addHeaders({ Referer: AnyBalance.getLastUrl() }));
 
-  html = AnyBalance.requestPost(baseurl + "hpg/login.do?l=en", {
-    user: prefs.login,
-    pass: prefs.password,
-    step: 'search'
+  var sitekey = getParam(html, null, null, /data-sitekey="([^"]*)/i, replaceHtmlEntities), recaptcha;
+
+  if(sitekey){
+  	recaptcha = solveRecaptcha('Пожалуйста, подтвердите, что вы не робот', AnyBalance.getLastUrl(), sitekey);
+  }
+
+  html = AnyBalance.requestPost(baseurl + "rs/submitLogin?l=en_US", {
+    username: prefs.login,
+    password: prefs.password,
+    'g-recaptcha-response': recaptcha,
+    submit: '',
+    returnPage: 'HOME_SUCCESS',
+    returnPageError: 'HOME_ERROR'
   }, AB.addHeaders({ Referer: AnyBalance.getLastUrl() }));
 
   if (!/step=logout|\/logout\?/.test(html)) {
@@ -67,14 +76,16 @@ function main() {
   html = AnyBalance.requestGet(baseurl + 'rs/account-statement?l=en', g_headers);
   AnyBalance.trace(AnyBalance.getLastUrl());
 
-  AB.getParam(html, result, 'balance', /Award\s+miles([\s\S]*?)<\/li>/i, AB.replaceTagsAndSpaces, AB.parseBalance);
-  AB.getParam(html, result, 'qbalance', /Award\s+miles[\s\S]*?Status\s+miles([\s\S]*?)<\/li>/i, AB.replaceTagsAndSpaces,
+  var replaceTagsSpacesCommas = [AB.replaceTagsAndSpaces, /,/g, ''];
+
+  AB.getParam(html, result, 'balance', /Award\s+miles([\s\S]*?)<\/li>/i, replaceTagsSpacesCommas, AB.parseBalance);
+  AB.getParam(html, result, 'qbalance', /Award\s+miles[\s\S]*?Status\s+miles([\s\S]*?)<\/li>/i, replaceTagsSpacesCommas,
     AB.parseBalance);
   AB.getParam(html, result, 'cardnum', /Account\s+balance[\s\S]*?<p[^>]*>[\s\S]*?<\/b>([\s\S]*?)<span/i, AB.replaceTagsAndSpaces);
   AB.getParam(html, result, 'nextstatus', /To\s+achieve([\s\S]*?)status/i, AB.replaceTagsAndSpaces);
-  AB.getParam(html, result, 'nextstatusmiles', /To\s+achieve[\s\S]*?status([\s\S]*?)status\s+miles/i, AB.replaceTagsAndSpaces,
+  AB.getParam(html, result, 'nextstatusmiles', /To\s+achieve[\s\S]*?status([\s\S]*?)status\s+miles/i, replaceTagsSpacesCommas,
     AB.parseBalance);
-  AB.getParam(html, result, 'nextfs', /To\s+achieve[\s\S]*?status\s+miles([\s\S]*?)flight/i, AB.replaceTagsAndSpaces,
+  AB.getParam(html, result, 'nextfs', /To\s+achieve[\s\S]*?status\s+miles([\s\S]*?)flight/i, replaceTagsSpacesCommas,
     AB.parseBalance);
 
   AB.getParam(html, result, 'dateRange', /To\s+achieve[\s\S]*?flight\s+segments([\s\S]*?)<\/p>/i, AB.replaceTagsAndSpaces);

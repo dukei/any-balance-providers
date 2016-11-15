@@ -138,6 +138,9 @@ function getMenuPage(html, name){
         lang:	'ru'
     }, addHeaders({Referer: baseurl + 'allmenuitems.jsp?session_lang=ru'}));
 
+    if(/Срок действия Вашего пароля истек/i.test(html))
+    	throw new AnyBalance.Error('Банк требует сменить пароль. Пожалуйста, войдите в интернет-банк через браузер, смените пароль, затем введите новый пароль в настройки провайдера.', null, true);
+
     return html;
 }
 

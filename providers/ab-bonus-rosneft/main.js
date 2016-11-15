@@ -10,8 +10,9 @@ var g_headers = {
 	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
 	'Connection': 'keep-alive',
 	'X-Requested-With': 'XMLHttpRequest',
+	'Origin': baseurl.replace(/\/+$/, ''),
 	'Referer': baseurl,
-	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
+	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.87 Safari/537.36',
 };
 
 function main() {
@@ -25,13 +26,9 @@ function main() {
 	var html = AnyBalance.requestGet(baseurl + 'login?X-Requested-With=XMLHttpRequest', g_headers);
 	var json = getJson(html);
 
+	AnyBalance.sleep(4000 + Math.random()*2000);
+
 	html = AnyBalance.requestPost(baseurl + 'login?X-Requested-With=XMLHttpRequest', JSON.stringify({
-    	"errors": [],
-    	"success": {}, "wasSubmit": true,
-    	"wait": true,
-    	"validate": {},
-    	"toData": {},
-    	"submit": {},
     	"Phone": prefs.login,
     	"Password": prefs.password,
     	"CallbackUrl": null,
@@ -39,7 +36,9 @@ function main() {
     	"ActiveGroup": null,
     	"ServerMessage": "",
     	"IsValid": true
-	}), g_headers);
+	}), addHeaders({
+		'Content-Type': 'application/json'
+	}));
 
 	json = getJson(html);
 	

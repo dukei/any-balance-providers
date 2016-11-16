@@ -3,26 +3,103 @@
 */
 
 var g_ServiceStatus = {
-	ACTIVE: "активна",
-	CONNECTED: "активна",
-	INACTIVE: "неактивна",
-	NOT_CONNECTED: "неактивна",
-	BLOCKED: "отключена за неуплату",
-	OPERATOR_BLOCK: "включена добровольная блокировка",
-	ENABLED: "включена",
-	DISABLED: "отключена",
-	RESERVED: "забронирована",
-	WAIT_CONFIRM: "ожидание подключения",
-	UNKNOWN_STATUS: "не определен"
+        NOT_CONNECTED: "Не подключена",
+        CONNECTED: "Услуга активна",
+        BLOCKED: "Отключена за неуплату",
+        VOLUNTARY_BLOCKED: "Включена добровольная блокировка",
+        LOSS_BLOCK: "Заблокирована по утере/краже",
+        ACTIVE: "Услуга активна и используется",
+        INACTIVE: "Услуга не активна",
+        OPERATOR_BLOCK: "Услуга заблокирована по инициативе оператора связи",
+        FRAUD: "Блокировка за мошенничество",
+        UNKNOWN_STATUS: "Статус не определен",
 };
+
+var baseurl = "https://lk.rt.ru/";
 
 var g_headers = {
 	Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
 	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
 	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
 	Connection: 'keep-alive',
-	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.11'
+	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.11',
+	'Content-Type': 'application/json',
+    'X-Requested-With':'XMLHttpRequest',
+    Referer:baseurl
+
 };
+
+    /**
+     * 79034785123 -> +7(903)478-51-23
+     */
+    var phoneFormat = function (phoneNumber, stacionar) {
+        var phoneRegexp = /\s*\+?(\d)\s*\(?(\d{3})\)?\s*(\d{3})-?(\d{2})-?(\d{2})\s*/;
+        var phone = phoneNumber === "string" ? phoneNumber : String(phoneNumber);
+        return phone.replace(phoneRegexp, stacionar ? "$1 ($2) $3-$4-$5" : "+$1 ($2) $3-$4-$5");
+    };
+
+var SERVICE_TYPE = new function () {
+    var self = this;
+    var ServiceType = function (id, name, url, title, jurTitle) {
+        var sdc = this;
+        sdc.id = id;
+        sdc.name = name;
+        sdc.url = url;
+        sdc.title = title;
+        if (jurTitle) { sdc.juristicTitle = jurTitle;}
+        sdc.icon = function () { return lkIcons.getIcon(sdc.name); };
+    };
+
+    self["0"] = self["UNKNOWN"] = /*                    */new ServiceType(0, "", "", "Неизвестный тип услуги", "Неизвестный тип услуги");
+    self["1"] = self["INTERNET"] = /*                   */new ServiceType(1, "INTERNET", "internet", "Домашний Интернет", "Интернет");
+    self["2"] = self["TELEPHONY"] = self["PHONE"] = /*  */new ServiceType(2, "TELEPHONY", "phone", "Домашний телефон", "Стационарный телефон");
+    self["2"].getDisplayNumber = function (serviceNumber) {
+        if (!serviceNumber) {return "";}
+        serviceNumber = serviceNumber.trim();
+        serviceNumber = serviceNumber.length == 10 ? "7" + serviceNumber : serviceNumber;
+        return phoneFormat(serviceNumber);
+    };
+    self["4"] = self["WIFI"] = /*                       */new ServiceType(4, "WIFI", "wifi", "Wi-Fi", null);
+    self["6"] = self["EQUIPMENT"] = /*                  */new ServiceType(6, "EQUIPMENT", "Оборудование", "Оборудование", "Оборудование");
+    self["8"] = self["IPTV"] = /*                       */new ServiceType(8, "IPTV", "iptv", "Интерактивное ТВ", null);
+    self["9"] = self["VPBX"] = /*                       */new ServiceType(9, "VPBX", "cloudphone", "Облачная АТС", null);
+    self["13"] = self["USC_WIFI"] = /*                  */new ServiceType(13, "USC_WIFI", "usc", "Универсальная услуга связи Wi-Fi", null);
+    self["14"] = self["DTV"] = /*                       */new ServiceType(14, "DTV", "cabeltv", "Кабельное ТВ (цифровое)", null);
+
+    self["15"] = self["OTT"] = /*                       */new ServiceType(15, "OTT", "ott", "Услуга «АЛЛЁ»", null);
+    self["15"].getDisplayNumber = function (serviceNumber) { return !serviceNumber ? "" : lkUtil.phoneFormat("7" + serviceNumber.trim(), false); };
+    self["15"].serviceNumberNaming = "Номер";
+
+    self["16"] = self["MVNO"] = /*                      */new ServiceType(16, "MVNO", "mvno", "Мобильная связь", null);
+    self["16"].getDisplayNumber = function (serviceNumber) { return !serviceNumber ? "" : lkUtil.phoneFormat(serviceNumber.trim()); };
+
+    self.getDisplayNumber = function (service) {
+        var servType = SERVICE_TYPE[service.type];
+        if (!servType || !servType.getDisplayNumber) { return service.displayNumber; }
+        return servType.getDisplayNumber(service.displayNumber);
+    };
+    self.getIcon = function (serviceId) {
+        if (SERVICE_TYPE[serviceId]) {
+            return SERVICE_TYPE[serviceId].icon();
+        }
+        return "promised"; // FIXME Что за магические строки?..
+    };
+};
+
+
+function generateUUID () {
+    var s = [], itoh = '0123456789ABCDEF', i;
+    for (i = 0; i < 36; i++) {
+        s[i] = Math.floor(Math.random() * 0x10);
+    }
+    s[14] = 4;
+    s[19] = (s[19] & 0x3) | 0x8;
+    for (i = 0; i < 36; i++) {
+        s[i] = itoh[s[i]];
+    }
+    s[8] = s[13] = s[18] = s[23] = '-';
+    return s.join('');
+}
 
 function main(){
     var prefs = AnyBalance.getPreferences();
@@ -34,37 +111,43 @@ function main(){
     checkEmpty(prefs.login, 'Введите логин!');
     checkEmpty(prefs.password, 'Введите пароль!');
 
-    var baseurl = "https://lk.rt.ru/";
+    var uuid = generateUUID();
+    var html = AnyBalance.requestPost(baseurl + 'client-api/login', JSON.stringify({
+    	"login": prefs.login,
+    	"loginType":"LOGIN",
+    	"passwd": prefs.password,
+    	"remember":false,
+    	"client_uuid":generateUUID(),
+    	"currnet_page":"login",
+//    	"current_page":"login"
+    }), g_headers);
 
-    var html = AnyBalance.requestPost(baseurl + 'serverLogic/login', {
-        action: 'login',
-        login:prefs.login,
-        passwd:prefs.password
-    }, g_headers);
-	
 	if(/Личный кабинет временно недоступен/i.test(html)) {
 		throw new AnyBalance.Error('Личный кабинет временно недоступен. Ведутся технические работы, попробуйте обновить баланс позже.');
 	}
-	
+
     var json = getJson(html);
     if(json.isError)
-        throw new AnyBalance.Error(json.errorMsg, null, /Вы ввели несуществующую пару логин-пароль/.test(json.errorMsg));
-    if(!json.sessionKey)
-        throw new AnyBalance.Error("Не удалось получить идентификатор сессии!");
+        throw new AnyBalance.Error(json.errorMessage, null, /парол/.test(json.errorMessage));
+//    if(!json.sessionKey)
+//        throw new AnyBalance.Error("Не удалось получить идентификатор сессии!");
 
-    var domain = getParam(baseurl, null, null, /https?:\/\/([^\/]*)/i);
-    AnyBalance.setCookie(domain, 'sessionHashKey', json.sessionKey);
+//    var domain = getParam(baseurl, null, null, /https?:\/\/([^\/]*)/i);
+//    AnyBalance.setCookie(domain, 'sessionHashKey', json.sessionKey);
 
-    html = AnyBalance.requestGet(baseurl, g_headers);
-	
-	html = AnyBalance.requestGet(baseurl + 'serverLogic/cabinetGetStructure', g_headers);
-	
+//    html = AnyBalance.requestGet(baseurl, g_headers);
+
+	html = AnyBalance.requestPost(baseurl + 'client-api/getAccounts', JSON.stringify({
+		client_uuid: uuid,
+		currnet_page: 'login'
+	}), g_headers);
+
     var accinfo = getRTJson(html);
 
-    if(!accinfo.cabinet.accounts || accinfo.cabinet.accounts.length == 0)
+    if(!accinfo.accounts || accinfo.accounts.length == 0)
         throw new AnyBalance.Error("В вашем кабинете Ростелеком ещё не подключена ни одна услуга");
 
-    AnyBalance.trace('Найдено ' + accinfo.cabinet.accounts.length + ' л/с');
+    AnyBalance.trace('Найдено ' + accinfo.accounts.length + ' л/с');
     AnyBalance.trace('Требуются ' + (prefs.num || 'любые л/с'));
 
     var nums = prefs.num ? prefs.num.split(/,/g) : ['', '', '', ''];
@@ -83,8 +166,8 @@ function main(){
         if(num){
             //Если num непустой, то ищем аккаунт с этим номером
             accsearch:
-            for(var j=0; j<accinfo.cabinet.accounts.length; ++j){
-                var _acc = accinfo.cabinet.accounts[j];
+            for(var j=0; j<accinfo.accounts.length; ++j){
+                var _acc = accinfo.accounts[j];
                 if(endsWith(_acc.number, num)){
                     acc = _acc;
                     break;
@@ -102,9 +185,9 @@ function main(){
             }
         }else{
             //Если num пустой, то просто берем следующий по счету аккаунт
-            acc = accinfo.cabinet.accounts[i];
+            acc = accinfo.accounts[i];
         }
-        
+
         if(!acc){
             if(num){
                 not_found[not_found.length] = num;
@@ -115,48 +198,70 @@ function main(){
 
         var suffix = i ? i : '';
 
-        if(AnyBalance.isAvailable('totalBalancePlus', 'totalBalanceMinus') || 
+        if(AnyBalance.isAvailable('totalBalancePlus', 'totalBalanceMinus') ||
            (i < 4 && AnyBalance.isAvailable('balance' + suffix, 'bonus' + suffix, 'sms' + suffix, 'mms' + suffix, 'min' + suffix, 'gprs' + suffix, 'status' + suffix, 'licschet' + suffix, 'name' + suffix, 'phone' + suffix))){
+
+            var servicesIds = [];
+            for(var s=0; s<acc.services.length; ++s)
+            	servicesIds.push(acc.services[s].serviceId);
+
+			html = AnyBalance.requestPost(baseurl + 'client-api/getServiceTariffName', JSON.stringify({
+				servicesId: servicesIds,
+				client_uuid: uuid,
+				currnet_page: 'main'
+			}), g_headers);
+			acc.__tariffNames = getRTJson(html).tariffNames;
 
             AnyBalance.trace('Получаем данные для л/с: ' + acc.number);
 			try{
-				html = AnyBalance.requestPost(baseurl + 'serverLogic/accountGetExtData', {account: acc.id}, g_headers);
-				json = getRTJson(html).account;
-				
-				if(json.state == "MIGRATE")
-					throw new AnyBalance.Error("Получение данных по сотовым номерам больше недоступно в Едином кабинете. Установите провайдера Ростелеком регионы и настройте новый аккаунт.");
-				
-				acc.__detailedInfo = json;
+				html = AnyBalance.requestPost(baseurl + 'client-api/getAccountBalance', JSON.stringify({
+					accountId: acc.accountId,
+					client_uuid: uuid,
+					currnet_page: 'main'
+				}), g_headers);
 
-				var balance = getAccBalance(json);
-				
+				acc.__detailedInfo = getRTJson(html);;
+
+				var balance = getAccBalance(acc.__detailedInfo);
+
 				if(i < 4){
 					if(AnyBalance.isAvailable('balance' + suffix))
 						result['balance' + suffix] = balance;
-					
-					var statuses = [], names = [], bonuses = [], phones = [], sms = [], mms = [], gprs = []; 
-					for(var j=0; json.services && j<json.services.length; ++j){
-						var service = json.services[j];
-						//tariffs.push(/*(service.type || service.serviceType) + */(service.tariff ? ': ' + service.tariff.title : ''));
-						
-						if(service.tariff.title)
-							tariffs.push(service.tariff.title);
-						
-						statuses.push(g_ServiceStatus[service.status]);
-						if(service.alias)
-							names.push(service.alias);
-						phones.push(service.number);
-		
+
+					var statuses = [], names = [], bonuses = [], phones = [], sms = [], mms = [], gprs = [];
+					for(var j=0; acc.services && j<acc.services.length; ++j){
+						var service = acc.services[j];
+
+						if(acc.__tariffNames[service.serviceId])
+							tariffs.push(acc.__tariffNames[service.serviceId]);
+
+						html = AnyBalance.requestPost(baseurl + 'client-api/getServiceInfo', JSON.stringify({
+							serviceId: service.serviceId,
+							client_uuid: uuid,
+							currnet_page: 'main'
+						}), g_headers);
+
+						statuses.push(g_ServiceStatus[getRTJson(html).status]);
+						var st = SERVICE_TYPE[service.type];
+						if(st)
+							names.push(st.title);
+						phones.push(SERVICE_TYPE.getDisplayNumber(service));
+
 						if(AnyBalance.isAvailable('bonus' + suffix)){
-							AnyBalance.trace('Пробуем найти бонусную программу Премия...');
-							var jsonBonus = getJson(AnyBalance.requestPost(baseurl + 'serverLogic/getBonusProgramStatus', {serviceId: service.id}, g_headers));
+							if(service.bonusStatus >= 0){
+                                AnyBalance.trace('Сервис ' + st.title + ' имеет бонус');
+							}else{
+								AnyBalance.trace('Сервис ' + st.title + ' не подключил бонусы');
+							}
+/*							AnyBalance.trace('Пробуем найти бонусную программу Премия...');
+							var jsonBonus = getJson(AnyBalance.requestPost(baseurl + 'client-api/getBonusStatus', {serviceId: service.id}, g_headers));
 							if(!jsonBonus.isError){
-								sumParam(jsonBonus.balance+'', result, 'bonus' + suffix, null, replaceTagsAndSpaces, parseBalance, aggregate_sum);						
+								sumParam(jsonBonus.balance+'', result, 'bonus' + suffix, null, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 							}else{
 								AnyBalance.trace('Не удалось бонусную программу Премия: ' + jsonBonus.errorMsg);
-							}
+							}*/
 						}
-						if(AnyBalance.isAvailable('sms' + suffix, 'mms' + suffix, 'min' + suffix, 'gprs' + suffix)){
+/*						if(AnyBalance.isAvailable('sms' + suffix, 'mms' + suffix, 'min' + suffix, 'gprs' + suffix)){
 							var jsonPackets = getJson(AnyBalance.requestPost(baseurl + 'serverLogic/viewCurrentBonus', {serviceId: service.id}, g_headers));
 							if(jsonPackets.bonusCurrent){
 								for(var j1=0; j1<jsonPackets.bonusCurrent.length; ++j1){
@@ -172,7 +277,8 @@ function main(){
 								}
 							}
 						}
-						if(/INTERNET|TELEPHONY|IPTV|CDMA/.test(service.type || '')  //Судя по шаблону detailed_list, только у этих сервисов есть статистика
+						*/
+/*						if(/INTERNET|TELEPHONY|IPTV|CDMA/.test(service.type || '')  //Судя по шаблону detailed_list, только у этих сервисов есть статистика
 							&& AnyBalance.isAvailable('trafIn' + suffix, 'trafOut' + suffix, 'minOutIC' + suffix)){
 							//Междугородная исходящая телефония
 							var dt = new Date();
@@ -200,27 +306,28 @@ function main(){
 							if(jsonStatistics.isError)
 								AnyBalance.trace(jsonStatistics.errorMessage);
 						}
+*/
 					}
-		
+
 					if(AnyBalance.isAvailable('status' + suffix) && statuses.length > 0)
 						result['status' + suffix] = statuses.join(', ');
-					
+
 					if(AnyBalance.isAvailable('licschet' + suffix))
 						result['licschet' + suffix] = acc.number;
-		
+
 					if(AnyBalance.isAvailable('name' + suffix) && names.length > 0)
 						result['name' + suffix] = names.join(', ');
-		
+
 					if(AnyBalance.isAvailable('phone' + suffix) && phones.length > 0)
 						result['phone' + suffix] = phones.join(', ');
-		
+
 					if(AnyBalance.isAvailable('bonus' + suffix)) {
 						if(bonuses.length > 0) {
 							result['bonus' + suffix] = aggregate_sum(bonuses);
 						}
 					}
 
-					if(AnyBalance.isAvailable('bonusInt' + suffix)){
+/*					if(AnyBalance.isAvailable('bonusInt' + suffix)){
 						AnyBalance.trace('Пробуем найти бонусную программу Интернет-Бонус...');
 						try {
 							var sbversion = getSouthBonusVersion(baseurl);
@@ -228,14 +335,14 @@ function main(){
 								html = '';
 								html = AnyBalance.requestPost(baseurl + 'plugins/south-bonus/' + sbversion + '/request', {action: 'getBonusBalance', accountId:acc.__detailedInfo.id}, g_headers);
 								var jsonBonus = getRTJson(html);
-								getParam(jsonBonus.balance+'', result, 'bonusInt' + suffix, null, replaceTagsAndSpaces, parseBalance);						
+								getParam(jsonBonus.balance+'', result, 'bonusInt' + suffix, null, replaceTagsAndSpaces, parseBalance);
 							}else{
 								AnyBalance.trace('Не удалось получить Интернет-Бонус: программа отсутствует');
 							}
 						} catch (e) {
 							AnyBalance.trace('Не удалось получить Интернет-Бонус: ' + html);
 						}
-					}
+					}*/
 				}
 				if(balance > 0)
 					totalBalancePlus += balance;
@@ -253,13 +360,16 @@ function main(){
     if(AnyBalance.isAvailable('bonusFPL')){
 		AnyBalance.trace('Пробуем найти программу "Бонус"...');
 		try {
-			html = '';
-			html = AnyBalance.requestPost(baseurl + 'serverLogic/bonusFPLGetProgram', '', g_headers);
+			html = AnyBalance.requestPost(baseurl + 'client-api/getBonusStatus', JSON.stringify({
+				client_uuid: uuid,
+				currnet_page: 'main'
+			}), g_headers);
 			var jsonBonus = getRTJson(html);
-			if(jsonBonus.masterFPL)
-				getParam(jsonBonus.masterFPL.points+'', result, 'bonusFPL', null, replaceTagsAndSpaces, parseBalance);						
-			else
-				AnyBalance.trace('Нет masterFPL: ' + html);
+			if(jsonBonus.bonus){
+				getParam(jsonBonus.bonus.points, result, 'bonusFPL');
+			}else{
+				AnyBalance.trace('Нет программы Бонус: ' + html);
+			}
 		} catch (e) {
 			AnyBalance.trace('Не удалось получить программу "Бонус": ' + e.message);
 		}
@@ -267,17 +377,23 @@ function main(){
 
     //Получим баланс для остальных л\с, если юзер запросил
     if(AnyBalance.isAvailable('totalBalancePlus', 'totalBalanceMinus')){
-        for(var i=0; i<accinfo.cabinet.accounts.length; ++i){
-            var acc = accinfo.cabinet.accounts[i];
+        for(var i=0; i<accinfo.accounts.length; ++i){
+            var acc = accinfo.accounts[i];
             if(!acc.__detailedInfo){
                 AnyBalance.trace('Дополнительно получаем данные для л/с: ' + acc.number);
 				try{
-					html = AnyBalance.requestPost(baseurl + 'serverLogic/accountGetExtData', {account: acc.id}, g_headers);
+					html = AnyBalance.requestPost(baseurl + 'client-api/getAccountBalance', JSON.stringify({
+						accountId: acc.accountId,
+						client_uuid: uuid,
+						currnet_page: 'main'
+					}), g_headers);
 					json = getRTJson(html);
-					if(json.account.balance > 0)
-						totalBalancePlus += json.account.balance/100;
+					var balance = getAccBalance(json);
+
+					if(balance > 0)
+						totalBalancePlus += balance;
 					else
-						totalBalanceMinus += json.account.balance/100;
+						totalBalanceMinus += balance;
 				}catch(e){
 				    AnyBalance.trace('Не удалось получить данные л/с ' + acc.number + ': ' + e.message);
 				}

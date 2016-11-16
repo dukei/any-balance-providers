@@ -1,18 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="21">ab-internet-kabinet-rt</id>
+	<id version="22">ab-internet-kabinet-rt</id>
 	<name>Ростелеком (Единый кабинет)</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе и выбранном лицевом счете для пользователей оператора связи "Ростелеком".</p> 
-	<p>Информация берется из единого личного кабинета "Ростелеком" <a href="http://kabinet.rt.ru">http://kabinet.rt.ru</a> и <a href="https://lk.rt.ru">https://lk.rt.ru</a>.</p>
+	<p>Информация берется из единого личного кабинета "Ростелеком" <a href="https://lk.rt.ru">https://lk.rt.ru</a>.</p>
 	]]></description>
 	<instruction html="true"><![CDATA[
 	<p>Как зарегистрироваться:</p>
 	<ul>
-		<li> Для регистрации пройдите по ссылке https://kabinet.rt.ru/?action=reg и подключите  свои услуги.</li>
+		<li> Для регистрации пройдите по ссылке https://lk.rt.ru/?action=reg и подключите  свои услуги.</li>
 	<br>
-	<b>ВНИМАНИЕ!</b> В настоящее время работает бета-версия Личного кабинета абонента ОАО "Ростелеком". В связи с этим функция присоединения услуг для некоторых регионов недоступна.
 	]]></instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>
@@ -31,7 +30,7 @@
 		<counter id="balance3" name="Баланс 4" units=" р"/>
 		<counter id="bonusFPL" name="Программа &quot;БОНУС&quot;" units=" Б"/>
 
-		<counter id="gprs" name="Остаток трафика" units=" Мб"/>
+<!--		<counter id="gprs" name="Остаток трафика" units=" Мб"/>
 		<counter id="sms" name="Остаток SMS" units=" sms"/>
 		<counter id="mms" name="Остаток MMS" units=" mms"/>
 		<counter id="min" name="Остаток минут" units=" мин"/>
@@ -70,22 +69,26 @@
 		<counter id="trafIn3" name="Входящий трафик 4" units=" Гб"/>
 		<counter id="trafOut3" name="Исходящий трафик 4" units=" Гб"/>
 		<counter id="minOutIC3" name="Междугородная исходящая телефония 4" type="time_interval" format="{@MIN}" units=" мин"/>
-
+-->
 		<counter id="status" name="Статус"  type="text"/>
 		<counter id="phone" name="Номер телефона" type="text"/>
 		<counter id="licschet" name="Лицевой счет" type="text"/>
+		<counter id="name" name="Название услуги" type="text"/>
 
 		<counter id="status1" name="Статус 2"  type="text"/>
 		<counter id="phone1" name="Номер телефона 2" type="text"/>
 		<counter id="licschet1" name="Лицевой счет 2" type="text"/>
+		<counter id="name1" name="Название услуги 2" type="text"/>
 
 		<counter id="status2" name="Статус 3"  type="text"/>
 		<counter id="phone2" name="Номер телефона 3" type="text"/>
 		<counter id="licschet2" name="Лицевой счет 3" type="text"/>
+		<counter id="name2" name="Название услуги 3" type="text"/>
 
 		<counter id="status3" name="Статус 4"  type="text"/>
 		<counter id="phone3" name="Номер телефона 4" type="text"/>
 		<counter id="licschet3" name="Лицевой счет 4" type="text"/>
+		<counter id="name3" name="Название услуги 4" type="text"/>
 
 		<counter id="totalBalancePlus" name="Сумма остатков" units=" р"/>
 		<counter id="totalBalanceMinus" name="Сумма задолженностей" units=" р"/>

@@ -22,28 +22,44 @@ function main() {
 
   var html = AnyBalance.requestGet(baseurl, g_headers);
 
-  var res = AnyBalance.requestPost(baseurl + 'oauth/token', {
+  var res = AnyBalance.requestPost(baseurl + 'oauth/connect/token', {
     grant_type: 'password',
     username: prefs.login,
     password: prefs.password,
     client_id: '1',
-    captcha: 'null'
+    scope: 'read:cur_user write:cur_user write:cur_user_email cur_user_books public offline_access payment'
   }, addHeaders({
     Referer: baseurl
   }));
 
   var json = getJson(res);
 
-  if (!json || json.error || !json.access_token) {
-    if (json.error_description)
-      throw new AnyBalance.Error(json.error_description, null, /Неверные данные для авторизации/.test(json.error_description));
+  if(/recaptcha/i.test(json.message)){
+  	AnyBalance.trace('Потребовалась рекапча...');
+  	var recaptcha = solveRecaptcha('Пожалуйста, докажите, что вы не робот!', baseurl, '6LdBYQITAAAAAJ-XHv2zQovsH44LC_Eef-KVH1GT');
+  	res = AnyBalance.requestPost(baseurl + 'oauth/connect/token', {
+    	grant_type: 'password',
+    	username: prefs.login,
+    	password: prefs.password,
+    	client_id: '1',
+    	scope: 'read:cur_user write:cur_user write:cur_user_email cur_user_books public offline_access payment'
+  	}, addHeaders({
+  		'recaptcha-code': recaptcha,
+    	Referer: baseurl
+	}));
+  	json = getJson(res);
+  }
+
+  if (!json || json.message || !json.access_token) {
+    if (json.message)
+      throw new AnyBalance.Error(json.message, null, /Неверные данные для авторизации/.test(json.message));
     AnyBalance.trace(JSON.stringify(json));
     throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
   }
 
   var token = json.access_token;
 
-  res = AnyBalance.requestGet(baseurl + 'api/profile', addHeaders({
+  res = AnyBalance.requestGet(baseurl + 'api/user', addHeaders({
     Referer: baseurl,
     Authorization: 'Bearer ' + token
   }));
@@ -57,12 +73,9 @@ function main() {
 
   AB.getParam(json.nickName + '', result, 'customer', null, AB.replaceTagsAndSpaces);
   AB.getParam(json.pluses + '', result, 'balanceinpoints', null, AB.replaceTagsAndSpaces, AB.parseBalance);
-  // getParam(json.balance + '', result, 'balanceinrubles', null, AB.replaceTagsAndSpaces, function(str){ var bal = parseBalance(str); return bal && bal/100;}); //Почему-то в копейках приходит
-  AB.getParam(json.balance + '', result, 'balanceinrubles', null, AB.replaceTagsAndSpaces, AB.parseBalance);
-  // getParam(json.unreadMessagesCount + '', result, 'messages', null, AB.replaceTagsAndSpaces, AB.parseBalance);
-  // AB.getParam(card ? card.ean : undefined, result, 'cardnumber');
-  AB.getParam(card ? card.ean : undefined, result, 'cardnumber');
-  AB.getParam(card && +card.status == 1 ? 'активная' : undefined, result, 'cardstate');
+  AB.getParam(card && card.balance/100, result, 'balanceinrubles', null, AB.replaceTagsAndSpaces, AB.parseBalance);
+  AB.getParam(card && card.ean, result, 'cardnumber');
+  AB.getParam(card && card.status, result, 'cardstate');
 
   if (AnyBalance.isAvailable(['pointsinlastoper', 'lastoperationplace', 'lastoperationdate'])) {
     res = AnyBalance.requestGet(baseurl + 'api/cards/current/operations?orderByDateAsc=false&skip=0&take=10&type=', addHeaders({

@@ -14,6 +14,56 @@ var g_headers = {
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
+	var baseurl = 'https://bonus.fix-price.ru/';
+	AnyBalance.setDefaultCharset('utf-8');
+
+	AB.checkEmpty(prefs.login, 'Введите логин!');
+	AB.checkEmpty(prefs.password, 'Введите пароль!');
+
+	var html = AnyBalance.requestGet(baseurl + 'ulogin', g_headers);
+
+	if (!html || AnyBalance.getLastStatusCode() > 400) {
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
+	}
+
+	var grc_response = solveRecaptcha('Пожалуйста, подтвердите, что вы не робот', baseurl, '6LcxEwkUAAAAAHluJu_MhGMLI2hbzWPNAATYetWH');
+
+	html = AnyBalance.requestPost(baseurl + 'ulogin', {
+		login: prefs.login,
+		password: prefs.password,
+		recaptcha: grc_response,
+	}, AB.addHeaders({
+		'X-Requested-With': 'XMLHttpRequest',
+		Referer: baseurl + 'ulogin'
+	}));
+
+	var json = AB.getJson(html);
+
+	if (!json.success) {
+		var error = json.message;
+		if (error) {
+			throw new AnyBalance.Error(error, null, /найден|пароль/i.test(error));
+		}
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
+	}
+
+	html = AnyBalance.requestGet(baseurl + 'profile', g_headers);
+	var result = {
+		success: true
+	};
+
+	var balanceInfo = getElement(html, /<div[^>]*class="[^"]*bonus-info/i);
+	AB.getParam(balanceInfo, result, 'balance', [/<h2[^>]*>[\s\S]*?<\/h2>/i, /У меня накоплено(.*?)балл/i], AB.replaceTagsAndSpaces, AB.parseBalance);
+	AB.getParam(html, result, 'fio', /<div[^>]*class="[^"]*user[^"]*"[^>]*>[\s\S]*?(<p[\s\S]*?)<\/a>/i, AB.replaceTagsAndSpaces);
+	AB.getParam(html, result, 'card', /на\s+вашей\s+карте\s+№([\s\S]*?)<\/p>/i, AB.replaceTagsAndSpaces);
+
+	AnyBalance.setResult(result);
+}
+
+function mainOld() {
+	var prefs = AnyBalance.getPreferences();
 	var baseurl = 'https://fix-price.ru/';
 	AnyBalance.setDefaultCharset('utf-8');
 

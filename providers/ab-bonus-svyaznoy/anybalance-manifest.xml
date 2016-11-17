@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="2.0" version="18">ab-bonus-svyaznoy</id>
+	<id major_version="2.0" version="19">ab-bonus-svyaznoy</id>
 	<api flags="no_browser"/>
 	<name>Связной Клуб</name>
 	<description html="true"><![CDATA[
@@ -25,6 +25,7 @@
 		<counter id="pointsinlastoper" name="Баллы по последней операции" units=" Б"/>
 		<counter id="lastoperationplace" name="Место последней операции" type="text"/>
 		<counter id="lastoperationdate" name="Дата последней операции" type="time" format="dd/MM/yyyy"/>
+		<counter id="till" name="Срок активности элитного статуса" type="time" format="dd/MM/yyyy"/>
 		<counter id="cardstate" name="Статус карты" type="text"/>
 		<!-- <counter id="messages" name="Количество сообщений" type="text" suffix=" сообщ."/> -->
 		<counter id="cardnumber" name="Номер карты" type="text" prefix=" №"/>

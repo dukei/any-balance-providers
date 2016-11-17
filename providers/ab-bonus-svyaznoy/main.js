@@ -76,6 +76,8 @@ function main() {
   AB.getParam(card && card.balance/100, result, 'balanceinrubles', null, AB.replaceTagsAndSpaces, AB.parseBalance);
   AB.getParam(card && card.ean, result, 'cardnumber');
   AB.getParam(card && card.status, result, 'cardstate');
+  AB.getParam(card && card.plan, result, '__tariff');
+  AB.getParam(card && card.planExpires, result, 'till', null, null, parseDateISO);
 
   if (AnyBalance.isAvailable(['pointsinlastoper', 'lastoperationplace', 'lastoperationdate'])) {
     res = AnyBalance.requestGet(baseurl + 'api/cards/current/operations?orderByDateAsc=false&skip=0&take=10&type=', addHeaders({

@@ -18,6 +18,15 @@ function getEventValidation(html){
     return getParam(html, null, null, /name="__EVENTVALIDATION".*?value="([^"]*)"/) || getParam(html, null, null, /__EVENTVALIDATION\|([^\|]*)/i);
 }
 
+function redirectIfNeeded(html){
+	if(/FormPostResponse/i.test(html)){
+		var params = createFormParams(html);
+		var action = getParam(html, null, null, /<form[^>]+action="([^"]*)/i, replaceHtmlEntities);
+		html = AnyBalance.requestPost(action, params, addHeaders({Referer: AnyBalance.getLastUrl()}));
+	}
+	return html;
+}
+
 function parseDateMy(str) {
 	var val;
 	if (/Завтра/i.test(str)) {
@@ -48,10 +57,10 @@ function main(){
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 	
-    var baseurl = "http://www.exist.ru/Profile/";
+    var baseurl = "http://www.exist.ru/";
     AnyBalance.setDefaultCharset('utf-8'); 
 	
-    var html = AnyBalance.requestGet(baseurl + 'Login.aspx?ReturnUrl=%2fProfile%2fbalance.aspx', g_headers);
+    var html = AnyBalance.requestGet(baseurl, g_headers);
 	
     if(prefs.num && !/^\d+$/.test(prefs.num))
         throw new AnyBalance.Error('Введите последние цифры номера заказа или не вводите ничего, чтобы получить информацию по последнему заказу');
@@ -61,18 +70,14 @@ function main(){
     if(!viewstate)
         throw new AnyBalance.Error('Не удалось найти форму входа. Сайт изменен?');
 	
-    html = AnyBalance.requestPost(baseurl + 'Login.aspx?ReturnUrl=%2fProfile%2fbalance.aspx', {
-        __EVENTTARGET:'',
-        __EVENTARGUMENT:'',
-        __VIEWSTATE:viewstate,
-        __EVENTVALIDATION:eventvalidation,
-        ctl00$ctl00$b$b$custLogin$txtLogin:prefs.login,
-        ctl00$ctl00$b$b$custLogin$txtPassword:prefs.password,
-        ctl00$ctl00$b$b$custLogin$bnLogin:'Ждите...'
-    }, addHeaders({Referer: baseurl + 'Login.aspx?ReturnUrl=%2fProfile%2fbalance.aspx'})); 
+    html = AnyBalance.requestPost(baseurl + 'Profile/Login?ReturnUrl=%2fProfile%2f', {
+        login:prefs.login,
+        pass:prefs.password
+    }, addHeaders({Referer: baseurl})); 
+    html = redirectIfNeeded(html);
 	
 	if(!/\/exit.axd/i.test(html)){
-		var error = getParam(html, null, null, /<span[^>]+id="lblError"[^>]*>([\s\S]*?)(?:<\/span>|<a[^>]+href=['"]\/howgetpass.aspx)/i, replaceTagsAndSpaces);
+		var error = getElement(html, /<div[^>]+alert/i, replaceTagsAndSpaces);
 		if (error)
 			throw new AnyBalance.Error(error, null, /парол/i.test(error));
 		
@@ -82,24 +87,26 @@ function main(){
 	
 	var result = {success: true};
 
-	var balance = getParam(html, null, null, /Средства на счету:([\s\S]+?)<\/b/i, replaceTagsAndSpaces, parseBalance);
-	var debt = getParam(html, null, null, /Задолженность по заказам:([\s\S]+?)<\/b/i, replaceTagsAndSpaces, parseBalance);
+	if(AnyBalance.isAvailable('balance', 'debt')){
+		html = AnyBalance.requestGet(baseurl + 'Profile/Orders/Hint/Balance.aspx', g_headers);
+		var balance = getParam(html, null, null, /Средства на счету:([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+		var debt = getParam(html, null, null, /Задолженность по заказам:([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+	    getParam(balance, result, 'balance');
+    	getParam(debt, result, 'debt');
+	    if(isset(balance) && isset(debt))
+ 		    getParam(balance - debt, result, 'balance_total');
+	}
 	
-    getParam(balance, result, 'balance');
-    getParam(debt, result, 'debt');
-    if(isset(balance) && isset(debt))
- 	    getParam(balance - debt, result, 'balance_total');
-	
-	html = AnyBalance.requestGet(baseurl + 'default.aspx', g_headers);
-    getParam(html, result, 'code', /код клиента[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces);
-    getParam(html, result, '__tariff', /код клиента[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces);
+	html = AnyBalance.requestGet(baseurl + 'Profile/Form.aspx', g_headers);
+    getParam(html, result, 'code', /код клиента[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
+    getParam(html, result, '__tariff', /код клиента[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
 	
 	var singleOrder;
 
 
 	// Новый формат, по всем позициям в заказе
 	if (AnyBalance.isAvailable('ordernum', 'ordersum', 'orderdesc', 'orderstatus', 'orderexpect', 'parts_count', 'place')) {
-    	html = AnyBalance.requestGet(baseurl + 'Orders/default.aspx', g_headers);
+    	html = AnyBalance.requestGet(baseurl + 'Profile/Orders/default.aspx', g_headers);
 
     	var ordersInfo = getElement(html, /<div[^>]+class="data"[^>]*>/i);
     	var ordersGroups = getElements(ordersInfo, /<div[^>]+class="(?:ordergroup|row)[^>]*>/ig);

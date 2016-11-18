@@ -106,6 +106,7 @@ function mainRu(baseurl){
 }
 
 function proceedWithMobileAppAPI(baseurl){
+	var prefs = AnyBalance.getPreferences();
 
 	var result = {success: true};
 
@@ -116,7 +117,7 @@ function proceedWithMobileAppAPI(baseurl){
 	var ret = apiLogin(baseurl);
 	result.password = ret && ret.password;
 
-	switchToAssocNumber();
+	switchToAssocNumber(prefs.phone);
 
 	adapter.processApi(result);
 

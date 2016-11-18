@@ -132,28 +132,23 @@ function switchToAssocNumber(num){
 
 	var login = getAssocLoginSimple(num);
 
-	if(!/^\d{10}$/.test(login)){
-		AnyBalance.trace('Выбран не CTN!');
-		var subscribers = getApiSubscribers(login).subscribers;
-		if(!subscribers || !subscribers.length)
-			throw new AnyBalance.Error('Не удаётся найти номер телефона для логина!');
-		for(var i=0; i<subscribers.length; ++i){
-			var s = subscribers[i];
-			if(prefs.phone && endsWith(s.ctn, prefs.phone)){
-				AnyBalance.trace('В качестве CTN берем ' + s.ctn + ' по заданным последним цифрам');
-				return prefs.phone = s.ctn;
-			}
-			if(s.ctnDefault){
-				AnyBalance.trace('В качестве CTN берем ' + s.ctn + ' по умолчанию');
-				return prefs.phone = s.ctn;
-			}
+	var subscribers = getApiSubscribers(login).subscribers;
+	if(!subscribers || !subscribers.length)
+		throw new AnyBalance.Error('Не удаётся найти номер телефона для логина!');
+	for(var i=0; i<subscribers.length; ++i){
+		var s = subscribers[i];
+		if(prefs.phone && endsWith(s.ctn, prefs.phone)){
+			AnyBalance.trace('В качестве CTN берем ' + s.ctn + ' по заданным последним цифрам');
+			return prefs.phone = s.ctn;
 		}
-
-		AnyBalance.trace('В качестве CTN берем ' + subscribers[0].ctn);
-		return prefs.phone = subscribers[0].ctn;
-	}else{
-		return prefs.phone = login;
+		if(!prefs.phone && s.ctnDefault){
+			AnyBalance.trace('В качестве CTN берем ' + s.ctn + ' по умолчанию');
+			return prefs.phone = s.ctn;
+		}
 	}
+
+	AnyBalance.trace('В качестве CTN берем ' + subscribers[0].ctn);
+	return prefs.phone = subscribers[0].ctn;
 }
 
 function processApi(result){

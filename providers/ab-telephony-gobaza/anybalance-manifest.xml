@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-    <id version="4">ab-telephony-gobaza</id>
+    <id version="5">ab-telephony-gobaza</id>
     <name>баZа</name>
     <description>
         Получает текущий баланс и другие параметы у провайдера IP-телефонии баZа (http://go2baza.ru).

@@ -10,7 +10,7 @@ function main(){
     var prefs = AnyBalance.getPreferences();
     AnyBalance.setDefaultCharset('windows-1251');    
 
-    var baseurl = "http://lk.gobaza.ru/",
+    var baseurl = "https://lk.gobaza.ru/",
         html    = AnyBalance.requestGet(baseurl, g_headers);
 
     if (!html || AnyBalance.getLastStatusCode() > 400) {
@@ -50,7 +50,7 @@ function main(){
     
     var result = {success: true};
 
-    html = AnyBalance.requestGet(baseurl + 'pls/gbaza/!w3_p_main.showform' + data_url, g_headers);
+    html = AnyBalance.requestGet(baseurl + 'owa/gbaza/!w3_p_main.showform' + data_url, g_headers);
 
     AB.getParam(html, result, 'balance',     /<td[^>]*>Текущий баланс[^>]*>([^<]*)/i,           AB.replaceTagsAndSpaces, AB.parseBalance);
     AB.getParam(html, result, 'st_balance',  /<td[^>]*>Баланс на начало[^>]*>([^<]*)/i,         AB.replaceTagsAndSpaces, AB.parseBalance);
@@ -67,14 +67,14 @@ function main(){
     AB.getParam(html, result, 'account',     /Лицевой счёт(?:[^>]*>){2}([^<]*)/i,                        AB.replaceTagsAndSpaces);
 
     if(isAvailable(['mins_month', 'mins_left', 'mins_total', 'mins_used'])) {
-        html = AnyBalance.requestGet(baseurl + 'pls/gbaza/!w3_p_main.showform' + menu_url);
+        html = AnyBalance.requestGet(baseurl + 'owa/gbaza/!w3_p_main.showform' + menu_url);
 
         var mins_url = AB.getParam(html, null, null, /<a[^>]+click(?:[^']*'){3}([^']*)[^>]*>Остаток минут/i);
         if(!mins_url) {
             AnyBalance.trace("Не удалось найти ссылку на страницу с остатками минут");
         }
 
-        html = AnyBalance.requestGet(baseurl + 'pls/gbaza/!w3_p_main.showform' + mins_url);
+        html = AnyBalance.requestGet(baseurl + 'owa/gbaza/!w3_p_main.showform' + mins_url);
         AB.getParam(html, result, 'mins_total', /Количество включённых минут по тарифу(?:[\s\S]*?<td[^>]*>){2}([^<]*)/i,        AB.replaceTagsAndSpaces, AB.parseBalance);
         AB.getParam(html, result, 'mins_month',  /Количество включённых минут в текущем месяце(?:[\s\S]*?<td[^>]*>){3}([^<]*)/i, AB.replaceTagsAndSpaces, AB.parseBalance);
         AB.getParam(html, result, 'mins_used',   /Израсходованное количество минут(?:[\s\S]*?<td[^>]*>){4}([^<]*)/i,             AB.replaceTagsAndSpaces, AB.parseBalance);

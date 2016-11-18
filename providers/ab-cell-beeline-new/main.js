@@ -21,12 +21,8 @@ function main() {
 		AnyBalance.setCookie('my.beeline.kz', 'ui.language.current', 'ru_RU');
 	} else {
 		if(prefs.source == 'app') {
-			if(canUseMobileApp(prefs)) {
-				proceedWithMobileAppAPI(baseurl, prefs);
-				return;
-			} else {
-				AnyBalance.trace('Невозможно обновить данные через API мобильного приложения, пробуем войти через сайт...');
-			}
+			proceedWithMobileAppAPI(baseurl);
+			return;
 		}
 	}
 	
@@ -39,13 +35,9 @@ function main() {
 		if(e.fatal)
 			throw e;
 		//Обломался сайт. Если можно мобильное приложение, давайте его попробуем
-		if(canUseMobileApp(prefs)) {
-			AnyBalance.trace('Не получается зайти в личный кабинет: ' + e.message + ', ' + e.stack + '. Попробуем мобильное приложение');
-			proceedWithMobileAppAPI(baseurl, prefs, true);
-			return;
-		}else{
-			throw e;
-		}
+		AnyBalance.trace('Не получается зайти в личный кабинет: ' + e.message + ', ' + e.stack + '. Попробуем мобильное приложение');
+		proceedWithMobileAppAPI(baseurl);
+		return;
 	}
 }
 
@@ -85,6 +77,8 @@ var g_countersTable = {
 		"traffic_used": "remainders.traffic_used",
 		"traffic_total": "remainders.traffic_total",
 		"min_local_till": "remainders.min_local_till",
+		"services_abon": "services_abon",
+		"services_count": "services_count",
 		"__tariff": "tariff"
 	}
 };
@@ -110,3 +104,28 @@ function mainRu(baseurl){
 
 	AnyBalance.setResult(newresult);
 }
+
+function proceedWithMobileAppAPI(baseurl){
+
+	var result = {success: true};
+
+	function shouldProcess(counter, info){ return true }
+    var adapter = new NAdapter(g_countersTable.common, shouldProcess);
+    adapter.processApi = adapter.envelope(processApi);
+
+	var ret = apiLogin(baseurl);
+	result.password = ret && ret.password;
+
+	switchToAssocNumber();
+
+	adapter.processApi(result);
+
+	var newresult = adapter.convert(result);
+	newresult.currency = result.currency;
+
+	setCountersToNull(newresult);
+
+	AnyBalance.setResult(newresult);
+}
+
+

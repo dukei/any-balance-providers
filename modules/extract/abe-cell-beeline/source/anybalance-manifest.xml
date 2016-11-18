@@ -6,6 +6,7 @@
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<js>lk.js</js>
+		<js>lkapi.js</js>
 		<history>history.xml</history>
 	</files>
 	<depends>

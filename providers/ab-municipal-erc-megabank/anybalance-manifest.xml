@@ -17,7 +17,6 @@
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
     <js>main.js</js>
-    <js>library.js</js>
     <history>history.xml</history>
   </files>
   <counters>

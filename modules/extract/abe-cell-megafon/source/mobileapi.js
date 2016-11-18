@@ -111,6 +111,7 @@ function megafonLkAPIDo(options, result) {
         getParam(null, result, 'bonus_burn');
     }
 
+	processServiceStopContentApi(result);
     processRemaindersApi(result);
     processMonthExpensesApi(result);
 
@@ -335,3 +336,21 @@ function processSmsTurnOffApi(){
     }
 }
 
+function processServiceStopContentApi(result){
+	if(!AnyBalance.isAvailable('status_stop_content'))
+		return;
+
+    var json = callAPI('get', 'api/options/list/additional');
+    for(var i=0; i<json.list.length; ++i){
+    	var group = json.list[i];
+    	for(var j=0; j<group.options.length; ++j){
+    		var option = group.options[j];
+    		if(/Запрет платных контентных|стоп-контент/i.test(option.optionName) ||
+    			/ad\/stop|stop_content/i.test(option.link)){
+					getParam(option.status == "1" ? 'Услуга подключена ' + option.operDate : 'Услуга не подключена', result, 'status_stop_content');
+					return;
+    		}
+    	}
+    }
+	AnyBalance.trace('Услуга Стоп-контент вообще не найдена: ' + JSON.stringify(json));
+}

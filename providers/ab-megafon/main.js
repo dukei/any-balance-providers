@@ -1590,6 +1590,24 @@ function isLoggedInSG(html){
 	return /CLOSE_SESSION/i.test(html);
 }
 
+function processStopContent(result){
+	if(AnyBalance.isAvailable('status_stop_content')){
+		AnyBalance.trace('Получаем статус услуги Стоп-контент');
+		var html = AnyBalance.requestGet(lk_url + 'options/additional/', g_headers);
+		var servicesGroups = getElements(html, /<div[^>]+gadget_options_table/ig);
+		for(var i=0; i<servicesGroups.length; ++i){
+			var serviceStop = getElements(servicesGroups[i].substr(1), [/<div/ig, /Запрет платных контентных|стоп-контент|ad\/stop|stop_content/i])[0];
+			if(serviceStop){
+				getParam(serviceStop, result, 'status_stop_content', /<(?:p[^>]+gadget_options_close|i[^>]+lk_svg_ok_mini)[^>]*>([\s\S]*?)<\/p>/i, replaceTagsAndSpaces);
+				break;
+			}
+		}
+		if(i >= servicesGroups.length){
+			AnyBalance.trace('Услуга Стоп-контент вообще не найдена: ' + html);
+		}
+	}
+}
+
 function enterLK(filial, options){
 	var prefs = AnyBalance.getPreferences();
 	AnyBalance.trace('Пробуем войти в новый ЛК...');
@@ -1621,7 +1639,7 @@ function enterLK(filial, options){
 		}
 
 		var params = AB.createFormParams(form, function(params, str, name, value) {
-			if (/login/i.test(name)) {
+			if (/username/i.test(name)) {
 				return prefs.login;
 			} else if (/password/i.test(name)) {
 				return prefs.password;
@@ -1635,9 +1653,7 @@ function enterLK(filial, options){
 	}	
 
 	if (!isLoggedInLK(html) && !isLoggedInSG(html)) {
-		var error = getParam(html, null, null, /login-warning[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces);
-		if (!error)
-			error = getElement(html, /<div[^>]+mf-error[^>]*>/i, replaceTagsAndSpaces);
+		var error = getElement(html, /<[^>]*(?:login-warning|ui-result-message|mf-error)/i, replaceTagsAndSpaces);
 		if (error)
 			throw new AnyBalance.Error(error, null, /парол|заблокирован/i.test(error));
 		
@@ -1976,6 +1992,8 @@ function megafonLK(filial, html){
 		}
 	}
 
+	processStopContent(result);
+
 	megafonLKTurnOffSMSNotification(csrf);
 
 	setCountersToNull(result);
@@ -1990,11 +2008,21 @@ function megafonLKRemainders(filial, html, result){
 		var rg = remGroups[i];
 		var gname = getElement(rg, /<h2[^>]*>/i, replaceTagsAndSpaces);
 		
-		var rows = getElements(rg, /<div[^>]+mf-gadget-remainders-box[^>]*>/ig);
-		AnyBalance.trace('Группа ' + gname + ' содержит ' + rows.length + ' подуслуг');
+		var rows = getElements(rg, /<(?:h2|div[^>]+mf-gadget-remainders-box)/ig);
+		AnyBalance.trace('Группа ' + gname + ' содержит ' + rows.length + ' подуслуг и их заголовков');
 
 		for(var j=0; j<rows.length; ++j){
 			var row = rows[j];
+
+			if(/^<h2/i.test(row)){
+				var h = replaceAll(row, replaceTagsAndSpaces);
+				if(h){
+					AnyBalance.trace('Новый заголовок услуг: ' + h);
+					gname = h;
+				}
+				continue;
+			}
+				
 //			if(/gadget-remainders-mobile-del/i.test(row))
 //				continue; //Заголовок пропускаем
 
@@ -2240,6 +2268,7 @@ var g_countersTable = {
 		"bonus_balance": "bonus_balance",
 		"bonus_status": "bonus_status",
 		"bonus_burn": "bonus_burn",
+		"status_stop_content": "status_stop_content",
 		"gb_with_you": "remainders.gb_with_you",
 		"internet_cur": "remainders.internet_cur",
 		"internet_cur_night": "remainders.internet_cur_night",

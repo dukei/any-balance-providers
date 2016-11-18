@@ -62,8 +62,8 @@ function main(){
 	
     var html = AnyBalance.requestGet(baseurl, g_headers);
 	
-    if(prefs.num && !/^\d+$/.test(prefs.num))
-        throw new AnyBalance.Error('Введите последние цифры номера заказа или не вводите ничего, чтобы получить информацию по последнему заказу');
+    if(prefs.num && !/^[\d,\s]+$/.test(prefs.num))
+        throw new AnyBalance.Error('Введите последние цифры номера заказа или не вводите ничего, чтобы получить информацию по последнему заказу', null, true);
 	
     var viewstate = getViewState(html);
     var eventvalidation = getEventValidation(html);

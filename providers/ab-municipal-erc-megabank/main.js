@@ -42,10 +42,19 @@ function main(){
       name: prefs.login,
       pass: prefs.password
     }, headers);
-    var matches = html.match(/<div class="[\s\S]* messages error">[\s\S]*<\/h4>([\s\S]*?) <a/i);
-    if(matches){
-      throw new AnyBalance.Error(matches[1]);
+
+    if(!/"command"\s*:\s*"reload"/i.test(html)){
+        var json = getJson(html);
+        for(var i=0; i<json.length; ++i){
+        	if(json[i].command == 'insert'){
+			    var error = getElement(json[i].data, /<div[^>]+alert/i, replaceTagsAndSpaces);
+			    if(error){
+          			throw new AnyBalance.Error(error, null, /парол/i.test(error));
+			    }
+        	}
+        }
     }
+
     AnyBalance.trace('Successfully login');
   } else {
     AnyBalance.trace('Already logged?');
@@ -71,15 +80,17 @@ function main(){
   AnyBalance.trace('account_N = ' + account_N[1]);
 
   AnyBalance.trace('Searching month_option');
-  var month_option = /<select class="form-control" id="kan_monthlist" size=1 onchange="get_views_nt\(\)" data-trig="1"><option value="(\d{6})"/.exec(html);
+  var month_option = getParam(html, null, null, /<select[^>]+id="kan_monthlist"[^>]*>\s*<option[^>]+value="([^"]*)/i, replaceHtmlEntities);
   if(!month_option) throw new AnyBalance.Error("Не удаётся найти month_option. Проблемы или изменения на сайте?");
-  AnyBalance.trace('month_option = ' + month_option[1]);
+  AnyBalance.trace('month_option = ' + month_option);
 
   AnyBalance.trace('Getting table');
-  var json_table = AnyBalance.requestGet(baseurl + 'ru/service/resp/debt/' + account_N[1] + '/' + month_option[1] + '?order=asc', headers);
+  var json_table = AnyBalance.requestGet(baseurl + 'ru/service/resp/debt/' + account_N[1] + '/' + month_option + '?order=asc', headers);
   data_table = JSON.parse(json_table);
 
   var result = {success: true};
+
+  result.month = month_option.replace(/(\d{4})(\d{2})/i, '$2/$1');
 
   // Лицевой счет
   getParam(html, result, 'account', /<span class="label-static">лицевой счет<\/span><span class="value-static">(.*?)</, replaceTagsAndSpaces, false);

@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="155">ab-cell-beeline-new</id>
+	<id version="156">ab-cell-beeline-new</id>
 	<name>Билайн (новый кабинет)</name>
 	<api flags="no_browser" min_level="5"/>
 	<description html="true"><![CDATA[
@@ -70,8 +70,8 @@
 		<counter id="traffic_used" name="Использовано трафика" units=" Mb"/>
 		<counter id="traffic_total" name="Всего трафика" units=" Mb"/>
 		<counter id="min_local_till" name="Срок действия пакета минут" type="time" format="dd/MM/yyyy"/>
-		<counter id="service_count" name="Услуги: всего" units=" шт"/>
-		<counter id="service_abon" name="Услуги: абонентская плата" units=" р"/>
+		<counter id="services_count" name="Услуги: всего" units=" шт"/>
+		<counter id="services_abon" name="Услуги: абонентская плата" units=" р"/>
 		<counter id="bills" name="Выставленные счета"/>
 		<!-- <counter id="addon_balance" name="Баланс для оплаты дополнительных услуг" units=" {@currency}"/> -->
 	</counters>

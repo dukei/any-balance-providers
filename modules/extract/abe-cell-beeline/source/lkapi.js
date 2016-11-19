@@ -46,6 +46,7 @@ function callAPIProc(url, getParams, postParams, method) {
 	var json = getJson(html);
 	if(json.meta.status != 'OK'){
 		var error = (api_errors[json.meta.message] || json.meta.message || '');
+		if(postParams && postParams.password) postParams.password = '**********';
 		AnyBalance.trace('Request (' + method + '): ' + url + ', ' + JSON.stringify(postParams) + '\nResponse: ' + html); 
 		throw new AnyBalance.Error('Ошибка вызова API! ' + error, null, /парол|логин/i.test(error)) ;
 	}
@@ -59,10 +60,14 @@ function apiLogin(baseurl){
 	var prefs = AnyBalance.getPreferences();
 	AnyBalance.setDefaultCharset('utf-8');
 
-	if(AnyBalance.getCookie('token')){
+	try{
+	    getApiAssocNumbers();
 		AnyBalance.trace('Уже залогинены, используем имеющийся вход');
 		return;
+	}catch(e){
+		AnyBalance.trace('Сессия новая, надо логиниться.');
 	}
+
 
 	var json = callAPIProc('2.0/auth/auth', {
 			userType: 'Mobile',
@@ -72,8 +77,7 @@ function apiLogin(baseurl){
 		}, 'PUT'
 	);
 
-	AnyBalance.setCookie('my.beeline.ru', 'token', json.token);
-	AnyBalance.setCookie('my.beeline.kz', 'token', json.token);
+	AnyBalance.setCookie(getParam(g_baseurlApi, null, null, /:\/\/([^\/]*)/), 'token', json.token);
 
 	__setLoginSuccessful();
 }
@@ -107,48 +111,40 @@ function switchToAssocNumber(num){
 
 	var prefs = AnyBalance.getPreferences();
 
-	function getAssocLoginSimple(num){
-	    
-		var json = getApiAssocNumbers();
-	    
-		if(!num || endsWith(prefs.login, num)){
-			var phone = json.ssoAccountList[0].name;
-			AnyBalance.trace('Используем первый присоединенный номер ' + phone);
-	    
-			return phone;
-		}
-	    
-		for(var i=0; i<json.ssoAccountList.length; ++i){
-			var sso = json.ssoAccountList[i];
-	    
-			if(endsWith(sso.name, num)){
-				AnyBalance.trace('Используем присоединенный номер ' + sso.name);
-				return sso.name;
+	function findCTNForLogin(login){
+		var subscribers = getApiSubscribers(login).subscribers;
+		if(!subscribers || !subscribers.length)
+			return; //throw new AnyBalance.Error('Не удаётся найти номер телефона для логина!');
+		for(var i=0; i<subscribers.length; ++i){
+			var s = subscribers[i];
+			if(num && endsWith(s.ctn, num)){
+				AnyBalance.trace('В качестве CTN берем ' + s.ctn + ' по заданным последним цифрам');
+				return prefs.phone = s.ctn;
+			}
+			if(!num && s.ctnDefault){
+				AnyBalance.trace('В качестве CTN берем ' + s.ctn + ' по умолчанию');
+				return prefs.phone = s.ctn;
 			}
 		}
 	    
-		throw new AnyBalance.Error("Не удалось найти присоединенный номер, оканчивающийся на " + prefs.phone);
-	}
-
-	var login = getAssocLoginSimple(num);
-
-	var subscribers = getApiSubscribers(login).subscribers;
-	if(!subscribers || !subscribers.length)
-		throw new AnyBalance.Error('Не удаётся найти номер телефона для логина!');
-	for(var i=0; i<subscribers.length; ++i){
-		var s = subscribers[i];
-		if(prefs.phone && endsWith(s.ctn, prefs.phone)){
-			AnyBalance.trace('В качестве CTN берем ' + s.ctn + ' по заданным последним цифрам');
-			return prefs.phone = s.ctn;
-		}
-		if(!prefs.phone && s.ctnDefault){
-			AnyBalance.trace('В качестве CTN берем ' + s.ctn + ' по умолчанию');
-			return prefs.phone = s.ctn;
+	    if(!num){
+			AnyBalance.trace('В качестве CTN берем ' + subscribers[0].ctn);
+			return prefs.phone = subscribers[0].ctn;
 		}
 	}
 
-	AnyBalance.trace('В качестве CTN берем ' + subscribers[0].ctn);
-	return prefs.phone = subscribers[0].ctn;
+	var assocs = getApiAssocNumbers();
+	for(var i=0; i<assocs.ssoAccountList.length; ++i){
+		var sso = assocs.ssoAccountList[i];
+	    
+	    var ctn = findCTNForLogin(sso.name);
+	    if(ctn){
+			AnyBalance.trace('Используем присоединенный логин ' + sso.name + ' и номер ' + ctn);
+			return ctn;
+		}
+	}
+
+	throw new AnyBalance.Error("Не удалось найти присоединенный номер, оканчивающийся на " + num);
 }
 
 function processApi(result){

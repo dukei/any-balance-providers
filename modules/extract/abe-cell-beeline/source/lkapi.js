@@ -119,16 +119,19 @@ function switchToAssocNumber(num){
 			var s = subscribers[i];
 			if(num && endsWith(s.ctn, num)){
 				AnyBalance.trace('В качестве CTN берем ' + s.ctn + ' по заданным последним цифрам');
+				prefs.__login = login;
 				return prefs.phone = s.ctn;
 			}
 			if(!num && s.ctnDefault){
 				AnyBalance.trace('В качестве CTN берем ' + s.ctn + ' по умолчанию');
+				prefs.__login = login;
 				return prefs.phone = s.ctn;
 			}
 		}
 	    
 	    if(!num){
 			AnyBalance.trace('В качестве CTN берем ' + subscribers[0].ctn);
+			prefs.__login = login;
 			return prefs.phone = subscribers[0].ctn;
 		}
 	}
@@ -218,6 +221,7 @@ function processApiInfo(result){
 
 function processApiPrepaid(result){
 	var prefs = AnyBalance.getPreferences();
+
 	if(AnyBalance.isAvailable('balance', 'currency', 'currency_code')){
 		var json = callAPIProc('1.0/info/prepaidBalance', {ctn: prefs.phone});
 	    
@@ -225,6 +229,7 @@ function processApiPrepaid(result){
 		getParam(json.currency, result, ['currency_code', 'balance']);
 		getParam(g_currencys[json.currency], result, ['currency', 'balance']);
 	}
+
 
 	try{
     	processApiRemaindersPrepaid(result);
@@ -251,7 +256,7 @@ function processApiRemaindersPrepaid(result){
 		// Минуты
 		if(curr.unit == 'SECONDS') {
 			//Приоритет билайна не случаен, их минуты определить сложнее
-			if(/номера других|на других|на все номера|местные.*вызовы|кроме номеров .?Билайн.?/i.test(curr.restName || curr.accName)) {
+			if(/номера других|на других|на все номера|местные.*вызовы|кроме номеров .?Билайн|любые местные/i.test(curr.restName || curr.accName)) {
 				sumParam(curr.rest + ' ' + curr.unit, remainders, 'remainders.min_local', null, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
 			} else {
 				sumParam(curr.rest + ' ' + curr.unit, remainders, 'remainders.min_bi', null, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
@@ -300,17 +305,41 @@ function processApiRemaindersPrepaid(result){
 	}
 }
 
+
+function getPostpaidBalanceApi(ctn){
+	if(!getPostpaidBalanceApi.json)
+		getPostpaidBalanceApi.json = {};
+	if(getPostpaidBalanceApi.json[ctn])
+		return getPostpaidBalanceApi.json[ctn];
+
+	var prefs = AnyBalance.getPreferences();
+	json = callAPIProc('1.0/info/postpaidBalance', {ctn: ctn});
+
+	return getPostpaidBalanceApi.json[ctn] = json;
+}
+
 function processApiPostpaid(result){
 	var prefs = AnyBalance.getPreferences();
 
 	if(isAvailable(['balance', 'currency', 'currency_code'])) {
-		json = callAPIProc('1.0/info/postpaidBalance', {ctn: prefs.phone});
+		json = getPostpaidBalanceApi(prefs.phone);
 		
 		getParam(json.balance + '', result, 'balance', null, replaceTagsAndSpaces, apiParseBalanceRound);
 		getParam(json.currency, result, ['currency_code', 'balance'], null, replaceTagsAndSpaces);
 		getParam(g_currencys[json.currency], result, ['currency', 'balance'], null, replaceTagsAndSpaces);
 	}
-		
+
+	if(AnyBalance.isAvailable('prebal')){
+		//получаем сумму балансов по выбранному договору
+		var subscribers = getApiSubscribers(prefs.__login).subscribers;
+		var balance = 0;
+		for(var i=0; subscribers && i<subscribers.length; ++i){
+			var s = subscribers[i];
+			balance += getPostpaidBalanceApi(s.ctn).balance;
+		}
+		getParam(balance, result, 'prebal');
+	}
+
 	if(isAvailable('overpay')) {
 		try{
 			json = callAPIProc('1.0/info/postpaidDebt', {ctn: prefs.phone});

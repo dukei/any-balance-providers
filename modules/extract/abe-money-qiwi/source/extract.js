@@ -41,8 +41,8 @@ function login(prefs) {
             password: prefs.password
         });
     }catch(e){
-    	AnyBalance.trace('Киви затребовало капчу...');
-    	if(/робот|robot/i.test(e.message)){
+    	if(!e.fatal && /робот|robot/i.test(e.message)){
+    		AnyBalance.trace('Киви затребовало капчу...');
             response = requestAPI({
 				action: 'cas/tgts',
 				isAuth: true
@@ -51,6 +51,8 @@ function login(prefs) {
                 password: prefs.password,
                 captcha: solveRecaptcha('Пожалуйста, докажите, что вы не робот.', baseurl, "6LfjX_4SAAAAAFfINkDklY_r2Q5BRiEqmLjs4UAC")
             });
+    	}else{
+    		throw e;
     	}
     }
 	

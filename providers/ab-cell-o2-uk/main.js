@@ -74,9 +74,9 @@ function main() {
 	AB.getParam(json.currentTariff.accountStatus, result, 'status');
 	AB.getParam(json.currentTariff.anniversaryDate, result, 'renewal');
 	//Don't forget, you get international calls from 1p/min. You have 3000 O2 texts, 0 O2 minutes and 100.0MB of data left.
-	AB.getParam(json.currentTariff.allowanceStatusText, result, 'sms', /(\d+)\s+O2 text/i, null, parseBalance);
-	AB.getParam(json.currentTariff.allowanceStatusText, result, 'min', /(\d+)\s+O2 minute/i, null, parseBalance);
-	AB.getParam(json.currentTariff.allowanceStatusText, result, 'traffic', /([\d\.\,]+[MGT]b)\s+of data/i, null, parseTraffic);
+	AB.getParam(json.currentTariff.allowanceStatusText || '', result, 'sms', /(\d+)\s+O2 text/i, null, parseBalance);
+	AB.getParam(json.currentTariff.allowanceStatusText || '', result, 'min', /(\d+)\s+O2 minute/i, null, parseBalance);
+	AB.getParam(json.currentTariff.allowanceStatusText || '', result, 'traffic', /([\d\.\,]+[MGT]b)\s+of data/i, null, parseTraffic);
 
 	AnyBalance.setResult(result);
 }

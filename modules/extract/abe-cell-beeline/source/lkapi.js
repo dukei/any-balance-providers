@@ -256,7 +256,7 @@ function processApiRemaindersPrepaid(result){
 		// Минуты
 		if(curr.unit == 'SECONDS') {
 			//Приоритет билайна не случаен, их минуты определить сложнее
-			if(/номера других|на других|на все номера|местные.*вызовы|кроме номеров .?Билайн|любые местные/i.test(curr.restName || curr.accName)) {
+			if(isLocalMin(curr.restName || curr.accName)) {
 				sumParam(curr.rest + ' ' + curr.unit, remainders, 'remainders.min_local', null, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
 			} else {
 				sumParam(curr.rest + ' ' + curr.unit, remainders, 'remainders.min_bi', null, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
@@ -357,6 +357,10 @@ function processApiPostpaid(result){
 	}
 }
 
+function isLocalMin(name){
+	return /номера других|на других|на все номера|др(?:угих|\.) операторов|всех|любых|местные.*вызовы|любые местные|кроме номеров .?Билайн.?/i.test(name);
+}
+
 function processApiRemaindersPostpaid(result){
 	if(!AnyBalance.isAvailable('remainders'))
 		return;
@@ -372,7 +376,7 @@ function processApiRemaindersPostpaid(result){
 		// Минуты
 		if(curr.unitType == 'VOICE') {
 			//Приоритет билайна не случаен, их минуты определить сложнее
-			if(/номера других|на других|на все номера|других операторов|всех|любых|местные.*вызовы|кроме номеров .?Билайн.?/i.test(curr.restName || curr.accName)) {
+			if(isLocalMin(curr.restName || curr.accName)) {
 				sumParam(curr.currValue + ' ', remainders, 'remainders.min_local', null, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
 			} else {
 				sumParam(curr.currValue + ' ', remainders, 'remainders.min_bi', null, replaceTagsAndSpaces, parseMinutes, aggregate_sum);

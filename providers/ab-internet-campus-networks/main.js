@@ -38,9 +38,9 @@ function main() {
 	}));
 	
 	if (!/exit/i.test(html)) {
-		var error = AB.getParam(html, null, null, /<div[^>]+class="alert alert-danger"[^>]*>([\s\S]*?)<\/div>/i, AB.replaceTagsAndSpaces);
+		var error = AB.getElement(html, /<div[^>]+alert/i, AB.replaceTagsAndSpaces);
 		if (error)
-			throw new AnyBalance.Error(error, null, /Логін або пароль невірний/i.test(error));
+			throw new AnyBalance.Error(error, null, /парол/i.test(error));
 		
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
@@ -50,18 +50,19 @@ function main() {
 
 	var result = {success: true};
 
-	AB.getParam(html, result, '__tariff', /Тарифний план(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, AB.replaceTagsAndSpaces);
+	AB.getParam(html, result, '__tariff', /(?:Тариф|Tariff):(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, AB.replaceTagsAndSpaces);
 
-	AB.getParam(html, result, 'balance', /Інформація по рахунку(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, AB.replaceTagsAndSpaces, AB.parseBalance);
-	AB.getParam(html, result, 'credit', /Інформація по рахунку(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, AB.replaceTagsAndSpaces, AB.parseBalance);
-	AB.getParam(html, result, 'cost_tariff', /Тарифний план(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, AB.replaceTagsAndSpaces, AB.parseBalance);
-	AB.getParam(html, result, 'cost_IP', /Інформація по рахунку(?:[\s\S]*?<td[^>]*>){8}([\s\S]*?)<\/td>/i, AB.replaceTagsAndSpaces, AB.parseBalance);
-	AB.getParam(html, result, 'fio', /Дані користувача(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, AB.replaceTagsAndSpaces);
-	AB.getParam(html, result, 'UID', /Дані користувача(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, AB.replaceTagsAndSpaces);
-	AB.getParam(html, result, 'agreement_num', /Дані користувача(?:[\s\S]*?<td[^>]*>){6}([\s\S]*?)<\/td>/i, AB.replaceTagsAndSpaces);
-	AB.getParam(html, result, 'user_status', /Дані користувача(?:[\s\S]*?<td[^>]*>){8}([^>]*>){4}/i, AB.replaceTagsAndSpaces);
-	AB.getParam(html, result, 'turbo_status', /Інформація по рахунку(?:[\s\S]*?<td[^>]*>){10}([\s\S]*?)<\/td>/i, AB.replaceTagsAndSpaces);
-	AB.getParam(html, result, 'internet_status', /Інформація по рахунку(?:[\s\S]*?<td[^>]*>){6}([\s\S]*?)<\/td>/i, AB.replaceTagsAndSpaces);
+	AB.getParam(html, result, 'balance', /(?:Поточний баланс|Текущий баланс|Current balance):(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, AB.replaceTagsAndSpaces, AB.parseBalance);
+	AB.getParam(html, result, 'credit', /(?:Кредит|Кредит|Credit):(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, AB.replaceTagsAndSpaces, AB.parseBalance);
+	AB.getParam(html, result, 'cost_tariff', /(?:Абонплата за тарифом|Абонплата по тарифу|Tariff cost):(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, AB.replaceTagsAndSpaces, AB.parseBalance);
+//	AB.getParam(html, result, 'cost_IP', /(?:Поточний баланс|Текущий баланс|Current balance):(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, AB.replaceTagsAndSpaces, AB.parseBalance);
+	AB.getParam(html, result, 'fio', /(?:П.І.Б.|Ф.И.О.|Names):(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, AB.replaceTagsAndSpaces);
+	AB.getParam(html, result, 'UID', /(?:UID):(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, AB.replaceTagsAndSpaces);
+	AB.getParam(html, result, 'agreement_num', /(?:Договір|Договор|Contract):(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, AB.replaceTagsAndSpaces);
+	AB.getParam(html, result, 'user_status', /(?:Статус користувача|Статус пользователя|User status):(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, AB.replaceTagsAndSpaces);
+	AB.getParam(html, result, 'turbo_status', /(?:Послуга Турбо|Услуга Турбо|Turbo service):(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, AB.replaceTagsAndSpaces);
+//	AB.getParam(html, result, 'internet_status', /(?:Поточний баланс|Текущий баланс|disconnected from the Internet in):(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, AB.replaceTagsAndSpaces);
+	AB.getParam(html, result, 'days_left', /(?:Інтернет відключиться через|Интернет отключится через|disconnected from the Internet in):(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, AB.replaceTagsAndSpaces, AB.parseBalance);
 
 	AnyBalance.setResult(result);
 }

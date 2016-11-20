@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="2.0" version="15" date="2016-11-20">
+	Восстановлено получение информации о последней покупке 
+	</change>
 	<change major_version="2.0" version="14" date="2016-01-03">
 	Поддержка изменений в процедуре входа
 	</change>

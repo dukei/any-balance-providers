@@ -25,7 +25,7 @@ function main() {
 		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
 	}
     
-    var loginForm = AB.getElement(html, /<form[^>]+?mini_login/i);
+    var loginForm = AB.getElement(html, /<form[^>]+?form_auth/i);
     
     if (!loginForm) {
         AnyBalance.trace(html);
@@ -33,7 +33,7 @@ function main() {
 	}
     
     var captchaCode = '';
-    var captchaUrl = getParam(loginForm, null, null, /<img[^>]*?src=["']([^"']+)/i);
+    var captchaUrl = getParam(loginForm, null, null, /<img[^>]*?src=["']([^"']*captcha[^"']*)/i);
     if (captchaUrl) {
         if (!/^https?:/.test(captchaUrl)) {
             captchaUrl = captchaUrl.replace(/^\/?/, baseurl + '/');
@@ -43,7 +43,7 @@ function main() {
         captchaCode = AnyBalance.retrieveCode('Введите проверочный код', image);
     }
     
-    var params = AB.createFormParams(html, function (params, str, name, value) {
+    var params = AB.createFormParams(loginForm, function (params, str, name, value) {
         if (name == 'captcha') {
             return captchaCode;
         }
@@ -55,16 +55,16 @@ function main() {
         }
         return value;
     });
-    params.remember_me = 'false';
-    delete params.q;
-    delete params.url;
+    params.code = '';
+    params.phone = '';
+    params.subscribe = true;
     
-    html = AnyBalance.requestPost(baseurl + '/user/authenticate', params, addHeaders({
+    html = AnyBalance.requestPost(baseurl + '/user/authenticate', JSON.stringify(params), addHeaders({
         Referer: baseurl,
         Accept: 'application/json, text/javascript, */*; q=0.01',
         Origin: baseurl,
         'X-Requested-With': 'XMLHttpRequest',
-        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+        'Content-Type': 'application/json;charset=UTF-8'
     }));
 
     var json = getJson(html);

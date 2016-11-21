@@ -37,9 +37,9 @@ function main(){
 	
 	var result = {success: true};
 	
-	getParam(html, result, 'acc', /<td[^>]*>\s*Договор[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
-	getParam(html, result, 'status', /<td[^>]*>\s*Статус[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
-	getParam(html, result, 'balance', /<td[^>]*>\s*Баланс[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'acc', /<td[^>]*>\s*(?:Contract|Договор)[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+	getParam(html, result, 'status', /<td[^>]*>\s*(?:Статус|Status)[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+	getParam(html, result, 'balance', /<td[^>]*>\s*(?:Balance|Баланс)[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 /*
 	if(AnyBalance.isAvailable('bsk', 
 	var html = AnyBalance.requestGet(baseurl + 'onyma/lk/account/', g_headers);

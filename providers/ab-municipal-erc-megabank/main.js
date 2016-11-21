@@ -65,7 +65,7 @@ function main(){
 
   AnyBalance.trace('Searching account_url');
   if(prefs.account){
-    var account_url = (new RegExp('<h3 class="title">' + prefs.account + '[\\s\\S]*"/(ru/service/publicutilities/debt/\\d)')).exec(html);
+    var account_url = (new RegExp('<h3 class="title">' + prefs.account + '[\\s\\S]*?"/(ru/service/publicutilities/debt/\\d)')).exec(html);
     if(!account_url) throw new AnyBalance.Error("Не удаётся найти account_url. Проблемы или изменения на сайте?");
     account_url = baseurl + account_url[1];
   } else var account_url = baseurl + 'ru/service/publicutilities/debt/1'

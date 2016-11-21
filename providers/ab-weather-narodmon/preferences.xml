@@ -2,12 +2,12 @@
 <PreferenceScreen>
     <EditTextPreference
 		obligatory="true"
-        title="Номер датчика"
+        title="Номер устройства"
         positiveButtonText="ОК"
-        summary="Номер датчика с сайта"
-        dialogTitle="Номер датчика"
+        summary="Номер устройства с сайта"
+        dialogTitle="Номер устройства"
         negativeButtonText="Отмена"
-        dialogMessage="Выберите нужный датчик на сайте http://narodmon.ru. После id= идет номер датчика."
+        dialogMessage="Выберите нужное устройство на сайте http://narodmon.ru. После id= идет номер устройства."
         key="number">
     </EditTextPreference>
 </PreferenceScreen>

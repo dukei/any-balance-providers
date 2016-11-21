@@ -16,126 +16,85 @@ var g_headers = {
     'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.1 (KHTML, like Gecko) Chrome/21.0.1180.60 Safari/537.1'
 };
 
-function getViewState(html){
-    return getParam(html, null, null, /name="__VIEWSTATE".*?value="([^"]*)"/);
-}
-
-function getEventValidation(html){
-    return getParam(html, null, null, /name="__EVENTVALIDATION".*?value="([^"]*)"/);
-}
-
-function myGetJson(html){
-    var json = getJson(html);
-    if(!json.d){
-        AnyBalance.trace('Отсутствует поле d: ' + html);
-        throw new AnyBalance.Error('Сервер вернул неверный ответ. Проблемы на сайте или сайт изменен.');
-    }
-    return getJson(json.d);
-}
-
 function main(){
     var prefs = AnyBalance.getPreferences();
     AnyBalance.setDefaultCharset('utf-8');
 
     var baseurl = "http://lk.csat.ru";
 
-    var html = AnyBalance.requestPost(baseurl + '/?login=yes', {
-    	AUTH_FORM: 'Y',
-    	TYPE: 'AUTH',
-    	USER_LOGIN: prefs.login,
-    	USER_PASSWORD: prefs.password,
-    	Login: 'Войти'
-    }, g_headers);
+	var html = AnyBalance.requestGet(baseurl + '/lk/auth/', g_headers);
+
+	if (!html || AnyBalance.getLastStatusCode() > 400) {
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Сайт провайдера временно недоступен! Попробуйте обновить данные позже.');
+	}
+
+	var form = AB.getElement(html, /<form[^>]+auth_form[^>]*>/i);
+	if(!form){
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удаётся найти форму входа! Сайт изменен?');
+	}
+
+	var entertype = /@/.test(prefs.login) ? 'email' : 'phone';
+	var params = AB.createFormParams(form, function(params, str, name, value) {
+		if (name == 'AUTH_TYPE') {
+			return entertype;
+		} else if (name == 'USER_LOGIN_PHONE') {
+			return entertype == 'phone' ? prefs.login : value;
+		} else if (name == 'USER_LOGIN_EMAIL') {
+			return entertype == 'email' ? prefs.login : value;
+		} else if (name == 'USER_LOGIN_PIN') {
+			return entertype == 'pin' ? prefs.login : value;
+		} else if (name == 'USER_PASSWORD') {
+			return prefs.password;
+		}
+
+		return value;
+	});
+
+    var html = AnyBalance.requestPost(baseurl + '/lk/auth/', params, addHeaders({Referer: baseurl + '/lk/auth/'}));
 
     if(!/Logout/i.test(html)){
-        var error = getParam(html, null, null, /create_modal\s*\(\s*'error',\s*'[^']*','((?:[^']|\\')*)/, [replaceSlashes, replaceTagsAndSpaces]);
+        var error = getElement(html, /<[^>]*text-danger/i, replaceTagsAndSpaces);
         if(error)
-            throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
+            throw new AnyBalance.Error(error, null, /парол/i.test(error));
         AnyBalance.trace(html);
         throw new AnyBalance.Error('Не удалось войти в личный кабинет. Проблемы на сайте или сайт изменен.');
     }
 
     var result = {success: true};
 
-    getParam(html, result, 'balance', /<li[^>]+class="balans"[^>]*>([\s\S]*?)<\/strong>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'daysleft', /<li[^>]+class="days"[^>]*>([\s\S]*?)<\/strong>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'plate', /<span[^>]+class="model"[^>]*>[\s\S]*?<\/div>/i, [/<span[^>]*>[^<]*<\/span>/i, '', replaceTagsAndSpaces], html_entity_decode);
-    getParam(html, result, '__tariff', /<li[^>]+class="tariff"[^>]*>([\s\S]*?)<\/strong>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'fio', /<li[^>]+class="name"[^>]*>([\s\S]*?)<\/strong>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'status', /<li[^>]+status[^>]*>([\s\S]*?)<\/strong>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'pin', /<li[^>]+pin[^>]*>([\s\S]*?)<\/strong>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'balance', /<div[^>]+balance[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'fio', /<li[^>]+owner[^>]*>([\s\S]*?)<\/li>/i, replaceTagsAndSpaces, html_entity_decode);
 
-    AnyBalance.setResult(result);
-}
+    var divs = getElements(html, /<div[^>]+pinListElementOfPage/ig);
+    for(var i=0; i<divs.length; ++i){
+    	var div = divs[i];
+    	var plate = getElement(div, /<h2/i, replaceTagsAndSpaces);
+    	AnyBalance.trace('Найден номер ' + plate);
+    	if(!prefs.plate || plate.indexOf(prefs.plate) >= 0){
+    		getParam(plate, result, 'plate');
+    		getParam(div, result, 'status', /Статус:([\s\S]*?)<\/strong>/i, replaceTagsAndSpaces);
+    		var pin = getParam(div, null, null, /data-pin-id="([^"]*)/i, replaceHtmlEntities);
+    		getParam(pin, result, 'pin');
 
-function mainOld(){
-    var prefs = AnyBalance.getPreferences();
-    AnyBalance.setDefaultCharset('utf-8');
+    		if(pin){
+    			html = AnyBalance.requestPost(baseurl + '/lk/ajax/service.php', {
+    				ajaxPin:	'Y',
+					typeAjaxQuery:	'getInformation',
+					pinID:	pin
+    			}, addHeaders({Referer: baseurl + '/lk/services/'}));
 
-    var baseurl = "http://cp.csat.ru/";
+    			var json = getJson(html);
+    			getParam(json.tariff, result, '__tariff', /[\s\S]*?<\/td>/i, replaceTagsAndSpaces);
+    		}
 
-    var html = AnyBalance.requestGet(baseurl + 'Login.aspx', g_headers);
-
-    html = AnyBalance.requestPost(baseurl + 'Login.aspx', {
-        __EVENTTARGET:'',
-        __EVENTARGUMENT:'',
-        __VIEWSTATE:getViewState(html),
-        __EVENTVALIDATION:getEventValidation(html),
-        TimeOffSet:-(new Date()).getTimezoneOffset(),
-        checkJS:1,
-        Text1:prefs.login,
-        Password1:prefs.password,
-        Button1:'Ok'
-    }, g_headers);
-
-    //AnyBalance.trace(html);
-    if(!/BtnExit_Click/i.test(html)){
-        var error = getParam(html, null, null, /<font[^>]*color:\s*red[^>]*>([\s\S]*?)<\/font>/, replaceTagsAndSpaces, html_entity_decode);
-        if(error)
-            throw new AnyBalance.Error(error, null, /Неверное имя пользователя или пароль/i.test(error));
-        AnyBalance.trace(html);
-        throw new AnyBalance.Error('Не удалось войти в личный кабинет. Проблемы на сайте или сайт изменен.');
+    		break;
+    	}
     }
 
-    if(AnyBalance.isAvailable('plate', 'ignition', 'speed', 'lat', 'long', 'course', 'lasttime', 'marka')){
-        html = AnyBalance.requestPost(baseurl + 'Default.aspx/GetAutoFirstLoad', '{}', addHeaders({'Content-Type': 'application/json; charset=UTF-8', 'X-Requested-With': 'XMLHttpRequest'}));
-        var json = myGetJson(html);
-        
-        var result = {success: true};
-        
-        for(var i=0; i<json.length; ++i){
-            var car = json[i];
-            if(!prefs.plate || car.Plate.toUpperCase().indexOf(prefs.plate.toUpperCase()) >= 0){
-                if(AnyBalance.isAvailable('plate'))
-                    result.plate = car.Plate;
-                if(AnyBalance.isAvailable('ignition'))
-                    result.ignition = car.Active ? 'ВКЛ' : 'выкл';
-                if(AnyBalance.isAvailable('speed'))
-                    result.speed = car.Speed;
-                if(AnyBalance.isAvailable('lat'))
-                    result.lat = car.Lat;
-                if(AnyBalance.isAvailable('long'))
-                    result['long'] = car.Long;
-                if(AnyBalance.isAvailable('course'))
-                    result.course = car.Course;
-                if(AnyBalance.isAvailable('lasttime'))
-                    result.lasttime = Date.parse(car.Time);
-                if(AnyBalance.isAvailable('marka'))
-                    result.marka = car.MarkaModel;
-                break;
-            }
-        }
-
-        if(prefs.plate && i >= json.length)
-            throw new AnyBalance.Error('Не удалось найти машину с номером, содержащим ' + prefs.plate);
-    }
-
-    html = AnyBalance.requestGet(baseurl + 'UserCabinet.aspx', g_headers);
-
-    getParam(html, result, 'balance', /<span[^>]+id="PointsCount"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'virtual', /<span[^>]+id="VirtPointsCount"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, '__tariff', /<span[^>]+id="lblTariff"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'daysleft', /Дней до истечения баланса:([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+    if(i>= divs.length)
+    	throw new AnyBalance.Error(prefs.plate ? 'Не удалось найти объекта с номером, содержащим ' + prefs.plate : 'Не удалось найти ни одного объекта');
 
     AnyBalance.setResult(result);
 }

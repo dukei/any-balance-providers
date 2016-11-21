@@ -46,9 +46,9 @@ function main(){
 	}
 
 	// Ищем по наименованию или по номеру лиц счета
-	var href = getParam(html, null, null, new RegExp('wuxify-me[^>]*?href="([^"]*)[^>]*>\\s*' + (prefs.account || '') + '[\\s\\S]*?<\\/a>', 'i'), replaceHtmlEntities);
+	var href = getParam(html, null, null, new RegExp('wuxify-me(?:[\\s\\S](?!</a>))+?href="([^"]*)[^>]*>\\s*' + (prefs.account || '') + '[\\s\\S]*?<\\/a>', 'i'), replaceHtmlEntities);
 	if(!href)
-		href = getParam(html, null, null, new RegExp('wuxify-me[^>]+?href="([^"]*\\?acc=' + (prefs.account || '') + '[^"]*)', 'i'), replaceHtmlEntities);
+		href = getParam(html, null, null, new RegExp('wuxify-me(?:[\\s\\S](?!<\/a>))+?href="([^"]*\\?acc=' + (prefs.account || '') + '[^"]*)', 'i'), replaceHtmlEntities);
 	if(!href)
 		throw new AnyBalance.Error('Не найден ' + (prefs.account ? 'лицевой счет "' + prefs.account + '"' : 'ни один счет'));
 	

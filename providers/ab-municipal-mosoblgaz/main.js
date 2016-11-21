@@ -69,7 +69,7 @@ function main(){
 	}
 */
 
-	if(isAvailable('income', 'nachisl', 'recomended', 'balance')) {
+	if(isAvailable(['income', 'nachisl', 'recomended', 'balance'])) {
 		html = AnyBalance.requestGet(baseurl + 'balance', g_headers);
 
 		AB.getParam(html, result, 'balance', 	/Баланс на[\s\S]*?<div[^>]+balance-value[^>]*>([\s\S]*?)<\/div>/i, 						   		AB.replaceTagsAndSpaces, AB.parseBalance);

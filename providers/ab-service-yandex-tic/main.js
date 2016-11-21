@@ -12,33 +12,33 @@ var g_headers = {
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'https://yaca.yandex.ru/yca';
+	var baseurl = 'https://yandex.ru/yaca/';
 	AnyBalance.setDefaultCharset('utf-8');
 
 	AB.checkEmpty(prefs.domain, 'Введите домен!');
 
-	var html = AnyBalance.requestGet(baseurl, g_headers);
+	var html = AnyBalance.requestGet(baseurl + 'cy/ch/' + prefs.domain, g_headers);
 
 	if (!html || AnyBalance.getLastStatusCode() > 400) {
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
 	}
 
-	html = AnyBalance.requestGet(baseurl + '/cy/ch/' + prefs.domain, g_headers);
-
 	var result = {success: true, __tariff: prefs.domain};
 
-	if(!/<img[^>]+arr-hilite[^>]*>/i.test(html)) {
-		var notFound = getParam(html, null, null, /<p[^>]+error-cy[^>]*>([\s\S]*?)<\/p>/, replaceTagsAndSpaces);
+	var row = getElements(html, [/<tr[^>]+cy__row/ig, /cy__description/i])[0];
+	if(!row){
+		var notFound = getElement(html, /<div[^>]+cy__not-described/, replaceTagsAndSpaces);
 		if(notFound) {
 			AnyBalance.trace(notFound);
-			getParam(/не определён/.test(notFound) ? undefined : notFound, result, 'index', /[^\d]*(\d*)/i, null, parseBalance);
+			throw new AnyBalance.Error(notFound);
+//			getParam(/не определён/.test(notFound) ? undefined : notFound, result, 'index', /[^\d]*(\d*)/i, null, parseBalance);
 		} else {
 			AnyBalance.trace(html);
 			throw new AnyBalance.Error("Не удалось найти данные. Сайт изменён?")
 		}
 	} else {
-		getParam(html, result, 'index', /<img[^>]+arr-hilite[^>]*>(?:[^]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+		getParam(row, result, 'index', /(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 	}
 
 	AnyBalance.setResult(result);

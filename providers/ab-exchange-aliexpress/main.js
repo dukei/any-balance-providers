@@ -38,7 +38,7 @@ function main() {
   }
 
   var baseUrl = "http://superdeals.aliexpress.com/en";
-  var apiBaseUrl = "http://api.dos.aliexpress.com/aliexpress/";
+  var apiBaseUrl = "https://api.dos.aliexpress.com/aliexpress/";
   AnyBalance.setDefaultCharset('utf-8');
 
   var html = AnyBalance.requestGet(baseUrl, g_headers);
@@ -127,7 +127,7 @@ function main() {
 
   var result = {
     success: true,
-    rate: (rubPrice/usdPrice).toFixed(4)
+    rate: parseFloat((rubPrice/usdPrice).toFixed(4))
   };
 
   if(AnyBalance.isAvailable('date')) {

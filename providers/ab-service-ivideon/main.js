@@ -8,7 +8,7 @@ var g_headers = {
 	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
 	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
 	'Connection': 'keep-alive',
-	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
+	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.99 Safari/537.36',
 };
 
 function main() {
@@ -26,13 +26,24 @@ function main() {
 		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
 	}
 
-	var token = getParam(html, null, null, /<input[^>]*value="([^"]*)"[^>]*name="[^"]*TOKEN[^"]*"/i);
+	var form = getElement(html, /<form[^>]+login-form/i);
+	if(!form){
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удаётся найти форму входа! Сайт изменен?');
+	}
 
-	html = AnyBalance.requestPost(baseurl + 'my/service/login', {
-		'IVIDEON_CSRF_TOKEN': token,
-		'LoginForm[username]': prefs.login,
-		'LoginForm[password]': prefs.password
-	}, addHeaders({
+	var params = AB.createFormParams(form, function(params, str, name, value) {
+		if (/username/i.test(name)) {
+			return prefs.login;
+		} else if (/password/i.test(name)) {
+			return prefs.password;
+		}
+
+		return value;
+	});
+
+
+	html = AnyBalance.requestPost(baseurl + 'my/service/login', params, addHeaders({
 		Referer: baseurl + 'my/service/login'
 	}));
 

@@ -42,12 +42,13 @@ function login(prefs, result) {
 		json = getJson(html);
 
 		if(json.status != 'authenticated'){
-			if(json._error){
+			if(json._error)
 				throw new AnyBalance.Error(json._error.code == 'INVALID_LOGIN_OR_PASSWORD' ? 'Невірний логін або пароль' : json._error.code, null, /INVALID_LOGIN_OR_PASSWORD/i.test(json._error.code));
+			if(json._status == 'confirmationRequired')
+				throw new AnyBalance.Error("Ощадбанк потребовал подтверждение входа по SMS. Эта возможность пока не поддерживается. Пожалуйста, обратитесь к разработчикам");
 
-				AnyBalance.trace(html);
-				throw new AnyBalance.Error('Не удалось войти в интернет банк. Сайт изменен?');
-			}
+			AnyBalance.trace(html);
+			throw new AnyBalance.Error('Не удалось войти в интернет банк. Сайт изменен?');
 		}
 	}else{
 		AnyBalance.trace('Используем существующую сессию');

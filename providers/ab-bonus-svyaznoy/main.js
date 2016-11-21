@@ -15,6 +15,7 @@ var g_headers = {
 function main() {
   var prefs = AnyBalance.getPreferences();
   var baseurl = 'https://sclub.ru/';
+  AnyBalance.setDefaultCharset('utf-8');
 
   AB.checkEmpty(prefs.login, 'Введите № карты!');
   checkEmailOrCardNum(prefs.login, 'Некорректный email или номер карты');
@@ -50,9 +51,10 @@ function main() {
   	json = getJson(res);
   }
 
-  if (!json || json.message || !json.access_token) {
-    if (json.message)
-      throw new AnyBalance.Error(json.message, null, /Неверные данные для авторизации/.test(json.message));
+  if (!json || json.error_description || json.message || !json.access_token) {
+  	var error = json.error_description || json.message;
+    if (error)
+      throw new AnyBalance.Error(error, null, /Неверные данные для авторизации/.test(error));
     AnyBalance.trace(JSON.stringify(json));
     throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
   }

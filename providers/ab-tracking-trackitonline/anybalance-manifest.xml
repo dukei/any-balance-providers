@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="3">ab-tracking-trackitonline</id>
+	<id version="4">ab-tracking-trackitonline</id>
 	<api flags="no_browser"/>
 	<name>Track It</name>
 	<description html="true"><![CDATA[

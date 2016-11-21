@@ -27,19 +27,21 @@ function main() {
     var cap_href = getParam(html, null, null, /(cap\/cap\.php[\s\S]*?)"/i);
     
 	var captchaa;
-	if(AnyBalance.getLevel() >= 7){
+	if(cap_href){ //Вроде нет никогда капчи сейчас
 		AnyBalance.trace('Пытаемся ввести капчу');
 		AnyBalance.setOptions({forceCharset: 'base64'});
 		var captcha = AnyBalance.requestGet(baseurl + cap_href);
 		AnyBalance.setOptions({forceCharset: 'utf-8'});
 		captchaa = AnyBalance.retrieveCode("Пожалуйста, введите код с картинки", captcha, {inputType: 'number'});
 		AnyBalance.trace('Капча получена: ' + captchaa);
-	}else{
-		throw new AnyBalance.Error('Провайдер требует AnyBalance API v7, пожалуйста, обновите AnyBalance!');
 	}
 	
 	html = AnyBalance.requestPost(baseurl + '?service=track', {
 		barCode: prefs.cargo,
+		dstn: 'XX',
+		Post: 'XX',
+		x: 62,
+		y: 41,
         keystring: captchaa
 	}, addHeaders({Referer: baseurl}));
 	

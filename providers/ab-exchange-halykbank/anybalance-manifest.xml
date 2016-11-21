@@ -1,21 +1,24 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id version="3">ab-exchange-halykbank</id>
+	<id version="4">ab-exchange-halykbank</id>
 	<name>Курсы валют (Народный банк Казахстана)</name>
 	<description>
 Текущие курсы валют, установленные Народным банком Казахстана http://halykbank.kz/
 	</description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
-		<js>library.js</js>
 		<js>main.js</js>
+		<history>history.xml</history>
 	</files>
 	<counters>
 		<counter id="USD" name="Курс доллара" prefix="$ "/>
 		<counter id="EUR" name="Курс евро" prefix="€ "/>
-		<counter id="RUR" name="Курс рубля" prefix="Р "/>
+		<counter id="RUB" name="Курс рубля" prefix="Р "/>
 		<counter id="GBP" name="Курс фунта" prefix="£ "/>
 		<counter id="CHF" name="Курс франка" prefix="₣ "/>
 		<counter id="XAU" name="Курс золота" />

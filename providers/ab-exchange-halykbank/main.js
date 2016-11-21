@@ -7,18 +7,18 @@ function getRate(result, info, counter){
 	
 function main(){
 	AnyBalance.setDefaultCharset('utf-8');
-	var info = AnyBalance.requestGet('http://halykbank.kz/ru/currency-rates');
+	var info = AnyBalance.requestGet('https://halykbank.kz/ru/currency-rates');
 	
-	var table = getParam(info, null, null, /Курсы конвертации для физических[\s\S]*?(<table[\s\S]*?<\/table>)/i);
+	var table = getParam(info, null, null, /Курсы конвертации для юридических лиц[\s\S]*?(<table[\s\S]*?<\/table>)/i);
 	if(!table)
 		throw new AnyBalance.Error('Не удалось найти таблицу с валютами, сайт изменен?');
 
 
 	var result = {success: true};
-	var currs = ['USD', 'EUR', 'RUR', 'GBP', 'CHF', 'XAU', 'XAG'];
+	var currs = ['USD', 'EUR', 'RUB', 'GBP', 'CHF', 'XAU', 'XAG'];
 	
 	for(i = 0; i < currs.length; i++) {
-		getRate(result, info, currs[i]);	
+		getRate(result, table, currs[i]);	
 	}
 
 	AnyBalance.setResult(result);

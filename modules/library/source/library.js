@@ -1137,7 +1137,7 @@ var AB = (function (global_scope) {
         if (!path) //Пустой путь
             return url;
         if (/^\//.test(path)) //Абсолютный путь
-            return url.replace(/^(\w+:\/\/[\w.\-]+).*$/, '$1' + path);
+            return url.replace(/^(\w+:\/\/[\w.:\-]+).*$/, '$1' + path);
         if (/^\w+:\/\//.test(path)) //Абсолютный урл
             return path;
         //относительный путь

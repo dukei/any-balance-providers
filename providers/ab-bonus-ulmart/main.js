@@ -40,6 +40,39 @@ function callApi(verb, params, method){
    	return json;
 }
 
+function convertPng(image){
+	function callConvertApi(params){
+		var baseurl = "https://api.convertio.co/convert";
+		var apikey = '01e98296269af8563ea2fc13a3579476';
+		
+		var html = typeof(params) == 'string' ?
+			AnyBalance.requestGet(baseurl + params) :
+			AnyBalance.requestPost(baseurl, JSON.stringify(joinObjects({apikey: apikey}, params)));
+
+		var json = getJson(html);
+		if(json.status != 'ok'){
+			throw new AnyBalance.Error(json.error);
+		}
+		return json;
+	}
+
+	var json = callConvertApi({
+		input: 'base64',
+		file: image,
+		filename: 'captcha.png',
+		outputformat: 'png'
+	});
+	var requestId = json.data.id;
+
+	do{
+		AnyBalance.sleep(3000);
+		json = callConvertApi('/' + requestId + '/status');
+		AnyBalance.trace('Conversion status: ' + json.data.step + ' ' + json.data.step_percent + '%');
+	}while(json.data.step != 'finish');
+
+	return AnyBalance.requestGet(json.data.output.url, null, {options: {FORCE_CHARSET: 'base64'}});
+}
+
 function mainApi(){
     var prefs = AnyBalance.getPreferences();
 
@@ -71,7 +104,8 @@ function mainApi(){
     	AnyBalance.trace('Не удалось войти автоматически: ' + e.message);
     	AnyBalance.sleep(10000);
         json = callApi('authcaptcha');
-        var code = AnyBalance.retrieveCode('Пожалуйста, введите код с картинки', json.captchaBase64);
+		var captcha = convertPng(json.captchaBase64);
+        var code = AnyBalance.retrieveCode('Пожалуйста, введите код с картинки', captcha || json.captchaBase64);
         
         json = callApi('v1_0/app/user/login', {
         	"email": prefs.login,

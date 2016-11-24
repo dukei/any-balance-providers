@@ -56,13 +56,23 @@ function convertPng(image){
 		return json;
 	}
 
-	var json = callConvertApi({
-		input: 'base64',
-		file: image,
-		filename: 'captcha.png',
-		outputformat: 'png'
-	});
+    var json;
+	try{
+		json = callConvertApi({
+			input: 'base64',
+			file: image,
+			filename: 'captcha.png',
+			outputformat: 'png'
+		});
+	}catch(e){
+		if(/No convertion minutes left/i.test(e.message)){
+			AnyBalance.trace('No conversion minutes left, returning original image');
+			return image;
+		}
+	}
+
 	var requestId = json.data.id;
+	
 
 	do{
 		AnyBalance.sleep(3000);

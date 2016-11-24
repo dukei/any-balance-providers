@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="20" date="2016-11-24">
+	Обход ошибки конвертирования капчи
+	</change>
 	<change version="19" date="2016-11-23">
 	Исправление отображения капчи
 	</change>

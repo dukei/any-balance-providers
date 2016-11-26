@@ -134,9 +134,9 @@ function login() {
 
 	var xml = makeRequest('login', g_baseparams);
 
-	var errorcode = getElement(xml, /<(?:faultcode|errorcode)>/i, replaceTagsAndSpaces);
+	var errorcode = getElement(xml, /<(?:\w+:)?(?:faultcode|errorcode)>/i, replaceTagsAndSpaces);
 	if(errorcode != '0'){
-		var error = getElement(xml, /<(?:faultstring|errortext)>/i, replaceTagsAndSpaces);
+		var error = getElement(xml, /<(?:\w+:)?(?:faultstring|errortext)>/i, replaceTagsAndSpaces);
 		if(error)
 			throw new AnyBalance.Error(error, null, /парол|не зарегистрирован/i.test(error));
 		AnyBalance.trace(xml);

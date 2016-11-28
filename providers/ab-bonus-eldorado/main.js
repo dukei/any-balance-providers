@@ -22,35 +22,38 @@ function main() {
 	
 	var html = AnyBalance.requestGet(baseurl + 'personal/club/offers/index.php', g_headers);
 
-	// Не трогать! Этот хак здесь живет не просто так.
-	// var captchaa;
-	// if(AnyBalance.getLevel() >= 7){
-		// AnyBalance.trace('Пытаемся ввести капчу');
-		var captcha = AnyBalance.requestGet(baseurl+ 'bitrix/tools/captcha.php?captcha_sid=123');
-		// captchaa = AnyBalance.retrieveCode("Пожалуйста, введите код с картинки", captcha);
-		// AnyBalance.trace('Капча получена: ' + captchaa);
-	// }else{
-		// throw new AnyBalance.Error('Провайдер требует AnyBalance API v7, пожалуйста, обновите AnyBalance!');
-	// }
-	
-    html = AnyBalance.requestPost(baseurl + '_ajax/userCardAuth.php', {
+	var params = {
 		'AUTH_FORM':'Y',
 		'action':'AUTH',
 		'auth_popup':'1',
 		'backurl':'/personal/orders/index.php?login=yes',
 		'USER_LOGIN':login,
-		'USER_PASSWORD':prefs.password,
-		captcha_sid:'123',
-		captcha_word:'5xx57',
-    }, addHeaders({Referer: baseurl + 'personal/orders/index.php', 'X-Requested-With': 'XMLHttpRequest'}));
+		'USER_PASSWORD':prefs.password
+    };
+
+    html = AnyBalance.requestPost(baseurl + '_ajax/userCardAuth.php', params, addHeaders({Referer: baseurl + 'personal/orders/index.php', 'X-Requested-With': 'XMLHttpRequest'}));
 	
     var json = getJson(html);
     if(!json.data && !json.success) {
-        throw new AnyBalance.Error(json.message || 'Не удаётся войти в личный кабинет. Сайт изменен?');
+    	if(json.captcha){
+    		AnyBalance.trace('Потребовалась рекапча...');
+    		var recaptcha = solveRecaptcha('Эльдорадо потребовало доказать, что вы не робот', baseurl + 'personal/club/offers/index.php', '6LfglhgTAAAAAKyh5GZXHeO6U3a7JUB-c-xtC1gW');
+    		params['g-recaptcha-response'] = recaptcha;
+    		html = AnyBalance.requestPost(baseurl + '_ajax/userCardAuth.php', params, addHeaders({Referer: baseurl + 'personal/orders/index.php', 'X-Requested-With': 'XMLHttpRequest'}));
+    		json = getJson(html);
+    	}
     }
 
     if(json.pinToPass)
         throw new AnyBalance.Error('Эльдорадо просит сменить ПИН на пароль. Для этого войдите в личный кабинет Эльдорадо через браузер, выполните инструкции и введите новый пароль в настройки провайдера.', null, true);
+
+    if(!json.data && !json.success){
+    	var error = json.message;
+    	if(error)
+    		throw new AnyBalance.Error(error, null, /парол/i.test(error));
+    	AnyBalance.trace(html);
+        throw new AnyBalance.Error(json.message || 'Не удаётся войти в личный кабинет. Сайт изменен?');
+    }
 	
     html = AnyBalance.requestGet(baseurl + '_ajax/getUserCardBonus.php', addHeaders({Referer: baseurl + 'personal/?loyalty', 'X-Requested-With': 'XMLHttpRequest'}));
     json = getJson(html);

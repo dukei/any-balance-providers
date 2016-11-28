@@ -1,16 +1,18 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="4">ab-money-nicehash</id>
+	<id version="5">ab-money-nicehash</id>
 	<api flags="no_browser"/>
 	<name>NiceHash</name>
 	<description html="true"><![CDATA[
 	<p>Provides nicehash.com unpaid balances for a given BTC wallet.</p>
 	]]></description>
 	<author>Borislip &lt;borislip@gmail.com&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>btcutil.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
@@ -25,9 +27,26 @@
 		<counter id="Keccak" name="Keccak" units="{@btcunits}"/>
 		<counter id="X15" name="X15" units="{@btcunits}"/>
 		<counter id="Nist5" name="Nist5" units="{@btcunits}"/>
+		<counter id="NeoScrypt" units="{@btcunits}"/>
+		<counter id="Lyra2RE" units="{@btcunits}"/>
+		<counter id="WhirlpoolX" units="{@btcunits}"/>
+		<counter id="Qubit" units="{@btcunits}"/>
+		<counter id="Quark" units="{@btcunits}"/>
+		<counter id="Axiom" units="{@btcunits}"/>
+		<counter id="Lyra2REv2" units="{@btcunits}"/>
+		<counter id="ScryptJaneNf16" units="{@btcunits}"/>
+		<counter id="Blake256r8" units="{@btcunits}"/>
+		<counter id="Blake256r14" units="{@btcunits}"/>
+		<counter id="Blake256r8vnl" units="{@btcunits}"/>
+		<counter id="Hodl" units="{@btcunits}"/>
+		<counter id="DaggerHashimoto" units="{@btcunits}"/>
+		<counter id="Decred" units="{@btcunits}"/>
+		<counter id="CryptoNight" units="{@btcunits}"/>
+		<counter id="Lbry" units="{@btcunits}"/>
+		<counter id="Equihash" units="{@btcunits}"/>
 		<counter id="btcunits" name="Units" type="text"/>
 	</counters>
 	<keywords>bitcoin,BTC,NiceHash,pool,mining,биткоин</keywords>
-	<type>money</type>
+	<type>money, wallet</type>
 	<country></country>
 </provider>

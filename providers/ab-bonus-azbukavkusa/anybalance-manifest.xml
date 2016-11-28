@@ -1,24 +1,28 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-bonus-azbukavkusa</id>
+	<id version="3">ab-bonus-azbukavkusa</id>
 	<api flags="no_browser"/>
 	<name>Азбука Вкуса (Бонусы)</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о бонусах на карте сети супермаркетов Азбука Вкуса.</p>
+	<p>Предоставляет информацию о бонусах Вкусомания на картах сети супермаркетов Азбука Вкуса https://av.ru/.</p>
+	<p>Информация берется из личного кабинета https://av.ru/personal/bonus_cards/</p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<!-- <counter id="to_reach_next_discount" name="До достижения следующей скидки" units=" р"/> -->
-		<counter id="discount" name="Размер скидки" units=" %"/>
-		<!-- <counter id="next_discount" name="Размер следующей скидки" units=" %"/>
-		<counter id="last_purch_date" name="Дата последней покупки" type="time" format="dd/MM/yyyy"/> -->
+		<counter id="balance" name="Общий баланс" units=" Б"/>
+		<counter id="balance_card" name="Баланс карты" units=" Б"/>
+		<counter id="num" name="Номер карты" type="text"/>
+		<counter id="status" name="Статус карты" type="text"/>
+		<counter id="phone" name="Мобильный телефон" type="text"/>
 	</counters>
 	<keywords></keywords>
 	<type>bonus</type>

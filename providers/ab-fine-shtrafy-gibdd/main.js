@@ -42,7 +42,7 @@ function main(){
 function mainNew(){
 	AnyBalance.trace('Пробуем войти на новый сайт...');
     var prefs = AnyBalance.getPreferences();
-    var baseurl = 'http://shtrafy-gibdd.ru/';
+    var baseurl = 'https://shtrafy-gibdd.ru/';
 
 	var html = AnyBalance.requestGet(baseurl, g_headers);
 	if (AnyBalance.getLastStatusCode() > 400) {

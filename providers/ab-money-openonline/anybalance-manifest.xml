@@ -1,11 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="5">ab-money-openonline</id>
+	<id version="6">ab-money-openonline</id>
 	<api flags="no_browser"/>
 	<name>Банк Открытие</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию об остатке на картах, счетах и вкладах крупного коммерческого Банка - Открытие</p>
-	<p>Информация берется из личного кабинета https://www.openonline.ru/logon</p>
+	<p>Информация берется из личного кабинета https://online.open.ru/logon</p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>

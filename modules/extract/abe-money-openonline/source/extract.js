@@ -10,7 +10,7 @@ var g_headers = {
 	'User-Agent':		'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/49.0.2623.87 Safari/537.360'
 };
 
-var baseurl = 'https://online.openbank.ru/';
+var baseurl = 'https://online.open.ru/';
 
 function getToken(html) {
 	return getParam(html, null, null, /name="__RequestVerificationToken"[^>]+value="([^"]+)/i);

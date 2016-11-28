@@ -27,11 +27,25 @@ function login() {
       throw new AnyBalance.Error('Ошибка при подключении к сайту интернет-банка! Попробуйте обновить данные позже.');
     }
 
+	var form = AB.getElement(html, /<form[^>]+LogOn[^>]*>/i);
+	if(!form){
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удаётся найти форму входа! Сайт изменен?');
+	}
+
+	var params = AB.createFormParams(form, function(params, str, name, value) {
+		if (name == 'Login') {
+			return prefs.login;
+		} else if (name == 'Password') {
+			return prefs.password;
+		}
+
+		return value;
+	});
+
+
     if (!/logout/i.test(html)) {
-      html = AnyBalance.requestPost(baseurl + 'Authorize/LogOn', {
-        Login:    prefs.login,
-        Password: prefs.password
-      }, addHeaders({
+      html = AnyBalance.requestPost(baseurl + 'Authorize/LogOn', params, addHeaders({
         Referer: baseurl + 'Authorize/LogOn'
       }));
     }else{
@@ -39,9 +53,9 @@ function login() {
     }
 
     if (!/logout/i.test(html)) {
-      var error = getParam(html, null, null, /<div[^>]+summary-errors[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+      var error = getParam(html, null, null, /<div[^>]+(?:summary-errors|warningText)[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
       if (error)
-        throw new AnyBalance.Error(error, null, /Вы указали неверное имя пользователя или пароль/i.test(error));
+        throw new AnyBalance.Error(error, null, /парол/i.test(error));
 
       AnyBalance.trace(html);
       throw new AnyBalance.Error('Не удалось зайти в интернет-банк. Сайт изменен?');

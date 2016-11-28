@@ -55,7 +55,7 @@ function main(){
     var result = {success: true};
 
     html = AnyBalance.requestGet(baseurl + 'REPSuite/home.page', g_headers);
-    AB.getParam(html, result, 'balance', /<td[^>]*>Баланс(?:[^>]*>){2}([^<]*)/i,                                          AB.replaceTagsAndSpaces, AB.parseBalance);
+    AB.getParam(html, result, 'balance', /Баланс:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i,                                          AB.replaceTagsAndSpaces, AB.parseBalance);
     AB.getParam(html, result, 'bonus',   /Доступные баллы[\s\S]*?<span[^>]*>([^<]*)/i,                                    AB.replaceTagsAndSpaces, AB.parseBalance);
     AB.getParam(html, result, 'p_bonus', /Потенциальные баллы[\s\S]*?<span[^>]*>([^<]*)/i,                                AB.replaceTagsAndSpaces, AB.parseBalance);
     AB.getParam(html, result, 'h_bonus', /Горящие баллы[\s\S]*?<span[^>]*>([^<]*)/i,                                      AB.replaceTagsAndSpaces, AB.parseBalance);
@@ -64,22 +64,26 @@ function main(){
     AB.getParam(html, result, '__tariff', /Здравствуйте,([^<]*)/i,                             AB.replaceTagsAndSpaces);
     AB.getParam(html, result, 'daysleft', /<span[^>]+daysLeft_text[^>]*>([\s\S]*?)<\/span>/i,  AB.replaceTagsAndSpaces,  AB.parseBalance);
 
-    html = AnyBalance.requestGet(baseurl + 'REPSuite/accountBalance.page', g_headers);
-    AB.getParam(html, result, 'lastpay', /Последний платеж\s*:([\s\S]*?)<\/td>/i,  AB.replaceTagsAndSpaces,  AB.parseBalance);
-    AB.getParam(html, result, 'credit',  /Кредит\s*:([\s\S]*?)<\/td>/i,            AB.replaceTagsAndSpaces,  AB.parseBalance);
-    AB.getParam(html, result, 'limit',   /доступный лимит кредита([^<]*<){2}/i,    AB.replaceTagsAndSpaces,  AB.parseBalance);
+    if(AnyBalance.isAvailable('lastpay', 'credit', 'limit', 'orderdate', 'paytill') ||
+    		(AnyBalance.isAvailable('balance') && !isset(result.balance))){
 
-    if(!result.balance)
-        AB.getParam(html, result, 'balance', /Баланс \+ Пени\s*:([\s\S]*?)<\/td>/i,  AB.replaceTagsAndSpaces,  AB.parseBalance);
-
-    var table =  AB.getParam(html, null, null, /<table[^>]+class="body"[^>]*>(?:[\s\S](?!<\/table>))*?Кампания[\s\S]*?<\/table>/i);
-    var tr;
-    if(table) {
-        tr =  AB.getParam(table, null, null, /<tr[^>]*>\s*<td[^>]*>[1-9]\d*(?:[\s\S](?!<\/tr>))*?Заказ[\s\S]*?<\/tr>/i);
-    }
-    if(tr) {
-        AB.getParam(tr, result, 'orderdate', /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, AB.replaceTagsAndSpaces, AB.parseDate);
-        AB.getParam(tr, result, 'paytill',   /(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, AB.replaceTagsAndSpaces, AB.parseDate);
+        html = AnyBalance.requestGet(baseurl + 'REPSuite/accountBalance.page', g_headers);
+        AB.getParam(html, result, 'lastpay', /Последний платеж\s*:([\s\S]*?)<\/td>/i,  AB.replaceTagsAndSpaces,  AB.parseBalance);
+        AB.getParam(html, result, 'credit',  /Кредит\s*:([\s\S]*?)<\/td>/i,            AB.replaceTagsAndSpaces,  AB.parseBalance);
+        AB.getParam(html, result, 'limit',   /доступный лимит кредита([^<]*<){2}/i,    AB.replaceTagsAndSpaces,  AB.parseBalance);
+        
+        if(!result.balance)
+            AB.getParam(html, result, 'balance', /Баланс\s*:([\s\S]*?)<\/td>/i,  AB.replaceTagsAndSpaces,  AB.parseBalance);
+        
+        var table =  AB.getParam(html, null, null, /<table[^>]+class="body"[^>]*>(?:[\s\S](?!<\/table>))*?Кампания[\s\S]*?<\/table>/i);
+        var tr;
+        if(table) {
+            tr =  AB.getParam(table, null, null, /<tr[^>]*>\s*<td[^>]*>[1-9]\d*(?:[\s\S](?!<\/tr>))*?Заказ[\s\S]*?<\/tr>/i);
+        }
+        if(tr) {
+            AB.getParam(tr, result, 'orderdate', /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, AB.replaceTagsAndSpaces, AB.parseDate);
+            AB.getParam(tr, result, 'paytill',   /(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, AB.replaceTagsAndSpaces, AB.parseDate);
+        }
     }
 
     //Возвращаем результат

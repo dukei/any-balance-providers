@@ -12,7 +12,7 @@ var g_headers = {
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'http://stat.protvino.net/';
+	var baseurl = 'https://stat.protvino.net/';
 	AnyBalance.setDefaultCharset('utf-8');
 	
 	checkEmpty(prefs.login, 'Введите логин!');
@@ -32,7 +32,7 @@ function main() {
         }, addHeaders({Referer: baseurl}));
 
         if (!/logout/i.test(html)) {
-            var error = getParam(html, null, null, /<div class="alert[^>]*>[\s\S]*?<a[^>]*>[\s\S]*?<\/a>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+            var error = getParam(html, null, null, /<div class="alert[^>]*>[\s\S]*?<a[^>]*>[\s\S]*?<\/a>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
             if (error) {
                 throw new AnyBalance.Error(error, null, /Ошибка авторизации/i.test(error));
             }
@@ -44,9 +44,9 @@ function main() {
 	
 	var result = {success: true};
 	
-	getParam(html, result, 'fio', /class="well"(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'fio', /class="well"(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces);
 	getParam(html, result, 'balance', />\s*Баланс(?:[^>]*>){3}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'account', />\s*Основной лицевой счёт:(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'account', />\s*Основной лицевой счёт:(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces);
 	
 	AnyBalance.setResult(result);
 }

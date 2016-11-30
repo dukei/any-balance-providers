@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-municipal-vkcomfort</id>
+	<id version="3">ab-municipal-vkcomfort</id>
 	<api flags="no_browser"/>
 	<name>ВК Комфорт</name>
 	<description html="true"><![CDATA[
@@ -22,6 +22,7 @@
 		<counter id="fio" name="ФИО" type="text"/>
 		<counter id="acc_num" name="№ лс" type="text"/>
 		<counter id="period" name="Период" type="text"/>
+		<!--
 		<counter id="water" name="Водоотведение" units=" р"/>
 		<counter id="warm" name="Отопление" units=" р"/>
 		<counter id="heating" name="Подогрев ХВС для ГВС" units=" р"/>
@@ -32,7 +33,8 @@
 		<counter id="total_utilities" name="Итого(коммунальные услуги)" units=" р"/>
 		<counter id="expluat" name="Содержание и ремонт жилого помещения" units=" р"/>
 		<counter id="total_expluat" name="Итого(эксплуатационные услуги)" units=" р"/>
-		<counter id="total_sum" name="Итого" units=" р"/>
+		-->
+		<counter id="total_sum" name="Итого начислено" units=" р"/>
 	</counters>
 	<keywords></keywords>
 	<type>municipal</type>

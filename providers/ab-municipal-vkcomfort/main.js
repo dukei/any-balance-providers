@@ -43,12 +43,36 @@ function main() {
     }
 
 	var result = {success: true};
+
+	var accsel = getElement(html, /<select[^>]+accountsAccount/i);
+	var accs = getElements(accsel, /<option/ig);
+	AnyBalance.trace('Найдено ' + accs.length + ' счетов');
+
+	var num = getParam(accsel, null, null, /<option[^>]+value="([^"]*)[^>]*selected/i, replaceHtmlEntities);
+	if(!prefs.num || endsWith(num, prefs.num)){
+		AnyBalance.trace('Выбран счет ' + num + ' и он подходит');
+	}else{
+		for(var i=0; i<accs.length; ++i){
+			var a = accs[i];
+			num = getParam(a, null, null, /<option[^>]+value="([^"]*)/i, replaceHtmlEntities);
+			AnyBalance.trace('найден счет ' + num);
+			if(endsWith(num, prefs.num)){
+				AnyBalance.trace('Переключаемся на счет ' + num);
+				html = AnyBalance.requestGet(baseurl + 'change-account/' + num + '/', addHeaders({Referer: baseurl}));
+				break;
+			}
+		}
+		if(i >= accs.length)
+			throw new AnyBalance.Error('Не удалось найти счет с последними цифрами ' + prefs.num);
+	}
 	
-	var balan = getParam(html, null, null, /class="(?:positive|negative)"[^>]*>[\s\S]*?<\//i, null, null);
-	getParam(balan.replace(/negative">/ig, '-'), result, 'balance', null, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'fio', /header-account(?:[^>]*>){3}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'acc_num', /№ лс:(?:[^>]*>){1}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
-    
+	
+	getParam(html, result, 'balance', /<span[^>]+balance[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'fio', /user.png[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
+	getParam(num, result, 'acc_num');
+
+	getParam(html, result, 'total_sum', /<th[^>]*>\s*Начислено(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+/*    
     html = AnyBalance.requestGet(baseurl + '%D1%83%D0%B7%D0%BD%D0%B0%D1%82%D1%8C/%D0%BD%D0%B0%D1%87%D0%B8%D1%81%D0%BB%D0%B5%D0%BD%D0%B8%D1%8F/', g_headers);
     
     // проверяем - если за последний месяц нет начислений, тогда берем начисления за предыдущий месяц
@@ -58,7 +82,7 @@ function main() {
     } else {
         parsePeriodParams(html, result, '4');
     }
-	
+*/	
 	AnyBalance.setResult(result);
 }
 

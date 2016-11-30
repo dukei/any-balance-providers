@@ -187,20 +187,39 @@ function mainBelgorod(region){
     var prefs = AnyBalance.getPreferences();
     AnyBalance.setDefaultCharset('windows-1251');
     var baseurl = 'https://selfcare.netbynet.ru/'+region+'/';
+
+    var html = AnyBalance.requestGet(baseurl);
 	
     AnyBalance.trace ("Trying to enter selfcare at address: " + baseurl);
-    var html = requestPostMultipart (baseurl + "?", {
-    	'LOGIN': prefs.login,
-    	'PASSWD': prefs.password,
-    	'URL': 'selfcare.puzzle.su',
-    	'subm.x': 31,
-    	'subm.y': 4
-    });
+
+	if (!html || AnyBalance.getLastStatusCode() > 400) {
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Сайт провайдера временно недоступен! Попробуйте обновить данные позже.');
+	}
+
+	var form = AB.getElement(html, /<div[^>]+class=['"]right['"]/i);
+	if(!form){
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удаётся найти форму входа! Сайт изменен?');
+	}
+
+	var params = AB.createFormParams(form, function(params, str, name, value) {
+		if (/login/i.test(name)) {
+			return prefs.login;
+		} else if (/password/i.test(name)) {
+			return prefs.password;
+		}
+
+		return value;
+	});
+
+    var html = requestPostMultipart (baseurl + "?", params);
 	
     if(!/\?exit=1/i.test(html)){
-        var error = getParam (html, null, null, /<font[^>]+color=['"]red['"][^>]*>([\s\S]*?)<\/font>/i, replaceTagsAndSpaces);
+		var form = AB.getElement(html, /<div[^>]+class=['"]right['"]/i);
+        var error = getElement(form, /<font[^>]+color=['"]red['"]/i, replaceTagsAndSpaces);
         if (error){
-            throw new AnyBalance.Error (error);
+            throw new AnyBalance.Error (error, null, /парол/i.test(error));
         }
         throw new AnyBalance.Error ("Не удаётся войти в личный кабинет. Сайт изменен?");
     }

@@ -46,14 +46,19 @@ function processClick(options) {
 
     var html = AnyBalance.requestGet(g_baseurl + '/ALFAIBSR/', g_headers);
 
-    html = AnyBalance.requestPost(g_baseurl + '/AlfaSign/security', {
-        username: prefs.login,
-        password: prefs.password.substr(0, 16)
-    }, g_headers);
+    var state = getJsonObject(html, /window.initialState\s*=/);
+    var requestId = state.passport.authorization.requestId;
 
+/*    html = AnyBalance.requestPost(g_baseurl + '/AlfaSign/security', {
+        username: prefs.login,
+        password: prefs.password.substr(0, 16),
+        request_id: state.passport.authorization.requestId
+    }, g_headers);
+*/
     html = AnyBalance.requestPost(g_baseurl + '/oam/server/auth_cred_submit', {
         username: prefs.login,
-        password: prefs.password.substr(0, 16)
+        password: prefs.password.substr(0, 16),
+        request_id: requestId
     }, g_headers);
 
     if (!/"_afrLoop",\s*"(\d+)"/i.test(html)) {

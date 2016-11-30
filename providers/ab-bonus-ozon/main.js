@@ -68,7 +68,7 @@ function main() {
 		getParam(html, result, 'order_sum', /К оплате([^>]*>){3}/i, replaceTagsAndSpaces, parseBalance);
 		getParam(html, result, 'weight', /class="Weight"([^>]*>){2}/i, replaceTagsAndSpaces, parseBalance);
 		getParam(html, result, 'ticket', /Отправление([^>]*>){2}/i, replaceTagsAndSpaces);
-		getParam(html, result, 'state', /"[^"]*shipmentStateItem[^"]*activeState[^"]*"([^>]*>){2}/i, replaceTagsAndSpaces);
+		getParam(html, result, 'state', /<span[^>]+orderState[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
 	}
 	
 	html = AnyBalance.requestGet(baseurl + 'context/myclient/');

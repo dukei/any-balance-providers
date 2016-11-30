@@ -29,24 +29,32 @@ function main() {
 		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
 	}
 
-	var xpid = AB.getParam(html, null, null, /xpid:"([^"]+)"/i);
+/*	var xpid = AB.getParam(html, null, null, /xpid:"([^"]+)"/i);
 	if (!xpid) {
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось найти форму входа. Сайт изменен?');
 	}
-
+*/
 	var headers = {
 		Accept: 'application/json, text/plain, */*',
-		'X-NewRelic-ID': xpid,
+//		'X-NewRelic-ID': xpid,
 		'Content-Type': 'application/json;charset=utf-8',
 		Referer: baseurl + baseadd
 	};
 
 	html = AnyBalance.requestPost(baseurl + 'api/auth/login/', JSON.stringify({ phone: prefs.login, password: prefs.password }), AB.addHeaders(headers));
 	var sesData = getJsonObject(html);
-	if (!sesData || !sesData.auth_token) {
+
+	if(!sesData || !sesData.auth_token){
+		var errors = [];
+		for(var e in sesData){
+			errors.push.apply(errors, sesData[e]);
+		}
+		var error = errors.join('; ');
+		if(error)
+			throw new AnyBalance.Error(error, null, /некорректн|парол/i.test(error));
 		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Не удалось авторизоваться на сайте. Сайт изменен?');
+		throw new AnyBalance.Error('Не удалось войти в личный кабинет. Сайт изменен?');
 	}
 
 	headers.Authorization = "Bearer " + sesData.auth_token;

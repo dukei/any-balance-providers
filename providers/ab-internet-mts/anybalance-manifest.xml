@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id version="113">ab-internet-mts</id>
+	<id version="114">ab-internet-mts</id>
 	<name>Домашний Интернет и Телевидение МТС</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о текущем балансе, номере лицевого счета и договора, ФИО владельца, трафике в текущем месяце, абонентской плате для пользователей провайдера "Домашний Интернет и Телевидение МТС".</p>
@@ -27,7 +27,7 @@
 		<li>Миасс (https://lkmiass.ural.mts.ru/)<br></li>
 		<li>Москва (<a href="http://kabinet.mts.ru">http://kabinet.mts.ru</a>) - Стрим (<a href="http://stream-internet.ru/">http://stream-internet.ru/</a>)<br></li>
 		<li>Находка (<a href="https://clb.primorye.mts.ru/cvld/">https://clb.primorye.mts.ru/cvld/</a>)<br></li>
-		<li>Нижний Новгород (https://lknn.pv.mts.ru/ , https://lktvnn.pv.mts.ru/)<br></li>
+		<li>Нижний Новгород (https://lktvnn.pv.mts.ru/)<br></li>
 		<li>Новокузнецк (<a href="https://kabinet.kemerovo.mts.ru/">https://kabinet.kemerovo.mts.ru/</a>)<br></li>
 		<li>Новосибирск (<a href="https://kabinet.nsk.mts.ru">https://kabinet.nsk.mts.ru</a>) - бывший CityHomeNet <br></li>
 		<li>Норильск (<a href="http://kabinet.norilsk.mts.ru">http://kabinet.norilsk.mts.ru</a>)<br></li>

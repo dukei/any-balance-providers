@@ -23,7 +23,7 @@ var regions = {
   ekt: getPrm,
   krv: getKrv,
   vnov: getVnov,
-  nnov: getNnov,
+  nnov: getNnovTv,
   nnov_tv: getNnovTv,
   sdv: getSdv,
   vlgd: getVologda,
@@ -355,52 +355,6 @@ function getNnovTv() {
 
 function getVnov() {
   newTypicalLanBillingInetTv('https://lk.nov.mts.ru/index.php');
-}
-
-function getNnov() {
-  var prefs = AnyBalance.getPreferences();
-  AnyBalance.setDefaultCharset('windows-1251');
-
-  var baseurl = 'https://lknn.pv.mts.ru/stat/';
-  AnyBalance.setAuthentication(prefs.login, prefs.password);
-
-  var html = AnyBalance.requestGet(baseurl);
-
-  if (!/Текущий остаток:/i.test(html))
-    throw new AnyBalance.Error("Не удалось войти в личный кабинет. Неправильные логин, пароль?");
-
-  var result = {
-    success: true
-  };
-
-  getParam(html, result, 'license', /Лицевой счёт([^<]*)/i, replaceTagsAndSpaces);
-  getParam(html, result, 'balance', /Текущий остаток:([\s\S]*?)<br[^>]*>/i, replaceTagsAndSpaces, parseBalance2);
-  getParam(html, result, '__tariff', /Текущий тарифный план:([\s\S]*?)<\/strong>/i, replaceTagsAndSpaces);
-  getParam(html, result, 'abon', /Абонентcкая плата:([^<]*)/i, replaceTagsAndSpaces, parseBalance2);
-  getParam(html, result, 'username', /Лицевой счёт[^<]*(?:<[^>]*>\s*)*([^<]*)/i, replaceTagsAndSpaces);
-  getParam(html, result, 'daysleft', /Этой суммы вам хватит[\s\S]*?<span[^>]+class="imp"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces,
-    parseBalance2);
-
-  var url = getParam(html, null, null, /<a[^>]+href="\/stat\/([^"]*)"[^>]*>Информация об услугах/i, replaceHtmlEntities);
-  if (!url) {
-    AnyBalance.trace("Не удалось найти ссылку на информацию об услугах.");
-  } else {
-    html = AnyBalance.requestGet(baseurl + url);
-    var tr = getParam(html, null, null, /Активные услуги(?:[\s\S](?!<\/table>))*?<tr[^>]*>\s*(<td[^>]*>\s*<a[\s\S]*?)<\/tr>/i);
-    if (!tr) {
-      AnyBalance.trace("Не удалось найти ссылку на информацию об интернет.");
-    } else {
-      url = getParam(tr, null, null, /<a[^>]+href="\/stat\/([^"]*)/i, replaceHtmlEntities);
-      html = AnyBalance.requestGet(baseurl + url);
-      getParam(html, result, 'agreement', /Договор:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
-      getParam(html, result, '__tariff', /Описание услуги:[\s\S]*?<td[^>]*>(?:\s*<b[^>]*>[^<]*<\/b>)?([\s\S]*?)<\/td>/i,
-        replaceTagsAndSpaces);
-      getParam(html, result, 'internet_cur', /IP трафик[\s\S]*?<small[^>]*>([\s\S]*?)<\/small>/i, replaceTagsAndSpaces, parseBalance2);
-    }
-  }
-
-
-  AnyBalance.setResult(result);
 }
 
 function getSdv() {
@@ -1054,11 +1008,13 @@ function newTypicalLanBillingInetTv(baseurl) {
       // Это ТВ
       if (/\BТВ\B|Телевидение/.test(tarifdescr) && !/ШПД/.test(tarifdescr)) {
         if (!isset(accTv[pri]))
-          accTv[pri] = response;
+        	accTv[pri] = [];
+          accTv[pri].push(response);
         // Это интернет
       } else {
         if (!isset(accInet[pri]))
-          accInet[pri] = response;
+          accInet[pri] = [];
+        accInet[pri].push(response);
       }
     }
   }
@@ -1081,15 +1037,18 @@ function newTypicalLanBillingInetTv(baseurl) {
   }
 
   function readAccByPriority(arr, isInet) {
-    for (var i = 0; i < arr.length; ++i)
-      if (arr[i])
-        return readAcc(arr[i], isInet);
+    for (var i = 0; i < arr.length; ++i){
+      	for(var j=0; arr[i] && j<arr[i].length; ++j)
+        	readAcc(arr[i][j], isInet);
+        break;
+    }
   }
 
   readAccByPriority(accInet, true);
   readAccByPriority(accTv);
 
-  getParam(html, result, 'username', /<div[^>]+class="content-aside"[^>]*>[\s\S]*?<p[^>]*>([\s\S]*?)<\/p>/i, replaceTagsAndSpaces);
+  getParam(html, result, 'username', [/<div[^>]+class="content-aside"[^>]*>[\s\S]*?<p[^>]*>([\s\S]*?)<\/p>/i,
+  	/<div[^>]+client-info-item-value[^>]*>([\s\S]*?)<\/div>/i], replaceTagsAndSpaces);
 
   AnyBalance.setResult(result);
 }

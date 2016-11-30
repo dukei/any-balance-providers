@@ -143,7 +143,7 @@ function main() {
 			AB.getParam('<b>' + day + '</b><br/><br/>' + totalLessons, result, 'total' + i);
 	}*/
 	
-	AB.getParam(html, result, 'fio', /header-profile__name[^>]+>([^<]+)/i, AB.replaceTagsAndSpaces);
+	AB.getParam(html, result, 'fio', /<h2[^>]*>\s*Дневник:([^<]*)/i, AB.replaceTagsAndSpaces);
 	
 	AnyBalance.setResult(result);
 }

@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="13" date="2016-11-30">
+	- Поддержка изменений на сайте.
+	</change>
 	<change version="12" date="2016-05-13">
 	Возврат к получению информации с dnevnik.ru
 	schools.mosreg.ru не работает!

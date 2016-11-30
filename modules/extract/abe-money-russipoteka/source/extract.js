@@ -28,20 +28,30 @@ function login() {
 		}
 
 		if (!/logout/i.test(html)) {
-			html = AnyBalance.requestPost(baseurl + 'login.jsf', {
-				'form:login': 					prefs.login,
-				'form:password': 				prefs.password,
-				'form:captchaText': 			'',
-				'form:loginForm_SUBMIT': 		1,
+			var form = getElement(html, /<form[^>]+loginForm/i);
+			if(!form){
+				AnyBalance.trace(html);
+				throw new AnyBalance.Error('Не удалось найти форму входа. Сайт изменен?');
+			}
+			var prefix = getParam(form, null, null, /<form[^>]+id="(\w+):/i, replaceHtmlEntities);
+			var action = getParam(form, null, null, /<form[^>]+action="([^"]*)/i, replaceHtmlEntities);
+			var params = createUrlEncodedParams({
+				'*PREFIX*:login': 					prefs.login,
+				'*PREFIX*:password': 				prefs.password,
+				'*PREFIX*:captchaText': 			'',
+				'*PREFIX*:loginForm_SUBMIT': 		1,
 				'javax.faces.ViewState': 		getParam(html, null, null, /<input[^>]+name="javax.faces.ViewState"[^>]+value="([^"]*)/i),
 				'javax.faces.behavior.event': 	'action',
 				'javax.faces.partial.event': 	'click',
-				'javax.faces.source': 			'form:loginBtn',
+				'javax.faces.source': 			'*PREFIX*:loginBtn',
 				'javax.faces.partial.ajax': 	true,
-				'javax.faces.partial.execute': 'form:login form:captchaText',
-				'form:loginForm': 				'form:loginForm'
-			}, addHeaders({
-				Referer: baseurl + 'protected/welcome.jsf'
+				'javax.faces.partial.execute': '*PREFIX*:login *PREFIX*:captchaText',
+				'*PREFIX*:loginForm': 			'*PREFIX*:loginForm'
+			}).replace(/\*PREFIX\*/g, prefix);
+
+			html = AnyBalance.requestPost(baseurl + 'login.jsf', params, addHeaders({
+				Referer: baseurl + 'protected/welcome.jsf',
+				'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
 			}));
 
 			var json = getJson(
@@ -108,9 +118,9 @@ function login() {
 		}
 
 		if (!/logout/i.test(html)) {
-			var error = getParam(html, null, null, /<div[^>]+messageBox-content iconError[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+			var error = getElement(html, /<(?:[\s\S](?!display:\s*none|>))+class="error"(?:[\s\S](?!display:\s*none|>))*.>/i, replaceTagsAndSpaces);
 			if (error)
-				throw new AnyBalance.Error(error, null, /Неверно указаны данные для входа в систему/i.test(error));
+				throw new AnyBalance.Error(error, null, /Неверно указаны данные для входа в систему|парол/i.test(error));
 
 			AnyBalance.trace(html);
 			throw new AnyBalance.Error('Не удалось зайти в интернет-банк. Сайт изменен?');

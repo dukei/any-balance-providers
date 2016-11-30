@@ -34,26 +34,6 @@ function main(){
 		'cap_field':captchaa
     }, required_headers);
 	
-	// Указан номер - надо переключиться
-	if(prefs.number) {
-		var login = getParam(html, null, null, /Логин[^<]+?(\d{6,})/i);
-		AnyBalance.trace('Залогинены на номер: ' + login);
-		
-		if(!endsWith(login, prefs.number)) {
-			var post = getParam(html, null, null, new RegExp('SendPost\\(\'(\\?pril_sel=\\d+' + prefs.number + '[^)\']+)', 'i'));
-			
-			html = AnyBalance.requestPost(baseurl + "main.html", {
-				'pril_sel':getParam(post, null, null, /pril_sel=([^&]+)/i),
-				'live':getParam(post, null, null, /live=([^&]+)/i),
-				'chpril':getParam(post, null, null, /chpril=([^&]+)/i),
-			}, required_headers);
-			
-			AnyBalance.trace('Переключились на номер с последними цифрами: ' + prefs.number);
-		} else {
-			AnyBalance.trace('Уже залогинены на правильный номер: ' + login);
-		}
-	}
-	
 	if (!/\/logout/i.test(html)) {
 		var error = sumParam(html, null, null, /id="error"[^>]*>([\s\S]*?)<\/div>/ig, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
 		if (error)
@@ -62,13 +42,39 @@ function main(){
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}	
+
+	var forcedChoice = /choice/i.test(AnyBalance.getLastUrl());
+	
+	// Указан номер - надо переключиться
+	if(prefs.number || forcedChoice) {
+		var login = forcedChoice ? 'надо выбрать' : getParam(html, null, null, /Логин[^<]+?(\d{6,})/i);
+		AnyBalance.trace('Залогинены на номер: ' + login);
+		
+		if((prefs.number && !endsWith(login, prefs.number)) || forcedChoice) {
+			var post = getParam(html, null, null, new RegExp('SendPost\\(\'(\\?pril_sel=\\d*' + (prefs.number || prefs.login) + '[^)\']+)', 'i'));
+			if(!post){
+				AnyBalance.trace(html);
+				throw new AnyBalance.Error('Не найден логин с последними цифрами ' + (prefs.number || prefs.login));
+			}
+			
+			html = AnyBalance.requestPost(baseurl + "choice.html", {
+				'pril_sel':getParam(post, null, null, /pril_sel=([^&]+)/i),
+				'live':getParam(post, null, null, /live=([^&]+)/i),
+				'chpril':getParam(post, null, null, /chpril=([^&]+)/i),
+			}, required_headers);
+			
+			AnyBalance.trace('Переключились на номер с последними цифрами: ' + (prefs.number || prefs.login));
+		} else {
+			AnyBalance.trace('Уже залогинены на правильный номер: ' + login);
+		}
+	}
 	
     var result = {success: true};
 	
-	getParam(html, result, 'username', />\s*ФИО\s*\/\s*Компания[^:]*:([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'agreement', />\s*Договор([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'username', />\s*ФИО\s*\/\s*Компания[^:]*:([^<]+)/i, replaceTagsAndSpaces);
+	getParam(html, result, 'agreement', />\s*Договор([^<]*)/i, replaceTagsAndSpaces);
 	getParam(html, result, 'balance', /coins\.png">(?:&nbsp;|\s*)?[^<]+баланс([\s\S]*?)р/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, '__tariff', /\d{8,}(?:\s|&nbsp;)?\(([^)]+)/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, '__tariff', /Тарифный план на услуги[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
 	
     AnyBalance.setResult(result);
 }

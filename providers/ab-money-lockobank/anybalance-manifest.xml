@@ -1,17 +1,19 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-money-lockobank</id>
+	<id version="3">ab-money-lockobank</id>
 	<api flags="no_browser"/>
 	<name>Локобанк</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе на картах и счетах ЛокоБанк http://lockobank.ru</p>
-	<p>Информация берется из личного кабинета https://i.lockobank.ru/Account/Login.aspx?ReturnUrl=%2f</p>
+	<p>Информация берется из личного кабинета https://i.lockobank.ru/Account/Login?ReturnUrl=%2f</p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
@@ -25,6 +27,6 @@
 		<counter id="type" name="Тип" type="text"/>
 	</counters>
 	<keywords></keywords>
-	<type>money</type>
+	<type>money, bank</type>
 	<country>ru</country>
 </provider>

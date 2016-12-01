@@ -846,7 +846,7 @@ function typicalApiInetTv(baseurl) {
 
 
 function getMagnit() {
-  newTypicalLanBillingInetTv('https://lkmagn.ural.mts.ru/index.php');
+  newTypicalLanBillingInetTv_1('https://lkmagn.ural.mts.ru/index.php');
 }
 
 

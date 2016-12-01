@@ -117,13 +117,13 @@ function main(){
 	        
 					AnyBalance.trace('Опция ' + name + (available ? ' доступна' : ' недоступна'));
 	        
-					if(name == 'SMS'){
+					if(name == 'SMS' && available){
 						html = AnyBalance.requestPost(joinUrl(ref, action), {Command: 'Sms'}, addHeaders({Referer: ref}));
 						ref = AnyBalance.getLastUrl();
 					   	break;
 					}
 
-					if(name == 'E-NUM'){
+					if(name == 'E-NUM' && available){
 						var enumId = getParam(o, null, null, /<input[^>]+name="EnumId"[^>]*value="([^"]*)/i, replaceHtmlEntities);
 						html = AnyBalance.requestPost(joinUrl(ref, action), {Command: 'Enum', EnumId: enumId}, addHeaders({Referer: ref}));
 						ref = AnyBalance.getLastUrl();

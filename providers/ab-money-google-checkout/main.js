@@ -16,7 +16,7 @@ function main() {
 	checkEmpty(prefs.password, 'Enter password!');
 	
 	AnyBalance.setDefaultCharset('utf-8');
-	var baseurl = 'https://wallet.google.com/';
+	var baseurl = 'https://payments.google.com/';
 	
 	var html = googleLogin(prefs);
 	
@@ -27,35 +27,37 @@ function main() {
 	getParam(html, result, '__tariff', /gbar\.logger\.il(?:[^>]*>){3}([^<]+)<\/span/i, replaceTagsAndSpaces, html_entity_decode);
 	
 	// Получаем информацию из кошелька гугл
-	html = AnyBalance.requestGet(baseurl + 'merchant/pages/', g_headers);
-	if (/Payments\s+Merchant\s+Center/i.test(html)) {
-		var href = getParam(html, null, null, /merchant\/pages[^"]+\/transactions\/display/i);
+	html = AnyBalance.requestGet(baseurl + 'payments/home?hl=ru', g_headers);
+	if (/центр\s+платежей/i.test(html)) {
+		var href = getElements(html, [/<a\s+[^>]+data-widget-reference-token/ig, /Подписки\s+и\s+услуги/i])[0];
 		if(!href) {
 			AnyBalance.trace(html);
 			throw new AnyBalance.Error('Can`t find transactions href, is the site changed?');
 		}
-		// Переходим на страницу Выплаты:
-		html = AnyBalance.requestGet(baseurl + href, addHeaders({'Referer': 'Referer: https://wallet.google.com/'}));
+
+		var ebpInfo = getParam(href, null, null, /data-widget-reference-token="([^"]*)/i, replaceHtmlEntities, getJson);
+
+		// Переходим на страницу подписок и услуг:
+		html = AnyBalance.requestPost(baseurl + 'payments/u/0/account_manager?hl=ru', {ebp: ebpInfo[1]}, addHeaders({'Referer': baseurl}));
 		
-		var pcid = getParam(html, null, null, /data-customer-id="([^"]+)/i);
-		
-		var paramsArray = [
-			'pcid=' + encodeURIComponent(pcid),
-			'style=' + encodeURIComponent('mc3:alerts=NO'),
-			'hostOrigin=' + encodeURIComponent('aHR0cHM6Ly93YWxsZXQuZ29vZ2xlLmNvbS8.'),
-			'hl=ru',
-			'ipi=' + encodeURIComponent('qhqo3ij9wquj'),
-		];
-		
-		html = AnyBalance.requestGet('https://bpui0.google.com/payments/u/0/transactions?' + paramsArray.join('&'), g_headers);
-		
-		getParam(html, result, 'balance', /id="balance"([^>]*>){2}/i, replaceTagsAndSpaces, parseBalance);
-		getParam(html, result, ['currency', 'balance'], /id="balance"([^>]*>){2}/i, replaceTagsAndSpaces, parseCurrency);
-		getParam(html, result, 'last_payment', /id="lastSuccessfulPayment"(?:[^>]*>){1}[^<(]+([^<]+)/i, replaceTagsAndSpaces, parseBalance);
-		getParam(html, result, 'last_payment_date', /id="lastSuccessfulPayment"(?:[^>]*>){1}([^<]+)/i, replaceTagsAndSpaces, parseDate);
+		var href = getElements(html, [/<a\s+[^>]+data-widget-reference-token/ig, /Перейти/i])[0];
+		if(!href) {
+			AnyBalance.trace(html);
+			throw new AnyBalance.Error('Can`t find payments href, is the site changed?');
+		}
+		var ebpInfo = getParam(href, null, null, /data-widget-reference-token="([^"]*)/i, replaceHtmlEntities, getJson);
+
+		// Переходим на страницу выплат:
+		html = AnyBalance.requestPost(baseurl + 'payments/u/0/embedded_landing_page?hl=ru', {ebp: ebpInfo[1]}, addHeaders({'Referer': baseurl}));
+
+		getParam(getElement(html, /<[^>]+balance-card-headline/i), result, 'balance', null, replaceTagsAndSpaces, parseBalance);
+		getParam(getElement(html, /<[^>]+balance-card-headline/i), result, ['currency', 'balance'], null, replaceTagsAndSpaces, parseCurrency);
+		getParam(html, result, 'last_payment', /Его\s+размер составил([^<]+)/i, [replaceTagsAndSpaces, /[\-−]+/g, ''], parseBalance);
+		getParam(html, result, 'last_payment_date', /Последний платеж был совершен([^<]+?)(?:\.\s+|<)/i, [replaceTagsAndSpaces, /([а-яё]+)\s+(\d+)/i, '$2 $1'], parseDateWord);
 		// Следующая выплата
-		getParam(html, result, 'next_payment', /Остаток на конец месяца:([^<]+\$)/i, replaceTagsAndSpaces, parseBalance);
+		getParam(html, result, 'next_payment', /Транзакции(?:[\s\S]*?<div[^>]+field-group-cell[^>]*>){4}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
 	} else {
+		AnyBalance.trace(html);
 		AnyBalance.trace('Can`t login to Google Wallet, do have it on this account?');
 	}
 	

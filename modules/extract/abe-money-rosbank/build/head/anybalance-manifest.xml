@@ -8,7 +8,7 @@
 		<module id="library"/>
 	</depends>
 	<files>
-		<js>abe-money-rosbank.min.js</js>
+		<js>extract.abe-money-rosbank.min.js</js>
 		<history>history.xml</history>
 	</files>
 	<type>money, bank</type>

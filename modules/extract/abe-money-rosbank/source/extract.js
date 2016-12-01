@@ -23,36 +23,61 @@ function getViewState(html){
     return getParam(html, null, null, /name="__VIEWSTATE".*?value="([^"]*)"/) || getParam(html, null, null, /__VIEWSTATE\|([^\|]*)/i);
 };
 
+function getViewStateGenerator(html){
+    return getParam(html, null, null, /name="__VIEWSTATEGENERATOR".*?value="([^"]*)"/) || getParam(html, null, null, /__VIEWSTATEGENERATOR\|([^\|]*)/i);
+};
+
 function getEventValidation(html) {
     return getParam(html, null, null, /name="__EVENTVALIDATION".*?value="([^"]*)"/) || getParam(html, null, null, /__EVENTVALIDATION\|([^\|]*)/i);
 };
 
+function getAspParams(html){
+	return {
+		__EVENTARGUMENT: '',
+		__EVENTTARGET: '',
+		__EVENTVALIDATION: getEventValidation(html),
+		__LASTFOCUS: '',
+		__VIEWSTATE: getViewState(html),
+		__VIEWSTATEGENERATOR: getViewStateGenerator(html)
+	};
+}
+
 function login() {
     var prefs = AnyBalance.getPreferences();
+    AnyBalance.setDefaultCharset('utf-8');
 
     var html = AnyBalance.requestGet(g_baseurl, g_headers);
     if(!/Logout.aspx/i.test(html)) {
-        html = AnyBalance.requestPost(g_baseurl + 'Login.aspx', {
-            'ctl00$MainScriptManager':'ctl00$MainContentPlaceHolder$TabsUpdatePanel|ctl00$MainContentPlaceHolder$CardButton',
-            __LASTFOCUS:'',
-            __EVENTTARGET:'',
-            __EVENTARGUMENT:'',
-            __VIEWSTATE:getViewState(html),
-            __EVENTVALIDATION:getEventValidation(html),
-            'ctl00$MainContentPlaceHolder$pin1':'',
-            'ctl00$MainContentPlaceHolder$TransCod':'',
-            'ctl00$MainContentPlaceHolder$pin2enc':'',
-            'ctl00$MainContentPlaceHolder$Signature':'',
-            'ctl00$MainContentPlaceHolder$CardNumTextBox':prefs.login,
-            __ASYNCPOST:'true',
-            'ctl00$MainContentPlaceHolder$CardButton':'%D0%9F%D1%80%D0%BE%D0%B4%D0%BE%D0%BB%D0%B6%D0%B8%D1%82%D1%8C'
-        }, addHeaders({'X-MicrosoftAjax':'Delta=true'}));
+    	var form = getElement(html, /<form[^>]+aspnetForm/i);
+    	if(!form)
+    		throw new AnyBalance.Error('Не удалось найти форму входа. Сайт изменен?');
+		
+		var params = AB.createFormParams(form, function(params, str, name, value) {
+			if (/RegButton/i.test(name)) {
+				return;
+			}
+			return value;
+		});
 
-        var pin2enc = getParam(html,null,null,/class="pin2enc" value="(.*)"/);
-        if(!pin2enc)
-        	throw new AnyBalance.Error('Вы ввели неправильный логин! Введите последние восемь цифр идентификационной карты или ваш логин в интернет банк Росбанк.', null, true);
+        html = AnyBalance.requestPost(g_baseurl + 'Login.aspx', joinObjects({
+            	'ctl00$MainScriptManager':'ctl00$MainContentPlaceHolder$TabsUpdatePanel|ctl00$MainContentPlaceHolder$CardButton',
+            	'ctl00$MainContentPlaceHolder$CardNumTextBox':prefs.login,
+            	__ASYNCPOST:'true'
+            }, params), addHeaders({'X-MicrosoftAjax':'Delta=true'}));
 
-        var TransCod = getParam(html,null,null,/class="TransCod" value="(.*)"/);
+        var pin2enc = getParam(html,null,null,/class="pin2enc"[^>]*value="(.*)"/);
+        if(!pin2enc){
+            if(/AcceptTerms/i.test(html)){
+            	throw new AnyBalance.Error('Вы ещё ни разу не входили в интернет-банк или вам требуется сменить пароль. Зайдите в интернет банк через браузер на https://ibank.rosbank.ru/, затем попробуйте выполнить провайдер ещё раз');
+            }
+           	var error = /Идентификационная карта не найдена/i.test(html) ? 'Вы ввели неправильный логин! Введите последние восемь цифр идентификационной карты или ваш логин в интернет банк Росбанк.' : '';
+           	if(error)
+           		throw new AnyBalance.Error(error, null, true);
+           	AnyBalance.trace(html);
+           	throw new AnyBalance.Error('Не удаётся ввести логин. Сайт изменен?');
+       	}
+
+        var TransCod = getParam(html,null,null,/class="TransCod"[^>]*value="(.*)"/);
         var pin3 = prefs.password;
         var Signature = '';
 

@@ -437,7 +437,7 @@ function processThanksAPI(result){
 		var url = getParam(html, null, null, /<url>([^<]{10,})/i, replaceTagsAndSpaces);
 		if(url) {
 			html = AnyBalance.requestGet(url);
-			getParam(html, result, 'spasibo', /Баланс:\s*<strong[^>]*>\s*([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+			getParam(getElement(html, /<[^>]+balance-banner/i), result, 'spasibo', null, replaceTagsAndSpaces, parseBalance);
 		} else {
 			AnyBalance.trace("Не удалось найти ссылку на программу спасибо, сайт изменен?");
 		}

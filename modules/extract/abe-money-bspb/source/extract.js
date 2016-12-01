@@ -57,7 +57,7 @@ function login(prefs) {
             return value;
         });
 
-        html = AnyBalance.requestPost(baseurl + 'security/authenticateotp', params, addHeaders({Referer: baseurl}));
+        html = AnyBalance.requestPost(baseurl + 'login/authenticateotp', params, addHeaders({Referer: baseurl}));
 	}
 
 	if (!/logout/i.test(html)) {

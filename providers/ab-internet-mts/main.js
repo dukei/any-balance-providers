@@ -28,6 +28,7 @@ var regions = {
   sdv: getSdv,
   vlgd: getVologda,
   izh: getIzhevsk,
+  irk: getIrkutsk,
   pnz: getPnz,
   kms: getKomsomolsk,
   tula: getTula,
@@ -885,6 +886,10 @@ function getSaratov() {
 
 function getChita() {
   newTypicalLanBillingInetTv('https://clb.primorye.mts.ru/chita/index.php');
+}
+
+function getIrkutsk() {
+  newTypicalLanBillingInetTv_1('https://clb.primorye.mts.ru/irk/index.php');
 }
 
 function getNahodka() {

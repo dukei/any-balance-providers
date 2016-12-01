@@ -197,6 +197,16 @@ function main(){
 		params = createFormParams(form);
 		action = getParam(form, null, null, /<form[^>]+action="([^"]*)/i, replaceHtmlEntities);
 		html = AnyBalance.requestPost(joinUrl(ref, action), params, addHeaders({Referer: ref}));
+		ref = AnyBalance.getLastUrl();
+
+		if(/ctl00\$cph\$btnStd/i.test(html)){
+			AnyBalance.trace('Обнаружена промежуточная страница, переходим на стандартный кошелек');
+			form = getElement(html, /<form[^>]+aspnetForm/i);
+			params = createFormParams(form);
+			html = AnyBalance.requestPost(ref, joinObjects({
+				__EVENTTARGET: 'ctl00$cph$btnStd'
+			}, params), addHeaders({Referer: ref}));
+		}
 	    
 		if (!/logout/i.test(html)) {
 			AnyBalance.trace(html);

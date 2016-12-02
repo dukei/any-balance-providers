@@ -31,8 +31,7 @@ function login(prefs, result) {
 		html = AnyBalance.requestPost(baseurl + 'wb/api/v2/session', JSON.stringify({
 			login: prefs.login,
 			password: prefs.password,
-			captcha: '',
-			_error: null		
+			captcha: ''
 		}), addHeaders({
 			Referer: baseurl + 'wb/',
 			'Content-Type': 'application/json',
@@ -41,11 +40,54 @@ function login(prefs, result) {
 		
 		json = getJson(html);
 
+		if(json._status == 'confirmationRequired'){
+			AnyBalance.trace('Потребовалась доп. авторизация');
+			if(json.confirmation.authTypes.indexOf('otp_sms') < 0){
+				AnyBalance.trace(html);
+				throw new AnyBalance.Error('Ни один способ доп. подтверждения входа, требуемый данным логином, пока не поддерживается. Сайт изменен?');
+			}
+
+			//посылаем смс запрос на первый телефон
+			json._status = null;
+			json.captcha = '';
+			json.login = prefs.login;
+			json.password = prefs.password;
+			json.confirmation.authType = 'otp_sms';
+			json.confirmation.phoneId = json.confirmation.phones[0].id;
+				
+			html = AnyBalance.requestPost(baseurl + 'wb/api/v2/session', JSON.stringify(json), addHeaders({
+				Referer: baseurl + 'wb/',
+				'Content-Type': 'application/json',
+				'X-Requested-With': 'XMLHttpRequest'
+			}));
+			
+			json = getJson(html);
+
+			var code = AnyBalance.retrieveCode('На ваш телефонний номер ' + json.confirmation.challenge.phone + ' відправлено СМС-повідомлення з одноразовим паролем. Будь ласка, введіть пароль', null, {inputType: 'number', time: 180000});
+
+			json._status = null;
+			json.captcha = '';
+			json.login = prefs.login;
+			json.password = prefs.password;
+			json.confirmation.response = code;
+
+			html = AnyBalance.requestPost(baseurl + 'wb/api/v2/session', JSON.stringify(json), addHeaders({
+				Referer: baseurl + 'wb/',
+				'Content-Type': 'application/json',
+				'X-Requested-With': 'XMLHttpRequest'
+			}));
+			
+			json = getJson(html);
+		}
+
 		if(json.status != 'authenticated'){
+			var errors = {
+				INVALID_ONE_TIME_PASSWORD: 'Невірний одноразовий пароль',
+				INVALID_LOGIN_OR_PASSWORD: 'Невірний логін або пароль',
+			};
+
 			if(json._error)
-				throw new AnyBalance.Error(json._error.code == 'INVALID_LOGIN_OR_PASSWORD' ? 'Невірний логін або пароль' : json._error.code, null, /INVALID_LOGIN_OR_PASSWORD/i.test(json._error.code));
-			if(json._status == 'confirmationRequired')
-				throw new AnyBalance.Error("Ощадбанк потребовал подтверждение входа по SMS. Эта возможность пока не поддерживается. Пожалуйста, обратитесь к разработчикам");
+				throw new AnyBalance.Error(errors[json._error.code] || json._error.code, null, /INVALID_LOGIN_OR_PASSWORD/i.test(json._error.code));
 
 			AnyBalance.trace(html);
 			throw new AnyBalance.Error('Не удалось войти в интернет банк. Сайт изменен?');

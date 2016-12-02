@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="2.8" version="24" date="2016-12-02">
+	Поддержка OTP по смс
+	</change>
 	<change major_version="2.8" version="23" date="2016-11-21">
 	- Поддержка изменений на сайте.
 	</change>

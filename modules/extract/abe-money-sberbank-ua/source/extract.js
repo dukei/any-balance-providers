@@ -41,29 +41,36 @@ function login(prefs, result) {
 		json = getJson(html);
 
 		if(json._status == 'confirmationRequired'){
-			AnyBalance.trace('Потребовалась доп. авторизация');
-			if(json.confirmation.authTypes.indexOf('otp_sms') < 0){
-				AnyBalance.trace(html);
-				throw new AnyBalance.Error('Ни один способ доп. подтверждения входа, требуемый данным логином, пока не поддерживается. Сайт изменен?');
+			AnyBalance.trace('Потребовалась доп. авторизация: ' + html);
+
+			if(json.confirmation.authTypes){
+				AnyBalance.trace('Выбираем способ подтверждения...');
+
+				if(json.confirmation.authTypes.indexOf('otp_sms') < 0){
+					AnyBalance.trace(html);
+					throw new AnyBalance.Error('Ни один способ доп. подтверждения входа, требуемый данным логином, пока не поддерживается. Сайт изменен?');
+				}
+			    
+				//посылаем смс запрос на первый телефон
+				json._status = null;
+				json.captcha = '';
+				json.login = prefs.login;
+				json.password = prefs.password;
+				json.confirmation.authType = 'otp_sms';
+				json.confirmation.phoneId = json.confirmation.phones[0].id;
+					
+				html = AnyBalance.requestPost(baseurl + 'wb/api/v2/session', JSON.stringify(json), addHeaders({
+					Referer: baseurl + 'wb/',
+					'Content-Type': 'application/json',
+					'X-Requested-With': 'XMLHttpRequest'
+				}));
+				
+				json = getJson(html);
 			}
 
-			//посылаем смс запрос на первый телефон
-			json._status = null;
-			json.captcha = '';
-			json.login = prefs.login;
-			json.password = prefs.password;
-			json.confirmation.authType = 'otp_sms';
-			json.confirmation.phoneId = json.confirmation.phones[0].id;
-				
-			html = AnyBalance.requestPost(baseurl + 'wb/api/v2/session', JSON.stringify(json), addHeaders({
-				Referer: baseurl + 'wb/',
-				'Content-Type': 'application/json',
-				'X-Requested-With': 'XMLHttpRequest'
-			}));
-			
-			json = getJson(html);
-
 			var code = AnyBalance.retrieveCode('На ваш телефонний номер ' + json.confirmation.challenge.phone + ' відправлено СМС-повідомлення з одноразовим паролем. Будь ласка, введіть пароль', null, {inputType: 'number', time: 180000});
+
+			AnyBalance.trace('Отправляем код подтверждения...');
 
 			json._status = null;
 			json.captcha = '';

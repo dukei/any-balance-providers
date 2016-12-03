@@ -63,7 +63,7 @@ function main() {
 
  	var json = getJsonObject(info, /var\s+\$Config\s*=\s*/);
 
- 	if (!json) {
+ 	if (!json && !/logout/i.test(info)) { //В некоторых аккаунтах почему-то нет Config, но есть логаунт (<html data-role-name="MeePortal")
  		json = getJsonObject(info, /var\s+ServerData\s*=\s*/);
  		var error = json && json.sErrTxt;
  		if (error)

@@ -37,10 +37,16 @@ function main() {
 			throw new AnyBalance.Error('Пользователь с такими данными не найден', null, true);
 
 	var result = {success: true};
-	html = AnyBalance.requestGet(baseurl+'scet/', g_headers);
-	getParam(html, result, 'balance', /<span[^>]*>Состояние счёта(?:[^>]*>){7}([\s\S]*?)<\/li/i, [replaceTagsAndSpaces, /задолженность:/i, '-'], parseBalance);
-	getParam(html, result, 'acc_num', /Ваш номер лицевого счета:([\s\S]*?)<\//i, replaceTagsAndSpaces);
-	getParam(html, result, 'lastDate', /<span[^>]*>Состояние счёта(?:[\s\S]*?<li[^>]*>){5}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseDate);
+	if(AnyBalance.isAvailable('acc_num', 'lastDate')){
+		html = AnyBalance.requestGet(baseurl+'scet/', g_headers);
+		getParam(html, result, 'acc_num', /Ваш номер лицевого счета:([\s\S]*?)<\//i, replaceTagsAndSpaces);
+		getParam(html, result, 'lastDate', /Дата передачи последних показаний(?:[\s\S]*?<li[^>]*>)([\s\S]*?)<\/li>/i, replaceTagsAndSpaces, parseDate);
+	}
+
+	if(AnyBalance.isAvailable('balance')){
+		html = AnyBalance.requestGet(baseurl+'payment/', g_headers);
+		getParam(html, result, 'balance', /С учётом задолженности и оплаты на конец отчётного периода(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+	}
 
 	AnyBalance.setResult(result);
 }

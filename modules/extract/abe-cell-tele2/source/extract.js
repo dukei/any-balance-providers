@@ -328,8 +328,8 @@ function processPayments(html, result){
 				return time;
 			}
 			
-			var match = /^(\d+\s+[а-яa-z]+)/i.exec(str) || [];
-			return parseDateWordSilent(match[1]);
+			var match = /^(\d+\s+[а-яa-z]+(?:\s+\d+)?)/i.exec(str) || [];
+			return parseDateWord(match[1]);
 		});
 
         result.payments.push(p);

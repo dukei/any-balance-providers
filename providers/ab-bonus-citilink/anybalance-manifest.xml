@@ -42,7 +42,7 @@
 		<counter id="wo_date" name="Ближайшая дата списания бонусов" type="time" format="dd/MM/yyyy"/>
 		<counter id="activation_date" name="Дата последней операции с бонусами" type="time" format="dd/MM/yyyy"/>
 		<counter id="card_activation_date" name="Дата активации карты" type="time" format="dd/MM/yyyy"/>
-		<counter id="card_num" name="Дата активации карты" type="text"/>
+		<counter id="card_num" name="Номер карты" type="text"/>
 	</counters>
 	<keywords>ситилинк,citilink,citylink</keywords>
 	<type>bonus</type>

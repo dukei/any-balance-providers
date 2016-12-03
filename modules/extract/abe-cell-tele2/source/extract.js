@@ -266,18 +266,22 @@ function getDiscount(result, discount) {
         //Минуты
         sumParam(discount.rest.value, result, 'remainders.min_left', null, null, null, aggregate_sum);
         sumParam(discount.limit.value - discount.rest.value, result, 'remainders.min_used', null, null, null, aggregate_sum);
+        sumParam(discount.endDate || undefined, result, 'remainders.min_till', null, null, null, aggregate_min);
     } else if (/[кмгkmg][bб]/i.test(units)) {
         //трафик
         getParam(discount.rest.value + discount.rest.measure, result, 'remainders.traffic_left', null, null, parseTraffic);
         getParam((discount.limit.value - discount.rest.value) + discount.limit.measure, result, 'remainders.traffic_used', null, null, parseTraffic);
+        sumParam(discount.endDate || undefined, result, 'remainders.traffic_till', null, null, null, aggregate_min);
     } else if (/шт|SMS|MMS/i.test(units)) {
         //СМС/ММС
         if (/ммс|mms/i.test(name)) {
             getParam(discount.rest.value, result, 'remainders.mms_left');
             getParam(discount.limit.value - discount.rest.value, result, 'remainders.mms_used');
+        	sumParam(discount.endDate || undefined, result, 'remainders.mms_till', null, null, null, aggregate_min);
         } else {
             getParam(discount.rest.value, result, 'remainders.sms_left');
             getParam(discount.limit.value - discount.rest.value, result, 'remainders.sms_used');
+        	sumParam(discount.endDate || undefined, result, 'remainders.sms_till', null, null, null, aggregate_min);
         }
     } else {
         AnyBalance.trace("Неизвестный дискаунт: " + JSON.stringify(discount));

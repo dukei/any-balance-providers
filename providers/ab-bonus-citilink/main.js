@@ -2,7 +2,7 @@
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 */
 
-var baseurl = "http://www.citilink.ru";
+var baseurl = "https://www.citilink.ru";
 
 var g_headers = {
 	'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
@@ -44,7 +44,7 @@ function main(){
 	var url = joinUrl(baseurl, action);
 	
 	//Надо вздремнуть, а то нас палят как роботов (а зачем это делать? оставьте полезных роботов в покое.)
-	var sleeptime = 2000 + Math.floor(Math.random()*3000);
+	var sleeptime = 4000 + Math.floor(Math.random()*3000);
 	AnyBalance.trace('Надо вздремнуть ' + sleeptime + ' мс, а то нас палят как роботов (а зачем это делать? оставьте полезных роботов в покое.)');
 	AnyBalance.sleep(sleeptime);
 

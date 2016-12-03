@@ -13,7 +13,7 @@ var g_headers = {
 	'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/47.0.2526.106 Safari/537.36'
 };
 
-function main(){
+function login(){
     var prefs = AnyBalance.getPreferences();
 
     AnyBalance.setDefaultCharset('utf-8'); 
@@ -54,11 +54,31 @@ function main(){
     if(!/\/login\/exit/i.test(html)){
         var error = getParam(html, null, null, /<div[^>]+class="[^"]*error[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
         if(error)
-            throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
+            throw new AnyBalance.Error(error, null, /парол/i.test(error));
 		
 		AnyBalance.trace(html);
         throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
     }
+
+    return html;
+}
+
+function main(){
+	var html;
+
+	for(var i=0; i<5; ++i){
+		try{
+			AnyBalance.trace('Попытка входа в Ситилинк ' + (i+1) + '/5');
+			html = login();
+			break;
+		}catch(e){
+			if(/парол/i.test(e.message) && i<4)
+				continue;
+			throw e;
+		}
+	}
+
+	AnyBalance.trace('Успешный вход');
 
     var result = {success: true};
     getParam(html, result, '__tariff', /Статус(?:\s|<[^>]*>)*:([^<]*)/i,  replaceTagsAndSpaces);
@@ -86,7 +106,7 @@ function main(){
       getParam(html, result, 'nachisleno',   /Начислено бонусов(?:[^>]*>){2}([^<]*)/i,                replaceTagsAndSpaces, parseBalance);
     }
 
-    if(isAvailable(['wo_date', 'wo_sum', 'activation_date', 'activation_sum', 'activation_type'])) {
+    if(isAvailable(['wo_date', 'wo_sum', 'activation_date', 'activation_sum', 'activation_type', 'card_activation_date', 'card_num'])) {
       html = AnyBalance.requestGet(baseurl + '/profile/club/', g_headers);
 
       getParam(html, result, 'wo_date', /дата списания(?:[\s\S]*?<td[^>]*>){1}([^<]*)/i, replaceTagsAndSpaces, parseDateWord);
@@ -96,6 +116,8 @@ function main(){
       getParam(html, result, 'activation_sum',   /Детализация активации бонусов(?:[\s\S]*?<td[^>]*>){3}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
       getParam(html, result, 'activation_type',  /Детализация активации бонусов(?:[\s\S]*?<td[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces);
 
+      getParam(html, result, 'card_activation_date', /дата активации:([^<]*)/i, replaceTagsAndSpaces, parseDateWord);
+      getParam(html, result, 'card_num', /Карта №([^,<]*)/i, replaceTagsAndSpaces);
     }
 
     AnyBalance.setResult(result);

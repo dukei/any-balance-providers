@@ -51,15 +51,6 @@ function main(){
     if(prefs.type != 0 && prefs.type != 500 && prefs.type != 550 && !prefs.city)
         throw new AnyBalance.Error('Для выбранного типа подключения необходимо явно указать ваш город.');
 	
-/*    AnyBalance.trace(JSON.stringify({
-        extDvc:prefs.type,
-        authCity:(prefs.city && city2num[prefs.city]) || 26,
-        authLogin:prefs.login,
-        authPassword:prefs.password,
-        userAction:'auth'
-    }));
-*/
-
     var html = AnyBalance.requestPost(baseurl, {
         extDvc:prefs.type,
         authCity:(prefs.city && city2num[prefs.city]) || 26,
@@ -69,13 +60,15 @@ function main(){
     });
 
     if(!/\/index\/logout/i.test(html)){
-        var error = getParam(html, null, null, /<div[^>]+authMsgBox[^>]*>\s*<h3[^>]*>([\s\S]*?)<\/h3>/i, replaceTagsAndSpaces, html_entity_decode);
-        if(error)
-            throw new AnyBalance.Error(error, null, /неверный логин или пароль/i.test(error));
+        var divs = getElements(html, /<[^>]+error_hint/ig), errors = [];
+        for(var i=0; i<divs.length; ++i){
+        	if(!/display:\s*none/i.test(divs[i]))
+        		errors.push(replaceAll(divs[i], replaceTagsAndSpaces));
+        }
         
-        error = getParam(html, null, null, /<div[^>]*background-color:\s*Maroon[^>]*>([\s\S]*?)<\/div>/, replaceTagsAndSpaces, html_entity_decode);
+        error = errors.join('; ');
         if(error)
-            throw new AnyBalance.Error(error);
+            throw new AnyBalance.Error(error, null, /парол|логин/i.test(error));
 		
         AnyBalance.trace(html);
         throw new AnyBalance.Error('Не удалось войти в личный кабинет. Проблемы на сайте или сайт изменен.');
@@ -83,15 +76,15 @@ function main(){
     var result = {success: true};
 	
 	if(!prefs.accnum) {
-		getParam(html, result, 'balance', /Баланс:[\S\s]*?<strong[^>]*>([\S\s]*?)<\/strong>/i, replaceTagsAndSpaces, parseBalanceRK);
-		getParam(html, result, 'status', /Статус:[\S\s]*?<strong[^>]*>([\S\s]*?)<\/strong>/i, replaceTagsAndSpaces, html_entity_decode);
-		getParam(html, result, 'licschet', /Лицевой счёт:[\S\s]*?<strong[^>]*>([\S\s]*?)<\/strong>/i, replaceTagsAndSpaces, html_entity_decode);
-		getParam(html, result, '__tariff', /Тарифный план:[\S\s]*?<strong[^>]*>([\S\s]*?)<\/strong>/i, replaceTagsAndSpaces, html_entity_decode);
+		getParam(html, result, 'balance', /<b[^>]+\bsumm\b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, parseBalance);
+		getParam(html, result, 'status', /<span[^>]+b-lk-fix-tarif__activated[^>]*>([\S\s]*?)<\/span>/i, replaceTagsAndSpaces);
+		getParam(html, result, 'licschet', /Номер лицевого счета\s*<\/div>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+		getParam(html, result, '__tariff', /<div[^>]+b-lk-fix-tarif__name[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
 	} else {
 		// Теперь таблица услуг
 		var table = getParam(html, null, null, /(<table[\s\S]{1,150}id="list"[\s\S]*?<\/table>)/i);
 		if(!table)
-			throw new AnyBalance.Error('Не найдена таблица услуг. Обратитесь к автору провайдера по имейл.');
+			throw new AnyBalance.Error('Не найдена таблица услуг. Сайт изменен?.');
 		
 		var re = /(<tr[\s\S]*?<\/tr>)/ig;
 		html.replace(re, function(tr) {

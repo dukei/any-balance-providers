@@ -197,6 +197,7 @@ function main() {
         if(!phone_num) {
           throw new AnyBalance.Error("Не удалось найти номер телефона!");
         }
+        AnyBalance.trace('Получаем информацию по первому номеру ' + phone_num);
 
         html_data = AnyBalance.requestPost(baseurl + 't2bsc/zkau', {
           dtid: subscribersPageToken,

@@ -880,21 +880,29 @@ function mainLK(html, result) {
         AnyBalance.trace('Пропускаем получение данных из ЛК, если требуется информация по другому номеру');
     }
 
-    try{
-        if (isAnotherNumber() || isAvailableIH()) {
-            var ret = followIHLink();
-            html = ret.html;
-        
-            if (!isInOrdinary(html)) //Тупой МТС не всегда может перейти из личного кабинета в интернет-помощник :(
-            	checkIHError(html, true, true);
-        
-            fetchOrdinary(html, ret.baseurlHelper, result);
+    var maxIHTries = 3;
+    //Иногда помощник входит не с первого раза почему-то.
+    for(var i=0; i<maxIHTries; ++i){
+        try{
+            if (isAnotherNumber() || isAvailableIH()) {
+            	AnyBalance.trace('Попытка входа в интернет-помощник ' + (i+1) + '/' + maxIHTries);
+                var ret = followIHLink();
+                html = ret.html;
+            
+                if (!isInOrdinary(html)) //Тупой МТС не всегда может перейти из личного кабинета в интернет-помощник :(
+                	checkIHError(html, true, true);
+            
+                fetchOrdinary(html, ret.baseurlHelper, result);
+            }
+            break;
+        }catch(e){
+        	if(isAnotherNumber())
+        		throw e; //В случае требования другого номера все данные получаются только из интернет-помощника
+            AnyBalance.trace('Не удалось получить данные из ип: ' + e.message + '\n' + e.stack);
+
+        	if(i == maxIHTries-1) //Если попытка последняя, ставим флаг, что были ошибки
+            	result.were_errors = true;
         }
-    }catch(e){
-    	if(isAnotherNumber())
-    		throw e; //В случае требования другого номера все данные получаются только из интернет-помощника
-        AnyBalance.trace('Не удалось получить данные из ип: ' + e.message + '\n' + e.stack);
-        result.were_errors = true;
     }
 }
 

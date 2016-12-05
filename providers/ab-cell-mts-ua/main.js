@@ -34,7 +34,9 @@ function main(){
 	});
 
 	if (!/Security\.mvc\/LogOff/i.test(html)) {
-		var error = getParam(html, null, null, [/<ul class="operation-results-error"><li>([\s\S]*?)<\/li>/i, /<h1>\s*Ошибка\s*<\/h1>\s*<p>([\s\S]*?)<\/p>/i], replaceTagsAndSpaces, html_entity_decode);
+		var error = getParam(html, null, null, [/<ul class="operation-results-error"><li>([\s\S]*?)<\/li>/i, /<h1>\s*Ошибка\s*<\/h1>\s*<p>([\s\S]*?)<\/p>/i], replaceTagsAndSpaces);
+		if(!error)
+			error = getElement(html, /<div[^>]+class="main"/i, replaceTagsAndSpaces);
 		if (error)
 			throw new AnyBalance.Error(error, null, /Введен неизвестный номер телефона|Введен неверный пароль/i.test(error));
 
@@ -81,7 +83,7 @@ function main(){
         html = AnyBalance.requestGet(baseurl + "MyPhoneNumbers.mvc/Change?phoneNumber=380"+prefs.phone);
 	if(!html)
 		throw new AnyBalance.Error(prefs.phone + ": номер, возможно, неправильный или у вас нет к нему доступа"); 
-	var error = getParam(html, null, null, /<ul class="operation-results-error">([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
+	var error = getParam(html, null, null, /<ul class="operation-results-error">([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces);
 	if(error)
 		throw new AnyBalance.Error(prefs.phone + ": " + error); 
     }
@@ -96,10 +98,10 @@ function main(){
     
     // Телефон
     if(fnomer == '2') {
-    getParam (html, result, 'phone', /(?:Ваш телефон|phone):.*?>([^<]*)</i, replaceTagsAndSpaces, html_entity_decode);
+    getParam (html, result, 'phone', /(?:Ваш телефон|phone):.*?>([^<]*)</i, replaceTagsAndSpaces);
     }
     if(fnomer == '4') {
-    getParam (html, result, 'phone', /(?:Ваш телефон|phone):.*?>([^<]*)</i, [replaceTagsAndSpaces, / /ig, '', /-/ig, '', /^\+380/, '0'], html_entity_decode);
+    getParam (html, result, 'phone', /(?:Ваш телефон|phone):.*?>([^<]*)</i, [replaceTagsAndSpaces, / /ig, '', /-/ig, '', /^\+380/, '0']);
     }
 
     AnyBalance.trace("Fetching status...");
@@ -109,7 +111,7 @@ function main(){
     AnyBalance.trace("Parsing status...");
 
     if(/<h1[^>]*>\s*Ошибка\s*<\/h1>/i.test(html)){
-		var error = getParam(html, null, null, /<h1[^>]*>\s*Ошибка\s*<\/h1>\s*<p[^>]*>([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, html_entity_decode);
+		var error = getParam(html, null, null, /<h1[^>]*>\s*Ошибка\s*<\/h1>\s*<p[^>]*>([\s\S]*?)<\/p>/i, replaceTagsAndSpaces);
 		AnyBalance.trace('При получении статуса МТС вернул ошибку: ' + error + '\n Проверьте, можно ли перейти на состояние счета в мобильном интернет-помощнике');
 	}
 
@@ -125,10 +127,10 @@ function main(){
     getParam (html, result, 'balance', /(?:Ваш поточний баланс|Ваш текущий баланс|balance):\s*([\s\S]*?)\s*грн/i, replaceTagsAndSpaces, parseBalance);
       // Телефон
     if(fnomer == '1') {
-    getParam (html, result, 'phone', /(?:Витрачено по номеру|Израсходовано по номеру|phone)\s*([\s\S]*?)\s*за/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam (html, result, 'phone', /(?:Витрачено по номеру|Израсходовано по номеру|phone)\s*([\s\S]*?)\s*за/i, replaceTagsAndSpaces);
     }
     if(fnomer == '3') {
-    getParam (html, result, 'phone', /(?:Витрачено по номеру|Израсходовано по номеру|phone)\s*([\s\S]*?)\s*за/i, [replaceTagsAndSpaces, / /ig, '', /-/ig, '', /\(/ig, '', /\)/ig, ''], html_entity_decode);
+    getParam (html, result, 'phone', /(?:Витрачено по номеру|Израсходовано по номеру|phone)\s*([\s\S]*?)\s*за/i, [replaceTagsAndSpaces, / /ig, '', /-/ig, '', /\(/ig, '', /\)/ig, '']);
     }
 
       //Срок действия (баланса) номера (!!!пропал из интернет помощника)
@@ -225,6 +227,8 @@ function main(){
     // Интернет за границей в "Команда 3D"
     sumParam (html, result, 'traffic_evropa_mb', /<li>2 МБ в Европе: Осталось:\s*(\d+,?\d* *(Кб|kб|bytes)).<\/li>/ig, null, parseTraffic, aggregate_sum);
     sumParam (html, result, 'traffic_russia_mb', /<li>20 МБ в России: Осталось:\s*(\d+,?\d* *(Кб|kб|bytes)).<\/li>/ig, null, parseTraffic, aggregate_sum);
+
+    sumParam (html, result, 'traffic_tablet_mb', /<li>\d+ Мб для тарифа "Планшет"[^>]*осталось([^<]*)<\/li>/ig, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
 
     // СМС в сети МТС
     sumParam (html, result, 'sms_net', /<li>Осталось (\d+) смс.[^<]*<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
@@ -330,7 +334,7 @@ function main(){
     sumParam (html, result, 'termin_traffic_free_mb', /<li>50 МБ для тарифа 'Смартфон'. Осталось:[^\d]*?[^<]*. Срок действия до([^<]*)<\/li>/ig, replaceTagsAndSpaces, parseDate, aggregate_min);
 
     // Лицевой счет
-    getParam (html, result, 'license', /№ (.*?):/, replaceTagsAndSpaces, html_entity_decode);
+    getParam (html, result, 'license', /№ (.*?):/, replaceTagsAndSpaces);
 
     // Расход за этот месяц
     getParam (html, result, 'usedinthismonth', /Витрачено по номеру[^<]*<strong>([\s\S]*?)<\/strong>[^<]*грн/i, replaceTagsAndSpaces, parseBalance);
@@ -391,7 +395,7 @@ function main(){
     AnyBalance.trace("Parsing tariff info...");
 
     // Тарифный план
-    getParam (html, result, '__tariff', /<p>(?:Ваш тариф|tariff plan):\s*<strong>([\s\S]*?)<\/strong><\/p>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam (html, result, '__tariff', /<p>(?:Ваш тариф|tariff plan):\s*<strong>([\s\S]*?)<\/strong><\/p>/i, replaceTagsAndSpaces);
 
     switch(result.__tariff) {
         case 'GSM \"Бизнес Оптимальный-2\"':

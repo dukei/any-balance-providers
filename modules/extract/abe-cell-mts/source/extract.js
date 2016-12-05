@@ -179,7 +179,7 @@ function fetchOrdinary(html, baseurl, result) {
 }
 
 function checkIHError(html, result, forceError) {
-    var error = getParam(html, null, null, /<div[^>]+class="b_(?:-page)error"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+    var error = getParam(html, null, null, /<div[^>]+class="b_(?:-page)?error"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
     if (error || forceError) {
         var err = 'Ошибка МТС при получения данных из интернет-помощника: ' + (error || 'вероятно, он временно недоступен');
         if(result === true){
@@ -277,6 +277,8 @@ function fetchAccountStatus(html, result) {
         // Бизнес пакеты
         html = sumParam(html, result.remainders, 'remainders.min_left', /местные минуты[^<]*?:\s*([\d\.,]+)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum, true);
         html = sumParam(html, result.remainders, 'remainders.min_left', /пакет местных минут[^<]*?:\s*([\d\.,]+)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum, true);
+        html = sumParam(html, result.remainders, 'remainders.min_left', /Остаток\s+"[^<]*?([\d\.,]+)\s*мин/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum, true);
+
         html = sumParam(html, result.remainders, 'remainders.min_left_mezh', /междугородные минуты[^<]*?:\s*([\d\.,]+)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum, true);
         // <li>Остаток пакета "Пакет МГ минут в дом. регионе":13мин МГ</li>
         html = sumParam(html, result.remainders, 'remainders.min_left_mezh', /Пакет МГ[^<]*?([\d\.,]+?)\s*мин/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum, true);

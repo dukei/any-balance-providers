@@ -21,4 +21,14 @@
 		dialogMessage="Введите пароль, используемый для входа в личный кабинет."
 		inputType="textPassword">
 	</EditTextPreference>
+	<EditTextPreference
+		title="Номер счета или телефона"
+		key="num"
+		summary="||{@s}"
+		inputType="number"
+		dialogTitle="Номер счета или телефона"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите последние цифры номера счета или телефона, по которому вы хотите получить информацию. Оставьте поле пустым, если хотите получить информацию по первому счету/телефону.">
+	</EditTextPreference>
 </PreferenceScreen>

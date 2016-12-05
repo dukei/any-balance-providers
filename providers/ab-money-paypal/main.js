@@ -198,6 +198,19 @@ function getBalanceInfo(html){
 			json = {balanceDetails: balances};
 		}
 	}
+	if(!json){
+		var info = getJsonObject(html, /var\s+__REACT_ENGINE__\s*=\s*/i);
+		if(info){
+			AnyBalance.trace('Данные вернулись в React Engine json, преобразовываем');
+			var balances = [];
+			for(var i=0; i<info.balance.balances.length; ++i){
+				var curr = info.balance.balances[i].currency;
+				var amount = info.balance.balances[i].availableBalance.total.amount;
+				balances.push({currency: curr, available: {amount: amount}});
+			}
+			json = {balanceDetails: balances};
+		}
+	}
 	return json;
 }
 
@@ -218,6 +231,11 @@ function faceStepUp(json, baseurl, loginPage){
 
 	var data = getParam(html, null, null, /\bdata-data="([^"]*)/i, replaceHtmlEntities, getJson);
 	AnyBalance.trace('StepUp data 1: ' + JSON.stringify(data));
+	if(!data){
+		var confType = getElement(html, /<div[^>]+callOut/i, replaceTagsAndSpaces);
+		AnyBalance.trace(confType + '\n\n' + html);
+		throw new AnyBalance.Error('PayPal required an unknown confimation of log in:\n"' + confType + '"\nIs the site changed?');
+	}
 	handleStepUpErrors(data);
 
 	var sms = data.challengeSetModel.selectOptionList.indexOf('SMS');
@@ -351,7 +369,7 @@ function logInSite(){
 	}
 
 	if(!jsonBalances){
-		throw new AnyBalance.Error('Не удалось войти в личный кабинет PayPal...');
+		throw new AnyBalance.Error('Could not find PayPal balance...');
 	}
 	
 	var result = {success: true};

@@ -22,7 +22,7 @@
 		inputType="textPassword">
 	</EditTextPreference>
 	<EditTextPreference
-		title="Номер карты"
+		title="Номер карты (4 последние цифры)"
 		key="cardnum"
 		summary="||{@s}"
 		obligatory="true"

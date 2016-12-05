@@ -40,7 +40,7 @@ function main() {
 		adapter.processCards(html, result);
 		
 		if(!adapter.wasProcessed('cards'))
-			throw new AnyBalance.Error(prefs.num ? 'Не найдена карта с последними цифрами ' + prefs.num : 'У вас нет ни одной карты!');
+			throw new AnyBalance.Error(prefs.cardnum ? 'Не найдена карта с последними цифрами ' + prefs.cardnum : 'У вас нет ни одной карты!');
 	}
 	
 	result = adapter.convert(result);

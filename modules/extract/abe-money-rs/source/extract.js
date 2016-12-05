@@ -103,10 +103,17 @@ function getProductsJson(){
     if(/'data'/.test(html))
         return false;
 
-	var json = getJson(html);
-	if(!json.data){
-		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Ошибка получения списка карт. Сайт изменен?');
+    try{
+		var json = getJson(html);
+		if(!json.data){
+			AnyBalance.trace(html);
+			throw new AnyBalance.Error('Ошибка получения списка продуктов. Сайт изменен?');
+		}
+	}catch(e){
+		var error = getElement(html, /<h1/i, replaceTagsAndSpaces);
+		if(error)
+			throw new AnyBalance.Error(error);
+		throw new AnyBalance.Error('Ошибка соединения с интернет-банком. Сайт изменен?');
 	}
 
 	return getProductsJson.cached_json = json;

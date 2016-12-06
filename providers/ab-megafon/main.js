@@ -1608,6 +1608,17 @@ function processStopContent(result){
 	}
 }
 
+function checkLKPhone(html){
+	var prefs = AnyBalance.getPreferences();
+	var phone = getParam(getElement(html, /<div[^>]+class="gadget_account_block"[^>]*>/i), null, null, /<h3[^>]*>([\s\S]*?)<\/h3>/i, [replaceTagsAndSpaces, /\D/g, '']);
+	checkLKPhone.phone = phone;
+	if(!phone)
+		return;
+    if(phone.indexOf(prefs.login) >= 0)
+    	return true;
+    return false;
+}
+
 function enterLK(filial, options){
 	var prefs = AnyBalance.getPreferences();
 	AnyBalance.trace('Пробуем войти в новый ЛК...');
@@ -1616,17 +1627,18 @@ function enterLK(filial, options){
 	
 	var html = AnyBalance.requestGet(baseurl, g_headers);
 	if(isLoggedInLK(html)){
-		var phone = getParam(getElement(html, /<div[^>]+class="gadget_account_block"[^>]*>/i), null, null, /<h3[^>]*>([\s\S]*?)<\/h3>/i, [replaceTagsAndSpaces, /\D/g, '']);
-		AnyBalance.trace('Автоматически зашли в личный кабинет на номер ' + phone);
-		if(!phone){
+		var phoneOk = checkLKPhone(html);
+		AnyBalance.trace('Автоматически зашли в личный кабинет на номер ' + checkLKPhone.phone);
+		if(!isset(phoneOk)){
 			AnyBalance.trace(html);
 			AnyBalance.trace('Не удалось определить номер... Будем входить по логину и паролю.');
 			removeAllLKCookies();
 			html = AnyBalance.requestGet(baseurl + 'login/', g_headers);
-		}else if(phone.indexOf(prefs.login) >= 0){
+		}else if(phoneOk === true){
 			AnyBalance.trace('Номер правильный. Используем этот вход.');
 		}else{
 			AnyBalance.trace('Номер неправильный (нужен ' + prefs.login + '). Будем входить по логину и паролю.');
+			megafonLKTurnOffAutoLogin();
 			removeAllLKCookies();
 			html = AnyBalance.requestGet(baseurl + 'login/', g_headers);
 		}
@@ -1662,6 +1674,11 @@ function enterLK(filial, options){
 	}
 			
 	var sessionid = getParam(html, null, null, /SESSION_ID=([^&"]+)/i);
+	var phoneOk = checkLKPhone(html);
+	if(!phoneOk){
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удаётся зайти в ЛК на нужный номер. Входит на номер ' + checkLKPhone.phone);
+	}
 
 	try{
 		if(options.useOldSG){
@@ -1937,18 +1954,23 @@ function allowRobotsSG(filial, sessionid, login){
     }
 }
 
-//Получение данных из ЛК мегафона
-function megafonLK(filial, html){
-	var result = {success: true, filial: filial_info[filial].id};
-
-	getParam(getElement(html, /<div[^>]+class="gadget_account_block"[^>]*>/i), result, 'phone', /<h3[^>]*>([\s\S]*?)<\/h3>/i, replaceNumber);
-
+function getLkCsrf(html){
 	var info = getJsonObject(html, /var\s+HISTONE_ENV\s*=\s*/);
 	var csrf = info.CSRF;
 	if(!csrf){
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось найти параметр запросов к API личного кабинета');
 	}
+	return csrf;
+}
+
+//Получение данных из ЛК мегафона
+function megafonLK(filial, html){
+	var result = {success: true, filial: filial_info[filial].id};
+
+	getParam(getElement(html, /<div[^>]+class="gadget_account_block"[^>]*>/i), result, 'phone', /<h3[^>]*>([\s\S]*?)<\/h3>/i, replaceNumber);
+
+	var csrf = getLkCsrf(html);
 
 	if(AnyBalance.isAvailable('available')){
 		info = requestPipe(csrf, 'balance/get');
@@ -2252,6 +2274,53 @@ function megafonLKTurnOffSMSNotification(csrf){
 		AnyBalance.trace('Уведомление выключено успешно!');
 	}else{
 		AnyBalance.trace('Результат выключения, к сожалению, неизвестен: ' + info);
+	}
+}
+
+function megafonLKTurnOffAutoLogin(csrf){
+	if(!csrf){
+		var html = AnyBalance.requestGet(lk_url + 'settings/login/', addHeaders({Referer: lk_url}));
+		csrf = getLkCsrf(html);
+	}
+		
+    function getLoginHash(csrf){
+		var json = requestPipe(csrf, 'check/autologin');
+		return json.hash;
+	}
+
+	var json = requestPipe(csrf, 'autologin/status');
+	
+	var on = json.allowAutologin;
+	if(!on){
+		AnyBalance.trace('Автовход выключен. И отлично.');
+		return;
+	}	
+
+    AnyBalance.trace('Автовход включен. К сожалению, теперь с автовходом нельзя попасть на другой номер, не отключив его. Попытаемся отключить.');
+
+	var hash = getLoginHash(csrf);
+
+	var json = requestPipe(csrf, 'autologin/status', null, {ALLOW_AUTOLOGIN: '0'});
+	if(!json.ok){
+		AnyBalance.trace('Запрос на выключение сработал неудачно: ' + info);
+	}
+
+	var tries = 5;
+	while(tries--){
+		var newHash = getLoginHash(csrf);
+		if(newHash != hash){
+			break; //Наверное, переключилось
+		}
+		AnyBalance.trace('Ждем результата. Запас терпения: ' + tries);
+		if(tries > 0)
+			AnyBalance.sleep(4000);
+	}
+
+	var json = requestPipe(csrf, 'autologin/status');
+	if(json.allowAutologin == "0"){
+		AnyBalance.trace('Автовход выключен успешно!');
+	}else{
+		AnyBalance.trace('Результат выключения автовхода, к сожалению, неизвестен: ' + info);
 	}
 }
 

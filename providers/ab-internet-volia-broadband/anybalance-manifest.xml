@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-  <id version="12">ab-internet-volia-broadband</id>
+  <id version="13">ab-internet-volia-broadband</id>
   <name>Volia Broadband (Украина)</name>
   <description>
     Мониторинг остатка средств на счету интернет провайдера Воля Бродбенд (Украина)
@@ -17,6 +17,7 @@
   </files>
   <counters>
     <counter id="balance" name="Баланс" suffix=" ₴" type="numeric"/>
+    <counter id="bonuses" name="Бонусы" suffix=" бон." type="numeric"/>
     <counter id="amountToPay" name="Рекомендовано оплатить" suffix=" ₴" type="numeric"/>
     <counter id="ndogovor" name="№ договора" type="numeric"/>
     <counter id="fio" name="ФИО абонента" type="text"/>
@@ -24,9 +25,6 @@
     <counter id="kkan" name="Количество каналов" suffix=" кан." type="numeric"/>
     <counter id="speed" name="Скорость интернета" suffix=" Мбит/с" type="numeric"/>
     <counter id="ktel" name="Количество телевизоров" suffix=" тел." type="numeric"/>
-    <counter id="traffic" name="Трафик" suffix=" GB" type="numeric"/>
-    <counter id="traffic_in_lim" name="Трафик в лимите" suffix=" GB" type="numeric"/>
-    <counter id="traffic_over_lim" name="Трафик за лимитом" suffix=" GB" type="numeric"/>
   </counters>
   <keywords>
     провайдер интернет украина

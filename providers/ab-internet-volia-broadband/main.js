@@ -7,7 +7,7 @@ var g_headers = {
 	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
 	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
 	'Connection': 'keep-alive',
-	'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/44.0.2403.157 Safari/537.36',
+	'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.75 Safari/537.36',
 };
 
 function main(){
@@ -103,6 +103,13 @@ function main(){
 
 	getParam(html, result, 'kkan', /Телевидение\s*<\/b>\s*<span>([^<]+)/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'speed', /Интернет\s*<\/b>\s*<span>([^<]+)/i, replaceTagsAndSpaces, parseBalance);
+    
+	html = AnyBalance.requestPost(baseurl + '/kiev/ru/cockpit/loyalty/bonuses', params, addHeaders({
+		Referer: baseurl + 'kiev/ru/faq',
+		'X-Requested-With':'XMLHttpRequest'
+	}));
+    
+	getParam(html, result, 'bonuses', /bonusAmountLabel" class=[^>]*>([^<]+)бонусов/i, replaceTagsAndSpaces, parseBalance);
 
 	AnyBalance.setResult(result);
 }

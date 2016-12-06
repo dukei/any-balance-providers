@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="3.1" version="200" date="2016-12-06">
+	Исправлен показ данных с другого номера через мобильный интернет
+	</change>
 	<change major_version="3.1" version="199" date="2016-12-06">
 	Исправление входа на другой номер через мобильный интернет
 	</change>

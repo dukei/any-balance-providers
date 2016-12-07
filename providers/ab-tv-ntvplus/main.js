@@ -67,27 +67,31 @@ function main(){
 		AnyBalance.trace('Найден нужный договор: ' + num);
 
 		getParam(num, result, 'agreement');
-		getParam(getElements(c, [/<div[^>]+contract--balance-item[^>]*>/ig, />\s*Баланс/i]), result, 'balance', null, replaceTagsAndSpaces, parseBalance);
-		getParam(getElements(c, [/<div[^>]+contract--balance-item[^>]*>/ig, />\s*Бонусный баланс/i]), result, 'bonus', null, replaceTagsAndSpaces, parseBalance);
 		getParam(getElements(c, /<[^>]+contract--description[^>]*>/i), result, '__tariff', null, replaceTagsAndSpaces);
-		getParam(getElements(c, /<[^>]+status--label[^>]*>/i), result, 'state', null, replaceTagsAndSpaces);
 
-		if(AnyBalance.isAvailable('packets')){
+		if(AnyBalance.isAvailable('balance', 'bonus', 'state', 'packets')){
 			var ref = getParam(c, null, null, /<a[^>]+href="([^"]*\/info\?id=[^"]*)/i, replaceHtmlEntities);
 			if(!ref){
 				AnyBalance.trace('Не удалось найти ссылку на расширенную информацию: ' + c);
-			}else{
-				var url = joinUrl(baseurl + 'account/', ref);
-				html = AnyBalance.requestGet(url, addHeaders({Referer: baseurl + 'account/'}));
-				var tagsContainer = getElement(html, /<div[^>]+tags[^>]*>/i);
-				var tags = getElements(tagsContainer, /<span[^>]+tags--item[^>]*>/ig, replaceTagsAndSpaces);
-				getParam(tags.join(', '), result, 'packets');
+				throw new AnyBalance.Error('Не удалось найти ссылку на подробную информацию о договоре. Сайт изменен?');
 			}
+		    
+			var url = joinUrl(baseurl + 'account/', ref);
+			html = AnyBalance.requestGet(url, addHeaders({Referer: baseurl + 'account/'}));
+			
+			getParam(getElements(html, [/<div[^>]+form--outlined[^>]*>/ig, />\s*Баланс/i]), result, 'balance', null, replaceTagsAndSpaces, parseBalance);
+			getParam(getElements(html, [/<div[^>]+form--outlined[^>]*>/ig, />\s*Бонусный баланс/i]), result, 'bonus', null, replaceTagsAndSpaces, parseBalance);
+			getParam(getElements(html, /<[^>]+status--label[^>]*>/i), result, 'state', null, replaceTagsAndSpaces);
+		    
+			var tagsContainer = getElement(html, /<div[^>]+tags[^>]*>/i);
+			var tags = getElements(tagsContainer, /<span[^>]+tags--item[^>]*>/ig, replaceTagsAndSpaces);
+			getParam(tags.join(', '), result, 'packets');
 		}
-
+		
 		break;
 	}
-
+	
     AnyBalance.setResult(result);
 }
 
+                                 

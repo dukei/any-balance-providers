@@ -859,7 +859,7 @@ function getKurgan() {
   AnyBalance.setOptions({
     SSL_ENABLED_PROTOCOLS: ['TLSv1'],
   });
-  newTypicalLanBillingInetTv('https://lkkurgan.ural.mts.ru/index.php');
+  newTypicalLanBillingInetTv_1('https://lkkurgan.ural.mts.ru/index.php');
 }
 
 function getBarnaul() {

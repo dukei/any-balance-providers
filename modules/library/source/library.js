@@ -99,6 +99,14 @@ var AB = (function (global_scope) {
      * см. например replaceTagsAndSpaces
      */
     function getParam(html, result, param, regexp, replaces, parser) {
+    	if (result instanceof RegExp){
+    		//Пропустили два параметра (result и param), остальные надо сдвинуть
+    		parser = regexp;
+    		replaces = param;
+    		regexp = result;
+    		result = param = null;
+    	}
+    		
         if (!isset(html)) {
             AnyBalance.trace('getParam: input ' + (param ? '(' + param + ')' : '') + ' is unset! ' + new Error().stack);
             return;
@@ -564,6 +572,16 @@ var AB = (function (global_scope) {
      * см. например replaceTagsAndSpaces
      */
     function sumParam(html, result, param, regexp, replaces, parser, do_replace, aggregate) {
+    	if (result instanceof RegExp){
+    		//Пропустили два параметра (result и param), остальные надо сдвинуть
+    		aggregate = do_replace;
+    		do_replace = parser;
+    		parser = regexp;
+    		replaces = param;
+    		regexp = result;
+    		result = param = null;
+    	}
+
         if (!isset(html)) {
             AnyBalance.trace('sumParam: input ' + (param ? '(' + param + ')' : '') + ' is unset! ' + new Error().stack);
             return;

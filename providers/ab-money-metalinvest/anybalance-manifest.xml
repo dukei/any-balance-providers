@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-money-metalinvest</id>
+	<id version="2">ab-money-metalinvest</id>
 	<api flags="no_browser"/>
 	<name>Металлинвестбанк</name>
 	<description html="true"><![CDATA[
@@ -8,12 +8,13 @@
 	<p>Информация берется из интернет-банка https://info.metib.ru:8223</p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="extract/abe-money-metalinvest"/>
+		<module id="nadapter"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
-		<js>nadapter.js</js>
-		<js>extract.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>

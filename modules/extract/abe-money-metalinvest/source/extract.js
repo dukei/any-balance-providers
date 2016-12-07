@@ -2,11 +2,6 @@
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 */
 
-function sleep(delay) {
-    AnyBalance.trace('Calling hw sleep');
-    AnyBalance.sleep(delay);
-} 
-
 function encryptPass(pass, map){
 	if(map){
 		var ch='',i=0,k=0,TempPass='',PassTemplate=map.split(','), Pass='';
@@ -33,116 +28,113 @@ var g_headers = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.1 (KHTML, like Gecko) Chrome/21.0.1180.60 Safari/537.1'
 }
 
-var g_baseurl;
+var g_baseurl, g_jsonInfo;
 
 function login(baseurl){
-    var prefs = AnyBalance.getPreferences();
+    var prefs = AnyBalance.getPreferences(), jsonInfo;
     g_baseurl = baseurl;
-    
-    var html = AnyBalance.requestGet(baseurl + 'T=RT_2Auth.BF');
-    var mapId = getParam(html, null, null, /<input[^>]*name="MapID"[^>]*value="([^"]*)"/i);
-    var map = getParam(html, null, null, /var\s+PassTemplate\s*=\s*new\s+Array\s*\(([^\)]*)/i);
-    var pass = encryptPass(prefs.password, map);
-	
-    html = AnyBalance.requestPost(baseurl, {
-        tic: 0,
-        T:'RT_2Auth.CL',
-        A:prefs.login,
-        B:pass,
-        L:'russian',
-        C:'',
-        IdCaptcha:'',
-        IMode:'',
-        sTypeInterface:'default',
-        MapID:mapId || ''
-    }, g_headers);
-	
-    var error = getParam(html, null, null, /<BSS_ERROR>\d*\|?([\s\S]*?)<\/BSS_ERROR>/i, replaceTagsAndSpaces);
-    if(error)
-        throw new AnyBalance.Error(error);
-	
-    var jsonInfo = getParam(html, null, null, /ClientInfo=(\{[\s\S]*?\})\s*(?:<\/div>|$)/i);
-    if(!jsonInfo)
-        throw new AnyBalance.Error("Не удалось найти информацию о сессии в ответе банка.");
-	
-    jsonInfo = JSON.parse(jsonInfo);
-    html = AnyBalance.requestPost(baseurl, {
-        SID:jsonInfo.SID,
-        tic:1,
-        T:'rt_0clientupdaterest.doheavyupd'
-    }, g_headers);
-	
-    var i=0;
-    do{
-        AnyBalance.trace('Ожидание обновления данных: ' + (i+1));
+
+    if(!g_jsonInfo){ 
+        var html = AnyBalance.requestGet(baseurl + 'T=RT_2Auth.BF');
+        var mapId = getParam(html, null, null, /<input[^>]*name="MapID"[^>]*value="([^"]*)"/i);
+        var map = getParam(html, null, null, /var\s+PassTemplate\s*=\s*new\s+Array\s*\(([^\)]*)/i);
+        var pass = encryptPass(prefs.password, map);
+		
+        html = AnyBalance.requestPost(baseurl, {
+            tic: 0,
+            T:'RT_2Auth.CL',
+            A:prefs.login,
+            B:pass,
+            L:'russian',
+            C:'',
+            IdCaptcha:'',
+            IMode:'',
+            sTypeInterface:'default',
+            MapID:mapId || ''
+        }, g_headers);
+		
+        var error = getParam(html, null, null, /<BSS_ERROR>\d*\|?([\s\S]*?)<\/BSS_ERROR>/i, replaceTagsAndSpaces);
+        if(error)
+            throw new AnyBalance.Error(error, null, /парол/i.test(error));
+		
+        jsonInfo = getJsonObject(html, /ClientInfo=/i);
+        if(!jsonInfo){
+        	AnyBalance.trace(html);
+            throw new AnyBalance.Error("Не удалось найти информацию о сессии в ответе банка.");
+        }
+		
         html = AnyBalance.requestPost(baseurl, {
             SID:jsonInfo.SID,
             tic:1,
-            T:'rt_0clientupdaterest.CheckForAcyncProcess'
-        }, addHeaders({Referer: baseurl+'T=RT_2Auth.BF'}));
+            T:'rt_0clientupdaterest.doheavyupd'
+        }, g_headers);
+		
+        var i=0;
+        do{
+            AnyBalance.trace('Ожидание обновления данных: ' + (i+1));
+            html = AnyBalance.requestPost(baseurl, {
+                SID:jsonInfo.SID,
+                tic:1,
+                T:'rt_0clientupdaterest.CheckForAcyncProcess'
+            }, addHeaders({Referer: baseurl+'T=RT_2Auth.BF'}));
+        
+            var opres = getParam(html, null, null, /^\s*(?:<BSS_ERROR>([\s\S]*?)<\/BSS_ERROR>)?([\s\S]*>)?\d+\s*$/i, replaceTagsAndSpaces);
+            if(opres){
+                AnyBalance.trace('Обновление данных закончено. ' + opres);
+                break; //Всё готово, надо получать баланс
+            }
+            if(++i > 10){  //На всякий случай не делаем больше 10 попыток
+                AnyBalance.trace('Не удалось за 10 попыток обновить баланс, получаем старое значение...');
+                break;
+            }
+            AnyBalance.sleep(3000);
+        }while(true);
 
-        var opres = getParam(html, null, null, /^\s*(?:<BSS_ERROR>([\s\S]*?)<\/BSS_ERROR>)?([\s\S]*>)?\d+\s*$/i, replaceTagsAndSpaces);
-        if(opres){
-            AnyBalance.trace('Обновление данных закончено. ' + opres);
-            break; //Всё готово, надо получать баланс
-        }
-        if(++i > 10){  //На всякий случай не делаем больше 10 попыток
-            AnyBalance.trace('Не удалось за 10 попыток обновить баланс, получаем старое значение...');
-            break;
-        }
-        sleep(3000);
-    }while(true);
+        g_jsonInfo = jsonInfo;
+        __setLoginSuccessful();
+    }else{
+    	AnyBalance.trace('Сессия уже начата, используем её');
+    	jsonInfo = g_jsonInfo;
+    }
 	
 	return jsonInfo;
 }
 
 function processCredits(jsonInfo, result){
     var html = AnyBalance.requestPost(g_baseurl, {
-        SID:jsonInfo.SID,
-        tic:1,
-        T:'RT_2IC.SC',
-        nvgt:1,
-        SCHEMENAME:'CREDITS',
-        FILTERIDENT:''
-    }, addHeaders({Referer: g_baseurl}));
+        WidgetID:'CREDITS',
+        Action:'Default',
+        Template:'Simple',
+        SchemeName:'',
+        BlockName:''
+    }, addHeaders({
+    	BSSHTTPRequest: '1',
+    	'X-Requested-With': 'XMLHttpRequest',
+    	BSSHTTPRequestExt: '1',
+    	'RTS-Request': 'SID=' + jsonInfo.SID + '&T=bss_plugins_core.widget&tic=1&isNewCore=1', 
+    	Referer: g_baseurl
+    }));
 
-    var tbl = getElement(html, /<table[^>]+id="SCROLLER"[^>]*>/i);
-    if(!tbl){
-    	AnyBalance.trace('Похоже, кредитов нет...\n' + html);
+    var cnt = getParam(html, /Всего\s*<strong[^>]*>([\s\S]*?)<\/strong>\s*кредит/i, replaceTagsAndSpaces, parseBalance);
+    if(!cnt){
+    	AnyBalance.trace('Похоже, кредитов нет...\n' + (isset(cnt) ? '' : html));
     	return;
     }
 
-    var headbody = getElements(tbl, /<(?:thead|tbody)[^>]*>/ig);
-    if(!/<thead/i.test('' + headbody[0])){
-    	AnyBalance.trace(html);
-    	throw new AnyBalance.Error('Не удаётся найти заголовок таблицы кредитов. Сайт изменен?');
-    }
-    if(!/<tbody/i.test('' + headbody[1])){
-    	AnyBalance.trace(html);
-    	throw new AnyBalance.Error('Не удаётся найти тело таблицы кредитов. Сайт изменен?');
-    }
+    AnyBalance.trace('Заявлено ' + cnt + ' кредитов');
 
+    var divs = getElements(html, /<div[^>]+credit-item/ig);
     result.credits = [];
 
-    var cols = getColsCredit(headbody[0]);
-    var trs = getElements(headbody[1], /<tr[^>]*>/ig);
-    for(var i=0; i<trs.length; ++i){
-    	var row = trs[i];
-    	var id = getParam(row, null, null, /<tr[^>]+ACC="([^"]*)/i, replaceHtmlEntities);
-    	var tds = getElements(row, /<td[^>]*>/ig);
-    	var name = /NickEmpty/i.test(row) || !isset(cols.name) ? id : getParam(tds[cols.name], null, null, null, replaceTagsAndSpaces);
-    	var c = {__id: id, __name: name};
+    AnyBalance.trace('Найдено ' + divs.length + ' кредитов');
+
+    for(var i=0; i<divs.length; ++i){
+    	var row = divs[i];
+    	var num = getParam(row, /getFormNickName\s*\([^),],\s*'([^']*)/i, replaceHtmlEntities);
+    	var name = getElement(row, /<div[^>]+credit_name/i, replaceTagsAndSpaces);
+    	var c = {__id: num, __name: name, num: num};
     	if(__shouldProcess('credits', c)){
-    		processCredit(cols, tds, c);
-
-			var idr = getParam(row, null, null, /<tr[^>]+SIDR="([^"]*)/i, replaceHtmlEntities);
-			if(!idr){
-				AnyBalance.trace('Не удаётся найти ссылку на расширенную информацию по кредиту\n' + row);
-				continue;
-			}
-
-			processCreditExtra(jsonInfo, idr, c);
-			processCreditTransactions(jsonInfo, idr, c);
+    		processCredit(jsonInfo, row, c);
     	}
 
     	result.credits.push(c);
@@ -184,7 +176,7 @@ function processAccounts(jsonInfo, result){
     	var tds = getElements(row, /<td[^>]*>/ig);
     	var id = getParam(row, null, null, /<input[^>]+type="checkbox"[^>]*STM="([^"]*)/i, replaceHtmlEntities);
     	var name = getParam(tds[cols.name], null, null, null, replaceTagsAndSpaces);
-    	var c = {__id: id, __name: name};
+    	var c = {__id: id, __name: name, num: id};
     	if(__shouldProcess('accounts', c)){
     		processAccount(cols, tds, c);
 			processAccountTransactions(jsonInfo, c);
@@ -211,36 +203,10 @@ function getColsAccount(thead){
     return cols;
 }
 
-
-function getColsCredit(thead){
-    var cols = {};
-    var ths = getElements(thead, /<th\b[^>]*>/ig);
-    for(var i=0; i<ths.length; ++i){
-    	var name = getParam(ths[i], null, null, /FLD="([^"]*)/i, replaceHtmlEntities);
-    	if(/NickName/i.test(name))
-    		cols.name = i;
-    	else if(/CONTRACTDATE/i.test(name))
-    		cols.agreement_date = i;
-    	else if(/AMOUNT/i.test(name))
-    		cols.limit = i;
-    	else if(/REST/i.test(name))
-    		cols.balance = i;
-    	else if(/CURRCODE/i.test(name))
-    		cols.currency = i;
-    	else if(/PERCENTS/i.test(name))
-    		cols.pct = i;
-    	else if(/ENDDATE/i.test(name))
-    		cols.date_end = i;
-    	else if(/STATUS/i.test(name))
-    		cols.status = i;
-    }
-    return cols;
-}
-
 function processInfo(jsonInfo, result){
 	if(!result.info)
 		result.info = {};
-	getParam(jsonInfo.USR, result.info, 'fio');
+	getParam(jsonInfo.USR, result.info, 'info.fio');
 }
 
 function processAccount(cols, tds, c){
@@ -253,113 +219,75 @@ function processAccount(cols, tds, c){
 		getParam(tds[cols.name], c, 'accounts.name', null, replaceTagsAndSpaces);
 }
 
-function processCredit(cols, tds, c){
-	if(isset(cols.agreement_date))
-		getParam(tds[cols.agreement_date], c, 'credits.agreement_date', null, replaceTagsAndSpaces, parseDate);
-	if(isset(cols.date_end))
-		getParam(tds[cols.date_end], c, 'credits.date_end', null, replaceTagsAndSpaces, parseDate);
-	if(isset(cols.limit))
-		getParam(tds[cols.limit], c, 'credits.limit', null, replaceTagsAndSpaces, parseBalance);
-	if(isset(cols.currency))
-		getParam(tds[cols.currency], c, ['credits.currency', 'credits.limit', 'credits.balance', 'credits.min_pay'], null, replaceTagsAndSpaces);
-	if(isset(cols.balance))
-		getParam(tds[cols.balance], c, 'credits.balance', null, replaceTagsAndSpaces, parseBalance);
-	if(isset(cols.pct))
-		getParam(tds[cols.pct], c, 'credits.pct', null, replaceTagsAndSpaces, parseBalance);
-	if(isset(cols.status))
-		getParam(tds[cols.status], c, 'credits.status', null, replaceTagsAndSpaces);
+function processCredit(jsonInfo, row, c){
+	getParam(row, c, 'credits.limit', /Первоначальная сумма кредита:[\s\S]*?<\/li>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(row, c, 'credits.balance', /<div[^>]+"sum"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(row, c, ['credits.currency', 'credits.limit', 'credits.balance', 'credits.min_pay'], /<div[^>]+"sum"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseCurrency);
+	getParam(row, c, 'credits.date_end', /Дата окончательных расчетов по кредиту:[\s\S]*?<\/li>/i, replaceTagsAndSpaces, parseDate);
+	getParam(row, c, 'credits.min_pay_till', /Ближайший платеж:([^<]*)/i, replaceTagsAndSpaces, parseDateWord);
+	getParam(row, c, 'credits.min_pay', /на сумму([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+
+	processCreditExtra(jsonInfo, row, c);
 }
 
-function processCreditExtra(jsonInfo, idr, c){
-	if(AnyBalance.isAvailable('credits.type', 'credits.agreement', 'credits.date_start', 'credits.min_pay_till',
+function processCreditExtra(jsonInfo, row, c){
+	if(AnyBalance.isAvailable('credits.type', 'credits.agreement', 'credits.agreement_date', 'credits.date_start', 'credits.min_pay_till',
 		'credits.peni','credits.min_early','credits.min_pay_debt','credits.min_pay_pct','credits.min_pay_pct_due','credits.min_pay_debt_due','credits.pct_due','credits.peni_debt',
-		'credits.peni_pct','credits.other_payments', 'credits.min_pay')){
+		'credits.peni_pct','credits.other_payments', 'credits.min_pay', 'credits.pct', 'credits.tranzactions', 'credits.schedule')){
+
+		var idr = getParam(row, /IDR:([0-9a-f\-]+)/i);
+		if(!idr){
+			AnyBalance.trace(row);
+			throw new AnyBalance.Error('Не удалось найти ссылку на расширенную информацию по кредиту. Сайт изменен?');
+		}
 
         var html = AnyBalance.requestPost(g_baseurl, {
-            SID:jsonInfo.SID,
-            tic:1,
-            T:'RT_2IC.view',
-            SCHEMENAME:'CREDITS',
-			IDR: idr,
-			FORMACTION:'VIEW',
-			PERIODPRN:'undefined'
-        }, addHeaders({Referer: g_baseurl}));
+            WidgetID:'CREDITS',
+            Action:'CreditInfoData',
+            Template:'info',
+            IDR: idr,
+            SchemeName:'',
+            BlockName:''
+        }, addHeaders({
+        	BSSHTTPRequest: '1',
+        	'X-Requested-With': 'XMLHttpRequest',
+        	BSSHTTPRequestExt: '1',
+        	'RTS-Request': 'SID=' + jsonInfo.SID + '&T=bss_plugins_core.widget&tic=1&isNewCore=1', 
+        	Referer: g_baseurl
+        }));
         
         getParam(html, c, 'credits.type', />\s*Тип кредита[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
-        if(c.__id == c.__name)
-        	getParam(html, c, 'credits.__name', />\s*Тип кредита[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
-
         getParam(html, c, 'credits.agreement', />\s*Номер договора[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+        getParam(html, c, 'credits.agreement_date', />\s*Дата договора[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDateWord);
         getParam(html, c, 'credits.date_start', />\s*Дата выдачи[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
+        getParam(html, c, 'credits.pct', />\s*Расчетная процентная ставка[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+
+        getParam(html, c, 'credits.pct_sum', />\s*Сумма начисленных процентов:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+        getParam(html, c, 'credits.debt', />\s*Сумма просроченной задолженности[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+        getParam(html, c, 'credits.pct_debt', />\s*Процентная ставка на просроченную задолженность[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+        getParam(html, c, 'credits.period', />\s*Периодичность платежей[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+
+        getParam(html, c, 'credits.min_pay_pct_due', />\s*Сумма начисленных процентов по просроченной задолженности[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+        getParam(html, c, 'credits.min_pay_pct', />\s*Сумма срочных процентов к уплате[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+        getParam(html, c, 'credits.pct_due', />\s*Сумма просроченных процентов[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+
         //Сумма неустойки/пени за просроченную задолженность
         getParam(html, c, 'credits.peni', />\s*Сумма неустойки[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
         getParam(html, c, 'credits.min_early', />\s*Минимальная сумма досрочного погашения[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
         getParam(html, c, 'credits.min_pay_debt', />\s*Сумма погашения срочного основного долга по кредиту[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-        getParam(html, c, 'credits.min_pay_pct', />\s*Сумма срочных процентов к уплате[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-        getParam(html, c, 'credits.min_pay_pct_due', />\s*Сумма начисленных процентов по просроченной задолженности[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
         getParam(html, c, 'credits.min_pay_debt_due', />\s*Сумма погашения просроченного долга по кредиту[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-        getParam(html, c, 'credits.pct_due', />\s*Сумма просроченных процентов по очередному платежу[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
         getParam(html, c, 'credits.peni_debt', />\s*Неустойка за основной долг[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
         getParam(html, c, 'credits.peni_pct', />\s*Неустойка за проценты[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
         getParam(html, c, 'credits.other_payments', />\s*Иные платежи[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-        getParam(html, c, 'credits.min_pay', />\s*Всего к погашению в очередной платеж[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-        getParam(html, c, 'credits.min_pay_till', />\s*Срок очередного платежа[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
-    }
-}
 
-function processCreditTransactions(jsonInfo, idr, c){
-	if(AnyBalance.isAvailable('credits.transactions')){
-        var html = AnyBalance.requestPost(g_baseurl, {
-            SID:jsonInfo.SID,
-            tic:1,
-            T:'RT_2IC.view',
-            CUSTOMVIEW:1,
-            PAR_IDRS: idr,
-            SCHEMENAME:'CREDITPAY',
-			IDR: idr,
-			FORMACTION:'VIEW',
-			PERIODPRN:'undefined'
-        }, addHeaders({Referer: g_baseurl}));
-
-        var tbl = getElement(html, /<TABLE[^>]+class="SCrollTBL"[^>]*>/i);
-        if(tbl)
-        	tbl = getElement(tbl, /<TBODY[^>]*>/i);
-        if(!tbl){
-        	AnyBalance.trace('Не удалось найти таблицу платежей по кредиту\n' + html);
-        	return;
+        if(AnyBalance.isAvailable('credits.transactions')){
+        	processCreditTransactions(html, c);
         }
-
-        c.transactions = [];
-        var trs = getElements(tbl, /<tr[^>]*>/ig);
-        for(var i=0; i<trs.length; ++i){
-        	var tr = trs[i];
-        	if(/Итого|Плановые платежи/i.test(tr))
-        		break;
-        	if(/Фактические платежи/i.test(tr))
-        		continue;
-        	
-        	var t = {};
-        	getParam(tr, t, 'credits.transactions.date', /(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
-        	//Сумма платежа
-        	getParam(tr, t, 'credits.transactions.sum', /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-        	//Сумма процентов
-        	getParam(tr, t, 'credits.transactions.sum_pct', /(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-        	//Сумма погашения основного долга
-        	getParam(tr, t, 'credits.transactions.sum_debt', /(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-        	//Сумма комиссий и других платежей
-        	getParam(tr, t, 'credits.transactions.sum_other', /(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-        	//Остаток долга
-        	getParam(tr, t, 'credits.transactions.debt', /(?:[\s\S]*?<td[^>]*>){6}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-
-        	c.transactions.push(t);
+        if(AnyBalance.isAvailable('credits.schedule')){
+        	processCreditSchedule(html, c);
         }
     }
 }
-
-function n2(n){
-	return n < 10 ? '0' + n : '' + n;
-}
-
 
 function getColsAccountTransactions(thead){
     var cols = {};
@@ -413,7 +341,7 @@ function processAccountTransactions(jsonInfo, c){
             		var secs = getParam(err, null, null, /Выписка будет доступна через\s*(\d+)\s*сек/i, null, parseBalance);
             		if(secs){
             			AnyBalance.trace('Ждем ' + secs + ' сек...');
-            			sleep(secs*1000);
+            			AnyBalance.sleep(secs*1000);
             			continue; //И пробуем ещё раз
             		}
             	}

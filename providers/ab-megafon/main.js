@@ -490,7 +490,7 @@ function megafonTrayInfo(filial) {
 		
 		getParam(xml, result, '__tariff', /<RATE_PLAN>([\s\S]*?)<\/RATE_PLAN>/i, replaceTagsAndSpaces);
 		getParam(xml, result, 'balance', /<BALANCE>([\s\S]*?)<\/BALANCE>/i, replaceTagsAndSpaces, parseBalance);
-		getParam(xml, result, 'phone', /<NUMBER>([\s\S]*?)<\/NUMBER>/i, replaceNumber, html_entity_decode);
+		getParam(xml, result, 'phone', /<NUMBER>([\s\S]*?)<\/NUMBER>/i, replaceNumber);
 		getParam(xml, result, 'prsnl_balance', /<PRSNL_BALANCE>([\s\S]*?)<\/PRSNL_BALANCE>/i, replaceTagsAndSpaces, parseBalance);
 		
 		var packs = xml.split(/<PACK>/ig);
@@ -498,7 +498,7 @@ function megafonTrayInfo(filial) {
 		AnyBalance.trace('Packs: ' + packs.length);
 		for (var ipack = 0; ipack < packs.length; ++ipack) {
 			var pack = packs[ipack];
-			var pack_name = getParam(pack, null, null, /<PACK_NAME>([\s\S]*?)<\/PACK_NAME>/i, null, html_entity_decode) || '';
+			var pack_name = getParam(pack, null, null, /<PACK_NAME>([\s\S]*?)<\/PACK_NAME>/i, replaceHtmlEntities) || '';
 			var discounts = sumParam(pack, null, null, /<DISCOUNT>([\s\S]*?)<\/DISCOUNT>/ig);
 			AnyBalance.trace('Pack: ' + pack_name + ', discounts: ' + discounts.length);
 			for (var i = 0; i < discounts.length; ++i) {
@@ -678,12 +678,12 @@ function megafonTrayInfo(filial) {
 					getParam(json.ok.html, result, 'sub_scr', /Роуминг\s*<\/td>(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 				}
 				// 																										Заменяем строку вида $[widgets.current.user($msisdn)]
-				getParam(json.ok.html, result, 'phone', /<span[^>]*class="login"[^>]*>([\s\S]*?)<\/span>/i, [/\uFFFD/g, ' ', replaceTagsAndSpaces, /\$\[[\s\S]*?\]/i, '', replaceNumber], html_entity_decode);
+				getParam(json.ok.html, result, 'phone', /<span[^>]*class="login"[^>]*>([\s\S]*?)<\/span>/i, [/\uFFFD/g, ' ', replaceTagsAndSpaces, /\$\[[\s\S]*?\]/i, '', replaceNumber]);
 				if (need_int_cur) getParam(json.ok.html, result, 'internet_cur', /Интернет-траффик \(GPRS\)\s*<\/td>(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseTraffic);
 				getParam(json.ok.html, result, 'internet_cost', /Интернет-траффик \(GPRS\)\s*<\/td>(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 				var table = getParam(json.ok.html, null, null, /<table[^>]*class="[^>]*rate-plans[^>][\s\S]*?<\/table>/i);
 				if (table) {
-					if (isAvailableButUnset(result, ['__tariff'])) sumParam(table, result, '__tariff', /<tr[^>]*>\s*<td[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
+					if (isAvailableButUnset(result, ['__tariff'])) sumParam(table, result, '__tariff', /<tr[^>]*>\s*<td[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, null, aggregate_join);
 				} else {
 					AnyBalance.trace('Не удалось найти список тарифных планов в яндекс.виджете');
 				}
@@ -978,7 +978,7 @@ function megafonBalanceInfo(filial) {
     var limit = getParam(html, null, null, /<CREDIT_\w+LIMIT>([^<]*)<\/CREDIT_\w+LIMIT>/i, replaceTagsAndSpaces, parseBalance);
     getParam(balance-(limit || 0), result, 'balance');
     getParam(limit, result, 'credit');
-    getParam(html, result, 'phone', /<MSISDN>([^<]*)<\/MSISDN>/i, replaceNumber, html_entity_decode);
+    getParam(html, result, 'phone', /<MSISDN>([^<]*)<\/MSISDN>/i, replaceNumber);
 
     //Не, врет безбожно, бесполезно вызывать
     //getInternetInfo(filial, result, {});
@@ -1044,7 +1044,7 @@ function megafonServiceGuidePhysical(filial, sessionid, text){
     getParam(balance-(limit || 0), result, 'balance');
     getParam(limit, result, 'credit');
     //Теперь получим телефон
-    getParam(text, result, 'phone', /<select[^>]*name="SUBSCRIBER_MSISDN"[\s\S]*?<option[^>]+value="([^"]*)[^>]*selected/i, replaceNumber, html_entity_decode);
+    getParam(text, result, 'phone', /<select[^>]*name="SUBSCRIBER_MSISDN"[\s\S]*?<option[^>]+value="([^"]*)[^>]*selected/i, replaceNumber);
     //Теперь получим персональный баланс
     getParam(text, result, 'prsnl_balance', /&#1055;&#1077;&#1088;&#1089;&#1086;&#1085;&#1072;&#1083;&#1100;&#1085;&#1099;&#1081; &#1073;&#1072;&#1083;&#1072;&#1085;&#1089;[\s\S]*?<div class="balance_[^>]*>([\S\s]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
     
@@ -1089,7 +1089,7 @@ function megafonServiceGuidePhysical(filial, sessionid, text){
 			/(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\/td>/i,
 			/(?:[\s\S]*?<td[^>]*>){6}([\s\S]*?)<\/td>/i,
         ];
-        var rows = sumParam(text, null, null, /<tr[^>]*>[\s\S]*?<\/tr>/ig, null, html_entity_decode);
+        var rows = sumParam(text, null, null, /<tr[^>]*>[\s\S]*?<\/tr>/ig, replaceHtmlEntities);
 		var reOption = /<tr[^>]*>(?:(?:[\s\S](?!<\/tr>))*?<td[^>]*>\s*<div[^>]+class="td_def"[^>]*>){3}[\s\S]*?<\/tr>/i;
         for(var i=0; i<rows.length; ++i){
 		    var row = rows[i];
@@ -1265,7 +1265,7 @@ function megafonServiceGuidePhysical(filial, sessionid, text){
 				'SUBSCRIBER_MSISDN':phone
         	}, addHeaders({Referer: baseurl + 'SCC/SC_BASE_LOGIN'}));
 
-			var tbody = getParam(text, null, null, /(?:Опции группы|&#1054;&#1087;&#1094;&#1080;&#1080; &#1075;&#1088;&#1091;&#1087;&#1087;&#1099;)[\s\S]*?(<tbody>[\s\S]*?<\/tbody>)/i, null, html_entity_decode);
+			var tbody = getParam(text, null, null, /(?:Опции группы|&#1054;&#1087;&#1094;&#1080;&#1080; &#1075;&#1088;&#1091;&#1087;&#1087;&#1099;)[\s\S]*?(<tbody>[\s\S]*?<\/tbody>)/i, replaceHtmlEntities);
 			if(tbody)
 			{
 				AnyBalance.trace('Получили таблицу услуг...');
@@ -1802,7 +1802,7 @@ function enterSG(filial, options){
         throw new AnyBalance.Error('Не удаётся найти форму входа в Сервис-гид. Сайт изменен?');
     }
 
-    var psid = getParam(form, null, null, /<input[^>]+name="PHPSESSID"[^>]*value="([^"]*)/i, null, html_entity_decode);
+    var psid = getParam(form, null, null, /<input[^>]+name="PHPSESSID"[^>]*value="([^"]*)/i, replaceHtmlEntities);
     var code;
     if(psid){
 	var imgurl = baseurl + "ps/scc/php/cryptographp.php?PHPSESSID=" + psid + '&ref=' + (Math.round(1E3 * Math.random()) + 1) + '&w=137';
@@ -1894,7 +1894,7 @@ function turnOffNotificationSMSSG(filial, sessionid, login){
     if(row){
         if(/<input[^>]+id="idSMSCheck_\d+"[^>]*checked/i.test(row)){
         	AnyBalance.trace('Уведомление по смс о входе разрешено. Запрещаем его, чтобы не парило мозг.');
-        	var snev = getParam(row, null, null, /<input[^>]+name="P_SNEV_ID_LIST"[^>]*value="([^"]*)/i, null, html_entity_decode);
+        	var snev = getParam(row, null, null, /<input[^>]+name="P_SNEV_ID_LIST"[^>]*value="([^"]*)/i, replaceHtmlEntities);
         	text = AnyBalance.requestPost(baseurl + 'SCWWW/SMS_NG_ACTION', {
         		'RECIPIENT':'',
         		'P_SNEV_ID_LIST':snev,
@@ -1990,7 +1990,7 @@ function megafonLK(filial, html){
 	
 	if(isAvailable(['__tariff'])){
 		info = requestPipe(csrf, 'mini/options');
-		getParam(info.tariffName, result, '__tariff');
+		getParam(info.tariffName, result, '__tariff', null, replaceHtmlEntities);
 	}
 		
 	if(AnyBalance.isAvailable('mins_n_free', 'mins_net_left', 'mins_left', 'mins_total', 'mms_left', 'mms_total', 'sms_left', 'sms_total', 
@@ -2241,7 +2241,7 @@ function megafonLKTurnOffSMSNotification(csrf){
 		return json.hash;
 	}
 
-	var json = requestPipe(csrf, 'userProfile/settings/notifications');
+	var json = requestPipe(csrf, '../api/profile/notifications');
 	
 	var on = json.notify;
 	if(!on){
@@ -2253,7 +2253,7 @@ function megafonLKTurnOffSMSNotification(csrf){
 
 	var hash = getSMSHash(csrf);
 
-	var json = requestPipe(csrf, 'userProfile/settings/notifications', null, {NOTIFY: 'false'});
+	var json = requestPipe(csrf, '../api/profile/notifications', null, {status: 'false'});
 	if(!json.ok){
 		AnyBalance.trace('Запрос на выключение сработал неудачно: ' + info);
 	}
@@ -2269,7 +2269,7 @@ function megafonLKTurnOffSMSNotification(csrf){
 			AnyBalance.sleep(4000);
 	}
 
-	var json = requestPipe(csrf, 'userProfile/settings/notifications');
+	var json = requestPipe(csrf, '../api/profile/notifications');
 	if(json.notify === false){
 		AnyBalance.trace('Уведомление выключено успешно!');
 	}else{

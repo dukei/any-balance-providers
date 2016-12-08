@@ -89,9 +89,8 @@ function main(){
     	}
 
         services.push(si.ServiceId);
-    	var left = Math.floor((AB.parseDateISO(si.EndDate) - new Date().getTime())/86400/1000);
         AB.getParam(name, result, 'service' + n);
-        AB.getParam(left, result, 'daysleft' + n);
+        AB.getParam('' + si.RemainingDays, result, 'daysleft' + n, null, null, parseBalance);
     	++n;
     }
 

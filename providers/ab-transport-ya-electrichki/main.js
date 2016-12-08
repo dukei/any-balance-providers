@@ -25,7 +25,7 @@ function main () {
 	
 	var href = g_baseurl + 'search/' + "?fromName=" + 
 	encodeURIComponent(prefs.station_from) + "&toName=" + 
-	encodeURIComponent(prefs.station_to);
+	encodeURIComponent(prefs.station_to) + "&when=" + encodeURIComponent('сегодня');
 	
 	if(/^\w+\d+$/.test(prefs.station_from))
 		href += '&fromId=' + prefs.station_from;
@@ -85,10 +85,10 @@ function main () {
 
 	var result = {success: true};
 
-	var idx = 0;
+	var idx = 0;//, now = +new Date();
 	for(var i=0; i<json.search.segments.length; ++i){
 		var segment = json.search.segments[i];
-//		var departure = new Date(parseDateISO(segment.departure));
+//		var departure = parseDateISO(segment.departure);
 //		var tz = segment.timezoneFrom;
 		var time = moment(segment.departure).tz(segment.timezoneFrom).format('HH:mm');
 

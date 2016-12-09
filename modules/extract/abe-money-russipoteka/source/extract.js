@@ -111,8 +111,11 @@ function login() {
 				}, addHeaders({
 					Referer: baseurl + 'j_security_check'
 				}));
+				if (AnyBalance.getLastStatusCode() == 400) {
+					throw new AnyBalance.Error('Криворукие переадресовали на http, хотя сами его не понимают');
+				}
 			} catch(e) {
-				AnyBalance.trace(e);
+				AnyBalance.trace(e.message + '\n' + html);
 				html = AnyBalance.requestGet(baseurl + 'protected/welcome.jsf', g_headers);
 			}
 		}

@@ -33,8 +33,8 @@ var g_lks = {
     },
     pes: {
 		url: 'https://ikus.pes.spb.ru/IKUSUser/',
-		uid: 'E85D8BB4C101FFBB462908DEC5BC61A6',
-		auth_uid: '64CB37418EFF33FAED7D9C1C973060FC',
+		uid: '137C3934919BAFF59CDBF95466D04C83',
+		auth_uid: 'AE742241A0A8AD76E4877D96DE250A42',
 		strong_name: '\\b%VARNAME_BROWSER%,\\w+\\],(\\w+)\\)',
 		auth_url: 'userAuth/',
 		auth_nocache: 'userAuth/userAuth.nocache.js',

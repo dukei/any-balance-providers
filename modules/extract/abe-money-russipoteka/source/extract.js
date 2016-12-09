@@ -138,27 +138,27 @@ function processCards(html, result) {
     if(!AnyBalance.isAvailable('cards'))
       return;
 
-    html = AnyBalance.requestGet(baseurl + 'protected/accounts_and_cards/index', g_headers);
+    html = AnyBalance.requestGet(baseurl + 'protected/cards/index', g_headers);
 
-    html = getParam(html, null, null, null, replaceHtmlEntities);
-    var table = getElement(html, /<span[^>]+title[^>]*>Карты(?:[\s\S]*?)(<table[^>]+tblList[^>]*>)/i);
-    var cards = getElements(table, /<tr[^>]*>/ig);
+    var cards = getElements(html, /<div[^>]+productShort["\s>]/ig);
     if(!cards.length) {
       AnyBalance.trace(html);
       AnyBalance.trace("Карты не найдены.");
       return;
     }
 
-    AnyBalance.trace('Найдено карт: ' + (cards.length - 1));
+    AnyBalance.trace('Найдено карт: ' + (cards.length));
     result.cards = [];
 
-    for(var i = 1; i < cards.length; ++i){
-      var id 		= getParam(cards[i], null, null, /<a[^>]*>[^\d]*(\d*)/i);
-      var num 	= getParam(cards[i], null, null, /<a[^>]*>[^\d]*(\d*)/i);
-      var title = getParam(cards[i], null, null, /<tr(?:[^>]*>){4}([\s\S]*?)<\/a>/i, replaceTagsAndSpaces);
+    for(var i = 0; i < cards.length; ++i){
+      var id 	= getParam(cards[i], /\/statement\/card\/(\d+)/i);
+      var info  = getElement(cards[i], /<table[^>]+w100Pc/i);
 
-      var c = {__id: id, __name: title, num: num};
+      var name = getParam(info, /<td[^>]*>([^<]*)/i, replaceTagsAndSpaces);
+      var num = getElement(info, /<span[^>]+block/i, replaceTagsAndSpaces);
 
+      var c = {__id: id, __name: name + ' *' + num.substr(-4), num: num};
+      getParam(name, c, 'cards.name');
 
       if (__shouldProcess('cards', c)) {
         processCard(cards[i], c, html);
@@ -171,43 +171,24 @@ function processCards(html, result) {
 function processCard(card, result, html) {
     AnyBalance.trace('Обработка карты ' + result.__name);
 
-    getParam(card, result, 'cards.balance', /<span[^>]+amount[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
-    getParam(card, result, ['cards.currency', 'cards.balance'], /<span[^>]+amount[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseCurrency);
+    getParam(getElement(card, /<span[^>]+amountBox/i), result, 'cards.balance', null, replaceTagsAndSpaces, parseBalance);
+    getParam(getElement(card, /<span[^>]+amountBox/i), result, ['cards.currency', 'cards.balance'], null, replaceTagsAndSpaces, parseCurrency);
 
-    var params = {
-        j_id_6h_2_SUBMIT:         getParam(html, null, null, /<input[^>]+j_id_6h_2_SUBMIT[^>]+value="([^"]*)/i),
-        'javax.faces.ViewState':  getParam(html, null, null, /<input[^>]+javax.faces.ViewState[^>]+value="([^"]*)/i),
-        'card_id':                getParam(card, null, null, /card_id([^']*'){3}/i, [/'/ig, ''])
-      };
+    if(AnyBalance.isAvailable('cards.till', 'cards.holder', 'cards.accnum', 'cards.agreement', 'cards.transactions')){
+    	html = AnyBalance.requestGet(baseurl + 'protected/statement/card/' + result.__id, addHeaders({Referer: baseurl}));
+        html = replaceAll(html, replaceHtmlEntities);
 
-    var param_name    = getParam(card, null, null, /submitForm([^']*'){2}/i, [/'/ig, '']),
-        param_value   = getParam(card, null, null, /submitForm([^']*'){4}/i, [/'/ig, '']);
+    	getParam(html, result, 'cards.holder',    /Держатель:([^<]*)/i,        replaceTagsAndSpaces);
+    	getParam(html, result, 'cards.accnum',    /Карточный счет\s*([^<]*)/i, replaceTagsAndSpaces);
+    	getParam(html, result, 'cards.till',      /Действительна до:([^<]*)/i, replaceTagsAndSpaces, parseDate);
+    	getParam(html, result, 'cards.agreement', /Номер договора:([^<]*)/i,   replaceTagsAndSpaces);
 
-    if(!param_name || !param_value) {
-      AnyBalance.trace("Не удалось найти параметры запроса на подробную информацию по карте.");
-      return;
-    }
-    params[param_name + ':_idcl'] = param_value;
-
-    try {
-      html = AnyBalance.requestPost(baseurl + 'protected/accounts_and_cards/index', params, addHeaders({
-        Referer: baseurl + 'protected/accounts_and_cards/index'
-      }));
-    } catch(e) {
-      AnyBalance.trace(e);
-      html = AnyBalance.requestGet(baseurl + 'protected/accounts_and_cards/account_card_list.jsf', g_headers);
-    }
-
-
-    html = getParam(html, null, null, null, replaceHtmlEntities);
-
-    getParam(html, result, 'cards.holder',    /Держатель:([^<]*)/i,        replaceTagsAndSpaces);
-    getParam(html, result, 'cards.full_num',  /Карточный счет\s*([^<]*)/i, replaceTagsAndSpaces);
-    getParam(html, result, 'cards.till',      /Действительна до:([^<]*)/i, replaceTagsAndSpaces, parseDate);
-    getParam(html, result, 'cards.agreement', /Номер договора:([^<]*)/i,   replaceTagsAndSpaces);
+    	getParam(html, result, 'cards.limit', 	  /Лимит овердрафта:[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i,   replaceTagsAndSpaces, parseBalance);
+    	getParam(html, result, 'cards.balance_min',/Неснижаемый остаток на счете:[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i,   replaceTagsAndSpaces, parseBalance);
 
 		if(isAvailable('cards.transactions')) {
-      processCardTransactions(html, result);
+      		processCardTransactions(html, result);
+    	}
     }
 }
 

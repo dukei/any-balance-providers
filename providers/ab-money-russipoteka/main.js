@@ -9,7 +9,7 @@ var g_countersTable = {
 	card: {
     "balance":    "cards.balance",
 		"currency":   "cards.currency",
-		"full_num":   "cards.full_num",
+		"full_num":   "cards.accnum",
 		"__tariff":   "cards.__name",
 		"holder":     "cards.holder",
 		"agreement":  "cards.agreement",
@@ -120,8 +120,6 @@ function main() {
 		
 		result = adapter.convert(result);
 	}
-	
-	// getParam(html, result, 'bonuses', /МКБ Бонус\s*<span[^>]*>([\s\d]+)&nbsp;баллов/i, replaceTagsAndSpaces, parseBalance);
 	
 	AnyBalance.setResult(result);
 }

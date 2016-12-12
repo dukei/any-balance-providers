@@ -12,7 +12,7 @@ var g_headers = {
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'http://www.onlinetrade.ru/';
+	var baseurl = 'https://www.onlinetrade.ru/';
 	AnyBalance.setDefaultCharset('windows-1251');
 	
 	AB.checkEmpty(prefs.login, 'Введите логин!');

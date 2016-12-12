@@ -1,11 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="3">ab-bonus-onlinetrade</id>
+	<id version="4">ab-bonus-onlinetrade</id>
 	<api flags="no_browser"/>
 	<name>Onlinetrade</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе ON-бонусов интернет-магазина Onlinetrade http://www.onlinetrade.ru/</p>
-	<p>Информация берется из личного кабинета http://www.onlinetrade.ru/member/</p>
+	<p>Информация берется из личного кабинета https://www.onlinetrade.ru/member/</p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>

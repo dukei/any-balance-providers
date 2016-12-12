@@ -25,8 +25,8 @@
 		<counter id="alias" name="Название карты" type="text"/>
 		<counter id="discount_count" name="Скидка: совершено поездок"/>
 		<counter id="discount_next_count" name="Скидка: поездок до следующего уровня"/>
-		<counter id="discount_rate" name="Скидка: цена следующей поездки"/>
-		<counter id="discount_till" name="Скидка: действует до"/>
+		<counter id="discount_rate" name="Скидка: цена следующей поездки" units=" р"/>
+		<counter id="discount_till" name="Скидка: действует до" type="time" format="dd/MM/yyyy"/>
 		<counter id="history" name="Последние 5 операций по карте" type="html"/>
 		<counter id="total_outcome" name="Всего потрачено" units=" р"/>
 		<counter id="total_income" name="Всего пополнено" units=" р"/>

@@ -78,9 +78,9 @@ function mainSite(prefs, baseurl) {
 	html = AnyBalance.requestPost(baseurl + 'ru/?locale=ru', params, addHeaders({Referer: baseurl + 'ru/?locale=ru'}));
 
 	if (!/logout/i.test(html)) {
-		var error = getParam(html, null, null, /class="errorlist">([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
+		var error = getParam(html, null, null, /class="errorlist">([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces);
 		if (error)
-			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
+			throw new AnyBalance.Error(error, null, /парол/i.test(error));
 
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
@@ -243,7 +243,7 @@ function lifeGet(method, params) {
 		throw new AnyBalance.Error('Неожиданный ответ сервера!');
 	}
 	if (code < 0)
-		throw new AnyBalance.Error(method + ': ' + g_errorDescription[code]);
+		throw new AnyBalance.Error(method + ': ' + g_errorDescription[code], null, /парол/i.test(g_errorDescription[code]));
 	return xml;
 }
 
@@ -324,6 +324,7 @@ function mainMobileApp(prefs, baseurl){
     	sumParam(xml, result, 'mins_fixed', /<balance[^>]+code="Bundle_Voice_Pstn[^>]*amount="([^"]*)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
     	//Минуты на номера других операторов и фиксированной связи Украины
     	sumParam(xml, result, 'mins_uk', /<balance[^>]+code="Bundle_Voice_Offnet[^>]*amount="([^"]*)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+    	sumParam(xml, result, 'mins_uk', /<balance[^>]+code="Bundle_Voice_Ukraine[^>]*amount="([^"]*)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
     	//Мин. услуги "life:) 5 копеек"
     	sumParam(xml, result, 'mins_uk', /<balance[^>]+code="Counter_Voice_Offnet_Lviv"[^>]*amount="([^"]*)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
     	//Минуты на номера мобильных операторов Украины (Безумный день Bundle_Youth_Voice_Omo_Pstn)

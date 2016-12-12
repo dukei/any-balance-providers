@@ -287,6 +287,8 @@ function processApiRemaindersPrepaid(result){
 				
 				if(/bonusopros/i.test(curr.name)) {
 					sumParam(curr.value + '', remainders, 'remainders.rub_opros', null, replaceTagsAndSpaces, apiParseBalanceRound, aggregate_sum);
+				}else if(/bonusmoney/i.test(curr.name)) {
+					sumParam(curr.value + '', remainders, 'remainders.rub_bonus', null, replaceTagsAndSpaces, apiParseBalanceRound, aggregate_sum);
 				}else if(/bonusseconds/i.test(curr.name)) { //Бонус секунд-промо
 					sumParam(curr.value + '', remainders, 'remainders.min_left_1', null, replaceTagsAndSpaces, apiParseBalanceRound, aggregate_sum);
 				}else if(/seconds/i.test(curr.name)) {

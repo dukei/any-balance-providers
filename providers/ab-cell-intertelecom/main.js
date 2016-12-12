@@ -105,8 +105,10 @@ function main() {
     sumParam(html, result, 'traffic_action', />\s*по акци(?:и|и \(Rev.A\)|и \(Rev.A\/Rev.B\))\s*<[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
     sumParam(html, result, 'traffic_action', />\s*Валентинка от Интертелеком. 1000 MB\s*<[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
     sumParam(html, result, 'traffic_action', />\s*Подарок от Интертелеком. 1000 MB\s*<[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+    sumParam(html, result, 'traffic_action', />\s*Компенсация от Интертелеком. \(Rev.A\/Rev.B\)\s*<[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
     //Срок трафика по акции
     sumParam(html, result, 'date_traffic_action', />\s*по акци(?:и|и \(Rev.A\)|и \(Rev.A\/Rev.B\))\s*<[\s\S]*?<td[^>]*>[\s\S]*? по ([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseDate, aggregate_min);
+    sumParam(html, result, 'date_traffic_action', />\s*Компенсация от Интертелеком. \(Rev.A\/Rev.B\)\s*<[\s\S]*?<td[^>]*>[\s\S]*? по ([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseDate, aggregate_min);
     //Срок действия безлимита на скорости до 128 Кбит/с
     sumParam(html, result, 'date_bezlimit', />\s*Трафик на скорости до 128\s*<[\s\S]*?<td[^>]*>Неограничено по ([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseDate, aggregate_min);
     //Акционный счет

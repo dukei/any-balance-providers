@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="12" date="2016-12-12">
+	Добавлена информация о скидке
+	</change>
 	<change version="11" date="2016-09-15">
 	Исправлено отображение последних 5 операций
 	</change>

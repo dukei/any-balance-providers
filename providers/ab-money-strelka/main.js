@@ -74,6 +74,14 @@ function main() {
 	
 	getParam(card.status.balance/100, result, 'balance');
 	getParam(card.cardalias, result, 'alias', /[\s\S]{2,}/, replaceTagsAndSpaces);
+
+	if(AnyBalance.isAvailable('discount_till', 'discount_count', 'discount_next_count', 'discount_rate')){
+		data = makeRequest('Get', lkurl + 'api/cards/status/?cardid=' + card.cardid, null, lkurl + '/cards');
+		getParam(data.discountenddate, result, 'discount_till', null, null, parseDateISO);
+		getParam(data.discountcount, result, 'discount_count');
+		getParam(data.discountnextcount, result, 'discount_next_count');
+		getParam((data.baserate - (data.discountsum || 0))/100, result, 'discount_rate');
+	}
 	
 	if(isAvailable(['history', 'total_outcome', 'total_income'])) {
 		var count = 5, history = [], item, i, date, summ;

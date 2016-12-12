@@ -55,9 +55,9 @@ function mainLKKZKH() {
 		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
 	}
 
-	html = AnyBalance.requestPost(baseurl + 'lkcom_data?action=auth', {
+	html = AnyBalance.requestPost(baseurl + 'lkcom_data/json-ws?action=auth', {
 		nm_email:	prefs.login,
-        nm_psw: hex_md5(prefs.password),
+        nm_psw: prefs.password,
 		nm_captcha_res:	'ok'
 	}, addHeaders({
 		Referer: baseurl + 'auth/'
@@ -86,7 +86,7 @@ function mainLKKZKH() {
 	};
 
 	if(isAvailable('licschet', 'balance', 'currency', '__tariff', 'balance', 'currency')){
-		json = getApiData('lkcom_data?action=sql&query=lka_get_houses', {
+		json = getApiData('lkcom_data/json-ws?action=sql&query=lka_get_houses', {
 			page:	'1',
 			start:	'0',
 			limit:	'25',
@@ -133,7 +133,7 @@ outer:
 	}
 
 	if(AnyBalance.isAvailable('fio')){
-		json = getApiData('lkcom_data?action=sql&query=lka_get_profile_attributes', {
+		json = getApiData('lkcom_data/json-ws?action=sql&query=lka_get_profile_attributes', {
 			session: sid
 		});
 
@@ -144,7 +144,7 @@ outer:
 	}
 
 	if(AnyBalance.isAvailable('balance', 'currency')){
-		json = getApiData('lkcom_data?action=sql&query=SmorodinaProxy&plugin=smorodinaProxy', {
+		json = getApiData('lkcom_data/json-ws?action=sql&query=SmorodinaProxy&plugin=smorodinaProxy', {
 			json:	JSON.stringify({"name":"qLkkUtilAbonentBalance","org":-1,"params":{"id_abonent":id_abonent,"dt_period":""},"out_params":{}}),
 			session: sid
 		});

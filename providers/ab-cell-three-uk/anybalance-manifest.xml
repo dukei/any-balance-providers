@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-cell-three-uk</id>
+	<id version="3">ab-cell-three-uk</id>
 	<api flags="no_browser"/>
 	<name>Three (UK)</name>
 	<description html="true"><![CDATA[
@@ -22,8 +22,8 @@
 	</files>
 	<counters>
 		<counter id="balance" name="Balance" prefix="£"/>
-		<counter id="internet_left" name="Free internet allowance" suffix=" mb"/>
-		<counter id="internet_till" name="Free internet allowance expiry" type="time" format="MM/dd/yyyy"/>
+		<counter id="internet_left" name="Total internet left" suffix=" mb"/>
+		<counter id="internet_till" name="Free internet allowance expires" type="time" format="MM/dd/yyyy"/>
 	</counters>
 	<keywords>three 3</keywords>
 	<type>cell</type>

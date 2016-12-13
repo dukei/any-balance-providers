@@ -44,53 +44,13 @@ function main(){
     	throw new AnyBalance.Error('Utair требует подтвердить почтовый ящик. Зайдите в кабинет https://status.utair.ru/ через браузер и подтвердите е-мейл, затем обновите провайдер ещё раз.');
     }
 
-    var json = getJson(html);
-
-    if(!json.access_token){
-
-        if(json.errors[0]) {
-            var field = json.errors[0].field || undefined;
-            var errorCode = json.errors[0].code || undefined;
-            if(!field || !errorCode)
-                throw new AnyBalance.Error("Не удалось найти параметр ошибки. Сайт изменён?");
-
-            var err_html = AnyBalance.requestGet(baseurl+'utair-cwa-theme/locale/ru_RU.json', g_headers); //Получаем список ошибок
-            var err_json = getJson(err_html);
-
-            var error = err_json.errors[errorCode] && err_json.errors[errorCode][field] ? err_json.errors[errorCode][field].tmpl : undefined;
-            if(error)
-                throw new AnyBalance.Error(error, null, /Неправильный логин или пароль/i.test(error));
-        }
-
-        AnyBalance.trace(html);
-        throw new AnyBalance.Error('Не удалось войти в личный кабинет. Сайт изменён?.');
-    }
-
     var result = {success: true};
-
-    var req_headers = {
-        'X-Requested-With': 'XMLHttpRequest',
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + json.access_token,
-        'Referer': 'https://clm.utair.ru/group/utair'
-    };
-
-    if(isAvailable('cardnum')) {
-        html = AnyBalance.requestGet(baseurl+'utair-rest/customers?_='+new Date().getTime(),req_headers);
-        json = getJson(html);
-
-        AB.getParam(json.cardNo, result, 'cardnum');
-    }
-
-    if(isAvailable(['fio', 'redemptionMiles', 'nextExpDate', 'qualifyingMiles'])) {
-        html = AnyBalance.requestGet(baseurl+'utair-rest/profileInfo?_='+new Date().getTime(), req_headers);
-        json = getJson(html);
-
-        AB.getParam((json.firstName || '') + ' ' + (json.secondName || '') + ' ' + (json.lastName || ' '), result, 'fio');
-        AB.getParam(json.redemptionMiles + '', result, 'redemptionMiles', null, null, AB.parseBalance);
-        AB.getParam(json.qualifyingMiles + '', result, 'qualifyingMiles', null, null, AB.parseBalance);
-        AB.getParam(json.nextExpDate, result, 'nextExpDate', null, null, AB.parseDate);
-    }
+    getParam(html, result, 'cardnum', /<text[^>]+id="card-number"[^>]*>([\s\S]*?)<\/text>/i, replaceTagsAndSpaces);
+    getParam(html, result, 'fio', /<a[^>]+username[^>]*>([\s\S]*?)<\/a>/i, [replaceTagsAndSpaces, /:/, '']);
+    getParam(html, result, 'redemptionMiles', /<span[^>]+transaction-history[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'nextExpDate', /Дата аннулирования миль:([^<]*)/i, replaceTagsAndSpaces, AB.parseDate);
+    getParam(html, result, '__tariff', /<text[^>]+id="current-status"[^>]*>([\s\S]*?)<\/text>/i, replaceTagsAndSpaces);
+    getParam(html, result, 'qualifyingMiles', /<text[^>]+id="progress-miles"[^>]*>([\s\S]*?)<\/text>/i, replaceTagsAndSpaces, parseBalance);
 
     AnyBalance.setResult(result);
 }

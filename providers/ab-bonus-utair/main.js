@@ -12,24 +12,37 @@ var g_headers = {
 function main(){
     var prefs = AnyBalance.getPreferences();
     AnyBalance.setDefaultCharset('utf-8');
-    var baseurl = "https://clm.utair.ru/";
+    var baseurl = "https://status.utair.ru/";
 
     AB.checkEmpty(prefs.login, 'Введите логин!');
     AB.checkEmpty(prefs.password, 'Введите пароль!');
 
-    var html = AnyBalance.requestGet(baseurl+'web/utair/login', g_headers);
+    var html = AnyBalance.requestGet(baseurl + 'signin', g_headers);
 
     if(!html || AnyBalance.getLastStatusCode() > 400) {
         AnyBalance.trace(html);
         throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
     }
 
-    html = AnyBalance.requestPost(baseurl + 'web/utair-login', JSON.stringify({
-        login:prefs.login,
+    html = AnyBalance.requestPost(baseurl + 'signin', {
+        username:prefs.login,
         password:prefs.password
-    }), AB.addHeaders({
-        'X-Requested-With': 'XMLHttpRequest'
+    }, AB.addHeaders({
+        Referer: baseurl + 'signin'
     }));
+
+    if(!/signout/i.test(html)){
+        var error = getParam(AnyBalance.getLastUrl(), /message=([^&]*)/i, null, decodeURIComponent);
+        if(error)
+        	throw new AnyBalance.Error(error, null, /парол/i.test(error));
+        AnyBalance.trace(html);
+        throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
+    }
+
+    if(/verify\/mail/i.test(AnyBalance.getLastUrl())){
+    	AnyBalance.trace('Потребовалось подтвердить емейл');
+    	throw new AnyBalance.Error('Utair требует подтвердить почтовый ящик. Зайдите в кабинет https://status.utair.ru/ через браузер и подтвердите е-мейл, затем обновите провайдер ещё раз.');
+    }
 
     var json = getJson(html);
 

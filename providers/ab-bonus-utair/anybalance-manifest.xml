@@ -1,18 +1,20 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="5">ab-bonus-utair</id>
+  <id version="6">ab-bonus-utair</id>
   <api flags="no_browser"/>
   <name>UTair</name>
   <description html="true"><![CDATA[
 	<p>Получает баланс баллов и другую информацию по бонусной карте авиакомпании UTair <a href="http://www.utair.ru">http://www.utair.ru</a></p>
-    <p>Информация берется из личного кабинета <a href="https://clm.utair.ru/group/utair">https://clm.utair.ru/group/utair</a></p>
+    <p>Информация берется из личного кабинета https://status.utair.ru/</p>
 	]]></description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+  <depends>
+  	<module id="library"/>
+  </depends>
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
     <js>main.js</js>
-    <js>library.js</js>
     <history>history.xml</history>
   </files>
   <counters>

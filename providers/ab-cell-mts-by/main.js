@@ -30,6 +30,13 @@ function mainOrdinary(){
     fetchOrdinary(html);
 }
 
+function parseBalanceRound(str){
+	var val = parseBalance(str);
+	if(val)
+		return Math.round(val*100)/100;
+	return val;
+}
+
 function fetchOrdinary(html){
     var prefs = AnyBalance.getPreferences();
     var result = {success: true};
@@ -53,13 +60,13 @@ function fetchOrdinary(html){
 	AnyBalance.trace('Пытаемся выяснить почему нет баланса?...');
 	AnyBalance.trace(html);
     // Тарифный план
-    getParam(html, result, '__tariff', /Тарифный план.*?>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, '__tariff', /Тарифный план.*?>([^<]*)/i, replaceTagsAndSpaces);
 
     // Баланс
-    getParam (html, result, 'balance', /<span[^>]*id="customer-info-balance[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+    getParam (html, result, 'balance', /<span[^>]*id="customer-info-balance[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalanceRound);
 
     // Телефон
-    getParam (html, result, 'phone', /Номер:.*?>([^<]*)</i, replaceTagsAndSpaces, html_entity_decode);
+    getParam (html, result, 'phone', /Номер:.*?>([^<]*)</i, replaceTagsAndSpaces);
 
     if (isAvailableStatus()) {
 
@@ -165,7 +172,7 @@ function mainMobile(allowRetry){
             html = AnyBalance.requestGet(baseurl + "MyPhoneNumbers.mvc/Change?phoneNumber=375"+prefs.phone);
 	if(!html)
 		throw new AnyBalance.Error(prefs.phone + ": номер, возможно, неправильный или у вас нет к нему доступа", false); 
-	var error = getParam(html, null, null, /<ul class="operation-results-error">([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
+	var error = getParam(html, null, null, /<ul class="operation-results-error">([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces);
 	if(error)
 		throw new AnyBalance.Error(prefs.phone + ": " + error, allowRetry); 
         }
@@ -203,9 +210,9 @@ function mainMobile(allowRetry){
 		AnyBalance.trace('Пытаемся выяснить почему нет баланса?...');
 		AnyBalance.trace(html);
         // Баланс
-        getParam (html, result, 'balance', /Баланс.*?>([-\d\.,\s]+)/, replaceTagsAndSpaces, parseBalance);
+        getParam (html, result, 'balance', /Баланс.*?>([-\d\.,\s]+)/, replaceTagsAndSpaces, parseBalanceRound);
         // Телефон
-        getParam (html, result, 'phone', /Ваш телефон:.*?>([^<]*)</i, replaceTagsAndSpaces, html_entity_decode);
+        getParam (html, result, 'phone', /Ваш телефон:.*?>([^<]*)</i, replaceTagsAndSpaces);
         
         if (isAvailableStatus()) {
         
@@ -315,11 +322,11 @@ function fetchAccountStatus(html, result) {
 	// Остаток ММС
 	getParam(html, result, 'mms_left', /(?:Осталось|Остаток)[^\d]*(\d*).*?(mms|ммс)/i, [], parseBalance);
 	// Накоплено 54 мин. в текущем месяце
-	getParam(html, result, 'min_used', /Накоплено.*?(\d+).*?мин[^\s]*/, replaceFloat, parseBalance);
+	getParam(html, result, 'min_used', /Накоплено.*?(\d+).*?мин[^\s]*/, replaceTagsAndSpaces, parseBalance);
 	// Сумма по неоплаченным счетам: 786.02 руб. (оплатить до 24.03.2012)
-	getParam(html, result, 'debt', /Сумма по неоплаченным счетам.*?([-\d\.,]+)/i, replaceFloat, parseBalance);
+	getParam(html, result, 'debt', /Сумма по неоплаченным счетам.*?([-\d\.,]+)/i, replaceTagsAndSpaces, parseBalance);
 	// Сумма по неоплаченным счетам: 786.02 руб. (оплатить до 24.03.2012)
-	getParam(html, result, 'pay_till', /оплатить до.*?([\d\.,\/]+)/i, replaceFloat, parseDate);
+	getParam(html, result, 'pay_till', /оплатить до.*?([\d\.,\/]+)/i, replaceTagsAndSpaces, parseDate);
 	//Для обычного помощника чуть по другому долг получать
 	getParam(html, result, 'debt', /оплатить до(?:[\s\S](?!<\/td>))*?<strong[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
 	// Ночной трафик
@@ -327,11 +334,12 @@ function fetchAccountStatus(html, result) {
 	// Остаток трафика (для впн надо в любом случае получать, иначе может наложиться на обычный трафик)
 	html = sumParam(html, result, ['traffic_left_vpn', 'traffic_left'], /VPN Counter[^<]*?:[^<]*?(\d+[,.]?\d*\s*([kmgкмг][бb]|байт|byte))/ig, replaceTagsAndSpaces, parseTraffic, true, aggregate_sum);
 	html = sumParam(html, result, 'traffic_left', /(?:Осталось|Остаток)[^<]*?(\d+[.,]?\d*\s*([kmgкмг][бb]|байт|byte))/ig, replaceTagsAndSpaces, parseTraffic, true, aggregate_sum);
+	html = sumParam(html, result, 'traffic_left_smart_box', /(?:СМАРТ box)[^<]*?(\d+[.,]?\d*\s*([kmgкмг][бb]|байт|byte))/ig, replaceTagsAndSpaces, parseTraffic, true, aggregate_sum);
 	html = sumParam(html, result, 'traffic_left', /:[^<]*?(\d+[,.]?\d*\s*([kmgкмг][бb]|байт|byte))/ig, replaceTagsAndSpaces, parseTraffic, true, aggregate_sum);
 	// Лицевой счет
-	getParam(html, result, 'license', /№ ([^<]*?)(?:<|:)/, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'license', /№ ([^<]*?)(?:<|:)/, replaceTagsAndSpaces);
 	// Блокировка
-	getParam(html, result, 'statuslock', /class="account-status-lock".*>(Номер [^<]*)</i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'statuslock', /class="account-status-lock".*>(Номер [^<]*)</i, replaceTagsAndSpaces);
 	// Сумма кредитного лимита
 	getParam(html, result, 'credit', /(?:Сумма кредитного лимита|Кредитный лимит)[\s\S]*?(-?\d+[\d\.,]*)/i, replaceTagsAndSpaces, parseBalance);
 	// Расход за этот месяц

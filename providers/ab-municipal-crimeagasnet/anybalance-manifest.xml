@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="5">ab-municipal-crimeagasnet</id>
+	<id version="6">ab-municipal-crimeagasnet</id>
 	<api flags="no_browser|captcha"/>
 	<name>КрымГазСети</name>
 	<description html="true"><![CDATA[

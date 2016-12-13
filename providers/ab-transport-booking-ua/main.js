@@ -36,7 +36,7 @@ function main() {
 	if (!html || AnyBalance.getLastStatusCode() > 400) 
 		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
 
-	var svAB = AnyBalance;
+	var svAB = AnyBalance, token;
 	this.fake_localStorage = {
 	    setItem: function(key, value) {
 			svAB.trace('Получили token (' + key + '): ' + value);
@@ -44,7 +44,7 @@ function main() {
 		}
 	}
 
-	var obf_script = getParam(html, null, null, /(\$\$_=~[\s\S]*?)\(function\s*\(\s*\)\s*\{\s*var\s+ga/);
+	var obf_script = getParam(html, /\$\$_=~[\s\S]*?\(\);/);
         
 	(0).constructor.constructor = function(str){ //Обфусцированный скрипт использует это для выполнения кода
 		if(str && typeof(str)=='string' && /localStorage/.test(str)){
@@ -54,6 +54,8 @@ function main() {
 	}
 
 	safeEval(obf_script);
+	if(!token)
+		throw new AnyBalance.Error('Не удалось получит token авторизации. Сайт изменен?');
     
     // Запрос на поиск пункта отправления
     var station_fromIdAndNameArray = findStationByName(baseurl, prefs.station_from);

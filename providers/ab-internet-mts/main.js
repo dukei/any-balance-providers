@@ -296,42 +296,62 @@ function getPrm() {
   if (type != 0 && type != 500 && type != 550 && !prefs.city)
     throw new AnyBalance.Error('Для выбранного типа подключения необходимо явно указать ваш город.');
 
+    var html = AnyBalance.requestPost(baseurl, {
+        extDvc:prefs.type,
+        authCity:(prefs.city && city2num[prefs.city]) || 26,
+        authLogin:prefs.login,
+        authPassword:prefs.password,
+        userAction:'auth'
+    });
 
-  /*    AnyBalance.trace(JSON.stringify({
-          extDvc:prefs.type,
-          authCity:(prefs.city && city2num[prefs.city]) || 26,
-          authLogin:prefs.login,
-          authPassword:prefs.password,
-          userAction:'auth'
-      }));
-  */
-
-  var html = AnyBalance.requestPost(baseurl, {
-    extDvc: type,
-    authCity: (prefs.city && city2num[prefs.city]) || 26,
-    authLogin: prefs.login,
-    authPassword: prefs.password,
-    userAction: 'auth'
-  });
-
-  if (!/\/index\/logout/i.test(html)) {
-    var error = getParam(html, null, null, /<div[^>]*background-color:\s*Maroon[^>]*>([\s\S]*?)<\/div>/, replaceTagsAndSpaces);
-    if (error)
-      throw new AnyBalance.Error(error);
-    AnyBalance.trace(html);
-    throw new AnyBalance.Error('Не удалось войти в личный кабинет. Проблемы на сайте или сайт изменен.');
-  }
-
-  var result = {
-    success: true
-  };
-
-  getParam(html, result, 'balance', /Баланс:[\S\s]*?<strong[^>]*>([\S\s]*?)<\/strong>/i, replaceTagsAndSpaces, parseBalanceRK);
-  getParam(html, result, 'status', /Статус:[\S\s]*?<strong[^>]*>([\S\s]*?)<\/strong>/i, replaceTagsAndSpaces);
-  getParam(html, result, 'licschet', /Лицевой счёт:[\S\s]*?<strong[^>]*>([\S\s]*?)<\/strong>/i, replaceTagsAndSpaces);
-  getParam(html, result, '__tariff', /Тарифный план:[\S\s]*?<strong[^>]*>([\S\s]*?)<\/strong>/i, replaceTagsAndSpaces);
-
-  AnyBalance.setResult(result);
+    if(!/\/index\/logout/i.test(html)){
+        var divs = getElements(html, /<[^>]+error_hint/ig), errors = [];
+        for(var i=0; i<divs.length; ++i){
+        	if(!/display:\s*none/i.test(divs[i]))
+        		errors.push(replaceAll(divs[i], replaceTagsAndSpaces));
+        }
+        
+        error = errors.join('; ');
+        if(error)
+            throw new AnyBalance.Error(error, null, /парол|логин/i.test(error));
+		
+        AnyBalance.trace(html);
+        throw new AnyBalance.Error('Не удалось войти в личный кабинет. Проблемы на сайте или сайт изменен.');
+    }
+    var result = {success: true};
+	
+	if(!prefs.accnum) {
+		getParam(html, result, 'balance', /<b[^>]+\bsumm\b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, parseBalance);
+		getParam(html, result, 'status', /<span[^>]+b-lk-fix-tarif__activated[^>]*>([\S\s]*?)<\/span>/i, replaceTagsAndSpaces);
+		getParam(html, result, 'licschet', /Номер лицевого счета\s*<\/div>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+		getParam(html, result, '__tariff', /<div[^>]+b-lk-fix-tarif__name[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+	} else {
+		// Теперь таблица услуг
+		var table = getParam(html, null, null, /(<table[\s\S]{1,150}id="list"[\s\S]*?<\/table>)/i);
+		if(!table)
+			throw new AnyBalance.Error('Не найдена таблица услуг. Сайт изменен?.');
+		
+		var re = /(<tr[\s\S]*?<\/tr>)/ig;
+		html.replace(re, function(tr) {
+			if(AnyBalance.isSetResultCalled())
+				return; //Если уже вернули результат, то дальше крутимся вхолостую
+			
+			var accnum = (prefs.accnum || '').toUpperCase();
+			var acc = getParam(tr, null, null, /(?:[\s\S]*?<td[^>]*>){1}\s*(?:<b>|<a href[\s\S]*?>|)\s*([\s\S]*?)\s*(?:<\/b>|<\/a>|)\s*<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+			//var acc = getParam(tr, null, null, /(?:[\s\S]*?<td[^>]*>){2}\s*([\s\S]*?)\s*<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+			if(!prefs.accnum || /*(name && name.toUpperCase().indexOf(accnum) >= 0) || */(acc && acc.toUpperCase().indexOf(accnum) >= 0))
+			{
+				getParam(tr, result, 'balance', /(?:[\s\S]*?<td[^>]*>){5}\s*(?:<b>|<a href[\s\S]*?>|)\s*([\s\S]*?)\s*(?:<\/b>|<\/a>|)\s*<\/td>/i, replaceTagsAndSpaces, parseBalanceRK);
+				//getParam(html, result, 'status', /Статус:[\S\s]*?<strong[^>]*>([\S\s]*?)<\/strong>/i, replaceTagsAndSpaces, html_entity_decode);
+				getParam(tr, result, 'licschet', /(?:[\s\S]*?<td[^>]*>){1}\s*(?:<b>|<a href[\s\S]*?>|)\s*([\s\S]*?)\s*(?:<\/b>|<\/a>|)\s*<\/td>/i, replaceTagsAndSpaces);
+				//getParam(html, result, '__tariff', /Тарифный план:[\S\s]*?<strong[^>]*>([\S\s]*?)<\/strong>/i, replaceTagsAndSpaces, html_entity_decode);
+				getParam(tr, result, 'usluga', /(?:[\s\S]*?<td[^>]*>){4}\s*(?:<b>|<a href[\s\S]*?>|)\s*([\s\S]*?)\s*(?:<\/b>|<\/a>|)\s*<\/td>/i, replaceTagsAndSpaces);
+				AnyBalance.setResult(result);
+				return;
+			}
+		});
+	}
+    AnyBalance.setResult(result);
 }
 
 function getKrv() {
@@ -347,7 +367,7 @@ function getArkh() {
 }
 
 function getPnz() {
-  newTypicalLanBillingInetTv('https://lkpenza.pv.mts.ru/index.php');
+  newTypicalLanBillingInetTv_1('https://lkpenza.pv.mts.ru/index.php');
 }
 
 function getNnovTv() {

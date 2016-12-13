@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="118" date="2016-12-13">
+	Исправлены Екатеринбург и Пенза
+	</change>
 	<change version="117" date="2016-12-07">
 	- Поддержка изменений на сайте: Курган
 	</change>

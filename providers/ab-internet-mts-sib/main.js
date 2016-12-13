@@ -74,11 +74,13 @@ function main(){
         throw new AnyBalance.Error('Не удалось войти в личный кабинет. Проблемы на сайте или сайт изменен.');
     }
     var result = {success: true};
+
+    var accnum = getParam(html, /Номер лицевого счета\s*<\/div>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
 	
-	if(!prefs.accnum) {
+	if(!prefs.accnum || endsWith(accnum || '', prefs.accnum)) {
 		getParam(html, result, 'balance', /<b[^>]+\bsumm\b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, parseBalance);
 		getParam(html, result, 'status', /<span[^>]+b-lk-fix-tarif__activated[^>]*>([\S\s]*?)<\/span>/i, replaceTagsAndSpaces);
-		getParam(html, result, 'licschet', /Номер лицевого счета\s*<\/div>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+		getParam(accnum, result, 'licschet');
 		getParam(html, result, '__tariff', /<div[^>]+b-lk-fix-tarif__name[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
 	} else {
 		// Теперь таблица услуг

@@ -50,9 +50,9 @@ function main(){
     }, addHeaders({Referer: baseurl + 'Auth/IndividualEnergy'})); 
     html = redirectIfNeeded(html);
 
-    var form = getElement(html, /<form[^>]+name="auth"/i);
-    
-    if(!form || !/<input[^>]+phone/i.test(html)){
+    var form = getElement(html, /<form[^>]+(?:name="auth"|auth\/mobile)/i);
+
+    if(!form || !/<input[^>]+(?:phone|Mobile)/i.test(html)){
         var error = getElement(html, /<div[^>]+(?:field-validation-error|alert)/i, replaceTagsAndSpaces);
         if(error)
             throw new AnyBalance.Error(error, null, /лицев|фамили/i.test(html));
@@ -64,6 +64,9 @@ function main(){
 		if (name == 'phone') {
 			return prefs.phone;
 		}
+		if (name == 'Mobile') {
+			return prefs.phone;
+		}
 
 		return value;
 	});
@@ -72,27 +75,41 @@ function main(){
 	html = AnyBalance.requestPost(joinUrl(AnyBalance.getLastUrl(), action), params, addHeaders({Referer: AnyBalance.getLastUrl()})); 
     html = redirectIfNeeded(html);
 
-    if(!/logout/i.test(html)){
+    var reBalance = /(?:Долг|Переплата)(?:\s|&nbsp;)*:[\s\S]*?<\/p>/i;
+
+    if(!/logout/i.test(html) || !reBalance.test(html)){
         var error = getElement(html, /<div[^>]+(?:field-validation-error|alert)/i, replaceTagsAndSpaces);
+        if(!error)
+        	error = getElement(html, /<p[^>]+color\s*:\s*red/i, replaceTagsAndSpaces);
         if(error)
             throw new AnyBalance.Error(error, null, /телефон/i.test(html));
         AnyBalance.trace(html);
         throw new AnyBalance.Error('Не удалось подтвердить вход в личный кабинет. Сайт изменен?');
     }
 
+    var type = /test.permenergosbyt.ru/i.test(AnyBalance.getLastUrl()) ? 'old' : 'new';
+    AnyBalance.trace('Тип кабинета: ' + type);
+
     var result = {success: true};
-    getParam(html, result, 'balance', /(?:Долг|Переплата)(?:\s|&nbsp;)*:[\s\S]*?<\/p>/i, [/Долг(?:\s|&nbsp;)*:/i, '-', replaceTagsAndSpaces], parseBalance);
-    getParam(html, result, 'account', /Лицевой счет(?:\s|&nbsp;)*:([^<]*)/i, replaceTagsAndSpaces);
+    getParam(html, result, 'balance', reBalance, [/Долг(?:\s|&nbsp;)*:/i, '-', replaceTagsAndSpaces], parseBalance);
     getParam(html, result, 'fio', /ФИО(?:\s|&nbsp;)*:\s*([\s\S]*?)<\/p>/i, replaceTagsAndSpaces);
     getParam(html, result, 'number', /Номер счетчика(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
     getParam(html, result, '__tariff', /Тариф(?:[\s\S]*?<td[^>]*>){6}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
     getParam(html, result, 'tariffNumber', /Ставка тарифа(?:[\s\S]*?<td[^>]*>){8}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
 
-    if(AnyBalance.isAvailable('statement', 'consumption')){
-    	html = AnyBalance.requestGet(AnyBalance.getLastUrl() + '?action=charges&active_from=' + getFormattedDate({offsetMonth: 3}) + '&active_to=' + getFormattedDate(), g_headers);
-    	getParam(html, result, 'statement', /<td[^>]*>\s*электроэнерги(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-    	getParam(html, result, 'consumption', /<td[^>]*>\s*электроэнерги(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+    if(type == 'new'){
+    	getParam(html, result, 'account', /Лицевой счет(?:\s|&nbsp;)*:([^<]*)/i, replaceTagsAndSpaces);
 
+        if(AnyBalance.isAvailable('statement', 'consumption')){
+        	html = AnyBalance.requestGet(AnyBalance.getLastUrl() + '?action=charges&active_from=' + getFormattedDate({offsetMonth: 3}) + '&active_to=' + getFormattedDate(), g_headers);
+        	getParam(html, result, 'statement', /<td[^>]*>\s*электроэнерги(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+        	getParam(html, result, 'consumption', /<td[^>]*>\s*электроэнерги(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+        
+        }
+    }else{
+        getParam(html, result, 'statement', /Расход электроэнергии(?:[\s\S]*?<td[^>]*>){9}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+        getParam(html, result, 'consumption', /Расход электроэнергии(?:[\s\S]*?<td[^>]*>){10}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+        getParam(html, result, 'account', /Лицевой счет(?:\s|&nbsp;)*:\s*<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
     }
 
     //Возвращаем результат

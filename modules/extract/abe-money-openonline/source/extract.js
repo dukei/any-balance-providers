@@ -239,26 +239,31 @@ function processDeposits(html, result) {
 function processDeposit(deposit, result) {
     AnyBalance.trace('Обработка депозита ' + result.__name);
 
-	var href = getParam(deposit, null, null, /location\.href\s*=\s*['"]\/?([^'"]*)/i);
-	if(!href) {
-		AnyBalance.trace(deposit);
-		AnyBalance.trace("Не удалось найти ссылку на выписку по депозиту" + result.__name);
-		return;
-	}
+    var depbalance = getElement(deposit, /<span[^>]+class="data"/i, replaceTagsAndSpaces);
 
-	var html = AnyBalance.requestGet(baseurl + href, g_headers);
+	getParam(depbalance, result, 'deposits.balance', null, null, parseBalance);
+	getParam(depbalance, result, ['deposits.currency', 'deposits.balance'], null, null, parseCurrency);
+	getParam(deposit, result, 'deposits.accnum', /Номер счета([^<]*)/i, replaceTagsAndSpaces);
 
-	getParam(html, result, 'deposits.balance', /остаток на(?:[^>]*>){1}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'deposits.pct', /Ставка:(?:[^>]*>){1}([^%]*)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, ['deposits.currency', 'deposits.balance'], /остаток на(?:[^>]*>){1}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseCurrency);
-	getParam(html, result, 'deposits.accnum', /Номер счета(?:[^>]*>){1}([\s\S]*?)<\//i, replaceTagsAndSpaces);
-	getParam(html, result, 'deposits.agreement', /Договор(?:[^>]*>){1}([\s\S]*?)<\//i, replaceTagsAndSpaces);
-	getParam(html, result, 'deposits.status', /Статус(?:[^>]*>){1}([\s\S]*?)<\//i, replaceTagsAndSpaces);
-	getParam(html, result, 'deposits.till', /остаток на(?:[^>]*>){1}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseDate);
-	getParam(html, result, 'deposits.date_start', /Дата открытия(?:[^>]*>){1}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseDate);
-
-	if(isAvailable('deposits.transactions')) {
-		processDepositTransactions(href, result);
+	if(AnyBalance.isAvailable('deposits.pct', 'deposits.agreement', 'deposits.status', 'deposits.till', 'deposits.date_start', 'deposits.transactions')){
+		var href = getParam(deposit, null, null, /location\.href\s*=\s*['"]\/?([^'"]*)/i);
+		if(!href) {
+			AnyBalance.trace(deposit);
+			AnyBalance.trace("Не удалось найти ссылку на выписку по депозиту" + result.__name);
+			return;
+		}
+	    
+		var html = AnyBalance.requestGet(baseurl + href, g_headers);
+		
+		getParam(html, result, 'deposits.pct', /Ставка:(?:[^>]*>){1}([^%]*)/i, replaceTagsAndSpaces, parseBalance);
+		getParam(html, result, 'deposits.agreement', /Договор(?:[^>]*>){1}([\s\S]*?)<\//i, replaceTagsAndSpaces);
+		getParam(html, result, 'deposits.status', /Статус(?:[^>]*>){1}([\s\S]*?)<\//i, replaceTagsAndSpaces);
+		getParam(html, result, 'deposits.till', /остаток на(?:[^>]*>){1}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseDate);
+		getParam(html, result, 'deposits.date_start', /Дата открытия(?:[^>]*>){1}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseDate);
+	    
+		if(isAvailable('deposits.transactions')) {
+			processDepositTransactions(href, result);
+		}
 	}
 }
 

@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="4">ab-bonus-ikra</id>
+	<id version="5">ab-bonus-ikra</id>
 	<api flags="no_browser"/>
 	<name>Икра (Карусель)</name>
 	<description html="true"><![CDATA[
@@ -8,10 +8,13 @@
 	<p>Информация берется из личного кабинета https://prcab.x5club.ru/karusel/</p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="crypt/sha1"/>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>

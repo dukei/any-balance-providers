@@ -255,10 +255,11 @@ function processApiRemaindersPrepaid(result){
 		
 		// Минуты
 		if(curr.unit == 'SECONDS') {
-			//Приоритет билайна не случаен, их минуты определить сложнее
-			if(isLocalMin(curr.restName || curr.accName)) {
+			if(/на междугородные номера/i.test(curr.restName || curr.accName)){
+				sumParam(curr.rest + ' ' + curr.unit, remainders, 'remainders.min_left_2', null, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
+			} else if(isLocalMin(curr.restName || curr.accName)) { 
 				sumParam(curr.rest + ' ' + curr.unit, remainders, 'remainders.min_local', null, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
-			} else {
+			} else { 	//Приоритет билайна не случаен, их минуты определить сложнее
 				sumParam(curr.rest + ' ' + curr.unit, remainders, 'remainders.min_bi', null, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
 			}
 		} else if(curr.unit == 'SMS') {

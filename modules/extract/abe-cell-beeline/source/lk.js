@@ -470,8 +470,11 @@ function fetchB2B(baseurl, html, result) {
 
     html = AnyBalance.requestGet(baseurl + href, g_headers);
 
-    getParam(html, result, 'phone', /subheader\s*"([^>]*>){3}/i, replaceTagsAndSpaces);
-    getParam(html, result, '__tariff', /Тариф:([^>]*>){5}/i, replaceTagsAndSpaces);
+    if(!result.info)
+    	result.info = {};
+
+    getParam(html, result.info, 'info.phone', /subheader\s*"([^>]*>){3}/i, replaceTagsAndSpaces);
+    getParam(html, result, 'tariff', /Тариф:([^>]*>){5}/i, replaceTagsAndSpaces);
 
 
     // Трафик из детализации, пока не работает
@@ -529,28 +532,31 @@ function fetchB2B(baseurl, html, result) {
     var bonuses = sumParam(html, null, null, /class="accumulator"[^>]*>([\s\S]*?)<\/div/ig);
     AnyBalance.trace('Найдено бонусов и пакетов: ' + bonuses.length);
 
+    if(!result.remainders)
+    	result.remainders = {};
+
     for (var i = 0; i < bonuses.length; i++) {
         var curr = bonuses[i];
-        var name = getParam(curr, null, null, /([^<]*)</i);
-        var usedMin = getParam(curr, null, null, /израсходовано[^>]*>([\s\d.,]+мин)/i, replaceTagsAndSpaces, parseMinutes);
-        var totalMin = getParam(curr, null, null, /из доступных[^>]*>([\s\d.,]+мин)/i, replaceTagsAndSpaces, parseMinutes);
-        var usedSms = getParam(curr, null, null, /израсходовано[^>]*>([\s\d.,]+штук)/i, replaceTagsAndSpaces, parseBalance);
-        var totalSms = getParam(curr, null, null, /из доступных[^>]*>([\s\d.,]+штук)/i, replaceTagsAndSpaces, parseBalance);
+        var name = getParam(curr, /([^<]*)</i);
+        var usedMin = getParam(curr, /израсходовано[^>]*>([\s\d.,]+мин)/i, replaceTagsAndSpaces, parseMinutes);
+        var totalMin = getParam(curr, /из доступных[^>]*>([\s\d.,]+мин)/i, replaceTagsAndSpaces, parseMinutes);
+        var usedSms = getParam(curr, /израсходовано[^>]*>([\s\d.,]+штук)/i, replaceTagsAndSpaces, parseBalance);
+        var totalSms = getParam(curr, /из доступных[^>]*>([\s\d.,]+штук)/i, replaceTagsAndSpaces, parseBalance);
 
         // Это пакет опций
         if (/Ноль на Билайн/i.test(name) && isset(usedMin) && isset(totalMin)) {
-            sumParam(totalMin - usedMin, result, 'min_bi', null, null, null, aggregate_sum);
+            sumParam(totalMin - usedMin, result.remainders, 'remainders.min_bi', null, null, null, aggregate_sum);
             // Это минуты
         } else if (isset(usedMin) && isset(totalMin)) {
-            if(!isset(result['min_left_1']) && !isset(result['min_left_2']))
-                sumParam(totalMin - usedMin, result, 'min_left_1', null, null, null, aggregate_sum);
-            else if(isset(result['min_left_1']) && !isset(result['min_left_2']))
-                sumParam(totalMin - usedMin, result, 'min_left_2', null, null, null, aggregate_sum);
+            if(!isset(result.remainders['min_left_1']) && !isset(result.remainders['min_left_2']))
+                sumParam(totalMin - usedMin, result.remainders, 'remainders.min_left_1', null, null, null, aggregate_sum);
+            else if(isset(result.remainders['min_left_1']) && !isset(result.remainders['min_left_2']))
+                sumParam(totalMin - usedMin, result.remainders, 'remainders.min_left_2', null, null, null, aggregate_sum);
             else
-                sumParam(totalMin - usedMin, result, 'min_local', null, null, null, aggregate_sum);
+                sumParam(totalMin - usedMin, result.remainders, 'remainders.min_local', null, null, null, aggregate_sum);
             // Это смс
         } else if (isset(usedSms) && isset(totalSms)) {
-            sumParam(totalSms - usedSms, result, 'sms_left', null, null, null, aggregate_sum);
+            sumParam(totalSms - usedSms, result.remainders, 'remainders.sms_left', null, null, null, aggregate_sum);
         } else {
             AnyBalance.trace('Неизвестная опция, либо неизвестные единицы измерений: ' + curr);
         }
@@ -1039,9 +1045,9 @@ function getBonuses(xhtml, result, nopath) {
                 sumParam(values, remainders, path + 'min_left_1', null, replaceMinutes, parseMinutes, aggregate_sum);
                 sumParam(services[i], remainders, path + 'min_local_till', /Доступно до([^<]{10,20})/i, replaceTagsAndSpaces, parseDateWord, aggregate_min);
                 // Это новый вид отображения данных
-            } else if (/Минут общения|вызовы|на местные номера|Остаток разговоров/i.test(name)) {
+            } else if (/Минут общения|вызовы|на местные номера|Остаток разговоров|Разговоры/i.test(name)) {
                 // Очень внимательно надо матчить
-                if(/местные.*вызовы|любые номера Вашего региона|^Минут общения по тарифу$|(?:всех|других|любых)\s*(?:сотовых|мобильных)?\s*операторов|все номера|На номера домашнего региона|Минут общения по тарифу Все для бизнеса Бронза|кроме номеров .?Билайн.?|на местные номера других операторов|любые местные/i.test(name))
+                if(/местные.*вызовы|любые номера Вашего региона|^Минут общения по тарифу$|(?:всех|других|любых)\s*(?:сотовых|мобильных)?\s*операторов|все номера|На номера домашнего региона|Минут общения по тарифу Все для бизнеса Бронза|кроме номеров .?Билайн.?|на местные номера других операторов|любые местные|другие мобильные/i.test(name))
                     sumParam(values, remainders, path + 'min_local', null, replaceMinutes, parseMinutes, aggregate_sum);
                 else
                     sumParam(values, remainders, path + 'min_bi', null, replaceMinutes, parseMinutes, aggregate_sum);

@@ -20,7 +20,7 @@ function main(){
     var prefs = AnyBalance.getPreferences();
     AnyBalance.setDefaultCharset('utf-8');
 
-    var baseurl = "http://lk.csat.ru";
+    var baseurl = "https://lk.csat.ru";
 
 	var html = AnyBalance.requestGet(baseurl + '/lk/auth/', g_headers);
 
@@ -35,7 +35,8 @@ function main(){
 		throw new AnyBalance.Error('Не удаётся найти форму входа! Сайт изменен?');
 	}
 
-	var entertype = /@/.test(prefs.login) ? 'email' : 'phone';
+	var entertype = /@/.test(prefs.login) ? 'email' : /^\d{3,6}$/.test(prefs.login) ? 'pin' : 'phone';
+	AnyBalance.trace(prefs.login + ' определен как ' + entertype);
 	var params = AB.createFormParams(form, function(params, str, name, value) {
 		if (name == 'AUTH_TYPE') {
 			return entertype;
@@ -71,11 +72,11 @@ function main(){
     for(var i=0; i<divs.length; ++i){
     	var div = divs[i];
     	var plate = getElement(div, /<h2/i, replaceTagsAndSpaces);
-    	AnyBalance.trace('Найден номер ' + plate);
-    	if(!prefs.plate || plate.indexOf(prefs.plate) >= 0){
+   		var pin = getParam(div, /data-pin-id="([^"]*)/i, replaceHtmlEntities);
+    	AnyBalance.trace('Найден номер ' + plate + ', PIN: ' + pin);
+    	if(!prefs.plate || plate.indexOf(prefs.plate) >= 0 || pin.indexOf(prefs.plate) >= 0){
     		getParam(plate, result, 'plate');
     		getParam(div, result, 'status', /Статус:([\s\S]*?)<\/strong>/i, replaceTagsAndSpaces);
-    		var pin = getParam(div, null, null, /data-pin-id="([^"]*)/i, replaceHtmlEntities);
     		getParam(pin, result, 'pin');
 
     		if(pin){

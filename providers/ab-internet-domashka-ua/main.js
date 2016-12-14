@@ -32,20 +32,17 @@ function main() {
 	}, addHeaders({Referer: baseurl + 'index.php'}));
 	
 	if (!/logout/i.test(html)) {
-		var error = getParam(html, null, null, /<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
-		if (error)
-			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
-		
 		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
+		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Неверный логин или пароль или сайт изменен.');
 	}
 	
 	var result = {success: true};
 	
-	getParam(html, result, 'balance', /Остаток на счету[^<]*<font[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'deadline', /Пакет будет продлен[^<]*<font[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseDate);
-	getParam(html, result, 'abon', /Абонентская плата(?:[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'bonus', /<tr[^>]*>(?:[\s\S](?!<\/tr>))*?Итого бонус на сегодня/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'balance', /(?:Остаток на счету|Залишок на рахунку)[^<]*<font[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(prefs.login, result, 'licschet');
+	getParam(html, result, 'deadline', /(?:Пакет будет продлен|Рестарт тарифного плану)[^<]*<font[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseDate);
+	getParam(html, result, 'abon', /(?:Абонентская плата|Абонентська плата)[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'bonus', /Бонус[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 
 	AnyBalance.setResult(result);
 }

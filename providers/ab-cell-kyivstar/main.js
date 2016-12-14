@@ -14,7 +14,7 @@ function main() {
 	});
 
 	try {
-	//throw new AnyBalance.Error('тест мобайл');
+//	throw new AnyBalance.Error('тест мобайл');
 		processSite();
 	} catch (e) {
 		if (e.fatal)
@@ -88,6 +88,12 @@ function processSite() {
 
 	} else {
 		AnyBalance.trace('тип лк: Телефон');
+		
+		if (html.indexOf(prefs.login) < 0) {
+			var num = getParam(html, /Номер:[\s\S]*?<td[^>]*>([^<]*)/i,	replaceTagsAndSpaces);
+			AnyBalance.trace(html);
+			throw new AnyBalance.Error('Не удалось зайти на нужный номер! Нужно ' + prefs.login + ', а зашли на ' + num + '. Попробуйте обновить аккаунт через вайфай.');
+		}
 
 		//Срок действия номера
 		sumParam(html, result, 'till', /(?:Номер діє до:|Номер действует до:)[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i,
@@ -321,6 +327,10 @@ function processSite() {
 			return parseTraffic(str, 'b');
 		}, aggregate_sum);
 	//Бонусный интернет
+	sumParam(html, result, 'internet',
+		/(?:Остаток МБ\s*:|Залишок МБ\s*:)[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/ig,
+		replaceTagsAndSpaces, parseTraffic, aggregate_sum);
+
 	sumParam(html, result, 'bonus_internet',
 		/(?:Залишок бонусного об’єму даних для інтернет доступу:|Остаток бонусного объема данных для интернет доступа:)[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/ig,
 		replaceTagsAndSpaces, parseTraffic, aggregate_sum);

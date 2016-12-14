@@ -1341,7 +1341,7 @@ var AB = (function (global_scope) {
 		var cookies = AnyBalance.getCookies();
 		for(var i=0; i<cookies.length; ++i){
 			var cookie = cookies[i];
-			AnyBalance.setCookie(cookie.domain, cookie.name, null);
+			AnyBalance.setCookie(cookie.domain, cookie.name, null, cookie);
 		}
 	}
 

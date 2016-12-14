@@ -30,7 +30,9 @@ function checkGwtError(html) {
 	try {
 		return gwtGetJSON(html);
 	} catch (e) {
-		if (/accountNotFound|AccountException/i.test(e.message))
+		if (/AccountException\$Type\/603172321/i.test(e.message))
+			throw new AnyBalance.Error('Превышено количество не успешных попыток входа. Ваша учетная запись временно заблокирована. Блокировка будет снята автоматически через 180 минут');
+		if (/accountNotFound|AccountException|passwordNotFound/i.test(e.message))
 			throw new AnyBalance.Error('Пользователь с таким логином не найден!', null, true);
 		throw e;
 	}
@@ -65,23 +67,20 @@ function loginBasic(html) {
 
 	AnyBalance.trace('форма входа найдена');
 
+
 	var strongName = gwtLoadStrongName(g_gwtCfg),
 		checkRequest =
 		'7|0|6|%url%|%magic_id%|ua.kyivstar.cas.shared.rpc.AuthSupportRPCService|getAccountShortDetails|java.lang.String/2004016611|%LOGIN%|1|2|3|4|1|5|6|',
 		authRequest =
 		'7|0|9|%url%|%magic_id%|ua.kyivstar.cas.shared.rpc.AuthSupportRPCService|authenticate|java.lang.String/2004016611|Z|%LOGIN%|%PASSWORD%|https://account.kyivstar.ua/cas/login?service=http%3A%2F%2Fmy.kyivstar.ua%3A80%2Ftbmb%2Fdisclaimer%2Fshow.do&locale=ua#password:|1|2|3|4|5|5|5|5|6|5|7|8|0|0|9|';
+		authRequestCaptcha =                                                                                                                                                                                                                                                               
+		'7|0|10|%url%|%magic_id%|ua.kyivstar.cas.shared.rpc.AuthSupportRPCService|authenticate|java.lang.String/2004016611|Z|%LOGIN%|%PASSWORD%|%RECAPTCHA%|https://account.kyivstar.ua/cas/login?service=http%3A%2F%2Fmy.kyivstar.ua%3A80%2Ftbmb%2Fdisclaimer%2Fshow.do&locale=ua#password:|1|2|3|4|5|5|5|5|6|5|7|8|9|0|10|';
 	//Проверяем телефон
 	//https://account.kyivstar.ua/cas/auth/authSupport.rpc
 	// html = AnyBalance.requestPost(g_gwtCfg.url + 'cas/auth/authSupport.rpc',
 	html = AnyBalance.requestPost(g_gwtCfg.url + 'authSupport.rpc',
 		makeReplaces(checkRequest, g_gwtCfg).replace(/%LOGIN%/g, gwtEscape(prefs.login)),
 		gwtHeaders(strongName, g_gwtCfg));
-
-	var json = checkGwtError(html);
-	if (json[12] >= 3)
-		throw new AnyBalance.Error(
-			'К сожалению, Киевстар потребовал ввода капчи для этого номера. Зайдите в личный кабинет один раз через браузер.',
-			null, true);
 
 	var types = {
 		msisdn: 'MSISDN_PASSWORD',
@@ -94,11 +93,19 @@ function loginBasic(html) {
 		type = 'msisdn';
 	}
 
+	var json = checkGwtError(html), recaptchaResponse;
+	if (json[12] >= 3){
+		recaptchaResponse = solveRecaptcha('К сожалению, Киевстар потребовал ввода капчи для этого номера. Решите её или зайдите в личный кабинет один раз через браузер.',
+			referer, "6LdmHxMTAAAAAOC1FPK3u0jx00AbkUj_OvQXN0yR");
+	}
+
 	//Получаем токен для входа
 	// html = AnyBalance.requestPost(g_gwtCfg.url + 'cas/auth/authSupport.rpc',
 	html = AnyBalance.requestPost(g_gwtCfg.url + 'authSupport.rpc',
-		makeReplaces(authRequest, g_gwtCfg).replace(/%LOGIN%/g, gwtEscape(prefs.login.replace(/\D+/g, ''))).replace(
-			/%PASSWORD%/g, gwtEscape(prefs.password)),
+		makeReplaces(recaptchaResponse ? authRequestCaptcha : authRequest, g_gwtCfg)
+			.replace(/%LOGIN%/g, gwtEscape(prefs.login.replace(/\D+/g, '')))
+			.replace(/%PASSWORD%/g, gwtEscape(prefs.password))
+			.replace(/%RECAPTCHA%/g, gwtEscape(recaptchaResponse || '')),
 		gwtHeaders(strongName, g_gwtCfg));
 
 	checkGwtError(html);
@@ -143,6 +150,7 @@ function loginBasic(html) {
 function loadAuthorizationPage(paramstr){
 	//Куки надо удалить, иначе посчитает, что авторизация уже есть
 	clearAllCookies();
+	AnyBalance.trace('Удалили все куки');
 	var html = AnyBalance.requestGet('https://account.kyivstar.ua/cas/login?' + paramstr, g_headers);
 	return html;
 }
@@ -187,7 +195,9 @@ function loginSite(baseurl) {
 	if (isLoggedIn(html)) {
 		AnyBalance.trace('Уже в системе.');
 		if (html.indexOf(prefs.login) < 0) {
-			AnyBalance.trace('Не тот аккаунт, выход.');
+    		html = goToOldSite(html); 
+			var num = getParam(html, null, null, [/Номер:[\s\S]*?<td[^>]*>([^<]*)/i, /"subscriptionIdentifier"\s*:\s*"([^"]*)/], replaceTagsAndSpaces);
+			AnyBalance.trace('Не тот аккаунт, выход (нужно ' + prefs.login + ', вошли на ' + num + ').');
 			html = doLogout();
 		}
 	}
@@ -244,12 +254,4 @@ function loginMobile(baseurl) {
 
 	html = loginBasic(html);
 	return html;
-}
-
-function clearAllCookies(){
-	var cookies = AnyBalance.getCookies();
-	for(var i=0; i<cookies.length; ++i){
-		var cookie = cookies[i];
-		AnyBalance.setCookie(cookie.domain, cookie.name, null);
-	}
 }

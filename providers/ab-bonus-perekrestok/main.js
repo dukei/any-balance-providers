@@ -58,8 +58,11 @@ function main () {
     	json = getJson(html);
 
     	getParam(json.data.balance_list[0].balance_points, result, 'balance');
-    	getParam(json.data.expiration_info.value, result, 'burnInThisMonth');
-    	getParam(json.data.expiration_info.date*1000, result, 'burnDate');
+
+    	if(json.data.expiration_info){
+	    	getParam(json.data.expiration_info.value, result, 'burnInThisMonth');
+    		getParam(json.data.expiration_info.date*1000, result, 'burnDate');
+    	}
     }
 
     AnyBalance.setResult (result);

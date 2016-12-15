@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="1.0" version="9">ab-bonus-perekrestok</id>
+	<id major_version="1.0" version="10">ab-bonus-perekrestok</id>
 	<api flags="no_browser"/>
 	<name>Перекресток</name>
 	<description html="true"><![CDATA[

@@ -29,99 +29,53 @@ function main() {
 
 	var grc_response = solveRecaptcha('Пожалуйста, подтвердите, что вы не робот', baseurl, '6LcxEwkUAAAAAHluJu_MhGMLI2hbzWPNAATYetWH');
 
-	html = AnyBalance.requestPost(baseurl + 'ulogin', {
+	html = AnyBalance.requestPost(baseurl + 'crm_cabinet_api/auth', JSON.stringify({
+		captcha: {
+			class_type: 'GoogleRecaptcha',
+			g_recaptcha_response: grc_response
+		},
 		login: prefs.login,
 		password: prefs.password,
-		recaptcha: grc_response,
-	}, AB.addHeaders({
-		'X-Requested-With': 'XMLHttpRequest',
+		remember: true
+	}), AB.addHeaders({
+		'Content-Type': 'application/json',
 		Referer: baseurl + 'ulogin'
-	}));
+	}), {HTTP_METHOD: 'PUT'});
 
 	var json = AB.getJson(html);
 
-	if (!json.success) {
-		var error = json.message;
+	if (!json.authorized) {
+		var error = json.reason;
+		if(json.reason == 'credentials not suitable')
+			error = 'Неверный логин или пароль';
 		if (error) {
-			throw new AnyBalance.Error(error, null, /найден|пароль/i.test(error));
+			throw new AnyBalance.Error(error, null, /парол/i.test(error));
 		}
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
 
-	html = AnyBalance.requestGet(baseurl + 'profile', g_headers);
 	var result = {
 		success: true
 	};
 
-	var balanceInfo = getElement(html, /<div[^>]*class="[^"]*bonus-info/i);
-	AB.getParam(balanceInfo, result, 'balance', [/<h2[^>]*>[\s\S]*?<\/h2>/i, /У меня накоплено(.*?)балл/i], AB.replaceTagsAndSpaces, AB.parseBalance);
-	AB.getParam(html, result, 'fio', /<div[^>]*class="[^"]*user[^"]*"[^>]*>[\s\S]*?(<p[\s\S]*?)<\/a>/i, AB.replaceTagsAndSpaces);
-	AB.getParam(html, result, 'card', /на\s+вашей\s+карте\s+№([\s\S]*?)<\/p>/i, AB.replaceTagsAndSpaces);
-
-	AnyBalance.setResult(result);
-}
-
-function mainOld() {
-	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'https://fix-price.ru/';
-	AnyBalance.setDefaultCharset('utf-8');
-
-	AB.checkEmpty(prefs.login, 'Введите логин!');
-	AB.checkEmpty(prefs.password, 'Введите пароль!');
-
-	var html = AnyBalance.requestGet(baseurl, g_headers);
-
-	if (!html || AnyBalance.getLastStatusCode() > 400) {
-		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
-	}
-
-//	AnyBalance.trace(JSON.stringify(AnyBalance.getCapabilities()));
-	var grc_response = solveRecaptcha('Пожалуйста, подтвердите, что вы не робот', baseurl, '6LcxEwkUAAAAAHluJu_MhGMLI2hbzWPNAATYetWH');
-
-	html = AnyBalance.requestPost(baseurl + 'ajax/crm1.php', {
-		mail: prefs.login,
-		pass: prefs.password,
-		uri: '/',
-		recaptcha: grc_response,
-		action: /@/.test(prefs.login) ? 'auth_by_email' : 'auth_by_phone'
-	}, AB.addHeaders({
-		'X-Requested-With': 'XMLHttpRequest',
-		Referer: baseurl
-	}));
-
-
-	if(html != '0'){
-		if(html == '1')
-			throw new AnyBalance.Error('Неправильный логин или пароль', null, true);
-	    
-		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
-	}
-
-	if(/062139c3908199a.png/i.test(html))
-		throw new AnyBalance.Error('FixPrice временно приостановил бонусную программу. Более подробная информация на https://bonus.fix-price.ru/rules#bt_regulations1');
-
-	var result = {
-		success: true
-	};
-
+	var join_space = create_aggregate_join(' ');
 	if(AnyBalance.isAvailable('fio')){
-		html = AnyBalance.requestGet(baseurl + 'account/', g_headers);
-		AB.getParam(html, result, 'fio', /Здравствуйте,([\s\S]*?)<\/h1>/i, AB.replaceTagsAndSpaces);
+		html = AnyBalance.requestGet(baseurl + 'crm_cabinet_api/anketa', g_headers);
+		json = getJson(html);
+		AB.sumParam(json.last_name, result, 'fio', null, null, null, join_space);
+		AB.sumParam(json.first_name, result, 'fio', null, null, null, join_space);
+		AB.sumParam(json.middle_name, result, 'fio', null, null, null, join_space);
 	}
 
-	if(AnyBalance.isAvailable('balance', 'card')){
-		for(var i=0; i<5; ++i){
-			html = AnyBalance.requestGet(baseurl + 'account/bonuses/', g_headers);
-			if(/У меня накоплено/i.test(html))
-				break; //Дождемся появления баланса. Что-то он тормозит появиться.
-		}
-	    
-		AB.getParam(html, result, 'balance', /У меня накоплено(.*?)балл/i, AB.replaceTagsAndSpaces, AB.parseBalance);
-		AB.getParam(html, result, 'card', /на\s+вашей\s+карте\s+№([\s\S]*?)<\/p>/i, AB.replaceTagsAndSpaces);
+	if(AnyBalance.isAvailable('balance')){
+		html = AnyBalance.requestGet(baseurl + 'crm_cabinet_api/balance', g_headers);
+		json = getJson(html);
+		AB.getParam(json.active, result, 'balance');
+		AB.getParam(json.inactive, result, 'balance_inactive');
 	}
+
+//	AB.getParam(html, result, 'card', /на\s+вашей\s+карте\s+№([\s\S]*?)<\/p>/i, AB.replaceTagsAndSpaces);
 
 	AnyBalance.setResult(result);
 }

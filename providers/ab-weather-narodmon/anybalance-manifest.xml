@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="2.0" version="7">ab-weather-narodmon</id>
+	<id major_version="2.0" version="8">ab-weather-narodmon</id>
 	<api flags="no_browser"/>
 	<name>Народный монитор</name>
 	<description html="true"><![CDATA[
@@ -36,6 +36,9 @@
 		<counter id="temperature" name="Температура воздуха" units=" °C"/>
 		<counter id="humidity" name="Влажность" units=" %"/>
 		<counter id="pressure" name="Давление" units=" мм рт.ст."/>
+		<counter id="temperature2" name="Температура воздуха 2" units=" °C"/>
+		<counter id="humidity2" name="Влажность 2" units=" %"/>
+		<counter id="pressure2" name="Давление 2" units=" мм рт.ст."/>
 	</counters>
 	<keywords>прогноз, погода, температура, воздух, narodmon</keywords>
 	<type>weather</type>

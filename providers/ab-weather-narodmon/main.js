@@ -40,16 +40,27 @@ function main(){
 	
     var result = {success: true};
 
+    var allocated = {
+    	temperature: 0,
+    	humidity: 0,
+    	pressure: 0
+    };
+
     for(var i=0; i<info.sensors.length; ++i){
-	var s = info.sensors[i];
-	if(s.type == 1 && AnyBalance.isAvailable('temperature'))
-		result.temperature=s.value;
-	else if(s.type == 2 && AnyBalance.isAvailable('humidity'))
-		result.humidity=s.value;
-	else if(s.type == 3 && AnyBalance.isAvailable('pressure'))
-		result.pressure=s.value
-	else
-		AnyBalance.trace("unknown sensor type: " + JSON.stringify(s));
+		var s = info.sensors[i];
+		AnyBalance.trace('Найден датчик ' + JSON.stringify(s));
+		if(s.type == 1){
+			getParam(s.value, result, 'temperature' + (allocated.temperature||''));
+			++allocated.temperature;
+		}else if(s.type == 2){
+			getParam(s.value, result, 'humidity' + (allocated.humidity||''));
+			++allocated.humidity;
+		}else if(s.type == 3){
+			getParam(s.value, result, 'pressure' + (allocated.pressure||''));
+			++allocated.pressure;
+		}else{
+			AnyBalance.trace("unknown sensor type: " + JSON.stringify(s));
+		}
     }
 
     result.__tariff = info.name;

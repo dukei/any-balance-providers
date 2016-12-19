@@ -1,11 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="4">ab-municipal-erczd</id>
+	<id version="5">ab-municipal-erczd</id>
 	<api flags="no_browser"/>
 	<name>Единый Расчётный Центр г. Железнодорожный</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе в Едином Расчётном Центре г. Железнодорожный</p>
-	<p>Информация берется из личного кабинета http://erczd.ru/index.php?menu=kabinet</p>
+	<p>Информация берется из личного кабинета https://erczd.ru/index.php?menu=kabinet</p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>

@@ -921,7 +921,7 @@ function getAmur() {
 }
 
 function getOrel() {
-  newTypicalLanBillingInetTv('https://lk-orel.center.mts.ru/index.php');
+  newTypicalLanBillingInetTv_1('https://lk-orel.center.mts.ru/index.php');
 }
 
 function getPiter() {

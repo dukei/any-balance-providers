@@ -13,7 +13,7 @@
 		summary="Номер карты||{@s}\n"
 		inputType="number"
 		dialogTitle="Номер карты"
-		dialogMessage="Введите номер карты для входа в личный кабинет, для карт Альфа-банк или Cetelem: с восьмой цифры восемь цифр, например: номер карты XXXX-XXX1-2345-678X , вводим 12345678"
+		dialogMessage="Введите номер карты для входа в личный кабинет, для карт Альфа-банк или Cetelem: с восьмой цифры восемь цифр, например: номер карты XXXX-XXX1-2345-678X , вводим 12345678. Для типа входа по Карте."
 		positiveButtonText="ОК"
 		negativeButtonText="Отмена">
 	</EditTextPreference>
@@ -23,7 +23,7 @@
 		summary="|ZIP или штрих-код|{@s}"
 		inputType="text"
 		dialogTitle="ZIP-код или штрих-код"
-		dialogMessage="Для карт М.Видео-БОНУС введите ZIP-код. Если у вас банковская карта, то введите штрих-код с оборотной стороны карты. Если на оборотной стороне Вашей карты нет штрих-кода, то необходимо ввести девять цифр из номера банковской карты: 1234-56ХХ-ХХХХ-ХХХ8"
+		dialogMessage="Для карт М.Видео-БОНУС введите ZIP-код. Если у вас банковская карта, то введите штрих-код с оборотной стороны карты. Если на оборотной стороне Вашей карты нет штрих-кода, то необходимо ввести девять цифр из номера банковской карты: 1234-56ХХ-ХХХХ-ХХХ8. Для типа входа по Карте."
 		positiveButtonText="ОК"
 		negativeButtonText="Отмена">
 	</EditTextPreference>
@@ -34,28 +34,26 @@
 		negativeButtonText="Отмена"
 		title="День рождения"
 		summary="Ваш день рождения||{@s}\n"
-		dialogMessage="Введите ваш день рождения в формате DD-MM-YYYY, например, 28-04-1980"
+		dialogMessage="Введите ваш день рождения в формате DD-MM-YYYY, например, 28-04-1980. Для типа входа по Карте."
 		inputType="date">
 	</EditTextPreference>
 	<EditTextPreference
 		title="Телефон или e-mail"
 		key="login"
 		summary="||{@s}"
-		obligatory="true"
 		dialogTitle="Телефон или e-mail"
 		positiveButtonText="ОК"
 		negativeButtonText="Отмена"
-		dialogMessage="Введите телефон или e-mail, используемый для входа в личный кабинет. Для авторизации по номеру телефона введите его в формате: 7XXXXXXXXXX">
+		dialogMessage="Введите телефон или e-mail, используемый для входа в личный кабинет. Для авторизации по номеру телефона введите его в формате: 7XXXXXXXXXX. Только для типа входа Логин и пароль!">
 	</EditTextPreference>
 	<EditTextPreference
 		title="Пароль"
 		key="password"
 		summary="||***********"
-		obligatory="true"
 		dialogTitle="Пароль"
 		positiveButtonText="ОК"
 		negativeButtonText="Отмена"
-		dialogMessage="Введите пароль, используемый для входа в личный кабинет."
+		dialogMessage="Введите пароль, используемый для входа в личный кабинет. Только для типа входа Логин и пароль!"
 		inputType="textPassword">
 	</EditTextPreference>
 </PreferenceScreen>

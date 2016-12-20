@@ -12,7 +12,7 @@ var g_headers = {
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'http://erczd.ru/';
+	var baseurl = 'https://erczd.ru/';
 	AnyBalance.setDefaultCharset('utf-8');
 	
 	checkEmpty(prefs.login, 'Введите логин!');
@@ -39,7 +39,7 @@ function main() {
 	
 	getParam(html, result, 'balance', /Сумма к оплате([^>]*>){3}/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'licschet', /лицевой счет\s*:\s*([\d]+)/i, replaceTagsAndSpaces);
-	getParam(html, result, '__tariff', /отчетный период\s*:\s*([^<]+)/i, replaceTagsAndSpaces);
+	getParam(html, result, '__tariff', />\s*отчетный период\s*:\s*([^<]+)/i, replaceTagsAndSpaces);
 	
 	getParam(html, result, 'hot_water', /горячее водоснабжение(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'cold_water', /холодное водоснабжение(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
@@ -51,7 +51,7 @@ function main() {
 	for(var i=0; i<6; ++i){
 		var month = months[new Date(dt.getFullYear(), dt.getMonth()-i, 1).getMonth()];
 		AnyBalance.trace('Пробуем найти показания счетчиков за ' + month);
-		var trWater = getParam(html, null, null, new RegExp('<tr[^>]*>\\s*<td[^>]*>\\s*"' + month + '"([\\s\\S]*?)</tr>', 'i'));
+		var trWater = getParam(html, new RegExp('<tr[^>]*>\\s*<td[^>]*>\\s*' + month + '([\\s\\S]*?)</tr>', 'i'));
 		if(trWater) {
 			getParam(trWater, result, 'cold_water_counter', /(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 			getParam(trWater, result, 'hot_water_counter', /(?:[\s\S]*?<td[^>]*>){7}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);

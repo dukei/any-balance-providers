@@ -12,13 +12,18 @@ var g_headers = {
 	'X-ApiVersion': appVersion
 };
 
-var baseurl = 'https://ibank.rncb.ru/prest-api/';
+var baseurl = 'https://online.rncb.ru/prest-api/';
+
 var g_token;
 var appVersion = '1.9.1'
 var device_name = 'AnyBalance API';
 
 var errorsDesc = {
 	invalid_grant: 'Неверный логин или пароль!'
+}
+
+function setBaseurl(_baseurl){
+	baseurl = _baseurl;
 }
 
 function apiCall(action, params) {

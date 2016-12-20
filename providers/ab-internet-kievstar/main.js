@@ -24,7 +24,7 @@ function main() {
 	};
 
 	if(isLoggedInNew(html)){
-		return processNew(result);
+		return processNew(html, result);
 	}
 
 	getParam(html, result, 'name',
@@ -42,9 +42,10 @@ function main() {
 		/(?:Лицевой\s+сч[её]т|Особовий\s+рахунок|Account:)[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i,
 		replaceTagsAndSpaces);
 
+	//Тарифный план
 	getParam(html, result, '__tariff',
 		/(?:Тарифный\s+план|Тарифний\s+план|Rate\s+Plan)[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i,
-		replaceTagsAndSpaces);
+		[/<span[^>]+hidden[^>]*>[\s\S]*?<\/span>/i, '', replaceTagsAndSpaces]);
 
 	getParam(html, result, 'status',
 		/(?:Статус\s+услуги|Статус\s+послуги|state\s+of\s+service)[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i,
@@ -69,9 +70,11 @@ function main() {
 	AnyBalance.setResult(result);
 }
 
-function processNew(result){
+function processNew(html, result){
 	var baseurl = 'https://new.kyivstar.ua/ecare/';
-	var html = AnyBalance.requestGet(baseurl, g_headers);
+	AnyBalance.trace('Используем новый кабинет');
+
+	html = goToSite(html);
 
 	var pageData = getJsonObject(html, /var\s+pageData\s*=\s*/);
 
@@ -102,6 +105,18 @@ function processNew(result){
 		sumParam(jspath1(pageData, "$.pageData.profileData.currentCustomer.lastName.value"), result, 'name', null, null, null, joinspace);
 
 		sumParam(jspath1(pageData, "$.pageData.profileData.currentCustomer.contactPhone.value"), result, 'phone');
+	}
+
+	if(AnyBalance.isAvailable('bonusDate', 'date_start')){
+		html = goToOldSite(html);
+
+		getParam(html, result, 'bonusDate',
+        	/(?:Бонусный\s+баланс|Бонусний\s+баланс|Bonuses)(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\/td>/i,
+			replaceTagsAndSpaces);
+		
+        getParam(html, result, 'date_start',
+			/(?:Дата\s+подключения|Дата\s+підключення|Connection\s+date):[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i,
+			replaceTagsAndSpaces, parseDate);
 	}
 
 	AnyBalance.setResult(result);

@@ -22,8 +22,12 @@ function isLoggedIn(html) {
 		isLoggedInNew(html);
 }
 
+function isNewDemo(html){
+	return /new.kyivstar.ua\/ecare\//i.test(html);
+}
+
 function isLoggedInNew(html){
-	return /var\s+pageData\s*=/.test(html) || /new.kyivstar.ua\/ecare\//i.test(html);
+	return /var\s+pageData\s*=/.test(html) || isNewDemo(html);
 }
 
 function checkGwtError(html) {
@@ -156,10 +160,16 @@ function loadAuthorizationPage(paramstr){
 }
 
 function goToOldSite(html){
-	if(/<a[^>]+new.kyivstar.ua[^>]+ks-button|FMK2.do/i.test(html)){
+	if(isLoggedInNew(html)){
 		AnyBalance.trace('Новый лк или его реклама, переходим на старый');
 		html = AnyBalance.requestGet('https://account.kyivstar.ua/cas/login?service=http%3A%2F%2Fmy.kyivstar.ua%3A80%2Ftbmb%2FMK2.do', g_headers);
 	}
+	return html;
+}
+
+function goToSite(html){
+	if(isNewDemo(html))
+		html = AnyBalance.requestGet('https://new.kyivstar.ua/ecare/', g_headers);
 	return html;
 }
 
@@ -181,13 +191,18 @@ function loginSite(baseurl) {
 
 	AnyBalance.trace('Успешное соединение.');
 
-	function doLogout(){
-		AnyBalance.trace('Пытаемся выйти...');
-		var html = AnyBalance.requestGet(baseurl + 'tbmb/logout/perform.do', g_headers);
-		var anotherLogoutPage = getParam(html, null, null, /<a[^>]+id="submitBtn"[^>]*href="([^"]*)/i, replaceHtmlEntities);
-		if(anotherLogoutPage){
-			AnyBalance.trace('Переход на страницу входа.');
-			html = AnyBalance.requestGet(anotherLogoutPage, g_headers);
+	function doLogout(html){
+		if(isLoggedInNew(html)){ 
+			AnyBalance.trace('Выходим из нового ЛК');
+			html = AnyBalance.requestGet('https://new.kyivstar.ua/logout', g_headers);
+		}else{
+			AnyBalance.trace('Пытаемся выйти ' + (isLoggedIn(html) ? ' из старого ЛК' : ' (но не залогинены?)'));
+			html = AnyBalance.requestGet(baseurl + 'tbmb/logout/perform.do', g_headers);
+			var anotherLogoutPage = getParam(html, null, null, /<a[^>]+id="submitBtn"[^>]*href="([^"]*)/i, replaceHtmlEntities);
+			if(anotherLogoutPage){
+				AnyBalance.trace('Переход на страницу входа.');
+				html = AnyBalance.requestGet(anotherLogoutPage, g_headers);
+			}
 		}
 		return html;
 	}
@@ -195,25 +210,25 @@ function loginSite(baseurl) {
 	if (isLoggedIn(html)) {
 		AnyBalance.trace('Уже в системе.');
 		if (html.indexOf(prefs.login) < 0) {
-    		html = goToOldSite(html); 
+    		html = goToSite(html); 
 			var num = getParam(html, null, null, [/Номер:[\s\S]*?<td[^>]*>([^<]*)/i, /"subscriptionIdentifier"\s*:\s*"([^"]*)/], replaceTagsAndSpaces);
 			AnyBalance.trace('Не тот аккаунт, выход (нужно ' + prefs.login + ', вошли на ' + num + ').');
-			html = doLogout();
+			html = doLogout(html);
 		}
 	}
 
-    html = goToOldSite(html); 
+    html = goToSite(html); 
 
 	if (!isLoggedIn(html)) {
 		if(!isThereLoginForm(html)){ 
 			AnyBalance.trace(html); //А то иногда показывается реклама нового ЛК
 			AnyBalance.trace('Не найдена форма входа. Выходим и явно переходим на авторизацию.');
-			html = doLogout();
+			html = doLogout(html);
 			AnyBalance.trace('Сейчас мы на ' + AnyBalance.getLastUrl() + '. Переходим на авторизацию.');
 			html = loadAuthorizationPage('service=http%3A%2F%2Fmy.kyivstar.ua%3A80%2Ftbmb%2Fdisclaimer%2Fshow.do&locale=ua');
 		}
 		html = loginBasic(html);
-    	html = goToOldSite(html); 
+    	html = goToSite(html); 
 	}
 
 	if (!isLoggedIn(html)) {

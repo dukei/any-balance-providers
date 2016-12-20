@@ -97,6 +97,7 @@ function megafonLkAPIDo(options, result) {
         json = callAPI('get', 'api/main/info');
 
         getParam(json.msisdn, result, 'phone', null, replaceNumber);
+        getParam(json.balance + '', result, 'available', null, replaceTagsAndSpaces, parseBalance);
         getParam(json.originalBalance + '', result, 'balance', null, replaceTagsAndSpaces, parseBalance);
         getParam(json.bonusBalance + '', result, 'bonus_balance', null, replaceTagsAndSpaces, parseBalance);
         getParam((json.balance-json.originalBalance) + '', result, 'credit', null, replaceTagsAndSpaces, parseBalance);

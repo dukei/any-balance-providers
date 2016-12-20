@@ -974,8 +974,9 @@ function megafonBalanceInfo(filial) {
 
     var result = {success: true, filial: filinfo.id};
 
-    var balance = getParam(html, null, null, /<BALANCE>([^<]*)<\/BALANCE>/i, replaceTagsAndSpaces, parseBalance);
-    var limit = getParam(html, null, null, /<CREDIT_\w+LIMIT>([^<]*)<\/CREDIT_\w+LIMIT>/i, replaceTagsAndSpaces, parseBalance);
+    var balance = getParam(html, /<BALANCE>([^<]*)<\/BALANCE>/i, replaceTagsAndSpaces, parseBalance);
+    var limit = getParam(html, /<CREDIT_\w+LIMIT>([^<]*)<\/CREDIT_\w+LIMIT>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(balance, result, 'available');
     getParam(balance-(limit || 0), result, 'balance');
     getParam(limit, result, 'credit');
     getParam(html, result, 'phone', /<MSISDN>([^<]*)<\/MSISDN>/i, replaceNumber);
@@ -2327,6 +2328,7 @@ function megafonLKTurnOffAutoLogin(csrf){
 var g_countersTable = {
 	common: {
 		"balance": "balance",
+		"available": "available",
 		"mins_left": "remainders.mins_left",
 		"mins_net_left": "remainders.mins_net_left",
 		"mins_n_free": "remainders.mins_n_free",

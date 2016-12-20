@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="3.1" version="201">ab-megafon</id>
+	<id major_version="3.1" version="202">ab-megafon</id>
 	<api flags="no_browser"/>
 	<name>Мегафон</name>
 	<description html="true"><![CDATA[
@@ -50,6 +50,7 @@
 	</files>
 	<counters>
 		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="available" name="Доступно" units=" р"/>
 		<counter id="mins_left" name="Бесплатные минуты" units=" мин" type="time_interval" format="{@MIN}"/>
 		<counter id="mins_country_left" name="Минуты по России" units=" мин" type="time_interval" format="{@MIN}"/>
 		<counter id="mins_sng_left" name="Минуты по СНГ" units=" мин" type="time_interval" format="{@MIN}"/>

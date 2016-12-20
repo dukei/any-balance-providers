@@ -48,6 +48,10 @@ function main () {
     if(isAvailable(['customer', '__tariff'])){
     	html = AnyBalance.requestGet(baseurl + 'api/v1/users/self', g_headers);
     	json = getJson(html);
+    	if(!json.data){
+    		AnyBalance.trace(html);
+    		throw new AnyBalance.Error('Не удалось получить данные пользователя. Сайт изменен?');
+    	}
 
     	getParam(json.data.user.name + ' ' + json.data.user.surname, result, 'customer');
     	getParam(json.data.user.card_no, result, '__tariff');
@@ -56,6 +60,10 @@ function main () {
     if(isAvailable(['balance', 'burnInThisMonth', 'burnDate'])){
     	html = AnyBalance.requestGet(baseurl + 'api/v1/balances', g_headers);
     	json = getJson(html);
+    	if(!json.data){
+    		AnyBalance.trace(html);
+    		throw new AnyBalance.Error('Не удалось получить баланс баллов. Сайт изменен?');
+    	}
 
     	getParam(json.data.balance_list[0].balance_points, result, 'balance');
 

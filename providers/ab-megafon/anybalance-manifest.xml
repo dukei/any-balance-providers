@@ -50,7 +50,6 @@
 	</files>
 	<counters>
 		<counter id="balance" name="Баланс" units=" р"/>
-		<counter id="available" name="Доступно" units=" р"/>
 		<counter id="mins_left" name="Бесплатные минуты" units=" мин" type="time_interval" format="{@MIN}"/>
 		<counter id="mins_country_left" name="Минуты по России" units=" мин" type="time_interval" format="{@MIN}"/>
 		<counter id="mins_sng_left" name="Минуты по СНГ" units=" мин" type="time_interval" format="{@MIN}"/>
@@ -82,6 +81,7 @@
 		<counter id="sms_total" name="Включенные SMS (всего)" units=" sms"/>
 		<counter id="mms_total" name="Включенные MMS (всего)" units=" mms"/>
 		<counter id="handygift_total" name="Нужный подарок - всего (Поволжье)" units=" р"/>
+		<counter id="available" name="Доступно" units=" р"/>
 		<counter id="credit" name="Кредитный лимит" units=" р"/>
 		<counter id="sub_scl" name="За звонки начислено" units=" р"/>
 		<counter id="sub_soi" name="За услуги начислено" units=" р"/>

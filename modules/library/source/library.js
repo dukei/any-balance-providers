@@ -233,7 +233,7 @@ var AB = (function (global_scope) {
             sec = parseFloat(regExp[2]);
             // Это любой другой формат, со словами либо просто число
         } else {
-            hour = getParam(text, null, null, /(-?\d[\d.,]*)\s*(?:час|ч|hour|h)/i, replaceFloat, parseFloat) || 0;
+            hour = getParam(text, null, null, /(-?\d[\d.,]*)\s*(?:час|ч|год|г|hour|h)/i, replaceFloat, parseFloat) || 0;
             min = getParam(text, null, null, [/(-?\d[\d.,]*)\s*(?:мин|м|хв|min|m)/i, /^-?[\d.,]+$/i], replaceFloat, parseFloat) || 0;
             sec = getParam(text, null, null, /(-?\d[\d.,]*)\s*(?:сек|c|с|sec|s)/i, replaceFloat, parseFloat) || 0;
         }

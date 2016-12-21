@@ -10,17 +10,20 @@ function main() {
 	checkEmpty(prefs.password, 'Введите пароль!');
 
 	AnyBalance.setOptions({
-		SSL_ENABLED_PROTOCOLS: ['TLSv1'], // https://my.kyivstar.ua очень смущается от присутствия TLSv1.1 и TLSv1.2
+		SSL_ENABLED_PROTOCOLS: ['TLSv1'] // https://my.kyivstar.ua очень смущается от присутствия TLSv1.1 и TLSv1.2
 	});
 
-	try {
-//	throw new AnyBalance.Error('тест мобайл');
-		processSite();
-	} catch (e) {
-		if (e.fatal)
-			throw e;
-		AnyBalance.trace('Не удалось получить данные из лк: ' + e.message);
-		AnyBalance.trace('Попробуем получить данные из мобильного приложения');
+	if(prefs.source != 'app'){
+		try {
+			processSite();
+		} catch (e) {
+			if (e.fatal)
+				throw e;
+			AnyBalance.trace('Не удалось получить данные из лк: ' + e.message);
+			AnyBalance.trace('Попробуем получить данные из мобильного приложения');
+			processMobileApi();
+		}
+	}else{
 		processMobileApi();
 	}
 }
@@ -43,6 +46,192 @@ function processSite() {
 			"Ошибка. Информация о номере не найдена. Если у вас корпоративный аккаунт, воспользуйтесь провайдером Киевстар для корпоративных тарифов."
 		);
 	}
+
+	if(prefs.source == 'auto'){
+		if(isLoggedInNew(html) || isNewDemo(html)){
+			processNew(html);
+		}else{
+			processOld(html);
+		}
+	}else if(prefs.source == 'new'){
+		processNew(html);
+	}else{
+		processOld(html);
+	}
+}
+
+function processNew(html){
+	var baseurl = 'https://new.kyivstar.ua/ecare/';
+	AnyBalance.trace('Используем новый кабинет');
+
+	html = goToNewSite(html);
+	var pageData = getJsonObject(html, /var\s+pageData\s*=\s*/);
+
+	var result = {success: true};
+
+	getParam(jspath1(pageData, "$.pageData.currentSubscription.subscriptionIdentifier"), result, 'phone');
+
+	getParam(jspath1(pageData, "$.slots.TopContent[?(@.template='balancePanelComponent')].data.accountData.balance"), result, 'balance', null, null, parseBalance);
+	getParam(jspath1(pageData, "$.slots.TopContent[?(@.template='balancePanelComponent')].data.currencyName"), result, ['currency', 'balance']);
+	getParam(jspath1(pageData, "$.slots.TopContent[?(@.template='balancePanelComponent')].data.accountData.accountNumber"), result, 'personal_account');
+
+	getParam(jspath1(pageData, "$.slots.TopContent[?(@.template='planPanelComponent')].data.servicePlan"), result, '__tariff');
+	getParam(jspath1(pageData, "$.slots.TopContent[?(@.template='planPanelComponent')].data.subscriptionStatus"), result, 'status');
+	getParam(jspath1(pageData, "$.slots.TopContent[?(@.template='planPanelComponent')].data.validityPeriod"), result, 'till', null, null, parseDate);
+
+	getParam(jspath1(pageData, "$.slots.TopContent[?(@.template='balancePanelComponent')].data.currentSubscription.bonusBalance"), result, 'bonusValue', null, null, parseBalance);
+
+	var bonuses = jspath1(pageData, "$.slots.TopContent[?(@.template='balancePanelComponent')].data.bonusBalance.bonusBalances");
+	processBonusesNew(bonuses, result);
+
+	var rows = jspath1(pageData, "$.slots.MiddleContent[?(@.template='dailyStatusComponent')].data.dailyStatusRows");
+	processRemaindersNew(rows, result);
+
+
+	if(AnyBalance.isAvailable('name') || (AnyBalance.isAvailable('phone') && !isset(result.phone))){
+		html = AnyBalance.requestGet(baseurl + 'profileSettings', g_headers);
+		pageData = getJsonObject(html, /var\s+pageData\s*=\s*/);
+	
+	    var joinspace = create_aggregate_join(' ');
+
+		sumParam(jspath1(pageData, "$.pageData.profileData.currentCustomer.firstName.value"), result, 'name', null, null, null, joinspace);
+		sumParam(jspath1(pageData, "$.pageData.profileData.currentCustomer.middleName.value"), result, 'name', null, null, null, joinspace);
+		sumParam(jspath1(pageData, "$.pageData.profileData.currentCustomer.lastName.value"), result, 'name', null, null, null, joinspace);
+
+		if(AnyBalance.isAvailable('phone') && !isset(result.phone))
+			sumParam(jspath1(pageData, "$.pageData.profileData.currentCustomer.contactPhone.value"), result, 'phone');
+	}
+
+	AnyBalance.setResult(result);
+}
+
+function getBonusFromArray(arr, result, name, re, replaces, parseFunc){
+	for(var i=0; i<arr.length; ++i){
+		var units = arr[i].unit || '';
+		if(!units.trim() && /internet|traffic/i.test(name))
+			units = 'мб';
+		sumParam(arr[i].value + units, result, name, re, replaces, parseFunc, aggregate_sum);
+	}
+}
+
+function checkName(type, name){
+	switch(type){
+	case 'off-net':
+		return /другие сети.+(?:фикс|городск)|Other network.+fix|інші мережі.+міськ/i.test(name)
+	case 'off-net-mobile':
+		return /минут.+на другие сети|minut.+other.+networks|хвилин.+інші мережі/i.test(name)
+			|| /минут.+на другие мобильные|minut.+other.+networks|хвилин.+інші мобільні/i.test(name)
+	case 'internet':
+		return /Остаток МБ|Balance MB|Залишок МБ/i.test(name) 
+			|| /Интернет|Internet|Інтернет/i.test(name)
+	case 'sms':
+		return /сообщен|SMS|СМС|повідомлен/i.test(name)
+	case 'mms':
+		return /MMS|ММС/i.test(name)
+	default:
+		throw new AnyBalance.Error('Unknown check type!');
+	}
+}
+
+function processBonusesNew(bonuses, result){
+	if(!bonuses){
+		AnyBalance.trace('Бонусов нет');
+		return;
+	}
+
+	for(var i=0; i<bonuses.length; ++i){
+		var bonus = bonuses[i];
+		AnyBalance.trace('Найден бонус ' + JSON.stringify(bonus));
+		if(/домашний интернет|Home Internet|Домашній Інтернет/i.test(bonus.name)){
+			AnyBalance.trace('Это домашний интернет');
+			getParam(bonus.balanceAmount[0].value, result, 'home_internet', null, null, parseBalance);
+			getParam(bonus.bonusExpirationDate, result, 'home_internet_date', null, null, parseDate);
+		}else if(checkName('internet', bonus.name)){
+			AnyBalance.trace('Это бонусный интернет');
+			getBonusFromArray(bonus.balanceAmount, result, 'bonus_internet', null, null, parseTraffic);
+			getParam(bonus.bonusExpirationDate, result, 'bonus_internet_date', null, null, parseDate);
+		}else if(checkName('off-net', bonus.name)){
+			AnyBalance.trace('Это бонусные минуты по Украине');
+			getBonusFromArray(bonus.balanceAmount, result, 'bonus_mins_2', null, null, parseMinutes);
+			getParam(bonus.bonusExpirationDate, result, 'bonus_mins_2_till', null, null, parseDate);
+		}else if(checkName('off-net-mobile', bonus.name)){
+			AnyBalance.trace('Это бонусные минуты на другие сети');
+			getBonusFromArray(bonus.balanceAmount, result, 'bonus_mins_other_mobile', null, null, parseMinutes);
+			getParam(bonus.bonusExpirationDate, result, 'bonus_mins_other_mobile_till', null, null, parseDate);
+		}else if(checkName('sms', bonus.name)){
+			AnyBalance.trace('Это SMS');
+			getBonusFromArray(bonus.balanceAmount, result, 'sms', null, null, parseBalance);
+		}else if(checkName('mms', bonus.name)){
+			AnyBalance.trace('Это MMS');
+			getBonusFromArray(bonus.balanceAmount, result, 'sms', null, null, parseBalance);
+		}else if(/Экстра Деньги|Extra money|Екстра гроші/i.test(bonus.name)){
+			AnyBalance.trace('Это бонусные деньги');
+			getParam(bonus.balanceAmount[0].value, result, 'bonus_money', null, null, parseBalance);
+			getParam(bonus.bonusExpirationDate, result, 'bonus_money_date', null, null, parseDate);
+		}else{
+			AnyBalance.trace('!!! Неизвестный бонус...');
+		}
+	}
+
+}
+
+function processRemaindersNew(bonuses, result){
+	if(!bonuses){
+		AnyBalance.trace('Остатков нет');
+		return;
+	}
+
+	function getBonusLocal(avlbl, check, dn, counter, func){
+		if(checkName(check, avlbl.categoryName) || checkName(check, bonus.usageTypeName)){
+			if(AnyBalance.isAvailable(counter) && !isset(result[counter])){
+				AnyBalance.trace(dn + ', но не учлись в бонусах! Учитываем.');
+				func();
+			}else{
+				AnyBalance.trace(dn + ', должны были учесться в бонусах!');
+			}
+			return true;
+		}
+		return false;
+	}
+
+	for(var i=0; i<bonuses.length; ++i){
+		var bonus = bonuses[i];
+		AnyBalance.trace('Найден остаток ' + JSON.stringify(bonus));
+		if(!bonus.availableAmountDetails || !bonus.availableAmountDetails.length){
+			AnyBalance.trace('Не содержит текущего остатка, пропускаем...');
+			continue;
+		}
+		var avlbl = bonus.availableAmountDetails[0];
+
+		getBonusLocal(avlbl, 'off-net', 'минуты по Украине', 'bonus_mins_2', function(){
+			getBonusFromArray(avlbl.balanceAmount, result, 'bonus_mins_2', null, null, parseMinutes);
+			getParam(avlbl.balanceAmount[0].period, result, 'bonus_mins_2_till', null, null, parseDate);
+		}) ||
+		getBonusLocal(avlbl, 'off-net-mobile', 'минуты на другие сети', 'bonus_mins_other_mobile', function(){
+			getBonusFromArray(avlbl.balanceAmount, result, 'bonus_mins_other_mobile', null, null, parseMinutes);
+			getParam(avlbl.balanceAmount[0].period, result, 'bonus_mins_other_mobile_till', null, null, parseDate);
+		}) ||
+		getBonusLocal(avlbl, 'sms', 'SMS', 'sms', function(){
+			getBonusFromArray(avlbl.balanceAmount, result, 'sms', null, null, parseBalance);
+		}) ||
+		getBonusLocal(avlbl, 'mms', 'MMS', 'mms', function(){
+			getBonusFromArray(avlbl.balanceAmount, result, 'mms', null, null, parseBalance);
+		}) ||
+		getBonusLocal(avlbl, 'internet', 'Интернет', 'internet', function(){
+			getBonusFromArray(avlbl.balanceAmount, result, 'internet', null, null, parseTraffic);
+		}) ||
+		
+		AnyBalance.trace('!!! Неизвестный остаток...');
+	}
+
+}
+
+function processOld(html){
+	var prefs = AnyBalance.getPreferences();
+ 	var baseurl = "https://my.kyivstar.ua/";
+ 	AnyBalance.trace('Используем старый кабинет');
+
+ 	html = goToOldSite(html);
 
 	var result = {
 			success: true
@@ -89,7 +278,7 @@ function processSite() {
 	} else {
 		AnyBalance.trace('тип лк: Телефон');
 		
-		if (html.indexOf(prefs.login) < 0) {
+		if (html.indexOf(prefs.login.substr(-10)) < 0) {
 			var num = getParam(html, /Номер:[\s\S]*?<td[^>]*>([^<]*)/i,	replaceTagsAndSpaces);
 			AnyBalance.trace(html);
 			throw new AnyBalance.Error('Не удалось зайти на нужный номер! Нужно ' + prefs.login + ', а зашли на ' + num + '. Попробуйте обновить аккаунт через вайфай.');
@@ -234,6 +423,8 @@ function processSite() {
 	sumParam(html, result, 'inc_pay', /(?:Доплата за входящие звонки:|Доплата за входящие звонки:)[\s\S]*?<b>([^<]*)/ig,
 		replaceTagsAndSpaces, parseBalance, aggregate_sum);
 	//MMS
+	sumParam(html, result, 'mms', />(?:MMS для отправки по Украине:|MMS для відправки по Україні:)[\s\S]*?<b>(.*?)</, replaceTagsAndSpaces, parseBalance,
+		aggregate_sum);
 	sumParam(html, result, 'mms', />(?:Бонусні MMS:|Бонусные MMS:)[\s\S]*?<b>(.*?)</, replaceTagsAndSpaces, parseBalance,
 		aggregate_sum);
 	sumParam(html, result, 'mms', />MMS:[\s\S]*?<b>(.*?)</, replaceTagsAndSpaces, parseBalance, aggregate_sum);
@@ -454,7 +645,10 @@ function processMobileApi() {
 		success: true
 	};
 
+	AnyBalance.trace('Получаем данные из мобильного приложения');
+
 	loginMobile();
+
 	var ticket = getParam(AnyBalance.getLastUrl(), null, null, /ticket=([^&]*)/i, null, decodeURIComponent);
 	if (!ticket)
 		throw new AnyBalance.Error('Не удалось найти тикет для авторизации в мобильном приложении. Сайт изменен?');

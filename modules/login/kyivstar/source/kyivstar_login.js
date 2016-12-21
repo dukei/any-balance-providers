@@ -18,16 +18,19 @@ var g_gwtCfg = {
 };
 
 function isLoggedIn(html) {
-	return /\/tbmb\/logout\/perform/i.test(html) ||
-		isLoggedInNew(html);
+	return isLoggedInOld(html) || isLoggedInNew(html) || isNewDemo(html);
+}
+
+function isLoggedInOld(html) {
+	return /\/tbmb\/logout\/perform/i.test(html);
 }
 
 function isNewDemo(html){
-	return /new.kyivstar.ua\/ecare\//i.test(html);
+	return /<a[^>]+new.kyivstar.ua\/ecare\/[^>]+ks-button/i.test(html);
 }
 
 function isLoggedInNew(html){
-	return /var\s+pageData\s*=/.test(html) || isNewDemo(html);
+	return /var\s+pageData\s*=/.test(html);
 }
 
 function checkGwtError(html) {
@@ -160,10 +163,16 @@ function loadAuthorizationPage(paramstr){
 }
 
 function goToOldSite(html){
-	if(isLoggedInNew(html)){
+	if(isLoggedInNew(html) || isNewDemo(html)){
 		AnyBalance.trace('Новый лк или его реклама, переходим на старый');
 		html = AnyBalance.requestGet('https://account.kyivstar.ua/cas/login?service=http%3A%2F%2Fmy.kyivstar.ua%3A80%2Ftbmb%2FMK2.do', g_headers);
 	}
+	return html;
+}
+
+function goToNewSite(html){
+	if(!isLoggedInNew(html))
+		html = AnyBalance.requestGet('https://new.kyivstar.ua/ecare/', g_headers);
 	return html;
 }
 
@@ -192,9 +201,9 @@ function loginSite(baseurl) {
 	AnyBalance.trace('Успешное соединение.');
 
 	function doLogout(html){
-		if(isLoggedInNew(html)){ 
+		if(isLoggedInNew(html) || isNewDemo(html)){ 
 			AnyBalance.trace('Выходим из нового ЛК');
-			html = AnyBalance.requestGet('https://new.kyivstar.ua/logout', g_headers);
+			html = AnyBalance.requestGet('https://new.kyivstar.ua/ecare/logout', g_headers);
 		}else{
 			AnyBalance.trace('Пытаемся выйти ' + (isLoggedIn(html) ? ' из старого ЛК' : ' (но не залогинены?)'));
 			html = AnyBalance.requestGet(baseurl + 'tbmb/logout/perform.do', g_headers);
@@ -209,8 +218,8 @@ function loginSite(baseurl) {
 
 	if (isLoggedIn(html)) {
 		AnyBalance.trace('Уже в системе.');
-		if (html.indexOf(prefs.login) < 0) {
-    		html = goToSite(html); 
+  		html = goToSite(html); 
+		if (html.indexOf(prefs.login.substr(-10)) < 0) {
 			var num = getParam(html, null, null, [/Номер:[\s\S]*?<td[^>]*>([^<]*)/i, /"subscriptionIdentifier"\s*:\s*"([^"]*)/], replaceTagsAndSpaces);
 			AnyBalance.trace('Не тот аккаунт, выход (нужно ' + prefs.login + ', вошли на ' + num + ').');
 			html = doLogout(html);

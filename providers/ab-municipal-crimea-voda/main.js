@@ -11,136 +11,88 @@ var g_headers = {
 	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
 };
 
-function getError(id) {
-	var errors = {
-		// SUCCESS
-		"REG_SUCCESS": "Регистрация проведена успешно",
-		// ERRORS
-		"LS_VALID_ERR": "Лицевой счет не должен быть пустым",
-		"LOGIN_VALID_ERR": "Логин должен состоять только из латинских букв и цифр",
-		"PASS_VALID_ERR": "Пароль должен состоять только из латинских букв и цифр",
-		"BUILD_VALID_ERR": "Номер дома может содержать только кириллицу, цифры и знак дроби",
-		"FLAT_VALID_ERR": "Номер квартиры может содержать только кириллицу, цифры и знак дроби",
-		"EMAIL_VALID_ERR": "Почтовый адрес введен некорректно",
-		"LS_DOESNT_EXIST_ERR": "Такого лицевого счета в базе нет",
-		"LS_ADDR_NOT_MATCH_ERR": "Указанному лицевому счету соответствует другой адрес",
-		"LOGIN_NOT_FOUND": "Ошибка авторизации: логин не найден в базе данных",
-		"PASSWORD_INCORRECT": "Ошибка авторизации: пароль указан не верно",
-		"LOGIN_TEST_FAIL": "Ошибка регистрации: такой логин уже занят",
-		"LS_TEST_FAIL": "Учетные данные с таким лицевым счетом уже зарегистрированы",
-		"REST_EMAIL_VALID_ERR": "Почтовый адрес введен некорректно",
-		"EMAIL_NOT_FOUND": "Этот почтовый адрес не был использован при регистрации в Личном кабинете",
-		"MAIL_ERR": "Ошибка отправления. Проверьте правильность написания почтового адреса",
-	};
-
-	if (errors[id])
-		return errors[id];
-
-	return "Неизвестная ошибка в системе (" + id + ')';
-}
-
-function formatMonth(monthno) {
-	// MONTH IN CALC
-	var month = (monthno % 12) + 1;
-	var year = (monthno - (month - 1)) / 12;
-	var str = "";
-	switch (String(month)) {
-		case "1":
-			str = "Январь";
-			break;
-		case "2":
-			str = "Февраль";
-			break;
-		case "3":
-			str = "Март";
-			break;
-		case "4":
-			str = "Апрель";
-			break;
-		case "5":
-			str = "Май";
-			break;
-		case "6":
-			str = "Июнь";
-			break;
-		case "7":
-			str = "Июль";
-			break;
-		case "8":
-			str = "Август";
-			break;
-		case "9":
-			str = "Сентябрь";
-			break;
-		case "10":
-			str = "Октябрь";
-			break;
-		case "11":
-			str = "Ноябрь";
-			break;
-		case "12":
-			str = "Декабрь";
-			break;
-	}
-	str += " " + year;
-	return str;
-}
-
-
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'http://old.voda.crimea.ru/';
+	var baseurl = 'http://voda.crimea.ru/';
 	// для нового сайта авторизация не через логин пароль, а через мобильный телефон
 	AnyBalance.setDefaultCharset('utf-8');
 
-	AB.checkEmpty(prefs.login, 'Введите логин!');
+	AB.checkEmpty(prefs.login, 'Введите логин (номер телефона)!');
+	AB.checkEmpty(/^\d{10}$/.test(prefs.login), 'Введите 10 цифр номера телефона без пробелов и разделителей. Например, 9031234567!');
 	AB.checkEmpty(prefs.password, 'Введите пароль!');
 
-	var html = AnyBalance.requestPost(baseurl + 'personalAccount/Auth.php', {
-		type: 'login',
-		login: prefs.login,
-		password: prefs.password,
-		'': ''
-	}, AB.addHeaders({
-		Referer: baseurl + 'personalAccount/'
-	}));
-
+	var html = AnyBalance.requestGet(baseurl, g_headers);
+	
 	if (!html || AnyBalance.getLastStatusCode() > 400) {
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
 	}
+	
+	html = AnyBalance.requestPost(baseurl + 'ajax.php', {
+		snippet: 'loginNew',
+		phone: prefs.login.replace(/(\d{3})(\d{3})(\d\d)(\d\d)/, '($1) $2-$3-$4'),
+	}, AB.addHeaders({
+		'Accept': 'application/json, text/javascript, */*; q=0.01',
+		'X-Requested-With': 'XMLHttpRequest',
+		Referer: baseurl
+	}));
 
-	var json = getJsonEval(html);
+	var json = getJson(html);
+	if(json.mod != 3){
+		var error = json.err;
+		if (error)
+			throw new AnyBalance.Error(error, null, /парол/i.test(json.err));
+		if(json.mod == 2)
+			throw new AnyBalance.Error('Номер не найден в базе', null, true);
 
-	if (json.success != "true") {
-		var error = getError(json.err);
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
+	}
+
+	html = AnyBalance.requestPost(baseurl + 'ajax.php', {
+		snippet: 'loginNew',
+		pass: prefs.password,
+	}, AB.addHeaders({
+		'Accept': 'application/json, text/javascript, */*; q=0.01',
+		'X-Requested-With': 'XMLHttpRequest',
+		Referer: baseurl
+	}));
+
+	json = getJson(html);
+
+	if(json.mod != 1){
+		var error = json.err;
 		if (error) {
-			throw new AnyBalance.Error(error, null, /LOGIN_NOT_FOUND|PASS_VALID_ERR|LOGIN_VALID_ERR|PASSWORD_INCORRECT/i.test('' +
-				json.err));
+			throw new AnyBalance.Error(error, null, /парол/i.test(json.err));
 		}
 
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
 
-	html = AnyBalance.requestPost(baseurl + 'personalAccount/servPart.php', {
-		type: 'getAllData',
-		'': ''
-	}, g_headers);
-	json = getJsonEval(html);
+	html = AnyBalance.requestGet(baseurl + 'account', g_headers);
 
 	var result = {
 		success: true
 	};
 
-	AB.getParam(json.ls, result, 'licschet');
-	AB.getParam(json.address, result, 'address');
+	AB.getParam(html, result, 'licschet', /л\/с №([^<]*)/i);
+	AB.getParam(html, result, 'address', /(<[^>]*m-icon-cont[\s\S]*?)<span/i, replaceTagsAndSpaces);
+	AB.getParam(html, result, 'debt', /Cостояние на сегодня:[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i, [replaceTagsAndSpaces, /Долг:?/i, '-'], AB.parseBalance);
 
-	AB.getParam(json.tbl[0][0], result, 'date', null, null, formatMonth);
-	AB.getParam(json.tbl[0][1], result, 'debt_start', null, null, AB.parseBalance);
-	AB.getParam(json.tbl[0][2], result, 'spent', null, null, AB.parseBalance);
-	AB.getParam(json.tbl[0][3], result, 'payed', null, null, AB.parseBalance);
-	AB.getParam(json.tbl[0][4], result, 'debt', null, null, AB.parseBalance);
+	html = AnyBalance.requestPost(baseurl + 'ajax.php', {
+		snippet: 'oborot',
+		account: '0'
+	}, addHeaders({
+		'X-Requested-With': 'XMLHttpRequest',
+		Referer: baseurl + 'account'
+	}));
+
+	AB.getParam(html, result, 'date', /(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, [replaceTagsAndSpaces, /\s+/g, ' ']);
+	AB.getParam(html, result, '__tariff', /(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, [replaceTagsAndSpaces, /\s+/g, ' ']);
+	AB.getParam(html, result, 'spent', /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+	AB.getParam(html, result, 'payed', /(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+	AB.getParam(html, result, 'debt_start', /(?:[\s\S]*?<td[^>]*>){8}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 
 	AnyBalance.setResult(result);
 }

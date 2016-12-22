@@ -937,7 +937,7 @@ function getYar() {
 }
 
 function getKursk() {
-  newTypicalLanBillingInetTv('https://lk-kursk.center.mts.ru/index.php');
+  newTypicalLanBillingInetTv_1('https://lk-kursk.center.mts.ru/index.php');
 }
 
 function newTypicalLanBillingInetTv(baseurl) {

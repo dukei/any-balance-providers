@@ -294,7 +294,7 @@ function processInfo(html, result){
 	  getParam(data.mobilePhone, info, 'info.mphone');
 
     //Получаем адреса постоянной регистрации и фактического проживания
-    for(var i = 0; i < data.addressList.length; i++) {
+    for(var i = 0; data.addressList && i < data.addressList.length; i++) {
       var counter_name;
       var adr = data.addressList[i];
 

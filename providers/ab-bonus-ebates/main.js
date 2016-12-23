@@ -18,9 +18,9 @@ function main() {
 	checkEmpty(prefs.login, 'Enter login!');
 	checkEmpty(prefs.password, 'Enter password!');
 
-	if (prefs.cabinet == 'ru')
+/*	if (prefs.cabinet == 'ru')
 		doRu('https://www.ebates.ru/', prefs);
-	else
+	else */
 		doCom('https://www.ebates.com/', prefs);
 }
 
@@ -28,13 +28,20 @@ function doCom(baseurl, prefs) {
 	AnyBalance.trace(baseurl);
 	var html = AnyBalance.requestGet(baseurl + 'auth/logon.do', g_headers);
 
+	var sitekey = getParam(html, /data-sitekey="([^"]*)/i, replaceHtmlEntities);
+	var recaptcha;
+	if(sitekey){
+		recaptcha = solveRecaptcha('Пожалуйста, докажите, что вы не робот', AnyBalance.getLastUrl(), sitekey);
+	}
+
 	html = AnyBalance.requestPost(baseurl + 'auth/logon.do', {
 		username: prefs.login,
 		password: prefs.password,
 		'urlIdentifier': '/auth/logon.do',
 		type: 'legacy-signuplogin',
-		_csrf: getParam(html, null, null, /<input[^>]+name="_csrf"[^>]*value="([^"]*)/i, replaceHtmlEntities),
-		'terms': 'checked'
+		_csrf: getParam(html, /<input[^>]+name="_csrf"[^>]*value="([^"]*)/i, replaceHtmlEntities),
+		'terms': 'checked',
+		'g-recaptcha-response': recaptcha
 	}, addHeaders({
 		Referer: baseurl + 'auth/logon.do'
 	}));

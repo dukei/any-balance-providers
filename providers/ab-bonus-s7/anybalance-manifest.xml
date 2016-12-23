@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="16">ab-bonus-s7</id>
+	<id version="17">ab-bonus-s7</id>
 	<name>S7 Приоритет</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе миль и другую информацию по бонусной карте авиакомпании S7 (http://www.s7.ru).</p>
@@ -18,10 +18,12 @@
 	<p>Как получить накопительную карту и пароль к личному кабинету, инструкция: https://www.s7.ru/home/priority/ffpEnrollment.dot</p>
 	]]></instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>

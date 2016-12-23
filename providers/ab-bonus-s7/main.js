@@ -43,7 +43,7 @@ function main() {
             if (/iplock/.test(errorMsg)) {
                 errorMsg = "Авторизация временно невозможна.";
             }
-            fatal = /логин|пароль|корректный.*ПИН/.test(errorMsg);
+            fatal = /не существует|логин|парол|корректный.*ПИН/.test(errorMsg);
         }
         throw new AnyBalance.Error(errorMsg || 'Ошибка авторизации.', false, fatal);
     }

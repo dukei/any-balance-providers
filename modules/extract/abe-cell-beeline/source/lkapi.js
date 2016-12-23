@@ -38,7 +38,7 @@ function callAPIProc(url, getParams, postParams, method) {
 	}else{
 		html = AnyBalance.requestPost(url, 
 			postParams && JSON.stringify(postParams), 
-			addHeaders({'Content-Type': postParams && 'application/json; charset=UTF-8'}, g_apiHeaders), 
+			addHeaders({'Content-Type': postParams ? 'application/json; charset=UTF-8' : undefined}, g_apiHeaders), 
 			{HTTP_METHOD: method || 'POST'}
 		);
 	}
@@ -431,3 +431,26 @@ function processApiServices(result){
 			sumParam(1, result, 'services_count', null, null, null, aggregate_sum);
 	}
 }
+
+function createNewPasswordApi(){
+	var prefs = AnyBalance.getPreferences();
+
+    checkEmpty(prefs.login, 'Введите 10 цифр вашего номера телефона в формате 9031234567');
+    checkEmpty(!prefs.password || prefs.password.length >= 6, 'Введите не менее 6 символов желаемого пароля. Или оставьте поле пустым, чтобы автоматически сгенерировать пароль.');
+
+	var json = callAPIProc('1.0/passReset', {login: prefs.login, channelType: 'CTN'});
+    var tempPass = AnyBalance.retrieveCode('Пожалуйста, введите временный пароль, который направлен вам по ' + json.channel, null, {inputType: 'number'});
+
+    var newPass = tempPass;
+	json = callAPIProc('2.0/auth/auth', {userType: 'Mobile', login: prefs.login}, {password: tempPass}, 'PUT');
+	AnyBalance.setCookie(getParam(g_baseurlApi, null, null, /:\/\/([^\/]*)/), 'token', json.token);
+
+	if(json.tempPassInd){
+		newPass = prefs.password || generatePassword();
+		json = callAPIProc('1.0/setting/changePassword', {login: prefs.login, newPassword: newPass}, '', 'PUT');
+//		json = callAPIProc('2.0/auth/auth', {userType: 'Mobile', login: prefs.login}, {password: newPass}, 'PUT');;
+	}
+
+	return newPass;
+}
+

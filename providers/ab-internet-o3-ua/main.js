@@ -11,43 +11,56 @@ var g_headers = {
 };
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'http://my.o3.ua/';
+	var baseurl = 'https://my.o3.ua/';
 	AnyBalance.setDefaultCharset('windows-1251');
 	
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 		
-	var html = AnyBalance.requestPost(baseurl, {
-		redirect:'',
-		logon:'1',
-		login:prefs.login,
-		password:prefs.password,
-		logon:'1',
-		chk:'frm_chk',
-    }, addHeaders({Referer: baseurl}));
+	var html = AnyBalance.requestPost(baseurl + 'login_check', {
+		_target_path:	'/',
+		_username: prefs.login,
+		_password: prefs.password
+    }, addHeaders({
+        Accept: 'application/json, text/javascript, */*; q=0.01',
+        'X-Requested-With': 'XMLHttpRequest',
+    	Referer: baseurl
+    }));
+
+    var json = getJson(html);
 	
-	if(!/logout/i.test(html)) {
-		var error = getParam(html, null, null, /<h2>Личный кабинет<\/h2>\s*<div[^>]*"message"[^>]*>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
-		if(error && /Неправильный логин или пароль/i.test(error))
-			throw new AnyBalance.Error(error, null, true);
+	if(!json.success) {
+		var error = json.message;
 		if(error)
-			throw new AnyBalance.Error(error);
+			throw new AnyBalance.Error(error, null, /парол/i.test(error));
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
+    
     var result = {success: true};
-	getParam(html, result, 'fio', /Вы вошли как([^<]*)/i, replaceTagsAndSpaces, capitalFirstLenttersDecode);
-	getParam(html, result, '__tariff', /Ваш тариф[^>]*>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'balance', /Состояние счета\s*<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'status', /Состояние интернет[^>]*>([^<]*)/i, replaceTagsAndSpaces, capitalFirstLenttersDecode);
-	getParam(html, result, 'dogovor', /Ваш номер договора\s*<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, html_entity_decode);
-	
+
+    html = AnyBalance.requestGet(baseurl + 'ajax/services', g_headers);
+    var json = getJson(html);
+    getParam(json[0] && json[0].pay_type_name, result, '__tariff');
+
+    html = AnyBalance.requestGet(baseurl + 'ajax/persons', g_headers);
+    var json = getJson(html);
+    var join_space = create_aggregate_join(' ');
+
+	sumParam(json.name, result, 'fio', null, replaceTagsAndSpaces, null, join_space);
+	sumParam(json.surname, result, 'fio', null, replaceTagsAndSpaces, null, join_space);
+	sumParam(json.lastname, result, 'fio', null, replaceTagsAndSpaces, null, join_space);
+
+	getParam(Math.round(json.current*100)/100, result, 'balance');
+	getParam(json.current < json.stopsum ? 'Не активний' : 'Активний', result, 'status');
+	getParam(json.card, result, 'dogovor');
+/*	
 	if(isAvailable(['traf_income','traf_outgoing'])) {
 		html = AnyBalance.requestGet(baseurl + 'ru/statystyka-zahruzok.html', g_headers);
 	
 		getParam(html, result, 'traf_income', /Всего за период(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 		getParam(html, result, 'traf_outgoing', /Всего за период(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 	}
-	
+*/	
     AnyBalance.setResult(result);
 }
 

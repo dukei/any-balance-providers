@@ -1,17 +1,19 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-internet-o3-ua</id>
+	<id version="3">ab-internet-o3-ua</id>
 	<api flags="no_browser"/>
 	<name>O3 (Freenet, Украина)</name>
 	<description html="true"><![CDATA[
 	<p>Получает данные для провайдера O3, бывший Freenet в Украине http://o3.ua/</p>
-	<p>Личный кабинет находится по адресу http://my.o3.ua/</p>
+	<p>Личный кабинет находится по адресу https://my.o3.ua/</p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
@@ -20,8 +22,8 @@
 		<counter id="fio" name="ФИО" type="text"/>
 		<counter id="status" name="Статус" type="text"/>
 		<counter id="dogovor" name="Договор" type="text"/>
-		<counter id="traf_income" name="Входящий трафик" units=" Мб"/>
-		<counter id="traf_outgoing" name="Исходящий трафик" units=" Мб"/>
+<!--		<counter id="traf_income" name="Входящий трафик" units=" Мб"/>
+		<counter id="traf_outgoing" name="Исходящий трафик" units=" Мб"/> -->
 	</counters>
 	<keywords></keywords>
 	<type>internet</type>

@@ -17,6 +17,8 @@ var g_baseUrls = {
 function main(){
     var prefs = AnyBalance.getPreferences();
 
+    throw new AnyBalance.Error('Этот провайдер больше не поддерживается. Используйте ТТК (Единый кабинет)', null, true);
+
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 	

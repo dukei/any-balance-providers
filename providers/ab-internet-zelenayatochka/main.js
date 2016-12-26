@@ -47,10 +47,10 @@ function getUnified(prefs) {
 	}, addHeaders({Referer: baseurl + 'login'}));
 
 	if (!/logout/i.test(html)) {
-		var error = getParam(html, null, null, /<div[^>]*class="alert alert-danger"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+		var error = getElement(html, /<div[^>]*alert/i, replaceTagsAndSpaces);
 		if(error) {
 			throw new AnyBalance.Error(error, null, /пользовател|логин|парол/i.test(error));
-                    }
+        }
 		
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
@@ -58,9 +58,11 @@ function getUnified(prefs) {
 	
 	var result = {success: true};
 	
-	getParam(html, result, 'fio', /Клиент:\s*<\/td>\s*<td[^>]*>([^<]+)/i, replaceTagsAndSpaces);
-	getParam(html, result, 'balance', /Баланс счета:\s*<\/td>\s*<td[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'cred_balance', /необходимо оплатить:\s*<strong>([^<]+)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'fio', /Клиент:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+	getParam(html, result, 'balance', /Баланс:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'cred_balance', /необходимо оплатить:\s*<span[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'acc_num', /Личный счет №([^<]+)/i, replaceTagsAndSpaces);
+	getParam(getElement(html, /<div[^>]+tariffBlock/i), result, '__tariff', /<h3[^>]*>([\s\S]*?)<\/h3>/i, [replaceTagsAndSpaces, /^тариф\s*/i, '', /\s+/g, ' ']);
 	
 	AnyBalance.setResult(result);
 }
@@ -105,9 +107,9 @@ function getStavr(prefs) {
 	}, addHeaders({Referer: baseurl}));
 
 	if (!/logout/i.test(html)) {
-		var error = getParam(html, null, null, /<\/form>\s*<div[^>]*color\s*:\s*#cd0a0a[^>]*>([^<]*)/i, replaceTagsAndSpaces);
-		if (error && /Неверный логин\/ЛС или пароль/i.test(error))
-			throw new AnyBalance.Error(error, null, true);
+		var error = getElement(html, /<div[^>]+alert/i, replaceTagsAndSpaces);
+		if (error)
+			throw new AnyBalance.Error(error, null, /Неверный логин\/ЛС или пароль/i.test(error));
 		if (error)
 			throw new AnyBalance.Error(error);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');

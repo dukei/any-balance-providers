@@ -627,13 +627,18 @@ function login(result){
 
     var prefs = AnyBalance.getPreferences(), html;
 
-    if (prefs.password) {
+    if(login.isLoggedIn){
+    	//Если мы уже были в кабинете, то не перелогиниваемся, может это мультипарт получение данных
+        html = enterLK({login: prefs.login, onlyAutomatic: true});
+    } else if (prefs.password) {
         html = loginWithPassword();
     } else {
         var ret = loginWithoutPassword();
         html = ret.html;
         result.password = ret.password;
     }
+
+    login.isLoggedIn = true;
     return html;
 }
 

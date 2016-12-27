@@ -25,17 +25,28 @@ function main() {
 		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
 	}
 
-	html = AnyBalance.requestPost(baseurl + 'account/login', {
-		Phone: prefs.login,
-		Password: prefs.password,
-		'ReturnUrl': ''
-	}, addHeaders({Referer: baseurl + 'account/login'}));
+	for(var i=0; i<5; ++i){
+		html = AnyBalance.requestPost(baseurl + 'account/login', {
+			Phone: prefs.login,
+			Password: prefs.password,
+			'ReturnUrl': ''
+		}, addHeaders({Referer: baseurl + 'account/login'}));
+
+		if(!/на нашем сервере произошла внутренняя ошибка/i.test(html))
+			break;
+
+		AnyBalance.trace('На сервере внутренняя ошибка. Ждем пару секунд и пробуем ' + (i+2) + '-й раз.');
+		AnyBalance.sleep(2000);
+	}
 	
 	if (!/logout/i.test(html)) {
 		var error = getParam(html, null, null, /<div[^>]+class="validation-summary-errors"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
 		if (error)
-			throw new AnyBalance.Error(error, null, /Логин или пароль неверен/i.test(error));
+			throw new AnyBalance.Error(error, null, /парол/i.test(error));
 		
+		if(/на нашем сервере произошла внутренняя ошибка/i.test(html))
+			throw new AnyBalance.Error('Сервер бонусной программы временно неработспособен. Пожалуйста, попробуйте позже');
+
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}

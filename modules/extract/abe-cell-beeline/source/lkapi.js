@@ -1,4 +1,4 @@
-﻿/*
+/*
 Бонусы различные
 - Баланс SMS-промо: расходуются на SMS внутри России (Билайн и другие операторы);
 - Баланс MMS-промо: расходуются на MMS внутри России (Билайн и другие операторы), на международных операторов и в роуминге не расходуются;
@@ -68,18 +68,25 @@ function apiLogin(baseurl){
 		AnyBalance.trace('Сессия новая, надо логиниться.');
 	}
 
+	var newPass;
+	if(!prefs.password){
+		AnyBalance.trace('Пароль не задан, получаем его по смс');
+		newPass = createNewPasswordApi();
+	}
 
 	var json = callAPIProc('2.0/auth/auth', {
 			userType: 'Mobile',
 			login: prefs.login
 		}, {
-			password: prefs.password
+			password: prefs.password || newPass
 		}, 'PUT'
 	);
 
 	AnyBalance.setCookie(getParam(g_baseurlApi, null, null, /:\/\/([^\/]*)/), 'token', json.token);
 
 	__setLoginSuccessful();
+
+	return newPass;
 }
 
 function getApiAssocNumbers(){

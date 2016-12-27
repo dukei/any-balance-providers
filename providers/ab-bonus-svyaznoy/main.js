@@ -28,7 +28,7 @@ function main() {
     username: prefs.login,
     password: prefs.password,
     client_id: '1',
-    scope: 'read:cur_user write:cur_user write:cur_user_email cur_user_books public offline_access payment'
+    scope: 'read:cur_user write:cur_user write:cur_user_email cur_user_books offline_access payment:domru'
   }, addHeaders({
     Referer: baseurl
   }));
@@ -52,7 +52,7 @@ function main() {
   }
 
   if (!json || json.error_description || json.message || !json.access_token) {
-  	var error = json.error_description || json.message;
+  	var error = json.error_description || json.message || json.error;
     if (error)
       throw new AnyBalance.Error(error, null, /Неверные данные для авторизации/.test(error));
     AnyBalance.trace(JSON.stringify(json));

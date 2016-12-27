@@ -44,8 +44,8 @@ function main() {
 	}
 
 	if(AnyBalance.isAvailable('balance')){
-		html = AnyBalance.requestGet(baseurl+'payment/', g_headers);
-		getParam(html, result, 'balance', /С учётом задолженности и оплаты на конец отчётного периода(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+		html = AnyBalance.requestGet(baseurl+'viv/', g_headers);
+		getParam(html, result, 'balance', /Итого на конец периода:(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 	}
 
 	AnyBalance.setResult(result);

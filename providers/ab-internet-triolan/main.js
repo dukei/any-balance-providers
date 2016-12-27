@@ -3,14 +3,10 @@
 */
 
 var g_headers = {
-	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
-	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
+	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+	'Accept-Language': 'ru,en-US;q=0.8,en;q=0.6',
 	'Connection': 'keep-alive',
-	// Mobile
-	//'User-Agent':'Mozilla/5.0 (BlackBerry; U; BlackBerry 9900; en-US) AppleWebKit/534.11+ (KHTML, like Gecko) Version/7.0.0.187 Mobile Safari/534.11+',
-	// Desktop
-	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
+	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36',
 };
 
 function getViewState(html){
@@ -31,6 +27,9 @@ function main() {
 	checkEmpty(prefs.password, 'Введите пароль!');
 	
 	var html = AnyBalance.requestGet(baseurl, g_headers);
+
+//	AnyBalance.setCookie(baseurl.replace(/\w+:\/\/([^\/]+)/, '$1'), 'triolan_name_user_login', prefs.login);
+//	AnyBalance.sleep(8000);
 	
 	try {
 		html = AnyBalance.requestPost(baseurl, {
@@ -39,13 +38,16 @@ function main() {
 			'__VIEWSTATE':getViewState(html),
 			'__VIEWSTATEENCRYPTED':'',
 			'__EVENTVALIDATION':getEventValidation(html),
-			'login1$tbAgreement':prefs.login,
-			'login1$tbPassword':prefs.password,
-			'login1$btnLoginByAgr':'Войти',
-			'login1$tbPhone':'',
-			'login1$tbEmail':'',
-			'login1$hfType':'1',
-		}, addHeaders({Referer: baseurl}));
+			'login2$tbAgreement':prefs.login,
+			'login2$tbPassword':prefs.password,
+			'login2$btnLoginByAgr':'Войти',
+			'login2$tbPhone':'',
+			'login2$tbEmail':'',
+			'login2$hfType':'1',
+		}, addHeaders({
+			Referer: baseurl, 
+			Origin: baseurl.replace(/\/+$/, '')
+		}));
 	} catch(e) {}
 	
 	if (!/>Выход</i.test(html)) {

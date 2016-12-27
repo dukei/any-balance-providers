@@ -12,50 +12,68 @@ var g_headers = {
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'https://banking.pivdenny.com/';
+	var baseurl = 'https://my.bank.com.ua/';
 	AnyBalance.setDefaultCharset('utf-8');
 
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 
-	var html = AnyBalance.requestGet(baseurl + 'fiz/signin', g_headers);
+	var html = AnyBalance.requestGet(baseurl + 'LoginForm.action', g_headers);
 
-	var tform = getParam(html, null, null, /([^"]*)"\s*name="t:formdata"/i, null, html_entity_decode);
-	if (!tform)
-		throw new AnyBalance.Error('Не удалось найти форму входа. Сайт изменен?');
+	html = AnyBalance.requestPost(baseurl + 'Login.action', {
+		user:	prefs.login,
+		sms:	'',	
+		md5psw:	hex_md5(prefs.password),
+	}, addHeaders({Referer: baseurl + 'LoginForm.action'}));
 
-	html = AnyBalance.requestPost(baseurl + 'fiz/ru/signin.loginform', {
-		't:formdata': tform,
-		login: prefs.login,
-		password: prefs.password,
-	}, addHeaders({Referer: baseurl + 'fiz/signin'}));
-
-	if (!/home\.bslayout\.logout/i.test(html)) {
-		var error = getParam(html, null, null, /(Ошибка авторизации(?:[^>]*>){3}[^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
-		if (error && /Неверный логин или пароль/i.test(error))
-			throw new AnyBalance.Error(error, null, true);
+	if (!/logout/i.test(html)) {
+		var error = getElement(html, /<div[^>]+message-error/i, replaceTagsAndSpaces);
 		if (error)
-			throw new AnyBalance.Error(error);
+			throw new AnyBalance.Error(error, null, /парол/i.test(error));
+		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
-	html = AnyBalance.requestGet(baseurl + 'fiz/ru/accountslist', addHeaders({Referer: baseurl + 'fiz/ru/home'}));
-	
-	var cardNum = prefs.card_num || '\\d{10,16}';
-	var trRegExp = new RegExp('(<tr\\s*class=\\"acc(?:[^>]*>){3}[^<]*'+cardNum+'[\\s\\S]*?</tr>)', 'i');
-	var tr = getParam(html, null, null, trRegExp);
-	
-	if(!tr)
-		throw new AnyBalance.Error('Не удалось найти ' + (prefs.card_num ? 'счет с последними цифрами ' + prefs.card_num : 'ни одного счета!'));
+	html = AnyBalance.requestGet(baseurl + 'MainAccountsShow.action', addHeaders({Referer: baseurl}));
 
-	var result = {success: true};
+	var model = getElement(html, /<model[^>]+CardsListCardsModel/i, replaceTagsAndSpaces, getJson);
+	AnyBalance.trace(JSON.stringify(model));
 	
-	getParam(html, result, 'fio', /Добро пожаловать,(?:[^>]*>){1}([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);		
-	getParam(tr, result, 'card_number', /(?:[\s\S]*?<[^>]*>){3}([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(tr, result, '__tariff', /(?:[\s\S]*?<[^>]*>){3}([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(tr, result, 'dogovor', /(?:[\s\S]*?<[^>]*>){6}([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(tr, result, 'acc_name', /(?:[\s\S]*?<[^>]*>){8}([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(tr, result, 'balance', /(?:[\s\S]*?<[^>]*>){10}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(tr, result, ['currency', 'balance'], /(?:[\s\S]*?<[^>]*>){14}([^<]*)/i, replaceTagsAndSpaces);
+	var result = {success: true}, aggregate_space = create_aggregate_join(' ');
+
+	for(var i=0; i<model.cards_list.length; ++i){
+		var card = model.cards_list[i];
+		if(!prefs.card_num || endsWith(card.cardNo, prefs.card_num) || endsWith(card.accountNo, prefs.card_num)){
+			getParam(card.fullOwnerName, result, 'fio');		
+			getParam(card.cardNo, result, 'card_number');
+			getParam(card.accountNo, result, 'acc_name');
+
+			sumParam(card.prefixName, result, '__tariff', null, null, null, aggregate_space);
+			sumParam(card.basesUppName, result, '__tariff', null, null, null, aggregate_space);
+			sumParam(card.cardType, result, '__tariff', null, null, null, aggregate_space);
+
+			getParam(card.amountCashed, result, 'balance');
+			getParam(card.currency, result, ['currency', 'balance'], null, null, CurrencyISO.getCurrencySymbol);
+			
+			AnyBalance.setResult(result);
+			return;
+		}
+	}
+
+	for(var i=0; model.acc2624_list && i<model.acc2624_list.length; ++i){
+		var acc = model.acc2624_list[i];
+		if(!prefs.card_num || endsWith(acc.accountNo, prefs.card_num)){
+			getParam(acc.availableAmountSaving && acc.availableAmountSaving.CARD_NO, result, 'card_number');
+			getParam(acc.accountNo, result, '__tariff');
+
+			getParam(acc.accountNo, result, 'acc_name');
+
+			getParam(acc.amount, result, 'balance');
+			getParam(acc.currency, result, ['currency', 'balance'], null, null, CurrencyISO.getCurrencySymbol);
+			
+			AnyBalance.setResult(result);
+			return;
+		}
+	}
 	
 	AnyBalance.setResult(result);
 }

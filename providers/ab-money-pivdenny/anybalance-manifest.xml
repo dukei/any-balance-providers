@@ -1,17 +1,21 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-money-pivdenny</id>
+	<id version="3">ab-money-pivdenny</id>
 	<api flags="no_browser"/>
 	<name>Акционерный банк "Пивденный"</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе на счет акционерного банка "Пивденный" Украины</p>
-	<p>Информация берется из личного кабинета https://banking.pivdenny.com/fiz/signin</p>
+	<p>Информация берется из личного кабинета https://my.bank.com.ua</p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="currency"/>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
+		<js>md5_local.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
@@ -20,10 +24,9 @@
 		<counter id="currency" name="Валюта" type="text"/>
 		<counter id="fio" name="ФИО" type="text"/>
 		<counter id="card_number" name="Номер счета" type="text"/>
-		<counter id="dogovor" name="Договор" type="text"/>
-		<counter id="acc_name" name="Название счета" type="text"/>
+		<counter id="acc_name" name="Номер счета" type="text"/>
 	</counters>
 	<keywords></keywords>
-	<type>money</type>
+	<type>money, bank</type>
 	<country>ua</country>
 </provider>

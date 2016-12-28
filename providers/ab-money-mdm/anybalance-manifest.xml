@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-    <id version="12">ab-money-mdm</id>
+    <id version="13">ab-money-mdm</id>
     <api flags="no_browser"/>
     <name>МДМ-Банк</name>
 	<description html="true"><![CDATA[
@@ -9,14 +9,9 @@
 	<instruction html="true"><![CDATA[
 	<p>Настройки:</p>
 	<ul>
-		<li>Укажите логин и пароль к Интернет-банку (http://oldclient.mdmbank.ru) в настройках провайдера.</li>
+		<li>Укажите логин и пароль к Интернет-банку (http://i.mdm.ru) в настройках провайдера.</li>
 	</ul>
-	<p>Как подключить Интернет-банк «МДМ online»:</p>
-	<ol>
-		<li>Обратитесь к персональному менеджеру в удобном для вас офисе.</li> 
-		<li>Оформите банковский счет и подпишите заявление на подключение услуги.</li>
-		<li>Получите в офисе банка конверт с логином и паролем для доступа в Интернет-банк «МДМ online».</li> 
-	</ol>
+	<p>Как подключить Интернет-банк «МДМ online»: подключитесь за 5 минут здесь: https://i.mdm.ru/register</p>
 	]]></instruction>
     <author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
     <depends>
@@ -30,6 +25,7 @@
         <history>history.xml</history>
     </files>
     <counters>
+		<counter id="available" name="Доступно" units=" {@currency}"/>
 		<counter id="balance" name="Баланс" units=" {@currency}"/>
         <counter id="currency" name="Валюта" type="text"/>
         <counter id="minpay" name="Минимальный платеж" units=" {@currency}"/>

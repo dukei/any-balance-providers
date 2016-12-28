@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="16">ab-cell-mts-by</id>
+	<id version="17">ab-cell-mts-by</id>
 	<name>МТС (Беларусь)</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе, расходах, статусе блокировки, кредите, номере лицевого счета, ежемесячной плате.</p>   
@@ -36,6 +36,7 @@
 		<counter id="traffic_left" name="Остаток трафика" units=" Mb"/>
 		<counter id="traffic_left_smart_box" name="Остаток трафика СМАРТ box" units=" Mb"/>
 		<counter id="traffic_night" name="Остаток ночного трафика" units=" Mb"/>
+		<counter id="traffic_open" name="Открытый интернет" units=" Mb"/>
 		<counter id="usedinthismonth" name="Расход за этот месяц" units=" р"/>
 		<counter id="min_used" name="Минут накоплено (кред.)" units=" мин"/>
 		<counter id="debt" name="Неоплаченные счета" units=" р"/>

@@ -80,6 +80,11 @@ function fetchOrdinary(html){
         fetchAccountStatus(html, result);
     }
 
+    if(AnyBalance.isAvailable('traffic_open')){
+    	html = AnyBalance.requestGet(baseurl + 'Services/mtsrequest.ashx?r=' + Math.random() + '&code=selfcare&method=gethonestinfo&js=account-status&data=null', g_headers);
+    	fetchOpenInternet(html, result);
+    }
+
     if(AnyBalance.isAvailable('bonus')){
         html = AnyBalance.requestGet(baseurl + "bonus.aspx", g_headers);
         getParam(html, result, 'bonus', /Ваш бонусный счёт:([^<]*)/i, replaceTagsAndSpaces, parseBalance);
@@ -222,6 +227,11 @@ function mainMobile(allowRetry){
         
             fetchAccountStatus(html, result);
         }
+
+    	if(AnyBalance.isAvailable('traffic_open')){
+    		html = AnyBalance.requestGet(baseurl + 'Services/mtsrequest.ashx?r=' + Math.random() + '&code=selfcare&method=gethonestinfo&js=account-status&data=null', g_headers);
+    		fetchOpenInternet(html, result);
+    	}
 
     /*  Тормозит и не работает
         if (AnyBalance.isAvailable ('usedinprevmonth')) {
@@ -382,4 +392,11 @@ function main(){
         }
         mainOrdinary();
     }
+}
+
+function fetchOpenInternet(html, result){
+	AnyBalance.trace('Пытаемся получить открытый интернет');
+	var tr = getParam(html, /<tr(?:[\s\S](?!<\/?tr))+Текущее начисление[\s\S]*?(?:<\/?tr[^>]*>|<\/table>|<\/tbody>)/i);
+	if(tr)
+		getParam(tr, result, 'traffic_open', /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseTraffic);
 }

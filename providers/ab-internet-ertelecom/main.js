@@ -106,10 +106,14 @@ function main() {
 		var user = {};
 		try {
 			user = getJson(res);
-		} catch (e) {}
+			
+			getParam(user.bill.balance, result, 'balance', null, replaceTagsAndSpaces, parseBalance);
+			getParam(user.bill.datePay, result, 'pay_till', null, replaceTagsAndSpaces, parseDateWord);
+		} catch (e) {
+			AnyBalance.trace(res);
+			throw e;
+		}
 
-		getParam(user.bill.balance, result, 'balance', null, replaceTagsAndSpaces, parseBalance);
-		getParam(user.bill.datePay, result, 'pay_till', null, replaceTagsAndSpaces, parseDateWord);
 	}
 
 	getParam(info, result, 'tariff_number', /<span[^>]+account-data-item_link[^>]*>([^]*?)<\/span>/i, replaceTagsAndSpaces);

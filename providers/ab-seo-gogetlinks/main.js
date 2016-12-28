@@ -32,10 +32,11 @@ function main(){
     }, addHeaders({Referer: baseurl}));
 	
     if(!/my_campaigns\.php/i.test(html)){
-        var error = getParam(html, null, null, /([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
+        var error = getParam(html, null, null, /([^<]*)/i, replaceTagsAndSpaces);
         if(error)
-            throw new AnyBalance.Error(error, null, /Некорректный Логин или Пароль/i.test(html));
+            throw new AnyBalance.Error(error, null, /Парол/i.test(html));
 		
+		AnyBalance.trace(html);
         throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
     }
 

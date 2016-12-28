@@ -24,7 +24,7 @@ function apiCall(params) {
 
 	if(!json.success) {
 		AnyBalance.trace(JSON.stringify(json));
-		throw new AnyBalance.Error('Не удалось получить данные из-за ошибке на сервере, попробуйте обновить данные позже. Код ошибки: ' + json.error.code);
+		throw new AnyBalance.Error('Не удалось получить данные из-за ошибки на сервере, попробуйте обновить данные позже. Код ошибки: ' + json.error.code);
 	}
 	return json;
 }

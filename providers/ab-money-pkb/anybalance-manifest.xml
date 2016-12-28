@@ -1,6 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="2">ab-money-pkb</id>
+	<api flags="no_browser"/>
+  <id version="3">ab-money-pkb</id>
   <name>Петрокоммерц (PKB on-line)</name>
   <description>
     Получает текущий остаток и другие параметры карт, счетов Банка Петрокоммерц (http://www.pkb.ru), используя интернет-банк https://www.pkb24.ru.
@@ -8,7 +9,10 @@
     Как подключиться к Интернет-Банку?
     Для работы в системе "PKB on-line" Вам необходимо обратиться в любое отделение Банка для оформления услуги (выбор режима работы в системе - информационный или платежный, оформление договора). После оформления услуги Вы получите конверт с индивидуальными средствами доступа (логин и пароль).
   </description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+  <depends>
+  	<module id="library"/>
+  </depends>
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
@@ -27,7 +31,7 @@
   </keywords>
   <type>
     money
-  </type>
+  , bank</type>
   <country>
     ru
   </country>

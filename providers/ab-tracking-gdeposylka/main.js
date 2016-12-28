@@ -85,10 +85,12 @@ function doLogin(result, prefs) {
 
 	result.success = true;
 
-	var trackingTable = AB.getParam(html, null, null, /<div[^>]+class="trackings-list"[^>]*>([\s\S]*?)<footer[^>]*>/i);
-	var tracks = getElements(trackingTable, /<div[^>]+class="tracking clearfix[^>]*>/ig);
-	if(tracks.length == 0)
+	var trackingTable = getElement(html, /<div[^>]+class="track-list"/i);
+	var tracks = getElements(trackingTable, /<div[^>]+track-container[^>]*>/ig);
+	if(tracks.length == 0){
+		AnyBalance.trace(html);
 		throw new AnyBalance.Error("Не удалось найти почтовые отправления.");
+	}
 
 	AnyBalance.trace("Найдено посылок: " + tracks.length);
 
@@ -96,56 +98,35 @@ function doLogin(result, prefs) {
 		result.allTracksText = '';
 
 		for(var i=0; i< tracks.length; i++) {
-			var day = getParam(tracks[i], null, null, /"checkpoint-time"(?:[^>]*>)([^<]+)/i, replaceTagsAndSpaces) || '';
-			var time = getParam(tracks[i], null, null, /"muted"[^>]*>([^<]+)/i, replaceTagsAndSpaces) || '';
-			var status = getParam(tracks[i], null, null, /"checkpoint-status"(?:[^>]*>)([\s\S]*?)<\/div/i, replaceTagsAndSpaces) || '';
-			var name = getParam(tracks[i], null, null, /"tracking-number"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces) || '';
-			var geo = getParam(tracks[i], null, null, /class="text-muted"[^>]*>([\s\S]*?)<\/div/i, replaceTagsAndSpaces) || '';
+			var day_time = getElement(tracks[i], /<div[^>]+class="time"/i, replaceTagsAndSpaces) || '';
+			var status = getElement(tracks[i], /<div[^>]+"checkpoint-status"/i, replaceTagsAndSpaces) || '';
+			var name = getElement(tracks[i], /<div[^>]+"title-wrapper"/i, replaceTagsAndSpaces) || '';
+			var geo = getElement(tracks[i], /<div[^>]+"text-muted"/i, replaceTagsAndSpaces) || '';
 
 
-			result.allTracksText += '<b>' + name + ', ' + status + ' (' + geo + ')</b><br/>' + '<small>' + day + ' ' + time + '</small><br/><br/>';
+			result.allTracksText += '<b>' + name + ', ' + status + ' (' + geo + ')</b><br/>' + '<small>' + day_time + '</small><br/><br/>';
 		}
 
 		result.allTracksText = result.allTracksText.replace(/<br\/><br\/>$/i, '');
 	}
 
-	if(prefs.track_id) {
-		var regExp = new RegExp('<a[^>]+href="([\\s\\S]*?' + prefs.track_id + ')"', 'i');
-		for(var i=0; i<tracks.length; i++) {
-			var href = AB.getParam(tracks[i], null, null, regExp);
-
-			if(href) {
-				html = AnyBalance.requestGet(baseurl+href, g_headers);
-				return getInfo(result, html);
-				break;
-			}
-		}
-
-		if(!href) {
-			AnyBalance.trace("Не нашли посылку с номером " + prefs.track_id + ' в ЛК. Пытаемся получить информацию напрямую..');
-			try {
-				return doTrack(result, prefs);
-			} catch (e) {
-				AnyBalance.trace(e.message);
-				return result;
-			}
+	for(var i=0; i<tracks.length; i++) {
+		var track_id = getElement(tracks[i], /<[^>]+tracking-number/i);
+		if(!prefs.track_id || track_id.indexOf(prefs.track_id) >= 0){
+			var href = getParam(track_id, /<a[^>]+href="([^"]*)/i, replaceHtmlEntities);
+			html = AnyBalance.requestGet(joinUrl(baseurl, href), g_headers);
+			return getInfo(result, html);
 		}
 	}
 
-	var href = AB.getParam(tracks[0], null, null, /<a[^>]+href="([\s\S]*?)"/i);
-	if(!href) {
-		AnyBalance.trace("Не удалось найти ссылку на почтовое отправление. Сайт изменён?");
-		return result;
-	} else {
-		html = AnyBalance.requestGet(baseurl+href, g_headers);
-		return getInfo(result, html);
-	}
+	AnyBalance.trace("Не нашли посылку с номером " + prefs.track_id + ' в ЛК. Пытаемся получить информацию напрямую..');
+	return doTrack(result, prefs);
 }
 
 function getInfo(result, html) {
 
 	getParam(html, result, '__tariff', /<h2>\s*<strong>([^<]+)/i, replaceTagsAndSpaces);
-	getParam(html, result, ['days' , '__tariff'], /В пути(?:[^>]*>){2}\s*(\d+)\s*д/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, ['days' , '__tariff'], /в пути\s*(\d+)\s*д/i, replaceTagsAndSpaces, parseBalance);
 
 	var table = getElement(html, /<ul\s+class="checkpoints">/i);
 	if(!table)

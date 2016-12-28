@@ -1,17 +1,18 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id major_version="1.1" version="4">ab-bonus-formulakino</id>
+	<id major_version="1.1" version="5">ab-bonus-formulakino</id>
 	<name>Формула Кино</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о бонусах на бонусной карте сети кинотеатров Формула Кино <a href=""></a></p>
+	<p>Предоставляет информацию о бонусах на бонусной карте сети кинотеатров Формула Кино http://www.formulakino.ru/tm/</p>
 	]]></description>
-	<author>iReset &lt;ireset.ag@gmail.com&gt;</author>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>

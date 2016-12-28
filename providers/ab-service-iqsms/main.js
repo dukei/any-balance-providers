@@ -13,7 +13,7 @@ var g_headers = {
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'http://web.iqsms.ru/';
+	var baseurl = 'https://web.iqsms.ru/';
 	AnyBalance.setDefaultCharset('utf-8');
 
 	AB.checkEmpty(prefs.login, 'Введите логин!');

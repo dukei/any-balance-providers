@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-service-iqsms</id>
+	<id version="2">ab-service-iqsms</id>
 	<api flags="no_browser"/>
 	<name>Смс Дисконт</name>
 	<description html="true"><![CDATA[

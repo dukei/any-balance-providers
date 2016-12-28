@@ -1,6 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-money-pcb24</id>
+	<api flags="no_browser"/>
+  <id version="2">ab-money-pcb24</id>
   <name>Петрокоммерц (Выписка on-line)</name>
   <description>
     Получает текущий остаток и другие параметры карт Банка Петрокоммерц (http://www.pkb.ru), используя систему Выписка On-Line https://pcb24.ru.
@@ -9,11 +10,13 @@
 
     Для получения доступа к системе "Выписка On-Line" Вам необходимо обратиться в любое отделение Банка.
   </description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+  <depends>
+  	<module id="library"/>
+  </depends>
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
-    <js>library.js</js>
     <js>main.js</js>
     <history>history.xml</history>
   </files>
@@ -33,7 +36,7 @@
   </keywords>
   <type>
     money
-  </type>
+  , bank</type>
   <country>
     ru
   </country>

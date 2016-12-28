@@ -111,10 +111,22 @@ function main(){
     checkEmpty(prefs.login, 'Введите логин!');
     checkEmpty(prefs.password, 'Введите пароль!');
 
+    var login=prefs.login, type='LOGIN';
+    if(/^\d{9,11}$/i.test(prefs.login.replace(/[\+\s\-()]+/ig, ''))){
+    	AnyBalance.trace('Входить будем по номеру телефона');
+    	login = prefs.login.replace(/[\+\s\-()]+/ig, '');
+    	type = 'PHONE';
+    }else if(/@/i.test(prefs.login)){
+    	AnyBalance.trace('Входить будем по eмейл');
+    	type = 'EMAIL';
+    }else{
+    	AnyBalance.trace('Входить будем по логину');
+    }
+
     var uuid = generateUUID();
     var html = AnyBalance.requestPost(baseurl + 'client-api/login', JSON.stringify({
-    	"login": prefs.login,
-    	"loginType":"LOGIN",
+    	"login": login,
+    	"loginType": type,
     	"passwd": prefs.password,
     	"remember":false,
     	"client_uuid":generateUUID(),

@@ -7,7 +7,7 @@
 		summary="||{@s}"
 		dialogTitle="Логин"
 		negativeButtonText="Отмена"
-		dialogMessage="Введите логин для входа в личный кабинет https://lk.rt.ru."
+		dialogMessage="Введите логин, email или телефон (в формате +79001234567) для входа в личный кабинет https://lk.rt.ru."
 		key="login">
 	</EditTextPreference>
 	<EditTextPreference

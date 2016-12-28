@@ -1,15 +1,17 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-municipal-ykstolica</id>
+	<id version="2">ab-municipal-ykstolica</id>
 	<api flags="no_browser"/>
 	<name>УК Столица</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о состоянии счета в личном кабинете управляющей компании Столица http://lk.ykstolica.ru</p>
+	<p>Предоставляет информацию о состоянии счета в личном кабинете управляющей компании Столица http://lk2.ykstolica.ru</p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>

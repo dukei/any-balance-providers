@@ -12,7 +12,7 @@ var g_headers = {
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'http://lk.ykstolica.ru/';
+	var baseurl = 'http://lk2.ykstolica.ru/';
 	AnyBalance.setDefaultCharset('utf-8');
 	
 	checkEmpty(prefs.login, 'Введите логин!');
@@ -32,23 +32,46 @@ function main() {
 	html = AnyBalance.requestPost(baseurl + 'billing/personal/', params, addHeaders({Referer: baseurl + 'billing/personal/'}));
 	
 	if (!/logout/i.test(html)) {
-		/*var error = getParam(html, null, null, /<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
+		var error = getElement(html, /<[^>]+errortext/i, replaceTagsAndSpaces);
 		if (error)
-			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
-		*/
+			throw new AnyBalance.Error(error, null, /парол/i.test(error));
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
 	
 	var result = {success: true};
 	
-	getParam(html, result, 'account', /Лицевой счет:[^>]*>\s*л.с([^<]+№\d+)/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, '__tariff', /Личный[^>]*>\s*кабинет([^>]*>){3}/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'balance', /((?:Задолженность|Переплата)\s*:[\s\S]*?)<\/tr/i, [replaceTagsAndSpaces, /([\d.,]+)\s*руб\.?\s*([\d.,]+)\s*коп\.?/i, '$1.$2', /Задолженность\s*:/i, '-'], parseBalance);
+	getParam(html, result, 'account', /Лицевой счет:[^>]*>\s*л.с[^<]+№(\d+)/i, replaceTagsAndSpaces);
+
+	html = AnyBalance.requestGet(baseurl + 'billing/personal/circulating-sheet/', g_headers);
+	var tbl = getElement(html, /<table[^>]+data-table/i);
+	var tbody = getElement(tbl, /<tbody/i);
+	var trs = getElements(tbody, /<tr/ig);
+
+	getParam(trs[0], result, '__tariff', /(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+	getParam(trs[0], result, 'balance', /(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalanceRK);
 	
-	var array = sumParam(html, null, null, /<tr>\s*<td>((?:[^>]*>){6})\s*<\/td>/ig, replaceTagsAndSpaces);
-	if(array) getParam(array.join('\n'), result, 'all');
-	else AnyBalance.trace('Не удалось найти услуги, сайт изменен?');
+	var services = getElement(trs[1], /<tbody/i);
+	services = getElements(services, /<tr/ig);
+
+	var sout = [];
+	for(var i=0; i<services.length-1; ++i){
+		sout.push(
+			getParam(services[i], /(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces) + ' ' +
+			getParam(services[i], /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalanceRK)
+		);
+	}
+	getParam(sout.join('\n'), result, 'all');
 	
 	AnyBalance.setResult(result);
+}
+
+function parseBalanceRK(_text) {
+    var text = _text.replace(/\s+/g, '');
+    var rub = getParam(text, null, null, /(-?\d[\d\.,]*)руб/i, replaceTagsAndSpaces, parseBalance) || 0;
+    var _sign = rub < 0 || /-\d[\d\.,]*руб/i.test(text) ? -1 : 1;
+    var kop = getParam(text, null, null, /(-?\d[\d\.,]*)коп/i, replaceTagsAndSpaces, parseBalance) || 0;
+    var val = _sign*(Math.abs(rub) + kop / 100);
+    AnyBalance.trace('Parsing balance (' + val + ') from: ' + _text);
+    return val;
 }

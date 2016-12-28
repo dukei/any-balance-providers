@@ -36,6 +36,9 @@ function main(){
         })
     );
 	
+	if(html.charCodeAt(0) == 0xFEFF)
+		html = html.substr(1); //Иногда там говноBOM
+
 	var json = AB.getJson(html);
 	
     if(json.result != 'data'){

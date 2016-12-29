@@ -70,17 +70,20 @@ function main() {
 		AnyBalance.setResult(result);
 		// Если нет ни логина ни пароля - просто ищем объявление
 	} else {
-		var region = prefs.region;
+		checkEmpty(!prefs.region || /^\w+$/.test(prefs.region), 'Название города может содержать только буквы и цифры. Чтобы его узнать, зайдите в браузере на avito.ru и перейдите на нужный город. Он появится в адресной строке браузера, например, ekaterinburg в http://www.avito.ru/ekaterinburg');
+
+		var region = prefs.region || 'rossiya';
 		var pattern = prefs.pattern;
 
-		var pattern1 = pattern.replace(/ /g, "+");
-
-		var baseurl = 'https://m.avito.ru/' + region + '?q=' + pattern1;
+		var baseurl = 'https://m.avito.ru/' + region + '?q=' + encodeURIComponent(pattern);
 
 		AnyBalance.trace('Starting search: ' + baseurl);
 		var info = AnyBalance.requestGet(baseurl);
-		if(AnyBalance.getLastStatusCode() == 404)
-			throw new AnyBalance.Error('Возможно, вы неправильно указали город. Чтобы его узнать, зайдите в браузере на avito.ru и перейдите на нужный город. Он появится в адресной строке браузера, например, ekaterinburg в http://www.avito.ru/ekaterinburg', null, true);
+		if(AnyBalance.getLastStatusCode() == 404){
+			if(/data-current-page="404"/i.test(info))
+				throw new AnyBalance.Error('Вы неправильно указали город (' + region + '). Чтобы его узнать, зайдите в браузере на avito.ru и перейдите на нужный город. Он появится в адресной строке браузера, например, ekaterinburg в http://www.avito.ru/ekaterinburg', null, true);
+			AnyBalance.trace('Получили 404, но похоже, просто нет объявлений');
+		}
 
 		/*var error = $('#errHolder', info).text();
 		if(error){

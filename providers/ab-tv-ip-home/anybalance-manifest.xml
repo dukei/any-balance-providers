@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-tv-ip-home</id>
+	<id version="3">ab-tv-ip-home</id>
 	<api flags="no_browser"/>
 	<name>IP-Home</name>
 	<description html="true"><![CDATA[

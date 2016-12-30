@@ -85,6 +85,8 @@ function login(prefs) {
                 return prefs.login;
             if (name == 'txtPassword')
                 return prefs.password;
+            if (name == '__EVENTTARGET')
+            	return 'btnLoginStandard';
             return value;
         });
 

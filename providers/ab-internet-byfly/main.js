@@ -3,9 +3,10 @@
 */
 
 var g_headers = {
-    'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.154 Safari/537.36',
+    'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:12.0) Gecko/20100101 Firefox/12.0',
     'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
     'Accept-Language': 'ru-ru,ru;q=0.8,en-us;q=0.5,en;q=0.3',
+    'Accept-Encoding': 'gzip, deflate',
     'Connection': 'keep-alive'
 };
 
@@ -47,6 +48,34 @@ function main(){
         throw new AnyBalance.Error('Не удалось войти в личный кабинет. Сайт изменен?');
     }
 
+	var forcedChoice = /choice/i.test(AnyBalance.getLastUrl());
+	
+	// Указан номер - надо переключиться
+	if(prefs.number || forcedChoice) {
+		var login = forcedChoice ? 'надо выбрать' : getParam(html, /Логин[^<]+?(\d{6,})/i);
+		AnyBalance.trace('Залогинены на номер: ' + login);
+		
+		if((prefs.number && !endsWith(login, prefs.number)) || forcedChoice) {
+			var post = getParam(html, null, null, new RegExp('SendPost\\(\'(\\?pril_sel=\\d*' + (prefs.number || prefs.login) + '[^)\']+)', 'i'));
+			if(!post){
+				AnyBalance.trace(html);
+				throw new AnyBalance.Error('Не найден логин с последними цифрами ' + (prefs.number || prefs.login));
+			}
+			
+			html = AnyBalance.requestPost(baseurl + "choice.html", {
+				'pril_sel':getParam(post, null, null, /pril_sel=([^&]+)/i),
+				'live':getParam(post, null, null, /live=([^&]+)/i),
+				'chpril':getParam(post, null, null, /chpril=([^&]+)/i),
+			}, g_headers);
+
+			login = getParam(html, /Логин[^<]+?(\d{6,})/i);
+			
+			AnyBalance.trace('Переключились на логин ' + login + ' с последними цифрами: ' + (prefs.number || prefs.login));
+		} else {
+			AnyBalance.trace('Уже залогинены на правильный номер: ' + login);
+		}
+	}
+
     if(!/<h1[^>]*>Состояние счета<\/h1>/i.test(html)){
         AnyBalance.trace('Оказались не на состоянии счета, переходим туда явно');
         html = AnyBalance.requestGet(baseurl + 'main.html', g_headers);
@@ -54,11 +83,13 @@ function main(){
 
     var result = {success: true};
 
+	getParam(html, result, 'login', /Логин[^<]+?(\d{6,})/i);
+
     getParam(html, result, 'balance', /Актуальный баланс:[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'username', /<td[^>]*>Абонент<[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'agreement', /Договор (?:&#8470;|№)([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, '__tariff', /<td[^>]*>Тарифный план на услуги<[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'status', />Статус блокировки<[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'username', /<td[^>]*>Абонент<[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+    getParam(html, result, 'agreement', /Договор (?:&#8470;|№)([^<]*)/i, replaceTagsAndSpaces);
+    getParam(html, result, '__tariff', /<td[^>]*>Тарифный план на услуги<[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+    getParam(html, result, 'status', />Статус блокировки<[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
 
     if(AnyBalance.isAvailable('last_pay_date', 'last_pay_sum', 'last_pay_comment')){
         html = AnyBalance.requestGet(baseurl + 'payact.html', g_headers);
@@ -66,7 +97,7 @@ function main(){
         if(row){
             getParam(row, result, 'last_pay_date', /(?:[\s\S]*?<td[^>]*>)([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
             getParam(row, result, 'last_pay_sum', /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-            getParam(row, result, 'last_pay_comment', /(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+            getParam(row, result, 'last_pay_comment', /(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
         }else{
             AnyBalance.trace('Последний платеж не найден...');
         }

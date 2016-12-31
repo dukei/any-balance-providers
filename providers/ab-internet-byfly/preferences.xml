@@ -21,7 +21,7 @@
         dialogMessage="Введите пароль, используемый для входа в ИССА Белтелеком"
         inputType="textPassword">
     </EditTextPreference>
-    <EditTextPreference 
+<!--    <EditTextPreference 
         title="Последние цифры логина" 
         positiveButtonText="ОК" 
         summary="|Автоматически|{@s}" 
@@ -29,5 +29,5 @@
         negativeButtonText="Отмена" 
         dialogMessage="Введите последние цифры логина, по которому необходимо получать данные, если у вас их несколько в личном кабинете"
         key="number">
-    </EditTextPreference>	
+    </EditTextPreference>	 -->
 </PreferenceScreen>

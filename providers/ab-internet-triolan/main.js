@@ -28,27 +28,31 @@ function main() {
 	
 	var html = AnyBalance.requestGet(baseurl, g_headers);
 
-//	AnyBalance.setCookie(baseurl.replace(/\w+:\/\/([^\/]+)/, '$1'), 'triolan_name_user_login', prefs.login);
-//	AnyBalance.sleep(8000);
-	
-	try {
-		html = AnyBalance.requestPost(baseurl, {
-			'__EVENTTARGET':'',
-			'__EVENTARGUMENT':'',
-			'__VIEWSTATE':getViewState(html),
-			'__VIEWSTATEENCRYPTED':'',
-			'__EVENTVALIDATION':getEventValidation(html),
-			'login2$tbAgreement':prefs.login,
-			'login2$tbPassword':prefs.password,
-			'login2$btnLoginByAgr':'Войти',
-			'login2$tbPhone':'',
-			'login2$tbEmail':'',
-			'login2$hfType':'1',
-		}, addHeaders({
+	var formRedirect = getElements(html, [/<form/ig, /btn_toLK/i])[0];
+	if(formRedirect){
+		AnyBalance.trace('Промежуточная переадресация..');
+		html = AnyBalance.requestPost(baseurl, createFormParams(formRedirect), addHeaders({
 			Referer: baseurl, 
 			Origin: baseurl.replace(/\/+$/, '')
 		}));
-	} catch(e) {}
+	}
+
+	html = AnyBalance.requestPost(baseurl, {
+		'__EVENTTARGET':'',
+		'__EVENTARGUMENT':'',
+		'__VIEWSTATE':getViewState(html),
+		'__VIEWSTATEENCRYPTED':'',
+		'__EVENTVALIDATION':getEventValidation(html),
+		'login2$tbAgreement':prefs.login,
+		'login2$tbPassword':prefs.password,
+		'login2$btnLoginByAgr':'Войти',
+		'login2$tbPhone':'',
+		'login2$tbEmail':'',
+		'login2$hfType':'1',
+	}, addHeaders({
+		Referer: baseurl, 
+		Origin: baseurl.replace(/\/+$/, '')
+	}));
 	
 	if (!/>Выход</i.test(html)) {
 		var error = getParam(html, null, null, /lbError"[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);

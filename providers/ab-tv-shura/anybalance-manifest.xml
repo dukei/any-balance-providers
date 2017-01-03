@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="4">ab-tv-shura</id>
+	<id version="5">ab-tv-shura</id>
 	<api flags="no_browser"/>
 	<name>Тетя Шура (Shura.tv)</name>
 	<description html="true"><![CDATA[
@@ -8,9 +8,12 @@
 	<p>Информация берется из личного кабинета https://shura.tv/b/</p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+		<module id="framework/cloudflare"/>
+	</depends>
 	<files>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>

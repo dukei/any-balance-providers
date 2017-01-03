@@ -5,6 +5,15 @@
     <name>cloudflare helper</name>
 	<description html="true"><![CDATA[
 		Helps to deal with cloudflare protected pages
+		Usage:
+
+			var cf = Cloudflare(baseurl + 'b/');
+			var html = AnyBalance.requestGet(baseurl + 'b/', g_headers);
+		    if(cf.isCloudflared(html))
+		        html = cf.executeScript(html);
+
+		    //Ordinary processing...
+
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>

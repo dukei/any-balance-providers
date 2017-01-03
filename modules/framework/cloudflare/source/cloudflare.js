@@ -136,22 +136,69 @@
     };
 
     function getHostname(){
-        return getParam(_url, null, null, /^https?:\/\/([^\/]*)/i);
+        return getParam(_url, /^https?:\/\/([^\/]*)/i);
     }
 
     function getBaseurl(url){
-        return getParam(url || _url, null, null, /^(https?:\/\/[^\/]*)/i);
+        return getParam(url || _url, /^(https?:\/\/[^\/]*)/i);
     }
 
     function getPath(){
-        return getParam(_url, null, null, /^https?:\/\/[^\/]*(\/?[^\?]*)/i);
+        return getParam(_url, /^https?:\/\/[^\/]*(\/?[^\?]*)/i);
     }
 
     function isCloudflared(html){
+        return isAutoCheck(html) || isCaptchaCheck(html);
+    }
+
+    function isAutoCheck(html){
         return /<input[^>]+name="jschl_vc"[^>]*value="([^"]*)/i.test(html);
+    }
+    
+    function isCaptchaCheck(html){
+        return /<form[^>]+chk_captcha/i.test(html);
     }
 
     function executeScript(html){
+    	if(isCaptchaCheck(html))
+    		html = executeScriptCaptcha(html);
+    	else 
+    		html = executeScriptAuto(html);
+
+    	if(_AnyBalance.getLevel() >= 9){
+			_AnyBalance.setData('__cfduid', _AnyBalance.getCookie('__cfduid'));
+			_AnyBalance.setData('cf_clearance', _AnyBalance.getCookie('cf_clearance'));
+			_AnyBalance.saveData();
+		}
+		 
+		return html;
+    }
+
+    function executeScriptCaptcha(html){
+    	AnyBalance.trace('Cloudflare потребовало reCaptcha');
+    	var id = getParam(html, /data-ray="([^"]*)/i, replaceHtmlEntities);
+    	var sitekey = getParam(html, /data-sitekey="([^"]*)/i, replaceHtmlEntities);
+
+    	if(!id || !sitekey){
+    		AnyBalance.trace(html);
+    		throw new AnyBalance.Error('Не удалось найти параметры Cloudflare для ввода капчи');
+    	}
+
+    	//В качестве url указываем cloudflare. В противном случае нужен s-token, но неохота с ним возиться.
+    	var response = solveRecaptcha("Вы заходите из небезопасного расположения. Cloudflare требует доказать, что вы не робот.", "https://cloudflare.com/", sitekey);
+
+    	var baseurl = getBaseurl();
+    	var html = AnyBalance.requestGet(baseurl + '/cdn-cgi/l/chk_captcha?' + createUrlEncodedParams({
+    		id: id,
+    		"g-recaptcha-response": response
+    	}), addHeaders({Referer: _url}));
+
+    	return html;
+    }
+
+    function executeScriptAuto(html){
+    	AnyBalance.trace('Пытаемся пройти автоматизированную проверку браузера Cloudflare');
+
         var paramNames = "window,document,location,parent";
         var paramValues = [_window,_document,_window.location,_window];
 
@@ -179,12 +226,6 @@
 		_AnyBalance.sleep(+matches[2]);
 
         safeEval(obfuscatedScript, paramNames, paramValues);
-
-    	if(_AnyBalance.getLevel() >= 9){
-			_AnyBalance.setData('__cfduid', _AnyBalance.getCookie('__cfduid'));
-			_AnyBalance.setData('cf_clearance', _AnyBalance.getCookie('cf_clearance'));
-			_AnyBalance.saveData();
-		}
 
         return _document._lastHtml;
     }

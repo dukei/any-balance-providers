@@ -17,9 +17,11 @@ function main() {
 	
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
+
+	var url = baseurl + 'b/?_=' + Math.random();
 	
-	var cf = Cloudflare(baseurl + 'b/');
-	var html = AnyBalance.requestGet(baseurl + 'b/', g_headers);
+	var cf = Cloudflare(url);
+	var html = AnyBalance.requestGet(url, g_headers);
     if(cf.isCloudflared(html))
         html = cf.executeScript(html);
 	

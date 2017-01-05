@@ -133,6 +133,9 @@ function findAccount(html){
     for(var i=0; i<accounts.length; ++i){
     	account = accounts[i];
     	accnum = getParam(account, /<td[^>]+class="tdId"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+    	if(!accnum)
+    		accnum = getParam(account, /'accountNumber'\s*,\s*'([^']*)/i, replaceHtmlEntities);
+
     	cards = getElements(account, [/<table[^>]+id="[^"]*ClientCardsDataForm:accountContainer:[^>]*>/ig, /<td[^>]+class="tdNumber"/i]);
     	var cardnums = sumParam(account, /<td[^>]+class="tdNumber"[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces);
     	

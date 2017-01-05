@@ -22,16 +22,17 @@
     	document: _document,
     };
 
-    function _Element(tag, attrs, children){
-    	function parseAttributes(str){
-    		var attribs = sumParam(str, null, null, /(\w+\s*=\s*(["'])[^'"]*\2)/g);
-    		var ret = {};
-    		for(var i=0; i<attribs.length; ++i){
-    			var matches = /(\w+)\s*=\s*["']([^'"])/.exec(attribs[i]);
-    		    ret[matches[1]] = html_entity_decode(matches[2]);
-    		}
-    		return ret;
+    function parseAttributes(str){
+    	var attribs = sumParam(str, /(\w+\s*=\s*(["'])[^'"]*\2)/g);
+    	var ret = {};
+    	for(var i=0; i<attribs.length; ++i){
+    		var matches = /(\w+)\s*=\s*["']([^'"]*)/.exec(attribs[i]);
+    	    ret[matches[1]] = html_entity_decode(matches[2]);
     	}
+    	return ret;
+    }
+
+    function _Element(tag, attrs, children){
 
     	function joinURLs(urlbase, urlrel){
             if(!/^https?:/i.test(urlrel)){
@@ -82,8 +83,7 @@
             	}
             	var method = this.method || 'get';
             	if(/get/i.test(method)){
-            		var str = params.reduce(function(previousValue, currentValue){ return (previousValue ? previousValue + '&' : '?') + encodeURIComponent(currentValue[0]) + '=' + encodeURIComponent(currentValue[1]); }, '');
-            		_document._lastHtml = _AnyBalance.requestGet(joinURLs(_url, this.action) + str, headers);
+            		_document._lastHtml = _AnyBalance.requestGet(joinURLs(_url, this.action) + '?' + createUrlEncodedParams(params), headers);
             	}else{
             		_document._lastHtml = _AnyBalance.requestPost(joinURLs(_url, this.action), params, headers);
             	}
@@ -202,20 +202,21 @@
         var paramNames = "window,document,location,parent";
         var paramValues = [_window,_document,_window.location,_window];
 
-        var jschl_vc = getParam(html, null, null, /<input[^>]+name="jschl_vc"[^>]*value="([^"]*)/i, null, html_entity_decode);
-        if(!jschl_vc)
-        	throw new _AnyBalance.Error('Не удалось найти секретный ключ Cloudflare');
-
-        var jschl_answer = new _Element('input', {name: 'jschl_answer'});
+        var inputs = sumParam(getElement(html, /<form[^>]+challenge-form/i), /<input[^>]*>/ig);
+        var children = [];
+        for(var i=0; i<inputs.length; ++i){
+        	children.push(new _Element('input', parseAttributes(inputs[i])));
+        }
 
         m_elements = { //Создаём элементы, которые мы должны будем найти скриптом.
-        	jschl_vc: new _Element('input', {value: jschl_vc}),
-        	'jschl-answer': jschl_answer,
-        	'challenge-form': new _Element('form', {action: '/cdn-cgi/l/chk_jschl'}, [
-        		new _Element('input', {name: 'jschl_vc', value: jschl_vc}),
-        		jschl_answer,
-        	]),
+        	'challenge-form': new _Element('form', {action: '/cdn-cgi/l/chk_jschl'}, children),
         };
+
+        //Заполняем поиск по id (имени)
+        for(var i=0; i<children.length; ++i){
+        	if(children[i].id)
+        		m_elements[children[i].id] = children[i];
+        }
 
         var matches = /setTimeout\(function\(\)\{([\s\S]*?)\},\s*(\d+)\)/.exec(html);
         if(!matches){

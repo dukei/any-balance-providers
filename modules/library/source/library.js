@@ -463,6 +463,7 @@ var AB = (function (global_scope) {
             var result = Function(argsNamesString || 'ja0w4yhwphgawht984h', 'AnyBalance', 'g_AnyBalanceApiParams', '_AnyBalanceApi', script).apply(null, argsArray);
             return result;
         } catch (e) {
+        	svAB.trace(e.message + '\n' + e.stack);
             throw new svAB.Error('Bad javascript (' + e.message + '): ' + script);
         } finally {
             AnyBalance = svAB, global_scope.g_AnyBalanceApiParams = svParams, global_scope._AnyBalanceApi = svApi;

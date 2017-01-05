@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id version="4">ab-bonus-luxor</id>
+	<id version="5">ab-bonus-luxor</id>
 	<name>Люксор</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию по накопительной карте сети кинотеатров Люксор <a href="http://www.luxorfilm.ru">http://www.luxorfilm.ru</a></p>
@@ -11,11 +11,13 @@
 	<p>Если у вас нет доступа к личному кабинету, зарегистрируйтесь здесь: <a href="http://www.luxorfilm.ru/Users/ChooseRegistration.aspx">http://www.luxorfilm.ru/Users/ChooseRegistration.aspx</a> и прикрепите к этому личному кабинету карту зрителя.</p>
 	]]></instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
 		<js>main.js</js>
-		<js>library.js</js>
 		<history>history.xml</history>
 	</files>
 	<counters>

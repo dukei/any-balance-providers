@@ -3,7 +3,7 @@
 */
 
 function getViewState(html){
-    return getParam(html, null, null, /name="__VIEWSTATE".*?value="([^"]*)"/);
+    return getParam(html, /name="__VIEWSTATE".*?value="([^"]*)"/);
 }
 
 function main(){
@@ -28,9 +28,9 @@ function main(){
     });
 	
     if(!/exit.png/i.test(html)){
-		var error = sumParam(html, null, null, /<span[^>]*lblMessageLogin[^>]*>([\s\S]*?)<\/span>/ig, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
+		var error = sumParam(html, /<span[^>]*lblMessageLogin[^>]*>([\s\S]*?)<\/span>/ig, replaceTagsAndSpaces, null, aggregate_join);
 		if (error)
-			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
+			throw new AnyBalance.Error(error, null, /парол/i.test(error));
 		
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
@@ -43,8 +43,8 @@ function main(){
     getParam(html, result, 'balance', /Количество баллов[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'visits', /Количество посещений[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'visits_left', /Посещений до следующего уровня[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'cardnum', /Карта №[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, '__tariff', /Ваш уровень[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'cardnum', /Карта №[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+    getParam(html, result, '__tariff', /Ваш уровень[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
 	
     AnyBalance.setResult(result);
 }

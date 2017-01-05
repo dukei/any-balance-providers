@@ -22,7 +22,7 @@ function main(){
 
     AnyBalance.setDefaultCharset('utf-8'); 
 
-    var html = AnyBalance.requestGet(baseurl, g_headers);
+    var html = AnyBalance.requestGet(baseurl + 'auth/auth/', g_headers);
     if(/403/i.test(AnyBalance.getLastUrl())){
     	var error = getElement(html, /<body[^>]*>/i, replaceTagsAndSpaces);
     	if(error)
@@ -40,9 +40,10 @@ function main(){
     }, addHeaders({Referer: baseurl + 'auth/auth/'}));
 
     if(!/lk\/auth\/exit/i.test(html)){
-        var error = getParam(html, null, null, /<div[^>]+id="auth_error"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+        var error = getParam(html, /<div[^>]+id="auth_error"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
         if(error)
-            throw new AnyBalance.Error(error);
+            throw new AnyBalance.Error(error, null, /парол/i.test(error));
+        AnyBalance.trace(html);
         throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
     }
 

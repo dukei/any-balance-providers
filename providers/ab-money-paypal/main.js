@@ -68,7 +68,8 @@ function executeChallenge(script, baseurl, loginPage){
 		},
 
 		getElementById: function(id){
-			ABSave.trace('Could not find element by Id: ' + id);
+			if(!this.elements[id])
+				ABSave.trace('Could not find element by Id: ' + id);
 			return this.elements[id];
 		},
 

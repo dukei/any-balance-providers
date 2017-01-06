@@ -71,11 +71,15 @@ function main() {
 	getParam(html, result, 'paid', /Оплачено(?:[^>]*>){4}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'adress', /Адрес(?:[^>]*>){4}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
 
-  if(isAvailable('saldo')) {
-    html = AnyBalance.requestGet(baseurl + 'cabinet_tver/cabinet.php?nachisl', g_headers);
-    getParam(html, result, 'saldo', /Начисления и платежи(?:[\s\S]*?<tr[^>]*>){14}(?:[\s\S]*?<td[^>]*>){5}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'in_saldo', /Начисления и платежи(?:[\s\S]*?<tr[^>]*>){14}(?:[\s\S]*?<td[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'period', /Начисления и платежи(?:[\s\S]*?<tr[^>]*>){14}(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
+
+  var period = getFormattedDate({format: 'MM.YY'});
+  getParam(period, result, '__tariff');
+
+  if(isAvailable('saldo', 'in_saldo', 'period')) {
+    html = AnyBalance.requestGet(baseurl + 'cabinet_tver/cabinet.php?nachisl_detal&date=01.' + period, g_headers);
+    getParam(html, result, 'saldo', /Итого(?:[\s\S]*?<td[^>]*>){6}([^\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'in_saldo', /Итого(?:[\s\S]*?<td[^>]*>){1}([^\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+    getParam('15.'+ period, result, 'period', null, null, parseDate);
   }
 
   if(isAvailable('device_value')) {

@@ -67,8 +67,6 @@ function main() {
 	
 	var result = {success: true};
 	
-	getParam(html, result, 'accrued', /Начислено(?:[^>]*>){4}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'paid', /Оплачено(?:[^>]*>){4}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'adress', /Адрес(?:[^>]*>){4}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
 
 
@@ -77,8 +75,10 @@ function main() {
 
   if(isAvailable('saldo', 'in_saldo', 'period')) {
     html = AnyBalance.requestGet(baseurl + 'cabinet_tver/cabinet.php?nachisl_detal&date=01.' + period, g_headers);
-    getParam(html, result, 'saldo', /Итого(?:[\s\S]*?<td[^>]*>){6}([^\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'in_saldo', /Итого(?:[\s\S]*?<td[^>]*>){1}([^\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'saldo', /Итого(?:[\s\S]*?<td[^>]*>){6}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'in_saldo', /Итого(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'accrued', /Итого(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'paid', /Итого(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
     getParam('15.'+ period, result, 'period', null, null, parseDate);
   }
 

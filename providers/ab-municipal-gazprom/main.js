@@ -316,7 +316,8 @@ function getTver() {
 		return value;
 	});
 
-	if (/<input[^>]+name="CaptchaCode"/i.test(html)) {
+	//Если капча есть и она не заключена в display:none
+	if (/<input[^>]+name="CaptchaCode"/i.test(html) && !getElements(html, [/<div[^>]+display\s*:\s*none/ig, /<input[^>]+name="CaptchaCode"/i])[0]) {
 		var captchaSRC = AB.getParam(html, null, null, /<img[^>]+captchaimage[^>]+src="([^"]*)"/i);
 		var captchaIMG = AnyBalance.requestGet(baseurl + captchaSRC, g_headers);
 		if (captchaIMG) {

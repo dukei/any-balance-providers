@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="3">ab-municipal-portal-tver-itgkh</id>
+	<id version="4">ab-municipal-portal-tver-itgkh</id>
 	<api flags="no_browser"/>
 	<name>Единый портал "Мониторинг Жилищного Фонда" Тверской области</name>
 	<description html="true"><![CDATA[

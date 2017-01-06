@@ -5,11 +5,12 @@
  */
 
 var g_headers = {
-	'Accept': 			'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+	'Accept': 			'*/*',
+	'Origin': 			'https://portal-tver.itgkh.ru',
 	'Accept-Charset': 	'windows-1251,utf-8;q=0.7,*;q=0.3',
 	'Accept-Language': 	'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
 	'Connection': 		'keep-alive',
-	'User-Agent': 		'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
+	'User-Agent': 		'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36',
 };
 
 function main() {
@@ -34,21 +35,17 @@ function main() {
 		'form[login]': prefs.login,
 		'form[password]': prefs.password
 	}, AB.addHeaders({
-		Referer: baseurl + 'index/login/'
+		Referer: baseurl,
+		HTTP_X_REQUESTED_WITH: 'xmlhttprequest',
+		'X-Requested-With': 'xmlhttprequest',
 	}));
-	AnyBalance.trace(html);
-
 
 	var json = AB.getJson(html);
-	if (!json.status) {
+	if (json.status != 'success') {
+		var error = json.message;
+		if(error)
+			throw new AnyBalance.Error(error, null, /пользователь не найден!/i.test(error));
 
-		var errorCode = json.code;
-
-		if (errorCode) {
-			var errorMessage = json.message;
-			throw new AnyBalance.Error(error, null, /пользователь не найден!/i.test(
-				message));
-		}
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
@@ -74,6 +71,7 @@ function main() {
 		var tableData = AB.getElement(html, /<table\s+class="[^"]*data_table[^"]*"[^>]*>/i);
 
 		var items = parseTable(tableData);
+		result.__tariff = items[0];
 		result['freshPeriod'] = AB.parseDateWord(items[0]);
 		result['inSaldo'] = parseBalance(items[1]);
 		result['accruedMoney'] = parseBalance(items[2]);

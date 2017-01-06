@@ -29,10 +29,13 @@ function executeChallenge(script, baseurl, loginPage){
 		return this;
 	}
 
+	var mainDiv = new Element('div');
+
 	var doc = {
 		_cookie: '',
 		elements: {
-			main: new Element('div')
+			main: mainDiv,
+			'ads-plugin': mainDiv,
 		}, 
 
 		forms: {
@@ -65,6 +68,7 @@ function executeChallenge(script, baseurl, loginPage){
 		},
 
 		getElementById: function(id){
+			ABSave.trace('Could not find element by Id: ' + id);
 			return this.elements[id];
 		},
 
@@ -109,7 +113,7 @@ function executeChallenge(script, baseurl, loginPage){
 	AnyBalance.trace('autosubmit = ' + autosubmit);
 
 	//Строго требуется капча...
-	formParams.captchaRequired = !!doc.elements.main.style.display || (autosubmit === false);
+	formParams.captchaRequired = !!mainDiv.style.display || (autosubmit === false);
 
 	return formParams;
 }

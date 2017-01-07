@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-money-belqi</id>
+	<id version="2">ab-money-belqi</id>
 	<api flags="no_browser"/>
 	<name>Belqi</name>
 	<description html="true"><![CDATA[
@@ -18,11 +18,11 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units=" BYR"/>
+		<counter id="balance" name="Баланс" units=" BYN"/>
 		<counter id="user_name" name="Пользователь" type="text"/>
 		<counter id="wallet" name="Номер кошелька"/>
 	</counters>
 	<keywords></keywords>
-	<type>money</type>
+	<type>money, wallet</type>
 	<country>by</country>
 </provider>

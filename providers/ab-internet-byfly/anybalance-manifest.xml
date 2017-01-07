@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="7">ab-internet-byfly</id>
+	<id version="8">ab-internet-byfly</id>
 	<api flags="no_browser"/>
 	<name>ByFly</name>
 	<description html="true"><![CDATA[

@@ -57,20 +57,22 @@ function main(){
 		
 		if((prefs.number && !endsWith(login, prefs.number)) || forcedChoice) {
 			var post = getParam(html, null, null, new RegExp('SendPost\\(\'(\\?pril_sel=\\d*' + (prefs.number || prefs.login) + '[^)\']+)', 'i'));
-			if(!post){
+			if(!post && prefs.number){
 				AnyBalance.trace(html);
 				throw new AnyBalance.Error('Не найден логин с последними цифрами ' + (prefs.number || prefs.login));
+			}else if(!post){
+				AnyBalance.trace('Не найден логин ' + prefs.login + ', но считаем, что нам его и надо\n' + html);
+			}else{
+				html = AnyBalance.requestPost(baseurl + "choice.html", {
+					'pril_sel':getParam(post, null, null, /pril_sel=([^&]+)/i),
+					'live':getParam(post, null, null, /live=([^&]+)/i),
+					'chpril':getParam(post, null, null, /chpril=([^&]+)/i),
+				}, g_headers);
+			    
+				login = getParam(html, /Логин[^<]+?(\d{6,})/i);
+				
+				AnyBalance.trace('Переключились на логин ' + login + ' с последними цифрами: ' + (prefs.number || prefs.login));
 			}
-			
-			html = AnyBalance.requestPost(baseurl + "choice.html", {
-				'pril_sel':getParam(post, null, null, /pril_sel=([^&]+)/i),
-				'live':getParam(post, null, null, /live=([^&]+)/i),
-				'chpril':getParam(post, null, null, /chpril=([^&]+)/i),
-			}, g_headers);
-
-			login = getParam(html, /Логин[^<]+?(\d{6,})/i);
-			
-			AnyBalance.trace('Переключились на логин ' + login + ' с последними цифрами: ' + (prefs.number || prefs.login));
 		} else {
 			AnyBalance.trace('Уже залогинены на правильный номер: ' + login);
 		}

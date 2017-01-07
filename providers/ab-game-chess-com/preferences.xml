@@ -5,8 +5,8 @@
         summary="Тип игры||Тип игры: {@s}\n"
         key="type"
         defaultValue="online"
-        entries="Live Chess - Blitz|Live Chess - Bullet|Live Chess - Standard|Online Chess|Chess960|Tactics|Chess Mentor"
-        entryValues="live_blitz|live_bullet|live_standard|online|chess960|tactics|mentor" />
+        entries="Live Chess - Blitz|Live Chess - Bullet|Live Chess - Standard|Online Chess|Chess960|Tactics|Chess Mentor|Daily|Rapid|Lessons"
+        entryValues="live_blitz|live_bullet|live_standard|online|chess960|tactics|mentor|daily|rapid|lessons" />
     <EditTextPreference 
         title="Ник" 
         positiveButtonText="ОК" 

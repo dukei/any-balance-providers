@@ -1,16 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
-    <ListPreference
+<!--    <ListPreference
         title="Тип игры"
         summary="Тип игры||Тип игры: {@s}\n"
         key="type"
         defaultValue="online"
         entries="Live Chess - Blitz|Live Chess - Bullet|Live Chess - Standard|Online Chess|Chess960|Tactics|Chess Mentor|Daily|Rapid|Lessons"
-        entryValues="live_blitz|live_bullet|live_standard|online|chess960|tactics|mentor|daily|rapid|lessons" />
+        entryValues="live_blitz|live_bullet|live_standard|online|chess960|tactics|mentor|daily|rapid|lessons" /> -->
     <EditTextPreference 
         title="Ник" 
         positiveButtonText="ОК" 
         summary="Ник||{@s}\n" 
+        obligatory="true"
         dialogTitle="Ваш ник" 
         negativeButtonText="Отмена" 
         dialogMessage="Введите ваш ник на chess.com"

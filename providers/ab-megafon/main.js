@@ -1622,6 +1622,7 @@ function checkLKPhone(html){
 
 function enterLK(filial, options){
 	var prefs = AnyBalance.getPreferences();
+	AnyBalance.setDefaultCharset('utf-8');
 	AnyBalance.trace('Пробуем войти в новый ЛК...');
 	
 	var baseurl = lk_url;
@@ -1647,6 +1648,9 @@ function enterLK(filial, options){
 	if(!isLoggedInLK(html)){
 		var form = getElement(html, /<form[^>]+dologin[^>]*>/i);
 		if(!form){
+			var error = getElement(html, /<[^>]+megafon-error-top/i, replaceTagsAndSpaces);
+			if(error)
+				throw new AnyBalance.Error(error);
 			AnyBalance.trace(html);
 		    throw new AnyBalance.Error('Не удалось найти форму авторизации. Сайт изменен?', true);
 		}

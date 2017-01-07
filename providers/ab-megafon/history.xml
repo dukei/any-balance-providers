@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="3.1" version="203" date="2017-01-07">
+	- Улучшена обработка ошибок.
+	</change>
 	<change major_version="3.1" version="202" date="2016-12-20">
 	Добавлен счетчик доступных средств (с учетом кредитного лимита)
 	</change>

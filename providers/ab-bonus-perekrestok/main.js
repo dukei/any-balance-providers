@@ -26,13 +26,18 @@ function main () {
 
     var card = /^\d{16}$/.test(prefs.login);
 
-    var html = AnyBalance.requestPost(baseurl + '/api/v1/sessions/card/establish', JSON.stringify({
+    var html = AnyBalance.requestPost(baseurl + 'api/v1/sessions/card/establish', JSON.stringify({
     	card_no: card ? prefs.login : undefined,
     	phone_no: card ? undefined : prefs.login,
     	password: prefs.password
     }), addHeaders({
     	'Content-Type': 'application/json;charset=UTF-8'
     }));
+
+    if(AnyBalance.getLastStatusCode() >= 400){
+    	AnyBalance.trace(html);
+    	throw new AnyBalance.Error('Личный кабинет https://my.perekrestok.ru/ временно недоступен. Пожалуйста, попробуйте позже');
+    }
 
     var json = getJson(html);
     if(!json.data || !json.data.totp_secret_key){

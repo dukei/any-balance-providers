@@ -91,7 +91,7 @@ function main(){
     getParam(html, result, 'username', /<td[^>]*>Абонент<[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
     getParam(html, result, 'agreement', /Договор (?:&#8470;|№)([^<]*)/i, replaceTagsAndSpaces);
     getParam(html, result, '__tariff', /<td[^>]*>Тарифный план на услуги<[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
-    getParam(html, result, 'status', />Статус блокировки<[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+    getParam(html, result, 'status', />Статус блокировки<[\s\S]*?<td[^>]*>([\s\S]*?)(?:<a|<\/td>)/i, replaceTagsAndSpaces);
 
     if(AnyBalance.isAvailable('last_pay_date', 'last_pay_sum', 'last_pay_comment')){
         html = AnyBalance.requestGet(baseurl + 'payact.html', g_headers);

@@ -1670,7 +1670,7 @@ function enterLK(filial, options){
 	}	
 
 	if (!isLoggedInLK(html) && !isLoggedInSG(html)) {
-		var error = getElement(html, /<[^>]*(?:login-warning|ui-result-message|mf-error)/i, replaceTagsAndSpaces);
+		var error = getElement(html, /<[^>]*(?:login-warning|ui-result-message|mf-error|megafon-error-top)/i, replaceTagsAndSpaces);
 		if (error)
 			throw new AnyBalance.Error(error, null, /парол|заблокирован/i.test(error));
 		

@@ -15,9 +15,12 @@ var errors = {
 	changepass: 'Вам необходимо сменить пароль. Войдите в личный кабинет через браузер, затем введите новый пароль в настройки провайдера'
 }
 
+var baseurlNew = 'https://my.prosto.net/cabinet/';
+var baseurlHome = 'http://home.prosto.net/';
+
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'https://my.prosto.net/cabinet/';
+	var baseurl = baseurlNew;
 	AnyBalance.setDefaultCharset('utf-8');
 	
 	checkEmpty(prefs.login, 'Введите логин!');
@@ -30,32 +33,61 @@ function main() {
 		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
 	}
 	var htmlInitial = html;
-	
-	html = AnyBalance.requestPost(baseurl + 'server.pl', {
-		action: 'login-check',
-		user_id: prefs.login,
-		password: prefs.password,
-	}, addHeaders({Referer: baseurl + 'index.pl'}));
-	
-	try {
-		var json = getJson(html);
-	} catch (e) {}
-	
-	if (!json || (json.result != 'ok' && json.result != 'redirect')) {
-		var error = errors[json.result];
-		if (error)
-			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
-		
-		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
-	}
 
-	if(json.result == 'redirect'){
-		return fetchHome(htmlInitial);
-	}else{
-		html = AnyBalance.requestGet(baseurl + json.url, g_headers);
+	if(/home.prosto.net/i.test(AnyBalance.getLastUrl())){
+		html = AnyBalance.requestPost(baseurlHome + 'server.php', {
+			action: 'auth',
+			url: '/',
+			user_id: '',
+			login: prefs.login,
+			password: prefs.password,
+		}, addHeaders({Referer: baseurlHome}));
+		
+		try{
+			var json = getJson(html);
+		}catch(e){};
+		
+		if (!json || json.result != 'ok') {
+			var error = json && errors[json.result];
+			if (error)
+				throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
+			
+			AnyBalance.trace(html);
+			throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
+		}
+	    
+		html = AnyBalance.requestGet(joinUrl(baseurlHome, json.url), g_headers);
+		return fetchHome(html);
+		
+	}else{ //Новый логин
+		html = AnyBalance.requestPost(baseurl + 'server.pl', {
+			action: 'login-check',
+			user_id: prefs.login,
+			password: prefs.password,
+		}, addHeaders({Referer: baseurl + 'index.pl'}));
+		
+		try {
+			var json = getJson(html);
+		} catch (e) {}
+		
+		if (!json || (json.result != 'ok' && json.result != 'redirect')) {
+			var error = json && errors[json.result];
+			if (error)
+				throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
+			
+			AnyBalance.trace(html);
+			throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
+		}
+	    
+		if(json.result == 'redirect'){
+			return fetchHomeAutoLogin(htmlInitial);
+		}else{
+			html = AnyBalance.requestGet(baseurl + json.url, g_headers);
+		}
 	}
-	
+}
+
+function fetchNew(html){
 	var result = {success: true};
 	
 	getParam(html, result, 'balance', /На Вашем счету(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
@@ -67,11 +99,10 @@ function main() {
 	AnyBalance.setResult(result);
 }
 
-function fetchHome(html){
-	AnyBalance.trace('Получаем данные из home');
+function fetchHomeAutoLogin(html){
+	AnyBalance.trace('Авто логин в home');
 
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'http://home.prosto.net/';
 
 	var form = getElement(html, /<form[^>]+redirect/i);
 	var params = AB.createFormParams(form, function(params, str, name, value) {
@@ -90,8 +121,16 @@ function fetchHome(html){
 		throw new AnyBalance.Error('Неправильный логин или пароль', null, true);
 	}
 
+	fetchHome();
+}
 
-	html = AnyBalance.requestPost(baseurl + 'server.php', {
+function fetchHome(html){
+	AnyBalance.trace('Получаем данные из home');
+
+	var prefs = AnyBalance.getPreferences();
+	var baseurl = baseurlHome;
+
+	var html = AnyBalance.requestPost(baseurl + 'server.php', {
 		module:	'app',
 		action:	'app-get-usr',
 		id:	0,

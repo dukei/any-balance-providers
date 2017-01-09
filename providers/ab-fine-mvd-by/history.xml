@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="5" date="2017-01-09">
+	Исправление сводки и полной суммы
+	</change>
 	<change version="4" date="2017-01-03">
 	Добавлено отображение суммы штрафа
 	</change>

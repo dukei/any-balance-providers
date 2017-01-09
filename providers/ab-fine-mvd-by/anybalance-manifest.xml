@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id version="4">ab-fine-mvd-by</id>
+	<id version="5">ab-fine-mvd-by</id>
 	<name>Штрафы (Беларусь)</name>
 	<description html="true"><![CDATA[
 	<p>Проверка наличия фактов превышения установленной скорости движения и соответствующих штрафов на сайте МВД Беларуси http://mvd.gov.by/. Информация берется со страницы http://mvd.gov.by/ru/main.aspx?guid=15791.
@@ -23,7 +23,7 @@
 		<counter id="last_date" name="Дата последнего штрафа" type="time" format="dd/MM/yyyy HH:mm"/>
 		<counter id="last_num" name="Номер постановления" type="text"/>
 		<counter id="last_sum" name="Сумма последнего штрафа" units=" р"/>
-		<counter id="all" name="Сводка" type="text"/>
+		<counter id="all" name="Сводка" type="html"/>
 	</counters>
 	<keywords>штраф беларусь гаи камера видеофиксация нарушений пдд</keywords>
 	<type>fine</type>

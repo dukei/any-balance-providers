@@ -68,16 +68,16 @@ function main(){
 
     			var str = getParam(fines[i], null, null, /(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces) + ' - ' + num;
     			if(sum)
-    				str += ': ' + sum + ' р';
+    				str += ': <b>' + sum + ' р</b>';
 
     			all.push(str);
+   				sumParam(sum, result, 'total_sum', null, null, null, aggregate_sum);
     		}
 
-   			getParam(all.join('\n'), result, 'all');
+   			getParam(all.join('<br/>\n'), result, 'all');
    			getParam(latest.dt, result, 'last_date');
    			getParam(latest.num, result, 'last_num');
    			getParam(latest.sum, result, 'last_sum');
-   			sumParam(sum, result, 'total_sum', null, null, null, aggregate_sum);
        	}catch(e){
        	    AnyBalance.trace(e.message + '\n' + e.stack);
        	}

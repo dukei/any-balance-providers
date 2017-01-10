@@ -10,12 +10,16 @@ var g_headers = {
 	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
 };
 
-function main(){
-	var prefs = AnyBalance.getPreferences();
-	checkEmpty(prefs.login, 'Enter login or SIP ID');
-	checkEmpty(prefs.password, 'Enter password');
+var basedomain = 'www.sipnet.net';
 
-	var baseurl = 'https://www.sipnet.ru/cabinet/';
+function makeBaseurl(basedomain){
+	return 'https://' + basedomain + '/cabinet/';
+}
+
+function login(baseurl){
+	var prefs = AnyBalance.getPreferences();
+
+	AnyBalance.trace('Авторизовываемся с ' + baseurl);
 
 	var html = AnyBalance.requestGet(baseurl, g_headers);
 
@@ -47,12 +51,36 @@ function main(){
 	if (!/profile-link/i.test(html)) {
 		var error = getElement(html, /<span[^>]+class="error"/i, AB.replaceTagsAndSpaces);
 		if (error) {
-			throw new AnyBalance.Error(error, null, /парол/i.test(error));
+			throw new AnyBalance.Error(error, null, /парол|password/i.test(error));
 		}
 
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
+
+	return html;
+}
+
+function main(){
+	var prefs = AnyBalance.getPreferences();
+	checkEmpty(prefs.login, 'Enter login or SIP ID');
+	checkEmpty(prefs.password, 'Enter password');
+
+	var baseurl = makeBaseurl(basedomain);
+	
+	try{
+		var html = login(baseurl);
+	}catch(e){
+		var domain = getParam(AnyBalance.getLastUrl(), /https?:\/\/([^\/]*)/i);
+		if(domain != basedomain){
+			AnyBalance.trace('Требуется авторизоваться с ' + domain);
+			baseurl = makeBaseurl(domain);
+			html = login(baseurl);
+		}else{
+			throw e;
+		}
+	}
+
 
 	var result = {success: true};
 	getParam(html, result, '__tariff', /<span[^>]+user-plan-name[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
@@ -60,7 +88,7 @@ function main(){
 	getParam(prefs.login, result, 'login');
 	getParam(html, result, 'fio', /<a[^>]+profile-link[^>]*>([\s\S]*?)<\/a>/i, replaceTagsAndSpaces);
 	
-	var balance = getParam(html, /Баланс[\s\S]*?<div[^>]+item-value[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+	var balance = getParam(html, /(?:Баланс|Balance)[\s\S]*?<div[^>]+item-value[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
 	if(!balance){
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Can`t find balance! Site changed?');

@@ -58,11 +58,13 @@ function main() {
 		throw new AnyBalance.Error("Не удалось получить данные по счету, попробуйте позднее");
 	}
 
-	getParam(json.data.billingDataHtml, result, 'balance', /Текущая задолженность(?:[^>]*>){9}([\s\S]*?)</i, replaceTagsAndSpaces, parseBalance);
+	getParam(json.data.billingDataHtml, result, 'balance', /<input[^>]+?value="([^"]*)[^>]+?energyhiddensum/i, replaceHtmlEntities, parseBalance);
 	getParam(json.data.billingDataHtml, result, 'adress', /<td[^>]*>Адрес(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces);
 	getParam(json.data.billingDataHtml, result, 'fio', /<td[^>]*>ФИО(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces);
-	getParam(json.data.billingDataHtml, result, 'lastValue', /<td[^>]*>Значение последнего измерения(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
-	getParam(json.data.billingDataHtml, result, 'lastDate', /<td[^>]*>Дата съёма показаний счётчика(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseDate);
+	getParam(json.data.billingDataHtml, result, 'lastValue', /<td[^>]*>\s*Значение последнего измерения[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(json.data.billingDataHtml, result, 'lastDate', /<td[^>]*>\s*Дата съёма показаний счётчика[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
+	getParam(json.data.billingDataHtml, result, 'agrDate', /<td[^>]*>\s*Дата заключения договора[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
+	getParam(json.data.billingDataHtml, result, 'licschet', /<td[^>]*>\s*№ лицевого счёта[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
 
 	AnyBalance.setResult(result);
 }

@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-municipal-donetskoblenergo</id>
+	<id version="2">ab-municipal-donetskoblenergo</id>
 	<api flags="no_browser"/>
 	<name>ДОНЕЦКОБЛЭНЕРГО</name>
 	<description html="true"><![CDATA[
@@ -8,10 +8,12 @@
 	<p>Информация берется из личного кабинета <a href="https://www.myenergy.dn.ua/ru/customer/login">https://www.myenergy.dn.ua/ru/customer/login</a></p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
@@ -21,6 +23,8 @@
 		<counter id="adress" name="Адрес" type="text"/>
 		<counter id="lastValue" name="Значение последнего измерения" units=" кВт*ч"/>
 		<counter id="lastDate" name="Дата съёма показаний счётчика" type="time" format="dd/MM/yyyy"/>
+		<counter id="agrDate" name="Дата заключения договора" type="time" format="dd/MM/yyyy"/>
+		<counter id="licschet" name="Лицевой счет" type="text"/>
 	</counters>
 	<keywords></keywords>
 	<type>municipal</type>

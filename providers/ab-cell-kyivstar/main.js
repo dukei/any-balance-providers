@@ -9,6 +9,8 @@ function main() {
 		'Введите номер вашего телефона для входа в Мой Киевстар (в формате +380ХХХХХХХХХ), например +380971234567');
 	checkEmpty(prefs.password, 'Введите пароль!');
 
+	prefs.login = prefs.login.replace(/[^+\d]+/g, ''); //Удаляем всё, кроме + и цифр
+
 	AnyBalance.setOptions({
 		SSL_ENABLED_PROTOCOLS: ['TLSv1'] // https://my.kyivstar.ua очень смущается от присутствия TLSv1.1 и TLSv1.2
 	});
@@ -656,6 +658,8 @@ function processMobileApi() {
 	var json = callMobileApi('login2', {
 		ticket: ticket
 	});
+
+	//Важно, что на этапе расчета бонусов именно этот тарифный план (код его)
 	getParam(json.rate_plan, result, '__tariff');
 	getParam(json.uid, result, 'phone');
 
@@ -717,6 +721,11 @@ function getUnitsValue(bonus){
 
 function processBonus(bonus, name, result) {
 	if (isArray(bonus)) {
+		if (/TIME/i.test(name) && /3G_TALK/i.test(result.__tariff)){
+			//Для некоторых тарифных планов (надеюсь, что не для отдельных номеров), в апи вместо минут секунды.
+			AnyBalance.trace('Для тарифного плана ' + result.__tariff + ' ' + bonus[3] + ' заменяются на СЕК.');
+			bonus[3] = 'СЕК.';
+		}
 		if (/От Домашнего Интернета/i.test(bonus[0])) {
 			getParam(bonus[1], result, 'home_internet', null, null, parseBalance);
 			getParam(getDateValue(bonus), result, 'home_internet_till', null, g_replace_date, parseDate);
@@ -733,15 +742,15 @@ function processBonus(bonus, name, result) {
 			AnyBalance.trace('Неизвестные sms ' + name + ', относим к sms: ' + JSON.stringify(bonus));
 			sumParam(bonus[1], result, 'sms', null, null, parseBalance, aggregate_sum);
 		} else if (/TIME/i.test(name) && /на Киевстар|В сети Киевстар/i.test(bonus[0])) {
-			sumParam(bonus[1], result, 'bonus_mins_1', null, null, parseMinutes, aggregate_sum);
+			sumParam(bonus[1] + bonus[3], result, 'bonus_mins_1', null, null, parseMinutes, aggregate_sum);
 			sumParam(getDateValue(bonus), result, 'bonus_mins_1_till', null, g_replace_date, parseDate, aggregate_min);
 		} else if (/TIME/i.test(name) && /на другие мобильные/i.test(bonus[0])) {
-			sumParam(bonus[1], result, 'bonus_mins_other_mobile', null, null, parseMinutes, aggregate_sum);
+			sumParam(bonus[1] + bonus[3], result, 'bonus_mins_other_mobile', null, null, parseMinutes, aggregate_sum);
 			sumParam(getDateValue(bonus), result, 'bonus_mins_other_mobile_till', null, g_replace_date, parseDate, aggregate_min);
 		} else if (/TIME/i.test(name)) {
 			if (!/В пределах Укр|по Украине|на другие сети/i.test(bonus[0]))
 				AnyBalance.trace('Неизвестные минуты ' + name + ', относим к минутам на все сети: ' + JSON.stringify(bonus));
-			sumParam(bonus[1], result, 'bonus_mins_2', null, null, parseMinutes, aggregate_sum);
+			sumParam(bonus[1] + bonus[3], result, 'bonus_mins_2', null, null, parseMinutes, aggregate_sum);
 			sumParam(getDateValue(bonus), result, 'bonus_mins_2_till', null, g_replace_date, parseDate, aggregate_min);
 		} else if (/INET/i.test(name)) {
 			sumParam(bonus[1] + getUnitsValue(bonus), result, 'internet', null, null, parseTraffic, aggregate_sum);

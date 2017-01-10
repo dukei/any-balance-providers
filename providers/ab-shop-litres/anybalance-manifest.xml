@@ -4,7 +4,7 @@
 	<api flags="no_browser"/>
 	<name>ЛитРес</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе ЛитРес <a href="ttp://www.litres.ru/">ttp://www.litres.ru/</a></p>
+	<p>Предоставляет информацию о балансе ЛитРес http://www.litres.ru/</p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>

@@ -27,7 +27,7 @@ function main(){
     }, addHeaders({Referer: baseurl + 'zadolg/'})); 
 	
 	if(!/На дату \d{2}.\d{2}.\d{2,4}/i.test(html)){
-		var error = sumParam(html, null, null, /class="errorstr"([^>]*>){2}/ig, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
+		var error = sumParam(html, null, null, /class="errorstr"([^>]*>){2}/ig, replaceTagsAndSpaces, null, aggregate_join);
 		if (error)
 			throw new AnyBalance.Error(error, null, /не\s*найдено/i.test(error));
 		
@@ -36,10 +36,16 @@ function main(){
 	}
 	
     var result = {success: true};
-	
-	getParam(html, result, 'balance', /Задолженность по начислениям[\s\S]*?<tbody>[\s\S]*?<td[^>]*>[\s\S]*?<\/td>[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'outstanding_charges', /Задолженность по начислениям[\s\S]*?<tbody>[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'licschet', /На дату[^<]*(?:задолженность|переплата)\s+по\s+договору([^<]*)составляет/i, replaceTagsAndSpaces, html_entity_decode);
+
+	getParam(html, result, 'balance', /(?:задолженность|переплата) по начислениям[\s\S]*?<tbody>[\s\S]*?<td[^>]*>[\s\S]*?<\/td>[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, function(str){
+		var sgn = /задолженность по начислениям/i.test(html) ? -1 : 1;
+		return parseBalance(str)*sgn;
+	});
+	getParam(html, result, 'outstanding_charges', /(?:задолженность|переплата) по начислениям[\s\S]*?<tbody>[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, function(str){
+		var sgn = /задолженность по штрафам/i.test(html) ? -1 : 1;
+		return parseBalance(str)*sgn;
+	});
+    getParam(html, result, 'licschet', /На дату[^<]*(?:задолженность|переплата)\s+по\s+договору([^<]*)составляет/i, replaceTagsAndSpaces);
 	
     AnyBalance.setResult(result);
 }

@@ -114,7 +114,7 @@ function main(){
             
             //Тут получаем что-то вроде //OK[[],0,6]
             var auth = gwtGetJSON(html);
-            if(!auth[0]){
+            if(!isset(auth[0])){
             	AnyBalance.trace(html);
                 throw new AnyBalance.Error("error");
             }

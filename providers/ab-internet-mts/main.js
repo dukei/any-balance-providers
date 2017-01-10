@@ -379,7 +379,7 @@ function getVnov() {
 }
 
 function getSdv() {
-  newTypicalLanBillingInetTv('https://lk.arkhangelsk.mts.ru/index.php');
+  newTypicalLanBillingInetTv_1('https://lk.arkhangelsk.mts.ru/index.php');
 }
 
 function getVologda() {

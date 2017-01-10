@@ -1,6 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="2" version="6">ab-exchange-rosbank</id>
+	<api flags="no_browser"/>
+  <id major_version="2" version="7">ab-exchange-rosbank</id>
   <name>Курсы валют РОСБАНК</name>
   <description>
     Текущие курсы покупки/продажи, установленные РОСБАНК на текущую дату. Содержит курс доллара и евро.
@@ -8,6 +9,9 @@
 	Возможность ввести в настройках свою сумму (напр.платеж по кредиту) в валюте и получать пересчет в рубли по курсу продажи. Удобно прогнозировать ден.средства для оплаты.
   </description>
   <author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+  <depends>
+  	<module id="library"/>
+  </depends>
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>

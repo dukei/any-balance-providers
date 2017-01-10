@@ -48,6 +48,23 @@ function main() {
 	var result = {success: true};
 	
 	getParam(html, result, 'balance', /<li[^>]+"cash"[^>]*>([\s\S]*?)<\/li>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'bonus', /Бонусов:[\s\S]*?<strong[^>]*>([\s\S]*?)<\/strong>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(prefs.login, result, '__tariff');
+
+	if(AnyBalance.isAvailable('books')){
+		AnyBalance.trace('Считаем количество не спрятанных книг');
+
+		html = AnyBalance.requestGet(baseurl + 'pages/my_books/', g_headers);
+		var pages = getParam(html, /страниц:\s*\d+/i, replaceTagsAndSpaces, parseBalance);
+		
+		if(pages > 1){
+			html = AnyBalance.requestGet(baseurl + 'pages/my_books/?pagenum=' + pages, g_headers);
+		}
+
+		var lastPageBooks = getElements(html, /<div[^>]+newbook/ig).length;
+
+		getParam((pages-1)*12 + lastPageBooks, result, 'books');
+	}
 	
 	AnyBalance.setResult(result);
 }

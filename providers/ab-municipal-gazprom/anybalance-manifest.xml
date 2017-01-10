@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="10">ab-municipal-gazprom</id>
+	<id version="11">ab-municipal-gazprom</id>
 	<api flags="no_browser"/>
 	<name>Газпром Межрегионгаз</name>
 	<description html="true"><![CDATA[
@@ -10,6 +10,7 @@
 		<li>Брянск (https://газ.смородина.онлайн/)<br></li>
 		<li>Волгоград (http://34regiongaz.ru/cabinet/enter/)<br></li>
 		<li>Воронеж (http://www.vrgaz.ru/lk/index.php)<br></li>
+		<li>Йошкар-Ола (https://газ.смородина.онлайн/)<br></li>
 		<li>Калуга (https://газ.смородина.онлайн/)<br></li>
 		<li>Москва (https://газ.смородина.онлайн/)<br></li>
 		<li>Пермь (https://газ.смородина.онлайн/)<br></li>

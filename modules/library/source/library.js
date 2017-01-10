@@ -472,7 +472,7 @@ var AB = (function (global_scope) {
 
     /** Проверяет, не оканчивается ли строка на заданную */
     function endsWith(str, suffix) {
-        return str.indexOf(suffix, str.length - suffix.length) !== -1;
+        return str ? str.indexOf(suffix, str.length - suffix.length) !== -1 : false;
     }
 
     /**

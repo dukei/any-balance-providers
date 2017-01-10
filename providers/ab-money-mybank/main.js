@@ -38,7 +38,7 @@ function main() {
 	}
 
 	if (!/logout/i.test(html)) {
-		var error = getParam(html, null, null, /<div[^>]+id="error"[^>]*>([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, html_entity_decode);
+		var error = getParam(html, null, null, /<div[^>]+id="error"[^>]*>([\s\S]*?)<\/p>/i, replaceTagsAndSpaces);
 		if (error)
 			throw new AnyBalance.Error(error, null, /Неверный пароль/i.test(error));
 		
@@ -66,14 +66,17 @@ function main() {
 			'ни одной карты!'));
 	
 	var result = {success: true};
+
+	var balances = getElement(product, /<table[^>]+balance-table/i);
 	
-	getParam(product, result, 'balance', /balance"[^>]*>([\s\S]*?)<\/span/i, [/'/g, '', replaceTagsAndSpaces], parseBalance);
+	getParam(balances, result, 'balance', /balance"[^>]*>([\s\S]*?)<\/span/i, [/'/g, '', replaceTagsAndSpaces], parseBalance);
+	getParam(getElements(balances, [/<tr/ig, /собственные средства/i])[0], result, 'own', /balance"[^>]*>([\s\S]*?)<\/span/i, [/'/g, '', replaceTagsAndSpaces], parseBalance);
 	getParam(product, result, 'limit', /лимит([^<)]*)/i, [/'/g, '', replaceTagsAndSpaces], parseBalance);
-	getParam(product, result, ['currency', 'balance', 'limit', 'debt', 'nachisl', 'grace_pay'], /balance"[^>]*>([\s\S]*?)<\/span/i, [/'/g, '', replaceTagsAndSpaces], parseCurrency);
-	getParam(product, result, 'cardname', /showFromTemplate[^>]*>([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(product, result, 'cardnum', /card-link-one[^>]*>([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(product, result, '__tariff', /card-link-one[^>]*>([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(product, result, 'order_num', /"product-under-title"[^>]*>([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(product, result, ['currency', 'balance', 'limit', 'debt', 'nachisl', 'grace_pay'], /balance"[^>]*>([\s\S]*?)<\/tr>/i, [/'/g, '', replaceTagsAndSpaces], parseCurrency);
+	getParam(product, result, 'cardname', /showFromTemplate[^>]*>([^<]+)/i, replaceTagsAndSpaces);
+	getParam(product, result, 'cardnum', /card-link-one[^>]*>([^<]+)/i, replaceTagsAndSpaces);
+	getParam(product, result, '__tariff', /card-link-one[^>]*>([^<]+)/i, replaceTagsAndSpaces);
+	getParam(product, result, 'order_num', /"product-under-title"[^>]*>([^<]+)/i, replaceTagsAndSpaces);
 	
 	if(isAvailable(['debt', 'nachisl', 'grace_pay', 'grace_pay_till', 'halava_bonus'])) {
 		var token = getParam(html, null, null, /"session_token"[^>]*value="([^"]+)/i);

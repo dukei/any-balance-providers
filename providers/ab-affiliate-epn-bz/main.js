@@ -56,7 +56,7 @@ function main() {
 
   }
 
-  if(isAvailable(['clicks', 'cr', 'epc', 'hosts', 'impressions', 'leads', 'leads_hold'])) {
+/*  if(isAvailable(['clicks', 'cr', 'epc', 'hosts', 'impressions', 'leads', 'leads_hold'])) {
     html = AnyBalance.requestGet(baseurl + 'stats/get-statistic-by-day', addHeaders({
       'X-Requested-With': 'XMLHttpRequest',
       Referer: baseurl + 'cabinet/'
@@ -81,7 +81,7 @@ function main() {
     }else{
     	AnyBalance.trace('Статистика пуста!');
     }
-  }
+  }*/
 
   if(isAvailable('pct')) {
     html = AnyBalance.requestGet(baseurl + 'profile', addHeaders({

@@ -51,13 +51,13 @@ function processClick(options) {
 
 /*    html = AnyBalance.requestPost(g_baseurl + '/AlfaSign/security', {
         username: prefs.login,
-        password: prefs.password.substr(0, 16),
+        password: prefs.password,
         request_id: state.passport.authorization.requestId
     }, g_headers);
 */
     html = AnyBalance.requestPost(g_baseurl + '/oam/server/auth_cred_submit', {
         username: prefs.login,
-        password: prefs.password.substr(0, 16),
+        password: prefs.password,
         request_id: requestId
     }, g_headers);
 

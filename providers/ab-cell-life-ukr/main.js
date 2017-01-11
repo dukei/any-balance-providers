@@ -118,19 +118,19 @@ function mainSite(prefs, baseurl) {
 	//Срок действия
 	getParam(html, result, 'till', />Срок действия номера(?:[\s\S]*?<td[^>]*>){1}\s*([\s\d.,\-]+)/i, replaceTagsAndSpaces, parseDate);
 	// Телефон
-	getParam(html, result, 'phone', /class="user-number"[^>]*>(380\d+)/i, [replaceTagsAndSpaces, /^380/, '+380'], html_entity_decode);
+	getParam(html, result, 'phone', /class="user-number"[^>]*>(380\d+)/i, [replaceTagsAndSpaces, /^380/, '+380']);
         // Тариф
 	if(lang == 'ru') {
 	  html = AnyBalance.requestGet(baseurl + 'ru/osnovnaya-informaciya/osnobnaya-informaciya/', addHeaders({Referer: baseurl}));
-	  getParam(html, result, '__tariff', /<td>Тариф:(?:[\s\S]*?<td[^>]*>){5}\s*([\s\S]*?)<\/td/i, replaceTagsAndSpaces, html_entity_decode);
+	  getParam(html, result, '__tariff', /<td>Тариф:(?:[\s\S]*?<td[^>]*>){5}\s*([\s\S]*?)<\/td/i, replaceTagsAndSpaces);
 	}
 	if(lang == 'uk') {
 	  html = AnyBalance.requestGet(baseurl + 'uk/osnovnaya-informaciya/osnobnaya-informaciya/', addHeaders({Referer: baseurl}));
-	  getParam(html, result, '__tariff', /<td>Тариф:(?:[\s\S]*?<td[^>]*>){5}\s*([\s\S]*?)<\/td/i, replaceTagsAndSpaces, html_entity_decode);
+	  getParam(html, result, '__tariff', /<td>Тариф:(?:[\s\S]*?<td[^>]*>){5}\s*([\s\S]*?)<\/td/i, replaceTagsAndSpaces);
 	}
 	if(lang == 'en') {
 	  html = AnyBalance.requestGet(baseurl + 'en/osnovnaya-informaciya/osnobnaya-informaciya/', addHeaders({Referer: baseurl}));
-	  getParam(html, result, '__tariff', /<td>Tariff:(?:[\s\S]*?<td[^>]*>){5}\s*([\s\S]*?)<\/td/i, replaceTagsAndSpaces, html_entity_decode);
+	  getParam(html, result, '__tariff', /<td>Tariff:(?:[\s\S]*?<td[^>]*>){5}\s*([\s\S]*?)<\/td/i, replaceTagsAndSpaces);
 	}
 
 
@@ -248,10 +248,7 @@ function lifeGet(method, params) {
 }
 
 function parseTrafficMb(str) {
-	var val = parseBalance(str);
-	if (isset(val))
-		val = Math.round(val / 1024 / 1024 * 100) / 100;
-	return val;
+	return parseTraffic(str + 'Bytes');
 }
 
 function mainMobileApp(prefs, baseurl){
@@ -282,7 +279,7 @@ function mainMobileApp(prefs, baseurl){
 	//Срок действия
 	getParam(xml, result, 'till', /<attribute[^>]+name="LINE_SUSPEND_DATE"[^>]*>\s*(?:<!\[CDATA\[)?([\s\S]*?)(?:\]\]>)?\s*<\/attribute>/i, replaceTagsAndSpaces, parseDateISO);
 	//Тариф
-	getParam(xml, result, '__tariff', /<tariff[^>]*>[\s\S]*?<name[^>]*>\s*(?:<!\[CDATA\[)?([\s\S]*?)(?:\]\]>)?\s*<\/name>/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(xml, result, '__tariff', /<tariff[^>]*>[\s\S]*?<name[^>]*>\s*(?:<!\[CDATA\[)?([\s\S]*?)(?:\]\]>)?\s*<\/name>/i, replaceTagsAndSpaces);
 
     if (AnyBalance.isAvailable('gprs', 'mms_uk', 'mms_life', 'sms_uk', 'sms_life', 'mins_family', 'mins_life', 'mins_fixed', 'mins_uk', 'mins_mob')) {
     	xml = lifeGet('getBalances', {msisdn: msisdn, languageId: lang, osType: 'ANDROID', token: token});
@@ -300,6 +297,8 @@ function mainMobileApp(prefs, baseurl){
     	sumParam(xml, result, 'gprs', /<balance[^>]+code="Bundle_Gprs_Internet_East"[^>]*amount="([^"]*)/ig, replaceTagsAndSpaces, parseTrafficMbLeftIE, aggregate_sum);
     	//Трафик 3G
     	sumParam(xml, result, 'hspa', /<balance[^>]+code="Bundle_Internet_3G[^>]*amount="([^"]*)/ig, replaceTagsAndSpaces, parseTrafficMb, aggregate_sum);
+    	//Трафик в роуминге
+    	sumParam(xml, result, 'hspa_roam', /<balance[^>]+code="[^"]*Internet_Roam[^>]*amount="([^"]*)/ig, replaceTagsAndSpaces, parseTrafficMb, aggregate_sum);
     	//Подарочные MMS в сети Life:)
     	sumParam(xml, result, 'mms_life', /<balance[^>]+code="FreeMms[^>]*amount="([^"]*)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
     	//MMS в сети Life:)

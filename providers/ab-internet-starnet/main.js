@@ -21,7 +21,7 @@ function main(){
 
     AnyBalance.setDefaultCharset('utf-8');
 
-    var baseurl = "http://my.starnet.md/";
+    var baseurl = "https://my.starnet.md/";
 
     var html = AnyBalance.requestPost(baseurl + 'user/login', {
         login:prefs.login,
@@ -32,7 +32,7 @@ function main(){
     if(!/\/user\/logout/i.test(html)){
         var error = getParam(html, null, null, /<ul[^>]+class="errors"[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
         if(error)
-            throw new AnyBalance.Error(error);
+            throw new AnyBalance.Error(error, null, /parola|парол/i.test(error));
         
         throw new AnyBalance.Error("Не удалось войти в личный кабинет. Личный кабинет изменился или проблемы на сайте.");
     }

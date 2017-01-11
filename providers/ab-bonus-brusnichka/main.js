@@ -13,7 +13,7 @@ var g_headers = {
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'https://brusnichka.com.ua/pokupatelyam/freshcard/';
+	var baseurl = 'https://brusnichka.com.ua/freshcard/';
 
 	AnyBalance.setDefaultCharset('utf-8');
 
@@ -55,6 +55,7 @@ function main() {
 	};
 
 	AB.getParam(html, result, 'card', /Карта[\s]*?<b>№([\s\S]*?)<\//i, AB.replaceTagsAndSpaces);
+	AB.getParam(html, result, '__tariff', /Карта[\s]*?<b>№([\s\S]*?)<\//i, AB.replaceTagsAndSpaces);
 	AB.getParam(html, result, 'balance', /Активный баланс бонусов(?:[^>]*>){1}([\s\S]*?)<\//i, AB.replaceTagsAndSpaces,
 		AB.parseBalance);
 

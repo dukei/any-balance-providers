@@ -448,4 +448,6 @@
 		return this.replaceAll(replaceTagsAndSpaces);
 	}
 
+	if(!''.trim) //У кого нет трим, тот, наверное AllBalance
+		throw new AnyBalance.Error('Версия приложения слишком старая.');
 })();

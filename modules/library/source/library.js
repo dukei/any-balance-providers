@@ -2,9 +2,6 @@
  AnyBalance (https://github.com/dukei/any-balance-providers/)
  
  Содержит некоторые полезные для извлечения значений с сайтов функции.
- Для конкретного провайдера рекомендуется оставлять в этом файле только те функции, которые используются.
- 
- library.js v0.23 от 29.03.2016
  
  Changelog:
  
@@ -99,7 +96,7 @@ var AB = (function (global_scope) {
      * см. например replaceTagsAndSpaces
      */
     function getParam(html, result, param, regexp, replaces, parser) {
-    	if (result instanceof RegExp){
+    	if (result instanceof RegExp || isArray(result)){
     		//Пропустили два параметра (result и param), остальные надо сдвинуть
     		parser = regexp;
     		replaces = param;
@@ -156,7 +153,8 @@ var AB = (function (global_scope) {
 //Замена пробелов и тэгов
     var replaceTagsAndSpaces = [String.REPLACE_TAGS_AND_SPACES, /[\uFEFF\xA0]/ig, ' ', /\s{2,}/g, ' ', /^\s+|\s+$/g, ''],
 //Замена для чисел (&minus, &mdash, &ndash)
-        replaceFloat = [/[\u2212\u2013\u2014–]/ig, '-', /\s+/g, '', /'/g, '', /,/g, '.', /\.([^.]*)(?=\.)/g, '$1', /^\./, '0.'],
+		replaceSpaces = [/[\s�]+/g, ''],
+        replaceFloat = [/[\u2212\u2013\u2014–]/ig, '-', replaceSpaces, /'/g, '', /,/g, '.', /\.([^.]*)(?=\.)/g, '$1', /^\./, '0.'],
 //Замена для Javascript строк
         replaceSlashes = [/\\(.?)/g, function (str, n) {
             switch (n) {
@@ -177,7 +175,7 @@ var AB = (function (global_scope) {
 
     /** Проверяет, является ли объект массивом */
     function isArray(arr) {
-        return Object.prototype.toString.call(arr) === '[object Array]';
+        return Array.isArray(arr);
     }
 
     /** Делает все замены в строке value. При этом, если элемент replaces массив, то делает замены по нему рекурсивно. */
@@ -190,7 +188,7 @@ var AB = (function (global_scope) {
 
     /** Извлекает числовое значение из переданного текста */
     function parseBalance(text, silent) {
-        var val = getParam(replaceAll(text, [/\s+/g, '']), null, null, /([\u2212\u2013\u2014–\-]?[.,]?\d[\d'.,]*)/, replaceFloat, parseFloat);
+        var val = getParam(replaceAll(text, replaceSpaces), /([\u2212\u2013\u2014–\-]?[.,]?\d[\d'.,]*)/, replaceFloat, parseFloat);
         if (!silent)
             AnyBalance.trace('Parsing balance (' + val + ') from: ' + text);
         return val;
@@ -202,7 +200,7 @@ var AB = (function (global_scope) {
 
     /** Извлекает валюту из переданного текста (типичная реализация) */
     function parseCurrency(text, silent) {
-        var val = getParam(text.replace(/\s+/g, ''), null, null, /-?\d[\d.,]*(\S*)/);
+        var val = getParam(replaceAll(text, replaceSpaces), /-?\d[\d.,]*(\S*)/);
         if(!silent)
             AnyBalance.trace('Parsing currency (' + val + ') from: ' + text);
         return val;
@@ -217,25 +215,25 @@ var AB = (function (global_scope) {
      Если на входе будет просто число - вернет минуты.
      Если на входе будет 02:03 будет принят формат ММ:СС*/
     function parseMinutes(_text, silent) {
-        var text = _text.replace(/[\s�]+/g, '');
+        var text = replaceAll(_text, replaceSpaces);
         var hour = 0, min = 0, sec = 0;
         // Это формат ЧЧ:ММ:СС
         if (/^\d+:\d+:\d+$/i.test(text)) {
             var regExp = /^(\d+):(\d+):(\d+)$/i.exec(text);
-            hour = parseFloat(regExp[1]);
-            min = parseFloat(regExp[2]);
-            sec = parseFloat(regExp[3]);
+            hour = +regExp[1];
+            min = +regExp[2];
+            sec = +regExp[3];
             // Это формат ММ:СС
         } else if (/^\d+:\d+/i.test(text)) {
             var regExp = /^(\d+):(\d+)/i.exec(text);
             hour = 0;
-            min = parseFloat(regExp[1]);
-            sec = parseFloat(regExp[2]);
+            min = +regExp[1];
+            sec = +regExp[2];
             // Это любой другой формат, со словами либо просто число
         } else {
-            hour = getParam(text, null, null, /(-?\d[\d.,]*)\s*(?:час|ч|год|г|hour|h)/i, replaceFloat, parseFloat) || 0;
-            min = getParam(text, null, null, [/(-?\d[\d.,]*)\s*(?:мин|м|хв|min|m)/i, /^-?[\d.,]+$/i], replaceFloat, parseFloat) || 0;
-            sec = getParam(text, null, null, /(-?\d[\d.,]*)\s*(?:сек|c|с|sec|s)/i, replaceFloat, parseFloat) || 0;
+            hour = getParam(text, /(-?\d[\d.,]*)(?:час|ч|год|г|hour|h)/i, replaceFloat, parseFloat) || 0;
+            min = getParam(text, [/(-?\d[\d.,]*)(?:мин|м|хв|min|m)/i, /^-?[\d.,]+$/i], replaceFloat, parseFloat) || 0;
+            sec = getParam(text, /(-?\d[\d.,]*)(?:сек|c|с|sec|s)/i, replaceFloat, parseFloat) || 0;
         }
         var val = (hour * 3600) + (min * 60) + sec;
         if (!silent)
@@ -284,8 +282,11 @@ var AB = (function (global_scope) {
      *	</pre>
      */
     function createFormParams(html, process, array) {
-        var params = array ? [] : {}, valueRegExp = /value\s*=\s*("[^"]*"|'[^']*'|[\w\-\/\\]+)/i, valueReplace = [/^"([^"]*)"$|^'([^']*)'$/, '$1$2', replaceHtmlEntities], name,
-            inputRegExp = /<input[^>]+?\bname\s*=\s*("[^"]*"|'[^']*'|[\w\-\/\\]+)[^>]*>|<select[^>]+?\bname\s*=\s*("[^"]*"|'[^']*'|[\w\-\/\\]+)[^>]*>[\s\S]*?<\/select>/ig, nullVal = null;
+        var params = array ? [] : {}, 
+        	valueRegExp = /value\s*=\s*("[^"]*"|'[^']*'|[\w\-\/\\]+)/i, 
+        	valueReplace = [/^"([^"]*)"$|^'([^']*)'$/, '$1$2', replaceHtmlEntities], 
+        	name,
+            inputRegExp = /<input[^>]+?\bname\s*=\s*("[^"]*"|'[^']*'|[\w\-\/\\]+)[^>]*>|<select[^>]+?\bname\s*=\s*("[^"]*"|'[^']*'|[\w\-\/\\]+)[^>]*>[\s\S]*?<\/select>/ig;
 
         while (true) {
             var amatch = inputRegExp.exec(html);
@@ -297,20 +298,20 @@ var AB = (function (global_scope) {
                     value = undefined;
                 else if (/type\s*=\s*['"]?checkbox['"]?/i.test(str)) {
                     //Чекбокс передаёт значение только если он чекед. Если чекед, а значения нет, то передаёт on
-                    value = /[^\w\-]checked[^\w\-]/i.test(str) ? getParam(str, nullVal, nullVal, valueRegExp, valueReplace) || 'on' : undefined;
+                    value = /[^\w\-]checked[^\w\-]/i.test(str) ? getParam(str, valueRegExp, valueReplace) || 'on' : undefined;
                 } else
-                    value = getParam(str, nullVal, nullVal, valueRegExp, valueReplace) || '';
+                    value = getParam(str, valueRegExp, valueReplace) || '';
                 name = replaceAll(nameInp, valueReplace);
 
             } else if (nameSel) {
-                var sel = getParam(str, nullVal, nullVal, /^<[^>]*>/i);
-                value = getParam(sel, nullVal, nullVal, valueRegExp, valueReplace);
+                var sel = getParam(str, /^<[^>]*>/i);
+                value = getParam(sel, valueRegExp, valueReplace);
                 if (typeof(value) == 'undefined') {
-                    var optSel = getParam(str, nullVal, nullVal, /(<option[^>]+selected[^>]*>)/i);
+                    var optSel = getParam(str, /(<option[^>]+selected[^>]*>)/i);
                     if (!optSel)
-                        optSel = getParam(str, nullVal, nullVal, /(<option[^>]*>)/i);
+                        optSel = getParam(str, /(<option[^>]*>)/i);
                     if (optSel)
-                        value = getParam(optSel, nullVal, nullVal, valueRegExp, valueReplace);
+                        value = getParam(optSel, valueRegExp, valueReplace);
                 }
                 name = replaceAll(nameSel, valueReplace);
                 ;
@@ -535,21 +536,6 @@ var AB = (function (global_scope) {
     	return parseDateISO(str, true);
     }
 
-    function parseDateJS(str) {
-        //Рассчитывает на библиотеку date-ru-RU.js
-        var _str = str.replace(/(\d+)\s*г(?:\.|ода?)?,?/i, '$1 '); //Убираем г. после года, чтобы не мешалось
-        var dt = Date.parse(_str);
-        if (!dt) {
-            AnyBalance.trace('Can not parse date from ' + str);
-            return;
-        }
-
-        dt = new Date(dt);
-
-        AnyBalance.trace('Parsed date ' + dt.toString() + ' from ' + str);
-        return dt.getTime();
-    }
-
     /**
      * Получает значение, подходящее под регулярное выражение regexp, производит
      * в нем замены replaces, результат передаёт в функцию parser,
@@ -573,7 +559,7 @@ var AB = (function (global_scope) {
      * см. например replaceTagsAndSpaces
      */
     function sumParam(html, result, param, regexp, replaces, parser, do_replace, aggregate) {
-    	if (result instanceof RegExp){
+    	if (result instanceof RegExp || isArray(result)){
     		//Пропустили два параметра (result и param), остальные надо сдвинуть
     		aggregate = do_replace;
     		do_replace = parser;
@@ -596,7 +582,7 @@ var AB = (function (global_scope) {
 
         function replaceIfNeeded() {
             if (do_replace)
-                return regexp ? html.replace(regexp, '') : '';
+                return html = regexp ? replaceAll(html, [regexp, '']) : '';
         }
 
         if (!isAvailable(param)) {
@@ -633,8 +619,8 @@ var AB = (function (global_scope) {
                         break; //Если поиск не глобальный, то выходим из цикла
                 }
             }
-            if (do_replace) //Убираем все матчи, если это требуется
-                html = regexp ? html.replace(regexp, '') : '';
+
+            replaceIfNeeded(); //Убираем все матчи, если это требуется
         }
 
         var total_value;
@@ -670,7 +656,7 @@ var AB = (function (global_scope) {
             delimiter = ', ';
         var ret = values.join(delimiter);
         if (!allow_empty) {
-            delimiter = delimiter.trim().replace(/([.?*+^$[\]\\(){}|-])/g, "\\$1");
+            delimiter = regexEscape(delimiter);
             ret = ret.replace(new RegExp('^(?:\\s*' + delimiter + '\\s*)+|(?:\\s*' + delimiter + ']\\s*){2,}|(?:\\s*' + delimiter + '\\s*)+$', 'g'), '');
         }
         return ret;
@@ -714,39 +700,44 @@ var AB = (function (global_scope) {
 
     /** Вычисляет трафик в нужных единицах из переданной строки. */
     function parseTrafficEx(text, thousand, order, defaultUnits) {
-        var _text = text.replace(/\s+/g, '');
-        var val = getParam(_text, null, null, /(-?\.?\d[\d\.,]*)/, replaceFloat, parseFloat);
+        var _text = replaceAll(text, replaceSpaces);
+        var val = getParam(_text, /(-?\.?\d[\d\.,]*)/, replaceFloat, parseFloat);
         if (!isset(val) || val === '') {
             AnyBalance.trace("Could not parse traffic value from " + text);
             return;
         }
-        var units = getParam(_text, null, null, /([kmgtкмгт][бb]?|[бb](?![\wа-я])|байт|bytes)/i);
+        var units = getParam(_text, /([kmgtкмгт][бb]?|[бb](?![\wа-я])|байт|bytes)/i);
         if (!units && !defaultUnits) {
             AnyBalance.trace("Could not parse traffic units from " + text);
             return;
         }
         if (!units)
             units = defaultUnits;
+
+        function scaleTraffic(odr){
+        	val = Math.round(val / Math.pow(thousand, order - (odr || 0)) * 100) / 100;
+        }
+
         switch (units.substr(0, 1).toLowerCase()) {
             case 'b':
             case 'б':
-                val = Math.round(val / Math.pow(thousand, order) * 100) / 100;
+                scaleTraffic();
                 break;
             case 'k':
             case 'к':
-                val = Math.round(val / Math.pow(thousand, order - 1) * 100) / 100;
+                scaleTraffic(1);
                 break;
             case 'm':
             case 'м':
-                val = Math.round(val / Math.pow(thousand, order - 2) * 100) / 100;
+                scaleTraffic(2);
                 break;
             case 'g':
             case 'г':
-                val = Math.round(val / Math.pow(thousand, order - 3) * 100) / 100;
+                scaleTraffic(3);
                 break;
             case 't':
             case 'т':
-                val = Math.round(val / Math.pow(thousand, order - 4) * 100) / 100;
+                scaleTraffic(4);
                 break;
         }
         var textval = '' + val;
@@ -789,11 +780,10 @@ var AB = (function (global_scope) {
     /** Приводим все к единому виду вместо ИВаНов пишем Иванов */
     function capitalFirstLetters(str) {
         var wordSplit = str.toLowerCase().split(' ');
-        var wordCapital = '';
         for (var i = 0; i < wordSplit.length; i++) {
-            wordCapital += wordSplit[i].substring(0, 1).toUpperCase() + wordSplit[i].substring(1) + ' ';
+            wordSplit[i] = wordSplit[i].substr(0, 1).toUpperCase() + wordSplit[i].substr(1);
         }
-        return wordCapital.replace(/^\s+|\s+$/g, '');
+        return wordSplit.join(' ');
     }
 
     /** Все включенные счетчики, значение которых не найдено, становится равным null,
@@ -861,7 +851,7 @@ var AB = (function (global_scope) {
 		
 		while (m = searchRe.exec(html)) {
 			if (/^['"]/.test(m[3])) m[3] = m[3].slice(1, -1);
-			val = m[3].htmlEntityDecode();
+			val = html_entity_decode(m[3]);
 			if (
 					(type === 'id' && val === id) || 
 					(type === 'class' && RegExp('\\b' + regexEscape(id) + '\\b').test(val) )
@@ -922,7 +912,7 @@ var AB = (function (global_scope) {
             startIndex += amatch[0].length - amatch[1].length;
             startTag = amatch[1];
         }
-        var elem = getParam(startTag, null, null, /<(\w+)/);
+        var elem = getParam(startTag, /<(\w+)/);
         var reStart = new RegExp('<' + elem + '[^>]*>', 'ig');
         var reEnd = new RegExp('<\/' + elem + '[^>]*>', 'ig');
         reStart.lastIndex = startIndex;
@@ -1156,13 +1146,13 @@ var AB = (function (global_scope) {
         if (!path) //Пустой путь
             return url;
         if (/^\//.test(path)) //Абсолютный путь
-            return url.replace(/^(\w+:\/\/[\w.:\-]+).*$/, '$1' + path);
+            return replaceAll(url, [/^(\w+:\/\/[\w.:\-]+).*$/, '$1' + path]);
         if (/^\w+:\/\//.test(path)) //Абсолютный урл
             return path;
         //относительный путь
-        url = url.replace(/\?.*$/, ''); //Обрезаем аргументы
+        url = replaceAll(url, [/\?.*$/, '']); //Обрезаем аргументы
         if (/:\/\/.*\//.test(url))
-            url = url.replace(/\/[^\/]*$/, '/'); //Сокращаем до папки
+            url = replaceAll(url, [/\/[^\/]*$/, '/']); //Сокращаем до папки
         if (!endsWith(url, '/'))
             url += '/';
         return url + path;
@@ -1325,7 +1315,7 @@ var AB = (function (global_scope) {
 
 	function createUrlEncodedParams(params){
 		var out = [];
-		if(Array.isArray(params)){
+		if(isArray(params)){
 			for(var i=0; i<params.length; ++i){
 				var p = params[i];
 				out.push(encodeURIComponent(p[0]) + '=' + encodeURIComponent(p[1]));

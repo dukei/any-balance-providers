@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="3">ab-hosting-sprinthost</id>
+	<id version="4">ab-hosting-sprinthost</id>
 	<api flags="no_browser"/>
 	<name>Sprinthost (хостинг сайтов)</name>
 	<description html="true"><![CDATA[

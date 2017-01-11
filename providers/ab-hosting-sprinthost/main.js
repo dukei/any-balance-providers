@@ -33,7 +33,7 @@ function main() {
 		return value;
 	});
 
-	html = AnyBalance.requestPost(baseurl, {
+	html = AnyBalance.requestPost(baseurl + 'auth/login-auth', {
 		action: 'login',
 		username: prefs.login,
 		password: prefs.password
@@ -42,11 +42,11 @@ function main() {
 	var json = getJson(html);
 
 	if (!json.status)
-		throw new AnyBalance.Error("Неправильный логин или пароль.");
+		throw new AnyBalance.Error("Неправильный логин или пароль.", null, true);
 	else if (json.newip) {
 		var error = getParam(json.content, null, null, null, replaceTagsAndSpaces);
 		if (error)
-			throw new AnyBalance.Error(error, null, /подозрительного IP/i.test(error));
+			throw new AnyBalance.Error(error);
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}

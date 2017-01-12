@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="3">ab-municipal-kvartplata-info</id>
+	<id version="4">ab-municipal-kvartplata-info</id>
 	<api flags="no_browser"/>
 	<name>Квартплата Info</name>
 	<description html="true"><![CDATA[
@@ -8,10 +8,12 @@
 	<p>Информация берется из личного кабинета <a href="http://gcjs.kvartplata.info/lich_kab/">http://gcjs.kvartplata.info/lich_kab/</a></p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>

@@ -28,7 +28,7 @@ function main(){
 	
     AnyBalance.setDefaultCharset('utf-8');
 
-    var baseurl = 'https://billing.zargacum.net/';
+    var baseurl = 'https://cabinet.zargacum.net/';
 	
 	var html = AnyBalance.requestGet(baseurl + 'login', g_headers);
 	if(/block\b|blackhole/i.test(AnyBalance.getLastUrl()) || /has been blocked by decision/i.test(html))

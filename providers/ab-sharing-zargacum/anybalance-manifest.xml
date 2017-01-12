@@ -1,10 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="7">ab-sharing-zargacum</id>
+	<id version="8">ab-sharing-zargacum</id>
 	<name>Zargacum</name>
 	<api flags="no_browser"/>
 	<description html="true"><![CDATA[
-	<p>Получает баланс и бонусы у провайдера кардшаринга Zargacum (https://billing.zargacum.net).</p>
+	<p>Получает баланс и бонусы у провайдера кардшаринга Zargacum (https://cabinet.zargacum.net/).</p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>

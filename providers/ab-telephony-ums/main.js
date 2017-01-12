@@ -61,11 +61,11 @@ function main() {
 		for(var i=0; i<items.length; ++i){
 			var opt = items[i], matches;
 			AnyBalance.trace('Разбираем ' + opt);
-			if(matches = /(?:У Вас осталось|U Vas ostalos|Sizda)([^<]+mb)[^<]+(?:Действует до|Dejstvuet do|Amal qilish muddati)([^<]*)/i.exec(opt)){
+			if(matches = /(?:У Вас осталось|U Vas ostalos|Sizda)[^<]*?([\d\.,]+\s*mb)[^<]+(?:Действует до|Dejstvuet do|Amal qilish muddati)([^<]*)/i.exec(opt)){
 				sumParam(matches[1], result, 'traffic2', null, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
 				sumParam(matches[2], result, 'traffic2_till', null, replaceTagsAndSpaces, parseDate, aggregate_min);
-			}else if(matches = /(?:У Вас осталось|U Vas ostalos)([\s\S]*?)mb/i.exec(opt)){
-				getParam(matches[1], result, 'traffic', null, replaceTagsAndSpaces, parseBalance);
+			}else if(matches = /(?:У Вас осталось|U Vas ostalos|Sizda)[^<]*?([\d\.,]+\s*mb)/i.exec(opt)){
+				sumParam(matches[1], result, 'traffic', null, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 			}else if(matches = /Осталось([^<]+)минут[^<]+Действует до([^>]*)/i.exec(opt)){
 				sumParam(matches[1], result, 'minutes2', null, replaceTagsAndSpaces, parseBalance, aggregate_sum);  
 				sumParam(matches[2], result, 'minutes2_till', null, replaceTagsAndSpaces, parseDate, aggregate_min);  

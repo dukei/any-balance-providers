@@ -1,139 +1,135 @@
- /**
-                                                                     Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
-                                                                     */
+﻿
+/**
+Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
+*/
 
- var g_headers = {
- 	'Origin': 'https://cabinet.altel.kz',
- 	'Referer': 'https://cabinet.altel.kz/',
- 	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/535.19 (KHTML, like Gecko) Chrome/18.0.1025.162 Safari/535.19'
- };
+var g_headers = {
+	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/30.0.1599.101 Safari/537.36',
+	'Accept': 'application/json, text/plain, */*',
+	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.5,en;q=0.3',
+	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
+	'Connection': 'keep-alive',
+};
 
- function main() {
- 	var prefs = AnyBalance.getPreferences();
+function main() {
+	var prefs = AnyBalance.getPreferences();
+	AB.checkEmpty(prefs.password, 'Введите пароль!');
+	if (!/\d{10}/i.test(prefs.login)) throw new AnyBalance.Error(
+		'Номер телефона должен быть без пробелов и разделителей, в формате 7XXxxxxxxx!');
 
- 	AB.checkEmpty(prefs.login, 'Введите логин!');
- 	AB.checkEmpty(prefs.password, 'Введите пароль!');
+	var baseurl = "https://cabinet.altel.kz/";
+	AnyBalance.setDefaultCharset('utf-8');
 
- 	var baseurl = "https://cabinet.altel.kz/?lang=ru";
- 	AnyBalance.setDefaultCharset('utf-8');
+	var html = AnyBalance.requestGet(baseurl + 'login', g_headers);
 
- 	var html = AnyBalance.requestGet(baseurl + '', g_headers);
+	html = AnyBalance.requestPost(baseurl + 'login', {
+		loginId: prefs.login,
+		password: prefs.password
+	}, addHeaders({
+		Referer: baseurl + 'login'
+	}));
 
- 	if (!html || AnyBalance.getLastStatusCode() > 400) {
- 		AnyBalance.trace(html);
- 		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
- 	}
+	if (!/tab-balance/i.test(html)) {
+		//Если в кабинет войти не получилось, то в первую очередь надо поискать в ответе сервера объяснение ошибки
+		var error = getElement(html, /<div[^>]+alert-danger/i, replaceTagsAndSpaces);
+		if (error)
+			throw new AnyBalance.Error(error, null, /парол/i.test(error));
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
+	}
+	
 
+	// Получаем данные о балансе
+	var result = {
+		success: true
+	};
 
- 	html = AnyBalance.requestPost(baseurl, {
- 		form_login: prefs.login,
- 		form_pass: prefs.password,
- 		x: 81,
- 		y: 18
- 	}, g_headers);
+	AB.getParam(html, result, 'fio', /<li[^>]+user[^>]*>([\s\S]*?)(?:\(|<\/li>)/i, AB.replaceTagsAndSpaces);
+	AB.getParam(html, result, 'balance', /<div[^>]+id="tab-balance"[\s\S]*?<h2[^>]*>([\s\S]*?)<\/h2>/i, AB.replaceTagsAndSpaces, AB.parseBalance);
+	AB.getParam(html, result, '__tariff', /<div[^>]+id="tab-plan"[\s\S]*?<h2[^>]*>([\s\S]*?)(?:<a|<\/h2>)/i, AB.replaceTagsAndSpaces);
+	AB.getParam(html, result, 'phone', /<li[^>]+user[^>]*>[\s\S]*?\(([^)]*)/i, AB.replaceTagsAndSpaces);
+	AB.getParam(html, result, 'till', /(?:Дата следующего списания абонентской платы|Абоненттік төлемді келесі шығынға жазу күні)[\s\S]*?<div[^>]+tab-section-value[^>]*>([\s\S]*?)<\/div>/i, AB.replaceTagsAndSpaces, parseDateISO);
 
- 	if (!/logout=1/i.test(html)) {
- 		var error = AB.getParam(html, null, null, /<ul[^>]+class="error"[^>]*>([\s\S]*?)<\/ul>/i, AB.replaceTagsAndSpaces);
- 		if (error) {
- 			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
- 		}
+	var bonuses = getElements(html, [/<div[^>]+container-fluid[\s>"]/ig, /<div[^>]+tab-section-field[^>]*>\s*Бонусы/i])[0];
+	if(!bonuses)
+		AnyBalance.trace('Бонусы не найдены');
+	else 
+		bonuses = getElements(bonuses, /<li/ig);
 
+	for(var i=0; bonuses && i<bonuses.length; ++i){
+		var text = replaceAll(bonuses[i], replaceTagsAndSpaces);
+		var units = getParam(text, /\S+$/i);
+		var value = getParam(text, /(\S+)\s+\S+$/i);
+		var name = getParam(text, /([\s\S]*?)\S+\s+\S+$/i);
+		sumDiscount(result, name, units, value);
+	}
 
- 		AnyBalance.trace(html);
- 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
- 	}
+	try {
+		if (AnyBalance.isAvailable('internet_trafic', 'internet_trafic_night', 'min_left', 'sms_left', 'mms_left')) {
 
- 	var result = {
- 		success: true
- 	};
+			// Сайт возвращает JSON c доп. балансами, они -то нам и нужны
+			html = AnyBalance.requestGet(baseurl + 'getTariffResources', AB.addHeaders({
+				'X-Requested-With': 'XMLHttpRequest',
+				Referer: baseurl
+			}));
 
- 	AB.getParam(html, result, 'fio', /"account-title"[^>]*>([^<]+)/i, AB.replaceTagsAndSpaces);
- 	AB.getParam(html, result, 'phone', /(?:Ваш номер|Сіздің нөміріңіз):([\s\S]*?)<\//i, AB.replaceTagsAndSpaces);
- 	AB.getParam(html, result, '__tariff', /"plan-title"[^>]*>([^<]+)[^>]*>[^>]*plan-subtitle/i, AB.replaceTagsAndSpaces);
- 	AB.getParam(html, result, 'balance', /"account-balance split"[\s\S]*?"split-title"[^>]*>([\s\S]*?)<\//i,
- 		AB.replaceTagsAndSpaces, AB.parseBalance);
- 	AB.getParam(html, result, 'bonus', /"bonus-balance split"[\s\S]*?"split-title"[^>]*>([\s\S]*?)<\//i,
- 		AB.replaceTagsAndSpaces, AB.parseBalance);
- 	AB.getParam(html, result, 'till', /бонусный счет[^>]*>\s*до([^<]+)/i, AB.replaceTagsAndSpaces, AB.parseDate);
+			json = AB.getJson(html);
 
+			for (var i = 0; i < json.length; ++i) {
+				var it = json[i];
+				var name = it.title,
+					units = getParam(it.value, /\S+$/),
+					value = getParam(it.value, /([\s\S]*?)(?:of|$)/);
+					value_max = getParam(it.value, /of(.*\d.*)/);
+				sumDiscount(result, name, units, value, value_max);
+			}
+		}
+	} catch (e) {
+		AnyBalance.trace('Ошибка при получении ресурсов тарифного плана: ' + e);
+	}
 
- 	var counters = AB.getElements(html, /<div[^>]+class="[^"]*?\bcounter[\s"]/ig);
-    
-    AnyBalance.trace('Found counters: ' + counters.length);
- 	for (var i = 0; i < counters.length; ++i) {
- 		var counter = counters[i];
-        var value = getParam(counter, null, null, /<div[^>]+>([^<]+)(?=<span[^>]*?title)/i, replaceTagsAndSpaces);
-        var units = AB.getElement(counter, /<span[^>]+?counter-title/i, replaceTagsAndSpaces);
- 		var note = (AB.getElement(counter, /<div[^>]+?counter-note/i, replaceTagsAndSpaces) || '').split('\n');
- 		var date = note[1] || note[0];
-        note = note[0];
-        var counter_name = null;
- 		if (/Мин/i.test(units)) {
- 			if (/Внутри сети|Желі ішінде/i.test(note))
- 				counter_name = 'min_left'; // Минуты внутри сети
- 			else if (/GSM/i.test(note))
- 				counter_name = 'min_left_gsm'; // Минуты на GSM
- 			else if (/на город|на др\.\s*сети/i.test(note))
- 				counter_name = 'min_left_city'; // Минуты на город
+	AnyBalance.setResult(result);
+}
 
- 			if (counter_name && !/unlim/i.test(value))
- 				AB.getParam(value, result, counter_name, null, null, parseMinutes);
- 		} else if (/[МГКMGK][бb]/i.test(units)) {
- 			// трафик
- 			if (/с 08/i.test(counter))
- 				counter_name = 'day_traffic_left';
- 			else if (/с 00|ноч/i.test(counter))
- 				counter_name = 'night_traffic_left';
- 			else if (/Израсходованного трафика/i.test(note))
- 				counter_name = 'traffic_used';
-            else 
-                counter_name = 'traffic_left';
+function sumDiscount(result, name, units, value, value_max) {
+	var bigname = name + units;
+	function parseBalanceMinus(str){
+		var balance = parseBalance(str);
+		if(!balance)
+			return balance;
+		return value_max ? -balance : balance;
+	}
 
- 			if (counter_name)
- 				AB.getParam(value + ' ' + units, result, counter_name, null, null, parseTraffic);
- 		} else if (/СМС|SMS/i.test(units)) {
- 			// Смс внутри сети
- 			counter_name = 'sms_left';
- 			AB.getParam(value, result, counter_name, null, null, parseBalance);
- 		}
- 		if (!counter_name)
- 			AnyBalance.trace('Неизвестная опция: ' + counter);
- 		else
- 			AB.getParam(date, result, counter_name + '_till', null, null, parseDateLocal);
- 	}
-    
-    // start 2.02.2016
- 	if (AnyBalance.isAvailable('additionalServices')) {
- 		html = AnyBalance.requestGet('https://cabinet.altel.kz/additional-services', g_headers);
+	function parseTrafficMinus(str){
+		var balance = parseTraffic(str);
+		if(!balance)
+			return balance;
+		return value_max ? -balance : balance;
+	}
 
- 		var
- 			liArray = AB.sumParam(html, null, null, /<li[^>]*class="[^"]*active[^"]*"[^>]*>([\s\S]*?)<\/li>/gi),
- 			pArray = [],
- 			name,
- 			price,
- 			additionalServices = [];
+	AnyBalance.trace('Найдено ' + name + ' ' + value + ' ' + units);
+	if (/шт|sms|смс/i.test(bigname)) {
+		sumParam(value + '', result, 'sms_left', null, null, parseBalanceMinus, aggregate_sum);
+		sumParam(value_max, result, 'sms_left', null, null, parseBalance, aggregate_sum);
+	} else if (/mms|ммс/i.test(bigname)) {
+		sumParam(value + '', result, 'mms_left', null, null, parseBalanceMinus, aggregate_sum);
+		sumParam(value_max, result, 'mms_left', null, null, parseBalance, aggregate_sum);
+	} else if (/gsm/i.test(bigname) && /минут|min/i.test(bigname)) {
+		sumParam(value + '', result, 'min_left_gsm', null, [/[\.,].*/, ''], parseBalanceMinus, aggregate_sum);
+		sumParam(value_max, result, 'min_left_gsm', null, [/[\.,].*/, ''], parseBalance, aggregate_sum);
+	} else if (/на город|на др\.\s*сети/i.test(bigname) && /минут|min/i.test(bigname)) {
+		sumParam(value + '', result, 'min_left_city', null, [/[\.,].*/, ''], parseBalanceMinus, aggregate_sum);
+		sumParam(value_max, result, 'min_left_city', null, [/[\.,].*/, ''], parseBalance, aggregate_sum);
+	} else if (/минут|min/i.test(bigname)) {
+		sumParam(value + '', result, 'min_left', null, [/[\.,].*/, ''], parseBalanceMinus, aggregate_sum);
+		sumParam(value_max, result, 'min_left', null, [/[\.,].*/, ''], parseBalance, aggregate_sum);
+	} else if (/[гкмgkm][бb]/i.test(bigname) || /интернет/i.test(name)) {
+		var night = /с 00|ноч/i.test(bigname) ? '_night' : '';
+		night = /с 08/i.test(bigname) ? '_day' : night;
 
- 		for (var i = 0; i < liArray.length; i++) {
- 			pArray = AB.sumParam(liArray[i], null, null, /<p[^>]*>([\s\S]*?)<\/p>/gi);
- 			name = AB.getParam(pArray[0], null, null, null, AB.replaceTagsAndSpaces);
- 			price = AB.getParam(pArray[1], null, null, null, AB.replaceTagsAndSpaces);
- 			additionalServices.push(name + ' | ' + price);
- 		}
-
- 		AB.getParam(additionalServices.join('<br/>'), result, 'additionalServices');
- 	}
- 	// end 2.02.2016
-
- 	AnyBalance.setResult(result);
- }
-
- function parseDateLocal(str) {
- 	if (/До конца дня|Күннің соңына дейін/i.test(str)) {
- 		var dt = new Date();
- 		var today = new Date(dt.getYear(), dt.getMonth(), dt.getDate(), 23, 59, 59);
- 		AnyBalance.trace('Parsed date ' + today + ' from ' + str);
- 		return dt.getTime();
- 	} else {
- 		return parseDate(str);
- 	}
- }
+		sumParam(value + units, result, 'traffic_left' + night, null, null, parseTrafficMinus, aggregate_sum);
+		sumParam(value_max && value_max + units, result, 'traffic_left' + night, null, null, parseTraffic, aggregate_sum);
+	} else {
+		AnyBalance.trace('Неизвестная опция: ' + name);
+	}
+}

@@ -10,9 +10,22 @@ var g_headers = {
 	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
 };
 
+var baseurl = 'https://my.kaspersky.com/';
+
+function redirectIfNeeded(html){
+	var form = getElement(html, /<form[^>]+id="hiddenform"/i);
+	if(form){
+		var params = AB.createFormParams(form);
+		var action = getParam(form, /<form[^>]+action="([^"]*)/i, replaceHtmlEntities);
+		var url = joinUrl(baseurl, action);
+		AnyBalance.trace('Потребовался редирект на ' + url);
+		html = AnyBalance.requestPost(url, params, addHeaders({Referer: baseurl}));
+	}
+	return html;
+}
+
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'https://my.kaspersky.com/';
 	AnyBalance.setDefaultCharset('utf-8');
 	
 	checkEmpty(prefs.login, 'Введите логин!');
@@ -24,6 +37,7 @@ function main() {
 		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
 
 	var url = AnyBalance.getLastUrl();
+	var initialHtml = html;
 
 	html = AnyBalance.requestPost(baseurl + 'SignIn/SignIn', {
 		ReturnUrl: '',
@@ -44,24 +58,33 @@ function main() {
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
-	
-	var json = getJson(html);
-	html = AnyBalance.requestPost(json.EndPoint, {
-		User: prefs.login,
-		Password: prefs.password,
-		logonContext: getParam(url, null, null, /logonContext=([^&]*)/i, null, decodeURIComponent),
-		failureUrl: json.FailureUrl
-	}, addHeaders({Referer: url}));
 
-	var params = createFormParams(html);
-	params.wresult = getParam(html, null, null, /"wresult"[^>]*value="([^"]+)/i, replaceHtmlEntities);
+	var json = getJson(html);
+	if(!json.IsProceedAuthentication){
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Неизвестный ответ сервера. Сайт изменен?');
+	}
+
+	var form = getElement(initialHtml, /<form[^>]+id="uisform"/i);
+	var params = AB.createFormParams(form, function(params, str, name, value) {
+		if (name == 'User') {
+			return prefs.login;
+		} else if (name == 'Password') {
+			return prefs.password;
+		}
 	
-  	html = AnyBalance.requestPost(baseurl, params, addHeaders({Referer: AnyBalance.getLastUrl()}));
+		return value;
+	});
+	var action = getParam(form, /<form[^>]+action="([^"]*)/i, replaceHtmlEntities);
+	var authurl = joinUrl(baseurl, action);
+	AnyBalance.trace("Proceeding auth to " + authurl);
+	html = AnyBalance.requestPost(authurl, params, addHeaders({Referer: url}));
+	html = redirectIfNeeded(html);
 
 	if(!/MyLicenses/i.test(AnyBalance.getLastUrl()))
     	html = AnyBalance.requestGet(baseurl + 'MyLicenses', g_headers);
 
-    json = getJsonObject(html, /licensesAndViewSettings\s*=/);
+    json = getJsonObject(html, /licensesAndViewSettings\s*:/);
     if(!json){
     	AnyBalance.trace(html);
     	throw new AnyBalance.Error('Информация о лицензиях не найдена!');
@@ -85,7 +108,7 @@ function main() {
     	}
 
     	if(!prefs.lic_id){ //Хотим найти неустаревшую лицензию в первую очередь
-    		var till = getParam(svc.ExpirationDate || undefined, null, null, null, null, parseBalance);
+    		var till = getParam(svc.ExpirationDate || undefined, null, null, null, null, parseDateISO);
     		if(till > new Date().getTime()){
     			svcSelected = svc;
     			break;
@@ -99,8 +122,8 @@ function main() {
     var svc = svcSelected || svcDefault;
 
 	getParam(svc.ServiceName, result, '__tariff');
-	getParam(svc.AvailableSlotsCount, result, 'devices');
-	getParam(svc.ExpirationDate || undefined, result, 'expires_date', null, null, parseBalance);
+	getParam(svc.DeviceCount, result, 'devices');
+	getParam(svc.ExpirationDate || undefined, result, 'expires_date', null, null, parseDateISO);
     
 	AnyBalance.setResult(result);
 }

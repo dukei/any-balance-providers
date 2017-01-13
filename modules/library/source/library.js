@@ -290,7 +290,7 @@ var AB = (function (global_scope) {
         	valueRegExp = /value\s*=\s*("[^"]*"|'[^']*'|[\w\-\/\\]+)/i, 
         	valueReplace = [/^"([^"]*)"$|^'([^']*)'$/, '$1$2', replaceHtmlEntities], 
         	name,
-            inputRegExp = /<input[^>]+?\bname\s*=\s*("[^"]*"|'[^']*'|[\w\-\/\\]+)[^>]*>|<select[^>]+?\bname\s*=\s*("[^"]*"|'[^']*'|[\w\-\/\\]+)[^>]*>[\s\S]*?<\/select>/ig;
+            inputRegExp = /<input[^>]+?\bname\s*=\s*("[^"]*"|'[^']*'|[\w\-\/\\]+)(?:[^>"']+|"[^"]*"|'[^']*')*>|<select[^>]+?\bname\s*=\s*("[^"]*"|'[^']*'|[\w\-\/\\]+)(?:[^>"']+|"[^"]*"|'[^']*')*>[\s\S]*?<\/select>/ig;
 
         while (true) {
             var amatch = inputRegExp.exec(html);

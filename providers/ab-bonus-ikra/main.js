@@ -10,6 +10,51 @@ var g_headers = {
 	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
 };
 
+/**
+ * This function changes date object to string in specified format.
+ * @param dat date object.
+ * @param format Date format - contains: 'yyyy' (or 'yy'), 'MM' and 'dd'.
+ */
+function date2string(dat, format) {
+	var y = dat.getFullYear() + "";
+	var m = dat.getMonth() + 1;
+	var d = dat.getDate();
+	
+	if(format.length > 10)
+	{
+		var HH = dat.getHours();
+		var mm = dat.getMinutes();
+		var ss = dat.getSeconds();
+	}
+	
+	if ((format.indexOf('yyyy') == -1 && format.indexOf('yy') == -1)
+			|| format.indexOf('MM')  == -1 || format.indexOf('dd') == -1) {
+		return null;		
+	}
+
+	if (m < 10) m = "0" + m;
+	if (d < 10) d = "0" + d;
+	
+	if (HH < 10) HH = "0" + HH;
+	if (mm < 10) mm = "0" + mm;
+	if (ss < 10) ss = "0" + ss;
+	
+	var ret = format;
+	ret = ret.replace("yyyy", y);
+	ret = ret.replace("yy", y);
+	ret = ret.replace("MM", m);
+	ret = ret.replace("dd", d);
+	
+	if(format.length > 10)
+	{
+		ret = ret.replace("HH", HH);
+		ret = ret.replace("mm", mm);
+		ret = ret.replace("ss", ss);
+	}
+	
+	return ret;
+}
+
 function main() {
 	var prefs = AnyBalance.getPreferences();
 	var baseurl = 'https://prcab.x5club.ru/karusel/';
@@ -26,6 +71,8 @@ function main() {
 	var params = AB.createFormParams(form, function(params, str, name, value) {
 		if (name == 'job') {
 			return 'LOGIN';
+		} else if (/id="logOnDate"/i.test(str)){
+			return date2string(new Date(),'yyyy-MM-dd HH:mm');
 		} else if (name == 'login'){
 			return prefs.login;
 		} else if (name == 'password') {
@@ -39,7 +86,7 @@ function main() {
 		return value;
 	});
 
-	html = AnyBalance.requestPost(baseurl + 'login.do', params, addHeaders({Referer: baseurl}));
+	html = AnyBalance.requestPost(baseurl + 'login.do', params, addHeaders({Referer: baseurl + 'anonymousLogin.do'}));
 	
 	if (!/logout/i.test(html)) {
 		var error = getParam(html, null, null, /<div[^>]+class="errorBoldText"[^>]*>([\s\S]*?)<br\/>/i, replaceTagsAndSpaces, html_entity_decode);

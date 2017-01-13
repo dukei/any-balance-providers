@@ -86,9 +86,15 @@ function login(prefs, result) {
 			json = requestJson({login: normalized_login}, 'auth_phone', 'Не удалось начать процесс привязки');
 			var id = json.id;
 			json = requestJson({id: id, pass: prefs.password}, 'auth_pass', 'Не удалось зайти с паролем');
-			// Все, тут надо дождаться смс кода
-			var code = AnyBalance.retrieveCode('Пожалуйста, введите код из смс, для привязки данного устройства.', null, {time: 300000});
-			json = requestJson({id: id, otp: code}, 'auth_otp', 'Не удалось привязать устройство');
+
+			var maxTries = 5, i=0;
+			while(json.nextCmd != 'redirect'){
+				json = performNextCmd(json.nextCmd, id);
+				if(++i > 5){
+					AnyBalance.trace(JSON.stringify(json));
+					throw new AnyBalance.Error('Слишком много подтверждений на вход. Сайт изменен?');
+				}
+			}
 
 			g_session = json.cookie;
 
@@ -120,6 +126,39 @@ function login(prefs, result) {
 	}
 	
 	return json;
+}
+
+function performShowIvr(id){
+	AnyBalance.trace('Понадобилось подтверждение по звонку');
+	var maxTries = 25;
+	for(var i=0; i<maxTries; ++i){
+		AnyBalance.sleep(5000);
+		var json = requestJson({id: id}, 'auth_get_confirm_status', 'Не удалось проверить статус подтверждения звонком');
+		AnyBalance.trace('Попытка ' + (i+1) + '/' + maxTries + ' подтвердить вход звонком: ' + JSON.stringify(json));
+		if(json.nextCmd)
+			return json;
+	}
+	throw new AnyBalance.Error('Вход не был подтвержден звонком');
+}
+
+function performAuthOtp(id){
+	AnyBalance.trace('Понадобилось подтверждение по SMS');
+	// Все, тут надо дождаться смс кода
+	var code = AnyBalance.retrieveCode('Пожалуйста, введите код из смс для привязки данного устройства.', null, {time: 300000});
+	var json = requestJson({id: id, otp: code}, 'auth_otp', 'Не удалось привязать устройство');
+	AnyBalance.trace('Введен код из СМС: ' + JSON.stringify(json));
+	return json;
+}
+
+function performNextCmd(nextCmd, id){
+	switch(nextCmd){
+		case 'show_ivr_form':
+			return performShowIvr(id);
+		case 'show_otp_password_form':
+			return performAuthOtp(id);
+		default:
+			throw new AnyBalance.Error('Неизвестный следующий этап подтверждения входа: ' + nextCmd + '. Сайт изменен?');
+	}
 }
 
 function processCards(json, result){

@@ -46,7 +46,7 @@ function main() {
 
 	AB.getParam(html, result, 'fio', /<li[^>]+user[^>]*>([\s\S]*?)(?:\(|<\/li>)/i, AB.replaceTagsAndSpaces);
 	AB.getParam(html, result, 'balance', /<div[^>]+id="tab-balance"[\s\S]*?<h2[^>]*>([\s\S]*?)<\/h2>/i, AB.replaceTagsAndSpaces, AB.parseBalance);
-	AB.getParam(html, result, '__tariff', /<div[^>]+id="tab-plan"[\s\S]*?<h2[^>]*>([\s\S]*?)<\/h2>/i, AB.replaceTagsAndSpaces);
+	AB.getParam(html, result, '__tariff', /<div[^>]+id="tab-plan"[\s\S]*?<h2[^>]*>([\s\S]*?)(?:<a|<\/h2>)/i, AB.replaceTagsAndSpaces);
 	AB.getParam(html, result, 'phone', /<li[^>]+user[^>]*>[\s\S]*?\(([^)]*)/i, AB.replaceTagsAndSpaces);
 
 	var bonuses = getElements(html, [/<div[^>]+container-fluid[\s>"]/ig, /<div[^>]+tab-section-field[^>]*>\s*Бонусы/i])[0];
@@ -79,7 +79,8 @@ function main() {
 				var name = it.title,
 					units = getParam(it.value, /\S+$/),
 					value = getParam(it.value, /([\s\S]*?)(?:of|$)/);
-				sumDiscount(result, name, units, value);
+					value_max = getParam(it.value, /of(.*)/);
+				sumDiscount(result, name, units, value, value_max);
 			}
 		}
 	} catch (e) {
@@ -89,18 +90,36 @@ function main() {
 	AnyBalance.setResult(result);
 }
 
-function sumDiscount(result, name, units, value) {
+function sumDiscount(result, name, units, value, value_max) {
 	var bigname = name + units;
+	function parseBalanceMinus(str){
+		var balance = parseBalance(str);
+		if(!balance)
+			return balance;
+		return value_max ? -balance : balance;
+	}
+
+	function parseTrafficMinus(str){
+		var balance = parseTraffic(str);
+		if(!balance)
+			return balance;
+		return value_max ? -balance : balance;
+	}
+
 	AnyBalance.trace('Найдено ' + name + ' ' + value + ' ' + units);
 	if (/шт|sms|смс/i.test(bigname)) {
-		sumParam(value + '', result, 'sms_left', null, null, parseBalance, aggregate_sum);
+		sumParam(value + '', result, 'sms_left', null, null, parseBalanceMinus, aggregate_sum);
+		sumParam(value_max, result, 'sms_left', null, null, parseBalance, aggregate_sum);
 	} else if (/mms|ммс/i.test(bigname)) {
-		sumParam(value + '', result, 'mms_left', null, null, parseBalance, aggregate_sum);
+		sumParam(value + '', result, 'mms_left', null, null, parseBalanceMinus, aggregate_sum);
+		sumParam(value_max, result, 'mms_left', null, null, parseBalance, aggregate_sum);
 	} else if (/минут|min/i.test(bigname)) {
-		sumParam(value + '', result, 'min_left', null, [/[\.,].*/, ''], parseBalance, aggregate_sum);
+		sumParam(value + '', result, 'min_left', null, [/[\.,].*/, ''], parseBalanceMinus, aggregate_sum);
+		sumParam(value_max, result, 'min_left', null, [/[\.,].*/, ''], parseBalance, aggregate_sum);
 	} else if (/[гкмgkm][бb]/i.test(bigname) || /интернет/i.test(name)) {
 		var night = /ноч/i.test(bigname) ? '_night' : '';
-		sumParam(value + units, result, 'internet_trafic' + night, null, null, parseTraffic, aggregate_sum);
+		sumParam(value + units, result, 'internet_trafic' + night, null, null, parseTrafficMinus, aggregate_sum);
+		sumParam(value_max && value_max + units, result, 'internet_trafic' + night, null, null, parseTraffic, aggregate_sum);
 	} else {
 		AnyBalance.trace('Неизвестная опция: ' + name);
 	}

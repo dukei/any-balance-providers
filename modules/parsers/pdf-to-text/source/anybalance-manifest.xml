@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+    <id version="1">parsers/pdf-to-text</id>
+	<api flags="no_browser" />
+    <name>PDF to text converter</name>
+	<description html="true"><![CDATA[
+		PDF to text converter using http://pdftotext.com
+
+		Example:
+			var pdf2text = new PdfToText();
+			var text = pdf2text.convert(base64pdf);
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+		<module id="crypt/cryptojs/base64"/>
+	</depends>
+	<files>
+		<js>pdf-to-text.js</js>
+		<history>history.xml</history>
+	</files>
+	<type>converter, pdf</type>
+</provider>

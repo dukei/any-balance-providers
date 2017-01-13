@@ -178,6 +178,10 @@ var AB = (function (global_scope) {
         return Array.isArray(arr);
     }
 
+    function isObject(obj){
+    	return Object.prototype.toString.call(obj) === "[object Object]";
+    }
+
     /** Делает все замены в строке value. При этом, если элемент replaces массив, то делает замены по нему рекурсивно. */
     function replaceAll(value, replaces) {
         if (!replaces) return value;
@@ -756,25 +760,43 @@ var AB = (function (global_scope) {
         return val;
     }
 
-    /** Создаёт мультипарт запрос полностью прикидываясь браузером */
-    function requestPostMultipart(url, data, headers) {
-        var b = '', possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    /** Создаёт мультипарт запрос полностью прикидываясь браузером
+    *   data может быть объектом {key: value} или массивом [ [key, value], ...]
+    *	value может быть строкой или объектом {attributes: {name: 'name', ...}, subheaders: {headername: 'header-name', ...}, value: 'datavalue'}
+    * 	attributes и subheaders могут быть не объектами, а массивами [ ['name', 'value'], ...], чтобы гарантировать порядок полей
+    */
+    function requestPostMultipart(url, data, headers, requestPost) {
+        let b = '', possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
-        for (var i = 0; i < 16; i++) {
+        for (let i = 0; i < 16; i++) {
             b += possible.charAt(Math.floor(Math.random() * possible.length));
         }
 
-        var parts = [];
+        const boundary = '------WebKitFormBoundary' + b;
+        let parts = processKeyValues(data, (key, value) => {
+        	//Формирование значения одного key => value
+        	let parts = [];
+        	let attributes = {name: key}, subheaders, datavalue = value;
+        	if(isObject(value)){
+        		attributes = value.attributes;
+        		subheaders = value.subheaders;
+        		datavalue = value.value;
+        	}
+        	attributes = processKeyValues(attributes, (key, value) => key + '="' + value + '"');
+        	parts.push(boundary, 'Content-Disposition: form-data; ' + attributes.join('; '));
+        	if(subheaders){
+        		subheaders = processKeyValues(subheaders, (key, value) => key + ': ' + value);
+        		parts.push.apply(parts, subheaders);
+        	}
+           	parts.push('', datavalue);
+           	return parts.join('\r\n');
+        });
 
-        var boundary = '------WebKitFormBoundary' + b;
-        for (var name in data) {
-            parts.push(boundary, 'Content-Disposition: form-data; name="' + name + '"', '', data[name]);
-        }
         parts.push(boundary + '--\r\n');
         if (!headers)
             headers = {};
         headers['Content-Type'] = 'multipart/form-data; boundary=' + boundary.substr(2);
-        return AnyBalance.requestPost(url, parts.join('\r\n'), headers);
+        return (requestPost || AnyBalance.requestPost)(url, parts.join('\r\n'), headers);
     }
 
     /** Приводим все к единому виду вместо ИВаНов пишем Иванов */
@@ -1313,19 +1335,23 @@ var AB = (function (global_scope) {
 		}
 	}
 
-	function createUrlEncodedParams(params){
+	function processKeyValues(params, processKeyValue){
 		var out = [];
 		if(isArray(params)){
 			for(var i=0; i<params.length; ++i){
 				var p = params[i];
-				out.push(encodeURIComponent(p[0]) + '=' + encodeURIComponent(p[1]));
+				out.push(processKeyValue(p[0], p[1]));
 			}
 		}else{
 			for(var p in params){
-				out.push(encodeURIComponent(p) + '=' + encodeURIComponent(params[p]));
+				out.push(processKeyValue(p, params[p]));
 			}
 		}
-		return out.join('&');
+		return out;
+	}
+
+	function createUrlEncodedParams(params){
+		return processKeyValues(params, (key, value) => encodeURIComponent(key) + '=' + encodeURIComponent(value)).join('&');
 	}
 
 	function clearAllCookies(){

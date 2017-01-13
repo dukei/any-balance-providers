@@ -10,16 +10,17 @@ var g_headers = {
 	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
 };
 
+var baseurl = 'http://www.ensb.tomsk.ru/';
+
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'http://www.ensb.tomsk.ru/';
 	AnyBalance.setDefaultCharset('utf-8');
 	
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 	
 	var html = AnyBalance.requestGet(baseurl, g_headers);
-	
+
 	html = AnyBalance.requestPost(baseurl, {
         'backurl':'/',
         'AUTH_FORM':'Y',
@@ -30,9 +31,9 @@ function main() {
 	}, addHeaders({Referer: baseurl}));
     
 	if (!/logout/i.test(html)) {
-		var error = getParam(html, null, null, /[^>]+class="errortext"[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
+		var error = getParam(html, /[^>]+class="errortext"[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces);
 		if (error)
-			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
+			throw new AnyBalance.Error(error, null, /парол/i.test(error));
 		
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
@@ -40,37 +41,86 @@ function main() {
     
     html = AnyBalance.requestGet(baseurl + 'profile/', g_headers);
 
-    var department = getParam(html, null, null, /name="department" value="([^"]+)/i);
-    var departmentId = getParam(html, null, null, /name="departmentId" value="([^"]+)/i);
-    var actID = getParam(html, null, null, /name="actID" value="([^"]+)/i);
+    var actID = getParam(html, null, null, /name="actID"[^>]*value="([^"]+)/i, replaceHtmlEntities);
     
     var today = new Date();
-    var monthNumber = today.getMonth()+1;
-    var report_year = today.getFullYear(); 
-    if(monthNumber == 1) {
-        monthNumber = 12;
-        report_year = report_year - 1;
-    } 
-    AnyBalance.trace(monthNumber);
-    AnyBalance.trace(report_year);
-        
-	html = AnyBalance.requestPost(baseurl + 'profile/reports.php', {
-        reportID: 'Invoice',
-        department: department,
-        departmentId: departmentId,
-        actID: actID,
-        monthNumber: monthNumber,
-        reportType: '2',
-        month: '',
-        report_year: report_year
-	}, addHeaders({Referer: baseurl + 'profile/'}));
-	
-	var result = {success: true};
-	
-	getParam(html, result, 'balance', />([\d\s\.]*?)<\/nobr>\s*?<\/td>\s*?<\/tr>\s*?<\/table>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'fio', /Ф\.И\.О\.([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'period', /СЧЕТ-ИЗВЕЩЕНИЕ[\s\S]*?за(?:[^>]*>)([\s\S]*?)от/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'acc_number', /Л\/СЧЕТ(?:[^>]*>){1}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
+    var lastMonth = new Date(today.getFullYear(), today.getMonth()-1, 15);
+    var monthNumber = n2(lastMonth.getMonth() + 1);
+    var report_year = lastMonth.getFullYear(); 
+
+	var result = {success: true}, pdftext;
+
+	getParam(html, result, 'fio', /<div[^>]+profile-item1[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+	getParam(html, result, 'acc_number', /Л\/СЧЕТ(?:[^>]*>){1}([\s\S]*?)<\//i, replaceTagsAndSpaces);
+
+	try{
+		pdftext = getBillForPeriod(actID, monthNumber, report_year);
+	}catch(e){
+		AnyBalance.trace('Не получилось: ' + e.message);
+    	lastMonth = new Date(today.getFullYear(), today.getMonth()-2, 15);
+    	var monthNumber = n2(lastMonth.getMonth() + 1);
+    	var report_year = lastMonth.getFullYear(); 
+		pdftext = getBillForPeriod(actID, monthNumber, report_year);
+	}
+
+	getParam(monthNumber + '/' + report_year, result, 'period');
+	getParam(monthNumber + '/' + report_year, result, '__tariff');
+	getParam(pdftext, result, 'balance', /Итого к оплате([^\n]*\d+[^\n*])/i, replaceTagsAndSpaces, parseBalance);
+	getParam(pdftext, result, 'balance_water', /\(Факт\)([^\n]*)/i, replaceTagsAndSpaces, parseBalance);
 	
 	AnyBalance.setResult(result);
+}
+
+function getBillForPeriod(actID, monthNumber, report_year){
+	AnyBalance.trace('Пытаемся получить квитанцию за ' + monthNumber + '/' + report_year);
+
+    var json = callApi({
+		action: 'createReport',
+		BC: actID,
+		month: monthNumber,
+		year: report_year
+	});
+
+	var access_token = json.access_token, max_tries = 25;
+
+	for(var i=0; i<max_tries; ++i){
+		AnyBalance.sleep(2000);
+		json = callApi({action: 'reportState'});
+		AnyBalance.trace('Ожидаем ' + (i+1) + '/' + max_tries + ': ' + JSON.stringify(json));
+		if(json.state == 'error')
+			throw new AnyBalance.Error(json.message);
+		if(json.state == 'ready')
+			break;
+	}
+
+	if(i >= max_tries)
+		throw new AnyBalance.Error('Не удалось дождаться формирования квитанции!');
+
+	var pdf = AnyBalance.requestGet(baseurl + '/soap/report.php?access_token=' + access_token, addHeaders({
+		Referer: baseurl + 'profile/'
+	}), {options: {
+		FORCE_CHARSET: 'base64'
+	}});
+
+	var pdf2text = new PdfToText();
+	var text = pdf2text.convert(pdf);
+	return text;
+}
+
+function callApi(params){
+	var html = AnyBalance.requestGet(baseurl + 'soap/?' + createUrlEncodedParams(params), addHeaders({
+		Referer: baseurl + 'profile/',
+		'X-Requested-With': 'XMLHttpRequest'
+	}));
+
+    var json = getJson(html);
+    if(!json.state == 'success'){
+    	var error = json.message;
+    	if(error)
+    		throw new AnyBalance.Error(error);
+    	AnyBalance.trace(html);
+    	throw new AnyBalance.Error('Не удалось получить квитанцию (' + params.action + ')!'); 
+   	}
+
+   	return json;
 }

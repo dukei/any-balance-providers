@@ -71,6 +71,7 @@ function main() {
 	
 	getParam(balances, result, 'balance', /balance"[^>]*>([\s\S]*?)<\/span/i, [/'/g, '', replaceTagsAndSpaces], parseBalance);
 	getParam(getElements(balances, [/<tr/ig, /собственные средства/i])[0], result, 'own', /balance"[^>]*>([\s\S]*?)<\/span/i, [/'/g, '', replaceTagsAndSpaces], parseBalance);
+	getParam(getElements(balances, [/<tr/ig, /доступная рассрочка/i])[0], result, 'credit', /balance"[^>]*>([\s\S]*?)<\/span/i, [/'/g, '', replaceTagsAndSpaces], parseBalance);
 	getParam(product, result, 'limit', /лимит([^<)]*)/i, [/'/g, '', replaceTagsAndSpaces], parseBalance);
 	getParam(product, result, ['currency', 'balance', 'limit', 'debt', 'nachisl', 'grace_pay'], /balance"[^>]*>([\s\S]*?)<\/tr>/i, [/'/g, '', replaceTagsAndSpaces], parseCurrency);
 	getParam(product, result, 'cardname', /showFromTemplate[^>]*>([^<]+)/i, replaceTagsAndSpaces);

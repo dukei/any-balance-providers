@@ -1,10 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="8">ab-sharing-cbilling</id>
+	<id version="9">ab-sharing-cbilling</id>
 	<api flags="no_browser"/>
 	<name>Cardsharing-Server LLC (cbilling.bz)</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию  из личного кабинета кардшаринг сервера Cardsharing-Server LLC <a href="https://cbilling.bz/">https://cbilling.bz/</a></p>
+	<p>Предоставляет информацию  из личного кабинета кардшаринг сервера Cardsharing-Server LLC <a href="https://cbilling.tv/">https://cbilling.tv/</a></p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>

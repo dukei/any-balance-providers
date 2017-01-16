@@ -100,9 +100,10 @@ function mainSite(prefs, baseurl) {
         //Минуты на других операторов
     	sumParam(html, result, 'mins_uk', /минуты на другие сети(?:[\s\S]*?<td[^>]*>){1}\s*([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 	//Подарочный трафик (Бесплатный Интернет [Интернет, WAP]: CMS и Бесплатный Интернет) + 3G
-	html = sumParam(html, result, 'hspa', /3G интернет(?:[\s\S]*?<td[^>]*>){1}\s*([\s\d.,\-]+)/ig, replaceTagsAndSpaces, parseTrafficMb, aggregate_sum, true);
-    	sumParam(html, result, 'hspa', /3G\+ Internet(?:[\s\S]*?<td[^>]*>){1}\s*([\s\d.,\-]+)/ig, replaceTagsAndSpaces, parseTrafficMb, aggregate_sum);
+	html = sumParam(html, result, 'hspa', /3G интернет(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseTraffic, aggregate_sum, true);
+    	sumParam(html, result, 'hspa', /3G\+ Internet(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
 	sumParam(html, result, 'gprs', /Интернет(?:[\s\S]*?<td[^>]*>){1}\s*([\s\d.,\-]+)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+    	sumParam(html, result, 'hspa_roam', /BiP в роуминге(?:[\s\S]*?<td[^>]*>)([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
 	//MMS по Life
     	sumParam(html, result, 'mms_life', /MMS \[сеть <span class="life">life:\)<\/span>](?:[\s\S]*?<td[^>]*>){1}\s*([\s\d.,\-]+)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
     	sumParam(html, result, 'mms_life', /MMS \[сеть life:\)](?:[\s\S]*?<td[^>]*>){1}\s*([\s\d.,\-]+)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
@@ -132,6 +133,16 @@ function mainSite(prefs, baseurl) {
 	  html = AnyBalance.requestGet(baseurl + 'en/osnovnaya-informaciya/osnobnaya-informaciya/', addHeaders({Referer: baseurl}));
 	  getParam(html, result, '__tariff', /<td>Tariff:(?:[\s\S]*?<td[^>]*>){5}\s*([\s\S]*?)<\/td/i, replaceTagsAndSpaces);
 	}
+
+	if(/Смарт семья|Смарт сім’я|Smart family/i.test(result.__tariff)){
+		html = AnyBalance.requestGet(baseurl + 'ru/osnovnaya-informaciya/smart-semya/', addHeaders({Referer: baseurl}));
+
+    	sumParam(html, result, 'mins_uk', /Остаток(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+    	sumParam(html, result, 'hspa', /Остаток(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+    	sumParam(html, result, 'sms_uk', /Остаток(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+	}
+
+
 
 
 	AnyBalance.setResult(result);

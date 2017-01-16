@@ -334,11 +334,11 @@ function fetchAccountStatus(html, result) {
 	// Накоплено 54 мин. в текущем месяце
 	getParam(html, result, 'min_used', /Накоплено.*?(\d+).*?мин[^\s]*/, replaceTagsAndSpaces, parseBalance);
 	// Сумма по неоплаченным счетам: 786.02 руб. (оплатить до 24.03.2012)
-	getParam(html, result, 'debt', /Сумма по неоплаченным счетам.*?([-\d\.,]+)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'debt', /Сумма по неоплаченным счетам.*?([-\d\.,]+)/i, replaceTagsAndSpaces, parseBalanceRound);
 	// Сумма по неоплаченным счетам: 786.02 руб. (оплатить до 24.03.2012)
 	getParam(html, result, 'pay_till', /оплатить до.*?([\d\.,\/]+)/i, replaceTagsAndSpaces, parseDate);
 	//Для обычного помощника чуть по другому долг получать
-	getParam(html, result, 'debt', /оплатить до(?:[\s\S](?!<\/td>))*?<strong[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'debt', /оплатить до(?:[\s\S](?!<\/td>))*?<strong[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalanceRound);
 	// Ночной трафик
 	html = sumParam(html, result, 'traffic_night', /Интернет\s*ночной:([\s\S]*?(?:[Мkmgкмг][Ббb]|байт|byte))/ig, replaceTagsAndSpaces, parseTraffic, true, aggregate_sum);
 	// Остаток трафика (для впн надо в любом случае получать, иначе может наложиться на обычный трафик)

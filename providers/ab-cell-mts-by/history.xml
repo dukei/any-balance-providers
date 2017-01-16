@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="19" date="2017-01-16">
+	Округлен расход за месяц до двух знаков
+	</change>
 	<change version="18" date="2017-01-16">
 	Округление рублей в счетчике долга
 	</change>

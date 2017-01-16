@@ -353,7 +353,7 @@ function fetchAccountStatus(html, result) {
 	// Сумма кредитного лимита
 	getParam(html, result, 'credit', /(?:Сумма кредитного лимита|Кредитный лимит)[\s\S]*?(-?\d+[\d\.,]*)/i, replaceTagsAndSpaces, parseBalance);
 	// Расход за этот месяц
-	getParam(html, result, 'usedinthismonth', /Израсходовано по номеру[^<]*?(?:<strong>|:)([\s\S]*?)(?:<\/strong>|<\/p>|<\/td>)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'usedinthismonth', /Израсходовано по номеру[^<]*?(?:<strong>|:)([\s\S]*?)(?:<\/strong>|<\/p>|<\/td>)/i, replaceTagsAndSpaces, parseBalanceRound);
     // Остаток СМС
     getParam(html, result, 'sms_left', /(?:Осталось|Остаток)[^\d]*(\d*).*?(sms|смс)/i, [], parseBalance);
     getParam(html, result, 'sms_left', /SMS:\s*([\d\.,]+)\s*шт/i, replaceTagsAndSpaces, parseBalance);

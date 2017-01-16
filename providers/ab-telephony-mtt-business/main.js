@@ -41,7 +41,7 @@ function main() {
 	if (!json.success) {
 		var error = json.errors ? json.errors.CustomerLoginForm_password.join(' ,') : undefined;
 		if (error)
-			throw new AnyBalance.Error(error, null, /Неверный email или пароль/i.test(error));
+			throw new AnyBalance.Error(error, null, /парол/i.test(error));
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
@@ -49,26 +49,43 @@ function main() {
 
 	var result = {success: true};
 	html = AnyBalance.requestGet(json.url);
-	getParam(html, result, 'accountID', /<div[^>]+class\s*=\s*"lR"(?:[\s\S]*?<div[^>]*>){3}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'balance', /<div[^>]+class\s*=\s*"lR"(?:[\s\S]*?<div[^>]*>){4}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'cost', /<div[^>]+class\s*=\s*"lR"(?:[\s\S]*?<div[^>]*>){5}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'manager', /<span[^>]+class\s*=\s*"lR__question-manager"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
 
-	getParam(html, result, 'busyLK', /Личные кабинеты[\s\S]*?<div[^>]+class\s*=\s*"diagram__sub-data"(?:[\s\S]*?<div[^>]*>){2}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'freeLK', /Личные кабинеты[\s\S]*?<div[^>]+class\s*=\s*"diagram__sub-data"(?:[\s\S]*?<div[^>]*>){3}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'totalLK', /Личные кабинеты[\s\S]*?<div[^>]+class\s*=\s*"diagram__sub-data"(?:[\s\S]*?<div[^>]*>){1}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'lkCost', /Личные кабинеты[\s\S]*?<div[^>]+class\s*=\s*"diagram__sub-data"(?:[\s\S]*?<div[^>]*>){4}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+//	if(AnyBalance.isAvailable('balance'
+//	html = AnyBalance.requestGet(baseurl + 'default/getWidget?widgetName=statusesWidget', g_headers);
 
-	var units = 'Mb';
+	getParam(html, result, 'accountID', /Лицевой счет:([\s\S]*?)(?:<\/a>|<\/div>)/i, replaceTagsAndSpaces);
+	getParam(html, result, 'balance', /<div[^>]+balance-block[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'manager', /<span[^>]+class\s*=\s*"lR__question-manager"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
 
-	function parseTrafficMy(str) {
-		return parseTraffic(str + units);
+	if(AnyBalance.isAvailable('busyLK', 'freeLK', 'totalLK', 'lkCost')){
+		html = AnyBalance.requestGet(baseurl + 'default/getWidget?customerLogin=' + encodeURIComponent(prefs.login) + '&widgetName=workPlaceWidget', g_headers);
+		json = getJson(html);
+
+		getParam(json.content, result, 'busyLK', /<[^>]+sub-data-engaged[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
+		getParam(json.content, result, 'freeLK', /<[^>]+sub-data-free[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
+		getParam(json.content, result, 'totalLK', /<[^>]+sub-data-total[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
+		getParam(json.content, result, 'lkCost', /Стоимость:[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, parseBalance);
 	}
 
-	getParam(html, result, 'totalDiskSpace', /Дисковое пространство[\s\S]*?всего([^>]*>){2}/i, replaceTagsAndSpaces, parseTrafficMy);
-	getParam(html, result, 'usedDiskSpace', /Дисковое пространство[\s\S]*?занято([^>]*>){2}/i, replaceTagsAndSpaces, parseTrafficMy);
-	getParam(html, result, 'freeDiskSpace', /Дисковое пространство[\s\S]*?свободно([^>]*>){2}/i, replaceTagsAndSpaces, parseTrafficMy);
-	getParam(html, result, 'diskCost', /Дисковое пространство[\s\S]*?<div[^>]+class\s*=\s*"diagram__data"(?:[\s\S]*?<div[^>]*>){5}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+	if(AnyBalance.isAvailable('cost')){
+		html = AnyBalance.requestGet(baseurl + 'default/getWidget?widgetName=CustomerWidget', g_headers);
+		json = getJson(html);
+		getParam(json.content, result, 'cost', /Аб\.\s+пл\.:([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+	}
+
+	if(AnyBalance.isAvailable('totalDiskSpace', 'usedDiskSpace', 'freeDiskSpace', 'diskCost')){
+		function parseTrafficMy(str) {
+			return parseTraffic(str + 'Mb');
+		}
+
+		html = AnyBalance.requestGet(baseurl + 'default/getWidget?customerLogin=' + encodeURIComponent(prefs.login) + '&widgetName=diskSpaceWidget', g_headers);
+		json = getJson(html);
+
+		getParam(json.content, result, 'usedDiskSpace', /<[^>]+sub-data-engaged[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
+		getParam(json.content, result, 'freeDiskSpace', /<[^>]+sub-data-free[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
+		getParam(json.content, result, 'totalDiskSpace', /<[^>]+sub-data-total[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
+		getParam(json.content, result, 'diskCost', /Стоимость:[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, parseBalance);
+	}
 
 	AnyBalance.setResult(result);
 }

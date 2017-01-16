@@ -51,7 +51,12 @@ function main() {
 			sumParam(card.basesUppName, result, '__tariff', null, null, null, aggregate_space);
 			sumParam(card.cardType, result, '__tariff', null, null, null, aggregate_space);
 
-			getParam(card.amountCashed, result, 'balance');
+			if(card.availableAmount){
+				getParam(card.availableAmount.AMOUNT_ONLINE_FORMAT || card.availableAmount.AMOUNT_FORMAT, result, 'balance', null, null, parseBalance);
+			}else{
+				getParam(card.amountCashed, result, 'balance');
+			}
+
 			getParam(card.currency, result, ['currency', 'balance'], null, null, CurrencyISO.getCurrencySymbol);
 			
 			AnyBalance.setResult(result);
@@ -67,7 +72,11 @@ function main() {
 
 			getParam(acc.accountNo, result, 'acc_name');
 
-			getParam(acc.amount, result, 'balance');
+			if(acc.availableAmountSaving){
+				getParam(acc.availableAmount.AMOUNT_ONLINE_FORMAT || acc.availableAmount.AMOUNT_FORMAT, result, 'balance', null, null, parseBalance);
+			}else{
+				getParam(acc.amount, result, 'balance');
+			}
 			getParam(acc.currency, result, ['currency', 'balance'], null, null, CurrencyISO.getCurrencySymbol);
 			
 			AnyBalance.setResult(result);

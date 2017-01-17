@@ -12,8 +12,7 @@ var g_headers = {
     'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
     'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
     'Referer':'http://www.novex-trade.ru/bonus-card-program/',
-    'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.17 (KHTML, like Gecko) Chrome/24.0.1312.56 Safari/537.17',
-    'X-Requested-With':'XMLHttpRequest'
+    'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.17 (KHTML, like Gecko) Chrome/24.0.1312.56 Safari/537.17'
 };
 
 
@@ -22,29 +21,29 @@ function main(){
     AnyBalance.setDefaultCharset('utf-8');
 
     var baseurl = "http://www.novex-trade.ru/";
+	AB.checkEmpty(prefs.login, 'Введите логин!');
+	AB.checkEmpty(prefs.password, 'Введите пароль!');
+	AB.checkEmpty(/^\+?\d{11}$/.test(prefs.login), 'Введите логин в формате +79001234567');
 
-    var html = AnyBalance.requestGet(baseurl + 'bonus/card/',  g_headers);
-    var url = AnyBalance.getLastUrl();
-    var urlPost = url.replace(/login\//i, 'loginPost/');
+    var html = AnyBalance.requestGet(baseurl,  g_headers);
 
-   	var html = AnyBalance.requestPost(urlPost, {
-   		'login[username]': prefs.login,
-		'login[password]': prefs.password,
-		ajax: 1
+   	var html = AnyBalance.requestPost(baseurl, {
+		return_url:	'bonuscard.html',
+		redirect_url:	'bonuscard.html',
+		user_login:	prefs.login.replace(/^\+?7(\d{3})(\d{3})(\d\d)(\d\d)$/, '+7 ($1) $2-$3-$4'),
+		password:	prefs.password,
+		'dispatch[auth.login]' : ''
    	}, addHeaders({
-    	Referer: url
+    	Referer: baseurl
     }));
 
-    var json = getJson(html);
-
-    if(!json.success){
-        if(json.message)
-            throw new AnyBalance.Error(json.message, null, /парол/i.test(json.message));
+    if(!/logout/i.test(html)){
+    	var error = getElement(html, /<div[^>]+alert-error/i, [replaceTagsAndSpaces, /\s+/g, ' ']);
+        if(error)
+            throw new AnyBalance.Error(error, null, /парол/i.test(error));
         AnyBalance.trace(html);
         throw new AnyBalance.Error('Не удалось получить баланс карты. Проблемы на сайте или сайт изменен.');
     }
-
-    html = AnyBalance.requestGet(baseurl + 'bonus/card/',  g_headers);
 
     var result = {success: true};
 

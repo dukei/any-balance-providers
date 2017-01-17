@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-  <id version="2">ab-bonus-novex</id>
+  <id version="3">ab-bonus-novex</id>
   <name>НОВЭКС</name>
   <description>
     Получает баланс бонусов на карте бонусной программы НОВЭКС ( http://www.novex-trade.ru/bonus-card-program/ ).

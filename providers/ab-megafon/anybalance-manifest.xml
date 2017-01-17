@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="3.1" version="203">ab-megafon</id>
+	<id major_version="3.1" version="204">ab-megafon</id>
 	<api flags="no_browser"/>
 	<name>Мегафон</name>
 	<description html="true"><![CDATA[
@@ -69,6 +69,10 @@
 		<counter id="internet_total" name="Интернет (всего)" units=" Mb"/>
 		<counter id="internet_total_night" name="Интернет ночь (всего)" units=" Mb"/>
 		<counter id="internet_till" name="Срок действия пакета интернет" type="time" format="dd/MM/yyyy"/>
+		<counter id="internet_roam_europe" name="Интернет в роуминге (СНГ/ЕВРОПА)" units=" Mb"/>
+		<counter id="internet_roam_popular" name="Интернет в роуминге (Популярные страны)" units=" Mb"/>
+		<counter id="internet_roam_other" name="Интернет в роуминге (Остальные страны)" units=" Mb"/>
+		<counter id="internet_auto_prolong" name="Опция автопродление (интернет)" units=" Mb"/>
 		<counter id="mins_total" name="Бесплатные минуты (всего)" units=" мин" type="time_interval" format="{@MIN}"/>
 		<counter id="mins_country_total" name="Минуты по России (всего)" units=" мин" type="time_interval" format="{@MIN}"/>
 		<counter id="mins_sng_total" name="Минуты по СНГ (всего)" units=" мин" type="time_interval" format="{@MIN}"/>

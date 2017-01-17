@@ -2101,6 +2101,15 @@ function megafonLKRemainders(filial, html, result){
 			} else if(/([kmgtкмгт][бb]|[бb](?![\wа-я])|байт|byte)/i.test(units)) {
 				if(/Гигабайт в дорогу/i.test(name)) {
 					getParam(left, result, 'gb_with_you', null, replaceTagsAndSpaces, parseTraffic);
+				}else if(/Интернет в роуминге/i.test(name)) {
+					if(/Остальные страны/i.test(name))
+						getParam(left, result, 'internet_roam_other', null, replaceTagsAndSpaces, parseTraffic);
+					else if(/Популярные страны/i.test(name))
+						getParam(left, result, 'internet_roam_popular', null, replaceTagsAndSpaces, parseTraffic);
+					else if(/ЕВРОПА/i.test(name))
+						getParam(left, result, 'internet_roam_europe', null, replaceTagsAndSpaces, parseTraffic);
+				}else if(/Автопродление/i.test(name)) {
+					getParam(left, result, 'remainders.internet_auto_prolong', null, replaceTagsAndSpaces, parseTraffic);
 				} else {
 					var suffix = '';
 					if(/ноч/i.test(name)) suffix = '_night';
@@ -2345,6 +2354,10 @@ var g_countersTable = {
 		"bonus_burn": "bonus_burn",
 		"status_stop_content": "status_stop_content",
 		"gb_with_you": "remainders.gb_with_you",
+		"internet_roam_other": "remainders.internet_roam_other",
+		"internet_roam_popular": "remainders.internet_roam_popular",
+		"internet_roam_europe": "remainders.internet_roam_europe",
+		"internet_auto_prolong": "remainders.internet_auto_prolong",
 		"internet_cur": "remainders.internet_cur",
 		"internet_cur_night": "remainders.internet_cur_night",
 		"internet_total": "remainders.internet_total",

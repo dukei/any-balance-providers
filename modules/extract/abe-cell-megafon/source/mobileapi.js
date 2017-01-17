@@ -254,6 +254,15 @@ function processRemaindersApi(result){
 
                         if(/Гигабайт в дорогу/i.test(name)) {
                             getParam(current.available + current.unit, remainders, 'remainders.gb_with_you', null, replaceTagsAndSpaces, parseTraffic);
+						}else if(/Интернет в роуминге/i.test(name)) {
+							if(/Остальные страны/i.test(name))
+								getParam(current.available + current.unit, remainders, 'remainders.internet_roam_other', null, replaceTagsAndSpaces, parseTraffic);
+							else if(/Популярные страны/i.test(name))
+								getParam(current.available + current.unit, remainders, 'remainders.internet_roam_popular', null, replaceTagsAndSpaces, parseTraffic);
+							else if(/ЕВРОПА/i.test(name))
+								getParam(current.available + current.unit, remainders, 'remainders.internet_roam_europe', null, replaceTagsAndSpaces, parseTraffic);
+						}else if(/Автопродление/i.test(name)) {
+								getParam(current.available + current.unit, remainders, 'remainders.internet_auto_prolong', null, replaceTagsAndSpaces, parseTraffic);
                         } else {
                             var suffix = '';
                             if(/ноч/i.test(name)) suffix = '_night';

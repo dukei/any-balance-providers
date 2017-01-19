@@ -80,7 +80,7 @@ function main() {
 				var name = it.title,
 					units = getParam(it.value, /\S+$/),
 					value = getParam(it.value, /([\s\S]*?)(?:of|$)/);
-					value_max = getParam(it.value, /of(.*\d.*)/);
+					value_max = getParam(it.value, /(?:of|из)(.*\d.*)/);
 				sumDiscount(result, name, units, value, value_max);
 			}
 		}
@@ -93,42 +93,23 @@ function main() {
 
 function sumDiscount(result, name, units, value, value_max) {
 	var bigname = name + units;
-	function parseBalanceMinus(str){
-		var balance = parseBalance(str);
-		if(!balance)
-			return balance;
-		return value_max ? -balance : balance;
-	}
-
-	function parseTrafficMinus(str){
-		var balance = parseTraffic(str);
-		if(!balance)
-			return balance;
-		return value_max ? -balance : balance;
-	}
 
 	AnyBalance.trace('Найдено ' + name + ' ' + value + ' ' + units);
 	if (/шт|sms|смс/i.test(bigname)) {
-		sumParam(value + '', result, 'sms_left', null, null, parseBalanceMinus, aggregate_sum);
-		sumParam(value_max, result, 'sms_left', null, null, parseBalance, aggregate_sum);
+		sumParam(value + '', result, 'sms_left', null, null, parseBalance, aggregate_sum);
 	} else if (/mms|ммс/i.test(bigname)) {
-		sumParam(value + '', result, 'mms_left', null, null, parseBalanceMinus, aggregate_sum);
-		sumParam(value_max, result, 'mms_left', null, null, parseBalance, aggregate_sum);
+		sumParam(value + '', result, 'mms_left', null, null, parseBalance, aggregate_sum);
 	} else if (/gsm/i.test(bigname) && /минут|min/i.test(bigname)) {
-		sumParam(value + '', result, 'min_left_gsm', null, [/[\.,].*/, ''], parseBalanceMinus, aggregate_sum);
-		sumParam(value_max, result, 'min_left_gsm', null, [/[\.,].*/, ''], parseBalance, aggregate_sum);
+		sumParam(value + '', result, 'min_left_gsm', null, [/[\.,].*/, ''], parseBalance, aggregate_sum);
 	} else if (/на город|на др\.\s*сети/i.test(bigname) && /минут|min/i.test(bigname)) {
-		sumParam(value + '', result, 'min_left_city', null, [/[\.,].*/, ''], parseBalanceMinus, aggregate_sum);
-		sumParam(value_max, result, 'min_left_city', null, [/[\.,].*/, ''], parseBalance, aggregate_sum);
+		sumParam(value + '', result, 'min_left_city', null, [/[\.,].*/, ''], parseBalance, aggregate_sum);
 	} else if (/минут|min/i.test(bigname)) {
-		sumParam(value + '', result, 'min_left', null, [/[\.,].*/, ''], parseBalanceMinus, aggregate_sum);
-		sumParam(value_max, result, 'min_left', null, [/[\.,].*/, ''], parseBalance, aggregate_sum);
+		sumParam(value + '', result, 'min_left', null, [/[\.,].*/, ''], parseBalance, aggregate_sum);
 	} else if (/[гкмgkm][бb]/i.test(bigname) || /интернет/i.test(name)) {
 		var night = /с 00|ноч/i.test(bigname) ? '_night' : '';
 		night = /с 08/i.test(bigname) ? '_day' : night;
 
-		sumParam(value + units, result, 'traffic_left' + night, null, null, parseTrafficMinus, aggregate_sum);
-		sumParam(value_max && value_max + units, result, 'traffic_left' + night, null, null, parseTraffic, aggregate_sum);
+		sumParam(value + units, result, 'traffic_left' + night, null, null, parseTraffic, aggregate_sum);
 	} else {
 		AnyBalance.trace('Неизвестная опция: ' + name);
 	}

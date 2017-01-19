@@ -19,6 +19,7 @@ function main() {
 	
 	var tokenBase64 = AnyBalance.requestPost(g_baseurl + 'setup', {}, g_headers);
 	checkEmpty(tokenBase64, 'Не удалось авторизоваться, сайт изменен?');
+	AnyBalance.trace('token: ' + tokenBase64);
 	
 	var token = CryptoJS.enc.Base64.parse(tokenBase64);
 	var encodedToken = CryptoJS.AES.encrypt(token, key, { iv: iv });

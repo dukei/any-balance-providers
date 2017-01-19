@@ -53,6 +53,35 @@ function main(){
     }
 
     html = AnyBalance.requestGet(baseurl, g_headers);
+
+    var nums = getElements(html, /<a[^>]+account-option/ig), chooseNumHref, activeNum, chosenNum;
+    AnyBalance.trace('В кабинете счетов: ' + nums.length);
+    for(var i=0; i<nums.length; ++i){
+     	var num = getParam(nums[i], /№\s*(\d+)/i, replaceTagsAndSpaces);
+     	var address = getParam(nums[i], /:([\s\S]*)/, replaceTagsAndSpaces);
+     	AnyBalance.trace('Найден счет ' + num + ': ' + address);
+     	if(/active/i.test(nums[i])){
+     		activeNum = num;
+     	}
+     	if(!chosenNum){
+     		if(!prefs.num || endsWith(num, prefs.num)){
+     			chosenNum = num;
+     			chooseNumHref = joinUrl(baseurl, getParam(nums[i], /<a[^>]+href="([^"]*)/i, replaceHtmlEntities));
+     		}
+     	}
+    }
+
+    if(!chosenNum && prefs.num){
+    	AnyBalance.trace(html);
+    	throw new AnyBalance.Error('Не удалось найти счет с последними цифрами ' + prefs.num);
+    }
+
+
+    AnyBalance.trace('Выбрали ' + chosenNum + ' (' + (chosenNum == activeNum ? 'он уже активен' : 'надо его активировать') + ')');
+    if(chosenNum != activeNum){
+    	html = AnyBalance.requestGet(chooseNumHref, addHeaders({Referer: baseurl}));
+    }
+
 	
     var result = {success: true};
     getParam(html, result, 'acc', /<span[^>]+account-chosen[^>]*>([\s\S]*?)<\/span>/i, [replaceTagsAndSpaces, /№/, '']);
@@ -72,7 +101,7 @@ function main(){
 	if(isAvailable(['income', 'nachisl', 'recomended', 'balance'])) {
 		html = AnyBalance.requestGet(baseurl + 'balance', g_headers);
 
-		AB.getParam(html, result, 'balance', 	/Баланс на[\s\S]*?<div[^>]+balance-value[^>]*>([\s\S]*?)<\/div>/i, 						   		AB.replaceTagsAndSpaces, AB.parseBalance);
+		AB.getParam(html, result, 'balance', 	/<div[^>]+label-uppercase[^>]*>(?:\s+|<[^>]*>)*?Баланс[\s\S]*?<div[^>]+balance-value[^>]*>([\s\S]*?)<\/div>/i, 						   		AB.replaceTagsAndSpaces, AB.parseBalance);
 		AB.getParam(html, result, 'income',  	/ПОСТУПЛЕНИЯ НА СЧЕТ В ТЕКУЩЕМ МЕСЯЦЕ[\s\S]*?<div[^>]+balance-value[^>]*>([\s\S]*?)<\/div>/i, 	AB.replaceTagsAndSpaces, AB.parseBalance);
 		AB.getParam(html, result, 'nachisl', 	/НАЧИСЛЕНИЯ ТЕКУЩЕГО МЕСЯЦА[\s\S]*?<div[^>]+balance-value[^>]*>([\s\S]*?)<\/div>/i, 		 	AB.replaceTagsAndSpaces, AB.parseBalance);
 		AB.getParam(html, result, 'recomended', /РЕКОМЕНДУЕМАЯ СУММА К ОПЛАТЕ[\s\S]*?<div[^>]+balance-value[^>]*>([\s\S]*?)<\/div>/i, 			AB.replaceTagsAndSpaces, AB.parseBalance);

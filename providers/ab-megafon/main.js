@@ -2045,7 +2045,8 @@ function megafonLKRemainders(filial, html, result){
 				var h = replaceAll(row, replaceTagsAndSpaces);
 				if(h){
 					AnyBalance.trace('Новый заголовок услуг: ' + h);
-					gname = h;
+					//Почему некоторые слова попадают в заголовок группы услуг, непонятно. Надо их исключить
+					gname = replaceAll(h, [/Автопродление/ig, '']);
 				}
 				continue;
 			}

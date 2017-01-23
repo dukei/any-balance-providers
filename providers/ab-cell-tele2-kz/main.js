@@ -53,13 +53,13 @@ function main() {
 	if(!bonuses)
 		AnyBalance.trace('Бонусы не найдены');
 	else 
-		bonuses = getElements(bonuses, /<li/ig);
+		bonuses = getElements(bonuses, /<div[^>]+class="row"/ig);
 
 	for(var i=0; bonuses && i<bonuses.length; ++i){
-		var text = replaceAll(bonuses[i], replaceTagsAndSpaces);
-		var units = getParam(text, /\S+$/i);
-		var value = getParam(text, /(\S+)\s+\S+$/i);
-		var name = getParam(text, /([\s\S]*?)\S+\s+\S+$/i);
+		var bonus = bonuses[i];
+		var units = getParam(bonus, /(?:[\s\S]*?<div[^>]+tab-section-bonus[^>]*>){3}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseCurrency);
+		var value = getParam(bonus, /(?:[\s\S]*?<div[^>]+tab-section-bonus[^>]*>){3}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+		var name = getParam(bonus, /(?:[\s\S]*?<div[^>]+tab-section-bonus[^>]*>){1}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
 		sumDiscount(result, name, units, value);
 	}
 

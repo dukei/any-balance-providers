@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="21" date="2017-01-23">
+	Исправлено получение бонусов
+	</change>
 	<change version="20" date="2017-01-13">
 	Показания счетчиков исправлены с Использовано на Осталось, как было раньше.
 	</change>

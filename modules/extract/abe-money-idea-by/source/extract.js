@@ -18,7 +18,7 @@ function login() {
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 
-	var html = AnyBalance.requestGet(baseurl + 'balanceOverviewPage.xhtml', g_headers);
+	var html = AnyBalance.requestGet(baseurl + 'balanceOverviewPage.xhtml', addHeaders({Referer: baseurl}));
 
 	if(!html || AnyBalance.getLastStatusCode() > 400){
 		AnyBalance.trace(html);
@@ -66,8 +66,9 @@ function processAccounts(html, result) {
 	if(!AnyBalance.isAvailable('accounts'))
 		return;
 
-	var table = getElement(html, /<div[^>]+mainForm:j_idt38_content[^>]*>/i);
-	var accounts = getElements(table, /<li[^>]+content-section[^>]*>/ig);
+	var section = getElement(html, /<div[^>]+card-list/i);
+	var table = getElement(section, /<ul[^>]+mainForm:j_idt\d+_list[^>]*>/i);
+	var accounts = getElements(table, /<li[^>]+"ui-datalist-item[^>]*>/ig);
 	if(!accounts.length) {
 		AnyBalance.trace(html);
 		AnyBalance.trace("Не удалось найти аккаунты. Сайт изменён?");
@@ -78,14 +79,14 @@ function processAccounts(html, result) {
 	result.accounts = [];
 
 	for(var i = 0; i < accounts.length; i++) {
-		var title = getParam(accounts[i], null, null,/Счет:(?:[^>]*>){4}([\s\S]*?)<\//i, replaceTagsAndSpaces);
-		var num = getParam(accounts[i], null, null, /договор[^\d]*(\d+)/i, replaceTagsAndSpaces);
-		var id = getParam(accounts[i], null, null, /договор[^\d]*(\d+)/i, replaceTagsAndSpaces);
+	    var acc = accounts[i];
+		var num = getParam(acc, /<a[^>]+ui-commandlink[^>]*>\s*№\s*(\d+)/i, replaceTagsAndSpaces);
+		var name = getParam(acc, /<a[^>]+ui-commandlink[^>]*>\s*№\s*\d+[\s\S]*?<div[^>]+>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
 
-		var c = {__id: id, __name: title, num: num};
+		var c = {__id: num, __name: name, num: num};
 
 		if (__shouldProcess('accounts', c)) {
-			processAccount(accounts[i], c, html);
+			processAccount(acc, c, html);
 		}
 
 		result.accounts.push(c);
@@ -118,8 +119,9 @@ function processAccount(account, result, html) {
 	getParam(html, result, 'accounts.pct', /процентная ставка(?:[^>]*>){2}([^%]*)/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'accounts.cardnum', /<span[^>]+link-text[^>]*><span[^>]+link-text[^>]*>[\s\S]*?(\d{6}\*+\d{4})/i, replaceTagsAndSpaces);
 
-	if(isAvailable('accounts.transactions'))
-		processAccountTransactions(html, result);
+//  Временно не поддерживаем
+//	if(isAvailable('accounts.transactions'))
+//		processAccountTransactions(html, result);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -129,30 +131,40 @@ function processCards(html, result) {
 	if(!AnyBalance.isAvailable('cards'))
 		return;
 
-	var table = getElement(html, /<div[^>]+mainForm:j_idt38_content[^>]*>/i);
+	var section = getElement(html, /<div[^>]+card-list/i);
+	var table = getElement(section, /<ul[^>]+mainForm:j_idt\d+_list[^>]*>/i);
 	//Я так поняла, что там к каждому счёту своя карта. В ЛК нет примера отдельных карт
-	var cards = getElements(table, /<li[^>]+content-section[^>]*>/ig); ////<li[^>]+"ui-datalist-item[^>]*>/ig
-	if(!cards.length) {
+	var accs = getElements(table, /<li[^>]+"ui-datalist-item[^>]*>/ig);
+	if(!accs.length) {
 		AnyBalance.trace(html);
 		AnyBalance.trace("Не удалось найти карты. Сайт изменён?"); //link-text span - cards
 		return;
 	}
 
-	AnyBalance.trace("Найдено карт:" + cards.length);
+	AnyBalance.trace("Найдено счетов с картами:" + accs.length);
 	result.cards = [];
 
-	for(var i=0; i < cards.length; ++i){
-		var id = getParam(cards[i], null, null, /<img[^>]*>[^\d]*(\d{6}\*+\d{4})/i);
-		var num = getParam(cards[i], null, null, /<img[^>]*>[^\d]*(\d{6}\*+\d{4})/i);
-		var title = getParam(cards[i], null, null, /<h1[^>]*>([\s\S]*?)<\/h1>/i, replaceTagsAndSpaces);
+	for(var i=0; i < accs.length; ++i){
+		var acc = accs[i];
+		var cards = getElements(acc, /<li[^>]+ui-datalist-item/ig); //Внутри счета список карт
+		var accnum = getParam(acc, /<a[^>]+ui-commandlink[^>]*>\s*№\s*(\d+)/i, replaceTagsAndSpaces);
+		AnyBalance.trace('Счет ' + accnum + ': ' + cards.length + ' карт');
 
-		var c = {__id: id, __name: title, num: num};
+		for(var j=0; j<cards.length; ++j){
+			var card = cards[j];
 
-		if (__shouldProcess('cards', c)) {
-			processCard(cards[i], c, html);
+			var num = getParam(card, /\d{6}\*{6}\d{4}/);
+			var title = getElement(card, /<h1/i, replaceTagsAndSpaces);
+	    
+			var c = {__id: num, __name: title + ' x' + num.substr(-4), num: num, acc: accnum};
+	    
+			if (__shouldProcess('cards', c)) {
+				processCard(card, c, html);
+			}
+
+			result.cards.push(c);
 		}
 
-		result.cards.push(c);
 	}
 }
 
@@ -176,18 +188,16 @@ function processCard(card, result, html) {
 	}));
 
 	getParam(html, result, 'cards.balance', /<span[^>]+balance-label[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, ['cards.currency', 'cards.balance'], /<span[^>]+balance-label[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseCurrency);
-	getParam(html, result, 'cards.type', /тип карты(?:[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
-	getParam(html, result, 'cards.date_start', /Срок действия(?:[^>]*>){6}([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseDate);
-	getParam(html, result, 'cards.till', /Срок действия(?:[^>]*>){9}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
-	getParam(html, result, 'cards.acc', /Счет:(?:[^>]*>){5}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
-	getParam(html, result, 'cards.status', /<span[^>]+class=("[^"]*")*>Карта активна/i, [replaceTagsAndSpaces, /"ui-state-disabled"/i, 'Неактивна', /""/i, 'Активна']);
-	getParam(html, result, 'cards.decure', /<span[^>]+class=("[^"]*")[^>]*>Услуга «3-D Secure»/i, [replaceTagsAndSpaces, /"ui-state-disabled"/i, 'Неактивна', /""/i, 'Активна']);
-	getParam(html, result, 'cards.SMS', /<span[^>]+class=("[^"]*")[^>]*>Услуга «SMS-информирование»/i, [replaceTagsAndSpaces, /"ui-state-disabled"/i, 'Неактивна', /""/i, 'Активна']);
+	getParam(html, result, ['cards.currency', 'cards.balance'], /<span[^>]ratesLabelCurrencyCode[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
+	getParam(html, result, 'cards.type', /тип карты(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+	getParam(html, result, 'cards.till', /Срок действия(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)/i, replaceTagsAndSpaces, parseDate);
+	getParam(html, result, 'cards.status', /<span[^>]+class=("[^"]*")[^>]*>[^<]*Карта/i, [replaceTagsAndSpaces, /"ui-state-disabled"/i, 'Неактивна', /""/i, 'Активна']);
+	getParam(html, result, 'cards.decure', /<span[^>]+class=("[^"]*")[^>]*>[^<]*3-D Secure/i, [replaceTagsAndSpaces, /"ui-state-disabled"/i, 'Неактивна', /""/i, 'Активна']);
+	getParam(html, result, 'cards.SMS', /<span[^>]+class=("[^"]*")[^>]*>[^<]*SMS-информирование/i, [replaceTagsAndSpaces, /"ui-state-disabled"/i, 'Неактивна', /""/i, 'Активна']);
 
-
-	if(isAvailable('cards.transactions'))
-		processCardTransactions(html, result);
+//  Временно не поддерживаем
+//	if(isAvailable('cards.transactions'))
+//		processCardTransactions(html, result);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -197,8 +207,9 @@ function processDeposits(html, result) {
 	if(!AnyBalance.isAvailable('deposits'))
 		return;
 
-	var table = getElement(html, /<div[^>]+mainForm:j_idt154_content[^>]*>/i);
-	var deposits = getElements(table, /<li[^>]+content-section[^>]*>/ig);
+	var section = getElement(html, /<div[^>]+deposit-list/i);
+	var table = getElement(section, /<ul[^>]+mainForm:j_idt\d+_list[^>]*>/i);
+	var deposits = getElements(table, /<li[^>]+"ui-datalist-item[^>]*>/ig);
 	if(!deposits.length) {
 		AnyBalance.trace(html);
 		AnyBalance.trace("Не удалось найти депозиты.");
@@ -210,14 +221,15 @@ function processDeposits(html, result) {
 	
 
 	for(var i=0; i < deposits.length; ++i){
-		var id = getParam(deposits[i], null, null, /Договор[^\d]*(\d+)/i, replaceTagsAndSpaces);
-		var num = getParam(deposits[i], null, null, /Договор[^\d]*(\d+)/i, replaceTagsAndSpaces);
-		var title = getParam(deposits[i], null, null, /<h1[^>]*>([\s\S]*?)<\/h1>/i, replaceTagsAndSpaces);
+	    var dep = deposits[i];
+		var id = getParam(dep, /Договор[^\d]*(\d+)/i, replaceTagsAndSpaces);
+		var num = getParam(dep, /Договор[^\d]*(\d+)/i, replaceTagsAndSpaces);
+		var title = getParam(dep, /<h1[^>]*>([\s\S]*?)<\/h1>/i, replaceTagsAndSpaces);
 		
 		var c = {__id: id, __name: title, num: num};
 		
 		if(__shouldProcess('deposits', c)) {
-			processDeposit(deposits[i], c, html);
+			processDeposit(dep, c, html);
 		}
 		
 		result.deposits.push(c);
@@ -259,9 +271,9 @@ function processDeposit(deposit, result, html) {
 	getParam(html, result, 'deposits.prolong', /Автопролонгация(?:[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
 	getParam(html, result, 'deposits.revocation', /Отзыв депозита(?:[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
 
-
-    if(isAvailable('deposits.transactions'))
-        processDepositTransactions(html, result);
+//  Временно не поддерживаем
+//    if(isAvailable('deposits.transactions'))
+//        processDepositTransactions(html, result);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -282,7 +294,7 @@ function processParams (html, product, prodRegExp) {
 		return value;
 	});
 
-	var actionForm = getParam(product ? product : html, null, null, prodRegExp);
+	var actionForm = getParam(product || html, prodRegExp);
 
 	params['javax.faces.partial.ajax'] = true;
 	params['javax.faces.partial.execute'] = '@all';

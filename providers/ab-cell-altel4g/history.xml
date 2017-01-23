@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="2.0" version="16" date="2017-01-23">
+	Исправлено получения срока действия 
+	</change>
 	<change major_version="2.0" version="15" date="2017-01-19">
 	- Поддержка изменений на сайте.
 	</change>

@@ -10,39 +10,6 @@ var g_headers = {
 	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
 };
 
-var g_baseurls = { 
-	  "Bashko" : "https://online.bm.ru",
-      "Habar" : "https://khb-online.mmbank.ru",
-      "Hanti" : "https://ekburg-online.mmbank.ru",
-      "Irkut" : "https://nsk-online.mmbank.ru",
-      "Kalin" : "https://spb-online.mmbank.ru",
-      "Kemer" : "https://nsk-online.mmbank.ru",
-      "Krasn" : "https://nsk-online.mmbank.ru",
-      "Kursk" : "https://online.bm.ru",
-      "Moskv" : "https://online.bm.ru",
-      "Nizheg" : "https://nnov-online.mmbank.ru",
-      "Novos" : "https://nsk-online.mmbank.ru",
-      "Omska" : "https://nsk-online.mmbank.ru",
-      "Orenb" : "https://nnov-online.mmbank.ru",
-      "Perms" : "https://nnov-online.mmbank.ru",
-      "Primo" : "https://khb-online.mmbank.ru",
-      "Rosto" : "https://online.bm.ru",
-      "Sahal" : "https://khb-online.mmbank.ru",
-      "Samar" : "https://nnov-online.mmbank.ru",
-      "Sankt" : "https://spb-online.mmbank.ru",
-      "Sever" : "https://online.bm.ru",
-      "Stavr" : "https://online.bm.ru",
-      "Sverd" : "https://ekburg-online.mmbank.ru",
-      "Tatar" : "https://online.bm.ru",
-      "Tul_s" : "https://online.bm.ru",
-      "Tyumen" : "https://ekburg-online.mmbank.ru",
-      "Volgo" : "https://online.bm.ru",
-      "Voron" : "https://online.bm.ru",
-      "Yamalo" : "https://ekburg-online.mmbank.ru",
-      "Yarosl" : "https://online.bm.ru",
-      "adige" : "https://krasnodar-online.mmbank.ru"
-};
-
 var g_baseurl = 'https://online.bm.ru';
 
 function isLoggedIn(html){
@@ -196,10 +163,6 @@ function login(){
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 
-	if(!prefs.region || !g_baseurls[prefs.region])
-		prefs.region = 'Moskv';
-
-	g_baseurl = g_baseurls[prefs.region];
 	AnyBalance.trace('Region is ' + prefs.region + ': ' + g_baseurl);
 
 	var html = AnyBalance.requestGet(g_baseurl + '/scoring/protected/welcome.jsf', g_headers);

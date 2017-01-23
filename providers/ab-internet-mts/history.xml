@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="122" date="2017-01-23">
+	- Исправлены Ростов и Вологда
+	</change>
 	<change version="121" date="2017-01-10">
 	Исправлен Северодвинск
 	</change>

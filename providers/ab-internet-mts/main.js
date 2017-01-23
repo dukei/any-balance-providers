@@ -104,8 +104,8 @@ function getRostov() {
   getParam(data.session.user.client, result, 'username');
   getParam(data.session.user.contrNum, result, 'agreement');
   getParam(data.session.user.personalAccount, result, 'license');
-  getParam(data.session.user.balance, result, 'balance', null, null, parseBalance);
-  getParam(data.session.user.feeDiscount, result, 'abon', null, null, parseBalance);
+  getParam(data.session.user.balance.value, result, 'balance', null, null, parseBalance);
+  getParam(data.session.user.balance.feeDiscount, result, 'abon', null, null, parseBalance);
 
   for(var i=0; i<data.resources.length; ++i){
   	var r = data.resources[i];
@@ -383,7 +383,7 @@ function getSdv() {
 }
 
 function getVologda() {
-  newTypicalLanBillingInetTv('https://lk.vologda.mts.ru/index.php');
+  newTypicalLanBillingInetTv_1('https://lk.vologda.mts.ru/index.php');
 }
 
 function getIzhevsk() {

@@ -53,7 +53,8 @@ function main() {
 	
 	var result = {success: true};
 	
-	getParam(html, result, 'balance', /balance" href="\/mypoints"[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
+	getParam(getElement(html, /<[^>]+user-block_text-bonuses/i), result, 'balance', null, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, '__tariff', /<[^>]+user-block_text[^>]*>([\s\S]*?),/i, replaceTagsAndSpaces);
 	
 	AnyBalance.setResult(result);
 }

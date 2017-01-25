@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="3">ab-municipal-ensb-tomsk</id>
+	<id version="4">ab-municipal-ensb-tomsk</id>
 	<api flags="no_browser"/>
 	<name>Томскэнергосбыт</name>
 	<description html="true"><![CDATA[
@@ -9,7 +9,6 @@
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>
-		<module id="library"/>
 		<module id="parsers/pdf-to-text"/>
 	</depends>
 	<files>

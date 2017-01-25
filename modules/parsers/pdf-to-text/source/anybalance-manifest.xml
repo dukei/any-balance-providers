@@ -12,8 +12,8 @@
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>
-		<module id="library"/>
 		<module id="crypt/cryptojs/base64"/>
+		<module id="library"/>
 	</depends>
 	<files>
 		<js>pdf-to-text.js</js>

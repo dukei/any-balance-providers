@@ -41,7 +41,13 @@ function main() {
     
     html = AnyBalance.requestGet(baseurl + 'profile/', g_headers);
 
-    var actID = getParam(html, null, null, /name="actID"[^>]*value="([^"]+)/i, replaceHtmlEntities);
+    var invoice_form = getElement(html, /<form[^>]+id="new_report"/i);
+    if(!invoice_form){
+        AnyBalance.trace(html);
+    	throw new AnyBalance.Error('Не удалось найти форму получения квитанции!');
+    }
+
+    var actID = getParam(invoice_form, null, null, /name="actID"[^>]*value="([^"]+)/i, replaceHtmlEntities);
     
     var today = new Date();
     var lastMonth = new Date(today.getFullYear(), today.getMonth()-1, 15);

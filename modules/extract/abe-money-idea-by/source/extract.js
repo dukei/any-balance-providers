@@ -67,7 +67,7 @@ function processAccounts(html, result) {
 		return;
 
 	var section = getElement(html, /<div[^>]+card-list/i);
-	var table = getElement(section, /<ul[^>]+mainForm:j_idt\d+_list[^>]*>/i);
+	var table = getElement(section, /<ul[^>]+mainForm:cardBlock_list[^>]*>/i);
 	var accounts = getElements(table, /<li[^>]+"ui-datalist-item[^>]*>/ig);
 	if(!accounts.length) {
 		AnyBalance.trace(html);
@@ -132,7 +132,7 @@ function processCards(html, result) {
 		return;
 
 	var section = getElement(html, /<div[^>]+card-list/i);
-	var table = getElement(section, /<ul[^>]+mainForm:j_idt\d+_list[^>]*>/i);
+	var table = getElement(section, /<ul[^>]+mainForm:cardBlock_list[^>]*>/i);
 	//Я так поняла, что там к каждому счёту своя карта. В ЛК нет примера отдельных карт
 	var accs = getElements(table, /<li[^>]+"ui-datalist-item[^>]*>/ig);
 	if(!accs.length) {
@@ -208,7 +208,7 @@ function processDeposits(html, result) {
 		return;
 
 	var section = getElement(html, /<div[^>]+deposit-list/i);
-	var table = getElement(section, /<ul[^>]+mainForm:j_idt\d+_list[^>]*>/i);
+	var table = getElement(section, /<ul[^>]+mainForm:depositBlock_list[^>]*>/i);
 	var deposits = getElements(table, /<li[^>]+"ui-datalist-item[^>]*>/ig);
 	if(!deposits.length) {
 		AnyBalance.trace(html);

@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="26" major_version="3.0">ab-cell-skylink</id>
+	<id version="25" major_version="3.0">ab-cell-skylink</id>
 	<name>Skylink</name>
 	<api flags="no_browser"/>
 	<description html="true"><![CDATA[
@@ -8,7 +8,7 @@
 	<p>Информация берется из личных кабинетов (разных для каждого региона).</p>   
 	<br>
 	<p>Поддерживаются регионы:</p>
-	<p>Москва (http://www.skypoint.ru, https://mycdma.skylink.ru) - баланс, ФИО, лицевой счет, начисления по договору за период;</p>  
+	<p>Москва (https://my.skylink.ru) - баланс, ФИО, номер, остатки трафика/минут;</p>  
 	<p>Алтайский край, Владимир, Волгоград, Воронеж, Екатеринбург, Калуга, Кемерово, Киров, Нижний Новгород, Новосибирск, Омск, Ростов, Ульяновск (http://www2.skypoint.ru) - баланс, трафик (автор Robert Khaliullov <ulrobix@gmail.com>);</p> 
 	<p>Краснодарский край и республика Адыгея (http://stat.kuban.skypoint.ru) - баланс, трафик, льготный трафик, ФИО;</p>
 	<p>Вологда, Калининград, Карелия, Мурманск, Новгород Великий, Псков, Санкт-Петербург (http://app.spb.skylink.ru:7772/internetBalance) - баланс, дневной трафик, ФИО, лицевой счет, статус, начисления по договору за период;</p> 

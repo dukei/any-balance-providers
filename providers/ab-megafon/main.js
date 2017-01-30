@@ -2110,7 +2110,7 @@ function megafonLKRemainders(filial, html, result){
 					else if(/ЕВРОПА/i.test(name))
 						getParam(left, result, 'internet_roam_europe', null, replaceTagsAndSpaces, parseTraffic);
 				}else if(/Автопродление/i.test(name)) {
-					getParam(left, result, 'remainders.internet_auto_prolong', null, replaceTagsAndSpaces, parseTraffic);
+					getParam(left, result, 'internet_auto_prolong', null, replaceTagsAndSpaces, parseTraffic);
 				} else {
 					var suffix = '';
 					if(/ноч/i.test(name)) suffix = '_night';

@@ -925,7 +925,7 @@ function getOrel() {
 }
 
 function getPiter() {
-  newTypicalLanBillingInetTv('https://lk.spb.mts.ru/index.php');
+  newTypicalLanBillingInetTv_1('https://lk.spb.mts.ru/index.php');
 }
 
 function getBalakovo() {

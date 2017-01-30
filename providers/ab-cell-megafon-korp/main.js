@@ -44,7 +44,7 @@ function main() {
     AB.checkEmpty(prefs.password, 'Введите пароль!');
 
     AnyBalance.setDefaultCharset('utf-8');
-    var baseurl = 'https://' + (prefs.region || 'center') + '.b2blk.megafon.ru/';
+    var baseurl = 'https://kvk-b2blk.megafon.ru/';//'https://' + (prefs.region || 'center') + '.b2blk.megafon.ru/';
 
     var html = AnyBalance.requestGet(baseurl + 'sc_cp_apps/login', g_headers);
 

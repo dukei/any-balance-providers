@@ -1,11 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-internet-volgaspot</id>
+	<id version="3">ab-internet-volgaspot</id>
 	<api flags="no_browser"/>
 	<name>Volgaspot</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе интернет-провайдера <a href="http://volgaspot.ru/">Volgaspot</a></p>
-	<p>Информация берется из личного кабинета http://volgaspot.ru/site/login</p>
+	<p>Информация берется из личного кабинета http://volgaspot.ru/login</p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>

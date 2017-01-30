@@ -30,7 +30,7 @@ function main() {
 		'f_password': prefs.password
 	}, AB.addHeaders({Referer: baseurl}));
 	
-	if (!/logout/i.test(html)) {
+	if (!/action=exit/i.test(html)) {
 		var error = AB.getParam(html, null, null, /alertsBlock\.create\(["']([^"']+)/i, AB.replaceTagsAndSpaces);
 		if (error)
 			throw new AnyBalance.Error(error, null, /Неправильно введен пароль/i.test(error));
@@ -44,7 +44,7 @@ function main() {
 	if(isAvailable('balance')) {
 		html = AnyBalance.requestGet(baseurl + 'staff/balance', g_headers);
 		
-		AB.getParam(html, result, 'balance', /Свободных средств(?:[^>]*>){2}([\s\S]*?)<\//i, AB.replaceTagsAndSpaces, AB.parseBalance);
+		AB.getParam(html, result, 'balance', /Свободных\s+средств([\s\S]*?)<\//i, AB.replaceTagsAndSpaces, AB.parseBalance);
 	}
 	
 	AB.getParam(html, result, 'fio', /class="ob-lk__name[^>]*>([\s\S]*?)<\//i, AB.replaceTagsAndSpaces);

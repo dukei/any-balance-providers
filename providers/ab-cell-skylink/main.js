@@ -12,11 +12,22 @@ function main(){
     var region = prefs.region || 'moscow';
     var regionFunc = g_regions[region] || g_regions.moscow;
 
-    AnyBalance.trace("Entering region: " + region);
-    regionFunc();
+    try {
+    	AnyBalance.trace("Entering region: " + region);
+        regionFunc();
+    } catch(e) {
+        if (!e.fatal) {
+            AnyBalance.trace('Старый логин не сработал (' + e.message + '), пробуем на mycdma.skylink');
+            mainMySkylink(prefs);
+        } else {
+            throw e;
+        }
+    }
 }
 
-function mainMySkylink(prefs){
+function mainMySkylink(){
+	var prefs = AnyBalance.getPreferences();
+
     AnyBalance.setDefaultCharset('utf-8');
     var baseurl = 'https://mycdma.skylink.ru/';
     var headers = {
@@ -223,7 +234,9 @@ function mainMoscow(){
     }
 }
 
-function mainMoscowSP(prefs){
+function mainMoscowSP(){
+	var prefs = AnyBalance.getPreferences();
+
     var baseurl = "https://www.skypoint.ru";
     AnyBalance.setDefaultCharset('utf-8');
 

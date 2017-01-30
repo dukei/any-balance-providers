@@ -236,7 +236,7 @@ function processRemainders(html, result){
         html = AnyBalance.requestGet(baseurl + "main/discounts", g_headers);
         AnyBalance.trace('Got discounts: ' + html);
         json = JSON.parse(html);
-        var arr = [json.discountsIncluded, json.discountsNotIncluded/** не ясно, для чего это включено */];
+        var arr = [json.discountsIncluded, json.discountsNotIncluded/** не ясно, для чего это включено */, json.discountsRollover];
         for (var k = 0; k < arr.length; ++k) {
             var discounts = arr[k];
             for (var i = 0; discounts && i < discounts.length; ++i) {

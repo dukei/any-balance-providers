@@ -1,18 +1,20 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-bonus-sportmaster-ua</id>
+	<id version="3">ab-bonus-sportmaster-ua</id>
 	<name>Спортмастер (Украина)</name>
 	<api flags="no_browser|captcha"/>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию по бонусной карте "Спортмастер-Украина".</p>
+	<p>Предоставляет информацию по бонусной карте "Спортмастер-Украина" http://www.sportmaster.ua/</p>
 	<p>Поддерживается получение данных только по номеру карты</p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
 		<history>history.xml</history>
-		<js>library.js</js>
 		<js>main.js</js>
 	</files>
 	<counters>

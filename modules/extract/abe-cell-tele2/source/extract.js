@@ -12,8 +12,13 @@ var g_headers = {
 
 var baseurl = "https://my.tele2.ru/";
 var baseurlLogin = 'https://login.tele2.ru/ssotele2/';
+var baseurlLoginIndex, baseurlLoginPost;
+var g_operatorName = 'Теле2';
 
 function login() {
+	var _baseurlLoginIndex = baseurlLoginIndex || baseurlLogin + 'wap/auth/';
+	var _baseurlLoginPost = baseurlLoginPost || baseurlLogin + 'wap/auth/submitLoginAndPassword';
+
     function retryToEnter(html){
         if (AnyBalance.getLastStatusCode() > 400) {
             // Прежде, чем переходить, надо сохранить ошибку, на всякий
@@ -28,7 +33,7 @@ function login() {
                     throw new AnyBalance.Error('Новый кабинет: ' + error);
 
                 AnyBalance.trace(html);
-                throw new AnyBalance.Error('Новый личный кабинет Теле2 временно недоступен. Попробуйте позже.');
+                throw new AnyBalance.Error("Новый личный кабинет ${g_operatorName} временно недоступен. Попробуйте позже.");
             }
         }
         return html;
@@ -47,23 +52,29 @@ function login() {
         if(!prefs.password){
             html = enterBySms();
         }else {
-            html = AnyBalance.requestGet(baseurlLogin + 'wap/auth/', g_headers);
+            html = AnyBalance.requestGet(_baseurlLoginIndex, g_headers);
             if (!html || AnyBalance.getLastStatusCode() > 400) {
                 AnyBalance.trace(html);
                 throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
             }
 
-            var token = getParam(html, null, null, /<input[^>]+value="([^"]+)"[^>]*name="_csrf"/i, replaceTagsAndSpaces);
-            if (!token) {
+            var form = getElement(html, /<form[^>]+authForm/i);
+            if (!form) {
                 AnyBalance.trace(html);
                 throw new AnyBalance.Error('Не удалось найти форму входа, сайт изменен?');
             }
+			var params = AB.createFormParams(form, function(params, str, name, value) {
+				if (/number|msisdn/i.test(name)) {
+					return prefs.login;
+				} else if (name == 'password') {
+					return prefs.password;
+				}
 
-            html = AnyBalance.requestPost(baseurlLogin + 'wap/auth/submitLoginAndPassword', {
-                pNumber: prefs.login,
-                password: prefs.password,
-                '_csrf': token
-            }, g_headers);
+				return value;
+			});
+
+
+            html = AnyBalance.requestPost(_baseurlLoginPost, params, addHeaders({Referer: baseurlLoginIndex}));
         }
 
         html = retryToEnter(html);
@@ -73,7 +84,7 @@ function login() {
 
 	if (!/\w+\/logout/i.test(html)) {
 		if (/<input[^>]+id\s*=\s*"smsCode"/i.test(html)) throw new AnyBalance.Error(
-			'У вас настроена двухфакторная авторизация с вводом SMS кода при входе в личный кабинет Теле2. Для работы провайдера требуется запрос СМС кода для входа в ЛК отключить. Инструкцию по отключению см. в описании провайдера.',
+			"У вас настроена двухфакторная авторизация с вводом SMS кода при входе в личный кабинет ${g_operatorName}. Для работы провайдера требуется запрос СМС кода для входа в ЛК отключить. Инструкцию по отключению см. в описании провайдера.",
 			null, true);
 		var error = sumParam(html, null, null, /<(?:div|section)[^>]+class="[^"]*\berror\b[^>]*>([\s\S]*?)(?:<\/section>|<\/div>|<div)/gi, replaceTagsAndSpaces, null, aggregate_join) || '';
 		if (error)
@@ -156,7 +167,7 @@ function enterBySms(){
                         return true; //Ещё раз запустить handleResult
                     }
                 } else if(json.forbiddenBranch){
-                    throw new AnyBalance.Error('Этот номер не поддерживается личным кабинетом Теле2. Убедитесь, что это действительно номер Теле2.', null, true);
+                    throw new AnyBalance.Error("Этот номер не поддерживается личным кабинетом ${g_operatorName}. Убедитесь, что это действительно номер ${g_operatorName}.", null, true);
                 } else {
                     AnyBalance.trace(html);
                     throw new AnyBalance.Error('Вход в личный кабинет не подтвержден на телефоне пользователя. Чтобы войти, отправьте 1 в ответ на запрос на телефоне или дождитесь SMS кода и введите его.');
@@ -174,7 +185,7 @@ function enterBySms(){
         html = AnyBalance.requestGet(baseurlLogin + 'wap/auth/requestSms', addHeaders({Referer: AnyBalance.getLastUrl()}));
         token = getParam(html, null, null, /<input[^>]+value="([^"]+)"[^>]*name="_csrf"/i, replaceTagsAndSpaces);
 
-        var code = AnyBalance.retrieveCode("Вам отправлено SMS-сообщение с кодом для входа в личный кабинет Теле2. Введите код из SMS", null, {inputType: 'number'});
+        var code = AnyBalance.retrieveCode("Вам отправлено SMS-сообщение с кодом для входа в личный кабинет ${g_operatorName}. Введите код из SMS", null, {inputType: 'number'});
         html = AnyBalance.requestPost(baseurlLogin + 'wap/auth/submitSmsCode', {
             _csrf: token,
             smsCode: code

@@ -2,12 +2,6 @@
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 */
 
-var g_headers = {
-	'Content-Type': 'text/xml; charset=utf-8',
-	'User-Agent': 'Mozilla/4.0 (compatible; MSIE 6.0; MS Web Services Client Protocol 2.0.50727.5472)',
-	'Connection': 'keep-alive',
-};
-
 function main(){
     var prefs = AnyBalance.getPreferences();
 
@@ -19,18 +13,7 @@ function main(){
     var regionFunc = g_regions[region] || g_regions.moscow;
 
     AnyBalance.trace("Entering region: " + region);
-
-    try {
-        AnyBalance.trace('Пробуем войти по-старому');
-        regionFunc();
-    } catch(e) {
-        if (!e.fatal) {
-            AnyBalance.trace('Старый логин не сработал, пробуем на mycdma.skylink');
-            mainMySkylink(prefs);
-        } else {
-            throw e;
-        }
-    }
+    regionFunc();
 }
 
 function mainMySkylink(prefs){
@@ -217,7 +200,7 @@ var g_regions = {
     omsk: mainUln,
     pskov: mainSpb,
     rostov: mainUln,
-    moscow: mainMoscow,
+    moscow: mainSkylinkTele2,
     kaluga: mainUln,
     uln: mainUln,
     kuban: mainKuban,
@@ -462,4 +445,72 @@ function mainRyaz(){
     getParam(html, result, 'traffic', /Использовано интернет за текущий месяц([\s\S]*?)<br/i, replaceTagsAndSpaces, parseTraffic);
     
     AnyBalance.setResult(result);
+}
+
+function mainSkylinkTele2(){
+	var prefs = AnyBalance.getPreferences();
+	checkEmpty(prefs.password, 'Введите пароль!');
+
+	baseurl = "https://my.skylink.ru/";
+	baseurlLogin = 'https://login.skylink.ru/ssotele2/';
+	baseurlLoginIndex = baseurlLogin + 'wap/auth/modem/';
+	baseurlLoginPost = baseurlLoginIndex;
+	g_operatorName = 'SkyLink';
+
+	var html = login();
+
+	var countersTable = {
+		common: {
+			"balance": "balance",
+			"__tariff": "tariff",
+			"min_left": "remainders.min_left",
+			"traffic": "remainders.traffic_left",
+			"sms_left": "remainders.sms_left",
+			"mms_left": "remainders.mms_left",
+			"min_till": "remainders.min_till",
+			"traffic_till": "remainders.traffic_till",
+			"sms_till": "remainders.sms_till",
+			"mms_till": "remainders.mms_till",
+			"min_used": "remainders.min_used",
+			"traffic_used": "remainders.traffic_used",
+			"sms_used": "remainders.sms_used",
+			"mms_used": "remainders.mms_used",
+			"userNum": "info.mphone",
+			"userName": "info.fio",
+		}
+	};
+
+	function shouldProcess(counter, info){
+		return true;
+	}
+
+    var adapter = new NAdapter(countersTable.common, shouldProcess);
+	
+    adapter.processInfo = adapter.envelope(processInfo);
+    adapter.processRemainders = adapter.envelope(processRemainders);
+    adapter.processPayments = adapter.envelope(processPayments);
+    adapter.processBalance = adapter.envelope(processBalance);
+
+	var result = {success: true};
+    adapter.processInfo(html, result);
+    adapter.processBalance(html, result);
+    adapter.processRemainders(html, result);
+    adapter.processPayments(html, result);
+
+    var newresult = adapter.convert(result);
+	
+	if(result.payments) {
+		for (var i = 0; i < result.payments.length; ++i) {
+			var p = result.payments[i];
+
+			sumParam(fmtDate(new Date(p.date), '.') + ' ' + p.sum, newresult, 'history', null, null, null, aggregate_join);
+			if (/^-/.test(p.sum)) {
+				sumParam(p.sum, newresult, 'history_out', null, null, null, aggregate_sum);
+			} else {
+				sumParam(p.sum, newresult, 'history_income', null, null, null, aggregate_sum);
+			}
+		}
+	}
+    
+    AnyBalance.setResult(newresult);
 }

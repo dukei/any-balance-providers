@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="25" major_version="3.0">ab-cell-skylink</id>
+	<id version="26" major_version="3.0">ab-cell-skylink</id>
 	<name>Skylink</name>
 	<api flags="no_browser"/>
 	<description html="true"><![CDATA[
@@ -23,7 +23,8 @@
 	]]></instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
     <depends>
-   		<module id="library"/>
+   		<module id="extract/abe-cell-tele2"/>
+   		<module id="nadapter"/>
    		<module id="crypt/cryptojs/sha256"/>
    		<module id="crypt/cryptojs/base64"/>
    	</depends>

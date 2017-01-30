@@ -10,6 +10,8 @@ var g_headers = {
 	'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.62 Safari/537.36',
 };
 
+function getDecValue(e,t){return GibberishAES.dec(e,t)}
+
 function main(){
     var prefs = AnyBalance.getPreferences();
     AnyBalance.setDefaultCharset('utf-8');    
@@ -17,34 +19,47 @@ function main(){
     var baseurl = 'https://www.hotvoip.com/';
     
     var html = AnyBalance.requestGet(baseurl + 'login', g_headers);
-	
-    var matches = /data:\s*[^<]*update_id=&([0-9a-f]{32})=([0-9a-f]{32})/i.exec(html);
-    if(!matches)
-        throw new AnyBalance.Error("Не удаётся найти идентификатор сессии! Свяжитесь с автором провайдера.");
+    var formid = getParam(html, /getDecValue\s*\([^)]*\)/, [/^/, 'return '], safeEval);
+    AnyBalance.trace('Active form id: ' + formid);
+    if(!formid){
+    	AnyBalance.trace(html);
+    	throw new AnyBalance.Error("Не удаётся найти идентификатор сессии! Свяжитесь с автором провайдера.");
+    }
+    	
+    var form = getElementById(html, formid);
+	var params = AB.createFormParams(form, function(params, str, name, value) {
+		if (/username/i.test(name)) {
+			return prefs.login;
+		} else if (/password/i.test(name)) {
+			return prefs.password;
+		} else if(/usercode/i.test(name)){
+			AnyBalance.trace('Потребовалась капча');
+			var imgurl = joinUrl(baseurl, getParam(form, /<img[^>]+captcha_img[^>]*src="([^"]*)/i, replaceHtmlEntities));
+			var img = AnyBalance.requestGet(imgurl, addHeaders({Referer: baseurl}));
+			return AnyBalance.retrieveCode('Please enter security code', img);
+		}
 
-    var params = {
-		'login[username]':prefs.login,
-		'login[password]':prefs.password,
-        page_referrer: 'login'
-    };
-    params[matches[1]] = matches[2];
+		return value;
+	});
 
-    //var info = AnyBalance.requestPost(baseurl + "login", params);
 	var info = AnyBalance.requestPost(baseurl + 'login', params, addHeaders({Referer: baseurl + 'login'})); 
-	
-    var error = getParam(info, null, null, /<div class="row_error_message error">([\s\S]*?)<\/div>/i, [/<.*?>/g, '', /^\s*|\s*$/g, '']);
-    if(error)
-        throw new AnyBalance.Error(error);
-
-    error = getParam(info, null, null, /(service is temporarily unavailable)/i);
-    if(error){
+    if(/(service is temporarily unavailable)/i.test(info)){
         //Какой-то глюк с 503 ошибкой, а баланс вроде бы выдаётся по другому адресу.
         info = AnyBalance.requestGet(baseurl + "buy_credit2/");
     }
 
-    error = getParam(info, null, null, /(service is temporarily unavailable)/i);
-    if(error) //Попытка не помогла, возвращаем ошибку
-        throw new AnyBalance.Error("К сожалению, сайт временно недоступен. Попробуйте позднее."); 
+	if(!/logout/i.test(info)){
+        var error = getElement(info, /<div[^>]+error/i, replaceTagsAndSpaces);
+        if(error)
+            throw new AnyBalance.Error(error, null, /username|password/i.test(error));
+        
+        error = getParam(info, /(service is temporarily unavailable)/i);
+        if(error) //Попытка не помогла, возвращаем ошибку
+            throw new AnyBalance.Error("К сожалению, сайт временно недоступен. Попробуйте позднее."); 
+
+        AnyBalance.trace(html);
+        throw new AnyBalance.Error('Сan not login. Is the site changed?');
+    }
      
     var result = {
         success: true
@@ -52,10 +67,10 @@ function main(){
 
     var matches;
 
-    getParam(info, result, 'balance', /Your credit:[\s\S]*?<span[^>]*>[^<]*?(-?\d[\d\s\.,]*)/i, replaceFloat, parseFloat);
-    getParam(info, result, 'freedays', /Freedays:[\s\S]*?<span[^>]*>(\d+)/i, replaceFloat, parseFloat);
+    getParam(info, result, 'balance', /Your credit:[\s\S]*?<span[^>]*>[^<]*?(-?\d[\d\s\.,]*)/i, replaceTagsAndSpaces, parseBalance);
+    getParam(info, result, 'freedays', /Freedays:[\s\S]*?<span[^>]*>(\d+)/i, replaceTagsAndSpaces, parseBalance);
     getParam(info, result, 'autorecharge', /Automatic recharge:([\s\S]*?)</i, replaceTagsAndSpaces);
-    getParam(info, result, 'notifications', /(\d+)\s*Notifications/i, replaceFloat, parseFloat);
+    getParam(info, result, 'notifications', /(\d+)\s*Notification/i, replaceTagsAndSpaces, parseBalance);
 
     result.__tariff = prefs.login;
 		

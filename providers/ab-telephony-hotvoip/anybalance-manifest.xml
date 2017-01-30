@@ -1,7 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="2">ab-telephony-hotvoip</id>
+	<id version="3">ab-telephony-hotvoip</id>
 	<name>Hotvoip.com</name>
 	<description>
 Получает данные для провайдера IP-телефонии Hotvoip.com (http://www.hotvoip.com/)
@@ -9,10 +9,13 @@
 Личный кабинет находится по адресу: https://www.hotvoip.com/buy_credit2/
 	</description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
+		<js>gibberish-aes-1.0.0.min.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>

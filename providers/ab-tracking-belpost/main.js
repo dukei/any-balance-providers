@@ -11,9 +11,34 @@ var g_headers = {
   'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
 };
 
+function mergeSorted(a, b, key) {
+  var answer = new Array(a.length + b.length), i = 0, j = 0, k = 0;
+  while (i < a.length && j < b.length) {
+    if (a[i][key] < b[j][key]) {
+        answer[k] = a[i];
+        i++;
+    }else {
+        answer[k] = b[j];
+        j++;
+    }
+    k++;
+  }
+  while (i < a.length) {
+    answer[k] = a[i];
+    i++;
+    k++;
+  }
+  while (j < b.length) {
+    answer[k] = b[j];
+    j++;
+    k++;
+  }
+  return answer;
+}
+
 function main() {
   var prefs = AnyBalance.getPreferences();
-  var baseurl = 'http://declaration.belpost.by/searchRu.aspx';
+  var baseurl = 'http://webservices.belpost.by/searchRu.aspx';
   AnyBalance.setDefaultCharset('utf-8');
 
   AB.checkEmpty(prefs.cargo, 'Введите номер отправления!');
@@ -42,22 +67,59 @@ function main() {
     success: true
   };
 
-  var infoTable = AB.getElement(html, /<table[^>]*id="[^"]*info[^"]*"[^>]*>/i);
-  var trArray = AB.sumParam(infoTable, null, null, /<tr[^>]*>([\s\S]*?)<\/tr>/gi);
-  var fresh = trArray[trArray.length - 1];
+  var infoTables = AB.getElements(html, /<table[^>]*id="[^"]*info[^"]*"[^>]*>/ig);
+  var colsDefInter = {
+		__date: {
+			re: /Дата/i,
+			result_func: parseDateISO,
+		},
+		__descr: {
+            re: /Событие/i,
+            result_func: null,
+        },
+		__office: {
+            re: /Офис/i,
+            result_func: null,
+        },
+	};
 
-  AB.getParam(fresh, result, 'date', /(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, AB.replaceTagsAndSpaces, AB.parseDateISO);
-  AB.getParam(fresh, result, 'status', /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, AB.replaceTagsAndSpaces);
-  AB.getParam(fresh, result, 'post_office', /(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, AB.replaceTagsAndSpaces);
+  var colsDefInner = {
+		__date: {
+			re: /Дата/i,
+			result_func: parseDate,
+		},
+		__descr: {
+            re: /Событие/i,
+            result_process: function(path, td, result){
+                td = replaceAll(td, replaceTagsAndSpaces);
+                getParam(td, result, '__descr', /^([\s\S]*?)[^)]*$/i);
+                getParam(td, result, '__office', /[^)]*$/i);
+            }
+        },
+	};
+
+  var trArray = AB.sumParam(infoTables, null, null, /<tr[^>]*>([\s\S]*?)<\/tr>/gi);
+  var inters = [], inners = [];
+  if(infoTables[0])
+  	processTable(infoTables[0], inters, '', colsDefInter);
+  if(infoTables[1])
+  	processTable(infoTables[1], inners, '', colsDefInner);
+
+  var events = mergeSorted(inters, inners, '__date');
+  var fresh = events[events.length - 1];
+
+  AB.getParam(fresh.__date, result, 'date');
+  AB.getParam(fresh.__descr, result, 'status');
+  AB.getParam(fresh.__office, result, 'post_office');
 
   if (AnyBalance.isAvailable('fulltext')) {
     var
       date, office, status, fullInfo = [];
 
-    for (var i = trArray.length - 1; i > 0; i--) {
-      date = AB.getParam(trArray[i], null, null, /(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, AB.replaceTagsAndSpaces);
-      status = AB.getParam(trArray[i], null, null, /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, AB.replaceTagsAndSpaces);
-      office = AB.getParam(trArray[i], null, null, /(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, AB.replaceTagsAndSpaces);
+    for (var i = events.length - 1; i >= 0; i--) {
+      date = getFormattedDate({format: 'DD/MM/YYYY'}, new Date(events[i].__date));
+      status = events[i].__descr;
+      office = events[i].__office;
       fullInfo.push('Дата: <b>' + date + '</b> ' + 'Cобытие: ' + status + '. ' + 'Офис: ' + office);
     }
     AB.getParam(fullInfo.join('<br/>'), result, 'fulltext');

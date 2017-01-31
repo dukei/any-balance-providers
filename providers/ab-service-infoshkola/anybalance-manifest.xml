@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id version="5">ab-service-infoshkola</id>
+	<id version="6">ab-service-infoshkola</id>
 	<name>Инфошкола</name>
 	<description>
 	Получает данные для провайдера Инфошкола (http://www.infoshkola.net/)
@@ -9,10 +9,12 @@
 	Личный кабинет находится по адресу: http://www.infoshkola.net/sdpupil/index.php?page=personal
 	</description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>

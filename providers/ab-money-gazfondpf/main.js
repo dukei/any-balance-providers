@@ -54,17 +54,9 @@ function main() {
 
 	var result = {success: true};
 	
-	var json = getParam(html, null, null, /<script[^>]+gazfond-data[^>]*>([\s\S]*?)<\/script>/i, replaceHtmlEntities, getJson);
-
-	var contract = json.contracts[0];
-	if(!contract){
-		AnyBalance.trace(JSON.stringify(json));
-		throw new AnyBalance.Error('Не найдено ни одного договора!');
-	}
-		
-	getParam(contract.sum, result, 'balance');
-	getParam(contract.num + ' от ' + contract.signdate, result, '__tariff');
-	getParam(contract.num, result, 'dogovor');
+	getParam(html, result, 'balance', /<p[^>]+contract-slider-item-sum[^>]*>([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, '__tariff', /<a[^>]+link-settings[^>]*>([\s\S]*?)<\/a>/i, replaceTagsAndSpaces);
+	getParam(html, result, 'dogovor', /<div[^>]*contract-slider-item-ico[\s\S]*?<p[^>]*>([\s\S]*?)<\/p>/i, replaceTagsAndSpaces);
 	
 	AnyBalance.setResult(result);
 }

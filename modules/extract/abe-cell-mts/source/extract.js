@@ -974,8 +974,11 @@ function getPasswordBySMS(login) {
     var html = AnyBalance.requestGet(url, g_headers);
 
     var img = getParam(html, 
-    	[/<img[^>]+id="kaptchaImage"[^>]*src="data:image\/\w+;base64,([^"]+)/i,
-    	/<img[^>]+src="data:image\/\w+;base64,([^"]+)[^>]*id="kaptchaImage"/i], replaceHtmlEntities);
+    	/#captcha-wrapper\s*\{[^}]*background-image:\s*url\(\s*['"]data:image\/\w+;base64,([^'"]*)/i, replaceHtmlEntities);
+    if(!img){
+    	AnyBalance.trace(html);
+    	throw new AnyBalance.Error('Не удалось получить капчу. Сайт изменен?');
+    }
 
     var code = AnyBalance.retrieveCode('Для получения пароля к личному кабинету по SMS символы, которые вы видите на картинке.', img, {time: 300000});
     var form = getParam(html, null, null, /<form[^>]+name="Login"[^>]*>([\s\S]*?)<\/form>/i);

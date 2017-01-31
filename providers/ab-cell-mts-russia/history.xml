@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="4.1" version="150" date="2017-01-31">
+	Исправление капчи при помощи в получении пароля
+	</change>
 	<change major_version="4.1" version="149" date="2017-01-31">
 	- Исправление показа капчи для получения нового пароля
 	</change>

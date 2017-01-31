@@ -371,7 +371,7 @@ function getPnz() {
 }
 
 function getNnovTv() {
-  newTypicalLanBillingInetTv('https://lktvnn.pv.mts.ru/index.php');
+  newTypicalLanBillingInetTv_1('https://lktvnn.pv.mts.ru/index.php');
 }
 
 function getVnov() {

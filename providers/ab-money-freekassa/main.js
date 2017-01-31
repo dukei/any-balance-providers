@@ -32,7 +32,7 @@ function main() {
 	}, addHeaders({Referer: baseurl + 'merchant/cabinet/login.php'}));
 	
 	if (!/logout/i.test(html)) {
-		var error = getParam(html, null, null, /font\scolor="#FF0000"\s*[^>]*>([\s\S]*?)<\/font>/i, replaceTagsAndSpaces, html_entity_decode);
+		var error = getParam(html, null, null, /font\scolor="#FF0000"\s*[^>]*>([\s\S]*?)<\/font>/i, replaceTagsAndSpaces);
 		if (error)
 			throw new AnyBalance.Error(error, null, /не найден/i.test(error));
 		
@@ -43,7 +43,7 @@ function main() {
 	var result = {success: true};
 	
 	getParam(html, result, 'balance', /Ваш баланс(?:[^>]){1}([^<]+)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'account_id', /ID:([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'account_id', /ID:([^<,\s]+)/i, replaceTagsAndSpaces);
 	
 	AnyBalance.setResult(result);
 }

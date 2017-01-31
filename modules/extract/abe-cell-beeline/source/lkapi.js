@@ -262,7 +262,7 @@ function processApiRemaindersPrepaid(result){
 		
 		// Минуты
 		if(curr.unit == 'SECONDS') {
-			if(/на междугородные номера/i.test(curr.restName || curr.accName)){
+			if(/на междугородные номера|на междугородные звонки/i.test(curr.restName || curr.accName)){
 				sumParam(curr.rest + ' ' + curr.unit, remainders, 'remainders.min_left_2', null, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
 			} else if(isLocalMin(curr.restName || curr.accName)) { 
 				sumParam(curr.rest + ' ' + curr.unit, remainders, 'remainders.min_local', null, replaceTagsAndSpaces, parseMinutes, aggregate_sum);

@@ -973,7 +973,10 @@ function getPasswordBySMS(login) {
     var url = g_baseurlLogin + '/amserver/UI/Login?service=smspassword&srcsvc=lk&goto=http%3A%2F%2Flk.ssl.mts.ru%2F';
     var html = AnyBalance.requestGet(url, g_headers);
 
-    var img = getParam(html, null, null, /<img[^>]+id="kaptchaImage"[^>]*src="data:image\/\w+;base64,([^"]+)/i, replaceHtmlEntities);
+    var img = getParam(html, 
+    	[/<img[^>]+id="kaptchaImage"[^>]*src="data:image\/\w+;base64,([^"]+)/i,
+    	/<img[^>]+src="data:image\/\w+;base64,([^"]+)[^>]*id="kaptchaImage"/i], replaceHtmlEntities);
+
     var code = AnyBalance.retrieveCode('Для получения пароля к личному кабинету по SMS символы, которые вы видите на картинке.', img, {time: 300000});
     var form = getParam(html, null, null, /<form[^>]+name="Login"[^>]*>([\s\S]*?)<\/form>/i);
     var params = createFormParams(form, function (params, input, name, value) {

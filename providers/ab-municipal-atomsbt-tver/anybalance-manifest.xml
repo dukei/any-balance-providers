@@ -1,11 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="5">ab-municipal-atomsbt-tver</id>
+	<id version="6">ab-municipal-atomsbt-tver</id>
 	<api flags="no_browser"/>
 	<name>АТОМЭНЕРГОСБЫТ (Тверь)</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе провайдера АТОМЭНЕРГОСБЫТ (Тверь) <a href="http://atomsbt.ru/">http://atomsbt.ru/</a></p>
-	<p>Информация берется из личного кабинета <a href="http://atomsbt.ru/klientam/kabinet_tver/">http://atomsbt.ru/klientam/kabinet_tver/</a></p>
+	<p>Информация берется из личного кабинета https://lk.tver.atomsbt.ru/</p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
     <depends>

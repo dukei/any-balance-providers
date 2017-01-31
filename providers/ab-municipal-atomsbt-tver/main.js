@@ -12,13 +12,13 @@ var g_headers = {
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'http://atomsbt.ru/';
+	var baseurl = 'https://lk.tver.atomsbt.ru/';
 	AnyBalance.setDefaultCharset('utf-8');
 
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 	
-	var html = AnyBalance.requestGet(baseurl + 'cabinet_tver/cabinet.php', g_headers);
+	var html = AnyBalance.requestGet(baseurl, g_headers);
 	
 	if(!html || AnyBalance.getLastStatusCode() > 400){
 		AnyBalance.trace(html);
@@ -29,37 +29,33 @@ function main() {
 	var captchaSRC = getParam(html, null, null, /<div[^>]+class="vpb_captcha_wrapper"[^>]*>[\s\S]*?<img src="([\s\S]*?)"/i);
 	if (!captchaSRC)
 		throw new AnyBalance.Error("Не удалось найти капчу. Сайт изменён?");
-	var captchaIMG = AnyBalance.requestGet(baseurl +'cabinet_tver/'+ captchaSRC, addHeaders({
-		Accept: 'image/webp,image/*,*/*;q=0.8',
-		Referer: 'http://atomsbt.ru/cabinet_tver/cabinet.php'
+	var captchaIMG = AnyBalance.requestGet(joinUrl(baseurl, captchaSRC), addHeaders({
+		Accept: 'image/webp,image/*,* /*;q=0.8',
+		Referer: baseurl
 	}));
-	if (captchaIMG) {
 		var captchaResponse = AnyBalance.retrieveCode('Пожалуйста, введите код с картинки.', captchaIMG);
-		html = AnyBalance.requestPost(baseurl + 'cabinet_tver/js/captcha/captcha_checker.php', {
+		html = AnyBalance.requestPost(baseurl + 'lib/js/captcha/captcha_checker.php', {
 			vpb_captcha_code: captchaResponse
 		}, addHeaders({
 			'X-Requested-With': 'XMLHttpRequest',
-			'Accept': '*/*'
+			'Accept': '* /*'
 		}));
 		if (!/1/.test(html))
 			throw new AnyBalance.Error("Введенный Вами код неправильный");
 		else
-			html = AnyBalance.requestPost(baseurl + 'cabinet_tver/cabinet.php', {
+			html = AnyBalance.requestPost(baseurl + 'page.php?page=lk-ls-info', {
 				ls: prefs.login,
 				pwd: prefs.password,
 				vpb_captcha_code: captchaResponse,
-				action: 'CheckLoginPwd'
-			}, addHeaders({Referer: baseurl + 'cabinet_tver/cabinet.php'}));
-	}
-	else
-		throw new AnyBalance.Error("Картинка с кодом не найдена");
+				saction: 'lspwd'
+			}, addHeaders({Referer: baseurl}));
 
 
 
 	if (!/exit/i.test(html)) {
-		var error = getParam(html, null, null, /<td[^>]+class="regErr"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+		var error = getElement(html, /<div[^>]+login_response/i, replaceTagsAndSpaces);
 		if (error)
-			throw new AnyBalance.Error(error, null, /Проверьте правильность ввода логина и\/или пароля./i.test(error));
+			throw new AnyBalance.Error(error, null, /парол/i.test(error));
 
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
@@ -67,24 +63,18 @@ function main() {
 	
 	var result = {success: true};
 	
-	getParam(html, result, 'adress', /Адрес(?:[^>]*>){4}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+	getParam(html, result, 'adress', /<div[^>]*divtext[^>]*>\s*Информация[\s\S]*?<div[^>]+info-text[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+ 	getParam(html, result, '__tariff', /(?:Долг|Переплата) на 01\.(\d\d\.\d\d)/i);
 
-
-  var period = getFormattedDate({format: 'MM.YY'});
-  getParam(period, result, '__tariff');
-
-  if(isAvailable('saldo', 'in_saldo', 'period')) {
-    html = AnyBalance.requestGet(baseurl + 'cabinet_tver/cabinet.php?nachisl_detal&date=01.' + period, g_headers);
-    getParam(html, result, 'saldo', /Итого(?:[\s\S]*?<td[^>]*>){6}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'in_saldo', /Итого(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'accrued', /Итого(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'paid', /Итого(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-    getParam('15.'+ period, result, 'period', null, null, parseDate);
-  }
+    getParam(html, result, 'saldo', /<div[^>]*divtext[^>]*>\s*Баланс счета[\s\S]*?<div[^>]+font-size:\s*18px[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'in_saldo', /(?:Долг|Переплата) на[\s\S]*?<div[^>]+balans-money[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'accrued', /Начислено:[\s\S]*?<div[^>]+balans-money[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'paid', /Оплачено в текущем месяце:[\s\S]*?<div[^>]+balans-money[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+    getParam('15.'+ result.__tariff, result, 'period', null, null, parseDate);
 
   if(isAvailable('device_value')) {
-    html = AnyBalance.requestGet(baseurl + 'cabinet_tver/cabinet.php?hist_counters', g_headers);
-    getParam(html, result, 'device_value', /История показаний счетчиков(?:[\s\S]*?<tr[^>]*>){2}(?:[\s\S]*?<td[^>]*>){3}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+    html = AnyBalance.requestGet(baseurl + 'page.php?page=lk-hist-counter', g_headers);
+    getParam(html, result, 'device_value', /История показаний приборов учета(?:[\s\S]*?<td[^>]*>){4}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
   }
 	
 	AnyBalance.setResult(result);

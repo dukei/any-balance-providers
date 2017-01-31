@@ -32,10 +32,21 @@ function main(){
 
     var result = {success: true};
 	
-    getParam(html, result, 'balance', /Ваш баланс:([^<]*)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, '__tariff', /Тариф:([\s\S]*?)<\/h3>/i, replaceTagsAndSpaces);
-	
-	getParam(html, result, 'daysleft', /Дней осталось:([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'deadline', /Дней осталось:(?:[\s\S](?!<\/div>))*?до([^<]*)/i, replaceTagsAndSpaces, parseDateWord);
+	if(/vds/i.test(AnyBalance.getLastUrl())){
+		AnyBalance.trace('Обнаружена услуга vds');
+
+        getParam(html, result, 'balance', /<span[^>]+js-account-balance[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+
+        var servers = getJsonObject(html, /'ServersService'\)\.setData\(/);
+		getParam(servers[0].name, result, '__tariff');
+	}else{
+		AnyBalance.trace('Обнаружена услуга shared hosting');
+
+        getParam(html, result, 'balance', /Ваш баланс:([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+		getParam(html, result, '__tariff', /Тариф:([\s\S]*?)<\/h3>/i, replaceTagsAndSpaces);
+		
+		getParam(html, result, 'daysleft', /Дней осталось:([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+		getParam(html, result, 'deadline', /Дней осталось:(?:[\s\S](?!<\/div>))*?до([^<]*)/i, replaceTagsAndSpaces, parseDateWord);
+	}
     AnyBalance.setResult(result);
 }

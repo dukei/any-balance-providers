@@ -293,7 +293,8 @@ function processDeposits(jsonInfo, result) {
 
     var error = getParam(html, null, null, /<REDIRECT>[\s\S]*?'(NO)DEPOSITS'/i);
     if(error) {
-      throw new AnyBalance.Error('У вас нет ни одного вклада');
+      AnyBalance.trace('У вас нет ни одного вклада');
+      return;
     }
 
     var deposits = getElements(html, /<div[^>]+div-corner div-cards[^>]*>/ig);

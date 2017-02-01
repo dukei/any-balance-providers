@@ -5,7 +5,7 @@
     <name>Extract for Unicredit</name>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
-		<js>abe-money-unicredit.min.js</js>
+		<js>extract.abe-money-unicredit.min.js</js>
 		<history>history.xml</history>
 	</files>
 	<depends>

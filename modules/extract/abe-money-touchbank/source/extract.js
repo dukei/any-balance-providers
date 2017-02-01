@@ -26,9 +26,9 @@ function login(prefs) {
 		throw new AnyBalance.Error('Ошибка при подключении к сайту интернет-банка! Попробуйте обновить данные позже.');
 	}
 
-	if (!/logout/i.test(html)) {
+	if (!/bb-module="account"/i.test(html)) {
 
-    csrf_token = getToken();
+    	csrf_token = getToken();
 
 		html = AnyBalance.requestPost(baseurl + '/j_spring_security_check', {
 			j_username: prefs.login,
@@ -42,22 +42,23 @@ function login(prefs) {
 
 		var json = getJson(html);
 
+		if (!json.success) {
+			var error = json.errors[0] ? json.errors[0].message : undefined;
+			if (error)
+				throw new AnyBalance.Error(error, null, /Вы ввели неверные логин или пароль/i.test(error));
+			
+			AnyBalance.trace(html);
+			throw new AnyBalance.Error('Не удалось зайти в интернет-банк. Сайт изменен?');
+		}
+
+  		csrf_token = getToken();
+
+		__setLoginSuccessful();
+
 	} else {
 		AnyBalance.trace('Уже залогинены, используем существующую сессию')
 	}
 
-	if (!json.success) {
-		var error = json.errors[0] ? json.errors[0].message : undefined;
-		if (error)
-			throw new AnyBalance.Error(error, null, /Вы ввели неверные логин или пароль/i.test(error));
-		
-		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Не удалось зайти в интернет-банк. Сайт изменен?');
-	}
-
-  csrf_token = getToken();
-
-	__setLoginSuccessful();
 	
 	return html;
 }

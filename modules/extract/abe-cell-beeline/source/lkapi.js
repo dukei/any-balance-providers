@@ -458,6 +458,8 @@ function createNewPasswordApi(){
 //		json = callAPIProc('2.0/auth/auth', {userType: 'Mobile', login: prefs.login}, {password: newPass}, 'PUT');;
 	}
 
+	createNewPasswordApi.password = newPass;
+	prefs.password = newPass; //Обязательно в настройки запишем новый пароль
 	return newPass;
 }
 

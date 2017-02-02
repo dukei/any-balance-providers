@@ -1332,24 +1332,14 @@ function getPropVal(html, text){
 }
 
 function parseMinutes(str){
-    var _str = html_entity_decode(str);
-    var matches = /([\d.]+)\s*мин\w*\s*([\d.]+)\s*сек/i.exec(_str), val;
-    if(!matches || matches[0]=='')
-        matches = /(\d+):(\d+)/i.exec(_str);
-    if(!matches)
-        matches = /([\d.]+)\s*мин/i.exec(_str);
-    if(!matches)
-        matches = /()([\d.]+)\s*сек/i.exec(_str);
-    if(!matches)
-        matches = /([\d.]+)/i.exec(_str);
-    if(matches)
-        val = (matches[1] ? +matches[1] : 0)*60 + (matches[2] ? +matches[2] : 0);
+	var _str = html_entity_decode(str);
+	val = AB.parseMinutes(_str);
     if(isset(val)){
-	if(val > 1000000){
+		if(val > 1000000){
             AnyBalance.trace('Parsed ' + val + ' seconds from ' + str + ' (' + _str + '). Это безлимитные минуты, пропускаем.');
 	    val = undefined;
 	}else
-            AnyBalance.trace('Parsed ' + val + ' seconds from ' + str + ' (' + _str + ')');
+        AnyBalance.trace('Parsed ' + val + ' seconds from ' + str + ' (' + _str + ')');
     }else
         AnyBalance.trace('Failed to parse seconds from ' + str + ' (' + _str + ')');
     return val;

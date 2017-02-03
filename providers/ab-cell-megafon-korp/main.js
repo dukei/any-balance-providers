@@ -6,7 +6,7 @@ var g_headers = {
 	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
 	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
 	'Connection': 'keep-alive',
-	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
+	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36',
 };
 
 function getRegions() {
@@ -37,6 +37,10 @@ function getRegions() {
 	
 }
 
+var g_conversion = {
+	kavkaz: 'https://kvk-b2blk.megafon.ru/'
+};
+
 function main() {
     var prefs = AnyBalance.getPreferences();
 
@@ -44,7 +48,10 @@ function main() {
     AB.checkEmpty(prefs.password, 'Введите пароль!');
 
     AnyBalance.setDefaultCharset('utf-8');
-    var baseurl = 'https://kvk-b2blk.megafon.ru/';//'https://' + (prefs.region || 'center') + '.b2blk.megafon.ru/';
+    var region = prefs.region || 'center';
+    var baseurl = g_conversion[region] || ('https://' + (prefs.region || 'center') + '.b2blk.megafon.ru/');
+
+    AnyBalance.trace('Регион: ' + baseurl);
 
     var html = AnyBalance.requestGet(baseurl + 'sc_cp_apps/login', g_headers);
 
@@ -56,21 +63,71 @@ function main() {
     html = AnyBalance.requestPost(baseurl + 'sc_cp_apps/loginProcess', {
         j_username: prefs.login,
         j_password: prefs.password,
-    }, AB.addHeaders({Referer: baseurl + 'sc_cp_apps/login'}));
+    }, AB.addHeaders({
+    	Referer: baseurl + 'sc_cp_apps/login',
+    	'X-Requested-With': 'XMLHttpRequest',
+    	Accept: 'application/json, text/javascript, */*; q=0.01',
+    }));
 
-    if (!/logout/i.test(html)) {
-        var error = AB.getParam(html, null, null, /"error\.message"\s*:\s*"([^"]+)/i, AB.replaceTagsAndSpaces);
+    var json = getJson(html);
+    if(!json.redirect || /error/i.test(json.redirect)){
+    	if(json.redirect)
+    		html = AnyBalance.requestGet(joinUrl(baseurl, json.redirect), AB.addHeaders({
+    			Referer: baseurl + 'sc_cp_apps/login',
+		    }));
+
+    	var error = getElement(html, /<[^>]+error-text/i, replaceTagsAndSpaces);
         if (error)
-            throw new AnyBalance.Error(error, null, /Вы ввели неправильный логин или пароль/i.test(error));
+            throw new AnyBalance.Error(error, null, /парол/i.test(error));
 
         AnyBalance.trace(html);
         throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
     }
 
+    var tries = 1, maxTries = 10;
+    do{
+	    var ok = AnyBalance.requestGet(baseurl + 'sc_cp_apps/isUserDataCached', AB.addHeaders({
+    		Referer: baseurl + 'sc_cp_apps/login',
+    		'X-Requested-With': 'XMLHttpRequest',
+	    }));
+	    ok = getJson(ok);
+
+	    if(ok === true || ok.status == 'USER_CACHED'){
+	        AnyBalance.trace('Информация обновлена');
+	    	break;
+	    }
+
+	    if(tries == 1){
+    		AnyBalance.trace('Обновляем информацию...');
+	        AnyBalance.requestPost(baseurl + 'sc_cp_apps/cacheUserData', '', AB.addHeaders({
+    			Referer: baseurl + 'sc_cp_apps/login',
+    			'X-Requested-With': 'XMLHttpRequest',
+	        }));
+	    }
+
+	    if(++tries > maxTries)
+	    	throw new AnyBalance.Error('Информация не может быть обновлена. Сайт изменен?');
+
+	    AnyBalance.trace('Проверяем ещё раз, не обновлена ли информация (' + tries + '/' + maxTries + ')');
+	    AnyBalance.sleep(2000);
+    }while(true);
+
+    html = AnyBalance.requestGet(joinUrl(baseurl, json.redirect), AB.addHeaders({
+    	Referer: baseurl + 'sc_cp_apps/login',
+    }));
+
+    if(!/logout/i.test(html)){
+    	var error = getElement(html, /<[^>]+error-text/i, replaceTagsAndSpaces);
+    	if(error)
+    		throw new AnyBalance.Error(error);
+    	AnyBalance.trace(html);
+    	throw new AnyBalance.Error('Не удалось получить счета после авторизации. Сайт изменен?');
+    }
+
     var result = {success: true};
 
-    AB.getParam(html, result, 'balance', /<dt>Текущий баланс[^]*?class="money[^>]*>([\s\S]*?)<span/i, AB.replaceTagsAndSpaces, AB.parseBalance);
-    AB.getParam(html, result, 'abonCount', /<dt>Абонентов[^]*?class="span28[^>]*>([^<]+)/i, AB.replaceTagsAndSpaces, AB.parseBalance);
+    AB.getParam(html, result, 'balance', /<dt[^>]*>\s*Текущий баланс[\s\S]*?class="money[^>]*>([\s\S]*?)<span/i, AB.replaceTagsAndSpaces, AB.parseBalance);
+    AB.getParam(html, result, 'abonCount', /<dt[^>]*>\s*Абонентов[\s\S]*?class="span28[^>]*>([^<]+)/i, AB.replaceTagsAndSpaces, AB.parseBalance);
     
     if (AB.isAvailable('unpaids')) {
         var elemUnpaids = AB.getElement(html, /<div\s[^>]*\bunpaidBillsCount\b/);

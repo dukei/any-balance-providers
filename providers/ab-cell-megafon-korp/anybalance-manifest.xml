@@ -1,11 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="9">ab-cell-megafon-korp</id>
+	<id version="10">ab-cell-megafon-korp</id>
 	<api flags="no_browser"/>
 	<name>Мегафон корпоративный</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе и других параметрах Мегафона корпоративного <a href="http://megafon.ru/corporate/">http://megafon.ru/corporate/</a></p>
-	<p>Информация берется из личного кабинета https://kvk-b2blk.megafon.ru/</p>
+	<p>Информация берется из личного кабинета https://lk.megafon.ru/b2blinks/</p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>

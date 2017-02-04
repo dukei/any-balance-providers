@@ -9,80 +9,75 @@
 Личный кабинет: https://cp.koptevo.net/
 */
 
-function getParam (html, result, param, regexp, replaces, parser) {
-	if (param && (param != '__tariff' && !AnyBalance.isAvailable (param)))
-		return;
+var g_headers = {
+	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
+	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
+	'Connection': 'keep-alive',
+	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
+};
 
-	var value = regexp.exec (html);
-	if (value) {
-		value = value[1];
-		if (replaces) {
-			for (var i = 0; i < replaces.length; i += 2) {
-				value = value.replace (replaces[i], replaces[i+1]);
-			}
-		}
-		if (parser)
-			value = parser (value);
-
-    if(param)
-      result[param] = value;
-    else
-      return value
-	}
-}
-
-var replaceTagsAndSpaces = [/<[^>]*>/g, ' ', /\s{2,}/g, ' ', /^\s+|\s+$/g, '', /^"+|"+$/g, ''];
-var replaceFloat = [/\s+/g, '', /,/g, '.'];
-
-function parseBalance(text){
-    var val = getParam(text.replace(/\s+/g, ''), null, null, /(-?\d[\d\s.,]*)/, replaceFloat, parseFloat);
-    AnyBalance.trace('Parsing balance (' + val + ') from: ' + text);
-    return val;
-}
-
-function parseTrafficGb(text){
-    var val = getParam(text.replace(/\s+/g, ''), null, null, /(-?\d[\d\s.,]*)/, replaceFloat, parseFloat);
-    val = Math.round(val/1024*100)/100; //Перевели в Гб с двумя знаками после запятой
-    AnyBalance.trace('Parsing balance (' + val + ') from: ' + text);
-    return val;
-}
 
 function main(){
     var prefs = AnyBalance.getPreferences();
 
     var baseurl = "https://cp.koptevo.net/";
-    AnyBalance.setDefaultCharset('windows-1251');
 
-    html = AnyBalance.requestPost(baseurl, {
-      _action: 'login',
-      flogin_name:prefs.login,
-      flogin_pwd:prefs.password
-    });
+	AB.checkEmpty(prefs.login, 'Введите логин!');
+	AB.checkEmpty(prefs.password, 'Введите пароль!');
 
-    var error = getParam(html, null, null, /<div[^>]*color:\s*red[^>]*>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
-    if(error)
-        throw new AnyBalance.Error(error);
+	var html = AnyBalance.requestGet(baseurl + 'login', g_headers);
 
-    var result = {success: true};
+	if (!html || AnyBalance.getLastStatusCode() > 400) {
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Сайт провайдера временно недоступен! Попробуйте обновить данные позже.');
+	}
 
-    getParam(html, result, 'balance', /Баланс:[\s\S]*?<span[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'status', /Интернет:[\s\S]*?<span[^>]*>([^<]*)/i, replaceTagsAndSpaces);
-    getParam(html, result, '__tariff', /Текущий тариф:([\s\S]*?)<br/i, replaceTagsAndSpaces);
+	var form = AB.getElement(html, /<form[^>]+login-form[^>]*>/i);
+	if(!form){
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удаётся найти форму входа! Сайт изменен?');
+	}
+
+	var params = AB.createFormParams(form, function(params, str, name, value) {
+		if (/username/i.test(name)) {
+			return prefs.login;
+		} else if (/password/i.test(name)) {
+			return prefs.password;
+		}
+
+		return value;
+	});
+
+	html = AnyBalance.requestPost(baseurl + 'login', params, AB.addHeaders({
+		Referer: baseurl + 'login'
+	}));
+
+	if (!/logout/i.test(html)) {
+		var error = AB.sumParam(html, /<p[^>]+error[^>]*>([\s\S]*?)<\/p>/ig, AB.replaceTagsAndSpaces, null, aggregate_join);
+		if (error) {
+			throw new AnyBalance.Error(error, null, /парол/i.test(error));
+		}
+
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
+	}
+
+	var result = {
+		success: true
+	};
+
+    getParam(html, result, 'balance', /Состояние счета[\s\S]*?<h2[^>]*>([\s\S]*?)<\/h2>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'status', /<th[^>]*>\s*Интернет[\s\S]*?<span[^>]*label[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
+    getParam(html, result, '__tariff', /Тарифный план[\s\S]*?<td[^>]*>([\s\S]*?)(?:<a|<\/td>)/i, replaceTagsAndSpaces);
+    getParam(html, result, 'fio', /Ф.И.О.[\s\S]*?<td[^>]*>([\s\S]*?)(?:<a|<\/td>)/i, replaceTagsAndSpaces);
+    getParam(html, result, 'agreement', /№ Договора[\s\S]*?<td[^>]*>([\s\S]*?)(?:<a|<\/td>)/i, replaceTagsAndSpaces);
 
     if(AnyBalance.isAvailable('trafficIn', 'trafficOut')){
-        html = AnyBalance.requestGet(baseurl + 'traffic.php');
-        getParam(html, result, 'trafficIn', /Всего(?:[^<>]*<\/th><th[^<>]*>){4}([^<]*)/i, replaceTagsAndSpaces, parseTrafficGb);
-        getParam(html, result, 'trafficOut', /Всего(?:[^<>]*<\/th><th[^<>]*>){5}([^<]*)/i, replaceTagsAndSpaces, parseTrafficGb);
+        html = AnyBalance.requestGet(baseurl + 'traffic');
+        getParam(html, result, 'trafficIn', /title="Входящий"[^>]*>([\s\S]*?)(?:<i|<small|<\/div>)/i, replaceTagsAndSpaces, parseTrafficGb);
+        getParam(html, result, 'trafficOut', /title="Исходящий"[^>]*>([\s\S]*?)(?:<i|<small|<\/div>)/i, replaceTagsAndSpaces, parseTrafficGb);
     }
 
     AnyBalance.setResult(result);
 }
-
-function html_entity_decode(str)
-{
-    //jd-tech.net
-    var tarea=document.createElement('textarea');
-    tarea.innerHTML = str;
-    return tarea.value;
-}
-

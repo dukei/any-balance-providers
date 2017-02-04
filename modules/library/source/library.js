@@ -565,8 +565,8 @@ var AB = (function (global_scope) {
     function sumParam(html, result, param, regexp, replaces, parser, do_replace, aggregate) {
     	if (result instanceof RegExp || isArray(result)){
     		//Пропустили два параметра (result и param), остальные надо сдвинуть
-    		aggregate = do_replace;
-    		do_replace = parser;
+    		aggregate = parser;
+    		do_replace = replaces;
     		parser = regexp;
     		replaces = param;
     		regexp = result;

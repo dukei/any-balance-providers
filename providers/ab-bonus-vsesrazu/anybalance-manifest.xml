@@ -17,11 +17,8 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units=" {@currency}"/>
+		<counter id="balance" name="Баланс" units=" Б"/>
 		<counter id="fio" name="ФИО" type="text"/>
-		<counter id="status" name="Статус" type="text"/>
-		<counter id="phone" name="Телефон" type="text"/>
-		<counter id="deadline" name="Дата отключения" type="time" format="dd/MM/yyyy"/>
 	</counters>
 	<keywords>#ВСЁСРАЗУ #ВСЕСРАЗУ</keywords>
 	<type>bonus</type>

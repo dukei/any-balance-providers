@@ -4,11 +4,13 @@
 */
 
 var g_headers = {
-	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
-	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
+	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+	'Accept-Language': 'ru,en-US;q=0.8,en;q=0.6',
 	'Connection': 'keep-alive',
-	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.99 Safari/537.36',
+	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36',
+	'Cache-Control': 'max-age=0',
+	Origin: 'https://ru.ivideon.com',
+	'Upgrade-Insecure-Requests': '1'
 };
 
 function main() {
@@ -42,6 +44,7 @@ function main() {
 		return value;
 	});
 
+	AnyBalance.setCookie('ru.ivideon.com', 'ivideon-preferredCdn', 'https://static.iv-cdn.com');
 
 	html = AnyBalance.requestPost(baseurl + 'my/service/login', params, addHeaders({
 		Referer: baseurl + 'my/service/login'

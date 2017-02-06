@@ -17,6 +17,12 @@ function main(){
 	
 	var html = AnyBalance.requestGet(baseurl + 'index.html?site=ru-ru', g_headers);
 	
+	var form = getElement(html, /<form[^>]+login_form/i);
+	if(!form){
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удалось найти форму входа. Сайт изменен?');
+
+	}
 	var params = createFormParams(html, function(params, str, name, value) {
 		if (name == 'cardnumber') 
 			return prefs.login;
@@ -25,6 +31,13 @@ function main(){
 
 		return value;
 	});
+
+	var sitekey = getParam(form, /data-sitekey="([^"]*)/i, replaceHtmlEntities);
+	if(sitekey){
+		AnyBalance.trace('Потребовалась рекапча');
+		var code = solveRecaptcha('Пожалуйста, докажите, что вы не робот', baseurl, sitekey);
+		params['g-recaptcha-response'] = code;
+	}
 	
 	html = AnyBalance.requestPost(baseurl + 'login?site=ru-ru', params, addHeaders({Referer: baseurl + 'index.html'})); 
 

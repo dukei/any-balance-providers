@@ -1,13 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="4">ab-bonus-shell</id>
+	<id version="5">ab-bonus-shell</id>
 	<api flags="no_browser"/>
 	<name>Shell CLUBSMART</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе на бонусной карте сети АЗС Shell (http://www.shellsmart.com).</p>
 	<p>Бонусную карту программы Shell CLUBSMART вы можете получить на любой АЗС Shell.</p>
 	]]></description>
-	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
         <depends>
    		<module id="library"/>
    	</depends>

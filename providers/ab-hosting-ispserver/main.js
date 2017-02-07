@@ -64,19 +64,19 @@ function main() {
 
 			json = AB.getJson(html);
 
-			content = json.rows[1];
-			AB.getParam(content.value, result, 'code');
-
-			content = json.rows[5];
-			AB.getParam(content.value, result, 'provider');
-
-			content = json.rows[6];
-			AB.getParam(content.value, result, 'acc_num');
-
-			content = json.rows[7];
-			AnyBalance.trace(content.value);
-			AB.getParam(content.value, result, 'balance', null, null, AB.parseBalance);
-			AB.getParam(content.value, result, ['currency', 'balance'], null, null, AB.parseCurrency);
+			for(var i=0; i<json.rows.length; ++i){
+				var content = json.rows[i];
+				if(content.name == 'id')
+					AB.getParam(content.value, result, 'code');
+				if(content.name == 'provider')
+					AB.getParam(content.value, result, 'provider');
+				if(content.name == 'subaccount')
+					AB.getParam(content.value, result, 'acc_num');
+				if(content.name == 'balance'){
+					AB.getParam(content.value, result, 'balance', null, null, AB.parseBalance);
+					AB.getParam(content.value, result, ['currency', 'balance'], null, null, AB.parseCurrency);
+				}
+			}
 
 		} catch (e) {
 			AnyBalance.trace(AnyBalance.getLastUrl());

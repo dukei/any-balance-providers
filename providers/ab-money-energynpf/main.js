@@ -43,11 +43,11 @@ function main() {
             Referer: baseurl + '/'
         }));
     } catch (e) {
-        html = AnyBalance.requestGet(baseurl + '/ru/calc/', g_headers);
+        html = AnyBalance.requestGet(baseurl + '/ru/savings/', g_headers);
     }
 
-    if (!/exit/.test(html)) {
-        var error = AB.getParam(html, null, null, /<span class="mess">([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
+    if (!/logout/.test(html)) {
+        var error = AB.getParam(html, null, null, /<span[^>]+class="mess">([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
         if (error) {
             throw new AnyBalance.Error(error, null, /(?:не\s+найдены|неверный\s*пароль)/i.test(error));
         }
@@ -57,17 +57,18 @@ function main() {
 
 	var result = {success: true};
 
-    html = AnyBalance.requestGet(baseurl + '/ru/savings/', g_headers);
+	if(!/savings/i.test(AnyBalance.getLastUrl()))
+    	html = AnyBalance.requestGet(baseurl + '/ru/savings/', g_headers);
 
-    // Всего накоплено (руб)
-	AB.getParam(html, result, 'balance',   [/Накопительная пенсия(?:[\s\S]*?<td[^>]+format-sum[^>]*>){2}([^<]*)/i,
-                                            /всего накоплено[\s\S]*?<td[^>]+format-sum[^>]*>([^<]*)/i],            AB.replaceTagsAndSpaces, AB.parseBalance);
+    var row = getElement(html, /<tr[^>]+exists/i);
+    AB.getParam(row, result, '__tariff',  /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i,  [AB.replaceTagsAndSpaces, /\s+/g, ' ']);
+    AB.getParam(row, result, 'balance',  /(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\/td>/i,  AB.replaceTagsAndSpaces, parseBalance);
 	//Накопительная пенсия, страховые взносы (руб)
-    AB.getParam(html, result, 'insurance',  /Накопительная пенсия(?:[\s\S]*?<td[^>]+format-sum[^>]*>){1}([^<]*)/i, AB.replaceTagsAndSpaces, AB.parseBalance);
+//    AB.getParam(html, result, 'insurance',  /Накопительная пенсия(?:[\s\S]*?<td[^>]+format-sum[^>]*>){1}([^<]*)/i, AB.replaceTagsAndSpaces, AB.parseBalance);
     // Номер договора
-    AB.getParam(html, result, '__tariff',  [/Накопительная пенсия(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i,
-                                            /Номер договора(?:[\s\S]*?<td[^>]*>){6}([\s\S]*?)<\/td>/i],            AB.replaceTagsAndSpaces);
-
+//    AB.getParam(html, result, '__tariff',  [/Накопительная пенсия(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i,
+//                                            /Номер договора(?:[\s\S]*?<td[^>]*>){6}([\s\S]*?)<\/td>/i],            AB.replaceTagsAndSpaces);
+/*
     if (AnyBalance.isAvailable('balance_income')) {
         var url = getParam(html, null, null, /Накопительная пенсия(?:[\s\S]*?<td[^>]*>){4}[\s\S]*?<a[^>]+href="([^"]*)/i);
         if (url) {
@@ -75,6 +76,6 @@ function main() {
             getParam(html, result, 'balance_income', /Инвестиционный доход(?:[\s\S]*?<span[^>]+summ[^>]*>){1}([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
         } else AnyBalance.trace("Не удалось найти ссылку на информацию об инвестиционном доходе.")
     }
-
+*/
 	AnyBalance.setResult(result);
 }

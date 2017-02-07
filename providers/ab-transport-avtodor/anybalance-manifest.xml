@@ -1,18 +1,20 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="6">ab-transport-avtodor</id>
+	<id version="7">ab-transport-avtodor</id>
 	<api flags="no_browser" />
 	<name>Автодор</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе счета в компании Автодор <a href="http://avtodor-ts.ru">http://avtodor-ts.ru</a></p>
 	<p>Информация берется из личного кабинета <a href="http://avtodor-ts.ru/account/index">http://avtodor-ts.ru/account/index</a></p>
 	]]></description>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<author>d3vil-st &lt;d3vil.st@gmail.com&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>

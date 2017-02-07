@@ -4,8 +4,8 @@
 	<api flags="no_browser" />
 	<name>Автодор</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе счета в компании Автодор <a href="http://avtodor-ts.ru">http://avtodor-ts.ru</a></p>
-	<p>Информация берется из личного кабинета <a href="http://avtodor-ts.ru/account/index">http://avtodor-ts.ru/account/index</a></p>
+	<p>Предоставляет информацию о балансе счета в компании Автодор http://avtodor-ts.ru</p>
+	<p>Информация берется из личного кабинета http://avtodor-tr.ru/account/index</p>
 	]]></description>
 	<depends>
 		<module id="library"/>

@@ -901,7 +901,7 @@ function getBelgorod() {
 }
 
 function getSaratov() {
-  newTypicalLanBillingInetTv('https://lksrt.pv.mts.ru/internet/index.php');
+  newTypicalLanBillingInetTv_1('https://lksrt.pv.mts.ru/internet/index.php');
 }
 
 function getChita() {

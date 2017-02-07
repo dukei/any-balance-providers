@@ -3,11 +3,13 @@
 */
 
 var g_headers = {
-	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
-	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
-	'Connection': 'keep-alive',
-	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
+	Connection: 'keep-alive',
+	Pragma: 'no-cache',
+	'Cache-Control': 'no-cache',
+	'Upgrade-Insecure-Requests': '1',
+	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36',
+	Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+	'Accept-Language': 'ru,en-US;q=0.8,en;q=0.6',
 };
 
 function main() {
@@ -22,16 +24,21 @@ function main() {
 
 	/* Проверяем доступность ресурса */
 
-	var html = AnyBalance.requestGet(baseurl, g_headers);
+	var html = AnyBalance.requestGet(baseurl + 'ru/aero/user/login', g_headers);
 
 	if(!html || AnyBalance.getLastStatusCode() > 400){
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
 	}
+	
+	var form = getElement(html, /<form[^>]+loginForm/i);
+	if(!form){
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удалось найти форму входа. Сайт изменен?');
+	}
 
 	/* Пробуем залогиниться */
-
-	var params = createFormParams(html, function(params, str, name, value) {
+	var params = createFormParams(form, function(params, str, name, value) {
 		if (name == 'mgnlUserId')
 			return prefs.login;
 		else if (name == 'mgnlUserPSWD')
@@ -39,9 +46,20 @@ function main() {
 		return value;
 	});
 
-	html = AnyBalance.requestPost(baseurl + 'ru/aero/user/login', params, g_headers);
+	html = AnyBalance.requestPost(baseurl + 'ru/enter', params, addHeaders({
+		Referer: AnyBalance.getLastUrl()
+	}));
+
+	if(AnyBalance.getLastStatusCode() == 404){
+		//Тупые аэроэкспрессы не ставят иногда куку сессии и тогда тут будет 404, но уже поставится куки. Если так, надо попробовать ещё раз.
+		AnyBalance.trace('404 на вход. Пробуем ещё раз, с кукой');
+		html = AnyBalance.requestPost(baseurl + 'ru/enter', params, addHeaders({
+			Referer: AnyBalance.getLastUrl()
+		}));
+	}
 
 	if(!html || AnyBalance.getLastStatusCode() > 400){
+		//Тупые аэроэкспрессы не ставят иногда куку сессии и тогда тут будет 404, но уже поставится куки. Если так, надо попробовать ещё раз.
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Ошибка при входе в личный кабинет! Попробуйте обновить данные позже.');
 	}
@@ -51,13 +69,14 @@ function main() {
 	if (!exitLinks || !exitLinks.length || !/Выход/i.test(exitLinks[0])) {
 		// определяем ошибку
 		var error = getElementById(html, 'page-intro', replaceTagsAndSpaces);
-		if (error) {
-			throw new AnyBalance.Error(error, null, /Вы неверно указали логин или пароль/i.test(error));
-		} else {
-			// если не смогли определить ошибку, то показываем дефолтное сообщение
-			AnyBalance.trace(html);
-			throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
-		}
+		if(!error)
+			error = getElement(html, /<div[^>]+id="crmWarning"/i, replaceTagsAndSpaces);
+		if (error) 
+			throw new AnyBalance.Error(error, null, /парол/i.test(error));
+
+		// если не смогли определить ошибку, то показываем дефолтное сообщение
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
 
 	/* Получаем данные */

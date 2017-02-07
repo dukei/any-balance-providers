@@ -69,7 +69,7 @@ function main(){
     AB.getParam(html, result, 'income', /Общий\s+доход\s+партнера([\s\S]*?)<\/div>/i, AB.replaceTagsAndSpaces, AB.parseBalance);
     AB.getParam(html, result, 'full_name', /user-name([\s\S]*?)<\/span>/i, [AB.replaceTagsAndSpaces, /[">\(\)]*/ig, '']);
 
-    if(isAvailable('balance')) {
+    if(AnyBalance.isAvailable('balance')) {
         html = AnyBalance.requestGet(baseUrl+'payments/partner_payments', g_headers);
         var partnerID = AB.getParam(html, null, null, /<input[^>]+name="globalPartnerId"[^>]+value="([\s\S]*?)"/i);
         if(!partnerID)
@@ -86,6 +86,12 @@ function main(){
         }
 
     }
+
+    if(AnyBalance.isAvailable('views', 'subscribers')){
+        html = AnyBalance.requestGet(baseUrl+'channels/partner_channels', g_headers);
+    	getParam(html, result, 'views', /<li[^>]+class="views"[^>]*>([\s\S]*?)<\/li>/i, replaceTagsAndSpaces, parseBalance);
+    	getParam(html, result, 'subscribers', /<li[^>]+class="viewers"[^>]*>([\s\S]*?)<\/li>/i, replaceTagsAndSpaces, parseBalance);
+    }                              
 
 
     AnyBalance.setResult(result);

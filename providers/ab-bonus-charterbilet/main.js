@@ -18,15 +18,13 @@ function main() {
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 	
-	try {
-		var html = AnyBalance.requestGet(baseurl, g_headers);
-	} catch(e){}
+	var html = AnyBalance.requestGet(baseurl, g_headers);
 	
 	if(AnyBalance.getLastStatusCode() > 400 || !html) {
 		throw new AnyBalance.Error('Ошибка! Сервер не отвечает! Попробуйте обновить баланс позже.');
 	}
 	
-	html = AnyBalance.requestPost(baseurl + 'ajax/login.php', {
+	html = AnyBalance.requestPost(baseurl + 'ajax/priv/login.php', {
 		login: prefs.login,
 		password: prefs.password,
 	}, addHeaders({Referer: baseurl, 'X-Requested-With':'XMLHttpRequest'}));
@@ -34,22 +32,18 @@ function main() {
 	var json = getJson(html);
 	
 	if (!json.result) {
-		var error = getParam(html, null, null, /<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
-		if (error)
-			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
-		
 		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
+		throw new AnyBalance.Error('Неверный логин или пароль', null, true);
 	}
 	
-	html = AnyBalance.requestGet(baseurl + 'priv/pay/pay_deposit_totals.php', g_headers);
+	html = AnyBalance.requestGet(baseurl + 'priv/private.php?tab=deposit', g_headers);
 	
 	var result = {success: true};
 	
-	getParam(html, result, 'charts', /span>чартик(?:[^>]*>){5}([^<]+)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'balance', />рубль(?:[^>]*>){5}([^<]+)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'balance_usd', />доллар(?:[^>]*>){5}([^<]+)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'balance_eur', />евро(?:[^>]*>){5}([^<]+)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'charts', /span[^>]*>чартик([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'balance', />рубль([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'balance_usd', />доллар([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'balance_eur', />евро([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
 	
 	AnyBalance.setResult(result);
 }

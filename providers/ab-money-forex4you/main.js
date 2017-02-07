@@ -55,15 +55,15 @@ function main() {
 	if (!json.token) {
 		var error = json.message;
 		if (error)
-			throw new AnyBalance.Error(error, null, /Имя пользователя или пароль введены неверно/i.test(error));
+			throw new AnyBalance.Error(error, null, /парол/i.test(error));
 		
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
 
-	html = AnyBalance.requestGet(baseurl+'trader-account/start', g_headers);
+	html = AnyBalance.requestGet(baseurl+'trader-account/dashboard/', g_headers);
 
-	var accounts = AnyBalance.requestGet(baseurl + 'utils/accounts.js', addHeaders(add_headers));
+	var accounts = AnyBalance.requestGet(baseurl + 'config/accounts.js', addHeaders(add_headers));
 	var curaccid = getParam(accounts, null, null, /FxAccountManagerProvider\.\$currentAccountId\s*=\s*(\d+)/);
 
 	accounts = getJsonObject(accounts, /FxAccountManagerProvider\.\$initialData\s*=/i);

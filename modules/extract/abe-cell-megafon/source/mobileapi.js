@@ -33,7 +33,8 @@ function callAPI(method, url, params, allowerror) {
     }
 
     if(json.code && !allowerror) {
-        throw new AnyBalance.Error('Ошибка вызова API! ' + json.message, null, /парол/i.test(json.message));
+    	//Иногда мегафон случайно выдаёт на случайные методы Неавторизованный доступ
+        throw new AnyBalance.Error('Ошибка вызова API! ' + json.message, /Неавторизованный доступ/i.test(json.message), /парол/i.test(json.message));
     }
     return json;
 }
@@ -50,7 +51,7 @@ function megafonLkAPILogin(options){
     if(sessid) //А то логин ставит secure cookie и из-за этого check в официальном приложении никогда не работает
         AnyBalance.setCookie('api.megafon.ru', 'JSESSIONID', sessid);
 
-    var html = AnyBalance.requestGet('http://api.megafon.ru/mlk/auth/check', g_api_headers);
+    var html = AnyBalance.requestGet('https://api.megafon.ru/mlk/auth/check', g_api_headers);
     if(AnyBalance.getLastStatusCode() >= 400){
         AnyBalance.trace(html);
         throw new AnyBalance.Error('Сервер мобильного API временно недоступен.');

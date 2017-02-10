@@ -12,7 +12,7 @@ var g_headers = {
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'http://legacy.ecolines.net/';
+	var baseurl = 'https://legacy.ecolines.net/';
 	AnyBalance.setDefaultCharset('utf-8');
 	
 	checkEmpty(prefs.login, 'Enter login!');
@@ -27,9 +27,9 @@ function main() {
     }, addHeaders({Referer: baseurl + 'login'}));
 	
 	if(!/logout/i.test(html)) {
-		var error = getParam(html, null, null, /<td\s*align="left"\s*colspan="\d+">\s*<br>\s*<b>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, html_entity_decode);
+		var error = getParam(html, /<td\s*align="left"\s*colspan="\d+">\s*<br>\s*<b>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces);
 		if(error)
-			throw new AnyBalance.Error(error);
+			throw new AnyBalance.Error(error, null, /email|code/i.test(error));
 		throw new AnyBalance.Error('Login failed, is site changed?');
 	}
     var result = {success: true};

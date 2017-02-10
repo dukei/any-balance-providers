@@ -1,17 +1,19 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-bonus-ecolines</id>
+	<id version="2">ab-bonus-ecolines</id>
 	<api flags="no_browser"/>
 	<name>EcoLines</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе в системе Ecolines</p>
-	<p>Информация берется из личного кабинета http://legacy.ecolines.net/index.php?s=791</p>
+	<p>Информация берется из личного кабинета https://legacy.ecolines.net/index.php?s=791</p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>

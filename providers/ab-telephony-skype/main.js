@@ -96,6 +96,22 @@ function main() {
  		var error = getElement(info, /<div[^>]+message_error[^>]*>/i, [/<div[^>]+messageIcon[^>]*>[\s\S]*?<\/div>/ig, '', replaceTagsAndSpaces], html_entity_decode);
  		if (error)
 			throw new AnyBalance.Error(error, null, /your password|ваш пароль|введіть пароль/i.test(error)); //Надо бы и другие языки поддержать, конечно, но хотя бы 3
+
+	 	var json = getJsonObject(info, /var\s+ServerData\s*=\s*/);
+	 	if(json && json.H){ //Проверим, не послан ли одноразовый код
+	 		for(var i=0; i<json.H.length; ++i){
+	 			var otc = json.H[i];
+	 			if(otc.otcEnabled)
+	 				AnyBalance.trace('Отправка кода на ' + otc.display + ' допустима');
+	 			if(otc.otcSent){
+	 				sentTo = otc.display;
+	 				AnyBalance.trace('Код на ' + otc.display + ' ОТПРАВЛЕН');
+	 			}
+	 		}
+	 		if(i >= json.H.length)
+	 			throw new AnyBalance.Error('You have enabled 2-step authorization. Please turn it off to use this provider');
+	 	}
+
 		AnyBalance.trace(info);
  		throw new AnyBalance.Error("Can`t redirect to skype account. Maybe site is changed?");
  	}

@@ -15,7 +15,7 @@ var errors = {
 	changepass: 'Вам необходимо сменить пароль. Войдите в личный кабинет через браузер, затем введите новый пароль в настройки провайдера'
 }
 
-var baseurlNew = 'https://my.prosto.net/cabinet/';
+var baseurlNew = 'https://my.prosto.net/';
 var baseurlHome = 'http://home.prosto.net/';
 
 function main() {
@@ -26,7 +26,7 @@ function main() {
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 	
-	var html = AnyBalance.requestGet(baseurl + 'index.pl', g_headers);
+	var html = AnyBalance.requestGet(baseurl, g_headers);
 	
 	if(!html || AnyBalance.getLastStatusCode() > 400){
 		AnyBalance.trace(html);
@@ -34,7 +34,7 @@ function main() {
 	}
 	var htmlInitial = html;
 
-	if(/home.prosto.net/i.test(AnyBalance.getLastUrl())){
+//	if(/home.prosto.net/i.test(AnyBalance.getLastUrl())){
 		html = AnyBalance.requestPost(baseurlHome + 'server.php', {
 			action: 'auth',
 			url: '/',
@@ -59,7 +59,7 @@ function main() {
 		html = AnyBalance.requestGet(joinUrl(baseurlHome, json.url), g_headers);
 		return fetchHome(html);
 		
-	}else{ //Новый логин
+/*	}else{ //Новый логин
 		html = AnyBalance.requestPost(baseurl + 'server.pl', {
 			action: 'login-check',
 			user_id: prefs.login,
@@ -85,6 +85,7 @@ function main() {
 			html = AnyBalance.requestGet(baseurl + json.url, g_headers);
 		}
 	}
+	*/
 }
 
 function fetchNew(html){

@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="126" date="2017-02-13">
+	Исправлены Рязань, Комсомольск-на-Амуре, Киров
+	</change>
 	<change version="125" date="2017-02-07">
 	Исправлен саратов
 	</change>

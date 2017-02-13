@@ -355,7 +355,7 @@ function getPrm() {
 }
 
 function getKrv() {
-  newTypicalLanBillingInetTv('https://lkkirov.pv.mts.ru/index.php');
+  newTypicalLanBillingInetTv_1('https://lkkirov.pv.mts.ru/index.php');
 }
 
 function getVolzhsk() {
@@ -391,7 +391,7 @@ function getIzhevsk() {
 }
 
 function getKomsomolsk() {
-  newTypicalLanBillingInetTv('https://clb.komsomolsk.mts.ru/kom/index.php');
+  newTypicalLanBillingInetTv_1('https://clb.komsomolsk.mts.ru/kom/index.php');
 }
 
 function getTula() {
@@ -403,7 +403,7 @@ function getSmolensk() {
 }
 
 function getRyazan() {
-  newTypicalLanBillingInetTv('https://lk-ryazan.center.mts.ru/index.php');
+  newTypicalLanBillingInetTv_1('https://lk-ryazan.center.mts.ru/index.php');
 }
 
 function typicalLanBillingInetTv(url) {

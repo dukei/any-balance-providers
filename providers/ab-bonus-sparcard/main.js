@@ -18,36 +18,39 @@ function main() {
         	throw new AnyBalance.Error('Введите номер карты!');
 	if (!prefs.auth_password)
 		throw new AnyBalance.Error('Введите пароль!');
+	
+	var baseurl = 'https://card.spar-nn.ru/';
+
+    var html = AnyBalance.requestGet(baseurl + 'site/login', g_headers);
+	var sitekey = getParam(html, /data-sitekey="([^"]*)/i, replaceHtmlEntities), recaptcha;
+	if(sitekey){
+		AnyBalance.trace('Потребовалась рекапча');
+		recaptcha = solveRecaptcha('Пожалуйста, подтвердите, что вы не робот!', baseurl + 'site/login', sitekey);
+	}
 		
-	html = AnyBalance.requestPost('https://card.spar-nn.ru/site/login', {
-		'LoginForm[redirect]':'',
+	html = AnyBalance.requestPost(baseurl + 'site/login', {
+		'LoginForm[redirect]':'/user',
 		'LoginForm[login]':prefs.auth_cnumber,
 		'LoginForm[password]':prefs.auth_password,
 		'LoginForm[rememberMe]':'0',
+		'g-recaptcha-response': recaptcha,
 		'yt0':'Вход'
-	}, g_headers);
+	}, addHeaders({Referer: baseurl}));
 	
-	if (matches = html.match(/\<div class=\"errorMessage\"[^\>]*\>([^\<]+)\<\/div\>/)) {
-		throw new AnyBalance.Error(matches[1]);
+	if (!/leftexit/i.test(html)){
+		var error = getElement(html, /<div[^>]+errorMessage/i, replaceTagsAndSpaces);
+		if(error)
+			throw new AnyBalance.Error(error, null, /парол|логин/i.test(error));
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удалось войти в кабинет. Сайт изменен?');
 	}
 
-	html = AnyBalance.requestGet('https://card.spar-nn.ru/user', g_headers);
+	html = AnyBalance.requestGet(baseurl + 'user', g_headers);
 
-	var result = {success: false};
+	var result = {success: true};
 
-	if (matches = html.match(/\<span class=\"lkuicard\"\>([\d\s]+)\<\/span\>/)) {
-		if(AnyBalance.isAvailable('__tariff')) {
-			result['__tariff'] = matches[1];
-		}
-	}
+	getParam(html, result, '_tariff', /<span[^>]+lkuicard[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
+	getParam(html, result, 'card_bonus', /<span[^>]+lkuibalance[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
 
-	if (matches = html.match(/\<span class=\"lkuibalance\"\>\s*(\-?[\s\d\.]*?\d)[^\d\<]*\<\/span\>/)) {
-		result['success'] = true;
-		if(AnyBalance.isAvailable('card_bonus')) {
-			result['card_bonus'] = parseFloat(matches[1].replace(' ', ''));
-		}
-		AnyBalance.setResult(result);
-	} else {
-		throw new AnyBalance.Error('Не удалось получить информацию о бонусах.');
-	}
+	AnyBalance.setResult(result);
 }

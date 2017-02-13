@@ -61,14 +61,32 @@ function processClick(options) {
         request_id: requestId
     }, g_headers);
 
+    if(/<input[^>]+otp_param/i.test(html)){
+    	AnyBalance.trace('Затребован одноразовый пароль');
+    	var form = getElement(html, /<form[^>]+approve-login/i);
+    	if(!form){
+    		AnyBalance.trace(html);
+    		throw new AnyBalance.Error('Не удалось получить форму ввода одноразового пароля. Сайт изменен?');
+    	}
+
+		var params = AB.createFormParams(form, function(params, str, name, value) {
+			if (name == 'otp_param')
+				return AnyBalance.retrieveCode('Введите код подтверждения входа из СМС', null, {inputType: 'number'});
+			return value;
+		});
+
+		html = AnyBalance.requestPost(g_baseurl + '/oam/server/auth_cred_submit', params, g_headers);
+    }
+
     if (!/"_afrLoop",\s*"(\d+)"/i.test(html)) {
         //Мы остались на странице входа. какая-то ошибка
-        var error = getParam(html, null, null, /<div[^>]+class="[^"]*\bred"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+        var error = getElement(html, /<div[^>]+class="[^"]*\b(?:red|notification__message)\b/i, replaceTagsAndSpaces);
         if (error)
-            throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
+            throw new AnyBalance.Error(error, null, /парол/i.test(error));
         error = getParam(html, null, null, /(Неверный логин или пароль)/i);
         if (error)
             throw new AnyBalance.Error(error, null, true);
+
         var error_code = getParam(AnyBalance.getLastUrl(), null, null, /p_error_code=([^&]*)/i, null, decodeURIComponent);
         if (error_code) {
             var jsons = AnyBalance.requestGet(g_baseurl + '/SLAlfaSignFront10/errors?code=' + error_code + '&type=' + getParam(error_code, null, null, /[^\-]*/), g_headers);
@@ -91,41 +109,6 @@ function processClick(options) {
 
     if (/faces\/main\/changePassword|faces\/routeChangePwd\/changePassword/i.test(html)) {
         throw new AnyBalance.Error("Вам необходимо сменить старый пароль. Зайдите в Альфа-Клик через браузер, поменяйте пароль, затем введите новый пароль в настройки провайдера.", null, true);
-    }
-
-    function getClickOTP(params, str, name, value) {
-        if (name == 'pt1:password_key'){
-            var msg = getParam(html, null, null, /<span[^>]+id="[^>]*_(?:token|sms)"(?:[^>](?!display\s*:\s*none))*>([\s\S]*?)(?:<\/span>|<div)/i, replaceTagsAndSpaces);
-            AnyBalance.trace('Затребован код на вход: ' + msg);
-            msg = msg || "Для входа в интернет-банк требуется одноразовый код. Введите его в поле ниже.";
-            return AnyBalance.retrieveCode(msg + "\n\nЧтобы не вводить код всегда при входе в интернет-банк, вы можете отключить требование одноразового кода на вход в настройках Альфа-Клик. Это безопасно, отменяет только подтверждение входа. Подтверждение транзакций всё равно будет требоваться обязательно.", null, {
-                    time: 180000, //Время ожидания ввода кода в мс (3 минуты)
-                    inputType: 'number' //Способ ввода (только цифры
-                });
-        }
-        return value;
-    }
-
-    if(/pt1:password_key/i.test(html)){
-        var windowName = getParam(html, null, null, /window.name='([^']*)/i, replaceSlashes) || null;
-
-        //надо ввести код для смс
-        var o = getNextPage(html, 'pt1:next_button', [
-            ['event', '%EVENT%'],
-            ['event.%EVENT%', g_some_action],
-            ['oracle.adf.view.rich.PPR_FORCED', 'true']
-        ], {paramsFunc: getClickOTP, withScripts: true});
-        html = o.html;
-
-        if(html) {
-            error = getParam(o.scripts, null, null, /AdfFacesMessage.TYPE_ERROR,[^,]*,('[^']*')/i, [/^/, 'return '], safeEval);
-            if (error)
-                throw new AnyBalance.Error(error);
-            AnyBalance.trace(html + o.scripts);
-            AnyBalance.trace('Не удалось зайти в Альфа-Клик после ввода одноразового пароля. Попробуйте отключить запрос одноразового пароля в настройках своего Альфа-Клик.')
-        }
-
-        html = clickGoToUrl(lastUrl.replace(/_afrWindowId=null/, '_afrWindowId=' + windowName));
     }
 
     if(!/images\/close.png/i.test(html) //Click 2.0

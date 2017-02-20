@@ -3,12 +3,11 @@
 */
 
 var g_headers = {
-	'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-	'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
-	'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
+	'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+	'Accept-Language':'ru,en-US;q=0.8,en;q=0.6',
     Origin: 'https://online.crediteurope.ru',
 	'Connection':'keep-alive',
-	'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:35.0) Gecko/20100101 Firefox/35.0'
+	'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36'
 };
 
 var baseurl = 'https://online.crediteurope.ru/FWFIB/';
@@ -62,7 +61,7 @@ function login() {
 
         params = createFormParams(form, function (params, str, name, value) {
             if (name == 'SMSPASS')
-                return AnyBalance.retrieveCode("Пожалуйста, введите код из СМС, пришедшего вам не телефон, для входа в интернет-банк");
+                return AnyBalance.retrieveCode("Пожалуйста, введите код из СМС, пришедшего вам не телефон, для входа в интернет-банк", null, {inputType: 'number', time: 120000});
             return value;
         });
 

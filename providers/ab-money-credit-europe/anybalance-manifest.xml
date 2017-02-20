@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser|sms" />
-    <id version="4">ab-money-credit-europe</id>
+    <id version="5">ab-money-credit-europe</id>
 	<name>Кредит Европа Банк</name>
 	<description html="true"><![CDATA[
 	<p>Получает текущий остаток и другие параметры продуктов Кредит Европа Банка http://crediteurope.ru/, используя интернет-банк (https://online.crediteurope.ru/).</p>

@@ -18,7 +18,7 @@ function main(){
 	
     AnyBalance.setDefaultCharset('utf-8');
 	
-	var baseurl = "http://lk.avtomir.tmweb.ru/";
+	var baseurl = "http://lk.avtomir.ru/";
 	
     var html = AnyBalance.requestGet(baseurl + 'personal/', g_headers);
 	
@@ -53,7 +53,7 @@ function main(){
     }
 
     AB.getParam(privateCabHtml, result, 'fio', /<div[^>]+class="b_private_cab_info"[^>]*>\s*<p[^>]*>([\s\S]*?)<br>/i, AB.replaceTagsAndSpaces);
-    AB.sumParam(privateCabHtml, result, 'balance', /Общая сумма баллов([\s\S]*?)<br/ig, AB.replaceTagsAndSpaces, AB.parseBalance, AB.aggregate_sum);
+    AB.sumParam(privateCabHtml, result, 'balance', /<span[^>]+card_amount[^>]*>([\s\S]*?)<\/span>/ig, AB.replaceTagsAndSpaces, AB.parseBalance, AB.aggregate_sum);
     AB.getParam(prefs.login, result, 'number');
 	
     html = AnyBalance.requestGet(baseurl + "personal/transactions/", g_headers);

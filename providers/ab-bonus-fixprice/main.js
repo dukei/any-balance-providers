@@ -71,8 +71,8 @@ function main() {
 	if(AnyBalance.isAvailable('balance')){
 		html = AnyBalance.requestGet(baseurl + 'crm_cabinet_api/balance', g_headers);
 		json = getJson(html);
-		AB.getParam(json.active, result, 'balance');
-		AB.getParam(json.inactive, result, 'balance_inactive');
+		AB.getParam(json.active/100, result, 'balance');
+		AB.getParam(json.inactive/100, result, 'balance_inactive');
 	}
 
 //	AB.getParam(html, result, 'card', /на\s+вашей\s+карте\s+№([\s\S]*?)<\/p>/i, AB.replaceTagsAndSpaces);

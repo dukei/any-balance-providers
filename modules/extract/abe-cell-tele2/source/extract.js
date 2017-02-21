@@ -33,7 +33,7 @@ function login() {
                     throw new AnyBalance.Error('Новый кабинет: ' + error);
 
                 AnyBalance.trace(html);
-                throw new AnyBalance.Error("Новый личный кабинет ${g_operatorName} временно недоступен. Попробуйте позже.");
+                throw new AnyBalance.Error("Новый личный кабинет ${g_operatorName} временно недоступен. Попробуйте позже.", true);
             }
         }
         return html;
@@ -58,7 +58,7 @@ function login() {
                 throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
             }
 
-            var form = getElement(html, /<form[^>]+authForm/i);
+            var form = getElement(html, /<form[^>]+(?:authForm|submitLoginAndPassword)/i);
             if (!form) {
                 AnyBalance.trace(html);
                 throw new AnyBalance.Error('Не удалось найти форму входа, сайт изменен?');
@@ -131,10 +131,13 @@ function enterBySms(){
         throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
     }
 
-    var token = getParam(html, null, null, /<input[^>]+value="([^"]+)"[^>]*name="_csrf"/i, replaceTagsAndSpaces);
+    var token = getParam(html, [
+    	/<input[^>]+value="([^"]+)"[^>]*name="_csrf"/i,
+    	/<input[^>]+name="_csrf"[^>]*value="([^"]+)"/i], replaceTagsAndSpaces);
+
     if (!token) {
         AnyBalance.trace(html);
-        throw new AnyBalance.Error('Не удалось найти форму входа, сайт изменен?');
+        throw new AnyBalance.Error('Не удалось найти форму входа при входе через SMS, сайт изменен?');
     }
 
     var headers = addHeaders({
@@ -183,7 +186,9 @@ function enterBySms(){
     if(returnCode == 504){
         //USSD код не введен, надо запросить смс
         html = AnyBalance.requestGet(baseurlLogin + 'wap/auth/requestSms', addHeaders({Referer: AnyBalance.getLastUrl()}));
-        token = getParam(html, null, null, /<input[^>]+value="([^"]+)"[^>]*name="_csrf"/i, replaceTagsAndSpaces);
+    	token = getParam(html, [
+    		/<input[^>]+value="([^"]+)"[^>]*name="_csrf"/i,
+    		/<input[^>]+name="_csrf"[^>]*value="([^"]+)"/i], replaceTagsAndSpaces);
 
         var code = AnyBalance.retrieveCode("Вам отправлено SMS-сообщение с кодом для входа в личный кабинет ${g_operatorName}. Введите код из SMS", null, {inputType: 'number'});
         html = AnyBalance.requestPost(baseurlLogin + 'wap/auth/submitSmsCode', {

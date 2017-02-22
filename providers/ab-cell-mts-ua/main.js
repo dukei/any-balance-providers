@@ -170,6 +170,7 @@ function main(){
     sumParam (html, result, 'min_net_100', /<li>100 минут в день на внутрисетевое направление:[^<]*осталось\s*([\d\.,]+)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
     sumParam (html, result, 'min_net_100', /<li>200 минут в день на внутрисетевое направление:[^<]*осталось\s*([\d\.,]+)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
     sumParam (html, result, 'min_net_100', /<li>Осталось ([\d\.,]+) бесплатных секундДо [^<]*<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+
     //Срок действия 100/200 минут в день на внутрисетевое направление
     sumParam (html, result, 'termin_min_net_100', /<li>Осталось [\d\.,]+ бесплатных секундДо ([^<]*)<\/li>/ig, replaceTagsAndSpaces, parseDate, aggregate_min);
     // 200 минут в день на внутрисетевое направление
@@ -248,7 +249,8 @@ function main(){
     //CMC+MMS на других
     sumParam (html, result, 'sms_mms_others', /<li>1000 SMS\/MMS по Украине, осталось: (\d+) SMS\/MMS/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
     //CMC+MMS по Украине и Европе Vodafone
-    sumParam (html, result, 'sms_mms_others1', /<li>\d+ SMS\/MMS в месяц RED ., осталось (\d+) sms\/mms/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+    sumParam (html, result, 'sms_mms_others1', /<li>\d+ SMS\/MMS[^>]*?(?:в|на) месяц RED[^>]*?осталось:? (\d+) sms\/mms/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+    sumParam (html, result, 'sms_mms_others1', /<li>\d+ SMS\/MMS[^>]*?RED[^>]*?(?:в|на) месяц[^>]*?осталось:? (\d+) sms\/mms/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
     sumParam (html, result, 'sms_mms_others1', /<li>\d+\s*SMS\/MMS по Україні \(RED .\), осталось:\s*(\d+)\s*(?:sms|смс|сообщений)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
     sumParam (html, result, 'sms_mms_others2', /<li>\d+ SMS\/MMS в день RED ., осталось (\d+) sms\/mms/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
     sumParam (html, result, 'sms_mms_others3', /<li>\d+ SMS\/MMS "Роуминг как дома", осталось (\d+) sms\/mms/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
@@ -267,6 +269,10 @@ function main(){
     // 100 минут абонентам по Украине
     sumParam (html, result, 'min_all_100', /<li>Осталось ([\d\.,]+) секунд на все сети<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
     sumParam (html, result, 'min_all_100', /<li>100 минут на других мобильных операторов по Украине, осталось: (\d+),*\d* мин/ig, replaceTagsAndSpaces, parseTime, aggregate_sum);
+    sumParam (html, result, 'min_all_100', /<li>Звонки по Украине. Осталось: ([\d\.,]+) мин/ig, replaceTagsAndSpaces, parseTime, aggregate_sum);
+
+    //Звонки за границу
+    sumParam (html, result, 'min_abroad', /<li>Звонки заграницу. Осталось: ([\d\.,]+) мин/ig, replaceTagsAndSpaces, parseTime, aggregate_sum);
 
     // Минуты с услугой «Супер без пополнения» в сети МТС
     sumParam (html, result, 'min_net', /<li>Осталось ([\d\.,]+) бесплатных секунд<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
@@ -359,7 +365,7 @@ function main(){
     // Интернет «Команда 3D»
     sumParam (html, result, 'traffic_used', /<li>МБ GPRS по услуге "Супер МТС Команда 3D", использовано:\s*(\d+,?\d* *(Кб|kb|mb|gb|кб|мб|гб|байт|bytes)).<\/li>/ig, null, parseTraffic, aggregate_sum);
     // Интернет Vodafone
-    sumParam (html, result, 'traffic_used', /<li>\d+ (?:Г|М)Б[^<]* в месяц[^<]*, использовано:\s*(\d+,?\d* *(Кб|kb|mb|gb|кб|мб|гб|байт|bytes)).<\/li>/ig, null, parseTraffic, aggregate_sum);
+    sumParam (html, result, 'traffic_used', /<li>\d+ (?:Г|М)Б[^<]* (?:в|на) месяц[^<]*использовано:\s*(\d+,?\d* *(Кб|kb|mb|gb|кб|мб|гб|байт|bytes))[^<]*<\/li>/ig, null, parseTraffic, aggregate_sum);
     sumParam (html, result, 'traffic_used', /<li>[^<]*\d+ (?:Г|М)Б[^<]* до конца месяц[^<]*:\s*(\d+,?\d* *(Кб|kb|mb|gb|кб|мб|гб|байт|bytes)).<\/li>/ig, null, parseTraffic, aggregate_sum);
     sumParam (html, result, 'traffic_used', /<li>Передача даних в Україні, використано:\s*(\d+,?\d* *(Кб|Мб|Гб|kb|mb|gb|кб|мб|гб|байт|bytes)).<\/li>/ig, null, parseTraffic, aggregate_sum);
     sumParam (html, result, 'traffic_used1', /<li>Мобильный Интернет на день RED, использовано:\s*(\d+,?\d* *(Кб|kb|mb|gb|кб|мб|гб|байт|bytes)).<\/li>/ig, null, parseTraffic, aggregate_sum);

@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="1.3" version="73" date="2017-02-22">
+	Улучшено распознавание доп. параметров RED
+	</change>
 	<change major_version="1.3" version="72" date="2016-12-05">
 	Добавлен счетчик трафика Интернет Планшет
 	</change>

@@ -70,7 +70,7 @@ function main() {
 		AnyBalance.setResult(result);
 		// Если нет ни логина ни пароля - просто ищем объявление
 	} else {
-		checkEmpty(!prefs.region || /^\w+$/.test(prefs.region), 'Название города может содержать только буквы и цифры. Чтобы его узнать, зайдите в браузере на avito.ru и перейдите на нужный город. Он появится в адресной строке браузера, например, ekaterinburg в http://www.avito.ru/ekaterinburg');
+		checkEmpty(!prefs.region || /^[\w\-]+$/.test(prefs.region), 'Название города может содержать только буквы, цифры и дефис. Чтобы его узнать, зайдите в браузере на avito.ru и перейдите на нужный город. Он появится в адресной строке браузера, например, ekaterinburg в http://www.avito.ru/ekaterinburg');
 
 		var region = prefs.region || 'rossiya';
 		var pattern = prefs.pattern;

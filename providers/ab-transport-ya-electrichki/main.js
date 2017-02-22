@@ -86,6 +86,8 @@ function main () {
 	var result = {success: true};
 
 	var idx = 0;//, now = +new Date();
+
+	json.search.segments.sort(function(s1, s2){ return s1.departure > s2.departure ? 1 : (s1.departure < s2.departure ? -1 : 0) });
 	for(var i=0; i<json.search.segments.length; ++i){
 		var segment = json.search.segments[i];
 //		var departure = parseDateISO(segment.departure);
@@ -93,7 +95,7 @@ function main () {
 		var time = moment(segment.departure).tz(segment.timezoneFrom).format('HH:mm');
 
 //		var time = n2(departure.getHours()) + ':' + n2(departure.getMinutes());
-		var name = segment.transport.title + ' ' + segment.title + ' ' + time;
+		var name = segment.transport.title + ' ' + (segment.title || segment.transferStations) + ' ' + time;
 
 		if(!types[segment.transport.code]){
 			AnyBalance.trace(name + ' не подходит под фильтр');

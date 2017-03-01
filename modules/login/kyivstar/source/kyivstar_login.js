@@ -102,12 +102,14 @@ function loginBasic(html) {
 
 	var json = checkGwtError(html), recaptchaResponse;
 	if (json[12] >= 3){
+		AnyBalance.trace('Потребовалась рекапча...');
 		recaptchaResponse = solveRecaptcha('К сожалению, Киевстар потребовал ввода капчи для этого номера. Решите её или зайдите в личный кабинет один раз через браузер.',
 			referer, "6LdmHxMTAAAAAOC1FPK3u0jx00AbkUj_OvQXN0yR");
 	}
 
 	//Получаем токен для входа
 	// html = AnyBalance.requestPost(g_gwtCfg.url + 'cas/auth/authSupport.rpc',
+	AnyBalance.trace('Получаем токен для входа...');
 	html = AnyBalance.requestPost(g_gwtCfg.url + 'authSupport.rpc',
 		makeReplaces(recaptchaResponse ? authRequestCaptcha : authRequest, g_gwtCfg)
 			.replace(/%LOGIN%/g, gwtEscape(prefs.login.replace(/\D+/g, '')))
@@ -141,6 +143,7 @@ function loginBasic(html) {
 	});
 
 	var action = getParam(form, null, null, /<form[^>]+action="([^"]*)/i, replaceHtmlEntities);
+	AnyBalance.trace('Завершаем вход...');
 	html = AnyBalance.requestPost(joinUrl(referer, action), params, addHeaders({
 		Referer: referer
 	}));
@@ -150,6 +153,8 @@ function loginBasic(html) {
 		AnyBalance.trace('Переадресовали на ' + AnyBalance.getLastUrl() + ':\n' + html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
+
+	AnyBalance.trace('В результате входа перешли на ' + AnyBalance.getLastUrl());
 
 	return html;
 }
@@ -177,8 +182,10 @@ function goToNewSite(html){
 }
 
 function goToSite(html){
-	if(isNewDemo(html))
+	if(isNewDemo(html)){
+		AnyBalance.trace('Показана страница рекламы нового кабинета, переходим в новый кабинет');
 		html = AnyBalance.requestGet('https://new.kyivstar.ua/ecare/', g_headers);
+	}
 	return html;
 }
 
@@ -225,8 +232,6 @@ function loginSite(baseurl) {
 			html = doLogout(html);
 		}
 	}
-
-    html = goToSite(html); 
 
 	if (!isLoggedIn(html)) {
 		if(!isThereLoginForm(html)){ 

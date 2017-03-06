@@ -81,8 +81,8 @@ function main() {
   AB.getParam(card && card.plan, result, '__tariff');
   AB.getParam(card && card.planExpires, result, 'till', null, null, parseDateISO);
 
-  if (AnyBalance.isAvailable(['pointsinlastoper', 'lastoperationplace', 'lastoperationdate'])) {
-    res = AnyBalance.requestGet(baseurl + 'api/cards/current/operations?orderByDateAsc=false&skip=0&take=10&type=', addHeaders({
+  if (card && AnyBalance.isAvailable(['pointsinlastoper', 'lastoperationplace', 'lastoperationdate'])) {
+    res = AnyBalance.requestGet(baseurl + 'api/user/cards/' + card.ean + '/operations?orderByDateAsc=false&skip=0&take=10&type=', addHeaders({
       Referer: baseurl,
       Authorization: 'Bearer ' + token
     }));

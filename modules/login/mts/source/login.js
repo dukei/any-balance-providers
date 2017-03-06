@@ -44,6 +44,23 @@ function checkLoginError(html, loginUrl) {
     return html;
 }
 
+function redirectIfNeeded(html){
+    if(/<body[^>]+onload[^>]+submit/i.test(html)){
+    	AnyBalance.trace('Потребовался редирект формой...');
+    	var params = createFormParams(html);
+    	var action = getParam(html, /<form[^>]+action=['"]([^'"]*)/, replaceHtmlEntities);
+    	var url = AnyBalance.getLastUrl();
+    	html = AnyBalance.requestPost(joinUrl(url, action), params, addHeaders({Refefer: url}));
+    }
+    var redir = getParam(html, /<meta[^>]+http-equiv="REFRESH"[^>]*content="0;url=([^";]*)/i, replaceHtmlEntities);
+    if(redir){
+    	AnyBalance.trace('Потребовался get редирект...');
+    	var url = AnyBalance.getLastUrl();
+    	html = AnyBalance.requestGet(joinUrl(url, redir), addHeaders({Refefer: url}));
+    }
+    return html;
+}
+
 function enterMTS(options){
 	var baseurl = options.baseurl || g_baseurl;
     var loginUrl = options.url || g_baseurlLogin + "/amserver/UI/Login?service=" + (options.service || 'lk') + '&goto=' + baseurl + '/';
@@ -63,6 +80,8 @@ function enterMTS(options){
 
     if(AnyBalance.getLastUrl().indexOf(baseurl) == 0) //Если нас сразу переадресовали на целевую страницу, значит, уже залогинены
 		return html;
+
+	html = redirectIfNeeded(html);
 
     var form = getParam(html, null, null, /<form[^>]+name="Login"[^>]*>([\s\S]*?)<\/form>/i);
     if (!form) {

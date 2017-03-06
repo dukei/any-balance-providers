@@ -4,6 +4,7 @@
 
 function main() {
     var prefs = AnyBalance.getPreferences();
+    AnyBalance.setOptions({cookiePolicy: 'best-match'});
 
     if(prefs.__initialization)
 	    return initialize();

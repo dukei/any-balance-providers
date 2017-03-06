@@ -24,10 +24,12 @@ var g_baseurlLogin = 'https://login.mts.ru';
 
 var g_headers = {
     'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-    'Accept-Language': 'ru,en;q=0.8',
-    'Cache-Control': 'max-age=0',
-    'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/43.0.2357.124 Safari/537.36',
-    'If-Modified-Since': null, //Иначе МТС глючит с кешированием...
+    'Accept-Language': 'ru,en-US;q=0.8,en;q=0.6',
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36',
+    Connection: 'keep-alive',
+    'Upgrade-Insecure-Requests': '1',
+    'Accept-Encoding': 'gzip, deflate, sdch, br'
+//    'If-Modified-Since': null, //Иначе МТС глючит с кешированием...
 };
 
 var replaceNumber = [replaceTagsAndSpaces, /\D/g, '', /.*(\d\d\d)(\d\d\d)(\d\d)(\d\d)$/, '+7 $1 $2-$3-$4'];

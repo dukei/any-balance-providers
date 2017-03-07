@@ -1340,10 +1340,12 @@ var AB = (function (global_scope) {
 		if(isArray(params)){
 			for(var i=0; i<params.length; ++i){
 				var p = params[i];
+				if(!isset(p[1])) continue;
 				out.push(processKeyValue(p[0], p[1]));
 			}
 		}else{
 			for(var p in params){
+				if(!isset(params[p])) continue;
 				out.push(processKeyValue(p, params[p]));
 			}
 		}
@@ -1449,7 +1451,8 @@ var AB = (function (global_scope) {
         getJsonObjSafe: getJsonObjSafe,
         createUrlEncodedParams: createUrlEncodedParams,
         clearAllCookies: clearAllCookies,
-        solveRecaptcha: solveRecaptcha
+        solveRecaptcha: solveRecaptcha,
+        regexEscape: regexEscape
     };
 })(this);
 

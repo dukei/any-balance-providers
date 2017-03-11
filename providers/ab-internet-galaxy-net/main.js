@@ -24,13 +24,23 @@ function main(){
     var baseurl = "http://users.galaxy-net.ru/client2/index.php?r=site/login";
 
     AnyBalance.setDefaultCharset('utf-8'); 
+        
+    AnyBalance.trace('Запрос страницы');
 
     html = AnyBalance.requestPost(baseurl, {
         "LoginForm[login]": login,
         "LoginForm[password]": password,
         'yt0': 'Войти'
     });
-    if(!/<title>LanBilling Client UI - Мои аккаунты<\/title>/i.test(html)){
+    
+    AnyBalance.trace('Ответ страницы');
+    
+    if (!html || AnyBalance.getLastStatusCode() > 400) {
+        AnyBalance.trace(html);
+        throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера!');
+    }
+    
+    if(!/<title>GALAXY-NET - Мои аккаунты<\/title>/i.test(html)){
         var error = getParam(html, null, null, /<li>Неверное имя пользователя или пароль<\/li>/i, replaceTagsAndSpaces);
         if(error){
             throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test());

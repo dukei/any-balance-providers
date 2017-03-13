@@ -105,7 +105,15 @@ function executeChallenge(script, baseurl, loginPage){
 
 	var win = {
 		document: doc,
-		XMLHttpRequest: XHR
+		XMLHttpRequest: XHR,
+		navigator: {
+			appName: 'Netscape'
+		},
+		screen: {},
+		innerWidth: 913,
+		location: {
+			host: "www.paypal.com"
+		}
 	};
 
 	script += "\nreturn typeof autosubmit != 'undefined' ? autosubmit : undefined;";

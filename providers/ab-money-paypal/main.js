@@ -118,7 +118,7 @@ function executeChallenge(script, baseurl, loginPage){
 
 	script += "\nreturn typeof autosubmit != 'undefined' ? autosubmit : undefined;";
 
-	var autosubmit = safeEval(script, 'window,document,XMLHttpRequest', [win, doc, XHR]);
+	var autosubmit = safeEval(script, 'window,document,XMLHttpRequest,screen,navigator,location', [win, doc, XHR, win.screen, win.navigator, win.location]);
 	AnyBalance.trace('autosubmit = ' + autosubmit);
 
 	//Строго требуется капча...

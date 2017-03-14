@@ -27,7 +27,7 @@ function loginAndGetBalance(prefs, result) {
 	
 	getParam(html, result, 'number', /Номер кошелька(?:[^>]*>){2}(\d{10,20})/i, replaceTagsAndSpaces);
 	
-	var textsum = getParam(html, result, 'balance', /(?:price|sum)__amount[^>]*>([\s\S]*?)<\/span>\s*<\/span>/i, replaceTagsAndSpaces);
+	var textsum = getElement(html, /<span[^>]+"price"/i, replaceTagsAndSpaces);
 	AnyBalance.trace('Предположительно баланс где-то здесь: ' + textsum);
 
 	if(/\*{3}/.test(textsum)) {

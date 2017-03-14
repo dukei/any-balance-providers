@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="26" date="2017-03-14">
+	Исправление получения отрицательного баланса
+	</change>
 	<change version="25" date="2016-09-16">
 	Исправлено получение спрятанного баланса
 	</change>

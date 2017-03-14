@@ -42,8 +42,11 @@ function mainCenter(){
     if(!/logout/i.test(html)){
         var error = getParam(html, null, null, /class="error"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
         if (error){
-            throw new AnyBalance.Error (error);
+            throw new AnyBalance.Error (error, null, /парол/i.test(error));
         }
+        if(/ПЕРЕАДРЕСАЦИЯ В НОВЫЙ ЛК/i.test(html))
+        	throw new AnyBalance.Error('Необходимо зарегистрироваться в https://my.netbynet.ru и ввести логин и пароль от него в настройки провайдера', null, true);
+        	
         throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
     }
 	

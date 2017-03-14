@@ -10,35 +10,64 @@ var g_headers = {
 	'Connection':'keep-alive',
 };
 
+function callAPI(verb, postParams){
+	var baseurl = "https://lk.cinemapark.ru/crm/";
+	var url = baseurl + verb;
+
+	var params = {
+		Request: postParams
+	};
+
+	if(!postParams.Source)
+		postParams.Source = {"Id":"8826A963-5A08-4629-81C0-ED5FDEEC35DD","SecretKey":"1cnMsQftmIsAxsGm5ROl"};
+    if(!postParams.Contact)
+    	postParams.Contact = callAPI.Contact;
+			
+	if(postParams)
+		method = 'POST';
+	else
+		postParams = '';
+
+	html = AnyBalance.requestPost(url, 
+		JSON.stringify(params), 
+		addHeaders({'Content-Type': 'application/json; charset=utf-8'})
+	);
+
+	var json = getJson(html);
+	return json;
+}
+
 function main(){
     AnyBalance.setDefaultCharset('utf-8');
 	var prefs = AnyBalance.getPreferences();
 	
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
-	
-	var html = AnyBalance.requestGet('https://cinemapark.ru/api/login/?loyalty_card_number='+ encodeURIComponent(prefs.login) +'&loyalty_card_codeword=' + encodeURIComponent(prefs.password) + '&is_persistent=0&_=');
-	// надо достать куку
-	var cookie = getParam(html, null, null, /<session_cookie>([\s\S]*?)<\//i, null, html_entity_decode);
-	if(!cookie)
-		throw new AnyBalance.Error('Не удалось найти токен авторизации, сайт либо недоступен, либо изменен');
-	// ставим куку руками
-	AnyBalance.setCookie('cinemapark.ru', 'session_cookie', cookie);
-	// инфрмация по карте
-	html = AnyBalance.requestGet('https://cinemapark.ru/card_info/');
-	
-    if(!/logout\(\)/i.test(html)) {
+
+	var json = callAPI('LoginUser', {"Contact":{"Password":prefs.password,"Username":prefs.login},"AuthorizationType":"Username"});
+    if(!json.LoginUserResult.Contact) {
+    	var error = json.LoginUserResult.Message;
+    	if(error)
+    		throw new AnyBalance.Error(error, null, /авториз/i.test(error));
 		AnyBalance.trace(html);
         throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Проверьте правильность ввода логина и пароля!');
 	}
-	
+	callAPI.Contact = {Id: json.LoginUserResult.Contact.Id, SecretKey: json.LoginUserResult.Contact.SecretKey};
+
+	json = callAPI('GetCardList', {OnlyActiveCard: true});
+
+	var card = json.GetCardListResult.Cards[0];
+	if(!card)
+		throw new AnyBalance.Error('У вас нет ни одной карты');
+
     var result = {success: true};
     
-	getParam(html, result, 'stage', /Уровень программы[\s\S]*?>[\s\S]*?>([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'discount', /Действующий процент[\s\S]*?>[\s\S]*?>([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'deadline', /Действительна до[\s\S]*?>[\s\S]*?>([\s\S]*?)<\//i, replaceTagsAndSpaces, parseDateWord);
-	getParam(html, result, 'status', /Состояние[\s\S]*?>[\s\S]*?>([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'balance', /Баллов[\s\S]*?>[\s\S]*?>([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
+	getParam(card.Category, result, 'stage');
+	getParam(card.Category, result, '__tariff');
+	getParam(card.CategoryPercent, result, 'discount');
+	getParam(card.Number, result, 'num');
+	getParam(card.State, result, 'status');
+	getParam(card.CurrentBalance, result, 'balance');
 	
     AnyBalance.setResult(result);
 }

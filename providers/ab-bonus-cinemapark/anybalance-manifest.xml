@@ -1,16 +1,18 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-bonus-cinemapark</id>
+	<id version="3">ab-bonus-cinemapark</id>
 	<api flags="no_browser"/>
 	<name>Синема Парк</name>
 	<description html="true"><![CDATA[
-	<p>Получает значения бонусной карты Синема Парк (https://cinemapark.ru)</p>
+	<p>Получает значения бонусной карты Синема Парк (http://www.cinemapark.ru)</p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>

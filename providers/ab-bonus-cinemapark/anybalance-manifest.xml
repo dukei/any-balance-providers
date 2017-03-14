@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="3">ab-bonus-cinemapark</id>
+	<id version="4">ab-bonus-cinemapark</id>
 	<api flags="no_browser"/>
 	<name>Синема Парк</name>
 	<description html="true"><![CDATA[
@@ -20,8 +20,8 @@
 		<counter id="balance" name="Баланс"/>
 		<counter id="status" name="Статус карты" type="text"/>
 		<counter id="stage" name="Уровень программы" type="text"/>
-		<counter id="discount" name="Действующий процент" type="text"/>
-		<counter id="deadline" name="Действительна до" type="time" format="dd/MM/yyyy"/>
+		<counter id="discount" name="Действующий процент" units="%"/>
+		<counter id="num" name="Номер карты" type="text"/>
 	</counters>
 	<keywords></keywords>
 	<type>bonus</type>

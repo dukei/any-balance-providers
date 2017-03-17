@@ -99,6 +99,7 @@ function main(){
 	        
 			var action = getParam(form, null, null, /<form[^>]+action="([^"]*)/i, replaceHtmlEntities);
 	        
+	        params.fid = hex_md5(prefs.login); //Теперь требуется фингерпринт передавать
 			html = AnyBalance.requestPost(joinUrl(ref, action), params, AB.addHeaders({
 				Referer: ref
 			}));
@@ -161,6 +162,7 @@ function main(){
 
 				action = getParam(html, null, null, /<form[^>]+action="([^"]*)/i, replaceHtmlEntities);
 				params = AB.createFormParams(html);
+				params.languages='ru-RU';
 	        
 				if(!params.Challenge){
 					var error = getElement(html, /<[^>]+login-global-error/i, replaceTagsAndSpaces);
@@ -183,6 +185,26 @@ function main(){
 		}
 	    
 		ref = AnyBalance.getLastUrl();
+		if(/Executing/i.test(ref)){
+			AnyBalance.trace('Доп. форма переадресации перед входом...');
+			var form = getElement(html, /<form[^>]+data-role="auto-submit"/i);
+			if(!form){
+				AnyBalance.trace(html);
+				throw new AnyBalance.Error('Не удалось найти форму переадресации после входа');
+			}
+
+			action = getParam(form, /<form[^>]+action="([^"]*)/i, replaceHtmlEntities);
+			params = createFormParams(form);
+			params.fid = hex_md5(prefs.login);
+			var delay = getParam(form, /<form[^>]+data-submit-delay="([^"]*)/i, replaceHtmlEntities, parseBalance) || 0;
+			if(delay > 0){
+				AnyBalance.trace('Необходимо подождать ' + delay + ' сек');
+				AnyBalance.sleep(delay*1000);
+			}
+			html = AnyBalance.requestPost(joinUrl(ref, action), params, addHeaders({Referer: ref}));
+			ref = AnyBalance.getLastUrl();
+		}
+
 		if(!/Completed/i.test(ref)){
 			var error = getElement(html, /<span[^>]+field-validation-error/i, replaceTagsAndSpaces);
 			if(error)

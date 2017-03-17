@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id version="6">ab-money-wm</id>
+	<id version="7">ab-money-wm</id>
 	<name>WebMoney</name>
 	<description html="true"><![CDATA[
 	<p>Получает информацию о балансе кошельков WMR, WMZ, WME, WMU и WMB из WM Keeper Standard https://mini.webmoney.ru .</p> 
@@ -18,6 +18,7 @@
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>
 		<module id="library"/>
+		<module id="crypt/md5"/>
 	</depends>
 	<files>
 		<icon>icon.png</icon>

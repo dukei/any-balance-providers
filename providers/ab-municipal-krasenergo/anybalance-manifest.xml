@@ -1,10 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="13">ab-municipal-krasenergo</id>
+	<id version="14">ab-municipal-krasenergo</id>
 	<api flags="no_browser"/>
 	<name>Красноярскэнергосбыт</name>
 	<description html="true"><![CDATA[
-		<p>Получает баланс и информацию о последнем платеже в КрасноярскЭнергоСбыт. Получает данные из личного кабинета http://old.krsk-sbit.ru/quasar.php.</p>
+		<p>Получает баланс и информацию о последнем платеже в КрасноярскЭнергоСбыт. Получает данные из личного кабинета http://http://krsk-sbit.ru/</p>
 
 		<p>Для доступа к данным лицевого счета требуется номер лицевого счета и фамилия (без имени и отчества) ИЛИ имя пользователя и пароль.</p>
 

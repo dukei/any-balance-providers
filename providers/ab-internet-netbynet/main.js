@@ -2,20 +2,56 @@
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 */
 
-var g_regions = {
-    voronezh: mainVoronezh,
-    belgorod: mainBelgorod,
-  ekaterinburg: mainEkaterinburg,
-    center: mainCenter,
-    orel: mainBelgorod,
-    oskol: mainBelgorod,
-    lipetsk: mainBelgorod,
-	tver: mainUniversal,
-	lobnya: mainLobnya,
-    murmansk: mainUniversal,
-	cheboksary: mainUniversal,
-	lenobl: mainUniversal,
+var g_headers = {
+	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
+	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
+	'Connection': 'keep-alive',
+	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36',
 };
+
+var baseurl = 'https://my.netbynet.ru/api/';
+
+function callAPI(verb, getParams, postParams, addheaders, checkResult){
+	var url = baseurl + verb, method = 'GET';
+	
+	if(getParams)
+		url += '?' + createUrlEncodedParams(getParams);
+
+	var paramsAreNotJson = postParams && postParams.__paramsAreNotJson;
+	if(postParams)
+		method = 'POST';
+	else
+		postParams = '';
+
+	var headers = addHeaders({
+		'X-Requested-With': 'XMLHttpRequest'
+	});
+
+	if(postParams && !paramsAreNotJson)
+		headers['Content-Type'] = 'application/json; charset=utf-8';
+	if(addheaders)
+		headers = addHeaders(addheaders, headers);
+
+	var html, tries = 0, maxTries = 5;
+	do{
+		if(tries > 0){
+			AnyBalance.trace('Retrying request: ' + tries + '/' + maxTries);
+			AnyBalance.sleep(1000);
+		}
+		html = AnyBalance.requestPost(url, 
+			typeof(postParams) == 'string' || paramsAreNotJson ? postParams : JSON.stringify(postParams), 
+			addHeaders(headers), 
+			{HTTP_METHOD: method}
+		);
+//	}while((/Server Hangup/i.test(AnyBalance.getLastStatusString()) || (502 == AnyBalance.getLastStatusCode() && /Server Hangup/i.test(html))) && (++tries <= maxTries));
+	}while(500 <= AnyBalance.getLastStatusCode() && 503 >= AnyBalance.getLastStatusCode() && (++tries <= maxTries));
+
+	var json = (checkResult || getJson)(html);
+	if(json.resultCode)
+		throw new AnyBalance.Error(json.resultText, null, /парол/i.test(json.resultText));
+	return json;
+}
 
 function main(){
     var prefs = AnyBalance.getPreferences();
@@ -23,10 +59,47 @@ function main(){
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 
+	var json = callAPI('v1/get-way', {accountNumber: prefs.login});
+	json = callAPI('v2/login', null, {"accountNumber":prefs.login,"password":prefs.password,"captchaCode":""});
+
+	if(json.needChangePassword)
+		throw new AnyBalance.Error('NetByNet требует сменить пароль. Пожалуйста, зайдите на https://my.netbynet.ru через браузер, смените пароль и введите новый пароль в настройки провайдера', null, true);
+
+	var result = {success: true};
+
+	if(AnyBalance.isAvailable('balance')){
+		json = callAPI('v1/get-balance');
+		getParam(json.accountBalance, result, 'balance');
+	}
+
+	json = callAPI('v1/get-internet-accounts-details');
+	var acct = json.internetAccounts[0];
+	if(acct){
+		getParam(acct.tariffPlan.name, result, '__tariff');
+		getParam(acct.statusName, result, 'status');
+	}
+
+	if(AnyBalance.isAvailable('subscriber', 'contract')){
+		json = callAPI('v1/get-profile-info');
+		getParam(json.contacts.fullName, result, 'subscriber');
+		getParam(json.number, result, 'contract');
+	}
+
+	if(AnyBalance.isAvailable('bonus_balance', 'abon', 'minpay', 'minpay_till')){
+		json = callAPI('v1/get-balance-details');
+		getParam(json.bonusBalance == -1 ? undefined : json.bonusBalance, result, 'bonus_balance');
+		getParam(json.nextPayment, result, 'minpay');
+		getParam(json.nextPaymentDate, result, 'minpay_till', null, null, parseDateISO);
+	}
+
+/*
     var func = g_regions[prefs.region] || g_regions.center;
     var region = (g_regions[prefs.region] && prefs.region) || 'center';
     AnyBalance.trace("region: " + region);
     func(region);
+    */
+
+    AnyBalance.setResult(result);
 }
 
 function mainCenter(){

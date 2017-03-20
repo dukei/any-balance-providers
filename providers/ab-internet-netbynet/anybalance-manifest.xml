@@ -1,26 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="2.0" version="29">ab-internet-netbynet</id>
+	<id major_version="2.0" version="30">ab-internet-netbynet</id>
 	<api flags="no_browser"/>
 	<name>NetByNet</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе, остатке дней, статусе и обещанном платеже для пользователей  интернет-провайдера NetByNet.</p>  
-	<p>Поддерживает регионы:
-	<ul>
-		<li>Москва и Московская область</li>
-		<li>Санкт-Петербург и Ленинградская область</li>
-		<li>Воронеж</li>
-		<li>Белгород</li>
-		<li>Екатеринбург</li>
-		<li>Липецк</li>
-		<li>Орел</li>
-		<li>Старый Оскол</li>
-		<li>Тверь</li>
-		<li>Лобня</li>
-		<li>Мурманск</li>
-		<li>Чебоксары</li>
-	</ul>
-	<p><small>В разных регионах личные кабинеты отличаются, в связи с чем могут быть доступны не все счетчики.</small></p>
+	<p>Предоставляет информацию о балансе, остатке дней, статусе и обещанном платеже для пользователей  интернет-провайдера NetByNet (http://netbynet.ru) из личного кабинета https://my.netbynet.ru .</p>  
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>
@@ -37,6 +21,8 @@
 		<counter id="bonus_balance" name="Бонусный баланс" units=" б"/>
 		<counter id="trafficLeft" name="Остаток трафика" units=" Гб"/>
 		<counter id="day_left" name="Осталось дней" suffix=" дн."/>
+		<counter id="minpay" name="К оплате" units=" р"/>
+		<counter id="minpay_till" name="К оплате до" type="time" format="dd/MM/yyyy"/>
 		<counter id="subscriber" name="Абонент" type="text"/>
 		<counter id="contract" name="Номер договора" type="text" prefix="№ "/>
 		<counter id="status" name="Статус" type="text"/>

@@ -65,6 +65,15 @@ function main(){
 	if(json.needChangePassword)
 		throw new AnyBalance.Error('NetByNet требует сменить пароль. Пожалуйста, зайдите на https://my.netbynet.ru через браузер, смените пароль и введите новый пароль в настройки провайдера', null, true);
 
+	//Надо исправить работу куки (пропали кавычки)
+	var cookies = AnyBalance.getCookies();
+	for(var i=0; i<cookies.length; ++i){
+		var c = cookies[i];
+		if(/^AUTHO/i.test(c.name) && !/^"/.test(c.value)){
+			AnyBalance.setCookie(c.domain, c.name, '"' + c.value + '"');
+		}
+	}
+
 	var result = {success: true};
 
 	if(AnyBalance.isAvailable('balance')){

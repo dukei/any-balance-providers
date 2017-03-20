@@ -71,24 +71,27 @@ function main(){
 
     if(AnyBalance.isAvailable('lastbilldate', 'indication','cons_ind','cost_ind','cons_com','cost_com','cons_tot','cost_tot')){
 		html = AnyBalance.requestGet(baseurl + 'home_kabinet?invoices', addHeaders({Referer: AnyBalance.getLastUrl()}));
-        var tds = getElements(html, /<div[^>]+account_period_dvic__tbl_td/ig);
-        if(tds.length){
-        	var tr = tds[tds.length-2] + tds[tds.length-1];
-            getParam(tr, result, 'lastbilldate', /(?:[\s\S]*?<div[^>]+invoice__tbl_td_item[^>]*>){1}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseDate);
-            getParam(tr, result, 'indication', /(?:[\s\S]*?<div[^>]+invoice__tbl_td_item[^>]*>){2}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
-
-            sumParam(tr, result, 'cons_ind', /(?:[\s\S]*?<div[^>]+invoice__tbl_td_item[^>]*>){4}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-            sumParam(tr, result, 'cost_ind', /(?:[\s\S]*?<div[^>]+invoice__tbl_td_item[^>]*>){11}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-            sumParam(tr, result, 'cons_ind', /(?:[\s\S]*?<div[^>]+invoice__tbl_td_item[^>]*>){5}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-            sumParam(tr, result, 'cost_ind', /(?:[\s\S]*?<div[^>]+invoice__tbl_td_item[^>]*>){12}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-
-            sumParam(tr, result, 'cons_com', /(?:[\s\S]*?<div[^>]+invoice__tbl_td_item[^>]*>){6}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-            sumParam(tr, result, 'cost_com', /(?:[\s\S]*?<div[^>]+invoice__tbl_td_item[^>]*>){13}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-            sumParam(tr, result, 'cons_com', /(?:[\s\S]*?<div[^>]+invoice__tbl_td_item[^>]*>){7}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-            sumParam(tr, result, 'cost_com', /(?:[\s\S]*?<div[^>]+invoice__tbl_td_item[^>]*>){14}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-
-            getParam(tr, result, 'cons_tot', /(?:[\s\S]*?<div[^>]+invoice__tbl_td_item[^>]*>){8}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
-            getParam(tr, result, 'cost_tot', /(?:[\s\S]*?<div[^>]+invoice__tbl_td_item[^>]*>){15}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+		var tbl = getElement(html, /<div[^>]+a_received_tbl/i);
+		if(tbl){
+            var tds = getElements(tbl, /<div[^>]+account_period_dvic__tbl_td/ig);
+            if(tds.length){
+            	var tr = tds[tds.length-2] + tds[tds.length-1];
+                getParam(tr, result, 'lastbilldate', /(?:[\s\S]*?<div[^>]+invoice__tbl_td_item[^>]*>){1}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseDate);
+                getParam(tr, result, 'indication', /(?:[\s\S]*?<div[^>]+invoice__tbl_td_item[^>]*>){2}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+            
+                sumParam(tr, result, 'cons_ind', /(?:[\s\S]*?<div[^>]+invoice__tbl_td_item[^>]*>){4}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+                sumParam(tr, result, 'cost_ind', /(?:[\s\S]*?<div[^>]+invoice__tbl_td_item[^>]*>){11}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+                sumParam(tr, result, 'cons_ind', /(?:[\s\S]*?<div[^>]+invoice__tbl_td_item[^>]*>){5}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+                sumParam(tr, result, 'cost_ind', /(?:[\s\S]*?<div[^>]+invoice__tbl_td_item[^>]*>){12}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+            
+                sumParam(tr, result, 'cons_com', /(?:[\s\S]*?<div[^>]+invoice__tbl_td_item[^>]*>){6}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+                sumParam(tr, result, 'cost_com', /(?:[\s\S]*?<div[^>]+invoice__tbl_td_item[^>]*>){13}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+                sumParam(tr, result, 'cons_com', /(?:[\s\S]*?<div[^>]+invoice__tbl_td_item[^>]*>){7}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+                sumParam(tr, result, 'cost_com', /(?:[\s\S]*?<div[^>]+invoice__tbl_td_item[^>]*>){14}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+            
+                getParam(tr, result, 'cons_tot', /(?:[\s\S]*?<div[^>]+invoice__tbl_td_item[^>]*>){8}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+                getParam(tr, result, 'cost_tot', /(?:[\s\S]*?<div[^>]+invoice__tbl_td_item[^>]*>){15}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+            }
         }
     }
 

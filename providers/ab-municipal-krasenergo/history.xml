@@ -1,4 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?><history>
+	<change version="15" date="2017-03-20">
+	- Поддержка изменений на сайте.
+	</change>
 	<change version="14" date="2017-03-20">
 	- поддержка нового ЛК
 	</change>

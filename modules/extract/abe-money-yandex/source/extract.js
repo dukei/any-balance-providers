@@ -27,15 +27,18 @@ function loginAndGetBalance(prefs, result) {
 	
 	getParam(html, result, 'number', /Номер кошелька(?:[^>]*>){2}(\d{10,20})/i, replaceTagsAndSpaces);
 	
-	var textsum = getElement(html, /<span[^>]+"price"/i, replaceTagsAndSpaces);
+	var textsum = getElements(html, [/<button/ig, /balance__icon/i])[0];
+	if(textsum)
+		textsum = replaceAll(textsum, replaceTagsAndSpaces);
+
 	AnyBalance.trace('Предположительно баланс где-то здесь: ' + textsum);
 
-	if(/\*{3}/.test(textsum)) {
+	if(!textsum || /\*{3}/.test(textsum)) {
 	    AnyBalance.trace('Сумма спрятана. Будем пытаться найти...');
 //		var text = AnyBalance.requestGet(baseurl + "tunes.xml", g_headers);
 		//Теперь ключ и баланс в такой структурке: 
 		//<div class="balance i-bem" data-bem="{&quot;balance&quot;:{&quot;amount&quot;:{&quot;sum&quot;:112.88,&quot;code&quot;:&quot;643&quot;},&quot;isHidden&quot;:true,&quot;setSumFlagUrl&quot;:&quot;/ajax/sum-visibility?sk=u8c9727f96af623dcb0814a3da5451cd6&quot;}}">
-	    var params = getParam(html, null, null, /<div[^>]+class="[^>]*\bbalance\b[^>]+data-bem="([^"]*)/i, replaceHtmlEntities, getJson);
+	    var params = getParam(html, null, null, /<div[^>]+class="[^>]*\bbalance\b[^>]+data-bem=[']([^']*)/i, replaceHtmlEntities, getJson);
 	    AnyBalance.trace('Получаем баланс из ' + JSON.stringify(params));
 	    if(params && params.balance && params.balance.amount && isset(params.balance.amount.sum)){
 	    	getParam(params.balance.amount.sum, result, 'balance');

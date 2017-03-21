@@ -46,18 +46,15 @@ function checkLoginError(html, loginUrl) {
 
 function redirectIfNeeded(html){
     if(/<body[^>]+onload[^>]+submit/i.test(html)){
+    	AnyBalance.trace('Потребовался редирект формой...');
     	var params = createFormParams(html);
     	var action = getParam(html, /<form[^>]+action=['"]([^'"]*)/, replaceHtmlEntities);
-    	AnyBalance.trace('Потребовался редирект формой на ' + action);
     	var url = AnyBalance.getLastUrl();
-    	if('https' == action)
-    		action = url.replace(/^https?:\/\/[\w+\.:]+/i, g_baseurlLogin); //Глюк какой-то, иногда просто https в action.
-    	AnyBalance.trace('Переходим на ' + action);
     	html = AnyBalance.requestPost(joinUrl(url, action), params, addHeaders({Refefer: url}));
     }
     var redir = getParam(html, /<meta[^>]+http-equiv="REFRESH"[^>]*content="0;url=([^";]*)/i, replaceHtmlEntities);
     if(redir){
-    	AnyBalance.trace('Потребовался get редирект на ' + redir);
+    	AnyBalance.trace('Потребовался get редирект...');
     	var url = AnyBalance.getLastUrl();
     	html = AnyBalance.requestGet(joinUrl(url, redir), addHeaders({Refefer: url}));
     }
@@ -66,27 +63,37 @@ function redirectIfNeeded(html){
 
 function enterMTS(options){
 	var baseurl = options.baseurl || g_baseurl;
-//    var loginUrl = options.url || g_baseurlLogin + "/amserver/UI/Login?service=" + (options.service || 'lk') + '&goto=' + baseurl + '/';
-    var loginUrl = g_baseurlLogin + "/amserver/UI/Login";
+    var loginUrl = options.url || g_baseurlLogin + "/amserver/UI/Login?service=" + (options.service || 'lk') + '&goto=' + baseurl + '/';
     var allowRetry = options.allowRetry;
 
     var html = options.html;
 
-//    if(!html || !/<form[^>]+name="Login"/i.test(html)){
+	//Надо исправить работу куки (пропали кавычки)
+	var cookies = AnyBalance.getCookies();
+	for(var i=0; i<cookies.length; ++i){
+		var c = cookies[i];
+		if(/^login/i.test(c.name) && !/^"/.test(c.value)){
+			var newval = '"' + c.value + '"';
+			AnyBalance.trace('Исправляем куки ' + c.name + ' на ' + newval);
+			AnyBalance.setCookie(c.domain, c.name, newval, c);
+		}
+	}
+
+    if(!html || !/<form[^>]+name="Login"/i.test(html)){
         html = AnyBalance.requestGet(loginUrl, g_headers);
         if(AnyBalance.getLastStatusCode() >= 500){
             AnyBalance.trace("МТС вернул 500. Пробуем ещё разок...");
 			html = AnyBalance.requestGet(loginUrl, g_headers);
 		}
 	    
-		html = redirectIfNeeded(html);
-
         if(AnyBalance.getLastStatusCode() >= 500)
         	throw new AnyBalance.Error("Ошибка на сервере МТС, сервер не смог обработать запрос. Можно попытаться позже...", allowRetry);
-//    }
+    }
 
     if(AnyBalance.getLastUrl().indexOf(baseurl) == 0) //Если нас сразу переадресовали на целевую страницу, значит, уже залогинены
 		return html;
+
+	html = redirectIfNeeded(html);
 
     var form = getParam(html, null, null, /<form[^>]+name="Login"[^>]*>([\s\S]*?)<\/form>/i);
     if (!form) {

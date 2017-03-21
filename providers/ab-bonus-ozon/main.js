@@ -2,18 +2,24 @@
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 */
 
-var g_headers = {
-	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-	'Accept-Language': 'ru,en-US;q=0.8,en;q=0.6',
-	'Connection': 'keep-alive',
-	'Origin': 'https://www.ozon.ru',
-	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36',
-	'Upgrade-Insecure-Requests': '1',
-};
+var g_headers = [
+	['Host', 'www.ozon.ru'],
+	['Connection', 'keep-alive'],
+	['Pragma', 'no-cache'],
+	['Cache-Control', 'no-cache'],
+	['User-Agent', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36'],
+	['Accept', 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8'],
+	['Accept-Encoding', 'gzip, deflate, sdch, br'],
+	['Accept-Language', 'ru,en-US;q=0.8,en;q=0.6'],
+	['Origin', 'https://www.ozon.ru'],
+	['Upgrade-Insecure-Requests', '1']
+];
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
 	var baseurl = "https://www.ozon.ru/";
+
+//    AnyBalance.setOptions({cookiePolicy: 'netscape'});
 
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');

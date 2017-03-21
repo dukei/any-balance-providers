@@ -11,128 +11,34 @@ var g_headers = {
   'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
 };
 
+function getPrice(cur){
+    var url = 'https://gpsfront.aliexpress.com/queryGpsProductAjax.do?&callback=jQuery18308581276012533401_1490101903659&widget_id=5041187&platform=pc&limit=12&offset=0&locale=ru_RU&phase=1&_=';
+    AnyBalance.setCookie('.aliexpress.com', 'aep_usuc_f', 'site=rus&region=RU&b_locale=ru_RU&c_tp=' + cur);
+    var html = AnyBalance.requestGet(url, g_headers);
+    var json = getParam(html, /jQuery18308581276012533401_1490101903659\s*\(([\s\S]*)\)/, null, getJson);
+
+    var good = json.gpsProductDetails[0];
+    var price = parseBalance(good.minPrice);
+    AnyBalance.trace('Товар "' + good.productTitle + '" стоит ' + good.minPrice);
+
+    return price;
+}
+
 function main() {
-  // На некоторых смартфонах появляется ошибка 'Cannot find function find'
-  // поэтому добавим этот полифилл
-  if (!Array.prototype.find) {
-    Array.prototype.find = function(predicate) {
-      if (this === null) {
-        throw new TypeError('Array.prototype.find called on null or undefined');
-      }
-      if (typeof predicate !== 'function') {
-        throw new TypeError('predicate must be a function');
-      }
-      var list = Object(this);
-      var length = list.length >>> 0;
-      var thisArg = arguments[1];
-      var value;
 
-      for (var i = 0; i < length; i++) {
-        value = list[i];
-        if (predicate.call(thisArg, value, i, list)) {
-          return value;
-        }
-      }
-      return undefined;
+  	AnyBalance.setDefaultCharset('utf-8');
+  
+    var usd = getPrice('USD');
+    var rub = getPrice('RUB');
+
+    var result = {
+        success: true,
+        rate: parseFloat((rub/usd).toFixed(4))
     };
-  }
-
-  var baseUrl = "http://superdeals.aliexpress.com/en";
-  var apiBaseUrl = "https://api.dos.aliexpress.com/aliexpress/";
-  AnyBalance.setDefaultCharset('utf-8');
-
-  var html = AnyBalance.requestGet(baseUrl, g_headers);
-
-  if (!html || AnyBalance.getLastStatusCode() > 400) {
-    AnyBalance.trace(html);
-    throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
-  }
-
-  // получаем дату
-  html = AnyBalance.requestGet(apiBaseUrl + 'tool/getTime.json?pattern=yyyyMMdd', g_headers);
-
-  var json = getJson(html);
-  if (json.hasError) {
-    throw new AnyBalance.Error('Ошибка при определении даты на сервере! Попробуйте обновить данные позже.');
-  }
-
-  var date = json.content.timeMillis;
-  var dataFormatted = json.content.timeFormatted;
-
-  // узнаем "SuperDeals" товары
-  var superDealsUrl = apiBaseUrl + 'data/doQuery.json?'
-    + '&widgetId=101'
-    + '&displayType=STRUCTURE'
-    + '&limit=10'
-    + '&offset=0';
-
-  html = AnyBalance.requestGet(superDealsUrl, g_headers);
-  json = getJson(html);
-  if (json.hasError) {
-    throw new AnyBalance.Error('Ошибка при получении товаров! Попробуйте обновить данные позже.');
-  }
-
-  // получаем текущий "SuperDeals" товар
-  var nodeList = json.content.nodeList;
-  var category = nodeList.find(function (node) {
-    return node.name === dataFormatted;
-  });
-  var node = category.children.find(function (cat) {
-    return cat.name === 'Single';
-  });
-
-  // получаем цену в RUB
-  var rubUrl = apiBaseUrl + 'data/doQuery.json?'
-    + '&widgetId=101'
-    + '&displayType=DATA'
-    + '&locale=en_US'
-    + '&currency=RUB'
-    + '&region=RU'
-    + '&nodeId=' + node.id
-    + '&limit=10'
-    + '&offset=0';
-  html = AnyBalance.requestGet(rubUrl, g_headers);
-  json = getJson(html);
-  if (json.hasError) {
-    throw new AnyBalance.Error('Ошибка при получении цены товара в рублях! Попробуйте обновить данные позже.');
-  }
-
-  if (!json.content.nodeList.length || !json.content.nodeList[0].nodeData.dataList.length) {
-    throw new AnyBalance.Error('Ошибка при определении цены товара в рублях! Сайт изменён?');
-  }
-
-  var rubPrice = parseBalance(json.content.nodeList[0].nodeData.dataList[0].minPrice);
-
-  // получаем цену в USD
-  var usdUrl = apiBaseUrl + 'data/doQuery.json?'
-    + '&widgetId=101'
-    + '&displayType=DATA'
-    + '&locale=en_US'
-    + '&currency=USD'
-    + '&region=RU'
-    + '&nodeId=' + node.id
-    + '&limit=10'
-    + '&offset=0';
-  html = AnyBalance.requestGet(usdUrl, g_headers);
-  json = getJson(html);
-  if (json.hasError) {
-    throw new AnyBalance.Error('Ошибка при получении цены товара в долларах! Попробуйте обновить данные позже.');
-  }
-
-  if (!json.content.nodeList.length || !json.content.nodeList[0].nodeData.dataList.length) {
-    throw new AnyBalance.Error('Ошибка при определении цены товара в долларах! Сайт изменён?');
-  }
-
-  var usdPrice = parseBalance(json.content.nodeList[0].nodeData.dataList[0].minPrice);
-
-  var result = {
-    success: true,
-    rate: parseFloat((rubPrice/usdPrice).toFixed(4))
-  };
-
-  if(AnyBalance.isAvailable('date')) {
-    result.date = date;
-  }
-
-  AnyBalance.setResult(result);
+    
+    if(AnyBalance.isAvailable('date')) {
+        result.date = +new Date();
+    }
+    
+    AnyBalance.setResult(result);
 }

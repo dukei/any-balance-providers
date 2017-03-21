@@ -12,14 +12,14 @@ var g_headers = {
 };
 
 function findStationByName(baseurl, name) {
-    var html = AnyBalance.requestPost(baseurl + 'ru/purchase/station/' + encodeURIComponent(name), {}, g_headers);
+    var html = AnyBalance.requestGet(baseurl + 'ru/purchase/station/?term=' + encodeURIComponent(name), g_headers);
     
     var json = getJson(html);
     
-    var value = json.value[0];
-    checkEmpty(value, 'Не удалось найти станцию (' + name + '), сайт изменен?', true);
+    var value = json[0];
+    checkEmpty(value, 'Не удалось найти станцию (' + name + '), проверьте, что вы правильно ввели её название. Как на сайте http://booking.uz.gov.ua/ru/', true);
     
-    return [value.station_id, value.title];
+    return [value.value, value.label];
 }
 
 function main() {
@@ -44,18 +44,20 @@ function main() {
 		}
 	}
 
-	var obf_script = getParam(html, /\$\$_=~[\s\S]*?\(\);/);
-        
-	(0).constructor.constructor = function(str){ //Обфусцированный скрипт использует это для выполнения кода
-		if(str && typeof(str)=='string' && /localStorage/.test(str)){
-			str = str.replace(/localStorage/g, 'fake_localStorage');
+	if(obf_script){
+		var obf_script = getParam(html, /\$\$_=~[\s\S]*?\(\);/);
+            
+		(0).constructor.constructor = function(str){ //Обфусцированный скрипт использует это для выполнения кода
+			if(str && typeof(str)=='string' && /localStorage/.test(str)){
+				str = str.replace(/localStorage/g, 'fake_localStorage');
+			}
+			return Function.apply(null, arguments);
 		}
-		return Function.apply(null, arguments);
+	    
+		safeEval(obf_script);
+		if(!token)
+			throw new AnyBalance.Error('Не удалось получить token авторизации. Сайт изменен?');
 	}
-
-	safeEval(obf_script);
-	if(!token)
-		throw new AnyBalance.Error('Не удалось получит token авторизации. Сайт изменен?');
     
     // Запрос на поиск пункта отправления
     var station_fromIdAndNameArray = findStationByName(baseurl, prefs.station_from);
@@ -78,7 +80,7 @@ function main() {
         'GV-Ajax': '1',
         'GV-Screen': '1440x900',
         'GV-Referer': 'http://booking.uz.gov.ua/ru/',
-        'GV-Token':token
+//        'GV-Token':token
     })); 
     
 	json = getJson(html);	

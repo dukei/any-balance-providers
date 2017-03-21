@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-cell-letai</id>
+	<id version="3">ab-cell-letai</id>
 	<api flags="no_browser"/>
 	<name>Летай</name>
 	<description html="true"><![CDATA[
@@ -27,9 +27,9 @@
 		<counter id="fio" name="ФИО" type="text"/>
 		<counter id="licschet" name="Лицевой счет" type="text"/>
 		<counter id="agreement" name="Номер договора" type="text"/>
-		<counter id="status" name="Статус" type="text"/>
+<!--		<counter id="status" name="Статус" type="text"/> -->
 		<counter id="phone" name="Телефон" type="text"/>
-		<counter id="address" name="Адрес подключения" type="text"/>
+<!--		<counter id="address" name="Адрес подключения" type="text"/> -->
 	</counters>
 	<keywords>таттелеком tattelecom</keywords>
 	<type>cell, internet</type>

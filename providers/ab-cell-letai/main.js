@@ -28,7 +28,7 @@ function main() {
 
 	var type = /@/i.test(prefs.login) ? 'email' : 'phone';
 
-	var form = AB.getElement(html, type == 'phone' ? /<form[^>]+userlogin1/i : /<form[^>]+userlogin2/i);
+	var form = AB.getElement(html, /<form[^>]+userlogin1/i);
 	if(!form){
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удаётся найти форму входа! Сайт изменен?');
@@ -68,9 +68,9 @@ function main() {
 	}));
 
 	if (!/logout/i.test(html)) {
-		var error = AB.getElement(html, /<p[^>]+class="error"/i, AB.replaceTagsAndSpaces);
+		var error = AB.getElement(html, /<span[^>]+color\s*:\s*red/i, AB.replaceTagsAndSpaces);
 		if (error) {
-			throw new AnyBalance.Error(error, null, /парол/i.test(error));
+			throw new AnyBalance.Error(error, null, /учетн|парол/i.test(error));
 		}
 
 		AnyBalance.trace(html);
@@ -86,30 +86,29 @@ function main() {
 		success: true
 	};
 
-	var divs = getElements(html, /<div[^>]+card_litz_scheta/ig);
+	var divs = getElements(html, /<div[^>]+bank-book[^>]*data-uk-accordion/ig);
 	AnyBalance.trace('Найдено ' + divs.length + ' лиц. счетов');
 	var found = false;
 	
 
 	for(var i=0; i<divs.length; ++i){
 		var div = divs[i];
-		var num = getElement(div, /<p[^>]+number/i, [/№/i, '', replaceTagsAndSpaces]);
-		var phoneNum = getParam(div, null, null, /Номер телефона:([\s\S]*?)(?:<br|<\/p>)/i, replaceTagsAndSpaces);
+		var num = getParam(div, /accountid=(\d+)/i);
+		var phoneNum = getParam(div, null, null, /Мобильная телефония -([^<]*)/i, replaceTagsAndSpaces);
 		AnyBalance.trace('Найден лицевой счет ' + num + ' (номер телефона ' + phoneNum + ')');
 		if(found)
 			continue;
 
-		var info = getElement(div, /<div[^>]+item_tarif/i);
 		if(!prefs.num || endsWith(num, prefs.num) || endsWith(phoneNum || '', prefs.num)){
 			getParam(num, result, 'licschet');
 			getParam(phoneNum, result, 'phone');
-			getParam(div, result, 'balance', /<span[^>]+balans[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
-			getParam(info, result, 'abon', /Абонентская плата:[\s\S]*?<dd[^>]*>([\s\S]*?)<\/dd>/i, replaceTagsAndSpaces, parseBalance);
-			getParam(info, result, 'fio', /Клиент:([\s\S]*?)(?:<br|<\/p>)/i, replaceTagsAndSpaces);
-			getParam(info, result, 'address', /Адрес подключения:([\s\S]*?)(?:<br|<\/p>)/i, replaceTagsAndSpaces);
-			getParam(info, result, 'agreement', /дата договора:([\s\S]*?)(?:<br|<\/p>)/i, replaceTagsAndSpaces);
-			getParam(info, result, '__tariff', /<h2[^>]*>([\s\S]*?)(?:<\/h2>|<\/a>)/i, replaceTagsAndSpaces);
-			getParam(info, result, 'status', /<div[^>]+info_stop-service[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+			getParam(div, result, '__tariff', /(?:тарифный план|Тариф -)([^<]*)/i, replaceTagsAndSpaces);
+			getParam(div, result, 'balance', /<div[^>]+widget-price[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+			getParam(div, result, 'abon', /Абонентская плата([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+			getParam(html, result, 'fio', /<div[^>]+profile-name[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+//			getParam(info, result, 'address', /Адрес подключения:([\s\S]*?)(?:<br|<\/p>)/i, replaceTagsAndSpaces);
+			getParam(div, result, 'agreement', /Договор №([^<]*)/i, replaceTagsAndSpaces);
+//			getParam(info, result, 'status', /<div[^>]+info_stop-service[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
 			found = true;;
 		}
 	}

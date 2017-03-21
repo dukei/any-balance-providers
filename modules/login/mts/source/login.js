@@ -72,7 +72,7 @@ function enterMTS(options){
 	var cookies = AnyBalance.getCookies();
 	for(var i=0; i<cookies.length; ++i){
 		var c = cookies[i];
-		if(/^login/i.test(c.name) && !/^"/.test(c.value)){
+		if(/^login$/i.test(c.name) && !/^"/.test(c.value)){
 			var newval = '"' + c.value + '"';
 			AnyBalance.trace('Исправляем куки ' + c.name + ' на ' + newval);
 			AnyBalance.setCookie(c.domain, c.name, newval, c);

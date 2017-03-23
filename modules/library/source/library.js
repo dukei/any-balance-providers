@@ -290,35 +290,40 @@ var AB = (function (global_scope) {
         	valueRegExp = /value\s*=\s*("[^"]*"|'[^']*'|[\w\-\/\\]+)/i, 
         	valueReplace = [/^"([^"]*)"$|^'([^']*)'$/, '$1$2', replaceHtmlEntities], 
         	name,
-            inputRegExp = /<input[^>]+?\bname\s*=\s*("[^"]*"|'[^']*'|[\w\-\/\\]+)(?:[^>"']+|"[^"]*"|'[^']*')*>|<select[^>]+?\bname\s*=\s*("[^"]*"|'[^']*'|[\w\-\/\\]+)(?:[^>"']+|"[^"]*"|'[^']*')*>[\s\S]*?<\/select>/ig;
+            inputRegExp = /<button(?:[^>"']+|"[^"]*"|'[^']*')*>[\s\S]*?<\/button>|<input(?:[^>"']+|"[^"]*"|'[^']*')*>|<select(?:[^>"']+|"[^"]*"|'[^']*')*>[\s\S]*?<\/select>/ig;
 
         while (true) {
             var amatch = inputRegExp.exec(html);
             if (!amatch)
                 break;
-            var str = amatch[0], nameInp = amatch[1], nameSel = amatch[2], value = '';
-            if (nameInp) {
-                if (/type\s*=\s*['"]?button['"]?/i.test(str))
-                    value = undefined;
-                else if (/type\s*=\s*['"]?checkbox['"]?/i.test(str)) {
-                    //Чекбокс передаёт значение только если он чекед. Если чекед, а значения нет, то передаёт on
-                    value = /[^\w\-]checked[^\w\-]/i.test(str) ? getParam(str, valueRegExp, valueReplace) || 'on' : undefined;
-                } else
-                    value = getParam(str, valueRegExp, valueReplace) || '';
-                name = replaceAll(nameInp, valueReplace);
+            var str = amatch[0], value = '';
+            name = getParam(str, /^<[^>]+?[\s'"]name\s*=\s*("[^"]*"|'[^']*'|[\w\-\/\\]+)/i, valueReplace);
 
-            } else if (nameSel) {
-                var sel = getParam(str, /^<[^>]*>/i);
-                value = getParam(sel, valueRegExp, valueReplace);
-                if (typeof(value) == 'undefined') {
-                    var optSel = getParam(str, /(<option[^>]+selected[^>]*>)/i);
-                    if (!optSel)
-                        optSel = getParam(str, /(<option[^>]*>)/i);
-                    if (optSel)
-                        value = getParam(optSel, valueRegExp, valueReplace);
+            if (name) {
+                if (/^<input/i.test(str)) {  //<input type="...">
+                    if (/[\s'"]type\s*=\s*['"]?button['"]?/i.test(str))
+                        value = undefined;
+                    else if (/[\s'"]type\s*=\s*['"]?checkbox['"]?/i.test(str)) {
+                        //Чекбокс передаёт значение только если он чекед. Если чекед, а значения нет, то передаёт on
+                        value = /[^\w\-]checked[^\w\-]/i.test(str) ? getParam(str, valueRegExp, valueReplace) || 'on' : undefined;
+                    } else
+                        value = getParam(str, valueRegExp, valueReplace) || '';
+                } else if (/^<button/i.test(str)) { //<button type="submit" ...>
+                    if (!/[\s'"]type\s*=\s*['"]?submit['"]?/i.test(str)){
+                        value = undefined;
+                    } else
+                        value = getParam(str, valueRegExp, valueReplace) || '';
+                } else if (/^<select/i.test(str)) { //<select>...</select>
+                    var sel = getParam(str, /^<[^>]*>/i);
+                    value = getParam(sel, valueRegExp, valueReplace);
+                    if (typeof(value) == 'undefined') {
+                        var optSel = getParam(str, /(<option[^>]*[\s'"]selected[^>]*>)/i);
+                        if (!optSel)
+                            optSel = getParam(str, /(<option[^>]*>)/i);
+                        if (optSel)
+                            value = getParam(optSel, valueRegExp, valueReplace);
+                    }
                 }
-                name = replaceAll(nameSel, valueReplace);
-                ;
             }
 
             if (process) {

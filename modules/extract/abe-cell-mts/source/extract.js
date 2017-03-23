@@ -508,6 +508,29 @@ function enterLK(options) {
     if (AnyBalance.getLastStatusCode() >= 500)
         throw new AnyBalance.Error("Ошибка на сервере МТС, сервер не смог обработать запрос. Можно попытаться позже...");
 
+    html = redirectIfNeeded(html); //Иногда бывает доп. форма, надо переадресоваться.
+
+    var loggedInNum = getParam(html, /Продолжить вход в Личный кабинет МТС с номером\s*<b[^>]*>([\s\S]*?)<\/b>/i, [replaceTagsAndSpaces, /\D+/g, '']);
+    if(loggedInNum){
+    	AnyBalance.trace('Предлагает автоматически залогиниться на ' + loggedInNum);
+    	var form = getElement(html, /<form[^>]+name="Login"/i);
+    	var submit;
+    	if(options.login != loggedInNum){
+    		AnyBalance.trace('А нам нужен номер ' + options.login + '. Отказываемся...');
+    		submit = 'Ignore';
+    	}else{
+    		AnyBalance.trace('А нам этот номер и нужен. Соглашаемся...');
+    		submit = 'Login';
+    	}
+
+    	var params = createFormParams(form, function (params, input, name, value) {
+        	if (name == 'IDButton')
+        		value = submit;
+		    return value;
+		});
+		html = AnyBalance.requestPost(AnyBalance.getLastUrl(), params, addHeaders({Referer: AnyBalance.getLastUrl()}));
+    }
+
     html = checkLoginState(html, {automatic: true});
 
     AnyBalance.trace('isLoggedIn(html) = ' + isLoggedIn(html));

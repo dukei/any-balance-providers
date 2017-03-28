@@ -10,9 +10,37 @@ var g_headers = {
 	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36',
 };
 
-var baseurl = 'https://my.netbynet.ru/api/';
+var g_regions = {
+	mynet: mainNew,
+    voronezh: mainVoronezh,
+    belgorod: mainBelgorod,
+  	ekaterinburg: mainEkaterinburg,
+    center: mainCenter,
+    orel: mainBelgorod,
+    oskol: mainBelgorod,
+    lipetsk: mainBelgorod,
+	tver: mainUniversal,
+	lobnya: mainLobnya,
+    murmansk: mainUniversal,
+	cheboksary: mainUniversal,
+	lenobl: mainUniversal,
+};
+
+function main(){
+    var prefs = AnyBalance.getPreferences();
+
+	checkEmpty(prefs.login, 'Введите логин!');
+	checkEmpty(prefs.password, 'Введите пароль!');
+
+    var func = g_regions[prefs.region] || g_regions.center;
+    var region = (g_regions[prefs.region] && prefs.region) || 'center';
+    AnyBalance.trace("region: " + region);
+    func(region);
+}
 
 function callAPI(verb, getParams, postParams, addheaders, checkResult){
+	var baseurl = 'https://my.netbynet.ru/api/';
+
 	var url = baseurl + verb, method = 'GET';
 	
 	if(getParams)
@@ -48,12 +76,14 @@ function callAPI(verb, getParams, postParams, addheaders, checkResult){
 	}while(500 <= AnyBalance.getLastStatusCode() && 503 >= AnyBalance.getLastStatusCode() && (++tries <= maxTries));
 
 	var json = (checkResult || getJson)(html);
-	if(json.resultCode)
+	if(json.resultCode && json.resultCode != 8)
 		throw new AnyBalance.Error(json.resultText, null, /парол/i.test(json.resultText));
 	return json;
 }
 
-function main(){
+function mainNew(){
+	var baseurl = 'https://my.netbynet.ru/';
+
     var prefs = AnyBalance.getPreferences();
 
 	checkEmpty(prefs.login, 'Введите логин!');
@@ -62,8 +92,15 @@ function main(){
 	var json = callAPI('v1/get-way', {accountNumber: prefs.login});
 	json = callAPI('v2/login', null, {"accountNumber":prefs.login,"password":prefs.password,"captchaCode":""});
 
+	if(json.resultCode == 8){
+		var img = AnyBalance.requestGet(baseurl + 'api/v2/captcha-challenge?accountNumber=' + prefs.login + '&time=' + (+new Date()), addHeaders({Referer: baseurl}));
+		var code = AnyBalance.retrieveCode('Пожалуйста, введите цифры с картинки', img, {inputType: 'number'});
+		json = callAPI('v2/login', null, {"accountNumber":prefs.login,"password":prefs.password,"captchaCode":code});
+	}
+
 	if(json.needChangePassword)
 		throw new AnyBalance.Error('NetByNet требует сменить пароль. Пожалуйста, зайдите на https://my.netbynet.ru через браузер, смените пароль и введите новый пароль в настройки провайдера', null, true);
+
 
 	//Надо исправить работу куки (пропали кавычки)
 	var cookies = AnyBalance.getCookies();
@@ -100,13 +137,6 @@ function main(){
 		getParam(json.nextPayment, result, 'minpay');
 		getParam(json.nextPaymentDate, result, 'minpay_till', null, null, parseDateISO);
 	}
-
-/*
-    var func = g_regions[prefs.region] || g_regions.center;
-    var region = (g_regions[prefs.region] && prefs.region) || 'center';
-    AnyBalance.trace("region: " + region);
-    func(region);
-    */
 
     AnyBalance.setResult(result);
 }

@@ -22,12 +22,12 @@
         positiveButtonText="ОК"
         negativeButtonText="Отмена">
     </EditTextPreference>
-<!--    <ListPreference 
+    <ListPreference 
         key="region" 
-        title="Регион"
+        title="Личный кабинет"
         summary="|Нужен для определения личного кабинета|{@s}"
-        entries="Москва и МО|Санкт-Петербург и ЛО|Воронеж|Белгород|Екатеринбург|Липецк|Орел|Старый Оскол|Тверь|Лобня|Мурманск|Чебоксары"
-        entryValues="moscow|lenobl|voronezh|belgorod|ekaterinburg|lipetsk|orel|oskol|tver|lobnya|murmansk|cheboksary"
-		defaultValue="moscow">
-    </ListPreference> -->
+        entries="Новый кабинет|Москва и МО|Санкт-Петербург и ЛО|Воронеж|Белгород|Екатеринбург|Липецк|Орел|Старый Оскол|Тверь|Лобня|Мурманск|Чебоксары"
+        entryValues="mynet|center|lenobl|voronezh|belgorod|ekaterinburg|lipetsk|orel|oskol|tver|lobnya|murmansk|cheboksary"
+		defaultValue="center">
+    </ListPreference>
 </PreferenceScreen>

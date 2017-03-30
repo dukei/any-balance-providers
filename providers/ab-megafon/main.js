@@ -1968,23 +1968,23 @@ function megafonLK(filial, html){
 	var csrf = getLkCsrf(html);
 
 	if(AnyBalance.isAvailable('available')){
-		info = requestPipe(csrf, 'balance/get');
+		info = requestPipe(csrf, 'lk/balance/get');
 		getParam(info.balance, result, 'available');
 	}
 
 	if(AnyBalance.isAvailable('bonus_balance')){
-		info = requestPipe(csrf, 'main/bonuses');
+		info = requestPipe(csrf, 'lk/main/bonuses');
 		getParam(info.balance, result, 'bonus_balance');
 	}
 
 	if(AnyBalance.isAvailable('balance', 'credit')){
-		info = requestPipe(csrf, 'main/atourexpense');
+		info = requestPipe(csrf, 'lk/main/atourexpense');
 		getParam(info.balance, result, 'balance');
 		getParam(info.limit, result, 'credit');
 	}
 	
 	if(isAvailable(['__tariff'])){
-		info = requestPipe(csrf, 'mini/options');
+		info = requestPipe(csrf, 'lk/mini/options');
 		getParam(info.tariffName, result, '__tariff', null, replaceHtmlEntities);
 	}
 		
@@ -2167,7 +2167,7 @@ function requestPipe(csrf, addr, get, post){
 	if(!post)
 		get._ = new Date().getTime();
 
-    var url = lk_url + 'pipes/lk/' + addr + '?' + AB.createUrlEncodedParams(get || {});
+    var url = lk_url + 'api/' + addr + '?' + AB.createUrlEncodedParams(get || {});
 
 	var html;
 	if(post){
@@ -2182,7 +2182,7 @@ function requestPipe(csrf, addr, get, post){
 
 function megafonLKFinance(csrf, filial, html, result){
 	if(AnyBalance.isAvailable('sub_soi', 'sub_smit', 'sub_smio', 'sub_scl', 'sub_scr', 'internet_cost')){
-		var json = requestPipe(csrf, 'reports/expenses');
+		var json = requestPipe(csrf, 'lk/reports/expenses');
 		AnyBalance.trace('Parsing expenses: ' + JSON.stringify(json));
 
 		for(var group in json.expenseGroups){
@@ -2223,7 +2223,7 @@ function megafonLKFinance(csrf, filial, html, result){
 	}
 
 	if(AnyBalance.isAvailable('last_pay_sum', 'last_pay_date')){
-		json = requestPipe(csrf, 'payment/history/list', {offset: 0, size: 5});
+		json = requestPipe(csrf, 'payments/history/list', {offset: 0, size: 5});
 		if(json.payments && json.payments.length){
 			getParam(json.payments[0].amount, result, 'last_pay_sum');
 			getParam(json.payments[0].date, result, 'last_pay_date', null, null, parseDate);
@@ -2246,7 +2246,7 @@ function megafonLKTurnOffSMSNotification(csrf){
 		return json.hash;
 	}
 
-	var json = requestPipe(csrf, '../api/profile/notifications');
+	var json = requestPipe(csrf, 'profile/notifications');
 	
 	var on = json.notify;
 	if(!on){
@@ -2258,7 +2258,7 @@ function megafonLKTurnOffSMSNotification(csrf){
 
 	var hash = getSMSHash(csrf);
 
-	var json = requestPipe(csrf, '../api/profile/notifications', null, {status: 'false'});
+	var json = requestPipe(csrf, 'profile/notifications', null, {status: 'false'});
 	if(!json.ok){
 		AnyBalance.trace('Запрос на выключение сработал неудачно: ' + info);
 	}
@@ -2274,7 +2274,7 @@ function megafonLKTurnOffSMSNotification(csrf){
 			AnyBalance.sleep(4000);
 	}
 
-	var json = requestPipe(csrf, '../api/profile/notifications');
+	var json = requestPipe(csrf, 'profile/notifications');
 	if(json.notify === false){
 		AnyBalance.trace('Уведомление выключено успешно!');
 	}else{
@@ -2293,7 +2293,7 @@ function megafonLKTurnOffAutoLogin(csrf){
 		return json.hash;
 	}
 
-	var json = requestPipe(csrf, 'autologin/status');
+	var json = requestPipe(csrf, 'lk/autologin/status');
 	
 	var on = json.allowAutologin;
 	if(!on){
@@ -2305,7 +2305,7 @@ function megafonLKTurnOffAutoLogin(csrf){
 
 	var hash = getLoginHash(csrf);
 
-	var json = requestPipe(csrf, 'autologin/status', null, {ALLOW_AUTOLOGIN: '0'});
+	var json = requestPipe(csrf, 'lk/autologin/status', null, {ALLOW_AUTOLOGIN: '0'});
 	if(!json.ok){
 		AnyBalance.trace('Запрос на выключение сработал неудачно: ' + info);
 	}
@@ -2321,7 +2321,7 @@ function megafonLKTurnOffAutoLogin(csrf){
 			AnyBalance.sleep(4000);
 	}
 
-	var json = requestPipe(csrf, 'autologin/status');
+	var json = requestPipe(csrf, 'lk/autologin/status');
 	if(json.allowAutologin == "0"){
 		AnyBalance.trace('Автовход выключен успешно!');
 	}else{

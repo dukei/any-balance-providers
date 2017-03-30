@@ -460,6 +460,7 @@ function createNewPasswordApi(){
 
 	createNewPasswordApi.password = newPass;
 	prefs.password = newPass; //Обязательно в настройки запишем новый пароль
+	AnyBalance.trace('Generated new password: ' + newPass);
 	return newPass;
 }
 

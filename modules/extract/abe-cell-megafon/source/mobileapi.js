@@ -107,10 +107,14 @@ function megafonLkAPIDo(options, result) {
             getParam(json.ratePlan.name, result, 'tariff', null, replaceTagsAndSpaces);
     }
 
-    if(AnyBalance.isAvailable('bonus_status', 'bonus_burn')){
-        json = callAPI('get', 'api/bonus/status');
-        getParam(json.statusDesc, result, 'bonus_status', null, replaceTagsAndSpaces);
-        getParam(null, result, 'bonus_burn');
+    try{
+        if(AnyBalance.isAvailable('bonus_status', 'bonus_burn')){
+            json = callAPI('get', 'api/bonus/status');
+            getParam(json.statusDesc, result, 'bonus_status', null, replaceTagsAndSpaces);
+            getParam(null, result, 'bonus_burn');
+        }
+    }catch(e){
+    	AnyBalance.trace('Не удалось получить информацию о бонусной программе: ' + e.message);
     }
 
 	processServiceStopContentApi(result);

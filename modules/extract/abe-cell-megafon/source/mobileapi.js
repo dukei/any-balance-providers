@@ -230,17 +230,16 @@ function processRemaindersApi(result){
                     }
 
                     // Минуты
-                    if((/мин/i.test(units) && !/интернет/i.test(name)) || (/шт/i.test(units) && /минут/i.test(name) && !/СМС|SMS|MMS|ММС/i.test(name))) {
+                    if((/мин|сек/i.test(units) && !/интернет/i.test(name)) || (/шт/i.test(units) && /минут/i.test(name) && !/СМС|SMS|MMS|ММС/i.test(name))) {
                         AnyBalance.trace('Parsing minutes...' + JSON.stringify(current));
-                        var val = getParam(current.available, null, null, null, replaceTagsAndSpaces, parseBalance);
                         if(/бесплат/i.test(name)) {
-                            getParam(current.available, remainders, 'remainders.mins_n_free', null, replaceTagsAndSpaces, parseMinutes);
+                            getParam(current.available + units, remainders, 'remainders.mins_n_free', null, replaceTagsAndSpaces, parseMinutes);
                         }else if((/\.\s*МегаФон|на мегафон/i.test(name) && !/МТС/i.test(name) && !/стационар/i.test(name))
                             || /внутри сети/i.test(name)) {
-                            sumParam(current.available, remainders, 'remainders.mins_net_left', null, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
+                            sumParam(current.available + units, remainders, 'remainders.mins_net_left', null, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
                         } else {
-                            sumParam(current.available, remainders, 'remainders.mins_left', null, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
-                            sumParam(current.total, remainders, 'remainders.mins_total', null, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
+                            sumParam(current.available + units, remainders, 'remainders.mins_left', null, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
+                            sumParam(current.total + units, remainders, 'remainders.mins_total', null, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
                         }
                         // Сообщения
                     } else if(/шт|sms|смс|mms|ммс/i.test(units)) {

@@ -234,7 +234,7 @@ function processRemaindersApi(result){
                         AnyBalance.trace('Parsing minutes...' + JSON.stringify(current));
                         if(/бесплат/i.test(name)) {
                             getParam(current.available + units, remainders, 'remainders.mins_n_free', null, replaceTagsAndSpaces, parseMinutes);
-                        }else if((/\.\s*МегаФон|на мегафон/i.test(name) && !/МТС/i.test(name) && !/стационар/i.test(name))
+                        }else if((/\.\s*МегаФон|на мегафон|на МФ/i.test(name) && !/МТС/i.test(name) && !/стационар/i.test(name))
                             || /внутри сети/i.test(name)) {
                             sumParam(current.available + units, remainders, 'remainders.mins_net_left', null, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
                         } else {

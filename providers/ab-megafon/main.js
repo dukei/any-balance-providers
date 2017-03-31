@@ -2062,7 +2062,7 @@ function megafonLKRemainders(filial, html, result){
 				if(val >= 0){
 					if(/бесплат/i.test(name)) {
 						getParam(left, result, 'mins_n_free', null, replaceTagsAndSpaces, parseMinutes);
-					}else if((/\.\s*МегаФон|на МегаФон/i.test(name) && !/МТС/i.test(name) && !/стационар/i.test(name))
+					}else if((/\.\s*МегаФон|на МегаФон|на МФ/i.test(name) && !/МТС/i.test(name) && !/стационар/i.test(name))
 							|| /внутри сети/i.test(name)) {
 						sumParam(left, result, 'mins_net_left', null, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
 					} else {

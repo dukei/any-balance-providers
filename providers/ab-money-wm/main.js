@@ -18,6 +18,25 @@ var g_headers = {
 	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.99 Safari/537.36',
 };
 
+function handleRedirect(html){
+	var form = getElement(html, /<form[^>]+data-role="auto-submit"/i);
+	if(form){
+		var prefs = AnyBalance.getPreferences();
+		AnyBalance.trace('Доп. форма переадресации перед продолжением...');
+		var ref = AnyBalance.getLastUrl();
+
+		var action = getParam(form, /<form[^>]+action="([^"]*)/i, replaceHtmlEntities);
+		var params = createFormParams(form);
+		params.fid = hex_md5(prefs.login);
+		var delay = getParam(form, /<form[^>]+data-submit-delay="([^"]*)/i, replaceHtmlEntities, parseBalance) || 0;
+		if(delay > 0){
+			AnyBalance.trace('Необходимо подождать ' + delay + ' сек');
+			AnyBalance.sleep(delay*100);
+		}
+		html = AnyBalance.requestPost(joinUrl(ref, action), params, addHeaders({Referer: ref}));
+	}
+	return html;
+}
 
 function main(){
     var prefs = AnyBalance.getPreferences();
@@ -64,6 +83,7 @@ function main(){
 			AnyBalance.trace('Ссылка на вход: ' + ref);
 	        
 			html = AnyBalance.requestGet(joinUrl(baseurl, ref), addHeaders({Referer: baseurl + 'welcome.aspx?ReturnUrl=%2f'}));
+			html = handleRedirect(html);
 			ref = AnyBalance.getLastUrl();
 	        
 			var form = AB.getElement(html, /<form[^>]+password[^>]*>/i);
@@ -182,29 +202,10 @@ function main(){
 		}else{
 			AnyBalance.trace('Пробуем быстрый логин');
 			html = AnyBalance.requestGet(logonUrl, addHeaders({Referer: ref}));
+			html = handleRedirect(html);
 		}
 	    
 		ref = AnyBalance.getLastUrl();
-		if(/Executing/i.test(ref)){
-			AnyBalance.trace('Доп. форма переадресации перед входом...');
-			var form = getElement(html, /<form[^>]+data-role="auto-submit"/i);
-			if(!form){
-				AnyBalance.trace(html);
-				throw new AnyBalance.Error('Не удалось найти форму переадресации после входа');
-			}
-
-			action = getParam(form, /<form[^>]+action="([^"]*)/i, replaceHtmlEntities);
-			params = createFormParams(form);
-			params.fid = hex_md5(prefs.login);
-			var delay = getParam(form, /<form[^>]+data-submit-delay="([^"]*)/i, replaceHtmlEntities, parseBalance) || 0;
-			if(delay > 0){
-				AnyBalance.trace('Необходимо подождать ' + delay + ' сек');
-				AnyBalance.sleep(delay*1000);
-			}
-			html = AnyBalance.requestPost(joinUrl(ref, action), params, addHeaders({Referer: ref}));
-			ref = AnyBalance.getLastUrl();
-		}
-
 		if(!/Completed/i.test(ref)){
 			var error = getElement(html, /<span[^>]+field-validation-error/i, replaceTagsAndSpaces);
 			if(error)
@@ -212,8 +213,11 @@ function main(){
 			AnyBalance.trace(ref + '\n' + html);
 			throw new AnyBalance.Error('Не удалось войти в кошелек. Сайт изменен?');
 		}
-	    
+
 		AnyBalance.trace('Успешно авторизовались');
+
+		html = handleRedirect(html);
+		ref = AnyBalance.getLastUrl();
 	    
 		form = getElement(html, /<form[^>]+gk-form/i);
 		params = createFormParams(form);

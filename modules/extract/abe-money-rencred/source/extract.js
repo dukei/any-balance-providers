@@ -3,139 +3,185 @@
 */
 
 var g_rootrul = "https://ib.rencredit.ru";
-var g_baseurl = g_rootrul + "/rencredit/ru/";
+var g_baseurl = g_rootrul + "/rencredit.server.portal.app/rest/";
 
 var g_headers = {
+	Accept: 'application/json, text/*',
     'Accept-Language': 'ru, en',
-    'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.1 (KHTML, like Gecko) Chrome/21.0.1180.60 Safari/537.1',
-    'Referer': g_baseurl
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/57.0.2987.133 Safari/537.36',
+    'Referer': g_rootrul + '/',
+    Origin: g_rootrul,
+    'X-Requested-With': 'XMLHttpRequest'
 }
 
-var g_url = {}; //ссылки на доп инфу
+function checkAPIResultSimple(html){
+	if(!html)
+		return html;
+	var json = getJson(html);
+	if(json.errorResponseMo){
+        var error = json.errorResponseMo.errorMsg;
+        if(error)
+            throw new AnyBalance.Error(error, null, /парол/i.test(error));
+		
+		AnyBalance.trace(JSON.stringify(json));
+        throw new AnyBalance.Error('Не удалось зайти в интернет-банк. Сайт изменен?');
+	}
+
+	return json;
+}
+
+function callAPI(verb, getParams, postParams){
+	return callAPIEx(verb, getParams, postParams, null, checkAPIResultSimple);
+}
+
+function callAPIEx(verb, getParams, postParams, addheaders, checkResult){
+	var url = g_baseurl + verb, method = 'GET';
+	
+	if(getParams)
+		url += '?' + createUrlEncodedParams(getParams);
+
+	var paramsAreNotJson = postParams && postParams.__paramsAreNotJson;
+	if(postParams)
+		method = 'POST';
+	else
+		postParams = '';
+
+	var headers = {
+		'X-XSRF-TOKEN': callAPI.data && callAPI.data.csrfToken
+	};
+
+	if(postParams && !paramsAreNotJson)
+		headers['Content-Type'] = 'application/json; charset=utf-8';
+	if(addheaders)
+		headers = addHeaders(addheaders, headers);
+
+	var html, tries = 0, maxTries = 5;
+	do{
+		if(tries > 0){
+			AnyBalance.trace('Retrying request: ' + tries + '/' + maxTries);
+			AnyBalance.sleep(1000);
+		}
+		html = AnyBalance.requestPost(url, 
+			typeof(postParams) == 'string' || paramsAreNotJson ? postParams : JSON.stringify(postParams), 
+			addHeaders(headers), 
+			{HTTP_METHOD: method}
+		);
+//	}while((/Server Hangup/i.test(AnyBalance.getLastStatusString()) || (502 == AnyBalance.getLastStatusCode() && /Server Hangup/i.test(html))) && (++tries <= maxTries));
+	}while(500 <= AnyBalance.getLastStatusCode() && 503 >= AnyBalance.getLastStatusCode() && (++tries <= maxTries));
+
+	var json = (checkResult || getJson)(html);
+	return json;
+}
 
 function login(){
     var prefs = AnyBalance.getPreferences();
+    AnyBalance.setDefaultCharset('utf-8');
 	
 	checkEmpty(prefs.login, 'Введите логин!');
     checkEmpty(prefs.password, 'Введите пароль!');
-	
-    var html = AnyBalance.requestGet(g_baseurl + 'group/ibs/product-list', g_headers);
-    if(!/<a[^]+id="logout"/i.test(html)){
-        html = AnyBalance.requestPost(g_baseurl + 'home?p_p_id=ClientLogin_WAR_bscbankserverportalapp&p_p_lifecycle=2&p_p_state=normal&p_p_mode=view&p_p_resource_id=SEND_FORM&p_p_cacheability=cacheLevelPage&p_p_col_id=column-1&p_p_col_count=1', {
-            login:prefs.login,
-            password:prefs.password,
-        }, addHeaders({'X-Requested-With':'XMLHttpRequest'}));
-    }else{
-    	AnyBalance.trace('Сессия уже начата. Используем существующую сессию');
+
+    var json = callAPI('public/version');
+    callAPI.data = {};
+    callAPI.data.csrfToken = AnyBalance.getCookie('XSRF-TOKEN');
+
+    json = callAPI('private/client/info');
+
+    if(AnyBalance.getLastStatusCode() == 401){
+    	AnyBalance.trace('Необходим новый логин');
+
+    	json = callAPI('public/auth/login', null, {
+    		username: prefs.login,
+    		password: prefs.password,
+    		__paramsAreNotJson: true
+    	});
+
+    	if(json.changePasswordRequired)
+    		throw new AnyBalance.Error('Банк требует сменить пароль. Пожалуйста, войдите в интернет банк ' + g_rootrul + ' через браузер, смените пароль и введите новый пароль в настройки провайдера', null, true);
+    	
+    	var code = AnyBalance.retrieveCode('На телефон ' + json.clientInfo.maskedPhoneNumber + ' выслан код подтверждения для входа в интернет банк. Пожалуйста, введите его', null, {inputType: 'number', time: json.validityOfOtpInSeconds*1000});
+
+    	json = callAPI('private/auth/confirm', null, {
+    		confirmationCode: code,
+   			__paramsAreNotJson: true
+    	});
     }
-	
-	if(!/<a[^]+id="logout"/i.test(html)){
-		if(/<form[^>]+id="_ClientLogin_WAR_bscbankserverportalapp_otpForm"/.test(html)){
-			//Надо вводить код подтверждения...
-			var message = getParam(html, null, null, /<div[^>]+class="disclaimer"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
-			var action = getParam(html, null, null, /<form[^>]+id="_ClientLogin_WAR_bscbankserverportalapp_otpForm"[^>]*action="([^"]*)/i, replaceHtmlEntities);
-			if(!action){
-				AnyBalance.trace(html);
-				throw new AnyBalanc.Error('Не удаётся найти параметр входа (action)! Сайт изменен?');
-			}
-			var code = AnyBalance.retrieveCode(message || 'Введите СМС-подтверждение для входа в интернет-банк', null, {inputType: 'number', time: 300000});
-			html = AnyBalance.requestPost(action, {otp: code}, addHeaders({'X-Requested-With':'XMLHttpRequest'}));
-			var redirect = getParam(html, null, null, /\.location\s*=\s*"([^"]*)/, replaceSlashes);
-			if(redirect)
-				html = AnyBalance.requestGet(redirect.replace(/^\//, g_rootrul + "/"), g_headers);
-		}
-	}
-		
-	if(!/<a[^]+id="logout"/i.test(html)){
-        //var htmlErr = AnyBalance.requestGet(baseurl + 'faces/renk/login.jsp', g_headers);
-        var error = getParam(html, null, null, /msg-error"(?:[^>]*>){1}([^<]+)/i, replaceTagsAndSpaces);
+
+	if(!json.clientInfo){
+        var error = json.errorResponseMo && json.errorResponseMo.errorMsg;
         if(error)
-            throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
+            throw new AnyBalance.Error(error, null, /парол/i.test(error));
 		
-		AnyBalance.trace(html);
+		AnyBalance.trace(JSON.stringify(json));
         throw new AnyBalance.Error('Не удалось зайти в интернет-банк. Сайт изменен?');
     }
 
+    var clientInfo = json.clientInfo;
+
     __setLoginSuccessful();
 
-    initDetailsUrls(html);
-
-    return html;
-
-    //А кредиты так получать
-    //https://ib.rencredit.ru/rencredit/ru/group/ibs/product-list?p_p_id=LoansList_WAR_bscbankserverportalapp&p_p_lifecycle=2&p_p_state=normal&p_p_mode=view&p_p_resource_id=COMMAND_UPDATE_LOANS&p_p_cacheability=cacheLevelPage&p_p_col_id=column-2-bottom&p_p_col_pos=3&p_p_col_count=4
-
+    return clientInfo;
 }
 
-function initDetailsUrls(html){
-    g_url.detailsCard = getParam(html, null, null, /"([^"]*card-detail\?[^"]*\{\{id\}\}[^"]*)/, replaceHtmlEntities);
-    g_url.detailsDep = getParam(html, null, null, /"([^"]*deposit-details\?[^"]*\{\{id\}\}[^"]*)/, replaceHtmlEntities);
-    g_url.detailsAcc = getParam(html, null, null, /"([^"]*current-account-details\?[^"]*\{\{id\}\}[^"]*)/, replaceHtmlEntities);
-    g_url.detailsLoan = getParam(html, null, null, /"([^"]*loan-detail\?[^"]*\{\{id\}\}[^"]*)/, replaceHtmlEntities);
-    g_url.scheduleLoan = getParam(html, null, null, /"([^"]*payment-schedule\?[^"]*\{\{id\}\}[^"]*)/, replaceHtmlEntities);
-}
+function fetchProductsJson(name){
+	var info = {
+		card: {
+			verb: 'private/products/cards',
+			name: 'карты',
+			firstTimeParams: {
+				forceRequest: 'true'
+			}
+		},
+		loan: {
+			verb: 'private/products/loans',
+			name: 'кредиты'
+		},
+		account: {
+			verb: 'private/products/accounts',
+			name: 'счета'
+		},
+		deposit: {
+			verb: 'private/products/deposits',
+			name: 'депозиты'
+		}
+	}
+	
+	if(!info[name])
+		throw new AnyBalance.Error('Неправильный продукт!', null, true);
 
-function fetchUrl(url, what){
-    var tries = 0;
+	if(!fetchProductsJson.data)
+		fetchProductsJson.data = {};
+
+	if(fetchProductsJson.data[name])
+		return fetchProductsJson.data[name];
+
+    var tries = 0, maxTries = 10, json;
 
     do{
-    	if(tries)
-    		AnyBalance.sleep(1500);
-        AnyBalance.trace('Попытка получить ' + what + ' №' + (tries+1));
-        var html = AnyBalance.requestGet(url, addHeaders({'X-Requested-With':'XMLHttpRequest'}));
-        var json = getJson(html);
-    }while(!json.failed && !json.suspendPolling && tries++ < 10);
+    	if(tries > 0){
+    		AnyBalance.trace('Пытаемся получить ' + info[name].name + ', попытка ' + (tries + 1) + '/' + maxTries);
+    		AnyBalance.sleep(2000);
+    	}
+    	json = callAPI(info[name].verb, tries == 0 ? info[name].firstTimeParams : null);
+    }while(!json.items && ++tries<maxTries);
 
-    if(json.failed){
-    	AnyBalance.trace(html);
-    	throw new AnyBalance.Error('Не удалось получить ' + what + ', проблемы на сайте или сайт изменен.');
-    }
-    	
-    if(!json.suspendPolling){
-    	AnyBalance.trace(html);
-    	throw new AnyBalance.Error('Не удаётся долго получить ' + what + '. Возможно, проблемы на сайте, попробуйте ещё раз позднее.');
-    }
-
-    return json;	
+    return fetchProductsJson.data[name] = json;
 }
 
-var g_cardsJson;
-function fetchCardsJson(){
-    if(g_cardsJson)
-        return g_cardsJson;
-
-    g_cardsJson = fetchUrl(g_baseurl + 'group/ibs/product-list?p_p_id=MyCards_WAR_bscbankserverportalapp&p_p_lifecycle=2&p_p_state=normal&p_p_mode=view&p_p_resource_id=update&p_p_cacheability=cacheLevelPage&p_p_col_id=column-2-bottom&p_p_col_pos=1&p_p_col_count=4', 'карты');
-    return g_cardsJson;
-}
-
-var g_loansJson;
-function fetchLoansJson(){
-    if(g_loansJson)
-        return g_loansJson;
-
-    g_loansJson = fetchUrl(g_baseurl + 'group/ibs/product-list?p_p_id=LoansList_WAR_bscbankserverportalapp&p_p_lifecycle=2&p_p_state=normal&p_p_mode=view&p_p_resource_id=COMMAND_UPDATE_LOANS&p_p_cacheability=cacheLevelPage&p_p_col_id=column-2-bottom&p_p_col_pos=3&p_p_col_count=4', 'кредиты');
-    if(g_loansJson.JSON_CLOSED_LOANS_HIDDEN_FLAG){ //Показываем в списке и закрытые кредиты
-    	g_loansJson = fetchUrl(g_baseurl + 'group/ibs/product-list?p_p_id=LoansList_WAR_bscbankserverportalapp&p_p_lifecycle=2&p_p_state=normal&p_p_mode=view&p_p_resource_id=COMMAND_HIDE_UNHIDE_CLOSED_LOANS&p_p_cacheability=cacheLevelPage&p_p_col_id=column-2-bottom&p_p_col_pos=3&p_p_col_count=4', 'все кредиты');
-    }
-
-    return g_loansJson;
-}
-
-function processCards(html, result) {
+function processCards(result) {
     if (!AnyBalance.isAvailable('cards'))
         return;
 
-    var json = fetchCardsJson();
+    var json = fetchProductsJson('card');
     result.cards = [];
-    for (var i = 0; i < json.cards.length; ++i) {
-        var card = json.cards[i];
-        if (card.typeCode == 'LOY')
+    for (var i = 0; i < json.items.length; ++i) {
+        var card = json.items[i];
+        if (card.cardType.code == 'LOY')
             continue;
 
         var c = {
             __id: card.id,
-            __name: card.type + ', ' + card.number,
-            num: card.number
+            __name: card.cardType.localizedText + ', ' + card.cardNumber,
+            num: card.cardNumber
         }
 
         if (__shouldProcess('cards', c)) {
@@ -146,45 +192,42 @@ function processCards(html, result) {
     }
 }
 
-function processBonus(html, result) {
+function processBonus(result) {
     if (!AnyBalance.isAvailable('bonus'))
         return;
 
-    var json = fetchCardsJson();
-    for (var i = 0; i < json.cards.length; ++i) {
-        var card = json.cards[i];
-        if (card.typeCode == 'LOY'){
-            getParam(card.availableBalance, result, 'bonus');
+    var json = fetchProductsJson('card');
+    for (var i = 0; i < json.items.length; ++i) {
+        var card = json.items[i];
+        if (card.cardType.code == 'LOY'){
+            getParam(card.availableAmount.amount, result, 'bonus');
         }
     }
 }
 
 function processCard(card, result){
     //Доступный лимит
-	getParam(card.availableBalance, result, 'cards.balance');
+	getParam(card.availableAmount.amount, result, 'cards.balance');
 	//Валюта
-	getParam(card.currency, result, ['cards.currency', 'cards.balance', 'cards.minpay', 'cards.limit', 'cards.own', 'cards.blocked', 'cards.cash']);
+	getParam(card.availableAmount.currency.code, result, ['cards.currency', 'cards.balance', 'cards.minpay', 'cards.limit', 'cards.own', 'cards.blocked', 'cards.cash']);
     //Тип
-    getParam(card.type, result, 'cards.type');
-    getParam(card.typeCode, result, 'cards.type_code'); //DBTO
+    getParam(card.cardType.localizedText, result, 'cards.type');
+    getParam(card.cardType.code, result, 'cards.type_code'); //DBTO
     //Статус
-    getParam(card.status, result, 'cards.status');
-    getParam(card.statusCode, result, 'cards.status_code'); //ACTIVE|CLOSED
-    getParam(card.closed, result, 'cards.closed');
+    getParam(card.status.localizedText, result, 'cards.status');
+    getParam(card.status.code, result, 'cards.status_code'); //ACTIVE|CLOSED
+//    getParam(card.closed, result, 'cards.closed');
 
-    if(g_url.detailsCard && AnyBalance.isAvailable('cards.minpay', 'cards.minpaytill', 'cards.limit', 'cards.userName', 'cards.own', 'cards.accnum', 'cards.contract', 'cards.cash', 'cards.blocked', 'cards.type_product')){
-    	var html = AnyBalance.requestGet(g_url.detailsCard.replace('{{id}}', card.id), g_headers);
-    	getParam(html, result, 'cards.minpay', /<div[^>]+class="cell[^>]*>Сумма минимального платежа[\s\S]*?<div[^>]+class="cell[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
-    	getParam(html, result, 'cards.limit', /<div[^>]+class="cell[^>]*>Общий размер кредитного лимита[\s\S]*?<div[^>]+class="cell[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
-    	getParam(html, result, 'cards.own', /<div[^>]+class="cell[^>]*>Собственные средства[\s\S]*?<div[^>]+class="cell[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
-        getParam(html, result, 'cards.cash', /<div[^>]+class="cell[^>]*>Доступные средства для снятия наличных[\s\S]*?<div[^>]+class="cell[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
-        getParam(html, result, 'cards.blocked', /<div[^>]+class="cell[^>]*>Сумма неподтвержденных операций[\s\S]*?<div[^>]+class="cell[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
-    	getParam(html, result, 'cards.minpaytill', /<div[^>]+class="cell[^>]*>Погасить минимальный платеж до[\s\S]*?<div[^>]+class="cell[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseDate);
-    	getParam(html, result, 'cards.userName', /<span[^>]+class="[^>]*fio[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
-    	getParam(html, result, 'cards.accnum', /<div[^>]+class="cell[^>]*>Номер счета[\s\S]*?<div[^>]+class="cell[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
-    	getParam(html, result, 'cards.contract', /<div[^>]+class="cell[^>]*>Номер договора[\s\S]*?<div[^>]+class="cell[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
-        getParam(html, result, 'cards.type_product', /<div[^>]+class="cell[^>]*>Тип продукта[\s\S]*?<div[^>]+class="cell[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
-    }
+    getParam(card.lastPayPeriodMinimumPayment, result, 'cards.minpay');
+    getParam(card.creditLimit, result, 'cards.limit');
+    getParam(card.ownFundsAmount, result, 'cards.own');
+//    getParam(html, result, 'cards.cash', /<div[^>]+class="cell[^>]*>Доступные средства для снятия наличных[\s\S]*?<div[^>]+class="cell[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(card.blockedAmount, result, 'cards.blocked');
+    getParam(card.payPeriodDateOfCompletion, result, 'cards.minpaytill', null, null, parseDateISO);
+//    getParam(html, result, 'cards.userName', /<span[^>]+class="[^>]*fio[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
+    getParam(card.accountNumber, result, 'cards.accnum');
+    getParam(card.contractNumber, result, 'cards.contract');
+    getParam(card.productType, result, 'cards.type_product');
 
     if(AnyBalance.isAvailable('cards.transactions')){
     	processCardsTransactions(card, result);
@@ -196,6 +239,8 @@ function processCard(card, result){
 function processCredits(html, result) {
     if (!AnyBalance.isAvailable('credits'))
         return;
+
+    throw new AnyBalance.Error('Кредиты пока не поддерживаются. Обращайтесь к разработчикам');
 
     var json = fetchLoansJson();
     result.credits = [];
@@ -247,69 +292,18 @@ function processCredit(credit, result){
     if(AnyBalance.isAvailable('credits.schedule')){
     	processCreditsSchedule(credit, result);
     }
-
-    
 }
 
 
-function processInfo(html, result){
+function processInfo(clientInfo, result){
     var info = result.info = {};
-    getParam(html, info, 'info.fio', /<span[^>]+fio[^>]*>([^]*?)<\/span>/i, replaceTagsAndSpaces);
-
-    if(AnyBalance.isAvailable('info.name_last', 'info.name', 'info.name_patronymic', 'info.hphone', 'info.mphone', 'info.wphone', 'info.email')) {
-        html = AnyBalance.requestGet(g_baseurl + 'group/ibs/settings', g_headers);
-
-        getParam(html, info, 'info.name_last', />\s*Фамилия[^]*?<td[^>]*>([^]*?)<\/td>/i, replaceTagsAndSpaces);
-        getParam(html, info, 'info.name', />\s*Имя[^]*?<td[^>]*>([^]*?)<\/td>/i, replaceTagsAndSpaces);
-        getParam(html, info, 'info.name_patronymic', />\s*Отчество[^]*?<td[^>]*>([^]*?)<\/td>/i, replaceTagsAndSpaces);
-        getParam(html, info, 'info.hphone', /<td[^>]*>\s*Домашний[^]*?<td[^>]*>([^]*?)<\/td>/i, replaceTagsAndSpaces); //+7000*****00
-        getParam(html, info, 'info.mphone', /<td[^>]*>\s*Мобильный[^]*?<td[^>]*>([^]*?)<\/td>/i, replaceTagsAndSpaces); //+7905*****42
-        getParam(html, info, 'info.wphone', /<td[^>]*>\s*Рабочий[^]*?<td[^>]*>([^]*?)<\/td>/i, replaceTagsAndSpaces); //+7861*****25
-        getParam(html, info, 'info.email', /<td[^>]*>\s*Email[^]*?<td[^>]*>([^]*?)<\/td>/i, replaceTagsAndSpaces); //K*********@MAIL.RU
-    }
+    getParam(clientInfo.surname + ' ' + clientInfo.name + ' ' + clientInfo.patronymic, info, 'info.fio');
+    getParam(clientInfo.surname, info, 'info.name_last');
+    getParam(clientInfo.patronymic, info, 'info.name_patronymic');
+    getParam(clientInfo.name, info, 'info.name');
+    getParam(clientInfo.maskedHomeNumber, info, 'info.hphone'); //+7000*****00
+    getParam(clientInfo.maskedPhoneNumber, info, 'info.mphone'); //+7905*****42
+    getParam(clientInfo.maskedOfficePhone, info, 'info.wphone'); //+7861*****25
+    getParam(clientInfo.email, info, 'info.email'); //K*********@MAIL.RU
 }
 
-function fetchAccount(html, baseurl){
-    var prefs = AnyBalance.getPreferences();
-    if(prefs.cardnum && !/^\d{4,20}$/.test(prefs.cardnum))
-        throw new AnyBalance.Error('Пожалуйста, введите не менее 4 последних цифр номера счета (или договора), по которому вы хотите получить информацию, или не вводите ничего, чтобы получить информацию по первому счету.');
-	
-    var json = fetchUrl(baseurl + 'group/ibs/product-list?p_p_id=DepositsList_WAR_bscbankserverportalapp&p_p_lifecycle=2&p_p_state=normal&p_p_mode=view&p_p_resource_id=depositsListupdate&p_p_cacheability=cacheLevelPage&p_p_col_id=column-2-bottom&p_p_col_pos=2&p_p_col_count=4', 'карты');
-    var accsAndDeps = [json.accounts, json.deposits];
-    var acc = null;
-
-    outer: for(var i=0; i<accsAndDeps.length; ++i){
-    	var accs = accsAndDeps[i];
-    	if(!accs) continue;
-    	for(var j=0; j<accs.length; ++j){
-    		if(!prefs.cardnum || endsWith(accs[j].accountNumber, prefs.cardnum)){
-    		    acc = accs[j];
-    			break outer;
-    		}
-    	}
-    }
-
-    if(!acc)
-    	throw new AnyBalance.Error(prefs.cardnum ? 'Не удалось найти счета/депозита с последними цифрами ' + prefs.cardnum : 'Не удалось найти ни одного счета/депозита');
-	
-    var result = {success: true};
-    getParam(acc.currency, result, ['currency', 'balance']);
-    getParam(acc.accountNumber, result, 'accnum');
-    getParam(acc.contractNumber, result, 'contract');
-
-    if(acc.currentDepositAmount){
-    	//Это депозит
-        getParam(acc.currentDepositAmount, result, 'balance', null, null, parseBalance);
-        getParam(acc.interestRate, result, 'pct');
-        getParam(acc.name, result, 'accname');
-        getParam(acc.expirationDate, result, 'till', null, null, parseDate);
-        getParam(acc.name, result, '__tariff');
-    }else{
-        //Это счет
-        getParam(acc.currentBalance, result, 'balance', null, null, parseBalance);
-        getParam(acc.accountNumber, result, '__tariff');
-        getParam(acc.status, result, 'status');
-    }
-	
-    AnyBalance.setResult(result);
-}

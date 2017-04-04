@@ -20,7 +20,7 @@ var g_countersTable = {
 		"cardnum": "cards.num",
 		"accnum": "cards.accnum",
 		"accname": "cards.type",
-		"userName": "cards.userName",
+		"userName": "info.fio",
 		"status": "cards.status",
 		"available": "cards.cash",
 		"__tariff": "cards.__name"
@@ -80,22 +80,22 @@ function main(){
     adapter.processCredits = adapter.envelope(processCredits);
     adapter.processInfo = adapter.envelope(processInfo);
 
-	var html = login();
+	var clientInfo = login();
 
 	var result = {success: true};
 
-	adapter.processBonus(html, result);
-	adapter.processInfo(html, result);
+	adapter.processBonus(result);
+	adapter.processInfo(clientInfo, result);
 
 	if(prefs.type == 'card'){
-		adapter.processCards(html, result);
+		adapter.processCards(result);
 		if(!adapter.wasProcessed('cards')){
 			throw new AnyBalance.Error(prefs.cardnum ? 'Не найдена карта с последними цифрами ' + prefs.cardnum : 'У вас нет ни одной карты');
 		}
 		result = adapter.convert(result);
 	}
 	if(prefs.type == 'crd'){
-		adapter.processCredits(html, result);
+		adapter.processCredits(result);
 		if(!adapter.wasProcessed('credits')){
 			throw new AnyBalance.Error(prefs.cardnum ? 'Не найден кредит с последними цифрами ' + prefs.cardnum : 'У вас нет ни одного кредита');
 		}

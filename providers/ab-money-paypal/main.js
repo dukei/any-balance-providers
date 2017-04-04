@@ -138,7 +138,11 @@ function executeChallenge(script, baseurl, loginPage){
 	this.document = win.document;
 	this.window = winProxy;
 
-	var autosubmit = safeEval(script.replace(/\bdata;/, 'return;'), 'window,document,XMLHttpRequest,screen,navigator,location', [winProxy, win.document, win.XMLHttpRequest, win.screen, win.navigator, win.location]);
+	var autosubmit = safeEval(replaceAll(script, [
+		/\bdata;/, 'return;',
+		/\\x5c\\x77\\x2b\\x20\\x2a\\x5c\\x28\\x5c\\x29\\x20\\x2a\\x7b\\x5c\\x77\\x2b\\x20\\x2a\\x5b\\x27\\x7c\\x22\\x5d\\x2e\\x2b\\x5b\\x27\\x7c\\x22\\x5d\\x3b\\x3f\\x20\\x2a\\x7d/ig, '.*',
+		/\\x28\\x5c\\x5c\\x5b\\x78\\x7c\\x75\\x5d\\x28\\x5c\\x77\\x29\\x7b\\x32\\x2c\\x34\\x7d\\x29\\x2b/ig, '.*'
+	]), 'window,document,XMLHttpRequest,screen,navigator,location', [winProxy, win.document, win.XMLHttpRequest, win.screen, win.navigator, win.location]);
 	AnyBalance.trace('autosubmit = ' + autosubmit);
 
 	//Строго требуется капча...

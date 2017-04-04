@@ -26,28 +26,44 @@ function main() {
 
     var incapsule = Incapsule(baseurl + 'context/login/');
 	var html = AnyBalance.requestGet(baseurl + 'context/login/', g_headers);
-	if(incapsule.isIncapsulated(html))
+	if(incapsule.isIncapsulated(html)){
+		AnyBalance.trace('Инкапсула вмешалась на старте');
 	    html = incapsule.executeScript(html);
-
-	var form = getElement(html, /<form[^>]+form1/i);
-	if (!form){
-		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Не найдена форма входа. Сайт изменен?');
 	}
-	
-	var params = AB.createFormParams(form, function(params, str, name, value) {
-		if (name == 'Login') {
-			return prefs.login;
-		} else if (name == 'Password') {
-			return prefs.password;
-		} else if (name == 'LoginGroup') {
-			return 'HasAccountRadio';
+
+	function tryToLogin(html){
+		var form = getElement(html, /<form[^>]+form1/i);
+		if (!form){
+			AnyBalance.trace(html);
+			throw new AnyBalance.Error('Не найдена форма входа. Сайт изменен?');
 		}
+		
+		var params = AB.createFormParams(form, function(params, str, name, value) {
+			if (name == 'Login') {
+				return prefs.login;
+			} else if (name == 'Password') {
+				return prefs.password;
+			} else if (name == 'LoginGroup') {
+				return 'HasAccountRadio';
+			}
+	    
+			return value;
+		});
+	    
+		html = AnyBalance.requestPost(baseurl + 'context/login/', params, addHeaders({Referer: baseurl + 'context/login/'}));
+		if(incapsule.isIncapsulated(html)){
+			AnyBalance.trace('Инкапсула вмешалась после логина');
+		    html = incapsule.executeScript(html);
+		}
+		return html;
+	}
 
-		return value;
-	});
+	html = tryToLogin(html);
+   	if(!/context\/logoff/i.test(html) && /<form[^>]+form1/i.test(html)){
+   		AnyBalance.trace('Снова форма авторизации... Заходим ещё разок');
+	  	html = tryToLogin(html); //Иногда может снова быть логин, если инкапсула не дала залогиниться
+	}
 
-	html = AnyBalance.requestPost(baseurl + 'context/login/', params, addHeaders({Referer: baseurl + 'context/login/'}));
 	
 	if (!/context\/logoff/i.test(html)) {
 		var error = getParam(html, null, null, /<span[^>]+class="ErrorSpan"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);

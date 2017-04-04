@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="12">ab-bonus-ozon</id>
+	<id version="13">ab-bonus-ozon</id>
 	<name>OZON.ru</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о баланcе, активном заказе и количестве баллов в интернет магазине OZON.ru <a href="http://www.ozon.ru">http://www.ozon.ru</a>.</p>

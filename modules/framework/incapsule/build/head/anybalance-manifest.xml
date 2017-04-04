@@ -5,6 +5,14 @@
     <name>Incapsule helper</name>
 	<description html="true"><![CDATA[
 		Helps to deal with incapsule protected pages
+
+		Usage:
+
+    		var incapsule = Incapsule(baseurl + 'ru/privilege/argo-login');
+		    var html = AnyBalance.requestGet(baseurl + 'ru/privilege/argo-login', g_headers);
+		    if(incapsule.isIncapsulated(html))
+		        html = incapsule.executeScript(html);
+
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>

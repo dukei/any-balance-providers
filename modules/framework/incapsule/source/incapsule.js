@@ -140,6 +140,7 @@
         var paramValues = [_window,_document,_navigator,_webkitURL,_window.location,_window,_XMLHttpRequest];
 
         if(/<META[^>]+NAME="robots"[^>]*CONTENT="noindex,nofollow"[^>]*>/i.test(html)){ //Усиленная скриптовая проверка
+        	AnyBalance.trace('Усиленная скриптовая проверка');
 			var obfuscatedScript = sumParam(html, null, null, /<script(?:[^>](?!src\s*=))*>([\s\S]*?)<\/script>/ig, null, null, create_aggregate_join('\n'));
         	safeEval(obfuscatedScript, paramNames, paramValues);
         	loadImages();

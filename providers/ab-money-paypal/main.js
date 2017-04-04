@@ -74,6 +74,10 @@ function executeChallenge(script, baseurl, loginPage){
 		},
 
 		lastModified: new Date().toString(),
+		characterSet: 'UTF-8',
+		documentElement: new Element('html'),
+		domain: 'www.paypal.com',
+		styleSheets: [],
 	};
 	
 	var XHR = function(){
@@ -103,22 +107,38 @@ function executeChallenge(script, baseurl, loginPage){
 		}
 	}
 
+	function createGetInterceptor(target, objectName){
+		return typeof Proxy != 'undefined' ? new Proxy(target, {
+			get: function(target, name, receiver) {
+       			ABSave.trace('get was called for: ' + objectName + '.' + name);
+       			if(!isset(target[name]))
+       				ABSave.trace('!!!!!!!!!!!!!! ' + objectName + '.' + name + ' is undefined!!!!!!!!!!!!!!!!!!!!!');
+       			return target[name];
+   			}
+   		}) : target;
+	}
+
 	var win = {
-		document: doc,
-		XMLHttpRequest: XHR,
-		navigator: {
+		document: createGetInterceptor(doc, 'document'),
+		XMLHttpRequest: createGetInterceptor(XHR, 'XHR'),
+		navigator: createGetInterceptor({
 			appName: 'Netscape'
-		},
-		screen: {},
+		}, 'navigator'),
+		screen: createGetInterceptor({}, 'screen'),
 		innerWidth: 913,
-		location: {
+		location: createGetInterceptor({
 			host: "www.paypal.com"
-		}
+		}, 'location')
 	};
+
+	var winProxy = createGetInterceptor(win, 'window');
 
 	script += "\nreturn typeof autosubmit != 'undefined' ? autosubmit : undefined;";
 
-	var autosubmit = safeEval(script, 'window,document,XMLHttpRequest,screen,navigator,location', [win, doc, XHR, win.screen, win.navigator, win.location]);
+	this.document = win.document;
+	this.window = winProxy;
+
+	var autosubmit = safeEval(script.replace(/\bdata;/, 'return;'), 'window,document,XMLHttpRequest,screen,navigator,location', [winProxy, win.document, win.XMLHttpRequest, win.screen, win.navigator, win.location]);
 	AnyBalance.trace('autosubmit = ' + autosubmit);
 
 	//Строго требуется капча...

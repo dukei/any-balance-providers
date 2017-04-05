@@ -61,9 +61,66 @@ function redirectIfNeeded(html){
     return html;
 }
 
+function isOnLogin(){
+	return AnyBalance.getLastUrl().indexOf(g_baseurlLogin) == 0;
+}
+
+function enterMtsLK(options) {
+	var baseurl = options.baseurl || g_baseurl;
+    var html = AnyBalance.requestGet(baseurl, g_headers);
+
+    if (AnyBalance.getLastStatusCode() >= 500) {
+        AnyBalance.trace("МТС вернул 500. Пробуем ещё разок...");
+        html = AnyBalance.requestGet(baseurl, g_headers);
+    }
+
+    if (AnyBalance.getLastStatusCode() >= 500)
+        throw new AnyBalance.Error("Ошибка на сервере МТС, сервер не смог обработать запрос. Можно попытаться позже...");
+
+    html = redirectIfNeeded(html); //Иногда бывает доп. форма, надо переадресоваться.
+
+    var loggedInNum = getParam(html, /Продолжить вход в[^<]+с номером\s*<b[^>]*>([\s\S]*?)<\/b>/i, [replaceTagsAndSpaces, /\D+/g, '']);
+    if(loggedInNum){
+    	AnyBalance.trace('Предлагает автоматически залогиниться на ' + loggedInNum);
+    	var form = getElement(html, /<form[^>]+name="Login"/i);
+    	var submit;
+    	if(options.login != loggedInNum){
+    		AnyBalance.trace('А нам нужен номер ' + options.login + '. Отказываемся...');
+    		submit = 'Ignore';
+    	}else{
+    		AnyBalance.trace('А нам этот номер и нужен. Соглашаемся...');
+    		submit = 'Login';
+    	}
+
+    	var params = createFormParams(form, function (params, input, name, value) {
+        	if (name == 'IDButton')
+        		value = submit;
+		    return value;
+		});
+		html = AnyBalance.requestPost(AnyBalance.getLastUrl(), params, addHeaders({Referer: AnyBalance.getLastUrl()}));
+    }
+
+    if(isOnLogin()){
+    	//Мы всё еще не переадресованы на целевую страницу, значит, надо логиниться
+    	options.html = html;
+    	if(!options.url)
+    		options.url = AnyBalance.getLastUrl();
+    	html = enterMTS(options);
+    }else{
+    	AnyBalance.trace('Мы не на странице логина. Внутри уже?');
+    }
+
+    if(isOnLogin()){
+    	AnyBalance.trace(html);
+    	throw new AnyBalance.Error('Не удалось зайти в личный кабинет');
+    }
+
+    return html;
+}
+
 function enterMTS(options){
 	var baseurl = options.baseurl || g_baseurl;
-    var loginUrl = options.url || g_baseurlLogin + "/amserver/UI/Login?service=" + (options.service || 'lk') + '&goto=' + baseurl + '/';
+    var loginUrl = options.url || g_baseurlLogin + "/amserver/UI/Login?goto=" + baseurl;
     var allowRetry = options.allowRetry;
 
     var html = options.html;
@@ -132,10 +189,10 @@ function enterMTS(options){
         throw new AnyBalance.Error("Ошибка на сервере МТС при попытке зайти, сервер не смог обработать запрос! Можно попытаться позже...", allowRetry);
 
     //Если переадресовали с логина, значит, залогинились. А если нет, то какие-то проблемы
-    if(AnyBalance.getLastUrl().indexOf(g_baseurlLogin) == 0)
+    if(isOnLogin())
 		html = checkLoginError(html, loginUrl);
 
-    if(AnyBalance.getLastUrl().indexOf(g_baseurlLogin) == 0){
+    if(isOnLogin()){
         AnyBalance.trace(html);
         throw new AnyBalance.Error('Не удаётся зайти в личный кабинет. Он изменился или проблемы на сайте.', allowRetry);
     }

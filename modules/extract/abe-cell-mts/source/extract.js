@@ -499,37 +499,7 @@ function checkLoginState(html, options) {
 function enterLK(options) {
     var loginUrl = g_baseurlLogin + "/amserver/UI/Login?service=lk&goto=" + g_baseurl + '/' + "";
 
-    var html = AnyBalance.requestGet(g_baseurl, g_headers);
-    if (AnyBalance.getLastStatusCode() >= 500) {
-        AnyBalance.trace("МТС вернул 500. Пробуем ещё разок...");
-        html = AnyBalance.requestGet(g_baseurl, g_headers);
-    }
-
-    if (AnyBalance.getLastStatusCode() >= 500)
-        throw new AnyBalance.Error("Ошибка на сервере МТС, сервер не смог обработать запрос. Можно попытаться позже...");
-
-    html = redirectIfNeeded(html); //Иногда бывает доп. форма, надо переадресоваться.
-
-    var loggedInNum = getParam(html, /Продолжить вход в Личный кабинет МТС с номером\s*<b[^>]*>([\s\S]*?)<\/b>/i, [replaceTagsAndSpaces, /\D+/g, '']);
-    if(loggedInNum){
-    	AnyBalance.trace('Предлагает автоматически залогиниться на ' + loggedInNum);
-    	var form = getElement(html, /<form[^>]+name="Login"/i);
-    	var submit;
-    	if(options.login != loggedInNum){
-    		AnyBalance.trace('А нам нужен номер ' + options.login + '. Отказываемся...');
-    		submit = 'Ignore';
-    	}else{
-    		AnyBalance.trace('А нам этот номер и нужен. Соглашаемся...');
-    		submit = 'Login';
-    	}
-
-    	var params = createFormParams(form, function (params, input, name, value) {
-        	if (name == 'IDButton')
-        		value = submit;
-		    return value;
-		});
-		html = AnyBalance.requestPost(AnyBalance.getLastUrl(), params, addHeaders({Referer: AnyBalance.getLastUrl()}));
-    }
+    var html = enterMtsLK(options);
 
     html = checkLoginState(html, {automatic: true});
 
@@ -567,7 +537,7 @@ function enterLK(options) {
 
     if (!isLoggedIn(html)) {
         if (!options.onlyAutomatic) {
-            html = enterMTS(joinObjects(options, {html: html, service: 'lk', url: AnyBalance.getLastUrl()}));
+            html = enterMtsLK(joinObjects(options, {html: html, service: 'lk', url: AnyBalance.getLastUrl()}));
             html = checkLoginState(html);
         } else {
             throw new AnyBalance.Error('Ручной вход запрещен');

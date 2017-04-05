@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="4.1" version="156" date="2017-04-05">
+	Мелкие исправления
+	</change>
 	<change major_version="4.1" version="155" date="2017-03-23">
 	Поддержка изменений в процедуре входа через мобильный интернет
 	</change>

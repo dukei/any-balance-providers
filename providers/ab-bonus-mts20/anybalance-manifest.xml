@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="7">ab-bonus-mts20</id>
+	<id version="8">ab-bonus-mts20</id>
 	<api flags="no_browser"/>
 	<name>МТС -20% (Бонусы)</name>
 	<description html="true"><![CDATA[
@@ -22,6 +22,7 @@
 		<counter id="balance" name="Баланс" units=" р"/>
 		<counter id="lastCharge" name="Последнее начисление" units=" р"/>
 		<counter id="allAccured" name="Всего начислено" units=" р"/>
+		<counter id="status" name="Статус" type="text"/>
 		<counter id="fio" name="ФИО" type="text"/>
 		<counter id="date" name="Дата последнего начисления" type="time" format="dd/MM/yyyy"/>
 	</counters>

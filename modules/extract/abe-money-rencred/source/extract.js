@@ -55,7 +55,7 @@ function callAPIEx(verb, getParams, postParams, addheaders, checkResult){
 	if(addheaders)
 		headers = addHeaders(addheaders, headers);
 
-	var html, tries = 0, maxTries = 5;
+	var html, tries = 0, maxTries = 3;
 	do{
 		if(tries > 0){
 			AnyBalance.trace('Retrying request: ' + tries + '/' + maxTries);
@@ -67,7 +67,7 @@ function callAPIEx(verb, getParams, postParams, addheaders, checkResult){
 			{HTTP_METHOD: method}
 		);
 //	}while((/Server Hangup/i.test(AnyBalance.getLastStatusString()) || (502 == AnyBalance.getLastStatusCode() && /Server Hangup/i.test(html))) && (++tries <= maxTries));
-	}while(500 <= AnyBalance.getLastStatusCode() && 503 >= AnyBalance.getLastStatusCode() && (++tries <= maxTries));
+	}while(500 <= AnyBalance.getLastStatusCode() && 503 >= AnyBalance.getLastStatusCode() && (++tries < maxTries));
 
 	var json = (checkResult || getJson)(html);
 	return json;
@@ -154,7 +154,7 @@ function fetchProductsJson(name){
 	if(fetchProductsJson.data[name])
 		return fetchProductsJson.data[name];
 
-    var tries = 0, maxTries = 10, json;
+    var tries = 0, maxTries = 20, json;
 
     do{
     	if(tries > 0){
@@ -179,7 +179,7 @@ function processCards(result) {
             continue;
 
         var c = {
-            __id: card.id,
+            __id: card.contractNumber + '_' + card.cardNumber.substr(-4),
             __name: card.cardType.localizedText + ', ' + card.cardNumber,
             num: card.cardNumber
         }
@@ -236,19 +236,17 @@ function processCard(card, result){
     
 }
 
-function processCredits(html, result) {
+function processCredits(result) {
     if (!AnyBalance.isAvailable('credits'))
         return;
 
-    throw new AnyBalance.Error('Кредиты пока не поддерживаются. Обращайтесь к разработчикам');
-
-    var json = fetchLoansJson();
+    var json = fetchProductsJson('loan');
     result.credits = [];
-    for (var i = 0; i < json.loans.length; ++i) {
-        var credit = json.loans[i];
+    for (var i = 0; i < json.items.length; ++i) {
+        var credit = json.items[i];
         var c = {
-            __id: credit.id,
-            __name: credit.name + ', ' + credit.contractNumber,
+            __id: credit.contractNumber,
+            __name: credit.loanName + ', ' + credit.contractNumber,
             num: credit.contractNumber
         }
 
@@ -262,35 +260,39 @@ function processCredits(html, result) {
 
 function processCredit(credit, result){
     //Доступный лимит
-	getParam(credit.creditAmount, result, 'credits.balance', null, null, parseBalance);
+	getParam(credit.balance, result, 'credits.balance');
 	//Валюта
-	getParam(credit.currency, result, ['credits.currency', 'credits.balance', 'credits.minpay', 'credits.limit']);
+	getParam(credit.loanAmount.currency.code, result, ['credits.currency', 'credits.balance', 'credits.minpay', 'credits.limit']);
     //Тип
-    getParam(credit.name, result, 'credits.name');
+    getParam(credit.loanName, result, 'credits.name');
 
-   	getParam(credit.nextInstallmentAmount, result, 'credits.minpay', null, null, parseBalance);
-   	getParam(credit.nextInstallmentDate, result, 'credits.minpay_till', null, null, parseDate);
-   	getParam(credit.openingDate, result, 'credits.date_start', null, null, parseDate);
+   	getParam(credit.nextPaymentAmount, result, 'credits.minpay');
+   	getParam(credit.nextPaymentDate, result, 'credits.minpay_till', null, null, parseDateISO);
+   	getParam(credit.openingDate, result, 'credits.date_start', null, null, parseDateISO);
     //Статус
-    getParam(credit.status, result, 'credits.status'); //Открыт
-    getParam(credit.closed_or_not_paid, result, 'credits.close_reason'); //closed|not_paid?
+    getParam(credit.status.localizedText, result, 'credits.status'); //Открыт
+    getParam(credit.status.code, result, 'credits.status_code'); //OPEN|CLOSED
 
-    if(g_url.detailsLoan && AnyBalance.isAvailable('credits.accnum', 'credits.date_end', 'credits.period', 'credits.pct', 'credits.limit')){
-    	var html = AnyBalance.requestGet(g_url.detailsLoan.replace('{{id}}', credit.id), g_headers);
-
-    	getParam(html, result, 'credits.accnum', /<div[^>]+class="cell[^>]*>Номер текущего счета[\s\S]*?<div[^>]+class="cell[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
-    	getParam(html, result, 'credits.date_end', /<div[^>]+class="cell[^>]*>Дата закрытия кредитного договора[\s\S]*?<div[^>]+class="cell[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseDate);
-    	getParam(html, result, 'credits.limit', /<div[^>]+class="cell[^>]*>Сумма кредита[\s\S]*?<div[^>]+class="cell[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
-    	getParam(html, result, 'credits.period', /<div[^>]+class="cell[^>]*>Срок кредита[\s\S]*?<div[^>]+class="cell[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
-        getParam(html, result, 'credits.pct', /<div[^>]+class="cell[^>]*>Годовая процентная ставка по кредиту[\s\S]*?<div[^>]+class="cell[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
-    }
+    getParam(credit.accountNumber, result, 'credits.accnum');
+    getParam(credit.closingDate, result, 'credits.date_end', null, null, parseDateISO);
+    getParam(credit.loanAmount.amount, result, 'credits.limit');
+    getParam(credit.term, result, 'credits.period');
+    getParam(credit.rate, result, 'credits.pct');
 
     if(AnyBalance.isAvailable('credits.transactions')){
-    	processCreditsTransactions(credit, result);
+    	try{
+    		processCreditsTransactions(credit, result);
+    	}catch(e){
+    		AnyBalance.trace('Не удалось получить транзакции по кредиту: ' + e.message);
+    	}
     }
 
     if(AnyBalance.isAvailable('credits.schedule')){
-    	processCreditsSchedule(credit, result);
+    	try{
+    		processCreditsSchedule(credit, result);
+    	}catch(e){
+    		AnyBalance.trace('Не удалось получить расписание по кредиту: ' + e.message);
+    	}
     }
 }
 

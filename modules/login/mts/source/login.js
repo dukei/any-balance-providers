@@ -77,6 +77,12 @@ function enterMtsLK(options) {
     if (AnyBalance.getLastStatusCode() >= 500)
         throw new AnyBalance.Error("Ошибка на сервере МТС, сервер не смог обработать запрос. Можно попытаться позже...");
 
+    if(fixCookies()){
+    	//Надо перезагрузить страницу, если куки были исправлены
+        AnyBalance.trace("Куки исправлены, перезагружаем страницу. Пробуем ещё разок...");
+        html = AnyBalance.requestGet(AnyBalance.getLastUrl(), g_headers);
+    }
+
     html = redirectIfNeeded(html); //Иногда бывает доп. форма, надо переадресоваться.
 
     var loggedInNum = getParam(html, /Продолжить вход в[^<]+с номером\s*<b[^>]*>([\s\S]*?)<\/b>/i, [replaceTagsAndSpaces, /\D+/g, '']);
@@ -112,10 +118,26 @@ function enterMtsLK(options) {
 
     if(isOnLogin()){
     	AnyBalance.trace(html);
-    	throw new AnyBalance.Error('Не удалось зайти в личный кабинет');
+    	throw new AnyBalance.Error('Не удаётся зайти в личный кабинет');
     }
 
     return html;
+}
+
+function fixCookies(){
+	//Надо исправить работу куки (пропали кавычки)
+	var cookies = AnyBalance.getCookies();
+	var repaired = false;
+	for(var i=0; i<cookies.length; ++i){
+		var c = cookies[i];
+		if(/^login$/i.test(c.name) && !/^"/.test(c.value)){
+			var newval = '"' + c.value + '"';
+			AnyBalance.trace('Исправляем куки ' + c.name + ' на ' + newval);
+			AnyBalance.setCookie(c.domain, c.name, newval, c);
+			repaired = true;
+		}
+	}
+	return repaired;
 }
 
 function enterMTS(options){
@@ -124,17 +146,7 @@ function enterMTS(options){
     var allowRetry = options.allowRetry;
 
     var html = options.html;
-
-	//Надо исправить работу куки (пропали кавычки)
-	var cookies = AnyBalance.getCookies();
-	for(var i=0; i<cookies.length; ++i){
-		var c = cookies[i];
-		if(/^login$/i.test(c.name) && !/^"/.test(c.value)){
-			var newval = '"' + c.value + '"';
-			AnyBalance.trace('Исправляем куки ' + c.name + ' на ' + newval);
-			AnyBalance.setCookie(c.domain, c.name, newval, c);
-		}
-	}
+    fixCookies();
 
     if(!html || !/<form[^>]+name="Login"/i.test(html)){
         html = AnyBalance.requestGet(loginUrl, g_headers);

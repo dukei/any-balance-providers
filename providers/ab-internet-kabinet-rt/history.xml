@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="24" date="2017-04-05">
+	Показ минут/смс/трафика на мобильных тарифах
+	</change>
 	<change version="23" date="2016-12-28">
 	Поддержка входа по емейлу или телефону
 	</change>

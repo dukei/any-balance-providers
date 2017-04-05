@@ -67,11 +67,11 @@ var SERVICE_TYPE = new function () {
     self["14"] = self["DTV"] = /*                       */new ServiceType(14, "DTV", "cabeltv", "Кабельное ТВ (цифровое)", null);
 
     self["15"] = self["OTT"] = /*                       */new ServiceType(15, "OTT", "ott", "Услуга «АЛЛЁ»", null);
-    self["15"].getDisplayNumber = function (serviceNumber) { return !serviceNumber ? "" : lkUtil.phoneFormat("7" + serviceNumber.trim(), false); };
+    self["15"].getDisplayNumber = function (serviceNumber) { return !serviceNumber ? "" : phoneFormat("7" + serviceNumber.trim(), false); };
     self["15"].serviceNumberNaming = "Номер";
 
     self["16"] = self["MVNO"] = /*                      */new ServiceType(16, "MVNO", "mvno", "Мобильная связь", null);
-    self["16"].getDisplayNumber = function (serviceNumber) { return !serviceNumber ? "" : lkUtil.phoneFormat(serviceNumber.trim()); };
+    self["16"].getDisplayNumber = function (serviceNumber) { return !serviceNumber ? "" : phoneFormat(serviceNumber.trim()); };
 
     self.getDisplayNumber = function (service) {
         var servType = SERVICE_TYPE[service.type];
@@ -273,23 +273,34 @@ function main(){
 								AnyBalance.trace('Не удалось бонусную программу Премия: ' + jsonBonus.errorMsg);
 							}*/
 						}
-/*						if(AnyBalance.isAvailable('sms' + suffix, 'mms' + suffix, 'min' + suffix, 'gprs' + suffix)){
-							var jsonPackets = getJson(AnyBalance.requestPost(baseurl + 'serverLogic/viewCurrentBonus', {serviceId: service.id}, g_headers));
-							if(jsonPackets.bonusCurrent){
-								for(var j1=0; j1<jsonPackets.bonusCurrent.length; ++j1){
-									var _packet = jsonPackets.bonusCurrent[j1];
-									if(/SMS/i.test(_packet.title))
-										sumParam(_packet.currentCount, result, 'sms'+suffix, null, null, parseBalance, aggregate_sum);
-									else if(/MMS/i.test(_packet.title))
-										sumParam(_packet.currentCount, result, 'mms'+suffix, null, null, parseBalance, aggregate_sum);
-									else if(/мин/i.test(_packet.title))
-										sumParam(_packet.currentCount, result, 'min'+suffix, null, null, parseBalance, aggregate_sum);
-									else if(/[мmkкгg][бb]|байт|bytes/i.test(_packet.title))
-										sumParam(_packet.currentCount, result, 'gprs'+suffix, null, null, parseBalance, aggregate_sum);
+
+						if(AnyBalance.isAvailable('sms' + suffix, 'mms' + suffix, 'min' + suffix, 'gprs' + suffix)){
+							var jsonPackets = getJson(AnyBalance.requestPost(baseurl + 'client-api/getServiceTariff', JSON.stringify({
+								serviceId: service.serviceId,
+								client_uuid: uuid,
+								currnet_page: 'mvno'
+							}), g_headers));
+
+							if(jsonPackets.options){
+								for(var j1=0; j1<jsonPackets.options.length; ++j1){
+									var _packet = jsonPackets.options[j1];
+									var limits = _packet.limits[0];
+									if(!limits){
+										AnyBalance.trace('Option without limits: ' + JSON.stringify(_packet));
+										continue;
+									}
+									if(/SMS|СМС/i.test(limits.unit))
+										sumParam(limits.remain, result, 'sms'+suffix, null, null, parseBalance, aggregate_sum);
+									else if(/MMS|ММС/i.test(limits.unit))
+										sumParam(limits.remain, result, 'mms'+suffix, null, null, parseBalance, aggregate_sum);
+									else if(/мин|MIN/i.test(limits.unit))
+										sumParam(limits.remain, result, 'min'+suffix, null, null, parseBalance, aggregate_sum);
+									else if(/[мmkкгg][бb]|байт|byte/i.test(limits.unit))
+										sumParam(limits.remain, result, 'gprs'+suffix, null, null, parseBalance, aggregate_sum);
 								}
 							}
 						}
-						*/
+
 /*						if(/INTERNET|TELEPHONY|IPTV|CDMA/.test(service.type || '')  //Судя по шаблону detailed_list, только у этих сервисов есть статистика
 							&& AnyBalance.isAvailable('trafIn' + suffix, 'trafOut' + suffix, 'minOutIC' + suffix)){
 							//Междугородная исходящая телефония

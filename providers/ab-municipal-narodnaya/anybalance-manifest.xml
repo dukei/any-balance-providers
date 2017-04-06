@@ -6,7 +6,7 @@
     <description>
         Предоставляет информацию о балансе в УК "Народная" (https://укнародная.рф)
     </description>
-    <author>Владимир Пахомчик &lt;v.pahomchik@gmail.com&gt;</author>
+    <author>Владимир Пахомчик. &lt;v.pahomchik@gmail.com&gt;</author>
     <depends>
         <module id="library"/>
     </depends>

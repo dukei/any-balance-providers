@@ -16,6 +16,14 @@ function login() {
 
 	AnyBalance.setDefaultCharset('utf-8');
 	
+	if (AnyBalance.getData) {
+		// заполняем эту куку, чтобы не запрашивался пароль из смс
+		var kaspiTag = AnyBalance.getData('kaspi-tag');
+		if (kaspiTag) {
+			AnyBalance.setCookie('kaspi.kz', 'kaspi-tag', kaspiTag);
+		}
+	}
+	
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 
@@ -46,31 +54,88 @@ function login() {
 				{'name': 'SignInLogin', 'value': login},
 				{'name': 'Password',    'value': prefs.password}
 			],
-			'requesTimestamp':'/Date('+new Date().getTime()+'-14400000)/'
+			'requestTimestamp':new Date().toISOString()
 		};
 
 		html = AnyBalance.requestPost(baseurl + '/api/auth/sign-in', JSON.stringify(params), addHeaders({
-			Referer: baseurl + '/entrance',
+			'Referer': baseurl + '/entrance',
 			'X-Requested-With': 'XMLHttpRequest',
 			'Accept': 'application/json, text/javascript, */*; q=0.01',
 			'Content-Type': 'application/json; charset=UTF-8'
 		}));
-	} else {
-		AnyBalance.trace('Уже залогинены, используем существующую сессию')
-	}
+		
+		var json = getJson(html);
+		if (json.load && /SmsAuth/i.test(json.load)) {
+			// при первой авторизации банк запрашивает одноразовый код из смс
+			AnyBalance.trace('Затребован SMS-код');
+			var html = AnyBalance.requestPost(baseurl + json.load, json.loadparams, addHeaders({
+				'X-Requested-With': 'XMLHttpRequest',
+				'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+				'Referer': baseurl + '/entrance'
+			}));
+			var form = getElement(html, /<form[^>]+SendMeSmsForm/i);
+			if (!form){
+				AnyBalance.trace(html);
+				throw new AnyBalance.Error('Не удалось получить форму ввода кода из SMS. Сайт изменен?');
+			}
 
-	var json = getJson(html);
-	if (!json.location) {
-		var error = isArray(json.error) ? json.error : [json.error];
-		if (error[0]) {
-			throw new AnyBalance.Error(error, null, /Мы не нашли такой пароль/i.test(error));
+			var smsFormParams = AB.createFormParams(form, function(params, str, name, value) {
+				if (name == 'SMSCode')
+					return AnyBalance.retrieveCode('Вам отправлено SMS-сообщение с кодом для входа в личный кабинет Каспи банка. Введите код из SMS', null, {
+						inputType: 'number',
+						minLength: 4,
+						maxLength: 4,
+						time: 300000
+					});
+				return value;
+			});
+			var smsFormParamsArray = Object.keys(smsFormParams).map(function (key) {
+				var obj = {};
+				obj['name'] = key;
+				obj['value'] = smsFormParams[key];
+				return obj;
+			});
+
+			var params = {
+				'submitId': 'SendMeSms',
+				'webFormValues': smsFormParamsArray,
+				'requestTimestamp':new Date().toISOString()
+			};
+			
+			html = AnyBalance.requestPost(baseurl + '/api/auth/sign-in', JSON.stringify(params), addHeaders({
+				'Referer': baseurl + '/entrance',
+				'X-Requested-With': 'XMLHttpRequest',
+				'Accept': 'application/json, text/javascript, */*; q=0.01',
+				'Content-Type': 'application/json; charset=UTF-8'
+			}));
+			json = getJson(html);
 		}
+		
+		if (!json.location) {
+			var errors = json.errors;
+			var lastError = '';
+			if (errors[0]) {
+				lastError = errors[0].message;
+			}
+			
+			if (lastError) {
+				throw new AnyBalance.Error(lastError, null, /Мы не нашли такой пароль/i.test(lastError));
+			}
 
-		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Не удалось зайти в интернет-банк. Сайт изменен?');
+			AnyBalance.trace(html);
+			throw new AnyBalance.Error('Не удалось зайти в интернет-банк. Сайт изменен?');
+		}
+		
+		if (AnyBalance.setData) {
+			// сохраняем куку, чтобы при следующей авторизации снова не запрашивался код из смс
+			AnyBalance.setData('kaspi-tag', AnyBalance.getCookie('kaspi-tag'));
+			AnyBalance.saveData();
+		}
+		
+	} else {
+		AnyBalance.trace('Уже залогинены, используем существующую сессию');
 	}
 	
-	html = AnyBalance.requestGet(baseurl + json.location, g_headers);
     __setLoginSuccessful();
 	
 	return html;

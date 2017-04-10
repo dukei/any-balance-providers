@@ -6,13 +6,14 @@ var g_countersTable = {
 	card: {
 		"balance": "cards.balance",
 		"num": "cards.num",
-		"blocked": "cards.blocked",
+//		"blocked": "cards.blocked",
 		"available": "cards.available",
 		"status": "cards.status",
 		"type": "cards.type",
 		"accnum": "cards.accnum",
-		"limit": "cards.limit",
+//		"limit": "cards.limit",
 		"currency": "cards.currency",
+		"pct": "cards.pct",
 		"__tariff": "cards.__name"
 	}, 
 	crd: {

@@ -33,7 +33,7 @@ function login() {
                     throw new AnyBalance.Error('Новый кабинет: ' + error);
 
                 AnyBalance.trace(html);
-                throw new AnyBalance.Error("Новый личный кабинет ${g_operatorName} временно недоступен. Попробуйте позже.", true);
+                throw new AnyBalance.Error(`Новый личный кабинет ${g_operatorName} временно недоступен. Попробуйте позже.`, true);
             }
         }
         return html;
@@ -84,7 +84,7 @@ function login() {
 
 	if (!/\w+\/logout/i.test(html)) {
 		if (/<input[^>]+id\s*=\s*"smsCode"/i.test(html)) throw new AnyBalance.Error(
-			"У вас настроена двухфакторная авторизация с вводом SMS кода при входе в личный кабинет ${g_operatorName}. Для работы провайдера требуется запрос СМС кода для входа в ЛК отключить. Инструкцию по отключению см. в описании провайдера.",
+			`У вас настроена двухфакторная авторизация с вводом SMS кода при входе в личный кабинет ${g_operatorName}. Для работы провайдера требуется запрос СМС кода для входа в ЛК отключить. Инструкцию по отключению см. в описании провайдера.`,
 			null, true);
 		var error = sumParam(html, null, null, /<(?:div|section)[^>]+class="[^"]*\berror\b[^>]*>([\s\S]*?)(?:<\/section>|<\/div>|<div)/gi, replaceTagsAndSpaces, null, aggregate_join) || '';
 		if (error)
@@ -170,7 +170,7 @@ function enterBySms(){
                         return true; //Ещё раз запустить handleResult
                     }
                 } else if(json.forbiddenBranch){
-                    throw new AnyBalance.Error("Этот номер не поддерживается личным кабинетом ${g_operatorName}. Убедитесь, что это действительно номер ${g_operatorName}.", null, true);
+                    throw new AnyBalance.Error(`Этот номер не поддерживается личным кабинетом ${g_operatorName}. Убедитесь, что это действительно номер ${g_operatorName}.`, null, true);
                 } else {
                     AnyBalance.trace(html);
                     throw new AnyBalance.Error('Вход в личный кабинет не подтвержден на телефоне пользователя. Чтобы войти, отправьте 1 в ответ на запрос на телефоне или дождитесь SMS кода и введите его.');
@@ -190,7 +190,7 @@ function enterBySms(){
     		/<input[^>]+value="([^"]+)"[^>]*name="_csrf"/i,
     		/<input[^>]+name="_csrf"[^>]*value="([^"]+)"/i], replaceTagsAndSpaces);
 
-        var code = AnyBalance.retrieveCode("Вам отправлено SMS-сообщение с кодом для входа в личный кабинет ${g_operatorName}. Введите код из SMS", null, {inputType: 'number'});
+        var code = AnyBalance.retrieveCode(`Вам отправлено SMS-сообщение с кодом для входа в личный кабинет ${g_operatorName}. Введите код из SMS`, null, {inputType: 'number'});
         html = AnyBalance.requestPost(baseurlLogin + 'wap/auth/submitSmsCode', {
             _csrf: token,
             smsCode: code

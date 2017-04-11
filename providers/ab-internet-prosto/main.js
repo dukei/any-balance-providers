@@ -16,7 +16,7 @@ var errors = {
 }
 
 var baseurlNew = 'https://my.prosto.net/';
-var baseurlHome = 'http://home.prosto.net/';
+var baseurlHome = 'https://home.prosto.net/';
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
@@ -35,7 +35,7 @@ function main() {
 	var htmlInitial = html;
 
 //	if(/home.prosto.net/i.test(AnyBalance.getLastUrl())){
-		html = AnyBalance.requestPost(baseurlHome + 'server.php', {
+		html = AnyBalance.requestPost(baseurl + 'server.php', {
 			action: 'auth',
 			url: '/',
 			user_id: '',
@@ -56,7 +56,7 @@ function main() {
 			throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 		}
 	    
-		html = AnyBalance.requestGet(joinUrl(baseurlHome, json.url), g_headers);
+		html = AnyBalance.requestGet(joinUrl(baseurl, json.url), g_headers);
 		return fetchHome(html);
 		
 /*	}else{ //Новый логин
@@ -129,7 +129,7 @@ function fetchHome(html){
 	AnyBalance.trace('Получаем данные из home');
 
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = baseurlHome;
+	var baseurl = baseurlNew;
 
 	var html = AnyBalance.requestPost(baseurl + 'server.php', {
 		module:	'app',

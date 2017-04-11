@@ -21,7 +21,7 @@ function main(){
 	AB.checkEmpty(prefs.login, 'Введите логин!');
 	AB.checkEmpty(prefs.password, 'Введите пароль!');
 
-    var baseurl = "http://www.kegelbum.ru/";
+    var baseurl = "https://www.kegelbum.ru/";
     
     var html = AnyBalance.requestGet(baseurl + 'login/', g_headers);
 	var timeToWait = 5000 + Math.random()*3000;

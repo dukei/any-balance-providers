@@ -299,7 +299,7 @@ var AB = (function (global_scope) {
             var str = amatch[0], value = '';
             name = getParam(str, /^<[^>]+?[\s'"]name\s*=\s*("[^"]*"|'[^']*'|[\w\-\/\\]+)/i, valueReplace);
 
-            if (name) {
+            if (name) { //В форму попадают только поля с именем
                 if (/^<input/i.test(str)) {  //<input type="...">
                     if (/[\s'"]type\s*=\s*['"]?button['"]?/i.test(str))
                         value = undefined;
@@ -324,17 +324,18 @@ var AB = (function (global_scope) {
                             value = getParam(optSel, valueRegExp, valueReplace);
                     }
                 }
+
+                if (process) {
+                    value = process(params, str, name, value);
+                }
+                if (typeof(value) != 'undefined') {
+                    if (array)
+                        params.push([name, value])
+                    else
+                        params[name] = value;
+                }
             }
 
-            if (process) {
-                value = process(params, str, name, value);
-            }
-            if (typeof(value) != 'undefined') {
-                if (array)
-                    params.push([name, value])
-                else
-                    params[name] = value;
-            }
         }
 
         //AnyBalance.trace('Form params are: ' + JSON.stringify(params));

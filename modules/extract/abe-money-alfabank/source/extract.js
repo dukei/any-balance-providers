@@ -224,8 +224,11 @@ function processCards2(html, result) {
 
     html = getMainPageOrModule2(html, 'card');
 
-    var rows = getElements(html, [/<div[^>]+class="[^"]*AFFlow[^>]*>/ig, /c2_cardlist_Card/i]);
-    if (!rows.length) {
+    var cardsTable = getElement(html, /<table[^>]+card-list/i), rows;
+    if(cardsTable)
+    	rows = getElements(cardsTable, /<tr/ig);
+    
+    if (!rows || !rows.length) {
         if (/Удобство пластиковых карт:/i.test(html)) {
             AnyBalance.trace('Нет ни одной карты');
         } else {
@@ -239,11 +242,12 @@ function processCards2(html, result) {
     AnyBalance.trace('Найдено карт: ' + rows.length);
     for (var i = 0; i < rows.length; ++i) {
         var row = rows[i];
-        var id = getParam(row, null, null, /<a[^>]+c2_cardlist_Card[^>]*>([\s\S]*?)<\/a>/i, replaceTagsAndSpaces);
-        var name = getParam(row, null, null, /<a[^>]+style="[^"]*display:\s*inline;[^>]*>([\s\S]*?)<\/a>/i, replaceTagsAndSpaces);
+        //ID - 4 последние цифры карты
+        var id = getParam(row, /\*{4}([\s\S]*?)<\/a>/i, replaceTagsAndSpaces);
+        var name = getParam(row, /<a[^>]+style="[^"]*display:\s*inline;[^>]*>([\s\S]*?)<\/a>/i, replaceTagsAndSpaces);
 
         var c = {
-            __id: id,
+            __id: id, 
             __name: name + ' (' + id + ')'
         };
 
@@ -256,7 +260,7 @@ function processCards2(html, result) {
 }
 
 function processCard2(html, row, result) {
-    var event = getParam(row, null, null, /<a[^>]+id="([^"]*)"[^>]*c2_cardlist_Card/i, replaceHtmlEntities);
+    var event = getParam(row, /\*{4}[\s\S]*?<a[^>]+id="([^"]*)/i, replaceHtmlEntities);
     html = getNextPage(html, event, [
         ['event', '%EVENT%'],
         ['event.%EVENT%', g_some_action],

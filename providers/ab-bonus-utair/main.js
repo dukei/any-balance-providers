@@ -14,8 +14,8 @@ function main(){
     AnyBalance.setDefaultCharset('utf-8');
     var baseurl = "https://status.utair.ru/";
 
-    AB.checkEmpty(prefs.login, 'Введите логин!');
-    AB.checkEmpty(prefs.password, 'Введите пароль!');
+    AB.checkEmpty(prefs.login, 'Введите номер телефона!');
+    AB.checkEmpty(/^\d{10}$/.test(prefs.login), 'Введите 10 цифр номер телефона без пробелов и разделителей, например, 9261234567!');
 
     var html = AnyBalance.requestGet(baseurl + 'signin', g_headers);
 
@@ -24,24 +24,48 @@ function main(){
         throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
     }
 
-    html = AnyBalance.requestPost(baseurl + 'signin', {
-        username:prefs.login,
-        password:prefs.password
-    }, AB.addHeaders({
-        Referer: baseurl + 'signin'
-    }));
-
-    if(!/signout/i.test(html)){
-        var error = getParam(AnyBalance.getLastUrl(), /message=([^&]*)/i, null, decodeURIComponent);
-        if(error)
-        	throw new AnyBalance.Error(error, null, /парол/i.test(error));
-        AnyBalance.trace(html);
-        throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
+    var data = getJsonObject(html, /window._sharedData\s*=/);
+    if(!data || !data.token){
+    	AnyBalance.trace(html);
+    	throw new AnyBalance.Error('Не удалось найти форму входа. Сайт изменен?');
     }
 
-    if(/verify\/mail/i.test(AnyBalance.getLastUrl())){
-    	AnyBalance.trace('Потребовалось подтвердить емейл');
-    	throw new AnyBalance.Error('Utair требует подтвердить почтовый ящик. Зайдите в кабинет https://status.utair.ru/ через браузер и подтвердите е-мейл, затем обновите провайдер ещё раз.');
+    html = AnyBalance.requestPost(baseurl + 'signin', {
+        username:prefs.login,
+        token:data.token
+    }, AB.addHeaders({
+        Referer: baseurl + 'signin',
+        'X-Requested-With': 'XMLHttpRequest'
+    }));
+
+    var json = getJson(html);
+    if(!/confirm/i.test(json.redirect_link)){
+    	var error = json.error_message;
+    	if(error)
+    		throw new AnyBalance.Error(error, null, /not found/i.test(error));
+        AnyBalance.trace(html);
+        throw new AnyBalance.Error('Не удалось авторизоваться. Сайт изменен?');
+    }
+
+    var url = json.redirect_link.replace(/http:/i, 'https:');
+
+    html = AnyBalance.requestGet(url, g_headers);
+    var message = getElement(html, /<div[^>]+lead/i, replaceTagsAndSpaces);
+    var code = AnyBalance.retrieveCode(message || 'Пожалуйста, введите код из СМС для входа в личный кабинет UTair', null, {inputType: 'number', time: 180000});
+
+    html = AnyBalance.requestPost(url, {
+        code:code,
+        token:data.token
+    }, AB.addHeaders({
+        Referer: baseurl + 'signin',
+        'X-Requested-With': 'XMLHttpRequest'
+    }));
+
+    if(AnyBalance.getLastUrl() != baseurl){
+    	if(/confirm/i.test(AnyBalance.getLastUrl()))
+        	throw new AnyBalance.Error('Неверно введен код!');
+        AnyBalance.trace(html);
+        throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
     }
 
     var result = {success: true};

@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="8" date="2017-04-14">
+	- Поддержка входа с одноразовым смс
+	</change>
 	<change version="7" date="2016-12-13">
 	- Поддержка изменений на сайте.
 	</change>

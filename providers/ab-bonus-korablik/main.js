@@ -11,7 +11,7 @@ var g_headers = {
 };
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'http://www.korablik.ru/';
+	var baseurl = 'https://www.korablik.ru/';
 	AnyBalance.setDefaultCharset('utf-8');
 	
 	checkEmpty(prefs.login, 'Введите логин!');

@@ -28,31 +28,26 @@ function main(){
     var lang = prefs.lang || 'ru';
     lang = langMap[lang] || lang; //Переведем старые настройки в новые.
 
-    var html;
-    if(!prefs.__dbg) {
-        html = AnyBalance.requestPost(baseurl + lang + "/ics.security/authenticate", {
-            'msisdn': '+7 (' + prefs.login.substr(0, 3) + ') ' + prefs.login.substr(3, 3) + '-' + prefs.login.substr(6, 4),
-            'password': prefs.password
-        }, addHeaders({'Referer': baseurl + lang + '/ics.security/login'}));
+    var html = AnyBalance.requestPost(baseurl + lang + "/ics.security/authenticate", {
+        'msisdn': '+7 (' + prefs.login.substr(0, 3) + ') ' + prefs.login.substr(3, 3) + '-' + prefs.login.substr(6, 4),
+        'password': prefs.password
+    }, addHeaders({'Referer': baseurl + lang + '/ics.security/login'}));
 
-		//AnyBalance.trace(html);
+	//AnyBalance.trace(html);
 
-        if(!/security\/logout/i.test(html)){
-			var error = getParam(html, null, null, /<div[^>]*class="[^"]*alert[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
-			if(error)
-				throw new AnyBalance.Error(error);
+    if(!/security\/logout/i.test(html)){
+		var error = getParam(html, null, null, /<div[^>]*class="[^"]*alert[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+		if(error)
+			throw new AnyBalance.Error(error, null, /парол/i.test(error));
 
-			throw new AnyBalance.Error("Не удалось зайти в личный кабинет. Если вы уверены, что правильно ввели логин-пароль, то это может быть из-за проблем на сервере или изменения личного кабинета.");
-        }
-
-		if(/icons\/503\.png/i.test(html))
-			throw new AnyBalance.Error("Проблемы на сервере, сайт изменен или, возможно, вы ввели неправильный номер телефона.");
-
-		if(/<title>\s*Смена пароля\s*<\/title>/i.test(html))
-			throw new AnyBalance.Error("Необходимо сменить пароль, зайдите на сайт через браузер и смените пароль.");
-    } else {
-		html = AnyBalance.requestGet(baseurl + lang + '/ics.account/dashboard', {'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/536.11 (KHTML, like Gecko) Chrome/20.0.1132.57 Safari/536.11'});
+		throw new AnyBalance.Error("Не удалось зайти в личный кабинет. Если вы уверены, что правильно ввели логин-пароль, то это может быть из-за проблем на сервере или изменения личного кабинета.");
     }
+
+	if(/icons\/503\.png/i.test(html))
+		throw new AnyBalance.Error("Проблемы на сервере, сайт изменен или, возможно, вы ввели неправильный номер телефона.");
+
+	if(/<title>\s*Смена пароля\s*<\/title>/i.test(html))
+		throw new AnyBalance.Error("Необходимо сменить пароль, зайдите на сайт через браузер и смените пароль.");
 
     var result = {success: true};
     //На казахском языке описание каких-то значений идёт перед ними, а на английском и в русском - после.
@@ -60,9 +55,9 @@ function main(){
     //(?:Теңгерім|Баланс|Balance):
     getParam(html, result, 'balance', /<h5[^>]*?>\s*?(?:Баланс|Теңгерім|Balance)\s*?<\/h5>\s*?<h5[^>]*?>([\s\S]*?)<\/h5/i, replaceTagsAndSpaces, parseBalance);
     //Тариф:
-    getParam(html, result, '__tariff', /<h[^>]*>(?:Тарифный план|Тариф|Tariff)[\s\S]*?<h[^>]*>([\s\S]*?)<\/h/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, '__tariff', /<h[^>]*>(?:Тарифный план|Тариф|Tariff)[\s\S]*?<h[^>]*>([\s\S]*?)<\/h/i, replaceTagsAndSpaces);
     //(?:Шот қалпы|Статус номера|Account status):
-    getParam(html, result, 'status', /<h5>(?:Статус|Қалпы|Status)(?:[^>]*>){2}([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'status', /<h5>(?:Статус|Қалпы|Status)(?:[^>]*>){2}([^<]+)/i, replaceTagsAndSpaces);
 
     var bonuses = getParam(html, null, null, /<h5[^>]*>\s*(?:Бонусы|Bonuses|Бонустар)[\s\S]*?<h5[^>]*>([\s\S]*?)<\/h5>/i);
     AnyBalance.trace('Найдены бонусы: ' + bonuses);
@@ -118,12 +113,12 @@ function main(){
     }
 
     if(AnyBalance.isAvailable('internet_plus')){
-        html = AnyBalance.requestGet(baseurl + lang + '/ics.account/getconnectedservices', g_headers);
+        html = AnyBalance.requestGet(baseurl + lang + '/ics.account/getsoldproducts', g_headers);
         var json = getJson(html);
-        var inet = json.inetPlusPack && json.inetPlusPack.inetPlusPackInfoDto;
+        var inet = json.inetPlusPackInfo;
         if(inet){
         	sumParam(inet.totalAvailableBytes + 'bytes', result, 'internet_plus', null, null, parseTraffic, aggregate_sum);
-        	sumParam(inet.welcomeBonusBytes + 'bytes', result, 'internet_plus', null, null, parseTraffic, aggregate_sum);
+        	sumParam(inet.welcomeBonusBytes + 'bytes', result, 'internet_plus_welcome', null, null, parseTraffic, aggregate_sum);
         }
     }
 

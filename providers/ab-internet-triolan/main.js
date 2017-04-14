@@ -55,24 +55,20 @@ function main() {
 	}));
 	
 	if (!/>Выход</i.test(html)) {
-		var error = getParam(html, null, null, /lbError"[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
+		var error = getParam(html, null, null, /lbError"[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces);
 		if (error)
-			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
+			throw new AnyBalance.Error(error, null, /парол/i.test(error));
 		
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
 	
-	html = AnyBalance.requestGet(baseurl + 'RegRovno.aspx', g_headers);
-	
-
-	
 	var result = {success: true};
 	
-    getParam(html, result, 'license', /id="l_stat"[\s\S]*?Л\/с[\s\S]*?>([^<]*)</i, replaceTagsAndSpaces);
+    getParam(html, result, 'license', /№ лицевого счета:[\s\S]*?<li[^>]*>([\s\S]*?)<\/li>/i, replaceTagsAndSpaces);
+    getParam(html, result, 'balance', /Баланс:[\s\S]*?<li[^>]*>([\s\S]*?)<\/li>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'till', /Оплачено до:[\s\S]*?<li[^>]*>([\s\S]*?)<\/li>/i, replaceTagsAndSpaces, parseDate);
     getParam(html, result, '__tariff', /<select name="ctl00\$cph_main\$ddl_activations"[\s\S]*?value=[\s\S]*?>"?([^<"]*)"?</i, replaceTagsAndSpaces);
-    getParam(html, result, 'balance', /id="l_stat"[\s\S]*?Баланс:[\s\S]*?>"?([^<]*)"?</i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'till', /id="l_stat"[\s\S]*?оплачено по:[\s\S]*?>([^<]*)</i, replaceTagsAndSpaces, parseDateISO);
-	
-	AnyBalance.setResult(result);
+
+    AnyBalance.setResult(result);
 }

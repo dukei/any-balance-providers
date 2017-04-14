@@ -176,7 +176,7 @@ function callApiReestablish(verb){
 	try{
 		json = callApi(verb);
 	}catch(e){
-		if(!e.fatal && AnyBalance.getLastStatusCode() == 401){
+		if(!e.fatal && AnyBalance.getLastStatusCode() == 401 || AnyBalance.getLastStatusCode() == 403){
 			AnyBalance.trace(verb + ': ' + e.message + ', reestablishing connection');
 			handshakeAndEstablish();
 			json = callApi(verb);
@@ -200,7 +200,15 @@ function main () {
     	throw new AnyBalance.Error('Личный кабинет https://my.perekrestok.ru/ временно недоступен. Пожалуйста, попробуйте позже');
     }
 
-	handshakeAndEstablish();
+    try{
+		handshakeAndEstablish();
+	}catch(e){
+		if(AnyBalance.getLastStatusCode() == 403 || AnyBalance.getLastStatusCode() == 401){
+			AnyBalance.trace('Тупой перекресток выдал ошибку в ' + AnyBalance.getLastUrl() + ': ' + AnyBalance.getLastStatusCode() + '. Надо переустановить соединение');
+			handshakeAndEstablish();
+		}else
+			throw e;
+	}
 
     var result = {success: true};
 

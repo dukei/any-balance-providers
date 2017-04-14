@@ -224,11 +224,9 @@ function processCards2(html, result) {
 
     html = getMainPageOrModule2(html, 'card');
 
-    var cardsTable = getElement(html, /<table[^>]+card-list/i), rows;
-    if(cardsTable)
-    	rows = getElements(cardsTable, /<tr/ig);
+    var rows = getElements(html, /<table[^>]+card-list/ig);
     
-    if (!rows || !rows.length) {
+    if (!rows.length) {
         if (/Удобство пластиковых карт:/i.test(html)) {
             AnyBalance.trace('Нет ни одной карты');
         } else {

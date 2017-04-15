@@ -85,7 +85,7 @@ function enterMtsLK(options) {
 
     html = redirectIfNeeded(html); //Иногда бывает доп. форма, надо переадресоваться.
 
-    var loggedInNum = getParam(html, /Продолжить вход в[^<]+с номером\s*<b[^>]*>([\s\S]*?)<\/b>/i, [replaceTagsAndSpaces, /\D+/g, '']);
+    var loggedInNum = getParam(html, /Продолжить вход[^<]+с номером\s*<b[^>]*>([\s\S]*?)<\/b>/i, [replaceTagsAndSpaces, /\D+/g, '']);
     if(loggedInNum){
     	AnyBalance.trace('Предлагает автоматически залогиниться на ' + loggedInNum);
     	var form = getElement(html, /<form[^>]+name="Login"/i);

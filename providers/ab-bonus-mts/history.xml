@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="3.0" version="13" date="2017-04-15">
+	Восстановлена работа через мобильный интернет
+	</change>
 	<change major_version="3.0" version="12" date="2017-04-05">
 	Исправлен вход в ЛК
 	</change>

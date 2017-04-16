@@ -7,7 +7,6 @@ var g_headers = {
 	'Origin': 'https://qiwi.com',
 	'Accept-Language': 'ru;q=0.8,en-US;q=0.6,en;q=0.4',
     'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/43.0.2357.132 Safari/537.36',
-	'Content-Type': 'application/json',
 };
 
 function login(prefs) {
@@ -21,7 +20,7 @@ function login(prefs) {
 		SSL_ENABLED_PROTOCOLS: ['TLSv1.2'] //QIWI только на этом протоколе теперь работает
 	});
 	
-    AnyBalance.requestGet(baseurl + 'payment/main.action'); //Надо сессию поставить
+    AnyBalance.requestGet(baseurl + 'payment/main.action', g_headers); //Надо сессию поставить
 	
 	var login = prefs.login;
 	// Только для России
@@ -64,7 +63,23 @@ function login(prefs) {
 		"service": baseurl + "j_spring_cas_security_check"
 	});
 	
-	var html = AnyBalance.requestGet(baseurl + 'j_spring_cas_security_check?ticket=' + response.entity.ticket, addHeaders({'Referer': baseurl}));
+	var html = AnyBalance.requestPost(baseurl + 'j_spring_cas_security_check', {
+		ticket: response.entity.ticket
+	}, addHeaders({
+		'accept': 'application/json',
+		'x-requested-with': 'XMLHttpRequest',
+		'Referer': baseurl
+	}));
+
+	var json = getJson(html);
+	if(json.code.value != "0"){
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удалось войти в личный кабинет. Сайт изменен?');
+	}
+
+	html = AnyBalance.requestGet(baseurl + 'main.action', addHeaders({
+		Referer: baseurl
+	}));
 	
 	if(/Внимание! Срок действия вашего пароля истек/i.test(html)) {
 		throw new AnyBalance.Error('Внимание! Срок действия вашего пароля истек. Зайдите в кошелек через браузер и следуйте инструкции.', null, true);
@@ -106,7 +121,9 @@ var baseurl = 'https://qiwi.com/';
 	isAuth - флаг проверки авторизации
 */
 function requestAPI(actionObj, params, addOnHeaders) {
-    var info = AnyBalance.requestPost(actionObj.isAuth ? baseurlAuth + actionObj.action : baseurl + actionObj.action, JSON.stringify(params), addOnHeaders ? addHeaders(g_headers, addOnHeaders) : g_headers);
+	addOnHeaders = joinObjects({'Content-Type': 'application/json'}, addOnHeaders || {});
+
+    var info = AnyBalance.requestPost(actionObj.isAuth ? baseurlAuth + actionObj.action : baseurl + actionObj.action, JSON.stringify(params), addHeaders(g_headers, addOnHeaders));
     AnyBalance.trace ('Request result: ' + info);
 	
     var response = getJson(info);

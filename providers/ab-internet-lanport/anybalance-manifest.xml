@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<api flags="no_browser"/>
+	<id version="3">ab-internet-lanport</id>
+	<name>Ланпорт (Москва)</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе интернет-провайдера 
+           Ланпорт - Интернет по выделенной линии в Люблино, Кузьминках, Текстильщиках(Москва) 
+           <a href="http://lanport.ru">http://lanport.ru</a></p>
+	<p>Информация берется из главной страницы сайта компании. 
+           ЗАМЕЧАНИЕ: Личный кабинет доступен только и исключительно изнутри сети провайдера.</p>
+	]]></description>	
+	<author>Mikhail Fedotov &lt;anyremote@mail.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<js>library.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance"  name="Баланс" units=" р"/>
+		<counter id="id"       name="Номер договора" type="text">
+	</counters>
+	<keywords>lanport</keywords>
+	<type>internet</type>
+	<country>ru</country>
+</provider>

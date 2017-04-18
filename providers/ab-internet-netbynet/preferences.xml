@@ -3,11 +3,10 @@
     <EditTextPreference
 		obligatory="true"
         key="login"
-        title="Номер лицевого счета"
+        title="Номер лицевого счета или логин"
         summary="||{@s}"
-        inputType="number"
-        dialogTitle="Номер лицевого счета"
-        dialogMessage="Введите номер лицевого счета для входа в личный кабинет"
+        dialogTitle="Номер лицевого счета или логин"
+        dialogMessage="Введите номер лицевого счета или логин для входа в личный кабинет"
         positiveButtonText="ОК"
         negativeButtonText="Отмена">
     </EditTextPreference>

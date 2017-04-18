@@ -103,6 +103,7 @@ function pass2f(handshake){
     		AnyBalance.trace(JSON.stringify(json));
     		throw new AnyBalance.Error('Нет номера телефона для подтверждения! Сайт изменен?');
     	}
+    	AnyBalance.trace('Phones: ' + JSON.stringify(json));
 
     	json = callApi('v3/security/2fa/requests', null, {
     		channel_id: channel.id,

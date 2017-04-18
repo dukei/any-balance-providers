@@ -104,11 +104,16 @@ function pass2f(handshake){
     		throw new AnyBalance.Error('Нет номера телефона для подтверждения! Сайт изменен?');
     	}
     	AnyBalance.trace('Phones: ' + JSON.stringify(json));
+    	var phoneInfo = json.phones.find(function(ph){ return ph.number == json.primary.number });
+    	if(!phoneInfo){
+    		AnyBalance.trace('Не удалось найти номер ' + json.primary.number);
+    		phoneInfo = json.phones[0];
+    	}
 
     	json = callApi('v3/security/2fa/requests', null, {
     		channel_id: channel.id,
     		factor_id: factor.id,
-    		phone_number_raw: json.primary.number
+    		phone_number_raw: phoneInfo.formatted_number
     	});
 
     	if(AnyBalance.getLastStatusCode() != 201){

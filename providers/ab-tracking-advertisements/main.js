@@ -36,7 +36,7 @@ function main() {
 			throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 		}
 
-		var ads = getElements(html, /<div[^>]+js-profile-item/ig);
+		var ads = getElements(html, /<div[^>]+js-profile-item\b/ig);
 		AnyBalance.trace('Нашли ' + ads.length + ' активных объявлений');
 		var pattern = prefs.pattern && prefs.pattern.toLowerCase();
 		for(var i=0; i<ads.length; ++i){

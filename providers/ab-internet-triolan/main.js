@@ -68,6 +68,8 @@ function main() {
     getParam(html, result, 'license', /№ лицевого счета:[\s\S]*?<li[^>]*>([\s\S]*?)<\/li>/i, replaceTagsAndSpaces);
     getParam(html, result, 'balance', /Баланс:[\s\S]*?<li[^>]*>([\s\S]*?)<\/li>/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'till', /Оплачено до:[\s\S]*?<li[^>]*>([\s\S]*?)<\/li>/i, replaceTagsAndSpaces, parseDate);
+
+    getParam(html, result, '__tariff', /Тариф:[\s\S]*?<li[^>]*>([\s\S]*?)<\/li>/i, replaceTagsAndSpaces);
     getParam(html, result, '__tariff', /<select name="ctl00\$cph_main\$ddl_activations"[\s\S]*?value=[\s\S]*?>"?([^<"]*)"?</i, replaceTagsAndSpaces);
 
     AnyBalance.setResult(result);

@@ -38,17 +38,12 @@ function main(){
         throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
     }
     var result = {success: true};
-    
-    if (AnyBalance.isAvailable('balance')) {
-        var balanceParent = AB.getElement(html, /<div[^>]*?panel[^>]*>(?=\s*<div[^>]*?heading[^>]*>\s*Баланс)/i);
-        var balanceBody = AB.getElement(balanceParent, /<div[^>]*?body/i);
-        getParam(balanceBody, result, 'balance', null, replaceTagsAndSpaces, parseBalance);
-    }
-	
-    //getParam(html, result, 'balance', /'panel-heading'[^>]*>\s*Баланс(?:[^>]*>){10}([\s\d.,]+)руб/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'acc_num', /ID абонента[^]+?(\d+)\s+<span class=['"]caret['"]>/i, replaceTagsAndSpaces);
+
+    getParam(html, result, 'balance', /<span[^>]+баланс[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'acc_num', /<span[^>]+Номер лицевого[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
+	getParam(html, result, 'acc_id', /ID абонента[\s\S]+?(\d{5,})[\s\S]*?<span class=['"]caret['"]>/i, replaceTagsAndSpaces);
 	getParam(html, result, 'fio', /user\/info[^>]*>([^<]+)/i, replaceTagsAndSpaces);
-	getParam(html, result, 'bonuses', /'panel-heading'[^>]*>\s*Бонусный счёт(?:[^>]*>){14}([\s\d.,]+)<\/big/i, replaceTagsAndSpaces);
+	getParam(html, result, 'bonuses', /Бонусный счёт[\s\S]*?Всего[\s\S]*?<big[^>]*>([\s\S]*?)<\/big>/i, replaceTagsAndSpaces, parseBalance);
     
     html = AnyBalance.requestGet(baseurl + 'services/index', g_headers);
     

@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="1.0" version="18" date="2017-04-19">
+	Добавлена отсутствующая функция для некоторых устройств.
+	</change>
 	<change major_version="1.0" version="17" date="2017-04-18">
 	Исправление получения номер для отсылки смс
 	</change>

@@ -387,7 +387,7 @@ function getVologda() {
 }
 
 function getIzhevsk() {
-  newTypicalLanBillingInetTv('https://lkizh.pv.mts.ru/index.php');
+  newTypicalLanBillingInetTv_1('https://lkizh.pv.mts.ru/index.php');
 }
 
 function getKomsomolsk() {

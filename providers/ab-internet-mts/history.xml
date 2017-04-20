@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="129" date="2017-04-20">
+	Исправлен Ижевск
+	</change>
 	<change version="128" date="2017-03-21">
 	- Поддержка изменений в процедуре входа
 	</change>

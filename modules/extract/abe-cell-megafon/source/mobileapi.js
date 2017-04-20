@@ -232,7 +232,9 @@ function processRemaindersApi(result){
                     // Минуты
                     if((/мин|сек/i.test(units) && !/интернет/i.test(name)) || (/шт/i.test(units) && /минут/i.test(name) && !/СМС|SMS|MMS|ММС/i.test(name))) {
                         AnyBalance.trace('Parsing minutes...' + JSON.stringify(current));
-                        if(/бесплат/i.test(name)) {
+						if(/в сутки/i.test(name)) {
+							getParam(current.available + units, remainders, 'remainders.mins_day', null, replaceTagsAndSpaces, parseMinutes);
+                        }else if(/бесплат/i.test(name)) {
                             getParam(current.available + units, remainders, 'remainders.mins_n_free', null, replaceTagsAndSpaces, parseMinutes);
                         }else if((/\.\s*МегаФон|на мегафон|на МФ/i.test(name) && !/МТС/i.test(name) && !/стационар/i.test(name))
                             || /внутри сети/i.test(name)) {

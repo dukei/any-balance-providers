@@ -2057,10 +2057,12 @@ function megafonLKRemainders(filial, html, result){
 			AnyBalance.trace('Обработка услуги ' + gname + ':' + rname);
 
 			// Минуты
-			if((/мин|сек/i.test(units) && (!/интернет/i.test(name) || /больше Интернета/i.test(name))) || (/шт/i.test(units) && /минут/i.test(rname) && !/СМС|SMS|ММС|MMS/i.test(rname))) {
+			if((/мин|сек/i.test(units) && (/Минут/i.test(name) || !/интернет/i.test(name) || /больше Интернета/i.test(name))) || (/шт/i.test(units) && /минут/i.test(rname) && !/СМС|SMS|ММС|MMS/i.test(rname))) {
 				var val = getParam(left, null, null, null, replaceTagsAndSpaces, parseBalance);
 				if(val >= 0){
-					if(/бесплат/i.test(name)) {
+					if(/в сутки/i.test(name)) {
+						getParam(left, result, 'mins_day', null, replaceTagsAndSpaces, parseMinutes);
+					}else if(/бесплат/i.test(name)) {
 						getParam(left, result, 'mins_n_free', null, replaceTagsAndSpaces, parseMinutes);
 					}else if((/\.\s*МегаФон|на МегаФон|на МФ/i.test(name) && !/МТС/i.test(name) && !/стационар/i.test(name))
 							|| /внутри сети/i.test(name)) {
@@ -2336,6 +2338,7 @@ var g_countersTable = {
 		"mins_left": "remainders.mins_left",
 		"mins_net_left": "remainders.mins_net_left",
 		"mins_n_free": "remainders.mins_n_free",
+		"mins_day": "remainders.mins_day",
 		"internet_left": "remainders.internet_left",
 		"internet_left_night": "remainders.internet_left_night",
 		"sms_left": "remainders.sms_left",

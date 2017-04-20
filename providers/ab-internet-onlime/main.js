@@ -115,6 +115,33 @@ function main(){
             AnyBalance.trace('Не удалось получить трафик: ' + e.message);
         }
     }
+
+    if(AnyBalance.isAvailable('abon')){
+		html = AnyBalance.requestGet(baseurl + "services/", g_headers);
+		var wtf = getParam(html, /wtf\s*=\s*'([^']*)/);
+
+		html = AnyBalance.requestGet(baseurl + "json/getcontract/", addHeaders({
+			'X-Requested-With': 'XMLHttpRequest',
+			Referer: baseurl + 'services/',
+			Accept: 'application/json',
+			'X-Request': 'JSON',
+			'X-Wtf': wtf
+		}));
+		json = getJson(html);
+
+		if(json.configuration.internet.status == 'ON'){
+			AnyBalance.trace('Интернет включен, узнаем абонентскую плату');
+			for(var svc in json.catalogue.rateplans){
+				var rps = json.catalogue.rateplans[svc];
+				var found = rps.filter(function(r){ return r.code == json.configuration.internet.rateplan.code })[0];
+				if(found){
+					getParam(found.price, result, 'abon');
+					break;
+				}
+			}
+		}
+    	
+    }                   
     
     AnyBalance.setResult(result);
 }

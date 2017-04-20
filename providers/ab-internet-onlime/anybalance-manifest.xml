@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id version="16">ab-internet-onlime</id>
+	<id version="17">ab-internet-onlime</id>
 	<name>Onlime (Москва)</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о текущем балансе, бонусных баллах, номерах лицевого счета и договора, статусе и трафике в текущем месяце для пользователей провайдера "Onlime" (<a href="http://onlime.ru">http://onlime.ru</a>).</p>
@@ -11,12 +11,14 @@
 	<p>Для работы провайдера необходимо иметь доступ к личному кабинету.</p>
 	<p>Получить доступ к личному кабинету можно на странице <a href="https://my.onlime.ru/account/forgot_password">https://my.onlime.ru/account/forgot_password</a>.</p>
 	]]></instruction>
-	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
 		<js>main.js</js>
-		<js>library.js</js>
 		<history>history.xml</history>
 	</files>
 	<counters>
@@ -26,6 +28,7 @@
 		<counter id="internet_total" name="Трафик (всего)" suffix=" Гб"/>
 		<counter id="internet_down" name="Трафик (входящий)" suffix=" Гб"/>
 		<counter id="internet_up" name="Трафик (исходящий)" suffix=" Гб"/>
+		<counter id="abon" name="Ежемесячный платеж" units=" р"/>
 		<counter id="license" name="Лицевой счет" type="text"/>
 		<counter id="agreement" name="Номер договора" type="text"/>
 	</counters>

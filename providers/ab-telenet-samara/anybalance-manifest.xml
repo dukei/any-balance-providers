@@ -1,9 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-telenet-samara</id>
+	<api flags="no_browser"/>
+  <id version="2">ab-telenet-samara</id>
   <name>Telenet баланс</name>
   <description>
-    Отображает балан Internet провайдера Telenet (Самара)
+    Отображает балан Internet провайдера Telenet (Самара). Информация получается из личного кабинета http://lk.telenettv.ru/
   </description>
   <author>lex &lt;lexxsol@yandex.ru&gt;</author>
   <files>

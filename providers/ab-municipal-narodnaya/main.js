@@ -4,7 +4,7 @@ function main() {
     auth(url);
 
     var html = request(url + '?option=com_auth&view=payment&Itemid=80');
-    var $paymentsTable = $('.main-container', html).find('.Table:eq(1)');
+    var $paymentsTable = $('.content', html).find('.Table:eq(1)');
     var $lastRow = $paymentsTable.find('tbody tr:last').prev('tr');
     var $cells = $lastRow.find('td');
 

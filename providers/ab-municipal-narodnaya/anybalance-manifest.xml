@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
     <api flags="no_browser"/>
-    <id version="1">ab-municipal-narodnaya</id>
+    <id version="2">ab-municipal-narodnaya</id>
     <name>Управляющая компания "Народная"</name>
     <description>
         Предоставляет информацию о балансе в УК "Народная" (https://укнародная.рф)

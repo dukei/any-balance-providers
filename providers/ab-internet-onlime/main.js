@@ -129,14 +129,18 @@ function main(){
 		}));
 		json = getJson(html);
 
-		if(json.configuration.internet.status == 'ON'){
-			AnyBalance.trace('Интернет включен, узнаем абонентскую плату');
-			for(var svc in json.catalogue.rateplans){
-				var rps = json.catalogue.rateplans[svc];
-				var found = rps.filter(function(r){ return r.code == json.configuration.internet.rateplan.code })[0];
-				if(found){
-					getParam(found.price, result, 'abon');
-					break;
+		var services = ['internet', 'inetdvbc'];
+		for(var i=0; i<services.length; ++i){
+			var service = json.configuration[services[i]];
+			if(service && service.status == 'ON' && service.rateplan){
+				AnyBalance.trace(services[i] + ' включен, узнаем абонентскую плату');
+				for(var svc in json.catalogue.rateplans){
+					var rps = json.catalogue.rateplans[svc];
+					var found = rps.filter(function(r){ return r.code == service.rateplan.code })[0];
+					if(found){
+						sumParam(found.price, result, 'abon', null, null, null, aggregate_sum);
+						break;
+					}
 				}
 			}
 		}

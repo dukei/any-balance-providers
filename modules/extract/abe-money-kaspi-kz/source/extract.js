@@ -150,7 +150,7 @@ function processCards(html, result) {
 
 	html = AnyBalance.requestGet(baseurl + '/index.aspx?action=bank', g_headers);
 
-	var cardList = AB.getElement(html, /<div[^>]+id="item_creditcards"[^>]*>/i);
+	var cardList = AB.getElement(html, /<div[^>]+id="(item_creditcards|item_kaspi_gold)"[^>]*>/i);
 	if(!cardList){
         if(/У вас нет карт/i.test(html)){
             AnyBalance.trace('У вас нет карт');
@@ -162,7 +162,7 @@ function processCards(html, result) {
 		return;
 	}
 
-	var cards = AB.getElements(cardList, /<div[^>]+credicardInfoWrapper[^>]*>/ig);
+	var cards = AB.getElements(cardList, /<div[^>]+(credicardInfoWrapper|payrolCardInfoWrapper)[^>]*>/ig);
 	if(!cards) {
 		AnyBalance.trace(cardList);
 		AnyBalance.trace("Не удалось найти карты. Сайт изменён?");
@@ -174,9 +174,18 @@ function processCards(html, result) {
 	for(var i=0; i < cards.length; ++i){
 		var card = cards[i];
 
-		var id 	  = AB.getParam(card, null, null, /<div[^>]+title--creditcard(?:[^>]*>){3}([\s\S]*?)<span/i, AB.replaceTagsAndSpaces),
-			num   = AB.getParam(card, null, null, /<div[^>]+title--creditcard(?:[^>]*>){3}([\s\S]*?)<span/i, AB.replaceTagsAndSpaces),
-			title = AB.getParam(card, null, null, /<div[^>]+title--creditcard(?:[^>]*>){3}([\s\S]*?)<span/i, AB.replaceTagsAndSpaces);
+		if (AB.getElement(card, /<div[^>]+credicardInfoWrapper[^>]*>/i)) {
+			var id 	  = AB.getParam(card, null, null, /<div[^>]+title--creditcard(?:[^>]*>){3}([\s\S]*?)<span/i, AB.replaceTagsAndSpaces),
+				num   = AB.getParam(card, null, null, /<div[^>]+title--creditcard(?:[^>]*>){3}([\s\S]*?)<span/i, AB.replaceTagsAndSpaces),
+				title = AB.getParam(card, null, null, /<div[^>]+title--creditcard(?:[^>]*>){3}([\s\S]*?)<span/i, AB.replaceTagsAndSpaces);
+		} else if (AB.getElement(card, /<div[^>]+payrolCardInfoWrapper[^>]*>/i)) {
+			var id 	  = AB.getParam(card, null, null, /<div[^>]+title--gold(?:[^>]*>){3}([\s\S]*?)<span/i, AB.replaceTagsAndSpaces),
+				num   = AB.getParam(card, null, null, /<div[^>]+title--gold(?:[^>]*>){3}([\s\S]*?)<span/i, AB.replaceTagsAndSpaces),
+				title = AB.getParam(card, null, null, /<div[^>]+title--gold(?:[^>]*>){3}([\s\S]*?)<span/i, AB.replaceTagsAndSpaces);
+		} else {
+			AnyBalance.trace("Найден неизвестный тип карты.");
+			continue;
+		}
 
 		var c = {__id: id, __name: title, num: num};
 
@@ -191,8 +200,8 @@ function processCards(html, result) {
 function processCard(card, result) {
     AnyBalance.trace('Обработка карты ' + result.__name);
 
-    AB.getParam(card, result, 'cards.balance', /<span[^>]+"e-limit__info__amount"[^>]*>[\s\S]*?<div/i, 					     AB.replaceTagsAndSpaces, AB.parseBalanceSilent);
-    AB.getParam(card, result, ['cards.currency', 'cards.balance'], /<span[^>]+"e-limit__info__amount"[^>]*>([\s\S]*?)<div/i, AB.replaceTagsAndSpaces, AB.parseCurrency);
+    AB.getParam(card, result, 'cards.balance', /<div[^>]+"e-limit__info__amount_inner"[^>]*>[\s\S]*?<span/i,					    AB.replaceTagsAndSpaces, AB.parseBalanceSilent);
+    AB.getParam(card, result, ['cards.currency', 'cards.balance'], /<div[^>]+"e-limit__info__amount_inner"[^>]*>([\s\S]*?)<\/div/i, AB.replaceTagsAndSpaces, AB.parseCurrency);
 
     AB.getParam(card, result, 'cards.debt',     /<span[^>]+"e-limit__subtitle e-debt__title"[^>]*>[\s\S]*?<div/i, AB.replaceTagsAndSpaces, AB.parseBalanceSilent);
     AB.getParam(card, result, 'cards.pay_till', /<span[^>]+"e-transfer__day"[^>]*>[\s\S]*?<div/i,                 AB.replaceTagsAndSpaces, AB.parseDateWord);

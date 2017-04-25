@@ -53,10 +53,10 @@ function shouldProcess(counter, info){
 		{
 			if(prefs.type != 'card')
 				return false;
-			if(!prefs.num)
+			if(!prefs.cardnum)
 				return true;
 
-			if(endsWith(info.num, prefs.num))
+			if(endsWith(info.num, prefs.cardnum))
 				return true;
 
 			return false;
@@ -65,20 +65,20 @@ function shouldProcess(counter, info){
 		{
 			if(prefs.type != 'crd')
 				return false;
-			if(!prefs.num)
+			if(!prefs.cardnum)
 				return true;
 
-			if(endsWith(info.num, prefs.num))
+			if(endsWith(info.num, prefs.cardnum))
 				return true;
 		}
 		case 'deposits':
 		{
 			if(prefs.type != 'dep')
 				return false;
-			if(!prefs.num)
+			if(!prefs.cardnum)
 				return true;
 
-			if(endsWith(info.num, prefs.num))
+			if(endsWith(info.num, prefs.cardnum))
 				return true;
 		}
 		default:
@@ -108,21 +108,21 @@ function main() {
 		adapter.processCards(html, result);
 
 		if(!adapter.wasProcessed('cards'))
-			throw new AnyBalance.Error(prefs.num ? 'Не найдена карта с последними цифрами ' + prefs.num : 'У вас нет ни одной карты!');
+			throw new AnyBalance.Error(prefs.cardnum ? 'Не найдена карта с последними цифрами ' + prefs.cardnum : 'У вас нет ни одной карты!');
 
 		result = adapter.convert(result);
 	} else if(prefs.type == 'crd') {
 		adapter.processCredits(html, result);
 
 		if(!adapter.wasProcessed('credits'))
-			throw new AnyBalance.Error(prefs.num ? 'Не найден кредит с последними цифрами ' + prefs.num : 'У вас нет ни одного кредита!');
+			throw new AnyBalance.Error(prefs.cardnum ? 'Не найден кредит с последними цифрами ' + prefs.cardnum : 'У вас нет ни одного кредита!');
 
 		result = adapter.convert(result);
 	} else if(prefs.type == 'dep') {
 		adapter.processDeposits(html, result);
 
 		if(!adapter.wasProcessed('deposits'))
-			throw new AnyBalance.Error(prefs.num ? 'Не найден депозит с последними цифрами ' + prefs.num : 'У вас нет ни одного депозита!');
+			throw new AnyBalance.Error(prefs.cardnum ? 'Не найден депозит с последними цифрами ' + prefs.cardnum : 'У вас нет ни одного депозита!');
 
 		result = adapter.convert(result);
 	}

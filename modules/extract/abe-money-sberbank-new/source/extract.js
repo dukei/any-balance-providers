@@ -436,7 +436,7 @@ function processMetalAccount(html, result){
 	getParam(html, result, 'accounts_met.weight', /"overallAmount"([^>]*>){2}/i, replaceTagsAndSpaces, parseBalance);
 	getParam('г.', result, ['accounts_met.weight_units', 'accounts_met.weight']);
     getParam(html, result, 'accounts_met.balance', /По курсу покупки Банка:([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'accounts_met.currency', /По курсу покупки Банка:([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseCurrency);
+    getParam(html, result, ['accounts_met.currency', 'accounts_met.balance'], /По курсу покупки Банка:([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseCurrency);
     getParam(html, result, 'accounts_met.date_start', /Открыт:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDateWord);
 
     if(AnyBalance.isAvailable('accounts_met.transactions')){
@@ -497,13 +497,15 @@ function getParamByName(html, name) {
     return getParam(html, null, null, new RegExp('name=["\']' + name + '["\'][^>]*value=["\']([^"\']+)"', 'i'));
 }
 
-function processRates(html, result) {
-	AnyBalance.trace('Fetching rates...');
-	
-	getParam(html, result, 'eurPurch', /"currencyRateName"[^>]*>EUR(?:[^>]*>){2}([^<]*)/i, null, parseBalance);
-	getParam(html, result, 'eurSell', /"currencyRateName"[^>]*>EUR(?:[^>]*>){5}([^<]*)/i, null, parseBalance);
-	getParam(html, result, 'usdPurch', /"currencyRateName"[^>]*>USD(?:[^>]*>){2}([^<]*)/i, null, parseBalance);
-	getParam(html, result, 'usdSell', /"currencyRateName"[^>]*>USD(?:[^>]*>){5}([^<]*)/i, null, parseBalance);
+function processRates(baseurl, result) {
+	if(AnyBalance.isAvailable('eurPurch', 'eurSell', 'usdPurch', 'usdSell')){
+		AnyBalance.trace('Fetching rates...');
+		var html = AnyBalance.requestGet(baseurl + '/PhizIC/private/accounts.do');
+		getParam(html, result, 'eurPurch', /"currencyRateName"[^>]*>\s*Евро(?:[\s\S]*?<div[^>]+rateText[^>]*>){1}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+		getParam(html, result, 'eurSell', /"currencyRateName"[^>]*>\s*Евро(?:[\s\S]*?<div[^>]+rateText[^>]*>){2}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+		getParam(html, result, 'usdPurch', /"currencyRateName"[^>]*>\s*Доллар США(?:[\s\S]*?<div[^>]+rateText[^>]*>){1}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+		getParam(html, result, 'usdSell', /"currencyRateName"[^>]*>\s*Доллар США(?:[\s\S]*?<div[^>]+rateText[^>]*>){2}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+	}
 }
 
 function fetchNewThanks(baseurl, result) {

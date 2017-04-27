@@ -13,7 +13,7 @@ var g_countersTable = {
 	}, 
 	card: {
     	"balance": "cards.balance",
-		"currency": "cards.currency",
+		"!currency": "cards.currency",
 		"cardNumber": "cards.cardNumber",
 		"till": "cards.till",
 		"status": "cards.status",
@@ -36,7 +36,7 @@ var g_countersTable = {
 	},
 	loan: {
     	"balance": "credits.balance",
-		"currency": "credits.currency",
+		"!currency": "credits.currency",
 		"till": "credits.till",
 		
 		"minpaydate": "credits.minpay_till",
@@ -49,7 +49,7 @@ var g_countersTable = {
 	},
     acc: {
     	"balance": "accounts.balance",
-		"currency": "accounts.currency",
+		"!currency": "accounts.currency",
 		"rate": "accounts.pct",
 		"cardNumber": "accounts.num",
 		"__tariff": "accounts.num",
@@ -57,7 +57,7 @@ var g_countersTable = {
     },
 	metal_acc: {
     	"balance": "accounts_met.balance",
-    	"currency": "accounts_met.currency",
+    	"!currency": "accounts_met.currency",
 		"cardNumber": "accounts_met.num",
 		"__tariff": "accounts_met.__name",
 		"weight": "accounts_met.weight",
@@ -93,7 +93,7 @@ function main(){
 	
 	var result = {success: true};
 	
-	adapter.processRates(html, result);
+	adapter.processRates(nodeUrl, result);
 	adapter.fetchNewThanks(nodeUrl, result);
 	
 	if(prefs.type == 'card') {

@@ -20,9 +20,17 @@ function NAdapter(countersMap, shouldProcess, options){
 	if(!options)
 		options = {};
 	var traverseCallbacks = {};
-	
+
+	function isRequired(c){
+		return /^!/.test(c);
+	}
+
+	function strip(c){
+		return c.replace(/^[^\w]+/g, '');
+	}
+
 	for(var c in countersMap){
-		if(isAvailable(c)){
+		if(isRequired(c) || isAvailable(c)){
 			var cnew = countersMap[c];
 			if(!isArray(cnew))
 				cnew = [cnew];
@@ -157,7 +165,7 @@ function NAdapter(countersMap, shouldProcess, options){
 			}
 
 			for(var c in countersMap){
-				if(isAvailable(c) && c != '__forceAvailable'){
+				if(c != '__forceAvailable' && (isRequired(c) || isAvailable(c))){
 					var cnew = countersMap[c];
 					if(!isArray(cnew))
 						cnew = [cnew];
@@ -165,7 +173,7 @@ function NAdapter(countersMap, shouldProcess, options){
 					for(var i=0; i<cnew.length; ++i){
 						var val = traverse(json, cnew[i]);
 						if(isset(val)){
-							result[c] = val;
+							result[strip(c)] = val;
 							break;
 						}
 					}

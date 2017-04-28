@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="2.0" version="98" date="2017-04-28">
+	- Поддержка изменений на сайте.
+	</change>
 	<change major_version="2.0" version="97" date="2017-01-10">
 	- Попытка исправить получение минут из API мобильного приложения на некоторых тарифных планах
 	</change>

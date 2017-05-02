@@ -151,6 +151,8 @@ function mainCenter(){
         password: prefs.password
     });
 
+    if(checkRedirectedToNew()) return;
+
     if(!/logout/i.test(html)){
         var error = getParam(html, null, null, /class="error"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
         if (error){
@@ -238,6 +240,8 @@ function mainVoronezh(){
     	'pr[form][auto][form_event]': 'Войти'
     }, {'Accept-Charset': 'windows-1251'});
 
+    if(checkRedirectedToNew()) return;
+
     if(!/'\?exit=1'/i.test(html)){
         var error = sumParam (html, null, null, /<font[^>]+color=['"]red['"][^>]*>([\s\S]*?)<\/font>/ig, replaceTagsAndSpaces, null, aggregate_join);
         if (error){
@@ -272,6 +276,8 @@ function mainUniversal(region){
     	'pr[form][auto][form_event]': 'Войти'
     }, {'Accept-Charset': 'windows-1251'});
 
+    if(checkRedirectedToNew()) return;
+
     if(!/'\?exit=1'/i.test(html)){
         var error = sumParam (html, null, null, /<font[^>]+color=['"]red['"][^>]*>([\s\S]*?)<\/font>/ig, replaceTagsAndSpaces, null, aggregate_join);
         if (error){
@@ -304,6 +310,7 @@ function mainBelgorod(region){
     var baseurl = 'https://selfcare.netbynet.ru/'+region+'/';
 
     var html = AnyBalance.requestGet(baseurl);
+    if(checkRedirectedToNew()) return;
 	
     AnyBalance.trace ("Trying to enter selfcare at address: " + baseurl);
 
@@ -367,6 +374,8 @@ function mainEkaterinburg(region) {
   var prefs = AnyBalance.getPreferences();
   var baseurl = 'https://selfcare.netbynet.ru/'+region+'/';
 
+  if(checkRedirectedToNew()) return;
+
   var html = requestPostMultipart (baseurl + "index.php", {
     'pr[form][auto][form_save_to_link]': 0,
     'pr[form][auto][login]': prefs.login,
@@ -391,6 +400,15 @@ function mainEkaterinburg(region) {
   AnyBalance.setResult(result);
 }
 
+function checkRedirectedToNew(){
+	if(/my.netbynet.ru/i.test(AnyBalance.getLastUrl())){
+		AnyBalance.trace('Перенаправили на новый кабинет. Используем новый.');
+		mainNew();
+		return true;
+	}
+	
+}
+
 function mainLobnya(region){
     var prefs = AnyBalance.getPreferences();
     var baseurl = 'https://selfcare.netbynet.ru/'+region+'/';
@@ -402,6 +420,8 @@ function mainLobnya(region){
     	'pr[form][auto][password]': prefs.password,
     	'pr[form][auto][form_event]': 'Войти'
     }, {'Accept-Charset': 'windows-1251'});
+
+    if(checkRedirectedToNew()) return;
 
     if(!/'\?exit=1'/i.test(html)){
         var error = sumParam (html, null, null, /<font[^>]+color=['"]red['"][^>]*>([\s\S]*?)<\/font>/ig, replaceTagsAndSpaces, null, aggregate_join);

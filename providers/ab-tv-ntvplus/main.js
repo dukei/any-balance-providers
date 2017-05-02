@@ -18,8 +18,8 @@ var g_headers = {
 
 function main(){
     var prefs = AnyBalance.getPreferences();
-    var baseurlLogin = 'http://ntvplus.ru/';
-    var baseurl = 'http://service.ntvplus.ru/';
+    var baseurlLogin = 'https://ntvplus.ru/';
+    var baseurl = 'https://service.ntvplus.ru/';
 
     if (!prefs.login || prefs.login == '')
         throw new AnyBalance.Error ('Введите логин.');

@@ -60,8 +60,10 @@ function main() {
 		'Accept': '*/*'
 	}));
 
-	if (!/check_balance__info_status/i.test(html)) {
-		var error = AB.getParam(html, null, null, /<div[^>]+check_balance_eror[^>]*>([\s\S]*?)<\/div>/i, AB.replaceTagsAndSpaces);
+	if (!/check_balance__row/i.test(html)) {
+		var error = AB.getParam(html, /<div[^>]+check_balance_err?or[^>]*>([\s\S]*?)<\/div>/i, AB.replaceTagsAndSpaces);
+		if(!error)
+			error = AB.getElement(html, /<h4/i, AB.replaceTagsAndSpaces);
 		if (error) {
 			throw new AnyBalance.Error(error, null, /Абонент не найден/i.test(error));
 		}
@@ -72,16 +74,17 @@ function main() {
 
 	var result = {success: true};
 
-	AB.getParam(html, result, 'balance', 			/<td[^>]*>Баланс(?:[\s\S]*?<td[^>]*>){4}([^<]*)/i, 	AB.replaceTagsAndSpaces, AB.parseBalance);
-	AB.getParam(html, result, 'cost', 				/<span[^>]+table_balance__tarif[^>]*>([^<]*)/i, 	AB.replaceTagsAndSpaces, AB.parseBalance);
-	AB.getParam(html, result, 'last_payment_sum', 	/Сумма последней оплаты(?:[^>]*>){3}([^<]*)/i, 		AB.replaceTagsAndSpaces, AB.parseBalance);
+	AB.getParam(html, result, 'balance', 			/<td[^>]*>\s*Баланс(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, 	AB.replaceTagsAndSpaces, AB.parseBalance);
+	AB.getParam(html, result, 'cost', 				/Абонентская плата[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, 	AB.replaceTagsAndSpaces, AB.parseBalance);
+	AB.getParam(html, result, 'last_payment_sum', 	/Сумма последнего платежа[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, 		AB.replaceTagsAndSpaces, AB.parseBalance);
 
+	AB.getParam(html, result, 'licschet', 			/Номер договора:([\s\S]*?)<\/span>/i, 						 AB.replaceTagsAndSpaces);
 	AB.getParam(html, result, 'fio', 				/user_name[^>]*>([^<]*)/i, 						 AB.replaceTagsAndSpaces);
 	AB.getParam(html, result, 'service', 			/Услуга(?:[\s\S]*?<td[^>]*>){4}([^<]*)/i, 		 AB.replaceTagsAndSpaces);
 	AB.getParam(html, result, 'status', 			/<span[^>]+table_balance__status[^>]*>([^<]*)/i, AB.replaceTagsAndSpaces);
-	AB.getParam(html, result, 'debt', 				/Долг(?:[^>]*>){2}([^<]*)/i, 					 AB.replaceTagsAndSpaces);
-	AB.getParam(html, result, 'deadline', 			/Оплачено по дату(?:[^>]*>){2}([^<]*)/i, 		 AB.replaceTagsAndSpaces, AB.parseDate);
-	AB.getParam(html, result, 'last_payment_date',  /Дата последней оплаты(?:[^>]*>){2}([^<]*)/i, 	 AB.replaceTagsAndSpaces, AB.parseDate);
+	AB.getParam(html, result, 'debt', 				/Долг[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, 					 AB.replaceTagsAndSpaces);
+	AB.getParam(html, result, 'deadline', 			/Оплачено по дату[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, 		 AB.replaceTagsAndSpaces, AB.parseDate);
+	AB.getParam(html, result, 'last_payment_date',  /Дата последнего платежа[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, 	 AB.replaceTagsAndSpaces, AB.parseDate);
 
 	AnyBalance.setResult(result);
 }

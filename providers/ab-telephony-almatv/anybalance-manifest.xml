@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-telephony-almatv</id>
+	<id version="2">ab-telephony-almatv</id>
 	<api flags="no_browser"/>
 	<name>Alma TV</name>
 	<description html="true"><![CDATA[
@@ -22,6 +22,7 @@
 		<counter id="last_payment_sum" name="Сумма последней оплаты" units=" т"/>
 		<counter id="fio" name="ФИО" type="text"/>
 		<counter id="service" name="Услуга" type="text"/>
+		<counter id="licschet" name="Номер договора" type="text"/>
 		<counter id="debt" name="Долг" type="text"/>
 		<counter id="status" name="Статус" type="text"/>
 		<counter id="deadline" name="Оплачено по дату" type="time" format="dd/MM/yyyy"/>

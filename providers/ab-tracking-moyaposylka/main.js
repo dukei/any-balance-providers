@@ -11,20 +11,20 @@ var g_headers = {
 
 var g_baseurl = 'https://moyaposylka.ru';
 
-function apiCall(params) {
-	html = AnyBalance.requestPost(g_baseurl + '/apps/tracker/v2', JSON.stringify(params), AB.addHeaders({
+function apiCall(verb) {
+	html = AnyBalance.requestGet(g_baseurl + '/api/v1/' + verb, AB.addHeaders({
 		Accept: 'application/json, text/plain, */*',
 		'Content-Type': 'application/json;charset=UTF-8',
 		Origin: g_baseurl,
 		Referer: g_baseurl + '/',
-		'X-Apps-Request': 'MoyaPosylka'
+		'X-Requested-With': 'XMLHttpRequest'
 	}));
 
 	var json = AB.getJson(html);
 
-	if(!json.success) {
+	if(json.status && json.status != 200) {
 		AnyBalance.trace(JSON.stringify(json));
-		throw new AnyBalance.Error('Не удалось получить данные из-за ошибки на сервере, попробуйте обновить данные позже. Код ошибки: ' + json.error.code);
+		throw new AnyBalance.Error('Не удалось получить данные из-за ошибки на сервере, попробуйте обновить данные позже. Код ошибки: ' + json.error + ', ' + json.message);
 	}
 	return json;
 }
@@ -42,99 +42,65 @@ function getMyPosylkaResult(prefs) {
 	AnyBalance.setCookie('moyaposylka.ru', 'trackerNumber', prefs.track_id);
 	AnyBalance.setCookie('moyaposylka.ru', 'countryCode', dest);
 
-	var json = apiCall({
-		"method":"getTrackerTypesByNumber",
-		"params":{
-			"number":prefs.track_id,
-		}
-	});
-
-	// вот такие варианты возвращаются в разных случаях...
-	//json = {"success":true,"error":null,"result":[],"debug":"0.0004"};
-	//json = {"success":true,"error":null,"result":'',"debug":"0.0004"};
-	//json = {"success":true,"error":null,"result":null,"debug":"0.0004"};
-
-	if(!AB.isArray(json.result) || !json.result || !json.result[0] || !json.result[0].code) {
+	var json = apiCall('carriers/' + encodeURIComponent(prefs.track_id));
+	if(json.length == 0){
 		AnyBalance.trace(JSON.stringify(json));
 		throw new AnyBalance.Error('Неизвестный тип почтового отправления, проверьте правильность введенных данных.');
 	}
 
-	json = apiCall({
-		"method":"createRequest",
-		"params":{
-			"type":json.result[0].code,
-			"number":prefs.track_id,
-			"countryCode":dest
-		}
-	});
-
-	var token = json.result;
-	AnyBalance.trace("Получили токен: " + token);
-
-	if(!token) {
-		AnyBalance.trace(JSON.stringify(json));
-		throw new AnyBalance.Error('Не удалось получить токен, сайт изменен?');
+	if(dest){
+		AnyBalance.requestPost(g_baseurl + '/api/v1/trackers/' + json[0].code + '/' + encodeURIComponent(prefs.track_id) + '/realtime', JSON.stringify({
+			countryCode: dest
+		}), addHeaders({
+			'Content-Type': 'application/json',
+			'X-Requested-With': 'XMLHttpRequest',
+			'X-Realtime': 'Portal',
+		}));
 	}
 
-	var retryCount = 10;
-	for(var i = 0; i < retryCount; i++) {
-		try {
-			AnyBalance.trace('Обновление данных №' + (i+1));
-			// Нужно дать данным обновиться, иначе получим 404
-			sleep(3000);
-			json = apiCall({
-				"method":"getRequestInfo",
-				"params":{
-					"token":token
-				}
-			});
+	var info = apiCall('trackers/' + json[0].code + '/' + encodeURIComponent(prefs.track_id)), tr = 0;
 
-			if(typeof(json.result) == 'string'){
-				//Смена токена, похоже
-				AnyBalance.trace("Сменили токен: " + token);
-				token = json.result;
-				continue;
-			}
-			// Успешно прошли - прерываемся
+	do{
+		try{
+			json = apiCall('trackers/' + json[0].code + '/' + encodeURIComponent(prefs.track_id) + '/realtime');
 			break;
-		} catch(e) {
-			if(/QUICK_CHECK_REQUEST_NOT_COMPLETE/i.test(e.message)) {
-				AnyBalance.trace('Обновление данных не завершено, попробоуем еще раз...');
-				continue;
-			} else {
-				AnyBalance.trace('Обновление данных завершено с ошибкой!');
-				throw e;
-			}
+		}catch(e){
+			AnyBalance.trace('Попытка ' + (++tr) + ': ' + AnyBalance.getLastStatusCode());
+			AnyBalance.sleep(1000);
 		}
-	}
+	}while(tr <= 30);
 
-	if(!json.result) {
+	if(tr > 30){
+		throw new AnyBalance.Error('Не удаётся получить информацию об отправлении. Либо оно ещё не попало в базу, либо почта не отдаёт данные. Попробуйте ещё раз позднее');
+	}
+		
+
+	if(!json.events && !json.events.length) {
 		AnyBalance.trace(JSON.stringify(json));
-		throw new AnyBalance.Error('Не удалось за ' + retryCount + ' запросов получить данные по отправлению, попробуйте обновить данные позже.');
+		throw new AnyBalance.Error('Не удалось получить информацию об отправлении. Либо оно ещё не попало в базу, либо почта не отдаёт данные. Попробуйте ещё раз позднее');
 	}
 
 	var result = {success: true};
 
 	try{
-		var tracker = json.result;
-		var ls = tracker.statuses[0];
+		var ls = json.events[0];
 
-		var lsdate = (ls && ls.date) || '',
-			lsplace = (ls && ls.place) || '',
-			lsstatus = (ls && ls.operation.name) || '???';
+		var lsdate = (ls && ls.eventDate) || 0,
+			lsplace = (ls && ls.location) || '',
+			lsstatus = (ls && ls.operation) || '???';
 
-        AB.getParam(tracker.number, result, 'trackid');
-        AB.getParam(tracker.trackTime + '', result, 'days', null, null, AB.parseBalance);
-        AB.getParam(tracker.weight + '', result, 'weight', null, null, AB.parseBalance);
-        AB.getParam(lsdate, result, 'date', null, null, AB.parseDateISO);
+		var days = ls ? Math.round(((ls.delivered ? ls.eventDate : +new Date()) - json.events[json.events.length-1].eventDate)/86400000) : 0;
+
+        AB.getParam(info.barcode, result, 'trackid');
+        AB.getParam(days, result, 'days');
+        AB.getParam(lsdate, result, 'date');
         AB.getParam(lsplace, result, 'address');
         AB.getParam(lsstatus, result, 'status');
 
 		if (AnyBalance.isAvailable('fulltext')) {
-			var date = AB.getParam(lsdate, null, null, null, null, AB.parseDateISO) || (new Date().getTime());
+			var date = lsdate || +new Date();
 			var address = lsplace;
 			var status = lsstatus;
-			var days = tracker.trackTime;
 			result.fulltext = '<b>' + status + '</b><br/>\n' + '<small>' + getDateString(date) + '</small>: ' + address + '<br/>\n' + 'в пути ' + days + ' дн.';
 		}
 		return result;
@@ -163,20 +129,6 @@ function numSize(num, size) {
 function getDateString(dt) {
 	if (typeof dt != 'object') dt = new Date(dt);
 	return numSize(dt.getDate(), 2) + '/' + numSize(dt.getMonth() + 1, 2) + '/' + dt.getFullYear() + " " + numSize(dt.getHours(), 2) + ':' + numSize(dt.getMinutes(), 2);
-}
-
-function sleep(delay) {
-	AnyBalance.trace('Sleeping ' + delay + ' ms');
-	if (AnyBalance.getLevel() < 6) {
-		var startTime = new Date();
-		var endTime = null;
-		do {
-			endTime = new Date();
-		} while (endTime.getTime() - startTime.getTime() < delay);
-	} else {
-		AnyBalance.trace('Calling hw sleep');
-		AnyBalance.sleep(delay);
-	}
 }
 
 function createCountries(baseurl, result) {

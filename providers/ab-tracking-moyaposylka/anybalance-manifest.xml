@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="17">ab-tracking-moyaposylka</id>
+	<id version="18">ab-tracking-moyaposylka</id>
 	<api flags="no_browser"/>
 	<name>Моя посылка</name>
 	<description html="true"><![CDATA[
@@ -23,7 +23,6 @@
 		<counter id="date" name="Дата" type="time"/>
 		<counter id="status" name="Статус" type="text"/>
 		<counter id="days" name="Время в пути" units="д"/>
-		<counter id="weight" name="Вес" units="кг"/>
 		<counter id="address" name="Адрес" type="text"/>
 	</counters>
 	<keywords>Почтовое отправление, почта России, моя посылка</keywords>

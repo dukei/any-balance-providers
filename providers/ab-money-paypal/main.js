@@ -124,7 +124,9 @@ function executeChallenge(script, baseurl, loginPage){
 		navigator: createGetInterceptor({
 			appName: 'Netscape'
 		}, 'navigator'),
-		screen: createGetInterceptor({}, 'screen'),
+		screen: createGetInterceptor({
+			width: 1920,
+		}, 'screen'),
 		innerWidth: 913,
 		location: createGetInterceptor({
 			host: "www.paypal.com"

@@ -30,6 +30,7 @@ function main(){
     var prefs = AnyBalance.getPreferences();
 
 	checkEmpty(prefs.login, 'Введите логин!');
+	checkEmpty(prefs.login.trim() == prefs.login, 'Вы случайно добавили пробелы в логин. Пожалуйста, введите логин в настройки провайдеров без пробелов.');
 	checkEmpty(prefs.password, 'Введите пароль!');
 
     var func = g_regions[prefs.region] || g_regions.center;

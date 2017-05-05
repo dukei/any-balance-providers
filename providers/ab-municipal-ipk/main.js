@@ -31,28 +31,28 @@ function main()
     getParam(html, result, 'phone', /<td>Телефон[\s\S]{1,100}<strong>(.+)<\/strong>/);
     getParam(html, result, 'type', /<td>Тип собственности[\s\S]{1,100}<strong>(.+)<\/strong>/);
 
-    html = AnyBalance.requestGet('https://portalgkh.ru/index.php?id=16&view=services');
+    html = AnyBalance.requestPost('https://portalgkh.ru/index.php?id=16&view=reports', {
+        report: 'moneymove',
+        report_id: 1
+    });
 
-    getParam(html, result, 'current_period', /<select id="period"[\s\S]+selected>(.{1,20})<\/option>/);
+    // Услуги УК.
+    var $row_uk = $('#collapseTwo table:eq(0) tr:last td', html);
+    // Отопление и ГВС.
+    var $row_gvs = $('#collapseTwo table:eq(1) tr:last td', html);
 
-    var balances = getBalances(html);
-    result['accrued'] = balances[4];
-    result['paid'] = balances[7];
-    result['to_pay'] = balances[8];
-
-    AnyBalance.setResult(result);
-}
-
-function getBalances(html)
-{
-    var balances = [],
-        match = 1,
-        regexp = /<td class="total right">(.*)<\/td>/g;
-
-    while (match != null) {
-        match = regexp.exec(html);
-        if (match) balances.push(parseBalance(match[1]));
+    if (!$row_uk.length || !$row_gvs.length) {
+        throw new AnyBalance.Error('Не удалось получить данные по платежам. Сайт изменён?');
     }
 
-    return balances;
+    result['current_period'] = $row_uk.eq(0).text().trim();
+    result['uk_accrued'] = parseBalance($row_uk.eq(5).text());
+    result['uk_paid'] = parseBalance($row_uk.eq(6).text());
+    result['uk_to_pay'] = parseBalance($row_uk.eq(7).text());
+    result['gvs_accrued'] = parseBalance($row_gvs.eq(5).text());
+    result['gvs_paid'] = parseBalance($row_gvs.eq(6).text());
+    result['gvs_to_pay'] = parseBalance($row_gvs.eq(7).text());
+    result['to_pay'] = result['uk_to_pay'] + result['gvs_to_pay'];
+
+    AnyBalance.setResult(result);
 }

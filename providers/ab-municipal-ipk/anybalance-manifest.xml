@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
     <api flags="no_browser"/>
-    <id version="2">ab-municipal-ipk</id>
+    <id version="3">ab-municipal-ipk</id>
     <name>Иркутская процессинговая компания</name>
     <description>
         Предоставляет сводную информацию о лицевом счете и балансе в системе "Иркутская процессинговая компания" (https://portalgkh.ru)
@@ -14,12 +14,17 @@
         <icon>icon.png</icon>
         <preferences>preferences.xml</preferences>
         <js>main.js</js>
+        <js>api:jquery.min.js</js>
         <history>history.xml</history>
     </files>
     <counters>
-        <counter id="to_pay" name="Долг/переплата" units=" р"/>
-        <counter id="accrued" name="Начислено к оплате" units=" р"/>
-        <counter id="paid" name="Оплачено" units=" р"/>
+        <counter id="to_pay" name="Общий долг/переплата" units=" р"/>
+        <counter id="uk_to_pay" name="Долг/переплата (услуги УК)" units=" р"/>
+        <counter id="uk_accrued" name="Начислено к оплате (услуги УК)" units=" р"/>
+        <counter id="uk_paid" name="Оплачено (услуги УК)" units=" р"/>
+        <counter id="gvs_to_pay" name="Долг/переплата (отопление и ГВС)" units=" р"/>
+        <counter id="gvs_accrued" name="Начислено к оплате (отопление и ГВС)" units=" р"/>
+        <counter id="gvs_paid" name="Оплачено (отопление и ГВС)" units=" р"/>
         <counter id="current_period" name="Текущий период" type="text"/>
         <counter id="account" name="Лицевой счет" type="text"/>
         <counter id="company" name="Управляющая компания" type="text"/>

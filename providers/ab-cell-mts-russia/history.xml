@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="4.1" version="160" date="2017-05-12">
+	Улучшено распознавание минут в некоторых случаях
+	</change>
 	<change major_version="4.1" version="159" date="2017-05-12">
 	- Исправление получения трафика в некоторых случаях
 	</change>

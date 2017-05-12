@@ -316,12 +316,15 @@ var AB = (function (global_scope) {
                 } else if (/^<select/i.test(str)) { //<select>...</select>
                     var sel = getParam(str, /^<[^>]*>/i);
                     value = getParam(sel, valueRegExp, valueReplace);
-                    if (typeof(value) == 'undefined') {
-                        var optSel = getParam(str, /(<option[^>]*[\s'"]selected[^>]*>)/i);
+                    if (!isset(value)) {
+                        var optSel = getParam(str, /(<option[^>]*[\s'"]selected[^>]*>[\s\S]*?<\/option>)/i);
                         if (!optSel)
-                            optSel = getParam(str, /(<option[^>]*>)/i);
-                        if (optSel)
+                            optSel = getParam(str, /(<option[^>]*>[\s\S]*?<\/option>)/i);
+                        if (optSel){
                             value = getParam(optSel, valueRegExp, valueReplace);
+                        	if(!isset(value))
+                        		value = replaceAll(optSel, replaceTagsAndSpaces);
+                        }
                     }
                 }
 

@@ -827,9 +827,25 @@ function processTrafficInternet(result){
 function processTrafficLKApi(result){
     if (isAvailable('remainders.traffic_left_mb', 'remainders.traffic_used_mb', 'remainders.traffic_left_till')) {
 		AnyBalance.trace('Пробуем получить трафик по апи из ЛК..');
-		var html = AnyBalance.requestGet(g_baseurl + '/api/myInternet/trafficAvailable', addHeaders({Referer: g_baseurl, 'X-Requested-With': 'XMLHttpRequest'}));
+		var html = AnyBalance.requestGet('https://oauth.mts.ru/webapi-1.4/api/counters/all', addHeaders({
+			Referer: 'https://oauth.mts.ru/wrs-4.1/gadgets/ifr?url=https://oauth.mts.ru/os/mts-my-account-payment/mts-my-account.xml&refresh=86400&lang=ru',
+			Authorization: 'Bearer sso_1.0_websso_cookie'
+		}));
+
 		var json = getJson(html);
-		processTrafficH2O(json.h2OExtended, result);
+		AnyBalance.trace('Остатки: ' + html);
+
+		var info = json.counters.filter(function(c) { return c.type == 'internet' })[0];
+		if(!info)
+			throw new Anybalance.Error('Трафик отсутствует в счетчиках');
+
+        if(!result.remainders)
+            result.remainders = {};
+        var remainders = result.remainders;
+
+		getParam(info.value/info.ratio + info.measBase, remainders, 'remainders.traffic_used_mb', null, null, parseTraffic);
+		getParam((info.limit - info.value)/info.ratio + info.measBase, remainders, 'remainders.traffic_left_mb', null, null, parseTraffic);
+		getParam(info.expirationTime, remainders, 'remainders.traffic_left_till', null, null, parseDateISO);
 	}
 }
 

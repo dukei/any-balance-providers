@@ -6,7 +6,7 @@ var g_headers = {
 	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
 	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
 	'Connection': 'keep-alive',
-	'Origin': 'https://my.velcom.by',
+	'Origin': 'https://internet.velcom.by',
 	'Cache-Control': 'no-cache',
         'Upgrade-Insecure-Requests': '1',
 	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/48.0.2564.97 Safari/537.36',
@@ -28,7 +28,7 @@ function parseBalanceRK(_text) {
 function main(){
     var prefs = AnyBalance.getPreferences();
 	
-    var baseurl = "https://my.velcom.by/";
+    var baseurl = "https://internet.velcom.by/";
     AnyBalance.setDefaultCharset('utf-8');
 	
     checkEmpty(prefs.login, 'Введите номер телефона в международном формате!');
@@ -45,7 +45,7 @@ function main(){
 
 		function randomString(length) {var result = '', chars = '0123456789';for (var i = length; i > 0; --i) {	result += chars[Math.round(Math.random() * (chars.length - 1))];}return result;}
 		// Ищи новый способ, как нас заблокировать.
-		AnyBalance.setCookie('my.velcom.by', '_ga', 'GA1.2.' + randomString(10) + '.' + randomString(10));
+		AnyBalance.setCookie('internet.velcom.by', '_ga', 'GA1.2.' + randomString(10) + '.' + randomString(10));
 
     var sid = getParam(html, null, null, /name="sid3" value="([^"]*)"/i);
     if(!sid){

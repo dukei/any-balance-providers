@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="8">ab-exchange-metal-sbrf</id>
+  <id version="9">ab-exchange-metal-sbrf</id>
   <api flags="no_browser"/>
   <name>Курсы драгоценных металлов Сбербанка</name>
   <description html="true"><![CDATA[
@@ -10,6 +10,7 @@
   <author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
   <depends>
     <module id="library"/>
+    <module id="framework/sbrf"/>
   </depends>
   <files>
     <icon>icon.png</icon>

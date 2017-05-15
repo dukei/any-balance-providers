@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="5.0" version="36">ab-money-paypal</id>
+	<id major_version="5.0" version="37">ab-money-paypal</id>
 	<api flags="no_browser"/>
 	<name>PayPal</name>
 	<description html="true"><![CDATA[

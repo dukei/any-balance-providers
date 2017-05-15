@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+    <id version="1">framework/sbrf</id>
+	<api flags="no_browser" />
+    <name>SBRF helper</name>
+	<description html="true"><![CDATA[
+		Helps to deal with SBRF regions
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<js>framework.sbrf.min.js</js>
+		<history>history.xml</history>
+	</files>
+	<type>framework</type>
+</provider>

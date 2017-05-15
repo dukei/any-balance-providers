@@ -1,10 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-  <id major_version="1.0" version="10">ab-exchange-sbrf</id>
+  <id major_version="1.0" version="11">ab-exchange-sbrf</id>
   <name>Курсы валют СБ РФ</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о курсах валют от банка "Сбербанк".</p>
+	<p>Предоставляет информацию о курсах валют от банка "Сбербанк" со страницы https://www.sberbank.ru/ru/quotes/currencies .</p>
 	]]></description>
   <author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
   <depends>

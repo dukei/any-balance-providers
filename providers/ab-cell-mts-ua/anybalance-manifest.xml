@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="1.3" version="73">ab-cell-mts-ua</id>
+	<id major_version="1.3" version="74">ab-cell-mts-ua</id>
 	<api flags="no_browser"/>
 	<name>МТС (Украина)</name>
 	<description html="true"><![CDATA[
@@ -70,7 +70,7 @@
 		<counter id="min_all_100" name="Минуты по Украине" type="time_interval" format="{@MIN}" units=" мин"/>
 		<counter id="min_abroad" name="Минуты заграницу" type="time_interval" format="{@MIN}" units=" мин"/>
 		<counter id="min_net" name="Минуты с услугой «Супер без пополнения» в сети МТС" type="time_interval" format="{@MIN}" units=" мин"/>
-		<counter id="min_all_25" name="25/40 минут на другие сети" type="time_interval" format="{@MIN}" units=" мин"/>
+		<counter id="min_all_25" name="Минуты на другие сети" type="time_interval" format="{@MIN}" units=" мин"/>
 		<counter id="min_net_2500" name="2500 минут в сети МТС" type="time_interval" format="{@MIN}" units=" мин"/>
 		<counter id="min_unlin_all" name="Минуты Супер безлимит все" type="time_interval" format="{@MIN}" units=" мин"/>
 		<counter id="min_unlin_mts" name="Минуты Супер безлимит в сети МТС" type="time_interval" format="{@MIN}" units=" мин"/>

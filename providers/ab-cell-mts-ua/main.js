@@ -193,6 +193,7 @@ function main(){
     sumParam (html, result, 'traffic_paket_mb', /<li>20MB_GPRS_Internet:[^<]*осталось[^\d]*?(\d+,?\d* *(kb|mb|gb|кб|мб|гб|байт|bytes)). Срок действия до[^<]*<\/li>/ig, null, parseTraffic, aggregate_sum);
     sumParam (html, result, 'traffic_paket_mb', /<li>3G Internet:[^<]*осталось[^\d]*?(\d+,?\d* *(kb|mb|gb|кб|мб|гб|байт|bytes)). Срок действия до[^<]*<\/li>/ig, null, parseTraffic, aggregate_sum);
     sumParam (html, result, 'traffic_paket_mb', /<li>Осталось: (\d+,?\d* *(kb|mb|gb|кб|мб|гб|байт|bytes)). Срок действия до[^<]*<\/li>/ig, null, parseTraffic, aggregate_sum);
+    sumParam (html, result, 'traffic_paket_mb', /<li>Пакет МБ. Осталось: (\d+,?\d* *(kb|mb|gb|кб|мб|гб|байт|bytes))<\/li>/ig, null, parseTraffic, aggregate_sum);
     //Срок Пакета интернета
     sumParam (html, result, 'termin_traffic_paket_mb', /<li>20MB_GPRS_Internet:[^<]*осталось[^\d]*?[^<]*. Срок действия до([^<]*)<\/li>/ig, replaceTagsAndSpaces, parseDate, aggregate_min);
     sumParam (html, result, 'termin_traffic_paket_mb', /<li>3G Internet:[^<]*осталось[^\d]*?[^<]*. Срок действия до([^<]*)<\/li>/ig, replaceTagsAndSpaces, parseDate, aggregate_min);
@@ -248,6 +249,7 @@ function main(){
     sumParam (html, result, 'termin_sms_others', /<li>Осталось: \d+ смс. Срок действия до([^<]*)<\/li>/ig, replaceTagsAndSpaces, parseDate, aggregate_min);
     //CMC+MMS на других
     sumParam (html, result, 'sms_mms_others', /<li>1000 SMS\/MMS по Украине, осталось: (\d+) SMS\/MMS/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+    sumParam (html, result, 'sms_mms_others', /<li>50 SMS\/MMS по Украине Vodafone Light\+, осталось (\d+) sms\/mms/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
     //CMC+MMS по Украине и Европе Vodafone
     sumParam (html, result, 'sms_mms_others1', /<li>\d+ SMS\/MMS[^>]*?(?:в|на) месяц RED[^>]*?осталось:? (\d+) sms\/mms/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
     sumParam (html, result, 'sms_mms_others1', /<li>\d+ SMS\/MMS[^>]*?RED[^>]*?(?:в|на) месяц[^>]*?осталось:? (\d+) sms\/mms/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
@@ -281,6 +283,7 @@ function main(){
     // 25/40 минут на другие сети
     sumParam (html, result, 'min_all_25', /<li>Осталось ([\d\.,]+) секунд на другие сети<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
     sumParam (html, result, 'min_all_25', /<li>40 минут на другие сети, осталось ([\d\.,]+) секунд на другие сети<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+    sumParam (html, result, 'min_all_25', /<li>Пакет минут по Украине. Осталось: (\d+),*\d* мин/ig, replaceTagsAndSpaces, parseTime, aggregate_sum);
 
     //2500 минут в сети МТС
     sumParam (html, result, 'min_net_2500', /<li>Осталось ([\d\.,]+) секунд внутри сети<\/li>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
@@ -335,6 +338,7 @@ function main(){
     // Подарок для тарифа Смартфон и Смартфон 0.50
     sumParam (html, result, 'traffic_free_mb', /<li>5 МБ для тарифа 'Смартфон'. Осталось:(\d+,?\d* *(kb|mb|gb|кб|мб|гб|байт|bytes)). Срок действия до [^<]*<\/li>/ig, null, parseTraffic, aggregate_sum);
     sumParam (html, result, 'traffic_free_mb', /<li>50 МБ для тарифа 'Смартфон'. Осталось:(\d+,?\d* *(kb|mb|gb|кб|мб|гб|байт|bytes)). Срок действия до [^<]*<\/li>/ig, null, parseTraffic, aggregate_sum);
+    sumParam (html, result, 'traffic_free_mb', /<li>12 GB \(4 GB x 3 мес\) - осталось: (\d+,?\d* *(kb|mb|gb|кб|мб|гб|байт|bytes)).<\/li>/ig, null, parseTraffic, aggregate_sum);
     //Срок действия бесплатного трафика для тарифа Смартфон и Смартфон 0.50
     sumParam (html, result, 'termin_traffic_free_mb', /<li>5 МБ для тарифа 'Смартфон'. Осталось:[^\d]*?[^<]*. Срок действия до([^<]*)<\/li>/ig, replaceTagsAndSpaces, parseDate, aggregate_min);
     sumParam (html, result, 'termin_traffic_free_mb', /<li>50 МБ для тарифа 'Смартфон'. Осталось:[^\d]*?[^<]*. Срок действия до([^<]*)<\/li>/ig, replaceTagsAndSpaces, parseDate, aggregate_min);

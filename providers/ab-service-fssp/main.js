@@ -19,6 +19,24 @@ function createParams(params){
 	return strParams;
 }
 
+function getCaptchaImage(e){
+	var output = [];
+	String.prototype.outs034n0s943 = function(){
+		output.push(this);
+	}
+	for(var i=0; i<e.length; ++i){
+		var s = e[i].replace(/\(\);$/, '.toString().outs034n0s943()');
+		safeEval(s);
+	}
+
+	var data = sumParam(output.join(''), null, null, /\bscr\s*\+\s*"([^"]*)/g, [/^.*?,/, '']);
+	if(!data.length){
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удалось получить изображение капчи. Сайт изменен?');
+	}
+	return data.join('');
+}
+
 function main() {
 	var prefs = AnyBalance.getPreferences();
 	var baseurl = 'http://fssprus.ru/';
@@ -56,9 +74,9 @@ function main() {
 	
 	var url = baseurl_api + 'ajax_search?' + createParams(params);
 	html = AnyBalance.requestGet(url, addHeaders({'X-Requested-With': 'XMLHttpRequest'}));
-	html = getJson(html).data;
+	var json = getJson(html);
 	
-	var captchaa = getParam(html, null, null, /<img[^>]+src="data:image[^"]*?,([^"]*)"[^>]*id="capchaVisual"/i, null, html_entity_decode);
+	var captchaa = json.e && getCaptchaImage(json.e).replace(/^.*?base64,/i, '');
 	if(captchaa) {
 		AnyBalance.trace('Пытаемся ввести капчу');
 		captchaa = AnyBalance.retrieveCode('Пожалуйста, введите код с картинки', captchaa);

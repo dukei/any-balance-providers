@@ -12,46 +12,53 @@ var g_headers = {
 
 function main(){
     var prefs = AnyBalance.getPreferences();
-    var baseurl = "http://cabinet.taximaxim.ru/";
+    var baseurl = "https://client.taximaxim.com/";
+    AnyBalance.setDefaultCharset('utf-8'); 
+   	
+   	checkEmpty(prefs.login, 'Введите 10 цифр номера телефона без пробелов и разделителей, например, 9261234567');
 
 //    createCityList();
 
-    AnyBalance.setDefaultCharset('utf-8'); 
-    var html = AnyBalance.requestPost(baseurl + 'webapp/index.php?r=clientCabinet/login', {
-    	'NewLoginForm[city]':prefs.city || '6',
-        'NewLoginForm[phone]':prefs.login,
-        'NewLoginForm[password]':prefs.password,
-        'NewLoginForm[rememberMe]':0,
-        'NewLoginForm[uuid]': hex_md5(prefs.login),
-        yt0:''
-    }, addHeaders({Referer: baseurl})); 
+    var html = AnyBalance.requestGet(baseurl + 'site/fp/?url=' + encodeURIComponent(baseurl + 'login/') + '&fp=' + hex_md5(prefs.login), g_headers);
+	if (!html || AnyBalance.getLastStatusCode() > 400) {
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Сайт провайдера временно недоступен! Попробуйте обновить данные позже.');
+	}
 
-    if(!/clientCabinet\/logout/i.test(html)){
-        var error = getParam(html, null, null, /<div[^>]+alert-error[^>]*>([\s\S]*?)<\/div>/i, [replaceTagsAndSpaces, /\s+/g, ' ']);
+    var form = getElement(html, /<form[^>]+login-form/i);
+	if(!form){
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удаётся найти форму входа! Сайт изменен?');
+	}
+
+	var params = AB.createFormParams(form, function(params, str, name, value) {
+		if (/baseId/i.test(name)) {
+			return prefs.city || '6';
+		} else if (/phone/i.test(name)) {
+			return prefs.login;
+		} else if (/code/i.test(name)) {
+			return prefs.password;
+		}
+
+		return value;
+	});
+
+    var html = AnyBalance.requestPost(baseurl + 'login/', params, addHeaders({Referer: baseurl})); 
+
+    if(!/logout/i.test(html)){
+        var error = getElement(html, /<div[^>]+error-summary/i, replaceTagsAndSpaces);
         if(error)
-            throw new AnyBalance.Error(error, null, /Неверное имя пользователя или пароль/i.test(error));
+            throw new AnyBalance.Error(error, null, /номер/i.test(error));
         //Если объяснения ошибки не найдено, при том, что на сайт войти не удалось, то, вероятно, произошли изменения на сайте
         throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
     }
     var result = {success: true};
 	
-	getParam(html, result, 'discont', /"Discont":\s*([^,{]*)/i, null, parseBalance);
-	
-	var json = getJsonObject(html, /user_profile\s*=/);
-	getParam(json.FIO, result, 'fio');
-	getParam(json.FIO, result, '__tariff');
-
-	html = AnyBalance.requestGet(baseurl + 'webapp/index.php?r=clientCabinet/accounts', g_headers);
-	var accid = getParam(html, null, null, /account="([^"]*)/i, replaceHtmlEntities);
-	if(!accid){
-		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Лицевой счет не найден. У вас нет лицевого счета или сайт изменен');
-	}
-
-	html = AnyBalance.requestGet(baseurl + 'webapp/index.php?r=ClientCabinet/AjaxGate&target=%2FServices%2FPublic.svc%2FAccount&id=' + accid + '&_=' + new Date().getTime(), g_headers);
-    json = getJson(html);
-    getParam(json.Balance, result, 'balance');
-    getParam(json.PayCode, result, 'licschet');
+	getParam(html, result, 'discont', /Скидка(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'fio', /<input[^>]+profileform-fio[^>]*value="([^"]*)/i, replaceHtmlEntities);
+	getParam(html, result, '__tariff', /<input[^>]+profileform-fio[^>]*value="([^"]*)/i, replaceHtmlEntities);
+	getParam(html, result, 'balance', /Баланс(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'licschet', /Баланс(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
 
     AnyBalance.setResult(result);
 }

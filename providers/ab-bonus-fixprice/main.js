@@ -29,7 +29,7 @@ function main() {
 
 	var grc_response = solveRecaptcha('Пожалуйста, подтвердите, что вы не робот', baseurl, '6LcxEwkUAAAAAHluJu_MhGMLI2hbzWPNAATYetWH');
 
-	html = AnyBalance.requestPost(baseurl + 'crm_cabinet_api/auth', JSON.stringify({
+	html = AnyBalance.requestPost(baseurl + 'cns_customer_cabinet/api/auth', JSON.stringify({
 		captcha: {
 			class_type: 'GoogleRecaptcha',
 			g_recaptcha_response: grc_response
@@ -61,7 +61,7 @@ function main() {
 
 	var join_space = create_aggregate_join(' ');
 	if(AnyBalance.isAvailable('fio')){
-		html = AnyBalance.requestGet(baseurl + 'crm_cabinet_api/anketa', g_headers);
+		html = AnyBalance.requestGet(baseurl + 'cns_customer_cabinet/api/anketa', g_headers);
 		json = getJson(html);
 		AB.sumParam(json.last_name, result, 'fio', null, null, null, join_space);
 		AB.sumParam(json.first_name, result, 'fio', null, null, null, join_space);
@@ -69,7 +69,7 @@ function main() {
 	}
 
 	if(AnyBalance.isAvailable('balance')){
-		html = AnyBalance.requestGet(baseurl + 'crm_cabinet_api/balance', g_headers);
+		html = AnyBalance.requestGet(baseurl + 'cns_customer_cabinet/api/balance', g_headers);
 		json = getJson(html);
 		AB.getParam(json.active/100, result, 'balance');
 		AB.getParam(json.inactive/100, result, 'balance_inactive');

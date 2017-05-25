@@ -35,7 +35,7 @@ function main() {
 		getParam(balance, result, 'balance');
 
 		if(AnyBalance.isAvailable('usd')){
-			getParam(balance*result.rate, result, 'usd');
+			getParam(Math.round(balance*result.rate*100)/100, result, 'usd');
 		}
 
 		if(AnyBalance.isAvailable('btc')){

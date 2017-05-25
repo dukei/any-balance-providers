@@ -24,4 +24,7 @@
 	<change version="8" date="2015-04-29">
 	- Do not fail when no data plans are reported by 012 mobile.
 	</change>
+   	<change version="9" date="2017-05-25">
+	- I am using 012 in Israel again, resurrecting this provider cant do any harm :-)
+	</change>
 </history>

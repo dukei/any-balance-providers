@@ -155,6 +155,12 @@ function main()
         } 
     }
     
+    // minutes and text
+    if (bill.CallsSubCategory!=null)
+        result['voice'] = bill.CallsSubCategory.Entity[0].USED_PERCENT;
+    if (bill.SmsSubCategory!=null)
+        result['text'] = bill.SmsSubCategory.Entity[0].USED_PERCENT;
+        
 	// set the rest of the results
 	getParam(bill.ContractTotalFinalBalance, result, 'price', null, null, parseBalance); 
 	getParam(bill.FullName, result, 'fullname', null, null, html_entity_decode); 
@@ -162,7 +168,7 @@ function main()
 	getParam(bill.NextMonthCharge, result, 'nextbill', null, null, parseDate); 
 	getParam(bill.DiscountExpiration, result, 'discountend', /\d\d\.\d\d\.\d\d\d\d/, null, parseDate); 
 	getParam(bill.PlanName, result, 'plan', null, null, html_entity_decode); 
-	
+
     // done, set the result
 	AnyBalance.setResult(result);
 }

@@ -24,17 +24,17 @@ function main(){
 
     AnyBalance.setDefaultCharset('utf-8'); 
 
-    var html = AnyBalance.requestPost(baseurl, {
-        page:'http://divo.ru/service/internet/234.html',
+    var html = AnyBalance.requestPost(baseurl + 'Account/SignIn', {
+        page:'https://www.divo.ru/%D0%BE%D1%88%D0%B8%D0%B1%D0%BA%D0%B0-%D0%B0%D0%B2%D1%82%D0%BE%D1%80%D0%B8%D0%B7%D0%B0%D1%86%D0%B8%D0%B8/',
         AccountId:prefs.login,
         Password:prefs.password
     }, addHeaders({Referer: baseurl})); 
 
-    if(!/id="Exit"/i.test(html)){
+    if(!/SignOut/i.test(html)){
         //Если в кабинет войти не получилось, то в первую очередь надо поискать в ответе сервера объяснение ошибки
-        var error = getParam(html, null, null, /<h1>Ошибка авторизации<\/h1>\s*<p[^>]*>([\s\S]*?)<\/p>/i, replaceTagsAndSpaces);
+        var error = getParam(html, null, null, /<h\d>Ошибка авторизации<\/h\d>\s*<p[^>]*>([\s\S]*?)<\/p>/i, replaceTagsAndSpaces);
         if(error)
-            throw new AnyBalance.Error(error);
+            throw new AnyBalance.Error(error, null, /парол/i.test(error));
         //Если объяснения ошибки не найдено, при том, что на сайт войти не удалось, то, вероятно, произошли изменения на сайте
         throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
     }
@@ -43,39 +43,23 @@ function main(){
     //Получаем все счетчики
     var result = {success: true};
     getParam(html, result, 'balance', /Состояние счета:([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'licschet', /Лицевой счет:([\s\S]*?)<\/p>/i, replaceTagsAndSpaces);
+    getParam(html, result, '__tariff', /Тарифные планы:([\s\S]*?)<\/p>/i, replaceTagsAndSpaces);
 
     if(AnyBalance.isAvailable('trafficIn', 'trafficOut')){
-        html = AnyBalance.requestPost(baseurl, {
-            ScriptManager:'ScriptManager|DetailLast3Month',
-            CurrentAction:'Detail',
-            CurrentActionAttributes:'3:web',
-            __EVENTTARGET:'DetailLast3Month',
-            __EVENTARGUMENT:'',
-            __VIEWSTATE:getViewState(html),
-            __EVENTVALIDATION:getEventValidation(html),
-            __ASYNCPOST:true,
-            '':''
-        }, addHeaders({Referer: baseurl, 'X-MicrosoftAjax':'Delta=true', 'X-Requested-With':'XMLHttpRequest'}));
-        
-        getParam(html, result, 'trafficIn', /Входящий трафик:([^<]*)/i, replaceTagsAndSpaces, parseTrafficGb);
-        getParam(html, result, 'trafficOut', /Исходящий трафик:([^<]*)/i, replaceTagsAndSpaces, parseTrafficGb);
+        html = AnyBalance.requestGet(baseurl + 'History/Last3MonthsSessions', addHeaders({Referer: baseurl}));
+
+        var tbl = getElement(html, /<table[^>]+color-table/i);
+        var trs = getElements(tbl || '', [/<tr/g, new RegExp(getFormattedDate({format: 'MM\\.YYYY'}))]);
+        for(var i=0; i<trs.length; ++i){
+        	sumParam(html, result, 'trafficIn', /(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalanceSilent, aggregate_sum);
+        	sumParam(html, result, 'trafficOut', /(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalanceSilent, aggregate_sum);
+        }
+        if(result.trafficIn)
+        	result.trafficIn = parseTrafficGb(result.trafficIn + ' bytes');
+        if(result.trafficOut)
+        	result.trafficOut = parseTrafficGb(result.trafficOut + ' bytes');
     }
-
-    html = AnyBalance.requestPost(baseurl, {
-        ScriptManager:'ScriptManager|TarifHistory',
-        CurrentAction:'Default',
-        CurrentActionAttributes:'',
-        __EVENTTARGET:'TarifHistory',
-        __EVENTARGUMENT:'',
-        __VIEWSTATE:getViewState(html),
-        __EVENTVALIDATION:getEventValidation(html),
-        __ASYNCPOST:true,
-        '':''
-    }, addHeaders({Referer: baseurl, 'X-MicrosoftAjax':'Delta=true', 'X-Requested-With':'XMLHttpRequest'}));
-    
-    var table = getParam(html, null, null, /<th[^>]*>\s*Тариф([\s\S]*?)<\/table>/i);
-
-    sumParam(table, result, '__tariff', /<tr[^>]*>(?:(?:[\s\S](?!<\/tr>))*?<td[^>]*>){2}((?:[\s\S](?!<\/tr>))*?)<\/td>(?:[\s\S](?!<\/tr>))*?<td[^>]*>Текущий<\/td>\s*<\/tr>/ig, replaceTagsAndSpaces, null, aggregate_join);
 
     //Возвращаем результат
     AnyBalance.setResult(result);

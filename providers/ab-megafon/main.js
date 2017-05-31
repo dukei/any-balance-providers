@@ -1610,6 +1610,22 @@ function checkLKPhone(html){
     return false;
 }
 
+function fixCookies(){
+	//Надо исправить работу куки (пропали кавычки)
+	var cookies = AnyBalance.getCookies();
+	var repaired = false;
+	for(var i=0; i<cookies.length; ++i){
+		var c = cookies[i];
+		if(/^APP-VERSION/i.test(c.name) && !/^"/.test(c.value)){
+			var newval = '"' + c.value + '"';
+			AnyBalance.trace('Исправляем куки ' + c.name + ' на ' + newval);
+			AnyBalance.setCookie(c.domain, c.name, newval, c);
+			repaired = true;
+		}
+	}
+	return repaired;
+}
+
 function enterLK(filial, options){
 	var prefs = AnyBalance.getPreferences();
 	AnyBalance.setDefaultCharset('utf-8');
@@ -1657,6 +1673,7 @@ function enterLK(filial, options){
 
 		
 		html = AnyBalance.requestPost(baseurl + 'dologin/', params, addHeaders({Referer: baseurl + 'login/'}));
+		fixCookies();
 	}	
 
 	if (!isLoggedInLK(html) && !isLoggedInSG(html)) {

@@ -108,9 +108,15 @@ function main() {
 	getParam(data, result, 'balance', /Начислено[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalanceRK);
 	getParam(html, result, 'debt', /((?:Вы не заплатили|Переплата на)[^<]*)/i, [/Переплата на/i, '-', replaceTagsAndSpaces], parseBalanceRK);
 	getParam(params.Month + ' ' + params.Year, result, '__tariff');
+	getParam(+new Date(params.Year, months.indexOf(params.Month), 15), result, 'period');
 	getParam(data, result, 'fine', /Пеня[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalanceRK);
 	getParam(html, result, 'payment', /Сумма к оплате:([^<]*)/i, replaceTagsAndSpaces, parseBalanceRK);
 	getParam(html, result, 'prev_payment', /Оплачено ранее([^<]*)<\//i, replaceTagsAndSpaces, parseBalanceRK);
+	getParam(params.AccauntNum, result, 'licschet');
+
+	var countersTable = getElement(html, /<table[^>]+flat-counters-table/i);
+	getParam(countersTable, result, 'cold_last_counter', /ХВС(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(countersTable, result, 'hot_last_counter', /ГВС(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 
 	
 	AnyBalance.setResult(result);

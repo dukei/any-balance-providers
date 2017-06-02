@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="5">ab-municipal-kvartplata-info</id>
+	<id version="6">ab-municipal-kvartplata-info</id>
 	<api flags="no_browser"/>
 	<name>Квартплата Info</name>
 	<description html="true"><![CDATA[
@@ -23,6 +23,10 @@
 		<counter id="debt" name="Задолженность с прошлых периодов" units=" р"/>
 		<counter id="payment" name="К оплате" units=" р"/>
 		<counter id="prev_payment" name="Оплачено ранее" units=" р"/>
+		<counter id="cold_last_counter" name="Последнее показание ХВС"/>
+		<counter id="hot_last_counter" name="Последнее показание ГВС"/>
+		<counter id="licschet" name="Лицевой счет" type="text"/>
+		<counter id="period" name="Период оплаты" type="time" format="MM.yyyy"/>
 	</counters>
 	<keywords></keywords>
 	<type>municipal</type>

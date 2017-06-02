@@ -25,10 +25,12 @@ function main(){
     var prefs = AnyBalance.getPreferences();
     AnyBalance.setDefaultCharset('UTF-8');
 
-    var baseurl = 'http://cabinet.sibset.ru/';
+// исправлено на https:// и добавлен поддомен города поскольку..
+    var baseurl = 'https://krs.sibset.ru/';
 
-    var html = AnyBalance.requestGet(baseurl, g_headers);
+    var html = AnyBalance.requestGet(baseurl + 'cabinet/', g_headers);
     var url = AnyBalance.getLastUrl();
+// .. getLastUrl() почему-то не отрабатывает редирект
 
     if(!isLoggedIn(html)){
     	
@@ -39,11 +41,11 @@ function main(){
     	var csrf = getParam(html, null, null, /<meta[^>]+name="csrf-token"[^>]*content="([^"]*)/i, replaceHtmlEntities);
 
     	//Обязательно надо капчу запросить, иначе не отсылает смс
-    	AnyBalance.requestGet(baseurl + getParam(html, null, null, /\/(captcha\/[^"]*)/i, replaceHtmlEntities), addHeaders({
+    	AnyBalance.requestGet(joinUrl(baseurl, getParam(html, /(\/captcha\/[^"]*)/i, replaceHtmlEntities)), addHeaders({
     		Referer: url
     	}));
 
-    	html = AnyBalance.requestPost(baseurl + 'check_phone', {
+    	html = AnyBalance.requestPost(baseurl + 'check_phone/', {
     		phone: '8' + prefs.login, 
     		_csrf: csrf
     	}, addHeaders({
@@ -56,7 +58,7 @@ function main(){
 
     	var json = getJson(html);
     	if(json.success != 100){
-    		var error = getElement(json.data, /<div[^>]+wrap_text_block/i, [/Попробовать ещё раз/i, '', replaceTagsAndSpaces]);
+    		var error = replaceAll(json.data, [/Попробовать ещё раз/i, '', replaceTagsAndSpaces]);
     		if(error)
     			throw new AnyBalance.Error(error, null, /не связан/i.test(error));
     		AnyBalance.trace(html);
@@ -64,7 +66,7 @@ function main(){
     	}
 
     	var sms = AnyBalance.retrieveCode('На ваш телефон отправлено SMS с кодом для входа в личный кабинет. Пожалуйста, введите его.');
-    	html = AnyBalance.requestPost(baseurl + 'check_sms', {
+    	html = AnyBalance.requestPost(baseurl + 'check_sms/', {
     		auth_code: sms, 
     	}, addHeaders({
     		Accept: 'application/json, text/javascript, */*; q=0.01',
@@ -94,9 +96,9 @@ function main(){
     	throw new AnyBalance.Error('Не удалось в итоге войти в личный кабинет. Сайт изменен?');
     }
 
-
     var csrf = getParam(html, null, null, /<meta[^>]+name="csrf-token"[^>]*content="([^"]*)/i, replaceHtmlEntities);
-    html = AnyBalance.requestPost(baseurl + 'index_ajax', '', addHeaders({
+// к index_ajax добавлен '/' 
+    html = AnyBalance.requestPost(baseurl + 'cabinet/index_ajax/', '', addHeaders({
    		'X-Requested-With': 'XMLHttpRequest',
    		'X-CSRF-Token': csrf,
    		Origin: baseurl.replace(/\/$/i, ''),
@@ -105,10 +107,13 @@ function main(){
 	
     var result = {success: true};
 
-	getParam(html, result, 'balance', /<div[^>]*class="balance"[^>]*>([\S\s]*?)<\/div>/i, replaceTagsAndSpaces, parseBalanceRK);
-    getParam(html, result, '__tariff', /Текущий тариф интернет:([^<]+)/i, replaceTagsAndSpaces);
-    getParam(html, result, 'licschet', /Номер счёта:([^<]+)/i, replaceTagsAndSpaces);
-    getParam(html, result, 'daysleft', /Средств на балансе хватит на([^<]+)/i, replaceTagsAndSpaces, parseBalance);
+// исправлен регексп
+	getParam(html, result, 'balance', /<div[^>]*class="balance "[^>]*>([\S\s]*?)<\/div>/i, replaceTagsAndSpaces, parseBalanceRK);
+// в принципе, два этих пункта можно достать, но полезность их сомнительна, ибо они статичны
+//    getParam(html, result, '__tariff', /Текущий тариф интернет:([^<]+)/i, replaceTagsAndSpaces);
+//    getParam(html, result, 'licschet', /Номер счёта:([^<]+)/i, replaceTagsAndSpaces);
+// исправлен регексп
+    getParam(html, result, 'daysleft', /<div[^>]*class="ostatok"[^>]*>([\S\s]*?)<\/b>/i, replaceTagsAndSpaces, parseBalance);
 //    getParam(html, result, 'bonus', /<a[^>]*class="header-bonus-button[^"]*"[^>]*>([\S\s]*?)<\/a>/i, replaceTagsAndSpaces, parseBalance);
 
     AnyBalance.setResult(result);

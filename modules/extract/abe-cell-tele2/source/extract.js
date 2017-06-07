@@ -155,7 +155,7 @@ function enterBySms(){
             var json = getJson(html);
             if (json.success) {
                 AnyBalance.setCookie('login.tele2.ru', 'AUTH_DATA', json.key);
-                html = AnyBalance.requestGet(baseurlLogin + 'wap/auth?serviceId=341', g_headers);
+                html = AnyBalance.requestGet(baseurlLogin + 'wap/auth?serviceId=301', g_headers);
             } else {
                 if (json.captchaNeeded) {
                     var image = AnyBalance.requestGet(baseurlLogin + 'wap/auth/captcha?' + new Date().getTime(), g_headers);

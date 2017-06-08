@@ -462,7 +462,15 @@ function isAnotherNumber() {
 function checkLoginState(html, options) {
 	var baseurl = (options && options.baseurl) || g_baseurl;
 	var referer = AnyBalance.getLastUrl();
-    if (/checkAuthStatus\(\)|дождитесь окончания процесса авторизации/i.test(html)) {
+	var meta = getParam(html, /<META[^>]+http-equiv="refresh"[^>]+content="\d+;URL=([^"]*)"/i, replaceHtmlEntities);
+	if(meta){
+    	AnyBalance.trace('Meta redirect to ' + meta);
+		var _html = AnyBalance.requestGet(baseurl + '/sitesettings/RequireConfig', addHeaders({Referer: referer}));
+		_html = AnyBalance.requestGet(baseurl + '/sitesettings/Settings.js', addHeaders({Referer: referer}));
+		html = _html;
+	}
+
+    if (/checkAuthStatus|дождитесь окончания процесса авторизации/i.test(html)) {
         var json = {}, tries = 20;
         while (json.Data != 'Success' && tries-- > 0) {
             json = AnyBalance.requestGet(baseurl + '/WaitAuth/CheckAuth?_=' + new Date().getTime(), addHeaders({Referer: referer}));
@@ -744,71 +752,27 @@ function keysToLowerCase(obj) {
 
 function processTrafficH2O(h2oProfile, result){
     AnyBalance.trace('H2O profile: ' + JSON.stringify(h2oProfile));
+
+    var till = typeof (h2oProfile.personalOptionUsage) != 'undefined'
+        ? h2oProfile.personalOptionUsage.usageEndDate
+        : h2oProfile.traffic.homeNextRotateDate;
+    var eatProlong = typeof (h2oProfile.autoStep) != 'undefined' && h2oProfile.autoStep.isActive;
+    var available = eatProlong
+        ? h2oProfile.autoStep.stepRemainder
+        : h2oProfile.traffic.available;
+    var consumed = eatProlong
+        ? h2oProfile.autoStep.stepQuota - h2oProfile.autoStep.stepRemainder
+        : h2oProfile.traffic.consumed;
+
     var obj = keysToLowerCase(h2oProfile);
 
     if(!result.remainders)
         result.remainders = {};
     var remainders = result.remainders;
 
-    //Теперь надо сделать сложные манипуляции с трафиком, как они делают их на сайте (http://internet.mts.ru/Scripts/mtsinternet/widgets/availableTraffic-valid.js). Извращенцы, почему нельзя было проще?
-    var isAcceptor = typeof (h2oProfile.h2o.p.muia) != 'undefined' && h2oProfile.h2o.p.muia.acceptor;
-
-    function anyActive(prev, x){
-    	return prev || x.isactive
-    }
-
-    function getTrafficInfo(trafficItem, isAcceptor) { //http://internet.mts.ru/Scripts/mtsinternet/widgets/availableTraffic-invalid.js
-        var quota = 0;
-        if (isAcceptor && trafficItem.muia) {
-            quota = trafficItem.muia.personalquota > 0 ? trafficItem.muia.personalquota : trafficItem.muia.sharedquotasize;
-        }
-        if (trafficItem.limits) {
-            for (var i = 0; i < trafficItem.limits.length; i++) {
-                var curr = trafficItem.limits[i].floor > trafficItem.limits[i].ceiling || isNaN(trafficItem.limits[i].ceiling)
-                    ? trafficItem.limits[i].floor
-                    : trafficItem.limits[i].ceiling;
-                quota = quota < curr ? curr : quota;
-            }
-        } else {
-            quota = 'Infinity';
-        }
-
-        var unavailable = isAcceptor && trafficItem.muia
-                ? quota - trafficItem.muia.quantumremaining - trafficItem.muia.quotaremaining
-                : 0;
-        return {
-            quota: quota,
-            unavailable: unavailable,
-            consumed: trafficItem.value,
-            available: quota - unavailable - trafficItem.value
-        };
-    }
-
-    var trafficExt = obj.personaltrafficextended;
-    var paoExt = obj.personaloptionextended;
-    if(trafficExt){ //Valid
-    	AnyBalance.trace('найден валидный трафик');
-        if (!isAcceptor && ((paoExt.autoprolongations && paoExt.autoprolongations.reduce(anyActive, false)) 
-        		|| (paoExt.extrapackages && paoExt.extrapackages.reduce(anyActive, false)))) {
-        	sumParam('' + (trafficExt.consumed),
-        		remainders, 'remainders.traffic_used_mb', null, null, parseTrafficFromKb, aggregate_sum);
-        	sumParam('' + (trafficExt.consumed > paoExt.quotas.basequota ? 0 : paoExt.quotas.basequota - trafficExt.consumed),
-        		remainders, 'remainders.traffic_left_mb', null, null, parseTrafficFromKb, aggregate_sum);
-        } else {
-        	sumParam(trafficExt.available + '', remainders, 'remainders.traffic_left_mb', null, null, parseTrafficFromKb, aggregate_sum);
-        	sumParam(trafficExt.consumed + '', remainders, 'remainders.traffic_used_mb', null, null, parseTrafficFromKb, aggregate_sum);
-        }
-    }else if(h2oProfile.personaltrafficitem){ //Invalid
-    	var ti = getTrafficInfo(obj.personaltrafficitem, isAcceptor);
-    	AnyBalance.trace('найден невалидный трафик ' + JSON.stringify(ti));
-     	sumParam(ti.available + '', remainders, 'remainders.traffic_left_mb', null, null, parseTrafficFromKb, aggregate_sum);
-       	sumParam(ti.consumed + '', remainders, 'remainders.traffic_used_mb', null, null, parseTrafficFromKb, aggregate_sum);
-    }else{
-    	AnyBalance.trace('Трафик не найден: ' + JSON.stringify(obj));
-    }
-
-    if(obj.personaltrafficitem)
-    	getParam(obj.personaltrafficitem.expirationtime, remainders, 'remainders.traffic_left_till', null, null, parseDateISO);
+   	sumParam(available + '', remainders, 'remainders.traffic_left_mb', null, null, parseTrafficFromKb, aggregate_sum);
+   	sumParam(consumed + '', remainders, 'remainders.traffic_used_mb', null, null, parseTrafficFromKb, aggregate_sum);
+   	getParam(till, remainders, 'remainders.traffic_left_till', null, null, parseDateISO);
 }
 
 function processTrafficInternet(result){
@@ -819,7 +783,7 @@ function processTrafficInternet(result){
     	html = checkLoginState(html, {baseurl: baseurl});
 
     	var script = AnyBalance.requestGet(baseurl + '/sitesettings/H2OProfile.js', addHeaders({Referer: baseurl+'/'}));
-    	var obj = getJsonObject(script, /_profile:(?=\s*\{)/i);
+    	var obj = getJsonObject(script, /_user:(?=\s*\{)/i);
     	processTrafficH2O(obj, result);
     }
 }

@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="45" date="2017-06-08">
+	Идентификация как AnyBalance для входа и по логину-паролю (по просьбе Tele2)
+	</change>
 	<change version="44" date="2017-06-07">
 	- Процедура входа адаптирована требованиям Tele2
 	</change>

@@ -52,7 +52,7 @@ function login() {
         if(!prefs.password){
             html = enterBySms();
         }else {
-            html = AnyBalance.requestGet(_baseurlLoginIndex, g_headers);
+            html = AnyBalance.requestGet(_baseurlLoginIndex + '?serviceId=301', g_headers);
             if (!html || AnyBalance.getLastStatusCode() > 400) {
                 AnyBalance.trace(html);
                 throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');

@@ -76,6 +76,9 @@ function main() {
 function getRostov() {
   var prefs = AnyBalance.getPreferences();
   var baseurl = 'https://lk.ug.mts.ru/';
+	AnyBalance.setOptions({
+		SSL_ENABLED_PROTOCOLS: ['TLSv1.1', 'TLSv1.2'] //Только на этом протоколе теперь работает
+	});
 
   var headers = addHeaders({'Content-Type': 'application/json', Accept: 'application/json'});
   // Заходим на главную страницу
@@ -504,7 +507,7 @@ function parseTrafficPerm(text) {
 }
 
 function getUln() {
-  newTypicalLanBillingInetTv('https://lkuln.pv.mts.ru/index.php');
+  newTypicalLanBillingInetTv_1('https://lkuln.pv.mts.ru/index.php');
 }
 
 function getNorilsk() {
@@ -893,7 +896,7 @@ function getNovokuz() {
 }
 
 function getVladimir() {
-  newTypicalLanBillingInetTv('https://lk-vladimir.center.mts.ru/index.php');
+  newTypicalLanBillingInetTv_1('https://lk-vladimir.center.mts.ru/index.php');
 }
 
 function getBelgorod() {

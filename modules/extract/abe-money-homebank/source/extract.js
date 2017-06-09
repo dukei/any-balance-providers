@@ -10,7 +10,7 @@ var g_headers = {
 	'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:35.0) Gecko/20100101 Firefox/35.0'
 };
 
-var baseurl = 'https://www.homebank.kz/new/';
+var baseurl = 'https://www.homebank.kz/';
 
 function login(prefs) {
 	AnyBalance.setDefaultCharset('utf-8');

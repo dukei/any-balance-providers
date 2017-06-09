@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="4">ab-exchange-rbc</id>
+	<id version="5">ab-exchange-rbc</id>
 	<api flags="no_browser"/>
 	<name>Курсы валют РБК</name>
 	<description html="true"><![CDATA[

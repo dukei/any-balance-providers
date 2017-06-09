@@ -21,7 +21,7 @@ function main() {
 	
 	var html = AnyBalance.requestGet(baseurl, g_headers);
 	
-	var table = getElement(html, /<div[^>]+class="indicators_vert__inner"[^>]*>/i);
+	var table = getElement(html, /<div[^>]+class="indicators__inner"[^>]*>/i);
 	if(!table)
 		throw new AnyBalance.Error('Не удалось найти таблицу с данными. Сайт изменен?');
 	

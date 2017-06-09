@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="3">ab-internet-tele-vox</id>
+  <id version="4">ab-internet-tele-vox</id>
   <api flags="no_browser"/>
   <name>Телевокс (Благовещенск)</name>
   <description>
@@ -8,12 +8,14 @@
 
     Информация берется из личного кабинета https://www.tele-vox.ru.
   </description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+  <depends>
+  	<module id="library"/>
+  </depends>
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
     <js>main.js</js>
-    <js>library.js</js>
     <history>history.xml</history>
   </files>
   <counters>

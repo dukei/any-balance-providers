@@ -12,6 +12,16 @@ var g_headers = {
     'User-Agent': 'Mozilla/5.0 (Linux; Android 5.0; SM-G900F Build/LRX21T) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/43.0.2357.93 Mobile Safari/537.36'
 };
 
+var getFormCodeFromStatus = function(xFormStatus) {
+    var code = xFormStatus;
+    var i, l, hval = 0x811c9dc5;
+    for (i = 0, l = code.length; i < l; i++) {
+        hval ^= code.charCodeAt(i);
+        hval += (hval << 1) + (hval << 4) + (hval << 7) + (hval << 8) + (hval << 24);
+    }
+    return code + "_" + hval.toString(16);
+};
+
 function main() {
     var prefs = AnyBalance.getPreferences();
     AnyBalance.setDefaultCharset('utf-8');
@@ -19,19 +29,38 @@ function main() {
     checkEmpty(prefs.login, 'Введите логин!');
     checkEmpty(prefs.password, 'Введите пароль!');
 
-    var baseurl = 'https://www.s7.ru/dotCMS/priority/';
-    
-    var loginJson = AnyBalance.requestPost(baseurl + 'ajaxLogin', {
-        dispatch: 'login',
-        username: prefs.login,
-        password: prefs.password
-    }, g_headers);
-    
-    if (!loginJson || (AnyBalance.getLastStatusCode() >= 400)) {
-        AnyBalance.trace(loginJson);
+    var baseurl = 'https://www.s7.ru/';
+
+    var html = AnyBalance.requestGet(baseurl, g_headers);
+
+    if (!html || (AnyBalance.getLastStatusCode() >= 400)) {
+        AnyBalance.trace(html);
         throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
     }
 
+    html = AnyBalance.requestGet(baseurl + 'servlets/formprocess/formsecurity?action=checkStatus', g_headers);
+    var formStatus = AnyBalance.getLastResponseHeader('X-Form-Status');
+    if(!formStatus){
+    	AnyBalance.trace(html);
+    	throw new AnyBalance.Error('Не удалось получить токен авторизации. Сайт изменен?');
+    }
+
+    html = AnyBalance.requestGet(baseurl + 'servlets/formprocess/formsecurity?action=generateUiTicketUniqName', g_headers);
+    var json = getJson(html);
+    if(!json.c || !json.c.name){
+    	AnyBalance.trace(html);
+    	throw new AnyBalance.Error('Не удалось получить имя токена авторизации. Сайт изменен?');
+    }
+
+    var loginJson = AnyBalance.requestPost(baseurl + 'dotCMS/priority/ajaxLogin', {
+        dispatch: 'login',
+        username: prefs.login,
+        password: prefs.password,
+        ticketName: json.c.name,
+		uiTicket: json.c.value,
+        xFormCode: getFormCodeFromStatus(formStatus)
+    }, g_headers);
+    
     var login = AB.getJson(loginJson);
     if (login.status != 'success') {
         var fatal = false;
@@ -48,7 +77,7 @@ function main() {
         throw new AnyBalance.Error(errorMsg || 'Ошибка авторизации.', false, fatal);
     }
     
-    var userDataJson = AnyBalance.requestGet(baseurl + 'ajaxProfileService?dispatch=getUserInfo&_=' + Date.now(), g_headers);
+    var userDataJson = AnyBalance.requestGet(baseurl + 'dotCMS/priority/ajaxProfileService?dispatch=getUserInfo&_=' + Date.now(), g_headers);
     
     if (!userDataJson || (AnyBalance.getLastStatusCode() >= 400)) {
         AnyBalance.trace(userDataJson);

@@ -39,10 +39,10 @@ function main() {
 	
 	var result = {success: true};
 	
-    getParam(html, result, 'licschet', /(?:Лицевой счет №)[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'licschet', /(?:Лицевой счет №)[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
     getParam(html, result, 'balance', /(?:Ваш баланс)([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, '__tariff', /<div[^>]+class="panel"[\s\S]*?<div[^>]+class="header"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'fio', /<div[^>]+class="name"[^>]*>([\s\S]*?)<\/div>/i, [replaceTagsAndSpaces, /-/g, '', /\s*$|^\s*/g, ''], html_entity_decode);
+    getParam(html, result, '__tariff', /<div[^>]+class="panel"[\s\S]*?<div[^>]+class="header"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+    getParam(html, result, 'fio', /<div[^>]+class="name"[^>]*>([\s\S]*?)<\/div>/i, [replaceTagsAndSpaces, /-/g, '', /\s*$|^\s*/g, '']);
     
 	if (isAvailable(['trafficIn', 'trafficOut'])) {
     	html = AnyBalance.requestGet(baseurl + 'cabinet/internet/statistic', g_headers);

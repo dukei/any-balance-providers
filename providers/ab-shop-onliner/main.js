@@ -32,12 +32,16 @@ function main() {
 		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
 	}
 
-	var token = getParam(html, null, null, /MODELS\.onlinerLogin\.data\.token\('([\S]+)'\);/i);
+	var token = getParam(html, /MODELS\.onlinerLogin\.data\.token\('([\S]+)'\);/i);
 	checkEmpty(token, "Не удалось найти токен. Сайт изменен?");
+	var sitekey = getParam(html, /data-sitekey="([^"]*)/i, replaceHtmlEntities);
+	var recaptcha = solveRecaptcha('Пожалуйста, докажите, что вы не робот', apiurl, sitekey);
 
 	var res = AnyBalance.requestPost(apiurl + 'login', JSON.stringify({
 		login: prefs.login,
 		password: prefs.password,
+		recaptcha_response_field: recaptcha,
+		session_id: null,
 		token: token
 	}), addHeaders(g_api_headers));
 	
@@ -59,15 +63,15 @@ function main() {
 	
 	var result = {success: true};
 	
-	getParam(json.user.money, result, 'balance');
+	getParam(json.user.money + '', result, 'balance', null, null, parseBalance);
 	getParam(json.user.nickname, result, 'nickname');
 
 	if(isAvailable(['account', 'registerDate', 'city'])){
 		html = AnyBalance.requestGet(baseurl, g_headers);
 
-		getParam(html, result, 'account', /Учетная запись(?:[^>]*>){2}([^<]+)/i, replaceTagsAndSpaces, parseBalance);
+		getParam(html, result, 'account', /Учетная запись(?:[^>]*>){2}([^<]+)/i, replaceTagsAndSpaces);
 		getParam(html, result, 'registerDate', /Зарегистрирован(?:[^>]*>){2}([^<]+)/i, replaceTagsAndSpaces, parseDateWord);
-		getParam(html, result, 'city', /Из города(?:[^>]*>){2}([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
+		getParam(html, result, 'city', /Из города(?:[^>]*>){2}([^<]+)/i, replaceTagsAndSpaces);
 	}
 
 	if(isAvailable('newMessages')){

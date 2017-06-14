@@ -99,9 +99,9 @@ function doLogin(result, prefs) {
 
 		for(var i=0; i< tracks.length; i++) {
 			var day_time = getElement(tracks[i], /<div[^>]+class="time"/i, replaceTagsAndSpaces) || '';
-			var status = getElement(tracks[i], /<div[^>]+"checkpoint-status"/i, replaceTagsAndSpaces) || '';
+			var status = getElement(tracks[i], /<[^>]+"checkpoint-status"/i, replaceTagsAndSpaces) || '';
 			var name = getElement(tracks[i], /<div[^>]+"title-wrapper"/i, replaceTagsAndSpaces) || '';
-			var geo = getElement(tracks[i], /<div[^>]+"text-muted"/i, replaceTagsAndSpaces) || '';
+			var geo = getElement(tracks[i], /<[^>]+"text-muted"/i, replaceTagsAndSpaces) || '';
 
 
 			result.allTracksText += '<b>' + name + ', ' + status + ' (' + geo + ')</b><br/>' + '<small>' + day_time + '</small><br/><br/>';
@@ -145,7 +145,7 @@ function getInfo(result, html) {
 			for(var i = 0; i < checkpoints.length; i++) {
 				var date = getParam(checkpoints[i], null, null, /<time[^>]*datetime="([^"]+)/i, replaceTagsAndSpaces, parseDateISO);
 				var status = getParam(checkpoints[i], null, null, /"checkpoint-status"(?:[^>]*>)([^<]+)/i, replaceTagsAndSpaces);
-				var geo = getParam(checkpoints[i], null, null, /class="text-muted"[^>]*>([\s\S]*?)<\/div/i, replaceTagsAndSpaces);
+				var geo = getElement(checkpoints[i], /<em[^>]+text-muted/i, replaceTagsAndSpaces);
 
 				if(i == 0) {
 					getParam(status, result, 'status');

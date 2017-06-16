@@ -11,6 +11,10 @@ var g_headers = {
 function main(){
     var prefs = AnyBalance.getPreferences();
 
+	AnyBalance.setOptions({
+		SSL_ENABLED_PROTOCOLS: ['TLSv1.2'] //Чтобы работало на Android 4.1+
+	});
+	
     AnyBalance.setDefaultCharset('utf-8');
 	
 	checkEmpty(prefs.login, 'Enter e-mail!');

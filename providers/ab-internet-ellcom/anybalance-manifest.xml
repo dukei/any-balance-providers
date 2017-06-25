@@ -1,11 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="4">ab-internet-ellcom</id>
+	<id version="5">ab-internet-ellcom</id>
 	<api flags="no_browser"/>
 	<name>Ellco (Электросвязь)</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе провайдера Ellco (Электросвязь) http://www.ellco.ru/</p>
-	<p>Информация берется из личного кабинета https://bill.ellco.ru/bgbilling/webexecuter</p>
+	<p>Информация берется из личного кабинета https://bill.ellco.ru/my/</p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>

@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="3" version="41" date="2017-06-25">
+	- Поддержка изменений на сайте.
+	</change>
 	<change major_version="3" version="40" date="2016-06-26">
 	Поддержка нового протокола
 	</change>

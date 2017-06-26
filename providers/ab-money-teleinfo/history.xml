@@ -1,5 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="3" version="42" date="2017-06-26">
+	- Поддержка изменений на сайте.
+	- Исправлено получение карт и счетов
+	</change>
 	<change major_version="3" version="41" date="2017-06-25">
 	- Поддержка изменений на сайте.
 	</change>

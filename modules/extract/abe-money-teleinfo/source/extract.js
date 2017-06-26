@@ -300,8 +300,9 @@ function isSessionValid() {
 
     try {
         var obj = request(new Message({
-            __type: 'ru.vtb24.mobilebanking.protocol.product.MainPageProductsRequest',
-            portfolioTypeMto: {
+            __type: 'ru.vtb24.mobilebanking.protocol.product.PortfolioRequest',
+            refreshImmediately: true,
+            portfolioType: {
                 __type: 'ru.vtb24.mobilebanking.protocol.product.PortfolioTypeMto',
                 id: 'ACCOUNTS_AND_CARDS'
             }
@@ -438,9 +439,13 @@ function getCardsAndAccounts(){
     }
 
     //Приводим к плоскому виду, как MainPageProductsRequest
-    for(var i=0; i<obj.payload.portfolio.productGroups.length; ++i){
-        var group = obj.payload.portfolio.productGroups[i];
-        processProductsArray(group.items);
+    for(var j=0; j<obj.payload.portfolios.length; ++j){
+    	var portfolio = obj.payload.portfolios[j];
+        for(var i=0; i<portfolio.productGroups.length; ++i){
+            var group = portfolio.productGroups[i];
+            processProductsArray(group.mainProduct && [group.mainProduct]);
+            processProductsArray(group.products);
+        }
     }
 
     AnyBalance.trace('Найдено ' + obj.payload.products.length + ' карт и счетов');

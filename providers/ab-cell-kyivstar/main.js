@@ -53,14 +53,24 @@ function processSite() {
 		if(isLoggedInNew(html) || isNewDemo(html)){
 			processNew(html);
 		}else{
-			processOld(html);
+			processOldNew(html);
 		}
 	}else if(prefs.source == 'new'){
 		processNew(html);
 	}else{
-		processOld(html);
+		processOldNew(html);
 	}
 }
+
+function processOldNew(html){
+	try{
+		processOld(html);
+	}catch(e){
+		AnyBalance.trace('Ошибка обработки старого кабинета: ' + e.message + '\n' + e.stack);
+		processNew();
+	}
+}
+
 
 function processNew(html){
 	var baseurl = 'https://new.kyivstar.ua/ecare/';

@@ -105,10 +105,12 @@ function login(prefs) {
         var params = createFormParams(html, function(params, str, name, value) {
             if (name == 'txtCode')
                 return AnyBalance.retrieveCode((msg || 'Пожалуйста, введите код из SMS для входа в интернет-банк.' ) + '\n\nЧтобы каждый раз не вводить код, вы можете отключить его в своём интернет банке: меню "Настройки системы"/"Настройки информирования"/"Информирование об операциях в системе", затем снять галочку "Запрашивать SMS-код подтверждения при входе". Это безопасно, код подтверждения всё равно будет требоваться для всех операций.', null, {inputType: 'number', time: 300000});
+            if (name == '__EVENTTARGET')
+            	return 'btnLoginSMS';
             return value;
         });
 
-        html = AnyBalance.requestPost(baseurl + 'secure/login.aspx', params, addHeaders({Referer: baseurl + 'secure/login.aspx'}));
+        html = AnyBalance.requestPost(baseurl + 'secure/login.aspx?a=2&returnurl=', params, addHeaders({Referer: baseurl + 'secure/login.aspx'}));
 	}
 
 	if (!/logout/i.test(html)) {

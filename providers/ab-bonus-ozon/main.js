@@ -32,7 +32,7 @@ function main() {
 	}
 
 	function tryToLogin(html){
-		var form = getElement(html, /<form[^>]+form1/i);
+		var form = getElement(html, /<form[^>]+name="form1"/i);
 		if (!form){
 			AnyBalance.trace(html);
 			throw new AnyBalance.Error('Не найдена форма входа. Сайт изменен?');
@@ -59,7 +59,7 @@ function main() {
 	}
 
 	html = tryToLogin(html);
-   	if(!/context\/logoff/i.test(html) && /<form[^>]+form1/i.test(html)){
+   	if(!/context\/logoff/i.test(html) && /<form[^>]+name="form1"/i.test(html)){
    		AnyBalance.trace('Снова форма авторизации... Заходим ещё разок');
 	  	html = tryToLogin(html); //Иногда может снова быть логин, если инкапсула не дала залогиниться
 	}

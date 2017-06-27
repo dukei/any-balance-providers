@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="14" date="2017-06-27">
+	- Поддержка изменений на сайте.
+	</change>
 	<change version="13" date="2017-04-05">
 	Обход защиты от роботов (дополнительные случаи)
 	</change>

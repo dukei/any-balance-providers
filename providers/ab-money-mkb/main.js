@@ -54,7 +54,7 @@ var g_countersTable = {
 function shouldProcess(counter, info){
 	var prefs = AnyBalance.getPreferences();
 	
-	if(!info || (!info.__id || !info.__name))
+	if(!info || !info.__id)
 		return false;
 	
 	switch(counter){
@@ -79,6 +79,7 @@ function shouldProcess(counter, info){
 			
 			if(endsWith(info.__id, prefs.num))
 				return true;
+			return false;
 		}
 		case 'loans':
 		{
@@ -87,11 +88,14 @@ function shouldProcess(counter, info){
 		    if(!prefs.num)
 		    	return true;
 			
-			var accNum = info.__id.replace(/\D/g, '');
-			return new RegExp(prefs.num, 'i').test(accNum);
+			var crednum = info.__id.replace(/\D/g, '');
 			
-			if(endsWith(info.__id.replace(/\D/g, ''), prefs.num))
+			if(endsWith(crednum, prefs.num))
 				return true;
+
+			if(new RegExp(regexEscape(prefs.num) + '\\b', 'i').test(info.__id))
+				return true;
+			return false;
 		}	
 		case 'deposits':
 		{
@@ -102,6 +106,7 @@ function shouldProcess(counter, info){
 			
 			if(endsWith(info.__id, prefs.num))
 				return true;
+			return false;
 		}
 		default:
 			return false;

@@ -481,13 +481,13 @@ function processLoans(html, result) {
 	AnyBalance.trace('Найдено кредитов: ' + loans.length);
 	result.loans = [];
 	
-	var detailsJson = getParam(html, null, null, /var\s+loanDetailsData\s*=\s*(\[{[\s\S]*?}\])/i, null, getJson);
-    var historyJson = getParam(html, null, null, /var\s+loanHistoryData\s*=\s*(\[{[\s\S]*?}\])/i, null, getJson);
-    var scheduleJson = getParam(html, null, null, /var\s+loanFuturePaymentsData\s*=\s*(\[{[\s\S]*?}\])/i, null, getJson);
+	var detailsJson = getParam(html, /var\s+loanDetailsData\s*=\s*(\[{[\s\S]*?}\])/i, null, getJson);
+    var historyJson = getParam(html, /var\s+loanHistoryData\s*=\s*(\[{[\s\S]*?}\])/i, null, getJson);
+    var scheduleJson = getParam(html, /var\s+loanFuturePaymentsData\s*=\s*(\[{[\s\S]*?}\])/i, null, getJson);
 
 	for(var i=0; i < loans.length; ++i){
-		var _id = getParam(loans[i], null, null, /class="txt"[^>]*>\s*([^<]+)/i, replaceTagsAndSpaces);
-		var title = getParam(loans[i], null, null, /class="txt"(?:[^>]*>){6}\s*([^<]+)/i, replaceTagsAndSpaces);
+		var _id = getParam(loans[i], /class="txt"[^>]*>\s*([^<]+)/i, replaceTagsAndSpaces);
+		var title = getElement(loans[i], /<div[^>]+product-attr-title/i, replaceTagsAndSpaces);
 		
 		var c = {__id: _id, __name: title};
 		

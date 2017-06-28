@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="4" date="2017-06-28">
+	Changed date format
+	</change>
 	<change version="3" date="2016-12-12">
 	Renamed counter to Total internet left
 	</change>

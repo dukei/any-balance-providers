@@ -91,7 +91,7 @@ function main(){
 
     html = AnyBalance.requestGet(baseurl + '/my-account', g_headers);
     getParam(html, result, 'fio', /Владелец карты[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
-    getParam(html, result, 'balance', /Доступно для оплаты покупок[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'balance', /<div[^>]+my-account-block-bonus-rubles-title[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, '__tariff', /Номер карты[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
     
     var hist = getElement(html, /<li[^>]+personal-orders-block-item[^>]*>/i);

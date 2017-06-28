@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="2.0" version="17" date="2017-06-28">
+	Исправлен баланс доступных бонусных рублей
+	</change>
 	<change major_version="2.0" version="16" date="2016-12-19">
 	Совместимость с другими средами выполнения
 	</change>

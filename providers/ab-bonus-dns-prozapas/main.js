@@ -79,7 +79,7 @@ function main() {
 
 	AB.getParam(getElement(html, /<div[^>]+bonus-active/i), result, 'balance', null, [AB.replaceTagsAndSpaces, /нет бонусов/i, '0'], AB.parseBalance);
 	AB.getParam(getElement(html, /<div[^>]+bonus-no-active/i), result, 'inactive', null, AB.replaceTagsAndSpaces, AB.parseBalance);
-	AB.getParam(html, result, 'till', /<td[^>]+date[^>]*>\s*\S[\s\S]*?<\/td>/i, AB.replaceTagsAndSpaces, AB.parseDate);
+	AB.getParam(html, result, 'till', /Дата сгорания:[\s\S]*?<div[^>]+bonus-count[^>]*>([\s\S]*?)<\/div>/i, AB.replaceTagsAndSpaces, AB.parseDate);
 	AB.getParam(html, result, 'fio', /<span[^>]+user-title[^>]*>([\s\S]*?)<\/span>/i, AB.replaceTagsAndSpaces);
 
 	AnyBalance.setResult(result);

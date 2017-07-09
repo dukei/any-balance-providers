@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-internet-pskovline</id>
+	<id version="11">ab-internet-pskovline</id>
 	<api flags="no_browser"/>
 	<name>PskovLine (Псков)</name>
 	<description html="true"><![CDATA[

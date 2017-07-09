@@ -29,7 +29,7 @@ function main() {
 			result['ballance']=parseFloat(matches[3].match(/>([\d\-\.]+)<\//)[1]);
 
 // Сумма списания за период
-var tarif= ( isNaN(parseInt(matches[14].match(/\d+/))) ? (parseInt(matches[13].match(/\d+/))) : (parseInt(matches[14].match(/\d+/))) );
+var tarif= ( isNaN(parseInt(matches[14].match(/\d+/),10)) ? (parseInt(matches[13].match(/\d+/),10)) : (parseInt(matches[14].match(/\d+/),10)) );
 result['tarif']=tarif;
 			if (AnyBalance.isAvailable('login'))
 				result['login'] =matches[5].match(/>(.*)<\//)[1];
@@ -43,7 +43,7 @@ result['tarif']=tarif;
 // Срок до отключения
 var dats=result['date'].split('.'); var tmp=dats[0]; dats[0]=parseInt(dats[1],10); dats[1]=tmp;
 // ...больше месяца ?
-if (tarif<result['ballance']) dats[0]+=Math.floor(result['ballance']/tarif);
+if (tarif<result['ballance']) dats[0]+=Math.floor(result['ballance']/tarif,10);
 if (dats[0]==13) {dats[0]=1; dats[2]++;}
 // Считаем дни
 dats=Math.ceil((Date.parse(dats.join('.'))-date)/(1000*60*60*24));

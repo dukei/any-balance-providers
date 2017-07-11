@@ -11,30 +11,30 @@ var g_headers = {
 
 function getRegions() {
 	var html = AnyBalance.requestGet('https://lk.megafon.ru/b2blinks/', g_headers);
-	
+
 	var regions = sumParam(html, null, null, /data-value="[^"]+(?:[^>]*>){3}[^<]+/ig)
-	
+
 	AnyBalance.trace('Регионов: ' + regions.length);
-	
+
 	var values='';
 	var entries='';
 	for(var i= 0; i < regions.length; i++) {
 		var curr = regions[i];
-		
+
 		var val = getParam(curr, null, null, /data-value="([^"]+)/i, replaceTagsAndSpaces);
 		var name = getParam(curr, null, null, />([^<]+)$/i, replaceTagsAndSpaces);
-		
+
 		if(!val || !name)
 			throw new AnyBalance.Error('Ошибка при поиске регионов!');
-		
+
 		values += val + '|';
 		entries += name + '|';
 	}
-	
-	
+
+
 	AnyBalance.trace('values: ' + values);
 	AnyBalance.trace('entries: ' + entries);
-	
+
 }
 
 var g_conversion = {
@@ -43,9 +43,6 @@ var g_conversion = {
 
 function main() {
     var prefs = AnyBalance.getPreferences();
-
-    AB.checkEmpty(prefs.login, 'Введите логин!');
-    AB.checkEmpty(prefs.password, 'Введите пароль!');
 
     AnyBalance.setDefaultCharset('utf-8');
     var region = prefs.region || 'center';
@@ -63,7 +60,7 @@ function main() {
     html = AnyBalance.requestPost(baseurl + 'sc_cp_apps/loginProcess', {
         j_username: prefs.login,
         j_password: prefs.password,
-    }, AB.addHeaders({
+    }, addHeaders({
     	Referer: baseurl + 'sc_cp_apps/login',
     	'X-Requested-With': 'XMLHttpRequest',
     	Accept: 'application/json, text/javascript, */*; q=0.01',
@@ -72,7 +69,7 @@ function main() {
     var json = getJson(html);
     if(!json.redirect || /error/i.test(json.redirect)){
     	if(json.redirect)
-    		html = AnyBalance.requestGet(joinUrl(baseurl, json.redirect), AB.addHeaders({
+    		html = AnyBalance.requestGet(joinUrl(baseurl, json.redirect), addHeaders({
     			Referer: baseurl + 'sc_cp_apps/login',
 		    }));
 
@@ -86,9 +83,10 @@ function main() {
 
     var tries = 1, maxTries = 10;
     do{
-	    var ok = AnyBalance.requestGet(baseurl + 'sc_cp_apps/isUserDataCached', AB.addHeaders({
+	    var ok = AnyBalance.requestGet(baseurl + 'sc_cp_apps/isUserDataCached', addHeaders({
     		Referer: baseurl + 'sc_cp_apps/login',
     		'X-Requested-With': 'XMLHttpRequest',
+            Accept: 'application/json, text/javascript, */*; q=0.01',
 	    }));
 	    ok = getJson(ok);
 
@@ -99,7 +97,7 @@ function main() {
 
 	    if(tries == 1){
     		AnyBalance.trace('Обновляем информацию...');
-	        AnyBalance.requestPost(baseurl + 'sc_cp_apps/cacheUserData', '', AB.addHeaders({
+	        AnyBalance.requestPost(baseurl + 'sc_cp_apps/cacheUserData', '', addHeaders({
     			Referer: baseurl + 'sc_cp_apps/login',
     			'X-Requested-With': 'XMLHttpRequest',
 	        }));
@@ -112,7 +110,7 @@ function main() {
 	    AnyBalance.sleep(2000);
     }while(true);
 
-    html = AnyBalance.requestGet(joinUrl(baseurl, json.redirect), AB.addHeaders({
+    html = AnyBalance.requestGet(joinUrl(baseurl, json.redirect), addHeaders({
     	Referer: baseurl + 'sc_cp_apps/login',
     }));
 
@@ -126,21 +124,21 @@ function main() {
 
     var result = {success: true};
 
-    AB.getParam(html, result, 'balance', /<dt[^>]*>\s*Текущий баланс[\s\S]*?class="money[^>]*>([\s\S]*?)<span/i, AB.replaceTagsAndSpaces, AB.parseBalance);
-    AB.getParam(html, result, 'abonCount', /<dt[^>]*>\s*Абонентов[\s\S]*?class="span28[^>]*>([^<]+)/i, AB.replaceTagsAndSpaces, AB.parseBalance);
-    
-    if (AB.isAvailable('unpaids')) {
-        var elemUnpaids = AB.getElement(html, /<div\s[^>]*\bunpaidBillsCount\b/);
+    getParam(html, result, 'balance', /<dt[^>]*>\s*Текущий баланс[\s\S]*?class="money[^>]*>([\s\S]*?)<span/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'abonCount', /<dt[^>]*>\s*Абонентов[\s\S]*?class="span28[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseBalance);
+
+    if (isAvailable('unpaids')) {
+        var elemUnpaids = getElement(html, /<div\s[^>]*\bunpaidBillsCount\b/);
         if (elemUnpaids) {
-            elemUnpaids = AB.getElement(elemUnpaids, /<span[^>]+class="[^"']*?\bmoney/, AB.replaceTagsAndSpaces, AB.parseBalance);
-            AB.getParam(elemUnpaids, result, 'unpaids');
+            elemUnpaids = getElement(elemUnpaids, /<span[^>]+class="[^"']*?\bmoney/, replaceTagsAndSpaces, parseBalance);
+            getParam(elemUnpaids, result, 'unpaids');
         }
     }
 
-    html = AnyBalance.requestGet(baseurl + 'sc_cp_apps/subscriber/mobile/list?from=0&size=' + 128, AB.addHeaders({'X-Requested-With':'XMLHttpRequest'}));
+    html = AnyBalance.requestGet(baseurl + 'sc_cp_apps/subscriber/mobile/list?from=0&size=' + 128, addHeaders({'X-Requested-With':'XMLHttpRequest'}));
 
     try {
-        var json = AB.getJson(html);
+        var json = getJson(html);
 
         var account;
         for(var i = 0; i < json.mobile.length; i++) {
@@ -148,10 +146,10 @@ function main() {
             if(!prefs.phone) {
                 account = curr;
                 AnyBalance.trace('Номер в настройках не задан, возьмем первый: ' + curr.msisdn);
-                break;				
+                break;
             }
 
-            if(AB.endsWith(curr.msisdn, prefs.phone)) {
+            if(endsWith(curr.msisdn, prefs.phone)) {
                 account = curr;
                 AnyBalance.trace('Нашли нужный номер: ' + curr.msisdn);
                 break;
@@ -166,8 +164,8 @@ function main() {
         AnyBalance.trace('Успешно получили данные по номеру: ' + curr.msisdn);
         AnyBalance.trace(JSON.stringify(account));
 
-        AB.getParam(account.msisdn, result, 'phone_name', null, AB.replaceTagsAndSpaces);
-        AB.getParam(account.account.name, result, 'name_name', null, AB.replaceTagsAndSpaces);
+        getParam(account.msisdn, result, 'phone_name', null, replaceTagsAndSpaces);
+        getParam(account.account.name, result, 'name_name', null, replaceTagsAndSpaces);
 
         if(AnyBalance.isAvailable('min_left', 'sms_left')){
             getDiscounts(baseurl, account, result);
@@ -175,9 +173,9 @@ function main() {
 
         function getDLValue(html, name, title) {
             if (AnyBalance.isAvailable(name)) {
-                var elem = AB.getElement(html, RegExp('<dl[^>]*>(?=\s*<dt[^>]*>\s*' + title.replace(/\s/g, ' ') + '\s*</dt\s*>)', 'i'));
-                elem = AB.getElement(elem, /<span[^>]+class="[^"]*money[^"]*"[^>]*>/i);
-                AB.getParam(elem, result, name, null, AB.replaceTagsAndSpaces, AB.parseBalance);
+                var elem = getElement(html, RegExp('<dl[^>]*>(?=\s*<dt[^>]*>\s*' + title.replace(/\s/g, ' ') + '\s*</dt\s*>)', 'i'));
+                elem = getElement(elem, /<span[^>]+class="[^"]*money[^"]*"[^>]*>/i);
+                getParam(elem, result, name, null, replaceTagsAndSpaces, parseBalance);
             }
         }
 
@@ -217,17 +215,17 @@ function getDiscounts(baseurl, account, result){
     json = getJson(html);
     for (var discgroup in json.discounts) {
         var group = json.discounts[discgroup];
-        if(!group || !AB.isArray(group)) continue;
+        if(!group || !isArray(group)) continue;
 
         for(var i=0; i<group.length; ++i){
             var d = group[i];
             AnyBalance.trace('Найдена скидка: ' + d.name + ' ' + d.volume + ' ' + d.measure);
             if(/мин/i.test(d.measure)){
                 AnyBalance.trace('Это минуты');
-                AB.sumParam(d.volume, result, 'min_left', null, null, null, AB.aggregate_sum);
+                sumParam(d.volume, result, 'min_left', null, null, null, aggregate_sum);
             }else if(/шт|смс|sms/i.test(d.measure)){
                 AnyBalance.trace('Это смс');
-                AB.sumParam(d.volume, result, 'sms_left', null, null, null, AB.aggregate_sum);
+                sumParam(d.volume, result, 'sms_left', null, null, null, aggregate_sum);
             }else{
                 AnyBalance.trace('неизвестная скидка: ' + JSON.stringify(d));
             }

@@ -219,14 +219,14 @@ function main () {
     var result = {success: true};
 
     if(isAvailable(['customer', '__tariff'])){
-    	json = callApiReestablish('v1/users/self');
+    	json = callApiReestablish('v3/users/self');
 
     	getParam(json.data.user.name + ' ' + json.data.user.surname, result, 'customer');
     	getParam(json.data.user.card_no, result, '__tariff');
     }
 
     if(isAvailable(['balance', 'burnInThisMonth', 'burnDate'])){
-    	json = callApiReestablish('v1/balances');
+    	json = callApiReestablish('v3/balances');
 
     	getParam(json.data.balance_list[0].balance_points, result, 'balance');
 

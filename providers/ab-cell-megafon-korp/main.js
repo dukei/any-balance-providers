@@ -128,7 +128,7 @@ function main() {
     var result = {success: true};
 
     getParam(html, result, 'balance', /<dt[^>]*>\s*Текущий баланс[\s\S]*?class="money[^>]*>([\s\S]*?)<span/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'abonCount', /<dt[^>]*>\s*Абонентов[\s\S]*?class="span28[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'abonCount', /<dt[^>]*>\s*Абонентов[\s\S]*?class="span76[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseBalance);
 
     if (isAvailable('unpaids')) {
         var elemUnpaids = getElement(html, /<div\s[^>]*\bunpaidBillsCount\b/);

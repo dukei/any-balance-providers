@@ -44,6 +44,9 @@ var g_conversion = {
 function main() {
     var prefs = AnyBalance.getPreferences();
 
+    checkEmpty(prefs.login, 'Введите логин!');
+    checkEmpty(prefs.password, 'Введите пароль!');
+
     AnyBalance.setDefaultCharset('utf-8');
     var region = prefs.region || 'center';
     var baseurl = g_conversion[region] || ('https://' + (prefs.region || 'center') + '.b2blk.megafon.ru/');

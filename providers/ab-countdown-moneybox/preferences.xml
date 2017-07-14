@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        title="Цель" 
+        positiveButtonText="ОК" 
+        summary="Цель||{@s}\n" 
+        dialogTitle="Цель" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите сумму которую вы хотите накопить"
+        key="purpose"
+        inputType="number">
+    </EditTextPreference>
+</PreferenceScreen>

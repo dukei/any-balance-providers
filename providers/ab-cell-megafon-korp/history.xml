@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="12" date="2017-07-15">
+	Мелкие исправления
+	</change>
 	<change version="11" date="2017-07-11">
 	Восстановлено получение данных для всех регионов
 	</change>

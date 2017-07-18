@@ -107,8 +107,24 @@ function findAppInDevAccount(baseurl, token, dev_acc, prefs) {
 			var currentApp = apps[i];
 			
 			var appName = currentApp[6][1];
-			if(new RegExp(prefs.app_name, 'i').test(appName)) {
-				app = currentApp;
+			var id = currentApp[1][1];                                                                         
+			if(new RegExp(prefs.app_name, 'i').test(appName)
+			    || new RegExp(prefs.app_name, 'i').test(id)) {
+				
+				html = AnyBalance.requestPost(baseurl + 'apps/publish/androidapps?dev_acc=' + dev_acc, JSON.stringify({
+					"method":"fetch",
+					"params":{"1":[id],"3":1},
+					"xsrf":token
+				}), {
+					Referer: baseurl + 'apps/publish/androidapps?dev_acc=' + dev_acc,
+					'Content-Type': 'application/javascript; charset=UTF-8',
+					'Accept': '*/*',
+					'X-GWT-Module-Base': 'https://play.google.com/apps/publish/gwt/',
+					'X-Client-Data': 'CJC2yQEIpLbJAQiptskBCMG2yQEI6YjKAQikksoBCNKUygEYq4nKAQ==',
+					'X-GWT-Permutation': 'F9491E9BC0BB6BA66743DFE7706239DD',
+				});
+	
+				app = getJsonEval(html).result['1'][0];
 				//AnyBalance.trace(JSON.stringify(app));
 				break;
 			}

@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="22">ab-telephony-mgts</id>
+	<id version="23">ab-telephony-mgts</id>
 	<name>МГТС</name>
 	<api flags="no_browser"/>
 	<description html="true"><![CDATA[
@@ -22,6 +22,7 @@
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
+		<js>rsa.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>

@@ -6,7 +6,7 @@ var g_headers = {
 	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
 	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
 	'Connection': 'keep-alive',
-	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
+	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.115 Safari/537.36',
 };
 
 function main() {
@@ -23,34 +23,64 @@ function main() {
 		}
 
 		//Зачем мешать полезным роботам информацию получать? Зачем такие сложности? Хватит, а?
-		AnyBalance.setCookie('oplata.uralsibbank.ru', 'TS01db9e9f_28', '01403d4e06e38d0fe057dcb52f2ee998045c5396b2116a12967573f07ea9a826266a4178a5a6bf05c506e30553bcda3b982d78da99');
-		AnyBalance.setCookie('oplata.uralsibbank.ru', 'TS01db9e9f', '0118f3d0afce1b9fbaa1479f5755548421a93d22c2452c40b56a563845e933970eefb43c09298850ca6a705c943fc03947af962d76a57794fedbffa1442294a7e57125fead5d5f5896aa0e912baf522b42a6edb18f');
-		var serviceID = '442', csrt = '13775051121879390047';
+		AnyBalance.setCookie('oplata.uralsib.ru', 'PUBLIC_WWV_CUSTOM-F_147019715977769365_30', '1519690862229901');
+		AnyBalance.setCookie('oplata.uralsib.ru', 'REMEMBER_WWV', 'PCEsFm3jv59CdRtsUG%2BpQU5l26WdRHLMTL0ZQIyqCXY%3D_510271256');
+		AnyBalance.setCookie('oplata.uralsib.ru', 'WWV_CUSTOM-F_147019715977769365_30', '2942459402C78EB6389C26BFA8CDF2FE');
+		AnyBalance.setCookie('oplata.uralsib.ru', 'TS019fd881_30', '01403d4e06305cbad863e9a01c436ddb1deafaae94737cbbb4085fa6eb9e4e74233ca61eae3c5777ec5d03e538107c27179d74175e');
+		AnyBalance.setCookie('oplata.uralsib.ru', 'TS019fd881_1', '01403d4e065396f9cd674cfdf8de018aa59731aec79c654a965916554743cf96076517a76a15771b515163cd793025eb14acaaa038');
+		AnyBalance.setCookie('oplata.uralsib.ru', 'TS019fd881', '0118f3d0af8e6671c5048e9a90c55f43615fb2490b388c1949ca9c89f56bedbc289d8112bcc33212b483a9cdbe99b8dcd7e3b38ec6c128af371739d267732a51b3c00ceae58534334c4921c5dcf22eb62af9ebfedf63dff4a2abaceebc9163037a28ede07b');
 
-		var url = 'https://oplata.uralsibbank.ru/cityp_eorder.asp?ServiceID=' + serviceID + '&csrt=' + csrt;
+		var url = 'https://oplata.uralsib.ru/f?p=30:50:1519690862229901::NO::F30_SERVICE_ID,F30_RESET_SERVICE:442,Y';
 		var html = AnyBalance.requestGet(url, g_headers);
+
+		var rsa_E = getParam(html, /window\.rsa_E\s*=\s*"([^"]*)/);
+		var rsa_N = getParam(html, /window\.rsa_N\s*=\s*"([^"]*)/);
+		var form = getElement(html, /<form[^>]+wwvFlowForm/i);
+		if(!form || !rsa_E || !rsa_N){
+			AnyBalance.trace(html);
+			throw new AnyBalance.Error('Не удалось получить форму ввода данных');
+		}
+
+		var params = createFormParams(form);
+
+		var rsa = new RSAKey();
+		rsa.setPublic(rsa_E, rsa_N);
+
+		params.PAYER_FLAT1 = prefs.kvart;
+		params.PHONE_NUMBER = prefs.login;
+
+		delete params.P60_CVV;
+		params.P60_PAN = rsa.encrypt('4111 1111 1111 1111');
+		params.P60_EXPIRE = rsa.encrypt('10/21');
+		params.P60_CVC = rsa.encrypt('123');
+
+		html = AnyBalance.requestPost('https://oplata.uralsib.ru/wwv_flow.show', {
+			p_request: 'APPLICATION_PROCESS=SAVEPAYMENT',
+			p_flow_id: params.p_flow_id,
+			p_flow_step_id: params.p_flow_step_id,
+			p_instance: params.p_instance,
+			x01: createUrlEncodedParams(params),
+			x02: '' 
+		}, addHeaders({Referer: AnyBalance.getLastUrl() }));
 		
-		html = AnyBalance.requestPost(url, {
-			extents: 'payment_id="" service_id="'+serviceID+'" customer_id="0" contract_id="0" cliring="MKC" needaddinfo="" PHONE_NUMBER="'+prefs.login+'" PAYER_FLAT1="'+prefs.kvart+'" EXTERNAL_RESPONSE="" main_amount="10.00" PURPOSE_PAYMENT="" action="save"',
-			action: 'save'
-		}, addHeaders({Referer: url }));
-		
-		if(!/id="EXTERNAL_RESPONSE"[^>]*value="[^"]+/i.test(html)){
-			html = replaceAll(html, [/<noscript>[\s\S]*?<\/noscript>/ig, '']);
-			var error = getElement(html, /<p[^>]+class="errorb"[^>]*>/i, replaceTagsAndSpaces);
+		var value = getParam(html, null, null, /value="([^"]+)"[^>]*id="EXTERNAL_RESPONSE"/i, replaceHtmlEntities);
+		if(!value){
+			var error = getElement(html, /<error/i, replaceTagsAndSpaces);
 			if(error)
 				throw new AnyBalance.Error(error, null, /Номер не существует/i.test(error));
 			AnyBalance.trace(html);
 			throw new AnyBalance.Error('Не удалось получить баланс. Cайт изменен?');
 		}
 
-		var value = getParam(html, null, null, /id="EXTERNAL_RESPONSE"[^>]*value="([^"]+)/i, replaceHtmlEntities);
+		//Формат ответа: лицевой счет - Название оператора - № транзакции в системе поставщика - Баланс ЛС
 		AnyBalance.trace('Ответ от внешней системы: ' + value);
 
 		if(/Баланс_не_может_быть_получен/i.test(value))
 			throw new AnyBalance.Error('Баланс временно недоступен. Попробуйте позднее или воспользуйтесь получением баланса по логину и паролю.');
 
 		getParam(value, result, 'balance', /МГТС-\d+-(.*)$/i, [/=/, '-'], parseBalance);
+		getParam(prefs.login, result, 'phone');
+		getParam(value, result, 'licschet', /^(\d+)/i);
 
 	} else {
 		AnyBalance.trace('Входим по логину и паролю...');

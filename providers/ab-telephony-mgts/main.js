@@ -17,6 +17,10 @@ function main() {
 	var result = {success: true};
 	
 	if(prefs.kvart && !prefs.password) {
+		AnyBalance.setOptions({
+			SSL_ENABLED_PROTOCOLS: ['TLSv1.1', 'TLSv1.2'] //Уралсиб, типа, безопасный
+		});     
+
 		AnyBalance.trace('Получаем информацию по номеру телефона и номеру квартиры...');
 		if(!/^\d{10}$/i.test(prefs.login)) {
 			throw new AnyBalance.Error('Необходим ввести номер телефона в десятизначном формате, например 4951234567');

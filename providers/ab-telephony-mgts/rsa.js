@@ -1,3 +1,8 @@
+if(typeof window == 'undefined'){
+	navigator = {appName: 'Netscape'};
+	window = {};
+}
+
 // Depends on jsbn.js and rng.js
 
 // Version 1.1: support utf-8 encoding in pkcs1pad2

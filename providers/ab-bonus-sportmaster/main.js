@@ -91,6 +91,11 @@ function main(){
     AB.getParam(html, result, 'cardnum',   /<h3>\s*Номер карты\s*<\/h3>\s*<div>\s*([^<]+)/i, AB.replaceTagsAndSpaces);
     AB.getParam(html, result, 'balance',   /smProfile__total-amount[^>]*>([^<]*)/i,          AB.replaceTagsAndSpaces, AB.parseBalance);
     AB.getParam(html, result, 'nextlevel', /Совершите покупки еще на([^<]*?)руб/i,           AB.replaceTagsAndSpaces, AB.parseBalance);
+
+    var bonuses = getParam(html, /bonuses:\s*(\[\{[\s\S]*?\}\])/, replaceHtmlEntities, getJson);
+    var tillbonus = bonuses.reduce(function(b, prev) { if(!prev || b.dateEnd < prev.dateEnd) prev = b; return prev });
+    getParam(tillbonus && tillbonus.dateEnd, result, 'till');
+    getParam(tillbonus && tillbonus.amount, result, 'sumtill');
 	
 	if(isAvailable('all')) {
 		var table = AB.getParam(html, null, null, /<table[^>]*sm-profile__bonustable[^>]*>(?:[\s\S](?!<\/table>))[\s\S]*?<\/table>/i);

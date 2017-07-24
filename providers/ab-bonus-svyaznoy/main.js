@@ -89,8 +89,8 @@ function main() {
 
     json = getJson(res);
 
-    if (json.operations && json.operations.length) {
-      var lastOperation = json.operations[0];
+    if (json.data && json.data.length) {
+      var lastOperation = json.data[0];
 
       AB.getParam(lastOperation.amount + '', result, 'pointsinlastoper', null, AB.replaceTagsAndSpaces, AB.parseBalance);
       AB.getParam(lastOperation.brandName + '', result, 'lastoperationplace', null, AB.replaceTagsAndSpaces);

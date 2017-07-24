@@ -462,15 +462,15 @@ function isAnotherNumber() {
 function checkLoginState(html, options) {
 	var baseurl = (options && options.baseurl) || g_baseurl;
 	var referer = AnyBalance.getLastUrl();
-	var meta = getParam(html, /<META[^>]+http-equiv="refresh"[^>]+content="\d+;URL=([^"]*)"/i, replaceHtmlEntities);
+/*	var meta = getParam(html, /<META[^>]+http-equiv="refresh"[^>]+content="\d+;URL=([^"]*)"/i, replaceHtmlEntities);
 	if(meta){
     	AnyBalance.trace('Meta redirect to ' + meta);
 		var _html = AnyBalance.requestGet(baseurl + '/sitesettings/RequireConfig', addHeaders({Referer: referer}));
 		_html = AnyBalance.requestGet(baseurl + '/sitesettings/Settings.js', addHeaders({Referer: referer}));
 		html = _html;
-	}
+	}*/
 
-    if (/checkAuthStatus|дождитесь окончания процесса авторизации/i.test(html)) {
+    if (/checkAuthStatus|дождитесь окончания процесса авторизации/i.test(html) || /waitauth/i.test(referer)) {
         var json = {}, tries = 20;
         while (json.Data != 'Success' && tries-- > 0) {
             json = AnyBalance.requestGet(baseurl + '/WaitAuth/CheckAuth?_=' + new Date().getTime(), addHeaders({Referer: referer}));

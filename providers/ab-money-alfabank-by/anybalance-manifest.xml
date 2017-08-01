@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="4">ab-money-alfabank-by</id>
+	<id version="5">ab-money-alfabank-by</id>
 	<api flags="no_browser"/>
 	<name>Альфа-Банк (Белоруссия)</name>
 	<description html="true"><![CDATA[

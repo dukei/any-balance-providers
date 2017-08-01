@@ -1,4 +1,4 @@
-﻿/**
+/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 */
 
@@ -15,7 +15,14 @@ function login(){
 }
 
 function isLoggedIn(html){
-	return /Выход/i.test(html);
+	return /Выход[^a-я]/i.test(html);
+}
+
+function skipButtons(params, str, name, value) {
+	if (/^<button/i.test(str)) //Skip buttons
+		return;
+
+	return value;
 }
 
 function followLink(html, reName){
@@ -33,7 +40,8 @@ function followLink(html, reName){
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось найти форму перехода по ссылке ' + reName.source);
 	}
-	var params = createFormParams(form);
+	var params = createFormParams(form, skipButtons);
+
 	for(var i in addParams)
 		params[i] = addParams[i];
 
@@ -61,7 +69,7 @@ function followAjaxLink(html, reName, linkSearchHtml){
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось найти форму перехода по ссылке ' + reName.source);
 	}
-	var params = createFormParams(form);
+	var params = createFormParams(form, skipButtons);
 	
 	params['javax.faces.partial.ajax'] = 'true';
 	params['javax.faces.source'] = ajaxParams.source;

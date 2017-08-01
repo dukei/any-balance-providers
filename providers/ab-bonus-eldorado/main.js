@@ -18,7 +18,7 @@ function main() {
     checkEmpty(login, 'Введите номер карты или логин!');
     checkEmpty(prefs.password, 'Введите ' + passMsg + ' для входа в личный кабинет!');
     
-    var baseurl = "http://www.eldorado.ru/";
+    var baseurl = "https://www.eldorado.ru/";
 	
 	var html = AnyBalance.requestGet(baseurl + 'personal/club/offers/index.php', g_headers);
 

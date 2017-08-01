@@ -1,5 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="3.1" version="216" date="2017-08-01">
+	Исправлено отображение названия тарифа
+	Исправлено отображение трафика в некоторых случаях
+	</change>
 	<change major_version="3.1" version="215" date="2017-05-31">
 	Исправлено получение данных из личного кабинета
 	</change>

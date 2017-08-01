@@ -197,7 +197,7 @@ function processMonthExpensesApi(result){
 }
 
 function processRemaindersApi(result){
-    if (AnyBalance.isAvailable('remainders')) {
+    if (AnyBalance.isAvailable('remainders') || (AnyBalance.isAvailable('tariff') && !result.tariff)) {
         var json = callAPI('get', 'api/options/remainders');
 
         var remainders = result.remainders = {};
@@ -207,6 +207,10 @@ function processRemaindersApi(result){
         // Идем с конца, чтобы игнорировать "замерзшие" остатки
         for(var i = json.models.length-1; i >= 0; i--) {
             var model = json.models[i];
+
+            if(model.optionsRemaindersType == 'RATE_PLAN' && !result.tariff)
+            	result.tariff = model.name;
+
             var optionId = (model.remainders && model.remainders[0] && model.remainders[0].optionId);
 
             // Этот пакет опций мы уже обработали
@@ -279,7 +283,7 @@ function processRemaindersApi(result){
                             var internet_total = getParam(current.total + current.unit, null, null, null, replaceTagsAndSpaces, parseTraffic);
                             
 							if(!unlim)
-								unlim = (internet_total >= 5000000); //Больше 5000 ТБ это же явно безлимит
+								unlim = (internet_total >= 999000); //Больше 999 ГБ это же явно безлимит
 							if(unlim)
 								AnyBalance.trace('пропускаем безлимит трафика: ' + name + ' ' + (current.available + current.unit) + '/' + (current.total + current.unit));
                             

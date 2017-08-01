@@ -58,7 +58,7 @@ function mainMobile(prefs){
 	};
 
 	var headers = {
-		'User-Agent': 'godville.android 5.5.5(556)'
+		'User-Agent': 'godville.android 6.3.4(634) HTC Desire 600 dual sim(API:16)'
 	};
 
 	var encoded = encodeRSA(JSON.stringify(params));
@@ -66,7 +66,7 @@ function mainMobile(prefs){
 	var html = AnyBalance.requestPost(baseurl + 'login/login_mob', {
 		client_id: 'android',
 		json: encoded,
-		v: '5.5.5'
+		v: '6.3.4'
 	}, headers);
 
 	var json = getJson(html);

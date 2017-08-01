@@ -1,37 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
+	<id version="2">ab-municipal-tns-energo-nn</id>
 	<api flags="no_browser"/>
-	<id version="1">ab-municipal-tns-energo-nn</id>
 	<name>ТНС энерго Нижний Новгород</name>
 	<description html="true"><![CDATA[	
-    <p>Предоставляет информацию о данных по лицевому счету ПАО «ТНС энерго Нижний Новгород» (ПАО «ТНС энерго НН»)  сайт: <a href="https://www.nsk.elektra.ru/">https://www.nsk.elektra.ru/</a></p>	
-	<p>Получает данные из личного кабинета <a href="https://www.nsk.elektra.ru/cabinet/">https://www.nsk.elektra.ru/cabinet/</a></p>	
+	<p>Предоставляет информацию о данных по лицевому счету ПАО «ТНС энерго Нижний Новгород» (ПАО «ТНС энерго НН») сайт: <a href="https://nn.tns-e.ru/population">https://nn.tns-e.ru/population</a></p>
+	<p>Получает данные из личного кабинета <a href="https://lk.nn.tns-e.ru">https://lk.nn.tns-e.ru</a></p>
 	]]></description>
 	<instruction html="true"><![CDATA[
-	<p>Если у вас нет доступа в Личный кабинет, получите его на странице <a href="https://www.nsk.elektra.ru/cabinet/registration.php">https://www.nsk.elektra.ru/cabinet/registration.php</a></p>
+	<p>Если у вас нет доступа в Личный кабинет, получите его на странице <a href="https://lk.nn.tns-e.ru/lk-reg">https://lk.nn.tns-e.ru/lk-reg</a></p>
 	]]></instruction>
 	<author>MixaSR &lt;mexan.nik@gmail.com&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="last_bill_sum" name="Последний выставленный счет(сумма)" units=" руб"/>
-		<counter id="last_bill_period" name="Последний выставленный счет(период)" type="text"/>
-		<counter id="acc_num" name="Лицевой счет" type="text"/>
-		<counter id="last_ind_date" name="Дата передачи показаний" type="time" format="dd/MM/yyyy HH:mm:ss"/>
-		<counter id="last_ind_day" name="Показания/пик(день)"/>
-		<counter id="last_ind_ppic" name="Показания/полупик"/>
-		<counter id="last_ind_night" name="Показания/ночь"/>	
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="debt" name="Долг на начало месяца" units=" р"/>
+		<counter id="accrued" name="Начислено за текущий месяц" units=" р"/>
+		<counter id="paid" name="Оплачено в текущем месяце" units=" р"/>
+		<counter id="to_pay" name="Итого к оплате" units=" р"/>
 		<counter id="fio" name="ФИО" type="text"/>
-		<counter id="address" name="Адрес" type="text"/>		
+		<counter id="address" name="Адрес" type="text"/>
+		<counter id="last_ind_date" name="Дата передачи показаний" type="time" format="dd/MM/yyyy HH:mm:ss"/>
+		<counter id="last_ind_day" name="Показания/день"/>
+		<counter id="last_ind_night" name="Показания/ночь"/>
 		<counter id="last_pay_date" name="Последняя оплата(дата)" type="time" format="dd/MM/yyyy"/>
-		<counter id="last_pay_sum" name="Последняя оплата(сумма)" units=" руб"/>	
+		<counter id="last_pay_sum" name="Последняя оплата(сумма)" units=" р"/>
 	</counters>
-	<keywords>нн, нижний новгород, электричество, энергосбыт</keywords>
+	<keywords>нн, нижний новгород, электричество, энергосбыт, тнс, электро</keywords>
 	<type>municipal</type>
 	<country>ru</country>
 </provider>

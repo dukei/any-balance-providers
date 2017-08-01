@@ -1,10 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="5">ab-money-alfabank-by</id>
+	<id version="6">ab-money-alfabank-by</id>
 	<api flags="no_browser"/>
-	<name>Альфа-Банк (Белоруссия)</name>
+	<name>Альфа-Банк (Беларусь)</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе на картах, кредитах и депозитах Альфа-Банка Белоруссия <a href="http://www.alfabank.by/">http://www.alfabank.by/</a></p>
+	<p>Предоставляет информацию о балансе на картах, кредитах и депозитах Альфа-Банка Беларусь <a href="http://www.alfabank.by/">http://www.alfabank.by/</a></p>
 	<p>Информация берется из личного кабинета <a href="https://click.alfa-bank.by">https://click.alfa-bank.by</a></p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>

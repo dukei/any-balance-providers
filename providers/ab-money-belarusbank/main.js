@@ -139,10 +139,9 @@ function findAccount(html){
     	cards = getElements(account, [/<table[^>]+id="[^"]*ClientCardsDataForm:accountContainer:[^>]*>/ig, /<td[^>]+class="tdNumber"/i]);
     	var cardnums = sumParam(account, /<td[^>]+class="tdNumber"[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces);
     	
-    	var ok = !prefs.lastdigits || endsWith(accnum, prefs.lastdigits);
-    	for(var j=0; !ok && j<cards.length; ++j){
-    		card = cards[j];
-    		cardnum = getParam(card, /<td[^>]+class="tdNumber"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+    	var ok = !prefs.lastdigits || endsWith(accnum.replace(/\s+/g, ''), prefs.lastdigits);
+    	for(var j=0; !ok && j<cardnums.length; ++j){
+    		cardnum = cardnums[j];
     		ok = ok || endsWith(cardnum, prefs.lastdigits);
     	}
 
@@ -164,7 +163,7 @@ function fetchCard(baseurl, html){
     var prefs = AnyBalance.getPreferences();
 
     if(prefs.lastdigits && !/^\d{4,}$/.test(prefs.lastdigits))
-        throw new AnyBalance.Error("Надо указывать 4 последних цифры карты или счета или не указывать ничего");
+        throw new AnyBalance.Error("Надо указывать 4 последних цифры карты или не менее 4 последних цифр счета счета или не указывать ничего");
 
 	var href = getParam(html, /href="\/([^"]+)"(?:[^>]*>){1,2}\s*Счета с карточкой/i, replaceTagsAndSpaces);
 	checkEmpty(href, 'Не удалось найти ссылку на счета, сайт изменен?', true);
@@ -198,8 +197,12 @@ function fetchCard(baseurl, html){
     }
 	
     var result = {success: true};
-	
-    getParam(info.card, result, 'cardnum', /<td[^>]*class="tdNumber">([^]*?)<\/td>/, replaceTagsAndSpaces);
+
+	if(info.cardnum)
+    	getParam(info.cardnum, result, 'cardnum');
+    else
+    	getParam(info.card, result, 'cardnum', /<td[^>]*class="tdNumber">([^]*?)<\/td>/, replaceTagsAndSpaces);
+
     getParam(info.card, result, 'cardaccnum', /<td[^>]+class="tdId"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
 	getParam(info.account, result, '__tariff', /<td[^>]*class="tdAccountText">([^]*?)<\/td>/, replaceTagsAndSpaces);
 	if(info.accnum == 'ExtraCardsAccount'){

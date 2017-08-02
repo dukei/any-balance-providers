@@ -95,6 +95,10 @@ function shouldProcess(counter, info){
 function main(){
 	var prefs = AnyBalance.getPreferences();
 
+	AnyBalance.setOptions({
+		SSL_ENABLED_PROTOCOLS: ['TLSv1.1', 'TLSv1.2'] 
+	});
+	
     if(!/^(card|crd|dep|acc)$/i.test(prefs.type || ''))
     	prefs.type = 'card';
 

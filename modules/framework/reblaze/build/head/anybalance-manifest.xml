@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+    <id version="1">framework/reblaze</id>
+	<api flags="no_browser" />
+    <name>Reblaze helper</name>
+	<description html="true"><![CDATA[
+		Helps to deal with Reblaze protected pages
+		Usage:
+
+			var reblaze = Reblaze(baseurl + 'b/');
+			var html = AnyBalance.requestGet(baseurl + 'b/', g_headers);
+		    if(reblaze.isReblazed(html))
+		        html = reblaze.executeScript(html);
+
+		    //Ordinary processing...
+
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<js>framework.reblaze.min.js</js>
+		<history>history.xml</history>
+	</files>
+	<depends>
+		<module id="library"/>
+	</depends>
+	<type>obfuscator, antirobot</type>
+</provider>

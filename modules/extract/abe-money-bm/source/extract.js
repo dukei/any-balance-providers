@@ -314,12 +314,13 @@ function processCard(html, result){
 	getParam(html, result, 'cards.currency', /<span[^>]+amountBox[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseCurrency);
 	getParam(html, result, 'cards.name', /<div[^>]+aliasBox[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
 
-	if(AnyBalance.isAvailable('cards.debt_late', 'cards.minpay', 'cards.debt', 'cards.gracepay', 'cards.gracepay_till', 'cards.limit', 'cards.blocked', 'cards.sms', 'cards.till', 'cards.transactions')){
+	if(AnyBalance.isAvailable('cards.debt_late', 'cards.minpay', 'cards.minpay_till', 'cards.debt', 'cards.gracepay', 'cards.gracepay_till', 'cards.limit', 'cards.blocked', 'cards.sms', 'cards.till', 'cards.transactions')){
 		html = AnyBalance.requestGet(g_baseurl + '/scoring/protected/statement/card/' + result.__id, g_headers);
 		var table = getElement(html, /<table[^>]+bigCardShadow[^>]*>/i, replaceHtmlEntities);
 
 		getParam(table, result, 'cards.debt_late', /Просроченная задолженность:[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
         getParam(table, result, 'cards.minpay', /Минимальный платеж:[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+        getParam(table, result, 'cards.minpay_till', /погасить до:[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseDate);
         getParam(table, result, 'cards.debt', /Всего задолженность:[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
         getParam(table, result, 'cards.date_start', /Дата открытия карты:([^<]*)/i, replaceTagsAndSpaces, parseDate);
         getParam(table, result, 'cards.pct', /Процентная ставка:([^<]*)/i, replaceTagsAndSpaces, parseBalance);

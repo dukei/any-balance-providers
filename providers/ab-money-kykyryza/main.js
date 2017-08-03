@@ -63,23 +63,24 @@ function doNewCabinet(prefs){
     getParam(html, result, 'balance', /b-user-info__balance[^>]*>([\s\S]*?)</i, null, parseBalance);
     getParam(html, result, 'bonus', />\s*Начислено(?:[^>]*>){4,6}\s*<span[^>]*b-user-info__balance[^>]*>([\s\S]*?)</i, null, parseBalance);
     getParam(html, result, 'bonus_avail', />\s*Доступно(?:[^>]*>){4,6}\s*<span[^>]*b-user-info__balance[^>]*>([\s\S]*?)</i, null, parseBalance);
-    // Пока не было такого
-    getParam(html, result, 'limit', />\s*Кредитный лимит(?:[^>]*>){4,6}\s*<span[^>]*b-user-info__balance[^>]*>([\s\S]*?)</i, null, parseBalance);
-    getParam(html, result, 'own', />\s*Собственные(?:[^>]*>|\s*)?средства(?:[^>]*>){4,6}\s*<span[^>]*b-user-info__balance[^>]*>([\s\S]*?)</i, null, parseBalance);
 
-    if(isAvailable('minpay', 'minpay_till')) {
-      html = AnyBalance.requestGet(baseurl + 'personal/credit-limit', g_headers);
+    if(isAvailable('minpay', 'minpay_till', 'limit')) {
+	   	html = AnyBalance.requestGet(baseurl + 'personal/go-to-the-future', g_headers);
 
-      getParam(html, result, 'curr_credit', /Текущая задолженность по кредиту(?:[^>]*>)([^<]*)/i, replaceTagsAndSpaces, parseBalance);
-      getParam(html, result, 'minpay', /Задолженность по минимальному обязательному платежу[\s\S]*?<b[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
-      getParam(html, result, 'minpay_till', /необходимо погасить до[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseDate);
-      getParam(html, result, 'minpay_date_end', /Дата окончания платежного периода(?:[^>]*>)([^<]*)/i, replaceTagsAndSpaces, parseDate);
+	   	html = AnyBalance.requestGet('https://mybank.oplata.kykyryza.ru/api/v0001/ping/session?rid=ec94aa58b5008', g_headers);
+	   	var json = getJson(html);
+	   	if(!json.data.authenticated){
+	   		AnyBalance.trace(html);
+	   		throw new AnyBalance.Error('Не удалось авторизоваться в новом кабинете');
+	   	}
 
-      //Для ренессанс-кредит
-      getParam(html, result, 'minpay', /Сумма минимального обязательного платежа составляет [\s\S]*?<b[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
-      getParam(html, result, 'minpay_till', / Минимальный обязательный платеж должен поступить в банк[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseDate);
+	   	html = AnyBalance.requestGet('https://mybank.oplata.kykyryza.ru/api/v0001/credit?rid=62e7ecadsdasd', g_headers);
+	   	json = getJson(html);
 
 
+        getParam(json.data && json.data[0].minimalRequiredPaymentAmount, result, 'minpay', null, null, parseBalance);
+        getParam(json.data && json.data[0].minimalRequiredPaymentDeadline, result, 'minpay_till', null, null, parseDateISO);
+        getParam(json.data && json.data[0].grantedAmount, result, 'limit', null, null, parseBalance);
     }
     result.__tariff = prefs.login;
 

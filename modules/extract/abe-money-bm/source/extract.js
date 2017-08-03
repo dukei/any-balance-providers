@@ -438,8 +438,8 @@ function processCredit(html, result){
 
     //Ежемесячный платеж:
     getParam(html, result, 'credits.minpay', /&#1045;&#1078;&#1077;&#1084;&#1077;&#1089;&#1103;&#1095;&#1085;&#1099;&#1081; &#1087;&#1083;&#1072;&#1090;&#1077;&#1078;:[\s\S]*?<span[^>]+amountBox[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
-    //Дата списания:
-    getParam(html, result, 'credits.minpay_till', /&#1044;&#1072;&#1090;&#1072; &#1089;&#1087;&#1080;&#1089;&#1072;&#1085;&#1080;&#1103;:([^<]*)/i, replaceTagsAndSpaces, parseDate);
+    //Дата платежа
+    getParam(html, result, 'credits.minpay_till', /&#1044;&#1072;&#1090;&#1072; &#1087;&#1083;&#1072;&#1090;&#1077;&#1078;&#1072;([^<]*)/i, replaceTagsAndSpaces, parseDate);
 
     if(AnyBalance.isAvailable('credits.debt_late', 'credits.pct', 'credits.date_start', 'credits.period', 'credits.cardnum', 'credits.accnum')){
         html = AnyBalance.requestGet(g_baseurl + '/scoring/protected/statement/credit/' + result.__id, g_headers);

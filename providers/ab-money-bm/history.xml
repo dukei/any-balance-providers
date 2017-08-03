@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="15" date="2017-08-03">
+	Исправлена дата минимального платежа для кредитов
+	</change>
 	<change version="14" date="2017-08-03">
 	Добавлен показ даты мин. платежа для карт
 	</change>

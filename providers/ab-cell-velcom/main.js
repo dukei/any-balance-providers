@@ -3,13 +3,12 @@
 */
 
 var g_headers = {
-	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
 	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
 	'Connection': 'keep-alive',
-	'Origin': 'https://internet.velcom.by',
-	'Cache-Control': 'no-cache',
+	'Cache-Control': 'max-age=0',
         'Upgrade-Insecure-Requests': '1',
-	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/48.0.2564.97 Safari/537.36',
+	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.90 Safari/537.36',
 };
 
 //var velcomOddPeople = 'Velcom сознательно противодействует оперативному получению вами баланса через сторонние программы! Вот и снова они специально ввели изменения, которые сломали получение баланса. Пожалуйста, позвоните в службу поддержки Velcom (411 и 410 с мобильного телефона в сети velcom без взимания оплаты) и оставьте претензию, что вы не можете пользоваться любимой программой. Проявите активную позицию, они скрывают ваш баланс от вас же. Зачем, интересно? МТС и Life своих абонентов уважают значительно больше...';
@@ -25,6 +24,10 @@ function parseBalanceRK(_text) {
   return val;
 }
 
+function getDomain(url){
+	return getParam(url, /^(https?:\/\/[^\/]*)/i);
+}
+
 function main(){
     var prefs = AnyBalance.getPreferences();
 	
@@ -35,7 +38,7 @@ function main(){
     checkEmpty(prefs.password, 'Введите пароль к ИССА!');
 	
     var matches;
-    if(!(matches = /^\+(375\d\d)(\d{7})$/.exec(prefs.login)))
+    if(!(matches = /^\+375(\d\d)(\d{7})$/.exec(prefs.login)))
 		throw new AnyBalance.Error('Неверный номер телефона. Необходимо ввести номер в международном формате без пробелов и разделителей!', false, true);
 	
     var phone = matches[2];
@@ -43,11 +46,11 @@ function main(){
     
     var html = AnyBalance.requestGet(baseurl, g_headers);
 
-		function randomString(length) {var result = '', chars = '0123456789';for (var i = length; i > 0; --i) {	result += chars[Math.round(Math.random() * (chars.length - 1))];}return result;}
+//		function randomString(length) {var result = '', chars = '0123456789';for (var i = length; i > 0; --i) {	result += chars[Math.round(Math.random() * (chars.length - 1))];}return result;}
 		// Ищи новый способ, как нас заблокировать.
-		AnyBalance.setCookie('internet.velcom.by', '_ga', 'GA1.2.' + randomString(10) + '.' + randomString(10));
+//		AnyBalance.setCookie('internet.velcom.by', '_ga', 'GA1.2.' + randomString(10) + '.' + randomString(10));
 
-    var sid = getParam(html, null, null, /name="sid3" value="([^"]*)"/i);
+    var sid = getParam(html, null, null, /name="sid3"[^>]+value="([^"]*)"/i);
     if(!sid){
 		if(AnyBalance.getLastStatusCode() >= 400){
 			var error = getParam(html, null, null, /<h1[^>]*>([\s\S]*?)<\/h1>/i, replaceTagsAndSpaces, html_entity_decode);
@@ -59,14 +62,14 @@ function main(){
 		throw new AnyBalance.Error(velcomOddPeople);
     }
     
-    var form = getParam(html, null, null, /(<form[^>]*name="mainForm"[^>]*>[\s\S]*?<\/form>)/i);
+    var form = getElement(html, /<form[^>]*name="asmpform"/i);
     if(!form){
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось найти форму входа, похоже, velcom её спрятал. Обратитесь к автору провайдера.');
     }
 	
 	var params = createFormParams(form, function(params, str, name, value) {
-		var id=getParam(str, null, null, /\bid="([^"]*)/i, null, html_entity_decode);
+		var id=getParam(str, /\bid="([^"]*)/i, replaceHtmlEntities);
 		if(id){
 			if(/PRE/i.test(id)){ //Это префикс
 				value = prefix;
@@ -78,8 +81,8 @@ function main(){
 		}
 		if(!name)
 			return;
-		if(name == 'user_input_0')
-			value = '_next';
+/*		if(name == 'user_input_0')
+			value = '';
 		if(name == 'user_input_timestamp')
 			value = new Date().getTime();
 		if(/^user_input_\d+8$/.test(name))
@@ -87,15 +90,17 @@ function main(){
 		if(/^user_input_\d+9$/.test(name))
 			value = '2';
 		if(/^user_input_\d+10$/.test(name))
-			value = '0';
+			value = '0'; */
 		return value || '';
     });
     delete params.user_submit;
+    var action = getParam(form, /<form[^>]+action="([^"]*)/i, replaceHtmlEntities);
+    var referer = AnyBalance.getLastUrl();
 
 	try {
-		html = requestPostMultipart(baseurl + 'work.html', params, addHeaders({Referer: baseurl + 'work.html'}));
+		html = AnyBalance.requestPost(joinUrl(referer, action), params, addHeaders({Referer: referer, Origin: getDomain(referer)}));
 	} catch(e) {
-		AnyBalance.trace('Error executing multipart request: ' + e.message);
+		AnyBalance.trace('Error executing request: ' + e.message);
 		if(/Read error|failed to respond/i.test(e.message)){
 			AnyBalance.trace(html);
 			throw new AnyBalance.Error(velcomOddPeople + '!');
@@ -129,6 +134,10 @@ function main(){
 	        || getParam(html, null, null, /<td[^>]+class="info_caption"[^>]*>[\s\S]*?<\/td>/ig, replaceTagsAndSpaces, html_entity_decode);
         if (!error) {
             error = AB.getElement(html, /<p\s[^>]+?info_error_caption/i, AB.replaceTagsAndSpaces);
+        }
+        if(!error) {
+        	var errors = getElements(html, /<div[^>]+class="auth_error_block"/ig);
+        	error = replaceAll(errors.filter(function(e) { return !/display\s*:\s*none/i.test(e) }).join(''), replaceTagsAndSpaces);
         }
         if(error)
             throw new AnyBalance.Error(error, null, /Неверно указан номер|номер телефона|парол/i.test(error));

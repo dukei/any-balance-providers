@@ -31,7 +31,7 @@ function getDomain(url){
 function main(){
     var prefs = AnyBalance.getPreferences();
 	
-    var baseurl = "https://internet.velcom.by/";
+    var baseurl = "https://my.velcom.by/";
     AnyBalance.setDefaultCharset('utf-8');
 	
     checkEmpty(prefs.login, 'Введите номер телефона в международном формате!');

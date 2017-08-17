@@ -25,7 +25,7 @@ function main() {
 		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
 	}
 	
-	html = AnyBalance.requestPost(baseurl + 'registration/getPassword/', {
+	html = AnyBalance.requestPost(baseurl, {
 		'f_login': prefs.login,
 		'f_password': prefs.password
 	}, AB.addHeaders({Referer: baseurl}));

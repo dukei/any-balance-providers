@@ -123,10 +123,31 @@ function main(){
     	AnyBalance.trace('Входить будем по логину');
     }
 
+    //Get captcha
+    var sitekey = '6LeQM84SAAAAAKALDOQ_0oUk2i09ozbCzrWg4nt5';
+    var html = AnyBalance.requestGet('https://www.google.com/recaptcha/api/challenge?k=' + sitekey + '&ajax=1&cachestop=' + Math.random(), addHeaders({
+    	Referer: baseurl
+    }));
+    var challenge = getParam(html, /challenge\s*:\s*'([^']*)/);
+    html = AnyBalance.requestGet('https://www.google.com/recaptcha/api/reload?c=' + challenge + '&k=' + sitekey + '&reason=i&type=image&lang=ru', addHeaders({
+    	Referer: baseurl
+    }));
+    var imgid = getParam(html, /Recaptcha.finish_reload\(\'([^']*)/);
+    var img = AnyBalance.requestGet('https://www.google.com/recaptcha/api/image?c=' + imgid, addHeaders({
+    	Referer: baseurl
+    }));
+
+    var code = AnyBalance.retrieveCode('Пожалуйста, введите слова с картинки', img);
+
+
     var uuid = generateUUID();
     var html = AnyBalance.requestPost(baseurl + 'client-api/login', JSON.stringify({
+    	"capcha": {
+    		challenge: imgid,
+    		code: code
+    	},
     	"login": login,
-    	"loginType": type,
+//    	"loginType": type,
     	"passwd": prefs.password,
     	"remember":false,
     	"client_uuid":generateUUID(),

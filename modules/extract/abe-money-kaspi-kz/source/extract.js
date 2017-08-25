@@ -35,93 +35,86 @@ function login() {
 	}
 
 	if (!/logout/i.test(html)) {
-		var login = getParam(prefs.login || '', null, null, /^\d{10}$/, [/^(\d{3})(\d{3})(\d{2})(\d{2})$/, '+7 ($1) $2-$3-$4']);
-		if(!login) {
-			throw new AnyBalance.Error('Не верный формат логина, необходимо вводить логин без +7 в начале и без пробелов.');
-		}
-
-		var auth_token = AB.getParam(html, null, null, /<input[^>]+name="authToken"[^>]+value="([^"]*)/i);
-		if(!auth_token) {
+		var form = getElement(html, /<form[^>]+LoginForm/i);
+		if (!form){
 			AnyBalance.trace(html);
-			throw new AnyBalance.Error("Не удалось найти токен авторизации. Сайт изменён?");
+			throw new AnyBalance.Error('Не удалось получить форму авторизации. Сайт изменен?');
 		}
+		var params = AB.createFormParams(form, function(params, str, name, value){
+			if(name == 'Login')
+				return prefs.login;
+			else if(name == 'Password')
+				return prefs.password;
+			return value;
+		});
 
-       	var params = {
-			'submitId': 'SignIn',
-			'webFormValues': [
-				{'name': 'FormId', 	    'value': 'SignInForm'},
-				{'name': 'AuthToken',   'value': auth_token},
-				{'name': 'SignInLogin', 'value': login},
-				{'name': 'Password',    'value': prefs.password}
-			],
-			'requestTimestamp':new Date().toISOString()
-		};
-
-		html = AnyBalance.requestPost(baseurl + '/api/auth/sign-in', JSON.stringify(params), addHeaders({
+		html = AnyBalance.requestPost(baseurl + '/SignIn', params, addHeaders({
 			'Referer': baseurl + '/entrance',
-			'X-Requested-With': 'XMLHttpRequest',
-			'Accept': 'application/json, text/javascript, */*; q=0.01',
-			'Content-Type': 'application/json; charset=UTF-8'
+			//'Content-Type': 'application/x-www-form-urlencoded'
 		}));
 		
-		var json = getJson(html);
-		if (json.load && /SmsAuth/i.test(json.load)) {
+		var error = getParam(html, null, null, /<div[^>]+class="entrance__inputErrorMessage[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+		if (error)
+			throw new AnyBalance.Error(error, null, /Пароль введен неверно/i.test(error));
+
+		if (/SMSCodeForm/i.test(html)) {
 			// при первой авторизации банк запрашивает одноразовый код из смс
-			AnyBalance.trace('Затребован SMS-код');
-			var html = AnyBalance.requestPost(baseurl + json.load, json.loadparams, addHeaders({
+			AnyBalance.trace('Отправляем запрос на сервер для получения SMS-кода');
+			var subHtml = AnyBalance.requestPost(baseurl + '/SendEntranceOtp', null, addHeaders({
 				'X-Requested-With': 'XMLHttpRequest',
-				'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
-				'Referer': baseurl + '/entrance'
+				'Accept': 'application/json, text/javascript, */*; q=0.01',
+				'Referer': baseurl + '/SignIn'
 			}));
-			var form = getElement(html, /<form[^>]+SendMeSmsForm/i);
+			var json = getJson(subHtml);
+			if (json.status !== 'OK') {
+				AnyBalance.trace(subHtml);
+				AnyBalance.trace('Сервер должен был отправить SMS с кодом, но вернул ошибку');
+				throw new AnyBalance.Error('Не удалось отправить SMS с кодом. Сайт изменен?');
+			}
+			
+			var smsCode = AnyBalance.retrieveCode('Вам отправлено SMS-сообщение с кодом для входа в личный кабинет Каспи банка. Введите код из SMS', null, {
+				inputType: 'number',
+				minLength: 4,
+				maxLength: 4,
+				time: 300000
+			});
+            
+			var subHtml = AnyBalance.requestPost(baseurl + '/CheckEntranceOtp', {'otp': smsCode}, addHeaders({
+				'X-Requested-With': 'XMLHttpRequest',
+				'Accept': 'application/json, text/javascript, */*; q=0.01',
+				'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+				'Referer': baseurl + '/SignIn'
+			}));
+			json = getJson(subHtml);
+			if (json.status === 'INVALID_OTP') {
+				AnyBalance.trace('Введен некорректный код из SMS');
+				throw new AnyBalance.Error('Вы ввели некорректный код из SMS. Попробуйще ещё раз.');
+			} else if (json.status !== 'OK') {
+				AnyBalance.trace(subHtml);
+				AnyBalance.trace('При проверке кода из SMS произошла неизвестная ошибка.');
+				throw new AnyBalance.Error('Не удалось проверить код из SMS. Сайт изменен?');
+			}
+			
+			var form = getElement(html, /<form[^>]+SMSCodeForm/i);
 			if (!form){
 				AnyBalance.trace(html);
 				throw new AnyBalance.Error('Не удалось получить форму ввода кода из SMS. Сайт изменен?');
 			}
 
 			var smsFormParams = AB.createFormParams(form, function(params, str, name, value) {
-				if (name == 'SMSCode')
-					return AnyBalance.retrieveCode('Вам отправлено SMS-сообщение с кодом для входа в личный кабинет Каспи банка. Введите код из SMS', null, {
-						inputType: 'number',
-						minLength: 4,
-						maxLength: 4,
-						time: 300000
-					});
+				if (name == 'Otp')
+					return smsCode;
+				else if (name == 'Login')
+					return prefs.login;
 				return value;
 			});
-			var smsFormParamsArray = Object.keys(smsFormParams).map(function (key) {
-				var obj = {};
-				obj['name'] = key;
-				obj['value'] = smsFormParams[key];
-				return obj;
-			});
-
-			var params = {
-				'submitId': 'SendMeSms',
-				'webFormValues': smsFormParamsArray,
-				'requestTimestamp':new Date().toISOString()
-			};
 			
-			html = AnyBalance.requestPost(baseurl + '/api/auth/sign-in', JSON.stringify(params), addHeaders({
-				'Referer': baseurl + '/entrance',
-				'X-Requested-With': 'XMLHttpRequest',
-				'Accept': 'application/json, text/javascript, */*; q=0.01',
-				'Content-Type': 'application/json; charset=UTF-8'
+			html = AnyBalance.requestPost(baseurl + '/SignIn', smsFormParams, addHeaders({
+				'Referer': baseurl + '/SignIn'
 			}));
-			json = getJson(html);
 		}
 		
-		if (!json.location) {
-			var errors = json.errors;
-			var lastError = '';
-			if (errors[0]) {
-				lastError = errors[0].message;
-			}
-			
-			if (lastError) {
-				throw new AnyBalance.Error(lastError, null, /Мы не нашли такой пароль/i.test(lastError));
-			}
-
+		if (!/logout/i.test(html)) {
 			AnyBalance.trace(html);
 			throw new AnyBalance.Error('Не удалось зайти в интернет-банк. Сайт изменен?');
 		}
@@ -148,24 +141,27 @@ function processCards(html, result) {
 	if(!AnyBalance.isAvailable('cards'))
 		return;
 
-	html = AnyBalance.requestGet(baseurl + '/index.aspx?action=bank', g_headers);
+    var cards = [];
+    var kaspiGoldUrl = getParam(html, null, null, /<a[^>]+class="myProductsMenu__link[^>]+href="([^>]*?)"[^>]*>\s*Kaspi Gold/i);
+    if (kaspiGoldUrl) {
+        AnyBalance.trace('Нашли карту Kaspi Gold, получаем базовую информацию.');
+        
+        html = AnyBalance.requestGet(baseurl + kaspiGoldUrl, g_headers);
+        
+        var title = AB.getParam(html, null, null, /<div[^>]+bankProducts__item--gold[\s\S]*?bankProducts__title[^>]*?>([\s\S]*?)<div/i, AB.replaceTagsAndSpaces);
+        
+        cards.push({
+            'url': kaspiGoldUrl,
+            'type': 'gold',
+            'title': title,
+            'html': html,
+        });
+    }
 
-	var cardList = AB.getElement(html, /<div[^>]+id="(item_creditcards|item_kaspi_gold)"[^>]*>/i);
-	if(!cardList){
-        if(/У вас нет карт/i.test(html)){
-            AnyBalance.trace('У вас нет карт');
-            result.cards = [];
-        }else {
-            AnyBalance.trace(html);
-            AnyBalance.trace('Не удалось найти таблицу с картами.');
-        }
+	if(!cards.length){
+        AnyBalance.trace(html);
+        AnyBalance.trace('У вас нет карт.');
 		return;
-	}
-
-	var cards = AB.getElements(cardList, /<div[^>]+(credicardInfoWrapper|payrolCardInfoWrapper)[^>]*>/ig);
-	if(!cards) {
-		AnyBalance.trace(cardList);
-		AnyBalance.trace("Не удалось найти карты. Сайт изменён?");
 	}
 
 	AnyBalance.trace('Найдено карт: ' + cards.length);
@@ -174,55 +170,36 @@ function processCards(html, result) {
 	for(var i=0; i < cards.length; ++i){
 		var card = cards[i];
 
-		if (AB.getElement(card, /<div[^>]+credicardInfoWrapper[^>]*>/i)) {
-			var id 	  = AB.getParam(card, null, null, /<div[^>]+title--creditcard(?:[^>]*>){3}([\s\S]*?)<span/i, AB.replaceTagsAndSpaces),
-				num   = AB.getParam(card, null, null, /<div[^>]+title--creditcard(?:[^>]*>){3}([\s\S]*?)<span/i, AB.replaceTagsAndSpaces),
-				title = AB.getParam(card, null, null, /<div[^>]+title--creditcard(?:[^>]*>){3}([\s\S]*?)<span/i, AB.replaceTagsAndSpaces);
-		} else if (AB.getElement(card, /<div[^>]+payrolCardInfoWrapper[^>]*>/i)) {
-			var id 	  = AB.getParam(card, null, null, /<div[^>]+title--gold(?:[^>]*>){3}([\s\S]*?)<span/i, AB.replaceTagsAndSpaces),
-				num   = AB.getParam(card, null, null, /<div[^>]+title--gold(?:[^>]*>){3}([\s\S]*?)<span/i, AB.replaceTagsAndSpaces),
-				title = AB.getParam(card, null, null, /<div[^>]+title--gold(?:[^>]*>){3}([\s\S]*?)<span/i, AB.replaceTagsAndSpaces);
-		} else {
-			AnyBalance.trace("Найден неизвестный тип карты.");
-			continue;
-		}
-
-		var c = {__id: id, __name: title, num: num};
+		var c = {__id: card.title, __name: card.title, num: card.title};
 
 		if (__shouldProcess('cards', c)) {
 			processCard(card, c);
 		}
-
-		result.cards.push(c);
+        
+        result.cards.push(c);
 	}
 }
 
 function processCard(card, result) {
     AnyBalance.trace('Обработка карты ' + result.__name);
 
-    AB.getParam(card, result, 'cards.balance', /<div[^>]+"e-limit__info__amount_inner"[^>]*>[\s\S]*?<span/i,					    AB.replaceTagsAndSpaces, AB.parseBalanceSilent);
-    AB.getParam(card, result, ['cards.currency', 'cards.balance'], /<div[^>]+"e-limit__info__amount_inner"[^>]*>([\s\S]*?)<\/div/i, AB.replaceTagsAndSpaces, AB.parseCurrency);
-
-    AB.getParam(card, result, 'cards.debt',     /<span[^>]+"e-limit__subtitle e-debt__title"[^>]*>[\s\S]*?<div/i, AB.replaceTagsAndSpaces, AB.parseBalanceSilent);
-    AB.getParam(card, result, 'cards.pay_till', /<span[^>]+"e-transfer__day"[^>]*>[\s\S]*?<div/i,                 AB.replaceTagsAndSpaces, AB.parseDateWord);
+    var html = card.html;
+    
+    // на данный момент нет доступных карт, у которых есть счетчики: cards.limit, cards.debt, cards.status, cards.till, cards.pay_till
+    
+    AB.getParam(html, result, 'cards.balance',                     /Доступно(?:[^>]*>){2}([\s\S]*?)<\/div>/i, AB.replaceTagsAndSpaces, AB.parseBalanceSilent);
+    AB.getParam(html, result, ['cards.currency', 'cards.balance'], /Доступно(?:[^>]*>){2}([\s\S]*?)<\/div>/i, AB.replaceTagsAndSpaces, AB.parseCurrency);
 	
-	var href_info = AB.getParam(card, null, null, /<a[^>]+href="([^"]*)"[^>]*>[\s\S]*?Информация о карте/i, [/#\d*/, '']);
+	var href_info = AB.getParam(html, null, null, /<a[^>]+href="([^"]*)"[^>]+class="[^"]+productsMainMenu__item--card[^"]+"/i);
 	if(!href_info) {
 		AnyBalance.trace(card);
 		AnyBalance.trace("Не удалось найты ссылку на страницу с информацией о карте. Сайт изменён?");
 	} else {
 		var html = AnyBalance.requestGet(baseurl + href_info, g_headers);
 
-		AB.getParam(html, result, 'cards.agreement', /Номер договора:(?:[^>]*>){2}([^<]*)/i,  	   		AB.replaceTagsAndSpaces);
-		AB.getParam(html, result, 'cards.limit',     /Кредитный лимит:(?:[^>]*>){2}([^<]*)/i, 	   		AB.replaceTagsAndSpaces, AB.parseBalance);
-		AB.getParam(html, result, 'cards.status',    /Статус:(?:[^>]*>){2}([^<]*)/i, 		  	   		AB.replaceTagsAndSpaces);
-		AB.getParam(html, result, 'cards.num',    	 /<div[^>]+class="card_number"[^>]*>([^<]*)/i, 		AB.replaceTagsAndSpaces);
-		AB.getParam(html, result, 'cards.type',    	 /<div[^>]+class="card_holder"[^>]*>([^<]*)/i, 		AB.replaceTagsAndSpaces);
-		AB.getParam(html, result, 'cards.till',    	 /<div[^>]+class="card_valid_thru"[^>]*>([^<]*)/i, 	AB.replaceTagsAndSpaces, AB.parseDateWord);
-
-	}
-	if(isAvailable('cards.transactions')) {
-		processCardTransactions(card, result);
+        AB.getParam(html, result, 'cards.num',    /Номер карты(?:[^>]*>){2}([^<]*)/i,   AB.replaceTagsAndSpaces);
+        AB.getParam(html, result, 'cards.status', /Статус(?:[^>]*>){2}([^<]*)/i,        AB.replaceTagsAndSpaces);
+        AB.getParam(html, result, 'cards.till',   /Срок действия(?:[^>]*>){2}([^<]*)/i, AB.replaceTagsAndSpaces, AB.parseDateWord);
 	}
 }
 
@@ -233,36 +210,30 @@ function processDeposits(html, result) {
 	if(!AnyBalance.isAvailable('deposits'))
 		return;
 
-	//Пока нет возможности посмотреть как будет выглядеть страница с двумя и т.д. депозитами. Может после исправления придёт какая-нибудь заявка
-	html = AnyBalance.requestGet(baseurl + '/index.aspx?action=bank', g_headers);
+    var depositsUrl = getParam(html, null, null, /<a[^>]+class="myProductsMenu__link[^>]+href="([^>]*?)"[^>]*>\s*Депозиты/i);
+    
+	html = AnyBalance.requestGet(baseurl + depositsUrl, g_headers);
 
-	var depositsList = getElement(html, /<div[^>]+id="item_deposits"[^>]*>/i);
-	if(!depositsList){
+    var deposits = AB.getElements(html, /<a[^>]+myProductsSubMenu__link[^>]*>/ig)
+	if(!deposits){
 		AnyBalance.trace(html);
-		AnyBalance.trace('Не удалось найти таблицу с депозитами.');
-		return;
-	}
-
-	var deposits = AB.getElements(depositsList, /<div[^>]+depositInfoWrapper[^>]*>/ig);
-	if(!deposits) {
-		AnyBalance.trace(depositsList);
-		AnyBalance.trace("Не удалось найти депозиты. Сайт изменён?");
+        AnyBalance.trace('Не удалось найти депозиты. Сайт изменён?');
 	}
 
 	AnyBalance.trace("Найдено депозитов: " + deposits.length);
 	result.deposits = [];
 	
 	for(var i = 0; i < deposits.length; i++) {
-		var href_info = AB.getParam(deposits[i], null, null, /<div[^>]+class="e-deposit__upper_info"[^>]*>[\s\S]*?<a[^>]+href="([^"]*)"[^>]*>[\s\S]*?Информация о депозите<\/a>/i, [/#\d*/, '']);
+		var href_info = AB.getParam(deposits[i], null, null, /<a[^>]+href="([^"]*)"[^>]*>/i);
 		if(!href_info) {
 			AnyBalance.trace("Не удалось найти ссылку на страницу с информацией о депозите. Сайт изменён?");
 			continue;
 		}
-		html = AnyBalance.requestGet(baseurl + href_info, g_headers);
+		html = AnyBalance.requestGet(baseurl + href_info + '/About', g_headers);
 
-		var id    = AB.getParam(html,		 null, null, /Номер счета Депозита:(?:[^>]*>){2}([^<]*)/i, AB.replaceTagsAndSpaces),
-			num   = AB.getParam(html, 		 null, null, /Номер счета Депозита:(?:[^>]*>){2}([^<]*)/i, AB.replaceTagsAndSpaces),
-			title = AB.getParam(deposits[i], null, null, /<div[^>]+depositinfo(?:[^>]*>){4}([^<]*)/i,  AB.replaceTagsAndSpaces);
+		var id    = AB.getParam(html, null, null, /Номер счета Депозита:(?:[^>]*>){2}([^<]*)/i, AB.replaceTagsAndSpaces),
+			num   = AB.getParam(html, null, null, /Номер счета Депозита:(?:[^>]*>){2}([^<]*)/i, AB.replaceTagsAndSpaces),
+			title = AB.getParam(html, null, null, /Название(?:[^>]*>){2}([^<]*)/i,  AB.replaceTagsAndSpaces);
 
 
 		var c = {__id: id, __name: title, num: num};
@@ -276,27 +247,24 @@ function processDeposits(html, result) {
 }
 
 function processDeposit(deposit, result, html) {
-		AB.getParam(deposit, result, 'deposits.balance', /Накоплено(?:[^>]*>){2}([\s\S]*?)<\/div>/i,  AB.replaceTagsAndSpaces, AB.parseBalance);
+	AB.getParam(html, result, 'deposits.balance',    /Накоплено(?:[^>]*>){2}([\s\S]*?)<\/div>/i,  AB.replaceTagsAndSpaces, AB.parseBalance);
 
-		AB.getParam(html, result, 'deposits.agreement',  /номер договора:(?:[^>]*>){2}([^<]*)/i,     							 AB.replaceTagsAndSpaces);
-		AB.getParam(html, result, 'deposits.date_start', /Вы открыли вклад:(?:[^>]*>){3}([^<]*)/i,   							 AB.replaceTagsAndSpaces, AB.parseDate);
-		AB.getParam(html, result, 'deposits.pct',        /Эффективная ставка:(?:[^>]*>){3}([^<]*)/i, 							 AB.replaceTagsAndSpaces, AB.parseBalance);
-		AB.getParam(html, result, 'deposits.withdraw',   /Доступно для снятия без комиссии:(?:[\s\S]*?<span[^>]*>){2}([^<]*)/i,  AB.replaceTagsAndSpaces, AB.parseBalance);
-		AB.getParam(html, result, 'deposits.currency',   /Валюта депозита:(?:[^>]*>){2}([^<]*)/i,  							     [AB.replaceTagsAndSpaces, /(.*?)/i, '0$1'], AB.parseCurrency);
+	AB.getParam(html, result, 'deposits.agreement',  /Номер договора(?:[^>]*>){2}([^<]*)/i,     							 AB.replaceTagsAndSpaces);
+	AB.getParam(html, result, 'deposits.date_start', /Вы открыли вклад(?:[^>]*>){2}([^<]*)/i,   							 AB.replaceTagsAndSpaces, AB.parseDate);
+	AB.getParam(html, result, 'deposits.pct',        /Эффективная ставка(?:[^>]*>){2}([^<]*)/i, 							 AB.replaceTagsAndSpaces, AB.parseBalance);
+	AB.getParam(html, result, 'deposits.withdraw',   /Доступно для снятия(?:[\s\S]*?<span[^>]*>)([^<]*)/i,                   AB.replaceTagsAndSpaces, AB.parseBalance);
+	AB.getParam(html, result, 'deposits.currency',   /Валюта Депозита(?:[^>]*>){2}([^<]*)/i,  							     [AB.replaceTagsAndSpaces, /(.*?)/i, '0$1'], AB.parseCurrency);
 
-		AB.getParam(html, result, 'deposits.dvk_status', /<div[^>]+class="text dvk_status"(?:[^>]*>){4}([^<]*)/i,  AB.replaceTagsAndSpaces);
-		AB.getParam(html, result, 'deposits.dvk_num',    /<div[^>]+class="dvkcard_number"[^>]*>([^<]*)/i,          AB.replaceTagsAndSpaces);
-		AB.getParam(html, result, 'deposits.dvk_till',   /<div[^>]+class="card_valid_thru"[^>]*>([^<]*)/i,    	   AB.replaceTagsAndSpaces, AB.parseDate);
-
-		if(isAvailable('deposits.transactions')) {
-			processDepositTransactions(html, result);
-		}
-		
+	AB.getParam(html, result, 'deposits.dvk_status', /<div[^>]+class="text dvk_status"(?:[^>]*>){4}([^<]*)/i,  AB.replaceTagsAndSpaces);
+	AB.getParam(html, result, 'deposits.dvk_num',    /<div[^>]+class="dvkcard_number"[^>]*>([^<]*)/i,          AB.replaceTagsAndSpaces);
+	AB.getParam(html, result, 'deposits.dvk_till',   /<div[^>]+class="card_valid_thru"[^>]*>([^<]*)/i,    	   AB.replaceTagsAndSpaces, AB.parseDate);
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Обработка кредитов
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 function processCredits(html, result) {
+    throw new AnyBalance.Error('Получение информации о кретидах ещё не реализовано. Обратитесь к разработчику программы.');
+    
 	if(!AnyBalance.isAvailable('credits'))
 		return;
 
@@ -355,15 +323,48 @@ function processCredit(html, result){
     }
 }
 
-function processInfo(html, result){
-    html = AnyBalance.requestGet(baseurl + '/index.aspx?action=bank', g_headers);
+function processWallet(html, result){
+	if(!AnyBalance.isAvailable('info.wallet'))
+		return;
+    
+    var walletUrl = getParam(html, null, null, /<a[^>]+class="myProductsMenu__link[^>]+href="([^>]*?)"[^>]*>\s*Kaspi Кошелек/i);
+    if (!walletUrl) {
+		AnyBalance.trace(html);
+        AnyBalance.trace('Не удалось найти ссылку на страницу Kaspi Кошелька.');
+		return;
+    }
+    
+    html = AnyBalance.requestGet(baseurl + walletUrl, g_headers);
 
+    var info = result.info;
+    
+    getParam(html, info, 'info.wallet', /Доступно(?:[^>]*>){2}([\s\S]*?)<\/div>/i, AB.replaceTagsAndSpaces, AB.parseBalance);
+    getParam(html, info, ['info.currency', 'info.wallet'], /Доступно(?:[^>]*>){2}([\s\S]*?)<\/div>/i, AB.replaceTagsAndSpaces, AB.parseCurrency);
+}
+
+function processBonuses(html, result){
+	if(!AnyBalance.isAvailable('info.bonus'))
+		return;
+    
+    html = AnyBalance.requestGet(baseurl + '/bonus', g_headers);
+
+    var info = result.info;
+    
+    getParam(html, info, 'info.bonus', /Доступно(?:[^>]*>){2}([\s\S]*?)<\/div>/i, AB.replaceTagsAndSpaces, AB.parseBalance);
+}
+
+function processInfo(html, result){
+/*	var bankSections = AB.getElements(html, /<a[^>]+myProductsMenu__link[^>]*>/ig)
+	if(!bankSections){
+		AnyBalance.trace(html);
+        AnyBalance.trace('Не удалось найти блок со ссылками на продукты пользователя.');
+		throw new AnyBalance.Error('Не удалось найти информацию о пользователе в личном кабинете. Сайт изменён?');
+	}*/
+    
     var info = result.info = {};
 
-    getParam(html, info, 'info.wallet', /Можно потратить[\s\S]*?<span[^>]+limit__info__amount[^>]*>([\s\S]*?)<div/i, AB.replaceTagsAndSpaces, AB.parseBalance);
-    getParam(html, info, ['info.currency', 'info.wallet'], /Можно потратить[\s\S]*?<span[^>]+limit__info__amount[^>]*>([\s\S]*?)<div/i, AB.replaceTagsAndSpaces, AB.parseCurrency);
-    getParam(html, info, 'info.bonus',  /<div[^>]+bonusMenuContainer[^>]*>([^<]*)/i, 								 AB.replaceTagsAndSpaces, AB.parseBalance);
-    getParam(html, info, 'info.mphone', /<div[^>]+headerSettings__phone(?:[^>]*>){3}([^<]*)/i,  					 AB.replaceTagsAndSpaces);
-    getParam(html, info, 'info.fio',    /<span[^>]+headerAuth__user[^>]*>([^<]*)/i, 								 AB.replaceTagsAndSpaces);
-	
+    getParam(html, info, 'info.fio', /<span[^>]+headerAuth__user[^>]*>([^<]*)/i, AB.replaceTagsAndSpaces);
+    
+    processWallet(html, result);
+    processBonuses(html, result);
 }

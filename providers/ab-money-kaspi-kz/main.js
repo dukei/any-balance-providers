@@ -14,7 +14,7 @@ var g_countersTable = {
 		"debt": "cards.debt", //задолженность
 		"currency": "cards.currency",
 		"card_num": "cards.num",
-		"__tariff": "cards.num",
+		"__tariff": "cards.__name",
 		"name": "cards.__name",
 		"status": "cards.status",
 		"till": "cards.till",
@@ -32,7 +32,7 @@ var g_countersTable = {
 
 	dep: {
 		"balance": "deposits.balance",
-		"__tariff": "deposits.agreement",
+		"__tariff": "deposits.__name",
 		"currency": "deposits.currency",
 		"pct": "deposits.pct",
 		"date_start": "deposits.date_start",
@@ -78,7 +78,7 @@ function shouldProcess(counter, info){
 			if(!prefs.cardnum)
 				return true;
 
-			if(endsWith(info.num, prefs.cardnum))
+			if(endsWith(info.num, prefs.cardnum) || endsWith(info.__name, prefs.cardnum))
 				return true;
 		}
 		default:

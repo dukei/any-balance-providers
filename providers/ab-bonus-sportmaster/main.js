@@ -93,7 +93,7 @@ function main(){
     AB.getParam(html, result, 'nextlevel', /Совершите покупки еще на([^<]*?)руб/i,           AB.replaceTagsAndSpaces, AB.parseBalance);
 
     var bonuses = getParam(html, /bonuses:\s*(\[\{[\s\S]*?\}\])/, replaceHtmlEntities, getJson);
-    var tillbonus = (bonuses || []).reduce(function(b, prev) { if(!prev || b.dateEnd < prev.dateEnd) prev = b; return prev });
+    var tillbonus = (bonuses || []).reduce(function(b, prev) { if(!prev || b.dateEnd < prev.dateEnd) prev = b; return prev }, 0);
     getParam(tillbonus && tillbonus.dateEnd, result, 'till');
     getParam(tillbonus && tillbonus.amount, result, 'sumtill');
 	

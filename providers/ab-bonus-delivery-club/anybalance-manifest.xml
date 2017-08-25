@@ -1,7 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
   <api flags="no_browser"/>
-  <id version="2">ab-bonus-delivery-club</id>
+  <id version="3">ab-bonus-delivery-club</id>
   <name>Delivery Club</name>
   <description html="true"><![CDATA[
 	<p>Получает колличество баллов на бонусной карте Delivery-Club <a href="http://www.delivery-club.ru/">http://www.delivery-club.ru/</a></p>
@@ -10,10 +10,12 @@
   <p>Если у вас нет доступа в Личный кабинет, получите его на странице <a href="http://www.delivery-club.ru/">http://www.delivery-club.ru/</a></p>
   ]]></instruction>
   <author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+  <depends>
+  	<module id="library"/>
+  </depends>
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
-    <js>library.js</js>
     <js>main.js</js>
     <history>history.xml</history>
   </files>

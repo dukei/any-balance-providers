@@ -11,7 +11,7 @@ var g_headers = {
 
 function main() {
   var prefs = AnyBalance.getPreferences();
-  var baseurl = 'http://www.delivery-club.ru/';
+  var baseurl = 'https://www.delivery-club.ru/';
   AnyBalance.setDefaultCharset('utf-8');
 
   AB.checkEmpty(prefs.login, 'Введите логин!');
@@ -34,10 +34,13 @@ function main() {
   }));
 
   if (!/success/i.test(html)) {
-    var json = AB.getJson(html);
+    var json = AB.getJson(html), error;
     if (json.error)
-      throw new AnyBalance.Error(json.error.log_in_failed, null, /пароль/i.test(json.error.log_in_failed));
-    AnyBalance.trace(json);
+    	error = json.error.log_in_failed || json.error.error_email;
+	if(error)
+      	throw new AnyBalance.Error(error, null, /пароль/i.test(error));
+
+    AnyBalance.trace(html);
     throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
   }
 
@@ -46,7 +49,7 @@ function main() {
     success: true
   };
 
-  AB.getParam(html, result, 'fio', /id="user-profile"[^>]*>([\s\S]*?)<ul/i, AB.replaceTagsAndSpaces);
+  AB.getParam(html, result, 'fio', /"user-profile__span"[^>]*>([^<]*)/i, AB.replaceTagsAndSpaces);
   AB.getParam(html, result, 'balance', /id="user-points"[^>]*>([\s\S]*?)<\/a>/i, AB.replaceTagsAndSpaces, AB.parseBalance);
 
   AnyBalance.setResult(result);

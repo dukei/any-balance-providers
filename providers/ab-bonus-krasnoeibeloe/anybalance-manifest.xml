@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="9">ab-bonus-krasnoeibeloe</id>
+	<id version="10">ab-bonus-krasnoeibeloe</id>
 	<api flags="no_browser"/>
 	<name>Красное&amp;Белое (Урал)</name>
 	<description html="true"><![CDATA[
@@ -19,8 +19,8 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<!-- <counter id="balance" name="Накопленная сумма" units=" р"/> -->
 		<counter id="discount" name="Скидка" units=" %"/>
+		<counter id="balance" name="Накопленная сумма" units=" р"/>
 		<counter id="sumleft" name="Осталось до следующего уровня" units=" р"/>
 		<counter id="nextdis" name="Следующий уровень скидки" units=" %"/>
 		<!-- <counter id="nextsum" name="Сумма для следующего уровеня скидки" units=" р"/> -->

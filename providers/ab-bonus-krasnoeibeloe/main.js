@@ -23,20 +23,20 @@ function main(){
     if(incapsule.isCloudflared(html))
         html = incapsule.executeScript(html);
 	
-	var form = getElements(html, [/<form[^>]*card_reg_form[^>]*>/ig, /<input[^>]+sessid/i])[0];
-    var sessid = getParam(form, null, null, /name="sessid"[\s\S]*?value="([^"]+)/i);
-    	
-    html = AnyBalance.requestPost(baseurl + 'discount/?discount=Y', {
-        'sessid': sessid,
-        'card_number_one': prefs.login.replace(/(\d)(\d{6})(\d{6})/i, '$1  $2  $3'),
-        'card_number': '',
-        'card_submit': 'Узнать'
-    }, addHeaders({Referer: baseurl + 'discount/?old=Y'}));
+    html = AnyBalance.requestPost(baseurl + 'local/php_interface/ajax/', {
+        'ajax_command': 'discount_check',
+        'cardNum': prefs.login.replace(/(\d)(\d{6})(\d{6})/i, '$1 $2 $3'),
+    }, addHeaders({Referer: baseurl + 'discount/?discount=Y', 'X-Requested-With': 'XMLHttpRequest'}));
+
+    var json = getJson(html);
 	
-	if (!/По данным на/i.test(getElement(html, /<div[^>]+bl_result_nomer_text[^>]*>/i))) {
-		var error = getJsonObject(html, /var\s+header_message\s*=/);
-		if (error && error.message)
-			throw new AnyBalance.Error(replaceAll(error.message, [/Активируйте карту по.*/i, '']), null, /неверный/i.test(error.message));
+	if (!json.cardInfo || !json.cardInfo.ID) {
+		var error = json.incorrect && 'Неверный номер карты';
+		if(!error && !json.cardInfo)
+			error = 'Номер карты неверный';
+
+		if (error)
+			throw new AnyBalance.Error(error, null, /неверный/i.test(error));
 		
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
@@ -44,10 +44,11 @@ function main(){
 
     var result = {success: true};
 	
-	getParam(html, result, 'discount', /<div[^>]+bl_result_nomer_procent[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'sumleft', /накопить еще([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'nextdis', /До скидки([\s\d,.%]+)Вам необходимо/i, replaceTagsAndSpaces, parseBalance);
-	getParam(prefs.login, result, '__tariff', null, [/(\d)(\d{6})(\d{6})/, '$1-$2-$3']);
+	getParam(json.cardInfo.PERCENT, result, 'discount', null, null, parseBalance);
+	getParam(json.cardInfo.SUM, result, 'balance', null, null, parseBalance);
+	getParam(json.cardInfo.diff, result, 'sumleft');
+	getParam(json.cardInfo.nextCondition || 0, result, 'nextdis');
+	getParam(json.cardInfo.ID, result, '__tariff', null, [/(\d)(\d{6})(\d{6})/, '$1-$2-$3']);
 
     AnyBalance.setResult(result);
 }

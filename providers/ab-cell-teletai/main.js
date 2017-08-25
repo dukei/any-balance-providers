@@ -24,9 +24,9 @@ function main() {
 		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
 	
 	var params = createFormParams(html, function(params, str, name, value) {
-		if (name == 'session[login]') 
+		if (name == 'username') 
 			return prefs.login;
-		else if (name == 'session[password]')
+		else if (name == 'password')
 			return prefs.password;
 
 		return value;

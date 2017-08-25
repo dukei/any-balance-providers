@@ -47,7 +47,7 @@ function main(){
 	getParam(json.cardInfo.PERCENT, result, 'discount', null, null, parseBalance);
 	getParam(json.cardInfo.SUM, result, 'balance', null, null, parseBalance);
 	getParam(json.cardInfo.diff, result, 'sumleft');
-	getParam(json.cardInfo.nextCondition || 0, result, 'nextdis');
+	getParam(json.cardInfo.nextCondition && json.cardInfo.nextCondition.PERCENT, result, 'nextdis');
 	getParam(json.cardInfo.ID, result, '__tariff', null, [/(\d)(\d{6})(\d{6})/, '$1-$2-$3']);
 
     AnyBalance.setResult(result);

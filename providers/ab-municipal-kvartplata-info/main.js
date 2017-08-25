@@ -36,8 +36,18 @@ function main() {
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
-	
+
 	var form = getParam(html, /<form[^>]+action="[^"]*AccountInfo"[^>]*>([\s\S]*?)<\/form>/i);
+	if(!form){
+		AnyBalance.trace('Оказались не на той странице: ' + AnyBalance.getLastUrl());
+		html = AnyBalance.requestGet(baseurl + 'Home/AccountInfo', g_headers);
+	}
+	
+	form = getParam(html, /<form[^>]+action="[^"]*AccountInfo"[^>]*>([\s\S]*?)<\/form>/i);
+	if(!form){
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удалось зайти на страницу информации о счете. Сайт изменен?');
+	}
 	var months = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
 
 	if(prefs.digits) {

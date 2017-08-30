@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="2" version="1">
+	- Изменения под новый интерфейс sms.ru. Спасибо xandrosko@gmail.com за предыдущую версию.
+	</change>
 	<change major_version="1" version="0.3">
 	- Упрощение процедуры извлечения результата, добавление счетчиков, добавление обработки ошибок получения данных, новая иконка
 	</change>

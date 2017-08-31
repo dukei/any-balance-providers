@@ -1,6 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="2" version="6">ab-telephony-vegatele</id>
+	<api flags="no_browser"/>
+	<id major_version="2" version="7">ab-telephony-vegatele</id>
 	<name>Vega (Телефония, Интернет)</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе и других параметров у украинского провайдера проводной телефонии и интернет Vega (http://www.vegatele.com).</p>
@@ -12,11 +13,13 @@
 	<p>Абонентам-юридическим лицам для получения доступа в Личный кабинет телефонии необходимо обратиться с заявлением в центре продаж и обслуживания Vega.</p>
 	<p>Личный кабинет для пользователей услуги «Телефония» доступен абонентам Vega, физическим и юридическим лицам, во всех городах, где предоставляется услуга фиксированной телефонии.</p>
 	]]></instruction>
-	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>

@@ -10,7 +10,7 @@ var g_headers = {
     'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.11'
 };
 
-var g_baseurl = 'https://i.mdm.ru/';
+var g_baseurl = 'https://i.binbank.ru/';
 
 function callApi(verb, getparams, postparams, method, noexception){
 	var html = AnyBalance.requestPost(

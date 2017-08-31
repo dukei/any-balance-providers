@@ -1,17 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-    <id version="13">ab-money-mdm</id>
+    <id version="14">ab-money-mdm</id>
     <api flags="no_browser"/>
-    <name>МДМ-Банк</name>
+    <name>Бинбанк (бывший МДМ-Банк)</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о карте, счете, депозите и кредите для клиентов МДМ-Банка (http://www.mdm.ru).</p>
+	<p>Предоставляет информацию о карте, счете, депозите и кредите для клиентов БИНБАНКА (бывшего МДМ-Банка) (http://www.binbank.ru).</p>
 	]]></description>
 	<instruction html="true"><![CDATA[
 	<p>Настройки:</p>
 	<ul>
 		<li>Укажите логин и пароль к Интернет-банку (http://i.mdm.ru) в настройках провайдера.</li>
 	</ul>
-	<p>Как подключить Интернет-банк «МДМ online»: подключитесь за 5 минут здесь: https://i.mdm.ru/register</p>
+	<p>Как подключить Интернет-банк «МДМ online»: подключитесь за 5 минут здесь: https://i.binbank.ru/register</p>
 	]]></instruction>
     <author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
     <depends>

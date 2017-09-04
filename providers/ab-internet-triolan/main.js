@@ -54,7 +54,7 @@ function main() {
 		Origin: baseurl.replace(/\/+$/, '')
 	}));
 	
-	if (!/>Выход</i.test(html)) {
+	if (!/(&#39;|>)Выход(<|&#39;)/i.test(html)) {
 		var error = getParam(html, null, null, /lbError"[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces);
 		if (error)
 			throw new AnyBalance.Error(error, null, /парол/i.test(error));

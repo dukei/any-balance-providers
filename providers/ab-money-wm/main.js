@@ -206,7 +206,7 @@ function main(){
 		}
 	    
 		ref = AnyBalance.getLastUrl();
-		if(!/Completed/i.test(ref)){
+		if(!/Completed|init=true/i.test(ref)){
 			var error = getElement(html, /<span[^>]+field-validation-error/i, replaceTagsAndSpaces);
 			if(error)
 				throw new AnyBalance.Error(error, null, /парол|Пользовател/i.test(error));
@@ -220,10 +220,12 @@ function main(){
 		ref = AnyBalance.getLastUrl();
 	    
 		form = getElement(html, /<form[^>]+gk-form/i);
-		params = createFormParams(form);
-		action = getParam(form, null, null, /<form[^>]+action="([^"]*)/i, replaceHtmlEntities);
-		html = AnyBalance.requestPost(joinUrl(ref, action), params, addHeaders({Referer: ref}));
-		ref = AnyBalance.getLastUrl();
+		if(form){
+			params = createFormParams(form);
+			action = getParam(form, null, null, /<form[^>]+action="([^"]*)/i, replaceHtmlEntities);
+			html = AnyBalance.requestPost(joinUrl(ref, action), params, addHeaders({Referer: ref}));
+			ref = AnyBalance.getLastUrl();
+		}
 
 		if(/ctl00\$cph\$btnStd/i.test(html)){
 			AnyBalance.trace('Обнаружена промежуточная страница, переходим на стандартный кошелек');

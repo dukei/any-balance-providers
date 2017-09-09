@@ -43,7 +43,7 @@ function main(){
 	AnyBalance.setDefaultCharset('utf-8');
 	
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'https://mini.webmoney.ru/';
+	var baseurl = 'https://wallet.webmoney.ru/';
 	var baseurlLogin = 'https://login.wmtransfer.com/';
 
 	AB.checkEmpty(prefs.login, 'Введите логин!');
@@ -79,7 +79,7 @@ function main(){
 		if(!info.loggedOn){
 			AnyBalance.trace('Автовход не удался, пробуем всё заново авторизовывать');
 
-			ref = getParam(html, null, null, /<a[^>]+href="([^"]*)[^>]+sign-in/i, replaceHtmlEntities);
+			ref = getParam(html, null, null, /<a[^>]+top-panel__button--enter[^>]+href="([^"]*)/i, replaceHtmlEntities);
 			AnyBalance.trace('Ссылка на вход: ' + ref);
 	        
 			html = AnyBalance.requestGet(joinUrl(baseurl, ref), addHeaders({Referer: baseurl + 'welcome.aspx?ReturnUrl=%2f'}));
@@ -245,27 +245,37 @@ function main(){
 		__setLoginSuccessful();
 	}
 
-	html = AnyBalance.requestGet(baseurl + 'purses-view-history.aspx', g_headers);
+	html = AnyBalance.requestGet(baseurl + 'srv/finance/entities', addHeaders({
+		Accept: 'application/json, text/plain, */*',
+		Referer: baseurl + 'finances'
+	}));
 
 	var result = {
 		success: true
 	};
 
-	var elements = getElements(html, /<[^>]+rptPurses/ig);
+	var elements = getJson(html);
 	AnyBalance.trace('Найдено ' + elements.length + ' кошельков');
 
 	for(var i=0; i<elements.length; ++i){
 		var e = elements[i];
-		var num = getElement(e, /<[^>]+item-description/i, replaceTagsAndSpaces);
-		var sum = getElement(e, /<[^>]+summ/i, replaceTagsAndSpaces);
-		AnyBalance.trace(num + ': ' + sum);
-		var curr = parseCurrency(sum);
+		var num = e.number;
+		var sum = e.summ;
+		var curr = e.currency;
+		AnyBalance.trace(num + ': ' + sum + ' ' + curr);
 
-		sumParam(sum, result, curr.toLowerCase(), null, null, parseBalance, aggregate_sum);
+		sumParam('' + sum, result, curr.toLowerCase(), null, null, parseBalance, aggregate_sum);
 		sumParam(num, result, curr.toLowerCase() + '_num', null, null, null, aggregate_join);
 	}
 
-    getParam(html, result, '__tariff', /WMID:([^<]*)/i, replaceTagsAndSpaces);
+	html = AnyBalance.requestGet(baseurl + 'srv/profile/info', addHeaders({
+		Accept: 'application/json, text/plain, */*',
+		Referer: baseurl + 'finances'
+	}));
+
+	var json = getJson(html);
+    getParam(json.wmid, result, '__tariff');
+    getParam(json.fullName, result, 'fio');
 
     AnyBalance.setResult(result);
 }

@@ -30,8 +30,8 @@ function handleRedirect(html){
 		params.fid = hex_md5(prefs.login);
 		var delay = getParam(form, /<form[^>]+data-submit-delay="([^"]*)/i, replaceHtmlEntities, parseBalance) || 0;
 		if(delay > 0){
-			AnyBalance.trace('Необходимо подождать ' + delay + ' сек');
-			AnyBalance.sleep(delay*100);
+			AnyBalance.trace('Необходимо подождать ' + delay + ' милисек');
+			AnyBalance.sleep(delay);
 		}
 		html = AnyBalance.requestPost(joinUrl(ref, action), params, addHeaders({Referer: ref}));
 	}

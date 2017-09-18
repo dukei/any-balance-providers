@@ -97,13 +97,14 @@ function login(){
 
     	if(json.changePasswordRequired)
     		throw new AnyBalance.Error('Банк требует сменить пароль. Пожалуйста, войдите в интернет банк ' + g_rootrul + ' через браузер, смените пароль и введите новый пароль в настройки провайдера', null, true);
-    	
+/*    	
     	var code = AnyBalance.retrieveCode('На телефон ' + json.clientInfo.maskedPhoneNumber + ' выслан код подтверждения для входа в интернет банк. Пожалуйста, введите его', null, {inputType: 'number', time: json.validityOfOtpInSeconds*1000});
 
     	json = callAPI('private/auth/confirm', null, {
     		confirmationCode: code,
    			__paramsAreNotJson: true
     	});
+    	*/
     }
 
 	if(!json.clientInfo){

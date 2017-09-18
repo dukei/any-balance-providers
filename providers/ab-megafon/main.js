@@ -1574,7 +1574,7 @@ function initialize(filial){
 }
 
 function isLoggedInLK(html){
-	return /app-id=ru.megafon.mlk/i.test(html) && /logout/i.test(html);
+	return /<title[^>]*>\s*Главная страница[^<]+Личный кабинет/i.test(html) && /logout/i.test(html);
 }
 
 function isLoggedInSG(html){
@@ -1601,11 +1601,11 @@ function processStopContent(result){
 
 function checkLKPhone(html){
 	var prefs = AnyBalance.getPreferences();
-	var phone = getParam(getElement(html, /<div[^>]+class="gadget_account_block"[^>]*>/i), null, null, /<h3[^>]*>([\s\S]*?)<\/h3>/i, [replaceTagsAndSpaces, /\D/g, '']);
-	checkLKPhone.phone = phone;
-	if(!phone)
+	var phone = getJsonObject(html, /var\s+HISTONE_ENV\s*=/i);
+	checkLKPhone.phone = phone.MSISDN;
+	if(!phone || !checkLKPhone.phone)
 		return;
-    if(phone.indexOf(prefs.login) >= 0)
+    if(checkLKPhone.phone.indexOf(prefs.login) >= 0)
     	return true;
     return false;
 }

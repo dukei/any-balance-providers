@@ -562,6 +562,8 @@ function enterLK(options) {
 
     __setLoginSuccessful();
 
+    turnOffLoginSMSNotify(html);
+
     return html;
 }
 
@@ -1076,3 +1078,28 @@ function processPayments(baseurl, result) {
     }
 }
 
+
+function turnOffLoginSMSNotify(html){
+	var url = g_baseurlLogin + '/amserver/UI/Login?service=setnotify&ForceAuth=true';
+	html = AnyBalance.requestGet(url, addHeaders({Referer: g_baseurl + '/settings'}));
+	var form = getElements(html, [/<form/ig, /<input[^>]+checkbox[^>]+successfullLogin/i])[0];
+	if(!form){
+		AnyBalance.trace('Could not find notification form, skipping sms notification check: ' + html);
+		return;
+	}
+
+	var params = createFormParams(form);
+	if(params.successfullLogin){
+		AnyBalance.trace('СМС о входе в кабинет включено. Выключаем...');
+		delete params.successfullLogin;
+
+		html = AnyBalance.requestPost(url, params, addHeaders({Referer: url}));
+		if(/settings_changed/i.test(AnyBalance.getLastUrl())){
+			AnyBalance.trace('СМС о входе отключено, чтобы не терзало зря телефон');
+		}else{
+			AnyBalance.trace('Не удалось отключить смс о входе');
+		}
+	}else{
+		AnyBalance.trace('СМС о входе уже отключено');
+	}
+}

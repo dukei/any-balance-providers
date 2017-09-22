@@ -205,6 +205,11 @@ function processRemaindersApi(result){
         var namesProcessed = [];
         //for(var i = 0; i < json.models.length; i++) {
         // Идем с конца, чтобы игнорировать "замерзшие" остатки
+        if(!json.models){
+        	AnyBalance.trace('Остатков не обнаружено: ' + JSON.stringify(json));
+        	return;
+        }
+        	
         for(var i = json.models.length-1; i >= 0; i--) {
             var model = json.models[i];
 

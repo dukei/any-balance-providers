@@ -60,28 +60,28 @@ function main(){
     AB.getParam(json.Subscriber.Agreements[0].Devices[0].SmartCard, result, 'device');
 
 	html = AnyBalance.requestGet(
-        baseurl + 'odata/StartTariff(00000000-0000-0000-0000-000000000000)',
+        baseurl + 'api/BillingOperations/GetStartTariff',
         AB.addHeaders({Authorization: 'Bearer ' + token.access_token})
     );
     json = AB.getJson(html);
-    if(!json.TariffName)
-    	AnyBalance.trace(html);
+    if(!json.TariffName){
+    	AnyBalance.trace('Не удалось найти название тарифа: ' + html);
+    }
 
     AB.getParam(json.TariffName, result, '__tariff');
     
 	html = AnyBalance.requestGet(
-        baseurl + 'odata/ServiceInfo?%24filter=(SubjectId%20eq%20%27' + encodeURIComponent(deviceid) +
-        '%27%20and%20SubjectTypeId%20eq%20%27Device%27)&%24orderby=Id',
+        baseurl + 'api/BillingOperations/GetServices?SubjectId=' + encodeURIComponent(deviceid) + '&SubjectTypeId=Device&ListTypeId=VisibleForSubject',
         AB.addHeaders({Authorization: 'Bearer ' + token.access_token})
     );
     json = AB.getJson(html);
-    if(!json.value)
-    	AnyBalance.trace(html);
+    if(!json.Value)
+    	AnyBalance.trace('Не найдены сервисы: ' + html);
 
     var n = 1;
     var services = [];
-    for(var i=0; i<json.value.length; ++i){
-    	var si = json.value[i];
+    for(var i=0; i<json.Value.length; ++i){
+    	var si = json.Value[i];
     	var name = si.ServiceName;
     	if(si.ServiceStatusId != 'Active'){
     		AnyBalance.trace('Сервис ' + name + ' неактивен, пропускаем.');
@@ -95,19 +95,18 @@ function main(){
     }
 
     html = AnyBalance.requestGet(
-        baseurl + 'odata/Balance?%24filter=(SubjectId%20eq%20%27' + encodeURIComponent(deviceid) +
-        '%27%20and%20SubjectTypeId%20eq%20%27Device%27)&%24orderby=Id',
+        baseurl + 'api/BillingOperations/GetBalance?subjectId=' + encodeURIComponent(deviceid) + '&subjectTypeId=Device',
         AB.addHeaders({Authorization: 'Bearer ' + token.access_token})
     );
     json = AB.getJson(html);
-    if(!json.value)
-        AnyBalance.trace(html);
+    if(!json.Value)
+        AnyBalance.trace('Не найден баланс: ' + html);
 
-    if (json.value.length && services.length) {
-        for (var idx = 0; idx < json.value.length; idx++) {
-            var serviceId = json.value[idx].ServiceId;
-            if (serviceId == undefined || services.indexOf(serviceId) > -1) {
-                AB.getParam(result.balance + json.value[idx].Balance, result, 'balance');
+    if (json.Value.length && services.length) {
+        for (var idx = 0; idx < json.Value.length; idx++) {
+            var serviceId = json.Value[idx].ServiceId;
+            if (!serviceId || services.indexOf(serviceId) > -1) {
+                AB.getParam(result.balance + json.Value[idx].Balance, result, 'balance');
             }
         }
     }

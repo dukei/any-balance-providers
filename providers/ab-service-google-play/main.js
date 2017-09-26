@@ -57,7 +57,7 @@ function main() {
 		throw new AnyBalance.Error('Can`t find application with name ' + prefs.app_name);
 	}
 	
-	var appName = app[6][1];
+	var appName = app.name;
 	
 	var result = {success: true};
 	
@@ -67,7 +67,7 @@ function main() {
 	// ВСЕГО оценок
 	getParam((app[3][2] || '0') + '', result, 'rating_total', null, replaceTagsAndSpaces, parseBalance);
 	// Активные юзеры
-	getParam((app[3][1] || '0') + '', result, 'active_users', null, replaceTagsAndSpaces, parseBalance);
+	getParam((app[3][7] || '0') + '', result, 'active_users', null, replaceTagsAndSpaces, parseBalance);
 	// Всего юзеров
 	getParam((app[3][5] || '0') + '', result, 'total_users', null, replaceTagsAndSpaces, parseBalance);
 	// СБОИ И ANR
@@ -78,8 +78,8 @@ function main() {
 
 function findAppInDevAccount(baseurl, token, dev_acc, prefs) {
 	var p = {
-		"method":"fetch",
-		"params":{"2":1,"3":7},
+		"method":"fetchIndex",
+		"params":{},
 		"xsrf":token
 	}
 	
@@ -87,9 +87,8 @@ function findAppInDevAccount(baseurl, token, dev_acc, prefs) {
 		Referer: baseurl + 'apps/publish/androidapps?dev_acc=' + dev_acc,
 		'Content-Type': 'application/javascript; charset=UTF-8',
 		'Accept': '*/*',
-		'X-GWT-Module-Base': 'https://play.google.com/apps/publish/gwt/',
-		'X-Client-Data': 'CJC2yQEIpLbJAQiptskBCMG2yQEI6YjKAQikksoBCNKUygEYq4nKAQ==',
-		'X-GWT-Permutation': 'F9491E9BC0BB6BA66743DFE7706239DD',
+		'X-GWT-Module-Base': 'https://ssl.gstatic.com/play-apps-publisher-rapid/fox/1616e8a4cbaff4be8ee2b17dfbe1b49f/fox/gwt/',
+		'X-GWT-Permutation': 'BD57F32BF4E06A7C0E6648164809C806',
 	});
 	
 	var json = getJsonEval(html);
@@ -106,25 +105,27 @@ function findAppInDevAccount(baseurl, token, dev_acc, prefs) {
 		for(var i =0; i < apps.length; i++) {
 			var currentApp = apps[i];
 			
-			var appName = currentApp[6][1];
-			var id = currentApp[1][1];                                                                         
+			var appName = currentApp[3];
+			var id = currentApp[2];                                                                         
 			if(new RegExp(prefs.app_name, 'i').test(appName)
 			    || new RegExp(prefs.app_name, 'i').test(id)) {
 				
 				html = AnyBalance.requestPost(baseurl + 'apps/publish/androidapps?dev_acc=' + dev_acc, JSON.stringify({
-					"method":"fetch",
-					"params":{"1":[id],"3":1},
+					"method":"fetchAppListStatsData",
+					"params":{},
 					"xsrf":token
 				}), {
 					Referer: baseurl + 'apps/publish/androidapps?dev_acc=' + dev_acc,
 					'Content-Type': 'application/javascript; charset=UTF-8',
 					'Accept': '*/*',
-					'X-GWT-Module-Base': 'https://play.google.com/apps/publish/gwt/',
-					'X-Client-Data': 'CJC2yQEIpLbJAQiptskBCMG2yQEI6YjKAQikksoBCNKUygEYq4nKAQ==',
-					'X-GWT-Permutation': 'F9491E9BC0BB6BA66743DFE7706239DD',
+					'X-GWT-Module-Base': 'https://ssl.gstatic.com/play-apps-publisher-rapid/fox/1616e8a4cbaff4be8ee2b17dfbe1b49f/fox/gwt/',
+					'X-GWT-Permutation': 'BD57F32BF4E06A7C0E6648164809C806',
 				});
 	
-				app = getJsonEval(html).result['1'][0];
+				var json = getJsonEval(html);
+				app = json.result[1].filter(function(a) { return a[2] == id })[0];
+				if(app)
+					app.name = appName;
 				//AnyBalance.trace(JSON.stringify(app));
 				break;
 			}

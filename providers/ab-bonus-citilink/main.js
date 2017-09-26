@@ -27,13 +27,14 @@ function login(){
 		throw new AnyBalance.Error('Не удалось найти форму входа, сайт изменен?');
 	}
 
+   	var json = getJsonObject(html, /window\s*\[\s*'globalSettings'\s*\]\s*=\s*/);
+
 	var params = createFormParams(form, function(params, str, name, value) {
 		if (name == 'login') 
 			return prefs.login;
 		else if (name == 'pass')
 			return prefs.password;
 	    else if (name == 'token'){
-	    	var json = getJsonObject(html, /window\s*\[\s*'globalSettings'\s*\]\s*=\s*/);
 	    	var obj = new te(json);
 	    	return pg({a: obj}); //Весьма сложные преобразования токена
 	    }
@@ -42,11 +43,12 @@ function login(){
 	});
 
 	var url = joinUrl(baseurl, action);
+	params['g-recaptcha-response'] = solveRecaptcha('Пожалуйста, докажите, что вы не робот', baseurl, json.recaptchaSiteKey);
 	
 	//Надо вздремнуть, а то нас палят как роботов (а зачем это делать? оставьте полезных роботов в покое.)
-	var sleeptime = 4000 + Math.floor(Math.random()*3000);
-	AnyBalance.trace('Надо вздремнуть ' + sleeptime + ' мс, а то нас палят как роботов (а зачем это делать? оставьте полезных роботов в покое.)');
-	AnyBalance.sleep(sleeptime);
+//	var sleeptime = 4000 + Math.floor(Math.random()*3000);
+//	AnyBalance.trace('Надо вздремнуть ' + sleeptime + ' мс, а то нас палят как роботов (а зачем это делать? оставьте полезных роботов в покое.)');
+//	AnyBalance.sleep(sleeptime);
 
 	AnyBalance.trace('Posting to url: ' + url);
 	html = AnyBalance.requestPost(url, params, addHeaders({Referer: baseurl + '/'})); 

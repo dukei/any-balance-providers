@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="1.0" version="23" date="2017-09-26">
+	Поддержка нового кабинета
+	</change>
 	<change major_version="1.0" version="22" date="2017-08-03">
 	Добавлена информация по кредиту
 	</change>

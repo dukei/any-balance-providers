@@ -7,7 +7,7 @@ var g_headers = {
 	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
 	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
 	'Connection': 'keep-alive',
-	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
+	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36',
 };
 
 function main () {
@@ -33,14 +33,21 @@ function main () {
 		throw new AnyBalance.Error('Провайдер требует AnyBalance API v7, пожалуйста, обновите AnyBalance!');
 	}
 	
+	var token =getParam(html, /csrfmiddlewaretoken[^>]*value=["']([^"']+)["']/i, replaceHtmlEntities);
+
 	html = AnyBalance.requestPost(baseurl + 'msk/pp/login/', {
-    	'csrfmiddlewaretoken': getParam(html, null, null, /csrfmiddlewaretoken[^>]*value=["']([^"']+)["']/i),
+    	'csrfmiddlewaretoken': token,
     	'contact': prefs.login,
     	'password': prefs.password,
     	'next': '',
 		'captcha_0':json.key,
 		'captcha_1':captchaa
-    }, addHeaders({'X-Requested-With': 'XMLHttpRequest'}));
+    }, addHeaders({
+		'Accept': 'application/json, text/javascript, */*; q=0.01',
+    	'X-Requested-With': 'XMLHttpRequest',
+    	Referer: baseurl + 'msk/',
+    	'X-CSRFToken': token
+    }));
 	
 	var json = getJson(html);
 	

@@ -112,6 +112,7 @@ function mainAppAPI(prefs) {
 	getParam(profileJson.data.milesExpirationDate, result, 'milesExpirationDate', null, replaceTagsAndSpaces, parseDateISO);
 	getParam(profileJson.data.tierExpirationDate, result, 'levelExpirationDate', null, replaceTagsAndSpaces, parseDateISO);
 	getParam(profileJson.data.tierLevel, result, 'level');
+	getParam(profileJson.data.loyalty_id, result, '__tariff');
 	
     AnyBalance.setResult(result);
 }

@@ -59,11 +59,27 @@ function main(){
 		throw new AnyBalance.Error('Сайт провайдера временно недоступен! Попробуйте обновить данные позже.');
 	}
 
+	var elements;
+	if(/logout/i.test(html)){
+		var fns = AnyBalance.requestGet(baseurl + 'srv/finance/entities', addHeaders({
+			Accept: 'application/json, text/plain, */*',
+			Referer: baseurl + 'finances'
+		}));
+		try{
+			elements = getJson(fns);
+			AnyBalance.trace('Удалось войти в предыдущей сессии');
+		}catch(e){
+			AnyBalance.trace('test of login failed, should relogin: ' + e.message);
+			AB.clearAllCookies();
+			html = AnyBalance.requestGet(baseurl, g_headers);
+		}
+	}
+	
 	if(!/logout/i.test(html)){
 		AnyBalance.trace('Мгновенно не зашли');
 
-		var signonUrl = getParam(html, null, null, /singleSignOnUrl:\s*'([^']*)/, replaceSlashes);
-		var logonUrl = getParam(html, null, null, /logOnUrl\s*=\s*new\s+Uri\s*\(\s*'([^']*)/, replaceSlashes);
+		var signonUrl = getParam(html, /singleSignOnUrl:\s*'([^']*)/, replaceSlashes);
+		var logonUrl = getParam(html, /logOnUrl\s*=\s*new\s+Uri\s*\(\s*'([^']*)/, replaceSlashes);
 		var info = {};
 		if(signonUrl){
 			AnyBalance.trace('Но есть возможность проверить автовход');
@@ -247,16 +263,19 @@ function main(){
 		__setLoginSuccessful();
 	}
 
-	html = AnyBalance.requestGet(baseurl + 'srv/finance/entities', addHeaders({
-		Accept: 'application/json, text/plain, */*',
-		Referer: baseurl + 'finances'
-	}));
-
 	var result = {
 		success: true
 	};
 
-	var elements = getJson(html);
+	if(!elements){
+		html = AnyBalance.requestGet(baseurl + 'srv/finance/entities', addHeaders({
+			Accept: 'application/json, text/plain, */*',
+			Referer: baseurl + 'finances'
+		}));
+	    
+		elements = getJson(html);
+	}
+
 	AnyBalance.trace('Найдено ' + elements.length + ' кошельков');
 
 	for(var i=0; i<elements.length; ++i){

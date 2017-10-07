@@ -100,16 +100,16 @@ function main() {
 		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
 
 	if(!isLoggedIn(html)){
-		var form = getElement(html, /<form[^>]+name="center"/i);
+		var form = getElement(html, /<form[^>]+name="frmLogin"/i);
 		if(!form){
 			AnyBalance.trace(html);
 			throw new AnyBalance.Error('Не удалось найти форму входа. Сайт изменен?');
 		}
 
 		var params = AB.createFormParams(form, function(params, str, name, value) {
-			if (name == 'center:login') {
+			if (name == 'frmLogin:login') {
 				return prefs.login;
-			} else if (name == 'center:keyboard') {
+			} else if (name == 'frmLogin:password') {
 				return prefs.password;
 			}
 	    

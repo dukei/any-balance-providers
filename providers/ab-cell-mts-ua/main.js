@@ -339,6 +339,7 @@ function main(){
     sumParam (html, result, 'traffic_free_mb', /<li>5 МБ для тарифа 'Смартфон'. Осталось:(\d+,?\d* *(kb|mb|gb|кб|мб|гб|байт|bytes)). Срок действия до [^<]*<\/li>/ig, null, parseTraffic, aggregate_sum);
     sumParam (html, result, 'traffic_free_mb', /<li>50 МБ для тарифа 'Смартфон'. Осталось:(\d+,?\d* *(kb|mb|gb|кб|мб|гб|байт|bytes)). Срок действия до [^<]*<\/li>/ig, null, parseTraffic, aggregate_sum);
     sumParam (html, result, 'traffic_free_mb', /<li>12 GB \(4 GB x 3 мес\) - осталось: (\d+,?\d* *(kb|mb|gb|кб|мб|гб|байт|bytes)).<\/li>/ig, null, parseTraffic, aggregate_sum);
+    sumParam (html, result, 'traffic_free_mb', /<li>Дополнительные 12 GB \(4 GB x 3 мес\) - осталось: (\d+,?\d* *(kb|mb|gb|кб|мб|гб|байт|bytes)).<\/li>/ig, null, parseTraffic, aggregate_sum);
     //Срок действия бесплатного трафика для тарифа Смартфон и Смартфон 0.50
     sumParam (html, result, 'termin_traffic_free_mb', /<li>5 МБ для тарифа 'Смартфон'. Осталось:[^\d]*?[^<]*. Срок действия до([^<]*)<\/li>/ig, replaceTagsAndSpaces, parseDate, aggregate_min);
     sumParam (html, result, 'termin_traffic_free_mb', /<li>50 МБ для тарифа 'Смартфон'. Осталось:[^\d]*?[^<]*. Срок действия до([^<]*)<\/li>/ig, replaceTagsAndSpaces, parseDate, aggregate_min);

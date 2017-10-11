@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="163" date="2017-10-11">
+	- Попытка исправить ошибку TOKEN_NOT_FOUND
+	</change>
 	<change version="162" date="2017-01-31">
 	Улучшено определение междугородных минут в некоторых случаях
 	</change>

@@ -36,6 +36,7 @@ function main() {
 			throw e;
 		//Обломался сайт. Если можно мобильное приложение, давайте его попробуем
 		AnyBalance.trace('Не получается зайти в личный кабинет: ' + e.message + ', ' + e.stack + '. Попробуем мобильное приложение');
+		clearAllCookies();
 		proceedWithMobileAppAPI(baseurl);
 		return;
 	}

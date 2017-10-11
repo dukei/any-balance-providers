@@ -17,23 +17,42 @@ function getPrice(cur){
     var html = AnyBalance.requestGet(url, g_headers);
     var json = getParam(html, /jQuery18308581276012533401_1490101903659\s*\(([\s\S]*)\)/, null, getJson);
 
-    var good = json.gpsProductDetails[0];
-    var price = parseBalance(good.minPrice);
-    AnyBalance.trace('Товар "' + good.productTitle + '" стоит ' + good.minPrice);
+    var products = {};
+    for(var i=0; i<json.gpsProductDetails.length; ++i){
+    	var p = json.gpsProductDetails[i];
+    	products[p.productId] = p;
+    }
 
-    return price;
+    AnyBalance.trace('Найдено ' + i + ' товаров для валюты ' + cur);
+
+    return products;
 }
 
 function main() {
 
   	AnyBalance.setDefaultCharset('utf-8');
   
-    var usd = getPrice('USD');
-    var rub = getPrice('RUB');
+    var productsUSD = getPrice('USD');
+    var productsRUB = getPrice('RUB');
+
+    var prub, pusd;
+    for(var pid in productsUSD){
+    	prub = productsRUB[pid];
+    	if(!prub)
+    		continue;
+    	pusd = productsUSD[pid];
+    	break;
+    }
+
+    if(!pusd)
+    	throw new AnyBalance.Error('Не удалось найти одинаковые продукты для разных валют', true);
+
+    AnyBalance.trace('Товар "' + pusd.productTitle + '" стоит ' + pusd.minPrice);
+    AnyBalance.trace('Товар "' + prub.productTitle + '" стоит ' + prub.minPrice);
 
     var result = {
         success: true,
-        rate: parseFloat((rub/usd).toFixed(4))
+        rate: parseFloat((parseBalance(prub.minPrice)/parseBalance(pusd.minPrice)).toFixed(4))
     };
     
     if(AnyBalance.isAvailable('date')) {

@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="1.0" version="24" date="2017-10-13">
+	Поддержка нескольких карт в кабинете
+	</change>
 	<change major_version="1.0" version="23" date="2017-09-26">
 	Поддержка нового кабинета
 	</change>

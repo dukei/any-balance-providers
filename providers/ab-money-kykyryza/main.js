@@ -49,6 +49,7 @@ function callApi(verb, getParams, postParams){
 
 function main(){
     var prefs = AnyBalance.getPreferences();
+    AnyBalance.setDefaultCharset('utf-8');
 	
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
@@ -74,7 +75,7 @@ function doNewCabinet(prefs){
 	if(!json || !json[0])
 		throw new AnyBalance.Error('Не найдено ни одной карты!');
 
-	var card = json[0];
+	var card = findCard(json);
 
     var result = {success: true};
     getParam(getEquity(card, 'FUNDS').amount, result, 'balance', null, null, parseBalance);
@@ -86,9 +87,11 @@ function doNewCabinet(prefs){
     	try{
 	   		json = callApi('credit');
 
-        getParam(json && json[0].minimalRequiredPaymentAmount, result, 'minpay', null, null, parseBalance);
-        getParam(json && json[0].minimalRequiredPaymentDeadline, result, 'minpay_till', null, null, parseDateISO);
-        getParam(json && json[0].grantedAmount, result, 'limit', null, null, parseBalance);
+	   	   	var crd = json && json.filter(function(c) { return c.cardId == card.id })[0];
+	   	    
+            getParam(crd && crd.minimalRequiredPaymentAmount, result, 'minpay', null, null, parseBalance);
+            getParam(crd && crd.minimalRequiredPaymentDeadline, result, 'minpay_till', null, null, parseDateISO);
+            getParam(crd && crd.grantedAmount, result, 'limit', null, null, parseBalance);
         }catch(e){
         	AnyBalance.trace('Can not get credit info: ' + e.message);
         }
@@ -97,6 +100,28 @@ function doNewCabinet(prefs){
     result.__tariff = prefs.login;
 
     AnyBalance.setResult(result);
+}
+
+function findCard(cards){
+	var prefs = AnyBalance.getPreferences();
+	for(var i=0; i<cards.length; ++i){
+		var c = cards[i];
+		AnyBalance.trace('Найдена карта ' + c.ean + ', pan: ' + c.panTail);
+		if(prefs.num && (
+			endsWith(c.ean, prefs.num) || endsWith(c.panTail, prefs.num))){
+				AnyBalance.trace('Подходит по последним цифрам');
+				return c;
+		}
+		if(!prefs.num && c.ean == prefs.login){
+			AnyBalance.trace('Подходит по ean');
+			return c;
+		}
+	}
+
+	if(!prefs.num)
+		return json[0];
+
+	throw new AnyBalance.Error('Не удалось найти карту с последними цифрами ' + prefs.num);
 }
 
 function getErrorDescription(code){

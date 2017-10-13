@@ -18,27 +18,33 @@ function main() {
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 	
-	var html = AnyBalance.requestGet(baseurl + 'Account/LogOn', g_headers);
+	var html = AnyBalance.requestGet(baseurl + 'user/login', g_headers);
 	
 	if(!html || AnyBalance.getLastStatusCode() > 400){
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
 	}
 
-	var params = createFormParams(html, function(params, str, name, value) {
-		if (name == 'username')
+	var form = getElement(html, /<form[^>]+login-form/);
+	if(!form){
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удалось найти форму входа. Сайт изменен?');
+	}
+
+	var params = createFormParams(form, function(params, str, name, value) {
+		if (/identity/i.test(name))
 			return prefs.login;
-		else if (name == 'password')
+		else if (/password/i.test(name))
 			return prefs.password;
 		return value;
 	});
 
-	html = AnyBalance.requestPost(baseurl + 'Account/LogOn', params, addHeaders({Referer: baseurl + 'Account/LogOn'}));
+	html = requestPostMultipart(baseurl + 'user/login', params, addHeaders({Referer: baseurl + 'Account/LogOn'}));
 
-	if (!/not-me-link/i.test(html)) {
-		var error = getElement(html, /<div[^>]+validation-summary-errors[^>]*>/i, replaceTagsAndSpaces);
+	if (!/logout/i.test(html)) {
+		var error = getElement(html, /<div[^>]+error/i, replaceTagsAndSpaces);
 		if (error)
-			throw new AnyBalance.Error(error, null, /пароль/i.test(error));
+			throw new AnyBalance.Error(error, null, /парол|Логин/i.test(error));
 		
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
@@ -46,16 +52,16 @@ function main() {
 
 	var result = {success: true};
 	
-	getParam(html, result, 'stars', /<div[^>]*bd-star-count[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'balance', /<span[^>]+dynamic-card-balance-value[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'stars', /<span[^>]+class="stars"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'balance', /<span[^>]+class="balance"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'status', /Ваш уровень:([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
-	getParam(html, result, 'fio', /<ul[^>]+bd-customer-info[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces);
+	getParam(html, result, 'fio', /<!-- Guest Info -->[\s\S]*?<li[^>]*>([\s\S]*?)<\/li>/i, replaceTagsAndSpaces);
 
 	if(AnyBalance.isAvailable('cardNumber')){
-		html = AnyBalance.requestGet(baseurl + 'card/page/CardInformation', g_headers);
-		var cardinfo = getElement(html, /<ul[^>]+my-card-container[^>]*>/i);
+		html = AnyBalance.requestGet(baseurl + 'card/page/', g_headers);
+		var cardinfo = getElement(html, /<div[^>]+card-head-menu/i);
 
-		sumParam(cardinfo, result, 'cardNumber', /<li[^>]+title="[^"]*?(\d+)\s*\|/ig, replaceTagsAndSpaces, null, aggregate_join);
+		sumParam(cardinfo, result, 'cardNumber', /card\/view\/(\d+)/ig, replaceHtmlEntities, null, aggregate_join);
 	}
 
 	AnyBalance.setResult(result);

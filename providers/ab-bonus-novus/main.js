@@ -12,7 +12,7 @@ var g_headers = {
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'https://my.novus.com.ua/';
+	var baseurl = 'https://my.novus.ua/';
 	AnyBalance.setDefaultCharset('utf-8');
 	
 	checkEmpty(prefs.login, 'Введите логин!');
@@ -33,9 +33,9 @@ function main() {
 
 
 	if (!/logout/i.test(html)) {
-		var error = getParam(html, null, null, /<span[^>]+id="ctl00_cphMain_lblError"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
+		var error = getParam(html, /<span[^>]+id="ctl00_cphMain_lblError"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
 		if (error)
-			throw new AnyBalance.Error(error, null, /Невірний номер картки чи пароль!/i.test(error));
+			throw new AnyBalance.Error(error, null, /парол/i.test(error));
 		
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
@@ -43,9 +43,10 @@ function main() {
 
 	var result = {success: true};
 	
-	getParam(html, result, 'status', /Статус([^>]*>){4}/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'balance', /Баланс за карткою([^>]*>){3}/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'deadline', /Бонуси діють([^>]*>){1}/i, replaceTagsAndSpaces, parseDate);
+	getParam(html, result, '__tariff', /Картка №[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+	getParam(html, result, 'status', />\s*Статус[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+	getParam(html, result, 'balance', /Баланс за карткою[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'deadline', /Бонуси діють([^>]*)/i, replaceTagsAndSpaces, parseDate);
 
 	AnyBalance.setResult(result);
 }

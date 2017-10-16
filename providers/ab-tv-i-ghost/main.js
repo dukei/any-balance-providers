@@ -14,10 +14,10 @@ function main() {
 	var prefs = AnyBalance.getPreferences();
 	var baseurl = 'https://www.i-ghost.biz/';
 	AnyBalance.setDefaultCharset('utf-8');
-	
-	checkEmpty(prefs.login, 'Введите логин!');
-	checkEmpty(prefs.password, 'Введите пароль!');
-	
+
+	AB.checkEmpty(prefs.login, 'Введите логин!');
+	AB.checkEmpty(prefs.password, 'Введите пароль!');
+
 	var html = AnyBalance.requestPost(baseurl + 'auth/auth_login', {
 		login: prefs.login,
 		password: prefs.password
@@ -33,16 +33,18 @@ function main() {
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error(error, null, /Ошибка авторизации/i.test(error));
 	}
-	
-	var result = {success: true};
-	
-	html = AnyBalance.requestGet(baseurl + 'setting/balance?_=' + new Date().getTime(), addHeaders({'X-Requested-With':'XMLHttpRequest', Referer: baseurl}));
-	getParam(html, result, 'balance', /Ваш Баланс:(.*)/i, replaceTagsAndSpaces, parseBalance);
 
-	html = AnyBalance.requestGet(baseurl + 'packet/show?_=' + new Date().getTime(), addHeaders({'X-Requested-With':'XMLHttpRequest', Referer: baseurl}));
-	getParam(html, result, '__tariff', /<h4[^>]*>([\s\S]*?)<\/h4>/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'daysleft', /<b[^>]+title="До [^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'till', /<b[^>]+title="До ([^"]*)/i, replaceTagsAndSpaces, parseDateISO);
-	
+	var result = {success: true};
+
+	html = AnyBalance.requestGet(baseurl + 'setting/balance?_=' + new Date().getTime(), AB.addHeaders({'X-Requested-With':'XMLHttpRequest', Referer: baseurl}));
+
+	AB.getParam(html, result, 'balance', /Ваш Баланс:(.*)/i, AB.replaceTagsAndSpaces, AB.parseBalance);
+
+	// html = AnyBalance.requestGet(baseurl + 'packet/show?_=' + new Date().getTime(), addHeaders({'X-Requested-With':'XMLHttpRequest', Referer: baseurl}));
+	// 	AnyBalance.trace(html);
+	// getParam(html, result, '__tariff', /<h4[^>]*>([\s\S]*?)<\/h4>/i, replaceTagsAndSpaces, html_entity_decode);
+	// getParam(html, result, 'daysleft', /<b[^>]+title="До [^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, parseBalance);
+	// getParam(html, result, 'till', /<b[^>]+title="До ([^"]*)/i, replaceTagsAndSpaces, parseDateISO);
+
 	AnyBalance.setResult(result);
 }

@@ -1,11 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="3" date="2016-01-27">
+	- Поддержка изменений на сайте.
+	- добавлен просмотр журнала отслеживания
+	</change>
 	<change version="2" date="2014-11-17">
 	- Добавление keywords
 	</change>
-<!--
-	<change version="2" date="2014-09-03">
-	- 
-	</change>
--->
 </history>

@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="23">ab-money-mkb</id>
+	<id version="29">ab-money-mkb</id>
 	<api flags="no_browser"/>
 	<name>Московский Кредитный Банк</name>
 	<description html="true"><![CDATA[
@@ -12,12 +12,13 @@
 	<p>Чтобы каждый раз не вводить код, вы можете отключить его в своём интернет банке: меню "Настройки системы"/"Настройки информирования"/"Информирование об операциях в системе", затем снять галочку "Запрашивать SMS-код подтверждения при входе". Это безопасно, код подтверждения всё равно будет требоваться для всех операций.</p>
 	]]></instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="nadapter"/>
+		<module id="extract/abe-money-mkb"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>nadapter.js</js>
-		<js>extract.js</js>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>

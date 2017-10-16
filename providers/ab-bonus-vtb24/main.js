@@ -19,25 +19,42 @@ function main() {
 	checkEmpty(prefs.password, 'Введите пароль!');
 	
 	var html = AnyBalance.requestGet(baseurl + 'account/login', g_headers);
-	
-	html = AnyBalance.requestPost(baseurl + 'account/login', {
-		Phone: prefs.login,
-		Password: prefs.password,
-		'ReturnUrl': ''
-	}, addHeaders({Referer: baseurl + 'account/login'}));
+
+	if(!html || AnyBalance.getLastStatusCode() > 400){
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
+	}
+
+	for(var i=0; i<5; ++i){
+		html = AnyBalance.requestPost(baseurl + 'account/login', {
+			Phone: prefs.login,
+			Password: prefs.password,
+			'ReturnUrl': ''
+		}, addHeaders({Referer: baseurl + 'account/login'}));
+
+		if(!/на нашем сервере произошла внутренняя ошибка/i.test(html))
+			break;
+
+		AnyBalance.trace('На сервере внутренняя ошибка. Ждем пару секунд и пробуем ' + (i+2) + '-й раз.');
+		AnyBalance.sleep(2000);
+	}
 	
 	if (!/logout/i.test(html)) {
-		var error = getParam(html, null, null, /<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
+		var error = getParam(html, null, null, /<div[^>]+class="validation-summary-errors"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
 		if (error)
-			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
+			throw new AnyBalance.Error(error, null, /парол/i.test(error));
 		
+		if(/на нашем сервере произошла внутренняя ошибка/i.test(html))
+			throw new AnyBalance.Error('Сервер бонусной программы временно неработспособен. Пожалуйста, попробуйте позже');
+
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
 	
 	var result = {success: true};
 	
-	getParam(html, result, 'balance', /balance" href="\/mypoints"[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
+	getParam(getElement(html, /<[^>]+user-block_text-bonuses/i), result, 'balance', null, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, '__tariff', /<[^>]+user-block_text[^>]*>([\s\S]*?),/i, replaceTagsAndSpaces);
 	
 	AnyBalance.setResult(result);
 }

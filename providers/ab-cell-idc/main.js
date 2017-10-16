@@ -37,62 +37,98 @@ function main(){
         secretkey:captchaa
     }, addHeaders({Referer: baseurl})); 
 	
-	if (!/Личный кабинет/i.test(html)) {
-		var error = getParam(html, null, null, /<div[^>]+class="alert-box error"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
-		if (error && /Неверный логин или пароль./i.test(error))
-			throw new AnyBalance.Error(error, null, true);
+	if (!/issa_exit/i.test(html)) {
+		var error = getElement(html, /<div[^>]+error[^>]*>/i, replaceTagsAndSpaces);
+		if (error)
+			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
+		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
 
 	// Ищем по наименованию или по номеру лиц счета
-	var href = getParam(html, null, null, new RegExp('wuxify-me[^>]*?href="([^"]*)[^>]*>\\s*' + (prefs.account || '') + '[\\s\\S]*?<\\/a>', 'i'));
+	var href = getParam(html, null, null, new RegExp('wuxify-me(?:[\\s\\S](?!</a>))+?href="([^"]*)[^>]*>\\s*' + (prefs.account || '') + '[\\s\\S]*?<\\/a>', 'i'), replaceHtmlEntities);
 	if(!href)
-		href = getParam(html, null, null, new RegExp('wuxify-me[^>]+?href="\\?acc=' + (prefs.account || '[^"]*') + '">', 'i'));
+		href = getParam(html, null, null, new RegExp('wuxify-me(?:[\\s\\S](?!<\/a>))+?href="([^"]*\\?acc=' + (prefs.account || '') + '[^"]*)', 'i'), replaceHtmlEntities);
 	if(!href)
 		throw new AnyBalance.Error('Не найден ' + (prefs.account ? 'лицевой счет "' + prefs.account + '"' : 'ни один счет'));
 	
-	html = AnyBalance.requestGet(baseurl + href, g_headers);
-	html = AnyBalance.requestGet(baseurl + 'issa_acc/', g_headers);
-
     var result = {success: true},
     	table, rows, row;
 
-    table = getParam(html, null, null, /Состояние счета:[\s\S]*?<tbody[^>]*>([\s\S]*?)<\/tbody>/i);
-	getParam(table, result, 'balance_usd', /<tr[^>]*>(?:\s*<td[^>]*>[\s\S]*?<\/td>){3}\s*<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(table, result, 'balance', /<\/tr>\s*<tr[^>]*>(?:\s*<td[^>]*>[\s\S]*?<\/td>){3}\s*<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(href, result, 'account_id', /\?acc=(\d+)/i, decodeURIComponent);
+	html = AnyBalance.requestGet(baseurl + href, g_headers);
+	html = AnyBalance.requestGet(baseurl + 'issa_acc/', g_headers);
 
-	table = getParam(html, null, null, /Ресурсы Номера:[\s\S]*?<tbody[^>]*>([\s\S]*?)<\/tbody>/i);
-	rows = sumParam(table, null, null, /<tr[^>]*>([\s\S]*?)<\/tr>/ig);
+    table = getParam(html, null, null, /Состояние счета:[\s\S]*?(<table[^>]*>([\s\S]*?)<\/table>)/i);
 
-	for(var i = 0, toi = rows.length; i < toi; i++){
-		row = rows[i];
-		if(/SMS/i.test(row)) {
+    var colsDef = {
+        __sum: {
+            re: /Исходящий остаток/i,
+            result_process: function(path, td, result){
+            	if(/руб/i.test(td)){
+                	getParam(td, result, path + '__balance', null, replaceTagsAndSpaces, parseBalance);
+            	}else{
+                	getParam(td, result, path + '__balance_usd', null, replaceTagsAndSpaces, parseBalance);
+            	}
+            }
+        },
+    };
+
+    var balances = [];
+    processTable(table, balances, '', colsDef);
+
+    for(var i=0; i<balances.length; ++i){
+    	for(var name in balances[i]){
+			getParam(balances[i][name], result, name.replace(/^_+/, ''));
+		}
+    }
+
+    table = getParam(html, null, null, /Ресурсы Номера:[\s\S]*?(<table[^>]*>([\s\S]*?)<\/table>)/i);
+    colsDef = {
+        name: {
+            re: /РЕСУРС/i,
+            result_func: null
+        },
+        till: {
+            re: /КОНЕЦ ДЕЙСТВИЯ/i,
+            result_func: parseDate
+        },
+        value: {
+            re: /ОСТАТОК/i,
+            result_func: null
+        },
+    };
+    var resources = [];
+    processTable(table, resources, '__', colsDef);
+
+	for(var i = 0; i < resources.length; i++){
+		var row = resources[i];
+		if(/SMS/i.test(row.__name)) {
 			// SMS 
-			sumParam(row, result, 'sms', /(?:\s*<td[^>]*>[\s\S]*?<\/td>){4}\s*<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-		} else if(/Время/i.test(row)) {
+			sumParam(row.__value, result, 'sms', null, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+		} else if(/Время/i.test(row.__name)) {
 			// Минуты
-			sumParam(row, result, 'minutes', /(?:\s*<td[^>]*>[\s\S]*?<\/td>){4}\s*<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
-		} else if(/Трафик/i.test(row)) {
+			sumParam(row.__value, result, 'minutes', null, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
+		} else if(/Трафик/i.test(row.__name)) {
 			// Трафик
-			sumParam(row, result, 'traf', /(?:\s*<td[^>]*>[\s\S]*?<\/td>){4}\s*<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-		} else if(/Simple/i.test(row)) {
+			sumParam(row.__value, result, 'traf', null, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+		} else if(/Simple/i.test(row.__name)) {
 			// Мини-пакет Simple
-			sumParam(row, result, 'simple', /(?:\s*<td[^>]*>[\s\S]*?<\/td>){4}\s*<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+			sumParam(row.__value, result, 'simple', null, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+			getParam(prefs.currency || 'rub', result, ['currency', 'simple']);
 		} else {
 			AnyBalance.trace('Unknown option, contact the developers, please.');
-			AnyBalance.trace(row);
+			AnyBalance.trace(JSON.stringify(row));
 		}
 	}
 
 	if(isAvailable('traf_used')){
 		html = AnyBalance.requestGet(baseurl + 'issa_charge/', g_headers);
 
-		table = getParam(html, null, null, /Суммарная статистика за месяц[\s\S]*?<tbody[^>]*>([\s\S]*?)<\/tbody>/i);
-		getParam(table, result, 'traf_used', /<tr[^>]*>(?:\s*<td[^>]*>[\s\S]*?<\/td>){2}\s*<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseTraffic);
+		table = getParam(html, null, null, /Начисления:[\s\S]*?<tbody[^>]*>([\s\S]*?)<\/tbody>/i);
+		sumParam(table, result, 'traf_used', /Трафик(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
+		sumParam(table, result, 'traf_used_sum', /Трафик(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 	}
-
-	getParam(prefs.currency || 'rub', result, ['currency', 'simple']);
-	getParam(html, result, 'account_id', /\?acc=(\d+)/i, replaceTagsAndSpaces);
 	
     AnyBalance.setResult(result);
 }

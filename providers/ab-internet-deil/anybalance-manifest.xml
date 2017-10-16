@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-internet-deil</id>
+	<api flags="no_browser"/>
+	<name>Дэйл-Телеком</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера Дэйл-телеком http://deil-00.ru/</p>
+	<p>Информация берется из личного кабинета http://deil-00.ru/cabinet/</p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+		<module id="crypt/md5"/>
+	</depends>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="cost" name="Абонентская плата" units=" р"/>
+		<counter id="user" name="Пользователь" type="text"/>
+		<counter id="phone" name="Телефон" type="text"/>
+		<counter id="ip" name="IP" type="text"/>
+		<counter id="agreement" name="Номер договора" type="text"/>
+	</counters>
+	<keywords>deil</keywords>
+	<type>internet</type>
+	<country>ru</country>
+</provider>

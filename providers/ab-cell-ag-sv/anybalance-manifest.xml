@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-cell-ag-sv</id>
+	<api flags="no_browser"/>
+	<name>Агентство связи</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе и тарифном плане для пользователей сотового оператора ООО «Агентство связи» http://ag-sv.ru</p>
+	<p>Информация берется из личного кабинета http://ag-sv.ru/contract</p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Если у вас нет доступа в Личный кабинет, получите его на странице http://ag-sv.ru/passwords/new</p>
+	]]></instruction>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="phone" name="Ваш номер" type="text" />
+		<counter id="balance" name="Баланс" units=" ₽" type="numeric" />
+		<counter id="status" name="Статус" type="text" />
+		<counter id="tariff" name="Ваш тариф" type="text" />
+		<counter id="payment_system" name="Система оплаты" type="text" />
+		<counter id="subscr_fee" name="Абон. плата" units=" ₽/мес." type="numeric" />
+		<counter id="costs" name="Расходы текущего периода" units=" ₽" type="numeric" />
+		<counter id="date_costs" name="Расходы на момент" type="time" format="dd.MM.yyyy HH:mm"/>
+	</counters>
+	<keywords>cотовый, телефон, мобильный, мобильник</keywords>
+	<type>cell</type>
+	<country>ru</country>
+</provider>

@@ -32,9 +32,9 @@
         positiveButtonText="ОК"
         key="cardnum" 
         inputType="number"
-        dialogTitle="Номер карты"
+        dialogTitle="Номер карты/счета"
         negativeButtonText="Отмена"
-        title="Номер карты"
+        title="Номер карты/счета"
         summary="|Автоматически|{@s}"
         dialogMessage="Введите последние 4 цифры карты/счета, по которому вы хотите получить данные. Если это поле оставить пустым, то будет показана информация по первой карте/счету.">
     </EditTextPreference>

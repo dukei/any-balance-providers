@@ -6,7 +6,7 @@
 	<description html="true"><![CDATA[
 	<p>Отслеживает почтовое отправление с помощью сервиса 139express <a href="http://vip.139express.com/search.aspx">http://vip.139express.com/search.aspx</a></p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

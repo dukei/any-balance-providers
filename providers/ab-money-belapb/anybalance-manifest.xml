@@ -1,11 +1,12 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="3">ab-money-belapb</id>
+  <id version="6">ab-money-belapb</id>
   <api flags="no_browser"/>
   <name>Белагропромбанк (Беларусь)</name>
   <description>
     Получает текущий остаток и другие параметры счетов и карт Белагропромбанка (http://www.belapb.by), используя интернет-банк https://www.ibank.belapb.by
-
+  </description>
+  <instruction>
     Для использования системы «Интернет-банкинг» Вам необходимо:
      * быть держателем карточки, выпущенной Банком, либо заключить с Банком договор текущего (расчетного) счета, договор банковского вклада (депозита) или кредитный договор;
      * обратиться в подразделение Банка;
@@ -13,21 +14,23 @@
      * оплатить вознаграждение за подключение к системе «Интернет-банкинг»;
      * получить карточку с логином и паролем, а также карточку с сеансовыми ключами для доступа к системе «Интернет-банкинг».
      * Далее услуга будет активизирована и доступ будет разрешен.
-
-    В настоящее время провайдер поддерживает только счета и карты. Для добавления депозитов и кредитов обращайтесь к автору по е-мейл.
-  </description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  </instruction>
+  <author>AnyBalance Team &lt;dco@mail.ru&gt;</author>
+  <depends>
+  	<module id="nadapter"/>
+  	<module id="login/bss"/>
+  	<module id="extract/abe-money-belapb"/>
+  </depends>
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
-    <js>library.js</js>
     <js>main.js</js>
     <history>history.xml</history>
   </files>
   <counters>
     <counter id="balance" name="Остаток" units=" {@currency}"/>
     <counter id="type" name="Тип" type="text"/>
-<!--    <counter id="status" name="Статус" type="text"/> -->
+    <counter id="status" name="Статус" type="text"/>
     <counter id="cardnum" name="Номер карты" type="text"/>
     <counter id="till" name="Срок действия" type="time" format="dd/MM/yyyy"/>
     <counter id="accnum" name="Номер счета" type="text"/>
@@ -37,9 +40,7 @@
   <keywords>
     интернет-банкинг
   </keywords>
-  <type>
-    money
-  </type>
+  <type>money, bank</type>
   <country>
     by
   </country>

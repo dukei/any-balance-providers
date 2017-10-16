@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">crypt/cryptojs/base64</id>
+	<api flags="no_browser"/>
+	<name>CryptoJS base64 module</name>
+	<description html="true"><![CDATA[
+	<p>CryptoJS base64 codec</p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="crypt/cryptojs/core"/>
+	</depends>
+	<files>
+		<js>enc-base64.js</js>
+		<history>history.xml</history>
+	</files>
+	<keywords></keywords>
+	<type>crypt cryptojs base64</type>
+	<country></country>
+</provider>

@@ -10,27 +10,54 @@ var g_headers = {
 	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
 };
 
+var g_baseurl = 'https://20.ssl.mts.ru/';
+
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'http://www.20.mts.ru/';
+	var baseurl = 'https://login.mts.ru/';
 	AnyBalance.setDefaultCharset('utf-8');
 
-	checkEmpty(prefs.login, 'Введите логин!');
+	checkEmpty(/^.{10}$/.test(prefs.login), 'Введите номер телефона (10 цифр)!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 
-	var html = AnyBalance.requestGet(baseurl + 'auth/login', g_headers);
-
-	html = AnyBalance.requestPost(baseurl + 'auth/login', {
-		phone: prefs.login,
+	var html = enterMtsLK({
+		baseurl: g_baseurl + 'login?goto='+encodeURIComponent(g_baseurl+'#!/login'),
+		url: baseurl+'amserver/UI/Login?goto='+encodeURIComponent(g_baseurl+'#!/login'),
+		login: prefs.login,
 		password: prefs.password,
-	}, addHeaders({Referer: baseurl + 'auth/login'}));
+	});
 
-	if (!/logout/i.test(html)) {
-		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
-	}
 	var result = {success: true};
-	
-	getParam(html, result, 'balance', /Начислено(?:[^>]*>){1}([^<]+)/i, replaceTagsAndSpaces, parseBalance);
-	
+	//Обязательно нужно получить эту информацию, т.к. она содержит информацию о статусе аккаунта.
+	html = AnyBalance.requestGet(g_baseurl+'api/user', g_headers);
+	var json = getJson(html);
+
+	getParam(json.fullName || '', result, 'fio');
+	getParam(json.balance ? json.balance.toFixed(2) : undefined, result, 'balance', null, null, parseBalance);
+	getParam(json.status, result, 'status');
+
+	if(isAvailable(['lastCharge', 'allAccrued', 'date'])) {
+		//Если статус аккаунта "closed", то регистрация в программе МТС "20%" невозможна.
+		//=> у user'a нет информации о бонусах и мы упадём с ошибкой при получении json'a. А это ата-та, т.к. баланс мы получили
+		if(!/closed|unregistered/i.test(json.status)) {
+			html = AnyBalance.requestGet(g_baseurl+'api/user/history', g_headers);
+			json = getJson(html);
+
+			var sumAllAccured = 0;
+			for(var i = 0; i < json.length; i++) {
+				sumAllAccured +=json[i].value;
+				if(i == (json.length - 1)) {
+					getParam(json[i].value, result, 'lastCharge', null, null, parseBalance);
+					getParam(json[i].date, result, 'date');
+				}
+			}
+			result.allAccured = sumAllAccured;
+		} else {
+			AnyBalance.trace('Ваш номер не зарегистрирован в программе бонусов "20% возвращаются". Войдите в личный кабинет https://20.ssl.mts.ru через браузер и зарегистрируйтесь в программе.');
+		}
+
+	}
+
 	AnyBalance.setResult(result);
+
 }

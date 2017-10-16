@@ -20,12 +20,12 @@
         positiveButtonText="ОК"
         negativeButtonText="Отмена">
     </EditTextPreference>
-    <ListPreference 
+<!--    <ListPreference 
         key="type" 
         title="Тип карты"
         summary="||{@s}\n"
         entries="Обычная|Особое отношение"
         entryValues="ordinary|vip"
 	defaultValue="ordinary">
-    </ListPreference>
+    </ListPreference> -->
 </PreferenceScreen>

@@ -1,32 +1,26 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1" version="5">ab-telephony-cnt</id>
+	<api flags="no_browser"/>
+  <id major_version="1" version="6">ab-telephony-cnt</id>
   <name>Центральный телеграф</name>
   <description>
-    Получает текущий баланс, номер лицевого счета, трафик, абонентскую плату, ФИО владельца в сокращенной и в новой версии личного кабинета.
+    Получает текущий баланс, номер лицевого счета, трафик, абонентскую плату, ФИО владельца в сокращенной http://www.cnt.ru/pcone/ и в новой версии личного кабинета https://lk.gobaza.ru.
 	Реквизиты для доступа к Новому личному кабинету можно найти в последней квитанции на оплату.
-	
-	Новое в версии 1.5:
-	- Исправлена ошибка получения "минусового" баланса.
-	
-	Новое в версии 1.4:
-	- Добавлена поддержка Нового личного кабинета (логин=номер лицевого счета, пароль - 10 символов);
-	- Добавлено получение трафика (количество минут и стоимость);
-	- Добавлено получение Абоненской платы (только для Нового личного кабинета);
   </description>
-  <author>Serg Repin &lt;serg.repin@gmail.com&gt;</author>
+  <author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+  <depends>
+  	<module id="library"/>
+  </depends>
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
     <js>main.js</js>
+  	<history>history.xml</history>
   </files>
   <counters>
     <counter id="balance" name="Баланс" units="р."/>
     <counter id="license" name="Лицевой счет" type="text"/>
-	<counter id="monthlypay" name="Абонентская плата" units="р."/>
     <counter id="username" name="ФИО" type="text"/>
-    <counter id="traffic" name="Трафик, мин" units="мин"/>
-    <counter id="trafficcost" name="Трафик, руб." units="р."/>
   </counters>
   <keywords>
     провайдер Московская область телефония

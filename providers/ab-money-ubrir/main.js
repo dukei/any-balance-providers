@@ -21,6 +21,15 @@ var g_countersTable = {
         "currency": "accounts.currency",
         "__tariff": "accounts.__name"
 	},
+	dep: {
+        "balance": "deposits.balance",
+        "accnum": "deposits.num",
+        "currency": "deposits.currency",
+        "till": "deposits.till",
+        "type": "deposits.name",
+        "pct": "deposits.pct",
+        "__tariff": "deposits.__name"
+	},
 };
 
 function shouldProcess(counter, info){
@@ -83,15 +92,15 @@ function main() {
     if(!/^(card|crd|dep|acc)$/i.test(prefs.type || ''))
     	prefs.type = 'card';
 
-    if(/^(crd|dep)$/i.test(prefs.type))
-    	throw new AnyBalance.Error('Не удалось получить информацию по кредиту/депозиту. Сайт изменен?');
+    if(/^(crd)$/i.test(prefs.type))
+    	throw new AnyBalance.Error('Не удалось получить информацию по кредиту. Сайт изменен?');
 	
     var adapter = new NAdapter(joinObjects(g_countersTable[prefs.type], g_countersTable.common), shouldProcess);
 	
     adapter.processCards = adapter.envelope(processCards);
     adapter.processAccounts = adapter.envelope(processAccounts);
 //    adapter.processCredits = adapter.envelope(processCredits);
-//    adapter.processDeposits = adapter.envelope(processDeposits);
+    adapter.processDeposits = adapter.envelope(processDeposits);
 	
 	var html = login(prefs);
 	

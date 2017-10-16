@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">currency</id>
+	<api flags="no_browser"/>
+	<name>Currency code and symbol conversions</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет возможность конвертировать коды валют цифровой в буквенный и наоборот. Символы валюты также получает</p>
+	]]></description>
+	<instruction><![CDATA[
+		
+		Usage:
+		   var symbol = CurrencyISO.getCurrencySymbol(card.currencyISO)
+
+	]]></instruction>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<js>currencyISO.js</js>
+		<history>history.xml</history>
+	</files>
+	<keywords></keywords>
+	<type>currency iso</type>
+</provider>

@@ -14,42 +14,61 @@ function main() {
 	var baseurl = 'https://wk.rcurala.ru/';
 	AnyBalance.setDefaultCharset('utf-8');
 	
-	checkEmpty(prefs.login, 'Введите логин!');
-	checkEmpty(prefs.password, 'Введите пароль!');
+	AB.checkEmpty(prefs.login, 'Введите логин!');
+	AB.checkEmpty(prefs.password, 'Введите пароль!');
 		
 	var html = AnyBalance.requestGet(baseurl + 'login.aspx', g_headers);
 	
-	var params = createFormParams(html, function(params, str, name, value) {
-		if(name == 'Login1$UserName')
+	var params = AB.createFormParams(html, function(params, str, name, value) {
+		if(/UserName$/i.test(name))
 			return prefs.login;
-		else if(name == 'Login1$Password')
+		else if(/Login1\$Password$/i.test(name))
 			return prefs.password;
 		return value;
 	});
+       
+        // два атрибута name в текстовом поле UserName
+        var inputName = AB.getParam(html, null, null, /<input[^>]*?name\s*=\s*"[^"]*UserName"[^>]*>/i);
+        if (inputName) {
+            var match, rxName = /\bname="([^"]+)"/g;
+            while (match = rxName.exec(inputName)) {
+                params[match[1]] = prefs.login;
+            }
+        }
 	
 	html = AnyBalance.requestPost(baseurl + 'login.aspx', params, addHeaders({Referer: baseurl + 'login.aspx'}));
-	
-	if(!/Выход/i.test(html)) {
-		var error = getParam(html, null, null, /<td[^>]*color:Red[^>]*>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
+        
+        function selectId(html, selector, replace, parse) {
+            selector = selector.split('#');
+            var tag = selector[0] || '[a-z1-6]+';
+            var id = selector[1];
+            return AB.getElement(html, RegExp('<' + tag + '(?=\\s)[^>]*?\\sid\\s*=\\s*"[^"]*?' + id + '"[^>]*>', 'i'), replace, parse);
+        }
+        
+        var userFIOElem = selectId(html, 'span#txtFio', AB.replaceTagsAndSpaces);
+        
+	if(!userFIOElem) {
+                var error = selectId(html, 'span#alertRegistrationText', AB.replaceTagsAndSpaces);
 		if(error)
-			throw new AnyBalance.Error(error, null, /Неудачная попытка входа/i.test(error));
+			throw new AnyBalance.Error(error, null, /(пользовател|парол).*правильн/i.test(error));
 		
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
 	
 	var result = {success: true};
 	
-	getParam(html, result, 'fio', /ФИО(?:[^>]*>){1,4}[^>]*value="([^"]*)/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'acc_num', /Лицевой счет(?:[^>]*>){1,4}[^>]*value="([^"]*)/i, replaceTagsAndSpaces, html_entity_decode);
+	AB.getParam(userFIOElem, result, 'fio');
+	AB.getParam(html, result, 'acc_num', /Лицевой счет(?:[^>]*>){1,4}[^>]*value="([^"]*)/i, AB.replaceTagsAndSpaces);
 	
 	// Заходим на страницу детализации
 	html = AnyBalance.requestGet(baseurl + 'FL/historyOfPayment.aspx', g_headers);
-	params = createFormParams(html);
+	params = AB.createFormParams(html);
 	
-	var select = getParam(html, null, null, /<select[^>]*name="ctl00\$ContentPlaceHolder1\$ddlLS" [^>]*>([\s\S]*?)<\/select>/i);
+	var select = selectId(html, 'select#ddlLS');
+        
 	if(select) {
 		AnyBalance.trace('Нашли выбор счетов...');
-		var items = sumParam(select, null, null, /<option[^>]*value="(\d+)/ig);
+		var items = AB.sumParam(select, null, null, /<option[^>]*value="(\d+)/ig);
 		
 		AnyBalance.trace('Всего счетов: ' + items.length);
 		
@@ -58,12 +77,12 @@ function main() {
 			
 			if(prefs.account_num) {
 				// Ищем нужный
-				if(endsWith(curr, prefs.account_num)) {
+				if(AB.endsWith(curr, prefs.account_num)) {
 					params['ctl00$ContentPlaceHolder1$ddlLS'] = curr;
 					params['ctl00$ContentPlaceHolder1$ScriptManager2'] = 'ctl00$ContentPlaceHolder1$ScriptManager2|ctl00$ContentPlaceHolder1$btnView';
 					AnyBalance.trace('Номер счета выбран: ' + curr + ' в настройках указан: ' + prefs.account_num);
 					
-					getParam(curr, result, 'acc_num');
+					AB.getParam(curr, result, 'acc_num');
 					break;
 				} else {
 					AnyBalance.trace('Номер счета ' + curr + ' не подходит ' + prefs.account_num);
@@ -71,7 +90,7 @@ function main() {
 			} else {
 				params['ctl00$ContentPlaceHolder1$ddlLS'] = curr;
 				AnyBalance.trace('Номер счета не указан, выбран автоматически: ' + curr);
-				getParam(curr, result, 'acc_num');
+				AB.getParam(curr, result, 'acc_num');
 				break;
 			}
 		}
@@ -79,14 +98,16 @@ function main() {
 	
 	params['ctl00$ContentPlaceHolder1$Bdate'] = getMonthDate(true);
 	params['ctl00$ContentPlaceHolder1$Edate'] = getMonthDate();
+        
+        
 	
-	html = AnyBalance.requestPost(baseurl + 'FL/historyOfPayment.aspx', params, addHeaders({Referer: baseurl + 'FL/historyOfPayment.aspx'}));
+	html = AnyBalance.requestPost(baseurl + 'FL/historyOfPayment.aspx', params, AB.addHeaders({Referer: baseurl + 'FL/historyOfPayment.aspx'}));
 	
-	var table = getParam(html, null, null, /(<table[^>]*id="ctl00_ContentPlaceHolder1_gvSel"[\s\S]*?<\/table>)/i);
-	checkEmpty(table, 'Нет данных о последних платежах за текущий период', true);
+	var table = selectId(html, 'table#gvSel');
+	AB.checkEmpty(table, 'Нет данных о последних платежах за текущий период', true);
 	
-	getParam(table, result, 'balance', /(?:[\s\S]*?<td[^>]*>){6}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
-	getParam(table, result, '__tariff', /(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
+	AB.getParam(table, result, 'balance', /(?:[\s\S]*?<td[^>]*>){6}([\s\S]*?)<\//i, AB.replaceTagsAndSpaces, AB.parseBalance);
+	AB.getParam(table, result, '__tariff', /(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\//i, AB.replaceTagsAndSpaces);
 	
     AnyBalance.setResult(result);
 }
@@ -98,8 +119,10 @@ function getMonthDate(prev) {
 	var year = dt.getFullYear();
 	
 	if(prev) {
-		if(month == 0)
+		if(month == 0) {
 			month = 12;
+                        year--;
+                    }
 		
 		return months[month-1] + ' ' + year;
 	} else {

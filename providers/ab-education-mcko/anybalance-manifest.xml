@@ -7,7 +7,7 @@
 	<p>Получает информацию об оценках из Московского регистра качества образования (https://mrko.mos.ru/)</p>
 	<p>Информация берется из сводной ведомости</p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

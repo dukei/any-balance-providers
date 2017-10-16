@@ -1,5 +1,23 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="29" date="2017-06-27">
+	Исправлено получение кредитов
+	</change>
+	<change version="28" date="2017-06-27">
+	- Поддержка изменений в процедуре входа
+	</change>
+	<change version="27" date="2016-12-30">
+	- Поддержка изменений в процедуре входа
+	</change>
+	<change version="26" date="2016-10-11">
+	Поддержка изменений в процедуре входа
+	</change>
+	<change version="25" date="2016-09-28">
+	Поддержка изменений в процедуре входа
+	</change>
+	<change version="24" date="2016-06-18">
+	Увеличено время ожидания смс кода на вход
+	</change>
 	<change version="23" date="2015-09-28">
 	Исправлены данные по кредитам
 	</change>

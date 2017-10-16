@@ -10,6 +10,7 @@ var g_countersTable = {
 	card: {
 		"__forceAvailable": ["cards.account_id"],
     	"balance": "accounts.balance",
+    	"available": "accounts.available",
 		"currency": "accounts.currency",
 		"num": "cards.num",
 		"__tariff": "cards.__name",
@@ -34,6 +35,7 @@ var g_countersTable = {
 	},
     acc: {
     	"balance": "accounts.balance",
+    	"available": "accounts.available",
 		"currency": "accounts.currency",
 		"__tariff": "accounts.__name",
 		"num": "accounts.num",
@@ -137,7 +139,8 @@ function main() {
 		if(!adapter.wasProcessed('cards'))
 			throw new AnyBalance.Error(prefs.num ? 'Не найдена карта с последними цифрами ' + prefs.num : 'У вас нет ни одной карты!');
 
-		shouldProcess.selectedAccountId = result.cards[0].account_id;
+		var card = adapter.findEntityById(result.cards, adapter.wasProcessed('cards'));
+		shouldProcess.selectedAccountId = card.account_id;
 		adapter.processAccounts(html, result);
 		
 		result = adapter.convert(result);

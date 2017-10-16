@@ -12,7 +12,7 @@ var g_headers = {
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'http://www.autodoc.ru/';
+	var baseurl = 'https://www.autodoc.ru/';
 	AnyBalance.setDefaultCharset('utf-8');
 	
 	checkEmpty(prefs.login, 'Введите логин!');
@@ -28,9 +28,9 @@ function main() {
 	}, addHeaders({Referer: baseurl}));
 	
 	if (!/logout/i.test(html)) {
-		var error = getParam(html, null, null, /logon_error[^>]*>([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
+		var error = getElement(html, /<[^>]*logon_page_error/i, replaceTagsAndSpaces);
 		if (error)
-			throw new AnyBalance.Error(error, null, /Логин и\(или\) пароль неверны/i.test(error));
+			throw new AnyBalance.Error(error, null, /парол/i.test(error));
 		
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
@@ -38,12 +38,12 @@ function main() {
 	
 	var result = {success: true};
 	
-	getParam(html, result, 'discount', />Скидка:(?:[^>]*>){3}([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'discount', />Скидка:(?:[^>]*>){3}([\s\S]*?)<\/b>/i, replaceTagsAndSpaces);
 	
 	if(isAvailable('balance')) {
 		html = AnyBalance.requestGet(baseurl + 'Web/Pages/BalanceForm.aspx?type=1', g_headers);
 		
-		getParam(html, result, 'balance', /"Баланс с учётом получения всех заказанных деталей"(?:[^>]*>){6}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
+		getParam(html, result, 'balance', /<span[^>]+lSLInWork[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
 	}
 	
 	if(isAvailable('orders_details') && prefs.order_num) {

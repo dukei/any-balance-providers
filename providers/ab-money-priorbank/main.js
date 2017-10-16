@@ -19,6 +19,7 @@ function main() {
 	
 	var tokenBase64 = AnyBalance.requestPost(g_baseurl + 'setup', {}, g_headers);
 	checkEmpty(tokenBase64, 'Не удалось авторизоваться, сайт изменен?');
+	AnyBalance.trace('token: ' + tokenBase64);
 	
 	var token = CryptoJS.enc.Base64.parse(tokenBase64);
 	var encodedToken = CryptoJS.AES.encrypt(token, key, { iv: iv });
@@ -30,8 +31,10 @@ function main() {
 		UserPassword: passHash.toString(), 
 		Token: encodedToken.toString(), 
 		'@OSType': '2', 
-		'@OSVersion': '19', 
-		'@AppVersion': '2.15.06.18'}, g_headers);
+		'@OSVersion': '16', 
+		'@AppVersion': '2.16.7.12',
+		'@isNewApp': 'true'
+	}, g_headers);
 	
 	if (!/UserSession/i.test(xml)) {
 		var error = sumParam(xml, null, null, /<Error>([\s\S]*?)<\/Error/i, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
@@ -55,7 +58,7 @@ function main() {
 function fetchCard(prefs, result) {
 	html = AnyBalance.requestPost(g_baseurl + 'GateWay&Target=Android', {Template: 'CardList'}, addHeaders({Base64Fields: 'XML'}));
 	
-	var re = new RegExp('<Card\\s+[^>]*>\\s*<Synonym>' + (prefs.num || '[^]+?') + '<\/Synonym>[^]*?<\/Card>', 'i');
+	var re = new RegExp('<Card\\s+[^>]*>\\s*<Synonym><\\!\\[CDATA\\[' + (prefs.num || '[^]+?') + '\\]\\]><\/Synonym>[^]*?<\/Card>', 'i');
 	var card = getParam(html, null, null, re);
 	if(!card){
 		AnyBalance.trace(html);

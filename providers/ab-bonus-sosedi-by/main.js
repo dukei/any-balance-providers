@@ -12,7 +12,7 @@ var g_headers = {
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'http://sosedi.by/';
+	var baseurl = 'https://sosedi.by/';
 	AnyBalance.setDefaultCharset('utf-8');
 	
 	checkEmpty(prefs.login, 'Введите логин!');
@@ -34,7 +34,7 @@ function main() {
 	}, addHeaders({Referer: baseurl + 'kupilka/personal/auth/'}));
 	
 	if (!/logout/i.test(html)) {
-		var error = getParam(html, null, null, /[^>]+class="errortext"[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
+		var error = getParam(html, null, null, /[^>]+class="errortext"[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces);
 		if (error)
 			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
 		
@@ -45,9 +45,9 @@ function main() {
 	var result = {success: true};
 	
 	getParam(html, result, 'balance', /Доступные бонусы<(?:[^>]*>){3}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'card', /на карте №([\s\S]*?)</i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'fio', /Добро пожаловать(?:[^>]*>){2}([\s\S]*?)</i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'status', /status_lbl(?:[^>]*>){1}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'card', /на карте №([\s\S]*?)</i, replaceTagsAndSpaces);
+	getParam(html, result, 'fio', /Добро пожаловать(?:[^>]*>){2}([\s\S]*?)</i, replaceTagsAndSpaces);
+	getParam(html, result, 'status', /status_lbl(?:[^>]*>){1}([\s\S]*?)<\//i, replaceTagsAndSpaces);
 	
 	AnyBalance.setResult(result);
 }

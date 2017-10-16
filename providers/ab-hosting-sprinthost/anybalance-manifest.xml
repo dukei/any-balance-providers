@@ -1,17 +1,19 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-hosting-sprinthost</id>
+	<id version="4">ab-hosting-sprinthost</id>
 	<api flags="no_browser"/>
 	<name>Sprinthost (хостинг сайтов)</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе провайдера Sprinthost <a href="http://sprinthost.ru/">http://sprinthost.ru/</a></p>
-	<p>Информация берется из личного кабинета <a href="http://cp.sprinthost.ru/">http://cp.sprinthost.ru/</a></p>
+	<p>Предоставляет информацию о балансе провайдера Sprinthost http://sprinthost.ru/</p>
+	<p>Информация берется из личного кабинета https://cp.sprinthost.ru/</p>
 	]]></description>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
@@ -25,7 +27,6 @@
 		<counter id="dBonus" name="Бонусы на домены" />
 		<counter id="daysLeft" name="Осталось дней"/>
 		<counter id="diskSpaceUsed" name="Использовано места на диске" units=" Мб"/>
-		<counter id="filesOnAcc" name="Файлов на аккаунте"/>
 		<counter id="domains" name="Количество доменов"/>
 		<counter id="vdomains" name="Количество сайтов"/>
 		<counter id="FTPs" name="Количество входов FTP"/>

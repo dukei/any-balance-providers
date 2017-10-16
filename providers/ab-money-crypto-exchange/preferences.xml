@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+	<EditTextPreference
+		title="Cryptocurrency Code"
+		key="base"
+		summary="||{@s}"
+		obligatory="true"
+		dialogTitle="Cryptocurrency Code"
+		positiveButtonText="Ok"
+		negativeButtonText="Cancel"
+		dialogMessage="Please enter 3 letters base cryptocurrency code, such as BTC, BCH, LTC...">
+	</EditTextPreference>
+	<EditTextPreference
+		title="Exchanged Currency Code"
+		key="target"
+		summary="||{@s}"
+        obligatory="true"
+		dialogTitle="Currency Code"
+		positiveButtonText="Ok"
+		negativeButtonText="Cancel"
+		dialogMessage="Please enter 3 letters currency code to exchange with, such as USD, RUB, ILS...">
+	</EditTextPreference>
+</PreferenceScreen>

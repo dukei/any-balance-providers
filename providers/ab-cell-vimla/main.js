@@ -31,16 +31,16 @@ function main() {
 		'Remember': 'false'
 	}, addHeaders({Referer: baseurl+ '/mitt-vimla'}));
 
-
+	postHTML = postHTML.replace(/^\s+|\s+$/g, ''); // trim spaces
+	if (postHTML[0] != '{') {
+		AnyBalance.trace(postHTML);
+		throw new AnyBalance.Error("Can`t login to selfcare. Check your Login (e-mail)! Or may be web site was changed so provider needs to be updated.", false, true);
+	}
 	var json = getJson(postHTML);
 	if(!json.success)
 	{
-		var jsonString = getParam(html, null, null, /components.login[^\}]*?(\{[\s\S]*?\})/i);
-		json = getJson(jsonString);
-		var error = getParam(json.loginFailed, null, null, null, replaceTagsAndSpaces, html_entity_decode);
-		if (error)
-			throw new AnyBalance.Error(error, null, /Oj, något gick snett/i.test(error));
-		throw new AnyBalance.Error("Can`t login to selfcare. Site changed?");
+		AnyBalance.trace(postHTML);
+		throw new AnyBalance.Error("Can`t login to selfcare. Check your Password! Or may be web site was changed so provider needs to be updated.", false, true);
 	}
 
 	var result = {success: true};
@@ -49,6 +49,7 @@ function main() {
 	getParam(html, result, 'fio', /personal['"][^>]*>[\s\S]*?(<span[^>]*>(\w+)<\/span>[\s\S]*?<span[^>]*>(\w+)<\/span>)/i, replaceTagsAndSpaces);
 	getParam(html, result, 'phone', /Mobilnummer[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(html, result, 'premium', /<p[^>]*>Utomlands och betalsamtal[\s\S]*?<em[^>]*>([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'datapack', />Paketpris data EU och Norge[\s\S]*?<strong[^>]*>([\s\S]*?)<\/strong>/i, replaceTagsAndSpaces, html_entity_decode);
 
 	html = AnyBalance.requestGet(baseurl+'/invoice/aggregatelines', g_headers);
 	json=getJson(html);

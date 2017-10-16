@@ -1,26 +1,28 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="3">ab-municipal-erczd</id>
+	<id version="5">ab-municipal-erczd</id>
 	<api flags="no_browser"/>
 	<name>Единый Расчётный Центр г. Железнодорожный</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе в Едином Расчётном Центре г. Железнодорожный</p>
-	<p>Информация берется из личного кабинета http://erczd.ru/adm6.php</p>
+	<p>Информация берется из личного кабинета https://erczd.ru/index.php?menu=kabinet</p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
 	<counters>
 		<counter id="balance" name="Баланс" units=" р"/>
 		<counter id="licschet" name="Лицевой счет" type="text"/>
-		<counter id="cold_water" name="Холодная вода" prefix="Х: " units=" куб.м"/>
+		<counter id="cold_water" name="Холодная вода" prefix="Х: " units=" р"/>
 		<counter id="cold_water_counter" name="Холодная вода - счетчик" prefix="Х: " units=" куб.м"/>
-		<counter id="hot_water" name="Горячая вода" prefix="Г: " units=" куб.м"/>
+		<counter id="hot_water" name="Горячая вода" prefix="Г: " units=" р"/>
 		<counter id="hot_water_counter" name="Горячая вода - счетчик" prefix="Г: " units=" куб.м"/>
 	</counters>
 	<keywords></keywords>

@@ -87,6 +87,10 @@ function fetchAll(baseurl, html){
 	
     var result = {success: true};
 
+
+
+
+
 	// общее
     getParam(html, result, 'accnum', /Номер счета:?[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(html, result, 'agreement', /Номер договора:?[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
@@ -102,7 +106,9 @@ function fetchAll(baseurl, html){
     getParam(html, result, 'balance', /Текущая сумма вклада(?:[^>]*>){6}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, ['currency', '__tariff'], /Текущая сумма вклада(?:[^>]*>){6}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseCurrency);
 	getParam(html, result, 'till', /Дата закрытия[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
-    getParam(html, result, 'rate', /Процентная ставка(?:[^>]*>){7}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
+    
+	AnyBalance.trace('Процентная ставка: ' +getParam(html, result, 'rate', /">([^"]*)% годовых/i, replaceTagsAndSpaces, parseBalance));
+	//getParam(html, result, 'rate', /Процентная ставка(?:[^>]*>){7}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'pcts', /Сумма начисленных процентов(?:[^>]*>){7}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
 	// Кредитная карта
 	var credCardBalances = [/Доступно(?:[^>]*>){4}([\s\S]*?)<\//i, /На вашем счёте(?:[^>]*>){4}([\s\S]*?)<\//i];
@@ -112,7 +118,8 @@ function fetchAll(baseurl, html){
 	getParam(html, result, 'minpaytill', /Дата списания следующего платежа(?:[^>]*>){7}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseDate);
 	getParam(html, result, 'minpay', /Дата списания следующего платежа(?:[^>]*>){9}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'overall_debt', /Задолженность на конец завершенного периода(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
-	
+	getParam(html, result, 'polsa', /Вас([^"]*)балл/i, replaceTagsAndSpaces, parseBalance);	
+
 	var limit = getParam(html, null, null, /Кредитный лимит([^<]+)/i, replaceTagsAndSpaces, parseBalance);
 	if(/карта/i.test(product) && limit && AnyBalance.isAvailable('debt')){
 		var balance = getParam(html, null, null, credCardBalances, replaceTagsAndSpaces, parseBalance);

@@ -12,33 +12,39 @@ var g_headers = {
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'https://cabinet.plas-tek.ru/default.aspx?';
+	var baseurl = 'https://starbuckscard.ru/';
 	AnyBalance.setDefaultCharset('UTF-8');
 	
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 	
-	var html = AnyBalance.requestGet(baseurl + 'mainlogin=true&style=starbucks', g_headers);
+	var html = AnyBalance.requestGet(baseurl + 'user/login', g_headers);
 	
 	if(!html || AnyBalance.getLastStatusCode() > 400){
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
 	}
 
-	var params = createFormParams(html, function(params, str, name, value) {
-		if (name == 'LoginTextBox1')
+	var form = getElement(html, /<form[^>]+login-form/);
+	if(!form){
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удалось найти форму входа. Сайт изменен?');
+	}
+
+	var params = createFormParams(form, function(params, str, name, value) {
+		if (/identity/i.test(name))
 			return prefs.login;
-		else if (name == 'PasswordTextBox2')
+		else if (/password/i.test(name))
 			return prefs.password;
 		return value;
 	});
 
-	html = AnyBalance.requestPost(baseurl + 'mainlogin=true&style=starbucks', params, addHeaders({Referer: baseurl + 'mainlogin=true&style=starbucks'}));
+	html = requestPostMultipart(baseurl + 'user/login', params, addHeaders({Referer: baseurl + 'Account/LogOn'}));
 
-	if (!/Баланс карты/i.test(html)) {
-		var error = getParam(html, null, null, /<div[^>]+id="pnlMessage"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+	if (!/logout/i.test(html)) {
+		var error = getElement(html, /<div[^>]+error/i, replaceTagsAndSpaces);
 		if (error)
-			throw new AnyBalance.Error(error, null, /Ошибка входа/i.test(error));
+			throw new AnyBalance.Error(error, null, /парол|Логин/i.test(error));
 		
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
@@ -46,25 +52,17 @@ function main() {
 
 	var result = {success: true};
 	
-	getParam(html, result, 'stars', /pnlCardInfo[^>]*>[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'cardNumber', /lblCardNumber[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'balance', /lblCardBalance[^>]*>[\s\S]*?<\//i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'status', /lblCardStatus[^>]*>([^;]*);/i, replaceTagsAndSpaces);
+	getParam(html, result, 'stars', /<span[^>]+class="stars"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'balance', /<span[^>]+class="balance"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'status', /Ваш уровень:([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
+	getParam(html, result, 'fio', /<!-- Guest Info -->[\s\S]*?<li[^>]*>([\s\S]*?)<\/li>/i, replaceTagsAndSpaces);
 
-	var eventValidation = getParam(html, null, null,/id="__EVENTVALIDATION"[^>]*value="([^"]+)/i);
-	var viewState = getParam(html, null, null, /id="__VIEWSTATE"[^>]*value="([^"]+)/i);
-	html = AnyBalance.requestPost(baseurl+'style=starbucks',{
-		__VIEWSTATEGENERATOR: params['__VIEWSTATEGENERATOR'],
-		__VIEWSTATE: viewState,
-		offset:3,
-		__EVENTVALIDATION:eventValidation,
-		__EVENTTARGET: 'CardsEnableForm'
-	}, addHeaders({Referer: baseurl+ 'style=starbucks'}));
+	if(AnyBalance.isAvailable('cardNumber')){
+		html = AnyBalance.requestGet(baseurl + 'card/page/', g_headers);
+		var cardinfo = getElement(html, /<div[^>]+card-head-menu/i);
 
-	var fName = getParam(html, null, null, /name="tbProfileFirstName"[^>]+value="([^"]+)/i, replaceTagsAndSpaces, html_entity_decode) || '';
-	var sName = getParam(html, null, null, /name="tbProfileSurname"[^>]+value="([^"]+)/i, replaceTagsAndSpaces, html_entity_decode || '');
-
-	getParam(fName + ' ' + sName, result, 'fio');
+		sumParam(cardinfo, result, 'cardNumber', /card\/view\/(\d+)/ig, replaceHtmlEntities, null, aggregate_join);
+	}
 
 	AnyBalance.setResult(result);
 }

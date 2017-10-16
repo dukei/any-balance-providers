@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-internet-iformula</id>
+  <id version="2">ab-internet-iformula</id>
   <name>Формула Связи (Ставрополь)</name>
   <description>
     Получает баланс и информацию о тарифном плане для ставропольского интернет провайдера Формула Связи (http://iformula.ru).
 
     Информация берется из личного кабинета https://stats.iformula.ru.
   </description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
@@ -21,9 +21,10 @@
     <counter id="balance" name="Баланс" units="р"/>
     <counter id="agreement" name="Договор" type="text"/>
     <counter id="fio" name="ФИО" type="text"/>
-    <counter id="lastpaysum" name="Последний платеж" units="р"/>
-    <counter id="lastpaydate" name="Дата последнего платежа" type="time" format="dd/MM/yyyy"/>
-    <counter id="lastpaydesc" name="Описание последнего платежа" type="text"/>
+    <counter id="address" name="Адрес" type="text"/>
+    <counter id="login" name="Логин" type="text"/>
+    <counter id="iptv_id" name="Идентификатор IPTV" type="text"/>
+    <counter id="price" name="Стоимость в месяц" units="₽"/>
   </counters>
   <keywords>
   </keywords>

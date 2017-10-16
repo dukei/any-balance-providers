@@ -1,31 +1,30 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="3">ab-bonus-fishka</id>
+	<id version="5">ab-bonus-fishka</id>
 	<api flags="no_browser"/>
 	<name>FiSHKA</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе для участников бонусной программы FISHKA (http://myfishka.com/).</p>
 	<p>FISHKA - программа для постоянных клиентов заправочных станций и магазинов автозаправочных комплексов ОККО.</p> 
 	<p>Программа FISHKA позволяет накапливать баллы за каждую покупку,  зарабатывать дополнительные очки во время акций, обмениваться бонусными баллами,  пользоваться выгодными предложениями и привилегиями.</p>
-	<p>Информация берется с персональной страницы (http://cwa.myfishka.com/).</p>
+	<p>Информация берется с персональной страницы (http://myfishka.com/).</p>
 	]]></description>
-	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="на Вашому рахунку" units=" Б"/>
-		<counter id="fio" name="Основний учасник" type="text"/>
-		<counter id="licschet" name="Номер рахунку" type="text"/>
-		<counter id="std" name="Набрано стандартних балів" units=" Б"/>
-		<counter id="extra" name="Набрано додаткових балів" units=" Б"/>
-		<counter id="used" name="Всього використаних балів" units=" Б"/>
-		<counter id="corr" name="Виправлено балів" units=" Б"/>
-		<counter id="out" name="Протерміновані бали" units=" Б"/>
+		<counter id="balance" name="Доступні бали" units=" F"/>
+		<counter id="fio" name="Прізвище та ім'я" type="text"/>
+		<counter id="licschet" name="Oсновна картка" type="text"/>
+		<counter id="extra" name="В резерві" units=" F"/>
+		<counter id="out" name="Згорять" units=" F"/>
 	</counters>
 	<keywords>фишка</keywords>
 	<type>bonus</type>

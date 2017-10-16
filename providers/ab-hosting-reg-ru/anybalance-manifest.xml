@@ -1,22 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="7">ab-hosting-reg-ru</id>
+	<id version="8">ab-hosting-reg-ru</id>
 	<name>Reg.ru</name>
 	<api flags="no_browser"/>
 	<description html="true"><![CDATA[
 	<p>Получает баланс регистратора reg.ru (http://www.reg.ru)</p>
 	<p>Информация берется из личного кабинетаклиента (https://www.reg.ru/)</p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>  
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>  
+        <depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
 	<counters>
 		<counter id="balance" name="Баланс" units=" р"/>
+                <counter id="limit" name="Доступный кредитный лимит" units=" р"/>
+                <counter id="plan" name="Планируемые расходы" units=" р"/>
 		<counter id="domain_0" name="Домен 1" type="text"/>
 		<counter id="domain_date_0" name="Дата окончания домена 1" type="time" format="dd/MM/yyyy"/>
 		<counter id="domain_1" name="Домен 2" type="text"/>
@@ -29,6 +33,8 @@
 		<counter id="service_date_1" name="Дата окончания услуги 2" type="time" format="dd/MM/yyyy"/>
 		<counter id="service_2" name="Услуга3" type="text"/>
 		<counter id="service_date_2" name="Дата окончания услуги 3" type="time" format="dd/MM/yyyy"/>
+                <counter id="user" name="Пользователь" type="text"/>
+                <counter id="code" name="Персональный код оплаты" type="text"/>
 	</counters>
 	<keywords>рег ру</keywords>
 	<type>hosting</type>

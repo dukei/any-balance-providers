@@ -3,16 +3,31 @@
 */
 
 var g_headers = {
-	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-	'Accept-Language': 'ru,en;q=0.8',
+	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
+	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
 	'Connection': 'keep-alive',
-	'Origin': 'https://my.velcom.by',
 	'Cache-Control': 'max-age=0',
-	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/36.0.1985.143 Safari/537.36',
+    'Upgrade-Insecure-Requests': '1',
+	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.101 Safari/537.36',
+	'Origin': 'https://my.velcom.by',
 };
 
 //var velcomOddPeople = 'Velcom сознательно противодействует оперативному получению вами баланса через сторонние программы! Вот и снова они специально ввели изменения, которые сломали получение баланса. Пожалуйста, позвоните в службу поддержки Velcom (411 и 410 с мобильного телефона в сети velcom без взимания оплаты) и оставьте претензию, что вы не можете пользоваться любимой программой. Проявите активную позицию, они скрывают ваш баланс от вас же. Зачем, интересно? МТС и Life своих абонентов уважают значительно больше...';
 var velcomOddPeople = 'Не удалось войти в личный кабинет. Сайт изменен?';
+
+function parseBalanceRK(_text) {
+  var text = _text.replace(/\s+/g, '');
+  var rub = getParam(text, null, null, /(-?\d[\d\.,]*)руб/i, replaceTagsAndSpaces, parseBalance) || 0;
+  var _sign = rub < 0 || /-\d[\d\.,]*руб/i.test(text) ? -1 : 1;
+  var kop = getParam(text, null, null, /(-?\d[\d\.,]*)коп/i, replaceTagsAndSpaces, parseBalance) || 0;
+  var val = _sign*(Math.abs(rub) + kop / 100);
+  AnyBalance.trace('Parsing balance (' + val + ') from: ' + _text);
+  return val;
+}
+
+function getDomain(url){
+	return getParam(url, /^(https?:\/\/[^\/]*)/i);
+}
 
 function main(){
     var prefs = AnyBalance.getPreferences();
@@ -24,38 +39,26 @@ function main(){
     checkEmpty(prefs.password, 'Введите пароль к ИССА!');
 	
     var matches;
-    if(!(matches = /^\+(375\d\d)(\d{7})$/.exec(prefs.login)))
-		throw new AnyBalance.Error('Неверный номер телефона. Необходимо ввести номер в международном формате без пробелов и разделителей!');
+    if(!(matches = /^\+375(\d\d)(\d{7})$/.exec(prefs.login)))
+		throw new AnyBalance.Error('Неверный номер телефона. Необходимо ввести номер в международном формате без пробелов и разделителей!', false, true);
 	
     var phone = matches[2];
     var prefix = matches[1];
     
     var html = AnyBalance.requestGet(baseurl, g_headers);
 
-		function randomString(length) {var result = '', chars = '0123456789';for (var i = length; i > 0; --i) {	result += chars[Math.round(Math.random() * (chars.length - 1))];}return result;}
+//		function randomString(length) {var result = '', chars = '0123456789';for (var i = length; i > 0; --i) {	result += chars[Math.round(Math.random() * (chars.length - 1))];}return result;}
 		// Ищи новый способ, как нас заблокировать.
-		AnyBalance.setCookie('my.velcom.by', '_ga', 'GA1.2.' + randomString(10) + '.' + randomString(10));
+//		AnyBalance.setCookie('internet.velcom.by', '_ga', 'GA1.2.' + randomString(10) + '.' + randomString(10));
 
-    var sid = getParam(html, null, null, /name="sid3" value="([^"]*)"/i);
-    if(!sid){
-		if(AnyBalance.getLastStatusCode() >= 400){
-			var error = getParam(html, null, null, /<h1[^>]*>([\s\S]*?)<\/h1>/i, replaceTagsAndSpaces, html_entity_decode);
-			if(error)
-				throw new AnyBalance.Error(error);
-			throw new AnyBalance.Error('Сайт временно недоступен. Пожалуйста, попробуйте ещё раз позднее.');
-		}
-		AnyBalance.trace(html);
-		throw new AnyBalance.Error(velcomOddPeople);
-    }
-    
-    var form = getParam(html, null, null, /(<form[^>]*name="mainForm"[^>]*>[\s\S]*?<\/form>)/i);
+    var form = getElement(html, /<form[^>]*name="asmpform"/i);
     if(!form){
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось найти форму входа, похоже, velcom её спрятал. Обратитесь к автору провайдера.');
     }
 	
 	var params = createFormParams(form, function(params, str, name, value) {
-		var id=getParam(str, null, null, /\bid="([^"]*)/i, null, html_entity_decode);
+		var id=getParam(str, /\bid="([^"]*)/i, replaceHtmlEntities);
 		if(id){
 			if(/PRE/i.test(id)){ //Это префикс
 				value = prefix;
@@ -67,8 +70,8 @@ function main(){
 		}
 		if(!name)
 			return;
-		if(name == 'user_input_0')
-			value = '_next';
+/*		if(name == 'user_input_0')
+			value = '';
 		if(name == 'user_input_timestamp')
 			value = new Date().getTime();
 		if(/^user_input_\d+8$/.test(name))
@@ -76,15 +79,17 @@ function main(){
 		if(/^user_input_\d+9$/.test(name))
 			value = '2';
 		if(/^user_input_\d+10$/.test(name))
-			value = '0';
+			value = '0'; */
 		return value || '';
     });
-    params.user_submit = undefined;
+    delete params.user_submit;
+    var action = getParam(form, /<form[^>]+action="([^"]*)/i, replaceHtmlEntities);
+    var referer = AnyBalance.getLastUrl();
 
 	try {
-		html = requestPostMultipart(baseurl + 'work.html', params, addHeaders({Referer: baseurl}));
+		html = AnyBalance.requestPost(joinUrl(referer, action), params, addHeaders({Referer: referer, Origin: getDomain(referer)}));
 	} catch(e) {
-		AnyBalance.trace('Error executing multipart request: ' + e.message);
+		AnyBalance.trace('Error executing request: ' + e.message);
 		if(/Read error|failed to respond/i.test(e.message)){
 			AnyBalance.trace(html);
 			throw new AnyBalance.Error(velcomOddPeople + '!');
@@ -100,24 +105,31 @@ function main(){
 
     var kabinetType, personalInfo;
 	if(/_root\/PERSONAL_INFO_ABONENT/i.test(html)) {
-        personalInfo = '_root/PERSONAL_INFO_ABONENT';
+        personalInfo = 'PERSONAL_INFO_ABONENT';
         kabinetType = 3;		
 	} else if(/_root\/PERSONAL_INFO/i.test(html)){
-        personalInfo = '_root/PERSONAL_INFO';
+        personalInfo = 'PERSONAL_INFO';
         kabinetType = 2;
     }else if(/_root\/USER_INFO/i.test(html)){
-        personalInfo = '_root/USER_INFO';
+        personalInfo = 'USER_INFO';
         kabinetType = 1;
     }
 	
 	AnyBalance.trace('Cabinet type: ' + kabinetType);
 	
-	if(!kabinetType){
+    if(!kabinetType){
         var error = sumParam(html, null, null, /<td[^>]+class="INFO(?:_Error|_caption)?"[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, html_entity_decode, create_aggregate_join(' '))
 		|| sumParam(html, null, null, /<span[^>]+style="color:\s*red[^>]*>[\s\S]*?<\/span>/ig, replaceTagsAndSpaces, html_entity_decode, create_aggregate_join(' '))
 	        || getParam(html, null, null, /<td[^>]+class="info_caption"[^>]*>[\s\S]*?<\/td>/ig, replaceTagsAndSpaces, html_entity_decode);
+        if (!error) {
+            error = AB.getElement(html, /<p\s[^>]+?info_error_caption/i, AB.replaceTagsAndSpaces);
+        }
+        if(!error) {
+        	var errors = getElements(html, /<div[^>]+class="auth_error_block"/ig);
+        	error = replaceAll(errors.filter(function(e) { return !/display\s*:\s*none/i.test(e) }).join(''), replaceTagsAndSpaces);
+        }
         if(error)
-            throw new AnyBalance.Error(error, null, /Неверный пароль или номер телефона|Пароль должен состоять из 8 цифр|Если вы забыли пароль/i.test(error));
+            throw new AnyBalance.Error(error, null, /Неверно указан номер|номер телефона|парол/i.test(error));
         if(/Сервис временно недоступен/i.test(html))
             throw new AnyBalance.Error('ИССА Velcom временно недоступна. Пожалуйста, попробуйте позже.');
         
@@ -136,19 +148,34 @@ function main(){
 	}	
 	
     var result = {success: true};
-	
+
+    var sid = AnyBalance.getCookie('WASESSION');
+    if(!sid){
+		if(AnyBalance.getLastStatusCode() >= 400){
+			var error = getParam(html, null, null, /<h1[^>]*>([\s\S]*?)<\/h1>/i, replaceTagsAndSpaces, html_entity_decode);
+			if(error)
+				throw new AnyBalance.Error(error);
+			throw new AnyBalance.Error('Сайт временно недоступен. Пожалуйста, попробуйте ещё раз позднее.');
+		}
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error(velcomOddPeople);
+    }
+
 	//Персональная информация
     html = requestPostMultipart(baseurl + 'work.html', {
         sid3: sid,
         user_input_timestamp: new Date().getTime(),
-        user_input_0: personalInfo,
-        last_id: ''
-    }, g_headers);
+        user_input_0: '_next',
+        last_id: '',
+        user_input_1: personalInfo,
+    }, addHeaders({
+    	Referer: baseurl
+    }));
 	
 	getParam(html, result, 'userName', /<td[^>]+id="(?:NAME|FIO)"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, 'userNum', /<td[^>]+id="(?:TEL_NUM|DIRNUM|PhoneNumber)"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
     //Хитрецы несколько строчек начисления абонента делают, одна при этом пустая
-    sumParam(html, result, 'balance', /(?:Баланс основного счета|Баланс лицевого счета|Баланс|Начисления абонента):[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+    sumParam(html, result, 'balance', /(?:Баланс основного счета|Баланс лицевого счета|Баланс|Начисления абонента):[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseBalanceRK, aggregate_sum);
     sumParam(html, result, 'balanceBonus', /(?:Баланс бонусного счета(?: \d)?):[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
     getParam(html, result, 'status', /(?:Текущий статус абонента|Статус абонента):[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
     getParam(html, result, '__tariff', /Тарифный план:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
@@ -178,9 +205,9 @@ function main(){
 		html = requestPostMultipart(baseurl + 'work.html', {
 			sid3: sid,
 			user_input_timestamp: new Date().getTime(),
-			user_input_0: '_root/FINANCE_INFO/INSTALLMENT',
-			user_input_1: '',
-			last_id: ''
+			user_input_0: '_next',
+			last_id: '',
+			user_input_1: 'FINANCE_INFO/INSTALLMENT',
 		}, g_headers);
 		
 		//Ежемес. платеж 659000 руб. Остаток 7249000 руб. Погашение 01.07.2015.			
@@ -188,21 +215,6 @@ function main(){
 		getParam(html, result, 'loan_left', /Остаток ([0-9]+) руб./i, replaceTagsAndSpaces, parseBalance);
 		getParam(html, result, 'loan_end', /Погашение ([0-9.]+)./i, replaceTagsAndSpaces, parseDate);
 	}
-	/*
-    if(AnyBalance.isAvailable('traffic')){
-        html = requestPostMultipart(baseurl + 'work.html', {
-            sid3: sid,
-            user_input_timestamp: new Date().getTime(),
-            user_input_0: '_root/TPLAN/PACKETS',
-            last_id: '',
-            user_input_1: -1
-        }, g_headers);
-
-        var packetMb = getParam(html, null, null, /Остаток интернет-трафика:[^<]*?(\d+)\s*Мб/i, replaceFloat, parseFloat) || 0;
-        var packetKb = getParam(html, null, null, /Остаток интернет-трафика:[^<]*?(\d+)\s*Кб/i, replaceFloat, parseFloat) || 0;
-
-        result.traffic = traffic + packetMb + packetKb/1000;
-    }*/ 
 	try{
 	    // Выходим из кабинета, чтобы снизить нагрузку на сервер
 		AnyBalance.trace('Выходим из кабинета, чтобы снизить нагрузку на сервер');

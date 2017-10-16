@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<history>
+	<change version="2" date="2016-11-20">
+	- Улучшена обработка ошибок в статусе PENDING_RECHARGE
+	</change>
+	<change version="1" date="2016-11-10">
+	- First provider version
+	</change>
+</history>

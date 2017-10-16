@@ -7,7 +7,7 @@
 	<p>Provides balance information about Orsay bonus program <a href="http://www.orsay.com/pl-pl/">http://www.orsay.com/pl-pl/</a></p>
 	<p>Information is retrieved from personal account <a href="http://www.orsay.com/pl-pl/customer/account/login">http://www.orsay.com/pl-pl/customer/account/login</a></p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

@@ -25,7 +25,7 @@ function parseDateISO2(str){
 }
 
 var g_urls = {
-	ru: ['http://new.goodline.ru', mainNew],
+	ru: ['https://new.goodline.ru', mainNew],
 	ua: ['http://goodline.com.ua', mainOld]
 };
 
@@ -99,7 +99,7 @@ function mainNew(baseurl){
     var info = AnyBalance.requestGet(baseurl + '/user', g_headers);
     var rsainfo = getParam(info, null, null, /top.rsasec_form_bind\)\s*\((\{'formid':'form_auth'[^)]*\})\)/);
     if(!rsainfo){
-        var error = getParam(info, null, null, /<h2[^>]+style="color:\s*#933"[^>]*>([\s\S]*?)<\/h2>/i, replaceTagsAndSpaces, html_entity_decode);
+        var error = getParam(info, null, null, /<h2[^>]+style="color:\s*#933"[^>]*>([\s\S]*?)<\/h2>/i, replaceTagsAndSpaces);
         if(error)
             throw new AnyBalance.Error(error);
         throw new AnyBalance.Error('Не найдены ключи шифрования пароля. Сайт изменен, обратитесь к автору провайдера.');
@@ -119,9 +119,9 @@ function mainNew(baseurl){
     ], rsainfo), addHeaders({'Content-Type': 'application/x-www-form-urlencoded', Referer: baseurl + '/user/'}));
 
     if(!/\?logout=yes/i.test(info)){
-        var error = getParam(info, null, null, /<font[^>]+class="errortext"[^>]*>([\s\S]*?)<\/font>/i, replaceTagsAndSpaces, html_entity_decode);
+        var error = getParam(info, null, null, /<font[^>]+class="errortext"[^>]*>([\s\S]*?)<\/font>/i, replaceTagsAndSpaces);
         if(!error)
-            error = getParam(info, null, null, /<h2[^>]+style="color:\s*#933"[^>]*>([\s\S]*?)<\/h2>/i, replaceTagsAndSpaces, html_entity_decode);
+            error = getParam(info, null, null, /<h2[^>]+style="color:\s*#933"[^>]*>([\s\S]*?)<\/h2>/i, replaceTagsAndSpaces);
         if(error)
             throw new AnyBalance.Error(error);
         AnyBalance.trace(info);
@@ -136,11 +136,11 @@ function mainNew(baseurl){
     if(!tr)
         throw new AnyBalance.Error(prefs.num ? "Не удалось найти номер " + prefs.num : "Не удалось найти ни одного номера.");
 
-    getParam(tr, result, 'number', /<span[^>]+class="phonenumber"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(tr, result, '__tariff', /Мой тариф:\s*<[^>]*>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(tr, result, 'number', /<span[^>]+class="phonenumber"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
+    getParam(tr, result, '__tariff', /Мой тариф:\s*<[^>]*>([^<]*)/i, replaceTagsAndSpaces);
     getParam(tr, result, 'balance', /Мой баланс:\s*<[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
     getParam(tr, result, 'currency', /Мой баланс:\s*<[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseCurrency);
-    getParam(tr, result, 'status', /Статус:\s*<[^>]*>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(tr, result, 'status', /Статус:\s*<[^>]*>([^<]*)/i, replaceTagsAndSpaces);
 
     if(AnyBalance.isAvailable('lastpay', 'lastpaydate')) {
 		var dateEnd = new Date();

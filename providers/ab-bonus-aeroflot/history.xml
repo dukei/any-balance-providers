@@ -1,5 +1,15 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="13" date="2017-09-27">
+	Added loyalty ID
+	</change>
+	<change version="12" date="2016-05-03">
+	- Улучшена обработка ошибок.
+	</change>
+	<change version="11" date="2016-04-21">
+	Добавлены новые счетчики
+	Восстановлены квалификационные мили
+	</change>
 	<change version="10" date="2015-11-23">
 	- Поддержка изменений на сайте.
 	</change>

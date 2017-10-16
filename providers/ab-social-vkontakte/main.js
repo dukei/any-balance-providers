@@ -27,15 +27,14 @@ function main(){
         AnyBalance.setCookie('.vk.com', 'remixttpid', uid);
     }
 
-    var html = AnyBalance.requestGet(baseurl + '/settings?act=balance', g_headers);
+    var html = AnyBalance.requestGet(baseurl + '/settings?act=payments', g_headers);
 
-/*  //Непонятно, зачем этот запрос. Пропускаем его  
-    var html = AnyBalance.requestPost(baseurl + '/login.php', {
-        op:'a_login_attempt',
-        login:prefs.login
-    }, g_headers);
-    AnyBalance.trace(html);*/
-    var form = getElement(html, /<form[^>]+id="login"[^>]*>/i);
+    var form = getElement(html, /<form[^>]+id="quick_login_form"[^>]*>/i);
+    if(!form){
+    	AnyBalance.trace(html);
+    	throw new AnyBalance.Error('Не удалось найти форму входа. Сайт изменен?');
+    }
+    	
 	var params = createFormParams(form, function(params, str, name, value) {
 		if (name == 'email') 
 			return prefs.login;
@@ -45,22 +44,14 @@ function main(){
 		return value;
 	});
 
-    if(!prefs.dbg) {
-		html = AnyBalance.requestPost("https://login.vk.com", params, g_headers);
-	}
-	else
-		html = AnyBalance.requestGet(baseurl + '/settings?act=balance', g_headers);
+	html = AnyBalance.requestPost("https://login.vk.com/?act=login", params, g_headers);
 	
-    if(!/\?act=logout/.test(html)){
-        var error = getParam(html, null, null, /<div[^>]+id="message"[^>]*>([\s\S]*?)(?:<\/div>|<\/ul>)/i, replaceTagsAndSpaces, html_entity_decode);
-        if(error)
-            throw new AnyBalance.Error(error, null, /проверьте правильность написания логина и пароля/i.test(error));
-        throw new AnyBalance.Error('Не удалось зайти. Сайт изменен?');
-    }
-
-    if(/<input[^>]+id="authcheck_code"/i.test(html)){
+    if(/act=authcheck/i.test(html)){
         AnyBalance.trace('Требуется двухфакторная авторизация...');
-        var _prompt = getParam(html, null, null, /<div[^>]+class="login_authcheck_info"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+
+    	html = AnyBalance.requestGet(baseurl + '/login?act=authcheck', addHeaders({Referer: AnyBalance.getLastUrl()}));
+
+        var _prompt = getParam(html, null, null, /<div[^>]+class="login_authcheck_info"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
         var hash = getParam(html, null, null, /a_authcheck_code[^\}]*hash:\s*'([^']*)/, replaceSlashes);
         var code = AnyBalance.retrieveCode(_prompt, null, {inputType: 'number'});
         var referer = AnyBalance.getLastUrl();
@@ -93,6 +84,15 @@ function main(){
         html = AnyBalance.requestGet(url, g_headers);
     }
 
+    if(!/onLoginDone|act=logout/.test(html)){
+    	if(/onLoginFailed/.test(html))
+    		throw new AnyBalance.Error('Не удается войти. Пожалуйста, проверьте правильность написания логина и пароля.', null, true);
+    	AnyBalance.trace(html);
+        throw new AnyBalance.Error('Не удалось зайти. Сайт изменен?');
+    }
+
+	html = AnyBalance.requestGet(baseurl + '/settings?act=payments', g_headers);
+
     if(!/<b[^>]+id="balance_str"/i.test(html)){
     	AnyBalance.trace(html);
     	throw new AnyBalance.Error('Не удалось получить страницу голосов. Сайт изменен?');
@@ -100,16 +100,24 @@ function main(){
 
     var result = {success: true};
     getParam(html, result, 'balance', /<b[^>]+id="balance_str"[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, parseBalance);
-	
-	if(isAvailable(['messages', 'new_friends', 'vk_name'])) {
-		var href = getParam(html, null, null, /<a[^>]*href="([^"]*)[^>]*>[^>]*>\s*Моя Страница/i);
-		html = AnyBalance.requestGet(baseurl + href, g_headers);
-		getParam(html, result, 'messages', /<li[^>]*id="l_msg"(?:[^>]*>){5}([\s\S]*?)<\/span>(?:[^>]*>){3}\s*Мои\s*Сообщения\s*<\/span>/i, replaceTagsAndSpaces, parseBalance);
-		getParam(html, result, 'new_friends', /<li[^>]*id="l_fr"(?:[^>]*>){5}([\s\S]*?)<\/span>(?:[^>]*>){3}\s*Мои\s*Друзья\s*<\/span>/i, replaceTagsAndSpaces, parseBalance);
-		getParam(html, result, 'vk_name', /<title>([\s\S]*?)<\/title>/i, replaceTagsAndSpaces, html_entity_decode);
+    
+    getParam(getElement(html, /<li[^>]+id="l_msg"[^>]*>/i), result, 'messages', /<span[^>]+left_count[^>]*>([\s\S]*?)<\/span>/i, [replaceTagsAndSpaces, /^$/, '0'], parseBalance);
+	getParam(getElement(html, /<li[^>]+id="l_fr"[^>]*>/i), result, 'new_friends', /<span[^>]+left_count[^>]*>([\s\S]*?)<\/span>/i, [replaceTagsAndSpaces, /^$/, '0'], parseBalance);
+
+	if(AnyBalance.isAvailable('friends_requests_in', 'friends_requests_out')){
+		html = AnyBalance.requestGet(baseurl + '/friends?section=all_requests', g_headers);
+    	getParam(getElement(html, /<a[^>]+out_requests/i), result, 'friends_requests_out', null, replaceTagsAndSpaces, parseBalance);
+    	getParam(getElement(html, /<a[^>]+all_requests/i), result, 'friends_requests_in', null, replaceTagsAndSpaces, parseBalance);
 	}
-	if(result.vk_name)
+	
+	if(isAvailable('vk_name')) {
+		var href = getParam(html, null, null, /<a[^>]*href="([^"]*)[^>]*>[^>]*>\s*Моя Страница/i);
+		html = AnyBalance.requestGet('https://m.vk.com', g_headers);
+		result.vk_name = getElement(html, /<a\s[^>]*?class="[^"]*?\bop_owner\b/i, replaceTagsAndSpaces);
+	}
+	if(result.vk_name) {
 		result.__tariff = result.vk_name;
+            }
     
     AnyBalance.setResult(result);
 }

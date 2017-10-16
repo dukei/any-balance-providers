@@ -5,7 +5,7 @@
   <description>
      Получает значения интернет- провайдера Айдо Телеком в г. Тольятти (https://my.aido.ru/login)
   </description>
-  <author>Stark &lt;support@starksoft.ru&gt;</author>
+  <author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>

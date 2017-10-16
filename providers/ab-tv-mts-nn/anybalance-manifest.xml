@@ -7,7 +7,7 @@
 	<p>Предоставляет информацию о текущем балансе, номере лицевого счета и договора, ФИО владельца, трафике в текущем месяце, абонентской плате для пользователей провайдера "Домашний Интернет и Телевидение МТС" в Нижнем Новгороде.</p>
 	<p>ВНИМАНИЕ! Этот провайдер больше не поддерживается, используйте провайдера <a href="http://anybalance.ru/catalog.php?id=ab-internet-mts">Домашний Интернет и Телевидение МТС</a>.</p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

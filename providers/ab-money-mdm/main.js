@@ -6,6 +6,7 @@ var g_countersTable = {
 	card: {
 		"currency": "cards.currency",
     	"balance": "cards.balance",
+    	"available": "cards.available",
     	"blocked": "cards.blocked",
 		"minpay": "cards.minpay",
 		"minpay_till": "cards.minpay_till",
@@ -52,7 +53,7 @@ function shouldProcess(counter, info){
 		case 'cards':
 		{
 		    if(!prefs.contract)
-		    	return true;
+		    	return info.visibility;
 			if(prefs.type != 'card')
 				return false;
 			return endsWith(info.num, prefs.contract);
@@ -60,7 +61,7 @@ function shouldProcess(counter, info){
 		case 'accounts':
 		{
 		    if(!prefs.contract)
-		    	return true;
+		    	return info.visibility;
 			if(prefs.type != 'acc')
 				return false;
 			return endsWith(info.num, prefs.contract);
@@ -68,7 +69,7 @@ function shouldProcess(counter, info){
 		case 'deposits':
 		{
 		    if(!prefs.contract)
-		    	return true;
+		    	return info.visibility;
 			if(prefs.type != 'dep')
 				return false;
 			return endsWith(info.num, prefs.contract);
@@ -76,7 +77,7 @@ function shouldProcess(counter, info){
 		case 'credits':
 		{
 		    if(!prefs.contract)
-		    	return true;
+		    	return info.visibility;
 			if(prefs.type != 'crd')
 				return false;
 			return endsWith(info.agreement, prefs.contract);
@@ -98,7 +99,7 @@ function main(){
     adapter.processCredits = adapter.envelope(processCredits);
     adapter.processInfo = adapter.envelope(processInfo);
 
-	var html = login();
+	login();
 
 	var result = {success: true};
 
@@ -106,28 +107,28 @@ function main(){
 
 	if(prefs.type == 'card'){
 
-		adapter.processCards(html, result);
+		adapter.processCards(result);
 		if(!adapter.wasProcessed('cards'))
 			throw new AnyBalance.Error(prefs.contract ? 'Не найдена карта с последними цифрами ' + prefs.contract : 'У вас нет ни одной карты');
 		result = adapter.convert(result);
 
 	}else if(prefs.type == 'acc'){
 
-		adapter.processAccounts(html, result);
+		adapter.processAccounts(result);
 		if(!adapter.wasProcessed('accounts'))
 			throw new AnyBalance.Error(prefs.contract ? 'Не найден счет с последними цифрами ' + prefs.contract : 'У вас нет ни одного счета');
 		result = adapter.convert(result);
 
 	}else if(prefs.type == 'dep'){
 
-		adapter.processDeposits(html, result);
+		adapter.processDeposits(result);
 		if(!adapter.wasProcessed('deposits'))
 			throw new AnyBalance.Error(prefs.contract ? 'Не найден депозит с последними цифрами ' + prefs.contract : 'У вас нет ни одного депозита');
 		result = adapter.convert(result);
 
 	}else if(prefs.type == 'crd'){
 
-		adapter.processCredits(html, result);
+		adapter.processCredits(result);
 		if(!adapter.wasProcessed('credits'))
 			throw new AnyBalance.Error(prefs.contract ? 'Не найден кредит с последними цифрами ' + prefs.contract : 'У вас нет ни одного кредита');
 		result = adapter.convert(result);

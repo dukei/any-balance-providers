@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
     <EditTextPreference 
-        title="№ лицевого счета или e-mail" 
+        title="E-mail"
         positiveButtonText="ОК" 
         summary="||{@s}" 
-        dialogTitle="№ лицевого счета" 
+        dialogTitle="E-mail"
         negativeButtonText="Отмена" 
         dialogMessage="Введите 10 цифр номера лицевого счета без разделителей или e-mail."
         inputType="textEmailAddress"
@@ -19,5 +19,16 @@
         summary="||***********"
         dialogMessage="Введите пароль, используемый для входа в личный кабинет."
         inputType="textPassword">
+    </EditTextPreference>
+    <EditTextPreference
+        positiveButtonText="ОК"
+        key="account"
+        dialogTitle="Лицевой счет"
+        negativeButtonText="Отмена"
+        title="Лицевой счет"
+        summary="||{@s}"
+        dialogMessage="Введите № лицевого счета (опционально)."
+        obligatory="false"
+        inputType="text">
     </EditTextPreference>
 </PreferenceScreen>

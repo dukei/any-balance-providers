@@ -1,5 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="18" date="2017-05-03">
+	- Поддержка изменений на сайте.
+	</change>
+	<change version="17" date="2016-12-28">
+	- Улучшена обработка ошибок.
+	</change>
+  <change version="16" date="2016-03-10">
+  - Улучшена обработка ошибок.
+  </change>
+	<change version="15" date="2016-02-24">
+	- Улучшена обработка ошибок.
+	</change>
 	<change version="14" date="2015-02-02">
 	- Улучшена обработка ошибок.
 	</change>

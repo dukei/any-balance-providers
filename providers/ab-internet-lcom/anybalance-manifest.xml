@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-internet-lcom</id>
+	<api flags="no_browser"/>
+	<name>LCom (Киев)</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию из личного кабинета интернет провайдера LCom <a href="http://www.lcom.net.ua/">http://www.lcom.net.ua/</a> г. Киев</p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" {@currency}"/>
+		<counter id="fio" name="Контактное лицо" type="text"/>
+		<counter id="access" name="Статус" type="text"/>
+		<counter id="id" name="Лицевой счёт" type="text"/>
+		<counter id="__tariff" name="Текущий тариф" type="text"/>
+	</counters>
+	<keywords>LCom Киев</keywords>
+	<type>internet</type>
+	<country>ua</country>
+</provider>

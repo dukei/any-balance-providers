@@ -4,8 +4,8 @@
         key="course" 
         title="Курс"
         summary="||{@s}"
-        entries="Курсы от банков|Карточные курсы|Индикативные курсы НБУ|Валютный аукцион"
-        entryValues="1|2|3|4"
+        entries="Курсы от Межбанка|Курсы от банков|Карточные курсы|Индикативные курсы НБУ|Валютный аукцион"
+        entryValues="0|1|2|3|4"
 		defaultValue="1">
 	</ListPreference>
 </PreferenceScreen>

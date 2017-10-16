@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="15">ab-cell-mts-by</id>
+	<id version="20">ab-cell-mts-by</id>
 	<name>МТС (Беларусь)</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе, расходах, статусе блокировки, кредите, номере лицевого счета, ежемесячной плате.</p>   
@@ -13,11 +13,13 @@
 		<li>На своем мобильном телефоне наберите *111*17# или позвоните по номеру 087021.</li>
 	</ul>   
 	]]></instruction>
-	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
@@ -32,7 +34,10 @@
 		<counter id="sms_left" name="Бесплатные СМС" units=" sms"/>
 		<counter id="mms_left" name="Бесплатные ММС" units=" mms"/>
 		<counter id="traffic_left" name="Остаток трафика" units=" Mb"/>
+		<counter id="traffic_left_smart_box" name="Остаток трафика СМАРТ box" units=" Mb"/>
 		<counter id="traffic_night" name="Остаток ночного трафика" units=" Mb"/>
+		<counter id="traffic_open" name="Открытый интернет" units=" Mb"/>
+		<counter id="traffic_lte" name="Интернет LTE" units=" Mb"/>
 		<counter id="usedinthismonth" name="Расход за этот месяц" units=" р"/>
 		<counter id="min_used" name="Минут накоплено (кред.)" units=" мин"/>
 		<counter id="debt" name="Неоплаченные счета" units=" р"/>

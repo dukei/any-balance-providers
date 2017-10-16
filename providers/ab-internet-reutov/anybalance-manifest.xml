@@ -1,18 +1,21 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="2">ab-internet-reutov</id>
+  <api flags="no_browser"/>
+  <id version="3">ab-internet-reutov</id>
   <name>Reutov.ru (Реутов, Моск. обл.)</name>
   <description>
     Получает баланс и информацию о тарифном плане для подмосковного реутовского интернет-провайдера Reutov.ru (http://reutov.ru).
 
-    Информация берется из личного кабинета https://www.reutov.ru/cabinet.
+    Информация берется из личного кабинета https://my.reutov.ru/
   </description>
   <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
     <js>md5.js</js>
+    <js>library.js</js>
     <js>main.js</js>
+  	<history>history.xml</history>
   </files>
   <counters>
     <counter id="balance" name="Баланс" units="р"/>

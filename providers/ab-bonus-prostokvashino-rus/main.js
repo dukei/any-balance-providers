@@ -33,44 +33,27 @@ function main() {
 		
 		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
 	}
-	// пробуем войти
-	html = AnyBalance.requestPost(baseurl + 'ajax', {method: 'user.login',
-											login: prefs.login,
-											password: prefs.password,
-											remember: 'no',
-											captcha: ''},
-											addHeaders({Referer: baseurl}));
-									
-	if (/"captcha"/i.test(html)) {
-			// пробуем получить captcha
-			var capt = AnyBalance.requestPost(baseurl + 'ajax', {method: 'user.captcha'}, addHeaders({Referer: baseurl}));
-			var captchaSrc = getParam(capt, null, null, /"captcha":"[^\/][\S]([^"]+)/i, replaceTagsAndSpaces, html_entity_decode);
-			var captchaa = '';
-			if(captchaSrc) {
-				if(AnyBalance.getLevel() >= 7){
-					AnyBalance.trace('Пытаемся ввести капчу');
-					var captcha = AnyBalance.requestGet(baseurl + captchaSrc);
-					captchaa = AnyBalance.retrieveCode("Пожалуйста, введите код с картинки", captcha);
-					AnyBalance.trace('Капча получена: ' + captchaa);					
-					html = AnyBalance.requestPost(baseurl + 'ajax', {method: 'user.login',
-															login: prefs.login,
-															password: prefs.password,
-															remember: 'no',
-															captcha: captchaa},
-															addHeaders({Referer: baseurl}));	
-				}else{
-					throw new AnyBalance.Error('Провайдер требует AnyBalance API v7, пожалуйста, обновите AnyBalance!');
-				}
-			}		
-	}	
+	var loginForm = getParam(html, null, null, /<form[^>]+action="\/login"[^>]*>[^]+?<\/form>/i);
+	if(!loginForm)
+		throw new AnyBalance.Error('Не найдена форма входа. Сайт изменен?');
+
+	var params = createFormParams(loginForm, function(params, str, name, value) {
+		if (name == 'app__logon[login]') 
+			return prefs.login;
+		else if (name == 'app__logon[password]')
+			return prefs.password;
+
+		return value;
+	});
+
+    html = AnyBalance.requestPost(baseurl + 'login', params, addHeaders({Referer: baseurl })); 
+	html = AnyBalance.requestGet(baseurl, g_headers);
 	
-	if (!/"status":0/i.test(html)) {
-		var error = getParam(html, null, null, /"msg":[\s\S]+?([^"]+)/i, replaceTagsAndSpaces, html_entity_decode);
-		if (error == "captcha")
-			throw new AnyBalance.Error('Число с картинки неверно');
-		else
+	if (!/\logout/i.test(html)) {
+		var error = getParam(html, null, null,  /<div[^>]+class=['"]login__form-msg-error['"][^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+		if (error){
 			throw new AnyBalance.Error('Логин или Пароль не правильные');
-		
+		}
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	} 

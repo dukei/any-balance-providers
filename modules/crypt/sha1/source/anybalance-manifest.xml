@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">crypt/sha1</id>
+	<api flags="no_browser"/>
+	<name>sha1 hash algorithm</name>
+	<description html="true"><![CDATA[
+	<p>Подсчет sha1 хэша</p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<js>sha1.js</js>
+		<history>history.xml</history>
+	</files>
+	<keywords></keywords>
+	<type>crypt sha1</type>
+	<country></country>
+</provider>

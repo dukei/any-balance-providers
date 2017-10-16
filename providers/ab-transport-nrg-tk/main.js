@@ -14,16 +14,35 @@ function main() {
 	
 	checkEmpty(prefs.number, 'Введите номер накладной!');
 	
-    var baseurl = 'http://api.nrg-tk.ru/api/rest';
+    var baseurl = 'https://nrg-tk.ru/client/tracking/';
+    var ajaxurl = 'https://clients.nrg-tk.ru/tracking';
+
+	AnyBalance.setCookie('nrg-tk.ru', 'DDOSEXPERT_COM_V3', 'c175d59221c53d61968148f9e5c2e939');
+
+    var html = AnyBalance.requestGet(baseurl, g_headers);
+    var sitekey = getParam(html, /data-sitekey="([^"]*)/i, replaceHtmlEntities);
+
+    if(!sitekey){
+    	AnyBalance.trace(html);
+    	throw new AnyBalance.Error('Не удалось найти форму запроса. Сайт изменен?');
+    }
+
+    var response = solveRecaptcha('Пожалуйста, докажите, что вы не робот.', baseurl, sitekey);
+
+    html = AnyBalance.requestPost(ajaxurl, {
+    	docNum: prefs.number,
+    	'g-recaptcha-response': response,
+    	submit: ''
+    }, addHeaders({
+    	'X-Requested-With': 'XMLHttpRequest',
+    	Referer: baseurl
+
+    }));
+
+    var json = getJson(html);
 	
-    var html = AnyBalance.requestGet(baseurl + '/?callback=jQuery11100618867561686784_1421683618927&method=nrg.get_sending_state&numdoc=' + encodeURIComponent(prefs.number) + '&idcity=' + encodeURIComponent(prefs.city) + '&_=' + new Date().getTime(), addHeaders({Referer: baseurl + 'tracking.html'}));
-	
-	// buildRegions(html);
-	
-	var json = getParam(html, null, null, /jQuery[\d_]+\((\{[\s\S]*?\})\)/i, null, getJson);
-	
-	if(!json || !json.rsp || json.rsp.stat != 'ok'){
-		var error = getParam(html, null, null, /<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
+	if(!json || json.code){
+		var error = (json && json.code);
 		if (error)
 			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
 		
@@ -31,18 +50,46 @@ function main() {
 		throw new AnyBalance.Error('Не удалось найти информацию. Сайт изменен?');
 	}
 	
-	json = json.rsp.info;
-	
     var result = {success: true};
 
-    getParam(json.cur_state + '', result, 'now', null, replaceTagsAndSpaces, html_entity_decode);
-    getParam(json.cityto + '', result, 'tocity', null, replaceTagsAndSpaces, html_entity_decode);
-    getParam(json.cityfrom + '', result, 'from', null, replaceTagsAndSpaces, html_entity_decode);
-    getParam(json.num_places + '', result, 'sits', null, replaceTagsAndSpaces, html_entity_decode);
-    getParam(json.weight + '', result, 'weight', null, replaceTagsAndSpaces, parseBalance);
-    getParam(json.volume + '', result, 'volume', null, replaceTagsAndSpaces, parseBalance);
+    getParam(json.states[0].title + getState(json.states[0]), result, 'now');
+    getParam(json.cityTo.name, result, 'tocity');
+    getParam(json.cityFrom.name, result, 'from');
+    getParam(json.places, result, 'sits');
+    getParam(json.weight, 'weight');
+    getParam(json.volume, result, 'volume');
 	
     AnyBalance.setResult(result);
+}
+
+function getState(state){
+	var info;
+    switch (state.idState) {
+        case 0:
+            info = ' создана';
+            break
+        case 1:
+            info = ': ' + state.stateInfo.warehouse.title + ', адрес ' + state.stateInfo.warehouse.address + ', телефон ' + state.stateInfo.warehouse.phone;
+            break
+        case 2:
+            var d = new Date(state.stateInfo.trip.date * 1000);
+            info = ': от ' + $.date(d) + ' ' + state.stateInfo.trip.cityFrom.name + '-' + state.stateInfo.trip.cityTo.name;
+            break
+        case 3:
+            info = '';
+            break
+        case 10:
+            info = '';
+            break
+        case 20:
+            var d = new Date(state.stateInfo.issued.issueDate * 1000);
+            info = ': ' + (state.stateInfo.issued.issueDateFormatted).slice(0,-9) + ', на складе "' + state.stateInfo.issued.warehouse.title + '"';
+            break
+        default:
+            info = ': информация отсутствует. За информацией обратитесь к операторам по номеру 8-800-700-7000';
+            break
+    }
+    return info;
 }
 
 function buildRegions(result){

@@ -18,23 +18,24 @@ function main() {
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 
-	var html = AnyBalance.requestGet(baseurl + 'Pages/Login/internet-banking-index_ua.aspx', g_headers);
+	var html = AnyBalance.requestGet(baseurl + 'uk/security/logon', g_headers);
 
 	var params = createFormParams(html, function(params, str, name, value) {
-		if (name == 'tbLogin') 
+		if (name == 'login') 
 			return prefs.login;
-		else if (name == 'tbPassword')
+		else if (name == 'password')
 			return prefs.password;
 
 		return value;
 	});
 	
-	html = AnyBalance.requestPost(baseurl + 'Pages/Login/internet-banking-index_ua.aspx', params, addHeaders({Referer: baseurl + 'Pages/Login/internet-banking-index_ua.aspx'}));
+	html = AnyBalance.requestPost(baseurl + 'uk/security/logon', params, addHeaders({Referer: baseurl + 'uk/security/logon'}));
 
 	if (!/logout/i.test(html)) {
-		var error = getParam(html, null, null, /"lblMessage"[^>]*>([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
+		var error = getElement(html, /<div[^>]+pageerror/, replaceTagsAndSpaces);
 		if (error)
-			throw new AnyBalance.Error(error);
+			throw new AnyBalance.Error(error, null, /парол/i.test(error));
+		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
 	
@@ -47,58 +48,45 @@ function getStateParams(html, param) {
 
 function fetchAccount(html, baseurl) {
 	var prefs = AnyBalance.getPreferences();
-	var lastdigits = prefs.lastdigits ? prefs.lastdigits : '\\d{4}';
 	
-	//(<tr>\s+<td>\s+<a[^>]+__doPostBack[^>]*AccountDetails(?:[^>]*>){4}\s*\d{4}\s\d\s\d{5}8742[\s\S]*?</tr>)
-	var reAcc = new RegExp("(<tr>\\s+<td>\\s+<a[^>]+__doPostBack[^>]*AccountDetails(?:[^>]*>){4}\\s*\\d{4}\\s\\d\\s\\d{5}" + lastdigits + '[\\s\\S]*?</tr>)', 'i');
-	
-	var tr = getParam(html, null, null, reAcc);
-	if(!tr)
-		throw new AnyBalance.Error('Не удалось найти ' + (prefs.lastdigits ? 'счет с последними цифрами '+prefs.lastdigits : 'ни одного счета!'));
+	html = AnyBalance.requestGet(baseurl + 'uk/accounts/data?nc=' + (+new Date()), addHeaders({
+		'X-Requested-With': 'XMLHttpRequest',
+		Referer: baseurl
+	}));
 
-	var result = {success: true};
-	getParam(tr, result, 'accNum', /__doPostBack[^>]*AccountDetails(?:[^>]*>){4}\s*(\d{4}\s\d\s\d{9})/i, [/\D/g, ''/*, /(\d{4})[\d]*(\d{4})/i, '$1 **** **** $2'*/]);
-	getParam(tr, result, '__tariff', /__doPostBack[^>]*AccountDetails(?:[^>]*>){4}\s*(\d{4}\s\d\s\d{9})/i, [/\D/g, '', /(\d{4})[\d]*(\d{4})/i, '$1 **** **** $2']);
-	getParam(tr, result, 'balance', /__doPostBack[^>]*AccountHistory(?:[^>]*>){4}([^<]+)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(tr, result, ['currency', 'balance'], /__doPostBack[^>]*AccountHistory(?:[^>]*>){6}([^<]+)/i, replaceTagsAndSpaces);	
-	
-	if(isAvailable(['cardName', 'cardNumber', 'till', 'status', 'blocked_balance', 'fio'])) {
-		var details = getParam(html, null, null, /__doPostBack[^']*'([^']*AccountDetails)/i);
-		if(!details) {
-			AnyBalance.trace('Не удалось найти ссылку на подробную информацию о счете, сайт изменен?');
-		} else {
-			html = AnyBalance.requestPost(baseurl + 'Pages/MainPage.aspx', {
-				'__EVENTTARGET':details,
-				'__EVENTARGUMENT':'',
-				'__LASTFOCUS':'',
-				'__VSTATE':getStateParams(html, '__VSTATE'),
-				'__VIEWSTATE':'',
-				'__VIEWSTATEENCRYPTED':'',
-				'__PREVIOUSPAGE':getStateParams(html, '__PREVIOUSPAGE'),
-				'__EVENTVALIDATION':getStateParams(html, '__EVENTVALIDATION'),
-				'ctl00$ddlTheme':'Default'
-			}, addHeaders({Referer: 'Pages/MainPage.aspx'}));
+	var json = getJson(html);
 
-			// Название карты
-			getParam(html, result, 'cardName', /imgCard"(?:[^>]+>){3}([^<]+)/i, replaceTagsAndSpaces);
-			getParam(html, result, 'cardNumber', /CardDetails(?:[^>]+>){1}([^<]+)/i, replaceTagsAndSpaces);
-			getParam(html, result, 'till', /CardDetails(?:[^>]+>){6}([^<]+)/i, replaceTagsAndSpaces, parseDate);
-			getParam(html, result, 'status', /CardDetails(?:[^>]+>){8}([^<]+)/i, replaceTagsAndSpaces);
-			getParam(html, result, 'blocked_balance', /Блоковано(?:[^>]*>){4}([^<]+)/i, replaceTagsAndSpaces, parseBalance);
-			getParam(html, result, 'fio', /Клієнт:(?:[^>]*>){2}([^<]+)/i, replaceTagsAndSpaces, capitalFirstLenttersDecode);
+	for(var i=0; i<json.length; ++i){
+		var acc = json[i];
+		AnyBalance.trace('Найден счет ' + acc.AccountNumber + ': ' + acc.Balance + ' ' + acc.Currency);
+		if(!prefs.lastdigits || endsWith(acc.AccountNumber, prefs.lastdigits)){
+			var result = {success: true};
+
+			getParam(acc.AccountNumber, result, 'accNum');
+			getParam(acc.Balance/100, result, 'balance');
+			getParam(acc.Currency, result, ['currency', 'balance']);	
+			getParam(acc.AccountName, result, 'fio');
+
+			if(isAvailable(['__tariff', 'till', 'blocked_balance', 'fio'])) {
+
+				html = AnyBalance.requestGet(baseurl + 'uk/accounts/details/data/' + acc.UniqueKey + '?nc=' + (+new Date()), addHeaders({
+					'X-Requested-With': 'XMLHttpRequest',
+					Referer: baseurl
+				}));    	
+
+				json = getJson(html);
+
+				getParam(json.ProductName, result, '__tariff');
+				if(json.OverdraftFlag){
+					getParam(json.OverdraftData.TillDate, result, 'till', null, null, parseDateISO);
+				}
+				getParam(json.Holds/100, result, 'blocked_balance');
+			}
+
+			
 		}
 	}
+
 	
 	AnyBalance.setResult(result);
-}
-
-/** Приводим все к единому виду вместо ИВаНов пишем Иванов */
-function capitalFirstLenttersDecode(str) {
-	str = html_entity_decode(str + '');
-	var wordSplit = str.toLowerCase().split(' ');
-	var wordCapital = '';
-	for (i = 0; i < wordSplit.length; i++) {
-		wordCapital += wordSplit[i].substring(0, 1).toUpperCase() + wordSplit[i].substring(1) + ' ';
-	}
-	return wordCapital.replace(/^\s+|\s+$/g, '');;
 }

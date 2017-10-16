@@ -1,27 +1,28 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="4">ab-internet-intercon</id>
+	<id version="5">ab-internet-intercon</id>
 	<name>Интеркон (Воронеж)</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе провайдера Интеркон г. Воронеж (http://www.intercon.ru/)</p>
-	<p>Информация берется из личного кабинета http://client2.intercon.ru/Client.aspx</p>
+	<p>Предоставляет информацию о балансе провайдера Интеркон г. Воронеж (http://intercon.ru/)</p>
+	<p>Информация берется из личного кабинета https://myintercon.ru/ </p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
 	<counters>
 		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="abon" name="Абонентская плата" units=" р"/>
 		<counter id="fio" name="ФИО" type="text"/>
 		<counter id="dogovor" name="Договор" type="text"/>
 		<counter id="acc-num" name="Номер счета" type="text"/>
-		<counter id="nextbonuses" name="Бонусы будущих периодов - сводка" type="text"/>
-		<counter id="nextbonuses_summ" name="Бонусы будущих периодов - сумма"/>
 	</counters>
 	<keywords></keywords>
 	<type>internet</type>

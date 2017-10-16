@@ -4,21 +4,21 @@
 
 var g_countersTable = {
 	common: {
-		"p": "profile.fio",
+		"phone": "info.mphone",
 	}, 
 	card: {
 		"__tariff": "cards.__name",
 		
     	"balance": "cards.balance",
-		"card_number": "cards.cardnum",
+		"card_number": "cards.num",
 		"card_name": "cards.__name",
 		"type": "cards.type",
 		"status": "cards.status",
 		"currency": "cards.currency",
 		"limit": "cards.limit",
-		"min_pay": "cards.min_pay",
+		"min_pay": "cards.minpay",
 		"is_credit": "cards.is_credit",
-		"rate": "cards.rate",
+		"rate": "cards.pct",
 	},
 };
 
@@ -40,7 +40,7 @@ function main() {
 		adapter.processCards(html, result);
 		
 		if(!adapter.wasProcessed('cards'))
-			throw new AnyBalance.Error(prefs.num ? 'Не найдена карта с последними цифрами ' + prefs.num : 'У вас нет ни одной карты!');
+			throw new AnyBalance.Error(prefs.cardnum ? 'Не найдена карта с последними цифрами ' + prefs.cardnum : 'У вас нет ни одной карты!');
 	}
 	
 	result = adapter.convert(result);
@@ -59,7 +59,7 @@ function shouldProcess(counter, info){
 		    if(!prefs.cardnum)
 		    	return true;
 			
-			if(endsWith(info.__name, prefs.cardnum))
+			if(endsWith(info.num, prefs.cardnum))
 				return true;
 		    
 			return false;

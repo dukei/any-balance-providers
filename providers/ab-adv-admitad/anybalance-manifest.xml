@@ -1,13 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-adv-admitad</id>
+	<id version="3">ab-adv-admitad</id>
 	<api flags="no_browser"/>
 	<name>Admitad</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе Admitad http://www.admitad.com</p>
 	<p>Информация берется из личного кабинета https://www.admitad.com/</p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

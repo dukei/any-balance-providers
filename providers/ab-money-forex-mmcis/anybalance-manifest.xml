@@ -6,7 +6,7 @@
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе в личном кабинете FOREX MMCIS group (http://ru.forex-mmcis.com/cabinet.html)</p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

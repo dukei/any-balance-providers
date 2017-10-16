@@ -7,7 +7,7 @@
 	<p>Получает данные по картам и счетам Номос Регионбанка (https://m.regiobank.ru)</p>
 	<p>На данный момент поддерживается вход по идентификатору клиента, если Вы хотите добавить вход по логину или по номеру карты, пишите автору провайдера на е-мейл</p>
 	]]></description>	
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

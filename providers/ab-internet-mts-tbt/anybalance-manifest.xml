@@ -1,24 +1,28 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="3">ab-internet-mts-tbt</id>
+	<id version="4">ab-internet-mts-tbt</id>
 	<api flags="no_browser|captcha"/>
 	<name>Домашний интернет МТС (Татарстан)</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе инетрнет-провайдера Домашний интернет МТС (Татарстан, ООО ТВТ)</p>
 	<p>Информация берется из личного кабинета https://lkkazan.pv.mts.ru</p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="balance" name="Баланс" units=" {@currency}"/>
+		<counter id="cost" name="Стоимость" units=" {@currency}"/>
 		<counter id="account" name="Лицевой счет" type="text"/>
 		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="currency" name="Валюта" type="text"/>
 	</counters>
 	<keywords></keywords>
 	<type>internet</type>

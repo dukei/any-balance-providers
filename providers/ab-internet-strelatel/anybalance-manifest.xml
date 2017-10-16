@@ -1,18 +1,32 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="4">ab-internet-strelatel</id>
+	<id version="5">ab-internet-strelatel</id>
 	<api min_level="6"/>
 	<name>Стрела Телеком (Сибирь)</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе и тарифном плане для сибирского интернет-провайдера Стрела Телеком (http://strelatelecom.ru).</p>
-	<p>Информация берется из личного кабинета https://bill.strelatelecom.ru</p>
+	<p>Информация берется из личного кабинета</p>
+	<ul>
+		<li>Ангарск: http://381.strelatelecom.ru/bill.html</li>
+		<li>Димитровград: http://730.strelatelecom.ru/bill.html</li>
+		<li>Иркутск: https://bill.strelatelecom.ru</li>
+		<li>Нижнеудинск: http://384.strelatelecom.ru/</li>
+		<li>Селенгинск: http://031.strelatelecom.ru/bill.html</li>
+		<li>Тайшет: http://383.strelatelecom.ru/</li>
+		<li>Улан-Удэ: http://030.strelatelecom.ru/bill.html</li>
+		<li>Усолье-Сибирское: http://382.strelatelecom.ru/bill.html</li>
+		<li>Хабаровск: 	https://bill.strelatelecom.ru/KHD/</li>
+	</ul>
+	Для городов Томск и Северск используйте провайдер Томтел http://anybalance.ru/catalog/ab-internet-tomtel/
 	]]></description>
-	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>

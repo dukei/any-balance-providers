@@ -6,7 +6,7 @@
   	<description html="true"><![CDATA[
 	<p>Obtains information from British Airways personal account <a href="https://www.britishairways.com/travel/home/execclub/_gf/ru_ru">https://www.britishairways.com/travel/home/execclub/_gf/ru_ru</a></p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

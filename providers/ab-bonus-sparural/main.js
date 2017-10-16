@@ -2,38 +2,30 @@
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 
     Получает текущий баланс достпуных и ожидаемых баллов
-	Данные берутся из личного кабинете программы (http://www.sparural.ru/)
+	Данные берутся из личного кабинете программы (http://molbonus.ru/)
 */
 
 function main(){
         var prefs = AnyBalance.getPreferences();
-		var url='http://www.sparural.ru/netcat/modules/sparAuth/index.php?action=login';
-		var url2='http://www.sparural.ru/cabinet/history/';
+		var url='http://molbonus.ru/';
 		var result = {success: true};
 		AnyBalance.trace('Получение доступа.');
         var html = AnyBalance.requestPost(url, {
-			user_cardNumber:prefs.login,
-			user_cardPassword:prefs.password,
-			user_name:'',
-			user_gender:'1',
-			user_birthday_day:'',
-			user_birthday_month:'',
-			user_birthday_year:'',
-			user_birthday:'',
-			user_phone:''
-			
+			plogin:prefs.login,
+			pass:prefs.password,
+			logot:'1',
+			x:'59',
+			y:'10'
 		});
-		var html2 = AnyBalance.requestPost(url2);
-		
-		
-		regexp=/Статистика покупок/m;
-		regexp2=/Пароль/m;
-		if (str=regexp.exec(html2)){	
+
+		regexp=/отложенных/m;
+		regexp2=/Ошибка авторизации/m;
+		if (str=regexp.exec(html)){	
 			AnyBalance.trace('Доступ получен');
 			}
-		else if (str=regexp2.exec(html2)){	
+		else if (str=regexp2.exec(html)){	
 			AnyBalance.trace('Неправильная пара логин-пароль!');
-			throw new AnyBalance.Error ('Неправильный логин-пароль.');
+			throw new AnyBalance.Error ('Неправильный логин-пароль.', null, true);
 			}
 		else	
 			{
@@ -43,28 +35,41 @@ function main(){
 			
 		AnyBalance.trace('Разбор полученных данных:');
 			
-//Баланс активных бонусов
-		regexp2=/personal-account__bonus.>(.*)<tsp/m;
-		if (str=regexp2.exec(html2)){
-			result.aktivrubl=parseFloat(str[1]);
-    		AnyBalance.trace('Баланс активных бонусов в рублях= ' + parseFloat(str[1]));
-			}
-		else	
-			{
-			AnyBalance.trace('Ошибка в запросе активных бонусов');
-		};
-
 //Баланс отложенных бонусов
-		regexp3=/<span>(.*)<tsp/m;
-		if (str=regexp3.exec(html2)){
-			result.planrubl=parseFloat(str[1]);
-        	AnyBalance.trace('Баланс отложенных бонусов в рублях = ' + parseFloat(str[1]));
+		regexp=/koball.>(.*)<.*отложенных/m;
+		if (str=regexp.exec(html)){
+			result.planbonus=parseFloat(str[1]);
+        	pr=parseFloat(str[1])/10,
+			result.planrubl=pr,
+			AnyBalance.trace('Баланс отложенных бонусов = ' + parseFloat(str[1]));
+			AnyBalance.trace('Баланс отложенных бонусов в рублях= ' + pr);
 			}
 		else	
 			{
 			AnyBalance.trace('Ошибка в запросе отложенных бонусов');
 		};
+
+//Баланс активных бонусов
+		regexp=/отложенных.*>(.*)<.*активных/m;
+		if (str=regexp.exec(html)){
+			result.aktivbonus=parseFloat(str[1]);
+        	ar=parseFloat(str[1])/10,
+			result.aktivrubl=ar,
+			AnyBalance.trace('Баланс активных бонусов = ' + parseFloat(str[1]));
+			AnyBalance.trace('Баланс активных бонусов в рублях= ' + ar);
+			}
+		else	
+			{
+			AnyBalance.trace('Ошибка в запросе активных бонусов');
+		};
 		
+			ir=pr+ar,
+			irb=ir*10,
+			result.itogrubl=ir,
+			result.itogbonus=irb,
+			
+			AnyBalance.trace('Общий баланс баллов = ' + irb);
+			AnyBalance.trace('Общий баланс баллов в рублях= ' + ir);
 			
 		AnyBalance.trace('Разбор завершен.');
 		AnyBalance.setResult(result);

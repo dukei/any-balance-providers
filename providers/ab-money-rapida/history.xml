@@ -1,5 +1,11 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="9" date="2016-11-08">
+	Поддержка рекапчи
+	</change>
+	<change version="8" date="2016-08-18">
+	- Поддержка изменений на сайте.
+	</change>
     <change version="1" date="2014-01-27">
       - Релиз
     </change>

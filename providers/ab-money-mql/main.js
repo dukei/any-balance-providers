@@ -1,4 +1,4 @@
-﻿/**
+/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 */
 
@@ -13,51 +13,59 @@ var prefs;
 function main() {
 	var html;
 	prefs = AnyBalance.getPreferences();
-	var baseurl = 'http://www.mql5.com/';
+	var baseurl = 'https://www.mql5.com/';
 	AnyBalance.setDefaultCharset('utf-8');
 	
-	checkEmpty(prefs.signal, 'Enter signal!');
+//	checkEmpty(prefs.signal, 'Enter signal!');
 
 	var result = {success: true};
 
 	if(prefs.Login!=null && prefs.Login.length>0){
 		try {
-			html = AnyBalance.requestPost('https://login.mql5.com/en/auth_login', {
+			html = AnyBalance.requestPost('https://www.mql5.com/en/auth_login', {
 				'Login':prefs.Login,
 				'Password':prefs.Password,
 				'RememberMe':'false',
-			}, addHeaders({Referer: 'https://login.mql5.com/en/auth_login'}));		
+			}, addHeaders({Referer: 'https://www.mql5.com/en/auth_login','X-Requested-With':'XMLHttpRequest'}));		
 		} catch(e) {
 		}
 	}
 	if (/Incorrect login or password/i.test(html)) {
 		throw new AnyBalance.Error('Incorrect login or password.');
 	}
-	html = AnyBalance.requestGet(baseurl + 'en/signals/'+prefs.signal, g_headers);
-	if (/<h1>404<\/h1>/i.test(html)) {
-		throw new AnyBalance.Error('Signal incorrect.');
-	}else if(/signal is disabled and unavailable/i.test(html)) {
-		throw new AnyBalance.Error('Signal is disabled, unavailable or need to type login and password.');
-	}
+	if(prefs.signal){
+		html = AnyBalance.requestGet(baseurl + 'en/signals/'+prefs.signal, g_headers);
+		if (/<h1>404<\/h1>/i.test(html)) {
+			throw new AnyBalance.Error('Signal incorrect.');
+		}else if(/signal is disabled and unavailable/i.test(html)) {
+			throw new AnyBalance.Error('Signal is disabled, unavailable or need to type login and password.');
+		}
 
-	result.__tariff = getParam(html, null, null , /<div class="info signals">[\s\S]*?<meta itemprop="name" content="(.*?)" \/>/, replaceTagsAndSpaces, html_entity_decode);
-	result.initial_deposit = getParam(html, null, null, />Initial Deposit:\s+<span>(.*?)<\/span>/i, replaceTagsAndSpaces, parseBalanceMulti);
-	result.deposits = getParam(html, null, null , />Deposits:\s+<span>(.*?)<\/span>/, replaceTagsAndSpaces, parseBalanceMulti);
-	result.total_deposit = Math.round((result.initial_deposit+result.deposits)*100)/100;
-	result.currency = getParam(html, null, null , />Initial Deposit:\s+<span>.*? ([\S]*?)<\/span>/, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'withdrawals' , />Withdrawals:\s+<span>(.*?)<\/span>/, replaceTagsAndSpaces, parseBalanceMulti);
-	result.balance = getParam(html, null, null , />Balance:\s+<span>(.*?)<\/span>/, replaceTagsAndSpaces, parseBalanceMulti);
-	result.equity = getParam(html, null, null , />Equity:\s+<span>(.*?)<\/span>/, replaceTagsAndSpaces, parseBalanceMulti);
-	result.current_profit = Math.round((result.equity-result.balance)*100)/100;
-	getParam(html, result, 'profit' , />Profit:\s+<span>(.*?)<\/span>/, replaceTagsAndSpaces, parseBalanceMulti);
-	getParam(html, result, 'subscribers' , />Subscribers:\s+<span>([\s\S]*?)<\/span>/, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'subscribers_funds' , />Subscribers' funds:\s+<span>([\s\S]*?)<\/span>/, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'maximum_drawdown' , />Maximum drawdown:\s+<span.*?>(.*?)<\/span>/, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'weeks' , />Weeks:\s+<span>([\s\S]*?)<\/span>/, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'latest_trade' , />Latest trade:\s+<span.*?>([\s\S]*?)</, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'trades_per_week' , />Trades per week:\s+<span>([\s\S]*?)<\/span>/, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'trades_total' , />Trades:\s+<span>([\s\S]*?)<\/span>/, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'avg_holding_time' , />Avg holding time:\s+<span>([\s\S]*?)<\/span>/, replaceTagsAndSpaces, html_entity_decode);
+		result.__tariff = getParam(html, null, null , /<meta itemprop="name" content="(.*?)" \/>/, replaceTagsAndSpaces, html_entity_decode);
+		result.initial_deposit = getParam(html, null, null, />Initial Deposit:[\s\S]*?<div class=.*?>(.*?)<\/div>/i, replaceTagsAndSpaces, parseBalanceMulti);
+		result.deposits = getParam(html, null, null , />Deposits:[\s\S]*?<div class=.*?>(.*?)<\/div>/, replaceTagsAndSpaces, parseBalanceMulti);
+		result.total_deposit = Math.round((result.initial_deposit+result.deposits)*100)/100;
+		result.currency = getParam(html, null, null , />Initial Deposit:[\s\S]*?<div class=.*?>.*? ([\S]*?)<\/div>/, replaceTagsAndSpaces, html_entity_decode);
+		getParam(html, result, 'withdrawals' , />Withdrawals:[\s\S]*?<div class=.*?>(.*?)<\/div>/, replaceTagsAndSpaces, parseBalanceMulti);
+		result.balance = getParam(html, null, null , />Balance:[\s\S]*?<div class=.*?>(.*?)<\/div>/, replaceTagsAndSpaces, parseBalanceMulti);
+		result.equity = getParam(html, null, null , />Equity:[\s\S]*?<div class=.*?>(.*?)<\/div>/, replaceTagsAndSpaces, parseBalanceMulti);
+		result.current_profit = Math.round((result.equity-result.balance)*100)/100;
+		getParam(html, result, 'profit' , />Profit:[\s\S]*?<div class=.*?>(.*?)<\/div>/, replaceTagsAndSpaces, parseBalanceMulti);
+		getParam(html, result, 'subscribers' , />Subscribers:[\s\S]*?<div class=.*?>([\s\S]*?)<\/div>/, replaceTagsAndSpaces, parseBalance);
+		getParam(html, result, 'subscribers_funds' , />Subscribers' funds:[\s\S]*?<div class=.*?>([\s\S]*?)<\/div>/, replaceTagsAndSpaces, html_entity_decode);
+		getParam(html, result, 'maximum_drawdown' , />Maximum drawdown:[\s\S]*?<div class=.*?>(.*?)<\/div>/, replaceTagsAndSpaces, parseBalance);
+		getParam(html, result, 'weeks' , />Weeks:[\s\S]*?<div class=.*?>([\s\S]*?)<\/div>/, replaceTagsAndSpaces, parseBalance);
+		getParam(html, result, 'latest_trade' , />Latest trade:\s+<span.*?>([\s\S]*?)</, replaceTagsAndSpaces, html_entity_decode);
+		getParam(html, result, 'trades_per_week' , />Trades per week:[\s\S]*?<div class=.*?>([\s\S]*?)<\/div>/, replaceTagsAndSpaces, parseBalance);
+		getParam(html, result, 'trades_total' , />Trades:[\s\S]*?<div class=.*?>([\s\S]*?)<\/div>/, replaceTagsAndSpaces, parseBalance);
+		getParam(html, result, 'avg_holding_time' , />Avg holding time:[\s\S]*?<div class=.*?>([\s\S]*?)<\/div>/, replaceTagsAndSpaces, html_entity_decode);
+	}
+	if(AnyBalance.isAvailable('profile_balance')){
+		checkEmpty(prefs.Login, 'Enter login and password!');
+		html = AnyBalance.requestGet(baseurl + 'en/users/'+prefs.Login, g_headers);
+		getParam(html, result, 'profile_balance' , /Your balance is (.*?) /, replaceTagsAndSpaces, parseBalance);
+		getParam(html, result, 'profile_currency' , /Your balance is .*? (\w+)/, replaceTagsAndSpaces, html_entity_decode);
+	}
 
 	
 	AnyBalance.setResult(result);

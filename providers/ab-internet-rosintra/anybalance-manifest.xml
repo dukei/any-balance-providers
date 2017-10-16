@@ -7,7 +7,7 @@
 	<p>Предоставляет информацию о балансе провайдера Рос-Интра (Урал-ТранТелеКом) http://www.ros-intra.ru/joomla/index.php/onas1/ri</p>
 	<p>Информация берется из личного кабинета http://billing.ros-intra.ru/client</p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<preferences>preferences.xml</preferences>
 		<js>library.js</js>

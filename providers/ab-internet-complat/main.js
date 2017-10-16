@@ -8,7 +8,7 @@
 */
 
 function parseTrafficMb(str){
-  var val = getParam(str.replace(/\s+/g, ''), null, null, /(-?\d[\d\s.,]*)/, replaceFloat, parseBalance);
+  var val = getParam(str.replace(/\s+/g, ''), null, null, /(-?\d[\d\s.,]*)/, replaceTagsAndSpaces, parseBalance);
   return val;
 }
 
@@ -27,20 +27,20 @@ function main(){
 
     //AnyBalance.trace(html);
 
-    if(!/logout.dhtml/i.test(html)){
-        var error = getParam(html, null, null, /Информационное сообщение[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+    if(!/logout/i.test(html)){
+        var error = getParam(html, null, null, /Информационное сообщение[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
         if(error)
-            throw new AnyBalance.Error(error);
+            throw new AnyBalance.Error(error, null, /парол/i.test(error));
         
-        throw new AnyBalance.Error("Не удалось войти в личный кабинет. Личный кабинет изменился или проблемы на сайте.");
+        throw new AnyBalance.Error("Не удалось войти в личный кабинет. Сайт изменен?");
     }
 
     var result = {success: true};
 
     getParam(html, result, 'balance', /Баланс счета[\s\S]*?<td[^>]*>([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'payday', /День расчетов[\s\S]*?<td[^>]*>([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, '__tariff', /Тариф[\s\S]*?<td[^>]*>(?:[^<]*-)?([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'status', /Статус пользователя[\s\S]*?<td[^>]*>([\S\s]*?)(?:<a|<\/td>)/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, '__tariff', /Тариф[\s\S]*?<td[^>]*>(?:[^<]*-)?([\S\s]*?)<\/td>/i, replaceTagsAndSpaces);
+    getParam(html, result, 'status', /Статус пользователя[\s\S]*?<td[^>]*>([\S\s]*?)(?:<a|<\/td>)/i, replaceTagsAndSpaces);
 
     if(AnyBalance.isAvailable('trafficIn','trafficOut')){
         html = AnyBalance.requestGet(baseurl + "datetraffic.dhtml");

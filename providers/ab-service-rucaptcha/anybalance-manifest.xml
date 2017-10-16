@@ -1,22 +1,26 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id major_version="1.0" version="1">ab-service-rucaptcha</id>
+	<id major_version="1.0" version="2">ab-service-rucaptcha</id>
 	<name>ruCaptcha</name>
 	<description html="true"><![CDATA[
-	<p>Получает текущий баланс и репутацию с сайта ruCaptcha.com</p>
+	<p>Получает текущий баланс и репутацию с сайта ruCaptcha.com (через API)</p>
 	]]></description>
-	<author>KiLLer13&lt;killer_kondor@pisem.net&gt;</author>
+	<instruction>
+		Для настройки провайдера понадобится captcha KEY. Его можно найти на вкладке API вебмастеру в вашем личном кабинете ruCaptcha: https://rucaptcha.com/setting
+	</instruction>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
 	<counters>
 		<counter id="balance" name="Баланс"  suffix=" р"/>
-		<counter id="reputation" name="Репутация"  suffix=""/>
 	</counters>
 	<keywords>баланс капча</keywords>
 	<type>internet, captcha</type>

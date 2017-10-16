@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="2">ab-cell-o2-uk</id>
+	<api flags="no_browser"/>
+	<name>O2 (UK)</name>
+	<description html="true"><![CDATA[
+	<p>Shows balance and allowances for O2 http://www.o2.co.uk/</p>
+	<p>Obtains information from personal account https://accounts.o2.co.uk/</p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>If you don't have login and password you can get in on the page https://accounts.o2.co.uk/</p>
+	]]></instruction>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Balance" prefix="£"/>
+		<counter id="status" name="Status" type="text"/>
+		<counter id="sms" name="O2 Texts" units=" sms"/>
+		<counter id="min" name="O2 Minutes" units=" min"/>
+		<counter id="traffic" name="Data" units=" MB"/>
+		<counter id="renewal" name="Renewal date" type="time" format="dd/MM/yyyy"/>
+	</counters>
+	<keywords>oxygen о2</keywords>
+	<type>cell</type>
+	<country>uk</country>
+</provider>

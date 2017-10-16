@@ -1,17 +1,19 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-telephony-youmagic-pro</id>
+	<id version="2">ab-telephony-youmagic-pro</id>
 	<api flags="no_browser"/>
 	<name>YouMagic.Pro</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе провайдера YouMagic.Pro <a href="http://youmagic.pro/ru/">http://youmagic.pro/ru/</a></p>
 	<p>Информация берется из личного кабинета <a href="http://account.youmagic.pro/user/login">http://account.youmagic.pro/user/login</a></p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>

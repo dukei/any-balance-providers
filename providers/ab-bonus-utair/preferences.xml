@@ -1,23 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
     <EditTextPreference 
-        title="№ карты" 
+        title="Номер телефона"
         positiveButtonText="ОК" 
-        summary="||{@s}" 
-        dialogTitle="№ карты" 
+        summary="|10 цифр, например, 926123467|{@s}" 
+        dialogTitle="Номер телефона"
         negativeButtonText="Отмена" 
-        dialogMessage="Введите номер карты для входа в личный кабинет UTair."
-        inputType="number"
+        dialogMessage="Введите 10 цифр номера телефона для входа в личный кабинет UTair без пробелов и разделителей, например, 9261234567"
         key="login">
     </EditTextPreference>
-    <EditTextPreference 
+<!--    <EditTextPreference 
         positiveButtonText="ОК"
         key="password" 
-        dialogTitle="ПИН"
+        dialogTitle="Пароль"
         negativeButtonText="Отмена"
-        title="ПИН"
+        title="Пароль"
         summary="||***********"
-        dialogMessage="Введите ПИН, используемый для входа в личный кабинет UTair."
-        inputType="textPassword">
-    </EditTextPreference>
+        dialogMessage="Введите пароль, используемый для входа в личный кабинет UTair."
+        inputType="textPassword"> 
+    </EditTextPreference> -->
 </PreferenceScreen>

@@ -1,24 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
-    <EditTextPreference 
-        title="Номер карты" 
-        positiveButtonText="ОК" 
-        summary="||{@s}" 
-        dialogTitle="Номер карты" 
-        negativeButtonText="Отмена" 
-        obligatory="true"
-        dialogMessage="Введите номер карты"
-        inputType="number"
-        key="login">
-    </EditTextPreference>
+	<EditTextPreference
+		title="Логин"
+		key="login"
+		summary="||{@s}"
+		obligatory="true"
+		dialogTitle="Логин"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите имейл, логин или номер бонусной карты, используемый для входа в личный кабинет.">
+	</EditTextPreference>
     <EditTextPreference 
         positiveButtonText="ОК"
         key="password" 
-        dialogTitle="PIN-код"
+        dialogTitle="Пароль/PIN-код"
         negativeButtonText="Отмена"
-        title="PIN-код"
+        title="Пароль/PIN-код"
         obligatory="true"
         summary="||***********"
-        dialogMessage="Введите PIN-код, используемый для входа в личный кабинет.">
+        dialogMessage="Введите пароль или PIN-код, используемый для входа в личный кабинет.">
     </EditTextPreference>
 </PreferenceScreen>

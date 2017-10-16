@@ -1,33 +1,47 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="1.0" version="5">ab-weather-narodmon</id>
+	<id major_version="2.0" version="10">ab-weather-narodmon</id>
 	<api flags="no_browser"/>
 	<name>Народный монитор</name>
 	<description html="true"><![CDATA[
 	<p>Получает текущую погоду с сайта narodmon.ru</p>
 	]]></description>
 	<instruction html="true"><![CDATA[
-	<p>В настройки провайдера требуется ввести номер датчика. Номер датчика можно получить так:</p>
+	<p>В настройки провайдера требуется ввести номер устройства. Номер устройства можно получить так:</p>
 	<ol>
-		<ul>Зайдите на http://narodmon.ru</ul>
-		<ul>Кликните по интересующему вас датчику</ul>
-		<ul>Нажмите на "Поделиться ссылкой на датчик"</ul>
-		<ul>Номер датчика начитается с id=</ul>
-		<ul>Введите номер в настройки провайдера, чтобы получить значение.</ul>
+		<li>Зайдите на http://narodmon.ru</li>
+		<li>Кликните по интересующему вас датчику</li>
+		<li>ID устройства отображается в информации об устройстве (в окошке, которое открывается, если кликнуть по устройству) через запятую после его названия</li>
+		<li>Введите номер в настройки провайдера, чтобы получить значение.</li>
+	</ol>
+	<p>Если вы не нашли ID устройства по инструкции выше, то можете продолжить:</p>
+	<ol>
+		<li>Нажмите в окне информации об устройстве на "Поделиться ссылкой на датчик"</li>
+		<li>Номер датчика начинается с id=</li>
+		<li>Введите номер в настройки провайдера, чтобы получить значение.</li>
 	</ol>
 	]]></instruction>
-	<author>Egor Anisimov &lt;support@ak-26.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="crypt/md5"/>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
 	<counters>
 		<counter id="temperature" name="Температура воздуха" units=" °C"/>
-		<counter id="humidity" name="Влажность" units=" %"/>
+		<counter id="humidity" name="Влажность" units="%"/>
 		<counter id="pressure" name="Давление" units=" мм рт.ст."/>
+		<counter id="temperature1" name="Температура воздуха 2" units=" °C"/>
+		<counter id="humidity1" name="Влажность 2" units="%"/>
+		<counter id="pressure1" name="Давление 2" units=" мм рт.ст."/>
+		<counter id="temperature2" name="Температура воздуха 3" units=" °C"/>
+		<counter id="humidity2" name="Влажность 3" units="%"/>
+		<counter id="pressure2" name="Давление 3" units=" мм рт.ст."/>
 	</counters>
 	<keywords>прогноз, погода, температура, воздух, narodmon</keywords>
 	<type>weather</type>

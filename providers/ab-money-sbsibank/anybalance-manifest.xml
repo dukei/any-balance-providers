@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="10">ab-money-sbsibank</id>
+	<id version="11">ab-money-sbsibank</id>
 	<api flags="no_browser|captcha"/>
 	<name>Система Банковского Самообслуживания (Беларусь)</name>
 	<description html="true"><![CDATA[
@@ -13,10 +13,12 @@
 	</ul>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>

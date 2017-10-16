@@ -1,5 +1,23 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="2" version="20" date="2016-05-25">
+	- переезд личного кабинета
+	</change>
+	<change major_version="2" version="19" date="2016-05-13">
+	Переход на использование API, чтобы капчу не вводить
+	</change>
+	<change major_version="2" version="18" date="2016-03-18">
+	Капча теперь запрашивается только по требованию сайта. Иногда она необязательна
+	</change>
+  <change major_version="2" version="17" date="2016-03-03">
+  - Всегда требуется ввод капчи.
+  </change>
+  <change major_version="2" version="16" date="2016-02-17">
+  - Изменена иконка.
+  </change>
+	<change major_version="2" version="15" date="2016-01-22">
+	- В некоторых случаях captcha не спрашивается.
+	</change>
 	<change major_version="2" version="14" date="2015-07-01">
 	- Поддержка изменений на сайте.
 	</change>

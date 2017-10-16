@@ -14,7 +14,7 @@ function main(){
     var prefs = AnyBalance.getPreferences();
     AnyBalance.setDefaultCharset('utf-8');    
 
-    var baseurl = 'http://www.zebratelecom.ru/services/';
+    var baseurl = 'https://www.zebratelecom.ru/services/';
  	
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');

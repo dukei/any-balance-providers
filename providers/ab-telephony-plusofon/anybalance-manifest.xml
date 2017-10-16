@@ -1,0 +1,42 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="3">ab-telephony-plusofon</id>
+	<api flags="no_browser"/>
+	<name>Плюсофон</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера Плюсофон https://plusofon.ru/ </p>
+	<p>Информация берется из личного кабинета https://portal.plusofon.ru/signin </p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="spent_the_day" name="Средний расход на разговоры" units=" р"/>
+		<counter id="subscriber_customer" name="Абонентская плата" units=" р"/>
+		<counter id="subscriber_accounts" name="Абонентская плата за номера и доп. услуги" units=" р"/>
+		<counter id="calls_missed" name="Не отвеченных вызовов"/>
+		<counter id="redirected_to_mobile" name="Переадресованно на мобильный"/>
+		<counter id="redirected_to_voicemail" name="Переадресованно на voicemail"/>
+		<counter id="c_outside" name="Городские номера"/>
+		<counter id="c_mobile" name="Мобильные номера"/>
+		<counter id="c_800" name="Номера 8-800"/>
+		<counter id="fio_manager" name="ФИО менеджера" type="text"/>
+		<counter id="email_manager" name="E-mail менеджера" type="text"/>
+		<counter id="phone_manager" name="Телефон менеджера" type="text"/>
+		<counter id="agreement" name="Номер договора" type="text"/>
+		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="sip" name="SIP аккаунт" type="text"/>
+		<counter id="phone" name="Номер телефона" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>telephony</type>
+	<country>ru</country>
+</provider>

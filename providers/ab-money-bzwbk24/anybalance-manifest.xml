@@ -1,0 +1,44 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="3">ab-money-bzwbk24</id>
+	<api flags="no_browser"/>
+	<name>Bank Zachodni WBK</name>
+	<description html="true"><![CDATA[
+	<p>Obtains information from Bank Zachodni WBK (https://www.bzwbk.pl).</p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>You can find your NIK (Customer Identification Number) in BZWBK24 agreement on electronic banking services.</p>
+	<ul>
+		<li>If you opened your current account using Internet or phone, the password was sent to you by text message or mail.</li>
+		<li>If you opened your current account with electronic banking services at one of the Bank's branches, you received a password in a sealed envelope from the Bank’s staff.</li>
+	</ul>
+	<p>If you do not remember your password, please visit one of the Bank's branches in order to generate a new one.</p>
+	<p>If you wish to sign an agreement on electronic banking services, please visit one of the Bank's branches where the Bank’s staff will activate BZWBK24 system for you.</p>
+	]]></instruction>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="extract/abe-money-bzwbk24"/>
+		<module id="nadapter"/>
+	</depends>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Saldo" units=" {@currency}"/>
+		<counter id="available" name="Available" units=" {@currency}"/>
+		<counter id="last_transaction_date" name="Last transaction date" type="time" format="dd/MM/yyyy"/>
+		<counter id="pct" name="Interest rate" units=" {@currency}"/>
+		<counter id="limit" name="Credit limit" units=" {@currency}"/>
+		<counter id="num" name="Card number" type="text"/>
+		<counter id="accnum" name="Account number" type="text"/>
+		<counter id="name" name="Name" type="text"/>
+		<counter id="currency" name="Currency" type="text"/>
+		<counter id="fio" name="User name" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>money, bank</type>
+	<country>pl</country>
+</provider>

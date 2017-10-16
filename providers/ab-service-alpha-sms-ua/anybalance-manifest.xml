@@ -7,7 +7,7 @@
 	<description>
 		Получает данные о баланса СМС сервиса Альфа СМС Украина (http://www.alphasms.ua/)
 	</description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

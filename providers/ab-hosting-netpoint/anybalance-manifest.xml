@@ -7,7 +7,7 @@
 	<p>Предоставляет информацию о балансе провайдера NetPoint <a href="http://netpoint-dc.com/">http://netpoint-dc.com/</a></p>
 	<p>Информация берется из личного кабинета <a href="https://billing.netpoint-dc.com/billmgr">https://billing.netpoint-dc.com/billmgr</a></p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

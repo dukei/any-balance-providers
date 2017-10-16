@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="5">ab-municipal-uslugi-tatarstan</id>
+	<id version="7">ab-municipal-uslugi-tatarstan</id>
 	<api flags="no_browser"/>
 	<name>Госуслуги Татарстан</name>
 	<description html="true"><![CDATA[
@@ -11,10 +11,12 @@
 	</ol>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
@@ -31,6 +33,6 @@
 		<counter id="fio" name="ФИО" type="text"/>
 	</counters>
 	<keywords></keywords>
-	<type>municipal, fines</type>
+	<type>municipal, fine</type>
 	<country>ru</country>
 </provider>

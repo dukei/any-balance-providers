@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="16">ab-weather-rp5</id>
+	<id version="17">ab-weather-rp5</id>
 	<api flags="no_browser"/>
 	<name>Прогноз rp5.ru</name>
 	<description html="true"><![CDATA[
@@ -21,11 +21,13 @@
 	</ol> 
 	<p>Оптимальный интервал обновления прогноза - 6 часов.</p>
 	]]></instruction>
-	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<preferences>preferences.xml</preferences>
 		<icon>icon.png</icon>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>

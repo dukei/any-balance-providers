@@ -1,9 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id version="3">ab-internet-ttk-baikal</id>
+	<id version="5">ab-internet-ttk-baikal</id>
 	<name>ТТК-Байкал</name>
 	<description html="true"><![CDATA[
+	<b>ВНИМАНИЕ! Личный кабинет переехал на https://lk.ttk.ru/. Используйте провайдер ТТК (Единый кабинет)</b> 
 	<p>Предоставляет информацию о балансе интернет провайдера ТТК-Байкал <a href="http://baikal-ttk.ru">http://baikal-ttk.ru</a></p>
 	<p>Информация берется из личного кабинета <a href="https://stat.baikal-ttk.ru">https://stat.baikal-ttk.ru</a> и <a href="https://188.244.184.44">https://188.244.184.44</a> для Якутска.</p>
 	<b>Провайдер предоставляет доступ в интернет в следующих городах:</b>
@@ -22,11 +23,13 @@
 		<li>Якутск</li>
 	</ul>
 	]]></description>	
-	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-	<files>
+    <author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+    <depends>
+        <module id="library"/>
+    </depends>
+    <files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>

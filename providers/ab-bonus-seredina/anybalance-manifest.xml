@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-bonus-seredina</id>
+	<api flags="no_browser"/>
+	<name>Золотая Середина</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера Золотая Середина <a href="http://www.seredina.ru/">http://www.seredina.ru/</a></p>
+	<p>Информация берется из личного кабинета <a href="http://www.lk2.seredina.ru/">http://www.lk2.seredina.ru/</a></p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Общий баланс" units=" Б"/>
+		<counter id="activeBalance" name="Активный баланс" units=" Б"/>
+		<counter id="receivedBonuses" name="Получено баллов" units=" Б"/>
+		<counter id="spentBonuses" name="Потрачено баллов" units=" Б"/>
+		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="purchases" name="Количество покупок"/>
+	</counters>
+	<keywords></keywords>
+	<type>bonus</type>
+	<country>ru</country>
+</provider>

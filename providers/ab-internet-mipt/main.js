@@ -8,7 +8,7 @@ function main(){
 	checkEmpty(prefs.password, 'Введите пароль!');
     
 	AnyBalance.setDefaultCharset('utf-8');
-	var baseurl = "http://cabinet.telecom.mipt.ru/";
+	var baseurl = "https://cabinet.telecom.mipt.ru/";
 	
     var html = AnyBalance.requestPost(baseurl, {
         login:prefs.login,
@@ -16,7 +16,7 @@ function main(){
     });
 	
     if(!/\/exit\//i.test(html)){
-        var error = getParam(html, null, null, [/Информационное сообщение[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, /<div\s+id="error">([^<]*)/i], replaceTagsAndSpaces, html_entity_decode);
+        var error = getParam(html, null, null, [/Информационное сообщение[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, /<div\s+id="error">([^<]*)/i], replaceTagsAndSpaces);
         if(error)
             throw new AnyBalance.Error(error);
         
@@ -28,13 +28,13 @@ function main(){
     getParam(html, result, 'balance', /Состояние счёта:[\s\S]*?<td[^>]*>([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'dayslimit', /Предел дней:[\s\S]*?<td[^>]*>([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'moneylimit', /Предел денег:[\s\S]*?<td[^>]*>([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'fio', /Статистика абонента:[\s\S]*?<i[^>]*>([\S\s]*?)<\/i>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'id', /Идентификатор абонента:[\s\S]*?<td[^>]*>(\d+)/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'fio', /Статистика абонента:[\s\S]*?<i[^>]*>([\S\s]*?)<\/i>/i, replaceTagsAndSpaces);
+    getParam(html, result, 'id', /Идентификатор абонента:[\s\S]*?<td[^>]*>(\d+)/i, replaceTagsAndSpaces);
 	
     html = AnyBalance.requestGet(baseurl + "services/");
-    getParam(html, result, '__tariff', /<th>Тариф<(?:[\s\S]*?<td[^>]*>){2}([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'status', /<th>Статус<(?:[\s\S]*?<td[^>]*>){3}([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, '__tariff', /Предел дней:[\s\S]*?<td[^>]*>([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, '__tariff', /<th>Тариф<(?:[\s\S]*?<td[^>]*>){2}([\S\s]*?)<\/td>/i, replaceTagsAndSpaces);
+    getParam(html, result, 'status', /<th>Статус<(?:[\s\S]*?<td[^>]*>){3}([\S\s]*?)<\/td>/i, replaceTagsAndSpaces);
+    getParam(html, result, '__tariff', /Предел дней:[\s\S]*?<td[^>]*>([\S\s]*?)<\/td>/i, replaceTagsAndSpaces);
 	
     if(AnyBalance.isAvailable('trafficIn','trafficOut')){
         var now = new Date();

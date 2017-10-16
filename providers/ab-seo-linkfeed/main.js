@@ -20,30 +20,38 @@ function main() {
 	
 	var html = AnyBalance.requestGet(baseurl, g_headers);
 
-	var match = /<img alt="([^"]+)"\s*src="\/(system\/captcha[^"]+)"/i.exec(html);
-	
-	
-	var captchaa;
-	if(AnyBalance.getLevel() >= 7){
-		AnyBalance.trace('Пытаемся ввести капчу');
-		var captcha = AnyBalance.requestGet(baseurl + match[2]);
-		captchaa = AnyBalance.retrieveCode("Пожалуйста, введите код с картинки", captcha);
-		AnyBalance.trace('Капча получена: ' + captchaa);
-	}else{
-		throw new AnyBalance.Error('Провайдер требует AnyBalance API v7, пожалуйста, обновите AnyBalance!');
+	if (!html || AnyBalance.getLastStatusCode() > 400) {
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Сайт провайдера временно недоступен! Попробуйте обновить данные позже.');
 	}
-	
-	html = AnyBalance.requestPost(baseurl + 'user/auth', {
-		'user[login]': prefs.login,
-		'user[password]': prefs.password,
-		'captcha_validation': match[1],
-		'captcha':captchaa
-	}, addHeaders({Referer: baseurl + 'user/auth'}));
+
+	var form = AB.getElement(html, /<form[^>]+login_form/i);
+	if(!form){
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удаётся найти форму входа! Сайт изменен?');
+	}
+
+	var params = AB.createFormParams(form, function(params, str, name, value) {
+		if (/login/i.test(name)) {
+			return prefs.login;
+		} else if (/password/i.test(name)) {
+			return prefs.password;
+		}
+
+		return value;
+	});
+
+	var sitekey = getParam(form, null, null, /data-sitekey="([^"]*)/i, replaceHtmlEntities);
+	if(sitekey)
+		params['g-recaptcha-response'] = solveRecaptcha('Пожалуйста, докажите, что вы не робот', baseurl, sitekey);
+
+
+	html = AnyBalance.requestPost(baseurl + 'user/auth', params, addHeaders({Referer: baseurl + 'user/auth'}));
 	
 	if (!/logout/i.test(html)) {
-		var error = getParam(html, null, null, /span style="font-weight: bold; color :red;"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+		var error = getParam(html, null, null, /<span[^>]+color\s*:\s*red[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
 		if (error)
-			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
+			throw new AnyBalance.Error(error, null, /авторизац/i.test(error));
 		
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
@@ -51,15 +59,16 @@ function main() {
 	
 	var result = {success: true};
 	
-	getParam(html, result, 'balance', /Баланс:(?:[^>]*>){5}([^<]+)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'expense_day', /Расход<(?:[^>]*>){2}([^<]+)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'expense_week', /Расход<(?:[^>]*>){4}([^<]+)/i, replaceTagsAndSpaces, parseBalance);	
-	getParam(html, result, 'income_day', /Доход<(?:[^>]*>){2}([^<]+)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'income_week', /Доход<(?:[^>]*>){4}([^<]+)/i, replaceTagsAndSpaces, parseBalance);		
-	getParam(html, result, 'partnership_day', /Партнерка<(?:[^>]*>){2}([^<]+)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'partnership_week', /Партнерка<(?:[^>]*>){4}([^<]+)/i, replaceTagsAndSpaces, parseBalance)
-	getParam(html, result, 'summ_day', /Сумма<(?:[^>]*>){2}([^<]+)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'summ_week', /Сумма<(?:[^>]*>){4}([^<]+)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'balance', /Баланс:[\s\S]*?<td[^>]*>([\s\S]*?)(?:\(|<\/td>)/i, replaceTagsAndSpaces, parseBalance);
+
+	getParam(html, result, 'expense_day', /Расход\s*<(?:[\s\S]*?<span[^>]+ru_currency[^>]*>){1}([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'expense_week', /Расход\s*<(?:[\s\S]*?<span[^>]+ru_currency[^>]*>){2}([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);	
+	getParam(html, result, 'income_day', /Доход\s*<(?:[\s\S]*?<span[^>]+ru_currency[^>]*>){1}([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'income_week', /Доход\s*<(?:[\s\S]*?<span[^>]+ru_currency[^>]*>){2}([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);		
+	getParam(html, result, 'partnership_day', /Партнерка\s*<(?:[\s\S]*?<span[^>]+ru_currency[^>]*>){1}([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'partnership_week', /Партнерка\s*<(?:[\s\S]*?<span[^>]+ru_currency[^>]*>){2}([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance)
+	getParam(html, result, 'summ_day', /Сумма\s*<(?:[\s\S]*?<span[^>]+ru_currency[^>]*>){1}([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'summ_week', /Сумма\s*<(?:[\s\S]*?<span[^>]+ru_currency[^>]*>){2}([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
 	
 	AnyBalance.setResult(result);
 }

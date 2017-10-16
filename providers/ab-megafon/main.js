@@ -15,82 +15,82 @@ var lk_url = 'https://lk.megafon.ru/';
 
 //http://ru.wikipedia.org/wiki/%D0%9C%D0%B5%D0%B3%D0%B0%D0%A4%D0%BE%D0%BD#.D0.A4.D0.B8.D0.BB.D0.B8.D0.B0.D0.BB.D1.8B_.D0.BA.D0.BE.D0.BC.D0.BF.D0.B0.D0.BD.D0.B8.D0.B8
 var filial_info = {
-	moscowsg: MEGA_FILIAL_MOSCOW,
-	sibsg1: MEGA_FILIAL_SIBIR,
-	sibsg: MEGA_FILIAL_SIBIR,
-	szfsg: MEGA_FILIAL_NW,
-	dvsg: MEGA_FILIAL_FAREAST,
-	volgasg: MEGA_FILIAL_VOLGA,
-	kavkazsg: MEGA_FILIAL_KAVKAZ,
-	centersg: MEGA_FILIAL_CENTRAL,
-	uralsg: MEGA_FILIAL_URAL
+	oldmoscowsg: MEGA_FILIAL_MOSCOW,
+	oldsibsg1: MEGA_FILIAL_SIBIR,
+	oldsibsg: MEGA_FILIAL_SIBIR,
+	oldszfsg: MEGA_FILIAL_NW,
+	olddvsg: MEGA_FILIAL_FAREAST,
+	oldvolgasg: MEGA_FILIAL_VOLGA,
+	oldkavkazsg: MEGA_FILIAL_KAVKAZ,
+	oldcentersg: MEGA_FILIAL_CENTRAL,
+	olduralsg: MEGA_FILIAL_URAL
 };
 filial_info[MEGA_FILIAL_MOSCOW] = {
 	name: 'Столичный филиал',
 	id: 'mos',
-    sg: "https://moscowsg.megafon.ru/",
-	widget: 'https://moscowsg.megafon.ru/WIDGET_INFO/GET_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%&CHANNEL=WYANDEX&LANG_ID=1&P_RATE_PLAN_POS=1&P_PAYMENT_POS=2&P_ADD_SERV_POS=4&P_DISCOUNT_POS=3',
-//	tray: "https://moscowsg.megafon.ru/TRAY_INFO/TRAY_INFO?LOGIN=%LOGIN%&PASSWORD=%PASSWORD%",
+    sg: "https://oldmoscowsg.megafon.ru/",
+	widget: 'https://oldmoscowsg.megafon.ru/WIDGET_INFO/GET_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%&CHANNEL=WYANDEX&LANG_ID=1&P_RATE_PLAN_POS=1&P_PAYMENT_POS=2&P_ADD_SERV_POS=4&P_DISCOUNT_POS=3',
+//	tray: "https://oldmoscowsg.megafon.ru/TRAY_INFO/TRAY_INFO?LOGIN=%LOGIN%&PASSWORD=%PASSWORD%",
 	internet: "http://user.moscow.megafon.ru/",
-	internetRobot: "https://moscowsg.megafon.ru/MEGAFON_BALANCE/MGFSTF_GET_QOS_PACK_STATUS?MSISDN=%LOGIN%&PASSWORD=%PASSWORD%",
-	balanceRobot: "https://moscowsg.megafon.ru/MEGAFON_BALANCE/MGFSTF_GET_BALANCE?MSISDN=%LOGIN%&PASSWORD=%PASSWORD%"
+	internetRobot: "https://oldmoscowsg.megafon.ru/MEGAFON_BALANCE/MGFSTF_GET_QOS_PACK_STATUS?MSISDN=%LOGIN%&PASSWORD=%PASSWORD%",
+	balanceRobot: "https://oldmoscowsg.megafon.ru/MEGAFON_BALANCE/MGFSTF_GET_BALANCE?MSISDN=%LOGIN%&PASSWORD=%PASSWORD%"
 };
 filial_info[MEGA_FILIAL_SIBIR] = {
 	name: 'Сибирский филиал',
 	id: 'sib',
-    sg: "https://sibsg.megafon.ru/",
-	tray: "https://sibsg.megafon.ru/ROBOTS/SC_TRAY_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%",
-	widget: 'https://sibsg.megafon.ru/WIDGET_INFO/GET_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%&CHANNEL=WYANDEX&LANG_ID=1&P_RATE_PLAN_POS=1&P_PAYMENT_POS=2&P_ADD_SERV_POS=4&P_DISCOUNT_POS=3',
+    sg: "https://oldsibsg.megafon.ru/",
+	tray: "https://oldsibsg.megafon.ru/ROBOTS/SC_TRAY_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%",
+	widget: 'https://oldsibsg.megafon.ru/WIDGET_INFO/GET_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%&CHANNEL=WYANDEX&LANG_ID=1&P_RATE_PLAN_POS=1&P_PAYMENT_POS=2&P_ADD_SERV_POS=4&P_DISCOUNT_POS=3',
 	sgCaptchaInputType: 'text',
 };
 filial_info[MEGA_FILIAL_NW] = {
 	name: 'Северо-западный филиал',
 	id: 'nw',
-    sg: "https://szfsg.megafon.ru/",
-	tray: 'https://szfsg.megafon.ru/ROBOTS/SC_TRAY_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%',
-	widget: 'https://szfsg.megafon.ru/WIDGET_INFO/GET_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%&CHANNEL=WYANDEX&LANG_ID=1&P_RATE_PLAN_POS=1&P_PAYMENT_POS=2&P_ADD_SERV_POS=4&P_DISCOUNT_POS=3',
+    sg: "https://oldszfsg.megafon.ru/",
+	tray: 'https://oldszfsg.megafon.ru/ROBOTS/SC_TRAY_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%',
+	widget: 'https://oldszfsg.megafon.ru/WIDGET_INFO/GET_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%&CHANNEL=WYANDEX&LANG_ID=1&P_RATE_PLAN_POS=1&P_PAYMENT_POS=2&P_ADD_SERV_POS=4&P_DISCOUNT_POS=3',
 	sgCaptchaInputType: 'text',
 };
 filial_info[MEGA_FILIAL_FAREAST] = {
 	name: 'Дальневосточный филиал',
 	id: 'dv',
-    sg: "https://dvsg.megafon.ru/",
-	tray: 'https://dvsg.megafon.ru/ROBOTS/SC_TRAY_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%',
-	widget: 'https://dvsg.megafon.ru/WIDGET_INFO/GET_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%&CHANNEL=WYANDEX&LANG_ID=1&P_RATE_PLAN_POS=1&P_PAYMENT_POS=2&P_ADD_SERV_POS=4&P_DISCOUNT_POS=3',
+    sg: "https://olddvsg.megafon.ru/",
+	tray: 'https://olddvsg.megafon.ru/ROBOTS/SC_TRAY_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%',
+	widget: 'https://olddvsg.megafon.ru/WIDGET_INFO/GET_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%&CHANNEL=WYANDEX&LANG_ID=1&P_RATE_PLAN_POS=1&P_PAYMENT_POS=2&P_ADD_SERV_POS=4&P_DISCOUNT_POS=3',
 };
 filial_info[MEGA_FILIAL_VOLGA] = {
 	name: 'Поволжский филиал',
 	id: 'vlg',
-	//  site: "https://volgasg.megafon.ru/",
+	//  site: "https://oldvolgasg.megafon.ru/",
 	//  func: megafonServiceGuide,
-    sg: "https://volgasg.megafon.ru/",
-	widget: 'https://volgasg.megafon.ru/WIDGET_INFO/GET_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%&CHANNEL=WYANDEX&LANG_ID=1&P_RATE_PLAN_POS=1&P_PAYMENT_POS=2&P_ADD_SERV_POS=4&P_DISCOUNT_POS=3',
-	tray: 'https://volgasg.megafon.ru/ROBOTS/SC_TRAY_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%'
+    sg: "https://oldvolgasg.megafon.ru/",
+	widget: 'https://oldvolgasg.megafon.ru/WIDGET_INFO/GET_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%&CHANNEL=WYANDEX&LANG_ID=1&P_RATE_PLAN_POS=1&P_PAYMENT_POS=2&P_ADD_SERV_POS=4&P_DISCOUNT_POS=3',
+	tray: 'https://oldvolgasg.megafon.ru/ROBOTS/SC_TRAY_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%'
 };
 filial_info[MEGA_FILIAL_KAVKAZ] = {
 	name: 'Кавказский филиал',
 	id: 'kv',
-    sg: "https://kavkazsg.megafon.ru/",
-	tray: "https://kavkazsg.megafon.ru/ROBOTS/SC_TRAY_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%",
-	widget: 'https://kavkazsg.megafon.ru/WIDGET_INFO/GET_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%&CHANNEL=WYANDEX&LANG_ID=1&P_RATE_PLAN_POS=1&P_PAYMENT_POS=2&P_ADD_SERV_POS=4&P_DISCOUNT_POS=3',
+    sg: "https://oldkavkazsg.megafon.ru/",
+	tray: "https://oldkavkazsg.megafon.ru/ROBOTS/SC_TRAY_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%",
+	widget: 'https://oldkavkazsg.megafon.ru/WIDGET_INFO/GET_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%&CHANNEL=WYANDEX&LANG_ID=1&P_RATE_PLAN_POS=1&P_PAYMENT_POS=2&P_ADD_SERV_POS=4&P_DISCOUNT_POS=3',
 };
 filial_info[MEGA_FILIAL_CENTRAL] = {
 	name: 'Центральный филиал',
 	id: 'ctr',
-	sg: "https://moscowsg.megafon.ru/",
+	sg: "https://oldmoscowsg.megafon.ru/",
 	lk: "https://lk.megafon.ru/",
-	widget: 'https://moscowsg.megafon.ru/WIDGET_INFO/GET_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%&CHANNEL=WYANDEX&LANG_ID=1&P_RATE_PLAN_POS=1&P_PAYMENT_POS=2&P_ADD_SERV_POS=4&P_DISCOUNT_POS=3',
-//	tray: "https://moscowsg.megafon.ru/TRAY_INFO/TRAY_INFO?LOGIN=%LOGIN%&PASSWORD=%PASSWORD%",
+	widget: 'https://oldmoscowsg.megafon.ru/WIDGET_INFO/GET_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%&CHANNEL=WYANDEX&LANG_ID=1&P_RATE_PLAN_POS=1&P_PAYMENT_POS=2&P_ADD_SERV_POS=4&P_DISCOUNT_POS=3',
+//	tray: "https://oldmoscowsg.megafon.ru/TRAY_INFO/TRAY_INFO?LOGIN=%LOGIN%&PASSWORD=%PASSWORD%",
 	internet: "http://user.moscow.megafon.ru/",
-	internetRobot: "https://moscowsg.megafon.ru/MEGAFON_BALANCE/MGFSTF_GET_QOS_PACK_STATUS?MSISDN=%LOGIN%&PASSWORD=%PASSWORD%",
-	balanceRobot: "https://moscowsg.megafon.ru/MEGAFON_BALANCE/MGFSTF_GET_BALANCE?MSISDN=%LOGIN%&PASSWORD=%PASSWORD%"
+	internetRobot: "https://oldmoscowsg.megafon.ru/MEGAFON_BALANCE/MGFSTF_GET_QOS_PACK_STATUS?MSISDN=%LOGIN%&PASSWORD=%PASSWORD%",
+	balanceRobot: "https://oldmoscowsg.megafon.ru/MEGAFON_BALANCE/MGFSTF_GET_BALANCE?MSISDN=%LOGIN%&PASSWORD=%PASSWORD%"
 };
 filial_info[MEGA_FILIAL_URAL] = {
 	name: 'Уральский филиал',
 	id: 'url',
-	sg: 'https://uralsg.megafon.ru/',
-	tray: 'https://uralsg.megafon.ru/ROBOTS/SC_TRAY_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%',
-	widget: 'https://uralsg.megafon.ru/WIDGET_INFO/GET_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%&CHANNEL=WYANDEX&LANG_ID=1&P_RATE_PLAN_POS=1&P_PAYMENT_POS=2&P_ADD_SERV_POS=4&P_DISCOUNT_POS=3',
+	sg: 'https://olduralsg.megafon.ru/',
+	tray: 'https://olduralsg.megafon.ru/ROBOTS/SC_TRAY_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%',
+	widget: 'https://olduralsg.megafon.ru/WIDGET_INFO/GET_INFO?X_Username=%LOGIN%&X_Password=%PASSWORD%&CHANNEL=WYANDEX&LANG_ID=1&P_RATE_PLAN_POS=1&P_PAYMENT_POS=2&P_ADD_SERV_POS=4&P_DISCOUNT_POS=3',
 	old_server: true
 };
 
@@ -192,11 +192,12 @@ function getFilial(prefs) {
 		try{	
 			// Мегафон сделал сервис для определения филиала, так что попытаемся обойтись им    
 			// Но этот сервис сдох... 13.03.15, но снова поднялся 14.03.15
-			var html = AnyBalance.requestPost("https://sg.megafon.ru/ps/scc/php/route.php", {
-				 CHANNEL: 'WWW',
-				 ULOGIN: number
+			var html = AnyBalance.requestPost("https://oldsg.megafon.ru/ps/scc/php/route.php", {
+				CHANNEL: 'WWW',
+				ULOGIN: number
 			});
 			var region = getParam(html, null, null, /<URL>https?:\/\/(\w+)\./i);
+			
 			if (region && filial_info[region]) {
 				 return filial_info[region];
 			}else{
@@ -213,6 +214,12 @@ function getFilial(prefs) {
 		return getFilialByPrefixAndNumber(prefix, num);
 	} else {
 		AnyBalance.trace('Указан регион в настройках: ' + prefs.region);
+		
+		if(!/^old/i.test(prefs.region)) {
+			AnyBalance.trace('Меняем регион с ' + prefs.region + ' на old' + prefs.region);
+			prefs.region = 'old' + prefs.region;
+		}
+		
 		return filial_info[prefs.region];
 	}
 }
@@ -274,8 +281,8 @@ function loadFilialInfo(filial){
         allow_captcha_sg = allow_captcha_app = false;
 
     var ok = false;
-    var e_some = null;
-    var e_total = null;
+    var e_some_messages = [];
+    var e_total_messages = [];
 
     for(var i=0; i<priority.length; ++i){
     	var src = priority[i];
@@ -300,8 +307,8 @@ function loadFilialInfo(filial){
 				if(e.fatal)
 					throw e;
 				if(!e.meaningless)
-					e_total = e;
-				e_some = e;
+					e_total_messages.push('ЛК: ' + e.message);
+				e_some_messages.push('ЛК: ' + e.message);
 				
 				if(/Требуется ввод кода/i.test(e.message || '') && !allow_captcha_sg && allow_captcha_sg != allow_captcha){
 					AnyBalance.trace('Без капчи зайти в sg не удалось, но может, потом попробуем с капчей...');
@@ -321,8 +328,9 @@ function loadFilialInfo(filial){
 				if(e.fatal)
 					throw e;
 				if(!e.meaningless)
-					e_total = e;
-				e_some = e;
+					e_total_messages.push('Мобильное приложение: ' + e.message);
+				e_some_messages.push('Мобильное приложение: ' + e.message);
+
 				if(/Требуется ввод кода/i.test(e.message || '') && !allow_captcha_app && allow_captcha_app != allow_captcha){
 					AnyBalance.trace('Без капчи зайти в app не удалось, но может, потом попробуем с капчей...');
 				    allow_captcha_app = allow_captcha;
@@ -341,9 +349,9 @@ function loadFilialInfo(filial){
 			}catch(e){
 				if(e.fatal)
 					throw e;
-				if(!e.meaningless)
-					e_total = e;
-				e_some = e;
+//				if(!e.meaningless) //Это неинтересно уже показывать
+//					e_total_messages.push('Роботы: ' + e.message);
+				e_some_messages.push('Роботы: ' + e.message);
 		        AnyBalance.trace('Не удалось получить информацию из входа для автоматизированных систем: ' + e.message);
 			}
 		}
@@ -357,15 +365,15 @@ function loadFilialInfo(filial){
 		}catch(e){
 			if(e.fatal)
 				throw e;
-			if(!e.meaningless)
-				e_total = e;
-			e_some = e;
+			if(!e.meaningless) //Это неинтересно показывать
+				e_total_messages.push('Робот баланса: ' + e.message);
+			e_some_messages.push('Робот баланса: ' + e.message);
 	        AnyBalance.trace('Не удалось получить информацию даже по балансу: ' + e.message);
 		}
 	}
 
 	if(!ok)
-		throw e_total || e_some;
+		throw e_total_messages.join('\n') || e_some_messages.join('\n');
 }
 
 var g_headers = {
@@ -414,7 +422,7 @@ function getTrayXmlText(filial){
 
     if(/SCC-ROBOTS-ERROR/.test(info)){
       AnyBalance.trace("Server returned: " + info);
-      throw new AnyBalance.Error('Сервис гид временно находится на техобслуживании. Зайдите позже.');
+      throw new AnyBalance.Error('Сервис-Гид временно находится на техобслуживании. Зайдите позже.');
     }
 
     var matches;
@@ -429,7 +437,7 @@ function getTrayXmlText(filial){
     }
 	
     //Проверяем на ошибку
-    var error = getParam(info, null, null, /<ERROR_MESSAGE[^>]*>([\s\S]*?)<\/ERROR_MESSAGE>/, replaceTagsAndSpaces, html_entity_decode);
+    var error = getParam(info, null, null, /<ERROR_MESSAGE[^>]*>([\s\S]*?)<\/ERROR_MESSAGE>/, replaceTagsAndSpaces);
     if(error){
         AnyBalance.trace("Server returned: " + info);
         if(/Robot login is not allowed|does not have permissions/.test(error))
@@ -439,7 +447,7 @@ function getTrayXmlText(filial){
             throw new AnyBalance.Error(error);
     }
 
-    error = getParam(info, null, null, /<ERROR\b[^>]*>([\s\S]*?)<\/ERROR>/, replaceTagsAndSpaces, html_entity_decode);;
+    error = getParam(info, null, null, /<ERROR\b[^>]*>([\s\S]*?)<\/ERROR>/, replaceTagsAndSpaces);;
     if(error){
         AnyBalance.trace("Server returned: " + info);
         throw new AnyBalance.Error(error + ' Возможно, вам надо зайти в Сервис-Гид и включить настройку Настройки Сервис-Гида/Автоматический доступ системам/Доступ открыт пользователям и автоматизированным системам, а также нажать кнопку "разблокировать".');
@@ -480,9 +488,9 @@ function megafonTrayInfo(filial) {
 	if(filinfo.tray){ try {
 		var xml = getTrayXmlText(filial), val;
 		
-		getParam(xml, result, '__tariff', /<RATE_PLAN>([\s\S]*?)<\/RATE_PLAN>/i, replaceTagsAndSpaces, html_entity_decode);
+		getParam(xml, result, '__tariff', /<RATE_PLAN>([\s\S]*?)<\/RATE_PLAN>/i, replaceTagsAndSpaces);
 		getParam(xml, result, 'balance', /<BALANCE>([\s\S]*?)<\/BALANCE>/i, replaceTagsAndSpaces, parseBalance);
-		getParam(xml, result, 'phone', /<NUMBER>([\s\S]*?)<\/NUMBER>/i, replaceNumber, html_entity_decode);
+		getParam(xml, result, 'phone', /<NUMBER>([\s\S]*?)<\/NUMBER>/i, replaceNumber);
 		getParam(xml, result, 'prsnl_balance', /<PRSNL_BALANCE>([\s\S]*?)<\/PRSNL_BALANCE>/i, replaceTagsAndSpaces, parseBalance);
 		
 		var packs = xml.split(/<PACK>/ig);
@@ -490,7 +498,7 @@ function megafonTrayInfo(filial) {
 		AnyBalance.trace('Packs: ' + packs.length);
 		for (var ipack = 0; ipack < packs.length; ++ipack) {
 			var pack = packs[ipack];
-			var pack_name = getParam(pack, null, null, /<PACK_NAME>([\s\S]*?)<\/PACK_NAME>/i, null, html_entity_decode) || '';
+			var pack_name = getParam(pack, null, null, /<PACK_NAME>([\s\S]*?)<\/PACK_NAME>/i, replaceHtmlEntities) || '';
 			var discounts = sumParam(pack, null, null, /<DISCOUNT>([\s\S]*?)<\/DISCOUNT>/ig);
 			AnyBalance.trace('Pack: ' + pack_name + ', discounts: ' + discounts.length);
 			for (var i = 0; i < discounts.length; ++i) {
@@ -578,7 +586,7 @@ function megafonTrayInfo(filial) {
 					var total = getParam(d, null, null, /<VOLUME_TOTAL>([\s\S]*?)<\/VOLUME_TOTAL>/i, replaceTagsAndSpaces, parseMinutes);
 					mins_totals_was['' + total] = true;
 					sumParam(d, result, 'mins_n_free', /<VOLUME_AVAILABLE>([\s\S]*?)<\/VOLUME_AVAILABLE>/i, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
-				} else if ((/вызовы внутри спг|\.\s*МегаФон/i.test(names) && !/МТС/i.test(names)) && /мин/i.test(plan_si)) {
+				} else if ((/вызовы внутри спг|\.\s*МегаФон|на МегаФон/i.test(names) && !/МТС/i.test(names)) && /мин/i.test(plan_si)) {
 					AnyBalance.trace('Найдены минуты внутри группы: ' + names + ', ' + plan_si);
 					var total = getParam(d, null, null, /<VOLUME_TOTAL>([\s\S]*?)<\/VOLUME_TOTAL>/i, replaceTagsAndSpaces, parseMinutes);
 					mins_totals_was['' + total] = true;
@@ -670,12 +678,12 @@ function megafonTrayInfo(filial) {
 					getParam(json.ok.html, result, 'sub_scr', /Роуминг\s*<\/td>(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 				}
 				// 																										Заменяем строку вида $[widgets.current.user($msisdn)]
-				getParam(json.ok.html, result, 'phone', /<span[^>]*class="login"[^>]*>([\s\S]*?)<\/span>/i, [/\uFFFD/g, ' ', replaceTagsAndSpaces, /\$\[[\s\S]*?\]/i, '', replaceNumber], html_entity_decode);
+				getParam(json.ok.html, result, 'phone', /<span[^>]*class="login"[^>]*>([\s\S]*?)<\/span>/i, [/\uFFFD/g, ' ', replaceTagsAndSpaces, /\$\[[\s\S]*?\]/i, '', replaceNumber]);
 				if (need_int_cur) getParam(json.ok.html, result, 'internet_cur', /Интернет-траффик \(GPRS\)\s*<\/td>(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseTraffic);
 				getParam(json.ok.html, result, 'internet_cost', /Интернет-траффик \(GPRS\)\s*<\/td>(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 				var table = getParam(json.ok.html, null, null, /<table[^>]*class="[^>]*rate-plans[^>][\s\S]*?<\/table>/i);
 				if (table) {
-					if (isAvailableButUnset(result, ['__tariff'])) sumParam(table, result, '__tariff', /<tr[^>]*>\s*<td[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
+					if (isAvailableButUnset(result, ['__tariff'])) sumParam(table, result, '__tariff', /<tr[^>]*>\s*<td[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, null, aggregate_join);
 				} else {
 					AnyBalance.trace('Не удалось найти список тарифных планов в яндекс.виджете');
 				}
@@ -693,8 +701,8 @@ function megafonTrayInfo(filial) {
 				var wasSM = false;
 				for (var i = 0; i < discounts.length; ++i) {
 					var discount = discounts[i];
-					var name = getParam(discount, null, null, /<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
-					var val = getParam(discount, null, null, /<div[^>]*class="discount_volume"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+					var name = getParam(discount, null, null, /<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+					var val = getParam(discount, null, null, /<div[^>]*class="discount_volume"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
 					if (!isset(val)) {
 						AnyBalance.trace('Опция без значений: ' + discount);
 						continue;
@@ -722,7 +730,7 @@ function megafonTrayInfo(filial) {
 							addLeftAndTotal(mins, result, AnyBalance.isAvailable('mins_n_free'), false, 'mins_n_free');
 							new_mins_totals_was[mins.total] = true;
 						}
-					} else if (/мин на номера МегаФон|\.\s*МегаФон/i.test(name) && !/МТС/i.test(name)) {
+					} else if (/мин на номера МегаФон|\.\s*МегаФон|на МегаФон/i.test(name) && !/МТС/i.test(name)) {
 						var mins = getLeftAndTotal(val, result, false, false, 'mins_net_left', null, parseMinutes);
 						if (!isset(mins.left) || mins.left < 1000000) { //Большие значения, считай, безлимит. Че его показывать...
 							if (isset(mins.total) && !isset(mins_totals_was[mins.total])) {
@@ -823,7 +831,7 @@ function getInternetInfo(filial, result, internet_totals_was){
             sumParam(total + 'мб', result, 'internet_total', null, replaceTagsAndSpaces, parseTrafficMyMb, aggregate_sum);
         }
     }else{
-        var error = getParam(xml, null, null, /<ERROR>([\s\S]*?)<\/ERROR>/i, replaceTagsAndSpaces, html_entity_decode);
+        var error = getParam(xml, null, null, /<ERROR>([\s\S]*?)<\/ERROR>/i, replaceTagsAndSpaces);
         AnyBalance.trace('Пакет трафика не найден: ' + error);
     }
 }
@@ -849,7 +857,7 @@ function getInternetInfo(filial, result){
 
     var num = getParam(html, null, null, /<p[^>]+class="phone"[^>]*>([\s\S]*?)<\/p>/i, [replaceTagsAndSpaces, /\D/g, '']);
     if(!num){
-        var error = getParam(html, null, null, /<article[^>]+class="warr?ning error"[^>]*>([\s\S]*?)<\/article>/i, replaceTagsAndSpaces, html_entity_decode);
+        var error = getParam(html, null, null, /<article[^>]+class="warr?ning error"[^>]*>([\s\S]*?)<\/article>/i, replaceTagsAndSpaces);
         if(error){
             AnyBalance.trace(error);
         }else{  
@@ -869,14 +877,14 @@ function getInternetInfo(filial, result){
     AnyBalance.trace('Интернет-кабинет: ' + html);
 
     if(isAvailableButUnset(result, ['__tariff']))
-        getParam(html, result, '__tariff', /Ваш тарифный план([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, html_entity_decode);
+        getParam(html, result, '__tariff', /Ваш тарифный план([\s\S]*?)<\/p>/i, replaceTagsAndSpaces);
     if(isAvailableButUnset(result, ['balance']))
         getParam(html, result, 'balance', /<p[^>]+class="balance"[^>]*>([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, parseBalance);
 
     var internets = sumParam(html, null, null, /<h5[^>]*>(?:[\s\S](?!<\/h5>))*.<\/h5>\s*<table[^>]+class="details"[^>]*>[\s\S]*?<\/table>/ig);
     for(var i=0; i<internets.length; ++i){
         var internet = internets[i];
-        var name = getParam(internet, null, null, /<h5[^>]*>[\s\S]*?<\/h5>/i, replaceTagsAndSpaces, html_entity_decode);
+        var name = getParam(internet, null, null, /<h5[^>]*>[\s\S]*?<\/h5>/i, replaceTagsAndSpaces);
         if(/Гигабайт в дорогу/i.test(name)){
             if(need_gb_with_you)
             	sumParam(internet, result, 'gb_with_you', /<td[^>]+class="traffic-by"[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
@@ -957,20 +965,21 @@ function megafonBalanceInfo(filial) {
 
     var html = AnyBalance.requestGet(filinfo.balanceRobot.replace(/%LOGIN%/i, encodeURIComponent(prefs.login)).replace(/%PASSWORD%/i, encodeURIComponent(prefs.password)));
     if(!/<BALANCE>([^<]*)<\/BALANCE>/i.test(html)){
-        var error = getParam(html, null, null, /<ERROR_MESSAGE>([\s\S]*?)<\/ERROR_MESSAGE>/i, replaceTagsAndSpaces, html_entity_decode);
+        var error = getParam(html, null, null, /<ERROR_MESSAGE>([\s\S]*?)<\/ERROR_MESSAGE>/i, replaceTagsAndSpaces);
         if(error)
-            throw new AnyBalance.Error(error, null, /Wrong password/i.test(error));
+            throw new AnyBalance.Error(error, null, /Wrong password|The user is not found/i.test(error));
         AnyBalance.trace(html);
         throw new AnyBalance.Error('Сервис временно недоступен');
     }
 
     var result = {success: true, filial: filinfo.id};
 
-    var balance = getParam(html, null, null, /<BALANCE>([^<]*)<\/BALANCE>/i, replaceTagsAndSpaces, parseBalance);
-    var limit = getParam(html, null, null, /<CREDIT_\w+LIMIT>([^<]*)<\/CREDIT_\w+LIMIT>/i, replaceTagsAndSpaces, parseBalance);
+    var balance = getParam(html, /<BALANCE>([^<]*)<\/BALANCE>/i, replaceTagsAndSpaces, parseBalance);
+    var limit = getParam(html, /<CREDIT_\w+LIMIT>([^<]*)<\/CREDIT_\w+LIMIT>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(balance, result, 'available');
     getParam(balance-(limit || 0), result, 'balance');
     getParam(limit, result, 'credit');
-    getParam(html, result, 'phone', /<MSISDN>([^<]*)<\/MSISDN>/i, replaceNumber, html_entity_decode);
+    getParam(html, result, 'phone', /<MSISDN>([^<]*)<\/MSISDN>/i, replaceNumber);
 
     //Не, врет безбожно, бесполезно вызывать
     //getInternetInfo(filial, result, {});
@@ -981,11 +990,11 @@ function megafonBalanceInfo(filial) {
 
 function checkTextForError(text){
     //Произошла ошибка при работе с системой.
-    var error = getParam(text, null, null, /&#1055;&#1088;&#1086;&#1080;&#1079;&#1086;&#1096;&#1083;&#1072; &#1086;&#1096;&#1080;&#1073;&#1082;&#1072; &#1087;&#1088;&#1080; &#1088;&#1072;&#1073;&#1086;&#1090;&#1077; &#1089; &#1089;&#1080;&#1089;&#1090;&#1077;&#1084;&#1086;&#1081;[\s\S]*?<[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+    var error = getParam(text, null, null, /&#1055;&#1088;&#1086;&#1080;&#1079;&#1086;&#1096;&#1083;&#1072; &#1086;&#1096;&#1080;&#1073;&#1082;&#1072; &#1087;&#1088;&#1080; &#1088;&#1072;&#1073;&#1086;&#1090;&#1077; &#1089; &#1089;&#1080;&#1089;&#1090;&#1077;&#1084;&#1086;&#1081;[\s\S]*?<[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
     if(error)
         throw new AnyBalance.Error(error);
 
-    error = getParam(text, null, null, /<STRONG[^>]+class="attention">([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+    error = getParam(text, null, null, /<STRONG[^>]+class="attention">([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
     if(error)
 		throw new AnyBalance.Error(error);
 }
@@ -1030,14 +1039,15 @@ function megafonServiceGuidePhysical(filial, sessionid, text){
     	throw new AnyBalance.Error('Не удалось зайти в сервис-гид. Сайт изменен?');
     }
 	
-    //Теперь получим баланс
-    getParam(text, result, 'balance', /&#1041;&#1072;&#1083;&#1072;&#1085;&#1089;[\s\S]*?<div class="balance_[^>]*>([\S\s]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+    //Теперь получим баланс и кредитный лимит (Уровень кредита|Кредитный лимит):
+	var balance = getParam(text, null, null, /&#1041;&#1072;&#1083;&#1072;&#1085;&#1089;[\s\S]*?<div class="balance_[^>]*>([\S\s]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+    var limit = getParam(text, null, null, /(?:&#1059;&#1088;&#1086;&#1074;&#1077;&#1085;&#1100; &#1082;&#1088;&#1077;&#1076;&#1080;&#1090;&#1072;|&#1050;&#1088;&#1077;&#1076;&#1080;&#1090;&#1085;&#1099;&#1081; &#1083;&#1080;&#1084;&#1080;&#1090;):([\S\s]*?)<\/tr>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(balance-(limit || 0), result, 'balance');
+    getParam(limit, result, 'credit');
     //Теперь получим телефон
-    getParam(text, result, 'phone', /<select[^>]*name="SUBSCRIBER_MSISDN"[\s\S]*?<option[^>]+value="([^"]*)[^>]*selected/i, replaceNumber, html_entity_decode);
+    getParam(text, result, 'phone', /<select[^>]*name="SUBSCRIBER_MSISDN"[\s\S]*?<option[^>]+value="([^"]*)[^>]*selected/i, replaceNumber);
     //Теперь получим персональный баланс
     getParam(text, result, 'prsnl_balance', /&#1055;&#1077;&#1088;&#1089;&#1086;&#1085;&#1072;&#1083;&#1100;&#1085;&#1099;&#1081; &#1073;&#1072;&#1083;&#1072;&#1085;&#1089;[\s\S]*?<div class="balance_[^>]*>([\S\s]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
-    //Теперь получим кредитный лимит (Уровень кредита|Кредитный лимит):
-    getParam(text, result, 'credit', /(?:&#1059;&#1088;&#1086;&#1074;&#1077;&#1085;&#1100; &#1082;&#1088;&#1077;&#1076;&#1080;&#1090;&#1072;|&#1050;&#1088;&#1077;&#1076;&#1080;&#1090;&#1085;&#1099;&#1081; &#1083;&#1080;&#1084;&#1080;&#1090;):([\S\s]*?)<\/tr>/i, replaceTagsAndSpaces, parseBalance);
     
 
     //Начислено абонентской платы по тарифному плану:
@@ -1080,7 +1090,7 @@ function megafonServiceGuidePhysical(filial, sessionid, text){
 			/(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\/td>/i,
 			/(?:[\s\S]*?<td[^>]*>){6}([\s\S]*?)<\/td>/i,
         ];
-        var rows = sumParam(text, null, null, /<tr[^>]*>[\s\S]*?<\/tr>/ig, null, html_entity_decode);
+        var rows = sumParam(text, null, null, /<tr[^>]*>[\s\S]*?<\/tr>/ig, replaceHtmlEntities);
 		var reOption = /<tr[^>]*>(?:(?:[\s\S](?!<\/tr>))*?<td[^>]*>\s*<div[^>]+class="td_def"[^>]*>){3}[\s\S]*?<\/tr>/i;
         for(var i=0; i<rows.length; ++i){
 		    var row = rows[i];
@@ -1111,7 +1121,7 @@ function megafonServiceGuidePhysical(filial, sessionid, text){
 						sumOption(colnum, row, result, 'mins_sng_total', 'mins_sng_left', '.', parseMinutes);
 					else if(/мин по России/i.test(name))
 						sumOption(colnum, row, result, 'mins_country_total', 'mins_country_left', '.', parseMinutes);
-					else if(/внутри сети|\.\s*мегафон/i.test(name) && !/мтс/i.test(name)) //мегафон не должен быть сначала. А то перепутается с названием тарифа
+					else if(/внутри сети|\.\s*мегафон|на МегаФон/i.test(name) && !/мтс/i.test(name)) //мегафон не должен быть сначала. А то перепутается с названием тарифа
 						sumOption(colnum, row, result, 'mins_net_total', 'mins_net_left', '.', parseMinutes);
 					else{
 				        AnyBalance.trace('Минуты ' + name + ', относим к просто минутам');
@@ -1256,7 +1266,7 @@ function megafonServiceGuidePhysical(filial, sessionid, text){
 				'SUBSCRIBER_MSISDN':phone
         	}, addHeaders({Referer: baseurl + 'SCC/SC_BASE_LOGIN'}));
 
-			var tbody = getParam(text, null, null, /(?:Опции группы|&#1054;&#1087;&#1094;&#1080;&#1080; &#1075;&#1088;&#1091;&#1087;&#1087;&#1099;)[\s\S]*?(<tbody>[\s\S]*?<\/tbody>)/i, null, html_entity_decode);
+			var tbody = getParam(text, null, null, /(?:Опции группы|&#1054;&#1087;&#1094;&#1080;&#1080; &#1075;&#1088;&#1091;&#1087;&#1087;&#1099;)[\s\S]*?(<tbody>[\s\S]*?<\/tbody>)/i, replaceHtmlEntities);
 			if(tbody)
 			{
 				AnyBalance.trace('Получили таблицу услуг...');
@@ -1272,7 +1282,7 @@ function megafonServiceGuidePhysical(filial, sessionid, text){
 					if(/checked/i.test(tr))
 					{
 						AnyBalance.trace('Нашли ' + ++checkedLen + ' отмеченных элементов в таблице');
-						var optName = getParam(tr, null, null, /<TMP_PACK_NAME>([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
+						var optName = getParam(tr, null, null, /<TMP_PACK_NAME>([\s\S]*?)<\//i, replaceTagsAndSpaces);
 						AnyBalance.trace('Опция ' + optName);
 						if(!foundInternetPacketOptions[optName]){
 							if(/^Интернет \w+$/i.test(optName))
@@ -1322,24 +1332,14 @@ function getPropVal(html, text){
 }
 
 function parseMinutes(str){
-    var _str = html_entity_decode(str);
-    var matches = /([\d.]+)\s*мин\w*\s*([\d.]+)\s*сек/i.exec(_str), val;
-    if(!matches || matches[0]=='')
-        matches = /(\d+):(\d+)/i.exec(_str);
-    if(!matches)
-        matches = /([\d.]+)\s*мин/i.exec(_str);
-    if(!matches)
-        matches = /()([\d.]+)\s*сек/i.exec(_str);
-    if(!matches)
-        matches = /([\d.]+)/i.exec(_str);
-    if(matches)
-        val = (matches[1] ? +matches[1] : 0)*60 + (matches[2] ? +matches[2] : 0);
+	var _str = html_entity_decode(str);
+	val = AB.parseMinutes(_str);
     if(isset(val)){
-	if(val > 1000000){
+		if(val > 1000000){
             AnyBalance.trace('Parsed ' + val + ' seconds from ' + str + ' (' + _str + '). Это безлимитные минуты, пропускаем.');
 	    val = undefined;
 	}else
-            AnyBalance.trace('Parsed ' + val + ' seconds from ' + str + ' (' + _str + ')');
+        AnyBalance.trace('Parsed ' + val + ' seconds from ' + str + ' (' + _str + ')');
     }else
         AnyBalance.trace('Failed to parse seconds from ' + str + ' (' + _str + ')');
     return val;
@@ -1480,12 +1480,12 @@ function aggregate_sum_minutes(values){
  */
 function parseTrafficExMega(text, thousand, order, defaultUnits){
     var _text = html_entity_decode(text.replace(/\s+/g, ''));
-    var val = getParam(_text, null, null, /(-?\.?\d[\d\.,]*)/, replaceFloat, parseFloat);
+    var val = getParam(_text, null, null, /(-?\.?\d[\d\.,]*)/, replaceTagsAndSpaces, parseBalance);
     if(!isset(val)){
         AnyBalance.trace("Could not parse traffic value from " + text);
         return;
     }
-    var units = getParam(_text, null, null, /([kmgкмгт][бb]?|[бb](?![\wа-я])|байт|byte)/i);
+    var units = getParam(_text, null, null, /([kmgкмг][бb]?|[бb](?![\wа-я])|байт|byte)/i);
     if(!units && !defaultUnits){
         AnyBalance.trace("Could not parse traffic units from " + text);
         return;
@@ -1574,67 +1574,128 @@ function initialize(filial){
 }
 
 function isLoggedInLK(html){
-	return /app-id=ru.megafon.mlk/i.test(html) && /logout/i.test(html);
+	return /<title[^>]*>\s*Главная страница[^<]+Личный кабинет/i.test(html) && /logout/i.test(html);
 }
 
 function isLoggedInSG(html){
 	return /CLOSE_SESSION/i.test(html);
 }
 
+function processStopContent(result){
+	if(AnyBalance.isAvailable('status_stop_content')){
+		AnyBalance.trace('Получаем статус услуги Стоп-контент');
+		var html = AnyBalance.requestGet(lk_url + 'options/additional/', g_headers);
+		var servicesGroups = getElements(html, /<div[^>]+gadget_options_table/ig);
+		for(var i=0; i<servicesGroups.length; ++i){
+			var serviceStop = getElements(servicesGroups[i].substr(1), [/<div/ig, /Запрет платных контентных|стоп-контент|ad\/stop|stop_content/i])[0];
+			if(serviceStop){
+				getParam(serviceStop, result, 'status_stop_content', /<(?:p[^>]+gadget_options_close|i[^>]+lk_svg_ok_mini)[^>]*>([\s\S]*?)<\/p>/i, replaceTagsAndSpaces);
+				break;
+			}
+		}
+		if(i >= servicesGroups.length){
+			AnyBalance.trace('Услуга Стоп-контент вообще не найдена: ' + html);
+		}
+	}
+}
+
+function checkLKPhone(html){
+	var prefs = AnyBalance.getPreferences();
+	var phone = getJsonObject(html, /var\s+HISTONE_ENV\s*=/i);
+	checkLKPhone.phone = phone.MSISDN;
+	if(!phone || !checkLKPhone.phone)
+		return;
+    if(checkLKPhone.phone.indexOf(prefs.login) >= 0)
+    	return true;
+    return false;
+}
+
+function fixCookies(){
+	//Надо исправить работу куки (пропали кавычки)
+	var cookies = AnyBalance.getCookies();
+	var repaired = false;
+	for(var i=0; i<cookies.length; ++i){
+		var c = cookies[i];
+		if(/^APP-VERSION/i.test(c.name) && !/^"/.test(c.value)){
+			var newval = '"' + c.value + '"';
+			AnyBalance.trace('Исправляем куки ' + c.name + ' на ' + newval);
+			AnyBalance.setCookie(c.domain, c.name, newval, c);
+			repaired = true;
+		}
+	}
+	return repaired;
+}
+
 function enterLK(filial, options){
 	var prefs = AnyBalance.getPreferences();
+	AnyBalance.setDefaultCharset('utf-8');
 	AnyBalance.trace('Пробуем войти в новый ЛК...');
 	
 	var baseurl = lk_url;
 	
 	var html = AnyBalance.requestGet(baseurl, g_headers);
 	if(isLoggedInLK(html)){
-		var phone = getParam(html, null, null, /<div[^>]+private-office-info-phone[^>]*>([\s\S]*?)<\/div>/i, [replaceTagsAndSpaces, replaceHtmlEntities, /\D/g, '']);
-		AnyBalance.trace('Автоматически зашли в личный кабинет на номер ' + phone);
-		if(!phone){
+		var phoneOk = checkLKPhone(html);
+		AnyBalance.trace('Автоматически зашли в личный кабинет на номер ' + checkLKPhone.phone);
+		if(!isset(phoneOk)){
 			AnyBalance.trace(html);
 			AnyBalance.trace('Не удалось определить номер... Будем входить по логину и паролю.');
 			removeAllLKCookies();
 			html = AnyBalance.requestGet(baseurl + 'login/', g_headers);
-		}else if(phone.indexOf(prefs.login) >= 0){
+		}else if(phoneOk === true){
 			AnyBalance.trace('Номер правильный. Используем этот вход.');
 		}else{
 			AnyBalance.trace('Номер неправильный (нужен ' + prefs.login + '). Будем входить по логину и паролю.');
+			megafonLKTurnOffAutoLogin();
 			removeAllLKCookies();
 			html = AnyBalance.requestGet(baseurl + 'login/', g_headers);
 		}
 	}
 	if(!isLoggedInLK(html)){
-		var token = getParam(html, null, null, /name=CSRF value="([^"]+)/i);
-		if(!token)
+		var form = getElement(html, /<form[^>]+dologin[^>]*>/i);
+		if(!form){
+			var error = getElement(html, /<[^>]+megafon-error-top/i, replaceTagsAndSpaces);
+			if(error)
+				throw new AnyBalance.Error(error);
 			AnyBalance.trace(html);
+		    throw new AnyBalance.Error('Не удалось найти форму авторизации. Сайт изменен?', true);
+		}
+
+		var params = AB.createFormParams(form, function(params, str, name, value) {
+			if (/username/i.test(name)) {
+				return prefs.login;
+			} else if (/password/i.test(name)) {
+				return prefs.password;
+			}
+	    
+			return value;
+		});
+
 		
-		checkEmpty(token, 'Не удалось найти токен авторизации ЛК!', true);
-		
-		html = AnyBalance.requestPost(baseurl + 'dologin/', {
-			j_username:options.login,
-			j_password:options.password,
-			CSRF:token,
-		}, addHeaders({Referer: baseurl + 'login/'}));
+		html = AnyBalance.requestPost(baseurl + 'dologin/', params, addHeaders({Referer: baseurl + 'login/'}));
+		fixCookies();
 	}	
 
 	if (!isLoggedInLK(html) && !isLoggedInSG(html)) {
-		var error = getParam(html, null, null, /login-warning[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
-		if (!error)
-			error = getParam(html, null, null, /<div[^>]+mf-error[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+		var error = getElement(html, /<[^>]*(?:login-warning|ui-result-message|mf-error|megafon-error-top)/i, replaceTagsAndSpaces);
 		if (error)
-			throw new AnyBalance.Error(error, null, /(?:Неверный|Неправильный) логин\/пароль/i.test(error));
+			throw new AnyBalance.Error(error, null, /парол|заблокирован/i.test(error));
 		
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в новый личный кабинет. Сайт изменен или на этом номере он не поддерживается.');
 	}
 			
 	var sessionid = getParam(html, null, null, /SESSION_ID=([^&"]+)/i);
+	var phoneOk = checkLKPhone(html);
+	if(!phoneOk){
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удаётся зайти в ЛК на нужный номер. Входит на номер ' + checkLKPhone.phone);
+	}
 
 	try{
 		if(options.useOldSG){
 			var sghtml = html;
-			var href = getParam(sghtml, null, null, /href="\/redirect\/sg\/index"/i, replaceTagsAndSpaces, html_entity_decode);
+			var href = getParam(sghtml, null, null, /href="\/redirect\/sg\/index"/i, replaceTagsAndSpaces);
 			// Не у всех доступен новый ЛК, если у юзера он не подключен, та нас редиректит сразу в старый кабинет
 	    
 			if(href || sessionid) {
@@ -1722,14 +1783,14 @@ function changePasswordSG(filial, sessionid, frompass, topass){
         CUR_SUBS_MSISDN:phone
     }, addHeaders({Referer: baseurl + 'SCC/SC_BASE_LOGIN'}));
 
-   	var action_result = getParam(text, null, null, /<div[^>]+class="action_result"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+   	var action_result = getParam(text, null, null, /<div[^>]+class="action_result"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
    	AnyBalance.trace("Result: " + action_result);
 
     //Пароль успешно изменен
     if(/&#1055;&#1072;&#1088;&#1086;&#1083;&#1100; &#1091;&#1089;&#1087;&#1077;&#1096;&#1085;&#1086; &#1089;&#1084;&#1077;&#1085;&#1077;&#1085;/i.test(text))
 		return true;
 
-    var error = getParam(text, null, null, /<STRONG[^>]+class="attention">([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+    var error = getParam(text, null, null, /<STRONG[^>]+class="attention">([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
     if(error)
 		throw new AnyBalance.Error(error);
 
@@ -1753,7 +1814,7 @@ function enterSG(filial, options){
         throw new AnyBalance.Error('Не удаётся найти форму входа в Сервис-гид. Сайт изменен?');
     }
 
-    var psid = getParam(form, null, null, /<input[^>]+name="PHPSESSID"[^>]*value="([^"]*)/i, null, html_entity_decode);
+    var psid = getParam(form, null, null, /<input[^>]+name="PHPSESSID"[^>]*value="([^"]*)/i, replaceHtmlEntities);
     var code;
     if(psid){
 	var imgurl = baseurl + "ps/scc/php/cryptographp.php?PHPSESSID=" + psid + '&ref=' + (Math.round(1E3 * Math.random()) + 1) + '&w=137';
@@ -1794,18 +1855,18 @@ function enterSG(filial, options){
 }
 
 function getSessionIdFromSGLogin(html){
-    var errid = getParam(html, null, null, /<ERROR_ID>(.*?)<\/ERROR_ID>/i, replaceTagsAndSpaces, html_entity_decode);
+    var errid = getParam(html, null, null, /<ERROR_ID>(.*?)<\/ERROR_ID>/i, replaceTagsAndSpaces);
     if(errid){
         AnyBalance.trace('Got error from sg: ' + errid);
 
         if(errid == '60020011')
-            throw new AnyBalance.Error('Пользователь заблокирован. Для разблокировки наберите команду *105*00# и нажмите клавишу вызова, новый пароль будет отправлен Вам в SMS.');
+            throw new AnyBalance.Error('Пользователь заблокирован. Для разблокировки наберите команду *105*00# и нажмите клавишу вызова, новый пароль будет отправлен Вам в SMS.', null, true);
 
         //Случилась ошибка, может быть мы можем даже увидеть её описание
-	var error = getParam(html, null, null, /<ERROR_MESSAGE>(.*?)<\/ERROR_MESSAGE>/i, replaceTagsAndSpaces, html_entity_decode);
+	var error = getParam(html, null, null, /<ERROR_MESSAGE>(.*?)<\/ERROR_MESSAGE>/i, replaceTagsAndSpaces);
         if(error){
             AnyBalance.trace('Got error message from sg: ' + error);
-            throw new AnyBalance.Error(error, null, /неправильный пароль|Абонент не найден/i.test(html));
+            throw new AnyBalance.Error(error, null, /неправильный пароль|Абонент не найден|Пользователь заблокирован/i.test(html));
         }
 
         errid = "error_" + Math.abs(parseInt(errid));
@@ -1816,7 +1877,7 @@ function getSessionIdFromSGLogin(html){
         throw new AnyBalance.Error(g_login_errors.error_0);
     }
 
-    var sessionid = getParam(html, null, null, /<SESSION_ID>(.*?)<\/SESSION_ID>/i, replaceTagsAndSpaces, html_entity_decode);
+    var sessionid = getParam(html, null, null, /<SESSION_ID>(.*?)<\/SESSION_ID>/i, replaceTagsAndSpaces);
     if(!sessionid){
 	AnyBalance.trace(html);
         throw new AnyBalance.Error('Не удалось получить сессию'); //Странный ответ, может, можно переконнектиться потом
@@ -1845,7 +1906,7 @@ function turnOffNotificationSMSSG(filial, sessionid, login){
     if(row){
         if(/<input[^>]+id="idSMSCheck_\d+"[^>]*checked/i.test(row)){
         	AnyBalance.trace('Уведомление по смс о входе разрешено. Запрещаем его, чтобы не парило мозг.');
-        	var snev = getParam(row, null, null, /<input[^>]+name="P_SNEV_ID_LIST"[^>]*value="([^"]*)/i, null, html_entity_decode);
+        	var snev = getParam(row, null, null, /<input[^>]+name="P_SNEV_ID_LIST"[^>]*value="([^"]*)/i, replaceHtmlEntities);
         	text = AnyBalance.requestPost(baseurl + 'SCWWW/SMS_NG_ACTION', {
         		'RECIPIENT':'',
         		'P_SNEV_ID_LIST':snev,
@@ -1859,7 +1920,7 @@ function turnOffNotificationSMSSG(filial, sessionid, login){
 		'CUR_SUBS_MSISDN':login,
         		'SUBSCRIBER_MSISDN':login
         	}, addHeaders({Referer: baseurl + 'SCC/SC_BASE_LOGIN'}));
-        	var action_result = getParam(text, null, null, /<div[^>]+class="action_result"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+        	var action_result = getParam(text, null, null, /<div[^>]+class="action_result"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
         	AnyBalance.trace("Result: " + action_result);
         }else if(/<input[^>]+id="idSMSCheck_/i.test(row)){
 		AnyBalance.trace('Уведомление по смс о входе отключено. И отлично.');
@@ -1900,76 +1961,128 @@ function allowRobotsSG(filial, sessionid, login){
 		'CUR_SUBS_MSISDN':login,
         	'SUBSCRIBER_MSISDN':login
         }, addHeaders({Referer: baseurl + 'SCC/SC_BASE_LOGIN'}));
-        var action_result = getParam(text, null, null, /<div[^>]+class="action_result"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+        var action_result = getParam(text, null, null, /<div[^>]+class="action_result"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
         AnyBalance.trace("Result: " + action_result);
     }
+}
+
+function getLkCsrf(html){
+	var info = getJsonObject(html, /var\s+HISTONE_ENV\s*=\s*/);
+	var csrf = info.CSRF;
+	if(!csrf){
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удалось найти параметр запросов к API личного кабинета');
+	}
+	return csrf;
 }
 
 //Получение данных из ЛК мегафона
 function megafonLK(filial, html){
 	var result = {success: true, filial: filial_info[filial].id};
 
-	getParam(html, result, 'phone', /<div[^>]*private-office-info-phone[^>]*>([\s\S]*?)<\/div>/i, replaceNumber, html_entity_decode);
-	getParam(html, result, 'credit', /<div[^>]*private-office-limit[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'balance', /Баланс([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'available', /Доступно([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'bonus_balance', /Бонусные баллы([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, '__tariff', />\s*Тариф([\s\S]*?)<\/div>/i, [replaceTagsAndSpaces, /^&laquo;(.*)&raquo;$/, '$1'], html_entity_decode);
+	getParam(getElement(html, /<div[^>]+class="gadget_account_block"[^>]*>/i), result, 'phone', /<h3[^>]*>([\s\S]*?)<\/h3>/i, replaceNumber);
 
+	var csrf = getLkCsrf(html);
+
+	if(AnyBalance.isAvailable('available', 'balance')){
+		info = requestPipe(csrf, 'lk/balance/get');
+		getParam(info.balance, result, 'available');
+		getParam(info.balance, result, 'balance');
+	}
+
+	if(AnyBalance.isAvailable('bonus_balance')){
+		info = requestPipe(csrf, 'lk/main/bonuses');
+		getParam(info.balance, result, 'bonus_balance');
+	}
+
+	if(AnyBalance.isAvailable('balance', 'credit')){
+		info = requestPipe(csrf, 'lk/main/atourexpense');
+		getParam(info.balance, result, 'balance');
+		getParam(info.limit, result, 'credit');
+	}
+	
+	if(isAvailable(['__tariff'])){
+		html = AnyBalance.requestGet(lk_url + 'tariff/', addHeaders({Referer: lk_url}));
+		getParam(getElement(html, /<h2/i), result, '__tariff', null, [/<svg[\s\S]*?<\/svg>/i, '', replaceTagsAndSpaces]);
+	}
+		
 	if(AnyBalance.isAvailable('mins_n_free', 'mins_net_left', 'mins_left', 'mins_total', 'mms_left', 'mms_total', 'sms_left', 'sms_total', 
 			'gb_with_you', 'internet_left', 'internet_total', 'internet_cur', 'internet_left_night', 'internet_total_night', 'interent_cur_night')){
 		html = AnyBalance.requestGet(lk_url + 'remainders/', g_headers);
 		megafonLKRemainders(filial, html, result);
 	}
 
-	if(AnyBalance.isAvailable('bonus_burn')){
+	if(AnyBalance.isAvailable(/*'bonus_burn', */'bonus_status')){
 		html = AnyBalance.requestGet(lk_url + 'bonus/', g_headers);
-		getParam(html, result, 'bonus_burn', /<div[^>]+gadget-bonus-summ-2[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+//		getParam(html, result, 'bonus_burn', /<div[^>]+gadget-bonus-summ-2[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+		getParam(html, result, 'bonus_status', /<div[^>]+gadget_bonus_status[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
 	}
 
-	if(AnyBalance.isAvailable('sub_soi', 'sub_smit', 'sub_smio', 'sub_scl', 'sub_scr', 'internet_cost',
-			'last_pay_sum', 'last_pay_date')){
-//		html = AnyBalance.requestGet(lk_url + 'historyNew/', g_headers);
-		megafonLKFinance(filial, html, result);
+	if(AnyBalance.isAvailable('sub_soi', 'sub_smit', 'sub_smio', 'sub_scl', 'sub_scr', 'internet_cost',	'last_pay_sum', 'last_pay_date')) {
+		//html = AnyBalance.requestGet(lk_url + 'historyNew/', g_headers);
+		try {
+			megafonLKFinance(csrf, filial, html, result);
+		} catch(e) {
+			AnyBalance.trace('Не удалось получить данные по финансовым остаткам.');
+		}
 	}
 
-	megafonLKTurnOffSMSNotification(html);
+	processStopContent(result);
+
+	megafonLKTurnOffSMSNotification(csrf);
 
 	setCountersToNull(result);
 	AnyBalance.setResult(result);
 }
 
 function megafonLKRemainders(filial, html, result){
-	var remGroups = getElements(html, /<div[^>]+class="gadget-remainders-color[^>]*>/ig);
+	var remGroups = getElements(html, /<div[^>]+class="mf-gadget-remainders"[^>]*>/ig);
 	AnyBalance.trace('Найдено ' + remGroups.length + ' групп остатков услуг');
 
 	for(var i=0; i<remGroups.length; ++i){
 		var rg = remGroups[i];
-		var gname = getElement(rg, /<h1[^>]*>/i, replaceTagsAndSpaces, html_entity_decode);
+		var gname = getElement(rg, /<h2[^>]*>/i, replaceTagsAndSpaces);
 		
-		var rows = getElements(rg, /<div[^>]+gadget-remainders-row[^>]*>/ig);
-		AnyBalance.trace('Группа ' + gname + ' содержит ' + (rows.length-1) + ' подуслуг');
+		var rows = getElements(rg, /<(?:h2|div[^>]+mf-gadget-remainders-box)/ig);
+		AnyBalance.trace('Группа ' + gname + ' содержит ' + rows.length + ' подуслуг и их заголовков');
 
 		for(var j=0; j<rows.length; ++j){
 			var row = rows[j];
-			if(/gadget-remainders-mobile-del/i.test(row))
-				continue; //Заголовок пропускаем
 
-			var rname = getElement(row, /<div[^>]+gadget-remainders-td-name[^>]*>/i, replaceTagsAndSpaces, html_entity_decode);
-			var total = getParam(row, null, null, /<div[^>]+gadget-remainders-td-2[^>]*>([\s\S]*?)<\/div>/i, [/<span[^>]+gadget-remainders-mobile-name[^>]*>[\s\S]*?<\/span>/i, '']);
-			var left = getParam(row, null, null, /<div[^>]+gadget-remainders-td-3[^>]*>([\s\S]*?)<\/div>/i, [/<span[^>]+gadget-remainders-mobile-name[^>]*>[\s\S]*?<\/span>/i, '']);
-			var units = getParam(left, null, null, /<span[^>]*>([^<]*)<\/span>\s*$/i, replaceTagsAndSpaces, html_entity_decode);
+			if(/^<h2/i.test(row)){
+				var h = replaceAll(row, replaceTagsAndSpaces);
+				if(h){
+					AnyBalance.trace('Новый заголовок услуг: ' + h);
+					//Почему некоторые слова попадают в заголовок группы услуг, непонятно. Надо их исключить
+					gname = replaceAll(h, [/Автопродление/ig, '']);
+				}
+				continue;
+			}
+				
+//			if(/gadget-remainders-mobile-del/i.test(row))
+//				continue; //Заголовок пропускаем
+
+			var rname = getParam(row, null, null, /<h5[^>]*>\s*Услуга[\s\S]*?<p[^>]*>([\s\S]*?)<\/p>/i, replaceTagsAndSpaces);
+			var vol = getParam(row, null, null, /<h5[^>]*>\s*Остаток[\s\S]*?<p[^>]*>([\s\S]*?)<\/p>/i, replaceTagsAndSpaces);
+
+			var total = getParam(vol, null, null, /\/([\s\S]*)/);
+			var units = parseCurrency(total);
+
+			var left = getParam(vol, null, null, /[^\/]*/) + units;
+
 			var name = gname + ' ' + rname;
 
 			AnyBalance.trace('Обработка услуги ' + gname + ':' + rname);
 
 			// Минуты
-			if(/мин/i.test(units)) {
+			if((/мин|сек/i.test(units) && (/Минут/i.test(name) || !/интернет/i.test(name) || /больше Интернета/i.test(name))) || (/шт/i.test(units) && /минут/i.test(rname) && !/СМС|SMS|ММС|MMS/i.test(rname))) {
 				var val = getParam(left, null, null, null, replaceTagsAndSpaces, parseBalance);
 				if(val >= 0){
-					if(/бесплат/i.test(name)) {
+					if(/в сутки/i.test(name)) {
+						getParam(left, result, 'mins_day', null, replaceTagsAndSpaces, parseMinutes);
+					}else if(/бесплат/i.test(name)) {
 						getParam(left, result, 'mins_n_free', null, replaceTagsAndSpaces, parseMinutes);
-					}else if((/\.\s*МегаФон|на Мегафон/i.test(name) && !/МТС/i.test(name))
+					}else if((/\.\s*МегаФон|на МегаФон|на МФ/i.test(name) && !/МТС/i.test(name) && !/стационар/i.test(name))
 							|| /внутри сети/i.test(name)) {
 						sumParam(left, result, 'mins_net_left', null, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
 					} else {
@@ -1996,9 +2109,18 @@ function megafonLKRemainders(filial, html, result){
 					sumParam(total, result, 'sms_total', null, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 				}
 			// Трафик
-			} else if(/([kmgкмгт][бb]?|[бb](?![\wа-я])|байт|byte)/i.test(units)) {
+			} else if(/([kmgtкмгт][бb]|[бb](?![\wа-я])|байт|byte)/i.test(units)) {
 				if(/Гигабайт в дорогу/i.test(name)) {
 					getParam(left, result, 'gb_with_you', null, replaceTagsAndSpaces, parseTraffic);
+				}else if(/Интернет в роуминге/i.test(name)) {
+					if(/Остальные страны/i.test(name))
+						getParam(left, result, 'internet_roam_other', null, replaceTagsAndSpaces, parseTraffic);
+					else if(/Популярные страны/i.test(name))
+						getParam(left, result, 'internet_roam_popular', null, replaceTagsAndSpaces, parseTraffic);
+					else if(/ЕВРОПА/i.test(name))
+						getParam(left, result, 'internet_roam_europe', null, replaceTagsAndSpaces, parseTraffic);
+				}else if(/Автопродление/i.test(name)) {
+					getParam(left, result, 'internet_auto_prolong', null, replaceTagsAndSpaces, parseTraffic);
 				} else {
 					var suffix = '';
 					if(/ноч/i.test(name)) suffix = '_night';
@@ -2007,6 +2129,12 @@ function megafonLKRemainders(filial, html, result){
 					
 					var internet_left = getParam(left, null, null, null, replaceTagsAndSpaces, parseTraffic);
 					var internet_total = getParam(total, null, null, null, replaceTagsAndSpaces, parseTraffic);
+
+					if(!unlim)
+						unlim = (internet_total >= 5000000); //Больше 5000 ТБ это же явно безлимит
+					if(unlim)
+						AnyBalance.trace('пропускаем безлимит трафика: ' + name + ' ' + left + '/' + total);
+
 					if(isset(internet_left) && !unlim)
 						sumParam(internet_left, result, 'internet_left' + suffix, null, null, null, aggregate_sum);
 					if(isset(internet_total) && !unlim)
@@ -2028,7 +2156,7 @@ function megafonLKRemainders(filial, html, result){
 				}
 			// Ошибка 
 			} else {
-				AnyBalance.trace('Неизвестные единицы измерений: ' + units + ' опция: ' + name + ': '  + row);
+				AnyBalance.trace('Неизвестные единицы измерений: ' + units + ', опция: ' + name + ': '  + row);
 			}
 		}
 	}
@@ -2039,7 +2167,12 @@ function megafonLKRemainders(filial, html, result){
 	for(i=0; i<discounts.length; ++i){
 		var discount = discounts[i];
 		if(/до ограничения скорости осталось/i.test(discount)){
-			sumParam(discount, result, 'internet_left', /до ограничения скорости осталось(.*?)(?:-|$)/i, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
+			if(AnyBalance.isAvailable('internet_left') && isset(result.internet_left)){
+				AnyBalance.trace(discount);
+				AnyBalance.trace('Интернет встретился второй раз. Скорее всего дублирование, пропускаем');
+			}else{
+				sumParam(discount, result, 'internet_left', /до ограничения скорости осталось(.*?)(?:-|$)/i, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
+			}
 			sumParam(discount, result, 'internet_till', /действует до(.*)/i, replaceTagsAndSpaces, parseDate, aggregate_min);
 		}else{
 			AnyBalance.trace('Неизвестная скидка: ' + discount);
@@ -2054,12 +2187,7 @@ function requestPipe(csrf, addr, get, post){
 	if(!post)
 		get._ = new Date().getTime();
 
-    var url = lk_url + 'pipes/lk/' + addr + '?';
-    var params = '';
-	for(var name in get){
-		params += (params ? '&' : '') + encodeURIComponent(name) + '=' + encodeURIComponent('' + get[name]);
-	}
-	url += params;
+    var url = lk_url + 'api/' + addr + '?' + AB.createUrlEncodedParams(get || {});
 
 	var html;
 	if(post){
@@ -2072,11 +2200,9 @@ function requestPipe(csrf, addr, get, post){
 	return json;
 }
 
-function megafonLKFinance(filial, html, result){
-	var csrf = getParam(html, null, null, /CSRF_PARAM\s*=\s*"([^"]*)/, replaceSlashes);
-	 
+function megafonLKFinance(csrf, filial, html, result){
 	if(AnyBalance.isAvailable('sub_soi', 'sub_smit', 'sub_smio', 'sub_scl', 'sub_scr', 'internet_cost')){
-		var json = requestPipe(csrf, 'reports/expenses');
+		var json = requestPipe(csrf, 'lk/reports/expenses');
 		AnyBalance.trace('Parsing expenses: ' + JSON.stringify(json));
 
 		for(var group in json.expenseGroups){
@@ -2117,7 +2243,7 @@ function megafonLKFinance(filial, html, result){
 	}
 
 	if(AnyBalance.isAvailable('last_pay_sum', 'last_pay_date')){
-		json = requestPipe(csrf, 'payment/history/list', {OFFSET: 0, SIZE: 5});
+		json = requestPipe(csrf, 'payments/history/list', {offset: 0, size: 5});
 		if(json.payments && json.payments.length){
 			getParam(json.payments[0].amount, result, 'last_pay_sum');
 			getParam(json.payments[0].date, result, 'last_pay_date', null, null, parseDate);
@@ -2133,16 +2259,14 @@ function removeAllLKCookies(){
 	}
 }
 
-function megafonLKTurnOffSMSNotification(html){
+function megafonLKTurnOffSMSNotification(csrf){
 
     function getSMSHash(csrf){
 		var json = requestPipe(csrf, 'check/sms');
 		return json.hash;
 	}
 
-//	var html = AnyBalance.requestGet(lk_url + 'settings/notification/', g_headers);
-	var csrf = getParam(html, null, null, /CSRF_PARAM\s*=\s*"([^"]*)/, replaceSlashes);
-	var json = requestPipe(csrf, 'userProfile/settings/notifications');
+	var json = requestPipe(csrf, 'profile/notifications');
 	
 	var on = json.notify;
 	if(!on){
@@ -2154,7 +2278,7 @@ function megafonLKTurnOffSMSNotification(html){
 
 	var hash = getSMSHash(csrf);
 
-	var json = requestPipe(csrf, 'userProfile/settings/notifications', null, {NOTIFY: 'false'});
+	var json = requestPipe(csrf, 'profile/notifications', null, {status: 'false'});
 	if(!json.ok){
 		AnyBalance.trace('Запрос на выключение сработал неудачно: ' + info);
 	}
@@ -2170,7 +2294,7 @@ function megafonLKTurnOffSMSNotification(html){
 			AnyBalance.sleep(4000);
 	}
 
-	var json = requestPipe(csrf, 'userProfile/settings/notifications');
+	var json = requestPipe(csrf, 'profile/notifications');
 	if(json.notify === false){
 		AnyBalance.trace('Уведомление выключено успешно!');
 	}else{
@@ -2178,18 +2302,74 @@ function megafonLKTurnOffSMSNotification(html){
 	}
 }
 
+function megafonLKTurnOffAutoLogin(csrf){
+	if(!csrf){
+		var html = AnyBalance.requestGet(lk_url + 'settings/login/', addHeaders({Referer: lk_url}));
+		csrf = getLkCsrf(html);
+	}
+		
+    function getLoginHash(csrf){
+		var json = requestPipe(csrf, 'check/autologin');
+		return json.hash;
+	}
+
+	var json = requestPipe(csrf, 'lk/autologin/status');
+	
+	var on = json.allowAutologin;
+	if(!on){
+		AnyBalance.trace('Автовход выключен. И отлично.');
+		return;
+	}	
+
+    AnyBalance.trace('Автовход включен. К сожалению, теперь с автовходом нельзя попасть на другой номер, не отключив его. Попытаемся отключить.');
+
+	var hash = getLoginHash(csrf);
+
+	var json = requestPipe(csrf, 'lk/autologin/status', null, {ALLOW_AUTOLOGIN: '0'});
+	if(!json.ok){
+		AnyBalance.trace('Запрос на выключение сработал неудачно: ' + info);
+	}
+
+	var tries = 5;
+	while(tries--){
+		var newHash = getLoginHash(csrf);
+		if(newHash != hash){
+			break; //Наверное, переключилось
+		}
+		AnyBalance.trace('Ждем результата. Запас терпения: ' + tries);
+		if(tries > 0)
+			AnyBalance.sleep(4000);
+	}
+
+	var json = requestPipe(csrf, 'lk/autologin/status');
+	if(json.allowAutologin == "0"){
+		AnyBalance.trace('Автовход выключен успешно!');
+	}else{
+		AnyBalance.trace('Результат выключения автовхода, к сожалению, неизвестен: ' + info);
+	}
+}
+
 var g_countersTable = {
 	common: {
 		"balance": "balance",
+		"available": "available",
 		"mins_left": "remainders.mins_left",
 		"mins_net_left": "remainders.mins_net_left",
 		"mins_n_free": "remainders.mins_n_free",
+		"mins_day": "remainders.mins_day",
 		"internet_left": "remainders.internet_left",
 		"internet_left_night": "remainders.internet_left_night",
 		"sms_left": "remainders.sms_left",
 		"mms_left": "remainders.mms_left",
 		"bonus_balance": "bonus_balance",
+		"bonus_status": "bonus_status",
+		"bonus_burn": "bonus_burn",
+		"status_stop_content": "status_stop_content",
 		"gb_with_you": "remainders.gb_with_you",
+		"internet_roam_other": "remainders.internet_roam_other",
+		"internet_roam_popular": "remainders.internet_roam_popular",
+		"internet_roam_europe": "remainders.internet_roam_europe",
+		"internet_auto_prolong": "remainders.internet_auto_prolong",
 		"internet_cur": "remainders.internet_cur",
 		"internet_cur_night": "remainders.internet_cur_night",
 		"internet_total": "remainders.internet_total",

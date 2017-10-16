@@ -2,16 +2,19 @@
 <provider>
 	<!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
 	<api flags="no_browser" />
-	<id version="1">ab-money-payoneer</id>
+	<id version="3">ab-money-payoneer</id>
 	<name>Bank Payoneer</name>
 	<description>
 	Obtains balance in Bank Payoneer at adress https://myaccount.payoneer.com/
 	</description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+		<module id="framework/reblaze"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>

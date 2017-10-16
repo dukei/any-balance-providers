@@ -7,7 +7,7 @@
 	<p>Предоставляет информацию о балансе Транспортной Карты в г.Казань</p>
 	<p>Информация берется из личного кабинета http://www.transkart.ru/clients/balans</p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

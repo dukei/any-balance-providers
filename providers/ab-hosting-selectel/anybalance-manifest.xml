@@ -1,28 +1,31 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="1.0" version="3">ab-hosting-selectel</id>
+	<id major_version="1.0" version="5">ab-hosting-selectel</id>
 	<api flags="no_browser"/>
-	<name>Селектел (Selectel)</name>
-	<description>
-Получает баланс и информацию об абоненте для хостинга Селектел. Информация берется из личного кабинета https://support.selectel.ru.
-	</description>
-	<author>xandros &lt;xandrosko@gmail.com&gt;</author>
+	<name>Selectel (Хостинг)</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе хостинг-провайдера Selectel https://selectel.ru/</p>
+	<p>Информация берется из личного кабинета https://support.selectel.ru</p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="cloudBalance" name="Баланс на облаке" units="р"/>
-		<counter id="storageBalance" name="Хранилище" units="р"/>
-		<counter id="Balance" name="Баланс" units="р"/>
-		<counter id="vkBalance" name="На приложении" units="голосов"/>
+		<counter id="cloudBalance" name="Баланс на облаке" units=" р"/>
+		<counter id="storageBalance" name="Хранилище" units=" р"/>
+		<counter id="Balance" name="Баланс" units=" р"/>
+		<counter id="vkBalance" name="На приложении" units=" г"/>
 		<counter id="id" name="Номер договора"/>
 		<counter id="username" name="ФИО" type="text"/>
 	</counters>
-	<keywords>интернет, хостинг, облако, сервер</keywords>
+	<keywords>Селектел, интернет, хостинг, облако, сервер</keywords>
 	<type>hosting</type>
 	<country>ru</country>
 </provider>

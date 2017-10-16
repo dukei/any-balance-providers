@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<history>
+	<change version="5" date="2017-10-11">
+	- Улучшена обработка ошибок.
+	</change>
+	<change version="4" date="2017-03-21">
+	- Поддержка изменений на сайте.
+	</change>
+	<change version="3" date="2016-11-21">
+	- Поддержка изменений на сайте.
+	</change>
+  <change version="2" date="2016-03-02">
+    - Добавлен polyfill для метода Array.prototype.find
+  </change>
+</history>

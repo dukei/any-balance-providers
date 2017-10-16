@@ -12,13 +12,17 @@ function main() {
 		bad/100;
 	}
 	
+	if(prefs.fatal_error)
+		throw new AnyBalance.Error('Тест фатальной ошибки', null, true);
+	
 	var result = {
 		success: true,
 		balance: null,
 		date: null,
 		text_counter: null,
-		currency: ' р',
-		hidden: 'hidden counter' // счетчик, который не объявлен в манифесте и он нигде не используется
+		currency: 'р',
+		hidden: 'hidden counter', // счетчик, который не объявлен в манифесте и он нигде не используется
+		__tariff: '__tariff'
 	};
 	
 	AnyBalance.trace('result is: ' + JSON.stringify(result));

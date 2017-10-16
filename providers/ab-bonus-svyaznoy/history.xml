@@ -1,5 +1,36 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="2.0" version="24" date="2017-10-11">
+	- Поддержка изменений на сайте.
+	</change>
+	<change major_version="2.0" version="23" date="2017-07-24">
+	Исправлено получение даты последней операции
+	</change>
+	<change major_version="2.0" version="22" date="2017-03-06">
+	- Поддержка изменений на сайте.
+	</change>
+	<change major_version="2.0" version="21" date="2016-12-27">
+	- Поддержка изменений на сайте.
+	</change>
+	<change major_version="2.0" version="20" date="2016-11-21">
+	- Улучшена обработка ошибок.
+	</change>
+	<change major_version="2.0" version="19" date="2016-11-17">
+	Добавлен элитный статус и срок его активности
+	</change>
+	<change major_version="2.0" version="18" date="2016-11-16">
+	- Поддержка изменений на сайте.
+	</change>
+	<change major_version="2.0" version="17" date="2016-08-03">
+	- Поддержка изменений на сайте.
+	</change>
+	<change major_version="2.0" version="16" date="2016-01-15">
+	Исправлено:
+	 - получение имени
+	-  получение бонусов
+	Удалено:
+	 счётчик количества сообщений (более не предоставляется)
+	</change>
 	<change major_version="2.0" version="15" date="2015-07-01">
 	- Исправлено получение даты последней операции
 	</change>

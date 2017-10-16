@@ -1,16 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
     <EditTextPreference 
-		obligatory="true"
-        title="Логин" 
+        title="Номер телефона (в формате 9001234567)" 
         positiveButtonText="ОК" 
         summary="||{@s}" 
-        dialogTitle="Логин" 
+        dialogTitle="Номер телефона" 
         negativeButtonText="Отмена" 
-        dialogMessage="Введите логин в паспорт http://passport.211.ru"
+        dialogMessage="Введите ваш номер телефона, связанный с личным кабинетом, если вы желаете получать баланс, не только находясь в сети провайдера. В формате 9001234567, 10 цифр без пробелов и разделителей"
         key="login">
     </EditTextPreference>
-    <EditTextPreference 
+<!--    <EditTextPreference 
 		obligatory="true"
         positiveButtonText="ОК"
         key="password" 
@@ -20,5 +19,5 @@
         summary="||***********"
         dialogMessage="Введите пароль, используемый для входа в паспорт http://passport.211.ru"
         inputType="textPassword">
-    </EditTextPreference>
+    </EditTextPreference>         -->
 </PreferenceScreen>

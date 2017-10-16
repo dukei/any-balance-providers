@@ -1,5 +1,21 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="20" date="2017-01-24">
+	Разделен интернет и интернет LTE
+	</change>
+	<change version="19" date="2017-01-16">
+	Округлен расход за месяц до двух знаков
+	</change>
+	<change version="18" date="2017-01-16">
+	Округление рублей в счетчике долга
+	</change>
+	<change version="17" date="2016-12-28">
+	Поддержка Открытого интернета
+	</change>
+	<change version="16" date="2016-12-13">
+	Отделен трафик Смарт box
+	Баланс округлен до 2х знаков после запятой
+	</change>
 	<change version="15" date="2015-12-07">
 	- Улучшено распознавание минут и SMS. 
 	</change>

@@ -21,4 +21,12 @@
 		dialogMessage="Введите пароль, используемый для входа в личный кабинет."
 		inputType="textPassword">
 	</EditTextPreference>
+	<ListPreference
+		key="cabinet"
+		title="Какой кабинет использовать"
+		summary="||{@s}"
+		entries="lk.seven-sky.net|stat.seven-sky.net"
+		entryValues="7sky|gorkom"
+		defaultValue="7sky">
+	</ListPreference>		
 </PreferenceScreen>

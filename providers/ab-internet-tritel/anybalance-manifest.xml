@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-internet-tritel</id>
+	<api flags="no_browser"/>
+	<name>Tritel</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера Tritel http://tritel.net.ru/</p>
+	<p>Информация берется из личного кабинета Tritel http://users.tritel.net.ru/</p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units="₽"/>
+		<counter id="tariff_cost" name="Стоимость тарифа" units="₽"/>
+		<counter id="status" name="Статус" type="text"/>
+		<counter id="phone" name="Телефон" type="text"/>
+		<counter id="address" name="Адрес" type="text"/>
+		<counter id="contract" name="Договор" type="text"/>
+		<counter id="pay_id" name="Платежный ID" type="text"/>
+		<counter id="ip_address" name="IP" type="text"/>
+	</counters>
+	<keywords>internet, tv</keywords>
+	<type>internet</type>
+	<country>ru</country>
+</provider>

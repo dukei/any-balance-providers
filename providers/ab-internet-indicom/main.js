@@ -12,8 +12,8 @@ var g_headers = {
 
 function main(){
     var prefs = AnyBalance.getPreferences();
-    var baseurl = 'http://stat.indikom.ru/';
-	
+    var baseurl = 'https://stat.indikom.ru/';
+
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 	
@@ -28,29 +28,29 @@ function main(){
     html = AnyBalance.requestPost(baseurl, {
         login:prefs.login,
         password:prefs.password,
-	}, addHeaders({Referer: 'http://indikom.ru/index.php'})); 
-	
+	}, addHeaders({Referer: baseurl}));
+
     if(!/logout/i.test(html)) {
-        var error = getParam(html, null, null, /<p[^>]*style='color:red'[^>]*>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
+        var error = getParam(html, null, null, /<p[^>]*style='color:red'[^>]*>([^<]*)/i, replaceTagsAndSpaces);
         if(error)
-            throw new AnyBalance.Error(error);
+            throw new AnyBalance.Error(error, null, /парол/i.test(error));
 		
         throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
     }
 	
     var result = {success: true};
 	
-    getParam(html, result, 'fio', /<td[^>]*>ФИО<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'account', /<td[^>]*>Основной лицевой счет<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'fio', /<td[^>]*>ФИО<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+    getParam(html, result, 'account', /<td[^>]*>Основной лицевой счет<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
     getParam(html, result, 'id', /<td[^>]*>ID<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'balance', /<td[^>]*>Баланс<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'balanceCredit', /<td[^>]*>Кредит<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'nds', /<td[^>]*>НДС<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 	
-    var href = getParam(html, null, null, /menu-inact'[^>]*>\s*<a\s+href='\/([^']*)[^>]*>\s*Тарифы/i, replaceTagsAndSpaces, html_entity_decode);
+    var href = getParam(html, null, null, /menu-inact'[^>]*>\s*<a\s+href='\/([^']*)[^>]*>\s*Тарифы/i, replaceTagsAndSpaces);
 	if(href) {
 		html = AnyBalance.requestGet(baseurl + href, g_headers);
-		getParam(html, result, '__tariff', /Текущий ТП<\/td>(?:[\s\S]*?<td[^>]*>){7}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);    
+		getParam(html, result, '__tariff', /Текущий ТП<\/td>(?:[\s\S]*?<td[^>]*>){7}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);    
 	}
 	
     AnyBalance.setResult(result);

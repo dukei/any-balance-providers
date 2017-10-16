@@ -45,9 +45,10 @@ function main() {
     }, g_headers);
 
     if(!/Logout.aspx/i.test(html)){
-        var error = getParam(html, null, null, /<div[^>]+class="loginError"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+        var error = getParam(html, null, null, /<div[^>]+class="loginError"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
         if(error)
-            throw new AnyBalance.Error(error);
+            throw new AnyBalance.Error(error, null, /парол/i.test(error));
+        AnyBalance.trace(html);
         throw new AnyBalance.Error('Не удалось войти в интернет-банк. Сайт изменен?');
     }
 
@@ -67,25 +68,29 @@ function fetchAccount(baseurl, html){
     if(/<a[^>]+href="AccList.aspx"/.test(html))
         html = AnyBalance.requestGet(baseurl + 'AccList.aspx');
 
-    //Сколько цифр осталось, чтобы дополнить до 20
-    var accnum = prefs.contract || '';
-    var accprefix = accnum.length;
-    accprefix = 20 - accprefix;
-
     var result = {success: true};
 
-    var re = new RegExp('(<tr[^>]*id=["\']?par_(?:[\\s\\S](?!<tr))*' + (accprefix > 0 ? '\\d{' + accprefix + '}' : '') + accnum + '\\s*<[\\s\\S]*?</tr>)', 'i');
+    var credits = getElements(html, /<div[^>]+creditWrap[^>]*>/ig);
+    AnyBalance.trace('Найдено ' + credits.length + ' счетов');
+    for(var i=0; i < credits.length; ++i){
+    	var c = credits[i];
+    	var num = getParam(c, null, null, /Номер счета:[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
+    	AnyBalance.trace('Найден счет с номером ' + num);
+    	if(!prefs.contract || endsWith(num, prefs.contract)){
+    		getParam(num, result, 'accnum');
+    		getParam(c, result, 'accname', /Тип (?:кредита|сч[её]та):([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
+    		getParam(c, result, '__tariff', /Тип (?:кредита|сч[её]та):([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
+    		getParam(c, result, 'balance', /Остаток на счете:[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+    		getParam(c, result, 'status', /Состояние счета:[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
+    		getParam(c, result, 'currency', /Валюта:[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
+    		break;
+    	}
+    }
 
-    var tr = getParam(html, null, null, re);
-    if(!tr)
-        throw new AnyBalance.Error('Не удаётся найти ' + (prefs.contract ? 'счет № ' + prefs.contract : 'ни одного счета'));
-    
-    getParam(tr, result, 'balance', /(?:[\s\S]*?<td[^>]*>){6}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(tr, result, 'accnum', /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(tr, result, '__tariff', /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(tr, result, 'currency', /(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(tr, result, 'accname', /(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'fio', /<span[^>]+id="ctl00_FIOLabel"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
+    if(i >= credits.length)
+    	throw new AnyBalance.Error(prefs.contract ? 'Не удалось найти счета с номером, оканчивающимся на ' + prefs.contract : 'Не удалось найти ни одного счета');
+
+    getParam(html, result, 'fio', /<span[^>]+id="ctl00_FIOLabel"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
 
     AnyBalance.setResult(result);
 }
@@ -96,23 +101,35 @@ function fetchCredit(baseurl, html){
     if(/<a[^>]+href="CreditList.aspx"/.test(html))
         html = AnyBalance.requestGet(baseurl + 'CreditList.aspx');
 
-    var re = new RegExp('(<tr[^>]*id=["\']?par_(?:[\\s\\S](?!<tr))*' + (prefs.contract || 'td') + '[\\s\\S]*?</tr>)', 'i');
-    var tr = getParam(html, null, null, re);
-    if(!tr)
-        throw new AnyBalance.Error('Не удаётся найти ' + (prefs.contract ? 'кредит №' + prefs.contract : 'ни одного кредита'));
-
     var result = {success: true};
-    
-    getParam(tr, result, 'balance', /(?:[\s\S]*?<td[^>]*>){13}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(tr, result, 'accnum', /(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(tr, result, '__tariff', /(?:[\s\S]*?<td[^>]*>){6}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(tr, result, 'currency', /(?:[\s\S]*?<td[^>]*>){10}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(tr, result, 'accname', /(?:[\s\S]*?<td[^>]*>){6}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(tr, result, 'till', /(?:[\s\S]*?<td[^>]*>){8}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
-    getParam(tr, result, 'payTill', /(?:[\s\S]*?<td[^>]*>){11}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
-    getParam(tr, result, 'payNext', /(?:[\s\S]*?<td[^>]*>){12}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'fio', /<span[^>]+id="ctl00_FIOLabel"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(tr, result, 'limit', /(?:[\s\S]*?<td[^>]*>){9}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+
+    var credits = getElements(html, /<div[^>]+creditWrap[^>]*>/ig);
+    AnyBalance.trace('Найдено ' + credits.length + ' кредитов');
+    for(var i=0; i < credits.length; ++i){
+    	var c = credits[i];
+    	var num = getParam(c, null, null, /Номер договора:[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
+    	AnyBalance.trace('Найден кредит с номером ' + num);
+    	if(!prefs.contract || endsWith(num, prefs.contract)){
+    		getParam(num, result, 'accnum');
+    		getParam(c, result, 'accname', /Тип кредита:([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
+    		getParam(c, result, '__tariff', /Тип кредита:([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
+    		getParam(c, result, 'payTill', /Дата следующего платежа:[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseDate);
+    		getParam(c, result, 'payNext', /Сумма следующего платежа:[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+    		getParam(c, result, 'balance', /Остаток задолжности:[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+    		getParam(c, result, 'limit', /Сумма кредита:[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+    		getParam(c, result, 'pct', /Процентная ставка:[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+    		getParam(c, result, 'status', /Состояние кредита:[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
+    		getParam(c, result, 'date_start', /Дата выдачи:[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseDate);
+    		getParam(c, result, 'till', /Дата окончания:[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseDate);
+    		getParam(c, result, 'currency', /Валюта:[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
+    		break;
+    	}
+    }
+
+    if(i >= credits.length)
+    	throw new AnyBalance.Error(prefs.contract ? 'Не удалось найти кредита с номером договора ' + prefs.contract : 'Не удалось найти ни одного кредита');
+
+    getParam(html, result, 'fio', /<span[^>]+id="ctl00_FIOLabel"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
 
     AnyBalance.setResult(result);
     

@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="12">ab-money-belarusbank</id>
+	<id version="16">ab-money-belarusbank</id>
 	<api min_level="6" flags="no_browser"/>
 	<name>Беларусбанк</name>
 	<description html="true"><![CDATA[
@@ -11,11 +11,13 @@
 	<p>Если у вас нет доступа к интернет-банку, инструкции по его получению можно увидеть здесь: http://belarusbank.by/ru/press/questions/16825/27580</p>
 	]]></instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
 		<history>history.xml</history>
-		<js>library.js</js>
 		<js>main.js</js>
 	</files>
 	<counters>

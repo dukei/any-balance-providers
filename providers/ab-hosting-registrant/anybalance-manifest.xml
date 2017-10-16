@@ -1,6 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-hosting-registrant</id>
+	<api flags="no_browser"/>
+  <id version="2">ab-hosting-registrant</id>
   <name>Registrant (домены)</name>
   <description>
     Получает информацию о доменах у регистратора доменов Registrant (http://registrant.ru).
@@ -8,11 +9,13 @@
     Информация берется из личного кабинета https://control.registrant.ru. Может получать информацию по 4 доменам одновременно.
   </description>
   <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <depends>
+    <module id="library"/>
+  </depends>
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
     <js>main.js</js>
-    <js>library.js</js>
     <history>history.xml</history>
   </files>
   <counters>

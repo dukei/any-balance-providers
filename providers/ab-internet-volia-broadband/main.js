@@ -7,7 +7,7 @@ var g_headers = {
 	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
 	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
 	'Connection': 'keep-alive',
-	'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/44.0.2403.157 Safari/537.36',
+	'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.90 Safari/537.36',
 };
 
 function main(){
@@ -63,6 +63,8 @@ function main(){
 
 	var result = {success: true};
 
+	html = AnyBalance.requestGet(baseurl + 'kiev/ru/cockpit/dashboard', g_headers);
+
 	getParam(html, result, '__tariff', /<div class="packageDescrption ">\s*<p>\s*<span>[^<]*<\/span>\s*<span class=[^>]*>\s*<img [^>]*>\s*<span>[^>]*<\/span>\s*<\/span>\s*<\/p>\s*<span class=[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(html, result, 'balance', /Текущий баланс[^]+?<div/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'amountToPay', /name="amountToPay"[^>]*value="([^"]+)/i, replaceTagsAndSpaces, parseBalance);
@@ -103,6 +105,13 @@ function main(){
 
 	getParam(html, result, 'kkan', /Телевидение\s*<\/b>\s*<span>([^<]+)/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'speed', /Интернет\s*<\/b>\s*<span>([^<]+)/i, replaceTagsAndSpaces, parseBalance);
+    
+	html = AnyBalance.requestPost(baseurl + '/kiev/ru/cockpit/loyalty/bonuses', params, addHeaders({
+		Referer: baseurl + 'kiev/ru/faq',
+		'X-Requested-With':'XMLHttpRequest'
+	}));
+    
+	getParam(html, result, 'bonuses', /bonusAmountLabel" class=[^>]*>([^<]+)бонусов/i, replaceTagsAndSpaces, parseBalance);
 
 	AnyBalance.setResult(result);
 }

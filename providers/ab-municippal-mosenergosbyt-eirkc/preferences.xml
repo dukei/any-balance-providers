@@ -1,15 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
 	<EditTextPreference
-		title="Лицевой счет или e-mail"
+		title="Логин"
 		key="login"
 		summary="||{@s}"
 		obligatory="true"
-		dialogTitle="Лицевой счет"
-		inputType="textEmailAddress"
+		dialogTitle="Логин"
 		positiveButtonText="ОК"
 		negativeButtonText="Отмена"
-		dialogMessage="Введите Лицевой счет без пробелов и дефисов, используемый для входа в личный кабинет.">
+		dialogMessage="Введите логин, используемый для входа в личный кабинет.">
 	</EditTextPreference>
 	<EditTextPreference
 		title="Пароль"
@@ -22,12 +21,14 @@
 		dialogMessage="Введите пароль, используемый для входа в личный кабинет."
 		inputType="textPassword">
 	</EditTextPreference>
-    <ListPreference 
-        key="site" 
-        title="Личный кабинет"
-        summary="|Выберите личный кабинет|{@s}"
-        entries="www.lkmo.ru|мо.смородина.онлайн"
-        entryValues="|smor"
-	      defaultValue="">
-    </ListPreference>
+	<EditTextPreference
+		title="№ лицевого счёта (необязательно)"
+		key="account"
+		summary="||{@s}"
+		obligatory="true"
+		dialogTitle="№ лицевого счёта"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите номер лицевого счёта, только цифры, например 123456">
+	</EditTextPreference>
 </PreferenceScreen>

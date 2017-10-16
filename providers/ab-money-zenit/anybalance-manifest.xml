@@ -8,7 +8,7 @@
 
 Данные берутся из системы дистанционного банковского обслуживания (ДБО) по адресу https://bank.zenit.ru/frontend/frontend
 	</description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

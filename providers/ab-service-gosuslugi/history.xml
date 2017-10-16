@@ -1,5 +1,38 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="1.0" version="40" date="2016-09-15">
+	Поддержка изменений на сайте
+	</change>
+	<change major_version="1.0" version="39" date="2016-07-21">
+	Получение автомобилей и инн из кабинета, если они не указаны в настройках
+	</change>
+	<change major_version="1.0" version="38" date="2016-07-18">
+	- Поддержка изменений на сайте.
+	</change>
+	<change major_version="1.0" version="37" date="2016-04-21">
+	- Улучшено получение штрафов.
+	</change>
+	<change major_version="1.0" version="36" date="2016-04-20">
+	- Добавлено поле Свидетельство о регистрации в настройки.
+	</change>
+	<change major_version="1.0" version="35" date="2016-04-20">
+	- Исправлено получение штрафов.
+	</change>
+	<change major_version="1.0" version="34" date="2016-03-22">
+	- Исправлено получение штрафов.
+	</change>
+	<change major_version="1.0" version="33" date="2016-02-10">
+	- Улучшена обработка ошибок неправильного логина и пароля.
+	</change>
+	<change major_version="1.0" version="32" date="2016-02-10">
+	- Исправлена ошибка.
+	</change>
+	<change major_version="1.0" version="31" date="2016-02-09">
+	- Улучшено отображение данных по штрафам.
+	</change>
+	<change major_version="1.0" version="29" date="2016-02-09">
+	- Поддержка изменений на сайте.
+	</change>
 	<change major_version="1.0" version="28" date="2015-08-26">
 	- Восстановлено получение данных по налогам.
 	</change>

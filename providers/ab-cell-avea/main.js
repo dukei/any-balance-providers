@@ -4,10 +4,10 @@
 
 var g_headers = {
 	'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-	'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
 	'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
 	'Connection':'keep-alive',
 	'Origin':'https://www.avea.com.tr',
+        'Upgrade-Insecure-Requests':'1',
 	'User-Agent':'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
 };
 
@@ -20,9 +20,9 @@ function getXpass(html) {
 }
 
 function checkErrors(html) {
-	var error = getParam(html, null,null, /<script type=['"]text\/javascript['"]>ShowModalAlert\(['"]((?:[\s\S](?!['"]\)))*\S)['"]\)/i, replaceTagsAndSpaces, html_entity_decode);
+	var error = getParam(html, null,null, /<script[^>]*>\s*ShowModalAlert\s*\(\s*['"]([^'"]*)/i, replaceTagsAndSpaces);
 	if(error)
-		throw new AnyBalance.Error(error, null, /Kullanıcı adınız ya da şifreniz hatalıdır/i.test(error));
+		throw new AnyBalance.Error(error, null, /şifreniz hatalıdır|Oturumunuz açılamadı|bu işlemi gerçekleştirmek için uygun değildir/i.test(error));
 }
 
 
@@ -34,8 +34,13 @@ function main() {
 	checkEmpty(prefs.login, 'Enter login!');
 	checkEmpty(prefs.password, 'Enter password!');
 	
-	var html = AnyBalance.requestGet(baseurl + 'mps/portal?cmd=onlineTransactionsHome&lang=tr&tb=redTab', g_headers);
+	var html = AnyBalance.requestGet(baseurl + 'mps/portal?cmd=Login', g_headers);
 	
+    if (!html || AnyBalance.getLastStatusCode() >= 400) {
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error("Error connecting to the provider's website! Try to refresh the data later.");
+	}
+    
 	var params = {
 		'SubmitImage':'Giriş'
 	};
@@ -43,7 +48,7 @@ function main() {
 	params[getXLogin(html)] = prefs.login;
 	params[getXpass(html)] = prefs.password;
 	
-	html = AnyBalance.requestPost(baseurl + 'mps/portal?cmd=Login&lang=tr', params, addHeaders({Referer: baseurl + 'mps/portal?cmd=Login&lang=tr'}));
+	html = AnyBalance.requestPost(baseurl + 'mps/portal?cmd=Login', params, addHeaders({Referer: baseurl + 'mps/portal?cmd=Login'}));
 
 	if(!/logout/i.test(html)) {
 		checkErrors(html);
@@ -52,7 +57,7 @@ function main() {
 		params[getXLogin(html)] = prefs.login;
 		params[getXpass(html)] = prefs.password;
 		
-		html = AnyBalance.requestPost(baseurl + 'mps/portal?cmd=Login&lang=tr', params, addHeaders({Referer: baseurl + 'mps/portal?cmd=Login&lang=tr'}));
+		html = AnyBalance.requestPost(baseurl + 'mps/portal?cmd=Login&lang=tr', params, addHeaders({Referer: baseurl + 'mps/portal?cmd=Login'}));
 		
 		if(!/logout/i.test(html)) {
 			checkErrors(html);
@@ -69,8 +74,10 @@ function main() {
 		AnyBalance.trace('It looks like we are in pre paid selfcare...');
 		html = AnyBalance.requestGet(baseurl + 'mps/portal?cmd=dashboard&lang=tr&pagemenu=paket.mevcutPaket', g_headers);
 		
-		getParam(html, result, '__tariff', /Tarifeniz:(?:[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
-		getParam(html, result, 'balance', /Kalan Bakiyeniz:(?:[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+        var headInfo = AB.getElement(html, /<div[^>]*?frame-head-info/);
+        
+		getParam(headInfo, result, '__tariff', /Tarifeniz:[^>]*>([^<]*)/i, replaceTagsAndSpaces);
+		getParam(headInfo, result, 'balance', /Kalan\s+Bakiyeniz:[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
 	
 		var rowsTitles = sumParam(html, null, null, /<div class="package-list-title">[\s\S]*?<\/div>/ig);
 		for(var i = 0, toi = rowsTitles.length; i < toi; i++){

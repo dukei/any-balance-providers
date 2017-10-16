@@ -1,5 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="29" date="2016-05-10">
+	Исправлена ошибка входа на сайт
+	</change>
+  <change version="8" date="2016-02-22">
+  - Добавлена проверка статуса ответа сервера.
+  </change>
+	<change version="7" date="2016-01-29">
+	- Улучшен поиск штрафов.
+	</change>
 	<change version="6" date="2015-08-24">
 	- Поддержка изменений на сайте.
 	</change>

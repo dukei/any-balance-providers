@@ -7,7 +7,7 @@
 	<p>Получает данные для провайдера Redcom в г. Хабаровск (http://redcom.ru/isp/)</p>
 	<p>Личный кабинет находится по адресу https://abonent.redcom.ru/</p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

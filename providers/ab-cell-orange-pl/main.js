@@ -3,18 +3,18 @@
 */
 
 var g_headers = {
-	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+	'Accept': 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
 	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
 	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
 	'Connection': 'keep-alive',
-	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
+	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/47.0.2526.106 Safari/537.36',
 };
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
 	var baseurl = 'https://m.orange.pl/';
 	AnyBalance.setDefaultCharset('utf-8');
-	
+
 	checkEmpty(prefs.login, 'Enter login!');
 	checkEmpty(prefs.password, 'Enter password!');
 	
@@ -29,10 +29,12 @@ function main() {
 		return value;
 	});
 	
-	html = AnyBalance.requestPost(baseurl + 'portal/lecare/login?_DARGS=/gear/lecare/login/login.jsp', params, addHeaders({Referer: baseurl + 'portal/lecare/login?_DARGS=/gear/lecare/login/login.jsp'}));
+	html = AnyBalance.requestPost(baseurl + 'portal/lecare/login?_DARGS=/gear/lecare/login/login.jsp', params, addHeaders({
+		Referer: baseurl + 'portal/lecare/login?_DARGS=/gear/lecare/login/login.jsp'
+	}));
 	
 	if (!/logout/i.test(html)) {
-		var error = sumParam(html, null, null, /class="alert error"([^>]*>){2}/i, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
+		var error = sumParam(html, null, null, /class="alert error"([^>]*>){2}/i, replaceTagsAndSpaces, null, aggregate_join);
 		if (error)
 			throw new AnyBalance.Error(error, null, /nieprawidłowy login|nieprawidłowe hasło/i.test(error));
 		
@@ -41,19 +43,20 @@ function main() {
 	}
 	
 	var result = {success: true};
-	
-	getParam(html, result, 'phone', /Numer telefonu([^>]*>){5}/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, '__tariff', /Plan taryfowy([^>]*>){6}/i, replaceTagsAndSpaces, html_entity_decode);
-	
-	if(isAvailable('balance')) {
-		html = AnyBalance.requestGet('https://www.orange.pl/gear/moj_orange/infoservices/ajax?group=packages-tab' + prefs.login + '&toGet=packages-tab&toUpdate=tab' + prefs.login + '&tabId=0&pageId=320500042&tabsReq=true&jsp=dynamic_v2&modal=&onlyHeader=true&_windowid=&jsp=dynamic_v2&refreshCounter=0&_=' + new Date().getTime(), addHeaders({
-			Accept: '*/*',
-			'X-Requested-With': 'XMLHttpRequest'
-		}));
-		
-		getParam(html, result, 'balance', /na koncie głównym(?:[\s\S]*?<span[^>]*>)([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
-		getParam(html, result, ['currency', 'balance'], /na koncie głównym(?:[\s\S]*?<span[^>]*>)([\s\S]*?)<\//i, replaceTagsAndSpaces, parseCurrency);
+
+	getParam(html, result, 'phone', /Numer telefonu([^>]*>){5}/i, replaceTagsAndSpaces);
+	getParam(html, result, '__tariff', /Plan taryfowy([^>]*>){6}/i, replaceTagsAndSpaces);
+	getParam(html, result, 'balance', /Konto główne(?:[^>]*>){11}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, ['currency', 'balance'], /Konto główne(?:[^>]*>){11}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseCurrency);
+	getParam(html, result, 'incomingCallsDays', /Możesz odbierać(?:[^>]*>){9}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'outgoingCallsDays', /Możesz dzwonić(?:[^>]*>){9}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'skarbonkaLeft', /Skarbonka(?:[^>]*>){18}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
+
+	if(isAvailable(['internet', 'trafficLeft', 'bonusTrafficLeft'])) {
+		html = AnyBalance.requestGet('https://www.orange.pl/portal/moj_orange/wykorzystanie/w_skrocie', g_headers);
+		getParam(html, result, 'internet', /pakiet danych(?:[\s\S]*?<div[^>]*>){12}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseTraffic);
+		getParam(html, result, 'trafficLeft', /Wartość dostępnego limitu transferu danych(?:[\s\S]*?<div[^>]*>){12}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseTraffic);
+		getParam(html, result, 'bonusTrafficLeft', /bonusowa wartość dostępnego limitu transferu danych(?:[\s\S]*?<div[^>]*>){12}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseTraffic);
 	}
-	
 	AnyBalance.setResult(result);
 }

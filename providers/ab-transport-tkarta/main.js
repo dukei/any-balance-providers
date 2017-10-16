@@ -20,7 +20,7 @@ function main() {
 	AnyBalance.setCookie('t-karta.ru', 'UserCity', 'Krasnodar');
 	
 	var html = AnyBalance.requestGet(baseurl + 'Events/Krasnodar', g_headers);
-	
+
 	if(!html || AnyBalance.getLastStatusCode() > 400){
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
@@ -32,28 +32,44 @@ function main() {
 		throw new AnyBalance.Error('Не удалось найти форму входа.');
 	}
 
-	html = AnyBalance.requestPost(baseurl + 'EK/Cabinet/CheckUserCard', {
+	var params = {
 		pan: prefs.login, 
 		currDate: fmtDate(new Date())
-	}, addHeaders({
+	};
+
+	var href = getParam(form, /<img[^>]+src="([^"]*)/i, replaceHtmlEntities);
+	if(href){
+		AnyBalance.trace("Требуется капча :(");
+		var img = AnyBalance.requestGet(joinUrl(baseurl, href), addHeaders({Referer: baseurl}));
+		params.capcha = AnyBalance.retrieveCode('Введите код', img, {inputType: 'number'});
+	}
+
+	html = AnyBalance.requestPost(baseurl + 'EK/Cabinet/CheckUserCard', params, addHeaders({
 		Accept: 'application/json, text/javascript, */*; q=0.01',
 		Origin: baseurl,
 		Referer: baseurl + 'Events/Krasnodar',
 		'X-Requested-With':'XMLHttpRequest'
 	}));
 
-	if(/false/i.test(html)){
-		throw new AnyBalance.Error('Неверный номер карты!', null, true);
+	var json = getJson(html);
+
+	if(!json.IsCaptchaValid){
+		throw new AnyBalance.Error('Неправильно введен код с картинки.');
 	}
 
-	var params = createFormParams(form, function(params, str, name, value) {
+	if(!json.IsCardValid){
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Неверный номер карты', null, true);
+	}
+
+/*	var params = createFormParams(form, function(params, str, name, value) {
 		if (name == 'pan') 
 			return prefs.login;
 		else if (name == 'capcha')
-			return 'xg9j'; //Вот бы все так капчу делали.
+			return PAR; //Вот бы все так капчу делали.
 		return value;
 	});
-
+*/
 	html = AnyBalance.requestPost(baseurl + 'EK/Cabinet/Trip', params, addHeaders({
 		Referer: baseurl + 'Events/Krasnodar'
 	}));  	
@@ -63,6 +79,7 @@ function main() {
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось войти в личный кабинет.');
 	}
+
 
 	var result = {success: true};
 

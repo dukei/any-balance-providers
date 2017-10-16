@@ -1,16 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-money-mql</id>
+	<id version="4">ab-money-mql</id>
 	<api flags="no_browser"/>
 	<name>Trading Signals for MetaTrader</name>
 	<description html="true"><![CDATA[
 	<p>This provider helps you to watch the signals on MQL5.com.</p>
 	]]></description>
 	<author>wtiger &lt;wtiger@mail.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
@@ -32,6 +34,8 @@
 		<counter id="trades_per_week" name="Trades per week"/>
 		<counter id="trades_total" name="Trades total"/>
 		<counter id="avg_holding_time" name="Avg holding time" type="text"/>
+		<counter id="profile_balance" name="Profile balance" units=" {@profile_currency}"/>
+		<counter id="profile_currency" name="Profile currency" type="text"/>
 	</counters>
 	<keywords>forex mql mql4 mal5 metatrader metatrader4 metatrader5 signal</keywords>
 	<type>money</type>

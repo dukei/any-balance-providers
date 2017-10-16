@@ -7,7 +7,7 @@
 	<p>Предоставляет информацию о балансе провайдера ТАТТЕЛЕКОМ <a href="http://tattelecom.ru/">http://tattelecom.ru/</a></p>
 	<p>Информация берется из личного кабинета <a href="https://webcab.tattelecom.ru:8443/path?page=1">https://webcab.tattelecom.ru:8443/path?page=1</a></p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

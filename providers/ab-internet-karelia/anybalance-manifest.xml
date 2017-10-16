@@ -7,7 +7,7 @@
 	<p>Предоставляет информацию о балансе провайдера Ситилинк https://karelia.pro</p>
 	<p>Информация берется из личного кабинета https://karelia.pro/stats</p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

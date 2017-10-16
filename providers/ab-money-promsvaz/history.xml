@@ -1,5 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="21" date="2016-05-26">
+	Добавлены депозиты
+	</change>
+	<change version="20" date="2016-05-26">
+	- Исправление ошибки JS
+	</change>
+	<change version="19" date="2016-05-25">
+	- Мелкие улучшения.
+	</change>
 	<change version="18" date="2015-12-16">
 	Исправлено получение баланса по картам
 	</change>

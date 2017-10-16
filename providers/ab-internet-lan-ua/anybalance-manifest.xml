@@ -7,7 +7,7 @@
 	<p>Предоставляет информацию о балансе провайдера LocalNet <a href="http://lan.ua/">http://lan.ua/</a></p>
 	<p>Информация берется из личного кабинета <a href="https://stat.lan.ua/cgi-bin/">https://stat.lan.ua/cgi-bin/</a></p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

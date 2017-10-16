@@ -17,22 +17,38 @@ function main () {
     checkEmpty (prefs.login, 'Введите логин');
     checkEmpty (prefs.password, 'Введите пароль');
 	
-	var html = AnyBalance.requestGet(baseurl + 'territory-movie', g_headers);
+	var html = AnyBalance.requestGet(baseurl + 'tm/', g_headers);
 	
 	if(!html || AnyBalance.getLastStatusCode() > 400)
 		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
+
+	var form = AB.getElement(html, /<form[^>]+card_login[^>]*>/i);
+	if(!form){
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удаётся найти форму входа! Сайт изменен?');
+	}
+
+	var params = AB.createFormParams(form, function(params, str, name, value) {
+		if (name == 'card') {
+			return prefs.login;
+		} else if (name == 'pin') {
+			return prefs.password;
+		}
+
+		return value;
+	});
 	
-	html = AnyBalance.requestPost(baseurl + 'territory-movie/', {
-		'sessid':getParam(html, null, null, /<form[^>]*action="\/territory-movie[^>]*>[^>]*value="([^"]+)/i),
-		'card':prefs.login,
-		'pin':prefs.password,
-		'login':'ВОЙТИ'
-	}, addHeaders({Referer: baseurl + 'territory-movie/'}));
-	
-	if (!/logout=yes/i.test(html)) {
-		var error = getParam(html, null, null, / class="errortext"[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
+	html = AnyBalance.requestPost(baseurl + 'tm/ajax/login.php', params, addHeaders({
+		Accept: 'application/json, text/javascript, */*; q=0.01',
+		'X-Requested-With': 'XMLHttpRequest',
+		Referer: baseurl + 'tm/'}));
+
+	var json = getJson(html);
+
+	if (!json.status) {
+		var error = json.message;
 		if (error)
-			throw new AnyBalance.Error(error, null, /Проверьте правильность номера карты и PIN/i.test(error));
+			throw new AnyBalance.Error(error, null, /парол/i.test(error));
 		
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
@@ -40,8 +56,10 @@ function main () {
 
     var result = {success: true};
 	
-	getParam(html, result, 'balance', /Текущие накопления на карте:([^>]*>){2}/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'bonus', /Бонус (\d+)%/i, replaceTagsAndSpaces, parseBalance);
+	html = AnyBalance.requestGet(baseurl + 'tm/cab/', g_headers);
+	getParam(html, result, 'balance', /<div[^>]+class="balance"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'cardnum', /<div[^>]+card-num[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+	getParam(html, result, '__tariff', /<div[^>]+card-num[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
 	
     AnyBalance.setResult (result);
 }

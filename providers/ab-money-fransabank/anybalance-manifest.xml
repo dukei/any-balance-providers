@@ -7,7 +7,7 @@
 	<p>Предоставляет информацию о балансе на картах Франсбанка http://fransabank.by/</p>
 	<p>Информация берется из интернет-банкинга https://ibank.fransabank.by/v1/cgi/bsi.dll?T=RT_2Auth.BF</p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

@@ -40,9 +40,9 @@ function main() {
 		tread: treadValue,
 		'Remember': 'false'
 	}, addHeaders({Referer: baseurl + 'index.php'}));
-	
-	if (!/\?s=exit/i.test(html)) {
-		var error = getParam(html, null, null, /id=["']el["'][^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+
+	if (!/(\?s=exit|\?show=main)/i.test(html)) {
+		var error = getParam(html, null, null, /id=["']el["'][^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
 		if(error)
 			throw new AnyBalance.Error(error, null, /Неверный логин\/пароль/i.test(error));
 
@@ -50,16 +50,19 @@ function main() {
 		throw new AnyBalance.Error("Не удалось зайти в личный кабинет. Сайт изменен?");
 	}
 
+  html = AnyBalance.requestGet(baseurl + 'index.php', g_headers);
+
 	var result = {success: true};
 
 	getParam(html, result, 'balance', /<td[^>]*>(?:(?!<\/?td>)[\s\S])*?вашего счета((?:(?!<\/?td>)[\s\S])*?)<\/td>/i, [[ /(задолженность:)/i, '-'], replaceTagsAndSpaces], parseBalance);
-	getParam(html, result, 'acc_num', /Лицевой счет[\s\S]*?<\/big>/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'adress', /<big[^>]*>\(([\s\S]*?)\)[\s\S]*?<\/big>/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'acc_num', /Лицевой счет([\s\S]*?)<\/big>/i, replaceTagsAndSpaces);
+	getParam(html, result, 'adress', /<big[^>]*>\(([\s\S]*?)\)[\s\S]*?<\/big>/i, replaceTagsAndSpaces);
 	
-	if(isAvailable('fio')) {
+	if(isAvailable(['fio', 'email'])) {
 		html = AnyBalance.requestGet(baseurl + 'index.php?show=param', g_headers);
-		
-		getParam(html, result, 'fio', /name=["']lgn["'][\s\S]*?value=['"]([\s\S]*?)['"][^>]*>/i, replaceTagsAndSpaces, html_entity_decode)
+
+		getParam(html, result, 'fio', /<input[^>]+name='lgn'[^>]+value="([^"]*)/i, replaceTagsAndSpaces);
+		getParam(html, result, 'email', /<input[^>]+name='eml'[^>]+value="([^"]*)/i, replaceTagsAndSpaces);
 	}
 	
 	AnyBalance.setResult(result);

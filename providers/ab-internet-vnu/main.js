@@ -12,31 +12,27 @@ var g_headers = {
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'http://cash.vnu.ru/';
+	var baseurl = 'https://cash.vnu.ru/';
 	AnyBalance.setDefaultCharset('utf-8');
 	
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 	
 	var html = AnyBalance.requestGet(baseurl, g_headers);
-	
+/*	//Вот козлы, они ж в нормальном режиме 500 возвращают
 	if(!html || AnyBalance.getLastStatusCode() > 400){
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
 	}
-
+*/
 	var captchaKey, captchaSrc, captcha;
-	if(AnyBalance.getLevel() >= 7){
-		AnyBalance.trace('Пытаемся ввести капчу');
-		captchaSrc = getParam(html, null, null, /kcaptcha\/\?PHPSESSID=[^"]+/i);
-		captcha = AnyBalance.requestGet(baseurl + captchaSrc, addHeaders({ Referer: baseurl }));
-		if(!captchaSrc || !captcha)
-			throw new AnyBalance.Error('Не удалось получить капчу! Попробуйте обновить данные позже.');
-		captchaKey = AnyBalance.retrieveCode("Пожалуйста, введите код с картинки", captcha);
-		AnyBalance.trace('Капча получена: ' + captchaKey);
-	} else {
-		throw new AnyBalance.Error('Провайдер требует AnyBalance API v7, пожалуйста, обновите AnyBalance!');
-	}
+	AnyBalance.trace('Пытаемся ввести капчу');
+	captchaSrc = getParam(html, null, null, /kcaptcha\/\?PHPSESSID=[^"]+/i);
+	captcha = AnyBalance.requestGet(baseurl + captchaSrc, addHeaders({ Referer: baseurl }));
+	if(!captchaSrc || !captcha)
+		throw new AnyBalance.Error('Не удалось получить капчу! Попробуйте обновить данные позже.');
+	captchaKey = AnyBalance.retrieveCode("Пожалуйста, введите код с картинки", captcha);
+	AnyBalance.trace('Капча получена: ' + captchaKey);
 	
 	html = AnyBalance.requestPost(baseurl + 'index', {
 		login: prefs.login,
@@ -45,7 +41,7 @@ function main() {
 	}, addHeaders({Referer: baseurl}));
 	
 	if (/Авторизация не удалась./i.test(html)) {
-		var error = getParam(html, null, null, /<div[^>]+class="cir yellow-tab"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+		var error = getParam(html, null, null, /<div[^>]+class="cir yellow-tab"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
 		if (error)
 			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
 		
@@ -58,11 +54,11 @@ function main() {
 	var result = {success: true};
 	
 	getParam(html, result, 'balance', /Баланс<\/th>\s*<td[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'status', /Блокировка<\/th>\s*<td[^>]*>([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'status', /Блокировка<\/th>\s*<td[^>]*>([^<]+)/i, replaceTagsAndSpaces);
 	getParam(html, result, 'credit', /Кредит<\/th>\s*<td[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'fio', /ФИО<\/th>\s*<td[^>]*>([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'fio', /ФИО<\/th>\s*<td[^>]*>([^<]+)/i, replaceTagsAndSpaces);
 	getParam(html, result, 'accnum', /id клиента<\/th>\s*<td[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, '__tariff', /тарифный план<\/th>\s*<td[^>]*>([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, '__tariff', /тарифный план<\/th>\s*<td[^>]*>([^<]+)/i, replaceTagsAndSpaces);
 	
 	AnyBalance.setResult(result);
 }

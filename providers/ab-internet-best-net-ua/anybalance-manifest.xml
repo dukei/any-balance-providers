@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-internet-best-net-ua</id>
+	<api flags="no_browser"/>
+	<name>ICC Best</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера ICC Best https://my.best.net.ua/</p>
+	<p>Информация берется из личного кабинета https://my.best.net.ua/zmain</p>
+
+	<b>Особенности:</b>
+	<ul>
+		<li>Логин и пароль указаны в договоре. Вы можете использовать любой из вариантов для входа в личный кабинет:</li>
+		<li>Логин + Пароль</li>
+		<li>Ваш IP + Пароль</li>
+	</ul>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" грн"/>
+		<counter id="summaryOfServices" name="Итого за услуги" units=" грн"/>
+
+		<counter id="internetService" name="Интернет услуга" type="text"/>
+		<counter id="internetPrice" name="Цена (интернет)" units=" грн"/>
+		<counter id="internetAddress" name="Адрес (интернет)" type="text"/>
+		<counter id="internetStatus" name="Статус (интернет)" type="text"/>
+		<counter id="ktbService" name="ТВ" type="text"/>
+		<counter id="ktbPrice" name="Цена (ТВ)" units=" грн"/>
+		<counter id="ktbAddress" name="Адрес (ТВ)" type="text"/>
+		<counter id="tvAmount" name="Количество телевизоров" type="text"/>
+		<counter id="ktbStatus" name="Статус (ТВ)" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>internet</type>
+	<country>ua</country>
+</provider>

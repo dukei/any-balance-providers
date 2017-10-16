@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id version="5">ab-money-chelindbank</id>
+	<id version="7">ab-money-chelindbank</id>
 	<name>Челиндбанк</name>
 	<description html="true"><![CDATA[
 	<p>Получает текущий остаток и другие параметры карт, счетов Челиндбанка (http://www.chelindbank.ru), используя интернет-банк https://www.chelindbank.ru/ib2.</p>
@@ -9,11 +9,13 @@
 	<instruction html="true"><![CDATA[
 	<p>Для подключения к системе «Интернет-банк» Вам необходимо лично обратиться в Банк для заключения Договора присоединения. При себе необходимо иметь документ, удостоверяющий личность (Паспорт) и мобильный телефон для авторизации в системе «Интернет-банк». Подключение осуществляет любое подразделение ОАО «ЧЕЛИНДБАНК», не зависимо от того, где открыты Ваши счета.	<p>Если у вас нет доступа в Интернет-Помощник, необходимо:</p>
 	]]></instruction>
-	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>

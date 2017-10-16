@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+    <id version="1">login/mailru</id>
+	<api flags="no_browser" />
+    <name>Mailru Login</name>
+	<description html="true"><![CDATA[
+		Предоставляет функции для логина в mail.ru (https://mail.ru)
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<js>login_mailru.js</js>
+		<history>history.xml</history>
+	</files>
+	<depends>
+		<module id="library"/>
+	</depends>
+	<type>login</type>
+</provider>

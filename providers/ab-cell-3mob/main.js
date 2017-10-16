@@ -7,7 +7,7 @@ var g_headers = {
 	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
 	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
 	'Connection': 'keep-alive',
-	'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/46.0.2490.86 Safari/537.36',
+	'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.104 Safari/537.36',
 };
 
 function main() {
@@ -44,25 +44,36 @@ function main() {
 	html = AnyBalance.requestGet(baseurl + '/ua/finance/balance', g_headers);
 
 	getParam(html, result, 'minutes_local', /<tr ><td>Голосовий баланс в мережі Тримоб \(сек\)<[^>]*><[^>]*>([^>]*)</i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'minutes_local', /<tr ><td>Голосовий баланс на номери ТриМоб \(сек\)<[^>]*><[^>]*>([^>]*)</i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'minutes_roam', /<tr ><td>Голосовий баланс в межах України \(сек\)<[^>]*><[^>]*>([^>]*)</i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'minutes_roam', /<tr ><td>Голосовий баланс на інші мережі по Україні \(V\) \(сек\)<[^>]*><[^>]*>([^>]*)</i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'internet_local', /<tr ><td>Інтернет в мережі Тримоб \(КБайт\)<[^>]*><[^>]*>([^>]*)</i, [replaceTagsAndSpaces, /(.*)/i, '$1 kb'], parseTraffic);
 	getParam(html, result, 'internet_roam', /<tr ><td>Інтернет в мережі Тримоб та нац.роумінгу \(КБайт\)<[^>]*><[^>]*>([^>]*)</i, [replaceTagsAndSpaces, /(.*)/i, '$1 kb'], parseTraffic);
 	getParam(html, result, 'internet_roaming', /<tr ><td>Інтернет в  нац.роумінгу \(КБайт\)<[^>]*><[^>]*>([^>]*)</i, [replaceTagsAndSpaces, /(.*)/i, '$1 kb'], parseTraffic);
+	getParam(html, result, 'internet_roam', /<tr ><td>Інтернет в мережі Тримоб та нац.роумінгу \(С\) \(КБайт\)<[^>]*><[^>]*>([^>]*)</i, [replaceTagsAndSpaces, /(.*)/i, '$1 kb'], parseTraffic);
+	getParam(html, result, 'internet_roaming', /<tr ><td>Інтернет в мережі Тримоб та нац.роумінгу \(A,B\) \(КБайт\)<[^>]*><[^>]*>([^>]*)</i, [replaceTagsAndSpaces, /(.*)/i, '$1 kb'], parseTraffic);
 	getParam(html, result, 'internet_bezlim', /<tr ><td>Безлім на день\/ Нічний Безлім \(КБайт\)<[^>]*><[^>]*>([^>]*)</i, [replaceTagsAndSpaces, /(.*)/i, '$1 kb'], parseTraffic);
 	getParam(html, result, 'internet_action', /<tr ><td>Акційний баланс \(КБайт\)<[^>]*><[^>]*>([^>]*)</i, [replaceTagsAndSpaces, /(.*)/i, '$1 kb'], parseTraffic);
 	getParam(html, result, 'balance_sms', /<tr ><td>SMS в межах України \(штук\)<[^>]*><[^>]*>([^>]*)</i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'balance_sms', /<tr ><td>SMS в межах України \(S\) \(штук\)<[^>]*><[^>]*>([^>]*)</i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'money_transfer', /<tr ><td>Грошовий переказ Utransfer \(грн\)<[^>]*><[^>]*>([^>]*)</i, replaceTagsAndSpaces, parseBalance);
 
 	getParam(html, result, 'balance_termin', /<tr ><td>Основний баланс \(грн\)<[^>]*><[^>]*>[^>]*<[^>]*><[^>]*>([^<]+)</i, replaceTagsAndSpaces, parseDate);
 	getParam(html, result, 'balance_bonus_termin', /<tr ><td>Бонусний грошовий баланс \(грн\)<[^>]*><[^>]*>[^>]*<[^>]*><[^>]*>([^<]+)</i, replaceTagsAndSpaces, parseDate);
+	getParam(html, result, 'balance_bonus_termin', /<tr ><td>Пакетний грошовий баланс \(грн\)<[^>]*><[^>]*>[^>]*<[^>]*><[^>]*>([^<]+)</i, replaceTagsAndSpaces, parseDate);
 	getParam(html, result, 'minutes_local_termin', /<tr ><td>Голосовий баланс в мережі Тримоб \(сек\)<[^>]*><[^>]*>[^>]*<[^>]*><[^>]*>([^<]+)</i, replaceTagsAndSpaces, parseDate);
+    getParam(html, result, 'minutes_local_termin', /<tr ><td>Голосовий баланс на номери ТриМоб \(сек\)<[^>]*><[^>]*>[^>]*<[^>]*><[^>]*>([^<]+)</i, replaceTagsAndSpaces, parseDate);
 	getParam(html, result, 'minutes_roam_termin', /<tr ><td>Голосовий баланс в мережі Тримоб та нац.роумінгу \(сек\)<[^>]*><[^>]*>[^>]*<[^>]*><[^>]*>([^<]+)</i, replaceTagsAndSpaces, parseDate);
+	getParam(html, result, 'minutes_roam_termin', /<tr ><td>Голосовий баланс на інші мережі по Україні \(V\) \(сек\)<[^>]*><[^>]*>[^>]*<[^>]*><[^>]*>([^<]+)</i, replaceTagsAndSpaces, parseDate);
 	getParam(html, result, 'internet_local_termin', /<tr ><td>Інтернет в мережі Тримоб \(КБайт\)<[^>]*><[^>]*>[^>]*<[^>]*><[^>]*>([^<]+)</i, replaceTagsAndSpaces, parseDate);
 	getParam(html, result, 'internet_roam_termin', /<tr ><td>Інтернет в мережі Тримоб та нац.роумінгу \(КБайт\)<[^>]*><[^>]*>[^>]*<[^>]*><[^>]*>([^<]+)</i, replaceTagsAndSpaces, parseDate);
 	getParam(html, result, 'internet_roaming_termin', /<tr ><td>Інтернет в  нац.роумінгу \(КБайт\)<[^>]*><[^>]*>[^>]*<[^>]*><[^>]*>([^<]+)</i, replaceTagsAndSpaces, parseDate);
-        getParam(html, result, 'internet_bezlim_termin', /<tr ><td>Безлім на день\/ Нічний Безлім \(КБайт\)<[^>]*><[^>]*>[^>]*<[^>]*><[^>]*>([^<]+)</i, replaceTagsAndSpaces, parseDate);
+	getParam(html, result, 'internet_roam_termin', /<tr ><td>Інтернет в мережі Тримоб та нац.роумінгу \(С\) \(КБайт\)<[^>]*><[^>]*>[^>]*<[^>]*><[^>]*>([^<]+)</i, replaceTagsAndSpaces, parseDate);
+	getParam(html, result, 'internet_roaming_termin', /<tr ><td>Інтернет в мережі Тримоб та нац.роумінгу \(A,B\) \(КБайт\)<[^>]*><[^>]*>[^>]*<[^>]*><[^>]*>([^<]+)</i, replaceTagsAndSpaces, parseDate);
+	getParam(html, result, 'internet_bezlim_termin', /<tr ><td>Безлім на день\/ Нічний Безлім \(КБайт\)<[^>]*><[^>]*>[^>]*<[^>]*><[^>]*>([^<]+)</i, replaceTagsAndSpaces, parseDate);
 	getParam(html, result, 'internet_action_termin', /<tr ><td>Акційний баланс \(КБайт\)<[^>]*><[^>]*>[^>]*<[^>]*><[^>]*>([^<]+)</i, replaceTagsAndSpaces, parseDate);
 	getParam(html, result, 'balance_sms_termin', /<tr ><td>SMS в межах України \(штук\)<[^>]*><[^>]*>[^>]*<[^>]*><[^>]*>([^<]+)</i, replaceTagsAndSpaces, parseDate);
+	getParam(html, result, 'balance_sms_termin', /<tr ><td>SMS в межах України \(S\) \(штук\)<[^>]*><[^>]*>[^>]*<[^>]*><[^>]*>([^<]+)</i, replaceTagsAndSpaces, parseDate);
 	getParam(html, result, 'money_transfer_termin', /<tr ><td>Грошовий переказ Utransfer \(грн\)<[^>]*><[^>]*>[^>]*<[^>]*><[^>]*>([^<]+)</i, replaceTagsAndSpaces, parseDate);
 
 	html = AnyBalance.requestGet(baseurl + '/logout', g_headers);

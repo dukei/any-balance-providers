@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="3">ab-money-etherscan</id>
+	<api flags="no_browser"/>
+	<name>Etherscan</name>
+	<description html="true"><![CDATA[
+	<p>Tracks ETH account balance on https://etherscan.io</p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="ETH" units="Ξ"/>
+		<counter id="btc" name="BTC" units="Ƀ"/>
+		<counter id="usd" name="USD" prefix="$"/>
+		<counter id="rate" name="USD/ETH" prefix="$"/>
+		<counter id="rate_btc" name="BTC/ETH" units="Ƀ"/>
+	</counters>
+	<keywords>ether btc cryptocurrency blockchain ethereum bitcoin</keywords>
+	<type>money, wallet</type>
+	<country></country>
+</provider>

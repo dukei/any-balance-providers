@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<api flags="no_browser"/>
+	<id version="3">ab-internet-cms-air</id>
+	<name>Air</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе YouTube партнерской системы CMS Air http://cms.air.io </p>
+	<p>Информация берется из личного кабинета http://cms.air.io/statistics/referral_system </p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" prefix="$ "/>
+		<counter id="income" name="Общий доход партнера" prefix="$ "/>
+		<counter id="full_name" name="ФИО" type="text"/>
+		<counter id="views" name="Просмотры"/>
+		<counter id="subscribers" name="Подписчики"/>
+	</counters>
+	<keywords></keywords>
+	<type>affiliate</type>
+	<country>ru</country>
+</provider>

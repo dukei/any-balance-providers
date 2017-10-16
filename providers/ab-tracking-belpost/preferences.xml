@@ -10,12 +10,12 @@
 		negativeButtonText="Отмена"
 		dialogMessage="Введите номер отправления.">
 	</EditTextPreference>
-	<ListPreference
+	<!-- <ListPreference
 		key="internal"
 		title="Вид отправления"
 		summary="||{@s}"
 		entries="Слежение за отправлениями по РБ|Слежение за международными отправлениями и EMS"
 		entryValues="1|2"
 		defaultValue="1">
-	</ListPreference>
+	</ListPreference> -->
 </PreferenceScreen>

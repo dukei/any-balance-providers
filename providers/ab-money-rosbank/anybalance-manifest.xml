@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-    <id version="7">ab-money-rosbank</id>
+    <id version="10">ab-money-rosbank</id>
     <name>РОСБАНК</name>
     <description>Информация о счете, кредите в банке Росбанк (http://www.rosbank.ru).
 	В настройках провайдера требуется указать 8 последних цифр номера Идентификационной карты и пароль к Интернет-банку https://ibank.rosbank.ru/.
@@ -15,14 +15,13 @@
 	Если вам нужна поддержка еще чего-нибудь, обращайтесь к автору провайдера по е-мейл.
 </description>
     <author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+    <depends>
+    	<module id="extract/abe-money-rosbank"/>
+    	<module id="nadapter"/>
+    </depends>
     <files>
-	<icon>icon.png</icon>
+		<icon>icon.png</icon>
         <preferences>preferences.xml</preferences>
-        <js>cryptojs.js</js>
-        <js>crb.js</js>
-        <js>library.js</js>
-        <js>nadapter.js</js>
-        <js>extract.js</js>
         <js>main.js</js>
         <history>history.xml</history>
     </files>

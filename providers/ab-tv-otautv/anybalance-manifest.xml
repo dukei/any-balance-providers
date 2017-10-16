@@ -7,7 +7,7 @@
 	<p>Предоставляет информацию о балансе провайдера ОТАУ-ТВ http://otautv.kz</p>
 	<p>Информация берется из личного кабинета http://customer.otautv.kz:8080</p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

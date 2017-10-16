@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-    <id version="14">ab-money-citi</id>
+    <id version="16">ab-money-citi</id>
     <name>Ситибанк</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию об остатках на картах и счетах в Ситибанке <a href="https://www.citibank.ru">https://www.citibank.ru</a></p>
@@ -11,12 +11,13 @@
 	<p>Если у вас нет логина и пароля, вы можете получить их на этой странице: <a href="https://www.citibank.ru/RUGCB/JSO/reg/Setup.do">https://www.citibank.ru/RUGCB/JSO/reg/Setup.do</a></p>
 	]]></instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="extract/abe-money-citi"/>
+		<module id="nadapter"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
-		<js>nadapter.js</js>
-		<js>extract.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>

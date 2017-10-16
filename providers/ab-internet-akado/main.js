@@ -40,9 +40,9 @@ function main(){
 	}));
 	
 	if(!/Вы успешно вошли в Личный кабинет/i.test(html)){
-		var error = getParam(html, null, null, /<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
+		var error = getElement(html, /<message[^>]*>/i, replaceTagsAndSpaces);
 		if (error)
-			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
+			throw new AnyBalance.Error(error, null, /логин|парол/i.test(error));
 		
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
@@ -51,8 +51,8 @@ function main(){
     var result = {success: true};
 
 	getParam(html, result, 'balance', /balance="([^"]+)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'username', /<account([\s\S]*?)\/>/i, [replaceTagsAndSpaces, /surname="([^"]+)"\s*name="([^"]+)"\s*patronymic="([^"]+)[\s\S]*/i, '$1 $2 $3'], html_entity_decode);
-	getParam(html, result, 'agreement', /crc="([^"]+)/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'username', /<account([\s\S]*?)\/>/i, [replaceTagsAndSpaces, /surname="([^"]+)"\s*name="([^"]+)"\s*patronymic="([^"]+)[\s\S]*/i, '$1 $2 $3']);
+	getParam(html, result, 'agreement', /crc="([^"]+)/i, replaceTagsAndSpaces);
 	
     if(AnyBalance.isAvailable('payhint')){
 		html = AnyBalance.requestGet(baseurl + 'finance/prepay.xml');
@@ -62,7 +62,7 @@ function main(){
 
     html = AnyBalance.requestGet(baseurl + 'services/display.xml');
 	
-	sumParam(html, result, '__tariff', /<service[^>]*name="([^"]+)[^>]*">/ig, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
+	sumParam(html, result, '__tariff', /<service[^>]*name="([^"]+)[^>]*">/ig, replaceTagsAndSpaces, null, aggregate_join);
 	
     AnyBalance.setResult(result);
 }

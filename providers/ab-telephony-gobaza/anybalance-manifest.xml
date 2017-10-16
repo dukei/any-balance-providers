@@ -1,32 +1,41 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="2">ab-telephony-gobaza</id>
-  <name>баZа</name>
-  <description>
-    Получает текущий баланс и другие параметы у провайдера IP-телефонии баZа (http://go2baza.ru).
-
-    Провайдер получает данные из личного кабинета https://go2baza.cnt.ru/cnt.
-  </description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>library.js</js>
-    <js>main.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="balance" name="Баланс" units="р"/>
-    <counter id="mins_total" name="Включенные минуты"/>
-    <counter id="mins_left" name="Остаток минут"/>
-  </counters>
-  <keywords>
-    база, baza
-  </keywords>
-  <type>
-    telephony
-  </type>
-  <country>
-    ru
-  </country>
+	<api flags="no_browser"/>
+    <id version="5">ab-telephony-gobaza</id>
+    <name>баZа</name>
+    <description>
+        Получает текущий баланс и другие параметы у провайдера IP-телефонии баZа (http://go2baza.ru).
+        Провайдер получает данные из личного кабинета http://lk.gobaza.ru/.
+    </description>
+    <author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+    <depends>
+      <module id="library"/>
+    </depends>
+    <files>
+        <icon>icon.png</icon>
+        <preferences>preferences.xml</preferences>
+        <js>main.js</js>
+        <history>history.xml</history>
+    </files>
+    <counters>
+        <counter id="balance" name="Текущий баланс" units="р"/>
+        <counter id="st_balance" name="Баланс на начало месяца" units="р"/>
+        <counter id="sum_bills" name="Сумма счетов за месяц" units="р"/>
+        <counter id="sum_current" name="Сумма текущих начислений" units="р"/>
+        <counter id="sum_paid" name="Сумма платежей в месяце" units="р"/>
+        <counter id="to_limit" name="Порог отключения" units="р"/>
+        <counter id="rec_sum" name="Рекомендуемая сумма платежа" units="р"/>
+        <counter id="date_start" name="Дата подключения" type="time" format="dd/MM/yyyy"/>
+        <counter id="next_date" name="Начало следующего расчётного периода" type="time" format="dd/MM/yyyy"/>
+        <counter id="address" name="Адрес" type="text"/>
+        <counter id="fio" name="ФИО" type="text"/>
+        <counter id="account" name="Лицевой счёт" type="text"/>
+        <counter id="mins_total" name="Количество включённых минут (тариф)"/>
+        <counter id="mins_month" name="Количество включённых минут (месяц)"/>
+        <counter id="mins_used" name="Израсходованное количество минут"/>
+        <counter id="mins_left" name="Остаток минут"/>
+      </counters>
+      <keywords>база, baza</keywords>
+      <type>telephony</type>
+      <country>ru</country>
 </provider>

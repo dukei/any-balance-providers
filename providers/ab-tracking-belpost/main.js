@@ -1,60 +1,128 @@
-﻿/**
+﻿
+/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 */
 
 var g_headers = {
-	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
-	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
-	'Connection': 'keep-alive',
-	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
+  'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+  'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
+  'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
+  'Connection': 'keep-alive',
+  'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
 };
 
-function main() {
-	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'http://search.belpost.by/';
-	AnyBalance.setDefaultCharset('utf-8');
-	
-	checkEmpty(prefs.cargo, 'Введите номер отправления!');
-	
-	var html = AnyBalance.requestGet(baseurl, g_headers);
-	
-	if(!html || AnyBalance.getLastStatusCode() > 400)
-		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
-    
-	html = AnyBalance.requestPost(baseurl + 'ajax/search', {
-		item: prefs.cargo,
-		internal: prefs.internal || '1'
-	}, addHeaders({Referer: baseurl + 'ajax/search'}));
-	
-	if (/ничего не найдено/i.test(html)) {
-		var error = getParam(html, null, null, /По вашему запросу ничего не найдено/i, replaceTagsAndSpaces, html_entity_decode);
-		if (error)
-			throw new AnyBalance.Error(error, null, /По вашему запросу ничего не найдено/i.test(error));
-		
-		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
-	}
-	
-	var result = {success: true};
-	
-    var trs = sumParam(html, null, null, /<tr>[\s\S]*?<\/tr>/ig);
-    var len = trs.length - 1;
-    
-    getParam(trs[len], result, 'date', /<td>([^>]*>){1}/i, replaceTagsAndSpaces, parseDate);
-    getParam(trs[len], result, 'status', /<td>([^>]*>){3}/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(trs[len], result, 'post_office', /<td>([^>]*>){5}/i, replaceTagsAndSpaces, html_entity_decode);
+function mergeSorted(a, b, key) {
+  var answer = new Array(a.length + b.length), i = 0, j = 0, k = 0;
+  while (i < a.length && j < b.length) {
+    if (a[i][key] < b[j][key]) {
+        answer[k] = a[i];
+        i++;
+    }else {
+        answer[k] = b[j];
+        j++;
+    }
+    k++;
+  }
+  while (i < a.length) {
+    answer[k] = a[i];
+    i++;
+    k++;
+  }
+  while (j < b.length) {
+    answer[k] = b[j];
+    j++;
+    k++;
+  }
+  return answer;
+}
 
-	if (AnyBalance.isAvailable('fulltext')) {
-        var res = [];
-        for (var i = 1; i < trs.length; i++) {       
-            var date = getParam(trs[i], null, null, /<td>([^>]*>){1}/i, replaceTagsAndSpaces, html_entity_decode);
-            var status = getParam(trs[i], null, null, /<td>([^>]*>){3}/i, replaceTagsAndSpaces, html_entity_decode);
-            var post_office = getParam(trs[i], null, null, /<td>([^>]*>){5}/i, replaceTagsAndSpaces, html_entity_decode);
-            res.push('<b>' + date + '</b> ' + status + '. ' + 'Post office: ' + post_office);
-        }
-        result.fulltext = res.join('<br/>');
-	}   
-	
-	AnyBalance.setResult(result);
+function main() {
+  var prefs = AnyBalance.getPreferences();
+  var baseurl = 'http://webservices.belpost.by/searchRu.aspx';
+  AnyBalance.setDefaultCharset('utf-8');
+
+  AB.checkEmpty(prefs.cargo, 'Введите номер отправления!');
+
+  var html = AnyBalance.requestGet(baseurl, g_headers);
+
+  if (!html || AnyBalance.getLastStatusCode() > 400) {
+    AnyBalance.trace(html);
+    throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
+  }
+
+  AnyBalance.sleep(1000);
+
+  html = AnyBalance.requestGet(baseurl + '?search=' + prefs.cargo, g_headers);
+
+  if (!/<input[^>]*id="[^"]*Search[^"]*"[^>]*>/i.test(html)) {
+    AnyBalance.trace(html);
+    throw new AnyBalance.Error('Не удалось найти кнопку поиска. Сайт изменен?');
+  }
+
+  if (/не\s+найдено/i.test(html)) {
+    throw new AnyBalance.Error('По данному отправлению ничего не найдено', null, /ничего\s+не\s+найдено/i.test(html));
+  }
+
+  var result = {
+    success: true
+  };
+
+  var infoTables = AB.getElements(html, /<table[^>]*id="[^"]*info[^"]*"[^>]*>/ig);
+  var colsDefInter = {
+		__date: {
+			re: /Дата/i,
+			result_func: parseDateISO,
+		},
+		__descr: {
+            re: /Событие/i,
+            result_func: null,
+        },
+		__office: {
+            re: /Офис/i,
+            result_func: null,
+        },
+	};
+
+  var colsDefInner = {
+		__date: {
+			re: /Дата/i,
+			result_func: parseDate,
+		},
+		__descr: {
+            re: /Событие/i,
+            result_process: function(path, td, result){
+                td = replaceAll(td, replaceTagsAndSpaces);
+                getParam(td, result, '__descr', /^([\s\S]*?)[^)]*$/i);
+                getParam(td, result, '__office', /[^)]*$/i);
+            }
+        },
+	};
+
+  var trArray = AB.sumParam(infoTables, null, null, /<tr[^>]*>([\s\S]*?)<\/tr>/gi);
+  var inters = [], inners = [];
+  if(infoTables[0])
+  	processTable(infoTables[0], inters, '', colsDefInter);
+  if(infoTables[1])
+  	processTable(infoTables[1], inners, '', colsDefInner);
+
+  var events = mergeSorted(inters, inners, '__date');
+  var fresh = events[events.length - 1];
+
+  AB.getParam(fresh.__date, result, 'date');
+  AB.getParam(fresh.__descr, result, 'status');
+  AB.getParam(fresh.__office, result, 'post_office');
+
+  if (AnyBalance.isAvailable('fulltext')) {
+    var
+      date, office, status, fullInfo = [];
+
+    for (var i = events.length - 1; i >= 0; i--) {
+      date = getFormattedDate({format: 'DD/MM/YYYY'}, new Date(events[i].__date));
+      status = events[i].__descr;
+      office = events[i].__office;
+      fullInfo.push('Дата: <b>' + date + '</b> ' + 'Cобытие: ' + status + '. ' + 'Офис: ' + office);
+    }
+    AB.getParam(fullInfo.join('<br/>'), result, 'fulltext');
+  }
+  AnyBalance.setResult(result);
 }

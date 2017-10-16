@@ -29,10 +29,13 @@
 	</ol>
 	]]></instruction>
 	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<depends>
+		<!-- обязательно посмотрите на функции библиотеки /any-balance-providers/extra/development/ab-test-library/library.js, которые облегчают написание провайдеров! -->
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon><!-- требования к иконке: https://github.com/dukei/any-balance-providers/wiki/Icon -->
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js><!-- обязательно посмотрите на функции библиотеки /any-balance-providers/extra/development/ab-test-library/library.js, которые облегчают написание провайдеров! -->
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>

@@ -36,7 +36,8 @@ function main(){
     var baseurl = 'https://www.mvideo.ru';
     var baseurl1 = 'http://www.mvideo.ru';
 
-    var html = AnyBalance.requestGet(baseurl + '/login', g_headers);
+    var html = AnyBalance.requestGet(baseurl1 + '/', g_headers);
+    html = AnyBalance.requestGet(baseurl + '/login', addHeaders({Referer: baseurl1 + '/'}));
     var form = getElement(html, prefs.type == '-1' ? /<form[^>]+id="login-form"[^>]*>/i : /<form[^>]+id="login-bonus-card-form"[^>]*>/i);
     if(!form){
     	AnyBalance.trace(form);
@@ -68,11 +69,11 @@ function main(){
 		return value;
 	});
 
-	var action = getParam(form, null, null, /action="([^"]*)/i, null, html_entity_decode);
+	var action = getParam(form, null, null, /action="([^"]*)/i, replaceHtmlEntities);
 	html = AnyBalance.requestPost(baseurl + action, params, addHeaders({Referer: baseurl + '/login'}));
 
 	if(!/logout/i.test(html)){
-		var error = getParam(html, null, null, /<label[^>]+class="text-error"[^>]*>\s*([^\s<][\s\S]*?)<\/label>/ig, replaceTagsAndSpaces, html_entity_decode);
+		var error = getParam(html, null, null, /<label[^>]+class="text-error"[^>]*>\s*([^\s<][\s\S]*?)<\/label>/ig, replaceTagsAndSpaces);
 		if(error)
 			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
 		if(!html && prefs.type >= 0)
@@ -89,17 +90,17 @@ function main(){
     getParam(html, result, 'balance_all', /<span[^>]+class="header-user-details"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
 
     html = AnyBalance.requestGet(baseurl + '/my-account', g_headers);
-    getParam(html, result, 'fio', /Владелец карты[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'balance', /Доступно для оплаты покупок[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, '__tariff', /Номер карты[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'fio', /Владелец карты[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+    getParam(html, result, 'balance', /<div[^>]+my-account-block-bonus-rubles-title[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, '__tariff', /Номер карты[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
     
-    var hist = getElement(html, /<li[^>]+class="order-history-item"[^>]*>/i);
+    var hist = getElement(html, /<li[^>]+personal-orders-block-item[^>]*>/i);
     if(hist){
     	// Дата последней операции по счету
-   		getParam(hist, result, 'last_date2', /Дата создания:[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseDate);
-   		getParam(hist, result, 'last_number', /Заказ:[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
-   		getParam(hist, result, 'last_status', /Статус:[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
-    	getParam(html, result, 'last_sum', /Сумма:[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+   		getParam(hist, result, 'last_date2', /<div[^>]+order-date[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseDate);
+   		getParam(hist, result, 'last_number', /<div[^>]+number[^>]*>[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
+   		getParam(hist, result, 'last_status', /<div[^>]+status[^>]*>([\s\S]*?)<\/div>/i, [/<strong[^>]*>[\s\S]*?<\/strong>/i, '', replaceTagsAndSpaces]);
+    	getParam(hist, result, 'last_sum', /<div[^>]+amount[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
     }else{
     	AnyBalance.trace('Последняя операция не найдена...');
     }

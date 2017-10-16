@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-internet-tel-kom</id>
+	<api flags="no_browser"/>
+	<name>ТелКом</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера ТелКом http://tel-kom.ru/</p>
+	<p>Информация берется из личного кабинета http://cabinet.tel-kom.ru/</p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="monthlyPayment" name="Периодическая стоимость" units=" р"/>
+		<counter id="deducted" name="Списано в текущем периоде" units=" р"/>
+		<counter id="paymentDate" name="Дата оплаты" type="time" format="dd/MM/yyyy"/>
+		<counter id="paymentSum" name="Сумма оплаты" units=" р"/>
+    <counter id="dailyDeductionDate" name="Дата списания" type="time" format="dd/MM/yyyy"/>
+    <counter id="dailyDeductionSum" name="Сумма списания" units=" р"/>
+	</counters>
+	<keywords></keywords>
+	<type>internet</type>
+	<country>ru</country>
+</provider>

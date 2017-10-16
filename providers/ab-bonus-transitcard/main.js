@@ -23,9 +23,9 @@ function main(){
     }, addHeaders({Referer: baseurl})); 
 	
     if(!/idAccount":\d+/i.test(html)){
-        var error = getParam(html, null, null, /<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
+        var error = html.replace(/^"+|"+$/i, '');
         if(error)
-            throw new AnyBalance.Error(error);
+            throw new AnyBalance.Error(error, null, /парол/i.test(error));
 		
         throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
     }
@@ -37,6 +37,8 @@ function main(){
     var result = {success: true};
 	
 	getParam(json.balance + '', result, 'balance', null, replaceTagsAndSpaces, parseBalance);
+	getParam(json.lastPayment, result, 'last_pay');
+	getParam(json.lastPaymentDate, result, 'last_pay_date', null, replaceTagsAndSpaces, parseDateISO);
 
     AnyBalance.setResult(result);
 }

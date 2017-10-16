@@ -20,20 +20,15 @@ function main() {
 		throw new AnyBalance.Error("Укажите код города для показа прогноза погоды. Код можно получить на сайте http://rp5.ru. Смотрите описание провайдера для подробностей.");
 	
 	AnyBalance.trace("About to request \"http://rp5.ru/xml/" + prefs.city + "/00000/ru\"");
-	var retry = false;
+	var retry = false, xml;
 	try {
-		var xml = AnyBalance.requestGet("http://rp5.ru/xml/" + prefs.city + "/00000/ru");
-		retry = /404 Not Found|^\s*$/i.test(xml);
+		xml = AnyBalance.requestGet("http://rp5.ru/xml/" + prefs.city + "/00000/ru");
+		parseXml(xml, prefs);
 	} catch (e) {
-		retry = true;
-		AnyBalance.trace('Проблема получения xml: ' + e.message);
-	}
-	if (retry) {
+		AnyBalance.trace('Проблема получения xml: ' + e.message + '\n' + xml);
 		AnyBalance.trace('Похоже, rp5 заблокировал ваш IP :( Пробуем парсить HTML страницу.');
 		var html = AnyBalance.requestGet('http://wap.rp5.ru/' + prefs.city + "/ru");
 		parseHtml(html);
-	} else {
-		parseXml(xml, prefs);
 	}
 }
 

@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="3">ab-money-bitcoin-wallet-stats</id>
+	<id version="4">ab-money-bitcoin-wallet-stats</id>
 	<api flags="no_browser"/>
 	<name>Bitcoin Wallet</name>
 	<description html="true"><![CDATA[
@@ -18,8 +18,11 @@
 	</files>
 	<counters>
 		<counter id="balance" name="Balance" units="BTC"/>
+        <counter id="exchange_rate" name="Exchange Rate" units="{@currency}"/>
+        <counter id="value" name="Value" units="{@currency}"/>
 		<counter id="total_received" name="Total Received" units="BTC"/>
 		<counter id="n_transactions" name="Transactions Count"/>
+        <counter id="currency" name="Currency" type="text"/>
 	</counters>
 	<keywords>bitcoin,BTC,биткоин</keywords>
 	<type>money</type>

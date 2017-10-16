@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="2">ab-shop-evacosmetics</id>
+	<api flags="no_browser"/>
+	<name>Eva Cosmetics</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о количестве баллов на бонусной карте сети магазинов Eva Cosmetics в России https://evacosmetics.ru/</p>
+	<p>Информация берется из личного кабинета https://evacosmetics.ru/orangecard/account/my-card/bill/</p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="allBonus" name="Все бонусы" />
+		<counter id="activeBinus" name="Доступно"/>
+		<counter id="inactiveBonus" name="Будут доступны"/>
+		<counter id="first_burn_bonus" name="Сгораемые баллы" />
+		<counter id="first_burn_date" name="Дата сгорания" type="time" format="dd/MM/yyyy"/>
+	</counters>
+	<keywords>магазин, косметика, баллы, скидки</keywords>
+	<type>shop</type>
+	<country>ru</country>
+</provider>

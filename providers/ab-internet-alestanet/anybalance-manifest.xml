@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-internet-alestanet</id>
+	<api flags="no_browser"/>
+	<name>Алеста (Красноярск)</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию из личного кабинета интернет-провайдера ООО 'Алеста' в г. Красноярске и пригороде <a href="http://alestanet.ru/">http://alestanet.ru/</a></p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" рyб"/>
+		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="__tariff" name="Текущий тариф" type="text"/>
+		<counter id="nextTariff" name="Следующий тариф" type="text"/>
+		<counter id="credit" name="Кредит" units=" рyб"/>
+	</counters>
+	<keywords>Алеста Красноярск</keywords>
+	<type>internet</type>
+	<country>ru</country>
+</provider>

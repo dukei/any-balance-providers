@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="23">ab-municipal-mosenergo</id>
+	<id version="26">ab-municipal-mosenergo</id>
 	<name>Мосэнергосбыт</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе и последнем платеже в "МосЭнергоСбыт".</p> 
@@ -10,12 +10,14 @@
 	<instruction html="true"><![CDATA[
 	<p>Если у вас привязано несколько счетов к одному аккаунту, то можно вводить нужный номер счета и пароль от счета, к которому он привязан.</p>
 	]]></instruction>	
-	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
 		<js>main.js</js>
-		<js>library.js</js>
 		<history>history.xml</history>
 	</files>
 	<counters>

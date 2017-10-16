@@ -1,17 +1,19 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-    <id version="14">ab-money-google-checkout</id>
+    <id version="16">ab-money-google-checkout</id>
     <name>Google Wallet (Checkout)</name>
 	<api flags="no_browser"/>
 	<description html="true"><![CDATA[
 	<p>Obtains information from Google Wallet personal account. <a href="https://checkout.google.com/sell/orders">https://checkout.google.com/sell/orders</a></p>
 	]]></description>
-    <author>Stark &lt;support@starksoft.ru&gt;</author>
+    <author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+    <depends>
+    	<module id="library"/>
+    	<module id="login/google"/>
+    </depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
-		<js>login.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>

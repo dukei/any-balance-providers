@@ -7,7 +7,7 @@
 	<p>Предоставляет информацию о балансе провайдера Mendeleevo.net г. Зеленоград</p>
 	<p>Информация берется из личного кабинета http://billing.mendeleevo.net/cp/?</p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<preferences>preferences.xml</preferences>
 		<js>library.js</js>

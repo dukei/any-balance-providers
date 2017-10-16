@@ -21,6 +21,8 @@ function main() {
 
 	html = AnyBalance.requestGet(baseurl + 'russia', g_headers);
 
+	AnyBalance.setCookie('www.netprint.ru', 'netprint_session_token', '' + Math.random());
+
 	var html = AnyBalance.requestPost(baseurl + 'xml/777', {
 		'operation':'stdlogin',
 		'POST_AUTH_USER':prefs.login,
@@ -28,10 +30,12 @@ function main() {
 		'please_remember_me':'false'
 	}, addHeaders({Referer: baseurl + ''}));
 
-	if (!/"code":100/i.test(html)) {
-		var error = getParam(html, null, null, /<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
+	var json = getJson(html);
+	if (json.code != 100) {
+		var error = json.error;
 		if (error)
-			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
+			throw new AnyBalance.Error(error, null, /password/i.test(error));
+		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
 	html = AnyBalance.requestGet(baseurl + 'russia/73/', g_headers);

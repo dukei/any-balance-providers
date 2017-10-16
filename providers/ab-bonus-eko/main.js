@@ -3,13 +3,13 @@
 
 Всеукраинская сеть супермаркетов «ЭКО-маркет»
 Сайт оператора: http://www.eko.com.ua
-Личный кабинет: http://www.podyaka.eko.com.ua
+Личный кабинет: https://www.podyaka.eko.com.ua
 */
 
 function main(){
     var prefs = AnyBalance.getPreferences();
 
-    var baseurl = 'http://www.podyaka.eko.com.ua';
+    var baseurl = 'https://www.podyaka.eko.com.ua';
 
     AnyBalance.trace("Trying to enter selfcare at address: " + baseurl + '/site/');
     var html = AnyBalance.requestPost(baseurl + '/site/', {

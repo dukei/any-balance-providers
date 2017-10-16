@@ -46,6 +46,10 @@ function apiCall(method, params) {
 			
 			if(errors.length > 0) {
 				var err = errors.join(', ');
+				if(/User does not have subscription on sms info/i.test(err)){
+					throw new AnyBalance.Error("Аэрофлот требует обязательной подписки на SMS-информирование для входа в личный кабинет. Войдите на https://www.aeroflot.ru/personal через браузер, выполните инструкции в личном кабинете.");
+				}
+
 				throw new AnyBalance.Error(err, null, /неправильные реквизиты/i.test(err));
 			}
 		}
@@ -89,7 +93,7 @@ function mainAppAPI(prefs) {
 		captcha = AnyBalance.retrieveCode("Пожалуйста, введите код с картинки", captcha);
 		AnyBalance.trace('Капча получена: ' + captcha);
 	}
-	
+
 	json = apiCall('POST:services/v.1/app_auth/welcome?_preferredLanguage=ru', {
 		passwd_hash2: hash2 + '',
 		cnonce: cnonce,
@@ -101,9 +105,14 @@ function mainAppAPI(prefs) {
     var result = {success: true};
 	
 	getParam(profileJson.data.mileBalance + '', result, 'balance', null, replaceTagsAndSpaces, parseBalance);
-	getParam(profileJson.data.currentYearBusinessSegments + '', result, 'segments', null, replaceTagsAndSpaces, parseBalance);
+	getParam(profileJson.data.currentYearMiles + '', result, 'qmiles', null, replaceTagsAndSpaces, parseBalance);
+	getParam(profileJson.data.currentYearSegments + '', result, 'segments', null, replaceTagsAndSpaces, parseBalance);
+	getParam(profileJson.data.currentYearBusinessSegments + '', result, 'segmentsBusiness', null, replaceTagsAndSpaces, parseBalance);
+	getParam(profileJson.data.milesActivityDate, result, 'milesActivityDate', null, replaceTagsAndSpaces, parseDateISO);
 	getParam(profileJson.data.milesExpirationDate, result, 'milesExpirationDate', null, replaceTagsAndSpaces, parseDateISO);
+	getParam(profileJson.data.tierExpirationDate, result, 'levelExpirationDate', null, replaceTagsAndSpaces, parseDateISO);
 	getParam(profileJson.data.tierLevel, result, 'level');
+	getParam(profileJson.data.loyalty_id, result, '__tariff');
 	
     AnyBalance.setResult(result);
 }

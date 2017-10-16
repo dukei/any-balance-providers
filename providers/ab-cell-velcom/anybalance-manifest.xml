@@ -1,27 +1,28 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="51">ab-cell-velcom</id>
+	<id version="59">ab-cell-velcom</id>
 	<api flags="no_browser"/>
 	<name>Velcom (Беларусь)</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе, использованных минутах, трафике для пользователей белорусского оператора сотовой связи Velcom.</p>
-	<p>Информация берется из интернет-службы сервиса абонента (ИССА) (http://internet.velcom.by/).</p>
+	<p>Информация берется из интернет-службы сервиса абонента (ИССА) (http://my.velcom.by/).</p>
 	]]></description>
 	<instruction html="true"><![CDATA[
 	<p>Как зарегистрироваться в ИССА:</p>
 	<ol>
-	<li>Перейдите по ссылке «Регистрация» на странице http://internet.velcom.by.</li>
+	<li>Перейдите по ссылке «Регистрация» на странице http://my.velcom.by.</li>
 	<li>Введите номер своего телефона и получите ВРЕМЕННЫЙ пароль (действует 1 час).</li>
 	<li>Зайдите через браузер в ИССА, используя полученный пароль, и смените его на ПОСТОЯННЫЙ (действует 1 год) в меню ""Дополнительно/Изменить пароль"".</li>
 	<li>Введите постоянный пароль в этот провайдер, чтобы получить баланс.</li>
 	</ol>
 	]]></instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+        <depends>
+            <module id="library"/>
+        </depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>vvv.js</js>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
@@ -30,10 +31,10 @@
 		<counter id="min" name="Минуты" units=" мин"/>
 		<counter id="sms" name="Сообщения" units=" смс"/>
 		<counter id="mms" name="MMS" units=" ммс"/>
-		<counter id="min_velcom" name="Минуты на velcom" units=" vc"/>
-		<counter id="min_fn" name="Минуты на любимые номера" units=" лн"/>
-		<counter id="traffic" name="Трафик" units=" Mb"/>
-		<counter id="traffic_night" name="Трафик (ночь)" units=" Mb"/>
+		<counter id="min_velcom" name="Минуты на Velcom" units=" мин vc"/>
+		<counter id="min_fn" name="Минуты на любимые номера" units=" мин лн"/>
+		<counter id="traffic" name="Трафик" units=" Мб"/>
+		<counter id="traffic_night" name="Трафик (ночь)" units=" Мб"/>
 		<counter id="balanceBonus" name="Бонусный баланс" units=" р"/>
 		<counter id="userName" name="ФИО" type="text"/>
 		<counter id="userNum" name="Номер абонента" type="text"/>

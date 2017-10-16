@@ -21,4 +21,13 @@
         dialogMessage="Введите пароль, используемый для входа в личный кабинет."
         inputType="textPassword">
     </EditTextPreference>
+    <EditTextPreference 
+        title="Организация" 
+		key="reseller"
+        summary="||{@s}" 
+		dialogTitle="Организация" 
+		positiveButtonText="ОК" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите часть названия обслуживающей организации, по которой вам нужно получить информацию, если их у вас несколько в кабинете.">
+    </EditTextPreference>
 </PreferenceScreen>

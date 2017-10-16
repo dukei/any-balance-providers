@@ -5,7 +5,7 @@
 	<id version="1">ab-internet-telesystems-ua</id>
 	<name>Телесистемы Украины</name>
 	<description>Получает данные из личного кабинета интернет-провайдера Телесистемы Украины (http://telesystems.ua/cabinet/index.php)</description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

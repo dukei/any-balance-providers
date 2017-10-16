@@ -1,17 +1,20 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-internet-starnet</id>
+	<api flags="no_browser"/>
+  <id version="2">ab-internet-starnet</id>
   <name>StarNet (Молдавия)</name>
   <description>
     Получает баланс и информацию о тарифных планах по различным услугам для молдавского интернет-провайдера StarNet (http://starnet.md).
 
     Информация берется из личного кабинета http://my.starnet.md
   </description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+  <depends>
+  	<module id="library"/>
+  </depends>
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
-    <js>library.js</js>
     <js>main.js</js>
     <history>history.xml</history>
   </files>

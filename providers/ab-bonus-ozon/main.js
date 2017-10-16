@@ -2,45 +2,73 @@
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 */
 
-var g_headers = {
-	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
-	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
-	'Connection': 'keep-alive',
-	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/30.0.1599.69 Safari/537.36'
-};
+var g_headers = [
+	['Host', 'www.ozon.ru'],
+	['Connection', 'keep-alive'],
+	['Pragma', 'no-cache'],
+	['Cache-Control', 'no-cache'],
+	['User-Agent', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36'],
+	['Accept', 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8'],
+	['Accept-Encoding', 'gzip, deflate, sdch, br'],
+	['Accept-Language', 'ru,en-US;q=0.8,en;q=0.6'],
+	['Origin', 'https://www.ozon.ru'],
+	['Upgrade-Insecure-Requests', '1']
+];
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
 	var baseurl = "https://www.ozon.ru/";
 
+//    AnyBalance.setOptions({cookiePolicy: 'netscape'});
+
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 
+    var incapsule = Incapsule(baseurl + 'context/login/');
 	var html = AnyBalance.requestGet(baseurl + 'context/login/', g_headers);
+	if(incapsule.isIncapsulated(html)){
+		AnyBalance.trace('Инкапсула вмешалась на старте');
+	    html = incapsule.executeScript(html);
+	}
 
-	var vs = getViewState(html);
-	if (!vs)
-		throw new AnyBalance.Error('Не найдена форма входа. Сайт изменен?');
-	
-	if (/<input[^>]+name="Answer"/i.test(html))
-		throw new AnyBalance.Error('Озон ввёл капчу при входе в личный кабинет. Провайдер временно не работает.');
-	
-	html = AnyBalance.requestPost(baseurl + 'context/login/', {
-		__EVENTTARGET: '',
-		__EVENTARGUMENT: '',
-		__VIEWSTATE: vs,
-		LoginGroup: 'HasAccountRadio',
-		CapabilityAgree: 'on',
-		'Authentication': 'Продолжить',
-		Login: prefs.login,
-		Password: prefs.password,
-	}, addHeaders({Referer: baseurl + 'context/login/'}));
+	function tryToLogin(html){
+		var form = getElement(html, /<form[^>]+name="form1"/i);
+		if (!form){
+			AnyBalance.trace(html);
+			throw new AnyBalance.Error('Не найдена форма входа. Сайт изменен?');
+		}
+		
+		var params = AB.createFormParams(form, function(params, str, name, value) {
+			if (name == 'Login') {
+				return prefs.login;
+			} else if (name == 'Password') {
+				return prefs.password;
+			} else if (name == 'LoginGroup') {
+				return 'HasAccountRadio';
+			}
+	    
+			return value;
+		});
+	    
+		html = AnyBalance.requestPost(baseurl + 'context/login/', params, addHeaders({Referer: baseurl + 'context/login/'}));
+		if(incapsule.isIncapsulated(html)){
+			AnyBalance.trace('Инкапсула вмешалась после логина');
+		    html = incapsule.executeScript(html);
+		}
+		return html;
+	}
+
+	html = tryToLogin(html);
+   	if(!/context\/logoff/i.test(html) && /<form[^>]+name="form1"/i.test(html)){
+   		AnyBalance.trace('Снова форма авторизации... Заходим ещё разок');
+	  	html = tryToLogin(html); //Иногда может снова быть логин, если инкапсула не дала залогиниться
+	}
+
 	
 	if (!/context\/logoff/i.test(html)) {
-		var error = getParam(html, null, null, /<span[^>]+class="ErrorSpan"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
+		var error = getParam(html, null, null, /<span[^>]+class="ErrorSpan"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
 		if (error)
-			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
+			throw new AnyBalance.Error(error, null, /парол/i.test(error));
 		
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
@@ -68,12 +96,12 @@ function main() {
 		getParam(html, result, 'order_sum', /К оплате([^>]*>){3}/i, replaceTagsAndSpaces, parseBalance);
 		getParam(html, result, 'weight', /class="Weight"([^>]*>){2}/i, replaceTagsAndSpaces, parseBalance);
 		getParam(html, result, 'ticket', /Отправление([^>]*>){2}/i, replaceTagsAndSpaces);
-		getParam(html, result, 'state', /"[^"]*shipmentStateItem[^"]*activeState[^"]*"([^>]*>){2}/i, replaceTagsAndSpaces);
+		getParam(html, result, 'state', /<span[^>]+orderState[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
 	}
 	
 	html = AnyBalance.requestGet(baseurl + 'context/myclient/');
 	
-	getParam(html, result, '__tariff', /<div[^>]+class="big1"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, '__tariff', /<div[^>]+class="big1"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
 	
 	AnyBalance.setResult(result);
 }

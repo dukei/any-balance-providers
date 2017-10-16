@@ -1,17 +1,19 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-service-kasperskiy</id>
+	<id version="4">ab-service-kasperskiy</id>
 	<api flags="no_browser"/>
 	<name>My Kaspersky</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о кодах активации продуктов Лаборатории Касперского <a href="http://www.kaspersky.com/">http://www.kaspersky.com/</a></p>
 	<p>Информация берется из личного кабинета <a href="https://my.kaspersky.com/ru/">https://my.kaspersky.com/ru/</a></p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>

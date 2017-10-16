@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id version="2">ab-internet-telincom</id>
+	<id version="3">ab-internet-telincom</id>
 	<name>TelinCom (Москва)</name>
 	<description>
 		Получает баланс и информацию о тарифном плане для московского интернет-провайдера TelinCom (http://www.telincom.ru).
@@ -9,17 +9,17 @@
 		Информация берется из личного кабинета.
 	</description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
         <preferences>preferences.xml</preferences>
-        <js>library.js</js>
         <js>main.js</js>
         <history>history.xml</history>
 	</files>
 	<counters>
 		<counter id="balance" name="Баланс" units=" р"/>
-		<counter id="credit" name="Кредит" units=" р"/>
-		<counter id="status" name="Состояние" type="text"/>
 		<counter id="licschet" name="Лицевой счет" type="text"/>
 		<counter id="trafficIn" name="Вх.трафик" units=" Gb"/>
 		<counter id="trafficOut" name="Исх.трафик" units=" Gb"/>

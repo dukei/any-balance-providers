@@ -1,5 +1,20 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="14" date="2017-06-27">
+	- Поддержка изменений на сайте.
+	</change>
+	<change version="13" date="2017-04-05">
+	Обход защиты от роботов (дополнительные случаи)
+	</change>
+	<change version="12" date="2017-03-21">
+	Обход защиты от роботов
+	</change>
+	<change version="11" date="2017-03-21">
+	- Поддержка изменений в процедуре входа
+	</change>
+	<change version="10" date="2016-11-30">
+	- Поддержка изменений на сайте.
+	</change>
 	<change version="9" date="2015-06-29">
 	- Новые счетики для отображения статуса активного заказа.
 	</change>

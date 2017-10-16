@@ -1,17 +1,19 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-bonus-starbucks</id>
+	<id version="3">ab-bonus-starbucks</id>
 	<api flags="no_browser"/>
 	<name>Starbucks</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе провайдера Starbucks <a href="http://starbuckscoffee.ru/ru/">http://starbuckscoffee.ru/ru/</a></p>
-	<p>Информация берется из личного кабинета <a href="https://cabinet.plas-tek.ru/default.aspx?mainlogin=true&style=stylestarbucks"> https://cabinet.plas-tek.ru/default.aspx?mainlogin=true&style=stylestarbucks</a></p>
+	<p>Предоставляет информацию о балансе провайдера Starbucks http://starbuckscoffee.ru/</p>
+	<p>Информация берется из личного кабинета https://starbuckscard.ru</p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>

@@ -199,6 +199,95 @@ function processCard(card, result) {
 // Обработка депозитов
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+function processDeposits(html, result) {
+    if(!AnyBalance.isAvailable('deposits'))
+        return;
+
+    html = AnyBalance.requestGet(baseurl + '/deposits', g_headers);
+
+    var depositList = getElement(html, /<ul[^>]+data-role="listview"[^>]*>/i);
+    if(!depositList){
+        if(/У вас нет (?:депозитов|вкладов)/i.test(html)){
+            AnyBalance.trace('У вас нет депозитов');
+            result.deposits = [];
+        }else {
+            AnyBalance.trace(html);
+            AnyBalance.trace('Не удалось найти таблицу с депозитами.');
+        }
+        return;
+    }
+
+    var deposits = getElements(depositList, /<li[^>]*>/ig);
+    AnyBalance.trace('Найдено депозитов: ' + deposits.length);
+    result.deposits = [];
+
+    for(var i=0; i < deposits.length; ++i){
+        var deposit = deposits[i];
+        var id = getParam(deposit, null, null, /depositId=([^"&]*)/i, replaceHtmlEntities);
+        var name = getParam(deposit, null, null, /<\/h3[^>]*>([\s\S]*?)<br[^>]*>/i, replaceTagsAndSpaces);
+        var num = getElement(deposit, /<h3[^>]*>/i, [replaceTagsAndSpaces, /\s+/g, '']);
+
+        var c = {__id: id, __name: name + ' *' + num.substr(-4), num: num};
+
+        if (__shouldProcess('deposits', c)) {
+            processDeposit(deposit, c);
+        }
+
+        result.deposits.push(c);
+    }
+}
+
+function processDeposit(deposit, result) {
+    getParam(deposit, result, 'deposits.name', /<\/h3[^>]*>([\s\S]*?)<br[^>]*>/i, replaceTagsAndSpaces);
+    getParam(deposit, result, 'deposits.balance', /<\/h3>[^<]*<br[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+    getParam(deposit, result, ['deposits.currency', 'deposits.balance'], /<\/h3>[^<]*<br[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseCurrency);
+
+    if(AnyBalance.isAvailable('deposits.type', 'deposits.num', 'deposits.till', 'deposits.status')) {
+        var detailsurl = getParam(deposit, null, null, /<a[^>]+href="([^"]*depositId[^"]*)/i, replaceHtmlEntities);
+        var html = AnyBalance.requestGet(joinUrl(baseurl, detailsurl), g_headers);
+
+        var dtStart = getParam(html, null, null, /<span[^>]+id="deposit-start"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseDate);
+        getParam(html, result, 'deposits.agreement', /<span[^>]+id="agreement-number"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
+        getParam(html, result, 'deposits.period', /<span[^>]+id="deposit-period"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance); //дн
+        getParam(dtStart, result, 'deposits.date_start');
+        getParam(html, result, 'deposits.till', /<span[^>]+id="deposit-until"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseDate);
+        getParam(html, result, 'deposits.pct', /<span[^>]+id="deposit-rate"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, function(str){return parsePcts(str, new Date(dtStart))});
+        getParam(html, result, 'deposits.pct_name', /<span[^>]+id="deposit-rate"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
+        getParam(html, result, 'deposits.prolong', /<span[^>]+id="prolongation"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces); //возврат средств на счёт клиента после окончания вклада
+        getParam(html, result, 'deposits.pct_conditions', /Выплата процентов([\s\S]*?)<\/li>/i, replaceTagsAndSpaces); //На счёт вклада
+        getParam(html, result, 'deposits.pct_period', /Период выплаты процентов([\s\S]*?)<\/li>/i, replaceTagsAndSpaces); //25 дн.
+        getParam(html, result, 'deposits.topup', /Возможность пополнения вклада([\s\S]*?)<\/li>/i, replaceTagsAndSpaces, parseBool);
+        getParam(html, result, 'deposits.withdraw', /Возможность частичного изъятия([\s\S]*?)<\/li>/i, replaceTagsAndSpaces, parseBool);
+        getParam(html, result, 'deposits.pct_withdraw', /Возможность снятия начисленных процентов([\s\S]*?)<\/li>/i, replaceTagsAndSpaces, parseBool);
+    }
+}
+
+//Определяет процент из строки вида c 1 по 150 день - 9.5%; с 151 по 200 день - 11%;
+function parsePcts(str, dtStart){
+    var dates = sumParam(str, null, null, /с\s*\d+[^;\-]*-\s*[\d.,]+%/ig), pct;
+    if(dates){
+        var dt = new Date();
+        for (var i = dates.length-1; i >= 0; i--) {
+            var day = getParam(dates[i], null, null, /с\s*(\d+)/, null, parseBalance);
+            var dtEdge = new Date(dtStart.getFullYear(), dtStart.getMonth(), dtStart.getDate() + (day || 0));
+            if (dt.getTime() >= dtEdge.getTime()) {
+                pct = getParam(dates[i], null, null, /[\d.,]+%/i, null, parseBalance);
+                return pct;
+            }
+        }
+    }else{
+        pct = getParam(str, null, null, /[\d.,]+%/i, null, parseBalance);
+        if(isset(pct))
+            return pct;
+        return parseBalance(str);
+    }
+}
+
+function parseBool(str){
+    return /\bДа\b/i.test(str);
+}
+
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Обработка кредитов
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

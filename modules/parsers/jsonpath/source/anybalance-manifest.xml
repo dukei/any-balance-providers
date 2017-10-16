@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+    <id version="1">parsers/jsonpath</id>
+	<api flags="no_browser" />
+    <name>jsonpath parser</name>
+    <description><![CDATA[
+    	//Пример использования
+    	getParam(jspath1(acc, '$.accountBalance.value'), result, 'accounts.balance');
+    	getParam(jspath1(acc, '$.accountBalance.currency.name'), result, 'accounts.currency');
+    	getParam(jspath1(acc, '$.creationDate.milliseconds'), result, 'accounts.date_start');
+    ]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<js>jsonpath.js</js>
+		<js>adapter.js</js>
+		<history>history.xml</history>
+	</files>
+</provider>

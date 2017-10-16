@@ -15,7 +15,7 @@ var g_countersTable = {
 		"name": "cards.name",
 		"__tariff": "cards.name",
 		"minpay": "accounts.minpay",
-		"minpaytill": "accounts.minpaytill",
+		"minpaytill": "accounts.minpay_till",
 		"debt": "accounts.debt",
 		"rate": "accounts.pct",
 		"till": "cards.till",
@@ -42,7 +42,7 @@ var g_countersTable = {
 		"name": "accounts.name",
 		"__tariff": "accounts.name",
 		"minpay": "accounts.minpay",
-		"minpaytill": "accounts.minpaytill",
+		"minpaytill": "accounts.minpay_till",
 		"debt": "accounts.debt",
 		"rate": "accounts.pct",
 		"limit": "accounts.limit",
@@ -58,6 +58,7 @@ var g_countersTable = {
 		"name": "savings.name",
 		"__tariff": "savings.name",
 		"pcts": "savings.pct_sum",
+		"accnum": "savings.num"
 	},
 
 };
@@ -162,7 +163,10 @@ function shouldProcess(counter, info){
 		{
 			if(prefs.type != 'saving')
 				return false;
-	    	return true; //У них нет номера, возвращаем только первый
+		    if(!prefs.num)
+		    	return true;
+			if(info.num && endsWith(info.num, prefs.num))
+				return true;
 		}
 		default:
 			return false;

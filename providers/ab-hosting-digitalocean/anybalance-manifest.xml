@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="1.0" version="3">ab-hosting-digitalocean</id>
+	<id major_version="1.0" version="4">ab-hosting-digitalocean</id>
 	<api flags="no_browser"/>
 	<name>DigitalOcean</name>
 	<description html="true"><![CDATA[
@@ -8,10 +8,12 @@
 	<p>Информация берется из личного кабинета <a href="https://cloud.digitalocean.com/billing">https://cloud.digitalocean.com/billing</a></p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+  <depends>
+    <module id="library"/>
+  </depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>

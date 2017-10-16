@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-cell-tcell</id>
+	<api flags="no_browser"/>
+	<name>Tcell</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе Tcell GSM <a href="http://tcell.tj/">http://tcell.tj/</a></p>
+	<p>Информация берется из личного кабинета <a href="http://my.tcell.tj/">http://my.tcell.tj/</a></p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" СМН"/>
+        <counter id="minus" name="Расходы (тек. месяц)" units=" СМН"/>
+        <counter id="plus" name="Приходы (тек. месяц)" units=" СМН"/>
+        <counter id="services" name="Активные услуги" type="text"/>
+		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="status" name="Статус" type="text"/>
+		<counter id="phone" name="Телефон" type="text"/>
+	</counters>
+	<keywords>tcell</keywords>
+	<type>cell</type>
+	<country>tj</country>
+</provider>

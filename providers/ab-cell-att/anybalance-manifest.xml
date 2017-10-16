@@ -1,6 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-cell-att</id>
+	<api flags="no_browser"/>
+	<id version="2">ab-cell-att</id>
 	<name>AT&amp;T (USA)</name>
 	<description html="true"><![CDATA[
 	<p>Obtains information from AT&amp;T personal account <a href=""></a></p>
@@ -10,25 +11,25 @@
 	<p>If you are not registered for AT&amp;T you can register here: <a href="https://www.att.com/olam/slidRegistrationAction.olamexecute">https://www.att.com/olam/slidRegistrationAction.olamexecute</a></p>
 	]]></instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+        <depends>
+  		<module id="library"/>
+        </depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
 	<counters>
 		<counter id="balance" name="Account balance" prefix="$ "/>
-		<counter id="till" name="Use by" type="time" format="MMM dd"/>
-		<counter id="expires" name="Expires" type="time" format="MMM dd"/>
-		<counter id="planName" name="Plan name" type="text"/>
-		<counter id="minPerMonth" name="Minutes per month" units=" min"/>
-		<counter id="minAvailable" name="Minutes available" units=" min"/>
-		<counter id="smsPerMonth" name="Messages per month" units=" sms"/>
-		<counter id="smsAvailable" name="Messages available" units=" sms"/>
-		<counter id="trafficPerMonth" name="Traffic per month" type="text"/>
-		<counter id="trafficAvaliable" name="Traffic available" type="text"/>
-		<counter id="status" name="Plan status" type="text"/>
+		<counter id="wlnextdate" name="Wireless Next Bill Cycle Date" type="time" format="MMM dd"/>
+		<counter id="uverseenddate" name="Uverse Billing Endt Date" type="time" format="MMM dd"/>
+		<counter id="user" name="User" type="text"/>
+                <counter id="wltrafficused" name="Wireless traffic used"/>
+                <counter id="wltrafficall" name="Wireless traffic alloted"/>
+                <counter id="wltext" name="Text messages used"/>
+                <counter id="wlstatus" name="Wireless status" type="text"/>
+                <counter id="uversestatus" name="Uverse status" type="text"/>
 	</counters>
 	<keywords></keywords>
 	<type>cell</type>

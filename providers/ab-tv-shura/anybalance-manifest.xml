@@ -1,16 +1,19 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="4">ab-tv-shura</id>
+	<id version="7">ab-tv-shura</id>
 	<api flags="no_browser"/>
 	<name>Тетя Шура (Shura.tv)</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе провайдера Тетя Шура https://forum.shura.tv/</p>
 	<p>Информация берется из личного кабинета https://shura.tv/b/</p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+		<module id="framework/cloudflare"/>
+	</depends>
 	<files>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>

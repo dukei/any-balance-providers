@@ -12,7 +12,7 @@ var g_headers = {
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'http://info.khotkovo.ru/';
+	var baseurl = 'https://info.khotkovo.ru/';
 	AnyBalance.setDefaultCharset('utf-8');
 
 	checkEmpty(prefs.login, 'Введите логин!');
@@ -32,20 +32,18 @@ function main() {
 	html = AnyBalance.requestPost(baseurl + 'login.aspx?ReturnUrl=%2fexit.aspx', params, addHeaders({Referer: baseurl + 'login.aspx?ReturnUrl=%2fexit.aspx'}));
 
 	if (!/Выйти\s*из\s*личного\s*кабинета/i.test(html)) {
-		var error = getParam(html, null, null, /ErrorLabel"(?:[^>]*>){1}([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
-		if (error && /Неверное имя пользователя или пароль/i.test(error))
-			throw new AnyBalance.Error(error, null, true);
+		var error = getParam(html, null, null, /ErrorLabel"(?:[^>]*>){1}([^<]*)/i, replaceTagsAndSpaces);
 		if (error)
-			throw new AnyBalance.Error(error);
+			throw new AnyBalance.Error(error, null, /Неверное имя пользователя или пароль/i.test(error));
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
 	var result = {success: true};
 	
-	getParam(html, result, 'fio', /ФИО пользователя:(?:[^>]*>){3}([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'balance', /Баланс счета:(?:[^>]*>){3}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'deadline', /Баланс счета:(?:[^>]*>){3}[^>]*хватит до([^<]*)/i, replaceTagsAndSpaces, parseDate);
-	getParam(html, result, '__tariff', /Тарифный план:(?:[^>]*>){4}([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'status', /Состояние интернета:(?:[^>]*>){1}([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'fio', /ФИО пользователя:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+	getParam(html, result, 'balance', /Баланс счета:[\s\S]*?<td[^>]*>([\s\S]*?)(?:до|<\/td>)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'deadline', /Баланс счета:[\s\S]*?<td[^>]*>([\s\S]*?)(?:<\/td>)/i, [/[\s\S]*?до/i, '', replaceTagsAndSpaces], parseDate);
+	getParam(html, result, '__tariff', /Тарифный план:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+	getParam(html, result, 'status', /<span[^>]+NetStateLabel[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
 	
 	AnyBalance.setResult(result);
 }

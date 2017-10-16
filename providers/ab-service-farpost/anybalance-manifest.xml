@@ -7,7 +7,7 @@
 	<p>Получает данные для рекламной сети farpost.ru</p>
 	<p>Личный кабинет находится по адресу: http://www.farpost.ru/personal/</p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

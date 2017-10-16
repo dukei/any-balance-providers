@@ -1,24 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
     <EditTextPreference
-	obligatory="true"
-        key="email"
-        title="E-mail" 
-        summary="E-mail||{@s}\n" 
-        dialogTitle="E-mail" 
+		obligatory="true"
+        key="key"
+        title="captcha KEY" 
+        summary="captcha KEY||{@s}\n" 
+        dialogTitle="captcha KEY" 
         negativeButtonText="Отмена" 
-        dialogMessage="Введите ваш e-mail"
+        dialogMessage="Введите ваш captcha KEY. Его можно узнать в вашем личном кабинете ruCaptcha"
         positiveButtonText="ОК">
-    </EditTextPreference>
-    <EditTextPreference
-	obligatory="true"
-        key="password"
-        title="Пароль"
-        summary="Пароль для авторизации||**********\n"
-        inputType="textPassword"
-        dialogTitle="Пароль"
-        dialogMessage="Введите пароль, используемый для авторизации"
-        positiveButtonText="ОК"
-        negativeButtonText="Отмена">
     </EditTextPreference>
 </PreferenceScreen>

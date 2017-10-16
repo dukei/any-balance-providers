@@ -1,17 +1,19 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-money-moneta</id>
+	<id version="2">ab-money-moneta</id>
 	<api flags="no_browser"/>
 	<name>Moneta.ru</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе USD RUB и EUR счетов в платежной системе Монета</p>
+	<p>Предоставляет информацию о балансе USD, RUB и EUR счетов в платежной системе Монета</p>
 	<p>Информация берется из личного кабинета https://moneta.ru/desktop.htm</p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
@@ -25,6 +27,6 @@
 		<counter id="type" name="Тип счета" type="text"/>
 	</counters>
 	<keywords></keywords>
-	<type>money</type>
+	<type>money, wallet</type>
 	<country>ru</country>
 </provider>

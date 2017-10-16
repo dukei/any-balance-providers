@@ -1,0 +1,41 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-money-halyk</id>
+	<api flags="no_browser"/>
+	<name>Halyk Bank</name>
+	<description html="true"><![CDATA[
+	<p>Получает текущий остаток и другие параметры продуктов Halyk Bank http://www.halykbank.kz/, используя интернет-банк (https://www.myhalyk.kz/).</p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Если у вас нет доступа к интернет-банку: для получения пароля надо зарегистрироваться по номеру карты: https://www.myhalyk.kz/wb/auth/enrollment?execution=e4s1</p>
+	]]></instruction>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+		<module id="nadapter"/>
+		<module id="extract/abe-money-halyk"/>
+	</depends>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Остаток" units=" {@currency}"/>
+		<counter id="blocked" name="Заблокированные средства" units=" {@currency}"/>
+		<counter id="bonus" name="Бонус" units=" {@currency}"/>
+		<counter id="limit" name="Кредитный лимит" units=" {@currency}"/>
+		<counter id="till" name="Срок действия" type="time" format="MM/yy"/>
+		<counter id="num" name="Номер карты" type="text"/>
+		<counter id="accnum" name="Номер счета" type="text"/>
+		<counter id="status" name="Статус" type="text"/>
+		<counter id="ps" name="Платежная система" type="text"/>
+		<counter id="holder" name="Держатель карты" type="text"/>
+		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="currency" name="Валюта" type="text"/>
+	</counters>
+	<keywords>халык халик</keywords>
+	<type>money, bank</type>
+	<country>ru</country>
+</provider>

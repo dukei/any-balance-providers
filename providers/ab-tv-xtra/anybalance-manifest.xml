@@ -7,7 +7,7 @@
 	<p>Предоставляет информацию о балансе провайдера XtraTV http://xtra.tv/</p>
 	<p>Информация берется из личного кабинета http://my.xtratv.com.ua/ru/login</p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

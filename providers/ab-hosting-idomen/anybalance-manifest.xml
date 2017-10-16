@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-hosting-idomen</id>
+	<api flags="no_browser"/>
+	<name>iDomen</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию из личного кабинета системы регистрации доменов iDomen <a href="http://www.idomen.ru/">http://www.idomen.ru/</a></p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Если у вас нет доступа в Личный кабинет, получите его на странице <a href="http://www.idomen.ru/">http://www.idomen.ru/</a></p>
+	]]></instruction>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Суммарный оборот на балансе" units=" {@currency}"/>
+		<counter id="account_balance" name="Остаток на счету" units=" {@currency}"/>
+		<counter id="domains" name="Зарегистрированные домены" type="text"/>
+	</counters>
+	<keywords>айдомен домен доменные</keywords>
+	<type>hosting</type>
+	<country>ru</country>
+</provider>

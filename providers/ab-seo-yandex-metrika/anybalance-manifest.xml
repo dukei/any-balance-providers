@@ -1,17 +1,19 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="9">ab-seo-yandex-metrika</id>
+	<id version="10">ab-seo-yandex-metrika</id>
 	<name>Яндекс.Метрика</name>
 	<description html="true"><![CDATA[
-	<p>Получает данные по id счетчика в системе Яндекс Метрика <a href="http://metrika.yandex.ru/stat/?counter_id=">http://metrika.yandex.ru/stat/?counter_id=</a></p>
+	<p>Получает данные по id счетчика в системе Яндекс Метрика https://metrika.yandex.ru/stat/traffic?group=day&id= </p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+		<module id="login/yandex"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>login.js</js>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>

@@ -52,7 +52,7 @@ function main() {
 	
 	getParam(html, result, 'balance', /Исходящий остаток на конец месяца(?:[^>]*>){2}([^<]+)/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'account', /Договор №([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'fee', /Абонплата(?:[^>]*>){2}([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'fee', /Абонплата(?:[^>]*>){2}([^<]+)/i, replaceTagsAndSpaces, parseBalance);
 	
 	AnyBalance.setResult(result);
 }

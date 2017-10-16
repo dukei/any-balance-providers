@@ -3,42 +3,33 @@ AnyBalance Provider (http://any-balance-providers.googlecode.com)
 */
 var g_headers = {
 	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-	// 'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
 	'Accept-Language': 'ru,en;q=0.8',
 	'Connection': 'keep-alive',
-	'Origin':'https://www.lebara.es',
-	'Cookie2':'$Version=1',
-	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/31.0.1650.57 Safari/537.36',
+	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.81 Safari/537.36',
 };
 
 function main(){
 	var prefs = AnyBalance.getPreferences();
 	
-	var baseurl = 'https://www.lebara.es/';
+	var baseurl = 'https://mobile.lebara.com/es/es/';
 	
 	// Да уж, такой авторизации я еще не видел.
-	var html = AnyBalance.requestGet(baseurl + 'view/content/pl_dashboardLoginSignup?targetUrl=/dashboard', g_headers);
-	
-	try {
-		// На сайте явный баг, авторизация происходит после второго или третьего запроса
-		for(var i=0; i<4; i++) {
-			html = AnyBalance.requestPost(baseurl + 'view/LoginComponentController?targetUrl=/dashboard&', {
-				loginId: prefs.login,
-				password: prefs.password
-			}, addHeaders({Referer: baseurl + 'view/content/pl_dashboardLoginSignup?targetUrl=/dashboard'}));
-			
-			if(/LogoutController/.test(html))
-				break;
-		}
-	} catch(e) {}
-	
-	html = AnyBalance.requestGet(baseurl + 'dashboard', g_headers);
-	//AnyBalance.trace(html);
-	
-    if(!/LogoutController/.test(html)){
-        var error = getParam(html, null, null, /<ul[^>]+id="[^"]*errors"[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces);
+	var html = AnyBalance.requestGet(baseurl + 'login', g_headers);
+	var csrf = getParam(html, /<input[^>]+CSRFToken[^>]*value="([^"]*)/i, replaceHtmlEntities);
+	if(!csrf){
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Could not find login form. Is the site changed?');
+	}
+	html = AnyBalance.requestPost(baseurl + 'j_spring_security_check', {
+		j_username:	prefs.login,
+		j_password:	prefs.password,
+		CSRFToken:	csrf
+	}, addHeaders({Referer: AnyBalance.getLastUrl()}));
+
+    if(!/Logout/i.test(html)){
+        var error = getElement(html, /<div[^>]+alert/i, replaceTagsAndSpaces);
         if(error)
-            throw new AnyBalance.Error(error);
+            throw new AnyBalance.Error(error, null, /incorrect/i.test(error));
 		
 		AnyBalance.trace(html);
         throw new AnyBalance.Error('Can not log in. Wrong login or password or site might be changed.');
@@ -46,8 +37,30 @@ function main(){
     
     var result = {success: true};
 	
-	getParam(html, result, '__tariff', /<option[^>]+selected[^>]*>\s*(\d+[^<]*)/i, replaceTagsAndSpaces);
-	getParam(html, result, 'balance', [/<[^>]*>[^<]*(?:saldo|balance)(?:[^>]*>){1}([\d.,-]+€)/i, /<p>[^<]*(?:Prepago|Pay as you go)(?:[^>]*>)([^<]+)/i], replaceTagsAndSpaces, parseBalance);
-	
+	getParam(html, result, '__tariff', /<div[^>]+sim-num[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+	getParam(html, result, 'balance', /<span[^>]+class="price"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+
+	var tbl = getElements(html, [/<div[^>]+class="container"/ig, /Saldo Disponible/i])[0];
+	if(tbl){
+		var rows = getElements(tbl, /<tr[^>]+border-bottom-table-row/ig);
+		for(var i=0; i<rows.length; ++i){
+			var cells = getElements(rows[i], /<td/ig, replaceTagsAndSpaces);
+			AnyBalance.trace('Found allowance: ' + cells.join(' '));
+			var name = cells[0];
+			var val = cells[1];
+			var till = cells[2];
+
+			if(/SP Data_Internet/i.test(name)){
+				getParam(val, result, 'internet_left', null, null, parseBalance);
+			}else if(/SP Data/i.test(name) && /Special/i.test(name)){
+				getParam(val, result, 'internet_special', null, null, parseBalance);
+			}else if(/SP L2L Voice/i.test(name)){
+				getParam(val, result, 'voice', null, null, parseBalance);
+			}else{
+				AnyBalance.trace('^^^ allowance is unknown, skipping...');
+			}
+		}
+	}
+
     AnyBalance.setResult(result);
 }

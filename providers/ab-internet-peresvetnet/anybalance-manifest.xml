@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-internet-peresvetnet</id>
+	<api flags="no_browser"/>
+	<name>Пересвет-Телеком</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию из аккаунта абонента интернет провайдера ООО «Пересвет Телеком» <a href="http://www.peresvetnet.ru">http://www.peresvetnet.ru</a></p>
+	<p>Информация берется из личного кабинета <a href="https://lc.peresvetnet.ru/user">https://lc.peresvetnet.ru/user</a></p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="next_tariff" name="Следующий ТП" type="text"/>
+		<counter id="begin_time" name="Начало расчётного периода" type="time" format="dd.MM.yyyy HH:mm"/>
+		<counter id="end_time" name="Конец расчетного периода" type="time" format="dd.MM.yyyy HH:mm"/>
+		<counter id="internet_status" name="Статус интернета" type="text" />
+		<counter id="blocking_status" name="Состояние блокировки" type="text" />
+		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="account" name="Основной лицевой счёт" type="text"/>
+		<counter id="address" name="Адрес" type="text"/>
+		<counter id="connect_time" name="Дата подключения" type="time" format="dd.MM.yyyy HH:mm"/>
+		<counter id="home_phone" name="Домашний телефон" type="text"/>
+		<counter id="mobile_phone" name="Мобильный телефон" type="text"/>
+		<counter id="email" name="Email" type="text"/>
+	</counters>
+	<keywords>IP-телефония, Смотрешка, ТВ, Пересвет</keywords>
+	<type>internet</type>
+	<country>ru</country>
+</provider>

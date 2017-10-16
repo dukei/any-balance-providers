@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">crypt/crc32</id>
+	<api flags="no_browser"/>
+	<name>crc32 hash algorithm</name>
+	<description html="true"><![CDATA[
+	<p>Подсчет crc32 хэша</p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<js>crc32.min.js</js>
+		<history>history.xml</history>
+	</files>
+	<keywords></keywords>
+	<type>crypt crc32</type>
+	<country></country>
+</provider>

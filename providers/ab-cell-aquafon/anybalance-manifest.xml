@@ -11,7 +11,7 @@
 		
 		Для получения пароля отправьте USSD-команду на номер *1234# или пустое SMS на номер 1234
 	</description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

@@ -12,41 +12,73 @@ var g_headers = {
 
 function main(){
     var prefs = AnyBalance.getPreferences();
-    var baseurl = "http://cabinet.taximaxim.ru/";
-
+    var baseurl = "https://client.taximaxim.com/";
     AnyBalance.setDefaultCharset('utf-8'); 
-    var html = AnyBalance.requestPost(baseurl + 'webapp/index.php?r=clientCabinet/login', {
-        'NewLoginForm[phone]':prefs.login,
-        'NewLoginForm[password]':prefs.password,
-        'NewLoginForm[rememberMe]':0,
-        yt0:''
-    }, addHeaders({Referer: baseurl})); 
+   	
+   	checkEmpty(prefs.login, 'Введите 10 цифр номера телефона без пробелов и разделителей, например, 9261234567');
 
-    if(!/clientCabinet\/logout/i.test(html)){
-        var error = getParam(html, null, null, /<div[^>]+alert-error[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+//    createCityList();
+
+    var html = AnyBalance.requestGet(baseurl + 'site/fp/?url=' + encodeURIComponent(baseurl + 'login/') + '&fp=' + hex_md5(prefs.login), g_headers);
+	if (!html || AnyBalance.getLastStatusCode() > 400) {
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Сайт провайдера временно недоступен! Попробуйте обновить данные позже.');
+	}
+
+    var form = getElement(html, /<form[^>]+login-form/i);
+	if(!form){
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удаётся найти форму входа! Сайт изменен?');
+	}
+
+	var params = AB.createFormParams(form, function(params, str, name, value) {
+		if (/baseId/i.test(name)) {
+			return prefs.city || '6';
+		} else if (/phone/i.test(name)) {
+			return prefs.login;
+		} else if (/code/i.test(name)) {
+			return prefs.password;
+		}
+
+		return value;
+	});
+
+    var html = AnyBalance.requestPost(baseurl + 'login/', params, addHeaders({Referer: baseurl})); 
+
+    if(!/logout/i.test(html)){
+        var error = getElement(html, /<div[^>]+error-summary/i, replaceTagsAndSpaces);
         if(error)
-            throw new AnyBalance.Error(error);
+            throw new AnyBalance.Error(error, null, /номер/i.test(error));
         //Если объяснения ошибки не найдено, при том, что на сайт войти не удалось, то, вероятно, произошли изменения на сайте
         throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
     }
     var result = {success: true};
 	
-	getParam(html, result, 'discont', /"Скидка:\s*(\d+)/i, null, parseBalance);
-	
-	var json = getParam(html, null, null, /user_profile\s*=\s*(\{[\s\S]*?\});/, null, getJson);
-	getParam(json.FIO, result, 'fio');
-	getParam(json.FIO, result, '__tariff');
-
-	html = AnyBalance.requestGet(baseurl + 'Services/Taxi.svc/Accounts', g_headers);
-    json = getJson(html);
-    for(var i=0; i<json.Accounts.length; ++i){
-        var acc = json.Accounts[i];
-        if(AnyBalance.isAvailable('balance'))
-            result.balance = acc.Balance;
-        if(AnyBalance.isAvailable('licschet'))
-            result.licschet = acc.PayCode;
-        break;
-    }
+	getParam(html, result, 'discont', /Скидка(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'fio', /<input[^>]+profileform-fio[^>]*value="([^"]*)/i, replaceHtmlEntities);
+	getParam(html, result, '__tariff', /<input[^>]+profileform-fio[^>]*value="([^"]*)/i, replaceHtmlEntities);
+	getParam(html, result, 'balance', /Баланс(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'licschet', /Баланс(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
 
     AnyBalance.setResult(result);
+}
+
+function createCityList(){
+	var html = AnyBalance.requestGet('http://cabinet.taximaxim.ru/webapp/index.php?r=clientCabinet/login', g_headers);
+	var list = getElement(html, /<div[^>]+id="cityList"[^>]*>/i);
+	var items = getElements(list, /<li[^>]*>/ig);
+
+	var values = [];
+	var names = [];
+	for(var i=0; i<items.length; ++i){
+		var it = items[i];
+		values.push(getParam(it, null, null, /value="([^"]*)/i, replaceHtmlEntities));
+		names.push(getParam(it, null, null, null, replaceTagsAndSpaces));
+	}
+
+	AnyBalance.setResult({
+		success: true,
+		entries: names.join('|'),
+		entryValues: values.join('|')
+	});
 }

@@ -1,19 +1,21 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id version="12">ab-money-trust</id>
+	<id version="13">ab-money-trust</id>
 	<name>Траст банк</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе карт/счетов/депозитов банка Траст <a href="http://www.trust.ru/">http://www.trust.ru/</a></p>
 	<p>Информация берется из интернет-банка <a href="https://online.trust.ru/">https://online.trust.ru/</a></p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+		<module id="nadapter"/>
+		<module id="extract/abe-money-trust"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
-		<js>nadapter.js</js>
-		<js>extract.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
@@ -30,6 +32,7 @@
 		<counter id="cardnum" name="Номер карты" type="text"/>
 		<counter id="accnum" name="Номер счета" type="text"/>
 		<counter id="fio" name="Владелец" type="text"/>
+		<counter id="fioMain" name="ФИО" type="text"/>
 	</counters>
 	<keywords>интернет-банкинг</keywords>
 	<type>money, bank</type>

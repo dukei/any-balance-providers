@@ -32,7 +32,7 @@ function main() {
 	}, addHeaders({Referer: baseurl + 'nalog/'}));
 
 	if (!/logout/i.test(html)) {
-		var error = getParam(html, null, null, /<li[^>]+class="error"[^>]*>([\s\S]*?)<\/li>/i, replaceTagsAndSpaces, html_entity_decode);
+		var error = getParam(html, null, null, /<p[^>]+class="error"[^>]*>([\s\S]*?)<\/p>/i, replaceTagsAndSpaces);
 		if (error)
 			throw new AnyBalance.Error(error, null, /Pogrešna e-mail adresa ili lozinka/i.test(error));
 		
@@ -44,10 +44,11 @@ function main() {
 
 	var result = {success: true};
 	
-	getParam(html, result, '__tariff', /Tarifni paket<\/h2>[^>]*>([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'balance', /preostaloKredita-cena[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'deadline', /serviceExpiryDate[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseDate);
-	
+	getParam(html, result, '__tariff', /Tarifni paket(?:[^>]*>){2}([\s\S]*?)<\/a>/i, replaceTagsAndSpaces);
+	getParam(html, result, 'balance', /Preostalo kredita(?:[^>]*>){2}([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'deadline', /Rok važenja dopune(?:[^>]*>){2}([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, parseDate);
+	getParam(html, result, 'deadlineCredit', /Rok za dopunu kredita(?:[^>]*>){2}([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, parseDate);
+
 	AnyBalance.setResult(result);
 	
 	// var html = AnyBalance.requestGet(baseurl, g_headers);

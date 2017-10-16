@@ -7,7 +7,7 @@ var g_headers = {
 	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
 	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
 	'Connection': 'keep-alive',
-	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
+	'User-Agent': 'Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/53.0.2785.116 Safari/537.36',
 };
 
 function main() {
@@ -50,10 +50,29 @@ function main() {
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
 	var result = {success: true};
-	
-	getParam(html, result, 'balance_pay', /Баланс для оплаты:[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'balance_out', /Баланс для вывода:[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'energy', /Энергия:(?:[^>]*>){4}([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
-	
+
+	html = AnyBalance.requestGet(baseurl + 'v2/ferma/init/', addHeaders({
+		'X-Requested-With': 'XMLHttpRequest',
+		'Accept': '*/*',
+		'Referer': 'https://fermasosedi.ru/login/'
+	}));
+
+	html = AnyBalance.requestGet(baseurl + 'v2/ferma/user/info', addHeaders({
+		'Referer': 'https://fermasosedi.ru/empty/'
+	}));
+	var json = getJson(html);
+
+	if(json && json.records && json.records[0]) {
+		var data = json.records[0];
+
+		AB.getParam(data.balance + '', 	     result, 'balance_pay', null, null, AB.parseBalance);
+		AB.getParam(data.balance_vivod + '', result, 'balance_out', null, null, AB.parseBalance);
+		AB.getParam(data.energy + '', 		 result, 'energy', 		null, null, AB.parseBalance);
+		AB.getParam(data.experience + '', 	 result, 'experience',  null, null, AB.parseBalance);
+		AB.getParam(data.level + '',      	 result, 'level',  null, null, AB.parseBalance);
+	} else {
+		throw new AnyBalance.Error("Не удалось получить данные. Сайт изменён?");
+	}
+
 	AnyBalance.setResult(result);
 }

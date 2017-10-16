@@ -39,12 +39,4 @@
         dialogMessage="Введіть Останні 4 цифри карти(рахунка), по якій Ви бажаете отримати інформацію. Якщо залишити це поле пустим, то буде відображена інформація по першій карті(рахунку)."
         inputType="number">
     </EditTextPreference>
-<!--    <ListPreference 
-        key="dz" 
-        title="Спосіб відображення дати закінчення"
-        summary="||{@s}"
-        entries="січень 2000|01.2000"
-        entryValues="mmyy|my"
-		defaultValue="mmyy">
-    </ListPreference> -->
 </PreferenceScreen>

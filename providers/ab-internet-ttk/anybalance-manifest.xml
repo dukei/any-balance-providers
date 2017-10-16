@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="4">ab-internet-ttk</id>
+	<id version="7">ab-internet-ttk</id>
 	<api flags="no_browser"/>
 	<name>ТТК (Единый кабинет)</name>
 	<description html="true"><![CDATA[
@@ -11,10 +11,12 @@
 		Если у вас несколько лицевых счетов в кабинете, указывайте в качестве логина тот счет, по которому вы хотите получить информацию.
 	</instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>

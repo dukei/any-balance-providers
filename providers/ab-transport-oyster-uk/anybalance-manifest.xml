@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="2">ab-transport-oyster-uk</id>
+	<api flags="no_browser"/>
+	<name>Oyster (UK)</name>
+	<description html="true"><![CDATA[
+	<p>Shows balance for Oyster (Transpor for London) transport cards (https://oyster.tfl.gov.uk/)</p>
+	<p>Obtains information from personal account https://oyster.tfl.gov.uk/oyster/entry.do</p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>If you don't have an account, create it here: https://oyster.tfl.gov.uk/oyster/link/0004.do</p>
+	]]></instruction>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Balance" prefix="£"/>
+		<counter id="num" name="Card number" type="text"/>
+		<counter id="balance1" name="Balance 2" prefix="£"/>
+		<counter id="num1" name="Card number 2" type="text"/>
+		<counter id="balance2" name="Balance 3" prefix="£"/>
+		<counter id="num2" name="Card number 3" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>transport</type>
+	<country>uk</country>
+</provider>

@@ -1,0 +1,40 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="2">ab-money-genbank</id>
+	<api flags="no_browser"/>
+	<name>ГенБанк</name>
+	<description html="true"><![CDATA[
+	<p>Получает текущий остаток и другие параметры продуктов банка ГенБанк http://www.genbank.ru/, используя API мобильного приложения.</p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Если у вас нет доступа к интернет-банку: для получения пароля перейдите на сайт https://ibank2.genbank.ru/web_banking/protected/welcome.jsf</p>
+	]]></instruction>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+		<module id="nadapter"/>
+		<module id="extract/abe-money-rncb"/>
+	</depends>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" {@currency}"/>
+		<counter id="availableAmount" name="В доступности" units=" {@currency}"/>
+		<counter id="lockedAmount" name="Блокировано" units=" {@currency}"/>
+		<counter id="contractNumber" name="Ваш счет" type="text"/>
+		<counter id="currency" name="Ваша валюта" type="text"/>
+		<counter id="statusDescription" name="Состояние" type="text"/>
+		<counter id="number" name="Карты" type="text"/>
+		<counter id="formattedName" name="Форматированное название" type="text"/>
+		<counter id="type" name="Вид карты" type="text"/>
+		<counter id="expireDate" name="Срок" type="time" format="MM/yy"/>
+		<counter id="fio" name="фио" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>money, bank</type>
+	<country>ru</country>
+</provider>

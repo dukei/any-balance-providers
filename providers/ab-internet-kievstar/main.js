@@ -1,13 +1,14 @@
-﻿/**
+﻿
+/**
 Plugin for AnyBalance (http://any-balance-providers.googlecode.com)
 
 Kievstar
 Site: https://my.kyivstar.ua/
-Author: Viacheslav Sychov
+Author: Viacheslav Sychov & Dmitry Kochin
 */
 var headers = {
-	'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
-	'Accept-Language':'uk-UA,uk;q=0.8,en-US;q=0.6,en;q=0.4',
+	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
+	'Accept-Language': 'uk-UA,uk;q=0.8,en-US;q=0.6,en;q=0.4',
 	'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/536.11 (KHTML, like Gecko) Chrome/20.0.1132.57 Safari/536.11',
 	'Connection': 'keep-alive'
 };
@@ -15,58 +16,108 @@ var headers = {
 function main() {
 	var prefs = AnyBalance.getPreferences();
 	var baseurl = "https://my.kyivstar.ua/";
-	
-	AnyBalance.setOptions({
-		SSL_ENABLED_PROTOCOLS: ['TLSv1'], // https://my.kyivstar.ua очень смущается от присутствия TLSv1.1 и TLSv1.2
-	}); 
 
-	AnyBalance.trace('Connecting to ' + baseurl);
-	
-	var html = AnyBalance.requestGet(baseurl + 'tbmb/login/show.do', headers);
-	var form = getParam(html, null, null, /<form[^>]+action="[^"]*perform.do"[^>]*>([\s\S]*?)<\/form>/i);
-	if(!form)
-		throw new AnyBalance.Error('Не удаётся найти форму входа. Проблемы или изменения на сайте?');
-	
-	/*var captchaa;
-	if(AnyBalance.getLevel() >= 7){
-		AnyBalance.trace('Пытаемся ввести капчу');
-		var captcha = AnyBalance.requestGet(baseurl+ getParam(html, null, null, /<img src="\/(tbmb\/jcaptcha[^"]*)/i));
-		captchaa = AnyBalance.retrieveCode('Пожалуйста, введите код с картинки', captcha);
-		AnyBalance.trace('Капча получена: ' + captchaa);
-	}else{
-		throw new AnyBalance.Error('Провайдер требует AnyBalance API v7, пожалуйста, обновите AnyBalance!');
-	}*/
-	
-	var params = createFormParams(form);
-	params.isSubmitted = "true";
-	params.user = prefs.login;
-	params.password = prefs.password;
-	//params.captcha = captchaa;	
-	
-	try{
-		html = AnyBalance.requestPost(baseurl + 'tbmb/login/perform.do', params, headers);
-	}catch(e){
-		if(!prefs.__debug)
-			throw e;
-		html = AnyBalance.requestGet(baseurl + 'tbmb/disclaimer/show.do', headers);
+	var html = loginSite(baseurl);
+
+	var result = {
+		success: true
+	};
+
+	if(isLoggedInNew(html)){
+		return processNew(html, result);
 	}
+
+	getParam(html, result, 'name',
+		/(?:Фамилия|Прізвище|First\s+name)[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+
+	getParam(html, result, 'balance',
+		/(?:Текущий\s+баланс|Поточний\s+баланс|Current\s+balance)[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces,
+		parseBalance);
+
+	getParam(html, result, ['currency', 'balance'],
+		/(?:Текущий\s+баланс|Поточний\s+баланс|Current\s+balance)[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i,
+		replaceTagsAndSpaces, parseCurrency);
+
+	getParam(html, result, 'licschet',
+		/(?:Лицевой\s+сч[её]т|Особовий\s+рахунок|Account:)[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i,
+		replaceTagsAndSpaces);
+
+	//Тарифный план
+	getParam(html, result, '__tariff',
+		/(?:Тарифный\s+план|Тарифний\s+план|Rate\s+Plan)[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i,
+		[/<span[^>]+hidden[^>]*>[\s\S]*?<\/span>/i, '', replaceTagsAndSpaces]);
+
+	getParam(html, result, 'status',
+		/(?:Статус\s+услуги|Статус\s+послуги|state\s+of\s+service)[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i,
+		replaceTagsAndSpaces);
+
+	getParam(html, result, 'bonusValue',
+		/(?:Бонусный\s+баланс|Бонусний\s+баланс|Bonuses)(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i,
+		replaceTagsAndSpaces, parseBalance);
+
+	getParam(html, result, 'bonusDate',
+		/(?:Бонусный\s+баланс|Бонусний\s+баланс|Bonuses)(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\/td>/i,
+		replaceTagsAndSpaces);
+
+	getParam(html, result, 'date_start',
+		/(?:Дата\s+подключения|Дата\s+підключення|Connection\s+date):[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i,
+		replaceTagsAndSpaces, parseDate);
+
+	getParam(html, result, 'phone',
+		/(?:Номер\s+мобильного\s+телефона|Номер\s+мобільного\s+телефону|Mobile\s+phone\s+number):[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i,
+		replaceTagsAndSpaces);
+
+	AnyBalance.setResult(result);
+}
+
+function processNew(html, result){
+	var baseurl = 'https://new.kyivstar.ua/ecare/';
+	AnyBalance.trace('Используем новый кабинет');
+
+	html = goToSite(html);
+
+	var pageData = getJsonObject(html, /var\s+pageData\s*=\s*/);
+
+	getParam(jspath1(pageData, "$.slots.TopContent[?(@.template='balancePanelComponent')].data.accountData.balance"), result, 'balance', null, null, parseBalance);
+	getParam(jspath1(pageData, "$.slots.TopContent[?(@.template='balancePanelComponent')].data.currencyName"), result, ['currency', 'balance']);
+	getParam(jspath1(pageData, "$.slots.TopContent[?(@.template='balancePanelComponent')].data.accountData.accountNumber"), result, 'licschet');
+
+	getParam(jspath1(pageData, "$.slots.TopContent[?(@.template='planPanelComponent')].data.servicePlan"), result, '__tariff');
+	getParam(jspath1(pageData, "$.slots.TopContent[?(@.template='planPanelComponent')].data.subscriptionStatus"), result, 'status');
+	getParam(jspath1(pageData, "$.slots.TopContent[?(@.template='balancePanelComponent')].data.currentSubscription.bonusBalance"), result, 'bonusValue', null, null, parseBalance);
+
+//	getParam(html, result, 'bonusDate',
+//		/(?:Бонусный\s+баланс|Бонусний\s+баланс|Bonuses)(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\/td>/i,
+//		replaceTagsAndSpaces);
+
+//	getParam(html, result, 'date_start',
+//		/(?:Дата\s+подключения|Дата\s+підключення|Connection\s+date):[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i,
+//		replaceTagsAndSpaces, parseDate);
+
+	if(AnyBalance.isAvailable('name', 'phone')){
+		html = AnyBalance.requestGet(baseurl + 'profileSettings', g_headers);
+		pageData = getJsonObject(html, /var\s+pageData\s*=\s*/);
 	
-	if(!/\/logout\/perform/i.test(html)){
-		var matches = html.match(/class="redError"[^>]*>([\s\S]*?)<\/td>/i);
-		if (matches)
-			throw new AnyBalance.Error(matches[1]);
-		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
+	    var joinspace = create_aggregate_join(' ');
+
+		sumParam(jspath1(pageData, "$.pageData.profileData.currentCustomer.firstName.value"), result, 'name', null, null, null, joinspace);
+		sumParam(jspath1(pageData, "$.pageData.profileData.currentCustomer.middleName.value"), result, 'name', null, null, null, joinspace);
+		sumParam(jspath1(pageData, "$.pageData.profileData.currentCustomer.lastName.value"), result, 'name', null, null, null, joinspace);
+
+		sumParam(jspath1(pageData, "$.pageData.profileData.currentCustomer.contactPhone.value"), result, 'phone');
 	}
-	
-	AnyBalance.trace('Successfully connected');
-	
-	var result = {success: true};
-	getParam(html, result, 'balance', /(?:Текущий баланс|Поточний баланс|Current balance):[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'bonuses', /(?:Бонусный баланс|Бонусний баланс|Bonuses)[\s\S]*?>\s*(?:Баланс|Balance):[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'licschet', /(?:Особовий рахунок|Лицевой счет|Account):[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'licschet', /(?:Статус послуги «Домашній Інтернет»|Статус услуги «Домашний Интернет»|The state of service «Home Internet»):[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, '__tariff', /(?:Тарифный пакет|Тарифний пакет|Rate package|Тарифний план|Тарифный план|Rate Plan):[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-	
+
+	if(AnyBalance.isAvailable('bonusDate', 'date_start')){
+		html = goToOldSite(html);
+
+		getParam(html, result, 'bonusDate',
+        	/(?:Бонусный\s+баланс|Бонусний\s+баланс|Bonuses)(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\/td>/i,
+			replaceTagsAndSpaces);
+		
+        getParam(html, result, 'date_start',
+			/(?:Дата\s+подключения|Дата\s+підключення|Connection\s+date):[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i,
+			replaceTagsAndSpaces, parseDate);
+	}
+
 	AnyBalance.setResult(result);
 }

@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="3">ab-money-gpb</id>
+	<id version="4">ab-money-gpb</id>
 	<api flags="no_browser"/>
 	<name>Газпромбанк</name>	
 	<description html="true"><![CDATA[
@@ -9,11 +9,13 @@
 	<instruction html="true"><![CDATA[
 	<p>Подключиться к системе «Домашний Банк» Вы можете в дополнительных офисах, а также через БАНКОМАТЫ Газпромбанка г. Москвы.</p>
 	]]></instruction>
-	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
@@ -33,6 +35,6 @@
 		<counter id="fio" name="Владелец" type="text"/>
 	</counters>
 	<keywords>интернет-банкинг</keywords>
-	<type>money</type>
+	<type>money, bank</type>
 	<country>ru</country>
 </provider>

@@ -1,10 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id version="5">ab-cell-lebara-es</id>
+	<id version="6">ab-cell-lebara-es</id>
 	<name>Lebara Móvil</name>
 	<description html="true"><![CDATA[
-	<p>Obtains balance on Lebara Mobile account (Spain). Gets data via MyLebara: https://www.lebara.es/dashboard.</p>
+	<p>Obtains balance on Lebara Mobile account (Spain). Gets data via MyLebara: https://mobile.lebara.com/es/es/login.</p>
 	]]></description>
 	<instruction html="true"><![CDATA[
 	<p>First Time you Login to MyLebara:</p>
@@ -14,16 +14,21 @@
 	<p>* When you log in for the first time, if you did not receive the validation e-mail, you can resubmit it by login your chosen e-mail and password.</p>
 	<p>* Before login to MyLebara, you should have activated your Lebara SIM by registering in a Lebara Movil's authorized point of sale. Find more information on how to register by clicking here</p>
 	]]></instruction>
-	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
 	<counters>
 		<counter id="balance" name="Balance" units=" €"/>
+		<counter id="internet_left" name="Internet left"/>
+		<counter id="voice" name="Voice"/>
+		<counter id="internet_special" name="Internet special tariff"/>
 	</counters>
 	<keywords></keywords>
 	<type>cell</type>

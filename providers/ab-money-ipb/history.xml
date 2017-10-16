@@ -1,7 +1,18 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="6" date="2016-08-18">
+	- Улучшена обработка ошибок.
+	</change>
+	<change version="5" date="2016-04-15">
+	- Поддержка изменений на сайте.
+	</change>
+	<change version="4" date="2016-02-18">
+	- Исправлено отображение баланса.
+	</change>
+	<change version="3" date="2016-02-12">
+	- Поддержка изменений на сайте.
+	</change>
 	<change version="2" date="2015-06-09">
 	- Поддержка изменений на сайте.
 	</change>
-
 </history>

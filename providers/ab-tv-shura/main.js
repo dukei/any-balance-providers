@@ -17,8 +17,13 @@ function main() {
 	
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
+
+	var url = baseurl + 'b/?_=' + Math.random();
 	
-	var html = AnyBalance.requestGet(baseurl + 'b/', g_headers);
+	var cf = Cloudflare(url);
+	var html = AnyBalance.requestGet(url, g_headers);
+    if(cf.isCloudflared(html))
+        html = cf.executeScript(html);
 	
 	var logonTries = 5;
 	var cookie = getParam(html, null, null, /document\.cookie='_ddn_intercept_2_=([^';]+)/i);
@@ -38,12 +43,8 @@ function main() {
 	}, addHeaders({Referer: baseurl + 'b/',	'X-Requested-With':'XMLHttpRequest'}));
 	
 	if (!/status:1/i.test(html)) {
-		var error = getParam(html, null, null, /<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
-		if (error)
-			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
-		
 		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
+		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Неверный логин-пароль или сайт изменен.');
 	}
 	
 	html = AnyBalance.requestGet(baseurl + 'b/b.php', g_headers);

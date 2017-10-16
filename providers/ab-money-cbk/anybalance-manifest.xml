@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-money-cbk</id>
+	<api flags="no_browser"/>
+	<name>Коммерческий банк Кыргызтан</name>
+	<description html="true"><![CDATA[
+    <p>Получает текущий остаток и другие параметры продуктов Коммерческого банка Кыргызтана http://www.cbk.kg/, используя интернет-банк (https://ibank.cbk.kg/).</p>	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+		<module id="nadapter"/>
+		<module id="extract/abe-money-cbk"/>
+	</depends>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Общий Остаток" units=" {@currency}"/>
+		<counter id="balance_acc" name="Остаток на счете" units=" {@currency}"/>
+		<counter id="limit" name="Лимит кредита" units=" {@currency}"/>
+		<counter id="fio" name="ФИО" type="text"/>
+        <counter id="type" name="Тип" type="text"/>
+        <counter id="currency" name="Валюта" type="text"/>
+        <counter id="status" name="Статус" type="text"/>
+        <counter id="name" name="Название карты/счёта" type="text"/>
+        <counter id="num" name="Номер карты/счёта" type="text"/>
+    </counters>
+	<keywords></keywords>
+	<type>money, bank</type>
+	<country>kg</country>
+</provider>

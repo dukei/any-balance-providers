@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="24">ab-money-tcs</id>
+	<id version="26">ab-money-tcs</id>
 	<api flags="no_browser" min_level="4"/>
 	<name>Тинькофф Кредитные Системы</name>
 	<description html="true"><![CDATA[
@@ -21,14 +21,13 @@
 		<li>Для накопительного счета последние цифры номера вводить не нужно - берется первый найденный счет.</li>
 	]]></instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="extract/abe-money-tcs"/>
+		<module id="nadapter"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>md5-min.js</js>
-		<js>jsonpath.js</js>
-		<js>library.js</js>
-		<js>nadapter.js</js>
-		<js>extract.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>

@@ -1,11 +1,15 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="6" date="2017-01-13">
+	- Поддержка изменений на сайте.
+	</change>
+	<change version="5" date="2016-12-14">
+	- Поддержка изменений на сайте.
+	</change>
+	<change version="4" date="2016-01-08">
+	- Поддержка изменений на сайте.
+	</change>
 	<change version="2" date="2015-03-19">
 	- Поддержка изменений на сайте.
 	</change>
-<!--
-	<change version="2" date="2014-02-01">
-	- 
-	</change>
--->
 </history>

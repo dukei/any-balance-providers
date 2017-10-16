@@ -7,87 +7,51 @@
 Личный кабинет: http://ikus.pesc.ru:8080/IKUSUser/
 */
 
-function gwtEscape(str){
-    return str.replace(/\\/g, '\\\\').replace(/\|/g, '\!');
-}
-
-function gwtGetStrongName(js, cfg){
-    var varName = getParam(js, null, null, /(\w+)='safari'/);
-    if(!varName)
-        throw new AnyBalance.Error('Не удаётся найти $strongName: ссылку на браузер.');
-    var re = new RegExp(cfg.strong_name.replace(/%VARNAME%/g, varName));
-    var varNameStrong = getParam(js, null, null, re);
-    if(!varNameStrong)
-        throw new AnyBalance.Error('Не удаётся найти $strongName: имя переменной.');
-    re = new RegExp('\\b'+varNameStrong+'=\'([^\']*)');
-    var val = getParam(js, null, null, re);
-    if(!val)
-        throw new AnyBalance.Error('Не удаётся найти $strongName: значение переменной.');
-    return val;
-}
-
-function gwtGetJSON(str){
-    if(/^\/\/EX/i.test(str)){
-        var error = getParam(str, null, null, /Exception.*?","([^"]*)/);
-        throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
-    }
-
-    var json = getParam(str, null, null, /\/\/OK(.*)/);
-    if(!json)
-        throw new AnyBalance.Error('Ошибка получения ответа: ' + str);
-    return getJson(json);
-}
-
 var g_userAgent = 'mozilla/5.0 (windows nt 10.0; win64; x64) applewebkit/537.36 (khtml, like gecko) chrome/46.0.2490.86 safari';
 
 var g_lks = {
     pesc: {
-    protocols: ['TLSv1.2'],
-	url: 'https://ikus.pesc.ru/IKUSUser/',
-	uid: 'E85D8BB4C101FFBB462908DEC5BC61A6',
-	auth_uid: 'AE742241A0A8AD76E4877D96DE250A42',
-	strong_name: '\\b%VARNAME%,\\w+\\],(\\w+)\\)',
-	auth_url: 'userAuth/',
-	auth_nocache: 'userAuth/userAuth.nocache.js',
-	auth_file: 'com.sigma.personal.client.auth.AuthService.gxt',
-	auth_class: 'com.sigma.personal.client.auth.AuthService',
-	auth_data: "7|0|8|%url%%auth_url%|%uid%|%auth_class%|login|java.lang.String/2004016611|%LOGIN%|%PASSWORD%|%USER_AGENT%|1|2|3|4|4|5|5|5|5|6|7|0|8|",
-	user_url: 'userPhysical/',
-	user_nocache: 'userPhysical/userPhysical.nocache.js',
-	user_file: 'com.sigma.personal.client.physical.ClientService.gwt',
-	user_class: 'com.sigma.personal.client.physical.ClientService',
-	user_data: "7|0|4|%url%%user_url%|%auth_uid%|%user_class%|getAbonsList|1|2|3|4|0|",
-	re_account: /electric.model.AbonentModel[^"]*","([^"]*)/,
-	re_address: /electric.model.AbonentModel[^"]*"(?:,"[^"]*"){2},"([^"]*)/,
-	counters: ['peni', 'balance'],
+        protocols: ['TLSv1.2'],
+		url: 'https://ikus.pesc.ru/IKUSUser/',
+		uid: 'DB3BE8F02EAC077FA97B69DF21C407B1',
+		auth_uid: '07914C14D20880A4DEDBABCB46A0F018',
+		strong_name: '\\b%VARNAME_BROWSER%,\\w+\\],(\\w+)\\)',
+		auth_url: 'userAuth/',
+		auth_nocache: 'userAuth/userAuth.nocache.js',
+		auth_file: 'com.sigma.personal.client.auth.api.AuthService.gxt',
+		auth_class: 'com.sigma.personal.client.auth.api.AuthService',
+		auth_data: "7|0|9|%url%%auth_url%|%uid%|%auth_class%|login|java.lang.String/2004016611|java.lang.Boolean/476441737|%LOGIN%|%PASSWORD%|%USER_AGENT%|1|2|3|4|5|5|5|6|5|5|7|8|6|0|0|9|",
+		auth_data_captcha: "7|0|10|%url%%auth_url%|%uid%|%auth_class%|login|java.lang.String/2004016611|java.lang.Boolean/476441737|%LOGIN%|%PASSWORD%|%CAPTCHA%|%USER_AGENT%|1|2|3|4|5|5|5|6|5|5|7|8|6|0|9|10|",
+		user_url: 'userPhysical/',
+		user_nocache: 'userPhysical/userPhysical.nocache.js',
+		user_file: 'com.sigma.personal.client.physical.api.ClientService.gwt',
+		user_class: 'com.sigma.personal.client.physical.api.ClientService',
+		user_data: "7|0|6|%url%%user_url%|%auth_uid%|%user_class%|getAllAbonents|java.lang.String/2004016611|Z|1|2|3|4|2|5|6|0|0|",
+		re_account: /"Аб\.\s+№","([^"]*)/,
+		re_address: /"Адрес","([^"]*)/,
+		counters: ['balance', 'peni']
     },
     pes: {
-	url: 'https://ikus.pes.spb.ru/IKUSUser/',
-	uid: 'E85D8BB4C101FFBB462908DEC5BC61A6',
-	auth_uid: 'AE742241A0A8AD76E4877D96DE250A42',
-	strong_name: '\\b%VARNAME%,\\w+\\],(\\w+)\\)',
-	auth_url: 'userAuth/',
-	auth_nocache: 'userAuth/userAuth.nocache.js',
-	auth_file: 'com.sigma.personal.client.auth.AuthService.gxt',
-	auth_class: 'com.sigma.personal.client.auth.AuthService',
-	auth_data: "7|0|8|%url%%auth_url%|%uid%|%auth_class%|login|java.lang.String/2004016611|%LOGIN%|%PASSWORD%|%USER_AGENT%|1|2|3|4|4|5|5|5|5|6|7|0|8|",
-	user_url: 'userPhysical/',
-	user_nocache: 'userPhysical/userPhysical.nocache.js',
-	user_file: 'com.sigma.personal.client.physical.ClientService.gwt',
-	user_class: 'com.sigma.personal.client.physical.ClientService',
-	user_data: "7|0|4|%url%%user_url%|%auth_uid%|%user_class%|getAbonsList|1|2|3|4|0|",
-	re_account: /electric.model.AbonentModel[^"]*","([^"]*)/,
-	re_address: /electric.model.AbonentModel[^"]*"(?:,"[^"]*"){1},"([^"]*)/,
-	counters: ['peni', 'balance'],
+		url: 'https://ikus.pes.spb.ru/IKUSUser/',
+		uid: 'DB3BE8F02EAC077FA97B69DF21C407B1',
+		auth_uid: '07914C14D20880A4DEDBABCB46A0F018',
+		strong_name: '\\b%VARNAME_BROWSER%,\\w+\\],(\\w+)\\)',
+		auth_url: 'userAuth/',
+		auth_nocache: 'userAuth/userAuth.nocache.js',
+		auth_file: 'com.sigma.personal.client.auth.api.AuthService.gxt',
+		auth_class: 'com.sigma.personal.client.auth.api.AuthService',
+		auth_data: "7|0|9|%url%%auth_url%|%uid%|%auth_class%|login|java.lang.String/2004016611|java.lang.Boolean/476441737|%LOGIN%|%PASSWORD%|%USER_AGENT%|1|2|3|4|5|5|5|6|5|5|7|8|6|0|0|9|",
+		auth_data_captcha: "7|0|10|%url%%auth_url%|%uid%|%auth_class%|login|java.lang.String/2004016611|java.lang.Boolean/476441737|%LOGIN%|%PASSWORD%|%CAPTCHA%|%USER_AGENT%|1|2|3|4|5|5|5|6|5|5|7|8|6|0|9|10|",
+		user_url: 'userPhysical/',
+		user_nocache: 'userPhysical/userPhysical.nocache.js',
+		user_file: 'com.sigma.personal.client.physical.api.ClientService.gwt',
+		user_class: 'com.sigma.personal.client.physical.api.ClientService',
+		user_data: "7|0|6|%url%%user_url%|%auth_uid%|%user_class%|getAllAbonents|java.lang.String/2004016611|Z|1|2|3|4|2|5|6|0|0|",
+		re_account: /"Аб\.\s+№","([^"]*)/,
+		re_address: /"Адрес","([^"]*)/,
+		counters: ['balance', 'peni']
     }
-}
-
-function makeReplaces(str, cfg){
-    for(var i in cfg){
-        str = str.replace(new RegExp('%' + i + '%', 'g'), cfg[i]);
-    }
-    return str;
-}
+};
 
 function main(){
     var prefs = AnyBalance.getPreferences();
@@ -112,19 +76,52 @@ function main(){
     var html = AnyBalance.requestGet(baseurl + cfg.auth_nocache);
 
     //Авторизируемся
-    html = AnyBalance.requestPost(baseurl + cfg.auth_file, 
-	makeReplaces(cfg.auth_data, cfg).replace(/%LOGIN%/g, gwtEscape(prefs.login)).replace(/%PASSWORD%/g, gwtEscape(prefs.password)).replace(/%USER_AGENT%/, gwtEscape(g_userAgent)),
-        { 
-          'Content-Type': 'text/x-gwt-rpc; charset=UTF-8', 
-          'X-GWT-Module-Base':baseurl + cfg.auth_url,
-          'X-GWT-Permutation':gwtGetStrongName(html, cfg),
-        }
-    );
+    var auth_strong = gwtGetStrongName(html, cfg);
+    var gwtAuthHeaders = { 
+        'Content-Type': 'text/x-gwt-rpc; charset=UTF-8', 
+        'X-GWT-Module-Base':baseurl + cfg.auth_url,
+        'X-GWT-Permutation':gwtGetStrongName(html, cfg),
+    };
 
-    //Тут получаем что-то вроде //OK[[],0,6]
-    var auth = gwtGetJSON(html);
-    if(!auth[0])
-        throw new AnyBalance.Error("error");
+    try{
+        html = AnyBalance.requestPost(baseurl + cfg.auth_file, 
+			makeReplaces(cfg.auth_data, cfg)
+				.replace(/%LOGIN%/g, gwtEscape(prefs.login))
+				.replace(/%PASSWORD%/g, gwtEscape(prefs.password))
+				.replace(/%USER_AGENT%/, gwtEscape(g_userAgent)),
+            gwtAuthHeaders
+        );
+        
+        //Тут получаем что-то вроде //OK[[],0,6]
+        var auth = gwtGetJSON(html);
+        if (!isset(auth[0])){
+        	AnyBalance.trace(html);
+            throw new AnyBalance.Error("error");
+        }
+    }catch(e){
+    	if(/Неверно введен проверочный код/i.test(e.message)){
+    		var img = AnyBalance.requestGet(baseurl + 'simpleCaptcha.jpg?' + Math.floor(Math.random()*100));
+    		var captcha = AnyBalance.retrieveCode('Пожалуйста, введите проверочный код с картинки', img);
+
+            html = AnyBalance.requestPost(baseurl + cfg.auth_file, 
+				makeReplaces(cfg.auth_data_captcha, cfg)
+					.replace(/%LOGIN%/g, gwtEscape(prefs.login))
+					.replace(/%PASSWORD%/g, gwtEscape(prefs.password))
+					.replace(/%USER_AGENT%/, gwtEscape(g_userAgent))
+					.replace(/%CAPTCHA%/, gwtEscape(captcha)),
+            	gwtAuthHeaders
+            );
+            
+            //Тут получаем что-то вроде //OK[[],0,6]
+            var auth = gwtGetJSON(html);
+            if(!isset(auth[0])){
+            	AnyBalance.trace(html);
+                throw new AnyBalance.Error("error");
+            }
+    	}else{
+    		throw e;
+    	}
+    }
 
     //Скачиваем новый скрипт для поиска $strongName
     html = AnyBalance.requestGet(baseurl + cfg.user_nocache);
@@ -143,9 +140,16 @@ function main(){
 
     var result = { success: true };
 
-    var num = getParam(html, null, null, /\d+\.\d+,(\d+),/);
-    if(!isset(num))
-    	throw new AnyBalance.Error('Не удаётся найти баланс. Сайт изменен?');
+    //Для песк и pes подряд идущие числа, похоже, вспомогательные балансы
+    if(cfg.url.match(/pes/))
+    	html = html.replace(/-?\d+\.\d+,-?\d+\.\d+/g, 'extrabalance,extrapeni');
+    	 
+    //Для песк балансы и пени лежат \d.\d,\d (и следующие цифры разные)
+    var num =  cfg.url.match(/pes/) ? '\\d+' : getParam(html, null, null, /\d+\.\d+,(\d+),/);
+    if(!isset(num)){
+    	AnyBalance.trace(html);
+    	throw new AnyBalance.Error('Не удаётся найти баланс. Зайдите в личный кабинет через браузер и убедитесь, что вы подключили абонентов.');
+    }
 
     var balanceRe = new RegExp('(-?\\d+\\.\\d+),' + num + '\\b', 'g');
     var balances = sumParam(html, null, null, balanceRe, null, parseBalance);

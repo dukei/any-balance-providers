@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-shop-kaliningrad-farfor</id>
+	<api flags="no_browser"/>
+	<name>Калининград фарфор</name>
+	<description><![CDATA[
+    <p>Предоставляет информацию о балансе провайдера Калининград фарфор <a href="http://kaliningrad.farfor.ru/"></a></p>
+    <p>Информация берется из личного кабинета <a href="http://kaliningrad.farfor.ru/cabinet/"></a></p>
+  ]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="bonuses" name="Количество бонусов"/>
+		<counter id="orders" name="Количество заказов"/>
+		<counter id="full_name" name="ФИО" type="text"/>
+		<counter id="phone" name="Телефон" type="text"/>
+	</counters>
+	<keywords>Магазин</keywords>
+	<type>bonus</type>
+	<country>ru</country>
+</provider>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-telephony-telecom-center</id>
+	<api flags="no_browser"/>
+	<name>Телеком Центр</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера Телеком Центр http://tcenter.ru/ </p>
+	<p>Информация берется из личного кабинета https://lc.telecom-center.ru:8011/ </p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="reserved" name="Зарезервировано" units=" р"/>
+		<counter id="recommended" name="Рекомендуемый платёж" units=" р"/>
+		<counter id="cost" name="Стоимость тарифа" units=" р"/>
+		<counter id="date_start" name="Начало расчетного периода" type="time" format="dd/MM/yyyy"/>
+		<counter id="date_end" name="Окончание расчетного периода" type="time" format="dd/MM/yyyy"/>
+		<counter id="account" name="Номер счёта" type="text"/>
+		<counter id="fio" name="ФИО" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>telephony</type>
+	<country>ru</country>
+</provider>

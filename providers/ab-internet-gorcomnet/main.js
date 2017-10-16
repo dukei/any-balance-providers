@@ -11,6 +11,8 @@ var g_headers = {
 };
 
 function main(){
+	throw new AnyBalance.Error('Горком вошел в состав провайдера Seven Sky, используйте провайдера Seven Sky', null, true);
+	
     var prefs = AnyBalance.getPreferences();
     var baseurl = "https://statistics.gorcomnet.ru:7778/";
 

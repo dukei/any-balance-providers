@@ -29,12 +29,24 @@ function doNewCabinet(prefs) {
 	
 	var html = AnyBalance.requestGet(baseurl + 'login', g_headers);
 
-	html = AnyBalance.requestPost(baseurl + 'login', {
-		username: (prefs.prefix || '') + prefs.login,
-		password: prefs.password,
-		option: 'com_cabinet',
-		task: 'login.login'
-	}, addHeaders({Referer: baseurl + 'login', 'Origin': baseurl}));
+	var form = getElement(html, /<form[^>]+com-form-login[^>]*>/i);
+	if(!form){
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удалось найти форму входа. Сайт изменен?');
+	}
+
+	var params = AB.createFormParams(form, function(params, str, name, value) {
+		if (name == 'LoginForm[abon_num]') {
+			return prefs.prefix + prefs.login;
+		} else if (name == 'LoginForm[password]') {
+			return prefs.password;
+		}
+
+		return value;
+	});
+
+
+	html = AnyBalance.requestPost(baseurl + 'login', params, addHeaders({Referer: baseurl + 'login', 'Origin': baseurl}));
 	
 	if (/<form[^>]+"js-form-accept"/i.test(html)) {
 		AnyBalance.trace("Требуется принять оферту. Принимаем...");
@@ -43,10 +55,14 @@ function doNewCabinet(prefs) {
 			task: 'offer.acceptOffer'
 		}, addHeaders({Referer: baseurl + 'contract-offer','Origin': baseurl}));
 	}
-	if (!/login\.logout/i.test(html)) {
-		var error = getParam(html, null, null, />\s*Ошибка([\s\S]*?)<\/div/i, replaceTagsAndSpaces, html_entity_decode);
+
+	if (!/logout/i.test(html)) {
+		var error = getParam(html, null, null, />\s*Ошибка([\s\S]*?)<\/div/i, replaceTagsAndSpaces);
 		if (error)
-			throw new AnyBalance.Error(error, null, /Имя пользователя и пароль не совпадают|учетная запись отсутствует|Неверные данные/i.test(error));
+			throw new AnyBalance.Error(error, null, /Не найден|парол/i.test(error));
+		error = getElement(html, /<div[^>]+notfound[^>]*>/i, replaceTagsAndSpaces);
+		if(error) //Сервис временно недоступен
+			throw new AnyBalance.Error(error);
 		
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
@@ -54,43 +70,31 @@ function doNewCabinet(prefs) {
 	
 	var result = {success: true};
 	
-	getParam(html, result, 'fio', /"person-info"(?:[^>]*>){2}([\s\S]*?<\/span[\s\S]*?)<\/span/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'phone', /"komplekt-number"(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'fio', /"person-info"(?:[^>]*>){2}([\s\S]*?<\/span[\s\S]*?)<\/span/i, replaceTagsAndSpaces);
 	getParam(html, result, 'balance', />\s*Баланс(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, '__tariff', /"komplekt-number"(?:[^>]*>){3}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
+
+	html = AnyBalance.requestGet(baseurl + 'ajax/sets', g_headers);
+	var json = getJson(html);
 	
-	try {
-		var setId = getParam(html, null, null, /Лимиты услуг\s*<\/div>\s*<div[^>]*data-set_id="([^"]+)"/i);
-		
-		if(!setId)
-			throw new AnyBalance.Error('Не удалось найти ссылку на пакеты услуг!');
-		
-		html = AnyBalance.requestPost(baseurl + '?option=com_cabinet&task=home.refresh_limits', {
-			'set_id': setId,
-			'refresh': '1',
-		}, g_headers);
-		
-		var json = getJson(html);
-		
-		if(!json.success)
-			throw new AnyBalance.Error('Возникла ошибка при обработке запроса!');
-		
-		var packs = sumParam(json.block, null, null, /<div[^>]+class="limitname"(?:[^>]*>){12,16}\s*<\/div>/ig);
-		AnyBalance.trace('Найдено пакетов: ' + packs.length);
-		for(var i = 0; i < packs.length; i++) {
-			var current = packs[i];
-			var name = getParam(current, null, null, /<span>([\s\S]*?)<\//i, replaceTagsAndSpaces);
-			
-			if(/Интернет|Продли скорость/i.test(name)) {
-				sumParam(current, result, 'internet', /Осталось([\d\s.,]+МБ)/i, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
-			} else {
-				AnyBalance.trace('Неизвестная опция: ' + current);
+	for(var i=0; i<json.length; ++i){
+		var s = json[i];
+		sumParam(s.main_abon_num, result, 'phone', null, null, null, aggregate_join);
+		sumParam(s.tariff_plan_term, result, '__tariff', null, null, null, aggregate_join);
+	}
+
+	if(AnyBalance.isAvailable('internet')){
+		html = AnyBalance.requestGet(baseurl + 'ajax/set-limits?app_id=' + json[0].app_id, g_headers);
+		json = getJson(html);
+
+		for(var i=0; i<json.limits.length; ++i){
+			var l = json.limits[i];
+			if(/мб/i.test(l.accum_unit)){
+				sumParam(l.accum_remainder, result, 'internet', null, null, parseBalance, aggregate_sum);
 			}
 		}
-	} catch (e) {
-		AnyBalance.trace('Не удалось получить данные по пакетам из-за ошибки: ' + e.message);
 	}
 	
+
 	AnyBalance.setResult(result);	
 }
 

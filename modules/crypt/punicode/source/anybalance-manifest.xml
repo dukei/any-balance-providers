@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">crypt/punicode</id>
+	<api flags="no_browser"/>
+	<name>punicode algorithm</name>
+	<description html="true"><![CDATA[
+	<p>Перевод доменов в юникод и ascii</p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<js>punicode.js</js>
+		<history>history.xml</history>
+	</files>
+	<keywords></keywords>
+	<type>crypt punicode</type>
+	<country></country>
+</provider>

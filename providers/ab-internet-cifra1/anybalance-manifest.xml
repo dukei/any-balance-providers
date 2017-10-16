@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="6">ab-internet-cifra1</id>
+	<id version="8">ab-internet-cifra1</id>
 	<api flags="no_browser"/>
 	<name>Цифра Один</name>
 	<description html="true"><![CDATA[
@@ -10,13 +10,14 @@
 	<p>Внимание! Поддерживаются следующие провайдеры, входящие в компанию Цифра Один:</p>
 	<p>* http://ultranet.ru, САО, Москва</p>
 	<p>* http://cifra1.ru</p>
-	<p>* http://cifra1.ru</p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>

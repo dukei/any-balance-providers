@@ -1,5 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="3" date="2017-05-03">
+	- Поддержка изменений на сайте.
+	</change>
     <change version="2" date="2013-08-26">
       Обход ошибки с кодировкой у сайта
     </change>

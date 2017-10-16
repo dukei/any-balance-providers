@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<history>
+	<change version="4" date="2016-08-17">
+	- Добавлены счётчики "Входящее сальдо", "Исходящее сальдо".
+	</change>
+	<change version="3" date="2016-06-16">
+	- Добавлены счетчики оплаты.
+	</change>
+	<change version="2" date="2016-01-11">
+	- Исправлена обработка ошибок.
+	</change>
+</history>

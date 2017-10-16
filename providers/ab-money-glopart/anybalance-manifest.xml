@@ -7,7 +7,7 @@
 	<p>Предоставляет информацию о балансе провайдера Glopart http://glopart.ru/</p>
 	<p>Сервис Glopart позволяет вам без проблем принимать платежи в Интернете. Клиенты в автоматическом режиме могут переводить вам деньги, а им автоматически отправляется продукт. Прием платежей на сайт ставится буквально за 5 минут...</p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

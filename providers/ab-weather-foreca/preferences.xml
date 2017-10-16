@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+	<EditTextPreference
+		obligatory="true"
+		title="Город"
+		positiveButtonText="ОК"
+		summary="|Прогноз для города|{@s}"
+		dialogTitle="Город"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите название города на русском языке"
+		key="city_name"
+		inputType="text">
+	</EditTextPreference>
+</PreferenceScreen>

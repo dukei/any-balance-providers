@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+    <id version="1">extract/abe-money-belapb</id>
+	<api flags="no_browser" />
+    <name>Extract for Белагропромбанк</name>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<js>abe-money-belapb.min.js</js>
+		<history>history.xml</history>
+	</files>
+	<depends>
+		<module id="login/bss"/>
+	</depends>
+	<type>money, bank</type>
+	<country>by</country>
+</provider>

@@ -1,5 +1,15 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="17" date="2016-11-18">
+	Поддержка ввода нескольких номеров заказа
+	</change>
+	<change version="16" date="2016-11-18">
+	- Поддержка изменений на сайте.
+	</change>
+	<change version="15" date="2016-05-27">
+	- Поддержка изменений на сайте.
+	- Поддержка вывода до 3 заказов
+	</change>
 	<change version="14" date="2015-07-29">
 	- Поддержка изменений на сайте.
 	</change>

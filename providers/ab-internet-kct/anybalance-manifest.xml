@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<api flags="no_browser"/>
+	<id version="1">ab-internet-kct</id>
+	<name>КСТ Симферополь</name>
+	<description html="true">
+	<![CDATA[
+	<p>Получает данные из личного кабинета интернет-провайдера КСТ Симферополь.</p>
+	<p>Кабинет находится по адресу http://kct.net.ua/</p>
+	]]>
+	</description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="deposit" name="Депозит" units=" руб"/>
+		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="phone" name="Телефон" type="text"/>
+		<counter id="address" name="Адрес" type="text"/>
+		<counter id="date" name="Дата договора" type="time" format="dd/MM/yyyy"/>
+		<counter id="status" name="Статус" type="text"/>
+		<counter id="payment_date" name="Оплата (дата)" type="time" format="dd/MM/yyyy"/>
+		<counter id="payment_sum" name="Оплата (сумма)" units=" руб"/>
+		<counter id="internet_days" name="Интернет - услуга завершится через" units=" дн"/>
+		<counter id="internet_ip" name="Интернет - статический IP" type="text"/>
+		<counter id="internet_status" name="Интернет - статус" type="text"/>
+	</counters>
+	<keywords>Крым</keywords>
+	<type>internet</type>
+	<country>ru</country>
+</provider>

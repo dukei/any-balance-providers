@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-bonus-voltmart</id>
+	<api flags="no_browser"/>
+	<name>Вольт Март</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о бонусах на картах сети магазинов Voltmart <a href="https://voltmart.su">https://voltmart.su</a></p>
+	<p>Информация берется из личного кабинета</p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Если у вас нет доступа в Личный кабинет, получите его на странице <a href="https://voltmart.su/registration.aspx">https://voltmart.su/registration.aspx</a></p>
+	]]></instruction>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="На Вашем счету бонусов" />
+		<counter id="discount" name="Процент накопления бонусов" units="%"/>
+	</counters>
+	<keywords>магазин бытовой техники, Voltmart, Вольтмарт, Крым, Алушта, Белогорск, Джанкой, Евпатория, Керчь, Красноперекопск, Саки, Севастополь, Симферополь, Феодосия, Ялта</keywords>
+	<type>bonus</type>
+	<country>ru, ua</country>
+</provider>

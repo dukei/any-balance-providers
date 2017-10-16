@@ -10,4 +10,15 @@
 		negativeButtonText="Cancel"
 		dialogMessage="Please enter your Bitcoin wallet address.">
 	</EditTextPreference>
+	<EditTextPreference
+		title="Convesion Currency Code"
+		key="currency"
+        defaultValue=""
+		summary="||{@s}"
+        obligatory="true"
+		dialogTitle="Currency Code"
+		positiveButtonText="ОК"
+		negativeButtonText="Cancel"
+		dialogMessage="Please enter ISO 4217 currency code, such as USD,RUB,ILS,EUR,GBP etc, to display converted values. Keep blank to disable.">
+	</EditTextPreference>
 </PreferenceScreen>

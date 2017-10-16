@@ -26,9 +26,9 @@ function main(){
     }, addHeaders({Referer: baseurl + 'login'}));
 	
     if(!/\/Logout/i.test(html)){
-        var error = getParam(html, null, null, /<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
+        var error = getParam(html, /<h2[^>]*>[\s\S]*?<\/p>/i, replaceTagsAndSpaces);
         if(error)
-            throw new AnyBalance.Error(error);
+            throw new AnyBalance.Error(error, null, /парол/i.test(error));
 		
 		AnyBalance.trace(html);
         throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');

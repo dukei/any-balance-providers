@@ -7,7 +7,7 @@
 	<p>Предоставляет информацию о балансе провайдера BelToll<a href="http://beltoll.by/ru.aspx">http://beltoll.by/ru.aspx</a></p>
 	<p>Информация берется из личного кабинета <a href="https://reg.beltoll.by/Account/Login">https://reg.beltoll.by/Account/Login</a></p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

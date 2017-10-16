@@ -1,9 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id version="3">ab-internet-gorcomnet</id>
+	<id version="4">ab-internet-gorcomnet</id>
 	<name>Горком (Москва)</name>
 	<description html="true"><![CDATA[
+	<p>Горком вошел в состав провайдера Seven Sky, используйте провайдера <a href="http://anybalance.ru/catalog.php?id=ab-internet-iskra&inapp=no">Seven Sky</a></p>
 	<p>Предоставляет информацию о балансе провайдера Горком <a href="http://gorcomnet.ru">http://gorcomnet.ru</a></p>
 	<p>Информация берется из личного кабинета <a href="https://statistics.gorcomnet.ru:7778/">https://statistics.gorcomnet.ru:7778/</a></p>
 	]]></description>

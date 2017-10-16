@@ -1,5 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="5" date="2017-04-11">
+	- Поддержка изменений на сайте.
+	</change>
+	<change version="4" date="2016-11-07">
+	Поддержка ReCaptcha
+	</change>
+	<change version="3" date="2016-10-25">
+	- Поддержка изменений на сайте.
+	</change>
 	<change version="2" date="2015-07-20">
 	- Улучшена обработка ошибок - провайдер не падает, когда нет ни одной карты
 	</change>

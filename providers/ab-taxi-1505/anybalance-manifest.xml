@@ -7,7 +7,7 @@
 	<description>
 	Получает количество поездок в Такси 1505 (http://www.taxi1505.com.ua/)
 	</description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

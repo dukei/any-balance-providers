@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-shop-secondby</id>
+	<api flags="no_browser"/>
+	<name>Second.by</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию из личного кабинета на сайте <a href="http://second.by">http://second.by</a></p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+	</files>
+	<counters>
+		<counter id="advertisements" name="Объявления"/>
+		<counter id="comments" name="Комментарии" type="text"/>
+		<counter id="messages" name="Сообщения"/>
+		<counter id="user_lists" name="Списки пользователей"/>
+		<counter id="collaborative_purchases" name="Совместные покупки" type="text"/>
+		<counter id="feedback" name="Отзывы" type="text"/>
+	</counters>
+	<keywords>Объявления/Магазин</keywords>
+	<type>shop</type>
+	<country>ru</country>
+</provider>

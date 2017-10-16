@@ -1,13 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="69">ab-money-sberbank</id>
+	<id version="84">ab-money-sberbank</id>
 	<api flags="no_browser"/>
-	<name>Сбербанк ОнЛ@йн</name>
+	<name>Сбербанк Онлайн</name>
 	<description html="true"><![CDATA[
-	<p>Получает информацию о текущем остатке и других параметрах карт и счетов "Сбербанка".</p> 
-	<p>Информация берется из системы "Сбербанк-Онлайн" (http://online.sberbank.ru).</p>
+	<p>Проверяйте информацию о текущем остатке/балансе денежных средств и других параметрах карт и счетов "Сбербанка".</p> 
+	<p>Информация берётся из личного кабинета "Сбербанк-Онлайн" (http://online.sberbank.ru).</p>
 	<p><b>ВНИМАНИЕ!</b> Чтобы получить баланс, провайдер заходит в ваш Сбербанк ОнЛ@йн. По умолчанию Сбербанк на каждый вход присылает СМС.
-	То есть, вам будет приходить СМС всякий раз, когда провайдер будет проверять ваш баланс. Это можно отключить, заменив уведомление на е-мейл в настройках интернет-банка.
+	Вам будет приходить SMS всякий раз, когда провайдер будет проверять ваш баланс. Это можно отключить, заменив уведомление на е-мейл в настройках интернет-банка.
 	]]></description>
 	<instruction html="true"><![CDATA[
 	<p>Как получить доступ к "Сбербанк-Онлайн":</p>
@@ -44,13 +44,13 @@
 	</ol></p>
 	]]></instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="extract/abe-money-sberbank-new"/>
+		<module id="nadapter"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>extract.js</js>
-		<js>nadapter.js</js>
-		<js>md5.js</js>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>

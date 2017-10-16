@@ -24,11 +24,10 @@
 	<EditTextPreference
 		title="Лицензия"
 		key="lic_id"
-		summary="||{@s}"
-		obligatory="true"
-		dialogTitle="Лицензия"
+		summary="|Автоматически|{@s}"
+		dialogTitle="Часть имени лицензии"
 		positiveButtonText="ОК"
 		negativeButtonText="Отмена"
-		dialogMessage="Введите последние 5 символов номера лицензии или не вводите ничего, чтобы получить данные по первой лицензии.">
+		dialogMessage="Введите часть имени лицензии, чтобы получить информацию по ней. Или не вводите ничего, чтобы получить данные по первой действующей лицензии.">
 	</EditTextPreference>    
 </PreferenceScreen>

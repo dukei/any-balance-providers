@@ -19,5 +19,10 @@
 		title="Падать?"
 		key="bad_behavior"
 		summary="Падает с ошибкой">
+	</CheckBoxPreference>
+	<CheckBoxPreference
+		title="Фатальная ошибка?"
+		key="fatal_error"
+		summary="Падает с фатальной ошибкой">
 	</CheckBoxPreference>	
 </PreferenceScreen>

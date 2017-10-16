@@ -1,13 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
     <EditTextPreference 
-        title="Номер карты" 
+        title="Контактный телефон" 
         positiveButtonText="ОК" 
         summary="||{@s}" 
-        dialogTitle="Номер карты" 
+        dialogTitle="Контактный телефон" 
         negativeButtonText="Отмена" 
-        dialogMessage="Введите все 13 цифр номера карты без пробелов и разделителей"
-        inputType="number"
+        dialogMessage="Введите ваш телефон для входа в личный кабинет НОВЭКС в формате +79991234567"
+		obligatory="true"
+        inputType="phone"
         key="login">
     </EditTextPreference>
+	<EditTextPreference
+		obligatory="true"
+		title="Пароль"
+		positiveButtonText="ОК"
+		summary="|Введите пароль|***********"
+		dialogTitle="Пароль"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите пароль, используемый для авторизации"
+		key="password"
+		inputType="textPassword">
+	</EditTextPreference>
 </PreferenceScreen>

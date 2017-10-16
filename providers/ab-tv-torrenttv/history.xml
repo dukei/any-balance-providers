@@ -1,5 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="6" date="2016-10-17">
+	- Поддержка изменений на сайте.
+	</change>
+	<change version="5" date="2016-02-01">
+	- Мелкие улучшения.
+	</change>
+	<change version="4" date="2015-12-22">
+	- Поддержка изменений на сайте.
+	</change>
 	<change version="3" date="2015-06-15">
 	- Добавлен обход защиты от роботов.
 	</change>
@@ -8,7 +17,7 @@
 	</change>
 <!--
 <change version="2" date="2013-09-21">
-- 
+-
 </change>
 -->
 </history>

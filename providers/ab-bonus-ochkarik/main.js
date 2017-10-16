@@ -17,15 +17,13 @@ function main(){
 
 	checkEmpty(prefs.card, 'Введите номер карты!');
 
-	var html = AnyBalance.requestGet(baseurl, g_headers);
-
-	if(!html || AnyBalance.getLastStatusCode() > 400){
-		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
-	}
-
 	html = AnyBalance.requestGet(baseurl + '?id=' + prefs.card + '&action=check&target=club_card',
 		addHeaders({Referer: baseurl, 'X-Requested-With': 'XMLHttpRequest'}));
+                
+        if(!html || AnyBalance.getLastStatusCode() >= 400){
+            AnyBalance.trace(html);
+            throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
+	}
 
 	var json = getJson(html);
 

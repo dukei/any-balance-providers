@@ -1,35 +1,34 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id major_version="3.0" version="16">ab-money-faktura</id>
+	<id major_version="3.0" version="21">ab-money-faktura</id>
 	<name>Фактура</name>
 	<description html="true"><![CDATA[
 	<p>Получает текущий остаток, бонусные баллы и другие параметры карт банков, работающих через factura.ru, используя систему Интернет-банк https://www.faktura.ru/lite/app</p>
-
 	<p>Проверено, что работает с банками</p>
 	<ul>
 		<li>Русский Торговый банк (ООО КБ "РТБК") http://rtbk.ru/</li>
-		<li>МДМ БАНК Кемерово (КФ ПАО "МДМ БАНК")</li>
-		<li>Банк Левобережный https://www.nskbl.ru/</li>
-		<li>Примсоцбанк http://www.pskb.com/</li>
-		<li>Европлан Банк http://europlan.ru/</li>
-		<li>БинБанк http://binbank.ru/</li>
+		<li>МДМ БАНК Кемерово (КФ ПАО "МДМ БАНК") http://mdm.ru/kemerovo/</li>
+		<li>Банк Левобережный https://nskbl.ru/</li>
+		<li>Примсоцбанк http://pskb.com/</li>
+		<li>Европлан Банк https://europlan.ru/</li>
+		<li>БинБанк https://binbank.ru/</li>
+		<li>ПАО Совкомбанк https://sovcombank.ru/</li>
 	</ul>
-
 	Вероятно, работает и с другими банками на базе Фактуры
-
-
 	]]></description>
 	<instruction html="true"><![CDATA[
 	<p>Если у вас нет доступа к интернет-банку, выполните условия на странице https://www.faktura.ru/lite/app/pub/Register</p>
 	]]></instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+    <depends>
+		<module id="library"/>
+		<module id="nadapter"/>
+		<module id="extract/abe-money-faktura"/>
+	</depends>	
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
-		<js>nadapter.js</js>
-		<js>extract.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>

@@ -15,11 +15,11 @@ var g_countersTable = {
 //		"income": "income",
 		"cardnum": "cards.num",
 		"type": "cards.name",
-		"balance_own": "accounts.balance_own",
+		"balance_own": "accounts.own",
 		"minpay": "cards.minpay",
-		"minpaytill": "cards.minpaytill",
+		"minpaytill": "cards.minpay_till",
 		"gracepay": "accounts.gracepay",
-		"gracepaytill": "accounts.gracepaytill",
+		"gracepaytill": "accounts.gracepay_till",
 		"blocked": "cards.blocked",
 		"accnum": "cards.accnum",
 		"currency": "cards.currency",
@@ -27,16 +27,26 @@ var g_countersTable = {
 	},
     acc: {
         "balance": "accounts.balance",
-		"balance_own": "accounts.balance_own",
+		"balance_own": "accounts.own",
 		"minpay": "accounts.minpay",
-		"minpaytill": "accounts.minpaytill",
+		"minpaytill": "accounts.minpay_till",
 		"gracepay": "accounts.gracepay",
-		"gracepaytill": "accounts.gracepaytill",
+		"gracepaytill": "accounts.gracepay_till",
 		"blocked": "accounts.blocked",
 		"accnum": "accounts.num",
 		"currency": "accounts.currency",
 		"__tariff": "accounts.__name"
     },
+	dep: {
+        "balance": "deposits.balance",
+		"till": "deposits.till",
+		"income": "deposits.estimated_value",
+		"cardnum": "deposits.contract",
+		"type": "deposits.name",
+		"accnum": "deposits.num",
+		"currency": "deposits.currency",
+		"__tariff": "deposits.__name"
+	},
 };
 
 var g_selectedCard;
@@ -88,7 +98,7 @@ function shouldProcess(counter, info){
 		    if(!prefs.lastdigits)
 		    	return true;
 			
-			if(endsWith(info.num, prefs.lastdigits))
+			if(endsWith(info.num, prefs.lastdigits) || endsWith(info.contract, prefs.lastdigits))
 				return true;
 		}
 		default:
@@ -102,8 +112,8 @@ function main() {
     if(!/^(card|crd|dep|acc)$/.test(prefs.type || ''))
     	prefs.type = 'card';
 
-    if(/dep|crd/.test(prefs.type))
-    	throw new AnyBalance.Error('Не удалось получить данные по кредиту/депозиту. Сайт изменен?');
+    if(/crd/.test(prefs.type))
+    	throw new AnyBalance.Error('Не удалось получить данные по кредиту. Сайт изменен?');
 	
     var adapter = new NAdapter(joinObjects(g_countersTable[prefs.type], g_countersTable.common), shouldProcess);
 	
@@ -112,7 +122,7 @@ function main() {
     adapter.processCards = adapter.envelope(processCards);
     adapter.processAccounts = adapter.envelope(processAccounts);
 //    adapter.processCredits = adapter.envelope(processCredits);
-//    adapter.processDeposits = adapter.envelope(processDeposits);
+    adapter.processDeposits = adapter.envelope(processDeposits);
 	
 	var html = login(prefs);
 	

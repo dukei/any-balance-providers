@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<history>
+	<change version="8" date="2017-02-01">
+	- Мелкие улучшения.
+	</change>
+	<change version="7" date="2016-12-22">
+	- Поддержка изменений на сайте.
+	</change>
+	<change version="6" date="2016-06-16">
+	- Поддержка изменений на сайте.
+	</change>
+	<change version="5" date="2016-05-05">
+	Исправлена ошибка JSON
+	</change>
+	<change version="4" date="2016-05-05">
+	- Улучшена обработка ошибок.
+	</change>
+	<change version="3" date="2016-04-04">
+	- Поддержка изменений на сайте.
+	</change>
+	<change version="2" date="2016-02-25">
+	- Добавлена поддержка бонусов.
+	</change>
+	<change version="1" date="2016-02-24">
+	- Первая версия провайдера.
+	</change>
+</history>

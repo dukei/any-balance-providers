@@ -16,6 +16,9 @@ var headersJSON = {
 	"User-Agent": "Mozilla/5.0 (Windows NT 6.1; WOW64)"
 };
 
+//Remove all spaces and tags
+var removeTagsAndSpaces = [/&nbsp;/ig,"",/&minus;/ig,"-",/<!--[\s\S]*?-->/g,"",/<[^>]*>/g,"",/\s{2,}/g,"",/^\s+|\s+$/g,""];
+
 if (typeof String.prototype.trim != 'function') { // detect native implementation
 	String.prototype.trim = function () {
 		return this.replace(/^\s+/, '').replace(/\s+$/, '');
@@ -34,11 +37,11 @@ function main(){
 	checkEmpty(prefs.cardnum, 'Enter card number!');
 	checkEmpty(prefs.cardcvc, 'Enter card CVC!');
 	
-	var html = AnyBalance.requestGet(baseurl + 'e-tjanster/se-saldo-och-ladda-kort', g_headers);
+	var html = AnyBalance.requestGet(baseurl + 'e-tjanster/se-saldo-och-ladda-kort1', g_headers);
 	
 	if(!html || AnyBalance.getLastStatusCode() > 400){
 		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
+		throw new AnyBalance.Error("Can't open skanetrafiken.se! Try to refresh later.");
 	}	
 	
 	var token = getParam(html, null, null, /"__RequestVerificationToken"[^>]*value="([^"]+)/i);
@@ -62,16 +65,27 @@ function main(){
 		throw new AnyBalance.Error('Card balance get error. Website design is changed?');
 	}
 	
-	getParam(prefs.cardnum, result, '__tariff');
-	getParam(prefs.cardnum, result, 'cardnum');
+	getParam(html, result, '__tariff', /"type"[^>]*>\s*([\s\S]*?)\s*</i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'cardnum', /"card-number"[^>]*>\s*([\d.,-]+)\s*</i, replaceTagsAndSpaces, html_entity_decode);
 	
-	getParam(html, result, 'balance', /"balance"[^>]*>\s*([\d.,-]+)\skr/i, replaceTagsAndSpaces, parseBalance);
-	// getParam(html, result, 'balancenow', /Tillg.ngligt nu:<\/h4>[\s\S]*?<p>([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, parseBalance);
-	// getParam(html, result, 'balancedownload', /Att h.mta:[\s\S]*?<p>.([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, parseBalance);
+	balnow = getParam(html, null, null, /"balance"[^>]*>\s*([\d.,-]+)\skr/i, replaceTagsAndSpaces, parseBalance);
+	baldown = getParam(html, null, null, /"fetch-balance"[^>]*>\s*([\d.,-]+)\skr/i, replaceTagsAndSpaces, parseBalance);
+	if (isset(balnow) || isset(baldown)) {
+		getParam((isset(balnow) ? balnow : 0) + (isset(baldown) ? baldown : 0), result, 'balance');
+	}
+	if (isset(balnow)) {
+		getParam(balnow, result, 'balancenow');
+	}
+	if (isset(baldown)) {
+		getParam(baldown, result, 'balancedownload');
+	}
+
 	getParam(html, result, ['currency','balance','balancenow','balancedownload'], /"balance"[^>]*>\s*([\d.,-]+\skr)/i, replaceTagsAndSpaces, parseCurrency);
-	// getParam(html, result, 'validfrom', /Periodkort fr:<\/h4>[\s\S]*?<p>([\s\S]*?) till/i, replaceTagsAndSpaces, parseDateISO);
-	// getParam(html, result, 'validtill', /Periodkort fr:<\/h4>[\s\S]*? till ([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, parseDateISO);
-	// getParam(html, result, 'zonesnum', /Antal zoner:<\/h4>[\s\S]*?<p>([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, parseBalance);
+
+	getParam(html, result, 'validfrom', /"validity"[^>]*>\s*([\d.,-]+)\s-\s[\d.,-]+\s*</i, replaceTagsAndSpaces, parseDateISO);
+	getParam(html, result, 'validtill', /"validity"[^>]*>\s*[\d.,-]+\s-\s([\d.,-]+)\s*</i, replaceTagsAndSpaces, parseDateISO);
+	getParam(html, result, 'zonesnum', /"zone-box-\d+-title"[^>]*>\s*([\d.,-]+)\szoner/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'zoneslist', /"info-box-content hidden"[\s\S]*?"zone-box-[^>]*>\s*([\s\S]*?)\s*</i, removeTagsAndSpaces, html_entity_decode);
 	
 	
 	if (prefs.cardnum && isAvailable(['expiresat', 'expiresin', 'expirestate'])) {

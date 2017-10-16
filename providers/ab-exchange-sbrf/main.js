@@ -1,62 +1,54 @@
 /**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 */
-http://www.sberbank.ru/common/js/quote_table.php
+
+var g_headers = {
+	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
+	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
+	'Connection': 'keep-alive',
+	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
+};
 
 function main() {
 	var result = {success: true};
 	
 	var prefs = AnyBalance.getPreferences();
+	var region = findRegion(prefs.region).REGION_ID;
 	
-	var baseurl = 'http://sberbank.ru/';
-	var html = AnyBalance.requestGet(baseurl + (prefs.region || 'moscow') + '/ru/quotes/currencies/');
+	var baseurl = 'http://www.sberbank.ru/portalserver/proxy/?pipe=shortCachePipe&url=';
+	var body = JSON.stringify({
+		"currencyData":[
+			{"currencyCode":"978","rangesAmountFrom":[0,1000]},
+			{"currencyCode":"840","rangesAmountFrom":[0,1000]}
+		],
+		"categoryCode":"base"
+	});
+	var addUrl = 'http://localhost/rates-web/rateService/rate?regionId=' + region + '&fromDate=' + getFormattedDate({offsetDay: 7}) + '&toDate=' + getFormattedDate() + '&hash=' + computeHash(body);
 	
-	getParam(html, result, 'date', /<h3[^>]*>Курсы иностранных валют с([^<]+)/i, replaceTagsAndSpaces, parseDate);
-	getParam(html, result, '__tariff', /<h3[^>]*>Курсы иностранных валют с([^<]+)/i, [/по местному времени/g, '', replaceTagsAndSpaces], html_entity_decode);
-	getParam(html, result, 'usd_purch', /"Доллар США"(?:[^>]*>){8}([\s\d.,]{3,})/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'usd_sell', /"Доллар США"(?:[^>]*>){13}([\s\d.,]{3,})/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'eur_purch', /"Евро"(?:[^>]*>){8}([\s\d.,]{3,})/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'eur_sell', /"Евро"(?:[^>]*>){13}([\s\d.,]{3,})/i, replaceTagsAndSpaces, parseBalance);
+	var html = AnyBalance.requestPost(baseurl + encodeURIComponent(addUrl), body, addHeaders({
+		'Content-Type': 'application/json',
+		'Referer': 'https://www.sberbank.ru/ru/quotes/currencies',
+		'X-Requested-With': 'XMLHttpRequest'
+	}));
+	var json = getJson(html);
+
+	if(AnyBalance.isAvailable('date', 'usd_purch', 'usd_sell')){
+		var info = json['840'].rates[0];
+		AB.getParam(info.activeFrom, result, 'date');
+    	AB.getParam(info.buyValue, result, 'usd_purch');
+    	AB.getParam(info.sellValue, result, 'usd_sell');
+    	AB.getParam(getFormattedDate(null, new Date(info.activeFrom)), result, '__tariff');
+	}
+	
+	if(AnyBalance.isAvailable('date', 'eur_purch', 'eur_sell')){
+		var info = json['978'].rates[0];
+		AB.getParam(info.activeFrom, result, 'date');
+    	AB.getParam(info.buyValue, result, 'eur_purch');
+    	AB.getParam(info.sellValue, result, 'eur_sell');
+    	AB.getParam(getFormattedDate(null, new Date(info.activeFrom)), result, '__tariff');
+	}
 	
 	AnyBalance.setResult(result);
 }
 
-function mainOld() {
-	var result = {success: true};
-	
-	var prefs = AnyBalance.getPreferences();
-	
-	var baseurl = 'http://sberbank.ru/';
-	var html = AnyBalance.requestGet(baseurl + (prefs.region || 'moscow') + '/ru/quotes/currencies/table/');
-	
-	getParam(html, result, 'date', /<input[^>]+value="([^"]*)"[^>]*name="date"/i, replaceTagsAndSpaces, parseDate);
-	getParam(html, result, '__tariff', /<input[^>]+value="([^"]*)"[^>]*name="date"/i, replaceTagsAndSpaces, html_entity_decode);
-	
-	var r = new RegExp('<input type="hidden" name="([^"]+)" value="([^"]+)" />', 'g');
-	
-	var url = baseurl + 'common/js/quote_table.php?payment=cash&person=natural';
-	
-	while ((matches = r.exec(html)) != null) {
-		url += '&' + matches[1] + '=' + matches[2];
-	}
-	html = AnyBalance.requestGet(url);
-	r = new RegExp('<tr><td class="rbord"><a[^>]+>[^<]+</a></td><td class="rbord" style="text-align:center;">([^<]+)</td><td class="rbord" style="text-align:center;">(\\d+)</td><td class="rbord" style="text-align:center;">([0-9\\.]+).+?</td><td class="rbord" style="text-align:center;">([0-9\\.]+).+?</td></tr>', 'g');
-	while ((matches = r.exec(html)) != null) {
-		switch (matches[1]) {
-		case 'USD':
-			result.usd_purch = parseFloat(matches[3]) / parseInt(matches[2]);
-			result.usd_sell = parseFloat(matches[4]) / parseInt(matches[2]);
-			break;
-		case 'EUR':
-			result.eur_purch = parseFloat(matches[3]) / parseInt(matches[2]);
-			result.eur_sell = parseFloat(matches[4]) / parseInt(matches[2]);
-			break;
-		case 'GBP':
-			result.gbp_purch = parseFloat(matches[3]) / parseInt(matches[2]);
-			result.gbp_sell = parseFloat(matches[4]) / parseInt(matches[2]);
-			break;
-		}
-	}
-	//throw new AnyBalance.Error('текст ошибки');
-	AnyBalance.setResult(result);
-}

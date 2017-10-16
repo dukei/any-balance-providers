@@ -1,24 +1,26 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="6">ab-bonus-krasnoeibeloe</id>
+	<id version="11">ab-bonus-krasnoeibeloe</id>
 	<api flags="no_browser"/>
 	<name>Красное&amp;Белое (Урал)</name>
 	<description html="true"><![CDATA[
 	<p>Получает баланс и скидку по дисконтной карте компании «Красное&amp;Белое» в Уральском регионе.</p>
-	<p>Информация берется с сайта http://www.krasnoeibeloe.ru/discount</p>
+	<p>Информация берется с сайта https://krasnoeibeloe.ru/discount</p>
 	]]></description>
 	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+		<module id="framework/cloudflare"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
-		<js>cloudflare.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<!-- <counter id="balance" name="Накопленная сумма" units=" р"/> -->
 		<counter id="discount" name="Скидка" units=" %"/>
+		<counter id="balance" name="Накопленная сумма" units=" р"/>
 		<counter id="sumleft" name="Осталось до следующего уровня" units=" р"/>
 		<counter id="nextdis" name="Следующий уровень скидки" units=" %"/>
 		<!-- <counter id="nextsum" name="Сумма для следующего уровеня скидки" units=" р"/> -->

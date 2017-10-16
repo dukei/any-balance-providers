@@ -1,17 +1,19 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-internet-krasset</id>
+	<id version="2">ab-internet-krasset</id>
 	<api flags="no_browser"/>
 	<name>Красноярская сеть</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе провайдера Красноярская сеть http://красноярскаясеть.рф</p>
 	<p>Информация берется из личного кабинета http://красноярскаясеть.рф/office</p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>

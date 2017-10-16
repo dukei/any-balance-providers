@@ -115,6 +115,37 @@ function main(){
             AnyBalance.trace('Не удалось получить трафик: ' + e.message);
         }
     }
+
+    if(AnyBalance.isAvailable('abon')){
+		html = AnyBalance.requestGet(baseurl + "services/", g_headers);
+		var wtf = getParam(html, /wtf\s*=\s*'([^']*)/);
+
+		html = AnyBalance.requestGet(baseurl + "json/getcontract/", addHeaders({
+			'X-Requested-With': 'XMLHttpRequest',
+			Referer: baseurl + 'services/',
+			Accept: 'application/json',
+			'X-Request': 'JSON',
+			'X-Wtf': wtf
+		}));
+		json = getJson(html);
+
+		var services = ['internet', 'inetdvbc'];
+		for(var i=0; i<services.length; ++i){
+			var service = json.configuration[services[i]];
+			if(service && service.status == 'ON' && service.rateplan){
+				AnyBalance.trace(services[i] + ' включен, узнаем абонентскую плату');
+				for(var svc in json.catalogue.rateplans){
+					var rps = json.catalogue.rateplans[svc];
+					var found = rps.filter(function(r){ return r.code == service.rateplan.code })[0];
+					if(found){
+						sumParam(found.price, result, 'abon', null, null, null, aggregate_sum);
+						break;
+					}
+				}
+			}
+		}
+    	
+    }                   
     
     AnyBalance.setResult(result);
 }

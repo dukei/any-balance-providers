@@ -1,5 +1,27 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="11" date="2016-11-26">
+	- Поддержка изменений в процедуре входа
+	</change>
+	<change version="10" date="2016-10-12">
+	Исправление получения карт и валюты по ним
+	</change>
+	<change version="9" date="2016-10-12">
+	Исправление получения карт
+	</change>
+	<change version="8" date="2016-09-15">
+	Поддержка изменений в API банка
+	</change>
+	<change version="7" date="2016-07-08">
+	- Поддержка новой версии приложения
+	</change>
+	<change version="6" date="2016-06-01">
+	Исправление валюты
+	</change>
+	<change version="5" date="2016-05-22">
+	 - Поддержка кредитов и счетов
+	 - Использование нового интернет-банка
+	</change>
 	<change version="4" date="2014-05-30">
 	- Поддержка изменений в процедуре входа.
 	</change>

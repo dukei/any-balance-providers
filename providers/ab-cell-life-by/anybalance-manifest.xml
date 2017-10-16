@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="2.0" version="28">ab-cell-life-by</id>
+	<id major_version="2.0" version="36">ab-cell-life-by</id>
 	<api flags="no_browser" />
 	<name>Life:) Беларусь</name>
 	<description html="true"><![CDATA[
@@ -13,11 +13,13 @@
 	<li>Наберите на своём телефоне *120# и следуйте инструкциям.</li>
 	</ul>
 	]]></instruction>
-	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
@@ -27,11 +29,14 @@
 		<counter id="balance_corent" name="Оплаченные обязательства" suffix=" ед"/>
 		<counter id="traffic_left" name="Остаток трафика" suffix=" Мб"/>
 		<counter id="traffic_night_left" name="Остаток ночного трафика" suffix=" Мб"/>
+		<counter id="traffic_msg_left" name="Трафик (Viber, Whatsapp)" suffix=" ед"/>
 		<counter id="min_left" name="Минуты внутри сети" units=" мин" type="time_interval" format="{@MIN}:{@sec}"/>
 		<counter id="min_left_other" name="Минуты на другие сети" units=" мин" type="time_interval" format="{@MIN}:{@sec}"/>
 		<counter id="sms_left" name="Остаток СМС" suffix=" смс"/>
 		<counter id="sms_left_other" name="Остаток СМС на все сети" suffix=" смс"/>
 		<counter id="mms_left" name="Остаток ММС" suffix=" ммс"/>
+		<counter id="limit_used" name="Использованный корпоративный лимит" suffix=" р"/>
+		<counter id="limit" name="Корпоративный лимит" suffix=" р"/>
 		<counter id="life_points" name="Life Points" suffix=" Б"/>
 		<counter id="fio" name="ФИО" type="text"/>
 		<counter id="phone" name="Телефон" type="text"/>

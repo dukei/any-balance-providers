@@ -19,16 +19,14 @@ function main() {
 	checkEmpty(prefs.password, 'Введите пароль!');
 	
 	var html = AnyBalance.requestGet(baseurl, g_headers);
+	if(/Сервис временно недоступен/i.test(html))
+		throw new AnyBalance.Error('Личный кабинет сообщает: Сервис временно недоступен. Попробуйте обновить позже');
 	
 	var captchaa;
-	if(AnyBalance.getLevel() >= 7) {
-		AnyBalance.trace('Пытаемся ввести капчу');
-		var captcha = AnyBalance.requestGet(baseurl+ getParam(html, null, null, /(lib\/kcaptcha[^"]+)/i));
-		captchaa = AnyBalance.retrieveCode("Пожалуйста, введите код с картинки", captcha);
-		AnyBalance.trace('Капча получена: ' + captchaa);
-	} else {
-		throw new AnyBalance.Error('Провайдер требует AnyBalance API v7, пожалуйста, обновите AnyBalance!');
-	}
+	AnyBalance.trace('Пытаемся ввести капчу');
+	var captcha = AnyBalance.requestGet(baseurl+ getParam(html, null, null, /(lib\/kcaptcha[^"]+)/i));
+	captchaa = AnyBalance.retrieveCode("Пожалуйста, введите код с картинки", captcha);
+	AnyBalance.trace('Капча получена: ' + captchaa);
 	
 	html = AnyBalance.requestPost(baseurl, {
 		ls: prefs.login,

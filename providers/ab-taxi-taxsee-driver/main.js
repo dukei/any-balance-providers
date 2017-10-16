@@ -12,38 +12,39 @@ var g_headers = {
 
 function main(){
     var prefs = AnyBalance.getPreferences();
-    var baseurl = "http://taxsee.ru/drivercabinet/";
+    var baseurl = "https://driver.taxsee.com/";
 
-    AnyBalance.setDefaultCharset('utf-8'); 
-    var html = AnyBalance.requestGet(baseurl + 'index.php', g_headers);
-    
-    var form = getParam(html, null, null, /<form[^>]+id="loginForm"[^>]*>([\s\S]*?)<\/form>/i);
-	if(!form)
-		throw new AnyBalance.Error('Не удалось найти форму входа, сайт изменен?');
-	
-    var params = createFormParams(form, function(params, str, name, value) {
-		if(name == 'LoginForm[username]')
-			return prefs.login;
-		if(name == 'LoginForm[password]')
-			return prefs.password;
-		return value;
-	});
-	
-	html = AnyBalance.requestPost(baseurl + 'index.php', params, addHeaders({Referer: baseurl})); 
+    AnyBalance.setDefaultCharset('utf-8');
 
-    if(!/.>Выход</i.test(html)){
-        var error = getParam(html, null, null, /<div[^>]+alert-error[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
-        if(error)
-            throw new AnyBalance.Error(error);
-        //Если объяснения ошибки не найдено, при том, что на сайт войти не удалось, то, вероятно, произошли изменения на сайте
+    var html = AnyBalance.requestGet(baseurl, g_headers);
+
+    if (!html || AnyBalance.getLastStatusCode() > 400) {
+        AnyBalance.trace(html);
+        throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
+    }
+	
+    var params = {
+        'LoginForm[username]': prefs.login,
+        'LoginForm[password]': prefs.password,
+        'yt0': ''
+    };
+	
+	html = AnyBalance.requestPost(baseurl, params, AB.addHeaders({Referer: baseurl}));
+
+    if (!/\/logout/i.test(html)) {
+        var error = AB.getParam(html, null, null, /alert-danger[^>]*>(?:[^>]*>){2}([^<]+)/i, AB.replaceTagsAndSpaces);
+        if(error) {
+            throw new AnyBalance.Error(error, null, /введены неправильно/i.test(error));
+        }
+
         throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
     }
 
     var result = {success: true};
 
-    getParam(html, result, '__tariff', /"Profile\[C_FIO\]"[^>]*value="([^"]+)/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(result.__tariff, result, 'fio');
-    getParam(html, result, 'balance', /"Profile\[C_SALDO\]"[^>]*value="([^"]+)/i, replaceTagsAndSpaces, parseBalance);
+    AB.getParam(html, result, '__tariff', /"Profile\[C_FIO\]"[^>]*value="([^"]+)/i, AB.replaceTagsAndSpaces);
+    AB.getParam(result.__tariff, result, 'fio');
+    AB.getParam(html, result, 'balance', /"Profile\[C_SALDO\]"[^>]*value="([^"]+)/i, AB.replaceTagsAndSpaces, AB.parseBalance);
 
     AnyBalance.setResult(result);
 }

@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="3">ab-daycounter</id>
+	<api flags="no_browser"/>
+	<name>Счетчик дней</name>
+	<description html="true"><![CDATA[
+	<p>Показывает сколько прошло от (или осталось до) указанной даты.</p> 
+	<br>
+	<p>Результат форматируется в читаемую строку, примеры:</p>
+ 	<p>"1 год, 2 мес., 3 дня"</p>
+ 	<p>"120 дней"</p>
+ 	<p>"14 нед."</p>
+	]]></description>
+	<author>Sergey Shostko &lt;sergey@shostko.by&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="year_full" name="Полных лет" units="{@year_full_unit}"/>
+		<counter id="month_full" name="Полных месяцев" units="мес."/>
+		<counter id="week_full" name="Полных недель" units="нед."/>
+		<counter id="day_full" name="Полных дней" units="{@day_full_unit}"/>
+		<counter id="month" name="Остаток месяцев" units="мес."/>
+		<counter id="day" name="Остаток дней" units="{@day_unit}"/>
+	</counters>
+	<keywords>сколько осталось прошло дней месяцев недель лет</keywords>
+	<type>countdown</type>
+</provider>

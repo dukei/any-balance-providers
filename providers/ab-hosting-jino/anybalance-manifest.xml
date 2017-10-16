@@ -1,24 +1,25 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id major_version="2.0" version="10">ab-hosting-jino</id>
+	<id major_version="2.0" version="11">ab-hosting-jino</id>
 	<name>Джино</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе, остатке дискового и почтового пространства хостинг-провайдера Джино http://jino.ru/</p>
 	<p>Информация берется из контрольной панели https://cp-hosting.jino.ru/</p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
 	<counters>
 		<counter id="balance" name="Баланс" units=" р"/>
 		<counter id="deadline" name="Дата отключения" type="time" format="dd/MM/yyyy"/>
-		<counter type="text" id="state" name="Статус"/>
 		<counter id="monthly_fee" name="Оплата в месяц" units=" р"/>
 		<counter id="daily_fee" name="Оплата в день" units=" р"/>
 		<counter id="storage_used" name="Дисковое простарнство - использовано Mb" units=" Mb"/>

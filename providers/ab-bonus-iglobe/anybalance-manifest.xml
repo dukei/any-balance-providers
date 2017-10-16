@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="3">ab-bonus-iglobe</id>
+	<id version="4">ab-bonus-iglobe</id>
 	<api flags="no_browser"/>
 	<name>iGlobe (Мили)</name>
 	<description html="true"><![CDATA[
@@ -8,11 +8,12 @@
 	<p>Информация берется из личного кабинета <a href="http://iglobe.ru/travelmiles/info/service">http://iglobe.ru/travelmiles/info/service</a></p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
-	<author>d3vil-st &lt;d3vil.st@gmail.com&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>

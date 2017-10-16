@@ -5,7 +5,7 @@
 	<id version="1">ab-internet-miit-ua</id>
 	<name>MIIT (Украина)</name>
 	<description>Получает данные Украинского интернет-провайдера MIIT (Севастополь, Киев) по адресу http://www.miit.ua/</description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

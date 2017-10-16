@@ -22,4 +22,12 @@
 		dialogMessage="Введите пароль, используемый для входа в Мой Киевстар"
 		inputType="textPassword">
 	</EditTextPreference>
+	<ListPreference
+		key="source"
+		title="Источник данных"
+		summary="||{@s}"
+		entries="Автоматически|Старый личный кабинет|Новый личный кабинет|Мобильное приложение"
+		entryValues="auto|old|new|app"
+		defaultValue="old">
+	</ListPreference>	
 </PreferenceScreen>

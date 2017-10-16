@@ -1,11 +1,22 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="7" date="2017-02-07">
+	- Поддержка изменений на сайте.
+	</change>
+	<change version="6" date="2017-02-07">
+	- Поддержка изменений на сайте.
+	</change>
+	<change version="5" date="2016-10-07">
+	Обход защиты от роботов
+	</change>
+    <change version="4" date="2016-08-18">
+    - Поддержка изменений на сайте.
+    - Изменена иконка.
+    </change>
+    <change version="3" date="2016-02-02">
+    - Поддержка изменений на сайте.
+    </change>
 	<change version="2" date="2015-10-16">
 	- Поддержка изменений на сайте.
 	</change>
-<!--
-<change version="2" date="2013-09-21">
-- 
-</change>
--->
 </history>

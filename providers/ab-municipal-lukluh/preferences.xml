@@ -1,0 +1,56 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference
+        title="Логин" 
+		obligatory="true"
+        positiveButtonText="ОК" 
+        summary="||{@s}" 
+        dialogTitle="Логин" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите ваш логин для входа в Интернет-банк"
+        key="login"
+        inputType="text">
+    </EditTextPreference>
+    <EditTextPreference 
+        positiveButtonText="ОК"
+        key="password" 
+		obligatory="true"
+        dialogTitle="Пароль"
+        negativeButtonText="Отмена"
+        title="Пароль"
+        summary="|Пароль для входа в Интернет-банк|***********\n"
+        dialogMessage="Введите пароль, используемый для входа в Интернет-банк"
+        inputType="textPassword">
+    </EditTextPreference>
+<!--     <EditTextPreference
+        title="Номер счета" 
+        positiveButtonText="ОК" 
+        summary="|Автоматически|{@s}" 
+        dialogTitle="Номер счета" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите последние от 4х цифр счета по которому хотите получать данные, либо оставьте поле пустым, чтобы получить данные по первому счету."
+        key="cardnum"
+        inputType="number">
+    </EditTextPreference>
+
+
+	
+    <ListPreference 
+        key="type" 
+        title="Продукт"
+        summary="||{@s}"
+        entries="Депозит|Карта|Кредит"
+        entryValues="dep|card|crd"
+		defaultValue="dep">
+    </ListPreference>	
+    <EditTextPreference
+        title="ID продукта" 
+        positiveButtonText="ОК" 
+        summary="|Автоматически|{@s}" 
+        dialogTitle="ID продукта" 
+        negativeButtonText="Отмена" 
+        dialogMessage="В зависимости от настройки Что смотреть, введите сюда ID депозита или кредита или последние 4 цифры карты. Если оставить поле пустым, то будет показана информация по первому продукту. ID депозитов и кредитов можно узнать из счетчика Сводка."
+        key="contract"
+        inputType="number">
+    </EditTextPreference> -->
+</PreferenceScreen>

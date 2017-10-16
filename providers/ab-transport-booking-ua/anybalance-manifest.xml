@@ -1,16 +1,18 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="6">ab-transport-booking-ua</id>
+	<id version="8">ab-transport-booking-ua</id>
 	<api flags="no_browser"/>
 	<name>Укрзализныця (Расписание поездов, Украина)</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет возможность мониторинга расписания поездов согласно сайту <a href="http://booking.uz.gov.ua/ru/">http://booking.uz.gov.ua/ru/</a></p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>

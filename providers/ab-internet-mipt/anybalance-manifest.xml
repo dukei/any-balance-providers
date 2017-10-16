@@ -1,18 +1,20 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="3">ab-internet-mipt</id>
+	<id version="4">ab-internet-mipt</id>
 	<name>МФТИ-Телеком (Моск.обл)</name>
 	<api flags="no_browser"/>
 	<description html="true"><![CDATA[
 	<p>Получает баланс и информацию о тарифном плане для подмосковного интернет-провайдера МФТИ-Телеком (http://www.mipt-telecom.ru).</p>
 	<p>НОУ "УНПК МФТИ" (торговая марка "МФТИ-Телеком") работает на рынке телекоммуникационных услуг г. Долгопрудного и Московской области с 1999 года. И со времени своего основания стало крупнейшим провайдером интернет услуг на территории г. Долгопрудного. На настоящий момент почти любой житель г.Долгопрудного может воспользоваться высокоскоростным доступом в интерент, предоставляемым НОУ "УНПК МФТИ". Локальная сеть "МФТИ-Телеком" охватывает все районы г. Долгопрудного, здания МФТИ в г. Жуковском и некоторые организации на территории г. Москва.</p>
-	<p>Информация берется из личного кабинета http://cabinet.telecom.mipt.ru.</p>
+	<p>Информация берется из личного кабинета https://cabinet.telecom.mipt.ru.</p>
 	]]></description>
-	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>

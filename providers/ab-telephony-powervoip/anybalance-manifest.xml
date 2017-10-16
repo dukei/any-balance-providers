@@ -7,7 +7,7 @@
 	<p>Obtains information from http://www.powervoip.com such as your credit, freedays.</p>
 	]]></description>
 	<author>v_stikh &lt;stikhilyas@gmail.com&gt;</author>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

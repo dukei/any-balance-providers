@@ -6,7 +6,7 @@
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о состоянии посылок в личном кабинете Мои посылки http://myparcels.ru/</p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<preferences>preferences.xml</preferences>
 		<js>library.js</js>

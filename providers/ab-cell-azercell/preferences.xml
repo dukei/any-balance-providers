@@ -1,27 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
-      <ListPreference 
-        key="prefix"
-        title="Префикс номера телефона" 
-        summary="|Выберите префикс номера телефона|{@s}" 
-		entries="50|51|55|70|77"
-		entryValues="50|51|55|70|77"
-        defaultValue="50"
-        dialogTitle="Префикс номера телефона">
-    </ListPreference>
-    <EditTextPreference 
-        title="Телефон" 
-        positiveButtonText="ОК" 
-        summary="|Введите 7 цифр номера телефона|{@s}\n" 
-        dialogTitle="Телефон" 
-        negativeButtonText="Отмена" 
-        dialogMessage="Введите последние 7 цифр вашего номера телефона без префикса ."
+    <EditTextPreference
+        title="Телефон"
+        positiveButtonText="ОК"
+        summary="|Введите 9 цифр номера телефона|{@s}\n"
+        dialogTitle="Телефон"
+        negativeButtonText="Отмена"
+        dialogMessage="Введите последние 9 цифр вашего номера телефона (без кода +994)."
         inputType="number"
         key="login">
     </EditTextPreference>
-    <EditTextPreference 
+    <EditTextPreference
         positiveButtonText="ОК"
-        key="password" 
+        key="password"
         dialogTitle="Пароль"
         negativeButtonText="Отмена"
         title="Пароль"

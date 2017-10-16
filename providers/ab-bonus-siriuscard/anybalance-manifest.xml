@@ -7,7 +7,7 @@
 	<description>
 	Obtains balance from Sirius personal account at https://www.jumeirah.com/en/sirius-login/
 	</description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

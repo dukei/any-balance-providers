@@ -12,27 +12,32 @@ var g_headers = {
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'https://lk.is74.ru/';
+        var baseurl = 'https://lk.is74.ru/';
 	AnyBalance.setDefaultCharset('utf-8');
 	
-	checkEmpty(prefs.login, 'Введите логин!');
-	checkEmpty(prefs.password, 'Введите пароль!');
+	AB.checkEmpty(prefs.login, 'Введите логин!');
+	AB.checkEmpty(prefs.password, 'Введите пароль!');
 	
 	var html = AnyBalance.requestGet(baseurl + 'auth/login', g_headers);
-	
-	AnyBalance.trace(html);
-	
-	var params = createFormParams(html);
-	
-	params.u = prefs.login;
-	params.p = prefs.password;
-	//AnyBalance.trace(JSON.stringify(params));
-	
-	if(!prefs.dbg) {
-		html = AnyBalance.requestPost(baseurl + 'auth/login', params, addHeaders({Referer: baseurl + 'auth/login'}));
-	} else {
-		html = AnyBalance.requestGet('https://ooointersvyaz6.lk.is74.ru/balance', g_headers);
+        
+        if(!html || AnyBalance.getLastStatusCode() >= 400){
+            AnyBalance.trace(html);
+            throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
 	}
+	
+        var loginParams = {
+            u: prefs.login, 
+            p: prefs.password
+        };
+	var params = AB.createFormParams(html, function(params, str, name, value) {
+            return loginParams[name] || value;
+        });
+	
+        html = AnyBalance.requestPost(baseurl + 'auth/login', params, AB.addHeaders({
+            Referer: baseurl + 'auth/login',
+            Origin: 'https://lk.is74.ru'
+        }));
+	
 	var lastUrl = AnyBalance.getLastUrl();
 	AnyBalance.trace('Last url was: ' + lastUrl);
 	
@@ -40,22 +45,22 @@ function main() {
 	AnyBalance.trace('Sub domain is: ' + subDomain);
 	
 	if (!/logout/i.test(html)) {
-		var error = getParam(html, null, null, /class="auth-error-summary"[^>]*>([\s\S]*)<\/ul/i, replaceTagsAndSpaces, html_entity_decode);
+		var error = getParam(html, null, null, /class="auth-error-summary"[^>]*>([\s\S]*)<\/ul/i, AB.replaceTagsAndSpaces);
 		if (error)
-			throw new AnyBalance.Error(error);
+			throw new AnyBalance.Error(error, false, /логин|пароль/i.test(error));
 		
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
 	var result = {success: true};
 	
-	getParam(html, result, 'balans', /Баланс на\s*(?:\d+\.){2}\d{4}(?:[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'bonuspr', /Ваш текущий бонус(?:[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'econom', /Ваш текущий бонус(?:[^>]*>){4}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'fio', /Здравствуйте,(?:[^>]*>){1}([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
+	AB.getParam(html, result, 'balans', /Баланс на\s*(?:\d+\.){2}\d{4}(?:[^>]*>){2}([^<]*)/i, AB.replaceTagsAndSpaces, AB.parseBalance);
+	AB.getParam(html, result, 'bonuspr', /Ваш текущий бонус(?:[^>]*>){2}([^<]*)/i, AB.replaceTagsAndSpaces, AB.parseBalance);
+	AB.getParam(html, result, 'econom', /Ваш текущий бонус(?:[^>]*>){4}([^<]*)/i, AB.replaceTagsAndSpaces, AB.parseBalance);
+	AB.getParam(html, result, 'fio', /Здравствуйте,(?:[^>]*>){1}([^<]*)/i, AB.replaceTagsAndSpaces);
 	
 	if(isAvailable('nls')) {
 		html = AnyBalance.requestGet('https://' + subDomain + '.lk.is74.ru/profile', g_headers);
-		getParam(html, result, 'nls', /Лицевой счет №:(?:[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
+		getParam(html, result, 'nls', /Лицевой счет №:(?:[^>]*>){2}([^<]*)/i, AB.replaceTagsAndSpaces);
 	}
 	
 	AnyBalance.setResult(result);

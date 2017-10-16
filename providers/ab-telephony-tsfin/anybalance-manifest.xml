@@ -7,7 +7,7 @@
 	<description>
 		Получает данные для SIP провайдера Телесеть Финанс по адресу https://cp.tsfin.ru/info.php
 	</description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

@@ -17,7 +17,7 @@ var g_headers = {
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'http://kinomax.ru/';
+	var baseurl = 'https://kinomax.ru/';
 	AnyBalance.setDefaultCharset('utf-8');
 	
 	if(!prefs.login)
@@ -25,33 +25,28 @@ function main() {
 	if(!prefs.password)
 		throw new AnyBalance.Error('Введите пароль!');
 		
-	var html = AnyBalance.requestPost(baseurl + 'index2.php?r=lk/login', {
-        'LoginForm[username]':prefs.login,
-        'LoginForm[password]':prefs.password,
-        'login_submit.x':38,
-		'login_submit.y':7,
-	}, addHeaders({Referer: baseurl + 'index2.php?r=lk/login'}));
+	var html = AnyBalance.requestPost(baseurl + 'lk/login', {
+        'login':prefs.login,
+        'password':prefs.password,
+	}, addHeaders({Referer: baseurl}));
+	var json = getJson(html);
 	
-	if(!/editprofile/i.test(html)) {
-		var error = getParam(html, null, null, /class="error-flash"[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
+	if(json.result != 'ok') {
+		var error = json.message;
 		if(error)
-			throw new AnyBalance.Error(error);
+			throw new AnyBalance.Error(error, null, /парол/i.test(error));
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
-	
-	var result = {success: true};
-	if(isAvailable(['card', 'name'])) {
-		html = AnyBalance.requestGet(baseurl + 'index2.php?r=lk/multicard', g_headers);
-		getParam(html, result, 'card', /<strong>Карта (\d+)<\/strong>/i, replaceTagsAndSpaces, html_entity_decode);
-		getParam(html, result, 'name', /<strong>Карта \d+<\/strong>[^\(]*\(([^\)]*)/i, replaceTagsAndSpaces, html_entity_decode);
-	}
 
-	if(isAvailable(['level', 'accum', 'active'])) {
-		html = AnyBalance.requestGet(baseurl + 'index2.php?r=lk/cardinfo&_=1380012900366', g_headers);
-		getParam(html, result, 'level', /Мультикарта (\d+)%/i, replaceTagsAndSpaces, parseBalance);
-		getParam(html, result, 'accum', /Накопительный баланс:([^<]*)/i, replaceTagsAndSpaces, parseBalance);
-		getParam(html, result, 'active', /Активный баланс:([^<]*)/i, replaceTagsAndSpaces, parseBalance);
-	}
+	html = AnyBalance.requestGet(baseurl + 'lk/index');
+
+	var result = {success: true};
+	getParam(html, result, 'name', /<img[^>]+user.svg[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+
+	html = AnyBalance.requestGet(baseurl + 'lk/cardinfo');
+
+	getParam(html, result, 'status', /Статус Мультикарты:([\s\S]*?)<\/p>/i, replaceTagsAndSpaces);
+	getParam(html, result, 'balance', /Баланс:([^<]*)/i, replaceTagsAndSpaces, parseBalance);
 	
     AnyBalance.setResult(result);
 }

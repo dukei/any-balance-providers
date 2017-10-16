@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-cell-cricket</id>
+	<id version="5">ab-cell-cricket</id>
 	<api flags="no_browser"/>
 	<name>Cricket</name>
 	<description html="true"><![CDATA[
@@ -10,7 +10,6 @@
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>aes.js</js>
 		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>

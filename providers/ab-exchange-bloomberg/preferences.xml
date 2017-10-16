@@ -8,6 +8,6 @@
 		dialogTitle="Quote" 
 		positiveButtonText="ОК" 
         negativeButtonText="Cancel" 
-        dialogMessage="Enter qoute, you wish to see (for example EURUSD).">
+        dialogMessage="Enter qoute, you wish to see (for example EURUSD:CUR).">
     </EditTextPreference>
 </PreferenceScreen>

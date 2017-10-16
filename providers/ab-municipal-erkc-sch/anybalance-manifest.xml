@@ -7,7 +7,7 @@
 	<p>Предоставляет информацию о балансе провайдера Единый расчетный кассовый центр Щелково http://erkc-sch.ru/</p>
 	<p>Информация берется из личного кабинета http://erkc-sch.ru/modules/alcom_konsalt</p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

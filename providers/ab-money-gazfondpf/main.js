@@ -12,39 +12,51 @@ var g_headers = {
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'https://client.gazfond.ru/';
+	var baseurl = 'https://client.gazfond-pn.ru/';
 	AnyBalance.setDefaultCharset('utf-8');
 
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 	
-	var html = AnyBalance.requestGet(baseurl + 'main?sysname=adm_logon_post', g_headers);
-	
-	/*var captchaa;
-	if(AnyBalance.getLevel() >= 7){
-		AnyBalance.trace('Пытаемся ввести капчу');
-		var captcha = AnyBalance.requestGet(baseurl + 'captcha/main.png?p=' + new Date().getTime());
-		captchaa = AnyBalance.retrieveCode("Пожалуйста, введите код с картинки", captcha);
-		AnyBalance.trace('Капча получена: ' + captchaa);
-	}else{
-		throw new AnyBalance.Error('Провайдер требует AnyBalance API v7, пожалуйста, обновите AnyBalance!');
-	}*/
+	var html = AnyBalance.requestGet(baseurl + '', g_headers);
 
-	html = AnyBalance.requestPost(baseurl + 'main?sysname=adm_logon_post', {
-		'xmlout':'',
-		email: prefs.login,
-		pass: prefs.password,
-		captcha_edit: ''
-	}, addHeaders({Referer: baseurl + 'main?sysname=adm_logon_post'}));
+	if (!html || (AnyBalance.getLastStatusCode() > 400 && AnyBalance.getLastStatusCode() != 403)) {
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
+	}
+
+	var form = getElement(html, /<form[^>]+login-form[^>]*>/i);
+	if(!form){
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удалось найти форму входа. Сайт изменен?');
+	}
+
+	var params = AB.createFormParams(html, function(params, str, name, value) {
+		if (name == 'login') {
+			return prefs.login;
+		} else if (name == 'password') {
+			return prefs.password;
+		}
+
+		return value;
+	});
+
+	
+	html = AnyBalance.requestPost(baseurl + '', params, addHeaders({Referer: baseurl + ''}));
 
 	if (!/logout/i.test(html)) {
+		var error = getParam(html, null, null, /<span[^>]+form-group-warning[^>]*>((?:[\s\S](?!<\/span>))*?[\s\S]<\/span>){2}\s*<!--\s*Button\s*-->/i, replaceTagsAndSpaces);
+		if(error)
+			throw new AnyBalance.Error(error, null, /не зарегистрирован|парол/i.test(error));
+		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
+
 	var result = {success: true};
 	
-	getParam(html, result, 'balance', /Договор об обязательном пенсионном страховании(?:[^>]*>){6}([^<]+)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, '__tariff', /Договор об обязательном пенсионном страховании(?:[^>]*>){2}([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(result.__tariff, result, 'dogovor');
+	getParam(html, result, 'balance', /<p[^>]+contract-slider-item-sum[^>]*>([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, '__tariff', /<a[^>]+link-settings[^>]*>([\s\S]*?)<\/a>/i, replaceTagsAndSpaces);
+	getParam(html, result, 'dogovor', /<div[^>]*contract-slider-item-ico[\s\S]*?<p[^>]*>([\s\S]*?)<\/p>/i, replaceTagsAndSpaces);
 	
 	AnyBalance.setResult(result);
 }

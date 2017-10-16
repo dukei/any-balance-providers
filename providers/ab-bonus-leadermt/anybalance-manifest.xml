@@ -5,7 +5,7 @@
 	<description html="true"><![CDATA[
 	<p>Obtains information about balance and number of selected gifts for owners of Leader bonus card (http://bonus.leadermt.ru/).</p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

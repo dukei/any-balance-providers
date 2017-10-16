@@ -24,18 +24,21 @@ function main() {
 
     var captcha_sid = getParam(html, null, null, /name="captcha_sid"\s*value="([\s\S]*?)"/i);
     AnyBalance.trace(captcha_sid);
+
+    if(!captcha_sid){
+    	if(/сумму начисленных БОНУСОВ прямо сейчас по бесплатному/i.test(html))
+    		throw new AnyBalance.Error('Уютерра временно не предоставляет данные по карте онлайн: Узнайте текущий % начисления по Вашей карте и сумму начисленных БОНУСОВ прямо сейчас по бесплатному телефону горячей линии 8 800 100-71-71.');
+        AnyBalance.trace(html);
+        throw new AnyBalance.Error('Не удалось найти форму входа. Сайт изменен?');
+    }
     
 	var captchaa;
-	if(AnyBalance.getLevel() >= 7){
-        AnyBalance.setOptions({forceCharset: 'base64'});
-		AnyBalance.trace('Пытаемся ввести капчу');
-		var captcha = AnyBalance.requestGet(baseurl + 'bitrix/tools/captcha.php?captcha_sid=' + captcha_sid, g_headers);
-		captchaa = AnyBalance.retrieveCode("Пожалуйста, введите код с картинки", captcha);
-        AnyBalance.setOptions({forceCharset: 'utf-8'});
-		AnyBalance.trace('Капча получена: ' + captchaa);
-	}else{
-		throw new AnyBalance.Error('Провайдер требует AnyBalance API v7, пожалуйста, обновите AnyBalance!');
-	}
+    AnyBalance.setOptions({forceCharset: 'base64'});
+	AnyBalance.trace('Пытаемся ввести капчу');
+	var captcha = AnyBalance.requestGet(baseurl + 'bitrix/tools/captcha.php?captcha_sid=' + captcha_sid, g_headers);
+	captchaa = AnyBalance.retrieveCode("Пожалуйста, введите код с картинки", captcha);
+    AnyBalance.setOptions({forceCharset: 'utf-8'});
+	AnyBalance.trace('Капча получена: ' + captchaa);
 	
 	html = AnyBalance.requestPost(baseurl + 'klubnye_karty/balance/', {
 		'bonus_value': prefs.login,
@@ -45,7 +48,7 @@ function main() {
 	}, addHeaders({Referer: baseurl + 'klubnye_karty/balance/'}));
 	
 	if (!/Ваша карта №/i.test(html)) {
-		var error = getParam(html, null, null, /<div class="hr">(?:[\s\S]*?)style=["']color:red["'][^>]*>[\s\S]*?([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
+		var error = getParam(html, null, null, /<div class="hr">(?:[\s\S]*?)style=["']color:red["'][^>]*>[\s\S]*?([\s\S]*?)<\//i, replaceTagsAndSpaces);
 		if (error)
 			throw new AnyBalance.Error(error, null, /Такой карты не существует|неверный код с картинки/i.test(error));
 		
@@ -57,8 +60,8 @@ function main() {
 	
 	getParam(html, result, 'balance', /Сумма начисленных бонусов на счете(?:[^>]*>){8}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'percent', /Текущий % начисления бонусов(?:[^>]*>){8}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'card', /Ваша карта №([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'term', /Срок действия % начисления(?:[^>]*>){8}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'card', /Ваша карта №([\s\S]*?)<\//i, replaceTagsAndSpaces);
+	getParam(html, result, 'term', /Срок действия % начисления(?:[^>]*>){8}([\s\S]*?)<\//i, replaceTagsAndSpaces);
 	
 	AnyBalance.setResult(result);
 }

@@ -22,6 +22,8 @@ function main(){
     var prefs = AnyBalance.getPreferences();
     AnyBalance.setDefaultCharset('windows-1251');
 
+    throw new AnyBalance.Error('Этот провайдер больше не поддерживается. Используйте ТТК (Единый кабинет)', null, true);
+
     if(prefs.num && !/^\d+$/.test(prefs.num))
         throw new AnyBalance.Error('Введите номер лицевого счета, по которому вы хотите получить информацию, или не вводите ничего, чтобы получить информацию по первому лицевому счету');
 

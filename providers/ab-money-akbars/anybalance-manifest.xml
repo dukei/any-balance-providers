@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="6">ab-money-akbars</id>
+	<id version="8">ab-money-akbars</id>
 	<api flags="no_browser"/>
 	<name>АК БАРС Online</name>
 	<description html="true"><![CDATA[
@@ -8,13 +8,13 @@
 	<p>Информация берется из АК БАРС Online <a href="https://online.akbars.ru/wb/#login">https://online.akbars.ru/wb/#login</a></p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="nadapter"/>
+		<module id="extract/abe-money-akbars"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
-		<js>nadapter.js</js>
-		<js>extract.js</js>
-		<js>jsonpath.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>

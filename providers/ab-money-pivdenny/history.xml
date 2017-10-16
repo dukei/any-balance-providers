@@ -1,5 +1,14 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="5" date="2017-01-16">
+	Исправлено получение баланса карты
+	</change>
+	<change version="4" date="2017-01-05">
+	Исправление ошибки установки
+	</change>
+	<change version="3" date="2016-12-27">
+	- Поддержка изменений на сайте.
+	</change>
 <change version="2" date="2013-11-18">
 - Исправлена ошибка
 </change>

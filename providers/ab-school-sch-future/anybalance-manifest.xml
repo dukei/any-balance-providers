@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-school-sch-future</id>
+	<api flags="no_browser"/>
+	<name>Школа будущего</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера Школа будущего http://xn--90agc8a6d.xn--d1acj3b/</p>
+	<p>Информация берется из личного кабинета http://xn--90agc8a6d.xn--d1acj3b/component/users/profile </p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="balance_start" name="Баланс на начало месяца" units=" р"/>
+		<counter id="balance_ends" name="Баланс на конец месяца" units=" р"/>
+		<counter id="income" name="Всего пополнений за месяц" units=" р"/>
+		<counter id="offs" name="Всего списаний за месяц" units=" р"/>
+		<counter id="days" name="Дней питания" units=" д"/>
+		<counter id="card_status" name="Карта ученика" type="text"/>
+		<counter id="account" name="Лицевой счёт" type="text"/>
+		<counter id="limit" name="Лимит буфета" type="text"/>
+	</counters>
+	<keywords>урал автоматизация</keywords>
+	<type>school</type>
+	<country>ru</country>
+</provider>

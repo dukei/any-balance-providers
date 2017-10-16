@@ -1,28 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="9" major_version="1">ab-internet-pskovline</id>
-  <name>PskovLine (Псков)</name>
-  <description>
-    ПсковЛайн (http://www.pskovline.ru). Псковский интернет-провайдер.
-    Просмотр баланса, № лицевого счета, логина, кредита и состояния интернета. Данные берутся из личного кабинета http://stat.pskovline.ru/
-  </description>
-  <author>IvDor &lt;IvanDor666@gmail.com&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>main.js</js>
-  </files>
-  <counters>
-    <counter id="ballance" name="Баланс" suffix=" р." type="numeric"/>
-    <counter id="number" name="Лицевой счет" prefix="№ " type="text"/>
-    <counter id="login" name="Логин" type="text"/>
-    <counter id="date" name="Окончание периода" type="text"/>
-    <counter id="days" name="Дней до отключения" type="numeric"/>
-  </counters>
-  <type>
-    internet
-  </type>
-  <country>
-    ru
-  </country>
+	<id version="11">ab-internet-pskovline</id>
+	<api flags="no_browser"/>
+	<name>PskovLine (Псков)</name>
+	<description html="true"><![CDATA[
+    <p>ПсковЛайн (http://www.pskovline.ru). Псковский интернет-провайдер.
+    <p>Просмотр баланса, № лицевого счета, логина и состояния интернета. Данные берутся из личного кабинета http://stat.pskovline.ru/
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Доступ в личный кабинет - по данным из договора</p>
+	]]></instruction>
+	<author>IvDor &lt;IvanDor666@gmail.com&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+
+        <counters>
+		<counter id="ballance" name="Баланс" suffix=" р." type="numeric"/>
+		<counter id="number" name="Лицевой счет" prefix="№ " type="text"/>
+		<counter id="login" name="Логин" type="text"/>
+		<counter id="date" name="Окончание периода" type="text"/>
+		<counter id="days" name="Дней до отключения" type="numeric"/>
+	</counters>
+
+	<keywords></keywords>
+	<type></type>
+	<country>ru</country>
 </provider>

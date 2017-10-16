@@ -21,12 +21,8 @@ function main() {
 		AnyBalance.setCookie('my.beeline.kz', 'ui.language.current', 'ru_RU');
 	} else {
 		if(prefs.source == 'app') {
-			if(canUseMobileApp(prefs)) {
-				proceedWithMobileAppAPI(baseurl, prefs);
-				return;
-			} else {
-				AnyBalance.trace('Невозможно обновить данные через API мобильного приложения, пробуем войти через сайт...');
-			}
+			proceedWithMobileAppAPI(baseurl);
+			return;
 		}
 	}
 	
@@ -39,13 +35,10 @@ function main() {
 		if(e.fatal)
 			throw e;
 		//Обломался сайт. Если можно мобильное приложение, давайте его попробуем
-		if(canUseMobileApp(prefs)) {
-			AnyBalance.trace('Не получается зайти в личный кабинет: ' + e.message + ', ' + e.stack + '. Попробуем мобильное приложение');
-			proceedWithMobileAppAPI(baseurl, prefs, true);
-			return;
-		}else{
-			throw e;
-		}
+		AnyBalance.trace('Не получается зайти в личный кабинет: ' + e.message + ', ' + e.stack + '. Попробуем мобильное приложение');
+		clearAllCookies();
+		proceedWithMobileAppAPI(baseurl);
+		return;
 	}
 }
 
@@ -67,7 +60,7 @@ var g_countersTable = {
 		"credit": "credit",
 		"sms_left": "remainders.sms_left",
 		"mms_left": "remainders.mms_left",
-		"rub_bonus": "remainders.bonus",
+		"rub_bonus": "remainders.rub_bonus",
 		"rub_bonus2": "remainders.rub_bonus2",
 		"rub_bonus2_till": "remainders.rub_bonus2_till",
 		"min_bi": "remainders.min_bi",
@@ -85,6 +78,8 @@ var g_countersTable = {
 		"traffic_used": "remainders.traffic_used",
 		"traffic_total": "remainders.traffic_total",
 		"min_local_till": "remainders.min_local_till",
+		"services_abon": "services_abon",
+		"services_count": "services_count",
 		"__tariff": "tariff"
 	}
 };
@@ -92,7 +87,7 @@ var g_countersTable = {
 function mainRu(baseurl){
 	var prefs = AnyBalance.getPreferences();
 
-	checkEmpty(prefs.password, 'Введите пароль!');
+	checkEmpty(prefs.password, 'Введите пароль!' );
 
 	var ret = login(baseurl);
 
@@ -110,3 +105,29 @@ function mainRu(baseurl){
 
 	AnyBalance.setResult(newresult);
 }
+
+function proceedWithMobileAppAPI(baseurl){
+	var prefs = AnyBalance.getPreferences();
+
+	var result = {success: true};
+
+	function shouldProcess(counter, info){ return true }
+    var adapter = new NAdapter(g_countersTable.common, shouldProcess);
+    adapter.processApi = adapter.envelope(processApi);
+
+	var ret = apiLogin(baseurl);
+	result.password = ret && ret.password;
+
+	switchToAssocNumber(prefs.phone);
+
+	adapter.processApi(result);
+
+	var newresult = adapter.convert(result);
+	newresult.currency = result.currency;
+
+	setCountersToNull(newresult);
+
+	AnyBalance.setResult(newresult);
+}
+
+

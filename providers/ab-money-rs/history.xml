@@ -1,5 +1,25 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="5.0" version="26" date="2016-12-05">
+	- Улучшена обработка ошибок.
+	</change>
+	<change major_version="5.0" version="25" date="2016-09-05">
+	Исправление получения параметров льготного платежа в некоторых случаях
+	</change>
+	<change major_version="5.0" version="24" date="2016-09-05">
+	Исправлено получение данных по льготному периоду
+	Добавлено отображение Кэшбэк бонусов
+	</change>
+	<change major_version="5.0" version="23" date="2016-05-18">
+	Исправлено получение номера счета карты
+	Исправлено получение кредитов
+	</change>
+	<change major_version="4.0" version="22" date="2016-01-29">
+	- Поддержка изменений на сайте.
+	</change>
+	<change major_version="3.0" version="21" date="2015-12-31">
+	- Улучшена обработка ошибок.
+	</change>
 	<change major_version="3.0" version="20" date="2015-07-06">
 	- Улучшена обработка ошибок.
 	</change>

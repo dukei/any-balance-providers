@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="5">ab-money-vbank</id>
+	<id version="6">ab-money-vbank</id>
 	<api flags="no_browser"/>
 	<name>Банк Возрождение</name>
 	<description html="true"><![CDATA[
-	<p>Получает остаток и другие параметры карт банка Возрождение (http://www.vbank.ru) из системы «Vbank с тобой» https://online.bankcard.ru.</p>
+	<p>Получает остаток и другие параметры карт, счетов, кредитов банка Возрождение (http://www.vbank.ru) из системы «Vbank с тобой» https://online.bankcard.ru.</p>
 	<p>Процедура получения логина и пароля описана в кратком руководстве пользователя «Vbank с тобой» в разделе 2: http://www.vbank.ru/common/ru/personal/assistant_card/7x24/vbank-with-you_short.pdf</p>
 	]]></description>
 	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
@@ -19,8 +19,15 @@
 		<counter id="balance" name="Остаток" units=" {@currency}"/>
 		<counter id="currency" name="Валюта" type="text"/>
 		<counter id="status" name="Статус" type="text"/>
-		<counter id="cardnum" name="Номер карты" type="text"/>
-		<counter id="cardname" name="Название" type="text"/>
+		<counter id="cardnum" name="Номер карты (счета)" type="text"/>
+		<counter id="cardname" name="Наименование карты, счета" type="text"/>
+		<counter id="creditname" name="Название кредита" type="text"/>
+		<counter id="creditnumber" name="Номер кредитного договора" type="text"/>
+		<counter id="percent" name="Процентная ставка" type="text"/>
+		<counter id="creditdate" name="Дата ближайшего платежа" type="time" format="dd/MM/yyyy"/>
+		<counter id="creditpay" name="Сумма ближайшео платежа" units=" {@currency}"/>
+		<counter id="creditdebt" name="Текущая задолжность" units=" {@currency}"/>
+		<counter id="creditfine" name="Просроченная задолжность" units=" {@currency}"/>
 	</counters>
 	<keywords>интернет-банк</keywords>
 	<type>money</type>

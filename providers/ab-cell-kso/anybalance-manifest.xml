@@ -7,7 +7,7 @@
 	<p>Предоставляет информацию о балансе провайдера Корпорация Свободного Обмена http://k5.ru/</p>
 	<p>Информация берется из личного кабинета http://k5.ru/cgi-bin/k5-4/lskso</p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+    <id version="1">ab-tracking-gsconto</id>
+    <api flags="no_browser"/>
+    <name>gSconto</name>
+    <description html="true"><![CDATA[
+    <p>Отслеживает почтовое отправление с помощью сервиса gSconto <a href="http://www.gsconto.com/ru/tracker/my">http://www.gsconto.com/ru/tracker/my</a></p>
+    ]]></description>
+    <author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+    <depends>
+        <module id="library"/>
+    </depends>
+    <files>
+        <icon>icon.png</icon>
+        <preferences>preferences.xml</preferences>
+        <js>main.js</js>
+        <history>history.xml</history>
+    </files>
+    <counters>
+        <counter id="trackCode" name="Код отправления" type="text"/>
+        <counter id="dsc" name="Посылка" type="text"/>
+        <counter id="destName" name="Назначение" type="text"/>
+        <counter id="transitTime" name="Дней в пути"/>
+        <counter id="all" name="Сводка" type="html"/>
+        <counter id="user" name="Пользователь" type="text"/>
+    </counters>
+    <keywords></keywords>
+    <type>tracking</type>
+    <country>ru</country>
+</provider>

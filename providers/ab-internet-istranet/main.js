@@ -12,7 +12,7 @@ var g_headers = {
 
 function main(){
     var prefs = AnyBalance.getPreferences();
-    var baseurl = "http://lk.istranet.ru/";
+    var baseurl = "https://lk.istranet.ru/";
 	
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');

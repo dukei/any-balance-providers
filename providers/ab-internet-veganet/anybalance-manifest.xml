@@ -1,30 +1,30 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-internet-veganet</id>
-  <name>Veganet</name>
-  <description>
-    Получает баланс и информацию о тарифном плане для интернет провайдера "Вега Нэт". "Вега Нэт" - интернет-сервис провайдер, работающий на территории Клинского района.
-  </description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>main.js</js>
-  </files>
-  <counters>
-    <counter id="balance" name="Баланс" units="р"/>
+	<id version="2">ab-internet-veganet</id>
+	<api flags="no_browser"/>
+	<name>Veganet</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию из личного кабинета пользователя интернет провайдера VegaNet (ВегаНэт) <a href="http://veganet.ru/">http://veganet.ru/</a> в г. Клин</p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units="р"/>
     <counter id="traffic" name="Трафик" units="Gb"/>
     <counter id="status" name="Статус" type="text"/>
-    <counter id="licschet" name="Лицевой счет" type="text"/>
+    <counter id="licschet" name="Лицевой счёт" type="text"/>
+    <counter id="__tariff" name="Тариф" type="text"/>
     <counter id="userName" name="ФИО" type="text"/>
-  </counters>
-  <keywords>
-    интернет, клинский район, клин
-  </keywords>
-  <type>
-    internet
-  </type>
-  <country>
-    ru
-  </country>
+	</counters>
+	<keywords>интернет, клинский район, клин</keywords>
+	<type>internet</type>
+	<country>ru</country>
 </provider>

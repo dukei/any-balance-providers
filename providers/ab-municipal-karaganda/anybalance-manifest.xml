@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-municipal-karaganda</id>
+	<api flags="no_browser"/>
+	<name>Караганды Жылу Сбыт</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера КарагандыЖылуСбыт https://kzs.kz/ru/</p>
+	<p>Информация берется из личного кабинета https://cabinet.kzs.kz/ru/auth/login/</p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="electroBalance" name="Баланс по электроэнергии" units=" KZT"/>
+		<counter id="tepBalance" name="Баланс по теплоэнергии" units=" KZT"/>
+		<counter id="electroAcc" name="Лицевой счет по электроэнергии" type="text"/>
+		<counter id="tepAcc" name="Лицевой счет по теплоэнергии" type="text"/>
+		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="address" name="Адрес" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>municipal</type>
+	<country>kz</country>
+</provider>

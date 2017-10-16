@@ -22,4 +22,12 @@
         dialogMessage="Enter your Cricket account password."
         inputType="textPassword">
     </EditTextPreference>
+	<ListPreference
+		title="Data Display Mode"
+		summary="||{@s}"
+		key="datamode"
+		defaultValue="0"
+		entries="Show consumed data|Show remaining data"
+		entryValues="0|1">
+	</ListPreference>    
 </PreferenceScreen>

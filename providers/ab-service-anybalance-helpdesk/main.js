@@ -22,9 +22,6 @@ function main() {
 	
 	var html = AnyBalance.requestGet(baseurl + 'scp/login.php', g_headers);
 	
-	if(!html || AnyBalance.getLastStatusCode() > 400)
-		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
-	
 	var params = createFormParams(html, function(params, str, name, value) {
 		if (name == 'userid') 
 			return prefs.login;
@@ -37,7 +34,7 @@ function main() {
 	html = AnyBalance.requestPost(baseurl + 'scp/login.php', params, addHeaders({Referer: baseurl + 'scp/login.php'}));
 	
 	if (!/logout/i.test(html)) {
-		var error = getParam(html, null, null, /<h3>([\s\S]*?)<\/h3>/i, replaceTagsAndSpaces, html_entity_decode);
+		var error = getParam(html, null, null, /<h3>([\s\S]*?)<\/h3>/i, replaceTagsAndSpaces);
 		if (error)
 			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
 		
@@ -47,11 +44,10 @@ function main() {
 	
 	var result = {success: true};
 	
-	getParam(html, result, 'open', /Открытые\s\(([\d,]+)\)/i, replaces, parseBalance);
-	getParam(html, result, 'answered', /Получившие ответ\s\(([\d,]+)\)/i, replaces, parseBalance);
-	getParam(html, result, 'my', /Мои заявки\s\(([\d,]+)\)/i, replaces, parseBalance);
-	getParam(html, result, 'overdue', /Просрочено\s\(([\d,]+)\)/i, replaces, parseBalance);
-	getParam(html, result, 'closed', /Закрытые\s\(([\d,]+)\)/i, replaces, parseBalance);
+	getParam(html, result, 'open', /(?:Open|Открытые)\s\(([\d,]+)\)/i, replaces, parseBalance);
+	getParam(html, result, 'my', /(?:My tickets|Мои заявки)\s\(([\d,]+)\)/i, replaces, parseBalance);
+	getParam(html, result, 'overdue', /(?:Overdue|Просрочено)\s\(([\d,]+)\)/i, replaces, parseBalance);
+	getParam(html, result, 'closed', /(?:Closed|Закрытые)\s\(([\d,]+)\)/i, replaces, parseBalance);
 	
 	AnyBalance.setResult(result);
 }

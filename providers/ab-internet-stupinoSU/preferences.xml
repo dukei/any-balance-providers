@@ -2,7 +2,7 @@
 <PreferenceScreen>
 	<EditTextPreference
 		title="Номер договора"
-		key="dogovor"
+		key="contract"
 		summary="||{@s}"
 		obligatory="true"
 		dialogTitle="Номер договора"

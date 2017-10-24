@@ -15,7 +15,7 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-				<counter id="cardnum" name="Номер бонусной карты" type="text"/>
+		<counter id="cardnum" name="Номер бонусной карты" type="text"/>
 		<counter id="cardbalance" name="Баланс бонусной карты"/>
 		
 		<counter id="cardnum1" name="Номер бонусной карты 2" type="text"/>

@@ -2003,7 +2003,7 @@ function megafonLK(filial, html){
 	
 	if(isAvailable(['__tariff'])){
 		html = AnyBalance.requestGet(lk_url + 'tariff/', addHeaders({Referer: lk_url}));
-		getParam(getElement(html, /<h2/i), result, '__tariff', null, [/<svg[\s\S]*?<\/svg>/i, '', replaceTagsAndSpaces]);
+		getParam(getElement(html, /<h2[^<]+tariff/i), result, '__tariff', null, [/<svg[\s\S]*?<\/svg>/i, '', replaceTagsAndSpaces]);
 	}
 		
 	if(AnyBalance.isAvailable('mins_n_free', 'mins_net_left', 'mins_left', 'mins_total', 'mms_left', 'mms_total', 'sms_left', 'sms_total', 

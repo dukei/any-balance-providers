@@ -1,7 +1,4 @@
-﻿/**
-Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
-*/
-
+﻿
 var g_headers = {
 	'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
 	'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
@@ -13,7 +10,7 @@ var g_headers = {
 function main(){
     var prefs = AnyBalance.getPreferences();
 
-    var baseurl = "https://btc-e.com/";
+    var baseurl = "https://wex.nz/";
 
     AnyBalance.setDefaultCharset('utf-8'); 
 
@@ -23,7 +20,7 @@ function main(){
         var error = getParam(html, null, null, /"error":\"([\s\S]*?)\"/i, replaceTagsAndSpaces, html_entity_decode);
         if(error)
             throw new AnyBalance.Error(error);
-        throw new AnyBalance.Error('Can`t login personal account. Maybe site is changed?');
+        throw new AnyBalance.Error('Error get data. Maybe site is changed?');
     }
 
     var json = getJson(html);

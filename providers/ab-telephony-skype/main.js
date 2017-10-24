@@ -62,10 +62,10 @@ function main() {
  	info = redirectIfNeeded(info);
 
  	var json = getJsonObject(info, /var\s+\$Config\s*=\s*/);
+ 	var jsonErr = getJsonObject(info, /var\s+ServerData\s*=\s*/);
 
- 	if (!json && !/logout/i.test(info)) { //В некоторых аккаунтах почему-то нет Config, но есть логаунт (<html data-role-name="MeePortal")
- 		json = getJsonObject(info, /var\s+ServerData\s*=\s*/);
- 		var error = json && json.sErrTxt;
+ 	if (!json && (!/logout/i.test(info) || (jsonErr && jsonErr.sErrTxt))) { //В некоторых аккаунтах почему-то нет Config, но есть логаунт (<html data-role-name="MeePortal")
+ 		var error = jsonErr && jsonErr.sErrTxt;
  		if (error)
 			throw new AnyBalance.Error(replaceAll(error, replaceTagsAndSpaces), null, /существует|exists|парол|password/i.test(error)); //Надо бы и другие языки поддержать, конечно, но хотя бы 2
 		AnyBalance.trace(info);

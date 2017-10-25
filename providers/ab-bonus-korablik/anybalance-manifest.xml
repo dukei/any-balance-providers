@@ -1,10 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="12">ab-bonus-korablik</id>
+	<id version="13">ab-bonus-korablik</id>
 	<api flags="no_browser"/>
 	<name>Кораблик (Бонусы)</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе бонусной карты сети магазинов Кораблик http://www.korablik.ru/</p>
+	<p>Предоставляет информацию о балансе бонусной карты сети магазинов Кораблик https://www.korablik.ru/</p>
 	]]></description>	
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>
@@ -19,12 +19,14 @@
 	<counters>
 		<counter id="cardnum" name="Номер бонусной карты" type="text"/>
 		<counter id="cardbalance" name="Баланс бонусной карты"/>
-		<counter id="status_balance" name="Статусный баланс"/>
 		
 		<counter id="cardnum1" name="Номер бонусной карты 2" type="text"/>
-		<counter id="cardbalance1" name="Баланс бонусной карты 2"/>		
+		<counter id="cardbalance1" name="Баланс бонусной карты 2"/>	
+		
+		<counter id="cardnum2" name="Номер бонусной карты 3" type="text"/>
+		<counter id="cardbalance3" name="Баланс бонусной карты 3"/>			
 	</counters>
-	<keywords></keywords>
+	<keywords>Кораблик</keywords>
 	<type>bonus</type>
 	<country>ru</country>
 </provider>

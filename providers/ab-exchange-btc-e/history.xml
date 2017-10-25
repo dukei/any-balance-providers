@@ -3,4 +3,10 @@
     <change version="6" date="2017-10-24"> 
     Переезд на новый домен wex.nz (Viktor Sinitsyn)
     </change>
+	  <change version="5" date="2016-02-25">
+  - Изменен домен соединения.
+  </change>
+  <change version="4" date="2016-02-17">
+  - Добавлена возможность установки соединения через несколько доменов.
+  </change>
 </history>

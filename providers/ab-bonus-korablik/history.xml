@@ -1,10 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
-	<change version="12" date="2017-04-14">
-	- Поддержка изменений на сайте.
-	</change>
-	<change version="11" date="2016-06-14">
-	- Поддержка изменений на сайте.
+	<change version="11" date="2017-10-24">
+	- Поддержка изменений на сайте. (Viktor Sinitsyn)
 	</change>
 	<change version="10" date="2015-08-03">
 	- Улучшена обработка ошибок.

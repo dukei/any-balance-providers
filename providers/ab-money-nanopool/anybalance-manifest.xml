@@ -8,10 +8,13 @@
 	<p>Информация предоставляется https://nanopool.org/</p>
 	]]></description>
 	<author>Viktor Sinitsyn &lt;mousesport007@ya.ru&gt;</author>
+		<depends>
+		<module id="library"/>
+	</depends>
 	<files>
+		<js>library.min.js</js>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>

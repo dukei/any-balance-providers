@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<id version="3">ab-internet-stupinoSU</id>
 	<api flags="no_browser"/>
@@ -9,10 +9,13 @@
 	<p>Для данного провайдера рекомендуется отдельно подключать аккаунты для интернет, телефонии и Wimax.</p>
 	]]></description>
 	<author>Viktor Sinitsyn &lt;mousesport007@ya.ru&gt;</author>
+		<depends>
+		<module id="library"/>
+	</depends>
 	<files>
+		<js>library.min.js</js>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>

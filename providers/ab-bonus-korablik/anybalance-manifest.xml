@@ -4,13 +4,14 @@
 	<api flags="no_browser"/>
 	<name>Кораблик (Бонусы)</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе бонусной карты сети магазинов Кораблик https://www.korablik.ru/</p>
+	<p>Предоставляет информацию о балансе бонусной карты сети магазинов Кораблик http://www.korablik.ru/</p>
 	]]></description>	
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>
 		<module id="library"/>
 	</depends>
 	<files>
+		<js>library.min.js</js>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
 		<js>main.js</js>
@@ -19,14 +20,12 @@
 	<counters>
 		<counter id="cardnum" name="Номер бонусной карты" type="text"/>
 		<counter id="cardbalance" name="Баланс бонусной карты"/>
+		<counter id="status_balance" name="Статусный баланс"/>
 		
 		<counter id="cardnum1" name="Номер бонусной карты 2" type="text"/>
-		<counter id="cardbalance1" name="Баланс бонусной карты 2"/>	
-		
-		<counter id="cardnum2" name="Номер бонусной карты 3" type="text"/>
-		<counter id="cardbalance3" name="Баланс бонусной карты 3"/>			
+		<counter id="cardbalance1" name="Баланс бонусной карты 2"/>		
 	</counters>
-	<keywords>Кораблик</keywords>
+	<keywords></keywords>
 	<type>bonus</type>
 	<country>ru</country>
 </provider>

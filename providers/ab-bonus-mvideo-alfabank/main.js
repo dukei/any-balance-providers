@@ -11,10 +11,11 @@ var g_headers = {
 	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/44.0.2403.155 Safari/537.36',
 };
 
-function main(){
-    var prefs = AnyBalance.getPreferences();
-    AnyBalance.setDefaultCharset('utf-8');
-    AnyBalance.setOptions({cookiePolicy: 'netscape'});
+var baseurl = 'https://www.mvideo.ru';
+var baseurl1 = 'http://www.mvideo.ru';
+
+function login(){
+	var prefs = AnyBalance.getPreferences();
 
     if(!prefs.type)
     	prefs.type = '0';
@@ -32,9 +33,6 @@ function main(){
 		checkEmpty(prefs.login, 'Введите логин!');
 		checkEmpty(prefs.password, 'Введите пароль!');
     }
-
-    var baseurl = 'https://www.mvideo.ru';
-    var baseurl1 = 'http://www.mvideo.ru';
 
     var html = AnyBalance.requestGet(baseurl1 + '/', g_headers);
     html = AnyBalance.requestGet(baseurl + '/login', addHeaders({Referer: baseurl1 + '/'}));
@@ -73,6 +71,8 @@ function main(){
 	html = AnyBalance.requestPost(baseurl + action, params, addHeaders({Referer: baseurl + '/login'}));
 
 	if(!/logout/i.test(html)){
+		if(/Мы ввели обязательное подтверждение телефона/i.test(html))
+			throw new AnyBalance.Error('МВидео требует подтвердить ваш номер телефона. Зайдите в личный кабинет через браузер.');
 		var error = getParam(html, null, null, /<label[^>]+class="text-error"[^>]*>\s*([^\s<][\s\S]*?)<\/label>/ig, replaceTagsAndSpaces);
 		if(error)
 			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
@@ -84,6 +84,27 @@ function main(){
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 			
 	}
+
+	return html;
+}
+
+function main(){
+    var prefs = AnyBalance.getPreferences();
+    AnyBalance.setDefaultCharset('utf-8');
+    AnyBalance.setOptions({cookiePolicy: 'netscape'});
+
+    var html;
+    try{
+        html = login();
+    }catch(e){
+    	if(prefs.type != '-1' && prefs.login && prefs.password){
+    		AnyBalance.trace('Войти по карте не удалось: ' + e.message + ', пробуем по логину-паролю');
+    		prefs.type = '-1';
+    		html = login();
+    	}else{
+    		throw e;
+    	}
+    }
 
 	var result = {success: true};
     //Баланс бонусных рублей

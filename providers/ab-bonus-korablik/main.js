@@ -1,12 +1,6 @@
-﻿/**
-Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
-*/
-
-var g_headers = {
-	'Accept':'application/json, text/javascript, */*; q=0.01',
-	'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
+﻿var g_headers = {
+	'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
 	'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
-	'Connection':'keep-alive',
 	'User-Agent':'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
 };
 function main() {
@@ -22,25 +16,23 @@ function main() {
 	if(AnyBalance.getLastStatusCode() > 400) {
 		throw new AnyBalance.Error('Ошибка! Сервер не отвечает! Попробуйте обновить баланс позже.');
 	}
+	var sitekey = getParam(html, /data-sitekey="([^"]*)/i, replaceHtmlEntities);
+	if(sitekey){
+		AnyBalance.trace('Потребовалась рекапча');
+		var code = solveRecaptcha('Пожалуйста, докажите, что вы не робот', baseurl, sitekey);
+	}
 	
 	html = AnyBalance.requestPost(baseurl + 'auth/login', {
-        email: prefs.login,
+        login: prefs.login,
         pwd: prefs.password,
-		'remember': '0',
-		'captcha': '',
-		'act': 'enter',
-    }, addHeaders({
-		'Accept': 'application/json, text/javascript, */*; q=0.01',
-		'X-Requested-With': 'XMLHttpRequest',
-		'Referer': baseurl + 'auth/login'
-	}));
+		'g-recaptcha-response': code,
+		'submit': '',
+    }, g_headers);
 	
-	var json = getJson(html);
-	
-	if (!json.status) {
-		var error = json.errors.access;
+	if(!/Выход/i.test(html)) {
+		var error = getParam(html, null, null, /<p[^>]+error[^>]*>([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, html_entity_decode);
 		if (error)
-			throw new AnyBalance.Error(error, null, /Неверные логин или пароль/i.test(error));
+			throw new AnyBalance.Error(error, null, /Неправильный логин или пароль/i.test(error));
 		
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
@@ -49,7 +41,6 @@ function main() {
     var result = {success: true};
 	
 	html = AnyBalance.requestGet(baseurl + 'detskaya/mycards', addHeaders({Referer: baseurl + 'detskaya/profile'}));
-
 	var cardsBlock = getElement(html, /<div[^>]+class="jcarousel"[^>]*>/i);
 	var cardBlocks = getElements(cardsBlock, /<li[^>]+row[^>]*>/ig);
 	AnyBalance.trace('Найдено ' + cardBlocks.length + ' карт');

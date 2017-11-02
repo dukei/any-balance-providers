@@ -4,7 +4,6 @@
 
 var g_headers = {
 	'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-	'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
 	'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
 	'Connection':'keep-alive',
 	'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.62 Safari/537.36',
@@ -12,18 +11,25 @@ var g_headers = {
 
 function main(){
     var prefs = AnyBalance.getPreferences();
-    var baseurl = 'http://www.oldi.ru/';
+    var baseurl = 'https://www.oldi.ru/';
     AnyBalance.setDefaultCharset('utf-8'); 
 	
+	
     var html = AnyBalance.requestGet(baseurl + 'auth/index.php?login=yes', g_headers);
-
+	var sitekey = getParam(html, /data-sitekey="([^"]*)/i, replaceHtmlEntities);
+	if(sitekey){
+		AnyBalance.trace('Потребовалась рекапча');
+		var code = solveRecaptcha('Пожалуйста, докажите, что вы не робот', baseurl, sitekey);
+	}
+	
 	html = AnyBalance.requestPost(baseurl + 'auth/index.php?login=yes', {
 		AUTH_FORM:'Y',
 		TYPE:'AUTH',
 		backurl:'/auth/index.php',
+		'g-recaptcha-response': code,
 		USER_LOGIN:prefs.login,
 		USER_PASSWORD:prefs.password,
-		Login:'Авторизоваться',
+		Login:'Send',
     }, addHeaders({Referer: baseurl + 'auth/index.php?login=yes'})); 
 
     if(!/logout=yes/i.test(html)){

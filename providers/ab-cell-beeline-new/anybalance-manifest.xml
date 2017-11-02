@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="163">ab-cell-beeline-new</id>
+	<id version="164">ab-cell-beeline-new</id>
 	<name>Билайн (новый кабинет)</name>
 	<api flags="no_browser" min_level="5"/>
 	<description html="true"><![CDATA[
@@ -66,6 +66,9 @@
 		<counter id="fio" name="ФИО" type="text"/>
 		<counter id="phone" name="Телефон" type="text"/>
 		<counter id="agreement" name="Договор" type="text"/>
+		<counter id="last_pay_date" name="Дата последней оплаты" type="time" format="dd/MM/yyyy"/>
+		<counter id="last_pay_sum" name="Сумма последней оплаты" units=" {@currency}"/>
+		<counter id="last_pay_place" name="Место последней оплаты" type="text"/> <!-- Только для предоплатных абонентов -->
 		<counter id="total_balance" name="Сумма по всем номерам" units=" {@currency}"/>
 		<counter id="traffic_used" name="Использовано трафика" units=" Mb"/>
 		<counter id="traffic_total" name="Всего трафика" units=" Mb"/>

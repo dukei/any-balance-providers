@@ -156,27 +156,33 @@ function proceedLk(prefs) {
 	var baseurl = "https://www.beeline.ru/login/";
 
 	var html = AnyBalance.requestGet(baseurl, g_headers); //Чтобы кука установилась
+	baseurl = getParam(AnyBalance.getLastUrl(), /^https?:\/\/[^\/]+/i) + '/';
+	AnyBalance.trace('Main page redirected to ' + AnyBalance.getLastUrl());
 
-	var form = AB.getElement(html, /<form[^>]+MobileLoginForm[^>]*>/i);
-	if(!form){
-		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Не удаётся найти форму входа! Сайт изменен?');
-	}
+	var loginfo = AnyBalance.requestGet(baseurl + '/menu/loginmodel?CTN=' + encodeURIComponent(prefs.login), addHeaders({
+		Referer: baseurl
+	}));
+	loginfo = getJson(loginfo);
 
-	var action = getParam(form, null, null, /\baction="([^"]*)/i, replaceHtmlEntities);
+	html = AnyBalance.requestPost('https://identity.beeline.ru/identity/fpcc', {
+		login:	prefs.login,
+		password:	prefs.password,
+		client_id:	'quantumartapp',
+		redirect_uri:	'https://www.beeline.ru/logincallback',
+		response_type:	'id_token',
+		response_mode:	'form_post',
+		state:	loginfo.state,
+		scope:	'openid selfservice_identity usss_token profile',
+		nonce:	loginfo.nonce,
+		remember_me:	true
+	}, addHeaders({Referer: baseurl}));
+	var referer = AnyBalance.getLastUrl();
 
-	var params = AB.createFormParams(form, function(params, str, name, value) {
-		if (name == 'login') {
-			return prefs.login;
-		} else if (name == 'password') {
-			return prefs.password;
-		}
-
-		return value;
-	});
-
+	var htmlfa = AnyBalance.requestGet('https://identity.beeline.ru/identity/FinishAuth?state=' + encodeURIComponent(loginfo.state), addHeaders({
+		Referer: referer
+	}));
+	
 	do{
-		html = AnyBalance.requestPost(action, params, addHeaders({Referer: AnyBalance.getLastUrl()}));
 		var form = getElement(html, /<form[^>]*(?:logincallback|oferta)[^>]*>/i);
 	    
 		if (!form) {
@@ -188,11 +194,12 @@ function proceedLk(prefs) {
 			throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 		}
 	    
-		params = AB.createFormParams(form);
-		action = getParam(form, null, null, /\baction="([^"]*)/i, replaceHtmlEntities);
+		var params = AB.createFormParams(form);
+		var action = getParam(form, /\baction="([^"]*)/i, replaceHtmlEntities);
 		var url = joinUrl(AnyBalance.getLastUrl(), action);
 		AnyBalance.trace('Posting form to ' + url);
 		html = AnyBalance.requestPost(url, params, addHeaders({Referer: AnyBalance.getLastUrl()}));
+		referer = AnyBalance.getLastUrl();
 	}while(/<form[^>]*logincallback/i.test(html));
 
 	var token = getParam(html, null, null, /QA.Identity.setToken\('([^']*)/);

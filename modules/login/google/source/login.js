@@ -40,7 +40,7 @@ function googleLogin(prefs) {
 			throw new AnyBalance.Error('Can`t find find login form, is site changed?');
 		}
 	    
-	    if(/<input[^>]+name="Email"/i.test(form)){
+	    if(/<input[^>]+name="Email"(?:[^<](?!readonly))*>/i.test(form)){
 	    	AnyBalance.trace('found login form, proceeding');
             var params = createFormParams(form, function(params, str, name, value) {
             	if(name == 'Email')
@@ -58,6 +58,7 @@ function googleLogin(prefs) {
 		}
 	    
 	    if(/<input[^>]+name="Passwd"/i.test(form)){
+	    	AnyBalance.trace('found password form, proceeding');
             params = createFormParams(form, function(params, str, name, value) {
             	if(name == 'Passwd')
             		return prefs.password;

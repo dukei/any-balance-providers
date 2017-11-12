@@ -41,10 +41,10 @@ function main() {
 	for(var i = 0; i < devAccJson['1'].length; i++) {
 		var curr = devAccJson['1'][i];
 		
-		var dev_acc = curr[1];
+		var dev_acc = curr[6];
 		var dev_acc_name = curr[2];
 		
-		AnyBalance.trace('Developer account: ' + dev_acc_name);
+		AnyBalance.trace('Developer account: ' + dev_acc_name + ' (' + dev_acc + ')');
 		
 		var app = findAppInDevAccount(baseurl, token, dev_acc, prefs);
 		if(app) {
@@ -83,12 +83,12 @@ function findAppInDevAccount(baseurl, token, dev_acc, prefs) {
 		"xsrf":token
 	}
 	
-	html = AnyBalance.requestPost(baseurl + 'apps/publish/androidapps?dev_acc=' + dev_acc, JSON.stringify(p), {
-		Referer: baseurl + 'apps/publish/androidapps?dev_acc=' + dev_acc,
+	html = AnyBalance.requestPost(baseurl + 'apps/publish/androidapps?account=' + dev_acc, JSON.stringify(p), {
+		Referer: baseurl + 'apps/publish/?account=' + dev_acc,
 		'Content-Type': 'application/javascript; charset=UTF-8',
 		'Accept': '*/*',
-		'X-GWT-Module-Base': 'https://ssl.gstatic.com/play-apps-publisher-rapid/fox/1616e8a4cbaff4be8ee2b17dfbe1b49f/fox/gwt/',
-		'X-GWT-Permutation': 'BD57F32BF4E06A7C0E6648164809C806',
+		'X-GWT-Module-Base': 'https://ssl.gstatic.com/play-apps-publisher-rapid/fox/61b77381fbed4f08da901bcba65cd641/fox/gwt/',
+		'X-GWT-Permutation': 'CC069DB9169472C2CD15575E2EA29749',
 	});
 	
 	var json = getJsonEval(html);
@@ -110,16 +110,16 @@ function findAppInDevAccount(baseurl, token, dev_acc, prefs) {
 			if(new RegExp(prefs.app_name, 'i').test(appName)
 			    || new RegExp(prefs.app_name, 'i').test(id)) {
 				
-				html = AnyBalance.requestPost(baseurl + 'apps/publish/androidapps?dev_acc=' + dev_acc, JSON.stringify({
+				html = AnyBalance.requestPost(baseurl + 'apps/publish/androidapps?account=' + dev_acc, JSON.stringify({
 					"method":"fetchAppListStatsData",
 					"params":{},
 					"xsrf":token
 				}), {
-					Referer: baseurl + 'apps/publish/androidapps?dev_acc=' + dev_acc,
+					Referer: baseurl + 'apps/publish/?account=' + dev_acc,
 					'Content-Type': 'application/javascript; charset=UTF-8',
 					'Accept': '*/*',
-					'X-GWT-Module-Base': 'https://ssl.gstatic.com/play-apps-publisher-rapid/fox/1616e8a4cbaff4be8ee2b17dfbe1b49f/fox/gwt/',
-					'X-GWT-Permutation': 'BD57F32BF4E06A7C0E6648164809C806',
+					'X-GWT-Module-Base': 'https://ssl.gstatic.com/play-apps-publisher-rapid/fox/61b77381fbed4f08da901bcba65cd641/fox/gwt/',
+					'X-GWT-Permutation': 'CC069DB9169472C2CD15575E2EA29749',
 				});
 	
 				var json = getJsonEval(html);

@@ -40,27 +40,35 @@ function googleLogin(prefs) {
 			throw new AnyBalance.Error('Can`t find find login form, is site changed?');
 		}
 	    
-        var params = createFormParams(html, function(params, str, name, value) {
-        	if(name == 'Email')
-        		return prefs.login;
-         	return value;
-        });
-		
-		html = AnyBalance.requestPost(baseurlLogin + 'AccountLoginInfo', params, addHeaders({Referer: AnyBalance.getLastUrl()}));
-	    
-		form = getElement(html, /<form[^>]+gaia_loginform/i);
-		if(!form){
-			AnyBalance.trace(html);
-			throw new AnyBalance.Error('Can`t find find password form, is site changed?');
+	    if(/<input[^>]+name="Email"/i.test(form)){
+	    	AnyBalance.trace('found login form, proceeding');
+            var params = createFormParams(form, function(params, str, name, value) {
+            	if(name == 'Email')
+            		return prefs.login;
+             	return value;
+            });
+			
+			html = AnyBalance.requestPost(baseurlLogin + 'AccountLoginInfo', params, addHeaders({Referer: AnyBalance.getLastUrl()}));
+	        
+			form = getElement(html, /<form[^>]+gaia_loginform/i);
+			if(!form){
+				AnyBalance.trace(html);
+				throw new AnyBalance.Error('Can`t find find password form, is site changed?');
+			}
 		}
 	    
-        params = createFormParams(html, function(params, str, name, value) {
-        	if(name == 'Passwd')
-        		return prefs.password;
-         	return value;
-        });
-        
-		html = AnyBalance.requestPost(baseurlLogin + 'signin/challenge/sl/password', params, addHeaders({Referer: AnyBalance.getLastUrl()}));
+	    if(/<input[^>]+name="Passwd"/i.test(form)){
+            params = createFormParams(form, function(params, str, name, value) {
+            	if(name == 'Passwd')
+            		return prefs.password;
+             	return value;
+            });
+            
+			html = AnyBalance.requestPost(baseurlLogin + 'signin/challenge/sl/password', params, addHeaders({Referer: AnyBalance.getLastUrl()}));
+		}else{
+			AnyBalance.trace(html);
+			throw new AnyBalance.Error('Can`t find find password in form, is site changed?');
+		}
 		
 		// Двухэтапная авторизация...
 		var challengeList = getElement(html, /<ol[^>]+challengePickerList/i);

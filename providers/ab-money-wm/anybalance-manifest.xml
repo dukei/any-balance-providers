@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id version="12">ab-money-wm</id>
+	<id version="13">ab-money-wm</id>
 	<name>WebMoney</name>
 	<description html="true"><![CDATA[
 	<p>Получает информацию о балансе кошельков WMR, WMZ, WME, WMU и WMB из WM Keeper Standard https://mini.webmoney.ru .</p> 

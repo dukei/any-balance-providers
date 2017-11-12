@@ -127,7 +127,7 @@ function googleLogin(prefs) {
 			let addPromt = getParam(html, null, null, /<input[^>]+name="Pin"[^>]*placeholder="([^"]*)/i, replaceHtmlEntities);
 			promt = promt ? promt + '. ' + addPromt : addPromt;
 			let type = getParam(form, null, null, /accounts\/marc\/(\w+)\.png/i);
-			AnyBalance.trace('Trying to get code for challenge of type ' + type + ': ' + promt);
+			AnyBalance.trace('Trying to get code for challenge of type ' + type + ': ' + promt, null, {inputType: 'number'});
 	    
 			let code = AnyBalance.retrieveCode(promt || 'Please, enter confirmation code');
 			AnyBalance.trace('Got code: ' + code);           

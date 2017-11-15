@@ -4,6 +4,14 @@
 
 function main() {
     var prefs = AnyBalance.getPreferences();
+    try{
+		AnyBalance.setOptions({
+			SSL_ENABLED_PROTOCOLS: ['TLSv1', 'TLSv1.1', 'TLSv1.2']
+		});
+	}catch(e){
+		AnyBalance.trace('Could not enable tls: ' + e.message);
+	}
+	
 
     if(prefs.__initialization)
 	    return initialize();

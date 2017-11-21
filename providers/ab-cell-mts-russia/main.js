@@ -4,13 +4,14 @@
 
 function main() {
     var prefs = AnyBalance.getPreferences();
-    try{
-		AnyBalance.setOptions({
-			SSL_ENABLED_PROTOCOLS: ['TLSv1', 'TLSv1.1', 'TLSv1.2']
-		});
-	}catch(e){
-		AnyBalance.trace('Could not enable tls: ' + e.message);
-	}
+
+	AnyBalance.setOptions({
+		PER_DOMAIN: {
+			'ihelper.mts.ru': {
+				SSL_ENABLED_PROTOCOLS: ['TLSv1', 'TLSv1.1', 'TLSv1.2']
+			}
+		}
+	});
 	
 
     if(prefs.__initialization)

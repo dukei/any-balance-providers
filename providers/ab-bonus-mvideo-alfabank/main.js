@@ -45,10 +45,10 @@ function login(){
         	throw new AnyBalance.Error('Не удалось найти форму входа. Сайт изменен?');
         }
         
-        var allowedArgs = /_dyn|cardType|CardNumber|zipCode|dateOfBirth|loginCard|DARGS|loginCaseSensitive|password|loginEmailPhone|verification-code|phoneNumber|code-check|showCaptcha/i;
+//        var allowedArgs = /_dyn|cardType|CardNumber|zipCode|dateOfBirth|loginCard|DARGS|loginCaseSensitive|password|loginEmailPhone|verification-code|phoneNumber|code-check|showCaptcha|rememberMe/i;
 		var params = createFormParams(form, function(params, str, name, value) {
-			if(!allowedArgs.test(name))
-				return;
+//			if(!allowedArgs.test(name))
+//				return;
 	    
 			if (name == 'mvideoBonusCardNumber' && prefs.type == '0') 
 				return prefs.card;

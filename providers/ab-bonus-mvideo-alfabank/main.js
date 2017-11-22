@@ -107,7 +107,10 @@ function login(){
 			}
 
 			html = sendForm(html);
+		}else if(prefs.type != -1 && /frm-password/i.test(html)){
+			throw new AnyBalance.Error('МВидео при входе по номеру карты затребовал пароль. Пожалуйста, переключитесь в настройках провайдера на вход по логину и паролю', null, true);
 		}
+
 	}
 
 	if(!/logout/i.test(html)){

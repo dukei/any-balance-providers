@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id version="1">ab-internet-kct</id>
+	<id version="2">ab-internet-kct</id>
 	<name>КСТ Симферополь</name>
 	<description html="true">
 	<![CDATA[
 	<p>Получает данные из личного кабинета интернет-провайдера КСТ Симферополь.</p>
-	<p>Кабинет находится по адресу http://kct.net.ua/</p>
+	<p>Кабинет находится по адресу http://kct.me/</p>
 	]]>
 	</description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>

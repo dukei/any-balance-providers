@@ -15,8 +15,8 @@ function main() {
 	var baseurl = 'https://epn.bz/ru/';
 	AnyBalance.setDefaultCharset('utf-8');
 
-	AB.checkEmpty(prefs.login, 'Введите логин!');
-	AB.checkEmpty(prefs.password, 'Введите пароль!');
+	checkEmpty(prefs.login, 'Введите логин!');
+	checkEmpty(prefs.password, 'Введите пароль!');
 
 	var html = AnyBalance.requestGet(baseurl + 'auth/login', g_headers);
 
@@ -28,12 +28,12 @@ function main() {
 	html = AnyBalance.requestPost(baseurl + 'auth/login', {
     username: prefs.login,
     password: prefs.password,
-	}, AB.addHeaders({
+	}, addHeaders({
 		Referer: baseurl + 'auth/login'
 	}));
 
-	if (!/logout/i.test(html)) {
-		var error = AB.getParam(html, null, null, /<strong[^>]*>([\s\S]*?)<\/strong>/i, AB.replaceTagsAndSpaces);
+	if (!/logout()/i.test(html)) {
+		var error = getParam(html, null, null, /<div class="md-alert red"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
 		if (error) {
 			throw new AnyBalance.Error(error, null, /Неправильная пара/i.test(error));
 		}
@@ -51,47 +51,10 @@ function main() {
     }));
 
     var json = getJson(html);
-    AB.getParam(json.balance + '',      result, 'balance',      null, null, parseBalance);
-    AB.getParam(json.balance_hold + '', result, 'balance_hold', null, null, parseBalance);
+    getParam(json.balance + '',      result, 'balance',      null, null, parseBalance);
+    getParam(json.balance_hold + '', result, 'balance_hold', null, null, parseBalance);
 
   }
 
-/*  if(isAvailable(['clicks', 'cr', 'epc', 'hosts', 'impressions', 'leads', 'leads_hold'])) {
-    html = AnyBalance.requestGet(baseurl + 'stats/get-statistic-by-day', addHeaders({
-      'X-Requested-With': 'XMLHttpRequest',
-      Referer: baseurl + 'cabinet/'
-    }));
-
-    var json = getJson(html), last;
-    if(isArray(json)){
-    	last = json.length -1;
-    }else{
-        last = 0;
-        json = [json];
-    }
-    
-    if(last >= 0){
-        AB.getParam(json[last].clicks + '',       result, 'clicks',       null, null, parseBalance);
-        AB.getParam(json[last].hosts + '',        result, 'hosts',        null, null, parseBalance);
-        AB.getParam(json[last].leads + '',        result, 'leads',        null, null, parseBalance);
-        AB.getParam(json[last].leads_hold + '',   result, 'leads_hold',   null, null, parseBalance);
-        AB.getParam(json[last].impressions + '',  result, 'impressions',  null, null, parseBalance);
-        AB.getParam(json[last].epc + '',          result, 'epc',          null, null, parseBalance);
-        AB.getParam(json[last].cr + '',           result, 'cr',           null, null, parseBalance);
-    }else{
-    	AnyBalance.trace('Статистика пуста!');
-    }
-  }*/
-
-  if(isAvailable('pct')) {
-    html = AnyBalance.requestGet(baseurl + 'profile', addHeaders({
-      'X-Requested-With': 'XMLHttpRequest',
-      Referer: baseurl + 'cabinet/'
-    }));
-
-    var json = getJson(html);
-
-    AB.getParam(json.rate + '', result, 'pct', null, null, parseBalance);
-  }
 	AnyBalance.setResult(result);
 }

@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="3">ab-affiliate-epn-bz</id>
+	<id version="4">ab-affiliate-epn-bz</id>
 	<api flags="no_browser"/>
 	<name>e-Commerce Partners Network</name>
 	<description html="true"><![CDATA[
@@ -15,19 +15,12 @@
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
 		<js>main.js</js>
+		<js>library.js</js>
 		<history>history.xml</history>
 	</files>
 	<counters>
 		<counter id="balance" name="Баланс" units=" $"/>
 		<counter id="balance_hold" name="В обработке" units=" $"/>
-        <counter id="pct" name="Текущая ставка" units="%"/>
-<!--        <counter id="epc" name="Доход с клика" units=" $"/>
-        <counter id="cr" name="CR" units="%"/>
-        <counter id="impressions" name="Показы"/>
-        <counter id="leads_hold" name="Лиды (в обработке)"/>
-        <counter id="leads" name="Лиды"/>
-        <counter id="hosts" name="Хосты"/>
-        <counter id="clicks" name="Клики"/> -->
 	</counters>
 	<keywords></keywords>
 	<type>affiliate</type>

@@ -37,8 +37,8 @@ function main(){
     
     var result = {success: true};
 	
-	getParam(html, result, '__tariff', /<div[^>]+sim-num[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
-	getParam(html, result, 'balance', /<span[^>]+class="price"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(getElement(html, /<span[^>]+my-lebara-plan-title/i), result, '__tariff', null, replaceTagsAndSpaces);
+	getParam(getElement(html, /<span[^>]+dashboard-current-balance/i), result, 'balance', null, replaceTagsAndSpaces, parseBalance);
 
 	var tbl = getElements(html, [/<div[^>]+class="container"/ig, /Saldo Disponible/i])[0];
 	if(tbl){
@@ -50,11 +50,11 @@ function main(){
 			var val = cells[1];
 			var till = cells[2];
 
-			if(/SP Data_Internet/i.test(name)){
+			if(/SP Data_Internet|datos/i.test(name)){
 				getParam(val, result, 'internet_left', null, null, parseBalance);
 			}else if(/SP Data/i.test(name) && /Special/i.test(name)){
 				getParam(val, result, 'internet_special', null, null, parseBalance);
-			}else if(/SP L2L Voice/i.test(name)){
+			}else if(/SP L2L Voice|Minut/i.test(name)){
 				getParam(val, result, 'voice', null, null, parseBalance);
 			}else{
 				AnyBalance.trace('^^^ allowance is unknown, skipping...');

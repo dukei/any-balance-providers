@@ -1,11 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="6">ab-cell-teletai</id>
+	<id version="7">ab-cell-teletai</id>
 	<api flags="no_browser|captcha"/>
 	<name>Teletai</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе провайдера Teletai <a href="http://www.teletie.ru/">http://www.teletie.ru/</a></p>
-	<p>Информация берется из личного кабинета <a href="http://lk.teletie.ru/login">http://lk.teletie.ru/login</a></p>
+	<p>Предоставляет информацию о балансе провайдера Teletai http://www.teletie.ru/</p>
+	<p>Информация берется из личного кабинета https://lka.teletie.ru/login/</a></p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>
@@ -19,7 +19,6 @@
 	</files>
 	<counters>
 		<counter id="balance" name="Баланс" units=" р"/>
-		<counter id="balance2" name="Расходы по номеру за текущий период" units=" р"/>
 		<counter id="status" name="Статус" type="text"/>
 		<counter id="phone" name="Телефон" type="text"/>
 		<counter id="rest_local" name="Вызовы" units=" мин"/>

@@ -76,7 +76,7 @@ function main() {
 		success: true
 	};
 
-	AB.getParam(html, result, 'balance', /Total Credit(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+	AB.getParam(html, result, 'balance', /<tr[^>]+summary[^>]*>([\s\S]*?)<\/tr>/i, replaceTagsAndSpaces, parseBalance);
 	AB.getParam(html, result, '__tariff', /Your number is\s*<strong[^>]*>([\s\S]*?)<\/strong>/i, replaceTagsAndSpaces);
 	AB.getParam(html, result, 'internet_till', /Free internet allowance(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, [replaceTagsAndSpaces /*, /(\d+)\/(\d+)\/(\d+)/, '$2/$1/$3'*/], parseDate);
 	AB.getParam(html, result, 'internet_left', /Total internet mb(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);

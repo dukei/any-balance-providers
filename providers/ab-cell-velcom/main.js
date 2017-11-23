@@ -60,11 +60,9 @@ function main(){
 	var params = createFormParams(form, function(params, str, name, value) {
 		var id=getParam(str, /\bid="([^"]*)/i, replaceHtmlEntities);
 		if(id){
-			if(/PRE/i.test(id)){ //Это префикс
-				value = prefix;
-			}else if(/NUMBER|MSISDN/i.test(id)){ //Это номер
-				value = phone;
-			}else if(/PWD/i.test(id)){ //Это пароль
+			if(/itelephone/i.test(id)){ //Это номер
+				value = prefs.login;
+			}else if(/ipassword/i.test(id)){ //Это пароль
 				value = prefs.password.substr(0, 10);  //Велкам уже принимает 10 символов пароля
 			}
 		}
@@ -118,18 +116,9 @@ function main(){
 	AnyBalance.trace('Cabinet type: ' + kabinetType);
 	
     if(!kabinetType){
-        var error = sumParam(html, null, null, /<td[^>]+class="INFO(?:_Error|_caption)?"[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, html_entity_decode, create_aggregate_join(' '))
-		|| sumParam(html, null, null, /<span[^>]+style="color:\s*red[^>]*>[\s\S]*?<\/span>/ig, replaceTagsAndSpaces, html_entity_decode, create_aggregate_join(' '))
-	        || getParam(html, null, null, /<td[^>]+class="info_caption"[^>]*>[\s\S]*?<\/td>/ig, replaceTagsAndSpaces, html_entity_decode);
-        if (!error) {
-            error = AB.getElement(html, /<p\s[^>]+?info_error_caption/i, AB.replaceTagsAndSpaces);
-        }
-        if(!error) {
-        	var errors = getElements(html, /<div[^>]+class="auth_error_block"/ig);
-        	error = replaceAll(errors.filter(function(e) { return !/display\s*:\s*none/i.test(e) }).join(''), replaceTagsAndSpaces);
-        }
+        var error = getElement(html, /<[^>]*p--error/i, replaceTagsAndSpaces);
         if(error)
-            throw new AnyBalance.Error(error, null, /Неверно указан номер|номер телефона|парол/i.test(error));
+            throw new AnyBalance.Error(error, null, /не зарегистрирован|Неверно указан номер|номер телефона|парол/i.test(error));
         if(/Сервис временно недоступен/i.test(html))
             throw new AnyBalance.Error('ИССА Velcom временно недоступна. Пожалуйста, попробуйте позже.');
         

@@ -1980,7 +1980,7 @@ function getLkCsrf(html){
 function megafonLK(filial, html){
 	var result = {success: true, filial: filial_info[filial].id};
 
-	getParam(getElement(html, /<div[^>]+class="gadget_account_block"[^>]*>/i), result, 'phone', /<h3[^>]*>([\s\S]*?)<\/h3>/i, replaceNumber);
+	getParam(getElement(html, /<div[^>]+class="lk_header_info"[^>]*>/i), result, 'phone', /<p[^>]*>([\s\S]*?)<\/p>/i, replaceNumber);
 
 	var csrf = getLkCsrf(html);
 
@@ -2003,7 +2003,7 @@ function megafonLK(filial, html){
 	
 	if(isAvailable(['__tariff'])){
 		html = AnyBalance.requestGet(lk_url + 'tariff/', addHeaders({Referer: lk_url}));
-		getParam(getElement(html, /<h2/i), result, '__tariff', null, [/<svg[\s\S]*?<\/svg>/i, '', replaceTagsAndSpaces]);
+		getParam(getElement(html, /<div[^>]+tariff/i), result, '__tariff', /<h2[^>]*>([\s\S]*?)<\/h2>/, [/<svg[^>]*>([\s\S]*?)<\/svg>/ig, '', replaceTagsAndSpaces]);
 	}
 		
 	if(AnyBalance.isAvailable('mins_n_free', 'mins_net_left', 'mins_left', 'mins_total', 'mms_left', 'mms_total', 'sms_left', 'sms_total', 
@@ -2062,17 +2062,16 @@ function megafonLKRemainders(filial, html, result){
 //			if(/gadget-remainders-mobile-del/i.test(row))
 //				continue; //Заголовок пропускаем
 
-			var rname = getParam(row, null, null, /<h5[^>]*>\s*Услуга[\s\S]*?<p[^>]*>([\s\S]*?)<\/p>/i, replaceTagsAndSpaces);
-			var vol = getParam(row, null, null, /<h5[^>]*>\s*Остаток[\s\S]*?<p[^>]*>([\s\S]*?)<\/p>/i, replaceTagsAndSpaces);
+			var rname = getParam(row, null, null, /<h3[^>]*>([\s\S]*?)<\/h3>/i, replaceTagsAndSpaces);
 
-			var total = getParam(vol, null, null, /\/([\s\S]*)/);
+			var total = getParam(row, null, null, /<span[^>]*>\s([\s\S]*?)\s<\/span><span>/i, replaceTagsAndSpaces);
 			var units = parseCurrency(total);
 
-			var left = getParam(vol, null, null, /[^\/]*/) + units;
+			var left = getParam(row, null, null, /<span[^>]*>\sОсталось\s([\s\S]*?)\s<\/span>/i, replaceTagsAndSpaces);
 
 			var name = gname + ' ' + rname;
 
-			AnyBalance.trace('Обработка услуги ' + gname + ':' + rname);
+			AnyBalance.trace('Обработка услуги: ' + rname + '...');
 
 			// Минуты
 			if((/мин|сек/i.test(units) && (/Минут/i.test(name) || !/интернет/i.test(name) || /больше Интернета/i.test(name))) || (/шт/i.test(units) && /минут/i.test(rname) && !/СМС|SMS|ММС|MMS/i.test(rname))) {

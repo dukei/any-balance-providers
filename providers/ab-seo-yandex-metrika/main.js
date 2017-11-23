@@ -34,7 +34,7 @@ function main() {
 		html = loginYandex(prefs.yalogin, prefs.password, html, counter_url, 'metrika');
 	}
 
-	var meta = getParam(html, null, null, /<body[^>]*data-bem="([^"]*)/i, replaceHtmlEntities, getJson);
+	var meta = getParam(html, null, null, /<body[^>]*data-bem='([^']*)/i, replaceHtmlEntities, getJson);
 	if(!meta){
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось получить метаинформацию по счетчику. Сайт изменен?');

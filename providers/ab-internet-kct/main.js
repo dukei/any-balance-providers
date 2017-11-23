@@ -8,7 +8,7 @@ var g_headers = {
 };
 
 function main() {
-	var baseUrl = 'http://kct.net.ua/';
+	var baseUrl = 'http://kct.me/';
 	var targetUrl = 'https://stats.kct.net.ua:9443/';
 
 	var prefs = AnyBalance.getPreferences();
@@ -45,20 +45,20 @@ function main() {
 
 	var result = { success: true };
 
-	AB.getParam(html, result, 'deposit', /Депозит:(?:[^>]+>){3}([^<]+)/i, AB.replaceTagsAndSpaces, AB.parseBalance);
-	AB.getParam(html, result, 'fio', /ФИО:(?:[^>]+>){3}([^<]+)/i, AB.replaceTagsAndSpaces);
-	AB.getParam(html, result, 'phone', /Телефон:(?:[^>]+>){3}([^<]+)/i, AB.replaceTagsAndSpaces);
-	AB.getParam(html, result, 'address', /Адрес:(?:[^>]+>){3}([^<]+)/i, AB.replaceTagsAndSpaces);
-	AB.getParam(html, result, 'date', /Договор Дата:(?:[^>]+>){3}([^<]+)/i, AB.replaceTagsAndSpaces, AB.parseDateISO);
-	AB.getParam(html, result, 'status', /Статус:(?:[^>]+>){3}([^<]+)/i, AB.replaceTagsAndSpaces);
-	AB.getParam(html, result, 'payment_date', />Дата:(?:[^>]+>){3}([^<]+)/i, AB.replaceTagsAndSpaces, AB.parseDateISO);
-	AB.getParam(html, result, 'payment_sum', />Сумма:(?:[^>]+>){3}([^<]+)/i, AB.replaceTagsAndSpaces, AB.parseBalance);
+	AB.getParam(html, result, 'deposit', /Депозит(?:[^>]+>){2}([^<]+)/i, AB.replaceTagsAndSpaces, AB.parseBalance);
+	AB.getParam(html, result, 'fio', /ФИО(?:[^>]+>){2}([^<]+)/i, AB.replaceTagsAndSpaces);
+	AB.getParam(html, result, 'phone', /Телефон(?:[^>]+>){2}([^<]+)/i, AB.replaceTagsAndSpaces);
+	AB.getParam(html, result, 'address', /Адрес(?:[^>]+>){2}([^<]+)/i, AB.replaceTagsAndSpaces);
+	AB.getParam(html, result, 'date', /Договор Дата(?:[^>]+>){2}([^<]+)/i, AB.replaceTagsAndSpaces, AB.parseDateISO);
+	AB.getParam(html, result, 'status', /Статус(?:[^>]+>){2}([^<]+)/i, AB.replaceTagsAndSpaces);
+	AB.getParam(html, result, 'payment_date', /text-1'>Дата(?:[^>]+>){2}([^<]+)/i, AB.replaceTagsAndSpaces, AB.parseDateISO);
+	AB.getParam(html, result, 'payment_sum', /text-1'>Сумма(?:[^>]+>){2}([^<]+)/i, AB.replaceTagsAndSpaces, AB.parseBalance);
 
 	html = AnyBalance.requestGet(targetUrl + 'index.cgi?index=43&sid=' + sid, AB.addHeaders({ Referer: targetUrl }));
 	AB.getParam(html, result, 'internet_days', /Услуга завершится через (\d+)/i, AB.replaceTagsAndSpaces, AB.parseBalance);
 	AB.getParam(html, result, '__tariff', /Тарифный план:(?:[^>]+>){3}([^<]+)/i, AB.replaceTagsAndSpaces);
-	AB.getParam(html, result, 'internet_ip', /Статический IP:(?:[^>]+>){2}([^<]+)/i, AB.replaceTagsAndSpaces);
-	AB.getParam(html, result, 'internet_status', /Статус:(?:[^>]+>){3}([^<]+)/i, AB.replaceTagsAndSpaces);
+	AB.getParam(html, result, 'internet_ip', /Статический IP(?:[^>]+>){2}([^<]+)/i, AB.replaceTagsAndSpaces);
+	AB.getParam(html, result, 'internet_status', /Статус(?:[^>]+>){3}([^<]+)/i, AB.replaceTagsAndSpaces);
 
 	AnyBalance.setResult(result);
 }

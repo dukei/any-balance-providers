@@ -1,5 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="4.1" version="165" date="2017-11-21">
+	Исправление получения баланса для андроида &lt; 4.1
+	</change>
+	<change major_version="4.1" version="164" date="2017-11-15">
+	Поддержка работы на андроид 4
+	</change>
 	<change major_version="4.1" version="163" date="2017-09-20">
 	Отключение надоедливого СМС о входе в кабинет
 	</change>

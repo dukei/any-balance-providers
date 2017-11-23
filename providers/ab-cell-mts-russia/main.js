@@ -5,6 +5,15 @@
 function main() {
     var prefs = AnyBalance.getPreferences();
 
+	AnyBalance.setOptions({
+		PER_DOMAIN: {
+			'ihelper.mts.ru': {
+				SSL_ENABLED_PROTOCOLS: ['TLSv1', 'TLSv1.1', 'TLSv1.2']
+			}
+		}
+	});
+	
+
     if(prefs.__initialization)
 	    return initialize();
 

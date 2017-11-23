@@ -464,3 +464,116 @@ function createNewPasswordApi(){
 	return newPass;
 }
 
+function processPaymentsPost(baseurl, html, result){
+    var button = getElements(html, [/<a[^>]*payments_form[^>]*>/ig, /Выгрузить в Excel/i])[0];
+    var bid = getParam(button, null, null, /mojarra.jsfcljs[^"]*'([^']*:payments_form:[^'\\]*)/i);
+    var formid = getParam(bid, null, null, /.*payments_form/i);
+
+    var form = getElement(html, new RegExp('<form[^>]+name="' + formid + '"[^>]*>', 'i'));
+    if(!form) {
+        AnyBalance.trace(html);
+        AnyBalance.trace('Не найдена форма получения платежей, сайт изменен?');
+        return;
+    }
+
+    var dt = new Date();
+    var dt2 = new Date(dt.getFullYear(), dt.getMonth(), dt.getDate()-90);
+    var params = createFormParams(form, function(params, str, name, value) {
+        if (/DateFrom/.test(name))
+            return fmtDate(dt2).replace(/\d\d(\d\d)/, '$1');
+        else if (/DateTo/.test(name))
+            return fmtDate(dt).replace(/\d\d(\d\d)/, '$1');
+
+        return value;
+    });
+
+    params[bid] = bid;
+    var xls = AnyBalance.requestPost(baseurl + 'c/post/fininfo/index.xhtml', params, addHeaders({Referer: baseurl}), {options: {FORCE_CHARSET: 'base64'}});
+    var wb = XLS.read(xls, {type: 'base64'});
+    var arr = sheet_to_array(wb.Sheets[wb.SheetNames[0]]);
+
+    AnyBalance.trace('Найдено ' + arr.length + ' строк платежей');
+    var payments = result.payments = [];
+
+    var colsDef = {
+        date: {
+            re: /Дата/i,
+            result_func: parseDate
+        },
+        type: {
+            re: /Тип/i,
+            result_func: null //Наличный платеж
+        },
+        sum: {
+            re: /Сумма/i
+        }
+    };
+
+
+    var cols = initCols(colsDef, arr[0]);
+
+    for (var i = 1; i < arr.length; i++) {
+        var row = arr[i];
+
+        var d = {};
+        fillColsResult(colsDef, cols, row, d, 'payments.');
+
+        payments.push(d);
+    }
+
+}
+
+function processDetailsAndPaymentsPre(baseurl, phone, result){
+    var dt = new Date();
+    var dtPrev = new Date(dt.getFullYear(), dt.getMonth()-1, dt.getDate());
+    var dts = dt.getFullYear() + '-' + n2(dt.getMonth()+1) + '-' + n2(dt.getDate());// + 'T00:00:00.000Z';
+    var dtPrevs = dtPrev.getFullYear() + '-' + n2(dtPrev.getMonth()+1) + '-' + n2(dtPrev.getDate());// + 'T00:00:00.000Z';
+
+//	var html = AnyBalance.requestGet(baseurl + 'c/pre/fininfo/index.xhtml?startDate=' + dtPrevs + '&endDate=' + dts, g_headers);
+    phone = replaceAll(phone, [/\+\s*7/, '', /\D/g, '']);
+
+    if(AnyBalance.isAvailable('payments'))
+        processPaymentsPre(baseurl, phone, dtPrevs, dts, result)
+
+    if(AnyBalance.isAvailable('detalization', 'info.date_start'))
+        processDetalizationPre(baseurl, phone, dtPrevs, dts, result)
+}
+
+function processPaymentsPre(baseurl, phone, from, to, result){
+    var json = callSiteApi(baseurl, 'info/payments/history?ctn=' + phone + '&periodStart=' + from + '&periodEnd=' + to);
+
+    processApiPayments0(json, result);
+}
+
+function processApiPayments(result){
+	if(!AnyBalance.isAvailable('payments'))
+		return;
+
+	try{
+		var prefs = AnyBalance.getPreferences();
+		var json = callAPIProc('1.0/info/payments/history', {ctn: prefs.phone});
+
+		processApiPayments0(json, result);
+	}catch(e){
+		AnyBalance.trace('Не удалось получить историю платежей: ' + e.message);
+	}
+}
+
+function processApiPayments0(json, result){
+	result.payments = [];
+	AnyBalance.trace('Найдено платежей: ' + json.paymentsHistory.length);
+	for(var i=0; i<json.paymentsHistory.length; ++i){
+		var payment = json.paymentsHistory[i];
+		var p = {};
+		getParam(payment.dateStart, p, 'payments.date', null, null, parseDateISO);
+		getParam(payment.value, p, 'payments.sum', null, null, parseBalance);
+		getParam(payment.paymentType, p, 'payments.type_code');
+		getParam(payment.paymentStatus, p, 'payments.status_code');
+		getParam(payment.payTypeName, p, 'payments.type');
+		if(payment.payPoint)
+			getParam(payment.payPoint, p, 'payments.place');
+
+		result.payments.push(p);
+	}
+}
+

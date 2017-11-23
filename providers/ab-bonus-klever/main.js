@@ -12,83 +12,52 @@ var g_headers = {
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'https://my.cleverbonus.ua/';
+	var baseurl = 'http://my.cleverbonus.ua/';
 	var html, res, json, result;
 	AnyBalance.setDefaultCharset('utf-8');
 	
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 	
-	html = AnyBalance.requestGet(baseurl + 'CWA/#login', g_headers);
+	html = AnyBalance.requestGet(baseurl + 'login', g_headers);
 	
 	if(!html || AnyBalance.getLastStatusCode() > 400){
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
 	}
 
-	AnyBalance.setCookie('my.cleverbonus.ua', 'changePasswordLogin', prefs.login);
-	AnyBalance.setCookie('my.cleverbonus.ua', 'lang', 'UA');
-	
-	res = AnyBalance.requestPost(baseurl + 'CWA/rest/auth/login', JSON.stringify({
-		login: prefs.login,
-		password: CryptoJS.SHA1(prefs.password).toString(CryptoJS.enc.Hex)
-	}), addHeaders({
-		Referer: baseurl + 'CWA/',
-		'X-Requested-With':' XMLHttpRequest',
-		'Content-Type': 'application/json',
-		'Accept': 'application/json, text/javascript, */*; q=0.01'
-	}));
+	var form = getElement(html, /<form[^>]+login_check/i);
+	if(!form){
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удалось найти форму входа. Сайт изменен?');
+	}
 
-	if(AnyBalance.getLastStatusCode() > 400){
-		/**
-		 * error:function(d,c){if(c.status==601){$$.showLocalizedMsg("error","wrongLoginOrPassword")
-			}else{if(c.status==602){app.navigate("firstChangePassword",true)
-			}else{if(c.status==609){$$.showLocalizedMsg("error","noActiveMedium")
-			}else{if(c.status==611){$$.showLocalizedMsg("error","mediumNotActive")
-			}else{if(c.status==612){$$.showLocalizedMsg("error","mediumWithNoOwner")
-			}else{if(c.status==613){$$.showLocalizedMsg("error","mediumWithNoMemberOwner")
-		 */
-		if(AnyBalance.getLastStatusCode() === 601)
-			throw new AnyBalance.Error('Невірний логін або пароль', null, true);
-		AnyBalance.trace('error code: ' + AnyBalance.getLastStatusCode());
-		if(AnyBalance.getLastStatusCode() < 600)
-			throw new AnyBalance.Error('Сайт временно недоступен. Попробуйте ещё раз позднее.');
-		AnyBalance.trace(res);
+	var params = AB.createFormParams(form, function(params, str, name, value) {
+		if (name == '_username') {
+			return prefs.login;
+		} else if (name == '_password') {
+			return prefs.password;
+		}
+
+		return value;
+	});
+
+	html = AnyBalance.requestPost(baseurl + 'login_check', params), addHeaders({
+		Referer: baseurl + 'login/'
+	});
+
+	if(!/logout/i.test(html)){
+		var error = getElement(html, /<[^>]+color:\s*red/i, replaceTagsAndSpaces);
+		if(error)
+			throw new AnyBalance.Error(error, null, /невірні/i.test(error));
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
 	
-	result = {success: true};
+	var result = {success: true};
 
-	if(/^\s*\{/i.test(res)){
-		res = getJson(res);
-		if(res.mediumSelectionRequired){
-			AnyBalance.trace("Требуется установка медиума. Устанавливаем " + res.mediums[0].id);
-			res = AnyBalance.requestPost(baseurl + 'CWA/rest/auth/login/setCard/' + res.mediums[0].id, '{}', addHeaders({
-				Referer: baseurl + 'CWA/',
-				'X-Requested-With':' XMLHttpRequest',
-				'Content-Type': 'application/json',
-				'Accept': 'application/json, text/javascript, */*; q=0.01'
-			}));
-		}
-	}
+	getParam(html, result, 'balance', /<div[^>]+active-points[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'fio', /Ви увійшли як:[\s\S]*?<a[^>]*>([\s\S]*?)<\/a>/i, replaceTagsAndSpaces);
+	getParam(html, result, 'num', /<input[^>]+cardNumber[^>]+value="([^"]*)/i, replaceHtmlEntities);
 
-	res = AnyBalance.requestGet(baseurl + 'CWA/rest/balance/summary/', null, addHeaders({
-		Referer: baseurl + 'CWA/',
-		'X-Requested-With':' XMLHttpRequest',
-		'Content-Type': 'application/json',
-		'Accept': 'application/json, text/javascript, */*; q=0.01'
-	}));
-	json = getJson(res);
-	getParam('' + json.points, result, 'balance', null, replaceTagsAndSpaces, parseBalance);
-
-	res = AnyBalance.requestGet(baseurl + 'CWA/rest/personalDetails/', null, addHeaders({
-		Referer: baseurl + 'CWA/',
-		'X-Requested-With':' XMLHttpRequest',
-		'Content-Type': 'application/json',
-		'Accept': 'application/json, text/javascript, */*; q=0.01'
-	}));
-	json = getJson(res);
-	getParam(json.lastName + ' ' + json.firstName + ' ' + json.middleName, result, 'fio', null, replaceTagsAndSpaces, html_entity_decode);
-	
 	AnyBalance.setResult(result);
 }

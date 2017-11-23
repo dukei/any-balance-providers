@@ -12,13 +12,13 @@ var g_headers = {
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'https://lk.teletie.ru/';
+	var baseurl = 'https://lka.teletie.ru/';
 	AnyBalance.setDefaultCharset('utf-8');
 	
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 	
-	var html = AnyBalance.requestGet(baseurl + 'login', g_headers);
+	var html = AnyBalance.requestGet(baseurl + 'login/', g_headers);
 	
 	if(!html || AnyBalance.getLastStatusCode() > 400)
 		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
@@ -32,7 +32,7 @@ function main() {
 		return value;
 	});
 
-	if(!/invisible-captcha/i.test(html)){
+/*	if(!/invisible-captcha/i.test(html)){
 		var captchaa;
 		AnyBalance.trace('Пытаемся ввести капчу');
 		var captchaHref = getParam(html, null, null, /captcha["'][^>]*src=["']\/([^'"]+)/i, replaceTagsAndSpaces);
@@ -43,33 +43,53 @@ function main() {
 		
 		params.captcha = captchaa;
 	}
+*/	
+	html = AnyBalance.requestPost(baseurl + 'ajax/auth/', params, addHeaders({
+		Referer: baseurl + 'login', 
+		'X-Requested-With': 'XMLHttpRequest'
+	}));
+
+	var json = getJson(html);
 	
-	html = AnyBalance.requestPost(baseurl + 'login', params, addHeaders({Referer: baseurl + 'login'}));
-	
-	if (!/logout/i.test(html)) {
-		var error = getParam(html, null, null, /error[^>]*>([\s\S]*?)</i, replaceTagsAndSpaces);
-		if (error)
-			throw new AnyBalance.Error(error, null, /парол/i.test(error));
-		
+	if (!json || json.status != 200) {
 		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
+		throw new AnyBalance.Error('Номер телефона или пароль указаны неверно', null, true);
 	}
 	
 	var result = {success: true};
 	
-	getParam(html, result, 'balance', />\s*Баланс(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'balance2', />\s*Расходы по номеру за текущий период(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'phone', />\s*Ваш номер(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'status', />\s*Статус(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, '__tariff', />\s*Ваш тариф(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
+	html = AnyBalance.requestGet(baseurl + 'ajax/getSummaryFirstContractInfo/0/', addHeaders({
+		Referer: baseurl + 'gui', 
+		'X-Requested-With': 'XMLHttpRequest'
+	}));
+  	json = getJson(html);
+
+  	var phone = json.products[0].ident_list_list[0].value;
+
+	getParam(json.balances[0].value, result);
+	getParam(phone, result, 'phone');
+	getParam(json.base.status_humanize, result, 'status');
+	getParam(json.products[0].tplan, result, '__tariff');
 	
-	var html = AnyBalance.requestGet(baseurl + 'tariff_description_rests', addHeaders({ Referer: baseurl + 'menu' }));
-	var param = getElements(html, /<[^>]+progress-bar-text/ig);
-	if (param && param.length == 3) {
-		getParam(param[0], result, 'rest_local', null, replaceTagsAndSpaces, parseBalance);
-		getParam(param[1], result, 'rest_sms', null, replaceTagsAndSpaces, parseBalance);
-		getParam(param[2], result, 'rest_internet', null, replaceTagsAndSpaces, parseBalance);
-	}
+	html = AnyBalance.requestGet(baseurl + 'ajax/getServicePackage/' + json.base.v_contract + '/', addHeaders({
+		Referer: baseurl + 'gui', 
+		'X-Requested-With': 'XMLHttpRequest'
+	}));
+  	json = getJson(html);
+
+  	var rests = json[phone];
+  	for(var i in rests){
+  		var rest = rests[i];
+  		if(i == 'SMS_MMS'){
+  			for(var x in rest){
+				sumParam(rest[x].n_volume_left, result, 'rest_sms', null, null, null, aggregate_sum);
+  			}
+  		}else if(i == 'VOICE'){
+  			for(var x in rest){
+				sumParam(rest[x].n_volume_left, result, 'rest_local', null, null, null, aggregate_sum);
+  			}
+  		}
+  	}
 
 	AnyBalance.setResult(result);
 }

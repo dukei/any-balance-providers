@@ -1,0 +1,44 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-money-nanopool</id>
+	<api flags="no_browser"/>
+	<name>Nanopool</name>
+	<description html="true"><![CDATA[
+	<p>Провайдер показывает статистику хешрейта, баланса</p>
+	<p>Информация предоставляется https://nanopool.org/</p>
+	]]></description>
+	<author>Viktor Sinitsyn &lt;mousesport007@ya.ru&gt;</author>
+		<depends>
+		<module id="library"/>
+	</depends>
+	<files>
+		<js>library.min.js</js>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balanceETH" name="Баланс ETH" units=" ETH"/>
+		<counter id="hashrateETH" name="Общий хешрейт ETH" units=" Mh/s"/>
+		
+		<counter id="balanceETC" name="Баланс ETC" units=" ETC"/>
+		<counter id="hashrateETC" name="Общий хешрейт ETC" units=" Mh/s"/>
+		
+		<counter id="balanceSIA" name="Баланс SIA" units=" SIA"/>
+		<counter id="hashrateSIA" name="Общий хешрейт SIA" units=" Mh/s"/>
+		
+		<counter id="balanceZEC" name="Баланс ZEC" units=" ZEC"/>
+		<counter id="hashrateZEC" name="Общий хешрейт ZEC" units=" Sol/s"/>
+		
+		<counter id="balanceXMR" name="Баланс XMR" units=" XMR"/>
+		<counter id="hashrateXMR" name="Общий хешрейт XMR" units=" H/s"/>
+		
+		<counter id="balancePASC" name="Баланс PASC" units=" PASC"/>
+		<counter id="hashratePASC" name="Общий хешрейт PASC" units=" Mh/s"/>
+
+	</counters>
+	<keywords>etc,eth,btc,xmr, sia, zec, pasc</keywords>
+	<type>money</type>
+	<country></country>
+</provider>

@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="4" date="2017-11-23">
+	Поддержка изменений в процедуре входа
+	</change>
 	<change version="3" date="2016-08-08">
 	- Поддержка нового протокола безопасности для Android 4.1+
 	</change>

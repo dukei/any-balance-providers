@@ -86,7 +86,10 @@ function main(){
 	getParam(html, result, '__tariff', /<span[^>]+user-plan-name[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
 	getParam(html, result, 'sipid', /SIP ID[\s\S]*?<div[^>]+item-value[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
 	getParam(prefs.login, result, 'login');
-	getParam(html, result, 'fio', /<a[^>]+profile-link[^>]*>([\s\S]*?)<\/a>/i, replaceTagsAndSpaces);
+	
+	var html = AnyBalance.requestGet(baseurl + 'do_personal_new', addHeaders({Referer: baseurl}));
+	getParam(html, result, 'nickname', /<li[^>]+class="current"[^>]*>([\s\S]*?)<\/li>/i, replaceTagsAndSpaces);
+	getParam(html, result, 'fio', /name="USERNAME"[^*]value="([\s\S]*?)"/i, replaceTagsAndSpaces);
 	
 	var balance = getParam(html, /(?:Баланс|Balance)[\s\S]*?<div[^>]+item-value[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
 	if(!balance){

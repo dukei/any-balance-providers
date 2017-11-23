@@ -32,8 +32,8 @@ function main() {
 		Referer: baseurl + 'auth/login'
 	}));
 
-	if (!/logout/i.test(html)) {
-		var error = AB.getParam(html, null, null, /<strong[^>]*>([\s\S]*?)<\/strong>/i, AB.replaceTagsAndSpaces);
+	if (!/logout()/i.test(html)) {
+		var error = getParam(html, null, null, /<div class="md-alert red"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
 		if (error) {
 			throw new AnyBalance.Error(error, null, /Неправильная пара/i.test(error));
 		}

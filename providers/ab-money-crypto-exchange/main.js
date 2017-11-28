@@ -13,8 +13,8 @@ var g_headers =
 function currencySymbolCheck(symbol)
 {
     symbol = symbol.toUpperCase();
-    if (!/^[A-Z][A-Z][A-Z]$/.test(symbol))
-        throw new AnyBalance.Error("Currency codes must be 3 letters long, English letters only, no extra spaces or other characters.");
+    if (!/^[A-Z]{3,5}$/.test(symbol))
+        throw new AnyBalance.Error("Currency codes must be 3 to 5 letters long, English letters only, no extra spaces or other characters.");
     return(symbol);
 }
 

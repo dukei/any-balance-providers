@@ -13,7 +13,7 @@
   </instruction>
   <author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
   <depends>
-  	<module id="framework/gwt"/>
+  	<module id="library"/>
   </depends>
   <files>
     <icon>icon.png</icon>

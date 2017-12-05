@@ -29,8 +29,7 @@ function main() {
     grant_type: 'password',
     username: prefs.login,
     password: prefs.password,
-    client_id: '1',
-    scope: 'read:cur_user write:cur_user write:cur_user_email cur_user_books offline_access payment:domru'
+    client_id: '1'
   }, addHeaders({
     Referer: baseurl
   }));
@@ -44,8 +43,7 @@ function main() {
     	grant_type: 'password',
     	username: prefs.login,
     	password: prefs.password,
-    	client_id: '1',
-    	scope: 'read:cur_user write:cur_user write:cur_user_email cur_user_books public offline_access payment'
+    	client_id: '1'
   	}, addHeaders({
   		'recaptcha-code': recaptcha,
     	Referer: baseurl
@@ -73,10 +71,18 @@ function main() {
   var result = {
     success: true
   };
-  var card = json.cards[0];
+  var cardNo = json.cards[0];
+  if(!cardNo)
+  	  throw new AnyBalance.Error('У вас нет ни одной бонусной карты');
+
+  html = AnyBalance.requestGet(baseurlApi + 'cards/' + cardNo, addHeaders({
+  	  Referer: baseurl,
+      Authorization: 'Bearer ' + token
+  }));
+  var card = getJson(html);
 
   AB.getParam(json.nickName + '', result, 'customer', null, AB.replaceTagsAndSpaces);
-  AB.getParam(json.pluses + '', result, 'balanceinpoints', null, AB.replaceTagsAndSpaces, AB.parseBalance);
+  AB.getParam(card.pluses + '', result, 'balanceinpoints', null, AB.replaceTagsAndSpaces, AB.parseBalance);
   AB.getParam(card && card.balance/100, result, 'balanceinrubles', null, AB.replaceTagsAndSpaces, AB.parseBalance);
   AB.getParam(card && card.ean, result, 'cardnumber');
   AB.getParam(card && card.status, result, 'cardstate');

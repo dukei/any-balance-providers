@@ -1,7 +1,5 @@
-﻿
-/**
+﻿/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
-qwintry
 */
 
 var g_headers = {
@@ -14,12 +12,12 @@ var g_headers = {
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'http://logistics.qwintry.com/';
+	var baseurl = 'http://logistics.qwintry.com/ru/';
 	AnyBalance.setDefaultCharset('utf-8');
 
 	AB.checkEmpty(prefs.number, 'Enter tracking number!');
 
-	var html = AnyBalance.requestGet(baseurl + 'login', g_headers);
+	var html = AnyBalance.requestGet(baseurl, g_headers);
 
 	if (!html || AnyBalance.getLastStatusCode() > 400) {
 		AnyBalance.trace(html);
@@ -28,7 +26,7 @@ function main() {
 
 	html = AnyBalance.requestGet(baseurl + 'track?tracking=' + prefs.number, g_headers);
 
-	if (!/Current\s+status/i.test(html)) {
+	if (!/Текущий\s+статус/i.test(html)) {
 		var error = AB.getParam(html, null, null, /<div[^>]*class="[^"]*danger[^"]*"[^>]*>([\s\S]*?)<\/div/i, AB.replaceTagsAndSpaces);
 		if (error) {
 			throw new AnyBalance.Error(error, null, /not\s+exist/i.test(error));
@@ -43,19 +41,16 @@ function main() {
 
 	AB.getParam(html, result, 'tracking', /<title>([\s\S]*?)<\/title>/i, AB.replaceTagsAndSpaces);
 
-	var
-		infoTable = AB.getElement(html, /<table[^"]*class="[^"]*table[^"]*"[^>]*>/i),
-		trArray = AB.sumParam(infoTable, null, null, /<tr[^>]*>([\s\S]*?)<\/tr>/gi);
+	var infoTable = AB.getElement(html, /<table[^"]*class="[^"]*table[^"]*"[^>]*>/i);
+	var trArray = AB.sumParam(infoTable, null, null, /<tr[^>]*>([\s\S]*?)<\/tr>/gi);
 
-	AB.getParam(trArray[trArray.length - 1], result, 'create_time', /(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, AB.replaceTagsAndSpaces,
-		AB.parseDate);
+	AB.getParam(trArray[trArray.length - 1], result, 'create_time', /(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, AB.replaceTagsAndSpaces, AB.parseDate);
 	AB.getParam(trArray[trArray.length - 1], result, 'status', /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, AB.replaceTagsAndSpaces);
 	AB.getParam(trArray[trArray.length - 1], result, 'message', /(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, AB.replaceTagsAndSpaces);
 
 	if (AnyBalance.isAvailable('trackingLog')) {
 		try {
-			var
-				time, status, message, trackingLog = [];
+			var time, status, message, trackingLog = [];
 
 			for (var i = trArray.length - 1; i > 0; i--) {
 				time = AB.getParam(trArray[i], null, null, /(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, AB.replaceTagsAndSpaces);

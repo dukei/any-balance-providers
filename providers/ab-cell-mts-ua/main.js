@@ -11,6 +11,7 @@ var g_apiHeaders = {
     Connection: 'keep-alive',
 	Accept: 'application/json, text/plain, */*',
 	Origin: 'file://',
+	'Accept-Encoding': null,
 	'User-Agent': 'Mozilla/5.0 (Linux; Android 8.0; ONEPLUS A3010 Build/OPR6.170623.013) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/48.0.2564.116 Crosswalk/18.48.477.13 Mobile Safari/537.36',
 	'Content-Type': 'application/json;charset=UTF-8'
 }
@@ -38,6 +39,7 @@ function main(){
 
 
 function callApi(requests){
+	//Почему-то апи плохо понимает UTF-16. Приходится через бинарник перекодировать
 	var html = AnyBalance.requestPost('https://cscapp.vodafone.ua/eai_mob/start.swe?SWEExtSource=JSONConverter&SWEExtCmd=Execute', JSON.stringify({
 		"requests": requests,
 		"params":{
@@ -48,10 +50,24 @@ function callApi(requests){
 			"manufacture":"OnePlus",
 			"childNumber":""
 		}
-	}), g_apiHeaders);
+	}), g_apiHeaders, { options: { FORCE_CHARSET: 'base64' }});
 
-	var json = getJson(html);
+	var response = decodeUTF16LE(Base64.decode(html));
+	var json = getJson(response);
 	return json;
+}
+
+//Braindead decoder that assumes fully valid input
+function decodeUTF16LE( binaryStr ) {
+    var cp = [];
+    for( var i = 0; i < binaryStr.length; i+=2) {
+        cp.push( 
+             binaryStr.charCodeAt(i) |
+            ( binaryStr.charCodeAt(i+1) << 8 )
+        );
+    }
+
+    return String.fromCharCode.apply( String, cp );
 }
 
 function throwApiError(res, verb){

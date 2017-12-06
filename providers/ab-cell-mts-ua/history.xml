@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="1.3" version="76" date="2017-12-06">
+	Уведомление о защите от роботов на сайте
+	</change>
 	<change major_version="1.3" version="75" date="2017-10-10">
 	- Исправлено распознавание трафика услуги «Додаткові Гігабайти» втарифах Vodafone RED.
 	</change>

@@ -7,6 +7,14 @@
 Личный кабинет: https://ihelper-prp.mts.com.ua/SelfCarePda/
 */
 
+var g_headers = {
+	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
+	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
+	'Connection': 'keep-alive',
+	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
+};
+
 function parseTrafficMb(str){
     var val = parseBalance(str);
     if(isset(val))
@@ -28,10 +36,34 @@ function main(){
 	var fnomer = prefs.fnomer || '1';
 
 	AnyBalance.trace("Trying to enter selfcare at address: " + baseurl);
-	var html = AnyBalance.requestPost(baseurl + "Security.mvc/LogOn", {
-		username: prefs.login,
-		password: prefs.password
+	var html = AnyBalance.requestGet(baseurl + 'Security.mvc/LogOn', g_headers);
+	if(/bobcmn/i.test(html))
+		throw new AnyBalance.Error('На сайте интернет-помощника Vodafone включена защита от роботов. Получение баланса через интернет-помощник невозможно.');
+
+	html = handleBobcmn(AnyBalance.getLastUrl(), html);
+
+	if (!html || AnyBalance.getLastStatusCode() > 400) {
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Сайт провайдера временно недоступен! Попробуйте обновить данные позже.');
+	}
+
+	var form = AB.getElement(html, /<form[^>]+LogOn/i);
+	if(!form){
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удаётся найти форму входа! Сайт изменен?');
+	}
+
+	var params = AB.createFormParams(form, function(params, str, name, value) {
+		if (name == 'username') {
+			return prefs.login;
+		} else if (name == 'password') {
+			return prefs.password;
+		}
+
+		return value;
 	});
+
+	var html = AnyBalance.requestPost(baseurl + "Security.mvc/LogOn", params, addHeaders({Referer: baseurl + 'LogOn'}));
 
 	if (!/Security\.mvc\/LogOff/i.test(html)) {
 		var error = getParam(html, null, null, [/<ul class="operation-results-error"><li>([\s\S]*?)<\/li>/i, /<h1>\s*Ошибка\s*<\/h1>\s*<p>([\s\S]*?)<\/p>/i], replaceTagsAndSpaces);

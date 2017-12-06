@@ -25,10 +25,23 @@ function main() {
 		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
 	}
 	    
-    html = AnyBalance.requestPost(baseurl + 'login/', {
-        account: prefs.login,
-        password: prefs.password
-    }, addHeaders({
+	var form = AB.getElement(html, /<form[^>]+login/i);
+	if(!form){
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удаётся найти форму входа! Сайт изменен?');
+	}
+
+	var params = AB.createFormParams(form, function(params, str, name, value) {
+		if (name == 'account') {
+			return prefs.login;
+		} else if (name == 'password') {
+			return prefs.password;
+		}
+
+		return value;
+	});
+
+    html = AnyBalance.requestPost(baseurl + 'login/', params, addHeaders({
         Referer: baseurl + 'login/'
     }));
 

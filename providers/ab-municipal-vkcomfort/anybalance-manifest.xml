@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="3">ab-municipal-vkcomfort</id>
+	<id version="4">ab-municipal-vkcomfort</id>
 	<api flags="no_browser"/>
 	<name>ВК Комфорт</name>
 	<description html="true"><![CDATA[

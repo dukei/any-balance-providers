@@ -134,12 +134,12 @@ function main_api(){
     		throwApiError(json.login, 'login');
     	}
 
-    	var code = AnyBalance.retrieveCode('Пожалуйста, введите код, отправленный вам по SMS на номер ' + prefs.login, null, {inputType: 'number'});
+    	var code = AnyBalance.retrieveCode('Пожалуйста, введите код, отправленный вам по SMS на номер ' + prefs.login, null, {inputType: 'number', time: 180000});
     	
     	json = callApi1('getToken', {action: 0, id: prefs.login, parentToken: "", rememberMe: true, tempToken: tempToken, tpass: code});
 
     	token = callApi.token = json.token;
-    	AnyBalance.setData('token', token);
+    	AnyBalance.setData('token_' + prefs.login, token);
     	AnyBalance.saveData();
 
     	if(justRegistered){

@@ -23,7 +23,11 @@ function main() {
 	var result = {success: true};
 
 	if(AnyBalance.isAvailable('rate', 'rate_btc', 'usd', 'btc')){
+		var cf = Cloudflare(baseurl);
 		var html = AnyBalance.requestGet(baseurl, g_headers);
+		if(cf.isCloudflared(html))
+		    html = cf.executeScript(html);
+
 		getParam(html, result, ['rate', 'usd'], /\$([\d\.\s]*)@[^<]*BTC\/ETH/i, replaceTagsAndSpaces, parseBalance);
 		getParam(html, result, ['rate_btc', 'btc'], /@([^<]*)BTC\/ETH/i, replaceTagsAndSpaces, parseBalance);
 	}

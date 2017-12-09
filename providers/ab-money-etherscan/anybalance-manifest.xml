@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="3">ab-money-etherscan</id>
+	<id version="4">ab-money-etherscan</id>
 	<api flags="no_browser"/>
 	<name>Etherscan</name>
 	<description html="true"><![CDATA[
@@ -8,6 +8,7 @@
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>
+		<module id="framework/cloudflare"/>
 		<module id="library"/>
 	</depends>
 	<files>

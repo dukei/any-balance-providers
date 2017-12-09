@@ -82,6 +82,8 @@
             	    params.push([m_children[i].name, m_children[i].value]);
             	}
             	var method = this.method || 'get';
+            	//Somewhy this link gets corrupted. So just restore it
+            	this.action = this.action.replace('undefined', '');
             	if(/get/i.test(method)){
             		_document._lastHtml = _AnyBalance.requestGet(joinURLs(_url, this.action) + '?' + createUrlEncodedParams(params), headers);
             	}else{

@@ -35,7 +35,7 @@ function main() {
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
 	
-	html = AnyBalance.requestGet(baseurl + 'parents/', g_headers);
+	html = AnyBalance.requestGet(baseurl + 'parents/account/', g_headers);
 	
 	var table = getParam(html, null, null, /Ваши счета:([\s\S]*?)<\/table>/i);
 	if(!table)

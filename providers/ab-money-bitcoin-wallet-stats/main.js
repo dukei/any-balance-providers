@@ -28,6 +28,7 @@ function main()
 				AnyBalance.sleep(3000);
 			}else{
 				AnyBalance.trace('Too frequent requests. Will try later');
+				break;
 			}
 		}else{
 			break;
@@ -43,7 +44,9 @@ function main()
 
 	// parse params
 	getParam(html, result, 'balance', /(<td[^>]+id="final_balance"[^>]*>[\s\S]*?<\/td>)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'balance_mbtc', /(<td[^>]+id="final_balance"[^>]*>[\s\S]*?<\/td>)/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'total_received', /(<td[^>]+id="total_received"[^>]*>[\s\S]*?<\/td>)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'total_received_mbtc', /(<td[^>]+id="total_received"[^>]*>[\s\S]*?<\/td>)/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'n_transactions', /(<td[^>]+id="n_transactions"[^>]*>[\s\S]*?<\/td>)/i, replaceTagsAndSpaces, parseBalance);
 
     // convert if needed
@@ -56,13 +59,11 @@ function main()
     }
 
    	result.btcunits = 'Ƀ';
-    if(prefs.mbtc){
-    	if(result.balance)
-    		result.balance = Math.round(result.balance*1000*100000)/100000;
-    	if(result.total_received)
-    		result.total_received = Math.round(result.total_received*1000*100000)/100000;
-    	result.btcunits = 'mɃ';
-    }
+    if(typeof result.balance_mbtc != 'undefined')
+    	result.balance_mbtc = Math.round(result.balance_mbtc*1000*100000)/100000;
+    if(typeof result.total_received_mbtc != 'undefined')
+    	result.total_received_mbtc = Math.round(result.total_received_mbtc*1000*100000)/100000;
+    result.btcunits = 'mɃ';
 
     result.__tariff = prefs.wallet;
 

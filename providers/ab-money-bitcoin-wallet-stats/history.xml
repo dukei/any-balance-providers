@@ -1,5 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="7" date="2017-12-18">
+	Fixed tries limit
+	Added mBTC counter instead of switch in preferences
+	</change>
+	<change version="6" date="2017-12-18">
+	Limited number of tries to get balance
+	</change>
 	<change version="5" date="2017-12-17">
 	More stable
 	Option to show value in mBTC

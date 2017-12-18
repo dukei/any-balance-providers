@@ -148,7 +148,7 @@
     _window.rbzns = _rbzns;
 
     function isReblazed(html){
-        return /window.rbzns/.test(html);
+        return /window.rbzns/.test(html) || /window.rbzid/.test(html);
     }
 
     function executeScript(html){

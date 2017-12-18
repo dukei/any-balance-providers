@@ -7,10 +7,7 @@
 	<p>Предоставляет информацию о балансе интернет-провайдера Astra Internet <a href="https://astrainternet.ru/">https://astrainternet.ru/</a></p>
 	<p>Информация берется из личного кабинета <a href="https://lk.astrainternet.ru/">https://lk.astrainternet.ru/</a></p>
 	]]></description>
-    <author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
-    <depends>
-        <module id="library"/>
-    </depends>
+    <author>MasterPlat</author>
     <files>
         <icon>icon.png</icon>
         <preferences>preferences.xml</preferences>

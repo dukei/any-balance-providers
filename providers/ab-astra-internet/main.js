@@ -12,7 +12,7 @@ var g_headers = {
 
 function main() {
     var prefs = AnyBalance.getPreferences();
-    var baseurl = 'http://178.21.11.3';
+    var baseurl = 'https://lk.astrainternet.ru/';
     AnyBalance.setDefaultCharset('utf-8');
 
     checkEmpty(prefs.login, 'Введите логин!');

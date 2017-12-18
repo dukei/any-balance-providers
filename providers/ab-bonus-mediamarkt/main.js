@@ -31,6 +31,9 @@ function main() {
         AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось найти форму входа. Сайт изменен?');
 	}
+
+	baseurl = getParam(AnyBalance.getLastUrl(), /https?:\/\/[^\/]+/i);
+	AnyBalance.trace('Using baseurl: ' + baseurl);
     
     var captchaCode = '';
     var captchaUrl = getParam(loginForm, null, null, /<img[^>]*?src=["']([^"']*captcha[^"']*)/i);
@@ -94,10 +97,14 @@ function main() {
 	}, addHeaders({Referer: baseurl}));
 	
 	json = getJson(html);
-	
-	getParam(json.html, result, 'balance', /class="mm-user__scores"[^>]*>([\s\S]*?)&nbsp;баллов/i, replaceTagsAndSpaces, parseBalance);
-	getParam(json.html, result, 'available', /Можно потратить: <b>([\s\S]*?)&nbsp;баллов<\/b>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(json.html, result, 'inactive', /Неактивных: <b>([\s\S]*?)&nbsp;баллов<\/b>/i, replaceTagsAndSpaces, parseBalance);
+
+	if(json.status){
+		getParam(json.html, result, 'balance', /class="mm-user__scores"[^>]*>([\s\S]*?)&nbsp;баллов/i, replaceTagsAndSpaces, parseBalance);
+		getParam(json.html, result, 'available', /Можно потратить: <b>([\s\S]*?)&nbsp;баллов<\/b>/i, replaceTagsAndSpaces, parseBalance);
+		getParam(json.html, result, 'inactive', /Неактивных: <b>([\s\S]*?)&nbsp;баллов<\/b>/i, replaceTagsAndSpaces, parseBalance);
+	}else{
+		throw new AnyBalance.Error('К вашему личному кабинету не прикреплена бонусная карта. Зайдите в личный кабинет через браузер и прикрепите бонусную карту.');
+	}
 
 	AnyBalance.setResult(result);
 }

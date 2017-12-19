@@ -121,9 +121,10 @@
         	return cookies_str;
         },
         set cookie(info){
-        	var path = getParam(info, null, null, /\bpath=([^;]*)/i);
-        	var nameval = getParam(info, null, null, /^[^;]*/).match(/([^=]*)=(.*)/);
-        	_AnyBalance.setCookie(getHostname(), nameval[1], nameval[2], {path: path});
+        	var path = getParam(info, /\bpath=([^;]*)/i);
+        	var domain = getParam(info, /\bdomain=([^;]*)/i) || getHostname();
+        	var nameval = getParam(info, /^[^;]*/).match(/([^=]*)=(.*)/);
+        	_AnyBalance.setCookie(domain, nameval[1], nameval[2], {path: path});
         },
 
         createElement: function(tag){
@@ -168,8 +169,7 @@
     		html = executeScriptAuto(html);
 
     	if(_AnyBalance.getLevel() >= 9){
-			_AnyBalance.setData('__cfduid', _AnyBalance.getCookie('__cfduid'));
-			_AnyBalance.setData('cf_clearance', _AnyBalance.getCookie('cf_clearance'));
+			_AnyBalance.saveCookies();
 			_AnyBalance.saveData();
 		}
 		 
@@ -236,8 +236,7 @@
     _window.parent = _window;
 
     if(_AnyBalance.getLevel() >= 9){
-   		_AnyBalance.setCookie(getHostname(), '__cfduid', _AnyBalance.getData('__cfduid'));
-   		_AnyBalance.setCookie(getHostname(), 'cf_clearance', _AnyBalance.getData('cf_clearance'));
+   		_AnyBalance.restoreCookies();
    	}
 
     return {

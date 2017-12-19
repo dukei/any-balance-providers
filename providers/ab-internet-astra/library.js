@@ -26,7 +26,7 @@ function getParam(f,k,b,g,c,a){if(!isset(f)){AnyBalance.trace("getParam: input "
     case"":return"";
     default:return b
 }}],replaceHtmlEntities=[/&(#(x)?)?(\w+);/ig,make_html_entity_replacement];
-function isset(a){return typeof(a)!="undefined"
+function isset(a){return typeof(a)!= "undefined"
 }function isArray(a){return Object.prototype.toString.call(a)==="[object Array]"
 }function replaceAll(c,a){for(var b=0;
                               a&&b<a.length;

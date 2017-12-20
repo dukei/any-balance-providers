@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-    <id version="1">ab-internet-astra</id>
+    <id major_version="1" version="2">ab-internet-astra</id>
     <api flags="no_browser"/>
     <name>Astra Internet</name>
     <description html="true"><![CDATA[

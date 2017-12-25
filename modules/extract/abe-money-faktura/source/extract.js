@@ -4,7 +4,7 @@
 
 //Заменяем системную строку замен
 var myReplaceTagsAndSpaces = [replaceTagsAndSpaces, /(\d)\-(\d)/g, '$1.$2'];
-var g_baseurl = "https://www.faktura.ru/lite/app";
+var g_baseurl = "https://lite.faktura.ru/lite/app";
 
 function login(){
     var prefs = AnyBalance.getPreferences();

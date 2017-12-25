@@ -3,53 +3,61 @@
 */
 
 var g_headers = {
-	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
-	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
+	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
+	'Accept-Language': 'ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7',
 	'Connection': 'keep-alive',
-	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
+	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.84 Safari/537.36',
 };
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'https://selfcare.netbynet.ru/';
+	var baseurl = 'https://my.netbynet.ru/';
 	AnyBalance.setDefaultCharset('utf-8');
 	
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 	
-	var html = AnyBalance.requestGet(baseurl + 'ott/', g_headers);
+	var html = AnyBalance.requestGet(baseurl, g_headers);
 	
 	if(!html || AnyBalance.getLastStatusCode() > 400)
 		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
 	
-	html = AnyBalance.requestPost(baseurl + 'ott/?', {
-    	'pr[form][auto][form_save_to_link]': 0,
-    	'pr[form][auto][login]': prefs.login,
-    	'pr[form][auto][password]': prefs.password,
-    	'pr[form][auto][form_event]': 'Войти'
-	}, addHeaders({Referer: baseurl + 'ott/'}));
-	
-	if (!/'\?exit=1'/i.test(html)) {
-		var error = getParam(html, null, null, /<font[^>]+color=['"]red['"][^>]*>([\s\S]*?)<\/font>/ig, replaceTagsAndSpaces, html_entity_decode);
-		if (error)
-			throw new AnyBalance.Error(error, null, /Неправильный логин или пароль/i.test(error));
-		
+	html = AnyBalance.requestPost(baseurl + 'api/v2/login', JSON.stringify({
+        "accountNumber": prefs.login,
+        "password": prefs.password,
+        "captchaCode":"",
+        "save":true
+    }), addHeaders({
+		Referer: baseurl,
+		'X-Requested-With': 'XMLHttpRequest',
+		'Accept': 'application/json, text/javascript, */*; q=0.01',
+		'Content-Type': 'application/json'
+	}));
+
+	var json = getJson(html);
+
+	if (json.resultCode) {
+		if(json.resultText) {
+            throw new AnyBalance.Error(json.resultText, null, true);
+		}
+
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
 	
 	var result = {success: true};
+
+	json = getJson(AnyBalance.requestGet(baseurl + 'api/v1/get-balance', g_headers));
+	getParam(json.accountBalance ? json.accountBalance + '': 0, result, 'balance', null, null, parseBalance);
+    getParam(json.statusName ? json.statusName : '', result, 'status');
+
+    json = getJson(AnyBalance.requestGet(baseurl + 'api/v1/get-profile-info'), g_headers);
+    getParam(json.contacts.fullName ? json.contacts.fullName : '', result, 'fio');
+    getParam((json.id ? json.id : prefs.login) + '', result, 'acc');
+
+    json = getJson(AnyBalance.requestGet(baseurl + 'api/v1/get-internet-accounts-details'), g_headers);
+    getParam(json.internetAccounts[0].tariffPlan.cost ? json.internetAccounts[0].tariffPlan.cost + '': 0, result, 'payment', null, null, parseBalance);
+    getParam(json.internetAccounts[0].tariffPlan.name ? json.internetAccounts[0].tariffPlan.name : '', result, '__tariff');
 	
-	getParam(html, result, 'balance', /баланс:(?:[^>]*>){2}([\s\S]*?)</i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'payment', /Ежемесячная абонентская плата:(?:[^>]*>){2}([\s\S]*?)</i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'fio', /Приветствуем Вас,([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'acc', /<b>\s*Лицевой счет:(?:[^>]*>){2}([^<,]*)/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'status', /Текущий статус договора:(?:[^>]*>){2}([\s\S]*?)</i, replaceTagsAndSpaces, html_entity_decode);
-	
-    html = AnyBalance.requestGet(baseurl + 'ott/?pr%5Bcontrol%5D%5Bkernel%5D%5Brecord%5D=245&pr%5Bcontrol%5D%5Bkernel%5D%5Bparent%5D=19&menu=19', g_headers);
-    
-	getParam(html, result, '__tariff', /Тариф(?:[^>]*>){16}([\s\S]*?)</i, replaceTagsAndSpaces, html_entity_decode);
-    
 	AnyBalance.setResult(result);
 }

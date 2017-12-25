@@ -48,11 +48,11 @@ function main() {
 
 	var result = {success: true};
 
-	AB.getParam(html, result, 'balance',   		/<span>текущий баланс((?:[^>]*>){3})/i, 		  AB.replaceTagsAndSpaces, AB.parseBalance);
-	AB.getParam(html, result, 'full_name', 		/cabinet-title[\s\S]*?<span[^>]*>([^/]+)/i, 	  AB.replaceTagsAndSpaces);
-	AB.getParam(html, result, 'account_number', /cabinet-title[\s\S]*?лицевой счет([^/]+)/i, 	  AB.replaceTagsAndSpaces);
-	AB.getParam(html, result, 'address', 		/cabinet-stats[\s\S]*?b-text[\s\S]*?<p>([^<]+)/i, AB.replaceTagsAndSpaces);
-	AB.getParam(html, result, 'email', 			/cabinet-stats[\s\S]*?propEmail[^>]*>([^<]+)/i,   AB.replaceTagsAndSpaces);
+	AB.getParam(html, result, 'balance',   		/<span>текущий баланс(?:[^>]*>){4}([\s\S]*?)<\/p>/i, AB.replaceTagsAndSpaces, AB.parseBalance);
+	AB.getParam(html, result, 'full_name', 		/cabinet-title[\s\S]*?<span[^>]*>([^/]+)/i, 	  	 AB.replaceTagsAndSpaces);
+	AB.getParam(html, result, 'account_number', /cabinet-title[\s\S]*?лицевой счет([^/]+)/i, 	  	 AB.replaceTagsAndSpaces);
+	AB.getParam(html, result, 'address', 		/cabinet-stats[\s\S]*?b-text[\s\S]*?<p>([^<]+)/i, 	 AB.replaceTagsAndSpaces);
+	AB.getParam(html, result, 'email', 			/cabinet-stats[\s\S]*?propEmail[^>]*>([^<]+)/i,   	 AB.replaceTagsAndSpaces);
 	//AB.getParam(html, result, 'agreement', /cabinet-title[\s\S]*?договор([^<]+)/i, AB.replaceTagsAndSpaces);
 
 	AnyBalance.setResult(result);

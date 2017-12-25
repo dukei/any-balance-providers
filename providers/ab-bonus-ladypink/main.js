@@ -12,23 +12,26 @@ var g_headers = {
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'http://www.podrygka.ru/';
+	var baseurl = 'https://www.podrygka.ru/';
 	AnyBalance.setDefaultCharset('utf-8');
 	
 	checkEmpty(prefs.login, 'Введите номер карты!');
 	checkEmpty((''+prefs.login).length === 13 && (''+prefs.login).substring(0, 4) === "2977", 'Введен некорректный номер карты. Пожалуйста, проверьте правильность ввода!');
 	
-	var html = AnyBalance.requestGet(baseurl + 'check-savings/', g_headers);
+	var html = AnyBalance.requestGet(baseurl + 'discount/', g_headers);
 
 	if(!html || AnyBalance.getLastStatusCode() > 400){
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
 	}
 	
-	html = AnyBalance.requestPost(baseurl + 'ajax/savings.php', {
-		card: prefs.login
-	}, addHeaders({Referer: baseurl + 'check-savings', 'X-Requested-With': 'XMLHttpRequest'}));
-	
+	html = AnyBalance.requestPost(baseurl + 'local/templates/.default/components/girlfriend/discount.card.check/gf.17.0.modal/ajax.php', {
+        number: prefs.login
+	}, addHeaders({
+		Referer: baseurl + 'discount/',
+		'X-Requested-With': 'XMLHttpRequest'
+	}));
+
 	var result = {success: true};
 
 	// По указанному номеру карты данных о покупках за текущий и предыдущий месяц нет.
@@ -38,21 +41,16 @@ function main() {
 		getParam('0', result, 'currentBalance', null, null, parseBalance);
 		getParam('0', result, 'futureDiscount', null, null, parseBalance);
 	} else {
-		var last = getParam(html, null, null, /LastMonth[^>]*>((?:[\s\S](?!(?:\s*<\/div>){2}))+[\S])/i),
-			current = getParam(html, null, null, /CurrentMonth[^>]*>((?:[\s\S](?!(?:\s*<\/div>){2}))+[\S])/i);
+		var rows = getElementsByClassName(html, 'info-row');
 
-		getDiscount(last, result, 'balance', 'discount');
-		getDiscount(current, result, 'currentBalance', 'futureDiscount');
+		getDiscount(rows[0], result, 'balance', 'discount');
+		getDiscount(rows[1], result, 'currentBalance', 'futureDiscount');
 	}
 	
 	AnyBalance.setResult(result);
 }
 
 function getDiscount(html, result, balancePar, discountPar){
-	if(/не совершали покупок/i.test(html))
-		getParam('0', result, balancePar, null, null, parseBalance);
-	else
-		getParam(html, result, balancePar, /purchase[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
-
-	getParam(html, result, discountPar, /(\d+)_percent\.png/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, balancePar, /<span[^>]*class="large">([^<]*)</i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, discountPar, /<div class="[^"]*circle--small"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
 }

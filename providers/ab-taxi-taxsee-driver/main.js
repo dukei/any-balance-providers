@@ -3,11 +3,10 @@
 */
 
 var g_headers = {
-'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
-'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
-'Connection':'keep-alive',
-'User-Agent':'Mozilla/5.0 (BlackBerry; U; BlackBerry 9900; en-US) AppleWebKit/534.11+ (KHTML, like Gecko) Version/7.0.0.187 Mobile Safari/534.11+'
+    'Accept':           'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
+    'Accept-Language':  'ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7',
+    'Connection':       'keep-alive',
+    'User-Agent':       'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.84 Safari/537.36'
 };
 
 function main(){
@@ -23,18 +22,20 @@ function main(){
         throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
     }
 	
-    var params = {
-        'LoginForm[username]': prefs.login,
-        'LoginForm[password]': prefs.password,
-        'yt0': ''
-    };
-	
-	html = AnyBalance.requestPost(baseurl, params, AB.addHeaders({Referer: baseurl}));
+	html = AnyBalance.requestPost(baseurl + 'login/',  {
+        '_csrf': AB.getParam(html, null, null, /input(?:[^>]*)name="_csrf"[^>]*value="([^"]*)/i, AB.replaceTagsAndSpaces),
+        'LoginForm[call]':      prefs.login,
+        'LoginForm[password]':  prefs.password,
+        'login-button': ''
+    }, AB.addHeaders({
+        Referer: baseurl + 'login/',
+        Origin: baseurl
+    }));
 
     if (!/\/logout/i.test(html)) {
-        var error = AB.getParam(html, null, null, /alert-danger[^>]*>(?:[^>]*>){2}([^<]+)/i, AB.replaceTagsAndSpaces);
+        var error = AB.getParam(html, null, null, /<div class="error-summary"(?:[^>]*>)([\s\S]*?)<\/div>/i, AB.replaceTagsAndSpaces);
         if(error) {
-            throw new AnyBalance.Error(error, null, /введены неправильно/i.test(error));
+            throw new AnyBalance.Error(error, null, /Неверно/i.test(error));
         }
 
         throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
@@ -42,9 +43,9 @@ function main(){
 
     var result = {success: true};
 
-    AB.getParam(html, result, '__tariff', /"Profile\[C_FIO\]"[^>]*value="([^"]+)/i, AB.replaceTagsAndSpaces);
+    AB.getParam(html, result, '__tariff', /input(?:[^>]*)id="profileform-fio"[^>]*value="([^"]*)/i, AB.replaceTagsAndSpaces);
     AB.getParam(result.__tariff, result, 'fio');
-    AB.getParam(html, result, 'balance', /"Profile\[C_SALDO\]"[^>]*value="([^"]+)/i, AB.replaceTagsAndSpaces, AB.parseBalance);
+    AB.getParam(html, result, 'balance', /input(?:[^>]*)id="profileform-saldo"[^>]*value="([^"]*)/i, AB.replaceTagsAndSpaces, AB.parseBalance);
 
     AnyBalance.setResult(result);
 }

@@ -32,6 +32,15 @@ function main() {
 	html = AnyBalance.requestPost(baseurl + 'uk/security/logon', params, addHeaders({Referer: baseurl + 'uk/security/logon'}));
 
 	if (!/logout/i.test(html)) {
+		var url = AnyBalance.getLastUrl();
+		AnyBalance.trace("Redirected to " + url);
+		if(/#/.test(url)){
+			AnyBalance.trace('Bad location, removing #');
+			html = AnyBalance.requestGet(url.replace(/#.*/, ''), addHeaders({Referer: baseurl + 'uk/security/logon'}));
+		}
+	}
+
+	if (!/logout/i.test(html)) {
 		var error = getElement(html, /<div[^>]+pageerror/, replaceTagsAndSpaces);
 		if (error)
 			throw new AnyBalance.Error(error, null, /парол/i.test(error));

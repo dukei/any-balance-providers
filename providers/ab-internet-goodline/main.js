@@ -12,44 +12,53 @@ var g_headers = {
 
 function main(){
     var prefs = AnyBalance.getPreferences();
-	var baseurl = 'https://' + (prefs.type || '') + 'lk.goodline.info/';
+	var baseurl = 'https://lk.goodline.info/';
     AnyBalance.setDefaultCharset('windows-1251');
 
 	AB.checkEmpty(prefs.login, 'Введите логин!');
 	AB.checkEmpty(prefs.password, 'Введите пароль!');
 
-	var html = AnyBalance.requestGet(baseurl + 'users/auth', g_headers);
+	var html = AnyBalance.requestGet(baseurl + 'auth', g_headers);
 	
 	if(!html || AnyBalance.getLastStatusCode() > 400){
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
 	}
-	
-	html = AnyBalance.requestPost(baseurl + 'users/auth', {
+
+	var token = getParam(html, null, null, /<input[^>]+name="_token"[^>]*value="([^"]*)/i) || '';
+
+	html = AnyBalance.requestPost(baseurl + 'auth/login', {
 		login: prefs.login,
 		password: prefs.password,
 		remember: '0',
-		submit:'Войти в систему'
-	}, AB.addHeaders({Referer: baseurl + 'users/auth'}));
-	
-	if(!/\/users\/exit/.test(html)) {
-		var error = AB.getParam(html, null, null, /<span[^>]*class=["']text-suspend[^>]*>([\s\S]*?)<\/span>/i, AB.replaceTagsAndSpaces);
-		if (error)
-			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
-        
-		error = getParam(html, null, null, /jGrowl\s*\(\s*'([^']*)/, replaceTagsAndSpaces);
-        if(error)
-            throw new AnyBalance.Error(error);
-		
+        new_lk: '1',
+        url: '',
+        _token: token,
+        remember: '1',
+		'g-recaptcha-response': ''
+	}, AB.addHeaders({Referer: baseurl + 'auth'}));
+
+	var json = getJson(html);
+
+	if(!json.success) {
+		var error = json.message ? json.message : '';
+		if (error) {
+            throw new AnyBalance.Error(error, null, /логин или пароль/i.test(error));
+
+        }
+
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
 	
     var result = {success: true};
 
-    getParam(html, result, 'balance', /Баланс:[^>]*>([\S\s]*?)<\//i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'pay', /к оплате(?:[^>]*>){2}\s*<div[^>]*class="price"[^>]*>([\s\S]*?)<\/div/i, replaceTagsAndSpaces, parseBalance);
-	
+	html = AnyBalance.requestGet(baseurl + 'service', g_headers);
+
+    getParam(html, result, 'balance', /Ваш баланс(?:[\s\S]*?)<div[^>]*class="price"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'pay', 	  /К ОПЛАТЕ(?:[\s\S]*?)<div[^>]*class="price"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'paid', 	  /Списано за(?:[\s\S]*?)<div[^>]*class="price"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+
 	
     // getParam(html, result, 'status', /Статус[\S\s]*?<td[^>]*>([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
     // getParam(html, result, 'agreement', /Номер договора[\S\s]*?<td[^>]*>([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
@@ -71,16 +80,12 @@ function main(){
     // }
 
 	if(AnyBalance.isAvailable('trafficInter', 'trafficIntra')){
-		html = AnyBalance.requestGet(baseurl + 'popup/internetstatistic', addHeaders({'X-fancyBox': 'true', 'X-Requested-With': 'XMLHttpRequest'}));
-		
-		getParam(html, result, 'trafficInter', /За месяц[\s\S]*?Итого([\s\S]*?)<\//i, replaceTagsAndSpaces, parseTrafficGb);
-		getParam(html, result, 'trafficIntra', /За месяц[\s\S]*?Итого:(?:[\s\S]*?<td[^>]*>){1}?Итого:([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseTrafficGb);
+		html = AnyBalance.requestGet(baseurl + 'service/internet_stat', g_headers);
+
+		getParam(html, result, 'trafficInter', /За месяц(?:[\s\S]*?<td[^>]*class="sum"[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+		getParam(html, result, 'trafficIntra', /За месяц(?:[\s\S]*?<td[^>]*class="sum"[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
     }
     
     AnyBalance.setResult(result);
 }
 
-function parseTrafficGb(str) {
-	var mbytes = parseTraffic(str, 'mb');
-	return parseFloat((mbytes/1024).toFixed(2));
-}

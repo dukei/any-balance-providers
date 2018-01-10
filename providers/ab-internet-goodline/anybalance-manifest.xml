@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="6">ab-internet-goodline</id>
+	<id version="7">ab-internet-goodline</id>
 	<api flags="no_browser"/>
 	<name>GoodLine (Кемерово)</name>
 	<description html="true"><![CDATA[
@@ -22,9 +22,10 @@
 		<counter id="balance" name="Баланс" units=" р"/>
 		<!-- <counter id="status" name="Статус" type="text"/> -->
 		<counter id="pay" name="Рекомендуемый платеж" units=" р"/>
+		<counter id="paid" name="Списано за месяц" units=" р"/>
 		<!-- <counter id="agreement" name="№ договора" type="text"/> -->
-		<counter id="trafficInter" name="Трафик интернет" units=" Gb"/>
-		<counter id="trafficIntra" name="Трафик интранет" units=" Gb"/>
+		<counter id="trafficInter" name="Трафик интернет" units=" Mb"/>
+		<counter id="trafficIntra" name="Трафик интранет" units=" Mb"/>
 	</counters>
 	<keywords>интернет</keywords>
 	<type>internet</type>

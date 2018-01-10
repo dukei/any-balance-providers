@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="4">ab-bonus-21century</id>
+  <id version="5">ab-bonus-21century</id>
   <api flags="no_browser"/>
   <name>21 Век Бонус (21vek.by)</name>
   <description html="true"><![CDATA[
@@ -20,8 +20,9 @@
     <history>history.xml</history>
   </files>
   <counters>
-    <counter id="balance" name="Баланс" units=" {@curr}"/>
-    <counter id="discount" name="% от общей суммы на счёт" units=" %"/>
+    <counter id="balance" name="Баланс" units=" Б"/>
+    <counter id="discount" name="Процент скидки" units=" %"/>
+    <counter id="purchase_amount" name="Сумма покупок" units=" р"/>
     <counter id="textInfo" name="Общая информация" type="text"/>
     <counter id="cardNumber" name="Текущая карта" type="text"/>
   </counters>

@@ -20,6 +20,7 @@ function main() {
 	
 	checkEmpty(prefs.contractNumber, 'Введите номер договора!');
 	checkEmpty(prefs.passportNumber, 'Введите номер паспорта!');
+	checkEmpty(prefs.mobileNumber, 'Введите номер мобильного телефона!');
 	
 	var html = AnyBalance.requestGet(baseurl + '/login.jsp', g_headers);
 	
@@ -29,7 +30,7 @@ function main() {
     var params = {
         captchaCode: "",
 		contractNumber: prefs.contractNumber,
-		mobileNumber: '',
+		mobileNumber: prefs.mobileNumber,
 		passportNumber: prefs.passportNumber
 	};
     
@@ -37,7 +38,7 @@ function main() {
 	
     var json = getJson(html);
     
-	if (json.state != 'authorized_without_mob') {
+	if (json.state != 'authorized') {
 		var error = json.err_msg;
 		if (error)
 			throw new AnyBalance.Error(error, null, /Неверный логин или пароль|не найдена/i.test(error));

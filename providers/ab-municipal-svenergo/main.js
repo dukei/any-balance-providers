@@ -3,16 +3,18 @@
 */
 
 var g_headers = {
-    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-    'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
-    'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
-    'Connection': 'keep-alive',
-    'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36'
+    'Accept':           'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
+    'Accept-Charset':   'windows-1251,utf-8;q=0.7,*;q=0.3',
+    'Accept-Language':  'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
+    'Connection':       'keep-alive',
+    'User-Agent':       'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.36'
 };
 
 function main(){
-    var prefs = AnyBalance.getPreferences();
-    var baseurl = 'http://ekb.esplus.ru/';
+    var prefs   = AnyBalance.getPreferences();
+    var baseurl = 'http://ekb.esplus.ru/',
+        lk_url  = 'https://lkk-ekb.esplus.ru/';
+
     AnyBalance.setDefaultCharset('utf-8');
 
     AB.checkEmpty(prefs.login, 'Введите логин!');
@@ -26,16 +28,17 @@ function main(){
     }
 
     var error = AB.getParam(html, null, null, /function\s*onCheckLogin[\s\S]*?(Ошибка авторизации[^"]+)/i, AB.replaceTagsAndSpaces);
-    var params = {
-        login: prefs.login,
-        pass: prefs.password
-    };
 
-    html = AnyBalance.requestPost(
-        'https://lk.sesb.ru/Individual',
-        params,
-        AB.addHeaders({ Referer: baseurl })
-    );
+    html = AnyBalance.requestPost(lk_url + 'Individual', {
+        'AUTH_FORM':  'Y',
+        'TYPE':       'AUTH',
+        'sessid':     '',
+        'USER_TYPE': 'fiz',
+        'login':      prefs.login,
+        'pass':       prefs.password
+    }, AB.addHeaders({
+        Referer: baseurl
+    }));
 
     if (!/logout/i.test(html)) {
         if (error) {
@@ -60,7 +63,7 @@ function main(){
     AB.getParam(html, result, 'cost', /Стоимость(?:[^>]*>){2}([\s\S]*?)<ta/i, AB.replaceTagsAndSpaces);
 
 
-    var account = getAccountId(html, prefs.account);
+    /*var account = getAccountId(html, prefs.account);
 
     if (account && !isEqualPrefsAndCurrentAccount(html, prefs.account)) {
         params = AB.createFormParams(html);
@@ -78,7 +81,7 @@ function main(){
                 break;
             }
         }
-    }
+     }*/
 
     var balanceHtml = AB.getParam(html, null, null, /NameBalance[^>]*>((?:[^>]+>){5})/i, AB.replaceTagsAndSpaces);
     AB.getParam(balanceHtml, result, 'balance', null, null, AB.parseBalance);

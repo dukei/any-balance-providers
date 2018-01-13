@@ -86,6 +86,7 @@ function main()
     AnyBalance.trace(rate, "exchange rate");
     var result = {success: true};
 
+    getParam(json[0].symbol + ' → ' + target, result, '__tariff');
     getParam(+rate, result, 'exchangerate');
     getParam(json[0].price_btc*1000, result, 'price_btc');
     getParam(json[0].symbol, result, 'symbol');

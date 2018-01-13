@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="5" date="2018-01-13">
+	Added tariff string
+	</change>
 	<change version="4" date="2018-01-13">
 	Fixed units
 	</change>

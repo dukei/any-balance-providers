@@ -1,5 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="3" date="2018-01-13">
+	Extended provider output - added price in btc, cap, rank, symbol
+	</change>
 	<change version="1" date="2017-08-29">
 	- Initial version.
 	</change>

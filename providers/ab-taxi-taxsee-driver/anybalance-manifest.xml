@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="3">ab-taxi-taxsee-driver</id>
+	<id version="4">ab-taxi-taxsee-driver</id>
 	<api flags="no_browser"/>
 	<name>Такси Максим (водитель)</name>
 	<description html="true"><![CDATA[
 	<p>Получает баланс на счете водителя Такси Максим (https://driver.taxsee.com/)</p>
-	<p>Информация берется из личного кабинета https://driver.taxsee.com/?r=profile&l=ru</p>
+	<p>Информация берется из личного кабинета https://driver.taxsee.com/profile</p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
   <depends>

@@ -21,12 +21,4 @@
         dialogMessage="Введите пароль, используемый для входа в личный кабинет Good Line."
         inputType="textPassword">
     </EditTextPreference>
-	<ListPreference
-		key="type"
-		title="Личный кабинет"
-		summary="||{@s}"
-		entries="Новый|Старый"
-		entryValues="|old-"
-		defaultValue="">
-	</ListPreference>	
 </PreferenceScreen>

@@ -3,13 +3,10 @@
 */
 
 var g_headers = {
-	'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-	'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
-	'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
-	'Accept-Encoding':'gzip,deflate,sdch',
-	'Connection':'keep-alive',
-	'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/28.0.1500.95 Safari/537.36',
-	'Origin':'https://mano.pildyk.lt',
+	'Accept': 			'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
+	'Accept-Charset':	'windows-1251,utf-8;q=0.7,*;q=0.3',
+	'Accept-Language':	'ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7',
+	'User-Agent': 		'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.84 Safari/537.36'
 };
 
 function main(){
@@ -22,41 +19,43 @@ function main(){
     AnyBalance.setDefaultCharset('utf-8'); 
 
 	var html = AnyBalance.requestGet(baseurl, g_headers);
-	
-	var html = AnyBalance.requestPost(baseurl + 'Prisijungti.aspx?ReturnUrl=%2fdefault.aspx', {
-		'ctl00$ctl00$main$main$login$tbUserName':prefs.login,
-		'ctl00$ctl00$main$main$login$tbPassword':prefs.password,
-		'__EVENTTARGET':'ctl00$ctl00$main$main$login$btnLogin',
-		'__SCROLLPOSITIONX':'0',
-		'__SCROLLPOSITIONY':'200',
-		'ctl00$ctl00$main$ctl00$tbPhone':'tel. numeris',
-		'ctl00$ctl00$main$ctl00$tbSum':'10',
-		'ctl00$ctl00$main$ctl00$ddlBank':'',
-		'ctl00$ctl00$main$main$registrationStart$tbUserNameReg':'',
-		'__EVENTARGUMENT':getParam(html, null, null, /<input\s*type="hidden"\s*name="__EVENTARGUMENT"\s*id="__EVENTARGUMENT"\s*value="([^\"]*)"\s*\/>/i, null, null),
-		'__VIEWSTATE':getParam(html, null, null, /<input\s*type="hidden"\s*name="__VIEWSTATE"\s*id="__VIEWSTATE"\s*value="([^\"]*)"\s*\/>/i, null, null),
-		'__EVENTVALIDATION':getParam(html, null, null, /<input\s*type="hidden"\s*name="__EVENTVALIDATION"\s*id="__EVENTVALIDATION"\s*value="([^\"]*)"\s*\/>/i, null, null),
-		'ctl00$ctl00$main$main$login$btnLogin':'Prisijungti'
-	}, addHeaders({Referer:baseurl+'Prisijungti.aspx?ReturnUrl=%2fdefault.aspx'}));
 
+    if (!html || AnyBalance.getLastStatusCode() >= 400) {
+        AnyBalance.trace(html);
+        throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
+    }
+
+	html = AnyBalance.requestPost(baseurl + 'api/authentication/login', {
+		'Msisdn': 	prefs.login,
+		'Password': prefs.password
+
+	}, addHeaders({
+		'X-Requested-With': 'XMLHttpRequest'
+	}));
+
+    var json = getJson(html);
 	
-	if (!/ctl00_ctl00_main_ctl00_userInfo_logoff/i.test(html)) {
-		var error = getParam(html, null, null, /<div[\s\S]*?class="msg msg-error"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+	if (!json.redirect) {
+		var error = json.errors ? json.errors[0].message : undefined;
 		if (error)
-			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
+			throw new AnyBalance.Error(error, null, true);
 		
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}	
 	
-	var result = {success: true}; 
-	
-	getParam(html, result, 'balance', /<big[^>]+class="sub_header"[^>]*>([\s\S]*?)<\/big>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'name', /<p\s*id="userinfo"\s*[^>]*>[\s\S]*?Prisijungęs:\s*<strong>([^>]*?)\s*<\/strong>[\s\S]*?<\/p>/i, replaceTagsAndSpaces, null);
+	var result = {success: true};
+
+	html = AnyBalance.requestGet(json.redirect, g_headers);
+	getParam(html, result, 'name', /dashboard(?:[\s\S]*?)profile-wrapper(?:[\s\S]*?<p[^>]*>)([^<]*)/i, replaceTagsAndSpaces, null);
+
     getParam(html, result, 'balanceExpire', /<th>Sąskaitos\s*likutis:[\s\S]*?<small\sclass="expiration_date">\s*galioja\s*iki\s*([^>]*?)\s*<\/small>\s*<\/th>/i, replaceTagsAndSpaces, parseDateISO);
-	
 	getParam(html, result, 'traf_left', /AccountInfo_DataBucketRepeater(?:[^>]*>){8}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseTraffic);
-	
+
+    json = getJson(AnyBalance.requestGet(baseurl + 'api/accountinformation/get-price-plan-and-account-balance', g_headers));
+    getParam(json.result.balance ? json.result.balance + '': '0', result, 'balance', null, null, parseBalance);
+    getParam(json.result.bonsBalance ? json.result.bonsBalance + '': '0', result, 'bonus', null, null, parseBalance);
+
 	result.telnum = '+370' + prefs.login;
 	
     AnyBalance.setResult(result);

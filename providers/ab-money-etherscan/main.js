@@ -28,7 +28,7 @@ function main() {
 		if(cf.isCloudflared(html))
 		    html = cf.executeScript(html);
 
-		getParam(html, result, ['rate', 'usd'], /\$([\d\.\s]*)@[^<]*BTC\/ETH/i, replaceTagsAndSpaces, parseBalance);
+		getParam(html, result, ['rate', 'usd'], /\$([\d\.,\s]*)@[^<]*BTC\/ETH/i, replaceTagsAndSpaces, parseBalance);
 		getParam(html, result, ['rate_btc', 'btc'], /@([^<]*)BTC\/ETH/i, replaceTagsAndSpaces, parseBalance);
 	}
 

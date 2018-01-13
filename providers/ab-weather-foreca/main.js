@@ -12,7 +12,7 @@ var g_headers = {
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'http://www.foreca.ru/';
+	var baseurl = 'https://www.foreca.ru/';
 	AnyBalance.setDefaultCharset('utf-8');
 
 	/* Проверяем не забыл ли пользователь ввести данные */

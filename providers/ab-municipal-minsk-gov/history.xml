@@ -1,12 +1,15 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="4" date="2017-12-25">
+	- Поддержка изменений на сайте.
+	</change>
 	<change version="3" date="2016-05-30">
-	Исправление списка районов
+	- Исправление списка районов.
 	</change>
 	<change version="2" date="2016-04-04">
 	- Исправлена ошибка.
 	</change>
-<change version="1" date="2016-03-01">
-	- Релиз
-</change>
+	<change version="1" date="2016-03-01">
+	- Релиз.
+	</change>
 </history>

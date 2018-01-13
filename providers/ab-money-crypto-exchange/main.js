@@ -88,9 +88,10 @@ function main()
 
     getParam(+rate, result, 'exchangerate');
     getParam(json[0].price_btc*1000, result, 'price_btc');
-    getParam(json[0].symbol, result, ['symbol', 'exchangerate', 'rank']);
+    getParam(json[0].symbol, result, 'symbol');
     getParam(+json[0].rank, result, 'rank');
     getParam(cap && +cap, result, 'cap');
+    getParam(target, result, ['currency', 'cap', 'exchangerate']);
 
 	AnyBalance.setResult(result);
 }

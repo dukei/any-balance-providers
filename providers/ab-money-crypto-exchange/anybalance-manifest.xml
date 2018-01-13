@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="3">ab-money-crypto-exchange</id>
+	<id version="4">ab-money-crypto-exchange</id>
 	<api flags="no_browser"/>
 	<name>Cryptocurrency Exchange Rates</name>
 	<description html="true"><![CDATA[<p>Fetches cryptocurrencies exchange rates. Uses coinmarketcap.com as it's source.</p>]]></description>
@@ -15,11 +15,12 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="exchangerate" name="Exchange Rate" units=" {@symbol}"/>
+		<counter id="exchangerate" name="Exchange Rate" units=" {@currency}"/>
 		<counter id="price_btc" name="BTC rate" units=" mɃ"/>
-		<counter id="cap" name="Market cap" units=" {@symbol}"/>
+		<counter id="cap" name="Market cap" units=" {@currency}"/>
 		<counter id="rank" name="Rating"/>
 		<counter id="symbol" name="Ticker" type="text"/>
+		<counter id="currency" name="Currency" type="text"/>
 	</counters>
 	<keywords>bitcoin,BTC,биткоин,BTH,биткэш,криптовалюта,cryptocurrency</keywords>
 	<type>finance, exchange</type>

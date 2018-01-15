@@ -1,16 +1,18 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="8">ab-internet-damavik</id>
+	<id version="9">ab-internet-damavik</id>
 	<name>Атлант Телеком (Шпарки Дамавик)</name>
 	<description html="true"><![CDATA[
-	<p>Получает данные для интернет-провайдера Шпарки дамавик (Шпаркi дамавiк или Атлант Телеком) http://www.telecom.by/</p>
+	<p>Получает данные для интернет-провайдера Velcom (Шпаркi дамавiк или Атлант Телеком) http://mydom.velcom.by/</p>
 	]]></description>	
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>

@@ -104,6 +104,22 @@ function main() {
 		getParam(json.data.balance, result, 'balancePASC');
 		getParam(json.data.hashrate, result, 'hashratePASC');
 	}
+	else if (prefs.pool=='etn') {
+		var baseurl = 'https://etn.nanopool.org/api/v1/balance_hashrate/';
+		var html = AnyBalance.requestGet(baseurl + prefs.wallet, g_headers);
+		if (!html || AnyBalance.getLastStatusCode() > 400) {
+			AnyBalance.trace(html);
+			throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Возможно сайт изменился.');
+		}
+		var json = getJson(html);
+		if(json.status !== true)
+			throw new AnyBalance.Error(json.error);
+
+			
+		var result = {success: true};
+		getParam(json.data.balance, result, 'balanceETN');
+		getParam(json.data.hashrate, result, 'hashrateETN');
+	}
 	else {
 		throw new AnyBalance.Error('Выберите пул монеты');
 		

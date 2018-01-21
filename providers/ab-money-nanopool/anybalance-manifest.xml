@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-money-nanopool</id>
+	<id version="2">ab-money-nanopool</id>
 	<api flags="no_browser"/>
 	<name>Nanopool</name>
 	<description html="true"><![CDATA[
@@ -12,7 +12,6 @@
 		<module id="library"/>
 	</depends>
 	<files>
-		<js>library.min.js</js>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
 		<js>main.js</js>
@@ -36,6 +35,9 @@
 		
 		<counter id="balancePASC" name="Баланс PASC" units=" PASC"/>
 		<counter id="hashratePASC" name="Общий хешрейт PASC" units=" Mh/s"/>
+		
+		<counter id="balanceETN" name="Баланс ETN" units=" ETN"/>
+		<counter id="hashrateETN" name="Общий хешрейт ETN" units=" H/s"/>
 
 	</counters>
 	<keywords>etc,eth,btc,xmr, sia, zec, pasc</keywords>

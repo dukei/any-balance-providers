@@ -3,7 +3,7 @@
 	<EditTextPreference
 		title="Номер кошелька"
 		key="wallet"
-		summary="||{@s}"
+		summary="|Введите номер кошелька|{@s}"
 		obligatory="true"
 		dialogTitle="Number Wallet"
 		positiveButtonText="ОК"
@@ -14,8 +14,8 @@
         key="pool" 
         title="Пул монеты"
         summary="||{@s}"
-        entries="eth.nanopool.org|etc.nanopool.org|sia.nanopool.org|zec.nanopool.org|xmr.nanopool.org|pasc.nanopool.org"
-        entryValues="eth|etc|sia|zec|xmr|pasc"
+        entries="eth.nanopool.org|etc.nanopool.org|sia.nanopool.org|zec.nanopool.org|xmr.nanopool.org|pasc.nanopool.org|etn.nanopool.org"
+        entryValues="eth|etc|sia|zec|xmr|pasc|etn"
 		defaultValue="eth">
 	</ListPreference>
 </PreferenceScreen>

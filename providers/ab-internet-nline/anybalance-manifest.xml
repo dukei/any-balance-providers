@@ -1,12 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id version="5">ab-internet-nline</id>
+	<id version="6">ab-internet-nline</id>
 	<name>ЭНЛАЙН (Москва)</name>
 	<description>
     Получает баланс и информацию о тарифном плане для московского интернет-провайдера ЭНЛАЙН (http://nline.ru).
 
-    Информация берется из личного кабинета http://nline.ru/cabineti.
+    Информация берется из личного кабинета https://billing.nline.ru/.
 	</description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>
@@ -22,7 +22,10 @@
 		<counter id="balance" name="Баланс" units=" р"/>
 		<counter id="licschet" name="005 номер" type="text"/>
 		<counter id="agreement" name="Номер договора" type="text"/>
+		<counter id="fio" name="ФИО" type="text"/>
+<!--
 		<counter id="traffic" name="Трафик" units=" Gb"/>
+-->
 	</counters>
 	<keywords>интернет</keywords>
 	<type>internet</type>

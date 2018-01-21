@@ -24,7 +24,7 @@ function findStationByName(baseurl, name) {
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'http://booking.uz.gov.ua/';
+	var baseurl = 'https://booking.uz.gov.ua/';
 	AnyBalance.setDefaultCharset('utf-8');
 	
 	checkEmpty(prefs.station_from, 'Введите пункт отправления!');
@@ -70,7 +70,7 @@ function main() {
         'station_from':station_fromIdAndNameArray[1],
         'station_till':station_toIdAndNameArray[1],
         'date_dep':prefs.date_trip,
-        'time_dep':'00:00',
+        'time_dep':prefs.time_trip || '00:00',
         'time_dep_till':'',
         'another_ec':'0',
         'search':''

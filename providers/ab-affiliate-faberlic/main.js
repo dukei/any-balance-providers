@@ -24,37 +24,42 @@ function main() {
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 
-	var html = AnyBalance.requestGet(baseurl+'index.php?option=com_user&view=login&lang=ru', g_headers);
-	html = handleRedirect(html);
+	var html = AnyBalance.requestGet(baseurl, g_headers);
 
 	if(!html || AnyBalance.getLastStatusCode() > 400){
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
 	}
 	
-	var params = createFormParams(html, function(params, str, name, value) {
-		if (name == 'username') 
-			return prefs.login;
-		else if (name == 'passwd')
-			return prefs.password;
-
-		return value;
-	});
-    
-	html = AnyBalance.requestPost(baseurl + 'index.php?option=com_edit&view=edit&listid=600&task=login&return='+params.return, params, addHeaders({
-		Referer: baseurl + 'index.php?option=com_user&view=login&lang=ru'
+	html = AnyBalance.requestPost(baseurl + 'index.php?option=com_ajax&jsonrpc=Loginauth', JSON.stringify({
+		"jsonrpc":"2.0",
+		"method":"login",
+		"params":{
+			"login":prefs.login,
+			"password":prefs.password,
+			"remember":false
+		},
+		"id":1
+	}), addHeaders({
+		'Content-Type': 'application/json',
+		'X-Requested-With': 'XMLHttpRequest',
+		Referer: baseurl
 	}));
-	html = handleRedirect(html);
 	
-	//html = AnyBalance.requestGet(baseurl + 'index.php?option=com_user&view=cabinet', g_headers);
+	var json = getJson(html);
+	if(!json.result || !json.result.success){
+		var error = json.result && json.result.error;
+		if (error)
+			throw new AnyBalance.Error(error, null, /парол/i.test(error));
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удалось войти в личный кабинет. Сайт изменен?');
+	}
+
+	html = AnyBalance.requestGet(baseurl, g_headers);
     
 	if (!/logout/i.test(html)) {
-		var error = getParam(html, null, null, /<div[^>]+alert-danger[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
-		if (error)
-			throw new AnyBalance.Error(error, null, /Неправильный логин или пароль/i.test(error));
-		
 		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
+		throw new AnyBalance.Error('Не удалось зайти в личный кабинет после авторизации. Сайт изменен?');
 	}    
     
     html = AnyBalance.requestGet(baseurl + 'index.php?option=com_user&view=bill&Itemid=2184&lang=ru', g_headers);

@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="46" date="2017-11-29">
+	Поддержка изменений в личном кабинете (восстановление получения остатков)
+	</change>
 	<change version="45" date="2017-06-08">
 	Идентификация как AnyBalance для входа и по логину-паролю (по просьбе Tele2)
 	</change>

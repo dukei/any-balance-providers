@@ -13,8 +13,8 @@ var g_headers =
 function currencySymbolCheck(symbol)
 {
     symbol = symbol.toUpperCase();
-    if (!/^[A-Z][A-Z][A-Z]$/.test(symbol))
-        throw new AnyBalance.Error("Currency codes must be 3 letters long, English letters only, no extra spaces or other characters.");
+    if (!/^[A-Z]{3,5}$/.test(symbol))
+        throw new AnyBalance.Error("Currency codes must be 3 to 5 letters long, English letters only, no extra spaces or other characters.");
     return(symbol);
 }
 
@@ -31,8 +31,8 @@ function currencyId(symbol)
     }
 
     // don't have it? shit! fetch the huge list
-    AnyBalance.trace("Fidning out cryptocurrency ID..."); 
-    var url = "https://api.coinmarketcap.com/v1/ticker/";
+    AnyBalance.trace("Finding out cryptocurrency ID..."); 
+    var url = "https://api.coinmarketcap.com/v1/ticker/?limit=0";
     var html = AnyBalance.requestGet(url, g_headers);
     var json = getJson(html);
     
@@ -75,6 +75,7 @@ function main()
     AnyBalance.trace(html, "server reply"); 
     var json = getJson(html);
     var rate = json[0]["price_" + target.toLowerCase()];
+    var cap = json[0]["market_cap_" + target.toLowerCase()];
     
     // the server will still return the usual JSON, nor an error, in case of bad 
     // target currency, but the price is going to be missing
@@ -82,6 +83,16 @@ function main()
         throw new AnyBalance.Error("Unexpected target currency code.");
     
 	// return the result
-    AnyBalance.trace(rate, "exchange rate"); 
-	AnyBalance.setResult({success: true, exchangerate: rate});
+    AnyBalance.trace(rate, "exchange rate");
+    var result = {success: true};
+
+    getParam(json[0].symbol + ' → ' + target, result, '__tariff');
+    getParam(+rate, result, 'exchangerate');
+    getParam(json[0].price_btc*1000, result, 'price_btc');
+    getParam(json[0].symbol, result, 'symbol');
+    getParam(+json[0].rank, result, 'rank');
+    getParam(cap && +cap, result, 'cap');
+    getParam(target, result, ['currency', 'cap', 'exchangerate']);
+
+	AnyBalance.setResult(result);
 }

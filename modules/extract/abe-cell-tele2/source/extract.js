@@ -219,7 +219,11 @@ function processBalance(html, result){
     for(var i = 0; i < maxTries; i++) {
         try {
             AnyBalance.trace('Пытаемся получить баланс, попытка: ' + (i+1));
-            html = AnyBalance.requestGet(baseurl + 'main/tariffAndBalance', g_headers);
+            html = AnyBalance.requestGet(baseurl + 'main/tariffAndBalance?_' + (+new Date()), addHeaders({
+            	Accept: '*/*',
+            	'X-Requested-With': 'XMLHttpRequest',
+            	Referer: baseurl
+            }));
 
             var json = getJson(html);
 
@@ -249,7 +253,12 @@ function processRemainders(html, result){
             result.remainders = {};
 
         AnyBalance.trace("Searching for resources left");
-        html = AnyBalance.requestGet(baseurl + "main/discounts", g_headers);
+        html = AnyBalance.requestGet(baseurl + "main/discounts?_" + (+new Date()), addHeaders({
+        	Accept: '*/*',
+        	'X-Requested-With': 'XMLHttpRequest',
+        	Referer: baseurl
+        }));
+
         AnyBalance.trace('Got discounts: ' + html);
         json = JSON.parse(html);
         var arr = [json.discountsIncluded, json.discountsNotIncluded/** не ясно, для чего это включено */, json.discountsRollover];

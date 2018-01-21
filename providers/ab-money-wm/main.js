@@ -60,13 +60,15 @@ function main(){
 	}
 
 	var elements;
-	if(/logout/i.test(html)){
+	if(/signoff/i.test(html)){
 		var fns = AnyBalance.requestGet(baseurl + 'srv/finance/entities', addHeaders({
 			Accept: 'application/json, text/plain, */*',
 			Referer: baseurl + 'finances'
 		}));
 		try{
 			elements = getJson(fns);
+			if(/denied/i.test(elements.Message))
+				throw new AnyBalance.Error(elements.Message);
 			AnyBalance.trace('Удалось войти в предыдущей сессии');
 		}catch(e){
 			AnyBalance.trace('test of login failed, should relogin: ' + e.message);
@@ -75,7 +77,7 @@ function main(){
 		}
 	}
 	
-	if(!/logout/i.test(html)){
+	if(!/signoff/i.test(html)){
 		AnyBalance.trace('Мгновенно не зашли');
 
 		var signonUrl = getParam(html, /singleSignOnUrl:\s*'([^']*)/, replaceSlashes);

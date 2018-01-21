@@ -13,7 +13,7 @@ var g_headers = {
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'https://letyshops.ru/';
+	var baseurl = 'https://letyshops.com/';
 	AnyBalance.setDefaultCharset('utf-8');
 
 	AB.checkEmpty(prefs.login, 'Введите логин!');
@@ -26,64 +26,56 @@ function main() {
 		throw new AnyBalance.Error('Сайт провайдера временно недоступен! Попробуйте обновить данные позже.');
 	}
 
-	html = AnyBalance.requestPost(baseurl + 'ajax/login7/ajax', {}, g_headers);
-	var json = getJson(html);
-	var form = json[1].output;
-
-	if(!form){
-		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Не удаётся найти форму входа! Сайт изменен?');
-	}
-
-	var params = AB.createFormParams(form, function(params, str, name, value) {
-		if (name == 'mail') {
-			return prefs.login;
-		} else if (name == 'pass') {
-			return prefs.password;
-		}
-
-		return value;
-	});
-
-	html = requestPostMultipart(baseurl + 'ajax/login7/ajax', params, AB.addHeaders({
-		Referer: baseurl
+	html = requestPostMultipart(baseurl + 'login', {
+		_username: prefs.login,
+		_password: prefs.password,
+		_csrf_token: ''
+	}, addHeaders({
+		Accept: 'application/json, text/plain, */*',
+		'X-Requested-With': 'XMLHttpRequest',
 	}));
 
-	if (!/"command"\s*:\s*"reload"/i.test(html)) {
-		var json = getJson(html);
-		var output = json[1].output;
-		var error = AB.getElement(output, /<div[^>]+error/i, [/<h[^>]*>([\s\S]*?)<\/h[^>]*>/ig, '', AB.replaceTagsAndSpaces]);
-		if (error) {
-			throw new AnyBalance.Error(error, null, /парол|некоррект/i.test(error));
-		}
+	var json = getJson(html);
 
+	if(!Array.isArray(json) || json.length != 0){
+		if(json.message)
+			throw new AnyBalance.Error(json.message, null, /парол/i.test(json.message));
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
 
-	html = AnyBalance.requestGet(baseurl, g_headers);
-	var data = getParam(html, null, null, /Drupal.ssiData\s*=\s*('[^']*')/i, [/^/, 'return '], safeEval);
-	data = getJson(data);
+	html = AnyBalance.requestGet(baseurl);
+	var data = getJsonObject(html, /window.__LS\s*=/);
 
-	html = AnyBalance.requestGet(baseurl + 'user/' + data.user.id + '/balance', g_headers);
+	if(!data){
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удалось успешно зайти в личный кабинет. Сайт изменен?');
+	}
 
 	var result = {
 		success: true
 	};
 
-	AB.getParam(html, result, 'balance', /В ожидании:[\s\S]*?<span[^>]+amount[^>]*>([\s\S]*?)<\/span>/i, AB.replaceTagsAndSpaces, AB.parseBalance);
-	AB.getParam(html, result, 'available', /На балансе:[\s\S]*?<span[^>]+amount[^>]*>([\s\S]*?)<\/span>/i, AB.replaceTagsAndSpaces, AB.parseBalance);
+	AB.getParam(data.user.balancePending, result, 'balance');
+	AB.getParam(data.user.balanceApproved, result, 'available');
 
-	var order = getElement(html, /<tr[^>]+order/i);
-	if(order){
-		AB.getParam(order, result, 'last_sum', /Сумма заказа:([^<]*)/i, AB.replaceTagsAndSpaces, AB.parseBalance);
-		AB.getParam(order, result, 'last_date', /Дата заказа:([^<]*)/i, AB.replaceTagsAndSpaces, AB.parseDate);
-		AB.getParam(order, result, 'last_place', /<div[^>]+title[^>]*>([\s\S]*?)<\/div>/i, AB.replaceTagsAndSpaces);
-		AB.getParam(order, result, 'last_cashback', /<td[^>]+amount[^>]*>([\s\S]*?)<\/td>/i, [/Тип аккаунта:?/i, '', AB.replaceTagsAndSpaces], parseBalance);
+	html = AnyBalance.requestGet(baseurl + 'user', g_headers);
+	var loyalty = getParam(html, /:loyalty="([^"]*)/i, replaceHtmlEntities, getJson);
+	result.__tariff = loyalty.level.current.name;
+	if(loyalty.level.next)
+		result.__tariff += ' (до ' + loyalty.level.next.name + ' ' + loyalty.level.next.delta + ' р.)';
+
+	if(AnyBalance.isAvailable('last_sum', 'last_date', 'last_place', 'last_cashback')){
+		html = AnyBalance.requestGet(baseurl + 'user/balance', g_headers);
+
+		var order = getElements(html, [/<tr[^>]+b-table__table-row/ig, /<td/i])[0];
+		if(order){
+			AB.getParam(order, result, 'last_sum', /(?:Кешбек|Сумма заказа):([^<]*)/i, AB.replaceTagsAndSpaces, AB.parseBalance);
+			AB.getParam(order, result, 'last_date', /Дата заказа:([^<]*)/i, AB.replaceTagsAndSpaces, AB.parseDate);
+			AB.getParam(order, result, 'last_place', /Заказ(?: реферала)? в([\s\S]*?)<\/span>/i, AB.replaceTagsAndSpaces);
+			AB.getParam(order, result, 'last_cashback', /<td[^>]+data-th="Кэшбэк"[^>]*>([\s\S]*?)<\/td>/i, AB.replaceTagsAndSpaces, parseBalance);
+		}
 	}
-
-	html = AnyBalance.requestGet(baseurl + 'user/' + data.user.id, g_headers);
-	result.__tariff = getElement(html, /<div[^>]+until-text/i, replaceTagsAndSpaces);
 
 	AnyBalance.setResult(result);
 }

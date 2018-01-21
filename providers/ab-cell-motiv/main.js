@@ -50,7 +50,11 @@ function main(){
     getParam(html, result, 'sms',          /Остаток SMS:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i,                         AB.replaceTagsAndSpaces, AB.parseBalance);
     getParam(html, result, 'mms',          /Остаток MMS:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i,                         AB.replaceTagsAndSpaces, AB.parseBalance);
     getParam(html, result, 'min',          /Пакеты голосовых услуг:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i,              AB.replaceTagsAndSpaces, AB.parseBalance);
-    getParam(html, result, 'traf',         /(?:Мобильный интернет|Остаток GPRS:)[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, AB.replaceTagsAndSpaces, AB.parseTraffic);
+    getParam(html, result, 'bonus',        /Бонусный баланс:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i,                     AB.replaceTagsAndSpaces, AB.parseBalance);
+    
+
+    var traf = getParam(html, /(?:Мобильный интернет|Остаток GPRS:)[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i);
+    getParam(traf, result, 'traf', /\d+(?:\.\d+)?\s*[гgkкmм][bб]/i, AB.replaceTagsAndSpaces, AB.parseTraffic);
 
     if(isAvailable('traf') && !result.traf) {
 

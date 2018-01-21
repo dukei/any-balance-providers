@@ -82,6 +82,8 @@
             	    params.push([m_children[i].name, m_children[i].value]);
             	}
             	var method = this.method || 'get';
+            	//Somewhy this link gets corrupted. So just restore it
+            	this.action = this.action.replace('undefined', '');
             	if(/get/i.test(method)){
             		_document._lastHtml = _AnyBalance.requestGet(joinURLs(_url, this.action) + '?' + createUrlEncodedParams(params), headers);
             	}else{
@@ -119,9 +121,10 @@
         	return cookies_str;
         },
         set cookie(info){
-        	var path = getParam(info, null, null, /\bpath=([^;]*)/i);
-        	var nameval = getParam(info, null, null, /^[^;]*/).match(/([^=]*)=(.*)/);
-        	_AnyBalance.setCookie(getHostname(), nameval[1], nameval[2], {path: path});
+        	var path = getParam(info, /\bpath=([^;]*)/i);
+        	var domain = getParam(info, /\bdomain=([^;]*)/i) || getHostname();
+        	var nameval = getParam(info, /^[^;]*/).match(/([^=]*)=(.*)/);
+        	_AnyBalance.setCookie(domain, nameval[1], nameval[2], {path: path});
         },
 
         createElement: function(tag){
@@ -166,8 +169,7 @@
     		html = executeScriptAuto(html);
 
     	if(_AnyBalance.getLevel() >= 9){
-			_AnyBalance.setData('__cfduid', _AnyBalance.getCookie('__cfduid'));
-			_AnyBalance.setData('cf_clearance', _AnyBalance.getCookie('cf_clearance'));
+			_AnyBalance.saveCookies();
 			_AnyBalance.saveData();
 		}
 		 
@@ -234,8 +236,7 @@
     _window.parent = _window;
 
     if(_AnyBalance.getLevel() >= 9){
-   		_AnyBalance.setCookie(getHostname(), '__cfduid', _AnyBalance.getData('__cfduid'));
-   		_AnyBalance.setCookie(getHostname(), 'cf_clearance', _AnyBalance.getData('cf_clearance'));
+   		_AnyBalance.restoreCookies();
    	}
 
     return {

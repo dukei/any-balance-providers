@@ -21,4 +21,10 @@
 		negativeButtonText="Cancel"
 		dialogMessage="Please enter ISO 4217 currency code, such as USD,RUB,ILS,EUR,GBP etc, to display converted values. Keep blank to disable.">
 	</EditTextPreference>
+<!--    <CheckBoxPreference
+        title="Use mBTC (BTC*1000)"
+        defaultValue=""
+        summaryOn="Display value in milliBTC"
+        summaryOff="Display value in BTC"
+        key="btcunits" /> -->
 </PreferenceScreen>

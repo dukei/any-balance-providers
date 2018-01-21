@@ -26,6 +26,7 @@ function main() {
 	html = AnyBalance.requestPost(baseurl + 'templates/petrunya/ajax/getData/', {
 		dg: prefs.login,
 		ps: prefs.password,
+		persData: "1",
 		'get': 'checkUser'
 	}, addHeaders({Referer: baseurl + 'lk/state/', 'X-Requested-With': 'XMLHttpRequest'}));
     

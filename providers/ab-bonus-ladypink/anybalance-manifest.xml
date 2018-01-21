@@ -1,16 +1,18 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="5">ab-bonus-ladypink</id>
+	<id version="6">ab-bonus-ladypink</id>
 	<api flags="no_browser"/>
 	<name>Подружка (Москва)</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о текущей скидке по карте Подружка г. Москва <a href="http://www.podrygka.ru/">http://www.podrygka.ru/</a></p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>

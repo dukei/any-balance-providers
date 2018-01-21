@@ -8,7 +8,7 @@ var g_headers = {
 	'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
 	'Connection':'keep-alive',
 	'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.66 Safari/537.36',
-	'Origin':'https://issa.telecom.by',
+	'Origin':'https://mydom.velcom.by',
 };
 
 // Сайт требует разлогиниваться безопасно, чтобы входить в аккаунт чаще чем раз в 5 минут
@@ -17,27 +17,38 @@ function logOutSafe(baseurl) {
 	return AnyBalance.requestPost(baseurl, {'action__n18':'logoff'}, addHeaders({Referer: baseurl})); 
 }
 
+function parseBalanceRK(_text) {
+  var text = _text.replace(/\s+/g, '');
+  var rub = getParam(text, null, null, /(-?\d[\d\.,]*)р/i, replaceTagsAndSpaces, parseBalance) || 0;
+  var _sign = rub < 0 || /-\d[\d\.,]*р/i.test(text) ? -1 : 1;
+  var kop = getParam(text, null, null, /(-?\d[\d\.,]*)к/i, replaceTagsAndSpaces, parseBalance) || 0;
+  var val = _sign*(Math.abs(rub) + kop / 100);
+  AnyBalance.trace('Parsing balance (' + val + ') from: ' + _text);
+  return val;
+}
+
+
 function main(){
     var prefs = AnyBalance.getPreferences();
 	
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 	
-    var baseurl = 'https://issa.telecom.by/';
+    var baseurl = 'https://mydom.velcom.by/';
     AnyBalance.setDefaultCharset('utf-8'); 
 	
     var html = AnyBalance.requestGet(baseurl, g_headers);
 	
 	try {
 		html = AnyBalance.requestPost(baseurl, {
-			form_action_true:'https://issa.damavik.by/about',
+			form_action_true:baseurl + 'about',
 			login__n18:prefs.login,
 			password__n18:prefs.password,
 			action__n18:'login'
 		}, addHeaders({Referer: baseurl}));
 		
 		if (!/Информация о лицевом счете/i.test(html)) {
-			var error = getParam(html, null, null, /<h1[^>]*>Вход в систему<\/h1>[\s\S]*?class="redmsg mesg"[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
+			var error = getParam(html, null, null, /<h1[^>]*>Вход в систему<\/h1>[\s\S]*?class="redmsg mesg"[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces);
 			if (error)
 				throw new AnyBalance.Error(error, null, /Введенные данные неверны/i.test(error));
 			
@@ -47,9 +58,9 @@ function main(){
 		
 		var result = {success: true};
 		
-		getParam(html, result, 'balance', /Состояние счета[^>]*value="([^"]*)/i, replaceTagsAndSpaces, parseBalance);
-		getParam(html, result, 'fio', /Добро пожаловать,\s*<[^>]*>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
-		getParam(html, result, 'acc', /Номер лицевого счета[^>]*value="([^"]*)/i, replaceTagsAndSpaces, html_entity_decode);
+		getParam(html, result, 'balance', /Состояние счета[^>]*value="([^"]*)/i, replaceTagsAndSpaces, parseBalanceRK);
+		getParam(html, result, 'fio', /Добро пожаловать,\s*<[^>]*>([^<]*)/i, replaceTagsAndSpaces);
+		getParam(html, result, 'acc', /Номер лицевого счета[^>]*value="([^"]*)/i, replaceTagsAndSpaces);
 		
 		if(isAvailable(['trafic', 'trafic_total'])) {
 			var hrefs = sumParam(html, null, null, /<a href="\/([^"]+)"[^>]*>статистика/ig);

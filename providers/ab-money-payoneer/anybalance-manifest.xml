@@ -2,7 +2,7 @@
 <provider>
 	<!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
 	<api flags="no_browser" />
-	<id version="3">ab-money-payoneer</id>
+	<id version="4">ab-money-payoneer</id>
 	<name>Bank Payoneer</name>
 	<description>
 	Obtains balance in Bank Payoneer at adress https://myaccount.payoneer.com/

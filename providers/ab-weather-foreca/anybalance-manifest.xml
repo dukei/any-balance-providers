@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-weather-foreca</id>
+	<id version="2">ab-weather-foreca</id>
 	<api flags="no_browser"/>
 	<name>Foreca</name>
 	<description html="true"><![CDATA[

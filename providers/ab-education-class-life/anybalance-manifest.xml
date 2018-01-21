@@ -1,6 +1,6 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="4">ab-education-class-life</id>
+	<id version="5">ab-education-class-life</id>
 	<api flags="no_browser"/>
 	<name>Школьная карта (http://www.avsu.ru/)</name>
 	<description html="true"><![CDATA[
@@ -8,17 +8,19 @@
 	<p>Информация берется из личного кабинета http://www.avsu.ru/loginparent</p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
 	<counters>
 		<counter id="balance" name="Общий баланс" units=" р"/>
-		<counter id="balance_hot" name="Баланс горячего питания" units=" р"/>
-		<counter id="balance_cafe" name="Баланс буфетного питания" units=" р"/>
+		<counter id="balance_hot" name="Горячее питание" units=" р"/>
+		<counter id="balance_cafe" name="Буфетное питание" units=" р"/>
 		<counter id="fio" name="Имя" type="text"/>
 		<counter id="licschet" name="Лицевой счет" type="text"/>
 	</counters>

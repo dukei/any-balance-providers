@@ -38,19 +38,19 @@ function doSevenSky(prefs){
 	
 	AnyBalance.sleep(2000);
 	
-	html = AnyBalance.requestPost(baseurl + 'login.jsp', {
-        p_logname: prefs.login,
-        p_pwd: prefs.password
-    }, addHeaders({ Referer: baseurl }));
+	html = AnyBalance.requestPost(baseurl + 'ajax/login.jsp', {
+        login: prefs.login,
+        password: prefs.password
+    }, addHeaders({ Referer: baseurl, 'X-Requested-With': 'XMLHttpRequest' }));
 
-    if(!/exit.jsp|action=logout/.test(html)) {
-        var error = getParam(html, null, null, /<p[^>]+class="hi"[^>]*>([^<]+)/, replaceTagsAndSpaces);
-        if(error)
-            throw new AnyBalance.Error(error, null, /Проверьте логин и пароль/i.test(error));
-		
+    var json = getJson(html);
+
+    if(!json.res) {
 		AnyBalance.trace(html);
-        throw new AnyBalance.Error('Не удалось войти в личный кабинет. Проблемы на сайте или сайт изменен.');
+        throw new AnyBalance.Error('Неверный логин или пароль', null, true);
     }
+
+    html = AnyBalance.requestGet(baseurl + 'index.jsp', addHeaders({Referer: baseurl}));
 
     var result = {success: true};
 

@@ -1,29 +1,29 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="3">ab-tracking-qwintry</id>
-  <api flags="no_browser"/>
-  <name>Бандеролька Qwintry logistics</name>
+	<id version="4">ab-tracking-qwintry</id>
+	<api flags="no_browser"/>
+	<name>Qwintry Logistics (Бандеролька)</name>
 	<description html="true"><![CDATA[
-	<p>Helps to track your package via <a href="http://logistics.qwintry.com/">http://logistics.qwintry.com/</a> to Russia, Belarus & Kazakhstan</p>
+	<p>Получает информацию о посылке в системе Qwintry Logistics <a href="http://logistics.qwintry.com/">http://logistics.qwintry.com/</a></p>
 	]]></description>
-  <author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
-  <depends>
-    <module id="library"/>
-  </depends>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>main.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="tracking" name="Tracking number" type="text"/>
-    <counter id="create_time" name="Create Time" type="time" format="dd/MM/yyyy"/>
-    <counter id="status" name="Status" type="text"/>
-    <counter id="message" name="Message" type="text"/>
-    <counter id="trackingLog" name="Tracking log" type="text"/>
-  </counters>
-  <keywords>Бандеролька Qwintry logistics tracking отслеживание отправлений</keywords>
-  <type>tracking</type>
-  <country></country>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="tracking" name="Номер" type="text"/>
+		<counter id="create_time" name="Время" type="time" format="dd/MM/yyyy"/>
+		<counter id="status" name="Статус" type="text"/>
+		<counter id="message" name="Сообщение" type="text"/>
+		<counter id="trackingLog" name="История" type="html"/>
+	</counters>
+	<keywords>Бандеролька Qwintry logistics tracking отслеживание отправлений</keywords>
+	<type>tracking</type>
+	<country>ru</country>
 </provider>

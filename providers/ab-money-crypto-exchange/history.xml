@@ -1,6 +1,18 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="5" date="2018-01-13">
+	Added tariff string
+	</change>
+	<change version="4" date="2018-01-13">
+	Fixed units
+	</change>
+	<change version="3" date="2018-01-13">
+	Extended provider output - added price in btc, cap, rank, symbol
+	</change>
 	<change version="1" date="2017-08-29">
 	- Initial version.
+	</change>
+	<change version="2" date="2017-11-27">
+	- Currency codes limitation update.
 	</change>
 </history>

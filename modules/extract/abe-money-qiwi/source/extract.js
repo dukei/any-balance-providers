@@ -77,7 +77,7 @@ function login(prefs) {
 		throw new AnyBalance.Error('Не удалось войти в личный кабинет. Сайт изменен?');
 	}
 
-	html = AnyBalance.requestGet(baseurl + 'main.action', addHeaders({
+	html = AnyBalance.requestGet(baseurl + 'main', addHeaders({
 		Referer: baseurl
 	}));
 	
@@ -173,6 +173,8 @@ function parseCurrencyMy(text){
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 function processAccounts(result) {
     var response = requestAPI({action: 'person/state.action'}, {}, {Accept: 'application/json, text/javascript', 'X-Requested-With':'XMLHttpRequest'});
+    if(!response.data.balances)
+    	throw new AnyBalance.Error('Киви требует сменить пароль. Пожалуйста, зайдите на https://qiwi.com через браузер, смените пароль и введите новый пароль в настройки провайдера.', null, true);
 	
 	result.accounts = [];
 	

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+	<EditTextPreference
+		title="Криптовалюта"
+		key="coin"
+		summary="|Введите абривиатуру криптовалюты|{@s}"
+		obligatory="true"
+		dialogTitle="BTC или LTC - NOT btc or ltc"
+		positiveButtonText="ОК"
+		negativeButtonText="Cancel"
+		dialogMessage="Введите абривиатуру криптовалюты - Заглавными буквами, например BTC или LTC">
+	</EditTextPreference>
+</PreferenceScreen>

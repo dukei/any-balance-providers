@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference
+	    title="Ваш Nickname"
+        key="nickname"
+        summary="|Ваш ник на pikabu|{@s}"
+		obligatory="true"
+        dialogTitle="Nickname"
+        positiveButtonText="Ок"
+        negativeButtonText="Отмена"
+		dialogMessage="Ваш ник на pikabu.ru">
+    </EditTextPreference>
+</PreferenceScreen>

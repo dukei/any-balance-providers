@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<api flags="no_browser"/>
+	<id version="1">ab-other-pikabu</id><!-- идентификатор провайдера: https://github.com/dukei/any-balance-providers/wiki/HowToAddProvider#%D0%98%D0%B4%D0%B5%D0%BD%D1%82%D0%B8%D1%84%D0%B8%D0%BA%D0%B0%D1%82%D0%BE%D1%80-%D0%BF%D1%80%D0%BE%D0%B2%D0%B0%D0%B9%D0%B4%D0%B5%D1%80%D0%B0 -->
+	<name>Pikabu</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о рейтинге никнейма</p>
+	<p>Информация берется с (https://pikabu.ru).</p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Просто введите nickname с сайта https://pikabu.ru</p>
+	]]></instruction>
+	<author>Viktor Sinitsyn &lt;mousesport007@ya.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="raiting" name="Рейтинг"/>
+	</counters>
+	<keywords>pikabu, pikabu.ru, пикабу</keywords>
+	<type>other</type>
+	<country>ru, ua, by</country>
+</provider>

@@ -26,8 +26,7 @@ function main(){
 	var html = AnyBalance.requestGet(baseurl + 'dm');
         
     AnyBalance.trace('Пытаемся ввести капчу');
-    var captcha = AnyBalance.requestGet(baseurl + 'dm/captcha');
-    captcha = AnyBalance.retrieveCode('Пожалуйста, введите код с картинки', captcha);
+    var captcha = solveRecaptcha('Пожалуйста, подтвердите, что вы не робот', baseurl + 'dm', '6LfijT0UAAAAADy8SUzjmi7K9-zB4bTWhTXFQ2fj');
     AnyBalance.trace('Капча получена: ' + captcha);
 	
 	html = AnyBalance.requestPost(baseurl + 'dm/detmir/info', {

@@ -2,11 +2,9 @@
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 */
 var g_headers = {
-	'Accept': '*/*',
-	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
-	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
-	'Connection': 'keep-alive',
-	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.66 Safari/537.36',
+	'Accept': 			'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
+	'Accept-Language': 	'ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7',
+	'User-Agent': 		'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.36',
 };
 
 function main() {
@@ -16,28 +14,45 @@ function main() {
 	
 	AnyBalance.setOptions({forceCharset: 'utf-8'});
 	
-	var baseurl = "https://card.welcash.kiev.ua/";
-	var html = AnyBalance.requestGet(baseurl + 'auth', g_headers);
+	var baseurl = "http://my.kishenya.ua/ru";
+	var html = AnyBalance.requestGet(baseurl + '/sessions/new', g_headers);
+    if(!html || AnyBalance.getLastStatusCode() > 400){
+        AnyBalance.trace(html);
+        throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
+    }
+
+	var token = getParam(html, null, null, /"csrf-token"[^>]*content="([^"]*)/i);
+	if(!token) {
+        throw new AnyBalance.Error('Не удалось найти токен авторизации.');
+    }
+
+	html = AnyBalance.requestPost(baseurl + '/sessions ', {
+		'utf8': 			  '✓',
+		'authenticity_token': token,
+        card_number: 		  prefs.login,
+		password: 			  prefs.password,
+		'button': 			  ''
+	}, addHeaders({
+		Referer: 		baseurl + '/sessions/new',
+		'Content-Type': 'application/x-www-form-urlencoded',
+		'Origin': 'http://my.kishenya.ua'
+	}));
 	
-	html = AnyBalance.requestPost(baseurl + 'auth', {
-		card: prefs.login,
-		password: prefs.password
-	}, addHeaders({Referer: baseurl + 'ps/scc/login.php?SECONDARY_LOGIN=1'}));
-	
-	if (!/auth\/exit/.test(html)) {
-		var error = getParam(html, null, null, /<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
-		if (error) throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
+	if (!/bnr-bonus/.test(html)) {
+		var error = getParam(html, null, null, /growl.error(?:[\s\S]*?message:\s*'([^']*))/i, replaceTagsAndSpaces, html_entity_decode);
+		if (error)  {
+			throw new AnyBalance.Error(error, null, /Неправильно введены данные/i.test(error));
+        }
+
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
-	//html = AnyBalance.requestGet(baseurl + 'my_card');
 	var result = {success: true};
 	
-	getParam(html, result, 'balance', />на карті([^>]*>){5}/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'bonus', />на карті([^>]*>){3}/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, '__tariff', /"username"([^>]*>){3}/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'balance',  /Мои бонусы(?:[\s\S]*?<p[^>]*>){2}([\s\S]*?)<\/p>/i,    replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'bonus',    /Мои бонусы[\s\S]*?<p[^>]*>([\s\S]*?)<\/p>/i, 		   replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, '__tariff', /<span[^>]*class='user-name'[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
 	getParam(prefs.login, result, 'cardnum');
-	
-	// getParam(html, result, 'level', /(?:Текущий уровень|Поточний рівень):[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+
 	AnyBalance.setResult(result);
 }

@@ -43,7 +43,7 @@ function login() {
 
     var html = AnyBalance.requestGet(g_baseurl + 'ibank', g_headers);
 
-    if(!/Logout.aspx/i.test(html)) {
+    if(!/actionLogout/i.test(html)) {
     	var form = getElement(html, /<form[^>]+operation/i);
     	if(!form)
     		throw new AnyBalance.Error('Не удалось найти форму входа. Сайт изменен?');
@@ -110,7 +110,7 @@ function processAccounts(result){
         'Referer': last_URL
     }));
 
-    var tbl = getElement(html, /<div[^>]*product account[^>]*>/i);
+    var tbl = getElements(html, /<div[^>]*product account/ig).join('\n');
     if(!tbl){
         AnyBalance.trace(html);
         AnyBalance.trace('Не удалось получить таблицу счетов');
@@ -119,7 +119,7 @@ function processAccounts(result){
 
     result.accounts = [];
 
-    var trs = getElements(tbl, /<div[^>]*mainInfo[^>]*>/i);
+    var trs = getElements(tbl, /<div[^>]*mainInfo[^>]*>/ig);
     AnyBalance.trace('Нашли ' + trs.length + ' счетов');
 
     for(var i=0; i<trs.length; ++i){

@@ -36,7 +36,7 @@ function callApi(verb, data){
 	var json = getJson(html);
 	if(json.errors){
 		var error = json.errors.map(function(e) { return e.message }).join(';\n');
-		throw new AnyBalance.Error(error, null, /парол/i.test(error));
+		throw new AnyBalance.Error(error, null, /парол|Invalid/i.test(error));
 	}
 	return json.data[verb];
 }

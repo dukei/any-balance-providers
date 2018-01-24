@@ -18,67 +18,8 @@ var g_headers = {
 }
 
 var g_verbsinfo = {
-	"loginwithcapture": `mutation loginwithcapture($barcode: String!, $password: String!, $ckey: String!) {
-  loginwithcapture(barcode: $barcode, password: $password, ckey: $ckey) {
-    accessToken {
-      ...AccessTokenFragment
-      __typename
-    }
-    user {
-      ...UserFragment
-      __typename
-    }
-    __typename
-  }
-}
-
-fragment AccessTokenFragment on AccessTokenType {
-  accessToken
-  expiresAt
-  __typename
-}
-
-fragment UserFragment on User {
-  id
-  firstName
-  lastName
-  middleName
-  email
-  emailConfirmed
-  notification
-  barcode
-  bonusAmount
-  vouchersAmount
-  spawnNextCouponDate
-  __typename
-}`,
-	"vouchers": `query vouchers($current: Boolean) {
-  vouchers(current: $current) {
-    ...VoucherFragment
-    __typename
-  }
-}
-
-fragment VoucherFragment on Voucher {
-  id
-  value
-  useType
-  voucherType
-  voucherText
-  typeDescription
-  status
-  modifiedAt
-  startedAt
-  endAt
-  items {
-    name
-    type
-    value
-    __typename
-  }
-  isChangeable
-  __typename
-}`,
+	"loginwithcapture": 'mutation loginwithcapture($barcode: String!, $password: String!, $ckey: String!) {\r\n  loginwithcapture(barcode: $barcode, password: $password, ckey: $ckey) {\r\n    accessToken {\r\n      ...AccessTokenFragment\r\n      __typename\r\n    }\r\n    user {\r\n      ...UserFragment\r\n      __typename\r\n    }\r\n    __typename\r\n  }\r\n}\r\n\r\nfragment AccessTokenFragment on AccessTokenType {\r\n  accessToken\r\n  expiresAt\r\n  __typename\r\n}\r\n\r\nfragment UserFragment on User {\r\n  id\r\n  firstName\r\n  lastName\r\n  middleName\r\n  email\r\n  emailConfirmed\r\n  notification\r\n  barcode\r\n  bonusAmount\r\n  vouchersAmount\r\n  spawnNextCouponDate\r\n  __typename\r\n}',
+	"vouchers": 'query vouchers($current: Boolean) {\r\n  vouchers(current: $current) {\r\n    ...VoucherFragment\r\n    __typename\r\n  }\r\n}\r\n\r\nfragment VoucherFragment on Voucher {\r\n  id\r\n  value\r\n  useType\r\n  voucherType\r\n  voucherText\r\n  typeDescription\r\n  status\r\n  modifiedAt\r\n  startedAt\r\n  endAt\r\n  items {\r\n    name\r\n    type\r\n    value\r\n    __typename\r\n  }\r\n  isChangeable\r\n  __typename\r\n}',
 }
 
 function callApi(verb, data){

@@ -1,5 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="103" date="2018-01-24">
+	- Улучшена обработка ошибок.
+	</change>
+	<change version="102" date="2018-01-22">
+	- Поддержка изменений на сайте.
+	</change>
 	<change version="10" date="2017-09-04">
 	- Поддержка изменений на сайте.
 	</change>

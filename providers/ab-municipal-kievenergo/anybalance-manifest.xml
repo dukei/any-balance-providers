@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="3">ab-municipal-kievenergo</id>
+	<id version="4">ab-municipal-kievenergo</id>
 	<name>МегаБиллинг: Киевэнерго и пр.</name>
 	<description html="true"><![CDATA[
 	<p>Получает данные в системе МегаБиллинг для Киевэнерго (http://kyivenergo.ua) и других предприятий</p>
@@ -21,7 +21,7 @@
 		<li>ДФ ГП «Региональные электрические сети»</li>
 		<li>КП «Водоканал г.Ужгород»</li>
 	</ul>
-	<p>Информация берется из личного кабинета https://www.ukrbilling.com/byt/ua </p>
+	<p>Информация берется из личного кабинета https://ukrbilling.com/byt/ua </p>
 	]]></description>	
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>

@@ -3,7 +3,7 @@
 */
 
 function main(){
-    var baseurl = "https://www.ukrbilling.com/byt/ua/";
+    var baseurl = "https://ukrbilling.com/byt/ua/";
     doMegabilling(baseurl);
 }
 

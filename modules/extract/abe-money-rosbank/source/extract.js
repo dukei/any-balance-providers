@@ -8,131 +8,83 @@
 */
 
 var g_headers = {
-    Accept:'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-    'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
-    'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
-    Connection:'keep-alive',
-    Origin:'https://ibank.rosbank.ru',
-    Referer: 'https://ibank.rosbank.ru/',
-    'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/35.0.1916.114 Safari/537.36',
+    Accept:             'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
+    'Accept-Language':  'ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7',
+    Connection:         'keep-alive',
+    'User-Agent':       'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.36',
 };
 
 var g_baseurl = 'https://ibank.rosbank.ru/';
 
-function getViewState(html){
-    return getParam(html, null, null, /name="__VIEWSTATE".*?value="([^"]*)"/) || getParam(html, null, null, /__VIEWSTATE\|([^\|]*)/i);
-};
+function findWicketActions(html) {
+    var actions = sumParam(html, null, null, /Wicket.Ajax.ajax\((\{[\s\S]*?\})\);/ig) || [];
+    AnyBalance.trace('Found ' + actions.length + ' Wicket-ajax actions');
+    return actions;
+}
 
-function getViewStateGenerator(html){
-    return getParam(html, null, null, /name="__VIEWSTATEGENERATOR".*?value="([^"]*)"/) || getParam(html, null, null, /__VIEWSTATEGENERATOR\|([^\|]*)/i);
-};
+function requestWicketAction(action, params, last_URL, base_URL) {
+    var focusedElementID = getParam(action, null, null, /c":"([^"]*)/i),
+        request_url      = getParam(action, null, null, /u":"\.\/([^"]*)/i);
 
-function getEventValidation(html) {
-    return getParam(html, null, null, /name="__EVENTVALIDATION".*?value="([^"]*)"/) || getParam(html, null, null, /__EVENTVALIDATION\|([^\|]*)/i);
-};
+    return AnyBalance.requestPost(g_baseurl + 'ibank/' + request_url, params, addHeaders({
+     'X-Requested-With': 'XMLHttpRequest',
+     'Accept': 'application/xml, text/xml, */*; q=0.01',
+     'Wicket-Ajax': 'true',
+     'Referer': last_URL,
+     'Wicket-Ajax-BaseURL': base_URL,
+     'Wicket-FocusedElementId': focusedElementID
+     }))
 
-function getAspParams(html){
-	return {
-		__EVENTARGUMENT: '',
-		__EVENTTARGET: '',
-		__EVENTVALIDATION: getEventValidation(html),
-		__LASTFOCUS: '',
-		__VIEWSTATE: getViewState(html),
-		__VIEWSTATEGENERATOR: getViewStateGenerator(html)
-	};
 }
 
 function login() {
     var prefs = AnyBalance.getPreferences();
     AnyBalance.setDefaultCharset('utf-8');
 
-    var html = AnyBalance.requestGet(g_baseurl, g_headers);
-    if(!/Logout.aspx/i.test(html)) {
-    	var form = getElement(html, /<form[^>]+aspnetForm/i);
+    var html = AnyBalance.requestGet(g_baseurl + 'ibank', g_headers);
+
+    if(!/actionLogout/i.test(html)) {
+    	var form = getElement(html, /<form[^>]+operation/i);
     	if(!form)
     		throw new AnyBalance.Error('Не удалось найти форму входа. Сайт изменен?');
 		
 		var params = AB.createFormParams(form, function(params, str, name, value) {
-			if (/RegButton/i.test(name)) {
+			if (/actionComponent/i.test(name)) {
 				return;
-			}
+			} else if (/login/i.test(name)) {
+			    return prefs.login
+            } else if(/password/i.test(name)) {
+			    return prefs.password
+            }
 			return value;
 		});
+        params['actions:list:2:actionComponent'] = '1';
 
-        html = AnyBalance.requestPost(g_baseurl + 'Login.aspx', joinObjects({
-            	'ctl00$MainScriptManager':'ctl00$MainContentPlaceHolder$TabsUpdatePanel|ctl00$MainContentPlaceHolder$CardButton',
-            	'ctl00$MainContentPlaceHolder$CardNumTextBox':prefs.login,
-            	__ASYNCPOST:'true'
-            }, params), addHeaders({'X-MicrosoftAjax':'Delta=true'}));
+        var actions = findWicketActions(html),
+            last_URL = AnyBalance.getLastUrl(),
+            base_URL = getParam(html, null, null, /Wicket.Ajax.baseUrl="([^"]*)/i) || 'home?0';
 
-        var pin2enc = getParam(html,null,null,/class="pin2enc"[^>]*value="(.*)"/);
-        if(!pin2enc){
-            if(/AcceptTerms/i.test(html)){
-            	throw new AnyBalance.Error('Вы ещё ни разу не входили в интернет-банк или вам требуется сменить пароль. Зайдите в интернет банк через браузер на https://ibank.rosbank.ru/, затем попробуйте выполнить провайдер ещё раз');
-            }
-           	var error = /Идентификационная карта не найдена/i.test(html) ? 'Вы ввели неправильный логин! Введите последние восемь цифр идентификационной карты или ваш логин в интернет банк Росбанк.' : '';
-           	if(error)
-           		throw new AnyBalance.Error(error, null, true);
-           	AnyBalance.trace(html);
-           	throw new AnyBalance.Error('Не удаётся ввести логин. Сайт изменен?');
-       	}
+        html = requestWicketAction(actions[4], {'fields:field:1:login': prefs.login, '': ''},       last_URL, base_URL);
+        html = requestWicketAction(actions[5], {'fields:field:2:password': prefs.password, '': ''}, last_URL, base_URL);
+        html = requestWicketAction(actions[2], params, last_URL, base_URL);
 
-        var TransCod = getParam(html,null,null,/class="TransCod"[^>]*value="(.*)"/);
-        var pin3 = prefs.password;
-        var Signature = '';
 
-        //Этот код расчета Signature выдран из main.js сайта (использует cryptojs.js и crb.js, которые приходят в ответе на аякс запрос предыдущий)
-        var v = CRB.decryptPin2(pin2enc,pin3);
-        if (v.result) {
-            var sign = CRB.encryptBlock(v.result, TransCod);
-            if (sign.result) {
-                Signature = sign.result;
-            }
-            else {
-                pin3 = '';
-                throw new AnyBalance.Error(sign.error);
-            }
+
+        if(/AcceptTerms/i.test(html)){
+            throw new AnyBalance.Error('Вы ещё ни разу не входили в интернет-банк или вам требуется сменить пароль. Зайдите в интернет банк через браузер на https://ibank.rosbank.ru/, затем попробуйте выполнить провайдер ещё раз');
         }
-        else {
-            pin3 = '';
-            throw new AnyBalance.Error(v.error);
-        }
-        //Расчитали Signature
 
-        html = AnyBalance.requestPost(g_baseurl + 'Login.aspx', {
-            'ctl00$MainScriptManager':'ctl00$MainContentPlaceHolder$TabsUpdatePanel|ctl00$MainContentPlaceHolder$Pwd1Button',
-            'ctl00$MainContentPlaceHolder$pin1':'50845000'+prefs.login.replace(' ',''),
-            'ctl00$MainContentPlaceHolder$TransCod':TransCod,
-            'ctl00$MainContentPlaceHolder$pin2enc':pin2enc,
-            'ctl00$MainContentPlaceHolder$Signature':Signature,
-            'ctl00$MainContentPlaceHolder$pin3':pin3,
-            __LASTFOCUS:'',
-            __EVENTTARGET:'',
-            __EVENTARGUMENT:'',
-            __VIEWSTATE:getViewState(html),
-            __EVENTVALIDATION:getEventValidation(html),
-            __ASYNCPOST:'true',
-            'ctl00$MainContentPlaceHolder$Pwd1Button':'%D0%9F%D1%80%D0%BE%D0%B4%D0%BE%D0%BB%D0%B6%D0%B8%D1%82%D1%8C'
-        }, addHeaders({'X-MicrosoftAjax':'Delta=true'}));
-
-        if(!/Logout.aspx/i.test(html) && !/pageRedirect/i.test(html)){
-            var error = getParam(html, null, null, /<div[^>]+class="loginError"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+        if(!/redirect/i.test(html)) {
+            var error = getParam(html, null,null, /<span[^>]*error[^>]*>([\s\S]*?)<\/span>/i);
             if(error)
-                throw new AnyBalance.Error(error, null, /не найден/i.test(error));
-
-            error = getParam(html, null, null, /<div[^>]+class="fulltab"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
-            if(error)
-                throw new AnyBalance.Error(error, null, /некорректного ввода пароля/i.test(error));
-
-            error = getParam(html, null, null, /<div[^>]+id="[^"]*CardDesc11Panel"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
-            if(error)
-                throw new AnyBalance.Error(error, null, /Пароль введен неверно/i.test(error));
-
+                throw new AnyBalance.Error(error, null, true);
             AnyBalance.trace(html);
-            throw new AnyBalance.Error('Не удалось войти в интернет-банк. Сайт изменен?');
+            throw new AnyBalance.Error('Не удаётся ввести логин. Сайт изменен?');
         }
-        
-        __setLoginSuccessful()
+
+
+        __setLoginSuccessful();
+
     }else{
         AnyBalance.trace('Найдена активная сессия. Используем её.');
     }
@@ -144,9 +96,21 @@ function processAccounts(result){
     if(!AnyBalance.isAvailable('accounts'))
         return;
 
-    var html = AnyBalance.requestGet(g_baseurl + 'Accounts.aspx', g_headers);
+    var html = AnyBalance.requestGet(g_baseurl + 'ibank/main');
 
-    var tbl = getElement(html, /<table[^>]+id="[^"]*_AccTable"[^>]*>/i);
+    var actions = findWicketActions(html),
+        last_URL = AnyBalance.getLastUrl(),
+        base_URL = getParam(html, null, null, /Wicket.Ajax.baseUrl="([^"]*)/i) || 'main?1';
+
+    var request_url = getParam(actions[actions.length - 1], null, null, /u":"\.\/([^"]*)/i);
+
+    html = AnyBalance.requestPost(g_baseurl + 'ibank/' + request_url, null, addHeaders({
+        'Wicket-Ajax': 'true',
+        'Wicket-Ajax-BaseURL': base_URL,
+        'Referer': last_URL
+    }));
+
+    var tbl = getElements(html, /<div[^>]*product account/ig).join('\n');
     if(!tbl){
         AnyBalance.trace(html);
         AnyBalance.trace('Не удалось получить таблицу счетов');
@@ -155,148 +119,195 @@ function processAccounts(result){
 
     result.accounts = [];
 
-    var trs = getElements(tbl, [/<tr[^>]*>/ig, /<td/i]);
+    var trs = getElements(tbl, /<div[^>]*mainInfo[^>]*>/ig);
     AnyBalance.trace('Нашли ' + trs.length + ' счетов');
 
     for(var i=0; i<trs.length; ++i){
         var tr = trs[i];
-        var id = getParam(tr, null, null, /([\s\S]*?<\/td>){2}/i, replaceTagsAndSpaces);
-        var name = getParam(tr, null, null, /([\s\S]*?<\/td>){1}/i, replaceTagsAndSpaces);
+        var id = getParam(tr, null, null, /<div[^>]*class="number"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+        var name = getParam(tr, null, null, /<a[^>]*class="name[^"]*"[^>]*>([\s\S]*?)<\/a>/i, replaceTagsAndSpaces);
 
-        var o = {
+        var a = {
             __id: id,
             __name: name + ' ' + id.substr(-4),
             num: id
         };
 
-        if(__shouldProcess('accounts', o)){
-            processAccount(tr, o);
+        if(__shouldProcess('accounts', a)){
+            processAccount(tr, a);
         }
 
-        result.accounts.push(o);
+        result.accounts.push(a);
     }
 }
 
 function processAccount(tr, result){
     AnyBalance.trace('Обработка счета ' + result.__name);
 
-    getParam(tr, result, 'accounts.balance', /([\s\S]*?<\/td>){3}/i, replaceTagsAndSpaces, parseBalance);
-    getParam(tr, result, 'accounts.currency', /([\s\S]*?<\/td>){3}/i, replaceTagsAndSpaces, parseCurrency);
+    getParam(tr, result, 'accounts.balance', /<span[^>]*class="sum"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(tr, result, 'accounts.currency', /<span[^>]*class="currency"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseCurrency);
 
     if(AnyBalance.isAvailable('accounts.num', 'accounts.type', 'accounts.owner')) {
-        var infourl = getParam(tr, null, null, /"(AccountInfo.aspx\?id=[^"]*)/i, replaceHtmlEntities);
-        var html = AnyBalance.requestGet(g_baseurl + infourl, g_headers);
+        var infourl = getParam(tr, null, null, /<a[^>]*href="\.\/([^"]*)/i, replaceHtmlEntities);
+        var html = AnyBalance.requestGet(g_baseurl + 'ibank/' + infourl, g_headers);
 
-        getParam(html, result, 'accounts.num', /Номер счёта:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
-        getParam(html, result, 'accounts.type', /Тип счёта:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
-        getParam(html, result, 'accounts.owner', /Наименование счёта:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+        var actions  = findWicketActions(html),
+            last_URL = AnyBalance.getLastUrl(),
+            base_URL = getParam(html, null, null, /Wicket.Ajax.baseUrl="([^"]*)/i);
+
+        var request_url = getParam(actions[actions.length - 1], null, null, /u":"\.\/([^"]*)/i);
+
+        var inner_html = AnyBalance.requestPost(g_baseurl + 'ibank/' + request_url, null, addHeaders({
+            'Wicket-Ajax': 'true',
+            'Wicket-Ajax-BaseURL': base_URL,
+            'Referer': last_URL
+        }));
+
+        getParam(inner_html, result, 'accounts.num', /Номер счёта:(?:[\s\S]*?)<div[^>]*class="stringField[^"]*[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+        getParam(inner_html, result, 'accounts.type', /Тип счёта:(?:[\s\S]*?)<div[^>]*class="stringField[^"]*[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+        getParam(inner_html, result, 'accounts.owner', /Наименование счёта:(?:[\s\S]*?)<div[^>]*class="stringField[^"]*[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
     }
 
     if(AnyBalance.isAvailable('accounts.transactions')){
-        processTransactions(tr, result);
+        processTransactions(html, result);
     }
 
 }
 
-function processTransactions(tr, result){
+function processTransactions(html, result){
     AnyBalance.trace('Получаем транзакции для ' + result.__name);
 
-    var infourl = getParam(tr, null, null, /"(StatementsAuto.aspx\?id=[^"]*)/i, replaceHtmlEntities);
-    var html = AnyBalance.requestGet(g_baseurl + infourl, g_headers);
+    var actions  = findWicketActions(html),
+        last_URL = AnyBalance.getLastUrl(),
+        base_URL = getParam(html, null, null, /Wicket.Ajax.baseUrl="([^"]*)/i);
 
-    //Одноколоночный заголовок убираем.
-    var table = getElement(html, /<div[^>]+entryCont[^>]*>/i, [/<tr[^>]*>\s*<th[^>]*>[^<]*<\/th>\s*<\/tr>/i, '']);
+    var request_url = getParam(actions[7], null, null, /u":"\.\/([^"]*)/i);
 
-    if(!table){
-        var error = getElement(html, /<div[^>]+errorBlock[^>]*>/i, replaceTagsAndSpaces);
-        if(error){
-            AnyBalance.trace(error);
-        }else{
+    html = AnyBalance.requestPost(g_baseurl + 'ibank/' + request_url, {
+        'ida2_hf_0': 'ida2_hf_0',
+        'fields:field:1:dateRangeName:select': 'CUSTOM',
+        'fields:field:2:dateRange:dateFrom:date': getFormattedDate({format: 'DD.MM.YYYY',offsetYear: 1}),
+        'fields:field:2:dateRange:dateTo:date': getFormattedDate({format: 'DD.MM.YYYY'}),
+        'fields:field:3:filter': '',
+        'filterAction': '1'
+    }, addHeaders({
+        'Wicket-Ajax': 'true',
+        'Wicket-Ajax-BaseURL': base_URL,
+        'Referer': last_URL
+    }));
+
+    if(/загрузка/i.test(html)) {
+        var transition_action = findWicketActions(html);
+        if(!transition_action) {
             AnyBalance.trace(html);
-            AnyBalance.trace('Не удалось найти таблицу транзакций');
+            AnyBalance.trace("Не удалось найти ссылку для запроса транзакций");
+        } else {
+            request_url = getParam(transition_action[0], null, null, /u":"\.\/([^"]*)/i);
+            AnyBalance.sleep(5000);
+            html = AnyBalance.requestGet(g_baseurl + 'ibank/' + request_url + '&_=' + new Date().getTime(), addHeaders({
+                'X-Requested-With': 'XMLHttpRequest',
+                'Wicket-Ajax-BaseURL': last_URL,
+                'Wicket-Ajax': 'true'
+            }));
         }
-        return;
     }
 
-    var colsInfo = {
-        date: {
-            re: /Дата/i,
-            result_func: parseDateSilent
-        },
-        descr: {
-            re: /Содержание/i,
-            result_func: null
-        },
-        sum: {
-            re: /Сумма/i,
-            result_func: parseBalanceSilent
-        }
-    };
-
+    var transactions = getElements(html, /<div[^>]*class="statementTransaction[^"]*"[^>]*>/ig);
     result.transactions = [];
-    processTable(table, result.transactions, 'accounts.transactions.', colsInfo);
+
+    for(var i = 0; i < transactions.length; i++) {
+        var t = {};
+
+        getParam(transactions[i], t, 'transactions.sum',   /<span[^>]*class="sum"[^>]*>([\s\S]*?)<\/span>/i,       replaceTagsAndSpaces, parseBalance);
+        getParam(transactions[i], t, 'transactions.descr', /<div[^>]*class="description"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+        getParam(transactions[i], t, 'transactions.type',  /<div[^>]*class="name"[^>]*>([\s\S]*?)<\/div>/i,        replaceTagsAndSpaces);
+        getParam(transactions[i], t, 'transactions.date',  /<div[^>]*class="date"[^>]*>([\s\S]*?)<\/div>/i,        replaceTagsAndSpaces, parseDate);
+        result.transactions.push(t);
+    }
 }
 
 function processCards(result){
     if(!AnyBalance.isAvailable('cards'))
         return;
 
-    var html = AnyBalance.requestGet(g_baseurl + 'Accounts.aspx', g_headers);
+    var html = AnyBalance.requestGet(g_baseurl + 'ibank/main');
 
-    var tbl = getElement(html, /<table[^>]+id="[^"]*_CardsTable"[^>]*>/i);
+    var actions = findWicketActions(html),
+        last_URL = AnyBalance.getLastUrl(),
+        base_URL = getParam(html, null, null, /Wicket.Ajax.baseUrl="([^"]*)/i) || 'main?1';
+
+    var request_url = getParam(actions[actions.length - 1], null, null, /u":"\.\/([^"]*)/i);
+
+    html = AnyBalance.requestPost(g_baseurl + 'ibank/' + request_url, null, addHeaders({
+        'Wicket-Ajax': 'true',
+        'Wicket-Ajax-BaseURL': base_URL,
+        'Referer': last_URL
+    }));
+
+    var tbl = getElement(html, /<div[^>]*cards listView[^>]*>/i);
     if(!tbl){
         AnyBalance.trace(html);
-        AnyBalance.trace('Не удалось получить таблицу карт');
+        AnyBalance.trace('Не удалось получить таблицу счетов');
         return;
     }
 
     result.cards = [];
 
-    var trs = getElements(tbl, [/<tr[^>]*>/ig, /<td/i]);
+    var trs = getElements(tbl, /<div[^>]*accountCard[^>]*>/ig);
     AnyBalance.trace('Нашли ' + trs.length + ' карт');
 
     for(var i=0; i<trs.length; ++i){
         var tr = trs[i];
-        var id = getParam(tr, null, null, /([\s\S]*?<\/td>){2}/i, replaceTagsAndSpaces);
-        var name = getParam(tr, null, null, /([\s\S]*?<\/td>){1}/i, replaceTagsAndSpaces);
+        var id = getParam(tr, null, null, /<div[^>]*class="number"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+        var name = getParam(tr, null, null, /<a[^>]*class="name[^"]*"[^>]*>([\s\S]*?)<\/a>/i, replaceTagsAndSpaces);
 
-        var o = {
+        var c = {
             __id: id,
             __name: name + ' ' + id.substr(-4),
             num: id
         };
 
-        if(__shouldProcess('cards', o)){
-            processCard(tr, o);
+        if(__shouldProcess('cards', c)){
+            processCard(tr, c);
         }
 
-        result.cards.push(o);
+        result.cards.push(c);
     }
 }
 
 function processCard(tr, result){
     AnyBalance.trace('Обработка карты ' + result.__name);
 
-    getParam(tr, result, 'cards.till', /([\s\S]*?<\/td>){4}/i, replaceTagsAndSpaces, parseDate);
-    getParam(tr, result, 'cards.status', /([\s\S]*?<\/td>){3}/i, replaceTagsAndSpaces); //Карта активна
+    getParam(tr, result, 'cards.till', /<div[^>]*class="term"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseDate);
+    //getParam(tr, result, 'cards.status', /([\s\S]*?<\/td>){3}/i, replaceTagsAndSpaces); //Карта активна
 
-    if(AnyBalance.isAvailable('cards.balance', 'cards.currency', 'cards.num', 'cards.accnum')) {
-        var infourl = getParam(tr, null, null, /"(CardInfo.aspx\?id=[^"]*)/i, replaceHtmlEntities);
-        var html = AnyBalance.requestGet(g_baseurl + infourl, g_headers);
+    if(AnyBalance.isAvailable('cards.balance', 'cards.currency', 'cards.num', 'cards.type', 'cards.blocked', 'cards.cardholder', 'cards.date_start')) {
+        var infourl = getParam(tr, null, null, /<a[^>]*href="\.\/([^"]*)/i, replaceHtmlEntities);
+        var html = AnyBalance.requestGet(g_baseurl + 'ibank/' + infourl, g_headers);
 
-        getParam(html, result, 'cards.balance', /Текущий доступный остаток:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-        getParam(html, result, 'cards.currency', /Валюта счета:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+        var actions  = findWicketActions(html),
+            last_URL = AnyBalance.getLastUrl(),
+            base_URL = getParam(html, null, null, /Wicket.Ajax.baseUrl="([^"]*)/i);
 
-        if(AnyBalance.getPreferences().full_num) {
-            //И эти люди работают в банке...
-            getParam(html, result, 'cards.num', /Номер карты[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
-        }
+        var request_url = getParam(actions[actions.length - 1], null, null, /u":"\.\/([^"]*)/i);
 
-        getParam(html, result, 'cards.accnum', /Номер счета:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, [replaceTagsAndSpaces, /\(.*/i, '']);
+        var inner_html = AnyBalance.requestPost(g_baseurl + 'ibank/' + request_url, null, addHeaders({
+            'Wicket-Ajax': 'true',
+            'Wicket-Ajax-BaseURL': base_URL,
+            'Referer': last_URL
+        }));
+
+        getParam(html, result, 'cards.balance',    /Доступный остаток(?:[\s\S]*?)<span[^>]*class="sum"[^>]*>([\s\S]*?)<\/span>/i,      replaceTagsAndSpaces, parseBalance);
+        getParam(html, result, 'cards.blocked',    /Заблокировано(?:[\s\S]*?)<span[^>]*class="sum"[^>]*>([\s\S]*?)<\/span>/i,          replaceTagsAndSpaces, parseBalance);
+        getParam(html, result, 'cards.currency',   /Доступный остаток(?:[\s\S]*?)<span[^>]*class="currency"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
+        getParam(html, result, 'cards.type',       /Тип карты(?:[\s\S]*?)<div[^>]*formcontrol[^>]*>([\s\S]*?)<\/div>/i,                replaceTagsAndSpaces);
+        getParam(html, result, 'cards.cardholder', /Держатель карты(?:[\s\S]*?)<div[^>]*formcontrol[^>]*>([\s\S]*?)<\/div>/i,          replaceTagsAndSpaces);
+        getParam(html, result, 'cards.date_start', /Дата выпуска(?:[\s\S]*?)<span[^>]*formcontrol[^>]*>([\s\S]*?)<\/span>/i,           replaceTagsAndSpaces, parseDate);
+        getParam(html, result, 'cards.accnum',     /Привязанные счета(?:[\s\S]*?)<div[^>]*class="number"[^>]*>([\s\S]*?)<\/div>/i,     replaceTagsAndSpaces);
     }
 
     if(AnyBalance.isAvailable('cards.transactions')){
-        processTransactions(tr, result);
+        processTransactions(html, result);
     }
 
 }
@@ -306,139 +317,10 @@ function processInfo(result){
         return;
 
     var info = result.info = {};
+    var html = AnyBalance.requestGet(g_baseurl + 'ibank/profile', g_headers);
 
-    var html = AnyBalance.requestGet(g_baseurl + 'Profile.aspx', g_headers);
-    getParam(html, info, 'info.fio', /<h3\s+class="two-cols"\s*>\s*<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
-    getParam(html, info, 'info.email', /<a[^>]+EmailHyperLink[^>]*>([\s\S]*?)<\/a>/i, replaceTagsAndSpaces);
-    getParam(html, info, 'info.notify', /Уведомления:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces); //не получать уведомлений|Получать уведомления только об успешных операциях|Получать уведомления обо всех активных операциях
-
-    if(AnyBalance.isAvailable('info.phone')) {
-        html = AnyBalance.requestGet(g_baseurl + 'ProfileChangeParams.aspx', g_headers);
-
-        getParam(html, info, 'info.phone', /<input[^>]+PhoneTextBox[^>]+value="([^"]*)/i, replaceTagsAndSpaces);
-    }
-}
-
-function fetchCredit(baseurl, html){
-    var prefs = AnyBalance.getPreferences();
-
-    if(/<a[^>]+href="Loans.aspx"/.test(html))
-        html = AnyBalance.requestGet(baseurl + 'Loans.aspx');
-
-    var re = new RegExp('(<tr[^>]*id=["\']?par_(?:[\\s\\S](?!<tr))*' + (prefs.contract || 'td') + '[\\s\\S]*?</tr>)', 'i');
-    var tr = getParam(html, null, null, re);
-    if(!tr)
-        throw new AnyBalance.Error('Не удаётся найти ' + (prefs.contract ? 'кредит №' + prefs.contract : 'ни одного кредита'));
-
-    var result = {success: true};
-    
-    getParam(tr, result, 'balance', /(?:[\s\S]*?<td[^>]*>){13}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(tr, result, 'accnum', /(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
-    getParam(tr, result, '__tariff', /(?:[\s\S]*?<td[^>]*>){6}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
-    getParam(tr, result, 'currency', /(?:[\s\S]*?<td[^>]*>){10}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
-    getParam(tr, result, 'accname', /(?:[\s\S]*?<td[^>]*>){6}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
-    getParam(tr, result, 'till', /(?:[\s\S]*?<td[^>]*>){8}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
-    getParam(tr, result, 'payTill', /(?:[\s\S]*?<td[^>]*>){11}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
-    getParam(tr, result, 'payNext', /(?:[\s\S]*?<td[^>]*>){12}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'fio', /<span[^>]+id="ctl00_FIOLabel"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
-    getParam(tr, result, 'limit', /(?:[\s\S]*?<td[^>]*>){9}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-
-    html = AnyBalance.requestGet(baseurl + 'Logout.aspx', g_headers2);
-    AnyBalance.setResult(result);
-    
-}
-
-function processDeposits(result){
-    if(!AnyBalance.isAvailable('deposits'))
-        return;
-
-    var html = AnyBalance.requestGet(g_baseurl + 'Deposits.aspx', g_headers);
-    html = html.replace(/<!--[\s\S]*?-->/g, ''); //Вырежем комментарии
-
-    var divs = getElements(html, /<div[^>]+class="entryCont"[^>]*>/i);
-    if(divs.length == 0){
-        AnyBalance.trace(html);
-        AnyBalance.trace('Не удалось получить вклады');
-        return;
-    }
-
-    result.deposits = [];
-
-    AnyBalance.trace('Нашли ' + divs.length + ' вкладов');
-
-    for(var i=0; i<divs.length; ++i){
-        var div = divs[i];
-        var id = getParam(div, null, null, /([\s\S]*?<\/td>){3}/i, replaceTagsAndSpaces);
-        var name = getParam(div, null, null, /<td[^>]*>([\s\S]*?<\/td>){1}/i, replaceTagsAndSpaces);
-
-        var o = {
-            __id: id,
-            __name: name + ' ' + id.substr(-4),
-            num: id
-        };
-
-        if(__shouldProcess('deposits', o)){
-            processDeposit(div, o);
-        }
-
-        result.deposits.push(o);
-    }
-}
-
-function parseBool(str){
-    return /Да/i.test(str);
-}
-
-function processDeposit(div, result){
-    AnyBalance.trace('Обработка вклада ' + result.__name);
-
-    getParam(div, result, 'deposits.balance', /([\s\S]*?<\/td>){4}/i, replaceTagsAndSpaces, parseBalance);
-    getParam(div, result, 'deposits.currency', /([\s\S]*?<\/td>){4}/i, replaceTagsAndSpaces, parseCurrency);
-    getParam(div, result, 'deposits.agreement', /([\s\S]*?<\/td>){2}/i, replaceTagsAndSpaces);
-
-    if(AnyBalance.isAvailable('deposits.num', 'deposits.num1', 'deposits.num2', 'deposits.type',
-            'deposits.period', 'deposits.owner', 'deposits.date_start', 'deposits.date_end', 'deposits.balance_start',
-            'deposits.balance_min', 'deposits.min_topup', 'deposits.pct', 'deposits.pct_sum', 'deposits.pct_period',
-            'deposits.pct_period2', 'deposits.pct_next_till', 'deposits.pct_next', 'deposits.topup')) {
-        var infourl = getParam(div, null, null, /"(DepositInfo.aspx\?id=[^"]*)/i, replaceHtmlEntities);
-        var html = AnyBalance.requestGet(g_baseurl + infourl, g_headers);
-
-        getParam(html, result, 'deposits.num', /Номер\s+счёта\s+вклада:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
-        getParam(html, result, 'deposits.num1', /Номер\s+счёта-синонима:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
-        getParam(html, result, 'deposits.type', /Вид\s+вклада:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
-        getParam(html, result, 'deposits.period', /Срок\s+вклада:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces); //3 мес. 0 дн.
-        getParam(html, result, 'deposits.owner', /ФИО\s+клиента:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
-        getParam(html, result, 'deposits.num2', /Счёт\s+погашения\s+суммы\s+вклада\s+и\s+%:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
-        getParam(html, result, 'deposits.date_start', /Дата\s+открытия\s+вклада:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
-        getParam(html, result, 'deposits.date_end', /Дата\s+окончания\s+срока\s+вклада:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
-        getParam(html, result, 'deposits.balance_start', /Начальная\s+сумма\s+вклада:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-        getParam(html, result, 'deposits.balance_min', /Минимальная\s+сумма\s+вклада:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-        getParam(html, result, 'deposits.min_topup', /Минимальная\s+сумма\s+пополнения:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-        getParam(html, result, 'deposits.pct', /Текущая\s+ставка\s+%:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-        getParam(html, result, 'deposits.pct_sum', /Выплаченные\s+%:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-        getParam(html, result, 'deposits.pct_period', /Частота\s+выплаты\s+процентов\s+на\s+счёт\s+по\s+вкладу:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces); //Ежемесячно
-        getParam(html, result, 'deposits.pct_period2', /Частота\s+перечисления\s+процентов\s+на\s+счёт\s+погашения:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces); //Конец срока
-        getParam(html, result, 'deposits.pct_next_till', /Дата\s+очередного\s+начисления\s+процентов:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
-        getParam(html, result, 'deposits.pct_next', /Сумма\s+процентов\s+к\s+очередной\s+выплате:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-        getParam(html, result, 'deposits.topup', /Пополнение:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBool);
-    }
-
-    if(AnyBalance.isAvailable('deposits.transactions')){
-        processTransactions(div, result);
-    }
-
-}
-
-function processCredits(result){
-    if(!AnyBalance.isAvailable('deposits'))
-        return;
-
-    var html = AnyBalance.requestGet(g_baseurl + 'Loans.aspx', g_headers);
-
-    var error = getElement(html, /<div[^>]+id="[^"]*_ErrorPanel"/i, replaceTagsAndSpaces);
-    if(error){
-        AnyBalance.trace("У вас нет кредитов: " + error);
-        return;
-    }
-
+    getParam(html, info, 'info.fio',    /Имя пользователя(?:[\s\S]*?)<div[^>]*class="value"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+    //getParam(html, info, 'info.email',  /<a[^>]+EmailHyperLink[^>]*>([\s\S]*?)<\/a>/i, replaceTagsAndSpaces);
+    getParam(html, info, 'info.phone',  /Отправка SMS на номер телефона(?:[\s\S]*?)<div[^>]*class="description[^"]*"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+    getParam(html, info, 'info.notify', /Отправка SMS на номер телефона(?:[\s\S]*?)<div[^>]*class="value[^"]*"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces); //не получать уведомлений|Получать уведомления только об успешных операциях|Получать уведомления обо всех активных операциях
 }

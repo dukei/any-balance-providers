@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="131" date="2018-01-24">
+	Поддержка работы на андроид до 5 версии для некоторых регионов
+	</change>
 	<change version="130" date="2017-06-09">
 	- Исправлен волгоград, ростов, ульяновск
 	</change>

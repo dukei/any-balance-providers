@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-    <id version="10">ab-money-rosbank</id>
+    <id version="12">ab-money-rosbank</id>
     <name>РОСБАНК</name>
     <description>Информация о счете, кредите в банке Росбанк (http://www.rosbank.ru).
 	В настройках провайдера требуется указать 8 последних цифр номера Идентификационной карты и пароль к Интернет-банку https://ibank.rosbank.ru/.
@@ -31,6 +31,7 @@
         <counter id="accnum" name="Номер" type="text"/>
         <counter id="accname" name="Название" type="text"/>
         <counter id="fio" name="ФИО" type="text"/>
+        <counter id="till" name="Срок действия" type="time" format="MM/yyyy"/>
     </counters>
     <keywords>Кредит, банк, rosbank</keywords>
     <type>money, bank</type>

@@ -7,8 +7,8 @@ var g_headers = [
 	['Connection', 'keep-alive'],
 	['Pragma', 'no-cache'],
 	['Cache-Control', 'no-cache'],
-	['User-Agent', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36'],
-	['Accept', 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8'],
+	['User-Agent', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.36'],
+	['Accept', 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8'],
 	['Accept-Encoding', 'gzip, deflate, sdch, br'],
 	['Accept-Language', 'ru,en-US;q=0.8,en;q=0.6'],
 	['Origin', 'https://www.ozon.ru'],
@@ -59,13 +59,14 @@ function main() {
 	}
 
 	html = tryToLogin(html);
-   	if(!/context\/logoff/i.test(html) && /<form[^>]+name="form1"/i.test(html)){
+
+
+    if(!/mWelcome/i.test(html) && /<form[^>]+name="form1"/i.test(html)){
    		AnyBalance.trace('Снова форма авторизации... Заходим ещё разок');
 	  	html = tryToLogin(html); //Иногда может снова быть логин, если инкапсула не дала залогиниться
 	}
 
-	
-	if (!/context\/logoff/i.test(html)) {
+	if (!/mWelcome/i.test(html)) {
 		var error = getParam(html, null, null, /<span[^>]+class="ErrorSpan"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
 		if (error)
 			throw new AnyBalance.Error(error, null, /парол/i.test(error));

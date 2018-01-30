@@ -12,7 +12,7 @@ var g_headers = {
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'http://travel.vtb24.ru/';
+	var baseurl = 'https://travel.vtb.ru/';
 	AnyBalance.setDefaultCharset('utf-8');
 
 	checkEmpty(prefs.login, 'Введите логин!');
@@ -36,7 +36,7 @@ function main() {
 	if (json.error) {
 		var error = json.error ? json.error.name : undefined;
 		//Здесь у них хранятся расшифровки ошибок
-		var rusJson = getJson(AnyBalance.requestGet('http://travel.vtb24.ru/app/js/translations/translation_ru.json', g_headers));
+		var rusJson = getJson(AnyBalance.requestGet(baseurl + 'app/js/translations/translation_ru.json', g_headers));
 		if (error)
 			throw new AnyBalance.Error(rusJson.ERRORS[error], null, /(NoSuchUser|WrongAuthParams)/i.test(error));
 		AnyBalance.trace(html);
@@ -48,7 +48,7 @@ function main() {
 	getParam((json.firstName || '') + ' ' + (json.midName || '') + ' ' + (json.lastName || ''), result, 'fio');
 	html = AnyBalance.requestGet(baseurl+'_api/buyermanager/getUserInfo/?_='+ new Date().getTime()+'&source=vtb24');
 	json = getJson(html);
-	getParam((json.bonuses.total)/0.33, result, 'balance');
+	getParam(json.bonuses.total, result, 'balance');
 
 	AnyBalance.setResult(result);
 }

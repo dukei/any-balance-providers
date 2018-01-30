@@ -15,67 +15,23 @@ function main(){
 
     var baseurl = "http://oao-tts.ru/";
 
-	var html = AnyBalance.requestGet(baseurl + 'index.php/balans-karty', g_headers);
+    var hash = hex_md5(getFormattedDate({format: 'DD.MM.YYYY'}) + '.' + prefs.login);
+	var html = AnyBalance.requestGet(baseurl + 'services/lnt/infoBalansCard.php?numberCard=' + encodeURIComponent(prefs.login) + '&h=' + hash + '&hi=1&tf=json', g_headers);
 	
 	if(!html || AnyBalance.getLastStatusCode() > 400)
 		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
 
-    var params = {
-        n: prefs.login,
-        keystring: getCaptcha(baseurl, html)
-    };
-	
-	html = AnyBalance.requestPost(
-        baseurl + 'modules/mod_balans/ajax.php',
-        params,
-        AB.addHeaders({
-            'Accept': 'application/json, text/javascript, */*; q=0.01',
-            'Origin': baseurl,
-            'Referer': baseurl + 'index.php/balans-karty',
-            'X-Requested-With': 'XMLHttpRequest'
-        })
-    );
-	
-	if(html.charCodeAt(0) == 0xFEFF)
-		html = html.substr(1); //Иногда там говноBOM
+	var json = getJson(html);
+	if(json.error)
+		throw new AnyBalance.Error(json.error, null, /не\s*корректный/i.test(json.error));
 
-	var json = AB.getJson(html);
-	
-    if(json.result != 'data'){
-        throw new AnyBalance.Error(json.rem || 'Не удалось получить информацию по карте. Введен неверный номер карты?');
-    }
-	
     var result = {success: true};
 
     AB.getParam(json.balance + '', result, 'balance', null, AB.replaceTagsAndSpaces, AB.parseBalance);
     AB.getParam(json.tknumber + '', result, '__tariff', null, AB.replaceTagsAndSpaces);
     AB.getParam(json.ostlgottips + '', result, 'lgotleft', null, AB.replaceTagsAndSpaces, AB.parseBalance);
     AB.getParam(json.lgottips + '', result, 'lgotnum', null, AB.replaceTagsAndSpaces, AB.parseBalance);
+    AB.getParam(json.date + '', result, 'lgotlast', null, AB.replaceTagsAndSpaces, AB.parseDate);
 
     AnyBalance.setResult(result);
-}
-
-function getCaptcha(url, html) {
-    if (AnyBalance.getLevel() < 7) {
-        throw new AnyBalance.Error('Провайдер требует AnyBalance API v7, пожалуйста, обновите AnyBalance!');
-    }
-
-    AnyBalance.trace('Пытаемся ввести капчу');
-    var src = AB.getParam(html, null, null, /(modules\/mod_balans\/lib\/kcaptcha[^"]+)/i);
-    var captcha = AnyBalance.requestGet(
-        url + src,
-        AB.addHeaders({
-            Referer: url + 'index.php/balans-karty'
-        })
-    );
-    captcha = AnyBalance.requestGet(
-        url + src + '&R=' + Math.random() * 10 * 3,
-        AB.addHeaders({
-            Referer: url + 'index.php/balans-karty'
-        })
-    );
-
-    var captchaCode = AnyBalance.retrieveCode("Пожалуйста, введите код с картинки", captcha);
-    AnyBalance.trace('Капча получена: ' + captchaCode);
-    return captchaCode;
 }

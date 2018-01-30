@@ -1,15 +1,16 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="4">ab-bonus-tts</id>
+	<id version="5">ab-bonus-tts</id>
 	<api flags="no_browser|captcha"/>
 	<name>Тюменская транспортная система</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию по карте Тюменской транспортной системы <a href="http://oao-tts.ru">http://oao-tts.ru</a></p>
-	<p>Информация берется со страницы <a href="http://oao-tts.ru/index.php/balans-karty"></a>http://oao-tts.ru/index.php/balans-karty</p>
+	<p>Информация берется со страницы http://oao-tts.ru/ttsfind/</p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
   <depends>
     <module id="library"/>
+    <module id="crypt/md5"/>
   </depends>
 	<files>
 		<icon>icon.png</icon>

@@ -6,6 +6,7 @@ var g_headers = {
 	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
 	'Accept-Language': 'ru,en-US;q=0.8,en;q=0.6',
 	'Connection': 'keep-alive',
+	'Accept-Encoding': 'gzip, deflate, br',
 	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36',
 };
 
@@ -19,6 +20,10 @@ function getEventValidation(html){
 
 
 function main() {
+	AnyBalance.setOptions({
+		SSL_ENABLED_PROTOCOLS: ['TLSv1'] //У этих странных людей даже SSL2 и 3 включены
+	});
+
 	var prefs = AnyBalance.getPreferences();
 	var baseurl = 'https://triolan.name/';
 	AnyBalance.setDefaultCharset('utf-8');
@@ -26,7 +31,7 @@ function main() {
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 	
-	var html = AnyBalance.requestGet(baseurl, g_headers);
+	var html = AnyBalance.requestGet(baseurl + 'LP.aspx', g_headers);
 
 	var formRedirect = getElements(html, [/<form/ig, /btn_toLK/i])[0];
 	if(formRedirect){
@@ -37,7 +42,7 @@ function main() {
 		}));
 	}
 
-	html = AnyBalance.requestPost(baseurl, {
+	html = AnyBalance.requestPost(baseurl + 'LP.aspx', {
 		'__EVENTTARGET':'',
 		'__EVENTARGUMENT':'',
 		'__VIEWSTATE':getViewState(html),

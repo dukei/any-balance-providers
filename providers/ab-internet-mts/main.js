@@ -70,6 +70,24 @@ function main() {
   checkEmpty(prefs.login, 'Введите логин!');
   checkEmpty(prefs.password, 'Введите пароль!');
 
+	AnyBalance.setOptions({
+		PER_DOMAIN: {
+			'lkmagn.ural.mts.ru': {
+				SSL_ENABLED_PROTOCOLS: ['TLSv1.1', 'TLSv1.2']
+			},
+			'lksrt.pv.mts.ru': {
+				SSL_ENABLED_PROTOCOLS: ['TLSv1.1', 'TLSv1.2']
+			},
+			'lkkirov.pv.mts.ru': {
+				SSL_ENABLED_PROTOCOLS: ['TLSv1.1', 'TLSv1.2']
+			},
+			'lk.vologda.mts.ru': {
+				SSL_ENABLED_PROTOCOLS: ['TLSv1.1', 'TLSv1.2']
+			},
+		}
+	});
+
+
   func();
 }
 
@@ -869,7 +887,7 @@ function typicalApiInetTv(baseurl) {
 
 
 function getMagnit() {
-  newTypicalLanBillingInetTv_1('https://lkmagn.ural.mts.ru/index.php');
+    newTypicalLanBillingInetTv_1('https://lkmagn.ural.mts.ru/index.php');
 }
 
 

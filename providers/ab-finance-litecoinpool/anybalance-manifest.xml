@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-finance-litecoinpool</id>
+	<api flags="no_browser"/>
+	<name>Litecoinpool</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о хешрейте воркеров на пуле.</p>
+	<p>Информация предоставляется https://www.litecoinpool.org</p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Если у вас нет аккаунта, зарегистрируйтесь на пуле https://www.litecoinpool.org/register</p>
+	<p>После регистрации на странице https://www.litecoinpool.org/account скопируйте ваш API key и введите ваш username.worker</p>
+	]]></instruction>
+	<author>Viktor Sinitsyn &lt;mousesport007@ya.ru&gt;</author>
+		<depends>
+		<module id="library"/>
+	</depends>
+	<files>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="hashrate" name="Хешрейт воркера" units=" KH/s"/>
+		<counter id="status" name="Статус воркера"  type="text"/>
+
+	</counters>
+	<keywords>litecoinpool, ltc, litecoin, crypto, pool, криптовалюта, пул, майнинг</keywords>
+	<type>finance</type>
+	<country></country>
+</provider>

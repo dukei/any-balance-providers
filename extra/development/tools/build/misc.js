@@ -9,7 +9,11 @@ var Misc = (function(){
 		if(!options)
 			options = {};
 
-		var oExec = WshShell.Exec(cmdline);
+		try{
+			var oExec = WshShell.Exec(cmdline);
+		}catch(e){
+			throw new Error("Unable to execute " + cmdline + ": \n" + e.message);
+		}
 		
 		function ReadAllFromAny(oExec)
 		{

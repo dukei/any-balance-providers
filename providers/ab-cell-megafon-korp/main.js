@@ -226,9 +226,15 @@ function getDiscounts(baseurl, account, result){
             if(/мин/i.test(d.measure)){
                 AnyBalance.trace('Это минуты');
                 sumParam(d.volume, result, 'min_left', null, null, null, aggregate_sum);
+            }else if(/Базовый sms/i.test(d.name)){
+                AnyBalance.trace('Это смс на мегафон');
+                sumParam(d.volume, result, 'sms_left_megafon', null, null, null, aggregate_sum);
             }else if(/шт|смс|sms/i.test(d.measure)){
                 AnyBalance.trace('Это смс');
                 sumParam(d.volume, result, 'sms_left', null, null, null, aggregate_sum);
+            }else if(/[мгкmgk][бb]/i.test(d.measure)){
+                AnyBalance.trace('Это интернет');
+                sumParam(d.volume + d.measure, result, 'traffic_left', null, null, parseTraffic, aggregate_sum);
             }else{
                 AnyBalance.trace('неизвестная скидка: ' + JSON.stringify(d));
             }

@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="13" date="2018-02-09">
+	Добавлено распознавание трафика и смс внутри сети
+	</change>
 	<change version="12" date="2017-07-15">
 	Мелкие исправления
 	</change>

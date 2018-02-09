@@ -74,12 +74,12 @@ function login() {
             throw new AnyBalance.Error('Вы ещё ни разу не входили в интернет-банк или вам требуется сменить пароль. Зайдите в интернет банк через браузер на https://ibank.rosbank.ru/, затем попробуйте выполнить провайдер ещё раз');
         }
 
-        if(!/redirect/i.test(html)) {
+        if(!/redirect|<button[^>]*>\s*Готово\s*<\/button>/i.test(html)) {
             var error = getParam(html, null,null, /<span[^>]*error[^>]*>([\s\S]*?)<\/span>/i);
             if(error)
                 throw new AnyBalance.Error(error, null, true);
             AnyBalance.trace(html);
-            throw new AnyBalance.Error('Не удаётся ввести логин. Сайт изменен?');
+            throw new AnyBalance.Error('Не удаётся войти в интернет банк. Сайт изменен?');
         }
 
 
@@ -96,7 +96,7 @@ function processAccounts(result){
     if(!AnyBalance.isAvailable('accounts'))
         return;
 
-    var html = AnyBalance.requestGet(g_baseurl + 'ibank/main');
+    var html = AnyBalance.requestGet(g_baseurl + 'ibank/main', g_headers);
 
     var actions = findWicketActions(html),
         last_URL = AnyBalance.getLastUrl(),
@@ -230,7 +230,7 @@ function processCards(result){
     if(!AnyBalance.isAvailable('cards'))
         return;
 
-    var html = AnyBalance.requestGet(g_baseurl + 'ibank/main');
+    var html = AnyBalance.requestGet(g_baseurl + 'ibank/main', g_headers);
 
     var actions = findWicketActions(html),
         last_URL = AnyBalance.getLastUrl(),

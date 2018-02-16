@@ -45,7 +45,9 @@ function main() {
 
 	var salt = callApi('Authorization/GetSalt', {lang: 'RUS', login: prefs.login});
 	AnyBalance.trace('Salt is: ' + JSON.stringify(salt));  
-	var passHash = CryptoJS.SHA512(prefs.password + salt.salt).toString();
+	var passHash = CryptoJS.SHA512(prefs.password).toString();
+	if(salt.salt)
+		passHash = CryptoJS.SHA512(passHash + salt.salt).toString();
 
 	var json = callApi('Authorization/Login', {
 		login: prefs.login,

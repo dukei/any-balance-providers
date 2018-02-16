@@ -1,98 +1,131 @@
-﻿/**
+/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 */
 
 var g_headers = {
-	'User-Agent': 'User-Agent: Dalvik/1.6.0 (Linux; U; Android 4.4.2; sdk Build/MR1)',
+	'User-Agent': 'PriorMobile3/3.17.03.22 (Android 26; versionCode 37)',
+	Connection: 'Keep-Alive'
 };
 
-var g_baseurl = 'https://www.prior.by/api/ibapi.axd?action=';
+var g_baseurl = 'https://www.prior.by/api3/api/';
+
+
+function callApi(verb, postParams){
+	var method = 'GET';
+	var h = g_headers;
+	if(isset(postParams)){
+		method = 'POST';
+		h = addHeaders({'Content-Type': 'application/json; charset=utf-8'}, h);
+	}
+	
+	var html = AnyBalance.requestPost(g_baseurl + verb, postParams && JSON.stringify(postParams), h, {HTTP_METHOD: method});
+
+	var json = getJson(html);
+	if(isset(json.success) && !json.success){
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error(json.errorMessage, null, /парол/i.test(json.errorMessage));
+	}
+
+	if(json.success)
+		return json.result;
+
+    return json;
+}
+
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
 	
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
-	
-	var key = CryptoJS.enc.Base64.parse('Nm4wMy5nOiM3JSpWfnwzOXFpNzRcfjB5MVNEKl8mWkw=');
-	var iv  = CryptoJS.enc.Base64.parse('OSMqNE11fGUoLDg5Mmk1WQ==');
-	
-	var tokenBase64 = AnyBalance.requestPost(g_baseurl + 'setup', {}, g_headers);
-	checkEmpty(tokenBase64, 'Не удалось авторизоваться, сайт изменен?');
-	AnyBalance.trace('token: ' + tokenBase64);
-	
-	var token = CryptoJS.enc.Base64.parse(tokenBase64);
-	var encodedToken = CryptoJS.AES.encrypt(token, key, { iv: iv });
-	
-	var passHash = CryptoJS.SHA512(prefs.password);
-	
-	var xml = AnyBalance.requestPost(g_baseurl + 'login', {
-		UserName: prefs.login, 
-		UserPassword: passHash.toString(), 
-		Token: encodedToken.toString(), 
-		'@OSType': '2', 
-		'@OSVersion': '16', 
-		'@AppVersion': '2.16.7.12',
-		'@isNewApp': 'true'
-	}, g_headers);
-	
-	if (!/UserSession/i.test(xml)) {
-		var error = sumParam(xml, null, null, /<Error>([\s\S]*?)<\/Error/i, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
-		if (error && /Неверный логин или пароль/i.test(error))
-			throw new AnyBalance.Error(error, null, true);
-		if (error)
-			throw new AnyBalance.Error(error);
-		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
-	}
+
+	var tokenInfo = callApi('Authorization/MobileToken');
+	g_headers.client_id = tokenInfo.client_secret;
+	g_headers.Authorization = tokenInfo.token_type + ' ' + tokenInfo.access_token;
+
+	var salt = callApi('Authorization/GetSalt', {lang: 'RUS', login: prefs.login});
+	AnyBalance.trace('Salt is: ' + JSON.stringify(salt));  
+	var passHash = CryptoJS.SHA512(prefs.password + salt.salt).toString();
+
+	var json = callApi('Authorization/Login', {
+		login: prefs.login,
+		password: passHash,
+		lang: 'RUS'
+	});
+
+	g_headers.Authorization = tokenInfo.token_type + ' ' + json.access_token;
+	AnyBalance.trace('Вошли как ' + json.clientName + ' ' + json.secondName + ' ' + json.surname);
 	
 	var result = {success: true};
 
 	if(prefs.type == 'card')
-		fetchCard(prefs, result);
+		fetchCard(json, result);
 	else
-		fetchContract(prefs, result);
+		fetchContract(json, result);
 	
 	AnyBalance.setResult(result);
 }
 
-function fetchCard(prefs, result) {
-	html = AnyBalance.requestPost(g_baseurl + 'GateWay&Target=Android', {Template: 'CardList'}, addHeaders({Base64Fields: 'XML'}));
-	
-	var re = new RegExp('<Card\\s+[^>]*>\\s*<Synonym><\\!\\[CDATA\\[' + (prefs.num || '[^]+?') + '\\]\\]><\/Synonym>[^]*?<\/Card>', 'i');
-	var card = getParam(html, null, null, re);
-	if(!card){
-		AnyBalance.trace(html);
-        throw new AnyBalance.Error(prefs.num ? 'Не удаётся найти карту с псевдонимом ' + prefs.num : 'У вас нет ни одной карты');
-    }
+function fetchCard(json, result) {
+	var prefs = AnyBalance.getPreferences();
 
-	getParam(card, result, 'balance', /AMOUNT_AVAILABLE[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(card, result, ['currency', 'balance'], /Currency[^>]*>([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(card, result, 'name', /CustomSynonym[^>]*>([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(card, result, 'cardNumber', /CardNum[^>]*>([^<]+)/i);
-	getParam(card, result, '__tariff', /CardNum[^>]*>([^<]+)/i);
-	getParam(card, result, 'validto', /CARD_EXPIRE[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseDate);
+	var json = callApi('Cards', {userSession: json.userSession});
+	if(!json || !json.length)
+		throw new AnyBalance.Error('У вас нет ни одной карты');
+
+	AnyBalance.trace('Найдено карт: ' + json.length);
+
+	var card;
+	for(var i=0; i<json.length; ++i){
+		card = json[i];
+		var syn = card.clientObject.customSynonym || card.clientObject.defaultSynonym;
+		AnyBalance.trace('Найдена карта ' + syn + ' (' + card.clientObject.cardMaskedNumber + ')');
+		if(!prefs.num || endsWith(card.clientObject.cardMaskedNumber, prefs.num) || endsWith(syn, prefs.num))
+			break;
+	}
+
+	if(i > json.length)
+		throw new AnyBalance.Error('Не удаётся найти карту с псевдонимом или последними цифрами ' + prefs.num); 
+
+	getParam(card.balance.available, result, 'balance');
+	getParam(card.clientObject.currIso, result, ['currency', 'balance']);
+	getParam(card.clientObject.customSynonym || card.clientObject.defaultSynonym, result, 'name');
+	getParam(card.clientObject.cardMaskedNumber, result, 'cardNumber');
+	getParam(card.clientObject.cardMaskedNumber, result, '__tariff');
+	getParam(card.clientObject.expDate, result, 'validto', null, null, parseDateISO);
 	
 	return result;
 }
 
-function fetchContract(prefs, result) {
-	html = AnyBalance.requestPost(g_baseurl + 'GateWay&Target=Android', {Template: 'ContractList'}, addHeaders({Base64Fields: 'XML'}));
-	
-	var re = new RegExp('<Contract\\s+[^>]*>\\s*<Synonym>' + (prefs.num ? '<!\\[CDATA\\[' + prefs.num + '\\]\\]>' : '[^]+?') + '<\/Synonym>[^]*?<\/Contract>', 'i');
-	var contract = getParam(html, null, null, re);
-	if(!contract){
-		AnyBalance.trace(html);
-        throw new AnyBalance.Error(prefs.num ? 'Не удаётся найти договор с псевдонимом ' + prefs.num : 'У вас нет ни одного договора');
-    }
+function fetchContract(json, result) {
+	var prefs = AnyBalance.getPreferences();
 
-	getParam(contract, result, 'balance', /ContractRest[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(contract, result, ['currency', 'balance'], /CurrCode[^>]*>([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(contract, result, 'name', /CustomSynonym[^>]*>([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
-	if(AnyBalance.isAvailable('name') && !result.name)
-		getParam(contract, result, 'name', /Description[^>]*>([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(contract, result, 'cardNumber', /ContracNum[^>]*>([^<]+)/i);
-	getParam(contract, result, '__tariff', /ContracNum[^>]*>([^<]+)/i);
-	getParam(contract, result, 'validto', /FinishDate[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseDate);
-	
+	var json = callApi('Contracts', {userSession: json.userSession});
+	if(!json || !json.length)
+		throw new AnyBalance.Error('У вас нет ни одного контракта');
+
+	AnyBalance.trace('Найдено контрактов: ' + json.length);
+
+	var card;
+	for(var i=0; i<json.length; ++i){
+		card = json[i];
+		var syn = card.clientObject.customSynonym || card.clientObject.defaultSynonym;
+		AnyBalance.trace('Найден контракт ' + syn + ' (' + card.clientObject.contractNum + ')');
+		if(!prefs.num || endsWith(card.clientObject.contractNum, prefs.num) || endsWith(syn, prefs.num))
+			break;
+	}
+
+	if(i > json.length)
+		throw new AnyBalance.Error('Не удаётся найти контракт с псевдонимом или последними цифрами ' + prefs.num); 
+
+	getParam(card.balance.available, result, 'balance');
+	getParam(card.clientObject.currIso, result, ['currency', 'balance']);
+	getParam(card.clientObject.customSynonym || card.clientObject.defaultSynonym, result, 'name');
+	getParam(card.clientObject.contractNum, result, 'cardNumber');
+	getParam(card.clientObject.contractNum, result, '__tariff');
+	getParam(card.clientObject.contractCloseDate, result, 'validto', null, null, parseDateISO);	
+	if(result.validto && result.validto < 0)
+		delete result.validto;
+
 	return result;
 }

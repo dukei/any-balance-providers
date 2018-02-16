@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="11">ab-money-priorbank</id>
+	<id version="12">ab-money-priorbank</id>
 	<api flags="no_browser"/>
 	<name>Приорбанк</name>
 	<description html="true"><![CDATA[
@@ -8,7 +8,6 @@
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>
-		<module id="crypt/cryptojs/aes"/>
 		<module id="crypt/cryptojs/sha512"/>
 		<module id="library"/>
 	</depends>

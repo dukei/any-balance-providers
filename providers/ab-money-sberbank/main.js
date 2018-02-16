@@ -20,6 +20,8 @@ var g_countersTable = {
 		"cardName": "cards.cardName",
 		"minpaydate": "cards.minpay_till",
 		"minpay": "cards.minpay",
+		"gracepay_till": "cards.gracepay_till",
+		"gracepay": "cards.gracepay",
 		"maxlimit": "cards.limit",
 		"debt": "cards.debt",
 		"debt_date": "cards.debt_date",

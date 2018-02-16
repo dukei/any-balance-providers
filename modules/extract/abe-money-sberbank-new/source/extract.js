@@ -335,8 +335,12 @@ function processCard(html, result){
 		getParam(html, result, 'cards.limit', /Кредитный лимит[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
         getParam(html, result, 'cards.own', /Собственные средства:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 
-		getParam(html, result, 'cards.debt', /Общая задолженность[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+		getParam(html, result, 'cards.debt', /(?:Общая задолженность|Задолженность\s*<br[^>]*>\s*на сегодня)[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 		getParam(html, result, 'cards.debt_date', /Дата формирования(?:\s|<[^>]*>)+отчета:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDateWord);
+
+		getParam(html, result, 'cards.gracepay', /Задолженность льготного периода[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+		getParam(html, result, 'cards.gracepay_till', /Задолженность льготного периода(?:[\s\S](?!<\/tr>))*?внести эту сумму до([^<,]*)/i, replaceTagsAndSpaces, parseDateWord);
+
 	}
 	// // Нужно только для старого провайдера
 	// if (AnyBalance.isAvailable('cards.lastPurchSum', 'cards.lastPurchPlace', 'cards.lastPurchDate')) {

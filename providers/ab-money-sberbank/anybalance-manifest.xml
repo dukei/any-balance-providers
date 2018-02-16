@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="84">ab-money-sberbank</id>
+	<id version="85">ab-money-sberbank</id>
 	<api flags="no_browser"/>
 	<name>Сбербанк Онлайн</name>
 	<description html="true"><![CDATA[
@@ -65,6 +65,8 @@
 		<counter id="own" name="Собственные средства" units=" {@currency}"/>
 		<counter id="cardNumber" name="Номер карты/счета" type="text"/>
 		<counter id="till" name="Срок действия" type="time" format="MM/yyyy"/>
+		<counter id="gracepay" name="Льготный платеж" units=" {@currency}"/>
+		<counter id="gracepay_till" name="Срок льготного платежа" type="time" format="dd/MM/yyyy"/>
 		<counter id="debt" name="Задолженность" units=" {@currency}"/>
 		<counter id="debt_date" name="Дата последнего отчета по задолженности" type="time" format="dd/MM/yyyy"/>
 		<counter id="maxlimit" name="Кредитный лимит" units=" {@currency}"/>

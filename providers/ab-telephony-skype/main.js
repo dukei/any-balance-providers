@@ -73,7 +73,7 @@ function main() {
  	}
 
  	info = AnyBalance.requestGet('https://secure.skype.com/portal/overview', g_headers);
- 	var clientId = getParam(info, null, null, /<input[^>]+value="([^"]*)[^>]+name="client_id"/i, replaceHtmlEntities);
+ 	var clientId = getParam(info, /client_id=([^&"]*)/i, decodeURIComponent);
  	if(!clientId){
  		AnyBalance.trace(info);
  		throw new AnyBalance.Error('Could not find login parameter (client_id). Is the site changed?');
@@ -86,7 +86,7 @@ function main() {
     info = AnyBalance.requestGet('https://login.skype.com/login/oauth/microsoft?mssso=1&client_id=' + clientId + '&redirect_uri=https%3A%2F%2Fsecure.skype.com%2Fportal%2Flogin%3Freturn_url%3Dhttps%253A%252F%252Fsecure.skype.com%252Fportal%252Foverview', addHeaders({Referer: AnyBalance.getLastUrl()}));
  	info = redirectIfNeeded(info);
 
- 	if (!/skype\.com\/(?:portal\/)?logout/i.test(info)) {
+ 	if (!/overviewSkypeName/i.test(info)) {
 	 	var json = getJsonObject(info, /var\s+\$Config\s*=\s*/);
 	 	if(json && json.WLXAccount && json.WLXAccount.confirmIdentity){
 	 		//Need otp authorization

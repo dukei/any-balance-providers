@@ -10,42 +10,52 @@ var g_headers = {
 	'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.31 (KHTML, like Gecko) Chrome/26.0.1410.64 Safari/537.31',
 };
 
+var baseurl = "https://lk.istranet.ru/";
+
+function callApi(verb, params){
+	var html = AnyBalance.requestPost(baseurl + verb, JSON.stringify(params), addHeaders({
+		'Content-Type': 'application/json;charset=UTF-8',
+		Referer: baseurl
+	}));
+
+	return getJson(html);
+}
+
 function main(){
     var prefs = AnyBalance.getPreferences();
-    var baseurl = "https://lk.istranet.ru/";
 	
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 	
 	AnyBalance.setDefaultCharset('UTF-8');
-	
-    var html = AnyBalance.requestPost(baseurl, {
-        login:prefs.login,
-        password:prefs.password,
-        cmd:'login'
-    }, addHeaders({Referer: baseurl})); 
-	
-	if(!/zz_logout/i.test(html)){
-		var error = getParam(html, null, null, /<p style=["']color:red["']>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
+
+	var json = callApi('login', {
+		login: prefs.login,
+		password: prefs.password
+	});
+
+	if(!json.sessionid){
+		var error = json.message;
 		if (error)
-			throw new AnyBalance.Error(error, null, /Неверно указаны логин или пароль/i.test(error));
+			throw new AnyBalance.Error(error, null, /парол/i.test(error));
 		
-		AnyBalance.trace(html);
+		AnyBalance.trace(JSON.stringify(json));
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
 	
     var result = {success: true};
-    getParam(html, result, 'fio', /<td[^>]*>ФИО<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'account', /<td[^>]*>Основной лицевой счет<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'id', /<td[^>]*>ID<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'balance', /<td[^>]*>Баланс<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'balanceCredit', /<td[^>]*>Кредит<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'nds', /<td[^>]*>НДС<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'status', /<td[^>]*>Состояние интернета<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/i, [/<A(?:[^>]*>){2}/ig, '', replaceTagsAndSpaces], html_entity_decode);
 	
-    html = AnyBalance.requestGet(baseurl + '?module=40_tariffs', g_headers);
-	
-    getParam(html, result, '__tariff', /<TD[^>]*>Тарифный план<\/TD>(?:[\s\S]*?<td[^>]*>){7}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);    
+	var sessionid = json.sessionid;
+
+    json = callApi('info', {sessionid: sessionid});
+
+    getParam(json.full_name, result, 'fio');
+    getParam(json.user_id, result, 'account');
+    getParam(json.user_id, result, 'id');
+	getParam(json.balance, result, 'balance');
+    getParam(json.credit || undefined, result, 'balanceCredit');
+	getParam(json.status ? 'Выключен' : 'Включен', result, 'status');
+	getParam(json.tariff.name, result, '__tariff');
 	
     AnyBalance.setResult(result);
 }

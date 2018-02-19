@@ -162,6 +162,28 @@ function findExactWickeAction(actions, exactId, event) {
 
 }
 
+function requestGetWicketActionEx(html, regex, params, preferredEvent) {
+ 	html = requestGetWicketAction(html, regex, params, preferredEvent);
+	do{
+		if(/<ajax-response><evaluate>/i.test(html)){
+			//Нужно переполучить через некоторое время
+			var url = getParam(html, /"u":"\.\/([^"]*)/);
+			var time = getParam(html, /\}\);\},\s*(\d+)/i, null, parseBalance);
+			if(!url || !time){
+				AnyBalance.trace('Неизвестный отложенный запрос: ' + html);
+				return html;	
+			} 
+
+			AnyBalance.trace('Требуется отложить запрос на ' + time + ' мс. Спим...');
+			AnyBalance.sleep(time);
+
+			html = AnyBalance.requestGet(baseurl + url + '&_=' + new Date().getTime(), addHeaders(g_Xml_Headers));
+		}else{
+			return html;
+		}
+	}while(true);
+}
+
 function requestGetWicketAction(html, regex, params, preferredEvent) {
 	var wicketId = getParam(html, regex);
 	if(!wicketId){
@@ -198,7 +220,7 @@ function processCards(html, result) {
 		return;
 	
 	var html = AnyBalance.requestGet(baseurl + 'main?main=priv', g_headers);
-  html = requestGetWicketAction(html, /wicket.event.add\([^"]*?"load"[\s\S]*?"c":"([^"]*)/i);
+	html = requestGetWicketActionEx(html, /wicket.event.add\([^"]*?"load"[\s\S]*?"c":"([^"]*)/i);
 
 	html = requestGetWicketAction(html, /<div[^>]+class="inner\b[^>]+id="(id[^"]+)"/i);
 	
@@ -271,7 +293,7 @@ function processAccounts(html, result) {
 		return;
 
 	var html = AnyBalance.requestGet(baseurl + 'main?main=priv', g_headers);
-  html = requestGetWicketAction(html, /wicket.event.add\([^"]*?"load"[\s\S]*?"c":"([^"]*)/i);
+    html = requestGetWicketActionEx(html, /wicket.event.add\([^"]*?"load"[\s\S]*?"c":"([^"]*)/i);
 
 	html = requestGetWicketAction(html, /<div[^>]+class="inner\b[^>]+id="(id[^"]+)"/i);
 		
@@ -323,7 +345,7 @@ function processCredits(html, result) {
 		return;
 	
 	var html = AnyBalance.requestGet(baseurl + 'main?main=priv', g_headers);
-  html = requestGetWicketAction(html, /wicket.event.add\([^"]*?"load"[\s\S]*?"c":"([^"]*)/i);
+  	html = requestGetWicketActionEx(html, /wicket.event.add\([^"]*?"load"[\s\S]*?"c":"([^"]*)/i);
 
   var credits = [];
   	try{
@@ -402,7 +424,7 @@ function processDeposits(html, result) {
 		return;
 	
 	var html = AnyBalance.requestGet(baseurl + 'main?main=priv', g_headers);
-  	html = requestGetWicketAction(html, /wicket.event.add\([^"]*?"load"[\s\S]*?"c":"([^"]*)/i);
+  	html = requestGetWicketActionEx(html, /wicket.event.add\([^"]*?"load"[\s\S]*?"c":"([^"]*)/i);
 
   	var deposits = [];
   	try{

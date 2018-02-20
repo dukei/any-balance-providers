@@ -5,10 +5,10 @@
 */
 
 var g_headers = {
-    'User-Agent': 'User-Agent: Sony D6503/android: 5.1.1/TCSMB/3.1.0'
+    'User-Agent': 'User-Agent: Sony D6503/android: 5.1.1/TCSMB/4.1.3'
 }
 
-var g_baseurl = 'https://api.tcsbank.ru/v1/';
+var g_baseurl = 'https://api.tinkoff.ru/v1/';
 var g_deviceid;
 var g_sessionid;
 
@@ -26,9 +26,10 @@ function requestJson(action, data, options) {
 	}
 
 	// Заполняем параметры, которые есть всегда
-	params.push(encodeURIComponent('appVersion') + '=' + encodeURIComponent('3.1.0'));
+	params.push(encodeURIComponent('appVersion') + '=' + encodeURIComponent('4.1.3'));
 	params.push(encodeURIComponent('platform') + '=' + encodeURIComponent('android'));
-	params.push(encodeURIComponent('origin') + '=' + encodeURIComponent('mobile,ib5,loyalty'));
+	params.push(encodeURIComponent('origin') + '=' + encodeURIComponent('mobile,ib5,loyalty,platform'));
+	params.push(encodeURIComponent('connectionType') + '=' + encodeURIComponent('WiFi'));
 	if(g_deviceid)
 		params.push(encodeURIComponent('deviceId') + '=' + encodeURIComponent(g_deviceid));
 

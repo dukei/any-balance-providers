@@ -8,9 +8,6 @@ var g_headers = {
 	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
 	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
 	'Connection': 'keep-alive',
-	// Mobile
-	//'User-Agent':'Mozilla/5.0 (BlackBerry; U; BlackBerry 9900; en-US) AppleWebKit/534.11+ (KHTML, like Gecko) Version/7.0.0.187 Mobile Safari/534.11+',
-	// Desktop
 	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
 };
 
@@ -29,11 +26,16 @@ function main() {
 		throw new AnyBalance.Error('Сайт провайдера временно недоступен! Попробуйте обновить данные позже.');
 	}
 
-	var form = AB.getElement(html, /<(?:div|form)[^>]+login-form[^>]*>/i);
+	var form = AB.getElement(html, /<form/i);
 	if(!form){
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удаётся найти форму входа! Сайт изменен?');
 	}
+
+	var key = getParam(form, /data-sitekey="?([^"\s>]*)/i, replaceHtmlEntities);
+	var captcha;
+	if(key)
+		captcha = solveRecaptcha("Пожалуйста, докажите, что вы не робот", AnyBalance.getLastUrl(), key);
 
 	var params = AB.createFormParams(form, function(params, str, name, value) {
 		if (name == 'Method') {
@@ -46,6 +48,8 @@ function main() {
 
 		return value;
 	});
+
+	params['g-recaptcha-response'] = captcha;
 
 	html = AnyBalance.requestPost(baseurl + 'login', params, AB.addHeaders({
 		Referer: baseurl + 'login'
@@ -75,7 +79,7 @@ function main() {
 		success: true
 	};
 
-	html = AnyBalance.requestGet('http://www.dns-shop.ru/profile/prozapass/', g_headers); 
+	html = AnyBalance.requestGet('https://www.dns-shop.ru/profile/prozapass/', g_headers); 
 
 	AB.getParam(getElement(html, /<div[^>]+bonus-active/i), result, 'balance', null, [AB.replaceTagsAndSpaces, /нет бонусов/i, '0'], AB.parseBalance);
 	AB.getParam(getElement(html, /<div[^>]+bonus-no-active/i), result, 'inactive', null, AB.replaceTagsAndSpaces, AB.parseBalance);

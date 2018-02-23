@@ -13,7 +13,9 @@ function getStatus(statusid){
 		true: 'Активен',
 	}[statusid] || 'Неизвестный статус (' + statusid + ')';
 }
-
+function parseSpeedMHs(str){
+    return parseTrafficEx(str, 1000, 2, 'k');
+}
 function main() {
 	var prefs = AnyBalance.getPreferences();
 	AnyBalance.setDefaultCharset('utf-8');
@@ -37,8 +39,8 @@ function main() {
 	AnyBalance.trace(JSON.stringify(json));
 
 	var result = { success: true };
-	getParam(json.workers[prefs.worker].hash_rate, result, 'hashrate');
+	getParam(json.workers[prefs.worker].hash_rate, result, 'hashrate', null, null, parseSpeedMHs);
     getParam(json.workers[prefs.worker].connected, result, 'status', null, null, getStatus);
-	 getParam(prefs.worker, result, '__tariff');
+	getParam(prefs.worker, result, '__tariff');
     AnyBalance.setResult(result);
 }

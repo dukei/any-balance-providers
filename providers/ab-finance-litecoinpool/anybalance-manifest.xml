@@ -16,12 +16,13 @@
 		<module id="library"/>
 	</depends>
 	<files>
+		<icon>icon.png</icon><!-- требования к иконке: https://github.com/dukei/any-balance-providers/wiki/Icon -->
 		<preferences>preferences.xml</preferences>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="hashrate" name="Хешрейт воркера" units=" KH/s"/>
+		<counter id="hashrate" name="Хешрейт воркера" units=" Mh/s"/>
 		<counter id="status" name="Статус воркера"  type="text"/>
 
 	</counters>

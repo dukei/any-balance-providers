@@ -1,5 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="5" date="2018-01-24">
+	- Поддержка изменений на сайте.
+	- Добавлен счётчик "Дата заключения".
+	</change>
 	<change version="4" date="2017-01-31">
 	- Поддержка изменений на сайте.
 	</change>

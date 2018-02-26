@@ -331,7 +331,7 @@ function processCard(html, result){
 		getParam(html, result, 'cards.cash', /Для снятия наличных:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 		getParam(html, result, 'cards.electrocash', /для покупок:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 		getParam(html, result, 'cards.minpay', /Обязательный платеж[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-		getParam(html, result, 'cards.minpay_till', /(?:Дата платежа:|Обязательный платеж, внесите до)[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/, replaceTagsAndSpaces, parseDateWord);
+		getParam(html, result, 'cards.minpay_till', /Обязательный платеж, внесите до([^<]*)/, replaceTagsAndSpaces, parseDateWord);
 		getParam(html, result, 'cards.limit', /Кредитный лимит[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
         getParam(html, result, 'cards.own', /Собственные средства:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 

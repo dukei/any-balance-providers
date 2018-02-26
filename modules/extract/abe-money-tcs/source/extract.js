@@ -203,7 +203,7 @@ function processAccounts(result){
 function processAccount(acc, result){
 	AnyBalance.trace('Обработка счета ' + result.__name);
 
-	var balance = jspath1(acc, '$.accountBalance') || jspath1(acc, '$.moneyAmount');
+	var balance = jspath1(acc, '$.moneyAmount') || jspath1(acc, '$.accountBalance');
 
     getParam(jspath1(balance, '$.value'), result, 'accounts.balance');
     getParam(jspath1(balance, '$.currency.name'), result, 'accounts.currency');

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+	<EditTextPreference
+		title="api key"
+		key="api"
+		summary="|Введите api_key|{@s}"
+		obligatory="true"
+		dialogTitle="api_key"
+		positiveButtonText="ОК"
+		negativeButtonText="Cancel"
+		dialogMessage="Введите api key">
+	</EditTextPreference>
+		<EditTextPreference
+		title="secret key"
+		key="secret"
+		summary="|Введите secret_key|{@s}"
+		obligatory="true"
+		dialogTitle="secret_key"
+		positiveButtonText="ОК"
+		negativeButtonText="Cancel"
+		dialogMessage="Введите api key">
+	</EditTextPreference>
+	<EditTextPreference
+		title="Sub-account"
+		key="username"
+		summary="|NOT email|{@s}"
+		obligatory="true"
+		dialogTitle="Sub-account"
+		positiveButtonText="ОК"
+		negativeButtonText="Cancel"
+		dialogMessage="Введите Sub-account - не email!">
+	</EditTextPreference>
+	<EditTextPreference
+		title="WorkerID"
+		key="indexworker"
+		summary="|indexworker|{@s}"
+		obligatory="true"
+		dialogTitle="WorkerID"
+		positiveButtonText="ОК"
+		negativeButtonText="Cancel"
+		dialogMessage="Введите WorkerID (worker = Sub-account.WorkerID) only input WorkerID">
+	</EditTextPreference>
+		<EditTextPreference
+		title="coin"
+		key="coin"
+		summary="|coin|{@s}"
+		obligatory="true"
+		dialogTitle="coin"
+		positiveButtonText="ОК"
+		negativeButtonText="Cancel"
+		dialogMessage="Введите coin - BTC or LTC or etc...">
+	</EditTextPreference>
+</PreferenceScreen>

@@ -29,10 +29,7 @@ function main() {
 	}
 	
 	var fw = json.data.find(function(el){
-		if (el.worker === prefs.worker) {
 			return el.worker === prefs.worker;
-		} else 
-			throw new AnyBalance.Error('Не удалось найти воркера');
 	});
 	
 	var hr = fw ? fw['currentHashrate'] : null;

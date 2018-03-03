@@ -29,6 +29,10 @@ function callApi(verb, params){
 	return json.response;
 }
 
+function purifyLogin(login){
+	return login.replace(/\.\.\..*$/, '');
+}
+
 function login(){
 	if(!AnyBalance.getCookie('JSESSION')) {
 		var prefs = AnyBalance.getPreferences();
@@ -40,7 +44,7 @@ function login(){
 		try{
 			if(!logNew){
 				var params = joinObjects(createParams(), {
-					login: prefs.login,
+					login: purifyLogin(prefs.login),
 					instanceId: instanceId,
 					pin: pin
 				});
@@ -91,7 +95,7 @@ function loginNew(){
 
 	var params = joinObjects(createParams(), {
 		publicKey:	'MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAN25xe6Nfp0FDB9aL1Ncj18UWnhzS/LqLoTeLXR4VQvATM2P9aX6sc9XgUbAC8t55LLqTxlybtuZROrE4q6/Sp8CAwEAAQ==',
-		login: prefs.login,
+		login: purifyLogin(prefs.login),
 		applicationStage:	'production',
 		reqId:	reqId,
         verificationCode: code,

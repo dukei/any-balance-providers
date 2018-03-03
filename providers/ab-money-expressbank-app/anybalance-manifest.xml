@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-  <id version="1">ab-money-expressbank-app</id>
+  <id version="2">ab-money-expressbank-app</id>
   <name>Банк Восточный (API)</name>   
   <description>
     Получает текущий остаток и другие параметры карт/счетов Восточного Экспресс Банка (http://www.vostbank.ru/), используя API приложения https://online.vostbank.ru

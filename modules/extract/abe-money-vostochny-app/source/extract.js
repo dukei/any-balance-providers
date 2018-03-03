@@ -10,6 +10,7 @@ var g_headers = {
 	'Connection': 'Keep-Alive'
 };
 var g_bankId = 11991;
+var g_deviceSecret;
 
 function callApi(verb, params){
 	params.appver = '3.10';
@@ -29,11 +30,9 @@ function callApi(verb, params){
 	return json.response;
 }
 
-function purifyLogin(login){
-	return login.replace(/\.\.\..*$/, '');
-}
-
 function login(){
+	g_deviceSecret = AnyBalance.getData('deviceSecret', Math.random().toString());
+		
 	if(!AnyBalance.getCookie('JSESSION')) {
 		var prefs = AnyBalance.getPreferences();
 	    
@@ -44,7 +43,7 @@ function login(){
 		try{
 			if(!logNew){
 				var params = joinObjects(createParams(), {
-					login: purifyLogin(prefs.login),
+					login: prefs.login,
 					instanceId: instanceId,
 					pin: pin
 				});
@@ -67,7 +66,7 @@ function login(){
 function createParams(){
 	var prefs = AnyBalance.getPreferences();
 
-	var hash = hex_md5(prefs.login);
+	var hash = hex_md5(prefs.login + g_deviceSecret);
 
 	var params = {
 		deviceType:	'android',
@@ -80,7 +79,7 @@ function createParams(){
 		hasHceModule:	true,
 		root:	false,
 		pushEnabled:	true,
-		imei: generateImei(prefs.login,	'86256103******L'),
+		imei: generateImei(prefs.login + g_deviceSecret,	'86256103******L'),
 		model:	'msm8996',
 		applicationCode:	'express-bank'
 	};
@@ -95,7 +94,7 @@ function loginNew(){
 
 	var params = joinObjects(createParams(), {
 		publicKey:	'MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAN25xe6Nfp0FDB9aL1Ncj18UWnhzS/LqLoTeLXR4VQvATM2P9aX6sc9XgUbAC8t55LLqTxlybtuZROrE4q6/Sp8CAwEAAQ==',
-		login: purifyLogin(prefs.login),
+		login: prefs.login,
 		applicationStage:	'production',
 		reqId:	reqId,
         verificationCode: code,

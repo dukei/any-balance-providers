@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-finance-flypool</id>
+	<api flags="no_browser"/>
+	<name>Flypool</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о хешрейте воркеров на пуле.</p>
+	<p>Информация предоставляется https://zcash.flypool.org/ и api по адресу https://api-zcash.flypool.org</p>
+	]]></description>
+	<author>Viktor Sinitsyn &lt;mousesport007@ya.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
+	<files>
+		<icon>icon.png</icon><!-- требования к иконке: https://github.com/dukei/any-balance-providers/wiki/Icon -->
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="hashrateGeneral" name="Общий Хешрейт" units=" kH/s"/>
+		<counter id="hashrateWorker" name="Хешрейт воркера" units=" kH/s"/>
+		<counter id="activeworker" name="Активных воркеров"/>
+		<counter id="up" name="Невыплаченный баланс" units=" ZEC"/>
+		<counter id="uc" name="Неподтвержденный баланс" units=" ZEC"/>
+	</counters>
+	<keywords>flypool, zec, zcash, crypto, pool, bitfly, майнинг, пул</keywords>
+	<type>finance</type>
+	<country></country>
+</provider>

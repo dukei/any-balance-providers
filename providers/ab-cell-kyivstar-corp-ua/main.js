@@ -38,7 +38,7 @@ function main(){
 	}); 
 
     
-    var baseurl = "https://my.kyivstar.ua/";
+    var baseurl = "https://b2b.kyivstar.ua/";
    	var html = loginSite(baseurl);
 
     if(/\/tbmb\/payment\/activity\//i.test(html)){

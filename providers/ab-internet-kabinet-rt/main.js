@@ -122,7 +122,7 @@ function main(){
     }else{
     	AnyBalance.trace('Входить будем по логину');
     }
-
+/*
     //Get captcha
     var sitekey = '6LeQM84SAAAAAKALDOQ_0oUk2i09ozbCzrWg4nt5';
     var html = AnyBalance.requestGet('https://www.google.com/recaptcha/api/challenge?k=' + sitekey + '&ajax=1&cachestop=' + Math.random(), addHeaders({
@@ -138,14 +138,14 @@ function main(){
     }));
 
     var code = AnyBalance.retrieveCode('Пожалуйста, введите слова с картинки', img);
-
+*/
 
     var uuid = generateUUID();
     var html = AnyBalance.requestPost(baseurl + 'client-api/login', JSON.stringify({
-    	"capcha": {
-    		challenge: imgid,
-    		code: code
-    	},
+//    	"capcha": {
+//    		challenge: imgid,
+//    		code: code
+//   	},
     	"login": login,
 //    	"loginType": type,
     	"passwd": prefs.password,

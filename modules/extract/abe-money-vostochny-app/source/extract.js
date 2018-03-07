@@ -10,6 +10,7 @@ var g_headers = {
 	'Connection': 'Keep-Alive'
 };
 var g_bankId = 11991;
+var g_deviceSecret;
 
 function callApi(verb, params){
 	params.appver = '3.10';
@@ -30,6 +31,8 @@ function callApi(verb, params){
 }
 
 function login(){
+	g_deviceSecret = AnyBalance.getData('deviceSecret', Math.random().toString());
+		
 	if(!AnyBalance.getCookie('JSESSION')) {
 		var prefs = AnyBalance.getPreferences();
 	    
@@ -63,7 +66,7 @@ function login(){
 function createParams(){
 	var prefs = AnyBalance.getPreferences();
 
-	var hash = hex_md5(prefs.login);
+	var hash = hex_md5(prefs.login + g_deviceSecret);
 
 	var params = {
 		deviceType:	'android',
@@ -76,7 +79,7 @@ function createParams(){
 		hasHceModule:	true,
 		root:	false,
 		pushEnabled:	true,
-		imei: generateImei(prefs.login,	'86256103******L'),
+		imei: generateImei(prefs.login + g_deviceSecret,	'86256103******L'),
 		model:	'msm8996',
 		applicationCode:	'express-bank'
 	};

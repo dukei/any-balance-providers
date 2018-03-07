@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="29" date="2018-03-07">
+	Исправлено отображение баланса по картам
+	</change>
 	<change version="28" date="2018-02-26">
 	Показ баланса за вычетом заблокированных средств
 	</change>

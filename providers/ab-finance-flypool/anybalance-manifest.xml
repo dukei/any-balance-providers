@@ -20,6 +20,8 @@
 	<counters>
 		<counter id="hashrateGeneral" name="Общий Хешрейт" units=" kH/s"/>
 		<counter id="hashrateWorker" name="Хешрейт воркера" units=" kH/s"/>
+		<counter id="rephashrateGeneral" name="Общий Неверный Хешрейт" units=" kH/s"/>
+		<counter id="rephashrateWorker" name="Неверный Хешрейт воркера" units=" kH/s"/>
 		<counter id="activeworker" name="Активных воркеров"/>
 		<counter id="up" name="Невыплаченный баланс" units=" ZEC"/>
 		<counter id="uc" name="Неподтвержденный баланс" units=" ZEC"/>

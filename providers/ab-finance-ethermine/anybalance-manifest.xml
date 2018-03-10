@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-finance-ethermine</id>
+	<api flags="no_browser"/>
+	<name>Ethermine</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о хешрейте воркеров на пуле.</p>
+	<p>Информация предоставляется https://etc.ethermine.org/ и api по адресу https://api-etc.ethermine.org/</p>
+	<p>либо https://ethermine.org/ и его api https://api.ethermine.org/</p>
+	]]></description>
+	<author>Viktor Sinitsyn &lt;mousesport007@ya.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
+	<files>
+		<icon>icon.png</icon><!-- требования к иконке: https://github.com/dukei/any-balance-providers/wiki/Icon -->
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="hashrateGeneral" name="Общий Хешрейт" units=" MH/s"/>
+		<counter id="hashrateWorker" name="Хешрейт воркера" units=" MH/s"/>
+		<counter id="rephashrateGeneral" name="Общий Неверный Хешрейт" units=" MH/s"/>
+		<counter id="rephashrateWorker" name="Неверный Хешрейт воркера" units=" MH/s"/>
+		<counter id="activeworker" name="Активных воркеров"/>
+		<counter id="up" name="Невыплаченный баланс" units=" {@currency}"/>
+		<counter id="currency" name="Монета" type="text"/>
+	</counters>
+	<keywords>ethermine, etc, eth, ethereum, classic, crypto, pool, bitfly, майнинг, пул</keywords>
+	<type>finance</type>
+	<country></country>
+</provider>

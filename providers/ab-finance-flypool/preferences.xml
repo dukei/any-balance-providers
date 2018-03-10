@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+	<EditTextPreference
+		title="wallet"
+		key="wallet"
+		summary="|Введите wallet address|{@s}"
+		obligatory="true"
+		dialogTitle="wallet"
+		positiveButtonText="ОК"
+		negativeButtonText="Cancel"
+		dialogMessage="Введите wallet address">
+	</EditTextPreference>
+		<EditTextPreference
+		title="worker"
+		key="worker"
+		summary="|Введите worker name|{@s}"
+		obligatory="true"
+		dialogTitle="worker"
+		positiveButtonText="ОК"
+		negativeButtonText="Cancel"
+		dialogMessage="Введите worker name">
+	</EditTextPreference>
+</PreferenceScreen>

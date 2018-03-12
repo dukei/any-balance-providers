@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-bonus-a100</id>
+	<id version="2">ab-bonus-a100</id>
 	<api flags="no_browser"/>
 	<name>АЗС "A-100"</name>
 	<description html="true"><![CDATA[

@@ -8,7 +8,7 @@ var g_headers = {
 	'Accept-Language': 	'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
 	'Accept-Encoding':  'gzip, deflate, sdch, br',
 	'Connection': 		'keep-alive',
-	'User-Agent': 		'Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/53.0.2785.116 Safari/537.36',
+	'User-Agent': 		'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.186 Safari/537.36',
 };
 
 function main() {
@@ -25,26 +25,32 @@ function main() {
 		throw new AnyBalance.Error('Сайт провайдера временно недоступен! Попробуйте обновить данные позже.');
 	}
 
+	//AnyBalance.setCookie('loyalty.azs.a100.by', '_gat', '1');
+
 	var params = {
 		number: prefs.login,
 		password: prefs.password
 	};
 
-	html = AnyBalance.requestPost(baseurl + 'api/v1/auth/login', JSON.stringify(params), AB.addHeaders({
-		Referer: baseurl + 'ru/login',
-		'Accept': 'application/json, text/plain, */*',
-		'X-XSRF-TOKEN': AnyBalance.getCookie('XSRF-TOKEN'),
-		'Origin': 'https://loyalty.azs.a-100.by',
-		'Content-Type': 'application/json;charset=UTF-8',
-		'Accept-Encoding': 'gzip, deflate, br'
-	}));
+	//AnyBalance.sleep(3000);
 
-	var json = getJson(html);
+	{
+		html = AnyBalance.requestPost(baseurl + 'api/v1/auth/login', JSON.stringify(params), AB.addHeaders({
+			Referer: baseurl + 'ru/login',
+			'Accept': 'application/json, text/plain, */*',
+			'X-XSRF-TOKEN': decodeURIComponent(AnyBalance.getCookie('XSRF-TOKEN')),
+			'Origin': 'https://loyalty.azs.a-100.by',
+			'Content-Type': 'application/json;charset=UTF-8',
+			'Accept-Encoding': 'gzip, deflate, br'
+		}));
+
+		var json = getJson(html);
+	}
 
 	if (json.error) {
-		var error = AB.getParam(html, null, null, /<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, AB.replaceTagsAndSpaces);
+		var error = json.response.message;
 		if (error) {
-			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
+			throw new AnyBalance.Error(error, null, /парол|неверно/i.test(error));
 		}
 
 		AnyBalance.trace(html);

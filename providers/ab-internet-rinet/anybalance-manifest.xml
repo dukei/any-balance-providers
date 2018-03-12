@@ -1,23 +1,25 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id version="2">ab-internet-rinet</id>
+	<id version="3">ab-internet-rinet</id>
 	<name>Rinet (Москва)</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе провайдера московского интернет-провайдера Rinet <a href="http://rinet.net">http://rinet.net</a></p>
 	<p>Информация берется из личного кабинета <a href="https://rinet.net/personal">https://rinet.net/personal</a></p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
 	<counters>
 		<counter id="balance" name="Баланс" units=" р"/>
-		<counter id="status" name="Состояние" type="text"/>
+<!--		<counter id="status" name="Состояние" type="text"/> -->
 		<counter id="abon" name="Абонентская плата" units=" р"/>
 		<counter id="trafficIn" name="Вх.трафик" units=" Gb"/>
 		<counter id="trafficOut" name="Исх.трафик" units=" Gb"/>

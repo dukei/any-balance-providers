@@ -153,7 +153,8 @@ function processCard(card, acc, result){
 
 	var balance = jspath1(acc, '$.moneyAmount') || jspath1(acc, '$.accountBalance');
 
-    getParam(jspath1(balance, '$.value'), result, 'cards.balance');
+    getParam(jspath1(acc, '$.accountBalance.value'), result, 'cards.balance');
+    getParam(jspath1(acc, '$.moneyAmount.value'), result, 'cards.available');
     getParam(jspath1(balance, '$.currency.name'), result, 'cards.currency');
     getParam(jspath1(card, '$.expiration.milliseconds'), result, 'cards.till');
     getParam(jspath1(card, '$.activated'), result, 'cards.active');
@@ -207,7 +208,8 @@ function processAccount(acc, result){
 
 	var balance = jspath1(acc, '$.moneyAmount') || jspath1(acc, '$.accountBalance');
 
-    getParam(jspath1(balance, '$.value'), result, 'accounts.balance');
+    getParam(jspath1(acc, '$.accountBalance.value'), result, 'accounts.balance');
+    getParam(jspath1(acc, '$.moneyAmount.value'), result, 'accounts.available');
     getParam(jspath1(balance, '$.currency.name'), result, 'accounts.currency');
     getParam(jspath1(acc, '$.creationDate.milliseconds'), result, 'accounts.date_start');
     getParam(jspath1(acc, '$.accountGroup'), result, 'accounts.type');

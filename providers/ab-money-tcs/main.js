@@ -10,6 +10,7 @@ var g_countersTable = {
 	}, 
 	card: {
     	"balance": "cards.balance",
+    	"available": "cards.available",
 		"currency": "cards.currency",
 		"cardnum": "cards.num",
 		"name": "cards.name",
@@ -38,6 +39,7 @@ var g_countersTable = {
 	},
     acc: {
     	"balance": "accounts.balance",
+    	"available": "accounts.available",
 		"currency": "accounts.currency",
 		"name": "accounts.name",
 		"__tariff": "accounts.name",

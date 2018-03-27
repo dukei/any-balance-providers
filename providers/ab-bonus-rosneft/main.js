@@ -28,7 +28,7 @@ function main() {
 
 	AnyBalance.sleep(4000 + Math.random()*2000);
 
-	html = AnyBalance.requestPost(baseurl + 'login?X-Requested-With=XMLHttpRequest', JSON.stringify({
+	html = AnyBalance.requestPost(baseurl + 'login?defaultCallbackUrl=%2F&X-Requested-With=XMLHttpRequest', JSON.stringify({
     	"Phone": prefs.login,
     	"Password": prefs.password,
     	"CallbackUrl": null,

@@ -2,11 +2,10 @@
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 */
 var g_headers = {
-	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
-	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
+	'Accept': 'application/json, text/javascript, */*; q=0.01',
+	'Accept-Language': 'ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7',
 	'Connection': 'keep-alive',
-	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36',
+	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.181 Safari/537.36',
 };
 
 function getRegions() {
@@ -53,18 +52,20 @@ function main() {
 
     AnyBalance.trace('Регион: ' + baseurl);
 
-    var html = AnyBalance.requestGet(baseurl + 'sc_cp_apps/login', g_headers);
+    var html = AnyBalance.requestGet(baseurl + 'b2b/login', g_headers);
 
     if(!html || AnyBalance.getLastStatusCode() > 400){
         AnyBalance.trace(html);
         throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
     }
 
-    html = AnyBalance.requestPost(baseurl + 'sc_cp_apps/loginProcess', {
+    g_headers.Referer = baseurl + 'b2b/';
+
+    html = AnyBalance.requestPost(baseurl + 'b2b/loginProcess', {
         j_username: prefs.login,
         j_password: prefs.password,
     }, addHeaders({
-    	Referer: baseurl + 'sc_cp_apps/login',
+    	Referer: baseurl + 'b2b/login',
     	'X-Requested-With': 'XMLHttpRequest',
     	Accept: 'application/json, text/javascript, */*; q=0.01',
     }));
@@ -73,7 +74,7 @@ function main() {
     if(!json.redirect || /error/i.test(json.redirect)){
     	if(json.redirect)
     		html = AnyBalance.requestGet(joinUrl(baseurl, json.redirect), addHeaders({
-    			Referer: baseurl + 'sc_cp_apps/login',
+    			Referer: baseurl + 'b2b/login',
 		    }));
 
     	var error = getElement(html, /<[^>]+error-text/i, replaceTagsAndSpaces);
@@ -86,8 +87,8 @@ function main() {
 
     var tries = 1, maxTries = 10;
     do{
-	    var ok = AnyBalance.requestGet(baseurl + 'sc_cp_apps/isUserDataCached', addHeaders({
-    		Referer: baseurl + 'sc_cp_apps/login',
+	    var ok = AnyBalance.requestGet(baseurl + 'b2b/isUserDataCached', addHeaders({
+    		Referer: baseurl + 'b2b/login',
     		'X-Requested-With': 'XMLHttpRequest',
             Accept: 'application/json, text/javascript, */*; q=0.01',
 	    }));
@@ -100,8 +101,8 @@ function main() {
 
 	    if(tries == 1){
     		AnyBalance.trace('Обновляем информацию...');
-	        AnyBalance.requestPost(baseurl + 'sc_cp_apps/cacheUserData', '', addHeaders({
-    			Referer: baseurl + 'sc_cp_apps/login',
+	        AnyBalance.requestPost(baseurl + 'b2b/cacheUserData', '', addHeaders({
+    			Referer: baseurl + 'b2b/login',
     			'X-Requested-With': 'XMLHttpRequest',
 	        }));
 	    }
@@ -114,7 +115,8 @@ function main() {
     }while(true);
 
     html = AnyBalance.requestGet(joinUrl(baseurl, json.redirect), addHeaders({
-    	Referer: baseurl + 'sc_cp_apps/login',
+    	Accept: 'text/html',
+    	Referer: baseurl + 'b2b/login',
     }));
 
     if(!/logout/i.test(html)){
@@ -138,7 +140,8 @@ function main() {
         }
     }
 
-    html = AnyBalance.requestGet(baseurl + 'sc_cp_apps/subscriber/mobile/list?from=0&size=' + 128, addHeaders({'X-Requested-With':'XMLHttpRequest'}));
+    html = AnyBalance.requestGet(baseurl + 'b2b/subscriber/mobile', g_headers);
+    html = AnyBalance.requestGet(baseurl + 'b2b/subscriber/mobile/list?from=0&size=' + 128 + '&_=' + (+new Date()), addHeaders({'X-Requested-With':'XMLHttpRequest', Referer: baseurl + 'b2b/subscriber/mobile'}));
 
     try {
         var json = getJson(html);
@@ -183,7 +186,7 @@ function main() {
         }
 
         if (AnyBalance.isAvailable('amountTotal', 'amountLocal', 'abon', 'charges')) {
-            var htmlExp = AnyBalance.requestGet(baseurl + 'sc_cp_apps/subscriber/finances/' + account.id, g_headers);
+            var htmlExp = AnyBalance.requestGet(baseurl + 'b2b/subscriber/finances/' + account.id, g_headers);
             getDLValue(htmlExp, 'amountTotal', 'Расходы с начала периода');
             getDLValue(htmlExp, 'amountLocal', 'Трафик');
             getDLValue(htmlExp, 'abon', 'Абонентская плата');
@@ -191,7 +194,7 @@ function main() {
         }
 
         if(AnyBalance.isAvailable('prsnl_balance')){
-            var htmlBudget = AnyBalance.requestGet(baseurl + 'sc_cp_apps/subscriber/budget/' + account.id, g_headers);
+            var htmlBudget = AnyBalance.requestGet(baseurl + 'b2b/subscriber/budget/' + account.id, g_headers);
             getDLValue(htmlBudget, 'prsnl_balance', 'Баланс');
         }
     } catch (e) {
@@ -203,7 +206,7 @@ function main() {
 }
 
 function getDiscounts(baseurl, account, result){
-    var html = AnyBalance.requestGet(baseurl + 'sc_cp_apps/subscriber/info/' + account.id + '/discounts', addHeaders({'X-Requested-With':'XMLHttpRequest'}));
+    var html = AnyBalance.requestGet(baseurl + 'b2b/subscriber/info/' + account.id + '/discounts', addHeaders({'X-Requested-With':'XMLHttpRequest'}));
     if(!/^\s*\{/i.test(html)){
         if(/Сервис временно недоступен/i.test(html)){
             AnyBalance.trace('Не удаётся получить дискаунты для этого номера: сервис временно недоступен');

@@ -151,10 +151,10 @@ function processCards(result){
 function processCard(card, acc, result){
 	AnyBalance.trace('Обработка карты ' + result.__name);
 
-	var balance = jspath1(acc, '$.moneyAmount') || jspath1(acc, '$.accountBalance');
+	var balance = jspath1(card, '$.availableBalance') || jspath1(acc, '$.moneyAmount') || jspath1(acc, '$.accountBalance');
 
     getParam(jspath1(acc, '$.accountBalance.value'), result, 'cards.balance');
-    getParam(jspath1(acc, '$.moneyAmount.value'), result, 'cards.available');
+    getParam(jspath1(balance, '$.value'), result, 'cards.available');
     getParam(jspath1(balance, '$.currency.name'), result, 'cards.currency');
     getParam(jspath1(card, '$.expiration.milliseconds'), result, 'cards.till');
     getParam(jspath1(card, '$.activated'), result, 'cards.active');

@@ -129,10 +129,44 @@ function main() {
 
     var result = {success: true};
 
-    getParam(html, result, 'balance', /<dt[^>]*>\s*Текущий баланс[\s\S]*?class="money[^>]*>([\s\S]*?)<span/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'abonCount', /<dt[^>]*>\s*Абонентов[\s\S]*?class="span76[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseBalance);
+    var acc;
+    if(!/accountInfo/i.test(AnyBalance.getLastUrl())){
+        html = AnyBalance.requestGet(baseurl + 'b2b/account/list?from=0&size=' + 128 + '&_=' + (+new Date()), addHeaders({'X-Requested-With':'XMLHttpRequest', Referer: baseurl + 'b2b/account'}));
+        json = getJson(html);
+        if(!json.account || !json.account.length){
+        	AnyBalance.trace(html);
+        	throw new AnyBalance.Error('Не удалось найти лицевых счетов после успешного входа');
+        }
+        
+        for(var i=0; i<json.account.length; ++i){
+        	acc = json.account[i];
+        	AnyBalance.trace('Найден лицевой счет ' + acc.contract);
+        	if(!prefs.lsnum || acc.contract.endsWith(prefs.lsnum)){
+        		getParam(acc.balance.value, result, 'balance');
+			    getParam(acc.subsCount, result, 'abonCount');
+			    break;
+        	}
+        }
+        
+        if(i >= json.account.length)
+        	throw new AnyBalance.Error('Не удалось найти лицевой счет с последними цифрами ' + prefs.lsnum);
+
+        getParam(acc.contract, result, 'licschet');
+    }else{
+    	getParam(html, result, 'balance', /<dt[^>]*>\s*Текущий баланс[\s\S]*?class="money[^>]*>([\s\S]*?)<span/i, replaceTagsAndSpaces, parseBalance);
+	    getParam(html, result, 'abonCount', /<dt[^>]*>\s*Абонентов[\s\S]*?class="span76[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseBalance);
+	    getParam(html, result, 'licschet', /Лицевой счет\s*(\d+)/i, replaceTagsAndSpaces);
+    }
+    
 
     if (isAvailable('unpaids')) {
+    	if(acc){
+	        html = AnyBalance.requestGet(baseurl + 'b2b/account/accountInfo/' + acc.id, addHeaders({
+    			Accept: 'text/html',
+    			Referer: baseurl + 'b2b/',
+	        }));
+	    }
+
         var elemUnpaids = getElement(html, /<div\s[^>]*\bunpaidBillsCount\b/);
         if (elemUnpaids) {
             elemUnpaids = getElement(elemUnpaids, /<span[^>]+class="[^"']*?\bmoney/, replaceTagsAndSpaces, parseBalance);

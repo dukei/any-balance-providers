@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="30">ab-money-tcs</id>
+	<id version="31">ab-money-tcs</id>
 	<api flags="no_browser" min_level="4"/>
 	<name>Тинькофф Кредитные Системы</name>
 	<description html="true"><![CDATA[
@@ -33,7 +33,6 @@
 	</files>
 	<counters>
 		<counter id="available" name="Доступно" units=" {@currency}"/>
-		<counter id="balance" name="Остаток" units=" {@currency}"/>
 		<counter id="minpay" name="Минимальный платеж" units=" {@currency}"/>
 		<counter id="minpaytill" name="Оплатить до" type="time" format="dd/MM/yyyy"/>
 		<counter id="debt" name="Задолженность" units=" {@currency}"/>
@@ -49,6 +48,8 @@
 		<counter id="freeaddlimit" name="Бесплатные пополнения (Лимит)" units=" {@currency}"/>
 		<counter id="freecashlimit" name="Сумма льготного снятия (Лимит)" units=" {@currency}"/>
 		<counter id="currency" name="Валюта" type="text"/>
+		<counter id="balance" name="Доступный остаток" units=" {@currency}"/>
+		<counter id="remainder" name="Остаток на счете" units=" {@currency}"/>
 	</counters>
 	<keywords>ткс онлайн, tcs online, tinkoff</keywords>
 	<type>money, bank</type>

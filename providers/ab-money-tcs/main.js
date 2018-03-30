@@ -9,8 +9,9 @@ var g_countersTable = {
 	common: {
 	}, 
 	card: {
-    	"balance": "cards.balance",
+    	"balance": "cards.available",
     	"available": "cards.available",
+    	"remainder": "cards.balance",
 		"currency": "cards.currency",
 		"cardnum": "cards.num",
 		"name": "cards.name",
@@ -25,7 +26,7 @@ var g_countersTable = {
 		"freecashleft": "accounts.free_cash_left",
 		"freeaddlimit": "accounts.free_add_limit",
 		"freecashlimit": "accounts.free_cash_limit",
-		"accnum": "cards.accnum"
+		"accnum": "cards.accnum",
 	},
 	dep: {
     	"balance": "deposits.balance",
@@ -38,8 +39,9 @@ var g_countersTable = {
 		"accnum": "deposits.num"
 	},
     acc: {
-    	"balance": "accounts.balance",
+    	"balance": "accounts.available",
     	"available": "accounts.available",
+    	"remainder": "accounts.balance",
 		"currency": "accounts.currency",
 		"name": "accounts.name",
 		"__tariff": "accounts.name",

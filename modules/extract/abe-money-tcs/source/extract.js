@@ -350,6 +350,7 @@ function processSaving(acc, result){
 
     getParam(jspath1(acc, '$.creationDate.milliseconds'), result, 'savings.date_start');
     getParam(jspath1(acc, '$.interest.value'), result, 'savings.pct_sum');
+    getParam(jspath1(acc, '$.tariffInfo.interestRate') || jspath1(acc, '$.rate'), result, 'savings.pct');
 
     getParam(jspath1(acc, '$.moneyAmount.value'), result, 'savings.balance');
     getParam(jspath1(acc, '$.moneyAmount.currency.name'), result, 'savings.currency');

@@ -62,7 +62,8 @@ var g_countersTable = {
 		"name": "savings.name",
 		"__tariff": "savings.name",
 		"pcts": "savings.pct_sum",
-		"accnum": "savings.num"
+		"accnum": "savings.num",
+		"rate": "savings.pct",
 	},
 
 };

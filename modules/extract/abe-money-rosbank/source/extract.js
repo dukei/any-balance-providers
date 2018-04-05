@@ -14,7 +14,7 @@ var g_headers = {
     'User-Agent':       'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.36',
 };
 
-var g_baseurl = 'https://ibank.rosbank.ru/';
+var g_baseurl = 'https://online.rosbank.ru/';
 
 function findWicketActions(html) {
     var actions = sumParam(html, null, null, /Wicket.Ajax.ajax\((\{[\s\S]*?\})\);/ig) || [];

@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="14" date="2018-04-05">
+	- Поддержка изменений на сайте.
+	</change>
 	<change version="13" date="2018-02-09">
 	- Поддержка изменений на сайте.
 	</change>

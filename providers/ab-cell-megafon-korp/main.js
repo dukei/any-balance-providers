@@ -131,52 +131,8 @@ function main() {
 
     var result = {success: true};
 
-    var acc;
-    if(!/accountInfo/i.test(AnyBalance.getLastUrl())){
-        html = AnyBalance.requestGet(baseurl + 'b2b/account/list?from=0&size=' + 128 + '&_=' + (+new Date()), addHeaders({'X-Requested-With':'XMLHttpRequest', Referer: baseurl + 'b2b/account'}));
-        json = getJson(html);
-        if(!json.account || !json.account.length){
-        	AnyBalance.trace(html);
-        	throw new AnyBalance.Error('Не удалось найти лицевых счетов после успешного входа');
-        }
-        
-        for(var i=0; i<json.account.length; ++i){
-        	acc = json.account[i];
-        	AnyBalance.trace('Найден лицевой счет ' + acc.contract);
-        	if(!prefs.lsnum || acc.contract.endsWith(prefs.lsnum)){
-        		getParam(acc.balance.value, result, 'balance');
-			    getParam(acc.subsCount, result, 'abonCount');
-			    break;
-        	}
-        }
-        
-        if(i >= json.account.length)
-        	throw new AnyBalance.Error('Не удалось найти лицевой счет с последними цифрами ' + prefs.lsnum);
-
-        getParam(acc.contract, result, 'licschet');
-    }else{
-    	getParam(html, result, 'balance', /<dt[^>]*>\s*Текущий баланс[\s\S]*?class="money[^>]*>([\s\S]*?)<span/i, replaceTagsAndSpaces, parseBalance);
-	    getParam(html, result, 'abonCount', /<dt[^>]*>\s*Абонентов[\s\S]*?class="span76[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseBalance);
-	    getParam(html, result, 'licschet', /Лицевой счет\s*(\d+)/i, replaceTagsAndSpaces);
-    }
-    
-
-    if (isAvailable('unpaids')) {
-    	if(acc){
-	        html = AnyBalance.requestGet(baseurl + 'b2b/account/accountInfo/' + acc.id, addHeaders({
-    			Accept: 'text/html',
-    			Referer: baseurl + 'b2b/',
-	        }));
-	    }
-
-        var elemUnpaids = getElement(html, /<div\s[^>]*\bunpaidBillsCount\b/);
-        if (elemUnpaids) {
-            elemUnpaids = getElement(elemUnpaids, /<span[^>]+class="[^"']*?\bmoney/, replaceTagsAndSpaces, parseBalance);
-            getParam(elemUnpaids, result, 'unpaids');
-        }
-    }
-
     html = AnyBalance.requestGet(baseurl + 'b2b/subscriber/mobile', g_headers);
+
     html = AnyBalance.requestGet(baseurl + 'b2b/subscriber/mobile/list?from=0&size=' + 128 + '&_=' + (+new Date()), addHeaders({'X-Requested-With':'XMLHttpRequest', Referer: baseurl + 'b2b/subscriber/mobile'}));
 
     try {
@@ -206,8 +162,11 @@ function main() {
         AnyBalance.trace('Успешно получили данные по номеру: ' + curr.msisdn);
         AnyBalance.trace(JSON.stringify(account));
 
-        getParam(account.msisdn, result, 'phone_name', null, replaceTagsAndSpaces);
-        getParam(account.account.name, result, 'name_name', null, replaceTagsAndSpaces);
+        getParam(account.balance.value, result, 'balance', null, null, parseBalance);
+        getParam(account.ratePlan.def, result, '__tariff');
+        getParam(account.account.number, result, 'licschet');
+        getParam(account.msisdn, result, 'phone_name');
+        getParam(account.account.name, result, 'name_name');
 
         if(AnyBalance.isAvailable('min_left', 'sms_left')){
             getDiscounts(baseurl, account, result);
@@ -233,6 +192,8 @@ function main() {
             var htmlBudget = AnyBalance.requestGet(baseurl + 'b2b/subscriber/budget/' + account.id, g_headers);
             getDLValue(htmlBudget, 'prsnl_balance', 'Баланс');
         }
+
+        getAccount(baseurl, account.account.number, result);
     } catch (e) {
         AnyBalance.trace(e.message);
         AnyBalance.trace('Не удалось получить данные по номеру телефона, свяжитесь, пожалуйста, с разработчиками.');
@@ -279,5 +240,59 @@ function getDiscounts(baseurl, account, result){
             }
         }
     }
+
+}
+
+function getAccount(baseurl, accnum, result){
+	var prefs = AnyBalance.getPreferences();
+	AnyBalance.trace('Получаем информацию по лицевому счету ' + accnum + ', потому что он связан с запрошенным номером телефона');
+	if(!accnum.endsWith(prefs.lsnum))
+		AnyBalance.trace('В настройках требуется неправильный лицевой счет! Игнорируем.');
+
+	var html = AnyBalance.requestGet(baseurl + 'b2b/account', g_headers);
+    var acc;
+    if(!/accountInfo/i.test(AnyBalance.getLastUrl())){
+        html = AnyBalance.requestGet(baseurl + 'b2b/account/list?from=0&size=' + 128 + '&_=' + (+new Date()), addHeaders({'X-Requested-With':'XMLHttpRequest', Referer: baseurl + 'b2b/account'}));
+        json = getJson(html);
+        if(!json.account || !json.account.length){
+        	AnyBalance.trace(html);
+        	throw new AnyBalance.Error('Не удалось найти лицевые счета после успешного входа');
+        }
+        
+        for(var i=0; i<json.account.length; ++i){
+        	acc = json.account[i];
+        	AnyBalance.trace('Найден лицевой счет ' + acc.contract);
+        	if(!accnum || acc.contract.endsWith(accnum)){
+        		getParam(acc.balance.value, result, 'balance');
+			    getParam(acc.subsCount, result, 'abonCount');
+			    break;
+        	}
+        }
+        
+        if(i >= json.account.length)
+        	throw new AnyBalance.Error('Не удалось найти лицевой счет с последними цифрами ' + accnum);
+
+        getParam(acc.contract, result, 'licschet');
+    }else{
+    	getParam(html, result, 'balance', /<dt[^>]*>\s*Текущий баланс[\s\S]*?class="money[^>]*>([\s\S]*?)<span/i, replaceTagsAndSpaces, parseBalance);
+	    getParam(html, result, 'abonCount', /<dt[^>]*>\s*Абонентов[\s\S]*?class="span76[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseBalance);
+	    getParam(html, result, 'licschet', /Лицевой счет\s*(\d+)/i, replaceTagsAndSpaces);
+    }
+    
+    if (isAvailable('unpaids')) {
+    	if(acc){
+	        html = AnyBalance.requestGet(baseurl + 'b2b/account/accountInfo/' + acc.id, addHeaders({
+    			Accept: 'text/html',
+    			Referer: baseurl + 'b2b/',
+	        }));
+	    }
+
+        var elemUnpaids = getElement(html, /<div\s[^>]*\bunpaidBillsCount\b/);
+        if (elemUnpaids) {
+            elemUnpaids = getElement(elemUnpaids, /<span[^>]+class="[^"']*?\bmoney/, replaceTagsAndSpaces, parseBalance);
+            getParam(elemUnpaids, result, 'unpaids');
+        }
+    }
+
 
 }

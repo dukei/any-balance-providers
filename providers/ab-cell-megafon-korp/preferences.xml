@@ -39,7 +39,7 @@
 		negativeButtonText="Отмена"
 		dialogMessage="Введите последние цифры номера телефона, по которому необходимо получать данные или не вводите ничего">
 	</EditTextPreference>	
-	<EditTextPreference
+<!--	<EditTextPreference
 		title="л/с"
 		key="lsnum"
 		summary="||{@s}"
@@ -47,5 +47,5 @@
 		positiveButtonText="ОК"
 		negativeButtonText="Отмена"
 		dialogMessage="Введите последние цифры лицевого счета, по которому необходимо получать данные или не вводите ничего">
-	</EditTextPreference>	
+	</EditTextPreference>	-->
 </PreferenceScreen>

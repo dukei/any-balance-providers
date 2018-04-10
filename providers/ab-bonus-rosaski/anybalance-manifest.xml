@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-bonus-rosaski</id>
+	<id version="2">ab-bonus-rosaski</id>
 	<api flags="no_browser"/>
 	<name>Моя роза (Роза Хутор)</name>
 	<description html="true"><![CDATA[
@@ -20,6 +20,7 @@
 	<counters>
 		<counter id="balance" name="Баланс" units=" Б"/>
 		<counter id="num" name="Номер карты" type="text"/>
+		<counter id="name" name="Название карты" type="text"/>
 		<counter id="type" name="Программа лояльности" type="text"/>
 	</counters>
 	<keywords></keywords>

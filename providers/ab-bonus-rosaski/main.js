@@ -79,6 +79,7 @@ function main() {
 			getParam(num, result, 'num');
 			getParam(row, result, 'type', /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
 			getParam(row, result, '__tariff', /(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+			getParam(row, result, 'name', /(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
 
 			var id = getParam(row, /id="card(\d+)Row/);
 			var bal = AnyBalance.requestGet(baseurl + 'script/ajax.loyalty_cards.php?card_id=' + id + '&action=updateBalance', addHeaders({

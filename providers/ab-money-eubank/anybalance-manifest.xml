@@ -1,0 +1,46 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <api flags="no_browser"/>
+  <id version="1">ab-money-eubank</id>
+  <name>Евразийский Банк</name>   
+  <description>
+    Получает текущий остаток и другие параметры продуктов Евразийского Банка (https://www.eubank.kz/), используя интернет-банк (https://my.smartbank.kz/).
+  </description>
+  <author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+  <depends>
+    <module id="nadapter"/>
+    <module id="extract/abe-money-eubank"/>
+  </depends>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+    <history>history.xml</history>
+  </files>
+  <counters>
+    <counter id="balance" name="Остаток" units=" {@currency}"/>
+    <counter id="bonuses" name="Бонус" units=" BNS"/>
+    <counter id="limit" name="Кредитный лимит" units=" {@currency}"/>
+    <counter id="deptill" name="Срок вклада до:" type="time" format="dd/MM/yyyy"/>
+    <counter id="pct" name="Процентная ставка" units=" %"/>
+    <counter id="type" name="Тип карты/кредита" type="text"/>
+    <counter id="blocked" name="Заблокированные средства" units=" {@currency}"/>
+    <counter id="till" name="Срок действия" type="time" format="MM/yy"/>
+    <counter id="status" name="Статус" type="text"/>
+    <counter id="num" name="Номер карты" type="text"/>
+    <counter id="accnum" name="Номер счета" type="text"/>
+    <counter id="holder" name="Владелец карты" type="text"/>
+    <counter id="fio" name="Владелец" type="text"/>
+    <counter id="currency" name="Валюта" type="text"/>
+    <counter id="date_start" name="Дата открытия" type="time" format="dd/MM/yyyy"/>
+  </counters>
+  <keywords>
+    интернет-банкинг
+  </keywords>
+  <type>
+    money, bank
+  </type>
+  <country>
+    kz
+  </country>
+</provider>

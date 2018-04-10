@@ -12,7 +12,7 @@ var g_headers = {
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'http://www.krc-prikam.ru';
+	var baseurl = 'https://www.krc-prikam.ru';
 	AnyBalance.setDefaultCharset('utf-8');
 
 	checkEmpty(prefs.login, 'Введите логин!');
@@ -48,6 +48,8 @@ function main() {
 	var result = {success: true};
 	
 	getParam(html, result, 'balance', /жилищно-коммунальные услуги -([\s\S]*?)<\/div>/i, [replaceTagsAndSpaces, /долг/i, '-'], parseBalance);
+	if(AnyBalance.isAvailable('balance') && !result.balance)
+		result.balance = 0;
 	getParam(html, result, 'fio', /покупатель(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces);
 	getParam(html, result, 'adress', /адрес(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces);
 	getParam(html, result, 'people', /проживающих(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces);

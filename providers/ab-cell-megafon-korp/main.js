@@ -72,12 +72,14 @@ function main() {
 
     var json = getJson(html);
     if(!json.redirect || /error/i.test(json.redirect)){
-    	if(json.redirect)
+    	if(json.redirect){
     		html = AnyBalance.requestGet(joinUrl(baseurl, json.redirect), addHeaders({
     			Referer: baseurl + 'b2b/login',
 		    }));
+		    try{ json = getJson(html) }catch(e){}
+		}
 
-    	var error = getElement(html, /<[^>]+error-text/i, replaceTagsAndSpaces);
+    	var error = (json && json.errorMessage) || getElement(html, /<[^>]+error-text/i, replaceTagsAndSpaces);
         if (error)
             throw new AnyBalance.Error(error, null, /парол/i.test(error));
 

@@ -162,7 +162,7 @@ function main() {
         AnyBalance.trace('Успешно получили данные по номеру: ' + curr.msisdn);
         AnyBalance.trace(JSON.stringify(account));
 
-        getParam(account.balance.value, result, 'balance', null, null, parseBalance);
+        getParam(account.balance && account.balance.value, result, 'balance', null, null, parseBalance);
         getParam(account.ratePlan.def, result, '__tariff');
         getParam(account.account.number, result, 'licschet');
         getParam(account.msisdn, result, 'phone_name');
@@ -246,10 +246,10 @@ function getDiscounts(baseurl, account, result){
 function getAccount(baseurl, accnum, result){
 	var prefs = AnyBalance.getPreferences();
 	AnyBalance.trace('Получаем информацию по лицевому счету ' + accnum + ', потому что он связан с запрошенным номером телефона');
-	if(!accnum.endsWith(prefs.lsnum))
+	if(prefs.lsnum && !accnum.endsWith(prefs.lsnum))
 		AnyBalance.trace('В настройках требуется неправильный лицевой счет! Игнорируем.');
 
-	var html = AnyBalance.requestGet(baseurl + 'b2b/account', g_headers);
+	var html = AnyBalance.requestGet(baseurl + 'b2b/account', addHeaders({Accept: 'text/html'}));
     var acc;
     if(!/accountInfo/i.test(AnyBalance.getLastUrl())){
         html = AnyBalance.requestGet(baseurl + 'b2b/account/list?from=0&size=' + 128 + '&_=' + (+new Date()), addHeaders({'X-Requested-With':'XMLHttpRequest', Referer: baseurl + 'b2b/account'}));

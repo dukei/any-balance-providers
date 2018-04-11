@@ -17,15 +17,16 @@ function main() {
 	
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
-	var html = AnyBalance.requestGet(baseurl + 'lkk_fl/', g_headers);
+	var html = AnyBalance.requestGet(baseurl + 'lkk/', g_headers);
 	
 	if(!html || AnyBalance.getLastStatusCode() > 400)
 		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
         
-	html = AnyBalance.requestPost(baseurl + 'lkk_fl/login', {
-		slogin: prefs.login,
-		spass: prefs.password
-	}, addHeaders({Referer: baseurl + 'lkk_fl/login'}));
+	html = AnyBalance.requestPost(baseurl + 'lkk/login', {
+		action: 'logon',
+		login: prefs.login,
+		pass: prefs.password
+	}, addHeaders({Referer: baseurl + 'lkk/login'}));
 	
 	if (!/logout/i.test(html)) {
 		var error = getParam(html, null, null, /[^>]+class="err"[^>]*>[\s\S]*?([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);

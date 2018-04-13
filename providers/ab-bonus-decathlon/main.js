@@ -55,6 +55,10 @@ function validateEmail(email) {
 function main(){
     var prefs = AnyBalance.getPreferences();
 
+	AnyBalance.setOptions({
+		SSL_ENABLED_PROTOCOLS: ['TLSv1.1', 'TLSv1.2']
+	});
+
     checkEmpty(prefs.login, 'Введите e-mail для входа в личный кабинет Декатлон');
     checkEmpty(validateEmail(prefs.login), 'Вы ввели некорректный e-mail. Для логина требуется корректный e-mail.');
     checkEmpty(prefs.password, 'Введите пароль для входа в личный кабинет Декатлон');

@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="18" date="2018-04-11">
+	- Улучшена обработка ошибок.
+	</change>
 	<change version="17" date="2018-04-10">
 	Получение л/с из номера телефона - поэтому убрана настройка л/с
 	</change>

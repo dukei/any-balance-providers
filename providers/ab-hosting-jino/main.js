@@ -31,7 +31,10 @@ function main() {
 			return value;
 		});
 		
-		html = AnyBalance.requestPost(baseurlLogin + 'login/hosting/', params, addHeaders({Referer: baseurlLogin + 'login/hosting/'})); 		
+		params.login = prefs.login;
+		params.password = prefs.password;
+		
+		html = AnyBalance.requestPost(baseurlLogin + 'login/?next=https://account.jino.ru', params, addHeaders({Referer: baseurlLogin})); 		
 		
 		if(!/\/logout/i.test(html)){
 			var error = sumParam(html, null, null, /"form-errors"[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode, aggregate_join);

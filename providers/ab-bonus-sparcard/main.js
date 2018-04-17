@@ -1,9 +1,9 @@
 /**
-Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
+Провайдер AnyBalance
 */
 
 var g_headers = {
-	'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+	'Accept':'application/json',
 	'Accept-Charset':'utf-8;q=0.7,*;q=0.3',
 	'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
 	'Connection':'keep-alive',
@@ -19,33 +19,36 @@ function main() {
 	if (!prefs.auth_password)
 		throw new AnyBalance.Error('Введите пароль!');
 		
-	html = AnyBalance.requestPost('https://card.spar-nn.ru/site/login', {
-		'LoginForm[redirect]':'',
-		'LoginForm[login]':prefs.auth_cnumber,
-		'LoginForm[password]':prefs.auth_password,
-		'LoginForm[rememberMe]':'0',
-		'yt0':'Вход'
+	response = AnyBalance.requestPost('https://api-sparmv.loymax.tech/token', {
+		'grant_type':'password',
+		'username':prefs.auth_cnumber,
+		'password':prefs.auth_password
 	}, g_headers);
+
+	token = getJson(response);
 	
-	if (matches = html.match(/\<div class=\"errorMessage\"[^\>]*\>([^\<]+)\<\/div\>/)) {
-		throw new AnyBalance.Error(matches[1]);
+	if (token.error_description) {
+		throw new AnyBalance.Error(token.error_description);
+	} else if (!token.access_token) {
+		throw new AnyBalance.Error('Не удалось авторизоваться.');
 	}
 
-	html = AnyBalance.requestGet('https://card.spar-nn.ru/user', g_headers);
+	g_headers['Authorization'] = 'Bearer ' + token.access_token;
+
+	response = AnyBalance.requestGet('https://api-sparmv.loymax.tech/api/user', g_headers);
+
+	user = getJson(response);
 
 	var result = {success: false};
 
-	if (matches = html.match(/\<span class=\"lkuicard\"\>([\d\s]+)\<\/span\>/)) {
+	if (user.data.cardShortInfo) {
 		if(AnyBalance.isAvailable('__tariff')) {
-			result['__tariff'] = matches[1];
+			result['__tariff'] = user.data.cardShortInfo.id;
 		}
-	}
-
-	if (matches = html.match(/\<span class=\"lkuibalance\"\>([\-\d\.\,]+?|[\-\d][\s\d\.\,]+\d)[^\d\<]*\<\/span\>/)) {
-		result['success'] = true;
 		if(AnyBalance.isAvailable('card_bonus')) {
-			result['card_bonus'] = parseFloat(matches[1]);
+			result['card_bonus'] = parseFloat(user.data.cardShortInfo.balance);
 		}
+		result['success'] = true;
 		AnyBalance.setResult(result);
 	} else {
 		throw new AnyBalance.Error('Не удалось получить информацию о бонусах.');

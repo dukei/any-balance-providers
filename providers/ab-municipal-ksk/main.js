@@ -48,8 +48,8 @@ function main() {
 	getParam(html, result, 'counter_end', /Показания счетчика на конец периода[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'counter_last', /Предыдущие показания счетчика[^<]*?(\d+)/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'potreblenie', /Потребление за период[^<]*?(\d+)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'balance', /Итого к оплате[^>]*>[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'pay_to', /Итого к оплате[^>]*>[^>]*>[^>]*>[^>]*>Оплатить до([^<]*)/i, replaceTagsAndSpaces, parseDate);
+	getParam(html, result, 'balance', /Итого к оплате[\s\S]*?<eve_sum[^>]*>([\s\S]*?)<\/eve_sum>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'pay_to', /Оплатить до([^<]*)/i, replaceTagsAndSpaces, parseDate);
 	
     AnyBalance.setResult(result);
 }

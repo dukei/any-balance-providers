@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-internet-garant-vitebsk</id>
+	<api flags="no_browser"/>
+	<name>Гарант Витебск</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера Гарант Витебск (http://www.vgarant.net/)</p>
+	<p>Информация берется из личного кабинета https://ssl.vgarant.by/login </p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" руб"/>
+		<counter id="traffic" name="Скачано в этом периоде" units=" Mb"/>
+		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="deadline" name="Окончание расчетного периода" type="time" format="dd/MM/yyyy"/>
+	</counters>
+	<keywords></keywords>
+	<type>internet</type>
+	<country>by</country>
+</provider>

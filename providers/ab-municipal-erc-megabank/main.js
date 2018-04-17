@@ -5,10 +5,13 @@
 Сайт: https://erc.megabank.net/
 */
 
-function htmlDecode(input){
-  var e = document.createElement('div');
-  e.innerHTML = input;
-  return e.childNodes.length === 0 ? "" : e.childNodes[0].nodeValue;
+function calc_service_debt(servicename, data){
+  for(var service_id in data) {
+    if(data[service_id].servicename == servicename) {
+      service_debt = data[service_id].saldo - data[service_id].paysnew;
+      return Math.round(service_debt*100)/100;
+    }
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -33,150 +36,128 @@ function main(){
   if(form_build_id) {
     AnyBalance.trace('form_build_id = ' + form_build_id[1]);
     AnyBalance.trace('Login');
-    var html = AnyBalance.requestPost(baseurl + 'ru/node?destination=front_page', {
+    var html = AnyBalance.requestPost(baseurl + 'ru/system/ajax', {
       form_build_id: form_build_id[1],
       form_id: "user_login_block",
       name: prefs.login,
       pass: prefs.password
     }, headers);
-    var matches = html.match(/<div class="messages error">\n([\s\S]*?) <a/i);
-    if(matches){
-      throw new AnyBalance.Error(matches[1]);
+
+    if(!/"command"\s*:\s*"reload"/i.test(html)){
+        var json = getJson(html);
+        for(var i=0; i<json.length; ++i){
+        	if(json[i].command == 'insert'){
+			    var error = getElement(json[i].data, /<div[^>]+alert/i, replaceTagsAndSpaces);
+			    if(error){
+          			throw new AnyBalance.Error(error, null, /парол/i.test(error));
+			    }
+        	}
+        }
     }
+
     AnyBalance.trace('Successfully login');
   } else {
     AnyBalance.trace('Already logged?');
   }
 
-  AnyBalance.trace('Connecting to ' + baseurl + 'ru/cabinet/publicutilities');
-  var html = AnyBalance.requestGet(baseurl + 'ru/cabinet/publicutilities', headers);
+  AnyBalance.trace('Connecting to ' + baseurl + 'ru/service/publicutilities');
+  var html = AnyBalance.requestGet(baseurl + 'ru/service/publicutilities', headers);
 
   AnyBalance.trace('Searching account_url');
   if(prefs.account){
-    var account_url = (new RegExp('<div class="magic_content">[\\s\\S]*<a href=([\\s\\S]*?)>' + prefs.account)).exec(html);
+    var account_url = (new RegExp('<h3 class="title">' + prefs.account + '[\\s\\S]*?"/(ru/service/publicutilities/debt/\\d)')).exec(html);
     if(!account_url) throw new AnyBalance.Error("Не удаётся найти account_url. Проблемы или изменения на сайте?");
-    account_url = account_url[1];
-  } else var account_url = 'https://erc.megabank.net/ru/cabinet/publicutilities/debt&rr=1'
+    account_url = baseurl + account_url[1];
+  } else var account_url = baseurl + 'ru/service/publicutilities/debt/1'
   AnyBalance.trace('account_url = ' + account_url);
 
   AnyBalance.trace('Connecting to ' + account_url);
   var html = AnyBalance.requestGet(account_url, headers);
-  
+
   AnyBalance.trace('Searching account_N');
   var account_N  = /(\d)$/.exec(account_url);
   if(!account_N) throw new AnyBalance.Error("Не удаётся найти account_N. Проблемы или изменения на сайте?");
   AnyBalance.trace('account_N = ' + account_N[1]);
 
   AnyBalance.trace('Searching month_option');
-  var month_option = /<select id="kan_monthlist" size=1 onchange="get_views_next\(\)"><option value="(\d{6})"/.exec(html);
+  var month_option = getParam(html, null, null, /<select[^>]+id="kan_monthlist"[^>]*>\s*<option[^>]+value="([^"]*)/i, replaceHtmlEntities);
   if(!month_option) throw new AnyBalance.Error("Не удаётся найти month_option. Проблемы или изменения на сайте?");
-  AnyBalance.trace('month_option = ' + month_option[1]);
+  AnyBalance.trace('month_option = ' + month_option);
 
   AnyBalance.trace('Getting table');
-  var html_table = AnyBalance.requestPost(baseurl + 'ru/kan-type/load', {
-    rr: account_N[1],
-    month: month_option[1]
-  }, headers);
+  var json_table = AnyBalance.requestGet(baseurl + 'ru/service/resp/debt/' + account_N[1] + '/' + month_option + '?order=asc', headers);
+  data_table = JSON.parse(json_table);
 
-  AnyBalance.trace('Reading table');
   var result = {success: true};
 
+  result.month = month_option.replace(/(\d{4})(\d{2})/i, '$2/$1');
+
   // Лицевой счет
-  getParam(html, result, 'account', /<DIV class="maintextercviewsmall">Лицевой счет[\s\S]*?class=maintextercview>(.*?)</, replaceTagsAndSpaces, false);
+  getParam(html, result, 'account', /<span class="label-static">лицевой счет<\/span><span class="value-static">(.*?)</, replaceTagsAndSpaces, false);
 
   // Адрес
-  getParam(html, result, 'address', /<DIV class="maintextercviewsmall">адрес[\s\S]*?class=maintextercview>([\s\S]*?)</, replaceTagsAndSpaces, htmlDecode);
+  getParam(html, result, 'address', /<span class="label-static">Адрес<\/span><span class="value-static">([\s\S]*?)</, replaceTagsAndSpaces);
 
   // Ф.И.О.
-  getParam(html, result, 'name', /<DIV class="maintextercviewsmall">ф.и.о.[\s\S]*?class=maintextercview>(.*?)</, replaceTagsAndSpaces, htmlDecode);
+  getParam(html, result, 'name', /<span class="label-static">Ф.И.О.<\/span><span class="value-static">(.*?)</, replaceTagsAndSpaces);
 
   // Месяц
-  getParam(html_table, result, 'month', /Справка о результатах взаиморасчетов по коммунальным услугам за (.*?)</, replaceTagsAndSpaces, false);
-  
+  getParam(html, result, 'month', /<select class="form-control" id="kan_monthlist" size=1 onchange="get_views_nt\(\)" data-trig="1"><option value="\d{6}"  selected="selected" > (.*?) </, replaceTagsAndSpaces);
+
+  // Электричество
+  if(AnyBalance.isAvailable('rent', 'debt')){
+    result.electricity = calc_service_debt('ЭЛЕКТРИЧЕСТВО', data_table)
+  }
+
   // Квартплата
   if(AnyBalance.isAvailable('rent', 'debt')){
-    //AnyBalance.trace('rent');
-    var debt_tmp=getParam(html_table, result, false, /&#1050;&#1042;&#1040;&#1056;&#1058;&#1055;&#1051;&#1040;&#1058;&#1040;(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance) || 0;
-    var paid1_tmp=getParam(html_table, result, false, /&#1050;&#1042;&#1040;&#1056;&#1058;&#1055;&#1051;&#1040;&#1058;&#1040;(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance) || 0;
-    var paid2_tmp=getParam(html_table, result, false, /&#1050;&#1042;&#1040;&#1056;&#1058;&#1055;&#1051;&#1040;&#1058;&#1040;(?:[\s\S]*?<td[^>]*>){6}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance) || 0;
-    result.rent = Math.round((debt_tmp - paid1_tmp - paid2_tmp)*100)/100;
+    result.rent = calc_service_debt('КВАРТПЛАТА', data_table)
   }
 
   // Отопление
   if(AnyBalance.isAvailable('heating', 'debt')){
-    //AnyBalance.trace('heating');
-    var debt_tmp=getParam(html_table, result, false, /&#1054;&#1058;&#1054;&#1055;&#1051;&#1045;&#1053;&#1048;&#1045;(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance) || 0;
-    var paid1_tmp=getParam(html_table, result, false, /&#1054;&#1058;&#1054;&#1055;&#1051;&#1045;&#1053;&#1048;&#1045;(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance) || 0;
-    var paid2_tmp=getParam(html_table, result, false, /&#1054;&#1058;&#1054;&#1055;&#1051;&#1045;&#1053;&#1048;&#1045;(?:[\s\S]*?<td[^>]*>){6}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance) || 0;
-    result.heating = Math.round((debt_tmp - paid1_tmp - paid2_tmp)*100)/100;
+    result.heating = calc_service_debt('ОТОПЛЕНИЕ', data_table)
   }
 
   // Горячая вода
   if(AnyBalance.isAvailable('hot_water', 'debt')){
-    //AnyBalance.trace('hot_water');
-    var debt_tmp=getParam(html_table, result, false, /&#1043;&#1054;&#1056;&#1071;&#1063;&#1040;&#1071; &#1042;&#1054;&#1044;&#1040;(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance) || 0;
-    var paid1_tmp=getParam(html_table, result, false, /&#1043;&#1054;&#1056;&#1071;&#1063;&#1040;&#1071; &#1042;&#1054;&#1044;&#1040;(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance) || 0;
-    var paid2_tmp=getParam(html_table, result, false, /&#1043;&#1054;&#1056;&#1071;&#1063;&#1040;&#1071; &#1042;&#1054;&#1044;&#1040;(?:[\s\S]*?<td[^>]*>){6}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance) || 0;
-    result.hot_water = Math.round((debt_tmp - paid1_tmp - paid2_tmp)*100)/100;
+    result.hot_water = calc_service_debt('ГОРЯЧАЯ ВОДА', data_table)
   }
 
   // Холодная вода
   if(AnyBalance.isAvailable('cold_water', 'debt')){
-    //AnyBalance.trace('cold_water');
-    var debt_tmp=getParam(html_table, result, false, /&#1061;&#1054;&#1051;&#1054;&#1044;&#1053;&#1040;&#1071; &#1042;&#1054;&#1044;&#1040;(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance) || 0;
-    var paid1_tmp=getParam(html_table, result, false, /&#1061;&#1054;&#1051;&#1054;&#1044;&#1053;&#1040;&#1071; &#1042;&#1054;&#1044;&#1040;(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance) || 0;
-    var paid2_tmp=getParam(html_table, result, false, /&#1061;&#1054;&#1051;&#1054;&#1044;&#1053;&#1040;&#1071; &#1042;&#1054;&#1044;&#1040;(?:[\s\S]*?<td[^>]*>){6}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance) || 0;
-    result.cold_water = Math.round((debt_tmp - paid1_tmp - paid2_tmp)*100)/100;
+    result.cold_water = calc_service_debt('ХОЛОДНАЯ ВОДА', data_table)
   }
 
   // Канализация
   if(AnyBalance.isAvailable('sewerage', 'debt')){
-    //AnyBalance.trace('sewerage');
-    var debt_tmp=getParam(html_table, result, false, /&#1050;&#1040;&#1053;&#1040;&#1051;&#1048;&#1047;&#1040;&#1062;&#1048;&#1071;(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance) || 0;
-    var paid1_tmp=getParam(html_table, result, false, /&#1050;&#1040;&#1053;&#1040;&#1051;&#1048;&#1047;&#1040;&#1062;&#1048;&#1071;(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance) || 0;
-    var paid2_tmp=getParam(html_table, result, false, /&#1050;&#1040;&#1053;&#1040;&#1051;&#1048;&#1047;&#1040;&#1062;&#1048;&#1071;(?:[\s\S]*?<td[^>]*>){6}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance) || 0;
-    result.sewerage = Math.round((debt_tmp - paid1_tmp - paid2_tmp)*100)/100;
+    result.sewerage = calc_service_debt('КАНАЛИЗАЦИЯ', data_table)
   }
 
   // Газ
   if(AnyBalance.isAvailable('gas', 'debt')){
-    //AnyBalance.trace('gas');
-    var debt_tmp=getParam(html_table, result, false, /&#1043;&#1040;&#1047;(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance) || 0;
-    var paid1_tmp=getParam(html_table, result, false, /&#1043;&#1040;&#1047;(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance) || 0;
-    var paid2_tmp=getParam(html_table, result, false, /&#1043;&#1040;&#1047;(?:[\s\S]*?<td[^>]*>){6}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance) || 0;
-    result.gas = Math.round((debt_tmp - paid1_tmp - paid2_tmp)*100)/100;
+    result.gas = calc_service_debt('ГАЗ', data_table)
   }
 
   // Вывоз ТБО
   if(AnyBalance.isAvailable('garbage', 'debt')){
-    //AnyBalance.trace('garbage');
-    var debt_tmp=getParam(html_table, result, false, /&#1042;&#1067;&#1042;&#1054;&#1047; &#1058;&#1041;&#1054;(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance) || 0;
-    var paid1_tmp=getParam(html_table, result, false, /&#1042;&#1067;&#1042;&#1054;&#1047; &#1058;&#1041;&#1054;(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance) || 0;
-    var paid2_tmp=getParam(html_table, result, false, /&#1042;&#1067;&#1042;&#1054;&#1047; &#1058;&#1041;&#1054;(?:[\s\S]*?<td[^>]*>){6}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance) || 0;
-    result.garbage = Math.round((debt_tmp - paid1_tmp - paid2_tmp)*100)/100;
+    result.garbage = calc_service_debt('ВЫВОЗ ТБО', data_table)
   }
 
   // Укртелеком
   if(AnyBalance.isAvailable('ukrtelekom', 'debt')){
-    //AnyBalance.trace('ukrtelekom');
-    var debt_tmp=getParam(html_table, result, false, /&#1059;&#1050;&#1056;&#1058;&#1045;&#1051;&#1045;&#1050;&#1054;&#1052;(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance) || 0;
-    var paid1_tmp=getParam(html_table, result, false, /&#1059;&#1050;&#1056;&#1058;&#1045;&#1051;&#1045;&#1050;&#1054;&#1052;(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance) || 0;
-    var paid2_tmp=getParam(html_table, result, false, /&#1059;&#1050;&#1056;&#1058;&#1045;&#1051;&#1045;&#1050;&#1054;&#1052;(?:[\s\S]*?<td[^>]*>){6}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance) || 0;
-    result.ukrtelekom = Math.round((debt_tmp - paid1_tmp - paid2_tmp)*100)/100;
+    result.ukrtelekom = calc_service_debt('УКРТЕЛЕКОМ', data_table)
   }
 
   // Воля
   if(AnyBalance.isAvailable('volya', 'debt')){
-    //AnyBalance.trace('volya');
-    var debt_tmp=getParam(html_table, result, false, /&#1042;&#1054;&#1051;&#1071;. &#1058;&#1045;&#1051;&#1045;&#1050;&#1054;&#1052;&#1052;&#1059;&#1053;&#1048;&#1050;&#1040;&#1062;. &#1059;&#1057;&#1051;&#1059;&#1043;&#1048;(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance) || 0;
-    var paid1_tmp=getParam(html_table, result, false, /&#1042;&#1054;&#1051;&#1071;. &#1058;&#1045;&#1051;&#1045;&#1050;&#1054;&#1052;&#1052;&#1059;&#1053;&#1048;&#1050;&#1040;&#1062;. &#1059;&#1057;&#1051;&#1059;&#1043;&#1048;(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance) || 0;
-    var paid2_tmp=getParam(html_table, result, false, /&#1042;&#1054;&#1051;&#1071;. &#1058;&#1045;&#1051;&#1045;&#1050;&#1054;&#1052;&#1052;&#1059;&#1053;&#1048;&#1050;&#1040;&#1062;. &#1059;&#1057;&#1051;&#1059;&#1043;&#1048;(?:[\s\S]*?<td[^>]*>){6}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance) || 0;
-    result.volya = Math.round((debt_tmp - paid1_tmp - paid2_tmp)*100)/100;
+    result.volya = calc_service_debt('ВОЛЯ. ТЕЛЕКОММУНИКАЦ. УСЛУГИ', data_table)
   }
 
   // Общий долг
   if(AnyBalance.isAvailable('debt')){
     result.debt = 0;
+    if(result.electricity>0) result.debt += result.electricity;
     if(result.rent>0) result.debt += result.rent;
     if(result.heating>0) result.debt += result.heating;
     if(result.hot_water>0) result.debt += result.hot_water;
@@ -190,12 +171,10 @@ function main(){
   }
 
   //Тарифный план
-  var account_tmp=getParam(html, result, false, /<DIV class="maintextercviewsmall">Лицевой счет[\s\S]*?class=maintextercview>(.*?)</, replaceTagsAndSpaces, false);
-  var month_tmp=getParam(html_table, result, false, /Справка о результатах взаиморасчетов по коммунальным услугам за (.*?)</, replaceTagsAndSpaces, false);
-  result.__tariff='Счет: ' + account_tmp + ' (' + month_tmp + ')';
+  result.__tariff='Счет: ' + result.account + ' (' + result.month + ')';
 
   AnyBalance.trace('Logout');
-  var html = AnyBalance.requestGet(baseurl + 'ru/logout', headers);
+  var html = AnyBalance.requestGet(baseurl + 'ru/user/logout', headers);
   
   AnyBalance.setResult(result);
 }

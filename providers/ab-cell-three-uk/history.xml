@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<history>
+	<change version="5" date="2017-10-24">
+	Support changes on site
+	</change>
+	<change version="4" date="2017-06-28">
+	Changed date format
+	</change>
+	<change version="3" date="2016-12-12">
+	Renamed counter to Total internet left
+	</change>
+	<change version="2" date="2016-12-12">
+	Added free internet allowance
+	</change>
+	<change version="1" date="2016-11-10">
+	First provider version
+	</change>
+</history>

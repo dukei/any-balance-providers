@@ -7,7 +7,7 @@
 	<p>Предоставляет информацию о балансе провайдера Траст банк <a href="http://banktrust.com.ua/">http://banktrust.com.ua/</a></p>
 	<p>Информация берется из личного кабинета <a href="https://mobi.banktrust.com.ua/mobi-trust/Login.do">https://mobi.banktrust.com.ua/mobi-trust/Login.do</a></p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

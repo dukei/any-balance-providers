@@ -1,5 +1,29 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="2" version="33" date="2018-02-16">
+	Support changes in login procedure
+	</change>
+	<change major_version="2" version="32" date="2017-10-24">
+	- Улучшена обработка ошибок.
+	</change>
+	<change major_version="2" version="31" date="2017-02-10">
+	- Улучшена обработка ошибок.
+	</change>
+	<change major_version="2" version="30" date="2016-12-03">
+	Исправление процедуры входа в некоторых случаях
+	</change>
+	<change major_version="2" version="29" date="2016-11-08">
+	- Улучшена обработка ошибок.
+	</change>
+	<change major_version="2" version="28" date="2016-10-19">
+	Исправления в процедуре входа
+	</change>
+	<change major_version="2" version="27" date="2016-10-18">
+	- Поддержка изменений на сайте.
+	</change>
+	<change major_version="2" version="26" date="2016-07-15">
+	- Восстановлено получение даты деактивации средств
+	</change>
 	<change major_version="2" version="25" date="2015-09-19">
 	- Поддержка изменений в процедуре входа
 	</change>

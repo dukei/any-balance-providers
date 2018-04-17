@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-internet-tvin-telecom</id>
+	<api flags="no_browser"/>
+	<name>ТВИН-Телеком</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе интернет провайдера ТВИН-Телеком <a href="http://tvin-telecom.ru">http://tvin-telecom.ru</a></p>
+	<p>Информация берется из личного кабинета <a href="http://tvin-telecom.ru/myaccount">http://tvin-telecom.ru/myaccount</a></p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Ваш баланс" units=" {@currency}"/>
+		<counter id="date" name="Дата следующего списания абонентской платы" type="time" format="dd/MM/yyyy"/>
+		<counter id="agreement" name="Номер договора" type="text"/>
+		<counter id="address" name="Адрес подключения" type="text"/>
+		<counter id="tariff" name="Тариф" type="text"/>
+		<counter id="phones" name="Контактные телефоны" type="text"/>
+	</counters>
+	<keywords>tvin-telecom, интернет, видеонаблюдение, оператор связи, Ногинск</keywords>
+	<type>internet</type>
+	<country>ru</country>
+</provider>

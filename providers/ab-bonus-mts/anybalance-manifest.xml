@@ -1,18 +1,19 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id major_version="3.0" version="9">ab-bonus-mts</id>
+	<id major_version="3.0" version="13">ab-bonus-mts</id>
 	<name>МТС Бонус</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о бонусных баллах за пользование услугами МТС (https://bonus.ssl.mts.ru).</p>
 	<p><small>Для абонентов МТС трафик бесплатный.</small></p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="login/mts"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
-		<js>login.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>

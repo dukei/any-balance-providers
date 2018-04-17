@@ -6,7 +6,7 @@
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе на картах, кредитах и депозитах Альфа-Банка Украина (https://my.alfabank.com.ua/)</p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

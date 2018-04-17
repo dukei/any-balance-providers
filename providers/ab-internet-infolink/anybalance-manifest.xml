@@ -1,24 +1,27 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="6">ab-internet-infolink</id>
+	<id version="8">ab-internet-infolink</id>
 	<name>Инфолинк</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе провайдера Инфолинк <a href="http://infolink.ru/">http://infolink.ru/</a> в городах Московской области: Щёлково, Щёлково-3, Монино, Свердловский, Электросталь, Орехово-Зуево, Королёв, Лосино-Петровский</p>
 	<p>Информация берется из личного кабинета <a href="https://user.infolink.ru/">https://user.infolink.ru/</a></p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+    <depends>
+  		<module id="library"/>
+  	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
 	<counters>
 		<counter id="balance" name="Баланс" units=" р"/>
-		<counter id="bonuses" name="Бонусы" type="text"/>
+		<counter id="bonuses" name="Бонусы" units=" Б"/>
 		<counter id="acc_num" name="Номер лицевого счёта" type="text"/>
+		<counter id="acc_id" name="ID абонента" type="text"/>
 		<counter id="fio" name="ФИО" type="text"/>
 	</counters>
 	<keywords></keywords>

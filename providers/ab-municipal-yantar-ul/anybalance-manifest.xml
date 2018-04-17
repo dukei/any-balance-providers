@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-municipal-yantar-ul</id>
+	<api flags="no_browser"/>
+	<name>Янтарьэнергосбыт (юр. лица)</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о последних начислениях и платежах сводно по всем договорам в Янтарьэнергосбыт http://yantarenergosbyt.ru/</p>
+	<p>Информация берется из личного кабинета для юридических лиц https://ul.yantarenergosbyt.ru/</p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="spent" name="Потрачено в текущем периоде" type="text"/>
+		<counter id="topay" name="Начислено в текущем периоде" type="text"/>
+		<counter id="payed" name="Оплачено в текущем периоде" type="text"/>
+		<counter id="payment_date" name="Дата последнего платежа" type="time" format="dd/MM/yyyy"/>
+		<counter id="payment_sum" name="Сумма последнего платежа" units=" р"/>
+		<counter id="payment_doc" name="Тип и номер документа платежа" type="text"/>
+		<counter id="inn" name="ИНН" type="text"/>
+		<counter id="name" name="Название компании" type="text"/>
+		<counter id="address" name="Адрес" type="text"/>
+		<counter id="num" name="Число договоров" units=" дог."/>
+		<counter id="balance_start" name="Сальдо на начало периода" type="text"/>
+		<counter id="period" name="Текущий период" type="time" format="MM/yyyy"/>
+	</counters>
+	<keywords></keywords>
+	<type>municipal</type>
+	<country>ru</country>
+</provider>

@@ -15,7 +15,7 @@ function main(){
     var prefs = AnyBalance.getPreferences();
     AnyBalance.setDefaultCharset('utf-8');
 
-    var baseurl = "http://my.arbital.ru/";
+    var baseurl = "https://my.arbital.ru/";
 
     var html = AnyBalance.requestPost(baseurl, {
         auth_name:prefs.login,
@@ -24,7 +24,7 @@ function main(){
     });
 
     if(!/<li[^>]*>\s*<a[^>]+href=["'][^"']*\?logout=true/i.test(html)){
-        var error = getParam(html, null, null, /<h4[^>]*>([\s\S]*?)<\/h4>/i, replaceTagsAndSpaces, html_entity_decode);
+        var error = getParam(html, null, null, /<h4[^>]*>([\s\S]*?)<\/h4>/i, replaceTagsAndSpaces);
         if(error)
             throw new AnyBalance.Error(error);
         throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
@@ -32,11 +32,11 @@ function main(){
 
     var result = {success: true};
 
-    getParam(html, result, 'fio', /Пользователь[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, '__tariff', /<td[^>]*>Тариф<[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'fio', /Пользователь[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+    getParam(html, result, '__tariff', /<td[^>]*>Тариф<[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
     getParam(html, result, 'balance', /<td[^>]*>Баланс[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'credit', /<td[^>]*>Кредит[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'status', /<td[^>]*>Интернет[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'status', /<td[^>]*>Интернет[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
     getParam(html, result, 'till', /<td[^>]*>Денег на балансе хватит до[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
 
     if(AnyBalance.isAvailable('trafficIn', 'trafficOut')){

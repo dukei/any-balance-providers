@@ -5,7 +5,7 @@
 	<name>Очередь на получение путевки (ДСЗНГМ)</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о состоянии очередности на получение путевки на санаторно-курортное лечение. Информация предоставляется на сайте департамента социальной защиты населения города Москвы <a href="http://www.dszn.ru/">http://www.dszn.ru/</a></p>
-	<p>Информация берется со страницы <a href="http://support.anybalance.ru/scp/l.php?url=http%3A%2F%2Fwww.dszn.ru%2Factivities%2Finformatsiya_o_putevkakh%2Fin-the-sanatorium-and-spa-institutions%2Finforming-about-the-state-of-order-to-receive-vouchers-for-sanatorium-and-spa-treatment.php&auth=46b68beec8f1c2facf8abcd63405eb4b">http://support.anybalance.ru/scp/l.php?url=http%3A%2F%2Fwww.dszn.ru%2Factivities%2Finformatsiya_o_putevkakh%2Fin-the-sanatorium-and-spa-institutions%2Finforming-about-the-state-of-order-to-receive-vouchers-for-sanatorium-and-spa-treatment.php&auth=46b68beec8f1c2facf8abcd63405eb4b</a></p>
+	<p>Информация берётся из личного кабинета http://www.dszn.ru/activities/informatsiya_o_putevkakh/in-the-sanatorium-and-spa-institutions/informing-about-the-state-of-order-to-receive-vouchers-for-sanatorium-and-spa-treatment.php</p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>

@@ -1,5 +1,112 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="2.0" version="100" date="2018-03-07">
+	- Поддержка изменений на сайте.
+	</change>
+	<change major_version="2.0" version="99" date="2017-06-27">
+	- Улучшена обработка ошибок.
+	</change>
+	<change major_version="2.0" version="98" date="2017-04-28">
+	- Поддержка изменений на сайте.
+	</change>
+	<change major_version="2.0" version="97" date="2017-01-10">
+	- Попытка исправить получение минут из API мобильного приложения на некоторых тарифных планах
+	</change>
+	<change major_version="2.0" version="96" date="2016-12-21">
+	Поддержка возможности получать данные из нового ЛК
+	</change>
+	<change major_version="2.0" version="95" date="2016-12-14">
+	Исправление входа на чужой номер через мобильный интернет
+	Улучшено разпознавание интернета в некоторых случаях
+	Поддержка рекапчи
+	</change>
+	<change major_version="2.0" version="94" date="2016-10-28">
+	Поддержка изменений в процедуре входа :)
+	</change>
+	<change major_version="2.0" version="93" date="2016-10-14">
+	- Исправлено дублирование тарифного плана
+	</change>
+	<change major_version="2.0" version="92" date="2016-10-04">
+	Поддержка изменений в процедуре входа
+	</change>
+	<change major_version="2.0" version="91" date="2016-09-29">
+	Исправлено переключение в старый кабинет
+	</change>
+	<change major_version="2.0" version="90" date="2016-07-11">
+	- Поддержка изменений в процедуре входа
+	</change>
+	<change major_version="2.0" version="89" date="2016-07-04">
+	- Поддержка изменений в процедуре входа.
+	</change>
+	<change major_version="2.0" version="88" date="2016-06-11">
+	Исправлена проблема с установкой
+	</change>
+	<change major_version="2.0" version="87" date="2016-06-11">
+	Разделены минуты по украине (городские), на других мобильных и на киевстар
+	Убран сводный счетчик по бонусам
+	</change>
+	<change major_version="2.0" version="86" date="2016-06-09">
+	- Поддержка изменений на сайте.
+	</change>
+	<change major_version="2.0" version="85" date="2016-06-09">
+	- Поддержка изменений на сайте.
+	</change>
+	<change major_version="2.0" version="84" date="2016-06-08">
+	- Поддержка изменений на сайте.
+	</change>
+	<change major_version="2.0" version="83" date="2016-06-07">
+	Исправление ошибки JS
+	</change>
+	<change major_version="2.0" version="82" date="2016-06-06">
+	Попытка исправить проверку чужого номера через 3G киевстара
+	</change>
+	<change major_version="2.0" version="81" date="2016-06-05">
+	Исправлена ошибка JS
+	</change>
+	<change major_version="2.0" version="80" date="2016-06-05">
+	- Улучшена обработка ошибок входа.
+	</change>
+	<change major_version="2.0" version="79" date="2016-06-04">
+	Попытка исправить вход с моб. интернета другого номера
+	</change>
+	<change major_version="2.0" version="78" date="2016-05-20">
+	- Поддержка изменений в процедуре входа
+	</change>
+	<change major_version="2.0" version="77" date="2016-05-06">
+	Улучшено распознавание минут на городские номера
+	</change>
+	<change major_version="2.0" version="76" date="2016-05-06">
+	Исправлена обработка автовхода через мобильный интернет
+	</change>
+	<change major_version="2.0" version="75" date="2016-03-13">
+	Поддержка изменений в определении требования капчи
+	</change>
+	<change major_version="2.0" version="74" date="2016-03-13">
+	поддержка изменений в процедуре входа
+	- Для некоторых тарифных планов поправлено отображение номера телефона, номера лицевого счёта и баланса.
+	- Добавлен счётчик "Начисление абонентской платы по услуге -33%"
+	</change>
+	<change major_version="2.0" version="73" date="2016-02-25">
+	- Мелкие улучшения и исправления
+	</change>
+	<change major_version="2.0" version="72" date="2016-02-10">
+	- Мелкие улучшения.
+	</change>
+	<change major_version="2.0" version="71" date="2016-01-29">
+	- Добавлены счетчики: "Бонусный интернет" и "Срок действия бонусного интернета".
+	</change>
+	<change major_version="2.0" version="70" date="2016-01-20">
+	- Исправление ошибки установки провайдера
+	</change>
+	<change major_version="2.0" version="69" date="2016-01-20">
+	Поддержка изменений в процедуре входа
+	</change>
+	<change major_version="2.0" version="68" date="2015-12-21">
+	Исправление входа через мобильный интернет
+	</change>
+	<change major_version="2.0" version="67" date="2015-12-18">
+	- Поддержка изменений в процедуре входа
+	</change>
 	<change major_version="2.0" version="66" date="2015-10-28">
 	- Обновлена иконка.
 	</change>

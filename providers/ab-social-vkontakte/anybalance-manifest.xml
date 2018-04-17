@@ -1,24 +1,28 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id version="4">ab-social-vkontakte</id>
+	<id version="10">ab-social-vkontakte</id>
 	<name>Вконтакте</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о количестве голосов, количестве новых сообщений и заявок в друзья в социальной сети "Вконтакте" (http://vk.com).</p>
 	]]></description>
-	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+    <depends>
+   		<module id="library"/>
+   	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Голоса"/>
-		<counter id="messages" name="Сообщения" units="шт"/>
-		<counter id="new_friends" name="Заявки в друзья" units="шт"/>
+		<counter id="balance" name="Голоса" units=" глс"/>
+		<counter id="messages" name="Сообщения" units=" шт"/>
+		<counter id="new_friends" name="Новые друзья" units=" шт"/>
 		<counter id="vk_name" name="Имя" type="text" />
+		<counter id="friends_requests_in" name="Входящие заявки в друзья" units=" шт"/>
+		<counter id="friends_requests_out" name="Исходящие заявки в друзья" units=" шт"/>
 	</counters>
 	<keywords>vkontakte, контакт, вк</keywords>
 	<type>social</type>

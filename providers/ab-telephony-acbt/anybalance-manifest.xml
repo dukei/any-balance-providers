@@ -7,7 +7,7 @@
 	<p>Предоставляет информацию о балансе провайдера ACBT <a href="http://asvt.ru/">http://asvt.ru/</a></p>
 	<p>Информация берется из личного кабинета <a href="https://lk.asvt.ru/billing/!w3_p_main.showform?CONFIG=CONTRACT">https://lk.asvt.ru/billing/!w3_p_main.showform?CONFIG=CONTRACT</a></p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

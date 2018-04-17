@@ -7,7 +7,7 @@
 	<p>Предоставляет информацию о балансе провайдера Седьмой Континент <a href="http://www.7cont.ru/">http://www.7cont.ru/</a></p>
 	<p>Информация берется из личного кабинета <a href="http://corporate.7cont.ru/loyal_cabinet/auth/">http://corporate.7cont.ru/loyal_cabinet/auth/</a></p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

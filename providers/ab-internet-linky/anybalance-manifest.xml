@@ -7,7 +7,7 @@
 	<p>Предоставляет информацию о балансе провайдера ЛИНКИ http://www.linky.ru/</p>
 	<p>Информация берется из личного кабинета http://my.linky.ru/login.php</p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

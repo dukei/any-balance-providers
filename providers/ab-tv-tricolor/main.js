@@ -15,76 +15,103 @@ var g_headers = {
 function main(){
     var prefs = AnyBalance.getPreferences();
 	
-	checkEmpty(prefs.login, 'Введите DREID приёмника!');
-	checkEmpty(prefs.password, 'Введите пароль!');	
+	AB.checkEmpty(prefs.login, 'Введите DREID приёмника!');
+    AB.checkEmpty(prefs.password, 'Введите пароль!');
 	
     AnyBalance.setDefaultCharset('utf-8');
 
     var baseurl = "https://lk-subscr.tricolor.tv/";
 
-    var html = AnyBalance.requestPost(baseurl + 'Token', {
-        grant_type: 'password',
-		username:prefs.login,
-		password:prefs.password,
-		type:'Login'
-    }, g_headers);
+    var html = AnyBalance.requestPost(
+        baseurl + 'Token',
+        {
+            grant_type: 'password',
+            username:prefs.login,
+            password:prefs.password,
+            type:'Login'
+        },
+        g_headers
+    );
 
-    var token = getJson(html);
-    if(!token.access_token){
+    var token = AB.getJson(html);
+    if (!token.access_token) {
     	AnyBalance.trace(html);
-    	if(token.error)
-    		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Проверьте логин и пароль');
+    	if(token.error) {
+            throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Проверьте логин и пароль');
+        }
+
     	throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
     }
 
-    html = AnyBalance.requestGet(baseurl + 'api/Account/UserInfo', addHeaders({Authorization: 'Bearer ' + token.access_token}));
+    html = AnyBalance.requestGet(
+        baseurl + 'api/Account/UserInfo',
+        AB.addHeaders({Authorization: 'Bearer ' + token.access_token})
+    );
 
-    var json = getJson(html);
-
-	var result = {success: true};
+    var json = AB.getJson(html);
+	var result = {
+        success: true,
+        balance: 0
+    };
 
 	var deviceid = json.Subscriber.Agreements[0].Devices[0].SmartCard;
 
-	getParam(json.Subscriber.Agreements[0].Number, result, 'agreement');
-	getParam(json.Subscriber.Agreements[0].Devices[0].SmartCard, result, 'device');
+    AB.getParam(json.Subscriber.Agreements[0].Number, result, 'agreement');
+    AB.getParam(json.Subscriber.Agreements[0].Devices[0].SmartCard, result, 'device');
 
-	html = AnyBalance.requestGet(baseurl + 'odata/StartTariff(00000000-0000-0000-0000-000000000000)', addHeaders({Authorization: 'Bearer ' + token.access_token})); 
-    json = getJson(html);
-    if(!json.TariffName)
-    	AnyBalance.trace(html);
+	html = AnyBalance.requestGet(
+        baseurl + 'api/BillingOperations/GetStartTariff',
+        AB.addHeaders({Authorization: 'Bearer ' + token.access_token})
+    );
+    json = AB.getJson(html);
+    if(!json.TariffName){
+    	AnyBalance.trace('Не удалось найти название тарифа: ' + html);
+    }
 
-	getParam(json.TariffName, result, '__tariff');
-
-	html = AnyBalance.requestGet(baseurl + 'odata/Balance?%24filter=(SubjectId%20eq%20%27' + encodeURIComponent(deviceid) + '%27%20and%20SubjectTypeId%20eq%20%27Device%27)&%24orderby=Id', addHeaders({Authorization: 'Bearer ' + token.access_token}));
-    json = getJson(html);
-    if(!json.value)
-    	AnyBalance.trace(html);
-
-    if(json.value[0]){
-		getParam(json.value[0].Balance, result, 'balance');
-	}else{
-		getParam(0, result, 'balance');
-		AnyBalance.trace('Похоже, денежные средства на счете отсутствуют');
-	}
+    AB.getParam(json.TariffName, result, '__tariff');
     
-	html = AnyBalance.requestGet(baseurl + 'odata/ServiceInfo?%24filter=(SubjectId%20eq%20%27' + encodeURIComponent(deviceid) + '%27%20and%20SubjectTypeId%20eq%20%27Device%27)&%24orderby=Id', addHeaders({Authorization: 'Bearer ' + token.access_token}));
-    json = getJson(html);
-    if(!json.value)
-    	AnyBalance.trace(html);
+	html = AnyBalance.requestGet(
+        baseurl + 'api/BillingOperations/GetServices?SubjectId=' + encodeURIComponent(deviceid) + '&SubjectTypeId=Device&ListTypeId=VisibleForSubject',
+        AB.addHeaders({Authorization: 'Bearer ' + token.access_token})
+    );
+    json = AB.getJson(html);
+    if(!json.Value)
+    	AnyBalance.trace('Не найдены сервисы: ' + html);
 
     var n = 1;
-    for(var i=0; i<json.value.length; ++i){
-    	var si = json.value[i];
+    var services = [];
+    for(var i=0; i<json.Value.length; ++i){
+    	var si = json.Value[i];
     	var name = si.ServiceName;
     	if(si.ServiceStatusId != 'Active'){
     		AnyBalance.trace('Сервис ' + name + ' неактивен, пропускаем.');
     		continue;
     	}
 
-    	var left = Math.floor((parseDateISO(si.EndDate) - new Date().getTime())/86400/1000);
-    	getParam(name, result, 'service' + n);
-    	getParam(left, result, 'daysleft' + n);
+        services.push(si.ServiceId);
+        AB.getParam(name, result, 'service' + n);
+        AB.getParam('' + si.RemainingDays, result, 'daysleft' + n, null, null, parseBalance);
     	++n;
+    }
+
+    html = AnyBalance.requestGet(
+        baseurl + 'api/BillingOperations/GetBalance?subjectId=' + encodeURIComponent(deviceid) + '&subjectTypeId=Device',
+        AB.addHeaders({Authorization: 'Bearer ' + token.access_token})
+    );
+    json = AB.getJson(html);
+    if(!json.Value)
+        AnyBalance.trace('Не найден баланс: ' + html);
+
+    if (json.Value.length && services.length) {
+        for (var idx = 0; idx < json.Value.length; idx++) {
+            var serviceId = json.Value[idx].ServiceId;
+            if (!serviceId || services.indexOf(serviceId) > -1) {
+                AB.getParam(result.balance + json.Value[idx].Balance, result, 'balance');
+            }
+        }
+    }
+    else {
+        AnyBalance.trace('Похоже, денежные средства на счете отсутствуют');
     }
 
     AnyBalance.setResult(result);

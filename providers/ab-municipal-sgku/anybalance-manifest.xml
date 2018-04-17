@@ -1,16 +1,18 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="2">ab-municipal-sgku</id>
+  <id version="3">ab-municipal-sgku</id>
   <api min_level="7" flags="no_browser"/>
-  <name>ЖКХ Сургут</name>
+  <name>ЖКХ Сургут (sgku.ru)</name>
   <description>
       Показывает состояние лицевого счета по оплате ЖКХ с сайта https://sgku.ru.
   </description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+  <depends>
+  	<module id="library"/>
+  </depends>
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
-    <js>library.js</js>
     <js>main.js</js>
     <js target="preferences">preferences.js</js>
     <history>history.xml</history>

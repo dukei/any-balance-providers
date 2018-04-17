@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-internet-obtelecom</id>
+  <name>ОБЪТЕЛЕКОМ</name>
+  <description>
+    Получает баланс интернет-провайдера Обътелеком (http://obtelecom.ru). Информация берется из личного кабинета "https://my.obtelecom.ru/cli/".
+  </description>
+  <author>johhy &lt;johhy1313@gmail.com&gt;</author>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>library.js</js>
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units=" р"/>
+  </counters>
+  <keywords>обьтелеком интернет провайдер</keywords>
+  <type>
+    internet
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

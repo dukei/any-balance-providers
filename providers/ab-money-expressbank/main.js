@@ -1,162 +1,169 @@
 ﻿/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 
-Получает текущий остаток и другие параметры карт/счетов/депозитов банка Юниаструм
+Получает текущий остаток и другие параметры карт/счетов/депозитов банка совкомбанк
 
-Сайт оператора: http://www.express-bank.ru/
-Личный кабинет: https://online.express-bank.ru
+Сайт оператора: http://sovcombank.ru
+Личный кабинет: https://elf.sovcombank.ru/elf/app/
 */
 
-var g_headers = {
-    Expect: '100-Continue',
-	Connection: 'Keep-Alive',
-	'User-Agent': 'Apache-HttpClient/UNAVAILABLE (java 1.4)'
-}
+/**
+Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
+*/
 
-var g_baseurl = "https://online.express-bank.ru/v1/cgi/bsi.dll?";
+var g_countersTable = {
+	common: {
+		'fio': 'info.fio'
+	}, 
+	card: {
+    	"balance": "cards.balance",
+		"currency": "cards.currency",
+		"num": "cards.cardnum",
+		"__tariff": "cards.__name",
+		"name": "cards.type",
+		"status": "cards.status",
+		"till": "cards.till",
+		"type": "cards.__name",
+		'holder': 'cards.holder',
+		'limit': 'cards.limit',
+	},
+	crd: {
+    	"balance": "credits.balance",
+    	"limit": "credits.limit",
+		"currency": "credits.currency",
+		"__tariff": "credits.__name",
+		"num": "credits.accnum",
+		"till": "credits.till",
+		"type": "credits.__name",
+	},
+    acc: {
+    	"balance": "accounts.balance",
+		"currency": "accounts.currency",
+		"num": "accounts.cardnum",
+		"type": "accounts.__name",
+		"__tariff": "accounts.__name",
+    },
+	dep: {
+    	"balance": "deposits.balance",
+		"currency": "deposits.currency",
+		"__tariff": "deposits.__name",
+		"num": "deposits.accnum",
+		"till": "deposits.till",
+		"type": "deposits.type",
+    }
+};
 
-function makeRequest(params, strParams){
-    var baseParams = {
-    	Console:	'android',
-		L:	'RUSSIAN',
-		TIC:	'1',
-		ChannelType:	'HTTP',
-		MINTime:	'163',
-		MAXTime:	'380',
-		AVGTime:	'271',
-		MINSpeed:	'118',
-		MAXSpeed:	'472',
-		AVGSpeed:	'240',
-		MobDevice:	'htc HTC Desire 600',
-	};
-	for(var param in params){
-	    baseParams[param] = params[param];
-	}
-	if(strParams){
-		var aParams = strParams.split(/;/g);
-		for(var i=0; i<aParams.length; ++i){
-			var param = aParams[i].split('=');
-			baseParams[param[0]] = param[1];
+function shouldProcess(counter, info){
+	var prefs = AnyBalance.getPreferences();
+	
+	if(!info || (!info.__id || !info.__name))
+		return false;
+	
+	switch(counter){
+		case 'cards':
+		{
+			if(prefs.type != 'card')
+				return false;
+		    if(!prefs.num)
+		    	return true;
+			
+			if(endsWith(info.num, prefs.num))
+				return true;
+			if(info.__name.toLowerCase().indexOf(prefs.num.toLowerCase()) >= 0)
+				return true;
+		    
+			return false;
 		}
+		case 'accounts':
+		{
+			if(prefs.type != 'acc')
+				return false;
+		    if(!prefs.num)
+		    	return true;
+			
+			if(endsWith(info.num, prefs.num))
+				return true;
+			if(info.__name.toLowerCase().indexOf(prefs.num.toLowerCase()) >= 0)
+				return true;
+
+			return false;
+		}
+		case 'credits':
+		{
+			if(prefs.type != 'crd')
+				return false;
+		    if(!prefs.num)
+		    	return true;
+			
+			if(info.__name.toLowerCase().indexOf(prefs.num.toLowerCase()) >= 0)
+				return true;
+
+			return false;
+		}	
+		case 'deposits':
+		{
+			if(prefs.type != 'dep')
+				return false;
+		    if(!prefs.num)
+		    	return true;
+			
+			if(info.__name.toLowerCase().indexOf(prefs.num.toLowerCase()) >= 0)
+				return true;
+
+			return false;
+		}
+		default:
+			return false;
 	}
-    var html = AnyBalance.requestPost(g_baseurl, baseParams, g_headers);
-    var error = getParam(html, null, null, /<DIV[^>]+ID="RTSError"[^>]*>([\s\S]*?)<\/DIV>/i, replaceTagsAndSpaces, html_entity_decode);
-    if(error)
-    	throw new AnyBalance.Error(error);
-    return html;
 }
 
-function main(){
-    var prefs = AnyBalance.getPreferences();
-
-    checkEmpty(prefs.login, 'Введите логин в интернет-банк!');
-    checkEmpty(prefs.password, 'Введите пароль в интернет-банк!');
-
-    AnyBalance.setOptions({DEFAULT_CHARSET: 'utf-8'});
-
-    var mainMenu = makeRequest({
-		b:	prefs.password,
-		a:	prefs.login,
-		T:	'RT_2Auth.CL'
-    });
-
-    var sid = getParam(mainMenu, null, null, /<form[^>]+sid="([^"]*)/i, replaceHtmlEntities);
-    if(!sid){
-    	var error = getParam(mainMenu, null, null, /<label[^>]+caption="([^"]*)/i, replaceHtmlEntities);
-    	if(error)
-    		throw new AnyBalance.Error(error, null, /имени пользователя или пароля/i.test(error));
-    	AnyBalance.trace(mainMenu);
-        throw new AnyBalance.Error("Не удалось найти информацию о сессии в ответе банка.");
-    }
-
-    html = makeRequest({
-		SID:	sid,
-		T:	'rt_0clientupdaterest.doheavyupd'
-    });
-    
-    AnyBalance.setOptions({FORCE_CHARSET: 'utf-8'});
-
-    for(var i=0; i<10; ++i){
-    	AnyBalance.trace('Trying to update: ' + i);
-    	AnyBalance.sleep(4000);
-
-        html = makeRequest({
-			SID:	sid,
-			T:	'rt_0clientupdaterest.CheckForAcyncProcess'
-        });
-    	
-    	var res = AnyBalance.getLastResponseHeader('ERRCODE');
-    	if(res == 0){
-    		AnyBalance.trace('The update process finished: ' + getParam(html, null, null, /<BSS_ERROR>([\s\S]*?)<\/BSS_ERROR>/i, replaceTagsAndSpaces, html_entity_decode));
-    		break;
-    	}
-    }
-
-    AnyBalance.setOptions({FORCE_CHARSET: null});
-
-    if(i >= 10)
-    	AnyBalance.trace('Too many tries to get update done. Skipping it...');
-
-    if(prefs.type == 'card')
-        fetchCard(sid, mainMenu);
-    else if(prefs.type == 'acc')
-        fetchAccount(sid, mainMenu);
-    else
-        fetchCard(sid, mainMenu); //По умолчанию карты будем получать
-}
-
-function fetchCard(sid, html){
-    var prefs = AnyBalance.getPreferences();
-    if(prefs.cardnum && !/^\d{4}$/.test(prefs.cardnum))
-        throw new AnyBalance.Error("Введите 4 последних цифры номера карты или не вводите ничего, чтобы показать информацию по первой карте");
-
-    var cardsParams = getParam(html, null, null, /<menuitem[^>]+action="url\(([^)]*)\)[^>]+icon="cards"/i);
-    
-    html = makeRequest({SID: sid}, cardsParams);
-    var card = getParam(html, null, null, new RegExp('<card[^>]+num="[\\dx]{12}' + (prefs.cardnum || '\\d{4}') + '"[^>]*'));
-
-    if(!card)
-        throw new AnyBalance.Error('Не удаётся найти ' + (prefs.cardnum ? 'карту с последними цифрами ' + prefs.cardnum : 'ни одной карты'));
+function main() {
+	var prefs = AnyBalance.getPreferences();
+	prefs.num = prefs.cardnum;
 	
-    var result = {success: true};
-    
-    getParam(card, result, '__tariff', /\bnum="([^"]*)/, replaceHtmlEntities);
-	getParam(result.__tariff, result, 'num');
+    if(!/^(card|crd|dep|acc)$/i.test(prefs.type || ''))
+    	prefs.type = 'card';
 
-    getParam(card, result, 'type', /\btype="([^"]*)/, replaceHtmlEntities);
-    getParam(card, result, 'balance', /\brest="([^"]*)/, replaceHtmlEntities, parseBalance);
-    getParam(card, result, ['currency', 'balance', 'limit'], /\brest="([^"]*)/, replaceHtmlEntities, parseCurrency);
-    getParam(card, result, 'holder', /\bholder="([^"]*)/, replaceHtmlEntities);
-    getParam(card, result, 'status', /\bstatus="([^"]*)/, replaceHtmlEntities);
-    getParam(card, result, 'till', /\bdate="([^"]*)/, replaceHtmlEntities, parseDate);
-    getParam(card, result, 'limit', /\blimit="([^"]*)/, replaceHtmlEntities, parseBalance);
-
-    getParam(card, result, 'fio', /\bname="([^"]*)/, replaceHtmlEntities);
+    var adapter = new NAdapter(joinObjects(g_countersTable[prefs.type], g_countersTable.common), shouldProcess);
 	
-    AnyBalance.setResult(result);
-}
-
-function fetchAccount(sid, html){
-    var prefs = AnyBalance.getPreferences();
-    if(prefs.cardnum && !/^\d{4,}$/.test(prefs.cardnum))
-        throw new AnyBalance.Error("Введите начало номера счета или не вводите ничего, чтобы показать информацию по первому счету");
+    adapter.processCards = adapter.envelope(processCards);
+    adapter.processAccounts = adapter.envelope(processAccounts);
+    adapter.processCredits = adapter.envelope(processCredits);
+    adapter.processDeposits = adapter.envelope(processDeposits);
 	
-    var params = getParam(html, null, null, /<menuitem[^>]+action="url\(([^)]*)\)[^>]+icon="accounts"/i);
-
-    html = makeRequest({SID: sid}, params);
-	var row = getParam(html, null, null, new RegExp('<accitem[^>]+num="\\d{0,16}' + (prefs.cardnum || '\\d{4}') + '"[^>]*'));
-
-	if(!row)
-        throw new AnyBalance.Error('Не удаётся найти ' + (prefs.cardnum ? 'счет с первыми цифрами ' + prefs.cardnum : 'ни одного счета'));
-
-    var result = {success: true};
+	var html = login('https://elf.faktura.ru/elf/app/');
+		
+	var result = {success: true};
 	
-    getParam(row, result, '__tariff', /\bnum="([^"]*)/, replaceHtmlEntities);
-	getParam(result.__tariff, result, 'num');
+	if(prefs.type == 'card') {
+		adapter.processCards(html, result);
+		
+		if(!adapter.wasProcessed('cards'))
+			throw new AnyBalance.Error(prefs.num ? 'Не найдена карта с последними цифрами ' + prefs.num : 'У вас нет ни одной карты!');
+		
+		result = adapter.convert(result);
+	} else if(prefs.type == 'acc') {
+		adapter.processAccounts(html, result);
 
-    getParam(row, result, 'type', /\btype="([^"]*)/, replaceHtmlEntities);
-    getParam(row, result, 'balance', /\brest="([^"]*)/, replaceHtmlEntities, parseBalance);
-    getParam(row, result, ['currency', 'balance'], /\brest="([^"]*)/, replaceHtmlEntities, parseCurrency);
+		if(!adapter.wasProcessed('accounts'))
+			throw new AnyBalance.Error(prefs.num ? 'Не найден счет с последними цифрами ' + prefs.num : 'У вас нет ни одного счета!');
+		
+		result = adapter.convert(result);
+	} else if(prefs.type == 'crd') {
+		adapter.processCredits(html, result);
+
+		if(!adapter.wasProcessed('credits'))
+			throw new AnyBalance.Error(prefs.num ? 'Не найден кредит с последними цифрами ' + prefs.num : 'У вас нет ни одного кредита!');
+		
+		result = adapter.convert(result);
+	} else if(prefs.type == 'dep') {
+		adapter.processDeposits(html, result);
+		
+		if(!adapter.wasProcessed('deposits'))
+			throw new AnyBalance.Error(prefs.num ? 'Не найден депозит с последними цифрами ' + prefs.num : 'У вас нет ни одного депозита!');
+		
+		result = adapter.convert(result);
+	}
 	
-    AnyBalance.setResult(result);
+	AnyBalance.setResult(result);
 }

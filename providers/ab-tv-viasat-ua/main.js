@@ -14,6 +14,7 @@ function main(){
     AnyBalance.setDefaultCharset('utf-8');
 
 	checkEmpty(prefs.login, 'Введите логин!');
+	checkEmpty(/^\S+$/.test(prefs.login), 'В логине не должно быть пробелов. Введите логин ещё раз!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 	
     var baseurl = "https://my.viasat.ua/ua/";

@@ -25,8 +25,8 @@
         key="region" 
         title="Интернет-провайдер"
         summary="||{@s}"
-        entries="Автоматически|Ultranet|Cifra1"
-        entryValues="auto|ultranet|cifra1"
+        entries="Автоматически|Ultranet|Cifra1|lk.cifra1.ru"
+        entryValues="auto|ultranet|cifra1|lkcifra1"
 		defaultValue="auto">
 	</ListPreference>
 </PreferenceScreen>

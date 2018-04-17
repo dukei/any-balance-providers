@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<api flags="no_browser"/>
+	<id version="1">ab-internet-gtk</id>
+	<name>Биллинговая система ГТК</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе биллинговой системы ГТК.</p>
+	<p>Информация берется из личного кабинета ГТК http://bill.gtk.su/user/index.xhtml.</p>
+	]]></description>
+	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="status" name="Статус" type="text"/>
+		<counter id="user" name="Абонент" type="text"/>
+		<counter id="agreement" name="Договор" type="text"/>
+		<counter id="account_number" name="Номер лицевого счета"/>
+		<counter id="calculation_scheme" name="Схема расчетов" type="text"/>
+		<counter id="shutdown_threshold" name="Порог отключения" units=" р"/>
+	</counters>
+	<keywords>Интернет, Санкт-Петербург</keywords>
+	<type>internet</type>
+	<country>ru</country>
+</provider>

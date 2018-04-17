@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id version="12">ab-game-godville</id>
+	<id version="17">ab-game-godville</id>
 	<name>Godville.net</name>
 	<description html="true"><![CDATA[
 	<p>Отображает некоторые параметры игры (здоровье, прана, количество кирпичей, бревен, уровень героя и др.)</p>
@@ -10,12 +10,14 @@
 		По умолчанию провайдер получает только базовый набор сведений о герое, примерно совпадающий с содержимым персональной страницы. 
 		Если за героем хочется наблюдать в реальном времени, то необходимо включить в профиле игры галочку "Оперативные данные в API", добавляющую десять с лишним часто меняющихся полей наподобие инвентаря, текущего здоровья и т.п.
 	</instruction>
-	<author>Vitaliy Poluphanov &lt;hetleven@yandex.ua&gt;</author>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="crypt/rsa"/>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
@@ -23,18 +25,19 @@
 		<counter id="name" name="Имя героя" type="text"/>
 		<counter id="level" name="Уровень" prefix="Ур. " type="numeric"/>
 		<counter id="health" name="Здоровье" type="numeric"/>
-		<counter id="health_p" name="Здоровье, ℅" suffix="℅" type="numeric"/>
+		<counter id="health_p" name="Здоровье, %" suffix="%" type="numeric"/>
 		<counter id="health_t" name="Здоровье, текущее/максимальное" type="text"/>
-		<counter id="bricks_p" name="Кирпичи, ℅" suffix="℅" type="numeric"/>
+		<counter id="bricks_p" name="Кирпичи, %" suffix="%" type="numeric"/>
 		<counter id="bricks" name="Кирпичи, шт" suffix=" шт" type="numeric"/>
-		<counter id="godpower" name="Прана" suffix="℅" type="numeric"/>
-		<counter id="level_p" name="Уровень, ℅" suffix="℅" type="numeric"/>
-		<counter id="quest_p" name="Квест, ℅" suffix="℅" type="numeric"/>
+		<counter id="godpower" name="Прана" suffix="%" type="numeric"/>
+		<counter id="level_p" name="Уровень, %" suffix="%" type="numeric"/>
+		<counter id="quest_p" name="Квест, %" suffix="%" type="numeric"/>
 		<counter id="savings" name="Сбережения, тыс." suffix=" тыс." type="numeric"/>
-		<counter id="wood_p" name="Бревна, ℅" suffix="℅" type="numeric"/>
+		<counter id="wood_p" name="Бревна, %" suffix="%" type="numeric"/>
 		<counter id="wood" name="Бревна, шт" suffix=" шт" type="numeric"/>
+		<counter id="death_count" name="Смертей" type="numeric" prefix="☠"/>
 		<counter id="inventory" name="Инвентарь, шт" suffix=" шт" type="numeric"/>
 	</counters>
-	<keywords>игра, game, godville</keywords>
+	<keywords>игра, game, годвиль, годвилль</keywords>
 	<type>game</type>
 </provider>

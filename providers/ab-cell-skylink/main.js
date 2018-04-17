@@ -2,12 +2,6 @@
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 */
 
-var g_headers = {
-	'Content-Type': 'text/xml; charset=utf-8',
-	'User-Agent': 'Mozilla/4.0 (compatible; MSIE 6.0; MS Web Services Client Protocol 2.0.50727.5472)',
-	'Connection': 'keep-alive',
-};
-
 function main(){
     var prefs = AnyBalance.getPreferences();
 
@@ -18,20 +12,24 @@ function main(){
     var region = prefs.region || 'moscow';
     var regionFunc = g_regions[region] || g_regions.moscow;
 
-    AnyBalance.trace("Entering region: " + region);
-
     try {
-        AnyBalance.trace('Пробуем войти по-старому');
+    	AnyBalance.trace("Entering region: " + region);
         regionFunc();
     } catch(e) {
-        AnyBalance.trace('Старый логин не сработал, пробуем на my.skylink');
-        mainMySkylink(prefs);
+        if (!e.fatal) {
+            AnyBalance.trace('Старый логин не сработал (' + e.message + '), пробуем на mycdma.skylink');
+            mainMySkylink(prefs);
+        } else {
+            throw e;
+        }
     }
 }
 
-function mainMySkylink(prefs){
+function mainMySkylink(){
+	var prefs = AnyBalance.getPreferences();
+
     AnyBalance.setDefaultCharset('utf-8');
-    var baseurl = 'https://my.skylink.ru/';
+    var baseurl = 'https://mycdma.skylink.ru/';
     var headers = {
         'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
         'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
@@ -76,12 +74,12 @@ function mainMySkylink(prefs){
 
     var result = {success: true};
 
-    getParam(html, result, 'userName', /top-profile-subscriber-name[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, '__tariff', /Тариф\s*<\/h2>\s*<div[^>]*>([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'userName', /top-profile-subscriber-name[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+    getParam(html, result, '__tariff', /Тариф\s*<\/h2>\s*<div[^>]*>([^<]+)/i, replaceTagsAndSpaces);
 
     if(isAvailable('balance')){
-        var tokenName = getParam(html, null, null, /var data\s*=\s*{\s*([^:]+)/i, replaceTagsAndSpaces, html_entity_decode);
-        var tokenValue = getParam(html, null, null, /var data\s*=\s*{\s*[^:]+:\s['"]([^'"]+)/i, replaceTagsAndSpaces, html_entity_decode);
+        var tokenName = getParam(html, null, null, /var data\s*=\s*{\s*([^:]+)/i, replaceTagsAndSpaces);
+        var tokenValue = getParam(html, null, null, /var data\s*=\s*{\s*[^:]+:\s['"]([^'"]+)/i, replaceTagsAndSpaces);
         if(!tokenName || !tokenValue)
             throw new AnyBalance.Error('Не удалось найти токен для получения баланса. Сайт изменен?');
 
@@ -137,14 +135,14 @@ function mainSkyPoint(prefs) {
 	'http://www.skylink.ru/SC/Verify1');
 
 	if (!/Verify1Result[^>]*Value\s*=\s*"\s*True/i.test(html)) {
-		var error = getParam(html, null, null, /Message="([^"]*)/i, replaceTagsAndSpaces, html_entity_decode);
+		var error = getParam(html, null, null, /Message="([^"]*)/i, replaceTagsAndSpaces);
 		if(/No connection could be made because the target machine actively refused/i.test(error)) {
 			AnyBalance.trace('SkyPoint временно не работает, попробуем войти в SkyBalance...');
 			mainSkyBalance(prefs);
 			return;
 		}
 		if (error)
-			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
+			throw new AnyBalance.Error(error, null, /Неверн.*?(логин|пароль)/i.test(error));
 		
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
@@ -154,7 +152,7 @@ function mainSkyPoint(prefs) {
 	
 	html = reqSkypoint('https://uws.skypoint.ru/uws.asmx',
 	'<?xml version="1.0" encoding="utf-8"?><soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"><soap:Body><InvokeMethod21 xmlns="http://www.skylink.ru/UWS"><dn>'+prefs.login+'</dn><pwd>'+pass+'</pwd><guid>f1e07de2-2fc5-4beb-bf9c-b997124658a4</guid><Parameters>I_DN='+prefs.login+',i_ExtParam=$SUBSYSTEM=WindowsSkyPoint</Parameters><Delimiter>,</Delimiter></InvokeMethod21></soap:Body></soap:Envelope>');
-	getParam(html, result, '__tariff', /<TARIFF_PLAN>([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, '__tariff', /<TARIFF_PLAN>([^<]+)/i, replaceTagsAndSpaces);
 	
 	if(isAvailable('balance')) {
 		html = reqSkypoint('https://uws.skypoint.ru/uws.asmx',
@@ -166,13 +164,13 @@ function mainSkyPoint(prefs) {
 		html = reqSkypoint('https://uws.skypoint.ru/uws.asmx',
 		'<?xml version="1.0" encoding="utf-8"?><soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"><soap:Body><InvokeMethod21 xmlns="http://www.skylink.ru/UWS"><dn>'+prefs.login+'</dn><pwd>'+pass+'</pwd><guid>ff644d4c-0dc5-4687-a481-868dc87a685c</guid><Parameters>I_DN='+prefs.login+',i_ExtParam=$SUBSYSTEM=WindowsSkyPoint</Parameters><Delimiter>,</Delimiter></InvokeMethod21></soap:Body></soap:Envelope>');
 		
-		getParam(html, result, 'userNum', /<ACCOUNT_ID>([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);		
+		getParam(html, result, 'userNum', /<ACCOUNT_ID>([^<]+)/i, replaceTagsAndSpaces);		
 	}
 	if(isAvailable('userName')) {
 		html = reqSkypoint('https://uws.skypoint.ru/uws.asmx',
 		'<?xml version="1.0" encoding="utf-8"?><soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"><soap:Body><InvokeMethod21 xmlns="http://www.skylink.ru/UWS"><dn>'+prefs.login+'</dn><pwd>'+pass+'</pwd><guid>6078690c-024d-4a32-8789-84c976adf62c</guid><Parameters>I_DN='+prefs.login+',i_ExtParam=$SUBSYSTEM=WindowsSkyPoint</Parameters><Delimiter>,</Delimiter></InvokeMethod21></soap:Body></soap:Envelope>');
 
-		getParam(html, result, 'userName', /<CLIENT_NAME>([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
+		getParam(html, result, 'userName', /<CLIENT_NAME>([^<]+)/i, replaceTagsAndSpaces);
 	}
 	
 	AnyBalance.setResult(result);
@@ -213,7 +211,7 @@ var g_regions = {
     omsk: mainUln,
     pskov: mainSpb,
     rostov: mainUln,
-    moscow: mainMoscow,
+    moscow: mainSkylinkTele2,
     kaluga: mainUln,
     uln: mainUln,
     kuban: mainKuban,
@@ -224,11 +222,22 @@ var g_regions = {
 
 function mainMoscow(){
 	var prefs = AnyBalance.getPreferences();
-	
-	mainSkyPoint(prefs);
-	return;
-	// Тут ввели капчу, пока не будем получать отсюда
-    var baseurl = "https://www.skypoint.ru/";
+	try {
+		throw new AnyBalance.Error('SkyPoint, похоже, давно мертв, пропускаем его...');
+	    mainSkyPoint(prefs);
+    } catch(exc) {
+        if (exc.fatal) {
+            throw exc;
+        } else {
+            mainMoscowSP(prefs);
+        }
+    }
+}
+
+function mainMoscowSP(){
+	var prefs = AnyBalance.getPreferences();
+
+    var baseurl = "https://www.skypoint.ru";
     AnyBalance.setDefaultCharset('utf-8');
 
     var headers = {
@@ -242,12 +251,12 @@ function mainMoscow(){
 
 
 
-    var html = AnyBalance.requestGet(baseurl + 'Account/Login.aspx?ReturnUrl=%2f', headers);
+    var html = AnyBalance.requestGet(baseurl + '/Account/Login.aspx?ReturnUrl=%2f', headers);
     var eventvalidation = getEventValidation(html);
     var viewstate = getViewState(html);
-
-    html = AnyBalance.requestPost(baseurl + 'Account/Login.aspx?ReturnUrl=%2f', {
-	__EVENTTARGET:'',
+    
+    var params = {
+        __EVENTTARGET:'',
 	__EVENTARGUMENT:'',
 	__VIEWSTATE:viewstate,
 	__EVENTVALIDATION:eventvalidation,
@@ -255,12 +264,22 @@ function mainMoscow(){
 	ctl00$MainContent$WatermarContactPhone_ClientState:'',
 	ctl00$MainContent$txtPassword:prefs.password,
         ctl00$MainContent$ctl00: 'Войти'
-    }, headers);
+    };
+    
+    if (/ctl00\$MainContent\$txt_captcha/i.test(html)) {
+        var captchaImage = AnyBalance.requestGet(baseurl + '/account/hcaptcha.ashx', headers);
+        var captchaCode = AnyBalance.retrieveCode('Введите проверочный код', captchaImage);
+        params['ctl00$MainContent$txt_captcha'] = captchaCode;
+    }
+    
+
+    html = AnyBalance.requestPost(baseurl + '/Account/Login.aspx?ReturnUrl=%2f', params, headers);
 
     if(!/ctl00\$b[nt]{2}Login/i.test(html)){
         var error = getParam(html, null, null, /<span[^>]+class="errorPinkMessage"(?:[^>](?!display:none|visibility))*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
-        if(error)
-            throw new AnyBalance.Error(error);
+        if(error) {
+            throw new AnyBalance.Error(error, false, /Неверный.*?(?:номер|пароль)|Номер\s+не\s+зарегистрирован/i.test(error));
+        }
         throw new AnyBalance.Error('Не удалось войти в личный кабинет. Сайт изменен или неправильный регион?');
     }
 
@@ -272,14 +291,14 @@ function mainMoscow(){
 
     var result = {success: true};
 
-    getParam(html, result, 'userName', /<span[^>]+id="txtLoginName"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'userNum', /<span[^>]+id="ucAbonentInfo_lblLitsevoySchet"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'userName', /<span[^>]+id="txtLoginName"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
+    getParam(html, result, 'userNum', /<span[^>]+id="ucAbonentInfo_lblLitsevoySchet"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
     getParam(html, result, 'balance', /Баланс лицевого счёта[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, '__tariff', /<span[^>]+id="ucAbonentInfo_lblTariffPlan"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, '__tariff', /<span[^>]+id="ucAbonentInfo_lblTariffPlan"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
     getParam(html, result, 'min_left', /Предоплаченные минуты(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 
     if(AnyBalance.isAvailable('charged')){
-        html = AnyBalance.requestGet(baseurl + 'AbonentCenter/Summary.aspx');
+        html = AnyBalance.requestGet(baseurl + '/AbonentCenter/Summary.aspx');
         getParam(html, result, 'charged', /<span[^>]+id="[^"]*CurrentlyUsed">([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
     }
     
@@ -312,12 +331,12 @@ function mainUln(){
     }, headers
     );
 
-    var error = getParam(html, null, null, /<span[^>]+class="err_msg"[^>]*>(.*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
+    var error = getParam(html, null, null, /<span[^>]+class="err_msg"[^>]*>(.*?)<\/span>/i, replaceTagsAndSpaces);
     if(error)
         throw new AnyBalance.Error(error);
 
     //Надо проверить, действительно ли нас пустили в кабинет, или просто перенаправили куда-то в другой регион
-    var login_marker = getParam(html, null, null, /<span[^>]+id="ctl00_abonent_number"[^>]*>Абонент: (.*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
+    var login_marker = getParam(html, null, null, /<span[^>]+id="ctl00_abonent_number"[^>]*>Абонент: (.*?)<\/span>/i, replaceTagsAndSpaces);
     if(!login_marker)
         throw new AnyBalance.Error("Не удалось войти в личный кабинет. Неправильный регион?");
 
@@ -331,7 +350,7 @@ function mainUln(){
     getParam(html, result, 'traffic', /Суммарный трафик \(мб\)[\s\S]*?<td[^>]*>(-?\d[\s\d,\.]*)<\/td>/i, replaceFloat, parseFloat);
 
     var html = AnyBalance.requestGet('http://www2.skypoint.ru/pages/change_tarif2.aspx', headers);	
-    getParam(html, result, '__tariff',  /<span[^>]+id="ctl00_pageContent_Label1"[^>]*>Ваш тарифный план:[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, '__tariff',  /<span[^>]+id="ctl00_pageContent_Label1"[^>]*>Ваш тарифный план:[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces);
     
     AnyBalance.setResult(result);
 }
@@ -355,7 +374,7 @@ function mainKuban(){
     html = AnyBalance.requestGet(baseurl + '?Action=Logon');
 
     if(!/\?Action=Logoff/i.test(html)){
-        var error = getParam(html, null, null, /<span[^>]+class="err_msg"[^>]*>(.*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
+        var error = getParam(html, null, null, /<span[^>]+class="err_msg"[^>]*>(.*?)<\/span>/i, replaceTagsAndSpaces);
         if(error)
             throw new AnyBalance.Error(error);
         throw new AnyBalance.Error("Не удалось войти в личный кабинет. Возможно, неправильный логин-пароль или регион.");
@@ -363,11 +382,11 @@ function mainKuban(){
 
     var result = {success: true}
     
-    getParam(html, result, 'userName', /Абонент:([\s\S]*?)<br[^>]*>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'userNum', /по лицевому счёту абонента[\s\S]*?<!--VALUE-->([\s\S]*?)<!--ENDVALUE-->/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'userName', /Абонент:([\s\S]*?)<br[^>]*>/i, replaceTagsAndSpaces);
+    getParam(html, result, 'userNum', /по лицевому счёту абонента[\s\S]*?<!--VALUE-->([\s\S]*?)<!--ENDVALUE-->/i, replaceTagsAndSpaces);
     getParam(html, result, 'balance', /Баланс по лицевому счёту абонента(?:[\s\S]*?<!--VALUE-->){2}([\s\S]*?)<!--ENDVALUE-->/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'traffic', /израсходовано\s*<b[^>]*>\s*<!--VALUE-->([^<]*)<!--ENDVALUE-->\s*<\/b>\s*мегабайт/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, '__tariff',  /Текущий тарифный план:[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, '__tariff',  /Текущий тарифный план:[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces);
     sumParam(html, result, 'trafficPack',  /Баланс в Трафик(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseBalance);
     
     AnyBalance.setResult(result);
@@ -391,7 +410,7 @@ function mainSpb(){
     }, headers);
 
     if(/<form[^>]+action="j_security_check"/i.test(html) || !/Exit.jsp/i.test(html)){
-        var error = getParam(html, null, null, /<span[^>]+class="err_msg"[^>]*>(.*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
+        var error = getParam(html, null, null, /<span[^>]+class="err_msg"[^>]*>(.*?)<\/span>/i, replaceTagsAndSpaces);
         if(error)
             throw new AnyBalance.Error(error);
         throw new AnyBalance.Error("Не удалось войти в личный кабинет. Возможно, неправильный логин-пароль или регион.");
@@ -399,15 +418,15 @@ function mainSpb(){
 
     var result = {success: true}
     
-    getParam(html, result, 'userName', /Контактное лицо:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'userNum', /Номер счета:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, '__tariff',  /Тарифный план:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'userName', /Контактное лицо:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+    getParam(html, result, 'userNum', /Номер счета:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+    getParam(html, result, '__tariff',  /Тарифный план:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
     getParam(html, result, 'trafficDay',  /Передача данных, Mб в день:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 
     if(AnyBalance.isAvailable('balance', 'status', 'charged')){
         html = AnyBalance.requestGet(baseurl + 'skyServiceBalance');
         getParam(html, result, 'balance', /Баланс,[^<]*:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-        getParam(html, result, 'status', /Статус договора:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+        getParam(html, result, 'status', /Статус договора:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
         getParam(html, result, 'charged', /Начислений по договору[\s\S]*?Всего[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
     }
     
@@ -427,7 +446,7 @@ function mainRyaz(){
     var html = AnyBalance.requestGet(baseurl + '?phone_num=' + encodeURIComponent(prefs.login) + '&acc_num=' + encodeURIComponent(prefs.password), headers);
 
     if(/Повторить ввод/i.test(html)){
-        var error = getParam(html, null, null, /<body[^>]*>([\s\S]*?)<br|$/i, replaceTagsAndSpaces, html_entity_decode);
+        var error = getParam(html, null, null, /<body[^>]*>([\s\S]*?)<br|$/i, replaceTagsAndSpaces);
         if(error)
             throw new AnyBalance.Error(error);
         throw new AnyBalance.Error("Не удалось войти в личный кабинет. Возможно, неправильный логин-пароль или регион.");
@@ -439,4 +458,72 @@ function mainRyaz(){
     getParam(html, result, 'traffic', /Использовано интернет за текущий месяц([\s\S]*?)<br/i, replaceTagsAndSpaces, parseTraffic);
     
     AnyBalance.setResult(result);
+}
+
+function mainSkylinkTele2(){
+	var prefs = AnyBalance.getPreferences();
+	checkEmpty(prefs.password, 'Введите пароль!');
+
+	baseurl = "https://my.skylink.ru/";
+	baseurlLogin = 'https://login.skylink.ru/ssotele2/';
+	baseurlLoginIndex = baseurlLogin + 'wap/auth/modem/';
+	baseurlLoginPost = baseurlLoginIndex;
+	g_operatorName = 'SkyLink';
+
+	var html = login();
+
+	var countersTable = {
+		common: {
+			"balance": "balance",
+			"__tariff": "tariff",
+			"min_left": "remainders.min_left",
+			"traffic": "remainders.traffic_left",
+			"sms_left": "remainders.sms_left",
+			"mms_left": "remainders.mms_left",
+			"min_till": "remainders.min_till",
+			"traffic_till": "remainders.traffic_till",
+			"sms_till": "remainders.sms_till",
+			"mms_till": "remainders.mms_till",
+			"min_used": "remainders.min_used",
+			"traffic_used": "remainders.traffic_used",
+			"sms_used": "remainders.sms_used",
+			"mms_used": "remainders.mms_used",
+			"userNum": "info.mphone",
+			"userName": "info.fio",
+		}
+	};
+
+	function shouldProcess(counter, info){
+		return true;
+	}
+
+    var adapter = new NAdapter(countersTable.common, shouldProcess);
+	
+    adapter.processInfo = adapter.envelope(processInfo);
+    adapter.processRemainders = adapter.envelope(processRemainders);
+    adapter.processPayments = adapter.envelope(processPayments);
+    adapter.processBalance = adapter.envelope(processBalance);
+
+	var result = {success: true};
+    adapter.processInfo(html, result);
+    adapter.processBalance(html, result);
+    adapter.processRemainders(html, result);
+    adapter.processPayments(html, result);
+
+    var newresult = adapter.convert(result);
+	
+	if(result.payments) {
+		for (var i = 0; i < result.payments.length; ++i) {
+			var p = result.payments[i];
+
+			sumParam(fmtDate(new Date(p.date), '.') + ' ' + p.sum, newresult, 'history', null, null, null, aggregate_join);
+			if (/^-/.test(p.sum)) {
+				sumParam(p.sum, newresult, 'history_out', null, null, null, aggregate_sum);
+			} else {
+				sumParam(p.sum, newresult, 'history_income', null, null, null, aggregate_sum);
+			}
+		}
+	}
+    
+    AnyBalance.setResult(newresult);
 }

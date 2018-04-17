@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<history>
+	<change version="2" date="2016-11-13">
+	Added detection of wrong login/password instead of cryptic error message.
+	Added status of data packet in EU/Norway roaming.
+	</change>
+	<change version="1" date="2015-11-13">
+	Первая версия провайдера
+	</change>
+</history>

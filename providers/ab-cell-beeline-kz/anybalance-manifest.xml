@@ -8,7 +8,7 @@
 	<p>Информация берется из личного кабинета https://beeline.kz/ru/users/sign_in</p>
 	<p>ВНИМАНИЕ! Билайн запустил новую версию кабинета по адресу my.beeline.kz если вы используете именно это сайт, вам необходимо установить провайдера Билайн (новый кабинет)</p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

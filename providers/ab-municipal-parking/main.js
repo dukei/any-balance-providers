@@ -12,6 +12,25 @@ var g_headers = {
 };
 
 function main(){
+	var tries = 0;
+	do{
+		try{
+			mainTry();
+			return;
+		}catch(e){
+			if(e.fatal)
+				throw e;
+			if(!/Connection reset by peer|Не удалось найти баланс|Failed to load/i.test(e.message))
+				throw e;
+			if(++tries >= 5)
+				throw e;
+			AnyBalance.trace('Не удалось получить данные (попытка ' + tries + '): ' + e.message);
+			AnyBalance.trace('Пробуем ещё раз');
+		}
+	}while(true);
+}
+
+function mainTry(){
     var prefs = AnyBalance.getPreferences();
 	
 	checkEmpty(prefs.login, 'Введите логин!');
@@ -47,6 +66,11 @@ function main(){
     }
 
 	var result = {success: true};
+
+	if(!/<strong[^>]*class="balance"[^>]*>([^<]+)/i.test(html)){
+	    AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удалось найти баланс. Сайт изменен?');
+	}
 	
     getParam(html, result, 'balance', /<strong[^>]*class="balance"[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseBalance);
 	

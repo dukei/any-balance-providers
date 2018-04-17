@@ -7,7 +7,7 @@
 	<description>
 		Получает данные по бонусам ТрансКлассСервис. Данные берутся из личного кабинета http://bonus.transclass.ru/Account/Balance
 	</description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

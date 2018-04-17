@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+    <id version="1">parsers/pdf</id>
+	<api flags="no_browser" />
+    <name>PDF parser</name>
+	<description html="true"><![CDATA[
+		PDF parser based on https://github.com/modesty/pdf2json/ with the help of https://github.com/michaelficarra/commonjs-everywhere
+
+		Usage: 
+			var text = ABPDF.parseTextFromBase64(base64encodedPdfContent);
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<js>pdf.min.js</js>
+		<history>history.xml</history>
+	</files>
+	<type>parser, pdf</type>
+</provider>

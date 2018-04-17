@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+	<EditTextPreference
+		title="Номер кошелька"
+		key="wallet"
+		summary="|Введите номер кошелька|{@s}"
+		obligatory="true"
+		dialogTitle="Number Wallet"
+		positiveButtonText="ОК"
+		negativeButtonText="Cancel"
+		dialogMessage="Введите адрес вашего кошелька.">
+	</EditTextPreference>
+		<ListPreference 
+        key="pool" 
+        title="Пул монеты"
+        summary="||{@s}"
+        entries="eth.nanopool.org|etc.nanopool.org|sia.nanopool.org|zec.nanopool.org|xmr.nanopool.org|pasc.nanopool.org|etn.nanopool.org"
+        entryValues="eth|etc|sia|zec|xmr|pasc|etn"
+		defaultValue="eth">
+	</ListPreference>
+</PreferenceScreen>

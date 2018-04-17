@@ -26,6 +26,16 @@ function main(){
 		password:prefs.password,
 		next:'/'
     }, addHeaders({Referer: baseurl + 'auth/?next=/'}));
+
+    var json = getJson(html);
+    if(!json.redirect){
+        var error = json.errors.__all__;
+        if(error)
+            throw new AnyBalance.Error(error, null, /парол/i.test(error));
+
+		AnyBalance.trace(html);
+        throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
+    }
 	
 	html = AnyBalance.requestGet(baseurl, g_headers);
 	
@@ -40,12 +50,11 @@ function main(){
     }
     //Раз мы здесь, то мы успешно вошли в кабинет
     var result = {success: true};
-    getParam(html, result, 'fio', /<div[^>]+class="top_exit"[^>]*>([\s\S]*?)(?:\(|<a|<\/div>)/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, '__tariff', /Заказанные услуги:([\s\S]*?)(?:<\/ul|<\/p>)/i, [replaceTagsAndSpaces, /:\s*заказан/ig, ', '], html_entity_decode);
-    getParam(html, result, 'licschet', /Договор:([\s\S]*?)(?:<br|<\/(?:b|p)>)/i, replaceTagsAndSpaces, html_entity_decode); 
-    getParam(html, result, 'balance', /Баланс:([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'status', /<span[^>]+user_state_[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
-
+    getParam(html, result, 'fio', /title="<b[^>]*>[\s\S]*?<\/b>([^"(]*)/i, replaceTagsAndSpaces);
+    getParam(html, result, 'status', /title="<b[^>]*>[\s\S]*?<\/b>[^"(]*\(([^")]*)/i, replaceTagsAndSpaces);
+    getParam(prefs.login, result, 'licschet'); 
+    getParam(html, result, 'balance', /USER_BALANCE\s*=([^;]*)/i, replaceTagsAndSpaces, parseBalance);
+/*
     if(AnyBalance.isAvailable('space', 'space_total', 'sites', 'sites_total', 'mail', 'mail_total')){
         html = AnyBalance.requestGet(baseurl + 'resources.json', g_headers);
         var json = getJson(html);
@@ -65,6 +74,7 @@ function main(){
             }
         }
     }
+*/
     //Возвращаем результат
     AnyBalance.setResult(result);
 }

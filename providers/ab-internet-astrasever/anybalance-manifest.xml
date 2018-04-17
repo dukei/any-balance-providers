@@ -7,7 +7,7 @@
 	<p>Предоставляет информацию о балансе интернет-провайдера Астра-Север г. Котлас http://astra-sever.ru/</p>
 	<p>Информация берется из личного кабинета https://user.astra-sever.ru/</p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

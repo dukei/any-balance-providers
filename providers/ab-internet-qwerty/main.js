@@ -7,35 +7,10 @@
 Личный кабинет: http://billing.qwerty.ru
 */
 
-function getParam (html, result, param, regexp, replaces, parser) {
-	if (param && (param != '__tariff' && !AnyBalance.isAvailable (param)))
-		return;
-
-	var value = regexp.exec (html);
-	if (value) {
-		value = value[1];
-		if (replaces) {
-			for (var i = 0; i < replaces.length; i += 2) {
-				value = value.replace (replaces[i], replaces[i+1]);
-			}
-		}
-		if (parser)
-			value = parser (value);
-
-    if(param)
-      result[param] = value;
-    else
-      return value
-	}
-}
-
-var replaceTagsAndSpaces = [/<[^>]*>/g, ' ', /\s{2,}/g, ' ', /^\s+|\s+$/g, ''];
-var replaceFloat = [/\s+/g, '', /,/g, '.'];
-
 function main(){
     var prefs = AnyBalance.getPreferences();
 
-    var baseurl = "http://billing.qwerty.ru/pls/rac.q/!w3_p_main.showform";
+    var baseurl = "https://lk.qwerty.ru/owa/rac.k/!w3_p_main.showform";
     var html = AnyBalance.requestPost(baseurl + "?CONFIG=CONTRACT", {
 	IDENTIFICATION:'CONTRACT',
 	USERNAME:prefs.login,
@@ -55,21 +30,13 @@ function main(){
 
     var result = {success: true};
 
-    getParam(html, result, 'userName', /Клиент:[\s\S]*?<td[^>]*>([\s\S]*?)<td[^>]*>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'licschet', /Лицевой счёт:[\s\S]*?<td[^>]*>([\s\S]*?)<td[^>]*>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'balance', /Текущий баланс[\s\S]*?<td[^>]*>(-?\d[\d\., ]*)/i, replaceFloat, parseFloat);
-    getParam(html, result, 'expences', /Сумма текущих начислений:[\s\S]*?<td[^>]*>(-?\d[\d\., ]*)/i, replaceFloat, parseFloat);
-    getParam(html, result, 'pays', /Сумма платежей[\s\S]*?<td[^>]*>(-?\d[\d\., ]*)/i, replaceFloat, parseFloat);
-    getParam(html, result, 'recommended', /Рекомендуемая сумма платежа:[\s\S]*?<td[^>]*>(-?\d[\d\., ]*)/i, replaceFloat, parseFloat);
+    getParam(html, result, 'userName', /Клиент:[\s\S]*?<td[^>]*>([\s\S]*?)<td[^>]*>/i, replaceTagsAndSpaces);
+    getParam(html, result, 'licschet', /Лицевой счёт:[\s\S]*?<td[^>]*>([\s\S]*?)<td[^>]*>/i, replaceTagsAndSpaces);
+    getParam(html, result, 'balance', /Текущий баланс[\s\S]*?<td[^>]*>(-?\d[\d\., ]*)/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'expences', /Сумма текущих начислений:[\s\S]*?<td[^>]*>(-?\d[\d\., ]*)/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'pays', /Сумма платежей[\s\S]*?<td[^>]*>(-?\d[\d\., ]*)/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'recommended', /Рекомендуемая сумма платежа:[\s\S]*?<td[^>]*>(-?\d[\d\., ]*)/i, replaceTagsAndSpaces, parseBalance);
 
     AnyBalance.setResult(result);
-}
-
-function html_entity_decode(str)
-{
-    //jd-tech.net
-    var tarea=document.createElement('textarea');
-    tarea.innerHTML = str;
-    return tarea.value;
 }
 

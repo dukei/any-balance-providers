@@ -17,16 +17,16 @@ function main() {
 	
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
-	
-	var html = AnyBalance.requestGet(baseurl + 'lkk_fl/', g_headers);
+	var html = AnyBalance.requestGet(baseurl + 'lkk/', g_headers);
 	
 	if(!html || AnyBalance.getLastStatusCode() > 400)
 		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
         
-	html = AnyBalance.requestPost(baseurl + 'lkk_fl/login', {
-		slogin: prefs.login,
-		spass: prefs.password
-	}, addHeaders({Referer: baseurl + 'lkk_fl/login'}));
+	html = AnyBalance.requestPost(baseurl + 'lkk/login', {
+		action: 'logon',
+		login: prefs.login,
+		pass: prefs.password
+	}, addHeaders({Referer: baseurl + 'lkk/login'}));
 	
 	if (!/logout/i.test(html)) {
 		var error = getParam(html, null, null, /[^>]+class="err"[^>]*>[\s\S]*?([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
@@ -39,7 +39,10 @@ function main() {
 	
 	var result = {success: true};
 	
-	getParam(html, result, 'balance', /Переплата(?:[^>]*>){1}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
+	var span = getParam(html, null, null, /<span[^>]+class\s*=\s*"text_bi(?:[^>]*>){3}/i);
+	
+	getParam(span, result, 'balance', /[^>]*руб/i, [replaceTagsAndSpaces, /(.+)/, ((/задолженность/i.test(span) ? '-' : '') + '$1')], parseBalance);
+	getParam(html, result, 'fines', /<span[^>]+class\s*=\s*"text_bi([^>]*>){6}/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'fio', /Потребитель:(?:[^>]*>){1}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(html, result, 'account', /Логин:(?:[^>]*>){1}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(html, result, 'device_number', /Номер прибора учета:(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);

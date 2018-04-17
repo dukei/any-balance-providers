@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="12">ab-telephony-goodline</id>
+	<id version="13">ab-telephony-goodline</id>
 	<api flags="no_browser"/>
 	<name>ГудЛайн</name>
 	<description html="true"><![CDATA[
@@ -12,12 +12,14 @@
 	<instruction html="true"><![CDATA[
 	<p>Если у вас ещё нет доступа в личный кабинет, вам необходимо зарегистрироваться на странице http://goodline.ru/ru/abonents/entercabinet/registration/. Для украины испльзуются те же адреса, только .ru надо заменить на .com.ua.</p>
 	]]></instruction>
-	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
 		<js>rsasecurity.js</js>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>

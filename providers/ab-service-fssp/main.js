@@ -11,12 +11,9 @@ var g_headers = {
 	'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
 };
 
-function createParams(params){
-	var strParams = '';
-	for(var i = 0; i < params.length; i++) {
-		strParams += '&' + encodeURIComponent(params[i][0]) + '=' + encodeURIComponent(params[i][1]);
-	}
-	return strParams;
+function getCaptchaImage(e){
+	var img = getParam(e, /<img[^>]+src="([^"]*)"[^>]*capchaVisual/i, [replaceHtmlEntities, /^.*?base64,/i, '']);
+	return img;
 }
 
 function main() {
@@ -54,23 +51,24 @@ function main() {
 		['is[sort_direction]','']
 	];
 	
-	var url = baseurl_api + 'ajax_search?' + createParams(params);
+	var url = baseurl_api + 'ajax_search?' + createUrlEncodedParams(params);
 	html = AnyBalance.requestGet(url, addHeaders({'X-Requested-With': 'XMLHttpRequest'}));
-	html = getJson(html).data;
+	var json = getJson(html);
+	html = json.data;
 	
-	var captchaa = getParam(html, null, null, /<img[^>]+src="data:image[^"]*?,([^"]*)"[^>]*id="capchaVisual"/i, null, html_entity_decode);
+	var captchaa = json.data && getCaptchaImage(json.data);
 	if(captchaa) {
 		AnyBalance.trace('Пытаемся ввести капчу');
 		captchaa = AnyBalance.retrieveCode('Пожалуйста, введите код с картинки', captchaa);
 		AnyBalance.trace('Капча получена: ' + captchaa);
 		
 		params.push(['code', captchaa]);
-		html = AnyBalance.requestGet(baseurl_api + 'ajax_search?' + createParams(params), addHeaders({Referer: url, 'X-Requested-With': 'XMLHttpRequest'}));
+		html = AnyBalance.requestGet(baseurl_api + 'ajax_search?' + createUrlEncodedParams(params), addHeaders({Referer: url, 'X-Requested-With': 'XMLHttpRequest'}));
 		html = getJson(html).data;
 	}
 
 	if(!/<div[^>]+class="results"/i.test(html)){
-		var error = getParam(html, null, null, /<div[^>]+class="empty"[^>]*>([^]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+		var error = getParam(html, /<div[^>]+class="empty"[^>]*>([^]*?)<\/div>/i, replaceTagsAndSpaces);
 		if(error)
 			throw new AnyBalance.Error(error, null, /не найден/i.test(html));
 
@@ -86,24 +84,22 @@ function main() {
 		getParam(0, result, 'sum');
 		getParam('По вашему запросу ничего не найдено', result, 'all');
 	} else {
-		getParam(html, null, null, /<table[^>]*class="list[\s\S]*?<\/table>/i, null, function(table) {
+		getParam(html, /<table[^>]*class="list[\s\S]*?<\/table>/i, null, function(table) {
 			// Сводка в html
 			sumParam(table, result, 'sum', /[\d\s-.,]{3,}\s*руб/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 			
-			var rows = sumParam(table, null, null, /(<tr[^>]*>[\s\S]*?<\/tr>)/ig);
+			var rows = getElements(table, /<tr/ig);
 			var all = [];
 			for(i = 0; i < rows.length; i++) {
 				var curRow = rows[i];
 
-				// var name = getParam(curRow, null, null, /<td>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
-				var order = getParam(curRow, null, null, /(?:[\s\S]*?<td>){2}([^<]+)/i, replaceTagsAndSpaces);
-				// var order = getParam(curRow, null, null, /(?:[\s\S]*?<td>){3}([^<]+)/i, replaceTagsAndSpaces);
-				var ammount = getParam(curRow, null, null, /(?:[\s\S]*?<td>){4}([^<]+)/i, replaceTagsAndSpaces);
+				var order = getParam(curRow, /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+				var ammount = getParam(curRow, /(?:[\s\S]*?<td[^>]*>){6}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
 				
 				if(order && ammount)
 					all.push('<b>' + order + ':</b> ' + ammount);
 			}
-			getParam(all.join('<br/><br/>'), result, 'all');
+			getParam(all.join('<br/>'), result, 'all');
 		});		
 	}
 	

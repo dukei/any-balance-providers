@@ -1,23 +1,25 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-sharing-1cent</id>
+	<id version="3">ab-sharing-1cent</id>
 	<api flags="no_browser"/>
 	<name>1cent.in</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию для шаринга <a href="https://1cent.in/">https://1cent.in/</a></p>
+	<p>Предоставляет информацию для шаринга https://1cent.in/</p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units=" USD"/>
+		<counter id="balance" name="Баланс" units=" $"/>
 		<counter id="dw_key" name="Cтоимость одного dw (ключа)" type="text"/>
 		<counter id="dw_users" name="Сумма dw юзеров" units=" шт"/>
-		<counter id="sum" name="На сумму" units=" USD"/>
+		<counter id="sum" name="На сумму" units=" $"/>
 		<counter id="status" name="Статус" type="text"/>
 	</counters>
 	<keywords></keywords>

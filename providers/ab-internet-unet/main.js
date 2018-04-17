@@ -37,10 +37,10 @@ function main() {
 	checkEmpty(prefs.password, 'Введите пароль!');
 	
 	var html = AnyBalance.requestGet(baseurl + 'api/login?' + createGetParams({login:prefs.login, pass:prefs.password}), g_headers);
-	var session = getParam(html, null, null, /session="([^"]+)"/i);
+	var session = getParam(html, /session="([^"]+)"/i, replaceHtmlEntities);
 	
 	if (!session) {
-		var error = getParam(html, null, null, /error="([^"]+)"/i, replaceTagsAndSpaces, html_entity_decode);
+		var error = getParam(html, null, null, /error="([^"]+)"/i, replaceTagsAndSpaces);
 		if (error)
 			throw new AnyBalance.Error(g_errors[error], null, /Неправильный логин либо пароль/i.test(g_errors[error]));
 		
@@ -52,8 +52,8 @@ function main() {
 	
 	var result = {success: true};
 	
-	getParam(html, result, 'balance', /deposit="([^"]+)"/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, '__tariff', /tariff="([^"]+)"/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'balance', /deposit="([^"]+)"/i, replaceTagsAndSpaces, function(str){return Math.round(parseBalance(str)*100)/100});
+	getParam(html, result, '__tariff', /tariff="([^"]+)"/i, replaceTagsAndSpaces);
 	getParam(html, result, 'traf_inet', /count_internet="([^"]+)"/i, [replaceTagsAndSpaces, /(.+)/, '$1 mb'], parseTraffic);
 	getParam(html, result, 'traf_unet', /count_unet="([^"]+)"/i, [replaceTagsAndSpaces, /(.+)/, '$1 mb'], parseTraffic);
 	//getParam(html, result, 'accnum', /<td>\s*Номер счёта(?:[^>]*>){4}([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);

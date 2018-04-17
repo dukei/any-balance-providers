@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id version="7">ab-cell-motiv</id>
+	<id version="9">ab-cell-motiv</id>
 	<name>Мотив Телеком</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе и тарифном плане для пользователей сотового оператора "Мотив".</p>   
@@ -19,11 +19,13 @@
 	<li>В настоящее время вход в ЛИСА поддерживается только по номеру телефона;</li> 
 	<li>Остаток GPRS не поддерживается.  Если вы хотите пользоваться этой услугой, пожалуйста, отправьте ваши пожелания автору провайдера по e-mail.</li>
 	]]></instruction>
-	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
@@ -33,6 +35,7 @@
 		<counter id="sms" name="SMS" units=" смс"/>
 		<counter id="mms" name="MMS" units=" ммс"/>
 		<counter id="traf" name="Трафик" units=" мб"/>
+		<counter id="bonus" name="Бонусный баланс" units=" Б"/>
 		<counter id="phone" name="Номер телефона" type="text"/>
 		<counter id="userName" name="Владелец" type="text"/>
 		<counter id="tarification" name="Тарификация" type="text"/>

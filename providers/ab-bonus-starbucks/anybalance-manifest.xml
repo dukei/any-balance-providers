@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="3">ab-bonus-starbucks</id>
+	<api flags="no_browser"/>
+	<name>Starbucks</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера Starbucks http://starbuckscoffee.ru/</p>
+	<p>Информация берется из личного кабинета https://starbuckscard.ru</p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="stars" name="Накопленные звёзды"/>
+		<counter id="cardNumber" name="Номер карты" type="text"/>
+		<counter id="balance" name="Баланс" units=" p"/>
+		<counter id="fName" name="Имя" type="text"/>
+		<counter id="sName" name="Фамилия" type="text"/>
+		<counter id="status" name="Статус карты" type="text"/>
+	</counters>
+	<keywords>кофе, старбакс</keywords>
+	<type>bonus</type>
+	<country>ru</country>
+</provider>

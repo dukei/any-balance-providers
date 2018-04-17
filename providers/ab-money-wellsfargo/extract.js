@@ -22,58 +22,66 @@ function handleRedirectIfNeeded(html){
 
 function login() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'https://www.wellsfargo.com';
+	var baseurl = 'https://online.wellsfargo.com';
 	AnyBalance.setDefaultCharset('utf-8');
 	
 	checkEmpty(prefs.login, 'Enter login!');
 	checkEmpty(prefs.password, 'Enter password!');
 	
-	var html = AnyBalance.requestGet(baseurl, g_headers);
-	
+	var html = AnyBalance.requestGet(baseurl + '/das/cgi-bin/session.cgi?screenid=SIGNON_PORTAL_PAUSE', g_headers);
+	html = handleRedirectIfNeeded(html); 
+
+	if((!/signoff/i.test(html) || /<div[^>]+id="sessiontimeout"/i.test(html)) && !/<form[^>]+name="signon"/i.test(html)){
+		var html = AnyBalance.requestGet(baseurl, g_headers);
+		html = handleRedirectIfNeeded(html);
+	}
+
 	if(!html || AnyBalance.getLastStatusCode() > 400){
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Error connecting provider site. Try to refresh later.');
 	}
 
-	var form = getParam(html, null, null, /<form[^>]+name="signon"[\s\S]*?<\/form>/i);
-	if(!form){
-		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Could not find signon form. Is the site changed?');
-	}
-	
-	var dt = new Date();
-	var dt_str = n2(dt.getDate()) + '.' + n2(dt.getMonth()+1) + '.' + dt.getFullYear() + ', ' + n2(dt.getHours()) + ':' + n2(dt.getMinutes()) + ':' + n2(dt.getSeconds());
-	var userPrefs = 'TF1;015;;;;;;;;;;;;;;;;;;;;;;Mozilla;Netscape;5.0%20%28Windows%20NT%2010.0%3B%20WOW64%29%20AppleWebKit/537.36%20%28KHTML%2C%20like%20Gecko%29%20Chrome/44.0.2403.130%20Safari/537.36;20030107;undefined;true;;true;Win32;undefined;Mozilla/5.0%20%28Windows%20NT%2010.0%3B%20WOW64%29%20AppleWebKit/537.36%20%28KHTML%2C%20like%20Gecko%29%20Chrome/44.0.2403.130%20Safari/537.36;ru;windows-1251;www.wellsfargo.com;undefined;undefined;undefined;undefined;false;false;' + new Date().getTime() + ';3;07.06.2005%2C%2022%3A33%3A44;1920;1080;;18.0;;;;;6;-180;-180;' + encodeURIComponent(dt_str) + ';24;1920;1040;0;0;;;;;;Shockwave%20Flash%7CShockwave%20Flash%2018.0%20r0;;;;;;;;;;;;;15;';
-	var params = createFormParams(form, function(params, str, name, value) {
-		if (name == 'j_username') 
-			return prefs.login;
-		else if (name == 'j_password')
-			return prefs.password;
-	    else if(name == 'u_p')
-	    	return userPrefs;
-	    else if(name == 'btnSignon')
-	    	return;
-	    else if(name == 'jsenabled')
-	    	return 'true';
-
-		return value;
-	});
-	
-	html = AnyBalance.requestPost('https://connect.secure.wellsfargo.com/auth/login/do', params, addHeaders({Origin: baseurl, Referer: baseurl + '/'}));
-	html = handleRedirectIfNeeded(html);
-
-	if (!/securemsg/i.test(html) && !/signoff/i.test(html)) {
-		var error = getParam(html, null, null, /<div[^>]+class="alert"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
-		if (error)
-			throw new AnyBalance.Error(error, null, /username and\/or password/i.test(error));
+	if(!/signoff/i.test(html)){
+		var form = getParam(html, null, null, /<form[^>]+name="signon"[\s\S]*?<\/form>/i);
+		if(!form){
+			AnyBalance.trace(html);
+			throw new AnyBalance.Error('Could not find signon form. Is the site changed?');
+		}
 		
-		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Could not enter personal account. Is the site changed?');
-	}
-
-	if(/securemsg/i.test(html)){
-		var html = new WellsFargo(AnyBalance.getLastUrl()).executeScript(html);
+		var dt = new Date();
+		var dt_str = n2(dt.getDate()) + '.' + n2(dt.getMonth()+1) + '.' + dt.getFullYear() + ', ' + n2(dt.getHours()) + ':' + n2(dt.getMinutes()) + ':' + n2(dt.getSeconds());
+		var userPrefs = 'TF1;015;;;;;;;;;;;;;;;;;;;;;;Mozilla;Netscape;5.0%20%28Windows%20NT%2010.0%3B%20WOW64%29%20AppleWebKit/537.36%20%28KHTML%2C%20like%20Gecko%29%20Chrome/44.0.2403.130%20Safari/537.36;20030107;undefined;true;;true;Win32;undefined;Mozilla/5.0%20%28Windows%20NT%2010.0%3B%20WOW64%29%20AppleWebKit/537.36%20%28KHTML%2C%20like%20Gecko%29%20Chrome/44.0.2403.130%20Safari/537.36;ru;windows-1251;www.wellsfargo.com;undefined;undefined;undefined;undefined;false;false;' + new Date().getTime() + ';3;07.06.2005%2C%2022%3A33%3A44;1920;1080;;18.0;;;;;6;-180;-180;' + encodeURIComponent(dt_str) + ';24;1920;1040;0;0;;;;;;Shockwave%20Flash%7CShockwave%20Flash%2018.0%20r0;;;;;;;;;;;;;15;';
+		var params = createFormParams(form, function(params, str, name, value) {
+			if (name == 'j_username') 
+				return prefs.login;
+			else if (name == 'j_password')
+				return prefs.password;
+		    else if(name == 'u_p')
+		    	return userPrefs;
+		    else if(name == 'btnSignon')
+		    	return;
+		    else if(name == 'jsenabled')
+		    	return 'true';
+	     
+			return value;
+		});
+		
+		html = AnyBalance.requestPost('https://connect.secure.wellsfargo.com/auth/login/do', params, addHeaders({Origin: baseurl, Referer: baseurl + '/'}));
 		html = handleRedirectIfNeeded(html);
+	    
+		if (!/"bobcmn"/i.test(html) && !/signoff/i.test(html)) {
+			var error = getParam(html, null, null, /<div[^>]+class="alert"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+			if (error)
+				throw new AnyBalance.Error(error, null, /username and\/or password/i.test(error));
+			
+			AnyBalance.trace(html);
+			throw new AnyBalance.Error('Could not enter personal account. Is the site changed?');
+		}
+	    
+		html = handleBobcmn(AnyBalance.getLastUrl(), html);
+		html = handleRedirectIfNeeded(html);
+	}else{
+		AnyBalance.trace('Already logged in. Using this session');
 	}
 
 	if(!/signoff/i.test(html)){

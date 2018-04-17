@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="2">ab-internet-soskol</id>
+	<api flags="no_browser"/>
+	<name>ЗАО ОсколТелеком</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию от группы компаний ОсколТелеком: интернет, телевидение, IP-телефония http://www.soskol.com/ </p>
+	<p>Информация берется из личного кабинета http://stat.soskol.info/ </p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Если у вас нет доступа в Личный кабинет, получите его на странице http://stat.soskol.info/reg_login.php </p>
+	]]></instruction>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="licschet" name="Лицевой счёт" type="text"/>
+		<counter id="balance" name="Состояние счёта" units=" р"/>
+		<counter id="payComment" name="Комментарий к платежу" type="text"/>
+		<counter id="payType" name="Тип платежа" type="text"/>
+		<counter id="payDate" name="Дата платежа" type="time" format="dd/MM/yyyy"/>
+		<counter id="payValue" name="Сумма платежа" units=" р"/>
+	</counters>
+	<keywords>интернет, телевидение, IP-телефония Соскол</keywords>
+	<type>internet telephony tv</type>
+	<country>ru</country>
+</provider>

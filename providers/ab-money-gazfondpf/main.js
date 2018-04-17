@@ -3,48 +3,66 @@
 */
 
 var g_headers = {
-	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
-	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
-	'Connection': 'keep-alive',
-	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
+	'Accept': 			'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
+	'Accept-Language': 	'ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7',
+	'Connection': 		'keep-alive',
+	'User-Agent': 		'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.36',
 };
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'https://client.gazfond.ru/';
+	var baseurl = 'https://lk.gazfond-pn.ru/';
 	AnyBalance.setDefaultCharset('utf-8');
 
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 	
-	var html = AnyBalance.requestGet(baseurl + 'main?sysname=adm_logon_post', g_headers);
-	
-	/*var captchaa;
-	if(AnyBalance.getLevel() >= 7){
-		AnyBalance.trace('Пытаемся ввести капчу');
-		var captcha = AnyBalance.requestGet(baseurl + 'captcha/main.png?p=' + new Date().getTime());
-		captchaa = AnyBalance.retrieveCode("Пожалуйста, введите код с картинки", captcha);
-		AnyBalance.trace('Капча получена: ' + captchaa);
-	}else{
-		throw new AnyBalance.Error('Провайдер требует AnyBalance API v7, пожалуйста, обновите AnyBalance!');
-	}*/
+	var html = AnyBalance.requestGet(baseurl + 'lk-ops/index.php', g_headers);
 
-	html = AnyBalance.requestPost(baseurl + 'main?sysname=adm_logon_post', {
-		'xmlout':'',
-		email: prefs.login,
-		pass: prefs.password,
-		captcha_edit: ''
-	}, addHeaders({Referer: baseurl + 'main?sysname=adm_logon_post'}));
+	if (!html || (AnyBalance.getLastStatusCode() > 400 && AnyBalance.getLastStatusCode() != 403)) {
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
+	}
+
+	var form = getElement(html, /<form[^>]+form_auth[^>]*>/i);
+	if(!form){
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удалось найти форму входа. Сайт изменен?');
+	}
+
+	var params = AB.createFormParams(html, function(params, str, name, value) {
+		if (name == 'USER_LOGIN') {
+			return prefs.login;
+		} else if (name == 'USER_PASSWORD') {
+			return prefs.password;
+		}
+
+		return value;
+	});
+	params['check'] = 'on';
+
+	html = AnyBalance.requestPost(baseurl + 'index.php?login=yes', params, addHeaders({
+		Referer: baseurl
+	}));
+
 
 	if (!/logout/i.test(html)) {
+		var error = getParam(html, null, null, /<font[^>]+class="errortext"[^>]*>([\s\S]*?)<\/font>/i, replaceTagsAndSpaces);
+		if(error)
+			throw new AnyBalance.Error(error, null, /Неверный СНИЛС или пароль/i.test(error));
+		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
+
 	var result = {success: true};
-	
-	getParam(html, result, 'balance', /Договор об обязательном пенсионном страховании(?:[^>]*>){6}([^<]+)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, '__tariff', /Договор об обязательном пенсионном страховании(?:[^>]*>){2}([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(result.__tariff, result, 'dogovor');
-	
+    getParam(html, result, 'balance', /<div[^>]*price left[^>]*>[\s\S]*?<div[^>]+prc[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+
+    if(AnyBalance.isAvailable('dogovor','datestart')){
+        html = AnyBalance.requestGet(baseurl + 'lk-ops/', g_headers);
+
+        getParam(html, result, 'dogovor', /номер договора[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+        getParam(html, result, 'datestart', /Дата заключения[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseDate);
+    }
+
 	AnyBalance.setResult(result);
 }

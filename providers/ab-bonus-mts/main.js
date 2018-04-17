@@ -30,18 +30,16 @@ function main() {
 	checkEmpty(prefs.login, 'Введите номер телефона');
 	checkEmpty(prefs.password, 'Введите пароль');
 	
-	var html = enterMTS({login: prefs.login, password: prefs.password, service: 'bonus'});
+	var html = enterMtsLK({
+		login: prefs.login,
+		password: prefs.password, 
+		baseurl: 'https://bonus.ssl.mts.ru/login?goto=' + encodeURIComponent(g_baseurl + '/#!/dashboard')
+	});
+
 	AnyBalance.trace('It looks like we are in selfcare...');
 
 	var result = {success: true};
 	var json = checkStatus(html);
-
-	if(!endsWith(json.login, prefs.login)){
-		AnyBalance.trace('Залогинились не на тот номер: ' + json.login + '. Выходим...');
-		html = AnyBalance.requestGet(g_baseurl + '/logout?goto=' + encodeURIComponent(g_baseurl + '/'), g_headers);
-		html = enterMTS({login: prefs.login, password: prefs.password, service: 'bonus', html: html});
-		json = checkStatus(html);
-	}
 
 	getParam(json.login, result, 'phone', null, [/7(\d\d\d)(\d\d\d)(\d\d)(\d\d)/, '+7($1)$2-$3-$4']);
 	getParam(json.fullName, result, 'fio');

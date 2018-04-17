@@ -1,23 +1,29 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id version="6">ab-internet-211</id>
+	<id version="8">ab-internet-211</id>
 	<name>Сибирские Сети</name>
 	<description html="true"><![CDATA[
-	<p>Получает баланс и информацию о тарифном плане для интернет-провайдера Сибирские Сети <a href="http://211.ru">http://211.ru</a>. Сибирские сети предоставляют доступ в интернет в следующих городах: Барнаул, Бердск, Бийск, Заринск, Искитим, Кемерово, Кольцово, Ленинск-Кузнецкий, Новоалтайск, Новокузнецк, Новосибирск, Обь, Осинники, Пашино, Прокопьевск, Рубцовск.</p>
-	<p>Информация берется из паспорта <a href="http://passport.211.ru">http://passport.211.ru</a>. Если у вас нет доступа к паспорту, зарегистрируйтесь тут: <a href="http://passport.211.ru/#registration">http://passport.211.ru/#registration</a></p>
+	<p>Получает баланс и информацию о тарифном плане для интернет-провайдера Сибирские Сети http://sibset.ru. Информация берется из личного кабинета http://cabinet.sibnet.ru
+	<p>Сибирские сети предоставляют доступ в интернет в следующих городах: Барнаул, Бердск, Березовский, Бийск, Заринск, Искитим, Калтан, Кемерово, Кольцово, Ленинск-Кузнецкий, Междуреченск, Мыски, Новоалтайск, Новокузнецк, Новосибирск, Обь, Осинники, Пашино, Полысаево, Прокопьевск, Рубцовск, Юрга.</p>	<p>Информация берется из паспорта <a href="http://passport.211.ru">http://passport.211.ru</a>. Если у вас нет доступа к паспорту, зарегистрируйтесь тут: <a href="http://passport.211.ru/#registration">http://passport.211.ru/#registration</a></p>
 	]]></description>
-	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<instruction>
+		Для доступа в кабинет необходимо в него входить через интернет от Сибирских сетей. В противном случае необходимо будет ввести код из смс для подтверждения входа.
+	</instruction>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
 	<counters>
 		<counter id="balance" name="Баланс" units=" р"/>
-		<counter id="bonus" name="Бонус" units=" β"/>
+		<counter id="daysleft" name="Дней до отключения" units=" дн"/>
+		<counter id="lischet" name="Лицевой счет" units=" дн"/>
 	</counters>
 	<keywords>интернет</keywords>
 	<type>internet</type>

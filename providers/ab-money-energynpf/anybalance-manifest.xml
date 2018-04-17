@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-money-energynpf</id>
+	<id version="7">ab-money-energynpf</id>
 	<api flags="no_browser"/>
 	<name>НПФ Электроэнергетики</name>
 	<description html="true"><![CDATA[
@@ -8,15 +8,18 @@
 	<p>Информация берется из личного кабинета https://online.npfe.ru/poffice/login</p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="На всех моих счетах" units=" р"/>
+		<counter id="balance" name="Всего накоплено" units=" р"/>
+		<counter id="insurance" name="Страховые взносы" units=" р"/>
 		<counter id="balance_income" name="Инвестиционный доход" units=" р"/>
 	</counters>
 	<keywords></keywords>

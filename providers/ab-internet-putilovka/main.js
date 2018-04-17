@@ -26,22 +26,24 @@ function main() {
 		passwd: prefs.password,
 		logined: 'войти'
 	}, addHeaders({Referer: baseurl + 'index.cgi'}));
-
+	
 	if (!/>Информация о пользователе</i.test(html)) {
-		var error = getParam(html, null, null, /err_message[^>]*>([\s\S]*?)<\/TABLE>/i, replaceTagsAndSpaces, html_entity_decode);
-		if (error && /Неправильный пароль/i.test(error))
-			throw new AnyBalance.Error(error, null, true);
+		var error = getParam(html, null, null, /err_message[^>]*>([\s\S]*?)<\/TABLE>/i, replaceTagsAndSpaces);
 		if (error)
-			throw new AnyBalance.Error(error);
+			throw new AnyBalance.Error(error, null, /Неправильный пароль/i.test(error));
+		
+		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
+	
+	
 	var result = {success: true};
 	
-	getParam(html, result, 'balance', /Депозит:(?:[^>]*>){6}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'status', /Статус:(?:[^>]*>){3}([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, '__tariff', /Тарифный план:[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, [replaceTagsAndSpaces, /-{2,}/i, ''], html_entity_decode);
-	getParam(html, result, 'fio', /ФИО:(?:[^>]*>){3}([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'dogovor', /Договор:(?:[^>]*>){5}([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'balance', /Счёт:([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'status', /<td>Статус:[\s\S]*?<font[^>]*>([\s\S]*?)<\/font>/i, replaceTagsAndSpaces);
+	getParam(html, result, '__tariff', /тарифный план[\s\S]*?<td>[\s\S]*?<b>([\s\S]*?)<\/b>/i, [replaceTagsAndSpaces, /-{2,}/i, '']);
+	getParam(html, result, 'fio', /ФИО:(?:[^>]*>){3}([^<]*)/i, replaceTagsAndSpaces);
+	getParam(html, result, 'dogovor', /Договор:(?:[^>]*>){5}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
 	
 	AnyBalance.setResult(result);
 }

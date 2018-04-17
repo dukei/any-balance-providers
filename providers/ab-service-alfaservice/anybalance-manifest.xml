@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-service-alfaservice</id>
+	<api flags="no_browser"/>
+	<name>УК Альфа-Сервис</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера УК Альфа-Сервис http://alfaservice.jfservice.ru/</p>
+	<p>Информация берется из личного кабинета http://alfaservice.jfservice.ru/user-index.html</p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="debt" name="Задолженность" units="₽"/>
+		<counter id="pay_date" name="Дата посл. платежа" type="time" format="dd/MM/yyyy"/>
+		<counter id="pay_sum" name="Сумма посл. платежа" units="₽"/>
+		<counter id="account" name="Лицевой счет" type="text"/>
+		<counter id="address" name="Адрес" type="text"/>
+		<counter id="email" name="E-mail" type="text"/>
+		<counter id="phone" name="E-Телефон" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>service</type>
+	<country>ru</country>
+</provider>

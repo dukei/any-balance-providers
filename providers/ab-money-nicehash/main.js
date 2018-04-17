@@ -19,7 +19,24 @@ var g_hash_types =
 	"X13",
 	"Keccak",
 	"X15",
-	"Nist5"
+	"Nist5",
+	"NeoScrypt",
+	"Lyra2RE",
+	"WhirlpoolX",
+	"Qubit",
+	"Quark",
+	"Axiom",
+	"Lyra2REv2",
+	"ScryptJaneNf16",
+	"Blake256r8",
+	"Blake256r14",
+	"Blake256r8vnl",
+	"Hodl",
+	"DaggerHashimoto",
+	"Decred",
+	"CryptoNight",
+	"Lbry",
+	"Equihash"
 ];
 
 
@@ -73,11 +90,13 @@ function main()
 	for(var i=0;i<json.result.stats.length;i++) 
 	{
 		var stats = json.result.stats[i];
-		if (stats.algo>=g_hash_types.length)
+		if (stats.algo>=g_hash_types.length){
+			AnyBalance.trace('Algo ' + stats.algo + ' is not supported yet: ' + JSON.stringify(stats));
 			continue;
+		}
 		stats.balance = parseFloat(stats.balance);
 		total += stats.balance;
-		getParam((stats.balance*prefs.btcunits).toString(), result, g_hash_types[stats.algo], null, null, parseBalance);
+		getParam((stats.balance*(prefs.btcunits || 1)).toString(), result, g_hash_types[stats.algo], null, null, parseBalance);
 	}
 
 	// update the total param and the the hell out

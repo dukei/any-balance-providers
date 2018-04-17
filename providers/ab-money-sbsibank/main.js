@@ -23,7 +23,7 @@ var g_banks = {
 }
 
 function getMessage(html) {
-	return getParam(html, null, null, /var\s+Message\s*=\s*['"]([^'"]+)['"]\s*;/i, replaceTagsAndSpaces, html_entity_decode);
+	return getParam(html, null, null, /var\s+Message\s*=\s*['"]([^'"]+)['"]\s*;/i, replaceTagsAndSpaces);
 }
 
 function getLoginParams(html, prefs) {
@@ -104,7 +104,7 @@ function main() {
 	checkEmpty(cards, 'Не удалось найти ни одной карты в интернет-банке, сайт изменен?', true);
 	AnyBalance.trace('Найдено карт: ' + cards.length);
 	var result = {success: true};
-	getParam(html, result, 'fio', /Пользователь\s*:([^>]*>){3}/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'fio', /Пользователь\s*:([^>]*>){3}/i, replaceTagsAndSpaces);
 	var cardCurrent = getParam(html, null, null, />Карточка\s*:(?:[^>]*>){3}([\s\S]*?)<\/td/i, replaceTagsAndSpaces);
 
 	if(!card) {
@@ -134,11 +134,14 @@ function main() {
 		Referer: baseurl + bankType + 'services.aspx',
 		'X-Requested-With':'XMLHttpRequest'			
 	}));
+
+	if(!html)
+		throw new AnyBalance.Error('Не удалось получить баланс по карте. Проверьте, что вы оплатили доступ в Интернет-Банк');
 	
 	getParam(cardCurrent, result, '__tariff');
 	getParam(cardCurrent, result, 'cardnum');
 	
-	var clearBalances = getParam(html, null, null, null, replaceTagsAndSpaces, html_entity_decode);
+	var clearBalances = getParam(html, null, null, null, replaceTagsAndSpaces);
 	AnyBalance.trace(clearBalances);
 	
 	var balanceRegExp = /Доступный остаток средств на карте([\s\d.,-]+\S+)/i;

@@ -26,20 +26,18 @@ function main(){
         'password':prefs.password
     }); 
 
-    if(!/signout/i.test(html)){
-        var error = getParam(html, null, null, /<ul class="error-messages"><li>([\s\S]*?)<\/li>/i, replaceTagsAndSpaces, html_entity_decode);
+    if(!/bonus_size/i.test(html)){
+        var error = getElement(html, /<div[^>]+login-error/i, [/&nbsp(?!;)/g, '&nbsp;', replaceTagsAndSpaces]);
         if(error)
-            throw new AnyBalance.Error(error);
+            throw new AnyBalance.Error(error, null, /знайшли|нашли|Парол/i.test(error));
         throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
     }
 
     var result = {success: true};
+    getParam(html, result, 'balance', /<div[^>]+bonus_size[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
 
     html = AnyBalance.requestGet(baseurl + 'Profile/Id'); 
-    getParam(html, result, '__tariff', /<dt>(?:Регистрационный номер|Реєстраційний номер)<\/dt>\s*<dd>([\s\S]*?)<\/dd>/i, replaceTagsAndSpaces, html_entity_decode);
-
-    html = AnyBalance.requestGet(baseurl + 'Profile/BonusBalance');
-    getParam(html, result, 'balance', /<\/h1>[\s\S]*?<p>([\s\S]*?) (?:бонусов на вашем счете.|бонусів на вашому рахунку.)/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, '__tariff', /(?:Регистрационный номер|Реєстраційний номер)[\s\S]*?<p[^>]*>([\s\S]*?)<\/p>/i, replaceTagsAndSpaces);
 
     AnyBalance.setResult(result);
 }

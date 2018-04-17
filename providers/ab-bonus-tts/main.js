@@ -6,8 +6,7 @@ var g_headers = {
 	'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
 	'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
 	'Connection':'keep-alive',
-	'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.22 (KHTML, like Gecko) Chrome/25.0.1364.172 Safari/537.22',
-	'X-Requested-With':'XMLHttpRequest'
+	'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.22 (KHTML, like Gecko) Chrome/25.0.1364.172 Safari/537.22'
 };
 
 function main(){
@@ -16,40 +15,29 @@ function main(){
 
     var baseurl = "http://oao-tts.ru/";
 
-	var html = AnyBalance.requestGet(baseurl + 'index.php/balans-karty', g_headers);
+    var hash = hex_md5(getFormattedDate({format: 'DD.MM.YYYY'}) + '.' + prefs.login);
+	var html = AnyBalance.requestGet(baseurl + 'services/lnt/infoBalansCard.php?numberCard=' + encodeURIComponent(prefs.login) + '&h=' + hash + '&hi=1&tf=json', g_headers);
+
+	// Catches EFBBBF (UTF-8 BOM) because the buffer-to-string
+	// conversion translates it to FEFF (UTF-16 BOM)
+	if (html.charCodeAt(0) === 0xFEFF) {
+		html = html.slice(1);
+	}
 	
 	if(!html || AnyBalance.getLastStatusCode() > 400)
 		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
-	
-	var captchaa;
-	if(AnyBalance.getLevel() >= 7) {
-		AnyBalance.trace('Пытаемся ввести капчу');
-		var src = getParam(html, null, null, /modules\/mod_balans\/lib\/kcaptcha[^"]+/i);
-		var captcha = AnyBalance.requestGet(baseurl + src);
-		captchaa = AnyBalance.retrieveCode("Пожалуйста, введите код с картинки", captcha);
-		AnyBalance.trace('Капча получена: ' + captchaa);
-	}else{
-		throw new AnyBalance.Error('Провайдер требует AnyBalance API v7, пожалуйста, обновите AnyBalance!');
-	}
-	
-	html = AnyBalance.requestPost(baseurl + 'modules/mod_balans/ajax.php', {
-		n: prefs.login,
-		keystring: captchaa,
-	}, addHeaders({Referer: baseurl + 'index.php/balans-karty'}));
-	
+
 	var json = getJson(html);
-	
-    if(json.result != 'data'){
-        throw new AnyBalance.Error(json.rem || 'Не удалось получить информацию по карте. Введен неверный номер карты?');
-    }
-	
+	if(json.error)
+		throw new AnyBalance.Error(json.error, null, /не\s*корректный/i.test(json.error));
+
     var result = {success: true};
-	
-    getParam(json.balance + '', result, 'balance', null, replaceTagsAndSpaces, parseBalance);
-    getParam(json.tknumber + '', result, '__tariff', null, replaceTagsAndSpaces, html_entity_decode);
-    getParam(json.ostlgottips + '', result, 'lgotleft', null, replaceTagsAndSpaces, parseBalance);
-    getParam(json.lgottips + '', result, 'lgotnum', null, replaceTagsAndSpaces, parseBalance);
-    // getParam(json.lgottips + '', result, 'lgotlast', /<li[^>]*>Дата последней поездки:([\s\S]*?)<\/?li>/i, replaceTagsAndSpaces, parseDate);
+
+    AB.getParam(json.balance + '', result, 'balance', null, AB.replaceTagsAndSpaces, AB.parseBalance);
+    AB.getParam(json.tknumber + '', result, '__tariff', null, AB.replaceTagsAndSpaces);
+    AB.getParam(json.ostlgottips + '', result, 'lgotleft', null, AB.replaceTagsAndSpaces, AB.parseBalance);
+    AB.getParam(json.lgottips + '', result, 'lgotnum', null, AB.replaceTagsAndSpaces, AB.parseBalance);
+    AB.getParam(json.date + '', result, 'lgotlast', null, AB.replaceTagsAndSpaces, AB.parseDate);
 
     AnyBalance.setResult(result);
 }

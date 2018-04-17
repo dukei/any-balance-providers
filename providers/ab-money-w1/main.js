@@ -33,8 +33,9 @@ function main() {
 	if(!html || AnyBalance.getLastStatusCode() > 400)
 		throw new AnyBalance.Error('Ошибка! Сервер не отвечает! Попробуйте обновить баланс позже.');
 	
-	var script = getParam(html, null, null, /src="(script.js[^"]+)/i);
-	html = AnyBalance.requestGet(baseurl + 'wallet/client/' + (script || ''), g_headers);
+	var base = getParam(html, /<base[^>]+href="([^"]+)/i) || '';
+	var script = getParam(html, /src="(script\d*.js[^"]+)/i) || '';
+	html = AnyBalance.requestGet(baseurl + 'wallet/client/' + base + script, g_headers);
 	
 	var token = getParam(html, null, null, /APP_TOKEN:"([\dA-F-]+)"/i);
 	if(!token || !script) {

@@ -1,16 +1,19 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-  <id version="2">ab-money-expressbank</id>
+  <id version="4">ab-money-expressbank</id>
   <name>Восточный Экспресс Банк</name>   
   <description>
-    Получает текущий остаток и другие параметры карт/счетов Восточного Экспресс Банка (http://www.express-bank.ru/), используя интернет-банк https://online.express-bank.ru
+    Получает текущий остаток и другие параметры карт/счетов Восточного Экспресс Банка (http://www.vostbank.ru/), используя интернет-банк https://online.vostbank.ru
   </description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+  <depends>
+	  <module id="nadapter"/>
+	  <module id="extract/abe-money-faktura-new"/>
+  </depends>
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
-    <js>library.js</js>
     <js>main.js</js>
     <history>history.xml</history>
   </files>

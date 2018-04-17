@@ -3,36 +3,49 @@
 */
 
 var g_headers = {
-	'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-	'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
-	'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
-	'Connection':'keep-alive',
-	'User-Agent':'Mozilla/5.0 (BlackBerry; U; BlackBerry 9900; en-US) AppleWebKit/534.11+ (KHTML, like Gecko) Version/7.0.0.187 Mobile Safari/534.11+'
+	'Accept':			'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+	'Accept-Language':	'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
+	'Connection':		'keep-alive',
+	'User-Agent':		'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/53.0.2785.116 Safari/537.36'
 };
 
 function main(){
     var prefs = AnyBalance.getPreferences();
-    var baseurl = 'https://lk2.service.nalog.ru/';
+    var baseurl = 'https://lkfl.nalog.ru/';
     AnyBalance.setDefaultCharset('utf-8'); 
 
     var html = AnyBalance.requestGet(baseurl + 'lk/index.html', g_headers);
-/*
-    var tform = getParam(html, null, null, /<input[^>]+name="t:formdata"[^>]*value="([^"]*)/i, null, html_entity_decode);
-    if(!tform) //Если параметр не найден, то это, скорее всего, свидетельствует об изменении сайта или о проблемах с ним
-        throw new AnyBalance.Error('Не удалось найти форму входа. Сайт изменен?');
-*/
-	html = AnyBalance.requestPost(baseurl + 'lk/index.html', {
-        username:prefs.login,
-        password:prefs.password,
-        __checkbox_rememberMe:false
-    }, addHeaders({Referer: baseurl + 'lk/index.html'})); 
+	if(!html || AnyBalance.getLastStatusCode() > 400) {
+		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
+	}
+
+	try {
+		html = AnyBalance.requestPost(baseurl + 'lk/index.html', {
+			username:			   prefs.login,
+			password:			   prefs.password,
+			__checkbox_rememberMe: false
+		}, addHeaders({
+			Referer: baseurl + 'lk/index.html',
+			'Origin': baseurl
+		}));
+	} catch (e) {
+		html = AnyBalance.requestGet(baseurl + 'lk/welcome.html')
+	}
+
 
     if(!/logout/i.test(html)){
+		var error = AB.getParam(html, null, null, /<div[^>]+class="err"[^>]*>([\s\S]*?)<\/div>/i);
+		if(error) {
+			throw new AnyBalance.Error(error, null, /имя|парол/i.test(error));
+		}
+
+		AnyBalance.trace(html);
         throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Проверьте правильность ввода логина или пароля. Так же возможно, что сайт изменен.');
     }
 	var result = {success: true};
+
 	result.__tariff = prefs.login;
-    getParam(html, result, 'fio', / <div>ФИО:\s*([\s\S]*?)\s*<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'fio', /<div[^>]*>ФИО:\s*([\s\S]*?)\s*<\/div>/i, replaceTagsAndSpaces);
 	
 	var json;
 	for(var i = 0; i < 5; i++) {
@@ -42,7 +55,7 @@ function main(){
 		json = getJson(html);
 		
 		if(!json.totals) {
-			sleep(2000);
+			AnyBalance.sleep(2000);
 		} else {
 			AnyBalance.trace('Данные успешно получены!');
 			break;
@@ -63,21 +76,9 @@ function main(){
 
 function parseBalanceRK(_text){
     var text = _text.replace(/\s+/g, '');
-    var rub = getParam(text, null, null, /(-?\d[\d\.,]*)\s*руб/i, replaceFloat, parseFloat) || 0;
-    var kop = getParam(text, null, null, /(-?\d[\d\.,]*)\s*коп/i, replaceFloat, parseFloat) || 0;
+    var rub = getParam(text, null, null, /(-?\d[\d\.,]*)\s*руб/i, replaceTagsAndSpaces, parseBalance) || 0;
+    var kop = getParam(text, null, null, /(-?\d[\d\.,]*)\s*коп/i, replaceTagsAndSpaces, parseBalance) || 0;
     var val = rub+kop/100;
     AnyBalance.trace('Parsing balance (' + val + ') from: ' + _text);
     return val;
-}
-
-function sleep(delay) {
-	if(AnyBalance.getLevel() < 6) {
-		var startTime = new Date();
-		var endTime = null;
-		do {
-			endTime = new Date();
-		} while (endTime.getTime() - startTime.getTime() < delay);
-	} else {
-		AnyBalance.sleep(delay);
-	}
 }

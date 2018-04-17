@@ -14,7 +14,7 @@ function main(){
 	var prefs = AnyBalance.getPreferences();
 	AnyBalance.setDefaultCharset('utf-8');
 
-	var baseurl = 'http://www.mnogo.ru/';
+	var baseurl = 'https://www.mnogo.ru/';
 
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(/(\d{2})\D(\d{2})\D(\d{4})/.test(prefs.birthday), 'День рождения должен быть в формате DD-MM-YYYY, например, 28-04-1980');

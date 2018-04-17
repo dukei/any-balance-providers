@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+	<EditTextPreference
+		title="BCC Wallet"
+		key="wallet"
+		summary="||{@s}"
+		obligatory="true"
+		dialogTitle="BCC Wallet"
+		positiveButtonText="ОК"
+		negativeButtonText="Cancel"
+		dialogMessage="Please enter your Bitcoin Cash wallet address.">
+	</EditTextPreference>
+</PreferenceScreen>

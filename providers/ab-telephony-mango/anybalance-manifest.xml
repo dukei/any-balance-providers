@@ -1,17 +1,18 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-telephony-mango</id>
+	<id version="3">ab-telephony-mango</id>
 	<api flags="no_browser"/>
 	<name>Манго-Офис</name>
 	<description html="true"><![CDATA[
 	<p>Получает текущий остаток на счете и параметры продукта у провайдера IP-телефонии Манго-Офис ( http://www.mango-office.ru/ ). Позволяет задать номер продукта, если у вас несколько продуктов в личном кабинете.</p>
 	]]></description>
-	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>

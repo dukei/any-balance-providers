@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<history>
+	<change version="5" date="2017-02-20">
+	- Улучшена обработка ошибок.
+	</change>
+	<change version="4" date="2016-11-15">
+	- Улучшена обработка ошибок.
+	</change>
+	<change version="3" date="2016-09-27">
+	Добавлен счетчик собственных средств
+	</change>
+	<change version="2" date="2016-08-17">
+	- Улучшена обработка ошибок.
+	</change>
+	<change version="1" date="2016-05-16">
+	- Первая версия провайдера.
+	</change>
+</history>

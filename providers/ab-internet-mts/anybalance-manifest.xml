@@ -1,6 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="97">ab-internet-mts</id>
+	<api flags="no_browser"/>
+	<id version="131">ab-internet-mts</id>
 	<name>Домашний Интернет и Телевидение МТС</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о текущем балансе, номере лицевого счета и договора, ФИО владельца, трафике в текущем месяце, абонентской плате для пользователей провайдера "Домашний Интернет и Телевидение МТС".</p>
@@ -11,11 +12,15 @@
 		<li>Балаково (<a href="http://stat.balakovo.comstar-r.ru">http://stat.balakovo.comstar-r.ru</a>)<br></li>
 		<li>Барнаул (<a href="http://kabinet.barnaul.mts.ru">http://kabinet.barnaul.mts.ru</a>)<br></li>
 		<li>Белгород (<a href="http://stat.belgorod-net.ru">http://stat.belgorod-net.ru</a>)<br></li>
+		<li>Великий Новгород (<a href="https://lk.nov.mts.ru/">https://lk.nov.mts.ru/</a>)<br></li>
 		<li>Владимир (<a href="https://lk-vladimir.center.mts.ru/">https://lk-vladimir.center.mts.ru/</a>)<br></li>
 		<li>Волжск (<a href="https://internet.mari-el.mts.ru/index.php?r=site/login">https://internet.mari-el.mts.ru/index.php?r=site/login</a>)<br></li>
+		<li>Волгоград (<a href="http://lk.ug.mts.ru">http://lk.ug.mts.ru</a>) - КОМСТАР-Регионы Южный филиал<br></li>
 		<li>Вологда (<a href="http://lk.vologda.mts.ru">http://lk.vologda.mts.ru</a>)<br></li>
 		<li>Ижевск (<a href="http://lk.izhnt.ru">http://lk.izhnt.ru</a>)<br></li>
+		<li>Иркутск (<a href="https://clb.primorye.mts.ru/irk/">https://clb.primorye.mts.ru/irk/</a>)<br></li>
 		<li>Киров (<a href="http://lk.kirovnet.net">http://lk.kirovnet.net</a>)<br></li>
+		<li>Кемерово (<a href="https://kabinet.kemerovo.mts.ru/">https://kabinet.kemerovo.mts.ru/</a>)<br></li>
 		<li>Комсомольск-на-Амуре (<a href="https://clb.komsomolsk.mts.ru/kom/">https://clb.komsomolsk.mts.ru/kom/</a>)<br></li>
 		<li>Курган (<a href="http://infocentr.ru/lk/index.php?r=site/login">http://infocentr.ru/lk/index.php?r=site/login</a>)<br></li>
 		<li>Курск (<a href="https://lk-kursk.center.mts.ru/index.php?r=site/login">https://lk-kursk.center.mts.ru/index.php?r=site/login</a>)<br></li>
@@ -23,13 +28,14 @@
 		<li>Миасс (https://lkmiass.ural.mts.ru/)<br></li>
 		<li>Москва (<a href="http://kabinet.mts.ru">http://kabinet.mts.ru</a>) - Стрим (<a href="http://stream-internet.ru/">http://stream-internet.ru/</a>)<br></li>
 		<li>Находка (<a href="https://clb.primorye.mts.ru/cvld/">https://clb.primorye.mts.ru/cvld/</a>)<br></li>
-		<li>Нижний Новгород (https://lknn.pv.mts.ru/ , https://lktvnn.pv.mts.ru/)<br></li>
+		<li>Нижний Новгород (https://lktvnn.pv.mts.ru/)<br></li>
 		<li>Новокузнецк (<a href="https://kabinet.kemerovo.mts.ru/">https://kabinet.kemerovo.mts.ru/</a>)<br></li>
 		<li>Новосибирск (<a href="https://kabinet.nsk.mts.ru">https://kabinet.nsk.mts.ru</a>) - бывший CityHomeNet <br></li>
 		<li>Норильск (<a href="http://kabinet.norilsk.mts.ru">http://kabinet.norilsk.mts.ru</a>)<br></li>
 		<li>Орел (<a href="http://lbc.oreltv.ru/index.php">http://lbc.oreltv.ru/index.php</a>)<br></li>
 		<li>Пенза (<a href="http://client.lanbilling.ptcomm.ru">http://client.lanbilling.ptcomm.ru</a>)<br></li>
 		<li>Ростов (<a href="http://lk.ug.mts.ru">http://lk.ug.mts.ru</a>) - КОМСТАР-Регионы Южный филиал	<br></li>
+		<li>Рязань (<a href="https://lk-ryazan.center.mts.ru/">https://lk-ryazan.center.mts.ru/</a>)<br></li>
 		<li>Санкт-Петербург (<a href="https://lk.spb.mts.ru/index.php">https://lk.spb.mts.ru/index.php</a>)<br></li>
 		<li>Саратов (https://lksrt.pv.mts.ru/internet/ , https://lksrt.pv.mts.ru/ktv/)<br></li>
 		<li>Северодвинск (<a href="https://lk.arkhangelsk.mts.ru/index.php">https://lk.arkhangelsk.mts.ru/index.php</a>)<br></li>
@@ -43,25 +49,28 @@
 	<instruction html="true"><![CDATA[
 	<p>Для добавления вашего региона обратитесь, пожалуйста, к разработчикам</p>
 	]]></instruction>
-	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+		<module id="login/mts"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>api:jquery.min.js</js> <!-- Используем библиотеку, которая и так входит в AnyBalance -->
-		<js>library.js</js>
-		<js>login.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
 	<counters>
 		<counter id="balance" name="Баланс" units=" р"/>
 		<counter id="balance_tv" name="Баланс ТВ" units=" р"/>
+		<counter id="last_payment_sum" name="Сумма последнего платежа" units=" р"/>
 		<counter id="internet_cur" name="Трафик в этом месяце" suffix=" Mb"/>
 		<counter id="abon" name="Абонентская плата" suffix=" р"/>
 		<counter id="daysleft" name="Хватит на" suffix=" дн"/>
 		<counter id="license" name="Лицевой счет" type="text"/>
 		<counter id="agreement" name="Номер договора" type="text"/>
 		<counter id="username" name="ФИО" type="text"/>
+		<counter id="last_payment_date" name="Дата платежа" type="time" format="dd/MM/yyyy"/>
 	</counters>
 	<keywords>провайдер интернет СитиХоумНет комстар регионы</keywords>
 	<type>internet, tv</type>

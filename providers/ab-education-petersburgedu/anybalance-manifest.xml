@@ -7,7 +7,7 @@
 	<p>Предоставляет информацию из электронного дневника на сайте Петербургское образование <a href="http://petersburgedu.ru/">http://petersburgedu.ru/</a></p>
 	<p>Информация берется из личного кабинета <a href="http://petersburgedu.ru/dnevnik/">http://petersburgedu.ru/dnevnik/</a></p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

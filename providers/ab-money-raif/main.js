@@ -5,58 +5,61 @@
 
 var g_countersTable = {
 	common: {
-		"fio": "profile.fio",
+		"fio": "info.fio",
 	}, 
 	card: {
-		"__tariff": "cards.cardnum",
+		"__tariff": "cards.num",
 		
     	"balance": "cards.balance",
 		"currency": "cards.currency",
-		"cardnum": "cards.cardnum",
+		"cardnum": "cards.num",
 		"type": "cards.type",
 		"accnum": "cards.accnum",
 		"till": "cards.till",
 		"minpay": "cards.minpay",
 		"limit": "cards.limit",
-		"minpaytill": "cards.minpaytill",
+		"minpaytill": "cards.minpay_till",
 		"cred_ammount": "cards.totalCreditDebtAmount",
-		"ownFunds": "cards.ownFunds",
+		"ownFunds": "cards.own",
 		"clearBalance": "cards.clearBalance",
+		"gracePeriodOutstanding": "cards.gracePeriodOutstanding",
+		"unpaidGracePeriodDue": "cards.gracepay",
+		"gracePeriodEnd": "cards.gracepay_till",
 	},
     acc: {
-		"__tariff": "accounts.accnum",
+		"__tariff": "accounts.num",
 		
 		"balance": "accounts.balance",
 		"currency": "accounts.currency",
 		"type": "accounts.type",
-		"accnum": "accounts.accnum",
+		"accnum": "accounts.num",
 		"till": "accounts.till",
 		"minpay": "accounts.minpay",
 		"limit": "accounts.limit",
-		"minpaytill": "accounts.minpaytill",
+		"minpaytill": "accounts.minpay_till",
     },
 	dep: {
-		"__tariff": "deposits.accnum",
+		"__tariff": "deposits.num",
 		
     	"balance": "deposits.balance",
     	"currency": "deposits.currency",
-		"rate": "deposits.rate",
-		"accnum": "deposits.accnum",
+		"rate": "deposits.pct",
+		"accnum": "deposits.num",
 		"type": "deposits.type",
 		"till": "deposits.till",
 		"pcts": "deposits.pcts",
     },
 	cred: {
-		"__tariff": "loans.accnum",
+		"__tariff": "credits.num",
 		
-    	"balance": "loans.balance",
-    	"currency": "loans.currency",
-    	"cred_ammount": "loans.cred_ammount",
-    	"minpay": "loans.minpay",
-    	"paid": "loans.paid",
-    	"minpaytill": "loans.minpaytill",
-    	"till": "loans.till",
-    	"rate": "loans.rate",
+    	"balance": "credits.balance",
+    	"currency": "credits.currency",
+    	"cred_ammount": "credits.limit",
+    	"minpay": "credits.minpay",
+    	"paid": "credits.paid",
+    	"minpaytill": "credits.minpay_till",
+    	"till": "credits.till",
+    	"rate": "credits.pct",
     }
 };
 
@@ -94,7 +97,7 @@ function main(){
 	} else if(prefs.type == 'cred') {
 		adapter.processLoans(html, result);
 
-		if(!adapter.wasProcessed('loans'))
+		if(!adapter.wasProcessed('credits'))
 			throw new AnyBalance.Error(prefs.num ? 'Не найден кредит с последними цифрами ' + prefs.num : 'У вас нет ни одного кредита!');
 	}
 	
@@ -139,7 +142,7 @@ function shouldProcess(counter, info){
 			if(endsWith(info.__name, prefs.num))
 				return true;
 		}
-		case 'loans':
+		case 'credits':
 		{
 			if(prefs.type != 'cred')
 				return false;

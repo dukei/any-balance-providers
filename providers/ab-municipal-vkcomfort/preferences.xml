@@ -8,6 +8,7 @@
 		dialogTitle="Логин"
 		positiveButtonText="ОК"
 		negativeButtonText="Отмена"
+		inputType="number"
 		dialogMessage="Введите логин, используемый для входа в личный кабинет.">
 	</EditTextPreference>
 	<EditTextPreference
@@ -20,5 +21,15 @@
 		negativeButtonText="Отмена"
 		dialogMessage="Введите пароль, используемый для входа в личный кабинет."
 		inputType="textPassword">
+	</EditTextPreference>
+	<EditTextPreference
+		title="Л/с"
+		key="num"
+		summary="|Последние цифры номера счета|{@s}"
+		dialogTitle="Л/c"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		inputType="number"
+		dialogMessage="Введите последние цифры номер счета, который вы хотите посмотреть, если их несколько в кабинете. Поле можно оставить пустым, тогда будет показан первый счет">
 	</EditTextPreference>
 </PreferenceScreen>

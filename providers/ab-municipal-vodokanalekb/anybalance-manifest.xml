@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-municipal-vodokanalekb</id>
+	<api flags="no_browser"/>
+	<name>Водоканал (Екатеринбург)</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера Водоканал (Екатеринбург) http://www.xn--80aadbki6adhshb.xn--p1ai/ </p>
+	<p>Информация берется из личного кабинета http://abon.vodokanalekb.ru/physics/Default.aspx </p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" p"/>
+		<counter id="accrued" name="Начислено" units=" p"/>
+		<counter id="paid" name="Оплачено" units=" p"/>
+		<counter id="benefit" name="Льготы" units=" p"/>
+		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="address" name="Адрес" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>municipal</type>
+	<country>ru</country>
+</provider>

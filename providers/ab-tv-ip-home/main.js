@@ -10,21 +10,9 @@ var g_headers = {
 	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
 };
 
-function parseBalanceRK(_text){
-    var text = _text.replace(/\s+/g, '');
-    var rub = Math.abs(getParam(text, null, null, /(-?\d[\d\.,]*)руб/i, replaceFloat, parseFloat) || 0);
-    var kop = Math.abs(getParam(text, null, null, /(-?\d[\d\.,]*)коп/i, replaceFloat, parseFloat) || 0);
-    var val = rub+kop/100;
-    AnyBalance.trace('Parsing balance (' + val + ') from: ' + _text);
-    if (text.charAt(0) == '-') {
-        val = Math.abs("-" + val)* -1;
-    }
-    return val;
-}
-
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'http://stat.ip-home.net:8002/';
+	var baseurl = 'https://stat.ip-home.net/';
 	AnyBalance.setDefaultCharset('utf-8');
 	
 	checkEmpty(prefs.login, 'Введите логин!');
@@ -45,9 +33,12 @@ function main() {
 	});
     
 	html = AnyBalance.requestPost(baseurl + 'login', params, addHeaders({Referer: baseurl + 'login'}));
+
+	if(/Продолжить ВХОД/i.test(html))
+		html = AnyBalance.requestGet(baseurl, addHeaders({Referer: baseurl + 'welcome'}));
 	
 	if (!/logout/i.test(html)) {
-		var error = getParam(html, null, null, /alert-danger[^>]*>{1}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
+		var error = getParam(html, null, null, /alert-danger[^>]*>{1}([\s\S]*?)<\//i, replaceTagsAndSpaces);
 		if (error)
 			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
 		
@@ -57,12 +48,12 @@ function main() {
 	
 	var result = {success: true};
 	
-    var table = getParam(html, null, null, new RegExp('(Название тарифа/услуги([\\s\\S]*?)</table)', 'i'));
-    sumParam(table, result, '__tariff', /<tr[\s]*?>[\s]*?<td>([\s\S]*?)<\/td>/ig,  replaceTagsAndSpaces, html_entity_decode, aggregate_join);    
+    var table = getParam(html, null, null, /Название тарифа\/услуги([\s\S]*?)<\/table/i);
+    sumParam(table, result, '__tariff', /<tr[^>]*>\s*<td[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, null, aggregate_join);    
     
-	getParam(html, result, 'balance', /Баланс:(?:[^>]*>){3}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalanceRK);
-	getParam(html, result, 'limit', /Постоянный кредитный лимит:(?:[^>]*>){3}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'account', /Лицевой счет:(?:[^>]*>){3}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'balance', /Баланс:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, function(str){ return Math.round(parseBalance(str)*100)/100 });
+	getParam(html, result, 'limit', /Постоянный кредитный лимит:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'account', /Логин:(?:[^>]*>){3}([\s\S]*?)<\//i, replaceTagsAndSpaces);
 	
 	AnyBalance.setResult(result);
 }

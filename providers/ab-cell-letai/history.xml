@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<history>
+	<change version="3" date="2017-03-21">
+	- Поддержка изменений на сайте.
+	</change>
+	<change version="2" date="2016-12-05">
+	Добавлена настройка номера для получения информации по нему.
+	</change>
+	<change version="1" date="2016-11-22">
+	- Первая версия провайдера.
+	</change>
+<!--
+  <change version="2" date="2014-02-01">
+  -
+  </change>
+-->
+</history>

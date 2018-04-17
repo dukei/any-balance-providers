@@ -1,17 +1,19 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-internet-beeline-kz</id>
+	<id version="3">ab-internet-beeline-kz</id>
 	<api flags="no_browser"/>
 	<name>Билайн Интернет Дома (Казахстан)</name>
 	<description html="true"><![CDATA[
 	<p>Получает баланс и информацию о тарифном плане для казахского интернет провайдера Beeline Интернет Дома (http://internet.beeline.kz)</p>
 	<p>Информация берется из личного кабинета https://my.internet.beeline.kz</p>
 	]]></description>
-	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>

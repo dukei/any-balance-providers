@@ -1,17 +1,19 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id version="4">ab-bonus-avantageclub</id>
+	<id version="6">ab-bonus-avantageclub</id>
 	<name>Улыбка Радуги (Avantage club)</name>
 	<description>
 	Получает баланс и другую информацию по бонусной карте с сайта магазина Улыбка Радуги (http://r-ulybka.ru)
-	Информация берется из личного кабинета: http://avantageclub.ru
+	Информация берется из личного кабинета: http://r-ulybka.ru
 	</description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>

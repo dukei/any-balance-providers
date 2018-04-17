@@ -7,7 +7,7 @@
 	<p>Предоставляет информацию о балансе провайдера Kolt-internet http://kolt-internet.ru/</p>
 	<p>Информация берется из личного кабинета http://46.149.33.10/</p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

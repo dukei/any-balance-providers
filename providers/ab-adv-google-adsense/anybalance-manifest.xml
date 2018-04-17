@@ -1,12 +1,15 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-    <id version="3">ab-adv-google-adsense</id>
+    <id version="5">ab-adv-google-adsense</id>
 	<api flags="no_browser" />
     <name>Google AdSense</name>
 	<description html="true"><![CDATA[
 	<p>Obtains information from Google AdSense personal account at <a href="https://www.google.com/adsense">https://www.google.com/adsense</a></p>
 	]]></description>
-    <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+    <author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+    <depends>
+    	<module id="login/google"/>
+    </depends>
     <files>
 	<icon>icon.png</icon>
         <preferences>preferences.xml</preferences>

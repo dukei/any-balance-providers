@@ -1,5 +1,12 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="6" date="2015-11-20">
+	- Улучшена обработка ошибок.
+	</change>
+	<change version="5" date="2015-11-16">
+	Изменения в процедуре входа
+	Улучшена обработка ошибок
+	</change>
 <change version="4" date="2013-11-18">
 - Возможность ввести e-mail с доменом не принадлежащим Mail.ru Group. (Stark)
 </change>

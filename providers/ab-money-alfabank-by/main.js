@@ -1,4 +1,4 @@
-﻿/**
+/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 */
 
@@ -10,118 +10,218 @@ var g_headers = {
 	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
 };
 
+var baseurl = 'https://click.alfa-bank.by/';
+function login(){
+}
+
+function isLoggedIn(html){
+	return /Выход[^a-я]/i.test(html);
+}
+
+function skipButtons(params, str, name, value) {
+	if (/^<button/i.test(str)) //Skip buttons
+		return;
+
+	return value;
+}
+
+function followLink(html, reName){
+	var a = getElements(html, [/<a\b/ig, reName])[0];
+	if(!a){
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удалось найти ссылку ' + reName.source);
+	}
+
+	var formName = getParam(a, null, null, /addSubmitParam\s*\(\s*'([^']*)/, replaceHtmlEntities);
+	var addParams = getJsonObject(a, /addSubmitParam/);
+
+	var form = getElement(html, new RegExp('<form[^>]+name="' + formName + '"', 'i'));
+	if(!form){
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удалось найти форму перехода по ссылке ' + reName.source);
+	}
+	var params = createFormParams(form, skipButtons);
+
+	for(var i in addParams)
+		params[i] = addParams[i];
+
+	var action = getParam(html, null, null, /<form[^>]+action="([^"]*)/i, replaceHtmlEntities);
+
+	html = AnyBalance.requestPost(joinUrl(baseurl, action), params, addHeaders({Referer: baseurl + 'webBank2/body/details.xhtml'}));
+	return html;
+}
+
+function followAjaxLink(html, reName, linkSearchHtml){
+	if(!linkSearchHtml)
+		linkSearchHtml = html;
+
+	var a = getElements(linkSearchHtml, [/<a\b/ig, reName])[0];
+	if(!a){
+		AnyBalance.trace(linkSearchHtml);
+		throw new AnyBalance.Error('Не удалось найти ajax ссылку ' + reName.source);
+	}
+
+	var ajaxParams = getJsonObject(a, /PrimeFaces.ab\s*\(\s*/);
+	var formName = ajaxParams.source.replace(/:[^:]*$/, '');
+
+	var form = getElement(html, new RegExp('<form[^>]+name="' + formName + '"', 'i'));
+	if(!form){
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удалось найти форму перехода по ссылке ' + reName.source);
+	}
+	var params = createFormParams(form, skipButtons);
+	
+	params['javax.faces.partial.ajax'] = 'true';
+	params['javax.faces.source'] = ajaxParams.source;
+	params['javax.faces.partial.execute'] = '@all';
+	params[ajaxParams.source] = ajaxParams.source;
+
+	for(var i=0; ajaxParams.params && i<ajaxParams.params.length; ++i){
+		var p = ajaxParams.params[i];
+		params[p.name] = p.value;
+	}
+
+	var action = getParam(html, null, null, /<form[^>]+action="([^"]*)/i, replaceHtmlEntities);
+
+	html = AnyBalance.requestPost(joinUrl(baseurl, action), params, addHeaders({Referer: AnyBalance.getLastUrl()}));
+	return html;
+}
+
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'https://click.alfa-bank.by/';
 	AnyBalance.setDefaultCharset('utf-8');
 	
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 	
-	var html = AnyBalance.requestGet(baseurl + 'webBank/private/details.action', g_headers);
+	var html = AnyBalance.requestGet(baseurl + 'webBank2/body/details.xhtml', addHeaders({Referer: baseurl + 'webBank2/body/details.xhtml'}));
 	
 	if(!html || AnyBalance.getLastStatusCode() > 400)
 		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
-	
-	html = AnyBalance.requestPost(baseurl + 'webBank/login.action', {        
-        login: prefs.login,
-        '__checkbox_saveLogin': true,
-        password: prefs.password,
-        loginEnterButton: 'Вход',
-        tabKeyClient: ''
-	}, addHeaders({Referer: baseurl + 'webBank/private/details.action'}));
-	
-	if (!/logout/i.test(html)) {
-		var error = getParam(html, null, null, /<span[^>]+class="errorMessageHistory"[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
-		if (error)
-			throw new AnyBalance.Error(error, null, /неверный логин или пароль/i.test(error));
-		
-		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
-	}
-    
-    if(prefs.type == 'dep')
-        processDep(html, baseurl);
-    else if(prefs.type == 'credit')
-        processCredit(html, baseurl);
-    else if(prefs.type == 'acc')
-        processAcc(html, baseurl);
-    else 
-        processCard(html, baseurl);
-}
 
-function processCard(html, baseurl){
-	var prefs = AnyBalance.getPreferences();
-	
-    if(prefs.cardnum && !/^\d{4}$/.test(prefs.cardnum))
-        throw new AnyBalance.Error("Введите 4 последних цифры номера карты или не вводите ничего, чтобы показать информацию по первой карте");
-	
+	if(!isLoggedIn(html)){
+		var form = getElement(html, /<form[^>]+name="frmLogin"/i);
+		if(!form){
+			AnyBalance.trace(html);
+			throw new AnyBalance.Error('Не удалось найти форму входа. Сайт изменен?');
+		}
+
+		var params = AB.createFormParams(form, function(params, str, name, value) {
+			if (name == 'frmLogin:login') {
+				return prefs.login;
+			} else if (name == 'frmLogin:password') {
+				return prefs.password;
+			}
+	    
+			return value;
+		});
+
+		html = AnyBalance.requestPost(baseurl + 'webBank2/login.xhtml', params, addHeaders({Referer: AnyBalance.getLastUrl()}));
+
+		if (!isLoggedIn(html)) {
+			var error = getElement(html, /<span[^>]+ui-messages-error-summary/i, replaceTagsAndSpaces);
+			if (error)
+				throw new AnyBalance.Error(error, null, /парол/i.test(error));
+			
+			AnyBalance.trace(html);
+			throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
+		}
+	}else{
+		AnyBalance.trace('Используем активную сессию...');
+	}
+
+	AnyBalance.trace('Зашли в банк');
 	var result = {success: true};
-    
-	// \d+[*]{11}\d{4}(?:[^>]*>){2,5}[^>]*"cardId"[^>]*value="([^"]+)
-    var href_id = getParam(html, null, null, new RegExp('\\d+[*]{11}' + (prefs.cardnum || '\\d{4}') + '(?:[^>]*>){2,5}[^>]*"cardId"[^>]*value="([^"]+)', 'i'), replaceTagsAndSpaces);
-    if(!href_id)
-		throw new AnyBalance.Error("Не удалось найти " + (prefs.cardnum ? ' карту с последними цифрами ' + prefs.cardnum : 'ни одной карты!'));
+	
+    if(prefs.type == 'dep')
+        processDeposits(html, baseurl);
+    else if(prefs.type == 'credit')
+        processCredits(html, baseurl);
+    else if(prefs.type == 'acc')
+        processAccounts(html, baseurl, null, result);
+    else{ 
+        processCards(html, baseurl, result);
+        processAccounts(html, baseurl, result.acc_number, result);
+    }
 
- 	detailsHtml = AnyBalance.requestPost(baseurl + 'webBank/private/card.details.action', {        
-        cardId: href_id,
-        tabKeyClient: ''
-	}, addHeaders({Referer: baseurl + 'webBank/private/card.details.action'}));
-    
-    getParam(detailsHtml, result, 'card_number', /Номер карты:(?:[^>]*>){3}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(detailsHtml, result, 'card_type', /Название карты:(?:[^>]*>){3}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(detailsHtml, result, 'card_curr', /Валюта:(?:[^>]*>){3}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(detailsHtml, result, 'expires', /Срок окончания действия карты:(?:[^>]*>){3}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(detailsHtml, result, 'status', /Статус карты:(?:[^>]*>){3}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
-	
-	var acc_number = getParam(detailsHtml, null, null, /Номер счёта:(?:[^>]*>){4}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(acc_number, result, 'acc_number');
-	
-	if(isAvailable('balance') && acc_number) {
-		AnyBalance.trace('Необходимо получить баланс по номеру счета...');
-		
-		processAcc(html, baseurl, acc_number, result);
-	}
-	
     AnyBalance.setResult(result);
 }
 
-function processAcc(html, baseurl, acc_number, ret_result){
+function processCards(html, baseurl, result){
 	var prefs = AnyBalance.getPreferences();
-	
-    if(prefs.cardnum && !/^\d{4}$/.test(prefs.cardnum))
-        throw new AnyBalance.Error("Введите 4 последних цифры номера счета или не вводите ничего, чтобы показать информацию по первому счету");
-	
-	if(!ret_result)
-		var result = {success: true};
-    else
-		var result = ret_result;
-	
-	var table = getParam(html, null, null, /Имя счета([\s\S]*?)<\/table>/i);
-	
-    // \d+\d{4}(?:[^>]*>){2,5}[^>]*"id"[^>]*value="([^"]+)
-	if(acc_number)
-		var href_id = getParam(table, null, null, new RegExp(acc_number + '(?:[^>]*>){2,5}[^>]*"id"[^>]*value="([^"]+)', 'i'), replaceTagsAndSpaces, html_entity_decode);
-	else
-		var href_id = getParam(table, null, null, new RegExp('\\d+' + (prefs.cardnum || '\\d{4}') + '(?:[^>]*>){2,5}[^>]*"id"[^>]*value="([^"]+)', 'i'), replaceTagsAndSpaces, html_entity_decode);
-	if(!href_id)
-		throw new AnyBalance.Error("Не удалось найти " + (prefs.cardnum ? ' счет с последними цифрами ' + prefs.cardnum : 'ни одного счета!'));
-	
- 	html = AnyBalance.requestPost(baseurl + 'webBank/private/accounts.action', {
-        id: href_id,
-        tabKeyClient: ''
-	}, addHeaders({Referer: baseurl + 'webBank/private/details.action'}));   
-    
-    getParam(html, result, 'acc_number', /Номер счёта:(?:[^>]*>){3}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'acc_type', /Тип счёта:(?:[^>]*>){3}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'balance', /Доступный остаток:(?:[^>]*>){3}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'limit', /Кредитный лимит:(?:[^>]*>){3}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'min_balance', /Неснижаемый остаток:(?:[^>]*>){3}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, ['currency', 'limit', 'min_balance', 'balance'], /Доступный остаток:(?:[^>]*>){3}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseCurrency);
-    getParam(html, result, 'rate', /Процентная ставка, текущая:(?:[^>]*>){3}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
-	
-	if(!ret_result)
-		AnyBalance.setResult(result);
+
+	html = followLink(html, />\s*Мои карты\s*</i);
+
+	var table = getElement(html, /<div[^>]+cardTable/i);
+	if(!table){
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удалось найти таблицу счетов. Сайт изменен?');
+	}
+
+	var tbody = getElement(table, /<tbody/i);
+	var trs = getElements(tbody, /<tr/ig);
+	AnyBalance.trace('Найдено ' + trs.length + ' карт');
+
+	for(var i=0; i<trs.length; ++i){
+		var tr = trs[i];
+		var tds = getElements(tr, /<td/ig);
+		var name = getParam(tds[3], null, null, null, replaceTagsAndSpaces);
+		var num = getParam(name, null, null, /\(([^)]*)\)$/i);
+		if(!prefs.cardnum || endsWith(num.replace(/\s+/g, ''), prefs.cardnum.replace(/\s+/g, ''))){
+			getParam(num, result, 'card_number');
+			getParam(name, result, 'card_type', /[^(]*/i, replaceTagsAndSpaces);
+			result.acc_number = getParam(tds[6], null, null, null, replaceTagsAndSpaces);
+			getParam(tds[7], result, 'card_curr', null, replaceTagsAndSpaces);
+			getParam(tds[9], result, 'status', null, replaceTagsAndSpaces);
+			getParam(tds[4], result, 'expires', /\d\d\/\d\d/, replaceTagsAndSpaces);
+			break;
+		}
+	}
+
+	if(i>=trs.length)
+		throw new AnyBalance.Error(i ? 'У вас нет ни одной карты' : 'Не найдена карта с последними цифрами ' + prefs.cardnum);
+
+	return html;
+}
+
+function processAccounts(html, baseurl, acc_number, result){
+	var prefs = AnyBalance.getPreferences();
+	if(!acc_number)
+		acc_number = prefs.cardnum;
+
+	html = followLink(html, />\s*Мои счета\s*</i);
+
+	var table = getElement(html, /<div[^>]+productsTable/i);
+	if(!table){
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удалось найти таблицу счетов. Сайт изменен?');
+	}
+
+	var tbody = getElement(table, /<tbody/i);
+	var trs = getElements(tbody, /<tr/ig);
+	AnyBalance.trace('Найдено ' + trs.length + ' счетов');
+
+	for(var i=0; i<trs.length; ++i){
+		var tr = trs[i];
+		var num = getParam(tr, null, null, /(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+		if(!acc_number || endsWith(num.replace(/\s+/g, ''), acc_number.replace(/\s+/g, ''))){
+			getParam(num, result, 'acc_number');
+			getParam(tr, result, 'acc_type', /(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+			getParam(tr, result, 'balance', /(?:[\s\S]*?<td[^>]*>){6}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+			getParam(tr, result, ['currency', 'balance'], /(?:[\s\S]*?<td[^>]*>){7}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+
+			html = followAjaxLink(html, /accountId/, tr);
+			getParam(html, result, 'limit', /Кредитный лимит:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+			getParam(html, result, 'min_balance', /Неснижаемый остаток:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+			getParam(html, result, 'rate', /Процентная ставка, текущая:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+			break;
+		}
+	}
+
+	if(i>=trs.length)
+		throw new AnyBalance.Error(i ? 'У вас нет ни одного счета' : 'Не найден счет с последними цифрами ' + acc_number);
+
+	return html;
 }
 
 function processDep(html, baseurl){

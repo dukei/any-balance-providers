@@ -7,7 +7,7 @@
 	<p>Предоставляет информацию о балансе провайдера ТВ ТРК Одинцово <a href="http://trc.odintv.ru">http://trc.odintv.ru</a></p>
 	<p>Информация берется из личного кабинета <a href="https://stat.odintv.ru/webexecuter">https://stat.odintv.ru/webexecuter</a></p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

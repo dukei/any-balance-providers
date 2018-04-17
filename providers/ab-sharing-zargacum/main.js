@@ -28,9 +28,11 @@ function main(){
 	
     AnyBalance.setDefaultCharset('utf-8');
 
-    var baseurl = 'https://billing.zargacum.net/';
+    var baseurl = 'https://cabinet.zargacum.net/';
 	
 	var html = AnyBalance.requestGet(baseurl + 'login', g_headers);
+	if(/block\b|blackhole/i.test(AnyBalance.getLastUrl()) || /has been blocked by decision/i.test(html))
+		throw new AnyBalance.Error('Сайт заблокирован РосКомНадзором. Попробуйте подключиться через другую сеть или прокси');
 	
 	var logonTries = 5;
 	var cookie = getParam(html, null, null, /document\.cookie='_ddn_intercept_2_=([^';]+)/i);
@@ -56,12 +58,12 @@ function main(){
         throw new AnyBalance.Error("Не удалось войти в личный кабинет. Неправильный логин-пароль?");
     }
 	
-    html = AnyBalance.requestGet('http://billing.zargacum.net/cabinet/', g_headers);
+    html = AnyBalance.requestGet(baseurl + 'cabinet/', g_headers);
 	
     var result = {success: true};
 	
     getParam(html, result, 'balance', /Баланс:([\S\s]*?)[\(\|<]/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, '__tariff', /Тип учетки([\S\s]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, '__tariff', /Тип учетки([\S\s]*?)<\/div>/i, replaceTagsAndSpaces);
     getParam(html, result, 'bonus', /Бонус\s*<[^>]*>\s*:([\S\s]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
 
     //Обязательно надо экранировать служебные символы в названии пакета, потому что оно вставляется в регулярное выражение

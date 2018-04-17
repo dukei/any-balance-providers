@@ -1,13 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id version="5">ab-money-easypay-ua</id>
+	<id version="6">ab-money-easypay-ua</id>
 	<name>EasyPay (Украина)</name>
 	<description html="true"><![CDATA[
 	<p>Получает баланс кошелька системы электронных платежей EasyPay <a href="https://easypay.ua">https://easypay.ua</a></p>
 	<p>Информация берется из личного кабинета <a href="https://easypay.ua/home">https://easypay.ua/home</a></p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

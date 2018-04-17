@@ -1,17 +1,19 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id version="2">ab-internet-divo</id>
+	<id version="4">ab-internet-divo</id>
 	<name>ДИВО (Сергиев-Посад)</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе для подмосковного интернет провайдера ДИВО Телекоммуникации <a href="http://divo.ru">http://divo.ru</a></p>
 	<p>Информация берется из личного кабинета <a href="http://divo.ru/service/internet/234.html">http://divo.ru/service/internet/234.html</a></p>
 	]]></description>
-	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
@@ -19,6 +21,7 @@
 		<counter id="balance" name="Баланс" units=" р"/>
 		<counter id="trafficIn" name="Вх.трафик в текущем месяце" units=" Гб"/>
 		<counter id="trafficOut" name="Исх.трафик в текущем месяце" units=" Гб"/>
+		<counter id="licschet" name="Лицевой счет" type="text"/>
 	</counters>
 	<keywords></keywords>
 	<type>internet</type>

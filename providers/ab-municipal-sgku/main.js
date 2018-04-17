@@ -32,7 +32,7 @@ function main(){
     //Обычно это ссылка на выход, хотя иногда приходится искать что-то ещё
     if(!/Лицевой счёт:/i.test(html)){
         //Если в кабинет войти не получилось, то в первую очередь надо поискать в ответе сервера объяснение ошибки
-        var error = getParam(html, null, null, /<div class="wrap">\s*<p[^>]+class="error"[^>]*>([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, html_entity_decode);
+        var error = getParam(html, null, null, /<div class="wrap">\s*<p[^>]+class="error"[^>]*>([\s\S]*?)<\/p>/i, replaceTagsAndSpaces);
         if(error)
             throw new AnyBalance.Error(error);
         //Если объяснения ошибки не найдено, при том, что на сайт войти не удалось, то, вероятно, произошли изменения на сайте
@@ -42,22 +42,29 @@ function main(){
     //Раз мы здесь, то мы успешно вошли в кабинет
     //Получаем все счетчики
     var result = {success: true};
-    getParam(html, result, 'address', /<div[^>]+class="row content"[^>]*>\s*<p[^>]*>([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, '__tariff', /<div[^>]+class="row content"[^>]*>\s*<p[^>]*>([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'licschet', /Лицевой счёт:\s*<strong[^>]*>([\s\S]*?)<\/strong>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'address', /<div[^>]+class="row content"[^>]*>\s*<p[^>]*>([\s\S]*?)<\/p>/i, replaceTagsAndSpaces);
+    getParam(html, result, '__tariff', /<div[^>]+class="row content"[^>]*>\s*<p[^>]*>([\s\S]*?)<\/p>/i, replaceTagsAndSpaces);
+    getParam(html, result, 'licschet', /Лицевой счёт:\s*<strong[^>]*>([\s\S]*?)<\/strong>/i, replaceTagsAndSpaces);
 
-    var kaprem = getParam(html, null, null, /Капитальный ремонт([\s\S]*?На дату:[^<]*)<\/div>/i);
-    if(kaprem){
-        getParam(kaprem, result, 'balance_kaprem', /(?:Переплата|Долг|Задолженность):\s*<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
-        getParam(kaprem, result, 'peni_kaprem', /Пени:([^<]*)/i, replaceTagsAndSpaces, parseBalance);
-        getParam(kaprem, result, 'date_kaprem', /На дату:([^<]*)/i, replaceTagsAndSpaces, parseDate);
-    }
-    
-    var kvpl = getParam(html, null, null, /Квартплата([\s\S]*?На дату:[^<]*)<\/div>/i);
-    if(kvpl){
-        getParam(kvpl, result, 'balance', /(?:Переплата|Долг|Задолженность):\s*<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
-        getParam(kvpl, result, 'peni', /Пени:([^<]*)/i, replaceTagsAndSpaces, parseBalance);
-        getParam(kvpl, result, 'date', /На дату:([^<]*)/i, replaceTagsAndSpaces, parseDate);
+    var info = getElement(html, /<div[^>]+margin-left:\s*1em[^>]*>/i); //Блок балансов
+    var infos = getElements(info.substr(1), /<div[^>]*>/ig);
+    var title;
+    for(var i=0; i<infos.length; ++i){
+    	info = infos[i];
+    	if(!/margin-left:\s*1em/i.test(info)){
+    		title = replaceAll(info, replaceTagsAndSpaces);
+    		AnyBalance.trace('Найден баланс для ' + title);
+    	}else{
+    		if(/Капитальный ремонт/i.test(title)){
+        		getParam(info, result, 'balance_kaprem', /(?:Переплата|Долг|Задолженность):\s*<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+        		getParam(info, result, 'peni_kaprem', /Пени:([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+        		getParam(info, result, 'date_kaprem', /На дату:([^<]*)/i, replaceTagsAndSpaces, parseDate);
+    		}else{
+        		sumParam(info, result, 'balance', /(?:Переплата|Долг|Задолженность):\s*<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+        		sumParam(info, result, 'peni', /Пени:([^<]*)/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+        		sumParam(info, result, 'date', /На дату:([^<]*)/i, replaceTagsAndSpaces, parseDate, aggregate_max);
+    		}
+    	}
     }
 
     //Возвращаем результат

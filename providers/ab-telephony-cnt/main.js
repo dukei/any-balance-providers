@@ -8,6 +8,14 @@
 Новый личный кабинет: http://ctweb.cnt.ru/
 */
 
+var g_headers = {
+	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
+	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
+	'Connection': 'keep-alive',
+	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
+};
+
 function main(){
     
     var prefs = AnyBalance.getPreferences();
@@ -25,10 +33,17 @@ function main(){
 }
 
 function new_cabinet(login,password) {
+    var prefs = AnyBalance.getPreferences();
 	
-	var baseurl = 'http://ctweb.cnt.ru/pls/rac.c/!w3_p_main.showform',auth='?CONFIG=CONTRACT&USERNAME=%%LOGIN%%&PASSWORD=%%PASSWORD%%';
+	var baseurl = 'https://lk.gobaza.ru/owa/gbaza/!w3_p_main.showform';
+	var session = AnyBalance.requestGet(baseurl + '?CONFIG=CONTRACT', g_headers);
 	
-	var session = AnyBalance.requestGet(baseurl+auth.split('%%LOGIN%%').join(login).split('%%PASSWORD%%').join(password));
+	var session = AnyBalance.requestPost(baseurl + '?CONFIG=CONTRACT', {
+		IDENTIFICATION: 'CONTRACT',
+		USERNAME: prefs.login,
+		PASSWORD: prefs.password,
+		FORMNAME: 'QFRAME'
+	}, addHeaders({Referer: baseurl + '?CONFIG=CONTRACT'}));
 	
 	var error;
 	if(error=/alert\s*\("([\D]*)"\)/.exec(session)) // Ошибка авторизации
@@ -51,21 +66,20 @@ function new_cabinet(login,password) {
 		htmltarif = AnyBalance.requestGet(baseurl+data[1])
 	}
 	// Тариф
-	//getParam(htmltarif, result, '__tariff', /([\dА-Яа-я ]*)<\/a><\/[><\w=\s]*<\/TR>/);//, null, html_entity_decode);
-	getParam(htmltarif, result, '__tariff', /\>([^\>]*)\<\/a\>\<\/[\>\<\w\=\s]*<\/TR\>/);//, null, html_entity_decode);
+	getParam(htmltarif, result, '__tariff', />\s*Текущий тарифный план[\s\S]*?<td[^>]*>([\s\S]*?)(?:<\/?t[dr])/i, replaceTagsAndSpaces);
 	AnyBalance.trace(result.__tariff);
 	
     // ФИО
-	getParam (htmlinfo, result, 'username', /><TD>Клиент[:<>\w]*([А-Яа-я ]*)</i);
+	getParam (htmlinfo, result, 'username', />\s*Клиент:[\s\S]*?<td[^>]*>([\s\S]*?)(?:<\/?t[dr])/i, replaceTagsAndSpaces);
 	   
 	// Баланс
-	getParam (htmlinfo, result, 'balance', />Текущий баланс[\D]*[\d{2}:]*\):[\D]*>([-\d\.]*)/, [/ |\xA0/, "", ",", "."], parseFloat);
+	getParam (htmlinfo, result, 'balance', />\s*Текущий баланс[\s\S]*?<td[^>]*>([\s\S]*?)(?:<\/?t[dr])/i, replaceTagsAndSpaces, parseBalance);
 	
  	// Абоненская плата
-	getParam (htmltarif, result, 'monthlypay', /Абон.плата - ([\d\.]*)/, [/ |\xA0/, "", ",", "."], parseFloat);
+	getParam (htmltarif, result, 'monthlypay', /Абон.плата - ([\d\.]*)/, replaceTagsAndSpaces, parseBalance);
 	
 	// Лицевой счет
-	getParam (htmlinfo, result, 'license', /><TD[\D]*\d*>Лицевой счёт[:<>\D]*(\d{6})</);
+	getParam (htmlinfo, result, 'license', />\s*Лицевой счёт:[\s\S]*?<td[^>]*>([\s\S]*?)(?:<\/?t[dr])/i, replaceTagsAndSpaces);
     
 	// Аутентификация в старом портале
 	AnyBalance.trace('AUTHENTICATION');
@@ -109,34 +123,8 @@ Array.prototype.copy = function(index,where) {
 	return result;
 }
 
-function html_entity_decode(str)
-{
-    //jd-tech.net
-    var tarea=document.createElement('textarea');
-    tarea.innerHTML = str;
-    return tarea.value;
-}
-
 String.prototype.right = function(num){
   return this.substr(this.length-num,num);
-}
-
-function getParam (html, result, param, regexp, replaces, parser) {
-	if (!AnyBalance.isAvailable (param))
-		return;
-
-	var value = regexp.exec (html);
-	if (value) {
-		value = value[1];
-		if (replaces) {
-			for (var i = 0; i < replaces.length; i += 2) {
-				value = value.replace (replaces[i], replaces[i+1]);
-			}
-		}
-		if (parser)
-			value = parser (value);
-		result[param] = value;
-	}
 }
 
 function getTrafficData(result, url) {

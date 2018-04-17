@@ -1,5 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change version="6" date="2015-12-04">
+	- Обработан случай, когда предлагается быстрый вход на телефоне
+	</change>
+	<change version="5" date="2015-12-04">
+	- Улучшена обработка ошибок.
+	</change>
+	<change version="4" date="2015-12-04">
+	Исправление получения русских имен
+	</change>
+	<change version="3" date="2015-12-04">
+	- Поддержка изменений на сайте.
+	</change>
 	<change version="2" date="2015-03-05">
 	- Поддержка изменений на сайте.
 	</change>

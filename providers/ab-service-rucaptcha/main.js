@@ -15,23 +15,13 @@ function main(){
 	var baseurl = 'https://rucaptcha.com';
 	AnyBalance.setDefaultCharset('utf-8');
 	
-	checkEmpty(prefs.email, 'Введите e-mail!');
-	checkEmpty(prefs.password, 'Введите пароль!');
-	var	html = AnyBalance.requestGet(baseurl+'/ru/cabinet');	
-	html = AnyBalance.requestPost(baseurl +'/auth', {
-		email: prefs.email,
-		password: prefs.password,
-		auth_redirect:''});
-	if (!/Профиль/i.test(html)){
-		var error = getParam(html, null, null, /<div[^>]+class="error">([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
-		if (/заблокирован/i.test(html)) error=html;
-		if (error) throw new AnyBalance.Error(error, null, /Неверные логин или пароль/i.test(error));
-		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
-	}
+	checkEmpty(prefs.key, 'Введите Captcha Key из вкладки API вебмастеру вашего личного кабинета ruCaptcha!');
+
+	var	html = AnyBalance.requestGet(baseurl+'/res.php?key=' + encodeURIComponent(prefs.key) + '&action=getbalance');	
+
 	var result = {success: true};
-	getParam(html, result, 'balance', /Баланс: <b>(.*) р/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'reputation', /Репутация.*<b>(.*) </i, replaceTagsAndSpaces, parseBalance);
-	html = AnyBalance.requestGet(baseurl+'/auth/logout');
+	getParam(html, result, 'balance', null, replaceTagsAndSpaces, parseBalance);
+
 	AnyBalance.setResult(result);
 
 }

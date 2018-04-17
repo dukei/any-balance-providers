@@ -57,18 +57,27 @@ function main(){
     		var all = [];
 
     		for(var i=0; i<fines.length; ++i){
-    			var dt = getParam(fines[i], null, null, /(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
-    			var num = getParam(fines[i], null, null, /(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+    			var dt = getParam(fines[i], /(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
+    			var num = getParam(fines[i], /(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+    			var sum = getFineSum(num);
     			if(!latest.dt || dt > latest.dt){
     				latest.dt = dt;
     				latest.num = num;
+    				latest.sum = sum;
     			}
-    			all.push(getParam(fines[i], null, null, /(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode) + ' - ' + num);
+
+    			var str = getParam(fines[i], null, null, /(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces) + ' - ' + num;
+    			if(sum)
+    				str += ': <b>' + sum + ' р</b>';
+
+    			all.push(str);
+   				sumParam(sum, result, 'total_sum', null, null, null, aggregate_sum);
     		}
 
-   			getParam(all.join('\n'), result, 'all');
+   			getParam(all.join('<br/>\n'), result, 'all');
    			getParam(latest.dt, result, 'last_date');
    			getParam(latest.num, result, 'last_num');
+   			getParam(latest.sum, result, 'last_sum');
        	}catch(e){
        	    AnyBalance.trace(e.message + '\n' + e.stack);
        	}
@@ -76,4 +85,59 @@ function main(){
     }
 
     AnyBalance.setResult(result);
+}
+
+function getFineSum(num){
+	try{
+		var html, form, params;
+		var baseurl = 'https://pay.wmtransfer.by/pls/iSOU/';
+		
+		if(!getFineSum.authorized){
+			html = AnyBalance.requestGet("https://wmtransfer.by/pay.asp", g_headers);
+		    
+			form = getElement(html, /<form[^>]+id="pay"/i);
+			if(!form){
+				AnyBalance.trace(html);
+				throw new AnyBalance.Error('Не удалось найти форму для авторизации');
+			}
+	        
+			params = AB.createFormParams(form);
+		    
+			html = AnyBalance.requestPost(baseurl + '!iSOU.Authentication', params, addHeaders({Referer: AnyBalance.getLastUrl()}));
+			getFineSum.authorized = true;
+		}
+
+		html = AnyBalance.requestPost(baseurl + '!iSOU.PaymentPrepare', {
+			service_no:	'391141',
+			ParamCount: '',
+			Amount: '',
+			AmountCurr: '',	
+			ServiceInfoId: '',	
+			ExtraInfoText:	'0B0C01D4EEF2EEF4E8EAF1E0F6E8FF20F1EAEEF0EEF1F2E8',
+		}, addHeaders({Referer: baseurl + '!iSOU.ServiceTree'}));
+	    
+		form = getElement(html, /<form[^>]+id="frm"/i);
+		if(!form){
+			AnyBalance.trace(html);
+			throw new AnyBalance.Error('Не удалось найти форму для запроса суммы штрафа');
+		}
+	    
+		params = AB.createFormParams(form, function(params, str, name, value) {
+			if (name == 'param2')
+				return num;
+	    
+			return value;
+		});
+	    
+		html = AnyBalance.requestPost(baseurl + '!iSOU.PaymentPrepare', params, addHeaders({Referer: baseurl + '!iSOU.PaymentPrepare'}), {
+			options: {
+				REQUEST_CHARSET: 'windows-1251',
+			}
+		});
+	    
+		return getParam(html, /<input[^>]+name="Amount"[^>]+value="([^"]*)/i, replaceHtmlEntities, parseBalance);
+	}catch(e){
+       	AnyBalance.trace('Не удалось получить сумму штрафа: ' + e.message + '\n' + e.stack);
+       	return;
+	}
 }

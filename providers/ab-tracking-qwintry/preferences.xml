@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
 	<EditTextPreference
-		title="Tracking number"
+		title="Номер отслеживания"
 		key="number"
 		summary="||{@s}"
 		obligatory="true"
-		dialogTitle="Tracking number"
-		positiveButtonText="Ok"
-		negativeButtonText="Cancel"
-		dialogMessage="Enter tracking number.">
+		dialogTitle="Номер отслеживания"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите номер отслеживания.">
 	</EditTextPreference>
 </PreferenceScreen>

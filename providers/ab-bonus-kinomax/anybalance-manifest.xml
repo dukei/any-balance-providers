@@ -1,26 +1,27 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-    <id version="3">ab-bonus-kinomax</id>
+    <id version="5">ab-bonus-kinomax</id>
 	<api flags="no_browser"/>
     <name>Киномакс</name>
     <description>
 Информация по бонусной карте Киномакс (http://kinomax.ru).
 
-Если у вас ещё нет доступа в личный кабинет Киномакс, зарегистрируйтесь здесь: http://kinomax.ru/booknow/?what=user.
+Если у вас ещё нет доступа в личный кабинет Киномакс, зарегистрируйтесь здесь: https://kinomax.ru/lk/register .
 	</description>
-    <author>BArtWell &lt;web@bartwell.ru&gt;</author>
+    <author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+    <depends>
+    	<module id="library"/>
+    </depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
     <counters>
-        <counter id="active" name="Активный баланс" units="р"/>
-		<counter id="accum" name="Накопительный баланс" units="р"/>
-		<counter id="level" name="Уровень накопления бонусов" units="%"/>
-		<counter id="card" name="Номер карты" type="text"/>
+        <counter id="balance" name="Баланс" units="р"/>
+        <counter id="percentage" name="Бонус с покупок" units="%"/>
+		<counter id="status" name="Статус карты" type="text"/>
         <counter id="name" name="ФИО" type="text"/>
     </counters>
     <keywords>Бонусная карта, скидки, киномакс, kinomax</keywords>

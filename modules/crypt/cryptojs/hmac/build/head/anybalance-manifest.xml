@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">crypt/cryptojs/hmac</id>
+	<api flags="no_browser"/>
+	<name>CryptoJS hmac module</name>
+	<description html="true"><![CDATA[
+	<p>CryptoJS hmac codec</p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="crypt/cryptojs/core"/>
+	</depends>
+	<files>
+		<js>hmac.min.js</js>
+		<history>history.xml</history>
+	</files>
+	<keywords></keywords>
+	<type>crypt cryptojs hmac</type>
+	<country></country>
+</provider>

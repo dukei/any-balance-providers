@@ -6,7 +6,7 @@
         summary="Номер телефона (9 цифр)||{@s}\n" 
         dialogTitle="Номер телефона" 
         negativeButtonText="Отмена" 
-        dialogMessage="Введите номер вашего телефона для входа в Интернет-Помощник (9 цифр), например 661234567"
+        dialogMessage="Введите номер вашего телефона для входа в My Vodafone (9 цифр), например 661234567"
 	obligatory="true"
         key="login"
         inputType="number">
@@ -17,12 +17,12 @@
         dialogTitle="Пароль"
         negativeButtonText="Отмена"
         title="Пароль"
-        summary="Пароль для входа в Интернет-Помощник||***********\n"
+        summary="Пароль для входа в My Vodafone||***********\n"
 	obligatory="true"
-        dialogMessage="Введите пароль, используемый для входа в Интернет-Помощник"
+        dialogMessage="Введите пароль, используемый для входа в My Vodafone"
         inputType="textPassword">
     </EditTextPreference>
-    <EditTextPreference 
+<!--    <EditTextPreference 
         positiveButtonText="ОК"
         key="phone" 
         dialogTitle="Номер телефона"
@@ -36,9 +36,9 @@
         key="fnomer"
         title="Формат отображения номера"
         summary="||{@s}"
-        entries="Длинный|Короткий"
-        entryValues="1|2"
+        entries="Очень длинный|Длинный|Короткий|Очень короткий"
+        entryValues="1|2|3|4"
         defaultValue="1"
         dialogTitle="Выберите формат отображения номера">
-     </ListPreference>
+     </ListPreference> -->
 </PreferenceScreen>

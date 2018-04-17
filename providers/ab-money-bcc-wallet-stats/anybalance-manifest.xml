@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-money-bcc-wallet-stats</id>
+	<api flags="no_browser"/>
+	<name>Bitcoin Cash Wallet</name>
+	<description html="true"><![CDATA[
+	<p>Provides information about a BCC wallet.
+	Information is sourced from https://blockdozer.com</p>
+	]]></description>
+	<author>Borislip &lt;borislip@gmail.com&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>bccutil.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Balance" units="BCC"/>
+        <counter id="value" name="Value" units="{@currency}"/>
+		<counter id="total_received" name="Total Received" units="BCC"/>
+		<counter id="total_sent" name="Total Sent" units="BCC"/>
+		<counter id="n_transactions" name="Transactions Count"/>
+	</counters>
+	<keywords>bitcoin cash,BCC,биткоин каш,биткоин кэш,биткоинкаш,биткоинкэш</keywords>
+	<type>money</type>
+	<country></country>
+</provider>

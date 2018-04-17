@@ -15,6 +15,8 @@ function setError(message) {
 function main() {
     var result = {};
 
+    var baseurl = 'https://obrkarta.ru/';
+
     AnyBalance.trace("Чтение настроек пользователя...");
 
     var prefs = AnyBalance.getPreferences();
@@ -22,10 +24,18 @@ function main() {
     AnyBalance.trace("Получено: договор - " + prefs.login + ", пароль - " + prefs.password);
 
     AnyBalance.trace("Вход в личный кабинет...");
-    var info = AnyBalance.requestPost("http://obrkarta.ru/auth/", {
+    var info = AnyBalance.requestPost(baseurl + "auth/", {
         login: prefs.login,
         password: prefs.password
     });
+
+    if(!/logout/i.test(info)){
+    	var error = getElement(info, /<font[^>]+#ff4500/i, replaceTagsAndSpaces);
+    	if(error)
+    		throw new AnyBalance.Error(error, null, /парол/i.test(error));
+    	AnyBalance.trace(html);
+    	throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
+    }
 
     if (info) {
         var matches;
@@ -63,7 +73,7 @@ function main() {
         if (AnyBalance.isAvailable("transportCardNumber")) {
             AnyBalance.trace("Загрузка страницы со списком карт...");
 
-            info = AnyBalance.requestGet("http://obrkarta.ru/personal/card/");
+            info = AnyBalance.requestGet(baseurl + "personal/card/");
 
             if (info) {
                 AnyBalance.trace("Поиск номера транспортной карты...");

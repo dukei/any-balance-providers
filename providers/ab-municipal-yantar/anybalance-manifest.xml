@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-municipal-yantar</id>
+	<api flags="no_browser"/>
+	<name>Янтарьэнергосбыт (физ. лица)</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о последних начислениях и платежах в Янтарьэнергосбыт http://yantarenergosbyt.ru/</p>
+	<p>Информация берется из личного кабинета для физических лиц https://fl.yantarenergosbyt.ru/</p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Если у вас нет доступа в Личный кабинет, получите его на странице https://fl.yantarenergosbyt.ru/page.php?page=lk-reg-nach . Для этого вам понадобятся данные из одной из квитанций.</p>
+	]]></instruction>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="spent" name="Начислено в текущем периоде" type="text"/>
+		<counter id="payment_date" name="Дата последнего платежа" type="time" format="dd/MM/yyyy"/>
+		<counter id="payment_sum" name="Сумма последнего платежа" units=" р"/>
+		<counter id="payment_source" name="Источник оплаты" type="text"/>
+		<counter id="licschet" name="Лицевой счет" type="text"/>
+		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="address" name="Адрес" type="text"/>
+		<counter id="balance_start" name="Сальдо на начало периода" type="text"/>
+		<counter id="period" name="Текущий период" type="time" format="MM/yyyy"/>
+	</counters>
+	<keywords></keywords>
+	<type>municipal</type>
+	<country>ru</country>
+</provider>

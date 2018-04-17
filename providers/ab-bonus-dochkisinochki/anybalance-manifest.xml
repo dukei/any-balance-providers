@@ -7,7 +7,7 @@
 	<p>Предоставляет информацию о балансе на бонусном счете в сети магазино Дочки-Сыночки http://www.dochkisinochki.ru/</p>
 	<p>Информация берется из личного кабинета http://www.dochkisinochki.ru/personal/points/</p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

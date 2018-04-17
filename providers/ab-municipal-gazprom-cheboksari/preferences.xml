@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+	<EditTextPreference
+		title="Лицевой счёт"
+		key="login"
+		summary="||{@s}"
+		obligatory="true"
+		dialogTitle="Номер лицевого счёта"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите номер лицевого счёта, используемый для входа в личный кабинет.">
+	</EditTextPreference>
+	<EditTextPreference
+		title="Номер дома"
+		key="houseNumber"
+		summary="||{@s}"
+		obligatory="true"
+		dialogTitle="Номер дома"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите номер дома, прикреплённый к данному счёту.">
+	</EditTextPreference>
+	<EditTextPreference
+		title="Номер корпуса"
+		key="houseCase"
+		summary="||{@s}"
+		dialogTitle="Номер корпуса"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите номер корпуса, прикреплённый к данному счёту. Если такого нет, то просто оставьте поле пустым.">
+	</EditTextPreference>
+	<EditTextPreference
+		title="Номер квартиры"
+		key="flatNumber"
+		summary="||{@s}"
+		dialogTitle="Номер квартиры"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите номер квартиры, прикреплённый к данному счёту. Если такого нет, то просто оставьте поле пустым.">
+	</EditTextPreference>
+	<EditTextPreference
+		title="Номер комнаты"
+		key="roomNumber"
+		summary="||{@s}"
+		dialogTitle="Номер комнаты"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите номер комнаты, прикреплённый к данному счёту. Если такого нет, то просто оставьте поле пустым.">
+	</EditTextPreference>
+</PreferenceScreen>

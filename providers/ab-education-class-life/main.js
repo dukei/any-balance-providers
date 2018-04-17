@@ -1,4 +1,4 @@
-﻿/**
+	/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 */
 
@@ -7,7 +7,7 @@ var g_headers = {
 	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
 	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
 	'Connection': 'keep-alive',
-	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
+	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:56.0) Gecko/20100101 Firefox/56.0',
 };
 
 function main() {
@@ -73,8 +73,8 @@ function main() {
 	getParam(info, result, 'fio', /<div[^>]+class='dataHeaderLcDiv1'[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(info, result, 'licschet', /<div[^>]+class='dataHeaderLcDiv2'[^>]*>([\s\S]*?)<\/div>/i, [/Л\/с:/i, '', replaceTagsAndSpaces], html_entity_decode);
 	
-	getParam(info, result, ['balance_hot', 'balance'], /Баланс горячего питания:[\s\S]*?<div[^>]+class='dataHeaderLcDiv4'[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(info, result, ['balance_cafe', 'balance'], /Баланс буфетного питания:[\s\S]*?<div[^>]+class='dataHeaderLcDiv4'[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(info, result, ['balance_hot', 'balance'], /Горячее питание[\s\S]*?<div[^>]+class='dataHeaderLcDiv4'[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(info, result, ['balance_cafe', 'balance'], /Буфетное питание[\s\S]*?<div[^>]+class='dataHeaderLcDiv4'[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
 	
 	if(isset(result.balance_hot) && isset(result.balance_cafe))
 		getParam(result.balance_hot + result.balance_cafe, result, 'balance');

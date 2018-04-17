@@ -1,18 +1,21 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="2">ab-internet-tenet</id>
+	<api flags="no_browser"/>
+  <id version="4">ab-internet-tenet</id>
   <name>TeNeT (Одесса)</name>
   <description>
     Получает баланс и информацию о тарифном плане для одесского интернет провайдера TeNeT (http://tenet.ua).
 
     Информация берется из личного кабинета https://stats.tenet.ua.
   </description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+  <depends>
+  	<module id="library"/>
+  </depends>
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
     <history>history.xml</history>
-    <js>library.js</js>
     <js>main.js</js>
   </files>
   <counters>

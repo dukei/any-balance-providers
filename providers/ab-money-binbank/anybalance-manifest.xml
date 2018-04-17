@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="9">ab-money-binbank</id>
+	<id version="12">ab-money-binbank</id>
 	<api flags="no_browser"/>
 	<name>Бинбанк</name>
 	<description html="true"><![CDATA[
@@ -35,12 +35,13 @@
 	<p>Для подключения к Интернет-банку необходимо обратиться в любой из офисов Банка, расположенных в этих городах.</p>
 	]]></instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="nadapter"/>
+		<module id="extract/abe-money-faktura"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
-		<js>nadapter.js</js>
-		<js>extract.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>

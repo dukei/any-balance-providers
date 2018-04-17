@@ -18,6 +18,15 @@ function getEventValidation(html){
     return getParam(html, null, null, /name="__EVENTVALIDATION".*?value="([^"]*)"/) || getParam(html, null, null, /__EVENTVALIDATION\|([^\|]*)/i);
 }
 
+function redirectIfNeeded(html){
+	if(/FormPostResponse/i.test(html)){
+		var params = createFormParams(html);
+		var action = getParam(html, null, null, /<form[^>]+action="([^"]*)/i, replaceHtmlEntities);
+		html = AnyBalance.requestPost(action, params, addHeaders({Referer: AnyBalance.getLastUrl()}));
+	}
+	return html;
+}
+
 function parseDateMy(str) {
 	var val;
 	if (/Завтра/i.test(str)) {
@@ -48,104 +57,122 @@ function main(){
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 	
-    var baseurl = "http://www.exist.ru/Profile/";
+    var baseurl = "http://www.exist.ru/";
     AnyBalance.setDefaultCharset('utf-8'); 
 	
-    var html = AnyBalance.requestGet(baseurl + 'Login.aspx?ReturnUrl=%2fProfile%2fbalance.aspx', g_headers);
+    var html = AnyBalance.requestGet(baseurl, g_headers);
 	
-    if(prefs.num && !/^\d+$/.test(prefs.num))
-        throw new AnyBalance.Error('Введите последние цифры номера заказа или не вводите ничего, чтобы получить информацию по последнему заказу');
+    if(prefs.num && !/^[\d,\s]+$/.test(prefs.num))
+        throw new AnyBalance.Error('Введите последние цифры номера заказа или не вводите ничего, чтобы получить информацию по последнему заказу', null, true);
 	
     var viewstate = getViewState(html);
     var eventvalidation = getEventValidation(html);
     if(!viewstate)
         throw new AnyBalance.Error('Не удалось найти форму входа. Сайт изменен?');
 	
-    html = AnyBalance.requestPost(baseurl + 'Login.aspx?ReturnUrl=%2fProfile%2fbalance.aspx', {
-        __EVENTTARGET:'',
-        __EVENTARGUMENT:'',
-        __VIEWSTATE:viewstate,
-        __EVENTVALIDATION:eventvalidation,
-        ctl00$ctl00$b$b$custLogin$txtLogin:prefs.login,
-        ctl00$ctl00$b$b$custLogin$txtPassword:prefs.password,
-        ctl00$ctl00$b$b$custLogin$bnLogin:'Ждите...'
-    }, addHeaders({Referer: baseurl + 'Login.aspx?ReturnUrl=%2fProfile%2fbalance.aspx'})); 
+    html = AnyBalance.requestPost(baseurl + 'Profile/Login?ReturnUrl=%2fProfile%2f', {
+        login:prefs.login,
+        pass:prefs.password
+    }, addHeaders({Referer: baseurl})); 
+    html = redirectIfNeeded(html);
 	
 	if(!/\/exit.axd/i.test(html)){
-		var error = getParam(html, null, null, /<span[^>]+id="lblError"[^>]*>([\s\S]*?)(?:<\/span>|<a[^>]+href=['"]\/howgetpass.aspx)/i, replaceTagsAndSpaces, html_entity_decode);
+		var error = getElement(html, /<div[^>]+alert/i, replaceTagsAndSpaces);
 		if (error)
-			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
+			throw new AnyBalance.Error(error, null, /парол/i.test(error));
 		
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
 	
 	var result = {success: true};
+
+	if(AnyBalance.isAvailable('balance', 'debt')){
+		html = AnyBalance.requestGet(baseurl + 'Profile/Orders/Hint/Balance.aspx', g_headers);
+		var balance = getParam(html, null, null, /Средства на счету:([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+		var debt = getParam(html, null, null, /Задолженность по заказам:([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+	    getParam(balance, result, 'balance');
+    	getParam(debt, result, 'debt');
+	    if(isset(balance) && isset(debt))
+ 		    getParam(balance - debt, result, 'balance_total');
+	}
 	
-    getParam(html, result, 'balance', /Средства на счету:([^<]+)<\/div/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'debt', /Задолженность по заказам:([^<]+)<\/div/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'balance_total', /<div>\s*Итого:\s*<span>([^<]+)<\/span>/i, replaceTagsAndSpaces, parseBalance);
-	
-    getParam(html, result, 'code', /'код клиента':\s*<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, '__tariff', /'код клиента':\s*<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, html_entity_decode);
+	html = AnyBalance.requestGet(baseurl + 'Profile/Form.aspx', g_headers);
+    getParam(html, result, 'code', /код клиента[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
+    getParam(html, result, '__tariff', /код клиента[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
 	
 	var singleOrder;
+
+
 	// Новый формат, по всем позициям в заказе
-	if (AnyBalance.isAvailable('ordernum', 'ordersum', 'orderdesc', 'orderstatus', 'orderexpect', 'parts_count')) {
-    	html = AnyBalance.requestGet(baseurl + 'Orders/default.aspx', g_headers);
-    	var trs = sumParam(html, null, null, new RegExp("<tr[^>]*>(?:[\\s\\S](?!</tr>))*?getOrder\\('[^']*\\d*" + (prefs.num || '\\d+') + "'[\\s\\S]*?</tr>", "ig"));
-		AnyBalance.trace('Found ' + trs.length + ' items');
-		var htmlDesc = [];
-		var parts_count = 0;
-		
-		if (!trs || !trs.length) {
-			AnyBalance.trace(prefs.num ? 'Не найдено активного заказа с последними цифрами ' + prefs.num : 'Не найдено ни одного активного заказа!');
-		} else {
-			for(var i = 0; i < trs.length; i++) {
-				var tr = trs[i];
-				// AnyBalance.trace('Found tr: ' + tr);
-				var order = getParam(tr, null, null, /(?:[^>]*>){5}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
-				if(!order) {
-					AnyBalance.trace('Не удалось узнать номер заказа, останавливаемся, дальше не идем..');
-					break;
-				}
-				
-				// Если номер заказа еще не установлен - установим его
-				if(!singleOrder) {
-					singleOrder = order;
-					getParam(order, result, 'ordernum');
-					getParam(tr, result, 'orderstatus', /(?:[\s\S]*?<td[^>]*>){8}([\s\S]*?)<\/td>/i, [replaceTagsAndSpaces, /\s*отказаться\s*/i, ''], html_entity_decode);
-				}
-				if(order == singleOrder) {
-					AnyBalance.trace('Найденый номер заказа соответствует текущему..');
+	if (AnyBalance.isAvailable('ordernum', 'ordersum', 'orderdesc', 'orderstatus', 'orderexpect', 'parts_count', 'place')) {
+    	html = AnyBalance.requestGet(baseurl + 'Profile/Orders/default.aspx', g_headers);
 
-					sumParam(tr, result, 'ordersum', /(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum_round);
-					sumParam(tr, result, 'orderexpect', /(?:[\s\S]*?<td[^>]*>){9}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDateMy, aggregate_max);
+    	var ordersInfo = getElement(html, /<div[^>]+class="data"[^>]*>/i);
+    	var ordersGroups = getElements(ordersInfo, /<div[^>]+class="(?:ordergroup|row)[^>]*>/ig);
 
-					// Создаем новую сводку, вот такую 
-					// <small>Van Wezel <b>5894915</b> (Центральный склад)<br>Фонарь указателя поворота зеркала левый</small>
-					var vendorName = getParam(tr, null, null, /"vendorName"[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces) || '';
-					var artname = getParam(tr, null, null, /"artname"[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces) || '';
-					var descript = getParam(tr, null, null, /"descript"[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces) || '';
-					var place = getParam(tr, null, null, /(?:[\s\S]*?<td[^>]*>){8}([\s\S]*?)<\/td>/i, [replaceTagsAndSpaces, /\s*отказаться\s*/i, '']) || '';
-					var count = getParam(tr, null, null, /(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-					
-					if(isset(count))
-						parts_count += count;
-					
-					htmlDesc.push('<small>' + vendorName + ' <b>' + artname + '</b> ' + (isset(count) ? ' - '  + count + ' шт': '') + (place ? ' (' + place + ')' : '') + '<br>' + descript + '</small>');
-				} else {
-					AnyBalance.trace('Найденый номер заказа не совпадает с предыдущим, это уже другой заказ, для его отображения необходимо явно указать его номер в настройках');
-					break;
-				}
-			}
-			// Запишем сводку
-			getParam(htmlDesc.join('<br><br>'), result, 'orderdesc');
-			getParam(parts_count, result, 'parts_count');
-		}
+    	if(prefs.num){
+	    	var nums = (prefs.num || '').split(/[\s,;]+/g), idx=0;
+    		for(var i=0; i<nums.length; ++i){
+    			findOrder(result, ordersGroups, nums[i], idx++);
+    		}
+    	}else{
+    		for(var i=0; i<ordersGroups.length; i+=2){
+    			findOrder(result, ordersGroups.slice(i), '', idx++);
+    		}
+    	}
     }
 	
     AnyBalance.setResult(result);
+}
+
+function findOrder(result, ordersGroups, num, idx){
+    var group, suffix = idx || '';
+    for(var i=0; i<ordersGroups.length; ++i){
+    	var g = ordersGroups[i];
+    	if(/<div[^>]+ordergroup/i.test(g)){
+    		//Это группа
+    		group = g;
+   			getParam(group, result, 'place' + suffix, /<div[^>]+office-name[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+    	}else{
+    		//Это детали
+    		var id = getParam(group, null, null, /<span[^>]+ordername[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
+    		if(!num || endsWith(id, num)){
+    			//Это наш заказ. Обрабатываем
+    			getParam(id, result, 'ordernum' + suffix);
+    			getParam(g, result, 'orderstatus' + suffix, /<div[^>]+action-name[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+				
+				sumParam(g, result, 'ordersum' + suffix, /<div[^>]+orders-price[^>]*>([\s\S]*?)<\/div>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum_round);
+				sumParam(g, result, 'orderexpect' + suffix, /<span[^>]+orders-delivery-date[^>]*>([\s\S]*?)<\/span>/ig, replaceTagsAndSpaces, parseDateMy, aggregate_max);
+
+				var htmlDesc = [];
+				var rows = getElements(g, /<div[^>]+rowData[^>]*>/ig);
+				var parts_count = 0;
+
+				for(var j=0; j<rows.length; ++j){
+					var row = rows[j];
+
+					// Создаем новую сводку, вот такую 
+					// <small>Van Wezel <b>5894915</b> (Центральный склад)<br>Фонарь указателя поворота зеркала левый</small>
+					var vendorName = getParam(row, null, null, /<span[^>]+item-name[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces) || '';
+					var artname = getParam(row, null, null, /<span[^>]+orders-art[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces) || '';
+					var descript = getParam(row, null, null, /<div[^>]+orders-description[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces) || '';
+					var count = getParam(row, null, null, /<div[^>]+orders-amount[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+				
+					if(isset(count))
+						parts_count += count;
+				
+					htmlDesc.push('<small>' + vendorName + ' <b>' + artname + '</b> ' + (isset(count) ? ' - '  + count + ' шт': '') + '<br/>' + descript + '</small>');
+				}
+				
+				getParam(parts_count, result, 'parts_count' + suffix);
+				getParam(htmlDesc.join('<br/>\n'), result, 'orderdesc' + suffix);
+    		}
+    		return;
+    	}
+    }
+
+	AnyBalance.trace(prefs.num ? 'Не найдено активного заказа с последними цифрами ' + prefs.num : 'Не найдено ни одного активного заказа!');
 }
 
 function aggregate_sum_round(values) {

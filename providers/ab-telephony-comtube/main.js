@@ -32,6 +32,17 @@ function main(){
         info = AnyBalance.requestGet(baseurl + 'index/payment_invest_info');
         getParam(info, result, 'invest', /Баланс инвестиционного счета:[\s\S]*?<span[^>]+class="p-big"[^>]*>([\s\S]*?)<\/span>/i, [/,/g, '', replaceTagsAndSpaces], parseBalance);
     }
+
+    if(AnyBalance.isAvailable('partner_balance', 'partner_available')){
+        info = AnyBalance.requestGet(baseurl + 'index/partnership_main_stat');
+        getParam(info, result, 'partner_balance', /Партнерский счет:([\s\S]*?)<\/h1>/i, replaceTagsAndSpaces, parseBalance);
+        getParam(info, result, 'partner_available', /Доступно для вывода:([\s\S]*?)(?:<\/font>|<br)/i, replaceTagsAndSpaces, parseBalance);
+    }
+
+    if(AnyBalance.isAvailable('licschet')){
+        info = AnyBalance.requestGet(baseurl + 'index/home_page_settings');
+        getParam(info, result, 'licschet', /Номер моего лицевого счета([\s\S]*?)(?:<\/dd>|<a)/i, replaceTagsAndSpaces);
+    }
 	
 	AnyBalance.setResult(result);
 }

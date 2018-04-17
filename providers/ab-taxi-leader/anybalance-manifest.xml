@@ -7,7 +7,7 @@
 	<p>Предоставляет информацию о балансе из личного кабинета Такси Лидер http://taxi-leader.ru/</p>
 	<p>Информация берется из двух личных кабинетов, если вход в http://taxi-leader.ru/enter.html не удался, будет отправлен запрос на http://sterl.rutaxi.ru/enter.html</p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

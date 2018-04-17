@@ -21,7 +21,7 @@
 		dialogMessage="Введите пароль, используемый для входа в личный кабинет."
 		inputType="textPassword">
 	</EditTextPreference>
-	<EditTextPreference
+	<!--<EditTextPreference
 		title="Номер контракта"
 		key="account"
 		summary="||{@s}"
@@ -30,5 +30,5 @@
 		positiveButtonText="ОК"
 		negativeButtonText="Отмена"
 		dialogMessage="Введите номер контракта по которому необходимо получать данные, либо оставьте поле пустым, для получения данных по первому контракту.">
-	</EditTextPreference>	
+	</EditTextPreference>	-->
 </PreferenceScreen>

@@ -12,7 +12,7 @@
 	<p>3. Номер телефона и полученный пароль введите в настройках этого провайдера.</p>
 	]]></instruction>
 	<author>Alexander Knyazhev &lt;knyazhev.am@softinvent.ru&gt;</author>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

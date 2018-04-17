@@ -1,4 +1,25 @@
 ﻿<?xml version="1.0" encoding="utf-8"?><history>
+	<change version="15" date="2017-03-20">
+	- Поддержка изменений на сайте.
+	</change>
+	<change version="14" date="2017-03-20">
+	- поддержка нового ЛК
+	</change>
+	<change version="13" date="2016-08-17">
+	- Поддержка изменений на сайте.
+	</change>
+	<change version="12" date="2016-05-17">
+	- Улучшена обработка ошибок.
+	</change>
+	<change version="11" date="2015-12-02">
+	- Поддержка изменений на сайте.
+	</change>
+	<change version="10" date="2015-11-25">
+	Задолженность показывается с минусом
+	</change>
+	<change version="9" date="2015-11-25">
+	- Поддержка изменений на сайте.
+	</change>
 	<change version="8" date="2015-04-02">
 	- Добавлен вход по имени пользователя и паролю
 	</change>

@@ -23,41 +23,46 @@ function main() {
 	
 	if(!html || AnyBalance.getLastStatusCode() > 400)
 		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
-	
-    var form_key = getParam(html, null, null, /ajax_key["'].value=["']([\s\S]*?)"/i, replaceTagsAndSpaces, html_entity_decode);
+
+   	html = AnyBalance.requestGet(baseurl + 'fancyajax/authForm.php?FORM=Y&BACKURI=%2F&FANCYAJAX=Y&_=' + (+new Date()));
+   	var form = getElement(html, /<form/i);
+
+	var params = AB.createFormParams(form, function(params, str, name, value) {
+		if (name == 'USER_LOGIN') {
+			return prefs.login;
+		} else if (name == 'USER_PASSWORD') {
+			return prefs.password;
+		}
+
+		return value;
+	});
+
+	html = requestPostMultipart(baseurl + 'fancyajax/authForm.php?login=yes', params, addHeaders({Referer: baseurl}));
     
-	html = AnyBalance.requestPost(baseurl + 'ajax/ajax_auth_form.php', {
-		'USER_LOGIN': prefs.login,
-		'USER_PASSWORD': prefs.password,
-        'undefined':'Войти',
-        'AUTH_FORM':'Y',
-        'TYPE':'AUTH',
-		'ajax_key': form_key
-	}, addHeaders({Referer: baseurl}));
-	
-    
-	if (!/"type":"ok"/i.test(html)) {
-        var json = getJson(html);
-		var error = json.message;
+	if (!/Подождите секундочку/i.test(html)) {
+		var error = getElement(html, /<div[^>]+error_msg/i, replaceTagsAndSpaces);
 		if (error)
-			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
+			throw new AnyBalance.Error(error, null, /парол/i.test(error));
 		
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
 	
-    html = AnyBalance.requestGet(baseurl + 'personal/bonus_discount/', g_headers);
+    html = AnyBalance.requestGet(baseurl + 'personal/', g_headers);
     
 	var result = {success: true};
 	
-	getParam(html, result, 'account', /(?:input-certificate" value="){1}([\s\S]*?)"/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'personal_discount', /Персональная продукция:(?:[^>]*>){3}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'prof_discount', /Профессиональная продукция:(?:[^>]*>){3}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'name', /\/personal\/(?:[^>]*>){1}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'bonus', /Бонусов:(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'next_discount_percent', /До следующей cкидки(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'next_discount_sum', /До следующей cкидки(?:[^>]*>){7}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'balance', /Баланс(?:[^>]*>){1}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'account', /<div[^>]+client_card_num[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+
+	var joinSpace = create_aggregate_join(' ');
+	
+	sumParam(html, result, 'name', /<div[^>]+label[^>]*>\s*Имя[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, null, joinSpace);
+	sumParam(html, result, 'name', /<div[^>]+label[^>]*>\s*Отчество[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, null, joinSpace);
+	sumParam(html, result, 'name', /<div[^>]+label[^>]*>\s*Фамилия[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, null, joinSpace);
+
+	getParam(html, result, 'balance', /Накопленная сумма на карте:([\s\S]*?)<\/li>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'bonus', /Доступная накопленная сумма баллов:([\s\S]*?)<\/li>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'last_buy', /Дата последней покупки: ([\s\S]*?)<\/li>/i, replaceTagsAndSpaces, parseDate);
 	
 	AnyBalance.setResult(result);
 }

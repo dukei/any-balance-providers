@@ -24,20 +24,29 @@ function main(){
     }, addHeaders({Referer: baseurl})); 
 	
     if(!/\/Logout/i.test(html)){
-        var error = getParam(html, null, null, /class="error-alert-message">([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
+        var error = getParam(html, null, null, /class="error-alert-message">([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
         if(error)
-            throw new AnyBalance.Error(error);
+            throw new AnyBalance.Error(error, null, /парол/i.test(error));
         throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
     }
 
     var result = {success: true};
 	
-    getParam(html, result, 'balance', [/Текущий баланс[\s\S]*?<td>([\s\S]*?)<\/td>/i, /"user-balance"(?:[^>]*>){1}([^<]*)/i], replaceTagsAndSpaces, parseBalance);
-	// getParam(html, result, '__tariff', /customer_plan_value[\s\S]*?<td>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-	
-	var days = getParam(html, null, null, /Дней осталось:(?:[^>]*>){3}(\d+)/i, replaceTagsAndSpaces, parseBalance);
-	if(isset(days)) {
-		getParam(new Date().getTime() + (days*86400*1000), result, 'deadline');
+	if(/vds/i.test(AnyBalance.getLastUrl())){
+		AnyBalance.trace('Обнаружена услуга vds');
+
+        getParam(html, result, 'balance', /<span[^>]+js-account-balance[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+
+        var servers = getJsonObject(html, /'ServersService'\)\.setData\(/);
+		getParam(servers[0].name, result, '__tariff');
+	}else{
+		AnyBalance.trace('Обнаружена услуга shared hosting');
+
+        getParam(html, result, 'balance', /Ваш баланс:([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+		getParam(html, result, '__tariff', /Тариф:([\s\S]*?)<\/h3>/i, replaceTagsAndSpaces);
+		
+		getParam(html, result, 'daysleft', /Дней осталось:([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+		getParam(html, result, 'deadline', /Дней осталось:(?:[\s\S](?!<\/div>))*?до([^<]*)/i, replaceTagsAndSpaces, parseDateWord);
 	}
     AnyBalance.setResult(result);
 }

@@ -17,35 +17,30 @@ function main() {
 	// Сначала ищем город
 	checkEmpty(prefs.city, 'Please, enter the city in settings!');
 	
-	var html = AnyBalance.requestGet('http://sugg.us.search.yahoo.net/gossip-gl-location/?appid=weather&output=sd1&p2=cn,t,pt,z&callback=YUI.Env.JSONP.yui_3_9_1_1_1380964963051_1216&lc=en-US&p1=26.24441909790039,50.61938858032227&command=' + encodeURIComponent(prefs.city), g_headers);
-
-	var woeid = getParam(html, null, null, /woeid=(\d+)/i);
-	checkEmpty(woeid, 'Cant find city ID! Please, check the city in settings ('+prefs.city+')', true);
-	
-	html = AnyBalance.requestGet(baseurlRssAPI+'forecastrss?w='+woeid + (prefs.Degree_units ? '&u='+prefs.Degree_units : ''), g_headers);
-	
-	if(/<title>Yahoo! Weather - Error/i.test(html)) {
-		var error = getParam(html, null, null, /<title>Yahoo! Weather - Error(?:[\s\S]*?<title>)([\s\S]*?)<\/description>/i, replaceTagsAndSpaces, html_entity_decode);
-		if(error)
-			throw new AnyBalance.Error(error);
-		throw new AnyBalance.Error('Error, cant find weather for city '+prefs.city);
+	var html = AnyBalance.requestGet("https://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20weather.forecast%20where%20woeid%20in%20(select%20woeid%20from%20geo.places(1)%20where%20text%3D%22" + encodeURIComponent(prefs.city) + "%22)%20and%20u%3D%22" + encodeURIComponent(prefs.Degree_units || 'f') + "%22&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys&&diagnostics=true", g_headers);
+	var json = getJson(html);
+	if(json.query.count <= 0){
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('The wheather forecast is not found for specified location: ' + prefs.city);
 	}
-	
-    var result = {success: true};
-	
-	getParam(html, result, 'current_temp', /<yweather:condition[^>]*temp="([^"]*)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'current_text', /<yweather:condition[^>]*text="([^"]*)/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'current_pressure', /<yweather:atmosphere[^>]*pressure="([^"]*)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'current_humidity', /<yweather:atmosphere[^>]*humidity="([^"]*)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'sunrise', /<yweather:astronomy[^>]*sunrise="([^"]*)/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'sunset', /<yweather:astronomy[^>]*sunset="([^"]*)/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'wind', /<yweather:wind[^>]*speed="([^"]*)/i, replaceTagsAndSpaces, parseBalance);
 
-	result.degrees_units = (prefs.Degree_units == 'c' ? 'C°' : 'F°');
+    var result = {success: true};
+
+    var data = json.query.results.channel;
 	
-	result.pressure_units = getParam(html, null, null, /<yweather:units[^>]*pressure="([^"]*)/i); 
-	result.wind_units = getParam(html, null, null, /<yweather:units[^>]*speed="([^"]*)/i);
-	result.__tariff = getParam(html, null, null, /<yweather:location[^>]*city="([^"]*)/i) + ', ' + getParam(html, null, null, /<yweather:location[^>]*country="([^"]*)/i)
+	getParam(data.item.condition.temp, result, 'current_temp', null, replaceTagsAndSpaces, parseBalance);
+	getParam(data.item.condition.text, result, 'current_text');
+	getParam(data.atmosphere.pressure, result, 'current_pressure', null, replaceTagsAndSpaces, parseBalance);
+	getParam(data.atmosphere.humidity, result, 'current_humidity', null, replaceTagsAndSpaces, parseBalance);
+	getParam(data.astronomy.sunrise, result, 'sunrise', null, replaceTagsAndSpaces, html_entity_decode);
+	getParam(data.astronomy.sunset, result, 'sunset', null, replaceTagsAndSpaces, html_entity_decode);
+	getParam(data.wind.speed, result, 'wind', null, replaceTagsAndSpaces, parseBalance);
+
+	result.degrees_units = (prefs.Degree_units == 'c' ? '°C' : '°F');
+	
+	result.pressure_units = data.units.pressure; 
+	result.wind_units = data.units.speed;
+	result.__tariff = data.location.city + ', ' + data.location.country;
 	
     AnyBalance.setResult(result);
 }

@@ -1,25 +1,29 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-cell-teletai</id>
+	<id version="7">ab-cell-teletai</id>
 	<api flags="no_browser|captcha"/>
 	<name>Teletai</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе провайдера Teletai <a href="http://www.teletie.ru/">http://www.teletie.ru/</a></p>
-	<p>Информация берется из личного кабинета <a href="http://lk.teletie.ru/login">http://lk.teletie.ru/login</a></p>
+	<p>Предоставляет информацию о балансе провайдера Teletai http://www.teletie.ru/</p>
+	<p>Информация берется из личного кабинета https://lka.teletie.ru/login/</a></p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
 	<counters>
 		<counter id="balance" name="Баланс" units=" р"/>
-		<counter id="balance2" name="Расходы по номеру за текущий период" units=" р"/>
 		<counter id="status" name="Статус" type="text"/>
 		<counter id="phone" name="Телефон" type="text"/>
+		<counter id="rest_local" name="Вызовы" units=" мин"/>
+		<counter id="rest_sms" name="SMS/MMS" units=" шт"/>
+		<counter id="rest_internet" name="Интернет" units=" Мб"/>
 	</counters>
 	<keywords></keywords>
 	<type>cell</type>

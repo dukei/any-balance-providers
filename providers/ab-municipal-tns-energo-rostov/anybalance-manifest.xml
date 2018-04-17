@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-municipal-tns-energo-rostov</id>
+	<api flags="no_browser"/>
+	<name>ТНС Энерго (Ростов-на-Дону)</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера ТНС Энерго (Ростов-на-Дону) <a href="https://rostov.tns-e.ru/population/">https://rostov.tns-e.ru/population/</a></p>
+	<p>Информация берется из личного кабинета <a href="https://lk.rostov.tns-e.ru/index.php">https://lk.rostov.tns-e.ru/index.php</a></p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="adress" name="Адрес" type="text"/>
+		<counter id="people" name="Число прописанных" type="text"/>
+		<counter id="indication" name="Последне показание"/>
+		<counter id="consumption" name="Расход"/>
+	</counters>
+	<keywords></keywords>
+	<type>municipal</type>
+	<country>ru</country>
+</provider>

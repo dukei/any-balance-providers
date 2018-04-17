@@ -12,46 +12,55 @@ var g_headers = {
 
 function main(){
     var prefs = AnyBalance.getPreferences();
-	checkEmpty(prefs.login, 'Введите логин!');
-	checkEmpty(prefs.password, 'Введите пароль!');
+    AB.checkEmpty(prefs.login, 'Введите логин!');
+    AB.checkEmpty(prefs.password, 'Введите пароль!');
 	
-    var baseurl = "http://www.belorusneft.by/";
+    var baseurl = "https://ssl.belorusneft.by/";
     AnyBalance.setDefaultCharset('utf-8'); 
 	
 	//Пароль в SHA-1
 	var pass = prefs.password;
 	var key = prefs.login;
     
-    pass = rstr2hex(rstr_hmac_sha1(pass, key));
+    var passHash = rstr2hex(rstr_hmac_sha1(pass, key)) + prefs.login;
 	
-	AnyBalance.requestGet(baseurl + 'lprogram/index.jsp', g_headers);
+	AnyBalance.requestGet(baseurl + 'lprogram/index.html', g_headers);
 	
-	var html = AnyBalance.requestPost(baseurl + 'lprogram/login', {
-        loginName:prefs.login,
-		loginPwd:'',
-        passHesh:pass,
-    }, addHeaders({Referer: baseurl + 'lprogram/index.jsp', Origin:baseurl})); 
+	var html = AnyBalance.requestPost(baseurl + 'lprogram/login-url', {
+        loginName: prefs.login,
+		txtPassword: pass,
+        passHesh: passHash
+    }, AB.addHeaders({Referer: baseurl + 'lprogram/index.html', Origin:baseurl}));
 	
     if(!/lprogram\/logout/i.test(html)){
-        var error = getParam(html, null, null, /id="login_error"[^>]*>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
-		if (error && /Данной комбинации логина и пароля не существует/i.test(error))
-			throw new AnyBalance.Error(error, null, true);		
-        if(error)
-            throw new AnyBalance.Error(error);
+        var error = AB.getParam(html, null, null, /id="login_error"[^>]*>((?:[^>]*>){3})/i, AB.replaceTagsAndSpaces);
+		if (error) {
+            throw new AnyBalance.Error("Неверный логин или пароль", null, true);
+        }
 		
 		AnyBalance.trace(html);
         throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
     }
 	
     var result = {success: true};
-	
-    getParam(html, result, 'fio', /Здравствуйте,[^>]*>([^\(<]*)/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'balance', /НА ВАШЕМ СЧЕТУ(?:[^>]*>){4}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'discount', /РАЗМЕР ВАШЕЙ СКИДКИ(?:[^>]*>){6}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'card_num', /№ карты([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, '__tariff', /№ карты([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'discount_next', /СЛЕДУЮЩЕЙ СКИДКИ(?:[^>]*>){4}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'discount_bal_next', /СЛЕДУЮЩЕЙ СКИДКИ(?:[^>]*>){15}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
-	
+
+    AB.getParam(html, result, 'fio',      /<li[^>]+fio_cabinet[^>]*>([\s\S]*?)<\/li>/i, [/Личный кабинет/i, '', AB.replaceTagsAndSpaces]);
+    AB.getParam(html, result, 'status',   /<span[^>]+info_label[^>]*>Статус[\s\S]*?<span[^>]+info_value[^>]*>([\s\S]*?)<\/span>/i, AB.replaceTagsAndSpaces);
+    AB.getParam(html, result, 'products', /<span[^>]+info_label[^>]*>Сопут. товары[\s\S]*?<span[^>]+info_value[^>]*>([\s\S]*?)<\/span>/i, AB.replaceTagsAndSpaces, AB.parseBalance);
+    AB.getParam(html, result, 'chance_1', /<span[^>]+info_label[^>]*>Шансы приз 1[\s\S]*?<span[^>]+info_value[^>]*>([\s\S]*?)<\/span>/i, AB.replaceTagsAndSpaces, AB.parseBalance);
+    AB.getParam(html, result, 'chance_2', /<span[^>]+info_label[^>]*>Шансы приз 2[\s\S]*?<span[^>]+info_value[^>]*>([\s\S]*?)<\/span>/i, AB.replaceTagsAndSpaces, AB.parseBalance);
+    AB.getParam(html, result, 'balance',  /<span[^>]+info_label[^>]*>Баллы[\s\S]*?<span[^>]+info_value[^>]*>([\s\S]*?)<\/span>/i, AB.replaceTagsAndSpaces, AB.parseBalance);
+    AB.getParam(html, result, 'card_num', /<span[^>]+info_label[^>]*>Карта №[\s\S]*?<span[^>]+info_value[^>]*>([\s\S]*?)<\/span>/i, AB.replaceTagsAndSpaces);
+    AB.getParam(html, result, '__tariff', /<span[^>]+info_label[^>]*>Карта №[\s\S]*?<span[^>]+info_value[^>]*>([\s\S]*?)<\/span>/i, AB.replaceTagsAndSpaces);
+/*
+    if(isAvailable(['discount', 'discount_sum'])) {
+      html = AnyBalance.requestGet(baseurl + 'lprogram/cabinet/bonus.jsp', g_headers);
+
+      AB.getParam(html, result, 'discount',     /Размер скидки(?:[\s\S]*?<td[^>]*>){6}([\s\S]*?)<\/td>/i,                AB.replaceTagsAndSpaces, AB.parseBalance);
+      AB.getParam(html, result, 'discount_sum', /Сумма предоставленной скидки(?:[\s\S]*?<td[^>]*>){6}([\s\S]*?)<\/td>/i, AB.replaceTagsAndSpaces, AB.parseBalance);
+
+    }
+  */
+    //AB.getParam(html, result, 'discount', /скидка на топливо([^>]+>){3}/i, AB.replaceTagsAndSpaces, AB.parseBalance);
     AnyBalance.setResult(result);
 }

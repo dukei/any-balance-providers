@@ -20,69 +20,117 @@ function main() {
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 
-	var html = AnyBalance.requestGet(baseurl + 'lk/login.jsp', g_headers);
+	var html = AnyBalance.requestGet(baseurl + 'lk/login', g_headers);
 	
-	html = AnyBalance.requestPost(baseurl + 'lk/j_spring_security_check', {
+	html = AnyBalance.requestPost(baseurl + 'j_spring_security_check', {
 		j_username: prefs.login,
-		j_password: prefs.password,
-		'_spring_security_remember_me': 'on'
+		j_password: prefs.password
 	}, addHeaders({Referer: baseurl + 'lk/login.jsp'}));
 
 	if (!/logout/i.test(html)) {
-		var error = getParam(html, null, null, /<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
-		if (error) throw new AnyBalance.Error(error);
+		var error = getParam(html, null, null, /<div[^>]+alert-error[^>]*>([\s\S]*?)(?:<\/div>|<\/strong)/i, replaceTagsAndSpaces, html_entity_decode);
+		if (error) throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
 	var dt = new Date();
 	var year = dt.getFullYear();
-	var p = {'year': year+''};
 	var result = {success: true};
-	
-	if(isAvailable(['balance', 'date'])) {
-		html = AnyBalance.requestPost(baseurl + 'lk/payment/getDataByYear', JSON.stringify(p), addHeaders( {
-			Referer: baseurl + 'lk/payment',
-			Accept:'*/*',
-			'X-Requested-With':'XMLHttpRequest',		
-		}));
-		
-		var paymentsJson = getJson(html);
-		var lastPayment = paymentsJson[paymentsJson.length-1];
-		
-		getParam(lastPayment.totalAmount+'', result, 'balance', null, replaceTagsAndSpaces, parseBalance);
-		getParam(lastPayment.date+'', result, 'date', null, replaceTagsAndSpaces, parseBalance);
-	}
 
 	if(isAvailable(['balance', 'date'])) {
-		html = AnyBalance.requestPost(baseurl + 'lk/history/getDataByYear', JSON.stringify(p), addHeaders( {
-			Referer: baseurl + 'lk/payment',
+		for(i=0; i<2; ++i){
+			html = AnyBalance.requestGet(baseurl + 'payment/part/dataByYear/' + (year-i), addHeaders( {
+				Referer: baseurl + 'payment',
+				Accept:'*/*',
+				'X-Requested-With':'XMLHttpRequest',		
+			}));
+		    
+			var trsBal = getElements(html, [/<tr/ig, /Начислено за/i]);
+
+			if(!trsBal.length)
+				continue;
+			
+			getParam(trsBal[trsBal.length-1], result, 'balance', /(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+			getParam(trsBal[trsBal.length-1], result, 'date', /(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
+			break;
+		}
+	}
+
+	if(isAvailable(['facilityGroup', 'serialNumber', 'usluga_balance'])) {
+		html = AnyBalance.requestGet(baseurl + 'history/part/dataByYear/' + year, addHeaders( {
+			Referer: baseurl + 'history',
 			Accept:'*/*',
 			'X-Requested-With':'XMLHttpRequest',		
 		}));		
-		
-		var historyJson = getJson(html);
-		
-		var m = dt.getMonth();
-		
-		for(i = 0; i < historyJson.length; i++) {
-			var curr = historyJson[i];
-			
-			if(prefs.usluga) {
-				if(prefs.usluga == curr.facilityGroup) {
-					parseElectricity(curr, result, m);
-					break;
+
+
+        var colsDef = {
+			sn: {
+				re: /Серийный /i,
+				result_func: null //Текст
+			},
+			service: {
+                re: /Услуга/i,
+				result_func: null //Текст
+            },
+			m0: {
+                re: /Январь/i,
+            },
+			m1: {
+                re: /Февраль/i,
+            },
+			m2: {
+                re: /Март/i,
+            },
+			m3: {
+                re: /Апрель/i,
+            },
+			m4: {
+                re: /Май/i,
+            },
+			m5: {
+                re: /Июнь/i,
+            },
+			m6: {
+                re: /Июль/i,
+            },
+			m7: {
+                re: /Август/i,
+            },
+			m8: {
+                re: /Сентябрь/i,
+            },
+			m9: {
+                re: /Октябрь/i,
+            },
+			m10: {
+                re: /Ноябрь/i,
+            },
+			m11: {
+                re: /Декабрь/i,
+            },
+	 	};
+	    
+	    var counters = [];
+		processTable(html, counters, '__', colsDef);
+
+		for(var i=0; i<counters.length; ++i){
+			var curr = counters[i];
+			AnyBalance.trace('Найдены показания по услуге: ' + curr.service);
+			if(!prefs.usluga || curr.__service == prefs.usluga){
+				getParam(curr.__service, result, 'facilityGroup');
+				getParam(curr.__sn, result, 'serialNumber');
+				for(var m=11; m>=0; --m){
+					if(isset(curr['__m'+m])){
+						AnyBalance.trace('Найдены показания за месяц: ' + (m+1));
+						getParam(curr['__m'+m], result, 'serialNumber');
+						break;
+					}
 				}
-			} else {
-				parseElectricity(curr, result, m);
 				break;
 			}
 		}
-	}	
+	}
 	
 	AnyBalance.setResult(result);
 }
 
-function parseElectricity(curr, result, m) {
-	getParam(curr.facilityGroup+'', result, 'facilityGroup', null, replaceTagsAndSpaces);
-	getParam(curr.serialNumber+'', result, 'serialNumber', null, replaceTagsAndSpaces);
-	getParam(curr[monthsArray[m-1]+'Readings']+'', result, 'usluga_balance', null, replaceTagsAndSpaces, parseBalance);
-}

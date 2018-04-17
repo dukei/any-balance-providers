@@ -7,7 +7,7 @@
 	<p>Предоставляет информацию о балансе провайдера BALTBET <a href="http://www.baltplay.com/">http://www.baltplay.com/</a></p>
 	<p>Информация берется из личного кабинета</p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

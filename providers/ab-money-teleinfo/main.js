@@ -134,6 +134,7 @@ function main(){
 		result = adapter.convert(result);
 
 	}else if(prefs.type == 'dep'){
+		throw new AnyBalance.Error('Депозиты временно не поддерживаются. Пожалуйста, обратитесь к разработчикам.');
 
 		adapter.processDeposits(result);
 		if(!adapter.wasProcessed('deposits'))
@@ -141,6 +142,7 @@ function main(){
 		result = adapter.convert(result);
 
 	}else if(prefs.type == 'crd'){
+		throw new AnyBalance.Error('Кредиты временно не поддерживаются. Пожалуйста, обратитесь к разработчикам.');
 
 		adapter.processCredits(result);
 		if(!adapter.wasProcessed('credits'))

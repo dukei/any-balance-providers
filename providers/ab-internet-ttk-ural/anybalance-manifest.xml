@@ -1,18 +1,22 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-internet-ttk-ural</id>
+	<api flags="no_browser"/>
+  <id version="2">ab-internet-ttk-ural</id>
   <name>ТТК-Урал</name>
-  <description>
+  <description html="true"><![CDATA[
+	<b>ВНИМАНИЕ! Личный кабинет переехал на https://lk.ttk.ru/. Используйте провайдер ТТК (Единый кабинет)</b> 
+    
     Получает баланс и информацию о тарифном плане для интернет-провайдера Транстелеком - Урал (https://www.uralttk.ru).
 
     Информация берется из личного кабинета https://www.uralttk.ru/billing.
-  </description>
+  ]]></description>
   <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
     <js>library.js</js>
     <js>main.js</js>
+  	<history>history.xml</history>
   </files>
   <counters>
     <counter id="balance" name="Баланс" units="р"/>

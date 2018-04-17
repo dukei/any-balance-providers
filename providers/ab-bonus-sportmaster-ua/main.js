@@ -22,17 +22,24 @@ function main(){
     checkEmpty(prefs.type, 'Выберите тип карты');
 
     AnyBalance.trace('Пароль не введен - получаем данные по номеру карты');
-
     var baseurl = "http://www.sportmaster.ua/";
+
+    var html = AnyBalance.requestGet(baseurl + '?module=clubpro&action=CheckSession', addHeaders({
+    	Referer: baseurl + 'ru/'
+    }));
+    var json = getJson(html);
+
     var types = {
         '600': 'Синяя карта',
         '601': 'Серебряная карта',
         '602': 'Золотая карта',
     };
-    var json;
 
-    var img = AnyBalance.requestGet(baseurl + "/kcaptcha/?" + Math.random());
-    var code = AnyBalance.retrieveCode('Пожалуйста, введите код с картинки', img);
+	var code = '';
+    if(json.need_captcha){
+		var img = AnyBalance.requestGet(baseurl + "/kcaptcha/?" + Math.random());
+		code = AnyBalance.retrieveCode('Пожалуйста, введите код с картинки', img);
+	}
     
     for(var type in types){
         if(types[prefs.type] && type != prefs.type)
@@ -42,7 +49,9 @@ function main(){
             card_number:prefs.login,
             card_type:type,
             captcha_text:code
-        }, g_headers);
+        }, addHeaders({
+    		Referer: baseurl + 'ru/'
+        }));
 		
 		json = getJson(html);
 
@@ -60,12 +69,17 @@ function main(){
     if(AnyBalance.isAvailable('cardnum'))
         result.cardnum = prefs.login;
 		
-    getParam(json.data.client_level.CurLevelSumma, result, 'balance', null, null, parseBalance);
-    for(var i=0; i<json.data.bonus_amount_list.BonusAmount.length; ++i){
-        var ba = json.data.bonus_amount_list.BonusAmount[i];
+	sumParam(0, result, 'balance', null, null, null, aggregate_sum);
+
+    for(var i=0; i<json.data.agg_bonus_amount_list.BonusAmount.length; ++i){
+        var ba = json.data.agg_bonus_amount_list.BonusAmount[i];
+        if(!ba)
+        	continue;
     	if(ba.BonusType == 3){
     		sumParam(ba.Amount, result, 'bonus3', null, null, null, aggregate_sum);
     		sumParam(ba.DatEnd, result, 'bonus3till', null, null, parseDateISO, aggregate_min);
+    	}else if(ba.BonusType == 1){
+    		sumParam(ba.Amount, result, 'balance', null, null, null, aggregate_sum);
     	}else{
     		AnyBalance.trace('Unknown bonus type: ' + JSON.stringify(ba));
     	}

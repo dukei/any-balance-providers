@@ -80,22 +80,27 @@ function main() {
 
 	var result = {success: true};
 
-	html = AnyBalance.requestGet(baseurl + '/market/personal/personal.zul', g_headers);
+	html = AnyBalance.requestGet(baseurl + '/customerarea/personal/personal.zul', g_headers);
 
 	getParam(html, result, 'licschet', /Лицевой счет:([^']*)/i, [replaceSlashes, replaceTagsAndSpaces]);
 	getParam(html, result, 'address', /userAddressLabel[^}]*value:'([^']*)/i, [replaceSlashes, replaceTagsAndSpaces]);
 	getParam(html, result, 'fio', /userFIOLabel[^}]*value:'([^']*)/i, [replaceSlashes, replaceTagsAndSpaces]);
 	getParam(html, result, 'phone', /homePhoneLabel[^}]*value:'([^']*)/i, [replaceSlashes, replaceTagsAndSpaces]);
 
-	html = AnyBalance.requestGet(baseurl + '/market/personal/currentCharge.zul', g_headers);
+	html = AnyBalance.requestGet(baseurl + '/customerarea/personal/currentCharge.zul', g_headers);
 
-	getParam(html, result, 'period', /debtHeaderLabel[\s\S]*?[^}]*Задолженность на([^']*)/, [replaceSlashes, replaceTagsAndSpaces]);
-	getParam(html, result, '__tariff', /debtHeaderLabel[\s\S]*?[^}]*Задолженность на([^']*)/, [replaceSlashes, replaceTagsAndSpaces]);
-	getParam(html, result, 'balance_start', /debtHeaderLabel[\s\S]*?'zul.sel.Listcell'[^\]]*label:'([^']*)/, replaceSlashes, parseBalance);
-	getParam(html, result, 'cost', /debtHeaderLabel(?:[\s\S]*?'zul.sel.Listcell'[^\]]*){2}label:'([^']*)/, replaceSlashes, parseBalance);
-	getParam(html, result, 'paid', /debtHeaderLabel(?:[\s\S]*?'zul.sel.Listcell'[^\]]*){3}label:'([^']*)/, replaceSlashes, parseBalance);
-	getParam(html, result, 'balance', /debtHeaderLabel(?:[\s\S]*?'zul.sel.Listcell'[^\]]*){4}label:'([^']*)/, replaceSlashes, parseBalance);
-	getParam(html, result, 'peni', /debtHeaderLabel(?:[\s\S]*?'zul.sel.Listcell'[^\]]*){5}label:'([^']*)/, replaceSlashes, parseBalance);
+	function parseBalanceMinus(str){
+		var v = parseBalance(str);
+		return v && -v;
+	}
+
+	getParam(html, result, 'period', /recipientDebtHeaderLabel[\s\S]*?[^}]*Задолженность на([^']*)/, [replaceSlashes, replaceTagsAndSpaces]);
+	getParam(html, result, '__tariff', /recipientDebtHeaderLabel[\s\S]*?[^}]*Задолженность на([^']*)/, [replaceSlashes, replaceTagsAndSpaces]);
+	getParam(html, result, 'balance_start', /recipientDebtHeaderLabel[\s\S]*?'zul.sel.Listcell'[^\]]*label:'([^']*)/, replaceSlashes, parseBalanceMinus);
+	getParam(html, result, 'cost', /recipientDebtHeaderLabel(?:[\s\S]*?'zul.sel.Listcell'[^\]]*){2}label:'([^']*)/, replaceSlashes, parseBalance);
+	getParam(html, result, 'paid', /recipientDebtHeaderLabel(?:[\s\S]*?'zul.sel.Listcell'[^\]]*){3}label:'([^']*)/, replaceSlashes, parseBalance);
+	getParam(html, result, 'balance', /recipientDebtHeaderLabel(?:[\s\S]*?'zul.sel.Listcell'[^\]]*){4}label:'([^']*)/, replaceSlashes, parseBalanceMinus);
+	getParam(html, result, 'peni', /recipientDebtHeaderLabel(?:[\s\S]*?'zul.sel.Listcell'[^\]]*){5}label:'([^']*)/, replaceSlashes, parseBalance);
 	
 	AnyBalance.setResult(result);
 }

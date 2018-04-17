@@ -14,11 +14,24 @@ function main(){
     var prefs = AnyBalance.getPreferences();
     AnyBalance.setDefaultCharset('utf-8');    
 
-    var baseurl = 'http://www.zebratelecom.ru/services/';
- 	
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
-	
+
+	if(prefs.type == 'main'){
+		mainMain();
+	}else{
+		mainCard();
+	}
+
+}
+
+function mainCard(){
+    var prefs = AnyBalance.getPreferences();
+
+    AnyBalance.trace('Используем кабинет для владельцев карт');
+
+    var baseurl = 'https://www.zebratelecom.ru/services/';
+ 	
 	var html = AnyBalance.requestGet(baseurl + 'cabinet', g_headers);
 	
 	if(!html || AnyBalance.getLastStatusCode() > 400){
@@ -33,9 +46,9 @@ function main(){
 	}, addHeaders({Referer: baseurl + 'cabinet'}));
 	
 	if (!/exit\.php/i.test(html)) {
-		var error = getParam(html, null, null, /<p[^>]*style="color:\s*red;"[^>]*>([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, html_entity_decode);
+		var error = getParam(html, null, null, /<p[^>]*style="color:\s*red;"[^>]*>([\s\S]*?)<\/p>/i, replaceTagsAndSpaces);
 		if (error)
-			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
+			throw new AnyBalance.Error(error, null, /парол/i.test(error));
 		
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
@@ -48,6 +61,60 @@ function main(){
     getParam(html, result, 'userName', /Пользователь:([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
     getParam(html, result, 'licschet', /№ счета:([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
     getParam(html, result, '__tariff', /Пользователь:([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+		
+    AnyBalance.setResult(result);
+}
+
+function mainMain(){
+    var prefs = AnyBalance.getPreferences();
+
+    AnyBalance.trace('Используем основной кабинет');
+
+    var baseurl = 'https://cabinet.zebratelecom.ru/';
+ 	
+	var html = AnyBalance.requestGet(baseurl + 'intro/login', g_headers);
+	
+	if(!html || AnyBalance.getLastStatusCode() > 400){
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
+	}
+	
+	var form = AB.getElement(html, /<form[^>]+form-panel/i);
+	if(!form){
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удаётся найти форму входа! Сайт изменен?');
+	}
+
+	var params = AB.createFormParams(form, function(params, str, name, value) {
+		if (name == 'email') {
+			return prefs.login;
+		} else if (name == 'pass') {
+			return prefs.password;
+		}
+
+		return value;
+	});
+
+	html = AnyBalance.requestPost(baseurl + 'intro/login', params, addHeaders({Referer: baseurl + 'intro/login'}));
+	
+	if (!/exit/i.test(html)) {
+		var error = getElement(html, /<div[^>]+form-panel-status/i, replaceTagsAndSpaces);
+		if (error)
+			throw new AnyBalance.Error(error, null, /парол/i.test(error));
+		
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
+	}
+
+	html = AnyBalance.requestGet(baseurl + 'customer/accounts', addHeaders({Referer: AnyBalance.getLastUrl()}));
+	
+    var result = {success: true};
+
+    getParam(html, result, 'balance', /<div[^>]+class="sum"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, ['currency', 'balance'], /<div[^>]+class="sum"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseCurrency);
+    getParam(html, result, 'licschet', /<div[^>]+class="title"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+    getParam(html, result, 'userName', /<div[^>]+side-user__in[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+    getParam(html, result, '__tariff', /<div[^>]+side-user__in[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
 		
     AnyBalance.setResult(result);
 }

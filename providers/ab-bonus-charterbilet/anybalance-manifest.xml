@@ -1,16 +1,18 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="3">ab-bonus-charterbilet</id>
+	<id version="4">ab-bonus-charterbilet</id>
 	<api flags="no_browser"/>
 	<name>Charterbilet (Чартики)</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе из личного кабинета Charterbilet http://www.charterbilet.ru/priv/pay/pay_deposit_totals.php</p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>

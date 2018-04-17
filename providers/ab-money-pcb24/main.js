@@ -27,7 +27,7 @@ function main(){
     var sid = getParam(html, null, null, /&SID=([^']*)/);
     if(!sid){
 //    if(!/toolbar\/exit.gif/.test(html)){
-        var error = getParam(html, null, null, /<TD[^>]+ID="CLT"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+        var error = getParam(html, null, null, /<TD[^>]+ID="CLT"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
         if(error)
             throw new AnyBalance.Error(error);
         throw new AnyBalance.Error('Не удалось войти в систему. Сайт изменен?');
@@ -47,8 +47,10 @@ function fetchCard(sid, html, headers, baseurl){
 
     var re = new RegExp('(<tr[^>]*>(?:[\\s\\S](?!</tr>))*?<td[^>]+id="cardnum"[^>]*>[^<]*' + cardnum + '</td>[\\s\\S]*?</tr>)', 'i');
     var tr = getParam(html, null, null, re);
-    if(!tr)
+    if(!tr){
+    	AnyBalance.trace(html);
         throw new AnyBalance.Error('Не удаётся найти ' + (prefs.cardnum ? 'карту с последними цифрами ' + prefs.cardnum : 'ни одной карты'));
+    }
 
     var result = {success: true};
     getParam(tr, result, 'cardnum', /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);

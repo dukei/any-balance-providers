@@ -1,184 +1,147 @@
 ﻿/**
-Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
+ Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
+ */
 
-Получает текущий остаток и другие параметры карт банка Idea
+var g_countersTable = {
+    common: {
+        'fio': 'info.fio'
+    },
+    card: {
+        "balance": "cards.balance",
+        "currency": "cards.currency",
+        "__tariff": "cards.num",
+        "accname": "cards.name",
+        "status": "cards.status",
+        "till": "cards.till",
+        "type": "cards.type",
+        "sign": "cards.sign",
+        'cardholder': 'cards.cardholder',
+    },
+    acc: {
+        "balance": "accounts.balance",
+        "available": "accounts.availableBalance",
+        "currency": "accounts.currency",
+        "accname": "accounts.name",
+        "product": "accounts.product",
+        "__tariff": "accounts.num",
+    },
+    dep: {
+        "balance": "deposits.balance",
+        "balance_min": "deposits.balance_min",
+        "balance_max": "deposits.balance_max",
+        "profit": "deposits.profit",
+        "currency": "deposits.currency",
+        "pct": "deposits.pct",
+        "accnum": "deposits.num",
+        "till": "deposits.till",
+    }
+};
 
-Сайт оператора: http://ideabank.com.ua/
-Личный кабинет: https://online.ideabank.com.ua
-*/
-
-function getViewState(html){
-    return getParam(html, null, null, /name="__VSTATE".*?value="([^"]*)"/);
-}
-
-function getEventValidation(html){
-    return getParam(html, null, null, /name="__EVENTVALIDATION".*?value="([^"]*)"/);
-}
-
-var g_headers = {
-    'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.1 (KHTML, like Gecko) Chrome/21.0.1180.60 Safari/537.1'
-}
-
-
-function main(){
+function shouldProcess(counter, info){
     var prefs = AnyBalance.getPreferences();
-    if(prefs.accnum){
-        if(!prefs.type || prefs.type == 'acc'){
-            if(!/^\d{4,}$/.test(prefs.accnum))
-                throw new AnyBalance.Error("Введите не меньше 4 последних цифр номера счета или не вводите ничего, чтобы показать информацию по первому счету.");
-        }else if(!/^\d{2}$/.test(prefs.accnum)){
-            throw new AnyBalance.Error("Введите 2 цифры ID кредита или депозита или не вводите ничего, чтобы показать информацию по первому счету. ID кредита можно узнать, выбрав счетчик \"Сводка\".");
+
+    if(!info || (!info.__id || !info.__name))
+        return false;
+
+    switch(counter){
+        case 'cards':
+        {
+            if(prefs.type != 'card')
+                return false;
+            if(!prefs.num)
+                return true;
+
+            if(endsWith(info.num, prefs.num))
+                return true;
+
+            return false;
         }
+        case 'accounts':
+        {
+            if(prefs.type != 'acc')
+                return false;
+            if(!prefs.num)
+                return true;
+
+            if(endsWith(info.num, prefs.num))
+                return true;
+        }
+        case 'credits':
+        {
+            if(prefs.type != 'crd')
+                return false;
+            if(!prefs.num)
+                return true;
+
+            if(endsWith(info.num, prefs.num))
+                return true;
+        }
+        case 'deposits':
+        {
+            if(prefs.type != 'dep')
+                return false;
+            if(!prefs.num)
+                return true;
+
+            if(endsWith(info.num, prefs.num))
+                return true;
+        }
+        default:
+            return false;
     }
+}
 
-    var baseurl = prefs.login != '1' ? "https://online.ideabank.com.ua/" : "https://online.ideabank.com.ua:444/";
-    
-    var html = AnyBalance.requestGet(baseurl + 'Pages/LogOn.aspx', g_headers);
+function main() {
+    var prefs = AnyBalance.getPreferences();
 
-    var form = getParam(html, null, null, /<form[^>]+name="aspnetForm"[^>]*>([\s\S]*?)<\/form>/i);
-    if(!form)
-        throw new AnyBalance.Error('Не удалось найти форму входа. Сайт изменен?');
+    if(!/^(card|crd|dep|acc)$/i.test(prefs.type || ''))
+        prefs.type = 'card';
 
-    var params = createFormParams(form);
-    params.__EVENTTARGET = 'ctl00$body$ContentBody$wzLogin$btnLogin';
-    params.ctl00$body$ContentBody$wzLogin$tbLogin = prefs.login;
-    params.ctl00$body$ContentBody$wzLogin$tbPassword = prefs.password;
+    var adapter = new NAdapter(joinObjects(g_countersTable[prefs.type], g_countersTable.common), shouldProcess);
 
-    html = AnyBalance.requestPost(baseurl + 'Pages/Security/LogOn.aspx', params, g_headers);
+    adapter.processCards = adapter.envelope(processCards);
+    adapter.processAccounts = adapter.envelope(processAccounts);
+    adapter.processCredits = adapter.envelope(processCredits);
+    adapter.processDeposits = adapter.envelope(processDeposits);
+    adapter.processInfo = adapter.envelope(processInfo);
 
-    if(!/\$btnLogout/i.test(html)){
-        var error = getParam(html, null, null, /<div[^>]+id="ctl00_body_ContentBody_wzLogin_vlSummaryLogin"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
-        if(error)
-            throw new AnyBalance.Error(error);
-        throw new AnyBalance.Error("Не удалось зайти в интернет-банк. Сайт изменен?");
-    }
+    var html = login(prefs);
 
     var result = {success: true};
-    
-    //Сделаем сводку.
-    if(AnyBalance.isAvailable('all')){
-        var all = [];
-        //Сначала для счетов
-        var added = false;
-        html.replace(/<a[^>]+id="ctl00_ctl00_body_ContentBody_MainContent_ucAccountList_gvAccounts_ctl\d+_btnAccountName"[^>]*>([^<]*)<\/a>\s*<\/td>\s*<td[^>]*>([^<]*)/ig, function(str, name, id){
-            if(!added){ all[all.length] = 'Счета'; added = true; }
-            all[all.length] = getParam(name, null, null, null, replaceTagsAndSpaces) + ': ' + getParam(id, null, null, null, replaceTagsAndSpaces);
-            return str;
-        });
-        //Для депозитов
-        var added = false;
-        html.replace(/<a[^>]+id="ctl00_ctl00_body_ContentBody_MainContent_ucDepositList_gvDeposits_ctl(\d+)_btnName"[^>]*>([^<]*)/ig, function(str, id, name){
-            if(!added){ all[all.length] = 'Депозиты'; added = true; }
-            all[all.length] = getParam(name, null, null, null, replaceTagsAndSpaces) + ': ' + getParam(id, null, null, null, replaceTagsAndSpaces);
-            return str;
-        });
-        //Для кредитов
-        var added = false;
-        html.replace(/<a[^>]+id="ctl00_ctl00_body_ContentBody_MainContent_ucLoanList_gvLoans_ctl(\d+)_btnName"[^>]*>([^<]*)/ig, function(str, id, name){
-            if(!added){ all[all.length] = 'Кредиты'; added = true; }
-            all[all.length] = getParam(name, null, null, null, replaceTagsAndSpaces) + ': ' + getParam(id, null, null, null, replaceTagsAndSpaces);
-            return str;
-        });
-        if(all.length)
-            result.all = all.join('\n');
+
+    adapter.processInfo(html, result);
+
+    if(prefs.type == 'card') {
+        adapter.processCards(html, result);
+
+        if(!adapter.wasProcessed('cards'))
+            throw new AnyBalance.Error(prefs.num ? 'Не найдена карта с последними цифрами ' + prefs.num : 'У вас нет ни одной карты!');
+
+        result = adapter.convert(result);
+    } else if(prefs.type == 'acc') {
+        adapter.processAccounts(html, result);
+
+        if(!adapter.wasProcessed('accounts'))
+            throw new AnyBalance.Error(prefs.num ? 'Не найден счет с последними цифрами ' + prefs.num : 'У вас нет ни одного счета!');
+
+        result = adapter.convert(result);
+    } else if(prefs.type == 'crd') {
+        adapter.processCredits(html, result);
+
+        if(!adapter.wasProcessed('credits'))
+            throw new AnyBalance.Error(prefs.num ? 'Не найден кредит с последними цифрами ' + prefs.num : 'У вас нет ни одного кредита!');
+
+        result = adapter.convert(result);
+    } else if(prefs.type == 'dep') {
+        adapter.processDeposits(html, result);
+
+        if(!adapter.wasProcessed('deposits'))
+            throw new AnyBalance.Error(prefs.num ? 'Не найден депозит с последними цифрами ' + prefs.num : 'У вас нет ни одного депозита!');
+
+        result = adapter.convert(result);
     }
 
-    if(prefs.type == 'acc'){
-        fetchAcc(html, baseurl, result);
-    }else if(prefs.type == 'dep'){
-        fetchDep(html, baseurl, result);
-    }else if(prefs.type == 'crd'){
-        fetchCredit(html, baseurl, result);
-    }else{
-        fetchAcc(html, baseurl, result);
-    }
-}
-
-function fetchDetails(html, tr, baseurl){
-    var id = getParam(tr, null, null, /__doPostBack\s*\(\s*(?:'|&#39;)([^'&]*Name)(?:'|&#39;)/i);
-    var form = getParam(html, null, null, /<form[^>]+name="aspnetForm"[^>]*>([\s\S]*?)<\/form>/i);
-    if(id && form){
-        var params = createFormParams(form);
-        params.__EVENTTARGET = id;
-        delete params.ctl00$ctl00$body$ContentHorizontalMenu$ucHorizontalBar$btnDefault;
-        delete params.ctl00$ctl00$body$ContentMenu$btnAvatar;
-        html = AnyBalance.requestPost(baseurl + 'Pages/User/MainPage.aspx', params, addHeaders({Referer: baseurl + 'Pages/Security/LogOn.aspx'}));
-        return html;
-    }else{
-        AnyBalance.trace('Не удалось получить ссылку на подробные сведения о продукте');
-    }
-}
-
-function fetchAcc(html, baseurl, result){
-    var prefs = AnyBalance.getPreferences();
-    //Сколько цифр осталось, чтобы дополнить до 12
-    var accnum = prefs.accnum || '';
-    var accprefix = accnum.length;
-    accprefix = 12 - accprefix;
-
-    var re = new RegExp('(<tr[^>]*>(?:[\\s\\S](?!<\\/tr>))*?>\\s*#' + (accprefix > 0 ? '\\d{' + accprefix + ',}' : '') + accnum + '[\\s\\S]*?<\\/tr>)', 'i');
-    var tr = getParam(html, null, null, re);
-    if(!tr)
-        throw new AnyBalance.Error('Не удаётся найти ' + (accnum ? 'счет с последними цифрами ' + accnum : 'ни одного счета'));
-
-    getParam(tr, result, '__tariff', /(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)(?:<span[^>]+class="sortExpr"|<\/td>)/i, replaceTagsAndSpaces);
-    getParam(tr, result, 'accnum', /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)(?:<span[^>]+class="sortExpr"|<\/td>)/i, replaceTagsAndSpaces);
-    getParam(tr, result, 'accname', /(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)(?:<span[^>]+class="sortExpr"|<\/td>)/i, replaceTagsAndSpaces);
-    getParam(tr, result, 'balance', /(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)(?:<span[^>]+class="sortExpr"|<\/td>)/i, replaceTagsAndSpaces, parseBalance);
-    getParam(tr, result, 'available', /(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)(?:<span[^>]+class="sortExpr"|<\/td>)/i, replaceTagsAndSpaces, parseBalance);
-    getParam(tr, result, ['currency', 'balance', 'available', 'limit'], /(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
-
-    if(AnyBalance.isAvailable('limit', 'pay', 'pct')){
-        if(html = fetchDetails(html, tr, baseurl)){
-            getParam(html, result, 'limit', /(?:Лимит овердрафта|Ліміт овердрафту|Overdraft limit)[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-            getParam(html, result, 'pay', /(?:Сумма к оплате|Сума до оплати|Amount to pay)[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-            getParam(html, result, 'pct', /(?:Процентная ставка|Відсоткова ставка|Interest rate)[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-        }
-    }
-
-    AnyBalance.setResult(result);
-}
-
-function fetchDep(html, baseurl, result){
-    var prefs = AnyBalance.getPreferences();
-    var re = new RegExp('(<tr[^>]*>(?:[\\s\\S](?!<\\/tr>))*?<a[^>]+id="ctl00_ctl00_body_ContentBody_MainContent_ucDepositList_gvDeposits_ctl' + (prefs.accnum ? prefs.accnum : '\\d{2}') + '_btnName"[\\s\\S]*?<\\/tr>)', 'i');
-    var tr = getParam(html, null, null, re);
-    if(!tr)
-        throw new AnyBalance.Error('Не удаётся найти ' + (prefs.accnum ? 'депозит с ID ' + prefs.accnum : 'ни одного депозита'));
-
-    getParam(tr, result, '__tariff', /(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)(?:<span[^>]+class="sortExpr"|<\/td>)/i, replaceTagsAndSpaces);
-    getParam(tr, result, 'accname', /(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)(?:<span[^>]+class="sortExpr"|<\/td>)/i, replaceTagsAndSpaces);
-    getParam(tr, result, 'accnum', /ctl00_ctl00_body_ContentBody_MainContent_ucDepositList_gvDeposits_ctl(\d{2})_btnName/i, replaceTagsAndSpaces);
-    getParam(tr, result, 'pct', /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)(?:<span[^>]+class="sortExpr"|<\/td>)/i, replaceTagsAndSpaces, parseBalance);
-    getParam(tr, result, 'balance', /(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)(?:<span[^>]+class="sortExpr"|<\/td>)/i, replaceTagsAndSpaces, parseBalance);
-    getParam(tr, result, ['currency', 'balance'], /(?:[\s\S]*?<td[^>]*>){6}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
-    getParam(tr, result, 'till', /(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
-
-    AnyBalance.setResult(result);
-}
-
-function fetchCredit(html, baseurl, result){
-    var prefs = AnyBalance.getPreferences();
-    var re = new RegExp('(<tr[^>]*>(?:[\\s\\S](?!<\\/tr>))*?<a[^>]+id="ctl00_ctl00_body_ContentBody_MainContent_ucLoanList_gvLoans_ctl' + (prefs.accnum ? prefs.accnum : '\\d{2}') + '_btnName"[\\s\\S]*?<\\/tr>)', 'i');
-    var tr = getParam(html, null, null, re);
-    if(!tr)
-        throw new AnyBalance.Error('Не удаётся найти ' + (prefs.accnum ? 'кредит с ID ' + prefs.accnum : 'ни одного кредита'));
-
-    getParam(tr, result, '__tariff', /(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)(?:<span[^>]+class="sortExpr"|<\/td>)/i, replaceTagsAndSpaces);
-    getParam(tr, result, 'accname', /(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)(?:<span[^>]+class="sortExpr"|<\/td>)/i, replaceTagsAndSpaces);
-    getParam(tr, result, 'accnum', /ctl00_ctl00_body_ContentBody_MainContent_ucLoanList_gvLoans_ctl(\d{2})_btnName/i, replaceTagsAndSpaces);
-    getParam(tr, result, 'balance', /(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)(?:<span[^>]+class="sortExpr"|<\/td>)/i, replaceTagsAndSpaces, parseBalance);
-    getParam(tr, result, 'limit', /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)(?:<span[^>]+class="sortExpr"|<\/td>)/i, replaceTagsAndSpaces, parseBalance);
-    getParam(tr, result, ['currency', 'balance', 'pay', 'limit'], /(?:[\s\S]*?<td[^>]*>){6}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
-    getParam(tr, result, 'till', /(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)(?:<span[^>]+class="sortExpr"|<\/td>)/i, replaceTagsAndSpaces, parseDate);
-
-    if(AnyBalance.isAvailable('paytill', 'pay', 'pct')){
-        if(html = fetchDetails(html, tr, baseurl)){
-            getParam(html, result, 'paytill', /(?:Дата следующего погашения|Дата наступного погашення|Next repayment date)[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
-            getParam(html, result, 'pay', /(?:Сумма следующего погашения|Сума наступного погашення|Next repayment amount)[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-            getParam(html, result, 'pct', /(?:Процентная ставка|Відсоткова ставка|Interest rate)[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-        }
-    }
+    // getParam(html, result, 'bonuses', /МКБ Бонус\s*<span[^>]*>([\s\d]+)&nbsp;баллов/i, replaceTagsAndSpaces, parseBalance);
 
     AnyBalance.setResult(result);
 }

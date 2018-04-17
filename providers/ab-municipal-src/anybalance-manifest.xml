@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-municipal-src</id>
+	<api flags="no_browser"/>
+	<name>Саранский Расчётный Центр</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера Саранский Расчётный Центр <a href="http://www.irc-saransk.ru/">http://www.irc-saransk.ru/</a></p>
+	<p>Информация берется из личного кабинета <a href="http://lc.irc-saransk.ru/Account/LogOn">http://lc.irc-saransk.ru/Account/LogOn</a></p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="electricityMeterD" name="Показания электросчётчика (дневная зона)"/>
+		<counter id="electricityMeterN" name="Показания электросчётчика (ночная зона)"/>
+		<counter id="hvs" name="Показания ХВС"/>
+		<counter id="gvs" name="Показания ГВС"/>
+	</counters>
+	<keywords></keywords>
+	<type>municipal</type>
+	<country>ru</country>
+</provider>

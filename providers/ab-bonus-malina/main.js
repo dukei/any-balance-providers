@@ -7,12 +7,12 @@ var g_headers = {
 	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
 	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
 	'Connection': 'keep-alive',
-	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
+	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36',
 };
 
 function main () {
     var prefs = AnyBalance.getPreferences ();
-    var baseurl = 'http://malina.ru/';
+    var baseurl = 'https://malina.ru/';
 
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');	
@@ -26,23 +26,28 @@ function main () {
 		AnyBalance.trace('Пытаемся ввести капчу');
 		
 		var json = getJson(AnyBalance.requestGet(baseurl + 'captcha/refresh/?_=' + new Date().getTime(), addHeaders({'X-Requested-With': 'XMLHttpRequest'})));
-		AnyBalance.setOptions({forceCharset:'base64'});
-		var captcha = AnyBalance.requestGet(baseurl + 'captcha/image/' + json.key);
+		var captcha = AnyBalance.requestGet(joinUrl(baseurl, json.image_url), g_headers, {options: {forceCharset: 'base64'}});
 		captchaa = AnyBalance.retrieveCode("Пожалуйста, введите код с картинки", captcha);
-		AnyBalance.setOptions({forceCharset:'utf-8'});
 		AnyBalance.trace('Капча получена: ' + captchaa);
 	}else{
 		throw new AnyBalance.Error('Провайдер требует AnyBalance API v7, пожалуйста, обновите AnyBalance!');
 	}
 	
+	var token =getParam(html, /csrfmiddlewaretoken[^>]*value=["']([^"']+)["']/i, replaceHtmlEntities);
+
 	html = AnyBalance.requestPost(baseurl + 'msk/pp/login/', {
-    	'csrfmiddlewaretoken': getParam(html, null, null, /csrfmiddlewaretoken[^>]*value=["']([^"']+)["']/i),
+    	'csrfmiddlewaretoken': token,
     	'contact': prefs.login,
     	'password': prefs.password,
     	'next': '',
 		'captcha_0':json.key,
 		'captcha_1':captchaa
-    }, addHeaders({'X-Requested-With': 'XMLHttpRequest'}));
+    }, addHeaders({
+		'Accept': 'application/json, text/javascript, */*; q=0.01',
+    	'X-Requested-With': 'XMLHttpRequest',
+    	Referer: baseurl + 'msk/',
+    	'X-CSRFToken': token
+    }));
 	
 	var json = getJson(html);
 	
@@ -77,14 +82,14 @@ function main () {
 	
     var result = {success: true};
 	
-	getParam (html, result, 'balance', /"acc-points"(?:[^>]*>){2}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
-	getParam (html, result, 'accountNumber', /Номер счета(?:[^>]*>){2}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam (html, result, 'customer', /Владелец счета(?:[^>]*>){2}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam (html, result, 'status', /Статус счета(?:[^>]*>){2}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam (html, result, 'balance', /<div[^>]+acc-points[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+	getParam (html, result, 'accountNumber', /Номер счета(?:[^>]*>){2}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+	getParam (html, result, 'customer', /Владелец счета(?:[^>]*>){2}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+	getParam (html, result, 'status', /Статус счета(?:[^>]*>){2}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
 	getParam (html, result, 'availableForPay', /Доступно к обмену на товары и услуги(?:[^>]*>){2}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
 	
     // Накоплено основных баллов
-    //getParam (html, result, 'mainPoints', /<th[^>]*>Владелец счета[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+    //getParam (html, result, 'mainPoints', /<th[^>]*>Владелец счета[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
     // Накоплено EXPRESS-баллов
     //getParam (html, result, 'expressPoints', $table, 'tr:contains("EXPRESS") td', parseBalance);
     // Израсходовано баллов

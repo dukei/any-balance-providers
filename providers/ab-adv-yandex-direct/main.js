@@ -6,8 +6,10 @@ var g_headers = {
 	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
 	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
 	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
+	'Origin': "https://passport.yandex.ru",
+	'Cache-Control': 'max-age=0',
 	'Connection': 'keep-alive',
-	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
+	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36',
 };
 
 function getIdKey(html){
@@ -21,49 +23,20 @@ function main(){
 	
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
-	
+
 	if(prefs.cid && !/\d+/.test(prefs.cid))
         throw new AnyBalance.Error("Введите ID рекламной кампании, по которой вы хотите получить информацию. Он должен состоять только из цифр!");
 	
 	var baseurl = "https://passport.yandex.ru/passport?mode=auth";
+	var html = loginYandex(prefs.login, prefs.password);
 	
-	var html = AnyBalance.requestGet(baseurl, g_headers);
-	/*var idKey = getIdKey(html);
-    if(!idKey)
-        throw new AnyBalance.Error("Не удаётся найти ключ для входа в Яндекс. Процедура входа изменилась или проблемы на сайте.");*/
-	
-    var html = AnyBalance.requestPost(baseurl, {
-        //from:'passport',
-        //idkey:idKey,
-        //display:'page',
-        login:prefs.login,
-        passwd:prefs.password,
-		retpath:'',
-        //timestamp:new Date().getTime()
-    }, g_headers);
-	
-    var error = getParam(html, null, null, /b\-login\-error[^>]*>([\s\S]*?)<\/strong>/i, replaceTagsAndSpaces);
-    if(error)
-        throw new AnyBalance.Error(error);
-	
-    if(/Установить постоянную авторизацию на(?:\s|&nbsp;)+данном компьютере\?/i.test(html)){
-        //Яндекс задаёт дурацкие вопросы.
-        AnyBalance.trace("Яндекс спрашивает, нужно ли запоминать этот компьютер. Отвечаем, что нет... (idkey=" + getIdKey(html) + ")");
-        html = AnyBalance.requestPost("https://passport.yandex.ru/passport?mode=auth", {
-            filled:'yes',
-            timestamp:new Date().getTime(),
-            idkey:getIdKey(html), 
-            no:1
-        }, g_headers);
-    }
-	
-    var yandexuid = getParam(html, null, null, /passport\.yandex\.ru\/passport\?mode=logout&yu=(\d+)/);
+    var yandexuid = getParam(html, null, null, /mode=logout&[^<]*\byu=(\d+)/);
     if(!yandexuid)
         throw new AnyBalance.Error("Не удалось зайти. Проверьте логин и пароль.");
 	
     var result = {success: true};
 	
-    var jsonInfoStr = AnyBalance.requestGet('http://direct.yandex.ru/widget/export?yandexuid=' + yandexuid + '&cid=' + (prefs.cid || ''), g_headers);
+    var jsonInfoStr = AnyBalance.requestGet('https://direct.yandex.ru/widget/export?yandexuid=' + yandexuid + '&cid=' + (prefs.cid || ''), g_headers);
 	if(/Сервис временно недоступен/.test(jsonInfoStr))
 		throw new AnyBalance.Error("Яндекс сообщает: Сервис временно недоступен");
 	

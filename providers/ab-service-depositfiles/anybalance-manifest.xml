@@ -7,7 +7,7 @@
 	<p>Предоставляет информацию о балансе в системе Depositfiles <a href="http://www.dfiles.ru/">http://www.dfiles.ru/</a><</p>
     <p>Информация берется из личного кабинета <a href="http://df.halileo.com/auth/index/login">http://df.halileo.com/auth/index/login</a></p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

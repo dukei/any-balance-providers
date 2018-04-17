@@ -6,7 +6,7 @@
 	<description>
 Получает данные в системе денежных переводов Юнистрим http://unistream.ru/status/
 	</description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

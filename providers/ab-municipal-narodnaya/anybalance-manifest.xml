@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+    <api flags="no_browser"/>
+    <id version="2">ab-municipal-narodnaya</id>
+    <name>Управляющая компания "Народная"</name>
+    <description>
+        Предоставляет информацию о балансе в УК "Народная" (https://укнародная.рф)
+    </description>
+    <author>Владимир Пахомчик. &lt;v.pahomchik@gmail.com&gt;</author>
+    <depends>
+        <module id="library"/>
+    </depends>
+    <files>
+        <icon>icon.png</icon>
+        <preferences>preferences.xml</preferences>
+        <js>main.js</js>
+        <js>api:jquery.min.js</js>
+        <history>history.xml</history>
+    </files>
+    <counters>
+        <counter id="debt_end" name="Задолженность на конец периода" units=" р"/>
+        <counter id="debt_start" name="Задолженность на начало периода" units=" р"/>
+        <counter id="charged" name="Начислено" units=" р"/>
+        <counter id="paid" name="Оплачено" units=" р"/>
+        <counter id="month" name="Расчетный период" type="text"/>
+    </counters>
+    <keywords></keywords>
+    <type>municipal</type>
+    <country>ru</country>
+</provider>

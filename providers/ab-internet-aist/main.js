@@ -10,6 +10,52 @@ var g_headers = {
 	'User-Agent':'Mozilla/5.0 (BlackBerry; U; BlackBerry 9900; en-US) AppleWebKit/534.11+ (KHTML, like Gecko) Version/7.0.0.187 Mobile Safari/534.11+'
 };
 
+function main(){
+    var prefs = AnyBalance.getPreferences();
+    var baseurl = "https://my.100megabit.ru/";
+    AnyBalance.setDefaultCharset('utf-8'); 
+
+    var html = AnyBalance.requestGet(baseurl + 'auth.php', g_headers);
+
+    html = AnyBalance.requestPost(baseurl + 'auth.php', {
+        user_name:prefs.login,
+        user_pass:prefs.password,
+    }, addHeaders({Referer: baseurl + 'auth.php'})); 
+
+    if(/class.avtograd.ru/i.test(AnyBalance.getLastUrl())){
+    	AnyBalance.trace('Redirected to old site!');
+    	return oldAfterLogin(html);
+    }
+
+    if(!/logout/i.test(html)){
+        //Если в кабинет войти не получилось, то в первую очередь надо поискать в ответе сервера объяснение ошибки
+        var error = getParam(html, null, null, /has-error[\s\S]*?\.html\s*\(\s*'([^']*)/i);
+        if(error)
+            throw new AnyBalance.Error(error);
+        //Если объяснения ошибки не найдено, при том, что на сайт войти не удалось, то, вероятно, произошли изменения на сайте
+        throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
+    }
+
+    //Раз мы здесь, то мы успешно вошли в кабинет
+    //Получаем все счетчики
+    var result = {success: true};
+
+    getParam(html, result, 'balance', /Текущий баланс[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, '__tariff', /Текущий тариф[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
+    getParam(html, result, 'line', /<span[^>]+next-tarif-caption[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
+    getParam(html, result, 'nexttar', /Следующий тариф[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
+
+    if(AnyBalance.isAvailable('fio', 'email')){
+    	html = AnyBalance.requestGet(baseurl + 'options.php', g_headers);
+    	getParam(html, result, 'fio', /<input[^>]+name="username2"[^>]*value="([^"]*)/i, replaceHtmlEntities);
+    	getParam(html, result, 'email', /<input[^>]+name="email2"[^>]*value="([^"]*)/i, replaceHtmlEntities);
+    }
+
+    //Возвращаем результат
+    AnyBalance.setResult(result);
+}
+
+
 function getViewState(html){
     return getParam(html, null, null, /name="__VIEWSTATE".*?value="([^"]*)"/) || getParam(html, null, null, /__VIEWSTATE\|([^\|]*)/i);
 }
@@ -23,7 +69,7 @@ g_region = {
     tlt: 'Тольятти'
 };
 
-function main(){
+function mainOld(){
     var prefs = AnyBalance.getPreferences();
     var region = g_region[prefs.region] ? prefs.region : 'tlt';
     AnyBalance.trace('Используется регион: ' + region);
@@ -63,6 +109,16 @@ function main(){
 
     html = AnyBalance.requestGet(baseurl + 'User\/Default.aspx', g_headers);
 
+    oldAfterLogin(html);
+}
+
+function oldAfterLogin(html){
+
+    if(!/Завершить сеанс работы/i.test(html)){
+    	AnyBalance.trace(html);
+        throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
+    }
+
     //Раз мы здесь, то мы успешно вошли в кабинет
     //Получаем все счетчики
     var result = {success: true};
@@ -82,3 +138,4 @@ function main(){
     //Возвращаем результат
     AnyBalance.setResult(result);
 }
+

@@ -12,42 +12,53 @@ var g_headers = {
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'http://gcjs.kvartplata.info/';
+	var baseurl = 'https://lk.kvartplata.info/LK/';
 	AnyBalance.setDefaultCharset('utf-8');
 	
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 	
-	var html = AnyBalance.requestGet(baseurl + 'lich_kab/Home/Login', g_headers);
+	var html = AnyBalance.requestGet(baseurl + 'Home/Login', g_headers);
 	
 	if(!html || AnyBalance.getLastStatusCode() > 400)
 		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
 	
-	html = AnyBalance.requestPost(baseurl + 'lich_kab/Home/Login', {
+	html = AnyBalance.requestPost(baseurl + 'Home/Login', {
 		UserNameEmail: prefs.login,
 		PasswordEntered: prefs.password
-	}, addHeaders({Referer: baseurl + 'lich_kab/Home/Login'}));
+	}, addHeaders({Referer: baseurl + 'Home/Login'}));
 	
 	if (!/logout/i.test(html)) {
-		var error = getParam(html, null, null, /<div[^>]+class="error-box"[^>]*>[\s\S]*?([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
+		var error = getElement(html, /<div[^>]+message-red/i, replaceTagsAndSpaces);
 		if (error)
-			throw new AnyBalance.Error(error, null, /Пользователь с таким адресом электронной почты и паролем не найден|Адрес электронной почты введен некорректно/i.test(error));
+			throw new AnyBalance.Error(error, null, /парол/i.test(error));
 		
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
+
+	var form = getParam(html, /<form[^>]+action="[^"]*AccountInfo"[^>]*>([\s\S]*?)<\/form>/i);
+	if(!form){
+		AnyBalance.trace('Оказались не на той странице: ' + AnyBalance.getLastUrl());
+		html = AnyBalance.requestGet(baseurl + 'Home/AccountInfo', g_headers);
+	}
 	
-	var form = getParam(html, null, null, /<form[^>]+action="[^"]*AccountInfo"[^>]*>([\s\S]*?)<\/form>/i);
+	form = getParam(html, /<form[^>]+action="[^"]*AccountInfo"[^>]*>([\s\S]*?)<\/form>/i);
+	if(!form){
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удалось зайти на страницу информации о счете. Сайт изменен?');
+	}
+	var months = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
 
 	if(prefs.digits) {
-		var accs = sumParam(html, null, null, /<option value="(\d+)/ig);
+		var accs = sumParam(getElement(form, /<select[^>]+AccauntNum/i), /<option[^>]+value="(\d+)/ig);
 		if(!accs || accs.length < 1) {
 			AnyBalance.trace(html);
 			AnyBalance.trace('Не удалось найти счета в кабинете. Похоже на кабинет с одним счетом');
 		}
 		
 		for(var i = 0; i < accs.length; i++) {
-			
+			AnyBalance.trace('Найден счет ' + accs[i]);
 			if(endsWith(accs[i], prefs.digits)) {
 				var account = accs[i];
 				break;
@@ -55,24 +66,23 @@ function main() {
 		}
 		if(!account)
 			throw new AnyBalance.Error('Не удалось найти счет с последними цифрами ' + prefs.digits);
-		
+
 		var dt = new Date();
-		var params = createFormParams(html, function(params, str, name, value) {
+		var params = createFormParams(form, function(params, str, name, value) {
 			if (name == 'AccauntNum') 
 				return account;
 			else if (name == 'Month')
-				return dt.getMonth() + 1;
+				return months[dt.getMonth()];
 			else if (name == 'Year')
 				return dt.getFullYear();
 	    
 			return value;
 		});
 
-		html = AnyBalance.requestPost(baseurl + 'lich_kab/Home/AccountInfo', params, addHeaders({Referer: baseurl + 'lich_kab/Home/Login'}));
+		html = AnyBalance.requestPost(baseurl + 'Home/AccountInfo', params, addHeaders({Referer: baseurl + 'Home/Login'}));
 	}
 
 	var error;
-
 	for(var i=1; i<=3; ++i){
 		if(/Нет данных для лицевого счета/i.test(html)){
 			error = getParam(html, null, null, /Нет данных для лицевого счета[^<]*/i);
@@ -80,16 +90,16 @@ function main() {
 			var dtNow = new Date();
 			var dt = new Date(dtNow.getFullYear(), dtNow.getMonth()-i, dtNow.getDate());
 
-			var params = createFormParams(html, function(params, str, name, value) {
+			var params = createFormParams(form, function(params, str, name, value) {
 				if (name == 'Month')
-					return dt.getMonth() + 1;
+					return months[dt.getMonth()];
 				else if (name == 'Year')
 					return dt.getFullYear();
 	        
 				return value;
 			});
 			
-			html = AnyBalance.requestPost(baseurl + 'lich_kab/Home/AccountInfo', params, addHeaders({Referer: baseurl + 'lich_kab/Home/Login'}));
+			html = AnyBalance.requestPost(baseurl + 'Home/AccountInfo', params, addHeaders({Referer: baseurl + 'Home/Login'}));
 		}else{
 			break;
 		}
@@ -99,24 +109,36 @@ function main() {
 		throw new AnyBalance.Error(error);
 	
 	var result = {success: true};
+
+	var form = getParam(html, /<form[^>]+action="[^"]*AccountInfo"[^>]*>([\s\S]*?)<\/form>/i);
+	var params = createFormParams(form);
+
+	var data = getElements(html, [/<table/ig, /Плательщик/i])[0];
 	
-	getParam(html, result, 'balance', /<b>Начислено:(?:[^>]*>){1}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalanceRK);
-	getParam(html, result, 'debt', /Вы не заплатили([^<]*)/i, replaceTagsAndSpaces, parseBalanceRK);
-	getParam(html, result, '__tariff', /<b>Период:(?:[^>]*>){1}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'fine', /<b>Пеня:(?:[^>]*>){1}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalanceRK);
-	getParam(html, result, 'payment', /<b>К оплате:(?:[^>]*>){1}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalanceRK);
-	getParam(html, result, 'prev_payment', /Оплачено ранее([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalanceRK);
-	getParam(html, result, 'cold_last_counter', /Последнее показание(?:[^>]*>){8}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'hot_last_counter', /Последнее показание(?:[^>]*>){16}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
+	getParam(data, result, 'balance', /Начислено[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalanceRK);
+	getParam(html, result, 'debt', /((?:Вы не заплатили|Переплата на)[^<]*)/i, [/Переплата на/i, '-', replaceTagsAndSpaces], parseBalanceRK);
+	getParam(params.Month + ' ' + params.Year, result, '__tariff');
+	getParam(+new Date(params.Year, months.indexOf(params.Month), 15), result, 'period');
+	getParam(data, result, 'fine', /Пеня[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalanceRK);
+	getParam(html, result, 'payment', /Сумма к оплате:([^<]*)/i, replaceTagsAndSpaces, parseBalanceRK);
+	getParam(html, result, 'prev_payment', /Оплачено ранее([^<]*)<\//i, replaceTagsAndSpaces, parseBalanceRK);
+	getParam(params.AccauntNum, result, 'licschet');
+
+	var countersTable = getElement(html, /<table[^>]+flat-counters-table/i);
+	getParam(countersTable, result, 'cold_last_counter', /ХВС(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(countersTable, result, 'hot_last_counter', /ГВС(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+
 	
 	AnyBalance.setResult(result);
 }
 
-function parseBalanceRK(_text){
-    var text = _text.replace(/\s+/g, '');
-    var rub = getParam(text, null, null, /(-?\d[\d\.,]*)\s*р/i, replaceFloat, parseFloat) || 0;
-    var kop = getParam(text, null, null, /(-?\d[\d\.,]*)\s*к/i, replaceFloat, parseFloat) || 0;
-    var val = rub+kop/100;
-    AnyBalance.trace('Parsing balance (' + val + ') from: ' + _text);
-    return val;
+function parseBalanceRK(_text) {
+  var text = _text.replace(/\s+/g, '');
+  var rub = getParam(text, /(-?\d[\d\.,]*)р/i, replaceTagsAndSpaces, parseBalance) || 0;
+  var _sign = rub < 0 || /-\d[\d\.,]*р/i.test(text) ? -1 : 1;
+  var kop = getParam(text, /(-?\d[\d\.,]*)к/i, replaceTagsAndSpaces, parseBalance) || 0;
+  var val = _sign*(Math.abs(rub) + kop / 100);
+  AnyBalance.trace('Parsing balance (' + val + ') from: ' + _text);
+  return val;
 }
+

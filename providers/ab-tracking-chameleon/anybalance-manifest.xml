@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<api flags="no_browser" />
+	<id version="5">ab-tracking-chameleon</id>
+	<name>Устройство GPS/ГЛОНАСС мониторинга объектов «Хамелеон»</name>
+	<description html="true"><![CDATA[
+        <p><a href="http://mychameleon.ru/">Хамелеон</a> совмещает в себе несколько функций: автомобильный трекер, автономный поисковый маяк и персональный трекер.</p>
+        <p>Информация берётся из личного кабинета http://gde.mychameleon.ru/</p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="watchName" name="Объект наблюдения" type="text"/>
+		<counter id="loc" name="Местоположение" type="text"/>
+		<counter id="voltage" name="Заряд батареи"/>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="time" name="Время опроса" type="text"/>
+		<counter id="gps_strength" name="Cигнал GPS/Glonass"/>
+		<counter id="gsm_strength" name="Cигнал GSM"/>
+		<counter id="altitude" name="Высота"/>
+		<counter id="temperature" name="Температура"/>
+	</counters>
+	<keywords>автомобильный трекер, автономный маяк, персональный трекер</keywords>
+	<type>tracking</type>
+	<country>ru</country>
+</provider>

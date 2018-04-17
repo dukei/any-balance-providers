@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<history>
+	<change version="5" date="2018-03-07">
+	Восстановлено отображение количества поездок
+	</change>
+	<change version="4" date="2016-11-09">
+	Добавлены счетчики - срок действия абонемента, осталось поездок
+	</change>
+	<change version="3" date="2016-08-17">
+	Поддержка капчи при входе
+	</change>
+	<change version="2" date="2016-02-11">
+	- Исправлено описание.
+	</change>
+<!--
+	<change version="2" date="2014-09-03">
+	- 
+	</change>
+-->
+</history>

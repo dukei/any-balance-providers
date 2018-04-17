@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-bonus-gost-taxi</id>
+	<api flags="no_browser"/>
+	<name>Такси ГОСТ</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера Такси ГОСТ <a href="http://gost56.ru/">http://gost56.ru/</a></p>
+	<p>Информация берется из личного кабинета <a href="http://gost56.ru/auth">http://gost56.ru/auth</a></p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Бонусы" units=" Б"/>
+		<counter id="tripsNumber" name="Количество поездок"/>
+		<counter id="networkSize" name="Размер вашей сети"/>
+		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="bonusCode" name="Бонусный код" type="text"/>
+		<counter id="phone" name="Телефон" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>bonus</type>
+	<country>ru</country>
+</provider>

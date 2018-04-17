@@ -10,7 +10,7 @@ var g_headers = {
 
 function main(){
     var prefs = AnyBalance.getPreferences(),
-        baseurl = "https://ctl.rinet.ru/cgi-bin/uctl.cgi";
+        baseurl = "https://secure.rinet.ru/";
     AnyBalance.setDefaultCharset('utf-8');
 
     checkEmpty(prefs.login, 'Введите логин!');
@@ -23,31 +23,48 @@ function main(){
         throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
     }
 
-    var html = AnyBalance.requestPost(baseurl, {
-        user: prefs.login,
-        passwd: prefs.password,
-        mode: 1,
-        cmd: 0,
-        x: 28,
-        y: 14
-    }, addHeaders({Referer: baseurl}));
+	var form = AB.getElement(html, /<form/i);
+	if(!form){
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удаётся найти форму входа! Сайт изменен?');
+	}
 
-    if(!/\/cgi-bin\/uctl.cgi\?mode=255/.test(html)){
-        var error = getParam(html, null, null, /<div[^>]+class="warning"[^>]*>([\s\S]*?)<\/div>/, replaceTagsAndSpaces, html_entity_decode);
+	var params = AB.createFormParams(form, function(params, str, name, value) {
+		if (name == 'user') {
+			return prefs.login;
+		} else if (name == 'passwd') {
+			return prefs.password;
+		}
+
+		return value;
+	});
+
+    var html = AnyBalance.requestPost(baseurl, params, addHeaders({Referer: baseurl}));
+
+    if(!/Logout/.test(html)){
+        var error = getElement(html, /<[^>]+form-control-comment/, replaceTagsAndSpaces);
         if(error)
-            throw new AnyBalance.Error(error);
+            throw new AnyBalance.Error(error, null, /парол/i.test(error));
         throw new AnyBalance.Error('Не удалось войти в личный кабинет. Проблемы на сайте или сайт изменен.');
     }
 
     var result = {success: true};
 
     //getParam(html, result, '__tariff', /Тарифный план:[\S\s]*?<td[^>]*>([\S\s]*?)<\/td>/i, replaceTagsAndSpaces);
-    getParam(html, result, 'balance', /Баланс[\s\S]+?<\/strong>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'abon', /Абонентская плата[\s\S]+?<\/strong>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(getElement(html, /<div[^>]+col-balance/i), result, 'balance', null, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'abon', /Абонентская плата[\s\S]+?<div[^>]+col-right[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
     //getParam(html, result, 'status', /Состояние счета:[\S\s]*?<td[^>]*>([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
 
-    getParam(html, result, 'trafficIn', /Трафик[\s\S]*?Итого(?:[\S\s]*?<div[^>]*>){5}([\S\s]*?)<\/div>/i, replaceFloat, function(traffic){ return parseTrafficGb(traffic, 'Мб') });
-    getParam(html, result, 'trafficOut', /Трафик[\s\S]*?Итого(?:[\S\s]*?<div[^>]*>){11}([\S\s]*?)<\/div>/i, replaceFloat, function(traffic){ return parseTrafficGb(traffic, 'Мб') });
+    if(AnyBalance.isAvailable('trafficIn', 'trafficOut')){
+    	html = AnyBalance.requestGet(baseurl + 'history/traf?month=' + getFormattedDate({format: 'YYYY-MM'}), g_headers);
+
+    	var tin = getParam(html, /входящий трафик:[\s\S]*?<table[^>]*>([\s\S]*)<\/table>/i);
+    	getParam(tin, result, 'trafficIn', /Всего:[\s\S]*?<td[^>]*>([\s\S]*)<\/td>/i, replaceTagsAndSpaces, parseTrafficGb);
+
+    	var tout = getParam(html, /исходящий трафик:[\s\S]*?<table[^>]*>([\s\S]*)<\/table>/i);
+    	getParam(tout, result, 'trafficOut', /Всего:[\s\S]*?<td[^>]*>([\s\S]*)<\/td>/i, replaceTagsAndSpaces, parseTrafficGb);
+
+    }
     
     AnyBalance.setResult(result);
 }

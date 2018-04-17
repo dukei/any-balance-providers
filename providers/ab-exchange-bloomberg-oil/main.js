@@ -12,7 +12,7 @@ var g_headers = {
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'http://www.bloomberg.com/';
+	var baseurl = 'https://www.bloomberg.com/';
 	AnyBalance.setDefaultCharset('utf-8');
 	
 	var html = AnyBalance.requestGet(baseurl + 'energy/', g_headers);
@@ -23,12 +23,12 @@ function main() {
 	var baseFind = type + '\\s*Crude(?:[^>]*>)';
 	
 	getParam(html, result, 'balance', new RegExp(baseFind + '{6}([^<]+)', 'i'), replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, ['currency', 'balance'], new RegExp(baseFind + '{4}([^<]*)', 'i'), replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, ['currency', 'balance'], new RegExp(baseFind + '{4}([^<]*)', 'i'), replaceTagsAndSpaces);
 	getParam(html, result, 'change', new RegExp(baseFind + '{8}([^<]*)', 'i'), replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'change_pcts', new RegExp(baseFind + '{10}([^<]*)', 'i'), replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'contract', new RegExp(baseFind + '{12}([^<]*)', 'i'), replaceTagsAndSpaces);
 	getParam(html, result, 'contract_time', new RegExp(baseFind + '{14}([^<]*)', 'i'), replaceTagsAndSpaces);
-	getParam(html, result, '__tariff', new RegExp(baseFind, 'i'), replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, '__tariff', new RegExp(baseFind, 'i'), replaceTagsAndSpaces);
 	
     AnyBalance.setResult(result);
 }

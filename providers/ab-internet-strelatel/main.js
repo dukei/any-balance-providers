@@ -10,20 +10,67 @@ var g_headers = {
 	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
 };
 
+var cities = {
+	kha: {
+		baseurl: 'https://bill.strelatelecom.ru/KHD/!w3_p_main.showform',
+		func: mainBill
+	},
+	nud: {
+		baseurl: 'https://bill.strelatelecom.ru/I/!w3_p_main.showform',
+		func: mainBill
+	},
+	tai: {
+		baseurl: 'https://bill.strelatelecom.ru/I/!w3_p_main.showform',
+		func: mainBill
+	},
+	us: {
+		baseurl: 'https://bill.strelatelecom.ru/US/!w3_p_main.showform',
+		func: mainBill
+	},
+	dim: {
+		baseurl: 'https://bill.strelatelecom.ru/D/!w3_p_main.showform',
+		func: mainBill
+	},
+	ang: {
+		baseurl: 'https://bill.strelatelecom.ru/ANG/!w3_p_main.showform',
+		func: mainBill
+	},
+	irk: {
+		baseurl: 'https://bill.strelatelecom.ru/I/!w3_p_main.showform',
+		func: mainBill
+	},
+	ude: {
+		baseurl: 'https://bill.strelatelecom.ru/BIKS/!w3_p_main.showform',
+		func: mainBill
+	},
+	slg: {
+		baseurl: 'https://bill.strelatelecom.ru/BIKS/!w3_p_main.showform',
+		func: mainBill
+	},
+}
+
 function main(){
-    if(AnyBalance.getLevel() < 6)
-        throw new AnyBalance.Error('Этот провайдер требует AnyBalance API 6+');
-	
-	//Старый сервер оракл 10g имеет баг в TSL, приходится явно перейти на SSL
-    // AnyBalance.setOptions({SSL_ENABLED_PROTOCOLS: ['SSLv3']});
-	
+	var prefs = AnyBalance.getPreferences();
+	if(!prefs.city)
+		prefs.city = 'irk';
+
+	var city = cities[prefs.city];
+   	if(!city)
+   		throw new AnyBalance.Error('Неизвестный город ' + prefs.city, null, true);
+
+   	AnyBalance.trace('Выбран город ' + prefs.city);
+
+   	city.func(city);
+}
+
+function mainBill(cityInfo){
 	var prefs = AnyBalance.getPreferences();
     AnyBalance.setDefaultCharset('windows-1251');
 	
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 	
-	var baseurl = "https://bill.strelatelecom.ru/I/!w3_p_main.showform";
+	var baseurl = cityInfo.baseurl;
 	
 	var html = AnyBalance.requestGet(baseurl + '?IDENTIFICATION=CONTRACT&ROOTMENU=ROOT', g_headers);	
 	
@@ -36,10 +83,11 @@ function main(){
 	
 	var sid = getParam(html, null, null, /sid=([0-9a-f]+)/i);
     if(!sid){
-        var error = getParam(html, null, null, /<div[^>]+(?:Error|Notice)Text[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+        var error = getParam(html, null, null, /<div[^>]+(?:Error|Notice)Text[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
         if(error)
-            throw new AnyBalance.Error(error);
-        
+            throw new AnyBalance.Error(error, null, /парол|Логин не найден/i.test(error));
+
+        AnyBalance.trace(html);
         throw new AnyBalance.Error("Не удалось войти в личный кабинет. Личный кабинет изменился или проблемы на сайте.");
     }
 	
@@ -64,8 +112,8 @@ function main(){
 	
     getParam(html, result, 'balance', /Текущий баланс[\s\S]*?<td[^>]*>([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'topay', /Рекомендуемая сумма платежа:[\s\S]*?<td[^>]*>([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'agreement', /Состояние счёта по договору №([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'fio', /Клиент:([\S\s]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'agreement', /Состояние счёта по договору №([^<]*)/i, replaceTagsAndSpaces);
+    getParam(html, result, 'fio', /Клиент:([\S\s]*?)<\/div>/i, replaceTagsAndSpaces);
 	
     //Пытаемся найти тарифный план
     //Загружаем меню
@@ -73,7 +121,7 @@ function main(){
     var plans = sumParam(htmlMenu, null, null, /:Curr\('TAR[^']*','([^']*)/g, replaceSlashes);
     for(var i=0; plans && i<plans.length; ++i){
         html = AnyBalance.requestGet(baseurl + plans[i]);
-        sumParam(html, result, '__tariff', /Текущий тарифный план[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
+        sumParam(html, result, '__tariff', /Текущий тарифный план[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, null, aggregate_join);
     }
 	
     AnyBalance.setResult(result);

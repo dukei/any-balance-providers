@@ -22,7 +22,7 @@
 	неправильном вводе пароля 6 раз подряд, вход в ИССА блокируется на 6 часов.</p>
 	]]></description>
 	<author>Leo Hawk &lt;Leo_Hawk@Mail.ru&gt;</author>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

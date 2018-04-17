@@ -12,16 +12,16 @@ var g_headers = {
 
 function main(){
     var prefs = AnyBalance.getPreferences();
-    var baseurl = 'http://lkk.mosoblgaz.ru/';
+    var baseurl = 'https://lkk.mosoblgaz.ru/';
     AnyBalance.setDefaultCharset('utf-8'); 
 
-    var html = AnyBalance.requestGet(baseurl + 'PersonalCabinetSUPG.aspx', g_headers);
+    var html = AnyBalance.requestGet(baseurl + 'auth/login', g_headers);
 	
 	var params = createFormParams(html, function(params, str, name, value) {
 		AnyBalance.trace('Processing form field ' + name + ': ' + value);
-		if (/\$UserAccount/i.test(name)) 
+		if (/username/i.test(name)) 
 			return prefs.login;
-		else if (/\$Password/i.test(name))
+		else if (/password/i.test(name))
 			return prefs.password;
 /*		else if (/\$Captcha/i.test(name)){
 			AnyBalance.trace('Пытаемся ввести капчу');
@@ -32,30 +32,61 @@ function main(){
 			    AnyBalance.trace('Капча получена: ' + captchaVal);
 			AnyBalance.setOptions({forceCharset:'utf-8'});
 			return captchaVal;                            
-		}  */
+		}*/
 
 		return value;
-	}, true); //Важен порядок параметров
+	});
 	
-	html = AnyBalance.requestPost(baseurl + 'LoginPersonalSUPG.aspx?ReturnUrl=%2fLoginPersonalSUPG.aspx%3fout%3d1', params, addHeaders({Referer: baseurl + 'LoginPersonalSUPG.aspx'})); 
+	html = AnyBalance.requestPost(baseurl + 'login_check', params, addHeaders({Referer: baseurl + 'auth/login'})); 
+	var json = getJson(html);
 	
-    if(!/LoginPersonalSUPG.aspx\?out=1/i.test(html)){
-        var error = getParam(html, null, null, /ctl00_ChildContent_CustomCaptchaValidator[^>]*>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
+    if(!json.success){
+    	var errors = [];
+    	for(var i in json.errors){
+    		errors.push(json.errors[i]);
+    	}
+        var error = errors.join(';\n');
         if(error)
-            throw new AnyBalance.Error(error);
-        error = getParam(html, null, null, /ctl00_ChildContent_AccountCustomValidator[^>]*>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
-        if(error)
-            throw new AnyBalance.Error(error, null, /пароль неверный/i.test(error));
+            throw new AnyBalance.Error(error, null, /парол/i.test(error));
+        AnyBalance.trace(html);
         throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
     }
+
+    html = AnyBalance.requestGet(baseurl, g_headers);
+
+    var nums = getElements(html, /<a[^>]+account-option/ig), chooseNumHref, activeNum, chosenNum;
+    AnyBalance.trace('В кабинете счетов: ' + nums.length);
+    for(var i=0; i<nums.length; ++i){
+     	var num = getParam(nums[i], /№\s*(\d+)/i, replaceTagsAndSpaces);
+     	var address = getParam(nums[i], /:([\s\S]*)/, replaceTagsAndSpaces);
+     	AnyBalance.trace('Найден счет ' + num + ': ' + address);
+     	if(/active/i.test(nums[i])){
+     		activeNum = num;
+     	}
+     	if(!chosenNum){
+     		if(!prefs.num || endsWith(num, prefs.num)){
+     			chosenNum = num;
+     			chooseNumHref = joinUrl(baseurl, getParam(nums[i], /<a[^>]+href="([^"]*)/i, replaceHtmlEntities));
+     		}
+     	}
+    }
+
+    if(!chosenNum && prefs.num){
+    	AnyBalance.trace(html);
+    	throw new AnyBalance.Error('Не удалось найти счет с последними цифрами ' + prefs.num);
+    }
+
+
+    AnyBalance.trace('Выбрали ' + chosenNum + ' (' + (chosenNum == activeNum ? 'он уже активен' : 'надо его активировать') + ')');
+    if(chosenNum != activeNum){
+    	html = AnyBalance.requestGet(chooseNumHref, addHeaders({Referer: baseurl}));
+    }
+
 	
     var result = {success: true};
-    getParam(html, result, 'licschet', /<span[^>]+lblCurrentAccount[^>]*>([\s\S]*?)<\/span>/i, [replaceTagsAndSpaces, /№/, ''], html_entity_decode);
-
-    getParam(html, result, 'balance', /по лицевому счету при показаниях.*?составляет\s*<strong[^>]*>([\s\S]*?)<\/strong>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'acc', /<span[^>]+lblCurrentAccount[^>]*>([\s\S]*?)<\/span>/i, [replaceTagsAndSpaces, /№/, ''], html_entity_decode);
-	getParam(html, result, 'fio', /<input[^>]+id="fioInputs"[^>]*value="([^"]*)/i, null, html_entity_decode);
-
+    getParam(html, result, 'acc', /<span[^>]+account-chosen[^>]*>([\s\S]*?)<\/span>/i, [replaceTagsAndSpaces, /№/, '']);
+	getParam(html, result, 'fio', /<ul[^>]+fioDrop[\s\S]*?<li[^>]*>([\s\S]*?)<\/li>/i, replaceTagsAndSpaces);
+/*
 	getParam(html, result, 'next_check', /очередной срок поверки([^<]*)/i, replaceTagsAndSpaces, parseDate);
 	getParam(html, result, 'last_counter_val', /по лицевому счету при показаниях\s*<strong[^>]*>([\s\S]*?)<\/strong>/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'last_counter_date', /Показания от([^<\-]*)/i, replaceTagsAndSpaces, parseDate);
@@ -65,18 +96,15 @@ function main(){
 		getParam(html, result, '__tariff', /<span[^>]+current-counter[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
 
 	}
+*/
 
-	if(isAvailable('income', 'nachisl', 'recomended', 'balance')){
-		html = AnyBalance.requestGet(baseurl + 'PersonalCalculationsSUPG.aspx', g_headers);
-		var tbl = getElement(html, /<table[^>]+history-table[^>]*>/i);
-		if(tbl){
-			getParam(html, result, 'income',  /(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-			getParam(html, result, 'nachisl',  /(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-			getParam(html, result, 'recomended', /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-			getParam(html, result, 'balance', /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-		}else{
-			AnyBalance.trace('Не удаётся найти таблицу расчетов: ' + html);
-		}
+	if(isAvailable(['income', 'nachisl', 'recomended', 'balance'])) {
+		html = AnyBalance.requestGet(baseurl + 'balance', g_headers);
+
+		AB.getParam(html, result, 'balance', 	/<div[^>]+label-uppercase[^>]*>(?:\s+|<[^>]*>)*?Баланс[\s\S]*?<div[^>]+balance-value[^>]*>([\s\S]*?)<\/div>/i, 						   		AB.replaceTagsAndSpaces, AB.parseBalance);
+		AB.getParam(html, result, 'income',  	/ПОСТУПЛЕНИЯ НА СЧЕТ В ТЕКУЩЕМ МЕСЯЦЕ[\s\S]*?<div[^>]+balance-value[^>]*>([\s\S]*?)<\/div>/i, 	AB.replaceTagsAndSpaces, AB.parseBalance);
+		AB.getParam(html, result, 'nachisl', 	/НАЧИСЛЕНИЯ ТЕКУЩЕГО МЕСЯЦА[\s\S]*?<div[^>]+balance-value[^>]*>([\s\S]*?)<\/div>/i, 		 	AB.replaceTagsAndSpaces, AB.parseBalance);
+		AB.getParam(html, result, 'recomended', /РЕКОМЕНДУЕМАЯ СУММА К ОПЛАТЕ[\s\S]*?<div[^>]+balance-value[^>]*>([\s\S]*?)<\/div>/i, 			AB.replaceTagsAndSpaces, AB.parseBalance);
 	}
 
     AnyBalance.setResult(result);

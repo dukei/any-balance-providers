@@ -1,5 +1,44 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="1.0" version="19" date="2017-07-12">
+	- Поддержка изменений на сайте.
+	</change>
+	<change major_version="1.0" version="18" date="2017-04-19">
+	Добавлена отсутствующая функция для некоторых устройств.
+	</change>
+	<change major_version="1.0" version="17" date="2017-04-18">
+	Исправление получения номер для отсылки смс
+	</change>
+	<change major_version="1.0" version="16" date="2017-04-18">
+	- Улучшена обработка ошибок.
+	</change>
+	<change major_version="1.0" version="15" date="2017-04-14">
+	Обход ошибок перекрестка
+	</change>
+	<change major_version="1.0" version="14" date="2017-04-14">
+	- Поддержка изменений в процедуре входа
+	</change>
+	<change major_version="1.0" version="13" date="2017-02-20">
+	- Поддержка изменений на сайте.
+	</change>
+	<change major_version="1.0" version="12" date="2017-01-07">
+	- Улучшена обработка ошибок.
+	</change>
+	<change major_version="1.0" version="11" date="2016-12-21">
+	- Улучшена обработка ошибок.
+	</change>
+	<change major_version="1.0" version="10" date="2016-12-15">
+	Исправлено получение данных в случае отсутствия информации об устаревании баллов
+	</change>
+	<change major_version="1.0" version="9" date="2016-12-13">
+	Получение данных из кабинета без капчи
+	</change>
+	<change major_version="1.0" version="8" date="2016-12-12">
+	- Поддержка изменений на сайте.
+	</change>
+	<change major_version="1.0" version="7" date="2016-03-16">
+	Добавлен счетчик даты ближайшего сгорания баллов
+	</change>
 <change major_version="1.0" version="6" date="2013-09-20">
 - Избавление от jquery
 - Исправлена процедура входа

@@ -12,56 +12,75 @@ var g_headers = {
 'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
 'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
 'Connection':'keep-alive',
-'User-Agent':'Mozilla/5.0 (BlackBerry; U; BlackBerry 9900; en-US) AppleWebKit/534.11+ (KHTML, like Gecko) Version/7.0.0.187 Mobile Safari/534.11+'
+'User-Agent':'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36'
 };
 
 function main(){
     var prefs = AnyBalance.getPreferences();
 
-    var baseurl = "https://support.atknet.ru/";
+    AB.checkEmpty(prefs.login, 'Введите логин!');
+    AB.checkEmpty(prefs.password, 'Введите пароль!');
+
+    var baseurl = "https://lk.atvc.ru/";
 
     AnyBalance.setDefaultCharset('utf-8'); 
 
-    var html = AnyBalance.requestGet(baseurl + 'login', g_headers);
+    var html = AnyBalance.requestGet(baseurl + 'account/login/?next=/', g_headers);
 
-    var tform = getParam(html, null, null, /<input[^>]+name='csrfmiddlewaretoken'[^>]+value='([^']*)/i, null, html_entity_decode);
-    console.log(tform);
-    if(!tform) 
+    if (!html || AnyBalance.getLastStatusCode() >= 400) {
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
+	}
+    
+    var form = AB.getElement(html, /<form[^>]*?auth-form/i);
+    if (!form) {
+        AnyBalance.trace(html);
         throw new AnyBalance.Error('Не удалось найти форму входа. Сайт изменен?');
+    }
+    
+    var params = AB.createFormParams(form, function(params, str, name, value) {
+        if (name == 'username') {
+            return prefs.login;
+        } else if (name == 'password') {
+            return prefs.password;
+        }
 
-    html = AnyBalance.requestPost(baseurl + 'login', {
-        'csrfmiddlewaretoken':tform,      
-        username:prefs.login,
-        password:prefs.password,
-        next:'http://127.0.0.1:8081/'
-    }, addHeaders({Referer: baseurl + 'login'})); 
+        return value;
+    });
 
-    if(!/\/logout/i.test(html)){
-        var error = getParam(html, null, null, /<div[^>]+class='login-error'[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
-        if(error)
-            throw new AnyBalance.Error(error);
+    html = AnyBalance.requestPost(baseurl + 'account/login/', params,
+        addHeaders({
+            Referer: baseurl + 'account/login/?next=/'
+        }));
+
+    if (!/\/logout/i.test(html)) {
+        var error = getParam(html, null, null, /<div[^>]*?alert-danger[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+        if (error) {
+            throw new AnyBalance.Error(error, null, /пользователя|парол/i.test(error));
+        }
+        AnyBalance.trace(html);
         throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
     }
 
+    AnyBalance.sleep(3000);
+    html = AnyBalance.requestGet(baseurl + 'internet/' + prefs.login + '/', g_headers);
+
     var result = {success: true};
 
-    getParam(html, result, '__tariff', /Тарифный\s*план:\s*<b[^>]*>([\s\S]*?)<\/b>[\s\S]*<a[^>]+>сменить тариф<\/a>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'licenseFee', /Абонентская плата за трафик:\s*([\s\S]*?)<\/li>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'externalTraffic', /Внешний трафик по выделенной линии:\s*([\s\S]*?)<\/li>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'reservPort', /Резервирование порта абонента: \s*([\s\S]*?)<\/li>/i, replaceTagsAndSpaces, parseBalance);
+    function getRe(name){
+    	return new RegExp(/<td[^>]*service-title[^>]*>(?:\s+|<(?:strong|b|a)[^>]*>)*%NAME%[\s\S]*?<td[^>]*>([\s\S]*?)(?:<ul|<\/td>)/.source.replace(/%NAME%/, name), 'i');
+    }
 
-    getParam(html, result, 'mailbox', /<h3>Почтовый ящик[\s\S]*-\s*([\s\S]*?)<\/h3>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'mailnumber', /<h3>Почтовый ящик\s*\(([\s\S]*?)\)/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, '__tariff', getRe('Тариф'), replaceTagsAndSpaces);
+    getParam(html, result, 'balance', getRe('Баланс'), replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'number', getRe('Номер договора'), replaceTagsAndSpaces);
+    getParam(html, result, 'licenseFee', getRe('Ежемесячный платёж'), replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'payment', getRe('К оплате'), replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'virtual_payment', getRe('Виртуальный платеж'), replaceTagsAndSpaces);
 
-
-    html = AnyBalance.requestGet(baseurl + 'api/base_info', g_headers);
-
-    getParam(html, result, 'number', /"login":\s*"([^"]*)/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'fio', /"name":\s*"([^"]*)/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'contractService', /"contract_service":\s*"([^"]*)/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'balance', /"state":\s*"([^"]*)/i, replaceTagsAndSpaces, parseBalance);
-
-
+    getParam(html, result, 'status', getRe('Статус'), replaceTagsAndSpaces);
+    getParam(html, result, 'login', getRe('Логин'), replaceTagsAndSpaces);
+    getParam(html, result, 'mailnumber', getRe('Почтовый ящик'), replaceTagsAndSpaces);
 
     AnyBalance.setResult(result);
 }

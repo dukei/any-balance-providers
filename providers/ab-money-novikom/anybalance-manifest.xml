@@ -7,7 +7,7 @@
 	<p>Предоставляет информацию о балансе на картах и счетах банка Новиком банк (http://novikom.ru/)</p>
 	<p>Информация берется из личного кабинета https://retail.novikom.ru</p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

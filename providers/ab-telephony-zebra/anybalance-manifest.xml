@@ -1,20 +1,22 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id version="2">ab-telephony-zebra</id>
+	<id version="4">ab-telephony-zebra</id>
 	<name>Зебра Телеком</name>
 	<description>
 	Получает текущий баланс, валюту баланса в провайдере IP-телефонии Зебра Телеком (http://www.zebratelecom.ru). 
 
 	ЗАО “Зебра Телеком” – один из российских операторов связи, предоставляющий частным и корпоративным пользователям услуги дальней связи по технологии VOIP на всей территории России. С 2006 года "Зебра Телеком" входит в группу компаний “Ростелеком”.
 
-	Провайдер получает данные из личного кабинета для физических лиц https://www.zebratelecom.ru/cabinet/.
+	Провайдер получает данные из личного кабинета для абонентов карт связи https://www.zebratelecom.ru/services/cabinet/ или из основного личного кабинета https://cabinet.zebratelecom.ru/.
 	</description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>

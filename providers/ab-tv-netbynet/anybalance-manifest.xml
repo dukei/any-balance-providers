@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-tv-netbynet</id>
+	<id version="2">ab-tv-netbynet</id>
 	<api flags="no_browser"/>
 	<name>NetByNet(TV)</name>
 	<description html="true"><![CDATA[

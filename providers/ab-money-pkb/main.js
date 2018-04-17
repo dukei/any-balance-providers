@@ -7,56 +7,6 @@
 Личный кабинет: https://www.pkb24.ru
 */
 
-function getParam (html, result, param, regexp, replaces, parser) {
-	if (param && (param != '__tariff' && !AnyBalance.isAvailable (param)))
-		return;
-
-	var value = regexp.exec (html);
-	if (value) {
-		value = value[1];
-		if (replaces) {
-			for (var i = 0; i < replaces.length; i += 2) {
-				value = value.replace (replaces[i], replaces[i+1]);
-			}
-		}
-		if (parser)
-			value = parser (value);
-
-    if(param)
-      result[param] = value;
-    else
-      return value
-	}
-}
-
-var replaceTagsAndSpaces = [/\\n/g, ' ', /\[br\]/ig, ' ', /<[^>]*>/g, ' ', /\s{2,}/g, ' ', /^\s+|\s+$/g, '', /^"+|"+$/g, ''];
-var replaceFloat = [/\s+/g, '', /,/g, '.'];
-
-function parseBalance(text){
-    var _text = text.replace(/\s+/g, '');
-    var val = getParam(_text, null, null, /(-?\d[\d\.,]*)/, replaceFloat, parseFloat);
-    AnyBalance.trace('Parsing balance (' + val + ') from: ' + text);
-    return val;
-}
-
-function parseCurrency(text){
-    var _text = text.replace(/\s+/g, '');
-    var val = getParam(_text, null, null, /-?\d[\d\.,]*\s*(\S*)/);
-    AnyBalance.trace('Parsing currency (' + val + ') from: ' + text);
-    return val;
-}
-
-function parseDate(str){
-    var matches = /(\d+)[^\d](\d+)[^\d](\d+)/.exec(str);
-    if(matches){
-          var date = new Date(+matches[3], matches[2]-1, +matches[1]);
-	  var time = date.getTime();
-          AnyBalance.trace('Parsing date ' + date + ' from value: ' + str);
-          return time;
-    }
-    AnyBalance.trace('Failed to parse date from value: ' + str);
-}
-
 function encryptPass(pass, map){
 	if(map){
 		var ch='',i=0,k=0,TempPass='',PassTemplate=map.split(','), Pass='';
@@ -108,7 +58,7 @@ function main(){
         MapID:mapId || ''
     }, headers);
 
-    var error = getParam(html, null, null, /<BSS_ERROR>\d*\|?([\s\S]*?)<\/BSS_ERROR>/i, replaceTagsAndSpaces, html_entity_decode);
+    var error = getParam(html, null, null, /<BSS_ERROR>\d*\|?([\s\S]*?)<\/BSS_ERROR>/i, replaceTagsAndSpaces);
     if(error)
         throw new AnyBalance.Error(error);
 
@@ -153,8 +103,10 @@ function fetchCard(jsonInfo, html, headers, baseurl){
         throw new AnyBalance.Error("Введите 4 последних цифры номера карты или не вводите ничего, чтобы показать информацию по первой карте");
 
     var table = getParam(html, null, null, /<h2[^>]*>\s*Ваши карты\s*<\/H2>\s*<TABLE[\s\S]*?<tbody[^>]*>([\s\S]*?)<\/tbody>/i);
-    if(!table)
+    if(!table){
+    	AnyBalance.trace(html);
         throw new AnyBalance.Error('У вас нет ни одной карты');
+    }
 
     var re = new RegExp('<td[^>]*>(\\d{4}\\s*[\\d\\*]{4}\\s*\\*{4}\\s*' + (prefs.cardnum ? prefs.cardnum : '\\d{4}') + ')<\\/td>', 'i');
 
@@ -167,8 +119,10 @@ function fetchCard(jsonInfo, html, headers, baseurl){
         return str;
     });
 
-    if(!tr)
+    if(!tr){
+    	AnyBalance.trace(html);
         throw new AnyBalance.Error('Не удаётся найти ' + (prefs.cardnum ? 'карту с последними цифрами ' + prefs.cardnum : 'ни одной карты'));
+    }
 
     var result = {success: true};
     getParam(tr, result, 'cardnum', re, replaceTagsAndSpaces);
@@ -186,8 +140,10 @@ function fetchAccount(jsonInfo, html, headers, baseurl){
         throw new AnyBalance.Error("Введите начало номера счета или не вводите ничего, чтобы показать информацию по первому счету");
                                                                                                                                 
     var table = getParam(html, null, null, /<h2[^>]*>\s*Ваши счета\s*<\/H2>[\S\s]*?<TABLE[\s\S]*?<tbody[^>]*>([\s\S]*?)<\/tbody>/i);
-    if(!table)
+    if(!table){
+    	AnyBalance.trace(html);
         throw new AnyBalance.Error('У вас нет ни одного счета');
+    }
 
     var re = new RegExp('<td[^>]*name="account"[^>]*>\\s*(' + (prefs.cardnum ? prefs.cardnum : '\\d{20}') + '\\d*)', 'i');
 
@@ -200,8 +156,10 @@ function fetchAccount(jsonInfo, html, headers, baseurl){
         return str;
     });
 
-    if(!tr)
+    if(!tr){
+    	AnyBalance.trace(html);
         throw new AnyBalance.Error('Не удаётся найти ' + (prefs.cardnum ? 'счет с первыми цифрами ' + prefs.cardnum : 'ни одного счета'));
+    }
 
     var result = {success: true};
     getParam(tr, result, 'cardnum', re, replaceTagsAndSpaces);
@@ -212,12 +170,3 @@ function fetchAccount(jsonInfo, html, headers, baseurl){
     getParam(jsonInfo.USR, result, 'fio', /(.*)/i, replaceTagsAndSpaces);
     AnyBalance.setResult(result);
 }
-
-function html_entity_decode(str)
-{
-    //jd-tech.net
-    var tarea=document.createElement('textarea');
-    tarea.innerHTML = str;
-    return tarea.value;
-}
-

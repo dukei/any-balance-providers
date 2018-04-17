@@ -12,7 +12,7 @@ var g_headers = {
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'http://volgaspot.ru/webmain/site/';
+	var baseurl = 'http://volgaspot.ru/';
 	AnyBalance.setDefaultCharset('utf-8');
 	
 	checkEmpty(prefs.login, 'Введите логин!');
@@ -32,14 +32,17 @@ function main() {
 	}, addHeaders({Referer: baseurl + 'login'}));
 	
 	if (!/logout/i.test(html)) {
-		//var error = getParam(html, null, null, /<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
-		var error = getParam(html, null, null, /<input[^>]+?class="[^"]*\berror\b[^"]*"[^>]+?name="LoginForm\[username\]"[^>]*>/i, replaceTagsAndSpaces, html_entity_decode);
+		var error = getParam(html, null, null, /<input[^>]+?class="[^"]*\berror\b[^>]+?id="LoginForm_username"[^>]*>/i);
 		if (error)
 			throw new AnyBalance.Error('Неверный логин!', null, true);
 		
-		var error = getParam(html, null, null, /<input[^>]+?class="[^"]*\berror\b[^"]*"[^>]+?name="LoginForm\[password\]"[^>]*>/i, replaceTagsAndSpaces, html_entity_decode);
+		error = getParam(html, null, null, /<input[^>]+?class="[^"]*\berror\b[^>]+?id="LoginForm_password"[^>]*>/i);
 		if (error)
 			throw new AnyBalance.Error('Неверный пароль!', null, true);
+
+		error = getParam(html, null, null, /<p[^>]*>((?:[\s\S](?!<\/p>))*?[\s\S])<\/p>\s*<form/i, replaceTagsAndSpaces);
+		if (error)
+			throw new AnyBalance.Error(error);
 		
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');

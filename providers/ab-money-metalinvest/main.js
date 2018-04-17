@@ -4,7 +4,7 @@
 
 var g_countersTable = {
  	common: {
- 		"fio": "fio"
+ 		"fio": "info.fio"
  	},
 	credit: {
     	"balance": "credits.balance",
@@ -46,7 +46,7 @@ function shouldProcess(counter, info){
 				return false;
 		    if(!prefs.cardnum)
 		    	return true;
-		    return endsWith(info.__id, prefs.cardnum);
+		    return endsWith(info.num, prefs.cardnum);
 		}
 		default:
 			return false;

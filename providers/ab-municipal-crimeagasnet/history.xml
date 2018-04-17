@@ -1,5 +1,20 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="6" date="2016-12-13">
+	- Поддержка изменений на сайте.
+	</change>
+	<change version="5" date="2016-12-12">
+	Добавлено Керченское
+	</change>
+	<change version="4" date="2016-09-07">
+	Долг показывается с -, переплата с +
+	</change>
+	<change version="3" date="2016-09-04">
+	- Улучшена обработка ошибок.
+	</change>
+	<change version="2" date="2015-11-10">
+	- Убрана отладочная функциональность, мешающая нормальной
+	</change>
 	<change version="1" date="2015-09-06">
 	- Первая версия провайдера.
 	</change>

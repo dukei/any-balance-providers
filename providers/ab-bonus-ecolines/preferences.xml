@@ -11,14 +11,14 @@
 		dialogMessage="Enter login to your Ecolines account.">
 	</EditTextPreference>
 	<EditTextPreference
-		title="Password"
+		title="Bonus code"
 		key="password"
 		summary="||***********"
 		obligatory="true"
-		dialogTitle="Password"
+		dialogTitle="Bonus code"
 		positiveButtonText="OK"
 		negativeButtonText="Cancel"
-		dialogMessage="Enter password to your Ecolines account."
+		dialogMessage="Enter Bonus code to your Ecolines account."
 		inputType="textPassword">
 	</EditTextPreference>
 </PreferenceScreen>

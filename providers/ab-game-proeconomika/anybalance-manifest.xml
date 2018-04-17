@@ -1,23 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-game-proeconomika</id>
+	<id version="2">ab-game-proeconomika</id>
 	<api flags="no_browser"/>
 	<name>Proeconomika</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию об аккаунте в игре Proeconomika</p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
 	<counters>
 		<counter id="gold" name="Золото"/>
 		<counter id="eco" name="ECO"/>
+		<counter id="budget" name="Бюджет" units=" RUB"/>
 		<counter id="day" name="День"/>
+		<counter id="user_health" name="Здоровье" units=" %"/>
+		<counter id="energy" name="Энергия" units=" %"/>
+		<counter id="productivity" name="Производительность" units=" %"/>
+		<counter id="efficiency" name="Эффективность" units=" %"/>
+		<counter id="happiness" name="Счастье" units=" %"/>
+		<counter id="culture" name="Культура" units=" %"/>
+		<counter id="education" name="Образование" units=" %"/>
+		<counter id="prestige" name="Престиж" units=" %"/>
 	</counters>
 	<keywords></keywords>
 	<type>game</type>

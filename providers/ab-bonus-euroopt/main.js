@@ -11,16 +11,17 @@ var g_headers = {
 };
 
 function main () {
-    if (AnyBalance.getLevel () < 3)
-        throw new AnyBalance.Error ('Для этого провайдера необходима версия программы не ниже 1.2.436. Пожалуйста, обновите программу.');
-	
     var prefs = AnyBalance.getPreferences ();
 	
-    var baseurl = 'http://www.evroopt.by/';
+    var baseurl = 'https://evroopt.by/';
     if(!prefs.login)
         throw new AnyBalance.Error('Введите № карты');
 	
     var html = AnyBalance.requestGet(baseurl + 'otchet-po-diskontnoj-karte-2', g_headers);
+    if (!html || AnyBalance.getLastStatusCode() > 400) {
+        AnyBalance.trace(html);
+        throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
+    }
     var form = getParam(html, null, null, /<div[^>]+class="enter_number_form"[^>]*>([\s\S]*?)<\/form>/i);
     if(!form){
 	AnyBalance.trace(html);
@@ -36,8 +37,6 @@ function main () {
         else if(name == 'to_date')
             value = dt.getDate() + '.' + (dt.getMonth()+1) + '.' + dt.getFullYear();
         else if(name == 'captcha[input]'){
-            if(AnyBalance.getLevel() < 7)
-                throw new AnyBalance.Error ('Этот провайдер требует ввода капчи. Обновите программу для поддержки капчи.');
             var captchaid = getParam(form, null, null, /<input[^>]+value="([^"]*)"[^>]*id="captcha-id"/i, null, html_entity_decode);
             var captchaimg = AnyBalance.requestGet(baseurl + 'images/captcha/' + captchaid + '.png');
             value = AnyBalance.retrieveCode("Пожалуйста, введите код с картинки.", captchaimg);

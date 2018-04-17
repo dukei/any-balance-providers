@@ -7,7 +7,7 @@
 	<p>Получает данные для провайдера ООО 3Т <a href="http://ooo3t.ru/">http://ooo3t.ru/</a></p>
 	<p>Электронный дневник находится по адресу <a href="http://ooo3t.ru/webjournal/ed.php">http://ooo3t.ru/webjournal/ed.php</a></p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

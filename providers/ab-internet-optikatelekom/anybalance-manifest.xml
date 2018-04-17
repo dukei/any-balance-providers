@@ -7,7 +7,7 @@
 	<p>Предоставляет информацию о балансе провайдера ОптикаТелеком <a href="http://www.dagtk.net/">http://www.dagtk.net/</a></p>
 	<p>Информация берется из личного кабинета <a href="http://81.24.80.230:8080/bgbilling/webexecuter">http://81.24.80.230:8080/bgbilling/webexecuter</a></p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

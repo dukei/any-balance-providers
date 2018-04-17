@@ -1,7 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="4">ab-service-1c</id>
+	<id version="6">ab-service-1c</id>
 	<name>1C8 (Подписка ИТС)</name>
 	<description>
 Получает данные из личного кабинета пользователя 1C8 http://users.v8.1c.ru/
@@ -27,6 +27,17 @@
 		<counter id="vidITS-OTR" name="Вид подписки ИТС:Отраслевой" type="text"/>
 		<counter id="partnerITS-OTR" name="Партнер ИТС:Отраслевой" type="text"/>
 		<counter id="productITS-OTR" name="Сопровождаемый продукт ИТС:Отраслевой" type="text"/>
+		
+		
+		<counter id="PostgreSQL" name="PostgreSQL" type="text"/>
+		<counter id="platform83" name="Платформа 8.3" type="text"/>
+		<counter id="platform82" name="Платформа 8.2" type="text"/>
+		<counter id="konf_buh_pred_red3" name="Бухгалтерия ред. 3" type="text"/>
+		<counter id="konf_buh_pred_red2" name="Бухгалтерия ред. 2" type="text"/>
+		<counter id="konf_zup_pred_red3" name="Зарплата и Управление Персоналом ред. 3" type="text"/>
+		<counter id="konf_zup_pred_red25" name="Зарплата и Управление Персоналом ред. 2.5" type="text"/>
+		
+		
 	</counters>
 	<keywords>1c 1с ИТС отраслевой</keywords>
 	<type>service</type>

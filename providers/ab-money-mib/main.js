@@ -153,19 +153,19 @@ function fetchCard(baseurl, sessionParams){
 
     var html = AnyBalance.requestPost(baseurl + 'getModule.jsp?name=CardsHome', sessionParams, g_headers);
 
-    var re = new RegExp('(<tr[^>]*>(?:[\\s\\S](?!<\\/tr>))*\\d{6}\\*{3,6}' + (prefs.contract ? prefs.contract : '\\d{4}') + '[\\s\\S]*?<\\/tr>)', 'i');
-    var tr = getParam(html, null, null, re);
+    var tr = getElement(html, new RegExp('<tr[^>]+panmbr="\\d+' + (prefs.contract||'') + '-', 'i'));
     if(!tr)
         throw new AnyBalance.Error('Не удаётся найти ' + (prefs.contract ? 'карту с последними цифрами ' + prefs.contract : 'ни одной карты'));
     
     var result = {success: true};
-    getParam(tr, result, 'cardnum', /(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(tr, result, 'till', /(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
-    getParam(tr, result, 'cardname', /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(tr, result, '__tariff', /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+    var cardnum = getParam(tr, null, null, /(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces)
+    getParam(cardnum, result, 'cardnum');
+    getParam(tr, result, 'till', /<td[^>]*expdate[^>]+id="([^"]*)/i, replaceHtmlEntities, parseDateISO);
+    getParam(tr, result, 'cardname', /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, function(str) {return str || cardnum});
+    getParam(tr, result, '__tariff', /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, function(str) {return str || cardnum});
 
-    var pan = getParam(tr, null, null, /panmbr="([^"\-]*)/i, null, html_entity_decode);
-    var mbr = getParam(tr, null, null, /panmbr="[^"]*-([^"]*)/i, null, html_entity_decode);
+    var pan = getParam(tr, null, null, /panmbr="([^"\-]*)/i, replaceHtmlEntities);
+    var mbr = getParam(tr, null, null, /panmbr="[^"]*-([^"]*)/i, replaceHtmlEntities);
    
     if(AnyBalance.isAvailable('balance','currency','net_balance','owner','status', 'accnum', 'accname', 'limit', 'reserved')){
         html = AnyBalance.requestPost(baseurl + 'getModule.jsp?name=CardInfo', joinObjects({PAN:pan, MBR:mbr}, sessionParams), g_headers);
@@ -173,11 +173,11 @@ function fetchCard(baseurl, sessionParams){
         getParam(html, result, 'balance', /Доступный баланс основного счета[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
         getParam(html, result, 'currency', /Доступный баланс основного счета[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseCurrency);
         getParam(html, result, 'net_balance', /Общий баланс основного счета[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-        getParam(html, result, 'owner', /Владелец[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-        getParam(html, result, 'status', /Статус[\s\S]*?<td[^>]*>([\s\S]*?)(?:<\/td>|Изменить)/i, replaceTagsAndSpaces, html_entity_decode);
-        var acc = getParam(html, result, 'accnum', /Основной счет[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-        getParam(acc, result, 'accnum', /([\s\S]*?)(?:\(|$)/i, replaceTagsAndSpaces, html_entity_decode);
-        getParam(acc, result, 'accname', /\(([\s\S]*?)(?:$|\))/i, replaceTagsAndSpaces, html_entity_decode);
+        getParam(html, result, 'owner', /Владелец[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+        getParam(html, result, 'status', /Статус[\s\S]*?<td[^>]*>([\s\S]*?)(?:<\/td>|Изменить)/i, replaceTagsAndSpaces);
+        var acc = getParam(html, result, 'accnum', /Основной счет[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+        getParam(acc, result, 'accnum', /([\s\S]*?)(?:\(|$)/i, replaceTagsAndSpaces);
+        getParam(acc, result, 'accname', /\(([\s\S]*?)(?:$|\))/i, replaceTagsAndSpaces);
 
         if(AnyBalance.isAvailable('limit', 'reserved')){
             var accid = getParam(html, null, null, /goToAcct\s*\(\s*'([^']*)/i);
@@ -219,9 +219,9 @@ function fetchAccount(baseurl, sessionParams){
 
     getParam(tr, result, 'balance', /(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
     getParam(tr, result, 'currency', /(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseCurrency);
-    getParam(tr, result, 'accnum', /(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(tr, result, 'accname', /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(tr, result, '__tariff', /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(tr, result, 'accnum', /(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+    getParam(tr, result, 'accname', /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+    getParam(tr, result, '__tariff', /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
 
     if(AnyBalance.isAvailable('net_balance', 'limit', 'reserved', 'status', 'cardnum', 'cardname')){
         var id = getParam(tr, null, null, /<td[^>]+acct="([^\-"]*)/i);
@@ -231,9 +231,9 @@ function fetchAccount(baseurl, sessionParams){
             getParam(html, result, 'net_balance', /<td[^>]*>\s*Общий баланс[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
             getParam(html, result, 'limit', /<td[^>]*>\s*Кредитный лимит\s*<[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
             getParam(html, result, 'reserved', /<td[^>]*>\s*Зарезервировано для будущих расчетов[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-            getParam(html, result, 'status', /<td[^>]*>\s*Статус[\s\S]*?<td[^>]*>([\s\S]*?)(?:<\/td>|Изменить)/i, replaceTagsAndSpaces, html_entity_decode);
-            getParam(html, result, 'cardnum', /<td[^>]+crdCardHomeLeftB[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-            getParam(html, result, 'cardname', /<td[^>]+crdCardHomeLeftB[^>]*>(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+            getParam(html, result, 'status', /<td[^>]*>\s*Статус[\s\S]*?<td[^>]*>([\s\S]*?)(?:<\/td>|Изменить)/i, replaceTagsAndSpaces);
+            getParam(html, result, 'cardnum', /<td[^>]+crdCardHomeLeftB[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+            getParam(html, result, 'cardname', /<td[^>]+crdCardHomeLeftB[^>]*>(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
         }else{
              AnyBalance.trace('Не удалось найти идентификатор счета');
         }

@@ -1,5 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="5" date="2016-12-14">
+	Поддержка входа по PIN
+	</change>
+	<change version="4" date="2016-11-21">
+	- Поддержка изменений на сайте.
+	</change>
 	<change version="3" date="2015-10-09">
 	Полное изменение личного кабинета
 	</change>

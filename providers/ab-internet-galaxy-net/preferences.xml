@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        title="Логин" 
+        positiveButtonText="ОК" 
+        summary="Номер договора (ip)||{@s}\n" 
+        dialogTitle="Номер договора" 
+        negativeButtonText="Отмена"
+        obligatory="true"
+        dialogMessage="Введите номер учётной записи для входа в личный кабинет Galaxy-net , например 83.69.111.111 (IP-адрес)"
+        key="login"
+        inputType="text">
+    </EditTextPreference>
+    <EditTextPreference 
+        title="Пароль"
+        positiveButtonText="ОК"
+        summary="Пароль для входа в Galaxy-net||***********\n"
+        dialogTitle="Пароль"
+        negativeButtonText="Отмена"
+        obligatory="true"
+        dialogMessage="Введите пароль, используемый для входа в Galaxy-net (обычно: test)"
+        key="password" 
+        inputType="textPassword">
+    </EditTextPreference>
+</PreferenceScreen>

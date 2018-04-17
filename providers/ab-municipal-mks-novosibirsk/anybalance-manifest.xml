@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-municipal-mks-novosibirsk</id>
+	<id version="2">ab-municipal-mks-novosibirsk</id>
 	<api flags="no_browser"/>
 	<name>МКС-Новосибирск</name>
 	<description html="true"><![CDATA[
@@ -11,10 +11,12 @@
 	<p>Если у вас нет доступа в Личный кабинет, получите его на странице <a href="http://mks-novosibirsk.ru/index.php?option=com_kabinet&layout=reg">регистрации</a></p>
 	]]></instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
@@ -26,7 +28,7 @@
 		<counter id="kod" name="Код оплаты" type="text"/>
 		<counter id="fio" name="ФИО" type="text"/>
 	</counters>
-	<keywords></keywords>
-	<type>ук коммуналка коммунальные платежи мой коммунальный стандарт</type>
+	<keywords>ук коммуналка коммунальные платежи мой коммунальный стандарт</keywords>
+	<type>municipal</type>
 	<country>ru</country>
 </provider>

@@ -7,7 +7,7 @@
 	<p>Предоставляет информацию о балансе провайдера SiP.Tj <a href="http://www.sip.tj/">http://www.sip.tj/</a></p>
 	<p>Информация берется из личного кабинета <a href="http://cab.sip.tj/ru/auth/">http://cab.sip.tj/ru/auth/</a></p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

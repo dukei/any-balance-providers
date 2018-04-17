@@ -1,5 +1,20 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="20" date="2016-11-24">
+	Обход ошибки конвертирования капчи
+	</change>
+	<change version="19" date="2016-11-23">
+	Исправление отображения капчи
+	</change>
+	<change version="18" date="2016-08-08">
+	Обход ошибки от ulmart No space left on device
+	</change>
+	<change version="17" date="2016-08-04">
+	Исправление ошибки JS
+	</change>
+	<change version="16" date="2016-08-04">
+	- Поддержка изменений на сайте.
+	</change>
 	<change version="15" date="2015-08-03">
 	- Поддержка нескольких контракторов в личном кабинете
 	</change>

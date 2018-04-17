@@ -1,6 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="1.0" version="6">ab-municipal-system-gorod</id>
+	<api flags="no_browser"/>
+	<id major_version="1.0" version="7">ab-municipal-system-gorod</id>
 	<name>Система Город</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе и значении счетчиков по лицевым счетам, привязанным к карте Системы "Город".</p>
@@ -16,13 +17,16 @@
 	<br>
 	Екатеринбург и др.
 	<br>
-	Банк УРАЛСИБ (http://oplata.uralsibbank.ru/gorod_login.asp)    
+	Банк УРАЛСИБ (https://oplata.uralsibbank.ru/gorod_login.asp)    
 	<p><b>ВНИМАНИЕ!</b> Для работы с картами других регионов используйте специализированные провайдеры:</p>
 	990002 -  провайдер Система «Город» (Челябинск) 
 	<br>
 	990006 - провайдер Система «Город» (Алтайский край) 
 	]]></instruction>
-	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
@@ -31,22 +35,11 @@
 	</files>
 	<counters>
 		<counter id="balance" name="Баланс" units="р"/>
-		<counter id="balance_total" name="Итого" units="р"/>
-		<counter id="strah" name="Страховой взнос" units="р"/>
-		<counter id="strah_ok" name="Согласие на страхование" type="text"/>
-		<counter id="cold" name="Холодная вода" units="м³"/>
-		<counter id="hot" name="Горячая вода" units="м³"/>
-		<counter id="gas_heat" name="Газ+отопление"/>
-		<counter id="electr" name="Электроэнергия"/>
-		<counter id="electr_day" name="Электроэнергия День"/>
-		<counter id="electr_night" name="Электроэнергия Ночь"/>
-		<counter id="gas" name="Газ"/>
-		<counter id="heat" name="Газ.отопление"/>
-		<counter id="fio" name="Владелец" type="text"/>
+        <counter id="service" name="Услуга" type="text"/>
+        <counter id="provider" name="Поставщик" type="text"/>
+        <counter id="accnum" name="Лицевой счет" type="text"/>
+        <counter id="fio" name="Владелец" type="text"/>
 		<counter id="address" name="Адрес" type="text"/>
-		<counter id="service" name="Услуга" type="text"/>
-		<counter id="provider" name="Поставщик" type="text"/>
-		<counter id="accnum" name="Лицевой счет" type="text"/>
 	</counters>
 	<keywords>Система город</keywords>
 	<type>municipal</type>

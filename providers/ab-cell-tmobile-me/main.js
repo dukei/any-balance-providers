@@ -13,6 +13,7 @@ var g_headers = {
 function main() {
 	var prefs = AnyBalance.getPreferences();
 	var baseurl = 'https://mojtportal.me/';
+	var baseurlTraffic = 'https://www.t-mobile.me:2443';
 	AnyBalance.setDefaultCharset('utf-8');
 	
 	checkEmpty(prefs.login, 'Enter your phone number!');
@@ -30,15 +31,15 @@ function main() {
 	html = AnyBalance.requestPost(baseurl + 'default.aspx', params, addHeaders({Referer: baseurl }));
 	
 	if (!/logout/i.test(html)) {
-		var error = getParam(html, null, null, /<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
+		var error = getParam(html, null, null, /<div[^>]+class="Informing"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
 		if (error)
-			throw new AnyBalance.Error(error);
+			throw new AnyBalance.Error(error, null, /lozinka/i.test(error));
 		throw new AnyBalance.Error('Can`t login, is the site changed?');
 	}
 	var result = {success: true};
-	getParam(html, result, 'phone', /Vaš broj:(?:[^>]*>){3}([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, '__tariff', /Paket:(?:[^>]*>){3}([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'balance', /Trenutno stanje:(?:[^>]*>){3}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'phone', /Vaš broj:(?:[^>]*>){3}([^<]*)/i, replaceTagsAndSpaces);
+	getParam(html, result, '__tariff', /Paket:(?:[^>]*>){3}([^<]*)/i, replaceTagsAndSpaces);
+	getParam(html, result, 'balance', /(?:Trenutno stanje|Trenutna potrošnja):(?:[^>]*>){3}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
 	
 	if(isAvailable(['traffic', 'traffic_till'])) {
 		var href = getParam(html, null, null, /href\s*=\s*"\s*(https:\/\/www\.t-mobile\.me:2443[^"]*)/i);
@@ -46,10 +47,10 @@ function main() {
 			html = AnyBalance.requestGet(href, g_headers);
 			
 			href = getParam(html, null, null, /href="([^"]*?)"(?:[^>]*?>){2}Mobilni Internet/i);
-			html = AnyBalance.requestGet('https://www.t-mobile.me:2443' + href, g_headers);
+			html = AnyBalance.requestGet(baseurlTraffic + href, g_headers);
 			
 			href = getParam(html, null, null, /href="([^"]*?)"(?:[^>]*?>){2}Provjera stanja/i);
-			html = AnyBalance.requestGet('https://www.t-mobile.me:2443' + href, g_headers);
+			html = AnyBalance.requestGet(baseurlTraffic + href, g_headers);
 			
 			getParam(html, result, 'traffic', /Mobilni Internet:([^<]*?)iz paketa/i, replaceTagsAndSpaces, parseTraffic);
 			getParam(html, result, 'traffic_till', /aktivan do([^<]*)/i, replaceTagsAndSpaces, parseDate);

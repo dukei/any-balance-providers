@@ -3,14 +3,11 @@
 */
 
 var g_headers = {
-	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
-	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
+	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+	'Accept-Language': 'ru,en-US;q=0.8,en;q=0.6',
 	'Connection': 'keep-alive',
-	// Mobile
-	//'User-Agent':'Mozilla/5.0 (BlackBerry; U; BlackBerry 9900; en-US) AppleWebKit/534.11+ (KHTML, like Gecko) Version/7.0.0.187 Mobile Safari/534.11+',
-	// Desktop
-	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
+	'Accept-Encoding': 'gzip, deflate, br',
+	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36',
 };
 
 function getViewState(html){
@@ -23,6 +20,10 @@ function getEventValidation(html){
 
 
 function main() {
+	AnyBalance.setOptions({
+		SSL_ENABLED_PROTOCOLS: ['TLSv1'] //У этих странных людей даже SSL2 и 3 включены
+	});
+
 	var prefs = AnyBalance.getPreferences();
 	var baseurl = 'https://triolan.name/';
 	AnyBalance.setDefaultCharset('utf-8');
@@ -30,43 +31,51 @@ function main() {
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 	
-	var html = AnyBalance.requestGet(baseurl, g_headers);
+	var html = AnyBalance.requestGet(baseurl + 'LP.aspx', g_headers);
+
+	var formRedirect = getElements(html, [/<form/ig, /btn_toLK/i])[0];
+	if(formRedirect){
+		AnyBalance.trace('Промежуточная переадресация..');
+		html = AnyBalance.requestPost(baseurl, createFormParams(formRedirect), addHeaders({
+			Referer: baseurl, 
+			Origin: baseurl.replace(/\/+$/, '')
+		}));
+	}
+
+	html = AnyBalance.requestPost(baseurl + 'LP.aspx', {
+		'__EVENTTARGET':'',
+		'__EVENTARGUMENT':'',
+		'__VIEWSTATE':getViewState(html),
+		'__VIEWSTATEENCRYPTED':'',
+		'__EVENTVALIDATION':getEventValidation(html),
+		'login2$tbAgreement':prefs.login,
+		'login2$tbPassword':prefs.password,
+		'login2$btnLoginByAgr':'Войти',
+		'login2$tbPhone':'',
+		'login2$tbEmail':'',
+		'login2$hfType':'1',
+	}, addHeaders({
+		Referer: baseurl, 
+		Origin: baseurl.replace(/\/+$/, '')
+	}));
 	
-	try {
-		html = AnyBalance.requestPost(baseurl, {
-			'__EVENTTARGET':'',
-			'__EVENTARGUMENT':'',
-			'__VIEWSTATE':getViewState(html),
-			'__VIEWSTATEENCRYPTED':'',
-			'__EVENTVALIDATION':getEventValidation(html),
-			'login1$tbAgreement':prefs.login,
-			'login1$tbPassword':prefs.password,
-			'login1$btnLoginByAgr':'Войти',
-			'login1$tbPhone':'',
-			'login1$tbEmail':'',
-			'login1$hfType':'1',
-		}, addHeaders({Referer: baseurl}));
-	} catch(e) {}
-	
-	if (!/>Выход</i.test(html)) {
-		var error = getParam(html, null, null, /lbError"[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
+	if (!/(&#39;|>)Выход(<|&#39;)/i.test(html)) {
+		var error = getParam(html, null, null, /lbError"[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces);
 		if (error)
-			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
+			throw new AnyBalance.Error(error, null, /парол/i.test(error));
 		
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
 	
-	html = AnyBalance.requestGet(baseurl + 'RegRovno.aspx', g_headers);
-	
-
-	
 	var result = {success: true};
 	
-    getParam(html, result, 'license', /id="l_stat"[\s\S]*?Л\/с[\s\S]*?>([^<]*)</i, replaceTagsAndSpaces);
+    getParam(html, result, 'license', /№ лицевого счета:[\s\S]*?<li[^>]*>([\s\S]*?)<\/li>/i, replaceTagsAndSpaces);
+    getParam(html, result, 'balance', /Баланс:[\s\S]*?<li[^>]*>([\s\S]*?)<\/li>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'till', /Оплачено до:[\s\S]*?<li[^>]*>([\s\S]*?)<\/li>/i, replaceTagsAndSpaces, parseDate);
+
+    getParam(html, result, '__tariff', /Тариф:[\s\S]*?<li[^>]*>([\s\S]*?)<\/li>/i, replaceTagsAndSpaces);
     getParam(html, result, '__tariff', /<select name="ctl00\$cph_main\$ddl_activations"[\s\S]*?value=[\s\S]*?>"?([^<"]*)"?</i, replaceTagsAndSpaces);
-    getParam(html, result, 'balance', /id="l_stat"[\s\S]*?Баланс:[\s\S]*?>"?([^<]*)"?</i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'till', /id="l_stat"[\s\S]*?оплачено по:[\s\S]*?>([^<]*)</i, replaceTagsAndSpaces, parseDateISO);
-	
-	AnyBalance.setResult(result);
+
+    AnyBalance.setResult(result);
 }

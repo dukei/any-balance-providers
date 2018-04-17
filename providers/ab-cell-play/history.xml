@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<history>
+	<change version="4" date="2016-09-28">
+	Добавлена диагностика ошибок
+	</change>
+	<change version="3" date="2016-08-26">
+	- Поддержка изменений на сайте.
+	</change>
+	<change version="2" date="2016-08-10">
+	Исправлено получение баланса
+	</change>
+	<change version="1" date="2016-01-07">
+	- Первая версия провайдера.
+	</change>
+</history>

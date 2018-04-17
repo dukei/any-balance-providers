@@ -110,6 +110,10 @@ Function createWindow(content,features)
     Err.Raise vbObjectError,"createWindow","Can't connect with created window !"
 End Function
 
+Function messageBox(prompt, buttons, title)
+	MsgBox prompt, buttons, title
+End Function
+
 Function VBInputBox(promptText, def)
       VBInputBox = InputBox(promptText, "History helper", def)
 End Function

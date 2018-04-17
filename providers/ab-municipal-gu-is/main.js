@@ -65,8 +65,8 @@ function findBill(baseurl, dt){
     getParam(html, result, 'balance_strah', /сумма в документе:.*?([\-\d\.]*)\s*со? страх/i, replaceTagsAndSpaces, parseBalance);
    
     //Если у нас один документ
-    getParam(html, result, 'balance', /<span[^>]+class="sum"[^>]*>([^<]*)<\/span>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'balance_strah', /<span[^>]+class="sum_with_insurance"[^>]*>([^<]*)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'balance', /<span[^>]+class="sum\b[^>]*>([^<]*)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'balance_strah', /<span[^>]+class="sum_with_insurance\b[^>]*>([^<]*)<\/span>/i, replaceTagsAndSpaces, parseBalance);
 
     if(AnyBalance.isAvailable('strah')){
     	//Если у нас пара документов
@@ -75,9 +75,9 @@ function findBill(baseurl, dt){
    
     	//Если у нас один документ
         if(!isset(bal))
-    	    bal = getParam(html, null, null, /<span[^>]+class="sum"[^>]*>([^<]*)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+    	    bal = getParam(html, null, null, /<span[^>]+class="sum\b[^>]*>([^<]*)<\/span>/i, replaceTagsAndSpaces, parseBalance);
         if(!isset(bals))
-    	    bals = getParam(html, null, null, /<span[^>]+class="sum_with_insurance"[^>]*>([^<]*)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+    	    bals = getParam(html, null, null, /<span[^>]+class="sum_with_insurance\b[^>]*>([^<]*)<\/span>/i, replaceTagsAndSpaces, parseBalance);
         
         result.strah = bals-bal;
     }

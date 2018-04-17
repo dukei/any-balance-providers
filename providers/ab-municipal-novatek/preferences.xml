@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+	<EditTextPreference
+		obligatory="true"
+		title="№ лицевого счета"
+		positiveButtonText="ОК"
+		summary="||{@s}"
+		dialogTitle="№ лицевого счета"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите 8 цифр номера лицевого счета."
+		inputType="number"
+		key="login">
+	</EditTextPreference>
+	<EditTextPreference
+		title="Пароль"
+		key="password"
+		summary="||***********"
+		obligatory="true"
+		dialogTitle="Пароль"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите пароль, используемый для входа в личный кабинет."
+		inputType="textPassword">
+	</EditTextPreference>
+</PreferenceScreen>

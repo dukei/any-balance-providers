@@ -6,6 +6,7 @@
         summary="||{@s}" 
         dialogTitle="Логин" 
         negativeButtonText="Отмена" 
+        obligatory="true"
         dialogMessage="Введите логин в личный кабинет."
         key="login">
     </EditTextPreference>
@@ -14,9 +15,19 @@
         key="password" 
         dialogTitle="Пароль"
         negativeButtonText="Отмена"
+        obligatory="true"
         title="Пароль"
         summary="||***********"
         dialogMessage="Введите пароль, используемый для входа в личный кабинет."
         inputType="textPassword">
+    </EditTextPreference>
+    <EditTextPreference 
+        title="Номер счета" 
+        positiveButtonText="ОК" 
+        summary="|Автоматически|{@s}" 
+        dialogTitle="Номер счета" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите последние цифры номера счета, по которому нужно получить информацию. Или не вводите ничего, чтобы получить данные по первому счету в кабинете."
+        key="num">
     </EditTextPreference>
 </PreferenceScreen>

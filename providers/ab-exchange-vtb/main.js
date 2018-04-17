@@ -11,14 +11,13 @@ var g_headers = {
 };
 
 function main() {
-	var prefs = AnyBalance.getPreferences();
 	var baseurl = 'http://www.vtb24.ru/_layouts/Vtb24.Pages/CurrencyRateAjaxRedesign.aspx';
 	AnyBalance.setDefaultCharset('utf-8');
 	
 	var html = AnyBalance.requestGet(baseurl, g_headers);
 	
 	if (!/Конвертация в офисе/i.test(html)) {
-		var error = getParam(html, null, null, /<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
+		var error = AB.getParam(html, null, null, /<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, AB.replaceTagsAndSpaces);
 		if (error)
 			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
 		
@@ -27,11 +26,11 @@ function main() {
 	}
 	
 	var result = {success: true};
-	
-	getParam(html, result, 'usd_buy', /USD(?:[^>]*>){4}([\s\d,.]+)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'usd_sell', /USD(?:[^>]*>){7}([\s\d,.]+)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'eur_buy', /eur(?:[^>]*>){3}([\s\d,.]+)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'eur_sell', /eur(?:[^>]*>){6}([\s\d,.]+)/i, replaceTagsAndSpaces, parseBalance);
+
+    AB.getParam(html, result, 'usd_buy', /USD(?:[^>]*>){4}([\s\d,.]+)/i, AB.replaceTagsAndSpaces, AB.parseBalance);
+    AB.getParam(html, result, 'usd_sell', /USD(?:[^>]*>){7}([\s\d,.]+)/i, AB.replaceTagsAndSpaces, AB.parseBalance);
+    AB.getParam(html, result, 'eur_buy', /eur(?:[^>]*>){4}([\s\d,.]+)/i, AB.replaceTagsAndSpaces, AB.parseBalance);
+    AB.getParam(html, result, 'eur_sell', /eur(?:[^>]*>){7}([\s\d,.]+)/i, AB.replaceTagsAndSpaces, AB.parseBalance);
 	
 	AnyBalance.setResult(result);
 }

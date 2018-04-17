@@ -12,7 +12,7 @@ var g_headers = {
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'http://obrkarta.ru/';
+	var baseurl = 'https://obrkarta.ru/';
 	AnyBalance.setDefaultCharset('utf-8');
 	
 	checkEmpty(prefs.login, 'Введите логин!');
@@ -31,7 +31,7 @@ function main() {
 	}, addHeaders({Referer: baseurl}));
 	
 	if (!/logout/i.test(html)) {
-		var error = getParam(html, null, null, /color="#ff4500"[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
+		var error = getParam(html, null, null, /color="#ff4500"[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces);
 		if (error)
 			throw new AnyBalance.Error(error, null, /Ошибка авторизации клиента/i.test(error));
 		
@@ -47,9 +47,9 @@ function main() {
 	getParam(html, result, 'overdraft_limit', /Лимит овердрафта(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'expense_limit', /Лимит расходов в день(?:[^>]*>)([\s\S]*?)<\/form/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'without_card', /Текущее количество покупок без предъявления карты(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'fio', /Лицо, заключившее договор(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'acc', /Номер лицевого счета(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'status', /Состояние договора(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'fio', /Лицо, заключившее договор(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces);
+	getParam(html, result, 'acc', /Номер лицевого счета(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces);
+	getParam(html, result, 'status', /Состояние договора(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces);
 	
 	AnyBalance.setResult(result);
 }

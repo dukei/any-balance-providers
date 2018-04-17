@@ -1,5 +1,29 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="19" date="2018-02-16">
+	- Поддержка изменений на сайте.
+	</change>
+	<change version="18" date="2016-10-11">
+	Поддержка изменений в личном кабинете
+	</change>
+	<change version="17" date="2016-09-27">
+	- Поддержка изменений на сайте.
+	</change>
+	<change version="16" date="2016-05-02">
+	- Улучшена обработка ошибок.
+	</change>
+	<change version="15" date="2016-04-24">
+	- Улучшена обработка ошибок.
+	</change>
+	<change version="14" date="2016-04-06">
+	Более точное определение факта успешного входа
+	</change>
+	<change version="13" date="2016-04-04">
+	- Поддержка изменений на сайте.
+	</change>
+	<change version="12" date="2016-02-29">
+	- Улучшена обработка ошибок.
+	</change>
 	<change version="11" date="2015-11-08">
 	- Улучшена обработка ошибок.
 	</change>

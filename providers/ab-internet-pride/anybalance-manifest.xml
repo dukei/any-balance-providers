@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="3">ab-internet-pride</id>
+  <name>Pride</name>
+  <description html="true"><![CDATA[
+  	<p>Предоставляет информацию о балансе провайдера Pride <a href="http://www.pride-net.ru/">http://www.pride-net.ru/</a></p>
+	<p>Информация берется из личного кабинета <a href="http://home.nv-net.ru/tvn/acc/services/?page=accs">http://home.nv-net.ru/tvn/acc/services/?page=accs</a></p>
+	]]>
+  </description>
+  <author>Denis Volkov &lt;vda@32768.ru&gt;</author>
+  <files>
+    <icon>logo_small_2.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>library.js</js>
+	<js>main.js</js>
+	<history>history.xml</history>
+  </files>
+  <counters>
+    <counter id="TV" name="Телевидение" units= " р"/>
+    <counter id="Phone" name="Телефония" units= " р"/>
+    <counter id="ChekinAccount" name="Расчетный" units= " р"/>
+    <counter id="Internet" name="Интернет" units= " р"/>
+    <counter id="Hotspot" name="Хотспот" units= " р"/>
+    <counter id="PhonePC" name="Телефония на ПК" units= " р"/>
+    <counter id="Bonus" name="Бонусный счет" units= " р"/>
+	<counter id="fio" name="ФИО" type="text"/>
+	<counter id="TarifInternet" name="Тариф Интернет" type="text"/>
+	<counter id="TarifPhone" name="Тариф Телефон" type="text"/>
+	<counter id="TarifTV" name="Тариф ТВ" type="text"/>
+  </counters>
+  <type>internet</type>
+  <country>ru</country>
+</provider>

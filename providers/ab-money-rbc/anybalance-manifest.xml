@@ -7,7 +7,7 @@
 	<p>Получает баланс системы RBK Money <a href="http://rbkmoney.ru">http://rbkmoney.ru</a></p>
 	<p>Информация берется из личного кабинета RBK Money: <a href="https://rbkmoney.ru/login">https://rbkmoney.ru/login</a></p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

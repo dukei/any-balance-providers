@@ -1,24 +1,27 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="4">ab-taxi-taxsee</id>
+	<id version="7">ab-taxi-taxsee</id>
 	<api flags="no_browser"/>
 	<name>Такси Максим (клиент)</name>
 	<description html="true"><![CDATA[
 	<p>Получает баланс на лицевом счете клиента Такси Максим (http://taximaxim.ru)</p>
-	<p>Информация берется из личного кабинета http://cabinet.taximaxim.ru</p>
+	<p>Информация берется из личного кабинета http://client.taximaxim.ru</p>
 	]]></description>
-	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+		<module id="crypt/md5"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
 	<counters>
 		<counter id="balance" name="Баланс" units=" р"/>
 		<counter id="fio" name="ФИО" type="text"/>
-		<counter id="discont" name="Скидка" units=" %"/>
+		<counter id="discont" name="Скидка" units="%"/>
 		<counter id="licschet" name="Лицевой счет" type="text"/>
 	</counters>
 	<keywords>taxi</keywords>

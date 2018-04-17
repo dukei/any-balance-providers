@@ -1,0 +1,53 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+    <id version="1">parsers/pdf</id>
+	<api flags="no_browser" />
+    <name>PDF parser</name>
+	<description html="true"><![CDATA[
+		PDF parser based on https://github.com/modesty/pdf2json/ with the help of https://github.com/michaelficarra/commonjs-everywhere
+
+		Usage: 
+			var text = ABPDF.parseTextFromBase64(base64encodedPdfContent);
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<js>env.js</js>
+
+		<js>base/shared/util.js</js>
+		<js>base/shared/colorspace.js</js>
+		<js>base/shared/pattern.js</js>
+		<js>base/shared/function.js</js>
+		<js>base/shared/annotation.js</js>
+
+		<js>base/core/core.js</js>
+		<js>base/core/obj.js</js>
+		<js>base/core/charsets.js</js>
+		<js>base/core/crypto.js</js>
+		<js>base/core/evaluator.js</js>
+		<js>base/core/fonts.js</js>
+		<js>base/core/font_renderer.js</js>
+		<js>base/core/glyphlist.js</js>
+		<js>base/core/image.js</js>
+		<js>base/core/metrics.js</js>
+		<js>base/core/parser.js</js>
+		<js>base/core/stream.js</js>
+		<js>base/core/worker.js</js>
+		<js>base/core/jpx.js</js>
+		<js>base/core/jbig2.js</js>
+		<js>base/core/bidi.js</js>
+		<js>base/core/jpg.js</js>
+		<js>base/core/chunked_stream.js</js>
+		<js>base/core/pdf_manager.js</js>
+		<js>base/core/cmap.js</js>
+		<js>base/core/cidmaps.js</js>
+
+		<js>base/display/canvas.js</js>
+		<js>base/display/font_loader.js</js>
+		<js>base/display/metadata.js</js>
+		<js>base/display/api.js</js>
+
+		<js>abpdf.js</js>
+		<history>history.xml</history>
+	</files>
+	<type>parser, pdf</type>
+</provider>

@@ -7,7 +7,7 @@
 	<p>Предоставляет информацию о балансе интернет провайдера Мегалинк Украина</p>
 	<p>Информация берется из личного кабинета http://www.megalink.com.ua/index.php?page=pa_info</p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

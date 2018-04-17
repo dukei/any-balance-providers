@@ -1,5 +1,23 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="1.0" version="14" date="2017-02-22">
+	- Поддержка изменений на сайте.
+	</change>
+	<change major_version="1.0" version="13" date="2016-12-08">
+	- Поддержка изменений на сайте.
+	</change>
+	<change major_version="1.0" version="12" date="2016-11-08">
+	Время отправления показывается по местному времени теперь
+	</change>
+	<change major_version="1.0" version="11" date="2016-11-03">
+	- Поддержка изменений на сайте.
+	</change>
+	<change major_version="1.0" version="10" date="2016-07-15">
+	- Поддержка изменений на сайте.
+	</change>
+	<change major_version="1.0" version="9" date="2016-02-24">
+	- Мелкие улучшения.
+	</change>
 	<change major_version="1.0" version="8">
 	- Доработана обработка конфликтных станций.
 	- Переименован в Яндекс.Электрички.

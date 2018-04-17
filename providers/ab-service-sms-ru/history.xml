@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
-	<change major_version="1" version="0.3">
+	<change major_version="1.0" version="4">
+	- Изменения под новый интерфейс sms.ru. Спасибо xandrosko@gmail.com за предыдущую версию.
+	</change>
+	<change major_version="1.0" version="3">
 	- Упрощение процедуры извлечения результата, добавление счетчиков, добавление обработки ошибок получения данных, новая иконка
 	</change>
-	<change major_version="1" version="0.2">
+	<change major_version="1.0" version="2">
 	- Получение требуемых результатов в AnyBalanceDebugger
 	</change>
-	<change major_version="1" version="0.1">
+	<change major_version="1.0" version="1">
 	- Добавление иконки, истории, конфигурирование файла настроек
-	</change>
-	<change major_version="1" version="0.0" date="2013-11-10">
-	- Пилотный запуск
 	</change>
 </history>

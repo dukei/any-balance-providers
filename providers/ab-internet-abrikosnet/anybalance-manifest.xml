@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-internet-abrikosnet</id>
+	<api flags="no_browser"/>
+	<name>Абрикос</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию из аккаунта абонента интернет провайдера г. Камышина Абрикос <a href="http://www.abrikosnet.ru">http://www.abrikosnet.ru</a></p>
+	<p>Информация берется из личного кабинета <a href="https://lk.abrikosnet.ru/users/tariff.action">https://lk.abrikosnet.ru/users/tariff.action</a></p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="fee" name="Абонентская плата" units=" р"/>
+		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="address" name="Адрес" type="text"/>
+		<counter id="contract" name="№ договора" type="text"/>
+		<counter id="account" name="Лицевой счет" type="text"/>
+		<counter id="phone" name="Телефон" type="text"/>
+		<counter id="email" name="E-mail" type="text"/>
+	</counters>
+	<keywords>Бизнес Системы, кабельное, ТВ, Поволжье</keywords>
+	<type>internet</type>
+	<country>ru</country>
+</provider>

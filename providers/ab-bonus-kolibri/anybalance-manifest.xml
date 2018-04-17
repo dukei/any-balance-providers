@@ -1,0 +1,41 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="2">ab-bonus-kolibri</id>
+	<api flags="no_browser"/>
+	<name>Kolibri United System</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера Kolibri United System https://my-kolibri.com/</p>
+	<p>Информация берется из личного кабинета https://my-kolibri.com/lk</p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р."/>
+		<counter id="purchase" name="Мои покупки (подтвержденные)"/>
+		<counter id="purchase_wait" name="Мои покупки в ожидании"/>
+		<counter id="service_package" name="Пакет услуг" type="text"/>
+		<counter id="full_name" name="ФИО" type="text"/>
+		<counter id="money_back_plus" name="Money Back Plus" units=" р."/>
+		<counter id="friend_bounty" name="Премия друзей"/>
+		<counter id="friend_count" name="Число друзей"/>
+		<counter id="partner_bounty" name="Премия партнёр"/>
+		<counter id="partner_count" name="Число партнёров"/>
+		<counter id="team_bounty" name="Премия команда"/>
+		<counter id="team_count" name="Число приглашенных в команду"/>
+		<counter id="shop_bounty" name="Премия розничных магазинов"/>
+		<counter id="shop_count" name="Число розничных магазинов"/>
+		<counter id="internetshop_bounty" name="Премия интернет-магазинов"/>
+		<counter id="internetshop_count" name="Число интернет-магазинов"/>
+	</counters>
+	<keywords></keywords>
+	<type>bonus</type>
+	<country>ru</country>
+</provider>

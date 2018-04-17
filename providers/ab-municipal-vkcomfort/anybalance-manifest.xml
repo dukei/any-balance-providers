@@ -1,17 +1,19 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-municipal-vkcomfort</id>
+	<id version="4">ab-municipal-vkcomfort</id>
 	<api flags="no_browser"/>
 	<name>ВК Комфорт</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе провайдера ВК Комфорт <a href="http://vkcomfort.ru/">http://vkcomfort.ru/</a></p>
-	<p>Информация берется из личного кабинета <a href="http://vkcomfort.ru/%D0%BB%D0%B8%D1%87%D0%BD%D1%8B%D0%B9-%D0%BA%D0%B0%D0%B1%D0%B8%D0%BD%D0%B5%D1%82/">http://vkcomfort.ru/личный-кабинет/</a></p>
+	<p>Предоставляет информацию о балансе провайдера ВК Комфорт http://vkcomfort.ru/ </p>
+	<p>Информация берется из личного кабинета https://room.vkcomfort.ru/login/ </p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
@@ -20,6 +22,7 @@
 		<counter id="fio" name="ФИО" type="text"/>
 		<counter id="acc_num" name="№ лс" type="text"/>
 		<counter id="period" name="Период" type="text"/>
+		<!--
 		<counter id="water" name="Водоотведение" units=" р"/>
 		<counter id="warm" name="Отопление" units=" р"/>
 		<counter id="heating" name="Подогрев ХВС для ГВС" units=" р"/>
@@ -30,7 +33,8 @@
 		<counter id="total_utilities" name="Итого(коммунальные услуги)" units=" р"/>
 		<counter id="expluat" name="Содержание и ремонт жилого помещения" units=" р"/>
 		<counter id="total_expluat" name="Итого(эксплуатационные услуги)" units=" р"/>
-		<counter id="total_sum" name="Итого" units=" р"/>
+		-->
+		<counter id="total_sum" name="Итого начислено" units=" р"/>
 	</counters>
 	<keywords></keywords>
 	<type>municipal</type>

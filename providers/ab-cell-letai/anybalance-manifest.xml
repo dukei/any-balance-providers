@@ -1,0 +1,37 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="3">ab-cell-letai</id>
+	<api flags="no_browser"/>
+	<name>Летай</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе мобильной связи Летай http://letai.ru</p>
+	<p>Информация берется из личного кабинета https://newlk.letai.ru:8443</p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p><b>Для входа по номеру телефона: </b> если Вы ВПЕРВЫЕ входите в Единый личный кабинет или забыли пароль, то необходимо получить пароль по USSD-запросу *100*3# или в смс-сообщении, отправив текст 003 на номер 0100 с мобильного номера "Летай". Полученный код необходимо ввести в поле "Пароль".</p>
+	<p><b>Для входа по e-mail: </b> Если Вы ВПЕРВЫЕ входите в Единый личный кабинет, то необходимо <a href="https://newlk.letai.ru:8443/template.REGISTER/">Зарегистрироваться</a>. При регистрации понадобится логин и пароль от Интернета с карты "Летай" или необходимо обратиться в офис продаж и обслуживания и назначить специальное кодовое слово.</p>
+	]]></instruction>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="abon" name="Абонентская плата" units=" р"/>
+		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="licschet" name="Лицевой счет" type="text"/>
+		<counter id="agreement" name="Номер договора" type="text"/>
+<!--		<counter id="status" name="Статус" type="text"/> -->
+		<counter id="phone" name="Телефон" type="text"/>
+<!--		<counter id="address" name="Адрес подключения" type="text"/> -->
+	</counters>
+	<keywords>таттелеком tattelecom</keywords>
+	<type>cell, internet</type>
+	<country>ru</country>
+</provider>

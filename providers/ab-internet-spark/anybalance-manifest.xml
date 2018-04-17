@@ -1,39 +1,43 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="3">ab-internet-spark</id>
-  <name>СПАРК</name>
+	<api flags="no_browser"/>
+  <id version="4">ab-internet-spark</id>
+  <name>ТТК (СПАРК)</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе и тарифном плане для пользователей Интернет-провайдера СПАРК (http://spark-com.ru).</p> 
+	<p>Предоставляет информацию о балансе и тарифном плане для пользователей Интернет-провайдера ТТК (компания СПАРК, http://spark-com.ru).</p> 
 	<p>Информация берется из личного кабинета (http://stat.spark-com.ru).</p>
 
 	<p>СПАРК — торговая марка ЗАО «Электро-ком» (входит в группу компаний ТТК).</p>   
 	<p>Обслуживает следующие города:<p>
+	<ul>
+        <li>Азов</li>
+        <li>Аксай</li>
+        <li>Брянск</li>
+        <li>Волгодонск</li>
+        <li>Калуга</li>
+        <li>Краснодар</li>
+        <li>Майкоп</li>
+        <li>Невинномысск</li>
+        <li>Новочеркасск</li>
+        <li>Новошахтинск</li>
+        <li>Обнинск</li>
+        <li>Ростов-на-Дону и Батайск</li>
+        <li>Рязань</li>
+        <li>Таганрог</li>
+        <li>Тула</li>
+        <li>Черкесск</li>
+	</ul>
 
-	Батайск
-	<br>
-	Брянск
-	<br>
-	Волгодонск
-	<br>
-	Калуга
-	<br>
-	Краснодар
-	<br>
-	Обнинск
-	<br>
-	Ростов-на-Дону
-	<br>
-	Рязань
-	<br>
-	Таганрог
-	<br>
-	Тула
 	]]></description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+  <depends>
+  	<module id="library"/>
+  </depends>
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
     <js>main.js</js>
+  	<history>history.xml</history>
   </files>
   <counters>
     <counter id="balance" name="Баланс" units="р"/>

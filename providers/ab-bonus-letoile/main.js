@@ -12,7 +12,7 @@ var g_headers = {
 
 function main () {
     var prefs = AnyBalance.getPreferences ();
-    var baseurl = 'http://www.letoile.ru/';
+    var baseurl = 'http://b2b.letoile.ru/';
 
     checkEmpty (prefs.number, 'Введите номер карты');
     checkEmpty (prefs.color, 'Выберите цвет карты');
@@ -29,9 +29,9 @@ function main () {
 		throw new AnyBalance.Error('Необходимо заполнить анкету на сайте зайдите в личный кабинет через браузер и заполните все поля и нажмите отправить.');
 
 	if (!/Баланс\s*карты:/i.test(html)) {
-		var error = getParam(html, null, null, /class="g-error"[^>]*>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
+		var error = getParam(html, /class="g-error"[^>]*>([^<]*)/i, replaceTagsAndSpaces);
 		if (error)
-			throw new AnyBalance.Error(error);
+			throw new AnyBalance.Error(error, null, /Некоррект/i.test(error));
 		
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');

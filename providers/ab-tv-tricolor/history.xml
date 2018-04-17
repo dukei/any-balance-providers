@@ -1,5 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="18" date="2017-09-23">
+	- Поддержка изменений на сайте.
+	</change>
+	<change version="17" date="2016-12-08">
+	- Исправлен счетчик количества дней до отключения.
+	</change>
+  <change version="16" date="2016-03-04">
+  - Выводится сумма балансов по всем услугам.
+  </change>
+  <change version="15" date="2016-02-18">
+  - Улучшено определение баланса.
+  </change>
 	<change version="14" date="2015-08-27">
 	- Улучшена обработка ошибок.
 	</change>

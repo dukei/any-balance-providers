@@ -1,5 +1,23 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="8" date="2018-04-10">
+	Поддержка ввода номера счета без пробелов
+	</change>
+	<change version="7" date="2017-10-07">
+	Поддержка изменений в процедуре входа
+	</change>
+	<change version="6" date="2017-08-01">
+	Название страны изменено
+	</change>
+	<change version="5" date="2017-08-01">
+	- Поддержка изменений на сайте.
+	</change>
+	<change version="4" date="2017-01-09">
+	Баланс подвинут наверх по важности
+	</change>
+	<change version="3" date="2016-11-09">
+	- Поддержка изменений на сайте.
+	</change>
 	<change version="2" date="2015-01-21">
 	- Поддержка изменений на сайте.
 	</change>

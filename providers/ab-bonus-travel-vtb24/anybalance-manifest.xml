@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="2">ab-bonus-travel-vtb24</id>
+	<api flags="no_browser"/>
+	<name>ВТБ мили</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера ВТБ24 мили https://travel.vtb.ru/</p>
+	<p>Информация берется из личного кабинета https://travel.vtb.ru/account/miles</p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Количество миль" units=" м"/>
+		<counter id="fio" name="ФИО" type="text"/>
+	</counters>
+	<keywords>ВТБ24</keywords>
+	<type>bonus</type>
+	<country>ru</country>
+</provider>

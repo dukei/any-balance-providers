@@ -7,7 +7,7 @@
 	<p>Предоставляет информацию о балансе карты в Судостроительном банке.</p>
 	<p>Информация берется из личного кабинета https://www.sbank.ru/Default.asp</p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

@@ -1,26 +1,38 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-hosting-beget</id>
+	<id version="4">ab-hosting-beget</id>
 	<api flags="no_browser"/>
 	<name>beget</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе и других параметрах хостинга beget <a href="https://beget.ru/">https://beget.ru/</a></p>
-	<p>Информация берется из личного кабинета <a href="https://cp.beget.ru/">https://cp.beget.ru/</a></p>
+	<p>Предоставляет информацию о балансе и других параметрах хостинга beget <a href="https://beget.com/">https://beget.ru/</a></p>
+	<p>Информация берется из личного кабинета <a href="https://cp.beget.com/">https://cp.beget.ru/</a></p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
 	<counters>
 		<counter id="balance" name="Баланс" units=" р"/>
-		<counter id="payment" name="Стоимость услу" units=" р"/>
+		<counter id="payment" name="Суммарная стоимость" units=" р"/>
+		<counter id="user_id" name="ID пользователя" type="text"/>
+		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="IP" name="IP сервера" type="text"/>
+		<counter id="server_name" name="Имя сервера" type="text"/>
+		<counter id="date_delete" name="Дата удаления" type="time" format="dd/MM/yyyy"/>
+		<counter id="date_block" name="Дата блокировки" type="time" format="dd/MM/yyyy"/>
 		<counter id="daysleft" name="Дней до блокировки" units=" д"/>
-		<counter id="disk" name="Дисковое пространство" units=" %"/>
-		<counter id="disk_mb" name="Дисковое пространство, мб" units=" Мб"/>
+		<counter id="ftp" name="FTP"/>
+		<counter id="mysql" name="MySQL"/>
+		<counter id="sites" name="Сайты"/>
+		<counter id="mail" name="Почта"/>
+		<counter id="plan_quota" name="Дисковое пространство (всего)" units=" Mb"/>
+		<counter id="used_quota" name="Дисковое пространство (использовано)" units=" Mb"/>
 	</counters>
 	<keywords></keywords>
 	<type>hosting</type>

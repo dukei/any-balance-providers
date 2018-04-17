@@ -2,13 +2,13 @@
 <PreferenceScreen>
     <EditTextPreference
 		obligatory="true"
-        title="Логин" 
+        title="Логин или электронная почта" 
         positiveButtonText="ОК" 
         summary="||{@s}" 
-        dialogTitle="Логин" 
+        dialogTitle="Логин или электронная почта" 
         negativeButtonText="Отмена" 
-        dialogMessage="Введите номер карты для входа в личный кабинет."
-        inputType="text"
+        dialogMessage="Введите логин или электронную почту для входа в личный кабинет."
+        inputType="textEmailAddress"
         key="login">
     </EditTextPreference>
     <EditTextPreference 
@@ -22,7 +22,7 @@
         dialogMessage="Введите пароль, используемый для входа в личный кабинет."
         inputType="textPassword">
     </EditTextPreference>
-    <EditTextPreference
+<!--    <EditTextPreference
         title="Код клиента" 
         positiveButtonText="ОК" 
         summary="||{@s}" 
@@ -31,5 +31,5 @@
         dialogMessage="Введите код клиента, если у вас их несколько в личном кабинете."
         inputType="number"
         key="num">
-    </EditTextPreference>
+    </EditTextPreference> -->
 </PreferenceScreen>

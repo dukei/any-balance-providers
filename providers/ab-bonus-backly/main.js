@@ -41,7 +41,7 @@ function main() {
 	if (!/redirect_url":"/i.test(html)) {
 		var error = getParam(html, null, null, /<div[^>]+class="alert"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
 		if (error)
-			throw new AnyBalance.Error(error, null, /Неверный пароль или email/i.test(error));
+			throw new AnyBalance.Error(error, null, /парол/i.test(error));
 		
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
@@ -56,13 +56,16 @@ function main() {
 	}
 
 	var result = {success: true};
+
+	var pager = getJsonObject(html, /:init-pager='/i);
 	
-	sumParam(html, result, 'balance', /<div[^>]+class=['"]total\b[^>]*>([\s\S]*?)<\/div>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-	sumParam(html, result, 'count', /<div[^>]+class=['"]orders-count\b[^>]*>([\s\S]*?)<\/div>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+	getParam(html, result, 'balance', />\s*Бэкли-счет[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/ig, replaceTagsAndSpaces, parseBalance);
+	getParam(pager.total_sum, result, 'blocked', null, replaceTagsAndSpaces, parseBalance);
+	getParam(pager.total_count, result, 'count');
 	getParam(html, result, 'got', /<span[^>]+class='name'[^>]*>\s*Получено\s*[\s\S]*?<span[^>]+class='count'[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'got4friends', /<span[^>]+class='name'[^>]*>\s*Кешбэк за друзей\s*[\s\S]*?<span[^>]+class='count'[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'friends', /<span[^>]+class='name'[^>]*>\s*Все друзья\s*[\s\S]*?<span[^>]+class='count'[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, '__tariff', /<div[^>]+class='personal'[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, '__tariff', /<a[^>]+username[^>]*>([\s\S]*?)<\/a>/i, replaceTagsAndSpaces);
 	
 	AnyBalance.setResult(result);
 }

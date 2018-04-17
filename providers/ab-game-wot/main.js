@@ -102,7 +102,8 @@ function main(){
 		var tmp = pvehicles.data[id]
 		var s = 0;
 		for (q in tmp){
-			s += tmp[q].statistics.battles * tanks_data[tmp[q].tank_id].level;
+			if(tanks_data[tmp[q].tank_id]) //ID танка юзера не было в общем списке танков
+				s += tmp[q].statistics.battles * tanks_data[tmp[q].tank_id].level;
 		}	
 		var TIER = s / battles;
 		
@@ -164,7 +165,7 @@ function main(){
 		var f = 0;
 		for (q in tmp){
 
-			if (tanks_data[tmp[q].tank_id].name_i18n == prefs.tank || tanks_data[tmp[q].tank_id].name.split(':', 2)[1] == prefs.tank) {
+			if (tanks_data[tmp[q].tank_id] && (tanks_data[tmp[q].tank_id].name_i18n == prefs.tank || tanks_data[tmp[q].tank_id].name.split(':', 2)[1] == prefs.tank)) {
 				
 				result.__tariff = pname + ' (' + tanks_data[tmp[q].tank_id].name_i18n + ')';
 

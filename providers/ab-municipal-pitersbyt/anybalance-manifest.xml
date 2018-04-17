@@ -1,24 +1,24 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="16">ab-municipal-pitersbyt</id>
+  <id version="40">ab-municipal-pitersbyt</id>
   <api flags="no_browser"/>
   <name>Петербургская сбытовая компания</name>
   <description>
-    Получает текущую задолженность в Петербургской Сбытовой Компании (http://pesc.ru) и Петроэлектросбыте (http://www.pes.spb.ru).
+    Получает текущую задолженность в Петербургской Сбытовой Компании и Петроэлектросбыте http://pesc.ru . 
     
-    Получает данные из личного кабинета для физических лиц Петербургской сбытовой компании (http://ikus.pesc.ru:8080/IKUSUser) и Петроэлектросбыта (https://ikus.pes.spb.ru/IKUSUser).
+    Получает данные из личного кабинета для физических лиц Петербургской сбытовой компании https://ikus.pesc.ru .
   </description>
   <instruction>
-    Если у вас еще нет доступа к этому личному кабинету, или данные не отображаются, выполните инструкции по регистрации по ссылкам:
-       http://www.pesc.ru/lk/poryadok_registracii (для Петербургской Сбытовой Компании),
-       http://www.pes.spb.ru/consumers/11/ (для Петроэлектросбыта) 
+    Если у вас еще нет доступа к этому личному кабинету, или данные не отображаются, зарегистрируйтесь по ссылке https://ikus.pesc.ru/login
   </instruction>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+  <author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+  <depends>
+  	<module id="library"/>
+  </depends>
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
     <js>main.js</js>
-    <js>library.js</js>
     <history>history.xml</history>
   </files>
   <counters>

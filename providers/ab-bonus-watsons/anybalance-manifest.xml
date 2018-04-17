@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="4">ab-bonus-watsons</id>
-  <name>Сеть магазинов Watsons (Украина)</name>
-  <description>
-    Мониторинг накопленных балов по программе лояльности сети магазинов Watsons (Украина).
-    
-    Для проверки балов необходимо зарегистрировать свою карточку по адресу https://club.watsons.com.ua/club/
-  </description>
+  <id version="5">ab-bonus-watsons</id>
+    <api flags="no_browser" />
+    <name>Мережа магазинів Watsons (Україна)</name>
+    <description html="true"><![CDATA[
+    <p>Моніторинг накопичених балів за програмою лояльності мережі магазинів Watsons (Україна).</p>
+    ]]></description>
+    <instruction html="true"><![CDATA[
+    <p>Для перевірки балів необхідно зареєструвати свою картку за адресою https://www.watsons.ua/register/stepOne</p>
+    ]]></instruction>
   <author>Ignatiy Goloviznin &lt;igoloviznin@gmail.com&gt;</author>
   <files>
     <icon>icon.png</icon>
@@ -17,11 +19,12 @@
   </files>
   <counters>
     <counter id="bonus" name="Бонус" suffix=" бон." type="numeric"/>
-    <counter id="bonus_burn_date" name="Срок действия бонусов" type="time" format="dd/MM/yyyy"/>
-    <counter id="bonus_burn" name="Сгорающие бонусы" suffix=" бон." type="numeric"/>
+    <counter id="bonus_last" name="Бонус за останню покупку" suffix=" бон." type="numeric"/>
+    <counter id="bonus_burn" name="Бонуси які незабаром згорять" suffix=" бон." type="numeric"/>
+    <counter id="bonus_burn_date" name="Термін дії бонусів" type="time" format="dd/MM/yyyy"/>
   </counters>
   <keywords>
-    сеть магазин ватсонс watsons dc дц украина
+    мережа сеть магазин ватсонс watsons dc дц україна украина
   </keywords>
   <type>
     bonus

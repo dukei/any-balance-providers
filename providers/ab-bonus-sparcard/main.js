@@ -18,6 +18,15 @@ function main() {
         	throw new AnyBalance.Error('Введите номер карты!');
 	if (!prefs.auth_password)
 		throw new AnyBalance.Error('Введите пароль!');
+	
+	var baseurl = 'https://card.spar-nn.ru/';
+
+    var html = AnyBalance.requestGet(baseurl + 'site/login', g_headers);
+	var sitekey = getParam(html, /data-sitekey="([^"]*)/i, replaceHtmlEntities), recaptcha;
+	if(sitekey){
+		AnyBalance.trace('Потребовалась рекапча');
+		recaptcha = solveRecaptcha('Пожалуйста, подтвердите, что вы не робот!', baseurl + 'site/login', sitekey);
+	}
 		
 	response = AnyBalance.requestPost('https://api-sparmv.loymax.tech/token', {
 		'grant_type':'password',
@@ -39,7 +48,7 @@ function main() {
 
 	user = getJson(response);
 
-	var result = {success: false};
+	var result = {success: true};
 
 	if (user.data.cardShortInfo) {
 		if(AnyBalance.isAvailable('__tariff')) {

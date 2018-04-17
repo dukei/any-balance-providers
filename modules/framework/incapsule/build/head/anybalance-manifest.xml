@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+    <id version="1">framework/incapsule</id>
+	<api flags="no_browser" />
+    <name>Incapsule helper</name>
+	<description html="true"><![CDATA[
+		Helps to deal with incapsule protected pages
+
+		Usage:
+
+    		var incapsule = Incapsule(baseurl + 'ru/privilege/argo-login');
+		    var html = AnyBalance.requestGet(baseurl + 'ru/privilege/argo-login', g_headers);
+		    if(incapsule.isIncapsulated(html))
+		        html = incapsule.executeScript(html);
+
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
+	<files>
+		<js>framework.incapsule.min.js</js>
+		<history>history.xml</history>
+	</files>
+	<type>obfuscator, antirobot</type>
+</provider>

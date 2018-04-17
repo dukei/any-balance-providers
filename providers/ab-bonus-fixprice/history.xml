@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<history>
+	<change version="110" date="2017-05-23">
+	- Поддержка изменений на сайте.
+	</change>
+	<change version="109" date="2017-02-21">
+	Исправлено отображение баллов с копейками
+	</change>
+	<change version="108" date="2016-12-16">
+	- Поддержка изменений на сайте.
+	</change>
+	<change version="107" date="2016-11-17">
+	- Поддержка изменений на сайте.
+	</change>
+	<change version="5" date="2016-11-01">
+	Поддержка рекапчи
+	Улучшена обработка ошибок
+	</change>
+	<change version="4" date="2016-10-14">
+	Обход капчи
+	</change>
+	<change version="3" date="2016-10-11">
+	Поддержка изменений в лк
+	</change>
+	<change version="2" date="2016-02-02">
+	- Поддержка изменений на сайте.
+	- Улучшена обработка ошибок.
+	</change>
+	<change version="1" date="2016-01-12">
+	- Первая версия провайдера.
+	</change>
+</history>

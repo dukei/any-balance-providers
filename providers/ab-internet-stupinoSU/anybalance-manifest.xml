@@ -1,18 +1,21 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-internet-stupinoSU</id>
+	<id version="3">ab-internet-stupinoSU</id>
 	<api flags="no_browser"/>
 	<name>stupino.su</name>
 	<description html="true"><![CDATA[
 	<p>Получает баланс и другую информацию для интернет провайдера stupino.su (http://stupino.su)</p>
-	<p>Информация берется из личного кабинета клиента: https://lk2.stupino.su</p>
+	<p>Информация берется из личного кабинета клиента: https://lk.stupino.su</p>
 	<p>Для данного провайдера рекомендуется отдельно подключать аккаунты для интернет, телефонии и Wimax.</p>
 	]]></description>
-	<author>ViktorSinitsyn &lt;mousesport007@ya.ru&gt;</author>
+	<author>Viktor Sinitsyn &lt;mousesport007@ya.ru&gt;</author>
+		<depends>
+		<module id="library"/>
+	</depends>
 	<files>
+		<js>library.min.js</js>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
@@ -20,12 +23,13 @@
 		<counter id="balance" name="Баланс" units=" р"/>
 		<counter id="tarif" name="Текущий тариф" type="text"/>	
 		<counter id="status" name="Авторизация" type="text"/>	
-		<counter id="ip" name="IP адрес" type="text"/>
-		<counter id="eip" name="Внешний IP" type="text"/>
+		<counter id="ip" name="IP-адрес" type="text"/>
+		<counter id="extip" name="Внешний IP-адрес" type="text"/>
 		<counter id="fio" name="ФИО" type="text"/>
 		<counter id="id" name="Номер договора" type="text"/>
+		<counter id="tel" name="Номер телефона" type="text"/>
 	</counters>
-	<keywords>скс ступино stupino домашняя сеть</keywords>
+	<keywords>скс, ступино, stupino, домашняя сеть</keywords>
 	<type>internet, telephony, tv</type>
 	<country>ru</country>
 </provider>

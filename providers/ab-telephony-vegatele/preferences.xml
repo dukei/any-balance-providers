@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
-    <ListPreference
+<!--    <ListPreference
 		obligatory="true"
         key="login_method" 
         title="Войти посредством"
@@ -8,7 +8,7 @@
         entries="Номер лицевого счета|Логин|E-mail"
         entryValues="number_ls|login|email"
 	defaultValue="number_ls">
-    </ListPreference>
+    </ListPreference> -->
     <EditTextPreference
 		obligatory="true"
         title="Логин" 

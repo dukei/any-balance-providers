@@ -1,5 +1,23 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="26" date="2018-03-07">
+	Убрана капча с сайта
+	</change>
+	<change version="25" date="2017-08-18">
+	Поддержка капчи
+	</change>
+	<change version="24" date="2017-04-05">
+	Показ минут/смс/трафика на мобильных тарифах
+	</change>
+	<change version="23" date="2016-12-28">
+	Поддержка входа по емейлу или телефону
+	</change>
+	<change version="22" date="2016-11-16">
+	- Поддержка изменений на сайте.
+	</change>
+	<change version="21" date="2016-10-04">
+	- Улучшена обработка ошибок.
+	</change>
 	<change version="20" date="2015-06-16">
 	- Улучшена обработка ошибок.
 	</change>

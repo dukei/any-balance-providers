@@ -6,7 +6,7 @@
 	<description html="true"><![CDATA[
 	<p>Получает текущий остаток и другие параметры карт банка Петербургский Социальный Коммерческий Банк (http://pscb.ru), используя интернет-банк https://web2.pscb.ru.</p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

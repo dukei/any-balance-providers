@@ -1,6 +1,6 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="13">ab-money-homecredit</id>
+	<id version="14">ab-money-homecredit</id>
 	<api flags="no_browser"/>
 	<name>Хоум Кредит</name>
 	<description html="true"><![CDATA[
@@ -47,6 +47,7 @@
 		<counter id="own" name="Собственные средства" units=" {@currency}"/>
 		<counter id="agreement" name="№ договора" type="text"/>
 		<counter id="overall_debt" name="Общая задолженность" units=" {@currency}"/>
+		<counter id="polsa" name="Баллов польза" units=" {@currency}"/>
 	</counters>
 	<keywords>Кредит, банк, home credit</keywords>
 	<type>money</type>

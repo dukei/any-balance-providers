@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id major_version="1.0" version="17">ab-upts</id>
+	<name>УПТС Воркута</name>
+	<description html="true"><![CDATA[
+		<p>Предоставляет  информацию о балансе для пользователей оператора связи "УПТС Воркута". </p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+		<p>Логин и пароль для доступа к балансу указаны в договоре</p>
+	]]></instruction>
+	<author>Dmitry Egorov &lt;ds.egorov@ovu.vorkuta.com&gt;</author>
+	<files>
+		<icon>icon.png</icon>	
+		<preferences>preferences.xml</preferences>	
+		<js>library.js</js>		
+		<js>main.js</js>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р" type="numeric"/>
+		<counter id="last_pay_sum" name="Последний платеж" units=" р"/>
+		<counter id="last_pay_date" name="Дата посл. платежа" type="time" format="dd/MM/yyyy"/>
+	</counters>
+	<keywords>интернет</keywords>
+	<type>cell</type>
+	<country>ru</country>
+</provider>

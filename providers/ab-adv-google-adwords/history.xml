@@ -1,5 +1,27 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="15" date="2017-04-13">
+	- Поддержка изменений на сайте.
+	- Баланс, к сожалению, получить не удаётся. Сложно.
+	</change>
+	<change version="14" date="2016-10-17">
+	- Поддержка изменений на сайте.
+	</change>
+	<change version="13" date="2016-10-17">
+	- Улучшена обработка ошибок.
+	</change>
+	<change version="12" date="2016-10-17">
+	Поддержка изменений в процедуре входа
+	</change>
+	<change version="11" date="2016-04-22">
+	- Поддержка изменений на сайте.
+	</change>
+	<change version="10" date="2016-01-10">
+	Добавлен баланс и последний платеж
+	</change>
+	<change version="9" date="2016-01-08">
+	- Поддержка замороченного личного кабинета
+	</change>
 	<change version="8" date="2014-10-10">
 	- Поддержка изменений на сайте.
 	</change>

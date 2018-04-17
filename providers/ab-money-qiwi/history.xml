@@ -1,5 +1,26 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="2.3" version="38" date="2017-11-30">
+	- Поддержка изменений на сайте.
+	</change>
+	<change major_version="2.3" version="37" date="2017-04-16">
+	- Улучшена обработка ошибок.
+	</change>
+	<change major_version="2.3" version="36" date="2016-11-19">
+	- Улучшена обработка ошибок.
+	</change>
+	<change major_version="2.3" version="35" date="2016-11-07">
+	Поддержка рекапчи
+	</change>
+	<change major_version="2.3" version="34" date="2016-10-14">
+	Протокол теперь только TLS1.2
+	</change>
+	<change major_version="2.3" version="33" date="2016-08-16">
+	Пояснение, что нужно делать в случае появления капчи
+	</change>
+	<change major_version="2.3" version="32" date="2016-02-15">
+	Добавлена возможность отображения до 5 балансов
+	</change>
 	<change major_version="2.3" version="31" date="2015-11-05">
 	- Исправлена кодировка.
 	</change>

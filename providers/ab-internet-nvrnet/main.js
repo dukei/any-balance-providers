@@ -1,98 +1,92 @@
 ﻿/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
-
-Получает баланс и информацию о тарифном плане для новороссийского интернет-провайдера Спринт
-
-Сайт оператора: http://nvrnet.ru
-Личный кабинет: http://nvrnet.ru/home
 */
 
-function getParam (html, result, param, regexp, replaces, parser) {
-	if (param && (param != '__tariff' && !AnyBalance.isAvailable (param)))
-		return;
+var g_headers = {
+	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
+	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
+	'Connection': 'keep-alive',
+	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
+};
 
-	var matches = regexp.exec (html), value;
-	if (matches) {
-		value = matches[1];
-		if (replaces) {
-			for (var i = 0; i < replaces.length; i += 2) {
-				value = value.replace (replaces[i], replaces[i+1]);
-			}
-		}
-		if (parser)
-			value = parser (value);
+function main() {
+	var prefs = AnyBalance.getPreferences();
+	var baseurl = 'https://nvrnet.ru/';
+	AnyBalance.setDefaultCharset('utf-8');
 
-    if(param)
-      result[param] = value;
+	/* Проверяем не забыл ли пользователь ввести данные */
+
+	checkEmpty(prefs.login, 'Введите логин!');
+	checkEmpty(prefs.password, 'Введите пароль!');
+
+	/* Проверяем доступность ресурса */
+
+	var html = AnyBalance.requestGet(baseurl, g_headers);
+
+	if(!html || AnyBalance.getLastStatusCode() > 400){
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
 	}
-   return value
+
+	/* Пробуем залогиниться */
+
+	html = AnyBalance.requestPost(baseurl, {
+		auth_id: prefs.login,
+		auth_password: prefs.password,
+		ajax: 1
+	}, g_headers);
+
+	if(!html || AnyBalance.getLastStatusCode() > 400) {
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Ошибка при входе в личный кабинет! Попробуйте обновить данные позже.');
+	}
+
+	var json = JSON.parse(html);
+	if (json.status !== 1) {
+		// ошибка, фатальная
+		throw new AnyBalance.Error(json.msg, null, true);
+	}
+
+	/* Получаем данные */
+
+	var result = {success: true};
+
+	html = AnyBalance.requestGet(baseurl + json.data.url.substring(0), g_headers);
+	// получаем лицевой счет (licschet) он же accound_id
+	getParam(html, result, 'licschet', /\([^)]*?account_tariffs_block[^)]*?,([\s\S]*?)\)/i, replaceTagsAndSpaces);
+
+	// получаем баланс
+	html = AnyBalance.requestPost(baseurl + 'utm5/office', {
+		ajax_action: 'get_account_panel',
+		account_id: result.licschet,
+		ajax: 1
+	}, g_headers);
+
+	json = JSON.parse(html);
+	if (json.status !== 1) {
+		// ошибка
+		throw new AnyBalance.Error('Ошибка при получении баланса. Сайт изменён?', null, false);
+	}
+
+	html = json.data.account_panel_html;
+	getParam(html, result, 'balance', /Баланс[\s\S]*?utm_value[^>]*?>([\s\S]*?)</i, replaceTagsAndSpaces, parseBalance);
+
+	// получаем тариф
+	html = AnyBalance.requestPost(baseurl + 'utm5/office', {
+		ajax_action: 'get_tariffs_block',
+		account_id: result.licschet,
+		ajax: 1
+	}, g_headers);
+
+	json = JSON.parse(html);
+	if (json.status !== 1) {
+		// ошибка
+		throw new AnyBalance.Error('Ошибка при получении тарифа. Сайт изменён?', null, false);
+	}
+
+	html = json.data.tariffs_block_html;
+	getParam(html, result, '__tariff', /utm_acctariffs_tariff_info[\s\S]*?TARIFF\s*?NAME[\s\S]*?utm_label[^>]*?>([\s\S]*?)</i, replaceTagsAndSpaces);
+
+	AnyBalance.setResult(result);
 }
-
-var replaceTagsAndSpaces = [/&nbsp;/g, ' ', /<[^>]*>/g, ' ', /\s{2,}/g, ' ', /^\s+|\s+$/g, ''];
-var replaceFloat = [/\s+/g, '', /,/g, '.'];
-
-function parseBalance(text){
-    var val = getParam(text.replace(/\s+/g, ''), null, null, /(-?\d[\d\s.,]*)/, replaceFloat, parseFloat);
-    AnyBalance.trace('Parsing balance (' + val + ') from: ' + text);
-    return val;
-}
-
-function parseTrafficGb(str){
-  var val = getParam(str.replace(/\s+/g, ''), null, null, /(-?\d[\d\s.,]*)/, replaceFloat, parseFloat);
-  return parseFloat((val/1024).toFixed(2));
-}
-
-function main(){
-    var prefs = AnyBalance.getPreferences();
-    AnyBalance.setDefaultCharset('utf-8');
-
-    var baseurl = "http://nvrnet.ru/";
-
-    var html = AnyBalance.requestGet(baseurl + 'home');
-    html = AnyBalance.requestPost(baseurl + 'home', {
-        'form-id':'sprint-statistics',
-        login:prefs.login,
-        password:prefs.password,
-        'op.x':16,
-        'op.y':7        
-    });
-
-    //AnyBalance.trace(html);
-    if(!/\/logout/i.test(html)){
-        var error = getParam(html, null, null, /<div[^>]+class=["'][^'"]*error[^>]*>([\s\S]*?)<\/div>/, replaceTagsAndSpaces, html_entity_decode);
-        if(error)
-            throw new AnyBalance.Error(error);
-        throw new AnyBalance.Error('Не удалось войти в личный кабинет. Проблемы на сайте или сайт изменен.');
-    }
-
-    var result = {success: true};
-
-    getParam(html, result, 'balance', /Баланс:[\S\s]*?<span[^>]*>([\S\s]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'licschet', /л\. счет:[\S\s]*?<span[^>]*>([\S\s]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
-
-    html = AnyBalance.requestGet(baseurl + "utm5/tariffs");
-    getParam(html, result, '__tariff', /Тарифный план[\S\s]*?<td[^>]*>([\S\s]*?)(?:<a|<\/td>)/i, replaceTagsAndSpaces, html_entity_decode);
-
-    if(AnyBalance.isAvailable('trafficIn', 'trafficOut')){
-        html = AnyBalance.requestGet(baseurl + "utm5/traffic");
-        var uid = getParam(html, null, null, /uid1=(\d+)/i);
-        var now = new Date();
-        var begin = new Date(now.getFullYear(), now.getMonth(), 1);
-
-        html = AnyBalance.requestGet(baseurl + 'utm5/traffic?ajax=1&d11=' + Math.round(begin.getTime()/1000) + '&d22=' + Math.round(now.getTime()/1000) + '&uid1=' + uid + '&sort1=common&group_ip=0');
-
-       getParam(html, result, 'trafficIn', /Incoming[\s\S]*?<td[^>]*>([\S\s]*?)<\/td>/i, replaceFloat, parseTrafficGb);
-       getParam(html, result, 'trafficOut', /Outgoing[\s\S]*?<td[^>]*>([\S\s]*?)<\/td>/i, replaceFloat, parseTrafficGb);
-    }
-    
-    AnyBalance.setResult(result);
-}
-
-function html_entity_decode(str)
-{
-    //jd-tech.net
-    var tarea=document.createElement('textarea');
-    tarea.innerHTML = str;
-    return tarea.value;
-}
-

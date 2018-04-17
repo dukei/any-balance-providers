@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">crypt/cryptojs/sha512</id>
+	<api flags="no_browser"/>
+	<name>CryptoJS sha512 module</name>
+	<description html="true"><![CDATA[
+	<p>CryptoJS sha512 codec</p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="crypt/cryptojs/core"/>
+		<module id="crypt/cryptojs/x64-core"/>
+	</depends>
+	<files>
+		<js>crypt.cryptojs.sha512.min.js</js>
+		<history>history.xml</history>
+	</files>
+	<keywords></keywords>
+	<type>crypt cryptojs sha512</type>
+	<country></country>
+</provider>

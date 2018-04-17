@@ -1,5 +1,21 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="14" date="2018-04-05">
+	- Поддержка изменений на сайте.
+	</change>
+	<change version="13" date="2018-02-09">
+	- Поддержка изменений на сайте.
+	</change>
+	<change version="12" date="2018-01-22">
+	Исправлено получение счетов
+	</change>
+	<change version="11" date="2018-01-16">
+	- Поддержка изменений на сайте.
+	- Временно удалена поддержка депозитов.
+	</change>
+	<change version="10" date="2016-12-01">
+	- Улучшена обработка ошибок.
+	</change>
 	<change version="7" date="2015-11-02">
 	- Улучшена обработка ошибок.
 	</change>

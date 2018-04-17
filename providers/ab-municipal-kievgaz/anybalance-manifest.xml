@@ -1,11 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-municipal-kievgaz</id>
+	<id version="3">ab-municipal-kievgaz</id>
 	<api flags="no_browser"/>
 	<name>Киевгаз</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о поставщике услуг "Киевгаз" (г. Киев), <a href="http://www.kyivgaz.ua/">http://www.kyivgaz.ua/</a></p>
-	<p>Информация берется из личного кабинета <a href="http://my.kyivgaz.ua/index.php">http://my.kyivgaz.ua/index.php</a></p>
+	<p>Информация берется из личного кабинета <a href="https://mynew.kyivgaz.ua/">https://mynew.kyivgaz.ua/</a></p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
@@ -16,8 +16,11 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="income" name="Поступившие оплаты" units=" грн"/>
-		<counter id="debt" name="Долг" units=" грн"/>
+		<counter id="lastPayment" name="Последний платеж" units=" грн"/>
+		<counter id="calc" name="Начислено" units=" грн"/>
+		<counter id="debt" name="Сумма к оплате" units=" грн"/>
+		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="datePayment" name="Дата последнего платежа" type="time" format="dd/MM/yyyy"/>
 	</counters>
 	<keywords></keywords>
 	<type>municipal</type>

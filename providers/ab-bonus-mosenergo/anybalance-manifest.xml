@@ -7,7 +7,7 @@
 	<p>Предоставляет информацию об остатке бонусных рублей и балансе из личного кабинета Мосэнергосбыт</p>
 	<p>Информация берется из личного кабинета https://mosenergosbyt.handybank.ru/</p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

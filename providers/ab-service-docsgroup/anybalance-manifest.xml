@@ -1,14 +1,19 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-service-docsgroup</id>
+	<id version="2">ab-service-docsgroup</id>
 	<api flags="no_browser"/>
 	<name>DOCS Group</name>
 	<description>
-Получает данные для провайдера DOCS Group (http://docs-group.ru)
-
-Личный кабинет находится по адресу http://my.docs-group.ru/cabinet.html
+	Получает данные для провайдера DOCS Group (http://docs-group.ru)
+	
+	Личный кабинет находится по адресу http://direct.docs-group.ru/ или http://sms.docs-group.ru/
 	</description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<instruction html="true"><![CDATA[
+	<p>Если у вас нет доступа в Личный кабинет, пройдите регистрацию:</p>
+	<p>http://direct.docs-group.ru/register/ или http://sms.docs-group.ru/Account/Register</p>
+	<p>Либо Свяжитесь по телефону +7 (495) 767-97-92</p>
+	]]></instruction>
+	<author>ViktorSinitsyn &lt;mousesport007@ya.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
@@ -17,11 +22,8 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units="{@currency}"/>
-		<counter id="sms_russia" name="СМС по России" units="шт"/>
-		<counter id="currency" name="Валюта" type="text"/>
-		<counter id="lastpay_sum" name="Последний платеж" units="{@currency}"/>
-		<counter id="lastpay_date" name="Дата последнего платежа" type="time" format="dd/MM/yyyy"/>
+		<counter id="balance" name="Баланс" units="RUR"/>
+
 	</counters>
 	<keywords></keywords>
 	<type>service</type>

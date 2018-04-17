@@ -1,21 +1,29 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="4">ab-bonus-rosneft</id>
+	<id version="10">ab-bonus-rosneft</id>
 	<api flags="no_browser"/>
-	<name>Роснефть (Бонусы)</name>
+	<name>Семейная команда (Бонусы)</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе бонусов на бонусной карте Роснефть (http://www.askidka.ru/?q=cabinet)</p>
+	<p>Предоставляет информацию о балансе бонусов на бонусной карте Семейная Команда (Роснефть, ТНК) (https://komandacard.ru/)</p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс"/>
+		<counter id="balance" name="Баланс" units=" Б"/>
+		<counter id="available" name="Доступно" units=" Б"/>
+		<counter id="last_date" name="Дата последней операции" type="time"/>
+		<counter id="last_place" name="Место последней операции" type="text"/>
+		<counter id="last_sum" name="Сумма последней операции" units=" р"/>
+		<counter id="last_bonus" name="Бонус последней операции" units=" Б"/>
+		<counter id="last_status" name="Статус последней операции" type="text"/>
 	</counters>
 	<keywords></keywords>
 	<type>bonus</type>

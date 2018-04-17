@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
-<EditTextPreference
+	<ListPreference 
+        key="protocol" 
+        title="Протокол"
+        summary="|Выберите протокол|{@s}"
+        entries="http|https"
+        entryValues="http://|https://"
+		defaultValue="">
+	</ListPreference>
+	<EditTextPreference
 		title="Домен"
 		key="site"
 		summary="|Домен который работает 1С-Битрикс|{@s}"
@@ -8,7 +16,7 @@
 		dialogTitle="Домен"
 		positiveButtonText="ОК"
 		negativeButtonText="Отмена"
-		dialogMessage="Введите адрес домена без указания www и http:// , например site.ru ">
+		dialogMessage="Введите адрес домена без указания http:// или https:// , например site.ru ">
 	</EditTextPreference>
 	<EditTextPreference
 		title="Логин"

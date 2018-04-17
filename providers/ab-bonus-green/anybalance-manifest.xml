@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<api flags="no_browser"/>
+	<id version="1">ab-bonus-green</id>
+	<name>Гринкарта (Бонусы)</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о бонусных баллах с сайта http://www.green-bonus.ru</p>
+	<p>Информация берется из личного кабинета http://www.green-bonus.ru/operations/</p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="bonuses" name="Бонусов на счету"/>
+		<counter id="card_number" name="Номер карты"/>
+		<counter id="status" name="Статус" type="text"/>
+	</counters>
+	<keywords>Бонусная программа</keywords>
+	<type>bonus</type>
+	<country>ru</country>
+</provider>

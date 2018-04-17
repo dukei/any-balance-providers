@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<history>
+	<change version="2" date="2018-01-21">
+	- Добавлен Electroneum пул etn.nanopool.org
+	</change>
+	<change version="1" date="2017-10-23">
+	- Первая версия.
+	</change>
+	
+</history>

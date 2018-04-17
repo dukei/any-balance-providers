@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="2">ab-bonus-rosaski</id>
+	<api flags="no_browser"/>
+	<name>Моя роза (Роза Хутор)</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе в программе лояльности лыжной карты Роза Хутор https://shop.rosaski.com/</p>
+	<p>Информация получается из личного кабинета https://shop.rosaski.com/auth/</p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" Б"/>
+		<counter id="num" name="Номер карты" type="text"/>
+		<counter id="name" name="Название карты" type="text"/>
+		<counter id="type" name="Программа лояльности" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>bonus</type>
+	<country>ru</country>
+</provider>

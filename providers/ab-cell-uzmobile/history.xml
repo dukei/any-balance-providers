@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<history>
+	<change version="5" date="2016-05-21">
+	Добавлены минуты, смс, ммс
+	</change>
+	<change version="4" date="2016-05-20">
+	- Восстановлено получение баланса
+	</change>
+	<change version="3" date="2016-05-20">
+	- Изменение адреса личного кабинета
+	</change>
+	<change version="2" date="2016-02-03">
+	- для GPRS изменилась схема парсинга
+	</change>
+<!--
+	<change version="2" date="2014-09-03">
+	- 
+	</change>
+-->
+</history>

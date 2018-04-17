@@ -14,16 +14,29 @@ var g_countersTable = {
 		"currency": "cards.currency",
     	"balance": "cards.balance",
 		"minpay": "cards.minpay",
-		"minpaytill": "cards.minpaytill",
+		"minpaytill": "cards.minpay_till",
     	"blocked": "cards.blocked",
 		"limit": "cards.limit",
 		"cardnum": "cards.num",
 		"accnum": "cards.accnum",
 		"accname": "cards.type",
-		"userName": "cards.userName",
+		"userName": "info.fio",
 		"status": "cards.status",
 		"available": "cards.cash",
 		"__tariff": "cards.__name"
+    },
+	crd: {
+		"currency": "credits.currency",
+    	"balance": "credits.balance",
+		"minpay": "credits.minpay",
+		"minpaytill": "credits.minpay_till",
+		"limit": "credits.limit",
+		"cardnum": "credits.num",
+		"accnum": "credits.accnum",
+		"accname": "credits.name",
+		"status": "credits.status",
+		"userName": "info.fio",
+		"__tariff": "credits.__name"
     },
 };
 
@@ -39,6 +52,14 @@ function shouldProcess(counter, info){
 				return false;
 			return endsWith(info.num, prefs.cardnum);
 		}
+		case 'credits':
+		{
+		    if(!prefs.cardnum)
+		    	return true;
+			if(prefs.type != 'crd')
+				return false;
+			return endsWith(info.num, prefs.cardnum);
+		}
 		default:
 			return false;
 	}
@@ -47,7 +68,7 @@ function shouldProcess(counter, info){
 function main(){
 	var prefs = AnyBalance.getPreferences();
 
-    if(!/^(card|acc)$/i.test(prefs.type || ''))
+    if(!/^(card|acc|crd)$/i.test(prefs.type || ''))
     	prefs.type = 'card';
 
     if(prefs.type == 'acc')
@@ -56,18 +77,27 @@ function main(){
     var adapter = new NAdapter(joinObjects(g_countersTable.common, g_countersTable[prefs.type]), shouldProcess);
     adapter.processBonus = adapter.envelope(processBonus);
     adapter.processCards = adapter.envelope(processCards);
+    adapter.processCredits = adapter.envelope(processCredits);
     adapter.processInfo = adapter.envelope(processInfo);
 
-	var html = login();
+	var clientInfo = login();
 
 	var result = {success: true};
 
-	adapter.processBonus(html, result);
+	adapter.processBonus(result);
+	adapter.processInfo(clientInfo, result);
 
 	if(prefs.type == 'card'){
-		adapter.processCards(html, result);
+		adapter.processCards(result);
 		if(!adapter.wasProcessed('cards')){
 			throw new AnyBalance.Error(prefs.cardnum ? 'Не найдена карта с последними цифрами ' + prefs.cardnum : 'У вас нет ни одной карты');
+		}
+		result = adapter.convert(result);
+	}
+	if(prefs.type == 'crd'){
+		adapter.processCredits(result);
+		if(!adapter.wasProcessed('credits')){
+			throw new AnyBalance.Error(prefs.cardnum ? 'Не найден кредит с последними цифрами ' + prefs.cardnum : 'У вас нет ни одного кредита');
 		}
 		result = adapter.convert(result);
 	}

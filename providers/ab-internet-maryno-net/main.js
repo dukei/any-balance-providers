@@ -62,14 +62,14 @@ function main(){
 	
 	var json = getJson(html);
 	
-	getParam(json.number, result, 'number', null, replaceTagsAndSpaces, html_entity_decode);
-	getParam(json.contract_num, result, 'dogovor', null, replaceTagsAndSpaces, html_entity_decode);
-	getParam(json.fio, result, 'FIO', null, replaceTagsAndSpaces, html_entity_decode);
-	getParam(json.address, result, 'address', null, replaceTagsAndSpaces, html_entity_decode);
+	getParam(json.number, result, 'number', null, replaceTagsAndSpaces);
+	getParam(json.contract_num, result, 'dogovor', null, replaceTagsAndSpaces);
+	getParam(json.fio, result, 'FIO', null, replaceTagsAndSpaces);
+	getParam(json.address, result, 'address', null, replaceTagsAndSpaces);
 	getParam(json.date_begin, result, 'start_day', null, replaceTagsAndSpaces, parseDateISO);
 	getParam(json.balance + '', result, 'balance', null, replaceTagsAndSpaces, parseBalance);
 	getParam(json.bonusBalance + '', result, 'bonus_balance', null, replaceTagsAndSpaces, parseBalance);
-	getParam(json.plan, result, '__tariff', null, replaceTagsAndSpaces, html_entity_decode);
+	getParam(json.plan, result, '__tariff', null, replaceTagsAndSpaces);
 	getParam(json.turnbackBalance + '', result, 'credit', null, replaceTagsAndSpaces, parseBalance);
 	getParam(json.blockStatus.isBlocked+'', result, 'status', null, replaceTagsAndSpaces, function (str) {if (str == 0) return "Не блокирован"; else return str;});
 	
@@ -78,18 +78,22 @@ function main(){
 		
 		json = getJson(html);
 		if(isset(json.value))
-			getParam(json.value+'', result, 'email', null, replaceTagsAndSpaces, html_entity_decode);
+			getParam(json.value+'', result, 'email', null, replaceTagsAndSpaces);
 	}
 	
 	function getDetails(url, result, inName, outName) {
-		html = AnyBalance.requestGet(url);
-		json = getJson(html);
-		
-		for(var i = 0; i < json.length; i++) {
-			var curr = json[i];
+		try{
+			html = AnyBalance.requestGet(url);
+			json = getJson(html);
 			
-			sumParam(curr.incoming + '', result, inName, null, [replaceTagsAndSpaces, /(.+)/, '$1 b'], parseTraffic, aggregate_sum);
-			sumParam(curr.outgoing + '', result, outName, null, [replaceTagsAndSpaces, /(.+)/, '$1 b'], parseTraffic, aggregate_sum);
+			for(var i = 0; i < json.length; i++) {
+				var curr = json[i];
+				
+				sumParam(curr.incoming + '', result, inName, null, [replaceTagsAndSpaces, /(.+)/, '$1 b'], parseTraffic, aggregate_sum);
+				sumParam(curr.outgoing + '', result, outName, null, [replaceTagsAndSpaces, /(.+)/, '$1 b'], parseTraffic, aggregate_sum);
+			}
+		}catch(e){
+			AnyBalance.trace('Ошибка запроса ' + url + ': ' + e.message);
 		}
 	}
 	

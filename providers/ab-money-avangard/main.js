@@ -78,6 +78,13 @@ function main() {
 	
     baseurl += bankType;
     html = AnyBalance.requestGet(baseurl + "/" + firstpage, g_headers);
+
+    if(/blocking_warning/i.test(html)){
+    	AnyBalance.trace('Банк выдаёт какое-то сообщение. Пропускаем его');
+    	var a = getParam(html, null, null, /<a[^>]+>\s*<img[^>]+&#1055;&#1088;&#1086;&#1076;&#1086;&#1083;&#1078;&#1080;&#1090;&#1100;/i); //Продолжить
+    	var source = getParam(a, null, null, /source:\s*'([^']*)/i, replaceHtmlEntities);
+        html = submitForm(html, baseurl, source);
+    }
 	
     if (bankType == 'clbAvn') {
         fetchBankYur(html, baseurl);
@@ -95,7 +102,7 @@ function fetchBankYur(html, baseurl) {
 
     if (/<title>session_error<\/title>/i.test(html)) {
         if (!prefs.__dbg) {
-            var error = getParam(html, null, null, /<body>([\s\S]*?)<\/body>/i, replaceTagsAndSpaces, html_entity_decode);
+            var error = getParam(html, null, null, /<body>([\s\S]*?)<\/body>/i, replaceTagsAndSpaces);
             throw new AnyBalance.Error(error);
         }
     }
@@ -117,7 +124,7 @@ function fetchBankYur(html, baseurl) {
         'docslist:main:clTbl:_sm': '',
         'docslist:main:accTbl:_sm': '',
         'event': '',
-        'source': 'docslist:main:_id526'
+        'source': getParam(html, null, null, /source:\\'(docslist:main:[^\\']*)/i, replaceHtmlEntities)
     }, addHeaders({Referer: baseurl + '/faces/facelet-pages/iday_balance.jspx'}));
 
     var table = getParam(html, null, null, /<table[^>]+class="x2f"[^>]*>([\s\S]*?)<\/table>/i);
@@ -131,9 +138,9 @@ function fetchBankYur(html, baseurl) {
 
     var result = {success: true};
     getParam(tr, result, 'balance', /(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(tr, result, '__tariff', /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(tr, result, 'accnum', /((?:\d\s*){20})/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(tr, result, 'accname', /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)(?:<\/td>|<\/div>)/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(tr, result, '__tariff', /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+    getParam(tr, result, 'accnum', /((?:\d\s*){20})/i, replaceTagsAndSpaces);
+    getParam(tr, result, 'accname', /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)(?:<\/td>|<\/div>)/i, replaceTagsAndSpaces);
 
     AnyBalance.setResult(result);
 }
@@ -181,7 +188,7 @@ function submitForm(html, baseurl, source) {
     });
     params.source = source;
 
-    var action = getParam(form, null, null, /<form[^>]+action="\/\w+Avn(\/[^"]*)/i, null, html_entity_decode);
+    var action = getParam(form, null, null, /<form[^>]+action="\/\w+Avn(\/[^"]*)/i, replaceHtmlEntities);
     if (!action) {
         AnyBalance.trace(form);
         throw new AnyBalance.Error('Не удалось найти адрес передачи формы. Сайт изменен?');
@@ -209,7 +216,7 @@ function fetchBankPhysic(html, baseurl) {
         throw new AnyBalance.Error(prefs.num ? 'Не удалось найти ' + g_phrases.kartu[what] + ' с последними цифрами ' + prefs.num : 'Не удалось найти ни ' + g_phrases.karty1[what] + '!');
 
     var result = {success: true};
-    getParam(tr, result, ['__tariff', 'accname'], /(?:[^>]*>){7}([^<]*)/, replaceTagsAndSpaces, html_entity_decode);
+    getParam(tr, result, ['__tariff', 'accname'], /(?:[^>]*>){7}([^<]*)/, replaceTagsAndSpaces);
     getParam(tr, result, 'accnum', /\d{20}/);
     getParam(tr, result, '__tariff', /\d{20}/);
     if (AnyBalance.isAvailable('accname'))
@@ -234,10 +241,10 @@ function fetchBankPhysic(html, baseurl) {
             }, addHeaders({Referer: baseurl + '/faces/pages/accounts/all_acc.jspx'}));
 
             if (what == 'card') {
-                getParam(html, result, 'cardname', /&#1048;&#1084;&#1103; &#1085;&#1072; &#1082;&#1072;&#1088;&#1090;&#1077;(?:[^>]*>){18}([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
-                getParam(html, result, 'cardtill', /&#1057;&#1088;&#1086;&#1082; &#1076;&#1077;&#1081;&#1089;&#1090;&#1074;&#1080;&#1103;(?:[^>]*>){20}([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
-                getParam(html, result, 'cardtype', /&#1058;&#1080;&#1087;(?:[^>]*>){22}([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
-                getParam(html, result, 'cardstatus', /&#1057;&#1090;&#1072;&#1090;&#1091;&#1089;(?:[^>]*>){24}([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
+                getParam(html, result, 'cardname', /&#1048;&#1084;&#1103; &#1085;&#1072; &#1082;&#1072;&#1088;&#1090;&#1077;(?:[^>]*>){18}([^<]*)/i, replaceTagsAndSpaces);
+                getParam(html, result, 'cardtill', /&#1057;&#1088;&#1086;&#1082; &#1076;&#1077;&#1081;&#1089;&#1090;&#1074;&#1080;&#1103;(?:[^>]*>){20}([^<]*)/i, replaceTagsAndSpaces);
+                getParam(html, result, 'cardtype', /&#1058;&#1080;&#1087;(?:[^>]*>){22}([^<]*)/i, replaceTagsAndSpaces);
+                getParam(html, result, 'cardstatus', /&#1057;&#1090;&#1072;&#1090;&#1091;&#1089;(?:[^>]*>){24}([^<]*)/i, replaceTagsAndSpaces);
             }
             // Это для кредитного счета
             if (!isset(result.balance)) {
@@ -309,7 +316,7 @@ function fetchBankPhysic(html, baseurl) {
     if (AnyBalance.isAvailable('miles', 'miles_avail', 'miles_due')) {
         html = submitForm(html, baseurl, 'f:airNotSelectedButton');
         //Бонусные мили
-        var bonusSource = getParam(html, null, null, /<input[^>]+name="([^"]*)[^>]*value="&#1041;&#1086;&#1085;&#1091;&#1089;&#1085;&#1099;&#1077; &#1084;&#1080;&#1083;&#1080;"/i, null, html_entity_decode);
+        var bonusSource = getParam(html, null, null, /<input[^>]+name="([^"]*)[^>]*value="&#1041;&#1086;&#1085;&#1091;&#1089;&#1085;&#1099;&#1077; &#1084;&#1080;&#1083;&#1080;"/i, replaceHtmlEntities);
         if (!bonusSource) {
             AnyBalance.trace(html);
             AnyBalance.trace('Не удалось найти ссылку на Бонусные мили.');

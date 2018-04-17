@@ -31,7 +31,10 @@ function main() {
 			return value;
 		});
 		
-		html = AnyBalance.requestPost(baseurlLogin + 'login/hosting/', params, addHeaders({Referer: baseurlLogin + 'login/hosting/'})); 		
+		params.login = prefs.login;
+		params.password = prefs.password;
+		
+		html = AnyBalance.requestPost(baseurlLogin + 'login/?next=https://account.jino.ru', params, addHeaders({Referer: baseurlLogin})); 		
 		
 		if(!/\/logout/i.test(html)){
 			var error = sumParam(html, null, null, /"form-errors"[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode, aggregate_join);
@@ -45,7 +48,7 @@ function main() {
 	
     var result = {success: true};
 	
-	if(isAvailable('deadline', 'balance', 'daily_fee', 'monthly_fee', 'state')) {
+	if(AnyBalance.isAvailable('deadline', 'balance')) {
 		var json = {};
 		try {
 			html = AnyBalance.requestGet(baseurl+'balance/', g_headers);
@@ -56,13 +59,16 @@ function main() {
 		}
 		if(json.status == 'success') {
 			getParam(json.data.funds+'', result, 'balance', null, replaceTagsAndSpaces, parseBalance);
-			getParam(json.data.payment_by_month+'', result, 'monthly_fee', null, replaceTagsAndSpaces, parseBalance);
-			getParam(json.data.payment_by_day+'', result, 'daily_fee', null, replaceTagsAndSpaces, parseBalance);
-			getParam(json.data.expiration_date+'', result, 'deadline', null, replaceTagsAndSpaces, parseDateISO);
-			getParam(json.data.state+'', result, 'state');
+			getParam(json.data.expiration_label, result, 'deadline', null, replaceTagsAndSpaces, parseDate);
 		} else {
 			throw new AnyBalance.Error('Сервре вернул ошибочные данные, сайт изменился?');
 		}
+	}
+
+	if(AnyBalance.isAvailable('daily_fee', 'monthly_fee')){
+		html = AnyBalance.requestGet('https://account.jino.ru/contract/services/', g_headers);
+		getParam(getElement(html, /<span[^>]+accservices-class-cost-daily/i), result, 'daily_fee', null, replaceTagsAndSpaces, parseBalance);
+		getParam(getElement(html, /<span[^>]+accservices-class-cost-monthly/i), result, 'monthly_fee', null, replaceTagsAndSpaces, parseBalance);
 	}
 	// Статистика
 	html = AnyBalance.requestGet(baseurl + 'statistics/resources/');

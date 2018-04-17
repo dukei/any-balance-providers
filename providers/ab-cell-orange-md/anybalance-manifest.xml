@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="3">ab-cell-orange-md</id>
+	<id version="4">ab-cell-orange-md</id>
 	<api flags="no_browser|captcha" min_level="7"/>
 	<name>Orange (Moldova)</name>
 	<description html="true"><![CDATA[
@@ -14,7 +14,7 @@
 		<li>enter the personal code from the Client Card provided to the owner of the contract upon signing up for the monthly plan.</li>
 	</ul>
 	]]></instruction>
-	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
@@ -24,8 +24,7 @@
 	</files>
 	<counters>
 		<counter id="balance" name="Balance" units=" lei" />
-		<counter id="abondate" name="Billing date" type="time" format="dd/MM/yyyy" />
-		<counter id="username" name="User name" type="text" />
+		<counter id="abondate" name="Billing day" type="text"  />
 		<counter id="license" name="Account number" type="text" />
 	</counters>
 	<keywords></keywords>

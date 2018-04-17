@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">crypt/cryptojs/md5</id>
+	<api flags="no_browser"/>
+	<name>CryptoJS md5 module</name>
+	<description html="true"><![CDATA[
+	<p>CryptoJS md5 codec</p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="crypt/cryptojs/core"/>
+	</depends>
+	<files>
+		<js>md5.js</js>
+		<history>history.xml</history>
+	</files>
+	<keywords></keywords>
+	<type>crypt cryptojs md5</type>
+	<country></country>
+</provider>

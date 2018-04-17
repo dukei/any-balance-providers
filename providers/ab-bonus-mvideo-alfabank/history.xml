@@ -1,5 +1,38 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="2.0" version="22" date="2018-02-19">
+	- Улучшена обработка ошибок.
+	</change>
+	<change major_version="2.0" version="21" date="2017-11-22">
+	- Улучшена обработка ошибок.
+	</change>
+	<change major_version="2.0" version="20" date="2017-11-21">
+	Поддержка изменений в процедуре входа
+	</change>
+	<change major_version="2.0" version="19" date="2017-11-10">
+	Поддержка ввода смс-кода при входе, если потребуется
+	</change>
+	<change major_version="2.0" version="18" date="2017-11-02">
+	- Улучшена обработка ошибок.
+	</change>
+	<change major_version="2.0" version="17" date="2017-06-28">
+	Исправлен баланс доступных бонусных рублей
+	</change>
+	<change major_version="2.0" version="16" date="2016-12-19">
+	Совместимость с другими средами выполнения
+	</change>
+	<change major_version="2.0" version="15" date="2016-11-20">
+	Восстановлено получение информации о последней покупке 
+	</change>
+	<change major_version="2.0" version="14" date="2016-01-03">
+	Поддержка изменений в процедуре входа
+	</change>
+	<change major_version="2.0" version="13" date="2015-12-07">
+	Поддержка изменений на сайте
+	</change>
+	<change major_version="2.0" version="12" date="2015-11-20">
+	- Поддержка изменений на сайте.
+	</change>
 	<change major_version="2.0" version="11" date="2015-09-06">
 	- Улучшена обработка ошибок.
 	</change>

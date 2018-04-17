@@ -7,7 +7,7 @@
 	<p>Предоставляет информацию о балансе интернет-провайдера Битрейс-телеком</p>
 	<p>Информация берется из личного кабинета http://info.sp.bitrace.ru</p>
 	]]></description>
-	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

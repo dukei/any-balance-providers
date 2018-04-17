@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+	<EditTextPreference
+		obligatory="true"
+		title="NIK"
+		positiveButtonText="OK"
+		summary="|NIK – Customer Identification Number|{@s}"
+		dialogTitle="NIK"
+		negativeButtonText="Cancel"
+		dialogMessage="NIK – Customer Identification Number – please refer to BZWBK24 agreement for electronic banking services."
+		key="login">
+	</EditTextPreference>
+	<EditTextPreference
+		obligatory="true"
+		positiveButtonText="OK"
+		key="password"
+		dialogTitle="PIN"
+		negativeButtonText="Cancel"
+		title="PIN"
+		summary="||***********"
+		dialogMessage="Enter your password to enter the internet-bank."
+		inputType="textPassword">
+	</EditTextPreference>
+	<ListPreference
+		key="type"
+		title="Bank product"
+		summary="||{@s}\n"
+		entries="Card|Loan|Deposit|Account"
+		entryValues="card|crd|dep|acc"
+		defaultValue="acc">
+	</ListPreference>
+	<EditTextPreference
+		positiveButtonText="OK"
+		key="num"
+		dialogTitle="Number"
+		negativeButtonText="Cancel"
+		title="Card/account/deposit/loan number"
+		summary="Last 4 digits of a card/account/deposit/loan number|Auto\n|{@s}\n"
+		dialogMessage="Enter last 4 digits of a card/account/deposit/loan, that you want to get info on. Leave it blank if you want information on the first product.">
+	</EditTextPreference>
+</PreferenceScreen>

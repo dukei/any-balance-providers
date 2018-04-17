@@ -12,22 +12,26 @@ var g_headers = {
 
 function main(){
     var prefs = AnyBalance.getPreferences();
-    var baseurl = 'https://account.telphin.ru/';
-    AnyBalance.setOptions({FORCE_CHARSET: 'windows-1251'}); 
+    var baseurl = 'https://cabinet.telphin.ru/';
+    AnyBalance.setOptions({FORCE_CHARSET: 'utf-8'}); 
 
-    var html = AnyBalance.requestPost(baseurl + 'login.php?r_page=', {
-        'user_name':prefs.login,
-        'user_pass':prefs.password,
+    var html = AnyBalance.requestGet(baseurl + 'login', g_headers);
+
+    var html = AnyBalance.requestPost(baseurl + 'login', {
+        'LoginForm[username]':prefs.login,
+        'LoginForm[password]':prefs.password,
+        yt0: 'Войти'
     }, g_headers); 
 	
-    if(!/btnout/i.test(html)){
-        var error = getParam(html, null, null, /<font color ="red"><b>([\s\S]*?)<\/b><\/font><\/p>/i, replaceTagsAndSpaces, html_entity_decode);
+    if(!/logout/i.test(html)){
+        var error = sumParam(html, /<div[^>]+errorMessage[^>]*>([\s\S]*?)<\/div>/ig, replaceTagsAndSpaces, null, aggregate_join);
         if(error)
-            throw new AnyBalance.Error(error);
+            throw new AnyBalance.Error(error, null, /парол/i.test(error));
         throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
     }
 
     var result = {success: true};
-    getParam(html, result, 'balance', /auth_conteiner[\s\S]*?(-?\d[\d\s]*[.,]?\d*[.,]?\d*)<\/p>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'balance', /<span[^>]+balance-cost[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'licschet', /Код клиента:[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
     AnyBalance.setResult(result);
 }

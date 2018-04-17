@@ -12,6 +12,10 @@ var g_headers = {
 
 function main(){
     var prefs = AnyBalance.getPreferences();
+
+	AnyBalance.setOptions({
+		SSL_ENABLED_PROTOCOLS: ['TLSv1.2'] //Детский мир только на этом протоколе теперь работает
+	});
 	
 	checkEmpty(prefs.login, 'Введите номер карты!');
 	
@@ -21,15 +25,9 @@ function main(){
 	
 	var html = AnyBalance.requestGet(baseurl + 'dm');
         
-	var captcha;
-	if (AnyBalance.getLevel() >= 7) {
-    	AnyBalance.trace('Пытаемся ввести капчу');
-    	var captcha = AnyBalance.requestGet(baseurl + 'dm/captcha');
-    	captcha = AnyBalance.retrieveCode('Пожалуйста, введите код с картинки', captcha);
-    	AnyBalance.trace('Капча получена: ' + captcha);
-    } else {
-    	throw new AnyBalance.Error('Провайдер требует AnyBalance API v7, пожалуйста, обновите AnyBalance!');
-    }
+    AnyBalance.trace('Пытаемся ввести капчу');
+    var captcha = solveRecaptcha('Пожалуйста, подтвердите, что вы не робот', baseurl + 'dm', '6LfijT0UAAAAADy8SUzjmi7K9-zB4bTWhTXFQ2fj');
+    AnyBalance.trace('Капча получена: ' + captcha);
 	
 	html = AnyBalance.requestPost(baseurl + 'dm/detmir/info', {
 		'card':prefs.login,

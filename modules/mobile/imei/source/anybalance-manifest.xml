@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">mobile/imei</id>
+	<api flags="no_browser"/>
+	<name>Imei generator</name>
+	<description html="true"><![CDATA[
+	<p>Генерация корректного Imei</p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="crypt/crc32"/>
+		<module id="crypt/luhn"/>
+	</depends>
+	<files>
+		<js>imei.js</js>
+		<history>history.xml</history>
+	</files>
+	<keywords></keywords>
+	<type>mobile</type>
+	<country></country>
+</provider>

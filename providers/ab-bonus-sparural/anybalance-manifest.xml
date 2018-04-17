@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-bonus-sparural</id>
+  <id version="2">ab-bonus-sparural</id>
   <name>Гипермаркет Спар-Урал</name>
   <description>
-    Получает текущий баланс активных и отложенных бонусов
-	гипермаркета "Спар" г.Челябинск
-	Данные берутся из личного кабинета программы
-	(http://www.sparural.ru/)
+    Получает текущий баланс активных и отложенных бонусов гипермаркета "Спар-Урал" г.Челябинск
+	Данные берутся из личного кабинета программы (http://molbonus.ru/)
   </description>
   <author>Dmitry Reshetnikov (korleone) &lt;rdb@inbox.ru&gt;</author>
   <files>
@@ -16,8 +14,12 @@
     <history>history.xml</history>
   </files>
   <counters>
+    <counter id="aktivbonus" name="Баланс активных бонусов"/>
     <counter id="aktivrubl" name="Баланс активных бонусов в рублях"/>
+    <counter id="planbonus" name="Баланс отложенных бонусов"/>
     <counter id="planrubl" name="Баланс отложенных бонусов в рублях"/>
+	<counter id="itogbonus" name="Общий баланс бонусов"/>
+    <counter id="itogrubl" name="Общий баланс бонусов в рублях"/>
   </counters>
   <keywords>
 	спар, гипермаркет, бонус

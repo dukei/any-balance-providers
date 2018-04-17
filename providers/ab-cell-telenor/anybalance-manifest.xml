@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-cell-telenor</id>
+	<id version="3">ab-cell-telenor</id>
 	<api flags="no_browser"/>
 	<name>Telenor</name>
 	<description html="true"><![CDATA[
@@ -17,7 +17,8 @@
 	</files>
 	<counters>
 		<counter id="balance" name="Баланс" units=" €"/>
-		<counter id="deadline" name="Дата отключения" type="time" format="dd/MM/yyyy"/>
+		<counter id="deadline" name="Срок действия" type="time" format="dd/MM/yyyy"/>
+		<counter id="deadlineCredit" name="Срок внесения платежей" type="time" format="dd/MM/yyyy"/>
 	</counters>
 	<keywords></keywords>
 	<type>cell</type>

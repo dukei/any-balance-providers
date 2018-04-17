@@ -20,34 +20,44 @@ function main() {
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 		
-	var html = AnyBalance.requestGet(baseurl + 'welcome.htm', g_headers);
-	
+	var html = AnyBalance.requestGet(baseurl + 'login.htm', g_headers);
+	var form = getElement(html, /<form[^>]+login-form[^>]*>/i);
+	if(!form){
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не найдена форма входа. Сайт изменен?');
+	}
 
-	html = AnyBalance.requestPost(baseurl + 'login', {
-		target:'desktop',
-		login:prefs.login,
-		password:prefs.password,
-    }, addHeaders({Referer: baseurl + 'welcome.htm'}));
+	var params = AB.createFormParams(form, function(params, str, name, value) {
+		if (name == 'login') {
+			return prefs.login;
+		} else if (name == 'password') {
+			return prefs.password;
+		}
+
+		return value;
+	});
+
+	html = AnyBalance.requestPost(baseurl + 'login', params, addHeaders({Referer: baseurl + 'login.htm'}));
 	
 	if(!/logout/i.test(html)) {
-		var error = getParam(html, null, null, /<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
-		if(error && /Неверный логин или пароль/i.test(error))
-			throw new AnyBalance.Error(error, null, true);
+		var error = getElement(html, /<div[^>]+form-error[^>]*>/i, replaceTagsAndSpaces);
 		if(error)
-			throw new AnyBalance.Error(error);
+			throw new AnyBalance.Error(error, null, /парол/i.test(error));
+	    AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
 	html = AnyBalance.requestGet(baseurl + 'desktop.htm', g_headers);
 
     var result = {success: true};
-	getParam(html, result, 'type', /Тип[^>]*>([^<:\(]*)/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'rub_acc', /RUB(?:[^>]*>){12}([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'type', /Тип[^>]*>([^<:\(]*)/i, replaceTagsAndSpaces);
+	getParam(html, result, '__tariff', /Тип[^>]*>([^<:\(]*)/i, replaceTagsAndSpaces);
+	getParam(html, result, 'rub_acc', /RUB(?:[^>]*>){12}([^<]*)/i, replaceTagsAndSpaces);
 	getParam(html, result, 'rub_balance', /RUB(?:[^>]*>){16}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
 	
-	getParam(html, result, 'usd_acc', /USD(?:[^>]*>){11}([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'usd_acc', /USD(?:[^>]*>){11}([^<]*)/i, replaceTagsAndSpaces);
 	getParam(html, result, 'usd_balance', /USD(?:[^>]*>){15}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
 	
-	getParam(html, result, 'eur_acc', /EUR(?:[^>]*>){11}([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'eur_acc', /EUR(?:[^>]*>){11}([^<]*)/i, replaceTagsAndSpaces);
 	getParam(html, result, 'eur_balance', /EUR(?:[^>]*>){15}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
 	
     AnyBalance.setResult(result);

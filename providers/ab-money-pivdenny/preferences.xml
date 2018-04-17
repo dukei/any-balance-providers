@@ -22,7 +22,7 @@
 		inputType="textPassword">
 	</EditTextPreference>
 	<EditTextPreference
-		title="Последние цифры счета"
+		title="Последние цифры счета/карты"
 		key="card_num"
 		summary="||{@s}"
 		dialogTitle="Последние цифры счета"

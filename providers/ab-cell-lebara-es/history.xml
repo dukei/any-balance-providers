@@ -1,5 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="7" date="2017-11-23">
+	Support for site changes
+	</change>
+	<change version="6" date="2017-05-02">
+	- supported site changes
+	- supported some allowances
+	</change>
 	<change version="5" date="2015-07-16">
 	- Support of the site changes.
 	</change>

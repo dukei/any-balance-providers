@@ -1,8 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
-<!--
-<change version="2" date="2013-09-21">
-- 
+
+<change version="2" date="2015-11-20">
+Поддержка изменений на сайте
+Удален неработающий кабинет my.docs-group.ru
+Добавлен личный кабинет sms.docs-group.ru
+Добавлен личный кабинет direct.docs-group.ru
+В direct.docs-group.ru добавлена поддержка капчи
+(ViktorSinitsyn)
 </change>
--->
+
 </history>

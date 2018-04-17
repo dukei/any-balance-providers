@@ -1,11 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="11">ab-telephony-mgts</id>
+	<id version="25">ab-telephony-mgts</id>
 	<name>МГТС</name>
 	<api flags="no_browser"/>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о текущем балансе в МГТС.</p>
-	<p>Информация берется из Интернет-помощника (http://ihelper.mgts.ru/CustomerSelfCare2).</p>
+	<p>Информация берется из личного кабинета (http://lk.mgts.ru/).</p>
 	]]></description>
 	<instruction html="true"><![CDATA[
 	<p>Для входа в Интернет-помощник вам понадобится PIN-код.</p>
@@ -15,19 +15,23 @@
 	<li>Обратитесь в любой Центр услуг связи ОАО МГТС http://mgts.ru/service-centres.</li>
 	</ul>
 	]]></instruction>
-	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
+		<js>rsa.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
 	<counters>
 		<counter id="balance" name="Баланс" units=" р"/>
-		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="bonus" name="Бонус" units=" Б"/>
 		<counter id="licschet" name="Лицевой счет" type="text"/>
 		<counter id="phone" name="Номер телефона" type="text"/>
+		<counter id="fio" name="ФИО" type="text"/>
 	</counters>
 	<keywords>mgts, московская городская телефонная сеть, проводной телефон</keywords>
 	<type>telephony</type>

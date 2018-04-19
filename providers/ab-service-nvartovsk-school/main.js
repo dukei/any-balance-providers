@@ -16,7 +16,7 @@ function main() {
 	
 	AnyBalance.setDefaultCharset('UTF-8');
 	
-	var baseurl = 'https://edu-nv.ru/onlajn-servis-shkolnoe-pitanie?resetfilters=0&clearordering=0&clearfilters=0';
+	var baseurl = 'http://edu-nv.ru/onlajn-servis-shkolnoe-pitanie?resetfilters=0&clearordering=0&clearfilters=0';
 	
 	var html = AnyBalance.requestPost(baseurl, {
 		'fabrik___filter[list_2_com_fabrik_2][value][0]':prefs.acc,

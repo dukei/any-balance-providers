@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="31" date="2018-04-28">
+	- Поддержка изменений в получении кредитов.
+	</change>
 	<change version="30" date="2018-04-26">
 	- Поддержка новой версии интернет банка
 	</change>

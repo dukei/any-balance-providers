@@ -284,21 +284,18 @@ function processDeposit(info, result) {
 function processLoans(result) {
 	if (!isAvailable('credits'))
 		return;
-
-	throw new AnyBalance.Error('Не удалось получить кредиты. Сайт изменен?');
-
-	html = AnyBalance.requestPost(baseurl + 'RCLoanService', g_xml_loans, addHeaders({SOAPAction: ''}));
-
-	var loans = getElements(html, /<return>/ig);
+		
+	var loans = callApi('rest/loan');
 
 	AnyBalance.trace('Найдено кредитов: ' + loans.length);
 	result.credits = [];
 
 	for (var i = 0; i < loans.length; ++i) {
-		var _id = getParam(loans[i], null, null, /<id>([\s\S]*?)<\/id>/i, replaceTagsAndSpaces);
+		var loan = loans[i];
+		var _id = loan.id;
 		var title = 'Кредит ' + _id;
-
-		var c = {__id: _id, __name: title, num: _id};
+		
+		var c = {__id: _id, __name: title};
 
 		if (__shouldProcess('credits', c)) {
 			processLoan(loans[i], c);
@@ -309,18 +306,19 @@ function processLoans(result) {
 }
 
 function processLoan(loan, result) {
-	getParam(loan, result, 'credits.pct', /<intrestRate>([\s\S]*?)<\/intrestRate>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(loan, result, 'credits.limit', /<loanAmount>([\s\S]*?)<\/loanAmount>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(loan, result, 'credits.balance', /<paymentRest>([\s\S]*?)<\/paymentRest>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(loan, result, 'credits.minpay', /<nextPaymentAmount>([\s\S]*?)<\/nextPaymentAmount>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(loan, result, 'credits.paid', /<paidLoanAmount>([\s\S]*?)<\/paidLoanAmount>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(loan, result, 'credits.paidLoanIntrest', /<paidLoanIntrest>([\s\S]*?)<\/paidLoanIntrest>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(loan, result, ['credits.currency', 'credits.limit', 'credits.balance', 'credits.paid', 'credits.paidLoanIntrest', 'credits.minpay'], /<currency>[^<]*?([^<\.]*?)<\/currency>/i, replaceTagsAndSpaces, toUpperCaseMy);
-	getParam(loan, result, 'credits.minpay_till', /<nextPaymentDate>([\s\S]*?)<\/nextPaymentDate>/i, replaceTagsAndSpaces, parseDateISO);
-	getParam(loan, result, 'credits.till', /<closeDate>([\s\S]*?)<\/closeDate>/i, replaceTagsAndSpaces, parseDateISO);
-	getParam(loan, result, 'credits.date_start', /<openDate>([\s\S]*?)<\/openDate>/i, replaceTagsAndSpaces, parseDateISO);
 
-	if (typeof processLoanTransactions != 'undefined')
-		processLoanTransactions(loan, result);
+	getParam(loan.rate, result, 'credits.pct', '', replaceTagsAndSpaces, parseBalance);
+	getParam(loan.start, result, 'credits.limit', '', replaceTagsAndSpaces, parseBalance);
+	getParam(loan.leftDebt, result, 'credits.balance', '', replaceTagsAndSpaces, parseBalance);
+	getParam(loan.pay, result, 'credits.minpay', '', replaceTagsAndSpaces, parseBalance);
+	getParam(loan.paidDebt, result, ['credits.paid', 'credits.paidLoanIntrest'], '', replaceTagsAndSpaces, parseBalance);
+	//getParam(loan, result, 'credits.paidLoanIntrest', /<paidLoanIntrest>([\s\S]*?)<\/paidLoanIntrest>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(loan.currencyId, result, ['credits.currency', 'credits.limit', 'credits.balance', 'credits.paid', 'credits.paidLoanIntrest', 'credits.minpay']);
+	getParam(loan.pastDueDate, result, 'credits.minpay_till', '', replaceTagsAndSpaces, parseDateISO);
+	getParam(loan.close, result, 'credits.till', '', replaceTagsAndSpaces, parseDateISO);
+	getParam(loan.open, result, 'credits.date_start', '', replaceTagsAndSpaces, parseDateISO);
+
+	//if (typeof processLoanTransactions != 'undefined')
+	//	processLoanTransactions(loan, result);
 }
 

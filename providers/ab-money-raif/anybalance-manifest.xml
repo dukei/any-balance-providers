@@ -39,7 +39,7 @@
 		<counter id="cred_ammount" name="Сумма кредита" units=" {@currency}"/>
 		<counter id="minpaytill" name="Срок платежа по кредиту" type="time" format="dd/MM/yyyy"/>
 		<counter id="limit" name="Кредитный лимит" units=" {@currency}"/>
-		<counter id="paidLoanIntrest" name="Упачено процентов по кредиту" units=" {@currency}"/>
+		<counter id="paidLoanIntrest" name="Уплачено процентов по кредиту" units=" {@currency}"/>
 		<counter id="till" name="Срок действия" type="time" format="dd/MM/yyyy"/>
 		<counter id="gracePeriodOutstanding" name="Просрочено в льготном периоде" units=" {@currency}"/>
 		<counter id="unpaidGracePeriodDue" name="Неоплачено в льготном периоде" units=" {@currency}"/>

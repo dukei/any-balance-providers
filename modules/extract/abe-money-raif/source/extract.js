@@ -312,9 +312,9 @@ function processLoan(loan, result) {
 	getParam(loan.leftDebt, result, 'credits.balance', '', replaceTagsAndSpaces, parseBalance);
 	getParam(loan.pay, result, 'credits.minpay', '', replaceTagsAndSpaces, parseBalance);
 	getParam(loan.paidDebt, result, ['credits.paid', 'credits.paidLoanIntrest'], '', replaceTagsAndSpaces, parseBalance);
-	//getParam(loan, result, 'credits.paidLoanIntrest', /<paidLoanIntrest>([\s\S]*?)<\/paidLoanIntrest>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(loan.paid-loan.paidDebt, result, ['credits.paidLoanIntrest', 'credits.paid'], '', replaceTagsAndSpaces, parseBalance);
 	getParam(loan.currencyId, result, ['credits.currency', 'credits.limit', 'credits.balance', 'credits.paid', 'credits.paidLoanIntrest', 'credits.minpay']);
-	getParam(loan.pastDueDate, result, 'credits.minpay_till', '', replaceTagsAndSpaces, parseDateISO);
+	getParam(loan.next, result, 'credits.minpay_till', '', replaceTagsAndSpaces, parseDateISO);
 	getParam(loan.close, result, 'credits.till', '', replaceTagsAndSpaces, parseDateISO);
 	getParam(loan.open, result, 'credits.date_start', '', replaceTagsAndSpaces, parseDateISO);
 

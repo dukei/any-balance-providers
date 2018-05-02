@@ -61,6 +61,7 @@ var g_countersTable = {
     	"minpaytill": "credits.minpay_till",
     	"till": "credits.till",
     	"rate": "credits.pct",
+    	"paidLoanIntrest": "credits.paidLoanIntrest",
     }
 };
 

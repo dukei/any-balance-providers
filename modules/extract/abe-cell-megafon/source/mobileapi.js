@@ -248,6 +248,9 @@ function processRemaindersApi(result){
                         }else if((/\.\s*МегаФон|на мегафон|на МФ/i.test(name) && !/МТС/i.test(name) && !/стационар/i.test(name))
                             || /внутри сети/i.test(name)) {
                             sumParam(current.available + units, remainders, 'remainders.mins_net_left', null, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
+						}else if(/Безлимитные входящие/i.test(name)) {
+							AnyBalance.trace('Бесконечное значение минут (' + name + '), пропускаем...');
+							continue;
                         } else {
                             sumParam(current.available + units, remainders, 'remainders.mins_left', null, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
                             sumParam(current.total + units, remainders, 'remainders.mins_total', null, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
@@ -278,6 +281,8 @@ function processRemaindersApi(result){
 								getParam(current.available + current.unit, remainders, 'remainders.internet_roam_europe', null, replaceTagsAndSpaces, parseTraffic);
 						}else if(/Автопродление/i.test(name)) {
 								getParam(current.available + current.unit, remainders, 'remainders.internet_auto_prolong', null, replaceTagsAndSpaces, parseTraffic);
+						}else if(/Интернет в Крыму/i.test(name)) {
+								getParam(current.available + current.unit, remainders, 'remainders.internet_left_crimea', null, replaceTagsAndSpaces, parseTraffic);
                         } else {
                             var suffix = '';
                             if(/ноч/i.test(name)) suffix = '_night';

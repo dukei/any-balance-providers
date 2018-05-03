@@ -8,7 +8,7 @@ var g_countersTable = {
 		"fio": "info.fio",
 	}, 
 	card: {
-		"__tariff": "cards.num",
+		"__tariff": "cards.__name",
 		
     	"balance": "cards.balance",
 		"currency": "cards.currency",
@@ -27,7 +27,7 @@ var g_countersTable = {
 		"gracePeriodEnd": "cards.gracepay_till",
 	},
     acc: {
-		"__tariff": "accounts.num",
+		"__tariff": "accounts.__name",
 		
 		"balance": "accounts.balance",
 		"currency": "accounts.currency",
@@ -39,7 +39,7 @@ var g_countersTable = {
 		"minpaytill": "accounts.minpay_till",
     },
 	dep: {
-		"__tariff": "deposits.num",
+		"__tariff": "deposits.__name",
 		
     	"balance": "deposits.balance",
     	"currency": "deposits.currency",
@@ -50,16 +50,18 @@ var g_countersTable = {
 		"pcts": "deposits.pcts",
     },
 	cred: {
-		"__tariff": "credits.num",
+		"__tariff": "credits.__name",
 		
     	"balance": "credits.balance",
     	"currency": "credits.currency",
     	"cred_ammount": "credits.limit",
+		"accnum": "cards.num",
     	"minpay": "credits.minpay",
     	"paid": "credits.paid",
     	"minpaytill": "credits.minpay_till",
     	"till": "credits.till",
     	"rate": "credits.pct",
+    	"paidLoanIntrest": "credits.paidLoanIntrest",
     }
 };
 
@@ -72,30 +74,31 @@ function main(){
 	
 	var result = {success: true};
 	
-	var html = login(prefs, result);
+	var html = login(result);
 	
+    adapter.processInfo = adapter.envelope(processInfo);
     adapter.processCards = adapter.envelope(processCards);
     adapter.processAccounts = adapter.envelope(processAccounts);
     adapter.processDeposits = adapter.envelope(processDeposits);
     adapter.processLoans = adapter.envelope(processLoans);
 	
 	if(prefs.type == 'card') {
-		adapter.processCards(html, result);
+		adapter.processCards(result);
 		
 		if(!adapter.wasProcessed('cards'))
 			throw new AnyBalance.Error(prefs.num ? 'Не найдена карта с последними цифрами ' + prefs.num : 'У вас нет ни одной карты!');
 	} else if(prefs.type == 'acc') {
-		adapter.processAccounts(html, result);
+		adapter.processAccounts(result);
 
 		if(!adapter.wasProcessed('accounts'))
 			throw new AnyBalance.Error(prefs.num ? 'Не найден счет с последними цифрами ' + prefs.num : 'У вас нет ни одного счета!');
 	} else if(prefs.type == 'dep') {
-		adapter.processDeposits(html, result);
+		adapter.processDeposits(result);
 
 		if(!adapter.wasProcessed('deposits'))
 			throw new AnyBalance.Error(prefs.num ? 'Не найден депозит с последними цифрами ' + prefs.num : 'У вас нет ни одного депозита!');
 	} else if(prefs.type == 'cred') {
-		adapter.processLoans(html, result);
+		adapter.processLoans(result);
 
 		if(!adapter.wasProcessed('credits'))
 			throw new AnyBalance.Error(prefs.num ? 'Не найден кредит с последними цифрами ' + prefs.num : 'У вас нет ни одного кредита!');

@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="3.1" version="221" date="2018-04-29">
+	- Поддержка безлимитных минут в Крыму и трафика в Крыму
+	</change>
 	<change major_version="3.1" version="220" date="2017-11-22">
 	Поддержка изменений в ЛК (ramzes26)
 	</change>

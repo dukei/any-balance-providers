@@ -471,7 +471,7 @@ function checkLoginState(html, options) {
 	}*/
 
     if (/checkAuthStatus|дождитесь окончания процесса авторизации/i.test(html) || /waitauth/i.test(referer)) {
-        var json = {}, tries = 20;
+/*        var json = {}, tries = 20;
         while (json.Data != 'Success' && tries-- > 0) {
             json = AnyBalance.requestGet(baseurl + '/WaitAuth/CheckAuth?_=' + new Date().getTime(), addHeaders({Referer: referer}));
             json = getJson(json);
@@ -493,12 +493,14 @@ function checkLoginState(html, options) {
             if (options && options.automatic) {
                 //Это была попытка автоматического входа. Раз он не получился, давайте попробуем по логину и паролю
                 AnyBalance.trace('МТС не пустил нас в ЛК после ожидания авторизации. Ладно, попробуем с логином и паролем войти.');
-                return AnyBalance.requestGet(g_baseurlLogin.replace(/\/Login.*/, '/Logout', addHeaders({Referer: baseurl})));
+                return AnyBalance.requestGet(g_baseurlLogin.replace(/\/Login.*<removeme>/, '/Logout', addHeaders({Referer: baseurl})));
             }
             throw new AnyBalance.Error('МТС не пустил нас в ' + baseurl + ' после ожидания авторизации. Это проблема на сайте МТС, как только работа сайта наладится - данные отобразятся.');
         }
 
         return AnyBalance.requestGet(baseurl, addHeaders({Referer: referer}));
+        */
+        html = AnyBalance.requestGet(baseurl, addHeaders({Referer: AnyBalance.getLastUrl()}));
     } else {
         return html;
     }

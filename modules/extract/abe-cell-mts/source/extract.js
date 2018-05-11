@@ -471,9 +471,15 @@ function checkLoginState(html, options) {
 	}*/
 
     if (/checkAuthStatus|дождитесь окончания процесса авторизации/i.test(html) || /waitauth/i.test(referer)) {
-/*        var json = {}, tries = 20;
+        var json = {}, tries = 20;
         while (json.Data != 'Success' && tries-- > 0) {
             json = AnyBalance.requestGet(baseurl + '/WaitAuth/CheckAuth?_=' + new Date().getTime(), addHeaders({Referer: referer}));
+            if(AnyBalance.getLastStatusCode() == 404){
+            	AnyBalance.trace('Проверка загрузки отсутствует, переходим на лк напрямую: ' + baseurl);
+		        html = AnyBalance.requestGet(baseurl, addHeaders({Referer: AnyBalance.getLastUrl()}));
+		        return html;
+            }
+
             json = getJson(json);
 
             if (json.Data == 'PreSuccess'){
@@ -499,8 +505,6 @@ function checkLoginState(html, options) {
         }
 
         return AnyBalance.requestGet(baseurl, addHeaders({Referer: referer}));
-        */
-        html = AnyBalance.requestGet(baseurl, addHeaders({Referer: AnyBalance.getLastUrl()}));
     } else {
         return html;
     }

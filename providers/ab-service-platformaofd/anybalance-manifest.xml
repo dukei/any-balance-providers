@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="2">ab-service-platformaofd</id>
+	<api flags="no_browser"/>
+	<name>Платформа ОФД</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера Платформа ОФД <a href="https://platformaofd.ru/">https://platformaofd.ru/</a></p>
+	<p>Информация берется из личного кабинета <a href="https://lk.platformaofd.ru/web/login">https://lk.platformaofd.ru/web/login</a></p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Если у вас нет доступа в Личный кабинет, получите его на странице <a href="https://lk.platformaofd.ru/web/registration">https://lk.platformaofd.ru/web/registration</a></p>
+	]]></instruction>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р."/>
+		<counter id="balance_cash" name="Оплата наличными" units=" р."/>
+		<counter id="balance_acquiring" name="Оплата картой" units=" р."/>
+		<counter id="ogrn" name="ОГРН" type="text"/>
+	</counters>
+	<keywords>офд, таском</keywords>
+	<type>service</type>
+	<country>ru</country>
+</provider>

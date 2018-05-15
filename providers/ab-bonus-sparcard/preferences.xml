@@ -18,7 +18,7 @@
 		dialogTitle="Пароль"
 		positiveButtonText="ОК"
 		negativeButtonText="Отмена"
-		dialogMessage="Введите пароль, используемый для входа в личный кабинет sparcard.ru."
+		dialogMessage="Введите пароль, используемый для входа в личный кабинет card.spar-nn.ru."
 		inputType="textPassword">
 	</EditTextPreference>
 </PreferenceScreen>

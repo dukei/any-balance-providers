@@ -9,9 +9,6 @@
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<author>dp &lt;d.p@km.ru&gt;</author>
-	<depends>
-		<module id="library"/>
-	</depends>
 	<files>
 		<icon>spar.png</icon>
 		<preferences>preferences.xml</preferences>

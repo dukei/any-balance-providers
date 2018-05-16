@@ -16,7 +16,6 @@
 		<icon>spar.png</icon>
 		<preferences>preferences.xml</preferences>
 		<js>main.js</js>
-		<history>history.xml</history>
 	</files>
 	<counters>
 		<counter id="card_bonus" name="Бонусы" units=" руб"/>

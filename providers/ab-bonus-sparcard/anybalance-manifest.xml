@@ -15,7 +15,6 @@
 	<files>
 		<icon>spar.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>

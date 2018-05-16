@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="16">ab-bonus-sparcard</id>
+	<id version="17">ab-bonus-sparcard</id>
 	<api flags="no_browser"/>
 	<name>card.spar-nn.ru</name>
 	<description html="true"><![CDATA[
@@ -15,7 +15,6 @@
 	<files>
 		<icon>spar.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>

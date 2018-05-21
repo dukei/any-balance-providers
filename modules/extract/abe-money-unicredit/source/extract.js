@@ -32,8 +32,17 @@ function login() {
 	}
 
 	if (!/exit/i.test(html)) {
-		var mapId 		  = getParam(html, null, null, /<input[^>]*id="MapID"[^>]*value="([^"]*)"/i);
-		var map 		  = getParam(html, null, null, /<input[^>]*id="Map"[^>]*value="([^"]*)"/i);
+		html = AnyBalance.requestPost(baseurl, {
+			tic: 		0,
+			T:			'RT_2Auth.getLoginMap',
+		}, addHeaders({
+			BSSHTTPRequest: 1,
+			Referer: baseurl + 'T=RT_2Auth.BF'
+		}));
+
+
+		var mapId 		  = getElement(html, /<i[^>]*N="MapID"/i, replaceTagsAndSpaces);
+		var map 		  = getElement(html, /<i[^>]*N="Map"/i, replaceTagsAndSpaces);
 		var encryptedPass = encryptPass(prefs.password, map);
 
 
@@ -46,8 +55,8 @@ function login() {
 			IdCaptcha:	'',
 			C:			'',
 			MapID:		mapId || '',
-			BROWSER:	'Crome',
-			BROWSERVER: '21.0.1180.60'
+			BROWSER:	'Chrome',
+			BROWSERVER: '66.0.3359.181'
 		}, addHeaders({
 			Referer: baseurl + 'T=RT_2Auth.BF'
 		}));

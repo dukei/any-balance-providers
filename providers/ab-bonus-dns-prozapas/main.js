@@ -11,6 +11,14 @@ var g_headers = {
 	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
 };
 
+function hash(str) {
+            for (var u = 305419896, n = str, t = 0; t < n.length; t++)
+                u += n.charCodeAt(t) * (t + 1);
+            for (var f = "", e = u.toString(), i = 0; i < n.length; i++)
+                f += n.charAt(i) + e.charAt(i);
+            return f
+}
+
 function main() {
 	var prefs = AnyBalance.getPreferences();
 	var baseurl = 'https://accounts.dns-shop.ru/';
@@ -32,10 +40,16 @@ function main() {
 		throw new AnyBalance.Error('Не удаётся найти форму входа! Сайт изменен?');
 	}
 
-	var key = getParam(form, /data-sitekey="?([^"\s>]*)/i, replaceHtmlEntities);
+/*	var key = getParam(form, /data-sitekey="?([^"\s>]*)/i, replaceHtmlEntities);
 	var captcha;
 	if(key)
 		captcha = solveRecaptcha("Пожалуйста, докажите, что вы не робот", AnyBalance.getLastUrl(), key);
+*/   	
+
+	var key = getParam(form, /data-id="?([^"\s>]*)/i, replaceHtmlEntities);
+	var captcha;
+	if(key)
+		captcha = hash(key);
 
 	var params = AB.createFormParams(form, function(params, str, name, value) {
 		if (name == 'Method') {
@@ -49,7 +63,8 @@ function main() {
 		return value;
 	});
 
-	params['g-recaptcha-response'] = captcha;
+//	params['g-recaptcha-response'] = captcha;
+	params['grecaptcha__val'] = captcha;
 
 	html = AnyBalance.requestPost(baseurl + 'login', params, AB.addHeaders({
 		Referer: baseurl + 'login'

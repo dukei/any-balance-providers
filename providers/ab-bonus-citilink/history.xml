@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="23" date="2018-05-21">
+	- Убрана рекапча
+	</change>
 	<change version="22" date="2017-09-27">
 	Поддержка рекапчи
 	</change>

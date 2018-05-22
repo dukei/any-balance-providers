@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="4.1" version="168" date="2018-05-22">
+	МТС стало требовать рекапчу...
+	</change>
 	<change major_version="4.1" version="167" date="2018-05-11">
 	- Исправлено получение трафика из интернет-кабинета
 	</change>

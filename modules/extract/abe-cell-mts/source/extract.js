@@ -512,6 +512,7 @@ function checkLoginState(html, options) {
 
 function enterLK(options) {
     var loginUrl = g_baseurlLogin + "/amserver/UI/Login?service=lk&goto=" + g_baseurl + '/' + "";
+    restoreLoginCookies();
 
     var html = enterMtsLK(options);
 
@@ -567,6 +568,7 @@ function enterLK(options) {
     }
 
     __setLoginSuccessful();
+    saveLoginCookies();
 
     turnOffLoginSMSNotify(html);
 

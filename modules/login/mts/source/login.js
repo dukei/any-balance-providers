@@ -67,6 +67,7 @@ function isOnLogin(){
 
 function enterMtsLK(options) {
 	var baseurl = options.baseurl || g_baseurl;
+
     var html = AnyBalance.requestGet(baseurl, g_headers);
 
     if (AnyBalance.getLastStatusCode() >= 500) {
@@ -140,6 +141,21 @@ function fixCookies(){
 	return repaired;
 }
 
+function saveLoginCookies(){
+	var prefs = AnyBalance.getPreferences();
+	AnyBalance.setData('login', prefs.login);
+	AnyBalance.saveCookies();
+	AnyBalance.saveData();
+}
+
+function restoreLoginCookies(){
+	var prefs = AnyBalance.getPreferences();
+	var login = AnyBalance.getData('login');
+	if(login == prefs.login){
+		AnyBalance.restoreCookies();
+	}
+}
+
 function enterMTS(options){
 	var baseurl = options.baseurl || g_baseurl;
     var loginUrl = options.url || g_baseurlLogin + "/amserver/UI/Login?goto=" + baseurl;
@@ -159,8 +175,9 @@ function enterMTS(options){
         	throw new AnyBalance.Error("Ошибка на сервере МТС, сервер не смог обработать запрос. Можно попытаться позже...", allowRetry);
     }
 
-    if(AnyBalance.getLastUrl().indexOf(baseurl) == 0) //Если нас сразу переадресовали на целевую страницу, значит, уже залогинены
+    if(AnyBalance.getLastUrl().indexOf(baseurl) == 0){ //Если нас сразу переадресовали на целевую страницу, значит, уже залогинены
 		return html;
+	}
 
 	html = redirectIfNeeded(html);
 
@@ -186,6 +203,13 @@ function enterMTS(options){
             value = 'Submit';
         return value;
     });
+
+    var sitekey = getParam(form, /data-sitekey="([^"]*)/i, replaceHtmlEntities);
+    if(sitekey){
+    	AnyBalance.trace('МТС требует рекапчу :(');
+    	var recaptcha = solveRecaptcha('МТС требует ввода рекапчи, как и при входе через браузер. Пожалуйста, докажите, что вы не робот.', loginUrl, sitekey);
+    	params.IDToken3 = recaptcha;
+    }
     
     // AnyBalance.trace("Login params: " + JSON.stringify(params));
     AnyBalance.trace("Логинимся с заданным номером");

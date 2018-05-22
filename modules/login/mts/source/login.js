@@ -78,6 +78,12 @@ function enterMtsLK(options) {
     if (AnyBalance.getLastStatusCode() >= 500)
         throw new AnyBalance.Error("Ошибка на сервере МТС, сервер не смог обработать запрос. Можно попытаться позже...");
 
+    if(/Произошла ошибка при попытке авторизации/i.test(html)){
+    	AnyBalance.trace('Куки протухли :( Придется авторизоваться заново');
+    	clearAllCookies();
+    	html = AnyBalance.requestGet(baseurl, g_headers);
+    }
+
     if(fixCookies()){
     	//Надо перезагрузить страницу, если куки были исправлены
         AnyBalance.trace("Куки исправлены, перезагружаем страницу. Пробуем ещё разок...");

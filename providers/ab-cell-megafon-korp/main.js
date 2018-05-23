@@ -62,8 +62,8 @@ function main() {
     g_headers.Referer = baseurl + 'b2b/';
 
     html = AnyBalance.requestPost(baseurl + 'b2b/loginProcess', {
-        j_username: prefs.login,
-        j_password: prefs.password,
+        username: prefs.login,
+        password: prefs.password,
     }, addHeaders({
     	Referer: baseurl + 'b2b/login',
     	'X-Requested-With': 'XMLHttpRequest',

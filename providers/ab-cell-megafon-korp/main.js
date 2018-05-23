@@ -79,7 +79,7 @@ function main() {
 		    try{ json = getJson(html) }catch(e){}
 		}
 
-    	var error = (json && json.errorMessage) || getElement(html, /<[^>]+error-text/i, replaceTagsAndSpaces);
+    	var error = (json && (json.errorMessage || json.error)) || getElement(html, /<[^>]+error-text/i, replaceTagsAndSpaces);
         if (error)
             throw new AnyBalance.Error(error, null, /парол/i.test(error));
 

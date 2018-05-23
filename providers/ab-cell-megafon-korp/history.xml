@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="21" date="2018-05-23">
+	Исправление проблем со входом в центральном регионе.
+	</change>
 	<change version="20" date="2018-05-23">
 	- Улучшена обработка ошибок.
 	</change>

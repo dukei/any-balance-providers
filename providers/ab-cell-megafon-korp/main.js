@@ -71,6 +71,22 @@ function main() {
     }));
 
     var json = getJson(html);
+    if(json.isCaptchaShouldBeShown){
+    	AnyBalance.trace('Мегафон потребовал рекапчу');
+
+    	html = AnyBalance.requestPost(baseurl + 'b2b/loginProcess', {
+        	username: prefs.login,
+        	password: prefs.password,
+        	captcha: solveRecaptcha('Пожалуйста, докажите, что вы не робот', baseurl + 'b2b/login', '6LeF9FkUAAAAAE8fndYadzonV1LnZ')
+    	}, addHeaders({
+    		Referer: baseurl + 'b2b/login',
+    		'X-Requested-With': 'XMLHttpRequest',
+    		Accept: 'application/json, text/javascript, */*; q=0.01',
+    	}));
+
+    	json = getJson(html);
+    }
+
     if(!json.redirect || /error/i.test(json.redirect)){
     	if(json.redirect){
     		html = AnyBalance.requestGet(joinUrl(baseurl, json.redirect), addHeaders({

@@ -52,10 +52,8 @@ function main(){
 
 	if (!/^OK$/i.test(html)) {
 		var error = html;
-		if (error && /Неверный логин или пароль/i.test(error))
-			throw new AnyBalance.Error(error, null, true);
 		if (error)
-			throw new AnyBalance.Error(error);
+			throw new AnyBalance.Error(error, null, /отсутствует|не соответствует/i.test(error));
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
 	
@@ -63,9 +61,10 @@ function main(){
 	
 	var result = {success: true};
 	
-	getParam(html, result, 'balance', /top_detals-bonus[^>]*>\s*<span>([^>]+)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'username', /class="top_detals-info[^>]*>([^<,]*)/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'cardnum', /class="number_card[^>]*>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);	
+	var bonuses = getElement(html, /<ul[^>]+js_bonuses/i);
+	getParam(bonuses, result, 'balance', /Бонусов[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'username', /Здравствуйте,([\s\S]*?)<\/a>/i, replaceTagsAndSpaces);
+	getParam(bonuses, result, 'cardnum', /№ карты[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);	
 	
 	AnyBalance.setResult(result);
 }

@@ -17,6 +17,12 @@ function main(){
 
     var hash = hex_md5(getFormattedDate({format: 'DD.MM.YYYY'}) + '.' + prefs.login);
 	var html = AnyBalance.requestGet(baseurl + 'services/lnt/infoBalansCard.php?numberCard=' + encodeURIComponent(prefs.login) + '&h=' + hash + '&hi=1&tf=json', g_headers);
+
+	// Catches EFBBBF (UTF-8 BOM) because the buffer-to-string
+	// conversion translates it to FEFF (UTF-16 BOM)
+	if (html.charCodeAt(0) === 0xFEFF) {
+		html = html.slice(1);
+	}
 	
 	if(!html || AnyBalance.getLastStatusCode() > 400)
 		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');

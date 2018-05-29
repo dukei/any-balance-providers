@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="3">ab-internet-pride</id>
+  <id version="4">ab-internet-pride</id>
   <name>Pride</name>
   <description html="true"><![CDATA[
   	<p>Предоставляет информацию о балансе провайдера Pride <a href="http://www.pride-net.ru/">http://www.pride-net.ru/</a></p>

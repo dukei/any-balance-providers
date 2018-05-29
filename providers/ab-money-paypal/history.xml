@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="5.0" version="39" date="2018-04-10">
+	- Улучшена обработка ошибок.
+	</change>
 	<change major_version="5.0" version="38" date="2017-06-16">
 	Поддержка работы на андроиде 4.1-5.0
 	</change>

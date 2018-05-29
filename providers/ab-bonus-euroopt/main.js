@@ -13,7 +13,7 @@ var g_headers = {
 function main () {
     var prefs = AnyBalance.getPreferences ();
 	
-    var baseurl = 'http://evroopt.by/';
+    var baseurl = 'https://evroopt.by/';
     if(!prefs.login)
         throw new AnyBalance.Error('Введите № карты');
 	

@@ -33,7 +33,7 @@ function main(){
 	}, addHeaders({Referer: baseurl}));
 
 	var json = getJson(html);
-	if(!json.susses){
+	if(!json.authenticationSuccess){
 		AnyBalance.trace(html);
 		var error = json.errors.reduce(function(acc, cur) { acc.push(cur.message); return acc; }, []).join(';\n');
 		if(error)

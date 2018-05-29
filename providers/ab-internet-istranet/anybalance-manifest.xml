@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="3">ab-internet-istranet</id>
+	<id version="4">ab-internet-istranet</id>
 	<name>Истранет (Истра)</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе провайдера Истранет http://istranet.ru/</p>

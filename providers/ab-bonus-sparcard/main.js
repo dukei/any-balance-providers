@@ -1,9 +1,9 @@
 /**
-Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
+Провайдер AnyBalance
 */
 
 var g_headers = {
-	'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+	'Accept':'application/json',
 	'Accept-Charset':'utf-8;q=0.7,*;q=0.3',
 	'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
 	'Connection':'keep-alive',
@@ -28,29 +28,38 @@ function main() {
 		recaptcha = solveRecaptcha('Пожалуйста, подтвердите, что вы не робот!', baseurl + 'site/login', sitekey);
 	}
 		
-	html = AnyBalance.requestPost(baseurl + 'site/login', {
-		'LoginForm[redirect]':'/user',
-		'LoginForm[login]':prefs.auth_cnumber,
-		'LoginForm[password]':prefs.auth_password,
-		'LoginForm[rememberMe]':'0',
-		'g-recaptcha-response': recaptcha,
-		'yt0':'Вход'
-	}, addHeaders({Referer: baseurl}));
+	response = AnyBalance.requestPost('https://api-sparmv.loymax.tech/token', {
+		'grant_type':'password',
+		'username':prefs.auth_cnumber,
+		'password':prefs.auth_password
+	}, g_headers);
+
+	token = getJson(response);
 	
-	if (!/leftexit/i.test(html)){
-		var error = getElement(html, /<div[^>]+errorMessage/i, replaceTagsAndSpaces);
-		if(error)
-			throw new AnyBalance.Error(error, null, /парол|логин/i.test(error));
-		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Не удалось войти в кабинет. Сайт изменен?');
+	if (token.error_description) {
+		throw new AnyBalance.Error(token.error_description);
+	} else if (!token.access_token) {
+		throw new AnyBalance.Error('Не удалось авторизоваться.');
 	}
 
-	html = AnyBalance.requestGet(baseurl + 'user', g_headers);
+	g_headers['Authorization'] = 'Bearer ' + token.access_token;
+
+	response = AnyBalance.requestGet('https://api-sparmv.loymax.tech/api/user', g_headers);
+
+	user = getJson(response);
 
 	var result = {success: true};
 
-	getParam(html, result, '_tariff', /<span[^>]+lkuicard[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
-	getParam(html, result, 'card_bonus', /<span[^>]+lkuibalance[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
-
-	AnyBalance.setResult(result);
+	if (user.data.cardShortInfo) {
+		if(AnyBalance.isAvailable('__tariff')) {
+			result['__tariff'] = user.data.cardShortInfo.id;
+		}
+		if(AnyBalance.isAvailable('card_bonus')) {
+			result['card_bonus'] = parseFloat(user.data.cardShortInfo.balance);
+		}
+		result['success'] = true;
+		AnyBalance.setResult(result);
+	} else {
+		throw new AnyBalance.Error('Не удалось получить информацию о бонусах.');
+	}
 }

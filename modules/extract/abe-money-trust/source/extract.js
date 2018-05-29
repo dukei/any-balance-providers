@@ -113,11 +113,12 @@ function login(prefs) {
 		}));
 		
 		// Токен протух, надо входить
-		if(!html) {
-			AnyBalance.trace('Сессия устарела, нужно войти повторно.');
-			var json = doLogin(prefs);
-		} else {
-			var json = getJson(html);
+		var json;
+		try{
+			json = getJson(html);
+		} catch(e) {
+			AnyBalance.trace('Сессия устарела, нужно войти повторно: ' + e.message);
+			json = doLogin(prefs);
 		}
 	}
 	

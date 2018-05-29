@@ -33,7 +33,7 @@ function main() {
 function processSite() {
 	var prefs = AnyBalance.getPreferences();
 
- 	var baseurl = "https://my.kyivstar.ua/";
+ 	var baseurl = "https://b2b.kyivstar.ua/";
 	var html = loginSite(baseurl);
 
 	/**
@@ -129,7 +129,7 @@ function getBonusFromArray(arr, result, name, re, replaces, parseFunc){
 function checkName(type, name){
 	switch(type){
 	case 'off-net':
-		return /другие сети.+(?:фикс|городск)|Other network.+fix|інші мережі.+міськ/i.test(name)
+		return /другие сети.+(?:фикс|городск)|Other network.+fix|інші мережі.+міськ|Хвилини по Україні/i.test(name)
 	case 'off-net-mobile':
 		return /минут.+на другие сети|minut.+other.+networks|хвилин.+інші мережі/i.test(name)
 			|| /минут.+на другие мобильные|minut.+other.+networks|хвилин.+інші мобільні/i.test(name)
@@ -610,7 +610,7 @@ function getMobileApiResult(json) {
 }
 
 function callMobileApi(cmd, params) {
-	var html, baseurl = 'https://my.kyivstar.ua/MobileConverter2/v2/';
+	var html, baseurl = 'https://b2b.kyivstar.ua/MobileConverter2/v2/';
 	var headers = {
 		Connection: 'keep-alive',
 		SESSION_COUNTER: '' + (g_session_counter++),

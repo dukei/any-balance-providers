@@ -12,6 +12,7 @@ var g_headers = {
 function main() {
 	var prefs = AnyBalance.getPreferences();
 	var baseurl = 'https://ibank.belinvestbank.by/';
+	var loginurl = 'https://login.belinvestbank.by/';
 	var result = {success: true};
 
 	try {
@@ -21,25 +22,32 @@ function main() {
 		checkEmpty(prefs.password, "Введите пароль!");
 		checkEmpty(!prefs.cardnum || /^\d{4}$/i.test(prefs.cardnum), 'Необходимо ввести 4 последние цифры номера карты, либо не вводить ничего!');
 			
-		var html = AnyBalance.requestGet(baseurl + 'signin', g_headers);
+		var html = AnyBalance.requestGet(loginurl + 'signin', g_headers);
 
 		if(!html || AnyBalance.getLastStatusCode() > 400){
 			AnyBalance.trace(html);
 			throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
 		}
 
-		var encryptArrayVar = getParam(html, null, null, /var\s*keyLang\s*=\s*\[([^\]]*)/i);
-		var encryptArray = sumParam(encryptArrayVar, null, null, /\d+/ig);
+		var encryptArrayVar = getParam(html, /var\s*keyLang\s*=\s*\[([^\]]*)/i);
+		var encryptArray = sumParam(encryptArrayVar, /\d+/ig);
 
-		html = AnyBalance.requestPost(baseurl + 'signin', {
+		html = AnyBalance.requestPost(loginurl + 'signin', {
 	        login: prefs.login,
-	        password: cod(prefs.password, encryptArray)
-	    }, addHeaders({Referer: baseurl + 'signin'}));
+	        password: cod(prefs.password, encryptArray),
+	        typeSessionKey: 0
+	    }, addHeaders({Referer: loginurl + 'signin'}));
+
+
+		if(!/На Ваш номер телефона/i.test(html) && /аннулировать предыдущий запуск/i.test(html)){
+			AnyBalance.trace('Аннулируем предыдущий вход');
+			html = AnyBalance.requestPost(loginurl + 'confirmationCloseSession', {}, addHeaders({Referer: loginurl + 'signin'}));
+		}
 
 		if(!/На Ваш номер телефона/i.test(html)){
-			var error = getParam(html, null, null, /<div[^>]+id="error"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+			var error = getElement(html, /<div[^>]+(?:error|alert__msg)/i, replaceTagsAndSpaces);
 			if(error)
-				throw new AnyBalance.Error(error, null, /Пароль введен неверно|Имя пользователя или пароль введены неверно/i.test(error));
+				throw new AnyBalance.Error(error, null, /Парол/i.test(error));
 			AnyBalance.trace(html);
 			throw new AnyBalance.Error('Не удалось войти в интернет-банк. Сайт изменен?');
 		}
@@ -49,16 +57,16 @@ function main() {
 		smsKey = AnyBalance.retrieveCode("Пожалуйста, введите код из смс", null, {inputType: 'number', time: 180000});
 		AnyBalance.trace('Код из смс получен: ' + smsKey);
 
-		html = AnyBalance.requestPost(baseurl + 'signin2', {
+		html = AnyBalance.requestPost(loginurl + 'signin2', {
 	        action: 1,
 	        key: smsKey
-	    }, addHeaders({Referer: baseurl + 'signin2'}));
+	    }, addHeaders({Referer: loginurl + 'signin2'}));
 
 		// ПРОВЕРКА НА НЕВЕРНЫЙ КОД ИЗ СМС!
 		if(!/logout/i.test(html)) {
-			var error = getParam(html, null, null, /class="attention"[^>]*>([^<]*)/i, replaceTagsAndSpaces);
+			var error = getElement(html, /<div[^>]+(?:error|alert__msg)/i, replaceTagsAndSpaces);
 			if(error)
-				throw new AnyBalance.Error(error, null, /Пароль введен неверно/i.test(error));
+				throw new AnyBalance.Error(error);
 
 			AnyBalance.trace(html);
 			throw new AnyBalance.Error('Не удалось зайти в интернет-банк. Сайт изменен?');

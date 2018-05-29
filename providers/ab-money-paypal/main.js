@@ -126,7 +126,8 @@ function executeChallenge(script, baseurl, loginPage){
 		document: createGetInterceptor(doc, 'document'),
 		XMLHttpRequest: createGetInterceptor(XHR, 'XHR'),
 		navigator: createGetInterceptor({
-			appName: 'Netscape'
+			appName: 'Netscape',
+			userAgent: g_headers['User-Agent'],
 		}, 'navigator'),
 		screen: createGetInterceptor({
 			height: 1080,
@@ -319,20 +320,8 @@ function faceStepUp(json, baseurl, loginPage){
 
 }
 
-function logInSite(){
-	AnyBalance.trace('Пытаемся зайти через сайт...');
-
+function getJsonBalances(baseurl){
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'https://www.paypal.com';
-	
-	g_headers = {
-		Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-		'Accept-Language': 'ru,en-US;q=0.8,en;q=0.6',
-		'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 9_1 like Mac OS X) AppleWebKit/601.1.46 (KHTML, like Gecko) Version/9.0 Mobile/13B143 Safari/601.1'
-	};
-
-	AnyBalance.restoreCookies();
-
 	var html = AnyBalance.requestGet(baseurl + '/myaccount/wallet', g_headers);
 	var jsonBalances = getBalanceInfo(html);
 	if(!jsonBalances){
@@ -403,7 +392,7 @@ function logInSite(){
 		if(!jsonBalances){
 			AnyBalance.trace('Got json on enter: ' + JSON.stringify(json));
 			AnyBalance.trace("wallet page: " + html);
-			throw new AnyBalance.Error('Could not enter PayPal personal account...');
+			return jsonBalances;
 		}
 
 		AnyBalance.saveCookies();
@@ -411,6 +400,29 @@ function logInSite(){
 		__setLoginSuccessful();
 	}else{
 		AnyBalance.trace('Вошли через существующую сессию');
+	}
+
+	return jsonBalances;
+}
+
+function logInSite(){
+	AnyBalance.trace('Пытаемся зайти через сайт...');
+
+	var prefs = AnyBalance.getPreferences();
+	var baseurl = 'https://www.paypal.com';
+	
+	g_headers = {
+		Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+		'Accept-Language': 'ru,en-US;q=0.8,en;q=0.6',
+		'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 9_1 like Mac OS X) AppleWebKit/601.1.46 (KHTML, like Gecko) Version/9.0 Mobile/13B143 Safari/601.1'
+	};
+
+	AnyBalance.restoreCookies();
+
+	var jsonBalances = getJsonBalances(baseurl);
+	if(!jsonBalances){
+		AnyBalance.trace('Could not enter PayPal. Let us try once more...');
+		jsonBalances = getJsonBalances(baseurl);
 	}
 
 	if(!jsonBalances){

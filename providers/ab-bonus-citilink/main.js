@@ -43,7 +43,7 @@ function login(){
 	});
 
 	var url = joinUrl(baseurl, action);
-	params['g-recaptcha-response'] = solveRecaptcha('Пожалуйста, докажите, что вы не робот', baseurl, json.recaptchaSiteKey);
+//	params['g-recaptcha-response'] = solveRecaptcha('Пожалуйста, докажите, что вы не робот', baseurl, json.recaptchaSiteKey);
 	
 	//Надо вздремнуть, а то нас палят как роботов (а зачем это делать? оставьте полезных роботов в покое.)
 //	var sleeptime = 4000 + Math.floor(Math.random()*3000);

@@ -1,5 +1,18 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="4.1" version="169" date="2018-05-22">
+	МТС ввело рекапчу :(
+	Сброс сессии и запрос капчи, если с сохраненной сессией не пускает в кабинет
+	</change>
+	<change major_version="4.1" version="168" date="2018-05-22">
+	МТС стало требовать рекапчу...
+	</change>
+	<change major_version="4.1" version="167" date="2018-05-11">
+	- Исправлено получение трафика из интернет-кабинета
+	</change>
+	<change major_version="4.1" version="166" date="2018-05-11">
+	- Поддержка изменений в процедуре входа
+	</change>
 	<change major_version="4.1" version="165" date="2017-11-21">
 	Исправление получения баланса для андроида &lt; 4.1
 	</change>

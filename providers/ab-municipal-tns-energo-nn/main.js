@@ -18,17 +18,21 @@ function main(){
 	AB.checkEmpty(prefs.password, 'Введите пароль!');
 
 	var html = AnyBalance.requestGet(baseurl, g_headers);
-	if (!html || AnyBalance.getLastStatusCode() > 400) {
+	if (!html || AnyBalance.getLastStatusCode() > 400)
+	{
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Сайт провайдера временно недоступен! Попробуйте обновить данные позже.');
 	}
 
 	var captchaSRC = getParam(html, null, null, /<img src="([^"]*)"[^>]+id="captchaimg"[^>]*>/i);
-	if (!captchaSRC) {
+	if (!captchaSRC)
+	{
 		throw new AnyBalance.Error("Не удалось найти ссылку на капчу. Сайт изменён?");
 	}
+
 	var captchaIMG = AnyBalance.requestGet(baseurl+captchaSRC, g_headers);
-	if(captchaIMG) {
+	if (captchaIMG)
+	{
 		var captchaResponse = AnyBalance.retrieveCode('Пожалуйста, введите код с картинки.', captchaIMG);
 
 		html = AnyBalance.requestPost(baseurl+'lib/js/captcha/captcha_checker.php', {
@@ -38,9 +42,12 @@ function main(){
 			'Accept': '*/*'
 		}));
 
-		if(!/1/.test(html)) {
+		if(!/1/.test(html))
+		{
 			throw new AnyBalance.Error("Введенный Вами код неправильный.");
-		} else {
+		}
+		else
+		{
 			html = AnyBalance.requestPost(baseurl + 'handlers/index.php', {
 				ls: prefs.login,
 				pwd: prefs.password,
@@ -51,11 +58,14 @@ function main(){
 				'Accept': 'text/plain, */*; q=0.01'
 			}));
 		}
-	} else {
+	}
+	else
+	{
 		throw new AnyBalance.Error("Картинка с кодом не найдена.");
 	}
 
-	if (!/1/i.test(html)) {
+	if (!/1/i.test(html))
+	{
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Пользователь с таким логином и паролем не найден. Попробуйте еще раз.');
 	}
@@ -63,42 +73,42 @@ function main(){
 	var result = {success: true};
 
 	html = AnyBalance.requestPost(baseurl + 'handlers/top-panel.php', {
-		action: 'getLsInfo'
+		action: 'updateLsInfo'
 	}, addHeaders({
 		'X-Requested-With': 'XMLHttpRequest',
 		'Accept': 'application/json, text/javascript, */*; q=0.01'
 	}));
+
 	var json = getJson(html);
 
-	AB.getParam(json.BALANCE + '', 	result, 'balance', null, null, AB.parseBalance);
-	AB.getParam(json.FIO, 			result, 'fio');
+	AB.getParam(json.\u041a\u041e\u041f\u041b\u0410\u0422\u0415_\u0411\u0410\u041b\u0410\u041d\u0421_\u0421\u041e_\u0417\u041d\u0410\u041a\u041e\u041c + ':',
+				result, 'balance', null, null, AB.parseBalance);
 
-	if(isAvailable(['address', 'accrued', 'paid', 'to_pay'])) {
-		html = AnyBalance.requestGet(baseurl, g_headers);
+	html = AnyBalance.requestGet(baseurl, g_headers);
 
-		AB.getParam(html, result, 'address', /Адрес:([^>]*>){2}/i,			AB.replaceTagsAndSpaces);
-		AB.getParam(html, result, '__tariff', /Номер счета:([^>]*>){3}/i,	AB.replaceTagsAndSpaces);
-		AB.getParam(html, result, 'accrued', /Начислено за([^>]*>){5}/i,	AB.replaceTagsAndSpaces, AB.parseBalance);
-		AB.getParam(html, result, 'paid',    /Оплачено в ([^>]*>){5}/i,		AB.replaceTagsAndSpaces, AB.parseBalance);
-		AB.getParam(html, result, 'to_pay',  /Итого к оплате([^>]*>){7}/i,	AB.replaceTagsAndSpaces, AB.parseBalance);
-		AB.getParam(html, result, 'debt',    /Долг на([^>]*>){5}/i,			AB.replaceTagsAndSpaces, AB.parseBalance);
-	}
+	AB.getParam(html, result, '__tariff', /Лицевой счёт:([^>]*>){3}/i,         AB.replaceTagsAndSpaces);
+	AB.getParam(html, result, 'fio',      /fio([^>]*>){2}/i,                   AB.replaceTagsAndSpaces);
+	AB.getParam(html, result, 'address',  /Адрес:([^>]*>){2}/i,                AB.replaceTagsAndSpaces);
+	AB.getParam(html, result, 'accrued',  /К оплате по квитанции([^>]*>){8}/i, AB.replaceTagsAndSpaces, AB.parseBalance);
+	AB.getParam(html, result, 'paid',     /Оплачено в ([^>]*>){7}/i,           AB.replaceTagsAndSpaces, AB.parseBalance);
+	AB.getParam(html, result, 'to_pay',   /оплатить"([^>]*>){7}/i,             AB.replaceTagsAndSpaces, AB.parseBalance);
+	AB.getParam(html, result, 'debt',     /Задолженность([^>]*>){10}/i,        AB.replaceTagsAndSpaces, AB.parseBalance);
 
-	if(isAvailable(['last_pay_date', 'last_pay_sum']))
+	if (isAvailable(['last_pay_date', 'last_pay_sum']))
 	{
 		html = AnyBalance.requestGet(baseurl + 'lk-hist-payments', g_headers);
 
-		getParam(html, result, 'last_pay_date', /Сумма([^>]*>){12}/i,	AB.replaceTagsAndSpaces, AB.parseDate);
-		getParam(html, result, 'last_pay_sum', /Сумма([^>]*>){14}/i,	AB.replaceTagsAndSpaces, AB.parseBalance);
+		getParam(html, result, 'last_pay_date', /Сумма([^>]*>){12}/i, AB.replaceTagsAndSpaces, AB.parseDate);
+		getParam(html, result, 'last_pay_sum',  /Сумма([^>]*>){14}/i, AB.replaceTagsAndSpaces, AB.parseBalance);
 	}
 
-	if(isAvailable(['last_ind_date', 'last_ind_day', 'last_ind_night']))
+	if (isAvailable(['last_ind_date', 'last_ind_day', 'last_ind_night']))
 	{
 		html = AnyBalance.requestGet(baseurl + 'lk-hist-counter', g_headers);
 
-		AB.getParam(html, result, 'last_ind_date', /День([^>]*>){3}([^<]+)/i,	AB.replaceTagsAndSpaces, AB.parseDate);
-		AB.getParam(html, result, 'last_ind_day', /День([^>]*>){14}/i,			AB.replaceTagsAndSpaces, AB.parseBalance);
-		AB.getParam(html, result, 'last_ind_night', /Ночь([^>]*>){14}/i,		AB.replaceTagsAndSpaces, AB.parseBalance);
+		AB.getParam(html, result, 'last_ind_date',  /День([^>]*>){3}/i,  AB.replaceTagsAndSpaces, AB.parseDate);
+		AB.getParam(html, result, 'last_ind_day',   /День([^>]*>){14}/i, AB.replaceTagsAndSpaces, AB.parseBalance);
+		AB.getParam(html, result, 'last_ind_night', /Ночь([^>]*>){14}/i, AB.replaceTagsAndSpaces, AB.parseBalance);
 	}
 
 	AnyBalance.setResult(result);

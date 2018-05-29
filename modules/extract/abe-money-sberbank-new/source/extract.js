@@ -66,6 +66,10 @@ function login(prefs) {
 	
 	var page = getParam(html, null, null, /value\s*=\s*["'](https:[^'"]*?AuthToken=[^'"]*)/i);
 	if (!page) {
+		if(/Выберите один идентификатор/i.test(html)){
+			throw new AnyBalance.Error('Сбербанк сообщает, что Вы несколько раз зарегистрированы в Сбербанк Онлайн. Для работы провайдера, Вам необходимо войти в Сбербанк Онлайн через браузер и выбрать единственный логин.');
+		}
+
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error("Не удаётся найти ссылку на информацию. Пожалуйста, обратитесь к разработчикам для исправления ситуации.");
 	}
@@ -326,17 +330,21 @@ function processCard(html, result){
 
 	if (AnyBalance.isAvailable('cards.userName', 'cards.own', 'cards.cash', 'cards.electrocash', 'cards.minpay', 'cards.minpay_till', 'cards.limit', 'cards.debt', 'cards.debt_date')) {
 		html = AnyBalance.requestGet(nodeUrl + '/PhizIC/private/cards/detail.do?id=' + _id);
-		getParam(html, result, 'cards.userName', /Держатель карты:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/, replaceTagsAndSpaces, capitalFirstLetters);
-        getParam(html, result, 'cards.accnum', /Номер счета карты:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/, replaceTagsAndSpaces);
-		getParam(html, result, 'cards.cash', /Для снятия наличных:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-		getParam(html, result, 'cards.electrocash', /для покупок:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+		getParam(html, result, 'cards.userName', /Держатель карты[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/, replaceTagsAndSpaces, capitalFirstLetters);
+        getParam(html, result, 'cards.accnum', /Номер счета карты[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/, replaceTagsAndSpaces);
+		getParam(html, result, 'cards.cash', /Для снятия наличных[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+		getParam(html, result, 'cards.electrocash', /для покупок\s*(?::|и платежей)[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 		getParam(html, result, 'cards.minpay', /Обязательный платеж[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-		getParam(html, result, 'cards.minpay_till', /Дата платежа:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/, replaceTagsAndSpaces, parseDateWord);
+		getParam(html, result, 'cards.minpay_till', /Обязательный платеж, внесите до([^<]*)/, replaceTagsAndSpaces, parseDateWord);
 		getParam(html, result, 'cards.limit', /Кредитный лимит[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-        getParam(html, result, 'cards.own', /Собственные средства:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+        getParam(html, result, 'cards.own', /Собственные средства[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 
-		getParam(html, result, 'cards.debt', /Общая задолженность[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-		getParam(html, result, 'cards.debt_date', /Дата формирования(?:\s|<[^>]*>)+отчета:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDateWord);
+		getParam(html, result, 'cards.debt', /(?:Общая задолженность|Задолженность\s*<br[^>]*>\s*на сегодня)[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+		getParam(html, result, 'cards.debt_date', /отчете на ([^<]*)/i, replaceTagsAndSpaces, parseDateWord);
+
+		getParam(html, result, 'cards.gracepay', /Задолженность льготного периода[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+		getParam(html, result, 'cards.gracepay_till', /Задолженность льготного периода(?:[\s\S](?!<\/tr>))*?внести эту сумму до([^<,]*)/i, replaceTagsAndSpaces, parseDateWord);
+
 	}
 	// // Нужно только для старого провайдера
 	// if (AnyBalance.isAvailable('cards.lastPurchSum', 'cards.lastPurchPlace', 'cards.lastPurchDate')) {
@@ -574,16 +582,16 @@ function processCardLast10Transactions(result) {
 
     result.transactions10 = [];
 	
-    var ops = sumParam(html, null, null, /<tr[^>]*class="ListLine\d+">(?:[^>]*>){6}\s*<\/tr>/ig);
+    var ops = getElements(html, /<tr[^>]*class="ListLine\d+"/ig);
 	
     AnyBalance.trace('У карты ' + _id + ' найдено транзакций: ' + ops.length);
     for(var i=0; i<ops.length; ++i){
     	var o = {};
 
-		getParam(ops[i], o, 'cards.transactions10.sum', /([^>]*>){7}/i, replaceTagsAndSpaces, parseBalanceSilent);
-		getParam(ops[i], o, 'cards.transactions10.currency', /([^>]*>){7}/i, replaceTagsAndSpaces, parseCurrencySilent);
-		getParam(ops[i], o, 'cards.transactions10.descr', /([^>]*>){3}/i, replaceTagsAndSpaces);
-    	getParam(ops[i], o, 'cards.transactions10.date', /([^>]*>){5}/i, replaceTagsAndSpaces, parseSmallDateSilent);
+		getParam(ops[i], o, 'cards.transactions10.sum', /(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalanceSilent);
+		getParam(ops[i], o, 'cards.transactions10.currency', /(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseCurrencySilent);
+		getParam(ops[i], o, 'cards.transactions10.descr', /(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+    	getParam(ops[i], o, 'cards.transactions10.date', /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseSmallDateSilent);
 
     	result.transactions10.push(o);
     }

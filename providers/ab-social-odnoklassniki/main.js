@@ -14,15 +14,16 @@ var g_headers = {
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'http://m.ok.ru/';
+	var baseurl = 'https://m.ok.ru/';
 	AnyBalance.setDefaultCharset('utf-8');
 
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 
-	var html = AnyBalance.requestPost(baseurl + 'dk?bk=GuestMain&st.cmd=main&_prevCmd=main&tkn=9519', {
+	var html = AnyBalance.requestPost(baseurl + 'dk?bk=GuestMain&st.cmd=main&_prevCmd=main&tkn=1565', {
 		'button_login': 'Войти',
 		'fr.login': prefs.login,
+		'fr.proto':	'1',
 		'fr.needCaptcha': '',
 		'fr.password': prefs.password,
 		'fr.posted': 'set',
@@ -30,7 +31,7 @@ function main() {
 		Referer: baseurl
 	}));
 
-	if (!/cmd=logoff/i.test(html)) {
+	if (!/Выход/i.test(html)) {
 		var error = getParam(html, null, null, /role="alert"[^>]*>([\s\S]*?)<\/ul/i, replaceTagsAndSpaces);
 		if (error)
 			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));

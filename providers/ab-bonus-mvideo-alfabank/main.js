@@ -34,7 +34,7 @@ function login(){
 		checkEmpty(prefs.password, 'Введите пароль!');
     }
 
-    var html = AnyBalance.requestGet(baseurl1 + '/', g_headers);
+    var html = AnyBalance.requestGet(baseurl + '/', g_headers);
     html = AnyBalance.requestGet(baseurl + '/login', addHeaders({Referer: baseurl1 + '/'}));
 
     function sendForm(html, code){
@@ -115,12 +115,16 @@ function login(){
 
 	if(!/logout/i.test(html)){
 		var error = getParam(html, null, null, /<label[^>]+class="text-error"[^>]*>\s*([^\s<][\s\S]*?)<\/label>/ig, replaceTagsAndSpaces);
+		if(!error)
+			error = getElement(html, /<[^>]+error-notification-main-text/i, replaceTagsAndSpaces);
 		if(error)
-			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
+			throw new AnyBalance.Error(error, null, /парол/i.test(error));
 		if(!html && prefs.type >= 0)
 			throw new AnyBalance.Error('Не удаётся зайти по номеру карты (М.Видео возвращает пустую страницу). Попробуйте войти по логину и паролю.');
 		if(/Для восстановления пароля авторизуйтесь через адрес электронной почты или телефон/i.test(html))
 			throw new AnyBalance.Error('М.Видео требует ввести пароль в личный кабинет. Вам необходимо войти в личный кабинет М.Видео https://www.mvideo.ru/login через браузер и ввести пароль.');
+		if(AnyBalance.getLastStatusCode() == 401)
+			throw new AnyBalance.Error('Пользователь временно заблокирован. Пожалуйста, проверьте логин и пароль и попробуйте позднее');
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 			
@@ -172,7 +176,7 @@ function main(){
     	do{
 	    	if(tri)
 	    		AnyBalance.trace('Попытка №' + (tri+1) + ' получить время устаревания бонусов');
-	    	html = AnyBalance.requestGet(baseurl1 + '/my-account/loyalty?ssb_block=balansBonusCardTabContentBlock&ajax=true&_=' + new Date().getTime(), addHeaders({
+	    	html = AnyBalance.requestGet(baseurl + '/my-account/loyalty?ssb_block=balansBonusCardTabContentBlock&ajax=true&_=' + new Date().getTime(), addHeaders({
 	    		Referer: baseurl + '/my-account/loyalty',
 	    		'X-Requested-With':'XMLHttpRequest'
 	    	}));
@@ -185,7 +189,7 @@ function main(){
 	}
 
     if(AnyBalance.isAvailable('strategy')){
-   	   	html = AnyBalance.requestGet(baseurl1 + '/my-account/bonusStrategy', g_headers);
+   	   	html = AnyBalance.requestGet(baseurl + '/my-account/bonusStrategy', g_headers);
    	   	var checked = getElements(html, [/<div[^>]+class="controls-group"[^>]*>/ig, /<input[^>]+id="newsletterBySms[^>]+checked/i])[0];
    	   	if(!checked)
    	   		AnyBalance.trace('Стратегия не выбрана?\n' + html); 

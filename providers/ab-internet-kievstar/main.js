@@ -15,7 +15,7 @@ var headers = {
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = "https://my.kyivstar.ua/";
+	var baseurl = "https://b2b.kyivstar.ua/";
 
 	var html = loginSite(baseurl);
 

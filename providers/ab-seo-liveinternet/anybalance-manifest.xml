@@ -1,17 +1,19 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="4">ab-seo-liveinternet</id>
+	<id version="5">ab-seo-liveinternet</id>
 	<name>Liveinternet.ru</name>
 	<description html="true"><![CDATA[
 	<p>Получает данные по счетчикам в известной статистике рунета http://www.liveinternet.ru</p>
 	<p>Информация по счетчикам берется по адресу: http://www.liveinternet.ru/stat</p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>

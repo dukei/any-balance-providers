@@ -14,7 +14,7 @@ var replaces = [replaceTagsAndSpaces, /[^\d\-]+/i, ''];
 
 function main(){
     var prefs = AnyBalance.getPreferences();
-    var baseurl = 'http://www.liveinternet.ru/';
+    var baseurl = 'https://www.liveinternet.ru/';
     AnyBalance.setDefaultCharset('utf-8'); 
 	
 	try {

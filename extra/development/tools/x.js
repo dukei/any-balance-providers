@@ -109,9 +109,28 @@ try{
 	}
 }catch(e){
 	if(e.message != cancel){
-		messageBox(e.message, vbOKOnly, 'Error');
+		messageBox((e.message || e.description) + (e.number ? ' (code: 0x' + decimalToHexString(e.number) + ')' : ''), vbOKOnly, e.name || 'Error');
 		throw e;
 	}
+}
+
+function decimalToHexString(number)
+{
+    if (number < 0)
+    {
+        number = 0xFFFFFFFF + number + 1;
+    }
+
+    return number.toString(16).toUpperCase();
+}
+
+function dumpObj(o){
+	var str = ['Object {'];
+	for(var p in o){
+		str.push(p, '=', o[p]);
+	}
+	str.push('}');
+	return str.join('\n');
 }
 
 function commit(commitDirs, mesg) {
@@ -132,7 +151,13 @@ function commit(commitDirs, mesg) {
 	for(var repo in repos){
 		WScript.Echo('Committing paths for repo ' + repo + ': ' + repos[repo].join('\n    '));
 		// GIT
-		WshShell.Run('TortoiseGitProc /command:commit /logmsg:"' + g_prov_name + ' (' + g_prov_text_id + '):\n' + mesg + '" /path:"'+repos[repo].join('*')+'"');
+		var cmd = 'TortoiseGitProc /command:commit /logmsg:"' + g_prov_name + ' (' + g_prov_text_id + '):\n' + mesg + '" /path:"'+repos[repo].join('*')+'"';
+		try{
+			WshShell.Run(cmd);
+		}catch(e){
+			e.message = 'Can not launch ' + cmd + '\nCause: ' + (e.message || e.description || '');
+			throw e;
+		}
 	}
 }
 

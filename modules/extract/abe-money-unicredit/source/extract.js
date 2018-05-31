@@ -7,10 +7,15 @@ var g_headers = {
 	'Accept-Charset': 	'windows-1251,utf-8;q=0.7,*;q=0.3',
 	'Accept-Language': 	'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
 	'Connection': 		'keep-alive',
-	'User-Agent': 		'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/49.0.2623.87 Safari/537.36'
+	'User-Agent': 		'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.181 Safari/537.36'
 };
 
 var baseurl;
+
+function fnRnd(){
+	var now=new Date(); 
+	return 'B'+(Date.parse(now.toGMTString())+now.getMilliseconds()).toString(32);
+}
 
 function login() {
 	var prefs = AnyBalance.getPreferences();
@@ -63,6 +68,30 @@ function login() {
 
 	}else{
 		AnyBalance.trace('Уже залогинены, используем существующую сессию')
+	}
+
+	if (!/ClientInfo/i.test(html)) {
+		var captchaId = getElement(html, /<i[^>]+n="idCaptcha"/i, replaceTagsAndSpaces);
+		if(captchaId){
+			AnyBalance.trace('Требуется ввод капчи');
+			var img = AnyBalance.requestGet(baseurl + 'T=laCaptcha.getCaptchaImage&ID=' + encodeURIComponent(captchaId) + '&tms=' + fnRnd(), {Referer: baseurl + 'T=RT_2Auth.BF'});
+			var code = AnyBalance.retrieveCode('Пожалуйста, введите код с картинки', img, {time: 120000});
+
+			html = AnyBalance.requestPost(baseurl, {
+				tic: 		0,
+				T:			'RT_2Auth.CL',
+				A:			prefs.login,
+				B:			encryptedPass,
+				L:			'RUSSIAN',
+				IdCaptcha:	captchaId,
+				C:			code,
+				MapID:		mapId || '',
+				BROWSER:	'Chrome',
+				BROWSERVER: '66.0.3359.181'
+			}, addHeaders({
+				Referer: baseurl + 'T=RT_2Auth.BF'
+			}));
+		}
 	}
 
 	if (!/ClientInfo/i.test(html)) {

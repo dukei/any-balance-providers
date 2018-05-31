@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-  <id version="11">ab-money-unicredit</id>
+  <id version="12">ab-money-unicredit</id>
   <name>UniCredit</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о текущем остатке и других параметрах карт, счетов, кредитов и вкладов для клиентов банка UniCredit.</p>

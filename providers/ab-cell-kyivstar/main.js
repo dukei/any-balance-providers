@@ -97,6 +97,8 @@ function processNew(html){
 	processBonusesNew(bonuses, result);
 
 	var rows = jspath1(pageData, "$.slots.MiddleContent[?(@.template='dailyStatusComponent')].data.dailyStatusRows");
+	if(!rows)
+		rows = jspath1(pageData, "$.slots.TopContent-Right[?(@.template='dailyStatusComponent')].data.dailyStatusRows");
 	processRemaindersNew(rows, result);
 
 

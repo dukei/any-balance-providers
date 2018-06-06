@@ -99,6 +99,7 @@ function main(){
 
 			ref = getParam(html, null, null, /<a[^>]+top-panel__button--enter[^>]+href="([^"]*)/i, replaceHtmlEntities);
 			AnyBalance.trace('Ссылка на вход: ' + ref);
+			ref = ref.replace(/\s/g, '%20'); //Иногда попадаются ссылки с пробелом
 	        
 			html = AnyBalance.requestGet(joinUrl(baseurl, ref), addHeaders({Referer: baseurl + 'welcome.aspx?ReturnUrl=%2f'}));
 			html = handleRedirect(html);

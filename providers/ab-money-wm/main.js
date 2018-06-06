@@ -33,6 +33,8 @@ function handleRedirect(html){
 			AnyBalance.trace('Необходимо подождать ' + delay + ' милисек');
 			AnyBalance.sleep(delay);
 		}
+		var newurl = joinUrl(ref, action).replace(/\s/g, '%20');
+
 		html = AnyBalance.requestPost(joinUrl(ref, action), params, addHeaders({Referer: ref}));
 	}
 	return html;

@@ -35,7 +35,7 @@ function handleRedirect(html){
 		}
 		var newurl = joinUrl(ref, action).replace(/\s/g, '%20');
 
-		html = AnyBalance.requestPost(joinUrl(ref, action), params, addHeaders({Referer: ref}));
+		html = AnyBalance.requestPost(newurl, params, addHeaders({Referer: ref}));
 	}
 	return html;
 }

@@ -189,7 +189,7 @@ function checkName(type, name){
 	case 'off-net':
 		return /другие сети.+(?:фикс|городск)|Other network.+fix|інші мережі.+міськ|Хвилини по Україні|Минуты по Украине/i.test(name)
 	case 'off-net-mobile':
-		return /Other mobile|off-net.+mobile|минут.+на другие сети|minut.+other.+networks|хвилин.+інші мережі/i.test(name)
+		return /Other mobile|off-net.+mobile|минут.+на другие сети|minut.+other.+networks|хвилин.+інші мережі|на інші мобільні|на другие мобильные/i.test(name)
 			|| /минут.+на другие мобильные|minut.+other.+networks|хвилин.+інші мобільні/i.test(name)
 	case 'internet':
 		return /Остаток МБ|Balance MB|Залишок МБ/i.test(name) 

@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="20" date="2018-06-07">
+	Возможность входить по логину
+	</change>
 	<change version="19" date="2018-06-07">
 	- Поддержка изменений на сайте.
 	</change>

@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="18" date="2018-06-07">
+	- Поддержка изменений на сайте.
+	</change>
 	<change version="17" date="2016-11-18">
 	Поддержка ввода нескольких номеров заказа
 	</change>

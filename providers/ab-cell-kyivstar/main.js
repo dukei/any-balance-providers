@@ -108,13 +108,13 @@ function processNewInner(html){
 
 	var pageData = getJsonObject(html, /var\s+pageData\s*=\s*/);
 	var phone = jspath1(pageData, "$.pageData.currentSubscription.subscriptionIdentifier");
-	if(!endsWith(prefs.login, phone)){
+	if(!endsWith(prefs.login, phone) && !endsWith(phone, prefs.login)){
 		AnyBalance.trace('Залогинены не на тот номер, нужен ' + prefs.login + ', попали на ' + phone + '. Попробуем переключиться');
 
 		var availableSubscriptions = jspath1(pageData, "$.slots.SubscriptionSelector[?(@.template='subscriptionSelectorComponent')].data.availableSubscriptions");
 		if(!availableSubscriptions)
 			throw new AnyBalance.Error('Вошли в кабинет на номер ' + phone + ' и не удалось переключиться на номер ' + prefs.login, {_relogin: true});
-		var subscription = availableSubscriptions.filter(function(s) { return endsWith(prefs.login, s.subscriptionIdentifier) })[0];
+		var subscription = availableSubscriptions.filter(function(s) { return endsWith(prefs.login, s.subscriptionIdentifier) || endsWith(s.subscriptionIdentifier, prefs.login)})[0];
 		if(!subscription){
 			AnyBalance.trace('В кабинете не нашлось номера ' + prefs.login + ' среди ' + availableSubscriptions.map(function(s) { return s.subscriptionIdentifier }).join(', '));
 			throw new AnyBalance.Error('В числе прикрепленных номеров в кабинете ' + phone + ' отсутствует ' + prefs.login, {_relogin: true}); 

@@ -54,13 +54,13 @@ function main(){
         balance: 0
     };
 
-	var deviceid = json.Subscriber.Agreements[0].Devices[0].SmartCard;
+	var deviceid = json.Subscriber.Agreements[0].Devices[0].Id;
 
     AB.getParam(json.Subscriber.Agreements[0].Number, result, 'agreement');
     AB.getParam(json.Subscriber.Agreements[0].Devices[0].SmartCard, result, 'device');
 
 	html = AnyBalance.requestGet(
-        baseurl + 'api/BillingOperations/GetStartTariff',
+        baseurl + 'api/Abonent/GetStartTariff',
         AB.addHeaders({Authorization: 'Bearer ' + token.access_token})
     );
     json = AB.getJson(html);
@@ -71,7 +71,7 @@ function main(){
     AB.getParam(json.TariffName, result, '__tariff');
     
 	html = AnyBalance.requestGet(
-        baseurl + 'api/BillingOperations/GetServices?SubjectId=' + encodeURIComponent(deviceid) + '&SubjectTypeId=Device&ListTypeId=VisibleForSubject',
+        baseurl + 'api/BillingOperations/GetServices?SubjectId=' + encodeURIComponent(deviceid) + '&SubjectTypeId=AbonentId&ListTypeId=VisibleForSubject',
         AB.addHeaders({Authorization: 'Bearer ' + token.access_token})
     );
     json = AB.getJson(html);
@@ -80,7 +80,7 @@ function main(){
 
     var n = 1;
     var services = [];
-    for(var i=0; i<json.Value.length; ++i){
+    for(var i=0; json.Value && i<json.Value.length; ++i){
     	var si = json.Value[i];
     	var name = si.ServiceName;
     	if(si.ServiceStatusId != 'Active'){
@@ -95,14 +95,14 @@ function main(){
     }
 
     html = AnyBalance.requestGet(
-        baseurl + 'api/BillingOperations/GetBalance?subjectId=' + encodeURIComponent(deviceid) + '&subjectTypeId=Device',
+        baseurl + 'api/BillingOperations/GetBalance?subjectId=' + encodeURIComponent(deviceid) + '&subjectTypeId=AbonentId',
         AB.addHeaders({Authorization: 'Bearer ' + token.access_token})
     );
     json = AB.getJson(html);
     if(!json.Value)
         AnyBalance.trace('Не найден баланс: ' + html);
 
-    if (json.Value.length && services.length) {
+    if (json.Value && json.Value.length && services.length) {
         for (var idx = 0; idx < json.Value.length; idx++) {
             var serviceId = json.Value[idx].ServiceId;
             if (!serviceId || services.indexOf(serviceId) > -1) {

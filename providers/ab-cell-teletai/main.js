@@ -66,7 +66,7 @@ function main() {
 
   	var phone = json.products[0].ident_list_list[0].value;
 
-	getParam(json.balances[0].value, result);
+	getParam(json.balances[0].value, result, 'balance');
 	getParam(phone, result, 'phone');
 	getParam(json.base.status_humanize, result, 'status');
 	getParam(json.products[0].tplan, result, '__tariff');
@@ -88,6 +88,12 @@ function main() {
   			for(var x in rest){
 				sumParam(rest[x].n_volume_left, result, 'rest_local', null, null, null, aggregate_sum);
   			}
+  		}else if(i == 'INTERNET'){
+  			for(var x in rest){
+				sumParam(rest[x].n_volume_left + rest[x].unit_name_humanize, result, 'rest_internet', null, null, parseTraffic, aggregate_sum);
+  			}
+  		}else {
+  			AnyBalance.trace('Неизвестный остаток: ' + JSON.stringify(rest));
   		}
   	}
 

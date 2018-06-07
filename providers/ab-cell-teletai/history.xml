@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="8" date="2018-06-07">
+	- Исправлен показ баланса и интернета
+	</change>
 	<change version="7" date="2017-10-24">
 	- Поддержка изменений на сайте.
 	</change>

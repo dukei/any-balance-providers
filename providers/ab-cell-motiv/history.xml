@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="10" date="2018-06-07">
+	- Улучшено распознавание минут и смс
+	</change>
 	<change version="9" date="2017-11-22">
 	- Исправлено отображение трафика в некоторых случаях
 	</change>

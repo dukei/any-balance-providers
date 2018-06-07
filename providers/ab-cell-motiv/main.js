@@ -51,15 +51,16 @@ function main(){
     getParam(html, result, 'mms',          /Остаток MMS:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i,                         AB.replaceTagsAndSpaces, AB.parseBalance);
     getParam(html, result, 'min',          /Пакеты голосовых услуг:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i,              AB.replaceTagsAndSpaces, AB.parseBalance);
     getParam(html, result, 'bonus',        /Бонусный баланс:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i,                     AB.replaceTagsAndSpaces, AB.parseBalance);
-    
 
     var traf = getParam(html, /(?:Мобильный интернет|Остаток GPRS:)[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i);
     getParam(traf, result, 'traf', /\d+(?:\.\d+)?\s*[гgkкmм][bб]/i, AB.replaceTagsAndSpaces, AB.parseTraffic);
 
-    if(isAvailable('traf') && !result.traf) {
+    if(isAvailable(['traf', 'min', 'sms'])) {
 
         html = AnyBalance.requestGet(baseurl + 'rest_of_packets/', g_headers)
-        AB.getParam(html, result, 'traf', /<b[^>]*>Интернет[\s\S]*?Услуга(?:[^>]*>){10}([^<]*)/i, AB.replaceTagsAndSpaces, AB.parseTraffic)
+        AB.getParam(html, result, 'traf', /<b[^>]*>Интернет([\s\S]*?<td[^>]*>){6}([^<]*)/i, AB.replaceTagsAndSpaces, AB.parseTraffic)
+        AB.getParam(html, result, 'min', /<b[^>]*>Минуты([\s\S]*?<td[^>]*>){6}([^<]*)/i, AB.replaceTagsAndSpaces, AB.parseBalance)
+        AB.getParam(html, result, 'sms', /<b[^>]*>SMS([\s\S]*?<td[^>]*>){6}([^<]*)/i, AB.replaceTagsAndSpaces, AB.parseBalance)
     }
 
     AnyBalance.setResult(result);

@@ -102,11 +102,11 @@ function main(){
     if(!json.Value)
         AnyBalance.trace('Не найден баланс: ' + html);
 
-    if (json.Value && json.Value.length && services.length) {
+    if (json.Value && json.Value.length) {
         for (var idx = 0; idx < json.Value.length; idx++) {
             var serviceId = json.Value[idx].ServiceId;
             if (!serviceId || services.indexOf(serviceId) > -1) {
-                AB.getParam(result.balance + json.Value[idx].Balance, result, 'balance');
+                AB.sumParam(result.balance + json.Value[idx].Balance, result, 'balance', null, null, null, aggregate_sum);
             }
         }
     }

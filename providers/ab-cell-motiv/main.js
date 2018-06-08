@@ -58,9 +58,21 @@ function main(){
     if(isAvailable(['traf', 'min', 'sms'])) {
 
         html = AnyBalance.requestGet(baseurl + 'rest_of_packets/', g_headers)
-        AB.getParam(html, result, 'traf', /<b[^>]*>Интернет([\s\S]*?<td[^>]*>){6}([^<]*)/i, AB.replaceTagsAndSpaces, AB.parseTraffic)
-        AB.getParam(html, result, 'min', /<b[^>]*>Минуты([\s\S]*?<td[^>]*>){6}([^<]*)/i, AB.replaceTagsAndSpaces, AB.parseBalance)
-        AB.getParam(html, result, 'sms', /<b[^>]*>SMS([\s\S]*?<td[^>]*>){6}([^<]*)/i, AB.replaceTagsAndSpaces, AB.parseBalance)
+
+        var tbl = getElements(html, [/<table/ig, /<b[^>]*>Интернет/])[0];
+        if(AnyBalance.isAvailable('traf') && !result.traf){
+        	AB.sumParam(tbl, result, 'traf', /<tr(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/ig, AB.replaceTagsAndSpaces, AB.parseTraffic, aggregate_sum)
+        }
+         
+        var tbl = getElements(html, [/<table/ig, /<b[^>]*>Минуты/])[0];
+        if(AnyBalance.isAvailable('min') && !result.min){
+        	AB.sumParam(tbl, result, 'min', /<tr(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/ig, AB.replaceTagsAndSpaces, AB.parseBalance, aggregate_sum)
+        }
+
+        var tbl = getElements(html, [/<table/ig, /<b[^>]*>SMS/])[0];
+        if(AnyBalance.isAvailable('sms') && !result.sms){
+        	AB.sumParam(tbl, result, 'sms', /<tr(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/ig, AB.replaceTagsAndSpaces, AB.parseBalance, aggregate_sum)
+        }
     }
 
     AnyBalance.setResult(result);

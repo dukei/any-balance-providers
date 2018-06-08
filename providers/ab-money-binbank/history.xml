@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="13" date="2018-06-08">
+	Поддержка нового интернет банка
+	</change>
 	<change version="12" date="2017-12-25">
 	Использование старого сайта
 	</change>

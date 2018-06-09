@@ -10,9 +10,10 @@ var g_headers =
 function main() 
 {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'http://blockdozer.com/insight-api/addr/';
+	var baseurl = 'https://blockdozer.com/insight-api/addr/';
 	AnyBalance.setDefaultCharset('utf-8');
-	
+	AnyBalance.setOptions({SSL_ENABLED_PROTOCOLS: ['TLSv1.1', 'TLSv1.2']});
+
 	validateBtcWallet(prefs.wallet);
 	
     // errors are text/html, but normal replies are json

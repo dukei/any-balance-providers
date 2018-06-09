@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="13">ab-money-binbank</id>
+	<id version="14">ab-money-binbank</id>
 	<api flags="no_browser"/>
 	<name>Бинбанк</name>
 	<description html="true"><![CDATA[
@@ -30,6 +30,7 @@
 		<counter id="credit_used" name="Использованный кредит" units=" {@currency}"/>
 		<counter id="credit_pay_to" name="Оплатить до" type="time" format="dd/MM/yyyy"/>
 		<counter id="credit_pay_sum" name="Сумма платежа по кредиту" units=" {@currency}"/>
+		<counter id="gracepay" name="Льготный платеж" units=" {@currency}"/>
 		<counter id="till" name="Действует до" type="time" format="MM/yy"/>
 		<counter id="status" name="Статус" type="text"/>
 		<counter id="type" name="Тип" type="text"/>

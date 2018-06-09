@@ -131,9 +131,9 @@ function processInfo(result) {
 	var json = apiCall('client');
 	var info = result.info = {};
 
-	getParam(json.addresses[0].full_address, info, 'info.address', null, replaceTagsAndSpaces);
+	getParam(jspath1(json, "$.addresses[?(@.type=='registration')].full_address"), info, 'info.address', null, replaceTagsAndSpaces);
 	getParam(json.birth_date, info, 'info.birthday', null, null, parseDateISO);
-	getParam(json.last_name + ' ' + json.first_name + ' ' + json.middle_name, info, 'info.name', null, replaceTagsAndSpaces);
+	getParam(json.last_name + ' ' + json.first_name + ' ' + json.middle_name, info, 'info.fio', null, replaceTagsAndSpaces);
 	//getParam(jsonInfo.profile.phone, info, 'info.passport', null, replaceTagsAndSpaces);  //Паспорт там есть вообще
 }
 
@@ -148,12 +148,12 @@ function getProducts(){
 // Счета
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 function processAccounts(result) {
-	throw new AnyBalance.Error('Не удаётся получить счета. Сайт изменен?');
-	
-	var accounts = jsonInfo.accounts;
+    var products = getProducts();
+	var accounts = products.filter(function(p) { return p.product_type === 'account' });
+
 	if(!accounts.length) {
 		AnyBalance.trace(
-			JSON.stringify(jsonInfo)
+			JSON.stringify(products)
 		);
 		AnyBalance.trace("Счета не найдены.");
 		return;
@@ -162,10 +162,10 @@ function processAccounts(result) {
 	result.accounts = [];
 	
 	for(var i=0; i < accounts.length; ++i){
-		var _id = accounts[i].number;
-		var title = accounts[i].number;
+		var _id = accounts[i].id;
+		var title = accounts[i].name + ' ' + accounts[i].number.substr(-4);
 		
-		var acc = {__id: _id, __name: title};
+		var acc = {__id: _id, __name: title, num: accounts[i].number};
 		
 		if(__shouldProcess('accounts', acc)){
 			processAccount(accounts[i], acc);
@@ -178,12 +178,12 @@ function processAccounts(result) {
 function processAccount(account, result) {
 	AnyBalance.trace('Обработка счета ' + result.__name);
 
-	getParam(account.rest + '', result, 'accounts.balance', null, replaceTagsAndSpaces, parseBalance);
-	getParam(currencys[account.currency], result, ['accounts.currency', 'accounts.balance']);
+	getParam(account.balance.amount, result, 'accounts.balance');
+	getParam(account.balance.currency, result, ['accounts.currency', 'accounts.balance']);
 
-	getParam(account.number, result, 'accounts.accnum', null, replaceTagsAndSpaces);
-	getParam(account.type, result, 'accounts.type', null, replaceTagsAndSpaces);
-	getParam(states[account.state], result, 'accounts.status');
+	getParam(account.name, result, 'accounts.type', null, replaceTagsAndSpaces);
+	getParam(account.state_details, result, 'accounts.status');
+	getParam(account.open_date, result, 'accounts.date_start', null, null, parseDateISO);
 
 	if(AnyBalance.isAvailable('accounts.transactions')) {
 		processAccountTransactions(account, result);
@@ -225,7 +225,7 @@ function processCard(card, result) {
 	AnyBalance.trace('Обработка карты ' + result.__name);
 
 	getParam(card.available_amount.amount, result, 'cards.balance');
-	getParam(card.available_amount.currency, result, ['cards.currency', 'cards.balance', 'cards.blocked']);
+	getParam(card.available_amount.currency, result, ['cards.currency', 'cards.balance', 'cards.blocked', 'cards.minpay', 'cards.gracepay', 'cards.fullpay']);
 	getParam(card.blocked_amount.amount, result, 'cards.blocked');
 	
 	getParam(card.requisites.account_number, result, 'cards.accnum', null, replaceTagsAndSpaces);
@@ -233,8 +233,14 @@ function processCard(card, result) {
 	getParam(card.expire_date, result, 'cards.till', null, replaceTagsAndSpaces, parseDateISO);
     getParam(card.holder, result, 'cards.fio', null, replaceTagsAndSpaces);
 	getParam(card.state_details, result, 'cards.status');
+	
+	getParam(jspath1(card, "$.credit_card_loan.credit_limit.amount"), result, 'cards.limit');
+	getParam(jspath1(card, "$.credit_card_loan.due_payment.total.amount"), result, 'cards.minpay');
+	getParam(jspath1(card, "$.credit_card_loan.due_payment.due_date"), result, 'cards.minpay_till', null, null, parseDateISO);
+	getParam(jspath1(card, "$.credit_card_loan.grace_amount.amount"), result, 'cards.gracepay');
+	getParam(jspath1(card, "$.credit_card_loan.full_payment.total.amount"), result, 'cards.fullpay');
 
-	getParam(jspath1(card, "$.bonus_cards[?(@.type='airmiles')].money_amount.amount"), result, 'cards.airmiles');
+	getParam(jspath1(card, "$.bonus_cards[?(@.type=='airmiles')].money_amount.amount"), result, 'cards.airmiles');
 
 	if(isAvailable('cards.transactions')) {
 		processCardTransactions(card, result);
@@ -245,12 +251,12 @@ function processCard(card, result) {
 // Депозиты
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 function processDeposits(result) {
-	throw new AnyBalance.Error('Не удаётся получить депозиты. Сайт изменен?');
-	
-	var deposits = jsonInfo.deposits;
+    var products = getProducts();
+	var deposits = products.filter(function(p) { return p.product_type === 'deposit' });
+
 	if(!deposits.length) {
 		AnyBalance.trace(
-			JSON.stringify(jsonInfo)
+			JSON.stringify(products)
 		);
 		AnyBalance.trace("Депозиты не найдены.");
 		return;
@@ -259,10 +265,10 @@ function processDeposits(result) {
 	result.deposits = [];
 	
 	for(var i=0; i < deposits.length; ++i){
-		var _id = deposits[i].number;
-		var title = deposits[i].number;
+		var _id = deposits[i].id;
+		var title = deposits[i].name + ' ' + deposits[i].number.substr(-4);
 		
-		var d = {__id: _id, __name: title};
+		var d = {__id: _id, __name: title, num: deposits[i].number};
 		
 		if(__shouldProcess('deposits', d)){
 			processDeposit(deposits[i], d);
@@ -275,15 +281,16 @@ function processDeposits(result) {
 function processDeposit(deposit, result) {
 	AnyBalance.trace('Обработка депозита ' + result.__name);
 
-	getParam(deposit.rest + '', result, 'deposits.balance', null, replaceTagsAndSpaces, parseBalance);
-	getParam(currencys[deposit.currency], result, ['deposits.currency', 'deposits.balance']);
+	getParam(deposit.balance.amount, result, 'deposits.balance');
+	getParam(deposit.balance.currency, result, ['deposits.currency', 'deposits.balance']);
 
-	getParam(deposit.number, result, 'deposits.accnum', null, replaceTagsAndSpaces);
-    getParam(deposit.type, result, 'deposits.type', null, replaceTagsAndSpaces);
-	getParam(deposit.closed, result, 'deposits.till', null, replaceTagsAndSpaces, parseDate);
-	getParam(states[deposit.state], result, 'deposits.status');
-    getParam(deposit.contract, result, 'deposits.contract', null, replaceTagsAndSpaces);
-    getParam(deposit.rate + '', result, 'deposits.rate', null, replaceTagsAndSpaces, parseBalance);
+    getParam(deposit.name, result, 'deposits.type', null, replaceTagsAndSpaces);
+	getParam(deposit.close_date, result, 'deposits.till', null, null, parseDateISO);
+	getParam(deposit.open_date, result, 'deposits.date_start', null, null, parseDateISO);
+	getParam(deposit.state_details, result, 'deposits.status');
+	getParam(deposit.rate, result, 'deposits.pct');
+	
+	getParam(jspath1(deposit, '$.start_money_amount.amount'), result, 'deposits.balance_start');
 
 	if(isAvailable('deposits.transactions')){
 		processDepositTransactions(deposit, result);
@@ -292,4 +299,14 @@ function processDeposit(deposit, result) {
 
 function processCredits(result) {
 	throw new AnyBalance.Error("Обработка кредитов пока не поддерживается. Пожалуйста, обратитесь к обработчикам");
+}
+
+function processBonus(result) {
+    var products = getProducts();
+	var loyalties = products.filter(function(p) { return p.product_type === 'loyalty' });
+	if(loyalties.length > 0){
+		getParam(loyalties[0].balance.amount, result, 'bonus');
+	}else{
+		AnyBalance.trace('Программа лояльности не найдена');
+	}
 }

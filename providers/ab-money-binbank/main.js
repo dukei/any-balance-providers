@@ -3,8 +3,12 @@
 */
 
 var g_countersTable = {
+	common: {
+		"fio": "info.fio",
+		"bonus": "bonus",
+	},
 	card: {
-		"currency": "currency",
+		"currency": "cards.currency",
     	"balance": "cards.balance",
     	"blocked": "cards.blocked",
 		"credit_used": "cards.credit_used",
@@ -14,10 +18,32 @@ var g_countersTable = {
 		"accnum": "cards.accnum",
 		"type": "cards.type",
 		"till": "cards.till",
+		"credit_used": "cards.fullpay",
+		"credit_pay_to": "cards.minpay_till",
+		"credit_pay_sum": "cards.minpay",
+		"gracepay": "cards.gracepay",
 		"status": "cards.status",
 		"fio": "cards.fio",
 		"airmiles": "cards.airmiles",
-		"__tariff": "cards.num"
+		"__tariff": "cards.num",
+		"pct": "cards.pct",
+    },
+	acc: {
+		"currency": "accounts.currency",
+    	"balance": "accounts.balance",
+		"accnum": "accounts.num",
+		"type": "accounts.type",
+		"status": "accounts.status",
+		"__tariff": "accounts.num",
+    },
+	dep: {
+		"currency": "deposits.currency",
+    	"balance": "deposits.balance",
+		"accnum": "deposits.num",
+		"type": "deposits.type",
+		"status": "deposits.status",
+		"__tariff": "deposits.__name",
+		"till": "deposits.till",
     },
 };
 
@@ -83,11 +109,12 @@ function main() {
     if(!/^(card|crd|dep|acc)$/i.test(prefs.type || ''))
     	prefs.type = 'card';
 
-    prefs.num = prefs.what;
+    prefs.num = prefs.cardnum;
 	
-    var adapter = new NAdapter(joinObjects(g_countersTable[prefs.type], g_countersTable.common), shouldProcess);
+    var adapter = new NAdapter(joinObjects(g_countersTable.common, g_countersTable[prefs.type]), shouldProcess);
 	
     adapter.processInfo = adapter.envelope(processInfo);
+    adapter.processBonus = adapter.envelope(processBonus);
     adapter.processCards = adapter.envelope(processCards);
     adapter.processAccounts = adapter.envelope(processAccounts);
     adapter.processCredits = adapter.envelope(processCredits);
@@ -98,6 +125,7 @@ function main() {
 	var result = {success: true};
 
 	adapter.processInfo(result);
+	adapter.processBonus(result);
 	
 	if(prefs.type == 'card') {
 		adapter.processCards(result);

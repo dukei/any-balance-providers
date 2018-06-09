@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="14" date="2018-06-09">
+	Расширенная поддержка карт, счетов и депозитов
+	</change>
 	<change version="13" date="2018-06-08">
 	Поддержка нового интернет банка
 	</change>

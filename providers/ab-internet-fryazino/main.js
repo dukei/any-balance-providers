@@ -3,22 +3,22 @@
 */
 
 var g_headers = {
-	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
-	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
+	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
+	'Accept-Language': 'ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7',
 	'Connection': 'keep-alive',
-	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
+	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.87 Safari/537.36',
 };
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'https://utm.fryazino.net/';
+	var baseurl = 'https://ou.fryazino.net/';
 	AnyBalance.setDefaultCharset('utf-8');
 	
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 	
-	var html = AnyBalance.requestGet(baseurl + 'UserTools/index.php', g_headers);
+	var html = AnyBalance.requestGet(baseurl + 'index.php', g_headers);
+	//AnyBalance.requestGet(baseurl + 'favicon.ico', addHeaders({Accept: 'image/webp,image/apng,image/*,*/*;q=0.8', Referer: baseurl})); 
 	
 	if(!html || AnyBalance.getLastStatusCode() > 400){
 		AnyBalance.trace(html);
@@ -27,21 +27,21 @@ function main() {
     
     var key = getParam(html, null, null, /name=['"]KEY['"]\stype=hidden\svalue=['"]([^'"]+)/i); 
     
-    var auth_type = encrypt(key + encrypt(prefs.password));
-    
-	html = AnyBalance.requestPost(baseurl + 'UserTools/index.php', {
-        'auth_type': auth_type,
+    //var auth_type = encrypt(key + encrypt(prefs.password));
+	html = AnyBalance.requestPost(baseurl + 'index.php', {
+        'auth_type': '',
+        'btn': 'Войти',
         'FORM_ACTION': 'Войти',
         'KEY': key,
-        'redirect': '/UserTools/index.php',
-        'pw': prefs.login,
+        'redirect': '/index.php',
+        'login': prefs.login,
         'pass': prefs.password
-    }, addHeaders({Referer: baseurl + 'UserTools/index.php'}));
+    }, addHeaders({Referer: baseurl}));
 	
 	if (!/exit/i.test(html)) {
-		var error = getParam(html, null, null, /[^>]+class=['"]td_message alert['"][^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
+		var error = getElement(html, /<div[^>]+alert/i, replaceTagsAndSpaces);
 		if (error)
-			throw new AnyBalance.Error(error, null, /несуществующий логин или неверный пароль/i.test(error));
+			throw new AnyBalance.Error(error, null, /парол/i.test(error));
 		
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
@@ -52,8 +52,8 @@ function main() {
 	getParam(html, result, 'balance', /баланс<(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'traffic_in', /входящий трафик(?:[^>]*>){9}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'traffic_out', /исходящий трафик(?:[^>]*>){9}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'acc_num', /договор(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'status', /статус(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'acc_num', /договор(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces);
+	getParam(html, result, 'status', /статус(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces);
 	
 	AnyBalance.setResult(result);
 }

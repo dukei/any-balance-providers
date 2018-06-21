@@ -92,12 +92,9 @@ function main() {
 		success: true
 	};
 
-	if (AnyBalance.isAvailable(['balance', 'pay_till'])) {
-		var token = getParam(info, null, null, /<input[^>]+value="([^"]*)"[^>]*name="YII_CSRF_TOKEN"/i);
-		var res = AnyBalance.requestPost(baseurl + 'user', [
-			['needProperties[]', 'balance'],
-			['needProperties[]', 'dataPay'],
-			['needProperties[]', 'paymentAmount'],
+	if (AnyBalance.isAvailable('balance', 'pay_till')) {
+		var token = getParam(info, /<input[^>]+value="([^"]*)"[^>]*name="YII_CSRF_TOKEN"/i);
+		var res = AnyBalance.requestPost(baseurl + 'payments/default/GetDataForMoneybagWidget', [
 			['YII_CSRF_TOKEN', token]
 		], addHeaders({
 			'X-Requested-With': 'XMLHttpRequest'
@@ -107,8 +104,8 @@ function main() {
 		try {
 			user = getJson(res);
 			
-			getParam(user.bill.balance, result, 'balance', null, replaceTagsAndSpaces, parseBalance);
-			getParam(user.bill.datePay, result, 'pay_till', null, replaceTagsAndSpaces, parseDateWord);
+			getParam(user.balance, result, 'balance', null, replaceTagsAndSpaces, parseBalance);
+			getParam(user.datePay, result, 'pay_till', null, replaceTagsAndSpaces, parseDateWord);
 		} catch (e) {
 			AnyBalance.trace(res);
 			throw e;
@@ -116,10 +113,15 @@ function main() {
 
 	}
 
-	getParam(info, result, 'tariff_number', /<span[^>]+account-data-item_link[^>]*>([^]*?)<\/span>/i, replaceTagsAndSpaces);
+	if(AnyBalance.isAvailable('bits')){
+		var html = AnyBalance.requestGet(baseurl + 'index/default/GetloyaltyPoints', addHeaders({'X-Requested-With': 'XMLHttpRequest', Referer: baseurl + 'profile'}));
+		var json = getJson(html);
+		getParam(json.content, result, 'bits', null, replaceTagsAndSpaces, parseBalance);
+ 	}
+
+	getParam(info, result, 'tariff_number', /<span[^>]+account-data-item_link[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
 	getParam(info, result, 'name', /b-head__account-data-item[^>]*data-name="([^"]*)/i, replaceTagsAndSpaces);
 	getParam(info, result, '__tariff', /Ваш пакет[^<]*<a[^>]*>([^<]+)/i, replaceTagsAndSpaces);
-	getParam(info, result, 'bits', /status[^>]*bonus"[^>]*>([^]*?)<\/a>/i, replaceTagsAndSpaces, parseBalance);
 	getParam(info, result, 'status', /<a[^>]+href="[^"]*status.domru.ru"[^>]*>([\s\S]*?)<\/a>/i, replaceTagsAndSpaces);
 
 	AnyBalance.setResult(result);

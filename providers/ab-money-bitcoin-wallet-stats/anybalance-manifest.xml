@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="8">ab-money-bitcoin-wallet-stats</id>
+	<id version="9">ab-money-bitcoin-wallet-stats</id>
 	<api flags="no_browser"/>
 	<name>Bitcoin Wallet</name>
 	<description html="true"><![CDATA[

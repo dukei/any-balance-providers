@@ -39,7 +39,7 @@ function main()
 	
 	// parse errors reported by blockchain.info, convert into AnyBalance exceptions if any
 	var errdiv = getElement(html, /<div[^>]+alert/i, replaceTagsAndSpaces);
-	if (errdiv!=null)
+	if ((errdiv!=null) && (!errdiv.includes("more about what to expect")))
 		throw new AnyBalance.Error("blockchain.info: "+errdiv);
 
 	// parse params

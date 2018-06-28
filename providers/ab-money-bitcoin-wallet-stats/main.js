@@ -10,7 +10,7 @@
 function main() 
 {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'https://blockchain.info/address/';
+	var baseurl = 'https://www.blockchain.com/en/btc/address/';
 	AnyBalance.setDefaultCharset('utf-8');
 	
 	validateBtcWallet(prefs.wallet);
@@ -39,7 +39,7 @@ function main()
 	
 	// parse errors reported by blockchain.info, convert into AnyBalance exceptions if any
 	var errdiv = getElement(html, /<div[^>]+alert/i, replaceTagsAndSpaces);
-	if (errdiv && (!/more about what to expect/i.test(errdiv)))
+	if (errdiv && (!/moved.*domains/i.test(errdiv)))
 		throw new AnyBalance.Error("blockchain.info: "+errdiv);
 
 	// parse params

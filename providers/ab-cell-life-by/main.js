@@ -81,7 +81,7 @@ function main() {
   // Карманы
   html = sumParam(html, result, 'carmani_min_left', /(?:&#34;|"|\()карманы(?:&#34;|"|\))(?:[^>]*>){2}([\s\S]*?)<\//ig, replaceTagsAndSpaces, parseMinutes, aggregate_sum, true);
   // Минуты
-  sumParam(html, result, 'min_left_other', /Звонки (?:на|во) (?:все|другие) сети(?:[^>]+>){2}([^<]+)/ig, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
+  sumParam(html, result, 'min_left_other', /Звонки (?:на|во|в) (?:все|другие) сети(?:[^>]+>){2}([^<]+)/ig, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
   sumParam(html, result, 'min_left', /Звонки внутри сети(?:[^>]+>){2}([^<]+)/ig, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
   // Трафик
   sumParam(html, result, 'traffic_night_left', />\s*Ночной интернет(?:[^>]+>){2}([^<]+(?:МБ|Гб|Кб|Байт))/ig, replaceTagsAndSpaces, parseTraffic, aggregate_sum);

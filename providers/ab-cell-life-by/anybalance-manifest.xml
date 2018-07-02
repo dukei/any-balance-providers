@@ -1,10 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="2.0" version="36">ab-cell-life-by</id>
+	<id major_version="2.0" version="37">ab-cell-life-by</id>
 	<api flags="no_browser" />
 	<name>Life:) Беларусь</name>
 	<description html="true"><![CDATA[
-	<p>Получает информацию о балансе для пользователей мобильного оператора Life:) (Белоруссия).</p>
+	<p>Получает информацию о балансе для пользователей мобильного оператора Life:) (Беларусь).</p>
 	<p>Информация берется из личного кабинета http://issa.life.com.by.</p>  
 	]]></description>
 	<instruction html="true"><![CDATA[
@@ -30,8 +30,8 @@
 		<counter id="traffic_left" name="Остаток трафика" suffix=" Мб"/>
 		<counter id="traffic_night_left" name="Остаток ночного трафика" suffix=" Мб"/>
 		<counter id="traffic_msg_left" name="Трафик (Viber, Whatsapp)" suffix=" ед"/>
-		<counter id="min_left" name="Минуты внутри сети" units=" мин" type="time_interval" format="{@MIN}:{@sec}"/>
-		<counter id="min_left_other" name="Минуты на другие сети" units=" мин" type="time_interval" format="{@MIN}:{@sec}"/>
+		<counter id="min_left" name="Минуты внутри сети" units=" мин" type="time_interval" format="{@MIN}"/>
+		<counter id="min_left_other" name="Минуты на другие сети" units=" мин" type="time_interval" format="{@MIN}"/>
 		<counter id="sms_left" name="Остаток СМС" suffix=" смс"/>
 		<counter id="sms_left_other" name="Остаток СМС на все сети" suffix=" смс"/>
 		<counter id="mms_left" name="Остаток ММС" suffix=" ммс"/>
@@ -40,7 +40,7 @@
 		<counter id="life_points" name="Life Points" suffix=" Б"/>
 		<counter id="fio" name="ФИО" type="text"/>
 		<counter id="phone" name="Телефон" type="text"/>
-		<counter id="carmani_min_left" name="Минуты (Карманы)" units=" мин" type="time_interval" format="{@MIN}:{@sec}"/>
+		<counter id="carmani_min_left" name="Минуты (Карманы)" units=" мин" type="time_interval" format="{@MIN}"/>
 		<counter id="packs" name="Активные пакеты" type="text"/>
 		<counter id="packs_deadline" name="Ближайшая дата отключения пакета" type="time" format="dd/MM/yyyy"/>
 	</counters>

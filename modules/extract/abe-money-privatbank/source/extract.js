@@ -99,10 +99,7 @@ function login(prefs, result) {
 			g_session = json.cookie;
 
 			AnyBalance.trace('Успешно привязали устройство: ' + JSON.stringify(json));
-		} else if (json.st == 'fail') {
-			AnyBalance.trace(JSON.stringify(json));
-			throw new AnyBalance.Error(json.err);
-		} else {
+		} else if (/CODE104: need auth/i.test(json.err)) {
 			AnyBalance.trace('Похоже что устройство уже привязано.');
 
 			json = requestJson({
@@ -110,6 +107,9 @@ function login(prefs, result) {
 				bank: ''
 			}, 'chpass', 'Не удалось авторизоваться, проверьте логин и пароль.');
 			g_session = json.cookie;
+		} else {
+			AnyBalance.trace(JSON.stringify(json));
+			throw new AnyBalance.Error(json.err);
 		}
 
 		__setLoginSuccessful();

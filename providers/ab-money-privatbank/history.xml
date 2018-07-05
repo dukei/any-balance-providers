@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="16" date="2018-07-05">
+	Исправление ошибки авторизации
+	</change>
 	<change version="15" date="2018-07-05">
 	Обновлена версия приложения
 	</change>

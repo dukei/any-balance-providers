@@ -28,7 +28,7 @@ function requestJson(data, action, errorMessage) {
 	params.push(encodeURIComponent('language') + '=' + 'ru');
 	params.push(encodeURIComponent('lon') + '=' + '0.0');
 	params.push(encodeURIComponent('device') + '=' + encodeURIComponent('SM-G900F|samsung'));
-	params.push(encodeURIComponent('version') + '=' + encodeURIComponent('5.11.02'));
+	params.push(encodeURIComponent('version') + '=' + encodeURIComponent('5.20.02'));
 	params.push(encodeURIComponent('versionOS') + '=' + encodeURIComponent('5.0'));
 	params.push(encodeURIComponent('lat') + '=' + encodeURIComponent('0.0'));
 	params.push(encodeURIComponent('ireal') + '=' + encodeURIComponent(g_imei));
@@ -99,6 +99,9 @@ function login(prefs, result) {
 			g_session = json.cookie;
 
 			AnyBalance.trace('Успешно привязали устройство: ' + JSON.stringify(json));
+		} else if (json.st == 'fail') {
+			AnyBalance.trace(JSON.stringify(json));
+			throw new AnyBalance.Error(json.err);
 		} else {
 			AnyBalance.trace('Похоже что устройство уже привязано.');
 

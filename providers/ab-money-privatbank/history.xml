@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="15" date="2018-07-05">
+	Обновлена версия приложения
+	</change>
 	<change version="14" date="2017-01-13">
 	Поддержка подтверждения авторизации по звонку
 	</change>

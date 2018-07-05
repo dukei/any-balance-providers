@@ -172,11 +172,11 @@ function main(){
     getParam(html, result, 'call_barring', /Запрет исходящих с:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDateWord);
 
     //Это иногда идет как Скидки:	У вас осталось 938 Мб 1001 Кб, 1 Кб.
-    var discount = getParam(html, null, null, /<td[^>]+id="DISCOUNT"[^>]*>([\s\S]*?)<\/td>/i, [replaceTagsAndSpaces, /^\D+/, '', /\s+/g, ''], html_entity_decode);
+    var discount = getParam(html, null, null, /<td[^>]+id="DISCOUNT"[^>]*>([\s\S]*?)<\/td>/i, [replaceTagsAndSpaces, /мбит/ig, '', /^\D+/, '', /\s+/g, '']);
     if(discount)
     	sumParam(discount, result, 'traffic', /(\d[\d.,]*[гмкgmk][бb])/ig, null, parseTraffic, aggregate_sum);
 
-    var counters = getParam(html, null, null, /(?:Остаток трафика|Остаток минут, SMS, MMS, (?:МБ|GPRS), включенных в абонплату):[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i);
+    var counters = getParam(html, /(?:Остаток трафика|Остаток минут, SMS, MMS, (?:МБ|GPRS), включенных в абонплату):[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, [/мбит/ig, '']);
     if(counters){
 	    sumParam(counters, result, 'sms', /(-?\d[\d,\.]*)\s*SMS/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 	    sumParam(counters, result, 'mms', /(-?\d[\d,\.]*)\s*MMS/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);

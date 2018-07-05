@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="8">ab-money-payeer-com</id>
+	<id version="9">ab-money-payeer-com</id>
 	<api flags="no_browser"/>
 	<name>Payeer.com</name>
 	<description html="true"><![CDATA[
@@ -11,6 +11,7 @@
 	<depends>
 		<module id="library"/>
 		<module id="framework/incapsule"/>
+		<module id="crypt/md5"/>
 	</depends>
 	<files>
 		<icon>icon.png</icon>

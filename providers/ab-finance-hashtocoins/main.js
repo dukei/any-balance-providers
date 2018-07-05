@@ -37,10 +37,17 @@ function main() {
 	if (typeof(targetUser)=="undefined")
 		throw new AnyBalance.Error('Не могу найти ' + prefs.worker +' , Проверьте правильность ввода username.worker!');
 	var {hashrate} = targetUser;
-
+	var {tag} = targetUser;
+	
 	var result = { success: true };
-	getParam(hashrate, result, 'hashrate');
+	getParam(hashrate, result, 'hashrate', null, null, parseBalance2);
 
-	getParam(prefs.worker, result, '__tariff');
+	getParam(prefs.worker + ' → ' + tag, result, '__tariff');
 	AnyBalance.setResult(result);
+}
+function parseBalance2(str) {
+  var val = parseBalance(str);
+  if (isset(val))
+    val = Math.round(val* 10000000 / 10000000000);
+  return val;
 }

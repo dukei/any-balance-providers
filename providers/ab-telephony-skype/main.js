@@ -1,4 +1,4 @@
- /**
+/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 */
 
@@ -73,7 +73,11 @@ function main() {
  	}
 
  	info = AnyBalance.requestGet('https://secure.skype.com/portal/overview', g_headers);
- 	var clientId = getParam(info, /client_id=([^&"]*)/i, decodeURIComponent);
+ 	var clientId = getParam(info, /client_id(?:=|%(?:25)?3d)([^&%"]*)/i, decodeURIComponent);
+ 	if(!clientId){
+ 		AnyBalance.trace("Trying to get client_id from last url");
+ 		clientId = getParam(AnyBalance.getLastUrl(), /client_id(?:=|%(?:25)?3d)([^&%"]*)/i, decodeURIComponent);
+ 	}
  	if(!clientId){
  		AnyBalance.trace(info);
  		throw new AnyBalance.Error('Could not find login parameter (client_id). Is the site changed?');
@@ -85,6 +89,18 @@ function main() {
 */ 
     info = AnyBalance.requestGet('https://login.skype.com/login/oauth/microsoft?mssso=1&client_id=' + clientId + '&redirect_uri=https%3A%2F%2Fsecure.skype.com%2Fportal%2Flogin%3Freturn_url%3Dhttps%253A%252F%252Fsecure.skype.com%252Fportal%252Foverview', addHeaders({Referer: AnyBalance.getLastUrl()}));
  	info = redirectIfNeeded(info);
+
+ 	if (!/overviewSkypeName/i.test(info)) {
+ 		var form = getElement(info, /<form[^>]+iAccrualForm/i);
+ 		if(form){
+ 			AnyBalance.trace('We need to agree with smth');
+ 			var params = createFormParams(form);
+ 			var action = joinUrl(AnyBalance.getLastUrl(), getParam(form, /<form[^>]+action="([^"]*)/i, replaceHtmlEntities));
+ 			AnyBalance.trace('Agreeing to ' + action);
+ 			info = AnyBalance.requestPost(action, params, addHeaders({Referer: AnyBalance.getLastUrl()}));
+ 			info = redirectIfNeeded(info);
+ 		}
+ 	}
 
  	if (!/overviewSkypeName/i.test(info)) {
 	 	var json = getJsonObject(info, /var\s+\$Config\s*=\s*/);

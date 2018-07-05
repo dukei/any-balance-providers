@@ -62,8 +62,8 @@ function main() {
     g_headers.Referer = baseurl + 'b2b/';
 
     html = AnyBalance.requestPost(baseurl + 'b2b/loginProcess', {
-        j_username: prefs.login,
-        j_password: prefs.password,
+        username: prefs.login,
+        password: prefs.password,
     }, addHeaders({
     	Referer: baseurl + 'b2b/login',
     	'X-Requested-With': 'XMLHttpRequest',
@@ -71,7 +71,23 @@ function main() {
     }));
 
     var json = getJson(html);
-    if(!json.redirect || /error/i.test(json.redirect)){
+    if(json.isCaptchaShouldBeShown){
+    	AnyBalance.trace('Мегафон потребовал рекапчу');
+
+    	html = AnyBalance.requestPost(baseurl + 'b2b/loginProcess', {
+        	username: prefs.login,
+        	password: prefs.password,
+        	captcha: solveRecaptcha('Пожалуйста, докажите, что вы не робот', baseurl + 'b2b/login', '6LeF9FkUAAAAAE8fndYadzonV1LnZ')
+    	}, addHeaders({
+    		Referer: baseurl + 'b2b/login',
+    		'X-Requested-With': 'XMLHttpRequest',
+    		Accept: 'application/json, text/javascript, */*; q=0.01',
+    	}));
+
+    	json = getJson(html);
+    }
+
+    if(!(json.redirect || json.targetUrl) || /error/i.test(json.redirect)){
     	if(json.redirect){
     		html = AnyBalance.requestGet(joinUrl(baseurl, json.redirect), addHeaders({
     			Referer: baseurl + 'b2b/login',
@@ -79,7 +95,7 @@ function main() {
 		    try{ json = getJson(html) }catch(e){}
 		}
 
-    	var error = (json && json.errorMessage) || getElement(html, /<[^>]+error-text/i, replaceTagsAndSpaces);
+    	var error = (json && (json.errorMessage || json.error)) || getElement(html, /<[^>]+error-text/i, replaceTagsAndSpaces);
         if (error)
             throw new AnyBalance.Error(error, null, /парол/i.test(error));
 
@@ -162,11 +178,22 @@ function main() {
         AnyBalance.trace('Успешно получили данные по номеру: ' + curr.msisdn);
         AnyBalance.trace(JSON.stringify(account));
 
-        getParam(account.balance && account.balance.value, result, 'balance', null, null, parseBalance);
-        getParam(account.ratePlan.def, result, '__tariff');
         getParam(account.account.number, result, 'licschet');
         getParam(account.msisdn, result, 'phone_name');
-        getParam(account.account.name, result, 'name_name');
+
+        if(account.ratePlan){
+        	getParam(account.balance && account.balance.value, result, 'balance', null, null, parseBalance);
+        	getParam(account.ratePlan.def, result, '__tariff');
+        	getParam(account.account.name, result, 'name_name');
+        }else{
+        	AnyBalance.trace('Пришлось получать данные из инфы о подписчике');
+        	var html = AnyBalance.requestGet(baseurl + 'b2b/subscriber/info/' + account.id, addHeaders({Referer: baseurl + 'b2b/subscriber/mobile'}));
+        	var json = getJson(html);
+        	
+        	getParam(json.profile.ratePlanName, result, '__tariff');
+        	getParam(json.subscriber.statusDef, result, 'status');
+        	getParam(json.profile.msisdn + ' - ' + json.profile.profileFio, result, 'name_name');
+        }
 
         if(AnyBalance.isAvailable('min_left', 'sms_left')){
             getDiscounts(baseurl, account, result);

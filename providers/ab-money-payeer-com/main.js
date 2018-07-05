@@ -4,9 +4,10 @@
 
 var g_headers = {
 	'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-	'Accept-Language':'ru,en;q=0.8',
+	'Accept-Language':'ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.',
 	'Connection':'keep-alive',
-	'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/37.0.2062.120 Safari/537.36',
+	Origin: 'https://payeer.com',
+	'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.181 Safari/537.36',
 };
 
 function processLoginResponse(html){
@@ -33,6 +34,13 @@ function processLoginResponse(html){
 	return html;
 }
 
+function getSign(html){
+	var scr = getParam(html, /<script[^>]*>(\s*var \$\$\$\s*=[\s\S]*?)<\/script>/i, [/\$.modmd5/, 'hex_md5']);
+	scr = 'var $$$$$$; ' + scr + '\nreturn $$$$$$;';
+	var sgn = safeEval(scr);
+	return sgn;
+}
+
 function login(baseurl, _html){
 	var prefs = AnyBalance.getPreferences();
 
@@ -43,7 +51,19 @@ function login(baseurl, _html){
 	}));
 	var json = getJson(html);
 
-	var form = getParam(json.main.html, null, null, /<form[^>]+id="(?:auth_captcha|authd)"[^>]*>([\s\S]*?)<\/form>/i);
+	//Без загрузки не работает.
+	//Ребята, если вы так мешаете роботам, дайте какое-нибудь апи, что ли? Ваши же пользователи хотят баланс смотреть
+	AnyBalance.trace('Загрузка бесполезных скриптов...');
+	AnyBalance.requestGet(baseurl + 'images/a/pb11.ico', {Referer: 'https://payeer.com/bitrix/templates/difiz_account/css/black.css?1522827325'});
+	var script = getParam(json.main.html, /"([^"]+script\.new[^"]*)/, replaceHtmlEntities);
+	if(script)
+		AnyBalance.requestGet(joinUrl(baseurl, script), {Referer: baseurl + 'ru/account/'});
+	var script = getParam(json.main.html, /"([^"]+jquery\.md5[^"]*)/, replaceHtmlEntities);
+	if(script)
+		AnyBalance.requestGet(joinUrl(baseurl, script), {Referer: baseurl + 'ru/account/'});
+
+
+	var form = getParam(json.main.html, /<form[^>]+id="(?:auth_captcha|authd)"[^>]*>([\s\S]*?)<\/form>/i);
 	
 	if(!form) {
 		if(/403 Forbidden/i.test(html))
@@ -53,18 +73,35 @@ function login(baseurl, _html){
 	}
 
 	var params = createFormParams(form);
+	params.sign = getSign(json.main.html);
 	params.email = prefs.login;
 	params.password = prefs.password;
+	params['g-recaptcha-response'] = '';
+
+	var need_captcha = getParam(form, /<div[^>]+payeer_captcha[^>]*/i);
+	need_captcha = need_captcha && !/hide/i.test(need_captcha);
+	var need_recaptcha = getParam(form, /<div[^>]+g-recaptcha-auth[^>]*>/i);
+	need_recaptcha = need_recaptcha && !/hide/i.test(need_recaptcha);
 
 	//Действительно, капча, надо попробовать её ввести.
-	if(params.captcha_sid){
-    	var captcha = AnyBalance.requestGet(baseurl + '/bitrix/tools/captcha.php?captcha_sid=' + params.captcha_sid);
+	if(need_captcha){
+    	var captcha = AnyBalance.requestGet(baseurl + 'bitrix/tools/captcha.php?captcha_sid=' + params.captcha_sid);
     	captcha = AnyBalance.retrieveCode('Пожалуйста, введите код с картинки', captcha);
     	AnyBalance.trace('Капча получена: ' + captcha);
     	params.captcha = captcha;
     }
 
-	html = AnyBalance.requestPost(baseurl + 'bitrix/components/payeer/system.auth.form/templates/index_list/ajax.php', params, addHeaders({Referer: baseurl, 'X-Requested-With':'XMLHttpRequest'}));
+	if(need_recaptcha){
+    	var recaptcha = solveRecaptcha('Пожалуйста, докажите, что вы не робот', baseurl + 'ru/account/', '6Lf_2Q0TAAAAABzDzxrOMAFty0K_OLFDhlu7P7in');
+		params['g-recaptcha-response'] = recaptcha;
+    }
+
+	html = AnyBalance.requestPost(baseurl + 'bitrix/components/payeer/system.auth.form/templates/index_list/ajax.php', params, addHeaders({
+		Referer: baseurl + 'ru/account/',
+		Accept: 'application/json, text/javascript, */*; q=0.01',
+		'X-Requested-With':'XMLHttpRequest',
+		'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+	}));
 
 	html = processLoginResponse(html);
 

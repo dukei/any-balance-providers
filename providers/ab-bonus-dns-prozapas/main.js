@@ -36,6 +36,7 @@ function main() {
 	var captcha;
 	if(key)
 		captcha = solveRecaptcha("Пожалуйста, докажите, что вы не робот", AnyBalance.getLastUrl(), key);
+		   	
 
 	var params = AB.createFormParams(form, function(params, str, name, value) {
 		if (name == 'Method') {

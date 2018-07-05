@@ -1,5 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="10" date="2018-06-28">
+	- Переход на www.blockchain.com
+	</change>
+	<change version="9" date="2018-06-26">
+	- Улучшена обработка ошибок.
+	</change>
+	<change version="8" date="2018-06-25">
+	Ignore the alert about moving to another domain, allowing the provider to work, for now. Will likely need a rewrite after the switch happens.
+	</change>
 	<change version="7" date="2017-12-18">
 	Fixed tries limit
 	Added mBTC counter instead of switch in preferences

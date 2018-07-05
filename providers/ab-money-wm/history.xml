@@ -1,5 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="19" date="2018-06-06">
+	- Улучшена обработка ошибок.
+	</change>
+	<change version="18" date="2018-06-06">
+	Исправление проблем с URL в процедуре входа
+	</change>
+	<change version="17" date="2018-06-06">
+	Исправление проблемы с URL в процедуре входа
+	</change>
+	<change version="16" date="2018-06-06">
+	Исправление проблем с URL в процедуре входа
+	</change>
 	<change version="15" date="2018-03-30">
 	- Поддержка изменений на сайте.
 	</change>

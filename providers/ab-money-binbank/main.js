@@ -3,101 +3,159 @@
 */
 
 var g_countersTable = {
+	common: {
+		"fio": "info.fio",
+		"bonus": "bonus",
+	},
 	card: {
-		"total": "total",
-		"currency": "currency",
-    	"balance": "accounts.cards.balance",
-		"credit_used": "accounts.credit_used",
-		"credit_pay_to": "accounts.minpay_till",
-		"credit_pay_sum": "accounts.minpay",
-		"cardnum": "accounts.cards.num",
-		"accnum": "accounts.num",
-		"fio": "info.fio_if",
-		"__tariff": "accounts.cards.num"
+		"currency": "cards.currency",
+    	"balance": "cards.balance",
+    	"blocked": "cards.blocked",
+		"credit_used": "cards.credit_used",
+		"credit_pay_to": "cards.minpay_till",
+		"credit_pay_sum": "cards.minpay",
+		"cardnum": "cards.num",
+		"accnum": "cards.accnum",
+		"type": "cards.type",
+		"till": "cards.till",
+		"credit_used": "cards.fullpay",
+		"credit_pay_to": "cards.minpay_till",
+		"credit_pay_sum": "cards.minpay",
+		"gracepay": "cards.gracepay",
+		"status": "cards.status",
+		"fio": "cards.fio",
+		"airmiles": "cards.airmiles",
+		"__tariff": "cards.num",
+		"pct": "cards.pct",
     },
-/*	acc: {
-		"total": "total",
-		"currency": "currency",
+	acc: {
+		"currency": "accounts.currency",
     	"balance": "accounts.balance",
-		"limit": "accounts.limit",
-		"accamount": "accounts.balance",
-		"credit_used": "accounts.credit_used",
-		"credit_pay_to": "accounts.minpay_till",
-		"credit_pay_sum": "accounts.minpay",
-		"cardnum": "accounts.cards.num",
-		"cardname": "accounts.cards.name",
 		"accnum": "accounts.num",
-		"accname": "accounts.name",
-//		"fio": "fio",
-		"__tariff": "accounts.__name"
-    }, */
+		"type": "accounts.type",
+		"status": "accounts.status",
+		"__tariff": "accounts.num",
+    },
+	dep: {
+		"currency": "deposits.currency",
+    	"balance": "deposits.balance",
+		"accnum": "deposits.num",
+		"type": "deposits.type",
+		"status": "deposits.status",
+		"__tariff": "deposits.__name",
+		"till": "deposits.till",
+    },
 };
-
-var g_found_card_idx;
-
-function traverseCard(prop, path){
-	return prop ? prop[g_found_card_idx || 0] : prop;
-}
 
 function shouldProcess(counter, info){
 	var prefs = AnyBalance.getPreferences();
-
+	
+	if(!info || (!info.__id || !info.__name))
+		return false;
+	
 	switch(counter){
+		case 'cards':
+		{
+			if(prefs.type != 'card')
+				return false;
+		    if(!prefs.num)
+		    	return true;
+			
+			if(endsWith(info.num, prefs.num))
+				return true;
+		    
+			return false;
+		}
 		case 'accounts':
 		{
-		    if(!prefs.cardnum)
+			if(prefs.type == 'acc'){
+		        if(!prefs.num)
+		        	return true;
+				
+				if(endsWith(info.num, prefs.num))
+					return true;
+			}else{
+				return false;
+			}
+		}
+		case 'credits':
+		{
+			if(prefs.type != 'crd')
+				return false;
+		    if(!prefs.num)
 		    	return true;
-			if(prefs.what == 'card'){
-		        for(var i=0; i<info.cards.length; ++i){
-		        	if(endsWith(info.cards[i].num, prefs.cardnum)){
-		        		g_found_card_idx = i;
-		        		return true;
-		        	}
-		        }
-		    }else if(prefs.what == 'acc'){
-		       	if(endsWith(info.__id, prefs.cardnum))
-	        		return true;
-		    }
-		    return false;
+			
+			if(endsWith(info.num, prefs.num))
+				return true;
+		}	
+		case 'deposits':
+		{
+			if(prefs.type != 'dep')
+				return false;
+		    if(!prefs.num)
+		    	return true;
+			
+			if(endsWith(info.num, prefs.num))
+				return true;
 		}
 		default:
 			return false;
 	}
 }
 
-function main(){
+function main() {
 	var prefs = AnyBalance.getPreferences();
-    if(!/^(card|acc|dep)$/i.test(prefs.what || ''))
-    	prefs.what = 'card';
+	
+    if(!/^(card|crd|dep|acc)$/i.test(prefs.type || ''))
+    	prefs.type = 'card';
 
-    var adapter = new NAdapter(g_countersTable[prefs.what], shouldProcess);
-    adapter.processAccounts = adapter.envelope(processAccounts);
+    prefs.num = prefs.cardnum;
+	
+    var adapter = new NAdapter(joinObjects(g_countersTable.common, g_countersTable[prefs.type]), shouldProcess);
+	
     adapter.processInfo = adapter.envelope(processInfo);
-    adapter.setTraverseCallbacks({'accounts.cards': traverseCard});
-
-	var html = login();
-
+    adapter.processBonus = adapter.envelope(processBonus);
+    adapter.processCards = adapter.envelope(processCards);
+    adapter.processAccounts = adapter.envelope(processAccounts);
+    adapter.processCredits = adapter.envelope(processCredits);
+    adapter.processDeposits = adapter.envelope(processDeposits);
+	
+	login();
+	
 	var result = {success: true};
 
-	adapter.processInfo(html, result);
+	adapter.processInfo(result);
+	adapter.processBonus(result);
+	
+	if(prefs.type == 'card') {
+		adapter.processCards(result);
 
-	if(prefs.what == 'card'){
+		if(!adapter.wasProcessed('cards'))
+			throw new AnyBalance.Error(prefs.num ? 'Не найдена карта с последними цифрами ' + prefs.num : 'У вас нет ни одной карты!');
 
-		adapter.processAccounts(html, result);
-		if(!adapter.wasProcessed('accounts'))
-			throw new AnyBalance.Error(prefs.cardnum ? 'Не найдена карта с последними цифрами ' + prefs.cardnum : 'У вас нет ни одной карты');
 		result = adapter.convert(result);
+	} else if(prefs.type == 'acc') {
+		adapter.processAccounts(result);
 
-	}else if(prefs.what == 'acc'){
-
-		adapter.processAccounts(html, result);
 		if(!adapter.wasProcessed('accounts'))
-			throw new AnyBalance.Error(prefs.cardnum ? 'Не найден счет с последними цифрами ' + prefs.cardnum : 'У вас нет ни одного депозита');
+			throw new AnyBalance.Error(prefs.num ? 'Не найден счет с последними цифрами ' + prefs.num : 'У вас нет ни одного счета!');
+		
 		result = adapter.convert(result);
+	} else if(prefs.type == 'crd') {
+		adapter.processCredits(result);
 
-	}else {//if(prefs.what == 'dep'){
-		throw AnyBalance.Error('Депозиты пока не поддерживаются!')
+		if(!adapter.wasProcessed('credits'))
+			throw new AnyBalance.Error(prefs.num ? 'Не найден кредит с последними цифрами ' + prefs.num : 'У вас нет ни одного кредита!');
+		
+		result = adapter.convert(result);
+	} else if(prefs.type == 'dep') {
+		adapter.processDeposits(result);
+		
+		if(!adapter.wasProcessed('deposits'))
+			throw new AnyBalance.Error(prefs.num ? 'Не найден депозит с последними цифрами ' + prefs.num : 'У вас нет ни одного депозита!');
+		
+		result = adapter.convert(result);
 	}
-
+	
 	AnyBalance.setResult(result);
 }

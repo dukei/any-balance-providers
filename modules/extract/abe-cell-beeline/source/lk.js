@@ -435,40 +435,16 @@ function fetchB2B(baseurl, html, result) {
     //Получим страницу с тарифом и опциями
     html = AnyBalance.requestGet(baseurl + 'b/info/abonents/catalog.xhtml', g_headers);
 
-    var number = prefs.phone || '\\d{4}';
-
     // Если указан телефон, надо его найти, актуально для тех у кого больше 10 номеров, они не помещаются на странице
     if(prefs.phone) {
-        var form = getParam(html, null, null, /<form[^>]*id="mobileDataForm"[\s\S]*?<\/form>/i);
-
-        checkEmpty(form, 'Не удалось найти форму поиска номера, сайт изменен?', true);
-
-        var params = getBlock(null, html, '^mobileDataForm');
-
-        params['mobileDataForm:abonents:telephoneNum'] = prefs.phone;
-        params['javax.faces.partial.execute'] = 'mobileDataForm';
-
-        html = AnyBalance.requestPost(baseurl + 'b/info/abonents/catalog.xhtml', params, addHeaders({
-            Referer: baseurl + 'b/info/abonents/catalog.xhtml',
-            'Faces-Request': 'partial/ajax',
-            'X-Requested-With': 'XMLHttpRequest'
-        }));
-
-        var re = new RegExp('<update[^>]*id="mobileDataForm"[^>]*>\\s*<!\\[CDATA\\[([\\s\\S]*?)\\]\\]></update>', 'i');
-        data = getParam(html, null, null, re);
-        if (!data) {
-            AnyBalance.trace('Неверный ответ для блока mobileDataForm: ' + html);
-            html = '';
-        } else {
-            html = data;
-        }
+    	html = AnyBalance.requestGet(baseurl + 'b/search/result.xhtml?q=' + encodeURIComponent(prefs.phone), {Referer: baseurl + 'b/index.xhtml'});
     }
 
-    var href = getParam(html, null, null, new RegExp('(b/info/subscriberDetail\\.xhtml\\?objId=\\d+)(?:[^>]*>){4}\\d{4,6}' + number, 'i'));
+    var url = getParam(html, /\/([^"]*subscriberDetail.xhtml[^"]*)/i, replaceHtmlEntities);
 
-    checkEmpty(href, 'Не удалось найти ' + (prefs.phone ? 'номер с последними цифрами ' + prefs.phone : 'ни одного номера!'), true);
+    checkEmpty(url, 'Не удалось найти ' + (prefs.phone ? 'номер с последними цифрами ' + prefs.phone : 'ни одного номера!'), true);
 
-    html = AnyBalance.requestGet(baseurl + href, g_headers);
+    html = AnyBalance.requestGet(baseurl + url, {Referer: AnyBalance.getLastUrl()});
 
     if(!result.info)
     	result.info = {};

@@ -57,7 +57,7 @@ function main(){
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 	
-    var baseurl = "http://www.exist.ru/";
+    var baseurl = "https://www.exist.ru/";
     AnyBalance.setDefaultCharset('utf-8'); 
 	
     var html = AnyBalance.requestGet(baseurl, g_headers);
@@ -88,9 +88,9 @@ function main(){
 	var result = {success: true};
 
 	if(AnyBalance.isAvailable('balance', 'debt')){
-		html = AnyBalance.requestGet(baseurl + 'Profile/Orders/Hint/Balance.aspx', g_headers);
-		var balance = getParam(html, null, null, /Средства на счету:([^<]*)/i, replaceTagsAndSpaces, parseBalance);
-		var debt = getParam(html, null, null, /Задолженность по заказам:([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+		html = AnyBalance.requestGet(baseurl + 'Profile/Balance/', g_headers);
+		var balance = getParam(html, null, null, /Средства на счету:[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+		var debt = getParam(html, null, null, /Задолженность по заказам:[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
 	    getParam(balance, result, 'balance');
     	getParam(debt, result, 'debt');
 	    if(isset(balance) && isset(debt))
@@ -98,8 +98,8 @@ function main(){
 	}
 	
 	html = AnyBalance.requestGet(baseurl + 'Profile/Form.aspx', g_headers);
-    getParam(html, result, 'code', /код клиента[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
-    getParam(html, result, '__tariff', /код клиента[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
+    getParam(html, result, 'code', /код клиента[\s\S]*?<\/div[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
+    getParam(html, result, '__tariff', /код клиента[\s\S]*?<\/div[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
 	
 	var singleOrder;
 

@@ -15,7 +15,7 @@ function main(){
     if(AnyBalance.getLevel() < 6)
         throw new AnyBalance.Error('Этот провайдер требует AnyBalance API v.6+');
 
-    //AnyBalance.setOptions({SSL_ENABLED_PROTOCOLS: ['SSLv3']});
+    AnyBalance.setOptions({SSL_ENABLED_PROTOCOLS: ['TLSv1.2']});
 
     var baseurl = "https://ibank.asb.by/";
     AnyBalance.setDefaultCharset('utf-8');

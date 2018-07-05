@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="41" date="2018-05-15">
+	- Улучшена обработка ошибок.
+	</change>
 	<change version="40" date="2017-12-04">
 	- Полностью изменился личный кабинет
 	</change>

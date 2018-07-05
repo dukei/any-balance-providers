@@ -2,13 +2,13 @@
 <PreferenceScreen>
     <EditTextPreference 
 		obligatory="true"
-        title="DREID приёмника" 
+        title="Логин" 
         positiveButtonText="ОК" 
         summary="||{@s}" 
-        dialogTitle="DREID приёмника" 
+        dialogTitle="Логин" 
         negativeButtonText="Отмена" 
-        dialogMessage="Введите DRE ID - 12-тизначный или 14-тизначный номер приемника."
-        inputType="number"
+        dialogMessage="Введите DREID - 12-тизначный или 14-тизначный номер приемника, номер абонентского договора или логин."
+        inputType="text"
         key="login">
     </EditTextPreference>
     <EditTextPreference

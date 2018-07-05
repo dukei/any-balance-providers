@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="6">ab-weather-amsg-perm-ru</id>
+	<api flags="no_browser"/>
+	<name>Авиационная метеорологическая станция гражданская (Большое Савино, Пермь)</name>
+	<description html="true"><![CDATA[
+	<p>Авиационная метеорологическая станция гражданская (АМСГ) — специализированное учреждение, <br>
+осуществляющее метеорологическое обеспечение гражданской авиации. <br>
+АМСГ имеются в большинстве аэропортов России и стран СНГ <br>
+(кроме части небольших аэропортов местных воздушных линий) (http://amsg.perm.ru/).</p>
+	]]></description>
+	<author>AlekseyShi &lt;aleks.shishkin@gmail.com&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="temperature_text" name="Температура" units="°C" type="text"/>
+		<counter id="temperature_num" name="Температура(график)" type="numeric"/>
+		<counter id="pressure" name="Давление" units="мм" type="numeric"/>
+		<counter id="humidity" name="Влажность" units="%" type="numeric"/>
+	</counters>
+	<keywords>amsg</keywords>
+	<type>weather</type>
+	<country>ru</country>
+</provider>

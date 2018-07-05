@@ -13,7 +13,7 @@ var g_headers = {
 function main(){
     var prefs = AnyBalance.getPreferences();
 
-    var baseurl = 'https://issa.beltelecom.by/';
+    var baseurl = 'https://issaold.beltelecom.by/';
 
     AnyBalance.trace('Entering ' + baseurl);
 

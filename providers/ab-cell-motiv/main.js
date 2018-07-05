@@ -51,15 +51,28 @@ function main(){
     getParam(html, result, 'mms',          /Остаток MMS:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i,                         AB.replaceTagsAndSpaces, AB.parseBalance);
     getParam(html, result, 'min',          /Пакеты голосовых услуг:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i,              AB.replaceTagsAndSpaces, AB.parseBalance);
     getParam(html, result, 'bonus',        /Бонусный баланс:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i,                     AB.replaceTagsAndSpaces, AB.parseBalance);
-    
 
     var traf = getParam(html, /(?:Мобильный интернет|Остаток GPRS:)[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i);
     getParam(traf, result, 'traf', /\d+(?:\.\d+)?\s*[гgkкmм][bб]/i, AB.replaceTagsAndSpaces, AB.parseTraffic);
 
-    if(isAvailable('traf') && !result.traf) {
+    if(isAvailable(['traf', 'min', 'sms'])) {
 
         html = AnyBalance.requestGet(baseurl + 'rest_of_packets/', g_headers)
-        AB.getParam(html, result, 'traf', /<b[^>]*>Интернет[\s\S]*?Услуга(?:[^>]*>){10}([^<]*)/i, AB.replaceTagsAndSpaces, AB.parseTraffic)
+
+        var tbl = getElements(html, [/<table/ig, /<b[^>]*>Интернет/])[0];
+        if(AnyBalance.isAvailable('traf') && !result.traf){
+        	AB.sumParam(tbl, result, 'traf', /<tr(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/ig, AB.replaceTagsAndSpaces, AB.parseTraffic, aggregate_sum)
+        }
+         
+        var tbl = getElements(html, [/<table/ig, /<b[^>]*>Минуты/])[0];
+        if(AnyBalance.isAvailable('min') && !result.min){
+        	AB.sumParam(tbl, result, 'min', /<tr(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/ig, AB.replaceTagsAndSpaces, AB.parseBalance, aggregate_sum)
+        }
+
+        var tbl = getElements(html, [/<table/ig, /<b[^>]*>SMS/])[0];
+        if(AnyBalance.isAvailable('sms') && !result.sms){
+        	AB.sumParam(tbl, result, 'sms', /<tr(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/ig, AB.replaceTagsAndSpaces, AB.parseBalance, aggregate_sum)
+        }
     }
 
     AnyBalance.setResult(result);

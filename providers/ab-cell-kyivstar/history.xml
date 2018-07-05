@@ -1,5 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="2.0" version="104" date="2018-06-07">
+	- Улучшена обработка ошибок.
+	</change>
+	<change major_version="2.0" version="103" date="2018-06-07">
+	Улучшено распознавание минут на другие сети
+	</change>
+	<change major_version="2.0" version="102" date="2018-06-01">
+	Получение данных из кабинета с несколькими прикрепленными номерами
+	</change>
+	<change major_version="2.0" version="101" date="2018-06-01">
+	- Поддержка изменений на сайте (отображение трафика)
+	</change>
 	<change major_version="2.0" version="100" date="2018-03-07">
 	- Поддержка изменений на сайте.
 	</change>

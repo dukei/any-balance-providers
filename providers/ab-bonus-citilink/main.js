@@ -42,8 +42,18 @@ function login(){
 		return value;
 	});
 
+	html = AnyBalance.requestGet(baseurl + '/login/captcha/?width=210', addHeaders({Accept: 'application/json, text/javascript, */*; q=0.01', 'X-Requested-With': 'XMLHttpRequest', Referer: baseurl + '/'}));
+	var jsonCaptcha = getJson(html);
+	if(jsonCaptcha.needCaptcha){
+		AnyBalance.trace('Потребовалась капча');
+		var captchaKey = getParam(jsonCaptcha.captcha, /<input[^>]+name="captchaKey"[^>]*value="([^"]*)/i, replaceHtmlEntities);
+		var img = AnyBalance.requestGet(baseurl + '/captcha/image/' + captchaKey + '/?_=' + Math.round((+new Date)/1000), addHeaders({Referer: baseurl + '/'}));
+		params.captcha = AnyBalance.retrieveCode('Пожалуйста, введите код с картинки', img);
+		params.captchaKey = captchaKey;
+	}
+
 	var url = joinUrl(baseurl, action);
-	params['g-recaptcha-response'] = solveRecaptcha('Пожалуйста, докажите, что вы не робот', baseurl, json.recaptchaSiteKey);
+//	params['g-recaptcha-response'] = solveRecaptcha('Пожалуйста, докажите, что вы не робот', baseurl, json.recaptchaSiteKey);
 	
 	//Надо вздремнуть, а то нас палят как роботов (а зачем это делать? оставьте полезных роботов в покое.)
 //	var sleeptime = 4000 + Math.floor(Math.random()*3000);

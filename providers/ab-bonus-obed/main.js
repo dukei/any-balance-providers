@@ -12,7 +12,7 @@ var g_headers = {
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'http://www.obed.ru/';
+	var baseurl = 'https://www.obed.ru/';
 	AnyBalance.setDefaultCharset('utf-8');
 	
 	AB.checkEmpty(prefs.login, 'Введите логин!');

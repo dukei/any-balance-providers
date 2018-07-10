@@ -146,11 +146,10 @@ function processCard(info, result) {
 		
 		// баланс - Лимит
 		getParam(info.balance - limit, result, 'cards.clearBalance');
-
-		//getParam(html, result, 'cards.totalCreditDebtAmount', /<totalDebtAmount>([\s\S]*?)<\/totalDebtAmount>/i, replaceTagsAndSpaces, parseBalance);
+		getParam(creditCard.totalDebt, result, 'cards.totalCreditDebtAmount', null, replaceTagsAndSpaces, parseBalance);
+		getParam(creditCard.unpaidGracePeriodDue, result, 'cards.gracepay', null, replaceTagsAndSpaces, parseBalance);
+		getParam(creditCard.longGraceDueDate, result, 'cards.gracepay_till', null, replaceTagsAndSpaces, parseDateISO);
 		//getParam(html, result, 'cards.gracePeriodOutstanding', /<gracePeriodOutstanding>([\s\S]*?)<\/gracePeriodOutstanding>/i, replaceTagsAndSpaces, parseBalance);
-		//getParam(html, result, 'cards.gracepay', /<unpaidGracePeriodDue>([\s\S]*?)<\/unpaidGracePeriodDue>/i, replaceTagsAndSpaces, parseBalance);
-		//getParam(html, result, 'cards.gracepay_till', /<gracePeriodEnd>([\s\S]*?)<\/gracePeriodEnd>/i, replaceTagsAndSpaces, parseDateISO);
 	}
 
 	if (typeof processCardTransactions != 'undefined')

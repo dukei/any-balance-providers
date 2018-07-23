@@ -92,7 +92,7 @@ function main() {
 		}
 		
 		getParam(card, result, '__tariff', /(\*\*\*\*\s*\d{4})/i, replaceTagsAndSpaces);
-		getParam(card, result, 'balance', /newCard__sum[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseBalance);
+		getParam(card, result, 'balance', /newCard__sum\b[\s'"][^>]*>([^<]+)/i, replaceTagsAndSpaces, parseBalance);
 		getParam(card, result, ['currency', 'balance'], /newCard__valuta[^>]*>([^<]+)/i, replaceTagsAndSpaces);
 		getParam(card, result, 'validto', /newCard__shelf-life[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseDate);
 	//	getParam(card, result, 'status', /(?:[\s\S]*?<td[^>]*>){6}([\s\S]*?)<\//i, replaceTagsAndSpaces);

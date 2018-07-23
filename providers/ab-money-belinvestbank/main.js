@@ -38,14 +38,15 @@ function main() {
 	        typeSessionKey: 0
 	    }, addHeaders({Referer: loginurl + 'signin'}));
 
-
-		if(!/На Ваш номер телефона/i.test(html) && /аннулировать предыдущий запуск/i.test(html)){
+		if(!/На Ваш номер телефона/i.test(html) && /showDialog\s*\(\s*'#confirmation_close_session/.test(html)){
 			AnyBalance.trace('Аннулируем предыдущий вход');
 			html = AnyBalance.requestPost(loginurl + 'confirmationCloseSession', {}, addHeaders({Referer: loginurl + 'signin'}));
 		}
 
 		if(!/На Ваш номер телефона/i.test(html)){
-			var error = getElement(html, /<div[^>]+(?:error|alert__msg)/i, replaceTagsAndSpaces);
+			var error = getElement(html, /<[^>]+(?:error|alert__msg)/i, replaceTagsAndSpaces);
+			if(!error)
+				error = getElement(html, /<[^>]+(?:label_type_error)/i, replaceTagsAndSpaces);
 			if(error)
 				throw new AnyBalance.Error(error, null, /Парол/i.test(error));
 			AnyBalance.trace(html);
@@ -54,7 +55,8 @@ function main() {
 
 		var smsKey;
 		AnyBalance.trace('Пытаемся ввести смс код.');
-		smsKey = AnyBalance.retrieveCode("Пожалуйста, введите код из смс", null, {inputType: 'number', time: 180000});
+		var msg = getElement(html, /<div[^>]+dialog__greets/i, [/<div[^>]+dialog__title[\s\S]*?<\/div>/i, '', replaceTagsAndSpaces]);
+		smsKey = AnyBalance.retrieveCode(msg || "Пожалуйста, введите код из смс", null, {inputType: 'number', time: 180000});
 		AnyBalance.trace('Код из смс получен: ' + smsKey);
 
 		html = AnyBalance.requestPost(loginurl + 'signin2', {
@@ -64,7 +66,7 @@ function main() {
 
 		// ПРОВЕРКА НА НЕВЕРНЫЙ КОД ИЗ СМС!
 		if(!/logout/i.test(html)) {
-			var error = getElement(html, /<div[^>]+(?:error|alert__msg)/i, replaceTagsAndSpaces);
+			var error = getElement(html, /<[^>]+(?:error|alert__msg)/i, replaceTagsAndSpaces);
 			if(error)
 				throw new AnyBalance.Error(error);
 
@@ -72,9 +74,9 @@ function main() {
 			throw new AnyBalance.Error('Не удалось зайти в интернет-банк. Сайт изменен?');
 		}
 		
-		html = AnyBalance.requestGet(baseurl + 'cards', addHeaders({'User-Agent':'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36'}));
+		html = AnyBalance.requestGet(baseurl + 'cards', addHeaders({'Referer':baseurl}));
 		
-		var cards = sumParam(html, null, null, /<div class="table-name-card">[^]+?<\/div>\s*<div[^>]*>[^]+?<\/div>/ig);
+		var cards = getElements(html, /<div[^>]+wrapper-newCard/ig);
 
 		if(!cards.length){
 			AnyBalance.trace(html);
@@ -89,11 +91,11 @@ function main() {
 			throw new AnyBalance.Error('Не удалось найти' + ( prefs.cardnum ? ' карту с последними цифрами ' + prefs.cardnum : ' ни одной карты!' ));
 		}
 		
-		getParam(card, result, '__tariff', /(\*\*\*\*\s*\*\*\*\*\s*\*\*\*\*\s*\d{4})/i, replaceTagsAndSpaces);
-		getParam(card, result, 'balance', /card-sum[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseBalance);
-		getParam(card, result, ['currency', 'balance'], /item-card-currency[^>]*>([^<]+)/i, replaceTagsAndSpaces);
-		getParam(card, result, 'validto', /item-card-expdate[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseDate);
-		getParam(card, result, 'status', /(?:[\s\S]*?<td[^>]*>){6}([\s\S]*?)<\//i, replaceTagsAndSpaces);
+		getParam(card, result, '__tariff', /(\*\*\*\*\s*\d{4})/i, replaceTagsAndSpaces);
+		getParam(card, result, 'balance', /newCard__sum[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseBalance);
+		getParam(card, result, ['currency', 'balance'], /newCard__valuta[^>]*>([^<]+)/i, replaceTagsAndSpaces);
+		getParam(card, result, 'validto', /newCard__shelf-life[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseDate);
+	//	getParam(card, result, 'status', /(?:[\s\S]*?<td[^>]*>){6}([\s\S]*?)<\//i, replaceTagsAndSpaces);
 
 	} finally {
 		// Выходим, чтобы закончить сессию. Нужно, так как запрещено 2 одновременных подключения.

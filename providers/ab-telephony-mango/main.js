@@ -55,6 +55,7 @@ function main(){
 
 	html = AnyBalance.requestPost(baseurl + 'auth/create-session', {
 		auth_token: json.auth_token,
+		refresh_token: json.refresh_token,
 		username: prefs.login,
 		app: 'ics'
 	}, addHeaders({

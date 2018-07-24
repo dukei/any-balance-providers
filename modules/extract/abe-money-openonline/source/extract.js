@@ -39,6 +39,8 @@ function login() {
 				return prefs.login;
 			if (name == 'PasswordFromHidden')
 				return prefs.password;
+			if (name == 'LoginToNewIb')
+				return 'false';
 			return value;
 		});
 

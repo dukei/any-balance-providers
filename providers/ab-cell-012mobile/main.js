@@ -4,15 +4,15 @@
 var g_headers = 
 {
 	'Content-Type': 'application/json; charset=utf-8',
-	'Origin': 'http://m.012mobile.co.il',
-	'Referer': 'http://m.012mobile.co.il'
+	'Origin': 'https://m.012mobile.co.il',
+	'Referer': 'https://m.012mobile.co.il'
 };
 
 
 // ask for the GUID, this will only work on mobile connection, on the 012 network
 function getGuid()
 {
-	var guidUrl = 'http://192.118.8.173/GeneralSrv/General.svc/Authentication/GetGuid';
+	var guidUrl = 'https://192.118.8.173/GeneralSrv/General.svc/Authentication/GetGuid';
 	var guidRequest = '{"brand":"012Mobile","platform":"WEB"}';
 	var json = getJson(AnyBalance.requestPost(guidUrl,guidRequest,addHeaders(g_headers)));
 	if (typeof json.GetGuidResult=="undefined")
@@ -72,7 +72,7 @@ function getKey(guid)
 // get bill data JSON
 function getBillData(key)
 {
-	var billUrl = 'http://my.partner.co.il/Mobile012Srv/Mobile012.svc/myAccount/GetContractBillingData';
+	var billUrl = 'https://my.partner.co.il/Mobile012Srv/Mobile012.svc/myAccount/GetContractBillingData';
 	var billRequest = '{"brand":"012Mobile","platform":"WEB","key" : "' + key + '"}';
     var json = getJson(AnyBalance.requestPost(billUrl,billRequest,addHeaders(g_headers)));
 	if (typeof json.GetContractBillingDataResult=="undefined")
@@ -87,7 +87,7 @@ function getBillData(key)
 // get data plan JSON
 function getDataPlan(key)
 {
-	var url = 'http://my.partner.co.il/ProductsSrvAddOns/SurfingPackages.svc/ContractData/GetContractSurfingDetails';
+	var url = 'https://my.partner.co.il/ProductsSrvAddOns/SurfingPackages.svc/ContractData/GetContractSurfingDetails';
 	var request = '{"brand":"012Mobile","key" : "' + key + '"}';
     var json = getJson(AnyBalance.requestPost(url,request,addHeaders(g_headers)));
     if (typeof json.GetContractSurfingDetailsResult=="undefined")
@@ -104,7 +104,8 @@ function main()
 	var result = {success: true};
     var prefs = AnyBalance.getPreferences();
 	AnyBalance.setDefaultCharset('utf-8');
-
+	AnyBalance.setOptions({SSL_ENABLED_PROTOCOLS: ['TLSv1.1', 'TLSv1.2']}); 
+    
 	// The GUID can be acquired by asking for it on a mobile connection
 	// or by requesting an SMS authentication (not implemented here)
 	// The GUID is permenent, one can reuse it on any connection later on, though.
@@ -120,26 +121,34 @@ function main()
 	var bill = getBillData(key);
 	AnyBalance.trace('Bill: ' + JSON.stringify(bill));
 
-    // get data plan details
-    var dataPlan = getDataPlan(key);
-    AnyBalance.trace('Data Plan: ' + JSON.stringify(dataPlan));
-
-    // data plan addon (used first)
-    if ((dataPlan.addons!=null) && (dataPlan.addons[0]!=null))
+    try
     {
-        result['dataprcnt'] = dataPlan.addons[0].balance.UsedPercent;
-        result['datausage'] = dataPlan.addons[0].balance.CreditAmmountMB*dataPlan.addons[0].balance.UsedPercent/100.0/1024.0;
-        result['dataplans'] = dataPlan.addons[0].Name;
-    } 
+        // get data plan details
+        var dataPlan = getDataPlan(key);
+        AnyBalance.trace('Data Plan: ' + JSON.stringify(dataPlan));
 
-    // regular data plan
-    if ((dataPlan.surfing!=null) && ((result['dataprcnt']==null) || (result['dataprcnt']>99.4)))
-    {
-        result['dataprcnt'] = dataPlan.surfing.balance.UsedPercent;
-        result['datausage'] = dataPlan.surfing.balance.CreditAmmountMB*dataPlan.surfing.balance.UsedPercent/100.0/1024.0;
-        result['dataplans'] = dataPlan.surfing.Name;
+        // data plan addon (used first)
+        if ((dataPlan.addons!=null) && (dataPlan.addons[0]!=null))
+        {
+            result['dataprcnt'] = dataPlan.addons[0].balance.UsedPercent;
+            result['datausage'] = dataPlan.addons[0].balance.CreditAmmountMB*dataPlan.addons[0].balance.UsedPercent/100.0/1024.0;
+            result['dataplans'] = dataPlan.addons[0].Name;
+        } 
+
+        // regular data plan
+        if ((dataPlan.surfing!=null) && ((result['dataprcnt']==null) || (result['dataprcnt']>99.4)))
+        {
+            result['dataprcnt'] = dataPlan.surfing.balance.UsedPercent;
+            result['datausage'] = dataPlan.surfing.balance.CreditAmmountMB*dataPlan.surfing.balance.UsedPercent/100.0/1024.0;
+            result['dataplans'] = dataPlan.surfing.Name;
+        }
     }
-
+    catch (e)
+    {
+        // don't fail everything when unable to get data plans, those aren't always available (or are they moving the API somewhere?)
+        AnyBalance.trace('Warning, unable to get data plans: ' + e.message);
+    }
+    
     // get roaming plans
     if (bill.International.Entity!=null)
 	{

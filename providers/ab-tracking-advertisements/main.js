@@ -19,16 +19,41 @@ function main() {
 		AnyBalance.trace('Есть логин и пароль, заходим...');
 		var baseurl = 'https://www.avito.ru/';
 
-		var html = AnyBalance.requestGet(baseurl + 'profile', g_headers);
+		var html = AnyBalance.requestGet(baseurl + 'rossiya', g_headers);
 
-		html = requestPostMultipart(baseurl + 'profile/login', {
-			'next': '/profile',
+		var tokenName = getParam(html, /<input[^>]+class="js-token"[^>]*name="([^"]*)/i, replaceHtmlEntities);
+		var tokenValue = getParam(html, /<input[^>]+class="js-token"[^>]*value="([^"]*)/i, replaceHtmlEntities);
+
+		var params = {
+			remember: 'true',
 			login: prefs.login.trim(),
-			password: prefs.password
-		}, addHeaders({
-			Referer: baseurl + 'profile'
+			password: prefs.password,
+		};
+
+		params[tokenName] = tokenValue;
+		params['g-recaptcha-response'] = solveRecaptcha('Пожалуйста, докажите, что вы не робот', AnyBalance.getLastUrl(), '6LekaEcUAAAAAHeBEnl8an4WEF2J8pSHZDebFTBZ');
+
+		html = requestPostMultipart(baseurl + 'auth/login', params, addHeaders({
+			'X-Requested-With': 'XMLHttpRequest',
+			Referer: AnyBalance.getLastUrl()
 		}));
 
+		var json = getJson(html);
+		if(!json.success){
+			var error;
+			if(json.errors){
+			    var errors = [];
+			    for(var name in json.errors)
+			        errors.push(json.errors[name])
+			    error = errors.join('.\n');
+			}
+			if(error)
+				throw new AnyBalance.Error(error, null, /парол|неправил/i.test(error));
+			AnyBalance.trace(html);
+			throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
+		}
+
+		html = AnyBalance.requestGet(baseurl + 'profile', addHeaders({Referer: baseurl}));
 		if (!/logout|profile\/exit/i.test(html)) {
 			var error = getParam(html, null, null, /class="[^"]*alert-red[^>]*>([\s\S]*?)<\/(?:p|div)>/i, replaceTagsAndSpaces);
 			if (error)

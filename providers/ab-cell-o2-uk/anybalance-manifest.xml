@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="3">ab-cell-o2-uk</id>
+	<id version="4">ab-cell-o2-uk</id>
 	<api flags="no_browser"/>
 	<name>O2 (UK)</name>
 	<description html="true"><![CDATA[

@@ -12,7 +12,7 @@ var g_headers = {
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'http://prostokvashino.by/';
+	var baseurl = 'https://prostokvashino.by/';
 	AnyBalance.setDefaultCharset('utf-8');
 	
 	AB.checkEmpty(prefs.login, 'Введите логин!');
@@ -50,10 +50,9 @@ function main() {
 	
 	var result = {success: true};
 
-    AB.getParam(html, result, 'balance', /Баллов на счету:([^<]+)/i, AB.replaceTagsAndSpaces, AB.parseBalance);
+    AB.getParam(html, result, 'balance', /<a[^>]+total_points[^>]*>([^<]+)/i, AB.replaceTagsAndSpaces, AB.parseBalance);
     AB.getParam(html, result, 'fio', /<a[^>]*profile[^>]*name[^>]*>([^<]+)/i, AB.replaceTagsAndSpaces);
-    AB.getParam(html, result, 'email', /E-mail:([^<]+)/i, AB.replaceTagsAndSpaces);
-    AB.getParam(html, result, 'gender', /Пол:([^<]+)/i, AB.replaceTagsAndSpaces);
+    AB.getParam(html, result, 'email', /E-mail:([\s\S]*?)<\/p>/i, AB.replaceTagsAndSpaces);
 	
 	AnyBalance.setResult(result);
 }

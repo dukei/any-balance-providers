@@ -18,25 +18,25 @@ function main() {
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 	
-	var html = AnyBalance.requestGet(baseurl + '?q=user', g_headers);
+	var html = AnyBalance.requestGet(baseurl + 'lk', g_headers);
 	
-	if(!html || AnyBalance.getLastStatusCode() > 400)
+	if(!html || AnyBalance.getLastStatusCode() >= 500)
 		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
 	
 	var params = createFormParams(html, function(params, str, name, value) { return value; });
     checkEmpty(params.form_build_id, 'Не удалось найти форму входа, сайт изменен?', true);
     
-	html = AnyBalance.requestPost(baseurl + '?q=user', {
+	html = AnyBalance.requestPost(baseurl + 'lk', {
 		name: prefs.login,
 		pass: prefs.password,
         form_build_id: params.form_build_id,
 		form_id: 'user_login'
-	}, addHeaders({Referer: baseurl + '?q=user'}));
+	}, addHeaders({Referer: baseurl + 'lk'}));
 	
 	if (!/logout/i.test(html)) {
-		var error = getParam(html, null, null, /Сообщение об ошибке[^>]*>([\s\S]*?)</i, replaceTagsAndSpaces, html_entity_decode);
+		var error = getParam(html, null, null, /Сообщение об ошибке[^>]*>([\s\S]*?)</i, replaceTagsAndSpaces);
 		if (error)
-			throw new AnyBalance.Error(error, null, /имя пользователя или пароль неверны/i.test(error));
+			throw new AnyBalance.Error(error, null, /парол/i.test(error));
 		
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
@@ -44,9 +44,9 @@ function main() {
 	
 	var result = {success: true};
 	
-	getParam(html, result, 'balance', /balance(?:.*?\|){3}([\d.-]{2,15})/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'lic_schet', /person_init_data.+?"([^\|]+)/i, replaceTagsAndSpaces);
-	getParam(html, result, 'fio', /person_init_data.+?"[^\|]+\|([^\|]+)/i, replaceTagsAndSpaces);
+	getParam(html, result, 'balance', /Итого:[\s\S]*?<td[^>]+lk-pay-balance[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'lic_schet', /Лицевой счет:([^<]*)/i, replaceTagsAndSpaces);
+	getParam(html, result, 'fio', /<div[^>]+lk_account__name[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
 	
 	AnyBalance.setResult(result);
 }

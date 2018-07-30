@@ -1,18 +1,20 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="6">ab-internet-bitkom</id>
+	<id version="7">ab-internet-bitkom</id>
 	<api flags="no_browser"/>
 	<name>БитКом</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе провайдера БитКом <a href="http://bit-com.ru/">http://bit-com.ru/</a></p>
-	<p>Информация берется из личного кабинета <a href="http://stat.bit-com.ru/?q=user">http://stat.bit-com.ru/?q=user</a></p>
+	<p>Предоставляет информацию о балансе провайдера БитКом <a href="https://bit-com.ru/">http://bit-com.ru/</a></p>
+	<p>Информация берется из личного кабинета <a href="https://stat.bit-com.ru/?q=user">http://stat.bit-com.ru/?q=user</a></p>
 
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>

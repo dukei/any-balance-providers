@@ -1,4 +1,4 @@
-﻿/**
+/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 */
 
@@ -12,23 +12,23 @@ var g_headers = {
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'http://rkc-jkh.ru/';
+	var baseurl = 'https://rkc-jkh.ru/';
 	AnyBalance.setDefaultCharset('windows-1251');
 	
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 	
-	var html = AnyBalance.requestGet(baseurl + 'login.asp', g_headers);
+	var html = AnyBalance.requestGet(baseurl + 'lk/login.php', g_headers);
 	
 	if(!html || AnyBalance.getLastStatusCode() > 400){
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
 	}
 	
-	html = AnyBalance.requestPost(baseurl + 'access.asp', {
+	html = AnyBalance.requestPost(baseurl + 'lk/dolg.php', {
 		'Search': prefs.login,
 		'secondname': prefs.password,
-	}, addHeaders({Referer: baseurl + 'login.asp'}));
+	}, addHeaders({Referer: baseurl + 'lk/login.php'}));
 	
 	if (!/Добро пожаловать/i.test(html)) {
 		var error = getParam(html, null, null, /<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);

@@ -145,7 +145,7 @@ function processAccounts(html, result) {
 		var _id = acc.benefacc;
 		var title = acc.acctype + ' ' + _id + ' ' + acc.curr;
 		
-		var c = {__id: _id, __name: title};
+		var c = {__id: _id, __name: title, acc_num: acc.acc};
 		
 		if(__shouldProcess('accounts', c)) {
 			processAccount(acc, c);
@@ -251,8 +251,9 @@ function processCards(html, result) {
 			var card = cards[i];
 			var _id = getElement(card, /<div[^>]+product-attr-title\s+mobile-view-block/i, replaceTagsAndSpaces);
 			var title = _id;
+			var num = cardsJson[i].cnum;
 	    
-			var c = {__id: _id, __name: title};
+			var c = {__id: _id, __name: title, cardnum: num};
 	    
 			if (__shouldProcess('cards', c)) {
 				processCard(card, c, cardsJson[i]);
@@ -379,7 +380,7 @@ function processDeposits(html, result) {
 		var _id = getElement(dep, /<div[^>]+product-attr-name/i, replaceTagsAndSpaces);
 		var title = getElement(dep, /<td[^>]+\bt2/i, replaceTagsAndSpaces); 
 		
-		var c = {__id: _id, __name: title};
+		var c = {__id: _id, __name: title, acc_num: detailsJson[i].ac};
 		
 		if(__shouldProcess('deposits', c)) {
 			processDeposit(dep, c, detailsJson[i]);

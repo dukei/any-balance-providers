@@ -7,7 +7,7 @@ var g_headers = {
 	'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
 	'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
 	'Connection':'keep-alive',
-	'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:35.0) Gecko/20100101 Firefox/35.0'
+	'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36'
 };
 
 var baseurl = 'https://online.mkb.ru/';
@@ -222,7 +222,7 @@ function processAccountTransactions(html, result) {
 // Обработка карт
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 function processCards(html, result) {
-	if(!AnyBalance.isAvailable('cards', 'bonuses'))
+	if(!AnyBalance.isAvailable('cards'))
 		return;
 
 	var html = AnyBalance.requestGet(baseurl + 'secure/dcards.aspx', g_headers);
@@ -235,43 +235,44 @@ function processCards(html, result) {
 		return;
 	}
 
-	var cards = sumParam(cardList, null, null, /<tr[^>]*>\s*<td[^>]*>[^]*?<\/tr>/ig);
+	var cards = getElements(cardList, [/<tr[^>]+product-cont/ig, /product-attr-name/i]);
 	AnyBalance.trace('Найдено карт: ' + cards.length);
 	if(AnyBalance.isAvailable('cards')) {
 		result.cards = [];
 	}
 	
-	// Для детальной инфы есть json но в нем нет баланса... мда...
-	var cardsJson = getParam(html, null, null, /var\s+carddata\s*=\s*(\[{[\s\S]*?}\])\s*;/i);
-	if(cardsJson)
-		cardsJson = getJson(cardsJson);
-	
-	for(var i=0; i < cards.length; ++i){
-		var card = cards[i];
-		if(/bonus.png/i.test(card)){
-			AnyBalance.trace('Это не карта, а бонус, получаем баллы...')
-			getParam(card, result, 'bonuses', /(<td[^>]*>[\s\S]*?){2}<\/td>/i, replaceTagsAndSpaces, parseBalance);
-		}else if(AnyBalance.isAvailable('cards')){
-			var _id = getParam(card, null, null, /class="txt"[^>]*>\s*([\d*]+)/i);
-			var title = sumParam(card, null, null, /class="txt"[^>]*>\s*([^<]+)/ig, replaceTagsAndSpaces, null, aggregate_join);
-
+	if(AnyBalance.isAvailable('cards')){
+		// Для детальной инфы есть json но в нем нет баланса... мда...
+		var cardsJson = getParam(html, null, null, /var\s+carddata\s*=\s*(\[{[\s\S]*?}\])\s*;/i);
+		if(cardsJson)
+			cardsJson = getJson(cardsJson);
+		
+		for(var i=0; i < cards.length; ++i){
+			var card = cards[i];
+			var _id = getElement(card, /<div[^>]+product-attr-title\s+mobile-view-block/i, replaceTagsAndSpaces);
+			var title = _id;
+	    
 			var c = {__id: _id, __name: title};
-
+	    
 			if (__shouldProcess('cards', c)) {
-				processCard(card, _id, c, cardsJson[i]);
+				processCard(card, c, cardsJson[i]);
 			}
-
+	    
 			result.cards.push(c);
 		}
 	}
 }
 
-function processCard(card, _id, result, cardDetailsJson) {
-    getParam(card, result, 'cards.balance', /(?:<td[^>]*>[^]*?<\/td>\s*){4}(<td[^>]*>[^]*?<\/td>)/i, replaceTagsAndSpaces, parseBalance);
-    getParam(card, result, ['cards.currency', 'cards.balance'], /(?:<td[^>]*>[^]*?<\/td>\s*){4}(<td[^>]*>[^]*?<\/td>)/i, replaceTagsAndSpaces, parseCurrency);
-	getParam(card, result, 'cards.cardnum', /<div[^>]*class="txt"[^>]*>([\d\*]+)/i, replaceTagsAndSpaces);
-    getParam(card, result, 'cards.type', /(?:<td[^>]*>[^]*?<\/td>\s*){2}(<td[^>]*>[^]*?<\/td>)/i, replaceTagsAndSpaces);
-    getParam(card, result, 'cards.status', /(?:<td[^>]*>[^]*?<\/td>\s*){3}(<td[^>]*>[^]*?<\/td>)/i, replaceTagsAndSpaces);
+function processCard(card, result, cardDetailsJson) {
+    var amountDiv = getElement(card, /<div[^>]+product-amount/i);
+    var rub = getElement(amountDiv, /<div[^>]+f500/i, replaceTagsAndSpaces, parseBalance);
+    var cop = getElement(amountDiv, /<sup[^>]+f500/i, replaceTagsAndSpaces, parseBalance);
+
+    getParam(rub + cop/100, result, 'cards.balance');
+    getParam(cardDetailsJson.currname, result, ['cards.currency', 'cards.balance']);
+	getParam(cardDetailsJson.cnum, result, 'cards.cardnum');
+    getParam(cardDetailsJson.cardtype, result, 'cards.type');
+    getParam(cardDetailsJson.cardstatus, result, 'cards.status');
 
 	getParam(cardDetailsJson.cardenddate + '', result, 'cards.till', null, replaceTagsAndSpaces, parseDateWord);
 	getParam(cardDetailsJson.cardacc + '', result, 'cards.acc_num');
@@ -297,11 +298,11 @@ function processCard(card, _id, result, cardDetailsJson) {
 		getParam(html, result, 'cards.gracepaytill', /Если Вы желаете воспользоваться условиями льготного кредитования([^<]+)/i, replaceTagsAndSpaces, parseDate);
 		
 		if(isAvailable('cards.transactions'))
-			processCardTransactions(_id, result, html);
+			processCardTransactions(result, html);
 	}
 }
 
-function processCardTransactions(_id, result, html) {
+function processCardTransactions(result, html) {
 	AnyBalance.trace('Получаем все операции по карте...');
 
 	var table = getElement(html, /<table[^>]+viewsettingslist[^>]*>/i);
@@ -365,18 +366,18 @@ function processDeposits(html, result) {
         return;
 	}
 
-	var deposits = sumParam(list, null, null, /<tr[^>]*>\s*<td[^>]*>[^]*?<\/tr>/ig);
+	var deposits = getElements(list, [/<tr[^>]+product-cont/ig, /product-attr-name/i]);
 	AnyBalance.trace('Найдено депозитов: ' + deposits.length);
 	result.deposits = [];
 	
-	var detailsJson = getParam(html, null, null, /var\s+depdata\s*=\s*(\[{[\s\S]*?}\])\s*;/i);
+	var detailsJson = getParam(html, /var\s+depdata\s*=\s*(\[{[\s\S]*?}\])\s*;/i);
 	if(detailsJson)
 		detailsJson = getJson(detailsJson);
 	
 	for(var i=0; i < deposits.length; ++i){
         var dep = deposits[i];
-		var _id = getParam(dep, null, null, /class="txt"[^>]*>\s*([^<]+)/i, replaceTagsAndSpaces);
-		var title = getParam(dep, null, null, /class="txt"(?:[^>]*>){5}\s*([^<]+)/i, replaceTagsAndSpaces);
+		var _id = getElement(dep, /<div[^>]+product-attr-name/i, replaceTagsAndSpaces);
+		var title = getElement(dep, /<td[^>]+\bt2/i, replaceTagsAndSpaces); 
 		
 		var c = {__id: _id, __name: title};
 		
@@ -477,7 +478,7 @@ function processLoans(html, result) {
 		return;
 	}
 
-	var loans = sumParam(list, null, null, /<tr[^>]*>\s*<td[^>]*>[^]*?<\/tr>/ig);
+	var loans = getElements(list, [/<tr/ig, /product-attr-name/i]);
 	AnyBalance.trace('Найдено кредитов: ' + loans.length);
 	result.loans = [];
 	
@@ -486,10 +487,11 @@ function processLoans(html, result) {
     var scheduleJson = getParam(html, /var\s+loanFuturePaymentsData\s*=\s*(\[{[\s\S]*?}\])/i, null, getJson);
 
 	for(var i=0; i < loans.length; ++i){
-		var _id = getParam(loans[i], /class="txt"[^>]*>\s*([^<]+)/i, replaceTagsAndSpaces);
+		var _id = getElement(loans[i], /<div[^>]+product-attr-name/i, replaceTagsAndSpaces);
 		var title = getElement(loans[i], /<div[^>]+product-attr-title/i, replaceTagsAndSpaces);
+	    var num = getParam(detailsJson[i].dt, result, 'loans.acc_num', /Лицевой счет №:?([\s\S]*?)<\/li>/i, replaceTagsAndSpaces);
 		
-		var c = {__id: _id, __name: title};
+		var c = {__id: _id, __name: title, acc_num: num};
 		
 		if(__shouldProcess('loans', c)) {
 			processLoan(loans[i], c, detailsJson[i]);
@@ -605,19 +607,19 @@ function processLoan(html, result, detailsJson){
     var _id = result.__id;
     AnyBalance.trace('Обработка кредита ' + _id);
 
-	getParam(detailsJson.dt, result, 'loans.limit', /Общая сумма кредита:([^]*?)<\/li>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(detailsJson.dt, result, ['loans.currency', 'loans.balance', 'loans.minpay', 'loans.limit'], /Общая сумма кредита:([^]*?)<\/li>/i, replaceTagsAndSpaces, parseCurrency);
-	getParam(detailsJson.dt, result, 'loans.minpay', /Сумма ближайшего платежа:([^]*?)<\/li>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(detailsJson.dt, result, 'loans.minpaydate', /Дата ближайшего платежа:([^]*?)<\/li>/i, replaceTagsAndSpaces, parseDateWord);
-	getParam(detailsJson.dt, result, 'loans.penalty', /Просроченная задолженность по кредиту:([^]*?)<\/li>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(detailsJson.dt, result, 'loans.acc_num', /Лицевой счет №:([^]*?)<\/li>/i, replaceTagsAndSpaces);
-	getParam(detailsJson.dt, result, 'loans.pct', /Текущая процентная ставка по кредиту:([^]*?)<\/li>/i, replaceTagsAndSpaces, parsePcts);
-    getParam(detailsJson.dt, result, 'loans.date_start', /Дата выдачи:([^]*?)<\/li>/i, replaceTagsAndSpaces, parseDateWord);
-    getParam(detailsJson.dt, result, 'loans.date_end', /Дата финального погашения:([^]*?)<\/li>/i, replaceTagsAndSpaces, parseDateWord);
-    getParam(detailsJson.dt, result, 'loans.period', /Срок кредита:([^]*?)<\/li>/i, replaceTagsAndSpaces, parseBalance); //мес
-    getParam(detailsJson.dt, result, 'loans.balance', /Текущая сумма долга по кредиту:([^]*?)<\/li>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(detailsJson.dt, result, 'loans.sum_close', /Сумма[^<]*под закрытие договора[^<]*:([^]*?)<\/li>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(detailsJson.dt, result, 'loans.noclose', /Мораторий на погашение по кредиту:([^]*?)<\/li>/i, replaceTagsAndSpaces, parseBool);
+	getParam(detailsJson.dt, result, 'loans.limit', /Общая сумма кредита:?([\s\S]*?)<\/li>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(detailsJson.dt, result, ['loans.currency', 'loans.balance', 'loans.minpay', 'loans.limit'], /Общая сумма кредита:?([\s\S]*?)<\/li>/i, replaceTagsAndSpaces, parseCurrency);
+	getParam(detailsJson.dt, result, 'loans.minpay', /Сумма ближайшего платежа:?([\s\S]*?)<\/li>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(detailsJson.dt, result, 'loans.minpaydate', /Дата ближайшего платежа:?([\s\S]*?)<\/li>/i, replaceTagsAndSpaces, parseDateWord);
+	getParam(detailsJson.dt, result, 'loans.penalty', /Просроченная задолженность по кредиту:?([\s\S]*?)<\/li>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(detailsJson.dt, result, 'loans.acc_num', /Лицевой счет №:?([\s\S]*?)<\/li>/i, replaceTagsAndSpaces);
+	getParam(detailsJson.dt, result, 'loans.pct', /Текущая процентная ставка по кредиту:?([\s\S]*?)<\/li>/i, replaceTagsAndSpaces, parsePcts);
+    getParam(detailsJson.dt, result, 'loans.date_start', /Дата выдачи:?([\s\S]*?)<\/li>/i, replaceTagsAndSpaces, parseDateWord);
+    getParam(detailsJson.dt, result, 'loans.date_end', /Дата финального погашения:?([\s\S]*?)<\/li>/i, replaceTagsAndSpaces, parseDateWord);
+    getParam(detailsJson.dt, result, 'loans.period', /Срок кредита:?([\s\S]*?)<\/li>/i, replaceTagsAndSpaces, parseBalance); //мес
+    getParam(detailsJson.dt, result, 'loans.balance', /Текущая сумма долга по кредиту:?([\s\S]*?)<\/li>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(detailsJson.dt, result, 'loans.sum_close', /Сумма[^<]*под закрытие договора[^<]*:?([\s\S]*?)<\/li>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(detailsJson.dt, result, 'loans.noclose', /Мораторий на погашение по кредиту:?([\s\S]*?)<\/li>/i, replaceTagsAndSpaces, parseBool);
 
 }
 
@@ -702,3 +704,22 @@ function processInfo(result){
     getParam(html, info, 'mphone', /<input[^>]+name="[^"]*txtMobileNumber"[^>]*value="([^"]*)/i, replaceHtmlEntities);
     getParam(html, info, 'email', /<input[^>]+name="[^"]*txtNotificationEmail"[^>]*value="([^"]*)/i, replaceHtmlEntities);
 }
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Обработка бонусов
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+function processBonus(result) {
+	if(!AnyBalance.isAvailable('bonuses'))
+		return;
+
+	var html = AnyBalance.requestPost(baseurl + 'secure/Main.aspx/GetBonusInfo', '{}', addHeaders({
+	    Accept: 'application/json, text/javascript, */*; q=0.01',
+	    'Content-Type': 'application/json; charset=UTF-8',
+		Referer: baseurl + 'secure/main.aspx',
+		'X-Requested-With': 'XMLHttpRequest'
+	}));
+
+	var json = getJson(getJson(html).d);
+	getParam(json.AscBonus, result, 'bonuses');
+}
+

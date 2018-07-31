@@ -1,10 +1,10 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-municipal-rkc-jkh</id>
+	<id version="2">ab-municipal-rkc-jkh</id>
 	<api flags="no_browser"/>
 	<name>РКЦ ЖКХ Якутск</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе РКЦ ЖКХ Якутск <a href="http://rkc-jkh.ru/login.asp">http://rkc-jkh.ru/login.asp</a></p>
+	<p>Предоставляет информацию о балансе РКЦ ЖКХ Якутск <a href="https://rkc-jkh.ru/lk/">https://rkc-jkh.ru/lk/</a></p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>

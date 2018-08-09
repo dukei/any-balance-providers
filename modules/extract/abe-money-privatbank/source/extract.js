@@ -121,7 +121,7 @@ function login(prefs, result) {
 		throw new AnyBalance.Error('Не удалось получить токен авторизации!');
 
 	json = requestJson({}, 'banks');
-	json = requestJson({/*registration_id: g_registrationId*/}, 'props_full');
+	json = requestJson({/*registration_id: g_registrationId*/}, 'props_full', "Банк не отдал данные");
 
 	if(AnyBalance.isAvailable('info.mphone')){
 		result.info = {};

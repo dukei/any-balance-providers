@@ -12,28 +12,49 @@ var g_headers = {
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'https://rkc-jkh.ru/';
+	var baseurl = 'https://rkc-jkh.ru/lk/';
 	AnyBalance.setDefaultCharset('windows-1251');
 	
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 	
-	var html = AnyBalance.requestGet(baseurl + 'lk/login.php', g_headers);
+	var html = AnyBalance.requestGet(baseurl + 'login.php', g_headers);
+
+	if(/Личный кабинет закрыт в связи с закрытием месяца/i.test(html))
+		throw new AnyBalance.Error('Личный кабинет закрыт в связи с закрытием месяца. Попробуйте позже');
 	
 	if(!html || AnyBalance.getLastStatusCode() > 400){
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
 	}
 	
-	html = AnyBalance.requestPost(baseurl + 'lk/dolg.php', {
-		'Search': prefs.login,
-		'secondname': prefs.password,
-	}, addHeaders({Referer: baseurl + 'lk/login.php'}));
+	var form = AB.getElement(html, /<form[^>]+login[^>]*>/i);
+	if(!form){
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удаётся найти форму входа! Сайт изменен?');
+	}
+
+	var params = AB.createFormParams(form, function(params, str, name, value) {
+		if (name == 'search') {
+			return prefs.login;
+		} else if (name == 'secondname') {
+			return prefs.password;
+		} else if (name == 'code') {
+			var imgurl = getParam(form, /<img[^>]+src=['"]([^'"]*)[^>]+capt?cha/i, replaceHtmlEntities);
+			var img = AnyBalance.requestGet(baseurl + imgurl, addHeaders({Referer: baseurl}));
+
+			return AnyBalance.retrieveCode('Пожалуйста, введите код с картинки', img, {inputType: 'number'});
+		}
+
+		return value;
+	});
+
+	html = AnyBalance.requestPost(baseurl + 'access.php', params, addHeaders({Referer: baseurl + 'login.php'}));
 	
-	if (!/Добро пожаловать/i.test(html)) {
-		var error = getParam(html, null, null, /<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
+	if (!/Задолженность на начало месяца/i.test(html)) {
+		var error = getElement(html, /<font[^>]+red/i, replaceTagsAndSpaces);
 		if (error)
-			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
+			throw new AnyBalance.Error(error, null, /не существует/i.test(error));
 		
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
@@ -41,18 +62,19 @@ function main() {
 	
 	var result = {success: true};
 	
+	getParam(html, result, '__tariff', /Год(?:[\s\S]*?<td[^>]*>){8}((?:[\s\S]*?<\/td>){2})/i, [replaceTagsAndSpaces, /\s+/g, ' ']);
 	// Задолженность на начало месяца
-	getParam(html, result, 'balance', /Задолженность на начало месяца(?:[^>]*>){9}([^<]+)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'balance', /Задолженность на начало месяца(?:[\s\S]*?<td[^>]*>){9}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 	// Предварительное начисление
-	getParam(html, result, 'plan', /Предварительное начисление(?:[^>]*>){11}([^<]+)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'plan', /Предварительное начисление(?:[\s\S]*?<td[^>]*>){9}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 	// Перерасчеты
-	getParam(html, result, 'pere', /Перерасчеты(?:[^>]*>){13}([^<]+)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'pere', /Перерасчеты(?:[\s\S]*?<td[^>]*>){9}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 	// Начислено на тек. дату
-	getParam(html, result, 'fakt', /Начислено на тек. дату(?:[^>]*>){17}([^<]+)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'fakt', /Начислено на тек. дату(?:[\s\S]*?<td[^>]*>){9}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 	// Поступления
-	getParam(html, result, 'postup', /Поступления(?:[^>]*>){19}([^<]+)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'postup', /Поступления(?:[\s\S]*?<td[^>]*>){9}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 	// Задолженность на конец месяца без учета пеней
-	getParam(html, result, 'debt_end', /Задолженность на конец месяца без учета пеней(?:[^>]*>){21}([^<]+)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'debt_end', /Задолженность на конец месяца(?:[\s\S]*?<td[^>]*>){9}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 	
 	AnyBalance.setResult(result);
 }

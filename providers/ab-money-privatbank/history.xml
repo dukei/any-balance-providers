@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="19" date="2018-08-10">
+	Поддержка восстановления после блокировки
+	</change>
 	<change version="18" date="2018-08-10">
 	- Поддержка изменений на сайте.
 	</change>

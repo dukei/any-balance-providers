@@ -3,8 +3,9 @@
 */
 
 var g_headers = {
-	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-	'User-Agent': 'android-async-http/1.4.1 (http://loopj.com/android-async-http)',
+	'User-Agent': 'Dalvik/2.1.0 (Linux; U; Android 6.0.1; D6503 Build/23.5.A.1.291)',
+	'Connection': 'Keep-Alive',
+	'AppMode': 'NFC',
 };
 
 var g_appKey = 'afhgfgfdg56ujdj6rtymr67yjrt76tyherhdbryj6r46df57';
@@ -27,14 +28,15 @@ function requestJson(data, action, errorMessage) {
 	params.push(encodeURIComponent('appkey') + '=' + encodeURIComponent(g_appKey));
 	params.push(encodeURIComponent('language') + '=' + 'ru');
 	params.push(encodeURIComponent('lon') + '=' + '0.0');
+	params.push(encodeURIComponent('ireal') + '=' + encodeURIComponent(g_imei));
 	params.push(encodeURIComponent('device') + '=' + encodeURIComponent('SM-G900F|samsung'));
 	params.push(encodeURIComponent('version') + '=' + encodeURIComponent('5.20.02'));
 	params.push(encodeURIComponent('versionOS') + '=' + encodeURIComponent('5.0'));
 	params.push(encodeURIComponent('lat') + '=' + encodeURIComponent('0.0'));
-	params.push(encodeURIComponent('ireal') + '=' + encodeURIComponent(g_imei));
 
 	var url = g_baseurl + 'iapi2/' + action + '?' + params.join('&');
 	var html = AnyBalance.requestGet(url, g_headers);
+	clearAllCookies();
 	var json = getJson(html);
 	
 	if(json.st != 'ok') {

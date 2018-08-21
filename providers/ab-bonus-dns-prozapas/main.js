@@ -80,12 +80,17 @@ function main() {
 		success: true
 	};
 
-	html = AnyBalance.requestGet('https://www.dns-shop.ru/profile/prozapass/', g_headers); 
+	for(var i=0; i<2; ++i){
+		html = AnyBalance.requestGet('https://www.dns-shop.ru/profile/prozapass/', g_headers); 
+	    
+		AB.getParam(getElement(html, /<div[^>]+bonus-active/i), result, 'balance', null, [AB.replaceTagsAndSpaces, /нет бонусов/i, '0'], AB.parseBalance);
+		AB.getParam(getElement(html, /<div[^>]+bonus-no-active/i), result, 'inactive', null, AB.replaceTagsAndSpaces, AB.parseBalance);
+		AB.getParam(html, result, 'till', /Дата сгорания:[\s\S]*?<div[^>]+bonus-count[^>]*>([\s\S]*?)<\/div>/i, AB.replaceTagsAndSpaces, AB.parseDate);
+		AB.getParam(html, result, 'fio', /<span[^>]+user-title[^>]*>([\s\S]*?)<\/span>/i, AB.replaceTagsAndSpaces);
 
-	AB.getParam(getElement(html, /<div[^>]+bonus-active/i), result, 'balance', null, [AB.replaceTagsAndSpaces, /нет бонусов/i, '0'], AB.parseBalance);
-	AB.getParam(getElement(html, /<div[^>]+bonus-no-active/i), result, 'inactive', null, AB.replaceTagsAndSpaces, AB.parseBalance);
-	AB.getParam(html, result, 'till', /Дата сгорания:[\s\S]*?<div[^>]+bonus-count[^>]*>([\s\S]*?)<\/div>/i, AB.replaceTagsAndSpaces, AB.parseDate);
-	AB.getParam(html, result, 'fio', /<span[^>]+user-title[^>]*>([\s\S]*?)<\/span>/i, AB.replaceTagsAndSpaces);
+		if(/<div[^>]+bonus-active/i.test(html))
+			break;
+	}
 
 	AnyBalance.setResult(result);
 }

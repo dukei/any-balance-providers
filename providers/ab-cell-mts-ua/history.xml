@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="2.0" version="80" date="2018-08-21">
+	Округление баланса
+	</change>
 	<change major_version="2.0" version="79" date="2017-12-07">
 	Ввод смс кода не каждый раз, а только первый раз
 	Увеличено время ожидания кода

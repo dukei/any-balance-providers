@@ -1,174 +1,195 @@
 /**
-Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
-*/
+ Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
+ */
 
 var g_headers = {
-	'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-	'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
+	'Accept':'application/json, text/plain, */*',
 	'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
-	'Connection':'keep-alive',
+	'Connection':'close',
 	'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:35.0) Gecko/20100101 Firefox/35.0'
 };
 
-var baseurl = 'https://www.homebank.kz/';
+var g_baseurl = 'https://api2.homebank.kz/hbapi/api/v1/';
+var g_oauth_url = 'https://oauth.homebank.kz/';
+var g_token;
+var g_fingerprint;
+var oauth_default_client_id = 'hb3halyk';
+var oauth_default_secret = 'F8aE1wqIUhWazLYs6qVuSwrWhglfET1r';
+
+function callApi(verb, params){
+	if(!g_token && verb != 'oauth2/token')
+		throw new AnyBalance.Error('Внутренняя ошибка, сайт изменен?');
+
+	var headers, url, formatted_params;
+	if(!g_token){
+		headers = addHeaders({Authorization: 'Basic aGIzaGFseWs6MjE4QzIzRTItOUQ2NC00NUQ0LUJCQ0YtNUJENkNDMzE2NDg0'});
+	}else{
+		headers = addHeaders({Authorization: 'Bearer ' + g_token});
+	}
+	if(params) {
+		headers['Content-Type'] = 'application/json';
+    }
+    url = g_baseurl;
+    formatted_params = params && JSON.stringify(params);
+    
+    if (verb === 'oauth2/token') {
+        url = g_oauth_url;
+        headers['Content-Type'] = 'application/x-www-form-urlencoded; charset=UTF-8';
+        if (params.grant_type === 'password') {
+            headers['Fingerprint'] = getFingerprint();
+        }
+        formatted_params = params;
+    }
+
+	var html = AnyBalance.requestPost(url + verb, formatted_params, headers, {HTTP_METHOD: params ? 'POST' : 'GET'});
+
+	if(AnyBalance.getLastStatusCode() >= 400){
+		AnyBalance.trace(html);
+		var json = getJson(html);
+        if (json && json.UserMessage) {
+            throw new AnyBalance.Error(json.UserMessage, null, /(Вы не зарегистрированы|неверный логин)/i.test(json.UserMessage));
+        } else {
+            throw new AnyBalance.Error('Ошибка вызова API ' + verb + ': ' + AnyBalance.getLastStatusCode());
+        }
+	}
+
+	var json = getJson(html);
+	return json;
+}
 
 function login(prefs) {
+	var prefs = AnyBalance.getPreferences();
 	AnyBalance.setDefaultCharset('utf-8');
 
 	AnyBalance.setOptions({
 		SSL_ENABLED_PROTOCOLS: ['TLSv1.2'] //Очень защищен казкоммерц...
 	});
 	
-	
-	checkEmpty(prefs.login, 'Введите логин!');
-	checkEmpty(prefs.password, 'Введите пароль!');
+	checkEmpty(prefs.login, 'Введите логин1!');
+	checkEmpty(prefs.password, 'Введите пароль2!');
 
-	var html = AnyBalance.requestGet(baseurl, g_headers);
+	if(!g_token){
+		var json = callApi('oauth2/token', {
+			"grant_type":"client_credentials",
+			"scope":"webapi sms_send verification email_send",
+			"client_id":oauth_default_client_id,
+			"client_secret":oauth_default_secret,
+		});
 
-	if(!html || AnyBalance.getLastStatusCode() > 400){
-		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Ошибка при подключении к сайту интернет-банка! Попробуйте обновить данные позже.');
+		g_token = json.access_token;
 	}
+    
+	var json = callApi('oauth2/token', {
+		"grant_type":"password",
+		"username":prefs.login,
+		"password":prefs.password,
+		"scope":"webapi sms_send verification email_send openapi",
+		"client_id":oauth_default_client_id,
+		"client_secret":oauth_default_secret,
+	});
 
-	if (!/logout/i.test(html)) {
-        var csrf = getParam(html, null, null, /\btoken_\s*=\s*'([^']*)/, replaceSlashes);
-        html = AnyBalance.requestPost(baseurl + 'login/login_ajax.htm', {
-            hbid: prefs.login,
-            password: prefs.password
-        }, addHeaders({'X-Csrf-Token': csrf}));
-
-        var json = getJson(html);
-
-        if(json.rc != 200){
-            if(json.message)
-                throw new AnyBalance.Error(json.message, null, /неверный идентификатор или пароль/i.test(json.message));
-
-            AnyBalance.trace(html);
-            throw new AnyBalance.Error('Не удалось войти в интернет-банк. Сайт изменен?');
-        }
-
-		html = AnyBalance.requestGet(baseurl + 'main.htm', g_headers);
-	}else{
-		AnyBalance.trace('Уже залогинены, используем существующую сессию')
-	}
-
-	if (!/logout/i.test(html)) {
-		var error = getParam(html, null, null, /<div[^>]+id="errMessage"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
-		if (error)
-			throw new AnyBalance.Error(error, null, /Проверьте правильность указания Логина и Пароля/i.test(error));
-		
-		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Не удалось зайти в интернет-банк. Сайт изменен?');
-	}
-	
-	if (/content_wrapper_campaign/i.test(html)) { // Казком вместо главной страницы показал какой-то рекламный оффер
-		var offerId = getParam(html, null, null, /id="offer_id"[^>]*value="(\d+)"/);
-		// Скрываем этот оффер
-		AnyBalance.requestGet(baseurl + 'campaign/check_ajax.htm?r=1&l=after-login&id=' + offerId, g_headers);
-		
-		// Повторно загружаем главную страницу
-		html = AnyBalance.requestGet(baseurl + 'main.htm', g_headers);
-	}
-
-    __setLoginSuccessful();
-	
-	return html;
+	g_token = json.access_token;
 }
+
+function getFingerprint() {
+    if (!g_fingerprint) {
+        g_fingerprint = AnyBalance.getData('fingerprint');
+    }
+    
+    if (!g_fingerprint) {
+        var allowedChars = 'abcdef1234567890';
+        var result = "";
+
+        for(var i=0; i<32; ++i) {
+            result += allowedChars.charAt(Math.floor(Math.random() * allowedChars.length));
+        }
+        
+        g_fingerprint = result;
+        AnyBalance.setData('fingerprint', result);
+        AnyBalance.saveData();
+    }
+	
+	return g_fingerprint;
+}
+
+function processInfo(result){
+	if(!AnyBalance.isAvailable('info'))
+        return;
+    
+    var user = callApi('users');
+	result.info = info = {};
+
+	getParam([user.lastName, user.firstName, user.middleName].join(' '), info, 'info.fio');
+	getParam(user.phone, info, 'info.mphone');
+	getParam(user.iin, info, 'info.iin');
+}
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Обработка счетов
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-function processAccounts(html, result) {
-    if(!AnyBalance.isAvailable('accounts'))
-        return;
+function processAccounts(result) {
+	if (!isAvailable('accounts'))
+		return;
 
-    var cardList = getElement(html, /<li[^>]+data-menu-value="current_accounts"[^>]*>/i);
-    if (!cardList) {
-        if (!/<li[^>]+date_current_accounts/i.test(html)) {
-            AnyBalance.trace('У вас нет текущих счетов');
-            result.accounts = [];
-        } else {
-            AnyBalance.trace(html);
-            AnyBalance.trace('Не удалось найти перечень счетов.');
-        }
-        return;
-    }
+	var cards = callApi('accounts');
 
-    var cards = getElements(cardList, /<div[^>]+class="item"[^>]*>/ig);
-    AnyBalance.trace('Найдено счетов: ' + cards.length);
-    result.accounts = [];
+	AnyBalance.trace('Найдено счетов: ' + cards.length);
+	result.accounts = [];
 
-    var error = getElement(cardList, /<div[^>]+error_box[^>]*>/i, replaceTagsAndSpaces);
-    if(error) //Ну ваще же! Актуальные данные по кредитам доступны в рабочее время (по времени Астаны)
-        AnyBalance.trace('!!!!!! ' + error);
+	for (var i = 0; i < cards.length; ++i) {
+		var card = cards[i];
+		var _id = card.systemAttributeId;
+		var title = card.aliasName ? card.aliasName : (card.accName + ' ' + card.currency + ' ' + card.iban);
 
-    for (var i = 0; i < cards.length; ++i) {
-        var card = cards[i];
-        var num = getElementsByClassName(card, 'account_mask', replaceTagsAndSpaces)[0];
-        var title = getElementsByClassName(card, 'account_name_long', replaceTagsAndSpaces)[0];
+		var c = {__id: _id, __name: title, num: card.iban};
 
-        var c = {__id: num, __name: title + ' ' + num.substr(-4), num: num, error: error};
+		if (__shouldProcess('accounts', c)) {
+			processAccount(cards[i], c);
+		}
 
-        if (__shouldProcess('accounts', c) && !error) {
-            getParam(title, result, 'accounts.name');
-            processAccount(card, c);
-        }
-
-        result.accounts.push(c);
-    }
+		result.accounts.push(c);
+	}
 }
 
-function processAccount(html, result){
-    AnyBalance.trace('Обработка счета ' + result.__name);
+function processAccount(info, result){
+	getParam(info.balance, result, 'accounts.balance');
+	getParam(info.blockedAmount, result, 'accounts.blocked');
+	getParam(info.currency, result, ['accounts.currency', 'accounts.blocked', 'accounts.balance']);
+	getParam(info.iban, result, 'accounts.num');
+	getParam(info.openDate, result, 'accounts.date_start', null, null, parseDateISO);
 
-    getParam(html, result, 'accounts.balance', /<span[^>]+class="account_amount_val"[\s\S]*?<\/span>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, ['accounts.currency', 'accounts.balance'], /<span[^>]+class="account_amount_val"[\s\S]*?<\/span>/i, replaceTagsAndSpaces, parseCurrency);
-    var id = getParam(html, null, null, /fid=([^&"'\s]+)/i, replaceHtmlEntities);
-
-    if(AnyBalance.isAvailable('accounts.date_start', 'accounts.status', 'accounts.transactions')){
-        var html = AnyBalance.requestGet(baseurl + 'finance/accounts/overview.htm?fid=' + id, g_headers);
-
-        getParam(html, result, 'accounts.date_start', /Счет открыт[\s\S]*?<div[^>]+class="cell"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseDate);
-        getParam(html, result, 'accounts.status', /Статус счета[\s\S]*?<div[^>]+class="cell"[^>]*>([\s\S]*?)<\/div>/i, [/[^\-]*-/, '', replaceTagsAndSpaces]); //активный
-
-        if(AnyBalance.isAvailable('accounts.transactions')) {
-            processAccountTransactions(html, result);
-        }
-    }
+	if (typeof processAccountTransactions != 'undefined')
+		processAccountTransactions(info, result);
 }
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Обработка карт
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-function processCards(html, result) {
-	if(!AnyBalance.isAvailable('cards'))
+function processCards(result) {
+	if (!isAvailable('cards'))
 		return;
 
-    var cardList = getElement(html, /<li[^>]+data-menu-value="payment_card_accounts"[^>]*>/i);
-	if(!cardList){
-        if(/У вас нет карт/i.test(html)){
-            AnyBalance.trace('У вас нет карт');
-            result.cards = [];
-        }else {
-            AnyBalance.trace(html);
-            AnyBalance.trace('Не удалось найти перечень карт.');
-        }
-		return;
-	}
+	var cards = callApi('cards');
 
-	var cards = getElements(cardList, /<div[^>]+class="item"[^>]*>/ig);
 	AnyBalance.trace('Найдено карт: ' + cards.length);
 	result.cards = [];
-	
-	for(var i=0; i < cards.length; ++i){
-		var card = cards[i];
-		var num = getElementsByClassName(card, 'account_mask', replaceTagsAndSpaces)[0];
-        var title = getElementsByClassName(card, 'account_name', replaceTagsAndSpaces)[0];
 
-		var c = {__id: num, __name: title + ' ' + num.substr(-4), num: num};
+	for (var i = 0; i < cards.length; ++i) {
+		var card = cards[i];
+        
+        if (card.cardInfo.accountType !== 'C') {
+            // внутренние счета, закрытые карты и т.п.
+            continue;
+        }
+        
+		var _id = card.systemAttributeId;
+		var title = resolveCardAlias(card) + ' ' + card.cardInfo.cardMask.substr(-4);
+
+		var c = {__id: _id, __name: title};
 
 		if (__shouldProcess('cards', c)) {
-			processCard(card, c);
+			processCard(cards[i], c);
 		}
 
 		result.cards.push(c);
@@ -176,52 +197,116 @@ function processCards(html, result) {
 }
 
 function processCard(card, result) {
-    AnyBalance.trace('Обработка карты ' + result.__name);
+    var info = card.cardInfo;
+    
+	for(var i= 0; i < info.balances.length; i++) {
+		var current = info.balances[i];
+	
+		getParam(current.amount, result, 'cards.balance_' + current.curr.toLowerCase());
+	}
+    
+    getParam(info.currency, result, ['cards.currency']);
+	getParam(info.creditLimit, result, 'cards.limit');
+	getParam(info.blockedAmount, result, 'cards.blocked');
+	getParam(info.cardMask, result, 'cards.num');
+	getParam(info.iban, result, 'cards.accnum');
+	getParam('01.'+info.expirationDates.expMonth+'.'+info.expirationDates.expYear, result, 'cards.till', null, replaceTagsAndSpaces, parseDate);
+}
 
-    getParam(card, result, 'cards.balance', /<span[^>]+class="account_amount_val"[\s\S]*?<\/span>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(card, result, ['cards.currency', 'cards.balance'], /<span[^>]+class="account_amount_val"[\s\S]*?<\/span>/i, replaceTagsAndSpaces, parseCurrency);
-    var id = getParam(card, null, null, /fid=([^&"'\s]+)/i, replaceHtmlEntities);
-
-    if(AnyBalance.isAvailable('cards.available', 'cards.minpay', 'cards.accnum', 'cards.till', 'cards.status', 'cards.balance_kzt', 'cards.balance_usd', 'cards.balance_eur', 'cards.transactions')){
-        var html = AnyBalance.requestGet(baseurl + 'finance/accounts/overview.htm?fid=' + id, g_headers);
-
-        getParam(html, result, 'cards.available', /Доступно[\s\S]*?<div[^>]+class="cell"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
-        getParam(html, result, 'cards.minpay', /К погашению[\s\S]*?<div[^>]+class="cell"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
-        getParam(html, result, 'cards.accnum', /ИИК[\s\S]*?<div[^>]+class="cell"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
-        getParam(html, result, 'cards.till', /Срок действия[\s\S]*?<div[^>]+class="cell"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseDate);
-        getParam(html, result, 'cards.status', /Срок действия[\s\S]*?<div[^>]+class="cell"[^>]*>([\s\S]*?)<\/div>/i, [/[^\-]*-/, '', replaceTagsAndSpaces]); //заблокирована
-
-        getParam(html, result, 'cards.balance_kzt', /KZT:[\s\S]*?<div[^>]+class="cell"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
-        getParam(html, result, 'cards.balance_usd', /USD:[\s\S]*?<div[^>]+class="cell"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
-        getParam(html, result, 'cards.balance_eur', /EUR:[\s\S]*?<div[^>]+class="cell"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
-
-        if(isAvailable('cards.transactions'))
-            processCardTransactions(html, result);
+function resolveCardAlias(json) {
+    if (json.aliasName && json.aliasName.length) {
+        return json.aliasName;
     }
+    if ("444482_729246" === json.cardInfo.contrSubtypeCode || "510145_735174" === json.cardInfo.contrSubtypeCode) {
+        return "Homebank Wallet";
+    }
+    var number = json.cardInfo.cardNum || json.cardInfo.cardMask,
+        aliasName;
+    switch (getCardType(number)) {
+        case "visa":
+            aliasName = "VISA";
+            break;
+        case "mastercard":
+            aliasName = "MasterCard";
+            break;
+        case "unionpay":
+            aliasName = "Union Pay";
+            break;
+        default:
+            aliasName = "Карта"
+    }
+    
+    if (json.cardInfo.isMultiCurrency) {
+        return aliasName + " Мультивалютная";
+    }
+    
+    return aliasName;
+}
 
+function getCardType(number) {
+    var cardTypeRegex = {
+        electron: /^(4026|417500|440564|4508|4844|4913|4917)\d*$/,
+        maestro: /^(5018|5020|5038|5612|5893|6304|6759|6761|6762|6763|0604|6390)\d*$/,
+        dankort: /^(5019)\d*$/,
+        interpayment: /^(636)\d+$/,
+        unionpay: /^(62|88)\d+$/,
+        visa: /^4\d+$/,
+        mastercard: /^5[1-5]\d+$/,
+        diners: /^3(?:0[0-5]|[68][0-9])\d+$/,
+        discover: /^6(?:011|5[0-9]{2})\d+$/,
+        jcb: /^(?:2131|1800|35\d{3})\d{11}$/,
+        amex: /^3[47]\d+$/
+    };
+    
+    number = ("" + number).substr(0, 4);
+    for (var s in cardTypeRegex)
+        if (cardTypeRegex[s].test(number))
+            return s;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Обработка депозитов
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-function processDeposits(html, result) {
-    if(!AnyBalance.isAvailable('deposits'))
-        return;
+function processDeposits(result) {
+	if (!isAvailable('deposits'))
+		return;
 
-    return;
+	var cards = callApi('deposits');
+
+	AnyBalance.trace('Найдено депозитов: ' + cards.length);
+	result.deposits = [];
+
+	for (var i = 0; i < cards.length; ++i) {
+		var card = cards[i];
+		var _id = card.systemAttributeId;
+		var title = card.aliasName ? card.aliasName : card.depositAccounts[0].depName;
+
+		var c = {__id: _id, __name: title, num: card.depositAccounts[0].iban};
+
+		if (__shouldProcess('deposits', c)) {
+			processDeposit(cards[i], c);
+		}
+
+		result.deposits.push(c);
+	}
 }
 
-function processDeposit(html, result) {
-    AnyBalance.trace('Обработка депозита ' + result.__name);
-
-    if(isAvailable('deposits.transactions'))
-        processDepositTransactions(html, result);
+function processDeposit(info, result) {
+	getParam(info.depositAccounts[0].iban, result, 'deposits.num');
+	getParam(info.depositAccounts[0].balance, result, 'deposits.balance');
+	getParam(info.depositAccounts[0].currency, result, ['deposits.currency', 'deposits.balance', 'deposits.pcts']);
+	getParam(info.depositAccounts[0].rate, result, 'deposits.pct');
+	getParam(info.depositAccounts[0].interest, result, 'deposits.pcts');
+	getParam(info.closeDate, result, 'deposits.till', null, null, parseDateISO);
+	getParam(info.openDate, result, 'deposits.date_start', null, null, parseDateISO);
+////	getParam(info.depositAccounts[0]., result, 'deposits.capitalization', /<capitalization>([\s\S]*?)<\/capitalization>/i, replaceTagsAndSpaces, parseBoolean);
+	getParam(info.depositAccounts[0].depName, result, 'deposits.name');
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Обработка кредитов
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-function processCredits(html, result) {
+function processCredits(result) {
     if (!AnyBalance.isAvailable('credits'))
         return;
 
@@ -284,21 +369,24 @@ function processCredit(html, result){
 
 }
 
-function processInfo(html, result){
-    if(!AnyBalance.isAvailable('info'))
-        return;
+function processBonuses(result){
+	if (!AnyBalance.isAvailable('bonus'))
+		return;
 
-    html = AnyBalance.requestGet(baseurl + 'settings/index.htm', g_headers);
+	var bonuses = callApi('go-bonuses');
+    var found = false;
 
-    var info = result.info = {};
-    getParam(html, info, 'info.fio', /ФИО:[\s\S]*?<div[^>]+class="cell"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
-    getParam(html, info, 'info.login', /Идентификатор:[\s\S]*?<div[^>]+class="cell"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
-    getParam(html, info, 'info.birthday', /Дата рождения:[\s\S]*?<div[^>]+class="cell"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseDate);
-    getParam(html, info, 'info.passport', /Номер документа[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces); //удостоверение личности, 035093814
-    getParam(html, info, 'info.inn', /ИИН:[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
-    getParam(html, info, 'info.mphone', /Доверенный контакт:[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces); //+7(777)110-95-24
-}
-
-function processBonuses(html, result){
-    getParam(html, result, 'bonus', /<li[^>]+bonuses_accounts[^>]*>([\s\S]*?)<\/li>/i, replaceTagsAndSpaces, parseBalance);
+	for (var i = 0; i < bonuses.length; ++i) {
+		var bonusItem = bonuses[i];
+		
+        if (bonusItem.bonusInfo.clients.pool === 12) { // 12 - KKB bonus
+            result.bonus = bonusItem.bonusInfo.clients.client.amount;
+            found = true;
+            break;
+        }
+	}
+    
+    if (!found) {
+        throw new AnyBalance.Error('Не удаётся получить информацию о бонусах');
+    }
 }

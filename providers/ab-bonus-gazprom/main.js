@@ -75,9 +75,9 @@ function main() {
 	
         
 	var reStatus = /Текущий статус карты[\s\S]{1,100}?<img[^>]+src="[^"]*images\/([^\/"]*)\.png"[^>]*>/i;
-	var reSave = /Для подтверждения статуса[\s\S]{1,50}?необходимо совершить покупки на сумму[\s\S]{1,100}?<div[^>]*>([^]+?)<\/div\s*>/i;
-	var reHeighten = /Для повышения статуса[\s\S]{1,50}?необходимо совершить покупки на сумму[\s\S]{1,100}?<div[^>]*>([^]+?)<\/div\s*>/i;
-
+	var reSave = /Для подтверждения статуса необходимо совершить заправку на:[\s\S]{1,100}?<div[^>]*>([^]+?) литр.<\/div\s*>/i;
+	var reHeighten = /Для повышения статуса необходимо совершить заправку на:[\s\S]{1,100}?<div[^>]*>([^]+?) литр.<\/div\s*>/i;
+	
 	getParam(html, result, 'balance', /Бонусов доступно[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'status', reStatus, replaceTagsAndSpaces, img2status);
 	getParam(html, result, '__tariff', reStatus, replaceTagsAndSpaces, img2status);

@@ -190,7 +190,16 @@ function processCard(card, result, acc) {
     getParam(card.monthEnd + '/' + card.yearEnd, result, 'cards.till', null, replaceTagsAndSpaces, parseDate); 
     getParam(acc.currencyName, result, ['cards.currency', 'cards.balance']); 
 
-    getParam(card.amount, result, 'cards.balance'); 
+    if(AnyBalance.isAvailable('cards.balance')){
+    	var end = card.yearEnd + '-' + card.monthEnd + '-15';
+    	var json = apiCall('rest/client/balance', JSON.stringify({
+    		cardExpire: end,
+    		cardId: card.cardId,
+    		currency: acc.currencyCode
+    	}));
+
+    	getParam(json.amount, result, 'cards.balance'); 
+    }
 
 	if(isAvailable('cards.transactions'))
 		processCardTransactions(card, result);

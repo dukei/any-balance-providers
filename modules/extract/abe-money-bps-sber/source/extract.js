@@ -90,7 +90,7 @@ function processAccounts(xml, result) {
 	for(var i=0; i < accounts.length; ++i){
         var acc = accounts[i];
 		var id = acc.contractId;
-		var num = acc.account;
+		var num = acc.account || acc.contractNumber;
 		var name = acc.name;
 
 		var title = name + ' ' + num.substr(-4);
@@ -190,7 +190,7 @@ function processCard(card, result, acc) {
     getParam(card.monthEnd + '/' + card.yearEnd, result, 'cards.till', null, replaceTagsAndSpaces, parseDate); 
     getParam(acc.currencyName, result, ['cards.currency', 'cards.balance']); 
 
-    getParam(acc.amount, result, 'cards.balance'); 
+    getParam(card.amount, result, 'cards.balance'); 
 
 	if(isAvailable('cards.transactions'))
 		processCardTransactions(card, result);

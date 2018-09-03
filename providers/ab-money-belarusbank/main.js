@@ -194,6 +194,10 @@ function fetchCard(baseurl, html){
 
 		html = AnyBalance.requestPost(baseurl + action, params, addHeaders({'Referer': baseurl}));
 		info = findAccount(html);
+		if(!info) {
+			AnyBalance.trace(html);
+			throw new AnyBalance.Error('Не удалось найти информацию по доп. карте! Сайт изменен?');
+		}
     }
 	
     var result = {success: true};

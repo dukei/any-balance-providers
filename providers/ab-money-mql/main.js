@@ -41,24 +41,25 @@ function main() {
 			throw new AnyBalance.Error('Signal is disabled, unavailable or need to type login and password.');
 		}
 
-		result.__tariff = getParam(html, null, null , /<meta itemprop="name" content="(.*?)" \/>/, replaceTagsAndSpaces, html_entity_decode);
-		result.initial_deposit = getParam(html, null, null, />Initial Deposit:[\s\S]*?<div class=.*?>(.*?)<\/div>/i, replaceTagsAndSpaces, parseBalanceMulti);
-		result.deposits = getParam(html, null, null , />Deposits:[\s\S]*?<div class=.*?>(.*?)<\/div>/, replaceTagsAndSpaces, parseBalanceMulti);
+		result.__tariff = getParam(html, null, null , /<span class="signal-card__title-wrapper">(.*?)</, replaceTagsAndSpaces, html_entity_decode);
+		result.initial_deposit = getParam(html, null, null, /Initial Deposit',[\s\S]+?value: '(.*?)'/i, replaceTagsAndSpaces, parseBalanceMulti);
+		result.deposits = getParam(html, null, null , /Deposits',[\s\S]+?value: '(.*?)'/, replaceTagsAndSpaces, parseBalanceMulti);
 		result.total_deposit = Math.round((result.initial_deposit+result.deposits)*100)/100;
-		result.currency = getParam(html, null, null , />Initial Deposit:[\s\S]*?<div class=.*?>.*? ([\S]*?)<\/div>/, replaceTagsAndSpaces, html_entity_decode);
-		getParam(html, result, 'withdrawals' , />Withdrawals:[\s\S]*?<div class=.*?>(.*?)<\/div>/, replaceTagsAndSpaces, parseBalanceMulti);
-		result.balance = getParam(html, null, null , />Balance:[\s\S]*?<div class=.*?>(.*?)<\/div>/, replaceTagsAndSpaces, parseBalanceMulti);
-		result.equity = getParam(html, null, null , />Equity:[\s\S]*?<div class=.*?>(.*?)<\/div>/, replaceTagsAndSpaces, parseBalanceMulti);
+		result.currency = getParam(html, null, null , /Initial Deposit',[\s\S]+value:.*?[\s\S]+?valueText: '.*? ([\S]*?)'/, replaceTagsAndSpaces, html_entity_decode);
+		getParam(html, result, 'withdrawals' , /Withdrawals',[\s\S]+?value: '(.*?)'/, replaceTagsAndSpaces, parseBalanceMulti);
+		result.balance = getParam(html, null, null , /'Balance:[\s\S]+?(.*?) .*?'/, replaceTagsAndSpaces, parseBalanceMulti);
+		result.equity = getParam(html, null, null , /Equity',[\s\S]+?value: '(.*?)'/, replaceTagsAndSpaces, parseBalanceMulti);
 		result.current_profit = Math.round((result.equity-result.balance)*100)/100;
-		getParam(html, result, 'profit' , />Profit:[\s\S]*?<div class=.*?>(.*?)<\/div>/, replaceTagsAndSpaces, parseBalanceMulti);
-		getParam(html, result, 'subscribers' , />Subscribers:[\s\S]*?<div class=.*?>([\s\S]*?)<\/div>/, replaceTagsAndSpaces, parseBalance);
-		getParam(html, result, 'subscribers_funds' , />Subscribers' funds:[\s\S]*?<div class=.*?>([\s\S]*?)<\/div>/, replaceTagsAndSpaces, html_entity_decode);
-		getParam(html, result, 'maximum_drawdown' , />Maximum drawdown:[\s\S]*?<div class=.*?>(.*?)<\/div>/, replaceTagsAndSpaces, parseBalance);
-		getParam(html, result, 'weeks' , />Weeks:[\s\S]*?<div class=.*?>([\s\S]*?)<\/div>/, replaceTagsAndSpaces, parseBalance);
-		getParam(html, result, 'latest_trade' , />Latest trade:\s+<span.*?>([\s\S]*?)</, replaceTagsAndSpaces, html_entity_decode);
-		getParam(html, result, 'trades_per_week' , />Trades per week:[\s\S]*?<div class=.*?>([\s\S]*?)<\/div>/, replaceTagsAndSpaces, parseBalance);
-		getParam(html, result, 'trades_total' , />Trades:[\s\S]*?<div class=.*?>([\s\S]*?)<\/div>/, replaceTagsAndSpaces, parseBalance);
-		getParam(html, result, 'avg_holding_time' , />Avg holding time:[\s\S]*?<div class=.*?>([\s\S]*?)<\/div>/, replaceTagsAndSpaces, html_entity_decode);
+		getParam(html, result, 'profit' , /Profit',[\s\S]+?value: '(.*?)'/, replaceTagsAndSpaces, parseBalanceMulti);
+		getParam(html, result, 'subscribers' , /Subscribers',[\s\S]+?value: '(.*?)'/, replaceTagsAndSpaces, parseBalance);
+		getParam(html, result, 'subscribers_funds' , /Subscribers funds',[\s\S]+?value: '(.*?)'/, replaceTagsAndSpaces, html_entity_decode);
+		getParam(html, result, 'maximum_drawdown' , /value : (.*?),[\s\S]+?name : 'Maximum drawdown/, replaceTagsAndSpaces, parseBalance);
+		getParam(html, result, 'weeks' , /Weeks',[\s\S]+?value: '(.*?)'/, replaceTagsAndSpaces, parseBalance);
+		getParam(html, result, 'latest_trade' , /Latest trade:[\s\S]+?columns__value>(.*?)</, replaceTagsAndSpaces, html_entity_decode);
+		getParam(html, result, 'trades_per_week' , /Trades per week:[\s\S]+?columns__value>(.*?)</, replaceTagsAndSpaces, parseBalance);
+		getParam(html, result, 'trades_total' , />Trades:[\s\S]+?columns__value>(.*?)</, replaceTagsAndSpaces, parseBalance);
+		getParam(html, result, 'avg_holding_time' , /Avg holding time:[\s\S]+?columns__value>(.*?)</, replaceTagsAndSpaces, html_entity_decode);
+
 	}
 	if(AnyBalance.isAvailable('profile_balance')){
 		checkEmpty(prefs.Login, 'Enter login and password!');

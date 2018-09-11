@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
   <api flags="no_browser"/>
-  <id version="1">ab-internet-taiget</id>
+  <id version="2">ab-internet-taiget</id>
   <name>Taiget</name>
   <description>
-    Тайгет (Taiget) в Туапсе
+    Тайгет (Taiget) в Туапсе. Данные получаются из личного кабинета https://sec.taiget.ru/client/
   </description>
   <author>Сергей Барбаянов &lt;k008nm@gmail.com&gt;</author>
   <files>

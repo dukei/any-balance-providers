@@ -3,30 +3,30 @@
 	<EditTextPreference
 		title="Логин"
 		key="login"
-		summary="||{@s}"
+		summary="|Введите логин в интернет-банк|{@s}"
 		obligatory="true"
 		dialogTitle="Логин"
 		positiveButtonText="ОК"
 		negativeButtonText="Отмена"
-		dialogMessage="Введите логин, используемый для входа в личный кабинет.">
+		dialogMessage="Введите логин, используемый для входа в интернет-банк.">
 	</EditTextPreference>
 	<EditTextPreference
 		title="Пароль"
 		key="password"
-		summary="||***********"
+		summary="|Введите пароль в интернет-банк|***********"
 		obligatory="true"
 		dialogTitle="Пароль"
 		positiveButtonText="ОК"
 		negativeButtonText="Отмена"
-		dialogMessage="Введите пароль, используемый для входа в личный кабинет."
+		dialogMessage="Введите пароль, используемый для входа в интернет-банк."
 		inputType="textPassword">
 	</EditTextPreference>
 	<ListPreference
 		key="type"
 		title="Банковский продукт"
 		summary="||{@s}"
-		entries="Счет|Карта|Кредит"
-		entryValues="acc|card|crd"
+		entries="Счет|Депозит|Карта|Кредит"
+		entryValues="acc|dep|card|crd"
 		defaultValue="card">
 	</ListPreference>
 	<EditTextPreference

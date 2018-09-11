@@ -20,8 +20,8 @@
 	<counters>
 		<counter id="balance" name="Баланс"/>
 		<counter id="month" name="Сумма покупок за месяц" suffix=" р"/>
-		<counter id="month_need" name="Сумма для подтверждения статуса" suffix=" р"/>
-		<counter id="month_need_up" name="Сумма для повышения статуса" suffix=" р"/>
+		<counter id="month_need" name="Заправок для подтверждения статуса" suffix=" л"/>
+		<counter id="month_need_up" name="Заправок для повышения статуса" suffix=" л"/>
 		<counter id="customer" name="Владелец" type="text"/>
 		<counter id="status" name="Текущий статус" type="text"/>
 	</counters>

@@ -1,14 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="5">ab-money-kkb-kz</id>
+	<id version="6">ab-money-kkb-kz</id>
 	<api flags="no_browser"/>
-	<name>Казкоммерцбанк</name>
+	<name>Homebank (Казкоммерцбанк/Народный Банк)</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о текущем остатке и других параметрах счетов, карт и кредитов для клиентов банка Казкоммерцбанк <a href="http://www.kkb.kz/">http://www.kkb.kz/</a></p>
-	<p>Информация берется из Интернет-банка <a href="https://www.homebank.kz/">https://www.homebank.kz/</a></p>
+	<p>Предоставляет информацию о текущем остатке и других параметрах счетов, карт и кредитов для клиентов банков Казкоммерцбанк <a href="http://www.qazkom.kz/">http://www.qazkom.kz/</a> и Народный Банк <a href="https://halykbank.kz/">https://halykbank.kz/</a></p>
+	<p>Информация берется из Интернет-банка <a href="https://homebank.kz/">https://homebank.kz/</a></p>
 	]]></description>
 	<instruction html="true"><![CDATA[
-	<p>Если у вас нет доступа к интернет-банку, зарегистрируйтесь здесь: https://www.homebank.kz/new/login/registration.htm </p>
+	<p>Если у вас нет доступа к интернет-банку, зарегистрируйтесь здесь: https://homebank.kz/#/users/registration </p>
 	]]></instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>
@@ -23,14 +23,22 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Остаток" units=" {@currency}"/>
+		<counter id="balance" name="Баланс" units=" {@currency}"/>
+		<counter id="balance_usd" name="Баланс Доллары США" units=" USD"/>
+		<counter id="balance_eur" name="Баланс Евро" units=" EUR"/>
+		<counter id="blocked" name="Заблокированные средства" units=" {@currency}"/>
+		<counter id="currency" name="Валюта" type="text"/>
 		<counter id="bonus" name="Бонусы Go!" units=" Go!"/>
 		<counter id="available" name="Доступно" units=" {@currency}"/>
 		<counter id="repayment" name="К погашению" units=" {@currency}"/>
 		<counter id="account" name="Номер счета/карты/кредита" type="text"/>
-		<counter id="currency" name="Валюта" type="text"/>
+		<counter id="accnum" name="Номер счета" type="text"/>
+		<counter id="till" name="Срок действия" type="time" format="dd/MM/yyyy"/>
+		<counter id="rate" name="Процентная ставка" units=" %"/>
+		<counter id="pcts" name="Проценты в конце срока" units=" {@currency}"/>
+		<counter id="fio" name="ФИО" type="text"/>
 	</counters>
-	<keywords>КАЗКОМ</keywords>
+	<keywords>КАЗКОМ Казкоммерцбанк QAZKOM Halyk Народный</keywords>
 	<type>money, bank</type>
 	<country>kz</country>
 </provider>

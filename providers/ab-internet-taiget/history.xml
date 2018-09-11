@@ -3,4 +3,7 @@
 	<change version="1" date="2016-04-10">
 	- Первая версия провайдера.
 	</change>
+	<change version="2" date="2018-08-19">
+	- Поддержка изменений на сайте
+	</change>
 </history>

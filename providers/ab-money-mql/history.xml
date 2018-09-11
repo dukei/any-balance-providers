@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change version="5" date="2018-08-06">
+      - Updated due to site changes.
+	  </change>
     <change version="4" date="2017-07-30">
-      - Updated 	due to site changes.
-	</change>
+      - Updated due to site changes.
+	  </change>
     <change version="3" date="2015-06-04">
       - Profile balance and currency counters added.
     </change>

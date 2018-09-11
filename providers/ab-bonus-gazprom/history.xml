@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="2.0" version="23" date="2018-09-11">
+	Исправлено получение баланса (@trublast)
+	</change>
 	<change major_version="2.0" version="22" date="2016-03-28">
 	- Исправлена ошибка, выпадающая в случае отсутствия покупок в текущем месяце.
 	</change>

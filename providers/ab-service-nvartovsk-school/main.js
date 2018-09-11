@@ -56,14 +56,15 @@ function main() {
 
 	var result = {success: true};
 
-	getParam(html, result, 'balanceSP', /Школьное питание [\s\S]*?Остаток на 01[\s\S]*?Остаток на [\s\S]*?<td class="schol_pit___saldoN fabrik_element fabrik_list_2_group_2" >([^<]+)[\s\S]*?<\/td/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'topaySP', /Школьное питание [\s\S]*?Остаток на 01[\s\S]*?Остаток на [\s\S]*?Сумма к оплате[\s\S]*?<td class="schol_pit___saldoN fabrik_element fabrik_list_2_group_2" >([^<]+)[\s\S]*?<\/td/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'balanceGPD', /Группа продленного дня[\s\S]*Остаток на 01[\s\S]*Остаток на [\s\S]*?<td class="schol_pit___saldoN fabrik_element fabrik_list_2_group_2" >([^<]+)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'topayGPD', /Группа продленного дня[\s\S]*Остаток на 01[\s\S]*Остаток на [\s\S]*Сумма к оплате[\s\S]*?<td class="schol_pit___saldoN fabrik_element fabrik_list_2_group_2" >([^<]+)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'balanceSP', /Школьное питание [\s\S]*?Остаток на [\s\S]*?59 мин[\s\S]*?<td class="schol_pit___saldoN fabrik_element fabrik_list_2_group_2" >([^<]+)[\s\S]*?<\/td/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'topaySP', /Школьное питание [\s\S]*?Остаток на [\s\S]*?59 мин[\s\S]*?умма к оплате[\s\S]*?<td class="schol_pit___saldoN fabrik_element fabrik_list_2_group_2" >([^<]+)[\s\S]*?<\/td/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'balanceGPD', /Группа продленного дня[\s\S]*?Остаток на [\s\S]*?59 мин[\s\S]*?<td class="schol_pit___saldoN fabrik_element fabrik_list_2_group_2" >([^<]+)/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'topayGPD', /Группа продленного дня[\s\S]*?Остаток на [\s\S]*?59 мин[\s\S]*?умма к оплате[\s\S]*?<td class="schol_pit___saldoN fabrik_element fabrik_list_2_group_2" >([^<]+)/i, replaceTagsAndSpaces, parseBalance);
 	AnyBalance.trace(result);
 
 
 	AnyBalance.setResult(result);
 };
+
 
 

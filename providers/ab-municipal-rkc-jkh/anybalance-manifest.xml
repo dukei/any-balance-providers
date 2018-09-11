@@ -1,24 +1,26 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-municipal-rkc-jkh</id>
+	<id version="3">ab-municipal-rkc-jkh</id>
 	<api flags="no_browser"/>
 	<name>РКЦ ЖКХ Якутск</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе РКЦ ЖКХ Якутск <a href="http://rkc-jkh.ru/login.asp">http://rkc-jkh.ru/login.asp</a></p>
+	<p>Предоставляет информацию о балансе РКЦ ЖКХ Якутск <a href="https://rkc-jkh.ru/lk/">https://rkc-jkh.ru/lk/</a></p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
 	<counters>
 		<counter id="balance" name="Задолженность на начало месяца" units=" р"/>
-		<counter id="plan" name="Плановое начисление" units=" р"/>
+		<counter id="plan" name="Предварительное начисление" units=" р"/>
 		<counter id="pere" name="Перерасчеты" units=" р"/>
-		<counter id="fakt" name="Фактическое начисление" units=" р"/>
+		<counter id="fakt" name="Начислено на тек. дату" units=" р"/>
 		<counter id="postup" name="Поступления" units=" р"/>
 		<counter id="debt_end" name="Задолженность на конец месяца" units=" р"/>
 	</counters>

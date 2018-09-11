@@ -25,6 +25,7 @@ var g_countersTable = {
 		"gracePeriodOutstanding": "cards.gracePeriodOutstanding",
 		"unpaidGracePeriodDue": "cards.gracepay",
 		"gracePeriodEnd": "cards.gracepay_till",
+		"rate": "cards.rate",
 	},
     acc: {
 		"__tariff": "accounts.__name",

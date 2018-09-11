@@ -428,6 +428,7 @@ function getCardsAndAccounts(){
         	if(products[p.id])
         		continue; //Уже обработали
 
+        	AnyBalance.trace("Found product: " + p.__type + ", " + p.displayName + ", id: " + p.id);
             obj.payload.products.push(p);
             products[p.id] = p;
 
@@ -448,7 +449,7 @@ function getCardsAndAccounts(){
         }
     }
 
-    AnyBalance.trace('Найдено ' + obj.payload.products.length + ' карт и счетов');
+    AnyBalance.trace('Найдено ' + obj.payload.products.length + ' продуктов банка');
     g_cardsAndAccounts = obj;
 
     return obj;
@@ -458,7 +459,7 @@ function processCards(result){
     if(!AnyBalance.isAvailable('cards'))
         return;
 
-    var obj = getCardsAndAccounts(g_cardsAndAccounts);
+    var obj = getCardsAndAccounts();
 
     var cards = [];
     for(var i=0; i<obj.payload.products.length; ++i){
@@ -489,6 +490,8 @@ function processCards(result){
 }
 
 function processCard(p, result){
+	AnyBalance.trace("Processing card " + result.__name);
+
     getParam(p.displayName, result, 'cards.name');
     getParam(p.balance.allowedSum, result, 'cards.balance');
     getParam(p.balance.amountSum, result, 'cards.own');
@@ -542,12 +545,12 @@ function processAccounts(result){
     if(!AnyBalance.isAvailable('accounts'))
         return;
 
-    var obj = getCardsAndAccounts(g_cardsAndAccounts);
+    var obj = getCardsAndAccounts();
 
     var accs = [];
     for(var i=0; i<obj.payload.products.length; ++i){
         var p = obj.payload.products[i];
-        if(!/Card/i.test(p.__type) || /CardAccount/i.test(p.__type)){
+        if(/AccountMto/i.test(p.__type)){
             accs.push(p);
         }
     }
@@ -573,6 +576,8 @@ function processAccounts(result){
 }
 
 function processAccount(p, result) {
+	AnyBalance.trace("Processing account " + result.__name);
+
     getParam(p.name, result, 'accounts.name');
     getParam(p.amount.sum, result, 'accounts.balance');
     getParam(p.amount.currency.currencyCode, result, ['accounts.currency', 'accounts.balance']);
@@ -640,6 +645,8 @@ function processDeposits(result){
 }
 
 function processDeposit(p, result){
+	AnyBalance.trace("Processing deposit " + result.__name);
+	
 	if(p.account && p.account.amount){
     	getParam(p.account.amount.sum, result, 'deposits.balance');
     	getParam(p.account.amount.currency.currencyCode, result, ['deposits.currency', 'deposits.balance']);
@@ -705,34 +712,30 @@ function processCredits(result) {
     if (!AnyBalance.isAvailable('credits'))
         return;
 
-    var obj = request(new Message({
-        __type: 'ru.vtb24.mobilebanking.protocol.product.MainPageProductsRequest',
-        portfolioTypeMto: {
-            __type: 'ru.vtb24.mobilebanking.protocol.product.PortfolioTypeMto',
-            id: 'CREDITS'
+    var obj = getCardsAndAccounts();
+
+    var accs = [];
+    for(var i=0; i<obj.payload.products.length; ++i){
+        var p = obj.payload.products[i];
+        if(/LoanContract/i.test(p.__type)){
+            accs.push(p);
         }
-    }, null, g_commonProperties));
-
-    AnyBalance.trace('Найдено ' + obj.payload.products.length + ' кредитов');
-
-    result.credits = [];
-
-    if (obj.payload.products.length == 0) {
-        AnyBalance.trace('У вас нет ни одного кредита!');
-        return;
     }
 
-    for (var i = 0; i < obj.payload.products.length; ++i) {
-        var p = obj.payload.products[i];
+    AnyBalance.trace('Найдено ' + accs.length + ' кредитов');
+    result.credits = [];
+
+    for (i = 0; i < accs.length; i++) {
+        var p = accs[i];
 
         var c = {
             __id: p.id,
-            __name: p.displayName,
+            __name: p.displayName + ' ' + p.account.amount.currency.currencyCode + ' ' + p.number.substr(-4),
             num: p.number,
             accnum: p.account.number
         };
 
-        if (__shouldProcess('credits', c)) {
+        if(__shouldProcess('credits', c)){
             processCredit(p, c);
         }
 
@@ -741,6 +744,8 @@ function processCredits(result) {
 }
 
 function processCredit(p, result){
+	AnyBalance.trace("Processing credit " + result.__name);
+
     getParam(p.creditSum.sum, result, 'credits.limit');
     getParam(p.creditSum.currency.currencyCode, result, ['credits.currency', 'credits.balance', 'credits.limit']);
     getParam(p.account.amount.sum, result, 'credits.balance');

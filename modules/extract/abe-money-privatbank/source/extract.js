@@ -3,8 +3,9 @@
 */
 
 var g_headers = {
-	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-	'User-Agent': 'android-async-http/1.4.1 (http://loopj.com/android-async-http)',
+	'User-Agent': 'Dalvik/2.1.0 (Linux; U; Android 6.0.1; D6503 Build/23.5.A.1.291)',
+	'Connection': 'Keep-Alive',
+	'AppMode': 'NFC',
 };
 
 var g_appKey = 'afhgfgfdg56ujdj6rtymr67yjrt76tyherhdbryj6r46df57';
@@ -22,19 +23,20 @@ function requestJson(data, action, errorMessage) {
 	}
 	// Заполняем параметры, которые есть всегда
 	params.push(encodeURIComponent('cookie') + '=' + encodeURIComponent(g_session));
-	params.push(encodeURIComponent('simSN') + '=' + encodeURIComponent(g_simsn));
+//	params.push(encodeURIComponent('simSN') + '=' + encodeURIComponent(g_simsn));
 	params.push(encodeURIComponent('imei') + '=' + encodeURIComponent(g_login_hash));
 	params.push(encodeURIComponent('appkey') + '=' + encodeURIComponent(g_appKey));
 	params.push(encodeURIComponent('language') + '=' + 'ru');
 	params.push(encodeURIComponent('lon') + '=' + '0.0');
-	params.push(encodeURIComponent('device') + '=' + encodeURIComponent('SM-G900F|samsung'));
-	params.push(encodeURIComponent('version') + '=' + encodeURIComponent('5.11.02'));
+	params.push(encodeURIComponent('ireal') + '=' + encodeURIComponent(g_imei));
+	params.push(encodeURIComponent('device') + '=' + encodeURIComponent('D6503|sony'));
+	params.push(encodeURIComponent('version') + '=' + encodeURIComponent('5.20.02'));
 	params.push(encodeURIComponent('versionOS') + '=' + encodeURIComponent('5.0'));
 	params.push(encodeURIComponent('lat') + '=' + encodeURIComponent('0.0'));
-	params.push(encodeURIComponent('ireal') + '=' + encodeURIComponent(g_imei));
 
 	var url = g_baseurl + 'iapi2/' + action + '?' + params.join('&');
 	var html = AnyBalance.requestGet(url, g_headers);
+	clearAllCookies();
 	var json = getJson(html);
 	
 	if(json.st != 'ok') {
@@ -55,6 +57,16 @@ function login(prefs, result) {
 	checkEmpty(prefs.password, 'Введите пароль!');
 
 	var normalized_login = '+' + prefs.login.replace(/\D+/g, '');
+	g_session = AnyBalance.getData('session');
+	
+	var login_hash = hex_md5(normalized_login); //Чтобы на сервере работало
+	AnyBalance.trace(login_hash + ' ' + typeof(login_hash));
+
+	g_login_hash = getParam(login_hash, null, null, null, [/([\s\S]{8})([\s\S]{4})([\s\S]{4})([\s\S]{4})([\s\S]{12})/, '$1-$2-$3-$4-$5']);
+	AnyBalance.trace('Login imei param is: ' + g_login_hash);
+
+	g_imei = generateImei(normalized_login, g_imei);
+	g_simsn = generateSimSN(normalized_login, g_simsn);
 
 	if(g_session) {
 		AnyBalance.trace('Найдена активная сессия, проверим её.')
@@ -68,15 +80,6 @@ function login(prefs, result) {
 	}
 
 	if(!g_session) {
-		var login_hash = hex_md5(normalized_login); //Чтобы на сервере работало
-		AnyBalance.trace(login_hash + ' ' + typeof(login_hash));
-
-		g_login_hash = getParam(login_hash, null, null, null, [/([\s\S]{8})([\s\S]{4})([\s\S]{4})([\s\S]{4})([\s\S]{12})/, '$1-$2-$3-$4-$5']);
-		AnyBalance.trace('Login imei param is: ' + g_login_hash);
-
-		g_imei = generateImei(normalized_login, g_imei);
-		g_simsn = generateSimSN(normalized_login, g_simsn);
-
 		var json = requestJson({/*registration_id: g_registrationId*/}, 'props_full');
 		// Если еще привязка не выполнялась, надо привязать
 		if (/phone not linked to imei/i.test(json.err)) {
@@ -99,26 +102,38 @@ function login(prefs, result) {
 			g_session = json.cookie;
 
 			AnyBalance.trace('Успешно привязали устройство: ' + JSON.stringify(json));
-		} else {
+		} else if (/CODE104: need auth/i.test(json.err)) {
 			AnyBalance.trace('Похоже что устройство уже привязано.');
 
 			json = requestJson({
 				pass: prefs.password,
 				bank: ''
-			}, 'chpass', 'Не удалось авторизоваться, проверьте логин и пароль.');
+			}, 'chpass');
+			if(/CODE194/.test(json.err)){
+				AnyBalance.trace("Аккаунт оказался заблокирован, отвязываем устройство и пробуем ещё раз");
+				var err = AnyBalance.Error(json.err, true);
+				json = requestJson({}, 'unlink_phone');
+				throw err;
+			}else if(json.st !== 'ok'){
+				throw new AnyBalance.Error(json.err, null, /парол/i.test(json.err));
+			}
+
 			g_session = json.cookie;
+		} else {
+			AnyBalance.trace(JSON.stringify(json));
+			throw new AnyBalance.Error(json.err);
 		}
 
+		AnyBalance.setData('session', g_session);
+		AnyBalance.saveData();
 		__setLoginSuccessful();
-	}else{
-		AnyBalance.trace()
 	}
 
 	if (!g_session)
 		throw new AnyBalance.Error('Не удалось получить токен авторизации!');
 
 	json = requestJson({}, 'banks');
-	json = requestJson({/*registration_id: g_registrationId*/}, 'props_full');
+	json = requestJson({/*registration_id: g_registrationId*/}, 'props_full', "Банк не отдал данные");
 
 	if(AnyBalance.isAvailable('info.mphone')){
 		result.info = {};

@@ -114,7 +114,6 @@ function processCard(info, result) {
 	getParam(info.balance, result, 'cards.balance');
 	getParam(info.currencyId, result, ['cards.currency', 'cards.balance', 'cards.minpay', 'cards.limit', 'cards.totalCreditDebtAmount', 'cards.blocked']);
 
-//	getParam(info, result, 'cards.minpay', /<minimalCreditPayment>([\s\S]*?)<\/minimalCreditPayment>/i, replaceTagsAndSpaces, parseBalance);
 //	getParam(info, result, 'cards.limit', /<creditLimit>([\s\S]*?)<\/creditLimit>/i, replaceTagsAndSpaces, parseBalance);
 	// getParam(info, result, 'cards.totalCreditDebtAmount', /<totalCreditDebtAmount>([\s\S]*?)<\/totalCreditDebtAmount>/i, replaceTagsAndSpaces, parseBalance);
 	getParam(info.hold, result, 'cards.blocked');
@@ -124,7 +123,7 @@ function processCard(info, result) {
 	getParam(info.pan, result, 'cards.num');
 	getParam(info.account.cba, result, 'cards.accnum');
 //	getParam(info, result, 'cards.minpay_till', /<nextCreditPaymentDate>([\s\S]*?)<\/nextCreditPaymentDate>/i, replaceTagsAndSpaces, parseDateISO);
-//	getParam(info, result, 'cards.till', /<expirationDate>([\s\S]*?)<\/expirationDate>/i, replaceTagsAndSpaces, parseDateISO);
+	getParam(info.expire, result, 'cards.till', null, replaceTagsAndSpaces, parseDateISO);
 	getParam(info.status.name, result, 'cards.status'); //Open
 	getParam(info.product, result, 'cards.name');
 	getParam(info.cardholder, result, 'cards.holder');
@@ -132,63 +131,27 @@ function processCard(info, result) {
 	getParam(info.main.id == 1, result, 'cards.isMain');
 	getParam(info.open, result, 'cards.dateStart', null, null, parseDateISO);
 	getParam(info.paymentSystem.name, result, 'cards.shortType');
+	getParam(info.rate, result, 'cards.rate');
 
 	// Кредитные карты
-/*	if (type == '3' && (isAvailable(['cards.totalCreditDebtAmount', 'cards.clearBalance', 'cards.own']) || isAvailableButUnset('cards.limit') || isAvailableButUnset('cards.minpay'))) {
-		var html = AnyBalance.requestPost(baseurl + 'RCCardService', '<?xml version=\'1.0\' encoding=\'UTF-8\' standalone=\'yes\' ?><soapenv:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://entry.rconnect/xsd" xmlns:ser="http://service.rconnect" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"><soapenv:Header /><soapenv:Body><ser:getCreditStatementPeriods2><cardId>' + result.__id + '</cardId></ser:getCreditStatementPeriods2></soapenv:Body></soapenv:Envelope>', addHeaders({SOAPAction: ''}));
+	if (info.type.id == '2' && (isAvailable(['cards.totalCreditDebtAmount', 'cards.clearBalance', 'cards.own']) || isAvailableButUnset('cards.limit') || isAvailableButUnset('cards.minpay'))) {
+		var creditCard = callApi('rest/account/' + info.accountId + '/statement/current?alien=false');
+	
+		var limit = getParam(creditCard.creditLimit, null, null, null, replaceTagsAndSpaces, parseBalance);
+		var ownFunds = getParam(creditCard.ownFunds, null, null, null, replaceTagsAndSpaces, parseBalance);
 
-		var returns = getElements(html, /<return/ig);
-		//Надо брать последний период
-		var ret = returns[returns.length-1];
-
-		var id = getParam(ret, null, null, /<id>([\s\S]*?)<\/id>/i, replaceTagsAndSpaces);
-		var prime = getParam(ret, null, null, /<prime>([\s\S]*?)<\/prime>/i, replaceTagsAndSpaces);
-
-		if (prime && id) {
-			html = AnyBalance.requestPost(baseurl + 'RCCardService', '<?xml version=\'1.0\' encoding=\'UTF-8\' standalone=\'yes\' ?><soapenv:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://entry.rconnect/xsd" xmlns:ser="http://service.rconnect" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"><soapenv:Header /><soapenv:Body><ser:getCurrentCreditStatement><cardId>' + result.__id + '</cardId><id>' + id + '</id><isPrime>' + prime + '</isPrime></ser:getCurrentCreditStatement></soapenv:Body></soapenv:Envelope>', addHeaders({SOAPAction: ''}));
-
-			var limit = getParam(html, null, null, /<availableCreditLimit>([\s\S]*?)<\/availableCreditLimit>/i, replaceTagsAndSpaces, parseBalance);
-			var ownFunds = getParam(html, null, null, /<ownFunds>([\s\S]*?)<\/ownFunds>/i, replaceTagsAndSpaces, parseBalance);
-
-			getParam(limit, result, 'cards.limit');
-			getParam(ownFunds, result, 'cards.own');
-			// баланс - Лимит
-			getParam(balance - limit, result, 'cards.clearBalance');
-
-			getParam(html, result, 'cards.totalCreditDebtAmount', /<totalDebtAmount>([\s\S]*?)<\/totalDebtAmount>/i, replaceTagsAndSpaces, parseBalance);
-			getParam(html, result, 'cards.minpay', /<minAmount>([\s\S]*?)<\/minAmount>/i, replaceTagsAndSpaces, parseBalance);
-			getParam(html, result, 'cards.gracePeriodOutstanding', /<gracePeriodOutstanding>([\s\S]*?)<\/gracePeriodOutstanding>/i, replaceTagsAndSpaces, parseBalance);
-			getParam(html, result, 'cards.gracepay', /<unpaidGracePeriodDue>([\s\S]*?)<\/unpaidGracePeriodDue>/i, replaceTagsAndSpaces, parseBalance);
-			getParam(html, result, 'cards.gracepay_till', /<gracePeriodEnd>([\s\S]*?)<\/gracePeriodEnd>/i, replaceTagsAndSpaces, parseDateISO);
-
-			/*
-			 <availableCreditLimit>155000.000</availableCreditLimit>
-			 <card_id>6601272</card_id>
-			 <endDate>2015-11-20T12:53:23.829+03:00</endDate>
-			 <gracePeriodEnd>2015-11-27T00:00:00.000+03:00</gracePeriodEnd>
-			 <gracePeriodOutstanding>0.000</gracePeriodOutstanding>
-			 <id>249007617</id>
-			 <intrestOutstanding>0.000</intrestOutstanding>
-			 <minAmount>0.000</minAmount>
-			 <overlimit>0</overlimit>
-			 <ownFunds>0.000</ownFunds>
-			 <pastDueInterestOutstanding>0</pastDueInterestOutstanding>
-			 <pastDuePrincipalOutstanding>0.000</pastDuePrincipalOutstanding>
-			 <paymentHolidays>false</paymentHolidays>
-			 <prevStatementTotalDebt>0.000</prevStatementTotalDebt>
-			 <prime>true</prime>
-			 <startDate>2015-11-07T00:00:00.000+03:00</startDate>
-			 <totalCredit>0.000</totalCredit>
-			 <totalDebit>0.000</totalDebit>
-			 <totalDebtAmount>0.000</totalDebtAmount>
-			 <unpaidGracePeriodDue>0.000</unpaidGracePeriodDue>
-			 * /
-		} else {
-			AnyBalance.trace('Не удалось найти доп информацию по карте ' + result.__name);
-			AnyBalance.trace(html);
-		}
+		getParam(limit, result, 'cards.limit');
+		getParam(ownFunds, result, 'cards.own');
+		getParam(creditCard.minAmount, result, 'cards.minpay', null, replaceTagsAndSpaces, parseBalance);
+		
+		// баланс - Лимит
+		getParam(info.balance - limit, result, 'cards.clearBalance');
+		getParam(creditCard.totalDebt, result, 'cards.totalCreditDebtAmount', null, replaceTagsAndSpaces, parseBalance);
+		getParam(creditCard.unpaidGracePeriodDue, result, 'cards.gracepay', null, replaceTagsAndSpaces, parseBalance);
+		getParam(creditCard.longGraceDueDate, result, 'cards.gracepay_till', null, replaceTagsAndSpaces, parseDateISO);
+		//getParam(html, result, 'cards.gracePeriodOutstanding', /<gracePeriodOutstanding>([\s\S]*?)<\/gracePeriodOutstanding>/i, replaceTagsAndSpaces, parseBalance);
 	}
-*/
+
 	if (typeof processCardTransactions != 'undefined')
 		processCardTransactions(info, result);
 }

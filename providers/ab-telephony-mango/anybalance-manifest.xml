@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="3">ab-telephony-mango</id>
+	<id version="4">ab-telephony-mango</id>
 	<api flags="no_browser"/>
 	<name>Манго-Офис</name>
 	<description html="true"><![CDATA[

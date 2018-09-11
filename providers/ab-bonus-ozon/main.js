@@ -2,111 +2,103 @@
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 */
 
-var g_headers = [
-	['Host', 'www.ozon.ru'],
-	['Connection', 'keep-alive'],
-	['Pragma', 'no-cache'],
-	['Cache-Control', 'no-cache'],
-	['User-Agent', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.36'],
-	['Accept', 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8'],
-	['Accept-Encoding', 'gzip, deflate, sdch, br'],
-	['Accept-Language', 'ru,en-US;q=0.8,en;q=0.6'],
-	['Origin', 'https://www.ozon.ru'],
-	['Upgrade-Insecure-Requests', '1']
-];
+var g_headers = {
+	Connection: 'Keep-Alive',
+	Pragma: 'no-cache',
+	'Cache-Control': 'no-cache',
+	'User-Agent': 'ozonapp_android/3.2+442',
+};
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = "https://www.ozon.ru/";
-
-//    AnyBalance.setOptions({cookiePolicy: 'netscape'});
+	var baseurl = "https://api.ozon.ru/";
+	var baseurlPartner = "https://ows.ozon.ru/";
 
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 
-    var incapsule = Incapsule(baseurl + 'context/login/');
-	var html = AnyBalance.requestGet(baseurl + 'context/login/', g_headers);
-	if(incapsule.isIncapsulated(html)){
-		AnyBalance.trace('Инкапсула вмешалась на старте');
-	    html = incapsule.executeScript(html);
+	var html = AnyBalance.requestPost(baseurl + 'OAuth/v1/auth/token', {
+		grant_type:	'anonymous',
+		client_id:	'androidapp',
+		client_secret:	'MaiNNqA859bnMqw'
+	}, g_headers);
+	var json = getJson(html);
+
+	g_headers.Authorization = json.token_type + ' ' + json.access_token;
+
+	html = AnyBalance.requestGet(baseurl + 'user/v5/reg/check?login=' + encodeURIComponent(prefs.login), g_headers);
+	json = getJson(html);
+
+	if(json.status != 'found'){
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Логин не найден.', null, true);
 	}
 
-	function tryToLogin(html){
-		var form = getElement(html, /<form[^>]+name="form1"/i);
-		if (!form){
-			AnyBalance.trace(html);
-			throw new AnyBalance.Error('Не найдена форма входа. Сайт изменен?');
-		}
-		
-		var params = AB.createFormParams(form, function(params, str, name, value) {
-			if (name == 'Login') {
-				return prefs.login;
-			} else if (name == 'Password') {
-				return prefs.password;
-			} else if (name == 'LoginGroup') {
-				return 'HasAccountRadio';
-			}
-	    
-			return value;
-		});
-	    
-		html = AnyBalance.requestPost(baseurl + 'context/login/', params, addHeaders({Referer: baseurl + 'context/login/'}));
-		if(incapsule.isIncapsulated(html)){
-			AnyBalance.trace('Инкапсула вмешалась после логина');
-		    html = incapsule.executeScript(html);
-		}
-		return html;
-	}
+	html = AnyBalance.requestPost(baseurl + 'OAuth/v1/auth/token', {
+		grant_type:	'password',
+		client_id:	'androidapp',
+		client_secret:	'MaiNNqA859bnMqw',
+		userName:	prefs.login,
+		password:	prefs.password,
+	}, g_headers);
+	var json = getJson(html);
 
-	html = tryToLogin(html);
-
-
-    if(!/mWelcome/i.test(html) && /<form[^>]+name="form1"/i.test(html)){
-   		AnyBalance.trace('Снова форма авторизации... Заходим ещё разок');
-	  	html = tryToLogin(html); //Иногда может снова быть логин, если инкапсула не дала залогиниться
-	}
-
-	if (!/mWelcome/i.test(html)) {
-		var error = getParam(html, null, null, /<span[^>]+class="ErrorSpan"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
-		if (error)
-			throw new AnyBalance.Error(error, null, /парол/i.test(error));
-		
+	if(!json.access_token){
+		if(json.error === 'access_denied')
+			throw new AnyBalance.Error('Неправильный пароль', null, true);
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
-	
+
+	var access_token = json.access_token;
+	g_headers.Authorization = json.token_type + ' ' + access_token;
+
 	var result = {success: true};
 	
-	if (isAvailable(['balance', 'blocked', 'available'])) {
-		html = AnyBalance.requestGet(baseurl + 'context/myaccount/', g_headers);
+	if (isAvailable(['balance', 'blocked', 'available', 'bonus'])) {
+		html = AnyBalance.requestGet(baseurlPartner + 'PartnerService/ClientService/GetClientAccountEntryInformation/?' + createUrlEncodedParams({
+			login: 'androidapp',
+			password: 'MaiNNqA859bnMqw',
+			partnerClientId: access_token
+		}), g_headers);
+
+		json = getJson(html);
 		
-		getParam(html, result, 'balance', /Остаток средств на счете[\s\S]*?<span>([\s\S]*?)руб/i, replaceTagsAndSpaces, parseBalance);
-		getParam(html, result, 'blocked', /Заблокировано[\s\S]*?<span>([\s\S]*?)руб/i, replaceTagsAndSpaces, parseBalance);
-		getParam(html, result, 'available', /Доступные средства[\s\S]*?<span>([\s\S]*?)руб/i, replaceTagsAndSpaces, parseBalance);
-	}
-	
-	if (isAvailable('bonus')) {
-		html = AnyBalance.requestGet(baseurl + 'context/mypoints/', g_headers);
-		getParam(html, result, 'bonus', /"eOzonStatus_NumberPoints"[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseBalance);
+		getParam(json.ClientAccountEntryInformationForWeb.Current, result, 'balance');
+		getParam(json.ClientAccountEntryInformationForWeb.Blocked, result, 'blocked');
+		getParam(json.ClientAccountEntryInformationForWeb.Accessible, result, 'available');
+		getParam(json.ClientAccountEntryInformationForWeb.Score, result, 'bonus');
 	}
 	
 	var orders = 0;
 	if (isAvailable(['order_sum', 'weight', 'ticket', 'state'])) {
-		html = AnyBalance.requestGet(baseurl + '?context=orderlist&type=3', g_headers);
-		
-		getParam(html, result, 'order_sum', /К оплате([^>]*>){3}/i, replaceTagsAndSpaces, parseBalance);
-		getParam(html, result, 'weight', /class="Weight"([^>]*>){2}/i, replaceTagsAndSpaces, parseBalance);
-		getParam(html, result, 'ticket', /Отправление([^>]*>){2}/i, replaceTagsAndSpaces);
-		getParam(html, result, 'state', /<span[^>]+orderState[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
+		html = AnyBalance.requestGet(baseurlPartner + 'PartnerService/OrderService/OrdersGet/?' + createUrlEncodedParams({
+			login: 'androidapp',
+			password: 'MaiNNqA859bnMqw',
+			partnerClientId: access_token
+		}), g_headers);
+
+		json = getJson(html);
+
+		if(json.OrderDetails && json.OrderDetails.length){
+			var order = json.OrderDetails[0];
+
+			getParam(order.Summ, result, 'order_sum');
+			getParam(order.State, result, 'state');
+			getParam(order.Number, result, 'ticket');
+
+			if(AnyBalance.isAvailable('weight')){
+				html = AnyBalance.requestGet(baseurl + 'order/v1/order/' + encodeURIComponent(order.Number), g_headers);
+				json = getJson(html);
+
+				for(var i=0; i<json.postings.length; ++i){
+					sumParam(json.postings[i].weight, result, 'weight');
+				}
+			}
+		}
 	}
-	
-	html = AnyBalance.requestGet(baseurl + 'context/myclient/');
-	
-	getParam(html, result, '__tariff', /<div[^>]+class="big1"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+
+	result.__tariff = prefs.login;
 	
 	AnyBalance.setResult(result);
-}
-
-function getViewState(html) {
-	return getParam(html, null, null, /name="__VIEWSTATE"[^>]*value="([^"]*)/i) || getParam(html, null, null, /__VIEWSTATE\|([^\|]*)/i);
 }

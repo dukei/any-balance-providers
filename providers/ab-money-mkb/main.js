@@ -65,7 +65,7 @@ function shouldProcess(counter, info){
 		    if(!prefs.num)
 		    	return true;
 			
-			if(endsWith(info.__id, prefs.num))
+			if(endsWith(info.cardnum, prefs.num))
 				return true;
 		    
 			return false;
@@ -77,7 +77,7 @@ function shouldProcess(counter, info){
 		    if(!prefs.num)
 		    	return true;
 			
-			if(endsWith(info.__id, prefs.num))
+			if(endsWith(info.acc_num, prefs.num))
 				return true;
 			return false;
 		}
@@ -104,7 +104,7 @@ function shouldProcess(counter, info){
 		    if(!prefs.num)
 		    	return true;
 			
-			if(endsWith(info.__id, prefs.num))
+			if(endsWith(info.acc_num, prefs.num))
 				return true;
 			return false;
 		}

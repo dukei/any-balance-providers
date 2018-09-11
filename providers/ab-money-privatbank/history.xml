@@ -1,5 +1,20 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="19" date="2018-08-10">
+	Поддержка восстановления после блокировки
+	</change>
+	<change version="18" date="2018-08-10">
+	- Поддержка изменений на сайте.
+	</change>
+	<change version="17" date="2018-08-09">
+	- Улучшена обработка ошибок.
+	</change>
+	<change version="16" date="2018-07-05">
+	Исправление ошибки авторизации
+	</change>
+	<change version="15" date="2018-07-05">
+	Обновлена версия приложения
+	</change>
 	<change version="14" date="2017-01-13">
 	Поддержка подтверждения авторизации по звонку
 	</change>

@@ -27,12 +27,27 @@ function main() {
 		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
 	}
 
-	html = AnyBalance.requestPost(baseurl + 'member/login.html', {
-		login: prefs.login,
-		password: prefs.password,
-		'log_in': '1',
-		'submit': 'войти'
-	}, addHeaders({Referer: baseurl + 'member/login.html'}));
+	var form = getElements(html, [/<form/ig, /password/i])[0];
+	if(!form){
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удалось найти форму входа. Сайт изменен?');
+	}
+
+	var params = AB.createFormParams(form, function(params, str, name, value) {
+		if (name == 'login') {
+			return prefs.login;
+		} else if (name == 'password') {
+			return prefs.password;
+		} else if (name == 'captcha') {
+			var img = AnyBalance.requestGet(baseurl + 'captcha.php?mode=login', addHeaders({Referer: baseurl + 'member/login.html'}));
+			return AnyBalance.retrieveCode('Пожалуйста, введите цифры с картинки', img, { inputType: 'number' });
+		}
+
+		return value;
+	});
+	
+	
+	html = AnyBalance.requestPost(baseurl + 'member/login.html', params, addHeaders({Referer: baseurl + 'member/login.html'}));
 	
 	if (!/member\/\?log_out=1/i.test(html)) {
 		var error = AB.getParam(html, null, null, /MessageError[^>]*>([\s\S]*?)<\/div>/i, AB.replaceTagsAndSpaces);

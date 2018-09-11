@@ -86,9 +86,9 @@ function login() {
 		if (/<input[^>]+id\s*=\s*"smsCode"/i.test(html)) throw new AnyBalance.Error(
 			`У вас настроена двухфакторная авторизация с вводом SMS кода при входе в личный кабинет ${g_operatorName}. Для работы провайдера требуется запрос СМС кода для входа в ЛК отключить. Инструкцию по отключению см. в описании провайдера.`,
 			null, true);
-		var error = sumParam(html, null, null, /<(?:div|section)[^>]+class="[^"]*\berror\b[^>]*>([\s\S]*?)(?:<\/section>|<\/div>|<div)/gi, replaceTagsAndSpaces, null, aggregate_join) || '';
+		var error = getElements(html, /<(?:section|div)[^>]+class="[^"]*\berror\b/gi, [/Осталось:/ig, '', replaceTagsAndSpaces]).join('\n') || '';
 		if (error)
-            throw new AnyBalance.Error(error, null, /Неверный пароль|не найден/i.test(error));
+            throw new AnyBalance.Error(error, null, /парол|не найден/i.test(error));
 
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');

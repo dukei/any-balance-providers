@@ -29,7 +29,7 @@ function main() {
 		throw new AnyBalance.Error('Site is temporary unavailable! Try again later.');
 	}
 
-	var form = AB.getElement(html, /<form[^>]+loginForm[^>]*>/i);
+	var form = AB.getElement(html, /<form[^>]+authParam[^>]*>/i);
 	if(!form){
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Could not find login form. Is site changed?');
@@ -45,7 +45,7 @@ function main() {
 		return value;
 	});
 
-	var action = getParam(form, null, null, /<form[^>]+action="([^"]*)/i, replaceHtmlEntities);
+	var action = getParam(form, /<form[^>]+action="([^"]*)/i, replaceHtmlEntities);
 
 	html = AnyBalance.requestPost(action, params, AB.addHeaders({
 		Referer: baseurlLogin + 'signin'

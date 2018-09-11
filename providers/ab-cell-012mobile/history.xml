@@ -30,4 +30,7 @@
    	<change version="10" date="2017-05-25">
 	- Add used percentage of voice and text messages
 	</change>
+   	<change version="11" date="2018-06-26">
+	- Switch to HTTPS, do not fail completely in case data plans info API isn't available.
+	</change>
 </history>

@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="11">ab-money-sber-by</id>
+	<id version="15">ab-money-sber-by</id>
 	<name>БПС Сбербанк (Беларусь)</name>
 	<description html="true"><![CDATA[
 	<p>Получает текущий остаток и другие параметры продуктов БПС-Сбербанка http://www.bps-sberbank.by/, используя интернет-банк (https://i.bps-sberbank.by/).</p>
@@ -23,6 +23,7 @@
 	</files>
 	<counters>
 		<counter id="balance" name="Остаток" units=" {@currency}"/>
+		<counter id="accbalance" name="Остаток на счете" units=" {@currency}"/>
 		<counter id="cardnum" name="Номер продукта" type="text"/>
 		<counter id="balance1" name="Остаток 2" units=" {@currency1}"/>
 		<counter id="cardnum1" name="Номер продукта 2" type="text"/>

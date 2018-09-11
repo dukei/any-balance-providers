@@ -7,28 +7,39 @@ var g_headers = {
 	'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
 	'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
 	'Connection':'keep-alive',
-	//'User-Agent':'Mozilla/5.0 (BlackBerry; U; BlackBerry 9900; en-US) AppleWebKit/534.11+ (KHTML, like Gecko) Version/7.0.0.187 Mobile Safari/534.11+',
 	'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.62 Safari/537.36',
 };
 
+function redirectIfNeeded(html){
+    var re = /<meta[^>]+http-equiv="refresh"[^>]+content="\d+;\s+url=([^"]*)/i;
+	do{
+		var url = getParam(html, re, replaceHtmlEntities);
+		if(url){
+			url = joinUrl(AnyBalance.getLastUrl(), url);
+			AnyBalance.trace("Redirecting to " + url);
+			html = AnyBalance.requestGet(url, addHeaders({Referer: AnyBalance.getLastUrl()}));
+		}
+	}while(re.test(html));
+	return html;
+}
+
 function main(){
     var prefs = AnyBalance.getPreferences();
-    var baseurl = 'http://www.infoshkola.net/';
-    AnyBalance.setDefaultCharset('utf-8'); 
-	AnyBalance.setOptions({forceCharset: 'windows-1251'});
+    var baseurl = 'http://infoshkola.net/';
 	
     var html = AnyBalance.requestGet(baseurl, g_headers);
-	
-	html = AnyBalance.requestPost(baseurl + 'login', {
+
+    html = AnyBalance.requestPost(baseurl + 'custom/auth', {
         login:prefs.login,
-        pass:prefs.password,
-        remember:1
-    }, addHeaders({Referer: baseurl + 'login'}));
+        password:prefs.password,
+    }, addHeaders({Referer: baseurl}));
+
+    html = redirectIfNeeded(html);
 	
-    if(!/\/Logout/i.test(html)){
-        var error = getParam(html, /<h2[^>]*>[\s\S]*?<\/p>/i, replaceTagsAndSpaces);
+    if(!/quit/i.test(html)){
+        var error = getElement(html, /<div[^>]+align="center"/i, replaceTagsAndSpaces);
         if(error)
-            throw new AnyBalance.Error(error, null, /парол/i.test(error));
+            throw new AnyBalance.Error(error, null, /не\s*верные/i.test(error));
 		
 		AnyBalance.trace(html);
         throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
@@ -36,22 +47,13 @@ function main(){
 	
 	AnyBalance.setOptions({forceCharset: 'utf-8'});
 	
-	var type = 'sdpupil';
-	if(/sdpupil_pg/i.test(html)) {
-		AnyBalance.trace('Тип кабинета: sdpupil_pg');
-		type = 'sdpupil_pg';
-	}
-	
-	html = AnyBalance.requestGet(baseurl + type + '/include/auth.php', g_headers);
-	html = AnyBalance.requestGet(baseurl + type + '/index.php?page=personal', g_headers);
-	
     var result = {success: true};
 	
     getParam(html, result, 'balance', /Остаток на счете:([\s\S]*?)руб/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'acc_type', /Тип счета:(?:[\s\S]*?<[^>]*>)([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'dogovor', /Договор:(?:[\s\S]*?<[^>]*>)([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'fio', /Абонент:(?:[\s\S]*?<[^>]*>)([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, '__tariff', />\s*Тариф:([\s\S]*?)<\/span/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'acc_type', /Тип счета:(?:[\s\S]*?<[^>]*>)([\s\S]*?)<\//i, replaceTagsAndSpaces);
+	getParam(html, result, 'dogovor', /Договор:([\s\S]*?)(?:<a|<\/p>)/i, replaceTagsAndSpaces);
+	getParam(html, result, 'fio', /Абонент:(?:[\s\S]*?<[^>]*>)([\s\S]*?)<\//i, replaceTagsAndSpaces);
+    getParam(html, result, '__tariff', />\s*Тариф:([\s\S]*?)<\/span/i, replaceTagsAndSpaces);
 	
     AnyBalance.setResult(result);
 }

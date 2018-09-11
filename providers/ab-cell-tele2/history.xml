@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="47" date="2018-07-23">
+	- Улучшена обработка ошибок.
+	</change>
 	<change version="46" date="2017-11-29">
 	Поддержка изменений в личном кабинете (восстановление получения остатков)
 	</change>

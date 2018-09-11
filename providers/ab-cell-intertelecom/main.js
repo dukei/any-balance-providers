@@ -66,6 +66,7 @@ function main() {
     sumParam(html, result, 'bonus_pr', /<td[^>]*>\s*Бонус Debtors \(без АП\)[^>]*\s*<\/td>\s*<td[^>]*>([\s\S]*?) \([^<]*\)\s*<\/td>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
     sumParam(html, result, 'bonus_pr', /<td[^>]*>\s*Бесплатная смена пакета \(шт\.\)[^>]*\s*<\/td>\s*<td[^>]*>([\s\S]*?) \([^<]*\)\s*<\/td>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
     sumParam(html, result, 'bonus_pr', /<td[^>]*>\s*Бонус за пополнение[^>]*\s*<\/td>\s*<td[^>]*>([\s\S]*?) \([^<]*\)\s*<\/td>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+    sumParam(html, result, 'bonus_pr', /<td[^>]*>\s*Бонус на все услуги[^>]*\s*<\/td>\s*<td[^>]*>([\s\S]*?) \([^<]*\)\s*<\/td>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
     //СМС по Украине
     sumParam(html, result, 'sms_ukr', />\s*сеть ИТ\+CDMA\+GSM операторов\s*<[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
     //Срок действия СМС по Украине
@@ -85,6 +86,7 @@ function main() {
     sumParam(html, result, 'date_bonus_pr', /<td[^>]*>\s*Лояльный Бонус[^>]*\s*<\/td>\s*<td[^>]*>\s*.* \(по ([^<]*)\)\s*<\/td>/ig, replaceTagsAndSpaces, parseDate, aggregate_min);
     sumParam(html, result, 'date_bonus_pr', /<td[^>]*>\s*Бесплатная смена пакета \(шт\.\)[^>]*\s*<\/td>\s*<td[^>]*>\s*.* \(по ([^<]*)\)\s*<\/td>/ig, replaceTagsAndSpaces, parseDate, aggregate_min);
     sumParam(html, result, 'date_bonus_pr', /<td[^>]*>\s*Бонус за пополнение[^>]*\s*<\/td>\s*<td[^>]*>\s*.* \(по ([^<]*)\)\s*<\/td>/ig, replaceTagsAndSpaces, parseDate, aggregate_min);
+    sumParam(html, result, 'date_bonus_pr', /<td[^>]*>\s*Бонус на все услуги[^>]*\s*<\/td>\s*<td[^>]*>\s*.* \(по ([^<]*)\)\s*<\/td>/ig, replaceTagsAndSpaces, parseDate, aggregate_min);
     //Дата минуты
     sumParam(html, result, 'date_min_uk_mob_uk', /<td[^>]*>[\s\S]*?Украина\+Моб\.Украина[^<]*<\/td>\s*<td[^>]*>[\s\S]*? по ([^<]*)</ig, replaceTagsAndSpaces, parseDate, aggregate_min);
     sumParam(html, result, 'date_min_uk_mob_uk', /<td>[^<]*Вся\s*Украина\s*\[Подарок\][^<]*<\/td>\s*<td[^>]*>[\s\S]*? по ([^<]*)/ig, replaceTagsAndSpaces, parseDate, aggregate_min);

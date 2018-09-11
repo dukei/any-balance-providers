@@ -47,7 +47,7 @@ function main() {
 		throw new AnyBalance.Error("Сервер вернул ошибочные данные: " + ex.message);
 	}
 
-	var result = {success: false};
+	var result = {success: true};
 
 	if (user.data.cardShortInfo) {
 		if(AnyBalance.isAvailable('__tariff')) {
@@ -56,7 +56,6 @@ function main() {
 		if(AnyBalance.isAvailable('card_bonus')) {
 			result['card_bonus'] = parseFloat(user.data.cardShortInfo.balance);
 		}
-		result['success'] = true;
 		AnyBalance.setResult(result);
 	} else {
 		throw new AnyBalance.Error('Не удалось получить информацию о бонусах.');

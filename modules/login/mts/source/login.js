@@ -97,7 +97,7 @@ function enterMtsLK(options) {
     	AnyBalance.trace('Предлагает автоматически залогиниться на ' + loggedInNum);
     	var form = getElement(html, /<form[^>]+name="Login"/i);
     	var submit;
-    	if(options.login != loggedInNum){
+    	if(!loggedInNum || !endsWith(loggedInNum, options.login)){
     		AnyBalance.trace('А нам нужен номер ' + options.login + '. Отказываемся...');
     		submit = 'Ignore';
     	}else{

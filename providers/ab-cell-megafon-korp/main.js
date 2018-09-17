@@ -103,6 +103,8 @@ function main() {
         throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
     }
 
+    var urlEnter = json.redirect || json.targetUrl;
+
     var tries = 1, maxTries = 10;
     do{
 	    var ok = AnyBalance.requestGet(baseurl + 'b2b/isUserDataCached', addHeaders({
@@ -132,7 +134,8 @@ function main() {
 	    AnyBalance.sleep(2000);
     }while(true);
 
-    html = AnyBalance.requestGet(joinUrl(baseurl, json.redirect), addHeaders({
+    AnyBalance.trace("Теперь переходим по " + urlEnter);
+    html = AnyBalance.requestGet(joinUrl(baseurl, urlEnter), addHeaders({
     	Accept: 'text/html',
     	Referer: baseurl + 'b2b/login',
     }));

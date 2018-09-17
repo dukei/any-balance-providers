@@ -83,6 +83,7 @@ function main() {
   // Минуты
   sumParam(html, result, 'min_left_other', /Звонки (?:на|во|в) (?:все|другие) сети(?:[^>]+>){2}([^<]+)/ig, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
   sumParam(html, result, 'min_left', /Звонки внутри сети(?:[^>]+>){2}([^<]+)/ig, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
+  sumParam(html, result, 'min_left_other', /Звонки для группы(?:[^>]+>){2}([^<]+)/ig, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
   // Трафик
   sumParam(html, result, 'traffic_night_left', />\s*Ночной интернет(?:[^>]+>){2}([^<]+(?:МБ|Гб|Кб|Байт))/ig, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
   sumParam(html, result, 'traffic_left', />(?:Безлимитный)?\s*интернет(?:[^>]+>){2}([^<]+(?:МБ|Гб|Кб|Байт))/ig, replaceTagsAndSpaces, parseTraffic, aggregate_sum);

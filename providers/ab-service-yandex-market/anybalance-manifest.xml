@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="5">ab-service-yandex-market</id>
+	<id version="6">ab-service-yandex-market</id>
 	<api flags="no_browser"/>
 	<name>Яндекс Маркет</name>
 	<description html="true"><![CDATA[
@@ -10,10 +10,12 @@
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<counters>
 		<counter id="balance" name="Средняя цена" units=" {@currency}"/>
 		<counter id="min_price" name="Минимальная цена" units=" {@currency}"/>

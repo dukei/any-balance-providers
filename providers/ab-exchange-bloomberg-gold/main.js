@@ -39,9 +39,11 @@ function main() {
         },
         __contract: {
             re: /contract/i,
+            result_func: null
         },
         __contract_time: {
             re: /time/i,
+            result_func: null
         },
     };
 

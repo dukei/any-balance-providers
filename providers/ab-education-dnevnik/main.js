@@ -47,21 +47,21 @@ function main() {
 	
 	if(prefs.id) {
 		AnyBalance.trace('Ищем дневник ребенка с идентификатором ' + prefs.id);
-		html = AnyBalance.requestGet(baseurlChildren + '/marks.aspx?child=' + prefs.id, g_headers);
+		html = AnyBalance.requestGet(baseurlChildren + '/marks.aspx?child=' + prefs.id, addHeaders({Referer: baseurlChildren + '/'}));
 	} else {
         AnyBalance.trace('Идентификатор ребенка не указан, ищем без него');
 
-        html = AnyBalance.requestGet(baseurlChildren, g_headers);
+        html = AnyBalance.requestGet(baseurlChildren, addHeaders({Referer: baseurlChildren + '/'}));
         if (!html || AnyBalance.getLastStatusCode() >= 400) {
             // в каких-то случаях children.dnevnik.ru закрыт (403), смотрим schools.dnevnik.ru
-            html = AnyBalance.requestGet(baseurlSchool + '/marks.aspx', g_headers);
+            html = AnyBalance.requestGet(baseurlSchool + '/marks.aspx', addHeaders({Referer: baseurlChildren + '/'}));
         } else {
             var href = AB.getParam(html, null, null, /<a\s[^>]*\bhref="(https?:\/\/children\.dnevnik\.ru\/marks\.aspx\?[^'"\s#>]*?child=[^'"\s#>]+)/i);
             if (!href) {
                 href = baseurlChildren + '/marks.aspx';
             }
             AnyBalance.trace(href);
-            html = AnyBalance.requestGet(href, g_headers);
+            html = AnyBalance.requestGet(href, addHeaders({Referer: baseurlChildren + '/'}));
         }
     }
 

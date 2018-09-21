@@ -361,7 +361,8 @@ function fetchAccountStatus(html, result) {
 }
 
 function isLoggedIn(html) {
-    return getParam(html, null, null, /(<meta[^>]*name="lkMonitorCheck")/i);
+    return getParam(html, /(<meta[^>]*name="lkMonitorCheck")/i)
+       || /api\/Login\/Logout/i.test(html);
 }
 
 function getLKJson(html, allowExceptions) {

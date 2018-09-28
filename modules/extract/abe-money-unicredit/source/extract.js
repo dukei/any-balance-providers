@@ -4,10 +4,11 @@
 
 var g_headers = {
 	'Accept': 			'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-	'Accept-Charset': 	'windows-1251,utf-8;q=0.7,*;q=0.3',
-	'Accept-Language': 	'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
+	'Accept-Language': 	'ru, en',
+	'Origin':			'https://enter.unicredit.ru',
 	'Connection': 		'keep-alive',
-	'User-Agent': 		'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.181 Safari/537.36'
+	'BSSHTTPRequest': 	'1',
+	'User-Agent': 		'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36',
 };
 
 var baseurl;
@@ -37,17 +38,23 @@ function login() {
 	}
 
 	if (!/exit/i.test(html)) {
-		html = AnyBalance.requestPost(baseurl, {
-			tic: 		0,
-			T:			'RT_2Auth.getLoginMap',
-		}, addHeaders({
-			BSSHTTPRequest: 1,
-			Referer: baseurl + 'T=RT_2Auth.BF'
-		}));
+		var mapId 		  = getParam(html, /<input[^>]*id="MapID"[^>]*value="([^"]*)"/i, replaceHtmlEntities);
+		var map 		  = getParam(html, /<input[^>]*id="Map"[^>]*value="([^"]*)"/i, replaceHtmlEntities);
+
+		if(!mapId || !map){
+			html = AnyBalance.requestPost(baseurl, {
+				tic: 		0,
+				T:			'RT_2Auth.getLoginMap',
+			}, addHeaders({
+				BSSHTTPRequest: 1,
+				Referer: baseurl + 'T=RT_2Auth.BF'
+			}));
+
+			mapId 		  = getElement(html, /<i[^>]*N="MapID"/i, replaceTagsAndSpaces);
+			map 		  = getElement(html, /<i[^>]*N="Map"/i, replaceTagsAndSpaces);
+		}
 
 
-		var mapId 		  = getElement(html, /<i[^>]*N="MapID"/i, replaceTagsAndSpaces);
-		var map 		  = getElement(html, /<i[^>]*N="Map"/i, replaceTagsAndSpaces);
 		var encryptedPass = encryptPass(prefs.password, map);
 
 
@@ -61,7 +68,7 @@ function login() {
 			C:			'',
 			MapID:		mapId || '',
 			BROWSER:	'Chrome',
-			BROWSERVER: '66.0.3359.181'
+			BROWSERVER: '69.0.3497.100'
 		}, addHeaders({
 			Referer: baseurl + 'T=RT_2Auth.BF'
 		}));
@@ -87,7 +94,7 @@ function login() {
 				C:			code,
 				MapID:		mapId || '',
 				BROWSER:	'Chrome',
-				BROWSERVER: '66.0.3359.181'
+				BROWSERVER: '69.0.3497.100'
 			}, addHeaders({
 				Referer: baseurl + 'T=RT_2Auth.BF'
 			}));

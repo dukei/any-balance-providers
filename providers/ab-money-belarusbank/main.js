@@ -178,7 +178,7 @@ function fetchCard(baseurl, html){
     	//Надо заново получить всё.
     	var cardId = getParam(info.card, /<td[^>]+class="tdId"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
     	var form = getParam(html, /<form[^>]+id="[^"]*:ClientCardsDataForm"[^>]*>[\s\S]*?<\/form>/i);
-    	var action = getParam(form, /<form[^>]+action="([^"]*)/i, replaceHtmlEntities);
+    	var action = getParam(form, /<form[^>]+action="([^"#]*)/i, replaceHtmlEntities);
 		var params = createFormParams(form, function(params, str, name, value) {
 			if (/acctIdSelField/i.test(name) || name == 'accountNumber') 
 				return info.accnum;

@@ -54,7 +54,7 @@ function main() {
   };
 
   getParam(json.userData.tariffName, result, '__tariff');
-  getParam(json.userData.infoTable.MSISDN, result, 'phone');
+  getParam(json.userData.MSISDN, result, 'phone');
 
   if(AnyBalance.isAvailable('fio')){
   	json = callApi('extend.account/getAccountData', {"chainName":"LH_Active_TP","language":"rus"});

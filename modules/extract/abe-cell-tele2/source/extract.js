@@ -10,7 +10,7 @@ var g_headers = {
 	'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/48.0.2564.116 Safari/537.36'
 };
 
-var baseurl = "https://my.tele2.ru/";
+var baseurl = "https://tele2.ru/";
 var baseurlLogin = 'https://login.tele2.ru/ssotele2/';
 var baseurlLoginIndex, baseurlLoginPost;
 var g_operatorName = 'Теле2';
@@ -48,7 +48,7 @@ function login() {
 
 	var html = AnyBalance.requestGet(baseurl + 'login', g_headers);
 
-	if (!/\w+\/logout/i.test(html)) {
+	if (!/\w+\/"number":"\d+"/i.test(html)) {
         if(!prefs.password){
             html = enterBySms();
         }else {
@@ -103,23 +103,6 @@ function login() {
     __setLoginSuccessful();
 	
 	return html;
-}
-
-/**
- * Входит в старый кабинет
- * (если уже осуществлен вход в новый)
- */
-function reenterOld(html){
-    var baseurl = "https://old.my.tele2.ru/";
-
-    html = AnyBalance.requestGet(baseurl, g_headers);
-    if(/<form[^>]+id="sso-modal-login-form"/i.test(html)){
-        //Надо нажать на кнопку "войти"
-        var token = getParam(html, null, null, /<input[^>]+name="csrfTokBY"[^>]*value="([^"]*)/i, replaceHtmlEntities);
-        html = AnyBalance.requestGet(baseurl + 'public/login_sso?csrfTokBY=' + token, addHeaders({Referer: baseurl}));
-    }
-
-    return html;
 }
 
 function enterBySms(){
@@ -208,38 +191,68 @@ function enterBySms(){
     return html;
 }
 
+function getSubscriberId() {
+	var prefs = AnyBalance.getPreferences();
+    var subsid = '7' + replaceAll(prefs.login, [/\D/g, '', /.*(\d{10})$/, '$1']);
+    return subsid;
+}
+
 function processBalance(html, result){
     if(!AnyBalance.isAvailable('balance', 'tariff'))
         return;
+
+    var subsid = getSubscriberId();
 
     AnyBalance.trace('Получаем баланс');
 
     var maxTries = 3;
 
-    for(var i = 0; i < maxTries; i++) {
-        try {
-            AnyBalance.trace('Пытаемся получить баланс, попытка: ' + (i+1));
-            html = AnyBalance.requestGet(baseurl + 'main/tariffAndBalance?_' + (+new Date()), addHeaders({
-            	Accept: '*/*',
-            	'X-Requested-With': 'XMLHttpRequest',
-            	Referer: baseurl
-            }));
-
-            var json = getJson(html);
-
-            // Иногда приходит пустой тариф
-            if(json.currentTariffPlan.name)
-                getParam(json.currentTariffPlan.name, result, 'tariff');
-
-            getParam(json.balance.amount, result, 'balance', null, null, parseBalance);
-
-            AnyBalance.trace('Успешно получили баланс');
-            break;
-        }
-        catch(e) {
-            AnyBalance.trace('Не удалось получить баланс, пробуем еще раз...');
+    if(AnyBalance.isAvailable('balance')){
+        for(var i = 0; i < maxTries; i++) {
+            try {
+                AnyBalance.trace('Пытаемся получить баланс, попытка: ' + (i+1));
+                html = AnyBalance.requestGet(baseurl + 'api/subscribers/' + subsid + '/balance', addHeaders({
+                	Accept: '*/*',
+                	'X-Requested-With': 'XMLHttpRequest',
+                	Referer: baseurl
+                }));
+        
+                var json = getJson(html);
+        
+                getParam(json.data.value, result, 'balance');
+        
+                AnyBalance.trace('Успешно получили баланс');
+                break;
+            }
+            catch(e) {
+                AnyBalance.trace('Не удалось получить баланс, пробуем еще раз...');
+            }
         }
     }
+
+    if(AnyBalance.isAvailable('tariff')){
+        for(var i = 0; i < maxTries; i++) {
+            try {
+                AnyBalance.trace('Пытаемся получить тариф, попытка: ' + (i+1));
+                html = AnyBalance.requestGet(baseurl + 'api/subscribers/' + subsid + '/tariff', addHeaders({
+                	Accept: '*/*',
+                	'X-Requested-With': 'XMLHttpRequest',
+                	Referer: baseurl
+                }));
+        
+                var json = getJson(html);
+        
+                getParam(json.data.frontName, result, 'tariff');
+        
+                AnyBalance.trace('Успешно получили тариф');
+                break;
+            }
+            catch(e) {
+                AnyBalance.trace('Не удалось получить тариф, пробуем еще раз...');
+            }
+        }
+    }
+
 }
 
 function processRemainders(html, result){
@@ -247,13 +260,20 @@ function processRemainders(html, result){
         return;
 
     AnyBalance.trace('Получаем остатки услуг');
+    var siteId = getParam(html, /"siteId":"([^"]*)/i);
+    if(!siteId){
+    	AnyBalance.trace(html);
+    	throw new AnyBalance.Error('Не удалось определить регион. Сайт изменен?');
+    } 
 
     try {
         if(!result.remainders)
             result.remainders = {};
 
+        var subsid = getSubscriberId();
+
         AnyBalance.trace("Searching for resources left");
-        html = AnyBalance.requestGet(baseurl + "main/discounts?_" + (+new Date()), addHeaders({
+        html = AnyBalance.requestGet(baseurl + "api/subscribers/" + subsid + '/' + siteId + '/rests', addHeaders({
         	Accept: '*/*',
         	'X-Requested-With': 'XMLHttpRequest',
         	Referer: baseurl
@@ -261,55 +281,43 @@ function processRemainders(html, result){
 
         AnyBalance.trace('Got discounts: ' + html);
         json = JSON.parse(html);
-        var arr = [json.discountsIncluded, json.discountsNotIncluded/** не ясно, для чего это включено */, json.discountsRollover];
-        for (var k = 0; k < arr.length; ++k) {
-            var discounts = arr[k];
-            for (var i = 0; discounts && i < discounts.length; ++i) {
-                var discount = discounts[i];
-                if (isArray(discount)) {
-                    for (var j = 0; j < discount.length; ++j) {
-                        getDiscount(result.remainders, discount[j]);
-                    }
-                } else {
-                    getDiscount(result.remainders, discount);
-                }
-            }
+        for (var i = 0; i<json.data.rests.length; ++i) {
+            var discount = json.data.rests[i];
+            getDiscount(result.remainders, discount);
         }
+        
     } catch(e) {
         AnyBalance.trace("Не удалось получить данные об остатках пакетов и услуг, попробуйте позже " + e);
     }
 }
 
 function getDiscount(result, discount) {
-    var name = discount.name;
-    var units = discount.limitMeasureCode;
+    var name = discount.service.name;
+    var units = discount.uom;
     AnyBalance.trace('Найден дискаунт: ' + name + ' (' + units + ')');
+
+    if(discount.limit === 0)
+    	return; //Empty discount
+
+	getParam(discount.endDay, result, 'remainders.endDate', null, null, parseDateISO);
 	
-	getParam(discount.endDateString, result, 'remainders.endDate', null, null, parseDateWordSilent);
-	
-    if (/мин/i.test(units)) {
+    if (/min/i.test(units)) {
         //Минуты
-        sumParam(Math.round(discount.rest.value*100)/100, result, 'remainders.min_left', null, null, null, aggregate_sum);
-        sumParam(Math.round((discount.limit.value - discount.rest.value)*100/100), result, 'remainders.min_used', null, null, null, aggregate_sum);
-        sumParam(discount.endDate || undefined, result, 'remainders.min_till', null, null, null, aggregate_min);
+        sumParam(Math.round(discount.remain*100)/100, result, 'remainders.min_left', null, null, null, aggregate_sum);
+        sumParam(Math.round((discount.limit - discount.remain)*100/100), result, 'remainders.min_used', null, null, null, aggregate_sum);
+        sumParam(discount.endDay || undefined, result, 'remainders.min_till', null, null, parseDateISO, aggregate_min);
     } else if (/[кмгkmg][bб]/i.test(units)) {
         //трафик
-        var left = parseTraffic(discount.rest.value + discount.rest.measure);
-        var total = parseTraffic(discount.limit.value + discount.limit.measure);
+        var left = parseTraffic(discount.remain + discount.uom);
+        var total = parseTraffic(discount.limit + discount.uom);
         sumParam(left, result, 'remainders.traffic_left', null, null, null, aggregate_sum);
         sumParam(total - left, result, 'remainders.traffic_used', null, null, null, aggregate_sum);
-        sumParam(discount.endDate || undefined, result, 'remainders.traffic_till', null, null, null, aggregate_min);
-    } else if (/шт|SMS|MMS/i.test(units)) {
+        sumParam(discount.endDate || undefined, result, 'remainders.traffic_till', null, null, parseDateISO, aggregate_min);
+    } else if (/pcs/i.test(units)) {
         //СМС/ММС
-        if (/ммс|mms/i.test(name)) {
-            sumParam(discount.rest.value, result, 'remainders.mms_left', null, null, null, aggregate_sum);
-            sumParam(discount.limit.value - discount.rest.value, result, 'remainders.mms_used', null, null, null, aggregate_sum);
-        	sumParam(discount.endDate || undefined, result, 'remainders.mms_till', null, null, null, aggregate_min);
-        } else {
-            sumParam(discount.rest.value, result, 'remainders.sms_left', null, null, null, aggregate_sum);
-            sumParam(discount.limit.value - discount.rest.value, result, 'remainders.sms_used', null, null, null, aggregate_sum);
-        	sumParam(discount.endDate || undefined, result, 'remainders.sms_till', null, null, null, aggregate_min);
-        }
+        sumParam(discount.remain, result, 'remainders.sms_left', null, null, null, aggregate_sum);
+        sumParam(discount.limit - discount.remain, result, 'remainders.sms_used', null, null, null, aggregate_sum);
+        sumParam(discount.endDate || undefined, result, 'remainders.sms_till', null, null, parseDateISO, aggregate_min);
     } else {
         AnyBalance.trace("Неизвестный дискаунт: " + JSON.stringify(discount));
     }
@@ -320,48 +328,34 @@ function processPayments(html, result){
         return;
 
     AnyBalance.trace("Searching for payments");
+
+    var subsid = getSubscriberId();
 	
 	try {
-		html = AnyBalance.requestGet(baseurl + "payments/history?filter=LAST_10");
+		html = AnyBalance.requestGet(baseurl + "api/subscribers/" + subsid + "/payments?fromDate=" 
+		    + getFormattedDate({format: 'YYYY-MM-DD', offsetMonth:6}) + "T00%3A00%3A00%2B03%3A00&toDate="
+		    + getFormattedDate({format: 'YYYY-MM-DD'}) + "T23%3A59%3A59%2B03%3A00", g_headers);
 		
-		var json = getParam(html, null, null, /JS_DATA\s*=\s*JSON.parse\s*\(('(?:[^\\']+|\\.)*')/, null, function(str) {
-			return getJson(safeEval("return " + str))
-		});
+		var json = getJson(html);
 	} catch (e) {}
 	
-	if(!json || !json.payments) {
+	if(!json || !json.data) {
 		AnyBalance.trace(html);
-		AnyBalance.trace('Не удолось получить последние платежи, может их просто нет?');
+		AnyBalance.trace('Не удалось получить последние платежи, может их просто нет?');
 		return;
 	}
 	
 	AnyBalance.trace('History json: ' + JSON.stringify(json));
     result.payments = [];
 	
-    for (var i = 0; i < json.payments.length; ++i) {
-        var pmnt = json.payments[i];
+    for (var i = 0; i < json.data.length; ++i) {
+        var pmnt = json.data[i];
         var p = {};
 
-        getParam(pmnt.amount, p, 'payments.sum', null, null, parseBalanceSilent);
+        getParam(pmnt.sum.amount, p, 'payments.sum', null, null, parseBalanceSilent);
 		getParam(pmnt.type, p, 'payments.descr');
 		
-        getParam(pmnt.date, p, 'payments.date', null, null, function (str) {
-			// Вчера в 17:09
-			if(/Вчера/i.test(str))
-				return parseDate(str.replace(/Вчера(?:\s+в)?/i, getFormattedDate({offsetDay: 1})));
-			// Сегодня в 11:00
-			if(/Сегодня/i.test(str))
-				return parseDate(str.replace(/Сегодня(?:\s+в)?/i, getFormattedDate({offsetDay: 0})));
-			//37 мин. назад
-			if(/назад/i.test(str)){
-				var time = new Date().getTime() - parseMinutes(str)*1000;
-				AnyBalance.trace('Parsed ' + new Date(time).getTime() + ' from ' + str);
-				return time;
-			}
-			
-			var match = /^(\d+\s+[а-яa-z]+(?:\s+\d+)?)/i.exec(str) || [];
-			return parseDateWord(match[1]);
-		});
+        getParam(pmnt.payDate, p, 'payments.date', null, null, parseDateISO);
 
         result.payments.push(p);
     }
@@ -371,17 +365,19 @@ function processInfo(html, result){
     if(!AnyBalance.isAvailable('info'))
         return;
 
+    var subsid = getSubscriberId();
+
     var info = result.info = {};
 
-    getParam(html, info, "info.fio", /<div[^>]+class="user-name"[^>]*>([\s\S]*?)(?:<\/div>|<a)/i, replaceTagsAndSpaces, capitalFirstLetters);
-    getParam(html, info, "info.mphone", /<div[^>]+class="user-phone"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+    html = AnyBalance.requestGet(baseurl + "api/subscribers/" + subsid + '/profile', addHeaders({
+    	Accept: '*/*',
+    	'X-Requested-With': 'XMLHttpRequest',
+    	Referer: baseurl
+    }));
 
-    if(AnyBalance.isAvailable("info.email", "info.address")){
-        html = AnyBalance.requestGet(baseurl + 'account');
-
-        getParam(html, info, "info.phone_model", /Модель телефона:([\s\S]*?)<\/p>/i, replaceTagsAndSpaces);
-        getParam(html, info, "info.address", /<div[^>]+id="js-view-element-address-view"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
-        getParam(html, info, "info.email", /<div[^>]+id="js-view-element-email-view"[^>]*>([\s\S]*?)<\/div>/i, [/unknown@email.com/i, '', replaceTagsAndSpaces]);
-
-    }
+    var json = getJson(html);
+    getParam(json.data.fullName, info, "info.fio", /<div[^>]+class="user-name"[^>]*>([\s\S]*?)(?:<\/div>|<a)/i, replaceTagsAndSpaces, capitalFirstLetters);
+    getParam(subsid, info, "info.mphone");
+    getParam(json.data.address.city + ' ' + json.data.address.street + ' ' + json.data.address.house, info, "info.address");
+    getParam(json.data.email || undefined, info, "info.email");
 }

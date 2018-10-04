@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="48" date="2018-10-04">
+	- Поддержка нового ЛК
+	</change>
 	<change version="47" date="2018-07-23">
 	- Улучшена обработка ошибок.
 	</change>

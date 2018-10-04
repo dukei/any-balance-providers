@@ -105,7 +105,7 @@ function main() {
 
     var urlEnter = json.redirect || json.targetUrl;
 
-    var tries = 1, maxTries = 10;
+    var tries = 1, maxTries = 25;
     do{
 	    var ok = AnyBalance.requestGet(baseurl + 'b2b/isUserDataCached', addHeaders({
     		Referer: baseurl + 'b2b/login',
@@ -152,25 +152,37 @@ function main() {
 
     html = AnyBalance.requestGet(baseurl + 'b2b/subscriber/mobile', g_headers);
 
-    html = AnyBalance.requestGet(baseurl + 'b2b/subscriber/mobile/list?from=0&size=' + 128 + '&_=' + (+new Date()), addHeaders({'X-Requested-With':'XMLHttpRequest', Referer: baseurl + 'b2b/subscriber/mobile'}));
 
     try {
-        var json = getJson(html);
-
+    	var pageCount = 128;
+    	var totalCount = pageCount;
         var account;
-        for(var i = 0; i < json.mobile.length; i++) {
-            var curr = json.mobile[i];
-            if(!prefs.phone) {
-                account = curr;
-                AnyBalance.trace('Номер в настройках не задан, возьмем первый: ' + curr.msisdn);
-                break;
+        var phone = prefs.phone && prefs.phone.replace(/\D/g, '');
+
+    	for(var startIndex = 0; !account && startIndex<totalCount; startIndex += pageCount){
+    		html = AnyBalance.requestGet(baseurl + 'b2b/subscriber/mobile/list?from=' + startIndex 
+    		    + '&size=' + pageCount + '&_=' + (+new Date()),
+    		    addHeaders({'X-Requested-With':'XMLHttpRequest', Referer: baseurl + 'b2b/subscriber/mobile'}));
+
+            var json = getJson(html);
+            totalCount = json.count && json.count > 0 ? json.count : totalCount;
+    		AnyBalance.trace('Got ' + startIndex + ':' + (startIndex+pageCount) + ' of ' + totalCount + ' subscribers');
+            
+            for(var i = 0; i < json.mobile.length; i++) {
+                var curr = json.mobile[i];
+                if(!phone) {
+                    account = curr;
+                    AnyBalance.trace('Номер в настройках не задан, возьмем первый: ' + curr.msisdn);
+                    break;
+                }
+            
+                if(endsWith(curr.msisdn, phone)) {
+                    account = curr;
+                    AnyBalance.trace('Нашли нужный номер: ' + curr.msisdn);
+                    break;
+                }
             }
 
-            if(endsWith(curr.msisdn, prefs.phone)) {
-                account = curr;
-                AnyBalance.trace('Нашли нужный номер: ' + curr.msisdn);
-                break;
-            }
         }
 
         if(!account) {
@@ -264,7 +276,20 @@ function getDiscounts(baseurl, account, result){
                 sumParam(d.volume, result, 'sms_left', null, null, null, aggregate_sum);
             }else if(/[мгкmgk][бb]/i.test(d.measure)){
                 AnyBalance.trace('Это интернет');
-                sumParam(d.volume + d.measure, result, 'traffic_left', null, null, parseTraffic, aggregate_sum);
+                if(d.volume >= 99999999){
+                	AnyBalance.trace('Это безлимит, пропускаем');
+                	continue;
+                }
+                if(/Европа.+интернет/i.test(d.name))
+                	sumParam(d.volume + d.measure, result, 'traffic_left_europe', null, null, parseTraffic, aggregate_sum);
+                else if(/поп.+страны.+интернет/i.test(d.name))
+                	sumParam(d.volume + d.measure, result, 'traffic_left_pop_countries', null, null, parseTraffic, aggregate_sum);
+                else if(/Остальные страны/i.test(d.name))
+                	sumParam(d.volume + d.measure, result, 'traffic_left_other_countries', null, null, parseTraffic, aggregate_sum);
+                else if(/СНГ.+интернет/i.test(d.name))
+                	sumParam(d.volume + d.measure, result, 'traffic_left_sng', null, null, parseTraffic, aggregate_sum);
+                else 
+                	sumParam(d.volume + d.measure, result, 'traffic_left', null, null, parseTraffic, aggregate_sum);
             }else{
                 AnyBalance.trace('неизвестная скидка: ' + JSON.stringify(d));
             }
@@ -291,8 +316,8 @@ function getAccount(baseurl, accnum, result){
         
         for(var i=0; i<json.account.length; ++i){
         	acc = json.account[i];
-        	AnyBalance.trace('Найден лицевой счет ' + acc.contract);
-        	if(!accnum || acc.contract.endsWith(accnum)){
+        	AnyBalance.trace('Найден лицевой счет ' + acc.number + ', контракт ' + acc.contract);
+        	if(!accnum || acc.number.endsWith(accnum)){
         		getParam(acc.balance.value, result, 'balance');
 			    getParam(acc.subsCount, result, 'abonCount');
 			    break;

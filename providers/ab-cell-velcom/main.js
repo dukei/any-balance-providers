@@ -138,7 +138,7 @@ function main(){
 	
     var result = {success: true};
 
-    var sid = AnyBalance.getCookie('WASESSION');
+    var sid = getParam(html, /<input[^>]+name="sid3"[^>]*value="([^"]*)/i, replaceHtmlEntities);
     if(!sid){
 		if(AnyBalance.getLastStatusCode() >= 400){
 			var error = getParam(html, null, null, /<h1[^>]*>([\s\S]*?)<\/h1>/i, replaceTagsAndSpaces, html_entity_decode);

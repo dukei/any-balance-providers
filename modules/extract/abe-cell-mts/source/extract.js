@@ -237,6 +237,17 @@ function fetchAccountStatus(html, result) {
         //Территория МТС (3000 минут): Осталось 0 минут
         html = sumParam(html, result.remainders, 'remainders.min_left_mts', /Территория МТС.*?: Осталось\s*([\d\.,]+)\s*мин/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum, true);
         html = sumParam(html, result.remainders, 'remainders.min_left_mts', /Оста(?:ток|лось):?\s*([\d\.,]+)\s*мин\S*\s*(?:на\s*)?МТС/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum, true);
+
+        html = sumParam(html, result.remainders, 'remainders.min_left_mezh', /междугородные минуты[^<]*?:\s*([\d\.,]+)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum, true);
+        // <li>Остаток пакета "Пакет МГ минут в дом. регионе":13мин МГ</li>
+        html = sumParam(html, result.remainders, 'remainders.min_left_mezh', /Пакет МГ[^<]*?([\d\.,]+?)\s*мин/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum, true);
+        // <li>Остаток пакета "Пакет МГ минут в дом. регионе":13мин МГ</li>
+        html = sumParam(html, result.remainders, 'remainders.min_left_mezh', /М2М[^<]*?([\d\.,]+?)\s*мин/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum, true);
+        // Остаток минут в международном роуминге
+        html = sumParam(html, result.remainders, 'remainders.min_left_mezh', /Остаток: (\d+) мин в МНР/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum, true);
+        
+
+
         //Срочный контракт (15%, 25% как 15%): Осталось 0 минут
         html = sumParam(html, result.remainders, 'remainders.min_left', /Срочный контракт.*?: Осталось\s*([\d\.,]+)\s*мин/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum, true);
         // Пакет минут
@@ -281,12 +292,6 @@ function fetchAccountStatus(html, result) {
         html = sumParam(html, result.remainders, 'remainders.min_left', /пакет местных минут[^<]*?:\s*([\d\.,]+)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum, true);
         html = sumParam(html, result.remainders, 'remainders.min_left', /Остаток\s+"[^<]*?([\d\.,]+)\s*мин/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum, true);
 
-        html = sumParam(html, result.remainders, 'remainders.min_left_mezh', /междугородные минуты[^<]*?:\s*([\d\.,]+)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum, true);
-        // <li>Остаток пакета "Пакет МГ минут в дом. регионе":13мин МГ</li>
-        html = sumParam(html, result.remainders, 'remainders.min_left_mezh', /Пакет МГ[^<]*?([\d\.,]+?)\s*мин/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum, true);
-        // <li>Остаток пакета "Пакет МГ минут в дом. регионе":13мин МГ</li>
-        html = sumParam(html, result.remainders, 'remainders.min_left_mezh', /М2М[^<]*?([\d\.,]+?)\s*мин/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum, true);
-        
         // Использовано: 0 минут местных и мобильных вызовов.
         // Использовано 1 мин на городские номера Москвы, МТС домашнего региона и МТС России
         sumParam(html, result.remainders, 'remainders.min_local', /Использовано:?\s*([\d\.,]+)\s*мин[^\s]* (местных|на городские)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);

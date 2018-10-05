@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="11">ab-municipal-gazprom</id>
+	<id version="12">ab-municipal-gazprom</id>
 	<api flags="no_browser"/>
 	<name>Газпром Межрегионгаз</name>
 	<description html="true"><![CDATA[
@@ -31,6 +31,8 @@
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>
 		<module id="library"/>
+		<module id="crypt/cryptojs/base64"/>
+		<module id="crypt/cryptojs/aes"/>
 	</depends>
 	<files>
 		<icon>icon.png</icon>

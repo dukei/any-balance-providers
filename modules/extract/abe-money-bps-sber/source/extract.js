@@ -9,6 +9,8 @@ var g_headers = {
 	'X-Sbol-Id': '',
 	'Connection': 'Keep-Alive',
 	'User-Agent': 'okhttp/3.6.0',
+	'Accept-Encoding': 'gzip',
+	'Origin': null,
 };
 
 var baseurl = 'https://digital.bps-sberbank.by/SBOLServer/';
@@ -45,13 +47,15 @@ function login() {
 	checkEmpty(prefs.password, 'Введите пароль!');
 
 	if(!g_headers.Authorization || !/Bearer/i.test(g_headers.Authorization)){
-		g_headers['X-Sbol-Id'] = hex_md5(prefs.login).substr(0, 16);
+		g_headers['X-Sbol-Id'] = '96892da4c0d22530'; //hex_md5(prefs.login).substr(0, 16);
 		g_headers.Authorization = 'Basic ' + Base64.encode(prefs.login + ':' + prefs.password);
 	    
 		var json = apiCall('oauth/token', {
 			client_id: prefs.login,
 			client_secret: prefs.password,
 			grant_type: 'client_credentials'
+		}, {
+			'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
 		});
 	    
 		g_headers.Authorization = 'Bearer ' + json.access_token;

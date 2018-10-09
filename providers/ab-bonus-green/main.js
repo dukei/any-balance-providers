@@ -16,7 +16,7 @@ function main(){
     AB.checkEmpty(prefs.login, 'Введите номер телефона!');
     AB.checkEmpty(prefs.password, 'Введите пароль!');
 
-    var baseurl = "http://www.green-bonus.ru/";
+    var baseurl = "http://green-bonus.ru/";
 
     AnyBalance.setDefaultCharset('utf-8');
 

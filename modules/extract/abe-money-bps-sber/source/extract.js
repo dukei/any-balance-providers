@@ -30,7 +30,7 @@ function apiCall(action, params, addOnHeaders) {
 	var json = getJson(html);
 
 	if(json.error || (json.errorInfo && +json.errorInfo.errorCode)) {
-		if(AnyBalance.getLastResponseHeader('sbol-status') === 'new_device')
+		if(getLastResponseHeader('sbol-status') === 'new_device')
 			return json;
 
 		var error = json.error_description || (json.errorInfo && json.errorInfo.errorDescription);
@@ -42,6 +42,16 @@ function apiCall(action, params, addOnHeaders) {
 	return json;
 }
 
+function getLastResponseHeader(name){
+	var headers = AnyBalance.getLastResponseHeaders();
+	name = name.toLowerCase();
+	for(var i=0; i<headers.length; ++i){
+		var header = headers[i];
+		if(header[0].toLowerCase() === name)
+			return header[1];
+	}
+	return;
+}
 
 function login() {
 	var prefs = AnyBalance.getPreferences();
@@ -52,7 +62,7 @@ function login() {
 	checkEmpty(prefs.password, 'Введите пароль!');
 
 	if(!g_headers.Authorization || !/Bearer/i.test(g_headers.Authorization)){
-		g_headers['X-Sbol-Id'] = '96892da4c0d22530'; //hex_md5(prefs.login).substr(0, 16);
+		g_headers['X-Sbol-Id'] = hex_md5(prefs.login).substr(0, 16);
 		g_headers.Authorization = 'Basic ' + Base64.encode(prefs.login + ':' + prefs.password);
 	    
 		var json = apiCall('oauth/token', {
@@ -64,9 +74,9 @@ function login() {
 		});
 
 		if(json.error){
-			if(AnyBalance.getLastResponseHeader('sbol-status') === 'new_device'){
+			if(getLastResponseHeader('sbol-status') === 'new_device'){
 				AnyBalance.trace('Требуется подтверждение устройства');
-				var uid = AnyBalance.getLastResponseHeader('sbol-udid');
+				var uid = getLastResponseHeader('sbol-udid');
 				
 				json = apiCall('rest/registration/prepareDevice', JSON.stringify({
 					"udId":uid

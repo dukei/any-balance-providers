@@ -66,13 +66,13 @@ function isOnLogin(){
 }
 
 function enterMtsLK(options) {
-	var baseurl = options.baseurl || g_baseurl;
+	var url = options.url || g_baseurlLogin;
 
-    var html = AnyBalance.requestGet(baseurl, g_headers);
+    var html = AnyBalance.requestGet(url, g_headers);
 
     if (AnyBalance.getLastStatusCode() >= 500) {
         AnyBalance.trace("МТС вернул 500. Пробуем ещё разок...");
-        html = AnyBalance.requestGet(baseurl, g_headers);
+        html = AnyBalance.requestGet(url, g_headers);
     }
 
     if (AnyBalance.getLastStatusCode() >= 500)
@@ -81,7 +81,7 @@ function enterMtsLK(options) {
     if(/Произошла ошибка при попытке авторизации/i.test(html)){
     	AnyBalance.trace('Куки протухли :( Придется авторизоваться заново');
     	clearAllCookies();
-    	html = AnyBalance.requestGet(baseurl, g_headers);
+    	html = AnyBalance.requestGet(url, g_headers);
     }
 
     if(fixCookies()){

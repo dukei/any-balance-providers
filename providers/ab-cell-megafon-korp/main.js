@@ -150,39 +150,45 @@ function main() {
 
     var result = {success: true};
 
-    html = AnyBalance.requestGet(baseurl + 'b2b/subscriber/mobile', g_headers);
-
 
     try {
-    	var pageCount = 128;
-    	var totalCount = pageCount;
+        html = AnyBalance.requestGet(baseurl + 'b2b/subscriber/mobile', g_headers);
+        var accId = getParam(AnyBalance.getLastUrl(), /subscriber\/info\/(\d+)$/i);
         var account;
-        var phone = prefs.phone && prefs.phone.replace(/\D/g, '');
 
-    	for(var startIndex = 0; !account && startIndex<totalCount; startIndex += pageCount){
-    		html = AnyBalance.requestGet(baseurl + 'b2b/subscriber/mobile/list?from=' + startIndex 
-    		    + '&size=' + pageCount + '&_=' + (+new Date()),
-    		    addHeaders({'X-Requested-With':'XMLHttpRequest', Referer: baseurl + 'b2b/subscriber/mobile'}));
-
-            var json = getJson(html);
-            totalCount = json.count && json.count > 0 ? json.count : totalCount;
-    		AnyBalance.trace('Got ' + startIndex + ':' + (startIndex+pageCount) + ' of ' + totalCount + ' subscribers');
+        if(!accId){
+            //Получаем инфу из апи
+    		var pageCount = 128;
+    		var totalCount = pageCount;
+            var phone = prefs.phone && prefs.phone.replace(/\D/g, '');
             
-            for(var i = 0; i < json.mobile.length; i++) {
-                var curr = json.mobile[i];
-                if(!phone) {
-                    account = curr;
-                    AnyBalance.trace('Номер в настройках не задан, возьмем первый: ' + curr.msisdn);
-                    break;
-                }
-            
-                if(endsWith(curr.msisdn, phone)) {
-                    account = curr;
-                    AnyBalance.trace('Нашли нужный номер: ' + curr.msisdn);
-                    break;
+    		for(var startIndex = 0; !account && startIndex<totalCount; startIndex += pageCount){
+    			html = AnyBalance.requestGet(baseurl + 'b2b/subscriber/mobile/list?from=' + startIndex 
+    			    + '&size=' + pageCount + '&_=' + (+new Date()),
+    			    addHeaders({'X-Requested-With':'XMLHttpRequest', Referer: baseurl + 'b2b/subscriber/mobile'}));
+    	    
+                var json = getJson(html);
+                totalCount = json.count && json.count > 0 ? json.count : totalCount;
+    			AnyBalance.trace('Got ' + startIndex + ':' + (startIndex+pageCount) + ' of ' + totalCount + ' subscribers');
+                
+                for(var i = 0; i < json.mobile.length; i++) {
+                    var curr = json.mobile[i];
+                    if(!phone) {
+                        account = curr;
+                        AnyBalance.trace('Номер в настройках не задан, возьмем первый: ' + curr.msisdn);
+                        break;
+                    }
+                
+                    if(endsWith(curr.msisdn, phone)) {
+                        account = curr;
+                        AnyBalance.trace('Нашли нужный номер: ' + curr.msisdn);
+                        break;
+                    }
                 }
             }
-
+        }else{
+        	//Только один аккаунт, переадресовали сразу на страницу номера
+        	account = {id: accId};
         }
 
         if(!account) {
@@ -190,13 +196,13 @@ function main() {
             throw new AnyBalance.Error('Не удалось найти ' + (prefs.phone ? 'номер телефона с последними цифрами ' + prefs.phone : 'ни одного номера телефона!'));
         }
 
-        AnyBalance.trace('Успешно получили данные по номеру: ' + curr.msisdn);
+        AnyBalance.trace('Успешно получили данные по номеру: ' + account.msisdn);
         AnyBalance.trace(JSON.stringify(account));
 
-        getParam(account.account.number, result, 'licschet');
-        getParam(account.msisdn, result, 'phone_name');
+        if(account.ratePlan && account.account){
+        	getParam(account.account.number, result, 'licschet');
+        	getParam(account.msisdn, result, 'phone_name');
 
-        if(account.ratePlan){
         	getParam(account.balance && account.balance.value, result, 'balance', null, null, parseBalance);
         	getParam(account.ratePlan.def, result, '__tariff');
         	getParam(account.account.name, result, 'name_name');
@@ -204,7 +210,10 @@ function main() {
         	AnyBalance.trace('Пришлось получать данные из инфы о подписчике');
         	var html = AnyBalance.requestGet(baseurl + 'b2b/subscriber/info/' + account.id, addHeaders({Referer: baseurl + 'b2b/subscriber/mobile'}));
         	var json = getJson(html);
-        	
+
+        	getParam(json.profile.subscriberId, result, 'licschet');
+        	getParam(json.profile.msisdn, result, 'phone_name');
+
         	getParam(json.profile.ratePlanName, result, '__tariff');
         	getParam(json.subscriber.statusDef, result, 'status');
         	getParam(json.profile.msisdn + ' - ' + json.profile.profileFio, result, 'name_name');
@@ -214,28 +223,27 @@ function main() {
             getDiscounts(baseurl, account, result);
         }
 
-        function getDLValue(html, name, title) {
-            if (AnyBalance.isAvailable(name)) {
-                var elem = getElement(html, RegExp('<dl[^>]*>(?=\s*<dt[^>]*>\s*' + title.replace(/\s/g, ' ') + '\s*</dt\s*>)', 'i'));
-                elem = getElement(elem, /<span[^>]+class="[^"]*money[^"]*"[^>]*>/i);
-                getParam(elem, result, name, null, replaceTagsAndSpaces, parseBalance);
-            }
-        }
-
         if (AnyBalance.isAvailable('amountTotal', 'amountLocal', 'abon', 'charges')) {
             var htmlExp = AnyBalance.requestGet(baseurl + 'b2b/subscriber/finances/' + account.id, g_headers);
-            getDLValue(htmlExp, 'amountTotal', 'Расходы с начала периода');
-            getDLValue(htmlExp, 'amountLocal', 'Трафик');
-            getDLValue(htmlExp, 'abon', 'Абонентская плата');
-            getDLValue(htmlExp, 'charges', 'Разовые начисления');
+            var json = getJson(htmlExp);
+
+            getParam(json.financeProfile.subscriberCostsEntity.periodAmount, result, 'amountTotal');
+            getParam(json.financeProfile.subscriberCostsEntity.trafficAmount, result, 'amountLocal');
+            getParam(json.financeProfile.subscriberCostsEntity.feeAmount, result, 'abon');
+            getParam(json.financeProfile.subscriberCostsEntity.chargesAmount, result, 'charges');
         }
 
         if(AnyBalance.isAvailable('prsnl_balance')){
             var htmlBudget = AnyBalance.requestGet(baseurl + 'b2b/subscriber/budget/' + account.id, g_headers);
-            getDLValue(htmlBudget, 'prsnl_balance', 'Баланс');
+            var json = getJson(htmlBudget);
+            getParam(json.subscriberBudget && json.subscriberBudget.balance, result, 'prsnl_balance');
         }
 
-        getAccount(baseurl, account.account.number, result);
+        if(account.account){
+        	getAccount(baseurl, account.account.number, result);
+        }else{
+            AnyBalance.trace('Номер не прикреплен к Л\С, пропускаем инфу по счету');
+        }	
     } catch (e) {
         AnyBalance.trace(e.message);
         AnyBalance.trace('Не удалось получить данные по номеру телефона, свяжитесь, пожалуйста, с разработчиками.');
@@ -327,7 +335,7 @@ function getAccount(baseurl, accnum, result){
         if(i >= json.account.length)
         	throw new AnyBalance.Error('Не удалось найти лицевой счет с последними цифрами ' + accnum);
 
-        getParam(acc.contract, result, 'licschet');
+        getParam(acc.number, result, 'licschet');
     }else{
     	getParam(html, result, 'balance', /<dt[^>]*>\s*Текущий баланс[\s\S]*?class="money[^>]*>([\s\S]*?)<span/i, replaceTagsAndSpaces, parseBalance);
     	getParam(html, result, 'balance_if', /<dt[^>]*>\s*Текущий условный баланс[\s\S]*?class="money[^>]*>([\s\S]*?)<span/i, replaceTagsAndSpaces, parseBalance);

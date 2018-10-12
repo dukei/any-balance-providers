@@ -367,7 +367,7 @@ function fetchAccountStatus(html, result) {
 
 function isLoggedIn(html) {
     return getParam(html, /(<meta[^>]*name="lkMonitorCheck")/i)
-       || /js-logout/i.test(html);
+       || /js-logout/i.test(html) || /UI\/Logout/i.test(html);
 }
 
 function getLKJson(html, allowExceptions) {
@@ -517,7 +517,6 @@ function checkLoginState(html, options) {
 }
 
 function enterLK(options) {
-    var loginUrl = g_baseurlLogin + "/amserver/UI/Login?service=lk&goto=" + g_baseurl + '/' + "";
     restoreLoginCookies();
 
     var html = enterMtsLK(options);
@@ -586,7 +585,7 @@ function loginWithPassword(){
 
     var prefs = AnyBalance.getPreferences();
 
-    var html = enterLK({login: prefs.login, password: prefs.password});
+    var html = enterLK({login: prefs.login, password: prefs.password, baseurl: 'https://online.mts.ru', url: 'https://login.mts.ru/amserver/UI/Login?service=lk&goto=http%3A%2F%2Fonline.mts.ru%2F'});
     return html;
 }
 
@@ -868,14 +867,6 @@ function processTrafficLK(result){
 function mainLK(html, result) {
     AnyBalance.trace("Мы в личном кабинете...");
 
-    if (!isAnotherNumber()) {
-        processInfoLK(html, result);
-        processBonusLK(result);
-        processTraffic(result);
-    } else {
-        AnyBalance.trace('Пропускаем получение данных из ЛК, если требуется информация по другому номеру');
-    }
-
     var maxIHTries = 3;
     //Иногда помощник входит не с первого раза почему-то.
     for(var i=0; i<maxIHTries; ++i){
@@ -883,12 +874,11 @@ function mainLK(html, result) {
             if (isAnotherNumber() || isAvailableIH()) {
             	AnyBalance.trace('Попытка входа в интернет-помощник ' + (i+1) + '/' + maxIHTries);
                 var ret = followIHLink();
-                html = ret.html;
             
-                if (!isInOrdinary(html)) //Тупой МТС не всегда может перейти из личного кабинета в интернет-помощник :(
-                	checkIHError(html, true, true);
+                if (!isInOrdinary(ret.html)) //Тупой МТС не всегда может перейти из личного кабинета в интернет-помощник :(
+                	checkIHError(ret.html, true, true);
             
-                fetchOrdinary(html, ret.baseurlHelper, result);
+                fetchOrdinary(ret.html, ret.baseurlHelper, result);
             }
             break;
         }catch(e){
@@ -899,6 +889,14 @@ function mainLK(html, result) {
         	if(i == maxIHTries-1) //Если попытка последняя, ставим флаг, что были ошибки
             	result.were_errors = true;
         }
+    }
+
+    if (!isAnotherNumber()) {
+        processInfoLK(html, result);
+        processBonusLK(result);
+        processTraffic(result);
+    } else {
+        AnyBalance.trace('Пропускаем получение данных из ЛК, если требуется информация по другому номеру');
     }
 }
 
@@ -939,7 +937,7 @@ function loginWithoutPassword(){
     } catch (e) {
         AnyBalance.trace('Автоматический вход в кабинет не удался. Пробуем получить пароль через СМС');
         pass = getPasswordBySMS(prefs.login);
-        html = enterLK({login: prefs.login, password: pass});
+        html = enterLK({login: prefs.login, password: pass, baseurl: 'https://online.mts.ru', url: 'https://login.mts.ru/amserver/UI/Login?service=lk&goto=http%3A%2F%2Fonline.mts.ru%2F'});
         if (prefs.password && prefs.password != pass) {
             changePassword(pass, prefs.password);
         }

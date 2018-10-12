@@ -18,8 +18,8 @@
         dialogTitle="Пароль"
         dialogMessage="Введите пароль, используемый для входа в личный кабинет. По умолчанию паролем является дата Вашего рождения, которую Вы указали в анкете, в формате ДДММГГ."
         positiveButtonText="ОК"
-        negativeButtonText="Отмена"> -->
-    </EditTextPreference>
+        negativeButtonText="Отмена">
+    </EditTextPreference> -->
 <!--    <ListPreference 
         key="type" 
         title="Тип карты"

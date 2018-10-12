@@ -52,8 +52,8 @@ function main() {
 	
 	// возвращается массив со счетами, можно потом сделать поддержку нескольких счетов
 	var currAcc;
-	for(var i=0; i<json.length; ++i){
-		currAcc = json[i];
+	for(var i=0; i<json.accountResponses.length; ++i){
+		currAcc = json.accountResponses[i];
 		if(currAcc.accountNumber == prefs.login)
 			break;
 	}

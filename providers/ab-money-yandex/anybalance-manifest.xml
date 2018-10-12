@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="27">ab-money-yandex</id>
+	<id version="28">ab-money-yandex</id>
 	<api flags="no_browser" />
 	<name>Яндекс.Деньги</name>
 	<description html="true"><![CDATA[
@@ -25,7 +25,9 @@
 	</files>
 	<counters>
 		<counter id="balance" name="Остаток" units=" р"/>
+		<counter id="bonus" name="Баллы" units=" Б"/>
 		<counter id="number" name="Номер счета" type="text"/>
+		<counter id="no_cashback_count" name="Платежей без кэшбэка" units=" шт"/>
 	</counters>
 	<keywords>яндекс-деньги, yandex money</keywords>
 	<type>money, wallet</type>

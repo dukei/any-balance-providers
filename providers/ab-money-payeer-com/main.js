@@ -4,10 +4,9 @@
 
 var g_headers = {
 	'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-	'Accept-Language':'ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.',
+	'Accept-Language':'ru,en-US;q=0.9,en;q=0.8,ru-RU;q=0.7',
 	'Connection':'keep-alive',
-	Origin: 'https://payeer.com',
-	'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.181 Safari/537.36',
+	'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36',
 };
 
 function processLoginResponse(html){
@@ -44,10 +43,12 @@ function getSign(html){
 function login(baseurl, _html){
 	var prefs = AnyBalance.getPreferences();
 
-	var html = AnyBalance.requestGet(baseurl + 'bitrix/components/payeer/system.auth.form/templates/index_list/ajax.php?cmd=Authorization&backurl=%252Fru%252Faccount%252F', addHeaders({
+	var html = AnyBalance.requestGet(baseurl + 'ru/auth/?backurl=%2Fru%2Faccount%2F');
+
+	html = AnyBalance.requestGet(baseurl + 'bitrix/components/payeer/system.auth.form/templates/index_list/ajax.php?cmd=Authorization&backurl=%252Fru%252Fauth%252F%253Fbackurl%253D%25252Fru%25252Faccount%25252F', addHeaders({
 		Accept: 'application/json, text/javascript, */*; q=0.01',
 		'X-Requested-With': 'XMLHttpRequest',
-		Referer: baseurl + 'ru/account/'
+		Referer: baseurl + 'ru/auth/?backurl=%2Fru%2Faccount%2F'
 	}));
 	var json = getJson(html);
 
@@ -103,7 +104,22 @@ function login(baseurl, _html){
 		'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
 	}));
 
+    json = getJson(html).main;
+    if(json.error && json.recaptcha == 'Y'){
+    	AnyBalance.trace('Потребовалась ещё и рекапча');
+    	var recaptcha = solveRecaptcha('Пожалуйста, докажите, что вы не робот', baseurl + 'ru/account/', '6Lf_2Q0TAAAAABzDzxrOMAFty0K_OLFDhlu7P7in');
+		params['g-recaptcha-response'] = recaptcha;
+
+		html = AnyBalance.requestPost(baseurl + 'bitrix/components/payeer/system.auth.form/templates/index_list/ajax.php', params, addHeaders({
+			Referer: baseurl + 'ru/account/',
+			Accept: 'application/json, text/javascript, */*; q=0.01',
+			'X-Requested-With':'XMLHttpRequest',
+			'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+		}));
+    }
+
 	html = processLoginResponse(html);
+
 
 	if(/auth_conf/i.test(html)){
 		AnyBalance.trace('Подтверждение на e-mail потребовалось...');
@@ -150,9 +166,9 @@ function main() {
     var result = {success: true};
 	
 	getParam(html, result, 'acc_num', /<label[^>]*>No. аккаунта[\s\S]*?<span[^>]+class="val"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'rub', /<li[^>]+class="RUB"[^>]*>([\s\S]*?)<\/li>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'usd', /<li[^>]+class="USD"[^>]*>([\s\S]*?)<\/li>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'eur', /<li[^>]+class="EUR"[^>]*>([\s\S]*?)<\/li>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'rub', /<li[^>]+class="RUB[^>]*>([\s\S]*?)<\/li>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'usd', /<li[^>]+class="USD[^>]*>([\s\S]*?)<\/li>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'eur', /<li[^>]+class="EUR[^>]*>([\s\S]*?)<\/li>/i, replaceTagsAndSpaces, parseBalance);
 	
     AnyBalance.setResult(result);
 }

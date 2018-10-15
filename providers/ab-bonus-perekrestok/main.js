@@ -81,7 +81,6 @@ function main () {
     AnyBalance.setDefaultCharset('utf-8');
 
 	checkEmpty(prefs.login, 'Введите номер карты или номер телефона.');
-	checkEmpty(prefs.password, 'Введите пароль.');
 		
     AnyBalance.trace('Входим в кабинет ' + baseurl);
 

@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="12">ab-municipal-gazprom</id>
+	<id version="13">ab-municipal-gazprom</id>
 	<api flags="no_browser"/>
 	<name>Газпром Межрегионгаз</name>
 	<description html="true"><![CDATA[
@@ -17,6 +17,7 @@
 		<li>Пятигорск (https://газ.смородина.онлайн/)<br></li>
 		<li>Ростов-на-Дону (http://www.rostovregiongaz.ru/auth/index.php)<br></li>
 		<li>Рязань (https://газ.смородина.онлайн/)<br></li>
+		<li>Самара (https://газ.смородина.онлайн/)<br></li>
 		<li>Санкт-Петербург (http://cfl.peterburgregiongaz.ru)<br></li>
 		<li>Север (https://severrg.ru/CustomerService/Login.aspx)<br></li>
 		<li>Тверь (http://lk.tverregiongaz.ru/)<br></li>

@@ -20,6 +20,7 @@ var regions = {
 	pyatigorsk: getSmorodina,
 	rostov: getRostov,
 	ryazan: getSmorodina,
+	samara: getSmorodina,
 	spb: getSmorodina,
     sever: getSever,
 	tver: getTver,

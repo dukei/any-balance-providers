@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="13" date="2018-10-15">
+	Поддержка Самары
+	</change>
 	<change version="12" date="2018-10-05">
 	- Поддержка нового ЛК
 	</change>

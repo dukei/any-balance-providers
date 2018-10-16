@@ -380,11 +380,11 @@ function getKrv() {
 }
 
 function getVolzhsk() {
-  newTypicalLanBillingInetTv('https://internet.mari-el.mts.ru/index.php');
+  newTypicalLanBillingInetTv_1('https://internet.mari-el.mts.ru/index.php');
 }
 
 function getArkh() {
-  newTypicalLanBillingInetTv('https://lk.arkhangelsk.mts.ru/index.php');
+  newTypicalLanBillingInetTv_1('https://lk.arkhangelsk.mts.ru/index.php');
 }
 
 function getPnz() {
@@ -396,7 +396,7 @@ function getNnovTv() {
 }
 
 function getVnov() {
-  newTypicalLanBillingInetTv('https://lk.nov.mts.ru/index.php');
+  newTypicalLanBillingInetTv_1('https://lk.nov.mts.ru/index.php');
 }
 
 function getSdv() {
@@ -416,11 +416,11 @@ function getKomsomolsk() {
 }
 
 function getTula() {
-  newTypicalLanBillingInetTv('https://lk-tula.center.mts.ru/index.php');
+  newTypicalLanBillingInetTv_1('https://lk-tula.center.mts.ru/index.php');
 }
 
 function getSmolensk() {
-  newTypicalLanBillingInetTv('https://lk-smolensk.center.mts.ru/index.php');
+  newTypicalLanBillingInetTv_1('https://lk-smolensk.center.mts.ru/index.php');
 }
 
 function getRyazan() {
@@ -893,7 +893,7 @@ function getMagnit() {
 
 function getMiass() {
   var baseurl = "https://lkmiass.ural.mts.ru/";
-  newTypicalLanBillingInetTv(baseurl + 'index.php');
+  newTypicalLanBillingInetTv_1(baseurl + 'index.php');
 }
 
 function getKurgan() {
@@ -918,7 +918,7 @@ function getVladimir() {
 }
 
 function getBelgorod() {
-  newTypicalLanBillingInetTv('https://lk-belgorod.center.mts.ru/index.php');
+  newTypicalLanBillingInetTv_1('https://lk-belgorod.center.mts.ru/index.php');
 }
 
 function getSaratov() {
@@ -926,7 +926,7 @@ function getSaratov() {
 }
 
 function getChita() {
-  newTypicalLanBillingInetTv('https://clb.primorye.mts.ru/chita/index.php');
+  newTypicalLanBillingInetTv_1('https://clb.primorye.mts.ru/chita/index.php');
 }
 
 function getIrkutsk() {
@@ -934,11 +934,11 @@ function getIrkutsk() {
 }
 
 function getNahodka() {
-  newTypicalLanBillingInetTv('https://clb.primorye.mts.ru/cvld/index.php');
+  newTypicalLanBillingInetTv_1('https://clb.primorye.mts.ru/cvld/index.php');
 }
 
 function getAmur() {
-  newTypicalLanBillingInetTv('https://clb.amur.mts.ru/cblg/index.php');
+  newTypicalLanBillingInetTv_1('https://clb.amur.mts.ru/cblg/index.php');
 }
 
 function getOrel() {
@@ -954,7 +954,7 @@ function getBalakovo() {
 }
 
 function getYar() {
-  newTypicalLanBillingInetTv('https://lk-yaroslavl.center.mts.ru/index.php');
+  newTypicalLanBillingInetTv_1('https://lk-yaroslavl.center.mts.ru/index.php');
 }
 
 function getKursk() {

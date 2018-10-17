@@ -100,8 +100,9 @@ function main() {
 		}
 
 		if(AnyBalance.isAvailable('bonus')){
-			html = AnyBalance.requestGet('https://bonus.mgts.ru/', g_headers);
-			getParam(html, result, 'bonus', /<span[^>]+bonus-number[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+			html = AnyBalance.requestGet('https://lk.mgts.ru/bonus/', g_headers);
+			var info = getJsonObject(html, /mgts.data.bonusInfo/) || {};
+			getParam(info.Rest, result, 'bonus');
 		}
 	}
 	

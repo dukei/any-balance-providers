@@ -148,9 +148,11 @@ function processCards(html, result) {
 
 function processCard(prod, result) {
     getParam(prod.balances.available.value, result, 'cards.balance', null, null, parseBalance);
-    getParam(prod.balances.full_crlimit.value, result, 'cards.maxlimit', null, null, parseBalance);
+    if(prod.balances.full_crlimit)
+    	getParam(prod.balances.full_crlimit.value, result, 'cards.maxlimit', null, null, parseBalance);
 	getParam(prod.card.expiryDate + '', result, 'cards.till', null, null, parseDate);
-    getParam(prod.balances.total_due.value, result, 'cards.debt', null, null, parseBalance);
+    if(prod.balances.total_due)
+    	getParam(prod.balances.total_due.value, result, 'cards.debt', null, null, parseBalance);
     getParam(prod.balances['06'].value, result, 'cards.mz', null, null, parseBalance);
     getParam(prod.card.accountNumber, result, 'cards.rr');
     getParam(prod.balances.available.currency, result, ['cards.currency', 'cards.balance', 'cards.maxlimit', 'cards.debt', 'cards.mz']);

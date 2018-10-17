@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="2.8" version="26" date="2018-10-17">
+	- Улучшена обработка ошибок.
+	</change>
 	<change major_version="2.8" version="25" date="2016-12-02">
 	Поддержка входа по СМС, когда только один способ подтверждения
 	</change>

@@ -9,9 +9,6 @@
     Информация берется из личного кабинета https://goodnet.su:8080/webexecuter.
   </description>
   <author>Gr &lt;&gt;</author>
-  <depends>
-  	<module id="library"/>
-  </depends>
   <files>
 		<js>library.min.js</js>
     <icon>icon.png</icon>

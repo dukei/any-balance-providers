@@ -146,16 +146,39 @@ function processCards(html, result) {
 	}
 }
 
+function processBalances(balances, result, prefix){
+	for(var b in balances){
+		var v = balances[b].value;
+		AnyBalance.trace('Найден баланс ' + b + ': ' + v);
+		switch(b){
+		case 'available':
+    		getParam(v, result, prefix + 'balance', null, null, parseBalance);
+    		getParam(balances.available.currency, result, [prefix + 'currency', prefix + 'balance', prefix + 'maxlimit', prefix + 'debt', prefix + 'mz', prefix + 'blocked']);
+    		break;
+		case '06':
+    		getParam(v, result, prefix + 'mz', null, null, parseBalance);
+    		break;
+		case 'full_crlimit':
+		case 'cr_limit':
+    		getParam(v, result, prefix + 'maxlimit', null, null, parseBalance);
+    		break;
+		case 'total_due':
+    		getParam(v, result, prefix + 'debt', null, null, parseBalance);
+    		break;
+		case 'blocked':
+    		getParam(v, result, prefix + 'blocked', null, null, parseBalance);
+    		break;
+		default:
+			AnyBalance.trace('Баланс неизвестен (' + prefix + '): ' + b);	
+		}
+	}
+}
+
 function processCard(prod, result) {
-    getParam(prod.balances.available.value, result, 'cards.balance', null, null, parseBalance);
-    if(prod.balances.full_crlimit)
-    	getParam(prod.balances.full_crlimit.value, result, 'cards.maxlimit', null, null, parseBalance);
+	AnyBalance.trace('Обработка карты ' + result.__name);
+    processBalances(prod.balances, result, 'cards.');
 	getParam(prod.card.expiryDate + '', result, 'cards.till', null, null, parseDate);
-    if(prod.balances.total_due)
-    	getParam(prod.balances.total_due.value, result, 'cards.debt', null, null, parseBalance);
-    getParam(prod.balances['06'].value, result, 'cards.mz', null, null, parseBalance);
     getParam(prod.card.accountNumber, result, 'cards.rr');
-    getParam(prod.balances.available.currency, result, ['cards.currency', 'cards.balance', 'cards.maxlimit', 'cards.debt', 'cards.mz']);
 	getParam(prod.number, result, 'cards.cardNumber');
 	
 	//https://online.oschadbank.ua/wb/history#contracts/03e500f461d4d94837a87ff39d4acc6871489fc1
@@ -189,12 +212,9 @@ function processAccounts(html, result) {
 }
 
 function processAccount(prod, result) {
-    getParam(prod.balances.available.value, result, 'accounts.balance', null, null, parseBalance);
-    getParam(prod.balances.full_crlimit.value, result, 'accounts.maxlimit', null, null, parseBalance);
-    getParam(prod.balances.total_due.value, result, 'accounts.debt', null, null, parseBalance);
-    getParam(prod.balances['06'].value, result, 'accounts.mz', null, null, parseBalance);
+	AnyBalance.trace('Обработка счета ' + result.__name);
+    processBalances(prod.balances, result, 'accounts.');
     getParam(prod.cardAccount.accountNumber, result, 'accounts.rr');
-    getParam(prod.balances.available.currency, result, ['accounts.currency', 'accounts.balance', 'accounts.maxlimit', 'accounts.debt', 'accounts.mz']);
 	
 	if(typeof processAccountTransactions != 'undefined')
 		processAccountTransactions(prod, result);

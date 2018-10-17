@@ -8,7 +8,7 @@
 
     Информация берется из личного кабинета https://goodnet.su:8080/webexecuter.
   </description>
-  <author>Gr &lt;&gt;</author>
+  <author>Gr &lt;Pomidor4ik@github&gt;</author>
   <files>
 		<js>library.min.js</js>
     <icon>icon.png</icon>

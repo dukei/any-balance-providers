@@ -28,6 +28,10 @@ var regions = {
 	cheboksari: getCheboksari
 };
 
+if(!this.console){
+	this.console = function(str){ AnyBalance.trace(str) }
+}
+
 function main() {
 	var prefs = AnyBalance.getPreferences();
 	var region = prefs.region;

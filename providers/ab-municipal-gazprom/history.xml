@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="14" date="2018-10-17">
+	- Исправлена работа провайдера на  некоторых платформах
+	</change>
 	<change version="13" date="2018-10-15">
 	Поддержка Самары
 	</change>

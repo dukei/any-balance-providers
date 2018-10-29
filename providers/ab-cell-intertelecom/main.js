@@ -58,6 +58,8 @@ function main() {
     sumParam(html, result, 'bonus_fb', /<td[^>]*>\s*Бонус [^>]*На лето[^>]*\s*[^>]*на доп.услуги[^>]*\s*<\/td>\s*<td[^>]*>([\s\S]*?) \([^<]*\)\s*<\/td>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
     //Бонус за регистрацию в АССА
     sumParam(html, result, 'bonus_fb', /<td[^>]*>\s*Бонус регистрация АССА\s*<\/td>\s*<td[^>]*>([\s\S]*?) \([^<]*\)\s*<\/td>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+    //Бонус исключительно на АП
+    sumParam(html, result, 'bonus_fb', /<td[^>]*>\s*Бонус исключительно на АП\s*<\/td>\s*<td[^>]*>([\s\S]*?) \([^<]*\)\s*<\/td>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
     //Бонус «Вільний доступ»    [^>]*<\/td>
     getParam(html, result, 'bonus_vd', /<td[^>]*>\s*Бонус [^>]*Вільний доступ[^>]*\s*<\/td>\s*<td[^>]*>([\s\S]*?) \([^>]*\)\s*<\/td>/i, replaceTagsAndSpaces, parseBalance);
     //Бонус при пополнении счета через Portmone + Лояльный Бонус
@@ -81,6 +83,8 @@ function main() {
     sumParam(html, result, 'date_bonus_fb', /<td[^>]*>\s*Бонус [^>]*На лето[^>]*\s*[^>]*на доп.услуги[^>]*\s*<\/td>\s*<td[^>]*>\s*.* \(по ([^<]*)\)\s*<\/td>/ig, replaceTagsAndSpaces, parseDate, aggregate_min);
     //Дата Бонус за регистрацию в АССА
     sumParam(html, result, 'date_bonus_fb', /<td[^>]*>\s*Бонус регистрация АССА\s*<\/td>\s*<td[^>]*>\s*.* \(по ([^<]*)\)\s*<\/td>/ig, replaceTagsAndSpaces, parseDate, aggregate_min);
+    //Дата Бонус исключительно на АП
+    sumParam(html, result, 'date_bonus_fb', /<td[^>]*>\s*Бонус исключительно на АП\s*<\/td>\s*<td[^>]*>\s*.* \(по ([^<]*)\)\s*<\/td>/ig, replaceTagsAndSpaces, parseDate, aggregate_min);
     //Дата "Бонус при пополнении счета через Portmone" + Лояльный Бонус
     sumParam(html, result, 'date_bonus_pr', /<td[^>]*>\s*Бонус при поповненні рахунку через Portmone[^>]*\s*<\/td>\s*<td[^>]*>\s*.* \(по ([^<]*)\)\s*<\/td>/ig, replaceTagsAndSpaces, parseDate, aggregate_min);
     sumParam(html, result, 'date_bonus_pr', /<td[^>]*>\s*Лояльный Бонус[^>]*\s*<\/td>\s*<td[^>]*>\s*.* \(по ([^<]*)\)\s*<\/td>/ig, replaceTagsAndSpaces, parseDate, aggregate_min);

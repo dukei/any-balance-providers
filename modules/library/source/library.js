@@ -1180,10 +1180,20 @@ var AB = (function (global_scope) {
             return replaceAll(url, [/^(\w+:\/\/[\w.:\-]+).*$/, '$1' + path]);
         if (/^\w+:\/\//.test(path)) //Абсолютный урл
             return path;
+        path = replaceAll(path, [
+        	/^\.\//, '', //Убираем ./
+        ]);
+
         //относительный путь
-        url = replaceAll(url, [/\?.*$/, '']); //Обрезаем аргументы
+        url = replaceAll(url, [
+        	/\?.*$/, '' //Обрезаем аргументы
+        ]); 
         if (/:\/\/.*\//.test(url))
             url = replaceAll(url, [/\/[^\/]*$/, '/']); //Сокращаем до папки
+        if(/^\.\.\//i.test(path)){
+        	path = path.substr(3); //Надо подняться на папку вверх
+        	url = replaceAll(url, [/\/[^\/]*\/?$/, '/']); //Сокращаем до папки
+        }
         if (!endsWith(url, '/'))
             url += '/';
         return url + path;

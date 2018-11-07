@@ -107,6 +107,11 @@ function megafonLkAPIDo(options, result) {
             getParam(json.ratePlan.name, result, 'tariff', null, replaceTagsAndSpaces);
     }
 
+    if(AnyBalance.isAvailable('tariff') && !result.tariff){
+    	json = callAPI('get', 'api/tariff/current');
+    	getParam(json.name, result, 'tariff');
+    }
+
     try{
         if(AnyBalance.isAvailable('bonus_status', 'bonus_burn')){
             json = callAPI('get', 'api/bonus/status');

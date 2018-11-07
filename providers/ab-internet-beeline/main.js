@@ -31,7 +31,11 @@ function main() {
 			proceedOffice(prefs);
 			break;
 		default:
-			proceedLk(prefs);
+		    var ret = proceedLk(prefs);
+		    if(ret === 'restart'){
+		    	clearAllCookies();
+		    	proceedLk(prefs);
+		    }
 			break;
 	}
 }
@@ -158,7 +162,7 @@ function proceedLk(prefs) {
 	baseurl = getParam(AnyBalance.getLastUrl(), /^https?:\/\/[^\/]+/i) + '/';
 	AnyBalance.trace('Main page redirected to ' + AnyBalance.getLastUrl());
 	AnyBalance.setCookie('.beeline.ru', 'SITE_VERSION', 'is_full_selected');
-	AnyBalance.setCookie('moskva.beeline.ru', 'tmr_detect', '0%7C1525419789821');
+//	AnyBalance.setCookie('moskva.beeline.ru', 'tmr_detect', '0%7C1525419789821');
 
 	var loginfo = AnyBalance.requestGet(baseurl + 'menu/loginmodel/?CTN=' + encodeURIComponent(prefs.login), addHeaders({
 		Referer: baseurl
@@ -200,10 +204,20 @@ function proceedLk(prefs) {
 		delete params.need_set_sso_cookie;
 
 		var action = getParam(form, /\baction="([^"]*)/i, replaceHtmlEntities);
-		var url = joinUrl(AnyBalance.getLastUrl(), action);
-		AnyBalance.trace('Posting form to ' + url + ' but due to 307 issues posting to ' + baseurl + "regionlogincallback/");
+		var url = joinUrl(referer, action);
 
-		html = AnyBalance.requestPost(baseurl + "regionlogincallback/", createUrlEncodedParams(params).replace(/%20/g, '+'), addHeaders({
+		var region = AnyBalance.getData('region');
+		if(!region || region.login != prefs.login)
+			region = null;
+
+		if(region){
+			AnyBalance.trace('Posting form to ' + url + ' but due to 307 issues posting to https://' + region.domain + "/regionlogincallback/");
+			url = "https://" + region.domain + "/regionlogincallback/";
+		}else{
+			AnyBalance.trace("Region is unknown, posting form to " + url);
+		}
+
+		html = AnyBalance.requestPost(url, createUrlEncodedParams(params).replace(/%20/g, '+'), addHeaders({
 			Referer: referer,
 			'Content-Type': 'application/x-www-form-urlencoded',
 			Origin: 'https://identity.beeline.ru',
@@ -211,6 +225,14 @@ function proceedLk(prefs) {
 			'Upgrade-Insecure-Requests': '1'
 		}));
 		referer = AnyBalance.getLastUrl();
+
+		if(!region && /\blogin\b/i.test(referer)){
+			region = getParam(referer, /https?:\/\/([^\/]+)/i);
+			AnyBalance.trace("Region is " + region + ". Restarting.");
+			AnyBalance.setData('region', { domain: region, login: prefs.login });
+			AnyBalance.saveData();
+			return "restart";  
+		}
 	}while(/<form[^>]*logincallback/i.test(html));
 
 	var token = getParam(html, null, null, /QA.Identity.setToken\('([^']*)/);

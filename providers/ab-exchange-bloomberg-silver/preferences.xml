@@ -4,8 +4,8 @@
 		key="type"
 		title="Type of silver"
 		summary="||{@s}"
-		entries="COMEX|TOCOM"
-		entryValues="COMEX|TOCOM"
+		entries="COMEX|TOKYO"
+		entryValues="COMEX|TOKYO"
 		defaultValue="COMEX">
 	</ListPreference>
 </PreferenceScreen>

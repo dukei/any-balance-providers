@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="14">ab-money-homecredit</id>
+	<id version="15">ab-money-homecredit</id>
 	<api flags="no_browser"/>
 	<name>Хоум Кредит</name>
 	<description html="true"><![CDATA[
@@ -19,12 +19,14 @@
 	<p>В настоящее время предоставляется информация только по вкладам и картам. Если вам нужна поддержка кредитов, обращайтесь, пожалуйста, к автору провайдера по e-mail.  Для указания депозита или кредита вы можете ввести его ID.</p> 
 	<p><small>Получить ID всех депозитов и кредитов можно в счетчике "Сводка".</small></p>
 	]]></instruction>
-	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
 		<js>main.js</js>
-		<js>library.js</js>
 		<history>history.xml</history>
 	</files>
 	<counters>
@@ -50,6 +52,6 @@
 		<counter id="polsa" name="Баллов польза" units=" {@currency}"/>
 	</counters>
 	<keywords>Кредит, банк, home credit</keywords>
-	<type>money</type>
+	<type>money, bank</type>
 	<country>ru</country>
 </provider>

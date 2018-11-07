@@ -11,7 +11,7 @@
 	<EditTextPreference
 		key="phone"
 		title="Номер телефона"
-		summary="Номер без префикса +380X3||{@s}\n"
+		summary="Номер без префикса +380XX3||{@s}\n"
 		dialogTitle="Номер телефона"
 		negativeButtonText="Отмена"
 		dialogMessage="Введите номер вашего телефона"

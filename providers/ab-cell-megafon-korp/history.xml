@@ -1,5 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="26" date="2018-10-09">
+	Поддержка одиноких номеров
+	</change>
+	<change version="25" date="2018-10-05">
+	Добавлено отображение условного баланса
+	</change>
+	<change version="24" date="2018-10-04">
+	- Поддержка изменений на сайте.
+	</change>
+	<change version="23" date="2018-09-14">
+	- Улучшена обработка ошибок.
+	</change>
 	<change version="22" date="2018-05-29">
 	Поддержка особенностей кабинетов в кавказском и других филиалах
 	</change>

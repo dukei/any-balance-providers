@@ -1,5 +1,20 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="4.1" version="174" date="2018-10-09">
+	Частично восстановлено получение информации для номеров МГТС (трафик пока не восстановлен!)
+	</change>
+	<change major_version="4.1" version="173" date="2018-10-04">
+	Улучшено распознавание минут
+	</change>
+	<change major_version="4.1" version="172" date="2018-09-28">
+	- Поддержка изменений на сайте.
+	</change>
+	<change major_version="4.1" version="171" date="2018-09-21">
+	- Поддержка изменений на сайте.
+	</change>
+	<change major_version="4.1" version="170" date="2018-09-17">
+	Исправлен вход через мобильный интернет в некоторых случаях
+	</change>
 	<change major_version="4.1" version="169" date="2018-05-22">
 	МТС ввело рекапчу :(
 	Сброс сессии и запрос капчи, если с сохраненной сессией не пускает в кабинет

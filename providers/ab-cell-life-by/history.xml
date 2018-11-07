@@ -1,5 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="3.0" version="41" date="2018-10-05">
+	Поддержка старой иссы для корпоративных номеров
+	</change>
+	<change major_version="3.0" version="40" date="2018-10-02">
+	- Поддержка изменений на сайте.
+	</change>
+	<change major_version="3.0" version="39" date="2018-09-21">
+	- Полностью изменен ЛК
+	</change>
+	<change major_version="2.0" version="38" date="2018-09-15">
+	Добавлено распознавание минут Звонки для группы
+	</change>
 	<change major_version="2.0" version="37" date="2018-07-01">
 	Корректировка отображения счетчиков оператора Life:) Беларусь
 	</change>

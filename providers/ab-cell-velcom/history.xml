@@ -1,5 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="63" date="2018-10-04">
+	Разрешено вводить буквы в пароле
+	</change>
+	<change version="62" date="2018-10-04">
+	- Поддержка изменений на сайте.
+	</change>
 	<change version="61" date="2018-07-05">
 	Исправлено получение трафика
 	</change>

@@ -9,6 +9,8 @@ var g_headers = {
 	'X-Sbol-Id': '',
 	'Connection': 'Keep-Alive',
 	'User-Agent': 'okhttp/3.6.0',
+	'Accept-Encoding': 'gzip',
+	'Origin': null,
 };
 
 var baseurl = 'https://digital.bps-sberbank.by/SBOLServer/';
@@ -26,15 +28,30 @@ function apiCall(action, params, addOnHeaders) {
 	}
 	
 	var json = getJson(html);
-	
-	if(json.error) {
+
+	if(json.error || (json.errorInfo && +json.errorInfo.errorCode)) {
+		if(getLastResponseHeader('sbol-status') === 'new_device')
+			return json;
+
+		var error = json.error_description || (json.errorInfo && json.errorInfo.errorDescription);
+
 		AnyBalance.trace(html);
-		throw new AnyBalance.Error(json.error_description, null, /unauthorized/i.test(json.error));
+		throw new AnyBalance.Error(error, null, /unauthorized/i.test(json.error + error));
 	}
 	
 	return json;
 }
 
+function getLastResponseHeader(name){
+	var headers = AnyBalance.getLastResponseHeaders();
+	name = name.toLowerCase();
+	for(var i=0; i<headers.length; ++i){
+		var header = headers[i];
+		if(header[0].toLowerCase() === name)
+			return header[1];
+	}
+	return;
+}
 
 function login() {
 	var prefs = AnyBalance.getPreferences();
@@ -52,7 +69,40 @@ function login() {
 			client_id: prefs.login,
 			client_secret: prefs.password,
 			grant_type: 'client_credentials'
+		}, {
+			'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
 		});
+
+		if(json.error){
+			if(getLastResponseHeader('sbol-status') === 'new_device'){
+				AnyBalance.trace('Требуется подтверждение устройства');
+				var uid = getLastResponseHeader('sbol-udid');
+				
+				json = apiCall('rest/registration/prepareDevice', JSON.stringify({
+					"udId":uid
+				}));
+
+				var code = AnyBalance.retrieveCode('Пожалуйста, подтвердите разрешение AnyBalance входить в интернет-банк БПС-Сбербанк, введя код из SMS',
+				    null, {inputType: 'number', time: 300000});
+
+				json = apiCall('rest/registration/trustedDevice', JSON.stringify({
+					"smsCode":code,
+					"udId":uid
+				}));
+
+				json = apiCall('oauth/token', {
+					client_id: prefs.login,
+					client_secret: prefs.password,
+					grant_type: 'client_credentials'
+				}, {
+					'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+				});
+
+			}else{
+				AnyBalance.trace(JSON.stringify(json));
+				throw new AnyBalance.Error('Неизвестная ошибка входа. Сайт изменен?');
+			}
+		}
 	    
 		g_headers.Authorization = 'Bearer ' + json.access_token;
 	    

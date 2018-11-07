@@ -46,14 +46,14 @@ function main() {
 	// Вошли, там может быть и несколько счетов, но пока нет доступа к такому кабинету, сделаем пока с одним
 	var result = {success: true};
 	
-	html = AnyBalance.requestGet(baseurl + '/po/rest/client/accounts/', g_headers);
+	html = AnyBalance.requestGet(baseurl + '/po/rest/client/accountsMain/', g_headers);
 	
 	var json = getJson(html);
 	
 	// возвращается массив со счетами, можно потом сделать поддержку нескольких счетов
 	var currAcc;
-	for(var i=0; i<json.length; ++i){
-		currAcc = json[i];
+	for(var i=0; i<json.accountResponses.length; ++i){
+		currAcc = json.accountResponses[i];
 		if(currAcc.accountNumber == prefs.login)
 			break;
 	}

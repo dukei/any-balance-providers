@@ -7,28 +7,25 @@ var g_countersTable = {
 		"__forceAvailable": ['cards.accnum'],
     	"balance": "cards.balance",
 		"currency": "cards.currency",
-		"account": "cards.accnum",
-		"acc_name": "cards.accname",
-		"own": "accounts.own",
-		"debt": "accounts.debt",
-		"avail": "accounts.avail",
-		"own": "accounts.own",
-		"overdraft": "accounts.overdraft",
-		"blocked": "accounts.blocked",
-		"__tariff": "cards.num",
+		"overdraft": "cards.overdraft",
+		"accnum": "cards.accnum",
+		"num": "cards.num",
+		"accname": "cards.accname",
+		"holder": "cards.holder",
+		"till": "cards.till",
+		"__tariff": "cards.__name",
 	},
     acc: {
     	"balance": "accounts.balance",
 		"currency": "accounts.currency",
-		"account": "accounts.num",
-		"acc_name": "accounts.type",
-		"own": "accounts.own",
-		"debt": "accounts.debt",
-		"avail": "accounts.avail",
-		"own": "accounts.own",
 		"overdraft": "accounts.overdraft",
-		"blocked": "accounts.blocked",
-		"__tariff": "accounts.num",
+		"accnum": "accounts.num",
+		"accname": "accounts.name",
+		"pct": "accounts.pct",
+		"overdraft_pct": "accounts.overdraft_pct",
+		"overdraft_till": "accounts.overdraft_till",
+		"overdraft_due_pct": "accounts.overdraft_due_pct",
+		"__tariff": "accounts.__name",
     }
 };
 
@@ -57,14 +54,6 @@ function main(){
 		if(!adapter.wasProcessed('cards'))
 			throw new AnyBalance.Error(prefs.lastdigits ? 'Не найдена карта с последними цифрами ' + prefs.lastdigits : 'У вас нет ни одной карты!');
 
-		g_accountNumberForCard = adapter.traverse(result, 'cards.accnum');
-
-		if(g_accountNumberForCard){
-			adapter.processAccounts(html, result);
-		}else{
-			AnyBalance.trace('Не удалось найти номер счета для карты...');
-		}
-		
 		result = adapter.convert(result);
 	} else if(prefs.type == 'acc') {
 		adapter.processAccounts(html, result);
@@ -89,22 +78,22 @@ function shouldProcess(counter, info){
 		    if(!prefs.lastdigits)
 		    	return true;
 			
-			if(endsWith(info.__id, prefs.lastdigits))
+			if(endsWith(info.num, prefs.lastdigits))
 				return true;
 		    
 			return false;
 		}
 		case 'accounts':
 		{
-			if(prefs.type == 'acc'){
-		        if(!prefs.lastdigits)
-		        	return true;
-				
-				if(endsWith(info.__id, prefs.lastdigits))
-					return true;
-		    }else if(prefs.type == 'card'){
-		    	return endsWith(info.__id, g_accountNumberForCard);
-		    }
+			if(prefs.type != 'acc')
+				return false;
+		    if(!prefs.lastdigits)
+		    	return true;
+
+			if(endsWith(info.num, prefs.lastdigits))
+				return true;
+
+		    return false;
 		}
 		default:
 			return false;

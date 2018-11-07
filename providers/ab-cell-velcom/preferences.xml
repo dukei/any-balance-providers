@@ -20,6 +20,6 @@
 		obligatory="true"
 		summary="|Пароль для входа в ИССА|***********"
 		dialogMessage="Введите пароль, используемый для входа в ИССА https://internet.velcom.by."
-		inputType="numberPassword">
+		inputType="textPassword">
 	</EditTextPreference>
 </PreferenceScreen>

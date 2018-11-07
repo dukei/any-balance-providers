@@ -1,5 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="27" date="2018-10-17">
+	Восстановлен показ бонусных баллов при запросе данных с паролем
+	</change>
+	<change version="26" date="2018-10-17">
+	Восстановлено получение информации по номеру телефона и квартиры
+	</change>
 	<change version="25" date="2017-07-22">
 	Исправление работы для AnyBalance+
 	</change>

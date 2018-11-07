@@ -1,5 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="1.0" version="22" date="2018-11-07">
+	- Улучшена обработка ошибок.
+	</change>
+	<change major_version="1.0" version="21" date="2018-10-15">
+	Пароль теперь не требуется
+	</change>
+	<change major_version="1.0" version="20" date="2018-10-12">
+	- Поддержка нового ЛК
+	</change>
 	<change major_version="1.0" version="19" date="2017-07-12">
 	- Поддержка изменений на сайте.
 	</change>

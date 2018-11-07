@@ -2002,8 +2002,8 @@ function megafonLK(filial, html){
 	}
 	
 	if(isAvailable(['__tariff'])){
-		html = AnyBalance.requestGet(lk_url + 'tariff/', addHeaders({Referer: lk_url}));
-		getParam(getElement(html, /<div[^>]+tariff/i), result, '__tariff', /<h2[^>]*>([\s\S]*?)<\/h2>/, [/<svg[^>]*>([\s\S]*?)<\/svg>/ig, '', replaceTagsAndSpaces]);
+		info = requestPipe(csrf, 'tariff/current');
+		getParam(info.name, result, '__tariff');
 	}
 		
 	if(AnyBalance.isAvailable('mins_n_free', 'mins_net_left', 'mins_left', 'mins_total', 'mms_left', 'mms_total', 'sms_left', 'sms_total', 

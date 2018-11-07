@@ -18,15 +18,6 @@ function main() {
         	throw new AnyBalance.Error('Введите номер карты!');
 	if (!prefs.auth_password)
 		throw new AnyBalance.Error('Введите пароль!');
-	
-	var baseurl = 'https://card.spar-nn.ru/';
-
-    var html = AnyBalance.requestGet(baseurl + 'site/login', g_headers);
-	var sitekey = getParam(html, /data-sitekey="([^"]*)/i, replaceHtmlEntities), recaptcha;
-	if(sitekey){
-		AnyBalance.trace('Потребовалась рекапча');
-		recaptcha = solveRecaptcha('Пожалуйста, подтвердите, что вы не робот!', baseurl + 'site/login', sitekey);
-	}
 		
 	response = AnyBalance.requestPost('https://api-sparmv.loymax.tech/token', {
 		'grant_type':'password',
@@ -34,7 +25,11 @@ function main() {
 		'password':prefs.auth_password
 	}, g_headers);
 
-	token = getJson(response);
+	try {
+		token = JSON.parse(response);
+	} catch (ex) {
+		throw new AnyBalance.Error("Сервер вернул ошибочные данные: " + ex.message);
+	}
 	
 	if (token.error_description) {
 		throw new AnyBalance.Error(token.error_description);
@@ -46,7 +41,11 @@ function main() {
 
 	response = AnyBalance.requestGet('https://api-sparmv.loymax.tech/api/user', g_headers);
 
-	user = getJson(response);
+	try {
+		user = JSON.parse(response);
+	} catch (ex) {
+		throw new AnyBalance.Error("Сервер вернул ошибочные данные: " + ex.message);
+	}
 
 	var result = {success: true};
 
@@ -57,7 +56,6 @@ function main() {
 		if(AnyBalance.isAvailable('card_bonus')) {
 			result['card_bonus'] = parseFloat(user.data.cardShortInfo.balance);
 		}
-		result['success'] = true;
 		AnyBalance.setResult(result);
 	} else {
 		throw new AnyBalance.Error('Не удалось получить информацию о бонусах.');

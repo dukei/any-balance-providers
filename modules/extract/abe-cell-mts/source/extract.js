@@ -237,6 +237,17 @@ function fetchAccountStatus(html, result) {
         //Территория МТС (3000 минут): Осталось 0 минут
         html = sumParam(html, result.remainders, 'remainders.min_left_mts', /Территория МТС.*?: Осталось\s*([\d\.,]+)\s*мин/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum, true);
         html = sumParam(html, result.remainders, 'remainders.min_left_mts', /Оста(?:ток|лось):?\s*([\d\.,]+)\s*мин\S*\s*(?:на\s*)?МТС/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum, true);
+
+        html = sumParam(html, result.remainders, 'remainders.min_left_mezh', /междугородные минуты[^<]*?:\s*([\d\.,]+)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum, true);
+        // <li>Остаток пакета "Пакет МГ минут в дом. регионе":13мин МГ</li>
+        html = sumParam(html, result.remainders, 'remainders.min_left_mezh', /Пакет МГ[^<]*?([\d\.,]+?)\s*мин/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum, true);
+        // <li>Остаток пакета "Пакет МГ минут в дом. регионе":13мин МГ</li>
+        html = sumParam(html, result.remainders, 'remainders.min_left_mezh', /М2М[^<]*?([\d\.,]+?)\s*мин/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum, true);
+        // Остаток минут в международном роуминге
+        html = sumParam(html, result.remainders, 'remainders.min_left_mezh', /Остаток: (\d+) мин в МНР/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum, true);
+        
+
+
         //Срочный контракт (15%, 25% как 15%): Осталось 0 минут
         html = sumParam(html, result.remainders, 'remainders.min_left', /Срочный контракт.*?: Осталось\s*([\d\.,]+)\s*мин/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum, true);
         // Пакет минут
@@ -281,12 +292,6 @@ function fetchAccountStatus(html, result) {
         html = sumParam(html, result.remainders, 'remainders.min_left', /пакет местных минут[^<]*?:\s*([\d\.,]+)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum, true);
         html = sumParam(html, result.remainders, 'remainders.min_left', /Остаток\s+"[^<]*?([\d\.,]+)\s*мин/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum, true);
 
-        html = sumParam(html, result.remainders, 'remainders.min_left_mezh', /междугородные минуты[^<]*?:\s*([\d\.,]+)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum, true);
-        // <li>Остаток пакета "Пакет МГ минут в дом. регионе":13мин МГ</li>
-        html = sumParam(html, result.remainders, 'remainders.min_left_mezh', /Пакет МГ[^<]*?([\d\.,]+?)\s*мин/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum, true);
-        // <li>Остаток пакета "Пакет МГ минут в дом. регионе":13мин МГ</li>
-        html = sumParam(html, result.remainders, 'remainders.min_left_mezh', /М2М[^<]*?([\d\.,]+?)\s*мин/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum, true);
-        
         // Использовано: 0 минут местных и мобильных вызовов.
         // Использовано 1 мин на городские номера Москвы, МТС домашнего региона и МТС России
         sumParam(html, result.remainders, 'remainders.min_local', /Использовано:?\s*([\d\.,]+)\s*мин[^\s]* (местных|на городские)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
@@ -361,7 +366,8 @@ function fetchAccountStatus(html, result) {
 }
 
 function isLoggedIn(html) {
-    return getParam(html, null, null, /(<meta[^>]*name="lkMonitorCheck")/i);
+    return getParam(html, /(<meta[^>]*name="lkMonitorCheck")/i)
+       || /js-logout/i.test(html) || /UI\/Logout/i.test(html);
 }
 
 function getLKJson(html, allowExceptions) {
@@ -511,7 +517,6 @@ function checkLoginState(html, options) {
 }
 
 function enterLK(options) {
-    var loginUrl = g_baseurlLogin + "/amserver/UI/Login?service=lk&goto=" + g_baseurl + '/' + "";
     restoreLoginCookies();
 
     var html = enterMtsLK(options);
@@ -580,7 +585,7 @@ function loginWithPassword(){
 
     var prefs = AnyBalance.getPreferences();
 
-    var html = enterLK({login: prefs.login, password: prefs.password});
+    var html = enterLK({login: prefs.login, password: prefs.password, baseurl: 'https://online.mts.ru', url: 'https://login.mts.ru/amserver/UI/Login?service=lk&goto=http%3A%2F%2Fonline.mts.ru%2F'});
     return html;
 }
 
@@ -862,14 +867,6 @@ function processTrafficLK(result){
 function mainLK(html, result) {
     AnyBalance.trace("Мы в личном кабинете...");
 
-    if (!isAnotherNumber()) {
-        processInfoLK(html, result);
-        processBonusLK(result);
-        processTraffic(result);
-    } else {
-        AnyBalance.trace('Пропускаем получение данных из ЛК, если требуется информация по другому номеру');
-    }
-
     var maxIHTries = 3;
     //Иногда помощник входит не с первого раза почему-то.
     for(var i=0; i<maxIHTries; ++i){
@@ -877,12 +874,11 @@ function mainLK(html, result) {
             if (isAnotherNumber() || isAvailableIH()) {
             	AnyBalance.trace('Попытка входа в интернет-помощник ' + (i+1) + '/' + maxIHTries);
                 var ret = followIHLink();
-                html = ret.html;
             
-                if (!isInOrdinary(html)) //Тупой МТС не всегда может перейти из личного кабинета в интернет-помощник :(
-                	checkIHError(html, true, true);
+                if (!isInOrdinary(ret.html)) //Тупой МТС не всегда может перейти из личного кабинета в интернет-помощник :(
+                	checkIHError(ret.html, true, true);
             
-                fetchOrdinary(html, ret.baseurlHelper, result);
+                fetchOrdinary(ret.html, ret.baseurlHelper, result);
             }
             break;
         }catch(e){
@@ -893,6 +889,14 @@ function mainLK(html, result) {
         	if(i == maxIHTries-1) //Если попытка последняя, ставим флаг, что были ошибки
             	result.were_errors = true;
         }
+    }
+
+    if (!isAnotherNumber()) {
+        processInfoLK(html, result);
+        processBonusLK(result);
+        processTraffic(result);
+    } else {
+        AnyBalance.trace('Пропускаем получение данных из ЛК, если требуется информация по другому номеру');
     }
 }
 
@@ -933,7 +937,7 @@ function loginWithoutPassword(){
     } catch (e) {
         AnyBalance.trace('Автоматический вход в кабинет не удался. Пробуем получить пароль через СМС');
         pass = getPasswordBySMS(prefs.login);
-        html = enterLK({login: prefs.login, password: pass});
+        html = enterLK({login: prefs.login, password: pass, baseurl: 'https://online.mts.ru', url: 'https://login.mts.ru/amserver/UI/Login?service=lk&goto=http%3A%2F%2Fonline.mts.ru%2F'});
         if (prefs.password && prefs.password != pass) {
             changePassword(pass, prefs.password);
         }

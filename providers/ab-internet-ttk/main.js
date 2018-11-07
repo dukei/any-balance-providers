@@ -46,7 +46,7 @@ function main() {
 	// Вошли, там может быть и несколько счетов, но пока нет доступа к такому кабинету, сделаем пока с одним
 	var result = {success: true};
 	
-	html = AnyBalance.requestGet(baseurl + '/po/rest/client/accounts/', g_headers);
+	html = AnyBalance.requestGet(baseurl + '/po/rest/client/accountsMain/', g_headers);
 	
 	var json = getJson(html);
 	

@@ -108,17 +108,24 @@ function main () {
     json = retryTimes(function(){ return callApi('v5/users/me') }, 5);
 
     if(AnyBalance.getLastStatusCode() == 401){
-    	AnyBalance.trace('Unauthorized, trying to refresh');
-        tokens = callApi('v5/auth/refresh', null, {
-        	"instance_id": instanceId,
-        	"refreshToken":tokens.refreshToken
-        });
-        setTokensCookies(tokens);
-
-    	json = retryTimes(function(){ return callApi('v5/users/me') }, 5);
+    	try{
+    		AnyBalance.trace('Unauthorized, trying to refresh');
+            tokens = callApi('v5/auth/refresh', null, {
+            	"instance_id": instanceId,
+            	"refreshToken":tokens.refreshToken
+            });
+            setTokensCookies(tokens);
+            
+    		json = retryTimes(function(){ return callApi('v5/users/me') }, 5);
+    	}catch(e){
+    		AnyBalance.trace("Unable to refresh: " + e.message + ". Need to reauth");
+    		AnyBalance.setData("tokens", null);
+    		AnyBalance.saveData();
+    		throw new AnyBalance.Error(e.message, true);
+    	}
     }
 
-    if(AnyBalance.getLastStatusCode() == 401){
+    if(AnyBalance.getLastStatusCode() == 401 || forceReAuth){
     	AnyBalance.trace('Still unauthorized, trying to login');
     	AnyBalance.setCookie(domain, 'perekrestok.authorized', 'false');
 

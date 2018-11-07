@@ -7,7 +7,7 @@ var g_headers = {
 	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
 	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
 	'Connection': 'keep-alive',
-	'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/53.0.2785.143 Safari/537.36',
+	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.77 Safari/537.36',
 };
 
 function main() {
@@ -51,36 +51,55 @@ function parseBalanceSecLeft(str) {
 function mainSite(prefs, baseurl) {
 	var html = AnyBalance.requestGet(baseurl + 'ru/?locale=ru', g_headers);
 	var lang = prefs.lang || 'ru';
+	checkEmpty(/^\d{7}$/i.test(prefs.phone), 'Введите ровно 7 цифр телефонного номера, без пробелов и разделителей!');
 
 	if(AnyBalance.getLastStatusCode() > 400 || !html)
 		throw new AnyBalance.Error('Ошибка! Сервер не отвечает! Попробуйте обновить баланс позже.');
 
-	var params = createFormParams(html, function(params, str, name, value) {
+	var form = getElement(html, /<form[^>]+auth-form/i);
+	if(!form){
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удаётся найти форму входа. Сайт изменен?');
+	}
+
+	var formatted_phone = '+38 (' + prefs.prefph + ') ' + prefs.phone.replace(/(\d{3})(\d{2})(\d{2})/, '$1-$2-$3');
+	var params = createFormParams(form, function(params, str, name, value) {
 		if (name == 'msisdn') 
-			return prefs.phone;
+			return formatted_phone;
 		else if (name == 'super_password')
 			return prefs.pass;
-		else if (name == 'msisdn_code')
-			return prefs.prefph;			
 			
 		return value;
 	});
 
-	// Если показывают картинку - надо запросить капчу
-	var href = getParam(html, null, null, /<img src="\/(captcha\/image[^"]+)/i);
-	if(href) {
-		AnyBalance.trace('Пытаемся ввести капчу');
-		var captcha = AnyBalance.requestGet(baseurl + href);
-		params.captcha_1 = AnyBalance.retrieveCode("Пожалуйста, введите код с картинки", captcha, {time: 180000, inputType: 'number'});
-		AnyBalance.trace('Капча получена: ' + params.captcha_1);
+	var captchaDiv = getElement(html, /<div[^>]+auth-captcha-container/i);
+	if(!/captcha-hidden/i.test(captchaDiv)){
+
+		// Если показывают картинку - надо запросить капчу
+		var href = getParam(html, null, null, /<img src="\/(captcha\/image[^"]+)/i);
+		if(href) {
+			AnyBalance.trace('Пытаемся ввести капчу');
+			var captcha = AnyBalance.requestGet(baseurl + href);
+			params.captcha_1 = AnyBalance.retrieveCode("Пожалуйста, введите код с картинки", captcha, {time: 180000, inputType: 'number'});
+			params.captcha_0 = getParam(href, /image\/([^\/]+)/i);
+			AnyBalance.trace('Капча получена: ' + params.captcha_1);
+		}
+	}else{
+		AnyBalance.trace('Капча не требуется, ура');
 	}
 
-	html = AnyBalance.requestPost(baseurl + 'ru/?locale=ru', params, addHeaders({Referer: baseurl + 'ru/?locale=ru'}));
+	html = AnyBalance.requestPost(baseurl + 'ru/', params, addHeaders({
+		'X-Requested-With': 'XMLHttpRequest',
+		'X-CSRFToken': params.csrfmiddlewaretoken,
+		Referer: baseurl + 'ru/'
+	}));
+	var json = getJson(html);
 
-	if (!/logout/i.test(html)) {
-		var error = getParam(html, null, null, /class="errorlist">([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces);
+	if (json.status != 'success') {
+		var json = getJson(html);
+		var error = json.error && json.error.message;
 		if (error)
-			throw new AnyBalance.Error(error, null, /парол/i.test(error));
+			throw new AnyBalance.Error(error, null, /invalid number|password|парол/i.test(error));
 
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
@@ -90,49 +109,53 @@ function mainSite(prefs, baseurl) {
 
 	html = AnyBalance.requestGet(baseurl + 'ru/osnovnaya-informaciya/osnobnaya-informaciya/', addHeaders({Referer: baseurl}));
         // Основной счет
-	getParam(html, result, 'Mbalance', /<td>Основной счет:(?:[\s\S]*?<td[^>]*>){5}\s*([\s\d.,\-]+)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'Mbalance', />Основной счет:(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
         // Бонусный счет
-	getParam(html, result, 'Bbalance', />Бонусный счет(?:[\s\S]*?<td[^>]*>){1}\s*([\s\d.,\-]+)/i, replaceTagsAndSpaces, parseBalance);
-	//Минуты по сети Life:)
-    	sumParam(html, result, 'mins_life', /минуты \[сеть (?:<span class="life">life:\)<\/span>|life:\))](?:[\s\S]*?<td[^>]*>){1}\s*([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseSec, aggregate_sum);
-    	//Минуты по сети Life:) тариф Life 25
-    	sumParam(html, result, 'mins_life', /25 - 3000 мин.(?:[\s\S]*?<td[^>]*>){1}\s*([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseBalanceSecLeft, aggregate_sum);
-        //Минуты на других операторов
-    	sumParam(html, result, 'mins_uk', /минуты на другие сети(?:[\s\S]*?<td[^>]*>){1}\s*([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-	//Подарочный трафик (Бесплатный Интернет [Интернет, WAP]: CMS и Бесплатный Интернет) + 3G
-	html = sumParam(html, result, 'hspa', /3G интернет(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseTraffic, aggregate_sum, true);
-    	sumParam(html, result, 'hspa', /3G\+ Internet(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
-	sumParam(html, result, 'gprs', /Интернет(?:[\s\S]*?<td[^>]*>){1}\s*([\s\d.,\-]+)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-    	sumParam(html, result, 'hspa_roam', /BiP в роуминге(?:[\s\S]*?<td[^>]*>)([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
-	//MMS по Life
-    	sumParam(html, result, 'mms_life', /MMS \[сеть <span class="life">life:\)<\/span>](?:[\s\S]*?<td[^>]*>){1}\s*([\s\d.,\-]+)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-    	sumParam(html, result, 'mms_life', /MMS \[сеть life:\)](?:[\s\S]*?<td[^>]*>){1}\s*([\s\d.,\-]+)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-    	//SMS по Life
-    	sumParam(html, result, 'sms_life', /SMS \[сеть <span class="life">life:\)<\/span>](?:[\s\S]*?<td[^>]*>){1}\s*([\s\d.,\-]+)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-    	sumParam(html, result, 'sms_life', /SMS \[сеть life:\)](?:[\s\S]*?<td[^>]*>){1}\s*([\s\d.,\-]+)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-	//MMS по Украине
-    	sumParam(html, result, 'mms_uk', /MMS \[в пределах Украины\](?:[\s\S]*?<td[^>]*>){1}\s*([\s\d.,\-]+)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-    	//SMS по Украине
-    	sumParam(html, result, 'sms_uk', /SMS \[в пределах Украины\](?:[\s\S]*?<td[^>]*>){1}\s*([\s\d.,\-]+)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-	//Ознака сплати АП [послуга &#34;Справжній нуль&#34;]
-    	sumParam(html, result, 'ap', /Признак оплаты АП \[за услугу [\s\S]*?Реальный ноль[\s\S]*?\](?:[\s\S]*?<td[^>]*>){1}\s*([\s\d.,\-]+)/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
-	//Срок действия
-	getParam(html, result, 'till', />Срок действия номера(?:[\s\S]*?<td[^>]*>){1}\s*([\s\d.,\-]+)/i, replaceTagsAndSpaces, parseDate);
-	// Телефон
-	getParam(html, result, 'phone', /class="user-number"[^>]*>(380\d+)/i, [replaceTagsAndSpaces, /^380/, '+380']);
         // Тариф
-	if(lang == 'ru') {
-	  html = AnyBalance.requestGet(baseurl + 'ru/osnovnaya-informaciya/osnobnaya-informaciya/', addHeaders({Referer: baseurl}));
-	  getParam(html, result, '__tariff', /<td>Тариф:(?:[\s\S]*?<td[^>]*>){5}\s*([\s\S]*?)<\/td/i, replaceTagsAndSpaces);
+	  getParam(html, result, '__tariff', /<th>Тариф:(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td/i, replaceTagsAndSpaces);
+
+
+	var table = getElement(html, /<table[^>]+table--columns-2/i);
+	var rows = getElements(table, /<tr/ig);
+	for(var i=0; i<rows.length; i++){
+		var row = rows[i];
+		var name = getParam(row, /<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+		var value = getParam(row, /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+		AnyBalance.trace('Найден параметр ' + name + ': ' + value);
+
+		if(/Бонусный счет/i.test(name)){
+			getParam(value, result, 'Bbalance', null, null, parseBalance);
+		}else if(/минут/i.test(name) && /life/i.test(name)){  //Минуты по сети Life:)
+    		sumParam(value, result, 'mins_life', null, null, parseSec, aggregate_sum);
+		}else if(/25 - 3000/i.test(name)){     	//Минуты по сети Life:) тариф Life 25
+    		sumParam(value, result, 'mins_life', null, null, parseSec, aggregate_sum);
+		}else if(/минут/i.test(name) && /други/i.test(name)){  //Минуты на других операторов
+    		sumParam(value, result, 'mins_uk', null, null, parseSec, aggregate_sum);
+		}else if(/Интернет/i.test(name) && /3g/i.test(name)){  //3g
+    		sumParam(value, result, 'hspa', null, null, parseTraffic, aggregate_sum);
+		}else if(/Интернет/i.test(name)){  //3g
+    		sumParam(value, result, 'gprs', null, null, parseTraffic, aggregate_sum);
+		}else if(/BiP в роуминге/i.test(name)){  //3g
+    		sumParam(value, result, 'hspa_roam', null, null, parseTraffic, aggregate_sum);
+		}else if(/MMS/i.test(name) && /life/i.test(name)){  //mms по life
+    		sumParam(value, result, 'mms_life', null, null, parseBalance, aggregate_sum);
+		}else if(/sms/i.test(name) && /life/i.test(name)){  //sms по life
+    		sumParam(value, result, 'sms_life', null, null, parseBalance, aggregate_sum);
+		}else if(/mms/i.test(name)){  //mms по украине
+    		sumParam(value, result, 'mms_uk', null, null, parseBalance, aggregate_sum);
+		}else if(/sms/i.test(name)){  //sms по украине
+    		sumParam(value, result, 'sms_uk', null, null, parseBalance, aggregate_sum);
+		}else if(/абонентская плата/i.test(name)){
+    		getParam(value, result, 'ap', null, null, parseBalance);
+		}else{
+			AnyBalance.trace('^-- Неизвестный параметр. Пропускаем');
+		}
 	}
-	if(lang == 'uk') {
-	  html = AnyBalance.requestGet(baseurl + 'uk/osnovnaya-informaciya/osnobnaya-informaciya/', addHeaders({Referer: baseurl}));
-	  getParam(html, result, '__tariff', /<td>Тариф:(?:[\s\S]*?<td[^>]*>){5}\s*([\s\S]*?)<\/td/i, replaceTagsAndSpaces);
-	}
-	if(lang == 'en') {
-	  html = AnyBalance.requestGet(baseurl + 'en/osnovnaya-informaciya/osnobnaya-informaciya/', addHeaders({Referer: baseurl}));
-	  getParam(html, result, '__tariff', /<td>Tariff:(?:[\s\S]*?<td[^>]*>){5}\s*([\s\S]*?)<\/td/i, replaceTagsAndSpaces);
-	}
+
+	//Срок действия
+	//getParam(html, result, 'till', />Срок действия номера(?:[\s\S]*?<td[^>]*>){1}\s*([\s\d.,\-]+)/i, replaceTagsAndSpaces, parseDate);
+	// Телефон
+	getParam(formatted_phone, result, 'phone');
 
 	if(/Смарт семья|Смарт сім’я|Smart family/i.test(result.__tariff)){
 		html = AnyBalance.requestGet(baseurl + 'ru/osnovnaya-informaciya/smart-semya/', addHeaders({Referer: baseurl}));

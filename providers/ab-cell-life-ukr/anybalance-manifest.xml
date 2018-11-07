@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="3" version="44">ab-cell-life-ukr</id>
+	<id major_version="3" version="45">ab-cell-life-ukr</id>
 	<api flags="no_browser" />
 	<name>Lifecell</name>
 	<description html="true"><![CDATA[
@@ -51,7 +51,7 @@
 		<counter id="mins_mob" name="Минуты на номера мобильных операторов Украины" type="time_interval" format="{@MIN}" units=" мин"/>
 		<counter id="mins_fixed" name="Минуты на номера фиксированной связи Украины" type="time_interval" format="{@MIN}" units=" мин"/>
 		<counter id="mins_family" name="Минуты на родные номера" type="time_interval" format="{@MIN}" units=" мин"/>
-		<counter id="ap" name="Признак оплаты АП"/>
+		<counter id="ap" name="Абонентская плата"/>
 		<counter id="till" name="Действителен до" type="time" format="dd/MM/yyyy"/>
 		<counter id="phone" name="Номер телефона" type="text"/>
 	</counters>

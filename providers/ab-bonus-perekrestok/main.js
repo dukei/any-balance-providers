@@ -125,7 +125,7 @@ function main () {
     	}
     }
 
-    if(AnyBalance.getLastStatusCode() == 401 || forceReAuth){
+    if(AnyBalance.getLastStatusCode() == 401){
     	AnyBalance.trace('Still unauthorized, trying to login');
     	AnyBalance.setCookie(domain, 'perekrestok.authorized', 'false');
 

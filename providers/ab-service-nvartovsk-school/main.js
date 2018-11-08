@@ -15,10 +15,10 @@ function main() {
 	checkEmpty(prefs.acc, 'Введите л/c школьника');
 	
 	AnyBalance.setDefaultCharset('UTF-8');
-	
-	var baseurl = 'http://edu-nv.ru/onlajn-servis-shkolnoe-pitanie?resetfilters=0&clearordering=0&clearfilters=0';
-	
-	var html = AnyBalance.requestPost(baseurl, {
+
+	var baseurl = '://edu-nv.ru/onlajn-servis-shkolnoe-pitanie?resetfilters=0&clearordering=0&clearfilters=0';
+
+	var requestParams = {
 		'fabrik___filter[list_2_com_fabrik_2][value][0]':prefs.acc,
 		'fabrik___filter[list_2_com_fabrik_2][condition][0]':'=',
 		'fabrik___filter[list_2_com_fabrik_2][join][0]':'AND',
@@ -46,9 +46,18 @@ function main() {
 		'fabrik_listplugin_renderOrder':'',
 		'fabrik_listplugin_options':'',
 		'incfilters':'1',
-	}, g_headers);
+	};
+
+	var html = AnyBalance.requestPost('http' + baseurl, requestParams, g_headers);
+
+	var errorHttp = getParam(html, null, null, /<div class="emptyDataMessage" style="">[\s\S]*Пожалуйста, установите хотя бы один фильтр/, replaceTagsAndSpaces, html_entity_decode);
+
+	if (errorHttp) {
+		var html = AnyBalance.requestPost('https' + baseurl, requestParams, g_headers);
+	}
 
 	var error = getParam(html, null, null, /<div class="emptyDataMessage" style="">[\s\S]*Нет записей/, replaceTagsAndSpaces, html_entity_decode);
+
 	if(error) {
 		throw new AnyBalance.Error(error);
 		throw new AnyBalance.Error('Нет записей для заданного л/с');
@@ -60,11 +69,7 @@ function main() {
 	getParam(html, result, 'topaySP', /Школьное питание [\s\S]*?Остаток на [\s\S]*?59 мин[\s\S]*?умма к оплате[\s\S]*?<td class="schol_pit___saldoN fabrik_element fabrik_list_2_group_2" >([^<]+)[\s\S]*?<\/td/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'balanceGPD', /Группа продленного дня[\s\S]*?Остаток на [\s\S]*?59 мин[\s\S]*?<td class="schol_pit___saldoN fabrik_element fabrik_list_2_group_2" >([^<]+)/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'topayGPD', /Группа продленного дня[\s\S]*?Остаток на [\s\S]*?59 мин[\s\S]*?умма к оплате[\s\S]*?<td class="schol_pit___saldoN fabrik_element fabrik_list_2_group_2" >([^<]+)/i, replaceTagsAndSpaces, parseBalance);
-	AnyBalance.trace(result);
 
 
 	AnyBalance.setResult(result);
 };
-
-
-

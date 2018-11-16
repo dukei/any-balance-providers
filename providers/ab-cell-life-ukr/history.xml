@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="3" version="46" date="2018-11-16">
+	поддежка рекапчи и изменений в процедуре входа
+	</change>
 	<change major_version="3" version="45" date="2018-11-07">
 	Восстановлено получение инфы с сайта
 	</change>

@@ -4,10 +4,9 @@
 
 var g_headers = {
 	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
-	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
+	'Accept-Language': 'ru,en-US;q=0.9,en;q=0.8,ru-RU;q=0.7',
 	'Connection': 'keep-alive',
-	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.77 Safari/537.36',
+	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.102 Safari/537.36',
 };
 
 function main() {
@@ -56,42 +55,32 @@ function mainSite(prefs, baseurl) {
 	if(AnyBalance.getLastStatusCode() > 400 || !html)
 		throw new AnyBalance.Error('Ошибка! Сервер не отвечает! Попробуйте обновить баланс позже.');
 
-	var form = getElement(html, /<form[^>]+auth-form/i);
+	var form = getElement(html, /<div[^>]+data-bazooka="authorization"/i);
 	if(!form){
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удаётся найти форму входа. Сайт изменен?');
 	}
 
 	var formatted_phone = '+38 (' + prefs.prefph + ') ' + prefs.phone.replace(/(\d{3})(\d{2})(\d{2})/, '$1-$2-$3');
-	var params = createFormParams(form, function(params, str, name, value) {
-		if (name == 'msisdn') 
-			return formatted_phone;
-		else if (name == 'super_password')
-			return prefs.pass;
-			
-		return value;
-	});
+	var csrf = getParam(form, /data-csrf="([^"]*)/i, replaceHtmlEntities);
+	var recaptcha = getParam(form, /data-recaptcha="([^"]*)/i, replaceHtmlEntities);
 
-	var captchaDiv = getElement(html, /<div[^>]+auth-captcha-container/i);
-	if(!/captcha-hidden/i.test(captchaDiv)){
+	var params = {
+		msisdn: formatted_phone,
+		super_password: prefs.pass,
+		csrfmiddlewaretoken: csrf
+	};
 
-		// Если показывают картинку - надо запросить капчу
-		var href = getParam(html, null, null, /<img src="\/(captcha\/image[^"]+)/i);
-		if(href) {
-			AnyBalance.trace('Пытаемся ввести капчу');
-			var captcha = AnyBalance.requestGet(baseurl + href);
-			params.captcha_1 = AnyBalance.retrieveCode("Пожалуйста, введите код с картинки", captcha, {time: 180000, inputType: 'number'});
-			params.captcha_0 = getParam(href, /image\/([^\/]+)/i);
-			AnyBalance.trace('Капча получена: ' + params.captcha_1);
-		}
+	if(recaptcha){
+	    params['g-recaptcha-response'] = solveRecaptcha("Пожалуйста, докажите, что Вы не робот", AnyBalance.getLastUrl(), recaptcha);
 	}else{
 		AnyBalance.trace('Капча не требуется, ура');
 	}
 
-	html = AnyBalance.requestPost(baseurl + 'ru/', params, addHeaders({
-		'X-Requested-With': 'XMLHttpRequest',
+	html = requestPostMultipart(baseurl + 'ru/?locale=ru', params, addHeaders({
+		Accept: 'application/json, text/plain, */*',
 		'X-CSRFToken': params.csrfmiddlewaretoken,
-		Referer: baseurl + 'ru/'
+		Referer: AnyBalance.getLastUrl()
 	}));
 	var json = getJson(html);
 

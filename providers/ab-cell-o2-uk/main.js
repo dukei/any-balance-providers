@@ -15,6 +15,7 @@ function main() {
 	var prefs = AnyBalance.getPreferences();
 	var baseurlLogin = 'https://accounts.o2.co.uk/';
 	var baseurl = 'https://mymobile.o2.co.uk/';
+	var baseurlApi = 'https://myo2payg.o2.co.uk/';
 
 	AnyBalance.setDefaultCharset('utf-8');
 
@@ -28,7 +29,7 @@ function main() {
 		throw new AnyBalance.Error('Site is temporary unavailable! Try again later.');
 	}
 
-	var form = AB.getElement(html, /<form[^>]+loginForm[^>]*>/i);
+	var form = AB.getElement(html, /<form[^>]+authParam[^>]*>/i);
 	if(!form){
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Could not find login form. Is site changed?');
@@ -44,7 +45,7 @@ function main() {
 		return value;
 	});
 
-	var action = getParam(form, null, null, /<form[^>]+action="([^"]*)/i, replaceHtmlEntities);
+	var action = getParam(form, /<form[^>]+action="([^"]*)/i, replaceHtmlEntities);
 
 	html = AnyBalance.requestPost(action, params, AB.addHeaders({
 		Referer: baseurlLogin + 'signin'
@@ -67,7 +68,7 @@ function main() {
 
 	AB.getParam(html, result, '__tariff', /<span[^>]+mobileNumberHeading[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
 
-	html = AnyBalance.requestGet(baseurl + 'api/payandgo/balanceandallowance?disambiguation_id=' + disambiguation_id, addHeaders({Referer: AnyBalance.getLastUrl()}));
+	html = AnyBalance.requestGet(baseurlApi + 'api/tariff/balanceandallowance?disambiguation_id=' + disambiguation_id, addHeaders({Referer: AnyBalance.getLastUrl()}));
 	var json = getJson(html);
 
 	AB.getParam(json.accountBalance.valueInPence/100, result, 'balance');

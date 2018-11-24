@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+    <id version="1">extract/abe-money-vostochny-app</id>
+	<api flags="no_browser" />
+    <name>Extract for Faktura mobile app API</name>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<files>
+		<js>extract.js</js>
+		<history>history.xml</history>
+	</files>
+	<depends>
+	    <module id="library"/>
+	    <module id="mobile/imei"/>
+	    <module id="crypt/md5"/>
+	    <module id="crypt/base64"/>
+	</depends>
+	<type>money, bank</type>
+</provider>

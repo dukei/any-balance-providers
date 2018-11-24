@@ -28,8 +28,10 @@ function main() {
 		if(cf.isCloudflared(html))
 		    html = cf.executeScript(html);
 
-		getParam(html, result, ['rate', 'usd'], /\$([\d\.,\s]*)@[^<]*BTC\/ETH/i, replaceTagsAndSpaces, parseBalance);
-		getParam(html, result, ['rate_btc', 'btc'], /@([^<]*)BTC\/ETH/i, replaceTagsAndSpaces, parseBalance);
+		var price = getElement(html, /<span[^>]+id=["']price['"]/i, replaceTagsAndSpaces);
+
+		getParam(price, result, ['rate', 'usd'], /\$([\d\.,\s]*)/i, replaceTagsAndSpaces, parseBalance);
+		getParam(price, result, ['rate_btc', 'btc'], /@([^<]*)/i, replaceTagsAndSpaces, parseBalance);
 	}
 
 	if(AnyBalance.isAvailable('balance', 'usd', 'btc')){

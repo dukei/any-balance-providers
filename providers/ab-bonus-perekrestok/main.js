@@ -7,15 +7,19 @@
 Личный кабинет: https://prcab.x5club.ru/cwa/
 */
 
+var domain = "my.perekrestok.ru"
+
 var g_headers = {
-	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-	'Accept-Language': 'ru,en-US;q=0.8,en;q=0.6',
+	'Accept': 'application/json, text/plain, */*',
+	'Accept-Language': 'ru,en-US;q=0.9,en;q=0.8,ru-RU;q=0.7',
 	'Connection': 'keep-alive',
-	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/57.0.2987.133 Safari/537.36',
-	Origin: "https://my.perekrestok.ru"
+	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36',
+	'If-Modified-Since': '0',
+	'Content-Type': 'application/json',
+	Origin: "https://" + domain
 };
 
-var baseurl = "https://my.perekrestok.ru/"
+var baseurl = "https://" + domain + "/"
 var apiHeaders = {
 	Referer: baseurl + 'login'
 };
@@ -30,11 +34,21 @@ function callApi(verb, getParams, postParams){
 	
 	var html = AnyBalance.requestPost(baseurl + 'api/' + verb, postParams && JSON.stringify(postParams), addHeaders(h), {HTTP_METHOD: method});
 
-	var json = getJson(html);
+	var json = html ? getJson(html) : {};
+
+	if(AnyBalance.getLastStatusCode() >= 500 && !html)
+		throw new AnyBalance.Error('Ошибка сервера');
+
+	if(AnyBalance.getLastStatusCode() >= 400 && json.code){
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error(json.title + '\n' + json.message, null, /не привязан|некорректный/i.test(json.message));
+	}
+
 	if(json.error){
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error(json.error.description, null, /парол/i.test(json.error.description));
 	}
+
 
 	if(json.non_field_errors){
 		AnyBalance.trace(html);
@@ -44,151 +58,22 @@ function callApi(verb, getParams, postParams){
 	return json;
 }
 
-function passCaptcha(handshake){
-    var captcha = handshake.server.features['security/captcha'];
-    if(captcha && captcha.enabled_for_resources && /establish/i.test(JSON.stringify(captcha.enabled_for_resources))){
-    	AnyBalance.trace('Требуется рекапча, надо показывать');
-    	var requestId = String(Math.floor(Math.random() * (9999999999 - 1000000000 + 1)) + 1000000000);
-    	html = AnyBalance.requestGet(baseurl + 'api/v3/security/captcha?' + 
-    		'request_id=' + requestId + '&' +
-    		'resource_id=' + baseurl + 'api/v3/sessions/card/establish' + '&' +
-    		'X-Authorization=' + encodeURIComponent(apiHeaders['X-Authorization']
-    	), addHeaders({
-    		Referer: baseurl + 'login'
-    	}));
-
-    	var sitekey = getParam(html, /data-sitekey="([^"]*)/i, replaceHtmlEntities);
-    	var csrf = getParam(html, /<input[^>]+csrfmiddlewaretoken[^>]*/i);
-    	if(!sitekey || !csrf){
-    		AnyBalance.trace(html);
-    		throw new AnyBalance.Error('Не удалось получить идентификатор капчи. Сайт изменен?');
-    	}
-    	var url = AnyBalance.getLastUrl();
-
-    	var response = solveRecaptcha('Пожалуйста, докажите, что вы не робот', url, sitekey);
-
-    	html = AnyBalance.requestPost(url, {
-    		csrfmiddlewaretoken: getParam(csrf, /value=['"]([^'"]*)/i, replaceHtmlEntities),
-    		'g-recaptcha-response': response
-    	}, addHeaders({
-    		Referer: url
-    	}));
-
-    	if(!/success/i.test(AnyBalance.getLastUrl())){
-    		AnyBalance.trace('Captcha redirected to ' + AnyBalance.getLastUrl() + ' with content:\n' + html);
-    		throw new AnyBalance.Error('Не удалось проверить капчу. Сайт изменен?');
-    	}
-
-    	var captcha_token = getParam(AnyBalance.getLastUrl(), /token=([^&]*)/i, decodeURIComponent);
-    	AnyBalance.trace('Капчу преодолели (token: ' + captcha_token + '), идем дальше');
-    	return {request_id: requestId, token: captcha_token};
-    }
-
-    return {request_id: '', token: ''};
+function setTokensCookies(tokens){
+    AnyBalance.setCookie(domain, 'perekrestok.accessToken', "Bearer%20" + tokens.accessToken);
+    AnyBalance.setCookie(domain, 'perekrestok.refreshToken', tokens.refreshToken);
+    g_headers['X-Authorization'] = "Bearer " + tokens.accessToken;
 }
 
-function pass2f(handshake){
-    var tfa = handshake.server.features['security/2fa'];
-    if(tfa && tfa.is_enabled){
-    	var factor = tfa.factors[0];
-    	var channel = factor.channels[0];
-    	AnyBalance.trace('Требуется подтверждение входа по ' + channel.id);
-    	if(!channel || channel.id != 'sms'){
-    		AnyBalance.trace(JSON.stringify(tfa));
-    		throw new AnyBalance.Error('Требуется двухфакторная авторизация по неизвестному каналу. Сайт изменен?');
-    	}
+function passCaptcha(info){
+    var response = solveRecaptcha('Пожалуйста, докажите, что вы не робот', baseurl, info.captcha_key);
 
-    	json = callApi('v3/users/self/phones');
-    	if(!json.primary || !json.primary.number){
-    		AnyBalance.trace(JSON.stringify(json));
-    		throw new AnyBalance.Error('Нет номера телефона для подтверждения! Сайт изменен?');
-    	}
-    	AnyBalance.trace('Phones: ' + JSON.stringify(json));
-    	var phoneInfo = json.phones.find(function(ph){ return ph.number == json.primary.number });
-    	if(!phoneInfo){
-    		AnyBalance.trace('Не удалось найти номер ' + json.primary.number);
-    		phoneInfo = json.phones[0];
-    	}
-
-    	json = callApi('v3/security/2fa/requests', null, {
-    		channel_id: channel.id,
-    		factor_id: factor.id,
-    		phone_number_raw: phoneInfo.formatted_number
-    	});
-
-    	if(AnyBalance.getLastStatusCode() != 201){
-    		AnyBalance.trace(JSON.stringify(json));
-    		throw new AnyBalance.Error('Не удалось послать смс. Сайт изменен?');
-    	}
-
-    	var code = AnyBalance.retrieveCode('Пожалуйста, введите код из СМС, посланной на номер ' + json.phone_number_raw, null, {inputType: 'number', time: 120000});
-    	json = callApi('v3/security/2fa/validations', null, {
-    		channel_id: channel.id,
-    		code: code,
-    		factor_id: factor.id,
-    		phone_number: json.phone_number_raw
-    	});
-
-    	if(json.need3f){
-    		AnyBalance.trace(JSON.stringify(json));
-    		throw new AnyBalance.Error('Прошли проверку смс, но перекрестку мало. Надо ещё что-то проходить. Попробуйте ещё раз, или обратитесь к разработчикам. Сайт изменен?');
-    	}
-
-    	AnyBalance.trace('Проверка 2f пройдена');
-    }
-}
-
-function handshakeAndEstablish(){
-    var prefs = AnyBalance.getPreferences (), html, json;
-
-    var handshake = callApi('v3/startup/handshake', null, {
-    	app: {
-    		platform: 'web',
-    		user_agent: g_headers['User-Agent'],
-    		version: 2
-    	},
-    	version: 1
+    var json = callApi('..' + info.captcha_url, null, {
+    	'g_recaptcha_response': response
     });
 
-    apiHeaders['X-Authorization'] = 'Bearer ' + handshake.server.features['security/session'].token.value;
-    AnyBalance.setCookie('my.perekrestok.ru', 'token', 'Bearer%20' + handshake.server.features['security/session'].token.value);
-    AnyBalance.setCookie('my.perekrestok.ru', 'header_name', 'X-Authorization');
-
-    var params1 = passCaptcha(handshake);
-
-    var card = /^\d{16}$/.test(prefs.login);
-    if(card){
-        json = callApi('v3/sessions/card/establish', null, joinObjects({
-        	card_no: prefs.login,
-        	password: prefs.password,
-        }, params1));
-    }else{
-        json = callApi('v3/sessions/phone/establish', null, joinObjects({
-        	phone_no: prefs.login,
-        	password: prefs.password,
-        }, params1));
+    if(!json.is_valid){
+    	throw new AnyBalance.Error('Не удалось проверить капчу. Сайт изменен?');
     }
-
-    if(!json.data || !json.data.totp_secret_key){
-    	AnyBalance.trace(JSON.stringify(json));
-    	throw new AnyBalance.Error('Не удалось авторизоваться. Сайт изменен?');
-    }
-
-    pass2f(handshake);
-}
-
-function callApiReestablish(verb){
-	var json;
-	try{
-		json = callApi(verb);
-	}catch(e){
-		if(!e.fatal && AnyBalance.getLastStatusCode() == 401 || AnyBalance.getLastStatusCode() == 403){
-			AnyBalance.trace(verb + ': ' + e.message + ', reestablishing connection');
-			handshakeAndEstablish();
-			json = callApi(verb);
-		}
-	}
-	return json;
 }
 
 function main () {
@@ -196,39 +81,104 @@ function main () {
     AnyBalance.setDefaultCharset('utf-8');
 
 	checkEmpty(prefs.login, 'Введите номер карты или номер телефона.');
-	checkEmpty(prefs.password, 'Введите пароль.');
 		
     AnyBalance.trace('Входим в кабинет ' + baseurl);
 
-    var html = AnyBalance.requestGet(baseurl + 'login', g_headers);
+    var html = AnyBalance.requestGet(baseurl + '', g_headers);
     if(AnyBalance.getLastStatusCode() >= 400){
     	AnyBalance.trace(html);
-    	throw new AnyBalance.Error('Личный кабинет https://my.perekrestok.ru/ временно недоступен. Пожалуйста, попробуйте позже');
+    	throw new AnyBalance.Error('Личный кабинет ' + baseurl + ' временно недоступен. Пожалуйста, попробуйте позже');
     }
 
-    try{
-		handshakeAndEstablish();
-	}catch(e){
-		if(AnyBalance.getLastStatusCode() == 403 || AnyBalance.getLastStatusCode() == 401){
-			AnyBalance.trace('Тупой перекресток выдал ошибку в ' + AnyBalance.getLastUrl() + ': ' + AnyBalance.getLastStatusCode() + '. Надо переустановить соединение');
-			handshakeAndEstablish();
-		}else
-			throw e;
-	}
+    var tokens = AnyBalance.getData('tokens');
+    var json;
+
+    var instanceId = hex_md5(prefs.login);
+    AnyBalance.setCookie(domain, 'perekrestok.instanceId', instanceId);
+
+    if(!tokens){
+        tokens = callApi('v5/auth/signin', null, {
+        	"instance_id": instanceId,
+        	"device":{"platform":"WEB","version":"2.0"},
+        	"grant_type":"DEVICE_TOKEN"
+        });
+    }
+    
+    setTokensCookies(tokens);
+    json = retryTimes(function(){ return callApi('v5/users/me') }, 5);
+
+    if(AnyBalance.getLastStatusCode() == 401){
+    	try{
+    		AnyBalance.trace('Unauthorized, trying to refresh');
+            tokens = callApi('v5/auth/refresh', null, {
+            	"instance_id": instanceId,
+            	"refreshToken":tokens.refreshToken
+            });
+            setTokensCookies(tokens);
+            
+    		json = retryTimes(function(){ return callApi('v5/users/me') }, 5);
+    	}catch(e){
+    		AnyBalance.trace("Unable to refresh: " + e.message + ". Need to reauth");
+    		AnyBalance.setData("tokens", null);
+    		AnyBalance.saveData();
+    		throw new AnyBalance.Error(e.message, true);
+    	}
+    }
+
+    if(AnyBalance.getLastStatusCode() == 401){
+    	AnyBalance.trace('Still unauthorized, trying to login');
+    	AnyBalance.setCookie(domain, 'perekrestok.authorized', 'false');
+
+    	var num = prefs.login.replace(/\D/g, '');
+    	var phone = num.length < 16;
+    	if(phone)
+    		num = '+' + (num.length <= 10 ? '7' : '') + num;
+
+    	do{
+        	json = callApi(phone ? 'v5/2fa/phone/requests' : 'v5/2fa/loyalty/requests', null, {
+        		"number": num,
+        	});
+        	
+        	if(json.captcha_key){
+        		AnyBalance.trace('Потребовалась капча');
+        		passCaptcha(json);
+        	}else{
+        		break;
+        	}
+        	
+        }while(true);
+
+        var code = AnyBalance.retrieveCode('Пожалуйста, введите код из СМС для входа в ЛК Перекресток', null, {inputType: 'number', time: 300000});
+
+        tokens = callApi('v5/auth/signin', null, {
+        	"instance_id": instanceId,
+        	"grant_type":"IDENTITY_TOKEN",
+        	"two_factor": {
+        		"code": code,
+        		"token": json.token
+        	}
+        });
+        setTokensCookies(tokens);
+
+    	json = retryTimes(function(){ return callApi('v5/users/me') }, 5);
+    }
+
+    if(AnyBalance.getLastStatusCode() >= 400){
+    	throw new AnyBalance.Error('Не удалось войти в личный кабинет. Сайт изменен?');
+    }
+
+    AnyBalance.setData('tokens', tokens);
+    AnyBalance.saveData();
 
     var result = {success: true};
 
-    if(isAvailable(['customer', '__tariff'])){
-    	json = callApiReestablish('v3/users/self');
+    getParam(json.personalData.firstName + ' ' + json.personalData.lastName, result, 'customer');
+    getParam(json.loyaltyNo, result, '__tariff');
+    getParam(json.balances.points, result, 'balance');
+    getParam(json.balances.stickers, result, 'stickers');
 
-    	getParam(json.data.user.name + ' ' + json.data.user.surname, result, 'customer');
-    	getParam(json.data.user.card_no, result, '__tariff');
-    }
-
-    if(isAvailable(['balance', 'burnInThisMonth', 'burnDate'])){
-    	json = callApiReestablish('v3/balances');
-
-    	getParam(json.data.balance_list[0].balance_points, result, 'balance');
+    if(isAvailable(['burnInThisMonth', 'burnDate'])){
+    	json = callApi('v3/balances');
 
     	if(json.data.expiration_info){
 	    	getParam(json.data.expiration_info.value, result, 'burnInThisMonth');
@@ -239,45 +189,14 @@ function main () {
     AnyBalance.setResult (result);
 }
 
-// https://tc39.github.io/ecma262/#sec-array.prototype.find
-if (!Array.prototype.find) {
-  Array.prototype.find = function(predicate) {
-     // 1. Let O be ? ToObject(this value).
-      if (this == null) {
-        throw new TypeError('"this" is null or not defined');
-      }
-
-      var o = Object(this);
-
-      // 2. Let len be ? ToLength(? Get(O, "length")).
-      var len = o.length >>> 0;
-
-      // 3. If IsCallable(predicate) is false, throw a TypeError exception.
-      if (typeof predicate !== 'function') {
-        throw new TypeError('predicate must be a function');
-      }
-
-      // 4. If thisArg was supplied, let T be thisArg; else let T be undefined.
-      var thisArg = arguments[1];
-
-      // 5. Let k be 0.
-      var k = 0;
-
-      // 6. Repeat, while k < len
-      while (k < len) {
-        // a. Let Pk be ! ToString(k).
-        // b. Let kValue be ? Get(O, Pk).
-        // c. Let testResult be ToBoolean(? Call(predicate, T, « kValue, k, O »)).
-        // d. If testResult is true, return kValue.
-        var kValue = o[k];
-        if (predicate.call(thisArg, kValue, k, o)) {
-          return kValue;
+function retryTimes(func, times){
+	for(var i=0; i<times; ++i){
+		try{
+			return func();
+		}catch(e){
+			AnyBalance.trace('Попытка ' + (i+1) + '/' + times + ': ' + e.message);
+			if(i === times-1)
+				throw e;
         }
-        // e. Increase k by 1.
-        k++;
-      }
-
-      // 7. Return undefined.
-      return undefined;
-  }
+    }
 }

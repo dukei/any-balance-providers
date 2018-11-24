@@ -2002,8 +2002,8 @@ function megafonLK(filial, html){
 	}
 	
 	if(isAvailable(['__tariff'])){
-		html = AnyBalance.requestGet(lk_url + 'tariff/', addHeaders({Referer: lk_url}));
-		getParam(getElement(html, /<div[^>]+tariff/i), result, '__tariff', /<h2[^>]*>([\s\S]*?)<\/h2>/, [/<svg[^>]*>([\s\S]*?)<\/svg>/ig, '', replaceTagsAndSpaces]);
+		info = requestPipe(csrf, 'tariff/current');
+		getParam(info.name, result, '__tariff');
 	}
 		
 	if(AnyBalance.isAvailable('mins_n_free', 'mins_net_left', 'mins_left', 'mins_total', 'mms_left', 'mms_total', 'sms_left', 'sms_total', 
@@ -2084,6 +2084,9 @@ function megafonLKRemainders(filial, html, result){
 					}else if((/\.\s*МегаФон|на МегаФон|на МФ/i.test(name) && !/МТС/i.test(name) && !/стационар/i.test(name))
 							|| /внутри сети/i.test(name)) {
 						sumParam(left, result, 'mins_net_left', null, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
+					}else if(/Безлимитные входящие/i.test(name)) {
+						AnyBalance.trace('Бесконечное значение минут (' + name + '), пропускаем: ' + row);
+						continue;
 					} else {
 						sumParam(left, result, 'mins_left', null, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
 						sumParam(total, result, 'mins_total', null, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
@@ -2120,6 +2123,8 @@ function megafonLKRemainders(filial, html, result){
 						getParam(left, result, 'internet_roam_europe', null, replaceTagsAndSpaces, parseTraffic);
 				}else if(/Автопродление/i.test(name)) {
 					getParam(left, result, 'internet_auto_prolong', null, replaceTagsAndSpaces, parseTraffic);
+				}else if(/Интернет в Крыму/i.test(name)) {
+					getParam(left, result, 'internet_left_crimea', null, replaceTagsAndSpaces, parseTraffic);
 				} else {
 					var suffix = '';
 					if(/ноч/i.test(name)) suffix = '_night';
@@ -2358,6 +2363,7 @@ var g_countersTable = {
 		"mins_day": "remainders.mins_day",
 		"internet_left": "remainders.internet_left",
 		"internet_left_night": "remainders.internet_left_night",
+		"internet_left_crimea": "remainders.internet_left_crimea",
 		"sms_left": "remainders.sms_left",
 		"mms_left": "remainders.mms_left",
 		"bonus_balance": "bonus_balance",

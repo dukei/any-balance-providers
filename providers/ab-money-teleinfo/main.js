@@ -142,8 +142,6 @@ function main(){
 		result = adapter.convert(result);
 
 	}else if(prefs.type == 'crd'){
-		throw new AnyBalance.Error('Кредиты временно не поддерживаются. Пожалуйста, обратитесь к разработчикам.');
-
 		adapter.processCredits(result);
 		if(!adapter.wasProcessed('credits'))
 			throw new AnyBalance.Error(prefs.card ? 'Не найден кредит с последними цифрами ' + prefs.card : 'У вас нет ни одного кредита');

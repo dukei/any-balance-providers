@@ -1,5 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="14" date="2018-10-17">
+	- Исправлена работа провайдера на  некоторых платформах
+	</change>
+	<change version="13" date="2018-10-15">
+	Поддержка Самары
+	</change>
+	<change version="12" date="2018-10-05">
+	- Поддержка нового ЛК
+	</change>
 	<change version="11" date="2017-01-10">
 	Добавлен регион Йошкар-Ола
 	</change>

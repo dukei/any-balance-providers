@@ -25,7 +25,7 @@ function main() {
 		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
 	}
 
-	html = AnyBalance.requestPost(baseurl + '_api/vtb/authenticate/', {
+	html = AnyBalance.requestPost(baseurl + '_api/mt/authenticate/', {
 		id: prefs.login,
 		password: prefs.password,
 		'source': 'vtb24'

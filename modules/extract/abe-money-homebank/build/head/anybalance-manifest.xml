@@ -2,7 +2,7 @@
 <provider>
     <id version="1">extract/abe-money-homebank</id>
 	<api flags="no_browser" />
-    <name>Extract for Казкоммерцбанк</name>
+    <name>Extract for Homebank (Казкоммерцбанк/Народный Банк)</name>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<js>extract.abe-money-homebank.min.js</js>

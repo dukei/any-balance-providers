@@ -1,4 +1,4 @@
-﻿/**
+/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 */
 
@@ -7,7 +7,7 @@ var g_countersTable = {
 	"count": "count",
 	"date": "fines.date",
 	"koap": "fines.koap",
-	"descr": "fines.descr",
+	"descr": ["fines.descr", "descr"],
 	"dateDiscount": "fines.dateDiscount",
 	"podrazdel": "fines.podrazdel",
 	"postanovlenie": "fines.postanovlenie",

@@ -5,13 +5,20 @@
 var g_countersTable = {
 	common: {
 		"bonus": "bonus",
+		"fio": "info.fio",
 	},
 	card: {
-		"balance": "cards.balance",
+		"balance": "cards.balance_kzt",
+		"balance_usd": "cards.balance_usd",
+		"balance_eur": "cards.balance_eur",
+		"blocked": "cards.blocked",
 		"available": "cards.available",
 		"repayment": "cards.minpay",
 		"account": "cards.num",
+		"accnum": "cards.accnum",
+		"till": "cards.till",
 		"currency": "cards.currency",
+		"limit": "cards.limit",
 		"__tariff": "cards.__name",
 	},
 	crd: {
@@ -21,15 +28,21 @@ var g_countersTable = {
 	},
     acc: {
 		"balance": "accounts.balance",
+		"blocked": "accounts.blocked",
+		"currency": "accounts.currency",
 		"account": "accounts.num",
 		"__tariff": "accounts.__name",
     },
 	dep: {
-		"balance": "balance",
-		"available": "available",
-		"repayment": "repayment",
-		"account": "account",
-		"currency": "currency",
+		"balance": "deposits.balance",
+		"available": "deposits.available",
+		"repayment": "deposits.repayment",
+		"account": "deposits.num",
+		"currency": "deposits.currency",
+		"pcts": "deposits.pcts",
+		"rate": "deposits.pct",
+		"till": "deposits.till",
+		"__tariff": "deposits.__name",
     }
 };
 
@@ -47,7 +60,7 @@ function shouldProcess(counter, info){
 		    if(!prefs.num)
 		    	return true;
 			
-			if(endsWith(info.num, prefs.num))
+			if(endsWith(info.__name, prefs.num))
 				return true;
 		    
 			return false;
@@ -69,7 +82,7 @@ function shouldProcess(counter, info){
 		    if(!prefs.num)
 		    	return true;
 			
-			if(endsWith(info.num, prefs.num))
+			if(endsWith(info.__name, prefs.num))
 				return true;
 		}	
 		case 'deposits':
@@ -93,52 +106,48 @@ function main() {
     if(!/^(card|crd|dep|acc)$/i.test(prefs.type || ''))
     	prefs.type = 'card';
 
-    if(/dep/i.test(prefs.type))
+    if(/crd/i.test(prefs.type))
     	throw new AnyBalance.Error('Не удалось получить данные по депозиту. Сайт изменен?');
 	
     var adapter = new NAdapter(joinObjects(g_countersTable.common, g_countersTable[prefs.type]), shouldProcess);
 	
     adapter.processCards = adapter.envelope(processCards);
     adapter.processAccounts = adapter.envelope(processAccounts);
-    adapter.processCredits = adapter.envelope(processCredits);
-//    adapter.processDeposits = adapter.envelope(processDeposits);
+//    adapter.processCredits = adapter.envelope(processCredits);
+    adapter.processDeposits = adapter.envelope(processDeposits);
     adapter.processBonuses = adapter.envelope(processBonuses);
-	
-	var html = login(prefs);
+    adapter.processInfo = adapter.envelope(processInfo);
 	
 	var result = {success: true};
+  
+	var html = login(result);
 
-	adapter.processBonuses(html, result);
+	adapter.processInfo(result);
+	adapter.processBonuses(result);
 	
 	if(prefs.type == 'card') {
-		adapter.processCards(html, result);
+		adapter.processCards(result);
 		
 		if(!adapter.wasProcessed('cards'))
 			throw new AnyBalance.Error(prefs.num ? 'Не найдена карта с последними цифрами ' + prefs.num : 'У вас нет ни одной карты!');
-		
-		result = adapter.convert(result);
 	} else if(prefs.type == 'acc') {
-		adapter.processAccounts(html, result);
+		adapter.processAccounts(result);
 
 		if(!adapter.wasProcessed('accounts'))
 			throw new AnyBalance.Error(prefs.num ? 'Не найден счет с последними цифрами ' + prefs.num : 'У вас нет ни одного счета!');
-		
-		result = adapter.convert(result);
 	} else if(prefs.type == 'crd') {
-		adapter.processCredits(html, result);
+		adapter.processCredits(result);
 
 		if(!adapter.wasProcessed('credits'))
 			throw new AnyBalance.Error(prefs.num ? 'Не найден кредит с последними цифрами ' + prefs.num : 'У вас нет ни одного кредита!');
-		
-		result = adapter.convert(result);
 	} else if(prefs.type == 'dep') {
-		adapter.processDeposits(html, result);
+		adapter.processDeposits(result);
 		
 		if(!adapter.wasProcessed('deposits'))
 			throw new AnyBalance.Error(prefs.num ? 'Не найден депозит с последними цифрами ' + prefs.num : 'У вас нет ни одного депозита!');
-		
-		result = adapter.convert(result);
 	}
 	
+	result = adapter.convert(result);
+
 	AnyBalance.setResult(result);
 }

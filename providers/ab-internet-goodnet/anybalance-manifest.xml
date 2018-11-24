@@ -1,0 +1,35 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id major_version="1" version="1">ab-internet-goodnet</id>
+  <api flags="no_browser"/>
+  <name>Гуднет (Благовещенск)</name>
+  <description>
+    Получает баланс и информацию о тарифном плане для благовещенского интернет-провайдера Гуднет (https://goodnet.su/).
+
+    Информация берется из личного кабинета https://goodnet.su:8080/webexecuter.
+  </description>
+  <author>Gr &lt;Pomidor4ik@github&gt;</author>
+  <files>
+		<js>library.min.js</js>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+    <history>history.xml</history>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units="р"/>
+    <counter id="prihod" name="Платежи в текущем месяце" units="р"/>
+    <counter id="trafficIn" name="Вх.трафик в текущем месяце" units="Gb"/>
+    <counter id="trafficOut" name="Исх.трафик в текущем месяце" units="Gb"/>
+    <counter id="licschet" name="Договор" type="text"/>
+  </counters>
+  <keywords>
+    интернет, goodnet, гуднет
+  </keywords>
+  <type>
+    internet
+  </type>
+  <country>
+    ru
+  </country>
+</provider>

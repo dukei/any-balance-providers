@@ -27,31 +27,27 @@ function main(){
 
   var region = findRegion(prefs.region).REGION_ID;
 
-  var body = '{"currencyData":[{"currencyCode":"A98","rangesAmountFrom":[0]},{"currencyCode":"A99","rangesAmountFrom":[0]},{"currencyCode":"A33","rangesAmountFrom":[0]},{"currencyCode":"A76","rangesAmountFrom":[0]}],"categoryCode":"base"}';
-
-  var html = AnyBalance.requestPost('http://www.sberbank.ru/portalserver/proxy/?pipe=shortCachePipe&url=http%3A%2F%2Flocalhost%2Frates-web%2FrateService%2Frate%3FregionId%3D' + region + '%26fromDate%3D' + getFormattedDate({offsetDay: 7}) + '%26toDate%3D' + getFormattedDate() + '%26hash%3D' + computeHash(body),
-
-  	body, 
+  var html = AnyBalance.requestGet('https://www.sberbank.ru/portalserver/proxy/?pipe=shortCachePipe&url=http%3A%2F%2Flocalhost%2Frates-web%2FrateService%2Frate%2Fcurrent%3FregionId%3D' + region + '%26rateCategory%3Dbase%26currencyCode%3DA33%26currencyCode%3DA76%26currencyCode%3DA98%26currencyCode%3DA99',
   	addHeaders({
   		'X-Requested-With': 'XMLHttpRequest',
-  		'Content-Type': 'application/json',
-  		Referer: 'http://www.sberbank.ru/ru/quotes/metal/'
+  		'X-Request-ID': 'cf0e71d3-a5e5-4a48-b4d3-7464c0ffb773',
+  		Referer: 'https://www.sberbank.ru/ru/quotes/metal/'
   	}));
 
   var json = getJson(html);
 
   var result = {success: true};
 
-  for(var key in json){
-  	  var metal = json[key];
+  for(var key in json.base){
+  	  var metal = json.base[key][0];
   	  var name = g_iso_to2letters[metal.isoCur];
       if(AnyBalance.isAvailable(name + '_buy'))
-        result[name + '_buy'] = metal.rates[0].buyValue;
+        result[name + '_buy'] = metal.buyValue;
       if(AnyBalance.isAvailable(name + '_sell'))
-        result[name + '_sell'] = metal.rates[0].sellValue;
+        result[name + '_sell'] = metal.sellValue;
       if(AnyBalance.isAvailable(name + '_weight') && (weight = getWeight(name)))
-        result[name + '_weight'] = metal.rates[0].buyValue * weight;
-      sumParam(metal.rates[0].activeFrom, result, 'date', null, null, null, aggregate_max);
+        result[name + '_weight'] = metal.buyValue * weight;
+      sumParam(metal.activeFrom, result, 'date', null, null, null, aggregate_max);
   }
 
   AnyBalance.setResult(result);

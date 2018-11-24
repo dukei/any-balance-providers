@@ -2,15 +2,15 @@
 <PreferenceScreen>
     <EditTextPreference
         key="login"
-        title="Номер карты"
-        summary="Номер карты для доступа к личному кабинету||{@s}\n"
+        title="Номер карты или телефона"
+        summary="Номер карты или телефона для доступа к личному кабинету||{@s}\n"
         inputType="number"
-        dialogTitle="Номер карты"
-        dialogMessage="Введите номер карты для входа в личный кабинет"
+        dialogTitle="Номер карты или телефона"
+        dialogMessage="Введите номер карты или телефона для входа в личный кабинет"
         positiveButtonText="ОК"
         negativeButtonText="Отмена">
     </EditTextPreference>
-    <EditTextPreference
+<!--    <EditTextPreference
         key="password"
         title="Пароль"
         summary="Пароль для входа в личный кабинет||**********\n"
@@ -19,7 +19,7 @@
         dialogMessage="Введите пароль, используемый для входа в личный кабинет. По умолчанию паролем является дата Вашего рождения, которую Вы указали в анкете, в формате ДДММГГ."
         positiveButtonText="ОК"
         negativeButtonText="Отмена">
-    </EditTextPreference>
+    </EditTextPreference> -->
 <!--    <ListPreference 
         key="type" 
         title="Тип карты"

@@ -69,13 +69,22 @@ function main() {
 	}
 	
 	var result = {success: true};
-	
-    getParam(html, result, 'license', /№ лицевого счета:[\s\S]*?<li[^>]*>([\s\S]*?)<\/li>/i, replaceTagsAndSpaces);
+
+    getParam(html, result, 'license', /(?:№ лицевого счета|№ особового рахунку):[\s\S]*?<li[^>]*>([\s\S]*?)<\/li>/i, replaceTagsAndSpaces);
     getParam(html, result, 'balance', /Баланс:[\s\S]*?<li[^>]*>([\s\S]*?)<\/li>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'till', /Оплачено до:[\s\S]*?<li[^>]*>([\s\S]*?)<\/li>/i, replaceTagsAndSpaces, parseDate);
+    var till = getParam(html, result, 'till', /(?:Оплачено включительно по|Оплачено включно по):[\s\S]*?<li[^>]*>([\s\S]*?)<\/li>/i, replaceTagsAndSpaces, parseDate);
 
     getParam(html, result, '__tariff', /Тариф:[\s\S]*?<li[^>]*>([\s\S]*?)<\/li>/i, replaceTagsAndSpaces);
     getParam(html, result, '__tariff', /<select name="ctl00\$cph_main\$ddl_activations"[\s\S]*?value=[\s\S]*?>"?([^<"]*)"?</i, replaceTagsAndSpaces);
+    
+    var cena = getParam(html, result, 'cena', /(\d+) грн\.\/(?:сут|доб)\./i, replaceTagsAndSpaces);
+    var tillcurent = +new Date();
+
+    if(typeof(balance) != 'defined'){
+        tillrez = parseInt((till - tillcurent)/86400000) + 1;
+        if(AnyBalance.isAvailable('cena'))
+           result.balance = tillrez*cena;
+    }
 
     AnyBalance.setResult(result);
 }

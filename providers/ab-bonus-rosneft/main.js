@@ -26,11 +26,12 @@ function main() {
 	var html = AnyBalance.requestGet(baseurl + 'login?X-Requested-With=XMLHttpRequest', g_headers);
 	var json = getJson(html);
 
-	AnyBalance.sleep(4000 + Math.random()*2000);
+	var captcha = solveRecaptcha('Пожалуйста, докажите, что вы не робот', baseurl + 'login', "6LejgioUAAAAAK6ZVEm_o8YhLHpnBil1J-hrPQnB");
 
-	html = AnyBalance.requestPost(baseurl + 'login?X-Requested-With=XMLHttpRequest', JSON.stringify({
+	html = AnyBalance.requestPost(baseurl + 'login?defaultCallbackUrl=%2F&X-Requested-With=XMLHttpRequest', JSON.stringify({
     	"Phone": prefs.login,
     	"Password": prefs.password,
+    	"Captcha": captcha,
     	"CallbackUrl": null,
     	"Antiforgery": json.AnnotatedModel.Antiforgery,
     	"ActiveGroup": null,

@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="8" date="2018-07-24">
+	Поддержка изменений в процедуре входа
+	</change>
 	<change version="7" date="2016-12-14">
 	Исправлено получение актуального баланса депозита
 	</change>

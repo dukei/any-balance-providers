@@ -15,15 +15,24 @@ function main(){
     AnyBalance.setDefaultCharset('windows-1251');
 
     var baseurl = "https://www.reg.ru";
+
+    var html = AnyBalance.requestGet(baseurl + '/user/authorize?redirect_after_login=/user/welcomepage', g_headers);
+
+    var csrf = getParam(html, /<meta[^>]+name="_csrf"[^>]*content="([^"]*)/i, replaceHtmlEntities);
+    if(!csrf){
+    	AnyBalance.trace(html);
+    	throw new AnyBalance.Error('Не удаётся найти форму входа. Сайт изменен?');
+    }
 	
-    var html = AnyBalance.requestPost(baseurl + '/user/login?nocache=8834', {
+    html = AnyBalance.requestPost(baseurl + '/user/login', {
         login: prefs.login,
         password: prefs.password,
         mode: 'login'
     }, addHeaders({
         Origin: baseurl,
-        Referer: baseurl,
-        'X-Requested-With':'XMLHttpRequest'
+        Referer: AnyBalance.getLastUrl(),
+        'X-Requested-With':'XMLHttpRequest',
+        'X-Csrf-Token': csrf
     }));
 
     var json = getJsonEval(html);

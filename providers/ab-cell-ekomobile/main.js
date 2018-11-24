@@ -12,7 +12,7 @@ var g_headers = {
 
 function main(){
     var prefs = AnyBalance.getPreferences();
-    var baseurl = 'http://www.ekomobile.ru/';
+    var baseurl = 'https://www.ekomobile.ru/';
     AnyBalance.setDefaultCharset('utf-8'); 
 
     var	html = AnyBalance.requestPost(baseurl + 'personal/index.php?login=yes', {

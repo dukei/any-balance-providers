@@ -167,7 +167,7 @@ function processCards(html, baseurl, result){
 		var tds = getElements(tr, /<td/ig);
 		var name = getParam(tds[3], null, null, null, replaceTagsAndSpaces);
 		var num = getParam(name, null, null, /\(([^)]*)\)$/i);
-		if(!prefs.cardnum || endsWith(num, prefs.cardnum)){
+		if(!prefs.cardnum || endsWith(num.replace(/\s+/g, ''), prefs.cardnum.replace(/\s+/g, ''))){
 			getParam(num, result, 'card_number');
 			getParam(name, result, 'card_type', /[^(]*/i, replaceTagsAndSpaces);
 			result.acc_number = getParam(tds[6], null, null, null, replaceTagsAndSpaces);
@@ -204,7 +204,7 @@ function processAccounts(html, baseurl, acc_number, result){
 	for(var i=0; i<trs.length; ++i){
 		var tr = trs[i];
 		var num = getParam(tr, null, null, /(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
-		if(!acc_number || endsWith(num, acc_number)){
+		if(!acc_number || endsWith(num.replace(/\s+/g, ''), acc_number.replace(/\s+/g, ''))){
 			getParam(num, result, 'acc_number');
 			getParam(tr, result, 'acc_type', /(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
 			getParam(tr, result, 'balance', /(?:[\s\S]*?<td[^>]*>){6}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);

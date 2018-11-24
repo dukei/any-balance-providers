@@ -20,12 +20,17 @@ var regions = {
 	pyatigorsk: getSmorodina,
 	rostov: getRostov,
 	ryazan: getSmorodina,
-	spb: getSPB,
+	samara: getSmorodina,
+	spb: getSmorodina,
     sever: getSever,
 	tver: getTver,
 	ufa: getUfa,
 	cheboksari: getCheboksari
 };
+
+if(!this.console){
+	this.console = function(str){ AnyBalance.trace(str) }
+}
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
@@ -85,69 +90,154 @@ function getVolgograd() {
 	AnyBalance.setResult(result);
 }
 
+//Ребята из смородины, зачем такой геморрой? Вам делать совсем нечего?
+//Трудно же парсить. Ваши пользователи жалуются. Пожалуйста, перестаньте всё усложнять!
+var SmorodinaCrypto = (function(){
+	var key = CryptoJS.enc.Base64.parse('Rks0TkU5M0xNMzFBVTk0RA=='); //FK4NE93LM31AU94D;
+
+	return {
+		encode: function(json){
+			var iv = CryptoJS.lib.WordArray.random(16);
+			var p = {
+				iv: iv,
+				pad: CryptoJS.pad.Pkcs7
+			}
+			var data = CryptoJS.AES.encrypt(JSON.stringify(json), key, p);
+			return {
+				data1: iv.toString(),
+				data0: data.toString()
+			}
+		},
+		decode: function(json){
+			var p = {
+				iv: CryptoJS.enc.Hex.parse(json.data1),
+				pad: CryptoJS.pad.Pkcs7
+			};
+	        
+			return JSON.parse(CryptoJS.AES.decrypt(json.data0, key, p).toString(CryptoJS.enc.Utf8));
+		}
+	}
+})();
+
+function callApiSmorodina(verb, params){
+	var baseurl = 'https://xn--80afnfom.xn--80ahmohdapg.xn--80asehdb';
+
+	if(!params)
+		params = {};
+	if(!params.version)
+		params.version = 3;
+	if(!params.session_uuid && callApiSmorodina.session_uuid)
+		params.session_uuid = callApiSmorodina.session_uuid;
+
+	console.log('->', verb, params);
+
+	var html = AnyBalance.requestPost(baseurl + '/api/' + verb,
+		JSON.stringify(SmorodinaCrypto.encode(params)),
+		addHeaders({
+			'Content-Type': 'application/json; charset=UTF-8',
+		})
+	);
+
+	var json = getJson(html);
+	
+	json = SmorodinaCrypto.decode(json);
+
+	console.log('<-', verb, json);
+
+	if(!json.ok){
+		if(!json.message){
+			AnyBalance.trace(JSON.stringify(json));
+			throw new AnyBalance.Error('Ошибка вызова API ' + verb + '!');
+		}
+
+		throw new AnyBalance.Error(json.message, null, /парол/i.test(json.message));
+	}
+
+	return json.result;
+}
+
 function getSmorodina() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'https://xn--80afn.xn--80ahmohdapg.xn--80asehdb';
 	AnyBalance.setDefaultCharset('utf-8');
 
-	var html = AnyBalance.requestGet(baseurl + '/pages/abonent/login.jsf', g_headers);
+	var sid = callApiSmorodina('userAuthenticate', {
+		login: prefs.login,
+		password: prefs.password,
+	});
+	callApiSmorodina.session_uuid = sid;
 
-	if(!html || AnyBalance.getLastStatusCode() > 400){
-		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
+	json = callApiSmorodina('accountList');
+	AnyBalance.trace('Найдено ' + json.count + ' аккаунтов');
+
+	if(json.count < 1)
+		throw new AnyBalance.Error('У вас нет ни одного лицевого счета');
+
+	var curAcc;
+	for(var i=0; i<json.count; ++i){
+		var acc = json.items[i];
+		AnyBalance.trace('Найден лицевой счет ' + acc.account_nm);
+		if(!curAcc && (!prefs.num || endsWith(acc.account_nm, prefs.num))){
+			AnyBalance.trace('Выбран ' + acc.account_nm);
+			curAcc = acc;
+		}
 	}
 
-	var viewState = AB.getParam(html, null, null, /<input[^]+name="javax.faces.ViewState"[^>]+value="([\s\S]*?)"/i);
-	if(!viewState)
-		throw  new AnyBalance.Error("Не удалось найти параметр. Сайт изменён?");
+	if(!curAcc)
+		throw new AnyBalance.Error('Не удалось найти лицевой счет с последними цифрами ' + prefs.num);
 
-	var loginForm = AB.getParam(html, null, null, /<form[^>]+id="f_login_abon"[^>]*>([\s\S]*?)<\/form>/i);
-	if(!loginForm)
-		throw new AnyBalance.Error("Не удалось найти форму входа. Сайт изменён?");
+	var requisites = callApiSmorodina('accountRequisites', {
+		account_nm: curAcc.account_nm,
+		account_uuid: curAcc.account_uuid,
+		org_sod: curAcc.org_sod,
+		org_uuid: curAcc.org_uuid,
+		service_uuid: 1
+	});
 
-	var buttonID = AB.getParam(loginForm, null, null, /<button[^>]+id="([\s\S]*?)"/i);
-	if(!buttonID)
-		throw new AnyBalance.Error("Не удалось найти параметр. Сайт изменён?");
-
-	html = AnyBalance.requestPost(baseurl + '/pages/abonent/login.jsf', [
-		['javax.faces.partial.ajax', 'true'],
-		['javax.faces.source', buttonID],
-		['javax.faces.partial.execute', 'f_login_abon:pLogin'],
-		['javax.faces.partial.render', 'f_login_abon'],
-		[buttonID, buttonID],
-		['f_login_abon', 'f_login_abon'],
-		['f_login_abon:eLogin', prefs.login],
-		['f_login_abon:ePwd', prefs.password],
-		['javax.faces.ViewState', viewState]
-	], AB.addHeaders({
-		Referer: baseurl + '/pages/abonent/login.jsf?faces-redirect=true',
-		'X-Requested-With': 'XMLHttpRequest',
-		Origin: baseurl,
-		'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
-	}));
-
-	if (!/redirect url/i.test(html)) {
-		var error = AB.getParam(html, null, null, /<span[^>]+class="ui-messages-error-detail"[^>]*>([\s\S]*?)\./i, AB.replaceTagsAndSpaces);
-		if (error)
-			throw new AnyBalance.Error(error, null, /(Указана неверная комбинация «E-mail - Пароль»|содержит один из запрещенных символов)/i.test(error));
-		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
-	}
+ 	var services = callApiSmorodina('accountServices', {
+		abonent_uuid: requisites.abonent_uuid,
+		code_pu: "" + curAcc.params.ecsop_code_pu,
+		org_sod: curAcc.org_sod,
+	});
 
 	var result = {success: true};
-	html = AnyBalance.requestGet(baseurl+'/pages/abonent/lite/accounts/accountInfo.jsf?faces-redirect=true', g_headers);
 
-	AB.getParam(html, result, 'balance', /за период(?:[^>]*>){3}([\s\S]*?)<\/td>/i, AB.replaceTagsAndSpaces, function(str){return -AB.parseBalance(str)});
-	AB.getParam(html, result, 'account', /лицевой счет:(?:[^>]*>){3}([\s\S]*?)<\/span>/i, AB.replaceTagsAndSpaces);
+	AB.getParam(acc.account_nm, result, 'account');
+	
+	for(var i=0; i<services.count; ++i){
+		var service = services.items[i];
+		AnyBalance.trace('Найдена услуга ' + service.service_nm + ': ' + service.service_debt);
+		AB.sumParam(-service.service_debt, result, 'balance', null, null, null, aggregate_sum);
+		AB.sumParam(service.service_nm, result, '__tariff', null, null, null, aggregate_join);
+	}
 
-	if(AnyBalance.isAvailable('address', 'device', 'currentCounter', 'date')){
-		html = AnyBalance.requestGet(baseurl + '/pages/abonent/full/accounts/accountInfo.jsf?faces-redirect=true', g_headers);
-		getParam(html, result, 'address', /Адрес регистрации:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+	if(AnyBalance.isAvailable('address', 'device', 'currentCounter', 'date', 'fio')){
 
-		var counters = getElements(html, [/<table/ig, /заводской номер/i])[0];
-		getParam(counters, result, 'device', /(?:[\S\s]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
-		getParam(counters, result, 'currentCounter', /(?:[\S\s]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-		getParam(counters, result, 'date', /(?:[\S\s]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
+		var abon = callApiSmorodina('fullGetAbonent', {
+			abon_ssd_id: curAcc.abon_ssd_id,
+			abon_ssd_uuid: curAcc.params.external_abonent_uuid,
+			account_nm: curAcc.account_nm,
+			account_uuid: curAcc.account_uuid,
+			find_type: "0",
+			org_sod: curAcc.org_sod,
+			
+		});
+
+		getParam(abon.address, result, 'address');
+		getParam(abon.name, result, 'fio');
+
+		for(var i=0; abon.equipments && i<abon.equipments.length; ++i){
+			var device = abon.equipments[i];
+			if(device.measuring){
+				getParam(device.name, result, 'device');
+				if(device.values && device.values[0]){
+					getParam(device.values[0].rate, result, 'consumption', null, null, parseBalance);
+					getParam(device.values[0].previous, result, 'previousCounter', null, null, parseBalance);
+					getParam(device.values[0].value, result, 'currentCounter', null, null, parseBalance);
+					getParam(device.values[0].date, result, 'date', null, null, parseDateISO);
+				}
+				break;
+			}
+		}
 	}
 
 	AnyBalance.setResult(result);
@@ -195,56 +285,6 @@ function getRostov() {
 		AB.getParam(html, result, 'balance', /Задолженность(?:[^>]*>){1}([\s\S]*?)<\//i, AB.replaceTagsAndSpaces, AB.parseBalance);
 		AB.getParam(html, result, 'advance', /Аванс(?:[^>]*>){1}([\s\S]*?)<\//i, AB.replaceTagsAndSpaces, AB.parseBalance);
 	}
-
-	AnyBalance.setResult(result);
-}
-
-function getSPB() {
-	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'http://cfl.peterburgregiongaz.ru/';
-	AnyBalance.setDefaultCharset('utf-8');
-
-	var html = AnyBalance.requestGet(baseurl + 'fcabinet/mainpage.xhtml', g_headers);
-
-	var viewState = AB.getParam(html, null, null, /"javax\.faces\.ViewState"[^>]*value="([^"]+)/i);
-	html = AnyBalance.requestPost(baseurl + 'fcabinet/mainpage.xhtml', {
-		'javax.faces.partial.ajax':true,
-		'javax.faces.source':'formMain:entryButton',
-		'javax.faces.partial.execute':'formMain',
-		'javax.faces.partial.render':'formMain',
-		'formMain:entryButton':'formMain:entryButton',
-		'formMain':'formMain',
-		'formMain:userLogin':prefs.login,
-		'formMain:userPsw':prefs.password,
-		'javax.faces.ViewState': viewState,
-	}, addHeaders({
-		Referer: baseurl + 'fcabinet/mainpage.xhtml',
-		'X-Requested-With':'XMLHttpRequest'
-	}));
-
-	var href = AB.getParam(html, null, null, /<redirect url="([^"]+)/i);
-
-	if (!href) {
-		var error = AB.sumParam(html, null, null, /<div[^>]+error[^>]*>[\s\S]*?<\/div>/ig, AB.replaceTagsAndSpaces, null, aggregate_join);
-		if (error)
-			throw new AnyBalance.Error(error, null, /парол/i.test(error));
-
-		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
-	}
-
-	html = AnyBalance.requestGet(baseurl + 'fcabinet/'+ href, g_headers);
-
-	var result = {success: true};
-
-	var dolg = AB.getParam(html, null, null, /<div class="align-left">([\s\d,.]+)(?:[^>]*>){8}\s*<\/table/i, AB.replaceTagsAndSpaces, AB.parseBalance) * -1;
-	var ammount = AB.getParam(html, null, null, /<div class="align-left">([\s\d,.]+)(?:[^>]*>){4}\s*<\/table/i, AB.replaceTagsAndSpaces, AB.parseBalance);
-
-	AB.getParam(dolg + ammount, result, 'balance');
-	//getParam(html, result, 'dolg', /<div class="align-left">([\d,.]+)(?:[^>]*>){8}\s*<\/table/i, replaceTagsAndSpaces, parseBalance);
-	//getParam(html, result, 'balance', /<div class="align-left">([\d,.]+)(?:[^>]*>){4}\s*<\/table/i, replaceTagsAndSpaces, parseBalance);
-	AB.getParam(html, result, 'fio', / class="blue2"[^>]*>([^<]+)/i, AB.replaceTagsAndSpaces);
-	AB.getParam(html, result, 'account', /Лицевой счет №([^<]+)/i, AB.replaceTagsAndSpaces);
 
 	AnyBalance.setResult(result);
 }

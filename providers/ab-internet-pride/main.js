@@ -38,15 +38,14 @@ function main() {
 	}
 
 	var result = {success: true};
-	getParam(html, result, 'TV', /Телевидение<\/td>*?\s*<td[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'Phone', /Телефония<\/td>*?\s*<td[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'ChekinAccount', /Расчетный<\/td>*?\s*<td[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'Internet', /Интернет<\/td>*?\s*<td[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'Hotspot', /Хотспот<\/td>*?\s*<td[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'PhonePC', /Телефония на ПК<\/td>*?\s*<td[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'Bonus', /Бонусный счет<\/td>*?\s*<td[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'fio', /Абонент:\s*<b><strong><i>([^<]+)*/i, replaceTagsAndSpaces, html_entity_decode);
-
+	getParam(html, result, 'TV', /Телевидение?\s*<\/td>*?\s*<td[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'Phone', /Телефония?\s*<\/td>*?\s*<td[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'ChekinAccount', /Расчетный?\s*<\/td>*?\s*<td[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'Internet', /Интернет?\s*<\/td>*?\s*<td[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'Hotspot', /Хотспот?\s*<\/td>*?\s*<td[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'PhonePC', /Телефония на ПК?\s*<\/td>*?\s*<td[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'Bonus', /Бонусный счет?\s*<\/td>*?\s*<td[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'fio', /Абонент:\s*<b><strong><i>([^<]+)*/i, replaceTagsAndSpaces, html_entity_decode);
 
 	html = AnyBalance.requestPost(ineturl, {
 		'auth_action':'login',

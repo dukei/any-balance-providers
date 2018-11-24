@@ -91,6 +91,13 @@ function callApi1(verb, request){
 
 }
 
+function parseBalanceRound(str){
+	var b = parseBalance(str);
+	if(isset(b))
+		b = Math.round(b*100)/100
+	return b;
+}
+
 function main_api(){
     var prefs = AnyBalance.getPreferences();
 
@@ -154,7 +161,7 @@ function main_api(){
     	AnyBalance.trace('Getting balance');
     	json = callApi1('balance');
 
-    	getParam(json.balance + '', result, 'balance', null, null, parseBalance);
+    	getParam(json.balance + '', result, 'balance', null, null, parseBalanceRound);
     }
 
     if(isAvailable('__tariff')){

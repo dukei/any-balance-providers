@@ -38,20 +38,24 @@ function main(){
     var result = {success: true};
     AnyBalance.trace('search table...');
     
-	if(matches = html.match(/\s*<tr[^>]*>\s*<td[^>]*>Номер договора<\/td>\s*<td[^>]*>Код оплаты<\/td>\s*<td[^>]*>Баланс.*<\/td>\s*<td[^>]*>Валюта<\/td>\s*<\/tr>/)){
-
-        if(matches = html.match(/\s*<tr[^>]*>\s*<td[^>]*>фл-(.*?)<\/td>\s*<td[^>]*>(.*?)<\/td>\s*<td[^>]*>(.*?)<\/td>\s*<td[^>]*>(.*?)<\/td>\s\s*<\/tr>/i)){
-            var Dogovor, Kod, balance, currency;
-            AnyBalance.trace('found table');
+	if(matches = html.match(/\s*<tr[^>]*>\s*<td[^>]*>Номер договора<\/td>\s*<td[^>]*>Платёжный идентификатор<\/td>\s*<td[^>]*>Код оплаты<\/td>\s*<td[^>]*>Баланс.*<\/td>\s*<td[^>]*>Валюта<\/td>\s*<\/tr>/)){
+        AnyBalance.trace('table found...');
+        AnyBalance.trace('search rows...');
+        if(matches = html.match(/\s*<tr[^>]*>\s*<td[^>]*>фл-(.*?)<\/td>\s*<td[^>]*>(.*?)<\/td>\s*<td[^>]*>(.*?)<\/td>\s*<td[^>]*>(.*?)<\/td>\s*<td[^>]*>(.*?)<\/td>\s\s*<\/tr>/i)){
+            var Dogovor, PayingID, Kod, balance, currency;
+            AnyBalance.trace('found rows');
             Dogovor = matches[1];
-            Kod = matches[2];
-            balance = replaceSpacesAndFloat(matches[3]);
-            currency = matches[4];
+            PayingID = matches[2];
+            Kod = matches[3];
+            balance = replaceSpacesAndFloat(matches[4]);
+            currency = matches[5];
             result.Dogovor=Dogovor;
+            result.PayingID=PayingID;
             result.balance=balance;
             result.Kod=Kod;
             result.currency=currency;
             AnyBalance.trace(Dogovor);
+            AnyBalance.trace(PayingID);
             AnyBalance.trace(balance);
             AnyBalance.trace(currency);
             AnyBalance.setResult(result);

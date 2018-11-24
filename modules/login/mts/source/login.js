@@ -66,16 +66,23 @@ function isOnLogin(){
 }
 
 function enterMtsLK(options) {
-	var baseurl = options.baseurl || g_baseurl;
-    var html = AnyBalance.requestGet(baseurl, g_headers);
+	var url = options.url || g_baseurlLogin;
+
+    var html = AnyBalance.requestGet(url, g_headers);
 
     if (AnyBalance.getLastStatusCode() >= 500) {
         AnyBalance.trace("МТС вернул 500. Пробуем ещё разок...");
-        html = AnyBalance.requestGet(baseurl, g_headers);
+        html = AnyBalance.requestGet(url, g_headers);
     }
 
     if (AnyBalance.getLastStatusCode() >= 500)
         throw new AnyBalance.Error("Ошибка на сервере МТС, сервер не смог обработать запрос. Можно попытаться позже...");
+
+    if(/Произошла ошибка при попытке авторизации/i.test(html)){
+    	AnyBalance.trace('Куки протухли :( Придется авторизоваться заново');
+    	clearAllCookies();
+    	html = AnyBalance.requestGet(url, g_headers);
+    }
 
     if(fixCookies()){
     	//Надо перезагрузить страницу, если куки были исправлены
@@ -90,7 +97,7 @@ function enterMtsLK(options) {
     	AnyBalance.trace('Предлагает автоматически залогиниться на ' + loggedInNum);
     	var form = getElement(html, /<form[^>]+name="Login"/i);
     	var submit;
-    	if(options.login != loggedInNum){
+    	if(!loggedInNum || !endsWith(loggedInNum, options.login)){
     		AnyBalance.trace('А нам нужен номер ' + options.login + '. Отказываемся...');
     		submit = 'Ignore';
     	}else{
@@ -140,6 +147,21 @@ function fixCookies(){
 	return repaired;
 }
 
+function saveLoginCookies(){
+	var prefs = AnyBalance.getPreferences();
+	AnyBalance.setData('login', prefs.login);
+	AnyBalance.saveCookies();
+	AnyBalance.saveData();
+}
+
+function restoreLoginCookies(){
+	var prefs = AnyBalance.getPreferences();
+	var login = AnyBalance.getData('login');
+	if(login == prefs.login){
+		AnyBalance.restoreCookies();
+	}
+}
+
 function enterMTS(options){
 	var baseurl = options.baseurl || g_baseurl;
     var loginUrl = options.url || g_baseurlLogin + "/amserver/UI/Login?goto=" + baseurl;
@@ -159,8 +181,9 @@ function enterMTS(options){
         	throw new AnyBalance.Error("Ошибка на сервере МТС, сервер не смог обработать запрос. Можно попытаться позже...", allowRetry);
     }
 
-    if(AnyBalance.getLastUrl().indexOf(baseurl) == 0) //Если нас сразу переадресовали на целевую страницу, значит, уже залогинены
+    if(AnyBalance.getLastUrl().indexOf(baseurl) == 0){ //Если нас сразу переадресовали на целевую страницу, значит, уже залогинены
 		return html;
+	}
 
 	html = redirectIfNeeded(html);
 
@@ -186,6 +209,13 @@ function enterMTS(options){
             value = 'Submit';
         return value;
     });
+
+    var sitekey = getParam(form, /data-sitekey="([^"]*)/i, replaceHtmlEntities);
+    if(sitekey){
+    	AnyBalance.trace('МТС требует рекапчу :(');
+    	var recaptcha = solveRecaptcha('МТС требует ввода рекапчи, как и при входе через браузер. Пожалуйста, докажите, что вы не робот.', loginUrl, sitekey);
+    	params.IDToken3 = recaptcha;
+    }
     
     // AnyBalance.trace("Login params: " + JSON.stringify(params));
     AnyBalance.trace("Логинимся с заданным номером");

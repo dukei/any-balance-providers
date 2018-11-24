@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="8" date="2018-04-10">
+	Поддержка ввода номера счета без пробелов
+	</change>
 	<change version="7" date="2017-10-07">
 	Поддержка изменений в процедуре входа
 	</change>

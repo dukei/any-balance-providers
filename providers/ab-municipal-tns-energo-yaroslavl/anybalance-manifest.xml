@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-municipal-tns-energo-yaroslavl</id>
+	<id version="2">ab-municipal-tns-energo-yaroslavl</id>
 	<api flags="no_browser"/>
 	<name>ТНС Энерго (Ярославль)</name>
 	<description html="true"><![CDATA[
@@ -19,12 +19,11 @@
 	</files>
 	<counters>
 		<counter id="balance" name="Баланс" units=" р"/>
-		<counter id="debt" name="Долг на начало месяца" units=" р"/>
-		<counter id="accrued" name="Начислено за текущий месяц" units=" р"/>
-		<counter id="paid" name="Оплачено в текущем месяце" units=" р"/>
 		<counter id="to_pay" name="Итого к оплате" units=" р"/>
 		<counter id="fio" name="ФИО" type="text"/>
 		<counter id="address" name="Адрес" type="text"/>
+		<counter id="licschet" name="Лицевой счет" type="text"/>
+		
 	</counters>
 	<keywords></keywords>
 	<type>municipal</type>

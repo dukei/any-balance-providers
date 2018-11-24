@@ -9,6 +9,7 @@ var g_countersTable = {
 	card: {
 		"__forceAvailable": ["cards.accid"],
     	"balance": "cards.balance",
+    	"accbalance": "accounts.balance",
 		"currency": "cards.currency",
 		"cardnum": "cards.num",
 		"accnum": "accounts.num",

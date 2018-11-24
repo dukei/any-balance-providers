@@ -122,7 +122,7 @@ function main(){
     }else{
     	AnyBalance.trace('Входить будем по логину');
     }
-
+/*
     //Get captcha
     var sitekey = '6LeQM84SAAAAAKALDOQ_0oUk2i09ozbCzrWg4nt5';
     var html = AnyBalance.requestGet('https://www.google.com/recaptcha/api/challenge?k=' + sitekey + '&ajax=1&cachestop=' + Math.random(), addHeaders({
@@ -138,21 +138,20 @@ function main(){
     }));
 
     var code = AnyBalance.retrieveCode('Пожалуйста, введите слова с картинки', img);
-
+*/
 
     var uuid = generateUUID();
     var html = AnyBalance.requestPost(baseurl + 'client-api/login', JSON.stringify({
-    	"capcha": {
-    		challenge: imgid,
-    		code: code
-    	},
+//    	"capcha": {
+//    		challenge: imgid,
+//    		code: code
+//   	},
     	"login": login,
 //    	"loginType": type,
     	"passwd": prefs.password,
     	"remember":false,
     	"client_uuid":generateUUID(),
-    	"currnet_page":"login",
-//    	"current_page":"login"
+    	"current_page":"login",
     }), g_headers);
 
 	if(/Личный кабинет временно недоступен/i.test(html)) {
@@ -172,7 +171,7 @@ function main(){
 
 	html = AnyBalance.requestPost(baseurl + 'client-api/getAccounts', JSON.stringify({
 		client_uuid: uuid,
-		currnet_page: 'login'
+		current_page: 'login'
 	}), g_headers);
 
     var accinfo = getRTJson(html);
@@ -241,7 +240,7 @@ function main(){
 			html = AnyBalance.requestPost(baseurl + 'client-api/getServiceTariffName', JSON.stringify({
 				servicesId: servicesIds,
 				client_uuid: uuid,
-				currnet_page: 'main'
+				current_page: 'main'
 			}), g_headers);
 			acc.__tariffNames = getRTJson(html).tariffNames;
 
@@ -250,7 +249,7 @@ function main(){
 				html = AnyBalance.requestPost(baseurl + 'client-api/getAccountBalance', JSON.stringify({
 					accountId: acc.accountId,
 					client_uuid: uuid,
-					currnet_page: 'main'
+					current_page: 'main'
 				}), g_headers);
 
 				acc.__detailedInfo = getRTJson(html);;
@@ -271,7 +270,7 @@ function main(){
 						html = AnyBalance.requestPost(baseurl + 'client-api/getServiceInfo', JSON.stringify({
 							serviceId: service.serviceId,
 							client_uuid: uuid,
-							currnet_page: 'main'
+							current_page: 'main'
 						}), g_headers);
 
 						statuses.push(g_ServiceStatus[getRTJson(html).status]);
@@ -299,7 +298,7 @@ function main(){
 							var jsonPackets = getJson(AnyBalance.requestPost(baseurl + 'client-api/getServiceTariff', JSON.stringify({
 								serviceId: service.serviceId,
 								client_uuid: uuid,
-								currnet_page: 'mvno'
+								current_page: 'mvno'
 							}), g_headers));
 
 							if(jsonPackets.options){
@@ -406,7 +405,7 @@ function main(){
 		try {
 			html = AnyBalance.requestPost(baseurl + 'client-api/getBonusStatus', JSON.stringify({
 				client_uuid: uuid,
-				currnet_page: 'main'
+				current_page: 'main'
 			}), g_headers);
 			var jsonBonus = getRTJson(html);
 			if(jsonBonus.bonus){
@@ -429,7 +428,7 @@ function main(){
 					html = AnyBalance.requestPost(baseurl + 'client-api/getAccountBalance', JSON.stringify({
 						accountId: acc.accountId,
 						client_uuid: uuid,
-						currnet_page: 'main'
+						current_page: 'main'
 					}), g_headers);
 					json = getRTJson(html);
 					var balance = getAccBalance(json);

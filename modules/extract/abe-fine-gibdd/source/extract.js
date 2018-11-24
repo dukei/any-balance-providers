@@ -26,7 +26,7 @@ function getGibddJson(html){
 }
 
 function requestFines(prefs) {
-    var baseurlUser = 'http://www.gibdd.ru/';
+    var baseurlUser = 'https://xn--90adear.xn--p1ai/';
     var baseurl = 'http://check.gibdd.ru/';
     AnyBalance.setDefaultCharset('utf-8');
 	
@@ -92,7 +92,7 @@ function parseFines(result, json) {
 		throw new AnyBalance.Error("Вероятно, Вами допущена ошибка при заполнении полей запроса.");
 	}
 	
-	AnyBalance.trace('Штрафов: ' + json.data.count);
+	AnyBalance.trace('Штрафов: ' + json.data.length);
 	
 	if(json.data.length > 0) {
 		result.fines = [];
@@ -121,7 +121,7 @@ function parseFines(result, json) {
 		getParam(json.data.length, result, 'count');
 		// Нет штрафов
 	} else {
-		result.descr = 'Неуплаченных штрафов в федеральной информационной системе ГИБДД по указанным данным не найдено.';
+		result.descr = 'Штрафов нет.';
 		result.count = 0;
 	}
 }

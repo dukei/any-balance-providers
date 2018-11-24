@@ -18,7 +18,7 @@ function main() {
 	checkEmpty(prefs.login && /^\d{9}$/.test(prefs.login), 'Логин должен состоять только из девяти цифр!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 	
-	var html = AnyBalance.requestGet(baseurl + '/po/LoginForm.jsp', g_headers);
+	var html = AnyBalance.requestGet(baseurl + '/po/login.jsf', g_headers);
 	
 	html = AnyBalance.requestGet(baseurl + '/po/accounts?account=' + prefs.login, g_headers);
 	
@@ -26,39 +26,34 @@ function main() {
 	checkEmpty(j_username, 'Не удалось найти id пользователя с номером счета ' + prefs.login);
 	
 	html = AnyBalance.requestPost(baseurl + '/po/login', {
+		redirect: '',
 		'username':prefs.login,
 		'j_username':j_username,
 		'password':prefs.password,
 		'loginSource':'form'
-	}, addHeaders({Origin: baseurl, Referer: baseurl + 'po/LoginForm.jsp'}));
+	}, addHeaders({Origin: baseurl, Referer: baseurl + 'po/login.jsf'}));
 
 	if(/failed=true/i.test(AnyBalance.getLastUrl())){
 		var error = getElement(html, /<em[^>]+id="[^"]*error(?:[^>](?!display:\s*none))*>/i, replaceTagsAndSpaces);
 		if (error)
-			throw new AnyBalance.Error(error, null, /Неверный пароль|Неверный лицевой/i.test(error));
+			throw new AnyBalance.Error(error, null, /Неверн/i.test(error));
 
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 
 	}
 	
-	html = AnyBalance.requestGet(baseurl + '/po/index.jsf', g_headers);
-	
-	if (!/logout/i.test(html)) {
-		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
-	}
 	// Вошли, там может быть и несколько счетов, но пока нет доступа к такому кабинету, сделаем пока с одним
 	var result = {success: true};
 	
-	html = AnyBalance.requestGet(baseurl + '/po/rest/client/accounts/', g_headers);
+	html = AnyBalance.requestGet(baseurl + '/po/rest/client/accountsMain/', g_headers);
 	
 	var json = getJson(html);
 	
 	// возвращается массив со счетами, можно потом сделать поддержку нескольких счетов
 	var currAcc;
-	for(var i=0; i<json.length; ++i){
-		currAcc = json[i];
+	for(var i=0; i<json.accountResponses.length; ++i){
+		currAcc = json.accountResponses[i];
 		if(currAcc.accountNumber == prefs.login)
 			break;
 	}
@@ -66,6 +61,10 @@ function main() {
 	if(!currAcc) {
 		AnyBalance.trace("Не удалось найти счет " + prefs.login + ", возьмем первый счет");
 		currAcc = json[0];
+	}
+
+	if(!currAcc) {
+		throw new AnyBalance.Error("Не удалось найти ни одного счета. Сайт изменен?"); 
 	}
 
 	getParam(currAcc.accountNumber + '', result, '__tariff', null, replaceTagsAndSpaces);

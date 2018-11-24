@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+	<EditTextPreference
+		title="api key"
+		key="api"
+		summary="|Введите api key|{@s}"
+		obligatory="true"
+		dialogTitle="api key"
+		positiveButtonText="ОК"
+		negativeButtonText="Cancel"
+		dialogMessage="Введите api key">
+	</EditTextPreference>
+	<EditTextPreference
+		title="username.worker"
+		key="worker"
+		summary="|Введите username.worker|{@s}"
+		obligatory="true"
+		dialogTitle="username.worker"
+		positiveButtonText="ОК"
+		negativeButtonText="Cancel"
+		dialogMessage="Введите username.worker">
+	</EditTextPreference>
+</PreferenceScreen>

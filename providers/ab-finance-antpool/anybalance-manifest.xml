@@ -1,0 +1,42 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-finance-antpool</id>
+	<api flags="no_browser"/>
+	<name>Antpool</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о хешрейте воркеров на пуле.</p>
+	<p>Информация предоставляется https://antpool.com/</p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Если у вас нет аккаунта, зарегистрируйтесь на пуле https://antpool.com/</p>
+	<p>После регистрации:</p>
+	<ol>
+	<li>Войдите в свой профиль</li>
+	<li>Выберите нужную монету</li>
+	<li>Создайте воркера</li>
+	<li>Создайте api_key и secret_key на вкладке API.</li>
+	</ol>
+	<p>В поле Sub-account не использовать email!</p>
+	]]></instruction>
+	<author>Viktor Sinitsyn &lt;mousesport007@ya.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+		<module id="crypt/cryptojs/hmac"/>
+   		<module id="crypt/cryptojs/sha256"/>
+	</depends>
+	<files>
+		<icon>icon.png</icon><!-- требования к иконке: https://github.com/dukei/any-balance-providers/wiki/Icon -->
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="last10m" name="10m Хешрейт воркера" units=" MH/s"/>
+		<counter id="last30m" name="30m Хешрейт воркера" units=" MH/s"/>
+		<counter id="last1h" name="1h Хешрейт воркера" units=" MH/s"/>
+		<counter id="last1d" name="1d Хешрейт воркера" units=" MH/s"/>
+	</counters>
+	<keywords>antpool, ltc, btc,eth,etc,zec,dash,bch,sc, crypto, pool</keywords>
+	<type>finance</type>
+	<country></country>
+</provider>

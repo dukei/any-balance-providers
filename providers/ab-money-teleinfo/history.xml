@@ -1,5 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="3" version="44" date="2018-07-30">
+	Поддержка кредитов
+	</change>
+	<change major_version="3" version="43" date="2018-05-15">
+	- Поддержка изменений в API
+	</change>
 	<change major_version="3" version="42" date="2017-06-26">
 	- Поддержка изменений на сайте.
 	- Исправлено получение карт и счетов

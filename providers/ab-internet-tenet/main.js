@@ -62,20 +62,19 @@ function main(){
     html = AnyBalance.requestPost(baseurl + 'portal/wwv_flow.accept', params, {'Content-Type': 'application/x-www-form-urlencoded'});
 
     if(!/apex_authentication.logout/i.test(html)){
-        var error = getParam(html, /<div[^>]*class="[^"]*uMessageText[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+        var error = getElement(html, /<div[^>]*t-Alert-body/i, replaceTagsAndSpaces);
         if(error)
-            throw new AnyBalance.Error(error, null, /парол/i.test(error));
+            throw new AnyBalance.Error(error, null, /парол|credent/i.test(error));
         throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
     }
 
     var result = {success: true};
 
-    getParam(html, result, 'fio', /Ф.И.О. владельца[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
-    getParam(html, result, 'licschet', /Услуги на Лицевом Счету([\s\S]*?)<\/font>/i, replaceTagsAndSpaces);
-    getParam(html, result, 'balance', /Баланс на[\s\S]*?Баланс на[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(getElements(html, [/<span[^>]+t-Button-label/ig, /ЛС/i])[0], result, 'licschet', /<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces);
+    getParam(getElements(html, [/<span[^>]+t-Button-label/ig, /баланс/i])[0], result, 'balance', null, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'status', /<dt[^>]*>\s*Статус ЛС[\s\S]*?<dd[^>]*>([\s\S]*?)<\/dd>/i, replaceTagsAndSpaces);
     sumParam(html, result, '__tariff', /<td[^>]+headers="AS_PKT_NAME"[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, null, aggregate_join);
-    getParam(html, result, 'status', /Статус ЛС[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
-    getParam(html, result, 'spent', /Оказано услуг[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'spent', /<dt[^>]*>\s*Оказано услуг[\s\S]*?<dd[^>]*>([\s\S]*?)<\/dd>/i, replaceTagsAndSpaces, parseBalance);
 
     AnyBalance.setResult(result);
 }

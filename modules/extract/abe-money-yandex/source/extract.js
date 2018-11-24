@@ -49,6 +49,8 @@ function loginAndGetBalance(prefs, result) {
 	} else {
 	    getParam(textsum, result, 'balance', null, replaceTagsAndSpaces, parseBalance);
 	}
+
+	getParam(html, result, 'bonus', /Сколько у вас баллов[\s\S]*?<div[^>]+balance__item[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
 }
 
 function processHistory(result) {
@@ -70,7 +72,7 @@ function processHistory(result) {
 			var h = {};
 			
 			getParam((json.history[i].type == 2 ? '-' : '') + json.history[i].sum + '', h, 'transactions.sum', null, replaceTagsAndSpaces, parseBalance);
-			getParam(json.history[i].name, h, 'transactions.name', null, replaceTagsAndSpaces, html_entity_decode);
+			getParam(json.history[i].name, h, 'transactions.name', null, replaceTagsAndSpaces);
 			getParam(json.history[i].date, h, 'transactions.time', null, replaceTagsAndSpaces, parseDateISO);
 			
 			result.transactions.push(h);
@@ -80,4 +82,59 @@ function processHistory(result) {
 			break;
 		}
 	}
+}
+
+function getCombinedHistory(){
+	var maxCount = 100;
+	var htmlBalls = AnyBalance.requestGet(baseurl + 'ajax/load-bonus-history?recordCount=' + maxCount, addHeaders({'X-Requested-With': 'XMLHttpRequest'}));
+	var htmlTrns = AnyBalance.requestGet(baseurl + 'ajax/history/partly?ncrnd=72010&history_shortcut=history_all&start-record=0&record-count=' + maxCount, addHeaders({'X-Requested-With': 'XMLHttpRequest'}));
+	var jsonBalls = getJson(htmlBalls);		
+	var jsonTrns = getJson(htmlTrns);
+
+	combineHistory(jsonTrns, jsonBalls);
+    return jsonTrns.history;
+}
+
+function combineHistory(jsonTrns, jsonBalls){
+    for(var i=0, j=0; i<jsonBalls.items.length; ++i){
+    	var balls = jsonBalls.items[i];
+    	
+    	var timeBa = parseDateISOSilent(balls.date);
+    	var typeBa;
+    	if(/за пятый|в категории месяца/i.test(balls.name))
+    		typeBa = 'card';
+    	else if(/за плат[её]ж в интернете/i.test(balls.name))
+    		typeBa = 'internet';
+    	else{
+    		AnyBalance.trace('Тип начисления баллов неизвестен: ' + balls.name + '\n' + JSON.stringify(balls));
+    		typeBa = 'unknown';
+    	}
+
+    	//Домотаем до первой транзакции произошедшей НЕ РАНЕЕ начисления баллов
+    	for(;j<jsonTrns.history.length && parseDateISOSilent(jsonTrns.history[j].date) > timeBa; ++j);
+    	if(j >= jsonTrns.history.length)
+    		break;
+
+    	for(var j1=j; j1<jsonTrns.history.length; ++j1){
+        	var trns = jsonTrns.history[j];
+    		var timeTr = parseDateISOSilent(trns.date);
+    		if(timeBa - timeTr > 5*60*1000) //Слишком удалились по времени от начисления баллов
+    			break;
+    		if(typeBa === 'card' && !trns.flags['is-meta-ycard-operation'])
+    			continue; //Нужна карточная операция, а это не карточная
+    		if(typeBa === 'internet' && !trns.flags['is-out-shop'])
+    		    continue; //Нужна оплата интернет-магазину, а это не она
+        	
+        	trns.__balls = balls;
+        	j = j1 + 1;
+        	
+        	break;
+        }
+
+        if(!trns.__balls){
+        	AnyBalance.trace('Не удалось найти транзакцию для баллов ' + JSON.stringify(balls));
+        }
+    }
+
+    AnyBalance.trace(i + '/' + jsonBalls.items.length + ' баллов поставлены в соответствие транзакциям');
 }

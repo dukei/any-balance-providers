@@ -3,11 +3,10 @@
 */
 
 var g_headers = {
-	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
-	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
+	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
+	'Accept-Language': 'ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7',
 	'Connection': 'keep-alive',
-	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
+	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.139 Safari/537.36',
 };
 
 function main() {
@@ -32,7 +31,11 @@ function main() {
 			proceedOffice(prefs);
 			break;
 		default:
-			proceedLk(prefs);
+		    var ret = proceedLk(prefs);
+		    if(ret === 'restart'){
+		    	clearAllCookies();
+		    	proceedLk(prefs);
+		    }
 			break;
 	}
 }
@@ -158,13 +161,15 @@ function proceedLk(prefs) {
 	var html = AnyBalance.requestGet(baseurl, g_headers); //Чтобы кука установилась
 	baseurl = getParam(AnyBalance.getLastUrl(), /^https?:\/\/[^\/]+/i) + '/';
 	AnyBalance.trace('Main page redirected to ' + AnyBalance.getLastUrl());
+	AnyBalance.setCookie('.beeline.ru', 'SITE_VERSION', 'is_full_selected');
+//	AnyBalance.setCookie('moskva.beeline.ru', 'tmr_detect', '0%7C1525419789821');
 
-	var loginfo = AnyBalance.requestGet(baseurl + '/menu/loginmodel?CTN=' + encodeURIComponent(prefs.login), addHeaders({
+	var loginfo = AnyBalance.requestGet(baseurl + 'menu/loginmodel/?CTN=' + encodeURIComponent(prefs.login), addHeaders({
 		Referer: baseurl
 	}));
 	loginfo = getJson(loginfo);
 
-	html = AnyBalance.requestPost('https://identity.beeline.ru/identity/fpcc', {
+	html = AnyBalance.requestPost('https://identity.beeline.ru/identity/fpcc', createUrlEncodedParams({
 		login:	prefs.login,
 		password:	prefs.password,
 		client_id:	'quantumartapp',
@@ -175,7 +180,8 @@ function proceedLk(prefs) {
 		scope:	'openid selfservice_identity usss_token profile',
 		nonce:	loginfo.nonce,
 		remember_me:	true
-	}, addHeaders({Referer: baseurl}));
+	}).replace(/%20/g, '+'), addHeaders({Referer: baseurl + 'login/', 'Content-Type': 'application/x-www-form-urlencoded'}));
+
 	var referer = AnyBalance.getLastUrl();
 
 	var htmlfa = AnyBalance.requestGet('https://identity.beeline.ru/identity/FinishAuth?state=' + encodeURIComponent(loginfo.state), addHeaders({
@@ -195,11 +201,38 @@ function proceedLk(prefs) {
 		}
 	    
 		var params = AB.createFormParams(form);
+		delete params.need_set_sso_cookie;
+
 		var action = getParam(form, /\baction="([^"]*)/i, replaceHtmlEntities);
-		var url = joinUrl(AnyBalance.getLastUrl(), action);
-		AnyBalance.trace('Posting form to ' + url);
-		html = AnyBalance.requestPost(url, params, addHeaders({Referer: AnyBalance.getLastUrl()}));
+		var url = joinUrl(referer, action);
+
+		var region = AnyBalance.getData('region');
+		if(!region || region.login != prefs.login)
+			region = null;
+
+		if(region){
+			AnyBalance.trace('Posting form to ' + url + ' but due to 307 issues posting to https://' + region.domain + "/regionlogincallback/");
+			url = "https://" + region.domain + "/regionlogincallback/";
+		}else{
+			AnyBalance.trace("Region is unknown, posting form to " + url);
+		}
+
+		html = AnyBalance.requestPost(url, createUrlEncodedParams(params).replace(/%20/g, '+'), addHeaders({
+			Referer: referer,
+			'Content-Type': 'application/x-www-form-urlencoded',
+			Origin: 'https://identity.beeline.ru',
+			'Cache-Control': 'max-age=0',
+			'Upgrade-Insecure-Requests': '1'
+		}));
 		referer = AnyBalance.getLastUrl();
+
+		if(!region && /\blogin\b/i.test(referer)){
+			region = getParam(referer, /https?:\/\/([^\/]+)/i);
+			AnyBalance.trace("Region is " + region + ". Restarting.");
+			AnyBalance.setData('region', { domain: region, login: prefs.login });
+			AnyBalance.saveData();
+			return "restart";  
+		}
 	}while(/<form[^>]*logincallback/i.test(html));
 
 	var token = getParam(html, null, null, /QA.Identity.setToken\('([^']*)/);

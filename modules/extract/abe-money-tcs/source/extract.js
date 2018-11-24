@@ -5,10 +5,10 @@
 */
 
 var g_headers = {
-    'User-Agent': 'User-Agent: Sony D6503/android: 5.1.1/TCSMB/3.1.0'
+    'User-Agent': 'User-Agent: Sony D6503/android: 5.1.1/TCSMB/4.1.3'
 }
 
-var g_baseurl = 'https://api.tcsbank.ru/v1/';
+var g_baseurl = 'https://api.tinkoff.ru/v1/';
 var g_deviceid;
 var g_sessionid;
 
@@ -26,9 +26,10 @@ function requestJson(action, data, options) {
 	}
 
 	// Заполняем параметры, которые есть всегда
-	params.push(encodeURIComponent('appVersion') + '=' + encodeURIComponent('3.1.0'));
+	params.push(encodeURIComponent('appVersion') + '=' + encodeURIComponent('4.1.3'));
 	params.push(encodeURIComponent('platform') + '=' + encodeURIComponent('android'));
-	params.push(encodeURIComponent('origin') + '=' + encodeURIComponent('mobile,ib5,loyalty'));
+	params.push(encodeURIComponent('origin') + '=' + encodeURIComponent('mobile,ib5,loyalty,platform'));
+	params.push(encodeURIComponent('connectionType') + '=' + encodeURIComponent('WiFi'));
 	if(g_deviceid)
 		params.push(encodeURIComponent('deviceId') + '=' + encodeURIComponent(g_deviceid));
 
@@ -150,8 +151,11 @@ function processCards(result){
 function processCard(card, acc, result){
 	AnyBalance.trace('Обработка карты ' + result.__name);
 
-    getParam(jspath1(card, '$.availableBalance.value'), result, 'cards.balance');
-    getParam(jspath1(card, '$.availableBalance.currency.name'), result, 'cards.currency');
+	var balance = jspath1(card, '$.availableBalance') || jspath1(acc, '$.moneyAmount') || jspath1(acc, '$.accountBalance');
+
+    getParam(jspath1(acc, '$.accountBalance.value'), result, 'cards.balance');
+    getParam(jspath1(balance, '$.value'), result, 'cards.available');
+    getParam(jspath1(balance, '$.currency.name'), result, 'cards.currency');
     getParam(jspath1(card, '$.expiration.milliseconds'), result, 'cards.till');
     getParam(jspath1(card, '$.activated'), result, 'cards.active');
     getParam(jspath1(card, '$.primary'), result, 'cards.primary');
@@ -202,9 +206,10 @@ function processAccounts(result){
 function processAccount(acc, result){
 	AnyBalance.trace('Обработка счета ' + result.__name);
 
-	var balance = jspath1(acc, '$.accountBalance') || jspath1(acc, '$.moneyAmount');
+	var balance = jspath1(acc, '$.moneyAmount') || jspath1(acc, '$.accountBalance');
 
-    getParam(jspath1(balance, '$.value'), result, 'accounts.balance');
+    getParam(jspath1(acc, '$.accountBalance.value'), result, 'accounts.balance');
+    getParam(jspath1(acc, '$.moneyAmount.value'), result, 'accounts.available');
     getParam(jspath1(balance, '$.currency.name'), result, 'accounts.currency');
     getParam(jspath1(acc, '$.creationDate.milliseconds'), result, 'accounts.date_start');
     getParam(jspath1(acc, '$.accountGroup'), result, 'accounts.type');
@@ -345,6 +350,7 @@ function processSaving(acc, result){
 
     getParam(jspath1(acc, '$.creationDate.milliseconds'), result, 'savings.date_start');
     getParam(jspath1(acc, '$.interest.value'), result, 'savings.pct_sum');
+    getParam(jspath1(acc, '$.tariffInfo.interestRate') || jspath1(acc, '$.rate'), result, 'savings.pct');
 
     getParam(jspath1(acc, '$.moneyAmount.value'), result, 'savings.balance');
     getParam(jspath1(acc, '$.moneyAmount.currency.name'), result, 'savings.currency');

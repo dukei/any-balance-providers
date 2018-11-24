@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-  <id version="4">ab-internet-tenet</id>
+  <id version="5">ab-internet-tenet</id>
   <name>TeNeT (Одесса)</name>
   <description>
     Получает баланс и информацию о тарифном плане для одесского интернет провайдера TeNeT (http://tenet.ua).
@@ -21,7 +21,6 @@
   <counters>
     <counter id="balance" name="Баланс" units="₴"/>
     <counter id="licschet" name="Лицевой счет" type="text"/>
-    <counter id="fio" name="ФИО" type="text"/>
     <counter id="status" name="Статус ЛС" type="text"/>
     <counter id="spent" name="Начислено за услуги" units="₴"/>
   </counters>

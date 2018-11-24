@@ -27,25 +27,44 @@ function login() {
 	}
 
 	if (!/logout/i.test(html)) {
-        var form = getElement(html, /<form[^>]+id="nikForm"[^>]*>/i);
-		if(!form) {
+		var loginfo = getParam(html, /\{[^}]*"nikForm"[^}]*\}/i, null, getJson);
+
+		if(!loginfo) {
 			AnyBalance.trace(html);
-			throw new AnyBalance.Error('Could not find NIK form. Is site changed?');
+			throw new AnyBalance.Error('Could not find login form. Is site changed?');
 		}
 
-        var params = createFormParams(form, function(params, str, name, value) {
-            if (name == 'nik')
-                return prefs.login;
-            return value;
-        });
-		var action = getParam(form, null, null, /<form[^>]+action="([^"]*)/i, AB.replaceHtmlEntities);
-		html = AnyBalance.requestPost(joinUrl(baseurl, action), params, addHeaders({Referer: baseurl + 'login'}));
+		var action = loginfo.u;
+		var referer = AnyBalance.getLastUrl();
+		html = AnyBalance.requestPost(joinUrl(baseurl, action), {
+			"nikForm_hf_0": "",
+			"nik": prefs.login,
+			"loginButton": "1",
+		}, addHeaders({
+			Referer: referer, 
+			"X-Requested-With": "XMLHttpRequest",
+			"Wicket-Ajax": "true",
+			"Wicket-Ajax-BaseURL": getParam(referer, /[^\/]*$/),
+			"Wicket-FocusedElementId": "okBtn2",
+		}));
 
-		form = getElement(html, /<form[^>]+id="pinForm"[^>]*>/i);
+		var redirect = getElement(html, /<redirect/i, [/<!\[CDATA\[|\]\]>/g, '', replaceTagsAndSpaces]);
+		if(!redirect){
+			AnyBalance.trace(html);
+			throw new AnyBalance.Error('Could not redirect to entering password. Is site changed?');
+		}
+
+		html = AnyBalance.requestGet(joinUrl(referer, redirect), addHeaders({
+			Referer: referer
+		}));
+
+		var form = getElement(html, /<form[^>]+id="pinForm"[^>]*>/i);
 		if(!form) {
 			var error = getElement(html, /<li[^>]+feedbackPanelERROR[^>]*>|<div[^>]+logErrorMessage[^>]*>/i, replaceTagsAndSpaces);
 			if(error)
 				throw new AnyBalance.Error('NIK: ' + error, null, /incorrect|nieprawid|NIK|PIN/i.test(error));
+			if(/<form[^>]+nikForm/i.test(html))
+				throw new AnyBalance.Error('Incorrect NIK', null, true);
 			AnyBalance.trace(html);
 			throw new AnyBalance.Error('Could not find PIN form. Is site changed?');
 		}
@@ -55,7 +74,7 @@ function login() {
 				return prefs.password;
 			return value;
 		});
-		action = getParam(form, null, null, /<form[^>]+action="([^"]*)/i, AB.replaceHtmlEntities);
+		action = getParam(form, null, null, /<form[^>]+action="\.+\/([^"]*)/i, AB.replaceHtmlEntities);
 		html = AnyBalance.requestPost(joinUrl(baseurl, action), params, addHeaders({Referer: AnyBalance.getLastUrl()}));
 	}else{
 		AnyBalance.trace('Already logged in. Reusing previous session.')
@@ -63,6 +82,8 @@ function login() {
 
 	if (!/logout/i.test(html)) {
 		var error = getElement(html, /<li[^>]+feedbackPanelERROR[^>]*>|<div[^>]+logErrorMessage[^>]*>/i, replaceTagsAndSpaces);
+		if(!error)
+			error = getElement(html, /<div[^>]+error/i, replaceTagsAndSpaces);
 		if(error)
 			throw new AnyBalance.Error(error, null, /incorrect|nieprawid|NIK|PIN/i.test(error));
 		

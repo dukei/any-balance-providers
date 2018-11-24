@@ -69,8 +69,9 @@ function main() {
 		AnyBalance.trace('Ни одного абонемента не подключено');
 	}else{
 		var trs = getElements(abons, /<tr/ig);
-		AB.getParam(trs[1], result, 'abon_till', /(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
-		AB.getParam(trs[1], result, 'abon_left', /(?:[\s\S]*?<td[^>]*>){6}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+		AB.getParam(trs[1], result, 'abon_till', /(?:[\s\S]*?<td[^>]*>){6}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
+		AB.getParam(trs[1], result, 'abon_left', /(?:[\s\S]*?<td[^>]*>){7}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+		AB.getParam(trs[1], result, '__tariff', /(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
 	}
 
 	AnyBalance.setResult(result);

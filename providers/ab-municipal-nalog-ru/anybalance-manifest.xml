@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="10">ab-municipal-nalog-ru</id>
+	<id version="11">ab-municipal-nalog-ru</id>
 	<name>Федеральная Налоговая Служба (ФНС)</name>
 	<description>
 	Пролучает данные на сайте Федеральной Налоговой Службы (ФНС) http://nalog.ru/.
@@ -23,9 +23,9 @@
 	<counters>
 		<counter id="arrears" name="Задолженность" units=" р"/>
 		<counter id="overpay" name="Переплата" units=" р"/>
-		<counter id="income" name="Зачислено" units=" р"/>
+	<!--	<counter id="income" name="Зачислено" units=" р"/>
 		<counter id="paid" name="Уплачено" units=" р"/>
-		<counter id="unpaid" name="Начислено" units=" р"/>
+		<counter id="unpaid" name="Начислено" units=" р"/> -->
 		<counter id="fio" name="ФИО" type="text"/>
 	</counters>
 	<keywords></keywords>

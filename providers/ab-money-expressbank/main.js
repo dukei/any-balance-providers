@@ -1,10 +1,10 @@
 ﻿/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 
-Получает текущий остаток и другие параметры карт/счетов/депозитов банка Юниаструм
+Получает текущий остаток и другие параметры карт/счетов/депозитов банка совкомбанк
 
-Сайт оператора: http://www.express-bank.ru/
-Личный кабинет: https://online.express-bank.ru
+Сайт оператора: http://sovcombank.ru
+Личный кабинет: https://elf.sovcombank.ru/elf/app/
 */
 
 /**
@@ -131,8 +131,8 @@ function main() {
     adapter.processCredits = adapter.envelope(processCredits);
     adapter.processDeposits = adapter.envelope(processDeposits);
 	
-	var html = login(prefs);
-	
+	var html = login('https://elf.faktura.ru/elf/app/');
+		
 	var result = {success: true};
 	
 	if(prefs.type == 'card') {

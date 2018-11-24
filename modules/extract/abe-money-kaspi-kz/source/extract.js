@@ -127,6 +127,7 @@ function login() {
 		
 	} else {
 		AnyBalance.trace('Уже залогинены, используем существующую сессию');
+		html = AnyBalance.requestGet(baseurl + '/bank', g_headers);
 	}
 	
     __setLoginSuccessful();
@@ -215,7 +216,12 @@ function processDeposits(html, result) {
 	html = AnyBalance.requestGet(baseurl + depositsUrl, g_headers);
 
     var deposits = AB.getElements(html, /<a[^>]+myProductsSubMenu__link[^>]*>/ig)
-	if(!deposits){
+	if(/\/History$/i.test(AnyBalance.getLastUrl())){
+		AnyBalance.trace('Депозит, видимо, только один. Оказались на его странице');
+		deposits = ['<a href="' + AnyBalance.getLastUrl().replace(/\/History$/i, '') + '">'];
+	}
+
+	if(!deposits.length){
 		AnyBalance.trace(html);
         AnyBalance.trace('Не удалось найти депозиты. Сайт изменён?');
 	}
@@ -229,7 +235,7 @@ function processDeposits(html, result) {
 			AnyBalance.trace("Не удалось найти ссылку на страницу с информацией о депозите. Сайт изменён?");
 			continue;
 		}
-		html = AnyBalance.requestGet(baseurl + href_info + '/About', g_headers);
+		html = AnyBalance.requestGet(joinUrl(baseurl, href_info + '/About'), g_headers);
 
 		var id    = AB.getParam(html, null, null, /Номер счета Депозита:(?:[^>]*>){2}([^<]*)/i, AB.replaceTagsAndSpaces),
 			num   = AB.getParam(html, null, null, /Номер счета Депозита:(?:[^>]*>){2}([^<]*)/i, AB.replaceTagsAndSpaces),
@@ -363,7 +369,7 @@ function processInfo(html, result){
     
     var info = result.info = {};
 
-    getParam(html, info, 'info.fio', /<span[^>]+headerAuth__user[^>]*>([^<]*)/i, AB.replaceTagsAndSpaces);
+    getParam(getElement(html, /<span[^>]+headerAuth__user/i), info, 'info.fio', null, AB.replaceTagsAndSpaces);
     
     processWallet(html, result);
     processBonuses(html, result);

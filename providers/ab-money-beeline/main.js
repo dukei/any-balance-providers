@@ -2,112 +2,145 @@
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 */
 
+var baseurl = 'https://bank.beeline.ru/';
 var g_headers = {
-	'Accept': 'application/json, text/javascript, */*; q=0.01',
-	'Accept-Language': 'ru,en;q=0.8',
+	'Accept': '*/*',
+	'Accept-Language': 'ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7',
 	'Connection': 'keep-alive',
-	'Origin': 'https://paycard.beeline.ru',
-	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2272.118 Safari/537.36',
+	'Origin': 'https://bank.beeline.ru',
+	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.186 Safari/537.36',
+	channel: 'web',
 };
+
+function callApi(verb, getParams, postParams){
+	var method = 'GET';
+	var h = g_headers;
+	if(isset(postParams)){
+		method = 'POST';
+		h = addHeaders({'Content-Type': 'application/json;charset=UTF-8'}, g_headers);
+	}
+	if(!getParams)
+		getParams = {};
+	if(!getParams.rid)
+		getParams.rid = String(Math.random().toString(16).split(".")[1]);
+	
+	h = addHeaders({
+		'X-Request-Id': getParams.rid,
+		'X-XSRF-TOKEN': AnyBalance.getCookie('XSRF-TOKEN') + ''
+	});
+	
+	var html = AnyBalance.requestPost(baseurl + 'api/v0001/' + verb + '?' + createUrlEncodedParams(getParams), postParams && JSON.stringify(postParams), h, {HTTP_METHOD: method});
+
+	var json = getJson(html);
+	return json;
+}
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'https://paycard.beeline.ru/';
 	AnyBalance.setDefaultCharset('utf-8');
 	
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 	
-	var html = AnyBalance.requestGet(baseurl + 'personal/pub/Entrance', addHeaders({Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8'}));
-	AnyBalance.sleep(1000); //Без таймаутов не пашет
-
-	var form = getParam(html, null, null, /<form[^>]*login[\s\S]*?<\/form>/i);
-	checkEmpty(form, 'Не удалось найти форму входа, сайт изменен?', true);
-	
-	var params = createFormParams(form, function(params, str, name, value) {
-		if (name == 'ean')
-			return prefs.login;
-		if (name == 'rememberEan')
-			return undefined;
-		
-		return value;
+	var json = callApi('ping/session');
+	json = callApi('authentication/authenticate', null, {
+    	"principal": prefs.login,
+    	"secret": prefs.password,
+    	"type": "AUTO"
 	});
-	
-	var action = getParam(form, null, null, /<form[^>]*data-validator-ajax-url="([^"]+)/i, [/\.\.\//, '']);
-	checkEmpty(action, 'Не удалось найти ссылку входа, сайт изменен?', true);
-	
-	html = AnyBalance.requestPost(baseurl + 'personal/' + action, params, addHeaders({
-		Referer: baseurl + 'personal/pub/Entrance',
-		'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
-		'X-Requested-With':'XMLHttpRequest'
-	}));
-	AnyBalance.sleep(1000); //Без таймаутов не пашет
-	
-	params.password = prefs.password;
-	
-	html = AnyBalance.requestPost(baseurl + 'personal/' + action, params, addHeaders({
-		Referer: baseurl + 'personal/pub/Entrance',
-		'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
 
-		'X-Requested-With':'XMLHttpRequest'
-	}));
-	
-	var json = getJson(html);
-	
-	if(!json.validated) {
-		var error = '';
-		if(json.fields) {
-			var errors = json.fields.join(', ');
-			for(var i = 0; i < json.fields.length; i++) {
-				error += json.fields[i].errorMessage + ', ';
-			}
+	if(json.status != 'OK'){
+		if(json.status == 'AUTH_WRONG'){
+			throw AnyBalance.Error('Неверный логин или пароль', null, true);
 		}
-		if(json.form) {
-			error = getParam(json.form.errorMessage, null, null, null, replaceTagsAndSpaces);
-		}
-		
-		if (error && error != '')
-			throw new AnyBalance.Error(error, null, /несуществующий номер|пароль/i.test(error));
-		
-		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');		
-		
+		AnyBalance.trace(JSON.stringify(json));
+		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
-	
-	var bonuses, tries=0;
-	do{
-		html = AnyBalance.requestGet(baseurl + 'personal/main', g_headers);
-		if(!/b-exit_link/i.test(html)){
-			AnyBalance.trace(html);
-			throw new AnyBalance.Error('Не удалось зайти в личный кабинет.. Сайт изменен?');
-		}
 
-		bonuses = getElement(html, /<table[^>]+b-user-info_bonus[^>]*>/i);
-		if(bonuses || ++tries >= 5)
-			break;
-		AnyBalance.trace('Ожидаем бонусы, попытка ' + tries);
-		AnyBalance.sleep(3000); //Бонусы появляются не сразу
-	}while(true);
-
-	
 	var result = {success: true};
-	
-	getParam(html, result, 'balance', />Баланс[\s\S]*?<span[^>]*b-user-info_value[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'fio', /name__user[^>]*>([^<]+)/i, replaceTagsAndSpaces);
-	getParam(html, result, '__tariff', />Номер карты<span[^>]*b-user-info_value[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
-	getParam(bonuses, result, 'extra', /Доступные([\s\S]*?)<\/tr>/i, replaceTagsAndSpaces, parseBalance);
 
-	if(AnyBalance.isAvailable('last_op_date', 'last_op_sum', 'last_op_descr')){
-		var ops = sumParam(html, null, null, /<tbody[^>]+class="[^"]*operation-item[^>]*>([\s\S]*)<\/tbody>/ig);
-		if(ops.length > 0){
-			getParam(ops[0], result, 'last_op_date', /<td[^>]+class="b-history-detail_date[^>]*>([\s\S]*?)<\/td>/i, [replaceTagsAndSpaces, /^(\d+\D\d+)$/, '$1.'+new Date().getFullYear()], parseDate);
-			getParam(ops[0], result, 'last_op_sum', /<td[^>]+class="b-history-detail_sum[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-			sumParam(ops[0], result, 'last_op_descr', /<td[^>]+class="b-history_description[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, null, aggregate_join);
-			sumParam(ops[0], result, 'last_op_descr', /<td[^>]+class="b-history-detail_comment[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, null, aggregate_join);
-		}else{
-			AnyBalance.trace('Недавних операций не найдено...');
-		}
+	if(AnyBalance.isAvailable('fio')){
+		json = callApi('consumer');
+
+		getParam(json.data.fio, result, 'fio');
+	}
+
+	if(prefs.type == 'wallet'){
+	 	json = callApi('wallets');
+
+		if(json.status == 'OK'){
+	 		for(var i=0; i<json.data.wallets.length; ++i){
+	 			var wallet = json.data.wallets[i];
+	 			AnyBalance.trace('Найден кошелек ' + wallet.currencyCode);
+	 			if(!prefs.num || wallet.currencyCode.toLowerCase() == prefs.num.toLowerCase()){
+					getParam(wallet.amount, result, 'balance', null, null, parseBalance);
+					getParam(wallet.currencyCode, result, ['currency', 'balance']);
+					getParam(wallet.name, result, '__tariff');
+
+					lastOp(result, wallet.contractId);
+					break;
+	 			}
+	 		}
+	 		if(i >= json.data.wallets.length)
+	 			throw new AnyBalance.Error(prefs.num ? 'Не найден кошелек с валютой ' + prefs.num : 'У вас нет кошельков');
+	 	}else{
+	 		AnyBalance.trace('Ошибка получения кошельков: ' + JSON.stringify(json));
+	 		throw new AnyBalance.Error('Не удалось получить баланс по кошельку: ' + json.status);
+	 	}
+	 		
+	}else{ //if(prefs.type == 'card')
+		json = callApi('cards');
+	
+	 	if(json.status == 'OK'){
+	 		for(var i=0; i<json.data.length; ++i){
+	 			var card = json.data[i];
+	 			AnyBalance.trace('Найдена карта ' + card.panTail);
+	 			if(!prefs.num || endsWith(card.panTail, prefs.num)){
+	 				for(var j=0; j<card.equities.length; ++j){
+	 					var e = card.equities[j];
+	 					if(e.type == 'FUNDS'){
+							getParam(e.amount, result, 'balance', null, null, parseBalance);
+							getParam(e.currencyCode, result, ['currency', 'balance']);
+	 					}else if(e.type == 'BNS'){
+							getParam(e.amount, result, 'extra', null, null, parseBalance);
+	 					}
+	 				}
+					getParam(card.name + ' ' + card.panTail, result, '__tariff');
+
+					lastOp(result, card.contractId);
+					break;
+	 			}
+	 		}
+	 		if(i >= json.data.length)
+	 			throw new AnyBalance.Error(prefs.num ? 'Не найдена карта с последними цифрами ' + prefs.num : 'У вас нет карт');
+	 	}else{
+	 		AnyBalance.trace('Ошибка получения карт: ' + JSON.stringify(json));
+	 		throw new AnyBalance.Error('Не удалось получить баланс по карте: ' + json.status);
+	 	}
 	}
 	
 	AnyBalance.setResult(result);
+}
+
+function lastOp(result, contractId){
+	if(AnyBalance.isAvailable('last_op_date', 'last_op_sum', 'last_op_descr')){
+		var hist = callApi('hst', {offset: 0, limit: 20, filter: JSON.stringify({contractId: contractId, topBefore: {$lt: +new Date()}})});
+		if(hist.status == 'OK'){
+			for(var j=0; j<hist.data.length; ++j){
+				var h = hist.data[j];
+				if(h.itemType == 'OPERATION'){
+					getParam(h.date, result, 'last_op_date');
+					getParam(h.money.income ? parseBalance(h.money.amount) : -h.money.amount, result, 'last_op_sum');
+					if(h.typeName){
+						getParam(h.typeName + ' ' + h.title, result, 'last_op_descr');
+					}else{
+						getParam(h.title + ' ' + h.description, result, 'last_op_descr');
+					}
+					break;
+				}
+			}
+		}else{
+			AnyBalance.trace('Can not get history: ' + JSON.stringify(hist));
+		}
+	}
 }

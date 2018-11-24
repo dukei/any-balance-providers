@@ -33,12 +33,37 @@ function handleRedirect(html){
 			AnyBalance.trace('Необходимо подождать ' + delay + ' милисек');
 			AnyBalance.sleep(delay);
 		}
+
 		html = AnyBalance.requestPost(joinUrl(ref, action), params, addHeaders({Referer: ref}));
 	}
 	return html;
 }
 
+function patchRequests(){
+	//Иногда попадаются ссылки с пробелом
+	var post = AnyBalance.requestPost;
+	var fget = AnyBalance.requestGet;
+
+	function req(func, url, args){
+		args[0] = url.replace(/\s/g, '%20');
+		if(url != args[0]){
+			AnyBalance.trace('Invalid url detected, patched: ' + url);
+		}
+		return func.apply(AnyBalance, args);
+	}
+
+	AnyBalance.requestPost = function(url){
+		return req(post, url, arguments);
+	}
+
+	AnyBalance.requestGet = function(url){
+		return req(fget, url, arguments);
+	}
+}
+
 function main(){
+	patchRequests();
+
     var prefs = AnyBalance.getPreferences();
 	AnyBalance.setDefaultCharset('utf-8');
 	

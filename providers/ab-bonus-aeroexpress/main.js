@@ -7,9 +7,10 @@ var g_headers = {
 	Pragma: 'no-cache',
 	'Cache-Control': 'no-cache',
 	'Upgrade-Insecure-Requests': '1',
-	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36',
+	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36',
 	Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-	'Accept-Language': 'ru,en-US;q=0.8,en;q=0.6',
+	'Accept-Language': 'ru,en-US;q=0.9,en;q=0.8,ru-RU;q=0.7',
+	Origin: 'https://aeroexpress.ru',
 };
 
 function main() {
@@ -24,7 +25,7 @@ function main() {
 
 	/* Проверяем доступность ресурса */
 
-	var html = AnyBalance.requestGet(baseurl + 'ru/aero/user/login', g_headers);
+	var html = AnyBalance.requestGet(baseurl + '', g_headers);
 
 	if(!html || AnyBalance.getLastStatusCode() > 400){
 		AnyBalance.trace(html);
@@ -46,29 +47,14 @@ function main() {
 		return value;
 	});
 
-	html = AnyBalance.requestPost(baseurl + 'ru/enter', params, addHeaders({
+	html = AnyBalance.requestPost(baseurl + '', params, addHeaders({
 		Referer: AnyBalance.getLastUrl()
 	}));
 
-	if(AnyBalance.getLastStatusCode() == 404){
-		//Тупые аэроэкспрессы не ставят иногда куку сессии и тогда тут будет 404, но уже поставится куки. Если так, надо попробовать ещё раз.
-		AnyBalance.trace('404 на вход. Пробуем ещё раз, с кукой');
-		html = AnyBalance.requestPost(baseurl + 'ru/enter', params, addHeaders({
-			Referer: AnyBalance.getLastUrl()
-		}));
-	}
-
-	if(!html || AnyBalance.getLastStatusCode() > 400){
-		//Тупые аэроэкспрессы не ставят иногда куку сессии и тогда тут будет 404, но уже поставится куки. Если так, надо попробовать ещё раз.
-		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Ошибка при входе в личный кабинет! Попробуйте обновить данные позже.');
-	}
-
 	// по наличию ссылки 'Выход' проверяем залогинились или нет
-	var exitLinks = getElementsByClassName(html, 'close', replaceTagsAndSpaces);
-	if (!exitLinks || !exitLinks.length || !/Выход/i.test(exitLinks[0])) {
+	if (!/mgnlLogout/i.test(html)) {
 		// определяем ошибку
-		var error = getElementById(html, 'page-intro', replaceTagsAndSpaces);
+		var error = getElementById(html, 'order_date_error', replaceTagsAndSpaces);
 		if(!error)
 			error = getElement(html, /<div[^>]+id="crmWarning"/i, replaceTagsAndSpaces);
 		if (error) 
@@ -83,19 +69,40 @@ function main() {
 
 	var result = {success: true};
 
+	html = AnyBalance.requestPost(baseurl + 'ru/aero/profile.html?open=bonus', g_headers);
+
+	var csrf = getParam(html, /csrfToken\s*=\s*"([^"]*)/i);
+	var referer = AnyBalance.getLastUrl();
+
 	if (AnyBalance.isAvailable('flights', 'username')) {
-		var info = createFormParams(html);
-		result.flights = parseBalance(info.flightPerYear);
-		result.username = info.salutation;
+		html = AnyBalance.requestPost(baseurl + 'ap/site/accountInfo', JSON.stringify({
+			csrfToken: csrf,
+			lang: 'ru'
+		}), addHeaders({
+			Accept: 'application/json, text/javascript, */*; q=0.01',
+			'X-Requested-With': 'XMLHttpRequest',
+			Referer: AnyBalance.getLastUrl(),
+			'Content-Type': 'application/json'
+		}));
+
+		var json = getJson(html);
+
+		getParam(json.crmProfile.flightsPerYear, result, 'flights');
+		getParam(json.crmProfile.salutation, result, 'username');
 	}
 
 	if (AnyBalance.isAvailable('balance')) {
-		html = AnyBalance.requestPost(baseurl + 'ap/getCrmBalance', {
-			login: prefs.login,
-			password: prefs.password
-		}, g_headers);
+		html = AnyBalance.requestPost(baseurl + 'ap/site/crmBalance', JSON.stringify({
+			csrfToken: csrf,
+			lang: 'ru'
+		}), addHeaders({
+			Accept: 'application/json, text/javascript, */*; q=0.01',
+			'X-Requested-With': 'XMLHttpRequest',
+			Referer: AnyBalance.getLastUrl(),
+			'Content-Type': 'application/json'
+		}));
 		var json = getJson(html);
-		result.balance = parseBalance(json.activeBalance);
+		getParam(json.activeBalance, result, 'balance');
 	}
 
 	AnyBalance.setResult(result);

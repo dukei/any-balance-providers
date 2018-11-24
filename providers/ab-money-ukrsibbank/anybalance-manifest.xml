@@ -1,18 +1,20 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="7">ab-money-ukrsibbank</id>
+	<id version="8">ab-money-ukrsibbank</id>
 	<api flags="no_browser"/>
 	<name>УКРСИББАНК</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе на картах и счетах УКРСИББАНКа http://ukrsibbank.com/</p>
-	<p>Информация берется из личного кабинета https://secure.my.ukrsibbank.com/web_banking/protected/welcome.jsf</p>
+	<p>Информация берется из личного кабинета https://online.ukrsibbank.com/ibank/</p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+		<module id="nadapter"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
-		<js>nadapter.js</js>
 		<js>extract.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
@@ -20,15 +22,16 @@
 	<counters>
 		<counter id="balance" name="Баланс"/>
 		<counter id="currency" name="Валюта" type="text"/>
-		<counter id="account" name="Номер счета" type="text"/>
-		<counter id="acc_name" name="Название счета" type="text"/>
-		<counter id="own" name="Собственные средства"/>
-		<counter id="avail" name="Доступная сумма"/>
-		<counter id="debt" name="Общая задолженность"/>
-		<counter id="fill" name="Пополнение за месяц"/>
-		<counter id="expense" name="Списание за месяц"/>
-		<counter id="overdraft" name="Доступный овердрафт"/>
-		<counter id="blocked" name="Заблокированная сумма"/>
+		<counter id="overdraft_till" name="Срок овердрафта"/>
+		<counter id="till" name="Срок действия карты"/>
+		<counter id="num" name="Номер карты" type="text"/>
+		<counter id="name" name="Название карты" type="text"/>
+		<counter id="accnum" name="Номер счета" type="text"/>
+		<counter id="accname" name="Название счета" type="text"/>
+		<counter id="overdraft" name="Лимит овердрафт"/>
+		<counter id="pct" name="Процент за овердрафт" units="%"/>
+		<counter id="overdraft_due_pct" name="Процент за просроченный овердрафт" units="%"/>
+		<counter id="holder" name="Держатель карты" type="text"/>
 	</counters>
 	<keywords></keywords>
 	<type>money, bank</type>

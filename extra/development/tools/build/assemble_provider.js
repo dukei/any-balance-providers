@@ -9,6 +9,7 @@ function main(){
 		defaultVersion = objArgs(1);
 
 	Modules.setDefaultVersion(defaultVersion);
+
 	var provider = Modules.createModule(WshShell.CurrentDirectory, '__self');
 
 	var modules = {}; //просто список используемых модулей

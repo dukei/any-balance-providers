@@ -306,17 +306,22 @@ var Modules = (function(){
 		return provider;
 	}
 
-	function getFilesMaxTime(module){
+	function getFilesMaxTime(module, allowNotExists){
 		var maxTime = 0;
 		for(var i=0; i<module.files.length; ++i){
 			var file = module.files[i];
 			var path = module.getFilePath(file.name);
+			var time;
 			try{
 				var f = fso.GetFile(path);
+				time = new Date(f.DateLastModified).getTime();
 			}catch(e){
+				if(allowNotExists){
+					WScript.Echo('Problem getting file ' + path + ': ' + e.message + ' -- assuming it is not built yet');
+					return 0;
+				}
 				throw new Error('Problem getting file ' + path + ': ' + e.message);
 			}
-			var time = new Date(f.DateLastModified).getTime();
 			if(time > maxTime)
 				maxTime = time;
 		}
@@ -332,7 +337,7 @@ var Modules = (function(){
 	    var moduleSource = new Module(module.id, module.repo, 'source'); //Специально мимо кеша создаём
 	    moduleSource.load();
 
-	    var time = getFilesMaxTime(module);
+	    var time = getFilesMaxTime(module, true);
 	    var timeSrc = getFilesMaxTime(moduleSource);
 
 	    return timeSrc <= time;

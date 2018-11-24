@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="4" date="2018-11-24">
+	- Поддержка изменений на сайте.
+	</change>
 	<change version="3" date="2018-01-27">
 	- Поддержка изменений на сайте.
 	</change>
 	<change version="2" date="2017-06-26">
 	- Переход на новый личный кабинет;
-    - Замена лого;
+	- Замена лого;
 	</change>
 	<change version="1" date="2015-09-18">
 	- Первая версия провайдера.

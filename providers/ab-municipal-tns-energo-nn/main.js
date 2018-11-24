@@ -72,27 +72,15 @@ function main(){
 
 	var result = {success: true};
 
-	html = AnyBalance.requestPost(baseurl + 'handlers/top-panel.php', {
-		action: 'updateLsInfo'
-	}, addHeaders({
-		'X-Requested-With': 'XMLHttpRequest',
-		'Accept': 'application/json, text/javascript, */*; q=0.01'
-	}));
-
-	var json = getJson(html);
-
-	AB.getParam(json.\u041a\u041e\u041f\u041b\u0410\u0422\u0415_\u0411\u0410\u041b\u0410\u041d\u0421_\u0421\u041e_\u0417\u041d\u0410\u041a\u041e\u041c + ':',
-				result, 'balance', null, null, AB.parseBalance);
-
-	html = AnyBalance.requestGet(baseurl, g_headers);
-
-	AB.getParam(html, result, '__tariff', /Лицевой счёт:([^>]*>){3}/i,         AB.replaceTagsAndSpaces);
-	AB.getParam(html, result, 'fio',      /fio([^>]*>){2}/i,                   AB.replaceTagsAndSpaces);
+	html = AnyBalance.requestGet(baseurl + 'lk-info', g_headers);
+	AB.getParam(html, result, 'balance',  /balance-value([^>]*>){3}/i,         AB.replaceTagsAndSpaces, AB.parseBalance);
+	AB.getParam(html, result, '__tariff', /account([^>]*>){4}/i,               AB.replaceTagsAndSpaces);
 	AB.getParam(html, result, 'address',  /Адрес:([^>]*>){2}/i,                AB.replaceTagsAndSpaces);
 	AB.getParam(html, result, 'accrued',  /К оплате по квитанции([^>]*>){8}/i, AB.replaceTagsAndSpaces, AB.parseBalance);
-	AB.getParam(html, result, 'paid',     /Оплачено в ([^>]*>){7}/i,           AB.replaceTagsAndSpaces, AB.parseBalance);
-	AB.getParam(html, result, 'to_pay',   /оплатить"([^>]*>){7}/i,             AB.replaceTagsAndSpaces, AB.parseBalance);
-	AB.getParam(html, result, 'debt',     /Задолженность([^>]*>){10}/i,        AB.replaceTagsAndSpaces, AB.parseBalance);
+	AB.getParam(html, result, 'paid',     /Оплачено:([^>]*>){7}/i,             AB.replaceTagsAndSpaces, AB.parseBalance);
+	AB.getParam(html, result, 'to_pay',   /koplate([^"]*"){2}/i,               AB.replaceTagsAndSpaces, AB.parseBalance);
+	AB.getParam(html, result, 'debt',     /zadolzhennost([^"]*"){2}/i,         AB.replaceTagsAndSpaces, AB.parseBalance);
+	AB.getParam(html, result, 'peni',     /пени([^>]*>){7}/i,                  AB.replaceTagsAndSpaces, AB.parseBalance);
 
 	if (isAvailable(['last_pay_date', 'last_pay_sum']))
 	{

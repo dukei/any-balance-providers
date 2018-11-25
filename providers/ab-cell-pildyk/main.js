@@ -42,7 +42,7 @@ function main(){
 		
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
-	}	
+	}
 	
 	var result = {success: true};
 
@@ -52,9 +52,12 @@ function main(){
     getParam(html, result, 'balanceExpire', /<th>Sąskaitos\s*likutis:[\s\S]*?<small\sclass="expiration_date">\s*galioja\s*iki\s*([^>]*?)\s*<\/small>\s*<\/th>/i, replaceTagsAndSpaces, parseDateISO);
 	getParam(html, result, 'traf_left', /AccountInfo_DataBucketRepeater(?:[^>]*>){8}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseTraffic);
 
-    json = getJson(AnyBalance.requestGet(baseurl + 'api/accountinformation/get-price-plan-and-account-balance', g_headers));
-    getParam(json.result.balance ? json.result.balance + '': '0', result, 'balance', null, null, parseBalance);
-    getParam(json.result.bonsBalance ? json.result.bonsBalance + '': '0', result, 'bonus', null, null, parseBalance);
+	json = getJson(AnyBalance.requestGet(baseurl + 'api/accountinformation/get-price-plan-and-account-balance', g_headers));
+	// Result sample: {"result":{"addonData":"1,80","addonDataUnit":"GB","addonMin":0.0,"balance":3.55,"bonsBalance":6.60,"msisdn":"60901234"}}
+	getParam(json.result.balance ? json.result.balance + '': '0', result, 'balance', null, null, parseBalance);
+	getParam(json.result.bonsBalance ? json.result.bonsBalance + '': '0', result, 'bonus', null, null, parseBalance);
+	getParam(json.result.addonData ? json.result.addonData + '': '0', result, 'addonData', null, null, parseBalance);
+	getParam(json.result.addonMin ? json.result.addonMin + '': '0', result, 'addonMin', null, null, parseBalance);
 
 	result.telnum = '+370' + prefs.login;
 	

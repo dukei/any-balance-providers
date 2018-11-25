@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change version="11" date="2018-11-25">
+    - Учёт опций дополнительного трафика и времени.
+    </change>
 	<change version="10" date="2017-12-25">
 	- Поддержка изменений на сайте.
 	</change>
@@ -20,11 +23,11 @@
 	</change>
     <change version="4" date="2013-07-15">
 	- Исправление счетчика Дата сгорания баланса с текстового на временной, чтобы можно было установить напоминание на дату. (Stark)
-	</change>   
+	</change>
     <change version="3" date="2013-07-12">
 	- Общие правки
-	</change>     
+	</change>
     <change version="2" date="2013-07-09">
 	- Обновлена иконка, добавлен счетчик с номером телефона
-	</change>     
+	</change>
 </history>

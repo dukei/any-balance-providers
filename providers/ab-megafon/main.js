@@ -975,9 +975,14 @@ function megafonBalanceInfo(filial) {
     var result = {success: true, filial: filinfo.id};
 
     var balance = getParam(html, /<BALANCE>([^<]*)<\/BALANCE>/i, replaceTagsAndSpaces, parseBalance);
+    if(balance == 0){
+	    AnyBalance.trace('Баланс вернул 0, этому значению нет доверия');
+	    balance = null;
+    }
+
     var limit = getParam(html, /<CREDIT_\w+LIMIT>([^<]*)<\/CREDIT_\w+LIMIT>/i, replaceTagsAndSpaces, parseBalance);
     getParam(balance, result, 'available');
-    getParam(balance-(limit || 0), result, 'balance');
+    getParam(balance && balance-(limit || 0), result, 'balance');
     getParam(limit, result, 'credit');
     getParam(html, result, 'phone', /<MSISDN>([^<]*)<\/MSISDN>/i, replaceNumber);
 

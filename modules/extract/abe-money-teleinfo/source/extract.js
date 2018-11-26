@@ -3,6 +3,8 @@
  */
 
 function trace(obj){
+	if(typeof console != 'undefined' && console && console.log)
+		console.log(obj);
     AnyBalance.trace(stringifyCircular(obj));
 }
 
@@ -504,35 +506,39 @@ function processCard(p, result){
     getParam(p.coBrandName, result, 'cards.cobrand');
     getParam(p.isEmitedForOwner, result, 'cards.for_owner');
     getParam(p.isMain, result, 'cards.is_main');
-    getParam(p.status.id, result, 'cards.status'); //ACTIVE
+    getParam(p.status ? p.status.id : p.statusDisplayName, result, 'cards.status'); //ACTIVE, Изготовлена
 
     //Для кредитной карты получаем больше параметров
     if(/Credit/.test(p.__type) && AnyBalance.isAvailable('cards.limit', 'cards.pct', 'cards.minpay', 'cards.gracepay', 'cards.credit_till', 'cards.minpay_till', 'cards.grace_till')){
-        var obj = request(new Message({
-            __type: 'ru.vtb24.mobilebanking.protocol.ObjectRequest',
-            identity: {
-                __type: 'ru.vtb24.mobilebanking.protocol.ObjectIdentityMto',
-                id: p.id,
-                type: p.__type
+    	try{
+            var obj = request(new Message({
+                __type: 'ru.vtb24.mobilebanking.protocol.ObjectRequest',
+                identity: {
+                    __type: 'ru.vtb24.mobilebanking.protocol.ObjectIdentityMto',
+                    id: p.id,
+                    type: p.__type
+                }
+            }, null, g_commonProperties));
+            
+            var ca = obj.payload.cardAccount, li = ca && ca.loanInfo;
+            if(ca && ca.creditLimit != null)
+                getParam(ca.creditLimit, result, 'cards.limit');
+            if(li){
+                if(li.interestRate != null)
+                    getParam(li.interestRate, result, 'cards.pct');
+                if(li.minAmountForRepayment != null)
+                    getParam(li.minAmountForRepayment, result, 'cards.minpay');
+                if(li.graceAmountForRepayment != null)
+                    getParam(li.graceAmountForRepayment, result, 'cards.gracepay');
+                if(li.limitEndDate)
+                    getParam(li.limitEndDate.getTime(), result, 'cards.credit_till');
+                if(li.repaymentDate)
+                    getParam(li.repaymentDate.getTime(), result, 'cards.minpay_till');
+                if(li.graceEndDate)
+                    getParam(li.graceEndDate.getTime(), result, 'cards.grace_till');
             }
-        }, null, g_commonProperties));
-
-        var ca = obj.payload.cardAccount, li = ca && ca.loanInfo;
-        if(ca && ca.creditLimit != null)
-            getParam(ca.creditLimit, result, 'cards.limit');
-        if(li){
-            if(li.interestRate != null)
-                getParam(li.interestRate, result, 'cards.pct');
-            if(li.minAmountForRepayment != null)
-                getParam(li.minAmountForRepayment, result, 'cards.minpay');
-            if(li.graceAmountForRepayment != null)
-                getParam(li.graceAmountForRepayment, result, 'cards.gracepay');
-            if(li.limitEndDate)
-                getParam(li.limitEndDate.getTime(), result, 'cards.credit_till');
-            if(li.repaymentDate)
-                getParam(li.repaymentDate.getTime(), result, 'cards.minpay_till');
-            if(li.graceEndDate)
-                getParam(li.graceEndDate.getTime(), result, 'cards.grace_till');
+        }catch(e){
+        	AnyBalance.trace('Не удалось получить данные по кредитной карте ' + p.__name + ': ' + e.message);
         }
     }
 

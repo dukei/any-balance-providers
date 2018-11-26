@@ -22,6 +22,8 @@
 		<counter id="name" name="Владелец" type="text"/>
 		<counter id="telnum" name="Номер телефона" type="text"/>
 		<counter id="traf_left" name="Остаток трафика" units=" Мб"/>
+		<counter id="addonData" name="Дополнительный трафик" units=" Мб"/>
+		<counter id="addonMin" name="Дополнительное время" units=" мин"/>
 	</counters>
 	<keywords>pildyk</keywords>
 	<type>cell</type>

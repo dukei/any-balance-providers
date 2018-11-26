@@ -1,5 +1,5 @@
 var g_api_headers = {
-    'User-Agent': 'MLK Android Phone 1.2.1',
+    'User-Agent': 'MLK Android Phone 3.0.8',
     'Connection': 'Keep-Alive'
 };
 

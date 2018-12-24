@@ -191,6 +191,15 @@ function processFinesBeta(result, prefs, showPaidFines) {
     processFinesBetaVehicles(result, vehicles, prefs.licensenumber, showPaidFines);
 }
 
+function guid() {
+  function s4() {
+    return Math.floor((1 + Math.random()) * 0x10000)
+      .toString(16)
+      .substring(1);
+  }
+  return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
+}
+
 function processFinesBetaVehicles(result, vehicles, license_number, showPaidFines) {
 	if ((!vehicles || !vehicles.length) && !license_number){
 		AnyBalance.trace('Нет автомобилей или прав, штрафы не получаем');
@@ -206,8 +215,7 @@ function processFinesBetaVehicles(result, vehicles, license_number, showPaidFine
 
 		html = AnyBalance.requestGet(g_baseurl + '10001/form', g_headers);
 
-		var trackId = AnyBalance.getLastResponseHeader('X-Atmosphere-tracking-id');
-		checkEmpty(trackId, 'X-Atmosphere-tracking-id header missing', true);
+		var trackId = guid();
 
 		var templateObj = getJsonObject(html, /gibdd\.requestTemplate/);
 
@@ -239,7 +247,7 @@ function processFinesBetaVehicles(result, vehicles, license_number, showPaidFine
 			"parameter": createRequestParams(templateObj)
 		};
 
-		var response = apiCallBetaCabinet('POST', 'a/wsapi/?_=' + new Date().getTime(), JSON.stringify(json), {
+		var response = apiCallBetaCabinet('POST', 'api/sf/v1/a/wsapi/?_=' + new Date().getTime(), JSON.stringify(json), {
 			'Origin': g_baseurl,
 			'X-Atmosphere-tracking-id': trackId,
 			'X-Atmosphere-Framework': '1.0',
@@ -432,8 +440,7 @@ function processNalogiBeta(result, html, inn) {
 
 		var mnemonic = forminfo.form.mnemonic;
 
-		var trackId = AnyBalance.getLastResponseHeader('X-Atmosphere-tracking-id');
-		checkEmpty(trackId, 'X-Atmosphere-tracking-id header missing', true);
+		var trackId = guid();
 
 		var json = {
 			"type": "javaServiceTask",
@@ -442,7 +449,7 @@ function processNalogiBeta(result, html, inn) {
 			"parameter": "{\"submitComponent\":\"Fns.FormStep1.Panel1.button\",\"submitEventNumber\":\"0\",\"submitEvent\":\"submit\",\"userSelectedRegion\":\"00000000000\",\"form\":{\"mnemonic\":\"" + mnemonic + "\",\"content\":{\"Fns.FormStep1.Panel1.userInn\":{\"value\":\"" + inn + "\"},\"Fns.FormStep1.Panel1.emailSend\":{\"value\":false},\"Fns.FormStep1.Panel1.phoneSend\":{\"value\":false},\"Fns.FormStep1.Panel1.formatedResponse\":{\"value\":false},\"Fns.FormStep1.Panel1.requested\":{\"value\":false},\"Fns.FormStep1.Panel1.useFailoverCache\":{\"value\":false}}},\"context\":{\"context\":{\"groovy\":{\"Script\":\"groovy.fnsFetchBill\"}}}}"
 		}
 
-		var fns = apiCallBetaCabinet('POST', 'a/wsapi/?_=' + new Date().getTime(), JSON.stringify(json), {
+		var fns = apiCallBetaCabinet('POST', 'api/sf/v1/a/wsapi/?_=' + new Date().getTime(), JSON.stringify(json), {
 			'Origin': g_baseurl,
 			'X-Atmosphere-tracking-id': trackId,
 			'X-Atmosphere-Framework': '1.0',

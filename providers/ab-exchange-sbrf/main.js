@@ -16,7 +16,7 @@ function main() {
 	var prefs = AnyBalance.getPreferences();
 	var region = findRegion(prefs.region).REGION_ID;
 	
-	var baseurl = 'http://www.sberbank.ru/portalserver/proxy/?pipe=shortCachePipe&url=';
+	var baseurl = 'https://www.sberbank.ru/portalserver/proxy/?pipe=shortCachePipe&url=';
 	var body = JSON.stringify({
 		"currencyData":[
 			{"currencyCode":"978","rangesAmountFrom":[0,1000]},

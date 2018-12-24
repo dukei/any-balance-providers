@@ -27,7 +27,7 @@ function main(){
 
     var html = AnyBalance.requestGet(baseurl, g_headers);
 
-    html = AnyBalance.requestPost(baseurl + 'application/api/authentication', {
+    html = AnyBalance.requestPost(baseurl + 'application/authentication', {
 		username:	prefs.login,
 		password:	prefs.password
 	}, addHeaders({Referer: baseurl}));
@@ -44,42 +44,48 @@ function main(){
 //	html = AnyBalance.requestGet(baseurl + 'application/api/checkAuthentication', addHeaders({Referer: baseurl}));
 //	json = getJson(html);
 
-	html = AnyBalance.requestGet(baseurl + 'application/api/accounts', addHeaders({Referer: baseurl}));
+	html = AnyBalance.requestGet(baseurl + 'application/accounts', addHeaders({Referer: baseurl}));
 	json = getJson(html);
+	var accounts = [];
+	for(var st in json){
+		accounts.push.apply(accounts, json[st]);
+	}
 
-	if(!json.length){
+	if(!accounts.length){
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Вы не добавили ни один лицевой счет в личный кабинет.');
 	}
 
-	AnyBalance.trace('Found accounts: ' + json.length);
+	AnyBalance.trace('Found accounts: ' + accounts.length);
 
 	var result = {success: true};
 
-	for(var i=0; i<json.length; ++i){
-		var acc = json[i];
+	for(var i=0; i<accounts.length; ++i){
+		var acc = accounts[i];
 		sumParam(acc.accountNumber, result, 'licschet', null, null, null, aggregate_join);
 		var name_balance = 'balance' + (i || ''), name_peni = 'peni' + (i || '')
-		var type = acc.providerName.toLowerCase();
+		var type = acc.providerName;
 
 		AnyBalance.trace('Found account: ' + JSON.stringify(acc));
 
 		if(AnyBalance.isAvailable(name_balance, name_peni)){
-			html = AnyBalance.requestPost(baseurl + 'application/api/accounts/' + type + '/debt', JSON.stringify({
-				accountNumber: acc.accountNumber
+			html = AnyBalance.requestPost(baseurl + 'application/accounts/' + type + '/balance', JSON.stringify({
+				accountNumber: acc.accountNumber,
+				serviceType: acc.serviceName
 			}), addHeaders({
 				Referer: baseurl,
 				'Content-Type': 'application/json'
 			}));
 
 			var _json = getJson(html);
-			getParam(_json.charge, result, name_balance);
-			getParam(_json.fine, result, name_peni);
+			getParam(_json.accountBalance, result, name_balance);
+			getParam(_json.accountFine, result, name_peni);
 		}
 
 		if(isAvailable('__tariff')){
-			html = AnyBalance.requestPost(baseurl + 'application/api/accounts/' + type + '/address', JSON.stringify({
-				accountNumber: acc.accountNumber
+			html = AnyBalance.requestPost(baseurl + 'application/accounts/' + type + '/address', JSON.stringify({
+				accountNumber: acc.accountNumber,
+				serviceType: acc.serviceName
 			}), addHeaders({
 				Referer: baseurl,
 				'Content-Type': 'application/json'

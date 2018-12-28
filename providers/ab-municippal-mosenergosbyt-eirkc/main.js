@@ -143,13 +143,15 @@ outer:
 		sumParam(json.nm_last || undefined, result, 'fio', null, null, null, aggregate_space);
 	}
 
-	if(AnyBalance.isAvailable('balance', 'currency')){
+	if(AnyBalance.isAvailable('balance', 'cost', 'currency')){
 		json = getApiData('lkcom_data/json-ws?action=sql&query=SmorodinaProxy&plugin=smorodinaProxy', {
-			json:	JSON.stringify({"name":"qLkkUtilAbonentBalance","org":-1,"params":{"id_abonent":id_abonent,"dt_period":""},"out_params":{}}),
+			json:	JSON.stringify({"name":"qLkkUtilCurrentAbonentBalance","org":-1,"params":{"id_abonent":id_abonent},"out_params":{}}),
+			needMetadata: 1,
 			session: sid
 		});
 
-		getParam(json.sm_all, result, 'balance');
+		getParam(json.sm_balance_all, result, 'balance');
+		getParam(json.charged_sum, result, 'cost');
 		getParam('руб', result, 'currency');
 	}
 

@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="10">ab-municippal-mosenergosbyt-eirkc</id>
+	<id version="11">ab-municippal-mosenergosbyt-eirkc</id>
 	<api flags="no_browser"/>
 	<name>МосОблЕИРЦ</name>
 	<description html="true"><![CDATA[
@@ -19,6 +19,7 @@
 	</files>
 	<counters>
 		<counter id="balance" name="Баланс" units=" {@currency}"/>
+		<counter id="cost" name="Начислено" units=" {@currency}"/>
 		<counter id="fio" name="ФИО" type="text"/>
 		<counter id="licschet" name="Лицевой счёт" type="text"/>
 	</counters>

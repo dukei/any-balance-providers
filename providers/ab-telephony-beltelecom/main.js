@@ -16,7 +16,7 @@ function getFormId(html) {
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'http://beltelecom.by/';
+	var baseurl = 'https://beltelecom.by/';
 	AnyBalance.setDefaultCharset('utf-8');
 	
 	checkEmpty(prefs.login, 'Введите номер телефона!');

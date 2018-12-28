@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="4">ab-telephony-beltelecom</id>
+	<id version="5">ab-telephony-beltelecom</id>
 	<api flags="no_browser"/>
 	<name>Белтелеком (Минск)</name>
 	<description html="true"><![CDATA[

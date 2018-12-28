@@ -20,7 +20,7 @@ function main(){
     checkEmpty(/^\d{10}$/.test(prefs.login), 'Введите номер телефона');
     checkEmpty(prefs.password, 'Введите пароль');
 
-    var baseurl = "https://www.activ.kz/";
+    var baseurl = "https://activ.kz/";
 
     AnyBalance.setDefaultCharset('utf-8');
 

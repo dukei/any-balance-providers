@@ -6,13 +6,15 @@ function checkLoginError(html, loginUrl) {
         if (error)
             throw new AnyBalance.Error(error, null, /Неверный пароль/i.test(error));
 
-        var error = getElement(html, /<div[^>]+b-page_error__msg[^>]*>/, replaceTagsAndSpaces, html_entity_decode);
+        var error = getElement(html, /<div[^>]+b-page_error__msg[^>]*>/, replaceTagsAndSpaces);
         if(error)
         	throw new AnyBalance.Error(error);
 	}
 
     processError(html);
-    var img = getParam(html, null, null, /<img[^>]+id="kaptchaImage"[^>]*src="data:image\/\w+;base64,([^"]+)/i, null, html_entity_decode);
+    var img = getParam(html, /<img[^>]+id="kaptchaImage"[^>]*/i);
+    if(img)
+        img = getParam(img, /data:image\/\w+;base64,([^"]+)/i, replaceHtmlEntities);
 
 	if(img) {
 	    AnyBalance.trace('МТС решило показать капчу :( Жаль');

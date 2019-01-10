@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="5">ab-bonus-onlinetrade</id>
+	<id version="6">ab-bonus-onlinetrade</id>
 	<api flags="no_browser"/>
 	<name>Onlinetrade</name>
 	<description html="true"><![CDATA[
@@ -14,6 +14,7 @@
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
+		<js>jsv1.2.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>

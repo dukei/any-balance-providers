@@ -18,9 +18,17 @@ function main() {
 	AB.checkEmpty(prefs.login, 'Введите логин!');
 	AB.checkEmpty(prefs.password, 'Введите пароль!');
 	
-	AnyBalance.setCookie('www.onlinetrade.ru', 'beget', 'begetok');
-	
 	var html = AnyBalance.requestGet(baseurl + 'member/login.html', g_headers);
+	var cE = getParam(html, /var\s+cE\s*=\s*['"]([^"']*)/);
+	if(cE){
+		AnyBalance.trace('Fooling stormwall');
+		var cK = getParam(html, /var\s+cK\s*=\s*(\d+)/, null, parseBalance);
+		var cookie = generateCookieValue(cK, cE);
+		AnyBalance.trace('swp_token: ' + cookie);
+		AnyBalance.setCookie('www.onlinetrade.ru', 'swp_token', cookie, {domain: 'www.onlinetrade.ru', path: '/'});
+	}
+	
+	html = AnyBalance.requestGet(baseurl + 'member/login.html', g_headers);
 	
 	if(!html || AnyBalance.getLastStatusCode() > 400){
 		AnyBalance.trace(html);
@@ -63,7 +71,7 @@ function main() {
 	AB.getParam(html, result, 'balance', /ON-бонусов:([^>]+>){2}/i, AB.replaceTagsAndSpaces, AB.parseBalance);
 	AB.getParam(html, result, 'price', /Цена:([^>]+>){2}/i, AB.replaceTagsAndSpaces);
 	AB.getParam(html, result, 'userId', /Клиентский номер([^>]+>){2}/i, AB.replaceTagsAndSpaces);
-	AB.getParam(html, result, 'status', /Статус:([^>]+>){2}/i, AB.replaceTagsAndSpaces);
+	AB.getParam(html, result, 'status', /Статус:([\s\S]*?)<span/i, AB.replaceTagsAndSpaces);
 	AB.getParam(html, result, 'email', /E-mail:([^>]+>){2}/i, AB.replaceTagsAndSpaces);
 	
 	AnyBalance.setResult(result);

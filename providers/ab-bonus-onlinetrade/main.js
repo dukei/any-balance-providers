@@ -14,7 +14,6 @@ function main() {
 	var prefs = AnyBalance.getPreferences();
 	var baseurl = 'https://www.onlinetrade.ru/';
 	AnyBalance.setDefaultCharset('windows-1251');
-    AnyBalance.setOptions({cookiePolicy: 'netscape'});
 	
 	AB.checkEmpty(prefs.login, 'Введите логин!');
 	AB.checkEmpty(prefs.password, 'Введите пароль!');
@@ -26,7 +25,7 @@ function main() {
 		var cK = getParam(html, /var\s+cK\s*=\s*(\d+)/, null, parseBalance);
 		var cookie = generateCookieValue(cK, cE);
 		AnyBalance.trace('swp_token: ' + cookie);
-		AnyBalance.setCookie('www.onlinetrade.ru', 'swp_token', cookie, {domain: 'www.onlinetrade.ru', path: '/'});
+		AnyBalance.setCookie('www.onlinetrade.ru', 'swp_token', cookie);
 	}
 	
 	html = AnyBalance.requestGet(baseurl + 'member/login.html', g_headers);

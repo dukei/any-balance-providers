@@ -14,6 +14,7 @@ function main() {
 	var prefs = AnyBalance.getPreferences();
 	var baseurl = 'https://www.onlinetrade.ru/';
 	AnyBalance.setDefaultCharset('windows-1251');
+    AnyBalance.setOptions({cookiePolicy: 'netscape'});
 	
 	AB.checkEmpty(prefs.login, 'Введите логин!');
 	AB.checkEmpty(prefs.password, 'Введите пароль!');

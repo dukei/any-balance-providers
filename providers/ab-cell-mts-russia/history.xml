@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="4.1" version="176" date="2019-01-11">
+	Исправлено получения трафика в некоторых случаях
+	</change>
 	<change major_version="4.1" version="175" date="2018-12-28">
 	- Исправлен показ капчи в случае необходимости
 	</change>

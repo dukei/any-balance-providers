@@ -477,8 +477,8 @@ function checkLoginState(html, options) {
 	}*/
 
     if (/checkAuthStatus|дождитесь окончания процесса авторизации/i.test(html) || /waitauth/i.test(referer)) {
-        var json = {}, tries = 20;
-        while (json.Data != 'Success' && tries-- > 0) {
+        var json = {Data: {}}, tries = 20;
+        while (json.Data.State != 'Success' && tries-- > 0) {
             json = AnyBalance.requestGet(baseurl + '/WaitAuth/CheckAuth?_=' + new Date().getTime(), addHeaders({Referer: referer}));
             if(AnyBalance.getLastStatusCode() == 404){
             	AnyBalance.trace('Проверка загрузки отсутствует, переходим на лк напрямую: ' + baseurl);
@@ -488,19 +488,19 @@ function checkLoginState(html, options) {
 
             json = getJson(json);
 
-            if (json.Data == 'PreSuccess'){
+            if (json.Data.State == 'PreSuccess'){
             	json = AnyBalance.requestGet(baseurl + '/WaitAuth/CompleteAuth?_=' + new Date().getTime(), addHeaders({Referer: referer}));
             	json = getJson(json);
             	AnyBalance.trace('Received PreSuccess, called CompleteAuth: ' + JSON.stringify(json));
             }
 
-            if (json.Data == 'Success')
+            if (json.Data.State == 'Success')
                 break;
             
             sleep(1000);
         }
         // Если прождали авторизацию, а она так и не произошла, надо об этом явно сообщить
-        if (json.Data != 'Success') {
+        if (json.Data.State != 'Success') {
         	AnyBalance.trace('Слишком долго ждали авторизацию: ' + JSON.stringify(json));
             if (options && options.automatic) {
                 //Это была попытка автоматического входа. Раз он не получился, давайте попробуем по логину и паролю

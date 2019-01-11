@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="90" date="2019-01-11">
+	Предупреждение о неполучении спасибо. Для получения баллов необходимо войти в https://bonus-spasibo.ru/ и привязать свой номер телефона
+	</change>
 	<change version="89" date="2018-03-15">
 	- Улучшена обработка ошибок.
 	</change>

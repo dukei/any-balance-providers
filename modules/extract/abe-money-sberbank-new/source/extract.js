@@ -521,12 +521,16 @@ function fetchNewThanks(baseurl, result) {
 	if (AnyBalance.isAvailable('spasibo')) {
 		html = AnyBalance.requestGet(baseurl + '/PhizIC/private/async/loyalty.do');
 		
-		var href = getParam(html, null, null, /^\s*(https?:\/\/\S*)/i, replaceTagsAndSpaces);
+		var href = getParam(html, /^\s*(https?:\/\/\S*)/i, replaceTagsAndSpaces);
 		if (!href) {
 			AnyBalance.trace('Не удаётся получить ссылку на спасибо от сбербанка: ' + html);
 		} else {
 			html = AnyBalance.requestGet(href);
-			getParam(html, result, 'spasibo', /<span[^>]*balance__thanks-count[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+			if(/Sberbank-spasibo - Подтверждение телефона/i.test(html)){
+				AnyBalance.trace('Не удалось получить баллы спасибо. Для получения баллов необходимо войти в https://bonus-spasibo.ru/ и привязать свой номер телефона');
+			}else{
+				getParam(html, result, 'spasibo', /<span[^>]*balance__thanks-count[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+			}
 		}
 	}
 }

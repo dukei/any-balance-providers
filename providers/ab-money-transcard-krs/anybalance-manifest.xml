@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="2.0" version="4">ab-money-transcard-krs</id>
+	<id major_version="2.0" version="5">ab-money-transcard-krs</id>
 	<api flags="no_browser"/>
 	<name>Транспортная карта, Красноярск</name>
 	<description html="true"><![CDATA[
@@ -9,10 +9,12 @@
 	]]></description>
 	<author>Leo Hawk &lt;Leo_Hawk@Mail.ru&gt;</author>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>

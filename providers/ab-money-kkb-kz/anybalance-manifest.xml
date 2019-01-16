@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="6">ab-money-kkb-kz</id>
+	<id version="7">ab-money-kkb-kz</id>
 	<api flags="no_browser"/>
 	<name>Homebank (Казкоммерцбанк/Народный Банк)</name>
 	<description html="true"><![CDATA[

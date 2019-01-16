@@ -202,7 +202,7 @@ function processCard(card, result) {
 	for(var i= 0; i < info.balances.length; i++) {
 		var current = info.balances[i];
 	
-		getParam(current.amount, result, 'cards.balance_' + current.curr.toLowerCase());
+		sumParam(current.amount, result, 'cards.balance_' + current.curr.toLowerCase(), null, null, null, aggregate_sum);
 	}
     
     getParam(info.currency, result, ['cards.currency']);

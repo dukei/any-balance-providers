@@ -17,6 +17,15 @@ var g_ServiceStatus = {
 
 var baseurl = "https://lk.rt.ru/";
 
+var g_web_headers = {
+	Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
+	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
+	Connection: 'keep-alive',
+	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.11',
+    Referer:baseurl
+};
+
 var g_headers = {
 	Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
 	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
@@ -140,35 +149,47 @@ function main(){
     var code = AnyBalance.retrieveCode('Пожалуйста, введите слова с картинки', img);
 */
 
-    var uuid = generateUUID();
-    var html = AnyBalance.requestPost(baseurl + 'client-api/login', JSON.stringify({
-//    	"capcha": {
-//    		challenge: imgid,
-//    		code: code
-//   	},
-    	"login": login,
-//    	"loginType": type,
-    	"passwd": prefs.password,
-    	"remember":false,
-    	"client_uuid":generateUUID(),
-    	"current_page":"login",
-    }), g_headers);
+    var state = generateUUID();
+    var html = AnyBalance.requestGet('https://b2c.passport.rt.ru/auth/realms/b2c/protocol/openid-connect/auth?' + createUrlEncodedParams({
+    	response_type: 'code',
+    	scope: 'openid',
+    	client_id: 'lk_b2c',
+    	state: state,
+    	redirect_uri: 'https://lk.rt.ru/sso-auth/'
+    }), g_web_headers);
 
 	if(/Личный кабинет временно недоступен/i.test(html)) {
 		throw new AnyBalance.Error('Личный кабинет временно недоступен. Ведутся технические работы, попробуйте обновить баланс позже.');
 	}
 
-    var json = getJson(html);
-    if(json.isError)
-        throw new AnyBalance.Error(json.errorMessage, null, /парол/.test(json.errorMessage));
-//    if(!json.sessionKey)
-//        throw new AnyBalance.Error("Не удалось получить идентификатор сессии!");
+    var form = getElement(html, /<form[^>]+kc-form-login/i);
+    if(!form){
+    	AnyBalance.trace(html);
+    	throw new AnyBalance.Error('Не удалось найти форму входа. Сайт изменен?');
+    }
 
-//    var domain = getParam(baseurl, null, null, /https?:\/\/([^\/]*)/i);
-//    AnyBalance.setCookie(domain, 'sessionHashKey', json.sessionKey);
+    var action = getParam(form, /<form[^>]+action="([^"]*)/i, replaceHtmlEntities);
+	var params = AB.createFormParams(form, function(params, str, name, value) {
+		if (name == 'username') {
+			return prefs.login;
+		} else if (name == 'password') {
+			return prefs.password;
+		}
 
-//    html = AnyBalance.requestGet(baseurl, g_headers);
+		return value;
+	});
 
+	var html = AnyBalance.requestPost(action, params, addHeaders({Referer: AnyBalance.getLastUrl()}, g_web_headers));
+
+	if(AnyBalance.getLastUrl().indexOf(baseurl) != 0){
+		var error = getElement(html, /<div[^>]+error/i, replaceTagsAndSpaces);
+		if(error)
+			throw new AnyBalance.Error(error, null, /парол/i.test(error));
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удалось войти в личный кабинет. Сайт изменен?');
+	}
+
+    var uuid = generateUUID();
 	html = AnyBalance.requestPost(baseurl + 'client-api/getAccounts', JSON.stringify({
 		client_uuid: uuid,
 		current_page: 'login'
@@ -403,16 +424,12 @@ function main(){
     if(AnyBalance.isAvailable('bonusFPL')){
 		AnyBalance.trace('Пробуем найти программу "Бонус"...');
 		try {
-			html = AnyBalance.requestPost(baseurl + 'client-api/getBonusStatus', JSON.stringify({
+			html = AnyBalance.requestPost(baseurl + 'client-api/getFplStatus', JSON.stringify({
 				client_uuid: uuid,
-				current_page: 'main'
+				current_page: ''
 			}), g_headers);
 			var jsonBonus = getRTJson(html);
-			if(jsonBonus.bonus){
-				getParam(jsonBonus.bonus.points, result, 'bonusFPL');
-			}else{
-				AnyBalance.trace('Нет программы Бонус: ' + html);
-			}
+			getParam(jsonBonus.balance, result, 'bonusFPL');
 		} catch (e) {
 			AnyBalance.trace('Не удалось получить программу "Бонус": ' + e.message);
 		}

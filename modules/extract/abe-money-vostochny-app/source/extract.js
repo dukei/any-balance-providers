@@ -21,6 +21,15 @@ function callApi(verb, params){
 	var html = AnyBalance.requestPost(g_baseurl + 'mobws/3.0/json/' + verb, params, g_headers); 
 
 	var json = getJson(html);
+	if(json.response.result == 5){
+		var msg = json.response.message && Base64.decode(json.response.message);
+		var warnings = json.response.object.warnings.map(function(m) { return Base64.decode(m.message) }).join('\n');
+		AnyBalance.trace(verb + ' warnings: ' + warnings);
+		
+		html = AnyBalance.requestPost(g_baseurl + 'mobws/3.0/json/' + verb, joinObjects(params, {sure: true}), g_headers);
+		var json = getJson(html);
+	}
+
 	if(json.response.result != 0 && json.response.result != 1){
 		AnyBalance.trace(html);
 		var msg = json.response.message && Base64.decode(json.response.message);

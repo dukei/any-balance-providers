@@ -1,11 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-  <id version="4">ab-money-expressbank</id>
+  <id version="5">ab-money-expressbank</id>
   <name>Восточный Экспресс Банк</name>   
-  <description>
-    Получает текущий остаток и другие параметры карт/счетов Восточного Экспресс Банка (http://www.vostbank.ru/), используя интернет-банк https://online.vostbank.ru
-  </description>
+  <description><![CDATA[
+    <p><font color=brown>ВНИМАНИЕ!</font> Провайдер больше не поддерживается. Пожалуйста, воспользуйтесь провайдером "<a href="https://anybalance.ru/catalog/ab-money-expressbank-app/>Банк Восточный (API)</a>".</p>
+    <p>Получает текущий остаток и другие параметры карт/счетов Восточного Экспресс Банка (http://www.vostbank.ru/), используя интернет-банк https://online.vostbank.ru</p>
+  ]]></description>
   <author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
   <depends>
 	  <module id="nadapter"/>

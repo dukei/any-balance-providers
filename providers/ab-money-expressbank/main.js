@@ -120,6 +120,8 @@ function shouldProcess(counter, info){
 function main() {
 	var prefs = AnyBalance.getPreferences();
 	prefs.num = prefs.cardnum;
+
+	throw new AnyBalance.Error("Провайдер больше не поддерживается. Пожалуйста, воспользуйтесь провайдером 'Банк Восточный (API)'", null, true);
 	
     if(!/^(card|crd|dep|acc)$/i.test(prefs.type || ''))
     	prefs.type = 'card';

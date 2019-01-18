@@ -284,20 +284,23 @@ function getDiscounts(baseurl, account, result){
                 sumParam(d.volume, result, 'sms_left', null, null, null, aggregate_sum);
             }else if(/[мгкmgk][бb]/i.test(d.measure)){
                 AnyBalance.trace('Это интернет');
-                if(d.volume >= 99999999){
+                var mb = parseTraffic(d.volume + d.measure);
+                if(mb >= 9999999){
                 	AnyBalance.trace('Это безлимит, пропускаем');
                 	continue;
                 }
-                if(/Европа.+интернет/i.test(d.name))
-                	sumParam(d.volume + d.measure, result, 'traffic_left_europe', null, null, parseTraffic, aggregate_sum);
-                else if(/поп.+страны.+интернет/i.test(d.name))
-                	sumParam(d.volume + d.measure, result, 'traffic_left_pop_countries', null, null, parseTraffic, aggregate_sum);
-                else if(/Остальные страны/i.test(d.name))
-                	sumParam(d.volume + d.measure, result, 'traffic_left_other_countries', null, null, parseTraffic, aggregate_sum);
-                else if(/СНГ.+интернет/i.test(d.name))
-                	sumParam(d.volume + d.measure, result, 'traffic_left_sng', null, null, parseTraffic, aggregate_sum);
-                else 
-                	sumParam(d.volume + d.measure, result, 'traffic_left', null, null, parseTraffic, aggregate_sum);
+                var cat = 'traffic_left';
+                if(/интернет/i.test(d.name) && /европ/i.test(d.name))
+                	cat = 'traffic_left_europe';
+                else if(/интернет/i.test(d.name) && /поп.+стран/i.test(d.name))
+                	cat = 'traffic_left_pop_countries';
+                else if(/остальн.+стран/i.test(d.name))
+                	cat = 'traffic_left_other_countries'
+                else if(/интернет/i.test(d.name) && /СНГ/i.test(d.name))
+                	cat = 'traffic_left_sng';
+
+                AnyBalance.trace('Относим ' + mb + ' МБ к ' + cat);
+                sumParam(mb, result, cat, null, null, null, aggregate_sum);
             }else{
                 AnyBalance.trace('неизвестная скидка: ' + JSON.stringify(d));
             }

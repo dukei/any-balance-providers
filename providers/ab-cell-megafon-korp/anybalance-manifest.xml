@@ -20,6 +20,7 @@
 	<counters>
 		<counter id="balance" name="Баланс" units=" р"/>
 		<counter id="balance_if" name="Условный баланс" units=" р"/>
+		<counter id="amountTotal" name="Расходы с начала периода" units=" р"/>
 		<counter id="min_left" name="Минуты" units=" мин"/>
 		<counter id="sms_left" name="SMS" units=" шт"/>
 		<counter id="sms_left_megafon" name="SMS на Мегафон" units=" шт"/>
@@ -29,7 +30,6 @@
 		<counter id="traffic_left_pop_countries" name="Интернет (популярные страны)" units=" мб"/>
 		<counter id="traffic_left_other_countries" name="Интернет (другие страны)" units=" мб"/>
 		<counter id="abonCount" name="Количество абонентов" type="text"/>
-		<counter id="amountTotal" name="Расходы с начала периода" units=" р"/>
 		<counter id="amountLocal" name="Трафик" units=" р"/>
 		<counter id="abon" name="Абонентская плата" units=" р"/>
 		<counter id="charges" name="Разовые начисления" units=" р"/>

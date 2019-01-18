@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="10">ab-internet-cifra1</id>
+	<id version="11">ab-internet-cifra1</id>
 	<api flags="no_browser"/>
 	<name>Цифра Один (Алмател)</name>
 	<description html="true"><![CDATA[
@@ -20,7 +20,7 @@
 	</files>
 	<counters>
 		<counter id="balance" name="Баланс" units=" р"/>
-		<counter id="bonus" name="Бонус" type=" Б"/>
+		<counter id="bonus" name="Бонус" units=" Б"/>
 		<counter id="status" name="Статус" type="text"/>
 		<counter id="agreement" name="№ договора" type="text"/>
 	</counters>

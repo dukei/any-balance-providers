@@ -1,4 +1,4 @@
-﻿/**
+/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 */
 
@@ -12,7 +12,7 @@ var g_headers = {
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'https://my.domtele.com/';
+	var baseurl = 'https://my.datagroup.ua/';
 	
 	//AnyBalance.setDefaultCharset('utf-8');
 	AnyBalance.setDefaultCharset('windows-1251');	

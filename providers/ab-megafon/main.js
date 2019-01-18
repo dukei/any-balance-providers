@@ -322,6 +322,7 @@ function loadFilialInfo(filial){
         if(src == 'app' && !ok){
             try{
            		AnyBalance.trace('Пробуем зайти в моб. приложение');
+           		clearAllCookies();
 				megafonLkAPI(filinfo, {allow_captcha: allow_captcha_app});
 				ok = true;
 			}catch(e){
@@ -331,7 +332,7 @@ function loadFilialInfo(filial){
 					e_total_messages.push('Мобильное приложение: ' + e.message);
 				e_some_messages.push('Мобильное приложение: ' + e.message);
 
-				if(/Требуется ввод кода/i.test(e.message || '') && !allow_captcha_app && allow_captcha_app != allow_captcha){
+				if(/Требуется ввод кода|Введите код/i.test(e.message || '') && !allow_captcha_app && allow_captcha_app != allow_captcha){
 					AnyBalance.trace('Без капчи зайти в app не удалось, но может, потом попробуем с капчей...');
 				    allow_captcha_app = allow_captcha;
 				    priority.push('app');
@@ -377,12 +378,12 @@ function loadFilialInfo(filial){
 }
 
 var g_headers = {
-    Accept:'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+    Accept:'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
     'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
-    'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
+    'Accept-Language':'ru,en-US;q=0.9,en;q=0.8,ru-RU;q=0.7',
     'Cache-Control':'max-age=0',
     Connection:'keep-alive',
-    'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.1 (KHTML, like Gecko) Chrome/21.0.1180.60 Safari/537.1'
+    'User-Agent':'Mozilla/5.0 (Windows 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36'
 };
 
 function getTrayXmlText(filial){
@@ -1679,10 +1680,17 @@ function enterLK(filial, options){
 		
 		html = AnyBalance.requestPost(baseurl + 'dologin/', params, addHeaders({Referer: baseurl + 'login/'}));
 		fixCookies();
-	}	
+	}
 
 	if (!isLoggedInLK(html) && !isLoggedInSG(html)) {
 		var error = getElement(html, /<[^>]*(?:login-warning|ui-result-message|mf-error|megafon-error-top)/i, replaceTagsAndSpaces);
+		if(!error){
+			error = sumParam(html, /\{"event":[^}]*\}/g, null, getJson)
+				.filter(function(e) { return e.event === 'addEvents_makeConversions' && /sendError/i.test(e.event_name) })
+				.map(function(e){ return e.event_param })
+				.join('\n');
+		}
+
 		if (error)
 			throw new AnyBalance.Error(error, null, /парол|заблокирован/i.test(error));
 		

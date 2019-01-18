@@ -1,11 +1,11 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="4">ab-internet-domtelecom</id>
+	<id version="5">ab-internet-domtelecom</id>
 	<api flags="no_browser"/>
 	<name>Домашний телеком</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе провайдера Домашний телеком <a href="http://www.domtele.com/">http://www.domtele.com/</a></p>
-	<p>Информация берется из личного кабинета <a href="http://my.domtele.com/">http://my.domtele.com/</a></p>
+	<p>Предоставляет информацию о балансе провайдера Домашний телеком <a href="http://www.datagroup.ua/">http://www.datagroup.ua/</a></p>
+	<p>Информация берется из личного кабинета <a href="http://my.datagroup.ua/">http://my.datagroup.ua/</a></p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>

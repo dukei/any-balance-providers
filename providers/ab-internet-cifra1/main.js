@@ -39,9 +39,10 @@ function main(){
 	html = AnyBalance.requestGet(baseurl + 'lk/', g_headers);
 
 	var result = {success: true};
-	getParam(html, result, 'balance', /<span[^>]+order_balance[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'agreement', /№ договора[\s\S]*?<p[^>]*>([\s\S]*?)<\/p>/i, replaceTagsAndSpaces);
+	getParam(html, result, 'balance', /Остаток на счете:[\s\S]*?<span[^>]+question-block-value[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'agreement', /Договор №\s*([^<]+)/i, replaceTagsAndSpaces);
 	getParam(html, result, 'status', /Статус[\s\S]*?<p[^>]*>([\s\S]*?)<\/p>/i, replaceTagsAndSpaces);
+	getParam(html, result, 'bonus', /Накопленные бонусы:[\s\S]*?<span[^>]+question-block-value[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, '__tariff', /<h6[^>]*>\s*Тарифный план[\s\S]*?<p[^>]*>([\s\S]*?)<\/p>/i, replaceTagsAndSpaces);
 
 	AnyBalance.setResult(result);

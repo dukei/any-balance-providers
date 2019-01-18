@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="3.1" version="225" date="2019-01-18">
+	Мелкие исправления
+	</change>
 	<change major_version="3.1" version="224" date="2019-01-18">
 	- Улучшена обработка ошибок.
 	</change>

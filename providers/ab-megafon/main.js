@@ -358,7 +358,7 @@ function loadFilialInfo(filial){
 		}
 	}
 
-    if(!ok){
+    if(!ok && false){ //Мегафон-баланс для всех выдаёт, что пользователь не найден
         try{
        		AnyBalance.trace('Пытаемся получить хотя бы баланс');
             megafonBalanceInfo(filial);
@@ -2016,7 +2016,7 @@ function megafonLK(filial, html){
 	
 	if(isAvailable(['__tariff'])){
 		info = requestPipe(csrf, 'tariff/current');
-		getParam(info.name, result, '__tariff');
+		getParam(info.name, result, '__tariff', null, replaceTagsAndSpaces);
 	}
 		
 	if(AnyBalance.isAvailable('mins_n_free', 'mins_net_left', 'mins_left', 'mins_total', 'mms_left', 'mms_total', 'sms_left', 'sms_total', 

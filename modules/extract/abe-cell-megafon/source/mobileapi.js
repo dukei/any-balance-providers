@@ -109,7 +109,7 @@ function megafonLkAPIDo(options, result) {
 
     if(AnyBalance.isAvailable('tariff') && !result.tariff){
     	json = callAPI('get', 'api/tariff/current');
-    	getParam(json.name, result, 'tariff');
+    	getParam(json.name, result, 'tariff', null, replaceTagsAndSpaces);
     }
 
     try{
@@ -219,7 +219,7 @@ function processRemaindersApi(result){
             var model = json.models[i];
 
             if(model.optionsRemaindersType == 'RATE_PLAN' && !result.tariff)
-            	result.tariff = model.name;
+            	result.tariff = replaceAll(model.name, replaceTagsAndSpaces);
 
             var optionId = (model.remainders && model.remainders[0] && model.remainders[0].optionId);
 

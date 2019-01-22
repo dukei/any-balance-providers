@@ -1,4 +1,4 @@
-﻿/**
+/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 */
 
@@ -58,5 +58,5 @@ function main() {
 	}
 	AnyBalance.requestGet("https://10.1.1.51:8001/logout");
 	AnyBalance.setResult(result);
-}
+} 
 

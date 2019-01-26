@@ -1,4 +1,4 @@
-/**
+﻿/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 */
 
@@ -82,16 +82,17 @@ function main() {
 	}
 	paramss ='a:4:{s:6:"source";s:77:"O:9:"connector":4:{s:6:"result";N;s:3:"lct";N;s:7:"message";N;s:5:"error";N;}";s:9:"className";s:9:"connector";s:6:"method";s:6:"xroute";s:9:"arguments";s:65:"a:1:{i:0;a:1:{s:11:"proxy.class";a:1:{s:12:"getCardsList";b:1;}}}";}';
 	paramss2='a:4:{s:6:"source";s:77:"O:9:"connector":4:{s:6:"result";N;s:3:"lct";N;s:7:"message";N;s:5:"error";N;}";s:9:"className";s:9:"connector";s:6:"method";s:6:"xroute";s:9:"arguments";s:69:"a:2:{i:0;a:1:{s:11:"proxy.class";a:1:{s:10:"clientData";b:1;}}i:1;N;}";}';
-	paramss3='a:4:{s:6:"source";s:77:"O:9:"connector":4:{s:6:"result";N;s:3:"lct";N;s:7:"message";N;s:5:"error";N;}";s:9:"className";s:9:"connector";s:6:"method";s:6:"xroute";s:9:"arguments";s:69:"a:2:{i:0;a:1:{s:11:"proxy.class";a:1:{s:10:"getCheques";b:1;}}i:1;N;}";}';
+	paramss3='a:4:{s:6:"source";s:77:"O:9:"connector":4:{s:6:"result";N;s:3:"lct";N;s:7:"message";N;s:5:"error";N;}";s:9:"className";s:9:"connector";s:6:"method";s:6:"xroute";s:9:"arguments";s:70:"a:2:{i:0;a:1:{s:11:"proxy.class";a:1:{s:11:"getAccounts";b:1;}}i:1;N;}";}';
 	html = AnyBalance.requestPost(baseurl  + 'admin.php?xoadCall=true', paramss, addHeaders({Referer: baseurl }));
 	html2 = AnyBalance.requestPost(baseurl  + 'admin.php?xoadCall=true', paramss2, addHeaders({Referer: baseurl }));
 	html3 = AnyBalance.requestPost(baseurl  + 'admin.php?xoadCall=true', paramss3, addHeaders({Referer: baseurl }));
+	//html4 = AnyBalance.requestPost(baseurl  + 'admin.php?xoadCall=true', paramss4, addHeaders({Referer: baseurl }));
 	var cardsForm = html;
 	checkEmpty(html, 'Не удалось найти форму с картами, сайт изменен?', true);
 
 	// Далее надо узнать какую карту смотреть
 	var card = prefs.lastdigits;
-	
+	//var card =4506;
 	var cards = sumParam(html, null, null, /"Card4":"([0-9].[0-9]*)/ig);
 	checkEmpty(cards, 'Не удалось найти ни одной карты в интернет-банке, сайт изменен?', true);
 	AnyBalance.trace('Найдено карт: ' + cards.length);
@@ -105,7 +106,7 @@ function main() {
 	var	card_pars=getJsonEval(html);
 	var cardres=card_pars.returnObject.result.cards.row[0]['Card4'];
 	AnyBalance.trace(cardres);
-	var cheques=getJsonEval(html3).returnObject.result.cheques.ChequesList[0];
+	var cheques=getJsonEval(html3).returnObject.result.accounts;
 	if(!card) {
 		AnyBalance.trace('Не указана карта в настройках, будет показана информация по карте: ' + cardres);
 		getParam(card_pars.returnObject.result.cards.row[0]['CardName'], result, '__tariff');
@@ -129,18 +130,37 @@ function main() {
 				var clearBalances = getParam(html, null, null, null, replaceTagsAndSpaces);
 				 AnyBalance.trace(clearBalances);
 					getParam(card_pars.returnObject.result.cards.row[i]['CardName'], result, '__tariff');
-					getParam(card_pars.returnObject.result.cards.row[i]['Card4'], result, 'cardnum');
 					getParam(clearBalances, result, 'balance', card_pars.returnObject.result.cards.row[i]['Balance'], replaceTagsAndSpaces, parseBalance);
-					getParam(card_pars.returnObject.result.cards.row[i]['CurrName'], result, 'currency');
-			
+					getParam(cheques.ACC[i]['@attributes'].Curr, result, 'currency');
+					getParam(cheques.ACC[i]['@attributes'].IBAN, result, 'num_account');
+					if(cheques.ACC[i].CARDS){
+					getParam(cheques.ACC[i].CARDS.CARD.NAME, result, 'cardnum');
+					}else{
+						getParam("Карта не привязана к счёту", result, 'cardnum');
+						
+					}
+					
+					 html = AnyBalance.requestPost(baseurl  + 'admin.php?xoadCall=true', 'a:4:{s:6:"source";s:77:"O:9:"connector":4:{s:6:"result";N;s:3:"lct";N;s:7:"message";N;s:5:"error";N;}";s:9:"className";s:9:"connector";s:6:"method";s:6:"xroute";s:9:"arguments";s:95:"a:2:{i:0;a:1:{s:11:"proxy.class";a:1:{s:17:"getAccountDetails";a:1:{s:2:"id";s:1:"'+i+'";}}}i:1;N;}";}', addHeaders({Referer: baseurl }));
+				
+					AnyBalance.trace(html);
+					var chec=getJsonEval(html).returnObject.result.accountDetails;
+					AnyBalance.trace(chec);
+					var chec_end=chec.Title.Row[0].TitleData;
+					for(var i =0; i < chec.F.Row.length; i++) {
+						
+					 chec_end+=",\n\n Дата: "+chec.F.Row[i].Date+",\n Назначение: "+chec.F.Row[i].Desc+',\n Сумма: '+chec.F.Row[i].AccAmount+' '+chec.F.Row[i].AccCurr+'';
+					
+					
+					}
+					getParam(chec_end, result, 'chec_end');
+					AnyBalance.trace(chec_end);
+					
 				break;
 			}
 		}
 		
 	}
-	var chec="Чек №"+cheques.ID+"\n \""+cheques.TRANS_DATE+'",\n Назначение: "'+cheques.DESCR+'",\n Сумма: "'+cheques.TRANS_AMOUNT+' '+cheques.CURR+'"';
-	getParam(chec, result, 'chec_end');
-	AnyBalance.trace(chec);
+	
 	if(!html)
 		throw new AnyBalance.Error('Не удалось получить баланс по карте. Проверьте, что вы оплатили доступ в Интернет-Банк');
 	

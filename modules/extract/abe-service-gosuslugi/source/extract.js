@@ -78,6 +78,17 @@ function login(prefs) {
 			'command': command
 		}, addHeaders({Referer: 'https://esia.gosuslugi.ru/idp/rlogin?cc=bp'}));
 
+		var form = getElement(html, /<form[^>]+otpForm/i);
+		if(form){
+			AnyBalance.trace('Требуется смс для входа');
+			var sms = getElement(html, /<[^>]*code-is-sent/i, replaceTagsAndSpaces);
+			var code = AnyBalance.retrieveCode(sms || 'Введите код подтверждения из SMS', null, {inputType: 'number'});
+			var params = createFormParams(form);
+			params.otp = code;
+
+			html = AnyBalance.requestPost('https://esia.gosuslugi.ru/idp/login/otp/do', params, addHeaders({Referer: AnyBalance.getLastUrl()}));
+		} 
+
 		if (!isLoggedIn(html)) {
 			//Попытаемся получить ошибку авторизации на раннем этапе. Тогда она точнее.
 			var errorCode = getParam(html, null, null, [/new LoginViewModel\([^,]+,'([^']+)/i, /authn\.error\.([^"']+)/i]);
@@ -87,6 +98,10 @@ function login(prefs) {
 
 				throw new AnyBalance.Error(message, null, /account_is_locked|certificate_user_not_found|invalid_credentials|invalid_signature|no_subject_found/i.test(errorCode));
 			}
+
+			var error = getElement(html, /<div[^>]+error/i, replaceTagsAndSpaces);
+			if(error)
+				throw new AnyBalance.Error(error, null, /парол/i.test(html));
 		}
 
 		// Возможно мы попадем в кабинет где есть ИП и физ лицо, надо проверить
@@ -101,7 +116,7 @@ function login(prefs) {
 	}
 
 	if (!isLoggedIn(html)) {
-		var error = getParam(html, null, null, [/span\s*>\s*(Ошибка авторизации(?:[^>]*>){4})/i, /<div class="error[^>]*>([\s\S]*?)<\/div>/i], [replaceTagsAndSpaces, /Вернуться назад/i, ''], html_entity_decode);
+		var error = getParam(html, [/span\s*>\s*(Ошибка авторизации(?:[^>]*>){4})/i, /<div class="error[^>]*>([\s\S]*?)<\/div>/i], [replaceTagsAndSpaces, /Вернуться назад/i, '']);
 		if (error)
 			throw new AnyBalance.Error(error, null, /Ошибка авторизации/i.test(error));
 

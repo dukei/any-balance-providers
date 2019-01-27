@@ -34,6 +34,7 @@ var g_max_plates_num = 10;
 var g_max_inns_num = 3;
 
 function login(prefs) {
+//    AnyBalance.setOptions({cookiePolicy: 'netscape'});
 	AnyBalance.setDefaultCharset('utf-8');
 
 	var formattedLogin = getParam(prefs.login || '', null, null, /^\d{11}$/, [/^(\d{3})(\d{3})(\d{3})(\d{2})$/i, '$1-$2-$3 $4']);
@@ -139,47 +140,45 @@ function processProfile(result) {
 		getParam(getUnreadMsgJson(), result.profile, 'profile.mails', /"msgCount"\D*(\d+)/i, replaceTagsAndSpaces, parseBalance);
 
 	// Детальная инфа
-	var html = checkForRedirect(AnyBalance.requestGet('https://esia.gosuslugi.ru/profile/user/personal', g_headers));
+	var html = checkForRedirect(AnyBalance.requestGet('https://lk.gosuslugi.ru/info', g_headers));
 	var referer = AnyBalance.getLastUrl();
 
-	html = AnyBalance.requestGet('https://esia.gosuslugi.ru/profile/rs/prns/?embed=(documents.elements,addresses.elements,vehicles.elements,kids.elements)', addHeaders({
+	html = AnyBalance.requestGet('https://www.gosuslugi.ru/api/lk/v1/users/data?_=' + Math.random(), addHeaders({
 		Referer: referer
 	}));
-	if(AnyBalance.getLastStatusCode() == 401){
-		html = checkForRedirect(AnyBalance.requestGet('https://esia.gosuslugi.ru/profile/login/', addHeaders({
-			Referer: referer
-		})));
-		html = AnyBalance.requestGet('https://esia.gosuslugi.ru/profile/rs/prns/?embed=(documents.elements,addresses.elements,vehicles.elements,kids.elements)', addHeaders({
-			Referer: referer
-		}));
-	}
 	
 	var json = getJson(html);
 
 	getParam(json.lastName + ' ' + json.firstName + ' ' + json.middleName, result.profile, 'profile.fio');
-	getParam(json.citizenship, result.profile, 'profile.birth_place');
-	getParam(json.birthDate, result.profile, 'profile.birth_day', null, replaceTagsAndSpaces, parseDate);
+	getParam(json.personCitizenship, result.profile, 'profile.birth_place');
+	getParam(json.birthDate, result.profile, 'profile.birth_day', null, replaceTagsAndSpaces, parseDateISO);
 
-	var passport = jspath1(json, '$.documents.elements[?(@.type == "RF_PASSPORT")]');
+	var passport = jspath1(json, '$.person.docs[?(@.type == "RF_PASSPORT")]');
 	if(passport){
 		getParam(passport.series + ' ' + passport.number + ' выдан ' + passport.issueDate + ' ' + passport.issuedBy, result.profile, 'profile.document');
 	}else{
 		AnyBalance.trace('Паспорт не найден: ' + html);
 	}
 
-	getParam(json.snils, result.profile, 'profile.snils');
-	getParam(json.inn, result.profile, ['profile.inn', 'nalog']);
-	var addr = jspath1(json, '$.addresses.elements[?(@.type == "PLV")]');
+	getParam(json.personSnils, result.profile, 'profile.snils');
+	getParam(json.personInn, result.profile, ['profile.inn', 'nalog']);
+	var addr = jspath1(json, '$.person.addresses[?(@.type == "PLV")]');
 	if(addr){
-		getParam(addr.addressStr + ', ' + addr.house + '-' + addr.flat, result.profile, 'profile.adress_fakt');
+		var str = addr.addressStr + ', ' + addr.house;
+		if(addr.flat)
+			str += '-' + addr.flat;
+		getParam(str, result.profile, 'profile.adress_fakt');
 	}
 	
-	addr = jspath1(json, '$.addresses.elements[?(@.type == "PRG")]');
+	addr = jspath1(json, '$.person.addresses[?(@.type == "PRG")]');
 	if(addr){
-		getParam(addr.addressStr + ', ' + addr.house + '-' + addr.flat, result.profile, 'profile.adress');
+		var str = addr.addressStr + ', ' + addr.house;
+		if(addr.flat)
+			str += '-' + addr.flat;
+		getParam(str, result.profile, 'profile.adress');
 	}
 
-	var dl = jspath1(json, '$.documents.elements[?(@.type == "RF_DRIVING_LICENSE")]');
+	var dl = jspath1(json, '$.person.docs[?(@.type == "RF_DRIVING_LICENSE")]');
 	if(dl){
 		getParam(dl.series + dl.number, result.profile, ['profile.license_number', 'fines'], /[^,]*/, [/\s+/g, '']);
 		getParam(dl.series + dl.number + ', до ' + dl.expiryDate, result.profile, 'profile.license');
@@ -188,7 +187,7 @@ function processProfile(result) {
 		AnyBalance.trace('Права не найдены: ' + html);
 	}
 
-	var vehicles = jspath1(json, '$.vehicles.elements');
+	var vehicles = jspath1(json, '$.person.vehicles');
 	if (vehicles) {
 		AnyBalance.trace('Найдено автомобилей: ' + vehicles.length);
 		result.profile.vehicles = [];
@@ -205,13 +204,8 @@ function processProfile(result) {
 		}
 	}
 
-	if(AnyBalance.isAvailable('profile.email', 'profile.phone')){
-	    html = AnyBalance.requestGet('https://esia.gosuslugi.ru/profile/rs/prns/ctts?embed=(elements-1)', g_headers);
-		json = getJson(html);
-
-		getParam(jspath1(json, '$.elements[?(@.type == "EML")].value'), result.profile, 'profile.email');
-		getParam(jspath1(json, '$.elements[?(@.type == "MBT")].value'), result.profile, 'profile.phone');
-	}
+	getParam(json.personEmail, result.profile, 'profile.email');
+	getParam(json.personMobilePhone, result.profile, 'profile.phone');
 
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

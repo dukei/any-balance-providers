@@ -124,45 +124,80 @@ function processProfile(result) {
 		getParam(getUnreadMsgJson(), result.profile, 'profile.mails', /"msgCount"\D*(\d+)/i, replaceTagsAndSpaces, parseBalance);
 
 	// Детальная инфа
-	var html = checkForRedirect(AnyBalance.requestGet('https://esia.gosuslugi.ru/profile/user/', g_headers));
+	var html = checkForRedirect(AnyBalance.requestGet('https://esia.gosuslugi.ru/profile/user/personal', g_headers));
+	var referer = AnyBalance.getLastUrl();
 
-	getParam(html, result.profile, 'profile.fio', /ФИО(?:[\s\S]*?<dd[^>]*>)([\s\S]*?)(?:<\/dd>|<span[^>]+status-verify)/i, replaceTagsAndSpaces);
-	getParam(html, result.profile, 'profile.birth_place', /Место рождения(?:[\s\S]*?<dd[^>]*>)([\s\S]*?)(?:<\/dd>|<span[^>]+status-verify)/i, replaceTagsAndSpaces);
-	getParam(html, result.profile, 'profile.birth_day', /Дата рождения(?:[\s\S]*?<dd[^>]*>)([\s\S]*?)(?:<\/dd>|<span[^>]+status-verify)/i, replaceTagsAndSpaces, parseDate);
-	getParam(html, result.profile, 'profile.document', /Документ, удостоверяющий личность(?:[\s\S]*?<dd[^>]*>)([\s\S]*?)(?:<\/dd>|<span[^>]+status-verify)/i, replaceTagsAndSpaces);
-	getParam(html, result.profile, 'profile.snils', /Страховой номер индивидуального лицевого счёта(?:[\s\S]*?<dd[^>]*>)([\s\S]*?)<\/dd>/i, replaceTagsAndSpaces);
-	getParam(html, result.profile, ['profile.inn', 'nalog'], /id="person:someInnLinkId[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces);
-	getParam(html, result.profile, 'profile.adress_fakt', /openAltAddress[^<]+'PRG'[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces);
-	getParam(html, result.profile, 'profile.adress', /openAltAddress[^<]+'PLV'[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces);
-	getParam(html, result.profile, 'profile.email', /altEmailWgt[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces);
-	getParam(html, result.profile, 'profile.phone', /altMobileWgt[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces);
+	html = AnyBalance.requestGet('https://esia.gosuslugi.ru/profile/rs/prns/?embed=(documents.elements,addresses.elements,vehicles.elements,kids.elements)', addHeaders({
+		Referer: referer
+	}));
+	if(AnyBalance.getLastStatusCode() == 401){
+		html = checkForRedirect(AnyBalance.requestGet('https://esia.gosuslugi.ru/profile/login/', addHeaders({
+			Referer: referer
+		})));
+		html = AnyBalance.requestGet('https://esia.gosuslugi.ru/profile/rs/prns/?embed=(documents.elements,addresses.elements,vehicles.elements,kids.elements)', addHeaders({
+			Referer: referer
+		}));
+	}
+	
+	var json = getJson(html);
 
-	var license = getElement(html, /<[^>]+altDrLicenceWgt.show[^>]*>/i, replaceTagsAndSpaces);
-	if (isset(license)) {
-		getParam(license, result.profile, ['profile.license_number', 'fines'], /[^,]*/, [/\s+/g, '']);
-		getParam(license, result.profile, 'profile.license');
-		getParam(license, result.profile, 'profile.license_till', /действительно до([^<]+)/i, null, parseDate);
+	getParam(json.lastName + ' ' + json.firstName + ' ' + json.middleName, result.profile, 'profile.fio');
+	getParam(json.citizenship, result.profile, 'profile.birth_place');
+	getParam(json.birthDate, result.profile, 'profile.birth_day', null, replaceTagsAndSpaces, parseDate);
+
+	var passport = jspath1(json, '$.documents.elements[?(@.type == "RF_PASSPORT")]');
+	if(passport){
+		getParam(passport.series + ' ' + passport.number + ' выдан ' + passport.issueDate + ' ' + passport.issuedBy, result.profile, 'profile.document');
+	}else{
+		AnyBalance.trace('Паспорт не найден: ' + html);
 	}
 
-	var vehiclesContainer = getElement(html, /<div[^>]+id="person:vehicleInf">/i);
-	if (vehiclesContainer) {
-		var vehicles = getElements(vehiclesContainer, /<dl[^>]+class="line-link">/ig);
+	getParam(json.snils, result.profile, 'profile.snils');
+	getParam(json.inn, result.profile, ['profile.inn', 'nalog']);
+	var addr = jspath1(json, '$.addresses.elements[?(@.type == "PLV")]');
+	if(addr){
+		getParam(addr.addressStr + ', ' + addr.house + '-' + addr.flat, result.profile, 'profile.adress_fakt');
+	}
+	
+	addr = jspath1(json, '$.addresses.elements[?(@.type == "PRG")]');
+	if(addr){
+		getParam(addr.addressStr + ', ' + addr.house + '-' + addr.flat, result.profile, 'profile.adress');
+	}
 
+	var dl = jspath1(json, '$.documents.elements[?(@.type == "RF_DRIVING_LICENSE")]');
+	if(dl){
+		getParam(dl.series + dl.number, result.profile, ['profile.license_number', 'fines'], /[^,]*/, [/\s+/g, '']);
+		getParam(dl.series + dl.number + ', до ' + dl.expiryDate, result.profile, 'profile.license');
+		getParam(dl.expiryDate, result.profile, 'profile.license_till', null, null, parseDate);
+	}else{
+		AnyBalance.trace('Права не найдены: ' + html);
+	}
+
+	var vehicles = jspath1(json, '$.vehicles.elements');
+	if (vehicles) {
 		AnyBalance.trace('Найдено автомобилей: ' + vehicles.length);
 		result.profile.vehicles = [];
 
 		for (var i = 0; i < vehicles.length; ++i) {
 			var vehicle = {};
 
-			getParam(vehicles[i], vehicle, ['profile.vehicles.name', 'fines'], /<dt>([^<]+)/i, replaceTagsAndSpaces);
-			var dd = getElement(vehicles[i], /<dd[^>]*>/i, replaceTagsAndSpaces);
-			getParam(dd, vehicle, ['profile.vehicles.plate', 'fines'], /([^,]+)/i, [/\s+/g, '']);
-			getParam(dd, vehicle, ['profile.vehicles.plate_id', 'fines'], /свидетельство о регистрации\s*([^<]+)/i, [/\s+/g, '']);
+			getParam(vehicles[i].name, vehicle, ['profile.vehicles.name', 'fines']);
+			getParam(vehicles[i].numberPlate, vehicle, ['profile.vehicles.plate', 'fines']);
+			getParam(vehicles[i].regCertificate.series + vehicles[i].regCertificate.number, vehicle, ['profile.vehicles.plate_id', 'fines']);
 
 			if (isset(vehicle.name) || isset(vehicle.plate) || isset(vehicle.plate_id))
 				result.profile.vehicles.push(vehicle);
 		}
 	}
+
+	if(AnyBalance.isAvailable('profile.email', 'profile.phone')){
+	    html = AnyBalance.requestGet('https://esia.gosuslugi.ru/profile/rs/prns/ctts?embed=(elements-1)', g_headers);
+		json = getJson(html);
+
+		getParam(jspath1(json, '$.elements[?(@.type == "EML")].value'), result.profile, 'profile.email');
+		getParam(jspath1(json, '$.elements[?(@.type == "MBT")].value'), result.profile, 'profile.phone');
+	}
+
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Штрафы

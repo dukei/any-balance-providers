@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-internet-grin</id>
+	<id version="3">ab-internet-grin</id>
 	<api flags="no_browser|private"/>
 	<name>Гродненские информационные сети (Grin)</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе инетрнет-провайдера Гродненские информационные сети (Grin) в г. Гродно http://grin.by/</p>
-	<p>Информация берется из личного кабинета https://utm.grin.by/</p>
+	<p>Информация берется из личного кабинета https://grin.by/</p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
@@ -16,8 +16,8 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units=" р"/>
-		<counter id="balanceCredit" name="Кредит" units=" р"/>
+		<counter id="balance" name="Баланс" units=" BYN"/>
+		<counter id="balanceCredit" name="Кредит" type="text"/>
 		<counter id="fio" name="ФИО" type="text"/>
 		<counter id="account" name="Лицевой счёт для оплаты в банках" type="text"/>
 	</counters>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">БелВЭБ24</id>
+	<api flags="no_browser|captcha"/>
+	<name>БелВЭБ24(Беларусь)</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе на картах  БЕЛВЭБ24 https://belveb24.by</p>
+	<p>Поддерживаемые банки:</p>
+	<ul>
+		<li>ОАО Банк БелВЭБ24 (https://belveb24.by)</li>
+		
+	</ul>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
+	<files>
+		<js>library.min.js</js>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" {@currency}"/>
+		<counter id="currency" name="Валюта" type="text"/>
+		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="cardnum" name="Карта" type="text"/>
+		<counter id="chec_end" name="Последняя операция" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>money, bank</type>
+	<country>by</country>
+</provider>

@@ -34,6 +34,7 @@ var g_max_plates_num = 10;
 var g_max_inns_num = 3;
 
 function login(prefs) {
+//    AnyBalance.setOptions({cookiePolicy: 'netscape'});
 	AnyBalance.setDefaultCharset('utf-8');
 
 	var formattedLogin = getParam(prefs.login || '', null, null, /^\d{11}$/, [/^(\d{3})(\d{3})(\d{3})(\d{2})$/i, '$1-$2-$3 $4']);
@@ -78,6 +79,17 @@ function login(prefs) {
 			'command': command
 		}, addHeaders({Referer: 'https://esia.gosuslugi.ru/idp/rlogin?cc=bp'}));
 
+		var form = getElement(html, /<form[^>]+otpForm/i);
+		if(form){
+			AnyBalance.trace('Требуется смс для входа');
+			var sms = getElement(html, /<[^>]*code-is-sent/i, replaceTagsAndSpaces);
+			var code = AnyBalance.retrieveCode(sms || 'Введите код подтверждения из SMS', null, {inputType: 'number'});
+			var params = createFormParams(form);
+			params.otp = code;
+
+			html = AnyBalance.requestPost('https://esia.gosuslugi.ru/idp/login/otp/do', params, addHeaders({Referer: AnyBalance.getLastUrl()}));
+		} 
+
 		if (!isLoggedIn(html)) {
 			//Попытаемся получить ошибку авторизации на раннем этапе. Тогда она точнее.
 			var errorCode = getParam(html, null, null, [/new LoginViewModel\([^,]+,'([^']+)/i, /authn\.error\.([^"']+)/i]);
@@ -87,6 +99,10 @@ function login(prefs) {
 
 				throw new AnyBalance.Error(message, null, /account_is_locked|certificate_user_not_found|invalid_credentials|invalid_signature|no_subject_found/i.test(errorCode));
 			}
+
+			var error = getElement(html, /<div[^>]+error/i, replaceTagsAndSpaces);
+			if(error)
+				throw new AnyBalance.Error(error, null, /парол/i.test(html));
 		}
 
 		// Возможно мы попадем в кабинет где есть ИП и физ лицо, надо проверить
@@ -101,7 +117,7 @@ function login(prefs) {
 	}
 
 	if (!isLoggedIn(html)) {
-		var error = getParam(html, null, null, [/span\s*>\s*(Ошибка авторизации(?:[^>]*>){4})/i, /<div class="error[^>]*>([\s\S]*?)<\/div>/i], [replaceTagsAndSpaces, /Вернуться назад/i, ''], html_entity_decode);
+		var error = getParam(html, [/span\s*>\s*(Ошибка авторизации(?:[^>]*>){4})/i, /<div class="error[^>]*>([\s\S]*?)<\/div>/i], [replaceTagsAndSpaces, /Вернуться назад/i, '']);
 		if (error)
 			throw new AnyBalance.Error(error, null, /Ошибка авторизации/i.test(error));
 
@@ -124,45 +140,73 @@ function processProfile(result) {
 		getParam(getUnreadMsgJson(), result.profile, 'profile.mails', /"msgCount"\D*(\d+)/i, replaceTagsAndSpaces, parseBalance);
 
 	// Детальная инфа
-	var html = checkForRedirect(AnyBalance.requestGet('https://esia.gosuslugi.ru/profile/user/', g_headers));
+	var html = checkForRedirect(AnyBalance.requestGet('https://lk.gosuslugi.ru/info', g_headers));
+	var referer = AnyBalance.getLastUrl();
 
-	getParam(html, result.profile, 'profile.fio', /ФИО(?:[\s\S]*?<dd[^>]*>)([\s\S]*?)(?:<\/dd>|<span[^>]+status-verify)/i, replaceTagsAndSpaces);
-	getParam(html, result.profile, 'profile.birth_place', /Место рождения(?:[\s\S]*?<dd[^>]*>)([\s\S]*?)(?:<\/dd>|<span[^>]+status-verify)/i, replaceTagsAndSpaces);
-	getParam(html, result.profile, 'profile.birth_day', /Дата рождения(?:[\s\S]*?<dd[^>]*>)([\s\S]*?)(?:<\/dd>|<span[^>]+status-verify)/i, replaceTagsAndSpaces, parseDate);
-	getParam(html, result.profile, 'profile.document', /Документ, удостоверяющий личность(?:[\s\S]*?<dd[^>]*>)([\s\S]*?)(?:<\/dd>|<span[^>]+status-verify)/i, replaceTagsAndSpaces);
-	getParam(html, result.profile, 'profile.snils', /Страховой номер индивидуального лицевого счёта(?:[\s\S]*?<dd[^>]*>)([\s\S]*?)<\/dd>/i, replaceTagsAndSpaces);
-	getParam(html, result.profile, ['profile.inn', 'nalog'], /id="person:someInnLinkId[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces);
-	getParam(html, result.profile, 'profile.adress_fakt', /openAltAddress[^<]+'PRG'[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces);
-	getParam(html, result.profile, 'profile.adress', /openAltAddress[^<]+'PLV'[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces);
-	getParam(html, result.profile, 'profile.email', /altEmailWgt[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces);
-	getParam(html, result.profile, 'profile.phone', /altMobileWgt[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces);
+	html = AnyBalance.requestGet('https://www.gosuslugi.ru/api/lk/v1/users/data?_=' + Math.random(), addHeaders({
+		Referer: referer
+	}));
+	
+	var json = getJson(html);
 
-	var license = getElement(html, /<[^>]+altDrLicenceWgt.show[^>]*>/i, replaceTagsAndSpaces);
-	if (isset(license)) {
-		getParam(license, result.profile, ['profile.license_number', 'fines'], /[^,]*/, [/\s+/g, '']);
-		getParam(license, result.profile, 'profile.license');
-		getParam(license, result.profile, 'profile.license_till', /действительно до([^<]+)/i, null, parseDate);
+	getParam(json.lastName + ' ' + json.firstName + ' ' + json.middleName, result.profile, 'profile.fio');
+	getParam(json.personCitizenship, result.profile, 'profile.birth_place');
+	getParam(json.birthDate, result.profile, 'profile.birth_day', null, replaceTagsAndSpaces, parseDateISO);
+
+	var passport = jspath1(json, '$.person.docs[?(@.type == "RF_PASSPORT")]');
+	if(passport){
+		getParam(passport.series + ' ' + passport.number + ' выдан ' + passport.issueDate + ' ' + passport.issuedBy, result.profile, 'profile.document');
+	}else{
+		AnyBalance.trace('Паспорт не найден: ' + html);
 	}
 
-	var vehiclesContainer = getElement(html, /<div[^>]+id="person:vehicleInf">/i);
-	if (vehiclesContainer) {
-		var vehicles = getElements(vehiclesContainer, /<dl[^>]+class="line-link">/ig);
+	getParam(json.personSnils, result.profile, 'profile.snils');
+	getParam(json.personInn, result.profile, ['profile.inn', 'nalog']);
+	var addr = jspath1(json, '$.person.addresses[?(@.type == "PLV")]');
+	if(addr){
+		var str = addr.addressStr + ', ' + addr.house;
+		if(addr.flat)
+			str += '-' + addr.flat;
+		getParam(str, result.profile, 'profile.adress_fakt');
+	}
+	
+	addr = jspath1(json, '$.person.addresses[?(@.type == "PRG")]');
+	if(addr){
+		var str = addr.addressStr + ', ' + addr.house;
+		if(addr.flat)
+			str += '-' + addr.flat;
+		getParam(str, result.profile, 'profile.adress');
+	}
 
+	var dl = jspath1(json, '$.person.docs[?(@.type == "RF_DRIVING_LICENSE")]');
+	if(dl){
+		getParam(dl.series + dl.number, result.profile, ['profile.license_number', 'fines'], /[^,]*/, [/\s+/g, '']);
+		getParam(dl.series + dl.number + ', до ' + dl.expiryDate, result.profile, 'profile.license');
+		getParam(dl.expiryDate, result.profile, 'profile.license_till', null, null, parseDate);
+	}else{
+		AnyBalance.trace('Права не найдены: ' + html);
+	}
+
+	var vehicles = jspath1(json, '$.person.vehicles');
+	if (vehicles) {
 		AnyBalance.trace('Найдено автомобилей: ' + vehicles.length);
 		result.profile.vehicles = [];
 
 		for (var i = 0; i < vehicles.length; ++i) {
 			var vehicle = {};
 
-			getParam(vehicles[i], vehicle, ['profile.vehicles.name', 'fines'], /<dt>([^<]+)/i, replaceTagsAndSpaces);
-			var dd = getElement(vehicles[i], /<dd[^>]*>/i, replaceTagsAndSpaces);
-			getParam(dd, vehicle, ['profile.vehicles.plate', 'fines'], /([^,]+)/i, [/\s+/g, '']);
-			getParam(dd, vehicle, ['profile.vehicles.plate_id', 'fines'], /свидетельство о регистрации\s*([^<]+)/i, [/\s+/g, '']);
+			getParam(vehicles[i].name, vehicle, ['profile.vehicles.name', 'fines']);
+			getParam(vehicles[i].numberPlate, vehicle, ['profile.vehicles.plate', 'fines']);
+			getParam(vehicles[i].regCertificate.series + vehicles[i].regCertificate.number, vehicle, ['profile.vehicles.plate_id', 'fines']);
 
 			if (isset(vehicle.name) || isset(vehicle.plate) || isset(vehicle.plate_id))
 				result.profile.vehicles.push(vehicle);
 		}
 	}
+
+	getParam(json.personEmail, result.profile, 'profile.email');
+	getParam(json.personMobilePhone, result.profile, 'profile.phone');
+
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Штрафы

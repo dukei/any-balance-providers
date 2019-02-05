@@ -11,13 +11,20 @@ var g_headers = {
 };
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = "https://10.1.1.51:8001/login";
+	var baseurl = "https://10.1.1.51:8001";
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 	AnyBalance.setDefaultCharset('UTF-8');
-	var html = AnyBalance.requestGet(baseurl, g_headers);
+	AnyBalance.setExceptions(false);
+	var html = AnyBalance.requestGet(baseurl+'/login', g_headers);
+	
+	if(!/authenticity_token" type="hidden" value="(.*)"/i.test(html)){
+		var baseurl = "https://178.172.128.2:48001";
+		var html = AnyBalance.requestGet(baseurl+'/login', g_headers);
+	
+	}
 	var token_aut = getParam(html, null, null, /authenticity_token" type="hidden" value="(.*)"/i, replaceTagsAndSpaces, html_entity_decode);
-	html = AnyBalance.requestPost(baseurl, {
+	html = AnyBalance.requestPost(baseurl+'/login', {
 			utf8: "✓",
 			authenticity_token: token_aut,
 			'user[login]': prefs.login,
@@ -56,7 +63,7 @@ function main() {
 			}
 		}
 	}
-	AnyBalance.requestGet("https://10.1.1.51:8001/logout");
+	AnyBalance.requestGet(baseurl+"/logout");
 	AnyBalance.setResult(result);
-} 
+}
 

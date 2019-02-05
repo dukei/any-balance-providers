@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="3">ab-internet-grin</id>
+	<id version="4">ab-internet-grin</id>
 	<api flags="no_browser|private"/>
 	<name>Гродненские информационные сети (Grin)</name>
 	<description html="true"><![CDATA[

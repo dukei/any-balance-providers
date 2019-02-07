@@ -32,31 +32,27 @@ function main() {
 	
 	var html = AnyBalance.requestGet(baseurl + 'login/', g_headers);
 	
-	var form = getParam(html, null, null, /<form[^>]+id="login_form"[^>]*>([\s\S]*?)<\/form>/i);
-	if(!form)
+	var form = getElement(html, /<fieldset[^>]+login/i);
+	if(!form){
+		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не найдена форма входа. Сайт изменен?');
+	}
 	
 	var params = createFormParams(form);
 	
-	if(params.captcha_code){
-		if(AnyBalance.getLevel() >= 7){
-			AnyBalance.trace('Пытаемся ввести капчу');
-			var captcha = AnyBalance.requestGet(baseurl + 'bitrix/tools/captcha.php?captcha_code=' + params.captcha_code);
-			params.captcha_word = AnyBalance.retrieveCode("Пожалуйста, введите код с картинки", captcha);
-			AnyBalance.trace('Капча получена: ' + params.captcha_word);
-		}else{
-			throw new AnyBalance.Error('К сожалению, сайт http://www.gpnbonus.ru ввел капчу (ввод циферок с картинки) для входа в личный кабинет. Пожалуйста, обратитесь в справочную службу ГазПромНефть по телефону 8 800 700 5151 и попросите отменить капчу или сделать интерфейс для автоматических программ.');
-        }
+	if(params.recap){
+		params['g-recaptcha-response'] = solveRecaptcha('Пожалуйста, докажите, что вы не робот', baseurl + 'login/', '6LdVlo0UAAAAAPLuKrC9r5CntdyGalCJGlLqYE7s');
 	}
+
 	AnyBalance.trace('Отправляем данные: ' + JSON.stringify(params));
 	params.login = prefs.login;
 	params.password = prefs.password;
 	
-	var html = AnyBalance.requestPost(baseurl + 'oneLogin/ru/', params, g_headers);
+	var html = AnyBalance.requestPost(baseurl + 'oneLogin/ru-phone/handler.php', params, g_headers);
 	var json = getJson(html);
 	if(json.action != 'login_ok'){
 		if(json.mess)
-			throw new AnyBalance.Error(json.mess, null, /неверный номер карты/i.test(json.mess));
+			throw new AnyBalance.Error(json.mess, null, /парол/i.test(json.mess));
 	    AnyBalance.trace(html);
 		throw new AnyBalance.Error ('Не удаётся зайти в личный кабинет. Возможно, неправильный логин, пароль или сайт изменен.');
 	}

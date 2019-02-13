@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="3.0" version="41">ab-cell-life-by</id>
+	<id major_version="3.0" version="42">ab-cell-life-by</id>
 	<api flags="no_browser" />
 	<name>Life:) Беларусь</name>
 	<description html="true"><![CDATA[
@@ -26,8 +26,8 @@
 	<counters>
 		<counter id="balance" name="Баланс" suffix=" р"/>
 		<counter id="traffic_left" name="Остаток трафика" suffix=" Мб"/>
-		<counter id="min_left" name="Минуты внутри сети" units=" мин" type="time_interval" format="{@MIN}"/>
-		<counter id="min_left_other" name="Минуты на другие сети" units=" мин" type="time_interval" format="{@MIN}"/>
+		<counter id="min_left" name="Минуты внутри сети" units=" мин"/>
+		<counter id="min_left_other" name="Минуты на другие сети" units=" мин"/>
 		<counter id="sms_left" name="Остаток СМС" suffix=" смс"/>
 		<counter id="sms_left_other" name="Остаток СМС на все сети" suffix=" смс"/>
 		<counter id="fio" name="ФИО" type="text"/>

@@ -44,7 +44,7 @@ function main() {
 		path: '/'
 	});
 
-	info = AnyBalance.requestGet(baseurl + "login", g_headers);
+	var info = AnyBalance.requestGet(baseurl + "login", g_headers);
 
 	if (!info || AnyBalance.getLastStatusCode() > 400) {
 		AnyBalance.trace(html);
@@ -70,10 +70,12 @@ function main() {
 		return value;
 	}, true);
 
-	// Заходим на главную страницу
-	var info = AnyBalance.requestPost(baseurlLogin + "user/login", params, g_headers);
+	var action = getParam(form, /<form[^>]+action="([^"]*)/, replaceHtmlEntities);
 
-	if (!/возвращением/.test(info)) {
+	// Заходим на главную страницу
+	var info = AnyBalance.requestPost(joinUrl(baseurlLogin, action), params, g_headers);
+
+	if (!/возвращением|logout|выход/.test(info)) {
 		var error = AB.getParam(info, null, null, /<div[^>]*class="[^"]*lk-form-block-error[^"]*"[^>]*>([\s\S]*?)<\/div>/i,
 			AB.replaceTagsAndSpaces);
 		if (error) {
@@ -92,7 +94,7 @@ function main() {
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
 
-	html = AnyBalance.requestGet(baseurl);
+	info = AnyBalance.requestGet(baseurl);
 
 	var result = {
 		success: true

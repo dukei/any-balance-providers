@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
     <api flags="no_browser"/>
-    <id version="3">ab-municipal-ipk</id>
+    <id version="4">ab-municipal-ipk</id>
     <name>Иркутская процессинговая компания</name>
     <description>
         Предоставляет сводную информацию о лицевом счете и балансе в системе "Иркутская процессинговая компания" (https://portalgkh.com)

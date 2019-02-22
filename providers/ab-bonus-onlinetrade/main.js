@@ -57,8 +57,8 @@ function main() {
 	
 	html = AnyBalance.requestPost(baseurl + 'member/login.html', params, addHeaders({Referer: baseurl + 'member/login.html'}));
 	
-	if (!/member\/\?log_out=1/i.test(html)) {
-		var error = AB.getParam(html, null, null, /MessageError[^>]*>([\s\S]*?)<\/div>/i, AB.replaceTagsAndSpaces);
+	if (!/memberEntered/i.test(html)) {
+		var error = AB.getElement(html, /<[^>]+coloredMessage_red/i, AB.replaceTagsAndSpaces);
 		if (error)
 			throw new AnyBalance.Error(error, null, /неверный/i.test(error));
 		
@@ -68,11 +68,11 @@ function main() {
 	
 	var result = {success: true};
 	
-	AB.getParam(html, result, 'balance', /ON-бонусов:([^>]+>){2}/i, AB.replaceTagsAndSpaces, AB.parseBalance);
-	AB.getParam(html, result, 'price', /Цена:([^>]+>){2}/i, AB.replaceTagsAndSpaces);
-	AB.getParam(html, result, 'userId', /Клиентский номер([^>]+>){2}/i, AB.replaceTagsAndSpaces);
-	AB.getParam(html, result, 'status', /Статус:([\s\S]*?)<span/i, AB.replaceTagsAndSpaces);
-	AB.getParam(html, result, 'email', /E-mail:([^>]+>){2}/i, AB.replaceTagsAndSpaces);
+	AB.getParam(html, result, 'balance', /ON-бонусов:([^>]+)/i, AB.replaceTagsAndSpaces, AB.parseBalance);
+	//AB.getParam(html, result, 'price', /Цена:([^>]+>){2}/i, AB.replaceTagsAndSpaces);
+	AB.getParam(html, result, 'userId', /Клиентский номер[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i, AB.replaceTagsAndSpaces);
+	AB.getParam(html, result, 'status', /Статус:[\s\S]*?<span[^>]*>([\s\S]*?)(?:<a|<\/span)/i, AB.replaceTagsAndSpaces);
+	AB.getParam(html, result, 'email', /E-mail:[\s\S]*?<span[^>]*>([\s\S]*?)(?:<a|<\/span)/i, AB.replaceTagsAndSpaces);
 	
 	AnyBalance.setResult(result);
 }

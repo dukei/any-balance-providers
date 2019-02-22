@@ -4,7 +4,7 @@
     <id version="3">ab-municipal-ipk</id>
     <name>Иркутская процессинговая компания</name>
     <description>
-        Предоставляет сводную информацию о лицевом счете и балансе в системе "Иркутская процессинговая компания" (https://portalgkh.ru)
+        Предоставляет сводную информацию о лицевом счете и балансе в системе "Иркутская процессинговая компания" (https://portalgkh.com)
     </description>
     <author>Владимир Пахомчик &lt;vladimir@pahomchik.ru&gt;</author>
     <depends>

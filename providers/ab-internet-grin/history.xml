@@ -1,5 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="4" date="2019-02-25">
+	Исправлена библиотека
+	</change>
 
 	<change version="2" date="2014-02-01">
 	- Поддержка изменений в процедуре входа
@@ -10,4 +13,3 @@
 
 
 </history>
-

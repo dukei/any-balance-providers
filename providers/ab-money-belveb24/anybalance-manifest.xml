@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">БелВЭБ24</id>
+	<id version="1">ab-money-belveb24</id>
 	<api flags="no_browser|captcha"/>
 	<name>БелВЭБ24(Беларусь)</name>
 	<description html="true"><![CDATA[
@@ -16,7 +16,6 @@
 		<module id="library"/>
 	</depends>
 	<files>
-		<js>library.min.js</js>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
 		<js>main.js</js>

@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="15" date="2019-03-01">
+	- Получение даты окончания депозита
+	</change>
 	<change version="14" date="2018-10-12">
 	- Получение депозитов, даже если он только один
 	</change>

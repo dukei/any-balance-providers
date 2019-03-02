@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+	<EditTextPreference
+		obligatory="true"
+		title="Логин"
+		positiveButtonText="ОК"
+		summary="|Номер телефона в международном формате|{@s}"
+		dialogTitle="Логин"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите ваш номер телефона для входа в международном формате, например +77771234567."
+		key="login">
+	</EditTextPreference>
+	<EditTextPreference
+		obligatory="true"
+		positiveButtonText="ОК"
+		key="password"
+		dialogTitle="Пароль"
+		negativeButtonText="Отмена"
+		title="Пароль"
+		summary="|Введите пароль в Альфа-Клик|***********"
+		dialogMessage="Введите пароль, используемый для входа в систему Альфа-Клик."
+		inputType="textPassword">
+	</EditTextPreference>
+	<ListPreference
+		key="type"
+		title="Банковский продукт"
+		summary="||{@s}\n"
+		entries="Карта|Счет"
+		entryValues="card|acc"
+		defaultValue="card">
+	</ListPreference>
+	<EditTextPreference
+		positiveButtonText="ОК"
+		key="num"
+		dialogTitle="Номер"
+		negativeButtonText="Отмена"
+		title="Номер карты/счета/депозита/кредита"
+		summary="Последние 4 цифры номера карты/счета/депозита/кредита|Автоматически\n|{@s}\n"
+		dialogMessage="Введите последние 4 цифры номера карты/счета/депозита/кредита, по которому вы хотите получить данные. Для счетов можно ввести больше 4 последних цифр, если это необходимо. Если это поле оставить пустым, то будет показана информация по первому банковскому продукту."
+		inputType="number">
+	</EditTextPreference>
+</PreferenceScreen>

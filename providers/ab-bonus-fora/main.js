@@ -8,13 +8,13 @@ function main(){
 	checkEmpty(prefs.login, 'Введите № карты!');
 	checkEmpty(prefs.pass, 'Введите пароль!');
 	
-	var html = AnyBalance.requestPost('http://my.fora.ua/', {
+	var html = AnyBalance.requestPost('https://my.fora.ua/', {
 		login: prefs.login,
 		pass: prefs.pass
-	}, {"User-Agent":"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.92 Safari/537.36"});
+	}, {"User-Agent":"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36"});
 
 	if (!/\?logout/i.test(html)) {
-		var error = getParam(html, null, null, /<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
+		var error = getParam(html, null, null, /<div class='message1'>([\s\S]*?)</i, replaceTagsAndSpaces, html_entity_decode);
 		if (error)
 			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
 		

@@ -2,11 +2,11 @@
 <PreferenceScreen>
     <EditTextPreference 
         key="login"
-        title="Номер карты" 
-        summary="Номер вашей карты||{@s}\n" 
-        dialogTitle="Номер карты" 
+        title="Штрих-код карты" 
+        summary="Штрих-код вашей карты||{@s}\n" 
+        dialogTitle="Штрих-код карты" 
         negativeButtonText="Отмена" 
-        dialogMessage="Введите номер вашей карты"
+        dialogMessage="Введите Штрих-код вашей карты"
         positiveButtonText="ОК" 
         inputType="number">
     </EditTextPreference>

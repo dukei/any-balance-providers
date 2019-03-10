@@ -13,8 +13,23 @@ function checkLoginError(html, loginUrl) {
 
     processError(html);
     var img = getParam(html, /<img[^>]+id="kaptchaImage"[^>]*/i);
-    if(img)
+    if(img){
         img = getParam(img, /data:image\/\w+;base64,([^"]+)/i, replaceHtmlEntities);
+    }
+    if(img && img.indexOf('iVBORw0KGgoAAAANSUhEUgAAANMAAAA6CAIAAAClLvvEAAAeQElEQVR42u3de7yVVZkH8NTQSi3N7uUltQuaoGFp') >= 0){
+    	AnyBalance.trace('Капча спрятана. Ищем её в другом месте');
+    	img = null;
+    }
+    if(!img){
+    	img = getParam(html, /var\s+_0x[\da-f]+\s*=\s*\[\s*"([^"]*)/);
+    	if(img){
+        	img = getParam(Base64.decode(img), /data:image\/\w+;base64,([^"]+)/i);
+    		if(!img){
+    			AnyBalance.trace(html);
+    			throw new AnyBalance.Error('Не удалось найти капчу. Сайт изменен?');
+    		}
+    	}
+    }
 
 	if(img) {
 	    AnyBalance.trace('МТС решило показать капчу :( Жаль');

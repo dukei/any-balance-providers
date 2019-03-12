@@ -11,6 +11,9 @@ var g_headers = {
 };
 
 function main() {
+
+	throw new AnyBalance.Error('Провайдер присоединен к NetByNet (https://myfire.ru). Пожалуйста, пользуйтесь провайдером для NetByNet');
+
 	var prefs = AnyBalance.getPreferences();
 	var baseurl = 'https://cab.garstelecom.ru/';
 	AnyBalance.setDefaultCharset('utf-8');

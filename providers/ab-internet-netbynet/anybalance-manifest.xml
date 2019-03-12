@@ -1,10 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="2.0" version="35">ab-internet-netbynet</id>
+	<id major_version="2.0" version="36">ab-internet-netbynet</id>
 	<api flags="no_browser"/>
 	<name>NetByNet</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе, остатке дней, статусе и обещанном платеже для пользователей  интернет-провайдера NetByNet (http://netbynet.ru) из личного кабинета https://my.netbynet.ru .</p>  
+	<p>Предоставляет информацию о балансе, остатке дней, статусе и обещанном платеже для пользователей  интернет-провайдера NetByNet (http://myfire.ru) из личного кабинета https://my.myfire.ru .</p>  
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>

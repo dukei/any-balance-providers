@@ -40,7 +40,7 @@ function main(){
 }
 
 function callAPI(verb, getParams, postParams, addheaders, checkResult){
-	var baseurl = 'https://my.netbynet.ru/api/';
+	var baseurl = 'https://my.wifire.ru/api/';
 
 	var url = baseurl + verb, method = 'GET';
 	

@@ -4,7 +4,7 @@
 	<api flags="no_browser"/>
 	<name>NetByNet</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе, остатке дней, статусе и обещанном платеже для пользователей  интернет-провайдера NetByNet (http://myfire.ru) из личного кабинета https://my.myfire.ru .</p>  
+	<p>Предоставляет информацию о балансе, остатке дней, статусе и обещанном платеже для пользователей  интернет-провайдера NetByNet (http://wifire.ru) из личного кабинета https://my.wifire.ru .</p>  
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>

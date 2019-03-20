@@ -13,7 +13,7 @@ var g_headers = {
 function main(){
     var prefs = AnyBalance.getPreferences();
     var baseurl = 'https://myaccount.payoneer.com/';
-    var apiUrl = 'https://loginapi.payoneer.com/';
+    var apiUrl = 'https://login.payoneer.com/';
     AnyBalance.setDefaultCharset('utf-8'); 
     
     AB.checkEmpty(prefs.login, 'Введите логин!');
@@ -50,7 +50,7 @@ function main(){
         }
     }
     AnyBalance.saveData();
-    
+
     lastUrl = AnyBalance.getLastUrl();
     var lastUrlParams = URLToArray(lastUrl);
     
@@ -63,35 +63,80 @@ function main(){
         },
         'ClientId': lastUrlParams.client_id,
         'LanguageIso2Code': 'en',
+        'LanguageWasChanged': false,
         'Password': prefs.password,
         'PayoneerUserPrefs': {
             'Value': "TF1;014;;;;;;;;;;;;;;;;;;;;;;Mozilla;Netscape;5.0%20%28Windows%20NT%2010.0%3B%20Win64%3B%20x64%29%20AppleWebKit/537.36%20%28KHTML%2C%20like%20Gecko%29%20Chrome/59.0.3071.115%20Safari/537.36;20030107;undefined;true;;true;Win32;undefined;Mozilla/5.0%20%28Windows%20NT%2010.0%3B%20Win64%3B%20x64%29%20AppleWebKit/537.36%20%28KHTML%2C%20like%20Gecko%29%20Chrome/59.0.3071.115%20Safari/537.36;ru;undefined;login.payoneer.com;undefined;undefined;undefined;undefined;false;false;1501688538043;6;07.06.2005%2C%2021%3A33%3A44;1920;1080;;;;;;;5;-360;-360;02.08.2017%2C%2021%3A42%3A18;24;"
         },
+        'ProviderId': lastUrlParams.provider_id,
         'RedirectUri': lastUrlParams.redirect_uri,
+        'ResponseType': lastUrlParams.response_type,
+        'Scope': lastUrlParams.scope.replace(/\+/g, " "),
         'SessionDataKey': lastUrlParams.sessionDataKey,
         'State': lastUrlParams.state,
-        'SupportOrnCode': null,
         'Username': prefs.login
     };
-    
+
+    // Массив с сообщениями
+    var res = AnyBalance.requestGet(apiUrl + 'api/v1/assets?locale=en', AB.addHeaders({
+        'Accept': 'application/json',
+    }));
+    var messages = JSON.parse(res);
+
+    // Текущее состояние страницы, чтобы узнать нужно ли вводить капчу
+    res = AnyBalance.requestGet(apiUrl + 'api/v1/loginRedirect?SessionDataKey='+lastUrlParams.sessionDataKey, AB.addHeaders({
+        'Accept': 'application/json',
+    }));
+
+    if (res.length > 0) {
+        var json = JSON.parse(res);
+
+        if (json.Errors && json.Errors.captcha) {
+            AnyBalance.trace('Нужно решить рекапчу');
+            loginData.Captcha = {Response: solveRecaptcha('Пожалуйста, докажите, что вы не робот', apiUrl, json.Captcha.VendorKey)};
+        }
+    }
+
     AnyBalance.trace('Пытаемся пройти авторизацию');
     res = AnyBalance.requestPost(apiUrl + 'api/v1/loginRedirect', JSON.stringify(loginData), AB.addHeaders({
         'Content-Type': 'application/json',
         'Accept': 'application/json',
     }));
-    
+
     try {
         var json = JSON.parse(res);
-    } catch(e) {
+    } catch (e) {
         AnyBalance.trace('JSON parse error (' + e.message + '): ' + res);
         throw new AnyBalance.Error('Проблемы на стороне сайта: неверный формат ответа авторизации');
     }
-    
+
     if (json.NeedToChangePassword) {
         AnyBalance.trace('Payoneer просит сменить пароль');
         throw new AnyBalance.Error('Payoneer просит сменить пароль. Пожалуйста, зайдите в личный кабинет через браузер и смените пароль.', null, true);
     }
-    
+
+    if (json.Errors) {
+        var errors = [],
+            fatal = false;
+        for (var field in json.Errors) {
+            var errorName = json.Errors[field];
+            if (errorName.indexOf('Username.') === 0 || errorName.indexOf('WrongDetails') !== -1) {
+                fatal = true;
+            }
+            if (errorName in messages.resources) {
+                errors.push(messages.resources[errorName]);
+            } else {
+                errors.push(field+': '+errorName);
+            }
+        }
+
+        if (errors.length) {
+            throw new AnyBalance.Error(errors.join('; '), null, fatal);
+        } else {
+            throw new AnyBalance.Error('Проблемы на стороне сайта: неизвестная ошибка, попробуйте ещё раз.', null, fatal);
+        }
+    }
+
     html = AnyBalance.requestGet(json.RedirectUri, g_headers);
 	
     if(!/SetAccount.aspx\?ac=0/i.test(html)){

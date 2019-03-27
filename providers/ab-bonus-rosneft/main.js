@@ -23,28 +23,27 @@ function main() {
 	checkEmpty(/^\d{10}$/.test(prefs.login), 'Введите 10 цифр номера телефона в формате 9261234567 без пробелов и разделителей!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 
-	var html = AnyBalance.requestGet(baseurl + 'login?X-Requested-With=XMLHttpRequest', g_headers);
+	var html = AnyBalance.requestGet(baseurl + 'account/login', g_headers);
 	var json = getJson(html);
+
+	var rvt = getParam(json.html, /<input[^>]+__RequestVerificationToken[^>]*value="([^"]*)/i, replaceHtmlEntities);
 
 	var captcha = solveRecaptcha('Пожалуйста, докажите, что вы не робот', baseurl + 'login', "6LejgioUAAAAAK6ZVEm_o8YhLHpnBil1J-hrPQnB");
 
-	html = AnyBalance.requestPost(baseurl + 'login?defaultCallbackUrl=%2F&X-Requested-With=XMLHttpRequest', JSON.stringify({
-    	"Phone": prefs.login,
-    	"Password": prefs.password,
+	html = AnyBalance.requestPost(baseurl + 'account/login', JSON.stringify({
+    	"__RequestVerificationToken": rvt,
     	"Captcha": captcha,
-    	"CallbackUrl": null,
-    	"Antiforgery": json.AnnotatedModel.Antiforgery,
-    	"ActiveGroup": null,
-    	"ServerMessage": "",
-    	"IsValid": true
+    	"Password": prefs.password,
+    	"Phone": '+7 ' + prefs.login,
 	}), addHeaders({
+		RequestVerificationToken: rvt,
 		'Content-Type': 'application/json'
 	}));
 
 	json = getJson(html);
 	
-	if(json.Status != 'Ok' || !json.RedirectUrl){
-		var error = json.CustomData && json.CustomData.ServerMessage;
+	if(!json.params || json.params.result != 0){
+		var error = getElement(json.html, /<div[^>]+validation-summary-errors/i, replaceTagsAndSpaces);
 		if(error)
 			throw new AnyBalance.Error(error, null, /парол/i.test(error));
 		AnyBalance.trace(html);
@@ -53,15 +52,15 @@ function main() {
 
 	var result = {success: true};
 
-	html = AnyBalance.requestGet(baseurl, addHeaders({Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8'}));
+	html = AnyBalance.requestGet(baseurl + 'account', addHeaders({Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8'}));
 
-	getParam(html, result, 'balance', /количество накопленных баллов[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'available', /Количество доступных баллов[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'balance', /Баллов всего:[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'available', /Баллов доступно:[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
 
 	if(AnyBalance.isAvailable('last_sum', 'last_date', 'last_bonus', 'last_place', 'last_status')){
-		html = AnyBalance.requestGet(baseurl + 'home/report?range=year', g_headers);
-
-		var row = getElement(html, /<div[^>]+main-goods-table__row[^>]*>/i);
+		var row = getElement(html, /<div[^>]+block-statement__content/i);
+		row = row && getElement(row, /<div[^>]+block-table__body/i);
+		row = row && getElement(row, /<div[^>]+"block-table__row/i);
 		getParam(row, result, 'last_date', /(?:[\s\S]*?<div[^>]*>){2}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseDate);
 		getParam(row, result, 'last_place', /(?:[\s\S]*?<div[^>]*>){4}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
 		getParam(row, result, 'last_sum', /(?:[\s\S]*?<div[^>]*>){5}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);

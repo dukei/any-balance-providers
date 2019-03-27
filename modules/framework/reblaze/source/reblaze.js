@@ -161,8 +161,22 @@
         if (!_AnyBalance.getCookie('rbzid')) {
             throw new AnyBalance.Error('Не удалось получить куку rbzid от Reblaze');
         }
-        
-        html = AnyBalance.requestGet(_url, headers);
+
+        try {
+            _AnyBalance.trace('Trying URL in Reblaze: '+_url);
+            html = AnyBalance.requestGet(_url, headers);
+        } catch (e) {
+            _AnyBalance.trace('An exception occurred in Reblaze while fetching URL');
+            if (/Invalid redirect URI/.test(e.message)) {
+                var fixedUrl = getParam(e.message, /Invalid redirect URI:\s*(.+)$/);
+                fixedUrl = fixedUrl.replace(' ', '%20');
+
+                _AnyBalance.trace('Replace spaces in URL, new URL: '+fixedUrl);
+                html = AnyBalance.requestGet(fixedUrl, headers);
+            } else {
+                throw e;
+            }
+        }
 
 		if(_AnyBalance.getLevel() >= 9){
 			_AnyBalance.setData('rbzid', _AnyBalance.getCookie('rbzid'));

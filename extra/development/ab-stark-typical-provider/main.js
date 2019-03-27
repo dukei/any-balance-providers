@@ -45,7 +45,7 @@ function main() {
 		return value;
 	});
 
-	html = AnyBalance.requestPost(baseurl + 'login', {
+	html = AnyBalance.requestPost(baseurl + 'login', /*params*/ {
 		login: prefs.login,
 		password: prefs.password,
 		'Remember': 'false'

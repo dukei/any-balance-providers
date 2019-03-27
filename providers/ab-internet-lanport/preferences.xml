@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        title="Ключ доступа" 
+        positiveButtonText="ОК" 
+        summary="||{@s}" 
+        dialogTitle="Ключ доступа" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите ключ доступа в личный кабинет."
+        key="key">
+    </EditTextPreference>
+</PreferenceScreen>

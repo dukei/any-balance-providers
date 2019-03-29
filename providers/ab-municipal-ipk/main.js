@@ -56,12 +56,12 @@ function main() {
     result.phone = card.phone;
     result.type = card.type;
     result.current_period = getCurrentMonth();
-    result.uk_accrued = parseBalance(uk.toPay);
-    result.uk_paid = parseBalance(uk.payd);
-    result.uk_to_pay = parseBalance(uk.totalDebt);
-    result.gvs_accrued = parseBalance(gvs.toPay);
-    result.gvs_paid = parseBalance(gvs.payd);
-    result.gvs_to_pay = parseBalance(gvs.totalDebt);
+    result.uk_accrued = parseBalance(uk.toPay.toFixed(2));
+    result.uk_paid = parseBalance(uk.payd.toFixed(2));
+    result.uk_to_pay = parseBalance(uk.totalDebt.toFixed(2));
+    result.gvs_accrued = parseBalance(gvs.toPay.toFixed(2));
+    result.gvs_paid = parseBalance(gvs.payd.toFixed(2));
+    result.gvs_to_pay = parseBalance(gvs.totalDebt.toFixed(2));
     result.to_pay = parseBalance((result.uk_to_pay + result.gvs_to_pay).toFixed(2));
 
     AnyBalance.setResult(result);

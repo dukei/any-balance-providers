@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id version="16">ab-cell-mts-russia-corp</id>
+	<id version="17">ab-cell-mts-russia-corp</id>
 	<name>МТС Корпоративный (Россия)</name>
 	<description>
 	Получает информацию по номеру и лицевому счету из интернет-помощника для корпоративных абонентов ( https://ihelper.mts.ru/Ncih ). 
@@ -11,11 +11,13 @@
 	Если вы не владелец корпоративного счета и вам на работе никто не дает пароль от этого кабинета, попробуйте зайти c телефона (через МОБИЛЬНЫЙ интернет только! Через wifi не получится) на адрес https://ihelper.mts.ru/selfcare. По идее, сайт сам определит номер и предложит установить пароль.
 	После этого можно воспользоваться обычным провайдером МТС (не корпоративным), только в качестве основного счетчика выбрать "Расход за этот месяц".
 	</description>
-	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<depends>
+		<module id="login/mts"/>
+	</depends>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>

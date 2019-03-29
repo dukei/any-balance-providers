@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="22" date="2019-03-29">
+	Обход редиректа на новую версию сайта
+	</change>	
 	<change version="21" date="2016-05-26">
 	Добавлены депозиты
 	</change>

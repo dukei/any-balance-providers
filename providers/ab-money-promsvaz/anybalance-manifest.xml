@@ -22,6 +22,9 @@
 		<module id="nadapter"/>
 	</depends>
 	<files>
+		<js>library.min.js</js>
+		<js>abe-money-promsvaz.min.js</js>
+		<js>nadapter.min.js</js>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
 		<history>history.xml</history>

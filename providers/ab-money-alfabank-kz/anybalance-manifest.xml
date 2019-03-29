@@ -1,0 +1,50 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-money-alfabank-kz</id>
+	<api flags="no_browser"/>
+	<name>Альфа-Банк (Казахстан)</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе на картах, кредитах и депозитах Альфа-Банка Казахстан <a href="https://alfabank.kz/">https://alfabank.kz/</a></p>
+	<p>Информация берется из системы Альфа-Клик <a href="https://click.alfabank.kz/">https://click.alfabank.kz/</a></p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Для подключения Альфа-Клик при наличии карты или счёта Альфа-Банка заполните форму по ссылке Регистрация на главной странице Альфа-Клика: https://click.alfabank.kz/entrance/</p>
+	]]></instruction>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="extract/abe-money-alfabank-kz"/>
+		<module id="nadapter"/>
+	</depends>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Остаток" units=" {@currency}"/>
+		<counter id="blocked" name="Заблокированные средства" units=" {@currency}"/>
+		<!--<counter id="bonuses" name="Бонус"/>-->
+		<!--<counter id="needpay" name="Обязательный платеж" units=" {@currency}"/>-->
+		<!--<counter id="needpaytill" name="Обязательный платеж: заплатить до" type="time" format="dd/MM/yyyy"/>-->
+		<!--<counter id="gracepay" name="Отчетная задолженность" units=" {@currency}"/>-->
+		<!--<counter id="gracepaytill" name="Отчетная задолженность: заплатить до" type="time" format="dd/MM/yyyy"/>-->
+		<!--<counter id="deptill" name="Срок вклада до:" type="time" format="dd/MM/yyyy"/>-->
+		<!--<counter id="pct" name="Срочные проценты" units=" {@currency}"/>-->
+		<!--<counter id="credit" name="Срочный Кредит" units=" {@currency}"/>-->
+		<!--<counter id="latedebt" name="Просроченная задолженность" units=" {@currency}"/>-->
+		<!--<counter id="limit" name="Кредитный лимит" units=" {@currency}"/>-->
+		<!--<counter id="pctcredit" name="Процентная ставка по кредиту/депозиту" units=" %"/>-->
+		<counter id="currency" name="Валюта" type="text"/>
+		<counter id="cardnum" name="Номер карты/кредита/депозита" type="text"/>
+		<counter id="accnum" name="Номер счета" type="text"/>
+		<counter id="name" name="Тип карты/кредита" type="text"/>
+		<counter id="status" name="Статус" type="text"/>
+		<counter id="till" name="Срок действия карты" type="time" format="dd/MM/yyyy"/>
+		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="date_start" name="Дата открытия" type="time" format="dd/MM/yyyy"/>
+	</counters>
+	<keywords>альфа, альфабанк казахстан, альфаклик</keywords>
+	<type>money, bank</type>
+	<country>kz</country>
+</provider>

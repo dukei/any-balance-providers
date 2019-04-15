@@ -3,11 +3,13 @@
 */
 
 var g_headers = {
-	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3',
 	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
 	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
 	'Connection': 'keep-alive',
-	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
+	'Origin': 'https://click.alfa-bank.by',
+	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.103 Safari/537.36',
+	'Referer': "https://click.alfa-bank.by/",
 };
 
 var baseurl = 'https://click.alfa-bank.by/';
@@ -61,8 +63,8 @@ function followAjaxLink(html, reName, linkSearchHtml){
 		throw new AnyBalance.Error('Не удалось найти ajax ссылку ' + reName.source);
 	}
 
-	var ajaxParams = getJsonObject(a, /PrimeFaces.ab\s*\(\s*/);
-	var formName = ajaxParams.source.replace(/:[^:]*$/, '');
+	var ajaxParams = getJsonObject(a, /PrimeFaces.ab\s*\(\s*/, replaceHtmlEntities);
+	var formName = ajaxParams.s.replace(/:[^:]*$/, '');
 
 	var form = getElement(html, new RegExp('<form[^>]+name="' + formName + '"', 'i'));
 	if(!form){
@@ -72,12 +74,12 @@ function followAjaxLink(html, reName, linkSearchHtml){
 	var params = createFormParams(form, skipButtons);
 	
 	params['javax.faces.partial.ajax'] = 'true';
-	params['javax.faces.source'] = ajaxParams.source;
+	params['javax.faces.source'] = ajaxParams.s;
 	params['javax.faces.partial.execute'] = '@all';
-	params[ajaxParams.source] = ajaxParams.source;
+	params[ajaxParams.s] = ajaxParams.s;
 
-	for(var i=0; ajaxParams.params && i<ajaxParams.params.length; ++i){
-		var p = ajaxParams.params[i];
+	for(var i=0; ajaxParams.pa && i<ajaxParams.pa.length; ++i){
+		var p = ajaxParams.pa[i];
 		params[p.name] = p.value;
 	}
 

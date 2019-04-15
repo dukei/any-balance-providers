@@ -31,13 +31,11 @@ function main(){
 		throw new AnyBalance.Error("На странице не найдена форма авторизации. Сайт изменен?");
 	}
 
-	var params = createFormParams(form, function(params, str, name, value) {
-		if (name == 'form[login]') 
-			return prefs.login;
-		else if (name == 'form[password]')
-			return prefs.password;
-		return value;
-	});
+	var params = {
+		'form[login]': prefs.login,
+		'form[password]': prefs.password,
+		'form[persondata]': 'on'
+	};
 
 	html = AnyBalance.requestPost(baseurl + 'index/login/', params, addHeaders({
 		'X-Requested-With': 'xmlhttprequest',

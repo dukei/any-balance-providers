@@ -71,7 +71,7 @@ function main(){
 
 	var result = {success: true};
 	
-    getParam(html, result, 'balance', />\s*Баланс бонусного счета[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'balance', />\s*Баланс бонусного сч[её]та[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'total', />\s*Оборот[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'next_level', />\s*До следующего уровня[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'current_level', />\s*Уровень участия[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces);

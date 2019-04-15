@@ -18,7 +18,7 @@ function main(){
 
     AnyBalance.setDefaultCharset('utf-8');
 
-    var baseurl = "http://utm.tkl-vidnoe.ru/";
+    var baseurl = "https://lk.tkl-vidnoe.ru/";
     var html = AnyBalance.requestPost(baseurl, {
         login: prefs.login,
         password: prefs.password

@@ -105,10 +105,22 @@ function main() {
 
     var urlEnter = json.redirect || json.targetUrl;
 
+    if(json.token){
+    	AnyBalance.trace('Устанавливаем токен');
+    	AnyBalance.setCookie(json.domain, 'x-ps-token', json.token);
+    }
+
+    AnyBalance.trace("Теперь переходим по " + urlEnter);
+    baseurl = joinUrl(baseurl, urlEnter);
+    html = AnyBalance.requestGet(baseurl, addHeaders({
+    	Accept: 'text/html',
+    	Referer: baseurl + 'b2b/login',
+    }));
+
     var tries = 1, maxTries = 25;
     do{
-	    var ok = AnyBalance.requestGet(baseurl + 'b2b/isUserDataCached', addHeaders({
-    		Referer: baseurl + 'b2b/login',
+	    var ok = AnyBalance.requestGet(baseurl + 'isUserDataCached', addHeaders({
+    		Referer: baseurl + 'login',
     		'X-Requested-With': 'XMLHttpRequest',
             Accept: 'application/json, text/javascript, */*; q=0.01',
 	    }));
@@ -121,8 +133,8 @@ function main() {
 
 	    if(tries == 1){
     		AnyBalance.trace('Обновляем информацию...');
-	        AnyBalance.requestPost(baseurl + 'b2b/cacheUserData', '', addHeaders({
-    			Referer: baseurl + 'b2b/login',
+	        AnyBalance.requestPost(baseurl + 'cacheUserData', '', addHeaders({
+    			Referer: baseurl + 'login',
     			'X-Requested-With': 'XMLHttpRequest',
 	        }));
 	    }
@@ -133,12 +145,6 @@ function main() {
 	    AnyBalance.trace('Проверяем ещё раз, не обновлена ли информация (' + tries + '/' + maxTries + ')');
 	    AnyBalance.sleep(2000);
     }while(true);
-
-    AnyBalance.trace("Теперь переходим по " + urlEnter);
-    html = AnyBalance.requestGet(joinUrl(baseurl, urlEnter), addHeaders({
-    	Accept: 'text/html',
-    	Referer: baseurl + 'b2b/login',
-    }));
 
     if(!/logout/i.test(html)){
     	var error = getElement(html, /<[^>]+error-text/i, replaceTagsAndSpaces);
@@ -152,7 +158,7 @@ function main() {
 
 
     try {
-        html = AnyBalance.requestGet(baseurl + 'b2b/subscriber/mobile', g_headers);
+        html = AnyBalance.requestGet(baseurl + 'subscriber/mobile', g_headers);
         var accId = getParam(AnyBalance.getLastUrl(), /subscriber\/info\/(\d+)$/i);
         var account;
 
@@ -163,9 +169,9 @@ function main() {
             var phone = prefs.phone && prefs.phone.replace(/\D/g, '');
             
     		for(var startIndex = 0; !account && startIndex<totalCount; startIndex += pageCount){
-    			html = AnyBalance.requestGet(baseurl + 'b2b/subscriber/mobile/list?from=' + startIndex 
+    			html = AnyBalance.requestGet(baseurl + 'subscriber/mobile/list?from=' + startIndex 
     			    + '&size=' + pageCount + '&_=' + (+new Date()),
-    			    addHeaders({'X-Requested-With':'XMLHttpRequest', Referer: baseurl + 'b2b/subscriber/mobile'}));
+    			    addHeaders({'X-Requested-With':'XMLHttpRequest', Referer: baseurl + 'subscriber/mobile'}));
     	    
                 var json = getJson(html);
                 totalCount = json.count && json.count > 0 ? json.count : totalCount;
@@ -208,7 +214,7 @@ function main() {
         	getParam(account.account.name, result, 'name_name');
         }else{
         	AnyBalance.trace('Пришлось получать данные из инфы о подписчике');
-        	var html = AnyBalance.requestGet(baseurl + 'b2b/subscriber/info/' + account.id, addHeaders({Referer: baseurl + 'b2b/subscriber/mobile'}));
+        	var html = AnyBalance.requestGet(baseurl + 'subscriber/info/' + account.id, addHeaders({Referer: baseurl + 'b2b/subscriber/mobile'}));
         	var json = getJson(html);
 
         	getParam(json.profile.subscriberId, result, 'licschet');
@@ -224,7 +230,7 @@ function main() {
         }
 
         if (AnyBalance.isAvailable('amountTotal', 'amountLocal', 'abon', 'charges')) {
-            var htmlExp = AnyBalance.requestGet(baseurl + 'b2b/subscriber/finances/' + account.id, g_headers);
+            var htmlExp = AnyBalance.requestGet(baseurl + 'subscriber/finances/' + account.id, g_headers);
             var json = getJson(htmlExp);
 
             getParam(json.financeProfile.subscriberCostsEntity.periodAmount, result, 'amountTotal');
@@ -234,7 +240,7 @@ function main() {
         }
 
         if(AnyBalance.isAvailable('prsnl_balance')){
-            var htmlBudget = AnyBalance.requestGet(baseurl + 'b2b/subscriber/budget/' + account.id, g_headers);
+            var htmlBudget = AnyBalance.requestGet(baseurl + 'subscriber/budget/' + account.id, g_headers);
             var json = getJson(htmlBudget);
             getParam(json.subscriberBudget && json.subscriberBudget.balance, result, 'prsnl_balance');
         }
@@ -253,7 +259,7 @@ function main() {
 }
 
 function getDiscounts(baseurl, account, result){
-    var html = AnyBalance.requestGet(baseurl + 'b2b/subscriber/info/' + account.id + '/discounts', addHeaders({'X-Requested-With':'XMLHttpRequest'}));
+    var html = AnyBalance.requestGet(baseurl + 'subscriber/info/' + account.id + '/discounts', addHeaders({'X-Requested-With':'XMLHttpRequest'}));
     if(!/^\s*\{/i.test(html)){
         if(/Сервис временно недоступен/i.test(html)){
             AnyBalance.trace('Не удаётся получить дискаунты для этого номера: сервис временно недоступен');
@@ -315,10 +321,10 @@ function getAccount(baseurl, accnum, result){
 	if(prefs.lsnum && !accnum.endsWith(prefs.lsnum))
 		AnyBalance.trace('В настройках требуется неправильный лицевой счет! Игнорируем.');
 
-	var html = AnyBalance.requestGet(baseurl + 'b2b/account', addHeaders({Accept: 'text/html'}));
+	var html = AnyBalance.requestGet(baseurl + 'account', addHeaders({Accept: 'text/html'}));
     var acc;
     if(!/accountInfo/i.test(AnyBalance.getLastUrl())){
-        html = AnyBalance.requestGet(baseurl + 'b2b/account/list?from=0&size=' + 128 + '&_=' + (+new Date()), addHeaders({'X-Requested-With':'XMLHttpRequest', Referer: baseurl + 'b2b/account'}));
+        html = AnyBalance.requestGet(baseurl + 'account/list?from=0&size=' + 128 + '&_=' + (+new Date()), addHeaders({'X-Requested-With':'XMLHttpRequest', Referer: baseurl + 'b2b/account'}));
         json = getJson(html);
         if(!json.account || !json.account.length){
         	AnyBalance.trace(html);
@@ -350,7 +356,7 @@ function getAccount(baseurl, accnum, result){
     	if(acc){
 	        html = AnyBalance.requestGet(baseurl + 'b2b/account/accountInfo/' + acc.id, addHeaders({
     			Accept: 'text/html',
-    			Referer: baseurl + 'b2b/',
+    			Referer: baseurl,
 	        }));
 	    }
 

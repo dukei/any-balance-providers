@@ -1,5 +1,8 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="23" date="2019-04-04">
+	Версия для ib.psbank.ru. Карты и счета работают, вклады не проверены.
+	</change>
 	<change version="22" date="2019-03-29">
 	Поддержка изменений в процедуре входа (#1061 @trublast)
 	</change>

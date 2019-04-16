@@ -108,6 +108,11 @@ var AB = (function (global_scope) {
             AnyBalance.trace('getParam: input ' + (param ? '(' + param + ')' : '') + ' is unset! ' + new Error().stack);
             return;
         }
+        if(html === null && regexp){
+            AnyBalance.trace('getParam: input ' + (param ? '(' + param + ')' : '') + ' is null! ' + new Error().stack);
+            return;
+        }
+
         if (!isAvailable(param)) {
             AnyBalance.trace(param + ' is disabled!');
             return;

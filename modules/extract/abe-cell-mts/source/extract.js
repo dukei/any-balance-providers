@@ -422,7 +422,7 @@ function getLKJson2(html) {
 
     var info = getParam(html, null, null, /^\{[\s\S]*?\}$/i, null, getJson);
     if (!info) {
-        AnyBalance.trace(html);
+        //AnyBalance.trace(html);
 
         var error = getParam(html, null, null, /<div[^>]+class="red-status"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
         if (error)

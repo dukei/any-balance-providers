@@ -86,6 +86,10 @@ function enterMtsLK(options) {
 	var url = options.url || g_baseurlLogin;
 
     var html = AnyBalance.requestGet(url, g_headers);
+    if(fixCookies()){
+        AnyBalance.trace("Куки исправлены на входе...");
+        html = AnyBalance.requestGet(AnyBalance.getLastUrl(), g_headers);
+    }
 
     if (AnyBalance.getLastStatusCode() >= 500) {
         AnyBalance.trace("МТС вернул 500. Пробуем ещё разок...");
@@ -154,12 +158,15 @@ function fixCookies(){
 	var repaired = false;
 	for(var i=0; i<cookies.length; ++i){
 		var c = cookies[i];
-		if(/^login$/i.test(c.name) && !/^"/.test(c.value)){
+		if(/^login|REDIRECT_BACK_SERVER_URL$/i.test(c.name) && !/^"/.test(c.value)){
 			var newval = '"' + c.value + '"';
 			AnyBalance.trace('Исправляем куки ' + c.name + ' на ' + newval);
 			AnyBalance.setCookie(c.domain, c.name, newval, c);
 			repaired = true;
 		}
+	}
+	if(!AnyBalance.getCookie('login')){
+		AnyBalance.setCookie('login.mts.ru', 'login', "\"https://login.mts.ru:443/amserver/UI/Login?service=lk&goto=http%3A%2F%2Fonline.mts.ru%2F\"", {path: "/amserver/UI/Login"});
 	}
 	return repaired;
 }

@@ -108,6 +108,11 @@ var AB = (function (global_scope) {
             AnyBalance.trace('getParam: input ' + (param ? '(' + param + ')' : '') + ' is unset! ' + new Error().stack);
             return;
         }
+        if(html === null && regexp){
+            AnyBalance.trace('getParam: input ' + (param ? '(' + param + ')' : '') + ' is null! ' + new Error().stack);
+            return;
+        }
+
         if (!isAvailable(param)) {
             AnyBalance.trace(param + ' is disabled!');
             return;
@@ -959,7 +964,7 @@ var AB = (function (global_scope) {
 
      Возвращается объект (или массив) или undefined, если объект не найден.
      */
-    function getJsonObject(html, reStartSearch) {
+    function getJsonObject(html, reStartSearch, replaces) {
 		if (false) { //development mode
 			//http://hjson.org/
 			//https://regex101.com/#javascript
@@ -1012,7 +1017,8 @@ var AB = (function (global_scope) {
         //var json = getRecursiveMatch(html, reStart, /[\}\]]/, null, getJsonEval);
 		
 		html = html.substring(startIndex).trim();
-		var json = html.matchRecursive(ALL, {open: 1, close: 2, parts: false}); 
+		var json = html.matchRecursive(ALL, {open: 1, close: 2, parts: false});
+		if(replaces) json = replaceAll(json, replaces); 
 		json = getJsonEval(json);
 
 		//if(reStartSearch)

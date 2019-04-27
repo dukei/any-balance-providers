@@ -60,9 +60,9 @@ function main(){
 
     getParam(json.data.account.agg_id, result, 'agreement');
     getParam(json.data.account.balance, result, 'balance');
-    getParam(json.data.account.date_minus, result, 'till');
+    getParam(json.data.account.date_minus*1000, result, 'till');
     getParam(json.data.account.users[0].ipaddr, result, 'ip');
-    getParam(json.data.account.users[0].state.code_name, result, 'status');
+    getParam(json.data.account.users[0].state.name, result, 'status');
     getParam(json.data.account.users[0].tariff.type_name, result, '__tariff');
 
     json = callApi('services/loyalty/');

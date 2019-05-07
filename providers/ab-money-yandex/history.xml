@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="30" date="2019-05-07">
+	учет отмен в Платежах без кешбэка
+	</change>
 	<change version="29" date="2019-03-27">
 	- Поддержка изменений на сайте.
 	</change>

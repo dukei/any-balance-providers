@@ -1,11 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-  <id version="3">ab-municipal-gu-is</id>
+  <id version="4">ab-municipal-gu-is</id>
   <name>Оплата ЕПД (ГУ ИС)</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о сумме оплаты по последнему выставленному счету ЕПД (за текущий или прошлый месяц).</p>
-	<p>Информация берется со страницы http://www.gu-is.ru/pay.</p>
 	]]></description>
 	<instruction html="true"><![CDATA[
 	<p>Настройки:</p>

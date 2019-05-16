@@ -1,90 +1,79 @@
 ﻿/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 
-Получает сумму счета за последний месяц в ЕИРЦ с сайта http://www.gu-is.ru/pay
-
 Для пользования провайдером требуется знать только код плательщика, который можно прочитать на квитанции: 
 
-Личный кабинет: http://www.gu-is.ru/pay
 */
+
+var g_headers = {
+	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
+	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
+	'Connection': 'keep-alive',
+	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.115 Safari/537.36',
+};
 
 function main(){
     AnyBalance.setDefaultCharset('utf-8');
 
-    var baseurl = "https://gu-is.acquiropay.ru/site/payform";
-
     var dt = new Date();
     try{
-        findBill(baseurl, dt);
+        findBill(dt);
     }catch(e){
         AnyBalance.trace('Запрос за период ' + (dt.getMonth()+1) + '-' + dt.getFullYear() + ' вернул ошибку: ' + e.message + '\nПробуем предыдущий период...');
         dt = new Date(dt.getFullYear(), dt.getMonth()-1, 1);
-        findBill(baseurl, dt);
+        findBill(dt);
     }
 }
 
-function findBill(baseurl, dt){
+function findBill(dt){
     var prefs = AnyBalance.getPreferences();
 
     var month = '' + (dt.getMonth() + 1);
     if(month.length < 2) month = '0' + month;
 
-    var html = AnyBalance.requestPost(baseurl, {
-        account:prefs.login,
-        period: month + '-' + dt.getFullYear(),
-        paymethod:1,
-        yt0:'Далее'
-    });
+	var html = AnyBalance.requestGet('https://1.elecsnet.ru/NotebookFront/services/0mhp/merchantId=956', g_headers);
 
+	html = AnyBalance.requestPost('https://1.elecsnet.ru/NotebookFront/services/0mhp/GetMerchantInfo', {
+	    merchantId:	'956',
+		paymentTool: '9',
+		'merchantFields[1]': prefs.login,
+		'merchantFields[2]': '01.' + month + '.' + dt.getFullYear(),
+	}, addHeaders({Referer: AnyBalance.getLastUrl(), 'X-Requested-With': 'XMLHttpRequest' }));
+	
+	var json = getJson(html);
+	if(!json.isSuccess){
+		var error = json.message;
+		if(/неверный номер плательщика/i.test(error))
+			throw new AnyBalance.Error(error, null, true);
+		if(error)
+			throw new AnyBalance.Error(error);
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удалось получить баланс. Cайт изменен?');
+	}
+
+	AnyBalance.trace('Ответ от внешней системы: ' + json.message);
 
     var result = {success: true};
 
-    if(!/период:\s*(?:<[^>]*>\s*)*<b[^>]*>([^<]*)/i.test(html)){
-        if(AnyBalance.isAvailable('period'))
-            result.period = month + '-' + dt.getFullYear();
-        result.__tariff = prefs.login + ', ' + month + '-' + dt.getFullYear();
-
-        var error = getParam(html, null, null, /<div[^>]+class="post-body"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
-        if(error){
-            //Счет может быть уже просто оплачен...
-            if(/нет неоплаченных счетов/i.test(error)){
-                //Если счет просто оплачен, то не будем возвращать ошибку
-                if(AnyBalance.isAvailable('status'))
-                    result.status = error;
-                AnyBalance.setResult(result);
-                return; //Всё в порядке, просто нет оплаченных счетов
-            }
-            throw new AnyBalance.Error(error);
+    getParam(month + '-' + dt.getFullYear(), result, 'period');
+    getParam(prefs.login + ', ' + month + '-' + dt.getFullYear(), result, '__tariff');
+    
+    if(json.billData.bills.length === 0){
+        //Если счет просто оплачен, то не будем возвращать ошибку
+        getParam(json.billData.emptyMessage, result, 'status');
+    }else{
+        for(var i=0; i<json.billData.bills.length; ++i){
+        	var bill = json.billData.bills[i];
+        	if(/с уч[её]том страх/i.test(bill.label)){
+        		getParam(bill.transferSumm, result, 'balance_strah');
+        		getParam(bill.insurancePrice, result, 'strah');
+        	}else{
+        		getParam(bill.transferSumm, result, 'balance');
+        	}
         }
-        throw new AnyBalance.Error('Не удаётся найти последний счет. Сайт изменен?');
+        getParam('OK', result, 'status');
     }
-
-    getParam(html, result, '__tariff', /период:\s*(?:<[^>]*>\s*)*<b[^>]*>([^<]*)/i, replaceTagsAndSpaces, function(str){return prefs.login + ', ' + str});
-    //Если у нас пара документов
-    getParam(html, result, 'balance', /сумма в документе:\s*([\-\d\.]*)\s*без страх/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'balance_strah', /сумма в документе:.*?([\-\d\.]*)\s*со? страх/i, replaceTagsAndSpaces, parseBalance);
-   
-    //Если у нас один документ
-    getParam(html, result, 'balance', /<span[^>]+class="sum\b[^>]*>([^<]*)<\/span>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'balance_strah', /<span[^>]+class="sum_with_insurance\b[^>]*>([^<]*)<\/span>/i, replaceTagsAndSpaces, parseBalance);
-
-    if(AnyBalance.isAvailable('strah')){
-    	//Если у нас пара документов
-    	var bal = getParam(html, null, null, /сумма в документе:\s*([\-\d\.]*)\s*без страх/i, replaceTagsAndSpaces, parseBalance);
-    	var bals = getParam(html, null, null, /сумма в документе:.*?([\-\d\.]*)\s*со? страх/i, replaceTagsAndSpaces, parseBalance);
-   
-    	//Если у нас один документ
-        if(!isset(bal))
-    	    bal = getParam(html, null, null, /<span[^>]+class="sum\b[^>]*>([^<]*)<\/span>/i, replaceTagsAndSpaces, parseBalance);
-        if(!isset(bals))
-    	    bals = getParam(html, null, null, /<span[^>]+class="sum_with_insurance\b[^>]*>([^<]*)<\/span>/i, replaceTagsAndSpaces, parseBalance);
-        
-        result.strah = bals-bal;
-    }
-
-    getParam(html, result, 'period', /период:\s*(?:<[^>]*>\s*)*<b[^>]*>([^<]*)/i, replaceTagsAndSpaces);
-    if(AnyBalance.isAvailable('status'))
-        result.status = 'OK';
     
     AnyBalance.setResult(result);
 }

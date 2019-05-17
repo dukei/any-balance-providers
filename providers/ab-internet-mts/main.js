@@ -1117,9 +1117,18 @@ function newTypicalLanBillingInetTv_1(baseurl) {
     	AnyBalance.setCookie(domain, 'YII_CSRF_TOKEN', csrfToken);
     }
 
+    var captcha;
+    if(/LoginForm\[captcha\]/i.test(html)){
+    	var img = getParam(html, /LoginForm\[captcha\][\s\S]*?<img[^>]+src="data:image[^"]*?base64,([^"]*)/, [replaceHtmlEntities, /\s+/g, '']);
+    	if(!img)
+    		throw new AnyBalance.Error('Не удалось найти капчу. Сайт изменен?');
+    	captcha = AnyBalance.retrieveCode('Пожалуйста, введите символы с картинки', img);
+    }
+
     html = AnyBalance.requestPost(urlIndex, {
       'LoginForm[login]': prefs.login,
       'LoginForm[password]': prefs.password,
+      'LoginForm[captcha]': captcha,
       'YII_CSRF_TOKEN': csrfToken,
       'yt0': 'Войти'
     });

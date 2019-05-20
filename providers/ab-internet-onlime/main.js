@@ -69,10 +69,10 @@ function main(){
     var oInfo = getJson(info.replace(/:(\-)?\./g, ':$10.')); //А то "balance":-.31 не распарсивается
 	
 	result.__tariff = oInfo.tier;
-	getParam(oInfo.balance, result, 'balance');
-	getParam(oInfo.points, result, 'bonus_balance');
+	getParam(oInfo.accountInfo.balance, result, 'balance');
+	getParam(oInfo.bonusAccount.points, result, 'bonus_balance');
 	//Похоже, 1000 используется, как бесконечное значение, в кабинете показывается >100
-	getParam(oInfo.lock == 1000 ? 100 : oInfo.lock, result, 'lock');
+	getParam(oInfo.accountInfo.daysToLock == 1000 ? 100 : oInfo.accountInfo.daysToLock, result, 'lock');
 	getParam(oInfo.contract, result, 'agreement');
 	getParam(oInfo.account, result, 'license');
     

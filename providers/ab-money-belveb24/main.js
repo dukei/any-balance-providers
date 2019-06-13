@@ -90,9 +90,9 @@ function main() {
 	checkEmpty(html, 'Не удалось найти форму с картами, сайт изменен?', true);
 
 	// Далее надо узнать какую карту смотреть
-	var card = prefs.lastdigits;
+	var carddigits = prefs.lastdigits;
 	
-	var cards = sumParam(html, null, null, /"Card4":"([0-9].[0-9]*)/ig);
+	var cards = sumParam(html, /"Card4":"([0-9].[0-9]*)/ig);
 	checkEmpty(cards, 'Не удалось найти ни одной карты в интернет-банке, сайт изменен?', true);
 	AnyBalance.trace('Найдено карт: ' + cards.length);
 	var result = {success: true};
@@ -103,44 +103,49 @@ function main() {
 	getParam(fio, result, 'fio');
 	
 	var	card_pars=getJsonEval(html);
-	var cardres=card_pars.returnObject.result.cards.row[0]['Card4'];
+	var cardsarray = card_pars.returnObject.result.cards.row ? [card_pars.returnObject.result.cards.row] : card_pars.returnObject.result.cards;
+	var card = cardsarray[0];
+	var cardres=card.Card4;
 	AnyBalance.trace(cardres);
-	var cheques=getJsonEval(html3).returnObject.result.cheques.ChequesList[0];
-	if(!card) {
+	var cheques=getJsonEval(html3).returnObject.result.cheques[0];
+	if(!carddigits) {
 		AnyBalance.trace('Не указана карта в настройках, будет показана информация по карте: ' + cardres);
-		getParam(card_pars.returnObject.result.cards.row[0]['CardName'], result, '__tariff');
+		getParam(card.CardName, result, '__tariff');
 		var clearBalances = getParam(html, null, null, null, replaceTagsAndSpaces);
 		 AnyBalance.trace(clearBalances);
-			getParam(card_pars.returnObject.result.cards.row[0]['Card4'], result, 'cardnum');
-			getParam(clearBalances, result, 'balance', card_pars.returnObject.result.cards.row[0]['Balance'], replaceTagsAndSpaces, parseBalance);
-			getParam(card_pars.returnObject.result.cards.row[0]['CurrName'], result, 'currency');
+			getParam(card.Card4, result, 'cardnum');
+			getParam(clearBalances, result, 'balance', card.Balance, replaceTagsAndSpaces, parseBalance);
+			getParam(card.CurrName, result, 'currency');
 				
 				
 	} else {
 		
 		for(var i =0; i < cards.length; i++) {
 			// Проверяем карты
-			var id = getParam(card_pars.returnObject.result.cards.row[i]['Card4'], null, null, new RegExp('[0-9].' + card , 'i'));
+			var id = getParam(cardsarray[i]['Card4'], null, null, new RegExp('[0-9].' + carddigits , 'i'));
 			if(!id) {
-				AnyBalance.trace('Карта ' + card_pars.returnObject.result.cards.row[i]['Card4'] + ' не соответствует заданной ' + card);
+				AnyBalance.trace('Карта ' + cardsarray[i]['Card4'] + ' не соответствует заданной ' + carddigits);
 			
 			} else {
-				AnyBalance.trace('Карта ' + card_pars.returnObject.result.cards.row[i]['Card4'] + ' соответствует заданной ' + card);
+				AnyBalance.trace('Карта ' + cardsarray[i]['Card4'] + ' соответствует заданной ' + carddigits);
 				var clearBalances = getParam(html, null, null, null, replaceTagsAndSpaces);
 				 AnyBalance.trace(clearBalances);
-					getParam(card_pars.returnObject.result.cards.row[i]['CardName'], result, '__tariff');
-					getParam(card_pars.returnObject.result.cards.row[i]['Card4'], result, 'cardnum');
-					getParam(clearBalances, result, 'balance', card_pars.returnObject.result.cards.row[i]['Balance'], replaceTagsAndSpaces, parseBalance);
-					getParam(card_pars.returnObject.result.cards.row[i]['CurrName'], result, 'currency');
+					getParam(cardsarray[i]['CardName'], result, '__tariff');
+					getParam(cardsarray[i]['Card4'], result, 'cardnum');
+					getParam(clearBalances, result, 'balance', cardsarray[i]['Balance'], replaceTagsAndSpaces, parseBalance);
+					getParam(cardsarray[i]['CurrName'], result, 'currency');
 			
 				break;
 			}
 		}
 		
 	}
-	var chec="Чек №"+cheques.ID+"\n \""+cheques.TRANS_DATE+'",\n Назначение: "'+cheques.DESCR+'",\n Сумма: "'+cheques.TRANS_AMOUNT+' '+cheques.CURR+'"';
-	getParam(chec, result, 'chec_end');
-	AnyBalance.trace(chec);
+
+	if(cheques){
+		var chec="Чек №"+cheques.ID+"\n \""+cheques.TRANS_DATE+'",\n Назначение: "'+cheques.DESCR+'",\n Сумма: "'+cheques.TRANS_AMOUNT+' '+cheques.CURR+'"';
+		getParam(chec, result, 'chec_end');
+		AnyBalance.trace(chec);
+	}
 	if(!html)
 		throw new AnyBalance.Error('Не удалось получить баланс по карте. Проверьте, что вы оплатили доступ в Интернет-Банк');
 	

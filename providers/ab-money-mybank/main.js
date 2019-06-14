@@ -12,7 +12,7 @@ var g_headers = {
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'https://new.mybank.by/';
+	var baseurl = 'https://old.mybank.by/';
 	var searchType = prefs.search_type || 'card_num';
 	AnyBalance.setDefaultCharset('utf-8');
 	

@@ -5,7 +5,7 @@
 	<name>МТБанк (Беларусь)</name>
 	<description html="true"><![CDATA[
 	<p>Получает текущий остаток и другие параметры карт МТБанка <a href="http://www.mtbank.by/">http://www.mtbank.by/</a></p>
-	<p>Информация берется из личного кабинета <a href="https://new.mybank.by/ib/site/login">https://new.mybank.by/ib/site/login</a></p>
+	<p>Информация берется из личного кабинета <a href="https://old.mybank.by/ib/site/login">https://old.mybank.by/ib/site/login</a></p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>

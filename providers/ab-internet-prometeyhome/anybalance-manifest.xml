@@ -4,8 +4,8 @@
 	<id version="1">ab-internet-prometeyhome</id>
 	<name>Prometey home</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе провайдера Prometey home <a href="http://prometeyhome.ru/">http://prometeyhome.ru</a> в г. Санкт-Петербург и области.</p>
-	<p>Информация берется из личного кабинета абонента <a href="http://bill.prometeyhome.ru">http://bill.prometeyhome.ru</a></p>
+	<p>Предоставляет информацию о балансе провайдера Prometey home <a href="https://prometeyhome.ru/">https://prometeyhome.ru</a> в г. Санкт-Петербург и области.</p>
+	<p>Информация берется из личного кабинета абонента <a href="https://bill.prometeyhome.ru">https://bill.prometeyhome.ru</a></p>
 	]]></description>
 	<author>Ilya Molchanov &lt;kakoo@yandex.ru&gt;</author>
 	<files>

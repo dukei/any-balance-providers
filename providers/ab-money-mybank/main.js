@@ -7,99 +7,126 @@ var g_headers = {
 	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
 	'Accept-Encoding': 'gzip, deflate',
 	'Connection': 'keep-alive',
-	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/40.0.2214.111 Safari/537.36'
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36',
+    'Referer': 'https://mybank.by/',
 };
+
+var apiHeaders = {
+	'Accept': 'application/json, text/plain, */*',
+    'Origin': 'https://mybank.by',
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36',
+    'Content-Type': 'application/json',
+    'Referer': 'https://mybank.by/',
+    'Accept-Encoding': 'gzip, deflate, br',
+    'Accept-Language': 'ru,en-US;q=0.9,en;q=0.8,ru-RU;q=0.7',
+	'Connection': 'keep-alive',
+}
+
+var g_baseurl = 'https://mybank.by/';
+
+function callApi(verb, getParams, postParams){
+	var method = 'GET';
+	var h = apiHeaders;
+	if(isset(postParams)){
+		method = 'POST';
+		h = addHeaders({'Content-Type': 'application/json;charset=UTF-8'}, apiHeaders);
+	}
+	
+	var html = AnyBalance.requestPost(g_baseurl + 'api/v1/' + verb, postParams && JSON.stringify(postParams), addHeaders(h), {HTTP_METHOD: method});
+
+	var json = getJson(html);
+	if(json.error){
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error(json.error.description, null, /парол/i.test(json.error.description));
+	}
+
+	return json.data;
+}
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'https://old.mybank.by/';
+	var baseurl = 'https://mybank.by/';
 	var searchType = prefs.search_type || 'card_num';
 	AnyBalance.setDefaultCharset('utf-8');
 	
-	checkEmpty(prefs.login, 'Введите логин!');
+	checkEmpty(prefs.login, 'Введите номер телефона!');
+	checkEmpty(/^\+\d+$/.test(prefs.login), 'Введите номер телефона в международном формате без пробелов и разделителей +375xxxxxxxxx !');
 	checkEmpty(prefs.password, 'Введите пароль!');
 	
-	if(!prefs.dbg) {
-		var html = AnyBalance.requestGet(baseurl + 'ib/site/login', g_headers);
+	var html = AnyBalance.requestGet(g_baseurl, g_headers);
 
-		if(!html || AnyBalance.getLastStatusCode() > 400){
-			AnyBalance.trace(html);
-			throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
-		}
-
-		html = AnyBalance.requestPost(baseurl + 'ib/site/login', {
-			name: prefs.login,
-			password: prefs.password,
-			session_token: '',
-			lang: ''
-		}, addHeaders({Referer: baseurl, Origin: baseurl}));
-	} else {
-		var html = AnyBalance.requestGet('https://new.mybank.by/ib/site/dashboard/v2', g_headers);
-	}
-
-	if (!/logout/i.test(html)) {
-		var error = getParam(html, null, null, /<div[^>]+id="error"[^>]*>([\s\S]*?)<\/p>/i, replaceTagsAndSpaces);
-		if (error)
-			throw new AnyBalance.Error(error, null, /Неверный пароль/i.test(error));
-		
+	if(!html || AnyBalance.getLastStatusCode() > 400){
 		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
+		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
 	}
 
-	var products = sumParam(html, null, null, /<div[^>]*bank-product[^>]*>[^]*?<!-- \/ bank-product -->/ig);
-	var product, searchMark = searchType == 'card_num' ? 'card-link-on' : 'product-under-title';
-	if(prefs.num){
-		AnyBalance.trace('Ищем счет по ' + searchType == 'card_num' ? 'номеру карты' : 'договору')
-		for(var i = 0, toi = products.length; i < toi; i++){
-			if(new RegExp(searchMark + '[^>]*>[^>]*' + prefs.num + '\\b', 'i').test(products[i])){
-				product = products[i];
-				break;
-			}
+	var data = callApi('user/isAuthenticated');
+	if(!data){
+		data = callApi('login/userIdentityByPhone', null, {
+			"phoneNumber":prefs.login, //.replace(/(.*)(\d\d)(\d\d\d)(\d\d)(\d\d)$/, '$1($2)$3-$4-$5'),
+			"loginWay":"1"
+		});
+		if(data.smsCode){
+			throw new AnyBalance.Error('Вход требует ввода смс-кода. Данная операция пока не поддерживается. Пожалуйста, обратитесь к автору провайдера');
 		}
-	} else {
-		product = products[0];
+		data = callApi('login/checkPassword', null, {"password":prefs.password});
+		data = callApi('user/userRole', null, data.userInfo.dboContracts[0]);
+
+		html = AnyBalance.requestGet(g_baseurl + 'main_authorised', g_headers);
 	}
 
-	if(!product)
+    data = callApi('user/loadUser');
+
+    AnyBalance.trace('Найдено ' + data.products.length + ' продуктов');
+    var p = null, card = null, cardContract = null;
+    for(var i=0; i<data.products.length; ++i){
+    	var _p = data.products[i];
+    	AnyBalance.trace('Найден продукт ' + _p.description + ', ' +  _p.accountId);	
+    	if(!prefs.num){
+    		p = _p;
+    		break;
+    	}
+    	var cs = _p.cards.filter(function(c){ return endsWith(c.pan, prefs.num) });
+        if(searchType === 'card_num' && cs.length > 0){
+            p = _p;
+            card = cs[0];
+            break;
+        }
+    	
+    	cs = _p.cardContract.filter(function(c){ return endsWith(c.contractNum, prefs.num) });
+        if(searchType === 'acc_num' && cs.length > 0){
+            p = _p;
+            cardContract = cs[0];
+            break;
+        }
+    }
+
+    if(!p)
 		throw new AnyBalance.Error('Не удалось найти ' + (prefs.num ?
 			'счет ' + (searchType == 'card_num' ? 'по номеру карты' : 'по договору') + ' с последними цифрами ' + prefs.num :
 			'ни одной карты!'));
+
+	card = card || p.cards[0];
+	cardContract = cardContract || p.cardContract[0];
 	
 	var result = {success: true};
 
-	var balances = getElement(product, /<table[^>]+balance-table/i);
-	
-	getParam(balances, result, 'balance', /balance"[^>]*>([\s\S]*?)<\/span/i, [/'/g, '', replaceTagsAndSpaces], parseBalance);
-	getParam(getElements(balances, [/<tr/ig, /собственные средства/i])[0], result, 'own', /balance"[^>]*>([\s\S]*?)<\/span/i, [/'/g, '', replaceTagsAndSpaces], parseBalance);
-	getParam(getElements(balances, [/<tr/ig, /доступная рассрочка/i])[0], result, 'credit', /balance"[^>]*>([\s\S]*?)<\/span/i, [/'/g, '', replaceTagsAndSpaces], parseBalance);
-	getParam(product, result, 'limit', /лимит([^<)]*)/i, [/'/g, '', replaceTagsAndSpaces], parseBalance);
-	getParam(product, result, ['currency', 'balance', 'limit', 'debt', 'nachisl', 'grace_pay'], /balance"[^>]*>([\s\S]*?)<\/tr>/i, [/'/g, '', replaceTagsAndSpaces], parseCurrency);
-	getParam(product, result, 'cardname', /showFromTemplate[^>]*>([^<]+)/i, replaceTagsAndSpaces);
-	getParam(product, result, 'cardnum', /card-link-one[^>]*>([^<]+)/i, replaceTagsAndSpaces);
-	getParam(product, result, '__tariff', /card-link-one[^>]*>([^<]+)/i, replaceTagsAndSpaces);
-	getParam(product, result, 'order_num', /"product-under-title"[^>]*>([^<]+)/i, replaceTagsAndSpaces);
+	getParam(p.avlBalance, result, 'balance', null, null, parseBalance);
+	getParam(p.ownFunds, result, 'own', null, null, parseBalance);
+	getParam(p.gracePeriodAvalDays, result, 'credit', null, null, parseBalance);
+	getParam(p.avlLimit, result, 'limit', null, null, parseBalance);
+	getParam(p.cardAccounts[0].currencyCode, result, ['currency', 'balance', 'limit', 'debt', 'nachisl', 'grace_pay']);
+	getParam(p.description, result, 'cardname');
+	getParam(card.pan, result, 'cardnum');
+	getParam(card.description + ', ' + p.description, result, '__tariff');
+	getParam(cardContract.contractNum, result, 'order_num');
 	
 	if(isAvailable(['debt', 'nachisl', 'grace_pay', 'grace_pay_till', 'halava_bonus'])) {
-		var token = getParam(html, null, null, /"session_token"[^>]*value="([^"]+)/i);
-		var url = getParam(product, null, null, /\.setUrl\('\\\/([^"']+)/i);
-		var contractCode = getParam(product, null, null, /contractCode'\s*:\s*'(\d+)/i);
-		
-		if(!token && !url && !contractCode) {
-			AnyBalance.trace(product);
-			throw new AnyBalance.Error('Не удалось поучить дополнительную информацию по карте! Сайт изменен?');
-		}
-		
-		html = AnyBalance.requestPost(baseurl + url, {
-			'session_token': token,
-			'contractCode': contractCode,
-			'action': 'showFromDashboard'
-		}, addHeaders({Referer: baseurl, Origin: 'https://new.mybank.by'}));
-		
-		getParam(html, result, 'halava_bonus', /loyalty-points[^>]*>\s*<span[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseBalance);
-		getParam(html, result, 'debt', /Задолженность по основному долгу:(?:[\s\S]*?<td[^>]*>)([\s\S]*?)<\/div/i, [/'/g, '', replaceTagsAndSpaces], parseBalance);
-		getParam(html, result, 'nachisl', /Начисл. проценты:(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/div/i, [/'/g, '', replaceTagsAndSpaces], parseBalance);
-		getParam(html, result, 'grace_pay', /Сумма и дата ближайшего минимального платежа:(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/div/i, [/'/g, '', replaceTagsAndSpaces], parseBalance);
-		getParam(html, result, 'grace_pay_till', /Сумма и дата ближайшего минимального платежа:(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\/div/i, [/'/g, '', replaceTagsAndSpaces], parseDate);
+		getParam(p.points, result, 'halava_bonus', null, null, parseBalance);
+		getParam(p.debtPayment, result, 'debt', null, null, parseBalance);
+		getParam(p.debtPaymentSumCom, result, 'nachisl', null, null, parseBalance);
+		getParam(p.loanNextPaymentAmmount, result, 'grace_pay', null, null, parseBalance);
+		getParam(p.gracePeriodEnd, result, 'grace_pay_till', null, null, parseDateISO);
 	}
 	
 	AnyBalance.setResult(result);

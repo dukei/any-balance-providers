@@ -1,11 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="10">ab-money-mybank</id>
+	<id version="11">ab-money-mybank</id>
 	<api flags="no_browser"/>
 	<name>МТБанк (Беларусь)</name>
 	<description html="true"><![CDATA[
 	<p>Получает текущий остаток и другие параметры карт МТБанка <a href="http://www.mtbank.by/">http://www.mtbank.by/</a></p>
-	<p>Информация берется из личного кабинета <a href="https://old.mybank.by/ib/site/login">https://old.mybank.by/ib/site/login</a></p>
+	<p>Информация берется из личного кабинета <a href="https://mybank.by/">https://mybank.by/</a></p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>

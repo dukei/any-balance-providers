@@ -23,6 +23,7 @@ var apiHeaders = {
 }
 
 var g_baseurl = 'https://mybank.by/';
+var g_cookie;
 
 function callApi(verb, getParams, postParams){
 	var method = 'GET';
@@ -32,8 +33,8 @@ function callApi(verb, getParams, postParams){
 		h = addHeaders({'Content-Type': 'application/json;charset=UTF-8'}, apiHeaders);
 	}
 	
+	//AnyBalance.setCookie('mybank.by', 'JSESSIONID', g_cookie);
 	var html = AnyBalance.requestPost(g_baseurl + 'api/v1/' + verb, postParams && JSON.stringify(postParams), addHeaders(h), {HTTP_METHOD: method});
-
 	var json = getJson(html);
 	if(json.error){
 		AnyBalance.trace(html);
@@ -44,6 +45,7 @@ function callApi(verb, getParams, postParams){
 }
 
 function main() {
+    AnyBalance.setOptions({cookiePolicy: 'rfc2965'});
 	var prefs = AnyBalance.getPreferences();
 	var baseurl = 'https://mybank.by/';
 	var searchType = prefs.search_type || 'card_num';
@@ -54,6 +56,7 @@ function main() {
 	checkEmpty(prefs.password, 'Введите пароль!');
 	
 	var html = AnyBalance.requestGet(g_baseurl, g_headers);
+	g_cookie = AnyBalance.getCookie('JSESSIONID');
 
 	if(!html || AnyBalance.getLastStatusCode() > 400){
 		AnyBalance.trace(html);
@@ -72,6 +75,7 @@ function main() {
 		data = callApi('login/checkPassword', null, {"password":prefs.password});
 		data = callApi('user/userRole', null, data.userInfo.dboContracts[0]);
 
+		//AnyBalance.setCookie('mybank.by', 'JSESSIONID', g_cookie);
 		html = AnyBalance.requestGet(g_baseurl + 'main_authorised', g_headers);
 	}
 

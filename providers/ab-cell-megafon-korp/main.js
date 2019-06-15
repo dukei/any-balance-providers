@@ -337,6 +337,7 @@ function getAccount(baseurl, accnum, result){
         	if(!accnum || acc.number.endsWith(accnum)){
         		getParam(acc.balance.value, result, 'balance');
 			    getParam(acc.subsCount, result, 'abonCount');
+			    getParam(acc.conditionBalance.value, result, 'balance_if');
 			    break;
         	}
         }

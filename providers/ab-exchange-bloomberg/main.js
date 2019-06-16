@@ -20,19 +20,14 @@ function main() {
 
 	var html = AnyBalance.requestGet(baseurl + 'quote/' + prefs.quote, g_headers);
 	
-	if(!/<meta[^>]+itemProp="price"/i.test(html)) {
-		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Please check entered quote. The quote header ' + prefs.quote + ' has not been found!');
-	}
-	
 	var result = {success: true};
 	//getParam(href, result, 'quote', /quote\/(.*)/i, null, html_entity_decode);
 
 	AB.getParam(html, result, '__tariff',   /<h1[^>]*>([^<]+)/i, AB.replaceTagsAndSpaces);
 	AB.getParam(html, result, 'quote_show', /<h1[^>]*>([^<]+)/i, AB.replaceTagsAndSpaces);
 
-	AB.getParam(html, result, 'balance', 							 /<meta[^>]+itemProp="price"[^>]*content="([^"]*)/i, AB.replaceHtmlEntities, AB.parseBalance);
-	AB.getParam(html, result, ['currency', 'balance', 'trending'], /<meta[^>]+itemProp="priceCurrency"[^>]*content="([^"]*)/i, AB.replaceHtmlEntities); 
+	AB.getParam(html, result, 'balance', 							 /<span[^>]+"priceText[^>]*>([\s\S]*?)<\/span>/i, AB.replaceTagsAndSpaces, AB.parseBalance);
+	AB.getParam(html, result, ['currency', 'balance', 'trending'], /<span[^>]+"currency[^>]*>([\s\S]*?)<\/span>/i, AB.replaceTagsAndSpaces); 
 
 
 	AB.getParam(html, result, 'trending', /<span[^>]+class="changeAbsolute[^>]*>(?:[\s\S]*?)<\/span>/i, AB.replaceTagsAndSpaces, AB.parseBalance),
@@ -40,8 +35,8 @@ function main() {
 
 	AB.getParam(html, result, 'open', 	    />\s*Open(?:[^>]*>){3}([\s\d.,-]+)/i,             AB.replaceTagsAndSpaces, AB.parseBalance);
 	AB.getParam(html, result, 'prev_close', />\s*Prev\s+Close(?:[^>]*>){3}([\s\d.,-]+)/i, AB.replaceTagsAndSpaces, AB.parseBalance);
-	AB.getParam(html, result, 'days_range', />\s*Day[^>]*Range[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i,    AB.replaceTagsAndSpaces);
-	AB.getParam(html, result, '52w_range',  />\s*52 week Range[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i,       AB.replaceTagsAndSpaces);
+	AB.getParam(html, result, 'days_range', />\s*Day[^>]*Range[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i,    [/<\/span>\s*<span[^>]*>/, '-', AB.replaceTagsAndSpaces]);
+	AB.getParam(html, result, '52w_range',  />\s*52 week Range[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i,    [/<\/span>\s*<span[^>]*>/, '-', AB.replaceTagsAndSpaces]);
 //	AB.getParam(html, result, 'volume',     />\s*Volume(?:[^>]*>){3}([\s\d.,-]+)/i,           [/\D/g, ''],             AB.parseBalance);
 	
     AnyBalance.setResult(result);

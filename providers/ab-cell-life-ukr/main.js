@@ -32,6 +32,13 @@ function parseSec(str) {
         AnyBalance.trace('Parsing minutes ' + time + ' from value: ' + str);
         return time;
     }
+
+    matches = /(\d+)\s*мин/i.exec(str);
+    if(matches){
+    	time = +matches[1]*60;
+        AnyBalance.trace('Parsing minutes ' + time + ' from value: ' + str);
+        return time;
+    }
     AnyBalance.trace('Could not parse minutes from value: ' + str);
 }
 

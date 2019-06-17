@@ -13,7 +13,9 @@ function main() {
         'deposits': 'https://ib.psbank.ru/api/deposits/?activeOnly=true',
         'cards': 'https://ib.psbank.ru/api/cards/data?activeOnly=true',
         'login': 'https://ib.psbank.ru/api/authentication/token',
-		'home': 'https://ib.psbank.ru/'
+		'home': 'https://ib.psbank.ru/',
+		'requestSMS': 'https://ib.psbank.ru/api/authentication/secondStepAuthRequest',
+		'verifySMS': 'https://ib.psbank.ru/api/authentication/doSecondStepAuth',
     };
     var result = {success: true};
     var prefs = AnyBalance.getPreferences();
@@ -44,17 +46,35 @@ function main() {
 	
     var loginResult = getJson(reply);
 	if (!loginResult || loginResult.error == 'invalid_grant') {
+		AnyBalance.trace(reply);
 		throw new AnyBalance.Error(loginResult.messageTemplate, false,true);
 	}
 
-    var headers = {'Authorization': 'Bearer ' + loginResult.access_token, 'X-XSRF-Token': xsrftoken};
+    g_headers.Authorization = 'Bearer ' + loginResult.access_token;
+    g_headers['X-XSRF-Token'] = xsrftoken;
+
+	if(loginResult.isSecondStepAuthRequired === 'true'){
+		reply = AnyBalance.requestGet(API.requestSMS, g_headers);
+		var res = getJson(reply);
+		AnyBalance.trace('SMS number: ' + res.smsData.smsNumber);
+
+		var code = AnyBalance.retrieveCode('Пожалуйста, введите код из смс для входа в интернет-банк', null, {inputType: 'number', time: res.smsData.lifetime*1000});
 	
+	    reply = AnyBalance.requestPost(API.verifySMS, JSON.stringify({"value": code,"authorizerType":res.preferredAuthorizerType}), addHeaders({
+	    	'Content-Type': 'application/json;charset=UTF-8'
+	    }));
+		if(reply){
+			AnyBalance.trace(reply);
+			throw new AnyBalance.Error('Неверный код');
+		}
+	}
+
 	//***********************************
 	//Получить нужные счетчики
 	//***********************************
 		
 	if(prefs.type == 'card') { //Карты
-		reply = AnyBalance.requestGet(API.cards, headers);
+		reply = AnyBalance.requestGet(API.cards, g_headers);
 		var cards = getJson(reply);
 		if (cards.cardAccounts.length == 0) 
 			throw new AnyBalance.Error('Карты не найдены');
@@ -75,7 +95,7 @@ function main() {
 		getParam(cards.cardAccounts[n].cards[0].expireDate, result, 'till', null, null, parseDateISO);
 		
 	} else if(prefs.type == 'acc') { //Счета
-	    reply = AnyBalance.requestGet(API.accounts, headers);
+	    reply = AnyBalance.requestGet(API.accounts, g_headers);
 		var accounts = getJson(reply);
 		if (accounts.length == 0) 
 			throw new AnyBalance.Error('Счета не найдены');
@@ -95,7 +115,7 @@ function main() {
 		result.currency = accounts[n].currency.nameIso;
 		
 	} else if(prefs.type == 'dep') { //Вклады
-	    reply = AnyBalance.requestGet(API.deposits, headers);
+	    reply = AnyBalance.requestGet(API.deposits, g_headers);
 		var deposits = getJson(reply);
 		if (deposits.length == 0) 
 			throw new AnyBalance.Error('Вклады не найдены');

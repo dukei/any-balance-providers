@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id version="1">ab-internet-prometeyhome</id>
+	<id version="2">ab-internet-prometeyhome</id>
 	<name>Prometey home</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе провайдера Prometey home <a href="https://prometeyhome.ru/">https://prometeyhome.ru</a> в г. Санкт-Петербург и области.</p>

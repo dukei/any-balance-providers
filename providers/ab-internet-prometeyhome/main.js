@@ -16,7 +16,7 @@ function parseTariff(value) {
 }
 
 function main() {
-    var baseurl = 'http://bill.prometeyhome.ru/';
+    var baseurl = 'https://bill.prometeyhome.ru/';
     var prefs = AnyBalance.getPreferences();
     AnyBalance.setDefaultCharset('cp1251'); 
     

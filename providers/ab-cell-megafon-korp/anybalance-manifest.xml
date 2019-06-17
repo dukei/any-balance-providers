@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="28">ab-cell-megafon-korp</id>
+	<id version="29">ab-cell-megafon-korp</id>
 	<api flags="no_browser"/>
 	<name>Мегафон корпоративный</name>
 	<description html="true"><![CDATA[
@@ -12,6 +12,7 @@
 		<module id="library"/>
 	</depends>
 	<files>
+		<js>library.min.js</js>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
 		<js>main.js</js>

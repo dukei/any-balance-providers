@@ -1,10 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="9">ab-internet-damavik</id>
+	<id version="10">ab-internet-damavik</id>
 	<name>Атлант Телеком (Шпарки Дамавик)</name>
 	<description html="true"><![CDATA[
-	<p>Получает данные для интернет-провайдера Velcom (Шпаркi дамавiк или Атлант Телеком) http://mydom.velcom.by/</p>
+	<p>Получает данные для интернет-провайдера Velcom (Шпаркi дамавiк или Атлант Телеком) https://my.velcom.by/</p>
 	]]></description>	
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>
@@ -19,7 +19,7 @@
 	<counters>
 		<counter id="balance" name="Баланс"/>
 		<counter id="fio" name="ФИО" type="text"/>
-		<counter id="trafic" name="Трафик" units=" Мб"/>
+		<counter id="trafic" name="Трафик за текущий месяц" units=" Мб"/>
 		<counter id="trafic_total" name="Трафик всего" units=" Мб"/>
 		<counter id="acc" name="Номер лицевого счета" type="text"/>
 	</counters>

@@ -393,6 +393,28 @@ function getLKJson(html, allowExceptions) {
     return {};
 }
 
+function getLKJson2(html) {
+    var html = AnyBalance.requestGet('https://login.mts.ru/api/profile', addHeaders({
+    	Referer: g_baseurl + '/'
+    }));
+
+    var json = getJson(html);
+    var out = {};
+    out.fio = json['profile:name'];
+    out.phone_formatted = ('' + json['mobile:phone']).replace(/(\d\d\d)(\d\d\d)(\d\d)(\d\d)$/, '+7($1)$2-$3-$4');
+    out.phone = '' + json['mobile:phone'];
+    out.balance = json['mobile:balance'];
+    if(!out.balance){
+    	AnyBalance.trace('Нулевой баланс! Возможно, что-то не так! ' + html);
+    }
+
+    if(!out.phone){
+    	AnyBalance.trace('Не удаётся получить информацию о текущем пользователе. Сайт изменен?\n' + html);
+    }
+
+    return json;
+}
+
 function getLKJson1(html) {
     var html = AnyBalance.requestGet('https://login.mts.ru/profile/header?ref=https%3A//lk.ssl.mts.ru/&scheme=https&style=2015v2', addHeaders({
     	Referer: g_baseurl + '/'
@@ -413,49 +435,6 @@ function getLKJson1(html) {
 
     return json;
 }
-
-function getLKJson2(html) {
-    var html = AnyBalance.requestGet('https://oauth.mts.ru/webapi-1.4/customers/@me', addHeaders({
-        'X-Requested-With': 'XMLHttpRequest',
-        'Authorization': 'Bearer sso_1.0_websso_cookie'
-    }));
-
-    var info = getParam(html, null, null, /^\{[\s\S]*?\}$/i, null, getJson);
-    if (!info) {
-        //AnyBalance.trace(html);
-
-        var error = getParam(html, null, null, /<div[^>]+class="red-status"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
-        if (error)
-            throw new AnyBalance.Error(error);
-
-        throw new AnyBalance.Error('Не удалось найти Json с описанием пользователя, сайт изменен?');
-    }
-
-    var json = {};
-    for (var i = 0; i < info.genericRelations.length; i++) {
-        var rel = info.genericRelations[i];
-        if (isset(rel.target.balance))
-            json.balance = getParam(rel.target.balance + '', null, null, null, null, parseBalanceRound);
-
-        if (isset(rel.target.productResources) && isset(rel.target.productResources[0]))
-            json.tariff = rel.target.productResources[0].product.name['ru-RU'];
-
-        if (isset(rel.target.address)){
-            json.phone = rel.target.address;
-            json.phone_formatted = replaceAll(json.phone, replaceNumber);
-        }
-
-        if (isset(rel.target.displayNameNat))
-            json.fio = rel.target.displayNameNat;
-    }
-
-    if(!json.balance){
-    	AnyBalance.trace('Нулевой баланс! Возможно, что-то не так! ' + html);
-    }
-
-    return json;
-}
-
 
 function isAnotherNumber() {
     var prefs = AnyBalance.getPreferences();
@@ -517,8 +496,6 @@ function checkLoginState(html, options) {
 }
 
 function enterLK(options) {
-    restoreLoginCookies();
-
     var html = enterMtsLK(options);
 
     html = checkLoginState(html, {automatic: true});
@@ -573,7 +550,6 @@ function enterLK(options) {
     }
 
     __setLoginSuccessful();
-    saveLoginCookies();
 
     turnOffLoginSMSNotify(html);
 
@@ -585,7 +561,7 @@ function loginWithPassword(){
 
     var prefs = AnyBalance.getPreferences();
 
-    var html = enterLK({login: prefs.login, password: prefs.password, baseurl: 'https://online.mts.ru', url: 'https://login.mts.ru/amserver/UI/Login?service=lk&goto=http%3A%2F%2Fonline.mts.ru%2F'});
+    var html = enterLK({login: prefs.login, password: prefs.password, baseurl: 'https://lk.mts.ru', url: 'https://login.mts.ru/amserver/UI/Login?service=newlk&goto=http%3A%2F%2Flk.mts.ru%2F'});
     return html;
 }
 
@@ -681,33 +657,7 @@ function processInfoLK(html, result){
         AnyBalance.trace('Не удалось получить данные о пользователе, скорее всего, виджет временно недоступен... ' + e.message + '\n' + e.stack);
     }
 }
-
-function processBonusLK(result){
-    try {
-    	//Если мы уже вошли в бонус, то логаут из кабинета не получается. 
-    	//Впрочем, в реальном использовании провайдера такого быть не должно
-        if (AnyBalance.isAvailable('bonus')) {
-            info = AnyBalance.requestGet('https://bonus.ssl.mts.ru/api/user/part/Status', addHeaders({
-                Referer: 'https://bonus.ssl.mts.ru/',
-                'X-Requested-With': 'XMLHttpRequest'
-            }));
-            var json = getJson(info);
-            if (json.status != 'registered') {
-                AnyBalance.trace('Бонус не может быть получен: ' + info);
-            } else {
-                info = AnyBalance.requestGet('https://bonus.ssl.mts.ru/api/user/part/Points', addHeaders({
-                    Referer: 'https://bonus.ssl.mts.ru/',
-                    'X-Requested-With': 'XMLHttpRequest'
-                }));
-                var json = getJson(info);
-                getParam(json.points, result, 'bonus');
-            }
-        }
-    } catch (e) {
-        AnyBalance.trace('Не удалось получить данные о бонусах... ' + e.message + '\n' + e.stack);
-    }
-}
-
+/*
 function processTraffic(result){
 	try{
 	    AnyBalance.trace('Пробуем получить трафик из ЛК по API');
@@ -724,7 +674,7 @@ function processTraffic(result){
     } catch (e) {
         AnyBalance.trace('Не удалось получить трафик из ЛК: ' + e.message + '\n' + e.stack);
     }
-*/
+* /
 	try{
 	    AnyBalance.trace('Пробуем получить трафик из интернет-кабинета');
 	    processTrafficInternet(result);
@@ -734,12 +684,13 @@ function processTraffic(result){
     }
     //Сюда попадаем только если во всех случаях случилась ошибка
     result.were_errors = true;
-}
+}*/
 
 function parseTrafficFromKb(str){
     return parseTraffic(str, 'kb');
 }
 
+/*
 function keysToLowerCase(obj) {
 	function isComplexObject(obj){
 		var t = typeof(obj);
@@ -846,7 +797,7 @@ function processTrafficLK(result){
 
             info = AnyBalance.requestGet(href + '&_=' + new Date().getTime(), addHeaders({
                 'X-Requested-With': 'XMLHttpRequest',
-                'Accept': '*/*',
+                'Accept': '*---/*',
                 'Referer': g_baseurl + '/'
             }));
             AnyBalance.trace(info);
@@ -862,7 +813,81 @@ function processTrafficLK(result){
         throw new AnyBalance.Error('Трафик не найден!');
     }
 }
+*/
 
+function callNewLKApiToken(verb){
+	var html = AnyBalance.requestGet('https://lk.mts.ru/api/' + verb, addHeaders({
+		Referer: 'https://lk.mts.ru/',
+		Origin: 'https://lk.mts.ru',
+		'X-Requested-With': 'XMLHttpRequest',
+		Accept: 'application/json, text/plain, */*',
+	}));
+
+	var token = getJson(html);
+	if(typeof token !== 'string'){
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Неверный ответ API ' + verb);
+	}
+
+	return {
+		token: token,
+		verb: 'api/' + verb
+	};
+}
+
+function callNewLKApiResult(token){
+	for(var i=0; i<30; ++i){
+		var html = AnyBalance.requestGet('https://lk.mts.ru/api/longtask/check/' + token.token + '?for=' + token.verb, addHeaders({
+			Referer: 'https://lk.mts.ru/',
+			Origin: 'https://lk.mts.ru',
+			'X-Requested-With': 'XMLHttpRequest',
+			Accept: 'application/json, text/plain, */*',
+		}));
+		if(!html){
+			AnyBalance.trace('Ожидание результата ' + token.verb + ' ' + (i+1) + '/' + 30);
+			AnyBalance.sleep(2000);
+			continue;
+		}
+
+		var json = getJson(html);
+		AnyBalance.trace('Получен результат ' + token.verb + ' от ' + json.refreshDate);
+		return json.data;
+	}
+
+	throw new AnyBalance.Error('Не удалось получить результат ' + token.verb);
+}
+
+function processCountersLK(result){
+	var token = callNewLKApiToken('sharing/counters');
+	var data = callNewLKApiResult(token);
+
+	if(!result.remainders)
+        result.remainders = {};
+
+	for(var i=0; i<data.counters.length; ++i){
+		var c = data.counters[i];
+		AnyBalance.trace('Найден счетчик ' + c.name + ' (' + c.packageType + ')');
+
+		if(c.packageType === 'Calling'){
+			AnyBalance.trace('Это минуты');
+			getParam(c.deadlineDate, result.remainders, 'remainders.min_till', null, null, parseDateISO);
+			getParam(c.usedAmount, result.remainders, 'remainders.min_local');
+			getParam(c.totalAmount - c.usedAmount, result.remainders, 'remainders.min_left');
+		}else if(c.packageType === 'Messaging'){
+			AnyBalance.trace('Это сообщения');
+			getParam(c.deadlineDate, result.remainders, 'remainders.sms_till', null, null, parseDateISO);
+			getParam(c.usedAmount, result.remainders, 'remainders.sms_used');
+			getParam(c.totalAmount - c.usedAmount, result.remainders, 'remainders.sms_left');
+		}else if(c.packageType === 'Internet'){
+			AnyBalance.trace('Это трафик');
+			getParam(c.deadlineDate, result.remainders, 'remainders.traffic_left_till', null, null, parseDateISO);
+			getParam((c.usedAmount) + c.unitType, result.remainders, 'remainders.traffic_used_mb', null, null, parseTraffic);
+			getParam((c.totalAmount - c.usedAmount) + c.unitType, result.remainders, 'remainders.traffic_left_mb', null, null, parseTraffic);
+		}else{
+			AnyBalance.trace('Неизвестный счетчик: ' + JSON.stringify(c));
+		}
+	}
+}
 
 function mainLK(html, result) {
     AnyBalance.trace("Мы в личном кабинете...");
@@ -893,8 +918,7 @@ function mainLK(html, result) {
 
     if (!isAnotherNumber()) {
         processInfoLK(html, result);
-        processBonusLK(result);
-        processTraffic(result);
+        processCountersLK(result);
     } else {
         AnyBalance.trace('Пропускаем получение данных из ЛК, если требуется информация по другому номеру');
     }
@@ -937,7 +961,7 @@ function loginWithoutPassword(){
     } catch (e) {
         AnyBalance.trace('Автоматический вход в кабинет не удался. Пробуем получить пароль через СМС');
         pass = getPasswordBySMS(prefs.login);
-        html = enterLK({login: prefs.login, password: pass, baseurl: 'https://online.mts.ru', url: 'https://login.mts.ru/amserver/UI/Login?service=lk&goto=http%3A%2F%2Fonline.mts.ru%2F'});
+        html = enterLK({login: prefs.login, password: pass, baseurl: 'https://lk.mts.ru', url: 'https://login.mts.ru/amserver/UI/Login?service=newlk&goto=http%3A%2F%2Flk.mts.ru%2F'});
         if (prefs.password && prefs.password != pass) {
             changePassword(pass, prefs.password);
         }
@@ -1092,7 +1116,7 @@ function processPayments(baseurl, result) {
 
 
 function turnOffLoginSMSNotify(html){
-	var url = g_baseurlLogin + '/amserver/UI/Login?service=setnotify&ForceAuth=true';
+	var url = g_baseurlLogin + '/amserver/UI/Login?service=setnotify2018&ForceAuth=true';
 	html = AnyBalance.requestGet(url, addHeaders({Referer: g_baseurl + '/settings'}));
 	var form = getElements(html, [/<form/ig, /<input[^>]+checkbox[^>]+successfullLogin/i])[0];
 	if(!form){

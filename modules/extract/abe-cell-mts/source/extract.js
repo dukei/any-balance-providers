@@ -412,7 +412,7 @@ function getLKJson2(html) {
     	AnyBalance.trace('Не удаётся получить информацию о текущем пользователе. Сайт изменен?\n' + html);
     }
 
-    return json;
+    return out;
 }
 
 function getLKJson1(html) {

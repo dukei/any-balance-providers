@@ -43,11 +43,13 @@ function checkLoginError(html, loginUrl) {
 
         AnyBalance.trace("Логинимся с заданным номером и капчей");
         html = AnyBalance.requestPost(loginUrl, params, addHeaders({Origin: g_baseurlLogin, Referer: loginUrl}));
-        
+        fixCookies();
+
         // Бага при авторизации ошибка 502, но если запросить гет еще раз - все ок
         if (AnyBalance.getLastStatusCode() >= 500) {
             AnyBalance.trace("МТС вернул 500 при попытке логина. Пробуем ещё разок...");
             html = AnyBalance.requestPost(loginUrl, params, addHeaders({Origin: g_baseurlLogin, Referer: loginUrl}));
+            fixCookies();
         }
         
 		if(AnyBalance.getLastStatusCode() >= 500)
@@ -68,12 +70,14 @@ function redirectIfNeeded(html){
     	var action = getParam(html, /<form[^>]+action=['"]([^'"]*)/, replaceHtmlEntities);
     	var url = AnyBalance.getLastUrl();
     	html = AnyBalance.requestPost(joinUrl(url, action), params, addHeaders({Refefer: url}));
+    	fixCookies();
     }
     var redir = getParam(html, /<meta[^>]+http-equiv="REFRESH"[^>]*content="0;url=([^";]*)/i, replaceHtmlEntities);
     if(redir){
     	AnyBalance.trace('Потребовался get редирект...');
     	var url = AnyBalance.getLastUrl();
     	html = AnyBalance.requestGet(joinUrl(url, redir), addHeaders({Refefer: url}));
+    	fixCookies();
     }
     return html;
 }
@@ -89,11 +93,13 @@ function enterMtsLK(options) {
     if(fixCookies()){
         AnyBalance.trace("Куки исправлены на входе...");
         html = AnyBalance.requestGet(AnyBalance.getLastUrl(), g_headers);
+        fixCookies();
     }
 
     if (AnyBalance.getLastStatusCode() >= 500) {
         AnyBalance.trace("МТС вернул 500. Пробуем ещё разок...");
         html = AnyBalance.requestGet(url, g_headers);
+        fixCookies();
     }
 
     if (AnyBalance.getLastStatusCode() >= 500)
@@ -103,12 +109,14 @@ function enterMtsLK(options) {
     	AnyBalance.trace('Куки протухли :( Придется авторизоваться заново');
     	clearAllCookies();
     	html = AnyBalance.requestGet(url, g_headers);
+    	fixCookies()
     }
 
     if(fixCookies()){
     	//Надо перезагрузить страницу, если куки были исправлены
         AnyBalance.trace("Куки исправлены, перезагружаем страницу. Пробуем ещё разок...");
         html = AnyBalance.requestGet(AnyBalance.getLastUrl(), g_headers);
+        fixCookies();
     }
 
     html = redirectIfNeeded(html); //Иногда бывает доп. форма, надо переадресоваться.
@@ -132,6 +140,7 @@ function enterMtsLK(options) {
 		    return value;
 		});
 		html = AnyBalance.requestPost(AnyBalance.getLastUrl(), params, addHeaders({Referer: AnyBalance.getLastUrl()}));
+        fixCookies();
     }
 
     if(isOnLogin()){
@@ -166,7 +175,7 @@ function fixCookies(){
 		}
 	}
 	if(!AnyBalance.getCookie('login')){
-		AnyBalance.setCookie('login.mts.ru', 'login', "\"https://login.mts.ru:443/amserver/UI/Login?service=lk&goto=http%3A%2F%2Fonline.mts.ru%2F\"", {path: "/amserver/UI/Login"});
+		AnyBalance.setCookie('login.mts.ru', 'login', "\"https://login.mts.ru:443/amserver/UI/Login?service=newlk&goto=http%3A%2F%2Flk.mts.ru%2F\"", {path: "/amserver/UI/Login"});
 	}
 	return repaired;
 }
@@ -196,9 +205,11 @@ function enterMTS(options){
 
     if(!html || !/<form[^>]+name="Login"/i.test(html)){
         html = AnyBalance.requestGet(loginUrl, g_headers);
+        fixCookies();
         if(AnyBalance.getLastStatusCode() >= 500){
             AnyBalance.trace("МТС вернул 500. Пробуем ещё разок...");
 			html = AnyBalance.requestGet(loginUrl, g_headers);
+			fixCookies();
 		}
 	    
         if(AnyBalance.getLastStatusCode() >= 500)
@@ -244,11 +255,13 @@ function enterMTS(options){
     // AnyBalance.trace("Login params: " + JSON.stringify(params));
     AnyBalance.trace("Логинимся с заданным номером");
     html = AnyBalance.requestPost(loginUrl, params, addHeaders({Origin: g_baseurlLogin, Referer: loginUrl}));
+    fixCookies();
 
     // Бага при авторизации ошибка 502, но если запросить гет еще раз - все ок
     if (AnyBalance.getLastStatusCode() >= 500) {
         AnyBalance.trace("МТС вернул 500 при попытке логина. Пробуем ещё разок...");
         html = AnyBalance.requestPost(loginUrl, params, addHeaders({Origin: g_baseurlLogin, Referer: loginUrl}));
+        fixCookies();
     }
 
 	if(AnyBalance.getLastStatusCode() >= 500)

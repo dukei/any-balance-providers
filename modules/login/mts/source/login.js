@@ -182,7 +182,7 @@ function fixCookies(){
 
 function saveLoginCookies(){
 	var prefs = AnyBalance.getPreferences();
-	AnyBalance.setData('login', prefs.login);
+	AnyBalance.setData('login', prefs.login + '-v1');
 	AnyBalance.saveCookies();
 	AnyBalance.saveData();
 }
@@ -190,7 +190,7 @@ function saveLoginCookies(){
 function restoreLoginCookies(){
 	var prefs = AnyBalance.getPreferences();
 	var login = AnyBalance.getData('login');
-	if(login == prefs.login){
+	if(login === (prefs.login  + '-v1')){
 		AnyBalance.restoreCookies();
 	}
 }

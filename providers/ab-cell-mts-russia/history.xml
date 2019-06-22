@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="4.1" version="181" date="2019-06-22">
+	Исправлена проблема со входом из-за старых кук
+	</change>
 	<change major_version="4.1" version="180" date="2019-06-22">
 	Исправление процедуры входа
 	</change>

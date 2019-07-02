@@ -65,5 +65,11 @@ function main() {
 	getParam(html, result, 'balance', /Всего:([^>]*)/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'available', /Доступно для списания:([^>]*)/i, replaceTagsAndSpaces, parseBalance);
 
+	var table = getParam(html, /История начислений[\s\S]*?(<table[\s\S]*?<\/table>)/i);
+	
+	getParam(table, result, 'last_date', /(?:[\s\S]*?<tr[^>]*>){2}(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
+	getParam(table, result, 'last_sum', /(?:[\s\S]*?<tr[^>]*>){2}(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(table, result, 'last_descr', /(?:[\s\S]*?<tr[^>]*>){2}(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+
 	AnyBalance.setResult(result);
 }

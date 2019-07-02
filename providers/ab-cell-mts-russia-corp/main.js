@@ -50,6 +50,8 @@ function isLoggedIn(html) {
 }
 
 function main(){
+	AnyBalance.setDefaultCharset('utf-8');
+
     var baseurl = "https://ihelper.mts.ru/Ncih/";
     var prefs = AnyBalance.getPreferences();
   	var baseloginurl =
@@ -63,6 +65,11 @@ function main(){
   	});
 
     var result = {success: true}
+
+    if(/ncih_new/i.test(AnyBalance.getLastUrl())){
+    	AnyBalance.trace('Переходим на старый кабинет');
+    	html = AnyBalance.requestGet(baseurl);
+    }
 
     if(/\/Ncih\/OwnInfo.mvc\/GetCurrentUserInfo/i.test(html)){
         //Похоже, это страница сотрудника, просмотр иерархии запрещен.

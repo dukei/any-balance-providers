@@ -49,6 +49,7 @@ function callApi(method, params, headers){
 }
 
 function login(){
+	var prefs = AnyBalance.getPreferences();
 	var html = AnyBalance.requestGet(loginUrl, g_headers);
 
 	var json = callApi('Rambler::Id::get_variti_url');

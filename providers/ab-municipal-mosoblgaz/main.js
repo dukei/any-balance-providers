@@ -3,11 +3,12 @@
 */
 
 var g_headers = {
-	'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-	'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
-	'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
+	'Accept':'*/*',
+	'Accept-Language':'en-GB,en;q=0.9,ru-RU;q=0.8,ru;q=0.7,en-US;q=0.6',
 	'Connection':'keep-alive',
-	'User-Agent':'Mozilla/5.0 (BlackBerry; U; BlackBerry 9900; en-US) AppleWebKit/534.11+ (KHTML, like Gecko) Version/7.0.0.187 Mobile Safari/534.11+'
+	'Origin': 'https://lkk.mosoblgaz.ru',
+	'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.100 Safari/537.36',
+	'X-Requested-With': 'XMLHttpRequest',
 };
 
 function main(){
@@ -23,6 +24,8 @@ function main(){
 			return prefs.login;
 		else if (/password/i.test(name))
 			return prefs.password;
+		else if (/submit/i.test(name))
+			return undefined;
 /*		else if (/\$Captcha/i.test(name)){
 			AnyBalance.trace('Пытаемся ввести капчу');
 			AnyBalance.setOptions({forceCharset:'base64'});
@@ -37,7 +40,7 @@ function main(){
 		return value;
 	});
 	
-	html = AnyBalance.requestPost(baseurl + 'login_check', params, addHeaders({Referer: baseurl + 'auth/login'})); 
+	html = AnyBalance.requestPost(baseurl + 'auth/login', params, addHeaders({Referer: baseurl + 'auth/login'})); 
 	var json = getJson(html);
 	
     if(!json.success){
@@ -47,7 +50,7 @@ function main(){
     	}
         var error = errors.join(';\n');
         if(error)
-            throw new AnyBalance.Error(error, null, /парол/i.test(error));
+            throw new AnyBalance.Error(error, null, /парол|имя/i.test(error));
         AnyBalance.trace(html);
         throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
     }
@@ -85,7 +88,7 @@ function main(){
 	
     var result = {success: true};
     getParam(html, result, 'acc', /<span[^>]+account-chosen[^>]*>([\s\S]*?)<\/span>/i, [replaceTagsAndSpaces, /№/, '']);
-	getParam(html, result, 'fio', /<ul[^>]+fioDrop[\s\S]*?<li[^>]*>([\s\S]*?)<\/li>/i, replaceTagsAndSpaces);
+	getParam(html, result, 'fio', /<div[^>]+site-header__name[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
 /*
 	getParam(html, result, 'next_check', /очередной срок поверки([^<]*)/i, replaceTagsAndSpaces, parseDate);
 	getParam(html, result, 'last_counter_val', /по лицевому счету при показаниях\s*<strong[^>]*>([\s\S]*?)<\/strong>/i, replaceTagsAndSpaces, parseBalance);

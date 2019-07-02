@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-bonus-hoff</id>
+	<api flags="no_browser"/>
+	<name>Hoff (бонусы)</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о бонусном балансе мебельного супермаркета Hoff</p>
+	<p>Информация берется из личного кабинета на https://hoff.ru </p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Если у вас нет доступа в Личный кабинет, получите его на странице https://hoff.ru/</p>
+	]]></instruction>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" Б"/>
+		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="phone" name="Телефон" type="text"/>
+		<counter id="burn" name="Ближайшая дата сгорания" type="time" format="dd/MM/yyyy"/>
+	</counters>
+	<keywords></keywords>
+	<type>bonus</type>
+	<country>ru</country>
+</provider>

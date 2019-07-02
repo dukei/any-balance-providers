@@ -21,7 +21,7 @@
 		dialogMessage="Введите пароль, используемый для входа в личный кабинет."
 		inputType="textPassword">
 	</EditTextPreference>
-	<EditTextPreference
+	<!--<EditTextPreference
 		title="Номер карты"
 		key="num"
 		summary="||{@s}"
@@ -29,5 +29,5 @@
 		positiveButtonText="ОК"
 		negativeButtonText="Отмена"
 		dialogMessage="Введите последние символы номера карты, по которой вы хотите получить информацию. Либо оставьте поле пустым, чтобы показать информацию по первой карте.">
-	</EditTextPreference>
+	</EditTextPreference>-->
 </PreferenceScreen>

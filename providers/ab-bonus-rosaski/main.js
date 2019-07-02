@@ -62,41 +62,8 @@ function main() {
 
 	var html = AnyBalance.requestGet(baseurl + 'personal/loyalty_programs/', g_headers);
 
-	var cards_table = getElement(html, /<table[^>]+loyaltyCardsTable/i);
-	if(!cards_table){
-		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Не удалось найти таблицу карт лояльности. Сайт изменен?');
-	}
-
-	var rows = getElements(cards_table, /<tr[^>]+id="card\d+Row/ig);
-	AnyBalance.trace('Найдено ' + rows.length + ' карт: ' + rows.map(function(e) { return getParam(e, /(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces) }).join(', '));
-
-	for(var i=0; i<rows.length; ++i){
-		var row = rows[i];
-		var num = getParam(row, /(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
-		AnyBalance.trace('Найдена карта ' + num);
-		if(!prefs.num || num.toLowerCase().endsWith(prefs.num.toLowerCase())){
-			getParam(num, result, 'num');
-			getParam(row, result, 'type', /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
-			getParam(row, result, '__tariff', /(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
-			getParam(row, result, 'name', /(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
-
-			var id = getParam(row, /id="card(\d+)Row/);
-			var bal = AnyBalance.requestGet(baseurl + 'script/ajax.loyalty_cards.php?card_id=' + id + '&action=updateBalance', addHeaders({
-				Referer: baseurl + 'personal/loyalty_programs/',
-				'X-Requested-With': 'XMLHttpRequest'
-			}));
-
-			var json = getJson(bal);
-			getParam(json.balance, result, 'balance');
-
-			break;
-		}
-	}
-
-	if(i >= rows.length){
-		throw new AnyBalance.Error(prefs.num ? 'Не найдена карта, оканчивающаяся на ' + prefs.num : 'Не найдено ни одной карты');
-	}
+	getParam(html, result, 'balance', /Всего:([^>]*)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'available', /Доступно для списания:([^>]*)/i, replaceTagsAndSpaces, parseBalance);
 
 	AnyBalance.setResult(result);
 }

@@ -71,6 +71,10 @@ function login(){
 	    
 			return value;
 		});
+
+		var recaptcha = solveRecaptcha('Пожалуйста, докажите, что вы не робот', baseurl, '6LdfyhQUAAAAAH18wjeroCwCYU9F6yjqp-2MYW7M');
+		params.recaptcha = 'on';
+		params['g-recaptcha-response'] = recaptcha;
 	    
 		var action = getParam(form, null, null, /action="([^"]*)/i, replaceHtmlEntities);
 		html = AnyBalance.requestPost(baseurl + action, params, addHeaders({Referer: baseurl + '/login'}));

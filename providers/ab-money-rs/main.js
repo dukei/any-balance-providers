@@ -14,7 +14,7 @@ var g_countersTable = {
         "contract_date": "cards.date_start",
         "credit_sum": "cards.limit",
         "till": "cards.till",
-        "bonus": "cards.bonus",
+        "bonus": "bonus",
         "status": "cards.status",
         "accname": "cards.accnum",
         "__tariff": "cards.__name"
@@ -30,7 +30,8 @@ var g_countersTable = {
         "cardnum": "credits.accnum",
         "credit_sum": "credits.limit",
         "accname": "credits.name",
-        "__tariff": "credits.__name"
+        "__tariff": "credits.__name",
+        "bonus": "bonus",
 	},
     acc: {
         "account_balance": "accounts.balance",
@@ -39,7 +40,8 @@ var g_countersTable = {
         "status": "accounts.status",
         "cardnum": "accounts.num",
         "accname": "accounts.name",
-        "__tariff": "accounts.__name"
+        "__tariff": "accounts.__name",
+        "bonus": "bonus",
     },
 	dep: {
         "account_balance": "deposits.balance",
@@ -49,7 +51,8 @@ var g_countersTable = {
         "contract_date": "deposits.date_start",
         "till": "deposits.till",
         "accname": "deposits.name",
-        "__tariff": "deposits.__name"
+        "__tariff": "deposits.__name",
+        "bonus": "bonus",
     }
 };
 
@@ -120,11 +123,14 @@ function main() {
     adapter.processAccounts = adapter.envelope(processAccounts);
     adapter.processCredits = adapter.envelope(processCredits);
     adapter.processDeposits = adapter.envelope(processDeposits);
+    adapter.processBonus = adapter.envelope(processBonus);
 	
 	var html = login(prefs);
-	
+
 	var result = {success: true};
 	
+	adapter.processBonus(html, result);
+
 	if(prefs.type == 'card') {
 		adapter.processCards(html, result);
 		

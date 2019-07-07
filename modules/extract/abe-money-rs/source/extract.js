@@ -10,111 +10,93 @@ var g_headers = {
 	'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:35.0) Gecko/20100101 Firefox/35.0'
 };
 
-var baseurl = 'https://online.rsb.ru/hb/faces/';
+var baseurl = 'https://online.rsb.ru/';
+
+function callApi(verb, getParams, postParams){
+	var method = 'GET';
+	var h = {
+		DateValue: '' + new Date().getTime(),
+		Expires: '0',
+		Referer: baseurl,
+		Origin: baseurl.replace(/\/$/, ''),
+	};
+
+	if(isset(postParams)){
+		method = 'POST';
+		h = addHeaders({'Content-Type': 'application/json'}, h);
+	}
+	
+	var html = AnyBalance.requestPost(baseurl + 'rest/' + verb + (getParams ? '?' + createUrlEncodedParams(getParams) : ''),
+		postParams && JSON.stringify(postParams), addHeaders(h), {HTTP_METHOD: method});
+
+	if(!html)
+		return {__empty: true};
+
+	var json = getJson(html);
+	if(json.error){
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error(json.error.description, null, /парол|Unauthorized/i.test(json.error.description));
+	}
+
+	if(json.errors){
+		var error = json.errors.join('\n');
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error(error, null, /парол|Unauthorized/i.test(error));
+	}
+
+	return json;
+}
 
 function login() {
 	var prefs = AnyBalance.getPreferences();
 	AnyBalance.setDefaultCharset('utf-8');
 
-    var json = getProductsJson();
-    if(!json) {
+	var json;
 
-        var html = AnyBalance.requestPost(baseurl + 'security_check', {
-            j_username: prefs.login,
-            j_password: prefs.password,
-            systemid: 'hb'
-        }, g_headers);
-
-        var redirect = getParam(html, null, null, /window.location\s*=\s*"faces\/([^"]*)/i, replaceSlashes);
-        if (redirect)
-            html = AnyBalance.requestGet(baseurl + redirect, g_headers);
-
-        if (!/<div[^>]+class="b-login"[^>]*>/i.test(html)) {
-            while (/Ввод пароля из SMS-сообщения/i.test(html)) {
-                var err = getParam(html, null, null, /<div[^>]+class="b-errors-message"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
-                var prmpt = getParam(html, null, null, /<label[^>]+for="temp_pass"[^>]*>([\s\S]*?)<\/label>/i, replaceTagsAndSpaces);
-                var sms_off = 'Для пользования провайдером удобно отключить одноразовый пароль на вход в настройках интернет-банка. Это безопасно, для проведения любых операций SMS-пароль всё равно будет требоваться.';
-                if (err)
-                    prmpt = err + '\n\n' + prmpt;
-                else
-                    prmpt = prmpt + '\n\n' + 'Для пользования провайдером удобно отключить одноразовый пароль на вход в настройках интернет-банка. Это безопасно, для проведения любых операций SMS-пароль всё равно будет требоваться.';
-
-                var form = getParam(html, null, null, /<form[^>]+action="[^"]*sms.jsp[\s\S]*?<\/form>/i);
-                if (!form)
-                    throw new AnyBalance.Error('Не удаётся найти форму ввода одноразового смс кода на вход.\n\n' + sms_off);
-
-                var params = createFormParams(form, function (params, str, name, value) {
-                    if (/submit_by_enth?er/i.test(str))
-                        return AnyBalance.retrieveCode(prmpt, null, {time: 300000, inputType: "number"});
-                    if (/type="submit"/i.test(str)) {
-                        if (/&#1042;&#1086;&#1081;&#1090;&#1080;/.test(str))
-                            params.source = name;
-                        return;
-                    }
-
-                    return value;
-                });
-
-                html = AnyBalance.requestPost(baseurl + 'system/login/sms/sms.jsp', params);
-            }
-        }
-
-        if (!/<div[^>]+class="b-login"[^>]*>/i.test(html)) {
-            var href = getParam(html, null, null, /window.location\s*=\s*"([^"]*)/i, replaceSlashes);
-            if (href) {
-                AnyBalance.trace("Переходим на " + href);
-                html = AnyBalance.requestGet(joinUrl(baseurl, href));
-            }
-
-            if (/Ввод пароля из SMS-сообщения/i.test(html))
-                throw new AnyBalance.Error('У вас настроен вход по паролю из SMS сообщения. Для пользования провайдером удобно отключить этот пароль в настройках интернет-банка. Это безопасно, для проведения любых операций SMS-пароль всё равно будет требоваться.');
-
-            var error = getParam(html, null, null, /<div[^>]+class="b-frm-warning2"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
-
-            if (!error)
-                error = getParam(html, null, null, /<h2[^>]+class="b-auth-error[^>]*>([\s\S]*?)<\/h2>/i, replaceTagsAndSpaces);
-
-            if (!error)
-                error = getParam(html, null, null, /<div[^>]+class="b-auth-blocked"[^>]*>\s*<p>([\s\S]*?)<\/p>/i, replaceTagsAndSpaces);
-
-            if (/необходимо задать новый пароль/i.test('' + error))
-                error += ' Зайдите в интернет-банк https://online.rsb.ru через браузер, задайте новый пароль и введите новый пароль в настройки провайдера.';
-
-            if (error)
-                throw new AnyBalance.Error(error, null, /новый пароль|или пароль|Доступ в систему заблокирован/i.test(error));
-
-            AnyBalance.trace(html);
-            throw new AnyBalance.Error('Ошибка авторизации. Проверьте логин и пароль');
-        }
-
-        json = getProductsJson();
-    }else{
+	try{
+		json = callApi('session/status');
         AnyBalance.trace('Используем существующую сессию...');
-    }
+		return getProductsJson();
+	}catch(e){
+		AnyBalance.trace('Автологин не получился: ' + e.message);
+	}
 
-    return json;
+	json = callApi('biz/auth/login', null, {
+		device: hex_md5(prefs.login),
+		password: prefs.password,
+		sysName: 'internetbank',
+		userName: prefs.login
+	});
+
+	if(json.otpId){
+		AnyBalance.trace('потребовалось подтверждение по ' + json.confirmType);
+		var code = AnyBalance.retrieveCode('Пожалуйста, введите подтверждение, полученное по ' + json.confirmType + '. Если Вы не хотите вводить код каждый раз, отмените запрос кода на вход в настройках интернет-банка https://online.rsb.ru', null, {inputType: 'number', time: 180000});
+
+		json = callApi('biz/auth/login', null, {
+			confirmation: {
+				otpId: json.otpId,
+				otpValue: code
+			},
+			device: hex_md5(prefs.login),
+			password: prefs.password,
+			sysName: 'internetbank',
+			userName: prefs.login
+		});
+	}
+
+	if(!json.authorized){
+		AnyBalance.trace(JSON.stringify(json));
+		throw new AnyBalance.Error('Не удалось войти в интернет банк. Сайт изменен?');
+	}
+
+    return getProductsJson();
 }
 
 function getProductsJson(){
 	if(getProductsJson.cached_json)
 		return getProductsJson.cached_json;
 
-	var html = AnyBalance.requestGet(baseurl + 'request.json', g_headers);
-    if(/'data'/.test(html))
-        return false;
-
-    try{
-		var json = getJson(html);
-		if(!json.data){
-			AnyBalance.trace(html);
-			throw new AnyBalance.Error('Ошибка получения списка продуктов. Сайт изменен?');
-		}
-	}catch(e){
-		var error = getElement(html, /<h1/i, replaceTagsAndSpaces);
-		if(error)
-			throw new AnyBalance.Error(error);
-		throw new AnyBalance.Error('Ошибка соединения с интернет-банком. Сайт изменен?');
-	}
+	var json = callApi('biz/client-products');
 
 	return getProductsJson.cached_json = json;
 
@@ -127,21 +109,16 @@ function processAccounts(json, result) {
     if(!AnyBalance.isAvailable('accounts'))
         return;
 
-    var products = [];
-    for(var i=0; i<json.data.length; ++i){
-        var p = json.data[i];
-        if(p.type == 'account')
-            products.push(p);
-    }
+    var products = json.ACCOUNT || [];
 
     AnyBalance.trace('Найдено счетов: ' + products.length);
 	result.accounts = [];
 	
 	for(var i=0; i < products.length; ++i){
         var p = products[i];
-		var id = p.id;
-        var num = p.num;
-		var title = p.title + ' ' + num.substr(-4);
+		var id = p.productId.contractId;
+        var num = p.productNumber;
+		var title = p.label + ' ' + num.substr(-4);
 		
 		var c = {__id: id, __name: title, num: num};
 		
@@ -156,23 +133,25 @@ function processAccounts(json, result) {
 function processAccount(account, result){
     AnyBalance.trace('Обработка счета ' + result.__name);
 	
-    getParam(account.title, result, 'accounts.name');
-    getParam(account.acc[0].available, result, 'accounts.balance', null, null, parseBalance);
-    getParam(account.acc[0].currency, result, ['accounts.currency' , 'accounts.balance']);
-    getParam(account.date_create, result, 'accounts.date_start', null, null, parseDate);
+    getParam(account.label, result, 'accounts.name');
+    var json = callApi('biz/account/detail', {id: account.productId.contractId});
 
-    if(AnyBalance.isAvailable('accounts.transactions', 'accounts.status', 'accounts.tariff')){
-        var html = AnyBalance.requestGet(joinUrl(baseurl, account.link), g_headers);
+    getParam(jspath1(json, '$.availableBalance.amount'), result, 'accounts.balance', null, null, parseBalance);
+    getParam(jspath1(json, '$.availableBalance.currency'), result, ['accounts.currency' , 'accounts.balance']);
+    getParam(json.contractDate, result, 'accounts.date_start');
+    getParam(json.tariffPlanName, result, 'accounts.tariff');
+    getParam(json.contractNumber, result, 'accounts.contract');
+    getParam(json.currentRate, result, 'accounts.pct');
 
-        if(AnyBalance.isAvailable('accounts.status', 'accounts.tariff')){
-            var details = getElement(html, /<table[^>]+prod-balance_var2[^>]*>/i, replaceHtmlEntities);
-            getParam(details, result, 'accounts.status', /Состояние[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces); //Открыт
-            getParam(details, result, 'accounts.tariff', /Тарифный план[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, [/Тарифный план\s*-/i, '', replaceTagsAndSpaces]); //Открыт
-        }
+    if(isAvailable('accounts.num')){
+    	json = callApi('biz/account/account-requisites/' + account.productId.contractId);
+    	getParam(json[0].accountNumber, result, 'accounts.num');
+    }
 
-        if(AnyBalance.isAvailable('accounts.transactions')) {
-            processAccountTransactions(html, result);
-        }
+    if(AnyBalance.isAvailable('accounts.transactions')){
+        //getParam(details, result, 'accounts.status', /Состояние[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces); //Открыт
+
+        //processAccountTransactions(html, result);
     }
 
 }
@@ -185,24 +164,17 @@ function processCards(json, result) {
 	if(!AnyBalance.isAvailable('cards'))
 		return;
 
-    var products = [];
-    for(var i=0; i<json.data.length; ++i){
-        var p = json.data[i];
-        if(p.type == 'card')
-            products.push(p);
-    }
+    var products = json.CARD || [];
 
     AnyBalance.trace('Найдено карт: ' + products.length);
     result.cards = [];
 
     for(var i=0; i < products.length; ++i){
         var p = products[i];
-        if(!p.acc)
-            continue; //Это несозданная виртуальная карта, вероятно
 
-        var id = p.id;
-        var num = p.num;
-        var title = p.title + ' ' + num.substr(-4);
+        var id = p.productId.cardId;
+        var num = p.productNumber;
+        var title = p.label + ' ' + num.substr(-4);
 
 
         var c = {__id: id, __name: title, num: num};
@@ -215,85 +187,40 @@ function processCards(json, result) {
     }
 }
 
-function followDetailsLink(html, re){
-    //Подробнее
-    var href = getParam(html, null, null, re);
-    if(!href)
-        return;
-    return followDetailsLinkStr(html, href);
-}
-
-function followDetailsLinkStr(html, href, options){
-    var form = getElement(html, /<form[^>]+name="mainform"[^>]*>/i);
-    var params = createFormParams(form);
-    params.source = getParam(href, null, null, /source\s*:\s*'([^']*)/);
-    var action = getParam(form, null, null, /<form[^>]+action="([^"]*)/i, replaceHtmlEntities);
-    var url = joinUrl(baseurl, action);
-
-    html = AnyBalance.requestPost(url, params, g_headers, options);
-    return html;
-}
-
-
 function processCard(card, result) {
     AnyBalance.trace('Обработка карты ' + result.__name);
 
-    function parseMain(str){
-        return /основная/i.test(str);
-    }
+    var json = callApi('biz/card/detail', {id: card.productId.cardId});
 
-    getParam(card.acc[0].available, result, 'cards.balance', null, null, parseBalance);
-    getParam(card.acc[0].lock, result, 'cards.blocked', null, null, parseBalance);
-    getParam(card.acc[0].own, result, 'cards.own', null, null, parseBalance);
-    getParam(card.acc[0].credit, result, 'cards.limit', null, null, parseBalance);
-    getParam(card.acc[0].currency, result, ['cards.currency', 'cards.balance', 'cards.blocked', 'cards.own']);
+    getParam(jspath1(json, '$.cardAccountBalanceDetailList[0].availableAmount.value.amount'), result, 'cards.balance');
+    getParam(jspath1(json, '$.cardAccountBalanceDetailList[0].blockedAmount.value.amount'), result, 'cards.blocked');
+    getParam(json.cardNumber, result, 'cards.num');
+    //getParam(card.acc[0].own, result, 'cards.own', null, null, parseBalance);
+    getParam(jspath1(json, '$.creditLimit.value.amount'), result, 'cards.limit');
+    getParam(json.currency, result, ['cards.currency', 'cards.balance', 'cards.blocked', 'cards.own']);
 
-	getParam(card.enddate, result, 'cards.till', null, replaceTagsAndSpaces, parseDate);
-    getParam(card.date_create, result, 'cards.date_start', null, replaceTagsAndSpaces, parseDate);
-    getParam(card.tarif, result, 'cards.tariff');
+	getParam(json.expiryDate, result, 'cards.till');
+    getParam(json.contractSignDate, result, 'cards.date_start', null, null, parseDateISO);
+    getParam(json.tariffPlan, result, 'cards.tariff');
+    getParam(json.status, result, 'cards.status');
 
-    var url = joinUrl(baseurl, card.link);
-    var html = AnyBalance.requestGet(url, g_headers)
+    getParam(jspath1(json, '$.gracePeriodAmount.value.amount'), result, 'cards.gracepay');
+    getParam(jspath1(json, '$.minPaymentAmount.value.amount'), result, 'cards.minpay');
+    getParam(json.gracePeriodDate, result, 'cards.gracepay_till');
 
-    var details = getElement(html, /<div[^>]+b-cash_back[^>]*>/i, replaceHtmlEntities);
-    if(details)
-    	getParam(details, result, 'cards.bonus', /Доступный баланс[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-    else
-    	getParam(html, result, 'cards.bonus', /<td[^>]+cashback-card-block__block-bonus[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-    
+    getParam(json.productId.contractId, result, 'cards.contract');
+    getParam(!card.isAdditionalCard, result, 'cards.main');
 
-    //Ищем таблицу с льготным периодом
-    details = getElements(html, [/<table[^>]+prod-balance[^>]*>/ig, /ьготного периода/i], replaceHtmlEntities)[0];
-    if(details){
-    	getParam(details, result, 'cards.gracepay', /Сумма для реализации Льготного периода[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-    	getParam(details, result, 'cards.gracepay_till', /Дата окончания Льготного периода[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
-    }else{
-    	AnyBalance.trace('Данные о льготном периоде отсуствуют');
+
+    if(isAvailable('cards.accnum')){
+    	json = callApi('biz/account/account-requisites/' + card.productId.contractId);
+    	getParam(json[0].accountNumber, result, 'accounts.accnum');
     }
 
     if(AnyBalance.isAvailable('cards.transactions')) {
-        processCardTransactions(html, result);
+        //processCardTransactions(html, result);
     }
 
-    if(AnyBalance.isAvailable('cards.accnum', 'cards.main', 'cards.status', 'cards.contract', 'cards.excerpt')) {
-        var props = getElement(html, /<div[^>]+b-prod-props[^>]*>/i, replaceHtmlEntities);
-        if(!props){
-        	html = followDetailsLink(html, /<table[^>]+prod-balance_var2[\s\S]*?(<a[^>]+link_more[^>]*>)/i);
-        	props = getElement(html, /<div[^>]+b-prod-props[^>]*>/i, replaceHtmlEntities);
-        }
-
-        getParam(props, result, 'cards.accnum', /Номер счета в банке:([\s\S]*?)<\/p>/i, replaceTagsAndSpaces);
-
-        var details = getElement(html, /<table[^>]+prod-balance_var2[^>]*>/i, replaceHtmlEntities);
-        getParam(details, result, 'cards.main', />\s*Тип[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseMain);
-        getParam(details, result, 'cards.status', />\s*Статус[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces); //Активирована
-        getParam(details, result, 'cards.contract', />\s*Договор[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, [/№/ig, '', replaceTagsAndSpaces]);
-
-        //Счета-выписки по карте
-        if(AnyBalance.isAvailable('cards.excerpt')) {
-            processCardExerpt(html, result);
-        }
-    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -302,6 +229,8 @@ function processCard(card, result) {
 function processDeposits(json, result) {
     if(!AnyBalance.isAvailable('deposits'))
         return;
+
+    throw new AnyBalance.Error('Депозиты временно не поддерживаются. Обращайтесь к разработчику.');
 
     var products = [];
     for(var i=0; i<json.data.length; ++i){
@@ -360,6 +289,8 @@ function processCredits(json, result) {
 	if(!AnyBalance.isAvailable('credits'))
 		return;
 
+    throw new AnyBalance.Error('Кредиты временно не поддерживаются. Обращайтесь к разработчику.');
+
     var products = [];
     for(var i=0; i<json.data.length; ++i){
         var p = json.data[i];
@@ -395,18 +326,6 @@ function processCredits(json, result) {
     }
 }
 
-function getActionUrl(re, actions){
-	for(var i=0; i<actions.length; ++i){
-		var action = actions[i];
-		if(re.test(action.title))
-			return joinUrl(baseurl, action.link);
-	}
-}
-
-function parseBool(str){
-    return /включено/i.test(str);
-}
-
 function processCredit(credit, result, info){
     AnyBalance.trace('Обработка кредита ' + result.__name);
 
@@ -433,14 +352,22 @@ function processCredit(credit, result, info){
    		processCreditSchedule(url, result);
    	}
 }
+                    
+function processBonus(html, result){
+    if(!AnyBalance.isAvailable('bonus'))
+        return;
+
+	var json = callApi('biz/bonus-list');
+	getParam(jspath1(json[0], '$.balance.value.amount'), result, 'bonus');
+}
 
 function processInfo(html, result){
     if(!AnyBalance.isAvailable('info'))
         return;
 
-    html = AnyBalance.requestGet(baseurl + 'rs/settings/Settings.jspx', g_headers);
+    var json = callApi('biz/user-settings/personal');
     var info = result.info = {};
-    getParam(html, info, 'info.fio', /&#1048;&#1084;&#1103; ([^<]*)/i, replaceTagsAndSpaces);
-    getParam(html, info, 'info.login', /<input[^>]+name="mainform:login"[^>]*value="([^"]*)/i, replaceHtmlEntities);
-    getParam(html, info, 'info.email', /<input[^>]+name="mainform:email"[^>]*value="([^"]*)/i, replaceHtmlEntities);
+
+    getParam(jspath1(json, '$.fullName.value'), info, 'info.fio');
+    getParam(jspath1(json, '$.email.value'), info, 'info.email');
 }

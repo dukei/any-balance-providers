@@ -14,6 +14,14 @@ var g_headers = {
 	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.100 Safari/537.36',
 };
 
+function throwError(html, defError){
+	var error = getElement(html, /<div[^>]+text-danger/i, replaceTagsAndSpaces);
+	if(error)
+		throw new AnyBalance.Error(error);
+	AnyBalance.trace(html);
+	throw new AnyBalance.Error(defError);
+}
+
 function main() {
 	var prefs = AnyBalance.getPreferences();
 	AnyBalance.setDefaultCharset('utf-8');
@@ -56,6 +64,62 @@ function main() {
 		RequestVerificationToken: rvt,
 		'Content-Type': 'application/json'
 	}));
+
+	if(/SelectedChannelId/.test(html)){
+		AnyBalance.trace('Просим подтвердить Вашу личность одним из доступных способов');
+
+		var label = getElement(html, /<label[^>]+for="0"/i, replaceTagsAndSpaces);
+		if(!label){
+			throwError(html, 'Не удаётся найти вариант подтверждения входа. Сайт изменен?');
+		}
+
+		rvt = getParam(html, /<input[^>]+__RequestVerificationToken[^>]*value="([^"]*)/i, replaceHtmlEntities);
+	   	
+		html = AnyBalance.requestPost(baseurl + 'account/login', JSON.stringify({
+            "GoForward": true,
+            "Data": [
+                {
+                    "name": "SelectedChannelId",
+                    "value": "0"
+                },
+                {
+                    "name": "__RequestVerificationToken",
+                    "value": rvt
+                }
+            ]
+		}), addHeaders({
+			RequestVerificationToken: rvt,
+			'Content-Type': 'application/json'
+		}));
+
+		if(!/<input[^>]+name="Otp"/i.test(html)){
+			throwError(html, 'Не удалось запросить подтверждение входа. Сайт изменен?');
+		}
+
+		var code = AnyBalance.retrieveCode('Пожалуйста, введите код, высланный на ' + label, null, {inputType: 'number', time: 180000});
+
+		rvt = getParam(html, /<input[^>]+__RequestVerificationToken[^>]*value="([^"]*)/i, replaceHtmlEntities);
+		html = AnyBalance.requestPost(baseurl + 'account/login', JSON.stringify({
+            "GoForward": true,
+            "Data": [
+                {
+                    "name": "Otp",
+                    "value": code
+                },
+                {
+                    "name": "__RequestVerificationToken",
+                    "value": rvt
+                }
+            ]
+		}), addHeaders({
+			RequestVerificationToken: rvt,
+			'Content-Type': 'application/json'
+		}));
+	
+		if(/<input[^>]+name="Otp"/i.test(html)){
+			throwError(html, 'Не удалось запросить подтверждение входа. Сайт изменен?');
+		}
+	}
 
 	json = {error: 'Не удалось войти в личный кабинет. Неверный логин и пароль или сайт изменен'};
 	try{

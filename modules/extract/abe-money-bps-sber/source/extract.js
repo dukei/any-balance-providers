@@ -5,7 +5,7 @@
 var g_headers = {
 	Accept: 'application/json; charset=UTF-8',
 	'X-Sbol-OS': 'android',
-	'X-Sbol-Version': '1.0.5',
+	'X-Sbol-Version': '1.2.1',
 	'X-Sbol-Id': '',
 	'Connection': 'Keep-Alive',
 	'User-Agent': 'okhttp/3.6.0',
@@ -239,7 +239,8 @@ function processCard(card, result, acc) {
     getParam(card.status, result, 'cards.status'); //0 - активный?
     getParam(card.monthEnd + '/' + card.yearEnd, result, 'cards.till', null, replaceTagsAndSpaces, parseDate); 
     getParam(acc.currencyName, result, ['cards.currency', 'cards.balance']); 
-
+    getParam(acc.amount, result, 'cards.balance'); 
+/*
     if(AnyBalance.isAvailable('cards.balance')){
     	var end = card.yearEnd + '-' + card.monthEnd + '-15';
     	var json = apiCall('rest/client/balance', JSON.stringify({
@@ -250,7 +251,7 @@ function processCard(card, result, acc) {
 
     	getParam(json.amount, result, 'cards.balance'); 
     }
-
+*/
 	if(isAvailable('cards.transactions'))
 		processCardTransactions(card, result);
 }

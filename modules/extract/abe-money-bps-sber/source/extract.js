@@ -240,18 +240,22 @@ function processCard(card, result, acc) {
     getParam(card.monthEnd + '/' + card.yearEnd, result, 'cards.till', null, replaceTagsAndSpaces, parseDate); 
     getParam(acc.currencyName, result, ['cards.currency', 'cards.balance']); 
     getParam(acc.amount, result, 'cards.balance'); 
-/*
-    if(AnyBalance.isAvailable('cards.balance')){
-    	var end = card.yearEnd + '-' + card.monthEnd + '-15';
-    	var json = apiCall('rest/client/balance', JSON.stringify({
-    		cardExpire: end,
-    		cardId: card.cardId,
-    		currency: acc.currencyCode
-    	}));
 
-    	getParam(json.amount, result, 'cards.balance'); 
+    if(AnyBalance.isAvailable('cards.balance')){
+    	try{
+    		var end = card.yearEnd + '-' + card.monthEnd + '-15';
+    		var json = apiCall('rest/client/balance', JSON.stringify({
+    			cardExpire: end,
+    			cardId: card.cardId,
+    			currency: acc.currencyCode
+    		}));
+    	    
+    		getParam(json.amount, result, 'cards.balance');
+    	}catch(e){
+    		AnyBalance.trace('Невозможно получить актуальный баланс для карты ' + result.__name + '. Заблокирована? Получаем баланс из счета.');
+    	}
     }
-*/
+
 	if(isAvailable('cards.transactions'))
 		processCardTransactions(card, result);
 }

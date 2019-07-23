@@ -3,118 +3,98 @@
 */
 
 var g_headers = {
-    'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:12.0) Gecko/20100101 Firefox/12.0',
-    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-    'Accept-Language': 'ru-ru,ru;q=0.8,en-us;q=0.5,en;q=0.3',
-    'Accept-Encoding': 'gzip, deflate',
-    'Connection': 'keep-alive'
+	Connection: 'keep-alive',
+	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.142 Safari/537.36',
+	Origin: 'https://my.beltelecom.by',
+	Referer: 'https://my.beltelecom.by/check-balance',
+	'Accept-Language': 'en-GB,en;q=0.9,ru-RU;q=0.8,ru;q=0.7,en-US;q=0.6',
 };
+
+function encodeInt(e) {
+    var t = "", r = 64;
+    var a = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-_".split("")
+    do {
+        t = a[e % r] + t,
+        e = Math.floor(e / r)
+    } while (e > 0);
+    return t;
+}
 
 function main(){
     var prefs = AnyBalance.getPreferences();
 
-    var baseurl = 'https://issaold.beltelecom.by/';
+    var html = AnyBalance.requestPost('https://myapi.beltelecom.by/api/v1/contracts/check/balance', JSON.stringify({
+  		"login": prefs.login,
+  		"password": prefs.password,
+	}), addHeaders({
+		Accept: 'application/json',
+		'content-type': 'application/json',
+		hl: 'ru',
+		'X-Client': 'web',
+	}));
 
-    AnyBalance.trace('Entering ' + baseurl);
-
-    var html = AnyBalance.requestGet(baseurl, g_headers);
-    var code;
-    if(/<input[^>]+name="cap_field"/i.test(html)){
-        //Требуется капча, черт
-        AnyBalance.trace('Затребовали капчу...');
-        var lnk = getParam(html, null, null, /<img[^>]+src="\/([^"]*)"[^>]*id="capcher"/i, null, html_entity_decode);
-        var captcha = AnyBalance.requestGet(baseurl + lnk, g_headers);
-        code = AnyBalance.retrieveCode('Пожалуйста, введите код с картинки', captcha);
-    }
-
-    html = AnyBalance.requestPost(baseurl + "main.html", {
-        redirect: '/main.html',
-        oper_user: prefs.login,
-        passwd: prefs.password,
-        cap_field: code
-    }, g_headers);
-
-
-    if(!/\/logout/i.test(html)){
-        var error = getParam(html, null, null, /\$\.jGrowl\('([^']*)/, [replaceSlashes, replaceTagsAndSpaces], html_entity_decode);
-        if(error)
-            throw new AnyBalance.Error(error, null, /Введен неверный пароль или абонент не существует/i.test(error));
-        error = getParam(html, null, null, /<div[^>]+id="error"[^>]*>([\s\S]*?)<\/div>/, replaceTagsAndSpaces, html_entity_decode);
-        if(error)
-            throw new AnyBalance.Error(error, null, /пользователя не существует/i.test(error));
-        if(/Вы совершаете слишком частые попытки авторизации/i.test(html))
-            throw new AnyBalance.Error('Вы совершаете слишком частые попытки авторизации. К сожалению, Белтелеком вынужден вас заблокировать на 10 минут.');
-        AnyBalance.trace(html);
-        throw new AnyBalance.Error('Не удалось войти в личный кабинет. Сайт изменен?');
-    }
-
-	var forcedChoice = /choice/i.test(AnyBalance.getLastUrl());
-	
-	// Указан номер - надо переключиться
-	if(prefs.number || forcedChoice) {
-		var login = forcedChoice ? 'надо выбрать' : getParam(html, /Логин[^<]+?(\d{6,})/i);
-		AnyBalance.trace('Залогинены на номер: ' + login);
-		
-		if((prefs.number && !endsWith(login, prefs.number)) || forcedChoice) {
-			var post = getParam(html, null, null, new RegExp('SendPost\\(\'(\\?pril_sel=\\d*' + (prefs.number || prefs.login) + '[^)\']+)', 'i'));
-			if(!post && prefs.number){
-				AnyBalance.trace(html);
-				throw new AnyBalance.Error('Не найден логин с последними цифрами ' + (prefs.number || prefs.login));
-			}else if(!post){
-				AnyBalance.trace('Не найден логин ' + prefs.login + ', но считаем, что нам его и надо\n' + html);
-			}else{
-				html = AnyBalance.requestPost(baseurl + "choice.html", {
-					'pril_sel':getParam(post, null, null, /pril_sel=([^&]+)/i),
-					'live':getParam(post, null, null, /live=([^&]+)/i),
-					'chpril':getParam(post, null, null, /chpril=([^&]+)/i),
-				}, g_headers);
-			    
-				login = getParam(html, /Логин[^<]+?(\d{6,})/i);
-				
-				AnyBalance.trace('Переключились на логин ' + login + ' с последними цифрами: ' + (prefs.number || prefs.login));
-			}
-		} else {
-			AnyBalance.trace('Уже залогинены на правильный номер: ' + login);
+	var json = getJson(html);
+	if(!json.channel){
+		var error = '';
+		for(var n in json){
+			error += n + ': ' + json[n].join('\n') + '\n';
 		}
+		if(error)
+			throw new AnyBalance.Error(error, null, /логин|парол/i.test(error));
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удалось войти, сайт изменен?');
 	}
 
-    if(!/<h1[^>]*>Состояние счета<\/h1>/i.test(html)){
-        AnyBalance.trace('Оказались не на состоянии счета, переходим туда явно');
-        html = AnyBalance.requestGet(baseurl + 'main.html', g_headers);
-    }
+	AnyBalance.trace('Channel id: ' + json.channel);
 
-    var result = {success: true};
+	html = AnyBalance.requestGet('https://myws.beltelecom.by/socket.io/?EIO=3&transport=polling&t=' + encodeInt(+new Date()), addHeaders({
+	    Accept: '*/*',
+	}));
 
-	getParam(html, result, 'login', /Логин[^<]+?(\d{6,})/i);
+	var sess = getJsonObject(html);
+	AnyBalance.trace('sid: ' + sess.sid);
 
-    getParam(html, result, 'balance', /Актуальный баланс:[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'username', /<td[^>]*>Абонент<[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
-    getParam(html, result, 'agreement', /Договор (?:&#8470;|№)([^<]*)/i, replaceTagsAndSpaces);
-    getParam(html, result, '__tariff', /<td[^>]*>Тарифный план на услуги<[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
-    getParam(html, result, 'status', />Статус блокировки<[\s\S]*?<td[^>]*>([\s\S]*?)(?:<a|<\/td>)/i, replaceTagsAndSpaces);
+	html = AnyBalance.requestPost('https://myws.beltelecom.by/socket.io/?EIO=3&transport=polling&sid=' + sess.sid + '&t=' + encodeInt(+new Date()),
+		'150:42' + JSON.stringify(
+			["subscribe",{"channel":json.channel,"auth":{"headers":{"Authorization":"Bearer undefined"}}}]
+		),
+		addHeaders({
+	    	Accept: '*/*',
+	    	'Content-type': 'text/plain;charset=UTF-8'
+		}));
 
-    if(AnyBalance.isAvailable('last_pay_date', 'last_pay_sum', 'last_pay_comment')){
-        html = AnyBalance.requestGet(baseurl + 'payact.html', g_headers);
-        var row = getParam(html, null, null, /Зачисленные платежи за последние \d+ дн(?:[\s\S](?!<\/table>))*?(<td[^>]*>\d\d\.\d\d\.\d{2,4} \d\d:\d\d:\d\d<[\s\S]*?)<\/tr>/i);
-        if(row){
-            getParam(row, result, 'last_pay_date', /(?:[\s\S]*?<td[^>]*>)([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
-            getParam(row, result, 'last_pay_sum', /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-            getParam(row, result, 'last_pay_comment', /(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
-        }else{
-            AnyBalance.trace('Последний платеж не найден...');
-        }
-    }
-	
-	if(AnyBalance.isAvailable('traf_used', 'traf_left', 'traf_total')) {
-		html = AnyBalance.requestGet(baseurl + 'statact.html', g_headers);
-		
-		getParam(html, result, ['traf_used', 'traf_total'], /трафик(?:[^>]*>){6}([\s\d.]+(?:М|К|Г)Б)/i, replaceTagsAndSpaces, parseTraffic);
-		getParam(html, result, ['traf_left', 'traf_total'], /трафик(?:[^>]*>){8}([\s\d.]+(?:М|К|Г)Б)/i, replaceTagsAndSpaces, parseTraffic);
-		
-		if(isset(result.traf_used) && isset(result.traf_left)) {
-			getParam(result.traf_used + result.traf_left, result, 'traf_total');
-		}	
+	if(html !== 'ok'){
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Ошибка подписки на баланс. Сайт изменен?');
 	}
-	
+
+	json = [];
+	for(var i=0; i<20; ++i){
+		html = AnyBalance.requestGet('https://myws.beltelecom.by/socket.io/?EIO=3&transport=polling&sid=' + sess.sid + '&t=' + encodeInt(+new Date()),
+			addHeaders({
+	    		Accept: '*/*',
+			}));
+
+	    AnyBalance.trace('Попытка ' + (i+1) + '/20: ' + html);
+		
+		json = getJsonObject(html);
+		if(json && json[2])
+			break;
+	}
+
+	if(!json[2]){
+		throw AnyBalance.Error('Не удалось получить баланс. Сайт изменен?');
+	}
+
+	if(json[2].status !== 'success'){
+		var error = json[2].message;
+		throw AnyBalance.Error(error, null, /парол/i.test(error));
+	}
+
+	var result = {success: true};
+    
+    getParam(json[2].balance, result, 'balance');
+    getParam(json[2].tariff, result, '__tariff');
+    getParam(json[2].message, result, 'agreement');
     AnyBalance.setResult(result);
 }

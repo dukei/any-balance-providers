@@ -1,11 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="10">ab-internet-byfly</id>
+	<id version="11">ab-internet-byfly</id>
 	<api flags="no_browser"/>
 	<name>ByFly</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию из ИССА ByFly - торговой марки «Белтелеком», в рамках которой предлагается широкополосный доступ в сеть Интернет.</p>
-	<p>Информация берется из личного кабинета (http://issa.beltelecom.by).</p>
+	<p>Информация берется из личного кабинета (https://my.beltelecom.by/check-balance).</p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>

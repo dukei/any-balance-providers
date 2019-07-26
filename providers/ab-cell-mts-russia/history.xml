@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="4.1" version="184" date="2019-07-26">
+	Исправлена капча
+	</change>
 	<change major_version="4.1" version="183" date="2019-07-25">
 	Обновление через мобильный интернет
 	</change>

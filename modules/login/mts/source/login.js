@@ -4,7 +4,7 @@ function checkLoginError(html, loginUrl) {
 	function processError(html){
         var error = sumParam(html, null, null, /var\s+(?:passwordErr|loginErr)\s*=\s*'([^']*)/g, replaceSlashes, null, aggregate_join);
         if (error)
-            throw new AnyBalance.Error(error, null, /Неверный пароль/i.test(error));
+            throw new AnyBalance.Error(error, null, /логин|парол/i.test(error));
 
         var error = getElement(html, /<div[^>]+b-page_error__msg[^>]*>/, replaceTagsAndSpaces);
         if(error)
@@ -12,18 +12,18 @@ function checkLoginError(html, loginUrl) {
 	}
 
     processError(html);
-    var img = getParam(html, /<img[^>]+id="kaptchaImage"[^>]*/i);
+    var img = getElement(html, /<[^>]+captcha-wrapper/i);
     if(img){
-        img = getParam(img, /data:image\/\w+;base64,([^"]+)/i, replaceHtmlEntities);
+        img = getParam(img, /data:image\/\w+;base64,([^'"]+)/i, replaceHtmlEntities);
     }
     if(img && img.indexOf('iVBORw0KGgoAAAANSUhEUgAAANMAAAA6CAIAAAClLvvEAAAeQElEQVR42u3de7yVVZkH8NTQSi3N7uUltQuaoGFp') >= 0){
     	AnyBalance.trace('Капча спрятана. Ищем её в другом месте');
     	img = null;
     }
     if(!img){
-    	img = getParam(html, /var\s+_0x[\da-f]+\s*=\s*\[\s*"([^"]*)/);
+    	img = getParam(html, /#captcha-wrapper\s*\{[^\}]*/);
     	if(img){
-        	img = getParam(Base64.decode(img), /data:image\/\w+;base64,([^"]+)/i);
+        	img = getParam(img, /data:image\/\w+;base64,([^'"]+)/i);
     		if(!img){
     			AnyBalance.trace(html);
     			throw new AnyBalance.Error('Не удалось найти капчу. Сайт изменен?');

@@ -68,10 +68,13 @@ function main() {
 	if(/SelectedChannelId/.test(html)){
 		AnyBalance.trace('Просим подтвердить Вашу личность одним из доступных способов');
 
-		var label = getElement(html, /<label[^>]+for="0"/i, replaceTagsAndSpaces);
+		var label = getElement(html, /<label[^>]+for="[^"]+"/i);
 		if(!label){
 			throwError(html, 'Не удаётся найти вариант подтверждения входа. Сайт изменен?');
 		}
+
+		var channelId = getParam(label, /<label[^>]+for="([^"]+)"/i, replaceHtmlEntities);
+		label = replaceAll(label, replaceTagsAndSpaces);
 
 		rvt = getParam(html, /<input[^>]+__RequestVerificationToken[^>]*value="([^"]*)/i, replaceHtmlEntities);
 	   	
@@ -80,7 +83,7 @@ function main() {
             "Data": [
                 {
                     "name": "SelectedChannelId",
-                    "value": "0"
+                    "value": channelId
                 },
                 {
                     "name": "__RequestVerificationToken",

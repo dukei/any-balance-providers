@@ -122,7 +122,15 @@ function callApi(verb, params){
 function mainPhysicNew(result){
     var prefs = AnyBalance.getPreferences();
 
-    var json = callApi('user/login', {"login":prefs.login,"password":prefs.password});
+    AnyBalance.requestGet('https://customer.licard.ru/api/init', addHeaders({Accept: 'application/vnd.licard-b2c.v1+json'}));
+    var html = AnyBalance.requestGet('https://customer.licard.ru/api/user/login-captcha', addHeaders({Accept: 'application/vnd.licard-b2c.v1+json'}));
+    var json = getJson(html);
+
+    var img = getParam(json.captcha, /base64,(.*)/);
+
+    var captcha = AnyBalance.retrieveCode('Пожалуйста, введите код с картинки', img);
+
+    var json = callApi('user/login', {captcha: captcha, "login":prefs.login,"password":prefs.password});
 
     var aggregate_join_space = create_aggregate_join(' ');
     

@@ -102,6 +102,18 @@ function main() {
  		}
  	}
 
+ 	if(!/overviewSkypeName/i.test(info)){
+ 		var form = getElement(info, /<form[^>]+fProofFreshness/i);
+ 		if(form){
+ 			AnyBalance.trace('We need to confirm security data freshness');
+ 			var params = createFormParams(form);
+ 			var action = AnyBalance.getLastUrl();
+ 			AnyBalance.trace('Confirming to ' + action);
+ 			info = AnyBalance.requestPost(action, params, addHeaders({Referer: AnyBalance.getLastUrl()}));
+ 			info = redirectIfNeeded(info);
+ 		}
+ 	}
+
  	if (!/overviewSkypeName/i.test(info)) {
 	 	var json = getJsonObject(info, /var\s+\$Config\s*=\s*/);
 	 	if(json && json.WLXAccount && json.WLXAccount.confirmIdentity){

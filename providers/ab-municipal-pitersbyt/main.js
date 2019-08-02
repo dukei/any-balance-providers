@@ -8,17 +8,16 @@
 */
 
 var g_headers = {
-	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
-	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
+	'Accept': 'application/json, text/plain, */*',
+	'Accept-Language': 'en-GB,en;q=0.9,ru-RU;q=0.8,ru;q=0.7,en-US;q=0.6',
 	'Connection': 'keep-alive',
-	'User-Agent': 'Mozilla/5.0 (windows nt 10.0; win64; x64) applewebkit/537.36 (khtml, like gecko) chrome/46.0.2490.86 safari',
+	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.142 Safari/537.36',
 };
 
 function main(){
     var prefs = AnyBalance.getPreferences();
     var baseurl = 'https://ikus.pesc.ru/';
-    g_headers.Origin = baseurl.replace(/\/+$/, '');
+    g_headers.Origin = baseurl.replace(/\/$/, '');
 
     checkEmpty(prefs.login, 'Введите e-mail!');
     checkEmpty(prefs.password, 'Введите пароль!');
@@ -27,13 +26,13 @@ function main(){
 
     var html = AnyBalance.requestGet(baseurl, g_headers);
 
-    html = AnyBalance.requestPost(baseurl + 'application/authentication', {
+    html = AnyBalance.requestPost(baseurl + 'application/v3/auth/login', JSON.stringify({
 		username:	prefs.login,
 		password:	prefs.password
-	}, addHeaders({Referer: baseurl}));
+	}), addHeaders({'Content-Type': 'application/json', Referer: baseurl}));
 
 	var json = getJson(html);
-	if(!json.authenticationSuccess){
+	if(!json.access_token){
 		AnyBalance.trace(html);
 		var error = json.errors.reduce(function(acc, cur) { acc.push(cur.message); return acc; }, []).join(';\n');
 		if(error)
@@ -41,15 +40,26 @@ function main(){
 		throw new AnyBalance.Error('Не удалось войти в личный кабинет. Сайт изменен?');
 	}
 
+	g_headers.Authorization = 'Bearer ' + json.access_token;
+
+	//html = AnyBalance.requestGet(baseurl + 'application/v3/profile', addHeaders({Referer: baseurl}));
+	//json = getJson(html);
+	
+	html = AnyBalance.requestGet(baseurl + 'application/v3/groups', addHeaders({Referer: baseurl}));
+	json = getJson(html);
+
+	var accounts = [];
+	for(var i=0; i<json.length; ++i){
+		let g = json[i].id;
+
+		html = AnyBalance.requestGet(baseurl + 'application/v3/groups/' + g + '/accounts', addHeaders({Referer: baseurl}));
+		json = getJson(html);
+		accounts.push.apply(accounts, json);
+	}
+
 //	html = AnyBalance.requestGet(baseurl + 'application/api/checkAuthentication', addHeaders({Referer: baseurl}));
 //	json = getJson(html);
 
-	html = AnyBalance.requestGet(baseurl + 'application/accounts', addHeaders({Referer: baseurl}));
-	json = getJson(html);
-	var accounts = [];
-	for(var st in json){
-		accounts.push.apply(accounts, json[st]);
-	}
 
 	if(!accounts.length){
 		AnyBalance.trace(html);
@@ -62,34 +72,30 @@ function main(){
 
 	for(var i=0; i<accounts.length; ++i){
 		var acc = accounts[i];
-		sumParam(acc.accountNumber, result, 'licschet', null, null, null, aggregate_join);
-		var name_balance = 'balance' + (i || ''), name_peni = 'peni' + (i || '')
-		var type = acc.providerName;
 
-		AnyBalance.trace('Found account: ' + JSON.stringify(acc));
+		for(var j=0; j<acc.accountDisplayKey.length; ++j){
+			var f = acc.accountDisplayKey[j];
+			if(f.fieldCode === '001')
+				sumParam(f.fieldValue, result, 'licschet', null, null, null, aggregate_join);
+		}
+
+		var name_balance = 'balance' + (i || ''), name_peni = 'peni' + (i || '')
+
+		AnyBalance.trace('Found account: ' + JSON.stringify(json));
 
 		if(AnyBalance.isAvailable(name_balance, name_peni)){
-			html = AnyBalance.requestPost(baseurl + 'application/accounts/' + type + '/balance', JSON.stringify({
-				accountNumber: acc.accountNumber,
-				serviceType: acc.serviceName
-			}), addHeaders({
-				Referer: baseurl,
-				'Content-Type': 'application/json'
-			}));
+			html = AnyBalance.requestGet(baseurl + 'application/v3/accounts/' + acc.accountId + '/data', addHeaders({Referer: baseurl}));
+			json = getJson(html);
 
-			var _json = getJson(html);
-			getParam(_json.accountBalance, result, name_balance);
-			getParam(_json.accountFine, result, name_peni);
+			getParam(json.balanceDetails.balance, result, name_balance);
+			for(var k=0; k<json.balanceDetails.subServiceBalances.length; ++k){
+				var ss = json.balanceDetails.subServiceBalances[k];
+				sumParam(ss.fine, result, name_peni, null, null, null, aggregate_sum);
+			}
 		}
 
 		if(isAvailable('__tariff')){
-			html = AnyBalance.requestPost(baseurl + 'application/accounts/' + type + '/address', JSON.stringify({
-				accountNumber: acc.accountNumber,
-				serviceType: acc.serviceName
-			}), addHeaders({
-				Referer: baseurl,
-				'Content-Type': 'application/json'
-			}));
+			html = AnyBalance.requestGet(baseurl + 'application/v3/accounts/' + acc.accountId + '/common-info', addHeaders({Referer: baseurl}));
 
 			var _json = getJson(html);
 			sumParam(_json.address, result, '__tariff', null, null, null, aggregate_join);

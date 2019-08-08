@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="6" date="2019-08-08">
+	- Поддержка изменений на сайте.
+	</change>
 	<change version="5" date="2018-01-13">
 	Added tariff string
 	</change>

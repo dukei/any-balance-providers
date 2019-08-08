@@ -5,6 +5,7 @@ var g_headers =
 	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
 	'Accept-Language': 'en-US',
 	'Connection': 'keep-alive',
+	'X-CMC_PRO_API_KEY': 'dd7a8fa5-f522-40dc-83dc-b1fc15e9cd36',
 	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
 };
 
@@ -32,33 +33,28 @@ function currencyId(symbol)
 
     // don't have it? shit! fetch the huge list
     AnyBalance.trace("Finding out cryptocurrency ID..."); 
-    var url = "https://api.coinmarketcap.com/v1/ticker/?limit=0";
+    var url = "https://pro-api.coinmarketcap.com/v1/cryptocurrency/map?symbol=" + symbol;
     var html = AnyBalance.requestGet(url, g_headers);
     var json = getJson(html);
-    
-    // find the currency
-    for (var i = 0; i < json.length; i++)
-    {
-        if (json[i].symbol==symbol)
-        {
-            AnyBalance.setData(symbol, json[i].id);
-            AnyBalance.saveData();            
-            return(json[i].id);
-        }
+
+    if(!json.status || json.status.error_code){
+    	var error = json.status && json.status.error_message;
+    	if(error)
+    		throw new AnyBalance.Error(error, null, /Invalid/i.test(error));
+    	AnyBalance.trace(html);
+    	throw new AnyBalance.Error('Could not receive CMC id for the ticker');
     }
-    
-    // oops
-    throw new AnyBalance.Error("Unknow cryptocurrency code.");
+
+    id = json.data[0].slug;
+    AnyBalance.setData(symbol, id);
+    AnyBalance.saveData();
+    return id;
 }
 
 
 // main entry point
 function main() 
 {
-	// make sure the data save/resore API is supported
-	if (AnyBalance.getLevel()<9)
-        throw new AnyBalance.Error("This provider requires a newer Anybalance version.");
-    
     // get and check preferences
 	AnyBalance.setDefaultCharset('utf-8');
     var prefs = AnyBalance.getPreferences();

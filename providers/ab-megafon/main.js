@@ -2003,11 +2003,11 @@ function megafonLK(filial, html){
 		getParam(info.balance, result, 'balance');
 	}
 
-	if(AnyBalance.isAvailable('bonus_balance')){
+/*	if(AnyBalance.isAvailable('bonus_balance')){
 		info = requestPipe(csrf, 'lk/main/bonuses');
 		getParam(info.balance, result, 'bonus_balance');
 	}
-
+*/
 	if(AnyBalance.isAvailable('balance', 'credit')){
 		info = requestPipe(csrf, 'lk/main/atourexpense');
 		getParam(info.balance, result, 'balance');
@@ -2025,12 +2025,12 @@ function megafonLK(filial, html){
 		megafonLKRemainders(filial, html, result);
 	}
 
-	if(AnyBalance.isAvailable(/*'bonus_burn', */'bonus_status')){
+/*	if(AnyBalance.isAvailable('bonus_burn', 'bonus_status')){
 		html = AnyBalance.requestGet(lk_url + 'bonus/', g_headers);
 //		getParam(html, result, 'bonus_burn', /<div[^>]+gadget-bonus-summ-2[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
 		getParam(html, result, 'bonus_status', /<div[^>]+gadget_bonus_status[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
 	}
-
+*/
 	if(AnyBalance.isAvailable('sub_soi', 'sub_smit', 'sub_smio', 'sub_scl', 'sub_scr', 'internet_cost',	'last_pay_sum', 'last_pay_date')) {
 		//html = AnyBalance.requestGet(lk_url + 'historyNew/', g_headers);
 		try {

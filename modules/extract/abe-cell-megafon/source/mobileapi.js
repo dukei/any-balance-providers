@@ -94,17 +94,16 @@ function megafonLkAPILogin(options){
 }
 
 function megafonLkAPIDo(options, result) {
-    if (AnyBalance.isAvailable('phone', 'balance', 'bonus_balance', 'tariff', 'credit')) {
-        json = callAPI('get', 'api/main/info');
+    if (AnyBalance.isAvailable('phone')) {
+        getParam(prefs.login, result, 'phone', null, replaceNumber);
+    }
+     
+    if (AnyBalance.isAvailable('balance', 'credit', 'available')) {
+        json = callAPI('get', 'api/main/balance');
 
-        getParam(json.msisdn, result, 'phone', null, replaceNumber);
-        getParam(json.balance + '', result, 'available', null, replaceTagsAndSpaces, parseBalance);
-        getParam(json.originalBalance + '', result, 'balance', null, replaceTagsAndSpaces, parseBalance);
-        getParam(json.bonusBalance + '', result, 'bonus_balance', null, replaceTagsAndSpaces, parseBalance);
-        getParam((json.balance-json.originalBalance) + '', result, 'credit', null, replaceTagsAndSpaces, parseBalance);
-
-        if (json.ratePlan)
-            getParam(json.ratePlan.name, result, 'tariff', null, replaceTagsAndSpaces);
+        getParam(json.balanceWithLimit + '', result, 'available', null, replaceTagsAndSpaces, parseBalance);
+        getParam(json.balance + '', result, 'balance', null, replaceTagsAndSpaces, parseBalance);
+        getParam((json.balanceWithLimit - json.balance) + '', result, 'credit', null, replaceTagsAndSpaces, parseBalance);
     }
 
     if(AnyBalance.isAvailable('tariff') && !result.tariff){

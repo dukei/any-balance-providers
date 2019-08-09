@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="36" date="2019-08-10">
+	Исправлены кредитные карты
+	</change>
 	<change version="35" date="2019-08-10">
 	Исправление получения информации по кредиткам
 	</change>

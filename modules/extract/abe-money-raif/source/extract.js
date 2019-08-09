@@ -133,6 +133,12 @@ function processCard(info, result) {
 	getParam(info.paymentSystem.name, result, 'cards.shortType');
 	getParam(info.rate, result, 'cards.rate');
 
+	function isAvailableButUnset(param){
+    	if(isAvailable(param) && !isset(result[param]))
+        	return true;
+    	return false;
+	}
+
 	// Кредитные карты
 	if (info.type.id == '2' && (isAvailable(['cards.totalCreditDebtAmount', 'cards.clearBalance', 'cards.own']) || isAvailableButUnset('cards.limit') || isAvailableButUnset('cards.minpay'))) {
 		var creditCard = callApi('rest/account/' + info.accountId + '/statement/current?alien=false');
@@ -285,9 +291,4 @@ function processLoan(loan, result) {
 	//	processLoanTransactions(loan, result);
 }
 
-function isAvailableButUnset(param){
-    if(isAvailable(param) && !isset(result[param]))
-        return true;
-    return false;
-}
 

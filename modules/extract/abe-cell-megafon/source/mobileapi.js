@@ -94,6 +94,8 @@ function megafonLkAPILogin(options){
 }
 
 function megafonLkAPIDo(options, result) {
+	var prefs = AnyBalance.getPreferences();
+
     if (AnyBalance.isAvailable('phone')) {
         getParam(prefs.login, result, 'phone', null, replaceNumber);
     }

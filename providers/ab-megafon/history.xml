@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="3.1" version="227" date="2019-08-09">
+	Исправление получения номера телефона
+	</change>
 	<change major_version="3.1" version="226" date="2019-08-08">
 	поддержка изменений в процедуре входа
 	</change>

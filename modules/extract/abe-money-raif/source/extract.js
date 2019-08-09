@@ -285,3 +285,9 @@ function processLoan(loan, result) {
 	//	processLoanTransactions(loan, result);
 }
 
+function isAvailableButUnset(param){
+    if(isAvailable(param) && !isset(result[param]))
+        return true;
+    return false;
+}
+

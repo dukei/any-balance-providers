@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="14" date="2019-08-12">
+	- Поддержка изменений в процедуре входа
+	</change>
 	<change version="13" date="2019-06-20">
 	Поддержка старых версий Android
 	</change>

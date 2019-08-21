@@ -26,9 +26,12 @@ function main(){
 
     var html = AnyBalance.requestGet(baseurl, g_headers);
 
+    var captcha = solveRecaptcha('Пожалуйста, докажите, что вы не робот', baseurl, '6Lep5K0UAAAAADF48l3jpw8QuqUKVQuOUxzM21HJ');
+
     html = AnyBalance.requestPost(baseurl + 'application/v3/auth/login', JSON.stringify({
 		username:	prefs.login,
-		password:	prefs.password
+		password:	prefs.password,
+		captchaCode: captcha,
 	}), addHeaders({'Content-Type': 'application/json', Referer: baseurl}));
 
 	var json = getJson(html);

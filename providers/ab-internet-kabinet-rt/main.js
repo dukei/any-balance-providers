@@ -148,14 +148,19 @@ function main(){
 
     var code = AnyBalance.retrieveCode('Пожалуйста, введите слова с картинки', img);
 */
+	var html = AnyBalance.requestPost(baseurl + 'client-api/checkSession', JSON.stringify({
+		client_uuid: generateUUID(), 
+		current_page: ''
+	}), addHeaders({Referer: baseurl}));
+
 
     var state = generateUUID();
-    var html = AnyBalance.requestGet('https://b2c.passport.rt.ru/auth/realms/b2c/protocol/openid-connect/auth?' + createUrlEncodedParams({
+    html = AnyBalance.requestGet('https://b2c.passport.rt.ru/auth/realms/b2c/protocol/openid-connect/auth?' + createUrlEncodedParams({
     	response_type: 'code',
     	scope: 'openid',
     	client_id: 'lk_b2c',
     	state: state,
-    	redirect_uri: 'https://lk.rt.ru/sso-auth/'
+    	redirect_uri: 'https://lk.rt.ru/sso-auth/?redirect=https%3A%2F%2Flk.rt.ru%2F'
     }), g_web_headers);
 
 	if(/Личный кабинет временно недоступен/i.test(html)) {
@@ -189,12 +194,16 @@ function main(){
 		throw new AnyBalance.Error('Не удалось войти в личный кабинет. Сайт изменен?');
 	}
 
-    var uuid = generateUUID();
-	html = AnyBalance.requestPost(baseurl + 'client-api/getAccounts', JSON.stringify({
-		client_uuid: uuid,
-		current_page: 'login'
-	}), g_headers);
+	html = AnyBalance.requestPost(baseurl + 'client-api/checkSession', JSON.stringify({
+		client_uuid: generateUUID(), 
+		current_page: ''
+	}), addHeaders({Referer: baseurl}));
 
+	html = AnyBalance.requestPost(baseurl + 'client-api/getAccounts', JSON.stringify({
+		client_uuid: generateUUID(),
+		current_page: 'login'
+	}), addHeaders({Referer: baseurl}));
+    
     var accinfo = getRTJson(html);
 
     if(!accinfo.accounts || accinfo.accounts.length == 0)
@@ -260,7 +269,7 @@ function main(){
 
 			html = AnyBalance.requestPost(baseurl + 'client-api/getServiceTariffName', JSON.stringify({
 				servicesId: servicesIds,
-				client_uuid: uuid,
+				client_uuid: generateUUID(),
 				current_page: 'main'
 			}), g_headers);
 			acc.__tariffNames = getRTJson(html).tariffNames;
@@ -269,7 +278,7 @@ function main(){
 			try{
 				html = AnyBalance.requestPost(baseurl + 'client-api/getAccountBalance', JSON.stringify({
 					accountId: acc.accountId,
-					client_uuid: uuid,
+					client_uuid: generateUUID(),
 					current_page: 'main'
 				}), g_headers);
 
@@ -290,7 +299,7 @@ function main(){
 
 						html = AnyBalance.requestPost(baseurl + 'client-api/getServiceInfo', JSON.stringify({
 							serviceId: service.serviceId,
-							client_uuid: uuid,
+							client_uuid: generateUUID(),
 							current_page: 'main'
 						}), g_headers);
 
@@ -318,7 +327,7 @@ function main(){
 						if(AnyBalance.isAvailable('sms' + suffix, 'mms' + suffix, 'min' + suffix, 'gprs' + suffix)){
 							var jsonPackets = getJson(AnyBalance.requestPost(baseurl + 'client-api/getServiceTariff', JSON.stringify({
 								serviceId: service.serviceId,
-								client_uuid: uuid,
+								client_uuid: generateUUID(),
 								current_page: 'mvno'
 							}), g_headers));
 
@@ -425,7 +434,7 @@ function main(){
 		AnyBalance.trace('Пробуем найти программу "Бонус"...');
 		try {
 			html = AnyBalance.requestPost(baseurl + 'client-api/getFplStatus', JSON.stringify({
-				client_uuid: uuid,
+				client_uuid: generateUUID(),
 				current_page: ''
 			}), g_headers);
 			var jsonBonus = getRTJson(html);
@@ -444,7 +453,7 @@ function main(){
 				try{
 					html = AnyBalance.requestPost(baseurl + 'client-api/getAccountBalance', JSON.stringify({
 						accountId: acc.accountId,
-						client_uuid: uuid,
+						client_uuid: generateUUID(),
 						current_page: 'main'
 					}), g_headers);
 					json = getRTJson(html);

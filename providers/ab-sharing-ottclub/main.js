@@ -17,26 +17,28 @@ function main() {
 	
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
-	var html = AnyBalance.requestGet(baseurl + 'auth/login', g_headers);
+	var html = AnyBalance.requestGet(baseurl, g_headers);
 	
 	if(!html || AnyBalance.getLastStatusCode() > 400)
 		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
+
+	var captcha = solveRecaptcha('Пожалуйста, докажите, что вы не робот', AnyBalance.getLastUrl(), JSON.stringify({SITEKEY: '6Lcdm6IUAAAAALPR2q8slgO3qVh8v68vjWrhpHma', TYPE: 'V3', ACTION: 'logform'}));
 	
 	html = AnyBalance.requestPost(baseurl + 'auth/login', {
 		email: prefs.login,
-		password: prefs.password
+		password: prefs.password,
+		capcha: captcha,
 	}, addHeaders({Referer: baseurl, 'X-Requested-With': 'XMLHttpRequest'}));
     
-	if (html != '1') {
-		var error = getParam(html, null, null, /<h1>\s*АВТОРИЗАЦИЯ\s*<\/h1>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+    var json = getJson(html);
+	if (json.status !== 'success') {
+		var error = json.message;
 		if (error)
-			throw new AnyBalance.Error(error, null, /Ошибка авторизации/i.test(html));
+			throw new AnyBalance.Error(error, null, /не существует|парол/i.test(html));
 		
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
-	
-    html = AnyBalance.requestGet(baseurl, addHeaders({Referer: baseurl}));
 	
 	var result = {success: true};
 

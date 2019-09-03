@@ -843,11 +843,16 @@ function callNewLKApiResult(token){
 			'X-Requested-With': 'XMLHttpRequest',
 			Accept: 'application/json, text/plain, */*',
 		}));
+		AnyBalance.trace('Ожидание результата ' + token.verb + ' ' + (i+1) + '/' + 30);
+		if(AnyBalance.getLastStatusCode() >= 400){
+			AnyBalance.trace("Waiting for result error: " + html);
+			throw new AnyBalance.Error(html);
+		}
 		if(!html){
-			AnyBalance.trace('Ожидание результата ' + token.verb + ' ' + (i+1) + '/' + 30);
 			AnyBalance.sleep(2000);
 			continue;
 		}
+		
 
 		var json = getJson(html);
 		AnyBalance.trace('Получен результат ' + token.verb + ' от ' + json.refreshDate);
@@ -918,7 +923,11 @@ function mainLK(html, result) {
 
     if (!isAnotherNumber()) {
         processInfoLK(html, result);
-        processCountersLK(result);
+        try{
+        	processCountersLK(result);
+        }catch(e){
+        	AnyBalance.trace("Ошибка получения остатков из кабинета. Попробуйте ещё раз позднее. Ошибка: " + e.message);
+        }
     } else {
         AnyBalance.trace('Пропускаем получение данных из ЛК, если требуется информация по другому номеру');
     }

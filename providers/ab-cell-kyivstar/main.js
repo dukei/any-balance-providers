@@ -11,9 +11,10 @@ function main() {
 
 	prefs.login = prefs.login.replace(/[^+\d]+/g, ''); //Удаляем всё, кроме + и цифр
 
-	AnyBalance.setOptions({
-		SSL_ENABLED_PROTOCOLS: ['TLSv1'] // https://my.kyivstar.ua очень смущается от присутствия TLSv1.1 и TLSv1.2
-	});
+//	AnyBalance.setOptions({
+//		SSL_ENABLED_PROTOCOLS: ['TLSv1.2'], // https://my.kyivstar.ua очень смущается от присутствия TLSv1.1 и TLSv1.2
+//		SSL_ENABLED_CIPHER_SUITES: ['TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384'],
+//	});
 
 	if(prefs.source != 'app'){
 		try {

@@ -1,5 +1,5 @@
 var g_api_headers = {
-    'User-Agent': 'MLK Android Phone 3.0.8',
+    'User-Agent': 'MLK Android Phone 3.3.8',
     'Connection': 'Keep-Alive'
 };
 
@@ -109,7 +109,7 @@ function megafonLkAPIDo(options, result) {
     }
 
     if(AnyBalance.isAvailable('tariff') && !result.tariff){
-    	json = callAPI('get', 'api/tariff/current');
+    	json = callAPI('get', 'api/tariff/2019-2/current');
     	getParam(json.name, result, 'tariff', null, replaceTagsAndSpaces);
     }
 

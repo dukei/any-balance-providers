@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="4.0" version="233" date="2019-09-19">
+	- Улучшена обработка ошибок.
+	</change>
 	<change major_version="4.0" version="232" date="2019-09-19">
 	- Поддержка входа без пароля через API мобильного приложения
 	- Пароль больше не нужен.

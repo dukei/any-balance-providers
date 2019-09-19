@@ -162,7 +162,7 @@ function megafonLkAPILoginNew(options){
 
 		if(json.operCode != 200){
 			AnyBalance.trace(html);
-			throw new Error('Неверный код подтверждения');
+			throw new AnyBalance.Error('Неверный код подтверждения');
 		}
 
 		var pin = Math.floor(1000 + Math.random()*9000).toString();

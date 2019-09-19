@@ -1,5 +1,5 @@
 var g_api_headers = {
-    'User-Agent': 'MLK Android Phone 3.3.8',
+    'User-Agent': 'MLK Android Phone 3.3.10',
     'Connection': 'Keep-Alive'
 };
 
@@ -25,11 +25,13 @@ function callAPI(method, url, params, allowerror) {
     }else
         html = AnyBalance.requestGet(api_url + url, g_api_headers);
 
-    var json;
-    try{
-        json = getJson(html);
-    }catch(e){
-        json = getJsonEval(html);
+    var json = {};
+    if(html){
+        try{
+            json = getJson(html);
+        }catch(e){
+            json = getJsonEval(html);
+        }
     }
 
     if(json.code && !allowerror) {
@@ -41,6 +43,8 @@ function callAPI(method, url, params, allowerror) {
 
 function megafonLkAPILogin(options){
     var prefs = AnyBalance.getPreferences();
+    options = options || {};
+
     AnyBalance.setDefaultCharset('utf-8');
 
     checkEmpty(prefs.login && /^\d{10}$/.test(prefs.login), 'Введите 10 цифр номера телефона без пробелов и разделителей в качестве логина!');
@@ -91,6 +95,86 @@ function megafonLkAPILogin(options){
 
         __setLoginSuccessful();
     }
+}
+
+function randomId(){
+	var chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+	var out = '';
+	for(var i=0; i<11; ++i){
+		out += chars.substr(Math.floor(Math.random()*chars.length), 1);
+	}
+	return out;
+}
+
+function megafonLkAPILoginNew(options){
+	options = options || {};
+	var prefs = AnyBalance.getPreferences();
+    AnyBalance.setDefaultCharset('utf-8');
+
+    var deviceid = AnyBalance.getData('deviceid');
+    if(!deviceid){
+    	deviceid = randomId();
+    	AnyBalance.setData('deviceid', deviceid);
+    	AnyBalance.saveData();
+    }
+    AnyBalance.trace('Device id: ' + deviceid);
+
+	if(!/^\d{10}$/.test(prefs.login))
+		throw new AnyBalance.Error('Пожалуйста, укажите в настройках 10 цифр вашего номера Мегафон, например, 9261234567');
+
+	var token = AnyBalance.getData('token-' + prefs.login);
+	if(token){
+		AnyBalance.trace('Сохранен токен биометрии, входим автоматически');
+		json = callAPI('post', 'auth/biometry', JSON.stringify({captcha: null, msisdn: prefs.login, token: token}), true);
+		if(json.code){
+			AnyBalance.trace(json.message);
+		    AnyBalance.trace('Входим по пину');
+			var pin = AnyBalance.getData('pin-' + prefs.login);
+			json = callAPI('post', 'auth/pin', JSON.stringify({captcha: null, msisdn: prefs.login, pin: pin}), true);
+			if(json.code){
+				AnyBalance.trace(json.message);
+				token = null;
+			}else{
+				json = callAPI('post', 'api/profile/biometry', '{}', true);
+				if(json.token){
+					AnyBalance.trace('Обновляем токен биометрии');
+					AnyBalance.setData('token-' + prefs.login, json.token);
+					AnyBalance.saveData();
+				}
+			}
+		}
+	}
+	if(!token){
+		AnyBalance.trace('Вход по одноразовому паролю. Привязываем устройство');
+		var html = AnyBalance.requestPost(api_url + 'auth/otp/request', {login: prefs.login}, g_api_headers);
+		var json = getJson(html);
+
+		if(!json.ok){
+			AnyBalance.trace(html);
+			throw new AnyBalance.Error(json.message || 'Ошибка входа. Неправильный номер?', null, true);
+		}
+
+		var code = AnyBalance.retrieveCode('Пожалуйста, введите код входа в Личный Кабинет из СМС для привязки номера к устройству', null, {inputType: 'number'});
+
+		html = AnyBalance.requestPost(api_url + 'auth/otp/submit', {login: prefs.login, otp: code}, g_api_headers);
+		json = getJson(html);
+
+		if(json.operCode != 200){
+			AnyBalance.trace(html);
+			throw new Error('Неверный код подтверждения');
+		}
+
+		var pin = Math.floor(1000 + Math.random()*9000).toString();
+		json = callAPI('post', 'api/profile/pin', JSON.stringify({captcha: null, pin: pin}));
+		
+		json = callAPI('post', 'api/profile/biometry', '{}');
+		if(!json.token)
+			throw new AnyBalance.Error('Не удалось получить токен биометрии. Сайт изменен?');
+
+		AnyBalance.setData('pin-' + prefs.login, pin);
+		AnyBalance.setData('token-' + prefs.login, json.token);
+		AnyBalance.saveData();
+	}
 }
 
 function megafonLkAPIDo(options, result) {

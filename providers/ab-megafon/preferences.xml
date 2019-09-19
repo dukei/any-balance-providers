@@ -6,60 +6,9 @@
         summary="|Номер телефона (10 цифр)|{@s}" 
         dialogTitle="Номер телефона" 
         negativeButtonText="Отмена" 
-        dialogMessage="Введите номер вашего телефона для входа в Сервис-Гид (10 цифр), например 9261234567"
+        dialogMessage="Введите 10 цифр вашего номера Мегафон, например 9261234567"
         obligatory="true"
         key="login"
         inputType="number">
     </EditTextPreference>
-    <EditTextPreference 
-        positiveButtonText="ОК"
-        key="password" 
-        dialogTitle="Пароль"
-        negativeButtonText="Отмена"
-        title="Пароль"
-        summary="|Пароль для входа в Сервис-Гид|***********"
-        dialogMessage="Введите пароль, используемый для входа в Сервис-Гид"
-        obligatory="true"
-        inputType="textPassword">
-    </EditTextPreference>
-    <ListPreference 
-        key="region" 
-        title="Регион"
-        summary="Укажите регион, если не удалось определить его автоматически||{@s}\n"
-        entries="Автоматически|Столичный филиал|Сибирский филиал|Северо-западный филиал|Дальневосточный филиал|Поволжский филиал|Кавказский филиал|Центральный филиал|Уральский филиал"
-        entryValues="|moscowsg|sibsg|szfsg|dvsg|volgasg|kavkazsg|centersg|uralsg"
-		defaultValue="">
-    </ListPreference>
-    <ListPreference 
-        key="lkpriority" 
-        title="Источники данных"
-        summary="||{@s}"
-        entries="Сервис-Гид, Мобильное, Роботы|Мобильное, Сервис-Гид, Роботы|Сервис-Гид, Роботы, Мобильное|Роботы, Сервис-Гид, Мобильное|Мобильное, Роботы, Сервис-Гид|Роботы, Мобильное, Сервис-Гид"
-        entryValues="sg,app,tray|app,sg,tray|sg,tray,app|tray,sg,app|app,tray,sg|tray,app,sg"
-		defaultValue="sg,app,tray">
-    </ListPreference>
-    <ListPreference 
-        key="allowcaptcha" 
-        title="Показывать капчу, если требуется"
-        summary="Если капча требуется, но отключена, данные могут быть не получены||{@s}\n"
-        entries="Если без неё никак|Всегда|Днем с 8 до 22|Днем с 8 до 23|Днем с 8 до 24|Днем с 9 до 22|Днем с 9 до 23|Днем с 9 до 24|Днем с 10 до 23|Днем с 10 до 24|Только вручную|Никогда"
-        entryValues="|alw|8-22|8-23|8-24|9-22|9-23|9-24|10-23|10-24|man|0-0"
-		defaultValue="">
-    </ListPreference>
-<!--    <EditTextPreference 
-        title="Доп. номер телефона" 
-        positiveButtonText="ОК" 
-        summary="|Автоматически|{@s}" 
-        dialogTitle="Доп. номер телефона" 
-        negativeButtonText="Отмена" 
-        dialogMessage="Введите номер телефона (10 цифр), для которого вы хотите получить информацию, если к вашему лицевому счету привязано больше одного телефона. Оставьте поле пустым, чтобы получить информацию по номеру логина."
-        key="phone"
-        inputType="number">
-    </EditTextPreference> -->
-<!--    <CheckBoxPreference
-        title="Корпоративный портал"
-        defaultValue="false"
-        summaryOn="Используется корпоративный портал"
-        summaryOff="Используется обычный сервис-гид"
-        key="corporate" /> -->
 </PreferenceScreen>

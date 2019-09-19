@@ -160,9 +160,9 @@ function megafonLkAPILoginNew(options){
 		html = AnyBalance.requestPost(api_url + 'auth/otp/submit', {login: prefs.login, otp: code}, g_api_headers);
 		json = getJson(html);
 
-		if(json.operCode != 200){
+		if(json.code){
 			AnyBalance.trace(html);
-			throw new AnyBalance.Error('Неверный код подтверждения');
+			throw new AnyBalance.Error(json.message || 'Неверный код подтверждения');
 		}
 
 		var pin = Math.floor(1000 + Math.random()*9000).toString();

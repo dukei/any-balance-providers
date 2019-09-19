@@ -54,8 +54,13 @@ var g_countersTable = {
 
 function main(){
 	var prefs = AnyBalance.getPreferences();
+	var options = {allow_captcha: true};
 
-	megafonLkAPILoginNew();
+	if(prefs.use_password && prefs.password){
+		megafonLkAPILogin(options);
+	}else{
+		megafonLkAPILoginNew(options);
+	}
 	
 	function shouldProcess(counter, info){ return true }
     var adapter = new NAdapter(g_countersTable.common, shouldProcess);
@@ -64,7 +69,7 @@ function main(){
 	
 	var result = {success: true};
 	
-	adapter.megafonLkAPIDo({}, result);
+	adapter.megafonLkAPIDo(options, result);
 	result = adapter.convert(result);
 
 	setCountersToNull(result);

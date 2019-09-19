@@ -11,4 +11,20 @@
         key="login"
         inputType="number">
     </EditTextPreference>
+    <CheckBoxPreference
+        title="Использовать пароль"
+        defaultValue="false"
+        summaryOn="Вход с использованием пароля"
+        summaryOff="Вход без пароля (рекомендуется)"
+        key="use_password" />
+    <EditTextPreference 
+        positiveButtonText="ОК"
+        key="password" 
+        dialogTitle="Пароль"
+        negativeButtonText="Отмена"
+        title="Пароль"
+        summary="|При отсутствии пароля авторизация будет произведена однократно по SMS|***********"
+        dialogMessage="Введите пароль, используемый для входа в личный кабинет. ВНИМАНИЕ! При доступе по паролю может потребоваться периодический ввод капчи. Если Вы хотите этого избежать, оставьте поле пароля пустым."
+        inputType="textPassword">
+    </EditTextPreference>
 </PreferenceScreen>

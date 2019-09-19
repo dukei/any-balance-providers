@@ -81,7 +81,7 @@ function megafonLkAPILogin(options){
         if (json.code) {
             if (json.code == 'a211' && options.allow_captcha) { //Капча
                 var capchaImg = AnyBalance.requestGet(api_url + 'auth/captcha', g_api_headers);
-                var captcha = AnyBalance.retrieveCode('Мегафон иногда требует подтвердить, что вы не робот. Сейчас как раз такой случай. Если вы введете цифры с картинки, то мы сможем получить какую-то информацию помимо баланса. В противном случае получим только баланс.\n\nВы можете отключить показ капчи совсем или только ночью в настройках провайдера.', capchaImg, {/*inputType: 'number'*/});
+                var captcha = AnyBalance.retrieveCode('Мегафон иногда требует подтвердить, что вы не робот. Сейчас как раз такой случай.\n\nЧтобы уменьшить вероятность требования капчи, используйте опцию входа без пароля с однократным вводом кода из SMS при первом обновлении баланса.', capchaImg, {/*inputType: 'number'*/});
                 json = callAPI('post', 'login', {
                     login: prefs.login,
                     password: prefs.password,

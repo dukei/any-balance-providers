@@ -3,79 +3,111 @@
 */
 
 var g_headers = {
-    Accept:'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+    Accept:'application/json,text/plain,*/*',
     'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
     'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
     Connection:'keep-alive',
-    'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.31 (KHTML, like Gecko) Chrome/26.0.1410.64 Safari/537.31'
+    'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.90 Safari/537.36'
 };
 
-function redirectIfNeeded(baseurl, html){	
-	var url = getParam(html, null, null, /<redirect[^>]+url="([^"]*)/i, replaceHtmlEntities);
-	if(url)
-		html = AnyBalance.requestGet(joinUrl(baseurl, url), addHeaders({Referer: baseurl}));
-	return html;
+var baseurl = 'https://my.mosenergosbyt.ru/';
+
+function callApi(query, params, action){
+	if(!action)
+		action = sql;
+    if(!params)
+    	params = {};
+    let url = baseurl + '?gate_lkcomu?action=' + action + '&query=' + query;
+    if(callApi.session)
+    	url += '&session=' + callApi.session;
+
+    var html = AnyBalance.requestPost(url, params, addHeaders({
+    	Referer: baseurl
+    }));
+
+    var json = getJson(html);
+    if(!json.success){
+    	AnyBalance.trace(html);
+    	throw new AnyBalance.Error('Ошибка вызова API ' + query + '. Сайт изменен?');
+    }
+
+    if(query === 'login'){
+    	callApi.session = json.data[0].session;
+    }
+
+    return json.data;
 }
+
+
+var MES_KD_PROVIDER = 1;
+var MOE_KD_PROVIDER = 2;
+var TMK_NRG_KD_PROVIDER = 3;
+var TMK_RTS_KD_PROVIDER = 4;
+var UFA_KD_PROVIDER = 5;
+var TKO_KD_PROVIDER = 6;
+var VLG_KD_PROVIDER = 7;
+var ORL_KD_PROVIDER = 8;
+var ORL_EPD_KD_PROVIDER = 9;
+
+export const providersPlugin = {
+    [MES_KD_PROVIDER]: "bytProxy",
+    [MOE_KD_PROVIDER]: "smorodinaTransProxy",
+    [ORL_KD_PROVIDER]: "orlBytProxy",
+    [TMK_NRG_KD_PROVIDER]: "tomskProxy",
+    [TMK_RTS_KD_PROVIDER]: "tomskProxy",
+    [UFA_KD_PROVIDER]: "ufaProxy",
+    [TKO_KD_PROVIDER]: "trashProxy",
+    [VLG_KD_PROVIDER]: "vlgProxy",
+    [ORL_EPD_KD_PROVIDER]: "orlProxy",
+};
+
+
 
 function main(){
     var prefs = AnyBalance.getPreferences();
     AnyBalance.setDefaultCharset('utf-8');
 	
-    var baseurl = 'https://lkkbyt.mosenergosbyt.ru/';
-	
-	checkEmpty(/^\d{10}$/.test(prefs.login), 'Введите 10 цифр лицевого счета без пробелов и разделителей.');
+	checkEmpty(/^(?:\+7|8)?9\d{9}$/.test(prefs.login) || /@/.test(prefs.login), 'Введите в качестве логина ваш номер телефона в формате 9XXXXXXXXX или e-mail.');
 	checkEmpty(prefs.password, 'Введите пароль!');			
-	
-    var parts = /^(\d{5})(\d{3})(\d{2})$/.exec(prefs.login);
-	
-	var html = AnyBalance.requestGet(baseurl + 'common/login.xhtml', g_headers);
 
-	if(!html || AnyBalance.getLastStatusCode() > 400){
-		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
-	}
+	callApi('login', {
+		login: prefs.login, 
+		psw: prefs.password, 
+		vl_device_info: JSON.stringify({appver: "1.9.0", type: "browser", "userAgent": g_headers['User-Agent']})
+	}, 'auth');
 
-	var form = getElement(html, /<form[^>]+id="lb_login:f_login"[^>]*>/i);
-	if(!form){
-		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Не удалось найти форму входа. Сайт изменен?');
-	}
-	
-	var params = AB.createFormParams(form, function(params, str, name, value) {
-		if (/:t_login$/i.test(name)) 
-			return prefs.login;
-		else if (/:t_pwd$/i.test(name)) 
-			return prefs.password.substr(0, 20); //В поле ввода maxlength 20
+	callApi('Init');
 
-		return value;
-	});
-
-	params = joinObjects({
-		"javax.faces.partial.ajax": 	"true",
-		"javax.faces.source": 			"lb_login:f_login:l_submit",
-		"javax.faces.partial.execute": 	"lb_login:f_login",
-		"javax.faces.behavior.event":	"action",
-        "javax.faces.partial.event":	"click"
-    }, params);
-	
-    html = AnyBalance.requestPost(baseurl + 'common/login.xhtml', params, g_headers);
-    html = redirectIfNeeded(baseurl + 'common/login.xhtml', html);
-	
-    //Выход из кабинета
-    if (!/common\/login\.xhtml\?logout/i.test(html)) {
-    	var error = sumParam(html, null, null, /<td[^>]+class="red[^>]*>([\s\S]*?)<\/td>/ig, [/<[^>]*>/ig, ' ', replaceTagsAndSpaces], null, aggregate_join);
-    	if (/что Вы не робот/i.test(error))
-    		throw new AnyBalance.Error(error + '\nМосэнергосбыт потребовал подтвердить, что вы не робот. Необходимо разок через браузер зайти в личный кабинет https://lkkbyt.mosenergosbyt.ru/.', null, true);
-    	if (error)
-    		throw new AnyBalance.Error(error, null, /Неверно введен пароль|Вы не зарегистрированы|Неправильный логин/i.test(error));
-    	
-    	// Если ошибку не распознали, запишем ее в лог.
-    	AnyBalance.trace(html);
-    	throw new AnyBalance.Error('Не удалось войти в личный кабинет. Сайт изменен?');
-    }
-	
 	var result = {success: true};
-	
+
+	var lss = callApi('LSList');
+	var lsCurrent = null;
+	var lssStr = '';
+	for(var i=0; lss && i<lss.length; ++i){
+		var ls = lss[i];
+		AnyBalance.trace('Найден ЛС ' + ls.nn_ls + ': ' + ls.nm_type + ', ' + ls.nm_street);
+		lssStr += ls.nn_ls + ': ' + ls.nm_type + ', ' + ls.nm_street + '\n';
+		if(!lsCurrent && ls.nn_ls.indexOf(prefs.num) >= 0){
+			AnyBalance.trace('Выбираем ЛС ' + ls.nn_ls + ' в качестве текущего');
+			lsCurrent = ls;
+		}
+	}
+
+	getParam(lssStr, result, 'lss');
+
+	if(!lsCurrent && prefs.num){
+		throw new AnyBalance.Error('Не удалось найти лицевой счет, содержащий ' + prefs.num + '. Доступные лицевые счета:\n' + lssStr, false, true);
+	}
+
+	if(!lsCurrent)
+		lsCurrent = lss[0];
+
+	if(!lsCurrent)
+		throw new Anybalance.Error('В Вашем кабинете нет лицевых счетов');
+
+
+
+
     getParam(html, result, 'balance', /(Баланс:(?:[^>]*>){2,4}(?:[\s\d.,-]{3,})руб)/i, [/class="red"[^>]*>/, '>-', replaceTagsAndSpaces], parseBalance);
     getParam(html, result, '__tariff', /ЛС №([^<]*)/i, replaceTagsAndSpaces);
     // используем особенности AnyBalance зачем искать значение дважды, если __tariff всегда available?

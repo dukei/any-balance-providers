@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="8">alga-card</id>
+  <name>Alga</name>
+  <description>
+    Транспортная карта АЛГА
+  </description>
+  <author>Ainur Giniyatov &lt;anurique@gmail.com&gt;</author>
+  <files>
+	<icon>icon.png</icon>
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" type="numeric"/>
+  </counters>
+</provider>

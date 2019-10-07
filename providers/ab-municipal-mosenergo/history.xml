@@ -1,4 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?><history>
+	<change version="27" date="2019-10-07">
+	- Поддержка нового личного кабинета
+	</change>
 	<change version="26" date="2016-05-14">
 	Поддержка длинных паролей
 	</change>

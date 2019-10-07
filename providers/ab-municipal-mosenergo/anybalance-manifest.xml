@@ -1,14 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="26">ab-municipal-mosenergo</id>
+	<id version="27">ab-municipal-mosenergo</id>
 	<name>Мосэнергосбыт</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе и последнем платеже в "МосЭнергоСбыт".</p> 
-	<p>Информация берется из личного кабинета http://lkkbyt.mosenergosbyt.ru</p>
+	<p>Информация берется из личного кабинета http://my.mosenergosbyt.ru</p>
 	]]></description>
 	<instruction html="true"><![CDATA[
-	<p>Если у вас привязано несколько счетов к одному аккаунту, то можно вводить нужный номер счета и пароль от счета, к которому он привязан.</p>
+	<p>Если у вас привязано несколько счетов к одному аккаунту, то укажите номер нужного счета в настройках провайдера.</p>
 	]]></instruction>	
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>
@@ -29,6 +29,7 @@
 		<counter id="lastcounter1" name="Последние показания другого счетчика"/>
 		<counter id="lastcounter2" name="Последние показания третьего счетчика"/>
 		<counter id="lastsum" name="Последний платеж" units=" р"/>
+		<counter id="all" name="Список счетов" type="text"/>
 	</counters>
 	<keywords>мосэнерго, москва, электричество</keywords>
 	<type>municipal</type>

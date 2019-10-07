@@ -14,10 +14,10 @@ var baseurl = 'https://my.mosenergosbyt.ru/';
 
 function callApi(query, params, action){
 	if(!action)
-		action = sql;
+		action = 'sql';
     if(!params)
     	params = {};
-    let url = baseurl + '?gate_lkcomu?action=' + action + '&query=' + query;
+    let url = baseurl + 'gate_lkcomu?action=' + action + '&query=' + query;
     if(callApi.session)
     	url += '&session=' + callApi.session;
 
@@ -27,12 +27,18 @@ function callApi(query, params, action){
 
     var json = getJson(html);
     if(!json.success){
+    	if(json.err_text)
+    		throw new AnyBalance.Error(json.err_text);
     	AnyBalance.trace(html);
     	throw new AnyBalance.Error('Ошибка вызова API ' + query + '. Сайт изменен?');
     }
 
     if(query === 'login'){
-    	callApi.session = json.data[0].session;
+    	var res = json.data[0];
+    	callApi.session = res.session;
+    	if(!res.session){
+    		throw new AnyBalance.Error(res.nm_result, null, /парол/i.test(res.nm_result));
+    	}
     }
 
     return json.data;
@@ -49,18 +55,17 @@ var VLG_KD_PROVIDER = 7;
 var ORL_KD_PROVIDER = 8;
 var ORL_EPD_KD_PROVIDER = 9;
 
-export const providersPlugin = {
-    [MES_KD_PROVIDER]: "bytProxy",
-    [MOE_KD_PROVIDER]: "smorodinaTransProxy",
-    [ORL_KD_PROVIDER]: "orlBytProxy",
-    [TMK_NRG_KD_PROVIDER]: "tomskProxy",
-    [TMK_RTS_KD_PROVIDER]: "tomskProxy",
-    [UFA_KD_PROVIDER]: "ufaProxy",
-    [TKO_KD_PROVIDER]: "trashProxy",
-    [VLG_KD_PROVIDER]: "vlgProxy",
-    [ORL_EPD_KD_PROVIDER]: "orlProxy",
-};
 
+var providersPlugin = {};
+providersPlugin[MES_KD_PROVIDER]= "bytProxy",
+providersPlugin[MOE_KD_PROVIDER]= "smorodinaTransProxy",
+providersPlugin[ORL_KD_PROVIDER]= "orlBytProxy",
+providersPlugin[TMK_NRG_KD_PROVIDER]= "tomskProxy",
+providersPlugin[TMK_RTS_KD_PROVIDER]= "tomskProxy",
+providersPlugin[UFA_KD_PROVIDER]= "ufaProxy",
+providersPlugin[TKO_KD_PROVIDER]= "trashProxy",
+providersPlugin[VLG_KD_PROVIDER]= "vlgProxy",
+providersPlugin[ORL_EPD_KD_PROVIDER]= "orlProxy";
 
 
 function main(){
@@ -68,7 +73,9 @@ function main(){
     AnyBalance.setDefaultCharset('utf-8');
 	
 	checkEmpty(/^(?:\+7|8)?9\d{9}$/.test(prefs.login) || /@/.test(prefs.login), 'Введите в качестве логина ваш номер телефона в формате 9XXXXXXXXX или e-mail.');
-	checkEmpty(prefs.password, 'Введите пароль!');			
+	checkEmpty(prefs.password, 'Введите пароль!');
+
+	AnyBalance.requestGet(baseurl, g_headers);
 
 	callApi('login', {
 		login: prefs.login, 
@@ -85,8 +92,8 @@ function main(){
 	var lssStr = '';
 	for(var i=0; lss && i<lss.length; ++i){
 		var ls = lss[i];
-		AnyBalance.trace('Найден ЛС ' + ls.nn_ls + ': ' + ls.nm_type + ', ' + ls.nm_street);
-		lssStr += ls.nn_ls + ': ' + ls.nm_type + ', ' + ls.nm_street + '\n';
+		AnyBalance.trace('Найден ЛС ' + ls.nn_ls + ': ' + ls.nm_type + ', ' + ls.data.nm_street);
+		lssStr += ls.nn_ls + ': ' + ls.nm_type + ', ' + ls.data.nm_street + '\n';
 		if(!lsCurrent && ls.nn_ls.indexOf(prefs.num) >= 0){
 			AnyBalance.trace('Выбираем ЛС ' + ls.nn_ls + ' в качестве текущего');
 			lsCurrent = ls;
@@ -105,47 +112,153 @@ function main(){
 	if(!lsCurrent)
 		throw new Anybalance.Error('В Вашем кабинете нет лицевых счетов');
 
+	let type = providersPlugin[lsCurrent.kd_provider];
+	if(!type){
+		AnyBalance.trace(JSON.stringify(lsCurrent));
+		throw new AnyBalance.Error('Неизвестный тип провайдера счета: ' + lsCurrent.kd_provider + '. Сайт изменен?');
+	}
 
 
-
-    getParam(html, result, 'balance', /(Баланс:(?:[^>]*>){2,4}(?:[\s\d.,-]{3,})руб)/i, [/class="red"[^>]*>/, '>-', replaceTagsAndSpaces], parseBalance);
-    getParam(html, result, '__tariff', /ЛС №([^<]*)/i, replaceTagsAndSpaces);
-    // используем особенности AnyBalance зачем искать значение дважды, если __tariff всегда available?
-    getParam(result.__tariff, result, 'agreement');
+	if(!this['process_' + type]){
+		throw new AnyBalance.Error('Тип счета ' + type + ' пока не поддерживается. Пожалуйста, обратитесь к разработчику.');
+	}
 	
-    html = AnyBalance.requestGet(baseurl + 'abonent/persInfo.xhtml', g_headers);
-    //Величина тарифа:
-    sumParam(html, result, '__tariff', /Величина тарифа:[\s\S]*?<tr>([\s\S]*?)<\/table>/i, replaceTagsAndSpaces, null, aggregate_join);
-    // Однотарифный, Двухтарифный, Трехтарифный
-    var type = getParam(html, null, null, /Тариф[\s\S]*?<tbody[^>]*>(?:[\s\S]*?<td[^>]*>){2}([\S\s]*?)<\/td>/i);
-	
-    if (isAvailable(['lastdate', 'lastsum'])) {
-    	html = AnyBalance.requestGet(baseurl + 'abonent/paysInfo.xhtml', g_headers);
-    	var table = getParam(html, null, null, /(<tbody id="t_pays:tbody_element">[\s\S]*?<\/tbody>)/i);
-    	if (!table) {
-    		AnyBalance.trace('не нашли таблицу с платежами, если платежи у вас есть - свяжитесь с автором провайдера');
-    	} else {
-    		getParam(table, result, 'lastdate', /<tbody[^>]*>(?:[\s\S]*?<td[^>]*>){1}([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
-    		getParam(table, result, 'lastsum', /<tbody[^>]*>(?:[\s\S]*?<td[^>]*>){2}([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-    	}
-    }
-    if (isAvailable(['lastcounter', 'lastcounter1', 'lastcounter2'])) {
-    	html = AnyBalance.requestGet(baseurl + 'abonent/counter.xhtml', g_headers);
-    	var table = getParam(html, null, null, /(<table id="r_ctr:0:t_pok"[\s\S]*?<\/tbody><\/table>)/i, null, null);
-    	if (!table) {
-    		AnyBalance.trace('не нашли таблицу с показаниями счетчиков, если показания у вас есть, свяжитесь с автором провайдера');
-    	} else {
-    		getParam(table, result, 'lastcounter', /<tbody[^>]*>(?:[\s\S]*?<td[^>]*>){4}([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-    		getParam(table, result, 'lastcounterdate', /<tbody[^>]*>(?:[\s\S]*?<td[^>]*>){1}([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
+	getParam(lsCurrent.nm_provider, result, '__tariff');
+	getParam(lsCurrent.nn_ls, result, 'agreement');
 
-    		if (type.toLowerCase().indexOf("двухтарифный") != -1 || /Зона суток/i.test(table)) 
-				getParam(table, result, 'lastcounter1', /<tbody[^>]*>(?:[\s\S]*?<td[^>]*>){6}([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+	var ipa = callApi('IndicationAndPayAvail', {kd_provider: lsCurrent.kd_provider});
+	AnyBalance.trace('Счет ' + type + ' поддерживает: ' + JSON.stringify(ipa[0]));
 
-    		if (type.toLowerCase().indexOf("трехтарифный") != -1) {
-    			getParam(table, result, 'lastcounter1', /<tbody[^>]*>(?:[\s\S]*?<td[^>]*>){6}([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-    			getParam(table, result, 'lastcounter2', /<tbody[^>]*>(?:[\s\S]*?<td[^>]*>){8}([\S\s]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-    		}
-    	}
-    }
+	this['process_' + type](lsCurrent, ipa[0], result);
+
     AnyBalance.setResult(result);
 }
+
+function process_trashProxy(ls, ipa, result){
+
+	if(ipa.balance_avail){
+		var json = callApi('trashProxy', {
+			plugin:	'trashProxy',
+			proxyquery:	'AbonentCurrentBalance',
+			vl_provider: ls.vl_provider
+		});
+    
+		getParam(json[0].sm_balance, result, 'balance');
+	}
+
+	if(ipa.pay_avail && AnyBalance.isAvailable('lastdate', 'lastsum')){
+		json = callApi('trashProxy', {
+			dt_en:	new Date().toISOString(),
+			dt_st:	new Date(+new Date() - 12*30*86400*1000).toISOString(),
+			plugin:	'trashProxy',
+			proxyquery:	'AbonentPays',
+			vl_provider: ls.vl_provider
+		});
+	    
+		if(json && json[0]){
+        	getParam(json[0].dt_pay, result, 'lastdate', null, null, parseDateISO);
+        	getParam(json[0].sm_pay, result, 'lastsum');
+        }else{
+        	AnyBalance.trace('Нет платежей за 3 мес');
+        }
+    }
+}
+
+function process_bytProxy(ls, ipa, result){
+
+	if(ipa.balance_avail){
+		var json = callApi('bytProxy', {
+			plugin:	'bytProxy',
+			proxyquery:	'CurrentBalance',
+			vl_provider: ls.vl_provider
+		});
+
+		getParam((/переплата/i.test(json[0].nm_balance) ? 1 : -1)*json[0].vl_balance, result, 'balance');
+	}
+
+	if(ipa.pay_avail && AnyBalance.isAvailable('lastdate', 'lastsum')){
+		json = callApi('bytProxy', {
+			dt_en:	new Date().toISOString(),
+			dt_st:	new Date(+new Date() - 12*30*86400*1000).toISOString(),
+			plugin:	'bytProxy',
+			proxyquery:	'Pays',
+			vl_provider: ls.vl_provider
+		});
+	    
+		if(json && json[0]){
+        	getParam(json[0].dt_pay, result, 'lastdate', null, null, parseDateISO);
+        	getParam(json[0].sm_pay, result, 'lastsum');
+        }else{
+        	AnyBalance.trace('Нет платежей за 3 мес');
+        }
+    }
+
+    if(ipa.ind_avail && AnyBalance.isAvailable('lastcounter', 'lastcounterdate', 'lastcounter1', 'lastcounter2')){
+		json = callApi('bytProxy', {
+			dt_en:	new Date().toISOString(),
+			dt_st:	new Date(+new Date() - 12*30*86400*1000).toISOString(),
+			plugin:	'bytProxy',
+			proxyquery:	'Indications',
+			vl_provider: ls.vl_provider
+		});
+
+		if(json && json[0]){
+			getParam(json[0].dt_indication, result, 'lastcounterdate', null, null, parseDateISO);
+			getParam(json[0].vl_t1 || undefined, result, 'lastcounter');
+			getParam(json[0].vl_t2 || undefined, result, 'lastcounter1');
+			getParam(json[0].vl_t3 || undefined, result, 'lastcounter2');
+		}else{
+        	AnyBalance.trace('Нет счетчиков за 3 мес');
+		}
+    } 
+}
+
+function process_smorodinaTransProxy(ls, ipa, result){
+
+	if(ipa.balance_avail){
+		var json = callApi('smorodinaTransProxy', {
+			plugin:	'smorodinaTransProxy',
+			proxyquery:	'AbonentCurrentBalance',
+			vl_provider: ls.vl_provider
+		});
+    
+		getParam(json[0].sm_balance, result, 'balance');
+	}
+
+	if(ipa.pay_avail && AnyBalance.isAvailable('lastdate', 'lastsum')){
+		json = callApi('smorodinaTransProxy', {
+			dt_en:	new Date().toISOString(),
+			dt_st:	new Date(+new Date() - 12*30*86400*1000).toISOString(),
+			plugin:	'smorodinaTransProxy',
+			proxyquery:	'AbonentPays',
+			vl_provider: ls.vl_provider
+		});
+	    
+		if(json[0]){
+        	getParam(json[0].dt_pay, result, 'lastdate', null, null, parseDateISO);
+        	getParam(json[0].sm_pay, result, 'lastsum');
+        }else{
+        	AnyBalance.trace('Нет платежей за 3 мес');
+        }
+    }
+
+    if(ipa.ind_avail && AnyBalance.isAvailable('lastcounter', 'lastcounterdate', 'lastcounter1', 'lastcounter2')){
+		json = callApi('smorodinaTransProxy', {
+			dt_en:	new Date().toISOString(),
+			dt_st:	new Date(+new Date() - 12*30*86400*1000).toISOString(),
+			plugin:	'smorodinaTransProxy',
+			proxyquery:	'AbonentEquipment',
+			vl_provider: ls.vl_provider
+		});
+
+		if(json && json[0]){
+			getParam(json[0].dt_indication, result, 'lastcounterdate', null, null, parseDateISO);
+			getParam(json[0].vl_t1 || undefined, result, 'lastcounter');
+			getParam(json[0].vl_t2 || undefined, result, 'lastcounter1');
+			getParam(json[0].vl_t3 || undefined, result, 'lastcounter2');
+		}else{
+        	AnyBalance.trace('Нет счетчиков за 3 мес');
+		}
+    } 
+}
+

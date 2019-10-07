@@ -30,6 +30,6 @@
 		negativeButtonText="Отмена"
 		dialogMessage="Введите фрагмент номера лицевого счета, если вы хотите получить информацию по конкретному счету."
 		inputType="text"
-		key="login">
+		key="num">
     </EditTextPreference>
 </PreferenceScreen>

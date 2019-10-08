@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="17">ab-bonus-lukoil</id>
+	<id version="18">ab-bonus-lukoil</id>
 	<name>Лукойл (Бонусы)</name>
 	<description html="true"><![CDATA[
 	<p>Получает информацию по картам "Лукойл Ликард" <a href="http://my.licard.com">http://my.licard.com</a></p>
@@ -29,11 +29,10 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="balance" name="Баланс" units=" Б"/>
 		<counter id="last_payment" name="Последний платеж" units=" р"/>
 		<counter id="cardnum" name="Номер карты" type="text"/>
 		<counter id="name" name="Имя" type="text"/>
-		<counter id="region" name="Регион программы" type="text"/>
 		<counter id="status" name="Статус карты" type="text"/>
 		<counter id="phonenumber" name="Номер телефона" type="text"/>
 	</counters>

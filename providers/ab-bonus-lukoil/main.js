@@ -3,10 +3,9 @@
 */
 
 var g_headers = {
-    'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:21.0) Gecko/20100101 Firefox/21.0',
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.90 Safari/537.36',
     'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-    'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.5,en;q=0.3',
-    'Accept-Encoding': 'gzip, deflate',
+    'Accept-Language': 'en-US,en;q=0.9,ru;q=0.8,ru-RU;q=0.7',
     'Connection': 'keep-alive',
 };
 
@@ -97,49 +96,61 @@ function main() {
 function callApi(verb, params){
     var baseurl = 'https://customer.licard.ru/';
 
-    var html = AnyBalance.requestPost(baseurl + 'api/' + verb, JSON.stringify(params), addHeaders({
-    	Accept: 'application/vnd.licard-b2c.v1+json',
+    var html = AnyBalance.requestPost(baseurl + 'api/v2/' + verb, JSON.stringify(params), addHeaders({
+    	'Accept': 'application/json, text/plain, */*',
+    	'X-Api-Token': 'mcHySTn5vmPvMLWrYMfG3xgC9rV2moJ6',
     	'Content-Type': 'application/json;charset=UTF-8',
+    	Origin: baseurl.replace(/\/$/g, ''),
     	Referer: baseurl
     }));
     var json = getJson(html);
    	var errors = [];
-    if(json.status_code && json.status_code >= 400){
-    	if(json.errors) for(var e in json.errors){
-    		errors = errors.concat(json.errors[e]);
-    	}
-
-    	if(!errors.length && json.message)
-    		errors.push(json.message)
-
-    	var error = errors.join(' ');
-    	throw new AnyBalance.Error(error, null, /Логин|не найден/i.test(error));
+    if(json.errorCode){
+    	var error = json.errorMessage;
+    	throw new AnyBalance.Error(error, null, /Логин|не найден|парол|недейств/i.test(error));
     }
     	
     return json;
 }
 
+function generateUUID() {
+	function s4() {
+  		return Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
+	}
+  	return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
+}
+
+
 function mainPhysicNew(result){
     var prefs = AnyBalance.getPreferences();
 
-    AnyBalance.requestGet('https://customer.licard.ru/api/init', addHeaders({Accept: 'application/vnd.licard-b2c.v1+json'}));
-    var html = AnyBalance.requestGet('https://customer.licard.ru/api/user/login-captcha', addHeaders({Accept: 'application/vnd.licard-b2c.v1+json'}));
-    var json = getJson(html);
+    var json = callApi('user/login', {"appVersion":1,"osVersion":'win32', platform: 'web'});
+    var sessionId = json.result.sessionId;
 
-    var img = getParam(json.captcha, /base64,(.*)/);
-
-    var captcha = AnyBalance.retrieveCode('Пожалуйста, введите код с картинки', img);
-
-    var json = callApi('user/login', {captcha: captcha, "login":prefs.login,"password":prefs.password});
+    var json = callApi('card/connect', {"cardNumber":prefs.login,"password":prefs.password, sessionId: sessionId});
+    var cardId = json.result.cardShortInfo.id;
 
     var aggregate_join_space = create_aggregate_join(' ');
     
-    getParam(json.user.cardbalance, result, 'balance', null, null, parseBalance);
-    getParam(json.user.cardnumber, result, 'cardnum');
-	
-	sumParam(json.user.lastname, result, 'name', null, null, null, aggregate_join_space);
-	sumParam(json.user.firstname, result, 'name', null, null, null, aggregate_join_space);
-	sumParam(json.user.middlename, result, 'name', null, null, null, aggregate_join_space);
+    getParam(json.result.cardShortInfo.balance, result, 'balance');
+    getParam(json.result.cardShortInfo.cardNumber, result, 'cardnum');
 
-	getParam(json.user.mobilephone, result, 'phonenumber');
+    getParam(json.result.cardShortInfo.cardLevel.description, result, '__tariff');
+
+    if(AnyBalance.isAvailable('name', 'phonenumber')){
+	    json = callApi('card/info', {"cardId":cardId, sessionId: sessionId});
+		
+		sumParam(json.result.lastName, result, 'name', null, null, null, aggregate_join_space);
+		sumParam(json.result.firstName, result, 'name', null, null, null, aggregate_join_space);
+		sumParam(json.result.middleName, result, 'name', null, null, null, aggregate_join_space);
+		
+		getParam(json.result.phoneNumber, result, 'phonenumber');
+    }
+	
+    if(AnyBalance.isAvailable('lastpayment')){
+	    json = callApi('card/transactions/list', {"cardId":cardId, sessionId: sessionId});
+		
+		getParam(json.result.transactions && json.result.transactions[0] && json.result.transactions[0].amountTotal, result, 'lastpayment');
+    }
+
 }

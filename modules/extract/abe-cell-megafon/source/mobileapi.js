@@ -128,12 +128,18 @@ function megafonLkAPILoginNew(options){
 		AnyBalance.trace('Сохранен токен биометрии, входим автоматически');
 		json = callAPI('post', 'auth/biometry', JSON.stringify({captcha: null, msisdn: prefs.login, token: token}), true);
 		if(json.code){
-			AnyBalance.trace(json.message);
+			AnyBalance.trace(JSON.stringify(json));
+			if(/Внутренняя ошибка/i.test(json.message)) //Иногда сервер глючит и не надо присылать смс второй раз
+				throw new AnyBalance.Error(json.message + '\nПожалуйста, попробуйте позже');
+				 
 		    AnyBalance.trace('Входим по пину');
 			var pin = AnyBalance.getData('pin-' + prefs.login);
 			json = callAPI('post', 'auth/pin', JSON.stringify({captcha: null, msisdn: prefs.login, pin: pin}), true);
 			if(json.code){
-				AnyBalance.trace(json.message);
+			    AnyBalance.trace(JSON.stringify(json));
+			    if(/Внутренняя ошибка/i.test(json.message)) //Иногда сервер глючит и не надо присылать смс второй раз
+				    throw new AnyBalance.Error(json.message + '\nПожалуйста, попробуйте позже');
+
 				token = null;
 			}else{
 				json = callAPI('post', 'api/profile/biometry', '{}', true);
@@ -208,7 +214,7 @@ function megafonLkAPIDo(options, result) {
     	AnyBalance.trace('Не удалось получить информацию о бонусной программе: ' + e.message);
     }
 
-	processServiceStopContentApi(result);
+	processServices(result);
     processRemaindersApi(result);
     processMonthExpensesApi(result);
 
@@ -332,6 +338,11 @@ function processRemaindersApi(result){
                     // Минуты
                     if((/мин|сек/i.test(units) && !/интернет/i.test(name)) || (/шт/i.test(units) && /минут/i.test(name) && !/СМС|SMS|MMS|ММС/i.test(name))) {
                         AnyBalance.trace('Parsing minutes...' + JSON.stringify(current));
+                        var unlim = /^9{7,}$/i.test(current.total); //Безлимитные значения только из девяток состоят
+						if(unlim){
+							AnyBalance.trace('пропускаем безлимит минут: ' + name + ' ' + (current.available + current.unit) + '/' + (current.total + current.unit));
+							continue;
+						}
 						if(/в сутки/i.test(name)) {
 							getParam(current.available + units, remainders, 'remainders.mins_day', null, replaceTagsAndSpaces, parseMinutes);
                         }else if(/бесплат/i.test(name)) {
@@ -348,6 +359,11 @@ function processRemaindersApi(result){
                         }
                         // Сообщения
                     } else if(/шт|sms|смс|mms|ммс/i.test(units)) {
+                        var unlim = /^9{7,}$/i.test(current.total); //Безлимитные значения только из девяток состоят
+						if(unlim){
+							AnyBalance.trace('пропускаем безлимит смс: ' + name + ' ' + (current.available + current.unit) + '/' + (current.total + current.unit));
+							continue;
+						}
                         if(/mms|ММС/i.test(name)){
                             AnyBalance.trace('Parsing mms...' + JSON.stringify(current));
                             sumParam(current.available, remainders, 'remainders.mms_left', null, replaceTagsAndSpaces, parseBalance, aggregate_sum);
@@ -457,21 +473,11 @@ function processSmsTurnOffApi(){
     }
 }
 
-function processServiceStopContentApi(result){
-	if(!AnyBalance.isAvailable('status_stop_content'))
+function processServices(result){
+	if(!AnyBalance.isAvailable('services_free', 'services_paid'))
 		return;
 
-    var json = callAPI('get', 'api/options/list/additional');
-    for(var i=0; i<json.list.length; ++i){
-    	var group = json.list[i];
-    	for(var j=0; j<group.options.length; ++j){
-    		var option = group.options[j];
-    		if(/Запрет платных контентных|стоп-контент/i.test(option.optionName) ||
-    			/ad\/stop|stop_content/i.test(option.link)){
-					getParam(option.status == "1" ? 'Услуга подключена ' + option.operDate : 'Услуга не подключена', result, 'status_stop_content');
-					return;
-    		}
-    	}
-    }
-	AnyBalance.trace('Услуга Стоп-контент вообще не найдена: ' + JSON.stringify(json));
+    var json = callAPI('get', 'api/options/list/current');
+    getParam(json.free ? json.free.length : 0, result, 'services_free');
+    getParam(json.paid ? json.paid.length : 0, result, 'services_paid');
 }

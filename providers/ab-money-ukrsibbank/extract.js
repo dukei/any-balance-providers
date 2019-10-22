@@ -92,28 +92,29 @@ function processAccounts(html, result){
     for(var i=0; i<lis.length; ++i){
     	var tr = lis[i];
     	var acc = getElement(tr, /<div[^>]+accountMenuItemPanel/i);
-    	var num = getElement(acc, /<span[^>]+number/i, replaceTagsAndSpaces);
+
+		var id=getParam(acc, /<div[^>]+id="([^"]*)/i, replaceHtmlEntities);
+		var info = requestGetWicketAction(html, id); 
+
+    	var num = getElement(getElement(info, /<div[^>]+productSummary/i), /<div[^>]+number/i, replaceTagsAndSpaces);
     	var name = getElement(acc, /<span[^>]+alias/i, replaceTagsAndSpaces);
     	var c = {
     		__id: num, 
-    		__name: name + ' (' + num.substr(-4) + ')',
+    		__name: name + ' (' + num.substr(-6) + ')',
     		num: num
     	};
 
     	if(__shouldProcess('accounts', c)){
-    		processAccount(html, acc, c);
+    		processAccount(html, acc, c, info);
     	}
 
     	result.accounts.push(c);
     }
 }
 
-function processAccount(html, acc, result) {
+function processAccount(html, acc, result, info) {
 	if(!AnyBalance.isAvailable('accounts'))
 		return;
-
-	var id=getParam(acc, /<div[^>]+id="([^"]*)/i, replaceHtmlEntities);
-	var info = requestGetWicketAction(html, id); 
 
     getParam(getElement(acc, /<span[^>]+alias/i, replaceTagsAndSpaces), result, 'accounts.name');
 	getParam(info, result, 'accounts.balance', /Баланс:([\s\S]*?)<span[^>]*currency/i, replaceTagsAndSpaces, parseBalance); 

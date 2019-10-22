@@ -37,31 +37,38 @@ function main(){
     	prefs.type = 'acc';
 
     var html = login();
-	
-    var adapter = new NAdapter(g_countersTable[prefs.type], shouldProcess);
-	
-    adapter.processInfo = adapter.envelope(processInfo);
-    adapter.processCards = adapter.envelope(processCards);
-    adapter.processAccounts = adapter.envelope(processAccounts);
-	
-	var result = {success: true};
-	
-	adapter.processInfo(html, result);
-	
-	if(prefs.type == 'card') {
-		adapter.processCards(html, result);
-		
-		if(!adapter.wasProcessed('cards'))
-			throw new AnyBalance.Error(prefs.lastdigits ? 'Не найдена карта с последними цифрами ' + prefs.lastdigits : 'У вас нет ни одной карты!');
+    var logoutLink = getParam(html, /<a[^>]+href="(?:\.\/)?([^"]*)[^>]+actionLogout/i, replaceHtmlEntities);
 
-		result = adapter.convert(result);
-	} else if(prefs.type == 'acc') {
-		adapter.processAccounts(html, result);
-
-		if(!adapter.wasProcessed('accounts'))
-			throw new AnyBalance.Error(prefs.lastdigits ? 'Не найден счет с последними цифрами ' + prefs.lastdigits : 'У вас нет ни одного счета!');
+	try{
+        var adapter = new NAdapter(g_countersTable[prefs.type], shouldProcess);
 		
-		result = adapter.convert(result);
+        adapter.processInfo = adapter.envelope(processInfo);
+        adapter.processCards = adapter.envelope(processCards);
+        adapter.processAccounts = adapter.envelope(processAccounts);
+		
+		var result = {success: true};
+		
+		adapter.processInfo(html, result);
+		
+		if(prefs.type == 'card') {
+			adapter.processCards(html, result);
+			
+			if(!adapter.wasProcessed('cards'))
+				throw new AnyBalance.Error(prefs.lastdigits ? 'Не найдена карта с последними цифрами ' + prefs.lastdigits : 'У вас нет ни одной карты!');
+	    
+			result = adapter.convert(result);
+		} else if(prefs.type == 'acc') {
+			adapter.processAccounts(html, result);
+	    
+			if(!adapter.wasProcessed('accounts'))
+				throw new AnyBalance.Error(prefs.lastdigits ? 'Не найден счет с последними цифрами ' + prefs.lastdigits : 'У вас нет ни одного счета!');
+			
+			result = adapter.convert(result);
+		}
+	}finally{
+		var url = joinUrl(g_baseurl, logoutLink);	
+		AnyBalance.trace('Logging out: ' + url);
+		AnyBalance.requestGet(url, addHeaders({Referer: g_baseurl}));
 	}
 	
 	AnyBalance.setResult(result);
@@ -78,7 +85,7 @@ function shouldProcess(counter, info){
 		    if(!prefs.lastdigits)
 		    	return true;
 			
-			if(endsWith(info.num, prefs.lastdigits))
+			if(endsWith(info.num.replace(/\s+/g, ''), prefs.lastdigits))
 				return true;
 		    
 			return false;
@@ -90,7 +97,7 @@ function shouldProcess(counter, info){
 		    if(!prefs.lastdigits)
 		    	return true;
 
-			if(endsWith(info.num, prefs.lastdigits))
+			if(endsWith(info.num.replace(/\s+/g, ''), prefs.lastdigits))
 				return true;
 
 		    return false;

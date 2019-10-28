@@ -16,19 +16,19 @@ function main() {
 //		SSL_ENABLED_CIPHER_SUITES: ['TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384'],
 //	});
 
-	if(prefs.source != 'app'){
+//	if(prefs.source != 'app'){
 		try {
 			processSite();
 		} catch (e) {
-			if (e.fatal)
+//			if (e.fatal)
 				throw e;
-			AnyBalance.trace('Не удалось получить данные из лк: ' + e.message);
-			AnyBalance.trace('Попробуем получить данные из мобильного приложения');
-			processMobileApi();
+//			AnyBalance.trace('Не удалось получить данные из лк: ' + e.message);
+//			AnyBalance.trace('Попробуем получить данные из мобильного приложения');
+//			processMobileApi();
 		}
-	}else{
-		processMobileApi();
-	}
+//	}else{
+//		processMobileApi();
+//	}
 }
 
 var baseurlLogin = "https://b2b.kyivstar.ua/";

@@ -4,9 +4,9 @@
 */
 
 var g_headers = {
-	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
-	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
-	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36',
+	'Accept': '*/*',
+	'Accept-Language': 'en-US,en;q=0.9,ru;q=0.8,ru-RU;q=0.7',
+	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.120 Safari/537.36',
 	Connection: 'keep-alive'
 };
 
@@ -79,15 +79,15 @@ function loginBasic(html) {
 		checkRequest =
 		'7|0|6|%url%|%magic_id%|ua.kyivstar.cas.shared.rpc.AuthSupportRPCService|getAccountShortDetails|java.lang.String/2004016611|%LOGIN%|1|2|3|4|1|5|6|',
 		authRequest =
-		'7|0|9|%url%|%magic_id%|ua.kyivstar.cas.shared.rpc.AuthSupportRPCService|authenticate|java.lang.String/2004016611|Z|%LOGIN%|%PASSWORD%|https://account.kyivstar.ua/cas/login?service=http%3A%2F%2Fmy.kyivstar.ua%3A80%2Ftbmb%2Fdisclaimer%2Fshow.do&locale=ua#password:|1|2|3|4|5|5|5|5|6|5|7|8|0|0|9|';
+		'7|0|9|%url%|%magic_id%|ua.kyivstar.cas.shared.rpc.AuthSupportRPCService|authenticate|java.lang.String/2004016611|Z|%LOGIN%|%PASSWORD%|https://account.kyivstar.ua/cas/login?service=https%3A%2F%2Fb2b.kyivstar.ua%2Ftbmb%2Fnew%2F#password:%LOGIN%|1|2|3|4|5|5|5|5|6|5|7|8|0|0|9|';
 		authRequestCaptcha =                                                                                                                                                                                                                                                               
-		'7|0|10|%url%|%magic_id%|ua.kyivstar.cas.shared.rpc.AuthSupportRPCService|authenticate|java.lang.String/2004016611|Z|%LOGIN%|%PASSWORD%|%RECAPTCHA%|https://account.kyivstar.ua/cas/login?service=http%3A%2F%2Fmy.kyivstar.ua%3A80%2Ftbmb%2Fdisclaimer%2Fshow.do&locale=ua#password:|1|2|3|4|5|5|5|5|6|5|7|8|9|0|10|';
+		'7|0|10|%url%|%magic_id%|ua.kyivstar.cas.shared.rpc.AuthSupportRPCService|authenticate|java.lang.String/2004016611|Z|%LOGIN%|%PASSWORD%|%RECAPTCHA%|https://account.kyivstar.ua/cas/login?service=https%3A%2F%2Fb2b.kyivstar.ua%2Ftbmb%2Fnew%2F#password:%LOGIN%|1|2|3|4|5|5|5|5|6|5|7|8|9|0|10|';
 	//Проверяем телефон
 	//https://account.kyivstar.ua/cas/auth/authSupport.rpc
 	// html = AnyBalance.requestPost(g_gwtCfg.url + 'cas/auth/authSupport.rpc',
 	html = AnyBalance.requestPost(g_gwtCfg.url + 'authSupport.rpc',
 		makeReplaces(checkRequest, g_gwtCfg).replace(/%LOGIN%/g, gwtEscape(prefs.login)),
-		gwtHeaders(strongName, g_gwtCfg));
+		addHeaders({Origin: 'https://account.kyivstar.ua'}, gwtHeaders(strongName, g_gwtCfg)));
 
 	var types = {
 		msisdn: 'MSISDN_PASSWORD',
@@ -115,7 +115,7 @@ function loginBasic(html) {
 			.replace(/%LOGIN%/g, gwtEscape(prefs.login.replace(/\D+/g, '')))
 			.replace(/%PASSWORD%/g, gwtEscape(prefs.password))
 			.replace(/%RECAPTCHA%/g, gwtEscape(recaptchaResponse || '')),
-		gwtHeaders(strongName, g_gwtCfg));
+		addHeaders({Origin: 'https://account.kyivstar.ua'}, gwtHeaders(strongName, g_gwtCfg)));
 
 	checkGwtError(html);
 
@@ -144,11 +144,17 @@ function loginBasic(html) {
 
 	var action = getParam(form, null, null, /<form[^>]+action="([^"]*)/i, replaceHtmlEntities);
 	AnyBalance.trace('Завершаем вход...');
-	html = AnyBalance.requestPost(joinUrl(referer, action), params, addHeaders({
+	html = AnyBalance.requestPost(/*joinUrl(referer, action)*/'https://account.kyivstar.ua/cas/login?service=http%3A%2F%2Fnew.kyivstar.ua%2Fecare%2F', params, addHeaders({
 		Referer: referer
 	}));
 
 	var domain = getParam(referer, null, null, /https?:\/\/[^\/]*/i);
+	if (AnyBalance.getLastUrl().indexOf(domain) === 0) { //если остались на сайте авторизации
+	    AnyBalance.trace('Сразу не вошли, надо попробовать чуть-чуть подождать');
+		AnyBalance.sleep(3000);
+		html = AnyBalance.requestGet(AnyBalance.getLastUrl(), g_headers);
+	}
+
 	if (AnyBalance.getLastUrl().indexOf(domain) === 0) { //если остались на сайте авторизации
 		AnyBalance.trace('Переадресовали на ' + AnyBalance.getLastUrl() + ':\n' + html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
@@ -239,7 +245,7 @@ function loginSite(baseurl) {
 			AnyBalance.trace('Не найдена форма входа. Выходим и явно переходим на авторизацию.');
 			html = doLogout(html);
 			AnyBalance.trace('Сейчас мы на ' + AnyBalance.getLastUrl() + '. Переходим на авторизацию.');
-			html = loadAuthorizationPage('service=http%3A%2F%2Fmy.kyivstar.ua%3A80%2Ftbmb%2Fdisclaimer%2Fshow.do&locale=ua');
+			html = loadAuthorizationPage('service=https%3A%2F%2Fb2b.kyivstar.ua%2Ftbmb%2Fnew%2F');
 		}
 		html = loginBasic(html);
     	html = goToSite(html); 
@@ -272,7 +278,7 @@ function loginMobile(baseurl) {
 		baseurl = "https://my.kyivstar.ua/";
 
 	AnyBalance.trace('Логин в мобильное приложение.');
-	var html = loadAuthorizationPage('locale=ru_ru&service=https://my.kyivstar.ua/tbmb/_assets_mobconv/portmone/index.html&renew=true&compact=1');
+	var html = loadAuthorizationPage('locale=ru_ru&service=https://b2b.kyivstar.ua/tbmb/_assets_mobconv/portmone/index.html&renew=true&compact=1');
 
 	if (!html || AnyBalance.getLastStatusCode() > 400) {
 		AnyBalance.trace(html);

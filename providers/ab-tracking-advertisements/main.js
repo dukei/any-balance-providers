@@ -61,12 +61,21 @@ function main() {
 			throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 		}
 
-		var ads = getElements(html, /<div[^>]+js-profile-item\b/ig);
-		AnyBalance.trace('Нашли ' + ads.length + ' активных объявлений');
+		var pages = getElements(html, [/<a[^>]+class="pagination-page"/i, /\d+<\/a>/i]);
+		AnyBalance.trace('Нашли ' + pages.length + ' доп страниц активных объявлений');
+
+		var items = getPersonalItems(html);
+		for(var i=0; i<pages.length; ++i){
+			html = AnyBalance.requestGet(joinUrl(baseurl + 'profile', getParam(pages[i], /<a[^>]+href="([^"]*)/i, replaceHtmlEntities)), g_headers);
+			var _items = getPersonalItems(html);
+			items.push.apply(items, _items);
+		}
+
+		AnyBalance.trace('Нашли ' + items.length + ' активных объявлений');
 		var pattern = prefs.pattern && prefs.pattern.toLowerCase();
-		for(var i=0; i<ads.length; ++i){
-			var ad = ads[i];
-			var name = getElement(ad, /<[^>]+profile-item-title/i, replaceTagsAndSpaces);
+		for(var i=0; i<items.length; ++i){
+			var ad = items[i];
+			var name = ad.title;
 			if(pattern && name.toLowerCase().indexOf(pattern) < 0){
 				AnyBalance.trace('Объявление ' + name + ' не содержит ' + pattern);
 				continue;
@@ -75,19 +84,19 @@ function main() {
 			break;
 		}
 
-		if(i < ads.length){
+		if(i < items.length){
 
 			var result = {
 				success: true
 			};
 
-			getParam(ad, result, 'views', /<span[^>]+profile-item-views-count[^\-][\s\S]*?<\/span>/i, replaceTagsAndSpaces, parseBalance);
-			getParam(ad, result, 'views_today', /<span[^>]+profile-item-views-count-today[\s\S]*?<\/span>/i, replaceTagsAndSpaces, parseBalance);
+			getParam(ad.views.total, result, 'views');
+			getParam(ad.views.today, result, 'views_today');
 			getParam(name, result, 'adv_title');
 			getParam(name, result, '__tariff');
-			getParam(ad, result, 'price', /<div[^>]+profile-item-data-price[\s\S]*?<\/div>/i, replaceTagsAndSpaces, parseBalance);
-			getParam(ad, result, ['currency', 'price'], /<div[^>]+profile-item-data-price[\s\S]*?<\/div>/i, replaceTagsAndSpaces, parseCurrency);
-			getParam(ad, result, 'days_left', /<div[^>]+profile-item-lifetime[\s\S]*?<\/div>/i, replaceTagsAndSpaces,	parseBalance);
+			getParam(ad.price.hasValue ? ad.price.formatted : undefined, result, 'price', null, null, parseBalance);
+			getParam(ad.price.postfix || '₽', result, ['currency', 'price']);
+			getParam(Math.floor((ad.finishTime - new Date())/86400000), result, 'days_left');
 		}else{
 			 throw new AnyBalance.Error('Не удаётся найти ни одного объявления');
 		}
@@ -100,7 +109,7 @@ function main() {
 		var region = prefs.region || 'rossiya';
 		var pattern = prefs.pattern;
 
-		var baseurl = 'https://m.avito.ru/' + region + '?q=' + encodeURIComponent(pattern);
+		var baseurl = 'https://www.avito.ru/' + region + '?q=' + encodeURIComponent(pattern);
 
 		AnyBalance.trace('Starting search: ' + baseurl);
 		var info = AnyBalance.requestGet(baseurl);
@@ -125,33 +134,23 @@ function main() {
 			return;
 		}
 
-		var found = getParam(info, null, null, /<div[^>]*class="[^"]*nav-helper-text[^"]*"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+		var found = getParam(info, null, null, /<span[^>]*data-marker="page-title\/count"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
 		getParam(found, result, 'found');
 
 		if (!found) {
 			throw new AnyBalance.Error("Ошибка при получении данных с сайта.");
 		}
-		if ((matches = info.match(/<article[^>]*class="[^"]*b-item[^"]*"[^>]*>[\s\S]*?<\/article>/ig))) {
-			info = matches[0];
-			getParam(info, result, 'date', /<div[^>]*class="[^"]*info-date[^"]*"[^>]*>([\s\S]*?),/i, replaceTagsAndSpaces);
-			getParam(info, result, 'time', /<div[^>]*class="[^"]*info-date[^"]*"[^>]*>[\s\S]*?,([\s\S]*?)<\/div>/i,
-				replaceTagsAndSpaces);
 
-			var datetime;
-			if (isset(result.date) && isset(result.time)) {
-				datetime = result.date + ' ' + result.time;
-			} else if (isset(result.date)) {
-				datetime = result.date;
-			} else if (isset(result.time)) {
-				datetime = result.time;
-			}
-			if (datetime)
-				getParam(datetime, result, 'datetime');
+		var ad = getElement(info, /<div[^>]+item_table-wrapper/ig);
+		if (ad) {
+			getParam(ad, result, 'datetime', /data-absolute-date="([^"]*)/i, replaceHtmlEntities);
+			getParam(ad, result, 'date', /data-absolute-date="([^"]*?)\d+:\d+/i, replaceHtmlEntities);
+			getParam(ad, result, 'time', /data-absolute-date="[^"]*?(\d+:\d+)/i, replaceHtmlEntities);
 
-			getParam(info, result, 'last', /<h3[^>]*class="[^"]*item-header[^"]*"[^>]*>([\s\S]*?)<\/h3>/i, replaceTagsAndSpaces);
-			getParam(info, result, 'price', /<div[^>]*class="[^"]*item-price[^"]*"[^>]*>([\s\S]*?)<\/div>/i,
+		//	getParam(info, result, 'last', /<h3[^>]*class="[^"]*item-header[^"]*"[^>]*>([\s\S]*?)<\/h3>/i, replaceTagsAndSpaces);
+			getParam(info, result, 'price', /<span[^>]+data-marker="item-price"[^>]*>([\s\S]*?)<\/span>/i,
 				replaceTagsAndSpaces, parseBalance);
-			getParam(info, result, ['currency', 'balance'], /<div[^>]*class="[^"]*item-price[^"]*"[^>]*>([\s\S]*?)<\/div>/i, AB.replaceTagsAndSpaces,
+			getParam(info, result, ['currency', 'balance'], /<span[^>]+data-marker="item-price"[^>]*>([\s\S]*?)<\/span>/i, AB.replaceTagsAndSpaces,
 				AB.parseCurrency);
 
 		} else {
@@ -160,4 +159,9 @@ function main() {
 
 		AnyBalance.setResult(result);
 	}
+}
+
+function getPersonalItems(html){
+	var ads = getParam(html, /<div[^>]+js-personal-items\b[^>]+data-params=["']([^"']*)/i, replaceHtmlEntities, getJson);
+	return ads.items;
 }

@@ -312,12 +312,12 @@ function getDiscount(result, discount) {
         var total = parseTraffic(discount.limit + discount.uom);
         sumParam(left, result, 'remainders.traffic_left', null, null, null, aggregate_sum);
         sumParam(total - left, result, 'remainders.traffic_used', null, null, null, aggregate_sum);
-        sumParam(discount.endDate || undefined, result, 'remainders.traffic_till', null, null, parseDateISO, aggregate_min);
+        sumParam(discount.endDay || undefined, result, 'remainders.traffic_till', null, null, parseDateISO, aggregate_min);
     } else if (/pcs/i.test(units)) {
         //СМС/ММС
         sumParam(discount.remain, result, 'remainders.sms_left', null, null, null, aggregate_sum);
         sumParam(discount.limit - discount.remain, result, 'remainders.sms_used', null, null, null, aggregate_sum);
-        sumParam(discount.endDate || undefined, result, 'remainders.sms_till', null, null, parseDateISO, aggregate_min);
+        sumParam(discount.endDay || undefined, result, 'remainders.sms_till', null, null, parseDateISO, aggregate_min);
     } else {
         AnyBalance.trace("Неизвестный дискаунт: " + JSON.stringify(discount));
     }
@@ -333,7 +333,7 @@ function processPayments(html, result){
 	
 	try {
 		html = AnyBalance.requestGet(baseurl + "api/subscribers/" + subsid + "/payments?fromDate=" 
-		    + getFormattedDate({format: 'YYYY-MM-DD', offsetMonth:6}) + "T00%3A00%3A00%2B03%3A00&toDate="
+		    + getFormattedDate({format: 'YYYY-MM-DD', offsetMonth:3}) + "T00%3A00%3A00%2B03%3A00&toDate="
 		    + getFormattedDate({format: 'YYYY-MM-DD'}) + "T23%3A59%3A59%2B03%3A00", g_headers);
 		
 		var json = getJson(html);

@@ -72,7 +72,7 @@ function main() {
 		if(data.smsCode){
 			throw new AnyBalance.Error('Вход требует ввода смс-кода. Данная операция пока не поддерживается. Пожалуйста, обратитесь к автору провайдера');
 		}
-		data = callApi('login/checkPassword2', null, {"password":prefs.password});
+		data = callApi('login/checkPassword3', null, {"password":prefs.password});
 		data = callApi('user/userRole', null, data.userInfo.dboContracts[0]);
 
 		//AnyBalance.setCookie('mybank.by', 'JSESSIONID', g_cookie);

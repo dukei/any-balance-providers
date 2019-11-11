@@ -29,8 +29,8 @@ function loginAndGetBalance(prefs, result) {
 	if(ld){
 		AnyBalance.trace('Загружаем из layoutData');
 		getParam(ld.user.accountId, result, 'number');
-		getParam(ld.balance.rubSum.availableAmount, result, 'balance');
-		getParam(ld.balance.bonusSum.availableAmount, result, 'bonus');
+		getParam(ld.balance.rub.availableAmount, result, 'balance');
+		getParam(ld.balance.bonus.availableAmount, result, 'bonus');
 	}else{
 		AnyBalance.trace('Загружаем по-старинке');
 		getParam(html, result, 'number', /Номер кошелька(?:[^>]*>){2}(\d{10,20})/i, replaceTagsAndSpaces);

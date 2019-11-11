@@ -90,8 +90,8 @@ function main() {
 				success: true
 			};
 
-			getParam(ad.views.total, result, 'views');
-			getParam(ad.views.today, result, 'views_today');
+			getParam((ad.views && ad.views.total) || undefined, result, 'views');
+			getParam((ad.views && ad.views.today) || undefined, result, 'views_today');
 			getParam(name, result, 'adv_title');
 			getParam(name, result, '__tariff');
 			getParam(ad.price.hasValue ? ad.price.formatted : undefined, result, 'price', null, null, parseBalance);

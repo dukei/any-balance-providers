@@ -875,9 +875,12 @@ function processCountersLK(result){
 
 		if(c.packageType === 'Calling'){
 			AnyBalance.trace('Это минуты');
+			let del = 1;
+			if(c.unitType === 'Second')
+				del = 60;
 			getParam(c.deadlineDate, result.remainders, 'remainders.min_till', null, null, parseDateISO);
-			getParam(c.usedAmount, result.remainders, 'remainders.min_local');
-			getParam(c.totalAmount - c.usedAmount, result.remainders, 'remainders.min_left');
+			getParam(c.usedAmount/del, result.remainders, 'remainders.min_local');
+			getParam((c.totalAmount - c.usedAmount)/del, result.remainders, 'remainders.min_left');
 		}else if(c.packageType === 'Messaging'){
 			AnyBalance.trace('Это сообщения');
 			getParam(c.deadlineDate, result.remainders, 'remainders.sms_till', null, null, parseDateISO);

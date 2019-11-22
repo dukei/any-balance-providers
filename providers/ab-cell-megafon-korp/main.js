@@ -2,10 +2,10 @@
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 */
 var g_headers = {
-	'Accept': 'application/json, text/javascript, */*; q=0.01',
+	'Accept': 'application/json, text/plain, */*; q=0.01',
 	'Accept-Language': 'ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7',
 	'Connection': 'keep-alive',
-	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.181 Safari/537.36',
+	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.120 Safari/537.36',
 };
 
 function getRegions() {
@@ -48,40 +48,59 @@ function main() {
 
     AnyBalance.setDefaultCharset('utf-8');
     var region = prefs.region || 'center';
-    var baseurl = g_conversion[region] || ('https://' + (prefs.region || 'center') + '.b2blk.megafon.ru/');
+//    var baseurl = g_conversion[region] || ('https://' + (prefs.region || 'center') + '.b2blk.megafon.ru/');
+    var baseurl = 'https://b2blk.megafon.ru/';
 
     AnyBalance.trace('Регион: ' + baseurl);
 
-    var html = AnyBalance.requestGet(baseurl + 'b2b/login', g_headers);
+    var html = AnyBalance.requestGet(baseurl + 'login', g_headers);
 
     if(!html || AnyBalance.getLastStatusCode() > 400){
         AnyBalance.trace(html);
         throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
     }
 
-    g_headers.Referer = baseurl + 'b2b/';
+    g_headers.Referer = baseurl;
 
-    html = AnyBalance.requestPost(baseurl + 'b2b/loginProcess', {
+    html = AnyBalance.requestPost(baseurl + 'loginProcess', {
+    	captchaTime: +new Date(),
         username: prefs.login,
         password: prefs.password,
     }, addHeaders({
-    	Referer: baseurl + 'b2b/login',
+    	Referer: baseurl + 'login',
     	'X-Requested-With': 'XMLHttpRequest',
-    	Accept: 'application/json, text/javascript, */*; q=0.01',
     }));
 
     var json = getJson(html);
+/*    if(json.isCaptchaShouldBeShown){
+    	AnyBalance.trace('Мегафон потребовал рекапчу');
+
+    	html = AnyBalance.requestPost(baseurl + 'loginProcess', {
+        	username: prefs.login,
+        	password: prefs.password,
+        	captcha: solveRecaptcha('Пожалуйста, докажите, что вы не робот', baseurl + 'login', '6LeF9FkUAAAAAE8fndYadzonV1LnZ')
+    	}, addHeaders({
+    		Referer: baseurl + 'login',
+    		'X-Requested-With': 'XMLHttpRequest'
+    	}));
+
+    	json = getJson(html);
+    }  */
+
     if(json.isCaptchaShouldBeShown){
     	AnyBalance.trace('Мегафон потребовал рекапчу');
 
-    	html = AnyBalance.requestPost(baseurl + 'b2b/loginProcess', {
+    	let ct = (+new Date());
+    	var img = AnyBalance.requestGet(baseurl + 'captcha?' + ct, addHeaders({Referer: baseurl + 'login'}));
+
+    	html = AnyBalance.requestPost(baseurl + 'loginProcess', {
+    		captchaTime: ct,
         	username: prefs.login,
         	password: prefs.password,
-        	captcha: solveRecaptcha('Пожалуйста, докажите, что вы не робот', baseurl + 'b2b/login', '6LeF9FkUAAAAAE8fndYadzonV1LnZ')
+        	captcha: AnyBalance.retrieveCode('Пожалуйста, введите код с картинки', img)
     	}, addHeaders({
-    		Referer: baseurl + 'b2b/login',
+    		Referer: baseurl + 'login',
     		'X-Requested-With': 'XMLHttpRequest',
-    		Accept: 'application/json, text/javascript, */*; q=0.01',
     	}));
 
     	json = getJson(html);
@@ -104,47 +123,48 @@ function main() {
     }
 
     var urlEnter = json.redirect || json.targetUrl;
+    AnyBalance.trace("Теперь переходим по " + urlEnter);
+    baseurl = joinUrl(baseurl, urlEnter).replace(/^(.*\/\/[^\/]+\/).*$/, '$1');
 
     if(json.token){
     	AnyBalance.trace('Устанавливаем токен');
     	AnyBalance.setCookie(json.domain, 'x-ps-token', json.token);
     }
 
-    AnyBalance.trace("Теперь переходим по " + urlEnter);
-    baseurl = joinUrl(baseurl, urlEnter);
+    if(json.auth.state !== 'CACHED'){
+        var tries = 1, maxTries = 25;
+        do{
+		    var ok = AnyBalance.requestGet(baseurl + 'isUserDataCached?' + (+new Date()), addHeaders({
+        		Referer: baseurl + 'login',
+//        		'X-Requested-With': 'XMLHttpRequest',
+		    }));
+		    ok = getJson(ok);
+	    
+		    if(ok === true || ok.status == 'USER_CACHED'){
+		        AnyBalance.trace('Информация обновлена');
+		    	break;
+		    }
+	    
+		    if(tries == 1){
+        		AnyBalance.trace('Обновляем информацию...');
+		        AnyBalance.requestPost(baseurl + 'cacheUserData', '', addHeaders({
+        			Referer: baseurl + 'login',
+//        			'X-Requested-With': 'XMLHttpRequest',
+		        }));
+		    }
+	    
+		    if(++tries > maxTries)
+		    	throw new AnyBalance.Error('Информация не может быть обновлена. Сайт изменен?');
+	    
+		    AnyBalance.trace('Проверяем ещё раз, не обновлена ли информация (' + tries + '/' + maxTries + ')');
+		    AnyBalance.sleep(2000);
+        }while(true);
+    }
+
     html = AnyBalance.requestGet(baseurl, addHeaders({
     	Accept: 'text/html',
-    	Referer: baseurl + 'b2b/login',
+    	Referer: baseurl + 'login',
     }));
-
-    var tries = 1, maxTries = 25;
-    do{
-	    var ok = AnyBalance.requestGet(baseurl + 'isUserDataCached', addHeaders({
-    		Referer: baseurl + 'login',
-    		'X-Requested-With': 'XMLHttpRequest',
-            Accept: 'application/json, text/javascript, */*; q=0.01',
-	    }));
-	    ok = getJson(ok);
-
-	    if(ok === true || ok.status == 'USER_CACHED'){
-	        AnyBalance.trace('Информация обновлена');
-	    	break;
-	    }
-
-	    if(tries == 1){
-    		AnyBalance.trace('Обновляем информацию...');
-	        AnyBalance.requestPost(baseurl + 'cacheUserData', '', addHeaders({
-    			Referer: baseurl + 'login',
-    			'X-Requested-With': 'XMLHttpRequest',
-	        }));
-	    }
-
-	    if(++tries > maxTries)
-	    	throw new AnyBalance.Error('Информация не может быть обновлена. Сайт изменен?');
-
-	    AnyBalance.trace('Проверяем ещё раз, не обновлена ли информация (' + tries + '/' + maxTries + ')');
-	    AnyBalance.sleep(2000);
-    }while(true);
 
     if(!/logout/i.test(html)){
     	var error = getElement(html, /<[^>]+error-text/i, replaceTagsAndSpaces);

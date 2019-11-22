@@ -40,7 +40,7 @@ function login(){
         
         function sendForm(html, code){
         	var prefs = AnyBalance.getPreferences();
-            var form = getElement(html, prefs.type == '-1' ? /<form[^>]+id="login-form"[^>]*>/i : /<form[^>]+id="login-bonus-card-form"[^>]*>/i);
+            var form = getElement(html, prefs.type == '-1' ? /<form[^>]+name="login-form"[^>]*>/i : /<form[^>]+name="login-bonus-card-form"[^>]*>/i);
             if(!form){
             	AnyBalance.trace(form);
             	throw new AnyBalance.Error('Не удалось найти форму входа. Сайт изменен?');
@@ -63,7 +63,7 @@ function login(){
 					return prefs.login;
 				else if ('verification-code' == name)
 					return code;
-				else if ('password' == name)
+				else if ('password' == name || 'login_password' == name)
 					return prefs.password;
 				else if (name == 'zipCode')
 					return prefs.zip;

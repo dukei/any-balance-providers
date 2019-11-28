@@ -119,6 +119,32 @@ function login(){
    	AnyBalance.saveData();
 }
 
+function loginKino(){
+	var prefs = AnyBalance.getPreferences();
+   	var html = AnyBalance.requestPost(baseurl + '/cgi-bin/api.pl', JSON.stringify({
+   		"method":"UserLogin",
+   		"params":{
+   			"Login":prefs.login,
+   			"Password":prefs.password
+   		}
+   	}), addHeaders({
+   		Accept: 'application/json',
+   		'Content-Type': 'application/json',
+   		Referer: baseurl + '/bonus/',
+   		'X-Requested-With': 'XMLHttpRequest',
+   	}));
+
+   	var json = getJson(html);
+   	if(!json.result){
+   		var error = json.error && json.error.message;
+   		if(error)
+   			throw new AnyBalance.Error(error, null, /email|парол/i.test(error));
+   		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
+   		
+   	}
+   	return json;
+}
+
 function main() {
 	var prefs = AnyBalance.getPreferences();
 
@@ -127,7 +153,7 @@ function main() {
 	AB.checkEmpty(prefs.login, 'Введите логин!');
 	AB.checkEmpty(prefs.password, 'Введите пароль!');
 
-	AnyBalance.restoreCookies();
+/*	AnyBalance.restoreCookies();
 
 	try{
 		callApi('Rambler::Id::get_profile_info', [
@@ -145,12 +171,19 @@ function main() {
  		login();
 	}
 
+	var json = loginKino();
+   	
    	json = callApi('Rambler::Id::Aux::get_rsidx', null, {
    		Referer: baseurl + '/bonus/',
    		Origin: baseurl
    	});
+   	var token = json.result.token;
+*/
+	
+	var json = loginKino();
+	var token = json.result.SessionId;
 
-   	var html = AnyBalance.requestGet(baseurl + '/bonus/?ajax=1&rsxid=' + encodeURIComponent(json.result.token), addHeaders({
+   	var html = AnyBalance.requestGet(baseurl + '/bonus/?ajax=1&SessionId=' + encodeURIComponent(token), addHeaders({
    		Accept: 'application/json',
    		Referer: baseurl + '/bonus/',
    		'X-Requested-With': 'XMLHttpRequest',
@@ -163,16 +196,34 @@ function main() {
 
 	json = getJson(html);
 
-	var card = json.request_data.GetCardInfoResult.Card;
+	try{
+		var card = json.request_data.GetCardInfoResult.Card;
+	    
+		AB.getParam(json.request_data.CurrentBalance, result, 'balance');
+		AB.getParam(card.CategoryPercent, result, 'percent');
+		AB.getParam(card.CategoryStatusName, result, 'status');
+		AB.getParam(card.NextCategoryStatusBalance 
+			- card.CurrentStatusBalance, result, 'left_for_next_status', null, replaceTagsAndSpaces, parseBalance);
+		AB.getParam(card.CategoryConfirmationDate, result, 'left_for_next_status_till', null, replaceTagsAndSpaces, parseDateISO);
+		AB.getParam(card.Number, result, 'num');
+		AB.getParam(card.CategoryStatusName + ': ' + card.Category, result, '__tariff');
 
-	AB.getParam(json.request_data.CurrentBalance, result, 'balance');
-	AB.getParam(card.CategoryPercent, result, 'percent');
-	AB.getParam(card.CategoryStatusName, result, 'status');
-	AB.getParam(card.NextCategoryStatusBalance 
-		- card.CurrentStatusBalance, result, 'left_for_next_status', null, replaceTagsAndSpaces, parseBalance);
-	AB.getParam(card.CategoryConfirmationDate, result, 'left_for_next_status_till', null, replaceTagsAndSpaces, parseDateISO);
-	AB.getParam(card.Number, result, 'num');
-	AB.getParam(card.CategoryStatusName + ': ' + card.Category, result, '__tariff');
+	}catch(e){
+		AnyBalance.trace('Не удалось получить баланс по информации о карте: ' + e.message);
+
+   	   	var html = AnyBalance.requestGet(baseurl + '/bonus/profile/?ajax=1&SessionId=' + encodeURIComponent(token), addHeaders({
+   	   		Accept: 'application/json',
+   	   		Referer: baseurl + '/bonus/',
+   	   		'X-Requested-With': 'XMLHttpRequest',
+   	    
+   	   	}));
+   	    
+		json = getJson(html);
+		var data = json.request_data;
+
+		AB.getParam(data.CurrentBalance, result, 'balance');
+		AB.getParam(data.UserInfo.CardNumber, result, 'num');
+	}
 
 	AnyBalance.setResult(result);
 }

@@ -14,7 +14,7 @@ var g_gwtCfg = {
 	url: 'https://account.kyivstar.ua/cas/auth/',
 	strong_name: '\\b%VARNAME_BROWSER%],(\\w+)\\)',
 	auth_nocache: 'auth.nocache.js',
-	magic_id: '2DBCE67F6E14FC6EA6EDAFE3ABA12BD9'
+	magic_id: '399E8C3CEF0C030C0BB622DCF82CCD9D'
 };
 
 function isLoggedIn(html) {

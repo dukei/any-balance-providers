@@ -338,7 +338,7 @@ function processRemaindersApi(result){
                     // Минуты
                     if((/мин|сек/i.test(units) && !/интернет/i.test(name)) || (/шт/i.test(units) && /минут/i.test(name) && !/СМС|SMS|MMS|ММС/i.test(name))) {
                         AnyBalance.trace('Parsing minutes...' + JSON.stringify(current));
-                        var unlim = /^9{7,}$/i.test(current.total); //Безлимитные значения только из девяток состоят
+                        var unlim = /^9{6,}$/i.test(current.total); //Безлимитные значения только из девяток состоят
 						if(unlim){
 							AnyBalance.trace('пропускаем безлимит минут: ' + name + ' ' + (current.available + current.unit) + '/' + (current.total + current.unit));
 							continue;
@@ -359,7 +359,7 @@ function processRemaindersApi(result){
                         }
                         // Сообщения
                     } else if(/шт|sms|смс|mms|ммс/i.test(units)) {
-                        var unlim = /^9{7,}$/i.test(current.total); //Безлимитные значения только из девяток состоят
+                        var unlim = /^9{6,}$/i.test(current.total); //Безлимитные значения только из девяток состоят
 						if(unlim){
 							AnyBalance.trace('пропускаем безлимит смс: ' + name + ' ' + (current.available + current.unit) + '/' + (current.total + current.unit));
 							continue;

@@ -48,10 +48,10 @@ function main() {
 	
 	var result = {success: true};
 
-	getParam(html, result, 'balance', /<h3[^>]*>\s*([\d\s,.-]+)руб/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'bonus', /<h3[^>]*>\s*([\d\s,.-]+)бал/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'status', /Текущий статус:(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces);
-	getParam(html, result, 'acc_num', /Номер лицевого счета:(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces);
+	getParam(html, result, 'balance', /<td[^>]*>\s*([\d\s,.-]+) руб/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'bonus', /<td[^>]*>\s*([\d\s,.-]+) бал/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'status', /Текущий тариф:(?:[^>]*>){2}\s*([\s\S]*?)\s*<\//i, replaceTagsAndSpaces);
+	getParam(html, result, 'acc_num', /Номер лицевого счета:(?:[^>]*>){2}\s*([\s\S]*?)\s*<\//i, replaceTagsAndSpaces);
 	
 	AnyBalance.setResult(result);
 }

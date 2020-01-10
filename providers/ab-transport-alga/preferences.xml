@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        key="cardnumber"
+        title="Карта" 
+        summary="Номер карты (19 цифр)||{@s}\n" 
+        dialogTitle="Номер карты" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите номер карты (19 цифр)"
+        positiveButtonText="ОК" 
+        inputType="number">
+    </EditTextPreference>
+</PreferenceScreen>

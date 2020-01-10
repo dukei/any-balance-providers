@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change version="5" date="2019-09-26">
+      - Исправлен URL запроса.
+    </change> 
     <change version="4" date="2016-11-08">
       - Исправлен URL запроса.
     </change>    

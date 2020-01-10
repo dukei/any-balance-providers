@@ -142,7 +142,7 @@ function shouldProcess(counter, info){
 		    if(!prefs.lastdigits)
 		    	return true;
 			
-			var num = getParam(info.__name, null, null, /([^,]+)/i);
+			var num = getParam(info.__name, /([^,]+)/i, [/\s+/g, '']);
 			if(endsWith(num, prefs.lastdigits))
 				return true;
 		    

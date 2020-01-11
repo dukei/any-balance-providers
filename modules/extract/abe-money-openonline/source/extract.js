@@ -9,9 +9,6 @@ var g_headers = {
 	'X-Client-Version': 'a2.35 (672)',
 	'User-Agent':		'okhttp/3.12.3',
 	'Connection': 'Keep-Alive',
-	'Sec-Fetch-Mode': null,
-	'Origin': null,
-	'Sec-Fetch-Site': null,
 };
 
 

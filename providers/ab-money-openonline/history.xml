@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="11" date="2020-01-11">
+	- ввод номера карты в качестве логина
+	</change>
 	<change version="10" date="2020-01-11">
 	- добавлены бонусные баллы
 	</change>

@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="8">ab-money-openonline</id>
+	<id version="9">ab-money-openonline</id>
 	<api flags="no_browser"/>
 	<name>Банк Открытие</name>
 	<description html="true"><![CDATA[
@@ -21,11 +21,11 @@
 	</files>
 	<counters>
 		<counter id="balance" name="Баланс" units=" {@currency}"/>
-		<counter id="blocked_balance" name="Заблокировано" units=" {@currency}"/>
+<!--		<counter id="blocked_balance" name="Заблокировано" units=" {@currency}"/> -->
 		<counter id="limit" name="Кредитный лимит" units=" {@currency}"/>
-		<counter id="oPct" name="Просроченные проценты" units=" {@currency}"/>
+<!--		<counter id="oPct" name="Просроченные проценты" units=" {@currency}"/> 
 		<counter id="available" name="Доступно" units=" {@currency}"/>
-		<counter id="debt" name="Задолженность" units=" {@currency}"/>
+		<counter id="debt" name="Задолженность" units=" {@currency}"/> -->
 		<counter id="cardNumber" name="Номер карты" type="text"/>
 		<counter id="accNum" name="Номер счета" type="text"/>
 		<counter id="currency" name="Валюта" type="text"/>

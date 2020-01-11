@@ -8,6 +8,7 @@ var g_countersTable = {
 	}, 
 	card: {
     	"balance": "cards.balance",
+    	"bonus": "cards.bonus",
 		"blocked_balance": "cards.blocked",
 		"debt": "cards.debt",
 		"oPct": "cards.overduePct",
@@ -27,7 +28,8 @@ var g_countersTable = {
 		"currency": "accounts.currency",
 		"accNum": "accounts.num",
 		"available": "accounts.available",
-		"__tariff": "accounts.num",
+		"__tariff": "accounts.__name",
+		"date_start": "accounts.date_start",
     },
 	dep: {
     	"balance": "deposits.balance",
@@ -141,6 +143,6 @@ function main() {
 		
 		result = adapter.convert(result);
 	}
-	
+
 	AnyBalance.setResult(result);
 }

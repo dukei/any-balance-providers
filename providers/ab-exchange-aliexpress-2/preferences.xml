@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+	<EditTextPreference
+		obligatory="true"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		key="item_url"
+		title="Ссылка на товар"
+		dialogTitle="Ссылка на товар"
+		summary="||{@s}"
+		defaultValue="https://www.aliexpress.com/item/32717673669.html"
+		dialogMessage="Введите полный url товара без дополнительных параметров после знака ? и без самого знака ?"
+		inputType="text" />
+	
+	<CheckBoxPreference
+		title="Дебаг"
+		defaultValue="false"
+		summaryOn="Сейчас выводится доп. информация"
+		summaryOff="Сейчас доп. информация не выводится"
+		key="isDebug" />
+	
+</PreferenceScreen>

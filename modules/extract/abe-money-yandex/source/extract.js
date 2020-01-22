@@ -22,7 +22,7 @@ function loginAndGetBalance(prefs, result) {
 	
 	html = loginYandex(prefs.login, prefs.password, html, baseurl + 'index.xml', 'money');
 	
-	if (!/user__logout|user-account__logout/i.test(html))
+	if (!/logout-url/i.test(html))
 		throw new AnyBalance.Error("Не удалось зайти. Проверьте логин и пароль.");
 
 	var ld = getJsonObject(html, /window.__layoutData__\s*=/);
@@ -30,7 +30,18 @@ function loginAndGetBalance(prefs, result) {
 		AnyBalance.trace('Загружаем из layoutData');
 		getParam(ld.user.accountId, result, 'number');
 		getParam(ld.balance.rub.availableAmount, result, 'balance');
-		getParam(ld.balance.bonus.availableAmount, result, 'bonus');
+		var sk = ld.secretKey;
+
+		if(ld.balance.bonus){
+			getParam(ld.balance.bonus.availableAmount, result, 'bonus');
+		}else{
+			var html = AnyBalance.requestGet(baseurl + 'ajax/layout/accounts?sk=' + encodeURIComponent(sk), addHeaders({
+				Accept: 'application/json, text/plain, */*',
+				Referer: baseurl
+			}));
+			var json = getJson(html);
+			getParam(json.balances.bonus.availableAmount, result, 'bonus');
+		}
 	}else{
 		AnyBalance.trace('Загружаем по-старинке');
 		getParam(html, result, 'number', /Номер кошелька(?:[^>]*>){2}(\d{10,20})/i, replaceTagsAndSpaces);

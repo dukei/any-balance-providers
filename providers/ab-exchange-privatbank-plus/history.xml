@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<history>
+	<change version="4" date="2014-10-24">
+	Добавлены кусру ETH, BTC на Bitrex и стоимость нефти марки Brent
+	</change>
+
+	<change version="3" date="2014-10-24">
+	Добавлен безналичный курс валют (конвертация по картам)
+	</change>
+<!--
+	<change version="2" date="2014-09-03">
+	- 
+	</change>
+-->
+</history>

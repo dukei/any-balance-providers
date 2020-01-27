@@ -1,0 +1,40 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-money-privatbank-bisness</id>
+	<name>Приватбанк для бизнеса(Украина)</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию об остатках на расчетых и депозитных счетах Приватбанка для Бизнеса <a href="http://privatbank.ua/">http://privatbank.ua/</a></p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<ul>
+		<li>Для получения ID и token включите автоклиент в настройках Privat24 для бизнеса</li>
+		<li>Инструкция: &lt;https://docs.google.com/document/d/e/2PACX-1vS8rx2WKg69o6JvG5L4AhSXcU6vxXcJph6WK84qJcAYDBvsNYEob57jDMQhbosjc9gRS5bOTqTXf0vb/pub&lt;</li>
+                <li>Выполните инструкцию до п.5 включительно. Затем нажмите "API для розробників"</li>
+                <li>ID и токен введите в настроки провайдера</li>
+	</ul>
+	]]></instruction>
+	<author>DimaZUA &lt;DIMAZ.KHUA@gmail.com&gt;</author>
+	<depends>
+		<module id="extract/abe-money-privatbank-bisnes"/>
+	</depends>
+	<files>
+		<js>library.min.js</js>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" {@currency}"/>
+<counter id="tbalance" name="Текущие счета" units=" {@currency}"/>
+<counter id="dbalance" name="Депозиты" units=" {@currency}"/>
+<counter id="lbalance" name="Кредиты" units=" {@currency}"/>
+<counter id="ubalance" name="Что-то еще" units=" {@currency}"/>
+<counter id="html" name="Выписка" type="html"/>
+		<counter id="currency" name="Валюта" type="text"/>
+
+	</counters>
+	<keywords>приват, банк, украина</keywords>
+	<type>money, bank</type>
+	<country>ua</country>
+</provider>

@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        title="Номер накладной" 
+        positiveButtonText="ОК" 
+        summary="|Введите номер накладной или весь текст SMS собщения|{@s}" 
+        dialogTitle="Номер накладной" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите номер товарно-транспортной накладной (весь номер, только цифры). Например, 56155000006911"
+        inputType="text"
+        key="track_id">
+    </EditTextPreference>
+    <EditTextPreference 
+        title="Номер телефона" 
+        positiveButtonText="ОК" 
+        summary="|Введите весь номер без скобок и пробелов|{@s}" 
+        dialogTitle="Номер телефона" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите номер телефона получателя или отправителя"
+        inputType="number"
+        key="phone">
+    </EditTextPreference>
+</PreferenceScreen>

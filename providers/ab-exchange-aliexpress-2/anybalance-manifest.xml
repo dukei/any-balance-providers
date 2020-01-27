@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id major_version="1" version="2">ab-exchange-aliexpress-2</id>
+  <id major_version="1" version="3">ab-exchange-aliexpress-2</id>
   <name>Курс Алиэкспресс 2</name>
   <description html="true"><![CDATA[
   <p>Определяет внутренний курс доллара в интернет-магазине Алиэкспресс (AliExpress) <a href="https://www.aliexpress.com"/>https://www.aliexpress.com/</a></p>

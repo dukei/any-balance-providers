@@ -1,32 +1,46 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="3">ab-exchange-privatbank</id>
+	<id version="4">ab-exchange-privatbank</id>
 	<api flags="no_browser"/>
 	<name>Курсы валют Приватбанка</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о текущих курсах валют, установленных Приватбанком (http://privatbank.ua).</p> 
 	<p>Показывает курс доллара, евро, рубля к гривне.</p>
+	<p>Также отображает курс BTC,ETH на Bitrex и нефть марки Brent</p>
 	]]></description>
 	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
 	<files>
 		<icon>icon.png</icon>
-		<js>library.js</js>
+		<js>library.min.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
 	<counters>
- 		<counter id="USD_buy" name="USD покупка(в отделениях и Приват24)" prefix="$↓ "/>
-		<counter id="USD_sell" name="USD продажа(в отделениях и Приват24)" prefix="$↑ "/>
-		<counter id="EUR_buy" name="EUR покупка(в отделениях и Приват24)" prefix="€↓ "/>
-		<counter id="EUR_sell" name="EUR продажа(в отделениях и Приват24)" prefix="€↑ "/>
-		<counter id="RUR_buy" name="RUR покупка(в отделениях и Приват24)" prefix="р↓ "/>
-		<counter id="RUR_sell" name="RUR продажа(в отделениях и Приват24)" prefix="р↑ "/>
- 		<counter id="USD_buy_card" name="USD покупка(конвертация по картам)" prefix="$↓ "/>
-		<counter id="USD_sell_card" name="USD продажа(конвертация по картам)" prefix="$↑ "/>
-		<counter id="EUR_buy_card" name="EUR покупка(конвертация по картам)" prefix="€↓ "/>
-		<counter id="EUR_sell_card" name="EUR продажа(конвертация по картам)" prefix="€↑ "/>
-		<counter id="RUR_buy_card" name="RUR покупка(конвертация по картам)" prefix="р↓ "/>
-		<counter id="RUR_sell_card" name="RUR продажа(конвертация по картам)" prefix="р↑ "/>
+ 		<counter id="USD_buy" name="USD покупка(в отделениях и Приват24)" prefix="$↓ " units=" ₴"/>
+		<counter id="USD_sell" name="USD продажа(в отделениях и Приват24)" prefix="$↑ " units=" ₴"/>
+
+		<counter id="EUR_buy" name="EUR покупка(в отделениях и Приват24)" prefix="€↓ " units=" ₴"/>
+		<counter id="EUR_sell" name="EUR продажа(в отделениях и Приват24)" prefix="€↑ " units=" ₴"/>
+
+		<counter id="RUR_buy" name="RUR покупка(в отделениях и Приват24)" prefix="р↓ " units=" ₴"/>
+		<counter id="RUR_sell" name="RUR продажа(в отделениях и Приват24)" prefix="р↑ " units=" ₴"/>
+
+ 		<counter id="BTC_buy" name="BTC покупка(в отделениях и Приват24)" prefix="BTC↓ " units=" $"/>
+		<counter id="BTC_sell" name="BTC продажа(в отделениях и Приват24)" prefix="BTC↑ " units=" $"/>
+
+ 		<counter id="USD_buy_card" name="USD покупка(конвертация по картам)" prefix="$↓ " units=" ₴"/>
+		<counter id="USD_sell_card" name="USD продажа(конвертация по картам)" prefix="$↑ " units=" ₴"/>
+
+		<counter id="EUR_buy_card" name="EUR покупка(конвертация по картам)" prefix="€↓ " units=" ₴"/>
+		<counter id="EUR_sell_card" name="EUR продажа(конвертация по картам)" prefix="€↑ " units=" ₴"/>
+
+		<counter id="RUR_buy_card" name="RUR покупка(конвертация по картам)" prefix="р↓ " units=" ₴"/>
+		<counter id="RUR_sell_card" name="RUR продажа(конвертация по картам)" prefix="р↑ " units=" ₴"/>
+
+		<counter id="BTC_bittrex" name="BTC Bittrex" prefix="BTC " units=" $"/>
+		<counter id="ETH_bittrex" name="ETH Bittrex" prefix="ETH " units=" $"/>
+
+		<counter id="Brent" name="Нефть марки Brent" prefix="BRENT " units=" $"/>
 	</counters>
 	<keywords>Курс валют, приватбанк, украина, доллар, евро, гривна, рубль</keywords>
 	<type>exchange</type>

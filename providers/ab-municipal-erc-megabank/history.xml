@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="1.1" version="14" date="2020-27-01">
+	Изменения на сайте
+	</change>
 	<change major_version="1.1" version="13" date="2016-11-21">
 	Исправлено получение нужного счета
 	</change>

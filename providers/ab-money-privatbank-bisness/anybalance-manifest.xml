@@ -14,9 +14,6 @@
 	</ul>
 	]]></instruction>
 	<author>DimaZUA &lt;DIMAZ.KHUA@gmail.com&gt;</author>
-	<depends>
-		<module id="extract/abe-money-privatbank-bisnes"/>
-	</depends>
 	<files>
 		<js>library.min.js</js>
 		<icon>icon.png</icon>

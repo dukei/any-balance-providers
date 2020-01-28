@@ -36,15 +36,13 @@ function main() {
     for (key in result) {
         if (key.indexOf('balance') > -1) result[key] = Math.floor(result[key] * 100) / 100
     }
-    var d = new Date();
-    result.__tariff = ("0" + d.getDate()).slice(-2) + "." + ("0" + (d.getMonth() + 1)).slice(-2) + "." + d.getFullYear() + " " + ("0" + d.getHours()).slice(-2) + ":" + ("0" + d.getMinutes()).slice(-2);
-
+    result.__tarif=getFormattedDate('DD.MM.YYYY HH:NN')
     AnyBalance.setResult(result);
 };
 
 function History(iban) {
 AnyBalance.setData('hist_'+iban,'');AnyBalance.saveData();
-    var response = AnyBalance.requestGet('https://acp.privatbank.ua/api/proxy/transactions?acc=' + iban + '&startDate=' + DateToString(-3) + '&endDate=' + DateToString(0), g_headers);
+    var response = AnyBalance.requestGet('https://acp.privatbank.ua/api/proxy/transactions?acc=' + iban + '&startDate=' + getFormattedDate({format:'DD-MM-YYYY',offsetDay:3}) + '&endDate=' + getFormattedDate('DD-MM-YYYY'), g_headers);
     if (AnyBalance.getData('hist_'+iban)==response) return AnyBalance.getData('html_'+iban);
     var json = getJson(response).StatementsResponse.statements;
     json.sort (function(a, b) {
@@ -67,10 +65,4 @@ AnyBalance.setData('hist_'+iban,'');AnyBalance.saveData();
     AnyBalance.setData('html_'+iban,ret);
     AnyBalance.saveData();
     return ret;
-}
-
-function DateToString(Shift) {
-    var d = new Date();
-    d.setDate(d.getDate() + Shift);
-    return ("0" + d.getDate()).slice(-2) + '-' + ("0" + d.getMonth()+1).slice(-2) + '-' +  d.getFullYear();
 }

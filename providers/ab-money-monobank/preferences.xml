@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference
+        positiveButtonText="ОК"
+	key="token" 
+        dialogTitle="Персональный token"
+        negativeButtonText="Отмена"
+        title="Ваш token с api.monobank.ua"
+        summary="||{@s}"
+        dialogMessage="Введите token.">
+    </EditTextPreference>
+</PreferenceScreen>

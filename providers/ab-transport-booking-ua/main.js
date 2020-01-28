@@ -12,8 +12,7 @@ var g_headers = {
 };
 
 function findStationByName(baseurl, name) {
-    var html = AnyBalance.requestGet(baseurl + 'ru/purchase/station/?term=' + encodeURIComponent(name), g_headers);
-    
+    var html = AnyBalance.requestGet(baseurl + 'ru/train_search/station/?term=' + encodeURIComponent(name), g_headers);
     var json = getJson(html);
     
     var value = json[0];
@@ -29,51 +28,30 @@ function main() {
 	
 	checkEmpty(prefs.station_from, 'Введите пункт отправления!');
 	checkEmpty(prefs.station_to, 'Введите пункт назначения!');
-	checkEmpty(prefs.date_trip, 'Введите дату!');
-	
-	var html = AnyBalance.requestGet(baseurl + 'ru/', g_headers);
-	
-	if (!html || AnyBalance.getLastStatusCode() > 400) 
-		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
 
-	var svAB = AnyBalance, token;
-	this.fake_localStorage = {
-	    setItem: function(key, value) {
-			svAB.trace('Получили token (' + key + '): ' + value);
-			token = value;
-		}
-	}
-
-	if(obf_script){
-		var obf_script = getParam(html, /\$\$_=~[\s\S]*?\(\);/);
-            
-		(0).constructor.constructor = function(str){ //Обфусцированный скрипт использует это для выполнения кода
-			if(str && typeof(str)=='string' && /localStorage/.test(str)){
-				str = str.replace(/localStorage/g, 'fake_localStorage');
-			}
-			return Function.apply(null, arguments);
-		}
-	    
-		safeEval(obf_script);
-		if(!token)
-			throw new AnyBalance.Error('Не удалось получить token авторизации. Сайт изменен?');
-	}
-    
+	
+   
     // Запрос на поиск пункта отправления
     var station_fromIdAndNameArray = findStationByName(baseurl, prefs.station_from);
     // Запрос на поиск пункта назначения
     var station_toIdAndNameArray = findStationByName(baseurl, prefs.station_to);
     // Запросим данные
-    html = AnyBalance.requestPost(baseurl + 'ru/purchase/search/', {
-        'station_id_from':station_fromIdAndNameArray[0],
-        'station_id_till':station_toIdAndNameArray[0],
-        'station_from':station_fromIdAndNameArray[1],
-        'station_till':station_toIdAndNameArray[1],
-        'date_dep':prefs.date_trip,
-        'time_dep':prefs.time_trip || '00:00',
-        'time_dep_till':'',
-        'another_ec':'0',
-        'search':''
+    if (!prefs.date_trip) {dt = new Date()
+    }else{
+       var parts = prefs.date_trip.split(".");
+       var dt = new Date(parseInt(parts[2], 10),
+                  parseInt(parts[1], 10) - 1,
+                  parseInt(parts[0], 10));
+    }
+    var curDate=new Date();
+    var time='00:00';
+    if (getFormattedDate('YYYY-MM-DD',dt)==getFormattedDate('YYYY-MM-DD',curDate)) time=getFormattedDate('HH:NN',curDate)
+    html = AnyBalance.requestPost(baseurl + 'ru/train_search/', {
+        'from':station_fromIdAndNameArray[0],
+        'to':station_toIdAndNameArray[0],
+        'date':getFormattedDate('YYYY-MM-DD',dt),
+        'time':time,
+        'get_tpl':'0'
     }, addHeaders({
         'Referer': baseurl + 'ru/',
         'GV-Unique-Host': '1',
@@ -82,59 +60,95 @@ function main() {
         'GV-Referer': 'http://booking.uz.gov.ua/ru/',
 //        'GV-Token':token
     })); 
-    
+	if (!html || AnyBalance.getLastStatusCode() > 400) 
+		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
+	
 	json = getJson(html);	
-	if(json.error) {
-		throw new AnyBalance.Error(json.value);
-	}
-    
 	var result = {success: true};
+	var cap='';
+	if (JSON.stringify(json).indexOf('"captcha":"booking"')>0) {
+		cap=reCapatcha(station_fromIdAndNameArray[0],station_toIdAndNameArray[0],getFormattedDate('YYYY-MM-DD',dt));
+		if (!cap) throw new AnyBalance.Error('Ошибка при попытке распознать капатчу.');
+
+    html = AnyBalance.requestPost(baseurl + 'ru/train_search/', {
+        'from':station_fromIdAndNameArray[0],
+        'to':station_toIdAndNameArray[0],
+        'date':getFormattedDate('YYYY-MM-DD',dt),
+        'time':time,
+        'captcha':cap,
+        'get_tpl':'0'
+    }, addHeaders({
+        'Referer': baseurl + 'ru/',
+        'GV-Unique-Host': '1',
+        'GV-Ajax': '1',
+        'GV-Screen': '1440x900',
+        'GV-Referer': 'http://booking.uz.gov.ua/ru/',
+//        'GV-Token':token
+    })); 
+	if (!html || AnyBalance.getLastStatusCode() > 400) 
+		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
 	
+	json = getJson(html);	
+		
+
+
+
+}
+	json=json.data.list;
 	var data;
-	
+	var otherTrains='';
 	if(prefs.train) {
-		for(var i = 0; i < json.value.length; i++) {
-			if(endsWith(json.value[i].num+'', prefs.train)) {
+		for(var i = 0; i < json.length; i++) {
+			if(endsWith(json[i].num+'', prefs.train)) {
 				AnyBalance.trace('Нашли нужный поезд.');
-				data = json.value[i];
+				data = json[i];
 				break;
 			} else {
-				AnyBalance.trace('Поезд с номером ' + json.value[i].num + ' не соответствует заданному в настройках ' + prefs.train);
+				AnyBalance.trace('Поезд с номером ' + json[i].num + ' не соответствует заданному в настройках ' + prefs.train);
 			}
 		}
 	} else {
-		data = json.value[0];
+		if(json.length>1){
+		for(var i = 1; i < json.length; i++) otherTrains+=json[i].num + ' ' + json[i].from.stationTrain + '-' + json[i].to.stationTrain+'<br>';
+		}    
+		data = json[0];
 	}
 	
 	checkEmpty(data, 'Не удалось найти информацию по по рейсам, сайт изменен?', true);
 	
-	getParam(data.num, result, 'train');
-	getParam(data.from.station, result, 'depart_station');
-	getParam(data.from.src_date, result, 'depart_time');
-	getParam(data.till.station, result, 'arrival_station');
-	getParam(data.till.src_date, result, 'arrival_time');
-    
+	result.train = data.num + ' ' + data.from.stationTrain + '-' + data.to.stationTrain;
+	result.depart_station =data.from.station+': '+ data.from.date+' '+data.from.time;
+	result.arrival_station =data.to.station+': '+ data.to.date+' '+data.to.time;
+        if (otherTrains>'') result.other_trains=otherTrains;
     var types = [];
-    
+    var type_luks=0;
+    var type_plats=0;
+    var type_kupe=0;
+    var type_other=0;
     for(var i = 0; i < data.types.length; i++)	{
         var avail_seats = " " + data.types[i].title + ": " + data.types[i].places;
         types.push(avail_seats);
+        if (data.types[i].id=='Л') type_luks=data.types[i].places;
+        if (data.types[i].id=='К') type_kupe=data.types[i].places;
+        if (data.types[i].id=='П') type_plats=data.types[i].places;
+        if ('ЛКП'.indexOf(data.types[i].id)==-1) type_other+=data.types[i].places;
 	}
-    result.types = types.toString();
-	
+	result.type_luks=type_luks;
+	result.type_plats=type_plats;
+	result.type_kupe=type_kupe;
+	result.type_other=type_other;
+	result.types = types.toString();
 	AnyBalance.setResult(result);
+	
 }
-
-function safeEval(script, argsNamesString, argsArray) {
-   var svAB = AnyBalance, svParams = this.g_AnyBalanceApiParams, svApi = this._AnyBalanceApi;
-   AnyBalance = this.g_AnyBalanceApiParams = this._AnyBalanceApi = undefined;
-
-   try{
-       var result = new Function(argsNamesString || 'ja0w4yhwphgawht984h', 'AnyBalance', 'g_AnyBalanceApiParams', '_AnyBalanceApi', script).apply(null, argsArray);
-       return result;
-   }catch(e){
-       throw new svAB.Error('Bad javascript (' + e.message + '): ' + script);
-   }finally{
-   		AnyBalance = svAB, g_AnyBalanceApiParams = svParams, _AnyBalanceApi=svApi;
+function reCapatcha(from,to,date){
+   if(AnyBalance.getLevel() >= 7){
+	AnyBalance.trace('Пытаемся ввести капчу');
+	var captcha = AnyBalance.requestGet('https://booking.uz.gov.ua/ru/captcha/?0');
+	captchaa = AnyBalance.retrieveCode("Пожалуйста, введите код с картинки", captcha);
+	AnyBalance.trace('Капча получена: ' + captchaa);
+   }else{
+	throw new AnyBalance.Error('Провайдер требует AnyBalance API v7, пожалуйста, обновите AnyBalance!');
    }
+    	return captchaa;
 }

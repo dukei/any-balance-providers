@@ -41,7 +41,6 @@ function main() {
 };
 
 function History(iban) {
-AnyBalance.setData('hist_'+iban,'');AnyBalance.saveData();
     var response = AnyBalance.requestGet('https://acp.privatbank.ua/api/proxy/transactions?acc=' + iban + '&startDate=' + getFormattedDate({format:'DD-MM-YYYY',offsetDay:3}) + '&endDate=' + getFormattedDate('DD-MM-YYYY'), g_headers);
     if (AnyBalance.getData('hist_'+iban)==response) return AnyBalance.getData('html_'+iban);
     var json = getJson(response).StatementsResponse.statements;

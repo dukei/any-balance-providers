@@ -43,6 +43,6 @@ function main() {
 	  var info = AnyBalance.requestGet('https://ru.widgets.investing.com/live-commodities?hideTitle=true&cols=last&pairs=8833');
           getParam(info, result, "Brent", new RegExp('last js-col-last pid.*>((\d|\,|\.)+)<', 'i'), null, parseBalance);
         }
-	result.__tarif=getFormattedDate('DD.MM.YYYY HH:NN')
+	result.__tariff=getFormattedDate('DD.MM.YYYY HH:NN')
 	AnyBalance.setResult(result);
 }

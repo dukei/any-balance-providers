@@ -29,7 +29,7 @@ function main() {
     result.balance-=result.limit;
     result.balance/=100;
     result.limit/=100;
-    result.__tarif=getFormattedDate('DD.MM.YYYY HH:NN');
+    result.__tariff=getFormattedDate('DD.MM.YYYY HH:NN');
     AnyBalance.setResult(result);
 };
 

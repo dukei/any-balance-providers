@@ -182,7 +182,7 @@ var AB = (function (global_scope) {
     function isArray(arr) {
         return Array.isArray(arr);
     }
-
+    String.prototype.replaceAll=function(k){var e=this,p;for(p=0;k&&p<k.length;++p)isArray(k[p])?e=e.replaceAll(k[p]):(e=e.replace(k[p],k[p+1]),++p);return e.valueOf()};
     function isObject(obj){
     	return Object.prototype.toString.call(obj) === "[object Object]";
     }
@@ -1160,15 +1160,21 @@ var AB = (function (global_scope) {
         	options.format = 'DD.MM.YYYY';
 
         //Формируем дату со смещением
-        dt = new Date(dt.getFullYear() - (options.offsetYear || 0), dt.getMonth() - (options.offsetMonth || 0), dt.getDate() - (options.offsetDay || 0));
+        dt = new Date(dt.getFullYear() - (options.offsetYear || 0), dt.getMonth() - (options.offsetMonth || 0), dt.getDate() - (options.offsetDay || 0), dt.getHours() - (options.offsetHours || 0), dt.getMinutes() - (options.offsetMinutes || 0), dt.getSeconds() - (options.offsetSeconds || 0));
         var day = dt.getDate();
         var month = (dt.getMonth() + 1);
         var year = dt.getFullYear();
-
+	var hours = dt.getHours();
+	var minutes = dt.getMinutes();
+	var seconds = dt.getSeconds();
+	
         return replaceAll(options.format, [
             /DD/, n2(day), /D/, day,
             /MM/, n2(month), /M/, month,
-            /YYYY/, year, /YY/, (year + '').substring(2, 4)
+            /YYYY/, year, /YY/, (year + '').substring(2, 4),
+	    /HH/,n2(hours),/H/,hours,
+	    /NN/,n2(minutes),/N/,minutes,
+	    /SS/,n2(seconds),/S/,seconds
         ]);
     }
 

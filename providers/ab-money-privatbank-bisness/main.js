@@ -36,7 +36,7 @@ function main() {
     for (key in result) {
         if (key.indexOf('balance') > -1) result[key] = Math.floor(result[key] * 100) / 100
     }
-    result.__tarif=getFormattedDate('DD.MM.YYYY HH:NN')
+    result.__tariff=getFormattedDate('DD.MM.YYYY HH:NN')
     AnyBalance.setResult(result);
 };
 

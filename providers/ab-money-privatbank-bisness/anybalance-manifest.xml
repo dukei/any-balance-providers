@@ -8,7 +8,7 @@
 	<instruction html="true"><![CDATA[
 	<ul>
 		<li>Для получения ID и token включите автоклиент в настройках Privat24 для бизнеса</li>
-		<li>Инструкция: &lt;https://docs.google.com/document/d/e/2PACX-1vS8rx2WKg69o6JvG5L4AhSXcU6vxXcJph6WK84qJcAYDBvsNYEob57jDMQhbosjc9gRS5bOTqTXf0vb/pub&lt;</li>
+		<li><a href="https://docs.google.com/document/d/e/2PACX-1vS8rx2WKg69o6JvG5L4AhSXcU6vxXcJph6WK84qJcAYDBvsNYEob57jDMQhbosjc9gRS5bOTqTXf0vb/pub">Инструкция по получению персональных ID и Tokena</a></li>
                 <li>Выполните инструкцию до п.5 включительно. Затем нажмите "API для розробників"</li>
                 <li>ID и токен введите в настроки провайдера</li>
 	</ul>

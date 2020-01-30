@@ -18,15 +18,14 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="train" name="Поезд" type="text"/>
 		<counter id="depart_station" name="Отправление" type="text"/>
 		<counter id="arrival_station" name="Прибытие" type="text"/>
 		<counter id="type_luks" name="Места люкс" type="numeric"/>
 		<counter id="type_plats" name="Места плацкарта" type="numeric"/>
 		<counter id="type_kupe" name="Места купе" type="numeric"/>
-		<counter id="type_other" name="Места прочие" type="numeric"/>
 		<counter id="types" name="Свободных мест" type="text"/>
 		<counter id="other_trains" name="Другие поезда" type="html"/>
+		<counter id="type_other" name="Места прочие" type="numeric"/>
 	</counters>
 	<keywords></keywords>
 	<type>transport</type>

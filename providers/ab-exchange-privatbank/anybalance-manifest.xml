@@ -9,6 +9,9 @@
 	<p>Также отображает Bid курс BTC,ETH на Bitrex.com и нефть марки Brent c investing.com</p>
 	]]></description>
 	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<js>library.min.js</js>

@@ -1,4 +1,4 @@
-﻿/**
+/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 */
 
@@ -85,8 +85,9 @@ function main(){
 	}
 
 	var elements;
-	if(/signoff/i.test(html)){
-		var fns = AnyBalance.requestGet(baseurl + 'srv/finance/entities', addHeaders({
+
+        if(!/logOnUrl/i.test(html)){
+		var fns = AnyBalance.requestGet(baseurl + 'srv/finance/purses/', addHeaders({
 			Accept: 'application/json, text/plain, */*',
 			Referer: baseurl + 'finances'
 		}));
@@ -101,12 +102,13 @@ function main(){
 			html = AnyBalance.requestGet(baseurl, g_headers);
 		}
 	}
-	
-	if(!/signoff/i.test(html)){
+
+	if(/logOnUrl/i.test(html)){
 		AnyBalance.trace('Мгновенно не зашли');
 
 		var signonUrl = getParam(html, /singleSignOnUrl:\s*'([^']*)/, replaceSlashes);
 		var logonUrl = getParam(html, /logOnUrl\s*=\s*new\s+Uri\s*\(\s*'([^']*)/, replaceSlashes);
+
 		var info = {};
 		if(signonUrl){
 			AnyBalance.trace('Но есть возможность проверить автовход');
@@ -121,15 +123,18 @@ function main(){
 
 		if(!info.loggedOn){
 			AnyBalance.trace('Автовход не удался, пробуем всё заново авторизовывать');
+                        AnyBalance.trace(logonUrl);
+			html=AnyBalance.requestGet(logonUrl, g_headers);
 
-			ref = getParam(html, null, null, /<a[^>]+top-panel__button--enter[^>]+href="([^"]*)/i, replaceHtmlEntities);
+			ref = getParam(html, null, null, /&#1042;&#1099;&#1087;&#1086;&#1083;&#1085;&#1077;&#1085;&#1080;&#1077; &#1074;&#1093;&#1086;&#1076;&#1072;[\s\S]+?\<form action="([^"]*)/i, replaceHtmlEntities);
 			AnyBalance.trace('Ссылка на вход: ' + ref);
-	        
-			html = AnyBalance.requestGet(joinUrl(baseurl, ref), addHeaders({Referer: baseurl + 'welcome.aspx?ReturnUrl=%2f'}));
+	                if (ref){
+			html = AnyBalance.requestGet(joinUrl(baseurlLogin, ref), addHeaders({Referer: baseurl + 'welcome.aspx?ReturnUrl=%2f'}));
 			html = handleRedirect(html);
 			ref = AnyBalance.getLastUrl();
-	        
+	                }
 			var form = AB.getElement(html, /<form[^>]+password[^>]*>/i);
+			//AnyBalance.trace(form.toString());
 			if(!form){
 				AnyBalance.trace(html);
 				throw new AnyBalance.Error('Не удаётся найти форму входа! Сайт изменен?');
@@ -138,6 +143,8 @@ function main(){
 			var params = AB.createFormParams(form, function(params, str, name, value) {
 				if (name == 'Login') {
 					return prefs.login;
+				} else if (name == 'RememberMe') {
+					return true;
 				} else if (name == 'Password') {
 					return prefs.password;
 				} else if (name == 'Captcha') {
@@ -147,8 +154,7 @@ function main(){
 						AnyBalance.trace(html);
 						throw new AnyBalance.Error('Не удаётся найти капчу. Сайт изменен?');
 					}
-						
-					var img = AnyBalance.requestGet(joinUrl(ref, imgUrl), addHeaders({Referer: ref}));
+					var img = AnyBalance.requestGet(joinUrl(baseurlLogin, imgUrl), addHeaders({Referer: ref}));
 					return AnyBalance.retrieveCode("Пожалуйста, введите число с картинки", img, {
 						inputType: 'number',
 						minLength: 5,
@@ -159,11 +165,9 @@ function main(){
 	        
 				return value;
 			});
-	        
-			var action = getParam(form, null, null, /<form[^>]+action="([^"]*)/i, replaceHtmlEntities);
-	        
-	        params.fid = hex_md5(prefs.login); //Теперь требуется фингерпринт передавать
-			html = AnyBalance.requestPost(joinUrl(ref, action), params, AB.addHeaders({
+			var action = getParam(form, null, null, /<form\saction=\"([\s\S]*?)\"/i, replaceHtmlEntities);
+                        //params.fid = hex_md5(prefs.login); //Теперь требуется фингерпринт передавать
+			html = AnyBalance.requestPost(joinUrl(baseurlLogin, action), params, AB.addHeaders({
 				Referer: ref
 			}));
 	        
@@ -278,8 +282,8 @@ function main(){
 				__EVENTTARGET: 'ctl00$cph$btnStd'
 			}, params), addHeaders({Referer: ref}));
 		}
-	    
-		if (!/logout/i.test(html)) {
+
+		if (/logOnUrl/i.test(html)) {
 			AnyBalance.trace(html);
 			throw new AnyBalance.Error('Не удалось зайти в кошелек после успешной авторизации. Сайт изменен?');
 		}
@@ -295,7 +299,7 @@ function main(){
 	};
 
 	if(!elements){
-		html = AnyBalance.requestGet(baseurl + 'srv/finance/entities', addHeaders({
+		html = AnyBalance.requestGet(baseurl + 'srv/finance/purses/', addHeaders({
 			Accept: 'application/json, text/plain, */*',
 			Referer: baseurl + 'finances'
 		}));
@@ -308,7 +312,7 @@ function main(){
 	for(var i=0; i<elements.length; ++i){
 		var e = elements[i];
 		var num = e.number;
-		var sum = e.summ;
+		var sum = e.amount;
 		var curr = e.currency;
 		AnyBalance.trace(num + ': ' + sum + ' ' + curr);
 

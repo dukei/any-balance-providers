@@ -132,7 +132,6 @@ function main(){
 			ref = AnyBalance.getLastUrl();
 	                }
 			var form = AB.getElement(html, /<form[^>]+password[^>]*>/i);
-			//AnyBalance.trace(form.toString());
 			if(!form){
 				AnyBalance.trace(html);
 				throw new AnyBalance.Error('Не удаётся найти форму входа! Сайт изменен?');
@@ -280,7 +279,7 @@ function main(){
 				__EVENTTARGET: 'ctl00$cph$btnStd'
 			}, params), addHeaders({Referer: ref}));
 		}
-
+	
 		if (/logOnUrl/i.test(html)) {
 			AnyBalance.trace(html);
 			throw new AnyBalance.Error('Не удалось зайти в кошелек после успешной авторизации. Сайт изменен?');

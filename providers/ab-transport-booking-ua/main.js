@@ -1,4 +1,4 @@
-﻿/**
+/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 */
 
@@ -29,7 +29,7 @@ function main() {
 	checkEmpty(prefs.station_from, 'Введите пункт отправления!');
 	checkEmpty(prefs.station_to, 'Введите пункт назначения!');
 
-	
+        AnyBalance.restoreCookies();
    
     // Запрос на поиск пункта отправления
     var station_fromIdAndNameArray = findStationByName(baseurl, prefs.station_from);
@@ -57,7 +57,7 @@ function main() {
         'GV-Unique-Host': '1',
         'GV-Ajax': '1',
         'GV-Screen': '1440x900',
-        'GV-Referer': 'http://booking.uz.gov.ua/ru/',
+        'GV-Referer': 'http://booking.uz.gov.ua/ru/'
 //        'GV-Token':token
     })); 
 	if (!html || AnyBalance.getLastStatusCode() > 400) 
@@ -76,7 +76,7 @@ function main() {
         'date':getFormattedDate('YYYY-MM-DD',dt),
         'time':time,
         'captcha':cap,
-        'get_tpl':'0'
+        'get_tpl':'1'
     }, addHeaders({
         'Referer': baseurl + 'ru/',
         'GV-Unique-Host': '1',
@@ -138,6 +138,8 @@ function main() {
 	result.type_kupe=type_kupe;
 	result.type_other=type_other;
 	result.types = types.toString();
+       	AnyBalance.saveCookies();
+	AnyBalance.saveData();
 	AnyBalance.setResult(result);
 	
 }

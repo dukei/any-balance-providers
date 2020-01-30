@@ -113,10 +113,28 @@ function main() {
 		}    
 		data = json[0];
 	}
+
+	if(prefs.train&&!data) {
+		for(var i = 0; i < json.length; i++) {
+			if((json[i].num+'').indexOf(prefs.train)>-1) {
+				AnyBalance.trace('Нашли нужный поезд.');
+				data = json[i];
+				break;
+			} else {
+				AnyBalance.trace('Поезд с номером ' + json[i].num + ' не соответствует заданному в настройках ' + prefs.train);
+			}
+		}
+	} else {
+		if(json.length>1){
+		for(var i = 1; i < json.length; i++) otherTrains+=json[i].num + ' ' + json[i].from.stationTrain + '-' + json[i].to.stationTrain+'<br>';
+		}    
+		data = json[0];
+	}
+
 	
 	checkEmpty(data, 'Не удалось найти информацию по по рейсам, сайт изменен?', true);
 	
-	result.train = data.num + ' ' + data.from.stationTrain + '-' + data.to.stationTrain;
+	result.__tariff = data.num + ' ' + data.from.stationTrain + '-' + data.to.stationTrain;
 	result.depart_station =data.from.station+': '+ data.from.date+' '+data.from.time;
 	result.arrival_station =data.to.station+': '+ data.to.date+' '+data.to.time;
         if (otherTrains>'') result.other_trains=otherTrains;

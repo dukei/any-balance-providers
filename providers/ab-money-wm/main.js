@@ -101,13 +101,12 @@ function main(){
 			html = AnyBalance.requestGet(baseurl, g_headers);
 		}
 	}
-
+	
 	if(/logOnUrl/i.test(html)){
 		AnyBalance.trace('Мгновенно не зашли');
 
 		var signonUrl = getParam(html, /singleSignOnUrl:\s*'([^']*)/, replaceSlashes);
 		var logonUrl = getParam(html, /logOnUrl\s*=\s*new\s+Uri\s*\(\s*'([^']*)/, replaceSlashes);
-
 		var info = {};
 		if(signonUrl){
 			AnyBalance.trace('Но есть возможность проверить автовход');

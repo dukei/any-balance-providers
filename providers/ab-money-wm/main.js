@@ -85,7 +85,6 @@ function main(){
 	}
 
 	var elements;
-
         if(!/logOnUrl/i.test(html)){
 		var fns = AnyBalance.requestGet(baseurl + 'srv/finance/purses/', addHeaders({
 			Accept: 'application/json, text/plain, */*',

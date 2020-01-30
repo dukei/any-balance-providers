@@ -8,10 +8,13 @@
 	<p>Информация берется из личного кабинета <a href="http://mega-net.com.ua/">http://mega-net.com.ua/</a></p>
 	]]></description>
 	<author>DimaZ &lt;DIMAZ.KHUA@gmail.com&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
+		<js>library.min.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>

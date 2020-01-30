@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<id version="1">ab-municipal-enera</id>
 	<api flags="no_browser"/>
@@ -8,10 +8,13 @@
 	<p>Информация берется из личного кабинета <a href="https://www.enera.lg.ua/uk/">https://www.enera.lg.ua/uk/</a></p>
 	]]></description>
 	<author>DimaZ &lt;DIMAZ.KHUA@gmail.com&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
+		<js>library.min.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>

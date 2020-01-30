@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<id version="1">ab-internet-matrix_net</id>
 	<api flags="no_browser"/>
@@ -8,10 +8,13 @@
 	<p>Информация берется из личного кабинета <a href="https://my.m-x.net.ua">https://my.m-x.net.ua</a></p>
 	]]></description>
 	<author>dimapplk &lt;dimapplk@gmail.com&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
+		<js>library.min.js</js>
 		<js>main.js</js>
                 <js>md5.js</js>
 		<history>history.xml</history>

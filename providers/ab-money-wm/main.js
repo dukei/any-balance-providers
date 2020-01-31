@@ -1,4 +1,4 @@
-/**
+﻿/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 */
 
@@ -75,8 +75,16 @@ function main(){
 	AB.checkEmpty(prefs.password, 'Введите пароль!');
 
 	AnyBalance.restoreCookies();
-
-	var html = AnyBalance.requestGet(baseurl, g_headers);
+	try{
+		var html = AnyBalance.requestGet(baseurl, g_headers);
+	}catch(e){
+		if (e.message.indexOf('ProtocolException: Invalid redirect URI:')){
+		AB.clearAllCookies();
+		AnyBalance.clearData();
+		AnyBalance.saveData();
+		throw new AnyBalance.Error('Необходима повторная авторизация',True);
+		}
+	}
 	var ref = AnyBalance.getLastUrl();
 
 	if (!html || AnyBalance.getLastStatusCode() > 400) {
@@ -98,6 +106,8 @@ function main(){
 		}catch(e){
 			AnyBalance.trace('test of login failed, should relogin: ' + e.message);
 			AB.clearAllCookies();
+			AnyBalance.clearData();
+			AnyBalance.saveData();
 			html = AnyBalance.requestGet(baseurl, g_headers);
 		}
 	}

@@ -1,4 +1,4 @@
-﻿/**
+/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 */
 
@@ -35,25 +35,27 @@ function main() {
 
 function History(iban) {
     var d=new Date();
-    d.setDate(d.getDate()-3)
+    d.setDate(d.getDate()-3);
     var response = AnyBalance.requestGet('https://api.monobank.ua/personal/statement/'+iban+'/'+d*1, g_headers);
-    if (AnyBalance.getData('hist_'+iban)==response) return AnyBalance.getData('html_'+iban);
     var json = getJson(response);
     var res = '';
+    var prevd=new Date();
+    prevd.setDate(prevd.getDate()-10);
     for (var i = 0; i < json.length; i++) {
         var t = json[i];
-        var s=t.amount;
-            res += '<font  color=#1e3b24><strong>'+s/100;
-            if (s<0) res=res.replace('1e3b24','B00000');
-            if (t.operationAmount!=t.amount) res+=' (' + t.operationAmount/100+')'
-            res +=  '</strong></font> ' + getFormattedDate('DD.MM.YYYY HH:NN:SS',new Date(t.time*1000)) + '<BR><small>' + t.description + '<br>'
+        var s=parseInt(t.amount);
+        var d=new Date(t.time*1000);
+        	if (res) res+='<br>';
+            if (prevd.getDate()!=d.getDate()) {
+            	res+='<big>'+getFormattedDate('DD.MM.YYYY',d)+':</big><br>';
+            	prevd=d;}
+            res += '<font  color=#'+(s<0?'B00000':'1e3b24')+'><strong>'+s/100;
+            if (t.operationAmount!=t.amount) res+=' (' + t.operationAmount/100+')';
+            res +=  '</strong></font> ' + getFormattedDate('HH:NN:SS',d) + '<BR><small>' + t.description + '<br>';
             if (t.commissionRate>0) res+=' Комиссия: '+t.commissionRate/100;
             if (t.cashbackAmount>0) res+=' Кешбэк: '+t.cashbackAmount/100;
             res+=' Баланс: '+t.balance/100;
-            res +='</small><br>';
+            res +='</small>';
         }
-    AnyBalance.setData('hist_'+iban,response);
-    AnyBalance.setData('html_'+iban,res);
-    AnyBalance.saveData();
     return res;
 }

@@ -22,7 +22,7 @@ function getPrice(cur)
 		for(var i=0; i<html.length; i=i+790) AnyBalance.trace(html.substring(i, i+790));
 	}
 	
-	var matches		= html.match(/"actSkuMultiCurrencyCalPrice":"([\d\.,]+)/);
+	var matches		= html.match(/skuMultiCurrencyCalPrice":"([\d\.,]+)/i);
 	//var matches		= html.match(/class="price">\D*([\d\.,]+)/);
 	
 	AnyBalance.trace('Результаты парсинга цены: ' + matches);

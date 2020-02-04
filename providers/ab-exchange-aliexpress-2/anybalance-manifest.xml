@@ -17,7 +17,7 @@
     <history>history.xml</history>
   </files>
   <counters>
-    <counter id="rate" name="Курс" units=" р за $1"/>
+    <counter id="rate" name="Курс" units=""/>
     <counter id="date" name="Дата" type="time" format="dd/MM/yyyy"/>
   </counters>
   <keywords>алиэкспресс, покупки, шоппинг, обмен валют</keywords>

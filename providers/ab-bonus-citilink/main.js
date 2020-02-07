@@ -31,9 +31,8 @@ function main(){
 	AnyBalance.trace('Успешный вход');
 
     var result = {success: true};
-    getParam(html, result, '__tariff', /Статус(?:\s|<[^>]*>)*:([^<]*)/i,  replaceTagsAndSpaces);
-    getParam(html, result, 'balance',  /Бонусы(?:\s|<[^>]*>)*:([^<]*)/i,  replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'wishes',   /Желания(?:\s|<[^>]*>)*:([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, '__tariff', /<span[^>]+auth-user-popup__text-status[^>]*>([\s\S]*?)<\/span>/i,  replaceTagsAndSpaces);
+    getParam(html, result, 'balance',  /<div[^>]+auth-user-popup__bonuses[^>]*>([\s\S]*?)<\/div>/i,  replaceTagsAndSpaces, parseBalance);
 
     if(AnyBalance.isAvailable('num', 'sum')){
     	html = AnyBalance.requestGet(baseurl + '/profile/', g_headers);
@@ -42,21 +41,6 @@ function main(){
     	getParam(html, result, 'sum', [/товар\S* на сумму:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, /Учт[ёе]нных покупок нет/i], [replaceTagsAndSpaces, /Учт[ёе]нных покупок нет/i, '0'], parseBalance);
     }
 	
-    if(isAvailable(['obrabotannie', 'pomosh', 'reshennie', 'zhalobi', 'rating', 'position', 'nachisleno'])) {
-      AnyBalance.trace('Переходим на страницу эксперта..');
-  //		html = AnyBalance.requestGet(baseurl + '/profile/expert/', g_headers);
-  /*
-      AnyBalance.trace('Но кабинет новый, можем счетчиков не найти... Если что, присылайте лог');
-      getParam(html, result, 'obrabotannie', /Количество обработанных вопросов(?:[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
-      getParam(html, result, 'pomosh',       /Скольким людям помогли ответы(?:[^>]*>){2}([^<]*)/i,    replaceTagsAndSpaces, parseBalance);
-      getParam(html, result, 'reshennie',    /Количество решенных вопросов(?:[^>]*>){2}([^<]*)/i,     replaceTagsAndSpaces, parseBalance);
-      getParam(html, result, 'zhalobi',      /Количество жалоб на эксперта(?:[^>]*>){2}([^<]*)/i,     replaceTagsAndSpaces, parseBalance);
-      getParam(html, result, 'rating',       /Ваш рейтинг(?:[^>]*>){2}([^<]*)/i,                      replaceTagsAndSpaces, parseBalance);
-      getParam(html, result, 'position',     /Ваше место(?:[^>]*>){2}([^<]*)/i,                       replaceTagsAndSpaces, parseBalance);
-      getParam(html, result, 'nachisleno',   /Начислено бонусов(?:[^>]*>){2}([^<]*)/i,                replaceTagsAndSpaces, parseBalance);
-    */
-    }
-
     if(isAvailable(['wo_date', 'wo_sum', 'activation_date', 'activation_sum', 'activation_type', 'card_activation_date', 'card_num'])) {
       html = AnyBalance.requestGet(baseurl + '/profile/club/', g_headers);
 
@@ -66,6 +50,10 @@ function main(){
       getParam(html, result, 'activation_date',  /Детализация активации бонусов(?:[\s\S]*?<td[^>]*>){1}([^<]*)/i, replaceTagsAndSpaces, parseDateWord);
       getParam(html, result, 'activation_sum',   /Детализация активации бонусов(?:[\s\S]*?<td[^>]*>){3}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
       getParam(html, result, 'activation_type',  /Детализация активации бонусов(?:[\s\S]*?<td[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces);
+
+      getParam(html, result, 'next_nachisl_date',  /Ближайшее начисление и активация бонусов(?:[\s\S]*?<td[^>]*>){1}([^<]*)/i, replaceTagsAndSpaces, parseDateWord);
+      getParam(html, result, 'next_activation_date',  /Ближайшее начисление и активация бонусов(?:[\s\S]*?<td[^>]*>){1}([^<]*)/i, replaceTagsAndSpaces, parseDateWord);
+      getParam(html, result, 'next_activation_sum',   /Ближайшее начисление и активация бонусов(?:[\s\S]*?<td[^>]*>){3}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
 
       getParam(html, result, 'card_activation_date', /дата активации:([^<]*)/i, replaceTagsAndSpaces, parseDateWord);
       getParam(html, result, 'card_num', /Карта №([^,<]*)/i, replaceTagsAndSpaces);

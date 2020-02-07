@@ -82,7 +82,7 @@ function main() {
 	AB.sumParam(html, result, '__tariff', /<div[^>]+elem-card__num[^>]*>([\s\S]*?)<\/div>/i, AB.replaceTagsAndSpaces, null, create_aggregate_join(', '));
 	AB.getParam(htmlPersonal, result, 'fio', /<div[^>]+box-user__name[^>]*>([\s\S]*?)<\/div>/i, AB.replaceTagsAndSpaces);
 	AB.getParam(htmlPersonal, result, 'phone', /<input[^>]+PERSONAL_PHONE[^>]*value="([^"]*)/i, AB.replaceHtmlEntities);
-	AB.sumParam(htmlPersonal, result, 'burn', /Дата ближайшего сгорания:([^<\(]*)/i, AB.replaceTagsAndSpaces, AB.parseDate, aggregate_min);
+	AB.sumParam(html, result, 'burn', /Дата ближайшего сгорания:([^<\(]*)/ig, AB.replaceTagsAndSpaces, AB.parseDate, aggregate_min);
 
 	AnyBalance.setResult(result);
 }

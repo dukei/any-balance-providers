@@ -52,7 +52,7 @@ function main(){
       getParam(html, result, 'activation_type',  /Детализация активации бонусов(?:[\s\S]*?<td[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces);
 
       getParam(html, result, 'next_nachisl_date',  /Ближайшее начисление и активация бонусов(?:[\s\S]*?<td[^>]*>){1}([^<]*)/i, replaceTagsAndSpaces, parseDateWord);
-      getParam(html, result, 'next_activation_date',  /Ближайшее начисление и активация бонусов(?:[\s\S]*?<td[^>]*>){1}([^<]*)/i, replaceTagsAndSpaces, parseDateWord);
+      getParam(html, result, 'next_activation_date',  /Ближайшее начисление и активация бонусов(?:[\s\S]*?<td[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces, parseDateWord);
       getParam(html, result, 'next_activation_sum',   /Ближайшее начисление и активация бонусов(?:[\s\S]*?<td[^>]*>){3}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
 
       getParam(html, result, 'card_activation_date', /дата активации:([^<]*)/i, replaceTagsAndSpaces, parseDateWord);

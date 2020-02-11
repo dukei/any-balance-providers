@@ -111,26 +111,23 @@ function main(){
 
     AB.getParam(json.bonus.clientInfo.curLevelName, result, '__tariff');
     AB.getParam(json.bonus.clientInfo.cardNumber, result, 'cardnum');
-    AB.getParam(json.bonus.clientInfo.curLevelSumma, result, 'balance');
-    AB.getParam(json.bonus.clientInfo.toNextLevelSumma, result, 'nextlevel');
 
-/*    var bonuses = getParam(html, /bonuses:\s*(\[\{[\s\S]*?\}\])/, replaceHtmlEntities, getJson);
-    var tillbonus = (bonuses || []).reduce(function(b, prev) { if(!prev || b.dateEnd < prev.dateEnd) prev = b; return prev }, 0);
-    getParam(tillbonus && tillbonus.dateEnd, result, 'till');
-    getParam(tillbonus && tillbonus.amount, result, 'sumtill');
-*/	/*
-	if(isAvailable('all')) {
-		var table = AB.getParam(html, null, null, /<table[^>]*sm-profile__bonustable[^>]*>(?:[\s\S](?!<\/table>))[\s\S]*?<\/table>/i);
-		if(table) {
-			var string = '';
-			var array = AB.sumParam(table, null, null, /<tr>\s*<td[^>]*>\s*[\s\S]*?<\/tr>/ig, replaceTagsAndSpaces);
-			for(var i = 0; i < array.length; i++) {
-				var current = AB.getParam(array[i], null, null, null, [/(\d{4})$/i, '$1\n', /(\d{2})-(\d{2})-(\d{4})/, '$1/$2/$3']);
-				string += current;
-			}
-			getParam(string, result, 'all');
-		}
-	}
-*/	
+    var balance = 0, minExpDate, minExpSum;
+    if(json.bonus.clientInfo.bonuses){
+    	balance = json.bonus.clientInfo.bonuses.reduce(function(acc, a){
+    		var dt = parseDateISO(a.dateEnd);
+    		if(!isset(minExpDate) || minExpDate > dt){
+    			minExpDate = dt;
+    			minExpSum = a.amount;
+    		}
+    		return acc+=a.amount;
+    	}, 0)
+    }
+
+    AB.getParam(balance, result, 'balance');
+    AB.getParam(json.bonus.clientInfo.toNextLevelSumma, result, 'nextlevel');
+    getParam(minExpDate, result, 'till');
+    getParam(minExpSum, result, 'sumtill');
+
     AnyBalance.setResult(result);
 }

@@ -89,10 +89,7 @@ function main(){
     AB.checkEmpty(prefs.login, 'Введите номер телефона!');
     AB.checkEmpty(/^\d{10}$/.test(prefs.login), 'Введите номер телефона - 10 цифр без пробелов и разделителей!');
 
-    var json = callApi('entities?' + createUrlEncodedParams({
-    	types: 'auth,bonus,profile',
-    	'access-token': g_accessToken
-    }));
+    var json = getInfo();
 
     if(!json.auth || json.auth.anonymous){
     	json = callApi('confirmation/sms/signIn', {phone: prefs.login}, 'POST');
@@ -100,12 +97,12 @@ function main(){
     	var code = AnyBalance.retrieveCode('Пожалуйста, введите SMS для подтверждения входа в личный кабинет Спортмастер', null, {inputType: 'number', time: json.waitSeconds*1000});
 
     	json = callApi('auth', {password: code, token: prefs.login, type: 'signInCode'}, 'POST');
-
-		json = callApi('entities?' + createUrlEncodedParams({
-    		types: 'auth,bonus,profile',
-    		'access-token': g_accessToken
-    	}));
+    	
+    	json = getInfo();
     }
+
+    if(addBonuses())
+    	json = getInfo();
 
     var result = {success: true};
 
@@ -129,5 +126,52 @@ function main(){
     getParam(minExpDate, result, 'till');
     getParam(minExpSum, result, 'sumtill');
 
+
     AnyBalance.setResult(result);
+}
+
+function getInfo(){
+    var json = callApi('entities?' + createUrlEncodedParams({
+    	types: 'auth,bonus,profile',
+    	'access-token': g_accessToken
+    }));
+    return json;
+}
+
+
+function addBonuses(){
+    try{
+    	AnyBalance.trace('Получаем бонусы постоянного клиента...');
+    	var headers = {
+			'X-User-Time-Zone': 'Europe/Moscow',
+			'Api-Authorization': g_accessToken,
+			Connection: 'Keep-Alive',
+			'User-Agent': 'okhttp/3.12.2'
+	    };
+
+    	var html = AnyBalance.requestGet('https://api.sportmaster.kingbird.ru/tasks/all', headers);
+	    json = getJson(html).filter(function(a){return a.type==='RC'});
+	    if(json.length === 0){
+	    	AnyBalance.trace(html);
+	    	throw new AnyBalance.Error('Не удалось найти бонус "Постоянный клиент"');
+	    }
+	   
+	    if(json[0].status === 'Y'){
+	    	throw new AnyBalance.Error('Бонус уже активирован сегодня');
+	    }
+
+	    html = AnyBalance.requestGet('https://api.sportmaster.kingbird.ru/points/' + json[0].id, headers);
+	    if(AnyBalance.getLastStatusCode() >= 400){
+	    	AnyBalance.trace(html);
+	    	throw new AnyBalance.Error('Не удалось начислить бонусы');
+	    }
+
+	    json = getJson(html);
+	    AnyBalance.trace(html);
+	    AnyBalance.trace('Бонусы успешно начислены');
+	    return true;
+    }catch(e){
+    	AnyBalance.trace('проблема с халявными бонусами: ' + e.message);
+    	return false;
+    }
 }

@@ -1,9 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
-	<change version="2" date="2019-06-13">
-	- Поддержка изменений на сайте.
-	</change>
 	<change version="1" date="2019-01-19">
 	- Добавлена поддержка ОАО Банк БелВЭБ24
+	</change>
+	<change version="2" date="2019-01-26">
+	- Добавлен счет, и вывиска по счету
+	</change>
+		<change version="3" date="2020-02-11">
+	- Исправления в определении счета по картам 
 	</change>
 </history>

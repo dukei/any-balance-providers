@@ -16,3 +16,4 @@ debug
 !extra/development/ab-nadapter-typical-provider/_debug-anybalance.html
 _debug-anybalance.html
 .DS_Store
+providers/ab-money-belveb24/library.min.js

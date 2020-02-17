@@ -160,7 +160,7 @@ function addBonuses(){
 	    	throw new AnyBalance.Error('Бонус уже активирован сегодня');
 	    }
 
-	    html = AnyBalance.requestGet('https://api.sportmaster.kingbird.ru/points/' + json[0].id, headers);
+	    html = AnyBalance.requestPost('https://api.sportmaster.kingbird.ru/points/' + json[0].id, {}, headers);
 	    if(AnyBalance.getLastStatusCode() >= 400){
 	    	AnyBalance.trace(html);
 	    	throw new AnyBalance.Error('Не удалось начислить бонусы');

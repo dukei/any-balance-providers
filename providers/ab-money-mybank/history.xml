@@ -1,5 +1,23 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="15" date="2019-11-11">
+	- Поддержка изменений на сайте.
+	</change>
+	<change version="14" date="2019-08-12">
+	- Поддержка изменений в процедуре входа
+	</change>
+	<change version="13" date="2019-06-20">
+	Поддержка старых версий Android
+	</change>
+	<change version="12" date="2019-06-14">
+	- Поддержка особенностей работы с куки
+	</change>
+	<change version="11" date="2019-06-14">
+	поддержка нового интернет банка
+	</change>
+	<change version="10" date="2019-06-14">
+	- Восстановлена работа со старым интернет банком
+	</change>
 	<change version="9" date="2017-01-16">
 	Добавлен счетчик Доступная рассрочка
 	</change>

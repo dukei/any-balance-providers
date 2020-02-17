@@ -108,6 +108,11 @@ var AB = (function (global_scope) {
             AnyBalance.trace('getParam: input ' + (param ? '(' + param + ')' : '') + ' is unset! ' + new Error().stack);
             return;
         }
+        if(html === null && regexp){
+            AnyBalance.trace('getParam: input ' + (param ? '(' + param + ')' : '') + ' is null! ' + new Error().stack);
+            return;
+        }
+
         if (!isAvailable(param)) {
             AnyBalance.trace(param + ' is disabled!');
             return;
@@ -502,7 +507,7 @@ var AB = (function (global_scope) {
             // before falling back to any implementation-specific date parsing, so that’s what we do, even if native
             // implementations could be faster
             //              1 YYYY                2 MM       3 DD           4 HH    5 mm       6 ss        7 msec        8 Z 9 ±    10 tzHH    11 tzmm
-            if ((struct = /(\d{4}|[+\-\.\/]\d{6})(?:[\.\-\/](\d{2})(?:[\.\-\/](\d{2}))?)?(?:(?:T|\s+)(\d{2}):(\d{2})(?::(\d{2})(?:\.(\d{3})\d*)?)?(?:(Z)|([+\-])(\d{2})(?::(\d{2}))?)?)?/.exec(date))) {
+            if ((struct = /(\d{4}|[+\-\.\/]\d{6})(?:[\.\-\/](\d{2})(?:[\.\-\/](\d{2}))?)?(?:(?:T|\s+)(\d{2}):(\d{2})(?::(\d{2})(?:\.(\d{3})\d*)?)?(?:(Z)|([+\-])(\d{2})(?::?(\d{2}))?)?)?/.exec(date))) {
                 // avoid NaN timestamps caused by “undefined” values being passed to Date.UTC
                 for (var i = 0, k;
                      (k = numericKeys[i]); ++i) {
@@ -959,7 +964,7 @@ var AB = (function (global_scope) {
 
      Возвращается объект (или массив) или undefined, если объект не найден.
      */
-    function getJsonObject(html, reStartSearch) {
+    function getJsonObject(html, reStartSearch, replaces) {
 		if (false) { //development mode
 			//http://hjson.org/
 			//https://regex101.com/#javascript
@@ -1012,7 +1017,8 @@ var AB = (function (global_scope) {
         //var json = getRecursiveMatch(html, reStart, /[\}\]]/, null, getJsonEval);
 		
 		html = html.substring(startIndex).trim();
-		var json = html.matchRecursive(ALL, {open: 1, close: 2, parts: false}); 
+		var json = html.matchRecursive(ALL, {open: 1, close: 2, parts: false});
+		if(replaces) json = replaceAll(json, replaces); 
 		json = getJsonEval(json);
 
 		//if(reStartSearch)

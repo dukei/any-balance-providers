@@ -1,58 +1,68 @@
-function main() 
-{
+var g_headers = {
+    'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
+    'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
+    'User-Agent':'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36'
+};
+
+function main() {
+    function getCurrentMonth() {
+        var dt = new Date();
+        var months = ['январь', 'февраль', 'март', 'апрель', 'май', 'июнь', 'июль', 'август', 'сентябрь', 'октябрь', 'ноябрь', 'декабрь'];
+        return months[dt.getMonth()] + ' ' + dt.getFullYear();
+    }
+
     AnyBalance.setDefaultCharset('utf-8');
 
+    var API = {
+        'accounts': 'https://api.portalgkh.com/v1/accounts',
+        'billing': 'https://api.portalgkh.com/v1/accounts/{account_id}/billing',
+        'card': 'https://api.portalgkh.com/v1/accounts/{account_id}/card',
+        'login': 'https://api.portalgkh.com/v1/users/login'
+    };
     var result = {success: true};
     var prefs = AnyBalance.getPreferences();
 
     checkEmpty(prefs.email, 'Не задан email');
     checkEmpty(prefs.password, 'Не задан пароль');
 
-    var html = AnyBalance.requestPost('https://portalgkh.ru/index.php?id=14', {
-        username: prefs.email,
-        password: prefs.password,
-        service: 'login'
-    });
+    var credentials = {login: prefs.email, password: prefs.password};
+    var loginResult = getJson(AnyBalance.requestPost(API.login, credentials, g_headers));
 
-    if (!html || AnyBalance.getLastStatusCode() > 400) {
-        AnyBalance.trace(html);
-        throw new AnyBalance.Error('Ошибка при подключении к сайту! Попробуйте обновить данные позже.');
+    if (loginResult.status === 'error') {
+        throw new AnyBalance.Error(loginResult.message);
     }
 
-    if (match = html.match(/<script type='text\/javascript'>alert\('(.+)'\);<\/script>/)) {
-        throw new AnyBalance.Error(match[1]);
-    }
+    var headers = {'Authorization': 'Bearer ' + loginResult.token};
 
-    getParam(html, result, 'account', /<td>Номер лицевого[\s\S]{1,100}<strong>(.+)<\/strong>/);
-    getParam(html, result, 'company', /<td>Управляющая компания[\s\S]{1,100}<strong>(.+)<\/strong>/);
-    getParam(html, result, 'owner', /<td>Собственник[\s\S]{1,200}<strong>(.+)<\/strong>/);
-    getParam(html, result, 'opened', /<td>Открыт[\s\S]{1,100}<strong>(.+)<\/strong>/, null, parseDate);
-    getParam(html, result, 'address', /<td>Адрес[\s\S]{1,100}<strong>(.+)<\/strong>/);
-    getParam(html, result, 'phone', /<td>Телефон[\s\S]{1,100}<strong>(.+)<\/strong>/);
-    getParam(html, result, 'type', /<td>Тип собственности[\s\S]{1,100}<strong>(.+)<\/strong>/);
+    var account = getJson(AnyBalance.requestGet(API.accounts, headers));
+    // TODO: выбор лицевого счета.
+    account = account[0];
+    var accountId = account.accountId;
 
-    html = AnyBalance.requestPost('https://portalgkh.ru/index.php?id=16&view=reports', {
-        report: 'moneymove',
-        report_id: 1
-    });
+    var cardUrl = replaceAll(API.card, ['{account_id}', accountId]);
+    var card = getJson(AnyBalance.requestGet(cardUrl, headers));
 
-    // Услуги УК.
-    var $row_uk = $('#collapseTwo table:eq(0) tr:last td', html);
-    // Отопление и ГВС.
-    var $row_gvs = $('#collapseTwo table:eq(1) tr:last td', html);
+    var billingUrl = replaceAll(API.billing, ['{account_id}', accountId]);
+    var billing = getJson(AnyBalance.requestGet(billingUrl, headers));
 
-    if (!$row_uk.length || !$row_gvs.length) {
-        throw new AnyBalance.Error('Не удалось получить данные по платежам. Сайт изменён?');
-    }
+    var uk = billing[0];
+    var gvs = billing[1];
 
-    result['current_period'] = $row_uk.eq(0).text().trim();
-    result['uk_accrued'] = parseBalance($row_uk.eq(5).text());
-    result['uk_paid'] = parseBalance($row_uk.eq(6).text());
-    result['uk_to_pay'] = parseBalance($row_uk.eq(7).text());
-    result['gvs_accrued'] = parseBalance($row_gvs.eq(5).text());
-    result['gvs_paid'] = parseBalance($row_gvs.eq(6).text());
-    result['gvs_to_pay'] = parseBalance($row_gvs.eq(7).text());
-    result['to_pay'] = result['uk_to_pay'] + result['gvs_to_pay'];
+    result.account = account.accountNumber;
+    result.owner = account.owner;
+    result.company = card.company;
+    result.opened = parseDate(card.openDate);
+    result.address = card.address;
+    result.phone = card.phone;
+    result.type = card.type;
+    result.current_period = getCurrentMonth();
+    result.uk_accrued = parseBalance(uk.toPay.toFixed(2));
+    result.uk_paid = parseBalance(uk.payd.toFixed(2));
+    result.uk_to_pay = parseBalance(uk.totalDebt.toFixed(2));
+    result.gvs_accrued = parseBalance(gvs.toPay.toFixed(2));
+    result.gvs_paid = parseBalance(gvs.payd.toFixed(2));
+    result.gvs_to_pay = parseBalance(gvs.totalDebt.toFixed(2));
+    result.to_pay = parseBalance((result.uk_to_pay + result.gvs_to_pay).toFixed(2));
 
     AnyBalance.setResult(result);
 }

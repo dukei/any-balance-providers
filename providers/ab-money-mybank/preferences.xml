@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
 	<EditTextPreference
-		title="Логин"
+		title="Номер телефона"
 		key="login"
 		summary="||{@s}"
 		obligatory="true"
-		dialogTitle="Логин"
+		dialogTitle="Номер телефона"
 		positiveButtonText="ОК"
 		negativeButtonText="Отмена"
-		dialogMessage="Введите логин, используемый для входа в личный кабинет.">
+		dialogMessage="Введите номер, используемый для входа в интернет банк, в международном формате без пробелов и разделителей, например, +375xxxxxxxxx.">
 	</EditTextPreference>
 	<EditTextPreference
 		title="Пароль"

@@ -28,7 +28,7 @@ function main() {
 		if(cf.isCloudflared(html))
 		    html = cf.executeScript(html);
 
-		var price = getElement(html, /<span[^>]+id=["']price['"]/i, replaceTagsAndSpaces);
+		var price = getElement(html, /<a[^>]+View Historical Ether Price/i, replaceTagsAndSpaces);
 
 		getParam(price, result, ['rate', 'usd'], /\$([\d\.,\s]*)/i, replaceTagsAndSpaces, parseBalance);
 		getParam(price, result, ['rate_btc', 'btc'], /@([^<]*)/i, replaceTagsAndSpaces, parseBalance);

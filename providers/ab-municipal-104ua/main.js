@@ -25,10 +25,13 @@ function main() {
 		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
 	}
 
-	html = AnyBalance.requestPost(baseurl + 'cabinet/login', {
+	html = AnyBalance.requestPost(baseurl + 'ru/cabinet/login_check', {
+			'_type': 'individual',
 			'_username': prefs.login,
 			'_password': prefs.password,
-			'_target_path': '/ru/cabinet',
+			'_target_path': '',
+			'_target_path_individual': '/ru/cabinet',
+			'_target_path_legal': '/ru/business-online',
 			'_remember_me': 1
 	}, AB.addHeaders({
 		    Referer: baseurl
@@ -48,15 +51,17 @@ function main() {
 
 	var result = {success: true};
 
-	var balance_div = getParam(html, null, null, /<div[^>]*g-col-right[^>]*>[\s\S]*?<div[^>]*b-top[^>]*>([\s\S]*?)<\/div>/i),
-		balance  	= /Задолженность/i.test(balance_div) ? '-' + getParam(balance_div, null, null, /<p>([\s\S]*?)<\/p>/i) : getParam(balance_div, null, null, /<p>([\s\S]*?)<\/p>/i);
 
-	AB.getParam(balance, result, 'balance',   		 null, 												 AB.replaceTagsAndSpaces, AB.parseBalance);
 	AB.getParam(html, 	 result, 'full_name', 		/cabinet-title[\s\S]*?<span[^>]*>([^/]+)/i, 	  	 AB.replaceTagsAndSpaces);
 	AB.getParam(html, 	 result, 'account_number',  /cabinet-title[\s\S]*?лицевой счет([^/]+)/i, 	  	 AB.replaceTagsAndSpaces);
 	AB.getParam(html, 	 result, 'address', 		/cabinet-stats[\s\S]*?b-text[\s\S]*?<p>([^<]+)/i, 	 AB.replaceTagsAndSpaces);
 	AB.getParam(html, 	 result, 'email', 			/cabinet-stats[\s\S]*?propEmail[^>]*>([^<]+)/i,   	 AB.replaceTagsAndSpaces);
 	//AB.getParam(html, result, 'agreement', /cabinet-title[\s\S]*?договор([^<]+)/i, AB.replaceTagsAndSpaces);
+
+	html = AnyBalance.requestGet(baseurl + 'ru/cabinet/consumers-book', g_headers);
+	var balance_div = getParam(html, null, null, /<div[^>]*g-col-right[^>]*>[\s\S]*?<div[^>]*b-top[^>]*>([\s\S]*?)<\/div>/i),
+		balance  	= /Задолженность/i.test(balance_div) ? '-' + getParam(balance_div, null, null, /<p>([\s\S]*?)<\/p>/i) : getParam(balance_div, null, null, /<p>([\s\S]*?)<\/p>/i);
+	AB.getParam(balance, result, 'balance',   		 null, 												 AB.replaceTagsAndSpaces, AB.parseBalance);
 
 	AnyBalance.setResult(result);
 }

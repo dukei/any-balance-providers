@@ -1,16 +1,18 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-exchange-xe</id>
+	<id version="3">ab-exchange-xe</id>
 	<api flags="no_browser"/>
 	<name>XE Live Exchange Rates</name>
 	<description html="true"><![CDATA[
-	<p>Shows XE Live Exchange Rates from <a href="http://www.xe.com/">http://www.xe.com/</a></p>
+	<p>Shows XE Live Exchange Rates from <a href="https://www.xe.com/">https://www.xe.com/</a></p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<author>Alexander Kotelevets &lt;kotelevets@mail.ua&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>

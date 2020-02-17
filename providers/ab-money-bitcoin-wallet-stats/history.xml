@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="11" date="2019-11-01">
+	- Support site changes
+	</change>
 	<change version="10" date="2018-06-28">
 	- Переход на www.blockchain.com
 	</change>

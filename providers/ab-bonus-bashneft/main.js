@@ -12,7 +12,7 @@ var g_headers = {
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'https://www.bashneft-azs.ru/';
+	var baseurl = 'https://bashneft-azs.ru/';
 	AnyBalance.setDefaultCharset('windows-1251');
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
@@ -30,6 +30,9 @@ function main() {
 	}, addHeaders({Referer: baseurl + 'loyalty/personal/'}));
 	
 	if (!/Выход/i.test(html)) {
+		if(/Технические работы/i.test(html))
+			throw new AnyBalance.Error('Личный кабинет временно не доступен в связи с проводимыми техническими работами.');
+
 		var error = getParam(html, null, null, /<div\s+class="error_block">([\s\S]+?)<\/div>/i, replaceTagsAndSpaces);
 		if (error) {
             throw new AnyBalance.Error(error, null, /данные неверны!/i.test(error));

@@ -35,49 +35,61 @@ function login(){
     }
 
     var html = AnyBalance.requestGet(baseurl + '/', g_headers);
-    html = AnyBalance.requestGet(baseurl + '/login', addHeaders({Referer: baseurl1 + '/'}));
-
-    function sendForm(html, code){
-    	var prefs = AnyBalance.getPreferences();
-        var form = getElement(html, prefs.type == '-1' ? /<form[^>]+id="login-form"[^>]*>/i : /<form[^>]+id="login-bonus-card-form"[^>]*>/i);
-        if(!form){
-        	AnyBalance.trace(form);
-        	throw new AnyBalance.Error('Не удалось найти форму входа. Сайт изменен?');
-        }
+    if(!/logout/i.test(html)){
+        html = AnyBalance.requestGet(baseurl + '/login', addHeaders({Referer: baseurl1 + '/'}));
         
-//        var allowedArgs = /_dyn|cardType|CardNumber|zipCode|dateOfBirth|loginCard|DARGS|loginCaseSensitive|password|loginEmailPhone|verification-code|phoneNumber|code-check|showCaptcha|rememberMe/i;
-		var params = createFormParams(form, function(params, str, name, value) {
-//			if(!allowedArgs.test(name))
-//				return;
+        function sendForm(html, code){
+        	var prefs = AnyBalance.getPreferences();
+            var form = getElement(html, prefs.type == '-1' ? /<form[^>]+name="login-form"[^>]*>/i : /<form[^>]+name="login-bonus-card-form"[^>]*>/i);
+            if(!form){
+            	AnyBalance.trace(form);
+            	throw new AnyBalance.Error('Не удалось найти форму входа. Сайт изменен?');
+            }
+            
+//  //        var allowedArgs = /_dyn|cardType|CardNumber|zipCode|dateOfBirth|loginCard|DARGS|loginCaseSensitive|password|loginEmailPhone|verification-code|phoneNumber|code-check|showCaptcha|rememberMe/i;
+			var params = createFormParams(form, function(params, str, name, value) {
+//	//			if(!allowedArgs.test(name))
+//	//				return;
+		    
+				if (name == 'mvideoBonusCardNumber' && prefs.type == '0') 
+					return prefs.card;
+				else if (name == 'alfaCardNumber' && prefs.type == '1') 
+					return prefs.card;
+				else if (name == 'cetelemCardNumber' && prefs.type == '2') 
+					return prefs.card;
+				else if (/cardType/i.test(name))
+					return {'0': 'mvidCard', '1': 'alphaCard', '2': 'cetelemCard'}[prefs.type];
+				else if ('/com/mvideo/userprofiling/LoginFormHandler.loginCaseSensitive' == name)
+					return prefs.login;
+				else if ('verification-code' == name)
+					return code;
+				else if ('password' == name || 'login_password' == name)
+					return prefs.password;
+				else if (name == 'zipCode')
+					return prefs.zip;
+				else if (name == '/com/mvideo/userprofiling/LoginFormHandler.dateOfBirth')
+					return birthdate;
+				else if (name == 'rememberMe')
+					return 'true'
+		    
+				return value;
+			});
 	    
-			if (name == 'mvideoBonusCardNumber' && prefs.type == '0') 
-				return prefs.card;
-			else if (name == 'alfaCardNumber' && prefs.type == '1') 
-				return prefs.card;
-			else if (name == 'cetelemCardNumber' && prefs.type == '2') 
-				return prefs.card;
-			else if (/cardType/i.test(name))
-				return {'0': 'mvidCard', '1': 'alphaCard', '2': 'cetelemCard'}[prefs.type];
-			else if ('/com/mvideo/userprofiling/LoginFormHandler.loginCaseSensitive' == name)
-				return prefs.login;
-			else if ('verification-code' == name)
-				return code;
-			else if ('password' == name)
-				return prefs.password;
-			else if (name == 'zipCode')
-				return prefs.zip;
-			else if (name == '/com/mvideo/userprofiling/LoginFormHandler.dateOfBirth')
-				return birthdate;
+			if(/recaptcha/i.test(form)){
+				var recaptcha = solveRecaptcha('Пожалуйста, докажите, что вы не робот', baseurl, '6LdfyhQUAAAAAH18wjeroCwCYU9F6yjqp-2MYW7M');
+				params.recaptcha = 'on';
+				params['g-recaptcha-response'] = recaptcha;
+			}
+		    
+			var action = getParam(form, null, null, /action="([^"]*)/i, replaceHtmlEntities);
+			html = AnyBalance.requestPost(baseurl + action, params, addHeaders({Referer: baseurl + '/login'}));
+			return html;
+		}
 	    
-			return value;
-		});
-	    
-		var action = getParam(form, null, null, /action="([^"]*)/i, replaceHtmlEntities);
-		html = AnyBalance.requestPost(baseurl + action, params, addHeaders({Referer: baseurl + '/login'}));
-		return html;
+		html = sendForm(html);
+	}else{
+		AnyBalance.trace('Вошли автоматически');
 	}
-
-	html = sendForm(html);
 
 	if(!/logout/i.test(html)){
 		if(/js-confirm-phone-btn/i.test(html)){
@@ -130,6 +142,10 @@ function login(){
 			
 	}
 
+	AnyBalance.setData('login', prefs.login + '/' + prefs.card);
+	AnyBalance.saveCookies();
+	AnyBalance.saveData();
+
 	return html;
 }
 
@@ -137,6 +153,9 @@ function main(){
     var prefs = AnyBalance.getPreferences();
     AnyBalance.setDefaultCharset('utf-8');
     AnyBalance.setOptions({cookiePolicy: 'netscape'});
+
+    if(AnyBalance.getData('login') === prefs.login + '/' + prefs.card)
+    	AnyBalance.restoreCookies();
 
     var html;
     try{
@@ -157,7 +176,8 @@ function main(){
 
     html = AnyBalance.requestGet(baseurl + '/my-account', g_headers);
     getParam(html, result, 'fio', /Владелец карты[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
-    getParam(html, result, 'balance', /<div[^>]+my-account-block-bonus-rubles-title[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+    //getParam(html, result, 'balance', /<div[^>]+my-account-block-bonus-rubles-title[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'balance', /<span[^>]+header-user-details[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, '__tariff', /Номер карты[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
     
     var hist = getElement(html, /<li[^>]+personal-orders-block-item[^>]*>/i);

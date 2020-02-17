@@ -11,6 +11,7 @@ var g_headers = {
 
 var regions = {
 	bryansk: getSmorodina,
+	vladimir: getSmorodina,
 	volgograd: getVolgograd,
 	voronej: getVoronej,
 	moscow: getSmorodina,
@@ -29,7 +30,7 @@ var regions = {
 };
 
 if(!this.console){
-	this.console = function(str){ AnyBalance.trace(str) }
+	this.console = {log: function(str){ AnyBalance.trace(str) }}
 }
 
 function main() {

@@ -1,5 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="32" date="2020-01-22">
+	- Поддержка изменений на сайте.
+	</change>
+	<change version="31" date="2019-11-11">
+	- Поддержка изменений на сайте.
+	</change>
+	<change version="30" date="2019-05-07">
+	учет отмен в Платежах без кешбэка
+	</change>
+	<change version="29" date="2019-03-27">
+	- Поддержка изменений на сайте.
+	</change>
 	<change version="28" date="2018-10-12">
 	Добавлены баллы и число платежей по карте после последнего 5го платежа
 	</change>

@@ -17,43 +17,38 @@ function main() {
 	
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
-	var html = AnyBalance.requestGet(baseurl + 'auth/login', g_headers);
+	var html = AnyBalance.requestGet(baseurl, g_headers);
 	
 	if(!html || AnyBalance.getLastStatusCode() > 400)
 		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
+
+	var captcha = solveRecaptcha('Пожалуйста, докажите, что вы не робот', AnyBalance.getLastUrl(), JSON.stringify({SITEKEY: '6Lcdm6IUAAAAALPR2q8slgO3qVh8v68vjWrhpHma', TYPE: 'V3', ACTION: 'logform'}));
 	
 	html = AnyBalance.requestPost(baseurl + 'auth/login', {
 		email: prefs.login,
-		password: prefs.password
+		password: prefs.password,
+		capcha: captcha,
 	}, addHeaders({Referer: baseurl, 'X-Requested-With': 'XMLHttpRequest'}));
     
-	if (html != '1') {
-		var error = getParam(html, null, null, /<h1>\s*АВТОРИЗАЦИЯ\s*<\/h1>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+    var json = getJson(html);
+	if (json.status !== 'success') {
+		var error = json.message;
 		if (error)
-			throw new AnyBalance.Error(error, null, /Ошибка авторизации/i.test(html));
+			throw new AnyBalance.Error(error, null, /не существует|парол/i.test(html));
 		
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
 	
-    html = AnyBalance.requestGet(baseurl, g_headers);
-	
 	var result = {success: true};
-	
-	getParam(html, result, 'partnerBalance', /Статистика[\s\S]*?<tbody>[\s\S]*?<td>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'charged', /Статистика[\s\S]*?<tbody>[\s\S]*?(?:<td>[\s\S]*?<\/td>[\s\S]*?){3}<td>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'key', /Ваш ключ:([\s\S]*?)<\/p>/i, replaceTagsAndSpaces);
 
-	if(isAvailable('balance')) {
-		html = AnyBalance.requestGet(baseurl + 'setting/get_balance?_=' + new Date().getTime(), g_headers);
-		getParam(html, result, 'balance', null, replaceTagsAndSpaces, parseBalance);
-	}
+	html = AnyBalance.requestGet(baseurl + 'setting/data_user?_=' + new Date().getTime(), addHeaders({Referer: baseurl}));
+	var json = getJson(html);
 	
-	html = AnyBalance.requestPost(baseurl + 'setting/get_plan', {
-		'showlist': 'plan'
-	}, addHeaders({'Referer': baseurl, 'X-Requested-With': 'XMLHttpRequest'}));
-	
-	getParam(html, result, '__tariff', /<p>Тарифный план:([\s\S]*?)<\/p>/i, replaceTagsAndSpaces);
-	
+	getParam(json.ref_balance, result, 'partnerBalance', null, replaceTagsAndSpaces, parseBalance);
+	getParam(json.balance, result, 'balance', null, replaceTagsAndSpaces, parseBalance);
+	getParam(json.plan, result, '__tariff', /Тарифный план:([\s\S]*)/i, replaceTagsAndSpaces);
+	getParam(json.ottkey, result, 'key', null, replaceTagsAndSpaces);
+
 	AnyBalance.setResult(result);
 }

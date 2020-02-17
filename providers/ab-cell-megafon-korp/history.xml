@@ -1,5 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="30" date="2019-11-22">
+	- Поддержка изменений на сайте.
+	</change>
+	<change version="29" date="2019-06-15">
+	Исправление для нескольких ЛС в одном ЛК
+	</change>
+	<change version="28" date="2019-03-29">
+	Поддержка изменений в процедуре входа
+	</change>
 	<change version="27" date="2019-01-18">
 	Улучшено распознавание трафика
 	</change>

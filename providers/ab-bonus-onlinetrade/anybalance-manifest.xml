@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="7">ab-bonus-onlinetrade</id>
+	<id version="8">ab-bonus-onlinetrade</id>
 	<api flags="no_browser"/>
 	<name>Onlinetrade</name>
 	<description html="true"><![CDATA[
@@ -20,7 +20,7 @@
 	</files>
 	<counters>
 		<counter id="balance" name="ON-бонусов"/>
-		<counter id="price" name="Цена" type="text"/>
+		<!--<counter id="price" name="Цена" type="text"/>-->
 		<counter id="userId" name="Клиентский номер" type="text"/>
 		<counter id="status" name="Статус" type="text"/>
 		<counter id="email" name="E-mail" type="text"/>

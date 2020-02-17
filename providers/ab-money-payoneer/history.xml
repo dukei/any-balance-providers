@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change version="6" date="2019-07-11">
+      - Переведено на мобильное API для обхода двухфакторной авторизации
+    </change>
+    <change version="5" date="2019-02-28">
+      - Поддержка изменений на сайте
+    </change>
     <change version="4" date="2017-11-26">
       - Исправлена автоматизированная проверка Reblaze
     </change>

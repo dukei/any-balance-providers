@@ -9,7 +9,7 @@ var g_headers = {
 	'Cache-Control': 'max-age=0',
     'Upgrade-Insecure-Requests': '1',
 	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.101 Safari/537.36',
-	'Origin': 'https://my.velcom.by',
+	'Origin': 'https://my.a1.by',
 };
 
 //var velcomOddPeople = 'Velcom сознательно противодействует оперативному получению вами баланса через сторонние программы! Вот и снова они специально ввели изменения, которые сломали получение баланса. Пожалуйста, позвоните в службу поддержки Velcom (411 и 410 с мобильного телефона в сети velcom без взимания оплаты) и оставьте претензию, что вы не можете пользоваться любимой программой. Проявите активную позицию, они скрывают ваш баланс от вас же. Зачем, интересно? МТС и Life своих абонентов уважают значительно больше...';
@@ -32,7 +32,7 @@ function getDomain(url){
 function main(){
     var prefs = AnyBalance.getPreferences();
 	
-    var baseurl = "https://my.velcom.by/";
+    var baseurl = "https://my.a1.by/";
     AnyBalance.setDefaultCharset('utf-8');
 	
     checkEmpty(prefs.login, 'Введите номер телефона в международном формате!');

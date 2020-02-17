@@ -14,40 +14,37 @@ var g_headers = {
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'https://bonus.fix-price.ru/';
+	var baseurl = 'https://fix-price.ru/';
 	AnyBalance.setDefaultCharset('utf-8');
 
 	AB.checkEmpty(prefs.login, 'Введите логин!');
 	AB.checkEmpty(prefs.password, 'Введите пароль!');
 
-	var html = AnyBalance.requestGet(baseurl + 'ulogin', g_headers);
+	var html = AnyBalance.requestGet(baseurl + 'bonus/', g_headers);
 
 	if (!html || AnyBalance.getLastStatusCode() > 400) {
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
 	}
 
-	var grc_response = solveRecaptcha('Пожалуйста, подтвердите, что вы не робот', baseurl, '6LcxEwkUAAAAAHluJu_MhGMLI2hbzWPNAATYetWH');
+//	var grc_response = solveRecaptcha('Пожалуйста, подтвердите, что вы не робот', baseurl, '6LcxEwkUAAAAAHluJu_MhGMLI2hbzWPNAATYetWH');
 
-	html = AnyBalance.requestPost(baseurl + 'cns_customer_cabinet/api/auth', JSON.stringify({
-		captcha: {
-			class_type: 'GoogleRecaptcha',
-			g_recaptcha_response: grc_response
-		},
+	html = AnyBalance.requestPost(baseurl + 'ajax/auth_user.php', {
+		AUTH_FORM:	'Y',
+		TYPE:		'AUTH',
+		backurl:	'/personal/',
 		login: prefs.login,
-		password: prefs.password,
-		remember: true
-	}), AB.addHeaders({
-		'Content-Type': 'application/json',
-		Referer: baseurl + 'ulogin'
-	}), {HTTP_METHOD: 'PUT'});
+		password: prefs.password
+	}, AB.addHeaders({
+		'X-Requested-With': 'XMLHttpRequest',
+		Accept: 'application/json, text/javascript, */*; q=0.01',
+		Referer: baseurl + 'bonus'
+	}), {HTTP_METHOD: 'POST'});
 
 	var json = AB.getJson(html);
 
-	if (!json.authorized) {
-		var error = json.reason;
-		if(json.reason == 'credentials not suitable')
-			error = 'Неверный логин или пароль';
+	if (!json.res) {
+		var error = json.mess;
 		if (error) {
 			throw new AnyBalance.Error(error, null, /парол/i.test(error));
 		}
@@ -59,23 +56,12 @@ function main() {
 		success: true
 	};
 
-	var join_space = create_aggregate_join(' ');
-	if(AnyBalance.isAvailable('fio')){
-		html = AnyBalance.requestGet(baseurl + 'cns_customer_cabinet/api/anketa', g_headers);
-		json = getJson(html);
-		AB.sumParam(json.last_name, result, 'fio', null, null, null, join_space);
-		AB.sumParam(json.first_name, result, 'fio', null, null, null, join_space);
-		AB.sumParam(json.middle_name, result, 'fio', null, null, null, join_space);
-	}
+	html = AnyBalance.requestGet(baseurl + 'personal/', addHeaders({Referer: baseurl}));
 
-	if(AnyBalance.isAvailable('balance')){
-		html = AnyBalance.requestGet(baseurl + 'cns_customer_cabinet/api/balance', g_headers);
-		json = getJson(html);
-		AB.getParam(json.active/100, result, 'balance');
-		AB.getParam(json.inactive/100, result, 'balance_inactive');
-	}
-
-//	AB.getParam(html, result, 'card', /на\s+вашей\s+карте\s+№([\s\S]*?)<\/p>/i, AB.replaceTagsAndSpaces);
+	getParam(html, result, 'fio', /<div[^>]+client-name[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+	getParam(html, result, 'balance', /<div[^>]+client-points__active[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'balance_inactive', /<span[^>]+inactive-points[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+	AB.getParam(html, result, 'card', /<div[^>]+personal-card__number[^>]*>([\s\S]*?)<\/div>/i, AB.replaceTagsAndSpaces);
 
 	AnyBalance.setResult(result);
 }

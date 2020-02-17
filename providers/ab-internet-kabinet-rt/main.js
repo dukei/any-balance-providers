@@ -18,24 +18,27 @@ var g_ServiceStatus = {
 var baseurl = "https://lk.rt.ru/";
 
 var g_web_headers = {
-	Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
-	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
+	Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3',
+	'Accept-Language': 'en-US,en;q=0.9,ru;q=0.8,ru-RU;q=0.7',
 	Connection: 'keep-alive',
-	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.11',
-    Referer:baseurl
+	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.120 Safari/537.36',
+    Referer:baseurl,
+    'Sec-Fetch-Mode': 'navigate',
+	'Sec-Fetch-User': '?1',
+	'Sec-Fetch-Site': 'same-origin',
+	Origin: 'https://b2c.passport.rt.ru'
 };
 
 var g_headers = {
-	Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
-	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
+	Accept: 'application/json, text/plain, */*',
+	'Accept-Language': 'en-US,en;q=0.9,ru;q=0.8,ru-RU;q=0.7',
 	Connection: 'keep-alive',
-	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.11',
+	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.120 Safari/537.36',
 	'Content-Type': 'application/json',
-    'X-Requested-With':'XMLHttpRequest',
-    Referer:baseurl
-
+    Referer:baseurl,
+    'Sec-Fetch-Mode': 'cors',
+    Origin: 'https://lk.rt.ru',
+    'Sec-Fetch-Site': 'same-origin'
 };
 
     /**
@@ -148,14 +151,22 @@ function main(){
 
     var code = AnyBalance.retrieveCode('Пожалуйста, введите слова с картинки', img);
 */
+	
+	AnyBalance.setCookie('.rt.ru', 'oxxfgh', '20171673-dde6-4018-87c5-324367ebc5ef#0#1800000#5000');
 
-    var state = generateUUID();
-    var html = AnyBalance.requestGet('https://b2c.passport.rt.ru/auth/realms/b2c/protocol/openid-connect/auth?' + createUrlEncodedParams({
+	var html = AnyBalance.requestPost(baseurl + 'client-api/checkSession', JSON.stringify({
+		client_uuid: generateUUID(), 
+		current_page: ''
+	}), addHeaders({Referer: baseurl}));
+
+
+    var state = JSON.stringify({uuid: generateUUID()});
+    html = AnyBalance.requestGet('https://b2c.passport.rt.ru/auth/realms/b2c/protocol/openid-connect/auth?' + createUrlEncodedParams({
     	response_type: 'code',
     	scope: 'openid',
     	client_id: 'lk_b2c',
     	state: state,
-    	redirect_uri: 'https://lk.rt.ru/sso-auth/'
+    	redirect_uri: 'https://lk.rt.ru/sso-auth/?redirect=https%3A%2F%2Flk.rt.ru%2F'
     }), g_web_headers);
 
 	if(/Личный кабинет временно недоступен/i.test(html)) {
@@ -189,12 +200,16 @@ function main(){
 		throw new AnyBalance.Error('Не удалось войти в личный кабинет. Сайт изменен?');
 	}
 
-    var uuid = generateUUID();
-	html = AnyBalance.requestPost(baseurl + 'client-api/getAccounts', JSON.stringify({
-		client_uuid: uuid,
-		current_page: 'login'
-	}), g_headers);
+	html = AnyBalance.requestPost(baseurl + 'client-api/checkSession', JSON.stringify({
+		client_uuid: generateUUID(), 
+		current_page: ''
+	}), addHeaders({Referer: baseurl}));
 
+	html = AnyBalance.requestPost(baseurl + 'client-api/getAccounts', JSON.stringify({
+		client_uuid: generateUUID(),
+		current_page: 'login'
+	}), addHeaders({Referer: baseurl}));
+    
     var accinfo = getRTJson(html);
 
     if(!accinfo.accounts || accinfo.accounts.length == 0)
@@ -260,7 +275,7 @@ function main(){
 
 			html = AnyBalance.requestPost(baseurl + 'client-api/getServiceTariffName', JSON.stringify({
 				servicesId: servicesIds,
-				client_uuid: uuid,
+				client_uuid: generateUUID(),
 				current_page: 'main'
 			}), g_headers);
 			acc.__tariffNames = getRTJson(html).tariffNames;
@@ -269,7 +284,7 @@ function main(){
 			try{
 				html = AnyBalance.requestPost(baseurl + 'client-api/getAccountBalance', JSON.stringify({
 					accountId: acc.accountId,
-					client_uuid: uuid,
+					client_uuid: generateUUID(),
 					current_page: 'main'
 				}), g_headers);
 
@@ -290,7 +305,7 @@ function main(){
 
 						html = AnyBalance.requestPost(baseurl + 'client-api/getServiceInfo', JSON.stringify({
 							serviceId: service.serviceId,
-							client_uuid: uuid,
+							client_uuid: generateUUID(),
 							current_page: 'main'
 						}), g_headers);
 
@@ -318,7 +333,7 @@ function main(){
 						if(AnyBalance.isAvailable('sms' + suffix, 'mms' + suffix, 'min' + suffix, 'gprs' + suffix)){
 							var jsonPackets = getJson(AnyBalance.requestPost(baseurl + 'client-api/getServiceTariff', JSON.stringify({
 								serviceId: service.serviceId,
-								client_uuid: uuid,
+								client_uuid: generateUUID(),
 								current_page: 'mvno'
 							}), g_headers));
 
@@ -425,7 +440,7 @@ function main(){
 		AnyBalance.trace('Пробуем найти программу "Бонус"...');
 		try {
 			html = AnyBalance.requestPost(baseurl + 'client-api/getFplStatus', JSON.stringify({
-				client_uuid: uuid,
+				client_uuid: generateUUID(),
 				current_page: ''
 			}), g_headers);
 			var jsonBonus = getRTJson(html);
@@ -444,7 +459,7 @@ function main(){
 				try{
 					html = AnyBalance.requestPost(baseurl + 'client-api/getAccountBalance', JSON.stringify({
 						accountId: acc.accountId,
-						client_uuid: uuid,
+						client_uuid: generateUUID(),
 						current_page: 'main'
 					}), g_headers);
 					json = getRTJson(html);

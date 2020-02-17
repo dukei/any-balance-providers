@@ -56,9 +56,9 @@ function main() {
 	
 	var result = {success: true};
 	
-	AB.getParam(html, result, 'balance', /Баланс[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, AB.replaceTagsAndSpaces, AB.parseBalance);
-	AB.getParam(html, result, 'status', /Статус[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, AB.replaceTagsAndSpaces);
-	AB.getParam(html, result, 'contract', /Договор[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, AB.replaceTagsAndSpaces);
+	AB.getParam(html, result, 'balance', /Баланс[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i, AB.replaceTagsAndSpaces, AB.parseBalance);
+	AB.getParam(html, result, 'status', /Статус[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i, AB.replaceTagsAndSpaces);
+	AB.getParam(html, result, 'contract', /Договор[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i, AB.replaceTagsAndSpaces);
 	AB.getParam(html, result, 'fio', /ФИО[\s\S]*?<span[^>]*>([\s\S]*?)Контакты/i, [AB.replaceTagsAndSpaces, /RU/g, '']);
 	AB.getParam(html, result, 'contacts', /Телефон:([\s\S]*?)<\/span>/i, AB.replaceTagsAndSpaces);
 

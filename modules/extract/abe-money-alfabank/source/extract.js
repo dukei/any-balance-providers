@@ -122,6 +122,8 @@ function processClick(options) {
 
     if (isClick20()) {  //Альфаклик 2.0
         AnyBalance.trace("Определен Альфа-Клик 2.0");
+
+        turnOffLoginOtp(); //Поскольку альфа-клик самостоятельно включает эту опцию почему-то, приходится её отключать каждый раз
     } else {
         AnyBalance.trace("Определен Альфа-Клик 1.0");
         if(!options || !options.allowClick10)
@@ -764,3 +766,70 @@ function processDeposit2(html, row, result) {
     }
 }
 
+function turnOffLoginOtp(){
+	try{
+		var html = AnyBalance.requestGet("https://settings.alfabank.ru/settings/logins-passwords", g_headers);
+		var referer = AnyBalance.getLastUrl();
+		html = AnyBalance.requestGet("https://settings.alfabank.ru/settings/api/load?_=" + new Date().getTime(), addHeaders({
+			Referer: referer,
+			'X-Requested-With': 'XMLHttpRequest',
+		}));
+
+		var json = getJson(html);
+		for(var i=0; i<json.length; ++i){
+			if(json[i].channels){
+				json = json[i];
+				break;
+			}
+		}
+		var found = false;
+		for(var i=0; json.channels && i<json.channels.length; ++i){
+			var c = json.channels[i];
+			if(c.id === 'C2'){
+				found = true;
+				if(c.hasAdditionalLoginPassword){
+					AnyBalance.trace('В настройках требуется подтверждение входа по SMS, отключаем...');
+					html = AnyBalance.requestPost('https://settings.alfabank.ru/settings/api/entry-method/save', {
+						entryMethod: 'WITHOUT_SMS'
+					}, addHeaders({
+						Referer: referer,
+						'X-Requested-With': 'XMLHttpRequest',
+					}));
+
+					json = getJson(html);
+					AnyBalance.requestPost('https://settings.alfabank.ru/settings/api/pipe-operation', {
+						'authMethod[methodId]': json.authMethods[0].methodId,
+						'authMethod[passwordSize]': json.authMethods[0].passwordSize || '',
+						'operationId': json.references[0],
+						'type': 'GENERATE_PASSWORD'
+					}, addHeaders({
+						Referer: referer,
+						'X-Requested-With': 'XMLHttpRequest',
+					}));
+
+					AnyBalance.requestPost('https://settings.alfabank.ru/settings/api/pipe-operation', {
+						'operationId': json.references[0],
+						'isBundle': 'false',
+						'references[]': json.references.join(','),
+						'password': '',
+						'type': 'CONFIRM'
+					}, addHeaders({
+						Referer: referer,
+						'X-Requested-With': 'XMLHttpRequest',
+					}));
+					
+					AnyBalance.trace('Может быть, отключили...');
+				}else{
+					AnyBalance.trace('Подтверждение входа по SMS не требуется...');
+				}
+
+				break;
+			}
+		}
+
+		if(!found)
+			AnyBalance.trace('Не удалось найти настройку SMS при входе');
+	}catch(e){
+		AnyBalance.trace('Ошибка отключения OTP при входе: ' + e.message);
+	}
+}

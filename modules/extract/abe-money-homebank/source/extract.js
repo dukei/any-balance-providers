@@ -37,6 +37,7 @@ function callApi(verb, params){
         headers['Content-Type'] = 'application/x-www-form-urlencoded; charset=UTF-8';
         if (params.grant_type === 'password') {
             headers['Fingerprint'] = getFingerprint();
+            headers['x-recaptcha'] = solveRecaptcha("Пожалуйста, докажите, что вы не робот.", "https://homebank.kz/", JSON.stringify({SITEKEY: '6LeaksYUAAAAAKSdZ3zOupIZj7TGYC67DFlL_MI4', TYPE: 'V3', ACTION: 'login'}));
         }
         formatted_params = params;
     }
@@ -78,7 +79,7 @@ function login(prefs) {
 
 		g_token = json.access_token;
 	}
-    
+
 	var json = callApi('oauth2/token', {
 		"grant_type":"password",
 		"username":prefs.login,

@@ -4,10 +4,9 @@
 
 var g_headers = {
 	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
-	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
+	'Accept-Language': 'ru,en-US;q=0.9,en;q=0.8,ru-RU;q=0.7',
 	'Connection': 'keep-alive',
-	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
+	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36',
 };
 
 var g_region_change = {
@@ -36,18 +35,6 @@ function main() {
 	AnyBalance.trace('Selected region: ' + domain);
 	var baseurl = 'https://lk.domru.ru/';
 
-	info = AnyBalance.requestGet(baseurl + "login", g_headers);
-
-
-	if (!info || AnyBalance.getLastStatusCode() > 400) {
-		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
-	}
-
-	var form = getElement(info, /<form[^>]+login-form[^>]*>/i);
-	if (!form)
-		throw new AnyBalance.Error('Не удалось найти форму входа. Сайт изменен?');
-
 	AnyBalance.setCookie('domru.ru', 'citydomain'); //Удаляем старую куку
 	AnyBalance.setCookie('.domru.ru', 'service', '0');
 	AnyBalance.setCookie('.domru.ru', 'citydomain', domain, {
@@ -56,6 +43,23 @@ function main() {
 	AnyBalance.setCookie('.domru.ru', 'cityconfirm', '1', {
 		path: '/'
 	});
+
+	var info = AnyBalance.requestGet(baseurl + "login", g_headers);
+
+	if (!info || AnyBalance.getLastStatusCode() > 400) {
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
+	}
+
+	AnyBalance.trace("Redirected to: " + AnyBalance.getLastUrl());
+
+	var baseurlLogin = getParam(AnyBalance.getLastUrl(), /^https?:\/\/[^\/]*/i) + '/';
+	AnyBalance.trace("baseurlLogin: " + baseurl);
+
+
+	var form = getElement(info, /<form[^>]+login[^>]*>/i);
+	if (!form)
+		throw new AnyBalance.Error('Не удалось найти форму входа. Сайт изменен?');
 
 	var params = createFormParams(form, function(params, str, name, value) {
 		if (/username/i.test(name))
@@ -66,10 +70,12 @@ function main() {
 		return value;
 	}, true);
 
-	// Заходим на главную страницу
-	var info = AnyBalance.requestPost(baseurl + "login", params, g_headers);
+	var action = getParam(form, /<form[^>]+action="([^"]*)/, replaceHtmlEntities);
 
-	if (!/\/logout|выход/.test(info)) {
+	// Заходим на главную страницу
+	var info = AnyBalance.requestPost(joinUrl(baseurlLogin, action), params, g_headers);
+
+	if (!/возвращением|logout|выход/.test(info)) {
 		var error = AB.getParam(info, null, null, /<div[^>]*class="[^"]*lk-form-block-error[^"]*"[^>]*>([\s\S]*?)<\/div>/i,
 			AB.replaceTagsAndSpaces);
 		if (error) {
@@ -88,16 +94,22 @@ function main() {
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
 
+	info = AnyBalance.requestGet(baseurl);
+
 	var result = {
 		success: true
 	};
 
 	if (AnyBalance.isAvailable('balance', 'pay_till')) {
-		var token = getParam(info, /<input[^>]+value="([^"]*)"[^>]*name="YII_CSRF_TOKEN"/i);
+		var token = decodeURIComponent(AnyBalance.getCookie('YII_CSRF_TOKEN'));
 		var res = AnyBalance.requestPost(baseurl + 'payments/default/GetDataForMoneybagWidget', [
 			['YII_CSRF_TOKEN', token]
 		], addHeaders({
-			'X-Requested-With': 'XMLHttpRequest'
+			Referer: baseurl,
+			Accept: 'application/json, text/javascript, */*; q=0.01',
+			'X-Requested-With': 'XMLHttpRequest',
+			Origin: 'https://lk.domru.ru',
+
 		}));
 
 		var user = {};

@@ -33,6 +33,9 @@ function main(){
         g_headers
     );
 
+    if(/crash-content/i.test(html))
+    	throw new AnyBalance.Error('В настоящий момент сервис временно недоступен, проводятся технические работы.');
+
     var token = AB.getJson(html);
     if (!token.access_token) {
     	AnyBalance.trace(html);

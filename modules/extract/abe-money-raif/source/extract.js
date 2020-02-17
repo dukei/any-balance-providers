@@ -2,15 +2,18 @@
  Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
  */
 
+var g_baseurl = 'https://online.raiffeisen.ru/';
+
 var g_headers = {
-	'User-Agent': 'Dalvik/2.1.0 (Linux; U; Android 8.0.0; ONEPLUS A3010 Build/OPR6.170623.013)',
-	Accept: 'application/json',
-	'RC-Device': 'android',
-	'Connection': 'close',
-	'Accept-Language': 'ru'
+	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.120 Safari/537.36',
+	Accept: 'application/json, text/plain, */*',
+	///'RC-Device': 'android',
+	'Connection': 'keep-alive',
+	'Accept-Language': 'ru',
+	Referer: g_baseurl,
+	Origin: g_baseurl.replace(/\/$/,''),
 };
 
-var g_baseurl = 'https://online.raiffeisen.ru/';
 var g_token;
 var g_loginInfo;
 
@@ -50,12 +53,15 @@ function login(result) {
 	AB.checkEmpty(prefs.password, 'Введите пароль!');
 
 	if(!g_token){
+		var node = AnyBalance.requestGet(g_baseurl + 'rest/version', g_headers);
+		var status = AnyBalance.requestGet(g_baseurl + 'oauth/status', g_headers);
+
 		var json = callApi('oauth/token', {
 			"grant_type":"password",
+			"node": node,
 			"password":prefs.password,
-			"platform":"android",
+			"uiVersion": "RC3.0-GUI-5.9.4",
 			"username":prefs.login,
-			"version":"497"
 		});
 
 		g_token = json.access_token;
@@ -132,6 +138,12 @@ function processCard(info, result) {
 	getParam(info.open, result, 'cards.dateStart', null, null, parseDateISO);
 	getParam(info.paymentSystem.name, result, 'cards.shortType');
 	getParam(info.rate, result, 'cards.rate');
+
+	function isAvailableButUnset(param){
+    	if(isAvailable(param) && !isset(result[param]))
+        	return true;
+    	return false;
+	}
 
 	// Кредитные карты
 	if (info.type.id == '2' && (isAvailable(['cards.totalCreditDebtAmount', 'cards.clearBalance', 'cards.own']) || isAvailableButUnset('cards.limit') || isAvailableButUnset('cards.minpay'))) {
@@ -284,4 +296,5 @@ function processLoan(loan, result) {
 	//if (typeof processLoanTransactions != 'undefined')
 	//	processLoanTransactions(loan, result);
 }
+
 

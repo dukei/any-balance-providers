@@ -2,24 +2,14 @@
 <PreferenceScreen>
 	<EditTextPreference
 		obligatory="true"
-		title="Логин"
+		title="Номер карты"
 		positiveButtonText="ОК"
 		summary="||{@s}"
-		dialogTitle="Логин"
+		dialogTitle="Номер карты"
 		negativeButtonText="Отмена"
-		dialogMessage="Введите логин для входа в интернет-банк."
+		inputType="number"
+		dialogMessage="Введите номер карты для регистрации в моб. приложении"
 		key="login">
-	</EditTextPreference>
-	<EditTextPreference
-		obligatory="true"
-		positiveButtonText="ОК"
-		key="password"
-		dialogTitle="Пароль"
-		negativeButtonText="Отмена"
-		title="Пароль"
-		summary="||***********"
-		dialogMessage="Введите пароль, используемый для входа в интернет-банк."
-		inputType="textPassword">
 	</EditTextPreference>
 	<ListPreference
 		key="type"

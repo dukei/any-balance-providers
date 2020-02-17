@@ -1,5 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="4" date="2019-07-02">
+	Добавлена информация о последней операции
+	</change>
+	<change version="3" date="2019-07-02">
+	Поддержка нового личного кабинета.
+	</change>
 	<change version="2" date="2018-04-10">
 	Добавлен счетчик Название
 	</change>

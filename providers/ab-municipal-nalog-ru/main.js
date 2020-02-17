@@ -48,7 +48,7 @@ function main(){
 	result.__tariff = prefs.login;
 	
 	if(AnyBalance.isAvailable('fio', 'appears')){
-		html = AnyBalance.requestGet(baseurl + 'lkfl/api/v1/taxpayer/info', addHeaders({
+		html = AnyBalance.requestGet(baseurl + 'lkfl/api/v1/taxpayer/taxInfo', addHeaders({
 			Referer: baseurl + 'lkfl/',
 			Authorization: 'Bearer ' + token
 		}));

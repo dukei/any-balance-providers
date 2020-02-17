@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="14">ab-municipal-gazprom</id>
+	<id version="15">ab-municipal-gazprom</id>
 	<api flags="no_browser"/>
 	<name>Газпром Межрегионгаз</name>
 	<description html="true"><![CDATA[
@@ -8,6 +8,7 @@
 	<p>Поддерживаются регионы:</p>
 	<ul>
 		<li>Брянск (https://газ.смородина.онлайн/)<br></li>
+		<li>Владимир (https://газ.смородина.онлайн/)<br></li>
 		<li>Волгоград (http://34regiongaz.ru/cabinet/enter/)<br></li>
 		<li>Воронеж (http://www.vrgaz.ru/lk/index.php)<br></li>
 		<li>Йошкар-Ола (https://газ.смородина.онлайн/)<br></li>
@@ -24,6 +25,8 @@
 		<li>Уфа (https://lk.bashgaz.ru/)<br></li>
 		<li>Чебоксары (http://gmch.ru/user/)<br></li>
 	</ul>
+
+	Если вашего региона нет, но он использует смородину, попробуйте выбрать любой другой регион со смородиной.
 	]]></description>
 	<instruction html="true"><![CDATA[
 	<p>Для добавления вашего региона обратитесь, пожалуйста, к разработчикам.</p>

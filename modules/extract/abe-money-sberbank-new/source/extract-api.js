@@ -237,6 +237,7 @@ function processCardsAPI(result) {
         var id = getElement(card, /<id>/i, replaceTagsAndSpaces);
         var num = getElement(card, /<number>/i, replaceTagsAndSpaces);
         var name = getElement(card, /<name>/i, replaceTagsAndSpaces);
+        AnyBalance.trace('Найдена карта ' + num + ' (' + name + '), id: ' + id);
 
         var c = {
             __id: id,

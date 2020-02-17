@@ -43,11 +43,11 @@ function main()
 		throw new AnyBalance.Error("blockchain.info: "+errdiv);
 
 	// parse params
-	getParam(html, result, 'balance', /(<td[^>]+id="final_balance"[^>]*>[\s\S]*?<\/td>)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'balance_mbtc', /(<td[^>]+id="final_balance"[^>]*>[\s\S]*?<\/td>)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'total_received', /(<td[^>]+id="total_received"[^>]*>[\s\S]*?<\/td>)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'total_received_mbtc', /(<td[^>]+id="total_received"[^>]*>[\s\S]*?<\/td>)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'n_transactions', /(<td[^>]+id="n_transactions"[^>]*>[\s\S]*?<\/td>)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'balance', /Final Balance[\s\S]*?<div[^>]+>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'balance_mbtc', /Final Balance[\s\S]*?<div[^>]+>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'total_received', /Total Received[\s\S]*?<div[^>]+>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'total_received_mbtc', /Total Received[\s\S]*?<div[^>]+>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'n_transactions', /Transactions[\s\S]*?<div[^>]+>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
 
     // convert if needed
     if ((typeof prefs.currency!="undefined") && (prefs.currency!=""))

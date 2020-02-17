@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id version="1">ab-transport-alga</id>
+  <name>Алға</name>
+  <description>
+    Предоставляет баланс транспортной карты АЛГА от Башавтотранс. Данные берет с сайта https://alga-card.ru/balance.php
+  </description>
+  <author>Ainur Giniyatov &lt;anurique@gmail.com&gt;</author>
+  <files>
+	  <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" type="numeric" units=" р."/>
+  </counters>
+  <keywords>alga</keywords>
+	<type>transport</type>
+	<country>ru</country>
+</provider>

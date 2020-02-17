@@ -1,5 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="14" date="2019-08-01">
+	- Поддержка изменений на сайте.
+	</change>
+	<change version="13" date="2019-07-20">
+	Поддержка смс
+	</change>
+	<change version="12" date="2019-07-02">
+	- Поддержка изменений на сайте.
+	</change>
+	<change version="11" date="2019-03-27">
+	- Поддержка изменений на сайте.
+	</change>
 	<change version="10" date="2018-04-05">
 	Поддержка рекапчи
 	</change>

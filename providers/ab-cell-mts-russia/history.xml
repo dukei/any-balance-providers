@@ -1,5 +1,35 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="4.1" version="186" date="2019-11-18">
+	Исправление отображения минут
+	</change>
+	<change major_version="4.1" version="185" date="2019-09-03">
+	- Улучшена обработка ошибок.
+	</change>
+	<change major_version="4.1" version="184" date="2019-07-26">
+	Исправлена капча
+	</change>
+	<change major_version="4.1" version="183" date="2019-07-25">
+	Обновление через мобильный интернет
+	</change>
+	<change major_version="4.1" version="182" date="2019-06-22">
+	Округление баланса до копеек
+	</change>
+	<change major_version="4.1" version="181" date="2019-06-22">
+	Исправлена проблема со входом из-за старых кук
+	</change>
+	<change major_version="4.1" version="180" date="2019-06-22">
+	Исправление процедуры входа
+	</change>
+	<change major_version="4.1" version="179" date="2019-06-22">
+	Поддержка нового ЛК
+	</change>
+	<change major_version="4.1" version="178" date="2019-04-22">
+	Поддержка изменений в процедуре входа через моб. интернет
+	</change>
+	<change major_version="4.1" version="177" date="2019-03-10">
+	Исправлен вход в случае капчи
+	</change>
 	<change major_version="4.1" version="176" date="2019-01-11">
 	Исправлено получения трафика в некоторых случаях
 	</change>

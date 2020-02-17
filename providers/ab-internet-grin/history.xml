@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="4" date="2019-02-25">
+	Исправлена библиотека
+	</change>
 
 	<change version="2" date="2014-02-01">
 	- Поддержка изменений в процедуре входа
@@ -7,9 +10,6 @@
 	<change version="3" date="2019-01-20">
 		- Поддержка изменений на сайте.
 	</change>
-	<change version="4" date="2019-02-05">
-		- Поддержка доступа к личному кабинету через интернет
-	</change>
+
 
 </history>
-

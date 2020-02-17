@@ -32,6 +32,13 @@ function parseSec(str) {
         AnyBalance.trace('Parsing minutes ' + time + ' from value: ' + str);
         return time;
     }
+
+    matches = /(\d+)\s*мин/i.exec(str);
+    if(matches){
+    	time = +matches[1]*60;
+        AnyBalance.trace('Parsing minutes ' + time + ' from value: ' + str);
+        return time;
+    }
     AnyBalance.trace('Could not parse minutes from value: ' + str);
 }
 
@@ -63,7 +70,7 @@ function mainSite(prefs, baseurl) {
 
 	var formatted_phone = '+38 (' + prefs.prefph + ') ' + prefs.phone.replace(/(\d{3})(\d{2})(\d{2})/, '$1-$2-$3');
 	var csrf = getParam(form, /data-csrf="([^"]*)/i, replaceHtmlEntities);
-	var recaptcha = getParam(form, /data-recaptcha="([^"]*)/i, replaceHtmlEntities);
+	var recaptcha = getParam(form, /data-recaptcha-key\s*=\s*"([^"]*)/i, replaceHtmlEntities);
 
 	var params = {
 		msisdn: formatted_phone,
@@ -71,7 +78,7 @@ function mainSite(prefs, baseurl) {
 		csrfmiddlewaretoken: csrf
 	};
 
-	if(recaptcha){
+	if(recaptcha && getParam(form, /data-recaptcha-disabled\s*=\s*"([^"]*)/i, replaceHtmlEntities) !== 'True'){
 	    params['g-recaptcha-response'] = solveRecaptcha("Пожалуйста, докажите, что Вы не робот", AnyBalance.getLastUrl(), recaptcha);
 	}else{
 		AnyBalance.trace('Капча не требуется, ура');

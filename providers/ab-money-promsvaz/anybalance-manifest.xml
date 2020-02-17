@@ -1,32 +1,31 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="21">ab-money-promsvaz</id>
+	<id version="25">ab-money-promsvaz</id>
 	<name>Промсвязьбанк</name>
 	<api flags="no_browser"/>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о текущем остатке и других параметрах карт, счетов и депозитов для клиентов "Промсвязьбанка".</p>
-	<p>Информация берется из Интернет-банка.</p>
+	<p>Информация берется из нового Интернет-банка ib.psbank.ru.</p>
 	]]></description>
 	<instruction html="true"><![CDATA[
 	<p>Настройки:</p>
 	<ul>
-	<li>Как подключиться к Интернет-банку, можно узнать по адресу http://retail.payment.ru.</li>
+	<li>Как подключиться к Интернет-банку, можно узнать по адресу http://ib.psbank.ru.</li>
 	</ul>      
 	<p><b>ВНИМАНИЕ!</b> 
 	<br><br>Для работы провайдера требуется отказаться от подтверждения входа в систему Интернет-банк одноразовым паролем.</p> 
 	<p><small>Отключение подтверждения даёт возможность только зайти в систему, в целях безопасности НЕВОЗМОЖНО отключить подтверждение одноразовым паролем переводов и платежей организациям или частным лицам.</small></p>   
 	]]></instruction>
-	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
-	<depends>
-		<module id="extract/abe-money-promsvaz"/>
-		<module id="nadapter"/>
-	</depends>
-	<files>
-		<icon>icon.png</icon>
-		<preferences>preferences.xml</preferences>
-		<history>history.xml</history>
-		<js>main.js</js>
-	</files>
+	<author>trublast &lt;info@anybalance.ru&gt;</author>
+    <depends>
+        <module id="library"/>
+    </depends>
+    <files>
+        <icon>icon.png</icon>
+        <preferences>preferences.xml</preferences>
+        <js>main.js</js>
+        <history>history.xml</history>
+    </files>
 	<counters>
 		<counter id="balance" name="Остаток" units=" {@currency}"/>
 		<counter id="till" name="Срок действия" type="time" format="dd/MM/yyyy"/>
@@ -44,7 +43,7 @@
 		<counter id="accnum" name="Номер счета" type="text"/>
 		<counter id="currency" name="Валюта" type="text"/>
 	</counters>
-	<keywords>промсвязьбанк, промсвязь, psb retail</keywords>
+	<keywords>промсвязьбанк, промсвязь, psbank</keywords>
 	<type>money, bank</type>
 	<country>ru</country>
 </provider>

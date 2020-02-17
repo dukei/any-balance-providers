@@ -3,11 +3,13 @@
 */
 
 var g_headers = {
-	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
-	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
+	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3',
+	'Accept-Language': 'ru,en-US;q=0.9,en;q=0.8,ru-RU;q=0.7',
+	'Origin': 'https://my.onlime.ru',
 	'Connection': 'keep-alive',
-	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
+	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36',
+	'Cache-Control': 'max-age=0',
+	'Upgrade-Insecure-Requests': '1',
 };
 
 function getWtf(info){
@@ -25,12 +27,20 @@ function main(){
 
     if(prefs.num && !/^\d+$/.test(prefs.num))
         throw new AnyBalance.Error('Пожалуйста, введите номер лицевого счета или договора, по которому вы хотите получить информацию, или не вводите ничего, чтобы получить информацию по первому счету.');
+
+    var html = AnyBalance.requestGet(baseurl, g_headers);
+    var csrf = getParam(html, /<input[^>]+_csrf_token[^>]*value\s*=\s*"([^"]*)/, replaceHtmlEntities);
+
+    AnyBalance.sleep(3000);
     
+    html = AnyBalance.requestPost(baseurl + "session/getcaptchalogin/", '', addHeaders({'X-Requested-With': 'XMLHttpRequest', Referer: baseurl}));
+
     // Заходим на главную страницу
     var info = AnyBalance.requestPost(baseurl + "session/login", {
+        "_csrf_token": csrf,
     	"login_credentials[login]": prefs.login,
-        "login_credentials[password]": prefs.password
-    }, g_headers);
+        "login_credentials[password]": prefs.password,
+    }, addHeaders({Referer: baseurl}));
     
 	var wtf = getWtf(info);
 	checkEmpty(wtf, 'Не удалось найти форму входа, сайт изменен?', true);
@@ -69,10 +79,10 @@ function main(){
     var oInfo = getJson(info.replace(/:(\-)?\./g, ':$10.')); //А то "balance":-.31 не распарсивается
 	
 	result.__tariff = oInfo.tier;
-	getParam(oInfo.balance, result, 'balance');
-	getParam(oInfo.points, result, 'bonus_balance');
+	getParam(oInfo.accountInfo.balance, result, 'balance');
+	getParam(oInfo.bonusAccount.points, result, 'bonus_balance');
 	//Похоже, 1000 используется, как бесконечное значение, в кабинете показывается >100
-	getParam(oInfo.lock == 1000 ? 100 : oInfo.lock, result, 'lock');
+	getParam(oInfo.accountInfo.daysToLock == 1000 ? 100 : oInfo.accountInfo.daysToLock, result, 'lock');
 	getParam(oInfo.contract, result, 'agreement');
 	getParam(oInfo.account, result, 'license');
     

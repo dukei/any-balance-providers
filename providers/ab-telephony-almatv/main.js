@@ -49,10 +49,10 @@ function main() {
 		throw new AnyBalance.Error('Сайт провайдера временно недоступен! Попробуйте обновить данные позже.');
 	}
 
-
 	html = AnyBalance.requestPost(baseurl + 'include/check_balance.php', {
 		number:  prefs.login,
 		surname: prefs.surname,
+		'g-recaptcha-response': solveRecaptcha('Пожалуйста, докажите, что вы не робот', baseurl, '6LdspA8UAAAAAMIdeMCBakhN0yGr4CHqgdHI_h7p')
 	}, AB.addHeaders({
 		Referer: baseurl + '?city=' + prefs.city,
 		'X-Requested-With': 'XMLHttpRequest',

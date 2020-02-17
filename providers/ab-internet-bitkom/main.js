@@ -45,7 +45,7 @@ function main() {
 	var result = {success: true};
 	
 	getParam(html, result, 'balance', /Итого:[\s\S]*?<td[^>]+lk-pay-balance[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'lic_schet', /Лицевой счет:([^<]*)/i, replaceTagsAndSpaces);
+	getParam(html, result, 'lic_schet', /Лицевой сч[её]т:([^<]*)/i, replaceTagsAndSpaces);
 	getParam(html, result, 'fio', /<div[^>]+lk_account__name[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
 	
 	AnyBalance.setResult(result);

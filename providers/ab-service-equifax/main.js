@@ -20,14 +20,26 @@ function main() {
 	
 	var html = AnyBalance.requestGet(baseurl + 'login', g_headers);
 	
-	html = AnyBalance.requestPost(baseurl + 'login', {
-		login: prefs.login,
-		password: prefs.password,
-		'enter': 'ВОЙТИ'
-	}, addHeaders({Referer: baseurl + 'login'}));
+	var form = AB.getElement(html, /<form[^>]+login-form/i);
+	if(!form){
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удаётся найти форму входа! Сайт изменен?');
+	}
+
+	var params = AB.createFormParams(form, function(params, str, name, value) {
+		if (name == 'login') {
+			return prefs.login;
+		} else if (name == 'password') {
+			return prefs.password;
+		}
+
+		return value;
+	});
+
+	html = AnyBalance.requestPost(baseurl + 'login', params, addHeaders({Referer: baseurl + 'login'}));
 	
 	if (!/logout/i.test(html)) {
-		var error = getParam(html, null, null, /Ошибка!(?:[^>]*>){1}([^<]*)/i, replaceTagsAndSpaces);
+		var error = getParam(html, /Ошибка!([^<]*)/i, replaceTagsAndSpaces);
 		if (error)
 			throw new AnyBalance.Error(error, null, /парол/i.test(error));
 		

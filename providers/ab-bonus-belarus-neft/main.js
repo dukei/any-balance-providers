@@ -15,7 +15,7 @@ function main(){
     AB.checkEmpty(prefs.login, 'Введите логин!');
     AB.checkEmpty(prefs.password, 'Введите пароль!');
 	
-    var baseurl = "https://ssl.belorusneft.by/";
+    var baseurl = "https://www.belorusneft.by/";
     AnyBalance.setDefaultCharset('utf-8'); 
 	
 	//Пароль в SHA-1

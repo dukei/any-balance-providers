@@ -27,7 +27,10 @@ function login() {
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 
-	var html = AnyBalance.requestGet(baseurl + '/entrance', g_headers);
+	// получаем начальные куки
+	AnyBalance.requestGet(baseurl, g_headers);
+
+	var html = AnyBalance.requestGet(baseurl + '/entrance?ref=startHeader', g_headers);
 
 	if(!html || AnyBalance.getLastStatusCode() > 400) {
 		AnyBalance.trace(html);
@@ -48,7 +51,7 @@ function login() {
 			return value;
 		});
 
-		html = AnyBalance.requestPost(baseurl + '/SignIn', params, addHeaders({
+		html = AnyBalance.requestPost(baseurl + '/entrance/SignIn', params, addHeaders({
 			'Referer': baseurl + '/entrance',
 			//'Content-Type': 'application/x-www-form-urlencoded'
 		}));
@@ -60,10 +63,10 @@ function login() {
 		if (/SMSCodeForm/i.test(html)) {
 			// при первой авторизации банк запрашивает одноразовый код из смс
 			AnyBalance.trace('Отправляем запрос на сервер для получения SMS-кода');
-			var subHtml = AnyBalance.requestPost(baseurl + '/SendEntranceOtp', null, addHeaders({
+			var subHtml = AnyBalance.requestPost(baseurl + '/entrance/SendEntranceOtp', null, addHeaders({
 				'X-Requested-With': 'XMLHttpRequest',
 				'Accept': 'application/json, text/javascript, */*; q=0.01',
-				'Referer': baseurl + '/SignIn'
+				'Referer': baseurl + '/entrance/SignIn'
 			}));
 			var json = getJson(subHtml);
 			if (json.status !== 'OK') {
@@ -79,11 +82,11 @@ function login() {
 				time: 300000
 			});
             
-			var subHtml = AnyBalance.requestPost(baseurl + '/CheckEntranceOtp', {'otp': smsCode}, addHeaders({
+			var subHtml = AnyBalance.requestPost(baseurl + '/entrance/CheckEntranceOtp', {'otp': smsCode}, addHeaders({
 				'X-Requested-With': 'XMLHttpRequest',
 				'Accept': 'application/json, text/javascript, */*; q=0.01',
 				'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
-				'Referer': baseurl + '/SignIn'
+				'Referer': baseurl + '/entrance/SignIn'
 			}));
 			json = getJson(subHtml);
 			if (json.status === 'INVALID_OTP') {
@@ -109,8 +112,8 @@ function login() {
 				return value;
 			});
 			
-			html = AnyBalance.requestPost(baseurl + '/SignIn', smsFormParams, addHeaders({
-				'Referer': baseurl + '/SignIn'
+			html = AnyBalance.requestPost(baseurl + '/entrance/SignIn', smsFormParams, addHeaders({
+				'Referer': baseurl + '/entrance/SignIn'
 			}));
 		}
 		
@@ -118,7 +121,9 @@ function login() {
 			AnyBalance.trace(html);
 			throw new AnyBalance.Error('Не удалось зайти в интернет-банк. Сайт изменен?');
 		}
-		
+
+		html = AnyBalance.requestGet(baseurl + '/bank', g_headers);
+
 		if (AnyBalance.setData) {
 			// сохраняем куку, чтобы при следующей авторизации снова не запрашивался код из смс
 			AnyBalance.setData('kaspi-tag', AnyBalance.getCookie('kaspi-tag'));
@@ -215,8 +220,9 @@ function processDeposits(html, result) {
     
 	html = AnyBalance.requestGet(baseurl + depositsUrl, g_headers);
 
-    var deposits = AB.getElements(html, /<a[^>]+myProductsSubMenu__link[^>]*>/ig)
-	if(/\/History$/i.test(AnyBalance.getLastUrl())){
+    var deposits = AB.getElements(html, /<a[^>]+myProductsSubMenu__link[^>]*\/bank\/Deposit\/\d+"[^>]*>/ig);
+
+	if(!deposits.length && /\/Deposit\/\d+\/History$/i.test(AnyBalance.getLastUrl())){
 		AnyBalance.trace('Депозит, видимо, только один. Оказались на его странице');
 		deposits = ['<a href="' + AnyBalance.getLastUrl().replace(/\/History$/i, '') + '">'];
 	}
@@ -257,6 +263,7 @@ function processDeposit(deposit, result, html) {
 
 	AB.getParam(html, result, 'deposits.agreement',  /Номер договора(?:[^>]*>){2}([^<]*)/i,     							 AB.replaceTagsAndSpaces);
 	AB.getParam(html, result, 'deposits.date_start', /Вы открыли вклад(?:[^>]*>){2}([^<]*)/i,   							 AB.replaceTagsAndSpaces, AB.parseDate);
+	AB.getParam(html, result, 'deposits.dvk_till',   /Дата будущего продления(?:[^>]*>){2}([^<]*)/i,   						 AB.replaceTagsAndSpaces, AB.parseDate);
 	AB.getParam(html, result, 'deposits.pct',        /Эффективная ставка(?:[^>]*>){2}([^<]*)/i, 							 AB.replaceTagsAndSpaces, AB.parseBalance);
 	AB.getParam(html, result, 'deposits.withdraw',   /Доступно для снятия(?:[\s\S]*?<span[^>]*>)([^<]*)/i,                   AB.replaceTagsAndSpaces, AB.parseBalance);
 	AB.getParam(html, result, 'deposits.currency',   /Валюта Депозита(?:[^>]*>){2}([^<]*)/i,  							     [AB.replaceTagsAndSpaces, /(.*?)/i, '0$1'], AB.parseCurrency);

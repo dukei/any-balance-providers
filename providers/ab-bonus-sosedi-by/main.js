@@ -33,21 +33,40 @@ function main() {
         Login: 'Войти'
 	}, addHeaders({Referer: baseurl + 'kupilka/personal/auth/'}));
 	
-	if (!/logout/i.test(html)) {
+	var data = getParam(html, /data-component="LK"[^>]+data-initial='([^']*)/i, replaceHtmlEntities, getJson);
+
+	if (!data.banner) {
 		var error = getParam(html, null, null, /[^>]+class="errortext"[^>]*>([\s\S]*?)<\//i, replaceTagsAndSpaces);
 		if (error)
 			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
 		
 		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
+		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Неправильный логин/пароль?');
 	}
 	
 	var result = {success: true};
+
 	
-	getParam(html, result, 'balance', /Доступные бонусы<(?:[^>]*>){3}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'card', /на карте №([\s\S]*?)</i, replaceTagsAndSpaces);
-	getParam(html, result, 'fio', /Добро пожаловать(?:[^>]*>){2}([\s\S]*?)</i, replaceTagsAndSpaces);
-	getParam(html, result, 'status', /status_lbl(?:[^>]*>){1}([\s\S]*?)<\//i, replaceTagsAndSpaces);
+	getParam(data.banner.cartScore, result, 'balance', null, replaceTagsAndSpaces, parseBalance);
+	getParam(data.banner.cartNumber, result, 'card');
+	getParam(data.banner.title, result, 'fio');
+	getParam(switchStatusCart(data.banner.cartActive), result, 'status');
 	
 	AnyBalance.setResult(result);
+}
+
+function switchStatusCart(t, by) {
+    switch (t) {
+    case 0:
+        return by ? "Актываваная" : "Активирована";
+    case 1:
+        return by,
+        "Неактивирована";
+    case 2:
+        return by ? "Заблакаваная" : "Заблокирована";
+    case 3:
+        return by ? "У архіве" : "В архиве";
+    default:
+        return by ? "Статус нявызначаных" : "Статус неопределен"
+    }
 }

@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="64" date="2019-08-12">
+	Переезд на a1
+	</change>
 	<change version="63" date="2018-10-04">
 	Разрешено вводить буквы в пароле
 	</change>

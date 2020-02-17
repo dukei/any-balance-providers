@@ -18,7 +18,7 @@ function main() {
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 	
-	var html = AnyBalance.requestGet(baseurl + 'login', g_headers);
+	var html = AnyBalance.requestGet(baseurl, g_headers);
 	
 	if(!html || AnyBalance.getLastStatusCode() > 400){
 		AnyBalance.trace(html);
@@ -31,9 +31,9 @@ function main() {
 	}, addHeaders({Referer: baseurl}));
 	
 	if (!/logout/i.test(html)) {
-		var error = getParam(html, null, null, /<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
+		var error = getParam(html, /emess\s*=\s*"([^"]*)/i, [/ ===== /g, "   \n"]);
 		if (error)
-			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
+			throw new AnyBalance.Error(error, null, /парол/i.test(error));
 		
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');

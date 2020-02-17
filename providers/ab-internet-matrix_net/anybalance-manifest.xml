@@ -10,13 +10,12 @@
 	<author>dimapplk &lt;dimapplk@gmail.com&gt;</author>
 	<depends>
 		<module id="library"/>
+		<module id="crypt/md5"/>
 	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.min.js</js>
 		<js>main.js</js>
-                <js>md5.js</js>
 		<history>history.xml</history>
 	</files>
 	<counters>

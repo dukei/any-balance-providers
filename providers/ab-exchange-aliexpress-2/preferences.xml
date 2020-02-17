@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+	<EditTextPreference
+		obligatory="true"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		key="item_url"
+		title="Ссылка на товар"
+		dialogTitle="Ссылка на товар"
+		summary="||{@s}"
+		defaultValue="https://aliexpress.ru/item/32831871694.html"
+		dialogMessage="Введите полный url товара без дополнительных параметров после знака ? и без самого знака ?"
+		inputType="text" />
+	
+	<ListPreference
+		key="curr_from"
+		title="В какой валюте курс"
+		entries="RUB|UAH|BYR|USD|EUR" 
+		entryValues="RUB|UAH|BYR|USD|EUR"
+		summary="||{@s}"
+		defaultValue="RUB" />
+	
+	<ListPreference
+		key="curr_to"
+		title="Курс какой валюты"
+		entries="USD|EUR|RUB|UAH|BYR" 
+		entryValues="USD|EUR|RUB|UAH|BYR"
+		summary="||{@s}"
+		defaultValue="USD" />
+	
+	<CheckBoxPreference
+		title="Дебаг"
+		defaultValue="false"
+		summaryOn="Сейчас выводится доп. информация"
+		summaryOff="Сейчас доп. информация не выводится"
+		key="isDebug" />
+	
+</PreferenceScreen>

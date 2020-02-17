@@ -11,15 +11,15 @@ var g_headers = {
 };
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = "https://10.1.1.51:8001";
+	var baseurl = "https://my.garant.by";
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 	AnyBalance.setDefaultCharset('UTF-8');
-	AnyBalance.setExceptions(false);
+	AnyBalance.setExceptions(true);
 	var html = AnyBalance.requestGet(baseurl+'/login', g_headers);
 	
 	if(!/authenticity_token" type="hidden" value="(.*)"/i.test(html)){
-		var baseurl = "https://178.172.128.2:48001";
+		var baseurl = "https://my.garant.by";
 		var html = AnyBalance.requestGet(baseurl+'/login', g_headers);
 	
 	}
@@ -42,27 +42,29 @@ function main() {
 	var result = {
 		success: true
 	};
-	var data = getParam(html, null, null, /new HupoApp\((.*)\.data/i, replaceTagsAndSpaces, html_entity_decode);
-	AnyBalance.trace(data);
+	var data = getParam(html, null, null, /new HupoApp\((.*)\.data/i,null , html_entity_decode);//replaceTagsAndSpaces
+	//AnyBalance.trace(data);
 	var res_data = getJsonEval(data);
-	AnyBalance.trace("ФИО : " + res_data.data.person.vc_name);
+//	AnyBalance.trace(res_data);
+	 AnyBalance.trace("ФИО : " + res_data.data.person.vc_name);
 	getParam(res_data.data.person.vc_name, result, 'fio');
 	AnyBalance.trace("Лицевой счет : " + res_data.data.personal_accounts[0].vc_subj_code);
 	getParam(res_data.data.personal_accounts[0].vc_subj_code, result, 'account');
 	AnyBalance.trace("Тариф интернета : " + res_data.data.servs[0].vc_name);
 	getParam(res_data.data.servs[0].vc_name, result, '__tariff');
+	AnyBalance.trace("Баланс : " + res_data.data.personal_accounts[0].n_sum_bal + ' BYN');
+	getParam(res_data.data.personal_accounts[0].n_sum_bal, result, 'balance', res_data.data.personal_accounts[0].n_sum_bal, replaceTagsAndSpaces, parseBalance);
+
 	for (var i = 0; i < res_data.data.personal_accounts.length; i++) {
 		if (res_data.data.personal_accounts[i].vc_currency_code == "BYN") {
 			if (/-3/i.test(res_data.data.personal_accounts[i].vc_account)) {
-				AnyBalance.trace("Баланс : " + res_data.data.personal_accounts[i].n_sum_bal + ' BYN');
-				getParam(res_data.data.personal_accounts[i].n_sum_bal, result, 'balance', res_data.data.personal_accounts[i].n_sum_bal, replaceTagsAndSpaces, parseBalance);
 				if (res_data.data.personal_accounts[i].n_temporal_overdraft) {
 					AnyBalance.trace("Кредит: " + res_data.data.personal_accounts[i].n_temporal_overdraft + ' BYN,' + " До: " + res_data.data.personal_accounts[i].d_overdraft_end);
 					getParam("Кредит: " + res_data.data.personal_accounts[i].n_temporal_overdraft + ' BYN,' + " До: " + res_data.data.personal_accounts[i].d_overdraft_end, result, 'balanceCredit');
 				}
 			}
 		}
-	}
+	} 
 	AnyBalance.requestGet(baseurl+"/logout");
 	AnyBalance.setResult(result);
 }

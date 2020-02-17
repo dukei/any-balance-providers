@@ -26,7 +26,8 @@
 		<counter id="currency" name="Валюта" type="text"/>
 		<counter id="fio" name="ФИО" type="text"/>
 		<counter id="cardnum" name="Карта" type="text"/>
-		<counter id="chec_end" name="Последняя операция" type="text"/>
+		<counter id="chec_end" name="Выписка 30" type="text"/>
+		<counter id="num_account" name="Номер Счета" type="text"/>
 	</counters>
 	<keywords></keywords>
 	<type>money, bank</type>

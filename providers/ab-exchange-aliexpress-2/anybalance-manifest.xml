@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+  <id major_version="1" version="3">ab-exchange-aliexpress-2</id>
+  <name>Курс Алиэкспресс 2</name>
+  <description html="true"><![CDATA[
+  <p>Определяет внутренний курс доллара в интернет-магазине Алиэкспресс (AliExpress) <a href="https://www.aliexpress.com"/>https://www.aliexpress.com/</a></p>
+  ]]></description>
+  <author>Ambuddy</author>
+  <depends>
+    <module id="library"/>
+  </depends>
+  <files>
+	<js>library.min.js</js>
+	<icon>icon.png</icon>
+	<preferences>preferences.xml</preferences>
+    <js>main.js</js>
+    <history>history.xml</history>
+  </files>
+  <counters>
+    <counter id="rate" name="Курс" units=""/>
+    <counter id="date" name="Дата" type="time" format="dd/MM/yyyy"/>
+  </counters>
+  <keywords>алиэкспресс, покупки, шоппинг, обмен валют</keywords>
+  <type>exchange, shop</type>
+  <country>ru</country>
+</provider>

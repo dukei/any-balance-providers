@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<history>
+	<change version="1.3" date="2020-01-15">
+    - Выбор из нескольких валют (RUB,UAH,BYR,USD,EUR)
+	</change>
+	<change version="1.2" date="2019-10-23">
+    - Добавление дебаг-режима
+	</change>
+	<change version="1.1" date="2019-06-12">
+    - Правка парсера
+	</change>
+	<change version="1" date="2019-05-22">
+    - Создание провайдера
+	</change>
+</history>

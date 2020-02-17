@@ -1,5 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="4" date="2020-28-01">
+	Добавлены кусры ETH и BTC на Bitrex, стоимость нефти марки Brent
+	</change>
+
 	<change version="3" date="2014-10-24">
 	Добавлен безналичный курс валют (конвертация по картам)
 	</change>

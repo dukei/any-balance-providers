@@ -1,28 +1,31 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="9">ab-transport-booking-ua</id>
+	<id version="10">ab-transport-booking-ua</id>
 	<api flags="no_browser"/>
-	<name>Укрзализныця (Расписание поездов, Украина)</name>
+	<name>Укрзалізниця</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет возможность мониторинга расписания поездов согласно сайту <a href="http://booking.uz.gov.ua/ru/">http://booking.uz.gov.ua/ru/</a></p>
+	<p>Предоставляет возможность мониторинга свободных мест на поезда <a href="http://booking.uz.gov.ua/ru/">booking.uz.gov.ua</a></p>
 	]]></description>
-	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<author>DimaZUA &lt;DIMAZ.KHUA@gmail.com&gt;</author>
 	<depends>
 		<module id="library"/>
 	</depends>
 	<files>
+		<js>library.min.js</js>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="train" name="Поезд" type="text"/>
-		<counter id="depart_station" name="Станция отправления" type="text"/>
-		<counter id="depart_time" name="Время и дата отправления" type="text"/>
-		<counter id="arrival_station" name="Станция прибытия" type="text"/>
-		<counter id="arrival_time" name="Время и дата прибытия" type="text"/>
+		<counter id="depart_station" name="Отправление" type="text"/>
+		<counter id="arrival_station" name="Прибытие" type="text"/>
+		<counter id="type_luks" name="Места люкс" type="numeric"/>
+		<counter id="type_plats" name="Места плацкарта" type="numeric"/>
+		<counter id="type_kupe" name="Места купе" type="numeric"/>
 		<counter id="types" name="Свободных мест" type="text"/>
+		<counter id="other_trains" name="Другие поезда" type="html"/>
+		<counter id="type_other" name="Места прочие" type="numeric"/>
 	</counters>
 	<keywords></keywords>
 	<type>transport</type>

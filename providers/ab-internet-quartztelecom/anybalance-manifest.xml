@@ -1,26 +1,25 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="4">ab-internet-quartztelecom</id>
+	<id version="5">ab-internet-quartztelecom</id>
 	<name>Кварц Телеком</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе интернет провайдера г. Подольск и Подольского района Кварц Телеком http://quartztelecom.ru</p>
 	<p>Информация берется из личного кабинета https://lk.quartztelecom.ru/login</p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
 	<counters>
 		<counter id="balance" name="Баланс интернета" units=" р"/>
 		<counter id="status" name="Статус интернета" type="text"/>
-		<counter id="balance_tv" name="Баланс ТВ" units=" р"/>
-		<counter id="status_tv" name="Статус ТВ" type="text"/>
-		<counter id="all" name="Сводка ТВ" type="html"/>
 		<counter id="fio" name="ФИО" type="text"/>
 		<counter id="account" name="№ лицевого счета" type="text"/>
 	</counters>

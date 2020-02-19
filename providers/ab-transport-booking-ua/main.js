@@ -28,6 +28,7 @@ function main() {
 	
 	checkEmpty(prefs.station_from, 'Введите пункт отправления!');
 	checkEmpty(prefs.station_to, 'Введите пункт назначения!');
+	checkEmpty(!prefs.date_trip || /^(\d\d\D\d\d\D\d\d\d\d)$/.test(prefs.date_trip), 'Введите дату в формате DD.MM.YYYY!');
 
         AnyBalance.restoreCookies();
    
@@ -138,14 +139,22 @@ function main() {
 	result.depart_station =data.from.station+': '+ data.from.date+' '+data.from.time;
 	result.arrival_station =data.to.station+': '+ data.to.date+' '+data.to.time;
         if (otherTrains>'') result.other_trains=otherTrains;
+
+    var arrTypes = null;
+    if(prefs.types && prefs.types.trim()){
+    	arrTypes = prefs.types.trim().toLocaleLowerCase().split(/\s*(?:,\s*)+/g);
+    }
+
     var types = [];
     var type_luks=0;
     var type_plats=0;
     var type_kupe=0;
     var type_other=0;
     for(var i = 0; i < data.types.length; i++)	{
-        var avail_seats = " " + data.types[i].title + ": " + data.types[i].places;
-        types.push(avail_seats);
+        if(!arrTypes || arrTypes.indexOf(data.types[i].title.toLocaleLowerCase()) >= 0){
+        	var avail_seats = " " + data.types[i].title + ": " + data.types[i].places;
+        	types.push(avail_seats);
+        }
         if (data.types[i].id=='Л') type_luks=data.types[i].places;
         if (data.types[i].id=='К') type_kupe=data.types[i].places;
         if (data.types[i].id=='П') type_plats=data.types[i].places;
@@ -156,7 +165,8 @@ function main() {
 	result.type_kupe=type_kupe;
 	result.type_other=type_other;
 	result.types = types.toString();
-       	AnyBalance.saveCookies();
+    
+    AnyBalance.saveCookies();
 	AnyBalance.saveData();
 	AnyBalance.setResult(result);
 	

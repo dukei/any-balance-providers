@@ -34,6 +34,10 @@ function callAPI(method, url, params, allowerror) {
         }
     }
 
+    if(json.code === 'a216'){ //Аккаунт заблокирован, надо явно его разблокировать через ussd или поддержку
+    	throw new AnyBalance.Error(json.message, null, true);
+    }
+
     if(json.code && !allowerror) {
     	//Иногда мегафон случайно выдаёт на случайные методы Неавторизованный доступ
         throw new AnyBalance.Error('Ошибка вызова API! ' + json.message, /Неавторизованный доступ/i.test(json.message), /парол/i.test(json.message));
@@ -153,8 +157,7 @@ function megafonLkAPILoginNew(options){
 	}
 	if(!token){
 		AnyBalance.trace('Вход по одноразовому паролю. Привязываем устройство');
-		var html = AnyBalance.requestPost(api_url + 'auth/otp/request', {login: prefs.login}, g_api_headers);
-		var json = getJson(html);
+		var json = callAPI('post', 'auth/otp/request', {login: prefs.login}, true);
 
 		if(!json.ok){
 			AnyBalance.trace(html);
@@ -163,8 +166,7 @@ function megafonLkAPILoginNew(options){
 
 		var code = AnyBalance.retrieveCode('Пожалуйста, введите код входа в Личный Кабинет из СМС для привязки номера к устройству', null, {inputType: 'number'});
 
-		html = AnyBalance.requestPost(api_url + 'auth/otp/submit', {login: prefs.login, otp: code}, g_api_headers);
-		json = getJson(html);
+		json = callAPI('post', 'auth/otp/submit', {login: prefs.login, otp: code}, true);
 
 		if(json.code){
 			AnyBalance.trace(html);

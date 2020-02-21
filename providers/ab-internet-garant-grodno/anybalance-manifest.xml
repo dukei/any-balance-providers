@@ -8,10 +8,11 @@
 	<p>Информация берется из личного кабинета https://my.garant.by</p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
-	<files>
+	
 	<depends>
 		<module id="library"/>
 	</depends>
+	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
 		<js>main.js</js>

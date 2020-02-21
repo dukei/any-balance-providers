@@ -5,14 +5,14 @@
   <description html="true"><![CDATA[
   <p>Определяет внутренний курс доллара в интернет-магазине Алиэкспресс (AliExpress) <a href="https://www.aliexpress.com"/>https://www.aliexpress.com/</a></p>
   ]]></description>
-  <author>Ambuddy</author>
+  <author>Ambuddy &lt;ambuddy@mail.ru&gt;</author>
   <depends>
     <module id="library"/>
   </depends>
   <files>
-	<js>library.min.js</js>
-	<icon>icon.png</icon>
-	<preferences>preferences.xml</preferences>
+    <js>library.min.js</js>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
     <js>main.js</js>
     <history>history.xml</history>
   </files>

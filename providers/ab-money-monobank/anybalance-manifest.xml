@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-money-monobank</id>
+	<name>Monobank(Украина)</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию об остатках на карте <a href="https://api.monobank.ua/">монобанка</a></p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<ul>
+		<li>Для получения token перейдите на сайт https://api.monobank.ua/</li>
+	</ul>
+	]]></instruction>
+	<author>DimaZUA &lt;DIMAZ.KHUA@gmail.com&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Собственные средства" units=" {@currency}"/>
+		<counter id="limit" name="Кредитный лимит" units=" {@currency}"/>
+		<counter id="html" name="Выписка" type="html"/>
+		<counter id="currency" name="Валюта" type="text"/>
+
+	</counters>
+	<keywords>монобанк,monobank, банк, украина</keywords>
+	<type>money, bank</type>
+	<country>ua</country>
+</provider>

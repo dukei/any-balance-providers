@@ -199,7 +199,12 @@ function main() {
 	try{
 		var card = json.request_data.GetCardInfoResult.Card;
 	    
-		AB.getParam(json.request_data.CurrentBalance, result, 'balance');
+	    if(json.request_data.CurrentBalance)
+			AB.getParam(json.request_data.CurrentBalance, result, 'balance');
+		else
+			AB.getParam(json.content, result, 'balance', /программа лояльности[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+		
+
 		AB.getParam(card.CategoryPercent, result, 'percent');
 		AB.getParam(card.CategoryStatusName, result, 'status');
 		AB.getParam(card.NextCategoryStatusBalance 

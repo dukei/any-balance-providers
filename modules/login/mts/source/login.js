@@ -2,7 +2,9 @@ var g_baseurlLogin = 'https://login.mts.ru';
 
 function checkLoginError(html, loginUrl) {
 	function processError(html){
-        var error = sumParam(html, null, null, /var\s+(?:passwordErr|loginErr)\s*=\s*'([^']*)/g, replaceSlashes, null, aggregate_join);
+        var error = sumParam(html, /var\s+(?:passwordErr|loginErr)\s*=\s*'([^']*)/g, replaceSlashes, null, aggregate_join);
+        if(!error) //На корп форме входа
+        	error = getElement(html, /<[^>]+field-help/i, replaceTagsAndSpaces);
         if (error)
             throw new AnyBalance.Error(error, null, /логин|парол/i.test(error));
 
@@ -222,8 +224,64 @@ function enterMTS(options){
 
 	html = redirectIfNeeded(html);
 
-    var form = getParam(html, null, null, /<form[^>]+name="Login"[^>]*>([\s\S]*?)<\/form>/i);
-    if (!form) {
+    var form;
+    if(form = getElement(html, /<form[^>]+name="Login"/i)){  //Обычная форма входа
+    	AnyBalance.trace('Найдена обычная форма входа');
+        var params = createFormParams(form, function (params, input, name, value) {
+            var undef;
+            if (name == 'IDToken1')
+                value = options.login;
+            else if (name == 'IDToken2')
+                value = options.password;
+            else if (name == 'noscript')
+                value = undef; //Снимаем галочку
+            else if (name == 'IDButton')
+                value = 'Submit';
+            return value;
+        });
+
+        var sitekey = getParam(form, /data-sitekey="([^"]*)/i, replaceHtmlEntities);
+        if(sitekey){
+        	AnyBalance.trace('МТС требует рекапчу :(');
+        	var recaptcha = solveRecaptcha('МТС требует ввода рекапчи, как и при входе через браузер. Пожалуйста, докажите, что вы не робот.', loginUrl, sitekey);
+        	params.IDToken3 = recaptcha;
+        }
+        
+        // AnyBalance.trace("Login params: " + JSON.stringify(params));
+        AnyBalance.trace("Логинимся с заданным номером");
+        html = AnyBalance.requestPost(loginUrl, params, addHeaders({Origin: g_baseurlLogin, Referer: loginUrl}));
+        fixCookies();
+    }else if(form = getElement(html, /<form[^>]+id="login-phone-form"/i)){       
+    	AnyBalance.trace('Найдена корп. форма входа');
+        var params = createFormParams(form, function (params, input, name, value) {
+            if (name == 'IDToken1')
+                value = options.login;
+            return value;
+        });
+        
+        html = AnyBalance.requestPost(loginUrl, params, addHeaders({Origin: g_baseurlLogin, Referer: loginUrl}));
+        fixCookies();
+    	
+    	form = getElement(html, /<form[^>]+id="enter-password-form"/i);
+    	if(!form){
+    		var error = getElement(html, /<[^>]+intro-text/i, replaceTagsAndSpaces);
+    		if(error)
+    			throw new AnyBalance.Error(error, null, /не существует/i.test(error));
+    		AnyBalance.trace(html);
+    		throw new AnyBalance.Error('Не удалось найти форму ввода пароля. Сайт изменен?');
+    	}
+
+        var params = createFormParams(form, function (params, input, name, value) {
+            if (name == 'IDToken1')
+                value = options.login;
+            else if (name == 'IDToken2')
+                value = options.password;
+            return value;
+        });
+
+        html = AnyBalance.requestPost(loginUrl, params, addHeaders({Origin: g_baseurlLogin, Referer: loginUrl}));
+        fixCookies();
+    }else{
     	if(!html)
     		throw new AnyBalance.Error('Личный кабинет МТС временно недоступен. Попробуйте ещё раз позже');
     	if(/<h1[^>]*>\s*Request Error/i.test(html))
@@ -231,31 +289,6 @@ function enterMTS(options){
         AnyBalance.trace(html);
         throw new AnyBalance.Error("Не удаётся найти форму входа! Сайт изменен?", allowRetry);
     }
-
-    var params = createFormParams(form, function (params, input, name, value) {
-        var undef;
-        if (name == 'IDToken1')
-            value = options.login;
-        else if (name == 'IDToken2')
-            value = options.password;
-        else if (name == 'noscript')
-            value = undef; //Снимаем галочку
-        else if (name == 'IDButton')
-            value = 'Submit';
-        return value;
-    });
-
-    var sitekey = getParam(form, /data-sitekey="([^"]*)/i, replaceHtmlEntities);
-    if(sitekey){
-    	AnyBalance.trace('МТС требует рекапчу :(');
-    	var recaptcha = solveRecaptcha('МТС требует ввода рекапчи, как и при входе через браузер. Пожалуйста, докажите, что вы не робот.', loginUrl, sitekey);
-    	params.IDToken3 = recaptcha;
-    }
-    
-    // AnyBalance.trace("Login params: " + JSON.stringify(params));
-    AnyBalance.trace("Логинимся с заданным номером");
-    html = AnyBalance.requestPost(loginUrl, params, addHeaders({Origin: g_baseurlLogin, Referer: loginUrl}));
-    fixCookies();
 
     // Бага при авторизации ошибка 502, но если запросить гет еще раз - все ок
     if (AnyBalance.getLastStatusCode() >= 500) {
@@ -278,3 +311,4 @@ function enterMTS(options){
 
     return html;
 }
+

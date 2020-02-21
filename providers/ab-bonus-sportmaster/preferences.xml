@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
-	<ListPreference
+<!--	<ListPreference
 		key="cardType"
 		title="Статус карты"
 		obligatory="true"
@@ -10,18 +10,18 @@
 		negativeButtonText="Отмена"
 		entryValues="0|1|2|3"
 		defaultValue="0">
-	</ListPreference>
+	</ListPreference> -->
     <EditTextPreference
 		obligatory="true"
-		title="E-mail или номер карты"
+		title="Номер телефона"
 		positiveButtonText="ОК"
 		summary="||{@s}"
-		dialogTitle="E-mail или номер карты"
+		dialogTitle="Номер телефона"
 		negativeButtonText="Отмена"
-		dialogMessage="Введите E-mail или номер карты."
+		dialogMessage="Введите 10 цифр номера телефона без пробелов и разделителей. Например, 9261234567."
 		key="login">
 	</EditTextPreference>
-	<EditTextPreference
+<!--	<EditTextPreference
 		positiveButtonText="ОК"
 		key="password"
 		dialogTitle="Пароль"
@@ -30,5 +30,5 @@
 		summary="||***********"
 		dialogMessage="Введите пароль, используемый для входа в личный кабинет. Вход с паролем капчу не требует. Без пароля (или с неправильным паролем) потребуется капча."
 		inputType="textPassword">
-	</EditTextPreference>
+	</EditTextPreference> -->
 </PreferenceScreen>

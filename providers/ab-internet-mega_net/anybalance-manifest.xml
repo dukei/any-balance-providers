@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-internet-mega_net</id>
+	<api flags="no_browser"/>
+	<name>Mega-NET</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера MegaNET <a href="http://mega-net.com.ua/">http://mega-net.com.ua/</a></p>
+	<p>Информация берется из личного кабинета <a href="http://mega-net.com.ua/">http://mega-net.com.ua/</a></p>
+	]]></description>
+	<author>DimaZ &lt;DIMAZ.KHUA@gmail.com&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" грн"/>
+		<counter id="login" name="Договор" type="text"/>
+		<counter id="pays" name="Платежи" type="html"/>
+	</counters>
+	<keywords></keywords>
+	<type>internet</type>
+	<country>ua</country>
+</provider>

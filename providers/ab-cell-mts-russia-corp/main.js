@@ -55,7 +55,7 @@ function main(){
     var baseurl = "https://ihelper.mts.ru/Ncih/";
     var prefs = AnyBalance.getPreferences();
   	var baseloginurl =
-    	"https://login.mts.ru/amserver/UI/Login?service=nkip&amp;goto=https://ihelper.mts.ru/Ncih/&amp;ForceAuth=true&goto2=https://b2b.mts.ru/Ncih/";
+    	"https://login.mts.ru/amserver/UI/Login?org=/b2b/ncih&goto=https://lk-b2b.mts.ru/ncih_new/";
 
   	var html = enterMTS({
     	baseurl: baseurl,

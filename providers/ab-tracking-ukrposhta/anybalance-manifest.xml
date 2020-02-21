@@ -1,23 +1,30 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="3">ab-tracking-ukrposhta</id>
+	<id version="4">ab-tracking-ukrposhta</id>
 	<name>Укрпошта</name>
 	<description>
-	Отримує дані за номером поштового відправлення на сайті http://ukrposhta.ua/vidslidkuvati-forma-poshuku
+	Отримує дані за номером поштового відправлення на сайті https://track.ukrposhta.ua/tracking_UA.html
 	</description>
-	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<author>DimaZUA &lt;DIMAZ.KHUA@gmail.com&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="all" name="Звіт" type="text"/>
+		<counter id="eventName" name="Стан" type="text"/>
+		<counter id="date" name="Час" type="text"/>
+		<counter id="index" name="Індекс" type="text"/>
+		<counter id="country" name="Країна" type="text"/>
+		<counter id="name" name="Відділення" type="text"/>
+		<counter id="all" name="Звіт" type="html"/>
 	</counters>
-	<keywords></keywords>
+	<keywords>укрпочта,укрпошта</keywords>
 	<type>tracking</type>
 	<country>ua</country>
 </provider>

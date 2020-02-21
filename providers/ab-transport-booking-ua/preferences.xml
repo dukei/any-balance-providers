@@ -48,4 +48,13 @@
 		negativeButtonText="Отмена"
 		dialogMessage="Введите номер поезда, без пробелов, либо оставьте пустым, для получения данных по первому поезду.">
 	</EditTextPreference>	
+	<EditTextPreference
+		title="Тип билетов"
+		key="types"
+		summary="||{@s}"
+		dialogTitle="Тип билетов"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите тип билетов, через запятую. Либо оставьте пустым для поиска всех возможных типов.">
+	</EditTextPreference>
 </PreferenceScreen>

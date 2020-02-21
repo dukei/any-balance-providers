@@ -68,15 +68,21 @@ function main() {
 		success: true
 	};
 
-	html = AnyBalance.requestGet(baseurl + 'personal/', addHeaders({
+	var htmlPersonal = AnyBalance.requestGet(baseurl + 'personal/', addHeaders({
 		Referer: baseurl
 	}));
 
+	html = AnyBalance.requestGet(baseurl + 'local/templates/redesign/components/bitrix/main.profile/main/tabs/loyalty.php', addHeaders({
+		Referer: baseurl
+	}));
+
+	html = getJson(html).HTML;
+
 	AB.sumParam(html, result, 'balance', /<div[^>]+elem-card__bonus--num[^>]*>([\s\S]*?)<\/div>/i, AB.replaceTagsAndSpaces, AB.parseBalance, aggregate_sum);
 	AB.sumParam(html, result, '__tariff', /<div[^>]+elem-card__num[^>]*>([\s\S]*?)<\/div>/i, AB.replaceTagsAndSpaces, null, create_aggregate_join(', '));
-	AB.getParam(html, result, 'fio', /<div[^>]+box-user__name[^>]*>([\s\S]*?)<\/div>/i, AB.replaceTagsAndSpaces);
-	AB.getParam(html, result, 'phone', /<input[^>]+PERSONAL_PHONE[^>]*value="([^"]*)/i, AB.replaceHtmlEntities);
-	AB.sumParam(html, result, 'burn', /Дата ближайшего сгорания:([^<\(]*)/i, AB.replaceTagsAndSpaces, AB.parseDate, aggregate_min);
+	AB.getParam(htmlPersonal, result, 'fio', /<div[^>]+box-user__name[^>]*>([\s\S]*?)<\/div>/i, AB.replaceTagsAndSpaces);
+	AB.getParam(htmlPersonal, result, 'phone', /<input[^>]+PERSONAL_PHONE[^>]*value="([^"]*)/i, AB.replaceHtmlEntities);
+	AB.sumParam(html, result, 'burn', /Дата ближайшего сгорания:([^<\(]*)/ig, AB.replaceTagsAndSpaces, AB.parseDate, aggregate_min);
 
 	AnyBalance.setResult(result);
 }

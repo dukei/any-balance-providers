@@ -1,17 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-internet-garantgrodno</id>
+	<id version="1">ab-internet-garant-grodno</id>
 	<api flags="no_browser|private"/>
 	<name>ГАРАНТ (garant.by)</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе инетрнет-провайдера ГАРАНТ (GRODNO) в г. Гродно http://garant.by/</p>
-	<p>Информация берется из личного кабинета https://my.garant.by/p>
+	<p>Информация берется из личного кабинета https://my.garant.by</p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
+	<depends>
+		<module id="library"/>
+	</depends>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>

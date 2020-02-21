@@ -51,7 +51,7 @@ function main() {
         'from':station_fromIdAndNameArray[0],
         'to':station_toIdAndNameArray[0],
         'date':getFormattedDate('YYYY-MM-DD',dt),
-        'time':time,
+        'time':prefs.time_trip || time,
         'get_tpl':'0'
     }, addHeaders({
         'Referer': baseurl + 'ru/',
@@ -101,28 +101,22 @@ function main() {
 	if(prefs.train) {
 		for(var i = 0; i < json.length; i++) {
 			if(endsWith(json[i].num+'', prefs.train)) {
-				AnyBalance.trace('Нашли нужный поезд.');
+				AnyBalance.trace('Нашли нужный поезд: ' + json[i].num);
 				data = json[i];
 				break;
 			} else {
 				AnyBalance.trace('Поезд с номером ' + json[i].num + ' не соответствует заданному в настройках ' + prefs.train);
 			}
 		}
-	} else {
-		if(json.length>1){
-		for(var i = 1; i < json.length; i++) otherTrains+=json[i].num + ' ' + json[i].from.stationTrain + '-' + json[i].to.stationTrain+'<br>';
-		}    
-		data = json[0];
-	}
-
-	if(prefs.train&&!data) {
-		for(var i = 0; i < json.length; i++) {
-			if((json[i].num+'').indexOf(prefs.train)>-1) {
-				AnyBalance.trace('Нашли нужный поезд.');
-				data = json[i];
-				break;
-			} else {
-				AnyBalance.trace('Поезд с номером ' + json[i].num + ' не соответствует заданному в настройках ' + prefs.train);
+		if(!data){
+			for(var i = 0; i < json.length; i++) {
+				if((json[i].num+'').indexOf(prefs.train)>-1) {
+					AnyBalance.trace('Нашли нужный поезд по вхождению фрагмента номера: ' + json[i].num);
+					data = json[i];
+					break;
+				} else {
+					AnyBalance.trace('Поезд с номером ' + json[i].num + ' не соответствует заданному в настройках ' + prefs.train);
+				}
 			}
 		}
 	} else {

@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="12">ab-transport-booking-ua</id>
+	<id version="13">ab-transport-booking-ua</id>
 	<api flags="no_browser"/>
 	<name>Укрзалізниця</name>
 	<description html="true"><![CDATA[

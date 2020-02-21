@@ -1,5 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="13" date="2020-02-21">
+	Исправлен фильтр по номеру поезда
+	Исправлен фильтр по времени отправления
+	</change>
 	<change version="12" date="2020-02-19">
 	Изменен логотип на новый
 	</change>

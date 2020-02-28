@@ -4,8 +4,8 @@
 	<api flags="no_browser"/>
 	<name>КРЦ-Прикамье</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе провайдера КРЦ-Прикамье <a href="http://www.krc-prikam.ru/news">http://www.krc-prikam.ru/news</a></p>
-	<p>Информация берется из личного кабинета <a href="http://www.krc-prikam.ru/cabinet_login">http://www.krc-prikam.ru/cabinet_login</a></p>
+	<p>Предоставляет информацию о балансе провайдера КРЦ-Прикамье <a href="http://www.krc-prikam.ru/">http://www.krc-prikam.ru/</a></p>
+	<p>Информация берется из личного кабинета <a href="http://old.krc-prikam.ru/cabinet_login">http://old.krc-prikam.ru/cabinet_login</a></p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>

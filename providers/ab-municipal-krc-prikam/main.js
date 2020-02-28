@@ -12,19 +12,19 @@ var g_headers = {
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'https://www.krc-prikam.ru';
+	var baseurl = 'https://old.krc-prikam.ru';
 	AnyBalance.setDefaultCharset('utf-8');
 
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
-	
+
 	var html = AnyBalance.requestGet(baseurl + '/cabinet_login', g_headers);
-	
+
 	if(!html || AnyBalance.getLastStatusCode() > 400){
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
 	}
-	
+
 	var params = createFormParams(html, function(params, str, name, value) {
 		if (name == 'name')
 			return prefs.login;
@@ -33,20 +33,20 @@ function main() {
 
 		return value;
 	});
-	
+
 	html = AnyBalance.requestPost(baseurl + '/cabinet_login?destination=cabinet_login', params, addHeaders({Referer: baseurl + '/cabinet_login'}));
-	
+
 	if (!/logout/i.test(html)) {
 		var error = getParam(html, null, null, /<div[^>]+class="messages error"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
 		if (error)
 			throw new AnyBalance.Error(error, null, /имя пользователя или пароль неверны/i.test(error));
-		
+
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
-	
+
 	var result = {success: true};
-	
+
 	getParam(html, result, 'balance', /жилищно-коммунальные услуги -([\s\S]*?)<\/div>/i, [replaceTagsAndSpaces, /долг/i, '-'], parseBalance);
 	if(AnyBalance.isAvailable('balance') && !result.balance)
 		result.balance = 0;

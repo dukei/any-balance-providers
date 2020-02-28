@@ -1,10 +1,10 @@
 ﻿/**
 Показания счетчика Пермэнергосбыт (http://any-balance-providers.googlecode.com)
 
-Получает баланс на счету оплаты электроэнергии 
+Получает баланс на счету оплаты электроэнергии
 
 Operator site: http://permenergosbyt.ru/
-Личный кабинет: http://test.permenergosbyt.ru/Auth/IndividualEnergy
+Личный кабинет: http://lk.permenergosbyt.ru/
 */
 
 var g_headers = {
@@ -35,83 +35,47 @@ function redirectIfNeeded(html){
 function main(){
     var prefs = AnyBalance.getPreferences();
 	checkEmpty(prefs.login, 'Введите логин!');
-	checkEmpty(prefs.surname, 'Введите фамилию!');
 	checkEmpty(prefs.phone, 'Введите телефон!');
 
-    var baseurl = "https://test.permenergosbyt.ru/";
+    var baseurl = "https://lk.permenergosbyt.ru/";
 
-    AnyBalance.setDefaultCharset('utf-8'); 
+    AnyBalance.setDefaultCharset('utf-8');
 
-    var html = AnyBalance.requestGet(baseurl + 'Auth/IndividualEnergy', g_headers);
+    // Не обязательно запрашивать форму перед её отправкой
+    // var html = AnyBalance.requestGet(baseurl + 'personal/show', g_headers);
 
-    html = AnyBalance.requestPost(baseurl + 'Auth/IndividualEnergy', {
-        "Number":prefs.login,
-        "SecondName":prefs.surname
-    }, addHeaders({Referer: baseurl + 'Auth/IndividualEnergy'})); 
+    html = AnyBalance.requestPost(baseurl + 'personal/show', {
+        "action": 'login',
+        "login": prefs.login,
+        "phone": prefs.phone
+    }, addHeaders({Referer: baseurl + 'personal/show'}));
     html = redirectIfNeeded(html);
 
-    var form = getElement(html, /<form[^>]+(?:name="auth"|auth\/mobile)/i);
+    var form = getElement(html, /<form[^>]+(?:name="auth")/i);
+    var reAccount = /Лицевой счёт\: (\d+)/i;
 
-    if(!form || !/<input[^>]+(?:phone|Mobile)/i.test(html)){
-        var error = getElement(html, /<div[^>]+(?:field-validation-error|alert)/i, replaceTagsAndSpaces);
-        if(error)
-            throw new AnyBalance.Error(error, null, /лицев|фамили/i.test(html));
+    if (form || !/action="logout"/i.test(html), !reAccount.test(html)) {
+        var error = getElement(html, /<div[^>]+(?:alert)/i, replaceTagsAndSpaces);
+        if (error)
+            throw new AnyBalance.Error('Не удалось войти в личный кабинет. ' + error.replace('×', ''));
         AnyBalance.trace(html);
         throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
     }
 
-	var params = AB.createFormParams(form, function(params, str, name, value) {
-		if (name == 'phone') {
-			return prefs.phone;
-		}
-		if (name == 'Mobile') {
-			return prefs.phone;
-		}
-
-		return value;
-	});
-	var action = getParam(html, /<form[^>]+action=['"]([^'"]*)/i, replaceHtmlEntities);
-	
-	html = AnyBalance.requestPost(joinUrl(AnyBalance.getLastUrl(), action), params, addHeaders({Referer: AnyBalance.getLastUrl()})); 
-    html = redirectIfNeeded(html);
-
-    var reBalance = /(?:Долг|Переплата)(?:\s|&nbsp;)*:[\s\S]*?<\/p>/i;
-
-    if(!/logout/i.test(html) || !reBalance.test(html)){
-        var error = getElement(html, /<div[^>]+(?:field-validation-error|alert)/i, replaceTagsAndSpaces);
-        if(!error)
-        	error = getElement(html, /<p[^>]+color\s*:\s*red/i, replaceTagsAndSpaces);
-        if(error)
-            throw new AnyBalance.Error(error, null, /телефон/i.test(html));
-        AnyBalance.trace(html);
-        throw new AnyBalance.Error('Не удалось подтвердить вход в личный кабинет. Сайт изменен?');
-    }
-
-    var type = /test.permenergosbyt.ru/i.test(AnyBalance.getLastUrl()) ? 'old' : 'new';
-    AnyBalance.trace('Тип кабинета: ' + type);
-
     var result = {success: true};
+
+    getParam(html, result, 'account', reAccount, replaceTagsAndSpaces);
+    result.balance = -getParam(html, null, null, /<tr[^>]+class="tr-pay-total"+>.*?<\/tr>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'fio', /<p><strong>ФИО\: <\/strong>(.*?)<\/p>/i, replaceTagsAndSpaces);
+    getParam(html, result, 'address', /<p><strong>Адрес\: <\/strong>(.*?)<\/p>/i, replaceTagsAndSpaces);
+    getParam(html, result, 'date', /alert.*?\:\s+(.+?)<\/strong>/i, replaceTagsAndSpaces, parseDate);
+/*
     getParam(html, result, 'balance', reBalance, [/Долг(?:\s|&nbsp;)*:/i, '-', replaceTagsAndSpaces], parseBalance);
     getParam(html, result, 'fio', /ФИО(?:\s|&nbsp;)*:\s*([\s\S]*?)<\/p>/i, replaceTagsAndSpaces);
     getParam(html, result, 'number', /Номер счетчика(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
     getParam(html, result, '__tariff', /Тариф(?:[\s\S]*?<td[^>]*>){6}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
     getParam(html, result, 'tariffNumber', /Ставка тарифа(?:[\s\S]*?<td[^>]*>){8}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
-
-    if(type == 'new'){
-    	getParam(html, result, 'account', /Лицевой счет(?:\s|&nbsp;)*:([^<]*)/i, replaceTagsAndSpaces);
-
-        if(AnyBalance.isAvailable('statement', 'consumption')){
-        	html = AnyBalance.requestGet(AnyBalance.getLastUrl() + '?action=charges&active_from=' + getFormattedDate({offsetMonth: 3}) + '&active_to=' + getFormattedDate(), g_headers);
-        	getParam(html, result, 'statement', /<td[^>]*>\s*электроэнерги(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-        	getParam(html, result, 'consumption', /<td[^>]*>\s*электроэнерги(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-        
-        }
-    }else{
-        getParam(html, result, 'statement', /Расход электроэнергии(?:[\s\S]*?<td[^>]*>){9}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-        getParam(html, result, 'consumption', /Расход электроэнергии(?:[\s\S]*?<td[^>]*>){10}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-        getParam(html, result, 'account', /Лицевой счет(?:\s|&nbsp;)*:\s*<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, html_entity_decode);
-    }
-
+*/
     //Возвращаем результат
     AnyBalance.setResult(result);
 }

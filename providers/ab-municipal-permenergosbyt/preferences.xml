@@ -1,33 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
-    <EditTextPreference 
+    <EditTextPreference
 		obligatory="true"
-        title="Номер счета" 
-        positiveButtonText="ОК" 
-        summary="||{@s}" 
-        dialogTitle="Номер счета" 
-        negativeButtonText="Отмена" 
+        title="Номер счета"
+        positiveButtonText="ОК"
+        summary="||{@s}"
+        dialogTitle="Номер счета"
+        negativeButtonText="Отмена"
         dialogMessage="Введите номер лицевого счета."
         key="login">
     </EditTextPreference>
-    <EditTextPreference 
+    <EditTextPreference
 		obligatory="true"
         positiveButtonText="ОК"
-        key="surname" 
-        dialogTitle="Фамилия"
-        negativeButtonText="Отмена"
-        title="Фамилия"
-        summary="||{@s}"
-        dialogMessage="Введите вашу фамилию.">
-    </EditTextPreference>
-    <EditTextPreference 
-		obligatory="true"
-        positiveButtonText="ОК"
-        key="phone" 
+        key="phone"
         dialogTitle="Телефон"
         negativeButtonText="Отмена"
         title="Телефон"
         summary="||{@s}"
         dialogMessage="Введите ваш телефон.">
+    </EditTextPreference>
+    <EditTextPreference
+        positiveButtonText="ОК"
+        key="surname"
+        dialogTitle="Фамилия"
+        negativeButtonText="Отмена"
+        title="Фамилия"
+        summary="||{@s}"
+        dialogMessage="Введите вашу фамилию, если входите впервые.">
     </EditTextPreference>
 </PreferenceScreen>

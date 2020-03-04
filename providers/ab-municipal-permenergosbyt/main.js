@@ -34,17 +34,14 @@ function redirectIfNeeded(html){
 
 function main(){
     var prefs = AnyBalance.getPreferences();
-	checkEmpty(prefs.login, 'Введите логин!');
-	checkEmpty(prefs.phone, 'Введите телефон!');
+	AB.checkEmpty(prefs.login, 'Введите логин!');
+	AB.checkEmpty(prefs.phone, 'Введите телефон!');
 
     var baseurl = "https://lk.permenergosbyt.ru/";
 
     AnyBalance.setDefaultCharset('utf-8');
 
-    // Не обязательно запрашивать форму перед её отправкой
-    // var html = AnyBalance.requestGet(baseurl + 'personal/show', g_headers);
-
-    html = AnyBalance.requestPost(baseurl + 'personal/show', {
+    var html = AnyBalance.requestPost(baseurl + 'personal/show', {
         "action": 'login',
         "login": prefs.login,
         "phone": prefs.phone
@@ -62,12 +59,65 @@ function main(){
         throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
     }
 
+    // Получим список лицевых счетов
+    /* Вообще-то список уже есть на странице, но там только id, номер, ФИО
+       А на странице со списком ЛС ещё есть адрес и вид услуги (типа, тариф) */
+    html = AnyBalance.requestGet(baseurl + 'personal/show?action=new_incdec', g_headers);
+    var table = getElement(html, /<div[^>]+(?:id="related-acc-list")/i);
+
+    var rows = getElements(table, /<div[^>]+(?:class="[^"]+ie-block")/ig);
+    AnyBalance.trace('Найдено ' + rows.length + ' ЛС.');
+
+    if (rows.length < 1) {
+        throw new AnyBalance.Error('У вас нет ни одного лицевого счета!');
+    }
+
+    var current_account;
+    for (var i = 0; i < rows.length; i++) {
+        var account_number = getElement(rows[i], /<span class="text-big"/i, replaceTagsAndSpaces);
+        AnyBalance.trace(account_number);
+        if (!current_account && (!prefs.num || endsWith(account_number, prefs.num))) {
+            AnyBalance.trace('Выбран ' + account_number);
+            current_account = {'account_number': account_number};
+            current_account.acc_id = rows[i].match(/<button[^>]+data-account="(\d+)"/i)[1];
+            let matches = rows[i].matchAll(/<strong>([^<]+)<\/strong>\s*<span>([^<]+)<\/span>/ig);
+            for (const match of matches) {
+                if (match[1] == 'ФИО ') {
+                    current_account.fio = match[2];
+                }
+                if (match[1] == 'Адрес ') {
+                    current_account.address = match[2];
+                }
+                if (match[1] == 'Вид услуги ') {
+                    current_account.service = match[2];
+                }
+            }
+        }
+    }
+
+    if(!current_account) {
+        throw new AnyBalance.Error('Не удалось найти лицевой счет с последними цифрами ' + prefs.num);
+    }
+
+    // Переход к нужному лицевому счёту
+    var xhr = AnyBalance.requestPost(baseurl + 'bb/ShowProc2/web.lk_account_related', {
+        go_lk_acc_id: current_account.acc_id
+    }, {'X-Requested-With': 'XMLHttpRequest'});
+
+    html = AnyBalance.requestGet(baseurl + 'personal/show?account=info', g_headers);
+
     var result = {success: true};
 
-    getParam(html, result, 'account', reAccount, replaceTagsAndSpaces);
+    result.__tariff = current_account.service;
+    result.account = current_account.account_number;
     result.balance = -getParam(html, null, null, /<tr[^>]+class="tr-pay-total"+>.*?<\/tr>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'fio', /<p><strong>ФИО\: <\/strong>(.*?)<\/p>/i, replaceTagsAndSpaces);
-    getParam(html, result, 'address', /<p><strong>Адрес\: <\/strong>(.*?)<\/p>/i, replaceTagsAndSpaces);
+    result.fio = current_account.fio;
+    result.address = current_account.address;
+
+//    getParam(html, result, 'account', reAccount, replaceTagsAndSpaces);
+//    getParam(html, result, 'fio', /<p><strong>ФИО\: <\/strong>(.*?)<\/p>/i, replaceTagsAndSpaces);
+//    getParam(html, result, 'address', /<p><strong>Адрес\: <\/strong>(.*?)<\/p>/i, replaceTagsAndSpaces);
+    getParam(html, result, 'phone', /<p><strong>Телефон\: <\/strong>(.*?)<\/p>/i, replaceTagsAndSpaces);
     getParam(html, result, 'date', /alert.*?\:\s+(.+?)<\/strong>/i, replaceTagsAndSpaces, parseDate);
 /*
     getParam(html, result, 'balance', reBalance, [/Долг(?:\s|&nbsp;)*:/i, '-', replaceTagsAndSpaces], parseBalance);

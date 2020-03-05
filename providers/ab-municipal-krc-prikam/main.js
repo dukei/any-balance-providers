@@ -10,6 +10,10 @@ var g_headers = {
 	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/47.0.2526.106 Safari/537.36',
 };
 
+function capitalFirstLetter(str) {
+	return str.charAt(0).toUpperCase() + str.slice(1)
+}
+
 function main() {
 	var prefs = AnyBalance.getPreferences();
 	var baseurl = 'https://old.krc-prikam.ru';
@@ -47,12 +51,16 @@ function main() {
 
 	var result = {success: true};
 
+	getParam(html, result, 'account', /номер договора(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces);
 	getParam(html, result, 'balance', /жилищно-коммунальные услуги -([\s\S]*?)<\/div>/i, [replaceTagsAndSpaces, /долг/i, '-'], parseBalance);
-	if(AnyBalance.isAvailable('balance') && !result.balance)
+	if (AnyBalance.isAvailable('balance') && !result.balance) {
 		result.balance = 0;
+	}
 	getParam(html, result, 'fio', /покупатель(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces);
 	getParam(html, result, 'adress', /адрес(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces);
+	getParam(html, result, 'area', /площадь(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseFloat);
 	getParam(html, result, 'people', /проживающих(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces);
-
+	getParam(html, result, '__tariff', /предмет договора(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces, capitalFirstLetter);
+	getParam(html, result, 'provider', /продавец(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces);
 	AnyBalance.setResult(result);
 }

@@ -14,14 +14,18 @@
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
+		<js>library.min.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
 	<counters>
 		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="account" name="Лицевой счет" type="text"/>
 		<counter id="fio" name="ФИО" type="text"/>
 		<counter id="adress" name="Адрес" type="text"/>
+		<counter id="area" name="Площадь" units="кв.м."/>
 		<counter id="people" name="Количество проживающих" type="text"/>
+		<counter id="provider" name="Поставщик услуг" type="text"/>
 	</counters>
 	<keywords></keywords>
 	<type>municipal</type>

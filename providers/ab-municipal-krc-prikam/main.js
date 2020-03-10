@@ -52,7 +52,7 @@ function main() {
 	var result = {success: true};
 
 	getParam(html, result, 'account', /номер договора(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces);
-	getParam(html, result, 'balance', /жилищно-коммунальные услуги -([\s\S]*?)<\/div>/i, [replaceTagsAndSpaces, /долг/i, '-'], parseBalance);
+	getParam(html, result, 'balance', /Состояние расчетов:<\/div><div class="value">.+\s+-\s+([^<]+)</i, [replaceTagsAndSpaces, /долг/i, '-', /переплата/i, ''], parseBalance);
 	if (AnyBalance.isAvailable('balance') && !result.balance) {
 		result.balance = 0;
 	}
@@ -60,7 +60,21 @@ function main() {
 	getParam(html, result, 'adress', /адрес(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces);
 	getParam(html, result, 'area', /площадь(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces, parseFloat);
 	getParam(html, result, 'people', /проживающих(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces);
-	getParam(html, result, '__tariff', /предмет договора(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces, capitalFirstLetter);
 	getParam(html, result, 'provider', /продавец(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces);
+	// Не совсем правильно. Ниже загрузим список услуг
+	// getParam(html, result, '__tariff', /предмет договора(?:[^>]*>){2}([\s\S]*?)<\//i, replaceTagsAndSpaces, capitalFirstLetter);
+	html = AnyBalance.requestGet(baseurl + '/cabinet/services', addHeaders({Referer: baseurl + '/maindata'}));
+	var table = getElement(html, /<table[^>]+class="content_table"[^>]*>/i);
+	var services = [];
+	var trs = getElements(table, /<tr[^>]*>/ig);
+	for (var i = 0; i < trs.length; i++) {
+		var tr = trs[i];
+		var tds = getElements(tr, /<td[^>]+class="s">/ig, replaceTagsAndSpaces);
+		if (tds[1]) {
+			services.push(getParam(tds[1]));
+		}
+	}
+	result.__tariff = services.join(', ');
+
 	AnyBalance.setResult(result);
 }

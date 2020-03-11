@@ -110,22 +110,22 @@ function main(){
 
     result.__tariff = current_account.service;
     result.account = current_account.account_number;
-    result.balance = -getParam(html, null, null, /<tr[^>]+class="tr-pay-total"+>.*?<\/tr>/i, replaceTagsAndSpaces, parseBalance);
+
+    // Не учитывает положительный баланс (переплату)
+    // result.balance = -getParam(html, null, null, /<tr[^>]+class="tr-pay-total"+>.*?<\/tr>/i, replaceTagsAndSpaces, parseBalance);
+    // Возьмём сумму из модального окна "Детальная информация"
+    var table = getElement(html, /<div[^>]+id="modal-help-balance"[^>]+>.*(<table.*<\/table>)/i);
+    var trs = getElements(table, /<tr>(.*)<\/tr>/ig);
+    result.balance = 0;
+	for (var i = 0; i < trs.length; i++) {
+        result.balance += getParam(trs[i], null, null, '', [replaceTagsAndSpaces, /задолженность/i, '-', /переплата/i, ''], parseBalance);
+	}
     result.fio = current_account.fio;
     result.address = current_account.address;
 
-//    getParam(html, result, 'account', reAccount, replaceTagsAndSpaces);
-//    getParam(html, result, 'fio', /<p><strong>ФИО\: <\/strong>(.*?)<\/p>/i, replaceTagsAndSpaces);
-//    getParam(html, result, 'address', /<p><strong>Адрес\: <\/strong>(.*?)<\/p>/i, replaceTagsAndSpaces);
     getParam(html, result, 'phone', /<p><strong>Телефон\: <\/strong>(.*?)<\/p>/i, replaceTagsAndSpaces);
     getParam(html, result, 'date', /alert.*?\:\s+(.+?)<\/strong>/i, replaceTagsAndSpaces, parseDate);
-/*
-    getParam(html, result, 'balance', reBalance, [/Долг(?:\s|&nbsp;)*:/i, '-', replaceTagsAndSpaces], parseBalance);
-    getParam(html, result, 'fio', /ФИО(?:\s|&nbsp;)*:\s*([\s\S]*?)<\/p>/i, replaceTagsAndSpaces);
-    getParam(html, result, 'number', /Номер счетчика(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
-    getParam(html, result, '__tariff', /Тариф(?:[\s\S]*?<td[^>]*>){6}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
-    getParam(html, result, 'tariffNumber', /Ставка тарифа(?:[\s\S]*?<td[^>]*>){8}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
-*/
+
     //Возвращаем результат
     AnyBalance.setResult(result);
 }

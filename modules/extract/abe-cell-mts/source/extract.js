@@ -561,7 +561,7 @@ function loginWithPassword(){
 
     var prefs = AnyBalance.getPreferences();
 
-    var html = enterLK({login: prefs.login, password: prefs.password, baseurl: 'https://lk.mts.ru', url: 'https://login.mts.ru/amserver/UI/Login?service=newlk&goto=http%3A%2F%2Flk.mts.ru%2F'});
+    var html = enterLK({login: prefs.login, password: prefs.password, baseurl: 'https://lk.mts.ru', url: 'https://login.mts.ru/amserver/UI/Login?service=lk&goto=http%3A%2F%2Flk.mts.ru%2F'});
     return html;
 }
 
@@ -973,7 +973,7 @@ function loginWithoutPassword(){
     } catch (e) {
         AnyBalance.trace('Автоматический вход в кабинет не удался. Пробуем получить пароль через СМС');
         pass = getPasswordBySMS(prefs.login);
-        html = enterLK({login: prefs.login, password: pass, baseurl: 'https://lk.mts.ru', url: 'https://login.mts.ru/amserver/UI/Login?service=newlk&goto=http%3A%2F%2Flk.mts.ru%2F'});
+        html = enterLK({login: prefs.login, password: pass, baseurl: 'https://lk.mts.ru', url: 'https://login.mts.ru/amserver/UI/Login?service=lk&goto=http%3A%2F%2Flk.mts.ru%2F'});
         if (prefs.password && prefs.password != pass) {
             changePassword(pass, prefs.password);
         }

@@ -404,6 +404,7 @@ function getLKJson2(html) {
     out.phone_formatted = ('' + json['mobile:phone']).replace(/(\d\d\d)(\d\d\d)(\d\d)(\d\d)$/, '+7($1)$2-$3-$4');
     out.phone = '' + json['mobile:phone'];
     out.balance = Math.round(json['mobile:balance']*100)/100;
+    out.tariff = '' + json['mobile:tariff'];
     if(!out.balance){
     	AnyBalance.trace('Нулевой баланс! Возможно, что-то не так! ' + html);
     }

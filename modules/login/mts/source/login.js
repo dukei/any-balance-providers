@@ -143,12 +143,12 @@ function enterMtsLK(options) {
 
     html = redirectIfNeeded(html); //Иногда бывает доп. форма, надо переадресоваться.
 
-    var loggedInNum = getElement(html, /<[^>]+login-form__confirm-number/i, [replaceTagsAndSpaces, /\D+/g, '']);
+    var loggedInNum = getParam(html, /Продолжить вход с номером([\s\S]*?)<\/[bp]/i, replaceTagsAndSpaces);
     if(loggedInNum){
     	AnyBalance.trace('Предлагает автоматически залогиниться на ' + loggedInNum);
     	var form = getElement(html, /<form[^>]+name="Login"/i);
     	var submit;
-    	if(!loggedInNum || !endsWith(loggedInNum, options.login)){
+    	if(!endsWith(loggedInNum.replace(/\D+/g, ''), options.login)){
     		AnyBalance.trace('А нам нужен номер ' + options.login + '. Отказываемся...');
     		submit = 'Ignore';
     	}else{

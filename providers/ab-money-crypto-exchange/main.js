@@ -15,7 +15,7 @@ function currencySymbolCheck(symbol)
 {
     symbol = symbol.toUpperCase();
     if (!/^[A-Z]{3,5}$/.test(symbol))
-        throw new AnyBalance.Error("Currency codes must be 3 to 5 letters long, English letters only, no extra spaces or other characters.");
+        throw new AnyBalance.Error("Currency codes must be 3 to 5 letters long, capital English letters only, no extra spaces or other characters.");
     return(symbol);
 }
 
@@ -58,37 +58,65 @@ function main()
     // get and check preferences
 	AnyBalance.setDefaultCharset('utf-8');
     var prefs = AnyBalance.getPreferences();
-    var base = currencySymbolCheck(prefs.base);
-    var target = currencySymbolCheck(prefs.target);
+    var base = currencySymbolCheck(prefs.base || '');
+    var target = currencySymbolCheck(prefs.target || '');
     
     // get the base currency id first
-    var baseId = currencyId(base);
-    AnyBalance.trace("The ID for " + base + " is " + baseId);
+    //var baseId = currencyId(base);
+    //AnyBalance.trace("The ID for " + base + " is " + baseId);
     
     // get the currency conversion info
-    var url = "https://api.coinmarketcap.com/v1/ticker/" + baseId + "/?convert=" + target;
+   	var targetParam = target;
+    if(target.toUpperCase() !== 'BTC' && AnyBalance.isAvailable('price_btc'))
+    	targetParam += ',BTC';
+    	
+    var url = "https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest?symbol="+ base + "&convert=" + target;
     var html = AnyBalance.requestGet(url, g_headers);
     AnyBalance.trace(html, "server reply"); 
     var json = getJson(html);
-    var rate = json[0]["price_" + target.toLowerCase()];
-    var cap = json[0]["market_cap_" + target.toLowerCase()];
-    
-    // the server will still return the usual JSON, nor an error, in case of bad 
-    // target currency, but the price is going to be missing
-    if (rate == null)
-        throw new AnyBalance.Error("Unexpected target currency code.");
-    
-	// return the result
-    AnyBalance.trace(rate, "exchange rate");
-    var result = {success: true};
+    for(var sym in json.data){
+        var info = json.data[sym];
+        var rate = info.quote[target.toUpperCase()].price;
+        var cap = info.quote[target.toUpperCase()].market_cap;
+        
+        // the server will still return the usual JSON, nor an error, in case of bad 
+        // target currency, but the price is going to be missing
+        if (rate == null)
+            throw new AnyBalance.Error("Unexpected target currency code.");
+        
+		// return the result
+        AnyBalance.trace(rate, "exchange rate");
+        var result = {success: true};
+        
+        getParam(info.symbol + ' → ' + target, result, '__tariff');
+        getParam(+rate, result, 'exchangerate');
+        getParam(info.symbol, result, 'symbol');
+        getParam(+info.cmc_rank, result, 'rank');
+        getParam(cap && +cap, result, 'cap');
+        getParam(target, result, ['currency', 'cap', 'exchangerate']);
+        
+        if(AnyBalance.isAvailable('price_btc')){
+        	if(base === 'BTC'){
+        		getParam(1000, result, 'price_btc');
+        	}else{
+        		if(target.toUpperCase() !== 'BTC'){
+        			var url = "https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest?symbol="+ base + "&convert=BTC";
+        			var html = AnyBalance.requestGet(url, g_headers);
+        			AnyBalance.trace(html, "server reply 2"); 
+        			json = getJson(html);
+        		}
 
-    getParam(json[0].symbol + ' → ' + target, result, '__tariff');
-    getParam(+rate, result, 'exchangerate');
-    getParam(json[0].price_btc*1000, result, 'price_btc');
-    getParam(json[0].symbol, result, 'symbol');
-    getParam(+json[0].rank, result, 'rank');
-    getParam(cap && +cap, result, 'cap');
-    getParam(target, result, ['currency', 'cap', 'exchangerate']);
+    			for(var sym1 in json.data){
+        			getParam(json.data[sym1].quote.BTC.price*1000, result, 'price_btc');
+        		}
+        	}
+        }
+
+    	break;
+    }
+
+    AnyBalance.trace("Elapsed: " + json.status.elapsed);
+
 
 	AnyBalance.setResult(result);
 }

@@ -1,6 +1,8 @@
 var g_baseurlLogin = 'https://login.mts.ru';
 
 function checkLoginError(html, loginUrl) {
+	var prefs = AnyBalance.getPreferences();
+
 	function processError(html){
         var error = sumParam(html, /var\s+(?:passwordErr|loginErr)\s*=\s*'([^']*)/g, replaceSlashes, null, aggregate_join);
         if(!error) //На корп форме входа
@@ -24,22 +26,17 @@ function checkLoginError(html, loginUrl) {
     }
     if(!img){
     	img = getParam(html, /#captcha-wrapper\s*\{[^\}]*/);
-    	if(img){
-        	img = getParam(img, /data:image\/\w+;base64,([^'"]+)/i);
-    		if(!img){
-    			AnyBalance.trace(html);
-    			throw new AnyBalance.Error('Не удалось найти капчу. Сайт изменен?');
-    		}
-    	}
     }
-
+    if(img){
+    	img = getParam(img, /data:image\/\w+;base64,([^'"]+)/i);
+    }
 	if(img) {
 	    AnyBalance.trace('МТС решило показать капчу :( Жаль');
 	    var code = AnyBalance.retrieveCode('МТС требует ввести капчу для входа в личный кабинет, чтобы подтвердить, что вы не робот. Введите символы, которые вы видите на картинке.', img);
-	    var form = getParam(html, null, null, /<form[^>]+name="Login"[^>]*>([\s\S]*?)<\/form>/i);
+	    var form = getElement(html, /<form[^>]+name="Login"/i);
 	    var params = createFormParams(form, function (params, input, name, value) {
-            if (name == 'IDToken2')
-                value = code;
+            if (name == 'IDToken1' || name == 'IDToken2')
+                value = prefs.password;
             return value;
         });
 
@@ -60,6 +57,29 @@ function checkLoginError(html, loginUrl) {
         if(AnyBalance.getLastUrl().indexOf(g_baseurlLogin) == 0) { //Если нас не переадресовали, значит, случилась ошибка
         	processError(html);
         }
+    }else if(/МТС\s*-\s*Установка пароля/i.test(html)){
+    	AnyBalance.trace('МТС потребовало установить пароль. Установим старый');
+	    var form = getElement(html, /<form[^>]+name="Login"/i);
+	    var params = createFormParams(form, function (params, input, name, value) {
+            if (name == 'IDToken2')
+                value = code;
+            return value;
+        });
+        html = AnyBalance.requestPost(loginUrl, params, addHeaders({Origin: g_baseurlLogin, Referer: loginUrl}));
+        fixCookies();
+
+        if(/Ваш пароль успешно/i.test(html)){
+        	AnyBalance.trace(html);
+        	throw new AnyBalance.Error('МТС потребовала установить новый пароль, автоматическая установка старого не удалась. Сайт изменен?');
+        }
+
+	    form = getElement(html, /<form[^>]+name="Login"/i);
+	    var params = createFormParams(form);
+        html = AnyBalance.requestPost(loginUrl, params, addHeaders({Origin: g_baseurlLogin, Referer: loginUrl}));
+        fixCookies();
+    }else{
+    	AnyBalance.trace(html);
+    	throw new AnyBalance.Error('Не удалось найти капчу. Сайт изменен?');
     }
 
     return html;
@@ -123,12 +143,12 @@ function enterMtsLK(options) {
 
     html = redirectIfNeeded(html); //Иногда бывает доп. форма, надо переадресоваться.
 
-    var loggedInNum = getElement(html, /<[^>]+login-form__confirm-number/i, [replaceTagsAndSpaces, /\D+/g, '']);
+    var loggedInNum = getParam(html, /Продолжить вход с номером([\s\S]*?)<\/[bp]/i, replaceTagsAndSpaces);
     if(loggedInNum){
     	AnyBalance.trace('Предлагает автоматически залогиниться на ' + loggedInNum);
     	var form = getElement(html, /<form[^>]+name="Login"/i);
     	var submit;
-    	if(!loggedInNum || !endsWith(loggedInNum, options.login)){
+    	if(!endsWith(loggedInNum.replace(/\D+/g, ''), options.login)){
     		AnyBalance.trace('А нам нужен номер ' + options.login + '. Отказываемся...');
     		submit = 'Ignore';
     	}else{
@@ -177,7 +197,7 @@ function fixCookies(){
 		}
 	}
 	if(!AnyBalance.getCookie('login')){
-		AnyBalance.setCookie('login.mts.ru', 'login', "\"https://login.mts.ru:443/amserver/UI/Login?service=newlk&goto=http%3A%2F%2Flk.mts.ru%2F\"", {path: "/amserver/UI/Login"});
+		AnyBalance.setCookie('login.mts.ru', 'login', "\"https://login.mts.ru:443/amserver/UI/Login?service=lk&goto=http%3A%2F%2Flk.mts.ru%2F\"", {path: "/amserver/UI/Login"});
 	}
 	return repaired;
 }

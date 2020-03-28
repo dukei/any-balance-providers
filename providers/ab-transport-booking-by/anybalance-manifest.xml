@@ -16,7 +16,6 @@
 		<module id="library"/>
 	</depends>
 	<files>
-		<js>library.min.js</js>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
 		<js>main.js</js>

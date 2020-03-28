@@ -5,7 +5,7 @@
 	<name>ГАРАНТ (garant.by)</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе инетрнет-провайдера ГАРАНТ (GRODNO) в г. Гродно http://garant.by/</p>
-	<p>Информация берется из личного кабинета https://my.garant.by/p>
+	<p>Информация берется из личного кабинета https://my.garant.by/</p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>

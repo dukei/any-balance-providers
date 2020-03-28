@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+	<EditTextPreference
+		title="Пункт отправления"
+		key="station_from"
+		summary="||{@s}"
+		obligatory="true"
+		dialogTitle="Пункт отправления"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите пункт отправления на русском языке.">
+	</EditTextPreference>
+	<EditTextPreference
+		title="Пункт назначения"
+		key="station_to"
+		summary="||{@s}"
+		obligatory="true"
+		dialogTitle="Пункт назначения"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите пункт назначения на русском языке.">
+	</EditTextPreference>
+	<EditTextPreference
+		title="Дата"
+		key="date_trip"
+		summary="|Дата в формате ДД.ММ.ГГГГ|{@s}"
+		obligatory="true"
+		dialogTitle="Дата"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите дату в формате ДД.ММ.ГГГГ, например, 01.12.2014">
+	</EditTextPreference>
+ 	<EditTextPreference
+		title="Номер поезда"
+		key="train"
+		summary="||{@s}"
+		dialogTitle="Номер поезда"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите номер поезда, без пробелов, либо оставьте пустым, для получения данных по первому поезду.">
+	</EditTextPreference>	
+</PreferenceScreen>

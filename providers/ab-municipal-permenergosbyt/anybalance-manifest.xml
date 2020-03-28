@@ -1,11 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="6">ab-municipal-permenergosbyt</id>
+	<id version="7">ab-municipal-permenergosbyt</id>
 	<api flags="no_browser"/>
 	<name>Пермэнергосбыт (Пермь)</name>
 	<description html="true"><![CDATA[
 	<p>Получает баланс и информацию о счетчике Пермэнергосбыта (https://permenergosbyt.ru)</p>
-	<p>Информация берется из личного кабинета Пермэнергосбыта: https://test.permenergosbyt.ru/Auth/IndividualEnergy</p>
+	<p>Информация берется из личного кабинета Пермэнергосбыта: https://lk.permenergosbyt.ru/</p>
 	<p>Для повышения уровня безопасности Ваших учетных данных введен номер мобильного или стационарного телефона</p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
@@ -15,17 +15,17 @@
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
+		<js>library.min.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
 	<counters>
 		<counter id="balance" name="Баланс" units=" р"/>
-		<counter id="statement" name="Показания новые" units=" кВт*ч"/>
-		<counter id="consumption" name="Расход электроэнергии" units=" кВт*ч"/>
 		<counter id="account" name="Лицевой счет" type="text"/>
-		<counter id="number" name="Номер счетчика" type="text"/>
-		<counter id="tariffNumber" name="Ставка тарифа" type="text"/>
 		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="address" name="Адрес" type="text"/>
+		<counter id="phone" name="Телефон" type="text"/>
+		<counter id="date" name="Дата фиксации показаний" type="time" format="dd.MM.yyyy"/>
 	</counters>
 	<keywords>permenergosbyt</keywords>
 	<type>municipal</type>

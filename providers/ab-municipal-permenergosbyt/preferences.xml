@@ -1,33 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
-    <EditTextPreference 
+    <EditTextPreference
 		obligatory="true"
-        title="Номер счета" 
-        positiveButtonText="ОК" 
-        summary="||{@s}" 
-        dialogTitle="Номер счета" 
-        negativeButtonText="Отмена" 
-        dialogMessage="Введите номер лицевого счета."
+        title="Лицевой счет или Email"
+        positiveButtonText="ОК"
+        summary="||{@s}"
+        dialogTitle="Лицевой счет или Email"
+        negativeButtonText="Отмена"
+        dialogMessage="Введите номер лицевого счета (10 или 11 цифр) или Email (вход по Email должен быть разрешен в настройках личного кабинета)"
         key="login">
     </EditTextPreference>
-    <EditTextPreference 
+    <EditTextPreference
 		obligatory="true"
         positiveButtonText="ОК"
-        key="surname" 
-        dialogTitle="Фамилия"
+        key="phone"
+        dialogTitle="Номер телефона"
         negativeButtonText="Отмена"
-        title="Фамилия"
-        summary="||{@s}"
-        dialogMessage="Введите вашу фамилию.">
+        title="Номер телефона"
+        summary="|8|{@s}"
+        dialogMessage="Введите номер Вашего мобильного или стационарного (с кодом города) телефона, который привязан к Вашему личному кабинету">
     </EditTextPreference>
-    <EditTextPreference 
+    <EditTextPreference
 		obligatory="true"
+        title="Номер лицевого счета"
         positiveButtonText="ОК"
-        key="phone" 
-        dialogTitle="Телефон"
-        negativeButtonText="Отмена"
-        title="Телефон"
         summary="||{@s}"
-        dialogMessage="Введите ваш телефон.">
+        dialogTitle="Номер лицевого счета"
+        negativeButtonText="Отмена"
+        dialogMessage="Введите последние цифры лицевого счета, если в кабинете их несколько. Оставьте поле пустым, если хотите получить данные по первому (основному) счету."
+        key="num">
     </EditTextPreference>
 </PreferenceScreen>

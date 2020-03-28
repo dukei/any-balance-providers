@@ -19,8 +19,10 @@ function login() {
 	if (AnyBalance.getData) {
 		// заполняем эту куку, чтобы не запрашивался пароль из смс
 		var kaspiTag = AnyBalance.getData('kaspi-tag');
-		if (kaspiTag) {
+		var kaspiUid = AnyBalance.getData('kaspi-uid');
+		if (kaspiTag && kaspiUid) {
 			AnyBalance.setCookie('kaspi.kz', 'kaspi-tag', kaspiTag);
+			AnyBalance.setCookie('kaspi.kz', 'kaspi-uid', kaspiUid);
 		}
 	}
 	
@@ -122,13 +124,14 @@ function login() {
 			throw new AnyBalance.Error('Не удалось зайти в интернет-банк. Сайт изменен?');
 		}
 
-		html = AnyBalance.requestGet(baseurl + '/bank', g_headers);
-
 		if (AnyBalance.setData) {
 			// сохраняем куку, чтобы при следующей авторизации снова не запрашивался код из смс
 			AnyBalance.setData('kaspi-tag', AnyBalance.getCookie('kaspi-tag'));
+			AnyBalance.setData('kaspi-uid', AnyBalance.getCookie('kaspi-uid'));
 			AnyBalance.saveData();
 		}
+
+		html = AnyBalance.requestGet(baseurl + '/bank', g_headers);
 		
 	} else {
 		AnyBalance.trace('Уже залогинены, используем существующую сессию');

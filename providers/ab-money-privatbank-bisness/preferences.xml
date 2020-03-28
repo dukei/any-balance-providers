@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        title="ID автоклиента" 
+        positiveButtonText="ОК" 
+        summary="||{@s}" 
+        dialogTitle="ID автоклиента" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите ID автоклиента."
+        	key="id">
+    </EditTextPreference>
+
+    <EditTextPreference
+        positiveButtonText="ОК"
+	key="token" 
+        dialogTitle="token автоклиента"
+        negativeButtonText="Отмена"
+        title="token автоклиента"
+        summary="||{@s}"
+        dialogMessage="Введите token автоклиента.">
+    </EditTextPreference>
+</PreferenceScreen>

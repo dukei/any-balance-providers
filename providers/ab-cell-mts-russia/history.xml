@@ -1,5 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="4.1" version="190" date="2020-03-18">
+	Исправление получение данных через мобильный интернет
+	</change>
+	<change major_version="4.1" version="189" date="2020-03-17">
+	Исправление получения данных через мобильный интернет
+	</change>
+	<change major_version="4.1" version="188" date="2020-03-17">
+	Исправлена проблема со входом при запросе смены пароля
+	</change>
+	<change major_version="4.1" version="187" date="2020-03-16">
+	Поддержка изменений в процедуре входа
+	</change>
 	<change major_version="4.1" version="186" date="2019-11-18">
 	Исправление отображения минут
 	</change>

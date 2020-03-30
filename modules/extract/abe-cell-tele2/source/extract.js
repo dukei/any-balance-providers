@@ -3,159 +3,170 @@
 */
 
 var g_headers = {
-	'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-	'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
-	'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
 	'Connection':'keep-alive',
-	'Tele2-User-Agent': 'web',
-	'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/48.0.2564.116 Safari/537.36'
+	'Tele2-User-Agent': '"mytele2-app/3.17.0"; "unknown"; "Android/9"; "Build/12998710"',
+	'X-API-Version': '1',
+	'User-Agent':'okhttp/4.2.0'
 };
 
-var baseurl = "https://msk.tele2.ru/";
-var baseurlLoginIndex, baseurlLoginPost;
-var g_operatorName = 'Теле2';
-var g_siteId = 'siteMSK';
+var baseurl = 'https://api.tele2.ru/';
 
-function login() {
-	var prefs = AnyBalance.getPreferences();
-
-	checkEmpty(/^\d{10}$/.test(prefs.login), 'Введите логин - номера телефона из 10 цифр! Например, 9771234567');
-	//checkEmpty(prefs.password, 'Введите пароль!');
-
-	AnyBalance.setDefaultCharset('utf-8');
-
-	var html = AnyBalance.requestGet(baseurl + 'api/subscribers/7' + prefs.login + '/profile', g_headers);
-
-	if (AnyBalance.getLastStatusCode() >= 400) {
-        if(!prefs.password){
-            html = enterBySms();
-        }else {
-            html = AnyBalance.requestPost(baseurl + 'auth/realms/tele2-b2c/protocol/openid-connect/token', {
-            	client_id:	'digital-suite-web-app',
-				grant_type:	'password',
-				username: 	'7' + prefs.login,	
-				password:	prefs.password,
-				password_type:	'password'
-            }, g_headers);
-
-            var json = getJson(html);
-            if(!json.access_token){
-            	var error = json.error_description;
-            	if(error)
-            		throw new AnyBalance.Error(error, null, /парол|not found|password/i.test(error));
-            	AnyBalance.trace(html);
-            	throw new AnyBalance.error('Не удалось зайти в личный кабинет. Сайт изменен?');
-            }
-
-            g_headers.Authorization = 'Bearer ' + json.access_token;
-
-            html = AnyBalance.requestGet(baseurl + 'api/route/redirect?path=/lk&softRedirect=true', g_headers);
-            json = getJson(html);
-            AnyBalance.trace('Правильный сайт: ' + json.data.location);
-            baseurl = getParam(json.data.location, /^https?:\/\/[^\/]*\//i);
-
-            html = AnyBalance.requestGet(json.data.location, g_headers);
-            var siteId = getParam(html, /"siteId":"([^"]*)/i);
-            if(!siteId){
-            	AnyBalance.trace(html);
-            	throw new AnyBalance.Error('Не удалось определить регион. Сайт изменен?');
-            }
-            AnyBalance.trace('SiteID: ' + siteId);
-            g_siteId = siteId; 
-        }
-	}else{
-        AnyBalance.trace('Уже в кабинете. Используем текущую сессию');
-    }
-
-    __setLoginSuccessful();
+function callApi(action, params){
+	var url = joinUrl(baseurl + 'api/', action);
+	var headers = g_headers;
+	if(params){
+		if(params.__post){
+			delete params.__post;
+		}else{
+			params = JSON.stringify(params);
+			headers = addHeaders({'Content-Type': 'application/json; charset=UTF-8'});
+		}
+	}
 	
-	return html;
+	var html = AnyBalance.requestPost(url, params, headers, {HTTP_METHOD: params ? 'POST' : 'GET'});
+	var json = {};
+	if(html){
+		json = JSON.parse(html);
+		if(!json.data && !json.access_token && !json.current_username){
+			AnyBalance.trace(html);
+			var error = json.message || json.error_description || 'Ошибка обращения к API';
+			throw new AnyBalance.Error(error, null, /парол|Msisdn not found|password/i.test(error));
+		}
+	}
+	return json.data || json;
 }
 
-function enterBySms(){
-    var prefs = AnyBalance.getPreferences();
+function login(){
+	AnyBalance.setDefaultCharset('utf-8');
+	var prefs = AnyBalance.getPreferences();
+	checkEmpty(/^\d{10}$/.test(prefs.login), 'Введите логин - номер телефона из 10 цифр! Например, 9771234567');
 
-    var html = AnyBalance.requestGet(baseurlLogin + 'wap/auth/ussd', g_headers);
-    if (!html || AnyBalance.getLastStatusCode() > 400) {
-        AnyBalance.trace(html);
-        throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
-    }
+	if(g_headers.Authorization)
+		return; //Уже залогинены
 
-    var token = getParam(html, [
-    	/<input[^>]+value="([^"]+)"[^>]*name="_csrf"/i,
-    	/<input[^>]+name="_csrf"[^>]*value="([^"]+)"/i], replaceTagsAndSpaces);
+	var ok = loginByAccessToken();
+	if(!ok)
+		ok = loginByRefreshToken();
+	if(!ok){
+		if(prefs.password){
+			loginByPassword();
+		}else{
+			loginBySMS();
+		}
+	}
+	
+    __setLoginSuccessful();
 
-    if (!token) {
-        AnyBalance.trace(html);
-        throw new AnyBalance.Error('Не удалось найти форму входа при входе через SMS, сайт изменен?');
-    }
+}
 
-    var headers = addHeaders({
-        'Origin': baseurlLogin.replace(/(.*:\/\/[^\/]+).*/i, '$1'),
-        'X-Requested-With': 'XMLHttpRequest',
-        'X-CSRF-TOKEN': token,
-        'Referer': AnyBalance.getLastUrl()
-    });
+function saveTokens(json){
+	var prefs = AnyBalance.getPreferences();
 
-    html = AnyBalance.requestPost(baseurlLogin + 'wap/auth/ussd?pNumber=' + encodeURIComponent(prefs.login), {}, headers);
-    var returnCode = AnyBalance.getLastStatusCode();
+	g_headers.Authorization = 'Bearer ' + json.access_token;
 
-    function handleAuthResult() {
-        if (returnCode < 400) {
-            var json = getJson(html);
-            if (json.success) {
-                AnyBalance.setCookie('login.tele2.ru', 'AUTH_DATA', json.key);
-                html = AnyBalance.requestGet(baseurlLogin + 'wap/auth?serviceId=301', g_headers);
-            } else {
-                if (json.captchaNeeded) {
-                    var image = AnyBalance.requestGet(baseurlLogin + 'wap/auth/captcha?' + new Date().getTime(), g_headers);
-                    code = AnyBalance.retrieveCode("Пожалуйста, введите цифры с картинки", image, {inputType: 'number'});
-                    var answer = AnyBalance.requestPost(baseurlLogin + 'wap/auth/ussdCaptcha?captchaAnswer=' + encodeURIComponent(code), {}, headers);
-                    json = getJson(answer);
-                    if (!json.success)
-                        throw new AnyBalance.Error('Неверно введены цифры с картинки.');
-                    else {
-                        html = AnyBalance.requestPost(baseurlLogin + 'wap/auth/ussd?pNumber=' + encodeURIComponent(prefs.login), {}, headers);
-                        returnCode = AnyBalance.getLastStatusCode();
-                        return true; //Ещё раз запустить handleResult
-                    }
-                } else if(json.forbiddenBranch){
-                    throw new AnyBalance.Error(`Этот номер не поддерживается личным кабинетом ${g_operatorName}. Убедитесь, что это действительно номер ${g_operatorName}.`, null, true);
-                } else {
-                    AnyBalance.trace(html);
-                    throw new AnyBalance.Error('Вход в личный кабинет не подтвержден на телефоне пользователя. Чтобы войти, отправьте 1 в ответ на запрос на телефоне или дождитесь SMS кода и введите его.');
-                }
-            }
-        }
-        return false;
-    }
+	AnyBalance.setData('login', prefs.login);
+	AnyBalance.setData('ac', json.access_token);
+	AnyBalance.setData('rt', json.refresh_token);
+	AnyBalance.saveData();
+}
 
-    if(handleAuthResult()) //Если возникла капча, то обработку надо повторить.
-        handleAuthResult();
+function loginBySMS() {
+	var prefs = AnyBalance.getPreferences();
 
-    if(returnCode == 504){
-        //USSD код не введен, надо запросить смс
-        html = AnyBalance.requestGet(baseurlLogin + 'wap/auth/requestSms', addHeaders({Referer: AnyBalance.getLastUrl()}));
-    	token = getParam(html, [
-    		/<input[^>]+value="([^"]+)"[^>]*name="_csrf"/i,
-    		/<input[^>]+name="_csrf"[^>]*value="([^"]+)"/i], replaceTagsAndSpaces);
+	var json = callApi('validation/number/7' + prefs.login, {sender: 'Tele2'});
 
-        var code = AnyBalance.retrieveCode(`Вам отправлено SMS-сообщение с кодом для входа в личный кабинет ${g_operatorName}. Введите код из SMS`, null, {inputType: 'number'});
-        html = AnyBalance.requestPost(baseurlLogin + 'wap/auth/submitSmsCode', {
-            _csrf: token,
-            smsCode: code
-        }, addHeaders({Referer: AnyBalance.getLastUrl()}));
+	var code = AnyBalance.retrieveCode('Пожалуйста, введите код из SMS для входа в личный кабинет Tele2', null, {inputType: 'number', time: 180000});
 
-        if (!/\w+\/logout/i.test(html) && AnyBalance.getLastStatusCode() < 400) {
-            var error = getParam(html, null, null, /<section[^>]+class="error"[^>]*>([\s\S]*?)(?:<div|<\/section>)/i, replaceTagsAndSpaces);
-            if(error)
-                throw new AnyBalance.Error(error);
-            AnyBalance.trace(html);
-            throw new AnyBalance.Error("Не удалось войти в кабинет после ввода SMS. Сайт изменен?");
-        }
-    }
+	json = callApi('https://sso.tele2.ru/auth/realms/tele2-b2c/protocol/openid-connect/token?msisdn=7' + prefs.login + '&action=auth&authType=sms', {
+		__post: true,
+		username: '7' + prefs.login,
+		password: code,
+		grant_type: 'password',
+		client_id: 'android-app',
+		password_type:	'sms_code',
+	});
 
-    return html;
+	saveTokens(json);
+}
+
+function loginByAccessToken(){
+	var prefs = AnyBalance.getPreferences();
+	if(prefs.login !== AnyBalance.getData('login'))
+		return false;
+
+	g_headers.Authorization = 'Bearer ' + AnyBalance.getData('ac');
+
+	try{
+		json = callApi('https://sso.tele2.ru/auth/realms/tele2-b2c/protocol/openid-connect/userinfo');
+	}catch(e){
+		AnyBalance.trace('Не удалось войти по access token: ' + e.message);
+		return false;
+	}
+
+
+	AnyBalance.trace('Вошли по access token');
+
+	return true;
+}
+
+function loginByAccessToken(){
+	var prefs = AnyBalance.getPreferences();
+	if(prefs.login !== AnyBalance.getData('login'))
+		return false;
+
+	g_headers.Authorization = 'Bearer ' + AnyBalance.getData('ac');
+
+	try{
+		var json = callApi('https://sso.tele2.ru/auth/realms/tele2-b2c/protocol/openid-connect/userinfo');
+	}catch(e){
+		AnyBalance.trace('Не удалось войти по access token: ' + e.message);
+		return false;
+	}
+
+    AnyBalance.trace('Вошли по access token');
+
+	return true;
+}
+
+function loginByRefreshToken(){
+	var prefs = AnyBalance.getPreferences();
+	if(prefs.login !== AnyBalance.getData('login'))
+		return false;
+
+	delete g_headers.Authorization;
+
+	try{
+		var json = callApi('https://sso.tele2.ru/auth/realms/tele2-b2c/protocol/openid-connect/token?action=refresh', {
+			__post: true,
+			refresh_token: AnyBalance.getData('rt'),
+			grant_type:	'refresh_token',
+			client_id:	'android-app'
+		});
+	}catch(e){
+		AnyBalance.trace('Не удалось получить токен по refresh token: ' + e.message);
+		return false;
+	}
+
+    AnyBalance.trace('Получили новый access token по refresh token');
+
+	saveTokens(json);
+
+	return loginByAccessToken();
+}
+
+function loginByPassword(){
+	var prefs = AnyBalance.getPreferences();
+
+	json = callApi('https://sso.tele2.ru/auth/realms/tele2-b2c/protocol/openid-connect/token?msisdn=7' + prefs.login + '&action=auth&authType=pass', {
+		__post: true,
+		username: '7' + prefs.login,
+		password: prefs.password,
+		grant_type: 'password',
+		client_id: 'android-app',
+		password_type:	'password',
+	});
+
+	saveTokens(json);
 }
 
 function getSubscriberId() {
@@ -164,7 +175,7 @@ function getSubscriberId() {
     return subsid;
 }
 
-function processBalance(html, result){
+function processBalance(result){
     if(!AnyBalance.isAvailable('balance', 'tariff'))
         return;
 
@@ -178,7 +189,7 @@ function processBalance(html, result){
         for(var i = 0; i < maxTries; i++) {
             try {
                 AnyBalance.trace('Пытаемся получить баланс, попытка: ' + (i+1));
-                html = AnyBalance.requestGet(baseurl + 'api/subscribers/' + subsid + '/balance', addHeaders({
+                var html = AnyBalance.requestGet(baseurl + 'api/subscribers/' + subsid + '/balance', addHeaders({
                 	Accept: '*/*',
                 	'X-Requested-With': 'XMLHttpRequest',
                 	Referer: baseurl
@@ -222,12 +233,11 @@ function processBalance(html, result){
 
 }
 
-function processRemainders(html, result){
+function processRemainders(result){
     if (!AnyBalance.isAvailable('remainders'))
         return;
 
     AnyBalance.trace('Получаем остатки услуг');
-    var siteId = g_siteId;
 
     try {
         if(!result.remainders)
@@ -236,7 +246,7 @@ function processRemainders(html, result){
         var subsid = getSubscriberId();
 
         AnyBalance.trace("Searching for resources left");
-        html = AnyBalance.requestGet(baseurl + "api/subscribers/" + subsid + '/' + siteId + '/rests', addHeaders({
+        var html = AnyBalance.requestGet(baseurl + "api/subscribers/" + subsid + '/rests', addHeaders({
         	Accept: '*/*',
         	'X-Requested-With': 'XMLHttpRequest',
         	Referer: baseurl
@@ -286,7 +296,7 @@ function getDiscount(result, discount) {
     }
 }
 
-function processPayments(html, result){
+function processPayments(result){
     if (!AnyBalance.isAvailable('payments'))
         return;
 
@@ -295,7 +305,7 @@ function processPayments(html, result){
     var subsid = getSubscriberId();
 	
 	try {
-		html = AnyBalance.requestGet(baseurl + "api/subscribers/" + subsid + "/payments?fromDate=" 
+		var html = AnyBalance.requestGet(baseurl + "api/subscribers/" + subsid + "/payments?fromDate=" 
 		    + getFormattedDate({format: 'YYYY-MM-DD', offsetMonth:3}) + "T00%3A00%3A00%2B03%3A00&toDate="
 		    + getFormattedDate({format: 'YYYY-MM-DD'}) + "T23%3A59%3A59%2B03%3A00", g_headers);
 		
@@ -324,7 +334,7 @@ function processPayments(html, result){
     }
 }
 
-function processInfo(html, result){
+function processInfo(result){
     if(!AnyBalance.isAvailable('info'))
         return;
 
@@ -332,7 +342,7 @@ function processInfo(html, result){
 
     var info = result.info = {};
 
-    html = AnyBalance.requestGet(baseurl + "api/subscribers/" + subsid + '/profile', addHeaders({
+    var html = AnyBalance.requestGet(baseurl + "api/subscribers/" + subsid + '/profile', addHeaders({
     	Accept: '*/*',
     	'X-Requested-With': 'XMLHttpRequest',
     	Referer: baseurl

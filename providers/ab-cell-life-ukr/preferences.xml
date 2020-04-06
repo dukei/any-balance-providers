@@ -4,14 +4,14 @@
 		key="prefph"
 		title="Префикс номера телефона"
 		summary="|Выберите префикс номера телефона|{@s}"
-		entries="063|073|093"
-		entryValues="063|073|093"
+		entries="063|073|093|067|097"
+		entryValues="063|073|093|067|097"
 		dialogTitle="Префикс номера телефона">
 	</ListPreference>
 	<EditTextPreference
 		key="phone"
 		title="Номер телефона"
-		summary="Номер без префикса +380XX3||{@s}\n"
+		summary="Номер без префикса +380XX||{@s}\n"
 		dialogTitle="Номер телефона"
 		negativeButtonText="Отмена"
 		dialogMessage="Введите номер вашего телефона"

@@ -9,6 +9,9 @@ var g_headers = {
 	'X-Client-Version': 'a2.35 (672)',
 	'User-Agent':		'okhttp/3.12.3',
 	'Connection': 'Keep-Alive',
+// 	Origin: null,
+//	'Sec-Fetch-Mode': null,
+//	'Sec-Fetch-Site': null
 };
 
 
@@ -129,15 +132,26 @@ function processAccounts(html, result) {
         return;
 	
 	var json = callApi('api/v1.0/account/product/account/current/list/');
+	AnyBalance.trace("Найдено текущих счетов: " + json.length);
 	var accounts = json;
 
-	AnyBalance.trace("Найдено текущих счетов: " + accounts.length);
+	var json = callApi('api/v1.0/account/accumulation/');
+	AnyBalance.trace("Найдено накопительных счетов: " + json.length);
+	accounts.push.apply(accounts, json);
+
 	result.accounts = [];
+
+	for(var i = 0; i < accounts.length; i++) {
+		var num = accounts[i].accNum;
+		var title = (accounts[i].accName || accounts[i].name) + ' ' + accounts[i].balance.currency + ' x' + num.substr(-4);
+    	AnyBalance.trace('Найден счет ' + title + ' (' + accounts[i]['@type'] + ')' );
+    }
+
 
 	for(var i = 0; i < accounts.length; i++) {
 		var id = accounts[i].accNum;
 		var num = accounts[i].accNum;
-		var title = accounts[i].accName + ' ' + accounts[i].balance.currency + ' x' + num.substr(-4);
+		var title = (accounts[i].accName || accounts[i].name) + ' ' + accounts[i].balance.currency + ' x' + num.substr(-4);
 
 		var c = {__id: id, __name: title, num: num};
 
@@ -155,6 +169,10 @@ function processAccount(account, result){
 	getParam(account.balance.amount, result, 'accounts.balance');
 	getParam(account.balance.currency, result, ['accounts.currency', 'accounts.balance']);
 	getParam(account.openDate, result, 'accounts.date_start', null, null, parseDateISO);
+
+	getParam(account.currentPercent, result, 'accounts.pct');
+	getParam(account.contractName, result, 'deposits.agreement');
+	getParam(account.status.value, result, 'deposits.status');
 
     if(AnyBalance.isAvailable('accounts.transactions')) {
     //    processAccountTransactions(href, result);

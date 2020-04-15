@@ -2,12 +2,13 @@
 <PreferenceScreen>
 	<EditTextPreference
 		obligatory="true"
-		title="Логин"
+		title="Телефон"
 		positiveButtonText="ОК"
-		summary="||{@s}"
-		dialogTitle="Логин"
+		summary="|Номер телефона в формате 9261234567|{@s}"
+		dialogTitle="Телефон"
+		inputType="number"
 		negativeButtonText="Отмена"
-		dialogMessage="Введите логин для входа в интернет-банк."
+		dialogMessage="Введите номер телефона для входа в интернет-банк (10 цифр без пробелов и разделителей, например 9261234567)."
 		key="login">
 	</EditTextPreference>
 	<EditTextPreference

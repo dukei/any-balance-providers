@@ -7,7 +7,6 @@
 	<depends>
 		<module id="library"/>
 		<module id="parsers/jsonpath"/>
-		<module id="crypt/md5"/>
 	</depends>
 	<files>
 		<js>extract.js</js>

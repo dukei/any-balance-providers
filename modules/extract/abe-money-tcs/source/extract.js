@@ -18,6 +18,7 @@ var g_postParams = {
 	root_flag:				'false',
 	appName:				'mobile',
 	origin: 				'mobile,ib5,loyalty,platform',
+	deviceId:				undefined,
     connectionType:			'WiFi',
 	platform:				'android',
 	screen_dpi:				'420',
@@ -217,10 +218,13 @@ function login() {
         });
 
         g_sessionid = json.payload.sessionid;
+        var data = AnyBalance.getData(getDataName(), {});
 
         var json = requestJson('warmup_cache', {}, {
             post: joinObjects({
-            		phone:	'+7' + prefs.login,
+            		old_session_id: data.oldSessionId,
+            		phone:	data.oldSessionId ? undefined : '+7' + prefs.login,
+            		device_id: getDeviceId(),
             		deviceId: getDeviceId(),
             	}, g_postParams),
         });

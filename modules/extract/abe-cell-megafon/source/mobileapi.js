@@ -341,7 +341,7 @@ function processRemaindersApi(result){
                     if((/мин|сек/i.test(units) && !/интернет/i.test(name)) || (/шт/i.test(units) && /минут/i.test(name) && !/СМС|SMS|MMS|ММС/i.test(name))) {
                         AnyBalance.trace('Parsing minutes...' + JSON.stringify(current));
                         var unlim = /^9{6,}$/i.test(current.total); //Безлимитные значения только из девяток состоят
-						if(unlim){
+						if(unlim || +current.total > 2600000){
 							AnyBalance.trace('пропускаем безлимит минут: ' + name + ' ' + (current.available + current.unit) + '/' + (current.total + current.unit));
 							continue;
 						}

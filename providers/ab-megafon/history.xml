@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="4.0" version="239" date="2020-05-02">
+	Исправлено получение минут в некоторых случаях
+	</change>
 	<change major_version="4.0" version="238" date="2020-02-19">
 	Прекращение обновления в случае блокировки номера
 	</change>

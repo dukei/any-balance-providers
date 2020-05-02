@@ -7,13 +7,11 @@ var g_headers = {
 	'Accept-Language': 'ru,en;q=0.8',
 	'Connection': 'keep-alive',
 	'Cache-Control': 'max-age=0',
-	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.65 Safari/537.36'
+	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.120 Safari/537.36'
 };
 
 function main(){
     var prefs = AnyBalance.getPreferences();
-    if(AnyBalance.getLevel() < 6)
-        throw new AnyBalance.Error('Этот провайдер требует AnyBalance API v.6+');
 
     AnyBalance.setOptions({SSL_ENABLED_PROTOCOLS: ['TLSv1.2']});
 
@@ -32,7 +30,7 @@ function main(){
     if(!prefs.codes3 || !/^\s*(?:\d{4}\s+){9}\d{4}\s*$/.test(prefs.codes3))
         throw new AnyBalance.Error("Неправильно введены коды 31-40! Необходимо ввести 10 четырехзначных кодов через пробел.");
       
-    var html = AnyBalance.requestGet(baseurl + 'wps/portal/ibank/');
+    var html = AnyBalance.requestGet(baseurl + 'wps/portal/ibank/', g_headers);
     var url = getParam(html, /<form[^>]+action="([^"]*)"[^>]*name="LoginForm1"/i, replaceHtmlEntities);
     if(!url){
         var error = getParam(html, /<font[^>]+color="#FF0000"[^>]*>([\s\S]*?)<\/font>/i, replaceTagsAndSpaces);
@@ -48,8 +46,27 @@ function main(){
         bbIbUseridField:prefs.login,
         bbIbPasswordField:prefs.password,
         bbIbLoginAction:'in-action',
-        bbIbCancelAction:''
-    });
+		bbibCodeSMSField:'0',
+		bbibUnblockAction:'',
+		bbibChangePwdByBlockedClientAction_sendSMS:''
+    }, addHeaders({
+    	Referer: AnyBalance.getLastUrl()
+    }));
+
+    if(/bbIbPasswordField/i.test(html)){
+    	AnyBalance.trace('С первого раза не пустили. Попробуем ещё разок');
+        
+        htmlCodePage = html = AnyBalance.requestPost(joinUrl(AnyBalance.getLastUrl(), url), {
+            bbIbUseridField:prefs.login,
+            bbIbPasswordField:prefs.password,
+            bbIbLoginAction:'in-action',
+			bbibCodeSMSField:'0',
+			bbibUnblockAction:'',
+			bbibChangePwdByBlockedClientAction_sendSMS:''
+        }, addHeaders({
+        	Referer: AnyBalance.getLastUrl()
+        }));
+    }
 
     var codenum = getParam(html, /Введите[^>]*>код [N№]\s*(\d+)/i, null, parseBalance);
     if(!codenum){

@@ -31,7 +31,7 @@ function main(){
         throw new AnyBalance.Error("Неправильно введены коды 31-40! Необходимо ввести 10 четырехзначных кодов через пробел.");
       
     var html = AnyBalance.requestGet(baseurl + 'wps/portal/ibank/', g_headers);
-    var url = getParam(html, /<form[^>]+action="([^"]*)"[^>]*name="LoginForm1"/i, replaceHtmlEntities);
+    var url = getParam(html, /<form[^>]+action="([^"]*)"[^>]*name="LoginForm1"/i, [replaceHtmlEntities, /#.*$/, '']);
     if(!url){
         var error = getParam(html, /<font[^>]+color="#FF0000"[^>]*>([\s\S]*?)<\/font>/i, replaceTagsAndSpaces);
         if(!error)
@@ -56,6 +56,7 @@ function main(){
     if(/bbIbPasswordField/i.test(html)){
     	AnyBalance.trace('С первого раза не пустили. Попробуем ещё разок');
         
+    	url = getParam(html, /<form[^>]+action="([^"]*)"[^>]*name="LoginForm1"/i, [replaceHtmlEntities, /#.*$/, '']);
         htmlCodePage = html = AnyBalance.requestPost(joinUrl(AnyBalance.getLastUrl(), url), {
             bbIbUseridField:prefs.login,
             bbIbPasswordField:prefs.password,
@@ -91,7 +92,7 @@ function main(){
 		throw new AnyBalance.Error('Не удалось найти форму ввода кода. Сайт изменен?');
 	}
 
-	var url = getParam(form, /<form[^>]+action="([^"]*)"[^>]*name="LoginForm1"/i, replaceHtmlEntities);
+	var url = getParam(form, /<form[^>]+action="([^"]*)"[^>]*name="LoginForm1"/i, [replaceHtmlEntities, /#.*$/, '']);
     /*if(!url)
         throw new AnyBalance.Error('Не удалось найти форму ввода кода. Сайт изменен?');*/
 
@@ -126,7 +127,7 @@ function main(){
         throw new AnyBalance.Error('Не удалось войти в интернет-банк после ввода кода (№' + (codenum+1) + ': ' + code + ') . Сайт изменен?');
     }
 	
-	var href = getParam(html, /href="\/([^"]+)">\s*Счета/i, replaceTagsAndSpaces);
+	var href = getParam(html, /href="\/([^"]+)">\s*Счета/i, [replaceTagsAndSpaces, /#.*$/, '']);
 	checkEmpty(href, 'Не удалось найти ссылку на счета, сайт изменен?', true);
 	html = AnyBalance.requestGet(baseurl + href, addHeaders({'Referer': baseurl}));
 	

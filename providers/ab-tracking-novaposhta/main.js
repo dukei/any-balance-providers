@@ -39,7 +39,7 @@ function main() {
     var prefs = AnyBalance.getPreferences();
     var tid = prefs.track_id;
     if (!tid) throw new AnyBalance.Error('Не указан номер накладной.');
-    var re = /(5\d{13}|1\d1{10}|2\d+)/i;
+    var re = /((5\d{13})|(1\d{10})|(2\d{6}\d+))/i;
     if (tid.search(re) == -1) tid = tid.replace(/([^A-Za-z0-9])/g, '');
     AnyBalance.setDefaultCharset('utf-8');
 
@@ -50,6 +50,39 @@ function main() {
 
     var html = AnyBalance.requestPost('https://api.novaposhta.ua/v2.0/json/', '{\"modelName\":\"TrackingDocument\",\"calledMethod\":\"getStatusDocuments\",\"methodProperties\":{\"Documents\":[{\"DocumentNumber\":\"' + tid + '\",\"Phone\":\"' + encodeURIComponent(prefs.phone) + '\"}]}}', g_headers);
     var json = getJson(html);
+    var result = {success: true};
+    result=getdata(json);
+} else {
+//Международные?
+    tid = prefs.track_id;
+    var re = /([A-Za-z]{4}\d{10}[A-Za-z]{3})/i;
+    if (tid.search(re) == -1) tid = tid.replace(/([^A-Za-z0-9])/g, '');
+
+    if (tid.length == 17) {
+        var baseurl = 'https://novaposhta.ua/tracking/international/cargo_number/';
+        var html = AnyBalance.requestGet(baseurl + tid, addHeaders({
+            Origin: baseurl
+        }));
+	var result = {success: true};
+        result.trackid=tid;
+        result.__tariff = getParam(html, null, null, /(?:Маршрут):[\s\S]*?(.*\s\-\s.*)/i, replaceTagsAndSpaces) +' '+ getParam(html, null, null, /(?:Вага відправлення|Вес отправления):[\s\S]*?(\d+\.\d*\sкг)/i, replaceTagsAndSpaces);
+        result.more = getParam(html, null, null, /(?:Поточний статус|Текущий статус)[\s\S]*?([\s\S]*)[\s\S]*(Історія статусів)/i, replaceTagsAndSpaces) ;
+        var dn=getParam(html, null, null, /(?:Додаткові номери):[\s\S]*?(((5\d{13})|(1\d{10})|(2\d{6}\d+)))/i, replaceTagsAndSpaces);
+        AnyBalance.trace(dn);
+        if (dn){
+        	var html = AnyBalance.requestPost('https://api.novaposhta.ua/v2.0/json/', '{\"modelName\":\"TrackingDocument\",\"calledMethod\":\"getStatusDocuments\",\"methodProperties\":{\"Documents\":[{\"DocumentNumber\":\"' + dn + '\",\"Phone\":\"' + encodeURIComponent(prefs.phone) + '\"}]}}', g_headers);
+        	var json = getJson(html);
+        	var result = {success: true};
+        	result=getdata(json);
+        }
+    }
+
+}
+
+    AnyBalance.setResult(result);
+}
+
+function getdata(json){
     if (json.errors.length > 0) {
         AnyBalance.trace('json.errors.length=' + json.errors.length);
         AnyBalance.trace(html);
@@ -94,26 +127,5 @@ function main() {
     if (cost != undefined) more += (more ? cr : '') + ((cost - paid > 0 && d.PayerType == 'Recipient') ? '<font  color=\'red\'>' : '') + 'Стоимость доставки <strong>' + cost.toFixed(2).replace(re, "$1 ").replace(".", ",") + ' грн.</strong> (' + ((d.PayerType != 'Recipient') ? 'Оплачено)' : (paid == 0) ? "Не оплачено)" : 'Оплачено ' + d.PaymentStatusDate + ' ' + d.PaymentStatus + ')' + ((cost - paid > 0 && d.PayerType == 'Recipient') ? '</font>' : ''));
     if (json.warnings.length > 0) more += (more ? cr : '') + "<small>Укажите номер телефона получателя или отправителя, чтобы получить больше информации.</small>"
     if (more) result.more = more;
-
-} else {
-//Международные?
-    tid = prefs.track_id;
-    var re = /([A-Za-z]{4}\d{10}[A-Za-z]{3})/i;
-    if (tid.search(re) == -1) tid = tid.replace(/([^A-Za-z0-9])/g, '');
-
-    if (tid.length == 17) {
-        var baseurl = 'https://novaposhta.ua/tracking/international/cargo_number/';
-        var html = AnyBalance.requestGet(baseurl + tid, addHeaders({
-            Origin: baseurl
-        }));
-	var result = {success: true};
-        result.trackid=tid;
-        result.__tariff = getParam(html, null, null, /(?:Маршрут):[\s\S]*?(.*\s\-\s.*)/i, replaceTagsAndSpaces) +' '+ getParam(html, null, null, /(?:Вага відправлення|Вес отправления):[\s\S]*?(\d+\.\d*\sкг)/i, replaceTagsAndSpaces);
-        result.more = getParam(html, null, null, /(?:Поточний статус|Текущий статус)[\s\S]*?([\s\S]*)[\s\S]*(Історія статусів)/i, replaceTagsAndSpaces) ;
-
-    }
-
-}
-
-    AnyBalance.setResult(result);
+    return result;
 }

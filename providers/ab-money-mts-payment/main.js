@@ -30,11 +30,40 @@ function main() {
 	var result = {success: true};
 
 	html = AnyBalance.requestGet(g_baseurl + '/cards', addHeaders({Referer: g_baseurl + '/'}));
+	if(AnyBalance.getLastStatusCode() >= 400 || /Unreachable server/i.test(html))
+		throw new AnyBalance.Error('Сайт временно недоступен. Пожалуйста, попробуйте позже');
+
+	var myphone = getElements(html, [/<div[^>]+acc[oa]unt-phone/ig, /мой телефон/i])[0];
+	if(myphone){
+		getParam(myphone, result, 'balance_phone', /<[^>]+b-payment-element__val-num[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+		result.status_phone = 'Не блокирован';
+		getParam(myphone, result, 'status_phone', /<div[^>]+b-payment-element__warn[^>]*>([\s\S]*?)(?:<\/div>|\.)/i, replaceTagsAndSpaces);
+	}
+
 	var cardId = getParam(html, /<a[^>]+href="[^"]*EMONEY[^>]*data-bid="([A-F\d]+)"/i);
 	if(!cardId){
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось найти идентификатор электронного кошелька. Сайт изменен?');
 	}
+
+    if(AnyBalance.isAvailable('cashback')){
+    	var token = getParam(html, /<input[^>]+__RequestVerificationToken[^>]*value="([^"]*)/i, replaceHtmlEntities);
+    	html = AnyBalance.requestPost(g_baseurl + '/Auth/EnsureIsAuthenticated/', {
+    	}, addHeaders({
+    		'X-Requested-With': 'XMLHttpRequest',
+    		Referer: g_baseurl + '/cards'
+    	}));
+    	html = AnyBalance.requestPost(g_baseurl + '/PaymentInstrument/GetCashBackBalance', {
+    		__RequestVerificationToken: token
+    	}, addHeaders({
+    		'X-Requested-With': 'XMLHttpRequest',
+    		Referer: g_baseurl + '/cards'
+    	}));
+
+        var json = getJson(html);
+        getParam(json.balance, result, 'cashback');
+
+    }
 
 	html = AnyBalance.requestGet(g_baseurl + '/cards/' + cardId, addHeaders({Referer: g_baseurl + '/cards'}));
 

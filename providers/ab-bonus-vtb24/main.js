@@ -12,10 +12,10 @@ var g_headers = {
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'https://bonus.vtb.ru/';
+	var baseurl = 'https://multibonus.ru/';
 	AnyBalance.setDefaultCharset('utf-8');
 	
-	checkEmpty(prefs.login = getParam(prefs.login, null, null, /^\d{10}$/i, [/^(\d{3})(\d{3})(\d{4})$/, '+7 ($1) $2-$3']), 'Введите номер телефона, 10 цифр подряд!' + (prefs.login ? ' Вы ввели: ' + prefs.login : ''));
+	checkEmpty(prefs.login = getParam(prefs.login, /^\d{10}$/i, [/^(\d{3})(\d{3})(\d{4})$/, '+7 ($1) $2-$3']), 'Введите номер телефона, 10 цифр подряд!' + (prefs.login ? ' Вы ввели: ' + prefs.login : ''));
 	checkEmpty(prefs.password, 'Введите пароль!');
 	
 	var html = AnyBalance.requestGet(baseurl + 'account/login', g_headers);
@@ -29,6 +29,7 @@ function main() {
 		html = AnyBalance.requestPost(baseurl + 'account/login', {
 			Phone: prefs.login,
 			Password: prefs.password,
+			AdmitadUrl: '',
 			'ReturnUrl': ''
 		}, addHeaders({Referer: baseurl + 'account/login'}));
 
@@ -40,7 +41,7 @@ function main() {
 	}
 	
 	if (!/logout/i.test(html)) {
-		var error = getParam(html, null, null, /<div[^>]+class="validation-summary-errors"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
+		var error = getParam(html, /<div[^>]+class="validation-summary-errors"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces);
 		if (error)
 			throw new AnyBalance.Error(error, null, /парол/i.test(error));
 		
@@ -53,8 +54,8 @@ function main() {
 	
 	var result = {success: true};
 	
-	getParam(getElement(html, /<[^>]+user-block_text-bonuses/i), result, 'balance', null, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, '__tariff', /<[^>]+user-block_text[^>]*>([\s\S]*?),/i, replaceTagsAndSpaces);
+	getParam(getElement(html, /<[^>]+__user-balance/i), result, 'balance', null, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, '__tariff', /<[^>]+__user-name[^>]*>([\s\S]*?)[<,]/i, replaceTagsAndSpaces);
 	
 	AnyBalance.setResult(result);
 }

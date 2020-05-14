@@ -1,13 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="3">ab-internet-vladlink</id>
+	<id version="4">ab-internet-vladlink</id>
 	<api flags="no_browser"/>
 	<name>Владлинк</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе провайдера Владлинк <a href="http://vladlink.ru/">http://vladlink.ru/</a></p>
 	<p>Информация берется из личного кабинета <a href="https://my.vladlink.ru/">https://my.vladlink.ru/</a></p>
 	]]></description>
-	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;, SirStefan</author>
 	<depends>
 		<module id="library"/>
 	</depends>

@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference
+		obligatory="true"
+        key="login"
+        title="Номер телефона"
+        summary="Номер телефона для доступа к личному кабинету||{@s}\n"
+        inputType="number"
+        dialogTitle="Номер телефона"
+        dialogMessage="Введите номер телефона без префикса для входа в личный кабинет, например, 9163456789"
+        positiveButtonText="ОК"
+        negativeButtonText="Отмена">
+    </EditTextPreference>
+    <EditTextPreference
+		obligatory="true"
+        key="password"
+        title="Пароль"
+        summary="Пароль для входа в личный кабинет||**********\n"
+        inputType="textPassword"
+        dialogTitle="Пароль"
+        dialogMessage="Введите пароль, используемый для входа в личный кабинет"
+        positiveButtonText="ОК"
+        negativeButtonText="Отмена">
+    </EditTextPreference>
+</PreferenceScreen>

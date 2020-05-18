@@ -1,11 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="7">ab-bonus-vtb24</id>
+	<id version="9">ab-bonus-vtb24</id>
 	<api flags="no_browser"/>
 	<name>ВТБ24 (Бонусы)</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию об остатке бонусов в программе лояльности ВТБ24 Коллекция</p>
-	<p>Информация берется из личного кабинета https://bonus.vtb.ru/</p>
+	<p>Предоставляет информацию об остатке бонусов в программе лояльности ВТБ Мультибонус</p>
+	<p>Информация берется из личного кабинета https://multibonus.ru/</p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>

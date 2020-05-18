@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<api flags="no_browser"/>
+	<id version="2">ab-money-mts-payment</id>
+	<name>МТС Кошелек</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе на электронном кошельке МТС (https://payment.mts.ru).</p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="login/mts"/>
+	</depends>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="phone" name="Телефон" type="text"/>
+		<counter id="identification" name="Идентификация" type="text"/>
+		<counter id="balance_phone" name="Баланс телефона" units=" р"/>
+		<counter id="status_phone" name="Статус счета телефона" type="text"/>
+		<counter id="cashback" name="Кэшбэк" units=" р"/>
+	</counters>
+	<keywords>бонус, мтс, bonus, mts</keywords>
+	<type>bonus</type>
+	<country>ru</country>
+</provider>

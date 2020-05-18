@@ -64,7 +64,7 @@ function main () {
     	source: 'openbank'
     }));
 
-    getParam(json.bonuses.bankTotals.openbank.amount, result, 'balance');
+    getParam(json.bonuses.total, result, 'balance');
     getParam(Object.keys(json.bonuses.bankTotals.openbank.cuids).join(', '), result, '__tariff');
 
     if(json.bonuses.movements && json.bonuses.movements.length){

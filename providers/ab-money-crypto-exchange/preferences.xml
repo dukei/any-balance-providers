@@ -20,4 +20,14 @@
 		negativeButtonText="Cancel"
 		dialogMessage="Please enter 3 letters currency code to exchange with, such as USD, RUB, ILS...">
 	</EditTextPreference>
+	<EditTextPreference
+		title="API key"
+		key="api_key"
+		summary="|Register at pro.coinmarketcap.com to get the key|{@s}"
+        obligatory="true"
+		dialogTitle="API key"
+		positiveButtonText="Ok"
+		negativeButtonText="Cancel"
+		dialogMessage="Register at pro.coinmarketcap.com to get the api key. It is free!">
+	</EditTextPreference>
 </PreferenceScreen>

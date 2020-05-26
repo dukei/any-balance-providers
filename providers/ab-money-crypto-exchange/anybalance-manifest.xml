@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="7">ab-money-crypto-exchange</id>
+	<id version="8">ab-money-crypto-exchange</id>
 	<api flags="no_browser"/>
 	<name>Cryptocurrency Exchange Rates</name>
 	<description html="true"><![CDATA[<p>Fetches cryptocurrencies exchange rates. Uses coinmarketcap.com as it's source.</p>]]></description>

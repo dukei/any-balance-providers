@@ -41,7 +41,7 @@ function main() {
 }
 
 function requestJson(url, data, headers) {
-	var json = getJson(AnyBalance.requestPost(url, data, headers));
+	var json = getJson(removeBOM(AnyBalance.requestPost(url, data, headers)));
 	
 	if(!json.success) {
 		AnyBalance.trace(JSON.stringify(json));
@@ -145,6 +145,13 @@ function proceedCab(prefs) {
 	AnyBalance.setResult(result);
 }
 
+function removeBOM(res){
+	if (res.charCodeAt(0) === 0xFEFF) {
+		res = res.substr(1);
+	}
+	return res;
+}
+
 function getStatus(status){
 	switch(status){
 		case 0: 
@@ -167,7 +174,7 @@ function proceedLk(prefs) {
 	var loginfo = AnyBalance.requestGet(baseurl + 'menu/loginmodel/?CTN=' + encodeURIComponent(prefs.login), addHeaders({
 		Referer: baseurl
 	}));
-	loginfo = getJson(loginfo);
+	loginfo = getJson(removeBOM(loginfo));
 
 	html = AnyBalance.requestPost('https://identity.beeline.ru/identity/fpcc', createUrlEncodedParams({
 		login:	prefs.login,
@@ -245,7 +252,7 @@ function proceedLk(prefs) {
 		 OamAuthToken: token,
 		 Referer: AnyBalance.getLastUrl()
 	}));
-	var json = getJson(html);
+	var json = getJson(removeBOM(html));
 	
 	var result = {success: true};
 

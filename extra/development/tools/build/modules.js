@@ -138,6 +138,12 @@ var Modules = (function(){
 		return xml;
 	}
 
+	function getGen(xml){
+		var node = xml.selectSingleNode('//provider');
+		var gen = node.attributes.getNamedItem('gen');
+		return +((gen && gen.text) || 1);
+	}
+
 	function getFilesList(xml){
 		var node = xml.selectSingleNode('//provider/files');
 		if(!node)
@@ -204,6 +210,7 @@ var Modules = (function(){
 		    
 			this.files = getFilesList(xml);
 			this.modules = getModulesList(xml);
+			this.gen = getGen(xml);
 			this.isLoaded = true;
 		}catch(e){
 			this.isLoaded = false;
@@ -251,7 +258,7 @@ var Modules = (function(){
 			callback.after(module);
 	}
 
-	var gcccmd = 'java -jar "%ABROOT%\\extra\\development\\tools\\compressors\\compiler.jar" --language_in ECMASCRIPT6 --language_out ECMASCRIPT5 --charset utf-8';
+	var gcccmd = 'java -jar "%ABROOT%\\extra\\development\\tools\\compressors\\compiler.jar" --language_in ECMASCRIPT_NEXT --language_out $LANGUAGE_OUT --charset utf-8';
 
 	function buildModule(basepathOrModule, version){
 		var basepath, provider;
@@ -293,7 +300,16 @@ var Modules = (function(){
 	    }catch(e){
 	    	WScript.Echo("WARNING: deleting old js files: " + e.message);
 	    }
-		var oExec = Misc.exec(gcccmd + ' --js "' + files.join('" --js "') + '" --js_output_file "' + version_path + sub_module_id + '.min.js"');
+
+	    var cmd;
+	    if(provider.gen === 2)
+	    	cmd = gcccmd.replace("$LANGUAGE_OUT", "ECMASCRIPT_2017");
+	    else
+	    	cmd = gcccmd.replace("$LANGUAGE_OUT", "ECMASCRIPT5");
+	    cmd += ' --js "' + files.join('" --js "') + '" --js_output_file "' + version_path + sub_module_id + '.min.js"';
+	    WScript.Echo(cmd);
+
+		var oExec = Misc.exec(cmd);
 		if(oExec != 0)
 			throw new Error('Compilation failed!');
 

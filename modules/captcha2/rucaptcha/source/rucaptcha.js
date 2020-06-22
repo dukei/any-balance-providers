@@ -4,15 +4,15 @@ class RuCaptcha {
 		this.baseurl = 'https://rucaptcha.com/';
 	}
 
-	async recognizeRecaptcha2(sitekey, url, userAgent){
+	async solveReCaptcha2(sitekey, {url, userAgent}){
 		let id = await this.sendToRecognition({
 			method: 'userrecaptcha',
 			googlekey: sitekey,
 			pageurl: url,
 			userAgent: userAgent,
 		});
-		
-		return id;
+
+		return await this.waitForResult(id);
 	}
 
 	async sendToRecognition(params){
@@ -25,7 +25,7 @@ class RuCaptcha {
 		    res = await AnyBalance.requestPost(this.baseurl + 'in.php', joinObjects({
 		    		key: this.key,
 		    		soft_id: '1351', //AnyBalance
-		    	}, options)
+		    	}, params)
 		    );
 		    await AnyBalance.trace('Статус принятия капчи: ' + res.getText());
 		}while(/ERROR_NO_SLOT_AVAILABLE/.test(res.getText()) && tryno++ < 5);
@@ -45,7 +45,7 @@ class RuCaptcha {
         		var code = res.getLastStatusCode();
         		if(code >= 400)
         			throw new AnyBalance.Error(code + ' ' + res.getLastStatusString());
-        		if(!/CAPCHA_NOT_READY/.test(res))
+        		if(!/^CAPCHA_NOT_READY/.test(res.getText()))
         			break;
         	}catch(e){
         		await AnyBalance.trace('Ошибка проверки статуса капчи (попытка ' + tryno + '): ' + e.message);

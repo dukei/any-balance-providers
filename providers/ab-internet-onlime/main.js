@@ -6,8 +6,9 @@ var g_headers = {
 	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3',
 	'Accept-Language': 'ru,en-US;q=0.9,en;q=0.8,ru-RU;q=0.7',
 	'Origin': 'https://my.onlime.ru',
+	'Referer': 'https://my.onlime.ru/',
 	'Connection': 'keep-alive',
-	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36',
+	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.120 Safari/537.36',
 	'Cache-Control': 'max-age=0',
 	'Upgrade-Insecure-Requests': '1',
 };
@@ -99,33 +100,7 @@ function main(){
         var html = AnyBalance.requestGet(baseurl + 'bonus/account/');
         getParam(html, result, 'bonus_balance', /Бонусный счет:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
     }
-	
-    if(AnyBalance.isAvailable('internet_total', 'internet_up', 'internet_down')) {
-        try {
-			var dt = new Date();
-			
-            info = AnyBalance.requestGet(baseurl + 'html/inetstat/?month=' + (dt.getMonth()+1) + '&year=' + dt.getFullYear());
-			
-			if(AnyBalance.isAvailable('internet_total', 'internet_down')){
-                var val = getParam(info, null, null, /Входящий трафик(?:[\s\S]*?<th[^>]*>){3}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
-                if(val)
-                    result.internet_down = Math.round(parseFloat(val)/1024*100)/100; //Переводим в Гб с двумя точками после запятой
-            }
-			
-            if(AnyBalance.isAvailable('internet_total', 'internet_up')){
-                var val = getParam(info, null, null, /Входящий трафик(?:[\s\S]*?<th[^>]*>){4}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
-                if(val)
-                    result.internet_up = Math.round(parseFloat(val)/1024*100)/100; //Переводим в Гб с двумя точками после запятой
-            }
-			if(AnyBalance.isAvailable('internet_total')){
-                if(result.internet_down && result.internet_up)
-                    result.internet_total = result.internet_down + result.internet_up;
-            }
-        }catch(e){
-            AnyBalance.trace('Не удалось получить трафик: ' + e.message);
-        }
-    }
-
+    
     if(AnyBalance.isAvailable('abon')){
 		html = AnyBalance.requestGet(baseurl + "services/", g_headers);
 		var wtf = getParam(html, /wtf\s*=\s*'([^']*)/);

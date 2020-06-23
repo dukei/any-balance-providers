@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="3">ab-internet-cosmostv</id>
+	<id version="4">ab-internet-cosmostv</id>
 	<api flags="no_browser"/>
 	<name>Космос ТВ (Беларусь)</name>
 	<description html="true"><![CDATA[

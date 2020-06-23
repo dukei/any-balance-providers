@@ -1,5 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="4" date="2020-06-23">
+	- Выключен SSL
+	</change>
 <change version="3" date="2013-10-16">
 - Мелкие улучшения
 </change>

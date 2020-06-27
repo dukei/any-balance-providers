@@ -5,7 +5,7 @@
 var g_headers = {
 	Accept: 'application/json; charset=UTF-8',
 	'X-Sbol-OS': 'android',
-	'X-Sbol-Version': '1.3.1',
+	'X-Sbol-Version': '1.4.2',
 	'X-Sbol-Id': '',
 	'Connection': 'Keep-Alive',
 	'User-Agent': 'okhttp/3.6.0',

@@ -67,11 +67,11 @@ function main() {
 	}
 
 	if(AnyBalance.isAvailable('USD', 'EUR')){
-		html = AnyBalance.requestGet('http://www.cbr.ru/', g_headers);
-		var elem = getElement(html, /<div[^>]+id="widget_exchange"/i);
+		html = AnyBalance.requestGet('https://www.cbr.ru/', g_headers);
+		var elem = getElement(html, /<div[^>]+mobile-indicator_courses/i);
 
 		getParam(elem, result, 'USD', /Доллар США(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-		getParam(html, result, 'EUR', /Евро(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+		getParam(elem, result, 'EUR', /Евро(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 	}
 	
 	AnyBalance.setResult(result);

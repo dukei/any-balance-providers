@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="91">ab-money-sberbank</id>
+	<id version="92">ab-money-sberbank</id>
 	<api flags="no_browser"/>
 	<name>Сбербанк Онлайн</name>
 	<description html="true"><![CDATA[

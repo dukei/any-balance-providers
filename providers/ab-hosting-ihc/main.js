@@ -40,6 +40,23 @@ function main() {
 	}));
 
 	var json = getJson(html);
+	if(json.error === 'captcha'){
+		var img = AnyBalance.requestGet(baseurl + 'captcha/index?x=' + new Date().getTime() + Math.random(), addHeaders({Referer: baseurl + 'login/auth'}));
+		var code = AnyBalance.retrieveCode('Пожалуйста, введите цифры с картинки', img, {inputType: 'number', time: 90000});
+
+		html = AnyBalance.requestPost(baseurl + 'j_spring_security_check?ajax=true', {
+			j_username: 	prefs.login,
+			j_password:		prefs.password,
+			recaptcha: '',
+			ihccaptcha: code,
+		}, addHeaders({
+			'X-Requested-With': 'XMLHttpRequest',
+			'Referer': baseurl + 'login/auth',
+		}));
+
+		json = getJson(html);
+	}
+
 	if(json.alert.type !== 'none'){
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error(json.alert.message, null, /парол/i.test(json.alert.message));

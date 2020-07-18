@@ -202,13 +202,15 @@ function createParams(params) {
 	return str;
 }
 
+var g_api_baseurl = 'https://api.life.com.ua/mobile/';
+
 function createSignedUrl(method, params) {
 	var str = createParams(params);
 	str = method + str + '&signature=';
 	var hash = CryptoJS.HmacSHA1(str, "E6j_$4UnR_)0b");
 	hash = hash.toString(CryptoJS.enc.Base64);
 	str += encodeURIComponent(hash);
-	return 'https://api.life.com.ua/mobile/' + str;
+	return g_api_baseurl + str;
 }
 
 var g_errors = {
@@ -281,21 +283,105 @@ function parseTrafficMb(str) {
 	return parseTraffic(str + 'Bytes');
 }
 
+function getTokenByOauth(){
+    var prefs = AnyBalance.getPreferences();
+    var msisdn = '38' + prefs.prefph + prefs.phone;
+
+    var headers = {
+    	'Save-Data': 'on',
+		'User-Agent': 'Mozilla/5.0 (Linux; Android 9; ONEPLUS A3010) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Mobile Safari/537.36',
+		'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
+		'Referer': 'https://auth.lifecell.ua/',
+		'Accept-Language': 'ru,en-US;q=0.9,en;q=0.8,ru-RU;q=0.7',
+    };
+    
+    var html = AnyBalance.requestGet('https://auth.lifecell.ua/auth/realms/lifecell/protocol/openid-connect/logout?redirect_uri=https%3A%2F%2Fauth.lifecell.ua%2Fauth%2Frealms%2Flifecell%2Fprotocol%2Fopenid-connect%2Fauth%3Fredirect_uri%3Dhttps%253A%252F%252Fanybalance.ru%26client_id%3Dmy-lifecell-app-android%26response_type%3Dcode%26state%3DjqWFQcMIrPhdp99Ahx4lcQ%26scope%3Dopenid%2520offline_access%26code_challenge%3DsqhxgO3NL5QDeFAHfx8rri5x34TGzUv3Ovr6wYl6-8w%26code_challenge_method%3DS256%26ui_locales%3Den', headers); 
+    var form = getElement(html, /<form[^>]+username-form/i);
+    if(!form){
+    	AnyBalance.trace(form);
+    	throw new AnyBalance.Error('Не удалось найти форму входа. Сайт изменен?');
+    }
+
+    var action = getParam(form, /<form[^>]+action="([^"]*)/i, replaceHtmlEntities);
+    var params = createFormParams(form);
+    params.username = msisdn;
+
+    html = AnyBalance.requestPost(action, params, headers);
+    form = getElement(html, /<form[^>]+password-form/i);
+    if(!form){
+    	if(/otp-form/i.test(html))
+    		throw new AnyBalance.Error('Потребовался ввод смс. Авторизуйтесь хотя бы раз в приложении My LifeCell');
+    	AnyBalance.trace(form);
+    	throw new AnyBalance.Error('Не удалось найти форму ввода пароля. Сайт изменен?');
+    }
+
+    action = getParam(form, /<form[^>]+action="([^"]*)/i, replaceHtmlEntities);
+    params = createFormParams(form);
+    params.password = prefs.pass;
+	
+    html = AnyBalance.requestPost(action, params, headers);
+    var url_result = AnyBalance.getLastUrl();
+    if(!/anybalance.ru/i.test(url_result)){
+    	var error = getElement(html, /<div[^>]+error-block/i, replaceTagsAndSpaces);
+    	if(error)
+    		throw new AnyBalance.Error(error, null, /password|парол/i.test(error));
+    	AnyBalance.trace(html);
+    	throw new AnyBalance.Error('Не удалось авторизоваться. Сайт изменен?');
+    }
+
+    var state = getParam(url_result, /\bstate=([^&]*)/, null, decodeURIComponent);
+    var session_state = getParam(url_result, /\bsession_state=([^&]*)/, null, decodeURIComponent);
+    var code = getParam(url_result, /\bcode=([^&]*)/, null, decodeURIComponent);
+
+    html = AnyBalance.requestPost('https://auth.lifecell.ua/auth/realms/lifecell/protocol/openid-connect/token', {
+		code:	code,
+		grant_type:	'authorization_code',
+		redirect_uri:	'https://anybalance.ru',
+		code_verifier:	'IkpkVQY0jdQvs7MwLaA__KMJZ_8uell7hQsYxB97DaoheroiGM_gDftuXxVrrV2KtWAlbuKj9RttE2z6mv42gQ'
+    }, addHeaders({
+    	Accept: 'application/json',
+    	'User-Agent': 'Dalvik/2.1.0 (Linux; U; Android 9; ONEPLUS A3010 Build/PKQ1.181203.001)',
+    	Authorization: 'Basic bXktbGlmZWNlbGwtYXBwLWFuZHJvaWQ6NGUxNjE4YTMtNjdhMS00OTA4LTk5OWUtNTAzMGExOWE2N2Jj',
+    }, headers));
+
+    var json = getJson(html);
+    if(!json.access_token){
+    	AnyBalance.trace(html);
+    	throw new AnyBalance.Error('Не удалось получить access_token. Сайт изменен?');
+    }
+
+	var xml = lifeGet('sso', {
+		token: json.access_token,
+		refreshToken: json.refresh_token
+	});
+
+	var token = getElement(xml, /<token/, replaceTagsAndSpaces);
+	return token;
+}
+
 function mainMobileApp(prefs, baseurl){
+    var prefs = AnyBalance.getPreferences();
     if (!prefs.prefph || !/^\d{3}$/.test(prefs.prefph))
 		throw new AnyBalance.Error('Введите префикс для вашего номера телефона (3 цифры)');
     if (!prefs.phone || !/^\d{7}$/.test(prefs.phone))
 		throw new AnyBalance.Error('Введите номер вашего телефона (7 цифр)');
 	
-    var prefs = AnyBalance.getPreferences();
     var msisdn = '38' + prefs.prefph + prefs.phone;
     var lang = prefs.lang || 'ru';
     
-	var xml = lifeGet('signIn', {msisdn: msisdn, superPassword: prefs.pass});
-	
-    var token = getParam(xml, null, null, /<token>([\s\S]*?)<\/token>/i, replaceTagsAndSpaces);
-    if (!token)
-		throw new AnyBalance.Error('He удалось авторизоваться в Life API!');
+    var token, xml;
+    try{
+		xml = lifeGet('signIn', {msisdn: msisdn, superPassword: prefs.pass});
+    	token = getParam(xml, null, null, /<token>([\s\S]*?)<\/token>/i, replaceTagsAndSpaces);
+	}catch(e){
+		if(AnyBalance.getLastStatusCode() === 403){
+			AnyBalance.trace('Пробуем получить токен по Oauth');
+			g_api_baseurl = 'https://api.lifecell.com.ua/mobile/';
+			token = getTokenByOauth();
+		}else{
+			throw e;
+		}
+	}
 
     var result = {success: true};
 

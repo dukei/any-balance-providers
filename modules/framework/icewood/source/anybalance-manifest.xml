@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+    <id version="1">framework/icewood</id>
+	<api flags="no_browser" />
+    <name>Icewood helper</name>
+	<description html="true"><![CDATA[
+		Helps to deal with incapsule protected pages
+
+		Usage:
+
+    		var fwl = Icewood(baseurl);
+		    var html = AnyBalance.requestGet(baseurl, g_headers);
+		    if(fwl.isProtected(html))
+		        html = fwl.executeScript(html);
+
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
+	<files>
+		<js>icewood.js</js>
+		<history>history.xml</history>
+	</files>
+	<type>obfuscator, antirobot</type>
+</provider>

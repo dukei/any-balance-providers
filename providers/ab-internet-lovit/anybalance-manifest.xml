@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-internet-lovit</id>
+	<api flags="no_browser"/>
+	<name>Lovit)) интернет провайдер</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе провайдера Lovit)) https://lovit.ru </p>
+	<p>Информация берется из личного кабинета https://lk.lovit.ru</p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="days_to_off" name="Дней до отключения" units=" дн"/>
+		<counter id="status" name="Статус" type="text"/>
+		<counter id="abon" name="Абонентская плата" units=" р"/>
+		<counter id="agreement" name="Номер договора" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>internet</type>
+	<country>ru</country>
+</provider>

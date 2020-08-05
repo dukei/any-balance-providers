@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="38" date="2020-08-05">
+	Поддержка счетчика Доступно для накопительных счетов
+	</change>
 	<change version="37" date="2020-04-21">
 	Уменьшение вероятности повторного запроса кода
 	</change>

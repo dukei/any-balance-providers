@@ -14,51 +14,64 @@ var g_headers = {
 function main(){
     AnyBalance.setDefaultCharset('utf-8');
     var prefs = AnyBalance.getPreferences();
-    var baseurl = 'https://avtodor-tr.ru/';
+    var baseurl = 'https://lk.avtodor-tr.ru/';
 
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 	
-	var html = AnyBalance.requestGet(baseurl + 'account', g_headers);
+	var html = AnyBalance.requestGet(baseurl, g_headers);
 	
 	if(!html || AnyBalance.getLastStatusCode() > 400) {
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
 	}
-	
-    html = requestPostMultipart(baseurl + 'account/login', {
-		"email": prefs.login,
-		"password": prefs.password,
-		"submit0":  "Подождите...",
-		"return_url": "https://avtodor-tr.ru/account"
-	}, addHeaders({Referer: baseurl + 'account/login'}));
 
-    if(!/account\/logout/i.test(html)){
-        var error = getElement(html, /<[^>]+alert-danger/i, replaceTagsAndSpaces);
-        if(!error)
-        	error = getElements(html, /<div[^>]+checkField[^>]+error/ig, replaceTagsAndSpaces).join('\n');
+	var form = getElement(html, /<form[^>]+kc-form-login/i);
+	if(!form){
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удаётся найти форму входа. Сайт изменен?');
+	}
+
+	var referer = AnyBalance.getLastUrl();
+	var action = getParam(form, /<form[^>]+action="([^"]*)/, replaceHtmlEntities);
+	var params = AB.createFormParams(form, function(params, str, name, value) {
+		if (name == 'username') {
+			return prefs.login;
+		} else if (name == 'password') {
+			return prefs.password;
+		}
+
+		return value;
+	});
+	
+    html = AnyBalance.requestPost(joinUrl(referer, action), params, addHeaders({Referer: referer}));
+
+    if(!/\/account\//i.test(AnyBalance.getLastUrl())){
+        var error = getElement(html, /<[^>]+alert-error/i, replaceTagsAndSpaces);
 		if (error)
-			throw new AnyBalance.Error(error, null, /неправильные реквизиты|почт/i.test(error));
+			throw new AnyBalance.Error(error, null, /парол/i.test(error));
 		
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
 
-    var result = {success: true};
+	var result = {
+		success: true
+	};
 
-    getParam(html, result, 'fio', /<td>Клиент[\s]*<\/td>[\s]*<td>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'balance', /<td>Баланс<\/td>[\s\S]*<td>([\s\S]*)<span class="alsrub">i<\/span><\/td>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'number', /<td>Договор[\s]*<\/td>[\s]*<td>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'email', /<td>Email[\s]*<\/td>[\s]*<td class="word-break">([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-    
-	var href = getParam(html, null, null, /href="([^"]*loyalty\.[^"]+)/i, replaceTagsAndSpaces);
-	if(href) {
-		html = AnyBalance.requestGet(href);
-		// У тестироуемого акка нету бонусов, поэтому "это" я исправить не могу
-		getParam(html, result, 'bonus', /<td><span class="mybonusbalance green-bold-text" style="font-size: 36px">([\s\S]*?)<\/span><\/td>/i, replaceTagsAndSpaces, parseBalance);
-	} else {
-		AnyBalance.trace('Не удалось найти ссылку на программу лояльности!');
-	}
+	var client = getJson(AnyBalance.requestGet(baseurl + 'api/client/extended', addHeaders({Referer: baseurl})));
+	var whoami = getJson(AnyBalance.requestGet(baseurl + 'api/whoami', addHeaders({Referer: baseurl})));
+
+	if(!client.contracts || !client.contracts.length)
+		throw new AnyBalance.Error('У вас нет лицевого счета');
+	var contract = client.contracts[0];
+
+	AB.getParam(contract.account_balance, result, 'balance');
+	AB.getParam(contract.loyalty_member_balance, result, 'bonus');
+	AB.getParam(client.client.name, result, 'fio');
+	AB.getParam(whoami.user.phone, result, 'phone');
+	AB.getParam(whoami.user.email, result, 'email');
+	AB.getParam(contract.contract_status_id, result, 'status');
 	
     AnyBalance.setResult(result);
 }

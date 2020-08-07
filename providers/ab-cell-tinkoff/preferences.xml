@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+	<EditTextPreference
+		obligatory="true"
+		title="Телефон"
+		positiveButtonText="ОК"
+		summary="|Номер телефона в формате 9951234567|{@s}"
+		dialogTitle="Телефон"
+		inputType="number"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите номер телефона для входа в приложение (10 цифр без пробелов и разделителей, например 9951234567)."
+		key="login">
+	</EditTextPreference>
+</PreferenceScreen>

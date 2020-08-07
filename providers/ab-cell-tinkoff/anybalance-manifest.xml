@@ -24,7 +24,7 @@
 	</files>
 	<counters>
 		<counter id="balance" name="Баланс" units=" р"/>
-		<counter id="min" name="Кредит" units=" мин"/>
+		<counter id="min" name="Минуты" units=" мин"/>
 		<counter id="internet" name="Интернет" units=" МБ"/>
 		<counter id="limit" name="Кредит" units=" р"/>
 		<counter id="fio" name="Имя абонента" type="text"/>

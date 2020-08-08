@@ -69,7 +69,7 @@ function main() {
 	getParam(json.Money, result, 'balance');
 	getParam(json.CallBalance, result, 'min');
 	getParam(json.SmsBalance, result, 'sms');
-	getParam(json.InternetBalance + json.InternetUnit, result, 'internet', null, null, parseTraffic);
+	getParam(json.InternetBalance, result, 'internet');
 	getParam(json.EndPeriodLocal, result, 'till', null, null, parseDate);
 
 	AnyBalance.setResult(result);

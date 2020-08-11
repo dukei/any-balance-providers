@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <provider>
-   <id version="3">ab-money-rgs</id>
+   <id version="4">ab-money-rgs</id>
    <name>Росгосстрах</name>
    <description>Получает текущий остаток и другие параметры карт, счетов, депозитов банка Росгосстрах (http://www.rgsbank.ru), используя интернет-банк https://online.rgsbank.ru.
 

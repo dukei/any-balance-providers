@@ -317,7 +317,7 @@ function fetchCredit(jsonInfo, baseurl){
     getParam(html, result, 'accnum', /Счет для погашения кредита(?:[\s\S]*?<TD[^>]*>){1}([\s\S]*?)<\/TD>/i, replaceTagsAndSpaces);
     getParam(html, result, 'pcts', /Сумма начисленных процентов\s*<(?:[\s\S]*?<TD[^>]*>){1}([\s\S]*?)<\/TD>/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'type', /Тип кредита(?:[\s\S]*?<TD[^>]*>){1}([\s\S]*?)<\/TD>/i, replaceTagsAndSpaces);
-    getParam(html, result, 'till', /Срок очередного платежа(?:[\s\S]*?<TD[^>]*>){1}([\s\S]*?)<\/TD>/i, replaceTagsAndSpaces, parseDate);
+    getParam(html, result, 'minpaytill', /Срок очередного платежа(?:[\s\S]*?<TD[^>]*>){1}([\s\S]*?)<\/TD>/i, replaceTagsAndSpaces, parseDate);
     getParam(html, result, '__tariff', /Счет для погашения кредита(?:[\s\S]*?<TD[^>]*>){1}([\s\S]*?)<\/TD>/i, replaceTagsAndSpaces);
     getParam(jsonInfo.USR, result, 'fio', /(.*)/i, replaceTagsAndSpaces);
 

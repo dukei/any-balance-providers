@@ -11,4 +11,10 @@
 		dialogMessage="Введите номер телефона для входа в приложение (10 цифр без пробелов и разделителей, например 9951234567)."
 		key="login">
 	</EditTextPreference>
+	<CheckBoxPreference
+		title="Подтверждение на контактный номер"
+		defaultValue="false"
+		summaryOn="Код для подтверждения входа присылается на контактный номер"
+		summaryOff="Код для подтверждения входа присылается на основной номер"
+		key="on_contact" />
 </PreferenceScreen>

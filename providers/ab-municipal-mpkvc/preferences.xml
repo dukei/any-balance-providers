@@ -1,13 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
+    <ListPreference
+        title="Регион"
+        summary="|Выберите регион|Выбран регион '{@s}'!"
+        key="region"
+        defaultValue="rzn"
+        entries="Рязань|Касимов|Рязанская область"
+        entryValues="rzn|kasimov|rznObl">
+    </ListPreference>
     <EditTextPreference 
         title="Номер лицевого счёта" 
         positiveButtonText="ОК" 
-        summary="||{@s}" 
+        summary="Учетная запись в Личном кабинете||{@s}\n" 
         dialogTitle="Номер лицевого счёта" 
         negativeButtonText="Отмена" 
-        dialogMessage="Введите номер лицевого счёта."
+        dialogMessage="Введите номер лицевого счёта"
         key="login"
         inputType="number">
+    </EditTextPreference>
+    <ListPreference
+        title="Что смотреть"
+        summary="||{@s}"
+        key="type"
+        defaultValue="total"
+        entries="Итого|Услуга"
+        entryValues="total|service">
+    </ListPreference>
+    <EditTextPreference
+        positiveButtonText="ОК"
+        key="code"
+        dialogTitle="Код"
+        negativeButtonText="Отмена"
+        title="Код услуги"
+        summary="|Автоматически|{@s}"
+        dialogMessage="Введите код услуги, по которой вы хотите получить данные. Если это поле оставить пустым, то будет показана информация по первой услуге.">
     </EditTextPreference>
 </PreferenceScreen>

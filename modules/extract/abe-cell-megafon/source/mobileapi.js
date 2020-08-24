@@ -164,7 +164,7 @@ function megafonLkAPILoginNew(options){
 			throw new AnyBalance.Error(json.message || 'Ошибка входа. Неправильный номер?', null, true);
 		}
 
-		var code = AnyBalance.retrieveCode('Пожалуйста, введите код входа в Личный Кабинет из СМС для привязки номера к устройству', null, {inputType: 'number'});
+		var code = AnyBalance.retrieveCode('Пожалуйста, введите код входа в Личный Кабинет из СМС для привязки номера к устройству', null, {inputType: 'number', time: 300000});
 
 		json = callAPI('post', 'auth/otp/submit', {login: prefs.login, otp: code}, true);
 

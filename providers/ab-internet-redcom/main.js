@@ -13,8 +13,8 @@ function main() {
 	var prefs = AnyBalance.getPreferences();
 	var baseurl = 'https://abonent.redcom.ru/';
 	AnyBalance.setDefaultCharset('utf-8');
-	//Старый сервер оракл 10g имеет баг в TSL, приходится явно перейти на SSL
-	AnyBalance.setOptions({SSL_ENABLED_PROTOCOLS: ['SSLv3']});
+	//Старый сервер оракл 10g, до сих пор SSL включен
+	AnyBalance.setOptions({SSL_ENABLED_PROTOCOLS: ['TLSv1.2']});
 	
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
@@ -26,7 +26,7 @@ function main() {
 		'FORMNAME':'QFRAME',
     }, addHeaders({Referer: baseurl + 'fastcom'}));
 	
-	var href = getParam(html, null, null, /Click[^']*'([^']*QCURRACC[^']*)/i);
+	var href = getParam(html, /Click[^']*'([^']*QCURRACC[^']*)/i);
 	
 	if(!href)
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен, либо не верные логин-пароль');
@@ -34,7 +34,7 @@ function main() {
 	html = AnyBalance.requestGet(baseurl + 'fastcom/!w3_p_main.showform' + href, g_headers);
 	
     var result = {success: true};
-	getParam(html, result, 'fio', /Клиент:[^>]*>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'fio', /Клиент:[^>]*>([^<]*)/i, replaceTagsAndSpaces);
 	getParam(html, result, 'balance', /Текущий баланс(?:[^>]*>){4}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'recomend', /Рекомендуемая сумма платежа[^>]*>\s*<TD[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
 	

@@ -3,12 +3,12 @@
 */
 
 var g_headers = {
-	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
-	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
+	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3',
+	'Accept-Language': 'en-US,en;q=0.9',
 	'Connection': 'keep-alive',
 	'Cache-Control': 'max-age=0',
     'Upgrade-Insecure-Requests': '1',
-	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.101 Safari/537.36',
+	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.120 Safari/537.36',
 	'Origin': 'https://my.a1.by',
 };
 
@@ -154,9 +154,9 @@ function main(){
     html = requestPostMultipart(baseurl + 'work.html', {
         sid3: sid,
         user_input_timestamp: new Date().getTime(),
-        user_input_0: '_next',
+        user_input_0: '_root/' + personalInfo,
         last_id: '',
-        user_input_1: personalInfo,
+        user_input_1: '',
     }, addHeaders({
     	Referer: baseurl
     }));

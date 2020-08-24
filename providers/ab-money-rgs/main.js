@@ -7,45 +7,6 @@
 Личный кабинет: https://online.rgsbank.ru
 */
 
-function getParam (html, result, param, regexp, replaces, parser) {
-	if (param && (param != '__tariff' && !AnyBalance.isAvailable (param)))
-		return;
-
-	var value = regexp.exec (html);
-	if (value) {
-		value = value[1];
-		if (replaces) {
-			for (var i = 0; i < replaces.length; i += 2) {
-				value = value.replace (replaces[i], replaces[i+1]);
-			}
-		}
-		if (parser)
-			value = parser (value);
-
-    if(param)
-      result[param] = value;
-    else
-      return value
-	}
-}
-
-var replaceTagsAndSpaces = [/\\n/g, ' ', /\[br\]/ig, ' ', /<[^>]*>/g, ' ', /\s{2,}/g, ' ', /^\s+|\s+$/g, '', /^"+|"+$/g, ''];
-var replaceFloat = [/\s+/g, '', /,/g, '.'];
-
-function parseBalance(text){
-    var _text = text.replace(/\s+/g, '');
-    var val = getParam(_text, null, null, /(-?\d[\d\.,]*)/, replaceFloat, parseFloat);
-    AnyBalance.trace('Parsing balance (' + val + ') from: ' + text);
-    return val;
-}
-
-function parseCurrency(text){
-    var _text = text.replace(/\s+/g, '');
-    var val = getParam(_text, null, null, /-?\d[\d\.,]*\s*(\S*)/);
-    AnyBalance.trace('Parsing currency (' + val + ') from: ' + text);
-    return val;
-}
-
 function parseDate(str){
     var matches = /(\d+)[^\d](\d+)[^\d](\d+)/.exec(str);
     if(matches){
@@ -170,14 +131,17 @@ function main(){
         XACTION:''
     }, g_headers);
 */
-    if(prefs.type == 'card')
+    if (prefs.type == 'card') {
         fetchCard(jsonInfo, baseurl);
-    else if(prefs.type == 'acc')
+	} else if(prefs.type == 'acc') {
         fetchAccount(jsonInfo, baseurl);
-    else if(prefs.type == 'dep')
+	} else if(prefs.type == 'dep') {
         fetchDeposit(jsonInfo, baseurl);
-    else
+	} else if(prefs.type == 'credit') {
+        fetchCredit(jsonInfo, baseurl);
+	} else {
         fetchCard(jsonInfo, baseurl); //По умолчанию карты будем получать
+	}
 }
 
 function fetchCard(jsonInfo, baseurl){
@@ -234,7 +198,7 @@ function fetchCard(jsonInfo, baseurl){
     AnyBalance.setResult(result);
 }
 
-function fetchAccount(jsonInfo, baseurl){
+function fetchAccount(jsonInfo, baseurl) {
     var prefs = AnyBalance.getPreferences();
     if(prefs.cardnum && !/^\d{4,}$/.test(prefs.cardnum))
         throw new AnyBalance.Error("Введите от четырех последних цифр номера счета или не вводите ничего, чтобы показать информацию по первому счету");
@@ -319,8 +283,48 @@ function fetchDeposit(jsonInfo, baseurl){
     AnyBalance.setResult(result);
 }
 
-function html_entity_decode(str)
-{
+function fetchCredit(jsonInfo, baseurl){
+    var html = AnyBalance.requestPost(baseurl, {
+        SID:jsonInfo.SID,
+        tic:1,
+        T:'RT_2IC.SC',
+        nvgt:1,
+        SCHEMENAME:'CREDITS',
+        FILTERIDENT:''
+    }, g_headers);
+
+
+	var id = getParam(html, null, null, /SIDR="([^"]*)/i);
+	if(!id) {
+		throw new AnyBalance.Error('Не удаётся найти ни одного кредита!');
+	}
+
+    html = AnyBalance.requestPost(baseurl, {
+            SID:jsonInfo.SID,
+            tic:1,
+            T:'RT_2IC.view',
+            SCHEMENAME:'CREDITS',
+            IDR:id,
+            FORMACTION:'VIEW'
+        }, g_headers);
+
+    var result = {success: true};
+
+    getParam(html, result, 'balance', /Общая задолженность(?:[\s\S]*?<TD[^>]*>){1}([\s\S]*?)<\/TD>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'summ', /Сумма договора(?:[\s\S]*?<TD[^>]*>){1}([\s\S]*?)<\/TD>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'minpay', /Всего к погашению в очередной платеж(?:[\s\S]*?<TD[^>]*>){1}([\s\S]*?)<\/TD>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'pct', /Процентная ставка(?:[\s\S]*?<TD[^>]*>){1}([\s\S]*?)<\/TD>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'accnum', /Счет для погашения кредита(?:[\s\S]*?<TD[^>]*>){1}([\s\S]*?)<\/TD>/i, replaceTagsAndSpaces);
+    getParam(html, result, 'pcts', /Сумма начисленных процентов\s*<(?:[\s\S]*?<TD[^>]*>){1}([\s\S]*?)<\/TD>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'type', /Тип кредита(?:[\s\S]*?<TD[^>]*>){1}([\s\S]*?)<\/TD>/i, replaceTagsAndSpaces);
+    getParam(html, result, 'minpaytill', /Срок очередного платежа(?:[\s\S]*?<TD[^>]*>){1}([\s\S]*?)<\/TD>/i, replaceTagsAndSpaces, parseDate);
+    getParam(html, result, '__tariff', /Счет для погашения кредита(?:[\s\S]*?<TD[^>]*>){1}([\s\S]*?)<\/TD>/i, replaceTagsAndSpaces);
+    getParam(jsonInfo.USR, result, 'fio', /(.*)/i, replaceTagsAndSpaces);
+
+    AnyBalance.setResult(result);
+}
+
+function html_entity_decode(str) {
     //jd-tech.net
     var tarea=document.createElement('textarea');
     tarea.innerHTML = str;

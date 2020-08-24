@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="4" date="2020-08-04">
+	Преодоление защиты от роботов
+	</change>
 	<change version="3" date="2020-02-07">
 	Исправлена дата сгорания баллов
 	</change>

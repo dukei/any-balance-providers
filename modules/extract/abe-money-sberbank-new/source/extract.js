@@ -218,7 +218,7 @@ function processAccounts(html, result) {
     if(!AnyBalance.isAvailable('accounts'))
         return;
 
-	html = AnyBalance.requestGet(nodeUrl + '/PhizIC/private/accounts/list.do', g_headers);
+	html = AnyBalance.requestGet(nodeUrl + '/PhizIC/private/accounts/list.do?design=1', g_headers);
 	var pageToken = getParamByName(html, 'PAGE_TOKEN');
 	
 	var accounts = getElements(html, /<div[^>]+class="productCover[^"]*Product[^>]*">/ig, g_headers);
@@ -297,7 +297,7 @@ function processCards(html, result) {
 	if(!AnyBalance.isAvailable('cards'))
 		return;
 
-	html = AnyBalance.requestGet(nodeUrl + '/PhizIC/private/cards/list.do');
+	html = AnyBalance.requestGet(nodeUrl + '/PhizIC/private/cards/list.do?design=1');
 	var cards = getElements(html, /<div[^>]+class="productCover[^"]*(?:activeProduct|errorProduct)[^>]*">/ig);
 	AnyBalance.trace('Найдено карт: ' + cards.length);
 	result.cards = [];
@@ -372,7 +372,7 @@ function processLoans(html, result) {
 	if(!AnyBalance.isAvailable('credits'))
 		return;
 
-	html = AnyBalance.requestGet(nodeUrl + '/PhizIC/private/loans/list.do');
+	html = AnyBalance.requestGet(nodeUrl + '/PhizIC/private/loans/list.do?design=1');
 	var loans = getElements(html, /<div[^>]+class="productCover[^"]*activeProduct[^>]*">/ig);
 	AnyBalance.trace('Найдено кредитов: ' + loans.length);
 	result.credits = [];
@@ -417,7 +417,7 @@ function processMetalAccounts(html, result) {
     if(!AnyBalance.isAvailable('accounts_met'))
         return;
 
-	html = AnyBalance.requestGet(nodeUrl + '/PhizIC/private/ima/list.do');
+	html = AnyBalance.requestGet(nodeUrl + '/PhizIC/private/ima/list.do?design=1');
 	var accounts = getElements(html, /<div[^>]+class="productCover[^"]*activeProduct[^>]*">/ig);
 	AnyBalance.trace('Найдено мет. счетов: ' + accounts.length);
 	result.accounts_met = [];

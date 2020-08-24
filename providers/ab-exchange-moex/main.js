@@ -23,7 +23,7 @@ function table2object(json){
 }
 
 function main() {
-	var baseurl = 'http://www.moex.com/';
+	var baseurl = 'https://iss.moex.com/';
 	AnyBalance.setDefaultCharset('utf-8');
 	
 	var html = AnyBalance.requestGet(baseurl, g_headers);
@@ -57,7 +57,7 @@ function main() {
 	}
 
 	if(AnyBalance.isAvailable('mmvb')){
-		html = AnyBalance.requestGet(baseurl + 'iss/engines/stock/markets/index/securities.jsonp?callback=iss_jsonp_c2d0522cd13ff6516bd29effe6d36b6d4807dd6d&iss.meta=off&iss.only=securities%2Cmarketdata&securities=SNDX%3AMICEXINDEXCF&lang=ru&_=' + (+new Date()), 
+		html = AnyBalance.requestGet(baseurl + 'iss/engines/stock/markets/index/securities.jsonp?callback=iss_jsonp_c2d0522cd13ff6516bd29effe6d36b6d4807dd6d&iss.meta=off&iss.only=securities%2Cmarketdata&securities=SNDX%3AIMOEX&lang=ru&_=' + (+new Date()), 
 			addHeaders({Referer: baseurl}));
 
 		var json = getJsonObject(html);
@@ -67,11 +67,11 @@ function main() {
 	}
 
 	if(AnyBalance.isAvailable('USD', 'EUR')){
-		html = AnyBalance.requestGet('http://www.cbr.ru/', g_headers);
-		var elem = getElement(html, /<div[^>]+id="widget_exchange"/i);
+		html = AnyBalance.requestGet('https://www.cbr.ru/', g_headers);
+		var elem = getElement(html, /<div[^>]+mobile-indicator_courses/i);
 
 		getParam(elem, result, 'USD', /Доллар США(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-		getParam(html, result, 'EUR', /Евро(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+		getParam(elem, result, 'EUR', /Евро(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 	}
 	
 	AnyBalance.setResult(result);

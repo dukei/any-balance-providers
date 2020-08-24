@@ -301,6 +301,8 @@ function enterMTS(options){
 
         html = AnyBalance.requestPost(loginUrl, params, addHeaders({Origin: g_baseurlLogin, Referer: loginUrl}));
         fixCookies();
+    }else if(/bobcmn/i.test(html)){
+    	throw new AnyBalance.Error('МТС ввел защиту от автоматического входа. Пожалуйста, обратитесь в поддержку МТС, составьте обращение о невозможности использования третьесторонних программ слежения за балансом. Напомните им, что вы можете перейти к другому оператору, который не противодействует отслеживанию баланса.');       
     }else{
     	if(!html)
     		throw new AnyBalance.Error('Личный кабинет МТС временно недоступен. Попробуйте ещё раз позже');

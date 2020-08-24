@@ -26,7 +26,7 @@
 		negativeButtonText="Отмена"
 		dialogMessage="Введите СуперПароль, используемый для авторизации. Если у вас нет пароля, позвоните со своего телефона Lifecell на номер *124*779#, пароль придет вам в ответном SMS."
 		positiveButtonText="ОК"
-		inputType="numberPassword">
+		inputType="textPassword">
 	</EditTextPreference>
 	<ListPreference
 		key="lang"

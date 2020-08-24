@@ -24,8 +24,8 @@
         key="type" 
         title="Банковский продукт"
         summary="||{@s}\n"
-        entries="Карта|Счет|Депозит"
-        entryValues="card|acc|dep"
+        entries="Карта|Счет|Депозит|Кредит"
+        entryValues="card|acc|dep|credit"
 	defaultValue="card">
     </ListPreference>
     <EditTextPreference 

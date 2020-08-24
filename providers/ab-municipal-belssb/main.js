@@ -12,7 +12,7 @@ var g_headers = {
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'http://www.belssb.ru/';
+	var baseurl = 'https://www.belssb.ru/';
 	AnyBalance.setDefaultCharset('utf-8');
 	
 	checkEmpty(prefs.login, 'Введите логин!');
@@ -30,12 +30,8 @@ function main() {
 	}, addHeaders({Referer: baseurl + 'lk/?login=yes'}));
 	
 	if (!/logout/i.test(html)) {
-		var error = getParam(html, null, null, /<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
-		if (error)
-			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
-		
 		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
+		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Неверный логин или пароль?');
 	}
 	
 	var result = {success: true};

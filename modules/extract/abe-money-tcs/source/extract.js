@@ -482,7 +482,8 @@ function processSaving(acc, result){
     getParam(jspath1(acc, '$.interest.value'), result, 'savings.pct_sum');
     getParam(jspath1(acc, '$.tariffInfo.interestRate') || jspath1(acc, '$.rate'), result, 'savings.pct');
 
-    getParam(jspath1(acc, '$.moneyAmount.value'), result, 'savings.balance');
+    getParam(jspath1(acc, '$.accountBalance.value'), result, 'savings.balance');
+    getParam(jspath1(acc, '$.moneyAmount.value'), result, 'savings.available');
     getParam(jspath1(acc, '$.moneyAmount.currency.name'), result, 'savings.currency');
 
     getParam(jspath1(acc, '$.status'), result, 'savings.status_code'); //ACTIVE

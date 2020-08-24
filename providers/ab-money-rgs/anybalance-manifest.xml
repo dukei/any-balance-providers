@@ -1,45 +1,41 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <provider>
-  <id version="2">ab-money-rgs</id>
-  <name>Росгосстрах</name>
-  <description>
-    Получает текущий остаток и другие параметры карт, счетов, депозитов банка Росгосстрах (http://www.rgsbank.ru), используя интернет-банк https://online.rgsbank.ru.
+   <id version="5">ab-money-rgs</id>
+   <name>Росгосстрах</name>
+   <description>Получает текущий остаток и другие параметры карт, счетов, депозитов банка Росгосстрах (http://www.rgsbank.ru), используя интернет-банк https://online.rgsbank.ru.
 
     Подключиться к системе «Интернет-банк» одним из способов:
       * Если у Вас есть действующая карта РОСГОССТРАХ БАНКА: зарегистрироваться дистанционно по адресу https://online.rgsbank.ru/ (страница авторизации системы «Интернет-банк»), перейдя по ссылке "Регистрация", заполнив предложенные поля и направив в Банк в электронном виде Заявление о присоединении к Правилам ДБО в соответствии с Правилами выпуска и обслуживания банковских карт Visa и MasterCard РОСГОССТРАХ БАНКА.
       * Если у Вас нет действующей карты РОСГОССТРАХ БАНКА: обратиться с паспортом в ближайший офис Банка для заключения Договора о дистанционном банковском обслуживании в системе Интернет-банк "Частный Клиент", получения средств авторизации (логина и пароля) и подключения SMS-кода для работы в Системе. 
 
-    В настоящее время провайдер поддерживает только карты, счета и депозиты. Для добавления кредитов обращайтесь к автору по е-мейл.
-  </description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>main.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="balance" name="Остаток"/>
-    <counter id="currency" name="Валюта" type="text"/>
-    <counter id="minpay" name="К оплате"/>
-    <counter id="minpaytill" name="Срок оплаты" type="time" format="dd/MM/yyyy"/>
-    <counter id="debt" name="Задолженность"/>
-    <counter id="type" name="Тип" type="text"/>
-    <counter id="pct" name="Процентная ставка" units="%"/>
-    <counter id="pcts" name="Сумма начисленных процентов"/>
-    <counter id="till" name="Срок действия" type="time" format="dd/MM/yyyy"/>
-    <counter id="status" name="Статус" type="text"/>
-    <counter id="cardnum" name="Номер карты" type="text"/>
-    <counter id="accnum" name="Номер счета" type="text"/>
-    <counter id="fio" name="Владелец" type="text"/>
-  </counters>
-  <keywords>
-    интернет-банкинг
-  </keywords>
-  <type>
-    money
-  </type>
-  <country>
-    ru
-  </country>
+    В настоящее время провайдер поддерживает только карты, счета и депозиты. Для добавления кредитов обращайтесь к автору по е-мейл.</description>
+   <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+   <depends>
+      <module id="library" />
+   </depends>
+   <files>
+      <icon>icon.png</icon>
+      <preferences>preferences.xml</preferences>
+      <js>main.js</js>
+      <history>history.xml</history>
+   </files>
+   <counters>
+      <counter id="balance" name="Остаток" />
+      <counter id="summ" name="Сумма" />
+      <counter id="currency" name="Валюта" type="text" />
+      <counter id="minpay" name="К оплате" />
+      <counter id="minpaytill" name="Срок оплаты" type="time" format="dd/MM/yyyy" />
+      <counter id="debt" name="Задолженность" />
+      <counter id="type" name="Тип" type="text" />
+      <counter id="pct" name="Процентная ставка" units="%" />
+      <counter id="pcts" name="Сумма начисленных процентов" />
+      <counter id="till" name="Срок действия" type="time" format="dd/MM/yyyy" />
+      <counter id="status" name="Статус" type="text" />
+      <counter id="cardnum" name="Номер карты" type="text" />
+      <counter id="accnum" name="Номер счета" type="text" />
+      <counter id="fio" name="Владелец" type="text" />
+   </counters>
+   <keywords>интернет-банкинг</keywords>
+   <type>money</type>
+   <country>ru</country>
 </provider>

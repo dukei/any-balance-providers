@@ -5,8 +5,8 @@
 var g_headers = {
 	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3',
 	'Accept-Language': 'ru,en-US;q=0.9,en;q=0.8,ru-RU;q=0.7',
-	'Origin': 'https://my.onlime.ru',
-	'Referer': 'https://my.onlime.ru/',
+	'Origin': 'https://my.rt.ru',
+	'Referer': 'https://my.rt.ru/',
 	'Connection': 'keep-alive',
 	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.120 Safari/537.36',
 	'Cache-Control': 'max-age=0',
@@ -19,7 +19,7 @@ function getWtf(info){
 
 function main(){
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'https://my.onlime.ru/';
+	var baseurl = 'https://my.rt.ru/';
 
     AnyBalance.setDefaultCharset('utf-8');
 

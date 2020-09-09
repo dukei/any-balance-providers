@@ -5,12 +5,11 @@
 var baseurl = "https://www.citilink.ru";
 
 var g_headers = {
-	'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-	'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
+	'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3',
 	'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
 	'Connection':'keep-alive',
 	'Origin': baseurl,
-	'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/47.0.2526.106 Safari/537.36'
+	'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.120 Safari/537.36'
 };
 
 function main(){
@@ -67,7 +66,7 @@ function login(){
 
     AnyBalance.setDefaultCharset('utf-8'); 
 
-	var html = AnyBalance.requestGet(baseurl + '/', g_headers);
+	var html = AnyBalance.requestGet(baseurl + '/login/', g_headers);
 	var form = getElement(html, /<form[^>]+action="[^"]*auth\/login[^>]*>/i);
 	var action = getParam(form, null, null, /<form[^>]+action="([^"]+)/i);
 
@@ -84,8 +83,9 @@ function login(){
 		else if (name == 'pass')
 			return prefs.password;
 	    else if (name == 'token'){
-	    	var obj = new te(json);
-	    	return pg({a: obj}); //Весьма сложные преобразования токена
+	    	return json.token + '_' + hex_md5(json.token + json.staticVersion)
+	    } else if(name == 'version'){
+	    	return json.staticVersion;
 	    }
 
 		return value;
@@ -104,7 +104,7 @@ function login(){
 	var url = joinUrl(baseurl, action);
 
 	AnyBalance.trace('Posting to url: ' + url);
-	html = AnyBalance.requestPost(url, params, addHeaders({Referer: baseurl + '/'})); 
+	html = AnyBalance.requestPost(url, params, addHeaders({Referer: baseurl + '/login/'})); 
 	
     if(!/\/login\/exit/i.test(html)){
         var error = getParam(html, null, null, /<div[^>]+class="[^"]*error[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);

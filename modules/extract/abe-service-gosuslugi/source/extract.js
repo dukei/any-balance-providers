@@ -66,7 +66,7 @@ function login(prefs) {
 		// }, addHeaders({Referer: 'https://esia.gosuslugi.ru/idp/authn/CommonLogin'}));
 
 		// А новую оставим на всякий
-		var command = getParam(html, null, null, /new\s+LoginViewModel\((?:[^,]+,){1,2}'([^"']+)'/i);
+		var command = getParam(html, null, null, /new\s+LoginViewModel\((?:[^,]+,){1,2}\s*'([^"']+)'/i);
 		if (!command) {
 			AnyBalance.trace(html);
 			throw new AnyBalance.Error('Не удалось найти идентификатор команды для входа.');

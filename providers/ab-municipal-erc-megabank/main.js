@@ -19,7 +19,7 @@ function calc_service_debt(servicename, data){
 function main(){
   AnyBalance.setDefaultCharset('utf-8');
   var prefs = AnyBalance.getPreferences();
-  var baseurl = 'https://erc.megabank.net/';
+  var baseurl = 'https://erc.megabank.ua/';
   var headers = {
     'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
     'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
@@ -36,14 +36,15 @@ function main(){
   if(form_build_id) {
     AnyBalance.trace('form_build_id = ' + form_build_id[1]);
     AnyBalance.trace('Login');
-    var html = AnyBalance.requestPost(baseurl + 'ru/system/ajax', {
+    var html = AnyBalance.requestPost(baseurl + '/ru/node?destination=node', {
       form_build_id: form_build_id[1],
       form_id: "user_login_block",
+      op: "Войти",
       name: prefs.login,
       pass: prefs.password
     }, headers);
 
-    if(!/"command"\s*:\s*"reload"/i.test(html)){
+    if(!/user\/logout/i.test(html)){
         var json = getJson(html);
         for(var i=0; i<json.length; ++i){
         	if(json[i].command == 'insert'){
@@ -62,10 +63,9 @@ function main(){
 
   AnyBalance.trace('Connecting to ' + baseurl + 'ru/service/publicutilities');
   var html = AnyBalance.requestGet(baseurl + 'ru/service/publicutilities', headers);
-
   AnyBalance.trace('Searching account_url');
   if(prefs.account){
-    var account_url = (new RegExp('<h3 class="title">' + prefs.account + '[\\s\\S]*?"/(ru/service/publicutilities/debt/\\d)')).exec(html);
+    var account_url = (new RegExp('<h3 class="title">' + prefs.account + '[\\s\\S]*?"/(ua/service/publicutilities/debt/\\d)')).exec(html);
     if(!account_url) throw new AnyBalance.Error("Не удаётся найти account_url. Проблемы или изменения на сайте?");
     account_url = baseurl + account_url[1];
   } else var account_url = baseurl + 'ru/service/publicutilities/debt/1'
@@ -82,24 +82,26 @@ function main(){
   AnyBalance.trace('Searching month_option');
   var month_option = getParam(html, null, null, /<select[^>]+id="kan_monthlist"[^>]*>\s*<option[^>]+value="([^"]*)/i, replaceHtmlEntities);
   if(!month_option) throw new AnyBalance.Error("Не удаётся найти month_option. Проблемы или изменения на сайте?");
-  AnyBalance.trace('month_option = ' + month_option);
-
+  var m=month_option.slice(4,7)*1;
+  var y=month_option.slice(0,4)*1;
+  m +=1;
+  if (m==13) {m=1;y+=1};
+  month_option=y.toString()+ (m<10 ? '0':'')+ m.toString();
   AnyBalance.trace('Getting table');
+  AnyBalance.trace('month_option = ' + month_option);
   var json_table = AnyBalance.requestGet(baseurl + 'ru/service/resp/debt/' + account_N[1] + '/' + month_option + '?order=asc', headers);
   data_table = JSON.parse(json_table);
+
 
   var result = {success: true};
 
   result.month = month_option.replace(/(\d{4})(\d{2})/i, '$2/$1');
 
   // Лицевой счет
-  getParam(html, result, 'account', /<span class="label-static">лицевой счет<\/span><span class="value-static">(.*?)</, replaceTagsAndSpaces, false);
+  getParam(html, result, 'account', /<span class="label-static">(?:особовий рахунок|лицевой счет)<\/span><span class="value-static">(.*?)</, replaceTagsAndSpaces, false);
 
   // Адрес
-  getParam(html, result, 'address', /<span class="label-static">Адрес<\/span><span class="value-static">([\s\S]*?)</, replaceTagsAndSpaces);
-
-  // Ф.И.О.
-  getParam(html, result, 'name', /<span class="label-static">Ф.И.О.<\/span><span class="value-static">(.*?)</, replaceTagsAndSpaces);
+  getParam(html, result, 'address', /<span class="label-static">Адреса?<\/span><span class="value-static">([\s\S]*?)</, replaceTagsAndSpaces);
 
   // Месяц
   getParam(html, result, 'month', /<select class="form-control" id="kan_monthlist" size=1 onchange="get_views_nt\(\)" data-trig="1"><option value="\d{6}"  selected="selected" > (.*?) </, replaceTagsAndSpaces);
@@ -136,9 +138,13 @@ function main(){
 
   // Газ
   if(AnyBalance.isAvailable('gas', 'debt')){
-    result.gas = calc_service_debt('ГАЗ', data_table)
+    result.gas = calc_service_debt('ГАЗ ПРИРОДНЫЙ', data_table)
   }
 
+  // Распределение газа
+  if(AnyBalance.isAvailable('gasrasp', 'debt')){
+    result.gasrasp = calc_service_debt('РАСПРЕДЕЛЕНИЕ ПРИРОДНОГО ГАЗА', data_table)
+  }
   // Вывоз ТБО
   if(AnyBalance.isAvailable('garbage', 'debt')){
     result.garbage = calc_service_debt('ВЫВОЗ ТБО', data_table)
@@ -174,7 +180,7 @@ function main(){
   result.__tariff='Счет: ' + result.account + ' (' + result.month + ')';
 
   AnyBalance.trace('Logout');
-  var html = AnyBalance.requestGet(baseurl + 'ru/user/logout', headers);
+//  var html = AnyBalance.requestGet(baseurl + 'ru/user/logout', headers);
   
   AnyBalance.setResult(result);
 }

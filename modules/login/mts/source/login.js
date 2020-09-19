@@ -1,4 +1,4 @@
-var g_baseurlLogin = 'https://login.mts.ru';
+var g_baseurlLogin = 'http://login.mts.ru';
 
 function checkLoginError(html, loginUrl) {
 	var prefs = AnyBalance.getPreferences();

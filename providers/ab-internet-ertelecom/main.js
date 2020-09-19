@@ -1,159 +1,148 @@
-/**
-Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
-*/
+﻿/**
+Провайдер AnyBalance (https://github.com/dukei/any-balance-providers)
+ */
 
 var g_headers = {
-	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-	'Accept-Language': 'ru,en-US;q=0.9,en;q=0.8,ru-RU;q=0.7',
-	'Connection': 'keep-alive',
-	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36',
+  'Accept': 'application/json, text/plain, */*',
+  'Accept-Encoding': 'gzip, deflate, br',
+  'Accept-Language': 'ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7',
+  'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.102 Safari/537.36'
 };
 
+var g_baseUrlAuth = 'https://api-auth.domru.ru/v1';
+var g_baseUrlProfile = 'https://api-profile.domru.ru/v1';
+
+/* Оставляем для сохранения обратной совместимости */
 var g_region_change = {
-	kzn: 'kazan',
-	nch: 'chelny',
-	novosib: 'nsk',
-	spb: 'interzet',
+  kzn: 'kazan',
+  nch: 'chelny',
+  novosib: 'nsk',
+  spb: 'interzet',
 };
 
 function main() {
-	AnyBalance.setDefaultCharset('utf-8');
+  AnyBalance.setDefaultCharset('utf-8');
 
-	//	makeRegions();
-	//	return;
+  var prefs = AnyBalance.getPreferences();
 
-	var prefs = AnyBalance.getPreferences();
-	var domain = prefs.region || 'kzn'; // Казань по умолчанию
+  /* Сохраняем обратную совместимость. Если не указаны новые параметры, используем старые */
+  prefs.city = prefs.city || prefs.region;
+  prefs.login = prefs.login || prefs.log;
+  prefs.password = prefs.password || prefs.pwd;
 
-	if (g_region_change[domain])
-		domain = g_region_change[domain];
+  var city = prefs.city || 'ryazan'; // Рязань по умолчанию
 
-	AB.checkEmpty(prefs.log, 'Введите логин!');
-	AB.checkEmpty(prefs.pwd, 'Введите пароль!');
+  /* Оставляем для сохранения обратной совместимости */
+  if (g_region_change[city]) {
+    city = g_region_change[city];
+  }
 
+  AB.checkEmpty(prefs.login, 'Укажите ваш номер Договора/Телефона/Логин/E-mail!');
+  AB.checkEmpty(prefs.password, 'Введите пароль от Личного кабинета!');
 
-	AnyBalance.trace('Selected region: ' + domain);
-	var baseurl = 'https://lk.domru.ru/';
+  AnyBalance.trace('Selected city: ' + city);
 
-	AnyBalance.setCookie('domru.ru', 'citydomain'); //Удаляем старую куку
-	AnyBalance.setCookie('.domru.ru', 'service', '0');
-	AnyBalance.setCookie('.domru.ru', 'citydomain', domain, {
-		path: '/'
-	});
-	AnyBalance.setCookie('.domru.ru', 'cityconfirm', '1', {
-		path: '/'
-	});
+  var result = {
+    success: true
+  };
 
-	var info = AnyBalance.requestGet(baseurl + "login", g_headers);
+  var accessToken = login(prefs.login, prefs.password, false, city);
 
-	if (!info || AnyBalance.getLastStatusCode() > 400) {
-		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
-	}
+  getClientPersonal(accessToken, city, result);
+  getPaymentInfo(accessToken, city, result);
+  getProductsInfo(accessToken, city, result);
 
-	AnyBalance.trace("Redirected to: " + AnyBalance.getLastUrl());
-
-	var baseurlLogin = getParam(AnyBalance.getLastUrl(), /^https?:\/\/[^\/]*/i) + '/';
-	AnyBalance.trace("baseurlLogin: " + baseurl);
-
-
-	var form = getElement(info, /<form[^>]+login[^>]*>/i);
-	if (!form)
-		throw new AnyBalance.Error('Не удалось найти форму входа. Сайт изменен?');
-
-	var params = createFormParams(form, function(params, str, name, value) {
-		if (/username/i.test(name))
-			return prefs.log;
-		else if (/password/i.test(name))
-			return prefs.pwd;
-
-		return value;
-	}, true);
-
-	var action = getParam(form, /<form[^>]+action="([^"]*)/, replaceHtmlEntities);
-
-	// Заходим на главную страницу
-	var info = AnyBalance.requestPost(joinUrl(baseurlLogin, action), params, g_headers);
-
-	if (!/возвращением|logout|выход/.test(info)) {
-		var error = AB.getParam(info, null, null, /<div[^>]*class="[^"]*lk-form-block-error[^"]*"[^>]*>([\s\S]*?)<\/div>/i,
-			AB.replaceTagsAndSpaces);
-		if (error) {
-			throw new AnyBalance.Error(error, null, /парол/i.test(error));
-		}
-
-
-		if (AnyBalance.getLastStatusCode() >= 500) {
-			AnyBalance.trace(info);
-			throw new AnyBalance.Error(
-				'Ошибка сервера. Подождите немного и попробуйте ещё раз. Если ошибка сохраняется долгое время, попробуйте войти в личный кабинет через браузер. Если там то же самое, обращайтесь в поддержку Дом.ру.'
-			);
-		}
-
-		AnyBalance.trace(info);
-		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
-	}
-
-	info = AnyBalance.requestGet(baseurl);
-
-	var result = {
-		success: true
-	};
-
-	if (AnyBalance.isAvailable('balance', 'pay_till')) {
-		var token = decodeURIComponent(AnyBalance.getCookie('YII_CSRF_TOKEN'));
-		var res = AnyBalance.requestPost(baseurl + 'payments/default/GetDataForMoneybagWidget', [
-			['YII_CSRF_TOKEN', token]
-		], addHeaders({
-			Referer: baseurl,
-			Accept: 'application/json, text/javascript, */*; q=0.01',
-			'X-Requested-With': 'XMLHttpRequest',
-			Origin: 'https://lk.domru.ru',
-
-		}));
-
-		var user = {};
-		try {
-			user = getJson(res);
-			
-			getParam(user.balance, result, 'balance', null, replaceTagsAndSpaces, parseBalance);
-			getParam(user.datePay, result, 'pay_till', null, replaceTagsAndSpaces, parseDateWord);
-		} catch (e) {
-			AnyBalance.trace(res);
-			throw e;
-		}
-
-	}
-
-	if(AnyBalance.isAvailable('bits')){
-		var html = AnyBalance.requestGet(baseurl + 'index/default/GetloyaltyPoints', addHeaders({'X-Requested-With': 'XMLHttpRequest', Referer: baseurl + 'profile'}));
-		var json = getJson(html);
-		getParam(json.content, result, 'bits', null, replaceTagsAndSpaces, parseBalance);
- 	}
-
-	getParam(info, result, 'tariff_number', /<span[^>]+account-data-item_link[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
-	getParam(info, result, 'name', /b-head__account-data-item[^>]*data-name="([^"]*)/i, replaceTagsAndSpaces);
-	getParam(info, result, '__tariff', /Ваш пакет[^<]*<a[^>]*>([^<]+)/i, replaceTagsAndSpaces);
-	getParam(info, result, 'status', /<a[^>]+href="[^"]*status.domru.ru"[^>]*>([\s\S]*?)<\/a>/i, replaceTagsAndSpaces);
-
-	AnyBalance.setResult(result);
+  AnyBalance.setResult(result);
 }
 
-function makeRegions() {
-	var html = AnyBalance.requestGet('https://lk.domru.ru/login', g_headers);
-	var elems = getElements(html, /<div[^>]+data-domain[^>]*>/ig);
-	var values = [],
-		names = [];
-	for (var i = 0; i < elems.length; ++i) {
-		var elem = elems[i];
-		var name = getParam(elem, null, null, null, replaceTagsAndSpaces);
-		var id = getParam(elem, null, null, /data-domain="([^"]*)/i, null);
-		values.push(id);
-		names.push(name);
-	}
+function login(username, password, rememberMe, domain) {
+  var response = requestJson('POST', g_baseUrlAuth, '/person/auth', {
+      headers: {
+        'Domain': domain
+      },
+      data: {
+        'username': username,
+        'password': password,
+        'rememberMe': rememberMe ? 1 : 0
+      }
+    });
 
-	AnyBalance.setResult({
-		values: values.join('|'),
-		names: names.join('|')
-	});
+  return response.data.access_token;
+}
+
+function getClientPersonal(accessToken, domain, result) {
+  var response = requestJson('GET', g_baseUrlProfile, '/info/personal', {
+      headers: {
+        'Domain': domain,
+        'Authorization': 'Bearer ' + accessToken
+      }
+    });
+
+  result['tariff_number'] = response.agreement;
+  result['name'] = response.fio;
+}
+
+function getPaymentInfo(accessToken, domain, result) {
+  var response = requestJson('GET', g_baseUrlProfile, '/info/payment', {
+      headers: {
+        'Domain': domain,
+        'Authorization': 'Bearer ' + accessToken
+      },
+      params: {
+        'floatRecSum': 1
+      }
+    });
+
+  result['balance'] = parseBalanceSilent(response.balance);
+  result['pay_till'] = parseDateISOSilent(response.payDay);
+}
+
+function getProductsInfo(accessToken, domain, result) {
+  var response = requestJson('GET', g_baseUrlProfile, '/info/products', {
+      headers: {
+        'Domain': domain,
+        'Authorization': 'Bearer ' + accessToken
+      }
+    });
+
+  result['__tariff'] = response.tariffName;
+}
+
+function requestJson(method, url, action, options) {
+  var html, paramsStr = '';
+
+  if (!options) {
+    options = {};
+  } else {
+    if (options.params) {
+      paramsStr = createParams(options.params);
+    }
+  }
+
+  if (method == 'POST') {
+    html = AnyBalance.requestPost(url + action + paramsStr, options.data, joinObjects(g_headers, options.headers));
+  } else {
+    html = AnyBalance.requestGet(url + action + paramsStr, joinObjects(g_headers, options.headers));
+  }
+
+  if (!html || AnyBalance.getLastStatusCode() >= 400) {
+    AnyBalance.trace('Action: "' + action + '", Response: ' + html);
+    throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.', null, true);
+  }
+
+  var json = getJson(html);
+
+  return json;
+}
+
+function createParams(params) {
+  var result = '';
+  for (var param in params) {
+    result += result ? '&' : '?';
+    result += encodeURIComponent(param);
+    result += '=';
+    result += encodeURIComponent(params[param]);
+  }
+
+  return result;
 }

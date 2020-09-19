@@ -21,7 +21,7 @@ function main() {
 	var html = enterMtsLK({
 		login: prefs.login,
 		password: prefs.password,
-		url: 'https://login.mts.ru/amserver/UI/Login?service=money&goto=https://payment.mts.ru/Auth/SignIn/%3FReturnUrl%3D%2F', 
+		url: 'http://login.mts.ru/amserver/UI/Login?service=money&goto=https://payment.mts.ru/Auth/SignIn/%3FReturnUrl%3D%2F', 
 		baseurl: g_baseurl
 	});
 

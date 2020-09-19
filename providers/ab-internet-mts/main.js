@@ -149,7 +149,7 @@ function getMoscow() {
   var prefs = AnyBalance.getPreferences();
   var baseurl = 'https://kabinet.mts.ru/zservice/';
   var baseloginurl =
-    "https://login.mts.ru/amserver/UI/Login?service=stream&arg=newsession&goto=http%3A%2F%2Fkabinet.mts.ru%3A80%2Fzservice%2F";
+    "http://login.mts.ru/amserver/UI/Login?service=stream&arg=newsession&goto=http%3A%2F%2Fkabinet.mts.ru%3A80%2Fzservice%2F";
 
   AnyBalance.setOptions({
     PER_DOMAIN: {

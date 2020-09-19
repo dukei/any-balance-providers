@@ -12,11 +12,30 @@ var g_headers = {
 var g_baseUrlAuth = 'https://api-auth.domru.ru/v1';
 var g_baseUrlProfile = 'https://api-profile.domru.ru/v1';
 
+/* Оставляем для сохранения обратной совместимости */
+var g_region_change = {
+  kzn: 'kazan',
+  nch: 'chelny',
+  novosib: 'nsk',
+  spb: 'interzet',
+};
+
 function main() {
   AnyBalance.setDefaultCharset('utf-8');
 
   var prefs = AnyBalance.getPreferences();
+
+  /* Сохраняем обратную совместимость. Если не указаны новые параметры, используем старые */
+  prefs.city = prefs.city || prefs.region;
+  prefs.login = prefs.login || prefs.log;
+  prefs.password = prefs.password || prefs.pwd;
+
   var city = prefs.city || 'ryazan'; // Рязань по умолчанию
+
+  /* Оставляем для сохранения обратной совместимости */
+  if (g_region_change[city]) {
+    city = g_region_change[city];
+  }
 
   AB.checkEmpty(prefs.login, 'Укажите ваш номер Договора/Телефона/Логин/E-mail!');
   AB.checkEmpty(prefs.password, 'Введите пароль от Личного кабинета!');

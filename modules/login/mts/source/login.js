@@ -90,7 +90,7 @@ function redirectIfNeeded(html){
     	AnyBalance.trace('Потребовался редирект формой...');
     	var params = createFormParams(html);
     	var action = getParam(html, /<form[^>]+action=['"]([^'"]*)/, replaceHtmlEntities);
-    	action = action.replace(/^https:\/\/login\.mts\.ru/, 'http://login.mts.ru'); 
+    	action = action.replace(/^https:\/\/login\.mts\.ru(?::443)?/, 'http://login.mts.ru'); 
     	var url = AnyBalance.getLastUrl();
     	html = AnyBalance.requestPost(joinUrl(url, action), params, addHeaders({Refefer: url}));
     	fixCookies();

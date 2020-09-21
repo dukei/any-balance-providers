@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="4.1" version="193" date="2020-09-21">
+	Восстановлено получение данных через мобильный интернет МТС
+	</change>
 	<change major_version="4.1" version="192" date="2020-09-19">
 	- Поддержка изменений в процедуре входа
 	</change>

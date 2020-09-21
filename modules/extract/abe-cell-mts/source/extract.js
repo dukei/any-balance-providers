@@ -23,10 +23,10 @@ var g_baseurl = 'https://lk.mts.ru';
 var g_baseurlLogin = 'http://login.mts.ru';
 
 var g_headers = {
-    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-    'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/40.0.2214.111 Safari/537.36',
-    Connection: 'Keep-Alive',
-    'Accept-Encoding': 'gzip'
+    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3',
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.120 Safari/537.36',
+    'Upgrade-Insecure-Requests': '1',
+	'Accept-Language': 'en-US,en;q=0.9',
 //    'If-Modified-Since': null, //Иначе МТС глючит с кешированием...
 };
 
@@ -972,7 +972,7 @@ function loginWithoutPassword(){
     } catch (e) {
         AnyBalance.trace('Автоматический вход в кабинет не удался. Пробуем получить пароль через СМС');
         pass = getPasswordBySMS(prefs.login);
-        html = enterLK({login: prefs.login, password: pass, baseurl: 'https://lk.mts.ru', url: 'https://login.mts.ru/amserver/UI/Login?service=lk&goto=http%3A%2F%2Flk.mts.ru%2F'});
+        html = enterLK({login: prefs.login, password: pass, baseurl: 'https://lk.mts.ru', url: 'http://login.mts.ru/amserver/UI/Login?service=lk&goto=http%3A%2F%2Flk.mts.ru%2F'});
         if (prefs.password && prefs.password != pass) {
             changePassword(pass, prefs.password);
         }

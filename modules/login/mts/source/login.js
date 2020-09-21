@@ -90,6 +90,7 @@ function redirectIfNeeded(html){
     	AnyBalance.trace('Потребовался редирект формой...');
     	var params = createFormParams(html);
     	var action = getParam(html, /<form[^>]+action=['"]([^'"]*)/, replaceHtmlEntities);
+    	action = action.replace(/^https:\/\/login\.mts\.ru/, 'http://login.mts.ru'); 
     	var url = AnyBalance.getLastUrl();
     	html = AnyBalance.requestPost(joinUrl(url, action), params, addHeaders({Refefer: url}));
     	fixCookies();
@@ -97,6 +98,7 @@ function redirectIfNeeded(html){
     var redir = getParam(html, /<meta[^>]+http-equiv="REFRESH"[^>]*content="0;url=([^";]*)/i, replaceHtmlEntities);
     if(redir){
     	AnyBalance.trace('Потребовался get редирект...');
+    	redir = redir.replace(/^https:\/\/login\.mts\.ru/, 'http://login.mts.ru');
     	var url = AnyBalance.getLastUrl();
     	html = AnyBalance.requestGet(joinUrl(url, redir), addHeaders({Refefer: url}));
     	fixCookies();

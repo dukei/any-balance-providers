@@ -31,10 +31,9 @@ function main(){
     var html = AnyBalance.requestGet (baseurl, g_headers);
 
     AnyBalance.trace ("Trying to enter selfcare at address: " + baseurl);
-    html = AnyBalance.requestPost (baseurlLogin + "/users/ajax/login.xl", {
+    html = AnyBalance.requestPost (baseurl + "users/ajax/log-in.xl", {
         email: prefs.login,
         pass: prefs.password,
-        expire: 'on'
     }, addHeaders({
     	Referer: baseurl
     }));

@@ -1,30 +1,32 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="6">ab-tracking-novaposhta</id>
+	<id version="7">ab-tracking-novaposhta</id>
 	<api flags="no_browser"/>
 	<name>Нова пошта</name>
 	<description html="true"><![CDATA[
 	<p>Отслеживание почтового отправления украинской службой доставки грузов Нова Пошта (http://novaposhta.ua)</p>
 	<p>Рекомендуется показывать местоположение в текстовом виджете не менее 1х2.</p>
 	]]></description>
-	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<author>DimaZUA &lt;DIMAZ.KHUA@gmail.com&gt;</author>
 	<depends>
 		<module id="library"/>
 	</depends>	
 	<files>
+		<js>library.min.js</js>
 		<icon>icon.png</icon>
 		<js>main.js</js>
 		<preferences>preferences.xml</preferences>
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="location" name="Текущее местоположение" type="text"/>
-		<counter id="route" name="Маршрут" type="text"/>
 		<counter id="trackid" name="№ накладной" type="text"/>
+		<counter id="location" name="Текущее местоположение" type="text"/>
+		<counter id="payment" name="Сумма к оплате" units=" грн."/>
+		<counter id="getdate" name="Дата доставки" type="text" />
 		<counter id="delivery_address" name="Адрес доставки" type="text"/>
-		<counter id="back" name="Обратная доставка" type="text"/>
-		<counter id="weight" name="Вес отправления" type="text"/>
-		<counter id="payment" name="Сумма к оплате" type="text"/>
+                <counter id="senderphone" name="Номер телефона отправителя" type="text"/>
+                <counter id="getterphone" name="Номер телефона получателя" type="text"/>
+                <counter id="more" name="Дополнительная информация" type="html"/>
 	</counters>
 	<keywords>Почтовое отправление, почта Украины</keywords>
 	<type>tracking, post</type>

@@ -128,6 +128,13 @@ function main() {
         AnyBalance.trace('Успешно получили данные по номеру: ' + account.msisdn);
         AnyBalance.trace(JSON.stringify(account));
 
+        getParam(account.position, result, 'position');
+        var labels = '?';
+        if(account.labels){
+            labels = account.labels.map(function(l) { return l.name }).join(', ');
+        	getParam(labels, result, 'labels');
+        }
+
         if(account.ratePlan && account.account && account.account.id){
         	getParam(account.account.number, result, 'licschet');
         	getParam(account.msisdn, result, 'phone_name');
@@ -145,7 +152,7 @@ function main() {
 
         	getParam(json.profile.ratePlanName, result, '__tariff');
         	getParam(json.subscriber.statusDef, result, 'status');
-        	getParam(json.profile.msisdn + ' - ' + json.profile.profileFio, result, 'name_name');
+        	getParam(json.profile.msisdn + ' - ' + (json.profile.profileFio || labels), result, 'name_name');
         }
 
         if(AnyBalance.isAvailable('min_left', 'sms_left')){
@@ -168,7 +175,7 @@ function main() {
             getParam(json.subscriberBudget && json.subscriberBudget.balance, result, 'prsnl_balance');
         }
 
-        if(account.account){
+        if(account.account && account.account.number){
         	getAccount(baseurl, account.account.number, result);
         }else{
             AnyBalance.trace('Номер не прикреплен к Л\С, пропускаем инфу по счету');

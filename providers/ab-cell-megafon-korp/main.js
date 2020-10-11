@@ -86,6 +86,8 @@ function main() {
     
     getParam(json.accountNumber, result, 'licschet');
     getParam(user.user.username, result, 'phone_name');
+    getParam(json.currentBalance, result, 'balance');
+    getParam(json.conditionalBalance, result, 'balance_if');
 
     try {
         var account;
@@ -119,6 +121,8 @@ function main() {
                 }
             }
         }
+
+        getParam(totalCount, result, 'abonCount');
 
         if(!account) {
             AnyBalance.trace(JSON.stringify(json));

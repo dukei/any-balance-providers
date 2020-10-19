@@ -8,7 +8,7 @@
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
-		<js>yandex.min.js</js>
+		<js>login.yandex.min.js</js>
 		<history>history.xml</history>
 	</files>
 	<depends>

@@ -58,7 +58,7 @@ function loginYandex(login, password, html, retpath, from) {
 		html = AnyBalance.requestPost(pageUrl, params, addHeaders({Referer: pageUrl}));
 	}
 
-	if (!/logout/i.test(html)) {
+	if (!/logout|balance-widget/i.test(html)) {
 		var error = getParam(html, null, null, [/b\-login\-error[^>]*>([\s\S]*?)<\/strong>/i, /error-msg[^>]*>([^<]+)/i], replaceTagsAndSpaces, html_entity_decode);
 		if (error)
 			throw new AnyBalance.Error(error, null, /Учётной записи с таким логином не существует|Неправильная пара логин-пароль|Неправильный логин или пароль|Нет аккаунта с таким логином/i.test(error));

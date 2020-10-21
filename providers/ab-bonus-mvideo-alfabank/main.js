@@ -176,8 +176,8 @@ function main(){
 
     html = AnyBalance.requestGet(baseurl + '/my-account', g_headers);
     getParam(html, result, 'fio', /Владелец карты[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
-    getParam(html, result, 'balance', /(\d+)\s+БР(?:\s|<[^>]*>)*из\s+\d+\s+доступно для оплаты/i, null, parseBalance);
-    getParam(html, result, 'balance_all', /\d+\s+БР(?:\s|<[^>]*>)*из\s+(\d+)\s+доступно для оплаты/i, null, parseBalance);
+    getParam(html, result, 'balance', /([\d\s]+)\s+БР(?:\s|<[^>]*>)*из\s+[\d\s]+доступно для оплаты/i, null, parseBalance);
+    getParam(html, result, 'balance_all', /([\d\s]+)\s+БР(?:\s|<[^>]*>)*из\s+([\d\s]+)доступно для оплаты/i, null, parseBalance);
 /*    var avail = getElements(html, /<thead/ig, [/Доступно для оплаты/i])[0];
     if(avail)
     	getParam(avail, result, 'balance', /<thead[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);

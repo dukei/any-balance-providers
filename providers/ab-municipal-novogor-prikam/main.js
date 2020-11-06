@@ -17,14 +17,17 @@ function main() {
 
 	checkEmpty(prefs.login1, 'Введите логин!');
 	checkEmpty(prefs.password1, 'Введите пароль!');
-	
+
 	var html = AnyBalance.requestGet(baseurl + '/account', g_headers);
-	
+	AnyBalance.trace('Status?');
+	var s = AnyBalance.getLastStatusCode();
+	AnyBalance.trace('Status: ' + s);
 	if(!html || AnyBalance.getLastStatusCode() > 400){
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
 	}
-	
+
+
 	var params = createFormParams(html, function(params, str, name, value) {
 		if (name == 'login')
 			return prefs.login1;
@@ -33,25 +36,42 @@ function main() {
 
 		return value;
 	});
-	
+
 	html = AnyBalance.requestPost(baseurl + '/login', params, addHeaders({Referer: baseurl + '/login'}));
-	
+
 	if (!/logout/i.test(html)) {
 		var error = getParam(html, null, null, /Ошибка/i, replaceTagsAndSpaces);
 		if (error)
 			throw new AnyBalance.Error(error, null, /имя пользователя или пароль неверны/i.test(error));
-		
+
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
-	
-	var result = {success: true};
-	
+
+	// Получим список лицевых счетов
+	var rows = getElements(html, /<div[^>]+class="account-info"[^>]*>/ig);
+
+	if (rows.length < 1) {
+        throw new AnyBalance.Error('У вас нет ни одного лицевого счета!');
+	}
+
+	var html = prefs.id > 0 && prefs.id <= rows.length ? rows[prefs.id - 1] : rows[0];
+
+	var result = {success: true, __tariff: 'Водоснабжение и водоотведение'};
+
 	getParam(html, result, 'balance', /account-info__value">([^&\s]*)/i, replaceTagsAndSpaces, parseBalance);
-	if(AnyBalance.isAvailable('balance') && !result.balance)
+	if(AnyBalance.isAvailable('balance') && !result.balance) {
 		result.balance = 0;
+	}
+	else {
+		[,balance_str] = html.match(/<div class="account-info__text">(.*) на/);
+		AnyBalance.trace(balance_str);
+		if (balance_str == 'К оплате') {
+			result.balance = -result.balance;
+		}
+	}
+	getParam(html, result, 'account', /Лицевой счет №([^<&\s]*)/i);
 	getParam(html, result, 'fio', /account-info__title">(?:[\s\S]*?)([\s\S]*?)Лицевой счет/i);
-	getParam(html, result, 'account', /Лицевой счет ([^<&\s]*)/i);
 	getParam(html, result, 'adress', /<div>(?:[\s\S]*?)([\s\S]*?)<\/div>/i);
 
 	AnyBalance.setResult(result);

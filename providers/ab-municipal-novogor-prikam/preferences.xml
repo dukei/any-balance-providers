@@ -21,4 +21,13 @@
 		dialogMessage="Введите пароль, используемый для входа в личный кабинет."
 		inputType="textPassword">
 	</EditTextPreference>
+	<EditTextPreference
+		title="Номер ЛС в кабинете"
+		positiveButtonText="ОК"
+		summary="|Автоматически|{@s}"
+		dialogTitle="Порядковый номер ЛС в кабинете"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите порядковый номер ЛС, по которому Вы хотите получить информацию, или оставьте поле пустым, чтобы получить информацию по первому (или единственному) ЛС."
+		key="id">
+	</EditTextPreference>
 </PreferenceScreen>

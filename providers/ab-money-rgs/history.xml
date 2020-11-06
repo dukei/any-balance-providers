@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+   <change version="5" date="2020-08-11">
+      - Добавлена поддержка кредитов.
+    </change>
     <change version="2" date="2013-01-12">
       - Снижена нагрузка на процессор при наличии AnyBalance 2.9.606+ (API v6)
     </change>

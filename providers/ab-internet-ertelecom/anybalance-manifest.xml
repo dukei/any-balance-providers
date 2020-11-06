@@ -1,36 +1,32 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="18">ab-internet-ertelecom</id>
-	<api flags="no_browser"/>
-	<name>Дом.ру (Эр-телеком)</name>
-	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о текущем балансе и номере лицевого счета для пользователей интернет-провайдера "Эр-телеком" (ДОМ.РУ), https://domru.ru.</p>
-	<p>Информация берется из личного кабинета (https://lk.domru.ru).</p>
-	<p>Провайдер предоставляет интернет для городов: Барнаул, Брянск, Волгоград, Волжский, Воронеж, Дзержинск, Екатеринбург, Ижевск, Иркутск, Йошкар-Ола, Казань, Киров, Красноярск, Курган, Курск, Липецк, Магнитогорск, Набережные Челны, Нижнекамск, Нижний Новгород, Новосибирск, Омск, Оренбург, Пенза, Пермь, Ростов-на-Дону, Рязань, Самара, Санкт-Петербург, Саратов, Сызрань, Тверь, Томск, Тула, Тюмень, Ульяновск, Уфа, Чебоксары, Челябинск, Энгельс, Ярославль</p>
-	]]></description>
-	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
-	<depends>
-		<module id="library"/>
-	</depends>
-	<files>
-		<icon>icon.png</icon>
-		<preferences>preferences.xml</preferences>
-		<js>main.js</js>
-		<history>history.xml</history>
-	</files>
-	<counters>
-		<counter id="balance" name="Баланс" units=" р"/>
-		<counter id="bits" name="Биты" units=" Ѣ"/>
-    	<counter id="name" name="ФИО" type="text"/>
-<!--		<counter id="contract_type" name="Тип контракта" type="text"/>
-		<counter id="last_session_end" name="Конец последней сессии" type="text"/>
-		<counter id="traffic_inner" name="Внутренний (Домашний) трафик" prefix="Дом:" suffix="Гб"/>
-		<counter id="traffic_outer" name="Внешний трафик" prefix="Вн:" suffix="Гб"/> -->
-		<counter id="tariff_number" name="Номер договора" type="text"/>
-		<counter id="status" name="Статус" type="text"/>
-		<counter id="pay_till" name="Дата пополнения" type="time" format="dd/MM/yyyy"/>
-	</counters>
-	<keywords>дом.ру ertelecom citidom эретелеком ситидом</keywords>
-	<type>internet</type>
-	<country>ru</country>
+  <id version="19">ab-internet-ertelecom</id>
+  <api flags="no_browser"/>
+  <name>Дом.ру (Эр-телеком)</name>
+  <description html="true">
+    <![CDATA[
+	<p>Предоставляет информацию о текущем балансе и номере лицевого счета для пользователей интернет-провайдера "ЭР-Телеком" (Дом.ru), https://domru.ru.</p>
+	<p>Информация берется при помощи API (https://api-profile.domru.ru/v1/).</p>
+	<p>Провайдер предоставляет интернет для городов: Ангарск, Барнаул, Березники, Брянск, Волгоград, Волжский, Воронеж, Дзержинск, Димитровград, Екатеринбург, Ижевск, Иркутск, Йошкар-Ола, Казань, Киров, Краснодар, Красноярск, Кунгур, Курган, Курск, Липецк, Магнитогорск, Мичуринск, Москва, Набережные Челны, Нижнекамск, Нижний Новгород, Новосибирск, Омск, Оренбург, Пенза, Пермь, Ростов-на-Дону, Рязань, Самара, Санкт-Петербург, Саратов, Северск, Соликамск, Сосновый Бор, Сызрань, Тверь, Томск, Тула, Тюмень, Ульяновск, Усолье-Сибирское, Уфа, Чебоксары, Челябинск, Чусовой, Энгельс, Ярославль, Улан-Удэ, Тайшет, Воткинск, Нижнеудинск</p>
+	]]>
+  </description>
+  <author>Pavel Biryukov &lt;biryukovpyu@gmail.com&gt;; AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+  <depends>
+    <module id="library"/>
+  </depends>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+    <history>history.xml</history>
+  </files>
+  <counters>
+    <counter id="balance" name="Баланс" units=" р"/>
+    <counter id="name" name="ФИО" type="text"/>
+    <counter id="tariff_number" name="Номер договора" type="text"/>
+    <counter id="pay_till" name="Дата следующего пополнения" type="time" format="dd/MM/yyyy"/>
+  </counters>
+  <keywords>дом.ру ertelecom citidom эретелеком ситидом</keywords>
+  <type>internet</type>
+  <country>ru</country>
 </provider>

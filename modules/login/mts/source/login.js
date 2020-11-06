@@ -1,4 +1,4 @@
-var g_baseurlLogin = 'https://login.mts.ru';
+var g_baseurlLogin = 'http://login.mts.ru';
 
 function checkLoginError(html, loginUrl) {
 	var prefs = AnyBalance.getPreferences();
@@ -90,6 +90,7 @@ function redirectIfNeeded(html){
     	AnyBalance.trace('Потребовался редирект формой...');
     	var params = createFormParams(html);
     	var action = getParam(html, /<form[^>]+action=['"]([^'"]*)/, replaceHtmlEntities);
+    	action = action.replace(/^https:\/\/login\.mts\.ru(?::443)?/, 'http://login.mts.ru'); 
     	var url = AnyBalance.getLastUrl();
     	html = AnyBalance.requestPost(joinUrl(url, action), params, addHeaders({Refefer: url}));
     	fixCookies();
@@ -97,6 +98,7 @@ function redirectIfNeeded(html){
     var redir = getParam(html, /<meta[^>]+http-equiv="REFRESH"[^>]*content="0;url=([^";]*)/i, replaceHtmlEntities);
     if(redir){
     	AnyBalance.trace('Потребовался get редирект...');
+    	redir = redir.replace(/^https:\/\/login\.mts\.ru/, 'http://login.mts.ru');
     	var url = AnyBalance.getLastUrl();
     	html = AnyBalance.requestGet(joinUrl(url, redir), addHeaders({Refefer: url}));
     	fixCookies();
@@ -301,6 +303,8 @@ function enterMTS(options){
 
         html = AnyBalance.requestPost(loginUrl, params, addHeaders({Origin: g_baseurlLogin, Referer: loginUrl}));
         fixCookies();
+    }else if(/bobcmn/i.test(html)){
+    	throw new AnyBalance.Error('МТС ввел защиту от автоматического входа. Пожалуйста, обратитесь в поддержку МТС, составьте обращение о невозможности использования третьесторонних программ слежения за балансом. Напомните им, что вы можете перейти к другому оператору, который не противодействует отслеживанию баланса.');       
     }else{
     	if(!html)
     		throw new AnyBalance.Error('Личный кабинет МТС временно недоступен. Попробуйте ещё раз позже');

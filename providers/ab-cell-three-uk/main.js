@@ -20,44 +20,30 @@ function main() {
 	AB.checkEmpty(prefs.login, 'Enter user name!');
 	AB.checkEmpty(prefs.password, 'Enter password!');
 
-	var html = AnyBalance.requestGet(baseurl + 'My3Account/My3/Login', g_headers);
+	var msisdn = prefs.login.replace(/^0/, '44');
+
+	var html = AnyBalance.requestGet(baseurl + 'My3Account/My3/Login?msisdn=' + msisdn, g_headers);
 
 	if (!html || AnyBalance.getLastStatusCode() > 400) {
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Site is temporary unavailable! Try again later.');
 	}
 
-	var iframe = getParam(html, null, null, /<iframe[^>]+id="loginIframe"[^>]*src="([^"]*)/i, replaceHtmlEntities);
-	if(!iframe){
-		html = AnyBalance.requestGet(baseurl + 'My3Account/My3/Login', g_headers);
-		iframe = getParam(html, null, null, /<iframe[^>]+id="loginIframe"[^>]*src="([^"]*)/i, replaceHtmlEntities);
-	}
-
-	AnyBalance.trace('Login iframe: ' + iframe);
-	html = AnyBalance.requestGet(iframe, addHeaders({Referer: AnyBalance.getLastUrl()}));
-
-	var form = AB.getElement(html, /<form[^>]+login_form[^>]*>/i);
-	if(!form){
-		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Could not find login form. Is site changed?');
-	}
-
-	var params = AB.createFormParams(form, function(params, str, name, value) {
-		if (name == 'username') {
-			return prefs.login;
-		} else if (name == 'password') {
-			return prefs.password;
-		}
-
-		return value;
-	});
-
-	html = AnyBalance.requestPost(AnyBalance.getLastUrl(), params, AB.addHeaders({
-		Referer: AnyBalance.getLastUrl()
+	html = AnyBalance.requestPost(baseurl + 'cs/form/customer-my3-login', JSON.stringify({
+		"_form_url":"",
+		"_success_url":"",
+		"_failure_url":"",
+		"msisdn":msisdn,
+		"password":prefs.password
+	}), addHeaders({
+		'X-Requested-With': 'XMLHttpRequest',
+		'Content-Type': 'application/json',
 	}));
+	
+	var json = getJson(html);
 
-	if (!/Login successful/i.test(html)) {
-		var error = AB.getElements(html, /<div[^>]+my3AuthError\b(?:[^>](?!display:\s*none))*>/ig, AB.replaceTagsAndSpaces).join('\n');
+	if (json.status !== 'success') {
+		var error = json.message;
 		if (error) {
 			throw new AnyBalance.Error(error, null, /password/i.test(error));
 		}
@@ -66,10 +52,10 @@ function main() {
 		throw new AnyBalance.Error('Could not enter personal account. Is the site changed?');
 	}
 
-	var url = getParam(html, null, null, /<a[^>]+href="([^"]*SelfcareUk[^"]*)/i, replaceHtmlEntities);
+	var url = json.data.redirectUrl;
 	AnyBalance.trace('Logged in successfully: ' + url);
 
-	html = AnyBalance.requestGet(url, g_headers);
+	html = AnyBalance.requestGet(url, addHeaders({Referer: baseurl}));
 	html = AnyBalance.requestGet(baseurl + 'New_My3/Account_balance?id=My3_CheckYourBalanceLink', g_headers);
 
 	var result = {

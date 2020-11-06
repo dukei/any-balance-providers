@@ -1,11 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="5">ab-telephony-beltelecom</id>
+	<id version="6">ab-telephony-beltelecom</id>
 	<api flags="no_browser"/>
 	<name>Белтелеком (Минск)</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе Белтелеком г. Минск</p>
-	<p>Информация берется с сайта http://beltelecom.by/subscribers/phone-debt</p>
+	<p>Предоставляет информацию о балансе Белтелеком (Беларусь)</p>
+	<p>Информация берется из личного кабинета с сайта https://my.beltelecom.by</p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>
@@ -18,9 +18,14 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Общая сумма неоплаченных услуг" units=" р"/>
+		<counter id="balance" name="Баланс" units=" р"/>
 		<counter id="fio" name="ФИО" type="text"/>
 		<counter id="phone" name="Телефон" type="text"/>
+		<counter id="bills" name="Задолженность" type="text"/>
+		<counter id="terminate_in" name="Примерный остаток дней, пользования услугой" type="text"/>
+		<counter id="agreement" name="Номер договора" type="text"/>
+		<counter id="counts" name="Список договоров" type="text"/>
+		
 	</counters>
 	<keywords></keywords>
 	<type>telephony</type>

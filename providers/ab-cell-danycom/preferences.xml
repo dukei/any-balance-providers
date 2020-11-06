@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+	<EditTextPreference
+		title="Номер телефона"
+		key="login"
+		summary="||{@s}"
+		obligatory="true"
+		dialogTitle="Номер телефона"
+		inputType="number"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите 10 цифр номера телефона без пробелов и разделителей, например 9010123456">
+	</EditTextPreference>
+	<EditTextPreference
+		title="Пароль"
+		key="password"
+		summary="||***********"
+		obligatory="true"
+		dialogTitle="Пароль"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите пароль, используемый для входа в личный кабинет"
+		inputType="textPassword">
+	</EditTextPreference>
+</PreferenceScreen>

@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider gen="2">
+	<id version="1">captcha2/rucaptcha</id>
+	<name>RuCaptcha</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет возможность распознать капчу через рукапча</p>
+	]]></description>
+	<instruction><![CDATA[
+		
+		Usage:
+		   var email = new Email(login, password);
+		   //email.email <- generated address is here :)
+
+	]]></instruction>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
+	<files>
+		<js>captcha2.rucaptcha.min.js</js>
+		<history>history.xml</history>
+	</files>
+	<keywords></keywords>
+	<type>captcha</type>
+</provider>

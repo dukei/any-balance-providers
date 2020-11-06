@@ -1,5 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="1.0" version="46" date="2020-10-22">
+	- Поддержка изменений на сайте.
+	</change>
+	<change major_version="1.0" version="45" date="2020-09-09">
+	Поддержка изменений в процедуре входа
+	</change>
 	<change major_version="1.0" version="44" date="2019-01-27">
 	Улучшена обработка ошибок
 	</change>

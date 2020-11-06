@@ -5,12 +5,27 @@
 */
 
 var g_headers = {
-    'User-Agent': 'User-Agent: Sony D6503/android: 5.1.1/TCSMB/4.1.3'
+    'User-Agent': 'OnePlus ONEPLUS A3010/android: 9/TCSMB/5.2.1'
 }
 
 var g_baseurl = 'https://api.tinkoff.ru/v1/';
-var g_deviceid;
 var g_sessionid;
+var g_postParams = {
+	mobile_device_model:	'ONEPLUS A3010',
+	mobile_device_os:		'android',
+	appVersion:				'5.2.1',
+	screen_width:			'1080',
+	root_flag:				'false',
+	appName:				'mobile',
+	origin: 				'mobile,ib5,loyalty,platform',
+	deviceId:				undefined,
+    connectionType:			'WiFi',
+	platform:				'android',
+	screen_dpi:				'420',
+	mobile_device_os_version:	'9',
+	screen_height:			'1920',
+	fingerprint:			'OnePlus ONEPLUS A3010/android: 9/TCSMB/5.2.1###1080x1920x32###180###false###false###',
+};
 
 function requestJson(action, data, options) {
 	var params = [], html;
@@ -26,12 +41,11 @@ function requestJson(action, data, options) {
 	}
 
 	// Заполняем параметры, которые есть всегда
-	params.push(encodeURIComponent('appVersion') + '=' + encodeURIComponent('4.1.3'));
-	params.push(encodeURIComponent('platform') + '=' + encodeURIComponent('android'));
-	params.push(encodeURIComponent('origin') + '=' + encodeURIComponent('mobile,ib5,loyalty,platform'));
-	params.push(encodeURIComponent('connectionType') + '=' + encodeURIComponent('WiFi'));
-	if(g_deviceid)
-		params.push(encodeURIComponent('deviceId') + '=' + encodeURIComponent(g_deviceid));
+	params.push(encodeURIComponent('appVersion') + '=' + encodeURIComponent(g_postParams.appVersion));
+	params.push(encodeURIComponent('platform') + '=' + encodeURIComponent(g_postParams.platform));
+	params.push(encodeURIComponent('origin') + '=' + encodeURIComponent(g_postParams.origin));
+	params.push(encodeURIComponent('connectionType') + '=' + encodeURIComponent(g_postParams.connectionType));
+	params.push(encodeURIComponent('deviceId') + '=' + encodeURIComponent(getDeviceId()));
 
 	if(options.post) {
 		html = AnyBalance.requestPost(g_baseurl + action + '?' + params.join('&'), options.post, g_headers);
@@ -43,7 +57,7 @@ function requestJson(action, data, options) {
 	
 	if(json.resultCode != 'OK' && !options.noException) {
 		AnyBalance.trace('Ошибка: ' + action + ', ' + json.errorMessage);
-		throw new AnyBalance.Error((options.scope ? options.scope + ': ' : '') + (json.plainMessage || json.errorMessage));
+		throw new AnyBalance.Error((options.scope ? options.scope + ': ' : '') + (json.plainMessage || json.errorMessage), null, /INVALID_REQUEST_DATA/i.test(json.resultCode));
 	}
 	
 	return json;
@@ -56,51 +70,167 @@ function requestAccountsJson(){
 	return g_accountsJson;
 }
 
-function login() {
+function getDataName(){
 	var prefs = AnyBalance.getPreferences();
+	return 'tcs_' + prefs.login;
+}
 
-	checkEmpty(prefs.login, 'Введите логин в интернет-банк!');
-	checkEmpty(prefs.password, 'Введите пароль в интернет-банк!');
+function createPass(size){
+	var s = '', alphabet = '0123456789abcdef';
+	for(var i=0; i<size; ++i){
+		s += alphabet.charAt(Math.floor(Math.random()*alphabet.length)); 
+	}
+	return s;
+}
 
-    if(!g_sessionid) {
-        var deviceid = hex_md5(prefs.login);
+function getDeviceId(){
+	var data = AnyBalance.getData(getDataName(), {});
+	if(!data.deviceid){
+		data.deviceid = createPass(16);
+		AnyBalance.setData(getDataName(), data);
+		AnyBalance.saveData();
+	}
+	return data.deviceid;
+}
 
-        var json = requestJson('mobile_session', {
-            deviceId: deviceid
-        }, {
-            post: {
-                username: prefs.login,
-                password: prefs.password,
-                screen_size: '1080x1920x32',
-                timezone: -new Date().getTimezoneOffset()
-            },
-            noException: true
-        });
-
-        g_deviceid = deviceid;
-
-        if (json.resultCode == 'DEVICE_LINK_NEEDED') {
-            var sessionId = json.payload.sessionid;
-
-            AnyBalance.trace('Необходимо привязать устройство...');
+function loginByPhone(){
+	var prefs = AnyBalance.getPreferences();
+    var json = requestJson('auth/by/phone', {}, {
+        post: joinObjects({
+        		phone:	'+7' + prefs.login,
+    			deviceId: getDeviceId(),
+        	}, g_postParams),
+        noException: true
+    });
+    
+    if (json.resultCode == 'WAITING_CONFIRMATION') {
+        AnyBalance.trace('Необходимо привязать устройство...');
+    	if(json.confirmations.indexOf('SMSBYID') >= 0){
             var code = AnyBalance.retrieveCode("Пожалуйста, введите код подтверждения из смс", null, {
                 inputType: 'number',
                 time: 180000
             });
             AnyBalance.trace('Получили код: ' + code);
-
-            json = requestJson('confirm', {
-                'initialOperationTicket': json.payload.confirmationData.operationTicket,
-                'confirmationData': '{"SMSBYID":"' + code + '"}',
-                'initialOperation': 'mobile_link_device',
-                'sessionid': sessionId,
+            
+            json = requestJson('confirm', {}, {
+            	post: joinObjects({
+            		initialOperationTicket: json.operationTicket,
+                    confirmationData: '{"SMSBYID":"' + code + '"}',
+                	initialOperation: 'auth/by/phone',
+    				deviceId: getDeviceId(),
+            	}, g_postParams)
             });
+        }else{
+        	AnyBalance.trace(JSON.stringify(json));
+        	throw new AnyBalance.Error('Потребовался неизвестный тип подтверждения входа');
+        }
+    
+        if(json.payload.accessLevel === 'CANDIDATE'){
+        	AnyBalance.trace('Необходим ещё и пароль');
+            json = requestJson('auth/by/password', {}, {
+            	post: joinObjects({
+            		password: prefs.password,
+    				deviceId: getDeviceId(),
+            	}, g_postParams)
+            });
+    
+            if(json.payload.accessLevel !== 'CLIENT'){
+            	AnyBalance.trace(JSON.stringify(json));
+            	throw new AnyBalance.Error('Не удалось войти в кабинет с нужным уровнем доступа');
+            }
 
-            g_sessionid = sessionId;
-        } else if (json.resultCode == 'OK') {
-            g_sessionid = json.payload.sessionid;
-        } else {
-            throw new AnyBalance.Error(json.plainMessage || json.errorMessage, null, json.resultCode == 'AUTHENTICATION_FAILED');
+            var pinHash = createPass(64);
+            var pin_set_date = getFormattedDate({format: 'YYYY-MM-DD HH:NN:SS'});
+    
+            json = requestJson('auth/pin/set', {}, {
+            	post: joinObjects({
+            		pinHash: pinHash,
+            		auth_type_set_date: pin_set_date,
+    				deviceId: getDeviceId(),
+            	}, g_postParams)
+            });
+    
+            var key = json.payload.key;
+            var data = AnyBalance.getData(getDataName());
+            AnyBalance.setData(getDataName(), joinObjects({
+            	key: key,
+            	pinHash: pinHash,
+            	auth_type_set_date: pin_set_date,
+            	oldSessionId: g_sessionid
+            }, data));
+            AnyBalance.saveData();
+        }
+    
+    } else if (json.resultCode == 'OK') {
+        g_sessionid = json.payload.sessionid;
+    } else {
+        throw new AnyBalance.Error(json.plainMessage || json.errorMessage, null, json.resultCode == 'AUTHENTICATION_FAILED');
+    }
+}
+
+function loginByPin(){
+    var data = AnyBalance.getData(getDataName());
+	if(!data || !data.pinHash)
+		return false;
+
+	try{
+        var json = requestJson('auth/by/pin', {}, {
+            post: joinObjects({
+            		pinHash:	data.pinHash,
+            		auth_type: 'pin',
+            		auth_type_set_date: data.auth_type_set_date,
+            		oldSessionId: data.oldSessionId,
+        			deviceId: getDeviceId(),
+            	}, g_postParams)
+        });
+		
+        if(json.payload.accessLevel !== 'CLIENT'){
+        	AnyBalance.trace(JSON.stringify(json));
+        	throw new AnyBalance.Error('Не удалось войти в кабинет с нужным уровнем доступа');
+        }
+        
+        data.oldSessionId = g_sessionid;
+        data.key = json.payload.key;
+        AnyBalance.setData(getDataName(), data);
+        AnyBalance.saveData();
+        return true;
+    }catch(e){
+    	AnyBalance.trace('Не удалось зайти по пину: ' + e.message);
+    	if(/Требуется привязка устройства|Неверный код доступа/i.test(e.message))
+    		return false;
+    	throw e;
+    }
+}
+
+function login() {
+	var prefs = AnyBalance.getPreferences();
+
+	checkEmpty(prefs.login, 'Введите ваш номер телефона!');
+	checkEmpty(/^\d{10}$/.test(prefs.login), 'Введите ваш номер телефона, 10 цифр без пробелов и разделителей, например, 9261234567 !');
+	checkEmpty(prefs.password, 'Введите пароль в интернет-банк!');
+
+    if(!g_sessionid) {
+        var json = requestJson('auth/session', {}, {
+            post: joinObjects({
+            		phone:	prefs.login,
+            		deviceId: getDeviceId(),
+            	}, g_postParams),
+        });
+
+        g_sessionid = json.payload.sessionid;
+        var data = AnyBalance.getData(getDataName(), {});
+
+        var json = requestJson('warmup_cache', {}, {
+            post: joinObjects({
+            		old_session_id: data.oldSessionId,
+            		phone:	data.oldSessionId ? undefined : '+7' + prefs.login,
+            		device_id: getDeviceId(),
+            		deviceId: getDeviceId(),
+            	}, g_postParams),
+        });
+
+        if(!loginByPin()){
+        	loginByPhone();
         }
 
         __setLoginSuccessful();
@@ -352,7 +482,8 @@ function processSaving(acc, result){
     getParam(jspath1(acc, '$.interest.value'), result, 'savings.pct_sum');
     getParam(jspath1(acc, '$.tariffInfo.interestRate') || jspath1(acc, '$.rate'), result, 'savings.pct');
 
-    getParam(jspath1(acc, '$.moneyAmount.value'), result, 'savings.balance');
+    getParam(jspath1(acc, '$.accountBalance.value'), result, 'savings.balance');
+    getParam(jspath1(acc, '$.moneyAmount.value'), result, 'savings.available');
     getParam(jspath1(acc, '$.moneyAmount.currency.name'), result, 'savings.currency');
 
     getParam(jspath1(acc, '$.status'), result, 'savings.status_code'); //ACTIVE

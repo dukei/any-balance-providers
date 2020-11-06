@@ -164,7 +164,7 @@ function megafonLkAPILoginNew(options){
 			throw new AnyBalance.Error(json.message || 'Ошибка входа. Неправильный номер?', null, true);
 		}
 
-		var code = AnyBalance.retrieveCode('Пожалуйста, введите код входа в Личный Кабинет из СМС для привязки номера к устройству', null, {inputType: 'number'});
+		var code = AnyBalance.retrieveCode('Пожалуйста, введите код входа в Личный Кабинет из СМС для привязки номера к устройству', null, {inputType: 'number', time: 300000});
 
 		json = callAPI('post', 'auth/otp/submit', {login: prefs.login, otp: code}, true);
 
@@ -341,7 +341,7 @@ function processRemaindersApi(result){
                     if((/мин|сек/i.test(units) && !/интернет/i.test(name)) || (/шт/i.test(units) && /минут/i.test(name) && !/СМС|SMS|MMS|ММС/i.test(name))) {
                         AnyBalance.trace('Parsing minutes...' + JSON.stringify(current));
                         var unlim = /^9{6,}$/i.test(current.total); //Безлимитные значения только из девяток состоят
-						if(unlim){
+						if(unlim || +current.total > 2600000){
 							AnyBalance.trace('пропускаем безлимит минут: ' + name + ' ' + (current.available + current.unit) + '/' + (current.total + current.unit));
 							continue;
 						}

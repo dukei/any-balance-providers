@@ -1,5 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="22" date="2020-05-02">
+	Исправление работы с URL
+	</change>
+	<change version="21" date="2020-05-02">
+	- Поддержка изменений на сайте.
+	</change>
 	<change version="20" date="2018-10-15">
 	- Поддержка изменений в процедуре входа
 	</change>

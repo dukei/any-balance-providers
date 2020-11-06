@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="3">ab-bonus-hoff</id>
+	<id version="4">ab-bonus-hoff</id>
 	<api flags="no_browser"/>
 	<name>Hoff (бонусы)</name>
 	<description html="true"><![CDATA[
@@ -13,6 +13,7 @@
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>
 		<module id="library"/>
+		<module id="framework/icewood"/>
 	</depends>
 	<files>
 		<icon>icon.png</icon>

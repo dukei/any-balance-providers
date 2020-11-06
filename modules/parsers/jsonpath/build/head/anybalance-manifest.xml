@@ -11,7 +11,7 @@
     ]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
-		<js>jsonpath.min.js</js>
+		<js>parsers.jsonpath.min.js</js>
 		<history>history.xml</history>
 	</files>
 </provider>

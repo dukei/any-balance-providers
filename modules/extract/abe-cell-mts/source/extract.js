@@ -19,16 +19,14 @@ var regionsOrdinary = {
     ug: "https://ihelper.ug.mts.ru/selfcare/"
 };
 
-var g_baseurl = 'https://lk.ssl.mts.ru';
-var g_baseurlLogin = 'https://login.mts.ru';
+var g_baseurl = 'https://lk.mts.ru';
+var g_baseurlLogin = 'http://login.mts.ru';
 
 var g_headers = {
-    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-    'Accept-Language': 'ru,en-US;q=0.8,en;q=0.6',
-    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36',
-    Connection: 'keep-alive',
+    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3',
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.120 Safari/537.36',
     'Upgrade-Insecure-Requests': '1',
-    'Accept-Encoding': 'gzip, deflate, sdch, br'
+	'Accept-Language': 'en-US,en;q=0.9',
 //    'If-Modified-Since': null, //Иначе МТС глючит с кешированием...
 };
 
@@ -367,7 +365,7 @@ function fetchAccountStatus(html, result) {
 
 function isLoggedIn(html) {
     return getParam(html, /(<meta[^>]*name="lkMonitorCheck")/i)
-       || /js-logout/i.test(html) || /UI\/Logout/i.test(html);
+       || /js-logout/i.test(html) || /UI\/Logout/i.test(html) || /Вы управляете:/i.test(html);
 }
 
 function getLKJson(html, allowExceptions) {
@@ -394,7 +392,7 @@ function getLKJson(html, allowExceptions) {
 }
 
 function getLKJson2(html) {
-    var html = AnyBalance.requestGet('https://login.mts.ru/api/profile', addHeaders({
+    var html = AnyBalance.requestGet('http://login.mts.ru/api/profile', addHeaders({
     	Referer: g_baseurl + '/'
     }));
 
@@ -417,7 +415,7 @@ function getLKJson2(html) {
 }
 
 function getLKJson1(html) {
-    var html = AnyBalance.requestGet('https://login.mts.ru/profile/header?ref=https%3A//lk.ssl.mts.ru/&scheme=https&style=2015v2', addHeaders({
+    var html = AnyBalance.requestGet('http://login.mts.ru/profile/header?ref=https%3A//lk.mts.ru/&scheme=https&style=2015v2', addHeaders({
     	Referer: g_baseurl + '/'
     }));
 
@@ -562,7 +560,7 @@ function loginWithPassword(){
 
     var prefs = AnyBalance.getPreferences();
 
-    var html = enterLK({login: prefs.login, password: prefs.password, baseurl: 'https://lk.mts.ru', url: 'https://login.mts.ru/amserver/UI/Login?service=lk&goto=http%3A%2F%2Flk.mts.ru%2F'});
+    var html = enterLK({login: prefs.login, password: prefs.password, baseurl: 'http://lk.mts.ru', url: 'http://login.mts.ru/amserver/UI/Login?service=lk&goto=http%3A%2F%2Flk.mts.ru%2F'});
     return html;
 }
 
@@ -974,7 +972,7 @@ function loginWithoutPassword(){
     } catch (e) {
         AnyBalance.trace('Автоматический вход в кабинет не удался. Пробуем получить пароль через СМС');
         pass = getPasswordBySMS(prefs.login);
-        html = enterLK({login: prefs.login, password: pass, baseurl: 'https://lk.mts.ru', url: 'https://login.mts.ru/amserver/UI/Login?service=lk&goto=http%3A%2F%2Flk.mts.ru%2F'});
+        html = enterLK({login: prefs.login, password: pass, baseurl: 'https://lk.mts.ru', url: 'http://login.mts.ru/amserver/UI/Login?service=lk&goto=http%3A%2F%2Flk.mts.ru%2F'});
         if (prefs.password && prefs.password != pass) {
             changePassword(pass, prefs.password);
         }

@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<history>
+	<change version="2" date="2020-05-18">
+	Исправлено значение баланса
+	</change>
+	<change version="1" date="2020-05-02">
+	- Первая версия провайдера.
+	</change>
+	<change version="1" date="2017-08-02">
+	Первая версия провайдера
+	</change>
+</history>

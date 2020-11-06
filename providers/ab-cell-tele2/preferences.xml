@@ -16,10 +16,9 @@
         key="password" 
         dialogTitle="Пароль"
         negativeButtonText="Отмена"
-        title="Пароль"
-        obligatory="true"
-        summary="|Пароль для входа в Мой Tele2|***********"
-        dialogMessage="Введите пароль, используемый для входа в личный кабинет Мой Tele2. Если Вы не знаете свой пароль, пройдите регистрацию или восстановите пароль на сайте https://my.tele2.ru."
+        title="Пароль (необязательно)"
+        summary="|Оставьте пустым для входа по SMS|***********"
+        dialogMessage="Введите пароль, используемый для входа в личный кабинет Мой Tele2. Если Вы не знаете свой пароль, пройдите регистрацию, восстановите пароль на сайте https://my.tele2.ru или оставьте поле пустым для входа по SMS."
         inputType="textPassword">
     </EditTextPreference>
 </PreferenceScreen>

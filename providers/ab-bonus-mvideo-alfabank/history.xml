@@ -1,5 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="2.0" version="28" date="2020-10-21">
+	Исправлен баланс большого количества бонусных рублей
+	</change>
+	<change major_version="2.0" version="27" date="2020-10-21">
+	- Исправлено отображение бонусных рублей
+	</change>
 	<change major_version="2.0" version="26" date="2019-11-22">
 	- Поддержка изменений на сайте.
 	</change>

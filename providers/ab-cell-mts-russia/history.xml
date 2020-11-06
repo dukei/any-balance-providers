@@ -1,5 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="4.1" version="194" date="2020-09-21">
+	Улучшенное исправление работы МТС через мобильный интернет на некоторых устройствах
+	</change>
+	<change major_version="4.1" version="193" date="2020-09-21">
+	Восстановлено получение данных через мобильный интернет МТС
+	</change>
+	<change major_version="4.1" version="192" date="2020-09-19">
+	- Поддержка изменений в процедуре входа
+	</change>
+	<change major_version="4.1" version="191" date="2020-08-07">
+	- Предупреждение о защите от роботов
+	</change>
 	<change major_version="4.1" version="190" date="2020-03-18">
 	Исправление получение данных через мобильный интернет
 	</change>

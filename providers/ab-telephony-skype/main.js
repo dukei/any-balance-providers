@@ -40,22 +40,35 @@ function main() {
 	var ts = +new Date();
 
  	var params = {
+ 	    i13: 	0,
 		loginfmt: prefs.login,
 		login:	prefs.login,
-		passwd: prefs.password,
 		type:	11,
-		PPFT:	getParam(json.sFTTag, null, null, /<input[^>]+value="([^"]*)/i, replaceHtmlEntities),
-		PPSX:	'Pass',
-		NewUser:	1,
 		LoginOptions:	3,
+		lrt: '',	
+		lrtPartition: '',
+		hisRegion: '',
+		hisScaleUnit: '',
+		passwd: prefs.password,
+		ps:	2,
+		psRNGCDefaultType: '',
+		psRNGCEntropy: '',
+		psRNGCSLK: '',
+		canary: '',
+		ctx: '',
+		hpgrequestid: '',
+		PPFT:	getParam(json.sFTTag, null, null, /<input[^>]+value="([^"]*)/i, replaceHtmlEntities),
+		PPSX:	'P',
+		NewUser:	1,
 		FoundMSAs: '',
-		fspost:	0,
+		fspost: 0,
+		i21:	0,
+		CookieDisclosure: 0,
+		IsFidoSupported:	1,
+		isSignupPost:	0,
 		i2:	1,
-		i16: JSON.stringify({"navigationStart":ts,"unloadEventStart":ts+210,"unloadEventEnd":ts+210,"redirectStart":0,"redirectEnd":0,"fetchStart":ts+1,"domainLookupStart":ts+1,"domainLookupEnd":ts+1,"connectStart":ts+1,"connectEnd":ts+1,"secureConnectionStart":0,"requestStart":ts+6,"responseStart":ts+7,"responseEnd":ts+9,"domLoading":ts+13,"domInteractive":ts+263,"domContentLoadedEventStart":ts+263,"domContentLoadedEventEnd":ts+263,"domComplete":ts+287,"loadEventStart":ts+287,"loadEventEnd":0}),
 		i17:	0,
-		i18:	'__DefaultLoginStrings|1,__DefaultLogin_Core|1,',
-//		i19:	26815
-		i21:	0 	
+		i18: ''	
 	};
 
  	info = AnyBalance.requestPost(json.urlPost, params, addHeaders({Referer: baseLogin}));
@@ -64,7 +77,7 @@ function main() {
  	var json = getJsonObject(info, /var\s+\$Config\s*=\s*/);
  	var jsonErr = getJsonObject(info, /var\s+ServerData\s*=\s*/);
 
- 	if (!json && (!/logout/i.test(info) || (jsonErr && jsonErr.sErrTxt))) { //В некоторых аккаунтах почему-то нет Config, но есть логаунт (<html data-role-name="MeePortal")
+ 	if (!json && (!/logout/i.test(info) && !/sSigninName:/.test(info) || (jsonErr && jsonErr.sErrTxt))) { //В некоторых аккаунтах почему-то нет Config, но есть логаунт (<html data-role-name="MeePortal")
  		var error = jsonErr && jsonErr.sErrTxt;
  		if (error)
 			throw new AnyBalance.Error(replaceAll(error, replaceTagsAndSpaces), null, /существует|exists|парол|password/i.test(error)); //Надо бы и другие языки поддержать, конечно, но хотя бы 2

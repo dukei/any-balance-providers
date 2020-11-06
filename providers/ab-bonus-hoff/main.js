@@ -19,7 +19,10 @@ function main() {
 	AB.checkEmpty(prefs.login, 'Введите логин!');
 	AB.checkEmpty(prefs.password, 'Введите пароль!');
 
+    var fwl = Icewood(baseurl);
 	var html = AnyBalance.requestGet(baseurl, g_headers);
+	if(fwl.isProtected(html))
+	    html = fwl.executeScript(html);
 
 	if (!html || AnyBalance.getLastStatusCode() > 400) {
 		AnyBalance.trace(html);

@@ -58,6 +58,7 @@ var g_countersTable = {
     },
 	saving: {
     	"balance": "savings.balance",
+    	"available": "savings.available",
 		"currency": "savings.currency",
 		"name": "savings.name",
 		"__tariff": "savings.name",

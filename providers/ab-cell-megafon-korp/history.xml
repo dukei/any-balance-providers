@@ -1,5 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="33" date="2020-10-11">
+	Восстановлены баланс и число абонентов
+	</change>
+	<change version="32" date="2020-09-29">
+	Добавлены Должность и Метки
+	</change>
+	<change version="31" date="2020-09-28">
+	- Поддержка изменений на сайте.
+	</change>
 	<change version="30" date="2019-11-22">
 	- Поддержка изменений на сайте.
 	</change>

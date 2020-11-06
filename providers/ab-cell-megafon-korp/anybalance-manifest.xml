@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="30">ab-cell-megafon-korp</id>
+	<id version="33">ab-cell-megafon-korp</id>
 	<api flags="no_browser"/>
 	<name>Мегафон корпоративный</name>
 	<description html="true"><![CDATA[
@@ -29,7 +29,9 @@
 		<counter id="traffic_left_europe" name="Интернет (Европа)" units=" мб"/>
 		<counter id="traffic_left_pop_countries" name="Интернет (популярные страны)" units=" мб"/>
 		<counter id="traffic_left_other_countries" name="Интернет (другие страны)" units=" мб"/>
-		<counter id="abonCount" name="Количество абонентов" type="text"/>
+		<counter id="position" name="Должность" type="text"/>
+		<counter id="labels" name="Метки" type="text"/>
+		<counter id="abonCount" name="Количество абонентов" units=" чел"/>
 		<counter id="amountLocal" name="Трафик" units=" р"/>
 		<counter id="abon" name="Абонентская плата" units=" р"/>
 		<counter id="charges" name="Разовые начисления" units=" р"/>

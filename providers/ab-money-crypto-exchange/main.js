@@ -60,6 +60,9 @@ function main()
     var prefs = AnyBalance.getPreferences();
     var base = currencySymbolCheck(prefs.base || '');
     var target = currencySymbolCheck(prefs.target || '');
+
+    if(prefs.api_key)
+    	g_headers['X-CMC_PRO_API_KEY'] = prefs.api_key;
     
     // get the base currency id first
     //var baseId = currencyId(base);
@@ -74,6 +77,15 @@ function main()
     var html = AnyBalance.requestGet(url, g_headers);
     AnyBalance.trace(html, "server reply"); 
     var json = getJson(html);
+    var result = {success: true};
+
+    if(!json.data){
+    	if(json.status && json.status.error_message){
+    		throw new AnyBalance.Error(json.status.error_message.replace(/Please contact us.*/i, 'Please, register at https://pro.coinmarketcap.com/signup and input your own API Key to the provider preferences.'));
+    	}
+    	throw new AnyBalance.Error('Could not get currency info. Is the site changed?');
+    }
+
     for(var sym in json.data){
         var info = json.data[sym];
         var rate = info.quote[target.toUpperCase()].price;
@@ -86,7 +98,6 @@ function main()
         
 		// return the result
         AnyBalance.trace(rate, "exchange rate");
-        var result = {success: true};
         
         getParam(info.symbol + ' → ' + target, result, '__tariff');
         getParam(+rate, result, 'exchangerate');

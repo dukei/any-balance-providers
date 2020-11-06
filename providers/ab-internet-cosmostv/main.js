@@ -42,7 +42,7 @@ function main() {
 	if (!/application\.init/i.test(html)) {
 		var error = getParam(html, null, null, /<div[^>]+error_container[^>]*>([^<]*)/i, AB.replaceTagsAndSpaces);
 		if (error)
-			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
+			throw new AnyBalance.Error(error, null, /парол/i.test(error));
 		
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
@@ -68,10 +68,10 @@ function main() {
 	var result = {success: true};
 
 	//Находим номер аккаунта и переходим на страницу с конктерной информацией по нему.
-	var text 	= AB.getParam(html, null, null, /application\s*=\s*[^\(]*\(([\s\S]*?),\s*\{loglevel/i),
+	var text 	= AB.getParam(html, /application\s*=\s*[^\(]*\(([\s\S]*?),\s*\{loglevel/i),
 		json 	= getJsonEval(text),
 		account = json.data.personal_accounts[0],
-		token 	= AB.getParam(html, null, null, /<meta[^>]+content="([^"]*)"[^>]+csrf-token/i);
+		token 	= AB.getParam(html, /<meta[^>]+csrf-token[^>]+content="([^"]*)/i);
 
 	if(!token || !account.vc_account) {
 		throw new AnyBalance.Error("Не удалось найти параметры запроса. Сайт изменён?")

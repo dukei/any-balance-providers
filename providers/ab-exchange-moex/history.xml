@@ -1,5 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="4" date="2020-06-27">
+	Исправлен показ USD ЦБ РФ
+	</change>
+	<change version="3" date="2020-06-23">
+	- Поддержка изменений на сайте.
+	</change>
 	<change version="2" date="2016-10-21">
 	- Поддержка изменений на сайте.
 	</change>

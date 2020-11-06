@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="21">ab-money-sber-by</id>
+	<id version="22">ab-money-sber-by</id>
 	<name>БПС Сбербанк (Беларусь)</name>
 	<description html="true"><![CDATA[
 	<p>Получает текущий остаток и другие параметры продуктов БПС-Сбербанка http://www.bps-sberbank.by/, используя интернет-банк (https://i.bps-sberbank.by/).</p>

@@ -3,7 +3,7 @@
 function jspath(obj, path, defval){
 	if(path == '$')
 		return [obj];
-	var arr = JSONPath(null, obj, path);
+	var arr = JSONPath({json: obj, path: path});
 	if(!arr.length)
 		return defval;
 	return arr;
@@ -12,7 +12,7 @@ function jspath(obj, path, defval){
 function jspath1(obj, path, defval){
 	if(path == '$')
 		return obj;
-	var arr = JSONPath(null, obj, path);
+	var arr = JSONPath({json: obj, path: path});
 	if(!arr.length)
 		return defval;
 	return arr[0];

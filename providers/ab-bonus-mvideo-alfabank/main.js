@@ -176,36 +176,28 @@ function main(){
 
     html = AnyBalance.requestGet(baseurl + '/my-account', g_headers);
     getParam(html, result, 'fio', /Владелец карты[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
-    //getParam(html, result, 'balance', /<div[^>]+my-account-block-bonus-rubles-title[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'balance', /<span[^>]+header-user-details[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'balance', /([\d\s]+)\s+БР(?:\s|<[^>]*>)*из\s+[\d\s]+доступно для оплаты/i, null, parseBalance);
+    getParam(html, result, 'balance_all', /([\d\s]+)\s+БР(?:\s|<[^>]*>)*из\s+([\d\s]+)доступно для оплаты/i, null, parseBalance);
+/*    var avail = getElements(html, /<thead/ig, [/Доступно для оплаты/i])[0];
+    if(avail)
+    	getParam(avail, result, 'balance', /<thead[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+    sumParam(html, result, 'balance_all', /<thead[^>]+u-font-large[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+    */
     getParam(html, result, '__tariff', /Номер карты[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
     
     var hist = getElement(html, /<li[^>]+personal-orders-block-item[^>]*>/i);
     if(hist){
     	// Дата последней операции по счету
    		getParam(hist, result, 'last_date2', /<div[^>]+order-date[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseDate);
-   		getParam(hist, result, 'last_number', /<div[^>]+number[^>]*>[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
-   		getParam(hist, result, 'last_status', /<div[^>]+status[^>]*>([\s\S]*?)<\/div>/i, [/<strong[^>]*>[\s\S]*?<\/strong>/i, '', replaceTagsAndSpaces]);
-    	getParam(hist, result, 'last_sum', /<div[^>]+amount[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+   		getParam(hist, result, 'last_number', /<div[^>]+order-number[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+   		getParam(hist, result, 'last_status', /<div[^>]+order-status[^>]*>([\s\S]*?)<\/div>/i, [/<strong[^>]*>[\s\S]*?<\/strong>/i, '', replaceTagsAndSpaces]);
+    	getParam(hist, result, 'last_sum', /<div[^>]+order-amount[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
     }else{
     	AnyBalance.trace('Последняя операция не найдена...');
     }
 
     if(AnyBalance.isAvailable('burn_date2')){
-    	var tri = 0;
-    	do{
-	    	if(tri)
-	    		AnyBalance.trace('Попытка №' + (tri+1) + ' получить время устаревания бонусов');
-	    	html = AnyBalance.requestGet(baseurl + '/my-account/loyalty?ssb_block=balansBonusCardTabContentBlock&ajax=true&_=' + new Date().getTime(), addHeaders({
-	    		Referer: baseurl + '/my-account/loyalty',
-	    		'X-Requested-With':'XMLHttpRequest'
-	    	}));
-	    	++tri;
-	    }while(html.length < 3 && tri < 5);
-    	//Даты сгорания бонусных рублей
-	    sumParam(html, result, 'burn_date2', /<td[^>]+balans-table-cell-1[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseDate, aggregate_min);
-	    if(AnyBalance.isAvailable('burn_date2') && !isset(result.burn_date2))
-	    	AnyBalance.trace('Не удалось получить дату сгорания: ' + html);
+    	getParam(html, result, 'burn_date2', /успейте потратить [^<]*бонусных рублей до([^<]*)/i, replaceHtmlEntities, parseDate);
 	}
 
     if(AnyBalance.isAvailable('strategy')){

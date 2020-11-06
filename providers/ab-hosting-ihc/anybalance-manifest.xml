@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="2">ab-hosting-ihc</id>
+	<api flags="no_browser"/>
+	<name>Интернет Хостинг Центр</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе и сроке оплаты для провайдера Интернет Хостинг Центр https://ihc.ru/</p>
+	<p>Информация берется из личного кабинета https://my.ihc.ru/</p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units="р"/>
+		<counter id="bonus" name="Bonus" units="р"/>
+		<counter id="orders" name="Заказов" units=" шт"/>
+		<counter id="next_order_till" name="Ближайшая дата оплаты" type="time" format="dd/MM/yyyy"/>
+		<counter id="next_order_name" name="Название ближайшего по оплате заказа" type="text"/>
+		<counter id="next_order_autopay" name="Автопродление ближайшего по оплате заказа" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type></type>
+	<country>ru</country>
+</provider>

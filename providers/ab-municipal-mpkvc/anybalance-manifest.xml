@@ -1,44 +1,50 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
+	<id version="6">ab-municipal-mpkvc</id>
 	<api flags="no_browser"/>
-	<id version="5">ab-municipal-mpkvc</id>
-	<name>КВЦ (Рязань)</name>
+	<name>МП «КВЦ»</name>
 	<description html="true"><![CDATA[
 	<p>Получается информацию о начислениях для Кустового Вычислительного Центра города Рязани (http://мпквц.рф/)</p>
 	<p>Информация берется из личного кабинета (http://мпквц.рф/component/private/)</p>
 	]]></description>
-    <author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
-    <depends>
-        <module id="library"/>
-    </depends>
-    <files>
+	<author>Pavel Biryukov &lt;biryukovpyu@gmail.com&gt;; AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
+	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Итого" units=" р"/>
-		<counter id="__tariff" name="Лицевой счет" type="text"/>
-		
-		<counter id="balance01" name="Сод. и рем. жил. помещ." units=" р"/>
-		<counter id="balance34" name="ВзнКапРем" units=" р"/>
-		<counter id="balance02" name="Газоснабжение" units=" р"/>
-		<counter id="balance03" name="Электроснабжение" units=" р"/>
-		<counter id="balance03_tariff" name="Электроснабжение (тариф)" units=" р"/>
-		<counter id="balance03_counter" name="Электроснабжение (показания на начало месяца)"/>
-		<counter id="balance06" name="Отопление" units=" р"/>
-		<counter id="balance07" name="ГВС" units=" р"/>
-		<counter id="balance05" name="ХВС" units=" р"/>
-		<counter id="balance17" name="Водоотведение" units=" р"/>
-		<counter id="balance85" name="ОДН ХВС" units=" р"/>
-		<counter id="balance87" name="ОДН ГВС" units=" р"/>
-		<counter id="balance08" name="Домофон" units=" р"/>
-		<counter id="balance12" name="Кабельное ТВ" units=" р"/>
-		<counter id="balance15" name="Вывоз ТБО" units=" р"/>
-		<counter id="balance15_tariff" name="Вывоз ТБО (тариф)" units=" р"/>
-		<counter id="balance15_diff" name="Вывоз ТБО (переплата/недоплата)" units=" р"/>
-		<counter id="balance15_accrued" name="Вывоз ТБО (начислено)" units=" р"/>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="personal_account" name="Лицевой счет" type="text"/>
+
+		<counter id="numberOfServices" name="Количество услуг"/>
+
+		<counter id="overUnderPaymentFirstDay" name="Переплата/недоплата на начало месяца" units=" р"/>
+		<counter id="consumption" name="Потребление"/>
+		<counter id="price" name="Тариф" units=" р"/>
+		<counter id="indicationsFirstDay" name="Показания на начало месяца"/>
+		<counter id="indicationsCurrentDay" name="Показания на текущий момент"/>
+		<counter id="accrued" name="Начислено" units=" р"/>
+		<counter id="recalculation" name="Перерасчет" units=" р"/>
+		<counter id="paid" name="Оплачено" units=" р"/>
+		<counter id="overUnderPaymentCurrentDay" name="Переплата/недоплата на текущий момент" units=" р"/>
+
+		<counter id="totalAccrued" name="ИТОГО начислено" units=" р"/>
+		<counter id="totalPaid" name="ИТОГО оплачено" units=" р"/>
+
+		<counter id="TUnder_paymentFirstDay" name="ИТОГО недоплата (на начало месяца)" units=" р"/>
+		<counter id="TUnder_paymentCurrentDay" name="ИТОГО недоплата (на текущий момент)" units=" р"/>
+
+		<counter id="TOver_paymentFirstDay" name="ИТОГО переплата (на начало месяца)" units=" р"/>
+		<counter id="TOver_paymentCurrentDay" name="ИТОГО переплата (на текущий момент)" units=" р"/>
+
+		<counter id="area" name="Площадь общая" units=" м²"/>
+		<counter id="registered_number" name="Количество зарегистрированных" units=" чел."/>
+		<counter id="owner" name="Собственник(и)" units=" чел."/>
 	</counters>
 	<keywords>мпквц Кустового Вычислительного Центра Рязань</keywords>
 	<type>municipal</type>

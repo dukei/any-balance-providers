@@ -7,7 +7,7 @@ var g_headers = {
 	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
 	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
 	Connection: 'keep-alive',
-	'User-Agent': 'Mozilla/5.0 (Windows NT 5.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/28.0.1500.72 Safari/537.36'
+	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.120 Safari/537.36'
 };
 
 var baseurl = 'https://money.yandex.ru/';
@@ -20,9 +20,9 @@ function loginAndGetBalance(prefs, result) {
 	
 	var html = AnyBalance.requestGet("https://passport.yandex.ru", g_headers);
 	
-	html = loginYandex(prefs.login, prefs.password, html, baseurl + 'index.xml', 'money');
+	html = loginYandex(prefs.login, prefs.password, html, baseurl, 'money');
 	
-	if (!/logout-url/i.test(html))
+	if (!/logout-url|balance-widget/i.test(html))
 		throw new AnyBalance.Error("Не удалось зайти. Проверьте логин и пароль.");
 
 	var ld = getJsonObject(html, /window.__layoutData__\s*=/);

@@ -6,21 +6,21 @@
 			'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
 			'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
 			'Connection': 'keep-alive',
-			'User-Agent': 'Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/32.0.1700.76 Safari/537.36',
+			'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.120 Safari/537.36',
 		};
 
 var g_apiHeaders = {
 	'Accept': 'application/json, text/javascript, */*; q=0.01',
 	'Origin': 'https://www.gosuslugi.ru',
 	'X-Requested-With': 'XMLHttpRequest',
-	'User-Agent': 'Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/32.0.1700.76 Safari/537.36',
+	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.120 Safari/537.36',
 	'Content-Type': 'application/json',
 	'Referer': 'https://www.gosuslugi.ru/pgu/personcab',
 }
 
 var g_betaApiHeaders = {
 	'Accept': 'application/json, text/javascript, */*; q=0.01',
-	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/44.0.2403.157 Safari/537.36',
+	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.120 Safari/537.36',
 	'Accept-Language': 'ru,en;q=0.8',
 }
 
@@ -37,11 +37,24 @@ function login(prefs) {
 //    AnyBalance.setOptions({cookiePolicy: 'netscape'});
 	AnyBalance.setDefaultCharset('utf-8');
 
-	var formattedLogin = getParam(prefs.login || '', null, null, /^\d{11}$/, [/^(\d{3})(\d{3})(\d{3})(\d{2})$/i, '$1-$2-$3 $4']);
-	var loginType = 'snils';
-	if (/@/.test(prefs.login)) {
-		formattedLogin = getParam(prefs.login || '', null, null, /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/);
+	var formattedLogin;
+	var loginType;
+	var login = prefs.login.replace(/[^\d@]+/g, '');
+	if (/@/.test(login)) {
+		formattedLogin = getParam(prefs.login, /^\s*([a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*)\s*$/);
+		if(!formattedLogin)
+			throw new AnyBalance.Error('Некорректный e-mail');
 		loginType = 'email';
+	}else if(/^\s*\+7/i.test(prefs.login) || /^\d{10}$/.test(login)){
+		loginType = 'phone';
+		formattedLogin = login.replace(/^7?(\d{3})(\d{3})(\d{2})(\d{2})/i, '+7($1)$2$3$4');
+	}else if(/^\d{11}$/.test(login)){
+		if(!checkSnils(login))
+			throw new AnyBalance.Error('Некорректный СНИЛС, пожалуйста, проверьте и исправьте', null, true);
+		loginType = 'snils';
+		formattedLogin = login.replace(/^(\d{3})(\d{3})(\d{3})(\d{2})$/i, '$1-$2-$3 $4');
+	}else{
+		throw new AnyBalance.Error('В качестве логина введите СНИЛС (11 цифр без разделителей), телефон (10 цифр без разделителей) или e-mail', null, true);
 	}
 
 	if (loginType == 'snils')
@@ -66,14 +79,16 @@ function login(prefs) {
 		// }, addHeaders({Referer: 'https://esia.gosuslugi.ru/idp/authn/CommonLogin'}));
 
 		// А новую оставим на всякий
-		var command = getParam(html, null, null, /new\s+LoginViewModel\((?:[^,]+,){1,2}'([^"']+)'/i);
+		var command = getParam(html, null, null, /new\s+LoginViewModel\((?:[^,]+,){1,2}\s*'([^"']+)'/i);
 		if (!command) {
 			AnyBalance.trace(html);
 			throw new AnyBalance.Error('Не удалось найти идентификатор команды для входа.');
 		}
 
 		html = AnyBalance.requestPost('https://esia.gosuslugi.ru/idp/login/pwd/do', {
+			mobileOrEmail: prefs.login,
 			login: formattedLogin,
+			snils: '',
 			password: prefs.password,
 			idType: loginType,
 			'command': command
@@ -366,7 +381,7 @@ function parseBool(str) {
 }
 
 function isLoggedIn(html) {
-	return /\/logout|title="Выход"/i.test(html);
+	return /<lk-root>/i.test(html);
 }
 
 /** на входе урл и параметры в json */

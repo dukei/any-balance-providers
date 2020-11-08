@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
   <api flags="no_browser"/>
-  <id version="1">ab-money-eubank</id>
+  <id version="2">ab-money-eubank</id>
   <name>Евразийский Банк</name>   
   <description>
     Получает текущий остаток и другие параметры продуктов Евразийского Банка (https://www.eubank.kz/), используя интернет-банк (https://my.smartbank.kz/).

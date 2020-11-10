@@ -7,8 +7,9 @@
 	<p>Предоставляет информацию о балансе провайдера Владлинк <a href="http://vladlink.ru/">http://vladlink.ru/</a></p>
 	<p>Информация берется из личного кабинета <a href="https://my.vladlink.ru/">https://my.vladlink.ru/</a></p>
 	]]></description>
-	<author>AnyBalance Team &lt;info@anybalance.ru&gt;, SirStefan</author>
-	<depends>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<author>SirStefan &lt;SirStefan@example.com&gt;</author>
+ 	<depends>
 		<module id="library"/>
 	</depends>
 	<files>

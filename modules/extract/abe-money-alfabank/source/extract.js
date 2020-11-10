@@ -3,7 +3,6 @@
  */
 
 var g_baseurl = 'https://click.alfabank.ru';
-var g_baseurl_auth = 'https://private.auth.alfabank.ru/passport/';
 
 var g_headers = {
     'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
@@ -20,7 +19,7 @@ var g_csrfToken;
 var g_pageID;
 
 function login(options) {
-    //AnyBalance.setOptions({cookiePolicy: 'rfc2109'});
+    AnyBalance.setOptions({cookiePolicy: 'rfc2109'});
     AnyBalance.setDefaultCharset('utf-8');
 
     var prefs = AnyBalance.getPreferences();
@@ -45,13 +44,10 @@ function isClick20() {
 function processClick(options) {
     var prefs = AnyBalance.getPreferences();
 
-    AnyBalance.trace('Navigating homepage');
-    var html = AnyBalance.requestGet(g_baseurl_auth + 'cerberus-mini-blue/dashboard-blue/username/', g_headers);
+    var html = AnyBalance.requestGet(g_baseurl + '/ALFAIBSR/', g_headers);
 
     var state = getJsonObject(html, /window.initialState\s*=/);
     var requestId = state.passport.authorization.requestId;
-
-    AnyBalance.trace('state=' + JSON.stringify(state) + ', requestId=' + requestId)
 
 /*    html = AnyBalance.requestPost(g_baseurl + '/AlfaSign/security', {
         username: prefs.login,
@@ -59,30 +55,11 @@ function processClick(options) {
         request_id: state.passport.authorization.requestId
     }, g_headers);
 */
-
-    var params = JSON.stringify({
-    	"username":prefs.login,
-    	"password":prefs.password,
-    	"queryRedirectParams":{
-    		"acr_values":"username",
-    		"scope":"click-web",
-    		"non_authorized_user":"true",
-    		"client_id":"click-web"
-    	},
-    	"currentRoute":"/password",
-    	"captchaKey":""
-    })
-
-    AnyBalance.trace('params=' + params)
-
-    html = AnyBalance.requestPost(g_baseurl_auth + 'cerberus-mini-green/dashboard-green/api/oid/authorize', params, addHeaders({"Content-Type": "application/json"}));
-
-    AnyBalance.trace('login response=' + html)
-
-    if(AnyBalance.getLastStatusCode() > 299) {
-        AnyBalance.trace(html);
-        throw new AnyBalance.Error("Не удалось зайти в интернет-банк. Сайт изменен?");
-    }
+    html = AnyBalance.requestPost(g_baseurl + '/oam/server/auth_cred_submit', {
+        username: prefs.login,
+        password: prefs.password,
+        request_id: requestId
+    }, g_headers);
 
     if(/<input[^>]+otp_param/i.test(html)){
     	AnyBalance.trace('Затребован одноразовый пароль');
@@ -101,37 +78,31 @@ function processClick(options) {
 		html = AnyBalance.requestPost(g_baseurl + '/oam/server/auth_cred_submit', params, g_headers);
     }
 
-    var result = getJsonObject(html);
+    if (!/"_afrLoop",\s*"(\d+)"/i.test(html)) {
+        //Мы остались на странице входа. какая-то ошибка
+        var error = getElement(html, /<div[^>]+class="[^"]*\b(?:red|notification__message)\b/i, replaceTagsAndSpaces);
+        if (error)
+            throw new AnyBalance.Error(error, null, /парол/i.test(error));
+        error = getParam(html, null, null, /(Неверный логин или пароль)/i);
+        if (error)
+            throw new AnyBalance.Error(error, null, true);
 
-    html = AnyBalance.requestGet(result.redirectUrl, g_headers);
+        var error_code = getParam(AnyBalance.getLastUrl(), null, null, /p_error_code=([^&]*)/i, null, decodeURIComponent);
+        if (error_code) {
+            var jsons = AnyBalance.requestGet(g_baseurl + '/SLAlfaSignFront10/errors?code=' + error_code + '&type=' + getParam(error_code, null, null, /[^\-]*/), g_headers);
+            var json = getJson(jsons);
+            if (json.result != 'SUCCESS') {
+                AnyBalance.trace('Не удалось получить ошибку: ' + jsons);
+            } else {
+                error = json.payload[error_code];
+            }
+            if (error)
+                throw new AnyBalance.Error(error, null, /логин или пароль/i.test(error));
+        }
 
-    AnyBalance.trace('redirectUrl response=' + html)
-
-    // if (!/"_afrLoop",\s*"(\d+)"/i.test(html)) {
-    //     //Мы остались на странице входа. какая-то ошибка
-    //     var error = getElement(html, /<div[^>]+class="[^"]*\b(?:red|notification__message)\b/i, replaceTagsAndSpaces);
-    //     if (error)
-    //         throw new AnyBalance.Error(error, null, /парол/i.test(error));
-    //     error = getParam(html, null, null, /(Неверный логин или пароль)/i);
-    //     if (error)
-    //         throw new AnyBalance.Error(error, null, true);
-
-    //     var error_code = getParam(AnyBalance.getLastUrl(), null, null, /p_error_code=([^&]*)/i, null, decodeURIComponent);
-    //     if (error_code) {
-    //         var jsons = AnyBalance.requestGet(g_baseurl + '/SLAlfaSignFront10/errors?code=' + error_code + '&type=' + getParam(error_code, null, null, /[^\-]*/), g_headers);
-    //         var json = getJson(jsons);
-    //         if (json.result != 'SUCCESS') {
-    //             AnyBalance.trace('Не удалось получить ошибку: ' + jsons);
-    //         } else {
-    //             error = json.payload[error_code];
-    //         }
-    //         if (error)
-    //             throw new AnyBalance.Error(error, null, /логин или пароль/i.test(error));
-    //     }
-
-    //     AnyBalance.trace(html);
-    //     throw new AnyBalance.Error("Не удалось зайти в интернет-банк. Сайт изменен?");
-    // }
+        AnyBalance.trace(html);
+        throw new AnyBalance.Error("Не удалось зайти в интернет-банк. Сайт изменен?");
+    }
 
     html = clickGoToUrl(html, {isHtml: true, sessionRequired: true});
     var lastUrl = AnyBalance.getLastUrl();
@@ -171,10 +142,8 @@ function clickGoToUrl(urlOrHtml, options){
     var html = options.isHtml ? urlOrHtml : AnyBalance.requestGet(urlOrHtml, g_headers);
 
     var afr = getParam(html, null, null, /"_afrLoop",\s*"(\d+)"/i);
-    if (!afr) {
-        AnyBalance.trace(html);
+    if (!afr)
         throw new AnyBalance.Error('Не удаётся найти параметр для входа: _afrLoop. Сайт изменен?');
-    }
 
     var sess = getParam(html, null, null, /var\s+sess\s*=\s*"([^"]*)/i, replaceSlashes);
     if (options.sessionRequired && !sess)
@@ -620,7 +589,7 @@ function processCredit2(html, result) {
 }
 
 function processInfo2(html, result) {
-    if (false && AnyBalance.isAvailable('info')) {
+    if (AnyBalance.isAvailable('info')) {
         AnyBalance.trace('Получаем информацию о пользователе');
 
         result = result.info = {};

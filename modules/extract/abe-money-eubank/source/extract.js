@@ -42,7 +42,11 @@ function login() {
 	} else {
 		AnyBalance.trace('Уже залогинены, используем существующую сессию')
 	}
-	
+
+    if (/Изменить пароль/i.test(html)) {
+        throw new AnyBalance.Error('Вам требуется сменить пароль! Зайдите в кабинет через браузер и поменяйте ваш пароль.', null, true);
+    }
+
 	if (!/logout/i.test(html)) {
 		var error = getParam(html, null, null, /<div[^>]+error[^>]*>([\s\S]*?)(?:<\/div>)/i, replaceTagsAndSpaces, html_entity_decode);
 		if (error)
@@ -71,7 +75,7 @@ function processCards(html, result) {
     // Если это не так тогда запросим страницу с картами
     var cardList = getParam(html, null, null, /<div[^>]+accounts-cards[^>]*>[^]*?<\/script>\s*<\/div>\s*<\/div>/i);
 	if(!cardList) {
-        var html = AnyBalance.requestGet(п_baseurl + 'accounts/cards', g_headers);
+        var html = AnyBalance.requestGet(g_baseurl + 'accounts/cards', g_headers);
         var cardList = getParam(html, null, null, /<div[^>]+accounts-cards[^>]*>[^]*?<\/script>\s*<\/div>\s*<\/div>/i);
 	}
 
@@ -276,7 +280,7 @@ function processDeposits(html, result) {
     // Если это не так тогда запросим страницу с картами
     var depositList = getParam(html, null, null, /<div[^>]+accounts-deposit[^>]*>[^]*?<\/script>\s*<\/div>\s*<\/div>/i);
 	if(!depositList) {
-        var html = AnyBalance.requestGet(п_baseurl + 'accounts/deposit', g_headers);
+        var html = AnyBalance.requestGet(g_baseurl + 'accounts/deposit', g_headers);
         var depositList = getParam(html, null, null, /<div[^>]+accounts-deposit[^>]*>[^]*?<\/script>\s*<\/div>\s*<\/div>/i);
 	}
 
@@ -380,7 +384,7 @@ function processBonuses(html, result) {
     // Если это не так тогда запросим страницу с картами
     var bonusList = getParam(html, null, null, /<div[^>]+accounts-bonus[^>]*>[^]*?<\/script>\s*<\/div>\s*<\/div>/i);
 	if(!bonusList) {
-        var html = AnyBalance.requestGet(п_baseurl + 'accounts/bonus', g_headers);
+        var html = AnyBalance.requestGet(g_baseurl + 'accounts/bonus', g_headers);
         var bonusList = getParam(html, null, null, /<div[^>]+accounts-bonus[^>]*>[^]*?<\/script>\s*<\/div>\s*<\/div>/i);
 	}
 

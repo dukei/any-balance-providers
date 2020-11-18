@@ -59,25 +59,21 @@ function main(){
 	
 	var params = createFormParams(form, function(params, str, name, value) {
 		var id=getParam(str, /\bid="([^"]*)/i, replaceHtmlEntities);
-		if(id){
-			if(/itelephone/i.test(id)){ //Это номер
-				value = prefs.login;
-			}else if(/ipassword/i.test(id)){ //Это пароль
-				value = prefs.password.substr(0, 10);  //Велкам уже принимает 10 символов пароля
-			}
+		if(name === 'pinCheck'){
+			return 'false';
+		}else if(name === 'UserID'){ //Это номер
+			value = prefs.login.replace(/(\+375)(\d\d)(\d{3})(\d\d)(\d\d)/, '$1 $2 $3 $4 $5');
+		}else if(name === 'mobilePassword'){ //Это пароль
+			value = prefs.password.substr(0, 10);  //Велкам уже принимает 10 символов пароля
+		}else if(name === 'identification'){
+			value = 'Мобильнаясвязь';
+		}else if(name === 'radio'){
+			value = 'on';
+		}else if(name === 'pin'){
+			value = '';
 		}
 		if(!name)
 			return;
-/*		if(name == 'user_input_0')
-			value = '';
-		if(name == 'user_input_timestamp')
-			value = new Date().getTime();
-		if(/^user_input_\d+8$/.test(name))
-			value = '5';
-		if(/^user_input_\d+9$/.test(name))
-			value = '2';
-		if(/^user_input_\d+10$/.test(name))
-			value = '0'; */
 		return value || '';
     });
     delete params.user_submit;

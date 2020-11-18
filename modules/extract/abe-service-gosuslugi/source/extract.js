@@ -15,7 +15,7 @@ var g_apiHeaders = {
 	'X-Requested-With': 'XMLHttpRequest',
 	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.120 Safari/537.36',
 	'Content-Type': 'application/json',
-	'Referer': 'https://www.gosuslugi.ru/pgu/personcab',
+	'Referer': 'https://www.gosuslugi.ru/',
 }
 
 var g_betaApiHeaders = {
@@ -64,7 +64,7 @@ function login(prefs) {
 
 	checkEmpty(prefs.password, 'Введите пароль!');
 
-	var html = AnyBalance.requestGet(g_baseurl + 'pgu/personcab', g_headers);
+	var html = AnyBalance.requestGet(g_baseurl + 'auth/esia/?redirectPage=/', g_headers);
 
 	// нужно для отладки
 	if (!isLoggedIn(html)) {
@@ -85,14 +85,14 @@ function login(prefs) {
 			throw new AnyBalance.Error('Не удалось найти идентификатор команды для входа.');
 		}
 
-		html = AnyBalance.requestPost('https://esia.gosuslugi.ru/idp/login/pwd/do', {
+		html = checkForRedirect(AnyBalance.requestPost('https://esia.gosuslugi.ru/idp/login/pwd/do', {
 			mobileOrEmail: prefs.login,
 			login: formattedLogin,
 			snils: '',
 			password: prefs.password,
 			idType: loginType,
 			'command': command
-		}, addHeaders({Referer: 'https://esia.gosuslugi.ru/idp/rlogin?cc=bp'}));
+		}, addHeaders({Referer: 'https://esia.gosuslugi.ru/idp/rlogin?cc=bp'})));
 
 		var form = getElement(html, /<form[^>]+otpForm/i);
 		if(form){
@@ -125,7 +125,7 @@ function login(prefs) {
 			html = AnyBalance.requestGet('https://esia.gosuslugi.ru/idp/globalRoleSelection?orgID=P', g_headers);
 		}
 
-		html = checkForRedirect(AnyBalance.requestGet('https://www.gosuslugi.ru/pgu/personcab', g_headers));
+		html = checkForRedirect(AnyBalance.requestGet('https://www.gosuslugi.ru/', g_headers));
 
 		// Поскольку Ваш браузер не поддерживает JavaScript, для продолжения Вам необходимо нажать кнопку "Продолжить".
 		html = checkForJsOff(html);
@@ -381,7 +381,8 @@ function parseBool(str) {
 }
 
 function isLoggedIn(html) {
-	return /<lk-root>/i.test(html);
+	var html = AnyBalance.requestGet(g_baseurl + 'api/lk/v1/users/data?_=' + Math.random(), addHeaders({Referer: g_headers}));
+	return /"firstName"/.test(html);
 }
 
 /** на входе урл и параметры в json */
@@ -424,17 +425,27 @@ function checkForJsOff(html) {
 function checkForRedirect(html) {
 	// Пытаемся найти ссылку на редирект
 	// var href = getParam(html, null, null, /url=([^"]+)/i);
+	var referer = AnyBalance.getLastUrl();
 	var href = getParam(html, null, null, /<meta[^>]+"refresh"[^>]+url=([^"]+)/);
-	// Если нет ссылки, не надо никуда идти
-	if (!href) {
-		AnyBalance.trace('Данная страница не требует переадресации.');
-		//AnyBalance.trace(html);
-		return html;
 		// Если нашли ссылку, идем по ней
-	} else {
+	if(href){
 		AnyBalance.trace('checkForRedirect: Нашли ссылку ' + href);
-		return checkForJsOff(AnyBalance.requestGet(href, addHeaders({Referer: g_baseurl + 'pgu/personcab'})));
+		return checkForJsOff(AnyBalance.requestGet(href, addHeaders({Referer: referer})));
 	}
+
+	var form = /<body[^>]+onload="document\.forms\[0\]\.submit/i.test(html);
+	if(form){
+		form = getElement(html, /<form/i);
+		href = getParam(form, /<form[^>]+action="([^"]*)/i, replaceHtmlEntities);
+		AnyBalance.trace('checkForRedirect: Нашли форму на ' + href);
+
+		return checkForJsOff(AnyBalance.requestPost(joinUrl(referer, href), createFormParams(form), addHeaders({Referer: referer})));
+	}
+
+	// Если нет ссылки, не надо никуда идти
+	AnyBalance.trace('Данная страница не требует переадресации.');
+	return html;
+
 }
 
 // function followRedirect(html, allowExceptions) {
@@ -445,7 +456,7 @@ function checkForRedirect(html) {
 // throw new AnyBalance.Error('Не удалось найти ссылку на переадресацию, сайт изменен?');
 // }
 // //AnyBalance.trace('Нашли ссылку ' + href);
-// return AnyBalance.requestGet(href, addHeaders({Referer: g_baseurl + 'pgu/personcab'}));
+// return AnyBalance.requestGet(href, addHeaders({Referer: g_baseurl}));
 // }
 
 function createFormParamsById(html, servicesubId) {

@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="33">ab-money-yandex</id>
+	<id version="34">ab-money-yandex</id>
 	<api flags="no_browser" />
-	<name>Яндекс.Деньги</name>
+	<name>ЮMoney (Яндекс.Деньги)</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о текущем остатке и номере счета в "Яндекс.Деньги".</p>
 	<p>Информация берется из личного кабинета <a href="https://money.yandex.ru/">https://money.yandex.ru/</a></p>
@@ -29,7 +29,7 @@
 		<counter id="number" name="Номер счета" type="text"/>
 		<counter id="no_cashback_count" name="Платежей без кэшбэка" units=" шт"/>
 	</counters>
-	<keywords>яндекс-деньги, yandex money</keywords>
+	<keywords>яндекс-деньги, yandex money, юмани, ю-мани</keywords>
 	<type>money, wallet</type>
 	<country>ru</country>
 </provider>

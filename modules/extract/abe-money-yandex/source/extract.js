@@ -10,21 +10,165 @@ var g_headers = {
 	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.120 Safari/537.36'
 };
 
-var baseurl = 'https://money.yandex.ru/';
+var baseurl = 'https://yoomoney.ru/';
+var g_csrf;
+var g_savedData;
+
+function callApi(verb, params){
+	if(!g_csrf)
+		throw new AnyBalance.Error('CSRF token not set!');
+
+	var html = AnyBalance.requestPost(baseurl + verb, JSON.stringify(params), addHeaders({
+		Referer: baseurl,
+		'Content-Type': 'application/json;charset=UTF-8',
+		'x-csrf-token': g_csrf
+	}));
+
+	var json = JSON.parse(html);
+	if(json.status === 'error'){
+		AnyBalance.trace(html);
+		var error = json.message || (json.errors && JSON.stringify(json.errors));
+		throw new AnyBalance.Error(error, null, /PASSWORD|ACCOUNT/i.test(error));
+	}
+
+	return json;
+}
+
+function login(){
+	var prefs = AnyBalance.getPreferences();
+	checkEmpty(prefs.login, 'Введите логин в ЮMoney!');
+	checkEmpty(prefs.password, 'Введите пароль, используемый для входа в систему ЮMoney.');
+	
+	if(!g_savedData)
+		g_savedData = new SavedData('yoomoney', prefs.login);
+
+	g_savedData.restoreCookies();
+
+	var html = AnyBalance.requestGet(baseurl, g_headers);
+	var data = getJsonObject(html, /window.__layoutData__\s*=/);
+	if(data && data.user && data.user.uid){
+		AnyBalance.trace('Already logged in to ' + data.user.userName + ' (' + data.user.maskedPhone + ')');
+	}else{
+		AnyBalance.trace('Logging in anew');
+		html = AnyBalance.requestGet(baseurl + 'yooid/login?origin=Wallet&returnUrl=https%3A%2F%2Fyoomoney.ru%2F', g_headers);
+		g_csrf = getParam(html, /__secretKey__="([^"]*)/);
+		if(!g_csrf){
+			AnyBalance.trace(html);
+			throw new AnyBalance.Error('Не удаётся найти информацию для входа. Сайт изменен?');
+		}
+		var data = getJsonObject(html, /__data__=/);
+	    
+		var jsonProcess = callApi('yooid/signin/api/start-authenticate', {
+			"sessionId":data.tmx.sessionId,
+			"login":prefs.login,
+			"origin":"Wallet"
+		});
+	    
+	    
+        var json = callApiProgress('yooid/signin/api/set-login', {
+        	"login":prefs.login,
+        	"processId":jsonProcess.result.processId,
+        	"loginType":jsonProcess.result.loginType
+        });
+        var _json = json;
+        
+		function getNextStepData(json){
+			if(!json.result)
+				return json.result;
+	    
+			if(json.result.nextStepData)
+				return json.result.nextStepData;
+	    
+			if(json.result.nextStep)
+				return json.result;
+		}
+	    
+		while(_json.result && getNextStepData(_json)){
+			_json = processStep(jsonProcess.result, getNextStepData(_json));
+		}
+		
+		html = AnyBalance.requestGet(baseurl);
+	}
+
+	g_savedData.setCookies();
+	g_savedData.save();
+	return html;
+}
+
+function callApiProgress(verb, params){
+	var json;
+	do{
+		if(json)
+			AnyBalance.sleep(1000);
+
+		json = callApi(verb, params);
+		AnyBalance.trace(verb + ': ' + JSON.stringify(json));
+	}while(json.status === 'progress');
+	
+	var status = json.result && json.result.status;
+	if(status && !/^(SUCCESS|ok)$/i.test(status)){
+		var error = json.result.message || json.result.status;
+		throw new AnyBalance.Error(error, null, /ACCOUNT|PASSWORD/i.test(error));
+	}
+
+	return json;
+}
+
+function processStep(data, stepData){
+	var prefs = AnyBalance.getPreferences();
+	AnyBalance.trace('Processing step ' + stepData.nextStep);
+	var json;
+	if(stepData.nextStep === 'SetPassword'){
+		json = callApiProgress('yooid/signin/api/set-password', {
+			"processId":data.processId,
+			"loginType":data.loginType,
+			"password":prefs.password
+		});
+	}else if(stepData.nextStep === 'SetConfirmationCode'){
+		var code = AnyBalance.retrieveCode('Пожалуйста, введите код, который послан вам на ' + stepData.maskedRecipient, {inputType: 'number', time: 170000});
+		var verbs = {
+			PhoneNumber: 'check-opt-phone',
+			Email: 'check-opt-mail',
+		};
+
+		if(!verbs[data.loginType])
+			throw new AnyBalance.Error('Неизвестный тип входа: ' + data.loginType);
+
+		json = callApiProgress('yooid/signin/api/' + verbs[data.loginType], {
+			"contextId": data.processId,
+			"answer": code
+		});
+	}else if(stepData.nextStep === 'Complete'){
+		json = callApiProgress('yooid/signin/api/confirm', {
+			"processId":data.processId,
+			"loginType":data.loginType,
+		});
+	}else if(stepData.nextStep === 'SelectAccount'){
+		AnyBalance.trace('Multiple accounts found: ' + JSON.stringify(stepData.accounts));
+		var acc = stepData.accounts.filter(function(a){return a.migrationRequirement === 'NotRequired'});
+		if(!acc[0])
+			throw new AnyBalance.Error('Не удалось найти готовый для входа аккаунт!');
+		
+		json = callApiProgress('yooid/signin/api/select-account', {
+			"processId":data.processId,
+			"loginType":data.loginType,
+			"uid": acc[0].uid
+		});
+	}else{
+		throw new AnyBalance.Error('Неизвестный шаг');
+	}
+
+	return json;
+}
 
 function loginAndGetBalance(prefs, result) {
 	checkEmpty(prefs.login, 'Введите логин в Яндекс.Деньги!');
 	checkEmpty(prefs.password, 'Введите пароль, используемый для входа в систему Яндекс.Деньги. Не платежный пароль, а именно пароль для входа!');
 	
 	AnyBalance.setDefaultCharset('UTF-8');
-	
-	var html = AnyBalance.requestGet("https://passport.yandex.ru", g_headers);
-	
-	html = loginYandex(prefs.login, prefs.password, html, baseurl, 'money');
-	
-	if (!/logout-url|balance-widget/i.test(html))
-		throw new AnyBalance.Error("Не удалось зайти. Проверьте логин и пароль.");
 
+	var html = login();
+	
 	var ld = getJsonObject(html, /window.__layoutData__\s*=/);
 	if(ld){
 		AnyBalance.trace('Загружаем из layoutData');

@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="34">ab-money-yandex</id>
+	<id version="35">ab-money-yandex</id>
 	<api flags="no_browser" />
 	<name>ЮMoney (Яндекс.Деньги)</name>
 	<description html="true"><![CDATA[

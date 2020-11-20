@@ -125,7 +125,7 @@ function processStep(data, stepData){
 			"password":prefs.password
 		});
 	}else if(stepData.nextStep === 'SetConfirmationCode'){
-		var code = AnyBalance.retrieveCode('Пожалуйста, введите код, который послан вам на ' + stepData.maskedRecipient, {inputType: 'number', time: 170000});
+		var code = AnyBalance.retrieveCode('Пожалуйста, введите код, который послан вам на ' + stepData.maskedRecipient, null, {inputType: 'number', time: 170000});
 		var verbs = {
 			PhoneNumber: 'check-opt-phone',
 			Email: 'check-opt-mail',

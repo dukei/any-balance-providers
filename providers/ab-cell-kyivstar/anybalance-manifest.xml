@@ -67,6 +67,8 @@
 		<counter id="bonus_mins_other_mobile_till" name="Срок действия минут на другие мобильные" type="time" format="dd/MM/yyyy"/>
 		<counter id="other_costs" name="Начисление абонентской платы по услуге «-33%»" units=" {@currency}"/>
 		<counter id="connection_date" name="Дата подключения" type="time" format="dd/MM/yyyy"/>
+		<counter id="mins_fix" name="Минуты на другие номера" type="time_interval" format="{@MIN}:{@s}"/>
+		<counter id="mins_fix_till" name="Срок действия минут на другие номера" type="time" format="dd/MM/yyyy"/>
 	</counters>
 	<keywords>Сотовый телефон, мобильный, мобильник, kyivstar, киевстар, Украина</keywords>
 	<type>cell</type>

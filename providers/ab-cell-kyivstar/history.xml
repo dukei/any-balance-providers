@@ -1,5 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="2.0" version="115" date="2020-11-18">
+	Исправлена проблема со входом
+	</change>
+	<change major_version="2.0" version="114" date="2020-11-02">
+	- Поддержка изменений в процедуре входа
+	</change>
 	<change major_version="2.0" version="113" date="2019-12-04">
 	- Поддержка изменений в процедуре входа
 	</change>

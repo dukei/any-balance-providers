@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-money-privatbank-bisness</id>
+	<id version="2">ab-money-privatbank-bisness</id>
 	<name>Приватбанк для бизнеса(Украина)</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию об остатках на расчетых и депозитных счетах Приватбанка для Бизнеса <a href="http://privatbank.ua/">http://privatbank.ua/</a></p>

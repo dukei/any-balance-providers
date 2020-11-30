@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="3">ab-internet-vladlink</id>
+	<id version="4">ab-internet-vladlink</id>
 	<api flags="no_browser"/>
 	<name>Владлинк</name>
 	<description html="true"><![CDATA[
@@ -8,7 +8,8 @@
 	<p>Информация берется из личного кабинета <a href="https://my.vladlink.ru/">https://my.vladlink.ru/</a></p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
-	<depends>
+	<author>SirStefan &lt;SirStefan@example.com&gt;</author>
+ 	<depends>
 		<module id="library"/>
 	</depends>
 	<files>

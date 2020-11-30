@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="2" date="2020-11-08">
+    - Отображение ошибки в случае когда банк требует сменить пароль
+	</change>
 	<change version="1" date="2018-04-03">
 	- Первая версия провайдера.
 	</change>

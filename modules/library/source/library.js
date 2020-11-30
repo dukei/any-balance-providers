@@ -1485,7 +1485,8 @@ var AB = (function (global_scope) {
         createUrlEncodedParams: createUrlEncodedParams,
         clearAllCookies: clearAllCookies,
         solveRecaptcha: solveRecaptcha,
-        regexEscape: regexEscape
+        regexEscape: regexEscape,
+        isObject: isObject
     };
 })(this);
 

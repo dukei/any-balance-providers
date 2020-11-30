@@ -7,7 +7,8 @@
 	<p>Предоставляет информацию о балансе провайдера РКС Новогор-Прикамье <a href="https://novogor.perm.ru/">https://novogor.perm.ru/</a></p>
 	<p>Информация берется из личного кабинета <a href="https://lk.novogor.perm.ru/account">https://lk.novogor.perm.ru/account</a></p>
 	]]></description>
-	<author>AlekseyShi &lt;aleks.shishkin@gmail.com&gt;, Aleksey Sosnin &lt;sosnin.aleksey@gmail.com&gt;</author>
+	<author>AlekseyShi &lt;aleks.shishkin@gmail.com&gt;</author>
+	<author>Aleksey Sosnin &lt;sosnin.aleksey@gmail.com&gt;</author>
 	<depends>
 		<module id="library"/>
 	</depends>

@@ -12,9 +12,9 @@ var g_headers = {
 
 var g_gwtCfg = {
 	url: 'https://account.kyivstar.ua/cas/auth/',
-	strong_name: '\\b%VARNAME_BROWSER%],(\\w+)\\)',
+	strong_name: '\\b%VARNAME_BROWSER%],(\\w+)\\)' ,
 	auth_nocache: 'auth.nocache.js',
-	magic_id: '399E8C3CEF0C030C0BB622DCF82CCD9D'
+	magic_id: '11BE696C2F44311723F20D50A016F48A'
 };
 
 function isLoggedIn(html) {

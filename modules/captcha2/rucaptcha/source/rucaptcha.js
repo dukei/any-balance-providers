@@ -15,6 +15,17 @@ class RuCaptcha {
 		return await this.waitForResult(id);
 	}
 
+	async solveFunCaptcha(sitekey, {url, userAgent, surl}){
+		let id = await this.sendToRecognition({
+			method: 'funcaptcha',
+			publickey: sitekey,
+			surl: surl,
+			userAgent: userAgent,
+		});
+
+		return await this.waitForResult(id);
+	}
+
 	async sendToRecognition(params){
 		let tryno = 1, res;
 		do{

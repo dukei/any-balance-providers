@@ -11,7 +11,7 @@ var g_headers = {
 	'Accept': 'application/json, text/plain, */*',
 	'Accept-Language': 'ru,en-US;q=0.8,en;q=0.6',
 	'Connection': 'keep-alive',
-	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.115 Safari/537.36',
+	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.120 Safari/537.36',
 	Origin: "https://my.5ka.ru"
 };
 
@@ -89,7 +89,7 @@ function handshakeAndEstablish(){
     	token: token
     });
 
-    if(!json.__empty){
+    if(!json.__empty && Object.keys(json).length > 0){
     	if(json.code == 4001)
     		throw new AnyBalance.Error('Неверный код подтверждения. Осталось попыток: ' + json.attempts);
         AnyBalance.trace(JSON.stringify(json));

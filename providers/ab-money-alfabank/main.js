@@ -64,6 +64,7 @@ var g_countersTable = {
 var g_accountNumberForCard;
 
 function main2(){
+	AnyBalance.trace('Processing alfaclick 2.0');
 	var prefs = AnyBalance.getPreferences();
     if(!/^(card|acc|dep|crd)$/i.test(prefs.type || ''))
     	prefs.type = 'card';

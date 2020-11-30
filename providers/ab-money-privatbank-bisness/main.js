@@ -25,17 +25,23 @@ function main() {
     };
     var response = AnyBalance.requestGet('https://acp.privatbank.ua/api/proxy/rest/today', g_headers);
     var json = getJson(response).balanceResponse;
+    var rahs=[];
+    var curRah;
     for (var i = 0; i < json.length; i++) {
-        var t = json[i][Object.keys(json[i])[0]];
+      curRah=Object.keys(json[i]);
+      if (rahs.indexOf(curRah) == -1){
+        rahs.push(curRah);
+        var t = json[i][curRah[0]];
         if ('DT'.indexOf(t.atp) > -1) result.balance += parseFloat(t.balanceOut);
         if ('DTUL'.indexOf(t.atp) > -1) result[t.atp.toLowerCase() + 'balance'] += parseFloat(t.balanceOut);
         if(AnyBalance.isAvailable('html')){
 	       if (t.atp == 'T' && t.state == 'a') result.html += History(Object.keys(json[i])[0]);
-        }
+        };
+      };
     };
-    for (key in result) {
-        if (key.indexOf('balance') > -1) result[key] = Math.floor(result[key] * 100) / 100
-    }
+//    for (key in result) {
+//        if (key.indexOf('balance') > -1) result[key] = Math.floor(result[key] * 100) / 100
+//    }
     result.__tariff=getFormattedDate('DD.MM.YYYY HH:NN')
     AnyBalance.setResult(result);
 };
@@ -50,8 +56,13 @@ function History(iban) {
     	return new Date(b.BPL_DAT_OD.replace(/(\d+)\.(\d+)\.(\d+)/, '$3-$2-$1')+ ' ' +b.BPL_TIM_P) - new Date(a.BPL_DAT_OD.replace(/(\d+)\.(\d+)\.(\d+)/, '$3-$2-$1')+ ' ' +a.BPL_TIM_P);
     });
     var ret='';
+    var rahs=[];
+    var curRah;
     for (var i = 0; i < json.length; i++) {
-        var t = json[i][Object.keys(json[i])[0]];
+      curRah=Object.keys(json[i]);
+      if (rahs.indexOf(curRah) == -1){
+        rahs.push(curRah);
+        var t = json[i][curRah[0]];
         var res = '';
         if (t.BPL_PR_PR == 'r' && t.BPL_FL_REAL == 'r') {
             res += '<font  color=#1e3b24><strong>+';
@@ -59,6 +70,7 @@ function History(iban) {
             res += t.BPL_SUM_E + '</strong></font> ' + t.BPL_DAT_OD + ' ' + t.BPL_TIM_P + '<BR><small>' + t.AUT_CNTR_NAM + '<br>' + t.BPL_OSND + '</small><br><br>';
         }
         ret=ret+res;
+      };
     };
     AnyBalance.setData('hist_'+iban,response);
     AnyBalance.setData('html_'+iban,ret);

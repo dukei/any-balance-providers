@@ -31,8 +31,6 @@ function main_site(){
 	var params = AB.createFormParams(form, function(params, str, name, value) {
 		if (name == 'username') {
 			return prefs.login;
-		} else if (name == 'password') {
-			return prefs.password;
 		}
 
 		return value;

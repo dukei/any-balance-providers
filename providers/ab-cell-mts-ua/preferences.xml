@@ -11,7 +11,7 @@
         key="login"
         inputType="number">
     </EditTextPreference>
-    <EditTextPreference 
+<!--    <EditTextPreference 
         positiveButtonText="ОК"
         key="password" 
         dialogTitle="Пароль"
@@ -22,7 +22,7 @@
         dialogMessage="Введите пароль, используемый для входа в My Vodafone"
         inputType="textPassword">
     </EditTextPreference>
-<!--    <EditTextPreference 
+    <EditTextPreference 
         positiveButtonText="ОК"
         key="phone" 
         dialogTitle="Номер телефона"

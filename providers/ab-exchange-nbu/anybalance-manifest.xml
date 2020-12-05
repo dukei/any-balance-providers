@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="4">ab-exchange-nbu</id>
+	<id version="6">ab-exchange-nbu</id>
 	<api flags="no_browser"/>
 	<api min_level="5"/>
 	<name>Курсы валют НБУ</name>
@@ -20,29 +20,37 @@
 		<counter id="EUR" prefix="{@preEUR}" suffix="{@sufEUR}" name="Євро"/>
 		<counter id="GBP" prefix="{@preGBP}" suffix="{@sufGBP}" name="Англійський фунт стерлінгів"/>
 		<counter id="RUB" prefix="{@preRUB}" suffix="{@sufRUB}" name="Російський рубль"/>
-		<counter id="BYR" prefix="{@preBYR}" suffix="{@sufBYR}" name="Бiлоруський рубль"/>
+		<counter id="BYN" prefix="{@preBYR}" suffix="{@sufBYR}" name="Бiлоруський рубль"/>
 		<counter id="KZT" prefix="{@preKZT}" suffix="{@sufKZT}" name="Казахстанський тенге"/>
 		<counter id="CHF" prefix="{@preCHF}" suffix="{@sufCHF}" name="Швейцарський франк"/>
 		<counter id="CNY" prefix="{@preCNY}" suffix="{@sufCNY}" name="Юань Женьмiньбi"/>
 		<counter id="JPY" prefix="{@preJPY}" suffix="{@sufJPY}" name="Японська єна"/>
 		<counter id="AUD" prefix="{@preAUD}" suffix="{@sufAUD}" name="Австралійський долар"/>
-		<counter id="AZM" prefix="{@preAZM}" suffix="{@sufAZM}" name="Азербайджанський манат"/>
+		<counter id="AZN" prefix="{@preAZM}" suffix="{@sufAZM}" name="Азербайджанський манат"/>
 		<counter id="DKK" prefix="{@preDKK}" suffix="{@sufDKK}" name="Датська крона"/>
-		<counter id="ISK" prefix="{@preISK}" suffix="{@sufISK}" name="Ісландська крона"/>
 		<counter id="CAD" prefix="{@preCAD}" suffix="{@sufCAD}" name="Канадський долар"/>
-		<counter id="LVL" prefix="{@preLVL}" suffix="{@sufLVL}" name="Латвійський лат"/>
-		<counter id="LTL" prefix="{@preLTL}" suffix="{@sufLTL}" name="Литовський літ"/>
 		<counter id="MDL" prefix="{@preMDL}" suffix="{@sufMDL}" name="Молдовський лей"/>
 		<counter id="NOK" prefix="{@preNOK}" suffix="{@sufNOK}" name="Норвезька крона"/>
 		<counter id="PLN" prefix="{@prePLN}" suffix="{@sufPLN}" name="Польський злотий"/>
 		<counter id="SGD" prefix="{@preSGD}" suffix="{@sufSGD}" name="Сінгапурський долар"/>
 		<counter id="XDR" prefix="{@preXDR}" suffix="{@sufXDR}" name="Спецiальнi права запозичення"/>
-		<counter id="TRL" prefix="{@preTRL}" suffix="{@sufTRL}" name="Турецька ліра"/>
-		<counter id="TMM" prefix="{@preTMM}" suffix="{@sufTMM}" name="Туркменський манат"/>
 		<counter id="HUF" prefix="{@preHUF}" suffix="{@sufHUF}" name="Угорський форинт"/>
-		<counter id="UZS" prefix="{@preUZS}" suffix="{@sufUZS}" name="Узбецький сум"/>
 		<counter id="CZK" prefix="{@preCZK}" suffix="{@sufCZK}" name="Чеська крона"/>
 		<counter id="SEK" prefix="{@preSEK}" suffix="{@sufSEK}" name="Шведська крона"/>
+		<counter id="BGN" prefix="{@preUSD}" suffix="{@sufUSD}" name="Болгарський лев"/>
+		<counter id="KRW" prefix="{@preUSD}" suffix="{@sufUSD}" name="Вона"/>
+		<counter id="HKD" prefix="{@preUSD}" suffix="{@sufUSD}" name="Гонконгівський долар"/>
+		<counter id="EGP" prefix="{@preUSD}" suffix="{@sufUSD}" name="Єгипетський фунт"/>
+		<counter id="INR" prefix="{@preUSD}" suffix="{@sufUSD}" name="Індійська рупія"/>
+		<counter id="HRK" prefix="{@preUSD}" suffix="{@sufUSD}" name="Куна"/>
+		<counter id="MXN" prefix="{@preUSD}" suffix="{@sufUSD}" name="Мексиканське песо"/>
+		<counter id="ILS" prefix="{@preUSD}" suffix="{@sufUSD}" name="Новий ізраїльський шекель"/>
+		<counter id="NZD" prefix="{@preUSD}" suffix="{@sufUSD}" name="Новозеландський долар"/>
+		<counter id="ZAR" prefix="{@preUSD}" suffix="{@sufUSD}" name="Ренд"/>
+		<counter id="RON" prefix="{@preUSD}" suffix="{@sufUSD}" name="Румунський лей"/>
+		<counter id="IDR" prefix="{@preUSD}" suffix="{@sufUSD}" name="Рупія"/>
+		<counter id="SAR" prefix="{@preUSD}" suffix="{@sufUSD}" name="Саудівський ріял"/>
+		<counter id="TRY" prefix="{@preUSD}" suffix="{@sufUSD}" name="Турецька ліра"/>
 		<counter id="date" name="Дата курса" type="text"/>
 	</counters>
 	<keywords>Курс валют, национальный банк, нацбанк украины, доллар, евро, фунт, белорусский рубль, тенге, юань, гривна, франк, йена</keywords>

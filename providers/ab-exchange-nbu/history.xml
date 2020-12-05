@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="6" date="2020-12-05">
+	- Поддержка изменений на сайте.
+	- Обновлен список валют.
+	</change>
 	<change version="3" date="2013-12-27">
 	- Исправлено описание.
 	</change>

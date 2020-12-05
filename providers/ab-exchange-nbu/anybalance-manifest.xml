@@ -37,20 +37,20 @@
 		<counter id="HUF" prefix="{@preHUF}" suffix="{@sufHUF}" name="Угорський форинт"/>
 		<counter id="CZK" prefix="{@preCZK}" suffix="{@sufCZK}" name="Чеська крона"/>
 		<counter id="SEK" prefix="{@preSEK}" suffix="{@sufSEK}" name="Шведська крона"/>
-		<counter id="BGN" prefix="{@preUSD}" suffix="{@sufUSD}" name="Болгарський лев"/>
-		<counter id="KRW" prefix="{@preUSD}" suffix="{@sufUSD}" name="Вона"/>
-		<counter id="HKD" prefix="{@preUSD}" suffix="{@sufUSD}" name="Гонконгівський долар"/>
-		<counter id="EGP" prefix="{@preUSD}" suffix="{@sufUSD}" name="Єгипетський фунт"/>
-		<counter id="INR" prefix="{@preUSD}" suffix="{@sufUSD}" name="Індійська рупія"/>
-		<counter id="HRK" prefix="{@preUSD}" suffix="{@sufUSD}" name="Куна"/>
-		<counter id="MXN" prefix="{@preUSD}" suffix="{@sufUSD}" name="Мексиканське песо"/>
-		<counter id="ILS" prefix="{@preUSD}" suffix="{@sufUSD}" name="Новий ізраїльський шекель"/>
-		<counter id="NZD" prefix="{@preUSD}" suffix="{@sufUSD}" name="Новозеландський долар"/>
-		<counter id="ZAR" prefix="{@preUSD}" suffix="{@sufUSD}" name="Ренд"/>
-		<counter id="RON" prefix="{@preUSD}" suffix="{@sufUSD}" name="Румунський лей"/>
-		<counter id="IDR" prefix="{@preUSD}" suffix="{@sufUSD}" name="Рупія"/>
-		<counter id="SAR" prefix="{@preUSD}" suffix="{@sufUSD}" name="Саудівський ріял"/>
-		<counter id="TRY" prefix="{@preUSD}" suffix="{@sufUSD}" name="Турецька ліра"/>
+		<counter id="BGN" prefix="{@preBGN}" suffix="{@sufBGN}" name="Болгарський лев"/>
+		<counter id="KRW" prefix="{@preKRW}" suffix="{@sufKRW}" name="Вона"/>
+		<counter id="HKD" prefix="{@preHKD}" suffix="{@sufHKD}" name="Гонконгівський долар"/>
+		<counter id="EGP" prefix="{@preEGP}" suffix="{@sufEGP}" name="Єгипетський фунт"/>
+		<counter id="INR" prefix="{@preINR}" suffix="{@sufINR}" name="Індійська рупія"/>
+		<counter id="HRK" prefix="{@preHRK}" suffix="{@sufHRK}" name="Куна"/>
+		<counter id="MXN" prefix="{@preMXN}" suffix="{@sufMXN}" name="Мексиканське песо"/>
+		<counter id="ILS" prefix="{@preILS}" suffix="{@sufILS}" name="Новий ізраїльський шекель"/>
+		<counter id="NZD" prefix="{@preNZD}" suffix="{@sufNZD}" name="Новозеландський долар"/>
+		<counter id="ZAR" prefix="{@preZAR}" suffix="{@sufZAR}" name="Ренд"/>
+		<counter id="RON" prefix="{@preRON}" suffix="{@sufRON}" name="Румунський лей"/>
+		<counter id="IDR" prefix="{@preIDR}" suffix="{@sufIDR}" name="Рупія"/>
+		<counter id="SAR" prefix="{@preSAR}" suffix="{@sufSAR}" name="Саудівський ріял"/>
+		<counter id="TRY" prefix="{@preTRY}" suffix="{@sufTRY}" name="Турецька ліра"/>
 		<counter id="date" name="Дата курса" type="text"/>
 	</counters>
 	<keywords>Курс валют, национальный банк, нацбанк украины, доллар, евро, фунт, белорусский рубль, тенге, юань, гривна, франк, йена</keywords>

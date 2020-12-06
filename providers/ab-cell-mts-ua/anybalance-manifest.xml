@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="2.0" version="80">ab-cell-mts-ua</id>
+	<id major_version="2.0" version="82">ab-cell-mts-ua</id>
 	<api flags="no_browser"/>
 	<name>Vodafone (Украина)</name>
 	<description html="true"><![CDATA[
@@ -10,8 +10,8 @@
 	<instruction html="true"><![CDATA[
 	<p>Как получить доступ</p>
 	<ul>
-	<li>Если вы уже зарегистрированы в приложении My Vodafone, введите в настройки провайдера свой номер телефона и пароль.</li>
-	<li>Если вы ещё не зарегистрированы в приложении My Vodafone, введите в настройки провайдера свой номер телефона и желаемый пароль.</li>
+	<li>Введите в настройки провайдера свой номер телефона</li>
+	<li>Доступ предоставляется после ввода кода из СМС</li>
 	</ul>
 	]]></instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
@@ -20,6 +20,8 @@
 		<module id="library"/>
 	</depends>
 	<files>
+		<js>base64.min.js</js>
+		<js>library.min.js</js>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
 		<js>main.js</js>
@@ -34,6 +36,9 @@
 		<counter id="min_left" name="Остаток минут" units=" мин"/>
 		<counter id="sms_left" name="Остаток SMS" units=" sms"/>
 		<counter id="phone" name="Номер телефона" type="text"/>
+		<counter id="endTP" name="Тариф действует до" type="time" format="dd.MM.yyyy"/>
+		<counter id="dateOfExpire" name="Номер действителен до" type="time" format="dd.MM.yyyy"/>
+		<counter id="info" name="Пакет" type="text" />
 	</counters>
 	<keywords>Сотовый телефон, мобильный, мобильник, mts, украина</keywords>
 	<type>cell</type>

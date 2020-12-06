@@ -27,7 +27,6 @@ function main(){
     var prefs = AnyBalance.getPreferences();
 
     checkEmpty(prefs.login, 'Введите номер телефона для входа в интернет-помощник!');
-    checkEmpty(prefs.password, 'Введите пароль для входа в интернет-помощник!');
 
 	if(prefs.phone && !/^\d+$/.test(prefs.phone)) {
 		throw new AnyBalance.Error('В качестве номера необходимо ввести 9 цифр номера, например, 501234567, или не вводить ничего, чтобы получить информацию по основному номеру.');
@@ -43,16 +42,19 @@ function callApi(requests){
 	var html = AnyBalance.requestPost('https://cscapp.vodafone.ua/eai_mob/start.swe?SWEExtSource=JSONConverter&SWEExtCmd=Execute', JSON.stringify({
 		"requests": requests,
 		"params":{
-			"version":"1.0.5",
-			"language":"en",
+			"version":"2.0.5",
+			"accessType": "",
+			"language":"ru",
 			"source":"android 8",
 			"token": callApi.token || null,
 			"manufacture":"OnePlus",
-			"childNumber":""
+			"childNumber":"",
+                        "spinner": 0
 		}
 	}), g_apiHeaders, { options: { FORCE_CHARSET: 'base64' }});
 
 	var response = decodeUTF16LE(Base64.decode(html));
+	AnyBalance.trace(response);
 	var json = getJson(response);
 	return json;
 }
@@ -124,21 +126,20 @@ function main_api(){
 
     if(!token){
     	AnyBalance.trace("Need to log in");
-
-    	json = callApi({login: {id: prefs.login, password: prefs.password}});
+    	json = callApi({loginV2: {id: prefs.login}});
     	var tempToken, justRegistered;
-
-    	if(json.login.error == 0){
-    		tempToken = json.login.values.tempToken;
+    	
+    	if(json.loginV2.error == 0){
+    		tempToken = json.loginV2.values.tempToken;
     		AnyBalance.trace('Got tempToken from login');
-    	}else if(json.login.error == 202){
+    	}else if(json.loginV2.error == 202){
     		AnyBalance.trace('Number should be registered first');
     		json = callApi1('recoveryRegister', {action: 1, id: prefs.login});
     		AnyBalance.trace('Got tempToken from register');
     		justRegistered = true;
     		tempToken = json.tempToken;
     	}else{
-    		throwApiError(json.login, 'login');
+    		throwApiError(json.loginV2, 'login');
     	}
 
     	var code = AnyBalance.retrieveCode('Пожалуйста, введите код, отправленный вам по SMS на номер ' + prefs.login, null, {inputType: 'number', time: 180000});
@@ -151,7 +152,7 @@ function main_api(){
 
     	if(justRegistered){
     		AnyBalance.trace('Setting new password (actually, password, entered in settings)');
-    		callApi1('newPassword', {password: prefs.password, rememberMe: true});
+    		//callApi1('newPassword', {password: prefs.password, rememberMe: true});
     	}
     }
 
@@ -169,25 +170,34 @@ function main_api(){
     	json = callApi1('currentPlan');
 
     	getParam(json.name, result, '__tariff');
+	    if(isAvailable('info')){
+    		getParam(json.desc+' ('+json.regularCost+' грн.)', result, 'info');
+    	}
+
     }
+
+
 
     if(AnyBalance.isAvailable('sms_left', 'min_left', 'traffic_left', 'bonus_balance')){
     	AnyBalance.trace('Getting remainders');
-    	json = callApi({countersMain: {}, countersMainDPI: {}, getBonus: {}});
+    	json = callApi({countersMainV2: {}, countersMainDPI: {}, getBonus: {}});
     	AnyBalance.trace('Remainders: ' + JSON.stringify(json));
 
-    	if(!json.countersMain.error){
-    		var val = json.countersMain.values;
+    	if(!json.countersMainV2.error){
+    		var val = json.countersMainV2.values.counters;
     		for(var i=0; i<val.length; ++i){
     			var rem = val[i];
     			if(rem.type == 'SMSMMS'){
-    				getParam(rem.amount + '', result, 'sms_left', null, null, parseBalance);
+    				getParam(rem.remainValue + '', result, 'sms_left', null, null, parseBalance);
     			}else if(rem.type == 'Minutes'){
-    				getParam(rem.amount + '', result, 'min_left', null, null, parseBalance);
+    				getParam(rem.remainValue + '', result, 'min_left', null, null, parseBalance);
     			}else{
     				AnyBalance.trace('Unknown remainder: ' + JSON.stringify(rem));
     			}
     		}
+                getParam(json.countersMainV2.values.dateOfExpire + '', result, 'dateOfExpire', null, null, parseDate);
+                getParam(json.countersMainV2.values.endTP.endedDateTP + '', result, 'endTP', null, null, parseDate);
+
     	}else{
     		AnyBalance.trace('Could not get countersMain: ' + JSON.stringify(json.countersMain));
     	}

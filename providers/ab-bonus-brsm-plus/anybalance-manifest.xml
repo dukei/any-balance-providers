@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-bonus-brsm-plus</id>
+	<id version="3">ab-bonus-brsm-plus</id>
 	<api flags="no_browser"/>
 	<name>БРСМ plus (Бонусы)</name>
 	<description html="true"><![CDATA[
@@ -17,7 +17,11 @@
 	</files>
 	<counters>
 		<counter id="balance" name="Баланс"/>
-		<counter id="next" name="До следующего уровня"/>
+		<counter id="prev_points" name="Балы в прошлом месяце"/>
+		<counter id="currentMonth" name="Экономия (текущий месяц)"/>
+		<counter id="previousMonth" name="Экономия (прошлый месяц)"/>
+		<counter id="currentYear" name="Экономия (текущий год)"/>
+		<counter id="allPeriod" name="Экономия (всего)"/>
 	</counters>
 	<keywords></keywords>
 	<type>bonus</type>

@@ -56,11 +56,12 @@ function main() {
 	getParam(html, result, 'day', /(?:Останні показники \(день\))([\s\S]*?)\<\/tr\>/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'night', /(?:Останні показники \(ніч\))([\s\S]*?)\<\/tr\>/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'all', /(?:Значення останнього показання)([\s\S]*?)\<\/tr\>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'lastdate', /(?:Дата знімання показів лічильника)([\s\S]*?)\<\/tr\>/i, replaceTagsAndSpaces, parseDate);
+	getParam(html, result, 'lastdate', /(?:Дата знімання показань лічильника)([\s\S]*?)\<\/tr\>/i, replaceTagsAndSpaces, parseDate);
 	var preresult= {success: true};
 	getParam(html, preresult, 'ls', /(?:особового рахунку)([\s\S]*?)\<\/tr\>/i, replaceTagsAndSpaces);
 	getParam(html, preresult, 'dogdate', /(?:Дата укладення договору)([\s\S]*?)\<\/tr\>/i, replaceTagsAndSpaces);
-        result.__tariff=preresult.ls+' Договор от '+preresult.dogdate;
+	getParam(html, preresult, 'EIC', /(?:EIC)([\s\S]*?)\<\/tr\>/i, replaceTagsAndSpaces);
+        result.__tariff='ЛС:'+preresult.ls+' EIC:'+preresult.EIC+' Договор от '+preresult.dogdate;
 
         AnyBalance.setResult(result);
 }

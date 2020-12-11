@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="4">ab-exchange-nbu</id>
+	<id version="6">ab-exchange-nbu</id>
 	<api flags="no_browser"/>
 	<api min_level="5"/>
 	<name>Курсы валют НБУ</name>
@@ -20,32 +20,40 @@
 		<counter id="EUR" prefix="{@preEUR}" suffix="{@sufEUR}" name="Євро"/>
 		<counter id="GBP" prefix="{@preGBP}" suffix="{@sufGBP}" name="Англійський фунт стерлінгів"/>
 		<counter id="RUB" prefix="{@preRUB}" suffix="{@sufRUB}" name="Російський рубль"/>
-		<counter id="BYR" prefix="{@preBYR}" suffix="{@sufBYR}" name="Бiлоруський рубль"/>
+		<counter id="BYN" prefix="{@preBYN}" suffix="{@sufBYN}" name="Бiлоруський рубль"/>
 		<counter id="KZT" prefix="{@preKZT}" suffix="{@sufKZT}" name="Казахстанський тенге"/>
 		<counter id="CHF" prefix="{@preCHF}" suffix="{@sufCHF}" name="Швейцарський франк"/>
 		<counter id="CNY" prefix="{@preCNY}" suffix="{@sufCNY}" name="Юань Женьмiньбi"/>
 		<counter id="JPY" prefix="{@preJPY}" suffix="{@sufJPY}" name="Японська єна"/>
 		<counter id="AUD" prefix="{@preAUD}" suffix="{@sufAUD}" name="Австралійський долар"/>
-		<counter id="AZM" prefix="{@preAZM}" suffix="{@sufAZM}" name="Азербайджанський манат"/>
+		<counter id="AZN" prefix="{@preAZN}" suffix="{@sufAZN}" name="Азербайджанський манат"/>
 		<counter id="DKK" prefix="{@preDKK}" suffix="{@sufDKK}" name="Датська крона"/>
-		<counter id="ISK" prefix="{@preISK}" suffix="{@sufISK}" name="Ісландська крона"/>
 		<counter id="CAD" prefix="{@preCAD}" suffix="{@sufCAD}" name="Канадський долар"/>
-		<counter id="LVL" prefix="{@preLVL}" suffix="{@sufLVL}" name="Латвійський лат"/>
-		<counter id="LTL" prefix="{@preLTL}" suffix="{@sufLTL}" name="Литовський літ"/>
 		<counter id="MDL" prefix="{@preMDL}" suffix="{@sufMDL}" name="Молдовський лей"/>
 		<counter id="NOK" prefix="{@preNOK}" suffix="{@sufNOK}" name="Норвезька крона"/>
 		<counter id="PLN" prefix="{@prePLN}" suffix="{@sufPLN}" name="Польський злотий"/>
 		<counter id="SGD" prefix="{@preSGD}" suffix="{@sufSGD}" name="Сінгапурський долар"/>
 		<counter id="XDR" prefix="{@preXDR}" suffix="{@sufXDR}" name="Спецiальнi права запозичення"/>
-		<counter id="TRL" prefix="{@preTRL}" suffix="{@sufTRL}" name="Турецька ліра"/>
-		<counter id="TMM" prefix="{@preTMM}" suffix="{@sufTMM}" name="Туркменський манат"/>
 		<counter id="HUF" prefix="{@preHUF}" suffix="{@sufHUF}" name="Угорський форинт"/>
-		<counter id="UZS" prefix="{@preUZS}" suffix="{@sufUZS}" name="Узбецький сум"/>
 		<counter id="CZK" prefix="{@preCZK}" suffix="{@sufCZK}" name="Чеська крона"/>
 		<counter id="SEK" prefix="{@preSEK}" suffix="{@sufSEK}" name="Шведська крона"/>
+		<counter id="BGN" prefix="{@preBGN}" suffix="{@sufBGN}" name="Болгарський лев"/>
+		<counter id="KRW" prefix="{@preKRW}" suffix="{@sufKRW}" name="Вона"/>
+		<counter id="HKD" prefix="{@preHKD}" suffix="{@sufHKD}" name="Гонконгівський долар"/>
+		<counter id="EGP" prefix="{@preEGP}" suffix="{@sufEGP}" name="Єгипетський фунт"/>
+		<counter id="INR" prefix="{@preINR}" suffix="{@sufINR}" name="Індійська рупія"/>
+		<counter id="HRK" prefix="{@preHRK}" suffix="{@sufHRK}" name="Куна"/>
+		<counter id="MXN" prefix="{@preMXN}" suffix="{@sufMXN}" name="Мексиканське песо"/>
+		<counter id="ILS" prefix="{@preILS}" suffix="{@sufILS}" name="Новий ізраїльський шекель"/>
+		<counter id="NZD" prefix="{@preNZD}" suffix="{@sufNZD}" name="Новозеландський долар"/>
+		<counter id="ZAR" prefix="{@preZAR}" suffix="{@sufZAR}" name="Ренд"/>
+		<counter id="RON" prefix="{@preRON}" suffix="{@sufRON}" name="Румунський лей"/>
+		<counter id="IDR" prefix="{@preIDR}" suffix="{@sufIDR}" name="Рупія"/>
+		<counter id="SAR" prefix="{@preSAR}" suffix="{@sufSAR}" name="Саудівський ріял"/>
+		<counter id="TRY" prefix="{@preTRY}" suffix="{@sufTRYTRY}" name="Турецька ліра"/>
 		<counter id="date" name="Дата курса" type="text"/>
 	</counters>
-	<keywords>Курс валют, национальный банк, нацбанк украины, доллар, евро, фунт, белорусский рубль, тенге, юань, гривна, франк, йена</keywords>
+	<keywords>Курс валют, национальный банк, нацбанк украины, НБУ, доллар, евро, фунт, белорусский рубль, тенге, юань, гривна, франк, йена</keywords>
 	<type>exchange</type>
 	<country>ua</country>
 </provider>

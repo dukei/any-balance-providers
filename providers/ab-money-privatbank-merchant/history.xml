@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<history>
+	<change version="2" date="2020-12-11">
+	- Смена прокси
+	- Добавлены кредитный лимит и валюта карты.
+	</change>
+	<change version="1" date="2020-12-1">
+	- Первая версия провайдера.
+	</change>
+</history>

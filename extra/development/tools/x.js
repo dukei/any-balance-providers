@@ -10,6 +10,7 @@ var g_prov_name = '';
 var g_history_file = '';
 var g_new_history_file_name = ''; //Имя файла истории, если его раньше не было в манифесте
 var g_prefs_file = '';
+var g_js_files = [];
 var g_defaultHistoryLine = '- Поддержка изменений на сайте.';
 
 var vbOKOnly = 0; // Constants for Popup
@@ -43,24 +44,23 @@ try{
 	getManifestData(manifest);
 	
 	// Проверим не заменены ли преференсы в файле
-	var mainJs = readFileToString('main.js');
+		
+	var mainJs = g_js_files[g_js_files.length-1]; //main.js обычно последний файл
 	if(g_prefs_file) {
 		var msg = ' Check you main.js file for stupid errors!';
-		
 		
 		var prefsName = searchRegExpSafe(/(?:var\s+)?([^\s]+)\s*=\s*AnyBalance\.getPreferences\s*\(\)/i, mainJs);
 		//var prefsName = /(?:var\s+)?([^\s]+)\s*=\s*AnyBalance\.getPreferences\s*\(\)/i.exec(mainJs)[1];
 		if(prefsName) {
 			// Нельзя хардкодить преференсы!
-			var reg = new RegExp('(?:var\\s+)?' + prefsName + '\\s*=\\s*([^,;]+)', 'ig');
+	/*		var reg = new RegExp('(?:var\\s+)?' + prefsName + '\\s*=\\s*([^,;]+)', 'ig');
 			var r_result;
 			while((r_result = reg.exec(mainJs)) !== null) {
 				if(!/AnyBalance\.getPreferences\s*\(\)/i.test(r_result[1])) {
 					throw new Error('You have overrided your preferences!' + msg);
 				}
-			}
+			} */
 		}
-
 		//Обработать ошибку входа!
 		if(mainJs.indexOf('<div[^>]+class="t-error"[^>]*>[\\s\\S]*?<ul[^>]*>([\\s\\S]*?)<\\/ul>') > 0){
 				throw new Error('You have to check for login error and show appropriate message!');
@@ -162,11 +162,17 @@ function commit(commitDirs, mesg) {
 }
 
 function readFileToString(file) {
-	objStream.Open();
-	objStream.LoadFromFile(file);
-	var text = objStream.ReadText();
-	objStream.Close();
-	return text; 
+	try{
+		objStream.Open();
+		objStream.LoadFromFile(file);
+		var text = objStream.ReadText();
+		objStream.Close();
+		
+		return text; 
+	}catch(e){
+		WScript.Echo('Can not open file ' + file + ': ' + e.message);
+		throw e;
+	}
 }
 
 function getManifestData(manifest) {
@@ -189,8 +195,9 @@ function getManifestData(manifest) {
 			throw new Error(cancel);
 	}
 		
-	g_prefs_file = searchRegExpSafe(/<preferences>([^<]+)<\/preferences>/i, manifest);	
-}
+	g_js_files = searchRegExpSafe(/<js[^>]*>([\s\S]*?)<\/js>/ig, manifest);
+
+	g_prefs_file = searchRegExpSafe(/<preferences>([^<]+)<\/preferences>/i, manifest);}
 
 function openManifest(objStream) {
 	objStream.Open();
@@ -243,9 +250,17 @@ function writeManifest(objStream, manifest, mainJs, WshShell) {
 }
 
 function searchRegExpSafe(regExp, where) {
-	var r = regExp.exec(where);
+	if(!regExp.global){
+		var r = regExp.exec(where);
+		return r ? r[1] : ''; 
+	}else{
+		var arr = [], r;
+		while ((r = regExp.exec(where)) !== null) {
+			arr.push(r[1] || '');
+		}
+		return arr;
+	}
 	
-	return r ? r[1] : ''; 
 }
 
 function addZeros(val) {

@@ -73,30 +73,32 @@ function main(){
 
 	AB.checkEmpty(prefs.login, 'Введите логин!');
 	AB.checkEmpty(prefs.password, 'Введите пароль!');
-
+	var token='';
 	AnyBalance.restoreCookies();
 	try{
-		var html = AnyBalance.requestGet(baseurl, g_headers);
+		var html = AnyBalance.requestGet(baseurl+'finances', g_headers);
+		token=getParam(html , /__RequestVerificationToken[\s\S]*?value="([\s\S]*?)"/)
 	}catch(e){
+		AnyBalance.trace(e.message);
 		if (e.message.indexOf('ProtocolException: Invalid redirect URI:')){
 		AB.clearAllCookies();
 		AnyBalance.clearData();
 		AnyBalance.saveData();
-		throw new AnyBalance.Error('Необходима повторная авторизация',True);
+		throw new AnyBalance.Error('Необходима повторная авторизация',true);
 		}
 	}
 	var ref = AnyBalance.getLastUrl();
-
 	if (!html || AnyBalance.getLastStatusCode() > 400) {
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Сайт провайдера временно недоступен! Попробуйте обновить данные позже.');
 	}
 
 	var elements;
-        if(!/logOnUrl/i.test(html)){
+        if(!/logOnUrl/i.test(html) && token){
 		var fns = AnyBalance.requestGet(baseurl + 'srv/finance/purses/', addHeaders({
 			Accept: 'application/json, text/plain, */*',
-			Referer: baseurl + 'finances'
+			Referer: baseurl + 'finances',
+                        'X-XSRF-Token': token
 		}));
 		try{
 			elements = getJson(fns);
@@ -262,6 +264,7 @@ function main(){
 		ref = AnyBalance.getLastUrl();
 		if(!/Completed|init=true/i.test(ref)){
 			var error = getElement(html, /<span[^>]+field-validation-error/i, replaceTagsAndSpaces);
+			if (!error)  error = getElement(html, /<[^>]+login-global-error/i, replaceTagsAndSpaces);
 			if(error)
 				throw new AnyBalance.Error(error, null, /парол|Пользовател/i.test(error));
 			AnyBalance.trace(ref + '\n' + html);
@@ -296,6 +299,8 @@ function main(){
 		}
 	    
 		AnyBalance.trace('Успешно вошли');
+		token=getParam(html , /__RequestVerificationToken[\s\S]*?value="([\s\S]*?)"/)
+		if (!token)  throw new AnyBalance.Error('Не удалось получить токен авторизации');
 		AnyBalance.saveCookies();
 		AnyBalance.saveData();
 		__setLoginSuccessful();
@@ -305,10 +310,11 @@ function main(){
 		success: true
 	};
 
-	if(!elements){
+	if(!elements && token){
 		html = AnyBalance.requestGet(baseurl + 'srv/finance/purses/', addHeaders({
 			Accept: 'application/json, text/plain, */*',
-			Referer: baseurl + 'finances'
+			Referer: baseurl + 'finances',
+                        'X-XSRF-Token': token
 		}));
 	    
 		elements = getJson(html);
@@ -329,7 +335,8 @@ function main(){
 
 	html = AnyBalance.requestGet(baseurl + 'srv/profile/info', addHeaders({
 		Accept: 'application/json, text/plain, */*',
-		Referer: baseurl + 'finances'
+		Referer: baseurl + 'finances',
+               'X-XSRF-Token': token
 	}));
 
 	var json = getJson(html);

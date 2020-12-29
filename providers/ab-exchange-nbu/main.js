@@ -61,41 +61,8 @@ function main() {
 	
 	var result = {success: true};
 	
-	getRate(result, info, 'USD');
-	getRate(result, info, 'EUR');
-	getRate(result, info, 'GBP');
-	getRate(result, info, 'RUB');
-	getRate(result, info, 'BYN');
-	getRate(result, info, 'KZT');
-	getRate(result, info, 'CHF');
-	getRate(result, info, 'CNY');
-	getRate(result, info, 'JPY');
-	getRate(result, info, 'AUD');
-	getRate(result, info, 'AZN');
-	getRate(result, info, 'DKK');
-	getRate(result, info, 'CAD');
-	getRate(result, info, 'MDL');
-	getRate(result, info, 'NOK');
-	getRate(result, info, 'PLN');
-	getRate(result, info, 'SGD');
-	getRate(result, info, 'XDR');
-	getRate(result, info, 'HUF');
-	getRate(result, info, 'CZK');
-	getRate(result, info, 'SEK');
-	getRate(result, info, 'BGN');
-	getRate(result, info, 'KRW');
-	getRate(result, info, 'HKD');
-	getRate(result, info, 'EGP');
-	getRate(result, info, 'INR');
-	getRate(result, info, 'HRK');
-	getRate(result, info, 'MXN');
-	getRate(result, info, 'ILS');
-	getRate(result, info, 'NZD');
-	getRate(result, info, 'ZAR');
-	getRate(result, info, 'RON');
-	getRate(result, info, 'IDR');
-	getRate(result, info, 'SAR');
-	getRate(result, info, 'TRY');
+	'USD EUR GBP RUB BYN KZT CHF CNY JPY AUD AZN DKK CAD MDL NOK PLN SGD XDR HUF CZK SEK BGN KRW HKD EGP INR HRK MXN ILS NZD ZAR RON IDR SAR TRY'.split(' ').forEach(valut => getRate(result, info, valut));
+	
 	getRateDate(result, info);
 	
 	AnyBalance.setResult(result);

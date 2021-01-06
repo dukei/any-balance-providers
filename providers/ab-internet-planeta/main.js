@@ -11,7 +11,7 @@ function main(){
     var prefs = AnyBalance.getPreferences();
     AnyBalance.setDefaultCharset('windows-1251');
 	
-    var baseurl = "https://weburg.me/planeta";
+    var baseurl = "https://my.planeta.tc";
 	
     var html = AnyBalance.requestPost(baseurl + '/login', {
         'planeta[login]':prefs.login,

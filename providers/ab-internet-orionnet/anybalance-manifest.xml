@@ -1,29 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-internet-orionnet</id>
-  <name>Орион телеком (Красноярск)</name>
+  <id version="2">ab-internet-orionnet</id>
+  <name>Орион телеком (Красноярск) new</name>
   <description>
-    Получает баланс и информацию о тарифе для интернет провайдера Орион телеком (http://orionnet.ru/)
-
-    Информация берется из личного кабинета клиента (https://stat.orionnet.ru/)
+	Информация о тарифе, балансе, абонентской плате абонента интернет провайдера Орион телеком г. Красноярск (http://orionnet.ru/)
   </description>
-  <author>Alexandra Shalamova &lt;alexandrashalamova@gmail.com&gt;</author>
+  <author>Pavel Klimatov &lt;mirage666z@yandex.ru&gt;</author>
+  <depends>
+  	<module id="library"/>
+  </depends>
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
-    <js>library.js</js>
     <js>main.js</js>
     <history>history.xml</history>
   </files>
   <counters>
     <counter id="balance" name="Баланс" units="р"/>
-    <counter id="credit" name="Кредит" units="р"/>
+    <counter id="credit" name="Обещанный платеж" units="р"/>
     <counter id="pay" name="Абонентская плата" units="р"/>
-    <counter id="block" name="Блокировка" type="text"/>
+    <counter id="block" name="Состояние подключения" type="text"/>
     <counter id="fio" name="ФИО" type="text"/>
+	<counter id="adress" name="Адрес" type="text"/>
+	<counter id="account" name="Лицевой счет" type="text"/>
   </counters>
   <keywords>
-    интернет orionnet
+    интернет orionnet красноярск
   </keywords>
   <type>
     internet

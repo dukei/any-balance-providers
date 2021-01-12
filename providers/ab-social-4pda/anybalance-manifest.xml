@@ -1,0 +1,35 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<api flags="no_browser"/>
+	<id version="1">ab-social-4pda</id>
+	<name>4pda.ru</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию с форума <a href="https://4pda.ru/forum/index.php">4PDA.ru</a>.</p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Для работы провайдера необходимо зарегистрироваться на <a href="https://4pda.ru/forum/index.php">4PDA.ru</a>.</p>
+
+	]]></instruction>
+	<author>DimaZUA &lt;DIMAZ.KHUA@gmail.com&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
+	<files>
+		<js>library.min.js</js>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="reputation" name="Репутация" />
+		<counter id="topics" name="Тем создано"/>
+		<counter id="posts" name="Сообщений отправлено" />
+		<counter id="qms" name="Непрочитанных личных сообщений (QMS)" />
+		<counter id="mentions" name="Непросмотренные упоминания" />
+		<counter id="fav" name="Непрочитанно в избранном" />
+	</counters>
+	<keywords>форум 4pda</keywords>
+	<type>forum</type>
+	<country>ru</country>
+</provider>

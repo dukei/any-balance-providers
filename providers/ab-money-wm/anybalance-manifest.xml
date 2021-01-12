@@ -21,9 +21,7 @@
 		<module id="crypt/md5"/>
 	</depends>
 	<files>
-		<js>library.min.js</js>
-		<js>md5.min.js</js>
-		<icon>icon.png</icon>
+\		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
 		<js>main.js</js>
 		<history>history.xml</history>

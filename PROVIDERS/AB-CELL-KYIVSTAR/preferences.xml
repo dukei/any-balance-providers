@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+	<EditTextPreference
+		obligatory="true"
+		title="Логин"
+		positiveButtonText="ОК"
+		summary="|Номер телефона (в формате +380ХХХХХХХХХ)|{@s}"
+		dialogTitle="Номер телефона"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите номер вашего телефона для входа в Мой Киевстар (в формате +380ХХХХХХХХХ), например +380971234567"
+		key="login"
+		inputType="phone">
+	</EditTextPreference>
+	<EditTextPreference
+		obligatory="true"
+		positiveButtonText="ОК"
+		key="password"
+		dialogTitle="Пароль"
+		negativeButtonText="Отмена"
+		title="Пароль"
+		summary="|Пароль для входа в Мой Киевстар|***********"
+		dialogMessage="Введите пароль, используемый для входа в Мой Киевстар"
+		inputType="textPassword">
+	</EditTextPreference>
+<!--	<ListPreference
+		key="source"
+		title="Источник данных"
+		summary="||{@s}"
+		entries="Автоматически|Старый личный кабинет|Новый личный кабинет|Мобильное приложение"
+		entryValues="auto|old|new|app"
+		defaultValue="old">
+	</ListPreference>	
+!-->
+</PreferenceScreen>

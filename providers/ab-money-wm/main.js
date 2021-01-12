@@ -1,4 +1,4 @@
-﻿/**
+/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 */
 
@@ -17,7 +17,24 @@ var g_headers = {
 	'Connection': 'keep-alive',
 	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.99 Safari/537.36',
 };
-
+function delCookies(){
+	AnyBalance.trace('Удалены данные предыдущей сесии.');
+	AB.clearAllCookies();
+	AnyBalance.clearData();
+	AnyBalance.saveData();
+};
+function isLoged(){
+	var info = {};
+	var ref = AnyBalance.getLastUrl();
+	info = AnyBalance.requestGet('https://login.wmtransfer.com/GateKeeper/SingleSignOn.js?type=cors&_=' + (+new Date()), addHeaders({
+		Accept: 'application/json, text/javascript, */*; q=0.01',
+		Origin: 'https://mini.webmoney.ru',
+		Referer: ref
+	}));
+	info = getJson(info);	
+	AnyBalance.trace(info.loggedOn?'Авторизованы для WMID '+info.wmId:'Не авторизованы');
+	return info.loggedOn;
+}
 function handleRedirect(html){
 	var form = getElement(html, /<form[^>]+data-role="auto-submit"/i);
 	if(form){
@@ -33,8 +50,15 @@ function handleRedirect(html){
 			AnyBalance.trace('Необходимо подождать ' + delay + ' милисек');
 			AnyBalance.sleep(delay);
 		}
-
 		html = AnyBalance.requestPost(joinUrl(ref, action), params, addHeaders({Referer: ref}));
+	}
+	if(/Сейчас произойдет автоматический переход на/i.test(html)){
+		AnyBalance.trace('Обнаружена промежуточная страница, переходим на стандартный кошелек');
+		form = getElement(html, /<form[^>]+gk-form/i);
+		action = getParam(form, null, null, /<form[^>]+action="([^"]*)/i, replaceHtmlEntities);
+		params = createFormParams(form);
+		html = AnyBalance.requestPost(joinUrl(ref, action), params, addHeaders({Referer: ref}));
+		ref = AnyBalance.getLastUrl();
 	}
 	return html;
 }
@@ -73,68 +97,55 @@ function main(){
 
 	AB.checkEmpty(prefs.login, 'Введите логин!');
 	AB.checkEmpty(prefs.password, 'Введите пароль!');
-
+	var token='';
 	AnyBalance.restoreCookies();
 	try{
-		var html = AnyBalance.requestGet(baseurl, g_headers);
+		var html = AnyBalance.requestGet(baseurl+'finances', g_headers);
+		token=getParam(html , /__RequestVerificationToken[\s\S]*?value="([\s\S]*?)"/);
 	}catch(e){
-		if (e.message.indexOf('ProtocolException: Invalid redirect URI:')){
-		AB.clearAllCookies();
-		AnyBalance.clearData();
-		AnyBalance.saveData();
-		throw new AnyBalance.Error('Необходима повторная авторизация',True);
-		}
+		delCookies
+		if (e.message.indexOf('ProtocolException: Invalid redirect URI:')>-1) throw new AnyBalance.Error('Необходима повторная авторизация',true);
+                if (e.message.indexOf('NetworkError: Failed to execute')>-1) throw new AnyBalance.Error(baseurl+' временно недоступен! Попробуйте обновить данные позже.');
+                AnyBalance.Error('Ошибка при обращении к '+baseurl);
+		AnyBalance.trace(e.message);
+
 	}
 	var ref = AnyBalance.getLastUrl();
-
 	if (!html || AnyBalance.getLastStatusCode() > 400) {
 		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Сайт провайдера временно недоступен! Попробуйте обновить данные позже.');
+		throw new AnyBalance.Error(baseurl+' временно недоступен! Попробуйте обновить данные позже.');
 	}
 
 	var elements;
-        if(!/logOnUrl/i.test(html)){
+        if(isLoged() && token){
 		var fns = AnyBalance.requestGet(baseurl + 'srv/finance/purses/', addHeaders({
 			Accept: 'application/json, text/plain, */*',
-			Referer: baseurl + 'finances'
+			Referer: baseurl + 'finances',
+                        'X-XSRF-Token': token
 		}));
 		try{
 			elements = getJson(fns);
-			if(/denied/i.test(elements.Message))
-				throw new AnyBalance.Error(elements.Message);
+			if(/denied/i.test(elements.Message)) throw new AnyBalance.Error(elements.Message);
 			AnyBalance.trace('Удалось войти в предыдущей сессии');
 		}catch(e){
 			AnyBalance.trace('test of login failed, should relogin: ' + e.message);
-			AB.clearAllCookies();
-			AnyBalance.clearData();
-			AnyBalance.saveData();
+                        elements=false;
 			html = AnyBalance.requestGet(baseurl, g_headers);
 		}
 	}
 	
 	if(/logOnUrl/i.test(html)){
 		AnyBalance.trace('Мгновенно не зашли');
-
-		var signonUrl = getParam(html, /singleSignOnUrl:\s*'([^']*)/, replaceSlashes);
-		var logonUrl = getParam(html, /logOnUrl\s*=\s*new\s+Uri\s*\(\s*'([^']*)/, replaceSlashes);
-		var info = {};
-		if(signonUrl){
-			AnyBalance.trace('Но есть возможность проверить автовход');
-			info = AnyBalance.requestGet(signonUrl + '?type=cors&_=' + (+new Date()), addHeaders({
-				Accept: 'application/json, text/javascript, */*; q=0.01',
-				Origin: 'https://mini.webmoney.ru',
-				Referer: ref
-			}));
-			AnyBalance.trace(info);
-			info = getJson(info);
-		}
-
-		if(!info.loggedOn){
-			AnyBalance.trace('Автовход не удался, пробуем всё заново авторизовывать');
-                        AnyBalance.trace(logonUrl);
-			html=AnyBalance.requestGet(logonUrl, g_headers);
-
-			ref = getParam(html, null, null, /&#1042;&#1099;&#1087;&#1086;&#1083;&#1085;&#1077;&#1085;&#1080;&#1077; &#1074;&#1093;&#1086;&#1076;&#1072;[\s\S]+?\<form action="([^"]*)/i, replaceHtmlEntities);
+                //AnyBalance.trace(html);
+		var logOnUrl = getParam(html, /logOnUrl="([\s\S]*?)"/i, replaceSlashes);
+		html=AnyBalance.requestGet(logOnUrl, g_headers);
+		html = handleRedirect(html);
+		if (isLoged()){
+		     	token=getParam(html , /__RequestVerificationToken[\s\S]*?value="([\s\S]*?)"/);
+                        if (token) AnyBalance.trace('Авторизация восстановлена');
+                }else{
+		        AnyBalance.trace('Автовход не удался, пробуем всё заново авторизовывать');
+			ref = getParam(html, null, null, /action="([\s\S]*?)"/i, replaceHtmlEntities);
 			AnyBalance.trace('Ссылка на вход: ' + ref);
 	                if (ref){
 			html = AnyBalance.requestGet(joinUrl(baseurlLogin, ref), addHeaders({Referer: baseurl + 'welcome.aspx?ReturnUrl=%2f'}));
@@ -144,6 +155,7 @@ function main(){
 			var form = AB.getElement(html, /<form[^>]+password[^>]*>/i);
 			if(!form){
 				AnyBalance.trace(html);
+				delCookies;
 				throw new AnyBalance.Error('Не удаётся найти форму входа! Сайт изменен?');
 			}
 	        
@@ -159,6 +171,7 @@ function main(){
 	        
 					if(!imgUrl){
 						AnyBalance.trace(html);
+                                                delCookies;
 						throw new AnyBalance.Error('Не удаётся найти капчу. Сайт изменен?');
 					}
 					var img = AnyBalance.requestGet(joinUrl(baseurlLogin, imgUrl), addHeaders({Referer: ref}));
@@ -172,7 +185,7 @@ function main(){
 	        
 				return value;
 			});
-			var action = getParam(form, null, null, /<form\saction=\"([\s\S]*?)\"/i, replaceHtmlEntities);
+			var action = getParam(form, null, null, /<form[\s\S]*?action=\"([\s\S]*?)\"/i, replaceHtmlEntities);
                         //params.fid = hex_md5(prefs.login); //Теперь требуется фингерпринт передавать
 			html = AnyBalance.requestPost(joinUrl(baseurlLogin, action), params, AB.addHeaders({
 				Referer: ref
@@ -209,6 +222,7 @@ function main(){
 	        
 				if(i >= auth_options.length){
 					AnyBalance.trace(html);
+                                        delCookies;
 					throw new AnyBalance.Error('Не удалось найти поддерживаемой опции для подтверждения входа. Сайт изменен?');
 				}
 			}
@@ -224,6 +238,7 @@ function main(){
 					if(error)
 						 throw new AnyBalance.Error(error);
 					AnyBalance.trace(html);
+                                        delCookies;
 					throw new AnyBalance.Error('Не удалось перейти к подтверждению входа по SMS. Сайт изменен?');
 				}
 				
@@ -243,6 +258,7 @@ function main(){
 					if(error)
 						 throw new AnyBalance.Error(error);
 					AnyBalance.trace(html);
+                                        delCookies;
 					throw new AnyBalance.Error('Не удалось перейти к подтверждению входа по ENUM. Сайт изменен?');
 				}
 				
@@ -252,52 +268,51 @@ function main(){
 				html = AnyBalance.requestPost(joinUrl(ref, action), params, addHeaders({Referer: ref}));
 			}else{
 				AnyBalance.trace('Не поддерживаемый способ подтверждения: ' + ref);
-			}
-		}else{
-			AnyBalance.trace('Пробуем быстрый логин');
-			html = AnyBalance.requestGet(logonUrl, addHeaders({Referer: ref}));
-			html = handleRedirect(html);
+		   
+		       }
 		}
 	    
 		ref = AnyBalance.getLastUrl();
-		if(!/Completed|init=true/i.test(ref)){
+		if(!/Completed|init=true/i.test(ref)&&!token){
+			delCookies;
 			var error = getElement(html, /<span[^>]+field-validation-error/i, replaceTagsAndSpaces);
+			if (!error)  error = getElement(html, /<[^>]+login-global-error/i, replaceTagsAndSpaces);
 			if(error)
 				throw new AnyBalance.Error(error, null, /парол|Пользовател/i.test(error));
 			AnyBalance.trace(ref + '\n' + html);
 			throw new AnyBalance.Error('Не удалось войти в кошелек. Сайт изменен?');
+
+
 		}
 
 		AnyBalance.trace('Успешно авторизовались');
 
-		html = handleRedirect(html);
 		ref = AnyBalance.getLastUrl();
-	    
-		form = getElement(html, /<form[^>]+gk-form/i);
+		form = getElement(html, /<form[^>]+password/i);
 		if(form){
 			params = createFormParams(form);
 			action = getParam(form, null, null, /<form[^>]+action="([^"]*)/i, replaceHtmlEntities);
 			html = AnyBalance.requestPost(joinUrl(ref, action), params, addHeaders({Referer: ref}));
 			ref = AnyBalance.getLastUrl();
 		}
-
-		if(/ctl00\$cph\$btnStd/i.test(html)){
+		if(/Сейчас произойдет автоматический переход на/i.test(html)){
 			AnyBalance.trace('Обнаружена промежуточная страница, переходим на стандартный кошелек');
-			form = getElement(html, /<form[^>]+aspnetForm/i);
+			form = getElement(html, /<form[^>]+gk-form/i);
+			action = getParam(form, null, null, /<form[^>]+action="([^"]*)/i, replaceHtmlEntities);
 			params = createFormParams(form);
-			html = AnyBalance.requestPost(ref, joinObjects({
-				__EVENTTARGET: 'ctl00$cph$btnStd'
-			}, params), addHeaders({Referer: ref}));
+			html = AnyBalance.requestPost(joinUrl(ref, action), params, addHeaders({Referer: ref}));
+			ref = AnyBalance.getLastUrl();
 		}
 	
 		if (/logOnUrl/i.test(html)) {
 			AnyBalance.trace(html);
+                        delCookies;
 			throw new AnyBalance.Error('Не удалось зайти в кошелек после успешной авторизации. Сайт изменен?');
 		}
 	    
 		AnyBalance.trace('Успешно вошли');
-		AnyBalance.saveCookies();
-		AnyBalance.saveData();
+		token=getParam(html , /__RequestVerificationToken[\s\S]*?value="([\s\S]*?)"/);
+		if (!token)  {delCookies;throw new AnyBalance.Error('Не удалось получить токен авторизации');}
 		__setLoginSuccessful();
 	}
 
@@ -306,16 +321,26 @@ function main(){
 	};
 
 	if(!elements){
-		html = AnyBalance.requestGet(baseurl + 'srv/finance/purses/', addHeaders({
+		var fns = AnyBalance.requestGet(baseurl + 'srv/finance/purses/', addHeaders({
 			Accept: 'application/json, text/plain, */*',
-			Referer: baseurl + 'finances'
+			Referer: baseurl + 'finances',
+                        'X-XSRF-Token': token
 		}));
-	    
-		elements = getJson(html);
+		try{
+			elements = getJson(fns);
+			if(/denied/i.test(elements.Message)) throw new AnyBalance.Error(elements.Message);
+			AnyBalance.trace('Удалось получить данные');
+		}catch(e){
+			AnyBalance.trace('Вход не удался: ' + e.message);
+			delCookies;
+                        throw new AnyBalance.Error(elements.Message)
+		}
 	}
 
-	AnyBalance.trace('Найдено ' + elements.length + ' кошельков');
+		AnyBalance.saveCookies();
+		AnyBalance.saveData();
 
+	AnyBalance.trace('Найдено ' + elements.length + ' кошельков');
 	for(var i=0; i<elements.length; ++i){
 		var e = elements[i];
 		var num = e.number;
@@ -329,7 +354,8 @@ function main(){
 
 	html = AnyBalance.requestGet(baseurl + 'srv/profile/info', addHeaders({
 		Accept: 'application/json, text/plain, */*',
-		Referer: baseurl + 'finances'
+		Referer: baseurl + 'finances',
+               'X-XSRF-Token': token
 	}));
 
 	var json = getJson(html);

@@ -1,11 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
-	<change version="1" date="2020-01-27">
+	<change version="2" date="2020-12-11">
+	- Поддержка изменений на сайте.
+	</change>
+	<change version="1" date="2019-07-12">
 	- Первая версия провайдера.
 	</change>
-<!--
-	<change version="2" date="2014-09-03">
-	- 
-	</change>
--->
 </history>

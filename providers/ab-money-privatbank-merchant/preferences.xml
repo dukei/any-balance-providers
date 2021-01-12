@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+	<EditTextPreference
+		title="Универсальная"
+		key="univers"
+		summary="||{@s}"
+		obligatory="true"
+		dialogTitle="Универсальня"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите ID, номер карты и пароль мерчанта">
+	</EditTextPreference>
+	<EditTextPreference
+		title="Ключ к счету"
+		key="kluch"
+		summary="||{@s}"
+		obligatory="true"
+		dialogTitle="Ключ к счету"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите ID, номер карты и пароль мерчанта">
+	</EditTextPreference>
+	<EditTextPreference
+		title="Карта юниора"
+		key="unior"
+		summary="||{@s}"
+		obligatory="true"
+		dialogTitle="Карта юниора"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите ID, номер карты и пароль мерчанта">
+	</EditTextPreference>
+	<EditTextPreference
+		title="Карта для выплат"
+		key="pay"
+		summary="||{@s}"
+		obligatory="true"
+		dialogTitle="Карта для выплат"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите ID, номер карты и пароль мерчанта">
+	</EditTextPreference>
+	<EditTextPreference
+		title="Корпоративная"
+		key="corp"
+		summary="||{@s}"
+		obligatory="true"
+		dialogTitle="Корпоративная"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите ID, номер карты и пароль мерчанта">
+	</EditTextPreference>
+	<EditTextPreference
+		title="Карта USD"
+		key="USD"
+		summary="||{@s}"
+		obligatory="true"
+		dialogTitle="Карта USD"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите ID, номер карты и пароль мерчанта">
+	</EditTextPreference>
+	<EditTextPreference
+		title="Карта EUR"
+		key="EUR"
+		summary="||{@s}"
+		obligatory="true"
+		dialogTitle="Карта EUR"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите ID, номер карты и пароль мерчанта">
+	</EditTextPreference>
+	<EditTextPreference
+		title="Зарплатная"
+		key="ZP"
+		summary="||{@s}"
+		obligatory="true"
+		dialogTitle="Зарплатная"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите ID, номер карты и пароль мерчанта">
+	</EditTextPreference>
+	<EditTextPreference
+		title="Пенсионная"
+		key="PENS"
+		summary="||{@s}"
+		obligatory="true"
+		dialogTitle="Пенсионная"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите ID, номер карты и пароль мерчанта">
+	</EditTextPreference>
+	<EditTextPreference
+		title="Соц.выплаты"
+		key="SOTS"
+		summary="||{@s}"
+		obligatory="true"
+		dialogTitle="Соц.выплаты"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите ID, номер карты и пароль мерчанта">
+	</EditTextPreference>
+	<EditTextPreference
+		title="Виртуальная"
+		key="virt"
+		summary="||{@s}"
+		obligatory="true"
+		dialogTitle="Виртуальная"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите ID, номер карты и пароль мерчанта">
+	</EditTextPreference>
+	<CheckBoxPreference
+		title="Кредитный лимит по картам"
+		defaultValue="true"
+		summaryOn="Показывать"
+		summaryOff="Не показывать"
+		key="needLimit" />
+	<CheckBoxPreference
+		title="Валюту карт"
+		defaultValue="true"
+		summaryOn="Показывать"
+		summaryOff="Не показывать"
+		key="needValut" />
+
+
+</PreferenceScreen>

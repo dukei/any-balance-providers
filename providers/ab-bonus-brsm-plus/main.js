@@ -12,36 +12,43 @@ var g_headers = {
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'http://brsm-plus.com/';
+	var baseurl = 'https://brsm-plus.com/';
 	AnyBalance.setDefaultCharset('utf-8');
 	
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
-	
-	var html = AnyBalance.requestGet(baseurl + 'personal.html', g_headers);
-	
-	html = AnyBalance.requestPost(baseurl + 'personal.html', {
-		login_user: prefs.login,
-		login_pass: prefs.password,
-	}, addHeaders({Referer: baseurl + 'personal.html'}));
-	
-	if (!/logout/i.test(html)) {
-		var error = getParam(html, null, null, /<div[^>]+class="messages">((?:[\s\S]*?<\/div[^>]*>){2})/i, replaceTagsAndSpaces, html_entity_decode);
+	html = AnyBalance.requestPost(baseurl + 'ua/login', {
+		num_cart: prefs.login,
+		password: prefs.password
+	});
+	if (html != '{"success":true}') {
+		var error = getJson(html).error;
 		if (error)
 			throw new AnyBalance.Error(error, null, /Стoрiнка тимчасoвo недoступна/i.test(error));
-		
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
-	
+
+//	var html = AnyBalance.requestGet(baseurl + 'ua/api2/mobile/get_economy_data', g_headers);
+	var html = AnyBalance.requestGet(baseurl + 'ua/api2/mobile/get_user_data', g_headers);
+	var json=getJson(html);
 	var result = {success: true};
+	if  (json.Result=='SUCCESS'){
+		getParam(json.Data.curr_points, result, 'balance');
+		getParam(json.Data.prev_points, result, 'prev_points');
+	}else{
+         	if (json.Data.message) {throw new AnyBalance.Error(json.Data.message)} else {throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?')};
+	}
+
+
+	var html = AnyBalance.requestGet(baseurl + 'ua/api2/mobile/get_economy_data', g_headers);
+	var json=getJson(html);
+	if  (json.Result=='SUCCESS'){
+                for (var c in json.Data)  result[c]=json.Data[c];
+	}
+
+	//var discNext = getElement(html, /<div class="disc_next">/i);
 	
-	var discAll = getElement(html, /Накопичено балів\s*<\/div>\s*<div class="disc_all">/i);
-	var discNext = getElement(html, /<div class="disc_next">/i);
-	
-	getParam(discAll, result, 'balance', null, [/\D/ig, ''], parseBalance);
-	
-	getParam(discNext, result, 'next', /([\s\S]*?)балів/i, [/\D/ig, ''], parseBalance);
 	
 	AnyBalance.setResult(result);
 }

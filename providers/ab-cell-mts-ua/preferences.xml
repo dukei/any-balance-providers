@@ -14,14 +14,37 @@
     <EditTextPreference 
         positiveButtonText="ОК"
         key="password" 
-        dialogTitle="Пароль"
+        dialogTitle="PUK"
         negativeButtonText="Отмена"
-        title="Пароль"
-        summary="Пароль для входа в My Vodafone||***********\n"
+        title="PUK"
+        summary="PUK||{@s}\n"
 	obligatory="true"
-        dialogMessage="Введите пароль, используемый для входа в My Vodafone"
-        inputType="textPassword">
+        dialogMessage="Введите PUK код (8 цифр). Если оставить это поле пустым первый вход будет произведен по коду из SMS от My Vodafone"
+        inputType="number">
     </EditTextPreference>
+	<ListPreference
+		key="lang"
+		title="Язык получаемых данных"
+		summary="||{@s}"
+		entries="Русский|Украинский|Английский"
+		entryValues="ru|ua|en"
+		defaultValue="ru">
+	</ListPreference>	
+
+	<CheckBoxPreference
+		title="Названия пакетов SMS и минут"
+		defaultValue="true"
+		summaryOn="Показывать названия минут или SMS"
+		summaryOff="Не показывать названия минут или SMS"
+		key="needPref" />
+
+	<CheckBoxPreference
+		title="SMS или минут в пакете"
+		defaultValue="true"
+		summaryOn="Показывать общее количество"
+		summaryOff="Не показывать общее количество"
+		key="needSuf" />
+
 <!--    <EditTextPreference 
         positiveButtonText="ОК"
         key="phone" 

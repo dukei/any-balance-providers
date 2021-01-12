@@ -1,10 +1,11 @@
 
 var g_headers = {
-	'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-	'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
-	'Content-Type':'text/html; charset=UTF-8',
+	'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+	'Accept-Encoding': 'gzip, deflate, br',
+	'Content-Type':'application/x-www-form-urlencoded',
 	'Connection':'keep-alive',
-	'User-Agent':'Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/38.0.2125.111 Safari/537.36'
+	'Accept-Language': 'ru-RU',
+	'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.102 Safari/537.36 Edge/18.18363'
 };
 	
 function main(){  
@@ -13,10 +14,11 @@ function main(){
 	var baseurl = 'https://lk.stupino.su/';
 		AnyBalance.setDefaultCharset('utf-8');
 
-	var html = requestPostMultipart(baseurl, {
+	var html = AnyBalance.requestPost(baseurl, {
 		action_id: 'AUTH',
-		contract: prefs.contract,
-		password: prefs.password
+		login: prefs.contract,
+		password: prefs.password,
+		'btn_submit': ''
 	}, addHeaders({
 		Referer: baseurl
 	}));
@@ -25,8 +27,8 @@ function main(){
 		throw new AnyBalance.Error('Ошибка получения данных! Сайт изменился?');
 	}
 	
-	if(!/Выход/i.test(html)) {
-		var error = getParam(html, null, null, /<div[^>]+id="err_msg[^style.]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+	if(!/Выйти/i.test(html)) {
+		var error = getParam(html, null, null, /Неправильный\sлогин\sили\sпароль/i, replaceTagsAndSpaces, html_entity_decode);
 		if (error)
 			throw new AnyBalance.Error(error, null, /Неправильный логин\/пароль/i.test( ));
 		
@@ -34,16 +36,29 @@ function main(){
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
 	
+	// AnyBalance.trace('Зашли в кабинет - парсим данные');
 	var result = {success: true};
 	
-	getParam(html, result, 'fio', /<td>Владелец договора<\/td>\s*<td>([\s\S]*?)&nbsp;<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'id', /<td>Номер договора<\/td>\s*<td>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'balance', /<td>Текущий баланс<\/td>\s*<td>([\s\S]*?) руб<\/td>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'ip', /<td>IP-адрес<\/td>\s*<td>([\s\S]*?)&nbsp;<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'extip', /<td>Внешний IP-адрес<\/td>\s*<td>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'status', /<td>Авторизация<\/td>\s*<td>([\s\S]*?)&nbsp;<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'tarif', /<td>Тарифный план<\/td>\s*<td>([\s\S]*?)<div[^>]/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'tel', /<td>Телефонный номер<\/td>\s*<td>([\s\S]*?)<div[^>]/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'fio', /<i class="fa fa-user"><\/i>[\s\S]*?<\/a>/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'id', /Лицевой счёт[^>]*>[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'balance', /Баланс[^>]*>[^>]*>([\d\D]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'tarif', /Тариф[^>]*>[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+	if (/Оплачен\sдо/i.test(html)) {
+		getParam(html, result, 'payed', /Оплачен[^>]*>[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+	}else {
+		getParam(html, result, 'payed', /Статус[^>]*>[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+	}
+	
+	html = AnyBalance.requestPost(baseurl, {
+		action_id: '.support.settings.service_inet_auth',
+	}, addHeaders({
+		Referer: baseurl
+	}));
+	getParam(html, result, 'status', /Статус авторизации:[^>]*>[^>]*>*>[^>]*>*><\/i>([\s\S]*?)<a[^>]/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'ip', /IP-адрес:[^>]*>[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'extip', /Внешний IP-адрес:[^>]*>[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+	
+	
 
 	
     AnyBalance.setResult(result);

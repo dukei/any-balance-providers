@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+<EditTextPreference
+		obligatory="true"
+		title="Логин"
+		positiveButtonText="ОК"
+		dialogTitle="Логин"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите логин, используемый для входа на сайт 4pda."
+		key="login">
+	</EditTextPreference>
+	<EditTextPreference
+		obligatory="true"
+		positiveButtonText="ОК"
+		key="password"
+		dialogTitle="Пароль"
+		negativeButtonText="Отмена"
+		title="Пароль"
+		summary="|Пароль|***********"
+		dialogMessage="Введите пароль, используемый для входа на сайт 4pda."
+		inputType="textPassword">
+	</EditTextPreference>
+</PreferenceScreen>

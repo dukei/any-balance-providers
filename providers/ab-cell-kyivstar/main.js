@@ -3,28 +3,32 @@
 */
 
 function main() {
+	AnyBalance.trace('start');
 	var prefs = AnyBalance.getPreferences();
-
 	checkEmpty(prefs.login,
 		'Введите номер вашего телефона для входа в Мой Киевстар (в формате +380ХХХХХХХХХ), например +380971234567');
 	checkEmpty(prefs.password, 'Введите пароль!');
-
 	prefs.login = prefs.login.replace(/[^+\d]+/g, ''); //Удаляем всё, кроме + и цифр
-
 //	AnyBalance.setOptions({
 //		SSL_ENABLED_PROTOCOLS: ['TLSv1.2'], // https://my.kyivstar.ua очень смущается от присутствия TLSv1.1 и TLSv1.2
 //		SSL_ENABLED_CIPHER_SUITES: ['TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384'],
 //	});
-
 //	if(prefs.source != 'app'){
+	AnyBalance.restoreCookies();
+	var html = goToNewSite();
 		try {
-			processSite();
+			if(isLoggedInNew(html)) {
+				AnyBalance.trace('Уже залогинены. Парсим сайт');
+				processNewInner(html);
+			}else{	
+				AnyBalance.trace('Нужно логинится');
+				processSite();
+			};
 		} catch (e) {
-//			if (e.fatal)
-				throw e;
-//			AnyBalance.trace('Не удалось получить данные из лк: ' + e.message);
-//			AnyBalance.trace('Попробуем получить данные из мобильного приложения');
-//			processMobileApi();
+			//if (e.fatal)
+			throw new AnyBalance.Error('Не удалось получить данные из лк: ' + e.message);
+			//AnyBalance.trace('Попробуем получить данные из мобильного приложения');
+			//processMobileApi();
 		}
 //	}else{
 //		processMobileApi();
@@ -54,31 +58,31 @@ function loginSitePhys(){
 }
 
 function processSite() {
-	var prefs = AnyBalance.getPreferences();
+//	var prefs = AnyBalance.getPreferences();
 
 	var html = loginSitePhys();
 
-	if(prefs.source == 'auto'){
-		if(isLoggedInNew(html) || isNewDemo(html)){
+//	if(prefs.source == 'auto'){
+//		if(isLoggedInNew(html) || isNewDemo(html)){
 			processNew(html);
-		}else{
-			processOldNew(html);
-		}
-	}else if(prefs.source == 'new'){
-		processNew(html);
-	}else{
-		processOldNew(html);
-	}
+//		}else{
+//			processOldNew(html);
+//		}
+//	}else if(prefs.source == 'new'){
+//		processNew(html);
+//	}else{
+//		processOldNew(html);
+//	}
 }
 
-function processOldNew(html){
-	try{
-		processOld(html);
-	}catch(e){
-		AnyBalance.trace('Ошибка обработки старого кабинета: ' + e.message + '\n' + e.stack);
-		processNew();
-	}
-}
+//function processOldNew(html){
+//	try{
+//		processOld(html);
+//	}catch(e){
+//		AnyBalance.trace('Ошибка обработки старого кабинета: ' + e.message + '\n' + e.stack);
+//		processNew();
+//	}
+//}
 
 var baseurlNewCabinet = 'https://new.kyivstar.ua/ecare/';
 
@@ -112,27 +116,30 @@ function processNewInner(html){
 	if(!endsWith(prefs.login, phone) && !endsWith(phone, prefs.login)){
 		AnyBalance.trace('Залогинены не на тот номер, нужен ' + prefs.login + ', попали на ' + phone + '. Попробуем переключиться');
 
-		var availableSubscriptions = jspath1(pageData, "$.slots.SubscriptionSelector[?(@.template='subscriptionSelectorComponent')].data.availableSubscriptions");
+		var availableSubscriptions = jspath1(pageData, "$.slots.UserInformation[?(@.template='profileAndSubscriptionSelectorComponent')].data.profileAndSubscriptions.availableSubscriptions");
 		if(!availableSubscriptions)
 			throw new AnyBalance.Error('Вошли в кабинет на номер ' + phone + ' и не удалось переключиться на номер ' + prefs.login, {_relogin: true});
-		var subscription = availableSubscriptions.filter(function(s) { return endsWith(prefs.login, s.subscriptionIdentifier) || endsWith(s.subscriptionIdentifier, prefs.login)})[0];
+		var subscription = availableSubscriptions.filter(function(s) { return endsWith(prefs.login, s.id) || endsWith(s.id, prefs.login)})[0];
 		if(!subscription){
-			AnyBalance.trace('В кабинете не нашлось номера ' + prefs.login + ' среди ' + availableSubscriptions.map(function(s) { return s.subscriptionIdentifier }).join(', '));
+			AnyBalance.trace('В кабинете не нашлось номера ' + prefs.login + ' среди ' + availableSubscriptions.map(function(s) { return s.id }).join(', '));
+			clearAllCookies();
+			AnyBalance.saveCookies();
+			AnyBalance.saveData();
 			throw new AnyBalance.Error('В числе прикрепленных номеров в кабинете ' + phone + ' отсутствует ' + prefs.login, {_relogin: true}); 
 		}
 
 		html = AnyBalance.requestPost(baseurl + 'changeSelectedSubscription', {
-			subscriptionId: subscription.subscriptionIdentifier,
+			subscriptionId: subscription.id,
 			targetUrl: '/',
-			CSRFToken: jspath1(pageData, "$.slots.SubscriptionSelector[?(@.template='subscriptionSelectorComponent')].data.subscriptionForm.inputs.CSRFToken.value")
+			CSRFToken: jspath1(pageData, "$.slots.UserInformation[?(@.template='profileAndSubscriptionSelectorComponent')].data.profileAndSubscriptions.availableSubscriptions[?(@.id="+subscription.id+")].form.inputs.CSRFToken.value")
 		}, addHeaders({Referer: baseurl}));
 
 		if(AnyBalance.getLastStatusCode() >= 400) {
 			AnyBalance.trace(html);
 			throw new AnyBalance.Error('Не удалось переключиться на нужный номер', {_relogin: true});
 		}
-
 		html = goToNewSite(html);
+
 		pageData = getJsonObject(html, /var\s+pageData\s*=\s*/);
 	}
 
@@ -152,25 +159,31 @@ function processNewInner(html){
 	processBonusesNew(bonuses, result);
 
 	var rows = jspath1(pageData, "$.slots.MiddleContent[?(@.template='dailyStatusComponent')].data.dailyStatusRows");
-	if(!rows)
-		rows = jspath1(pageData, "$.slots.TopContent-Right[?(@.template='dailyStatusComponent')].data.dailyStatusRows");
-	processRemaindersNew(rows, result);
-
-
-	if(AnyBalance.isAvailable('name') || (AnyBalance.isAvailable('phone') && !isset(result.phone))){
-		html = AnyBalance.requestGet(baseurl + 'profileSettings', g_headers);
-		pageData = getJsonObject(html, /var\s+pageData\s*=\s*/);
+	if(rows) processRemaindersNew(rows, result);
 	
-	    var joinspace = create_aggregate_join(' ');
+	rows = jspath1(pageData, "$.slots.TopContent-Right[?(@.template='dailyStatusComponent')].data.dailyStatusRows");
+	if(rows) processRemaindersNew(rows, result);
 
-		sumParam(jspath1(pageData, "$.pageData.profileData.currentCustomer.firstName.value"), result, 'name', null, null, null, joinspace);
-		sumParam(jspath1(pageData, "$.pageData.profileData.currentCustomer.middleName.value"), result, 'name', null, null, null, joinspace);
-		sumParam(jspath1(pageData, "$.pageData.profileData.currentCustomer.lastName.value"), result, 'name', null, null, null, joinspace);
-
-		if(AnyBalance.isAvailable('phone') && !isset(result.phone))
-			sumParam(jspath1(pageData, "$.pageData.profileData.currentCustomer.contactPhone.value"), result, 'phone');
+	if(AnyBalance.isAvailable('phone') && !isset(result.phone)){
+			sumParam(jspath1(pageData, "$.pageData.currentSubscription.subscriptionIdentifier"), result, 'phone');
+	}
+	if(AnyBalance.isAvailable('name') && !isset(result.name)){
+			sumParam(jspath1(pageData, "$.pageData.currentSubscription.name"), result, 'name');
 	}
 
+
+//	if(AnyBalance.isAvailable('name') || (AnyBalance.isAvailable('phone') && !isset(result.phone))){
+//		html = AnyBalance.requestGet(baseurl + 'profileSettings', g_headers);
+//		pageData = getJsonObject(html, /var\s+pageData\s*=\s*/);
+	
+//	    var joinspace = create_aggregate_join(' ');
+
+//		sumParam(jspath1(pageData, "$.pageData.profileData.currentCustomer.firstName.value"), result, 'name', null, null, null, joinspace);
+//		sumParam(jspath1(pageData, "$.pageData.profileData.currentCustomer.middleName.value"), result, 'name', null, null, null, joinspace);
+//		sumParam(jspath1(pageData, "$.pageData.profileData.currentCustomer.lastName.value"), result, 'name', null, null, null, joinspace);
+
+	AnyBalance.saveCookies();
+        AnyBalance.saveData();
 	AnyBalance.setResult(result);
 }
 
@@ -192,6 +205,7 @@ function checkName(type, name){
 	case 'off-net-mobile':
 		return /Other mobile|off-net.+mobile|минут.+на другие сети|minut.+other.+networks|хвилин.+інші мережі|на інші мобільні|на другие мобильные/i.test(name)
 			|| /минут.+на другие мобильные|minut.+other.+networks|хвилин.+інші мобільні/i.test(name)
+			|| /Минуты на мобильные номера по Украине|Minutes to mobile numbers within Ukraine|Хвилини на мобільні номери по Україні/i.test(name)
 	case 'internet':
 		return /Остаток МБ|Balance MB|Залишок МБ/i.test(name) 
 			|| /Интернет|Internet|Інтернет/i.test(name)
@@ -280,15 +294,15 @@ function processRemaindersNew(bonuses, result){
 
 		getBonusLocal(avlbl, 'off-net', 'минуты по Украине', 'bonus_mins_2', function(){
 			getBonusFromArray(avlbl.balanceAmount, result, 'bonus_mins_2', null, null, parseMinutes);
-			getParam(avlbl.balanceAmount[0].period, result, 'bonus_mins_2_till', null, null, parseDate);
+			if (avlbl.balanceAmount[0]) getParam(avlbl.balanceAmount[0].period, result, 'bonus_mins_2_till', null, null, parseDate);
 		}) ||
 		getBonusLocal(avlbl, 'off-net-mobile', 'минуты на другие сети', 'bonus_mins_other_mobile', function(){
 			getBonusFromArray(avlbl.balanceAmount, result, 'bonus_mins_other_mobile', null, null, parseMinutes);
-			getParam(avlbl.balanceAmount[0].period, result, 'bonus_mins_other_mobile_till', null, null, parseDate);
+			if (avlbl.balanceAmount[0]) getParam(avlbl.balanceAmount[0].period, result, 'bonus_mins_other_mobile_till', null, null, parseDate);
 		}) ||
 		getBonusLocal(avlbl, 'fix-min', 'минуты на фикс. номера', 'mins_fix', function(){
 			getBonusFromArray(avlbl.balanceAmount, result, 'mins_fix', null, null, parseMinutes);
-			getParam(avlbl.balanceAmount[0].period, result, 'mins_fix_till', null, null, parseDate);
+			if (avlbl.balanceAmount[0]) getParam(avlbl.balanceAmount[0].period, result, 'mins_fix_till', null, null, parseDate);
 		}) ||
 		getBonusLocal(avlbl, 'sms', 'SMS', 'sms', function(){
 			getBonusFromArray(avlbl.balanceAmount, result, 'sms', null, null, parseBalance);

@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id major_version="2.0" version="116">ab-cell-kyivstar</id>
+	<id major_version="2.0" version="117">ab-cell-kyivstar</id>
 	<name>Киевстар</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе, бонусных минутах, SMS, MMS, остатке интернет-трафика и других бонусах для пользователей мобильного оператора "Киевстар".</p>
@@ -29,7 +29,6 @@
 		<module id="login/kyivstar"/>
 	</depends>
 	<files>
-		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
 		<js>main.js</js>
 		<history>history.xml</history>
@@ -66,9 +65,9 @@
 		<counter id="bonus_mins_2_till" name="Срок действия минут по Украине" type="time" format="dd/MM/yyyy"/>
 		<counter id="bonus_mins_other_mobile_till" name="Срок действия минут на другие мобильные" type="time" format="dd/MM/yyyy"/>
 		<counter id="other_costs" name="Начисление абонентской платы по услуге «-33%»" units=" {@currency}"/>
-		<counter id="connection_date" name="Дата подключения" type="time" format="dd/MM/yyyy"/>
 		<counter id="mins_fix" name="Минуты на другие номера" type="time_interval" format="{@MIN}:{@s}"/>
 		<counter id="mins_fix_till" name="Срок действия минут на другие номера" type="time" format="dd/MM/yyyy"/>
+		<counter id="connection_date" name="Дата подключения" type="time" format="dd/MM/yyyy"/>
 	</counters>
 	<keywords>Сотовый телефон, мобильный, мобильник, kyivstar, киевстар, Украина</keywords>
 	<type>cell</type>

@@ -12,7 +12,7 @@ var g_headers = {
 
 var g_gwtCfg = {
 	url: 'https://account.kyivstar.ua/cas/auth/',
-	strong_name: '\\b%VARNAME_BROWSER%],(\\w+)\\)' ,
+	strong_name: '\\b%VARNAME_BROWSER%],(\\w+)\\)',
 	auth_nocache: 'auth.nocache.js',
 	magic_id: '11BE696C2F44311723F20D50A016F48A'
 };
@@ -29,9 +29,6 @@ function isNewDemo(html){
 	return /<a[^>]+new.kyivstar.ua\/ecare\/[^>]+ks-button/i.test(html);
 }
 
-function isLoggedInNew(html){
-	return /var\s+pageData\s*=/.test(html);
-}
 
 function checkGwtError(html) {
 	try {
@@ -134,7 +131,7 @@ function loginBasic(html) {
 		else if (name == 'authenticationType')
 			return types[type];
 		else if (name == 'rememberMe')
-			return "false";
+			return "true";
 		else if (name == 'token') {
 			return token;
 		}
@@ -181,9 +178,17 @@ function goToOldSite(html){
 	return html;
 }
 
+function isLoggedInNew(html){
+	return /var\s+pageData\s*=/.test(html) && !/"event":"session_start"/.test(html);
+}
+
 function goToNewSite(html){
-	if(!isLoggedInNew(html))
+	if(!isLoggedInNew(html)){
+		AnyBalance.trace('Загружаем https://new.kyivstar.ua/ecare/');
+//                html = AnyBalance.requestGet('https://new.kyivstar.ua/ecare/_s/language?code=ru', g_headers); //переключение языка данных
 		html = AnyBalance.requestGet('https://new.kyivstar.ua/ecare/', g_headers);
+		if (/var\s+pageData\s*=/.test(html) && /"event":"session_start"/.test(html)) html = AnyBalance.requestGet('https://new.kyivstar.ua/ecare/', g_headers);
+		AnyBalance.trace('');}
 	return html;
 }
 
@@ -250,6 +255,12 @@ function loginSite(baseurl) {
 		html = loginBasic(html);
     	html = goToSite(html); 
 	}
+        if (!isLoggedIn(html)) {
+		if ((/var\s+pageData\s*=/.test(html)) && (/"event":"session_start"/.test(html))) {
+			AnyBalance.trace('Залогинены, но нужно перезагрузить страницу ' + AnyBalance.getLastUrl());
+                        html = AnyBalance.requestGet(AnyBalance.getLastUrl(), g_headers);
+		}
+        }
 
 	if (!isLoggedIn(html)) {
 		var error = getParam(html, null, null, /<td[^>]+class="(?:redError|casError)"[^>]*>([\s\S]*?)<\/td>/i,

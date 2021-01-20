@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="4">ab-internet-istranet</id>
+	<id version="5">ab-internet-istranet</id>
 	<name>Истранет (Истра)</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе провайдера Истранет http://istranet.ru/</p>
@@ -19,12 +19,13 @@
 	</files>
 	<counters>
 		<counter id="balance" name="Баланс" units=" р"/>
-		<counter id="balanceCredit" name="Кредит" units=" р"/>
+		<counter id="balanceCredit" prefix="{@prebalanceCredit} " name="Кредит"/>
 		<counter id="nds" name="НДС" type="text" units=" %"/>
 		<counter id="fio" name="ФИО" type="text"/>
 		<counter id="id" name="ID" type="text"/>
 		<counter id="status" name="Состояние интернета" type="text"/>
-		<counter id="account" name="Основной счет" type="text"/>
+		<counter id="account" name="Адрес" type="text"/>
+		<counter id="payDate" name="Дата следующего пополнения" type="time"  format="dd.MM.yyyy"/>
 	</counters>
 	<keywords>vintem</keywords>
 	<type>internet</type>

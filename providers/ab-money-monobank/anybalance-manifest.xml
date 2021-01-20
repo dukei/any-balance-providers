@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-money-monobank</id>
+	<id version="2">ab-money-monobank</id>
 	<name>Monobank(Украина)</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию об остатках на карте <a href="https://api.monobank.ua/">монобанка</a></p>
@@ -21,11 +21,16 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Собственные средства" units=" {@currency}"/>
-		<counter id="limit" name="Кредитный лимит" units=" {@currency}"/>
+		<counter id="balance" name="Собственные средства" units=" грн."/>
+		<counter id="limit" name="Кредитный лимит" units=" грн."/>
+		<counter id="fop" name="Счет ФЛП" suffix="{@suffop}"/>
+		<counter id="black" name="Черная" suffix="{@sufblack}"/>
+		<counter id="yellow" name="Детская" suffix="{@sufyellow}"/>
+		<counter id="card1" name="Доп.карта1" suffix="{@sufcard1}"/>
+		<counter id="card2" name="Доп.карта2" suffix="{@sufcard2}"/>
+		<counter id="card3" name="Доп.карта3" suffix="{@sufcard3}"/>
+		<counter id="fio" name="ФИО" type="text"/>
 		<counter id="html" name="Выписка" type="html"/>
-		<counter id="currency" name="Валюта" type="text"/>
-
 	</counters>
 	<keywords>монобанк,monobank, банк, украина</keywords>
 	<type>money, bank</type>

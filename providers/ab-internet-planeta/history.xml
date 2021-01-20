@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="5" date="2021-13-01">
+	- Исправлена ошибка с подключением library.js
+	</change>
 	<change version="3" date="2021-12-01">
 	- Поддержка изменений на сайте.
 	</change>

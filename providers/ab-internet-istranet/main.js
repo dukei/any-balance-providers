@@ -36,8 +36,7 @@ function main(){
 
 	if(!json.sessionid){
 		var error = json.message;
-		if (error)
-			throw new AnyBalance.Error(error, null, /парол/i.test(error));
+		if (error)	throw new AnyBalance.Error(error);
 		
 		AnyBalance.trace(JSON.stringify(json));
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
@@ -50,12 +49,16 @@ function main(){
     json = callApi('info', {sessionid: sessionid});
 
     getParam(json.full_name, result, 'fio');
-    getParam(json.user_id, result, 'account');
+    getParam(json.actual_address, result, 'account');
     getParam(json.user_id, result, 'id');
-	getParam(json.balance, result, 'balance');
-    getParam(json.credit || undefined, result, 'balanceCredit');
+    getParam(json.balance, result, 'balance');
+    getParam(json.tariff.date, result, 'payDate', null ,null , parseDateWord);
+    if (json.credit.status=='possible'){
+	    getParam(json.credit.cost, result, 'balanceCredit');
+	    result.sufbalanceCredit='р. на '+json.credit.time;
+	    }
 	getParam(json.status ? 'Выключен' : 'Включен', result, 'status');
-	getParam(json.tariff.name, result, '__tariff');
+	getParam(json.tariff.name+' ('+json.tariff.services[0].cost+' р.)', result, '__tariff');
 	
     AnyBalance.setResult(result);
 }

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="4">ab-internet-planeta</id>
+	<id version="5">ab-internet-planeta</id>
 	<api flags="no_browser"/>
 	<name>Планета (Екатеринбург)</name>
 	<description html="true"><![CDATA[
@@ -8,6 +8,9 @@
 	<p>Информация берется из личного кабинета https://weburg.me/planeta. Будьте внимательны - в номере договора есть русские буквы! Если вы получаете ошибку "Введен неправильный № договора и/или пароль", проверьте, что вы набираете номер договора и пароль на нужном языке.</p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

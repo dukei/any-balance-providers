@@ -28,6 +28,7 @@ function main() {
     var html='';
     var inf='';
     var cardsBalances={};
+    var currentCardNum=0;
     json.forEach(function(acc, index) {
     	var cardname=(acc.type=='fop'?'Карта ФЛП':(acc.type=='yellow'?'Детская':(acc.type=='black'?'Черная карта':(currentCardNum<4?'Карта'+currentCardNum:(acc.maskedPan[0]?acc.maskedPan[0]:acc.iban)))));
     	if (acc.currencyCode==980){ 
@@ -36,7 +37,8 @@ function main() {
         };
         cardsBalances[acc.id]={cardname:cardname,balance:acc.balance};
         switch (acc.type){
-          case 'fop': case 'yellow': case 'black':
+//          case 'fop': case 'yellow': case 'black':
+          case 's':
           	result[acc.type]=acc.balance/100;
                 if (acc.creditLimit) {
                 	result['suf'+acc.type]='+'+acc.creditLimit/100;
@@ -46,9 +48,10 @@ function main() {
                 inf+='<br>'+cardname+(acc.maskedPan[0]?' '+acc.maskedPan[0]:'')+' IBAN:'+acc.iban;
           break;
           default :
-          	inf+='<br>'(currentCardNum<2?'Карта'+(currentCardNum+1)+' ('+acc.type+')':acc.type)+(acc.maskedPan[0]?' '+acc.maskedPan[0]:'')+' IBAN:'+acc.iban;
+          	AnyBalance.trace('Карта без счетчика:'+acc.type);
+          	inf+='<br>'+(currentCardNum<2?'Карта'+(currentCardNum+1)+' ('+acc.type+')':acc.type)+(acc.maskedPan[0]?' '+acc.maskedPan[0]:'')+' IBAN:'+acc.iban;
           	if (currentCardNum>2) {
-          		result.html+="Не отабражен баланс по карте "+acc.type+(acc.maskedPan[0]?' '+acc.maskedPan[0]:'')+' IBAN:'+acc.iban+'<br>';
+          		result.html+="Не отображен баланс по карте "+acc.type+(acc.maskedPan[0]?' '+acc.maskedPan[0]:'')+' IBAN:'+acc.iban+'<br>';
           		break;
           	}
           	currentCardNum+=1;

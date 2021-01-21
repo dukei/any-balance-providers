@@ -26,13 +26,15 @@ function main() {
     var json = json.accounts;
     var curdefault=0;
     var html='';
-    var inf=''
+    var inf='';
+    var cardsBalances={};
     json.forEach(function(acc, index) {
     	var cardname=(acc.type=='fop'?'Карта ФЛП':(acc.type=='yellow'?'Детская':(acc.type=='black'?'Черная карта':(currentCardNum<4?'Карта'+currentCardNum:(acc.maskedPan[0]?acc.maskedPan[0]:acc.iban)))));
     	if (acc.currencyCode==980){ 
     	   result.balance+=acc.balance;
            result.limit+=acc.creditLimit;
         };
+        cardsBalances[acc.id]={cardname:cardname,balance:acc.balance};
         switch (acc.type){
           case 'fop': case 'yellow': case 'black':
           	result[acc.type]=acc.balance/100;
@@ -57,14 +59,43 @@ function main() {
                   }
                 result['sufcard'+currentCardNum]=(result['sufcard'+currentCardNum]?result['sufcard'+currentCardNum]:'')+acc.cashbackType.replace('UAH',' грн.');
           }
-          if (AnyBalance.isAvailable('html')){
-          	html+=History(acc.id,cardname);
-          }
     });
-    result.html+=jsonToHTML(html)+'<br><br>Проверены карты:<small>'+inf+'</small>';
+    var hist='';
+    if (AnyBalance.isAvailable('html')){
+    	var needRead=false;
+    	var cardsBalancesPrevios=AnyBalance.getData('cardsBalancesPrevios');
+    		if(!cardsBalancesPrevios) needRead=true;
+    		if(!needRead){
+        	for (var key in cardsBalances) {
+        		if (!cardsBalancesPrevios[key]) cardsBalancesPrevios[key].balance=-99999;
+                        if (cardsBalances[key].balance!=cardsBalancesPrevios[key].balance) {needRead=true;break;}
+        	}}
+        	if (/"error":"true"/i.test(AnyBalance.getData('historyPrevios'))) needRead=true;
+        	if(needRead){
+        		try{
+        			for (var key in cardsBalances)
+        				hist+=History(key,cardsBalances[key].cardname);
+                                AnyBalance.setData('historyPrevios',hist);
+        		}catch(e){
+        			AnyBalance.trace('Ошибка при чтении выписки: '+e.message);
+                                hist=AnyBalance.getData('historyPrevios');
+        		}
+        	}else{
+        		hist=AnyBalance.getData('historyPrevios');
+        	}
+    };
+    AnyBalance.setData('cardsBalancesPrevios',cardsBalances);
+    AnyBalance.saveData();
+    html+=hist;
     result.balance-=result.limit;
     result.balance/=100;
     result.limit/=100;
+    try{
+    	html=(html?jsonToHTML(html)+'<br><br>':'')+'Проверены карты:<small>'+inf+'</small>';
+    }catch(e){
+    	AnyBalance.trace('Ошибка при форматировании выписки: '+e.message);
+    }
+    result.html=html;
     result.__tariff='Обновлено '+getFormattedDate('DD.MM.YYYY HH:NN');
     AnyBalance.setResult(result);
 };
@@ -76,25 +107,23 @@ function History(iban,cardname) {
     var json = getJson(response);
     if (json.errorDescription) {
     	AnyBalance.trace (cardname+': '+json.errorDescription);
-    	return '{"cardname":"'+cardname+'","date":'+(new Date()/1000).toFixed(0)+',"res":"'+json.errorDescription+'"},';;
+    		return '{"cardname":"'+cardname+'","date":'+(new Date()/1000).toFixed(0)+',"res":"'+json.errorDescription+'","error":"true"},';;
     }
     var res = '';
     var jres='';
     var prevd=new Date();
-    //prevd.setDate(prevd.getDate()-10);
-    //if (json.length>0) res+='<big>'+cardname+':</big><br>';
     for (var i = 0; i < json.length; i++) {
         var t = json[i];
         var s=parseInt(t.amount);
             res='<font  color=#'+(s<0?'B00000':'1e3b24')+'><strong>'+(s/100).toFixed(2);
             res+= t.operationAmount!=t.amount?' (' + (t.operationAmount/100).toFixed(2)+')':'';
-            res+= '</strong></font> ' + getFormattedDate('HH:NN:SS',new Date(t.time*1000)) + '<BR><small>' + t.description + ' ';
+            res+= '</strong></font> ' + getFormattedDate('HH:NN:SS',new Date(t.time*1000)) + '<small><BR>' + t.description + '<BR>';
             res+= t.commissionRate>0 ? ' Комиссия:'+(t.commissionRate/100).toFixed(2):'';
             res+= t.cashbackAmount>0 ? ' Кешбэк:'+(t.cashbackAmount/100).toFixed(2):'';
             res+=' Баланс:'+(t.balance/100).toFixed(2)+'</small>';
             jres+='{"cardname":"'+cardname+'","date":'+t.time+',"res":"'+res+'"},';
        }
-    return jres;
+    return jres.replace(/\n/g, '\\n');
 }
 function jsonToHTML(j){
     	var prevd=new Date();
@@ -108,7 +137,7 @@ function jsonToHTML(j){
 		var d=new Date(j[i].date*1000);
 		res+=res?'<br>':'';
             if (prevd.getDate()!=d.getDate()||prevcardname!=j[i].cardname) {
-            	res+='<br><b><font color=#1A5276>'+j[i].cardname+' '+getFormattedDate('DD.MM.YYYY',d)+':</font><b><br>';
+            	res+=(res?'<br>':'')+'<b><font color=#1A5276>'+j[i].cardname+' '+getFormattedDate('DD.MM.YYYY',d)+':</font><b><br>';
             	prevd=d;
             	prevcardname=j[i].cardname;
             	}

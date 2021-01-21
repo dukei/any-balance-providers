@@ -3,6 +3,12 @@
 */
 
 var g_headers = {};
+var types={black:'Черная',
+	white:'Белая',
+	platinum:'Платиновая',
+	iron:'IRON',
+	fop:'Счет ФЛП',
+	yellow:'Детская'};
 
 function main() {
     var prefs = AnyBalance.getPreferences();
@@ -30,15 +36,14 @@ function main() {
     var cardsBalances={};
     var currentCardNum=0;
     json.forEach(function(acc, index) {
-    	var cardname=(acc.type=='fop'?'Карта ФЛП':(acc.type=='yellow'?'Детская':(acc.type=='black'?'Черная карта':(currentCardNum<4?'Карта'+currentCardNum:(acc.maskedPan[0]?acc.maskedPan[0]:acc.iban)))));
+    	
+    	var cardname=(types[acc.type])?types[acc.type]:acc.type;
     	if (acc.currencyCode==980){ 
     	   result.balance+=acc.balance;
            result.limit+=acc.creditLimit;
         };
         cardsBalances[acc.id]={cardname:cardname,balance:acc.balance};
-        switch (acc.type){
-//          case 'fop': case 'yellow': case 'black':
-          case 's':
+	if (types[acc.type]){
           	result[acc.type]=acc.balance/100;
                 if (acc.creditLimit) {
                 	result['suf'+acc.type]='+'+acc.creditLimit/100;
@@ -46,22 +51,24 @@ function main() {
                 }
                 result['suf'+acc.type]=(result['suf'+acc.type]?result['suf'+acc.type]:'')+' грн.';
                 inf+='<br>'+cardname+(acc.maskedPan[0]?' '+acc.maskedPan[0]:'')+' IBAN:'+acc.iban;
-          break;
-          default :
+	}else{
           	AnyBalance.trace('Карта без счетчика:'+acc.type);
-          	inf+='<br>'+(currentCardNum<2?'Карта'+(currentCardNum+1)+' ('+acc.type+')':acc.type)+(acc.maskedPan[0]?' '+acc.maskedPan[0]:'')+' IBAN:'+acc.iban;
+          	inf+='<br>'+(currentCardNum<3?'Карта'+(currentCardNum+1)+' ('+acc.type+')':acc.type)+(acc.maskedPan[0]?' '+acc.maskedPan[0]:'')+' IBAN:'+acc.iban;
           	if (currentCardNum>2) {
           		result.html+="Не отображен баланс по карте "+acc.type+(acc.maskedPan[0]?' '+acc.maskedPan[0]:'')+' IBAN:'+acc.iban+'<br>';
-          		break;
-          	}
-          	currentCardNum+=1;
-                result['card'+currentCardNum]=acc.balance/100;
+          		//break;
+          	}else{
+          	  currentCardNum+=1;
+                  result['card'+currentCardNum]=acc.balance/100;
+                  result['sufcard'+currentCardNum]='';
+                  result['prefcard'+currentCardNum]=acc.type+' ';
                   if (acc.creditLimit) {
                 	result['sufcard'+currentCardNum]='+'+acc.creditLimit/100;
-                        result['card'+currentCardNum]-=result['sufcard'+currentCardNum];
+                        result['card'+currentCardNum]-=acc.creditLimit/100;
                   }
-                result['sufcard'+currentCardNum]=(result['sufcard'+currentCardNum]?result['sufcard'+currentCardNum]:'')+acc.cashbackType.replace('UAH',' грн.');
-          }
+                  result['sufcard'+currentCardNum]=(result['sufcard'+currentCardNum]?result['sufcard'+currentCardNum]:'')+acc.cashbackType.replace('UAH',' грн.');
+                }
+          };
     });
     var hist='';
     if (AnyBalance.isAvailable('html')){

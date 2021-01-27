@@ -1,0 +1,53 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-cell-mcn</id>
+	<api flags="no_browser"/>
+	<name>MCN Телеком</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе MCN Телеком. <a href="https://lk.mcn.ru"/>https://lk.mcn.ru/</a></p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Как получить доступ</p>
+	<ul>
+	<li>Введите в настройки провайдера e-mail и пароль</li>
+	</ul>
+	]]></instruction>
+	<author>DimaZ &lt;DIMAZ.KHUA@gmail.com&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р."/>
+		<counter id="credit" name="Кредитный лимит" units=" р."/>
+		<counter id="ls" name="Лицевой счет" type="text"/>
+		<counter id="tel0" name="1.Номер телефона" type="text"/>
+		<counter id="tel1" name="2.Номер телефона" type="text"/>
+		<counter id="tel2" name="3.Номер телефона" type="text"/>
+		<counter id="tel3" name="4.Номер телефона" type="text"/>
+		<counter id="tel4" name="5.Номер телефона" type="text"/>
+		<counter id="inet0" name="1.Трафик" prefix="{@pretel0}" sufix="{@suf_inet0}" units=" МБ"/>
+		<counter id="inet1" name="2.Трафик" prefix="{@pretel1}" sufix="{@suf_inet1}" units=" МБ"/>
+		<counter id="inet2" name="3.Трафик" prefix="{@pretel2}" sufix="{@suf_inet2}" units=" МБ"/>
+		<counter id="inet3" name="4.Трафик" prefix="{@pretel3}" sufix="{@suf_inet3}" units=" МБ"/>
+		<counter id="inet4" name="5.Трафик" prefix="{@pretel4}" sufix="{@suf_inet4}" units=" МБ"/>
+		<counter id="deactivate_future_date0" name="1.Отключение" prefix="{@pretel0}" type="time" format="dd.MM.YYYY"/>
+		<counter id="deactivate_future_date1" name="2.Отключение" prefix="{@pretel1}" type="time" format="dd.MM.YYYY"/>
+		<counter id="deactivate_future_date2" name="3.Отключение" prefix="{@pretel2}" type="time" format="dd.MM.YYYY"/>
+		<counter id="deactivate_future_date3" name="4.Отключение" prefix="{@pretel3}" type="time" format="dd.MM.YYYY"/>
+		<counter id="deactivate_future_date4" name="5.Отключение" prefix="{@pretel4}" type="time" format="dd.MM.YYYY"/>
+		<counter id="tariff0" name="1.Тариф" prefix="{@pretel0}" type="text"/>
+		<counter id="tariff1" name="2.Тариф" prefix="{@pretel1}" type="text"/>
+		<counter id="tariff2" name="3.Тариф" prefix="{@pretel2}" type="text"/>
+		<counter id="tariff3" name="4.Тариф" prefix="{@pretel3}" type="text"/>
+		<counter id="tariff4" name="5.Тариф" prefix="{@pretel4}" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>cell</type>
+	<country>ru</country>
+</provider>

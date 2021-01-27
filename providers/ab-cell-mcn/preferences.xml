@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+	<EditTextPreference
+		title="Логин"
+		key="login"
+		summary="||{@s}"
+		obligatory="true"
+		dialogTitle="Логин"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите email или номер лицевого счета, используемый для входа в личный кабинет.">
+	</EditTextPreference>
+	<EditTextPreference
+		title="Пароль"
+		key="password"
+		summary="||***********"
+		obligatory="true"
+		dialogTitle="Пароль"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите пароль, используемый для входа в личный кабинет."
+		inputType="textPassword">
+	</EditTextPreference>
+	<CheckBoxPreference
+		title="Номера телефонов перед счетчиками"
+		defaultValue="true"
+		summaryOn="Показывать номера телефонов"
+		summaryOff="Не показывать номера телефонов"
+		key="needPref" />
+
+</PreferenceScreen>                                  

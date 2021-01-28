@@ -38,7 +38,10 @@ function checkGwtError(html) {
 			throw new AnyBalance.Error('Превышено количество не успешных попыток входа. Ваша учетная запись временно заблокирована. Блокировка будет снята автоматически через 180 минут');
 		if (/accountNotFound|AccountException|passwordNotFound/i.test(e.message))
 			throw new AnyBalance.Error('Пользователь с таким логином не найден!', null, true);
-		throw e;
+		if (/RecaptchaException/i.test(html))
+			throw new AnyBalance.Error('К сожалению, Киевстар потребовал ввода капчи для этого номера. Зайдите в личный кабинет один раз через браузер на этом устройстве', null, true);
+		if (e) throw e;
+                throw new AnyBalance.Error('Не удалось получить токен авторизации. Сайт изменен или требуется вход в личный кабинет через браузер на этом устройстве', null, true);
 	}
 }
 

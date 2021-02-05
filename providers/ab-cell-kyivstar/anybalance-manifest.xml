@@ -46,7 +46,7 @@
 		<counter id="bonus_mins_1" name="Минуты на Киевстар" type="time_interval" format="{@MIN}" units=" мин."/>
 		<counter id="bonus_mins_2" name="Минуты по Украине" type="time_interval" format="{@MIN}" units=" мин."/>
 		<counter id="bonus_mins_other_mobile" name="Минуты на другие мобильные" type="time_interval" format="{@MIN}" units=" мин."/>
-		<counter id="mins_tariff" name="Тарифные минуты" units=" мин" type="time_interval" format="{@MIN}" units=" мин."/>
+		<counter id="mins_tariff" name="Тарифные минуты" type="time_interval" format="{@MIN}" units=" мин."/>
 		<counter id="mms" name="MMS" />
 		<counter id="sms" name="SMS" />
 		<counter id="inc_pay" name="Доплата за входящие" suffix=" ₴" />

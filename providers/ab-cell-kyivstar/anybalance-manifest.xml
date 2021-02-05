@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id major_version="2.0" version="117">ab-cell-kyivstar</id>
+	<id major_version="2.0" version="118">ab-cell-kyivstar</id>
 	<name>Киевстар</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе, бонусных минутах, SMS, MMS, остатке интернет-трафика и других бонусах для пользователей мобильного оператора "Киевстар".</p>
@@ -34,41 +34,41 @@
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
-	<counters>
+	<counters>                                  
 		<counter id="balance" name="Баланс" units=" {@currency}"/>
 		<counter id="bonusValue" name="Бонусный баланс" units=" б"/>
 		<counter id="bonusDate" name="Срок действия бонусов" type="text"/>
 		<counter id="phone" name="Номер мобильного телефона" type="text"/>
-		<counter id="till" name="Срок действия номера" type="time" format="dd/MM/yyyy"/>
+		<counter id="till" name="Срок действия номера" type="time" format="dd.MM.yyyy"/>
 		<counter id="status" name="Статус тарифа" type="text"/>
 		<counter id="personal_account" name="Лицевой счёт" type="text"/>
 		<counter id="name" name="Имя" type="text"/>
-		<counter id="bonus_mins_1" name="Минуты на Киевстар" type="time_interval" format="{@MIN}:{@s}"/>
-		<counter id="bonus_mins_2" name="Минуты по Украине" type="time_interval" format="{@MIN}:{@s}"/>
-		<counter id="bonus_mins_other_mobile" name="Минуты на другие мобильные" type="time_interval" format="{@MIN}:{@s}"/>
-		<counter id="mins_tariff" name="Тарифные минуты" units=" мин" type="time_interval" format="{@MIN}"/>
+		<counter id="bonus_mins_1" name="Минуты на Киевстар" type="time_interval" format="{@MIN}" units=" мин."/>
+		<counter id="bonus_mins_2" name="Минуты по Украине" type="time_interval" format="{@MIN}" units=" мин."/>
+		<counter id="bonus_mins_other_mobile" name="Минуты на другие мобильные" type="time_interval" format="{@MIN}" units=" мин."/>
+		<counter id="mins_tariff" name="Тарифные минуты" units=" мин" type="time_interval" format="{@MIN}" units=" мин."/>
 		<counter id="mms" name="MMS" />
 		<counter id="sms" name="SMS" />
 		<counter id="inc_pay" name="Доплата за входящие" suffix=" ₴" />
 		<counter id="bonus_money" name="Бонусные средства" suffix=" ₴" />
-		<counter id="bonus_money_till" name="Срок действия бонусных средств" type="time" format="dd/MM/yyyy"/>
+		<counter id="bonus_money_till" name="Срок действия бонусных средств" type="time" format="dd.MM.yyyy"/>
 		<counter id="bonus_left" name="Остаток бонусов" suffix=" ₴" />
  	 	<counter id="bonus_internet" name="Интернет" units=" Mb"/>
- 	 	<counter id="bonus_internet_till" name="Срок действия интернета" type="time" format="dd/MM/yyyy"/>
+ 	 	<counter id="bonus_internet_till" name="Срок действия интернета" type="time" format="dd.MM.yyyy"/>
 		<counter id="home_internet" name="Домашний Интернет" suffix=" ₴" />
-		<counter id="home_internet_date" name="Домашний Интернет, срок действия" type="time" format="dd/MM/yyyy"/>
+		<counter id="home_internet_date" name="Домашний Интернет, срок действия" type="time" format="dd.MM.yyyy"/>
 		<counter id="limit" name="Порог отключения" suffix=" ₴" />
-		<counter id="comfort_till" name="Срок действия услуги Комфортный переход" type="time" format="dd/MM/yyyy"/>
+		<counter id="comfort_till" name="Срок действия услуги Комфортный переход" type="time" format="dd.MM.yyyy"/>
 		<counter id="sms_packet" name="SMS пакет" type="text"/>
-		<counter id="sms_packet_till" name="Срок действия пакета SMS" type="time" format="hh:mm dd/MM/yyyy"/>
+		<counter id="sms_packet_till" name="Срок действия пакета SMS" type="time" format="hh:mm dd.MM.yyyy"/>
 		<counter id="sms_packet_left" name="Остаток SMS" />
-		<counter id="bonus_mins_1_till" name="Срок действия минут на Киевстар" type="time" format="dd/MM/yyyy"/>
-		<counter id="bonus_mins_2_till" name="Срок действия минут по Украине" type="time" format="dd/MM/yyyy"/>
-		<counter id="bonus_mins_other_mobile_till" name="Срок действия минут на другие мобильные" type="time" format="dd/MM/yyyy"/>
+		<counter id="bonus_mins_1_till" name="Срок действия минут на Киевстар" type="time" format="dd.MM.yyyy"/>
+		<counter id="bonus_mins_2_till" name="Срок действия минут по Украине" type="time" format="dd.MM.yyyy"/>
+		<counter id="bonus_mins_other_mobile_till" name="Срок действия минут на другие мобильные" type="time" format="dd.MM.yyyy"/>
 		<counter id="other_costs" name="Начисление абонентской платы по услуге «-33%»" units=" {@currency}"/>
-		<counter id="mins_fix" name="Минуты на другие номера" type="time_interval" format="{@MIN}:{@s}"/>
-		<counter id="mins_fix_till" name="Срок действия минут на другие номера" type="time" format="dd/MM/yyyy"/>
-		<counter id="connection_date" name="Дата подключения" type="time" format="dd/MM/yyyy"/>
+		<counter id="mins_fix" name="Минуты на другие номера" type="time_interval" format="{@MIN}" units=" мин."/>
+		<counter id="mins_fix_till" name="Срок действия минут на другие номера" type="time" format="dd.MM.yyyy"/>
+		<counter id="connection_date" name="Дата подключения" type="time" format="dd.MM.yyyy"/>
 	</counters>
 	<keywords>Сотовый телефон, мобильный, мобильник, kyivstar, киевстар, Украина</keywords>
 	<type>cell</type>

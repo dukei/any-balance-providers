@@ -38,7 +38,10 @@ function checkGwtError(html) {
 			throw new AnyBalance.Error('Превышено количество не успешных попыток входа. Ваша учетная запись временно заблокирована. Блокировка будет снята автоматически через 180 минут');
 		if (/accountNotFound|AccountException|passwordNotFound/i.test(e.message))
 			throw new AnyBalance.Error('Пользователь с таким логином не найден!', null, true);
-		throw e;
+		if (/RecaptchaException/i.test(html))
+			throw new AnyBalance.Error('К сожалению, Киевстар потребовал ввода капчи для этого номера. Зайдите в личный кабинет один раз через браузер на этом устройстве', null, true);
+		if (e) throw e;
+                throw new AnyBalance.Error('Не удалось получить токен авторизации. Сайт изменен или требуется вход в личный кабинет через браузер на этом устройстве', null, true);
 	}
 }
 
@@ -187,8 +190,14 @@ function goToNewSite(html){
 		AnyBalance.trace('Загружаем https://new.kyivstar.ua/ecare/');
 //                html = AnyBalance.requestGet('https://new.kyivstar.ua/ecare/_s/language?code=ru', g_headers); //переключение языка данных
 		html = AnyBalance.requestGet('https://new.kyivstar.ua/ecare/', g_headers);
-		if (/var\s+pageData\s*=/.test(html) && /"event":"session_start"/.test(html)) html = AnyBalance.requestGet('https://new.kyivstar.ua/ecare/', g_headers);
-		AnyBalance.trace('');}
+		var i=0;
+		while ((/var\s+pageData\s*=/.test(html)) && (/"event":"session_start"/.test(html)) && i<10) {
+			AnyBalance.trace('Не все данные получены, надо попробовать чуть-чуть подождать');
+			AnyBalance.sleep(1000);
+			i+=1;
+			html = AnyBalance.requestGet('https://new.kyivstar.ua/ecare/', g_headers);
+		}
+	}
 	return html;
 }
 
@@ -256,9 +265,12 @@ function loginSite(baseurl) {
     	html = goToSite(html); 
 	}
         if (!isLoggedIn(html)) {
-		if ((/var\s+pageData\s*=/.test(html)) && (/"event":"session_start"/.test(html))) {
+        	var i=0;
+		while ((/var\s+pageData\s*=/.test(html)) && (/"event":"session_start"/.test(html)) && i<10) {
 			AnyBalance.trace('Залогинены, но нужно перезагрузить страницу ' + AnyBalance.getLastUrl());
+                        AnyBalance.sleep(1000);
                         html = AnyBalance.requestGet(AnyBalance.getLastUrl(), g_headers);
+                        i+=1;
 		}
         }
 

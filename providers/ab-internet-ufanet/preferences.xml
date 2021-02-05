@@ -26,7 +26,7 @@
         entries="Ишимбай|Нефтекамск|Октябрьский|Оренбург|Орск|Салават|Стерлитамак|Уфа"
         entryValues="ish|nft|okt|orb|orsk|slv|str|ufa"
 		defaultValue="ufa">
-    </ListPreference>
+    </ListPreference>!
     <EditTextPreference 
         positiveButtonText="ОК"
         key="licschet" 
@@ -41,7 +41,7 @@
         key="cab" 
         title="Кабинет"
         summary="||{@s}"
-        entries="Новый my.ufanet.ru|Старый stat1.ufanet.ru"
+        entries="Новый my.ufanet.ru|Старый oldlk.ufanet.ru"
         entryValues="new|old"
 		defaultValue="new">
     </ListPreference>	

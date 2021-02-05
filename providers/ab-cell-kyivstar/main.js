@@ -3,7 +3,6 @@
 */
 
 function main() {
-	AnyBalance.trace('start');
 	var prefs = AnyBalance.getPreferences();
 	checkEmpty(prefs.login,
 		'Введите номер вашего телефона для входа в Мой Киевстар (в формате +380ХХХХХХХХХ), например +380971234567');
@@ -25,8 +24,22 @@ function main() {
 				processSite();
 			};
 		} catch (e) {
+			if (/В числе прикрепленных номеров в кабинете/.test(e.message)){
+				AnyBalance.trace('logout и очистка Cookies.');
+				AnyBalance.requestGet(baseurlNewCabinet + 'logout', {Referer: baseurlNewCabinet});
+				clearAllCookies();
+                                AnyBalance.trace('Вторая попытка.');
+                                try{
+                                	processSite();
+                                } catch (e) {
+                                	throw new AnyBalance.Error('Не удалось получить данные после повторного логина: ' + e.message);
+                                }
+
+			}else{
+
 			//if (e.fatal)
-			throw new AnyBalance.Error('Не удалось получить данные из лк: ' + e.message);
+				throw new AnyBalance.Error('Не удалось получить данные из лк: ' + e.message);
+			}
 			//AnyBalance.trace('Попробуем получить данные из мобильного приложения');
 			//processMobileApi();
 		}
@@ -112,6 +125,9 @@ function processNewInner(html){
 	var result = {success: true};
 
 	var pageData = getJsonObject(html, /var\s+pageData\s*=\s*/);
+	//AnyBalance.trace ('dataLayer:'+JSON.stringify(pageData.pageData.dataLayer));
+	//AnyBalance.trace ('pageData:'+JSON.stringify(pageData));
+
 	var phone = jspath1(pageData, "$.pageData.currentSubscription.subscriptionIdentifier");
 	if(!endsWith(prefs.login, phone) && !endsWith(phone, prefs.login)){
 		AnyBalance.trace('Залогинены не на тот номер, нужен ' + prefs.login + ', попали на ' + phone + '. Попробуем переключиться');
@@ -122,10 +138,7 @@ function processNewInner(html){
 		var subscription = availableSubscriptions.filter(function(s) { return endsWith(prefs.login, s.id) || endsWith(s.id, prefs.login)})[0];
 		if(!subscription){
 			AnyBalance.trace('В кабинете не нашлось номера ' + prefs.login + ' среди ' + availableSubscriptions.map(function(s) { return s.id }).join(', '));
-			clearAllCookies();
-			AnyBalance.saveCookies();
-			AnyBalance.saveData();
-			throw new AnyBalance.Error('В числе прикрепленных номеров в кабинете ' + phone + ' отсутствует ' + prefs.login, {_relogin: true}); 
+			throw new AnyBalance.Error('В числе прикрепленных номеров в кабинете ' + phone + ' отсутствует ' + prefs.login, {_relogin: true},true); 
 		}
 
 		html = AnyBalance.requestPost(baseurl + 'changeSelectedSubscription', {
@@ -156,12 +169,15 @@ function processNewInner(html){
 	getParam(jspath1(pageData, "$.slots.TopContent[?(@.template='balancePanelComponent')].data.currentSubscription.bonusBalance"), result, 'bonusValue', null, null, parseBalance);
 
 	var bonuses = jspath1(pageData, "$.slots.TopContent[?(@.template='balancePanelComponent')].data.bonusBalance.bonusBalances");
+	//AnyBalance.trace ('bonuses:'+JSON.stringify(bonuses));
 	processBonusesNew(bonuses, result);
 
 	var rows = jspath1(pageData, "$.slots.MiddleContent[?(@.template='dailyStatusComponent')].data.dailyStatusRows");
+	//AnyBalance.trace ('MiddleContent rows:'+JSON.stringify(rows));
 	if(rows) processRemaindersNew(rows, result);
 	
 	rows = jspath1(pageData, "$.slots.TopContent-Right[?(@.template='dailyStatusComponent')].data.dailyStatusRows");
+	//AnyBalance.trace ('TopContent-Right rows:'+JSON.stringify(rows));
 	if(rows) processRemaindersNew(rows, result);
 
 	if(AnyBalance.isAvailable('phone') && !isset(result.phone)){

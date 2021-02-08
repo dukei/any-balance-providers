@@ -1,5 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="2.0" version="120" date="2021-02-08">
+	Исправлена процедура входа
+	</change>
 	<change major_version="2.0" version="118" date="2021-01-23">
 	- Исправление ошибок версии 2.0.117
 	</change>

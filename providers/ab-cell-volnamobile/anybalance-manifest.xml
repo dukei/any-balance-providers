@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id  version="1">ab-cell-volnamobile</id>
+	<api flags="no_browser"/>
+	<name>Волна мобайл</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе, использованных минутах,  SMS, MMS и трафике для пользователей сотового оператора Волна мобайл </p>
+	<p>Информация берется из личного кабинета.</p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Как получить доступ</p>
+	<ul>
+	<li>Введите в настройки провайдера свой номер телефона и пароль</li>
+	</ul>
+	]]></instruction>
+	<author>DimaZ &lt;DIMAZ.KHUA@gmail.com&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" руб."/>
+		<counter id="traffic_left"  name="Остаток трафика" units=" МБ"/>
+		<counter id="min_left" name="Остаток минут" units=" мин"/>
+		<counter id="dateOfExpire_min" name="Дата списания минут" type="time" format="dd.MM.yyyy"/>
+		<counter id="dateOfExpire_traffic" name="Дата списания мегабайт" type="time" format="dd.MM.yyyy"/>
+	</counters>
+	<keywords>Сотовый телефон, мобильный, мобильник, Волна, Волнамобайл,Volnamobile,Volna, Крым</keywords>
+	<type>cell</type>
+	<country>ua</country>
+</provider>

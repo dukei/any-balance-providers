@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
     <EditTextPreference 
-		obligatory="true"
+    	obligatory="true"
         title="Логин" 
         positiveButtonText="ОК" 
         summary="||{@s}" 
@@ -11,7 +11,7 @@
         key="login">
     </EditTextPreference>
     <EditTextPreference 
-		obligatory="true"
+    	obligatory="true"
         positiveButtonText="ОК"
         key="password" 
         dialogTitle="Пароль"
@@ -30,4 +30,13 @@
         dialogMessage="Введите через запятую ICCID устройств (достаточно последних цифр), информацию по которым нужно получить, или оставьте поле пустым. Например, 8823, 7751, 3224."
         key="devices">
     </EditTextPreference>
+	<ListPreference
+		key="description"
+		title="Название устройства перед счетчиком"
+		summary="||{@s}"
+		entries="Не показывать|Показывать ICCID|Показать наименование|ICCID и наименование"
+		entryValues="0|1|2|3"
+		defaultValue="0">
+	</ListPreference>	
+
 </PreferenceScreen>

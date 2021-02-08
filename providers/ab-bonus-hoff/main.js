@@ -54,7 +54,8 @@ function main() {
 		Accept: 'application/json, text/plain, */*',
 		Referer: baseurl
 	}));
-
+//POST /sso/oauth2/revoke?token=7b8a3d20-6e98-4b23-ad1c-e441046ffadd&token_type_hint=access_token
+/*
 	var json = getJson(html);
 
 	if (!json.RESULT) {
@@ -66,15 +67,15 @@ function main() {
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
-
+*/
 	var result = {
 		success: true
 	};
 
-	var htmlPersonal = AnyBalance.requestGet(baseurl + 'personal/', addHeaders({
-		Referer: baseurl
-	}));
-
+//	var htmlPersonal = AnyBalance.requestGet(baseurl + 'personal/', addHeaders({
+//		Referer: baseurl
+//	}));
+//	html = AnyBalance.requestGet(baseurl + 'vue/me/card_list/',g_headers);
 	html = AnyBalance.requestGet(baseurl + 'local/templates/redesign/components/bitrix/main.profile/main/tabs/loyalty.php', addHeaders({
 		Referer: baseurl
 	}));
@@ -83,8 +84,8 @@ function main() {
 
 	AB.sumParam(html, result, 'balance', /<div[^>]+elem-card__bonus--num[^>]*>([\s\S]*?)<\/div>/i, AB.replaceTagsAndSpaces, AB.parseBalance, aggregate_sum);
 	AB.sumParam(html, result, '__tariff', /<div[^>]+elem-card__num[^>]*>([\s\S]*?)<\/div>/i, AB.replaceTagsAndSpaces, null, create_aggregate_join(', '));
-	AB.getParam(htmlPersonal, result, 'fio', /<div[^>]+box-user__name[^>]*>([\s\S]*?)<\/div>/i, AB.replaceTagsAndSpaces);
-	AB.getParam(htmlPersonal, result, 'phone', /<input[^>]+PERSONAL_PHONE[^>]*value="([^"]*)/i, AB.replaceHtmlEntities);
+//	AB.getParam(htmlPersonal, result, 'fio', /<div[^>]+box-user__name[^>]*>([\s\S]*?)<\/div>/i, AB.replaceTagsAndSpaces);
+//	AB.getParam(htmlPersonal, result, 'phone', /<input[^>]+PERSONAL_PHONE[^>]*value="([^"]*)/i, AB.replaceHtmlEntities);
 	AB.sumParam(html, result, 'burn', /Дата ближайшего сгорания:([^<\(]*)/ig, AB.replaceTagsAndSpaces, AB.parseDate, aggregate_min);
 
 	AnyBalance.setResult(result);

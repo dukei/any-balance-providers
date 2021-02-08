@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="111">ab-bonus-fixprice</id>
+	<id version="112">ab-bonus-fixprice</id>
 	<api flags="no_browser"/>
 	<name>FixPrice Бонус</name>
 	<description html="true"><![CDATA[
@@ -8,6 +8,7 @@
 	<p>Информация берется из личного кабинета https://bonus.fix-price.ru/profile</p>
 	<p>
 	]]></description>
+	<author>DimaZ &lt;DIMAZ.KHUA@gmail.com&gt;</author>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>
 		<module id="library"/>

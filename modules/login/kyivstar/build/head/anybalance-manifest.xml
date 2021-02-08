@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-    <id version="1">login/kyivstar</id>
+    <id version="2">login/kyivstar</id>
 	<api flags="no_browser" />
     <name>Kyivstar Login</name>
 	<description html="true"><![CDATA[

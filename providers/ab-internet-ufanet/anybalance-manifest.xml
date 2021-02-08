@@ -21,7 +21,7 @@
 	<counters>
 		<counter id="balance" name="Баланс" units=" р"/>
 		<counter id="pay" name="Сумма к оплате" units=" р"/>
-		<counter id="daysleft" name="Действует до" type="date"/>
+		<counter id="daysleft" name="Действует до" type="time" format="dd.MM.yyyy"/>
 		<counter id="status" name="Статус" type="text"/>
 		<counter id="fio" name="Имя" type="text"/>
 		<counter id="adress" name="Адрес" type="text"/>

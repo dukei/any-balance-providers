@@ -60,8 +60,10 @@ function main(){
     	var re=new RegExp('value="'+contracts[i]+'[^>]*>([^<]*)');
     	getParam1(html,result,'contract'+i,re,replaceTagsAndSpaces,null);
     	var rows=getParam(html, /Дополнительные балансы[\s\S]*?tbody>([\s\S]*?)<\/tbody/i, replaceHtmlEntities);
-        rows=rows.match(/<tr[\s\S]*?<\/tr>/g);
-        rows.forEach (getDopBalance);
+    	if (rows){
+        	rows=rows.match(/<tr[\s\S]*?<\/tr>/g);
+        	rows.forEach (getDopBalance);
+        }
    }
 
     getParam1(html,result,'fio',/user-full-name">([^<]*)/,replaceTagsAndSpaces);

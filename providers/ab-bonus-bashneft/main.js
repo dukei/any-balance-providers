@@ -16,17 +16,26 @@ function main() {
 	AnyBalance.setDefaultCharset('windows-1251');
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
-	
+	AnyBalance.restoreCookies();
 	var html = AnyBalance.requestGet(baseurl + 'loyalty/personal/', g_headers);
-	
+if (!/Выход/i.test(html)) {
 	if(!html || AnyBalance.getLastStatusCode() > 400){
 		AnyBalance.trace(html);
+                clearAllCookies();
+		AnyBalance.saveData();
 		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
+	}
+        var recaptcha=getParam(html, /data-sitekey="([^"]*)/i, replaceHtmlEntities);
+	if(recaptcha){
+	    var g_recaptcha_response = solveRecaptcha("Пожалуйста, докажите, что Вы не робот", AnyBalance.getLastUrl(), recaptcha);
+	}else{
+		AnyBalance.trace('Капча не требуется, ура');
 	}
 
 	html = AnyBalance.requestPost(baseurl + 'loyalty/personal/', {
 		userLoginForm_login: prefs.login,
-		userLoginForm_pswrd: prefs.password
+		userLoginForm_pswrd: prefs.password,
+                'g-recaptcha-response':g_recaptcha_response
 	}, addHeaders({Referer: baseurl + 'loyalty/personal/'}));
 	
 	if (!/Выход/i.test(html)) {
@@ -35,13 +44,19 @@ function main() {
 
 		var error = getParam(html, null, null, /<div\s+class="error_block">([\s\S]+?)<\/div>/i, replaceTagsAndSpaces);
 		if (error) {
-            throw new AnyBalance.Error(error, null, /данные неверны!/i.test(error));
-        }
+                	clearAllCookies();
+                	AnyBalance.saveData();
+                	throw new AnyBalance.Error(error, null, /данные неверны!/i.test(error));
+		}
 		
 		AnyBalance.trace(html);
+                clearAllCookies();
+		AnyBalance.saveData();
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
-	
+}	
+	AnyBalance.saveCookies();
+	AnyBalance.saveData();
 	var result = {success: true};
 	
 	getParam(html, result, 'balance', /Ваш баланс[\s\S]*?<div[^>]*>([\s\S]+?)<\/div>/i, replaceTagsAndSpaces, parseBalance);

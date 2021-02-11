@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        title="Телефон или штрих-код карты" 
+		key="login"
+        summary="||{@s}" 
+        obligatory="true"
+		dialogTitle="Телефон или штрих-код карты"
+		inputType="number" 
+		positiveButtonText="ОК" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите ваш телефон (10 цифр без пробелов и разделителей) или штрих-код карты (13 цифр без пробелов и разделителей), используемый для входа в личный кабинет OZON.Card.">
+    </EditTextPreference>
+    <EditTextPreference 
+        title="Пароль"
+		key="password" 
+		summary="||***********"
+        obligatory="true"
+		dialogTitle="Пароль"
+		positiveButtonText="ОК"
+        negativeButtonText="Отмена"
+        dialogMessage="Введите пароль, используемый для входа в личный кабинет."
+        inputType="textPassword">
+    </EditTextPreference>
+</PreferenceScreen>

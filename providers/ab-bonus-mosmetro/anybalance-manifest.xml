@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-bonus-mosmetro</id>
+	<api flags="no_browser"/>
+	<name>Тройка mosmetro</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе карты Тройка из личного кабинета MosMetro </p>
+	<p>Информация берется из личного кабинета https://lk.mosmetro.ru </p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Если у вас нет доступа в Личный кабинет, получите его на странице https://lk.mosmetro.ru </p>
+	]]></instruction>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+   		<module id="crypt/cryptojs/sha256"/>
+   		<module id="crypt/cryptojs/base64"/>
+	</depends>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="bonus" name="Бонус" units=" Б"/>
+	</counters>
+	<keywords>метро тройка</keywords>
+	<type>bonus</type>
+	<country>ru</country>
+</provider>

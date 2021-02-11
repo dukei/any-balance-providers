@@ -5,9 +5,10 @@
 var g_headers = {
 	Connection: 'Keep-Alive',
 	'Cache-Control': 'no-cache',
-	'User-Agent': 'ozonapp_android/7.7+946',
+	'User-Agent': 'ozonapp_android/12.2.2+1395',
 	'x-o3-app-name': 'ozonapp_android',
-	'x-o3-app-version': '7.7(946)',
+	'x-o3-app-version': '12.2.2(1395)',
+	'x-o3-device-type': 'mobile'
 };
 
 function callApi(verb, params){
@@ -31,6 +32,10 @@ function callApi(verb, params){
 	return json;
 }
 
+function callPageJson(url, params){
+	return callApi('composer-api.bx/page/json/v1?url=' + encodeURIComponent(url.replace(/^ozon:\//, '')), params);
+}
+
 function generateUUID() {
 	function s4() {
   		return Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
@@ -48,60 +53,83 @@ function getDeviceId(){
 	return id;
 }
 
+function getDeviceInfo(){
+	var prefs = AnyBalance.getPreferences();
+	return {
+    	"vendor": "OnePlus",
+    	"hasSmartLock": true,
+    	"hasBiometrics": true,
+    	"biometryType": "FINGER_PRINT",
+    	"model": "OnePlus ONEPLUS A3010",
+    	"deviceId": hex_md5(prefs.login).replace(/(\w{8})(\w{4})(\w{4})(\w{4})(\w{12})/, '$1-$2-$3-$4-$5'),
+    	"version": "9"
+	}
+}
+
+function getDefaultProp(obj){
+	for(var prop in obj){
+		if(/-default-/.test(prop))
+			return obj[prop];
+		return obj;
+	}
+}
+
 function loginPure(){
 	var prefs = AnyBalance.getPreferences(), json;
 	
     if(/@/.test(prefs.login)){
     	AnyBalance.trace('Вход по емейл');
-    	json = callApi('composer-api.bx/_action/emailOtpEntryMobile?email=&origin=&otp=&otpId=&phone=', {
-    		deviceId: getDeviceId(),
-    		email: prefs.login,
-    		hasBiometrics: true
-    	});
+    	json = callPageJson('/my/entry/credentials-required?type=emailOtpEntry', getDeviceInfo());
     }else{
     	AnyBalance.trace('Вход по телефону');
-    	json = callApi('composer-api.bx/_action/fastEntryMobile?origin=', {
-    		deviceId: getDeviceId(),
-    		phone: '7' + prefs.login,
-    		hasBiometrics: true
-    	});
+    	json = callPageJson('/my/entry/credentials-required', getDeviceInfo());
+    }
+    
+    var submit = getDefaultProp(json.csma.entryCredentialsRequired).submitButton;
+    if(!submit)
+    	throw new AnyBalance.Error('Не удалось найти кнопку входа. Сайт изменен?');
+    if(/@/.test(prefs.login)){
+    	json = callApi('composer-api.bx/_action/' + submit.action, joinObjects(getDeviceInfo(),{email: prefs.login}));
+    }else{
+    	json = callApi('composer-api.bx/_action/' + submit.action, joinObjects(getDeviceInfo(),{phone: prefs.login}));
+    }
+    while(json.status && json.status.deeplink){
+    	AnyBalance.trace('Потребовалась проверка: ' + json.status.deeplink);
+    	json = callPageJson(json.status.deeplink);
+    	var otp = getDefaultProp(json.csma.otp);
+    	
+    	var code = AnyBalance.retrieveCode(otp.title + '. ' + otp.subtitle, null, {inputType: 'number', time: 300000});
+    	json = callApi('composer-api.bx/_action/' + otp.action, joinObjects(joinObjects(getDeviceInfo(),otp.data),{otp: code}));
     }
 
-    var action = getParam(json.status.deeplink, /action=([^&]*)/, null, decodeURIComponent);
-    if(!action){
+    if(!json.data || !json.data.authToken){
     	AnyBalance.trace(JSON.stringify(json));
-    	throw new AnyBalance.Error('Неверный ответ сервера. Сайт изменен?');
+    	throw new AnyBalance.Error('Неожиданный ответ после авторизации. Сайт изменен?');
     }
 
-    var phone = getParam(json.status.deeplink, /phone=([^&]*)/, null, decodeURIComponent);
+    saveAuthToken(json.data.authToken);
+}
 
-    var code = AnyBalance.retrieveCode('Пожалуйста, введите код, посланный на телефон ' + phone, null, {inputType: 'number', time: 300000});
+function saveAuthToken(at){
+	var prefs = AnyBalance.getPreferences();
+	AnyBalance.setData('authToken', at);
+	AnyBalance.setData('login', prefs.login);
+	AnyBalance.saveData();
+	setAuthHeader(at);
+}
 
-    json = callApi('composer-api.bx/_action/' + action, {
-    	abGroup: '37',
-    	deviceId: getDeviceId(),
-    	hasBiometrics: true,
-    	otp: code
-    });
-
-    if(!json.data.authToken){
-    	AnyBalance.trace(JSON.stringify(json));
-    	throw new AnyBalance.Error('Неверный ответ сервера при входе. Сайт изменен?');
-    }
-
-    var at = json.data.authToken;
-    AnyBalance.setData('login', prefs.login);
-    AnyBalance.setData('authToken', at);
-    AnyBalance.saveData();
-
-	g_headers.Authorization = (at.token_type || at.tokenType) + ' ' + (at.access_token || at.accessToken);
+function setAuthHeader(at){
+	if(at)
+		g_headers.Authorization = (at.token_type || at.tokenType) + ' ' + (at.access_token || at.accessToken);
+	else
+		delete g_headers.Authorization;
 }
 
 function loginAccessToken(){
 	var at = AnyBalance.getData('authToken');
-	g_headers.Authorization = (at.token_type || at.tokenType) + ' ' + (at.access_token || at.accessToken);
 	try{
-		callApi('user/v5');
+	    setAuthHeader(at);
+		callApi('composer-api.bx/_action/isUserPremium');
 		AnyBalance.trace('Удалось войти по accessToken');
 		return true;
 	}catch(e){
@@ -110,40 +138,41 @@ function loginAccessToken(){
 	}
 }
 
-function loginToken(){
-	if(loginAccessToken())
-		return true;
-	
-	AnyBalance.trace('Получаем новый accessToken');
-
+function loginRefreshToken(){
 	var at = AnyBalance.getData('authToken');
-	var html = AnyBalance.requestPost('https://api.ozon.ru/OAuth/v1/auth/token', {
-		grant_type:	'refresh_token',
-		client_id:	'androidapp',
-		client_secret:	'MaiNNqA859bnMqw',
-		refresh_token: at.refresh_token || at.refreshToken
-	}, g_headers);
+	try{
+	    setAuthHeader();
+		at = callApi('composer-api.bx/_action/initAuthRefresh', {refreshToken: at.refreshToken});
+		AnyBalance.trace('Удалось войти по refreshToken');
+		saveAuthToken(at.authToken);
+		return true;
+	}catch(e){
+		AnyBalance.trace('Не удалось войти по refreshToken: ' + e.message);
+		return false;
+	}
+}
 
-	if(AnyBalance.getLastStatusCode() != 200){
-		AnyBalance.trace('Не удалось обновить рефреш токен: ' + AnyBalance.getLastStatusCode() + ' ' + html);
+function loginToken(){
+	var prefs = AnyBalance.getPreferences();
+
+	if(!AnyBalance.getData('authToken')){
+		AnyBalance.trace("Токен не сохранен");
 		return false;
 	}
 
-	var json = getJson(html);
-	AnyBalance.setData('authToken', json);
-	AnyBalance.saveData();
+	if(prefs.login != AnyBalance.getData('login')){
+		AnyBalance.trace("Токен соответствует другому логину");
+		return false;
+	}
 
 	if(loginAccessToken())
 		return true;
-
-	return false;
+	
+	return loginRefreshToken();
 }
 
 function login(){
-	var prefs = AnyBalance.getPreferences();
-	if(prefs.login != AnyBalance.getData('login')){
-		loginPure();
-	}else if(!loginToken()){
+	if(!loginToken()){
 		loginPure();
 	}
 }
@@ -172,32 +201,30 @@ function main() {
 	if (isAvailable(['order_sum', 'weight', 'ticket', 'state'])) {
 		json = callApi('composer-api.bx/page/json/v1?url=%2Fmy%2Forderlist');
 
-		for(var i in json.csma.orderListApp){
-			var ol = json.csma.orderListApp[i].orderList;
+		var ola = getDefaultProp(json.csma.orderListApp);
+		for(var i=0; ola.orderListApp && i<ola.orderListApp.length; ++i){
+			var order = ola.orderListApp[i];
+			AnyBalance.trace('Нашли ' + order.header.title + ' ' + order.header.number);
+			json = callPageJson(order.deeplink);
+		    
+            getParam(getDefaultProp(json.csma.orderTotal).summary.footer.price.price, result, 'order_sum', null, null, parseBalance);
+			getParam(order.sections[0].status.name, result, 'state');
+			getParam(order.header.number, result, 'ticket');
+		    
+			if(AnyBalance.isAvailable('weight')){
+				var shw_items = getDefaultProp(json.csma.shipmentWidget).items;
+				var it = shw_items.find(function(b){ return b.type=="postings" });
+				for(var k=0; k<it.postings.postings.length; ++k){
+					var p = it.postings.postings[k];
+					var pjson = callPageJson(p.action.link);
 
-			if(ol && ol.length){
-				var order = ol[0];
-		    
-		        for(var j=0; j<order.elements.length; ++j){
-		        	var el = order.elements[j];
-		        	if(/сумма/i.test(el.text)){
-                		getParam(el.text, result, 'order_sum', null, null, parseBalance);
-                		break;
-		        	}
-		        }
-
-				getParam(order.status.name, result, 'state');
-				getParam(order.number, result, 'ticket');
-		    
-				if(AnyBalance.isAvailable('weight')){
-					json = callApi('my-account-api.bx/orders/v2/details?number=' + encodeURIComponent(order.number));
-					json = json.data[0];
-		    
-					for(var i=0; i<json && json.shipments.length; ++i){
-						sumParam(json.shipments[i].total.weight, result, 'weight', null, null, parseWeight);
-					}
+					var textAtom = getDefaultProp(pjson.common.textBlock).body.find(function(b){ return b.type=="textAtom" });
+					if(textAtom)
+						sumParam(textAtom.textAtom.text, result, 'weight', /•.*/, null, parseWeight, aggregate_sum);
 				}
 			}
+
+			break;
 		}
 
 	}
@@ -214,8 +241,8 @@ function parseWeight(text, defaultUnits) {
 
 /** Вычисляет вес в нужных единицах из переданной строки. */
 function parseWeightEx(text, thousand, order, defaultUnits) {
-    var _text = replaceAll(text, replaceSpaces);
-    var val = getParam(_text, /(-?\.?\d[\d\.,]*)/, replaceFloat, parseFloat);
+    var _text = replaceAll(text, replaceTagsAndSpaces);
+    var val = parseBalanceSilent(_text);
     if (!isset(val) || val === '') {
         AnyBalance.trace("Could not parse Weight value from " + text);
         return;

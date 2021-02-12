@@ -1,5 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="20" date="2021-02-12">
+	Обход ошибки соединения
+	
+	</change>
 	<change version="19" date="2021-02-12">
 	Поддержка изменений в лк
 	</change>

@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="4">ab-bonus-kinoteatr</id>
+	<id version="5">ab-bonus-kinoteatr</id>
 	<api flags="no_browser"/>
 	<name>Кино Бонус</name>
 	<description html="true"><![CDATA[
@@ -17,7 +17,6 @@
 		<preferences>preferences.xml</preferences>
 		<js>main.js</js>
 		<history>history.xml</history>
-		<js>api:jquery.min.js</js> <!-- Используем библиотеку, которая и так входит в AnyBalance -->
 	</files>
 	<counters>
 		<counter id="balance" name="Баланс" units=" Б"/>

@@ -1,13 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="12">ab-internet-yota</id>
+	<id version="13">ab-internet-yota</id>
 	<name>Yota (Россия)</name>
 	<description html="true"><![CDATA[
 	<p>Получает информацию о балансе и тарифном плане для пользователей интернет-провайдера LTE и WiMAX Yota http://yota.ru.</p> 
 	<p>Информация берется из личного кабинета http://my.yota.ru.</p>   
 	]]></description>
-	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<author>DimaZ &lt;DIMAZ.KHUA@gmail.com&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>
 		<module id="library"/>
 	</depends>
@@ -20,22 +21,22 @@
 	<counters>
 		<counter id="balance" name="Баланс" units=" р"/>
 		
-		<counter id="abon" name="Абонентская плата" units=" р"/>
-		<counter id="speed" name="Скорость" type="text"/>
-		<counter id="timeleft" name="Осталось времени" type="time_interval" format="{@D}дн, {@h}:{@min}"/>
+		<counter id="abon" prefix="{@dev}" name="Абонентская плата" units=" р"/>
+		<counter id="speed" prefix="{@dev}" name="Скорость" type="text" units="{@speedunit}"/>
+		<counter id="timeleft" prefix="{@dev}" name="Осталось времени" type="time_interval" format="{@D}дн, {@h}:{@min}"/>
+		<counter id="abon1" prefix="{@dev1}" name="Абонентская плата 2" units=" р"/>
+		<counter id="speed1" prefix="{@dev1}" name="Скорость 2" type="text" units="{@speedunit1}"/>
+		<counter id="timeleft1" prefix="{@dev1}" name="Осталось времени 2" type="time_interval" format="{@D}дн, {@h}:{@min}"/>
+		<counter id="abon2" prefix="{@dev2}" name="Абонентская плата 3" units=" р"/>
+		<counter id="speed2" prefix="{@dev2}" name="Скорость 3" type="text" units="{@speedunit2}"/>
+		<counter id="timeleft2" prefix="{@dev2}" name="Осталось времени 3" type="time_interval" format="{@D}дн, {@h}:{@min}"/>
+		<counter id="abon3" prefix="{@dev3}" name="Абонентская плата 4" units=" р"/>
+		<counter id="speed3" prefix="{@dev3}" name="Скорость 4" type="text" units="{@speedunit3}"/>
+		<counter id="timeleft3" prefix="{@dev3}" name="Осталось времени 4" type="time_interval" format="{@D}дн, {@h}:{@min}"/>
+		<counter id="abon4" prefix="{@dev4}" name="Абонентская плата 5" units=" р"/>
+		<counter id="speed4" prefix="{@dev4}" name="Скорость 5" type="text" units="{@speedunit4}"/>
+		<counter id="timeleft4" prefix="{@dev4}" name="Осталось времени 5" type="time_interval" format="{@D}дн, {@h}:{@min}"/>
 		<counter id="licschet" name="Лицевой счет" type="text"/>
-		<counter id="abon1" name="Абонентская плата 2" units=" р"/>
-		<counter id="speed1" name="Скорость 2" type="text"/>
-		<counter id="timeleft1" name="Осталось времени 2" type="time_interval" format="{@D}дн, {@h}:{@min}"/>
-		<counter id="abon2" name="Абонентская плата 3" units=" р"/>
-		<counter id="speed2" name="Скорость 3" type="text"/>
-		<counter id="timeleft2" name="Осталось времени 3" type="time_interval" format="{@D}дн, {@h}:{@min}"/>
-		<counter id="abon3" name="Абонентская плата 4" units=" р"/>
-		<counter id="speed3" name="Скорость 4" type="text"/>
-		<counter id="timeleft3" name="Осталось времени 4" type="time_interval" format="{@D}дн, {@h}:{@min}"/>
-		<counter id="abon4" name="Абонентская плата 5" units=" р"/>
-		<counter id="speed4" name="Скорость 5" type="text"/>
-		<counter id="timeleft4" name="Осталось времени 5" type="time_interval" format="{@D}дн, {@h}:{@min}"/>
 		<counter id="agreement" name="Тип договора" type="text"/>
 		<counter id="fio" name="Имя" type="text"/>
 		<counter id="email" name="E-mail" type="text"/>

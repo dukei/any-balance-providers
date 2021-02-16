@@ -56,12 +56,14 @@ function main(){
     }
 
     html = AnyBalance.requestGet(baseurl, g_headers);
+//    html = AnyBalance.requestGet(baseurl+'lkk3/');
+//    var token=AnyBalance.getLastResponseHeader('token');
 
-    var nums = getElements(html, /<a[^>]+account-option/ig), chooseNumHref, activeNum, chosenNum;
+    var nums = getElements(html, /<span class="account-option dropdown-item active"/ig), chooseNumHref, activeNum, chosenNum;
     AnyBalance.trace('В кабинете счетов: ' + nums.length);
     for(var i=0; i<nums.length; ++i){
      	var num = getParam(nums[i], /№\s*(\d+)/i, replaceTagsAndSpaces);
-     	var address = getParam(nums[i], /:([\s\S]*)/, replaceTagsAndSpaces);
+     	var address = getParam(nums[i], /account-dropdown-text">([\s\S]*)</, replaceTagsAndSpaces);
      	AnyBalance.trace('Найден счет ' + num + ': ' + address);
      	if(/active/i.test(nums[i])){
      		activeNum = num;
@@ -101,14 +103,20 @@ function main(){
 	}
 */
 
-	if(isAvailable(['income', 'nachisl', 'recomended', 'balance'])) {
+	if(isAvailable('income', 'nachisl', 'recomended')) {
 		html = AnyBalance.requestGet(baseurl + 'balance', g_headers);
 
-		AB.getParam(html, result, 'balance', 	/<div[^>]+label-uppercase[^>]*>(?:\s+|<[^>]*>)*?Баланс[\s\S]*?<div[^>]+balance-value[^>]*>([\s\S]*?)<\/div>/i, 						   		AB.replaceTagsAndSpaces, AB.parseBalance);
-		AB.getParam(html, result, 'income',  	/ПОСТУПЛЕНИЯ НА СЧЕТ В ТЕКУЩЕМ МЕСЯЦЕ[\s\S]*?<div[^>]+balance-value[^>]*>([\s\S]*?)<\/div>/i, 	AB.replaceTagsAndSpaces, AB.parseBalance);
+
+		AB.getParam(html, result, 'income',  	/В ТЕКУЩЕМ МЕСЯЦЕ[\s\S]*?<div[^>]+balance-value[^>]*>([\s\S]*?)<\/div>/i, 	AB.replaceTagsAndSpaces, AB.parseBalance);
 		AB.getParam(html, result, 'nachisl', 	/НАЧИСЛЕНИЯ ТЕКУЩЕГО МЕСЯЦА[\s\S]*?<div[^>]+balance-value[^>]*>([\s\S]*?)<\/div>/i, 		 	AB.replaceTagsAndSpaces, AB.parseBalance);
 		AB.getParam(html, result, 'recomended', /РЕКОМЕНДУЕМАЯ СУММА К ОПЛАТЕ[\s\S]*?<div[^>]+balance-value[^>]*>([\s\S]*?)<\/div>/i, 			AB.replaceTagsAndSpaces, AB.parseBalance);
 	}
+
+	if(isAvailable('balance')) {
+		html = AnyBalance.requestGet(baseurl + 'history/payments-and-calculations?type=gas&interval=P1M', g_headers);
+		AB.getParam(html, result, 'balance', 	/table-row-item__val[\s\S]*?table-row-item__val">([^<]*)/i,AB.replaceTagsAndSpaces, AB.parseBalance);
+	}
+
 
     AnyBalance.setResult(result);
 }

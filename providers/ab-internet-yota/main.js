@@ -2,177 +2,111 @@
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 */
 
-var baseurl = "https://my.yota.ru/";
-var g_headers = {
-	Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3',
-	'Accept-Language': 'ru-RU,en-US,en;q=0.9',
-	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.120 Safari/537.36',
-	Connection: 'keep-alive'
-}
 
 function main(){
-    var prefs = AnyBalance.getPreferences();
-    AnyBalance.setDefaultCharset('utf-8');
+	var baseurl = "https://my.yota.ru/";
+	var g_headers = {
+		Accept: 'application/json',
+		'Accept-Language': 'ru-RU,en-US,en;q=0.9',
+		'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.120 Safari/537.36',
+		Connection: 'keep-alive',
+	}
+	var prefs = AnyBalance.getPreferences();
+	AnyBalance.setDefaultCharset('utf-8');
 
 	checkEmpty(prefs.login, 'Пожалуйста, введите логин в личный кабинет Yota!');
 	checkEmpty(prefs.password, 'Пожалуйста, введите пароль!');
-
-	var html = AnyBalance.requestGet(baseurl, g_headers);
-	var widgetUrl = getParam(html, /widgetUrls\[0\]=('[^']*')/, [/'/g, '"', /^/, 'return '], safeEval);
-	var data = getParam(widgetUrl, /up_inputData=([^&]*)/, null, decodeURIComponent);
-	if(!data){
+	//var token=AnyBalance.getData('token'+prefs.login);
+	//if (token) g_headers.Authorization=token;
+        AnyBalance.trace('Get tokenInfo');
+	var html = AnyBalance.requestPost('https://my.yota.ru/wa/v1/auth/tokenInfo');
+	var params={
+		'client_id': 'yota_mya',
+		'client_secret':'password',
+		realm: '/customer',
+		service: 'dispatcher',
+		'grant_type': 'urn:roox:params:oauth:grant-type:m2m',
+		'response_type': 'token cookie'
+		};
+        var json=getJson(html);
+	        AnyBalance.trace('Get execution');
+		var html = AnyBalance.requestPost('https://id.yota.ru/sso/oauth2/access_token?skipAutoLogin=false',params, g_headers);
+		json=getJson(html);
+        
+		params.execution=json.execution;
+        	params['_eventId']='next';
+        	params.username= prefs.login;
+        	params.password= prefs.password;
+                AnyBalance.trace('Get access_token 2');
+		var html = AnyBalance.requestPost('https://id.yota.ru/sso/oauth2/access_token?skipAutoLogin=false',params, g_headers);
+		json=getJson(html);
+//		if (json.access_token){
+//			token=json.token_type+' '+json.access_token;
+//			//g_headers.Authorization=token;
+//		}else{
+//			throw new AnyBalance.Error('Не удается авторизоваться. Изменения в API?');
+//		}
+	
+	if(!json.access_token){
 		AnyBalance.trace(html);
+		if (json.form.errors[0].message) throw new AnyBalance.Error(json.form.errors[0].message);
 		throw new AnyBalance.Error('Не удается найти форму входа. Сайт изменен?');
 	}
-		
-	data = getJson(data);
+        //AnyBalance.setData('token'+prefs.login,token);
+	//AnyBalance.saveData();
+	g_headers.Authorization='Basic bmV3X2xrX3Jlc3Q6cGFzc3dvcmQ=';
+	var html = AnyBalance.requestGet('https://my.yota.ru/wa/v1/finance/getBalance',g_headers);
+        json=getJson(html);
+        var result = {success: true};
+        result.balance=json.amount;
 
-	var referer = AnyBalance.getLastUrl();
+        if(isAvailable('agreement','phone','email','licschet')){
+		var html = AnyBalance.requestGet('https://my.yota.ru/wa/v1/profile/info',g_headers);
+		json=getJson(html);
+	        result.agreement=json.accountType;
+	        result.phone=json.phone;
+	        result.email=json.email;
+	        result.licschet=json.userId;
+        }
 
-	var html = AnyBalance.requestPost(data.serverUrl, {
-		username: prefs.login.replace(/^\s*\+/, ''),
-		password: prefs.password,
-		_eventId: 'next',
-		execution: data.execution
-	}, addHeaders({
-		Accept: 'application/json',
-		'X-Requested-With': 'XMLHttpRequest',
-		Referer: referer
-	}));
+        if(isAvailable('speed','abon','timeleft','speed1','abon1','timeleft1','speed2','abon2','timeleft2','speed3','abon3','timeleft3','speed4','abon4','timeleft4')){
+		var html = AnyBalance.requestGet('https://my.yota.ru/wa/v1/devices/devices',g_headers);
+		var devlist=[];
+	        json=getJson(html);
+	        var devrefs = (prefs.devices?prefs.devices.toString():'*').split(/\s*[\\,;\-\/\s\.]+\s*/g);
+	        let sufix='';
+	        for(let i=0; i<json.devices.length; ++i){
+	        	let dev=json.devices[i];
+	        	AnyBalance.trace('Найдено устройство '+dev.physicalResource.resourceID.key);
+	        	let need=false;
+	                if (!devrefs.includes('*')&&devrefs.length>0) {
+	                	for(let j=0; j<devrefs.length; ++j){
+		        		if (endsWith(dev.physicalResource.resourceID.key,devrefs[j])) {
+		        			AnyBalance.trace('Данные по устройству '+dev.physicalResource.resourceID.key+' будут добавлены, т.к. оно найдено в настройках провайдера:'+devrefs[j]);
+	        				need=true;
+	        				break;
+		        		}
+	                	}
+	                }else{
+	                	AnyBalance.trace('Данные по устройству '+dev.physicalResource.resourceID.key+' будут добавлены, т.к. обрабатываются все устройства.');
+	                	need=true;
+	                }
+	                if (need){
+	                	result['dev'+sufix]=(prefs.description & 1)?dev.physicalResource.resourceID.key+': ':'';
+	                        if (prefs.description & 2) result['dev'+sufix]+=dev.physicalResource.registrState.name+': ';
+        	                devlist.push(dev.physicalResource.registrState.name);
+                	        result['speed'+sufix]=dev.offeringSpeed.speedValue;
+                	        result['speedunit'+sufix]=dev.offeringSpeed.unitOfMeasure;
+	                        result['abon'+sufix]=dev.product.price.amount;
+        	                result['timeleft'+sufix]=(new Date(dev.product.endDate)-new Date())/1000;
+                	        sufix=sufix?sufix+1:1;
 
-	var json = getJson(html);
-
-	if(json.step != 'redirect'){
-		var error = json.form.errors.map(function(e) { return e.message }).join(', ');
-		if(error)
-			throw new AnyBalance.Error(error, null, /credentials/i.test(error));
-		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
+	                }else{
+        	        	AnyBalance.trace('Устройство '+dev.physicalResource.resourceID.key+' пропущено.');
+	                }
+	        }
 	}
-
-    var html = AnyBalance.requestGet(joinUrl(referer, json.location), addHeaders({
-    	Referer: referer
-    }));
-	
-	
-    if(!/\/selfcare\/logout/.test(html)){
-        var error = getParam(html, /id="site-fastclick"[^>]*>([\s\S]*?)<\/li>/i, replaceTagsAndSpaces);
-        if(!error)
-            error = getParam(html, /id="selfcare-not-available"[^>]*>([\s\S]*?)<\/li>/i, replaceTagsAndSpaces);
-        if(error)
-            throw new AnyBalance.Error(error);
-		if(/404 not found/i.test(html) || /error-site-fastclick/i.test(lastUrl))
-			throw new AnyBalance.Error("В данный момент превышено допустимое количество подключений к серверу. Попробуйте обновить данные позже.");
-		
-		AnyBalance.trace(html);
-        throw new AnyBalance.Error('Не удалось войти в личный кабинет. Неверный логин-пароль?');
-    }
-
-    var result = {success: true};
-	
-	if(/corp\./i.test(AnyBalance.getLastUrl())) {
-		AnyBalance.trace('Это корпоративный кабинет.');
-		html = AnyBalance.requestGet('https://corp.yota.ru/selfcare/devices');
-		
-		getParam(html, result, 'balance', /"account-money"[^>]*>([^{]*?)<\/dd>/i, replaceTagsAndSpaces, parseBalance);
-		sumParam(html, result, '__tariff', /<h3[^>]+class="[^"]*device-title[^"]*"[^>]*>([\S\s]*?)<\/h3>/ig, replaceTagsAndSpaces, null, aggregate_join);
-		
-		if(AnyBalance.isAvailable('licschet', 'agreement', 'fio', 'email', 'phone')){
-			html = AnyBalance.requestGet('https://corp.yota.ru/selfcare/profile');
-			getParam(html, result, 'licschet', /(?:Номер лицевого сч(?:e|ё)та|Personal Account Number)(?:[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces);
-			getParam(html, result, 'phone', /(?:Телефон|Mobile Phone Number)(?:[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces);
-			getParam("Корпоративный", result, 'agreement');
-			getParam(html, result, 'fio', /(?:Компания|Company)(?:[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces);
-			getParam(html, result, 'email', /(?:Эл\. почта|E-mail)(?:[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces);
-		}
-		
-		AnyBalance.setResult(result);
-	} else {
-		AnyBalance.trace('Похоже на кабинет для физических лиц.');
-		if(!/<span[^>]*>Yota 4G<\/span>/i.test(html)) {
-			AnyBalance.trace('Открылась не страница по устройству. Надо открыть нужную страницу. Страница: ' + lastUrl);
-			html = AnyBalance.requestGet(baseurl + 'devices');
-		}
-
-		var devices = sumParam(html, /<form[^>]+class="tariff-choice-form"[^>]*>([\s\S]*?)<\/form>/ig);
-		if(devices.length > 0){
-			var idx = 0, n = 0;
-			var devrefs = (prefs.devices || '*,*,*,*,*').split(/\s*,\s*/g);
-			for(var i=0; i<devrefs.length; ++i){
-				var device = null;
-				if(devrefs[i] == '*'){
-					if(idx >= devices.length){
-						AnyBalance.trace("All the devices are listed, breaking...");
-						break;
-					}else{
-						device = devices[idx++];
-					}
-				}else{
-					for(var j=0; j<devices.length; ++j){
-						var icc = getParam(devices[j], /ICCID:([^<]+)/i, replaceTagsAndSpaces);
-						if(!icc){
-							AnyBalance.trace("Can not find device ICCID: " + devices[j]);
-							continue;
-						}
-						if(endsWith(icc, devrefs[i])){
-							device = devices[j];
-							break;
-						}
-					}
-
-					if(!device){
-							AnyBalance.trace("Could not find device ending with " + devrefs[i]);
-							++n;
-							continue;
-					}
-					AnyBalance.trace("Found device ICCID:" + icc + ', ends with ' + devrefs[i]);
-				}
-
-				var suffix = n==0 ? '' : '' + n;
-				++n;
-				getParam(device, result, 'abon' + suffix, /<div[^>]+class="cost"[^>]*>([^{]*?)<\/div>/ig, replaceTagsAndSpaces, parseBalance);
-				getParam(device, result, 'speed' + suffix, /<div[^>]+class="speed"[^>]*>([^{]*?)<\/div>/ig, replaceTagsAndSpaces);
-				sumParam(device, result, '__tariff', /<h3[^>]+class="device-title"[^>]*>([\S\s]*?)<\/h3>/ig, replaceTagsAndSpaces, null, aggregate_join);
-				getParam(device, result, 'timeleft' + suffix, /<div[^>]+class="time[^"]*"[^>]*>([\S\s]*?)<\/div>/ig, replaceTagsAndSpaces, parseTimeInterval);
-			}
-		}
-
-		getParam(html, result, 'balance', /<dd[^>]+id="balance-holder"[^>]*>([^{]*?)<\/dd>/i, replaceTagsAndSpaces, parseBalance);
-		if(AnyBalance.isAvailable('licschet', 'agreement', 'fio', 'email', 'phone')){
-			html = AnyBalance.requestGet(baseurl + 'profile');
-			getParam(html, result, 'licschet', /(?:Номер лицевого счета|Personal Account Number)[\S\s]*?<div[^>]+class="value"[^>]*>([\S\s]*?)<\/div>/i, replaceTagsAndSpaces);
-			getParam(html, result, 'agreement', /(?:Тип договора|Contract Type)[\S\s]*?<div[^>]+class="value"[^>]*>([\S\s]*?)<\/div>/i, replaceTagsAndSpaces);
-			getParam(html, result, 'fio', /(?:Фамилия Имя|>Name<)[\S\s]*?<div[^>]+class="value"[^>]*>([\S\s]*?)<\/div>/i, replaceTagsAndSpaces);
-			getParam(html, result, 'email', /E-mail[\S\s]*?<div[^>]+class="value"[^>]*>([\S\s]*?)<\/div>/i, replaceTagsAndSpaces);
-			getParam(html, result, 'phone', /(?:Мобильный телефон|Mobile Phone Number)[\S\s]*?<div[^>]+class="value"[^>]*>([\S\s]*?)<\/div>/i, replaceTagsAndSpaces);
-		}
-		
-		AnyBalance.setResult(result);		
-	}
-}
-
-function parseTimeInterval(str){
-    var val = parseBalance(str);
-    if(!isset(val))
+	if (devlist) result.__tariff=devlist.join(', ');
+        AnyBalance.setResult(result);
         return;
-    var units = getParam(str, null, null, /\d+\s*(.)/);
-    switch(units){
-        case 'Д':
-        case 'д':
-            val*=86400;
-            break;
-        case 'ч':
-        case 'Ч':
-            val*=3600;
-            break;
-        case 'м':
-        case 'М':
-            val*=60;
-            break;
-	default:
-            AnyBalance.trace('Не удалось выяснить единицы изменения для интервала ' + str);
-            return;
-    }
-    AnyBalance.trace('Получили ' + val + ' сек из ' + str);
-    return val;
 }

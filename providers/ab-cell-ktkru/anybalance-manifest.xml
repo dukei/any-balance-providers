@@ -1,0 +1,82 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-cell-ktkru</id>
+	<api flags="no_browser"/>
+	<name>КрымТелеком</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе КрымТелеком. <a href="https://lk.ktkru.ru/"/>https://lk.ktkru.ru/</a></p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Как получить доступ</p>
+	<ul>
+	<li>Введите в настройки провайдера логин и пароль</li>
+	</ul>
+	]]></instruction>
+	<author>DimaZ &lt;DIMAZ.KHUA@gmail.com&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="fio" name="ФИО" type="text"/>
+
+		<counter id="balance0" name="1.Баланс" prefix="{@pretel0}" units=" р."/>
+		<counter id="contract0" name="1.Лицевой счет" type="text"/>
+		<counter id="phone0" name="1.Номер телефона" type="text"/>
+		<counter id="inet0" name="1.Трафик" prefix="{@pretel0}"  units=" ГБ"/>
+		<counter id="minute0" name="1.Минуты" prefix="{@pretel0}"  units=" мин."/>
+		<counter id="sum0" name="1.Тариф" prefix="{@pretel0}" units=" р."/>
+		<counter id="date_inet0" name="1.Срок действия трафика" prefix="{@pretel0}" type="time" format="dd.MM.YYYY"/>
+		<counter id="date_minute0" name="1.Срок действия минут" prefix="{@pretel0}" type="time" format="dd.MM.YYYY"/>
+		<counter id="tarif0" name="1.Пакет услуг" type="text"/>
+
+		<counter id="balance1" name="2.Баланс" prefix="{@pretel1}" units=" р."/>
+		<counter id="contract1" name="2.Лицевой счет" type="text"/>
+		<counter id="phone1" name="2.Номер телефона" type="text"/>
+		<counter id="inet1" name="2.Трафик" prefix="{@pretel1}"  units=" ГБ"/>
+		<counter id="minute1" name="2.Минуты" prefix="{@pretel1}"  units=" мин."/>
+		<counter id="sum1" name="2.Тариф" prefix="{@pretel1}" units=" р."/>
+		<counter id="date_inet1" name="2.Срок действия трафика" prefix="{@pretel1}" type="time" format="dd.MM.YYYY"/>
+		<counter id="date_minute1" name="2.Срок действия минут" prefix="{@pretel1}" type="time" format="dd.MM.YYYY"/>
+		<counter id="tarif1" name="2.Пакет услуг" type="text"/>
+
+		<counter id="balance2" name="3.Баланс" prefix="{@pretel2}" units=" р."/>
+		<counter id="contract2" name="3.Лицевой счет" type="text"/>
+		<counter id="phone2" name="3.Номер телефона" type="text"/>
+		<counter id="inet2" name="3.Трафик" prefix="{@pretel2}"  units=" ГБ"/>
+		<counter id="minute2" name="3.Минуты" prefix="{@pretel2}"  units=" мин."/>
+		<counter id="sum2" name="3.Тариф" prefix="{@pretel2}" units=" р."/>
+		<counter id="date_inet2" name="3.Срок действия трафика" prefix="{@pretel2}" type="time" format="dd.MM.YYYY"/>
+		<counter id="date_minute2" name="3.Срок действия минут" prefix="{@pretel2}" type="time" format="dd.MM.YYYY"/>
+		<counter id="tarif2" name="3.Пакет услуг" type="text"/>
+
+		<counter id="balance3" name="4.Баланс" prefix="{@pretel3}" units=" р."/>
+		<counter id="contract3" name="4.Лицевой счет" type="text"/>
+		<counter id="phone3" name="4.Номер телефона" type="text"/>
+		<counter id="inet3" name="4.Трафик" prefix="{@pretel3}"  units=" ГБ"/>
+		<counter id="minute3" name="4.Минуты" prefix="{@pretel3}"  units=" мин."/>
+		<counter id="sum3" name="4.Тариф" prefix="{@pretel3}" units=" р."/>
+		<counter id="date_inet3" name="4.Срок действия трафика" prefix="{@pretel3}" type="time" format="dd.MM.YYYY"/>
+		<counter id="date_minute3" name="4.Срок действия минут" prefix="{@pretel3}" type="time" format="dd.MM.YYYY"/>
+		<counter id="tarif3" name="4.Пакет услуг" type="text"/>
+
+		<counter id="balance4" name="5.Баланс" prefix="{@pretel4}" units=" р."/>
+		<counter id="contract4" name="5.Лицевой счет" type="text"/>
+		<counter id="phone4" name="5.Номер телефона" type="text"/>
+		<counter id="inet4" name="5.Трафик" prefix="{@pretel4}"  units=" ГБ"/>
+		<counter id="minute4" name="5.Минуты" prefix="{@pretel4}"  units=" мин."/>
+		<counter id="sum4" name="5.Тариф" prefix="{@pretel4}" units=" р."/>
+		<counter id="date_inet4" name="5.Срок действия трафика" prefix="{@pretel4}" type="time" format="dd.MM.YYYY"/>
+		<counter id="date_minute4" name="5.Срок действия минут" prefix="{@pretel4}" type="time" format="dd.MM.YYYY"/>
+		<counter id="tarif4" name="5.Пакет услуг" type="text"/>
+
+	</counters>
+	<keywords></keywords>
+	<type>cell</type>
+	<country>ru</country>
+</provider>

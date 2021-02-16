@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="18">ab-bonus-lukoil</id>
+	<id version="19">ab-bonus-lukoil</id>
 	<name>Лукойл (Бонусы)</name>
 	<description html="true"><![CDATA[
 	<p>Получает информацию по картам "Лукойл Ликард" <a href="http://my.licard.com">http://my.licard.com</a></p>
@@ -18,6 +18,7 @@
 	</ul>
 	<p><small>По умолчанию используется "Ликард".</small></p>
 	]]></instruction>
+	<author>DimaZ &lt;DIMAZ.KHUA@gmail.com&gt;</author>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
         <depends>
    		<module id="library"/>

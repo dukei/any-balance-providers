@@ -96,7 +96,7 @@ function main() {
 function callApi(verb, params){
     var baseurl = 'https://customer.licard.ru/';
 
-    var html = AnyBalance.requestPost(baseurl + 'api/v2/' + verb, JSON.stringify(params), addHeaders({
+    var html = AnyBalance.requestPost(baseurl + 'api/v4/' + verb, JSON.stringify(params), addHeaders({
     	'Accept': 'application/json, text/plain, */*',
     	'X-Api-Token': 'mcHySTn5vmPvMLWrYMfG3xgC9rV2moJ6',
     	'Content-Type': 'application/json;charset=UTF-8',

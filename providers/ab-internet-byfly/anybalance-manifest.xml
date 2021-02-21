@@ -1,13 +1,15 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="12">ab-internet-byfly</id>
+	<id version="13">ab-internet-byfly</id>
 	<api flags="no_browser"/>
 	<name>ByFly</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию из ИССА ByFly - торговой марки «Белтелеком», в рамках которой предлагается широкополосный доступ в сеть Интернет.</p>
-	<p>Информация берется из личного кабинета (https://issaold.beltelecom.by/).</p>
+	<p>Информация берется из личного кабинета (https://issaold.beltelecom.by/main.html).</p>
+        <p>Для автоматического распознования каптчи в настройки провайдера нужно ввести API key полученный с http://eepurl.com/bOLOcf</p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<author>DimaZ &lt;DIMAZ.KHUA@gmail.com&gt;</author>
 	<depends>
 		<module id="library"/>
 	</depends>
@@ -22,7 +24,7 @@
 		<counter id="status" name="Статус" type="text"/>
 		<counter id="agreement" name="Номер договора" type="text"/>
 		<counter id="username" name="ФИО" type="text"/>
-		<counter id="last_pay_date" name="Дата последнего платежа" type="time" format="dd/MM/yyyy"/>
+		<counter id="last_pay_date" name="Дата последнего платежа" type="time" format="dd.MM.yyyy"/>
 		<counter id="last_pay_sum" name="Сумма последнего платежа" units=" р"/>
 		<counter id="last_pay_comment" name="Тип последнего платежа" type="text"/>
 		<counter id="traf_used" name="Использовано трафика" units=" Mb"/>

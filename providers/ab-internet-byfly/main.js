@@ -23,25 +23,53 @@ function main(){
 	 AnyBalance.saveCookies();
 	 AnyBalance.saveData();
 	}
+	var img;
 	var html=AnyBalance.requestGet(baseurl+'main.html',g_headers);
         var prefs = AnyBalance.getPreferences();
 	if (!/logout/i.test(html)){
-		if (/oper_user/i.test(html)){
-			var img=AnyBalance.requestGet(baseurl+'data/capcha/secpic.php',g_headers);
-		   var code= AnyBalance.retrieveCode('Пожалуйста, введите код с картинки', img, {
-			inputType: 'number',
-			minLength: 4,
-			maxLength: 4,
-			time: 300000
-		   });
-        	   var html=AnyBalance.requestPost(baseurl+'main.html',{
-        		redirect: '/main.html',
-                	oper_user: prefs.login,
-                	passwd: prefs.password,
-                	cap_field: code
-        		},g_headers);
-        	var html=AnyBalance.requestGet(baseurl+'main.html',g_headers);
-		}
+			if (prefs.apikey){
+			for (let i=1;i<20&&!/logout/i.test(html);i++){
+				img=AnyBalance.requestGet(baseurl+'data/capcha/secpic.php',g_headers);
+				var html=AnyBalance.requestPost('https://api.ocr.space/parse/image',{
+					apikey:prefs.apikey,
+                                        base64Image:'data:image/png;base64,'+img,
+                                        detectOrientation:false,
+                                        isTable:false,
+                                        scale:true,
+                                        OCREngine:2
+				});
+				var json=getJson(html);
+				var code=json.ParsedResults[0].ParsedText;
+				code=code.replace(/\s*/g,'');
+				AnyBalance.trace('Картинка распознана как "'+code+'".   Попытка:'+i);
+				if (/^\d{4}$/.test(code)){
+				   var html=AnyBalance.requestPost(baseurl+'main.html',{
+					redirect: '/main.html',
+					oper_user: prefs.login,
+					passwd: prefs.password,
+					cap_field: code
+					},g_headers);
+					var html=AnyBalance.requestGet(baseurl+'main.html',g_headers);
+				}
+			}
+			}
+	}
+        if (!/logout/i.test(html)){
+        			if (!img) img=AnyBalance.requestGet(baseurl+'data/capcha/secpic.php',g_headers);
+				var code= AnyBalance.retrieveCode('Пожалуйста, введите код с картинки', img, {
+				inputType: 'number',
+				minLength: 4,
+				maxLength: 4,
+				time: 300000
+				});
+				var html=AnyBalance.requestPost(baseurl+'main.html',{
+					redirect: '/main.html',
+					oper_user: prefs.login,
+					passwd: prefs.password,
+					cap_field: code
+					},g_headers);
+					var html=AnyBalance.requestGet(baseurl+'main.html',g_headers);
+
 	}
 	if (!/logout/i.test(html)) {
 		AnyBalance.trace(html);

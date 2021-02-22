@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="52">ab-cell-intertelecom</id>
+  <id version="53">ab-cell-intertelecom</id>
   <api flags="no_browser" />
   <name>Интертелеком</name>
 	<description html="true"><![CDATA[
@@ -15,23 +15,27 @@
 	</ul>   
 	]]></instruction>
   <author>Ignatiy Goloviznin &lt;igoloviznin@gmail.com&gt;</author>
+  <author>DimaZUA &lt;DIMAZ.KHUA@gmail.com&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
-    <js>library.js</js>
     <js>main.js</js>
     <history>history.xml</history>
   </files>
   <counters>
     <counter id="saldo" name="Сальдо" suffix=" ₴" type="numeric"/>
+    <counter id="perevod" name="Доступно для перевода" suffix=" ₴" type="numeric"/>
     <counter id="predoplata" name="Предоплаченые услуги на месяц" suffix=" ₴" type="numeric"/>
     <counter id="bonus" name="Неактивированные бонусы (с 094)" suffix=" ₴" type="numeric"/>
-    <counter id="min_it" name="Минуты Интертелеком и Местные" type="time_interval" format="{@H}:{@min}:{@sec}"/>
-    <counter id="min_local" name="Местные минуты" type="time_interval" format="{@H}:{@min}:{@sec}"/>
-    <counter id="min_local_uk" name="Местные минуты и по Украине" type="time_interval" format="{@H}:{@min}:{@sec}"/>
-    <counter id="min_uk_mob" name="Минуты по Украине на мобильные" type="time_interval" format="{@H}:{@min}:{@sec}"/>
-    <counter id="min_uk_mob_uk" name="Минуты по Украине на мобильные и городские" type="time_interval" format="{@H}:{@min}:{@sec}"/>
-    <counter id="min_rus" name="Минуты по России" type="time_interval" format="{@H}:{@min}:{@sec}"/>
+    <counter id="min_it" name="Минуты Интертелеком и Местные" type="time_interval" format="{@H} ч. {@min} мин."/>
+    <counter id="min_local" name="Местные минуты" type="time_interval" format="{@H} ч. {@min} мин."/>
+    <counter id="min_local_uk" name="Местные минуты и по Украине" type="time_interval" format="{@H} ч. {@min} мин."/>
+    <counter id="min_uk_mob" name="Минуты по Украине на мобильные" type="time_interval" format="{@H} ч. {@min} мин."/>
+    <counter id="min_uk_mob_uk" name="Минуты по Украине на мобильные и городские" type="time_interval" format="{@H} ч. {@min} мин."/>
+    <counter id="min_rus" name="Минуты по России" type="time_interval" format="{@H} ч. {@min} мин."/>
     <counter id="bonus_pl" name="Бонус по программе лояльности «Наилучшее общение»" suffix=" ₴" type="numeric" flags="zero_when_empty"/>
     <counter id="traffic_paket" name="Пакетный трафик" units=" mb"/>
     <counter id="traffic_paket_revb" name="Пакетный трафик (Rev.B)" units=" mb"/>
@@ -47,22 +51,24 @@
     <counter id="traffic_action" name="Трафик по акции" units=" mb" flags="zero_when_empty"/>
     <counter id="bonus_action_current" name="Акционный счет на текущий месяц" suffix=" ₴" type="numeric" flags="zero_when_empty"/>
     <counter id="bonus_action_next" name="Акционный счет на следующие месяцы" suffix=" ₴" type="numeric" flags="zero_when_empty"/>
-    <counter id="date_activity" name="Дата последней абонентской активности" type="time" format="dd/MM/yyyy"/>
-    <counter id="date_bonus_fb" name="Срок действия бонусов по акциям" type="time" format="dd/MM/yyyy"/>
-    <counter id="date_bonus_pr" name="Срок действия Лояльного Бонуса" type="time" format="dd/MM/yyyy"/>
-    <counter id="date_traffic_action" name="Срок действия трафика по акции" type="time" format="dd/MM/yyyy"/>
-    <counter id="date_bezlimit" name="Срок действия безлимита на скорости до 128 Кбит/с" type="time" format="dd/MM/yyyy"/>
-    <counter id="date_sms_ukr" name="Срок действия СМС по Украине" type="time" format="dd/MM/yyyy"/>
-    <counter id="date_min_it" name="Срок действия минут по Интертелеком и Местные" type="time" format="dd/MM/yyyy"/>
-    <counter id="date_min_uk_mob" name="Срок действия минут по Украине на мобильные" type="time" format="dd/MM/yyyy"/>
-    <counter id="date_min_uk_mob_uk" name="Срок действия минут по Украине на мобильные и городские" type="time" format="dd/MM/yyyy"/>
+    <counter id="date_activity" name="Дата последней абонентской активности" type="time" format="dd.MM.yyyy"/>
+    <counter id="date_bonus_fb" name="Срок действия бонусов по акциям" type="time" format="dd.MM.yyyy"/>
+    <counter id="date_bonus_pr" name="Срок действия Лояльного Бонуса" type="time" format="dd.MM.yyyy"/>
+    <counter id="date_traffic_action" name="Срок действия трафика по акции" type="time" format="dd.MM.yyyy"/>
+    <counter id="date_bezlimit" name="Срок действия безлимита на скорости до 128 Кбит/с" type="time" format="dd.MM.yyyy"/>
+    <counter id="date_sms_ukr" name="Срок действия СМС по Украине" type="time" format="dd.MM.yyyy"/>
+    <counter id="date_min_it" name="Срок действия минут по Интертелеком и Местные" type="time" format="dd.MM.yyyy"/>
+    <counter id="date_min_uk_mob" name="Срок действия минут по Украине на мобильные" type="time" format="dd.MM.yyyy"/>
+    <counter id="date_min_uk_mob_uk" name="Срок действия минут по Украине на мобильные и городские" type="time" format="dd.MM.yyyy"/>
     <counter id="skidka" name="Размер скидки по программе лояльности «Наилучшее общение»" suffix="%" type="numeric"/>
-    <counter id="loyalty" name="Лояльный стаж" type="time_interval" format="{@Y}:{@mo}"/>
-    <counter id="mobsubscr" name="Абонентский стаж" type="time_interval" format="{@Y}:{@mo}"/>
+    <counter id="loyalty" name="Лояльный стаж" type="time_interval" format="{@Y} г. {@mo} мес."/>
+    <counter id="mobsubscr" name="Абонентский стаж" type="time_interval" format="{@Y} г. {@mo} мес."/>
     <counter id="news" name="Новости" type="numeric" flags="zero_when_empty"/>
     <counter id="kredit" name="Кредит до…" suffix=" ₴" type="numeric"/>
     <counter id="phonet" name="Номер телефона" type="text"/>
     <counter id="mobphonet" name="Номер телефона мобильный" type="text"/>
+    <counter id="contphone" name="Номер телефона контактный" type="text"/>
+    <counter id="ls" name="Лицевой счет" type="text"/>
 	<counter id="ip_adr" name="IP" type="text"/>
   </counters>
   <keywords>

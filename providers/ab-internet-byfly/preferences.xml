@@ -21,6 +21,16 @@
         dialogMessage="Введите пароль, используемый для входа в ИССА Белтелеком"
         inputType="textPassword">
     </EditTextPreference>
+    <EditTextPreference 
+        title="Ключ API" 
+        positiveButtonText="ОК" 
+        summary="|API KEY|{@s}" 
+        dialogTitle="Ключ API" 
+        obligatory="true"
+        negativeButtonText="Отмена" 
+        dialogMessage="Ключ API с сайта (https://ocr.space/OCRAPI)"
+        key="apikey">
+    </EditTextPreference>
 <!--    <EditTextPreference 
         title="Последние цифры логина" 
         positiveButtonText="ОК" 

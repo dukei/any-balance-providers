@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="3" version="51">ab-cell-life-ukr</id>
+	<id major_version="3" version="52">ab-cell-life-ukr</id>
 	<api flags="no_browser" />
 	<name>Lifecell</name>
 	<description html="true"><![CDATA[
@@ -24,6 +24,7 @@
 	<author>Ignatiy Goloviznin &lt;igoloviznin@gmail.com&gt;</author>
 	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<author>DimaZUA &lt;DIMAZ.KHUA@gmail.com&gt;</author>
 	<depends>
 		<module id="crypt/cryptojs/sha1"/>
 		<module id="crypt/cryptojs/hmac"/>
@@ -52,7 +53,8 @@
 		<counter id="mins_fixed" name="Минуты на номера фиксированной связи Украины" type="time_interval" format="{@MIN}" units=" мин"/>
 		<counter id="mins_family" name="Минуты на родные номера" type="time_interval" format="{@MIN}" units=" мин"/>
 		<counter id="ap" name="Абонентская плата"/>
-		<counter id="till" name="Действителен до" type="time" format="dd/MM/yyyy"/>
+		<counter id="till" name="Действителен до" type="time" format="dd.MM.yyyy"/>
+		<counter id="till_tarif" name="Пакет услуг действует до" type="time" format="dd.MM.yyyy"/>
 		<counter id="phone" name="Номер телефона" type="text"/>
 	</counters>
 	<keywords>мобильный оператор Lifecell украина проверка баланса</keywords>

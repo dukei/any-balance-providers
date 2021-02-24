@@ -91,6 +91,7 @@ function main(){
     getParam(html, result, 'status',/Статус блокировки([\s\S]*?)<a href/i,replaceTagsAndSpaces,null);
     getParam(html, result, 'login',/Логин ([\s\S]*?)</i,replaceTagsAndSpaces,parseBalance);
     getParam(html, result, '__tariff',/Тарифный план на услуги([\s\S]*?)<\/tr/i,replaceTagsAndSpaces,null);
+    if (!result.__tariff) getParam(html, result, '__tariff',/Пакет\sуслуг\s\(([\s\S]*?)\)/i,replaceTagsAndSpaces,null);
     AnyBalance.saveCookies();
     AnyBalance.saveData();
     AnyBalance.setResult(result);

@@ -1,11 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-municipal-enera</id>
+	<id version="3">ab-municipal-enera</id>
 	<api flags="no_browser"/>
-	<name>Енера-схід</name>
+	<name>E-Svitlo (Енера-схід)</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе на лицевом счете комапнии Єнера-Схід <a href="http://lg.enera.ua/">http://lg.enera.ua</a></p>
-	<p>Информация берется из личного кабинета <a href="https://www.enera.lg.ua/uk/">https://www.enera.lg.ua/uk/</a></p>
+	<p>Предоставляет информацию о балансе на лицевом счете комапнии ТОВ Єнера-Схід <a href="http://lg.enera.ua/">http://lg.enera.ua</a></p>
+	<p>Информация берется из личного кабинета <a href="https://lg.e-svitlo.com.ua/">https://lg.e-svitlo.com.ua/</a></p>
 	]]></description>
 	<author>DimaZ &lt;DIMAZ.KHUA@gmail.com&gt;</author>
 	<depends>
@@ -19,12 +19,23 @@
 	</files>
 	<counters>
 		<counter id="balance" name="Баланс" units=" грн"/>
-		<counter id="day" name="Показания день" units=" кВт/ч"/>
-		<counter id="night" name="Показания ночь" units=" кВт/ч"/>
-		<counter id="all" name="Показания счетчика" units=" кВт/ч"/>
-		<counter id="lastdate" name="Дата показаний" type="time" format="dd/MM/yyyy"/>
+		<counter id="pay" name="Сумма поледнего платежа" units=" грн"/>
+		<counter id="value1" name="Показания (Зона 1)" units=" кВт/ч"/>
+		<counter id="value2" name="Показания (Зона 2)" units=" кВт/ч"/>
+		<counter id="value3" name="Показания (Зона 3)" units=" кВт/ч"/>
+		<counter id="use1" name="Потрбление за послений месяц (Зона 1)" units=" кВт/ч"/>
+		<counter id="use2" name="Потрбление за послений месяц (Зона 2)" units=" кВт/ч"/>
+		<counter id="use3" name="Потрбление за послений месяц (Зона 3)" units=" кВт/ч"/>
+		<counter id="lastvaluedate" name="Дата показаний" type="time" format="dd.MM.yyyy"/>
+		<counter id="lastpaydate" name="Дата последней оплаты" type="time" format="dd.MM.yyyy"/>
+                <counter id="eic" name="EIC код" type="text"/>
+                <counter id="ls" name="Лицевой счет" type="text"/>
+                <counter id="fio" name="Лицевой счет" type="text"/>
+                <counter id="adr" name="Лицевой счет" type="text"/>
 	</counters>
-	<keywords></keywords>
+	<keywords>
+	електрична енергія, Луганської, електроенергия, Луганская, Энера, Єнера, електроенергія, світло, e-svitlo, электричество, енера, энера, enera
+	</keywords>
 	<type>internet</type>
 	<country>ua</country>
 </provider>

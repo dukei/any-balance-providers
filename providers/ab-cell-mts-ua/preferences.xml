@@ -3,10 +3,10 @@
     <EditTextPreference 
         title="Логин" 
         positiveButtonText="ОК" 
-        summary="Номер телефона (9 цифр)||{@s}\n" 
+        summary="Номер телефона||{@s}\n" 
         dialogTitle="Номер телефона" 
         negativeButtonText="Отмена" 
-        dialogMessage="Введите номер вашего телефона для входа в My Vodafone (9 цифр), например 661234567"
+        dialogMessage="Введите номер вашего телефона для входа в My Vodafone"
 	obligatory="true"
         key="login"
         inputType="number">
@@ -14,9 +14,9 @@
     <EditTextPreference 
         positiveButtonText="ОК"
         key="password" 
-        dialogTitle="PUK"
+        dialogTitle="PUK код"
         negativeButtonText="Отмена"
-        title="PUK"
+        title="PUK код"
         summary="PUK||{@s}\n"
 	obligatory="true"
         dialogMessage="Введите PUK код (8 цифр). Если оставить это поле пустым первый вход будет произведен по коду из SMS от My Vodafone"
@@ -32,19 +32,36 @@
 	</ListPreference>	
 
 	<CheckBoxPreference
-		title="Названия пакетов SMS и минут"
-		defaultValue="true"
-		summaryOn="Показывать названия минут или SMS"
-		summaryOff="Не показывать названия минут или SMS"
+		title="Названия пакетов SMS, минут, мегабайт"
+		defaultValue="false"
+		summaryOn="Показывать названия пакетов"
+		summaryOff="Не показывать названия пакетов"
 		key="needPref" />
 
 	<CheckBoxPreference
-		title="SMS или минут в пакете"
-		defaultValue="true"
+		title="SMS, минут, мегабайт в пакете"
+		defaultValue="false"
 		summaryOn="Показывать общее количество"
 		summaryOff="Не показывать общее количество"
 		key="needSuf" />
 
+	<ListPreference
+		key="service"
+		title="Информция об услугах в счетчике Доп.инфо"
+		summary="||{@s}"
+		entries="Не показывать|Только платные|Показать все подключенные"
+		entryValues="0|1|2"
+		defaultValue="0">
+	</ListPreference>	
+
+	<ListPreference
+		key="exps"
+		title="Ифнормация  расходах в счетчике Доп.инфо"
+		summary="||{@s}"
+		entries="Не показывать|Только платные|Показать все расходы"
+		entryValues="0|1|2"
+		defaultValue="0">
+	</ListPreference>	
 <!--    <EditTextPreference 
         positiveButtonText="ОК"
         key="phone" 

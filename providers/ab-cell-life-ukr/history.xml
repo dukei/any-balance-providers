@@ -1,5 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="3" version="52" date="2021-02-24">
+	Поддержка изменений на сайте
+	Добавлен счетчик "Пакет услуг действует до"
+	</change>
 	<change major_version="3" version="51" date="2020-07-19">
 	Возможность вводить буквы в пароль
 	</change>

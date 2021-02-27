@@ -1,10 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="2.0" version="83">ab-cell-mts-ua</id>
+	<id major_version="2.0" version="84">ab-cell-mts-ua</id>
 	<api flags="no_browser"/>
 	<name>Vodafone (Украина)</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе, использованных минутах,  SMS, MMS и трафике для пользователей сотового оператора Vodafone (Украина) (бывший МТС)</p>
+	<p>Предоставляет информацию о балансе, бонусах, услугах, расходах, дате отключения номера и дате завершения пакета услуг, остатке минут, SMS и трафика для пользователей сотового оператора Vodafone (Украина)</p>
 	<p>Информация берется из мобильного приложения My Vodafone.</p>
 	]]></description>
 	<instruction html="true"><![CDATA[
@@ -15,6 +15,7 @@
 	</ul>
 	]]></instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<author>DimaZ &lt;DIMAZ.KHUA@gmail.com&gt;</author>
 	<depends>
 		<module id="crypt/base64"/>
 		<module id="library"/>
@@ -22,28 +23,35 @@
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
+		<js>library.min.js</js>
+		<js>base64.min.js</js>
 		<js>main.js</js>
 		<js>errors.js</js>
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units=" ₴"/>
+		<counter id="balance" name="Баланс" units=" ₴" flags="zero_when_empty"/>
 		<counter id="traffic_left"  prefix="{@pre_traffic_left}" suffix="{@suf_traffic_left}" name="Остаток трафика" units=" МБ"/>
 		<counter id="min_left" prefix="{@pre_min_left}" suffix="{@suf_min_left}" name="Остаток минут" units=" мин"/>
-		<counter id="sms_left"  prefix="{@pre_sms_left}" suffix="{@suf_sms_left}" name="Остаток SMS" units=" sms"/>
-		<counter id="min_left1" prefix="{@pre_min_left1}" suffix="{@suf_min_left1}" name="Остаток минут " units=" мин"/>
-		<counter id="min_left2" prefix="{@pre_min_left2}" suffix="{@suf_min_left2}" name="Остаток минут  " units=" мин"/>
 		<counter id="bonus_balance" name="Бонусный баланс" units=" ₴" flags="zero_when_empty"/>
-		<counter id="min_left3" prefix="{@pre_min_left3}" suffix="{@suf_min_left3}" name="Остаток минут   " units=" мин"/>
-		<counter id="min_left4" prefix="{@pre_min_left4}" suffix="{@suf_min_left4}" name="Остаток минут    " units=" мин"/>
-		<counter id="sms_left1"  prefix="{@pre_sms_left1}" suffix="{@suf_sms_left1}" name="Остаток SMS " units=" sms"/>
-		<counter id="sms_left2"  prefix="{@pre_sms_left2}" suffix="{@suf_sms_left2}" name="Остаток SMS  " units=" sms"/>
-		<counter id="sms_left3"  prefix="{@pre_sms_left3}" suffix="{@suf_sms_left3}" name="Остаток SMS   " units=" sms"/>
-		<counter id="sms_left4"  prefix="{@pre_sms_left4}" suffix="{@suf_sms_left4}" name="Остаток SMS    " units=" sms"/>
-		<counter id="phone" name="Номер телефона" type="text"/>
+		<counter id="ama" name="Доп.счет" units=" ₴" flags="zero_when_empty"/>
 		<counter id="endTP" name="Тариф действует до" type="time" format="dd.MM.yyyy"/>
+		<counter id="info" name="Доп.инфо" type="html" />
+		<counter id="sms_left"  prefix="{@pre_sms_left}" suffix="{@suf_sms_left}" name="Остаток SMS" units=" sms"/>
 		<counter id="dateOfExpire" name="Номер действителен до" type="time" format="dd.MM.yyyy"/>
-		<counter id="info" name="Пакет" type="text" />
+		<counter id="min_left1" prefix="{@pre_min_left1}" suffix="{@suf_min_left1}" name="2.Остаток минут" units=" мин"/>
+		<counter id="min_left2" prefix="{@pre_min_left2}" suffix="{@suf_min_left2}" name="3.Остаток минут" units=" мин"/>
+		<counter id="min_left3" prefix="{@pre_min_left3}" suffix="{@suf_min_left3}" name="4.Остаток минут" units=" мин"/>
+		<counter id="min_left4" prefix="{@pre_min_left4}" suffix="{@suf_min_left4}" name="5.Остаток минут" units=" мин"/>
+		<counter id="sms_left1"  prefix="{@pre_sms_left1}" suffix="{@suf_sms_left1}" name="2.Остаток SMS" units=" sms"/>
+		<counter id="sms_left2"  prefix="{@pre_sms_left2}" suffix="{@suf_sms_left2}" name="3.Остаток SMS" units=" sms"/>
+		<counter id="sms_left3"  prefix="{@pre_sms_left3}" suffix="{@suf_sms_left3}" name="4.Остаток SMS" units=" sms"/>
+		<counter id="sms_left4"  prefix="{@pre_sms_left4}" suffix="{@suf_sms_left4}" name="5.Остаток SMS" units=" sms"/>
+		<counter id="traffic_left1"  prefix="{@pre_traffic_left1}" suffix="{@suf_traffic_left1}" name="2.Остаток трафика" units=" МБ"/>
+		<counter id="traffic_left2"  prefix="{@pre_traffic_left2}" suffix="{@suf_traffic_left2}" name="3.Остаток трафика" units=" МБ"/>
+		<counter id="traffic_left3"  prefix="{@pre_traffic_left3}" suffix="{@suf_traffic_left3}" name="4.Остаток трафика" units=" МБ"/>
+		<counter id="traffic_left4"  prefix="{@pre_traffic_left4}" suffix="{@suf_traffic_left4}" name="5.Остаток трафика" units=" МБ"/>
+		<counter id="phone" name="Номер телефона" type="text"/>
 	</counters>
 	<keywords>Сотовый телефон, мобильный, мобильник, mts, украина</keywords>
 	<type>cell</type>

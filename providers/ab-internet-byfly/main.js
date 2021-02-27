@@ -16,6 +16,8 @@ var g_headers = {
 
 function main(){
 	var baseurl='https://issaold.beltelecom.by/';
+        var prefs = AnyBalance.getPreferences();
+/*
 	try{
          AnyBalance.restoreCookies();
         }catch(e){
@@ -25,7 +27,6 @@ function main(){
 	}
 	var img;
 	var html=AnyBalance.requestGet(baseurl+'main.html',g_headers);
-        var prefs = AnyBalance.getPreferences();
 	if (!/logout/i.test(html)){
 			if (prefs.apikey){
 			for (let i=1;i<20&&!/logout/i.test(html);i++){
@@ -40,7 +41,7 @@ function main(){
 				});
 				var json=getJson(html);
 				var code=json.ParsedResults[0].ParsedText;
-				code=code.replace(/\s*/g,'');
+				code=code.replace(/\s* /g,'');
 				AnyBalance.trace('Картинка распознана как "'+code+'".   Попытка:'+i);
 				if (/^\d{4}$/.test(code)){
 				   var html=AnyBalance.requestPost(baseurl+'main.html',{
@@ -71,18 +72,26 @@ function main(){
 					var html=AnyBalance.requestGet(baseurl+'main.html',g_headers);
 
 	}
+*/
+				var html=AnyBalance.requestPost(baseurl+'main.html',{
+					redirect: '/main.html',
+					oper_user: prefs.login,
+					passwd: prefs.password,
+					},g_headers);
+
 	if (!/logout/i.test(html)) {
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось войти. Сайт изменен?');
 		}
 	var result = {success: true};
     
-    getParam(html, result, 'balance',/баланс:([\s\S]*?)р/i,replaceTagsAndSpaces,parseBalance);
+    getParam(html, result, 'balance',/баланс[:\s]([\s\S]*?)р/i,replaceTagsAndSpaces,parseBalance);
     getParam(html, result, 'agreement',/Договор ([\s\S]*?)</i,replaceTagsAndSpaces,parseBalance);
     getParam(html, result, 'username',/ФИО \/ Компания: ([\s\S]*?)</i,replaceTagsAndSpaces,null);
     getParam(html, result, 'status',/Статус блокировки([\s\S]*?)<a href/i,replaceTagsAndSpaces,null);
     getParam(html, result, 'login',/Логин ([\s\S]*?)</i,replaceTagsAndSpaces,parseBalance);
     getParam(html, result, '__tariff',/Тарифный план на услуги([\s\S]*?)<\/tr/i,replaceTagsAndSpaces,null);
+    if (!result.__tariff) getParam(html, result, '__tariff',/Пакет\sуслуг\s\(([\s\S]*?)\)/i,replaceTagsAndSpaces,null);
     AnyBalance.saveCookies();
     AnyBalance.saveData();
     AnyBalance.setResult(result);

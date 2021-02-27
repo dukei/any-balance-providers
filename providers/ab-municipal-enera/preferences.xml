@@ -5,10 +5,10 @@
 		key="login"
 		summary="||{@s}"
 		obligatory="true"
-		dialogTitle="Логин"
+		dialogTitle="e-mail"
 		positiveButtonText="ОК"
 		negativeButtonText="Отмена"
-		dialogMessage="Введите логин, используемый для входа в личный кабинет.">
+		dialogMessage="Введите e-mail, используемый для входа в личный кабинет.">
 	</EditTextPreference>
 	<EditTextPreference
 		title="Пароль"
@@ -20,5 +20,15 @@
 		negativeButtonText="Отмена"
 		dialogMessage="Введите пароль, используемый для входа в личный кабинет."
 		inputType="textPassword">
+	</EditTextPreference>
+	<EditTextPreference
+		title="Лицевой счет"
+		key="ls"
+		summary="||{@s}"
+		obligatory="true"
+		dialogTitle="Лицевой счет"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		dialogMessage="Если в аккаунт добавлено несколько лицевых счетов, введите часть нужного Вам лицевого счета или часть фамили или часть адреса. Иначе будет использоваться первый лицевой в списке.">
 	</EditTextPreference>
 </PreferenceScreen>

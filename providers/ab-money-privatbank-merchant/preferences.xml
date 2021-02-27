@@ -1,5 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
+	<ListPreference
+		key="showLimit"
+		title="Кредитный лимит по картам"
+		entries="Не показывать|Как выражение|Прибавлять к балансу"
+		entryValues="0|1|2"
+		defaultValue="1">
+	</ListPreference>
+	<CheckBoxPreference
+		title="Валюту карт"
+		defaultValue="true"
+		summaryOn="Показывать"
+		summaryOff="Не показывать"
+		key="needValut" />
 	<EditTextPreference
 		title="Универсальная"
 		key="univers"
@@ -110,18 +123,4 @@
 		negativeButtonText="Отмена"
 		dialogMessage="Введите ID, номер карты и пароль мерчанта">
 	</EditTextPreference>
-	<CheckBoxPreference
-		title="Кредитный лимит по картам"
-		defaultValue="true"
-		summaryOn="Показывать"
-		summaryOff="Не показывать"
-		key="needLimit" />
-	<CheckBoxPreference
-		title="Валюту карт"
-		defaultValue="true"
-		summaryOn="Показывать"
-		summaryOff="Не показывать"
-		key="needValut" />
-
-
 </PreferenceScreen>

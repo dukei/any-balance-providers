@@ -435,6 +435,10 @@ function mainMobileApp(prefs, baseurl){
             			token='';
                                 subId='';
             		}
+            	}else{
+            			AnyBalance.trace('Удаляем старый токен');
+            			token='';
+                                subId='';
             	}
             }
 

@@ -1,7 +1,8 @@
 var g_baseurlLogin = 'http://login.mts.ru';
 
-function checkLoginError(html, loginUrl) {
+function checkLoginError(html, options) {
 	var prefs = AnyBalance.getPreferences();
+	var loginUrl = options.url;
 
 	function processError(html){
         var error = sumParam(html, /var\s+(?:passwordErr|loginErr)\s*=\s*'([^']*)/g, replaceSlashes, null, aggregate_join);
@@ -25,7 +26,8 @@ function checkLoginError(html, loginUrl) {
     	img = null;
     }
     if(!img){
-    	img = getParam(html, /#captcha-wrapper\s*\{[^\}]*/);
+    	img = getParam(html, /"(ZGF0YTppbWFnZS[^"]*)/);
+    	img = Base64.decode(img);
     }
     if(img){
     	img = getParam(img, /data:image\/\w+;base64,([^'"]+)/i);
@@ -35,8 +37,10 @@ function checkLoginError(html, loginUrl) {
 	    var code = AnyBalance.retrieveCode('МТС требует ввести капчу для входа в личный кабинет, чтобы подтвердить, что вы не робот. Введите символы, которые вы видите на картинке.', img);
 	    var form = getElement(html, /<form[^>]+name="Login"/i);
 	    var params = createFormParams(form, function (params, input, name, value) {
-            if (name == 'IDToken1' || name == 'IDToken2')
-                value = prefs.password;
+            if (name == 'IDToken1')
+                value = prefs.login;
+            if (name == 'IDToken2')
+            	value = code;
             return value;
         });
 
@@ -53,6 +57,10 @@ function checkLoginError(html, loginUrl) {
         
 		if(AnyBalance.getLastStatusCode() >= 500)
             throw new AnyBalance.Error("Ошибка на сервере МТС при попытке зайти, сервер не смог обработать запрос! Можно попытаться позже...", allowRetry);
+
+        if(isOnLogin() && getOrdinaryLoginForm(html)) { //Бывает, после капчи не переадресовывает
+            html = loginOrdinaryForm(html, options);
+        }
 
         if(AnyBalance.getLastUrl().indexOf(g_baseurlLogin) == 0) { //Если нас не переадресовали, значит, случилась ошибка
         	processError(html);
@@ -109,6 +117,11 @@ function redirectIfNeeded(html){
 function isOnLogin(){
 	return AnyBalance.getLastUrl().indexOf(g_baseurlLogin) == 0;
 }
+
+function getOrdinaryLoginForm(html){
+	return getElement(html, /<form[^>]+name="Login"/i);
+}
+
 
 function enterMtsLK(options) {
 	var url = options.url || g_baseurlLogin;
@@ -219,15 +232,46 @@ function restoreLoginCookies(){
 	}
 }
 
+function loginOrdinaryForm(html, options){
+	var prefs = AnyBalance.getPreferences();
+    AnyBalance.trace('Найдена обычная форма входа');
+    var form = getOrdinaryLoginForm(html);
+    var params = createFormParams(form, function (params, input, name, value) {
+        var undef;
+        if (name == 'IDToken1')
+            value = options.login;
+        else if (name == 'IDToken2')
+            value = options.password;
+        else if (name == 'noscript')
+            value = undef; //Снимаем галочку
+        else if (name == 'IDButton')
+            value = 'Submit';
+        return value;
+    });
+
+    var sitekey = getParam(form, /data-sitekey="([^"]*)/i, replaceHtmlEntities);
+    if(sitekey){
+    	AnyBalance.trace('МТС требует рекапчу :(');
+    	var recaptcha = solveRecaptcha('МТС требует ввода рекапчи, как и при входе через браузер. Пожалуйста, докажите, что вы не робот.', loginUrl, sitekey);
+    	params.IDToken3 = recaptcha;
+    }
+    
+    // AnyBalance.trace("Login params: " + JSON.stringify(params));
+    AnyBalance.trace("Логинимся с заданным номером");
+    html = AnyBalance.requestPost(options.url, params, addHeaders({Origin: g_baseurlLogin, Referer: options.url}));
+    fixCookies();
+    return html;
+}
+
 function enterMTS(options){
 	var baseurl = options.baseurl || g_baseurl;
-    var loginUrl = options.url || g_baseurlLogin + "/amserver/UI/Login?goto=" + baseurl;
+    var loginUrl = options.url = options.url || g_baseurlLogin + "/amserver/UI/Login?goto=" + baseurl;
     var allowRetry = options.allowRetry;
 
     var html = options.html;
     fixCookies();
 
-    if(!html || !/<form[^>]+name="Login"/i.test(html)){
+    if(!html || !getOrdinaryLoginForm(html)){
         html = AnyBalance.requestGet(loginUrl, g_headers);
         fixCookies();
         if(AnyBalance.getLastStatusCode() >= 500){
@@ -247,32 +291,8 @@ function enterMTS(options){
 	html = redirectIfNeeded(html);
 
     var form;
-    if(form = getElement(html, /<form[^>]+name="Login"/i)){  //Обычная форма входа
-    	AnyBalance.trace('Найдена обычная форма входа');
-        var params = createFormParams(form, function (params, input, name, value) {
-            var undef;
-            if (name == 'IDToken1')
-                value = options.login;
-            else if (name == 'IDToken2')
-                value = options.password;
-            else if (name == 'noscript')
-                value = undef; //Снимаем галочку
-            else if (name == 'IDButton')
-                value = 'Submit';
-            return value;
-        });
-
-        var sitekey = getParam(form, /data-sitekey="([^"]*)/i, replaceHtmlEntities);
-        if(sitekey){
-        	AnyBalance.trace('МТС требует рекапчу :(');
-        	var recaptcha = solveRecaptcha('МТС требует ввода рекапчи, как и при входе через браузер. Пожалуйста, докажите, что вы не робот.', loginUrl, sitekey);
-        	params.IDToken3 = recaptcha;
-        }
-        
-        // AnyBalance.trace("Login params: " + JSON.stringify(params));
-        AnyBalance.trace("Логинимся с заданным номером");
-        html = AnyBalance.requestPost(loginUrl, params, addHeaders({Origin: g_baseurlLogin, Referer: loginUrl}));
-        fixCookies();
+    if(form = getOrdinaryLoginForm(html)){  //Обычная форма входа
+    	html = loginOrdinaryForm(html, options);
     }else if(form = getElement(html, /<form[^>]+id="login-phone-form"/i)){       
     	AnyBalance.trace('Найдена корп. форма входа');
         var params = createFormParams(form, function (params, input, name, value) {
@@ -326,7 +346,7 @@ function enterMTS(options){
 
     //Если переадресовали с логина, значит, залогинились. А если нет, то какие-то проблемы
     if(isOnLogin())
-		html = checkLoginError(html, loginUrl);
+		html = checkLoginError(html, options);
 
     if(isOnLogin()){
         AnyBalance.trace(html);

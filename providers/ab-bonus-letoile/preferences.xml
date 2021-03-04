@@ -2,20 +2,34 @@
 <PreferenceScreen>
     <EditTextPreference
 		obligatory="true"
-        key="number"
-        title="Номер карты"
-        summary="Номер клубной карты||{@s}\n"
-        inputType="number"
-        dialogTitle="Номер карты"
-        dialogMessage="Введите номер клубной карты Л'Этуаль"
+        key="login"
+        dialogTitle="Логин" 
+        title="Логин"
+        summary="||{@s}" 
+        inputType="text"
+        dialogTitle="Логин"
+        dialogMessage="Введите email, используемый для входа на letu.ru или letu.ua"
         positiveButtonText="ОК"
         negativeButtonText="Отмена">
     </EditTextPreference>
+	<EditTextPreference
+		obligatory="true"
+		key="password"
+		title="Пароль"
+		summary="Пароль для авторизации||***********\n"
+		dialogTitle="Пароль"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите пароль, используемый для авторизации"
+		positiveButtonText="ОК"
+		inputType="textPassword">
+	</EditTextPreference>
     <ListPreference 
-        key="color"
-        title="Цвет карты"
-        summary="Цвет клубной карты||{@s}\n"
-        entries="зеленая|красная|рубиновая|синяя|сапфировая|серебряная|аметистовая|золотая|бриллиантовая"
-        entryValues="1_old|2_old|2|3_old|3|4_old|4|5_old|5">
+        key="loc"
+        title="Проверять сайт"
+        summary="||{@s}" 
+        entries="Украина (letu.ua)|Росиия (letu.ru)"
+        entryValues="UA|RU"
+        defaultValue="UA">
     </ListPreference>
+
 </PreferenceScreen>

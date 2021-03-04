@@ -1,50 +1,67 @@
 ﻿/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 */
-
 var g_headers = {
-    'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-    'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
-    'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
-    'Connection':'keep-alive',
-    'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/40.0.2214.115 Safari/537.36'
+'accept':'application/json, text/javascript, */*; q=0.01',
+'x-requested-with':'XMLHttpRequest',
+'user-agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.190 Safari/537.36',
+'content-type':'application/json; charset=UTF-8',
+'origin':'https://www.letu.ru',
+'referer':'https://www.letu.ru/login'
 }
 
 function main () {
     var prefs = AnyBalance.getPreferences ();
-    var baseurl = 'http://b2b.letoile.ru/';
-
-    checkEmpty (prefs.number, 'Введите номер карты');
-    checkEmpty (prefs.color, 'Выберите цвет карты');
-
-    var html = AnyBalance.requestGet(baseurl, g_headers);
-
-    html = AnyBalance.requestGet(baseurl + 'ajax/check_account.php?card_type=' + prefs.color + '&card_number=' + prefs.number, addHeaders({
-   		Referer: baseurl,
-   		'X-Requested-With': 'XMLHttpRequest'
-    }));
-	
-	
-	if(/\/anketa\//i.test(html))
-		throw new AnyBalance.Error('Необходимо заполнить анкету на сайте зайдите в личный кабинет через браузер и заполните все поля и нажмите отправить.');
-
-	if (!/Баланс\s*карты:/i.test(html)) {
-		var error = getParam(html, /class="g-error"[^>]*>([^<]*)/i, replaceTagsAndSpaces);
-		if (error)
-			throw new AnyBalance.Error(error, null, /Некоррект/i.test(error));
-		
+    var loc=prefs.loc||'RU';
+    var baseurl = 'https://www.letu.'+loc+'/';
+    AnyBalance.restoreCookies();
+    var html = AnyBalance.requestGet(baseurl+'rest/model/atg/userprofiling/ClientActor/extendedProfileInfo?pushSite=storeMobile'+loc);
+    var json=getJson(html);
+    if (!json.profile.lastName)
+{
+    AnyBalance.trace('Нужно логиниться');
+    checkEmpty (prefs.login, 'Введите e-mail');
+    checkEmpty (prefs.password, 'Выберите пароль');
+    AnyBalance.setDefaultCharset('utf-8'); 
+    var html = AnyBalance.requestGet(baseurl+'login/');
+	if(!html || AnyBalance.getLastStatusCode() > 400){
 		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
+		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
 	}
-	
+    var setItem=getParam(html,null,null,/_dynSessConf[^\d-]*([\d-]*)/);
+    if (!setItem) throw new AnyBalance.Error ('Не удалось найти параметры авторизации. Возможно сайт изменен.');
+    var html = AnyBalance.requestPost(baseurl+'rest/model/atg/userprofiling/ProfileActor/login', JSON.stringify({
+	login: prefs.login,
+	password: prefs.password,
+	pushSite: 'storeMobile'+loc,
+	_dynSessConf: setItem
+    	}),g_headers);
+	if(!html || AnyBalance.getLastStatusCode() > 400){
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
+	}
     var result = {success: true};
-	
-	getParam(html, result, 'balance', /Баланс\s*карты:[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+    if (/<title>Error<\/title>/i.test(html)) {
+    	var err=getElement(html,/<body>/,replaceTagsAndSpaces);
+    	if (err) throw new AnyBalance.Error (err,false,true);
+        throw new AnyBalance.Error ('Не удалось авторизоваться. Возможно сайт изменен.',false,true);
+    }
+    var json=getJson(html);
+    if (json.formExceptions) throw new AnyBalance.Error (json.formExceptions[0].localizedMessage,false,true);
+    var html = AnyBalance.requestGet(baseurl+'rest/model/atg/userprofiling/ClientActor/extendedProfileInfo?pushSite=storeMobile'+loc);
+}
 
-	if(isAvailable('dateOf')) {
-		html = AnyBalance.requestGet (baseurl + 'club/cards/account/', g_headers);
-		getParam(html, result, 'dateOf', /Данные\s*о\s*балансе(?:[^>]*>){2}(\d{1,2}.\d{1,2}.\d{4} \d{1,2}:\d{2})/i, replaceTagsAndSpaces, parseDate);	
-	}
+    var json=getJson(html);
 
-    AnyBalance.setResult (result);
+    var result = {success: true};
+    result.balance=json.profile.cardBalance;
+    result.discount=json.profile.cardDiscount;
+    result.__tariff=json.profile.cardTypeName;
+    result.number=json.profile.cardNumber.replace(/(\d{4})(\d{4})(\d*)/,'$1-$2-$3');
+    getParam(html, result, 'balance', /Баланс\s*карты:^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+
+	AnyBalance.saveCookies();
+	AnyBalance.saveData();
+
+   AnyBalance.setResult (result);
 }

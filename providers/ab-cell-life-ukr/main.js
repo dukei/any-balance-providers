@@ -6,7 +6,8 @@ var g_headers = {
 	'User-Agent': 'Mozilla/5.0 (Linux; Android 7.1.1; ONEPLUS A5000) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.121 Mobile Safari/537.36',
 	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
 	'Referer': 'https://auth.lifecell.ua/',
-	'Accept-Language': 'ru,en-US;q=0.9,en;q=0.8,ru-RU;q=0.7',
+	'Accept-Language': 'ru,en-US;q=0.9,en;q=0.8,ru-RU;q=0.7'
+
 };
 
   // Default options are marked with *
@@ -15,7 +16,6 @@ function main() {
 	var prefs = AnyBalance.getPreferences();
 	var baseurl = 'https://my.lifecell.ua/';
 	AnyBalance.setDefaultCharset('utf-8');
-	
 	checkEmpty(prefs.phone, 'Введите номер телефона!');
 	checkEmpty(prefs.pass, 'Введите пароль!');
 	if(prefs.type == 'site') {
@@ -27,13 +27,7 @@ function main() {
                         mainMobileApp(prefs, baseurl);
 		}
 	} else {
-		try{
-			mainMobileApp(prefs, baseurl);;
-		}catch(e){
-			AnyBalance.trace(e.message);
-                        AnyBalance.trace('Не удалось получить данные из мобильного приложения. Пытаюсь получить с сайта');
-                        mainSite(prefs, baseurl);
-		}
+			mainMobileApp(prefs, baseurl);
 	}
 }
 
@@ -75,7 +69,6 @@ function loginSite(prefs){
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удаётся найти форму входа. Сайт изменен?');
 	}
-	AnyBalance.trace('Найдена форма авторизации');
 	var recaptcha=getParam(form, /data-sitekey="([^"]*)/i, replaceHtmlEntities);
         AnyBalance.trace('recaptcha='+recaptcha);
 	var params = {
@@ -96,7 +89,7 @@ function loginSite(prefs){
 		Referer: AnyBalance.getLastUrl()
 		})*/
 	);
-        AnyBalance.trace('Логин отправлен');
+
 	var form = getElement(html, /<form[^>]+password-form/i);
 	if(!form){
 		AnyBalance.trace(html);
@@ -107,17 +100,16 @@ function loginSite(prefs){
                 password: prefs.pass
 	};
 	var action=getParam(form,/action="([^"]*)/,replaceHtmlEntities)
-	var html = AnyBalance.requestPost(action, params,g_headers);
-        AnyBalance.trace('Пароль отправлен');
-        return html;
+	html = AnyBalance.requestPost(action, params,g_headers);
+	return html;
 }
-function loginSiteOld(baseurl,prefs){
+function loginSiteOld(prefs,baseurl){
     var msisdn = '38' + prefs.prefph + prefs.phone;
 
     var html = AnyBalance.requestGet('https://auth.lifecell.ua/auth/realms/lifecell/protocol/openid-connect/logout?redirect_uri=https%3A%2F%2Fauth.lifecell.ua%2Fauth%2Frealms%2Flifecell%2Fprotocol%2Fopenid-connect%2Fauth%3Fredirect_uri%3Dlifecell.sso%3A%2Foauth2redirect%26client_id%3Dmy-lifecell-app-android%26response_type%3Dcode%26state%3DjqWFQcMIrPhdp99Ahx4lcQ%26scope%3Dopenid%2520offline_access%26code_challenge%3DsqhxgO3NL5QDeFAHfx8rri5x34TGzUv3Ovr6wYl6-8w%26code_challenge_method%3DS256%26ui_locales%3Den', g_headers); 
     var form = getElement(html, /<form[^>]+username-form/i);
     if(!form){
-    	AnyBalance.trace(html);
+    	AnyBalance.trace(form);
     	throw new AnyBalance.Error('Не удалось найти форму входа. Сайт изменен?');
     }
     AnyBalance.trace('Найдена форма авторизации');
@@ -125,12 +117,12 @@ function loginSiteOld(baseurl,prefs){
     var params = createFormParams(form);
     params.username = msisdn;
 
-    html = AnyBalance.requestPost(action, params, g_headers);
+    html = AnyBalance.requestPost(action, params, g_headers,{followRedirect:false});
     form = getElement(html, /<form[^>]+password-form/i);
     if(!form){
     	if(/otp-form/i.test(html))
     		throw new AnyBalance.Error('Потребовался ввод смс. Авторизуйтесь хотя бы раз в приложении My LifeCell');
-    	AnyBalance.trace(html);
+    	AnyBalance.trace(form);
     	throw new AnyBalance.Error('Не удалось найти форму ввода пароля. Сайт изменен?');
     }
     AnyBalance.trace('Логин отправлен');
@@ -143,14 +135,24 @@ function loginSiteOld(baseurl,prefs){
     }catch(e){
 	AnyBalance.trace('Пароль отправлен');
     };
-    return AnyBalance.requestGet(baseurl + 'ru/osnovnaya-informaciya/osnobnaya-informaciya/', g_headers);
+    return AnyBalance.requestGet(baseurl, g_headers);;
+
 }
-/*
-function loginSiteByCoocies(baseurl,prefs,headers){
+function getJWT(base64){
+    base64 = base64.split('.')[1];
+    var base64 = base64.replace(/-/g, '+').replace(/_/g, '/');
+    var jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+    }).join(''));
+    return JSON.parse(jsonPayload);
+}
+function loginSiteByCookies(prefs,baseurl,session_code){
+AnyBalance.trace(JSON.stringify(AnyBalance.getCookies()));
     html = AnyBalance.requestPost('https://auth.lifecell.ua/auth/realms/lifecell/protocol/openid-connect/token', {
 		password: prefs.pass,
 		username:'38'+prefs.prefph+prefs.phone,
-		grant_type:	'password',
+		grant_type:'password',
+		session_code:session_code,
     }, addHeaders({
     	Accept: 'application/json',
     	'User-Agent': 'Dalvik/2.1.0 (Linux; U; Android 9; ONEPLUS A3010 Build/PKQ1.181203.001)',
@@ -161,10 +163,16 @@ function loginSiteByCoocies(baseurl,prefs,headers){
 
     AnyBalance.setCookie('.my.lifecell.ua','kc_token',json.access_token,{path: '/',secure: true});
     AnyBalance.setCookie('.my.lifecell.ua','kc_refreshToken',json.refresh_token,{path: '/',secure: true});
-    AnyBalance.setCookie('auth.lifecell.ua','AUTH_SESSION_ID',json.session_state+'.sso-prod2',{path: '/auth/realms/lifecell/',secure: true});
-    return AnyBalance.requestGet(baseurl + 'ru/osnovnaya-informaciya/osnobnaya-informaciya/', headers);
+    var json=getJWT(json.access_token);
+    AnyBalance.setCookie('auth.lifecell.ua','AUTH_SESSION_ID',json.session_state+'.sso-prod1',{path: '/auth/realms/lifecell/',secure: true});
+    AnyBalance.setCookie('auth.lifecell.ua','KEYCLOAK_REMEMBER_ME','username:38'+prefs.prefph+prefs.phone,{path: '/auth/realms/lifecell/',secure: true});
+    AnyBalance.setCookie('auth.lifecell.ua','KEYCLOAK_SESSION','lifecell/'+json['sub']+'/'+json.session_state,{path: '/auth/realms/lifecell/',secure: true});
+    AnyBalance.setCookie('auth.lifecell.ua','KEYCLOAK_SESSION_LEGACY','lifecell/'+json['sub']+'/'+json.session_state,{path: '/auth/realms/lifecell/',secure: true});
+AnyBalance.trace(JSON.stringify(AnyBalance.getCookies()));
+    //AnyBalance.setCookie('my.lifecell.ua','csrftoken',token,{path: '/',secure: true});
+    return AnyBalance.requestGet(baseurl + 'ru/osnovnaya-informaciya/osnobnaya-informaciya/', g_headers);
 }
-*/
+
 function mainSite(prefs, baseurl) {
 	AnyBalance.restoreCookies();
 	var html = AnyBalance.requestGet(baseurl + 'ru/osnovnaya-informaciya/osnobnaya-informaciya/', g_headers);
@@ -175,21 +183,9 @@ function mainSite(prefs, baseurl) {
 
 	var lang = prefs.lang || 'ru';
 	var formatted_phone = '+38 (' + prefs.prefph + ') ' + prefs.phone.replace(/(\d{3})(\d{2})(\d{2})/, '$1-$2-$3');
-	if (!/logout/.test(html)){
-		AnyBalance.trace('Нужна авторизация. Пробуем без капчи.');
-		try{
-			var html=loginSiteOld(baseurl,prefs);
-		}catch(e){
-                        AnyBalance.trace(e.message);
-		}
-	}
-//	if (!/logout/.test(html))
-//		var html=loginSiteByCoocies(baseurl,prefs);
-        if (!/logout/.test(html)){
-        	AnyBalance.trace('Без капчи не получилось. Пробуем с капчей.');
-        	var html=loginSite(prefs);
-        }
-                //var html = AnyBalance.requestGet(baseurl + 'ru/osnovnaya-informaciya/osnobnaya-informaciya/', g_headers);
+//	if (!/logout/.test(html)) var html=loginSiteOld(prefs,baseurl);
+//	if (!/logout/.test(html)) var html=loginSiteByCookies(prefs,baseurl,getParam(html,/session_code=([^&]*)/));
+        if (!/logout/.test(html)) var html=loginSite(prefs);
          if (!/logout/.test(html)){
                	clearAllCookies();
                 AnyBalance.saveCookies();
@@ -427,11 +423,10 @@ function mainMobileApp(prefs, baseurl){
             		try{
             			xml = lifeGet('getToken', {msisdn: msisdn, subId: subId, clientVersion: '4.5.8'});
             			token = getParam(xml, null, null, /<token>([\s\S]*?)<\/token>/i, replaceTagsAndSpaces);
-                                subId= getParam(xml, null, null, /<subId>([\s\S]*?)<\/subId>/i, replaceTagsAndSpaces);
                                 if (token) AnyBalance.trace('Получен новый токен');
             		}
             		catch(e){
-            			AnyBalance.trace('Не удалось обновить токен');
+            			AnyBalance.trace('Не удалось обновить токен. Удаляем старый токен');
             			token='';
                                 subId='';
             		}
@@ -464,10 +459,10 @@ function mainMobileApp(prefs, baseurl){
 		}
 	   }
 	}
-	if (!token) throw new AnyBalance.Error('Не удалось получить токен авторизации. Изменения в API?');
 	AnyBalance.setData('token'+prefs.phone,token);
 	AnyBalance.setData('subId'+prefs.phone,subId);
         AnyBalance.saveData();
+	if (!token) throw new AnyBalance.Error('Не удалось получить токен авторизации. Изменения в API?');
     var result = {success: true};
 
 	if (!/getSummaryData/.test(xml)) xml = lifeGet('getSummaryData', {msisdn: msisdn, languageId: lang, osType: 'ANDROID', token: token});

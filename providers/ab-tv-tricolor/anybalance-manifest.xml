@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id version="22">ab-tv-tricolor</id>
+	<id version="23">ab-tv-tricolor</id>
 	<name>Триколор ТВ</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе и другие данные для пользователей провайдера спутникового телевидения "Триколор ТВ" (http://tricolor.tv).</p>   
@@ -14,6 +14,7 @@
 	</ul>
 	]]></instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<author>DimaZUA &lt;DIMAZ.KHUA@gmail.com&gt;</author>
   <depends>
     <module id="library"/>
   </depends>

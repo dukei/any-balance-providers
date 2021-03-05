@@ -460,7 +460,7 @@ function mainMobileApp(prefs, baseurl){
 	   }
 	}
 	AnyBalance.setData('token'+prefs.phone,token);
-	AnyBalance.setData('subId'+prefs.phone,subId);
+	if (subId) AnyBalance.setData('subId'+prefs.phone,subId);
         AnyBalance.saveData();
 	if (!token) throw new AnyBalance.Error('Не удалось получить токен авторизации. Изменения в API?');
     var result = {success: true};

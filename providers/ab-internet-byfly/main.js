@@ -83,17 +83,36 @@ function main(){
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось войти. Сайт изменен?');
 		}
+	var html=AnyBalance.requestGet(baseurl+'main.html',g_headers);
+
 	var result = {success: true};
     
-    getParam(html, result, 'balance',/баланс[:\s]([\s\S]*?)р/i,replaceTagsAndSpaces,parseBalance);
+    getParam(html, result, 'balance',/Актуальный баланс([\s\S]*?)<\/div>/i,replaceTagsAndSpaces,parseBalance);
     getParam(html, result, 'agreement',/Договор ([\s\S]*?)</i,replaceTagsAndSpaces,parseBalance);
     getParam(html, result, 'username',/ФИО \/ Компания: ([\s\S]*?)</i,replaceTagsAndSpaces,null);
     getParam(html, result, 'status',/Статус блокировки([\s\S]*?)<a href/i,replaceTagsAndSpaces,null);
     getParam(html, result, 'login',/Логин ([\s\S]*?)</i,replaceTagsAndSpaces,parseBalance);
     getParam(html, result, '__tariff',/Тарифный план на услуги([\s\S]*?)<\/tr/i,replaceTagsAndSpaces,null);
-    if (!result.__tariff) getParam(html, result, '__tariff',/Пакет\sуслуг\s\(([\s\S]*?)\)/i,replaceTagsAndSpaces,null);
-    AnyBalance.saveCookies();
-    AnyBalance.saveData();
+    if (!result.__tariff) getParam(html, result, '__tariff',/Пакет sуслуг\s\(([\s\S]*?)\)/i,replaceTagsAndSpaces,null);
+    if (AnyBalance.isAvailable('last_pay_comment','last_pay_sum','last_pay_date')){
+    	  var html=AnyBalance.requestGet(baseurl+'payact.html',g_headers);
+    	  var table=getElementById(html,'pays');
+          var table=getElement(table,/<table[^>]*>/)
+          getParam(table,result,'last_pay_date',/(?:<tr[\s\S]*?){3}(?:<td[\s\S]*?){2}[^>]*?>([^<]*)</,null,parseDate);
+          getParam(table,result,'last_pay_sum',/(?:<tr[\s\S]*?){3}(?:<td[\s\S]*?){3}[^>]*?>([^<]*)</,null,parseBalance);
+          getParam(table,result,'last_pay_comment',/(?:<tr[\s\S]*?){3}(?:<td[\s\S]*?){4}[^>]*?>([^<]*)</);
+    }
+    if (AnyBalance.isAvailable('cost')){
+    	  var html=AnyBalance.requestGet(baseurl+'servact.html',g_headers);
+    	  var table=getParam(html,/<table[\s\S*]*?Набор периодических услуг[\s\S*]*?table>/);
+    	  var table=getElements(table,/<tr align="center">/ig);
+    	  table.forEach(function(row, index){
+    	  	if (/<td class="border" width="80">месяц<\/td>/i.test(row))
+    	  		sumParam(row, result, 'cost', /<tr[\s\S]*?(?:<td[\s\S]*?){3}[^>]*?>([^<]*)</, null, parseBalance, aggregate_sum);
+    	  })
+    }
+//    AnyBalance.saveCookies();
+//    AnyBalance.saveData();
     AnyBalance.setResult(result);
 
 }

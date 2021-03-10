@@ -6,10 +6,10 @@ function checkLoginError(html, options) {
 
 	function processError(html){
         var error = sumParam(html, /var\s+(?:passwordErr|loginErr)\s*=\s*'([^']*)/g, replaceSlashes, null, aggregate_join);
-        if(!error) //На корп форме входа
+        if(!error) //РќР° РєРѕСЂРї С„РѕСЂРјРµ РІС…РѕРґР°
         	error = getElement(html, /<[^>]+field-help/i, replaceTagsAndSpaces);
         if (error)
-            throw new AnyBalance.Error(error, null, /логин|парол/i.test(error));
+            throw new AnyBalance.Error(error, null, /Р»РѕРіРёРЅ|РїР°СЂРѕР»/i.test(error));
 
         var error = getElement(html, /<div[^>]+b-page_error__msg[^>]*>/, replaceTagsAndSpaces);
         if(error)
@@ -22,7 +22,7 @@ function checkLoginError(html, options) {
         img = getParam(img, /data:image\/\w+;base64,([^'"]+)/i, replaceHtmlEntities);
     }
     if(img && img.indexOf('iVBORw0KGgoAAAANSUhEUgAAANMAAAA6CAIAAAClLvvEAAAeQElEQVR42u3de7yVVZkH8NTQSi3N7uUltQuaoGFp') >= 0){
-    	AnyBalance.trace('Капча спрятана. Ищем её в другом месте');
+    	AnyBalance.trace('РљР°РїС‡Р° СЃРїСЂСЏС‚Р°РЅР°. РС‰РµРј РµС‘ РІ РґСЂСѓРіРѕРј РјРµСЃС‚Рµ');
     	img = null;
     }
     if(!img){
@@ -34,8 +34,8 @@ function checkLoginError(html, options) {
     	img = getParam(img, /data:image\/\w+?(?:png)?;base64,([^'"]+)/i);
     }
     if(img) {
-	    AnyBalance.trace('МТС решило показать капчу :( Жаль');
-	    var code = AnyBalance.retrieveCode('МТС требует ввести капчу для входа в личный кабинет, чтобы подтвердить, что вы не робот. Введите символы, которые вы видите на картинке.', img);
+	    AnyBalance.trace('РњРўРЎ СЂРµС€РёР»Рѕ РїРѕРєР°Р·Р°С‚СЊ РєР°РїС‡Сѓ :( Р–Р°Р»СЊ');
+	    var code = AnyBalance.retrieveCode('РњРўРЎ С‚СЂРµР±СѓРµС‚ РІРІРµСЃС‚Рё РєР°РїС‡Сѓ РґР»СЏ РІС…РѕРґР° РІ Р»РёС‡РЅС‹Р№ РєР°Р±РёРЅРµС‚, С‡С‚РѕР±С‹ РїРѕРґС‚РІРµСЂРґРёС‚СЊ, С‡С‚Рѕ РІС‹ РЅРµ СЂРѕР±РѕС‚. Р’РІРµРґРёС‚Рµ СЃРёРјРІРѕР»С‹, РєРѕС‚РѕСЂС‹Рµ РІС‹ РІРёРґРёС‚Рµ РЅР° РєР°СЂС‚РёРЅРєРµ.', img);
 	    var form = getElement(html, /<form[^>]+name="Login"/i);
 	    if (!form) form=getElementById(html,'captchaForm');
 	    var params = createFormParams(form, function (params, input, name, value) {
@@ -46,31 +46,31 @@ function checkLoginError(html, options) {
             return value;
         });
 
-        AnyBalance.trace("Логинимся с заданным номером и капчей");
+        AnyBalance.trace("Р›РѕРіРёРЅРёРјСЃСЏ СЃ Р·Р°РґР°РЅРЅС‹Рј РЅРѕРјРµСЂРѕРј Рё РєР°РїС‡РµР№");
         html = AnyBalance.requestPost(loginUrl, params, addHeaders({Origin: g_baseurlLogin, Referer: loginUrl}));
         var er=getParam(html,/data-error="([^"]*)/);
         if (er) throw new AnyBalance.Error(er, true);
         fixCookies();
 
-        // Бага при авторизации ошибка 502, но если запросить гет еще раз - все ок
+        // Р‘Р°РіР° РїСЂРё Р°РІС‚РѕСЂРёР·Р°С†РёРё РѕС€РёР±РєР° 502, РЅРѕ РµСЃР»Рё Р·Р°РїСЂРѕСЃРёС‚СЊ РіРµС‚ РµС‰Рµ СЂР°Р· - РІСЃРµ РѕРє
         if (AnyBalance.getLastStatusCode() >= 500) {
-            AnyBalance.trace("МТС вернул 500 при попытке логина. Пробуем ещё разок...");
+            AnyBalance.trace("РњРўРЎ РІРµСЂРЅСѓР» 500 РїСЂРё РїРѕРїС‹С‚РєРµ Р»РѕРіРёРЅР°. РџСЂРѕР±СѓРµРј РµС‰С‘ СЂР°Р·РѕРє...");
             html = AnyBalance.requestPost(loginUrl, params, addHeaders({Origin: g_baseurlLogin, Referer: loginUrl}));
             fixCookies();
         }
         
 		if(AnyBalance.getLastStatusCode() >= 500)
-            throw new AnyBalance.Error("Ошибка на сервере МТС при попытке зайти, сервер не смог обработать запрос! Можно попытаться позже...", allowRetry);
+            throw new AnyBalance.Error("РћС€РёР±РєР° РЅР° СЃРµСЂРІРµСЂРµ РњРўРЎ РїСЂРё РїРѕРїС‹С‚РєРµ Р·Р°Р№С‚Рё, СЃРµСЂРІРµСЂ РЅРµ СЃРјРѕРі РѕР±СЂР°Р±РѕС‚Р°С‚СЊ Р·Р°РїСЂРѕСЃ! РњРѕР¶РЅРѕ РїРѕРїС‹С‚Р°С‚СЊСЃСЏ РїРѕР·Р¶Рµ...", allowRetry);
 
-        if(isOnLogin() && getOrdinaryLoginForm(html)) { //Бывает, после капчи не переадресовывает
+        if(isOnLogin() && getOrdinaryLoginForm(html)) { //Р‘С‹РІР°РµС‚, РїРѕСЃР»Рµ РєР°РїС‡Рё РЅРµ РїРµСЂРµР°РґСЂРµСЃРѕРІС‹РІР°РµС‚
             html = loginOrdinaryForm(html, options);
         }
 
-        if(AnyBalance.getLastUrl().indexOf(g_baseurlLogin) == 0) { //Если нас не переадресовали, значит, случилась ошибка
+        if(AnyBalance.getLastUrl().indexOf(g_baseurlLogin) == 0) { //Р•СЃР»Рё РЅР°СЃ РЅРµ РїРµСЂРµР°РґСЂРµСЃРѕРІР°Р»Рё, Р·РЅР°С‡РёС‚, СЃР»СѓС‡РёР»Р°СЃСЊ РѕС€РёР±РєР°
         	processError(html);
         }
-    }else if(/МТС\s*-\s*Установка пароля/i.test(html)){
-    	AnyBalance.trace('МТС потребовало установить пароль. Установим старый');
+    }else if(/РњРўРЎ\s*-\s*РЈСЃС‚Р°РЅРѕРІРєР° РїР°СЂРѕР»СЏ/i.test(html)){
+    	AnyBalance.trace('РњРўРЎ РїРѕС‚СЂРµР±РѕРІР°Р»Рѕ СѓСЃС‚Р°РЅРѕРІРёС‚СЊ РїР°СЂРѕР»СЊ. РЈСЃС‚Р°РЅРѕРІРёРј СЃС‚Р°СЂС‹Р№');
 	    var form = getElement(html, /<form[^>]+name="Login"/i);
 	    var params = createFormParams(form, function (params, input, name, value) {
             if (name == 'IDToken2')
@@ -80,9 +80,9 @@ function checkLoginError(html, options) {
         html = AnyBalance.requestPost(loginUrl, params, addHeaders({Origin: g_baseurlLogin, Referer: loginUrl}));
         fixCookies();
 
-        if(/Ваш пароль успешно/i.test(html)){
+        if(/Р’Р°С€ РїР°СЂРѕР»СЊ СѓСЃРїРµС€РЅРѕ/i.test(html)){
         	AnyBalance.trace(html);
-        	throw new AnyBalance.Error('МТС потребовала установить новый пароль, автоматическая установка старого не удалась. Сайт изменен?');
+        	throw new AnyBalance.Error('РњРўРЎ РїРѕС‚СЂРµР±РѕРІР°Р»Р° СѓСЃС‚Р°РЅРѕРІРёС‚СЊ РЅРѕРІС‹Р№ РїР°СЂРѕР»СЊ, Р°РІС‚РѕРјР°С‚РёС‡РµСЃРєР°СЏ СѓСЃС‚Р°РЅРѕРІРєР° СЃС‚Р°СЂРѕРіРѕ РЅРµ СѓРґР°Р»Р°СЃСЊ. РЎР°Р№С‚ РёР·РјРµРЅРµРЅ?');
         }
 
 	    form = getElement(html, /<form[^>]+name="Login"/i);
@@ -91,7 +91,7 @@ function checkLoginError(html, options) {
         fixCookies();
     }else{
     	AnyBalance.trace(html);
-    	throw new AnyBalance.Error('Не удалось найти капчу. Сайт изменен?');
+    	throw new AnyBalance.Error('РќРµ СѓРґР°Р»РѕСЃСЊ РЅР°Р№С‚Рё РєР°РїС‡Сѓ. РЎР°Р№С‚ РёР·РјРµРЅРµРЅ?');
     }
 
     return html;
@@ -99,7 +99,7 @@ function checkLoginError(html, options) {
 
 function redirectIfNeeded(html){
     if(/<body[^>]+onload[^>]+submit/i.test(html)){
-    	AnyBalance.trace('Потребовался редирект формой...');
+    	AnyBalance.trace('РџРѕС‚СЂРµР±РѕРІР°Р»СЃСЏ СЂРµРґРёСЂРµРєС‚ С„РѕСЂРјРѕР№...');
     	var params = createFormParams(html);
     	var action = getParam(html, /<form[^>]+action=['"]([^'"]*)/, replaceHtmlEntities);
     	action = action.replace(/^https:\/\/login\.mts\.ru(?::443)?/, 'http://login.mts.ru'); 
@@ -109,7 +109,7 @@ function redirectIfNeeded(html){
     }
     var redir = getParam(html, /<meta[^>]+http-equiv="REFRESH"[^>]*content="0;url=([^";]*)/i, replaceHtmlEntities);
     if(redir){
-    	AnyBalance.trace('Потребовался get редирект...');
+    	AnyBalance.trace('РџРѕС‚СЂРµР±РѕРІР°Р»СЃСЏ get СЂРµРґРёСЂРµРєС‚...');
     	redir = redir.replace(/^https:\/\/login\.mts\.ru/, 'http://login.mts.ru');
     	var url = AnyBalance.getLastUrl();
     	html = AnyBalance.requestGet(joinUrl(url, redir), addHeaders({Refefer: url}));
@@ -132,46 +132,46 @@ function enterMtsLK(options) {
 
     var html = AnyBalance.requestGet(url, g_headers);
     if(fixCookies()){
-        AnyBalance.trace("Куки исправлены на входе...");
+        AnyBalance.trace("РљСѓРєРё РёСЃРїСЂР°РІР»РµРЅС‹ РЅР° РІС…РѕРґРµ...");
         html = AnyBalance.requestGet(AnyBalance.getLastUrl(), g_headers);
         fixCookies();
     }
 
     if (AnyBalance.getLastStatusCode() >= 500) {
-        AnyBalance.trace("МТС вернул 500. Пробуем ещё разок...");
+        AnyBalance.trace("РњРўРЎ РІРµСЂРЅСѓР» 500. РџСЂРѕР±СѓРµРј РµС‰С‘ СЂР°Р·РѕРє...");
         html = AnyBalance.requestGet(url, g_headers);
         fixCookies();
     }
 
     if (AnyBalance.getLastStatusCode() >= 500)
-        throw new AnyBalance.Error("Ошибка на сервере МТС, сервер не смог обработать запрос. Можно попытаться позже...");
+        throw new AnyBalance.Error("РћС€РёР±РєР° РЅР° СЃРµСЂРІРµСЂРµ РњРўРЎ, СЃРµСЂРІРµСЂ РЅРµ СЃРјРѕРі РѕР±СЂР°Р±РѕС‚Р°С‚СЊ Р·Р°РїСЂРѕСЃ. РњРѕР¶РЅРѕ РїРѕРїС‹С‚Р°С‚СЊСЃСЏ РїРѕР·Р¶Рµ...");
 
-    if(/Произошла ошибка при попытке авторизации/i.test(html)){
-    	AnyBalance.trace('Куки протухли :( Придется авторизоваться заново');
+    if(/РџСЂРѕРёР·РѕС€Р»Р° РѕС€РёР±РєР° РїСЂРё РїРѕРїС‹С‚РєРµ Р°РІС‚РѕСЂРёР·Р°С†РёРё/i.test(html)){
+    	AnyBalance.trace('РљСѓРєРё РїСЂРѕС‚СѓС…Р»Рё :( РџСЂРёРґРµС‚СЃСЏ Р°РІС‚РѕСЂРёР·РѕРІР°С‚СЊСЃСЏ Р·Р°РЅРѕРІРѕ');
     	clearAllCookies();
     	html = AnyBalance.requestGet(url, g_headers);
     	fixCookies()
     }
 
     if(fixCookies()){
-    	//Надо перезагрузить страницу, если куки были исправлены
-        AnyBalance.trace("Куки исправлены, перезагружаем страницу. Пробуем ещё разок...");
+    	//РќР°РґРѕ РїРµСЂРµР·Р°РіСЂСѓР·РёС‚СЊ СЃС‚СЂР°РЅРёС†Сѓ, РµСЃР»Рё РєСѓРєРё Р±С‹Р»Рё РёСЃРїСЂР°РІР»РµРЅС‹
+        AnyBalance.trace("РљСѓРєРё РёСЃРїСЂР°РІР»РµРЅС‹, РїРµСЂРµР·Р°РіСЂСѓР¶Р°РµРј СЃС‚СЂР°РЅРёС†Сѓ. РџСЂРѕР±СѓРµРј РµС‰С‘ СЂР°Р·РѕРє...");
         html = AnyBalance.requestGet(AnyBalance.getLastUrl(), g_headers);
         fixCookies();
     }
 
-    html = redirectIfNeeded(html); //Иногда бывает доп. форма, надо переадресоваться.
+    html = redirectIfNeeded(html); //РРЅРѕРіРґР° Р±С‹РІР°РµС‚ РґРѕРї. С„РѕСЂРјР°, РЅР°РґРѕ РїРµСЂРµР°РґСЂРµСЃРѕРІР°С‚СЊСЃСЏ.
 
-    var loggedInNum = getParam(html, /Продолжить вход с номером([\s\S]*?)<\/[bp]/i, replaceTagsAndSpaces);
+    var loggedInNum = getParam(html, /РџСЂРѕРґРѕР»Р¶РёС‚СЊ РІС…РѕРґ СЃ РЅРѕРјРµСЂРѕРј([\s\S]*?)<\/[bp]/i, replaceTagsAndSpaces);
     if(loggedInNum){
-    	AnyBalance.trace('Предлагает автоматически залогиниться на ' + loggedInNum);
+    	AnyBalance.trace('РџСЂРµРґР»Р°РіР°РµС‚ Р°РІС‚РѕРјР°С‚РёС‡РµСЃРєРё Р·Р°Р»РѕРіРёРЅРёС‚СЊСЃСЏ РЅР° ' + loggedInNum);
     	var form = getElement(html, /<form[^>]+name="Login"/i);
     	var submit;
     	if(!endsWith(loggedInNum.replace(/\D+/g, ''), options.login)){
-    		AnyBalance.trace('А нам нужен номер ' + options.login + '. Отказываемся...');
+    		AnyBalance.trace('Рђ РЅР°Рј РЅСѓР¶РµРЅ РЅРѕРјРµСЂ ' + options.login + '. РћС‚РєР°Р·С‹РІР°РµРјСЃСЏ...');
     		submit = 'Ignore';
     	}else{
-    		AnyBalance.trace('А нам этот номер и нужен. Соглашаемся...');
+    		AnyBalance.trace('Рђ РЅР°Рј СЌС‚РѕС‚ РЅРѕРјРµСЂ Рё РЅСѓР¶РµРЅ. РЎРѕРіР»Р°С€Р°РµРјСЃСЏ...');
     		submit = 'Login';
     	}
 
@@ -185,32 +185,32 @@ function enterMtsLK(options) {
     }
 
     if(isOnLogin()){
-    	//Мы всё еще не переадресованы на целевую страницу, значит, надо логиниться
+    	//РњС‹ РІСЃС‘ РµС‰Рµ РЅРµ РїРµСЂРµР°РґСЂРµСЃРѕРІР°РЅС‹ РЅР° С†РµР»РµРІСѓСЋ СЃС‚СЂР°РЅРёС†Сѓ, Р·РЅР°С‡РёС‚, РЅР°РґРѕ Р»РѕРіРёРЅРёС‚СЊСЃСЏ
     	options.html = html;
     	if(!options.url)
     		options.url = AnyBalance.getLastUrl();
     	html = enterMTS(options);
     }else{
-    	AnyBalance.trace('Мы не на странице логина. Внутри уже?');
+    	AnyBalance.trace('РњС‹ РЅРµ РЅР° СЃС‚СЂР°РЅРёС†Рµ Р»РѕРіРёРЅР°. Р’РЅСѓС‚СЂРё СѓР¶Рµ?');
     }
 
     if(isOnLogin()){
     	AnyBalance.trace(html);
-    	throw new AnyBalance.Error('Не удаётся зайти в личный кабинет');
+    	throw new AnyBalance.Error('РќРµ СѓРґР°С‘С‚СЃСЏ Р·Р°Р№С‚Рё РІ Р»РёС‡РЅС‹Р№ РєР°Р±РёРЅРµС‚');
     }
 
     return html;
 }
 
 function fixCookies(){
-	//Надо исправить работу куки (пропали кавычки)
+	//РќР°РґРѕ РёСЃРїСЂР°РІРёС‚СЊ СЂР°Р±РѕС‚Сѓ РєСѓРєРё (РїСЂРѕРїР°Р»Рё РєР°РІС‹С‡РєРё)
 	var cookies = AnyBalance.getCookies();
 	var repaired = false;
 	for(var i=0; i<cookies.length; ++i){
 		var c = cookies[i];
 		if(/^login|REDIRECT_BACK_SERVER_URL$/i.test(c.name) && !/^"/.test(c.value)){
 			var newval = '"' + c.value + '"';
-			AnyBalance.trace('Исправляем куки ' + c.name + ' на ' + newval);
+			AnyBalance.trace('РСЃРїСЂР°РІР»СЏРµРј РєСѓРєРё ' + c.name + ' РЅР° ' + newval);
 			AnyBalance.setCookie(c.domain, c.name, newval, c);
 			repaired = true;
 		}
@@ -238,7 +238,7 @@ function restoreLoginCookies(){
 
 function loginOrdinaryForm(html, options){
 	var prefs = AnyBalance.getPreferences();
-    AnyBalance.trace('Найдена обычная форма входа');
+    AnyBalance.trace('РќР°Р№РґРµРЅР° РѕР±С‹С‡РЅР°СЏ С„РѕСЂРјР° РІС…РѕРґР°');
     var form = getOrdinaryLoginForm(html);
     var params = createFormParams(form, function (params, input, name, value) {
         var undef;
@@ -247,7 +247,7 @@ function loginOrdinaryForm(html, options){
         else if (name == 'IDToken2')
             value = options.password;
         else if (name == 'noscript')
-            value = undef; //Снимаем галочку
+            value = undef; //РЎРЅРёРјР°РµРј РіР°Р»РѕС‡РєСѓ
         else if (name == 'IDButton')
             value = 'Submit';
         return value;
@@ -255,13 +255,13 @@ function loginOrdinaryForm(html, options){
 
     var sitekey = getParam(form, /data-sitekey="([^"]*)/i, replaceHtmlEntities);
     if(sitekey){
-    	AnyBalance.trace('МТС требует рекапчу :(');
-    	var recaptcha = solveRecaptcha('МТС требует ввода рекапчи, как и при входе через браузер. Пожалуйста, докажите, что вы не робот.', loginUrl, sitekey);
+    	AnyBalance.trace('РњРўРЎ С‚СЂРµР±СѓРµС‚ СЂРµРєР°РїС‡Сѓ :(');
+    	var recaptcha = solveRecaptcha('РњРўРЎ С‚СЂРµР±СѓРµС‚ РІРІРѕРґР° СЂРµРєР°РїС‡Рё, РєР°Рє Рё РїСЂРё РІС…РѕРґРµ С‡РµСЂРµР· Р±СЂР°СѓР·РµСЂ. РџРѕР¶Р°Р»СѓР№СЃС‚Р°, РґРѕРєР°Р¶РёС‚Рµ, С‡С‚Рѕ РІС‹ РЅРµ СЂРѕР±РѕС‚.', loginUrl, sitekey);
     	params.IDToken3 = recaptcha;
     }
     
     // AnyBalance.trace("Login params: " + JSON.stringify(params));
-    AnyBalance.trace("Логинимся с заданным номером");
+    AnyBalance.trace("Р›РѕРіРёРЅРёРјСЃСЏ СЃ Р·Р°РґР°РЅРЅС‹Рј РЅРѕРјРµСЂРѕРј");
     html = AnyBalance.requestPost(options.url, params, addHeaders({Origin: g_baseurlLogin, Referer: options.url}));
     fixCookies();
     return html;
@@ -279,26 +279,26 @@ function enterMTS(options){
         html = AnyBalance.requestGet(loginUrl, g_headers);
         fixCookies();
         if(AnyBalance.getLastStatusCode() >= 500){
-            AnyBalance.trace("МТС вернул 500. Пробуем ещё разок...");
+            AnyBalance.trace("РњРўРЎ РІРµСЂРЅСѓР» 500. РџСЂРѕР±СѓРµРј РµС‰С‘ СЂР°Р·РѕРє...");
 			html = AnyBalance.requestGet(loginUrl, g_headers);
 			fixCookies();
 		}
 	    
         if(AnyBalance.getLastStatusCode() >= 500)
-        	throw new AnyBalance.Error("Ошибка на сервере МТС, сервер не смог обработать запрос. Можно попытаться позже...", allowRetry);
+        	throw new AnyBalance.Error("РћС€РёР±РєР° РЅР° СЃРµСЂРІРµСЂРµ РњРўРЎ, СЃРµСЂРІРµСЂ РЅРµ СЃРјРѕРі РѕР±СЂР°Р±РѕС‚Р°С‚СЊ Р·Р°РїСЂРѕСЃ. РњРѕР¶РЅРѕ РїРѕРїС‹С‚Р°С‚СЊСЃСЏ РїРѕР·Р¶Рµ...", allowRetry);
     }
 
-    if(AnyBalance.getLastUrl().indexOf(baseurl) == 0){ //Если нас сразу переадресовали на целевую страницу, значит, уже залогинены
+    if(AnyBalance.getLastUrl().indexOf(baseurl) == 0){ //Р•СЃР»Рё РЅР°СЃ СЃСЂР°Р·Сѓ РїРµСЂРµР°РґСЂРµСЃРѕРІР°Р»Рё РЅР° С†РµР»РµРІСѓСЋ СЃС‚СЂР°РЅРёС†Сѓ, Р·РЅР°С‡РёС‚, СѓР¶Рµ Р·Р°Р»РѕРіРёРЅРµРЅС‹
 		return html;
 	}
 
 	html = redirectIfNeeded(html);
 
     var form;
-    if(form = getOrdinaryLoginForm(html)){  //Обычная форма входа
+    if(form = getOrdinaryLoginForm(html)){  //РћР±С‹С‡РЅР°СЏ С„РѕСЂРјР° РІС…РѕРґР°
     	html = loginOrdinaryForm(html, options);
     }else if(form = getElement(html, /<form[^>]+id="login-phone-form"/i)){       
-    	AnyBalance.trace('Найдена корп. форма входа');
+    	AnyBalance.trace('РќР°Р№РґРµРЅР° РєРѕСЂРї. С„РѕСЂРјР° РІС…РѕРґР°');
         var params = createFormParams(form, function (params, input, name, value) {
             if (name == 'IDToken1')
                 value = options.login;
@@ -312,9 +312,9 @@ function enterMTS(options){
     	if(!form){
     		var error = getElement(html, /<[^>]+intro-text/i, replaceTagsAndSpaces);
     		if(error)
-    			throw new AnyBalance.Error(error, null, /не существует/i.test(error));
+    			throw new AnyBalance.Error(error, null, /РЅРµ СЃСѓС‰РµСЃС‚РІСѓРµС‚/i.test(error));
     		AnyBalance.trace(html);
-    		throw new AnyBalance.Error('Не удалось найти форму ввода пароля. Сайт изменен?');
+    		throw new AnyBalance.Error('РќРµ СѓРґР°Р»РѕСЃСЊ РЅР°Р№С‚Рё С„РѕСЂРјСѓ РІРІРѕРґР° РїР°СЂРѕР»СЏ. РЎР°Р№С‚ РёР·РјРµРЅРµРЅ?');
     	}
 
         var params = createFormParams(form, function (params, input, name, value) {
@@ -328,33 +328,33 @@ function enterMTS(options){
         html = AnyBalance.requestPost(loginUrl, params, addHeaders({Origin: g_baseurlLogin, Referer: loginUrl}));
         fixCookies();
     }else if(/bobcmn/i.test(html)){
-    	throw new AnyBalance.Error('МТС ввел защиту от автоматического входа. Пожалуйста, обратитесь в поддержку МТС, составьте обращение о невозможности использования третьесторонних программ слежения за балансом. Напомните им, что вы можете перейти к другому оператору, который не противодействует отслеживанию баланса.');       
+    	throw new AnyBalance.Error('РњРўРЎ РІРІРµР» Р·Р°С‰РёС‚Сѓ РѕС‚ Р°РІС‚РѕРјР°С‚РёС‡РµСЃРєРѕРіРѕ РІС…РѕРґР°. РџРѕР¶Р°Р»СѓР№СЃС‚Р°, РѕР±СЂР°С‚РёС‚РµСЃСЊ РІ РїРѕРґРґРµСЂР¶РєСѓ РњРўРЎ, СЃРѕСЃС‚Р°РІСЊС‚Рµ РѕР±СЂР°С‰РµРЅРёРµ Рѕ РЅРµРІРѕР·РјРѕР¶РЅРѕСЃС‚Рё РёСЃРїРѕР»СЊР·РѕРІР°РЅРёСЏ С‚СЂРµС‚СЊРµСЃС‚РѕСЂРѕРЅРЅРёС… РїСЂРѕРіСЂР°РјРј СЃР»РµР¶РµРЅРёСЏ Р·Р° Р±Р°Р»Р°РЅСЃРѕРј. РќР°РїРѕРјРЅРёС‚Рµ РёРј, С‡С‚Рѕ РІС‹ РјРѕР¶РµС‚Рµ РїРµСЂРµР№С‚Рё Рє РґСЂСѓРіРѕРјСѓ РѕРїРµСЂР°С‚РѕСЂСѓ, РєРѕС‚РѕСЂС‹Р№ РЅРµ РїСЂРѕС‚РёРІРѕРґРµР№СЃС‚РІСѓРµС‚ РѕС‚СЃР»РµР¶РёРІР°РЅРёСЋ Р±Р°Р»Р°РЅСЃР°.');       
     }else{
     	if(!html)
-    		throw new AnyBalance.Error('Личный кабинет МТС временно недоступен. Попробуйте ещё раз позже');
+    		throw new AnyBalance.Error('Р›РёС‡РЅС‹Р№ РєР°Р±РёРЅРµС‚ РњРўРЎ РІСЂРµРјРµРЅРЅРѕ РЅРµРґРѕСЃС‚СѓРїРµРЅ. РџРѕРїСЂРѕР±СѓР№С‚Рµ РµС‰С‘ СЂР°Р· РїРѕР·Р¶Рµ');
     	if(/<h1[^>]*>\s*Request Error/i.test(html))
-    		throw new AnyBalance.Error('Личный кабинет МТС временно не работает. Попробуйте ещё раз позже');
+    		throw new AnyBalance.Error('Р›РёС‡РЅС‹Р№ РєР°Р±РёРЅРµС‚ РњРўРЎ РІСЂРµРјРµРЅРЅРѕ РЅРµ СЂР°Р±РѕС‚Р°РµС‚. РџРѕРїСЂРѕР±СѓР№С‚Рµ РµС‰С‘ СЂР°Р· РїРѕР·Р¶Рµ');
         AnyBalance.trace(html);
-        throw new AnyBalance.Error("Не удаётся найти форму входа! Сайт изменен?", allowRetry);
+        throw new AnyBalance.Error("РќРµ СѓРґР°С‘С‚СЃСЏ РЅР°Р№С‚Рё С„РѕСЂРјСѓ РІС…РѕРґР°! РЎР°Р№С‚ РёР·РјРµРЅРµРЅ?", allowRetry);
     }
 
-    // Бага при авторизации ошибка 502, но если запросить гет еще раз - все ок
+    // Р‘Р°РіР° РїСЂРё Р°РІС‚РѕСЂРёР·Р°С†РёРё РѕС€РёР±РєР° 502, РЅРѕ РµСЃР»Рё Р·Р°РїСЂРѕСЃРёС‚СЊ РіРµС‚ РµС‰Рµ СЂР°Р· - РІСЃРµ РѕРє
     if (AnyBalance.getLastStatusCode() >= 500) {
-        AnyBalance.trace("МТС вернул 500 при попытке логина. Пробуем ещё разок...");
+        AnyBalance.trace("РњРўРЎ РІРµСЂРЅСѓР» 500 РїСЂРё РїРѕРїС‹С‚РєРµ Р»РѕРіРёРЅР°. РџСЂРѕР±СѓРµРј РµС‰С‘ СЂР°Р·РѕРє...");
         html = AnyBalance.requestPost(loginUrl, params, addHeaders({Origin: g_baseurlLogin, Referer: loginUrl}));
         fixCookies();
     }
 
 	if(AnyBalance.getLastStatusCode() >= 500)
-        throw new AnyBalance.Error("Ошибка на сервере МТС при попытке зайти, сервер не смог обработать запрос! Можно попытаться позже...", allowRetry);
+        throw new AnyBalance.Error("РћС€РёР±РєР° РЅР° СЃРµСЂРІРµСЂРµ РњРўРЎ РїСЂРё РїРѕРїС‹С‚РєРµ Р·Р°Р№С‚Рё, СЃРµСЂРІРµСЂ РЅРµ СЃРјРѕРі РѕР±СЂР°Р±РѕС‚Р°С‚СЊ Р·Р°РїСЂРѕСЃ! РњРѕР¶РЅРѕ РїРѕРїС‹С‚Р°С‚СЊСЃСЏ РїРѕР·Р¶Рµ...", allowRetry);
 
-    //Если переадресовали с логина, значит, залогинились. А если нет, то какие-то проблемы
+    //Р•СЃР»Рё РїРµСЂРµР°РґСЂРµСЃРѕРІР°Р»Рё СЃ Р»РѕРіРёРЅР°, Р·РЅР°С‡РёС‚, Р·Р°Р»РѕРіРёРЅРёР»РёСЃСЊ. Рђ РµСЃР»Рё РЅРµС‚, С‚Рѕ РєР°РєРёРµ-С‚Рѕ РїСЂРѕР±Р»РµРјС‹
     if(isOnLogin())
 		html = checkLoginError(html, options);
 
     if(isOnLogin()){
         AnyBalance.trace(html);
-        throw new AnyBalance.Error('Не удаётся зайти в личный кабинет. Он изменился или проблемы на сайте.', allowRetry);
+        throw new AnyBalance.Error('РќРµ СѓРґР°С‘С‚СЃСЏ Р·Р°Р№С‚Рё РІ Р»РёС‡РЅС‹Р№ РєР°Р±РёРЅРµС‚. РћРЅ РёР·РјРµРЅРёР»СЃСЏ РёР»Рё РїСЂРѕР±Р»РµРјС‹ РЅР° СЃР°Р№С‚Рµ.', allowRetry);
     }
 
     return html;

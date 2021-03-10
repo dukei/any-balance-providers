@@ -1,24 +1,34 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
-	<EditTextPreference
-		title="Логин"
-		key="login"
-		summary="||{@s}"
+    <EditTextPreference
 		obligatory="true"
-		dialogTitle="Логин"
-		positiveButtonText="ОК"
-		negativeButtonText="Отмена"
-		dialogMessage="Введите логин, используемый для входа в личный кабинет.">
-	</EditTextPreference>
+        key="login"
+        title="Логин"
+        summary="||{@s}" 
+        inputType="text"
+        dialogTitle="Логин"
+        dialogMessage="Введите email, используемый для входа на letu.ru или letu.ua"
+        positiveButtonText="ОК"
+        negativeButtonText="Отмена">
+    </EditTextPreference>
 	<EditTextPreference
-		title="Пароль"
+		obligatory="true"
 		key="password"
-		summary="||***********"
-		obligatory="true"
+		title="Пароль"
+		summary="Пароль для авторизации||***********\n"
 		dialogTitle="Пароль"
-		positiveButtonText="ОК"
 		negativeButtonText="Отмена"
-		dialogMessage="Введите пароль, используемый для входа в личный кабинет."
+		dialogMessage="Введите пароль, используемый для авторизации"
+		positiveButtonText="ОК"
 		inputType="textPassword">
 	</EditTextPreference>
+    <ListPreference 
+        key="loc"
+        title="Проверять сайт"
+        summary="||{@s}" 
+        entries="Украина (letu.ua)|Росиия (letu.ru)"
+        entryValues="UA|RU"
+        defaultValue="UA">
+    </ListPreference>
+
 </PreferenceScreen>

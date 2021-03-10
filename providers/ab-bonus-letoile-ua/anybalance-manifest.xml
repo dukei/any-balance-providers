@@ -1,25 +1,31 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-bonus-letoile-ua</id>
+	<id major_version="1.0" version="10">ab-bonus-letoile-ua</id>
 	<api flags="no_browser"/>
-	<name>Л'Этуаль (Украина)</name>
+	<name>Л'Этуаль</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе провайдера Л'Этуаль (Украина) <a href="http://www.letu.ua/">http://www.letu.ua/</a></p>
+	<p>Предоставляет информацию о бонусных баллах на клубных картах сети магазинов Л'Этуаль с сайтов letu.ru и letu.ua</p>
 	]]></description>
+	<instruction html="true"><![CDATA[
+	]]>
+	</instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<author>DimaZUA &lt;DIMAZ.KHUA@gmail.com&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units=" грн"/>
+		<counter id="balance" name="Баланс" units=" {@unt}."/>
 		<counter id="discount" name="Скидка" units=" %"/>
-		<counter id="nextLevel" name="Необходимо потратить для сл. уровня" units=" грн"/>
+		<counter id="number" name="Номер карты" type="text"/>
 	</counters>
-	<keywords></keywords>
+	<keywords>клубная карта, дисконтная карта, бонусная карта, бонус, bonus, лэтуаль, летуаль, л'этуаль, letoile, скидка</keywords>
 	<type>bonus</type>
-	<country>ua</country>
+	<country>ru</country>
 </provider>

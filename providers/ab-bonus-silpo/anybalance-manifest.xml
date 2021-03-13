@@ -1,13 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-  <id version="15">ab-bonus-silpo</id>
+  <id version="16">ab-bonus-silpo</id>
   <name>Сільпо, мережа супермаркетів (Україна)</name>
   <description>
     Мониторинг накопленных бонусов по программе "Власний рахунок" сети супермаркетов Сільпо (Украина). Получает информацию из личного кабинета https://my.silpo.ua.
   </description>
   <author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
   <author>Ignatiy Goloviznin &lt;igoloviznin@gmail.com&gt;</author>
+  <author>DimaZUA &lt;DIMAZ.KHUA@gmail.com&gt;</author>
   <depends>
   	<module id="library"/>
   </depends>
@@ -18,16 +19,22 @@
     <history>history.xml</history>
   </files>
   <counters>
+    <counter id="bonus" name="Бонус" suffix=" бон." type="numeric"/>
+    <counter id="moneybox" name="У «Скарбничці»" suffix=" Б" type="numeric"/>
+    <counter id="activ_coupons" name="Купоны" type="html"/>
     <counter id="baly" name="Балы" suffix=" бал." type="numeric"/>
     <counter id="skidka" name="Скидка" suffix=" ₴" type="numeric" flags="zero_when_empty"/>
-    <counter id="bonus" name="Бонус" suffix=" бон." type="numeric"/>
     <counter id="num" name="Номер карты" type="text"/>
-    <counter id="bonus_conversion" name="Дата перерасчета бонусов" type="time" format="dd/MM/yyyy"/>
+    <counter id="bonus_conversion" name="Дата перерасчета бонусов" type="time" format="dd.MM.yyyy"/>
+
     <counter id="purchases" name="Покупки в «Сільпо»" suffix=" Б" type="numeric"/>
     <counter id="coupon" name="Спеціальні пропозиції та акції в «Сільпо»" suffix=" Б" type="numeric"/>
-    <counter id="ringoo" name="Покупки в ringoo" suffix=" Б" type="numeric"/>
-    <counter id="romashka" name="Покупки в мережі аптек «Біла ромашка»" suffix=" Б" type="numeric"/>
-    <counter id="moneybox" name="У «Скарбничці»" suffix=" Б" type="numeric"/>
+    <counter id="ringoo" name="Покупки в «Ringoo»" suffix=" Б" type="numeric"/>
+    <counter id="bank_vostok" name="Розрахунки карткою «БАНК ВОСТОК»" suffix=" Б" type="numeric"/>
+    <counter id="voyage" name="Покупки в «Сільпо Вояж»" suffix=" Б" type="numeric"/>
+    <counter id="yezzz" name="Поповнення Yezzz!" suffix=" Б" type="numeric"/>
+    <counter id="recycling" name="Екобали" suffix=" Б" type="numeric"/>
+    <counter id="bank_bvr" name="Розрахунки карткою «Банк Власний Рахунок»" suffix=" Б" type="numeric"/>
   </counters>
   <keywords>
     сеть супермаркет сільпо сильпо silpo украина

@@ -6,96 +6,171 @@
 Персональная страничка: https://my.silpo.ua/
 */
 
-var origin = 'https://my.silpo.ua';
-var baseurl = origin + '/';
+var baseurl = 'https://api.sm.silpo.ua/api/2.0/exec/FZGlobal/';
 var g_headers = {
-	Connection: "keep-alive",
-	accept: "*/*",
-	Origin: origin,
-	"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.36",
-	Referer: baseurl,
-	"Accept-Language": "ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7",
+	'user-info':'{"androidVersion":"Nougat (Android 7.1.1)","appVersionCode":"120","appVersionName":"1.66.0","brand":"OnePlus","geolocationTrackingCode":0,"model":"ONEPLUS A5000","pushNotificationTrackingCode":"1","root":"true","sdkRelease":"7.1.1","sdkVersion":"25"}',
+	'coordinates':'{"xCoord":0.0,"yCoord":0.0}',
+	'Content-Type':'application/json',
+	'Host':'api.sm.silpo.ua',
+	'Connection':'Keep-Alive',
+	'Accept-Encoding':'gzip',
+	'User-Agent':'okhttp/3.12.1'
 }
 
-var g_verbsinfo = {
-	"loginwithcapture": 'mutation loginwithcapture($barcode: String!, $password: String!, $ckey: String!) {\r\n  loginwithcapture(barcode: $barcode, password: $password, ckey: $ckey) {\r\n    accessToken {\r\n      ...AccessTokenFragment\r\n      __typename\r\n    }\r\n    user {\r\n      ...UserFragment\r\n      __typename\r\n    }\r\n    __typename\r\n  }\r\n}\r\n\r\nfragment AccessTokenFragment on AccessTokenType {\r\n  accessToken\r\n  expiresAt\r\n  __typename\r\n}\r\n\r\nfragment UserFragment on User {\r\n  id\r\n  firstName\r\n  lastName\r\n  middleName\r\n  email\r\n  emailConfirmed\r\n  notification\r\n  barcode\r\n  bonusAmount\r\n  vouchersAmount\r\n  spawnNextCouponDate\r\n  __typename\r\n}',
-	"vouchers": 'query vouchers($current: Boolean) {\r\n  vouchers(current: $current) {\r\n    ...VoucherFragment\r\n    __typename\r\n  }\r\n}\r\n\r\nfragment VoucherFragment on Voucher {\r\n  id\r\n  value\r\n  useType\r\n  voucherType\r\n  voucherText\r\n  typeDescription\r\n  status\r\n  modifiedAt\r\n  startedAt\r\n  endAt\r\n  items {\r\n    name\r\n    type\r\n    value\r\n    __typename\r\n  }\r\n  isChangeable\r\n  __typename\r\n}',
+function uuidv4() {
+  return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
+    (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
+  );
 }
 
-function callApi(verb, data){
-	
-	var html = requestPostMultipart('https://silpo.ua/graphql', {
-		query: g_verbsinfo[verb],
-		variables: JSON.stringify(data),
-		debugName: '""',
-		operationName: '"' + verb + '"'
-	}, addHeaders({
-		Referer: baseurl
-	}));
 
-	var json = getJson(html);
-	if(json.errors){
-		var error = json.errors.map(function(e) { return e.message }).join(';\n');
-		throw new AnyBalance.Error(error, null, /парол|Invalid/i.test(error));
-	}
-	return json.data[verb];
-}
-
-function main(){
-	var prefs = AnyBalance.getPreferences();
-	AnyBalance.setDefaultCharset('utf-8');
-
-	checkEmpty(prefs.login, 'Введите № карты');
-	checkEmpty(prefs.pass, 'Введите пароль');
-
-	var response = solveRecaptcha('Пожалуйста, докажите, что вы не робот', baseurl, '6Ld6QjMUAAAAAO8rI-MlhpdE2s0sF-m_qNY5gMYm');
-
-	AnyBalance.trace('Logging in...');
-	var json = callApi('loginwithcapture', {
-		"barcode": prefs.login,
-		"password":prefs.pass,
-		"ckey":response
-	});
-
-	if(!json.accessToken){
-		AnyBalance.trace(JSON.stringify(json));
-		throw new AnyBalance.Error('Не удалось войти в личный кабинет. Сайт изменен?');
-	}
-	g_headers["access-token"] = json.accessToken.accessToken;
-
-	AnyBalance.trace('Got answer from authorization: "' + JSON.stringify(json) + '"');
-	
-	var result = {success: true};
-
-	getParam(json.user.lastName + ' ' + json.user.firstName + ' ' + json.user.middleName, result, '__tariff');
-	getParam(json.user.barcode, result, 'num');
-	getParam(json.user.bonusAmount, result, 'bonus');
-
-	json = callApi('vouchers', {"current":null});
-	AnyBalance.trace('Найдено ' + json.length + ' ваучеров');
-	json = json[0];
-	
-	getParam(json.value, result, 'skidka');
-	getParam(json.modifiedAt, result, 'bonus_conversion', null, null, parseDateISO);
-
-	for(var i=0; i<json.items.length; ++i){
-		var item = json.items[i];
-		if(item.type == 'BALANCE'){
-			getParam(item.value, result, 'baly');
-		}else if(item.type == 'PURCHASES'){
-			getParam(item.value, result, 'purchases');
-		}else if(item.type == 'COUPON'){
-			getParam(item.value, result, 'coupon');
-		}else if(item.type == 'RINGOO'){
-			getParam(item.value, result, 'ringoo');
-		}else if(item.type == 'BILA_ROMASHKA'){
-			getParam(item.value, result, 'romashka');
-		}else if(item.type == 'MONEYBOX'){
-			getParam(item.value, result, 'moneybox');
-		}else{
-			AnyBalance.trace('Неизвестный ваучер: ' + JSON.stringify(item));
+function callApi(data){
+	AnyBalance.trace('=Запрос:\n'+JSON.stringify(data));
+	g_headers.deviceTime=new Date().toJSON();
+	for(var i=0;i<=3;i++){
+		var html = AnyBalance.requestPost(baseurl, JSON.stringify(data), g_headers);
+		AnyBalance.trace('====Ответ:\n'+html);
+		if (!/503 Backend fetch failed/i.test(html)) break;
+		if (i<3){
+                	AnyBalance.trace('Ответ не получен. Повтор через 3 секунды');
+			AnyBalance.sleep(3000);
 		}
 	}
+	if(!html || AnyBalance.getLastStatusCode() > 401){
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
+	}
+	var json = getJson(html);
+	if(json.error.errorCode){
+		var error = json.error.errorString;
+		if (error=='CAPCHA_REQUIRED'||error=='TOKEN_EXPIRED') return json.error.errorString;
+		throw new AnyBalance.Error(error, null, /парол|Invalid|block/i.test(error));
+	}
+	return json;
+}
 
+function loginSilpo(prefs){
+	var guid=AnyBalance.getData('guid'+prefs.login);
+	if (!guid) {
+		guid=uuidv4();
+		AnyBalance.setData('guid'+prefs.login,guid);
+	}
+
+	checkEmpty(prefs.login, 'Введите номер телефона');
+        AnyBalance.trace('Запрос SMS');
+	var answer=callApi({
+	   Data: {
+		guid: guid,
+		phone: prefs.login
+	   },
+	   Method: "SendOTP"
+	});
+        var g_responce='';
+	if (answer==='CAPCHA_REQUIRED'){
+		AnyBalance.trace('Сайт требует решить каптчу');
+		g_responce=solveRecaptcha('silpo.ua требует подтвердить, что вы не робот', 'https://api.sm.silpo.ua/api/2.0/', '6LcafqkUAAAAAFNr8fr2G-3BCsTeVBNa0zeB_xSf');
+		
+		var answer=callApi({
+		Data: {
+			captcha:g_responce,
+			guid: guid,
+			phone: prefs.login
+			},
+			Method: "SendOTP"
+		});
+	}
+        var sms=AnyBalance.retrieveCode('Для входа в кошелек, пожалуйста, введите код из SMS, посланной на номер '+prefs.login.replace(/\+38(\d{3})(\d{3})(\d{2})(\d{2})/,'+38 ($1) $2-$3-$4'), null, 
+        	{inputType: 'number',
+        	minLength: 4,
+        	maxLength: 4,	
+        	time: 180000});
+	answer=callApi({
+	   Data: {
+		guid: guid,
+		otpCode: sms,
+		phone: prefs.login
+	   },
+	   Method: "ConfirmationOtp_V2"
+	});
+	if (!answer.tokens) throw new AnyBalance.Error ('Авторизация не удалась. Возможно API изменен.',false,true);
+	var token=answer.tokens.accessToken.value;
+	var refreshToken=answer.tokens.refreshToken.value;
+        g_headers.Authorization='Token '+token;
+
+        answer=callApi({Data: {},Method: "CheckUser"});
+        if (answer.registered==false){
+        	AnyBalance.trace('Новый пользователь. Пробуем зарегистрировать');
+        	answer=callApi({Data: {},Method: "RegisterUser"});
+        	if (answer.register!=true) throw new AnyBalance.Error ('Не удалось зарегистрировать нового пользователя. Пройдите регистрацию на сайте silpo.ua',false,true);
+        }
+        AnyBalance.setData('token'+prefs.login, token);
+        AnyBalance.setData('refreshToken'+prefs.login, refreshToken);
+        AnyBalance.saveData();
+        return token;
+}
+function refresh_Token(prefs){
+        var token=AnyBalance.getData('refreshToken'+prefs.login);
+        g_headers.Authorization='Token '+token;
+	var answer=callApi({
+	"Data": {},
+	"Method": "RefreshToken"
+	});
+	if (!answer.tokens) return '';
+	var token=answer.tokens.accessToken.value;
+	var refreshToken=answer.tokens.refreshToken.value;
+        g_headers.Authorization='Token '+token;
+        AnyBalance.setData('token'+prefs.login, token);
+        AnyBalance.setData('refreshToken'+prefs.login, refreshToken);
+        AnyBalance.saveData();
+        AnyBalance.trace('Получен новый токен');
+        return token;	
+	}
+function main(){
+	var prefs = AnyBalance.getPreferences();
+        prefs.login=prefs.login.replace(/[^\d]*/g,'').substr(-9);
+        if (prefs.login.length!=9) throw new AnyBalance.Error ('Указан не верный номер телефона',false,true);
+        prefs.login='+380'+prefs.login;
+	AnyBalance.setDefaultCharset('utf-8');
+	var token=AnyBalance.getData('token'+prefs.login);
+	if (!token) token=loginSilpo(prefs);
+        g_headers.Authorization='Token '+token;
+        var json=callApi({Data:{forceUpdate:true},Method:'GetPersonalInfo_V4'});
+        if (json==='TOKEN_EXPIRED') {
+        	AnyBalance.trace('Токен устарел. Пробуем обновить');
+        	token=refresh_Token (prefs);
+        	if (!token) token=loginSilpo(prefs);
+                if (!token) throw new AnyBalance.Error ('Не удалось обновить токен или авторизоваться',false,true);
+                var json=callApi({Data:{forceUpdate:true},Method:'GetPersonalInfo_V4'});
+                if(json.error.errorCode){
+			var error = json.error.errorString;
+			throw new AnyBalance.Error(error, null, /парол|Invalid|block/i.test(error));
+                }
+	}
+	var result = {success: true};
+	//getParam(json.user.barcode, result, 'num');
+	result.baly=json.personalInfo.Bonus.currentBalanceAmount;
+	result.bonus=json.personalInfo.Bonus.bonusBalanceAmount;
+        json.personalInfo.Bonus.currentBalanceItems.forEach(function(bon){
+        	result[bon.codeName.toLowerCase()]=bon.balance;
+        	})
+        var html='';
+        json.personalInfo.Coupons.forEach(function(coupon){
+        	coupon.activCoupons.forEach(function(c){
+        		if (html) html+='<br>';
+        		html+='<strong>'+c.rewardText +(c.couponDescription?' ' +c.couponDescription:'')+'</strong><br>';
+        		html+='з '+getFormattedDate('DD.MM.YYYY р.',new Date(parseDateISO(c.beginDate)))+' до '+getFormattedDate('DD.MM.YYYY р.',new Date(parseDateISO(c.endDate)))+'<br>';
+                        if (c.lagerWarningText) html+='<strong><font color=red>'+c.lagerWarningText+'</font></strong><br>';
+                        if (c.warningText) html+='<strong>'+c.warningText+'</strong><br>';
+                        html+='<small>';
+                        if (c.promoDescription) html+=c.promoDescription+'<br>';
+                        if (c.limitText) html+=c.limitText+'<br>';
+                        if (c.addressListText) html+=c.addressListText+'<br>';
+        		})
+        	})
+        if (html) result.activ_coupons=html;
+        json=json.personalInfo.MemberAnketa;
+        result.moneybox=json.moneyBox.balance;
+        var name=(json.firstName||' ') + ' ' + (json.middleName||' ') +' '+ (json.lastName||' ').replace(/\s*/g," ").trim();
+        getParam(name, result, '__tariff');
 	AnyBalance.setResult(result);
 }

@@ -31,4 +31,21 @@
 		negativeButtonText="Отмена"
 		dialogMessage="Введите последние 4 цифры карты по которой хотите получать информацию, либо оставьте это поле пустым для отображения данных по первой карте.">
 	</EditTextPreference>	
+	<ListPreference
+		key="source"
+		title="Источник данных"
+		summary="||{@s}"
+		entries="Автоматически|Сайт|Мобильное приложение (не работает авторизация)"
+		entryValues="auto|site|app"
+		defaultValue="app">
+	</ListPreference>	
+	<ListPreference
+		key="showLimit"
+		title="Кредитный лимит по картам"
+		entries="Не показывать|Как выражение|Прибавлять к балансу"
+		summary="||{@s}"
+		entryValues="0|1|2"
+		defaultValue="1">
+	</ListPreference>
+
 </PreferenceScreen>

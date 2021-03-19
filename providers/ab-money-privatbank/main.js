@@ -22,7 +22,26 @@ var g_countersTable = {
 	},
 };
 
-function main() {
+function main(){
+     var prefs = AnyBalance.getPreferences();
+
+     if (!prefs.source||prefs.source=='app') 
+     	mobileApp(prefs);
+     else if (prefs.source=='site')
+     	site();
+     else{
+     	try{
+     		mobileApp(prefs);
+     	}catch(e){
+     		AnyBalance.trace(e.message); 
+     		AnyBalance.trace('Не удалось получить данные через мобильное прложение');
+                AnyBalance.trace('Пробуем черз сайт');
+     		site();
+     	}
+     }
+}
+
+function mobileApp(prefs) {
 	var prefs = AnyBalance.getPreferences();
 	// Пока ничего кроме карт не поддерживается, ну, оставим, на всякий
     if(!/^(acc|dep|card|cred)$/i.test(prefs.type || ''))

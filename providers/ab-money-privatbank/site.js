@@ -39,7 +39,7 @@ if (xref){
 
 
 if (!xref) xref = loginSite(prefs);
-
+if (!xref) throw new AnyBalance.Error('Ошибка авторизации: xref не получен.');
     var json = callSiteAPI('cardslist');
     if (!prefs.cardnum) {
         var card = json[0];
@@ -145,12 +145,27 @@ function callSiteAPI(cmd, params) {
     var json=getJson(html);
     if (cmd.includes('refresh')) return json;
     if (json.status=='error' && json.error_code==51) return {error:51};
-    if (json.status=='error') throw AnyBalance.Error(json.message);
+    if (json.status=='error') throw AnyBalance.Error(json.message,null,true);
     return json.data;
 }
 
 function loginSite(prefs) {
 	AnyBalance.trace('Начало авторизации');
+
+    if 	(prefs.interval && prefs.begin!=prefs.end){
+    	var h=new Date().getHours();
+    	var s=(h>=prefs.begin && h<prefs.end && prefs.begin<prefs.end);
+    	var s=(prefs.begin>prefs.end&&(h=>prefs.begin || h<prefs.end));
+    	if ((h>=prefs.begin && h<prefs.end && prefs.begin<prefs.end)||(prefs.begin>prefs.end&&(h>=prefs.begin || h<prefs.end))){
+    		AnyBalance.trace('Допустимое время для авторизации');
+    	}else{
+    		AnyBalance.trace('Авторизация в это время запрещена в настройках');
+    		var result = {success: true};
+    		setCountersToNull(result);
+    		AnyBalance.setResult(result);
+    		return;
+    	}
+    }       
     var pt = generate_pt();
 //    var pt ='';
 //    var fingerprint = '4400cf9b3c6c42ba17f2497c8c0cfef7-evr42rm9m';
@@ -247,7 +262,7 @@ var show_sms_password_form={
                 break;
             } 
             AnyBalance.trace(html);
-            throw new AnyBalance.Error(json.data.step.id + ' - Неизвестный шаг во время авторизаци');
+            throw new AnyBalance.Error(json.data.step.id + ' - Неизвестный шаг во время авторизаци.',null,true);
         }
     }
         if (!dyn_string) throw AnyBalance.Error('Авторизация не удалась');
@@ -258,7 +273,7 @@ var show_sms_password_form={
         var json = getJson(html);
         if (json.status != 'success') {
             AnyBalance.trace(html);
-            throw AnyBalance.Error('Не удалось войти в Приват24');
+            throw AnyBalance.Error('Не удалось войти в Приват24',null,true);
         }
         var skey=AnyBalance.getCookie('skey');
         skey=getParam(skey,null,null,/"?([^"]*)"?/);

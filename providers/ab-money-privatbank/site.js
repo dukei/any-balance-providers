@@ -265,7 +265,7 @@ var show_sms_password_form={
             throw new AnyBalance.Error(json.data.step.id + ' - Неизвестный шаг во время авторизаци.',null,true);
         }
     }
-        if (!dyn_string) throw AnyBalance.Error('Авторизация не удалась');
+        if (!dyn_string) throw AnyBalance.Error('Авторизация не удалась',false,true);
         var html = AnyBalance.requestPost(apiUrl + 'pub/init?dyn_string=' + dyn_string, {
             token: dyn_string,
             "_": new Date() * 1
@@ -273,7 +273,7 @@ var show_sms_password_form={
         var json = getJson(html);
         if (json.status != 'success') {
             AnyBalance.trace(html);
-            throw AnyBalance.Error('Не удалось войти в Приват24',null,true);
+            throw AnyBalance.Error('Не удалось войти в Приват24',false,true);
         }
         var skey=AnyBalance.getCookie('skey');
         skey=getParam(skey,null,null,/"?([^"]*)"?/);

@@ -27,15 +27,17 @@ function checkLoginError(html, options) {
     }
     if(!img){
     	img = getParam(html, /"(ZGF0YTppbWFnZS[^"]*)/);
-    	img = Base64.decode(img);
+    	if(img) img = Base64.decode(img);
     }
+    if (!img) img=getParam(html,/<img id="captchaImage"\s*?src="([^"]+)/) 
     if(img){
-    	img = getParam(img, /data:image\/\w+;base64,([^'"]+)/i);
+    	img = getParam(img, /data:image\/\w+?(?:png)?;base64,([^'"]+)/i);
     }
-	if(img) {
+    if(img) {
 	    AnyBalance.trace('МТС решило показать капчу :( Жаль');
 	    var code = AnyBalance.retrieveCode('МТС требует ввести капчу для входа в личный кабинет, чтобы подтвердить, что вы не робот. Введите символы, которые вы видите на картинке.', img);
 	    var form = getElement(html, /<form[^>]+name="Login"/i);
+	    if (!form) form=getElementById(html,'captchaForm');
 	    var params = createFormParams(form, function (params, input, name, value) {
             if (name == 'IDToken1')
                 value = prefs.login;
@@ -46,6 +48,8 @@ function checkLoginError(html, options) {
 
         AnyBalance.trace("Логинимся с заданным номером и капчей");
         html = AnyBalance.requestPost(loginUrl, params, addHeaders({Origin: g_baseurlLogin, Referer: loginUrl}));
+        var er=getParam(html,/data-error="([^"]*)/);
+        if (er) throw new AnyBalance.Error(er, true);
         fixCookies();
 
         // Бага при авторизации ошибка 502, но если запросить гет еще раз - все ок

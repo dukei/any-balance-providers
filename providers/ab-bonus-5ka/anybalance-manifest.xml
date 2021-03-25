@@ -1,12 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id  version="2">ab-bonus-5ka</id>
+	<id  version="3">ab-bonus-5ka</id>
 	<api flags="no_browser"/>
 	<name>Выручай-карта (Пятёрочка)</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о бонусном балансе на карте "Выручай-карта" магазина Пятерочка (https://my.5ka.ru/).</p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<author>DimaZUA &lt;DIMAZ.KHUA@gmail.com&gt;</author>
 	<depends>
 		<module id="library"/>
 	</depends>
@@ -21,6 +22,8 @@
 		<counter id="balancePoints" name="Баланс в баллах" units=" Б"/>
 		<counter id="earnedInThisMonth" name="Сгорание баллов" units=" Б"/>
 		<counter id="customer" name="Владелец" type="text"/>
+<!--		<counter id="card_number" name="Номер карты" type="text"/>-->
+		<counter id="last_transaсtion" name="Поcледнее действие" type="text"/>
 	</counters>
 	<keywords>пятерочка, накопительная программа, накопительная карта, бонус, бонусная карта, продукты, покупки, баллы</keywords>
 	<type>bonus</type>

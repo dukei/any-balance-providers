@@ -45,7 +45,7 @@ function main(){
 
     	throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
     }
-
+    var deviceid=token.userName;
     html = AnyBalance.requestGet(
         baseurl + 'api/Account/UserInfo',
         AB.addHeaders({Authorization: 'Bearer ' + token.access_token})
@@ -57,11 +57,14 @@ function main(){
         balance: 0
     };
 
+if (json.Subscriber.Agreements.length>0){
 	var deviceid = json.Subscriber.Agreements[0].Devices[0].Id;
 
     AB.getParam(json.Subscriber.Agreements[0].Number, result, 'agreement');
     AB.getParam(json.Subscriber.Agreements[0].Devices[0].SmartCard, result, 'device');
-
+}
+if (!result.agreement) AB.getParam(json.AbonentInfo.AgreementNumber, result, 'agreement');
+if (!result.device) AB.getParam(json.AbonentInfo.SmartCardId, result, 'device');
 	html = AnyBalance.requestGet(
         baseurl + 'api/Abonent/GetStartTariff',
         AB.addHeaders({Authorization: 'Bearer ' + token.access_token})

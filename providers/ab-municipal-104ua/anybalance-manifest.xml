@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="5">ab-municipal-104ua</id>
+	<id version="6">ab-municipal-104ua</id>
 	<api flags="no_browser"/>
 	<name>104.ua</name>
 	<description html="true"><![CDATA[
@@ -8,6 +8,7 @@
 	<p>Информация берется из личного кабинета https://104.ua/ru/cabinet/info</p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<author>DimaZUA &lt;DIMAZ.KHUA@gmail.com&gt;</author>
 	<depends>
 		<module id="library"/>
 	</depends>
@@ -18,14 +19,24 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units=" грн"/>
-		<counter id="full_name" name="ФИО" type="text"/>
-		<counter id="account_number" name="Лицевой счет" type="text"/>
-		<counter id="agreement" name="Договор" type="text"/>
+		<counter id="balance" name="Баланс за газ" units=" грн"/>
+		<counter id="balance_rasp" name="Баланс за доставку" units=" грн"/>
+		<counter id="price_main" name="Стоимость газа" units=" грн за 1 м³"/>
+		<counter id="price_rasp" name="Стоимость за доставку" units=" грн за 1 м³"/>
+		<counter id="ls" name="Лицевой счет" type="text"/>
+		<counter id="meter_no" name="Счетчик номер" type="text"/>
+		<counter id="last_payment" name="Последний платеж" type="text"/>
+                <counter id="meterages" name="Потребление" type="html"/>
+                <counter id="gasPay" name="Оплата за газ" type="html"/>
+                <counter id="deliveryPay" name="Оплата за доставку" type="html"/>
+		<counter id="fio" name="ФИО" type="text"/>
 		<counter id="address" name="Адрес" type="text"/>
 		<counter id="email" name="email" type="text"/>
+		<counter id="phone" name="Телефон" type="text"/>
+		<counter id="eic_code" name="EIC" type="text"/>
+		<counter id="people_count" name="Прописано" units=" чел."/>
 	</counters>
 	<keywords></keywords>
-	<type>municipal</type>
+	<type>municipal,газ,облгаз</type>
 	<country>ua</country>
 </provider>

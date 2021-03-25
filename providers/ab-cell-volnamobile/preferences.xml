@@ -3,10 +3,10 @@
     <EditTextPreference 
         title="Логин" 
         positiveButtonText="ОК" 
-        summary="Номер телефона (10 цифр)||{@s}\n" 
+        summary="Номер телефона||{@s}\n" 
         dialogTitle="Номер телефона" 
         negativeButtonText="Отмена" 
-        dialogMessage="Введите номер вашего телефона для входа в личный кабинет (10 цифр), например 9781234567"
+        dialogMessage="Введите номер вашего телефона для входа в личный кабинет"
 	obligatory="true"
         key="login"
         inputType="number">
@@ -18,8 +18,15 @@
         negativeButtonText="Отмена"
         title="Пароль"
 	obligatory="true"
-        summary="||***********"
+        summary="|Пароль не введен|Пароль введен (скрыт)"
         dialogMessage="Введите пароль, используемый для входа в личный кабинет."
         inputType="textPassword">
     </EditTextPreference>
+	<CheckBoxPreference
+		title="Названия пакетов SMS, минут, мегабайт"
+		defaultValue="true"
+		summaryOn="Показывать названия пакетов"
+		summaryOff="Не показывать названия пакетов"
+		key="needPref" />
+
 </PreferenceScreen>

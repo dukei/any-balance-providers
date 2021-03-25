@@ -153,9 +153,9 @@ function loginSite(prefs) {
 	AnyBalance.trace('Начало авторизации');
 
     if 	(prefs.interval && prefs.begin!=prefs.end){
+    	prefs.begin=Number(prefs.begin);
+    	prefs.end=Number(prefs.end);
     	var h=new Date().getHours();
-    	var s=(h>=prefs.begin && h<prefs.end && prefs.begin<prefs.end);
-    	var s=(prefs.begin>prefs.end&&(h=>prefs.begin || h<prefs.end));
     	if ((h>=prefs.begin && h<prefs.end && prefs.begin<prefs.end)||(prefs.begin>prefs.end&&(h>=prefs.begin || h<prefs.end))){
     		AnyBalance.trace('Допустимое время для авторизации');
     	}else{

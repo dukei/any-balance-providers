@@ -7,7 +7,6 @@
         title="Логин"
         summary="||{@s}" 
         inputType="text"
-        dialogTitle="Логин"
         dialogMessage="Введите email, используемый для входа на letu.ru или letu.ua"
         positiveButtonText="ОК"
         negativeButtonText="Отмена">

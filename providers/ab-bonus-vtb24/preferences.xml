@@ -8,7 +8,7 @@
 		dialogTitle="Номер телефона"
 		positiveButtonText="ОК"
 		negativeButtonText="Отмена"
-		dialogMessage="Введите номер телефона, 10 цифр без +7 и пробелов.">
+		dialogMessage="Введите номер телефона">
 	</EditTextPreference>
 	<EditTextPreference
 		title="Пароль"

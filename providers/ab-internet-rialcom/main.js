@@ -7,7 +7,7 @@ function main(){
 
     AnyBalance.setDefaultCharset('utf-8');
 
-    var baseurl = "http://stat.rialcom.ru/";
+    var baseurl = "https://stat.rialcom.ru/";
     var html = AnyBalance.requestPost(baseurl, {
         login: prefs.login,
         password: prefs.password

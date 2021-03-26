@@ -11,9 +11,9 @@ function main(){
     var prefs = AnyBalance.getPreferences();
     AnyBalance.setDefaultCharset('utf-8');
 
-    var baseurl = "https://stat.inetvl.ru/";
+    var baseurl = "https://stat.inetvl.ru";
 
-    var html = AnyBalance.requestPost(baseurl + '/user/login/', {
+    var html = AnyBalance.requestPost(baseurl + '/user/login', {
         login_input:prefs.login,
         pwd_input:prefs.password,
         Enter: 'Войти'
@@ -32,9 +32,9 @@ function main(){
     getParam(html, result, 'balance', /Баланс лицевого счёта:[\S\s]*?<t[dh][^>]*>([\S\s]*?)<\/t[dh]>/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'promise', /Незакрытый обещанный платеж:[\S\s]*?<t[dh][^>]*>([\S\s]*?)<\/t[dh]>/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'promise_close', /Закрыть обещанный платёж до:[\S\s]*?<t[dh][^>]*>([\S\s]*?)<\/t[dh]>/i, replaceTagsAndSpaces, parseDate);
-    getParam(html, result, 'block', /Блокировка:[\S\s]*?[\S\s]*?<t[dh][^>]*>([\S\s]*?)<\/t[dh]>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'block', /До блокировки:[\S\s]*?[\S\s]*?<t[dh][^>]*>([\S\s]*?)<\/t[dh]>/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'licschet', /Номер лицевого счета[\S\s]*?<t[dh][^>]*>([\S\s]*?)<\/t[dh]>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'bestpay', /Рекомендуемая предоплата:[\S\s]*?<t[dh][^>]*>([\S\s]*?)<\/t[dh]>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'bestpay', /Сумма к оплате сейчас:[\S\s]*?<t[dh][^>]*>([\S\s]*?)<\/t[dh]>/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, '__tariff', /Текущий тариф[\S\s]*?<t[dh][^>]*>([\S\s]*?)<\/t[dh]>/i, replaceTagsAndSpaces, html_entity_decode);
     
     AnyBalance.setResult(result);

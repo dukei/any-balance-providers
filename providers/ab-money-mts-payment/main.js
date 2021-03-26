@@ -6,18 +6,27 @@ var g_headers = {
 	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
 	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
 	'Cache-Control': 'max-age=0',
-	Connection: 'keep-alive',
+	Connection: 'close',
 	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.1 (KHTML, like Gecko) Chrome/21.0.1180.60 Safari/537.1'
 };
 
 var g_baseurl = 'https://payment.mts.ru';
-
-function main() {
+function main(){
+	try{
+		mainSite();
+	}catch(e){
+		clearAllCookies();
+		AnyBalance.saveCookies();
+		AnyBalance.saveData();
+		throw new AnyBalance.Error(e.message, e.allow_retry, e.fatal);
+	}
+}
+function mainSite() {
 	var prefs = AnyBalance.getPreferences();
 
 	checkEmpty(prefs.login, 'Введите номер телефона');
 	checkEmpty(prefs.password, 'Введите пароль');
-	
+        AnyBalance.restoreCookies();
 	var html = enterMtsLK({
 		login: prefs.login,
 		password: prefs.password,
@@ -66,11 +75,12 @@ function main() {
     }
 
 	html = AnyBalance.requestGet(g_baseurl + '/cards/' + cardId, addHeaders({Referer: g_baseurl + '/cards'}));
-
-	getParam(html, result, 'identification', /<div[^>]+b-card-page__val-status[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
-	getParam(html, result, '__tariff', /<div[^>]+b-card-page__val-status[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+	getParam(html, result, 'identification', /<div[^>]+b-card-page__val b-card-page__val_plan[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+	getParam(html, result, '__tariff',/<div[^>]+b-card-page__val b-card-page__val_plan[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
 	getParam(html, result, 'balance', /<div[^>]+b-card-page__val-num[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'phone', /<div[^>]+b-card__phone[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
-	
+	if(/запрет/i.test(result.status_phone)) result.__tariff+=' - запрет вывода с баланса сим';
+	AnyBalance.saveCookies();
+	AnyBalance.saveData();
 	AnyBalance.setResult(result);
 }

@@ -1,16 +1,16 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="1.0" version="9">ab-bonus-letoile</id>
+	<id major_version="1.0" version="10">ab-bonus-letoile</id>
 	<api flags="no_browser"/>
 	<name>Л'Этуаль</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о бонусных баллах на клубных картах сети магазинов Л'Этуаль с сайта http://b2b.letoile.ru</p>
+	<p>Предоставляет информацию о бонусных баллах на клубных картах сети магазинов Л'Этуаль с сайтов letu.ru и letu.ua</p>
 	]]></description>
 	<instruction html="true"><![CDATA[
-	<p>Возможно необходимо заполнить анкету на сайте для получения данных по карте, для этого пройдите на сайт <a href="http://www.letoile.ru/">http://www.letoile.ru/</a>, введите номер и тип своей карты. Если появилась форма, заполните все необходимые поля и нажмите отправить.</p>
 	]]>
 	</instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<author>DimaZUA &lt;DIMAZ.KHUA@gmail.com&gt;</author>
 	<depends>
 		<module id="library"/>
 	</depends>
@@ -21,8 +21,9 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units=" р"/>
-		<counter id="dateOf" name="Дата актуализации" type="time"/>
+		<counter id="balance" name="Баланс" units=" {@unt}."/>
+		<counter id="discount" name="Скидка" units=" %"/>
+		<counter id="number" name="Номер карты" type="text"/>
 	</counters>
 	<keywords>клубная карта, дисконтная карта, бонусная карта, бонус, bonus, лэтуаль, летуаль, л'этуаль, letoile, скидка</keywords>
 	<type>bonus</type>

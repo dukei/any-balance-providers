@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="66">ab-cell-velcom</id>
+	<id version="67">ab-cell-velcom</id>
 	<api flags="no_browser"/>
-	<name>Velcom (Беларусь)</name>
+	<name>A1 (Беларусь)</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе, использованных минутах, трафике для пользователей белорусского оператора сотовой связи Velcom.</p>
 	<p>Информация берется из интернет-службы сервиса абонента (ИССА) (http://my.a1.by/).</p>
@@ -41,10 +41,10 @@
 		<counter id="status" name="Статус" type="text"/>
 		<counter id="loan_balance" name="Размер ежемесячного платежа" units=" р"/>
 		<counter id="loan_left" name="Оставшаяся к выплате сумма по рассрочке" units=" р"/>
-		<counter id="loan_end" name="Дата погашения рассрочки" type="time" format="dd/MM/yyyy"/>
-		<counter id="call_barring" name="Запрет исходящих с" type="time" format="dd/MM/yyyy"/>
+		<counter id="loan_end" name="Дата погашения рассрочки" type="time" format="dd.MM.yyyy"/>
+		<counter id="call_barring" name="Запрет исходящих с" type="time" format="dd.MM.yyyy"/>
 	</counters>
-	<keywords>велком, мобильный</keywords>
+	<keywords>велком, мобильный,velcome</keywords>
 	<type>cell</type>
 	<country>by</country>
 </provider>

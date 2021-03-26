@@ -1,8 +1,31 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
-<!--
-	<change version="2" date="2014-09-03">
-	- 
+	<change major_version="1.0" version="10" date="2021-03-04">
+	- Поддержка изменений на сайте.
 	</change>
--->
+	<change major_version="1.0" version="9" date="2017-06-28">
+	- Поддержка изменений на сайте.
+	</change>
+	<change major_version="1.0" version="8" date="2015-03-03">
+	- Улучшена обработка ошибок.
+	</change>
+	<change major_version="1.0" version="7" date="2015-03-03">
+	- Улучшено описание.
+	</change>
+	<change major_version="1.0" version="6" date="2015-03-02">
+	- Мелкие улучшения.
+	</change>
+	<change major_version="1.0" version="5" date="2015-02-27">
+	- Мелкие улучшения.
+	</change>
+	<change major_version="1.0" version="4" date="2014-01-10">
+	- Оптимизация кода и исправлени ошибок. (Stark)
+	</change>
+	<change major_version="1.0" version="3" date="2013-05-23">
+	- Изменена обработка ошибок.
+	</change>
+    <change major_version="1.0" version="2" date="2012-07-09">
+	- Изменен email автора провайдера.
+	- Добавлена история версий.
+	</change>
 </history>

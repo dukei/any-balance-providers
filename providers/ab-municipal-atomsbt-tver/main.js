@@ -3,78 +3,119 @@
 */
 
 var g_headers = {
-	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
-	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
-	'Connection': 'keep-alive',
-	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/47.0.2526.106 Safari/537.36',
+	'Content-Type':'application/json; charset=UTF-8',
+	'Connection':'Keep-Alive',
+	'User-Agent':'okhttp/3.12.2'};
+var baseurl = 'https://waapi.atomsbt.ru/api/';	
+function callAPI(cmd,params,prefs){
+	AnyBalance.trace('Запрос на '+cmd);
+	for (var i=0;i<5;i++){
+		if (params){
+			var html = AnyBalance.requestPost(baseurl+cmd, JSON.stringify(params), g_headers);
+		}else{
+			var html = AnyBalance.requestGet(baseurl+cmd, g_headers);
+		}
+		if (html && !/504 Gateway Time-out/.test(html))
+			break;
+		AnyBalance.trace(html);
+		if(i<4)AnyBalance.trace('не удалось получить '+cmd+'. Попытка '+(i+2)+ 'из 5');
+	}
+	var json=getJson(html);
+	if (!json.result) {
+		AnyBalance.trace('запрос:'+cmd);
+		AnyBalance.trace('ответ:'+html);
+		if (json.errorText) throw new AnyBalance.Error(json.errorText);
+                throw new AnyBalance.Error("Ошибка вызова API. Подробности в логе");
+	}
+        if (cmd=='user/auth') {
+        	g_headers.token=json.token;
+        	AnyBalance.setData(prefs.login+'token',g_headers.token);
+        	AnyBalance.saveData();
+        	return;
+        }
+        return json.data;
 };
-
 function main() {
-	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'https://lk.tver.atomsbt.ru/';
+
 	AnyBalance.setDefaultCharset('utf-8');
+	var prefs = AnyBalance.getPreferences();
+	var token=AnyBalance.getData(prefs.login+'token');
+	if (token){
+		AnyBalance.trace('Найден старый токен.')
+		try{
+			g_headers.token=token;
+			var lss=callAPI('ls/list');
+                        AnyBalance.trace('Старый токен в порядке. Будем использовать его.')
+		}catch(e){
+			AnyBalance.trace('Токен испорчен.')
+                        g_headers.token='';
+                        token='';
+		}
 
-	checkEmpty(prefs.login, 'Введите логин!');
-	checkEmpty(prefs.password, 'Введите пароль!');
-	
-	var html = AnyBalance.requestGet(baseurl, g_headers);
-	
-	if(!html || AnyBalance.getLastStatusCode() > 400){
-		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
 	}
-
-
-	var captchaSRC = getParam(html, null, null, /<div[^>]+class="vpb_captcha_wrapper"[^>]*>[\s\S]*?<img src="([\s\S]*?)"/i);
-	if (!captchaSRC)
-		throw new AnyBalance.Error("Не удалось найти капчу. Сайт изменён?");
-	var captchaIMG = AnyBalance.requestGet(joinUrl(baseurl, captchaSRC), addHeaders({
-		Accept: 'image/webp,image/*,* /*;q=0.8',
-		Referer: baseurl
-	}));
-		var captchaResponse = AnyBalance.retrieveCode('Пожалуйста, введите код с картинки.', captchaIMG);
-		html = AnyBalance.requestPost(baseurl + 'lib/js/captcha/captcha_checker.php', {
-			vpb_captcha_code: captchaResponse
-		}, addHeaders({
-			'X-Requested-With': 'XMLHttpRequest',
-			'Accept': '* /*'
-		}));
-		if (!/1/.test(html))
-			throw new AnyBalance.Error("Введенный Вами код неправильный");
+	if (!token){
+		AnyBalance.trace('Нужна авторизация');
+		checkEmpty(prefs.login, 'Введите логин!');
+		checkEmpty(prefs.password, 'Введите пароль!');
+		callAPI('user/auth',{login: prefs.login,password: prefs.password},prefs);
+		var lss=callAPI('ls/list');
+	}
+	if (lss.length<1) throw new AnyBalance.Error ('Не удалось найти ни одного лицевого счета.',false, true)
+	AnyBalance.trace('Найдены лицевые счета:\n'+lss.map(ls=>ls.billing_object_number).join(', '));
+	if (prefs.ls){
+		lss=lss.filter(ls=>ls.billing_object_number.endsWith(prefs.ls));
+		if (lss.length<1) throw new AnyBalance.Error ('Не удалось найти лицевой счет с последними цифрами '+prefs.ls,false, true)
+		ls=lss[0];
+	}else if(lss.length==1){
+		ls=lss[0];
+	}else{
+		var main_ls=lss.filter(ls=>ls.main_ls=='1');
+		if (main_ls.length>0) 
+			ls=main_ls[0];
 		else
-			html = AnyBalance.requestPost(baseurl + 'page.php?page=lk-ls-info', {
-				ls: prefs.login,
-				pwd: prefs.password,
-				vpb_captcha_code: captchaResponse,
-				saction: 'lspwd'
-			}, addHeaders({Referer: baseurl}));
-
-
-
-	if (!/exit/i.test(html)) {
-		var error = getElement(html, /<div[^>]+login_response/i, replaceTagsAndSpaces);
-		if (error)
-			throw new AnyBalance.Error(error, null, /парол/i.test(error));
-
-		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
+			ls=lss[0];
 	}
-	
+	AnyBalance.trace('Используется лицевой счет:'+ls.billing_object_number);
 	var result = {success: true};
-	
-	getParam(html, result, 'adress', /<div[^>]*divtext[^>]*>\s*Информация[\s\S]*?<div[^>]+info-text[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
- 	getParam(html, result, '__tariff', /(?:Долг|Переплата) на 01\.(\d\d\.\d\d)/i);
+	result.ls=ls.billing_object_number;
+	var info=callAPI('ls/'+ls.billing_object_number);
+	result.adress=info.ADRES;
+	result.saldo=info.BALANS/100;
+        result.paid=(info.OPLACHENO+info.OPLACHENOZAKRMES+info.OPLACHENOPENI+info.OPLACHENOPENIZAKRMES+info.OPLACHENOSPENI+info.OPLPENI)/100;
+        result.in_saldo=+info.PVHSALDO/100;
+        result.accrued=+info.NACHISLENO/100;
+        result.period=parseDateISO(info.DOLGNA,true);
+        result.__tariff='К оплате:'+info.KOPLATESPENI/100+' руб.';
+        var rowID;
+        if(isAvailable('device_value','device_number','pays','poverkaNext','poverkaLast')){
+        	var info=callAPI('ls/'+ls.billing_object_number+'/counters/list/100');
+        	if (info.length>0){
+        		result.device_number=info[0].ZavodNomer;
+        		rowID=info[0].RowID;
+        		result.poverkaNext=parseDateISO(info[0].DateNextCheck);
+        		result.poverkaLast=parseDateISO(info[0].DateCheck);
 
-    getParam(html, result, 'saldo', /<div[^>]*divtext[^>]*>\s*Баланс счета[\s\S]*?<div[^>]+font-size:\s*18px[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'in_saldo', /(?:Долг|Переплата) на[\s\S]*?<div[^>]+balans-money[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'accrued', /Начислено:[\s\S]*?<div[^>]+balans-money[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, 'paid', /Оплачено в текущем месяце:[\s\S]*?<div[^>]+balans-money[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
-    getParam('15.'+ result.__tariff, result, 'period', null, null, parseDate);
+        	}
+        }
+  if(isAvailable('device_value') && rowID) {
+  	var info=callAPI('ls/counters/history',{
+  		ls: ls.billing_object_number,
+  		RowID: rowID,
+  		enddate: getFormattedDate('YYYY-MM-DD')+'T23:59:00.820',
+  		page: 1,
+  		rowsPerPage: 100,
+  		startdate: getFormattedDate({format:'YYYY-MM-DD',offsetYear:1})+'T23:59:00.820'});
+  	result.device_value=info.map(row=>'<b>'+row.pokazaniya[0].POKAZANIE+'</b> ('+row.pokazaniya[0].RASHOD+')-'+getFormattedDate('DD.MM.YYYY',new Date (parseDateISO(row.DATA,true)))+'<br><small> через:'+row.pokazaniya[0].TIPVVODA+'</small>').join('<br>');
+  }
 
-  if(isAvailable('device_value')) {
-    html = AnyBalance.requestGet(baseurl + 'page.php?page=lk-hist-counter', g_headers);
-    getParam(html, result, 'device_value', /История показаний приборов учета(?:[\s\S]*?<td[^>]*>){4}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+  if(isAvailable('pays') && rowID) {
+  	var info=callAPI('ls/payments',{
+  		ls: ls.billing_object_number,
+  		enddate: getFormattedDate('YYYY-MM-DD')+'T23:59:00.820',
+  		page: 1,
+  		rowsPerPage: 100,
+  		startdate: getFormattedDate({format:'YYYY-MM-DD',offsetYear:1})+'T23:59:00.820'});
+  	result.pays=info.map(row=>'<b>'+row.SUMMA/100+' руб.</b> - '+getFormattedDate('DD.MM.YYYY',new Date(parseDateISO(row.DATA,true)))+'<br><small>'+row.ISTOCHNIK+'</small>').join('<br>');
   }
 	
 	AnyBalance.setResult(result);

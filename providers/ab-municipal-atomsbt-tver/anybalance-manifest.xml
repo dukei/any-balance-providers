@@ -1,16 +1,16 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="6">ab-municipal-atomsbt-tver</id>
+	<id version="7">ab-municipal-atomsbt-tver</id>
 	<api flags="no_browser"/>
-	<name>АТОМЭНЕРГОСБЫТ (Тверь)</name>
+	<name>АТОМЭНЕРГОСБЫТ</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе провайдера АТОМЭНЕРГОСБЫТ (Тверь) <a href="http://atomsbt.ru/">http://atomsbt.ru/</a></p>
-	<p>Информация берется из личного кабинета https://lk.tver.atomsbt.ru/</p>
+	<p>Предоставляет информацию о балансе провайдера АТОМЭНЕРГОСБЫТ<a href="http://atomsbt.ru/">http://atomsbt.ru/</a></p>
+	<p>Информация берется из мобильного приложения</p>
 	]]></description>
-	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
-    <depends>
-        <module id="library"/>
-    </depends>
+	<author>DimaZUA &lt;DIMAZ.KHUA@gmail.com&gt;</author>
+	<depends>
+        	<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
@@ -20,11 +20,16 @@
 	<counters>
 		<counter id="accrued" name="Начислено в текущем месяце" units=" p"/>
 		<counter id="paid" name="Оплачено в текущем месяце" units=" p"/>
-        <counter id="saldo" name="Исходящее сальдо" units=" p"/>
-        <counter id="in_saldo" name="Входящее сальдо" units=" p"/>
-        <counter id="adress" name="Адрес" type="text"/>
-        <counter id="period" name="Текущий период" type="time" format="MM/yyyy"/>
-		<counter id="device_value" name="Показание счётчика"/>
+		<counter id="saldo" name="Исходящее сальдо" units=" p"/>
+	        <counter id="in_saldo" name="Входящее сальдо" units=" p"/>
+	        <counter id="poverkaLast" name="Последняя поверка счетчика" type="time" format="dd.MM.yyyy"/>
+	        <counter id="poverkaNext" name="Следующая поверка счетчика" type="time" format="dd.MM.yyyy"/>
+	        <counter id="period" name="Текущий период" type="time" format="MM.yyyy"/>
+	        <counter id="ls" name="Лицевой счет" type="text"/>
+	        <counter id="device_number" name="Номер счетчика" type="text"/>
+	        <counter id="device_value" name="История показаний" type="html"/>
+	        <counter id="pays" name="История платежей" type="html"/>
+	        <counter id="adress" name="Адрес" type="text"/>
 	</counters>
 	<keywords></keywords>
 	<type>municipal</type>

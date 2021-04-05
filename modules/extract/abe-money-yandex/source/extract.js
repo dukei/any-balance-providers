@@ -23,6 +23,8 @@ function callApi(verb, params){
 		'Content-Type': 'application/json;charset=UTF-8',
 		'x-csrf-token': g_csrf
 	}));
+	if (verb=='yooid/signin/api/start-authenticate' && AnyBalance.getLastStatusCode()==404)
+		return 	 callApi ('yooid/signin/api/start',params);
 
 	var json = JSON.parse(html);
 	if(json.status === 'error'){

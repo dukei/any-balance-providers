@@ -83,7 +83,7 @@ function main(){
 		mainMobileApp2(prefs, adapter);
 		return;
 	}
-	
+    AnyBalance.setOptions({cookiePolicy: 'rfc2965'});	
     adapter.processRates = adapter.envelope(processRates);
     adapter.processCards = adapter.envelope(processCards);
     adapter.processAccounts = adapter.envelope(processAccounts);

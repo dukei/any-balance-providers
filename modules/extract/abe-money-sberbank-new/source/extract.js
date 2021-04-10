@@ -32,11 +32,12 @@ function getLoggedInHtml(lastChance){
 function login(prefs) {
 	var baseurl = "https://online.sberbank.ru/CSAFront/login.do";
 	AnyBalance.setDefaultCharset('utf-8');
-	
+
 	checkEmpty(prefs.login, "Пожалуйста, укажите логин для входа в Сбербанк-Онлайн!");
 	checkEmpty(prefs.password, "Пожалуйста, укажите пароль для входа в Сбербанк-Онлайн!");
 
 	var html = getLoggedInHtml();
+
     if(isLoggedIn(html)){
         AnyBalance.trace("Уже залогинены, используем текущую сессию");
         return html;
@@ -44,13 +45,13 @@ function login(prefs) {
 
 	//Сбер разрешает русские логины и кодирует их почему-то в 1251, хотя в контент-тайп передаёт utf-8.
 	AnyBalance.setDefaultCharset('windows-1251');
+
 	html = AnyBalance.requestPost(baseurl, {
 		'field(login)': prefs.login,
 		'field(password)': prefs.password.substr(0, 30), //Максимальная длина - 30 символов
 		operation: 'button.begin'
 	}, addHeaders({Referer: baseurl, 'X-Requested-With': 'XMLHttpRequest', Origin: 'https://online.sberbank.ru'}));
 	AnyBalance.setDefaultCharset('utf-8');
-	
 	var error = getParam(html, null, null, /<h1[^>]*>О временной недоступности услуги[\s\S]*?<p[^>]*>([\s\S]*?)<\/p>/i, replaceTagsAndSpaces);
 	if (error)
 		throw new AnyBalance.Error(error);
@@ -508,7 +509,7 @@ function getParamByName(html, name) {
 function processRates(baseurl, result) {
 	if(AnyBalance.isAvailable('eurPurch', 'eurSell', 'usdPurch', 'usdSell')){
 		AnyBalance.trace('Fetching rates...');
-		var html = AnyBalance.requestGet(baseurl + '/PhizIC/private/accounts.do');
+		var html = AnyBalance.requestGet(baseurl + '/PhizIC/clientapi/private/rates/list.do?amountRate=true');
 		getParam(html, result, 'eurPurch', /"currencyRateName"[^>]*>\s*Евро(?:[\s\S]*?<div[^>]+rateText[^>]*>){1}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
 		getParam(html, result, 'eurSell', /"currencyRateName"[^>]*>\s*Евро(?:[\s\S]*?<div[^>]+rateText[^>]*>){2}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
 		getParam(html, result, 'usdPurch', /"currencyRateName"[^>]*>\s*Доллар США(?:[\s\S]*?<div[^>]+rateText[^>]*>){1}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
@@ -519,17 +520,23 @@ function processRates(baseurl, result) {
 function fetchNewThanks(baseurl, result) {
 	AnyBalance.trace('Попробуем получить Спасибо от сбербанка...');
 	if (AnyBalance.isAvailable('spasibo')) {
-		html = AnyBalance.requestGet(baseurl + '/PhizIC/private/async/loyalty.do');
-		
-		var href = getParam(html, /^\s*(https?:\/\/\S*)/i, replaceTagsAndSpaces);
+		html = AnyBalance.requestGet(baseurl + '/PhizIC/clientapi/private/profile/loyaltyURL.do');
+		var href = getParam(html, /^{"response":{"url":"(https:\/\/[^"]*)"/i, replaceTagsAndSpaces);
+		if (href) href = getParam(href, /sat=([^"]*)/, replaceTagsAndSpaces);
 		if (!href) {
 			AnyBalance.trace('Не удаётся получить ссылку на спасибо от сбербанка: ' + html);
 		} else {
-			html = AnyBalance.requestGet(href);
+			html = AnyBalance.requestGet('https://bonus-spasibo.ru/sbrf-mobile/api/participant/info?sat='+href);
 			if(/Sberbank-spasibo - Подтверждение телефона/i.test(html)){
 				AnyBalance.trace('Не удалось получить баллы спасибо. Для получения баллов необходимо войти в https://bonus-spasibo.ru/ и привязать свой номер телефона');
 			}else{
-				getParam(html, result, 'spasibo', /<span[^>]*balance__thanks-count[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+			      try{
+				var json=getJson(html);
+                                result.spasibo=json.balance/100;
+                              }catch(e){
+                              	AnyBalance.trace('Не удалось получить баллы спасибо. '+e.message);
+                              	AnyBalance.trace(html);
+                              }
 			}
 		}
 	}
@@ -627,4 +634,3 @@ function processMetalAccountTransactions(html, result){
         result.transactions.push(t);
     }
 }
-

@@ -1,13 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id version="3">ab-internet-rialcom</id>
+	<id version="4">ab-internet-rialcom</id>
 	<name>РиалКом</name>
 	<description html="true"><![CDATA[
 	<p>Получает баланс и информацию о тарифном плане для подмосковного интернет-провайдера РиалКом. Информация берется из личного кабинета https://stat.rialcom.ru.</p>
 	<p>ЗАО "РиалКом" - телекоммуникационная компания, предоставляющая весь комплекс услуг связи на территории Москвы и Московской области. Компания является крупнейшим, альтернативным оператором связи на юге московской области и располагает наибольшей по протяженности современной оптоволоконной мультисервисной телекоммуникационной сетью.</p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>

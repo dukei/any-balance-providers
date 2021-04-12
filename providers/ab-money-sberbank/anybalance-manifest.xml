@@ -1,6 +1,6 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="92">ab-money-sberbank</id>
+	<id version="93">ab-money-sberbank</id>
 	<api flags="no_browser"/>
 	<name>Сбербанк Онлайн</name>
 	<description html="true"><![CDATA[
@@ -59,16 +59,16 @@
 		<counter id="weight" name="Вес" units=" {@weight_units}"/>
 		<counter id="spasibo" name="Спасибо"/>
 		<counter id="minpay" name="Минимальный платеж" units=" {@currency}"/>
-		<counter id="minpaydate" name="Дата минимального платежа" type="time" format="dd/MM/yyyy"/>
+		<counter id="minpaydate" name="Дата минимального платежа" type="time" format="dd.MM.yyyy"/>
 		<counter id="electrocash" name="Для покупок" units=" {@currency}"/>
 		<counter id="cash" name="Наличные" units=" {@currency}"/>
 		<counter id="own" name="Собственные средства" units=" {@currency}"/>
 		<counter id="cardNumber" name="Номер карты/счета" type="text"/>
 		<counter id="till" name="Срок действия" type="time" format="MM/yyyy"/>
 		<counter id="gracepay" name="Льготный платеж" units=" {@currency}"/>
-		<counter id="gracepay_till" name="Срок льготного платежа" type="time" format="dd/MM/yyyy"/>
+		<counter id="gracepay_till" name="Срок льготного платежа" type="time" format="dd.MM.yyyy"/>
 		<counter id="debt" name="Задолженность" units=" {@currency}"/>
-		<counter id="debt_date" name="Дата последнего отчета по задолженности" type="time" format="dd/MM/yyyy"/>
+		<counter id="debt_date" name="Дата последнего отчета по задолженности" type="time" format="dd.MM.yyyy"/>
 		<counter id="maxlimit" name="Кредитный лимит" units=" {@currency}"/>
 		<counter id="loan_ammount" name="Сумма кредита" units=" {@currency}"/>
 		<counter id="cardName" name="Имя на карте" type="text"/>

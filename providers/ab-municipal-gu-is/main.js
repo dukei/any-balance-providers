@@ -1,4 +1,4 @@
-﻿/**
+/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 
 Для пользования провайдером требуется знать только код плательщика, который можно прочитать на квитанции: 
@@ -32,11 +32,11 @@ function findBill(dt){
     var month = '' + (dt.getMonth() + 1);
     if(month.length < 2) month = '0' + month;
 
-	var html = AnyBalance.requestGet('https://1.elecsnet.ru/NotebookFront/services/0mhp/merchantId=956', g_headers);
+	var html = AnyBalance.requestGet('https://1.elecsnet.ru/NotebookFront/services/0mhp/default.aspx?merchantId=956', g_headers);
 
 	html = AnyBalance.requestPost('https://1.elecsnet.ru/NotebookFront/services/0mhp/GetMerchantInfo', {
 	    merchantId:	'956',
-		paymentTool: '9',
+		paymentTool: '36',//9
 		'merchantFields[1]': prefs.login,
 		'merchantFields[2]': '01.' + month + '.' + dt.getFullYear(),
 	}, addHeaders({Referer: AnyBalance.getLastUrl(), 'X-Requested-With': 'XMLHttpRequest' }));

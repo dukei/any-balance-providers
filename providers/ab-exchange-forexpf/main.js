@@ -16,7 +16,7 @@ function getCurrent(html, result, value) {
 }
 
 function main() {
-	var baseurl = 'http://profinance.ru/chart/usdrub/';
+	var baseurl = 'https://www.profinance.ru/chart/usdrub/';
 	AnyBalance.setDefaultCharset('utf-8');
 	
 	var html = AnyBalance.requestGet(baseurl, g_headers);

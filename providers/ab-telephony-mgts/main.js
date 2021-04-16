@@ -21,7 +21,7 @@ function main() {
 
 		html = AnyBalance.requestPost('https://1.elecsnet.ru/NotebookFront/services/0mhp/GetMerchantInfo', {
 		    merchantId:	'92',
-			paymentTool: '9',
+			paymentTool: '46',
 			'merchantFields[1]': prefs.login,
 			'merchantFields[2]': prefs.kvart || 13,
 		}, addHeaders({Referer: AnyBalance.getLastUrl(), 'X-Requested-With': 'XMLHttpRequest' }));

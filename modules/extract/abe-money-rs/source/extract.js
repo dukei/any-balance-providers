@@ -29,19 +29,27 @@ function callApi(verb, getParams, postParams){
 	var html = AnyBalance.requestPost(baseurl + 'rest/' + verb + (getParams ? '?' + createUrlEncodedParams(getParams) : ''),
 		postParams && JSON.stringify(postParams), addHeaders(h), {HTTP_METHOD: method});
 
-	if(!html)
+	var code = AnyBalance.getLastStatusCode();
+	if(!html && 200 <= code && code < 300)
 		return {__empty: true};
 
-	var json = getJson(html);
-	if(json.error){
-		AnyBalance.trace(html);
-		throw new AnyBalance.Error(json.error.description, null, /парол|Unauthorized/i.test(json.error.description));
+	if(html){
+		var json = getJson(html);
+		if(json.error){
+			AnyBalance.trace(html);
+			throw new AnyBalance.Error(json.error.description, null, /парол|Unauthorized/i.test(json.error.description));
+		}
+	    
+		if(json.errors){
+			var error = json.errors.join('\n');
+			AnyBalance.trace(html);
+			throw new AnyBalance.Error(error, null, /парол|Unauthorized/i.test(error));
+		}
 	}
 
-	if(json.errors){
-		var error = json.errors.join('\n');
+	if(code < 200 || 400 <= code){
 		AnyBalance.trace(html);
-		throw new AnyBalance.Error(error, null, /парол|Unauthorized/i.test(error));
+		throw new AnyBalance.Error(AnyBalance.getLastStatusString());
 	}
 
 	return json;
@@ -54,7 +62,7 @@ function login() {
 	var json;
 
 	try{
-		json = callApi('session/status');
+		json = callApi('common/session/status');
         AnyBalance.trace('Используем существующую сессию...');
 		return getProductsJson();
 	}catch(e){
@@ -96,7 +104,7 @@ function getProductsJson(){
 	if(getProductsJson.cached_json)
 		return getProductsJson.cached_json;
 
-	var json = callApi('biz/client-products');
+	var json = callApi('biz/client-products-sorted');
 
 	return getProductsJson.cached_json = json;
 
@@ -109,7 +117,7 @@ function processAccounts(json, result) {
     if(!AnyBalance.isAvailable('accounts'))
         return;
 
-    var products = json.ACCOUNT || [];
+    var products = json.filter(p => p.productId.productType === 'ACCOUNT');
 
     AnyBalance.trace('Найдено счетов: ' + products.length);
 	result.accounts = [];
@@ -164,7 +172,7 @@ function processCards(json, result) {
 	if(!AnyBalance.isAvailable('cards'))
 		return;
 
-    var products = json.CARD || [];
+    var products = json.filter(p => p.productId.productType === 'CARD');;
 
     AnyBalance.trace('Найдено карт: ' + products.length);
     result.cards = [];

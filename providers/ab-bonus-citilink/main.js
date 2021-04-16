@@ -30,8 +30,7 @@ function main(){
 	AnyBalance.trace('Успешный вход');
 
     var result = {success: true};
-    getParam(html, result, '__tariff', /<span[^>]+auth-user-popup__text-status[^>]*>([\s\S]*?)<\/span>/i,  replaceTagsAndSpaces);
-    getParam(html, result, 'balance',  /<div[^>]+auth-user-popup__bonuses[^>]*>([\s\S]*?)<\/div>/i,  replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, '__tariff', /Статус:([^<]*)/i,  replaceTagsAndSpaces);
 
     if(AnyBalance.isAvailable('num', 'sum')){
     	html = AnyBalance.requestGet(baseurl + '/profile/', g_headers);
@@ -40,8 +39,10 @@ function main(){
     	getParam(html, result, 'sum', [/товар\S* на сумму:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, /Учт[ёе]нных покупок нет/i], [replaceTagsAndSpaces, /Учт[ёе]нных покупок нет/i, '0'], parseBalance);
     }
 	
-    if(isAvailable(['wo_date', 'wo_sum', 'activation_date', 'activation_sum', 'activation_type', 'card_activation_date', 'card_num'])) {
+    if(isAvailable(['balance', 'wo_date', 'wo_sum', 'activation_date', 'activation_sum', 'activation_type', 'card_activation_date', 'card_num'])) {
       html = AnyBalance.requestGet(baseurl + '/profile/club/', g_headers);
+
+      getParam(html, result, 'balance',  /Мои бонусы:([^>]*)/i,  replaceTagsAndSpaces, parseBalance);
 
       getParam(html, result, 'wo_date', /дата списания(?:[\s\S]*?<td[^>]*>){1}([^<]*)/i, replaceTagsAndSpaces, parseDateWord);
       getParam(html, result, 'wo_sum',  /дата списания(?:[\s\S]*?<td[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces, parseBalance);

@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="29" date="2021-04-16">
+	- Восстановлен показ бонусов и статуса
+	</change>
 	<change version="28" date="2020-09-09">
 	поддержка изменений в процедуре входа
 	</change>

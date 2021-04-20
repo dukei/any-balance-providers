@@ -4,7 +4,11 @@
 
 var g_countersTable = {
 	common: {
-		'fio': 'info.fio'
+		'fio': 'info.fio',
+		'bonus_new_current': 'bonus.bonus_new_current',
+		'bonus_new_target': 'bonus.bonus_new_target',
+		'bonus_tx_category': 'bonus.bonus_tx_category',
+		'bonus_tx_total': 'bonus.bonus_tx_total',
 	}, 
 	card: {
     	"balance": "cards.balance",
@@ -108,12 +112,14 @@ function main() {
     adapter.processCredits = adapter.envelope(processCredits);
     adapter.processDeposits = adapter.envelope(processDeposits);
     adapter.processInfo = adapter.envelope(processInfo);
+    adapter.processBonus = adapter.envelope(processBonus);
 
 	var html = login(prefs);
 	
 	var result = {success: true};
 
 	adapter.processInfo(html, result);
+	adapter.processBonus(html, result);
 	if(prefs.type == 'card') {
 		adapter.processCards(html, result);
 		

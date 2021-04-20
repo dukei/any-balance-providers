@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="14" date="2021-04-20">
+	Добавлен счетчик бонусов к начислению за текущий месяц
+	</change>
 	<change version="13" date="2020-04-15">
 	Добавлена поддержка накопительных счетов
 	</change>

@@ -179,6 +179,19 @@ function processAccount(account, result){
     }
 }
 
+
+function processBonus(html, result){
+	if(!isAvailable('bonus'))
+		return;
+
+	let bonus = result.bonus = {};
+	
+	var json = callApi('api/v1.3/card/loyalty/conditions/');
+	getParam(json.bonus && json.bonus.currentAmount, bonus, 'bonus.bonus_new_current');
+	getParam(json.bonus && json.bonus.targetAmount, bonus, 'bonus.bonus_new_target');
+	getParam(json.transactionsSum && json.transactionsSum.posCategoryAmount, bonus, 'bonus.bonus_tx_category');
+	getParam(json.transactionsSum && json.transactionsSum.posTotalAmount, bonus, 'bonus.bonus_tx_total');
+}
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Обработка карт
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -230,6 +243,8 @@ function processCard(card, result) {
 //		processCardTransactions(href, result);
 	}
 }
+
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Обработка депозитов

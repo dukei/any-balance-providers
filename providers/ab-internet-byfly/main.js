@@ -17,7 +17,7 @@ var g_headers = {
 function main(){
 	var baseurl='https://issaold.beltelecom.by/';
         var prefs = AnyBalance.getPreferences();
-/*
+
 	try{
          AnyBalance.restoreCookies();
         }catch(e){
@@ -50,7 +50,6 @@ function main(){
 					passwd: prefs.password,
 					cap_field: code
 					},g_headers);
-					var html=AnyBalance.requestGet(baseurl+'main.html',g_headers);
 				}
 			}
 			}
@@ -69,17 +68,19 @@ function main(){
 					passwd: prefs.password,
 					cap_field: code
 					},g_headers);
-					var html=AnyBalance.requestGet(baseurl+'main.html',g_headers);
 
 	}
-*/
+/*
 				var html=AnyBalance.requestPost(baseurl+'main.html',{
 					redirect: '/main.html',
 					oper_user: prefs.login,
 					passwd: prefs.password,
 					},g_headers);
-
+*/
 	if (!/logout/i.test(html)) {
+		var error = getElement(html, /<div[^>]+error/i, replaceTagsAndSpaces);
+		if(error)
+			throw new AnyBalance.Error(error);
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось войти. Сайт изменен?');
 		}

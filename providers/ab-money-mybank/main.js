@@ -41,7 +41,7 @@ function callApi(verb, getParams, postParams){
 		throw new AnyBalance.Error(json.error.description, null, /парол/i.test(json.error.description));
 	}
 
-	return json.data;
+	return json;
 }
 
 function main() {
@@ -64,22 +64,22 @@ function main() {
 	}
 
 	var data = callApi('user/isAuthenticated');
-	if(!data){
+	if(!data.success){
 		data = callApi('login/userIdentityByPhone', null, {
 			"phoneNumber":prefs.login, //.replace(/(.*)(\d\d)(\d\d\d)(\d\d)(\d\d)$/, '$1($2)$3-$4-$5'),
 			"loginWay":"1"
-		});
+		}).data;
 		if(data.smsCode){
 			throw new AnyBalance.Error('Вход требует ввода смс-кода. Данная операция пока не поддерживается. Пожалуйста, обратитесь к автору провайдера');
 		}
-		data = callApi('login/checkPassword3', null, {"password":prefs.password});
-		data = callApi('user/userRole', null, data.userInfo.dboContracts[0]);
+		data = callApi('login/checkPassword4', null, {"password":prefs.password}).data;
+		data = callApi('user/userRole', null, data.userInfo.dboContracts[0]).data;
 
 		//AnyBalance.setCookie('mybank.by', 'JSESSIONID', g_cookie);
 		html = AnyBalance.requestGet(g_baseurl + 'main_authorised', g_headers);
 	}
 
-    data = callApi('user/loadUser');
+    data = callApi('user/loadUser').data;
 
     AnyBalance.trace('Найдено ' + data.products.length + ' продуктов');
     var p = null, card = null, cardContract = null;

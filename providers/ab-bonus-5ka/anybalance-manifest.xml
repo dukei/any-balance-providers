@@ -7,7 +7,6 @@
 	<p>Предоставляет информацию о бонусном балансе на карте "Выручай-карта" магазина Пятерочка (https://my.5ka.ru/).</p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
-	<author>DimaZUA &lt;DIMAZ.KHUA@gmail.com&gt;</author>
 	<depends>
 		<module id="library"/>
 	</depends>

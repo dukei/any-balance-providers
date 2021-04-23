@@ -23,6 +23,9 @@ var apiHeaders = {
 
 
 function callApi(verb, getParams, postParams){
+	AnyBalance.trace('====================================================\nverb='+verb);
+	AnyBalance.trace('getParams='+getParams);
+	AnyBalance.trace('postParams='+postParams);
 	var method = 'GET';
 	var h = apiHeaders;
 	if(isset(postParams)){
@@ -31,7 +34,7 @@ function callApi(verb, getParams, postParams){
 	}
 	
 	var html = AnyBalance.requestPost(baseurl + 'api/' + verb, postParams && JSON.stringify(postParams), addHeaders(h), {HTTP_METHOD: method});
-
+	AnyBalance.trace('html:\n'+html+'\n====================================================');
 	if(!html)
 		return {__empty: true};
 
@@ -117,10 +120,10 @@ function main () {
     	apiHeaders['X-Authorization'] = 'Token' + token;
     	AnyBalance.trace('Проверка токена');
     	var me = callApi('v1/users/me');
-    	if (AnyBalance.getLastStatusCode()==401){
-                AnyBalance.trace(me.detail+'\nТокен не подешел. Нужна авторизация');
+    	if (AnyBalance.getLastStatusCode() >= 401){
+            AnyBalance.trace(me.detail+'\nТокен не подешел. Нужна авторизация');
     		token='';
-                apiHeaders['X-Authorization'] = '';
+            apiHeaders['X-Authorization'] = '';
     		AnyBalance.setData('token'+prefs.login,'');
     		AnyBalance.saveData();
     	}
@@ -135,11 +138,11 @@ function main () {
     	var me = handshakeAndEstablish();
     }
     if (!me||!me.cards){
-    	throw new AnyBalance.Error('Не удалось войти в личный кабинет. Возможно изменился API');
     	token='';
     	apiHeaders['X-Authorization'] = '';
     	AnyBalance.setData('token'+prefs.login,'');
     	AnyBalance.saveData();
+    	throw new AnyBalance.Error('Не удалось войти в личный кабинет. Возможно изменился API');
     }
     if(!me.cards.main)
     	throw new AnyBalance.Error('У вас нет карт Пятерочки Выручай-ка');

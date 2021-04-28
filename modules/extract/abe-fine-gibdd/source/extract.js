@@ -7,7 +7,7 @@ var g_headers = {
 	'Accept-Language':'ru,en;q=0.8',
 	'Connection':'keep-alive',
 	'Origin':'http://www.gibdd.ru',
-	'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.0.2743.116 Safari/537.36'
+	'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4298.0 Safari/537.36'
 };
 
 function getGibddJson(html){
@@ -27,10 +27,10 @@ function getGibddJson(html){
 
 function requestFines(prefs) {
     var baseurlUser = 'https://xn--90adear.xn--p1ai/';
-    var baseurl = 'http://check.gibdd.ru/';
+    var baseurl = 'https://xn--b1afk4ade.xn--90adear.xn--p1ai/';
     AnyBalance.setDefaultCharset('utf-8');
 	
-	var html = AnyBalance.requestGet(baseurlUser + 'check/fines/', g_headers);
+	var html = AnyBalance.requestGet(baseurlUser + 'check/fines', g_headers);
 	
 	if (AnyBalance.getLastStatusCode() >= 400) {
 		AnyBalance.trace('Server returned: ' + AnyBalance.getLastStatusString());
@@ -43,7 +43,7 @@ function requestFines(prefs) {
 	if(!found)
 		throw new AnyBalance.Error('Номер должен быть в формате а123вс190 либо 1234ав199, буквы русские.');
 	
-	var captcha = solveRecaptcha('Пожалуйста, докажите, что вы не робот', AnyBalance.getLastUrl(), JSON.stringify({SITEKEY: '6Lc66nwUAAAAANZvAnT-OK4f4D_xkdzw5MLtAYFL', TYPE: 'V3', ACTION: 'check_fines'}));
+	var captcha = solveRecaptcha('Пожалуйста, докажите, что вы не робот', AnyBalance.getLastUrl(), JSON.stringify({SITEKEY: '6Lc66nwUAAAAANZvAnT-OK4f4D_xkdzw5MLtAYFL', TYPE: 'V3', ACTION: 'check_fines', USERAGENT: g_headers['User-Agent']}));
 
 	var params2 = [
 		['regnum',found[1].toUpperCase()],

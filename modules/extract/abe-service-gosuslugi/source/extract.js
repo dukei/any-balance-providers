@@ -34,7 +34,7 @@ var g_max_plates_num = 10;
 var g_max_inns_num = 3;
 
 function login(prefs) {
-//    AnyBalance.setOptions({cookiePolicy: 'netscape'});
+    //AnyBalance.setOptions({cookiePolicy: 'netscape'});
 	AnyBalance.setDefaultCharset('utf-8');
 
 	var formattedLogin;
@@ -68,6 +68,7 @@ function login(prefs) {
 
 	// нужно для отладки
 	if (!isLoggedIn(html)) {
+		var jsessionid = AnyBalance.getCookie('JSESSIONID');
 		html = checkForRedirect(html);
 
 		// Госуслуги издеваются. Сначала выкатили новую форму входа, потом спрятали
@@ -81,6 +82,7 @@ function login(prefs) {
 		// А новую оставим на всякий
 		var command = getParam(html, null, null, /new\s+LoginViewModel\((?:[^,]+,){1,2}\s*'([^"']+)'/i);
 		if (!command && /ChallengeId/.test(html)){
+			//Поскольку куки мы переставили, надо челендж запросить с нужными куками
 			html=getChalenge(html);
 			command = getParam(html, null, null, /new\s+LoginViewModel\((?:[^,]+,){1,2}\s*'([^"']+)'/i);
 		}
@@ -626,6 +628,8 @@ function getChalenge(html){
 		'X-Requested-With':'ru.rostel',
 		'Content-Type':'text/plain'
 	}))
+	//apacheclient теряет кавычки внутри значений кук. Надо восстановить
+	fixCookies();
 	html=AnyBalance.requestGet(AnyBalance.getLastUrl());
 	return html;
 }
@@ -645,4 +649,20 @@ function test(var1)
 	answer+=(minDig*1)-(LastDig*1);
 	answer=answer+subvar2;
 	return answer;
+}
+
+function fixCookies(){
+	//Надо исправить работу куки (пропали кавычки)
+	var cookies = AnyBalance.getCookies();
+	var repaired = false;
+	for(var i=0; i<cookies.length; ++i){
+		var c = cookies[i];
+		if(/BotMitigationCookie/i.test(c.name) && !/^"/.test(c.value)){
+			var newval = '"' + c.value + '"';
+			AnyBalance.trace('Исправляем куки ' + c.name + ' на ' + newval);
+			AnyBalance.setCookie(c.domain, c.name, newval, c);
+			repaired = true;
+		}
+	}
+	return repaired;
 }

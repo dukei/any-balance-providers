@@ -1389,11 +1389,12 @@ var AB = (function (global_scope) {
 		return processKeyValues(params, (key, value) => encodeURIComponent(key) + '=' + encodeURIComponent(value)).join('&');
 	}
 
-	function clearAllCookies(){
+	function clearAllCookies(checkfunc){
 		var cookies = AnyBalance.getCookies();
 		for(var i=0; i<cookies.length; ++i){
 			var cookie = cookies[i];
-			AnyBalance.setCookie(cookie.domain, cookie.name, null, cookie);
+			if(!checkfunc || checkfunc(cookie))
+				AnyBalance.setCookie(cookie.domain, cookie.name, null, cookie);
 		}
 	}
 

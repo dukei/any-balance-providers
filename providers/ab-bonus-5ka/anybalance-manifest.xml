@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id  version="4">ab-bonus-5ka</id>
+	<id  version="5">ab-bonus-5ka</id>
 	<api flags="no_browser"/>
 	<name>Выручай-карта (Пятёрочка)</name>
 	<description html="true"><![CDATA[
@@ -18,11 +18,11 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="balance" name="Баланс" units=" руб."/>
 		<counter id="balancePoints" name="Баланс в баллах" units=" Б"/>
 		<counter id="earnedInThisMonth" name="Сгорание баллов" units=" Б"/>
 		<counter id="customer" name="Владелец" type="text"/>
-<!--		<counter id="card_number" name="Номер карты" type="text"/>-->
+		<counter id="card_number" name="Номер карты" type="text"/>
 		<counter id="last_transaсtion" name="Поcледнее действие" type="text"/>
 	</counters>
 	<keywords>пятерочка, накопительная программа, накопительная карта, бонус, бонусная карта, продукты, покупки, баллы</keywords>

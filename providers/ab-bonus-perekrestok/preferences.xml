@@ -2,11 +2,11 @@
 <PreferenceScreen>
     <EditTextPreference
         key="login"
-        title="Номер карты или телефона"
-        summary="Номер карты или телефона для доступа к личному кабинету||{@s}\n"
+        title="Номер телефона"
+        summary="Номер телефона для доступа к личному кабинету||{@s}\n"
         inputType="number"
-        dialogTitle="Номер карты или телефона"
-        dialogMessage="Введите номер карты или телефона для входа в личный кабинет"
+        dialogTitle="Номер телефона"
+        dialogMessage="Введите номер телефона для входа в личный кабинет"
         positiveButtonText="ОК"
         negativeButtonText="Отмена">
     </EditTextPreference>

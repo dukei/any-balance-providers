@@ -1,16 +1,16 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="1.0" version="23">ab-bonus-perekrestok</id>
+	<id major_version="1.0" version="24">ab-bonus-perekrestok</id>
 	<api flags="no_browser"/>
 	<name>Перекресток</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о бонусном балансе на карте "Клуба Перекресток" (https://perekrestok.ru/club/).</p>
+	<p>Предоставляет информацию о бонусном балансе на карте "Клуба Перекресток" (https://my.perekrestok.ru/).</p>
 	<p>Информация берется из личного кабинета (https://my.perekrestok.ru/).</p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<author>DimaZUA &lt;DIMAZ.KHUA@gmail.com&gt;</author>
 	<depends>
 		<module id="library"/>
-		<module id="crypt/md5"/>
 	</depends>
 	<files>
 		<icon>icon.png</icon>
@@ -19,10 +19,12 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units=" Б"/>
-		<counter id="stickers" name="Наклейки" units=" шт"/>
+		<counter id="balance" name="Баллов" units=" Б"/>
+		<counter id="balance_rub" name="Рублей" units=" руб."/>
+		<counter id="stickers" name="Наклейки" units=" шт."/>
 		<counter id="burnInThisMonth" name="Сгорание баллов" units=" Б"/>
-		<counter id="burnDate" name="Дата сгорания баллов" type="time" format="dd/MM/yyyy"/>
+		<counter id="burnInThisMonth_rub" name="Сгорание рублей" units=" руб"/>
+		<counter id="burnDate" name="Дата сгорания баллов" type="time" format="dd.MM.yyyy"/>
 		<counter id="customer" name="Владелец" type="text"/>
 	</counters>
 	<keywords>клуб, перекресток, накопительная программа, накопительная карта, бонус, бонусная карта, продукты, покупки, баллы</keywords>

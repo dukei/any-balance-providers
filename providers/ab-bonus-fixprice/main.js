@@ -31,13 +31,20 @@ function main() {
 	if (!/logout/i.test(html)){
 		AnyBalance.trace('Нужно логинится');
 		var token=getParam(html,  /CSRF"[\s\S]*?"([^"]*)/i, replaceTagsAndSpaces);
+		if (/@/.test(prefs.login)){
+			var auth_method='email';
+		}else{
+			var auth_method='phone';
+			prefs.login='+7 ('+prefs.login.replace(/[^\d]*/g,'').substr(-10).replace(/(\d{3})(\d{3})(\d{2})(\d{2})/,'$1) $2-$3-$4')
+		}
+
 		html = AnyBalance.requestPost(baseurl + 'ajax/auth_user.php', {
 			AUTH_FORM:	'Y',
 			TYPE:		'AUTH',
 			backurl:	'/personal/',
 			login: prefs.login,
 			password: prefs.password,
-	                auth_method: 'email',
+	                auth_method: auth_method,
 	                CSRF:token
 		}, AB.addHeaders({
 			'X-Requested-With': 'XMLHttpRequest',

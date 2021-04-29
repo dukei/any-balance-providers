@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="112">ab-bonus-fixprice</id>
+	<id version="113">ab-bonus-fixprice</id>
 	<api flags="no_browser"/>
 	<name>FixPrice Бонус</name>
 	<description html="true"><![CDATA[
@@ -8,8 +8,8 @@
 	<p>Информация берется из личного кабинета https://bonus.fix-price.ru/profile</p>
 	<p>
 	]]></description>
-	<author>DimaZ &lt;DIMAZ.KHUA@gmail.com&gt;</author>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<author>DimaZ &lt;DIMAZ.KHUA@gmail.com&gt;</author>
 	<depends>
 		<module id="library"/>
 	</depends>
@@ -21,6 +21,7 @@
 	</files>
 	<counters>
 		<counter id="balance" name="Баланс" units=" баллов"/>
+		<counter id="balance_inactive" name="Неактивный баланс" units=" баллов"/>
 		<counter id="fio" name="ФИО" type="text"/>
 		<counter id="card" name="Номер карты" type="text"/>
 	</counters>

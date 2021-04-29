@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="165">ab-cell-beeline-new</id>
+	<id version="166">ab-cell-beeline-new</id>
 	<name>Билайн (новый кабинет)</name>
 	<api flags="no_browser" min_level="5"/>
 	<description html="true"><![CDATA[
@@ -9,6 +9,7 @@
 	<ul>
 		<li>Россия <a href="https://my.beeline.ru">https://my.beeline.ru</a></li>
 		<li>Казахстан <a href="https://my.beeline.kz">https://my.beeline.kz</a></li>
+		<li>Узбекистан <a href="https://my.beeline.uz">https://my.beeline.uz</a></li>
 	</ul>
 	<b>ВНИМАНИЕ!</b> Если у вас логин и пароль от старого личного кабинета <a href="https://uslugi.beeline.ru">https://uslugi.beeline.ru</a>, используйте провайдер "Билайн" (старый кабинет).
 	]]></description>
@@ -23,7 +24,7 @@
 	</ol>
 	<p><strong>Как отключить уведомления по SMS о входе в личный кабинет:</strong></p>
 	<ol>
-		<li>Зайдите через браузер на сайт <a href="https://my.beeline.ru">https://my.beeline.ru</a> для России и <a href="https://my.beeline.kz">https://my.beeline.kz</a> для Казахстана</li>
+		<li>Зайдите через браузер на сайт <a href="https://my.beeline.ru">https://my.beeline.ru</a> для России, <a href="https://my.beeline.kz">https://my.beeline.kz</a> для Казахстана и  <a href="https://my.beeline.uz">https://my.beeline.uz</a> для Узбекистана</li></li>
 		<li>Перейдите на закладку "Настройки".</li>
 		<li>Нажмите на нужный номер телефона и подождите, пока не раскроется меню.</li>
 		<li>Снимите галочку с пункта "Вход в личный кабинет".</li>
@@ -31,6 +32,7 @@
 	</ol>	
 	<small>Если данные об оставшихся SMS, MMS, минутах и трафике не отображаются в приложении, вначале проверьте, есть ли они в личном кабинете. Если есть, обратитесь к разработчикам.</small>
 	]]></instruction>	
+	<author>DimaZ &lt;DIMAZ.KHUA@gmail.com&gt;</author>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>
 		<module id="library"/>
@@ -41,6 +43,7 @@
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
 		<js>lkkz.js</js>
+		<js>lkuz.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 		<settings target="init">settings_init.xml</settings>
@@ -60,6 +63,7 @@
 		<counter id="traffic_left" name="Остаток трафика" units=" Mb"/>
 		<counter id="traffic_left_night" name="Остаток ночного трафика" units=" Mb"/>
 		<counter id="traffic_bonus" name="Бонусный трафик" units=" Mb"/>
+		<counter id="traffic_rouming" name="Остаток трафика в роуминге" units=" Mb"/>
 		<counter id="min_left_1" name="Остаток минут 1" type="time_interval" format="{@MIN}" units=" мин"/>
 		<counter id="min_left_2" name="Остаток минут 2" type="time_interval" format="{@MIN}" units=" мин"/>
 		<counter id="credit" name="Кредит" units=" {@currency}"/>

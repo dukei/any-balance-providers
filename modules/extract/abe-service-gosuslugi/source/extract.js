@@ -80,11 +80,16 @@ function login(prefs) {
 
 		// А новую оставим на всякий
 		var command = getParam(html, null, null, /new\s+LoginViewModel\((?:[^,]+,){1,2}\s*'([^"']+)'/i);
+		if (!command && /ChallengeId/.test(html)){
+			html=getChalenge(html);
+			command = getParam(html, null, null, /new\s+LoginViewModel\((?:[^,]+,){1,2}\s*'([^"']+)'/i);
+		}
+
 		if (!command) {
 			AnyBalance.trace(html);
 			throw new AnyBalance.Error('Не удалось найти идентификатор команды для входа.');
 		}
-
+		AnyBalance.setCookie('esia.gosuslugi.ru','login_value',prefs.login,{path:'/idp/login/pwd/do'});
 		html = checkForRedirect(AnyBalance.requestPost('https://esia.gosuslugi.ru/idp/login/pwd/do', {
 			mobileOrEmail: prefs.login,
 			login: formattedLogin,
@@ -104,6 +109,37 @@ function login(prefs) {
 
 			html = AnyBalance.requestPost('https://esia.gosuslugi.ru/idp/login/otp/do', params, addHeaders({Referer: AnyBalance.getLastUrl()}));
 		} 
+		var form = getElement(html, /<form[^>]+req-form/i);
+		if(form){
+			AnyBalance.trace('Требуется ответ на вопрос');
+			var request = getElementById(html,'request', replaceTagsAndSpaces);
+			var db=AnyBalance.getData(login+'answerDB');
+			var answer='';
+			if (db){
+				db=getJson(db);
+				answer=db.filter(i=>i.request==request)
+				if (answer.length>0) 
+					answer=answer[0].answer;
+				else
+					answer='';
+			}else{
+				db=[];
+			}
+			if (!answer)
+                        	var answer = AnyBalance.retrieveCode(request);
+			var params = createFormParams(form);
+			params.answer = answer;
+			html = AnyBalance.requestPost('https://esia.gosuslugi.ru/idp/login/pwd/inforeq', params, addHeaders({Referer: AnyBalance.getLastUrl()}));
+			if (/Вы ввели неверные данные!/i.test(html)){
+				throw new AnyBalance.Error('Вы ввели неверные данные!', null, true);
+			}
+			db.push({request:request,answer:answer});
+                        AnyBalance.setData(login+'answerDB',JSON.stringify(db));
+                        AnyBalance.saveData();
+                        html = checkForRedirect(html);
+
+		} 
+
 
 		if (!isLoggedIn(html)) {
 			//Попытаемся получить ошибку авторизации на раннем этапе. Тогда она точнее.
@@ -577,3 +613,36 @@ function apiCallBetaCabinet(method, action, params, addOnHeaders) {
 }
 /////////////////////////////////////////////// Конец блока бета-кабинета ////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+function getChalenge(html){
+	var ChallengeId=getParam(html,/ChallengeId=(\d*)/);
+	var Challenge=getParam(html,/Challenge=(\d*)/);
+	y=test(Challenge);
+	html=AnyBalance.requestPost(AnyBalance.getLastUrl(),'',addHeaders({
+		'X-AA-Challenge-ID': ChallengeId, 
+		'X-AA-Challenge-Result':y,
+		'X-AA-Challenge':Challenge,
+		'X-Requested-With':'ru.rostel',
+		'Content-Type':'text/plain'
+	}))
+	html=AnyBalance.requestGet(AnyBalance.getLastUrl());
+	return html;
+}
+function test(var1)
+{
+	var var_str=""+var1;
+	var var_arr=var_str.split("");
+	var LastDig=var_arr.reverse()[0];
+	var minDig=var_arr.sort()[0];
+	var subvar1 = (2 * (var_arr[2]))+(var_arr[1]*1);
+	var subvar2 = (2 * var_arr[2])+var_arr[1];
+	var my_pow=Math.pow(((var_arr[0]*1)+2),var_arr[1]);
+	var x=(var1*3+subvar1)*1;
+	var y=Math.cos(Math.PI*subvar2);
+	var answer=x*y;
+	answer-=my_pow*1;
+	answer+=(minDig*1)-(LastDig*1);
+	answer=answer+subvar2;
+	return answer;
+}

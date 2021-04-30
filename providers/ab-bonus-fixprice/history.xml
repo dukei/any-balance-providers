@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="113" date="2021-04-29">
+	- Вход по номеру телефона.
+	</change>
 	<change version="112" date="2021-02-08">
 	- Поддержка изменений на сайте.
 	</change>

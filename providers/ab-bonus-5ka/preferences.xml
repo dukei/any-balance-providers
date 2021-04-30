@@ -3,10 +3,10 @@
     <EditTextPreference
         key="login"
         title="Номер карты или телефона"
-        summary="Номер карты для доступа к личному кабинету||{@s}\n"
+        summary="Номер карты или телефона для доступа к личному кабинету||{@s}\n"
         inputType="number"
         dialogTitle="Номер карты или телефона"
-        dialogMessage="Введите номер карты или телефона для входа в личный кабинет. Только цифры без пробелов и разделителей."
+        dialogMessage="Введите номер карты или телефона для входа в личный кабинет."
         positiveButtonText="ОК"
         negativeButtonText="Отмена">
     </EditTextPreference>

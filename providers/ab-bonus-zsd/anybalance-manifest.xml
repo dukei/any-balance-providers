@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id  version="1">ab-bonus-zsd</id>
+	<api flags="no_browser"/>
+	<name>Западный скоростной диаметр (ЗСД)</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе на счете Западный скоростной диаметр (ЗСД) https://nch-spb.com/</p>
+	]]></description>
+	<author>DimaZUA &lt;DIMAZ.KHUA@gmail.com&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="contract_num" name="Договор" type="text"/>
+		<counter id="contract_date" name="Дата договора" type="time" format="dd.MM.YYYY"/>
+	</counters>
+	<keywords>магистраль северной столицы, санкт-петербург, ЗСД, платная дорога</keywords>
+	<type>bonus</type>
+	<country>ru</country>
+</provider>

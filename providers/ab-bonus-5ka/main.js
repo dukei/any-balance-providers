@@ -43,6 +43,10 @@ function callApi(verb, getParams, postParams){
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error(json.error.description, null, /парол/i.test(json.error.description));
 	}
+	if(json.detail){
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error(json.detail, null, /парол/i.test(json.detail));
+	}
 
 	if(json.non_field_errors){
 		AnyBalance.trace(html);
@@ -52,9 +56,8 @@ function callApi(verb, getParams, postParams){
 	return json;
 }
 
-function handshakeAndEstablish(){
-    var prefs = AnyBalance.getPreferences (), html, json;
-
+function handshakeAndEstablish(prefs){
+    var  html, json;
     var handshake = callApi('v1/startup/handshake', null, {
     	app: {
     		platform: 'web',
@@ -65,14 +68,15 @@ function handshakeAndEstablish(){
     });
 
     apiHeaders['X-Authorization'] = 'Token' + handshake.server.features['security/session'].token.value;
-    //AnyBalance.setCookie(domain, 'token', 'Token' + handshake.server.features['security/session'].token.value);
-    //AnyBalance.setCookie(domain, 'header_name', 'X-Authorization');
+    AnyBalance.setCookie(domain, 'token', 'Token' + handshake.server.features['security/session'].token.value);
+    AnyBalance.setCookie(domain, 'header_name', 'X-Authorization');
     AnyBalance.setData('token'+prefs.login,handshake.server.features['security/session'].token.value);
     AnyBalance.saveData();
 
 
 //    var params1 = passCaptcha(handshake);
 
+    for (var i=1;i<6;i++){
     var card = /^\d{16}$/.test(prefs.login);
     json = callApi('v1/auth/signin', null, {
     	login: card ? prefs.login : '+7' + prefs.login,
@@ -89,19 +93,26 @@ function handshakeAndEstablish(){
         throw new AnyBalance.trace('Не удалось войти в личный кабинет. Сайт изменен?');
     }
     var token = json.token;
-
-    var code = AnyBalance.retrieveCode('Пожалуйста, введите код подтверждения для входа в личный кабинет, отправленный вам по СМС', null, {time: 120000, inputType: 'number'});
-
-    json = callApi('v1/auth/2fa', null, {
-    	code: code,
-    	token: token
-    });
-
+    try{
+    	var code = AnyBalance.retrieveCode('Пожалуйста, введите код подтверждения для входа в личный кабинет, отправленный вам по СМС\nПопытка '+i+' из 5\n\nДля отмены введите 1', null, {time: 120000, inputType: 'number'});
+    }catch(e){
+    	AnyBalance.trace(e.message);
+    	AnyBalance.trace('Код не получен. Осталось ' + (5-i) + ' попыток');
+    }
+    if (code){
+    	if (code==1)  throw new AnyBalance.trace('Код подтверждения не получен. Отмена 1', false, true);
+    	json = callApi('v1/auth/2fa', null, {
+    		code: code,
+    		token: token
+    		});
+    	break;
+    }
+    }
     if(!json.__empty && Object.keys(json).length > 0){
     	if(json.code == 4001)
-    		throw new AnyBalance.Error('Неверный код подтверждения. Осталось попыток: ' + json.attempts);
+    		throw new AnyBalance.Error('Неверный код подтверждения.', false, true);
         AnyBalance.trace(JSON.stringify(json));
-        throw new AnyBalance.trace('Не удалось войти в личный кабинет после ввода кода подтверждения. Сайт изменен?');
+        throw new AnyBalance.trace('Не удалось войти в личный кабинет после ввода кода подтверждения. Сайт изменен?', false, true);
     }
     json = callApi('v1/users/me');
     return json;
@@ -110,7 +121,7 @@ function handshakeAndEstablish(){
 function main () {
     var prefs = AnyBalance.getPreferences ();
     AnyBalance.setDefaultCharset('utf-8');
-
+        prefs.login=prefs.login.replace(/([^\d]*)/g,'');
 	checkEmpty(prefs.login, 'Введите 16 цифр номера карты или 10 цифр номера телефона.');
 	checkEmpty(/^\d{16}$/.test(prefs.login) || /^\d{10}$/.test(prefs.login), 'Введите 16 цифр номера карты или 10 цифр номера телефона.');
 	checkEmpty(prefs.password, 'Введите пароль.');
@@ -119,11 +130,13 @@ function main () {
     	AnyBalance.trace('Найден старый токен');
     	apiHeaders['X-Authorization'] = 'Token' + token;
     	AnyBalance.trace('Проверка токена');
-    	var me = callApi('v1/users/me');
-    	if (AnyBalance.getLastStatusCode() >= 401){
-            AnyBalance.trace(me.detail+'\nТокен не подешел. Нужна авторизация');
+    	try{
+    		var me = callApi('v1/users/me');
+    	}catch(e){
+    		AnyBalance.trace(e.message);
+                AnyBalance.trace('Токен не подешел. Нужна авторизация');
     		token='';
-            apiHeaders['X-Authorization'] = '';
+                apiHeaders['X-Authorization'] = '';
     		AnyBalance.setData('token'+prefs.login,'');
     		AnyBalance.saveData();
     	}
@@ -135,34 +148,32 @@ function main () {
     		AnyBalance.trace(html);
     		throw new AnyBalance.Error('Личный кабинет ' + baseurl + ' временно недоступен. Пожалуйста, попробуйте позже');
     	}
-    	var me = handshakeAndEstablish();
-    }
-    if (!me||!me.cards){
-    	token='';
-    	apiHeaders['X-Authorization'] = '';
-    	AnyBalance.setData('token'+prefs.login,'');
-    	AnyBalance.saveData();
-    	throw new AnyBalance.Error('Не удалось войти в личный кабинет. Возможно изменился API');
+    	var me = handshakeAndEstablish(prefs);
     }
     if(!me.cards.main)
-    	throw new AnyBalance.Error('У вас нет карт Пятерочки Выручай-ка');
+    	throw new AnyBalance.Error('У вас нет карт Пятерочки Выручай-ка',false,true);
     
     var result = {success: true};
 
     var card = callApi('v3/cards/' + me.cards.main);
 
-    if(isAvailable(['customer', '__tariff'])){
-    	getParam(me.person.first_name + ' ' + me.person.last_name, result, 'customer');
-    	getParam(card.number.replace(/(\d{4})(\d{4})(\d{4})(\d{4})(\d*)/,'$1-$2-$3-$4 $5').trim(), result, '__tariff');
-//    	getParam(card.number.replace(/(\d{4})(\d{4})(\d{4})(\d{4})(\d*)/,'$1-$2-$3-$4 $5').trim(), result, 'card_number');
-//    	getParam(card.type.verbose_name, result, '__tariff');
-    }
-
-    if(isAvailable(['balance', 'earnedInThisMonth', 'balancePoints'])){
+    var balance = callApi('v2/users/balance/' + me.cards.main);
+    if (balance.points && balance.points.length>0){
+    	balance=balance.points[0];
+    	getParam(balance.points, result, 'balancePoints');
+    	getParam(Math.floor(balance.points/10), result, 'balance');
+    	getParam(balance.expiration.points, result, 'earnedInThisMonth');
+    }else{
     	getParam(card.balance.points, result, 'balancePoints');
     	getParam(Math.floor(card.balance.points/10), result, 'balance');
     	getParam(card.balance.incoming_monthly_points, result, 'earnedInThisMonth');
     }
+    
+    	getParam(me.person.first_name + ' ' + me.person.last_name, result, 'customer');
+    	//getParam(card.number.replace(/(\d{4})(\d{4})(\d{4})(\d{4})(\d*)/,'$1-$2-$3-$4 $5').trim(), result, '__tariff');
+    	getParam(card.number.replace(/(\d{4})(\d{4})(\d{4})(\d{4})(\d*)/,'$1-$2-$3-$4 $5').trim(), result, 'card_number');
+    	getParam(card.type.verbose_name, result, '__tariff');
+
     if(isAvailable('last_transaсtion')){
     try{
     	var t=callApi('v4/transactions/?card=' + me.cards.main+'&offset=0&limit=1');

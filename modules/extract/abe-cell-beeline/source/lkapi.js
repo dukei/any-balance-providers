@@ -239,7 +239,7 @@ function processApiPrepaid(result){
 
 
 	try{
-    	processApiRemaindersPrepaid(result);
+    		processApiRemaindersPrepaid(result);
 	}catch(e){
 		AnyBalance.trace('Не удалось получить бонусы: ' + e.message);
 	}
@@ -274,18 +274,22 @@ function processApiRemaindersPrepaid(result){
 		} else if(curr.unit == 'MMS') {
 			sumParam(curr.rest + ' ' + curr.unit, remainders, 'remainders.mms_left', null, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 		} else if(curr.unit == 'KBYTE') {
+			if (curr.soc=='ROAMGPRS'){
+				sumParam(curr.rest + ' ' + curr.unit, remainders, ['remainders.traffic_rouming'], null, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
+			}else{
 			
-			sumParam(curr.rest + ' ' + curr.unit, remainders, ['remainders.traffic_left', 'remainders.traffic_used'], null, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
-			sumParam(curr.size + ' ' + curr.unit, remainders, ['remainders.traffic_total', 'remainders.traffic_used'], null, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
+				sumParam(curr.rest + ' ' + curr.unit, remainders, ['remainders.traffic_left', 'remainders.traffic_used'], null, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
+				sumParam(curr.size + ' ' + curr.unit, remainders, ['remainders.traffic_total', 'remainders.traffic_used'], null, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
 			
-			if(isset(remainders.traffic_total) && isset(remainders.traffic_left)) {
+			if(isset(remainders.traffic_total) && isset(remainders.traffic_left)) 
 				sumParam(remainders.traffic_total - remainders.traffic_left, remainders, 'remainders.traffic_used', null, null, null, aggregate_sum);
+
 			}
 		} else {
 			AnyBalance.trace('Unknown units: ' + JSON.stringify(curr));
 		}
 	}
-	
+	AnyBalance.trace(JSON.stringify(remainders));
 	json = callAPIProc('1.0/info/prepaidAddBalance', {ctn: prefs.phone});
 	
 	for(var prop in json){

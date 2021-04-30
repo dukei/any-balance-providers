@@ -16,7 +16,10 @@ function main() {
 	
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
-	
+	if(prefs.country == 'uz') {
+	        main_uz();
+	        return;
+	}
 	if(prefs.country == 'kz') {
 		AnyBalance.setCookie('my.beeline.kz', 'ui.language.current', 'ru_RU');
 	} else {
@@ -67,6 +70,7 @@ var g_countersTable = {
 		"min_local": "remainders.min_local",
 		"rub_opros": "remainders.rub_opros",
 		"traffic_left": "remainders.traffic_left",
+		"traffic_rouming": "remainders.traffic_rouming",
 		"traffic_left_night": "remainders.traffic_left_night",
 		"traffic_bonus": "remainders.traffic_bonus",
 		"min_left_1": "remainders.min_left_1",

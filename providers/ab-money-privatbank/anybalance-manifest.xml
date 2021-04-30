@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="19">ab-money-privatbank</id>
+	<id version="20">ab-money-privatbank</id>
 	<api flags="no_browser|sms"/>
 	<name>Приватбанк (Украина)</name>
 	<description html="true"><![CDATA[
@@ -8,11 +8,17 @@
 	]]></description>
 	<instruction html="true"><![CDATA[
 	<ul>
+		<li>Через мобильное приложение (не работает)</li>
 		<li>При первом обновлении баланса на ваш номер будет выслан смс-код для привязки.</li>
 		<li>Введите его во всплывающем окне, больше смс-код приходить не будет для данного логина.</li>
+		<li></li>
+		<li>Через сайт</li>
+		<li>Авторизация проходит через звонок из банка, смс, подтверждение в мобильном приложении или в viber..</li>
+		<li>Повторно подтверждение запрашивается так же часто, как и при обычной авторизации на сайте приватбанка.</li>
 	</ul>
 	]]></instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<author>DimaZUA &lt;DIMAZ.KHUA@gmail.com&gt;</author>
 	<depends>
 		<module id="extract/abe-money-privatbank"/>
 		<module id="nadapter"/>
@@ -21,16 +27,55 @@
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
 		<js>main.js</js>
+		<js>api_new.js</js>
 		<history>history.xml</history>
+<!--		<js target="preferences">preferences.js</js>-->
+
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units=" {@currency}"/>
-		<counter id="limit" name="Лимит по карте" units=" {@currency}"/>
-		<counter id="min_pay" name="Минимальный платеж" units=" {@currency}"/>
-		<counter id="rate" name="Проценты" units="%"/>
+		<counter id="balance" name="Баланс" suffix="{@suflimit}" units=" {@currency}"/>
+		<counter id="bonusPlus" name="Баланс бонус+" units=" {@currency}"/>
+
+		<counter id="INET1" name="Internet card"   suffix="{@INET1_suf}" prefix="{@INET1_pref}" units=" {@INET1_currency}"/>
+		<counter id="INET2" name="Internet card-2"  suffix="{@INET2_suf}" prefix="{@INET2_pref}" units=" {@INET2_currency}"/>
+		<counter id="INET3" name="Internet card-3" suffix="{@INET3_suf}" prefix="{@INET3_pref}" units=" {@INET3_currency}"/>
+
+		<counter id="MSB1" name="Бизнес"   suffix="{@MSB1_suf}" prefix="{@MSB1_pref}" units=" {@MSB1_currency}"/>
+        	<counter id="MSB2" name="Бизнес-2"  suffix="{@MSB2_suf}" prefix="{@MSB2_pref}" units=" {@MSB2_currency}"/>
+		<counter id="MSB3" name="Бизнес-3" suffix="{@MSB3_suf}" prefix="{@MSB3_pref}" units=" {@MSB3_currency}"/>
+
+		<counter id="KDV1" name="Для выплат"   suffix="{@KDV1_suf}" prefix="{@KDV1_pref}" units=" {@KDV1_currency}"/>
+		<counter id="KDV2" name="Для выплат-2"  suffix="{@KDV2_suf}" prefix="{@KDV2_pref}" units=" {@KDV2_currency}"/>
+		<counter id="KDV3" name="Для выплат-3" suffix="{@KDV3_suf}" prefix="{@KDV3_pref}" units=" {@KDV3_currency}"/>
+
+		<counter id="KUN1" name="Универсальная"   suffix="{@KUN1_suf}" prefix="{@KUN1_pref}" units=" {@KUN1_currency}"/>
+		<counter id="KUN2" name="Универсальная-2"  suffix="{@KUN2_suf}" prefix="{@KUN2_pref}" units=" {@KUN2_currency}"/>
+		<counter id="KUN3" name="Универсальная-3" suffix="{@KUN3_suf}" prefix="{@KUN3_pref}" units=" {@KUN3_currency}"/>
+
+		<counter id="card1" name="Карта 1" suffix="{@card1_suf}" prefix="{@card1_pref}" units=" {@card1_currency}"/>
+		<counter id="card2" name="Карта 2" suffix="{@card2_suf}" prefix="{@card2_pref}" units=" {@card2_currency}"/>
+		<counter id="card3" name="Карта 3" suffix="{@card3_suf}" prefix="{@card3_pref}" units=" {@card3_currency}"/>
+		<counter id="card4" name="Карта 4" suffix="{@card4_suf}" prefix="{@card4_pref}" units=" {@card4_currency}"/>
+		<counter id="card5" name="Карта 5" suffix="{@card5_suf}" prefix="{@card5_pref}" units=" {@card5_currency}"/>
+		<counter id="card6" name="Карта 6" suffix="{@card6_suf}" prefix="{@card6_pref}" units=" {@card6_currency}"/>
+		<counter id="card7" name="Карта 7" suffix="{@card7_suf}" prefix="{@card7_pref}" units=" {@card7_currency}"/>
+		<counter id="card8" name="Карта 8" suffix="{@card8_suf}" prefix="{@card8_pref}" units=" {@card8_currency}"/>
+		<counter id="card9" name="Карта 9" suffix="{@card9_suf}" prefix="{@card9_pref}" units=" {@card9_currency}"/>
+
+		<counter id="DEP1" name="Депозит 1" suffix="{@DEP1_suf}" prefix="{@DEP1_pref}" units=" {@DEP1_currency}"/>
+		<counter id="DEP2" name="Депозит 2" suffix="{@DEP2_suf}" prefix="{@DEP2_pref}" units=" {@DEP2_currency}"/>
+		<counter id="DEP3" name="Депозит 3" suffix="{@DEP3_suf}" prefix="{@DEP3_pref}" units=" {@DEP3_currency}"/>
+
+		<counter id="limit" name="Кредитный лимит" units=" {@currency}"/>
 		<counter id="card_number" name="Номер карты" type="text"/>
 		<counter id="card_name" name="Название карты" type="text"/>
 		<counter id="currency" name="Валюта" type="text"/>
+
+		<counter id="info" name="Информация о картах" type="html"/>
+		<counter id="statment" name="Выписка по картам" type="html"/>
+
+		<counter id="depdateclose" name="Ближайшая дата окончания депозита" prefix="{@DEPodateclose_pref}" type="time" format="dd.MM.yyyy"/>
+                
 	</counters>
 	<keywords>приват, банк, украина</keywords>
 	<type>money, bank</type>

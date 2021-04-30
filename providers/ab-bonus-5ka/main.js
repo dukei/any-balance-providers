@@ -76,6 +76,7 @@ function handshakeAndEstablish(prefs){
 
 //    var params1 = passCaptcha(handshake);
 
+    for (var i=1;i<6;i++){
     var card = /^\d{16}$/.test(prefs.login);
     json = callApi('v1/auth/signin', null, {
     	login: card ? prefs.login : '+7' + prefs.login,
@@ -92,19 +93,26 @@ function handshakeAndEstablish(prefs){
         throw new AnyBalance.trace('Не удалось войти в личный кабинет. Сайт изменен?');
     }
     var token = json.token;
-
-    var code = AnyBalance.retrieveCode('Пожалуйста, введите код подтверждения для входа в личный кабинет, отправленный вам по СМС', null, {time: 120000, inputType: 'number'});
-
-    json = callApi('v1/auth/2fa', null, {
-    	code: code,
-    	token: token
-    });
-
+    try{
+    	var code = AnyBalance.retrieveCode('Пожалуйста, введите код подтверждения для входа в личный кабинет, отправленный вам по СМС\nПопытка '+i+' из 5\n\nДля отмены введите 1', null, {time: 120000, inputType: 'number'});
+    }catch(e){
+    	AnyBalance.trace(e.message);
+    	AnyBalance.trace('Код не получен. Осталось ' + (5-i) + ' попыток');
+    }
+    if (code){
+    	if (code==1)  throw new AnyBalance.trace('Код подтверждения не получен. Отмена 1', false, true);
+    	json = callApi('v1/auth/2fa', null, {
+    		code: code,
+    		token: token
+    		});
+    	break;
+    }
+    }
     if(!json.__empty && Object.keys(json).length > 0){
     	if(json.code == 4001)
-    		throw new AnyBalance.Error('Неверный код подтверждения. Осталось попыток: ' + json.attempts);
+    		throw new AnyBalance.Error('Неверный код подтверждения.', false, true);
         AnyBalance.trace(JSON.stringify(json));
-        throw new AnyBalance.trace('Не удалось войти в личный кабинет после ввода кода подтверждения. Сайт изменен?');
+        throw new AnyBalance.trace('Не удалось войти в личный кабинет после ввода кода подтверждения. Сайт изменен?', false, true);
     }
     json = callApi('v1/users/me');
     return json;
@@ -141,13 +149,6 @@ function main () {
     		throw new AnyBalance.Error('Личный кабинет ' + baseurl + ' временно недоступен. Пожалуйста, попробуйте позже');
     	}
     	var me = handshakeAndEstablish(prefs);
-    }
-    if (!me||!me.cards){
-    	token='';
-    	apiHeaders['X-Authorization'] = '';
-    	AnyBalance.setData('token'+prefs.login,'');
-    	AnyBalance.saveData();
-    	throw new AnyBalance.Error('Не удалось войти в личный кабинет. Возможно изменился API',false,true);
     }
     if(!me.cards.main)
     	throw new AnyBalance.Error('У вас нет карт Пятерочки Выручай-ка',false,true);

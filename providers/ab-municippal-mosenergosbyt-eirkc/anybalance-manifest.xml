@@ -1,13 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="11">ab-municippal-mosenergosbyt-eirkc</id>
+	<id version="12">ab-municippal-mosenergosbyt-eirkc</id>
 	<api flags="no_browser"/>
 	<name>МосОблЕИРЦ</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию но номерам лицевого счёта в Мособлеирц https://lkk-zkh.ru/</p>
-	<p>Информация берется из личного кабинета https://lkk-zkh.ru/</p>
+	<p>Предоставляет информацию но номерам лицевого счёта в Мособлеирц https://my.mosenergosbyt.ru/</p>
+	<p>Информация берется из личного кабинета https://my.mosenergosbyt.ru/</p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<author>DimaZUA &lt;DIMAZ.KHUA@gmail.com&gt;</author>
 	<depends>
 		<module id="library"/>
 	</depends>
@@ -18,10 +19,15 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units=" {@currency}"/>
-		<counter id="cost" name="Начислено" units=" {@currency}"/>
-		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="balance" name="Баланс" units=" р."/>
+		<counter id="cost" name="Начислено" units=" р."/>
+		<counter id="pay" name="Оплачено" units=" р."/>
 		<counter id="licschet" name="Лицевой счёт" type="text"/>
+		<counter id="service" name="Услуга" type="text"/>
+		<counter id="indicator" name="Показания счетчика" type="html"/>
+		<counter id="IndicationCounter" name="Передача показаний через" units=" дн."/>
+		<counter id="adr" name="Адрес" type="text"/>
+		<counter id="provider" name="Поставщик услуги" type="text"/>
 	</counters>
 	<keywords></keywords>
 	<type>municipal</type>

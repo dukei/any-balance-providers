@@ -404,12 +404,16 @@ function loginSite(prefs, data) {
             i++;
             return i + '.' + (j.card_currency != 'UAH' ? j.card_currency + ' ' : '') + j.card_name + ' (' + j.card_mask + ')'
         }).join('\n');
-        var cardNum = parseInt(AnyBalance.retrieveCode('Введите номер карты, от которой Вы помните PIN-код\n' + cards, null, {
+        var cardNum = parseInt(AnyBalance.retrieveCode('Выберите карту, от которой Вы помните PIN-код\n' + cards+'\nВведите число от 1 до '+i, null, {
             time: 60000,
             inputType: 'number',
             minLength: 1,
             maxLength: 2,
         })) - 1;
+        if (!json.data.cardlist[cardNum]) {
+        	Anybalance.trace('Введено "'+cardNum+'" при выборе от 1 до '+i);
+        	throw new AnyBalance.Error("Карта для ввода PIN не найдена", false, true);
+        	}
         var pin = AnyBalance.retrieveCode('Введите PIN-код, от карты\n' + (json.data.cardlist[cardNum].card_currency != 'UAH' ? json.data.cardlist[cardNum].card_currency + ' ' : '') + json.data.cardlist[cardNum].card_name + ' (' + json.data.cardlist[cardNum].card_mask + ')\nОсталось попыток:' + json.data.check_pin_counter, null, {
             time: 60000,
             inputType: 'number',

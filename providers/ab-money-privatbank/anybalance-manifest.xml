@@ -4,17 +4,13 @@
 	<api flags="no_browser|sms"/>
 	<name>Приватбанк (Украина)</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе на картах Приватбанка <a href="http://privatbank.ua/">http://privatbank.ua/</a></p>
+	<p>Предоставляет информацию о балансе на картах и депозитах Приватбанка <a href="http://privatbank.ua/">http://privatbank.ua/</a></p>
 	]]></description>
 	<instruction html="true"><![CDATA[
 	<ul>
-		<li>Через мобильное приложение (не работает)</li>
-		<li>При первом обновлении баланса на ваш номер будет выслан смс-код для привязки.</li>
+		<li>При первом обновлении баланса будет запрошен пароль от приват24, далее на Ваш номер будет совершен звонок от приватбанка или выслан смс-код для привязки.</li>
 		<li>Введите его во всплывающем окне, больше смс-код приходить не будет для данного логина.</li>
-		<li></li>
-		<li>Через сайт</li>
-		<li>Авторизация проходит через звонок из банка, смс, подтверждение в мобильном приложении или в viber..</li>
-		<li>Повторно подтверждение запрашивается так же часто, как и при обычной авторизации на сайте приватбанка.</li>
+		<li>После этого может быть запрошен PIN-код от одной из Ваших карт</li>
 	</ul>
 	]]></instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
@@ -77,7 +73,7 @@
 		<counter id="depdateclose" name="Ближайшая дата окончания депозита" prefix="{@DEPodateclose_pref}" type="time" format="dd.MM.yyyy"/>
                 
 	</counters>
-	<keywords>приват, банк, украина</keywords>
+	<keywords>приват, банк, украина, Бонус+</keywords>
 	<type>money, bank</type>
 	<country>ua</country>
 </provider>

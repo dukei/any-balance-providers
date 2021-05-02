@@ -8,7 +8,7 @@
 		dialogTitle="Логин"
 		positiveButtonText="ОК"
 		negativeButtonText="Отмена"
-		dialogMessage="Введите логин, используемый для входа в личный кабинет.">
+		dialogMessage="Введите телефон или e-mail, используемый для входа в личный кабинет.">
 	</EditTextPreference>
 	<EditTextPreference
 		title="Пароль"
@@ -24,11 +24,11 @@
 	<EditTextPreference
 		title="№ лицевого счёта (необязательно)"
 		key="account"
-		summary="||{@s}"
+		summary="|первый найденный|{@s}"
 		obligatory="true"
 		dialogTitle="№ лицевого счёта"
 		positiveButtonText="ОК"
 		negativeButtonText="Отмена"
-		dialogMessage="Введите номер лицевого счёта, только цифры, например 123456">
+		dialogMessage="Введите последние цифры номера лицевого счёта, по которому нужно получить данные. Если оставить это поле пустым - данные будут отображены по первому найденному лицевому счету">
 	</EditTextPreference>
 </PreferenceScreen>

@@ -7,7 +7,7 @@
         dialogTitle="Логин" 
         negativeButtonText="Отмена" 
         obligatory="true"
-        dialogMessage="Введите логин в личный кабинет."
+        dialogMessage="Введите логин, используемый для входа в личный кабинет - номер лицевого счета, номер телефона или e-mail"
         key="login">
     </EditTextPreference>
     <EditTextPreference 

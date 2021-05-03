@@ -8,7 +8,7 @@
 		dialogTitle="Логин"
 		positiveButtonText="ОК"
 		negativeButtonText="Отмена"
-		dialogMessage="Введите номер телефона в формате 707XXXXXXX или 747XXXXXXX.">
+		dialogMessage="Введите номер телефона">
 	</EditTextPreference>
 	<EditTextPreference
 		obligatory="true"
@@ -21,4 +21,12 @@
 		dialogMessage="Введите пароль, используемый для входа в личный кабинет."
 		inputType="textPassword">
 	</EditTextPreference>
+	<CheckBoxPreference
+        	key="show_amount"
+        	title="Всего в пакете услуг"
+        	summary="Отображение общего количество sms, mms, минут, мегабайт в пакете"
+        	summaryOn="Отображать общее количество в пакете"
+        	summaryOff="Не отображать общее количество в пакете"
+        	defaultValue="false"/>
+
 </PreferenceScreen>

@@ -1,10 +1,13 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="10" date="2021-05-08">
+	Изменился адрес сайта (cbilling.in)
+	</change>
 	<change version="9" date="2017-01-16">
-	Изменился адрес сайта
+	Изменился адрес сайта (cbilling.tv)
 	</change>
 	<change version="8" date="2016-12-19">
-	- Поддержка изменений на сайте.
+	- Поддержка изменений на сайте (cbilling.bz)
 	</change>
 	<change version="7" date="2016-09-30">
 	- Исправлено получение счётчика "Дата окончания".

@@ -1,16 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="9">ab-sharing-cbilling</id>
-	<api flags="no_browser"/>
-	<name>Cardsharing-Server LLC (cbilling.bz)</name>
+	<id version="10">ab-sharing-cbilling</id>
+	<api flags="no_browser|captcha"/>
+	<name>Cardsharing-Server LLC</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию  из личного кабинета кардшаринг сервера Cardsharing-Server LLC <a href="https://cbilling.tv/">https://cbilling.tv/</a></p>
+	<p>Предоставляет информацию  из личного кабинета кардшаринг сервера Cardsharing-Server LLC <a href="https://cbilling.in/">https://cbilling.in/</a></p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>
 		<module id="library"/>
-  </depends>
+	</depends>
 	<files>
+		<js>library.min.js</js>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
 		<js>main.js</js>
@@ -24,7 +25,7 @@
 		<counter id="server" name="Сервер" type="text"/>
 		<counter id="__tariff" name="Ваш Тариф" type="text"/>
 	</counters>
-	<keywords>Cardsharing-Server LLC кардшаринг, Кардшаринг сервер, cardsharing-server.ru </keywords>
+	<keywords>Cardsharing-Server LLC кардшаринг, Кардшаринг сервер, cardsharing-server.ru, cbilling</keywords>
 	<type>sharing</type>
 	<country>ru</country>
 </provider>

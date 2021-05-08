@@ -1,23 +1,18 @@
-﻿
-/**
-Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
-*/
-
-var g_headers = {
+﻿var g_headers = {
 	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
 	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
 	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
 	'Connection': 'keep-alive',
-	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
+	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36'
 };
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'https://cbilling.tv/';
+	var baseurl = 'https://cbilling.in/';
 	AnyBalance.setDefaultCharset('utf-8');
 
-	AB.checkEmpty(prefs.login, 'Введите логин!');
-	AB.checkEmpty(prefs.password, 'Введите пароль!');
+	checkEmpty(prefs.login, 'Введите логин!');
+	checkEmpty(prefs.password, 'Введите пароль!');
 
 	var html = AnyBalance.requestGet(baseurl + '?mode=auth', g_headers);
 
@@ -28,7 +23,7 @@ function main() {
 
 	if (AnyBalance.getLevel() >= 7) {
 		AnyBalance.trace('Пытаемся ввести капчу');
-		var urlPart = AB.getParam(html, null, null, /libs\/securimage\/securimage_show[^"]*/i);
+		var urlPart = getParam(html, null, null, /libs\/securimage\/securimage_show[^"]*/i);
 		var picture = AnyBalance.requestGet(baseurl + urlPart);
 		var captchaValue;
 		captchaValue = AnyBalance.retrieveCode("Пожалуйста, решите пример на картинке", picture);
@@ -38,8 +33,8 @@ function main() {
 	}
 
 	html = AnyBalance.requestPost(baseurl + '?mode=auth', {
-		login: prefs.login,
-		password: prefs.password,
+		'login': prefs.login,
+		'password': prefs.password,
 		'code': captchaValue,
 		'do': 'Войти',
 	}, AB.addHeaders({
@@ -56,7 +51,7 @@ function main() {
 			throw new AnyBalance.Error('Вы ввели неверные символы с картинки!');
 		}
 
-		var error = AB.getParam(html, null, null, /MessageError["'][^>]*>([\s\S]*?)<\/div>/i, AB.replaceTagsAndSpaces);
+		var error = AB.getParam(html, null, null, /MessageError["'][^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
 
 		if (error) {
 			throw new AnyBalance.Error(error, null, /Проверьте логин и пароль/i.test(error));
@@ -70,12 +65,12 @@ function main() {
 		success: true
 	};
 
-	AB.getParam(html, result, 'balance', 				/Баланс:([^<(]*)/i, 													  AB.replaceTagsAndSpaces, AB.parseBalance);
-	AB.getParam(html, result, ['currency', 'balance'], 	/Баланс:([^<(]*)/i, 													  AB.replaceTagsAndSpaces, AB.parseCurrency);
-	AB.getParam(html, result, '__tariff', 				/Ваши пакеты(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, 				  AB.replaceTagsAndSpaces);
-	AB.getParam(html, result, 'date', 					/Дата завершения(?:[\s\S]*?<div[^>]*>){3}([^<]*)/i, 					  AB.replaceTagsAndSpaces, AB.parseDateISO);
-	AB.getParam(html, result, 'server', 				/Ваш сервер:(?:[\s\S]*?<b[^>]*>){1}([\s\S]*?)<\/b>/i, 				      AB.replaceTagsAndSpaces);
-	AB.getParam(html, result, 'days', 					/Осталось дней([\s\S]*?)<\//i, 											  AB.replaceTagsAndSpaces, AB.parseBalance);
+	getParam(html, result, 'balance', 				/Баланс:([^<(]*)/i, 													  replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, ['currency', 'balance'], 	/Баланс:([^<(]*)/i, 												  replaceTagsAndSpaces, parseCurrency);
+	getParam(html, result, '__tariff', 				/Ваши пакеты(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, 				  replaceTagsAndSpaces);
+	getParam(html, result, 'date', 					/Дата завершения(?:[\s\S]*?<div[^>]*>){3}([^<]*)/i, 					  replaceTagsAndSpaces, parseDateISO);
+	getParam(html, result, 'server', 				/Ваш сервер:(?:[\s\S]*?<b[^>]*>){1}([\s\S]*?)<\/b>/i, 				      replaceTagsAndSpaces);
+	getParam(html, result, 'days', 					/Осталось дней([\s\S]*?)<\//i, 											  replaceTagsAndSpaces, parseBalance);
 
 	AnyBalance.setResult(result);
 }

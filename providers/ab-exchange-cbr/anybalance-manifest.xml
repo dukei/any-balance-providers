@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="10">ab-exchange-cbr</id>
+	<id version="11">ab-exchange-cbr</id>
 	<api flags="no_browser"/>
 	<name>Курсы валют ЦБ России</name>
 	<description html="true"><![CDATA[
@@ -8,21 +8,50 @@
 	<p>Показывает курс доллара, евро, фунта, белорусского рубля, тенге, юаня, гривны, швейцарского франка, йены.</p>
 	]]></description>
 	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<author>DimaZUA &lt;DIMAZ.KHUA@gmail.com&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<history>history.xml</history>
 		<js>main.js</js>
 	</files>
 	<counters>
-		<counter id="USD" name="Курс доллара" prefix="$ "/>
-		<counter id="EUR" name="Курс евро" prefix="€ "/>
-		<counter id="GBP" name="Курс фунта" prefix="£ "/>
-		<counter id="BYR" name="Курс бел.рубля" prefix="Br "/>
-		<counter id="KZT" name="Курс тенге" prefix="T "/>
-		<counter id="CNY" name="Курс юаня" prefix="Ұ "/>
-		<counter id="UAH" name="Курс гривны" prefix="₴ "/>
-		<counter id="CHF" name="Курс франка" prefix="₣ "/>
-		<counter id="JPY" name="Курс йены" prefix="¥ "/>
+		<counter id="USD" name="Доллар США" prefix="{@USDpref}"/>
+		<counter id="EUR" name="Евро" prefix="{@EURpref}"/>
+		<counter id="GBP" name="Фунт стерлингов Соединенного королевства" prefix="{@GBPpref}"/>
+		<counter id="BYN" name="Белорусский рубль" prefix="{@BYNpref}"/>
+		<counter id="KZT" name="Казахстанских тенге" prefix="{@KZTpref}"/>
+		<counter id="CNY" name="Китайский юань" prefix="{@CNYpref}"/>
+		<counter id="UAH" name="Украинских гривен" prefix="{@UAHpref}"/>
+		<counter id="CHF" name="Швейцарский франк" prefix="{@CHFpref}"/>
+		<counter id="JPY" name="Японских иен" prefix="{@JPYpref}"/>
+		<counter id="AMD" name="Армянских драмов" prefix="{@AMDpref}"/>
+		<counter id="AUD" name="Австралийский доллар" prefix="{@AUDpref}"/>
+		<counter id="AZN" name="Азербайджанский манат" prefix="{@AZNpref}"/>
+		<counter id="BGN" name="Болгарский лев" prefix="{@BGNpref}"/>
+		<counter id="BRL" name="Бразильский реал" prefix="{@BRLpref}"/>
+		<counter id="CAD" name="Канадский доллар" prefix="{@CADpref}"/>
+		<counter id="CZK" name="Чешских крон" prefix="{@CZKpref}"/>
+		<counter id="DKK" name="Датская крона" prefix="{@DKKpref}"/>
+		<counter id="HKD" name="Гонконгских долларов" prefix="{@HKDpref}"/>
+		<counter id="HUF" name="Венгерских форинтов" prefix="{@HUFpref}"/>
+		<counter id="INR" name="Индийских рупий" prefix="{@INRpref}"/>
+		<counter id="KGS" name="Киргизских сомов" prefix="{@KGSpref}"/>
+		<counter id="KRW" name="Вон Республики Корея" prefix="{@KRWpref}"/>
+		<counter id="MDL" name="Молдавских леев" prefix="{@MDLpref}"/>
+		<counter id="NOK" name="Норвежских крон" prefix="{@NOKpref}"/>
+		<counter id="PLN" name="Польский злотый" prefix="{@PLNpref}"/>
+		<counter id="RON" name="Румынский лей" prefix="{@RONpref}"/>
+		<counter id="SEK" name="Шведских крон" prefix="{@SEKpref}"/>
+		<counter id="SGD" name="Сингапурский доллар" prefix="{@SGDpref}"/>
+		<counter id="TJS" name="Таджикских сомони" prefix="{@TJSpref}"/>
+		<counter id="TMT" name="Новый туркменский манат" prefix="{@TMTpref}"/>
+		<counter id="TRY" name="Турецких лир" prefix="{@TRYpref}"/>
+		<counter id="UZS" name="Узбекских сумов" prefix="{@UZSpref}"/>
+		<counter id="XDR" name="СДР (специальные права заимствования)" prefix="{@XDRpref}"/>
+		<counter id="ZAR" name="Южноафриканских рэндов" prefix="{@ZARpref}"/>
 		<counter id="date" name="Дата курса" type="text"/>
 	</counters>
 	<keywords>Курс валют, центральный банк, центробанк рф, доллар, евро, фунт, белорусский рубль, тенге, юань, гривна, франк, йена, форекс, forex</keywords>

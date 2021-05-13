@@ -26,7 +26,10 @@ function main() {
 
 	var result = {success: true};
 	var matches=info.match(/<Valute[\s\S]*?<\/Valute>/g)
-	matches.map(valut=>getRate(result,valut));
+	//matches.map(valut=>getRate(result,valut));
+	if (matches && matches.length>0)
+		for (var i=0;i<matches.length;i++)
+			getRate(result,matches[i])
 	getParam(info, result, 'date',/Date="([^"]*)/);
 	result.__tariff=result.date;
 	

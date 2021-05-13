@@ -1,5 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="11" date="2021-05-13">
+	- Поддержка изменений на сайте.
+	- добавлены валюты.
+	</change>
 	<change version="10" date="2015-01-06">
 	- Улучшена обработка ошибок.
 	</change>

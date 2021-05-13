@@ -1,5 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="16" date="2021-05-02">
+        - Исправленно отображение баланса
+	- Добавлены новые счетчики
+	</change>
 	<change version="15" date="2021-02-08">
 	- Поддержка изменений на сайте.
 	</change>

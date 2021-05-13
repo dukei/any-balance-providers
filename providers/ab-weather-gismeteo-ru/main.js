@@ -23,6 +23,7 @@ function main() {
   //Чтобы всегда был старый дизайн
   AnyBalance.setCookie(domain, 'old', '1');
   AnyBalance.setCookie(domain, 'old_auto', '1');
+  AnyBalance.setCookie(domain, 'droped_old', '1');
 
   // Если не числа, значит надо сделать доп запрос для поиска индекса города
   if (!/^\d+$/i.test(prefs.city)) {

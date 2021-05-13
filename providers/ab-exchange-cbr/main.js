@@ -1,59 +1,36 @@
 /**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 */
+const prefix={USD:'$', EUR:'€', GBP:'£', BYN:'Br', KZT:'T', CNY:'Ұ', UAH:'₴', CHF:'₣', JPY:'¥'}
 
-function getRateText(result, info, namein, nameout, force) {
-	var matches, regexp = new RegExp('"' + namein + '"[^"]*"([^"]*)"', 'i');
-	if (matches = info.match(regexp)) {
-		if (force || AnyBalance.isAvailable(nameout)) {
-			result[nameout] = matches[1];
-		}
-	}
-}
-
-function getRate(result, info, namein, nameout) {
-	var matches, regexp = new RegExp('"' + namein + '"[^"]*"([\\d\\.\\,]*)"', 'i');
-	if (matches = info.match(regexp)) {
-		if (AnyBalance.isAvailable(nameout)) {
-			var val = matches[1].replace(',', '.');
-			if(!val) {
-				result[nameout] = null;
-			} else {
-				result[nameout] = parseFloat(val);
-			}
-		}
-	} else {
-		if (AnyBalance.isAvailable(nameout)) {
-			result[nameout] = null;
-		}
-	}
+function getRate(result, valut) {
+	var CharCode=getParam(valut,/<CharCode>([^<]*)/);
+        //var nominal=getParam(valut+' ',/<Nominal>([^<]*)/,null,parseBalance);
+        result[CharCode]=getParam(valut+' ',/<Value>([^<]*)/,null,parseBalance);
+        result[CharCode+'pref']=(prefix[CharCode]||CharCode)+' ';
 }
 
 function main() {
-	AnyBalance.trace('Connecting to forex...');
+	AnyBalance.trace('Connecting to cbr...');
 	
-	var info = AnyBalance.requestGet('http://informers.forexpf.ru/php/cbrf.php?id=012345678');
+	var info = AnyBalance.requestGet('http://www.cbr.ru/scripts/XML_daily.asp');
 
 	// Нужно для улучшения обработки ошибок в след версии
-	AnyBalance.trace(info);
+	//AnyBalance.trace(info);
+
+	if(AnyBalance.getLastStatusCode() >= 500)
+	    	var info = AnyBalance.requestGet('https://www.cbr-xml-daily.ru/daily_utf8.xml');
 
 	if(AnyBalance.getLastStatusCode() >= 500)
 	    throw new AnyBalance.Error('Сервер временно недоступен. Пожалуйста, попробуйте позже.');
 
 	var result = {success: true};
-	
-	getRate(result, info, 'usrutm', 'USD');
-	getRate(result, info, 'eurutm', 'EUR');
-	getRate(result, info, 'gbrutm', 'GBP');
-	getRate(result, info, 'byrutm', 'BYR');
-	getRate(result, info, 'kzrutm', 'KZT');
-	getRate(result, info, 'cnrutm', 'CNY');
-	getRate(result, info, 'uarutm', 'UAH');
-	getRate(result, info, 'chrutm', 'CHF');
-	getRate(result, info, 'jprutm', 'JPY');
-	
-	getRateText(result, info, 'pfdt2', 'date');
-	getRateText(result, info, 'pfdt2', '__tariff', true);
+	var matches=info.match(/<Valute[\s\S]*?<\/Valute>/g)
+	matches.map(valut=>getRate(result,valut));
+	getParam(info, result, 'date',/Date="([^"]*)/);
+	result.__tariff=result.date;
 	
 	AnyBalance.setResult(result);
 }
+
+

@@ -1,13 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id version="1">ab-social-4pda</id>
+	<id version="2">ab-social-4pda</id>
 	<name>4pda.ru</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию с форума <a href="https://4pda.ru/forum/index.php">4PDA.ru</a>.</p>
+	<p>Предоставляет информацию с форума <a href="https://4pda.to/forum/index.php">4PDA.to</a>.</p>
 	]]></description>
 	<instruction html="true"><![CDATA[
-	<p>Для работы провайдера необходимо зарегистрироваться на <a href="https://4pda.ru/forum/index.php">4PDA.ru</a>.</p>
+	<p>Для работы провайдера необходимо зарегистрироваться на <a href="https://4pda.to/forum/index.php">4PDA.to</a>.</p>
 
 	]]></instruction>
 	<author>DimaZUA &lt;DIMAZ.KHUA@gmail.com&gt;</author>

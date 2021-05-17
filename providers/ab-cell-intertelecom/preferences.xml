@@ -22,4 +22,10 @@
 		positiveButtonText="ОК"
 		inputType="textPassword">
 	</EditTextPreference>
+	<CheckBoxPreference
+		title="Названия пакетов SMS, минут, мегабайт"
+		defaultValue="true"
+		summaryOn="Показывать названия пакетов"
+		summaryOff="Не показывать названия пакетов"
+		key="needPref" />
 </PreferenceScreen>

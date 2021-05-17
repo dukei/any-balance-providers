@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="53">ab-cell-intertelecom</id>
+  <id version="54">ab-cell-intertelecom</id>
   <api flags="no_browser" />
   <name>Интертелеком</name>
 	<description html="true"><![CDATA[
@@ -14,7 +14,6 @@
 	<li>Для получения утерянного пароля зайдите в раздел восстановления пароля http://assa.intertelecom.ua/ru/recovery.</li>
 	</ul>   
 	]]></instruction>
-  <author>Ignatiy Goloviznin &lt;igoloviznin@gmail.com&gt;</author>
   <author>DimaZUA &lt;DIMAZ.KHUA@gmail.com&gt;</author>
 	<depends>
 		<module id="library"/>
@@ -24,52 +23,40 @@
     <preferences>preferences.xml</preferences>
     <js>main.js</js>
     <history>history.xml</history>
+    <js>library.min.js</js>
   </files>
   <counters>
-    <counter id="saldo" name="Сальдо" suffix=" ₴" type="numeric"/>
-    <counter id="perevod" name="Доступно для перевода" suffix=" ₴" type="numeric"/>
-    <counter id="predoplata" name="Предоплаченые услуги на месяц" suffix=" ₴" type="numeric"/>
-    <counter id="bonus" name="Неактивированные бонусы (с 094)" suffix=" ₴" type="numeric"/>
-    <counter id="min_it" name="Минуты Интертелеком и Местные" type="time_interval" format="{@H} ч. {@min} мин."/>
-    <counter id="min_local" name="Местные минуты" type="time_interval" format="{@H} ч. {@min} мин."/>
-    <counter id="min_local_uk" name="Местные минуты и по Украине" type="time_interval" format="{@H} ч. {@min} мин."/>
-    <counter id="min_uk_mob" name="Минуты по Украине на мобильные" type="time_interval" format="{@H} ч. {@min} мин."/>
-    <counter id="min_uk_mob_uk" name="Минуты по Украине на мобильные и городские" type="time_interval" format="{@H} ч. {@min} мин."/>
-    <counter id="min_rus" name="Минуты по России" type="time_interval" format="{@H} ч. {@min} мин."/>
-    <counter id="bonus_pl" name="Бонус по программе лояльности «Наилучшее общение»" suffix=" ₴" type="numeric" flags="zero_when_empty"/>
-    <counter id="traffic_paket" name="Пакетный трафик" units=" mb"/>
-    <counter id="traffic_paket_revb" name="Пакетный трафик (Rev.B)" units=" mb"/>
-    <counter id="traffic_smart" name="Трафик Смартфон" units=" mb"/>
-    <counter id="traffic_night" name="Трафик ночной" units=" mb"/>
-    <counter id="traffic_it" name="Трафик IT" units=" mb"/>
-    <counter id="traffic_3g_turbo" name="Трафик 3G_TURBO" units=" mb"/>
-    <counter id="traffic_session" name="Трафик за текущую сессию" units=" mb"/>
-    <counter id="bonus_fb" name="Бонус по акциям" suffix=" ₴" type="numeric" flags="zero_when_empty"/>
-    <counter id="bonus_vd" name="Бонус «Вільний доступ»" suffix=" ₴" type="numeric" flags="zero_when_empty"/>
-    <counter id="bonus_pr" name="Лояльный Бонус" suffix=" ₴" type="numeric" flags="zero_when_empty"/>
-    <counter id="sms_ukr" name="СМС по Украине" suffix=" sms" type="numeric" flags="zero_when_empty"/>    
-    <counter id="traffic_action" name="Трафик по акции" units=" mb" flags="zero_when_empty"/>
-    <counter id="bonus_action_current" name="Акционный счет на текущий месяц" suffix=" ₴" type="numeric" flags="zero_when_empty"/>
-    <counter id="bonus_action_next" name="Акционный счет на следующие месяцы" suffix=" ₴" type="numeric" flags="zero_when_empty"/>
-    <counter id="date_activity" name="Дата последней абонентской активности" type="time" format="dd.MM.yyyy"/>
-    <counter id="date_bonus_fb" name="Срок действия бонусов по акциям" type="time" format="dd.MM.yyyy"/>
-    <counter id="date_bonus_pr" name="Срок действия Лояльного Бонуса" type="time" format="dd.MM.yyyy"/>
-    <counter id="date_traffic_action" name="Срок действия трафика по акции" type="time" format="dd.MM.yyyy"/>
-    <counter id="date_bezlimit" name="Срок действия безлимита на скорости до 128 Кбит/с" type="time" format="dd.MM.yyyy"/>
-    <counter id="date_sms_ukr" name="Срок действия СМС по Украине" type="time" format="dd.MM.yyyy"/>
-    <counter id="date_min_it" name="Срок действия минут по Интертелеком и Местные" type="time" format="dd.MM.yyyy"/>
-    <counter id="date_min_uk_mob" name="Срок действия минут по Украине на мобильные" type="time" format="dd.MM.yyyy"/>
-    <counter id="date_min_uk_mob_uk" name="Срок действия минут по Украине на мобильные и городские" type="time" format="dd.MM.yyyy"/>
-    <counter id="skidka" name="Размер скидки по программе лояльности «Наилучшее общение»" suffix="%" type="numeric"/>
+    <counter id="ls" name="Лицевой счет" type="text"/>
     <counter id="loyalty" name="Лояльный стаж" type="time_interval" format="{@Y} г. {@mo} мес."/>
     <counter id="mobsubscr" name="Абонентский стаж" type="time_interval" format="{@Y} г. {@mo} мес."/>
-    <counter id="news" name="Новости" type="numeric" flags="zero_when_empty"/>
-    <counter id="kredit" name="Кредит до…" suffix=" ₴" type="numeric"/>
     <counter id="phonet" name="Номер телефона" type="text"/>
     <counter id="mobphonet" name="Номер телефона мобильный" type="text"/>
     <counter id="contphone" name="Номер телефона контактный" type="text"/>
-    <counter id="ls" name="Лицевой счет" type="text"/>
-	<counter id="ip_adr" name="IP" type="text"/>
+
+    <counter id="min1" prefix="{@pref_min1}" name="Минуты 1" type="time_interval" format="{@H} ч. {@min} мин."/>
+    <counter id="min2" prefix="{@pref_min2}" name="Минуты 2" type="time_interval" format="{@H} ч. {@min} мин."/>
+    <counter id="min3" prefix="{@pref_min3}" name="Минуты 3" type="time_interval" format="{@H} ч. {@min} мин."/>
+    <counter id="min4" prefix="{@pref_min4}" name="Минуты 4" type="time_interval" format="{@H} ч. {@min} мин."/>
+    <counter id="min5" prefix="{@pref_min5}" name="Минуты 5" type="time_interval" format="{@H} ч. {@min} мин."/>
+
+    <counter id="date_min1" prefix="{@pref_min1}" name="Срок действия минут 1" type="time" format="dd.MM.yyyy"/>
+    <counter id="date_min2" prefix="{@pref_min2}" name="Срок действия минут 2" type="time" format="dd.MM.yyyy"/>
+    <counter id="date_min3" prefix="{@pref_min3}" name="Срок действия минут 3" type="time" format="dd.MM.yyyy"/>
+    <counter id="date_min4" prefix="{@pref_min4}" name="Срок действия минут 4" type="time" format="dd.MM.yyyy"/>
+    <counter id="date_min5" prefix="{@pref_min5}" name="Срок действия минут 5" type="time" format="dd.MM.yyyy"/>
+
+    <counter id="traffic1" prefix="{@pref_traffic1}" name="Трафик 1" units=" mb"/>
+    <counter id="traffic2" prefix="{@pref_traffic2}" name="Трафик 2" units=" mb"/>
+    <counter id="traffic3" prefix="{@pref_traffic3}" name="Трафик 3" units=" mb"/>
+    <counter id="traffic4" prefix="{@pref_traffic4}" name="Трафик 4" units=" mb"/>
+    <counter id="traffic5" prefix="{@pref_traffic5}" name="Трафик 5" units=" mb"/>
+
+    <counter id="date_traffic1" prefix="{@pref_traffic1}" name="Срок действия трафика 1" type="time" format="dd.MM.yyyy"/>
+    <counter id="date_traffic2" prefix="{@pref_traffic2}" name="Срок действия трафика 2" type="time" format="dd.MM.yyyy"/>
+    <counter id="date_traffic3" prefix="{@pref_traffic3}" name="Срок действия трафика 3" type="time" format="dd.MM.yyyy"/>
+    <counter id="date_traffic4" prefix="{@pref_traffic4}" name="Срок действия трафика 4" type="time" format="dd.MM.yyyy"/>
+    <counter id="date_traffic5" prefix="{@pref_traffic5}" name="Срок действия трафика 5" type="time" format="dd.MM.yyyy"/>
+
   </counters>
   <keywords>
     мобильный национальный оператор cdma украина

@@ -70,13 +70,24 @@ function main(){
 		"sortOrder": "desc",
 		"searchQuery": ""
 	},
-	"query": "query services($first: Int!, $offset: Int!, $folderId: Int, $filterType: String, $filterValue: String, $searchQuery: String, $sort: String, $sortOrder: String) {\n  services(\n    first: $first\n    offset: $offset\n    folderId: $folderId\n    filterType: $filterType\n    filterValue: $filterValue\n    searchQuery: $searchQuery\n    sort: $sort\n    sortOrder: $sortOrder\n  ) {\n    items {\n      ...BaseServicesItem\n      __typename\n    }\n     }\n}\n\nfragment BaseServicesItem on Service {\n  state\n  expiration_date\n  service_title\n   comment\n  }\n"
+	"query": "query services($first: Int!, $offset: Int!, $folderId: Int, $filterType: String, $filterValue: String, $searchQuery: String, $sort: String, $sortOrder: String) {\n  services(\n    first: $first\n    offset: $offset\n    folderId: $folderId\n    filterType: $filterType\n    filterValue: $filterValue\n    searchQuery: $searchQuery\n    sort: $sort\n    sortOrder: $sortOrder\n  ) {\n    items {\n      ...BaseServicesItem\n      __typename\n    }\n     }\n}\n\nfragment BaseServicesItem on Service {\n  state\n  expiration_date\n  service_title\n   servtype\n comment\n  }\n"
 	}),g_headers);
     var services = getJson(html).data.services.items;
+    	var serviceCounterNumber=0;
+    	var domainCounterNumber=0;
     	for (var i=0;i<services.length;i++){
-    		getParam(services[i].service_title, result, 'service_'+i);
-    		if (services[i].state!='A') result['service_'+i]='!!! '+result['service_'+i];
-    		getParam(services[i].expiration_date, result, 'service_date_'+i, null, null, parseDate);
+    		if (services[i].servtype=='domain' && domainCounterNumber<5) {
+                        var counterNumber=domainCounterNumber;
+    			var countername='domain';
+    			domainCounterNumber+=1;
+    		}else{
+                        var counterNumber=serviceCounterNumber;
+    			var countername='service';
+                        serviceCounterNumber+=1;
+    		}
+    		getParam(services[i].service_title, result, countername+'_'+counterNumber);
+    		if (services[i].state!='A') result[countername+'_'+counterNumber]='!!! '+result[countername+'_'+counterNumber];
+    		getParam(services[i].expiration_date, result, countername+'_date_'+counterNumber, null, null, parseDate);
     	}
 
     if (AnyBalance.isAvailable('plan')) {

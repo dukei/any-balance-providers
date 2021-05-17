@@ -12,7 +12,7 @@ var g_headers = {
 
 function main(){
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'https://4pda.ru/forum/index.php?';
+	var baseurl = 'https://4pda.to/forum/index.php?';
 
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
@@ -39,14 +39,14 @@ if (!/action=logout/.test(html)){
       	'captcha-sig': capatcha_sign,
       	captcha: code}) ,g_headers);
       if (/Введено неверное число с картинки\. Попробуйте ещё раз\./.test(html)) throw new AnyBalance.Error('Введено неверное число с картинки. Попробуйте ещё раз.');
-      if (!/action=logout/.test(html)) throw new AnyBalance.Error('Не удалось войти на 4pda. Сайт изменен?');
+      if (!/action=logout/.test(html)) throw new AnyBalance.Error('Не удалось войти на 4pda. Сайт изменен?',false,true);
       AnyBalance.saveCookies();
       AnyBalance.saveData();
 
 }
 	//4pda.ru/forum/index.php?showuser=1729973">dimapplk
       var userId=getParam(html, null, null, /index\.php\?showuser=(\d*)"/i);
-      if (!userId) throw new AnyBalance.Error('Не удалось получить идентификатор пользователя. Сайт изменен?');
+      if (!userId) throw new AnyBalance.Error('Не удалось получить идентификатор пользователя. Сайт изменен?',false,true);
       var result = {success: true};
       result.qms=getParam(html,null,null,/act=qms[\s\S]*?Сообщения \((\d*?)\)/i,null,parseBalance)||0;
       result.mentions=getParam(html,null,null,/act=mentions"\>Упоминания \((\d*?)\)/i,null,parseBalance)||0;

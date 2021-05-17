@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        key="login"
+        title="Логін" 
+        summary="Логін для входу до особистого кабінету||{@s}\n"
+        dialogTitle="Логін" 
+        dialogMessage="Введіть логін для входу до особистого кабінету"
+        positiveButtonText="ОК" 
+        negativeButtonText="Відміна">
+    </EditTextPreference>
+    <EditTextPreference 
+        key="password" 
+        title="Пароль"
+        summary="Пароль для входу до особистого кабінету||***********\n"
+        dialogTitle="Пароль"
+        dialogMessage="Введіть пароль, для входа до особистого кабінету"
+        inputType="textPassword"
+        positiveButtonText="ОК"
+        negativeButtonText="Відміна">
+    </EditTextPreference>
+</PreferenceScreen>

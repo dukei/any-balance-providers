@@ -1,0 +1,46 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<api flags="no_browser"/>
+  <id version="1">ab-municipal-cks</id>
+  <name>Центр комунального сервісу</name>
+  <description>
+    Центр комунального сервісу – Ваш експерт у сфері житлово-комунальних послуг
+  </description>
+  <author>DimaZUA &lt;DIMAZ.KHUA@gmail.com&gt;</author>
+  <depends>
+    <module id="library"/>
+  </depends>
+  <files>
+    <icon>icon.png</icon>
+    <preferences>preferences.xml</preferences>
+    <js>main.js</js>
+    <js>library.min.js</js>
+    <history>history.xml</history>
+  </files>
+  <counters>
+    <counter id="balance" name="Загальний борг" suffix=" ₴" type="numeric"/>
+    <counter id="electricity" name="Електроенергія" suffix=" ₴" type="numeric"/>
+    <counter id="domofon" name="Домофон" suffix=" ₴" type="numeric"/>
+    <counter id="rent" name="Утримання будинку" suffix=" ₴" type="numeric"/>
+    <counter id="heating" name="Опалення" suffix=" ₴" type="numeric"/>
+    <counter id="heating_counter" name="Загальнобудинковий лічильник опалення" suffix=" ₴" type="numeric"/>
+    <counter id="sewerage" name="Водовідведення" suffix=" ₴" type="numeric"/>
+    <counter id="gasrasp" name="Розподіл газу" suffix=" ₴" type="numeric"/>
+    <counter id="garbage" name="Вивіз сміття" suffix=" ₴" type="numeric"/>
+    <counter id="cold_water" name="Холодна вода" suffix=" ₴" type="numeric"/>
+    <counter id="hot_water" name="Горяча вода" suffix=" ₴" type="numeric"/>
+    <counter id="cold_water_out" name="Водовідведення холодної води" suffix=" ₴" type="numeric"/>
+    <counter id="hot_water_out" name="Водовідведення горячої води" suffix=" ₴" type="numeric"/>
+    <counter id="address" name="Адреса" type="text"/>
+  </counters>
+  <keywords>
+    ЦКС, cks, коммунальные услуги, задолженость, долг, Украина, коммунальні послуги, заборгованість, борг, Україна
+  </keywords>
+  <type>
+    municipal
+  </type>
+  <country>
+    ua
+  </country>
+</provider>
+

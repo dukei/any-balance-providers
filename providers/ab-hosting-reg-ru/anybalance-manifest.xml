@@ -1,11 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="10">ab-hosting-reg-ru</id>
+	<id version="11">ab-hosting-reg-ru</id>
 	<name>Reg.ru</name>
 	<api flags="no_browser"/>
 	<description html="true"><![CDATA[
 	<p>Получает баланс регистратора reg.ru (http://www.reg.ru)</p>
-	<p>Информация берется из личного кабинетаклиента (https://www.reg.ru/)</p>
+	<p>Информация берется из личного кабинета клиента (https://www.reg.ru/)</p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>  
 	<author>DimaZUA &lt;DIMAZ.KHUA@gmail.com&gt;</author>
@@ -26,6 +26,21 @@
                 <counter id="code" name="Код привлечения рефералов" type="text"/>
                 <counter id="currencyRate" name="Внутренний курс USD" units=" р."/>
                 <counter id="notPaidBills" name="Не оплачено счетов на" units=" р.{@notPaidBillsCount}"/>
+
+		<counter id="domain_0" name="Домен 1" type="text"/>
+		<counter id="domain_date_0" name="Дата окончания домена 1" type="time" format="dd.MM.yyyy"/>
+
+		<counter id="domain_1" name="Домен 2" type="text"/>
+		<counter id="domain_date_1" name="Дата окончания домена 2" type="time" format="dd.MM.yyyy"/>
+
+		<counter id="domain_2" name="Домен 3" type="text"/>
+		<counter id="domain_date_2" name="Дата окончания домена 3" type="time" format="dd.MM.yyyy"/>
+
+		<counter id="domain_3" name="Домен 4" type="text"/>
+		<counter id="domain_date_3" name="Дата окончания домена 4" type="time" format="dd.MM.yyyy"/>
+
+		<counter id="domain_4" name="Домен 5" type="text"/>
+		<counter id="domain_date_4" name="Дата окончания домена 5" type="time" format="dd.MM.yyyy"/>
 
 		<counter id="service_0" name="Услуга 1" type="text"/>
 		<counter id="service_date_0" name="Дата окончания услуги 1" type="time" format="dd.MM.yyyy"/>

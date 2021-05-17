@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
   <id version="54">ab-cell-intertelecom</id>
   <api flags="no_browser" />
@@ -23,7 +23,6 @@
     <preferences>preferences.xml</preferences>
     <js>main.js</js>
     <history>history.xml</history>
-    <js>library.min.js</js>
   </files>
   <counters>
     <counter id="ls" name="Лицевой счет" type="text"/>

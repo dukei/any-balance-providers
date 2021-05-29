@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="3">ab-money-monobank</id>
+	<id version="4">ab-money-monobank</id>
 	<name>Monobank(Украина)</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию об остатках на карте <a href="https://api.monobank.ua/">монобанка</a></p>
@@ -29,10 +29,6 @@
 		<counter id="iron" name="IRON" suffix="{@sufiron}"/>
 		<counter id="fop" name="Счет ФЛП" suffix="{@suffop}"/>
 		<counter id="yellow" name="Детская" suffix="{@sufyellow}"/>
-		<counter id="card1" name="Доп.карта1" suffix="{@sufcard1}" prefix="{@prefcard1}"/>
-		<counter id="card2" name="Доп.карта2" suffix="{@sufcard2}" prefix="{@prefcard2}"/>
-		<counter id="card3" name="Доп.карта3" suffix="{@sufcard3}" prefix="{@prefcard3}"/>
-		<counter id="fio" name="ФИО" type="text"/>
 		<counter id="html" name="Выписка" type="html"/>
 	</counters>
 	<keywords>монобанк,monobank, банк, украина</keywords>

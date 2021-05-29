@@ -1,5 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="2.0" version="85" date="2021-05-30">
+	Поддержка изменения на сайте
+	</change>
 	<change major_version="2.0" version="84" date="2020-02-27">
 	Добавлены счетчики дополнительных пакетов трафика
 	Добавлена возможность мониторить список подключенных услуг

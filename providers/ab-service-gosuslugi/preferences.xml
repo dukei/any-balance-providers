@@ -21,6 +21,7 @@
 		dialogMessage="Введите пароль, используемый для входа в Госуслуги."
 		inputType="textPassword">
 	</EditTextPreference>
+<!--
 	<EditTextPreference
 		title="Номера автомобилей"
 		key="gosnumber"
@@ -57,5 +58,6 @@
 		positiveButtonText="ОК"
 		negativeButtonText="Отмена"
 		dialogMessage="Введите один ИНН или несколько через символ ; максимально можно ввести 3 ИНН. Если в вашем кабинете ИНН уже сохранен, то оставьте поле пустым">
-	</EditTextPreference>		
+	</EditTextPreference>
+-->		
 </PreferenceScreen>

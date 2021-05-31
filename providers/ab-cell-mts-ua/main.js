@@ -6,13 +6,13 @@
 Сайт оператора: http://mts.com.ua/
 Личный кабинет: https://ihelper-prp.mts.com.ua/SelfCarePda/
 */
-
 var g_apiHeaders = {
     Connection: 'keep-alive',
 	Accept: 'application/json, text/plain, */*',
 	Origin: 'https://my.vodafone.ua',
-//	Origin: 'file://',
+	Origin: 'file://',
 	'Accept-Encoding': null,
+	Authorization:'Basic YXBwLW15dm9kYWZvbmUtbXc6UGg1ZDg2QnpCNg==',
 	'User-Agent': 'Mozilla/5.0 (Linux; Android 8.0; ONEPLUS A3010 Build/OPR6.170623.013) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/48.0.2564.116 Crosswalk/18.48.477.13 Mobile Safari/537.36',
 	'Content-Type': 'application/manifest+json; charset=UTF-8'
 }
@@ -37,12 +37,13 @@ function main(){
 
 
 
-function callApi(requests){
+function callApi(requests,charset){
 	//Почему-то апи плохо понимает UTF-16. Приходится через бинарник перекодировать
+	g_apiHeaders['Content-Type']='application/manifest+json; charset='+charset;
 	var html = AnyBalance.requestPost('https://cscapp.vodafone.ua/eai_mob/start.swe?SWEExtSource=JSONConverter&SWEExtCmd=Execute', JSON.stringify({
 		"requests": requests,
 		"params":{
-			"version":"2.1.1",
+			"version":"2.3.9.0",
 			"accessType": "",
 			"language": callApi.lang,
 			"source":"android 8",
@@ -51,11 +52,11 @@ function callApi(requests){
 			"childNumber":"",
                         "spinner": 0
 		}
-	}), g_apiHeaders, { options: { FORCE_CHARSET: 'base64' }}
+	}), g_apiHeaders, { options: { FORCE_CHARSET: charset }}
 	);
 	if (!html) throw new AnyBalance.Error('Сервер не отвечает. Попробуйте позже.', true);
-	if (/[\s\S]{,50}<title>[\S\s]+?<\/title>/.test(html)) throw new AnyBalance.Error(getParam(html, null, null,/<title>([\S\s]+?)<\/title>/), true);
-	var response=decodeUTF16LE(Base64.decode(html));
+	if (/<head><title>[\S\s]+?<\/title>/.test(html)) throw new AnyBalance.Error(getParam(html, null, null,/<title>([\S\s]+?)<\/title>/), true);
+	if (charset=='base64') var response=decodeUTF16LE(Base64.decode(html)); else var response=html;
         //AnyBalance.trace('===========Ответ:\n'+response);
         response = response.replace(/[\u0000-\u0019]+/g,""); 
 	var json = getJson(response);
@@ -81,25 +82,32 @@ function throwApiError(res, verb){
 		var message = getMtsErrorText(res.error) || 'Ошибка ' + verb + ': ' + res.error;
 		throw new AnyBalance.Error(message, null, res.error == 202);
 	}
+	if (res[verb]) throwApiError (res[verb],verb);
 }
 
 function callApi1(verb, request){
     var params = {};
     params[verb] = request || {};
+    var charset='UTF-8';
     var i=1;
-  while (i<4){
+  while (i<10){
     try{
-        if (i>1) AnyBalance.trace('Попытка получить '+verb+' '+i+' из 10');
-    	var json = callApi(params);
+        if (i>1){
+        	AnyBalance.trace('Попытка получить '+verb+' '+i+' из 3');
+        	AnyBalance.trace('Ждем 15 сек. перед повтором');
+        	AnyBalance.sleep(1000);
+        }
+        if (i>3) charset='UTF-16';
+        if (i>6) charset='base64';
+    	var json = callApi(params,charset);
     	var res = json[verb];
-	throwApiError(res, verb);
+	throwApiError(json, verb);
 	return json[verb].values;
    }catch(e){
         var message=e.message;
    	AnyBalance.trace('message: '+message);
    }
    i+=1;
-   AnyBalance.sleep(2000);
   }
   throw new AnyBalance.Error(message);
 }

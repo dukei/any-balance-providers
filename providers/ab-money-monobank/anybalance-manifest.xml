@@ -1,6 +1,6 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="3">ab-money-monobank</id>
+	<id version="4">ab-money-monobank</id>
 	<name>Monobank(Украина)</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию об остатках на карте <a href="https://api.monobank.ua/">монобанка</a></p>

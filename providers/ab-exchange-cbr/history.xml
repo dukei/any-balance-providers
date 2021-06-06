@@ -1,5 +1,8 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+﻿﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="13" date="2021-06-06">
+	- Исправлено отображение даты вверху при отключенном счетчике "Дата курса"
+	</change>
 	<change version="12" date="2021-05-13">
 	- Исправление для AnyBalance+
 	</change>

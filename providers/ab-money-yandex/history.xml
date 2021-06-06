@@ -1,5 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="36" date="2021-06-06">
+	Поддержка изменений на сайте
+	Добавлены новые счетчики
+	</change>
 	<change version="35" date="2020-11-20">
 	Исправлен ввод кода 
 	</change>

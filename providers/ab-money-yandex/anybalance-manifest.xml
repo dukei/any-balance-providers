@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="35">ab-money-yandex</id>
+	<id version="36">ab-money-yandex</id>
 	<api flags="no_browser" />
 	<name>ЮMoney (Яндекс.Деньги)</name>
 	<description html="true"><![CDATA[
@@ -14,6 +14,7 @@
 	</ul>
 	]]></instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<author>DimaZUA &lt;DIMAZ.KHUA@gmail.com&gt;</author>
 	<depends>
 		<module id="extract/abe-money-yandex"/>
 	</depends>
@@ -27,7 +28,13 @@
 		<counter id="balance" name="Остаток" units=" р"/>
 		<counter id="bonus" name="Баллы" units=" Б"/>
 		<counter id="number" name="Номер счета" type="text"/>
-		<counter id="no_cashback_count" name="Платежей без кэшбэка" units=" шт"/>
+<!--
+		<counter id="no_cashback_count" name="Платежей без кэшбэка" units=" шт"/> 
+-->
+		<counter id="accountStatus" name="Статус" type="text"/>
+		<counter id="userName" name="ФИО" type="text"/>
+		<counter id="cardNumber" name="Доп.карта" type="text"/>
+		<counter id="cardDate" name="Срок дейстия доп.карты" type="time" format="dd.MM.yyyy"/>
 	</counters>
 	<keywords>яндекс-деньги, yandex money, юмани, ю-мани</keywords>
 	<type>money, wallet</type>

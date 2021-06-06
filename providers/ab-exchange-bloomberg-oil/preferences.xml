@@ -4,8 +4,8 @@
 		key="type"
 		title="Type of oil"
 		summary="||{@s}"
-		entries="WTI|BRENT"
-		entryValues="WTI|BRENT"
+		entries="WTI|BRENT|Crude Oil (Tokyo)|Natural Gas (Nymex)"
+		entryValues="WTI|BRENT|Crude Oil \(Tokyo|Natural Gas"
 		defaultValue="WTI">
 	</ListPreference>
 </PreferenceScreen>

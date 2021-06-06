@@ -1,13 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="3">ab-bonus-brsm-plus</id>
+	<id version="4">ab-bonus-brsm-plus</id>
 	<api flags="no_browser"/>
 	<name>БРСМ plus (Бонусы)</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе провайдера БРСМ plus <a href="http://brsm-plus.com">http://brsm-plus.com</a></p>
 	<p>Информация берется из личного кабинета <a href="http://brsm-plus.com/login.html">http://brsm-plus.com/login.html</a></p>
 	]]></description>
-	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<author>DimaZ &lt;DIMAZ.KHUA@gmail.com&gt;</author>
 	<depends>
 		<module id="library"/>
 	</depends>
@@ -19,6 +19,9 @@
 	</files>
 	<counters>
 		<counter id="balance" name="Баланс"/>
+		<counter id="card1" name="Карта" type="text"/>
+		<counter id="card2" name="Карта 2" type="text"/>
+
 		<counter id="prev_points" name="Балы в прошлом месяце"/>
 		<counter id="currentMonth" name="Экономия (текущий месяц)"/>
 		<counter id="previousMonth" name="Экономия (прошлый месяц)"/>

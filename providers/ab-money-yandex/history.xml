@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="37" date="2021-06-07">
+	Исправлена публикация
+	</change>
 	<change version="36" date="2021-06-06">
 	Поддержка изменений на сайте
 	Добавлены новые счетчики

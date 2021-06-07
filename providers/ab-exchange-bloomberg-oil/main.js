@@ -14,56 +14,22 @@ function main() {
 	var baseurl = 'https://www.bloomberg.com/';
 	AnyBalance.setDefaultCharset('utf-8');
 	
-	var html = AnyBalance.requestGet(baseurl + 'energy/', g_headers);
+	var html = AnyBalance.requestGet(baseurl + 'energy', g_headers);
 
 	var result = {success: true};
 
 	var table = getParam(html, /<h2[^>]*>\s*Crude Oil[\s\S]*?<table[^>]*>([\s\S]*?)<\/table>/i);
+	var re = new RegExp('('+(prefs.type || 'WTI')+'[\\s\\S]*?<\/a>[\\s\\S]*?)((<a class=)|(<\/tbody>))', 'i');
+	var table= getParam(table, re);
+	var result = {success: true};
+	getParam(table, result, '__tariff',/([^"<]*)/,replaceTagsAndSpaces);
+	getParam(table, result, 'currency',/(<span[\s\S]*?<\/span>)/,replaceTagsAndSpaces);
+	getParam(table, result, 'balance',/(?:<span[\s\S]*?<\/span>[\s\S]*?)(<span[\s\S]*?<\/span>)/,replaceTagsAndSpaces,parseBalance);
+	getParam(table, result, 'change',/(?:<span[\s\S]*?<\/span>[\s\S]*?){2,2}(<span[\s\S]*?<\/span>)/,replaceTagsAndSpaces,parseBalance);
+	getParam(table, result, 'change_pcts',/(?:<span[\s\S]*?<\/span>[\s\S]*?){3,3}(<span[\s\S]*?<\/span>)/,replaceTagsAndSpaces,parseBalance);
+	getParam(table, result, 'contract',/(?:<span[\s\S]*?<\/span>[\s\S]*?){4,4}(<span[\s\S]*?<\/span>)/,replaceTagsAndSpaces);
+	getParam(table, result, 'contract_time',/(?:<span[\s\S]*?<\/span>[\s\S]*?){5,5}(<span[\s\S]*?<\/span>)/,replaceTagsAndSpaces);
 
-    var colsDef = {
-        __tariff: {
-            re: /INDEX/i,
-            result_func: null
-        },
-        __balance: {
-            re: /PRICE/i
-        },
-        __currency: {
-            re: /UNITS/i,
-            result_func: null
-        },
-        __change: {
-            re: /[^%]CHANGE/i,
-        },
-        __change_pcts: {
-            re: /%CHANGE/i,
-        },
-        __contract: {
-            re: /contract/i,
-            result_func: null
-        },
-        __contract_time: {
-            re: /time/i,
-            result_func: null
-        },
-    };
-
-    var rows = [];
-    processTable(table, rows, '', colsDef);
-
-    var re = new RegExp((prefs.type || 'WTI'), 'i');
-    for(var i=0; i<rows.length; ++i){
-    	var row = rows[i];
-    	if(re.test(row.__tariff)){
-			getParam(row.__tariff, result, '__tariff');
-			getParam(row.__balance, result, 'balance');
-			getParam(row.__currency, result, ['currency', 'balance']);
-			getParam(row.__change, result, 'change');
-			getParam(row.__change_pcts, result, 'change_pcts');
-			getParam(row.__contract, result, 'contract');
-			getParam(row.__contract_time, result, 'contract_time');
-    	}
-    }
 	
     AnyBalance.setResult(result);
 }

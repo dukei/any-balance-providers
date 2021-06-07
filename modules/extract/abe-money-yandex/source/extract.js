@@ -172,9 +172,13 @@ function loginAndGetBalance(prefs, result) {
 	var html = login();
 	
 	var ld = getJsonObject(html, /window.__layoutData__\s*=/);
+	var status={identified:'Идентифицированный', anonymous:'Анонимный',named:'Именной'};
 	if(ld){
 		AnyBalance.trace('Загружаем из layoutData');
 		getParam(ld.user.accountId, result, 'number');
+		getParam(ld.user.accountId, result, '__tariff');
+		getParam(ld.user.userName, result, 'userName');
+		getParam(status[ld.user.accountStatus]||ld.user.accountStatus, result, 'accountStatus');
 		getParam(ld.balance.rub.availableAmount, result, 'balance');
 		var sk = ld.secretKey;
 
@@ -188,6 +192,23 @@ function loginAndGetBalance(prefs, result) {
 			var json = getJson(html);
 			getParam(json.balances.bonus.availableAmount, result, 'bonus');
 		}
+		   try{
+			var html = AnyBalance.requestGet(baseurl + 'ajax/layout/curtain-cards?sk=' + encodeURIComponent(sk), addHeaders({
+				Accept: 'application/json, text/plain, */*',
+				Referer: baseurl
+			}));
+			var json = getJson(html).ownCards;
+			if (json && json.length>0){
+				json=json[0];
+				getParam(json.cardNumber.substr(-8), result, 'cardNumber');
+				getParam(json.expirationDate, result, 'cardDate',null,null,parseDate);
+				
+			}
+		   }catch(e){
+			AnyBalance.trace('Ошибка получения информации по доп.картам'+e.message);
+		   }
+			//getParam(json.balances.bonus.availableAmount, result, 'bonus');
+
 	}else{
 		AnyBalance.trace('Загружаем по-старинке');
 		getParam(html, result, 'number', /Номер кошелька(?:[^>]*>){2}(\d{10,20})/i, replaceTagsAndSpaces);
@@ -251,10 +272,11 @@ function processHistory(result) {
 }
 
 function getCombinedHistory(){
+	return [];
 	var maxCount = 100;
 	var htmlBalls = AnyBalance.requestGet(baseurl + 'ajax/load-bonus-history?recordCount=' + maxCount, addHeaders({'X-Requested-With': 'XMLHttpRequest'}));
-	var htmlTrns = AnyBalance.requestGet(baseurl + 'ajax/history/partly?ncrnd=72010&history_shortcut=history_all&start-record=0&record-count=' + maxCount, addHeaders({'X-Requested-With': 'XMLHttpRequest'}));
 	var jsonBalls = getJson(htmlBalls);		
+	var htmlTrns = AnyBalance.requestGet(baseurl + 'ajax/history/partly?ncrnd=72010&history_shortcut=history_all&start-record=0&record-count=' + maxCount, addHeaders({'X-Requested-With': 'XMLHttpRequest'}));
 	var jsonTrns = getJson(htmlTrns);
 
 	combineHistory(jsonTrns, jsonBalls);

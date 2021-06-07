@@ -9,7 +9,7 @@ function main() {
 	
 	loginAndGetBalance(prefs, result);
 
-	if(AnyBalance.isAvailable('no_cashback_count')){
+	if(false && AnyBalance.isAvailable('no_cashback_count')){
 		var hist = getCombinedHistory().filter(function(h) { 
 				return !!h.flags['is-meta-ycard-operation'] 
 					&& !!h.cardOperationShort 
@@ -29,6 +29,5 @@ function main() {
 			getParam(emptyOpCount, result, 'no_cashback_count');
 		}
 	}
-
 	AnyBalance.setResult(result);
 }

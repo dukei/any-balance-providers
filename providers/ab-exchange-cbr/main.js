@@ -31,7 +31,8 @@ function main() {
 		for (var i=0;i<matches.length;i++)
 			getRate(result,matches[i])
 	getParam(info, result, 'date',/Date="([^"]*)/);
-	result.__tariff=result.date;
+	getParam(info, result, '__tariff',/Date="([^"]*)/);
+
 	
 	AnyBalance.setResult(result);
 }

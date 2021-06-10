@@ -7,7 +7,6 @@ var g_headers = {
 	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
 	'Referer': 'https://auth.lifecell.ua/',
 	'Accept-Language': 'ru,en-US;q=0.9,en;q=0.8,ru-RU;q=0.7'
-
 };
 
   // Default options are marked with *
@@ -18,16 +17,19 @@ function main() {
 	AnyBalance.setDefaultCharset('utf-8');
 	checkEmpty(prefs.phone, 'Введите номер телефона!');
 	checkEmpty(prefs.pass, 'Введите пароль!');
-	if(prefs.type == 'site') {
+	if(prefs.type == 'site') 
+		mainSite(prefs, baseurl);
+	else if (prefs.type == 'app') 
+		mainMobileApp(prefs, baseurl);
+	else
+		{
 		try{
-			mainSite(prefs, baseurl);
+			mainMobileApp(prefs, baseurl);
 		}catch(e){
 			AnyBalance.trace(e.message);
-                        AnyBalance.trace('Не удалось получить данные с сайта. Пытаюсь получить из мобильного приложения');
-                        mainMobileApp(prefs, baseurl);
+                        AnyBalance.trace('Не удалось получить данные из мобильного приложения. Пытаюсь получить данне с сайта');
+                        mainSite(prefs, baseurl);
 		}
-	} else {
-			mainMobileApp(prefs, baseurl);
 	}
 }
 
@@ -61,6 +63,7 @@ function parseBalanceSecLeft(str) {
     AnyBalance.trace('Could not parse minutes from value: ' + str);
 }
 function loginSite(prefs){
+    AnyBalance.trace('Логин c каптчей');
 	checkEmpty(/^\d{7}$/i.test(prefs.phone), 'Введите ровно 7 цифр телефонного номера, без пробелов и разделителей!');
 	var html = AnyBalance.requestGet('https://my.lifecell.ua/ru/sso-login/?next=/ru/osnovnaya-informaciya/osnobnaya-informaciya/', g_headers);
 	var lang = prefs.lang || 'ru';
@@ -104,9 +107,10 @@ function loginSite(prefs){
 	return html;
 }
 function loginSiteOld(prefs,baseurl){
+    AnyBalance.trace('Старый логин');
     var msisdn = '38' + prefs.prefph + prefs.phone;
 
-    var html = AnyBalance.requestGet('https://auth.lifecell.ua/auth/realms/lifecell/protocol/openid-connect/logout?redirect_uri=https%3A%2F%2Fauth.lifecell.ua%2Fauth%2Frealms%2Flifecell%2Fprotocol%2Fopenid-connect%2Fauth%3Fredirect_uri%3Dlifecell.sso%3A%2Foauth2redirect%26client_id%3Dmy-lifecell-app-android%26response_type%3Dcode%26state%3DjqWFQcMIrPhdp99Ahx4lcQ%26scope%3Dopenid%2520offline_access%26code_challenge%3DsqhxgO3NL5QDeFAHfx8rri5x34TGzUv3Ovr6wYl6-8w%26code_challenge_method%3DS256%26ui_locales%3Den', g_headers); 
+    var html = AnyBalance.requestGet('https://auth.lifecell.ua/auth/realms/lifecell/protocol/openid-connect/logout?redirect_uri=https%3A%2F%2Fauth.lifecell.ua%2Fauth%2Frealms%2Flifecell%2Fprotocol%2Fopenid-connect%2Fauth%3Fredirect_uri%3Dlifecell.sso%3A%2Foauth2redirect%26client_id%3Dmy-lifecell-app-android%26response_type%3Dcode%26state%3DjqWFQcMIrPhdp99Ahx4lcQ%26scope%3Dopenid%2520offline_access%26code_challenge%3DsqhxgO3NL5QDeFAHfx8rri5x34TGzUv3Ovr6wYl6-8w%26code_challenge_method%3DS256%26ui_locales%3Dru', g_headers); 
     var form = getElement(html, /<form[^>]+username-form/i);
     if(!form){
     	AnyBalance.trace(form);
@@ -147,7 +151,8 @@ function getJWT(base64){
     return JSON.parse(jsonPayload);
 }
 function loginSiteByCookies(prefs,baseurl,session_code){
-AnyBalance.trace(JSON.stringify(AnyBalance.getCookies()));
+    AnyBalance.trace('Логин через установку cookies');
+	AnyBalance.trace(JSON.stringify(AnyBalance.getCookies()));
     html = AnyBalance.requestPost('https://auth.lifecell.ua/auth/realms/lifecell/protocol/openid-connect/token', {
 		password: prefs.pass,
 		username:'38'+prefs.prefph+prefs.phone,
@@ -183,15 +188,15 @@ function mainSite(prefs, baseurl) {
 
 	var lang = prefs.lang || 'ru';
 	var formatted_phone = '+38 (' + prefs.prefph + ') ' + prefs.phone.replace(/(\d{3})(\d{2})(\d{2})/, '$1-$2-$3');
-//	if (!/logout/.test(html)) var html=loginSiteOld(prefs,baseurl);
-//	if (!/logout/.test(html)) var html=loginSiteByCookies(prefs,baseurl,getParam(html,/session_code=([^&]*)/));
-        if (!/logout/.test(html)) var html=loginSite(prefs);
-         if (!/logout/.test(html)){
+	if (/data-sitekey=|sso-login/.test(html)) var html=loginSiteOld(prefs,baseurl);
+	if (/data-sitekey=|sso-login/.test(html)) var html=loginSiteByCookies(prefs,baseurl,getParam(html,/session_code=([^&]*)/));
+        if (/data-sitekey=|sso-login/.test(html)) var html=loginSite(prefs);
+        if (/data-sitekey=|sso-login/.test(html)){
                	clearAllCookies();
                 AnyBalance.saveCookies();
                	AnyBalance.saveData();
                	AnyBalance.trace(html);
-               	throw new AnyBalance.Error('Не удалось авторизоваться. Сайт изменен?');	
+               	throw new AnyBalance.Error('Не удалось авторизоваться. Сайт изменен?',false,true);	
          }
         var result = {success: true};
         // Основной счет
@@ -354,7 +359,11 @@ g_errorDescription[g_errors.LOGIC_IS_BLOCKING] = "Логика заблокир�
 g_errorDescription[g_errors.TOO_MANY_REQUESTS] = "Слишком много запросов";
 g_errorDescription[g_errors.PAYMENTS_OR_EXPENSES_MISSED] = "Какая-то проблема с платежами или тратами";
 g_errorDescription[g_errors.INTERNAL_APPLICATION_ERROR] = "Внутренняя ошибка приложения";
-
+var api_g_geaders={
+	'User-Agent':'Android',
+	'Connection':'Keep-Alive',
+	'Accept-Encoding':'gzip'
+}
 function lifeGet(method, params) {
 	if (!isset(params.accessKeyCode))
 		params.accessKeyCode = '7';
@@ -365,7 +374,7 @@ function lifeGet(method, params) {
 		AnyBalance.trace('Неожиданный ответ сервера (' + method + '): ' + xml);
 		throw new AnyBalance.Error('Неожиданный ответ сервера!');
 	}
-	if (code < 0)
+	if (code < 0&&code!=-2)
 		throw new AnyBalance.Error(method + ': ' + g_errorDescription[code], null, /парол/i.test(g_errorDescription[code]));
 	return xml;
 }
@@ -397,9 +406,17 @@ function getTokenByPassword(prefs,headers){
 	});
 	return xml;
 }
-
+var uuid='';
 function mainMobileApp(prefs, baseurl){
     var prefs = AnyBalance.getPreferences();
+    uuid=AnyBalance.getData(prefs.phone+'uuid');
+    if (!uuid) {
+    	const uuidPart=()=>('0000' + Math.floor(Math.random()*99998)+1).substr(-5);
+    	uuid=`${uuidPart()}-${uuidPart()}-${uuidPart()}-${uuidPart()}`;
+                AnyBalance.setData(prefs.phone+'uuid',uuid);
+                AnyBalance.saveData(prefs.phone+'uuid',uuid);
+    }
+    api_g_geaders.UUID=uuid;
     if (!prefs.prefph || !/^\d{3}$/.test(prefs.prefph))
 		throw new AnyBalance.Error('Введите префикс для вашего номера телефона (3 цифры)');
     if (!prefs.phone || !/^\d{7}$/.test(prefs.phone))
@@ -421,7 +438,7 @@ function mainMobileApp(prefs, baseurl){
             	AnyBalance.trace('Стрый токен не подходит.'+(subId?'Пробуем обновить':''));
             	if (subId) {
             		try{
-            			xml = lifeGet('getToken', {msisdn: msisdn, subId: subId, clientVersion: '4.5.8'});
+            			xml = lifeGet('getToken', {msisdn: msisdn, subId: subId, clientVersion: '4.5.9'});
             			token = getParam(xml, null, null, /<token>([\s\S]*?)<\/token>/i, replaceTagsAndSpaces);
                                 if (token) AnyBalance.trace('Получен новый токен');
             		}
@@ -450,6 +467,7 @@ function mainMobileApp(prefs, baseurl){
                 AnyBalance.trace('Не удалось получить токен.');
 		if(AnyBalance.getLastStatusCode() == 403){
 			AnyBalance.trace('Пробуем получить токен на api.lifecell.com.ua');
+			g_api_baseurl = 'https://api.lifecell.com.ua/mobile/';
 			xml = getTokenByPassword(prefs);
 			token = getParam(xml, null, null, /<token>([\s\S]*?)<\/token>/i, replaceTagsAndSpaces);
 			subId= getParam(xml, null, null, /<subId>([\s\S]*?)<\/subId>/i, replaceTagsAndSpaces);

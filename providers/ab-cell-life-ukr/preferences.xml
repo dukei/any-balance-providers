@@ -41,9 +41,9 @@
 		key="type"
 		title="Тип кабинета"
 		summary="||{@s}"
-		entries="Мобильное приложение|Сайт с капчей"
-		entryValues="app|site"
-		defaultValue="app"
+		entries="Автоматичеки|Мобильное приложение|Сайт с капчей"
+		entryValues="auto|app|site"
+		defaultValue="auto"
 		dialogTitle="Выберите тип кабинета">
 	</ListPreference>	
 </PreferenceScreen>

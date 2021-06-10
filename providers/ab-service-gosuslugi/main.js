@@ -17,35 +17,35 @@ function main() {
 	var profile = login(prefs);
 	getParam(profile.formattedLoginName||profile.formattedName||profile.lastName+' '+profile.firstName+''+profile.middleName,result,'fio')
 	var json=callAPI('pay/v1/informer/fetch');
+        result.balance=json.result.amount;
+        result.info='';
 	if (json.fns){
-        	result.nalog_balance=json.fns.result.amount;
-                result.nalog_info='';
+        	//result.nalog_balance=json.fns.result.amount;
         	json.fns.groups.forEach(function(g) {
         		g.bills.forEach(function(n) {
-        			result.nalog_info+='<b>'+n.amount.toFixed(2)+' р.:</b>'+(n.billName||n.fnsName)+'<br><br>'
+        			result.info+='<b>'+n.amount.toFixed(2)+' р.:</b>'+(n.billName||n.fnsName)+'<br><br>'
         		})
         	})
         	
 	}
         if (json.fine){
-        	result.gibdd_info='';
-        	result.gibdd_balance=json.fine.result.amount;
-        	result.gibdd_balance_full=json.fine.result.originalAmount;
+        	//result.gibdd_info='';
+        	//result.gibdd_balance=json.fine.result.amount;
+        	//result.gibdd_balance_full=json.fine.result.originalAmount;
         	json.fine.groups.forEach(function(g) {
-        		result.gibdd_info+=g.name+'<br>'
+        		result.info+=g.name+'<br>'
         		g.bills.forEach(function(n) {
         			n.discountDate=n.discountDate.replace(/(\d*)-(\d*)-(\d*)/,'$3.$2.$1');
         			if (parseDate(n.discountDate)>new Date())
-        				result.gibdd_info+='<b>'+n.amount.toFixed(2)+' р. </b><small> (до '+n.discountDate+')</small><br>:';
+        				result.info+='<b>'+n.amount.toFixed(2)+' р. </b><small> (до '+n.discountDate+')</small><br>:';
         			else
-        				result.gibdd_info+='<b>'+n.originalAmount.toFixed(2)+' р.:</b><br>';
-                                result.gibdd_info+=n.billName+' ('+n.articleCode+')<br>'+n.offenseDate.replace(/(\d{4})-(\d{2})-(\d{2})([\s\S]*)/,'$3.$2.$1 в$4');
-                                if (n.hasPhoto) result.gibdd_info+='<br>Есть фото нарушения'
-                                result.gibdd_info+='<br><small>'+n.supplierFullName+'</small><br><br>';
+        				result.info+='<b>'+n.originalAmount.toFixed(2)+' р.:</b><br>';
+                                result.info+=n.billName+' ('+n.articleCode+')<br>'+n.offenseDate.replace(/(\d{4})-(\d{2})-(\d{2})([\s\S]*)/,'$3.$2.$1 в$4');
+                                if (n.hasPhoto) result.info+='<br>Есть фото нарушения'
+                                result.info+='<br><small>'+n.supplierFullName+'</small><br><br>';
         		})
         	})
         }
-        result.justice_info='<small>В текущей версии провайдера не реализовано получение данных о судебной задолженности.<br>Если у Вас в личном кабинете отображается такая задолженность - отправьте пожалуйста лог работы провайдера разработчику.</small>';
 	var json=callAPI('lk/v1/feeds/counters/');
 	result.mails=json.unread;
 	AnyBalance.setResult(result);
@@ -80,13 +80,13 @@ function login(prefs){
 		checkEmpty(formattedLogin, 'Введите правильный Email. Вы ввели: "' + (prefs.login || 'пустое поле') + '"!');
 
 	checkEmpty(prefs.password, 'Введите пароль!');
-
-	var html = AnyBalance.requestGet(g_baseurl + 'auth/esia/?redirectPage=/', g_headers);
+        var html=AnyBalance.requestGet('https://lk.gosuslugi.ru/overview')
+	//var html = AnyBalance.requestGet(g_baseurl + 'auth/esia/?redirectPage=/', g_headers);
 
 	// нужно для отладки
 	if (!isLoggedIn(html)) {
 		var jsessionid = AnyBalance.getCookie('JSESSIONID');
-		html = checkForRedirect(html);
+		//html = checkForRedirect(html);
 
 		// Госуслуги издеваются. Сначала выкатили новую форму входа, потом спрятали
 		// Пока используем старую
@@ -104,20 +104,23 @@ function login(prefs){
 			command = getParam(html, null, null, /new\s+LoginViewModel\((?:[^,]+,){1,2}\s*'([^"']+)'/i);
 		}
 
-		if (!command) {
-			AnyBalance.trace(html);
-			throw new AnyBalance.Error('Не удалось найти идентификатор команды для входа.');
-		}
+		//if (!command) {
+		//	AnyBalance.trace(html);
+		//	throw new AnyBalance.Error('Не удалось найти идентификатор команды для входа.');
+		//}
 		AnyBalance.setCookie('esia.gosuslugi.ru','login_value',prefs.login,{path:'/idp/login/pwd/do'});
-		html = checkForRedirect(AnyBalance.requestPost('https://esia.gosuslugi.ru/idp/login/pwd/do', {
-			mobileOrEmail: prefs.login,
+		g_headers['Content-Type']='application/json';
+		g_headers.Accept='application/json, text/plain, */*';
+		html = checkForRedirect(AnyBalance.requestPost('https://esia.gosuslugi.ru/aas/oauth2/api/login', JSON.stringify({
+//			mobileOrEmail: prefs.login,
 			login: formattedLogin,
-			snils: '',
+//			snils: '',
 			password: prefs.password,
 			idType: loginType,
-			'command': command
-		}, addHeaders({Referer: 'https://esia.gosuslugi.ru/idp/rlogin?cc=bp'})));
-
+//			'command': command
+		}), addHeaders({Referer: 'https://esia.gosuslugi.ru/login/'})));
+		var json=getJson(html);
+		var html=AnyBalance.requestGet('https://esia.gosuslugi.ru'+json.redirect_url,g_headers);
 		var form = getElement(html, /<form[^>]+otpForm/i);
 		if(form){
 			AnyBalance.trace('Требуется смс для входа');
@@ -264,8 +267,8 @@ function createFormParamsById(html, servicesubId) {
 	return createFormParams(form);
 }
 function isLoggedIn(html) {
-	var html = AnyBalance.requestGet(g_baseurl + 'api/lk/v1/users/data?_=' + Math.random(), addHeaders({Referer: g_headers}));
-	return /"firstName"/.test(html);
+	var html = AnyBalance.requestGet(g_baseurl + 'api/lk/v1/users/userDateOffset?_=' + Math.random(), addHeaders({Referer: g_headers}));
+	return /"serverDate"/.test(html);
 }
 function getChalenge(html){
 	var ChallengeId=getParam(html,/ChallengeId=(\d*)/);

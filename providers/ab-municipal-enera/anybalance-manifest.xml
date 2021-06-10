@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="3">ab-municipal-enera</id>
+	<id version="4">ab-municipal-enera</id>
 	<api flags="no_browser"/>
 	<name>E-Svitlo (Енера-схід)</name>
 	<description html="true"><![CDATA[

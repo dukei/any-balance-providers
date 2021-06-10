@@ -1,4 +1,4 @@
-﻿/**
+/**
  Провайдер AnyBalance (http://any-balance-providers.googlecode.com) 
  */
 
@@ -343,7 +343,7 @@ function processFinesBetaVehicles(result, vehicles, license_number, showPaidFine
 			"methodName": "process",
 			"parameter": createRequestParams(templateObj)
 		};
-
+		try{
 		var response = apiCallBetaCabinet('POST', 'api/sf/v1/a/wsapi/?_=' + new Date().getTime(), JSON.stringify(json), {
 			'Origin': g_baseurl,
 			'X-Atmosphere-tracking-id': trackId,
@@ -353,7 +353,10 @@ function processFinesBetaVehicles(result, vehicles, license_number, showPaidFine
 			'X-Atmosphere-Transport': 'long-polling',
 			'Referer': g_baseurl + '10001/result',
 		});
-
+		}catch(e){
+			AnyBalance.trace ('Не удалось получить штрафы');
+			return;
+		}
 		if (response.error.code != 0) {
 			AnyBalance.trace(html);
 			throw new AnyBalance.Error('Не удалось запросить информацию о штрафах, ошибка в запросе!');
@@ -598,7 +601,6 @@ function apiCallBetaCabinet(method, action, params, addOnHeaders) {
 		ret = AnyBalance.requestPost(g_baseurl + action, params, isset(addOnHeaders) ? addHeaders(g_betaApiHeaders, addOnHeaders) : g_betaApiHeaders);
 	else
 		throw new AnyBalance.Error('Unexpected type of method: ' + method);
-
 	ret = getJson(ret);
 
 	var code = isset(ret.error.code) ? ret.error.code : ret.error.errorCode;

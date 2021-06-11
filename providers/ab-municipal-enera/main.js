@@ -52,7 +52,7 @@ function main() {
 
         var tmp=getElementsByClassName(html,'borg-text',replaceTagsAndSpaces, null);
 	getParam(tmp[1], result, 'balance', null , null, parseBalance);        
-        if (tmp[0]=='Сума до сплати') result.balance=-result.balance;
+        if (tmp[0]=='Сума до сплати'||tmp[2]=='Заборгованість') result.balance=-result.balance;
         getParam(tmp[2], result, 'pay', null , null, parseBalance);        
         getParam(tmp[3], result, 'lastpaydate', null , null, parseDate);        
 

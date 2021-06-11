@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
+<!--
 	<EditTextPreference
 		obligatory="true"
 		title="Логин"
@@ -21,6 +22,7 @@
 		dialogMessage="Введите пароль, используемый для входа в личный кабинет https://lk.rt.ru."
 		inputType="textPassword">
 	</EditTextPreference>
+
 	<EditTextPreference
 		title="Номера л/с или телефонов"
 		positiveButtonText="ОК"
@@ -29,6 +31,17 @@
 		negativeButtonText="Отмена"
 		dialogMessage="Введите через запятую номера лицевых счетов или телефонов (до 4), по которым вы хотите получить информацию, или оставьте поле пустым, чтобы получить информацию по первым четырем лицевым счетам. Можно вводить номера не целиком, а только несколько последних цифр."
 		inputType="phone"
+		key="num">
+	</EditTextPreference>
+-->
+	<EditTextPreference
+		title="Лицевой счет"
+		positiveButtonText="ОК"
+		summary="||{@s}"
+		dialogTitle="Лицевой счет"
+		negativeButtonText="Отмена"
+		dialogMessage="Лицевой счет."
+		inputType="number"
 		key="num">
 	</EditTextPreference>
 </PreferenceScreen>

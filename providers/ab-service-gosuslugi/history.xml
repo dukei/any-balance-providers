@@ -1,5 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="1.0" version="846" date="2021-06-10">
+	- Поддержка изменений на сайте
+	- Изменение в счетчиках
+	</change>
 	<change major_version="1.0" version="845" date="2021-05-30">
 	- Поддержка изменений на сайте
 	</change>

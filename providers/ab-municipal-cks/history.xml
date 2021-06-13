@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change version="2" date="2021-06-13">
+      Провайдер выдавал ошибку при отключенном отображении счетчика "Адрес"
+    </change>
     <change version="1" date="2021-05-15">
       Перша версія провайдера.
     </change>

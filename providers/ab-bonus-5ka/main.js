@@ -127,7 +127,6 @@ function main () {
 	checkEmpty(/^\d{16}$/.test(prefs.login) || /^\d{10}$/.test(prefs.login), 'Введите 16 цифр номера карты или 10 цифр номера телефона.');
 	checkEmpty(prefs.password, 'Введите пароль.');
     var	 token=AnyBalance.getData('token'+prefs.login);
-token='fc127603c8a49715dd66d94d16a5df776cafd574';
     if (token){
     	AnyBalance.trace('Найден старый токен');
     	apiHeaders['X-Authorization'] = 'Token' + token;

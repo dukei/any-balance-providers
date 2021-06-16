@@ -16,7 +16,7 @@ function main () {
     var loc=prefs.loc||'RU';
     var baseurl = 'https://www.letu.'+loc+'/';
     AnyBalance.restoreCookies();
-    var html = AnyBalance.requestGet(baseurl+'rest/model/atg/userprofiling/ClientActor/extendedProfileInfo?pushSite=storeMobile'+loc);
+    var html = AnyBalance.requestGet(baseurl+'rest/model/atg/userprofiling/ClientActor/extendedProfileInfo?pushSite=storeMobile'+loc+'&_='+(new Date().getTime()));
     var json=getJson(html);
     if (!json.profile.lastName)
 {
@@ -50,7 +50,7 @@ function main () {
     }
     var json=getJson(html);
     if (json.formExceptions) throw new AnyBalance.Error (json.formExceptions[0].localizedMessage,false,true);
-    var html = AnyBalance.requestGet(baseurl+'rest/model/atg/userprofiling/ClientActor/extendedProfileInfo?pushSite=storeMobile'+loc);
+    var html = AnyBalance.requestGet(baseurl+'rest/model/atg/userprofiling/ClientActor/extendedProfileInfo?pushSite=storeMobile'+loc+'&_='+(new Date().getTime()));
 }
 
     var json=getJson(html);

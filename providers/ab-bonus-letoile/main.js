@@ -11,8 +11,9 @@ var g_headers = {
 }
 
 function main () {
-    var loc='RU';
+    
     var prefs = AnyBalance.getPreferences ();
+    var loc=prefs.loc||'RU';
     var baseurl = 'https://www.letu.'+loc+'/';
     AnyBalance.restoreCookies();
     var html = AnyBalance.requestGet(baseurl+'rest/model/atg/userprofiling/ClientActor/extendedProfileInfo?pushSite=storeMobile'+loc);
@@ -58,7 +59,8 @@ function main () {
     result.balance=json.profile.cardBalance;
     result.discount=json.profile.cardDiscount;
     result.__tariff=json.profile.cardTypeName;
-    result.number=json.profile.cardNumber.replace(/(\d{4})(\d{4})(\d*)/,'$1-$2-$3');
+
+    getParam(json.profile.cardNumber+'', result, 'number', null,[/(\d{4})(\d{4})(\d*)/i,'$1-$2-$3']);
     getParam(html, result, 'balance', /Баланс\s*карты:^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
 
 	AnyBalance.saveCookies();

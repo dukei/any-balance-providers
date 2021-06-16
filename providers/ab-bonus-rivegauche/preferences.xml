@@ -1,21 +1,25 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
-	<ListPreference
-		title="Тип карты"
-		summary="|Выберите тип карты|Сейчас выбран тип:\n{@s}"
-		key="cardtype"
-		entries="Стандартная карта|Золотая VIP-карта"
-		entryValues="0|1"
-		defaultValue="0"/>
 	<EditTextPreference
 		obligatory="true"
-		key="cardnum"
-		title="Номер Карты"
-		summary="Номер карты||{@s}\n"
-		inputType="number"
-		dialogTitle="Номер карты"
-		dialogMessage="Введите номер карты"
+		key="login"
+		title="Логин"
+		summary="Номер карты или email||{@s}\n"
+		inputType="text"
+		dialogTitle="Номер карты или email"
+		dialogMessage="Введите номер карты или email"
 		positiveButtonText="ОК"
 		negativeButtonText="Отмена">
 	</EditTextPreference>
+	<EditTextPreference
+		key="password"
+		title="Пароль"
+		summary="Пароль для авторизации||***********\n"
+		dialogTitle="Пароль"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите Пароль."
+		positiveButtonText="ОК"
+		inputType="textPassword">
+	</EditTextPreference>
+
 </PreferenceScreen>

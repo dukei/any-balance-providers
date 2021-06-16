@@ -11,8 +11,8 @@ var g_headers = {
 }
 
 function main () {
+    var loc='RU';
     var prefs = AnyBalance.getPreferences ();
-    var loc=prefs.loc||'UA';
     var baseurl = 'https://www.letu.'+loc+'/';
     AnyBalance.restoreCookies();
     var html = AnyBalance.requestGet(baseurl+'rest/model/atg/userprofiling/ClientActor/extendedProfileInfo?pushSite=storeMobile'+loc);
@@ -23,12 +23,13 @@ function main () {
     checkEmpty (prefs.login, 'Введите e-mail');
     checkEmpty (prefs.password, 'Выберите пароль');
     AnyBalance.setDefaultCharset('utf-8'); 
-    var html = AnyBalance.requestGet(baseurl+'login/');
+    //var html = AnyBalance.requestGet(baseurl+'login/');
+    var html = AnyBalance.requestGet(baseurl+'rest/model/atg/rest/SessionConfirmationActor/getSessionConfirmationNumber');
 	if(!html || AnyBalance.getLastStatusCode() > 400){
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
 	}
-    var setItem=getParam(html,null,null,/_dynSessConf[^\d-]*([\d-]*)/);
+    var setItem=getParam(html,/sessionConfirmationNumber":\s?(-?\d*)/i);
     if (!setItem) throw new AnyBalance.Error ('Не удалось найти параметры авторизации. Возможно сайт изменен.');
     var html = AnyBalance.requestPost(baseurl+'rest/model/atg/userprofiling/ProfileActor/login', JSON.stringify({
 	login: prefs.login,
@@ -62,7 +63,6 @@ function main () {
 
 	AnyBalance.saveCookies();
 	AnyBalance.saveData();
-    if (loc=='RU') result.unt='р';
-    if (loc=='UA') result.unt='грн';
+
    AnyBalance.setResult (result);
 }

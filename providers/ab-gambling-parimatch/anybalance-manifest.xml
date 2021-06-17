@@ -1,25 +1,26 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-  <id version="2">ab-gambling-parimatch</id>
+  <id version="3">ab-gambling-parimatch</id>
   <name>Parimatch</name>
   <description>
     Получает баланс на счету сайта Parimatch (http://www.parimatch.com/)
-
   </description>
-  <author>Alexandra Shalamova &lt;alexandrashalamova@gmail.com&gt;</author>
+  <author>DimaZUA &lt;DIMAZ.KHUA@gmail.com&gt;</author>
+          <depends>
+   		<module id="library"/>
+   	</depends>
   <files>
     <icon>icon.png</icon>
     <preferences>preferences.xml</preferences>
-    <js>library.js</js>
     <js>main.js</js>
     <history>history.xml</history>
   </files>
   <counters>
     <counter id="balance" name="Баланс на счету" units=" {@currency}"/>
-    <counter id="summ" name="Сумма нерасчитанных" units=" {@currencysumm}"/>
-    <counter id="rates" name="Ставки из 100"/>
-    <counter id="bonus" name="Бонус" units=" {@currencybonus}"/>
+    <counter id="restOfNCalc" name="Сумма нерасчитанных" units=" {@currency}"/>
+    <counter id="restOfNPay" name="Ожидает выплаты" units=" {@currency}"/>
+    <counter id="bonus" name="Бонус" units=" {@currency}"/>
   </counters>
   <keywords>
     париматч

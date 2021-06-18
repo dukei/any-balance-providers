@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id version="12">ab-cell-motiv</id>
+	<id version="13">ab-cell-motiv</id>
 	<name>Мотив Телеком</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе и тарифном плане для пользователей сотового оператора "Мотив".</p>   
@@ -16,6 +16,7 @@
 	</ol>
 	]]></instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<author>DimaZUA &lt;DIMAZ.KHUA@gmail.com&gt;</author>
 	<depends>
 		<module id="library"/>
 	</depends>

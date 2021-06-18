@@ -32,7 +32,7 @@ function callApi(verb, params){
 		throw new AnyBalance.Error(error, null, /парол/i.test(error));
 	}
 
-	if(verb === 'auth')
+	if(verb === 'login')
 		callApi.s_token = json.access_token;
 
 	return json;
@@ -43,10 +43,11 @@ function main(){
 	AnyBalance.setDefaultCharset('utf-8');
 	
     var prefs = AnyBalance.getPreferences();
+    	prefs.login=prefs.login.replace(/([^\d]*)/g,'').substr(-10)
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
-	
-    var json = callApi('auth', {username: prefs.login, password: prefs.password});
+
+    var json = callApi('login', {username: prefs.login, password: prefs.password});
 
     json = callApi('me');
 

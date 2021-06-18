@@ -68,6 +68,7 @@ function handshakeAndEstablish(prefs){
     });
 
     apiHeaders['X-Authorization'] = 'Token' + handshake.server.features['security/session'].token.value;
+    apiHeaders['X-PLATFORM']='android';
     AnyBalance.setCookie(domain, 'token', 'Token' + handshake.server.features['security/session'].token.value);
     AnyBalance.setCookie(domain, 'header_name', 'X-Authorization');
     AnyBalance.setData('token'+prefs.login,handshake.server.features['security/session'].token.value);
@@ -100,7 +101,7 @@ function handshakeAndEstablish(prefs){
     	AnyBalance.trace('Код не получен. Осталось ' + (5-i) + ' попыток');
     }
     if (code){
-    	if (code==1)  throw new AnyBalance.trace('Код подтверждения не получен. Отмена 1', false, true);
+    	if (code==1)  throw new AnyBalance.Error('Код подтверждения не получен. Отмена 1', false, true);
     	json = callApi('v1/auth/2fa', null, {
     		code: code,
     		token: token
@@ -129,6 +130,7 @@ function main () {
     if (token){
     	AnyBalance.trace('Найден старый токен');
     	apiHeaders['X-Authorization'] = 'Token' + token;
+    	apiHeaders['X-PLATFORM']='android';
     	AnyBalance.trace('Проверка токена');
     	try{
     		var me = callApi('v1/users/me');
@@ -156,13 +158,25 @@ function main () {
     var result = {success: true};
 
     var card = callApi('v3/cards/' + me.cards.main);
+    //var card = callApi('v3/cards');
 
     var balance = callApi('v2/users/balance/' + me.cards.main);
     if (balance.points && balance.points.length>0){
-    	balance=balance.points[0];
-    	getParam(balance.points, result, 'balancePoints');
-    	getParam(Math.floor(balance.points/10), result, 'balance');
-    	getParam(balance.expiration.points, result, 'earnedInThisMonth');
+    	for (var i=0;i<balance.points.length;i++){
+    		var b=balance.points[i];
+    		if (b.type=='main'){
+    			getParam(b.points, result, 'balancePoints');
+    			getParam(Math.floor(b.points/10), result, 'balance');
+    			getParam(b.expiration.points, result, 'earnedInThisMonth');
+    			getParam(b.expiration.date.replace(/(\d{4})-(\d{2})-(\d{2})/,'$3.$2.$1'), result, 'pointexpirationDate');
+    		}else if (b.type=='stickers'){
+    			getParam(b.points, result, 'stikersPoints');
+    			getParam(b.expiration.points, result, 'stikersearnedInThisMonth');
+    			getParam(b.expiration.date.replace(/(\d{4})-(\d{2})-(\d{2})/,'$3.$2.$1'), result, 'stikersexpirationDate');
+    		}else{
+    			AnyBalance.trace('Неизвестный бонус'+b.type+':\n'+JSON.stringify(b));
+    		}
+        }
     }else{
     	getParam(card.balance.points, result, 'balancePoints');
     	getParam(Math.floor(card.balance.points/10), result, 'balance');
@@ -177,7 +191,13 @@ function main () {
     if(isAvailable('last_transaсtion')){
     try{
     	var t=callApi('v4/transactions/?card=' + me.cards.main+'&offset=0&limit=1');
-    	if (t && t.results) getParam(t.results[0].created_at.replace(/(\d{4})-(\d{2})-(\d{2})([\s\S]*)/,'$3.$2.$1$4')+' '+t.results[0].bonuses[0].title+' '+t.results[0].bonuses[0].sum +' ('+t.results[0].title+' на '+t.results[0].sum+')',result,'last_transaсtion');
+    	if (t && t.results && t.results.length>0) {
+    		        var res=t.results[0].created_at.replace(/(\d{4})-(\d{2})-(\d{2})([\s\S]*)/,'$3.$2.$1$4')+' ';
+    		        for (var i=0;i<t.results[0].bonuses.length;i++)
+    		        	res+=t.results[0].bonuses[i].title+' +'+t.results[0].bonuses[i].sum +'. ';
+    		        res+='('+t.results[0].title+' на '+t.results[0].sum.toFixed(2)+' р.)';
+    			getParam(res,result,'last_transaсtion');
+    		}
     }catch(e){
     	AnyBalance.trace(e.message);
     }

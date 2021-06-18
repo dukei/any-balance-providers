@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-  <id version="1">ab-municipal-cks</id>
+  <id version="2">ab-municipal-cks</id>
   <name>Центр комунального сервісу</name>
   <description>
     Центр комунального сервісу – Ваш експерт у сфері житлово-комунальних послуг

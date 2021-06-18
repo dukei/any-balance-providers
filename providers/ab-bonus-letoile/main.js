@@ -11,11 +11,12 @@ var g_headers = {
 }
 
 function main () {
+    
     var prefs = AnyBalance.getPreferences ();
     var loc=prefs.loc||'RU';
     var baseurl = 'https://www.letu.'+loc+'/';
     AnyBalance.restoreCookies();
-    var html = AnyBalance.requestGet(baseurl+'rest/model/atg/userprofiling/ClientActor/extendedProfileInfo?pushSite=storeMobile'+loc);
+    var html = AnyBalance.requestGet(baseurl+'rest/model/atg/userprofiling/ClientActor/extendedProfileInfo?pushSite=storeMobile'+loc+'&_='+(new Date().getTime()));
     var json=getJson(html);
     if (!json.profile.lastName)
 {
@@ -23,12 +24,13 @@ function main () {
     checkEmpty (prefs.login, 'Введите e-mail');
     checkEmpty (prefs.password, 'Выберите пароль');
     AnyBalance.setDefaultCharset('utf-8'); 
-    var html = AnyBalance.requestGet(baseurl+'login/');
+    //var html = AnyBalance.requestGet(baseurl+'login/');
+    var html = AnyBalance.requestGet(baseurl+'rest/model/atg/rest/SessionConfirmationActor/getSessionConfirmationNumber');
 	if(!html || AnyBalance.getLastStatusCode() > 400){
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
 	}
-    var setItem=getParam(html,null,null,/_dynSessConf[^\d-]*([\d-]*)/);
+    var setItem=getParam(html,/sessionConfirmationNumber":\s?(-?\d*)/i);
     if (!setItem) throw new AnyBalance.Error ('Не удалось найти параметры авторизации. Возможно сайт изменен.');
     var html = AnyBalance.requestPost(baseurl+'rest/model/atg/userprofiling/ProfileActor/login', JSON.stringify({
 	login: prefs.login,
@@ -48,7 +50,7 @@ function main () {
     }
     var json=getJson(html);
     if (json.formExceptions) throw new AnyBalance.Error (json.formExceptions[0].localizedMessage,false,true);
-    var html = AnyBalance.requestGet(baseurl+'rest/model/atg/userprofiling/ClientActor/extendedProfileInfo?pushSite=storeMobile'+loc);
+    var html = AnyBalance.requestGet(baseurl+'rest/model/atg/userprofiling/ClientActor/extendedProfileInfo?pushSite=storeMobile'+loc+'&_='+(new Date().getTime()));
 }
 
     var json=getJson(html);
@@ -57,7 +59,8 @@ function main () {
     result.balance=json.profile.cardBalance;
     result.discount=json.profile.cardDiscount;
     result.__tariff=json.profile.cardTypeName;
-    result.number=json.profile.cardNumber.replace(/(\d{4})(\d{4})(\d*)/,'$1-$2-$3');
+
+    getParam(json.profile.cardNumber+'', result, 'number', null,[/(\d{4})(\d{4})(\d*)/i,'$1-$2-$3']);
     getParam(html, result, 'balance', /Баланс\s*карты:^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
 
 	AnyBalance.saveCookies();

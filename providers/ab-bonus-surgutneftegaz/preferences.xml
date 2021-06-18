@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
     <EditTextPreference 
-        title="Номер счета" 
+        title="Логин" 
         positiveButtonText="ОК" 
         summary="||{@s}" 
         dialogTitle="Логин" 
         negativeButtonText="Отмена" 
-        dialogMessage="Введите номер счета"
+        dialogMessage="Введите e-mail или номер карты."
         key="login">
     </EditTextPreference>
     <EditTextPreference 

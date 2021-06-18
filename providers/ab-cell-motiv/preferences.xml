@@ -4,10 +4,10 @@
 		obligatory="true"
 		title="Телефон"
 		positiveButtonText="ОК"
-		summary="10 цифр номера телефона||{@s}\n"
+		summary="Номер телефона||{@s}\n"
 		dialogTitle="Телефон"
 		negativeButtonText="Отмена"
-		dialogMessage="Введите 10 цифр вашего номера телефона, например, 9081234567."
+		dialogMessage="Введите Номер телефона"
 		inputType="number"
 		key="login">
 	</EditTextPreference>

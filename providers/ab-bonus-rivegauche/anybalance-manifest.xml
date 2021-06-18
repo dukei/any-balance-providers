@@ -1,13 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="2.0" version="4">ab-bonus-rivegauche</id>
+	<id major_version="3.0" version="5">ab-bonus-rivegauche</id>
 	<api flags="no_browser"/>
 	<name>Рив Гош</name>
 	<description html="true"><![CDATA[
 	<p>Получает сумму накоплений, сумму бонуса к Дню рождения для золотой карты, дата последней операции по карте.</p>
 	]]></description>
-	<author>KiLLer13&lt;killer_kondor@pisem.net&gt;</author>
-	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<author>DimaZUA &lt;DIMAZ.KHUA@gmail.com&gt;</author>
 	<depends>
 		<module id="library"/>
 	</depends>
@@ -18,9 +17,16 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
+		<counter id="balance" name="Баланс"/>
+		<counter id="fullCardNumber" name="Номер карты" type="text"/>
+
+		<counter id="orders" name="Заказы" type="text"/>
+		<counter id="favoritesProductsCount" name="Избранное"/>
+		<counter id="awaitingProductsCount" name="Жду поступления"/>
+
 		<counter id="db_balance" name="Сумма накоплений"/>
 		<counter id="db_bonus" name="Сумма бонусов" />
-		<counter id="db_date" name="Последняя операция по карте" type="time" format="dd/MM/yyyy" />
+		<counter id="db_date" name="Последняя операция по карте" type="time" format="dd.MM.yyyy" />
 		<counter id="db_status" name="Статус карты" type="text"/>
 	</counters>
 	<keywords>бонус, ривгош, bonus, rivegauche</keywords>

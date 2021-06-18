@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<api flags="no_browser" />
+	<id version="1">ab-bonus-surgutneftegaz</id>
+	<name>Сургутнефтегаз (Бонусы)</name>
+	<description html="true"><![CDATA[
+	<p>Получает информацию по картам программы ляльности сети АЗС "Сургутнефтегаз" на все 100% <a href="https://sngbonus.ru/">https://sngbonus.ru/</a></p>
+	]]></description>
+	<author>DimaZUA &lt;DIMAZ.KHUA@gmail.com&gt;</author>
+        <depends>
+   		<module id="library"/>
+   	</depends>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" бон."/>
+		<counter id="this_month" name="В этом месяце получено" units=" бон"/>
+		<counter id="cardnum" name="Номер карты" type="text"/>
+		<counter id="next_status_left" name="До следующего статуса" type="text"/>
+		<counter id="status" name="Статус карты" type="text"/>
+		<counter id="last_operation" name="Последняя операция" type="html"/>
+	</counters>
+	<keywords></keywords>
+	<type>bonus</type>
+	<country>ru</country>
+</provider>

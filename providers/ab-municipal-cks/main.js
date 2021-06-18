@@ -52,7 +52,7 @@ function main(){
 	}else{
   		for (var i=0;i<adrs.length;i++)
   			ask+=(i+1)+'. '+adrs[i].adr+'\n';
-  		ask='Оберіть адресу, по якій потрібно отримавати інформацію про заборгованість\n'+ask+'\nВведіть число від 1 до '+adrs.length;
+  		ask='Оберіть адресу, по якій потрібно отримувати інформацію про заборгованість\n'+ask+'\nВведіть число від 1 до '+adrs.length;
   		href=adrs[parseInt(AnyBalance.retrieveCode(ask, null, {time: 60000,inputType: 'number',minLength: 1,maxLength: 2,}))-1].href;
 	}
 	AnyBalance.setData(prefs.login+'href',href);
@@ -63,8 +63,8 @@ function main(){
   }
   var table= getElementById(html,'data-table');
   var result = {success:true,balance:0};
-  getParam(table,result,'address',/span>([\s\S]*?)<\/span>/);
-  if (!result.address){
+  var addr=getParam(table,null,null,/span>([\s\S]*?)<\/span>/);
+  if (!addr){
   	AnyBalance.trace('Что-то пошло не так.');
   	AnyBalance.trace(html);
   	AnyBalance.setData(prefs.login+'href','');
@@ -73,6 +73,7 @@ function main(){
 	AnyBalance.saveData();
   	throw new AnyBalance.Error('Несподівана відповідь від серверу. Можливо сайт було змінено.', null, true);
   }
+  getParam(addr,result,'address');
   getParam(html,result,'__tariff',/Рахунок за ([^<]*?)</);
   var rows=getElementsByClassName(table,'item-row');
     for (var i=0;i<rows.length;i++){

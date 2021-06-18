@@ -114,6 +114,39 @@ function generateUUID () {
 }
 
 function main(){
+var g_headers = {
+'content-type':'application/json',
+accept:'application/vnd.qiwi.v1+json',
+'user-agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.77 Safari/537.36',
+'client-software':'WEB v4.98.0',
+'x-application-id':'0ec0da91-65ee-496b-86d7-c07afc987007',
+'x-application-secret':'66f8109f-d6df-49c6-ade9-5692a0b6d0a1',
+'origin':'https://qiwi.com',
+'sec-fetch-site':'same-site',
+'sec-fetch-mode':'cors',
+'sec-fetch-dest':'empty',
+'referer':'https://qiwi.com/',
+'accept-encoding':'gzip, deflate, br'
+}
+    var prefs = AnyBalance.getPreferences();
+    AnyBalance.setDefaultCharset('utf-8');
+    AnyBalance.setOptions({cookiePolicy: 'netscape'});	
+var html=AnyBalance.requestGet('https://qiwi.com/payment/form/32558');
+AnyBalance.trace(html);
+var html=AnyBalance.requestPost('https://qiwi.com/oauth/token',{grant_type:'anonymous',client_id:'anonymous'});
+AnyBalance.trace(html);
+var json=getJson(html);
+g_headers.authorization='TokenHead '+json.access_token;
+var html=AnyBalance.requestPost('https://edge.qiwi.com/sinap/api/refs/d70e3628-ac4c-48ff-9e20-e7f04b4c9b81/containers',JSON.stringify({
+	account: prefs.num,
+	serviceType: 'account',
+	profileId: 'rostelecom'}),g_headers);
+AnyBalance.trace(html);
+	var json=getJson(html);
+	if (json.message) throw new AnyBalance.Error(json.message,false,true)
+	AnyBalance.setResult({success:true,balance:json.elements[0].value})
+	return;
+
     var prefs = AnyBalance.getPreferences();
     AnyBalance.setDefaultCharset('utf-8');
 
@@ -152,8 +185,7 @@ function main(){
     var code = AnyBalance.retrieveCode('Пожалуйста, введите слова с картинки', img);
 */
 	
-	AnyBalance.setCookie('.rt.ru', 'oxxfgh', '20171673-dde6-4018-87c5-324367ebc5ef#0#1800000#5000');
-
+	AnyBalance.setCookie('.rt.ru', 'oxxfgh', 'f9d528d6-f77e-421d-aa52-fb0260e7ec6e#0#1800000#5000');
 	var html = AnyBalance.requestPost(baseurl + 'client-api/checkSession', JSON.stringify({
 		client_uuid: generateUUID(), 
 		current_page: ''
@@ -161,6 +193,15 @@ function main(){
 
 
     var state = JSON.stringify({uuid: generateUUID()});
+    html = AnyBalance.requestGet('https://b2c.passport.rt.ru/auth/realms/b2c/protocol/openid-connect/auth?' + createUrlEncodedParams({
+    	response_type: 'code',
+    	scope: 'openid',
+    	client_id: 'lk_b2c',
+    	state: state,
+    	redirect_uri: 'https://lk.rt.ru/sso-auth/?redirect=https%3A%2F%2Flk.rt.ru%2F'
+    }), g_web_headers);
+
+     html = handleBobcmn(AnyBalance.getLastUrl(), html);
     html = AnyBalance.requestGet('https://b2c.passport.rt.ru/auth/realms/b2c/protocol/openid-connect/auth?' + createUrlEncodedParams({
     	response_type: 'code',
     	scope: 'openid',

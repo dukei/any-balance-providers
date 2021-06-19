@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="5" date="2021-06-19">
+	- Исправления в манифесте
+	</change>
 	<change version="4" date="2021-06-10">
 	- Исправлено отображение переплаты.
 	</change>

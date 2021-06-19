@@ -17,7 +17,7 @@ function main() {
 	
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
-	
+/**	
 	try {
 		var html = AnyBalance.requestGet(baseurl + 'cgi-bin/stat.pl', g_headers);
 	} catch(e){}
@@ -25,11 +25,15 @@ function main() {
 	if(AnyBalance.getLastStatusCode() > 400 || !html) {
 		throw new AnyBalance.Error('Ошибка! Сервер не отвечает! Попробуйте обновить баланс позже.');
 	}
-	
-	html = AnyBalance.requestPost(baseurl + 'cgi-bin/stat.pl', {
+**/	
+	var html = AnyBalance.requestPost(baseurl + 'cgi-bin/stat.pl', {
 		uu: prefs.login,
 		pp: prefs.password,
 	}, addHeaders({Referer: baseurl + 'cgi-bin/stat.pl'}));
+
+	if(AnyBalance.getLastStatusCode() > 400 || !html) {
+		throw new AnyBalance.Error('Ошибка! Сервер не отвечает! Попробуйте обновить баланс позже.');
+	}
 	
 	if (!/logout/i.test(html)) {
 		var error = getParam(html, null, null, /<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
@@ -42,8 +46,15 @@ function main() {
 	
 	var result = {success: true};
 	
-	getParam(html, result, 'balance', /Остаток на счете((?:[\s\S](?!<\/b>))+[\s\S])/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'fio', /ФИО(?:[^>]*>){3}([\s\S]*?)</i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'balance', /Залишок на рахунку[\s\S]*?<td>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'cost', /Зняття за поточний період[\s\S]*?<td>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'cost_options', /Зняття за підключені опції[\s\S]*?<td>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'personal_code', /Ваш персональний платіжний код\s*(\d*)/i, replaceTagsAndSpaces);
+	getParam(html, result, 'fio', /П\.І\.Б\.(?:[^>]*>){3}([\s\S]*?)</i, replaceTagsAndSpaces, html_entity_decode);
+
+	var href=getParam(html, null,null, /Список сервісів[\s\S]*?href='([^']*)/i);
+	html= AnyBalance.requestGet(baseurl + href)
+	getParam(html, result, '__tariff', /<table[\s\S]*?<td[\s\S]*?(<td[\s\S]*?td>)/i, replaceTagsAndSpaces, html_entity_decode);
 	
 	AnyBalance.setResult(result);
 }

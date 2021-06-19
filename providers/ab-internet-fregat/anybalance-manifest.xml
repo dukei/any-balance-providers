@@ -1,13 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="3">ab-internet-fregat</id>
+	<id version="4">ab-internet-fregat</id>
 	<api flags="no_browser"/>
 	<name>Фрегат (Днепропетровск)</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе провайдера Фрегат г. Днепропетровск</p>
 	<p>Информация берется из личного кабинета https://info.fregat.net/cgi-bin/stat.pl</p>
 	]]></description>
-	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>DimaZUA &lt;DIMAZ.KHUA@gmail.com&gt;</author>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
@@ -17,6 +18,9 @@
 	</files>
 	<counters>
 		<counter id="balance" name="Баланс" units=" грн"/>
+		<counter id="cost" name="За текущий период" units=" грн"/>
+		<counter id="cost_options" name="За подключенные опции" units=" грн"/>
+		<counter id="personal_code" name="Ваш персональний платіжний код" type="text"/>
 		<counter id="fio" name="ФИО" type="text"/>
 	</counters>
 	<keywords></keywords>

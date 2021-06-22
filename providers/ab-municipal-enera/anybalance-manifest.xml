@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="4">ab-municipal-enera</id>
+	<id version="5">ab-municipal-enera</id>
 	<api flags="no_browser"/>
 	<name>E-Svitlo (Енера-схід)</name>
 	<description html="true"><![CDATA[
@@ -30,8 +30,8 @@
 		<counter id="lastpaydate" name="Дата последней оплаты" type="time" format="dd.MM.yyyy"/>
                 <counter id="eic" name="EIC код" type="text"/>
                 <counter id="ls" name="Лицевой счет" type="text"/>
-                <counter id="fio" name="Лицевой счет" type="text"/>
-                <counter id="adr" name="Лицевой счет" type="text"/>
+                <counter id="fio" name="ФИО" type="text"/>
+                <counter id="adr" name="Адрес" type="text"/>
 	</counters>
 	<keywords>
 	електрична енергія, Луганської, електроенергия, Луганская, Энера, Єнера, електроенергія, світло, e-svitlo, электричество, енера, энера, enera

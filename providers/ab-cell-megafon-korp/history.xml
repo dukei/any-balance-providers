@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="34" date="2021-06-25">
+	Восстановлены после переименования переменные
+	</change>
 	<change version="33" date="2020-10-11">
 	Восстановлены баланс и число абонентов
 	</change>

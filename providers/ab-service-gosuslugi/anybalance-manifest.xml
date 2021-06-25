@@ -25,7 +25,6 @@
 		<js>main.js</js>
 		<js>snils.js</js>
 		<history>history.xml</history>
-		<js>library.min.js</js>
 	</files>
 	<counters>
 		<counter id="balance" name="Задолженность" units=" р"/>

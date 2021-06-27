@@ -1,25 +1,29 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-internet-k-telecom</id>
+	<id version="3">ab-internet-k-telecom</id>
 	<api flags="no_browser"/>
 	<name>K-Telecom</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе интернет-провайдера K-Telecom <a href="http://k-telecom.org/">http://k-telecom.org/</a></p>
 	<p>Информация берется из личного кабинета <a href="https://stat.k-telecom.org/cgi-bin/proga/client.pl">https://stat.k-telecom.org/cgi-bin/proga/client.pl</a></p>
 	]]></description>
-	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<author>Stark &lt;support@starksoft.ru&gt;</author>
+	<author>DimaZUA &lt;DIMAZ.KHUA@gmail.com&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
 	<counters>
 		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="abon" name="Ежемесячный платеж" units=" р"/>
+		<counter id="recomended" name="Рекомендуемый платеж" units=" р"/>
+		<counter id="date" name="Дата рачета" type="time" fomat="dd.MM.YYYY"/>
 		<counter id="fio" name="ФИО" type="text"/>
-		<counter id="status" name="Состояние" type="text"/>
-		<counter id="access" name="Доступ" type="text"/>
 		<counter id="agreement" name="N Договора" type="text"/>
 	</counters>
 	<keywords></keywords>

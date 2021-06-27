@@ -1,26 +1,32 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<id version="1">ab-internet-pautina</id>
 	<api flags="no_browser"/>
-	<name>Паутина (Чернигов)</name>
+	<name>Pautina</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе интернет-провайдера Паутина г. Чернигов http://pautina.ch.ua</p>
-	<p>Информация берется из личного кабинета https://stat.pautina.ch.ua/index.php</p>
+	<p>Предоставляет информацию о балансе провайдера pautina <a href="https://pautina.ua">https://pautina.ua</a></p>
 	]]></description>
-	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<author>DimaZUA &lt;DIMAZ.KHUA@gmail.com&gt;</author>
+	<depends>
+		<module id="library"/>
+		<module id="crypt/md5"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс"/>
-		<counter id="account" name="Номер договора" type="text"/>
-		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="balance" name="Баланс" units=" ₴"/>
+		<counter id="bonus" name="Бонуси"/>
+		<counter id="abon" name="Загальна вартість послуг" units=" ₴"/>
+		<counter id="recomend" name="Рекомендована сума поповнення в поточному місяці" type="text"/>
+		<counter id="recomend_next" name="Рекомендована сума поповнення на наступний місяць" type="text"/>
+		<counter id="fio" name="П.І.Б." type="text"/>
+		<counter id="amount" name="Аккаунт" type="text"/>
 	</counters>
-	<keywords></keywords>
+	<keywords>паутина</keywords>
 	<type>internet</type>
 	<country>ua</country>
 </provider>

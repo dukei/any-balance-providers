@@ -12,31 +12,39 @@ var g_headers = {
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'https://stat.pautina.ch.ua/';
-	AnyBalance.setDefaultCharset('utf-8');
+
+    baseurl= 'https://stat.pautina.ua/ua/i';
+    if (parseInt(prefs.login.substr(0,1)) < 6)
+    baseurl= 'https://stat.pautina.net.ua/ua/i';
+
+    var d = new Date();
+    var gm = d.getMonth();
+    var gd = d.getDate();
+    var gy = d.getYear();
+    var ses=gd+""+gm+""+gy;
+    var pp = hex_md5(ses+" "+prefs.password);
+    var html=AnyBalance.requestGet(baseurl+'?&uu='+prefs.login+'&pp='+pp);
+
 	
-	checkEmpty(prefs.login, 'Введите логин!');
-	checkEmpty(prefs.password, 'Введите пароль!');
-	
-	var html = AnyBalance.requestGet(baseurl + 'index.php', g_headers);
-	
-	html = AnyBalance.requestPost(baseurl + 'index.php', {
-		login: prefs.login,
-		password: prefs.password,
-		'Remember': 'false'
-	}, addHeaders({Referer: baseurl + 'index.php'}));
-	
-	if (!/>Выход</i.test(html)) {
+	if(!html || AnyBalance.getLastStatusCode() > 400){
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
+	}
+
+	if (!/АККАУНТ : /i.test(html)) {
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
-	
+
 	var result = {success: true};
-	
-	getParam(html, result, 'account', /Номер договора<(?:[^>]*>){14}([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, 'balance', /Баланс\s*<(?:[^>]*>){14}([^<]+)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'fio', /Вы:(?:[^>]*>){2}([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
-	getParam(html, result, '__tariff', /Тариф\s*<(?:[^>]*>){20}([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
-	
+
+	getParam(html, result, 'balance', /Баланс[\s\S]*?<h[32]>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'bonus', /Бонуси[\s\S]{1,30}<h[32]>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'abon', /Загальна вартість послуг[\s\S]*?h[32][^<]*?>([\d\.,\s]+)?<\/h[32]/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'recomend', /в поточному місяці[\s\S]*?(<h[432][\s\S]*?<\/h[432]>)/i, [replaceTagsAndSpaces,replaceHtmlEntities]);
+	getParam(html, result, 'recomend_next', /на наступний місяць[\s\S]*?(<h[432][\s\S]*?<\/h[432]>)/i, [replaceTagsAndSpaces,replaceHtmlEntities]);
+	getParam(html, result, 'fio', /&a=101&a=100">([\s\S]*?)<\/h6/i, [replaceTagsAndSpaces,replaceHtmlEntities]);
+	getParam(html, result, 'amount', /АККАУНТ[\s\S]*?<b>([\s\S]*?)<\/b/i, [replaceTagsAndSpaces,replaceHtmlEntities]);
+	getParam(html, result, '__tariff', /[\s\S]*<span>([\s\S]*)<\/span>/i, [replaceTagsAndSpaces,replaceHtmlEntities]);
 	AnyBalance.setResult(result);
 }

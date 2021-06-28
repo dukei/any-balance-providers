@@ -7,10 +7,11 @@
         summary="Номер телефона для доступа к личному кабинету||{@s}\n"
         inputType="number"
         dialogTitle="Номер телефона"
-        dialogMessage="Введите номер телефона без префикса для входа в личный кабинет, например, 9163456789"
+        dialogMessage="Введите номер телефона для входа в личный кабинет"
         positiveButtonText="ОК"
         negativeButtonText="Отмена">
     </EditTextPreference>
+<!--
     <EditTextPreference
 		obligatory="true"
         key="password"
@@ -22,4 +23,5 @@
         positiveButtonText="ОК"
         negativeButtonText="Отмена">
     </EditTextPreference>
+-->
 </PreferenceScreen>

@@ -87,7 +87,7 @@ function main() {
     getParam(json.accountNumber, result, 'licschet');
     getParam(user.user.username, result, 'phone_name');
     getParam(json.currentBalance, result, 'balance');
-    getParam(json.conditionalBalance, result, 'balance_if');
+    getParam(json.totalBalance, result, 'balance_if');
 
     try {
         var account;
@@ -271,7 +271,7 @@ function getAccount(baseurl, accnum, result){
         	if(!accnum || acc.number.endsWith(accnum)){
         		getParam(acc.balance.value, result, 'balance');
 			    getParam(acc.subsCount, result, 'abonCount');
-			    getParam(acc.conditionBalance.value, result, 'balance_if');
+			    getParam(acc.totalBalance.value, result, 'balance_if');
 			    break;
         	}
         }
@@ -282,7 +282,7 @@ function getAccount(baseurl, accnum, result){
         getParam(acc.number, result, 'licschet');
     }else{
     	getParam(html, result, 'balance', /<dt[^>]*>\s*Текущий баланс[\s\S]*?class="money[^>]*>([\s\S]*?)<span/i, replaceTagsAndSpaces, parseBalance);
-    	getParam(html, result, 'balance_if', /<dt[^>]*>\s*Текущий условный баланс[\s\S]*?class="money[^>]*>([\s\S]*?)<span/i, replaceTagsAndSpaces, parseBalance);
+    	getParam(html, result, 'balance_if', /<dt[^>]*>\s*Всего средств на услуги[\s\S]*?class="money[^>]*>([\s\S]*?)<span/i, replaceTagsAndSpaces, parseBalance);
 	    getParam(html, result, 'abonCount', /<dt[^>]*>\s*Абонентов[\s\S]*?class="span76[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseBalance);
 	    getParam(html, result, 'licschet', /Лицевой счет\s*(\d+)/i, replaceTagsAndSpaces);
     }

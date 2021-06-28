@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="3" version="46" date="2021-06-27">
+	- Поддержка изменений в API
+	</change>
 	<change major_version="3" version="45" date="2018-11-26">
 	Поддержка недовыпущенных карт
 	</change>

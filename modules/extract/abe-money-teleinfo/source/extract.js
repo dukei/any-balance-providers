@@ -362,12 +362,12 @@ function login() {
             password: prefs.password
         }, 'LoginRequest theme', g_commonProperties));
 
-        if(!obj.payload.authorizationLevel || obj.payload.authorizationLevel.id != 'IDENTIFIED') {
+        if(!obj.payload.authorizationLevel || !/Identified/i.test(obj.payload.authorizationLevel.id)) {
             trace(obj);
             throw new AnyBalance.Error('Неизвестная ошибка. Сайт изменен?');
         }
 
-        if(obj.payload.authorization.type.id != 'NONE'){
+        if(!/NONE/i.test(obj.payload.authorization.type.id)){
             //Надо вводить код...
             AnyBalance.trace('Придется, черт возьми, вводить код: ' + obj.payload.authorization.type.id);
         }
@@ -384,7 +384,7 @@ function login() {
         }, 'GetChallengeRequest theme', g_commonProperties));
 
         var code = '';
-        if(obj.payload.authorization.type.id != 'NONE'){
+        if(!/NONE/i.test(obj.payload.authorization.type.id)){
             var code = AnyBalance.retrieveCode(obj.payload.authorization.message, null, {inputType: 'number', time: 300000});
         }
 

@@ -23,7 +23,12 @@ function main(){
     }else{
     	AnyBalance.trace('Найден токен');
     	g_headers.authorization='Token '+ token;
-    	var json=callApi('v2/user/getAccountInfo');
+    	try{
+    		var json=callApi('v2/user/getAccountInfo');
+    	}catch(e){
+    		AnyBalance.trace('Токен устарел');
+    		var json=login();
+   	}
     }
     AnyBalance.trace(JSON.stringify(json));
     var result = {success: true};

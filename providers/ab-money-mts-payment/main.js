@@ -12,6 +12,8 @@ var g_headers = {
 
 var g_baseurl = 'https://payment.mts.ru';
 function main(){
+	mainAPI();
+	return;
 	try{
 		mainSite();
 	}catch(e){

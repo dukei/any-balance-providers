@@ -11,22 +11,22 @@ var g_headers = {
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'https://stat.k-telecom.org/';
-	AnyBalance.setDefaultCharset('KOI8-R');
+	var baseurl = 'https://stat-new.k-telecom.org/';
+	AnyBalance.setDefaultCharset('UTF-8');
 	
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 	
-	var html = AnyBalance.requestGet(baseurl + 'cgi-bin/proga/client.pl', g_headers);
+	var html = AnyBalance.requestPost(baseurl + 'client/auth/login', {
+		from_page:'/client/main',
+		username:prefs.login,
+		password:prefs.password
+		},g_headers);
+
+	var html=AnyBalance.requestGet(baseurl+'client/services', g_headers);
 
 	if(!html || AnyBalance.getLastStatusCode() > 400)
 		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
-
-	html = AnyBalance.requestPost(baseurl+'cgi-bin/proga/client.pl', {
-		do_login: 1,
-		login: prefs.login,
-		pass: prefs.password
-	});
 
 	if (!/logout/i.test(html)) {
 		var error = getParam(html, null, null, /<h4[^>]+style='color:red;text-align:center;'[^>]*>([\s\S]*?)<\/h4>/i, replaceTagsAndSpaces);
@@ -35,15 +35,25 @@ function main() {
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
-	
+	var m_element=getElements(html,/<main role="main">/);
+	if (m_element.length<1) throw new AnyBalance.Error('Не удалось найти данные. Сайт изменен?');
+        m_element=m_element[0];
 	var result = {success: true};
 	
-	getParam(html, result, 'balance', /Баланс(?:[^>]*>){3}([^<]+)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'fio', /Абонент(?:[^>]*>){2}([^<]+)/i, replaceTagsAndSpaces);
-	getParam(html, result, 'status', /Состояние(?:[^>]*>){3}([^<]+)/i, replaceTagsAndSpaces);
-	getParam(html, result, 'access', /Доступ(?:[^>]*>){3}([^<]+)/i, replaceTagsAndSpaces);
-	getParam(html, result, 'agreement', /N Договора(?:[^>]*>){2}([^<]+)/i, replaceTagsAndSpaces);
-	getParam(html, result, '__tariff', /тариф(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+	getParam(m_element, result, 'balance',/Баланс([\s\S]*?)<\/div/, replaceTagsAndSpaces, parseBalance);
+	getParam(m_element, result, 'abon',/Ежемесячный платёж([\s\S]*?)<\/div/, replaceTagsAndSpaces, parseBalance);
+	getParam(m_element, result, 'recomended',/Рекомендованный платёж([\s\S]*?)<\/div/, replaceTagsAndSpaces, parseBalance);
+	getParam(m_element, result, 'date',/Дата расчёта([\s\S]*?)<\/div/, replaceTagsAndSpaces, parseDate);
+	getParam(m_element, result, 'agreement', /Договор([\s\S]*?)<\/div/i, replaceTagsAndSpaces);
+	getParam(m_element, result, '__tariff', /Тариф \/ пакет<\/div>([\s\S]*?)<\/div/i, replaceTagsAndSpaces);
 
+
+	if (AnyBalance.isAvailable('fio')){
+		var html=AnyBalance.requestGet(baseurl+'client/main', g_headers);
+		var m_element=getElements(html,/<main role="main">/);
+		if (m_element.length<1) throw new AnyBalance.Error('Не удалось найти данные. Сайт изменен?');
+        	m_element=m_element[0];
+        	getParam(m_element, result, 'fio', /Абонент([\s\S]*?)<\/div/i, replaceTagsAndSpaces);
+	}
 	AnyBalance.setResult(result);
 }

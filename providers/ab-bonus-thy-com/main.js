@@ -11,17 +11,12 @@ var g_headers = {
 	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64; Trident/7.0; rv:11.0) like Gecko',
 };
 
-	const iiud_part=(len,base=16)=>Math.floor((1 + Math.random()) * base**len).toString(base).substring(1);	
-	//const=generateUUID=(mask='4',base=16)=>mask.match(/\d+/g).map(m=>iiud_part(m,base)).join('-');
-	function generateUUID(mask='4',base=16){
-		var mathes=mask.match(/\d+/g)
-		var res='';
-		for(var i=0;i<mathes.length;i++)
-                    res+=iiud_part(mathes[i],base)+'-';
-
-                res=res.substring(0,res.length-1);
-                return res;
+function generateUUID() {
+	function s4() {
+  		return Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
 	}
+  	return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
+}
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
@@ -46,7 +41,7 @@ function main() {
 	g_headers={
 		'page':'https://www.turkishairlines.com/ru-ua/index.html#',
 		'accept-language':'ru',
-		'requestid':generateUUID('8-4-4-4-12'),
+		'requestid':generateUUID(),
 		'pagerequestid':pageID,
 		'content-type':'application/json; charset=UTF-8',
 		'accept':'*/*',
@@ -69,7 +64,7 @@ function main() {
         	AnyBalance.trace(html);
         	throw new AnyBalance.Error('Ошибка авторизции',false,true);
         }
-        g_headers.requestid=generateUUID('8-4-4-4-12');
+        g_headers.requestid=generateUUID();
 	var html = AnyBalance.requestGet(baseurl + '/com.thy.web.online.miles/ms/miles/memberprofile?_='+new Date()*1,g_headers);
 	var json=getJson(html);
         if (!json.type=='SUCCESS') {

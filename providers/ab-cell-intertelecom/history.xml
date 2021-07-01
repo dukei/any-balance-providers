@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="55" date="2021-07-01">
+    - Исправленна ошибка авторизации
+	</change>
 	<change version="54" date="2021-05-16">
     - Поддержка измнений на сайте.
 	</change>

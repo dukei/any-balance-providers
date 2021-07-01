@@ -25,12 +25,14 @@ head={
 
 
 
-var html=AnyBalance.requestPost(encodeURI('https://assa.intertelecom.ua/api.php?request=<?xml version="1.0" encoding="UTF-8"?><responc><code>1</code><ip>10.0.2.15</ip><lang>rus</lang><pass>123456QwErty70</pass><phone>443841413</phone><phone2v>443841413</phone2v><real_ip>10.0.2.15</real_ip></responc>'),'',head);
+var html=AnyBalance.requestPost(encodeURI('https://assa.intertelecom.ua/api.php?request=<?xml version="1.0" encoding="UTF-8"?><responc><code>1</code><ip>10.0.2.15</ip><lang>rus</lang><pass>'+prefs.password+'</pass><phone>'+prefs.phone+'</phone><phone2v>'+prefs.phone+'</phone2v><real_ip>10.0.2.15</real_ip></responc>'),'',head);
 var id=getParam(html,/<id>([^<]*)<\/id>/)
-html=AnyBalance.requestPost(encodeURI('https://assa.intertelecom.ua/api.php?request=<?xml version="1.0" encoding="UTF-8"?><responc><code>'+7+'</code><id>'+id+'</id><ip>10.0.2.15</ip><lang>rus</lang><pass>123456QwErty70</pass><phone>443841413</phone><phone2v>443841413</phone2v><real_ip>10.0.2.15</real_ip></responc>'),'',head);
+html=AnyBalance.requestPost(encodeURI('https://assa.intertelecom.ua/api.php?request=<?xml version="1.0" encoding="UTF-8"?><responc><code>'+7+'</code><id>'+id+'</id><ip>10.0.2.15</ip><lang>rus</lang><pass>'+prefs.password+'</pass><phone>'+prefs.phone+'</phone><phone2v>'+prefs.phone+'</phone2v><real_ip>10.0.2.15</real_ip></responc>'),'',head);
+AnyBalance.trace(html);
 var result = {success: true}
         var services = getElement(html,/<extra>/).match(/<item[^>]*?>/ig);
         var title,value,dateTo,type,minNumber=0,internetNumber=0;
+        if (services){
         for (var i=0;i<services.length;i++){
         	title=getParam(services[i],null,null,/title="([^"]*?)"/);
         	value=getParam(services[i],null,null,/value="([\s\S]*?) по/);
@@ -50,6 +52,7 @@ var result = {success: true}
         		AnyBalance.trace('Неизвестный баланс:\n'+type+'\n'+title+'\n'+value+'\n'+dateTo);
         	}
         }
+        }
         result.ls=getElement(html,/<saldo_id>/,replaceTagsAndSpaces);
         result.__tariff=getElement(html,/<tariff>/,replaceTagsAndSpaces);
         result.mobsubscr=parseStazh(getElement(html,/<abonent_age>/,replaceTagsAndSpaces));
@@ -62,6 +65,7 @@ var result = {success: true}
 } 
 
 function parseStazh(str) {
+	if(!str) return;
     var matches = str.match(/(\d+)[^\d]*?(\d+)/);
     if (matches) {
         var val = (365 * matches[1] + 30 * matches[2]) * 86400;

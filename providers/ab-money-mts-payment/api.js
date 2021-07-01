@@ -1,17 +1,15 @@
 ﻿/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 */
-	const iiud_part=(len,base=16)=>Math.floor((1 + Math.random()) * base**len).toString(base).substring(1);	
+	//const iiud_part=(len,base=16)=>Math.floor((1 + Math.random()) * base**len).toString(base).substring(1);	
 	//const=generateUUID=(mask='4',base=16)=>mask.match(/\d+/g).map(m=>iiud_part(m,base)).join('-');
-	function generateUUID(mask='4',base=16){
-		var mathes=mask.match(/\d+/g)
-		var res='';
-		for(var i=0;i<mathes.length;i++){
-                    res+=iiud_part(mathes[i],base)+'-';
-                }
-                res=res.substring(0,res.length-1);
-                return res;
+function generateUUID() {
+	function s4() {
+  		return Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
 	}
+  	return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
+}
+
 var baseLoginurl = 'https://sso.mtsbank.ru/';
 var g_LoginHeaders = {
 Connection:'keep-alive',
@@ -76,9 +74,9 @@ if (token) {
 	}
 }
 if (!token){    	
-	if (!tid) var tid=generateUUID('8-4-4-4-12',16);
-	const code_verifier=generateUUID('8-4-4-4-12',16);
-	const state=generateUUID('8-4-4-4-12',16);
+	if (!tid) var tid=generateUUID();
+	const code_verifier=generateUUID();
+	const state=generateUUID();
 	var code_challenge=Base64.encode(hex_sha256(code_verifier));
 	code_challenge=code_challenge.substr(0,code_challenge.length-2);
 	AnyBalance.trace('tid:\n'+tid+'\n'+'code_verifier:\n'+code_verifier+'\n'+'state:\n'+state+'\n'+'code_challenge:\n'+code_challenge);
@@ -123,7 +121,7 @@ if (!token){
 }
 function callLoginAPI(cmd,params){
 	if (g_LoginHeaders.Platform)
-		g_LoginHeaders['Request-id']=generateUUID('8-4-4-4-12',16);
+		g_LoginHeaders['Request-id']=generateUUID();
 	if (params && !params.refresh_token)
 		params=JSON.stringify(params);
 	if (params) 
@@ -147,7 +145,7 @@ function callLoginAPI(cmd,params){
 
 }
 function callAPI(cmd,params){
-	var id=generateUUID('8-4-4-4-12',16);
+	var id=generateUUID();
 	g_headers['Request-id']=id;
 	g_headers['X-Request-Id']=id;
 	if (params) 

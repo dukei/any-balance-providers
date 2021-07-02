@@ -11,42 +11,29 @@ var g_headers = {
 };
 
 function main() {
-	var prefs = AnyBalance.getPreferences(),
-		baseurl = 'http://www.ukrtelecom.ua/',
-		cabineturl = 'http://kvnsmeppay.ukrtelecom.net:8080/';
+	var prefs = AnyBalance.getPreferences();
+	baseurl = 'https://ukrtelecom.ua/local/components/ebola.entities/payment.form/ajax.php?type=validateInput&lang=ua&',
+	prefs.login=prefs.login.replace(/[^\d]/g, '');
+	if (prefs.login.length==16) 
+		prefs.login='account=' + prefs.login;
+	else 
+		prefs.login='phone=0'+prefs.login.substr(-9);
 	AnyBalance.setDefaultCharset('utf-8');
 	
-	checkEmpty(prefs.login, 'Введите номер телефона!');
-	
-	var html = AnyBalance.requestGet(baseurl + 'oplata/form', g_headers);
+	checkEmpty(prefs.login, 'Введите номер телефона или номер лицевого счета!');
+
+	var html = AnyBalance.requestGet(baseurl + prefs.login, g_headers);
 	
 	if(!html || AnyBalance.getLastStatusCode() > 400){
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
 	}
 	
-	html = AnyBalance.requestPost(cabineturl + '/webaccount/gsumm_score.jsp', {
-		tel: prefs.login,
-		or: '',
-		score: 1
-	}, addHeaders({Referer: baseurl + 'oplata/form'}));
-	
-	if (!/СУМА ДО СПЛАТИ/i.test(html)) {
-		var error = getParam(html, null, null, /Не знайдено жодного рахунку за\s+умовами Вашого запиту\./i, replaceTagsAndSpaces, html_entity_decode);
-		if (error)
-			throw new AnyBalance.Error(error, null, true);
-		
-		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
-	}
-	
+	var json=getJson(html);
+	if (json.result.toString()=='false') throw new AnyBalance.Error('Неверный номер телефона или лицевого счета');
 	var result = {success: true};
-	
-	getParam(html, result, 'pay', /СУМА ДО СПЛАТИ,грн(?:[^>]+>){5}([^<]+)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'op', /О\/P<\/td(?:[^>]*>){3}([^<]+)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'phase', /Період<\/td(?:[^>]*>){3}([^<]+)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'ks', /КС<\/td(?:[^>]*>){3}([^<]+)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, '__tariff', /телефон<\/td(?:[^>]*>){3}([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
+
+	getParam(json.result, result, 'pay', null, replaceTagsAndSpaces, parseBalance);
 
 	AnyBalance.setResult(result);
 }

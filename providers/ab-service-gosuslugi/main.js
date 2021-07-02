@@ -1,4 +1,4 @@
-﻿/**
+/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 */
 var g_baseurl = 'https://www.gosuslugi.ru/';
@@ -80,13 +80,13 @@ function login(prefs){
 		checkEmpty(formattedLogin, 'Введите правильный Email. Вы ввели: "' + (prefs.login || 'пустое поле') + '"!');
 
 	checkEmpty(prefs.password, 'Введите пароль!');
-        var html=AnyBalance.requestGet('https://lk.gosuslugi.ru/overview')
-	//var html = AnyBalance.requestGet(g_baseurl + 'auth/esia/?redirectPage=/', g_headers);
+
+	var html = AnyBalance.requestGet(g_baseurl + 'auth/esia/?redirectPage=/', g_headers);
 
 	// нужно для отладки
 	if (!isLoggedIn(html)) {
 		var jsessionid = AnyBalance.getCookie('JSESSIONID');
-		//html = checkForRedirect(html);
+		html = checkForRedirect(html);
 
 		// Госуслуги издеваются. Сначала выкатили новую форму входа, потом спрятали
 		// Пока используем старую
@@ -104,23 +104,23 @@ function login(prefs){
 			command = getParam(html, null, null, /new\s+LoginViewModel\((?:[^,]+,){1,2}\s*'([^"']+)'/i);
 		}
 
-		//if (!command) {
-		//	AnyBalance.trace(html);
-		//	throw new AnyBalance.Error('Не удалось найти идентификатор команды для входа.');
-		//}
-		AnyBalance.setCookie('esia.gosuslugi.ru','login_value',prefs.login,{path:'/idp/login/pwd/do'});
-		g_headers['Content-Type']='application/json';
-		g_headers.Accept='application/json, text/plain, */*';
-		html = checkForRedirect(AnyBalance.requestPost('https://esia.gosuslugi.ru/aas/oauth2/api/login', JSON.stringify({
-//			mobileOrEmail: prefs.login,
+		if (!command) {
+			AnyBalance.trace(html);
+			throw new AnyBalance.Error('Не удалось найти идентификатор команды для входа.');
+		}
+		AnyBalance.setCookie('esia.gosuslugi.ru','login_value',prefs.login);
+		AnyBalance.setCookie('esia.gosuslugi.ru','userSelectedLanguage','ru');
+		AnyBalance.setCookie('esia.gosuslugi.ru','_idp_authn_id',encodeURIComponent('email:'+prefs.login));
+
+		html = checkForRedirect(AnyBalance.requestPost('https://esia.gosuslugi.ru/idp/login/pwd/do', {
+			mobileOrEmail: prefs.login,
 			login: formattedLogin,
-//			snils: '',
+			snils: '',
 			password: prefs.password,
 			idType: loginType,
-//			'command': command
-		}), addHeaders({Referer: 'https://esia.gosuslugi.ru/login/'})));
-		var json=getJson(html);
-		var html=AnyBalance.requestGet('https://esia.gosuslugi.ru'+json.redirect_url,g_headers);
+			'command': command
+		}, addHeaders({Referer: 'https://esia.gosuslugi.ru/idp/rlogin?cc=bp'})));
+
 		var form = getElement(html, /<form[^>]+otpForm/i);
 		if(form){
 			AnyBalance.trace('Требуется смс для входа');
@@ -267,8 +267,8 @@ function createFormParamsById(html, servicesubId) {
 	return createFormParams(form);
 }
 function isLoggedIn(html) {
-	var html = AnyBalance.requestGet(g_baseurl + 'api/lk/v1/users/userDateOffset?_=' + Math.random(), addHeaders({Referer: g_headers}));
-	return /"serverDate"/.test(html);
+	var html = AnyBalance.requestGet(g_baseurl + 'api/lk/v1/users/data?_=' + Math.random(), addHeaders({Referer: g_headers}));
+	return /"firstName"/.test(html);
 }
 function getChalenge(html){
 	var ChallengeId=getParam(html,/ChallengeId=(\d*)/);

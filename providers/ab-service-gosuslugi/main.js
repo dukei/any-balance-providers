@@ -46,8 +46,12 @@ function main() {
         		})
         	})
         }
-	var json=callAPI('lk/v1/feeds/counters/');
-	result.mails=json.unread;
+        try{
+	var json=callAPI('lk/v1/feeds/counters');
+		result.mails=json.unread;
+	}catch(e){
+		AnyBalance.trace('Ошибка получения количества непрочитанных писем:'+e.mesage);
+	}
 	AnyBalance.setResult(result);
 }
 function login(prefs){

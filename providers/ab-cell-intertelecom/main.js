@@ -23,11 +23,26 @@ head={
 'Accept-Charset':'utf-8',
 'Content-Type':'text/xml'}
 
+function escapeHtml(str){
+    return str.replace(/&/g, '&amp;')
+               .replace(/</g, '&lt;')
+               .replace(/>/g, '&gt;')
+               .replace(/"/g, '&quot;')
+               .replace(/'/g, '&apos;');
+}
 
 
-var html=AnyBalance.requestPost(encodeURI('https://assa.intertelecom.ua/api.php?request=<?xml version="1.0" encoding="UTF-8"?><responc><code>1</code><ip>10.0.2.15</ip><lang>rus</lang><pass>'+prefs.password+'</pass><phone>'+prefs.phone+'</phone><phone2v>'+prefs.phone+'</phone2v><real_ip>10.0.2.15</real_ip></responc>'),'',head);
+var html=AnyBalance.requestPost('https://assa.intertelecom.ua/api.php?request=' + encodeURIComponent('<?xml version="1.0" encoding="UTF-8"?><responc><code>1</code><ip>10.0.2.15</ip><lang>rus</lang><pass>'+escapeHtml(prefs.pass)+'</pass><phone>'+escapeHtml(prefs.phone)+'</phone><phone2v>'+escapeHtml(prefs.phone)+'</phone2v><real_ip>10.0.2.15</real_ip></responc>'),'',head);
+var error_code = getElement(html, /<error_code/, replaceTagsAndSpaces);
+if(error_code){
+	throw new AnyBalance.Error(getElement(html, /<text/, replaceTagsAndSpaces) || "Не удалось войти в личный кабинет (code:" + error_code + "). Сайт изменен?");
+}
 var id=getParam(html,/<id>([^<]*)<\/id>/)
-html=AnyBalance.requestPost(encodeURI('https://assa.intertelecom.ua/api.php?request=<?xml version="1.0" encoding="UTF-8"?><responc><code>'+7+'</code><id>'+id+'</id><ip>10.0.2.15</ip><lang>rus</lang><pass>'+prefs.password+'</pass><phone>'+prefs.phone+'</phone><phone2v>'+prefs.phone+'</phone2v><real_ip>10.0.2.15</real_ip></responc>'),'',head);
+if(!id){
+	AnyBalance.trace(html);
+	throw new AnyBalance.Error('Не удалось получить id сессии. Сайт изменен?');
+}
+html=AnyBalance.requestPost('https://assa.intertelecom.ua/api.php?request=' + encodeURIComponent('<?xml version="1.0" encoding="UTF-8"?><responc><code>'+7+'</code><id>'+id+'</id><ip>10.0.2.15</ip><lang>rus</lang><pass>'+escapeHtml(prefs.pass)+'</pass><phone>'+escapeHtml(prefs.phone)+'</phone><phone2v>'+escapeHtml(prefs.phone)+'</phone2v><real_ip>10.0.2.15</real_ip></responc>'),'',head);
 AnyBalance.trace(html);
 var result = {success: true}
         var services = getElement(html,/<extra>/).match(/<item[^>]*?>/ig);

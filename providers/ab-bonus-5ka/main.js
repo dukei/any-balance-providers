@@ -167,12 +167,16 @@ function main () {
     		if (b.type=='main'){
     			getParam(b.points, result, 'balancePoints');
     			getParam(Math.floor(b.points/10), result, 'balance');
-    			getParam(b.expiration.points, result, 'earnedInThisMonth');
-    			getParam(b.expiration.date.replace(/(\d{4})-(\d{2})-(\d{2})/,'$3.$2.$1'), result, 'pointexpirationDate');
+    			if (b.expiration){
+    				getParam(b.expiration.points, result, 'earnedInThisMonth');
+    				getParam(b.expiration.date.replace(/(\d{4})-(\d{2})-(\d{2})/,'$3.$2.$1'), result, 'pointexpirationDate');
+    			}
     		}else if (b.type=='stickers'){
     			getParam(b.points, result, 'stikersPoints');
-    			getParam(b.expiration.points, result, 'stikersearnedInThisMonth');
-    			getParam(b.expiration.date.replace(/(\d{4})-(\d{2})-(\d{2})/,'$3.$2.$1'), result, 'stikersexpirationDate');
+    			if (b.expiration){
+    				getParam(b.expiration.points, result, 'stikersearnedInThisMonth');
+    				getParam(b.expiration.date.replace(/(\d{4})-(\d{2})-(\d{2})/,'$3.$2.$1'), result, 'stikersexpirationDate');
+    			}
     		}else{
     			AnyBalance.trace('Неизвестный бонус'+b.type+':\n'+JSON.stringify(b));
     		}

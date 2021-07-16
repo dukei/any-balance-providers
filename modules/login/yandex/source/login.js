@@ -2,81 +2,165 @@
 Процедура входа в Яндекс. Унифицирована и выделена в отдельный файл для удобства встраивания
 */
 
-function loginYandex(login, password, html, retpath, from) {
+function loginYandex(login, password, html, retpath, origin) {
+	var baseurl = "https://passport.yandex.ru";
 	
-	function getIdKey(html) {
-		return getParam(html, null, null, /<input[^>]*name="idkey"[^>]*value="([^"]*)/i);
-	}
-
-	var baseurl = "https://passport.yandex.ru/passport?mode=auth";
-	
-	if (from) 
-		baseurl += '&from=' + encodeURIComponent(from);
+	const params = {};
+	if (origin) 
+		params.origin = origin;
 	if (retpath) 
-		baseurl += '&retpath=' + encodeURIComponent(retpath);
+		params.retpath = retpath;
+	let referer = baseurl + '/auth/?' + createUrlEncodedParams(params);
 	if (!html)
-		html = AnyBalance.requestGet(baseurl, g_headers);
+		html = AnyBalance.requestGet(referer, g_headers);
 	
-	var idKey = getIdKey(html);
-	// Если нет этого параметра, то это другой тип кабинета
-	if (idKey) {
-		var html = AnyBalance.requestPost(baseurl, {
-			from: from || 'passport',
-			retpath: retpath,
-			idkey: idKey,
-			display: 'page',
-			login: login,
-			passwd: password,
-			timestamp: new Date().getTime()
-		}, g_headers);
-	} else {
-		var html = AnyBalance.requestPost(baseurl, {
-			//from:from || 'passport',
-			retpath: retpath,
-			login: login,
-			passwd: password,
-		}, addHeaders({Referer: baseurl}));
-	}
+	const csrf = getParam(html, /<input[^>]+name="csrf_token"[^>]*value="([^"]*)/i, replaceHtmlEntities);
+	const process_uuid = getParam(html, /process_uuid=([^&"]*)/i, replaceHtmlEntities, decodeURIComponent);
 
-	var captchaUrl = getParam(html, null, null, /<img[^>]+captcha__text[^>]*src="([^"]*)/i, replaceHtmlEntities);
-	if (!/logout/i.test(html) && captchaUrl) {
-		var pageUrl = AnyBalance.getLastUrl();
-		AnyBalance.trace('Затребована капча, придется показывать');
-		var params = AB.createFormParams(html, function(params, str, name, value) {
-			if (name == 'login') 
-				return login;
-			else if (name == 'passwd')
-				return password;
-			else if (name == 'answer'){
-				var img = AnyBalance.requestGet(captchaUrl, g_headers);
-				return AnyBalance.retrieveCode("Пожалуйста, введите символы с картинки", img);
-			}
-	    
-			return value;
-		});
-
-		html = AnyBalance.requestPost(pageUrl, params, addHeaders({Referer: pageUrl}));
-	}
-
-	if (!/logout|balance-widget/i.test(html)) {
-		var error = getParam(html, null, null, [/b\-login\-error[^>]*>([\s\S]*?)<\/strong>/i, /error-msg[^>]*>([^<]+)/i], replaceTagsAndSpaces, html_entity_decode);
-		if (error)
-			throw new AnyBalance.Error(error, null, /Учётной записи с таким логином не существует|Неправильная пара логин-пароль|Неправильный логин или пароль|Нет аккаунта с таким логином/i.test(error));
-		if(/Нам пришлось заблокировать ваш IP/i.test(html))
-			throw new AnyBalance.Error('Яндекс временно заблокировал ваш IP. Возможно, с этого IP было много входов. Пожалуйста, подождите часок и попробуйте ещё раз.');
-		
+	html = AnyBalance.requestPost(baseurl + '/registration-validations/auth/multi_step/start', {
+		csrf_token: csrf,
+		login: login,
+		process_uuid: process_uuid,
+		retpath: retpath,
+		origin: origin		
+	}, addHeaders({
+		'X-Requested-With': 'XMLHttpRequest',
+		Origin: baseurl,
+		Referer: referer
+	}));
+	let json = getJson(html);
+	if(json.status !== 'ok'){
 		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Не удалось зайти в личный кабинет Яндекса. Сайт изменен?');
+		throw new AnyBalance.Error('Вход не может быть выполнен. Сайт изменен?');
 	}
-	if (/Установить постоянную авторизацию на(?:\s|&nbsp;)+данном компьютере\?/i.test(html)) {
-		//Яндекс задаёт дурацкие вопросы.
-		AnyBalance.trace("Яндекс спрашивает, нужно ли запоминать этот компьютер. Отвечаем, что нет... (idkey=" + getIdKey(html) + ")");
-		html = AnyBalance.requestPost(baseurl, {
-			filled: 'yes',
-			timestamp: new Date().getTime(),
-			idkey: getIdKey(html),
-			no: 1
-		}, g_headers);
+	if(!json.can_authorize){
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Этот логин не может быть авторизован');
 	}
+	const track_id = json.track_id;
+
+	html = AnyBalance.requestPost(baseurl + '/registration-validations/auth/multi_step/commit_password', {
+		csrf_token: csrf,
+		track_id: track_id,
+		password: password,
+		retpath: retpath
+	}, addHeaders({
+		'X-Requested-With': 'XMLHttpRequest',
+		Origin: baseurl,
+		Referer: referer
+	}));
+	json = getJson(html);
+	if(json.status !== 'ok'){
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Пароль не принят. Сайт изменен?');
+	}
+
+	if(json.state === 'auth_challenge'){
+		AnyBalance.trace('Потребовалась дополнительная проверка входа');
+
+		html = AnyBalance.requestPost(baseurl + '/registration-validations/auth/challenge/submit', {
+			csrf_token: csrf,
+			track_id: track_id,
+		}, addHeaders({
+			'X-Requested-With': 'XMLHttpRequest',
+			Origin: baseurl,
+			Referer: referer
+		}));
+		json = getJson(html);
+		if(json.status !== 'ok'){
+			AnyBalance.trace(html);
+			throw new AnyBalance.Error('Пароль не принят. Сайт изменен?');
+		}
+		const challengeType = json.challenge.challengeType;
+
+		if(challengeType === 'phone_confirmation'){
+			AnyBalance.trace('Требуется подтверждение по телефону');
+			const phoneId = json.challenge.phoneId;
+			const hint = json.challenge.hint;
+
+			html = AnyBalance.requestPost(baseurl + '/registration-validations/auth/validate_phone_by_id', {
+				csrf_token: csrf,
+				track_id: track_id,
+				phoneId: phoneId
+			}, addHeaders({
+				'X-Requested-With': 'XMLHttpRequest',
+				Origin: baseurl,
+				Referer: referer
+			}));
+			json = getJson(html);
+			if(json.status !== 'ok'){
+				AnyBalance.trace(html);
+				throw new AnyBalance.Error('Запрос на валидацию не принят. Сайт изменен?');
+			}
+
+			if(!json.valid_for_flash_call){
+				AnyBalance.trace(html);
+				throw new AnyBalance.Error('Требуемое подтверждение не поддерживается');
+			}
+
+
+			html = AnyBalance.requestPost(baseurl + '/registration-validations/phone-confirm-code-submit', {
+				csrf_token: csrf,
+				track_id: track_id,
+				phone_id: phoneId,
+				confirm_method: 'by_flash_call',
+				isCodeWithFormat: true
+			}, addHeaders({
+				'X-Requested-With': 'XMLHttpRequest',
+				Origin: baseurl,
+				Referer: referer
+			}));
+			json = getJson(html);
+			if(json.status !== 'ok'){
+				AnyBalance.trace(html);
+				throw new AnyBalance.Error('Запрос на посылку кода не принят. Сайт изменен?');
+			}
+			
+
+			const code = AnyBalance.retrieveCode('Пожалуйста, введите последние ' + json.code_length + ' цифры номер, который вам сейчас позвонит на ваш номер ' + json.number.masked_international);
+
+			html = AnyBalance.requestPost(baseurl + '/registration-validations/phone-confirm-code', {
+				csrf_token: csrf,
+				track_id: track_id,
+				code: code,
+			}, addHeaders({
+				'X-Requested-With': 'XMLHttpRequest',
+				Origin: baseurl,
+				Referer: referer
+			}));
+			json = getJson(html);
+			if(json.status !== 'ok'){
+				AnyBalance.trace(html);
+				throw new AnyBalance.Error('Подтверждение кода не удалось. Сайт изменен?');
+			}
+			
+
+		}else{
+			AnyBalance.trace(html);
+			throw new AnyBalance.Error('Challenge не поддерживется: ' + challengeType);
+		}
+
+		
+		html = AnyBalance.requestPost(baseurl + '/registration-validations/auth/challenge/commit', {
+			csrf_token: csrf,
+			track_id: track_id,
+			challenge: challengeType,
+		}, addHeaders({
+			'X-Requested-With': 'XMLHttpRequest',
+			Origin: baseurl,
+			Referer: referer
+		}));
+		json = getJson(html);
+		if(json.status !== 'ok'){
+			AnyBalance.trace(html);
+			throw new AnyBalance.Error('Подтверждение. Сайт изменен?');
+		}
+	}
+
+	html = AnyBalance.requestGet(baseurl + '/auth/finish/?' + createUrlEncodedParams({
+		track_id: track_id,
+		retpath: retpath
+	}), addHeaders({Referer: referer}));
+		
 	return html;
 }

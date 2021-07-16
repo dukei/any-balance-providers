@@ -15,7 +15,9 @@ function main() {
 	checkEmpty(prefs.login, 'Введите ID счетчика, информацию по которому вы хотите посмотреть');
 	checkEmpty(/^\d+$/.test(prefs.login), 'ID счетчика должен состоять только из цифр!');
 	var baseurl = 'https://metrika.yandex.ru/';
-	
+
+	var savedData = new SavedData(prefs.yalogin, 'metrika');
+	savedData.restoreCookies();
 	
 	var now = new Date();
 	var dateTo = getFormattedDate({format: 'YYYY-MM-DD', offsetDay: 0}, now);
@@ -32,6 +34,8 @@ function main() {
 		//Не залогинены в яндекс... Надо залогиниться
 		checkEmpty(prefs.yalogin && prefs.password, 'Для просмотра информации по счетчику Яндекс требует авторизации. Введите в настройки логин и пароль.');
 		html = loginYandex(prefs.yalogin, prefs.password, html, counter_url, 'metrika');
+		savedData.setCookies();
+		savedData.save();
 	}
 
 	var meta = getParam(html, null, null, /<body[^>]*data-bem='([^']*)/i, replaceHtmlEntities, getJson);

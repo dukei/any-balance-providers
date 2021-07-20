@@ -73,9 +73,12 @@ function processClick(options) {
     	"captchaKey":""
     })
 
-    AnyBalance.trace('params=' + params)
+    //AnyBalance.trace('params=' + params)
 
     html = AnyBalance.requestPost(g_baseurl_auth + 'cerberus-mini-green/dashboard-green/api/oid/authorize', params, addHeaders({"Content-Type": "application/json"}));
+    var json = getJson(html);
+    if(json.error)
+    	throw new AnyBalance.Error(json.errors.map(e => e.message).join('\n'));
 
     AnyBalance.trace('login response=' + html)
 
@@ -84,26 +87,47 @@ function processClick(options) {
         throw new AnyBalance.Error("Не удалось зайти в интернет-банк. Сайт изменен?");
     }
 
-    if(/<input[^>]+otp_param/i.test(html)){
+    if(/username:sms/.test(json.params.acr_values)){
     	AnyBalance.trace('Затребован одноразовый пароль');
-    	var form = getElement(html, /<form[^>]+approve-login/i);
-    	if(!form){
-    		AnyBalance.trace(html);
-    		throw new AnyBalance.Error('Не удалось получить форму ввода одноразового пароля. Сайт изменен?');
+    	
+    	params = {
+    		is_push: true,
+    		previousMultiFactorResponseParams: json.params,
+    		"queryRedirectParams":{
+    			"acr_values":"username",
+    			"scope":"click-web",
+    			"non_authorized_user":"true",
+    			"response_type":"code",
+    			"client_id":"openid click-web"
+    		},
+    		type: 'CARD'
     	}
 
-		var params = AB.createFormParams(form, function(params, str, name, value) {
-			if (name == 'otp_param')
-				return AnyBalance.retrieveCode('Введите код подтверждения входа из СМС', null, {inputType: 'number'});
-			return value;
-		});
+    	html = AnyBalance.requestPost(g_baseurl_auth + 'cerberus-mini-green/dashboard-green/api/oid/reference', JSON.stringify(params), addHeaders({"Content-Type": "application/json"}));
+    	AnyBalance.trace('reference -> ' + html);
+    	json = getJson(html);
+        if(json.error)
+        	throw new AnyBalance.Error(json.errors.map(e => e.message).join('\n'));
 
-		html = AnyBalance.requestPost(g_baseurl + '/oam/server/auth_cred_submit', params, g_headers);
+		var code = AnyBalance.retrieveCode('Введите код подтверждения входа из СМС, посланный на ' + json.reference.masked_phone, null, {inputType: 'number'});
+
+		params.code = code;
+		params.previousMultiFactorResponseParams.masked_phone = json.reference.masked_phone;
+		params.previousMultiFactorResponseParams.reference = json.reference.reference;
+
+    	html = AnyBalance.requestPost(g_baseurl_auth + 'cerberus-mini-green/dashboard-green/api/oid/finishCustomerRegistration', JSON.stringify({credentials: params}), addHeaders({"Content-Type": "application/json"}));
+    	AnyBalance.trace('finish -> ' + html);
+        json = getJson(html);
+
+        if(json.error)
+        	throw new AnyBalance.Error(json.errors.map(e => e.message).join('\n'));
     }
 
-    var result = getJsonObject(html);
+    if(!json.redirectUrl){
+    	throw new AnyBalance.Error('Не вернули адрес переадресации. Сайт изменен?');
+    }
 
-    html = AnyBalance.requestGet(result.redirectUrl, g_headers);
+    html = AnyBalance.requestGet(json.redirectUrl, g_headers);
 
     AnyBalance.trace('redirectUrl response=' + html)
 

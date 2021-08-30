@@ -63,7 +63,8 @@ function main(){
     /* Вообще-то список уже есть на странице, но там только id, номер, ФИО
        А на странице со списком ЛС ещё есть адрес и вид услуги (типа, тариф) */
     html = AnyBalance.requestGet(baseurl + 'personal/show?action=new_incdec', g_headers);
-    var table = getElement(html, /<div[^>]+(?:id="related-acc-list")/i);
+    // Основной лицевой счёт вывели отдельно, поэтому ищем в родительском блоке
+    var table = getElement(html, /<div[^>]+(?:class="main-container")/i);
 
     var rows = getElements(table, /<div[^>]+(?:class="[^"]+ie-block")/ig);
     AnyBalance.trace('Найдено ' + rows.length + ' ЛС.');
@@ -79,7 +80,13 @@ function main(){
         if (!current_account && (!prefs.num || endsWith(account_number, prefs.num))) {
             AnyBalance.trace('Выбран ' + account_number);
             current_account = {'account_number': account_number};
-            current_account.acc_id = rows[i].match(/<button[^>]+data-account="(\d+)"/i)[1];
+            // У основного счёта теперь нет кнопки перехода и, соотвтственно, acc_id
+            submatches = rows[i].match(/<button[^>]+data-account="(\d+)"/i);
+            if (submatches != null) {
+                current_account.acc_id = submatches[1];
+            }
+            // Также у основного счёта нет поля "Вид услуги"
+            current_account.service = "Основной счёт"; // Значение по умолчанию
             let matches = rows[i].matchAll(/<strong>([^<]+)<\/strong>\s*<span>([^<]+)<\/span>/ig);
             for (const match of matches) {
                 if (match[1] == 'ФИО ') {
@@ -99,10 +106,13 @@ function main(){
         throw new AnyBalance.Error('Не удалось найти лицевой счет с последними цифрами ' + prefs.num);
     }
 
-    // Переход к нужному лицевому счёту
-    var xhr = AnyBalance.requestPost(baseurl + 'bb/ShowProc2/web.lk_account_related', {
-        go_lk_acc_id: current_account.acc_id
-    }, {'X-Requested-With': 'XMLHttpRequest'});
+    // К основному счёту не переходим
+    if (current_account.acc_id != undefined) {
+        // Переход к нужному лицевому счёту
+        var xhr = AnyBalance.requestPost(baseurl + 'bb/ShowProc2/web.lk_account_related', {
+            go_lk_acc_id: current_account.acc_id
+        }, {'X-Requested-With': 'XMLHttpRequest'});
+    }
 
     html = AnyBalance.requestGet(baseurl + 'personal/show?account=info', g_headers);
 

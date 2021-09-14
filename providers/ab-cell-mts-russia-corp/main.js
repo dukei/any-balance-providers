@@ -52,7 +52,7 @@ function isLoggedIn(html) {
 function main(){
 	AnyBalance.setDefaultCharset('utf-8');
 
-    var baseurl = "https://ihelper.mts.ru/Ncih/";
+    var baseurl = "https://lk-b2b.mts.ru/ncih/";
     var prefs = AnyBalance.getPreferences();
   	var baseloginurl =
     	"http://login.mts.ru/amserver/UI/Login?org=/b2b/ncih&goto=https://lk-b2b.mts.ru/ncih_new/";

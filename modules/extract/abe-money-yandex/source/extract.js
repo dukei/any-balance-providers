@@ -23,8 +23,8 @@ function callApi(verb, params){
 		'Content-Type': 'application/json;charset=UTF-8',
 		'x-csrf-token': g_csrf
 	}));
-	if (verb=='yooid/signin/api/start-authenticate' && AnyBalance.getLastStatusCode()==404)
-		return 	 callApi ('yooid/signin/api/start',params);
+	if (verb=='yooid/signin/api/process/start/standard' && AnyBalance.getLastStatusCode()==404)
+		return 	 callApi ('yooid/signin/api/process/start',params);
 
 	var json = JSON.parse(html);
 	if(json.status === 'error'){
@@ -52,7 +52,7 @@ function login(){
 		AnyBalance.trace('Already logged in to ' + data.user.userName + ' (' + data.user.maskedPhone + ')');
 	}else{
 		AnyBalance.trace('Logging in anew');
-		html = AnyBalance.requestGet(baseurl + 'yooid/login?origin=Wallet&returnUrl=https%3A%2F%2Fyoomoney.ru%2F', g_headers);
+		html = AnyBalance.requestGet(baseurl + 'yooid/signin?origin=Wallet&returnUrl=https%3A%2F%2Fyoomoney.ru%2F', g_headers);
 		g_csrf = getParam(html, /__secretKey__="([^"]*)/);
 		if(!g_csrf){
 			AnyBalance.trace(html);
@@ -60,14 +60,14 @@ function login(){
 		}
 		var data = getJsonObject(html, /__data__=/);
 	    
-		var jsonProcess = callApi('yooid/signin/api/start-authenticate', {
+		var jsonProcess = callApi('yooid/signin/api/process/start/standard', {
 			"sessionId":data.tmx.sessionId,
 			"login":prefs.login,
 			"origin":"Wallet"
 		});
 	    
 	    
-        var json = callApiProgress('yooid/signin/api/set-login', {
+        var json = callApiProgress('yooid/signin/api/login/set', {
         	"login":prefs.login,
         	"processId":jsonProcess.result.processId,
         	"loginType":jsonProcess.result.loginType
@@ -121,7 +121,7 @@ function processStep(data, stepData){
 	AnyBalance.trace('Processing step ' + stepData.nextStep);
 	var json;
 	if(stepData.nextStep === 'SetPassword'){
-		json = callApiProgress('yooid/signin/api/set-password', {
+		json = callApiProgress('yooid/signin/api/password/set', {
 			"processId":data.processId,
 			"loginType":data.loginType,
 			"password":prefs.password
@@ -129,8 +129,8 @@ function processStep(data, stepData){
 	}else if(stepData.nextStep === 'SetConfirmationCode'){
 		var code = AnyBalance.retrieveCode('Пожалуйста, введите код, который послан вам на ' + stepData.maskedRecipient, null, {inputType: 'number', time: 170000});
 		var verbs = {
-			PhoneNumber: 'check-opt-phone',
-			Email: 'check-opt-mail',
+			PhoneNumber: 'otp/check/phone',
+			Email: 'otp/check/mail',
 		};
 
 		if(!verbs[data.loginType])
@@ -141,7 +141,7 @@ function processStep(data, stepData){
 			"answer": code
 		});
 	}else if(stepData.nextStep === 'Complete'){
-		json = callApiProgress('yooid/signin/api/confirm', {
+		json = callApiProgress('yooid/signin/api/process/complete', {
 			"processId":data.processId,
 			"loginType":data.loginType,
 		});
@@ -151,7 +151,7 @@ function processStep(data, stepData){
 		if(!acc[0])
 			throw new AnyBalance.Error('Не удалось найти готовый для входа аккаунт!');
 		
-		json = callApiProgress('yooid/signin/api/select-account', {
+		json = callApiProgress('yooid/signin/api/account/select', {
 			"processId":data.processId,
 			"loginType":data.loginType,
 			"uid": acc[0].uid
@@ -179,18 +179,18 @@ function loginAndGetBalance(prefs, result) {
 		getParam(ld.user.accountId, result, '__tariff');
 		getParam(ld.user.userName, result, 'userName');
 		getParam(status[ld.user.accountStatus]||ld.user.accountStatus, result, 'accountStatus');
-		getParam(ld.balance.rub.availableAmount, result, 'balance');
+		getParam(ld.balance.rub.availableAmount, result, 'balance', null, null, parseBalance);
 		var sk = ld.secretKey;
 
 		if(ld.balance.bonus){
-			getParam(ld.balance.bonus.availableAmount, result, 'bonus');
+			getParam(ld.balance.bonus.availableAmount, result, 'bonus', null, null, parseBalance);
 		}else{
 			var html = AnyBalance.requestGet(baseurl + 'ajax/layout/accounts?sk=' + encodeURIComponent(sk), addHeaders({
 				Accept: 'application/json, text/plain, */*',
 				Referer: baseurl
 			}));
 			var json = getJson(html);
-			getParam(json.balances.bonus.availableAmount, result, 'bonus');
+			getParam(json.balances.bonus.availableAmount, result, 'bonus', null, null, parseBalance);
 		}
 		   try{
 			var html = AnyBalance.requestGet(baseurl + 'ajax/layout/curtain-cards?sk=' + encodeURIComponent(sk), addHeaders({
@@ -227,7 +227,7 @@ function loginAndGetBalance(prefs, result) {
 		    var params = getParam(html, null, null, /<div[^>]+class="[^>]*\bbalance\b[^>]+data-bem=[']([^']*)/i, replaceHtmlEntities, getJson);
 		    AnyBalance.trace('Получаем баланс из ' + JSON.stringify(params));
 		    if(params && params.balance && params.balance.amount && isset(params.balance.amount.sum)){
-		    	getParam(params.balance.amount.sum, result, 'balance');
+		    	getParam(params.balance.amount.sum, result, 'balance', null, null, parseBalance);
 		    }else{
 				AnyBalance.trace(html);
 				throw new AnyBalance.Error('Не удаётся найти спрятанный баланс! Сайт изменен?');
@@ -236,7 +236,7 @@ function loginAndGetBalance(prefs, result) {
 		    getParam(textsum, result, 'balance', null, replaceTagsAndSpaces, parseBalance);
 		}
     
-		getParam(html, result, 'bonus', /Сколько у вас баллов[\s\S]*?<div[^>]+balance__item[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+		getParam(html, result, 'bonus', /Скол`ько у вас баллов[\s\S]*?<div[^>]+balance__item[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
 	}
 }
 

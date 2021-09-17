@@ -1,12 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="2.0" version="28">ab-bonus-mvideo-alfabank</id>
+	<id major_version="3.0" version="29">ab-bonus-mvideo-alfabank</id>
 	<name>М.Видео-БОНУС</name>
 	<api flags="no_browser"/>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о бонусных баллах и бонусных рублях по бонусной картам М.Видео, включая кобрэнды Альфа и Cetelem.</p>
+	<p>Предоставляет информацию о бонусных баллах и бонусных рублях по бонусной программе М.Клуб (M.Club)</p>
 	]]></description>
-	<author>KiLLer13&lt;killer_kondor@pisem.net&gt;</author>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>
 		<module id="library"/>
@@ -19,7 +18,7 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance_all" name="Всего бонусных рублей" suffix=" р"/>/>
+		<counter id="balance_all" name="Всего бонусных рублей" suffix=" р"/>
 		<counter id="balance" name="Доступные бонусные рубли" suffix=" р"/>
 		<counter id="burn_date2" name="Ближайшая дата сгорания бонусных рублей" type="time" format="dd/MM/yyyy"/>
 		<counter id="strategy" name="Ваша стратегия начисления" type="text"/>

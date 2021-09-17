@@ -3,44 +3,154 @@
 */
 
 var g_headers = {
-	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
+	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3',
 	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
 	'Cache-Control': 'max-age=0',
-	'Connection': 'keep-alive',
-	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/44.0.2403.155 Safari/537.36',
+	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.120 Safari/537.36',
 };
 
-var baseurl = 'https://www.mvideo.ru';
-var baseurl1 = 'http://www.mvideo.ru';
+var baseurlOuter = 'https://www.mvideo.ru';
+var baseurlLocal = 'https://www.mvideo.ru';
+
+var browserApi = 'http://browser.anybalance.ru:4024';
+//var browserApi = 'http://192.168.0.117:4024';
+//var browserApi = 'http://localhost:4024';
 
 function login(){
 	var prefs = AnyBalance.getPreferences();
+		
+	checkEmpty(prefs.login, 'Введите логин!');
+	checkEmpty(prefs.password, 'Введите пароль!');
 
-    if(!prefs.type)
-    	prefs.type = '0';
-    
-    if(prefs.type != '-1'){
-    	// Проверяем правильность ввода даты рождения
-    	checkEmpty(prefs.card, 'Введите номер карты!');
-    	checkEmpty(prefs.zip, 'Введите zip-код карты!');
-        var matches = /^(\d{2})[^\d](\d{2})[^\d](\d{4})$/i.exec('' + prefs.birthday);
-        if (!matches)
-			throw new AnyBalance.Error('День рождения должен быть в формате DD-MM-YYYY, например, 28-04-1980');
-			
-        var birthdate = prefs.birthday.replace(/[^\d]/g, '.');
-    }else{
-		checkEmpty(prefs.login, 'Введите логин!');
-		checkEmpty(prefs.password, 'Введите пароль!');
-    }
+    var html = AnyBalance.requestGet(baseurlLocal + '/my-account', g_headers);
 
-    var html = AnyBalance.requestGet(baseurl + '/', g_headers);
     if(!/logout/i.test(html)){
-        html = AnyBalance.requestGet(baseurl + '/login', addHeaders({Referer: baseurl1 + '/'}));
+
+    	clearAllCookies();
+
+    	html = AnyBalance.requestPost(browserApi + '/base/open', JSON.stringify({
+    		userAgent: g_headers["User-Agent"],
+    		url: baseurlOuter + "/login",
+    		rules: [
+    		    {
+    				url: /^https?:\/\/(www|static)\.mvideo\.ru/.toString(),
+    				not: true,
+                	action: 'abort',
+               	},{
+                	resType: /^(image|stylesheet|font)$/.toString(),
+                	action: 'abort',
+               	},{
+               		url: /\/login|api\/fl|ip-to-location/.toString(),
+                	action: 'request',
+                }
+    		],
+    	}), {"Content-Type": "application/json"});
+    	var json = JSON.parse(html);
+    	if(json.status !== 'ok'){
+    		AnyBalance.trace(html);
+    		throw new AnyBalance.Error('Ошибка browser api: ' + json.message);
+    	}
+    	var page = json.page, num=0;
+
+    	do{
+    		++num;
+    		AnyBalance.sleep(3000);
+  			html = AnyBalance.requestGet(browserApi + '/base/status?page=' + page);
+  			json = JSON.parse(html);
+    		if(json.status !== 'ok'){
+    			AnyBalance.trace(html);
+    			throw new AnyBalance.Error('Ошибка browser api: ' + json.message);
+    		}
+    		AnyBalance.trace('Статус загрузки: ' + json.loadStatus + ' (попытка ' + num + ')');
+    		if(json.pendingRequests && json.pendingRequests.length > 0){
+    			for(let j=0; j<json.pendingRequests.length; ++j){
+    				var pr = json.pendingRequests[j];
+    				var headers = [];
+    				for(var name in pr.headers){
+    					var values = pr.headers[name].split('\n');
+    					for(var i=0; i<values.length; ++i)
+    						headers.push([name, values[i]]);
+    				}
+    				html = AnyBalance.requestPost(pr.url, pr.body, addHeaders(headers, {
+    					'Accept': '*/*',
+						'Origin': 'https://www.mvideo.ru',
+						'Sec-Fetch-Site': 'same-origin',
+						'Sec-Fetch-Mode': 'cors',
+						'Sec-Fetch-Dest': 'empty'
+    				}), {HTTP_METHOD: pr.method});
+    				var params = AnyBalance.getLastResponseParameters();
+    				var convertedHeaders = {}, ct;
+    				params.headers.push(['set-cookie', '_HASH__=' + AnyBalance.getCookie('_HASH__') + '; Max-Age=3600; Path=/']);
+
+    				for(var i=0; i<params.headers.length; ++i){
+    					var h = params.headers[i];
+    					var name = h[0].toLowerCase();
+    					if(['transfer-encoding','content-encoding'].indexOf(name) >= 0)
+    						continue; //Возвращаем контент целиком
+    					if(name === 'content-length'){
+    						//https://stackoverflow.com/questions/5515869/string-length-in-bytes-in-javascript
+    						h[1] = '' + unescape(encodeURIComponent(html || '')).length;
+    					}
+    					if(convertedHeaders[name] === undefined){
+    						convertedHeaders[name] = h[1];
+    					}else{
+    						convertedHeaders[name] += '\n' + h[1];
+    					}
+    					if(name === 'content-type')
+    						ct = h[1];
+    				}
+    				var pr = {
+    					id: pr.id,
+    					page: page,
+    					r: {
+    						status: AnyBalance.getLastStatusCode(),
+    						headers: convertedHeaders,
+    						contentType: ct,
+    						body: html
+    					}
+    				}
+    				html = AnyBalance.requestPost(browserApi + '/base/response', JSON.stringify(pr), {"Content-Type": "application/json"});
+    			}
+    		}else if(json.loadStatus === 'load')
+    			break;
+    	}while(num < 15);
+
+    	if(json.loadStatus !== 'load')
+    		throw new AnyBalance.Error('Не удалось получить информацию для входа');
+
+    	html = AnyBalance.requestGet(browserApi + '/base/content?page='+page);
+    	json = JSON.parse(html);
+    	if(json.status !== 'ok'){
+    		AnyBalance.trace(html);
+    		throw new AnyBalance.Error('Ошибка browser api: ' + json.message);
+    	}
+    	var htmlContent = json.content;
+
+    	html = AnyBalance.requestPost(browserApi + '/base/cookies', JSON.stringify({
+    		page: page,
+    		urls: [baseurlOuter + "/"]
+    	}), {"Content-Type": "application/json"});
+
+    	json = JSON.parse(html);
+    	if(json.status !== 'ok'){
+    		AnyBalance.trace(html);
+    		throw new AnyBalance.Error('Ошибка browser api: ' + json.message);
+    	}
+
+    	html = AnyBalance.requestPost(browserApi + '/base/close', JSON.stringify({
+    		page: page,
+    	}), {"Content-Type": "application/json"});
+
+    	for(var i=0; i<json.cookies.length; ++i){
+    		var c = json.cookies[i];
+    		AnyBalance.setCookie(c.domain, c.name, c.value, c);
+    	}
+
+        html = htmlContent;
         
         function sendForm(html, code){
         	var prefs = AnyBalance.getPreferences();
-            var form = getElement(html, prefs.type == '-1' ? /<form[^>]+name="login-form"[^>]*>/i : /<form[^>]+name="login-bonus-card-form"[^>]*>/i);
+            var form = getElement(html, /<form[^>]+name="login-form"[^>]*>/i);
             if(!form){
             	AnyBalance.trace(form);
             	throw new AnyBalance.Error('Не удалось найти форму входа. Сайт изменен?');
@@ -51,15 +161,7 @@ function login(){
 //	//			if(!allowedArgs.test(name))
 //	//				return;
 		    
-				if (name == 'mvideoBonusCardNumber' && prefs.type == '0') 
-					return prefs.card;
-				else if (name == 'alfaCardNumber' && prefs.type == '1') 
-					return prefs.card;
-				else if (name == 'cetelemCardNumber' && prefs.type == '2') 
-					return prefs.card;
-				else if (/cardType/i.test(name))
-					return {'0': 'mvidCard', '1': 'alphaCard', '2': 'cetelemCard'}[prefs.type];
-				else if ('/com/mvideo/userprofiling/LoginFormHandler.loginCaseSensitive' == name)
+				if ('/com/mvideo/userprofiling/LoginFormHandler.loginCaseSensitive' == name)
 					return prefs.login;
 				else if ('verification-code' == name)
 					return code;
@@ -76,13 +178,13 @@ function login(){
 			});
 	    
 			if(/recaptcha/i.test(form)){
-				var recaptcha = solveRecaptcha('Пожалуйста, докажите, что вы не робот', baseurl, '6LdfyhQUAAAAAH18wjeroCwCYU9F6yjqp-2MYW7M');
+				var recaptcha = solveRecaptcha('Пожалуйста, докажите, что вы не робот', baseurlOuter, '6LdfyhQUAAAAAH18wjeroCwCYU9F6yjqp-2MYW7M');
 				params.recaptcha = 'on';
 				params['g-recaptcha-response'] = recaptcha;
 			}
 		    
 			var action = getParam(form, null, null, /action="([^"]*)/i, replaceHtmlEntities);
-			html = AnyBalance.requestPost(baseurl + action, params, addHeaders({Referer: baseurl + '/login'}));
+			html = AnyBalance.requestPost(baseurlLocal + action, params, addHeaders({Referer: baseurlLocal + '/login'}));
 			return html;
 		}
 	    
@@ -95,7 +197,7 @@ function login(){
 		if(/js-confirm-phone-btn/i.test(html)){
 			var phone = getParam(html, /<input[^>]+register-form-phone[^>]+value="([^"]*)/i, replaceHtmlEntities);
 			AnyBalance.trace('МВидео требует подтвердить ваш номер телефона: ' + phone);
-			var sent = AnyBalance.requestPost(baseurl + '/sitebuilder/components/phoneVerification/sendSmsCode.json.jsp', {
+			var sent = AnyBalance.requestPost(baseurlLocal + '/sitebuilder/components/phoneVerification/sendSmsCode.json.jsp', {
 				phone: phone
 			}, addHeaders({
 				'X-Requested-With': 'XMLHttpRequest',
@@ -108,7 +210,7 @@ function login(){
 
 			var sms = AnyBalance.retrieveCode('Пожалуйста, введите код для подтверждения входа в ЛК МВидео, высланный на телефон ' + phone);
 
-			var verify = AnyBalance.requestPost(baseurl + '/sitebuilder/components/phoneVerification/verifySmsCode.json.jsp', {
+			var verify = AnyBalance.requestPost(baseurlLocal + '/sitebuilder/components/phoneVerification/verifySmsCode.json.jsp', {
 				phone: phone,
 				code: sms
 			});
@@ -142,7 +244,7 @@ function login(){
 			
 	}
 
-	AnyBalance.setData('login', prefs.login + '/' + prefs.card);
+	AnyBalance.setData('login', prefs.login);
 	AnyBalance.saveCookies();
 	AnyBalance.saveData();
 
@@ -154,7 +256,7 @@ function main(){
     AnyBalance.setDefaultCharset('utf-8');
     AnyBalance.setOptions({cookiePolicy: 'netscape'});
 
-    if(AnyBalance.getData('login') === prefs.login + '/' + prefs.card)
+    if(AnyBalance.getData('login') === prefs.login)
     	AnyBalance.restoreCookies();
 
     var html;
@@ -174,7 +276,7 @@ function main(){
     //Баланс бонусных рублей
     getParam(html, result, 'balance_all', /<span[^>]+class="header-user-details"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
 
-    html = AnyBalance.requestGet(baseurl + '/my-account', g_headers);
+    html = AnyBalance.requestGet(baseurlLocal + '/my-account', g_headers);
     getParam(html, result, 'fio', /Владелец карты[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
     getParam(html, result, 'balance', /([\d\s]+)\s+БР(?:\s|<[^>]*>)*из\s+[\d\s]+доступно для оплаты/i, null, parseBalance);
     getParam(html, result, 'balance_all', /([\d\s]+)\s+БР(?:\s|<[^>]*>)*из\s+([\d\s]+)доступно для оплаты/i, null, parseBalance);
@@ -201,11 +303,11 @@ function main(){
 	}
 
     if(AnyBalance.isAvailable('strategy')){
-   	   	html = AnyBalance.requestGet(baseurl + '/my-account/bonusStrategy', g_headers);
+   	   	html = AnyBalance.requestGet(baseurlLocal + '/my-account/bonusStrategy', g_headers);
    	   	var checked = getElements(html, [/<div[^>]+class="controls-group"[^>]*>/ig, /<input[^>]+id="newsletterBySms[^>]+checked/i])[0];
    	   	if(!checked)
    	   		AnyBalance.trace('Стратегия не выбрана?\n' + html); 
-   	   	getParam(checked, result, 'strategy', null, replaceTagsAndSpaces, html_entity_decode);
+   	   	getParam(checked, result, 'strategy', null, replaceTagsAndSpaces);
    	}
 
     AnyBalance.setResult(result);

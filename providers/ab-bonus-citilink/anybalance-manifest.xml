@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="29">ab-bonus-citilink</id>
+	<id version="30">ab-bonus-citilink</id>
 	<api flags="no_browser|captcha"/>
 	<name>Ситилинк</name>
 	<description html="true"><![CDATA[
@@ -30,11 +30,11 @@
 		<counter id="activation_sum" name="Сумма последней операции с бонусами" units=" Б"/>
 		<counter id="activation_type" name="Тип последней операции с бонусами" type="text"/>
 		<counter id="next_activation_sum" name="Сумма ближайшей активации бонусов" units=" Б"/>
-		<counter id="num" name="Товаров в текущем квартале" units=" т"/>
+<!--		<counter id="num" name="Товаров в текущем квартале" units=" т"/>
 		<counter id="sum" name="Покупки в текущем квартале" units=" р"/>
 		<counter id="next_activation_date" name="Дата ближайшей активации бонусов" type="time" format="dd/MM/yyyy"/>
-		<counter id="next_nachisl_date" name="Дата начисления бонусов для ближайшей активации" type="time" format="dd/MM/yyyy"/>
-		<counter id="wo_date" name="Ближайшая дата списания бонусов" type="time" format="dd/MM/yyyy"/>
+		<counter id="next_nachisl_date" name="Дата начисления бонусов для ближайшей активации" type="time" format="dd/MM/yyyy"/> -->
+ 		<counter id="wo_date" name="Ближайшая дата списания бонусов" type="time" format="dd/MM/yyyy"/>
 		<counter id="activation_date" name="Дата последней операции с бонусами" type="time" format="dd/MM/yyyy"/>
 		<counter id="card_activation_date" name="Дата активации карты" type="time" format="dd/MM/yyyy"/>
 		<counter id="card_num" name="Номер карты" type="text"/>

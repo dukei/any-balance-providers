@@ -40,23 +40,39 @@ function main(){
     }
 	
     if(isAvailable(['balance', 'wo_date', 'wo_sum', 'activation_date', 'activation_sum', 'activation_type', 'card_activation_date', 'card_num'])) {
-      html = AnyBalance.requestGet(baseurl + '/profile/club/', g_headers);
+      html = AnyBalance.requestPost(baseurl + '/profile/main', '', addHeaders({
+      	'X-Requested-With': 'XMLHttpRequest',
+      	Origin: baseurl,
+      	Referer: baseurl + '/profile/club/',
 
-      getParam(html, result, 'balance',  /Мои бонусы:([^>]*)/i,  replaceTagsAndSpaces, parseBalance);
+      }));
 
-      getParam(html, result, 'wo_date', /дата списания(?:[\s\S]*?<td[^>]*>){1}([^<]*)/i, replaceTagsAndSpaces, parseDateWord);
-      getParam(html, result, 'wo_sum',  /дата списания(?:[\s\S]*?<td[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+      var json = getJson(html);
 
-      getParam(html, result, 'activation_date',  /Детализация активации бонусов(?:[\s\S]*?<td[^>]*>){1}([^<]*)/i, replaceTagsAndSpaces, parseDateWord);
-      getParam(html, result, 'activation_sum',   /Детализация активации бонусов(?:[\s\S]*?<td[^>]*>){3}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
-      getParam(html, result, 'activation_type',  /Детализация активации бонусов(?:[\s\S]*?<td[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces);
+      getParam(json.bonuses.currentBonus, result, 'balance');
 
-      getParam(html, result, 'next_nachisl_date',  /Ближайшее начисление и активация бонусов(?:[\s\S]*?<td[^>]*>){1}([^<]*)/i, replaceTagsAndSpaces, parseDateWord);
-      getParam(html, result, 'next_activation_date',  /Ближайшее начисление и активация бонусов(?:[\s\S]*?<td[^>]*>){2}([^<]*)/i, replaceTagsAndSpaces, parseDateWord);
-      getParam(html, result, 'next_activation_sum',   /Ближайшее начисление и активация бонусов(?:[\s\S]*?<td[^>]*>){3}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+      if(json.bonuses.willDebitBonus && json.bonuses.willDebitBonus[0]){
+      	getParam(json.bonuses.willDebitBonus[0].processDate, result, 'wo_date');
+      	getParam(json.bonuses.willDebitBonus[0].bonusesCount, result, 'wo_sum');
+      }
 
-      getParam(html, result, 'card_activation_date', /дата активации:([^<]*)/i, replaceTagsAndSpaces, parseDateWord);
-      getParam(html, result, 'card_num', /Карта №([^,<]*)/i, replaceTagsAndSpaces);
+      if(json.bonuses.clubCardOperations && json.bonuses.clubCardOperations[0]){
+      	getParam(json.bonuses.clubCardOperations[0].addDate, result, 'activation_date');
+      	getParam(json.bonuses.clubCardOperations[0].bonusesCount, result, 'activation_sum',   null, null, parseBalance);
+      	getParam(json.bonuses.clubCardOperations[0].itemName, result, 'activation_type');
+      }
+   	}
+
+    if(isAvailable(['card_activation_date', 'card_num'])) {
+      html = AnyBalance.requestPost(baseurl + '/profile/club/info/?limit=19&offset=1', '', addHeaders({
+      	'X-Requested-With': 'XMLHttpRequest',
+      	Origin: baseurl,
+      	Referer: baseurl + '/profile/club/',
+
+      }));
+      var json = getJson(html);
+      getParam(json.bonuses.activationDate, result, 'card_activation_date');
+      getParam(json.bonuses.clubCardNumber, result, 'card_num');
     }
 
     AnyBalance.setResult(result);
@@ -92,14 +108,13 @@ function login(){
 		return value;
 	});
 
-	html = AnyBalance.requestGet(baseurl + '/login/captcha/?width=210', addHeaders({Accept: 'application/json, text/javascript, */*; q=0.01', 'X-Requested-With': 'XMLHttpRequest', Referer: baseurl + '/'}));
+	html = AnyBalance.requestGet(baseurl + '/captcha/image/?_=' + (+new Date()), addHeaders({Accept: 'application/json, text/javascript, */*; q=0.01', 'X-Requested-With': 'XMLHttpRequest', Referer: baseurl + '/'}));
 	var jsonCaptcha = getJson(html);
-	if(jsonCaptcha.needCaptcha){
+	if(true || jsonCaptcha.needCaptcha){
 		AnyBalance.trace('Потребовалась капча');
-		var captchaKey = getParam(jsonCaptcha.captcha, /<input[^>]+name="captchaKey"[^>]*value="([^"]*)/i, replaceHtmlEntities);
-		var img = AnyBalance.requestGet(baseurl + '/captcha/image/' + captchaKey + '/?_=' + Math.round((+new Date)/1000), addHeaders({Referer: baseurl + '/'}));
+		var img = jsonCaptcha.image;
 		params.captcha = AnyBalance.retrieveCode('Пожалуйста, введите код с картинки', img);
-		params.captchaKey = captchaKey;
+		params.captchaKey = jsonCaptcha.token;
 	}
 
 	var url = joinUrl(baseurl, action);
@@ -108,7 +123,7 @@ function login(){
 	html = AnyBalance.requestPost(url, params, addHeaders({Referer: baseurl + '/login/'})); 
 	
     if(!/\/login\/exit/i.test(html)){
-        var error = getParam(html, null, null, /<div[^>]+class="[^"]*error[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+        var error = getElement(html, /<div[^>]+error-message/i, replaceTagsAndSpaces);
         if(error)
             throw new AnyBalance.Error(error, null, /парол/i.test(error));
 		

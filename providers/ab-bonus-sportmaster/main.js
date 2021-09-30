@@ -70,10 +70,14 @@ function callApi(action, params, method){
 
 	var delim = action.indexOf('?') >= 0 ? '&' : '?';
 	action += delim + 'access-token=' + encodeURIComponent(g_accessToken);
+	AnyBalance.trace('action::: ' + action + 'params::: ' + params + ' ? ' + 'json::: ' + JSON.stringify(params));
 
-	var html = AnyBalance.requestPost('https://mobileapp.sportmaster.ru/rest/v1/' + action, params ? JSON.stringify(params) : null, headers, {HTTP_METHOD: method || 'GET'});
-
+	var html = AnyBalance.requestPost('https://m.sportmaster.ru/rest/v1/' + action, params ? JSON.stringify(params) : null, headers, {HTTP_METHOD: method || 'GET'});
+//	                                   https://moappsmapi.sptmr.ru/rest/v1/
+//	                                   https://m.sportmaster.ru/rest/v1/auth
+ //                             https://m.sportmaster.ru/rest/v1/auth?__local=0
 	var json = getJson(html);
+	AnyBalance.trace('Json_1::: ' + JSON.stringify(json));
 	if(json.error){
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error(json.error, /42/i.test(json.error) ? true : null, /телефон|парол/i.test(json.error));
@@ -90,6 +94,7 @@ function main(){
     AB.checkEmpty(/^\d{10}$/.test(prefs.login), 'Введите номер телефона - 10 цифр без пробелов и разделителей!');
 
     var json = getInfo();
+	AnyBalance.trace('htmlJson_2::: ' + JSON.stringify(json));
 
     if(!json.auth || json.auth.anonymous){
     	json = callApi('confirmation/sms/signIn', {phone: prefs.login}, 'POST');
@@ -97,12 +102,14 @@ function main(){
     	var code = AnyBalance.retrieveCode('Пожалуйста, введите SMS для подтверждения входа в личный кабинет Спортмастер', null, {inputType: 'number', time: json.waitSeconds*1000});
 
     	json = callApi('auth', {password: code, token: prefs.login, type: 'signInCode'}, 'POST');
+
     	
     	json = getInfo();
     }
 
     if(addBonuses())
     	json = getInfo();
+
 
     var result = {success: true};
 

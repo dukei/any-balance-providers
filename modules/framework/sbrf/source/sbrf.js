@@ -15,7 +15,7 @@ function findRegion(mnemonic){
   }
   if(!mnemonic) mnemonic = 'moscow';
   var region = findRegion1(mnemonic) || g_regions[0];
-  AnyBalance.trace('Показываем регион ' + region.REGION_MNEMONIC +" ("+a.TRBANK_CODE+")");
+  AnyBalance.trace('Показываем регион ' + region.REGION_MNEMONIC +" ("+region.TRBANK_CODE+")");
   return region;
 }
 

@@ -15,39 +15,42 @@ var g_headers = {
 };
 
 var g_iso_to2letters = {
-	palladium: 'Pl',
-	platinum: 'Pt',
-	Gold: 'Au',
-	Silver: 'Ag'
+	A33: 'Pd',
+	A76: 'Pt',
+	A98: 'Au',
+	A99: 'Ag'
 };
 
 function main(){
   var prefs = AnyBalance.getPreferences();
   AnyBalance.setDefaultCharset('utf-8');
 
-  var region = findRegion(prefs.region).REGION_ID;
+  var region = findRegion(prefs.region).TRBANK_CODE;
 
-  var html = AnyBalance.requestGet('https://www.sberbank.ru/portalserver/proxy/?pipe=shortCachePipe&url=http%3A%2F%2Flocalhost%2Frates-web%2FrateService%2Frate%2Fcurrent%3FregionId%3D' + region + '%26rateCategory%3Dbase%26currencyCode%3DA33%26currencyCode%3DA76%26currencyCode%3DA98%26currencyCode%3DA99',
+  var html = AnyBalance.requestGet('https://www.sberbank.ru/proxy/services/rates/public/actual?rateType=PMR-3&isoCodes[]=A98&isoCodes[]=A99&isoCodes[]=A76&isoCodes[]=A33&regionId=' + region + '&segType=TRADITIONAL',
   	addHeaders({
   		'X-Requested-With': 'XMLHttpRequest',
-  		'X-Request-ID': 'cf0e71d3-a5e5-4a48-b4d3-7464c0ffb773',
-  		Referer: 'https://www.sberbank.ru/ru/quotes/metal/'
+  		'X-Request-ID': 'c169d176feee11568f0ed90b07e5cada',
+  		Referer: 'https://www.sberbank.ru/ru/quotes/metalbeznal/'
   	}));
 
   var json = getJson(html);
 
   var result = {success: true};
 
-  for(var key in json.base){
-  	  var metal = json.base[key][0];
-  	  var name = g_iso_to2letters[metal.isoCur];
+  for(var key in json){
+  	  var metal = json[key];
+  	  var name = g_iso_to2letters[key];
+	  AnyBalance.trace(name + ': ' + JSON.stringify(metal));
       if(AnyBalance.isAvailable(name + '_buy'))
-        result[name + '_buy'] = metal.buyValue;
+        result[name + '_buy'] = metal.rateList[0].rateBuy;
       if(AnyBalance.isAvailable(name + '_sell'))
-        result[name + '_sell'] = metal.sellValue;
+        result[name + '_sell'] = metal.rateList[0].rateSell;
       if(AnyBalance.isAvailable(name + '_weight') && (weight = getWeight(name)))
-        result[name + '_weight'] = metal.buyValue * weight;
-      sumParam(metal.activeFrom, result, 'date', null, null, null, aggregate_max);
+        result[name + '_weight'] = metal.rateList[0].rateBuy * weight;
+	  if(AnyBalance.isAvailable('date'))
+        sumParam(metal.startDateTime, result, 'date', null, null, null, aggregate_max);
+	  getParam(getFormattedDate(null, new Date(metal.startDateTime)), result, '__tariff');
   }
 
   AnyBalance.setResult(result);

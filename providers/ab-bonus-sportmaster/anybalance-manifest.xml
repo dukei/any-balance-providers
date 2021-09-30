@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id version="30">ab-bonus-sportmaster</id>
+	<id version="31">ab-bonus-sportmaster</id>
 	<name>Спортмастер</name>
 	<description html="true"><![CDATA[
    <p>Предоставляет информацию по бонусной карте "Спортмастер".</p> 
@@ -13,6 +13,7 @@
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
     <depends>
    		<module id="library"/>
+   		<module id="misc/saved-data"/>
    		<module id="crypt/md5"/>
    	</depends>
 	<files>
@@ -22,11 +23,19 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="balance" name="Баланс" units=" ₽"/>
+		<counter id="cashback" name="Кэшбэк бонусы" units=" ₽"/>
+		<counter id="promo" name="Промо бонусы" units=" ₽"/>
 		<counter id="cardnum" name="Номер карты" type="text"/>
-		<counter id="nextlevel" name="Покупок до след уровня" units=" р"/>
-		<counter id="till" name="Дата сгорания" type="time" format="dd/MM/yyyy"/>
-		<counter id="sumtill" name="Сумма сгорания" units=" р"/>
+		<counter id="nextlevel" name="Покупок до след. уровня" units=" ₽"/>
+		<counter id="till" name="Дата сгорания" type="time" format="dd.MM.yyyy"/>
+		<counter id="sumtill" name="Сумма сгорания" units=" ₽"/>
+		<counter id="last_order_date" name="Дата последнего заказа" type="time" format="dd.MM.yyyy"/>
+		<counter id="last_order_number" name="Номер последнего заказа" type="text"/>
+		<counter id="last_order_status" name="Статус последнего заказа" type="text"/>
+		<counter id="last_order_sum" name="Сумма последнего заказа" units=" ₽"/>
+		<counter id="phone" name="Телефон" type="text"/>
+		<counter id="fio" name="ФИО" type="text"/>
 	</counters>
 	<keywords>sportmaster, карта, бонус</keywords>
 	<type>bonus</type>

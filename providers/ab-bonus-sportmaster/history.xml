@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="31" date="2021-09-30">
+	- Добавлены доп счетчики
+	</change>
 	<change version="30" date="2021-09-30">
 	- Поддержка изменений в адресе API (Роман Сотников)
 	</change>

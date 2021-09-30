@@ -23,67 +23,57 @@ var g_cardTypes = [
     { auth: 'GOLD', check: '302', name: 'Золотой' }
 ];
 
-function generateUUID () {
-    var s = [], itoh = '0123456789abcdef', i;
-    for (i = 0; i < 36; i++) {
-        s[i] = Math.floor(Math.random() * 0x10);
-    }
-    s[14] = 4;
-    s[19] = (s[19] & 0x3) | 0x8;
-    for (i = 0; i < 36; i++) {
-        s[i] = itoh[s[i]];
-    }
-    s[8] = s[13] = s[18] = s[23] = '-';
-    return s.join('');
+var g_savedData;
+
+function saveTokens(json){
+	g_savedData.set('accessToken', json.AccessToken);
+	g_savedData.set('accessTokenExpire', json.AccessTokenExpire);
+	g_savedData.set('refreshToken', json.RefreshToken);
+	g_savedData.set('refreshTokenExpire', json.RefreshTokenExpire);
 }
 
-var g_androidId;
-var g_accessToken;
-
 function callApi(action, params, method){
-	if(!g_androidId){
+    var androidId = g_savedData.get('androidId');
+	if(!androidId){
 		var prefs = AnyBalance.getPreferences();
-		g_androidId = hex_md5(prefs.login).substr(0, 16);
+		androidId = hex_md5(prefs.login).substr(0, 16);
 	}
 
-    if(!g_accessToken){
-    	var token = AnyBalance.getData('accessToken');
-    	if(token && AnyBalance.getData('login') === prefs.login)
-    		g_accessToken = token;
-    }
-
-    if(!g_accessToken){
-    	g_accessToken = generateUUID();
-    	AnyBalance.setData('login', prefs.login);
-    	AnyBalance.setData('accessToken', g_accessToken);
-    	AnyBalance.saveData();
-    }
-
 	var headers = {
-		'User-Agent': 'mobileapp-android-3.5.5(21135)',
-		'X-SM-MobileApp': g_androidId,
+		'User-Agent': 'mobileapp-android-9',
+		'Device-Model': 'OnePlus ONEPLUS A3010',
+		'App-Version': '3.70.42',
+		'OS': 'ANDROID',
+		'OS-Version': '9',
+		'Build-Mode': 'Production',
+		'Accept-Encoding': 'identity',
+		'X-SM-MobileApp': androidId,
 		Connection: 'Keep-Alive'
 	};
+
+	var accessToken = g_savedData.get('accessToken');
+    if(!accessToken && (action !== 'auth' || params)){
+    	var json = callApi('auth');
+    	
+    	saveTokens(json);
+    	accessToken = json.AccessToken;
+    }
+
+    if(accessToken){
+    	headers['Access-Token'] = accessToken;
+    }
 
 	if(params)
 		headers['Content-Type'] = 'application/json; charset=utf-8';
 
-	var delim = action.indexOf('?') >= 0 ? '&' : '?';
-	action += delim + 'access-token=' + encodeURIComponent(g_accessToken);
-	AnyBalance.trace('action::: ' + action + 'params::: ' + params + ' ? ' + 'json::: ' + JSON.stringify(params));
-
-	var html = AnyBalance.requestPost('https://m.sportmaster.ru/rest/v1/' + action, params ? JSON.stringify(params) : null, headers, {HTTP_METHOD: method || 'GET'});
-//	                                   https://moappsmapi.sptmr.ru/rest/v1/
-//	                                   https://m.sportmaster.ru/rest/v1/auth
- //                             https://m.sportmaster.ru/rest/v1/auth?__local=0
+	var html = AnyBalance.requestPost('https://moappsmapi.sportmaster.ru/api/v1/' + action, params ? JSON.stringify(params) : null, headers, {HTTP_METHOD: method || 'GET'});
 	var json = getJson(html);
-	AnyBalance.trace('Json_1::: ' + JSON.stringify(json));
 	if(json.error){
 		AnyBalance.trace(html);
-		throw new AnyBalance.Error(json.error, /42/i.test(json.error) ? true : null, /телефон|парол/i.test(json.error));
+		throw new AnyBalance.Error(json.error.title, /42/i.test(json.error.title) ? true : null, /телефон|парол/i.test(json.error.title));
 	}
 		
-	return json;
+	return json.data;
 }
 
 function main(){
@@ -93,92 +83,78 @@ function main(){
     AB.checkEmpty(prefs.login, 'Введите номер телефона!');
     AB.checkEmpty(/^\d{10}$/.test(prefs.login), 'Введите номер телефона - 10 цифр без пробелов и разделителей!');
 
-    var json = getInfo();
-	AnyBalance.trace('htmlJson_2::: ' + JSON.stringify(json));
+    g_savedData = new SavedData('sport_master', prefs.login);
 
-    if(!json.auth || json.auth.anonymous){
-    	json = callApi('confirmation/sms/signIn', {phone: prefs.login}, 'POST');
+    var json = getInfo();
+    if(!json.customer){
+    	json = callApi('code', {type: 'phone', value: prefs.login}, 'POST');
+    	AnyBalance.trace("Sending code: " + JSON.stringify(json));
 
     	var code = AnyBalance.retrieveCode('Пожалуйста, введите SMS для подтверждения входа в личный кабинет Спортмастер', null, {inputType: 'number', time: json.waitSeconds*1000});
 
-    	json = callApi('auth', {password: code, token: prefs.login, type: 'signInCode'}, 'POST');
+    	json = callApi('auth', {phone: prefs.login, token: code, type: 'sms'}, 'POST');
+    	saveTokens(json);
 
-    	
     	json = getInfo();
     }
 
-    if(addBonuses())
-    	json = getInfo();
-
+    g_savedData.save();
 
     var result = {success: true};
 
-    AB.getParam(json.bonus.clientInfo.curLevelName, result, '__tariff');
-    AB.getParam(json.bonus.clientInfo.cardNumber, result, 'cardnum');
+    AB.getParam(json.bonusCurLevel, result, '__tariff');
+    AB.getParam(json.cardNum, result, 'cardnum');
+    AB.getParam(json.bonusAmount, result, 'balance');
+    AB.getParam(json.toNextLevelSumma, result, 'nextlevel');
+    AB.getParam(json.name, result, 'fio');
+    AB.getParam(json.customer.phone, result, 'phone');
 
-    var balance = 0, minExpDate, minExpSum;
-    if(json.bonus.clientInfo.bonuses){
-    	balance = json.bonus.clientInfo.bonuses.reduce(function(acc, a){
-    		var dt = parseDateISO(a.dateEnd);
-    		if(!isset(minExpDate) || minExpDate > dt){
-    			minExpDate = dt;
-    			minExpSum = a.amount;
-    		}
-    		return acc+=a.amount;
-    	}, 0)
+    if(AnyBalance.isAvailable('till', 'sumtill')){
+    	json = callApi('auth/bonus');
+        var balance = 0, minExpDate, minExpSum;
+        if(json.clientInfo.bonuses){
+        	var balance = json.clientInfo.bonuses.reduce(function(acc, a){
+        		var dt = parseDateISO(a.dateEnd);
+        		if(a.amount && (!isset(minExpDate) || minExpDate > dt)){
+        			minExpDate = dt;
+        			minExpSum = a.amount;
+        		}
+        		return acc+=a.amount;
+        	}, 0);
+
+			getParam(minExpDate, result, 'till');
+			getParam(minExpSum, result, 'sumtill');
+        }
+        if(json.details){
+        	var cashback=0, promo=0;
+        	for(var i=0; i<json.details.length; ++i){
+        		var d = json.details[i];
+        		if(d.bonusTypeCode === 7)
+        			cashback += d.amount;
+        		if(d.bonusTypeCode === 8)
+        			promo += d.amount;
+        	}
+			getParam(cashback, result, 'cashback');
+			getParam(promo, result, 'promo');
+        }
     }
 
-    AB.getParam(balance, result, 'balance');
-    AB.getParam(json.bonus.clientInfo.toNextLevelSumma, result, 'nextlevel');
-    getParam(minExpDate, result, 'till');
-    getParam(minExpSum, result, 'sumtill');
+    if(AnyBalance.isAvailable("last_order_date","last_order_number","last_order_status","last_order_sum")){
+        json = callApi('orders?pageNumber=1&pageSize=15');
+        if(json.length){
+        	var o = json[0];
+        	getParam(o.orderDate, result, 'last_order_date');
+        	getParam(o.number, result, 'last_order_number');
+        	getParam(o.price, result, 'last_order_sum');
+        	getParam(o.statusTitle, result, 'last_order_status');
+        }
+    }
 
 
     AnyBalance.setResult(result);
 }
 
 function getInfo(){
-    var json = callApi('entities?' + createUrlEncodedParams({
-    	types: 'auth,bonus,profile',
-    	'access-token': g_accessToken
-    }));
+    var json = callApi('auth/profile');
     return json;
-}
-
-
-function addBonuses(){
-    try{
-    	AnyBalance.trace('Получаем бонусы постоянного клиента...');
-    	var headers = {
-			'X-User-Time-Zone': 'Europe/Moscow',
-			'Api-Authorization': g_accessToken,
-			Connection: 'Keep-Alive',
-			'User-Agent': 'okhttp/3.12.2'
-	    };
-
-    	var html = AnyBalance.requestGet('https://api.sportmaster.kingbird.ru/tasks/all', headers);
-	    json = getJson(html).filter(function(a){return a.type==='RC'});
-	    if(json.length === 0){
-	    	AnyBalance.trace(html);
-	    	throw new AnyBalance.Error('Не удалось найти бонус "Постоянный клиент"');
-	    }
-	   
-	    if(json[0].status === 'Y'){
-	    	throw new AnyBalance.Error('Бонус уже активирован сегодня');
-	    }
-
-	    html = AnyBalance.requestPost('https://api.sportmaster.kingbird.ru/points/' + json[0].id, {}, headers);
-	    if(AnyBalance.getLastStatusCode() >= 400){
-	    	AnyBalance.trace(html);
-	    	throw new AnyBalance.Error('Не удалось начислить бонусы');
-	    }
-
-	    json = getJson(html);
-	    AnyBalance.trace(html);
-	    AnyBalance.trace('Бонусы успешно начислены');
-	    return true;
-    }catch(e){
-    	AnyBalance.trace('проблема с халявными бонусами: ' + e.message);
-    	return false;
-    }
 }

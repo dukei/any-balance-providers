@@ -1,5 +1,8 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="1.0" version="14" date="2021-09-30">
+	- Улучшения и украшения
+	</change>
 	<change major_version="1.0" version="13" date="2018-12-24">
 	- Поддержка изменений на сайте.
 	</change>

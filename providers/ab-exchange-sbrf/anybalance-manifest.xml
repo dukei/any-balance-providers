@@ -1,10 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-  <id major_version="1.0" version="13">ab-exchange-sbrf</id>
+  <id major_version="1.0" version="14">ab-exchange-sbrf</id>
   <name>Курсы валют СБ РФ</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о курсах валют от банка "Сбербанк" со страницы https://www.sberbank.ru/ru/quotes/currencies .</p>
+	<p>Предоставляет информацию о курсах валют от банка "Сбербанк" со страницы https://www.sberbank.ru/ru/quotes/currencies.</p>
+	<p>Позволяет также ввести сумму имеющейся у вас валюты и выводит ваш капитал в случае продажи всей валюты Сбербанку по текущей цене покупки.</p>
 	]]></description>
   <author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
   <depends>
@@ -18,11 +19,13 @@
     <js>main.js</js>
   </files>
   <counters>
-    <counter id="usd_purch" name="USD покупка" units=" р"/>
-    <counter id="usd_sell" name="USD продажа" units=" р"/>
-    <counter id="eur_purch" name="EUR покупка" units=" р"/>
-    <counter id="eur_sell" name="EUR продажа" units=" р"/>
-    <counter id="date" name="Дата курса" type="time" format="dd/MM/yyyy"/>
+    <counter id="usd_purch" name="USD покупка" prefix="$↓ " units=" ₽"/>
+    <counter id="usd_sell" name="USD продажа" prefix="$↑ " units=" ₽"/>
+	<counter id="usd_amount" name="USD за сумму" prefix="$+ " units=" ₽"/>
+    <counter id="eur_purch" name="EUR покупка" prefix="€↓ " units=" ₽"/>
+    <counter id="eur_sell" name="EUR продажа" prefix="€↑ " units=" ₽"/>
+	<counter id="eur_amount" name="EUR за сумму" prefix="€+ " units=" ₽"/>
+    <counter id="date" name="Дата курса" type="time" format="dd.MM.yyyy"/>
   </counters>
   <keywords>Курсы, валюта, доллар, евро, фунт, сбербанк</keywords>
 	<type>exchange</type>

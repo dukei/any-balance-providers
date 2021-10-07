@@ -67,7 +67,7 @@ function mainSite(){
 	var json = getJsonEval(html);
 	AnyBalance.trace(JSON.stringify(json));
 	
-    if(json && json.anonimous != true){
+    if(json && json.anonymous != true){
 		AnyBalance.trace('Похоже, мы уже залогинены на имя ' + json.name + ' ' + json.lastname + ' (' + prefs.login_site + ')');
     }else{
 		AnyBalance.trace('Сессия новая. Будем логиниться заново...');
@@ -169,7 +169,7 @@ function loginSite(prefs){
 	if (json.required = 'true') {
 	    AnyBalance.trace('Спортмастер затребовал капчу');
 	    var capKey = json.key
-	    var recaptcha = solveRecaptcha('Пожалуйста, подтвердите, что Вы не робот', baseurl, '6LeTH-IUAAAAAL31r4UoabGNn-9ifCS63cxzc7q3');
+	    var recaptcha = solveRecaptcha('Пожалуйста, подтвердите, что Вы не робот', baseurl + '/', '6LeTH-IUAAAAAL31r4UoabGNn-9ifCS63cxzc7q3', {USERAGENT: g_headers['User-Agent']});
 	}
 	
 	if (/^\d{10}$/.test(prefs.login_site)) {

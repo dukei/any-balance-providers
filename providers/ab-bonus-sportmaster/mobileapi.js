@@ -53,7 +53,7 @@ function callApi(action, params, method){
 	};
 
 	var accessToken = g_savedData.get('accessToken');
-    if(!accessToken && (action !== 'auth' || params)){
+    if(!accessToken && (action !== 'auth')){
     	var json = callApi('auth');
     	saveTokens(json);
     	accessToken = json.AccessToken;
@@ -87,8 +87,34 @@ function mainAPI(){
 
     AnyBalance.trace ('Пробуем получить данные из мобильного приложения...');
 
-    var json = getInfo();
-	AnyBalance.trace(JSON.stringify(json));
+    
+    var json;
+    try{
+    	json = getInfo();
+    }catch(e){
+		AnyBalance.trace("Error getting info: " + JSON.stringify(json));
+		if(/Token expired|invalid/i.test(e.message)){
+			AnyBalance.trace("Trying to refresh token");
+			g_savedData.set('accessToken', undefined); 
+			var refreshToken = g_savedData.get('refreshToken');
+			try{
+    			json = callApi('auth', {RefreshToken: refreshToken}, 'POST');
+    			saveTokens(json);
+    			json = getInfo();
+    		}catch(e){
+				AnyBalance.trace("Error refreshing token: " + JSON.stringify(json));
+    			if(/Token expired|invalid/i.test(e.message)){
+    				saveTokens({});
+    				json = getInfo();	
+    			}else{
+    				throw e;
+    			}
+    		}
+		}else{
+			throw e;
+		}
+    }
+
 	
     if(!json.customer){
     	json = callApi('code', {type: 'phone', value: prefs.login}, 'POST');

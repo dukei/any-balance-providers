@@ -26,11 +26,21 @@ function main(){
   AnyBalance.setDefaultCharset('utf-8');
 
   var region = findRegion(prefs.region).TRBANK_CODE;
+  
+  if (/office/.test(prefs.type)) {
+        var segType = '&segType=TRADITIONAL';
+        var requestID = 'c169d176feee11568f0ed90b07e5cada';
+		var sourceType = 'Офисы банка';
+	} else {
+        var segType = '';
+        var requestID = '1e65ab9578777362383f525a74b7268f';
+		var sourceType = 'СберБанк Онлайн';
+    }	
 
-  var html = AnyBalance.requestGet('https://www.sberbank.ru/proxy/services/rates/public/actual?rateType=PMR-3&isoCodes[]=A98&isoCodes[]=A99&isoCodes[]=A76&isoCodes[]=A33&regionId=' + region + '&segType=TRADITIONAL',
+  var html = AnyBalance.requestGet('https://www.sberbank.ru/proxy/services/rates/public/actual?rateType=PMR-3&isoCodes[]=A98&isoCodes[]=A99&isoCodes[]=A76&isoCodes[]=A33&regionId=' + region + segType,
   	addHeaders({
   		'X-Requested-With': 'XMLHttpRequest',
-  		'X-Request-ID': 'c169d176feee11568f0ed90b07e5cada',
+  		'X-Request-ID': requestID,
   		Referer: 'https://www.sberbank.ru/ru/quotes/metalbeznal/'
   	}));
 
@@ -50,6 +60,8 @@ function main(){
         result[name + '_weight'] = metal.rateList[0].rateBuy * weight;
 	  if(AnyBalance.isAvailable('date'))
         sumParam(metal.startDateTime, result, 'date', null, null, null, aggregate_max);
+	  if(AnyBalance.isAvailable('source'))
+        getParam(sourceType, result, 'source');
 	  getParam(getFormattedDate(null, new Date(metal.startDateTime)), result, '__tariff');
   }
 

@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="11">ab-exchange-metal-sbrf</id>
+  <id version="12">ab-exchange-metal-sbrf</id>
   <api flags="no_browser"/>
   <name>Курсы драгоценных металлов Сбербанка</name>
   <description html="true"><![CDATA[
@@ -31,7 +31,8 @@
     <counter id="Pd_buy" name="Палладий покупка" prefix="Pd↓ " units=" ₽"/>
     <counter id="Pd_sell" name="Палладий продажа" prefix="Pd↑ " units=" ₽"/>
     <counter id="Pd_weight" name="Палладий за вес" prefix="Pd+ " units=" ₽"/>
-    <counter id="date" name="Дата курса" type="time" format="dd.MM.yyyy"/>
+    <counter id="date" name="Дата курсов" type="time" format="dd.MM.yyyy"/>
+	<counter id="source" name="Источник курсов" type="text"/>
   </counters>
   <keywords>
     Драгоценные металлы, золото, серебро, платина, палладий, sberbank, сберегательный банк

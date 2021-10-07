@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-  <id major_version="1.0" version="14">ab-exchange-sbrf</id>
+  <id major_version="1.0" version="15">ab-exchange-sbrf</id>
   <name>Курсы валют СБ РФ</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о курсах валют от банка "Сбербанк" со страницы https://www.sberbank.ru/ru/quotes/currencies.</p>
@@ -25,7 +25,35 @@
     <counter id="eur_purch" name="EUR покупка" prefix="€↓ " units=" ₽"/>
     <counter id="eur_sell" name="EUR продажа" prefix="€↑ " units=" ₽"/>
 	<counter id="eur_amount" name="EUR за сумму" prefix="€+ " units=" ₽"/>
-    <counter id="date" name="Дата курса" type="time" format="dd.MM.yyyy"/>
+	<counter id="cad_purch" name="CAD покупка" prefix="C$↓ " units=" ₽"/>
+    <counter id="cad_sell" name="CAD продажа" prefix="C$↑ " units=" ₽"/>
+	<counter id="cad_amount" name="CAD за сумму" prefix="C$+ " units=" ₽"/>
+    <counter id="dkk_purch" name="DKK покупка" prefix="kr.↓ " units=" ₽"/>
+    <counter id="dkk_sell" name="DKK продажа" prefix="kr.↑ " units=" ₽"/>
+	<counter id="dkk_amount" name="DKK за сумму" prefix="kr.+ " units=" ₽"/>
+	<counter id="jpy_purch" name="JPY покупка" prefix="¥↓ " units=" ₽"/>
+    <counter id="jpy_sell" name="JPY продажа" prefix="¥↑ " units=" ₽"/>
+	<counter id="jpy_amount" name="JPY за сумму" prefix="¥+ " units=" ₽"/>
+    <counter id="nok_purch" name="NOK покупка" prefix="kr↓ " units=" ₽"/>
+    <counter id="nok_sell" name="NOK продажа" prefix="kr↑ " units=" ₽"/>
+	<counter id="nok_amount" name="NOK за сумму" prefix="kr+ " units=" ₽"/>
+	<counter id="sgd_purch" name="SGD покупка" prefix="S$↓ " units=" ₽"/>
+    <counter id="sgd_sell" name="SGD продажа" prefix="S$↑ " units=" ₽"/>
+	<counter id="sgd_amount" name="SGD за сумму" prefix="S$+ " units=" ₽"/>
+    <counter id="sek_purch" name="SEK покупка" prefix="kr↓ " units=" ₽"/>
+    <counter id="sek_sell" name="SEK продажа" prefix="kr↑ " units=" ₽"/>
+	<counter id="sek_amount" name="SEK за сумму" prefix="kr+ " units=" ₽"/>
+	<counter id="chf_purch" name="CHF покупка" prefix="₣↓ " units=" ₽"/>
+    <counter id="chf_sell" name="CHF продажа" prefix="₣↑ " units=" ₽"/>
+	<counter id="chf_amount" name="CHF за сумму" prefix="₣+ " units=" ₽"/>
+	<counter id="gbp_purch" name="GBP покупка" prefix="£↓ " units=" ₽"/>
+    <counter id="gbp_sell" name="GBP продажа" prefix="£↑ " units=" ₽"/>
+	<counter id="gbp_amount" name="GBP за сумму" prefix="£+ " units=" ₽"/>
+	<counter id="cny_purch" name="CNY покупка" prefix="Ұ↓ " units=" ₽"/>
+    <counter id="cny_sell" name="CNY продажа" prefix="Ұ↑ " units=" ₽"/>
+	<counter id="cny_amount" name="CNY за сумму" prefix="Ұ+ " units=" ₽"/>
+    <counter id="date" name="Дата курсов" type="time" format="dd.MM.yyyy"/>
+	<counter id="source" name="Источник курсов" type="text"/>
   </counters>
   <keywords>Курсы, валюта, доллар, евро, фунт, сбербанк</keywords>
 	<type>exchange</type>

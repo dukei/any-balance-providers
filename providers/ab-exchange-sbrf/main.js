@@ -15,20 +15,39 @@ var g_headers = {
 };
 
 var g_iso_to2letters = {
+	USD: 'usd',
 	EUR: 'eur',
-	USD: 'usd'
+	CAD: 'cad',
+	DKK: 'dkk',
+	JPY: 'jpy',
+	NOK: 'nok',
+	SGD: 'sgd',
+	SEK: 'sek',
+	CHF: 'chf',
+	GBP: 'gbp',
+	CNY: 'cny'
 };
 
 function main(){
   var prefs = AnyBalance.getPreferences();
   AnyBalance.setDefaultCharset('utf-8');
 
-  var region = findRegion(prefs.region).TRBANK_CODE;
+    var region = findRegion(prefs.region).TRBANK_CODE;
+  
+    if (/office/.test(prefs.type)) {
+        var rateType = 'ERNP-4';
+        var requestID = '7cfa7f739ebdf97418a3963183fbba05';
+		var sourceType = 'Офисы банка';
+	} else {
+        var rateType = 'ERNP-2';
+        var requestID = '8e4f8491fbf9f2ada11a32133ef30b80';
+		var sourceType = 'СберБанк Онлайн';
+    }	
 
-  var html = AnyBalance.requestGet('https://www.sberbank.ru/proxy/services/rates/public/actual?rateType=ERNP-4&isoCodes[]=USD&isoCodes[]=EUR&regionId=' + region,
+  var html = AnyBalance.requestGet('https://www.sberbank.ru/proxy/services/rates/public/actual?rateType=' + rateType + '&isoCodes[]=USD&isoCodes[]=EUR&isoCodes[]=CAD&isoCodes[]=DKK&isoCodes[]=JPY&isoCodes[]=NOK&isoCodes[]=SGD&isoCodes[]=SEK&isoCodes[]=CHF&isoCodes[]=GBP&isoCodes[]=CNY&regionId=' + region,
 	addHeaders({
   		'X-Requested-With': 'XMLHttpRequest',
-  		'X-Request-ID': '7cfa7f739ebdf97418a3963183fbba05',
+  		'X-Request-ID': requestID,
   		Referer: 'https://www.sberbank.ru/ru/quotes/currencies/'
   	}));
 
@@ -48,6 +67,8 @@ function main(){
         result[name + '_amount'] = valut.rateList[0].rateBuy * amount;
 	  if(AnyBalance.isAvailable('date'))
         sumParam(valut.startDateTime, result, 'date', null, null, null, aggregate_max);
+	  if(AnyBalance.isAvailable('source'))
+        getParam(sourceType, result, 'source');
 	  getParam(getFormattedDate(null, new Date(valut.startDateTime)), result, '__tariff');
   }
 
@@ -63,6 +84,3 @@ function getAmount(valut){
 	var amount = getParam(prefs.amount, null, null, new RegExp(valut + '\s*:([^;a-z]*)', 'i'), null, parseBalance);
 	return amount;
 }
-
-    	//AB.getParam(getFormattedDate(null, new Date(info.activeFrom)), result, '__tariff');
-

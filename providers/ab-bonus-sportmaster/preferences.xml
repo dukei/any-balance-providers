@@ -15,20 +15,39 @@
 		obligatory="true"
 		title="Номер телефона"
 		positiveButtonText="ОК"
-		summary="||{@s}"
+		summary="Номер телефона, привязанный к карте||{@s}\n"
 		dialogTitle="Номер телефона"
 		negativeButtonText="Отмена"
 		dialogMessage="Введите 10 цифр номера телефона без пробелов и разделителей. Например, 9261234567."
 		key="login">
 	</EditTextPreference>
-<!--	<EditTextPreference
+	<EditTextPreference
+		obligatory="true"
+		title="Логин"
+		positiveButtonText="ОК"
+		summary="E-mail или номер телефона для входа||{@s}\n"
+		dialogTitle="Логин"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите E-mail или 10 цифр номера телефона без пробелов и разделителей. Например, 9261234567."
+		key="login_site">
+	</EditTextPreference>
+	<EditTextPreference
 		positiveButtonText="ОК"
 		key="password"
 		dialogTitle="Пароль"
 		negativeButtonText="Отмена"
 		title="Пароль"
-		summary="||***********"
-		dialogMessage="Введите пароль, используемый для входа в личный кабинет. Вход с паролем капчу не требует. Без пароля (или с неправильным паролем) потребуется капча."
+		summary="Пароль для входа в личный кабинет||**********\n"
+		dialogMessage="Введите пароль, используемый для входа в личный кабинет. Вход с паролем потребует однократной проверки ReCaptcha."
 		inputType="textPassword">
-	</EditTextPreference> -->
+	</EditTextPreference>
+	<ListPreference
+		key="source"
+		title="Источник данных"
+		summary="Источник для получения информации||{@s}\n"
+		dialogTitle="Источник данных"
+		entries="Автоматически|Мобильное приложение|Официальный сайт"
+		entryValues="auto|app|site"
+		defaultValue="auto">
+	</ListPreference>
 </PreferenceScreen>

@@ -3,114 +3,104 @@
 */
 
 var g_headers = {
-    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3',
-    'Accept-Language': 'en-US,en;q=0.9,ru;q=0.8,ru-RU;q=0.7',
-    'Connection': 'keep-alive',
-    Origin: 'https://www.sportmaster.ru',
-    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.120 Safari/537.36',
-    'Sec-Fetch-Mode': 'navigate',
-    'Sec-Fetch-Site': 'same-origin',
+	'Accept': 'application/json, text/plain, */*',
+	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
+	'Accept-Encoding': 'gzip, deflate, br',
+	'Accept-Language': 'ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.6',
 	'Cache-Control': 'max-age=0',
-	'Upgrade-Insecure-Requests': '1',
-	'Sec-Fetch-User': '?1',                   	
-	'Referer': 'https://www.sportmaster.ru/user/session/login.do?continue=%2F',
+	'Connection': 'keep-alive',
+	'Content-Type': 'application/json;charset=UTF-8',
+	'Origin': 'https://m.sportmaster.ru',
+    'Referer': 'https://m.sportmaster.ru/user/session/login.do',
+	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.61 Safari/537.36'
 };
 
-var g_cardTypes = [
-    {},
-    { auth: 'COMMON', check: '300', name: 'Обычный' },
-    { auth: 'SILVER', check: '301', name: 'Серебряный' },
-    { auth: 'GOLD', check: '302', name: 'Золотой' }
-];
-
+var baseurl = "https://m.sportmaster.ru";
 var g_savedData;
-
-function saveTokens(json){
-	g_savedData.set('accessToken', json.AccessToken);
-	g_savedData.set('accessTokenExpire', json.AccessTokenExpire);
-	g_savedData.set('refreshToken', json.RefreshToken);
-	g_savedData.set('refreshTokenExpire', json.RefreshTokenExpire);
-}
-
-function callApi(action, params, method){
-    var androidId = g_savedData.get('androidId');
-	if(!androidId){
-		var prefs = AnyBalance.getPreferences();
-		androidId = hex_md5(prefs.login).substr(0, 16);
-	}
-
-	var headers = {
-		'User-Agent': 'mobileapp-android-9',
-		'Device-Model': 'OnePlus ONEPLUS A3010',
-		'App-Version': '3.70.42',
-		'OS': 'ANDROID',
-		'OS-Version': '9',
-		'Build-Mode': 'Production',
-		'Accept-Encoding': 'identity',
-		'X-SM-MobileApp': androidId,
-		Connection: 'Keep-Alive'
-	};
-
-	var accessToken = g_savedData.get('accessToken');
-    if(!accessToken && (action !== 'auth' || params)){
-    	var json = callApi('auth');
-    	
-    	saveTokens(json);
-    	accessToken = json.AccessToken;
-    }
-
-    if(accessToken){
-    	headers['Access-Token'] = accessToken;
-    }
-
-	if(params)
-		headers['Content-Type'] = 'application/json; charset=utf-8';
-
-	var html = AnyBalance.requestPost('https://moappsmapi.sportmaster.ru/api/v1/' + action, params ? JSON.stringify(params) : null, headers, {HTTP_METHOD: method || 'GET'});
-	var json = getJson(html);
-	if(json.error){
-		AnyBalance.trace(html);
-		throw new AnyBalance.Error(json.error.title, /42/i.test(json.error.title) ? true : null, /телефон|парол/i.test(json.error.title));
-	}
-		
-	return json.data;
-}
+var replaceNumberSite = [replaceTagsAndSpaces, /\D/g, '', /.*(\d\d\d)(\d\d\d)(\d\d)(\d\d)$/, '+7 $1 $2-$3-$4'];
 
 function main(){
+	var prefs = AnyBalance.getPreferences();
+	
+	switch(prefs.source){
+	case 'app':
+        var html = mainAPI(prefs);
+    case 'site':
+        var html = mainSite(prefs);
+    case 'auto':
+    default:
+        try{
+			var html = mainAPI(prefs);
+        }catch(e){
+            if(e.fatal)
+                throw e;
+			AnyBalance.trace('Не удалось получить данные из мобильного приложения');
+		    clearAllCookies();
+            var html = mainSite(prefs);
+        }
+        break;
+	}
+	
+	var result = {success: true};
+	
+	AnyBalance.setResult(result);
+}
+
+function mainSite(){
     var prefs = AnyBalance.getPreferences();
+	
     AnyBalance.setDefaultCharset('utf-8');
+	
+	g_savedData = new SavedData('sport_master_site', prefs.login_site);
 
-    AB.checkEmpty(prefs.login, 'Введите номер телефона!');
-    AB.checkEmpty(/^\d{10}$/.test(prefs.login), 'Введите номер телефона - 10 цифр без пробелов и разделителей!');
+	g_savedData.restoreCookies();
 
-    g_savedData = new SavedData('sport_master', prefs.login);
-
-    var json = getInfo();
-    if(!json.customer){
-    	json = callApi('code', {type: 'phone', value: prefs.login}, 'POST');
-    	AnyBalance.trace("Sending code: " + JSON.stringify(json));
-
-    	var code = AnyBalance.retrieveCode('Пожалуйста, введите SMS для подтверждения входа в личный кабинет Спортмастер', null, {inputType: 'number', time: json.waitSeconds*1000});
-
-    	json = callApi('auth', {phone: prefs.login, token: code, type: 'sms'}, 'POST');
-    	saveTokens(json);
-
-    	json = getInfo();
+    AnyBalance.trace ('Пробуем получить данные с официального сайта...');
+	
+	var html = AnyBalance.requestGet(baseurl + '/rest/v1/auth?__local=0', g_headers);
+	
+	if(AnyBalance.getLastStatusCode() >= 400){
+        AnyBalance.trace(html);
+        throw new AnyBalance.Error('Сайт Спортмастер временно недоступен. Попробуйте еще раз позже');
     }
-
-    g_savedData.save();
+		
+	var json = getJsonEval(html);
+	AnyBalance.trace(JSON.stringify(json));
+	
+    if(json && json.anonimous != true){
+		AnyBalance.trace('Похоже, мы уже залогинены на имя ' + json.name + ' ' + json.lastname + ' (' + prefs.login_site + ')');
+    }else{
+		AnyBalance.trace('Сессия новая. Будем логиниться заново...');
+		clearAllCookies();
+    	loginSite(prefs);
+	}
 
     var result = {success: true};
-
-    AB.getParam(json.bonusCurLevel, result, '__tariff');
-    AB.getParam(json.cardNum, result, 'cardnum');
-    AB.getParam(json.bonusAmount, result, 'balance');
-    AB.getParam(json.toNextLevelSumma, result, 'nextlevel');
-    AB.getParam(json.name, result, 'fio');
-    AB.getParam(json.customer.phone, result, 'phone');
-
-    if(AnyBalance.isAvailable('till', 'sumtill')){
-    	json = callApi('auth/bonus');
+	
+	if (AnyBalance.isAvailable('balance', 'cardnum', 'fio', 'phone')) {
+	    html = AnyBalance.requestGet(baseurl + '/rest/v1/auth?__local=0', g_headers);
+		
+		var json = getJsonEval(html);
+	    AnyBalance.trace(JSON.stringify(json));
+		
+		getParam(json.bonusAmount, result, 'balance', null, null, parseBalance);
+		getParam(json.customer.cardNumber, result, 'cardnum');
+		var fio = json.name; // Если пользователь не указал в профиле фамилию, значение свойства "name" имеет вид "Имя null", поэтому делаем в виде сводки
+	    if (json.lastname)
+	    	fio+=' '+json.lastname;
+	    getParam(fio, result, 'fio');
+	    getParam(json.customer.phone, result, 'phone', null, replaceNumberSite);
+	}
+	
+	if(AnyBalance.isAvailable('__tariff', 'buysum', 'nextlevel', 'till', 'sumtill', 'cashback', 'promo')){
+    	html = AnyBalance.requestGet(baseurl + '/rest/v1/auth/bonus', g_headers);
+		
+		var json = getJsonEval(html);
+	    AnyBalance.trace(JSON.stringify(json));
+		
+		getParam(json.clientInfo.curLevelName, result, '__tariff');
+		getParam(json.clientInfo.buySumma, result, 'buysum', null, null, parseBalance);
+		getParam(json.clientInfo.toNextLevelSumma, result, 'nextlevel', null, null, parseBalance);
         var balance = 0, minExpDate, minExpSum;
         if(json.clientInfo.bonuses){
         	var balance = json.clientInfo.bonuses.reduce(function(acc, a){
@@ -123,7 +113,7 @@ function main(){
         	}, 0);
 
 			getParam(minExpDate, result, 'till');
-			getParam(minExpSum, result, 'sumtill');
+			getParam(minExpSum, result, 'sumtill', null, null, parseBalance);
         }
         if(json.details){
         	var cashback=0, promo=0;
@@ -134,27 +124,85 @@ function main(){
         		if(d.bonusTypeCode === 8)
         			promo += d.amount;
         	}
-			getParam(cashback, result, 'cashback');
-			getParam(promo, result, 'promo');
+			getParam(cashback, result, 'cashback', null, null, parseBalance);
+			getParam(promo, result, 'promo', null, null, parseBalance);
         }
     }
-
-    if(AnyBalance.isAvailable("last_order_date","last_order_number","last_order_status","last_order_sum")){
-        json = callApi('orders?pageNumber=1&pageSize=15');
-        if(json.length){
-        	var o = json[0];
-        	getParam(o.orderDate, result, 'last_order_date');
-        	getParam(o.number, result, 'last_order_number');
-        	getParam(o.price, result, 'last_order_sum');
-        	getParam(o.statusTitle, result, 'last_order_status');
-        }
-    }
-
-
-    AnyBalance.setResult(result);
+	
+    if (AnyBalance.isAvailable('last_order_date', 'last_order_number', 'last_order_status', 'last_order_sum')) {
+	    html = AnyBalance.requestGet(baseurl + '/rest/v2/orders?page=0&size=3', g_headers);
+		
+		var json = getJsonEval(html);
+	    AnyBalance.trace(JSON.stringify(json));
+		
+		if (json.orders[0]){
+		    var orderData = json.orders[0];
+		    getParam(orderData.createDate, result, 'last_order_date', null, null, null);
+		    getParam(orderData.number, result, 'last_order_number');
+		    getParam(orderData.statusTitle, result, 'last_order_status');
+		    getParam(orderData.total, result, 'last_order_sum', null, null, parseBalance);
+		}else{
+			AnyBalance.trace('Последний заказ не найден');
+		}
+		
+	}
+	
+	AnyBalance.setResult(result);
 }
 
-function getInfo(){
-    var json = callApi('auth/profile');
-    return json;
+function loginSite(prefs){
+	var prefs = AnyBalance.getPreferences();
+	
+	checkEmpty(prefs.login_site, 'Введите логин!');
+    if (/^\d+$/.test(prefs.login_site)){
+	    checkEmpty(/^\d{10}$/.test(prefs.login_site), 'Введите номер телефона - 10 цифр без пробелов и разделителей!');
+	}
+	checkEmpty(prefs.password, 'Введите пароль!');
+	
+    AnyBalance.setDefaultCharset('utf-8');
+	
+	var html = AnyBalance.requestPost(baseurl + '/rest/v1/confirmation/captcha/login?__local=1', {type: "login", __local: 1}, g_headers);
+		
+	var json = getJsonEval(html);
+	AnyBalance.trace(JSON.stringify(json));
+	
+	if (json.required = 'true') {
+	    AnyBalance.trace('Спортмастер затребовал капчу');
+	    var capKey = json.key
+	    var recaptcha = solveRecaptcha('Пожалуйста, подтвердите, что Вы не робот', baseurl, '6LeTH-IUAAAAAL31r4UoabGNn-9ifCS63cxzc7q3');
+	}
+	
+	if (/^\d{10}$/.test(prefs.login_site)) {
+		var login_type = 'phone';
+	} else {
+		var login_type = 'email';
+	}
+	
+	var params = {
+	    "captchaKey": capKey,
+		"password": prefs.password,
+		"reCaptchaResponse": recaptcha,
+		"token": prefs.login_site,
+		"type": login_type
+	};
+	
+	AnyBalance.trace('Входим по логину ' + prefs.login_site + ' и паролю...');
+	
+	html = AnyBalance.requestPost(baseurl + '/rest/v1/auth', JSON.stringify(params), g_headers);
+	
+	var json = getJsonEval(html);
+		
+	if(json.error){
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error(json.error, /42/i.test(json.error) ? true : null, /телефон|парол/i.test(json.error));
+	}
+
+    if(!json){
+		AnyBalance.trace(html);
+        throw new AnyBalance.Error('Не удалось войти в личный кабинет. Сайт изменён?');
+	}
+
+	g_savedData.setCookies();
+	g_savedData.save();
+	return json;
 }

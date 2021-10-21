@@ -22,10 +22,10 @@ function requestApiInner(url, params, no_default_params, ignoreErrors) {
 		newParams = params;
 	} else {
 		newParams = joinObjects(params, {
-			'version':'9.10',
+			'version':'9.20',
 			'appType':'android',
-			'appVersion':'7.1.0',
-			'deviceName':'AnyBalanceAPI',
+			'appVersion':'11.13.0',
+			'deviceName':'SM-G973',
 		});
 	}
 	// регистрируем девайс
@@ -64,50 +64,86 @@ function generateHex(mask, digits){
 
 function createSdkData(){
   	var dt = new Date(), prefs = AnyBalance.getPreferences();
-  	var hex = hex_md5(prefs.login + 'sdk_data');
-  	var rsa_app_key = hex_md5(prefs.login + 'rsa app key').toUpperCase();
+  	var hex = hex_md5(prefs.login + 'sdk_data_28');
 
+/*			mobileSdkData: '{"TIMESTAMP":"2021-10-21T17:33:9Z","HardwareID":"354809109338562","SIM_ID":"8970101662005544490","PhoneNumber":"","DeviceModel":"SM-G973","DeviceName":"0000000","DeviceSystemName":"Android","DeviceSystemVersion":"28","Languages":"ru_RU",
+"WiFiMacAddress":"00:a0:c6:b3:97:91","WiFiNetworksData":{"BSSID":"02:00:00:00:00:00","SignalStrength":"-50","Channel":"8","SSID":3936293315},"ScreenSize":"1440x3040","MCC":"250","MNC":"02",
+"AppKey":"31b24386-dd60-3ed3-a900-5fca8f98fa84","SDK_VERSION":"1.5.1.257","Compromised":0,"MultitaskingSupported":true,"AdvertiserId":"3353eed1-c767-32bf-89c1-aa936375551d","OS_ID":"f7cc5b905e4d388c","Emulator":0,
+"GeoLocationInfo":[{"Longitude":"0","Latitude":"0","Altitude":"0","HorizontalAccuracy":"0","AltitudeAccuracy":"0","Heading":"0","Speed":"0","Status":"1","Timestamp":"0"}],
+"DeveloperTools":0,"GooglePlayProtect":-1,"HoursSinceZoomInstall":-1,"HoursSinceQSInstall":-1,"HoursSinceAnyDeskInstall":-1,"UnknownSources":-1,"AgentBrand":"Samsung","AgentBootTime":"83285","TimeZone":"0","SupportedAPILevel":"28","OSCodeName":"Android Pie","AgentAppInfo":"СберБанк 11.13.0","ApprepInstalledApps":"114","OSFontsNumber":"234","OSFontsHash":-1313735598,"ScreenColorDepth":"~550dpi","TimeZoneDSTOffset":"0","SimCard":"1","AgentSignalStrengthCellular":"-1","AgentConnectionType":"WIFI","AgentSignalTypeCellular":"-1","LocalIPv4":"192.168.0.250","LocalIPv6":"fe80::02a0:c6ff:feb3:9791","DnsIP":"10.0.2.3","ApplicationMD5":"7961c3913fd720d20171b2915aa49b06","RdpConnection":"0","InstallationSource":"com.android.vending","LocationHash":"4b92a30e9d39579fcdaf1be41448ccc259a3d1a5712c77358aedbe99036dd9ce"}',
+*/
 	var obj = {
 		"TIMESTAMP": dt.getUTCFullYear() + '-' + n2(dt.getUTCMonth()) + '-' + n2(dt.getUTCDate()) + 'T' + dt.getUTCHours() + ':' + dt.getUTCMinutes() + ':' + dt.getUTCSeconds() + 'Z',
-		"HardwareID": generateImei(prefs.login, '35472406******L'),
-		"SIM_ID": generateSimSN(prefs.login, '2500266********L'),
+		"HardwareID": generateImei(prefs.login, '35480910******L'),
+		"SIM_ID": generateSimSN(prefs.login, '8970101********L'),
 		"PhoneNumber": "",
 		"GeoLocationInfo": [
 			{
-				"Longitude": "" + (37 + Math.random()),
-				"Latitude": "" + (55 + Math.random()),
-				"HorizontalAccuracy": "5",
-				"Altitude": "" + (150 + Math.floor(Math.random()*20)),
-				"AltitudeAccuracy": "5",
-				"Timestamp": "" + (dt.getTime() - Math.floor(Math.random()*1000000)),
-				"Heading": "" + (Math.random()*90),
-				"Speed": "3",
-				"Status": "3"
+				"Longitude": "0",
+				"Latitude": "0",
+				"HorizontalAccuracy": "0",
+				"Altitude": "0",
+				"AltitudeAccuracy": "0",
+				"Timestamp": "0",
+				"Heading": "0",
+				"Speed": "0",
+				"Status": "1"
 			}
 		],
-		"DeviceModel": "D6503",
+		"DeviceModel": "SM-G973",
 		"MultitaskingSupported": true,
-		"DeviceName": "Xperia Z2",
+		"DeviceName": "0000000",
 		"DeviceSystemName": "Android",
-		"DeviceSystemVersion": "22",
-		"Languages": "ru",
-		"WiFiMacAddress": generateHex('44:d4:e0:xx:xx:xx', hex.substr(0, 6)),
+		"DeviceSystemVersion": "28",
+		"Languages": "ru_RU",
+		"WiFiMacAddress": generateHex('00:a0:c6:xx:xx:xx', hex.substr(0, 6)),
 		"WiFiNetworksData": {
-			"BBSID": generateHex('5c:f4:ab:xx:xx:xx', hex.substr(6, 12)),
+			"BBSID": generateHex('02:00:00:xx:xx:xx', hex.substr(6, 12)),
 			"SignalStrength": "" + Math.floor(-30 - Math.random() * 20),
-			"Channel": "null",
+			"Channel": "8",
 			"SSID": "TPLink"
 		},
 		"CellTowerId": "" + (12875 + Math.floor(Math.random()*10000)),
 		"LocationAreaCode": "9722",
-		"ScreenSize": "1080x1776",
-		"RSA_ApplicationKey": rsa_app_key,
+		"ScreenSize": "1440x3040",
+		"AppKey": "31b24386-dd60-3ed3-a900-5fca8f98fa84",
 		"MCC": "250",
 		"MNC": "02",
 		"OS_ID": hex.substring(12, 16),
-		"SDK_VERSION": "2.0.1",
+		"SDK_VERSION": "1.5.1.257",
+		"MultitaskingSupported":true,
+		"AdvertiserId":"3353eed1-c767-32bf-89c1-aa936375551d",
+		"OS_ID":"f7cc5b905e4d388c",
 		"Compromised": 0,
-		"Emulator": 0
+		"Emulator": 0,
+		"DeveloperTools":0,
+		"GooglePlayProtect":-1,
+		"HoursSinceZoomInstall":-1,
+		"HoursSinceQSInstall":-1,
+		"HoursSinceAnyDeskInstall":-1,
+		"UnknownSources":-1,
+		"AgentBrand":"Samsung",
+		"AgentBootTime":"83285",
+		"TimeZone":"0",
+		"SupportedAPILevel":"28",
+		"OSCodeName":"Android Pie",
+		"AgentAppInfo":"СберБанк 11.13.0",
+		"ApprepInstalledApps":"114",
+		"OSFontsNumber":"234",
+		"OSFontsHash":-1313735598,
+		"ScreenColorDepth":"~550dpi",
+		"TimeZoneDSTOffset":"0",
+		"SimCard":"1",
+		"AgentSignalStrengthCellular":"-1",
+		"AgentConnectionType":"WIFI",
+		"AgentSignalTypeCellular":"-1",
+		"LocalIPv4":"192.168.0.250",
+		"LocalIPv6":"fe80::02a0:c6ff:feb3:9791",
+		"DnsIP":"10.0.2.3",
+		"ApplicationMD5":"7961c3913fd720d20171b2915aa49b06",
+		"RdpConnection":"0",
+		"InstallationSource":"com.android.vending",
+		"LocationHash":"4b92a30e9d39579fcdaf1be41448ccc259a3d1a5712c77358aedbe99036dd9ce"
 	};
 	
 	return obj;
@@ -125,7 +161,7 @@ function loginAPI() {
 	if(!devid){
 		// Сбер стал блокировать одинаковые девайсы, перепривязывая их по новой.
 		// Придется сделать так
-        devid = hex_md5(prefs.login + ' ' + Math.random());
+        	devid = hex_md5(prefs.login + ' ' + Math.random());
 		AnyBalance.setData('devid', devid);
 	}
 	var pin = prefs.pin || AnyBalance.getData('pin', defaultPin);
@@ -159,10 +195,31 @@ function loginAPI() {
 		AnyBalance.trace('Необходимо привязать устройство!');
 		
 		// регистрируем девайс
+		var sdkData = createSdkData();
 		var html = requestApiLogin('registerApp.do', {
 			'operation':'register',
 			'login':prefs.login,
-			'devID':devid
+			'devID':devid,
+			'mobileSdkData': JSON.stringify(sdkData),
+			mobileSDKKAV:  JSON.stringify({
+				"model":"SM-G973",
+				"androidId":"f7cc5b905e4d388c",
+				"locale":"ru_RU",
+				"osVersion":28,
+				"phoneCellId":"{MMC=250, MNC=02,LAC=39395,CID=20391}",
+				"simSerialNumber":sdkData.SIM_ID,
+				"KavSdkId":"F7D87E55-B687-475C-AC62-0CBD5D9CA219",
+				"KavSdkVersion":"5.10.0.1413",
+				"KavSdkVirusDBVersion":"SdkVirusDbInfo(year=2021, month=3, day=16, hour=7, minute=8, second=0, knownThreatsCount=-1,records=338516,size=0)",
+				"KavSdkVirusDBStatus":"NO_UPDATE_NEEDED",
+				"KavSdkVirusDBStatusDate":"2021-10-21 17:33:9",
+				"KavSdkRoot":false,
+				"LowPasswordQuality":false,
+				"NonMarketAppsAllowed":false,
+				"UsbDebugOn":false,
+				"ScanStatus":"FULL",
+				"WiFiMAC":sdkData.WiFiMacAddress
+			}),
 		});
 		
 		var mGUID = getElement(html, /<mGUID>/i, replaceTagsAndSpaces);
@@ -185,6 +242,8 @@ function loginAPI() {
 			'operation':'confirm',
 			'mGUID':mGUID,
 			'smsPassword':code,
+			'mobileSdkData': JSON.stringify(createSdkData())
+
 		});
 		AnyBalance.trace('Успешно привязали устройство. Создадим PIN...');
 		

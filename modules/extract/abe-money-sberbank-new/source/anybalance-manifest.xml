@@ -8,6 +8,7 @@
 		<module id="crypt/md5"/>
 		<module id="mobile/imei"/>
 		<module id="library"/>
+		<module id="framework/browser"/>
 	</depends>
 	<files>
 		<js>extract.js</js>

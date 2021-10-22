@@ -1,1 +1,0 @@
-cscript "%ABROOT%\extra\development\tools\build\build_module.wsf" "%~dp0" %1

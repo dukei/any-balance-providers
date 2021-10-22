@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<id version="1">crypt/luhn</id>
 	<api flags="no_browser"/>
@@ -8,7 +8,7 @@
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
-		<js>luhn.min.js</js>
+		<js>crypt.luhn.min.js</js>
 		<history>history.xml</history>
 	</files>
 	<keywords></keywords>

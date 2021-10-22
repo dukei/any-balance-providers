@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<id version="1">crypt/crc32</id>
 	<api flags="no_browser"/>
@@ -8,7 +8,7 @@
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
-		<js>crc32.min.js</js>
+		<js>crypt.crc32.min.js</js>
 		<history>history.xml</history>
 	</files>
 	<keywords></keywords>

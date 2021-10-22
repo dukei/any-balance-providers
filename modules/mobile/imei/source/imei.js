@@ -13,7 +13,7 @@ function generateImei(val, mask) {
 }
 
 function generateSimSN(val, mask) {
-	var g_simsn_default = '897010266********L'; //билайн
+	var g_simsn_default = '897010266********L'; //Р±РёР»Р°Р№РЅ
 	var serial = (Math.abs(crc32(val + 'simSN') % 100000000)) + '';
 	
 	if(!mask)

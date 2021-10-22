@@ -7,7 +7,7 @@ var g_headers = {
 	'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
 	'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
 	'Connection':'keep-alive',
-	'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/46.0.2490.80 Safari/537.36'
+	'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome 93.0.4577.0 Safari/537.36'
 };
 
 var nodeUrl = ''; // Подставляется при авторизации, обычно имеет вид https://node1.online.sberbank.ru/
@@ -31,6 +31,7 @@ function getLoggedInHtml(lastChance){
 
 function login(prefs) {
 	var baseurl = "https://online.sberbank.ru/CSAFront/login.do";
+	var baseurl1 = "https://online.sberbank.ru/CSAFront/index.do"
 	AnyBalance.setDefaultCharset('utf-8');
 
 	checkEmpty(prefs.login, "Пожалуйста, укажите логин для входа в Сбербанк-Онлайн!");
@@ -42,6 +43,76 @@ function login(prefs) {
         AnyBalance.trace("Уже залогинены, используем текущую сессию");
         return html;
     }
+
+    if(/bobcmn/i.test(html)){
+    	//К сожалению, пока обход защиты не работает
+		throw new AnyBalance.Error('Вход через сайт заблокирован Сбербанком. Пожалуйста, настройте провайдер для входа через API мобильного приложения.')
+    	AnyBalance.trace('Обнаружена защита от роботов. Обходим.');
+    	clearAllCookies();
+
+    	const bapi = new BrowserAPI({
+			userAgent: g_headers['User-Agent'],
+			rules: [
+				{
+					url: /^https?:\/\/online\.sberbank\.ru/.toString(),
+					not: true,
+					action: 'abort',
+				},{
+					resType: /^(image|stylesheet|font)$/.toString(),
+					action: 'abort',
+				},{
+					resType: /^(script)$/.toString(),
+					action: 'continue',
+				},{
+					url: /^https?:\/\/online\.sberbank\.ru/.toString(),
+					action: 'request',
+				}
+			],
+			additionalRequestHeaders: [
+				{
+					url: /CSAFront/,
+					maxCount: 1,
+					headers: {
+						'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3',
+						'Accept-Language': 'en-US,en;q=0.9',
+						'Sec-Fetch-Dest': 'document',
+						'Sec-Fetch-Site': 'none',
+						'Sec-Fetch-Mode': 'navigate',
+						'Sec-Fetch-User': '?1'
+					}
+				},
+				{
+					url: /CSAFront/,
+					headers: {
+						'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3',
+						'Accept-Language': 'en-US,en;q=0.9',
+						'Cache-Control': 'max-age=0',
+						'Sec-Fetch-Site': 'same-origin',
+						'Sec-Fetch-Mode': 'navigate'
+					}
+				},
+				{
+					headers: {
+						'Accept': '*/*',
+						'Origin': 'https://online.sberbank.ru',
+						'Sec-Fetch-Site': 'same-origin',
+						'Sec-Fetch-Mode': 'cors',
+						'Sec-Fetch-Dest': 'empty'
+					}
+				}
+			]
+		});
+
+    	const {page} = bapi.open(baseurl1);
+    	try {
+			bapi.waitForLoad(page);
+			const {cookies} = bapi.cookies(page, baseurl1);
+			BrowserAPI.useCookies(cookies);
+		}finally {
+			bapi.close(page);
+		}
+
+	}
 
 	//Сбер разрешает русские логины и кодирует их почему-то в 1251, хотя в контент-тайп передаёт utf-8.
 	AnyBalance.setDefaultCharset('windows-1251');

@@ -99,17 +99,16 @@ function createSdkData(){
 		"WiFiMacAddress": generateHex('00:a0:c6:xx:xx:xx', hex.substr(0, 6)),
 		"WiFiNetworksData": {
 			"BBSID": generateHex('02:00:00:xx:xx:xx', hex.substr(6, 12)),
-			"SignalStrength": "" + Math.floor(-30 - Math.random() * 20),
+			"SignalStrength": "" + Math.floor(-50),
 			"Channel": "8",
 			"SSID": "TPLink"
 		},
-		"CellTowerId": "" + (12875 + Math.floor(Math.random()*10000)),
 		"LocationAreaCode": "9722",
 		"ScreenSize": "1440x3040",
 		"AppKey": "31b24386-dd60-3ed3-a900-5fca8f98fa84",
 		"MCC": "250",
 		"MNC": "02",
-		"OS_ID": hex.substring(12, 16),
+		"OS_ID": hex.substr(12, 16),
 		"SDK_VERSION": "1.5.1.257",
 		"AdvertiserId":"3353eed1-c767-32bf-89c1-aa936375551d",
 		"Compromised": 0,
@@ -121,7 +120,7 @@ function createSdkData(){
 		"HoursSinceAnyDeskInstall":-1,
 		"UnknownSources":-1,
 		"AgentBrand":"Samsung",
-		"AgentBootTime":"83285",
+		"AgentBootTime":"" + ((Math.floor(+dt/1000) % 86400) + Number.parseInt(hex.substr(28, 4), 16)),
 		"TimeZone":"0",
 		"SupportedAPILevel":"28",
 		"OSCodeName":"Android Pie",
@@ -141,7 +140,7 @@ function createSdkData(){
 		"ApplicationMD5":"7961c3913fd720d20171b2915aa49b06",
 		"RdpConnection":"0",
 		"InstallationSource":"com.android.vending",
-		"LocationHash":"4b92a30e9d39579fcdaf1be41448ccc259a3d1a5712c77358aedbe99036dd9ce"
+		"LocationHash":"5028545054d6644b9c2f990c278b14f6beaa8bc0f4b7c17eb373ec3903855514"
 	};
 	
 	return obj;
@@ -152,7 +151,7 @@ function loginAPI() {
 	AnyBalance.trace('Входим через API мобильного приложения...');
 	
 	var defaultPin = '11223';
-	
+
 	// Здесь нужно узнать, нужна ли привязка
 	var guid = AnyBalance.getData('guid', '');
 	var devid = AnyBalance.getData('devid', '');
@@ -191,9 +190,10 @@ function loginAPI() {
 
 	if(!guid){
 		AnyBalance.trace('Необходимо привязать устройство!');
-		
+
 		// регистрируем девайс
 		var sdkData = createSdkData();
+		var dt = new Date();
 		var html = requestApiLogin('registerApp.do', {
 			'operation':'register',
 			'login':prefs.login,
@@ -201,7 +201,7 @@ function loginAPI() {
 			'mobileSdkData': JSON.stringify(sdkData),
 			mobileSDKKAV:  JSON.stringify({
 				"model":"SM-G973",
-				"androidId":"f7cc5b905e4d388c",
+				"androidId":sdkData.OS_ID,
 				"locale":"ru_RU",
 				"osVersion":28,
 				"phoneCellId":"{MMC=250, MNC=02,LAC=39395,CID=20391}",
@@ -210,7 +210,7 @@ function loginAPI() {
 				"KavSdkVersion":"5.10.0.1413",
 				"KavSdkVirusDBVersion":"SdkVirusDbInfo(year=2021, month=3, day=16, hour=7, minute=8, second=0, knownThreatsCount=-1,records=338516,size=0)",
 				"KavSdkVirusDBStatus":"NO_UPDATE_NEEDED",
-				"KavSdkVirusDBStatusDate":"2021-10-21 17:33:9",
+				"KavSdkVirusDBStatusDate":dt.getUTCFullYear() + '-' + n2(dt.getUTCMonth()) + '-' + n2(dt.getUTCDate()) + ' ' + dt.getUTCHours() + ':' + dt.getUTCMinutes() + ':' + dt.getUTCSeconds(),
 				"KavSdkRoot":false,
 				"LowPasswordQuality":false,
 				"NonMarketAppsAllowed":false,

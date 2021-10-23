@@ -79,7 +79,7 @@ function main(){
 	
     var adapter = new NAdapter(joinObjects(g_countersTable[prefs.type], g_countersTable.common), shouldProcess);
 	
-	if(prefs.source == 'app') {
+	if(true || prefs.source == 'app') {
 		mainMobileApp2(prefs, adapter);
 		return;
 	}

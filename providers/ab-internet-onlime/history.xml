@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="26" date="2021-11-01">
+	- Переменован в Ростелеком и обновлена иконка.
+	</change>
 	<change version="24" date="2021-01-10">
 	- Поддержка изменений на сайте.
 	</change>

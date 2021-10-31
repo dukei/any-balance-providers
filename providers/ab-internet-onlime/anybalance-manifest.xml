@@ -1,10 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id version="25">ab-internet-onlime</id>
-	<name>Onlime (Москва)</name>
+	<id version="26">ab-internet-onlime</id>
+	<name>Ростелеком Москва (Onlime)</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о текущем балансе, бонусных баллах, номерах лицевого счета и договора, статусе и трафике в текущем месяце для пользователей провайдера "Onlime" (<a href="http://onlime.ru">http://onlime.ru</a>).</p>
+	<p>Предоставляет информацию о текущем балансе, бонусных баллах, номерах лицевого счета и договора, статусе и трафике в текущем месяце для пользователей провайдера "Ростелеком" (Бывший Onlime) (<a href="http://onlime.ru">http://onlime.ru</a>).</p>
 	<p>Информация берется из личного кабинета (<a href="https://my.rt.ru">https://my.rt.ru</a>).</p>
 	]]></description>
 	<instruction html="true"><![CDATA[
@@ -29,7 +29,7 @@
 		<counter id="license" name="Лицевой счет" type="text"/>
 		<counter id="agreement" name="Номер договора" type="text"/>
 	</counters>
-	<keywords>провайдер интернет онлайм ростелеком</keywords>
+	<keywords>провайдер, интернет, онлайм, ростелеком, onlime, on-lime</keywords>
 	<type>internet, tv</type>
 	<country>ru</country>
 </provider>

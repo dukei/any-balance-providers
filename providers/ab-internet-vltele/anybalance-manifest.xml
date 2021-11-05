@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-internet-vltele</id>
+	<id version="2">ab-internet-vltele</id>
 	<api flags="no_browser"/>
 	<name>ВЛ-Телеком</name>
 	<description html="true"><![CDATA[

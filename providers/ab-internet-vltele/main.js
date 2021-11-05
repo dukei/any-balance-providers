@@ -95,6 +95,12 @@ function apiCall(location, params) {
 		throw new AnyBalance.Error('Не удалось вызвать функцию ' + location);
 	}
 	
+	AnyBalance.trace('Got api response: ' + JSON.stringify(json));
+	
+	if(json.status_id > 299) {
+		throw new AnyBalance.Error('Не удалось вызвать функцию ' + location + ', код: ' + json.status_id);
+	}
+	
 	return json
 }
 

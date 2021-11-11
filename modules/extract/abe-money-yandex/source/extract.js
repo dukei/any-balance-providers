@@ -52,7 +52,7 @@ function login(){
 		AnyBalance.trace('Already logged in to ' + data.user.userName + ' (' + data.user.maskedPhone + ')');
 	}else{
 		AnyBalance.trace('Logging in anew');
-		html = AnyBalance.requestGet(baseurl + 'yooid/signin?origin=Wallet&returnUrl=https%3A%2F%2Fyoomoney.ru%2F', g_headers);
+		html = AnyBalance.requestGet(baseurl + 'yooid/signin/step/login?origin=Wallet&returnUrl=https%3A%2F%2Fyoomoney.ru%2F', g_headers);
 		g_csrf = getParam(html, /__secretKey__="([^"]*)/);
 		if(!g_csrf){
 			AnyBalance.trace(html);
@@ -172,7 +172,7 @@ function loginAndGetBalance(prefs, result) {
 	var html = login();
 	
 	var ld = getJsonObject(html, /window.__layoutData__\s*=/);
-	var status={identified:'Идентифицированный', anonymous:'Анонимный',named:'Именной'};
+	var status={identified:'Идентифицированный', anonymous:'Анонимный',named:'Именной',light:'Именной'};
 	if(ld){
 		AnyBalance.trace('Загружаем из layoutData');
 		getParam(ld.user.accountId, result, 'number');

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        title="Логин" 
+        positiveButtonText="ОК" 
+        summary="Логин для входа в личный кабинет||{@s}\n" 
+        dialogTitle="Логин" 
+        negativeButtonText="Отмена" 
+        obligatory="true"
+        dialogMessage="Введите номер телефона или логин для входа в личный кабинет. Для авторизации по номеру телефона введите его в формате 10 цифр, например: 9091234567"
+        key="login">
+    </EditTextPreference>
+    <EditTextPreference 
+        positiveButtonText="ОК"
+        key="password" 
+        dialogTitle="Пароль"
+        negativeButtonText="Отмена"
+        title="Пароль"
+        obligatory="true"
+        summary="Пароль для входа в личный кабинет||**********\n"
+        dialogMessage="Введите пароль для входа в личный кабинет"
+        inputType="textPassword">
+    </EditTextPreference>
+	<EditTextPreference
+		positiveButtonText="ОК"
+		key="lastdigits"
+		dialogTitle="Номер карты"
+		negativeButtonText="Отмена"
+		title="Номер карты"
+		summary="Последние 4 цифры карты|Автоматически\n|{@s}\n"
+		dialogMessage="Введите последние 4 цифры карты, по которой Вы хотите получать информацию. Если оставить поле пустым, будет показана информация по первой карте"
+		inputType="number">
+	</EditTextPreference>
+</PreferenceScreen>

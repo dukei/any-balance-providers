@@ -1,18 +1,19 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-bonus-magnit</id>
+	<id version="4">ab-bonus-magnit</id>
 	<api flags="no_browser"/>
 	<name>Магнит</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе на бонусной карте сети магазинов Магнит https://magnit.ru</p>
-	<p>Информация берется из личного кабинета https://moy.magnit.ru</p>
+	<p>Предоставляет информацию по программе лояльности "Магнит" для клиентов сети магазинов Магнит.</p>
+	<p>Информация берется из личного кабинета https://new.moy.magnit.ru/.</p>
 	]]></description>
 	<instruction html="true"><![CDATA[
-	<p>Для использования провайдера необходимо активировать карту Магнит в личном кабинете https://moy.magnit.ru </p>
+	<p>Для получения данных с сайта необходимо ввести в настройки провайдера свой номер телефона, на который зарегистрирована карта "Магнит" и однократно ввести проверочный код, пришедший по SMS.</p>
 	]]></instruction>
-	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<author>RamzesZeus &lt;ramzeszeus@gmail.com&gt;</author>
 	<depends>
 		<module id="library"/>
+		<module id="misc/saved-data"/>
 	</depends>
 	<files>
 		<icon>icon.png</icon>
@@ -21,11 +22,21 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units=" Б"/>
-		<counter id="fio" name="ФИО" type="text"/>
-		<counter id="status" name="Статус" type="text"/>
+		<counter id="balance" name="Бонусы" units=" Б"/>
+		<counter id="express" name="Экспресс" units=" Б"/>
+		<counter id="magnets" name="Магнитики" units=" шт"/>
+		<counter id="cardnum_plastic" name="Пластиковая карта" type="text"/>
+		<counter id="cardnum_virtual" name="Виртуальная карта" type="text"/>
+		<counter id="spend_now" name="Покупок до след. уровня" units=" ₽"/>
+		<counter id="count_now" name="Товаров до след. уровня" units=" шт"/>
+		<counter id="month_purchases" name="Покупок за месяц" units=" ₽"/>
+		<counter id="level" name="Уровень начислений" units="%"/>
+		<counter id="status" name="Статус начислений" type="text"/>
+		<counter id="last_operation" name="Поcледняя операция" type="text"/>
+		<counter id="phone" name="Телефон" type="text"/>
+		<counter id="fio" name="ФИО владельца" type="text"/>
 	</counters>
-	<keywords></keywords>
+	<keywords>magnit, магнит, bonus, бонус</keywords>
 	<type>bonus</type>
 	<country>ru</country>
 </provider>

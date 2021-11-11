@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+	<EditTextPreference
+		title="Логин"
+		key="login"
+		summary="Логин в личном кабинете Платон||{@s}\n"
+		obligatory="true"
+		dialogTitle="Логин"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите логин, используемый для входа в личный кабинет">
+	</EditTextPreference>
+	<EditTextPreference
+		title="Пароль"
+		key="password"
+		summary="Пароль в личном кабинете Платон||**********\n"
+		obligatory="true"
+		dialogTitle="Пароль"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите пароль, используемый для входа в личный кабинет"
+		inputType="textPassword">
+	</EditTextPreference>
+</PreferenceScreen>

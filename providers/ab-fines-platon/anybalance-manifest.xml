@@ -1,0 +1,46 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-fines-platon</id>
+	<api flags="no_browser"/>
+	<name>Платон</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию по системе взимания платы "Платон" для владельцев грузовых транспортных средств.</p>
+	<p>Информация берется из личного кабинета https://lk.platon.ru/.</p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Для получения данных с сайта необходимо ввести в настройки провайдера свой логин, на который зарегистрирован личный кабинет, и пароль для входа.</p>
+	]]></instruction>
+	<author>RamzesZeus &lt;ramzeszeus@gmail.com&gt;</author>
+	<depends>
+		<module id="library"/>
+		<module id="misc/saved-data"/>
+	</depends>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" ₽"/>
+		<counter id="grz" name="ГРЗ" type="text"/>
+		<counter id="grz_status" name="Статус ГРЗ" type="text"/>
+		<counter id="bu_num" name="Номер БУ" type="text"/>
+		<counter id="bu_status" name="Cтатус БУ" type="text"/>
+		<counter id="cont_num" name="Номер договора" type="text"/>
+		<counter id="cont_date" name="Дата договора" type="time" format="dd.MM.yyyy"/>
+		<counter id="cont_date_exp" name="Дата окончания БУ" type="time" format="dd.MM.yyyy"/>
+		<counter id="group" name="Группа" type="text"/>
+		<counter id="payment" name="Расчетная запись" type="text"/>
+		<counter id="notifications" name="Уведомления" units=" шт"/>
+		<counter id="role" name="Роль" type="text"/>
+		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="last_bu_order_num" name="Номер посл. заказа" type="text"/>
+		<counter id="last_bu_order_date" name="Дата посл. заказа" type="time" format="dd.MM.yyyy"/>
+		<counter id="last_bu_order_count" name="БУ по посл. заказу" units=" шт"/>
+		<counter id="last_bu_order_status" name="Статус посл. заказа" type="text"/>
+	</counters>
+	<keywords>platon, платон</keywords>
+	<type>fines</type>
+	<country>ru</country>
+</provider>

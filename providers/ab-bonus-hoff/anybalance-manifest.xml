@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="5">ab-bonus-hoff</id>
+	<id version="6">ab-bonus-hoff</id>
 	<api flags="no_browser"/>
 	<name>Hoff (бонусы)</name>
 	<description html="true"><![CDATA[
@@ -15,6 +15,7 @@
 	<depends>
 		<module id="library"/>
 		<module id="framework/icewood"/>
+		<module id="misc/saved-data"/>
 	</depends>
 	<files>
 		<icon>icon.png</icon>
@@ -24,6 +25,10 @@
 	</files>
 	<counters>
 		<counter id="balance" name="Баланс" units=" Б"/>
+		<counter id="balance_active" name="Активный баланс" units=" Б"/>
+		<counter id="soon_available" name="Бонусы в накоплении" units=" Б"/>
+		<counter id="burn_count" name="Сгораемые бонусы" units=" Б"/>
+		<counter id="card" name="Номер карты" type="text"/>
 		<counter id="fio" name="ФИО" type="text"/>
 		<counter id="phone" name="Телефон" type="text"/>
 		<counter id="burn" name="Ближайшая дата сгорания" type="time" format="dd.MM.yyyy"/>

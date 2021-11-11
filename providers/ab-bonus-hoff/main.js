@@ -4,18 +4,87 @@
 */
 
 var g_headers = {
-	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
 	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
-	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
+	'Accept-Language': 'ru-RU,ru;q=0.9,en-US;q=0.6,en;q=0.4',
+	'accept-encoding': 'gzip, deflate, br',
+    'cache-control': 'max-age=0',
 	'Connection': 'keep-alive',
+	'sec-fetch-site': 'same-origin',
+    'sec-fetch-user': '?1',
+    'upgrade-insecure-requests': '1',
 	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
 };
 
+var baseurl = 'https://hoff.ru/';
+var g_savedData;
+
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'https://hoff.ru/';
-	AnyBalance.setDefaultCharset('utf-8');
+	
 
+	
+	if(!g_savedData)
+		g_savedData = new SavedData('hoff', prefs.login);
+
+	g_savedData.restoreCookies();
+
+    AnyBalance.trace ('Пробуем войти в личный кабинет...');
+	
+	var fwl = Icewood(baseurl);
+	var html = AnyBalance.requestGet(baseurl, g_headers);
+	if(fwl.isProtected(html))
+	    html = fwl.executeScript(html);
+	
+	html = AnyBalance.requestGet(baseurl + 'vue/me/', g_headers);
+
+	
+	var json = getJson(html);
+	AnyBalance.trace(html);
+	
+	if (json.data.error_code === 422) {
+		AnyBalance.trace('Сессия новая. Будем логиниться заново...');
+		clearAllCookies();
+    	loginSite(prefs);
+		}else{
+		AnyBalance.trace('Похоже, мы уже залогинены на имя ' + json.data.name + ' ' + json.data.last_name + ' (' + prefs.login + ')');
+	}
+	
+	var result = {success: true};
+	
+	if (AnyBalance.isAvailable('balance', 'balance_active', 'card', '__tariff', 'soon_available', 'burn_count', 'burn', 'fio', 'phone')) {
+	    html = AnyBalance.requestGet(baseurl + 'vue/me/', addHeaders({
+	    	'accept': 'application/json, text/plain, */*',
+	    	'x-requested-with': 'XMLHttpRequest',
+	    	Referer: 'https://hoff.ru/personal/'
+	    }));
+	
+	    var json = getJson(html);
+	    AnyBalance.trace(JSON.stringify(json));
+	
+	    var userData = getJson(html).data;
+	    var firstCard = getParam(userData.card[0]);
+	    var cardData = getJson(html).data.card_data[firstCard];
+	
+	    getParam(cardData.balance, result, 'balance', null, null, parseBalance);
+	    getParam(cardData.balance_active, result, 'balance_active', null, null, parseBalance);
+	    getParam(cardData.number, result, 'card');
+	    getParam(cardData.number, result, '__tariff');
+	    getParam(cardData.soon_available, result, 'soon_available', null, null, parseBalance);
+	    getParam(cardData.withdrawal_count, result, 'burn_count', null, null, parseBalance);
+	    getParam(cardData.withdrawal_time, result, 'burn', null, null, parseDate);
+	    getParam(userData.name + ' ' + userData.last_name, result, 'fio');
+	    getParam(userData.phone, result, 'phone');
+	}
+
+	AnyBalance.setResult(result);
+}
+	
+function loginSite(prefs) {
+    var prefs = AnyBalance.getPreferences();
+	
+	AnyBalance.setDefaultCharset('utf-8');
+	
 	AB.checkEmpty(prefs.login, 'Введите логин!');
 	AB.checkEmpty(prefs.password, 'Введите пароль!');
 
@@ -30,9 +99,15 @@ function main() {
 	}
 
 	html = AnyBalance.requestGet(baseurl + 'ajax/auth/auth_2018.php?backurl=%2F&is_ajax=y', addHeaders({
-		'X-Requested-With': 'XMLHttpRequest',
-		Referer: baseurl,
-	}));
+		Referer: baseurl + 'iwaf-challenge',
+	    }));
+	if(fwl.isProtected(html))
+	    html = fwl.executeScript(html);
+	
+	if (!html || AnyBalance.getLastStatusCode() > 400) {
+		AnyBalance.trace(html);
+	    throw new AnyBalance.Error('Сайт провайдера временно недоступен! Попробуйте обновить данные позже.');
+	}
 
 	var form = AB.getElement(html, /<form[^>]+authFormPopup[^>]*>/i);
 	if(!form){
@@ -54,6 +129,12 @@ function main() {
 		Accept: 'application/json, text/plain, */*',
 		Referer: baseurl
 	}));
+
+	AnyBalance.trace(html);
+	
+	g_savedData.setCookies();
+	g_savedData.save();
+	return html;
 //POST /sso/oauth2/revoke?token=7b8a3d20-6e98-4b23-ad1c-e441046ffadd&token_type_hint=access_token
 /*
 	var json = getJson(html);
@@ -68,25 +149,4 @@ function main() {
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
 */
-	var result = {
-		success: true
-	};
-
-//	var htmlPersonal = AnyBalance.requestGet(baseurl + 'personal/', addHeaders({
-//		Referer: baseurl
-//	}));
-//	html = AnyBalance.requestGet(baseurl + 'vue/me/card_list/',g_headers);
-	html = AnyBalance.requestGet(baseurl + 'local/templates/redesign/components/bitrix/main.profile/main/tabs/loyalty.php', addHeaders({
-		Referer: baseurl
-	}));
-
-	html = getJson(html).HTML;
-
-	AB.sumParam(html, result, 'balance', /<div[^>]+elem-card__bonus--num[^>]*>([\s\S]*?)<\/div>/i, AB.replaceTagsAndSpaces, AB.parseBalance, aggregate_sum);
-	AB.sumParam(html, result, '__tariff', /<div[^>]+elem-card__num[^>]*>([\s\S]*?)<\/div>/i, AB.replaceTagsAndSpaces, null, create_aggregate_join(', '));
-//	AB.getParam(htmlPersonal, result, 'fio', /<div[^>]+box-user__name[^>]*>([\s\S]*?)<\/div>/i, AB.replaceTagsAndSpaces);
-//	AB.getParam(htmlPersonal, result, 'phone', /<input[^>]+PERSONAL_PHONE[^>]*value="([^"]*)/i, AB.replaceHtmlEntities);
-	AB.sumParam(html, result, 'burn', /Дата ближайшего сгорания:([^<\(]*)/ig, AB.replaceTagsAndSpaces, AB.parseDate, aggregate_min);
-
-	AnyBalance.setResult(result);
 }

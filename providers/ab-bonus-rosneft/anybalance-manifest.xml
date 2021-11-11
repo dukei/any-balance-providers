@@ -1,14 +1,19 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="14">ab-bonus-rosneft</id>
+	<id version="15">ab-bonus-rosneft</id>
 	<api flags="no_browser"/>
 	<name>Семейная команда (Бонусы)</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе бонусов на бонусной карте Семейная Команда (Роснефть, ТНК) (https://komandacard.ru/)</p>
+	<p>Предоставляет информацию по программе лояльности "Семейная команда" для клиентов сети АЗС/АЗК Роснефть, ТНК, ПТК, Славнефть.</p>
+	<p>Информация берется из личного кабинета на сайте https://komandacard.ru/.</p>
 	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Для получения данных с сайта необходимо ввести в настройки провайдера свой номер телефона, на который зарегистрирована карта "Семейная команда", однократно пройти проверку ReCaptcha и ввести проверочный код, пришедший по SMS.</p>
+	]]></instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>
 		<module id="library"/>
+		<module id="misc/saved-data"/>
 	</depends>
 	<files>
 		<icon>icon.png</icon>
@@ -19,13 +24,21 @@
 	<counters>
 		<counter id="balance" name="Баланс" units=" Б"/>
 		<counter id="available" name="Доступно" units=" Б"/>
+		<counter id="card" name="Основная карта" type="text"/>
+		<counter id="card2" name="Доп. карта 1" type="text"/>
+		<counter id="card3" name="Доп. карта 2" type="text"/>
+		<counter id="vehicle" name="Марка машины" type="text"/>
+		<counter id="tire_size" name="Размер шин" type="text"/>
+		<counter id="fuel_type" name="Тип топлива" type="text"/>
 		<counter id="last_date" name="Дата последней операции" type="time"/>
 		<counter id="last_place" name="Место последней операции" type="text"/>
-		<counter id="last_sum" name="Сумма последней операции" units=" р"/>
+		<counter id="last_sum" name="Сумма последней операции" units=" ₽"/>
 		<counter id="last_bonus" name="Бонус последней операции" units=" Б"/>
 		<counter id="last_status" name="Статус последней операции" type="text"/>
+		<counter id="phone" name="Номер телефона" type="text"/>
+		<counter id="fio" name="ФИО владельца" type="text"/>
 	</counters>
-	<keywords></keywords>
+	<keywords>rosneft, роснефть</keywords>
 	<type>bonus</type>
 	<country>ru</country>
 </provider>

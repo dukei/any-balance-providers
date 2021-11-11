@@ -3,6 +3,8 @@
 */
 
 var baseurl = 'https://komandacard.ru/';
+var g_savedData;
+var replaceNumber = [replaceTagsAndSpaces, /\D/g, '', /.*(\d)(\d\d\d)(\d\d\d)(\d\d)(\d\d)$/, '+$1 $2 $3-$4-$5'];
 
 var g_headers = {
 	'Accept': '*/*',
@@ -25,44 +27,128 @@ function throwError(html, defError){
 function main() {
 	var prefs = AnyBalance.getPreferences();
 	AnyBalance.setDefaultCharset('utf-8');
+	
+	if(!g_savedData)
+		g_savedData = new SavedData('komandacard', prefs.login);
+
+	g_savedData.restoreCookies();
+	
+	AnyBalance.trace ('Пробуем войти в личный кабинет...');
+	
+	var html = AnyBalance.requestGet(baseurl + 'account', addHeaders({
+		'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9'
+	}));
+	
+	if(!/unauthorized/i.test(html)){
+		AnyBalance.trace('Сессия сохранена. Входим автоматически...');
+	}else{
+		AnyBalance.trace('Сессия новая. Будем логиниться заново...');
+		clearAllCookies();
+    	loginSite(prefs);
+    }
+
+    var result = {success: true};
+	
+	if(AnyBalance.isAvailable('balance', 'available', 'card', 'card2', 'card3', '__tariff')){
+	    html = AnyBalance.requestGet(baseurl + 'account', addHeaders({
+	    	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9'
+	    }));
+
+	    getParam(html, result, 'balance', /Баллов всего:[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+	    getParam(html, result, 'available', /Баллов доступно:[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+	
+	    var block = getElement(html, /<div[^>]+class="block-cabinet__team block-stat"[^>]*>/i);
+	    var info = getElements(block, /<div[^>]+class="block-team__number"[^>]*>/ig);
+	    AnyBalance.trace('Найдено карт: ' + info.length);
+	    if(info) {
+	    	// Данные по картам
+	        for(var i = 0; i<info.length; i++){
+	        	var mcard = (i >= 1 ? 'card' + (i + 1) : 'card');
+	        	getParam(info[i], result, mcard, /<div[^>]+class="block-team__number"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+	        }
+	    	getParam(info[0], result, '__tariff', /<div[^>]+class="block-team__number"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+	    } else {
+ 	    	AnyBalance.trace('Не удалось получить данные по картам');
+ 	    }
+	}
+	
+	if(AnyBalance.isAvailable('last_sum', 'last_date', 'last_bonus', 'last_place', 'last_status')){
+        if (!/no-report/i.test(html)) {
+		    var row = getElement(html, /<div[^>]+block-statement__content/i);
+		    row = row && getElement(row, /<div[^>]+block-table__body/i);
+		    row = row && getElement(row, /<div[^>]+block-table__row/i);
+		    getParam(row, result, 'last_date', /(?:[\s\S]*?<div[^>]*>){2}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseDate);
+		    getParam(row, result, 'last_place', /(?:[\s\S]*?<div[^>]*>){4}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+		    getParam(row, result, 'last_sum', /(?:[\s\S]*?<div[^>]*>){5}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+		    getParam(row, result, 'last_status', /(?:[\s\S]*?<div[^>]*>){7}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+		    getParam(row, result, 'last_bonus', /(?:[\s\S]*?<div[^>]*>){6}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+		} else {
+			var error = getParam(html, /<div class="no-report">([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+			AnyBalance.trace(error);
+		}
+	}
+	
+	if(AnyBalance.isAvailable('fio', 'phone', 'vehicle', 'tire_size', 'fuel_type')){
+		html = AnyBalance.requestGet(baseurl + 'account/settings', addHeaders({
+			'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9'
+		}));
+
+		var fio = getParam(html, /"Name" value="([\s\S]*?)"/i, replaceTagsAndSpaces);
+		var lastName = getParam(html, /"LastName" value="([\s\S]*?)"/i, replaceTagsAndSpaces);
+	    if (lastName)
+	    	fio += ' ' + lastName;
+	    getParam(fio, result, 'fio');
+		getParam(html, result, 'phone', /"Phone" value="([\s\S]*?)"/i, replaceNumber);
+		getParam(html, result, 'vehicle', /"VehicleVendor">[\s\S]*?<option selected="selected">([\s\S]*?)<\/option>/i, replaceTagsAndSpaces);
+		getParam(html, result, 'tire_size', /"VehicleWheelsSize">[\s\S]*?<option selected="selected">([\s\S]*?)<\/option>/i, replaceTagsAndSpaces);
+		getParam(html, result, 'fuel_type', /"VehicleFuel"[\s\S]*?<option selected="selected">([\s\S]*?)<\/option>/i, replaceTagsAndSpaces);
+	}
+	
+	AnyBalance.setResult(result);
+}
+
+
+function loginSite(prefs){
+    var prefs = AnyBalance.getPreferences();
 
 	checkEmpty(prefs.login, 'Введите номер телефона!');
 	checkEmpty(/^\d{10}$/.test(prefs.login), 'Введите 10 цифр номера телефона в формате 9261234567 без пробелов и разделителей!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 
-	var html = AnyBalance.requestGet(baseurl + 'location/getcity', g_headers);
-	var json = getJson(html);
+//	var html = AnyBalance.requestGet(baseurl + 'location/getcity', g_headers);
+//	var json = getJson(html);
 
-	AnyBalance.setCookie('komandacard.ru', 'regionId', json.regionId);
+//	AnyBalance.setCookie('komandacard.ru', 'regionId', json.regionId);
 
 	var html = AnyBalance.requestGet(baseurl + 'account/login', g_headers);
 	var rvt = getParam(html, /<input[^>]+__RequestVerificationToken[^>]*value="([^"]*)/i, replaceHtmlEntities);
 
-	var captcha = solveRecaptcha('Пожалуйста, докажите, что вы не робот', baseurl + 'login', "6LejgioUAAAAAK6ZVEm_o8YhLHpnBil1J-hrPQnB");
+	var captcha = solveRecaptcha('Пожалуйста, докажите, что вы не робот', baseurl + 'login', '6LejgioUAAAAAK6ZVEm_o8YhLHpnBil1J-hrPQnB', {USERAGENT: g_headers['User-Agent']});
 
 	html = AnyBalance.requestPost(baseurl + 'account/login', JSON.stringify({
-		Data: [
-			{
-				name: 'Phone',
-				value: '+7 ' + prefs.login,
-			},
-			{
-				name: 'Password',
-				value: prefs.password,
-			},
-			{
-				name: 'g-recaptcha-response',
-				value: captcha,
-			},
-			{
-				name: 'Captcha',
-				value: captcha,
-			},
-		],
-		GoForward: true
+		"GoForward": true,
+        "Data": [
+            {
+                "name": "Phone",
+                "value": "+7 " + prefs.login
+            },
+            {
+                "name": "Password",
+                "value": prefs.password
+            },
+            {
+                "name": "g-recaptcha-response",
+                "value": captcha
+            },
+            {
+                "name": "Captcha",
+                "value": captcha
+            }
+        ]
 	}), addHeaders({
-		RequestVerificationToken: rvt,
-		'Content-Type': 'application/json'
+		'RequestVerificationToken': rvt,
+		'Content-Type': 'application/json',
+		'X-Requested-With': 'XMLHttpRequest'
 	}));
 
 	if(/SelectedChannelId/.test(html)){
@@ -91,15 +177,16 @@ function main() {
                 }
             ]
 		}), addHeaders({
-			RequestVerificationToken: rvt,
-			'Content-Type': 'application/json'
+			'RequestVerificationToken': rvt,
+			'Content-Type': 'application/json',
+			'X-Requested-With': 'XMLHttpRequest'
 		}));
 
 		if(!/<input[^>]+name="Otp"/i.test(html)){
 			throwError(html, 'Не удалось запросить подтверждение входа. Сайт изменен?');
 		}
 
-		var code = AnyBalance.retrieveCode('Пожалуйста, введите код, высланный на ' + label, null, {inputType: 'number', time: 180000});
+		var code = AnyBalance.retrieveCode('Пожалуйста, введите код подтверждения, высланный на номер ' + label, null, {inputType: 'number', time: 180000});
 
 		rvt = getParam(html, /<input[^>]+__RequestVerificationToken[^>]*value="([^"]*)/i, replaceHtmlEntities);
 		html = AnyBalance.requestPost(baseurl + 'account/login', JSON.stringify({
@@ -115,8 +202,9 @@ function main() {
                 }
             ]
 		}), addHeaders({
-			RequestVerificationToken: rvt,
-			'Content-Type': 'application/json'
+			'RequestVerificationToken': rvt,
+			'Content-Type': 'application/json',
+			'X-Requested-With': 'XMLHttpRequest'
 		}));
 	
 		if(/<input[^>]+name="Otp"/i.test(html)){
@@ -140,29 +228,9 @@ function main() {
 		throw new AnyBalance.Error('Не удалось войти в личный кабинет. Сайт изменен?');
 	}
 
-	var result = {success: true};
-
-	html = AnyBalance.requestGet(baseurl + 'account', addHeaders({Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8'}));
-
-	getParam(html, result, 'balance', /Баллов всего:[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'available', /Баллов доступно:[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
-
-	if(AnyBalance.isAvailable('last_sum', 'last_date', 'last_bonus', 'last_place', 'last_status')){
-		var dt = new Date();
-		html = AnyBalance.requestGet(baseurl + 'report/01.01.1900/' + n2(dt.getDate()) + '.' + n2(dt.getMonth()+1) + '.' + dt.getFullYear(),
-			addHeaders({Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8'}));
-
-		var row = getElement(html, /<div[^>]+block-statement__content/i);
-		row = row && getElement(row, /<div[^>]+block-table__body/i);
-		row = row && getElement(row, /<div[^>]+"block-table__row/i);
-		getParam(row, result, 'last_date', /(?:[\s\S]*?<div[^>]*>){2}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseDate);
-		getParam(row, result, 'last_place', /(?:[\s\S]*?<div[^>]*>){4}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
-		getParam(row, result, 'last_sum', /(?:[\s\S]*?<div[^>]*>){5}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
-		getParam(row, result, 'last_status', /(?:[\s\S]*?<div[^>]*>){7}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
-		getParam(row, result, 'last_bonus', /(?:[\s\S]*?<div[^>]*>){6}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
-	}   
-	
-	AnyBalance.setResult(result);
+	g_savedData.setCookies();
+	g_savedData.save();
+	return json;
 }
 
 function n2(str){

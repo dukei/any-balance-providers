@@ -1,0 +1,41 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-internet-domolan</id>
+	<api flags="no_browser"/>
+	<name>Домолан</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию по балансу, услугам и платежам для абонентов интернет-провайдера "Домолан" (Домодедово).</p>
+	<p>Информация берется из личного кабинета https://www.domolan.ru/.</p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Для получения данных с сайта необходимо ввести в настройки провайдера свой логин, на который зарегистрирован личный кабинет, и пароль для входа.</p>
+	]]></instruction>
+	<author>RamzesZeus &lt;ramzeszeus@gmail.com&gt;</author>
+	<depends>
+		<module id="library"/>
+		<module id="misc/saved-data"/>
+	</depends>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" ₽"/>
+		<counter id="balance_start" name="На начало месяца" units=" ₽"/>
+		<counter id="pin" name="PIN для оплаты" type="text"/>
+		<counter id="speed" name="Скорость интернета" units=" {@currency}"/>
+		<counter id="cab_tv" name="Кабельное ТВ" units=" ₽"/>
+		<counter id="abon" name="Абонентская плата" units=" ₽"/>
+		<counter id="pay_month" name="Пополнение за месяц" units=" ₽"/>
+		<counter id="lastpay_sum" name="Сумма посл. оплаты" units=" ₽"/>
+		<counter id="lastpay_date" name="Дата посл. оплаты" type="time" format="dd.MM.yyyy"/>
+		<counter id="block_from" name="Блокировка с" type="time" format="dd.MM.yyyy"/>
+		<counter id="phone" name="Номер телефона" type="text"/>
+		<counter id="fio" name="ФИО" type="text"/>
+	</counters>
+	<keywords>domolan, домолан</keywords>
+	<type>internet</type>
+	<country>ru</country>
+</provider>

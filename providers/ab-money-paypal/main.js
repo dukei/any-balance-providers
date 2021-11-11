@@ -17,8 +17,8 @@ function main(){
 	
     AnyBalance.setDefaultCharset('utf-8');
 	
-	checkEmpty(prefs.login, 'Enter e-mail!');
-	checkEmpty(prefs.password, 'Enter password!');
+	checkEmpty(prefs.login, 'Введите E-mail!');
+	checkEmpty(prefs.password, 'Введите пароль!');
 
 	logInSite();
 }
@@ -193,7 +193,7 @@ function faceCaptchaChallenge(json, baseurl, loginPage, debugId){
 	var params = AB.createFormParams(form);
 	if(captchaRequired){
 		AnyBalance.trace('Captcha is required');
-		params.recaptcha = solveRecaptcha('Please, prove you are not a robot', baseurl, '6LepHQgUAAAAAFOcWWRUhSOX_LNu0USnf7Vg6SyA');
+		params.recaptcha = solveRecaptcha('Пожалуйста, докажите, что вы не робот', baseurl, '6LeZ6egUAAAAAGwL8CjkDE8dcSw2DtvuVpdwTkwG');
 	}
 	
 	var submitUrl = getParam(form, /<form[^>]+action="([^"]*)/i, replaceHtmlEntities);
@@ -233,7 +233,7 @@ function getBalanceInfo(html){
 		}
 	}
 	if(!json){
-		var info = getJsonObject(html, /var\s+__REACT_ENGINE__\s*=\s*/i);
+		var info = getJsonObject(html, /id="react-engine-props"[\s\S]*json"\s+>/i);
 		if(info){
 			AnyBalance.trace('Данные вернулись в React Engine json, преобразовываем');
 			var balances = [];
@@ -310,7 +310,7 @@ function faceStepUp(json, baseurl, loginPage){
 
 function getJsonBalances(baseurl){
 	var prefs = AnyBalance.getPreferences();
-	var html = AnyBalance.requestGet(baseurl + '/myaccount/wallet', g_headers);
+	var html = AnyBalance.requestGet(baseurl + '/myaccount/money', g_headers);
 	var jsonBalances = getBalanceInfo(html);
 	if(!jsonBalances){
 		var loginPage = AnyBalance.getLastUrl();
@@ -374,7 +374,7 @@ function getJsonBalances(baseurl){
 			faceStepUp(json, baseurl, loginPage);
 		}
 
-		html = AnyBalance.requestGet(baseurl + '/myaccount/wallet', addHeaders({Referer: loginPage}));
+		html = AnyBalance.requestGet(baseurl + '/myaccount/money', addHeaders({Referer: loginPage}));
 		jsonBalances = getBalanceInfo(html);
 
 		if(!jsonBalances){
@@ -408,6 +408,7 @@ function logInSite(){
 	AnyBalance.restoreCookies();
 
 	var jsonBalances = getJsonBalances(baseurl);
+	
 	if(!jsonBalances){
 		AnyBalance.trace('Could not enter PayPal. Let us try once more...');
 		jsonBalances = getJsonBalances(baseurl);
@@ -421,20 +422,44 @@ function logInSite(){
 	
 	for(var i=0; i<jsonBalances.balanceDetails.length; i++) {
 		var curr = jsonBalances.balanceDetails[i];
-		if(curr.currency == 'USD') {
+		if(curr.currency == 'RUB') {
 			getParam(curr.available.amount, result, 'balance', null, null, parseBalance);
+		} else if(curr.currency == 'USD') {
+			getParam(curr.available.amount, result, 'balance_usd', null, null, parseBalance);
 		} else if(curr.currency == 'EUR') {
 			getParam(curr.available.amount, result, 'balance_eur', null, null, parseBalance);
+		} else if(curr.currency == 'GBP') {
+			getParam(curr.available.amount, result, 'balance_gbp', null, null, parseBalance);
+		} else if(curr.currency == 'CHF') {
+			getParam(curr.available.amount, result, 'balance_chf', null, null, parseBalance);
 		} else if(curr.currency == 'SEK') {
 			getParam(curr.available.amount, result, 'balance_sek', null, null, parseBalance);
-		} else if(curr.currency == 'RUB') {
-			getParam(curr.available.amount, result, 'balance_rub', null, null, parseBalance);
+		} else if(curr.currency == 'JPY') {
+			getParam(curr.available.amount, result, 'balance_jpy', null, null, parseBalance);
 		}else{
 		    AnyBalance.trace('Unknown currency ' + curr.currency + ': ' + JSON.stringify(curr));
 		}
 	}
+	
+	html = AnyBalance.requestGet(baseurl + '/myaccount/settings', g_headers);
+	var data = getJsonObject(html, /window.cwContext\s*=/);
 
-	result.__tariff = prefs.login;
+    if(!data){
+		AnyBalance.trace('Got json on settings enter: ' + JSON.stringify(data));
+		AnyBalance.trace("Settings page: " + html);
+		return data;
+	}
+	
+	getParam(data.encryptedAccountNumber, result, '__tariff');
+	getParam(data.encryptedAccountNumber, result, 'id');
+	getParam(html, result, 'notifications', /<span[^>]+id="notificationCount">([\s\S]*?)<\/span>/i, null, parseBalance);
+	getParam(html, result, 'incoming', /<span[^>]+id="messageCount">([\s\S]*?)<\/span>/i, null, parseBalance);
+	getParam(html, result, 'since', /<p[^>]+class="profileDetail-joinedSince[^>]*>С\sнами\sс\s([\s\S]*?)\sгода<\/p>/i, replaceTagsAndSpaces);
+	getParam(html, result, 'phone', /<span[^>]+id="phoneNumJYLLM3MCXMSX6[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
+	getParam(html, result, 'fio', /business_contact_name&quot;&#x3A;&quot?;([\s\S]*?)&quot;/i, replaceTagsAndSpaces);
+	
+
+	result.login = prefs.login;
 	
     AnyBalance.setResult(result);
 }
@@ -484,14 +509,20 @@ function logInOpenAuth(){
 	
 	for(var i=0; i<json.account_balance.balances.length; i++) {
 		var curr = json.account_balance.balances[i];
-		if(curr.currency == 'USD') {
+		if(curr.currency == 'RUB') {
 			getParam(curr.available.total.amount, result, 'balance', null, null, parseBalance);
+		} else if(curr.currency == 'USD') {
+			getParam(curr.available.total.amount, result, 'balance_usd', null, null, parseBalance);
 		} else if(curr.currency == 'EUR') {
 			getParam(curr.available.total.amount, result, 'balance_eur', null, null, parseBalance);
+		} else if(curr.currency == 'GBP') {
+			getParam(curr.available.total.amount, result, 'balance_gbp', null, null, parseBalance);
+		} else if(curr.currency == 'CHF') {
+			getParam(curr.available.total.amount, result, 'balance_chf', null, null, parseBalance);
 		} else if(curr.currency == 'SEK') {
 			getParam(curr.available.total.amount, result, 'balance_sek', null, null, parseBalance);
-		} else if(curr.currency == 'RUB') {
-			getParam(curr.available.total.amount, result, 'balance_rub', null, null, parseBalance);
+		} else if(curr.currency == 'JPY') {
+			getParam(curr.available.total.amount, result, 'balance_jpy', null, null, parseBalance);
 		}else{
 		    AnyBalance.trace('Unknown currency ' + curr.currency + ': ' + JSON.stringify(curr));
 		}
@@ -675,14 +706,20 @@ function logInAPI(prefs) {
 	
 	for(var i=0; i<json.result.balance.currencyBalances.length; i++) {
 		var curr = json.result.balance.currencyBalances[i];
-		if(curr.currencyCode == 'USD') {
+		if(curr.currencyCode == 'RUB') {
 			getParam(curr.available.value/curr.available.scale, result, 'balance');
+		} else if(curr.currencyCode == 'USD') {
+			getParam(curr.available.value/curr.available.scale, result, 'balance_usd');
 		} else if(curr.currencyCode == 'EUR') {
 			getParam(curr.available.value/curr.available.scale, result, 'balance_eur');
+		} else if(curr.currencyCode == 'GBP') {
+			getParam(curr.available.value/curr.available.scale, result, 'balance_gbp');
+		} else if(curr.currencyCode == 'CHF') {
+			getParam(curr.available.value/curr.available.scale, result, 'balance_chf');
 		} else if(curr.currencyCode == 'SEK') {
 			getParam(curr.available.value/curr.available.scale, result, 'balance_sek');
-		} else if(curr.currencyCode == 'RUB') {
-			getParam(curr.available.value/curr.available.scale, result, 'balance_rub');
+		} else if(curr.currencyCode == 'JPY') {
+			getParam(curr.available.value/curr.available.scale, result, 'balance_jpy');
 		}else{
 		    AnyBalance.trace('Unknown currency ' + curr.currencyCode + ': ' + JSON.stringify(curr));
 		}

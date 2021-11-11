@@ -1,11 +1,15 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="5.0" version="40">ab-money-paypal</id>
+	<id major_version="5.0" version="41">ab-money-paypal</id>
 	<api flags="no_browser"/>
 	<name>PayPal</name>
 	<description html="true"><![CDATA[
-	<p>Retrieves balance on your PayPal account.</p>
+	<p>Предоставляет информацию по вашему счету PayPal.</p>
+	<p>Информация берется из личного кабинета на сайте https://www.paypal.com.</p>
 	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Для получения данных необходимо ввести в настройки провайдера свой E-mail, на который зарегистрирован счет PayPal и пройти проверку ReCaptcha.</p>
+	]]></instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>
 		<module id="library"/>
@@ -21,10 +25,20 @@
 		<js>main.js</js>
 	</files>
 	<counters>
-		<counter id="balance" name="Balance" units=" USD"/>
-		<counter id="balance_rub" name="Balance RUB" units=" RUB"/>
-		<counter id="balance_eur" name="Balance EUR" units=" EUR"/>
-		<counter id="balance_sek" name="Balance SEK" units=" SEK"/>
+		<counter id="balance" name="Баланс" units=" ₽"/>
+		<counter id="balance_usd" name="Баланс USD" units=" $"/>
+		<counter id="balance_eur" name="Баланс EUR" units=" €"/>
+		<counter id="balance_gbp" name="Баланс GBP" units=" £"/>
+		<counter id="balance_chf" name="Баланс CHF" units=" ₣"/>
+		<counter id="balance_sek" name="Баланс SEK" units=" kr"/>
+		<counter id="balance_jpy" name="Баланс JPY" units=" ¥"/>
+		<counter id="notifications" name="Уведомления" type="text" units=" шт"/>
+		<counter id="incoming" name="Входящие" type="text" units=" шт"/>
+		<counter id="id" name="Код продавца" type="text"/>
+		<counter id="since" name="Год создания" type="text"/>
+		<counter id="login" name="Логин" type="text"/>
+		<counter id="phone" name="Номер телефона" type="text"/>
+		<counter id="fio" name="ФИО" type="text"/>
 	</counters>
 	<keywords>пейпал</keywords>
 	<type>money, wallet</type>

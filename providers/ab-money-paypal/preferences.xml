@@ -2,12 +2,12 @@
 <PreferenceScreen>
 	<EditTextPreference
 		obligatory="true"
-		title="Email address"
+		title="E-mail"
 		positiveButtonText="OK"
-		summary="||{@s}"
-		dialogTitle="Email address"
-		negativeButtonText="Cancel"
-		dialogMessage="Enter e-mail to log in PayPal."
+		summary="E-mail для входа в PayPal||{@s}\n"
+		dialogTitle="E-mail"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите E-mail для входа в PayPal."
 		inputType="textEmailAddress"
 		key="login">
 	</EditTextPreference>
@@ -15,11 +15,11 @@
 		obligatory="true"
 		positiveButtonText="OK"
 		key="password"
-		dialogTitle="Password"
-		negativeButtonText="Cancel"
-		title="Enter password"
-		summary="||***********"
-		dialogMessage="Please enter password to log into your PayPal account."
+		dialogTitle="Пароль"
+		negativeButtonText="Отмена"
+		title="Пароль"
+		summary="Пароль для входа в PayPal||**********\n"
+		dialogMessage="Введите пароль для входа в PayPal."
 		inputType="textPassword">
 	</EditTextPreference>
 </PreferenceScreen>

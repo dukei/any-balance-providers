@@ -1,0 +1,52 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="2">ab-municipal-moygaz-smorodina</id>
+	<api flags="no_browser"/>
+	<name>Мой ГАЗ Смородина</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию по лицевому счету в сервисе "Мой ГАЗ Смородина" для пользователей услуг компании Газпром Межрегионгаз.</p>
+	<p>Информация берется из личного кабинета https://мойгаз.смородина.онлайн/.</p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Для получения данных с сайта необходимо ввести в настройки провайдера свой логин, на который зарегистрирован личный кабинет, и пароль для входа.</p>
+	<p>Если в кабинете зарегистрировано несколько лицевых счетов, вы можете выбрать счет, по которому хотите получать информацию, в настройках провайдера.</p>
+	]]></instruction>
+	<author>RamzesZeus &lt;ramzeszeus@gmail.com&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" ₽"/>
+		<counter id="advance" name="Переплата" units=" ₽"/>
+		<counter id="toPay" name="Задолженность" units=" ₽"/>
+		<counter id="charged" name="Начислено" units=" ₽"/>
+		<counter id="recalculation" name="Корректировка" units=" ₽"/>
+		<counter id="paid" name="Оплачено" units=" ₽"/>
+		<counter id="payDate" name="Дата последней оплаты" type="time" format="dd.MM.yyyy"/>
+		<counter id="id" name="Персональный ID" type="text"/>
+		<counter id="account" name="Лицевой счет" type="text"/>
+		<counter id="device" name="Прибор учета" type="text"/>
+		<counter id="serialNumber" name="Серийный номер" type="text"/>
+		<counter id="state" name="Состояние прибора" type="text"/>
+		<counter id="checkDate" name="Следующая дата поверки" type="time" format="dd.MM.yyyy"/>
+		<counter id="previousCounter" name="Предыдущие показания" units=" &#13221;"/>
+		<counter id="currentCounter" name="Текущие показания" units=" &#13221;"/>
+		<counter id="consumption" name="Потребление" units=" &#13221;"/>
+		<counter id="date" name="Дата изменения" type="time" format="dd.MM.yyyy"/>
+		<counter id="countState" name="Статус показаний" type="text"/>
+		<counter id="averageMonthlyExpense" name="Среднемесячный расход" units=" &#13221;"/>
+		<counter id="address" name="Адрес установки оборудования" type="text"/>
+		<counter id="provider" name="Провайдер" type="text"/>	
+		<counter id="phone" name="Номер телефона" type="text"/>
+		<counter id="fio" name="ФИО" type="text"/>
+	</counters>
+	<keywords>smorodina, смородина, gaz mejregion, газ межрегион</keywords>
+	<type>municipal</type>
+	<country>ru</country>
+</provider>

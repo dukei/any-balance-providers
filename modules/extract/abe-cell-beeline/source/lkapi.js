@@ -301,6 +301,9 @@ function processApiRemaindersPrepaid(result){
 					sumParam(curr.value + '', remainders, 'remainders.rub_opros', null, replaceTagsAndSpaces, apiParseBalanceRound, aggregate_sum);
 				}else if(/bonusmoney/i.test(curr.name)) {
 					sumParam(curr.value + '', remainders, 'remainders.rub_bonus', null, replaceTagsAndSpaces, apiParseBalanceRound, aggregate_sum);
+ 				}else if(/comverse.balance.name.bonusbalance17/i.test(d.name)){
+					getParam(curr.value + "", remainders, "remainders.rub_bonus2", null, replaceTagsAndSpaces, apiParseBalanceRound);
+					getParam(curr.dueDate, remainders, "remainders.rub_bonus2_till", null, replaceTagsAndSpaces, parseDateISO); 
 				}else if(/bonusseconds/i.test(curr.name)) { //Бонус секунд-промо
 					sumParam(curr.value + '', remainders, 'remainders.min_left_1', null, replaceTagsAndSpaces, apiParseBalanceRound, aggregate_sum);
 				}else if(/seconds/i.test(curr.name)) {

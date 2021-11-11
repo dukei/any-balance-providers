@@ -474,8 +474,8 @@ function fetchB2B(baseurl, html, result) {
     // Это расходы из детализации
     if(isAvailable('balance')) {
         var form = getParam(html, null, null, /<form id="reportDetailUnbilledButtonsForm"[\s\S]*?<\/form>/i);
-        if(form) {
-            /*
+        /*if(form) {
+            
              javax.faces.partial.ajax:true
              javax.faces.source:reportDetailUnbilledButtonsForm:j_idt2444
              javax.faces.partial.execute:@all
@@ -483,7 +483,7 @@ function fetchB2B(baseurl, html, result) {
              reportDetailUnbilledButtonsForm:j_idt2444:reportDetailUnbilledButtonsForm:j_idt2444
              reportDetailUnbilledButtonsForm:reportDetailUnbilledButtonsForm
              javax.faces.ViewState:-2522423474342426299:3960040617829553771
-             */
+            
 
             // var xhtml = getBlock(baseurl + 'b/info/subscriberDetail.xhtml', form, 'reportDetailUnbilledButtonsForm');
 
@@ -499,6 +499,7 @@ function fetchB2B(baseurl, html, result) {
 
             //Итого с НДС[^>]*>([\s\S]*?)<\/div>
         }
+ 	*/
     }
 
 
@@ -1095,8 +1096,7 @@ function getTempPasswordSMS(baseurl, html){
 }
 
 function createNewPassword(baseurl){
-	return createNewPasswordApi();
-    return pass;
+    return createNewPasswordApi();
 }
 
 function loginWithoutPassword(baseurl){

@@ -13,7 +13,7 @@ var g_sessionid;
 var g_postParams = {
 	mobile_device_model:	'ONEPLUS A3010',
 	mobile_device_os:		'android',
-	appVersion:				'2.9',
+	appVersion:				'3.21',
 	screen_width:			'1080',
 	root_flag:				'false',
 	appName:				'mobile',

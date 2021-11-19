@@ -1,5 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change version="2.12" date="2021-11-13">
+	- Поддержка нового личного кабинета
+	- Добавлены дополнительные счетчики
+	</change>
 	<change version="11" date="2016-07-25">
 	- Исправление ошибки соединения на новых Android
 	</change>

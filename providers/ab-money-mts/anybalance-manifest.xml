@@ -1,33 +1,20 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="11">ab-money-mts</id>
-	<api flags="no_browser"/>
+	<id major_version="2" version="12">ab-money-mts</id>
 	<name>МТС Банк</name>
+	<api flags="no_browser"/>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о текущем остатке и других параметрах карт и счетов для клиентов МТС Банка (http://www.mtsbank.ru).</p>
-	<p>Информация берется из Интернет-банка (http://personalbank.ru).</p>
+	<p>Предоставляет информацию о балансе, картах, счетах, операциях по счетам и другие данные для владельцев карт и счетов МТС Банка.</p>
+	<p>Информация берётся из личного кабинета МТС Банка на сайте https://online.mtsbank.ru/.</p>
 	]]></description>
 	<instruction html="true"><![CDATA[
-	<p>Где подключиться к Интернет-банку:</p>
-	<ul>
-		<li>В любом из офисов МТС Банка;</li>
-		<li>С помощью банкомата МТС Банка.</li>
-	</ul>
-	<p>При подключении в офисе МТС Банка вам предоставляется:</p>
-	<ol>
-		<li>Логин и пароль для входа в систему «Интернет-банкинг».</li> 
-		<li>Комплект сеансовых ключей, необходимых для совершения платежных операций в рамках Системы (для работы провайдера необязательно).</li>
-	</ol>
-	<p>При подключении через банкомат МТС Банка вам предоставляется:</p>
-	<ol>
-		<li>Логин и пароль для входа в систему «Интернет-банкинг», которые распечатываются на чеке.</li>
-		<li>Новые логин и пароль в случае утраты (услуга платная, в соответствии с Тарифами Банка).</li>
-		<p><b>ВНИМАНИЕ!</b> Для совершения платежных операций вам потребуется получить комплект сеансовых ключей в офисе Банка (для работы провайдера необязательно).</p>
-	</ol>   
+	<p>Для работы провайдера требуется ввести логин и пароль для входа в личный кабинет МТС Банка.</p>
+	<p>Кроме того, для авторизации в личном кабинете потребуется ввести код подтверждения из SMS, высланного на номер телефона, привязанного к личному кабинету МТС Банка.</p>
 	]]></instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
-	<depends>
+    <depends>
 		<module id="library"/>
+		<module id="misc/saved-data"/>
 	</depends>
 	<files>
 		<icon>icon.png</icon>
@@ -37,25 +24,33 @@
 	</files>
 	<counters>
 		<counter id="balance" name="Остаток" units=" {@currency}"/>
+		<counter id="balance_all" name="Доступно" units=" {@currency}"/>
+		<counter id="res_sum" name="Заблокировано" units=" {@currency}"/>
+		<counter id="block_sum" name="Зарезервировано" units=" {@currency}"/>
+		<counter id="own_sum" name="Собственные средства" units=" {@currency}"/>
+		<counter id="limit" name="Кредитный лимит" units=" {@currency}"/>
 		<counter id="minpay" name="Минимальный платеж" units=" {@currency}"/>
-		<counter id="debt" name="Использовано в кредит" units=" {@currency}"/>
-		<counter id="overdraft" name="Сумма технического овердрафта" units=" {@currency}"/>
-		<counter id="pct_sum" name="Сумма процентов к уплате" units=" {@currency}"/>
 		<counter id="peni" name="Штрафы, пени, платы" units=" {@currency}"/>
-		<counter id="pct" name="Процентная ставка" units=" %"/>
-		<counter id="limit" name="Лимит по договору" units=" {@currency}"/>
-		<counter id="currency" name="Валюта" type="text"/>
-		<counter id="minpay_till" name="Срок минимального платежа" type="time" format="dd/MM/yyyy"/>
-		<counter id="date_start" name="Дата начала действия кредитного договора" type="time" format="dd/MM/yyyy"/>
-		<counter id="accnum" name="Номер счета" type="text"/>
-		<counter id="agreement" name="Номер договора" type="text"/>
-		<counter id="type" name="Тип" type="text"/>
-		<counter id="cardnum" name="Номер" type="text"/>
-		<counter id="status" name="Статус карты" type="text"/>
-		<counter id="fio" name="Владелец" type="text"/>
-		<counter id="till" name="Срок действия" type="time" format="MM/yy"/>
+		<counter id="totalpay" name="Всего к оплате" units=" {@currency}"/>
+		<counter id="debt" name="Использовано в кредит" units=" {@currency}"/>
+		<counter id="debt_main" name="Сумма основного долга" units=" {@currency}"/>
+		<counter id="minpay_till" name="Срок мин. платежа" type="time" format="dd.MM.yyyy"/>
+		<counter id="comm" name="Комиссия за обслуживание" units=" {@currency}"/>
+		<counter id="comm_till" name="Срок оплаты комиссии" type="time" format="dd.MM.yyyy"/>
+		<counter id="acc_number" name="Номер счета" type="text"/>
+		<counter id="prod_name" name="Имя продукта" type="text"/>
+		<counter id="acc_capital" name="Дата капитализации" type="time" format="dd.MM.yyyy"/>
+		<counter id="currency" name="Валюта счета" type="text"/>
+        <counter id="card" name="Номер карты" type="text"/>
+		<counter id="card_type" name="Тип карты" type="text"/>
+		<counter id="card_status" name="Статус карты" type="text"/>
+		<counter id="card_burn" name="Срок действия карты" type="time" format="dd.MM.yyyy"/>
+		<counter id="date_start" name="Дата начала договора" type="time" format="dd.MM.yyyy"/>
+		<counter id="date_end" name="Срок действия договора" type="time" format="dd.MM.yyyy"/>
+		<counter id="last_operation" name="Последняя операция" type="text"/>
+        <counter id="fio" name="ФИО" type="text"/>
 	</counters>
-	<keywords>интернет-банкинг</keywords>
+	<keywords>мтс, мтс банк, mts, mts bank</keywords>
 	<type>money, bank</type>
 	<country>ru</country>
 </provider>

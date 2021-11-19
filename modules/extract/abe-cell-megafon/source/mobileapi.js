@@ -1,5 +1,5 @@
 var g_api_headers = {
-    'User-Agent': 'MLK Android Phone 3.3.10',
+    'User-Agent': 'MLK Android Phone 4.28.10',
     'Connection': 'Keep-Alive'
 };
 
@@ -195,14 +195,14 @@ function megafonLkAPIDo(options, result) {
      
     if (AnyBalance.isAvailable('balance', 'credit', 'available')) {
         json = callAPI('get', 'api/main/balance');
-
-        getParam(json.balanceWithLimit + '', result, 'available', null, replaceTagsAndSpaces, parseBalance);
+        const limit = (json.balanceWithLimit || json.limit || 0);
+        getParam(limit + '', result, 'available', null, replaceTagsAndSpaces, parseBalance);
         getParam(json.balance + '', result, 'balance', null, replaceTagsAndSpaces, parseBalance);
-        getParam((json.balanceWithLimit - json.balance) + '', result, 'credit', null, replaceTagsAndSpaces, parseBalance);
+        getParam((limit - json.balance) + '', result, 'credit', null, replaceTagsAndSpaces, parseBalance);
     }
 
     if(AnyBalance.isAvailable('tariff') && !result.tariff){
-    	json = callAPI('get', 'api/tariff/2019-2/current');
+    	json = callAPI('get', 'api/tariff/2019-3/current');
     	getParam(json.name, result, 'tariff', null, replaceTagsAndSpaces);
     }
 

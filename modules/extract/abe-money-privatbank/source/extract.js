@@ -30,7 +30,7 @@ function requestJson(data, action, errorMessage) {
 	params.push(encodeURIComponent('lon') + '=' + '0.0');
 	params.push(encodeURIComponent('ireal') + '=' + encodeURIComponent(g_imei));
 	params.push(encodeURIComponent('device') + '=' + encodeURIComponent('D6503|sony'));
-	params.push(encodeURIComponent('version') + '=' + encodeURIComponent('5.20.02'));
+	params.push(encodeURIComponent('version') + '=' + encodeURIComponent('6.37.00'));
 	params.push(encodeURIComponent('versionOS') + '=' + encodeURIComponent('5.0'));
 	params.push(encodeURIComponent('lat') + '=' + encodeURIComponent('0.0'));
 

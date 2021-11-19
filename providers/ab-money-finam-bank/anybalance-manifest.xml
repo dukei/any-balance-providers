@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="2">ab-money-finam-bank</id>
+	<name>Финам-Банк</name>
+	<api flags="no_browser"/>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о доступных средствах, картах, счетах и другие данные для владельцев карт и счетов Финам-Банка.</p>
+	<p>Информация берётся из личного кабинета Финам-Банка на сайте https://ibank.finam.ru/.</p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Для работы провайдера требуется ввести логин и пароль для входа в личный кабинет Финам-Банка.</p>
+	<p>Кроме того, для авторизации в личном кабинете потребуется ввести код подтверждения из SMS, высланного на номер телефона, привязанного к личному кабинету Финам-Банка.</p>
+	]]></instruction>
+	<author>RamzesZeus &lt;ramzeszeus@gmail.com&gt;</author>
+    <depends>
+		<module id="library"/>
+		<module id="misc/saved-data"/>
+	</depends>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Доступный остаток" units=" {@currency}"/>
+		<counter id="balance_rest" name="Остаток на счете" units=" {@currency}"/>
+		<counter id="balance_block" name="Заблокировано" units=" {@currency}"/>
+		<counter id="contract_number" name="Номер договора" type="text"/>
+		<counter id="contract_date" name="Дата закл. договора" type="time" format="dd.MM.yyyy"/>
+		<counter id="account_number" name="Номер счета" type="text"/>
+		<counter id="account_date" name="Дата открытия счета" type="time" format="dd.MM.yyyy"/>
+		<counter id="account_type" name="Тип счета" type="text"/>
+		<counter id="credit" name="Кредитный лимит" units=" {@currency}"/>
+		<counter id="contract_rate" name="Ставка по договору" type="text"/>
+		<counter id="credit_risk" name="Кредитный риск" type="text"/>
+		<counter id="credit_ratio" name="Доля" type="text"/>
+		<counter id="currency_full" name="Валюта счета" type="text"/>
+		<counter id="sms_inform" name="SMS-информирование" type="text"/>
+		<counter id="card" name="Основная карта" type="text"/>
+		<counter id="card_1" name="Дополнительная карта" type="text"/>
+		<counter id="card_2" name="Дополнительная карта 2" type="text"/>
+		<counter id="card_3" name="Дополнительная карта 3" type="text"/>		
+		<counter id="phone" name="Номер телефона" type="text"/>
+		<counter id="fio" name="ФИО" type="text"/>
+	</counters>
+	<keywords>финам, финам банк, finam, finam bank</keywords>
+	<type>money, bank</type>
+	<country>ru</country>
+</provider>

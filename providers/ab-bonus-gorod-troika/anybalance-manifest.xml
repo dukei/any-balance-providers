@@ -1,0 +1,40 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="2">ab-bonus-gorod-troika</id>
+	<api flags="no_browser"/>
+	<name>Город Тройка</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию по бонусной коалиционной программе для держателей транспортной карты "Тройка".</p>
+	<p>Информация берется из личного кабинета https://gorodtroika.ru/.</p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Для получения данных с сайта необходимо ввести в настройки провайдера свой номер телефона, на который зарегистрирован личный кабинет, и пароль для входа.</p>
+	<p>Кроме того, для авторизации в личном кабинете потребуется ввести код подтверждения из SMS, высланного на номер телефона, привязанного к личному кабинету.</p>
+	]]></instruction>
+	<author>RamzesZeus &lt;ramzeszeus@gmail.com&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Доступные бонусы" units=" Б"/>
+		<counter id="expected" name="Ожидаемые бонусы" units=" Б"/>
+		<counter id="experience" name="Собрано жетонов" units=" шт"/>
+		<counter id="notifications" name="Уведомления" units=" шт"/>
+		<counter id="level" name="Текущий уровень" type="text"/>
+		<counter id="percent" name="Дополнительный процент" units="%"/>
+		<counter id="nextlevelexp" name="До следующего уровня" units=" шт"/>
+		<counter id="cardnum" name="Номер карты" type="text"/>
+		<counter id="region" name="Регион" type="text"/>
+		<counter id="phone" name="Номер телефона" type="text"/>
+		<counter id="fio" name="ФИО" type="text"/>
+	</counters>
+	<keywords>troika, тройка, gorod troika, город тройка</keywords>
+	<type>bonus</type>
+	<country>ru</country>
+</provider>

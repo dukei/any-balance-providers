@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference
+		obligatory="true"
+		title="Номер телефона"
+		positiveButtonText="ОК"
+		summary="Номер телефона, привязанный к карте||{@s}\n"
+		dialogTitle="Номер телефона"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите 10 цифр номера телефона без пробелов и разделителей. Например, 9261234567"
+		key="login">
+	</EditTextPreference>
+	<EditTextPreference
+		title="Пароль"
+		key="password"
+		summary="Пароль для входа в личный кабинет||**********\n"
+		obligatory="true"
+		dialogTitle="Пароль"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите пароль, используемый для входа в личный кабинет"
+		inputType="textPassword">
+	</EditTextPreference>
+</PreferenceScreen>

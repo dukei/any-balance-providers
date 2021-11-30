@@ -10,6 +10,8 @@ var g_headers = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
 };
 
+var replaceNumber = [replaceTagsAndSpaces, /\D/g, '', /.*(\d)(\d\d\d)(\d\d\d)(\d\d)(\d\d)$/, '+$1 $2 $3-$4-$5'];
+
 function main(){
     var prefs = AnyBalance.getPreferences();
 	
@@ -56,8 +58,10 @@ function doSevenSky(prefs){
 
     getParam(html, result, 'balance', /<li>\s*Баланс:(?:<[^>]*>){2}([^<]+)/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'days', /<li[^>]*>\s*Дней до блокировки:(?:<[^>]*>){1}([^<]+)/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, '__tariff', /Ваш тарифный план[\s\S]*?<b[^>]*>([\s\S]*?)<\/b>/i, replaceTagsAndSpaces);
-    getParam(html, result, 'licschet', /Лицевой счет №\s*(\d+)/i, replaceTagsAndSpaces);
+    getParam(html, result, '__tariff', /<b[^>]*>Тариф\s«?([\s\S]*?)»?<\/b>/i, replaceTagsAndSpaces);
+    getParam(html, result, 'licschet', /<div[^>]+class="account"[^>]*>\s*?Лицевой счет([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+	getParam(html, result, 'speed', /<span[^>]*>\s*?Скорость (?:\S*)?([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
+	getParam(html, result, 'abon', /<td[^>]+class="price"[^>]*>\s*?([\s\S]*?)<a/i, replaceTagsAndSpaces);
     /*
     if(/lk.seven-sky\.net/.test(url)){	
     } else if(/stat.seven-sky\.net/.test(url)){
@@ -68,6 +72,21 @@ function doSevenSky(prefs){
     	throw new AnyBalance.Error('Кабинет по адресу ' + url + ' не поддерживается. Сайт изменен?');
     }
     */
+	
+	html = AnyBalance.requestGet(baseurl + 'stat.jsp', addHeaders({Referer: baseurl}));
+	
+	var incom = getParam(html, null, null, /(?:Входящий Internet трафик[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalanceSilent);
+	getParam(incom + ' Mb', result, 'incoming', null, replaceTagsAndSpaces, parseTraffic);
+    var outgo = getParam(html, null, null, /(?:Исходящий Internet трафик[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalanceSilent);
+	getParam(outgo + ' Mb', result, 'outgoing', null, replaceTagsAndSpaces, parseTraffic);
+	getParam(html, result, 'onetimeabon', /Разовая абонентская плата(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'ipaddressabon', /Плата за внешний IP-адрес(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'dailyrefundabon', /Ежедневная плата с возвратом(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'monthallabon', /Итого(?:[\s\S]*?<td[^>]*>){1}<strong>([\s\S]*?)<\/strong><\/td>/i, replaceTagsAndSpaces, parseBalance);
+	
+	html = AnyBalance.requestGet(baseurl + 'settings.jsp', addHeaders({Referer: baseurl}));
+	getParam(html, result, 'phone', /Мобильный телефон(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceNumber);
+	getParam(html, result, 'fio', /Ф И О(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
 
     AnyBalance.setResult(result);
 }

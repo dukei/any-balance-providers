@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="11">ab-internet-iskra</id>
+	<id version="12">ab-internet-iskra</id>
 	<name>Seven Sky (Москва)</name>
 	<description html="true"><![CDATA[
 	<p>Получает баланс и информацию о тарифном плане для московского интернет-провайдера Seven Sky http://www.seven-sky.net/ (Бывший ИСКРАТЕЛЕКОМ http://iskratelecom.ru и бывший Горком http://gorcomnet.ru)</p>
@@ -27,6 +27,15 @@
 		<counter id="balance" name="Баланс" units=" р"/>
 		<counter id="days" name="Дней до отключения" units=" д"/>
 		<counter id="licschet" name="Лицевой счет" type="text"/>
+		<counter id="speed" name="Скорость интернета" type="text"/>
+		<counter id="abon" name="Абонентская плата" type="text"/>
+		<counter id="incoming" name="Входящий трафик" units=" Mb"/>
+		<counter id="outgoing" name="Исходящий трафик" units=" Mb"/>
+		<counter id="onetimeabon" name="Разовая абонплата" units=" р"/>
+		<counter id="ipaddressabon" name="Плата за IP-адрес" units=" р"/>
+		<counter id="dailyrefundabon" name="Плата с возвратом" units=" р"/>
+		<counter id="monthallabon" name="Расходы за месяц" units=" р"/>
+		<counter id="phone" name="Номер телефона" type="text"/>
 		<counter id="fio" name="ФИО" type="text"/>
 	</counters>
 	<keywords>интернет севен скай, 7, sky, горком</keywords>

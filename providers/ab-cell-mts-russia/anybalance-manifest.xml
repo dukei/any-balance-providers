@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id major_version="4.1" version="195">ab-cell-mts-russia</id>
+	<id major_version="4.1" version="196">ab-cell-mts-russia</id>
 	<name>МТС (Россия)</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе, бонусных баллах, использованных минутах на локальные, мобильные и любимые номера, расходах, статусе блокировки, кредите, номере лицевого счета, ежемесячной плате.</p>
@@ -12,7 +12,6 @@
 	]]></instruction>
 	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
 	<depends>
-		<module id="extract/abe-cell-mts"/>
 		<module id="nadapter"/>
 	</depends>
 	<files>
@@ -34,6 +33,7 @@
 		<counter id="mms_left" name="Бесплатные ММС" units=" mms"/>
 		<counter id="sms_used" name="Использовано СМС" units=" sms"/>
 		<counter id="traffic_left_mb" name="Остаток трафика" units=" Mb"/>
+		<counter id="cashback" name="Кэшбэк" units=" р"/>
 		<counter id="min_used" name="Минут накоплено (кред.)" units=" мин"/>
 		<counter id="min_love" name="Использовано минут на любимые номера" units=" мин"/>
 		<counter id="min_used_mts" name="Использовано минут на МТС" units=" мин"/>
@@ -49,15 +49,20 @@
 		<counter id="sms_till" name="Срок действия пакета SMS" type="time" format="dd/MM/yyyy"/>
 		<counter id="mms_till" name="Срок действия пакета MMS" type="time" format="dd/MM/yyyy"/>
 		<counter id="traffic_used_mb" name="Истрачено трафика" units=" Mb"/>
+		<counter id="traffic_used_by_acceptors_mb" name="Истрачено трафика участниками" units=" Mb"/>
 		<counter id="last_pay_sum" name="Последний платеж" units=" р"/>
 		<counter id="last_pay_date" name="Дата последнего платежа" type="time" format="dd/MM/yyyy"/>
 		<counter id="statuslock" name="Статус блокировки" type="text"/>
-		<counter id="credit" name="Кредит" units=" р"/>
+		<counter id="credit" name="Кредитный лимит" units=" р"/>
+		<counter id="services" name="Подключенные услуги" units=" шт"/>
+		<counter id="services_free" name="Бесплатные услуги" units=" шт"/>
+		<counter id="services_paid" name="Платные услуги" units=" шт"/>
 		<counter id="usedinthismonth" name="Расход за этот месяц" units=" р"/>
 		<counter id="usedinprevmonth" name="Расход за прошлый месяц" units=" р"/>
 		<counter id="license" name="Лицевой счет" type="text"/>
 		<counter id="monthlypay" name="Ежемесячная плата" units=" р"/>
 		<counter id="phone" name="Номер телефона" type="text"/>
+		<counter id="fio" name="ФИО" type="text"/>
 		<counter id="bonus_balance" name="Остаток бонусного баланса" units=" р"/>
 		<counter id="sms_left_perezvoni" name="СМС Перезвони" units=" sms"/>
 	</counters>

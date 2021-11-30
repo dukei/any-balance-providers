@@ -861,12 +861,39 @@ function callNewLKApiResult(token){
 	throw new AnyBalance.Error('Не удалось получить результат ' + token.verb);
 }
 
-function processCountersLK(result){
-	var token = callNewLKApiToken('sharing/counters');
-	var data = callNewLKApiResult(token);
+function callNewLKApiResultAlt(token){
+	for(var i=0; i<30; ++i){
+		var html = AnyBalance.requestGet('https://lk.mts.ru/api/longtask/check/' + token.token + '?for=' + token.verb, addHeaders({
+			Referer: 'https://lk.mts.ru/',
+			Origin: 'https://lk.mts.ru',
+			'X-Requested-With': 'XMLHttpRequest',
+			Accept: 'application/json, text/plain, */*',
+		}));
+		AnyBalance.trace('Ожидание результата ' + token.verb + ' ' + (i+1) + '/' + 30);
+		if(AnyBalance.getLastStatusCode() >= 400){
+			AnyBalance.trace("Waiting for result error: " + html);
+			throw new AnyBalance.Error(html);
+		}
+		if(!html){
+			AnyBalance.sleep(2000);
+			continue;
+		}
+		
 
+		var json = getJson(html);
+		AnyBalance.trace('Получен результат ' + token.verb);
+		return json;
+	}
+
+	throw new AnyBalance.Error('Не удалось получить результат ' + token.verb);
+}
+
+function processCountersLK(result){
 	if(!result.remainders)
         result.remainders = {};
+	
+	var token = callNewLKApiToken('sharing/counters');
+	var data = callNewLKApiResult(token);
 
 	for(var i=0; i<data.counters.length; ++i){
 		var c = data.counters[i];
@@ -889,11 +916,49 @@ function processCountersLK(result){
 			AnyBalance.trace('Это трафик');
 			getParam(c.deadlineDate, result.remainders, 'remainders.traffic_left_till', null, null, parseDateISO);
 			getParam((c.usedAmount) + c.unitType, result.remainders, 'remainders.traffic_used_mb', null, null, parseTraffic);
+			getParam((c.usedByAcceptors) + c.unitType, result.remainders, 'remainders.traffic_used_by_acceptors_mb', null, null, parseTraffic);
 			getParam((c.totalAmount - c.usedAmount) + c.unitType, result.remainders, 'remainders.traffic_left_mb', null, null, parseTraffic);
 		}else{
 			AnyBalance.trace('Неизвестный счетчик: ' + JSON.stringify(c));
 		}
 	}
+	
+	var token = callNewLKApiToken('cashback/account');
+	var data = callNewLKApiResult(token);
+	
+	getParam(data.balance, result.remainders, 'remainders.cashback');
+	
+	var token = callNewLKApiToken('services/list/active');
+	var data = callNewLKApiResult(token);
+	var status = {
+		Unblocked: 'Разблокировано',
+		Blocked: 'Заблокировано'
+	};
+	getParam(status[data.accountBlockStatus]||data.accountBlockStatus, result.remainders, 'remainders.statuslock');
+	getParam(data.services.length, result.remainders, 'remainders.services');
+	getParam(0, result.remainders, 'remainders.services_free');
+	getParam(0, result.remainders, 'remainders.services_paid');
+	for(var i=0; i<data.services.length; ++i){
+		var c = data.services[i];
+		AnyBalance.trace('Найдена услуга ' + c.name);
+
+		if(c.isSubscriptionFee === false){
+			AnyBalance.trace('Это бесплатная услуга');
+            countFree = 1;
+			sumParam(countFree, result.remainders, 'remainders.services_free', null, null, parseBalanceSilent, aggregate_sum);
+		}else if(c.isSubscriptionFee === true){
+			AnyBalance.trace('Это платная услуга');
+			countPaid = 1;
+			sumParam(countPaid, result.remainders, 'remainders.services_paid', null, null, parseBalanceSilent, aggregate_sum);
+		}else{
+			AnyBalance.trace('Неизвестный тип услуги: ' + JSON.stringify(c));
+		}
+	}
+	
+	var token = callNewLKApiToken('creditLimit');
+	var data = callNewLKApiResultAlt(token);
+	
+	getParam(data.currentCreditLimitValue, result.remainders, 'remainders.credit');
 }
 
 function mainLK(html, result) {

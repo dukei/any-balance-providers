@@ -1,21 +1,19 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="24">ab-money-avangard</id>
+	<id version="26">ab-money-avangard</id>
 	<api flags="no_browser"/>
 	<name>Банк Авангард</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о текущем остатке и других параметрах карт и счетов для пользователей банка "Авангард".</p>
-	<p>Информация берется из системы Интернет-банк (https://www.avangard.ru/login/www/ibank_enter.php).</p>
+	<p>Информация берется из системы Интернет-банк (https://ib.avangard.ru/login/www/ibank_enter.php).</p>
 	<p><b>Особенности:</b></p>
 	<p>Когда происходит вход в Интернет-банк, банк присылает SMS на ваш телефон. Так как для получения счетчиков этот провайдер входит в Интернет-банк, вы будете получать SMS каждый раз, когда провайдер делает запрос счетчиков.</p>   	
 	]]></description>
 	<instruction html="true"><![CDATA[
 	<p>Для входа в Интернет-банк потребуется логин и пароль:</p>
 	<ul> 
-	<li>Получить логин и пароль вы можете на странице https://www.avangard.ru/login/www/ibank_enter.php?fl=1.</li>
-	</ul> 
-	<p><b>Особенности:</b></p>
-	<p>Когда происходит вход в Интернет-банк, банк присылает SMS на ваш телефон. Так как для получения счетчиков этот провайдер входит в Интернет-банк, вы будете получать SMS каждый раз, когда провайдер делает запрос счетчиков.</p>   
+	<li>Получить логин и пароль вы можете на странице https://ib.avangard.ru/login/www/ibank_enter.php?fl=1.</li>
+	</ul>
 	]]></instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>
@@ -29,24 +27,33 @@
 	</files>
 	<counters>
 		<counter id="balance" name="Остаток" units=" {@currency}"/>
-		<counter id="minpay" name="Мин.платеж" units=" {@currency}"/>
-		<counter id="minpaydate" name="Дата мин.платежа" type="time" format="dd/MM/yyyy"/>
-		<counter id="freepay" name="Платеж льготного периода"/>
-		<counter id="freepaydate" name="Дата платежа льготного периода" type="time" format="dd/MM/yyyy"/>
+		<counter id="balance_month" name="Получено за месяц" units=" {@currency}"/>
+    	<counter id="minpay" name="Мин. платеж" units=" {@currency}"/>
+		<counter id="minpaydate" name="Дата мин. платежа" type="time" format="dd.MM.yyyy"/>
+		<counter id="freepay" name="Платеж льготного периода" units=" {@currency}"/>
+		<counter id="freepaydate" name="Дата платежа льготного периода" type="time" format="dd.MM.yyyy"/>
 		<counter id="debt" name="Задолженность" units=" {@currency}"/>
-		<counter id="miles" name="Бонусные мили" units=" миль"/>
+		<counter id="reporteddebt" name="Отчетная сумма задолженности" units=" {@currency}"/>
 		<counter id="limit" name="Кредитный лимит" units=" {@currency}"/>
+		<counter id="currrate" name="Текущая ставка" type="text"/>
+		<counter id="nextrate" name="Ставка след. месяца" type="text"/>
+		<counter id="overdebt" name="Задолженность по овердрафту" units=" {@currency}"/>
+		<counter id="outinterest" name="Не погашенные проценты" units=" {@currency}"/>
+		<counter id="outcommissions" name="Не погашенные комиссии" units=" {@currency}"/>
 		<counter id="cardname" name="Имя на карте" type="text"/>
+		<counter id="cardstart" name="Дата открытия" type="text"/>
 		<counter id="cardtill" name="Срок действия" type="text"/>
 		<counter id="accnum" name="Номер счета" type="text"/>
 		<counter id="accname" name="Имя счета" type="text"/>
 		<counter id="cardtype" name="Тип" type="text"/>
 		<counter id="cardstatus" name="Статус" type="text"/>
+		<counter id="miles" name="Бонусные мили" units=" миль"/>
 		<counter id="miles_avail" name="Доступные мили" units=" миль"/>
 		<counter id="miles_due" name="Ожидаемые мили" units=" миль"/>
-		<counter id="currency" name="Валюта" type="text"/>
+		<counter id="currency_full" name="Валюта" type="text"/>
+		<counter id="fio" name="ФИО" type="text"/>
 	</counters>
 	<keywords></keywords>
-	<type>money, bank</type>
+	<type>money, bank, avangard</type>
 	<country>ru</country>
 </provider>

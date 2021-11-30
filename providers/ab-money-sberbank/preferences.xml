@@ -10,7 +10,7 @@
 		obligatory="true"
 		key="login">
 	</EditTextPreference>
-<!--	<EditTextPreference
+	<EditTextPreference
 		positiveButtonText="ОК"
 		key="password"
 		dialogTitle="Пароль"
@@ -28,7 +28,7 @@
 		entries="Сайт|API Мобильного приложения"
 		entryValues="site|app"
 		defaultValue="site">
-	</ListPreference> -->	
+	</ListPreference>
 	<EditTextPreference
 		positiveButtonText="ОК"
 		key="pin"

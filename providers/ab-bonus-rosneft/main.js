@@ -76,16 +76,25 @@ function main() {
         if (!/no-report/i.test(html)) {
 		    var row = getElement(html, /<div[^>]+block-statement__content/i);
 		    row = row && getElement(row, /<div[^>]+block-table__body/i);
-		    row = row && getElement(row, /<div[^>]+block-table__row/i);
-		    getParam(row, result, 'last_date', /(?:[\s\S]*?<div[^>]*>){2}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseDate);
-		    getParam(row, result, 'last_place', /(?:[\s\S]*?<div[^>]*>){4}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
-		    getParam(row, result, 'last_sum', /(?:[\s\S]*?<div[^>]*>){5}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
-		    getParam(row, result, 'last_status', /(?:[\s\S]*?<div[^>]*>){7}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
-		    getParam(row, result, 'last_bonus', /(?:[\s\S]*?<div[^>]*>){6}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+		    rows = row && getElements(row, /<div[^>]+block-table__row/ig);
+            last = rows[rows.length - 1];
+		    getParam(last, result, 'last_date', /(?:[\s\S]*?<div[^>]*>){2}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseDate);
+			getParam(last, result, 'last_card', /(?:[\s\S]*?<div[^>]*>){3}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+		    getParam(last, result, 'last_place', /(?:[\s\S]*?<div[^>]*>){4}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+		    getParam(last, result, 'last_sum', /(?:[\s\S]*?<div[^>]*>){5}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+			getParam(last, result, 'last_bonus', /(?:[\s\S]*?<div[^>]*>){6}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+		    getParam(last, result, 'last_status', /(?:[\s\S]*?<div[^>]*>){7}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
 		} else {
 			var error = getParam(html, /<div class="no-report">([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
 			AnyBalance.trace(error);
 		}
+	}
+	
+	if(AnyBalance.isAvailable('stat_azs', 'stat_partner')){
+		var row = getElement(html, /<div[^>]+block-stat__legend/i);
+		row = row && getElement(row, /<div[^>]+block-stat__content/i);
+		getParam(row, result, 'stat_azs', /(?:[\s\S]*?<span[^>]*>){1}([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+		getParam(row, result, 'stat_partner', /(?:[\s\S]*?<span[^>]*>){2}([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
 	}
 	
 	if(AnyBalance.isAvailable('fio', 'phone', 'vehicle', 'tire_size', 'fuel_type')){

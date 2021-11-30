@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="15">ab-bonus-rosneft</id>
+	<id version="16">ab-bonus-rosneft</id>
 	<api flags="no_browser"/>
 	<name>Семейная команда (Бонусы)</name>
 	<description html="true"><![CDATA[
@@ -30,11 +30,14 @@
 		<counter id="vehicle" name="Марка машины" type="text"/>
 		<counter id="tire_size" name="Размер шин" type="text"/>
 		<counter id="fuel_type" name="Тип топлива" type="text"/>
-		<counter id="last_date" name="Дата последней операции" type="time"/>
+		<counter id="last_date" name="Дата последней операции" type="time" format="dd.MM.yyyy"/>
+		<counter id="last_card" name="Карта последней операции" type="text"/>
 		<counter id="last_place" name="Место последней операции" type="text"/>
 		<counter id="last_sum" name="Сумма последней операции" units=" ₽"/>
 		<counter id="last_bonus" name="Бонус последней операции" units=" Б"/>
 		<counter id="last_status" name="Статус последней операции" type="text"/>
+		<counter id="stat_azs" name="Начислено через АЗС" units=" Б"/>
+		<counter id="stat_partner" name="Начислено через партнеров" units=" Б"/>
 		<counter id="phone" name="Номер телефона" type="text"/>
 		<counter id="fio" name="ФИО владельца" type="text"/>
 	</counters>

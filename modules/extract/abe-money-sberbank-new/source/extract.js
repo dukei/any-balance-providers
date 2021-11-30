@@ -43,85 +43,85 @@ function login(prefs) {
         AnyBalance.trace("Уже залогинены, используем текущую сессию");
         return html;
     }
-
-    if(/bobcmn/i.test(html)){
+    
+//	if(/bobcmn/i.test(html)){
     	//К сожалению, пока обход защиты не работает
-		throw new AnyBalance.Error('Вход через сайт заблокирован Сбербанком. Пожалуйста, настройте провайдер для входа через API мобильного приложения.')
-    	AnyBalance.trace('Обнаружена защита от роботов. Обходим.');
-    	clearAllCookies();
+//		throw new AnyBalance.Error('Вход через сайт заблокирован Сбербанком. Пожалуйста, настройте провайдер для входа через API мобильного приложения.')
+//    	AnyBalance.trace('Обнаружена защита от роботов. Обходим.');
+//    	clearAllCookies();
 
-    	const bapi = new BrowserAPI({
-			userAgent: g_headers['User-Agent'],
-			rules: [
-				{
-					url: /^https?:\/\/online\.sberbank\.ru/.toString(),
-					not: true,
-					action: 'abort',
-				},{
-					resType: /^(image|stylesheet|font)$/.toString(),
-					action: 'abort',
-				},{
-					resType: /^(script)$/.toString(),
-					action: 'continue',
-				},{
-					url: /^https?:\/\/online\.sberbank\.ru/.toString(),
-					action: 'request',
-				}
-			],
-			additionalRequestHeaders: [
-				{
-					url: /CSAFront/,
-					maxCount: 1,
-					headers: {
-						'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3',
-						'Accept-Language': 'en-US,en;q=0.9',
-						'Sec-Fetch-Dest': 'document',
-						'Sec-Fetch-Site': 'none',
-						'Sec-Fetch-Mode': 'navigate',
-						'Sec-Fetch-User': '?1'
-					}
-				},
-				{
-					url: /CSAFront/,
-					headers: {
-						'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3',
-						'Accept-Language': 'en-US,en;q=0.9',
-						'Cache-Control': 'max-age=0',
-						'Sec-Fetch-Site': 'same-origin',
-						'Sec-Fetch-Mode': 'navigate'
-					}
-				},
-				{
-					headers: {
-						'Accept': '*/*',
-						'Origin': 'https://online.sberbank.ru',
-						'Sec-Fetch-Site': 'same-origin',
-						'Sec-Fetch-Mode': 'cors',
-						'Sec-Fetch-Dest': 'empty'
-					}
-				}
-			]
-		});
+//    	const bapi = new BrowserAPI({
+//			userAgent: g_headers['User-Agent'],
+//			rules: [
+//				{
+//					url: /^https?:\/\/online\.sberbank\.ru/.toString(),
+//					not: true,
+//					action: 'abort',
+//				},{
+//					resType: /^(image|stylesheet|font)$/.toString(),
+//					action: 'abort',
+//				},{
+//					resType: /^(script)$/.toString(),
+//					action: 'continue',
+//				},{
+//					url: /^https?:\/\/online\.sberbank\.ru/.toString(),
+//					action: 'request',
+//				}
+//			],
+//			additionalRequestHeaders: [
+//				{
+//					url: /CSAFront/,
+//					maxCount: 1,
+//					headers: {
+//						'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3',
+//						'Accept-Language': 'en-US,en;q=0.9',
+//						'Sec-Fetch-Dest': 'document',
+//						'Sec-Fetch-Site': 'none',
+//						'Sec-Fetch-Mode': 'navigate',
+//						'Sec-Fetch-User': '?1'
+//					}
+//				},
+//				{
+//					url: /CSAFront/,
+//					headers: {
+//						'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3',
+//						'Accept-Language': 'en-US,en;q=0.9',
+//						'Cache-Control': 'max-age=0',
+//						'Sec-Fetch-Site': 'same-origin',
+//						'Sec-Fetch-Mode': 'navigate'
+//					}
+//				},
+//				{
+//					headers: {
+//						'Accept': '*/*',
+//						'Origin': 'https://online.sberbank.ru',
+//						'Sec-Fetch-Site': 'same-origin',
+//						'Sec-Fetch-Mode': 'cors',
+//						'Sec-Fetch-Dest': 'empty'
+//					}
+//				}
+//			]
+//		});
 
-    	const {page} = bapi.open(baseurl1);
-    	try {
-			bapi.waitForLoad(page);
-			const {cookies} = bapi.cookies(page, baseurl1);
-			BrowserAPI.useCookies(cookies);
-		}finally {
-			bapi.close(page);
-		}
+//    	const {page} = bapi.open(baseurl1);
+//    	try {
+//			bapi.waitForLoad(page);
+//			const {cookies} = bapi.cookies(page, baseurl1);
+//			BrowserAPI.useCookies(cookies);
+//		}finally {
+//			bapi.close(page);
+//		}
 
-	}
-
+//	}
+	
 	//Сбер разрешает русские логины и кодирует их почему-то в 1251, хотя в контент-тайп передаёт utf-8.
 	AnyBalance.setDefaultCharset('windows-1251');
 
-	html = AnyBalance.requestPost(baseurl, {
+	html = AnyBalance.requestPost('https://online.sberbank.ru/CSAFront/login.do', {
 		'field(login)': prefs.login,
 		'field(password)': prefs.password.substr(0, 30), //Максимальная длина - 30 символов
 		operation: 'button.begin'
-	}, addHeaders({Referer: baseurl, 'X-Requested-With': 'XMLHttpRequest', Origin: 'https://online.sberbank.ru'}));
+	}, addHeaders({Referer: 'https://online.sberbank.ru/CSAFront/login.do', 'X-Requested-With': 'XMLHttpRequest', Origin: 'https://online.sberbank.ru'}));
 	AnyBalance.setDefaultCharset('utf-8');
 	var error = getParam(html, null, null, /<h1[^>]*>О временной недоступности услуги[\s\S]*?<p[^>]*>([\s\S]*?)<\/p>/i, replaceTagsAndSpaces);
 	if (error)
@@ -328,27 +328,28 @@ function parseAllow(str){
 
 function processAccount(html, result, pageToken){
     AnyBalance.trace('Обработка счета ' + result.__name);
-
+    
     var isTarget = /thermometertargetTemplate/i.test(html);
 
     if(!isTarget){
 		getParam(html, result, 'accounts.balance', /overallAmount\b[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
-		getParam(html, result, 'accounts.pct', /descriptionRight[^>]*>\s*([\d.,]+%)/i, replaceTagsAndSpaces, parseBalance);
-		getParam(html, result, ['accounts.currency', 'accounts.balance'], /overallAmount\b[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseCurrency);
-		getParam(html, result, 'accounts.till', /<[^>]*class="(?:product|account)Number\b[^"]*">[^<]+,\s+действует (?:до|по)([^<]+)/i, replaceTagsAndSpaces, parseDateWord);
+		getParam(html, result, 'accounts.pct', /ставка:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+		getParam(html, result, ['accounts.currency', 'accounts.balance'], /overallAmount\b[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, myParseCurrency);
+		getParam(html, result, 'accounts.till', /Дата окончания срока действия:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
 	}else{
 		//Целевой
 		getParam(html, result, 'accounts.balance', /dribbleCenter\b[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
-		getParam(html, result, 'accounts.pct', /ставка:\s*([\d.,]+%)/i, replaceTagsAndSpaces, parseBalance);
-		getParam(html, result, ['accounts.currency', 'accounts.balance'], /dribbleCenter\b[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseCurrency);
+		getParam(html, result, 'accounts.pct', /ставка:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+		getParam(html, result, ['accounts.currency', 'accounts.balance'], /dribbleCenter\b[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, myParseCurrency);
 		getParam(html, result, 'accounts.till', /Дата покупки\s*<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseDate);
 	}
 
 	if(AnyBalance.isAvailable('accounts.num', 'accounts.period', 'accounts.balance_min', 'accounts.pct_conditions', 'accounts.status', 'accounts.prolong', 'accounts.withdraw', 'accounts.topup')){
 		var info = AnyBalance.requestGet(nodeUrl + '/PhizIC/private/accounts/info.do?id=' + result.__id, g_headers);
 	    
-		getParam(info, result, 'accounts.num', /Номер счета[^<]*:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
-		getParam(info, result, 'accounts.period', /Срок вклада:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+		getParam(html, result, 'accounts.cardName', /<span[^>]+class="mainProductTitle\s?mainProductDetailTitle\s?">([\s\S]*?)<\/span>/, replaceTagsAndSpaces);
+		getParam(info, result, 'accounts.num', /Номер сч[е|ё]та[^<]*:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+		getParam(info, result, 'accounts.period', /Срок вклада:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, capitalFirstLetters);
 		getParam(info, result, 'accounts.balance_min', /Сумма неснижаемого остатка:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 		getParam(info, result, 'accounts.pct_conditions', /Порядок уплаты процентов:[\s\S]*?<td[^>]*>([\s\S]*?)(?:<\/td>|<script)/i, replaceTagsAndSpaces);
 		getParam(info, result, 'accounts.status', /Текущее состояние:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
@@ -393,22 +394,24 @@ function processCard(html, result){
     AnyBalance.trace('Обработка карты ' + result.__name);
 	
 	getParam(html, result, 'cards.balance', /productAmount\b[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, ['cards.currency', 'cards.balance', 'cards.cash', 'cards.electrocash', 'cards.debt', 'cards.maxlimit'], /overallAmount\b[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseCurrency);
+	getParam(html, result, ['cards.currency', 'cards.balance', 'cards.cash', 'cards.electrocash', 'cards.debt', 'cards.maxlimit'], /overallAmount\b[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, myParseCurrency);
 	getParam(html, result, 'cards.cardNumber', /<[^>]*class="accountNumber\b[^"]*">([^<,]+)/i, replaceTagsAndSpaces);
-	getParam(html, result, 'cards.till', /<[^>]*class="accountNumber\b[^"]*">[^<]+,\s+действует (?:до|по)([^<]+)/i, replaceTagsAndSpaces, parseDateWord);
+	getParam(html, result, 'cards.till', /<[^>]*class="accountNumber\b[^"]*">[^<]+,\s+действует (?:до|по)([^<]+)/i, replaceTagsAndSpaces, parseDate);
     getParam(html, result, 'cards.accnum', /<[^>]*class="accountNumber\b[^"]*">([^<,]+)/i, replaceTagsAndSpaces);
-    getParam(html, result, 'cards.status', /<[^>]*class="detailStatus\b[^"]*">([^<]+)/i, replaceTagsAndSpaces);
+    getParam(html, result, 'cards.status', /Состояние сч[е|ё]та[\s\S]*?<nobr[^>]*>([\s\S]*?)<\/nobr>/i, replaceTagsAndSpaces);
     getParam(html, result, 'cards.is_blocked', /Blocked.jpg/i, null, function(str) { return !!str});
 
 	if (AnyBalance.isAvailable('cards.userName', 'cards.own', 'cards.cash', 'cards.electrocash', 'cards.minpay', 'cards.minpay_till', 'cards.limit', 'cards.debt', 'cards.debt_date')) {
 		html = AnyBalance.requestGet(nodeUrl + '/PhizIC/private/cards/detail.do?id=' + _id);
+		
+		getParam(html, result, 'cards.cardName', /<span[^>]+class="mainProductTitle\s?mainProductDetailTitle\s?">([\s\S]*?)<\/span>/, replaceTagsAndSpaces);
 		getParam(html, result, 'cards.userName', /Держатель карты[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/, replaceTagsAndSpaces, capitalFirstLetters);
-        getParam(html, result, 'cards.accnum', /Номер счета карты[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/, replaceTagsAndSpaces);
+        getParam(html, result, 'cards.accnum', /Номер сч[е|ё]та карты[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/, replaceTagsAndSpaces);
 		getParam(html, result, 'cards.cash', /Для снятия наличных[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 		getParam(html, result, 'cards.electrocash', /для покупок\s*(?::|и платежей)[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 		getParam(html, result, 'cards.minpay', /Обязательный платеж[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 		getParam(html, result, 'cards.minpay_till', /Обязательный платеж, внесите до([^<]*)/, replaceTagsAndSpaces, parseDateWord);
-		getParam(html, result, 'cards.limit', /Кредитный лимит[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+		getParam(html, result, 'cards.limit', /Кредитный лимит[\s\S]*?<nobr[^>]*>([\s\S]*?)<\/nobr>/i, replaceTagsAndSpaces, parseBalance);
         getParam(html, result, 'cards.own', /Собственные средства[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 
 		getParam(html, result, 'cards.debt', /(?:Общая задолженность|Задолженность\s*<br[^>]*>\s*на сегодня)[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
@@ -470,7 +473,7 @@ function processLoan(html, result){
     AnyBalance.trace('Обработка кредита ' + result.__name);
 	
 	getParam(html, result, 'credits.balance', /Осталось (?:погасить|оплатить)[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, ['credits.currency', 'credits.balance', 'credits.limit', 'credits.minpay'], /Осталось (?:погасить|оплатить)[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseCurrency);
+	getParam(html, result, ['credits.currency', 'credits.balance', 'credits.limit', 'credits.minpay'], /Осталось (?:погасить|оплатить)[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, myParseCurrency);
 	getParam(html, result, 'credits.minpay_till', /<td[^>]+field[^>]*>\s*Плат[ёе]ж([^<]*)/i, replaceTagsAndSpaces, parseDateWord);
 	getParam(html, result, 'credits.minpay', /<td[^>]+field[^>]*>\s*Плат[ёе]ж[\s\S]*?<td[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'credits.limit', /(?:Сумма кредита|Первоначальная сумма)[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
@@ -516,7 +519,7 @@ function processMetalAccount(html, result){
 	getParam(html, result, 'accounts_met.weight', /"overallAmount"([^>]*>){2}/i, replaceTagsAndSpaces, parseBalance);
 	getParam('г.', result, ['accounts_met.weight_units', 'accounts_met.weight']);
     getParam(html, result, 'accounts_met.balance', /По курсу покупки Банка:([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(html, result, ['accounts_met.currency', 'accounts_met.balance'], /По курсу покупки Банка:([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseCurrency);
+    getParam(html, result, ['accounts_met.currency', 'accounts_met.balance'], /По курсу покупки Банка:([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, myParseCurrency);
     getParam(html, result, 'accounts_met.date_start', /Открыт:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDateWord);
 
     if(AnyBalance.isAvailable('accounts_met.transactions')){
@@ -671,7 +674,7 @@ function processCardLast10Transactions(result) {
     	var o = {};
 
 		getParam(ops[i], o, 'cards.transactions10.sum', /(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalanceSilent);
-		getParam(ops[i], o, 'cards.transactions10.currency', /(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseCurrencySilent);
+		getParam(ops[i], o, 'cards.transactions10.currency', /(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, myParseCurrency);
 		getParam(ops[i], o, 'cards.transactions10.descr', /(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
     	getParam(ops[i], o, 'cards.transactions10.date', /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseSmallDateSilent);
 

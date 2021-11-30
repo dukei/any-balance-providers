@@ -314,12 +314,33 @@ function processCardAPI(xml, result) {
 
     var avail = getElement(xml, /<availableLimit>/i);
     getParam(avail, result, 'cards.balance', /<amount>([\s\S]*?)<\/amount>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(avail, result, ['cards.currency', 'cards.balance'], /<currency>\s*<code>([\s\S]*?)<\/code>/i, replaceTagsAndSpaces);
+    getParam(avail, result, ['cards.currency', 'cards.balance'], /<currency>\s*<code>([\s\S]*?)<\/code>/i, replaceTagsAndSpaces, myParseCurrency);
     getParam(xml, result, 'cards.status', /<state>([\s\S]*?)<\/state>/i, replaceTagsAndSpaces);
     getParam(xml, result, 'cards.type', /<type>([\s\S]*?)<\/type>/i, replaceTagsAndSpaces);
 
     xml = requestApi('private/cards/info.do', {id: result.__id});
-    getParam(xml, result, 'cards.cardName', /<holderName>([\s\S]*?)<\/holderName>/i, replaceTagsAndSpaces);
+    getParam(xml, result, 'cards.userName', /<holderName>([\s\S]*?)<\/holderName>/i, replaceTagsAndSpaces, capitalFirstLetters);
+	
+	avail = getElement(xml, /<limit>/i);
+    getParam(avail, result, 'cards.limit', /<amount>-?([\s\S]*?)<\/amount>/i, replaceTagsAndSpaces, parseBalance);
+	
+	avail = getElement(xml, /<ownSum>/i);
+    getParam(avail, result, 'cards.own', /<amount>-?([\s\S]*?)<\/amount>/i, replaceTagsAndSpaces, parseBalance);
+	
+	avail = getElement(xml, /<minPayment>/i);
+    getParam(avail, result, 'cards.minpay', /<amount>-?([\s\S]*?)<\/amount>/i, replaceTagsAndSpaces, parseBalance);
+
+	getParam(xml, result, 'cards.minpay_till', /<minPaymentDate>([\s\S]*?)<\/minPaymentDate>/i, replaceTagsAndSpaces, parseDate);
+	
+	avail = getElement(xml, /<TotalOnReport>/i);
+    getParam(avail, result, 'cards.gracepay', /<amount>-?([\s\S]*?)<\/amount>/i, replaceTagsAndSpaces, parseBalance);
+	
+	getParam(xml, result, 'cards.gracepay_till', /<minPaymentDate>([\s\S]*?)<\/minPaymentDate>/i, replaceTagsAndSpaces, parseDate);
+	
+	avail = getElement(xml, /<Debt>/i);
+    getParam(avail, result, 'cards.debt', /<amount>-?([\s\S]*?)<\/amount>/i, replaceTagsAndSpaces, parseBalance);
+	
+	getParam(xml, result, 'cards.debt_date', /<LastBillingDate>([\s\S]*?)<\/LastBillingDate>/i, replaceTagsAndSpaces, parseDate);
 
     avail = getElement(xml, /<availableCashLimit>/i);
     getParam(avail, result, 'cards.cash', /<amount>([\s\S]*?)<\/amount>/i, replaceTagsAndSpaces, parseBalance);
@@ -328,7 +349,9 @@ function processCardAPI(xml, result) {
     getParam(avail, result, 'cards.electrocash', /<amount>([\s\S]*?)<\/amount>/i, replaceTagsAndSpaces, parseBalance);
 
     getParam(xml, result, 'cards.accnum', /<accountNumber>([\s\S]*?)<\/accountNumber>/i, replaceTagsAndSpaces);
-
+	getParam(xml, result, 'cards.till', /<expireDate>([\s\S]*?)<\/expireDate>/i, replaceTagsAndSpaces, parseDate);
+	getParam(xml, result, 'cards.cardName', /<accountNumber>[\s\S]*?<name>([\s\S]*?)<\/name>/i, replaceTagsAndSpaces);
+	
     if(AnyBalance.isAvailable('cards.transactions10')) {
         processCardAPITransactions(result);
     }
@@ -340,17 +363,17 @@ function processCardAPITransactions(result) {
         var elements = getElements(xml, /<operation>/ig);
         AnyBalance.trace('Найдено ' + elements.length + ' последних транзакций');
 
-        result.transactions = [];
+        result.transactions10 = [];
 
         for (var i = 0; i < elements.length; i++) {
             var elem = elements[i];
             var t = {};
             getParam(elem, t, 'cards.transactions10.date', /<date>([\s\S]*?)<\/date>/i, replaceTagsAndSpaces, parseDate);
             getParam(elem, t, 'cards.transactions10.sum', /<amount>([\s\S]*?)<\/amount>/i, replaceTagsAndSpaces, parseBalance);
-            getParam(elem, t, ['cards.transactions10.currency', 'cards.transactions10.sum'], /<currency>\s*<code>([\s\S]*?)<\/code>/i, replaceTagsAndSpaces);
+            getParam(elem, t, ['cards.transactions10.currency', 'cards.transactions10.sum'], /<currency>\s*<code>([\s\S]*?)<\/code>/i, replaceTagsAndSpaces, myParseCurrency);
             getParam(elem, t, 'cards.transactions10.descr', /<description>\s*(?:<!\[CDATA\[)?([\s\S]*?)(?:\]\]>)?\s*<\/description>/i, replaceTagsAndSpaces);
 
-            result.transactions.push(t);
+            result.transactions10.push(t);
         }
     }catch(e){
         AnyBalance.trace('Не удалось получить транзакции для карты ' + result.__name + ': ' + e.message);
@@ -398,20 +421,20 @@ function parseBoolAPI(str) {
 
 function processAccountAPI(xml, result) {
     AnyBalance.trace('Обрабатываем счет ' + result.__name);
-
     var avail = getElement(xml, /<balance>/i);
     getParam(avail, result, 'accounts.balance', /<amount>([\s\S]*?)<\/amount>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(avail, result, ['accounts.currency', 'accounts.balance'], /<currency>\s*<code>([\s\S]*?)<\/code>/i, replaceTagsAndSpaces);
-    getParam(xml, result, 'accounts.rate', /<rate>([\s\S]*?)<\/rate>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(avail, result, ['accounts.currency', 'accounts.balance'], /<currency>\s*<code>([\s\S]*?)<\/code>/i, replaceTagsAndSpaces, myParseCurrency);
+    getParam(xml, result, 'accounts.pct', /<rate>([\s\S]*?)<\/rate>/i, replaceTagsAndSpaces, parseBalance);
     getParam(xml, result, 'accounts.till', /<closeDate>([\s\S]*?)<\/closeDate>/i, replaceTagsAndSpaces, parseDate);
     getParam(xml, result, 'accounts.status', /<state>([\s\S]*?)<\/state>/i, replaceTagsAndSpaces);
+	getParam(xml, result, 'accounts.cardName', /<account>[\s\S]*?<name>([\s\S]*?)<\/name>/i, replaceTagsAndSpaces);
 
     xml = requestApi('private/accounts/info.do', {id: result.__id});
     getParam(xml, result, 'accounts.period', /<period>([\s\S]*?)<\/period>/i, replaceTagsAndSpaces);
     getParam(xml, result, 'accounts.balance_min', /<irreducibleAmt>([\s\S]*?)<\/irreducibleAmt>/i, replaceTagsAndSpaces, parseBalance);
     getParam(xml, result, 'accounts.prolong', /<prolongation>([\s\S]*?)<\/prolongation>/i, replaceTagsAndSpaces, parseBoolAPI);
 
-    if(AnyBalance.isAvailable('accounts.transactions')) {
+    if(AnyBalance.isAvailable('accounts.transactions10')) {
         processAccountAPITransactions(result);
     }
 }
@@ -431,17 +454,17 @@ function processAccountAPITransactions(result) {
         var elements = getElements(xml, /<operation>/ig);
         AnyBalance.trace('Найдено ' + elements.length + ' последних транзакций');
 
-        result.transactions = [];
+        result.transactions10 = [];
 
         for (var i = 0; i < elements.length; i++) {
             var elem = elements[i];
             var t = {};
             getParam(elem, t, 'accounts.transactions10.date', /<date>([\s\S]*?)<\/date>/i, replaceTagsAndSpaces, parseDate);
             getParam(elem, t, 'accounts.transactions10.sum', /<amount>([\s\S]*?)<\/amount>/i, replaceTagsAndSpaces, parseBalance);
-            getParam(elem, t, ['accounts.transactions10.currency', 'accounts.transactions10.sum'], /<currency>\s*<code>([\s\S]*?)<\/code>/i, replaceTagsAndSpaces);
+            getParam(elem, t, ['accounts.transactions10.currency', 'accounts.transactions10.sum'], /<currency>\s*<code>([\s\S]*?)<\/code>/i, replaceTagsAndSpaces, myParseCurrency);
             getParam(elem, t, 'accounts.transactions10.descr', /<description>\s*(?:<!\[CDATA\[)?([\s\S]*?)(?:\]\]>)?\s*<\/description>/i, replaceTagsAndSpaces);
 
-            result.transactions.push(t);
+            result.transactions10.push(t);
         }
     }catch(e){
         AnyBalance.trace('Не удалось получить транзакции для счета ' + result.__name + ': ' + e.message);
@@ -454,9 +477,9 @@ function processInfoAPI(result) {
 
         var xml = requestApi('private/profile/info.do');
         var joinSpaces = create_aggregate_join(' ');
-        sumParam(xml, info, 'info.fio', /<firstName>([\s\S]*?)<\/firstName>/i, replaceTagsAndSpaces, null, joinSpaces);
-        sumParam(xml, info, 'info.fio', /<patrName>([\s\S]*?)<\/patrName>/i, replaceTagsAndSpaces, null, joinSpaces);
-        sumParam(xml, info, 'info.fio', /<surName>([\s\S]*?)<\/surName>/i, replaceTagsAndSpaces, null, joinSpaces);
+        sumParam(xml, info, 'info.fio', /<firstName>([\s\S]*?)<\/firstName>/i, replaceTagsAndSpaces, capitalFirstLetters, joinSpaces);
+        sumParam(xml, info, 'info.fio', /<patrName>([\s\S]*?)<\/patrName>/i, replaceTagsAndSpaces, capitalFirstLetters, joinSpaces);
+        sumParam(xml, info, 'info.fio', /<surName>([\s\S]*?)<\/surName>/i, replaceTagsAndSpaces, capitalFirstLetters, joinSpaces);
 
         getParam(xml, info, 'info.phone', /<mobilePhone>([\s\S]*?)<\/mobilePhone>/i, replaceTagsAndSpaces);
         getParam(xml, info, 'info.email', /<email>([\s\S]*?)<\/email>/i, replaceTagsAndSpaces);
@@ -495,7 +518,7 @@ function processThanksAPI(result){
 		var url = getParam(html, null, null, /<url>([^<]{10,})/i, replaceTagsAndSpaces);
 		if(url) {
 			html = AnyBalance.requestGet(url);
-			getParam(getElement(html, /<[^>]+balance-banner/i), result, 'spasibo', null, replaceTagsAndSpaces, parseBalance);
+			getParam(html, result, 'spasibo', /balance:([\d+\.\d+]*?)\,/i, replaceTagsAndSpaces, parseBalance);
 		} else {
 			AnyBalance.trace("Не удалось найти ссылку на программу спасибо, сайт изменен?");
 		}

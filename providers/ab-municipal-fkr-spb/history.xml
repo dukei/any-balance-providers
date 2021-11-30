@@ -1,9 +1,18 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="5" date="2021-11-30">
+	- Новая библиотека
+	</change>
+    <change version="4" date="2021-11-26">
+	- Добавлена возможность выбора квартиры для просмотра
+	</change>
+    <change version="3" date="2021-11-25">
+	- Поддержка изменений на сайте
+	</change>
 	<change version="2" date="2015-11-20">
 	- Исправлены ошибки, мешающие получения информации
 	</change>
 	<change version="1" date="2015-11-17">
-	Первая версия провайдера
+	- Первая версия провайдера
 	</change>
 </history>

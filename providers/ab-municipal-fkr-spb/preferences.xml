@@ -3,7 +3,7 @@
 	<EditTextPreference
 		title="Логин"
 		key="login"
-		summary="||{@s}"
+		summary="Логин для входа в личный кабинет||{@s}\n"
 		obligatory="true"
 		dialogTitle="Логин"
 		positiveButtonText="ОК"
@@ -13,12 +13,30 @@
 	<EditTextPreference
 		title="Пароль"
 		key="password"
-		summary="||***********"
+		summary="Пароль для входа в личный кабинет||***********\n"
 		obligatory="true"
 		dialogTitle="Пароль"
 		positiveButtonText="ОК"
 		negativeButtonText="Отмена"
 		dialogMessage="Введите пароль, используемый для входа в личный кабинет."
 		inputType="textPassword">
+	</EditTextPreference>
+	<EditTextPreference
+		title="Номер дома"
+		key="housenum"
+		summary="Номер дома для получения информации|Автоматически\n|{@s}\n"
+		dialogTitle="Номер дома"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите номер дома, по которому вы хотите получать информацию. Если оставить поле пустым, будет показана информация по первому дому">
+	</EditTextPreference>
+	<EditTextPreference
+		title="Номер квартиры"
+		key="flatnum"
+		summary="Номер квартиры для получения информации|Автоматически\n|{@s}\n"
+		dialogTitle="Номер квартиры"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите номер квартиры, по которой вы хотите получать информацию. Если оставить поле пустым, будет показана информация по первой квартире">
 	</EditTextPreference>
 </PreferenceScreen>

@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-municipal-fkr-spb</id>
+	<id version="5">ab-municipal-fkr-spb</id>
 	<api flags="no_browser"/>
 	<name>НО Фонд ЖКХ (Санкт-Петербург)</name>
 	<description html="true"><![CDATA[
@@ -8,21 +8,26 @@
 	<p>Информация берется из личного кабинета <a href="http://fkr-spb.ru/user">http://fkr-spb.ru/user</a></p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
 	<counters>
 		<counter id="balance" name="Баланс" units=" р"/>
-		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="penalty" name="Начислено пени" units=" р"/>
+		<counter id="account" name="Лицевой счет" type="text"/>
 		<counter id="contribution" name="Собираемость взносов по дому" suffix="%"/>
+		<counter id="collectPercentPeny" name="Собираемость пени по дому" suffix="%"/>
 		<counter id="houseKadNum" name="Кадастровый номер дома" type="text"/>
 		<counter id="flatKadNum" name="Кадастровый номер квартиры" type="text"/>
 		<counter id="adress" name="Адрес" type="text"/>
 		<counter id="flatArea" name="Площадь квартиры" suffix="м²"/>
+		<counter id="fio" name="ФИО" type="text"/>
 	</counters>
 	<keywords>ЖКХ, Спб, Санкт-Петербург</keywords>
 	<type>municipal</type>

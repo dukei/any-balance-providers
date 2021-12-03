@@ -61,17 +61,28 @@ function login(){
 		var data = getJsonObject(html, /__data__=/);
 	    
 		var jsonProcess = callApi('yooid/signin/api/process/start/standard', {
-			"sessionId":data.tmx.sessionId,
+			"tmxSessionId":data.tmx.sessionId,
 			"login":prefs.login,
 			"origin":"Wallet"
 		});
 	    
 	    
-        var json = callApiProgress('yooid/signin/api/login/set', {
-        	"login":prefs.login,
-        	"processId":jsonProcess.result.processId,
-        	"loginType":jsonProcess.result.loginType
-        });
+        
+	var tries = 0;
+	do{
+		var json = callApiProgress('yooid/signin/api/process/start/standard', {
+        		"login":prefs.login,
+        		"processId":jsonProcess.result.processId,
+        		"loginType":jsonProcess.result.loginType,
+			"tmxSessionId":data.tmx.sessionId,
+			"origin":"Wallet"
+        	});
+	}while(!json.result.isLoginSet && ++tries < 5);
+
+	if(!json.result.isLoginSet){
+		AnyBalance.trace(JSON.stringify(json));
+		throw new AnyBalance.Error('Не удалось войти в личный кабинет. Сайт изменен?');
+	}
         var _json = json;
         
 		function getNextStepData(json){

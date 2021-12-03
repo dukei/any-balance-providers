@@ -128,17 +128,21 @@ function processStep(data, stepData){
 		});
 	}else if(stepData.nextStep === 'SetConfirmationCode'){
 		var code = AnyBalance.retrieveCode('Пожалуйста, введите код, который послан вам на ' + stepData.maskedRecipient, null, {inputType: 'number', time: 170000});
-		var verbs = {
-			PhoneNumber: 'otp/check/phone',
-			Email: 'otp/check/mail',
-		};
+		// ЮMoney больше не разделяет вход по типу
+//		var verbs = {
+//			PhoneNumber: 'otp/check/phone',
+//			Email: 'otp/check/mail',
+//		};
 
-		if(!verbs[data.loginType])
-			throw new AnyBalance.Error('Неизвестный тип входа: ' + data.loginType);
+//		if(!verbs[data.loginType])
+//			throw new AnyBalance.Error('Неизвестный тип входа: ' + data.loginType);
 
-		json = callApiProgress('yooid/signin/api/' + verbs[data.loginType], {
+        // Теперь в форме задаются loginType и processId
+		json = callApiProgress('yooid/signin/api/otp/check', {
 			"contextId": data.processId,
-			"answer": code
+			"answer": code,
+			"processId":data.processId,
+			"loginType":data.loginType
 		});
 	}else if(stepData.nextStep === 'Complete'){
 		json = callApiProgress('yooid/signin/api/process/complete', {

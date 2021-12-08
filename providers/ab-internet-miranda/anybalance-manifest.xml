@@ -1,11 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="3">ab-internet-miranda</id>
+	<id version="4">ab-internet-miranda</id>
 	<api flags="no_browser"/>
 	<name>Миранда-Медиа (Крым)</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе провайдера Миранда-Медиа (Крым) <a href="http://www.miranda-media.ru/">http://www.miranda-media.ru/</a></p>
-	<p>Информация берется из личного кабинета <a href="https://lk.miranda-media.ru/login.phtml">https://lk.miranda-media.ru/login.phtml</a></p>
+	<p>Информация берется из личного кабинета <a href="https://lk.miranda-media.ru/">https://lk.miranda-media.ru/</a></p>
 	]]></description>
 	<author>DimaZ &lt;DIMAZ.KHUA@gmail.com&gt;</author>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
@@ -20,9 +20,9 @@
 	</files>
 	<counters>
 		<counter id="balance" name="Баланс" units=" р"/>
-		<counter id="bonus" name="Бонусы" units=" бон."/>
+		<counter id="bonus" name="Бонусы" units=" б"/>
 		<counter id="fio" name="ФИО" type="text"/>
-		<counter id="adr" name="Адресс" type="text"/>
+		<counter id="adr" name="Адрес" type="text"/>
 		<counter id="cost" name="Стоимость в месяц" units=" р"/>
 		<counter id="dogovor" name="Номер лицевого счёта" type="text"/>
 	</counters>

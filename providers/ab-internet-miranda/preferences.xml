@@ -3,7 +3,7 @@
 	<EditTextPreference
 		title="Логин"
 		key="login"
-		summary="||{@s}"
+		summary="Логин для входа в личный кабинет||{@s}\n"
 		obligatory="true"
 		dialogTitle="Логин"
 		positiveButtonText="ОК"
@@ -13,7 +13,7 @@
 	<EditTextPreference
 		title="Пароль"
 		key="password"
-		summary="||***********"
+		summary="Пароль для входа в личный кабинет||**********\n"
 		obligatory="true"
 		dialogTitle="Пароль"
 		positiveButtonText="ОК"

@@ -32,22 +32,22 @@ function main() {
 	if (!/Вы зашли как/.test(html)){
 	   var params = createFormParams(html, function(params, str, name, value) {
 		AnyBalance.trace('Processing form field ' + name + ': ' + value);
-		if (/login/i.test(name)) 
+		if (/_58_login/i.test(name)) 
 			return prefs.login;
-		else if (/password/i.test(name))
+		else if (/_58_password/i.test(name))
 			return prefs.password;
-		else if (/submit/i.test(name))
-			return undefined;
-		else if(/formDate/i.test(name))
+//		else if (/submit/i.test(name))
+//			return undefined;
+		else if(/_58_formDate/i.test(name))
 			AnyBalance.setCookie('lk.miranda-media.ru', 'LFR_SESSION_STATE_5', value+100, null)
 		return value;
 	   });
 	   var action = getParam(html, /<form[^>]+action="([^"]*)/i, replaceHtmlEntities);
-           AnyBalance.trace('action='+action);
-           AnyBalance.trace('params='+JSON.stringify(params));
-	   html = AnyBalance.requestPost(action, params,addHeaders({Referer:'https://lk.miranda-media.ru/lk_auth'}));
+           AnyBalance.trace('action=' + action);
+           AnyBalance.trace('params=' + JSON.stringify(params));
+	   html = AnyBalance.requestPost(action, params, addHeaders({Referer: 'https://lk.miranda-media.ru/lk_auth'}));
 	}else{
-	   var html = AnyBalance.requestGet(baseurl + 'group/prmsaas/main',g_headers);
+	   var html = AnyBalance.requestGet(baseurl + 'group/prmsaas', g_headers);
 	}
 	if (!/logout/i.test(html)) {
 		var error = getParam(html, null, null, /<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, replaceTagsAndSpaces, html_entity_decode);
@@ -59,21 +59,21 @@ function main() {
 	}
 	var result = {success: true};
 	getParam(html, result, 'fio', /user-full-name">([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);	
-	var json=getParam(html,null,null,/jsonDataBillInfo[^\{]+({[\s\S]*?})/i);
+	var json = getParam(html, null, null, /jsonDataBillInfo[^\{]+({[\s\S]*?});/i);
 	AnyBalance.trace(json);
-	var json=getJson(json);
+	var json = getJson(json);
 	getParam(json.balanceValue, result, 'balance', null, null, parseBalance);
-	result.dogovor=json.contractNm;
-	result.bonus=json.bonusValue;
+	result.dogovor = json.contractNm;
+	result.bonus = json.bonusValue;
 
-	var json=getParam(html,null,null,/jsonDataTariffInfo[^\{]+({[^;]*})/i);
+	var json = getParam(html, null, null, /jsonDataTariffInfo[^\{]+({[^;]*});/i);
 	AnyBalance.trace(json);
-	var json=getJson(json);
-	result.adr=json.v_address;
-        var json=json.tariffs;
-	result.__tariff=json[0].tpName;
+	var json = getJson(json);
+	result.adr = json.v_address;
+    var json = json.tariffs;
+	result.__tariff = json[0].tpName;
 	var res = json.map(tar => tar.tpCost).reduce((acc, bill) => bill + acc);
-	result.cost=res;
+	result.cost = res;
 	getParam(html, result, '__tariff', /Тариф(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
 	
 	AnyBalance.setResult(result);

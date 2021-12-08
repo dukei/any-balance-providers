@@ -10,6 +10,21 @@ var g_headers = {
 	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.120 Safari/537.36'
 };
 
+var g_currency = {
+	643: '₽',
+	843: '$',
+	978: '€',
+	933: 'Br',
+	398: '₸',
+	826: '£',
+	156: 'Ұ',
+	756: '₣',
+	203: 'Kč',
+	985: 'zł',
+	392: '¥',
+	undefined: ''
+};
+
 var baseurl = 'https://yoomoney.ru/';
 var g_csrf;
 var g_savedData;
@@ -52,7 +67,7 @@ function login(){
 		AnyBalance.trace('Already logged in to ' + data.user.userName + ' (' + data.user.maskedPhone + ')');
 	}else{
 		AnyBalance.trace('Logging in anew');
-		html = AnyBalance.requestGet(baseurl + 'yooid/signin/step/login?origin=Wallet&returnUrl=https%3A%2F%2Fyoomoney.ru%2F', g_headers);
+		html = AnyBalance.requestGet(baseurl + 'yooid/signin?origin=Wallet&returnUrl=https%3A%2F%2Fyoomoney.ru%2F', g_headers);
 		g_csrf = getParam(html, /__secretKey__="([^"]*)/);
 		if(!g_csrf){
 			AnyBalance.trace(html);
@@ -61,28 +76,26 @@ function login(){
 		var data = getJsonObject(html, /__data__=/);
 	    
 		var jsonProcess = callApi('yooid/signin/api/process/start/standard', {
-			"tmxSessionId":data.tmx.sessionId,
+			"tmxSessionId":data.staticData.tmx.sessionId,
 			"login":prefs.login,
 			"origin":"Wallet"
 		});
-	    
-	    
-        
-	var tries = 0;
-	do{
-		var json = callApiProgress('yooid/signin/api/process/start/standard', {
+	       
+	    var tries = 0;
+	    do{
+	    	var json = callApiProgress('yooid/signin/api/process/start/standard', {
         		"login":prefs.login,
         		"processId":jsonProcess.result.processId,
         		"loginType":jsonProcess.result.loginType,
-			"tmxSessionId":data.tmx.sessionId,
-			"origin":"Wallet"
-        	});
-	}while(!json.result.isLoginSet && ++tries < 5);
+	    		"tmxSessionId":data.staticData.tmx.sessionId,
+	    		"origin":"Wallet"
+            });
+	    }while(!json.result.isLoginSet && ++tries < 5);
 
-	if(!json.result.isLoginSet){
-		AnyBalance.trace(JSON.stringify(json));
-		throw new AnyBalance.Error('Не удалось войти в личный кабинет. Сайт изменен?');
-	}
+	    if(!json.result.isLoginSet){
+	    	AnyBalance.trace(JSON.stringify(json));
+	    	throw new AnyBalance.Error('Не удалось войти в личный кабинет. Сайт изменен?');
+	    }
         var _json = json;
         
 		function getNextStepData(json){
@@ -194,7 +207,8 @@ function loginAndGetBalance(prefs, result) {
 		getParam(ld.user.accountId, result, '__tariff');
 		getParam(ld.user.userName, result, 'userName');
 		getParam(status[ld.user.accountStatus]||ld.user.accountStatus, result, 'accountStatus');
-		getParam(ld.balance.rub.availableAmount, result, 'balance', null, null, parseBalance);
+		getParam(ld.balance.rub.availableAmount, result, ['balance', 'currency'], null, null, parseBalance);
+		getParam(g_currency[ld.balance.rub.currencyCode], result, ['currency', 'balance']);
 		var sk = ld.secretKey;
 
 		if(ld.balance.bonus){
@@ -216,6 +230,7 @@ function loginAndGetBalance(prefs, result) {
 			if (json && json.length>0){
 				json=json[0];
 				getParam(json.cardNumber.substr(-8), result, 'cardNumber');
+				getParam(json.paymentSystem, result, 'paymentSystem');
 				getParam(json.expirationDate, result, 'cardDate',null,null,parseDate);
 				
 			}

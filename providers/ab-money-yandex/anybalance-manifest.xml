@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="41">ab-money-yandex</id>
+	<id version="42">ab-money-yandex</id>
 	<api flags="no_browser" />
 	<name>ЮMoney (Яндекс.Деньги)</name>
 	<description html="true"><![CDATA[
@@ -25,15 +25,17 @@
 		<js>main.js</js>
 	</files>
 	<counters>
-		<counter id="balance" name="Остаток" units=" р"/>
+		<counter id="balance" name="Остаток" units=" {@currency}"/>
 		<counter id="bonus" name="Баллы" units=" Б"/>
 		<counter id="number" name="Номер счета" type="text"/>
+		<counter id="currency" name="Валюта счета" type="text"/>
 <!--
 		<counter id="no_cashback_count" name="Платежей без кэшбэка" units=" шт"/> 
 -->
 		<counter id="accountStatus" name="Статус" type="text"/>
 		<counter id="userName" name="ФИО" type="text"/>
 		<counter id="cardNumber" name="Доп.карта" type="text"/>
+		<counter id="paymentSystem" name="Платежная система" type="text"/>
 		<counter id="cardDate" name="Срок дейстия доп.карты" type="time" format="dd.MM.yyyy"/>
 	</counters>
 	<keywords>яндекс-деньги, yandex money, юмани, ю-мани</keywords>

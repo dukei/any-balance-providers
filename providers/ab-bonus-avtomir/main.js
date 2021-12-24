@@ -10,15 +10,17 @@ var g_headers = {
 	'User-Agent': 'Mozilla/5.0 (BlackBerry; U; BlackBerry 9900; en-US) AppleWebKit/534.11+ (KHTML, like Gecko) Version/7.0.0.187 Mobile Safari/534.11+'
 };
 
+var replaceNumber = [replaceTagsAndSpaces, /\D/g, '', /.*(\d\d\d)(\d\d\d)(\d\d)(\d\d)$/, '+7 $1 $2-$3-$4'];
+
 function main(){
     var prefs = AnyBalance.getPreferences();
 	
-	AB.checkEmpty(prefs.login, 'Введите логин!');
-	AB.checkEmpty(prefs.password, 'Введите пароль!');
+	checkEmpty(prefs.login, 'Введите логин!');
+	checkEmpty(prefs.password, 'Введите пароль!');
 	
     AnyBalance.setDefaultCharset('utf-8');
 	
-	var baseurl = "http://lk.avtomir.ru/";
+	var baseurl = "https://lk.avtomir.ru/";
 	
     var html = AnyBalance.requestGet(baseurl + 'personal/', g_headers);
 	
@@ -28,13 +30,13 @@ function main(){
     	['backurl', '/personal/index.php'],
     	['USER_LOGIN', prefs.login],
     	['USER_PASSWORD', prefs.password],
-    	['Login', 'Войти']
-    ], AB.addHeaders({'Content-Type': 'application/x-www-form-urlencoded',Referer: baseurl + 'personal/'}));
+		['USER_REMEMBER','Y']
+    ], addHeaders({'Content-Type': 'application/x-www-form-urlencoded', 'Referer': baseurl + 'personal/'}));
 	
     if(!/\?logout=yes/i.test(html)){
-        var error = AB.getParam(html, null, null, [/<font[^>]+class="errortext"[^>]*>([\s\S]*?)<\/font>/i,
+        var error = getParam(html, null, null, [/<font[^>]+class="errortext"[^>]*>([\s\S]*?)<\/font>/i,
 			/alert-error([^>]*>){2}/i,
-			/<h2[^>]+style="color:\s*#933"[^>]*>([\s\S]*?)<\/h2>/i], AB.replaceTagsAndSpaces);
+			/<h2[^>]+style="color:\s*#933"[^>]*>([\s\S]*?)<\/h2>/i], replaceTagsAndSpaces);
 		
         if(error)
             throw new AnyBalance.Error(error, null, /Ошибка авторизации/i.test(error));
@@ -45,30 +47,34 @@ function main(){
 	
     var result = {success: true};
 	
-    var privateCabHtml = AB.getElement(html, /<div[^>]+class="[^"]*?b_private_cab_info/i);
-    
+    var privateCabHtml = getElement(html, /<div[^>]+class="b_private_cab_info"[^>]*>/i);
+
     if (!privateCabHtml) {
         AnyBalance.trace(html);
         throw new AnyBalance.Error('Не удалось получить данные. Сайт изменен?');
     }
 
-    AB.getParam(privateCabHtml, result, 'fio', /<div[^>]+class="b_private_cab_info"[^>]*>\s*<p[^>]*>([\s\S]*?)<br>/i, AB.replaceTagsAndSpaces);
-    AB.sumParam(privateCabHtml, result, 'balance', /<span[^>]+card_amount[^>]*>([\s\S]*?)<\/span>/ig, AB.replaceTagsAndSpaces, AB.parseBalance, AB.aggregate_sum);
-    AB.getParam(prefs.login, result, 'number');
+    sumParam(privateCabHtml, result, 'balance', /<span[^>]+card_amount[^>]*>([\s\S]*?)<\/span>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+	getParam(privateCabHtml, result, 'number', /Карта №:[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
+	getParam(privateCabHtml, result, 'status', /Статус карты:[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
+	getParam(privateCabHtml, result, '__tariff', /Статус карты:[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
+	getParam(privateCabHtml, result, 'phone', /Мобильный телефон:[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i, replaceNumber);
+	getParam(privateCabHtml, result, 'fio', /ФИО:[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
+	
 	
     html = AnyBalance.requestGet(baseurl + "personal/transactions/", g_headers);
 
-    var divContentHtml = AB.getElement(html, /<div[^>]+id="content"/i);
-    var tbodyHtml = AB.getElement(divContentHtml, /<tbody/i);
-    var trHtml = AB.getElement(tbodyHtml, /<tr/i);
-    var tdArray = AB.getElements(trHtml, /<td/ig);
+    var divContentHtml = getElement(html, /<div[^>]+id="content"/i);
+    var tbodyHtml = getElement(divContentHtml, /<tbody/i);
+    var trHtml = getElement(tbodyHtml, /<tr/i);
+    var tdArray = getElements(trHtml, /<td/ig);
 
-    AB.getParam(tdArray[0], result, 'dateLast', null, AB.replaceTagsAndSpaces, AB.parseDate);
-    AB.getParam(tdArray[1], result, 'regionLast', null, AB.replaceTagsAndSpaces);
-    AB.getParam(tdArray[2], result, 'typeLast', null, AB.replaceTagsAndSpaces);
-    AB.getParam(tdArray[3], result, 'sumLast',  null, AB.replaceTagsAndSpaces, AB.parseBalance);
-    AB.getParam(tdArray[3], result, ['sumCurrencyLast', 'sumLast'],  null, AB.replaceTagsAndSpaces, AB.parseCurrency);
-    AB.getParam(tdArray[4], result, 'balanceLast',  null, AB.replaceTagsAndSpaces, AB.parseBalance);
+    getParam(tdArray[0], result, 'dateLast', null, replaceTagsAndSpaces, parseDate);
+    getParam(tdArray[1], result, 'regionLast', null, replaceTagsAndSpaces);
+    getParam(tdArray[2], result, 'typeLast', null, replaceTagsAndSpaces);
+    getParam(tdArray[3], result, 'balanceLast',  null, replaceTagsAndSpaces, parseBalance);
+//  AB.getParam(tdArray[3], result, ['sumCurrencyLast', 'sumLast'],  null, AB.replaceTagsAndSpaces, AB.parseCurrency);
+//  AB.getParam(tdArray[4], result, 'balanceLast',  null, AB.replaceTagsAndSpaces, AB.parseBalance);
 	
     AnyBalance.setResult(result);
 }

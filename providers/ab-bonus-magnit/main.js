@@ -32,12 +32,12 @@ function main(){
 	
 	var html = AnyBalance.requestGet(baseurl + '/dashboard/', g_headers);
 	
-	if(AnyBalance.getLastStatusCode() >= 400){
+	if(!html || AnyBalance.getLastStatusCode() >= 400){
         AnyBalance.trace(html);
         throw new AnyBalance.Error('Сайт Мой магнит временно недоступен. Попробуйте ещё раз позже');
     }
 	
-	if(/<div class="balances">/i.test(html)){
+	if(/logout/i.test(html)){
 		AnyBalance.trace('Сессия сохранена. Входим автоматически...');
 	}else{
 		AnyBalance.trace('Сессия новая. Будем логиниться заново...');
@@ -50,27 +50,32 @@ function main(){
 	if (AnyBalance.isAvailable('balance', 'express', 'magnets', 'spend_now', 'count_now', 'level', 'status')) {
 		html = AnyBalance.requestGet(baseurl + '/dashboard/', g_headers);
 		
-	    getParam(html, result, 'balance', /<div class="balance balance--b">([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
-	    getParam(html, result, 'express', /<div class="balance balance--e">([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
-	    getParam(html, result, 'magnets', /<div class="balance balance--m">([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
-	    getParam(html, result, 'spend_now', /<span data-dashboard-spend-now>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
-	    getParam(html, result, 'count_now', /<span data-dashboard-count-now>([\s\S]*?)\s*товара<\/span>/i, replaceTagsAndSpaces, parseBalance);
-	    getParam(html, result, 'level', /<div class="welcome-proc welcome-proc--gold" data-dashboard-level>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+		if (!/logout/i.test(html)) {
+       	    AnyBalance.trace(html);
+       	    throw new AnyBalance.Error('Не удалось получить данные из-за проблем на сайте. Попробуйте ещё раз позже');
+        }
+		
+	    getParam(html, result, 'balance', /<div[^>]+class="balance balance--b"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+	    getParam(html, result, 'express', /<div[^>]+class="balance balance--e"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+	    getParam(html, result, 'magnets', /<div[^>]+class="balance balance--m"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+	    getParam(html, result, 'spend_now', /<span[^>]+data-dashboard-spend-now[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+	    getParam(html, result, 'count_now', /<span[^>]+data-dashboard-count-now[^>]*>([\s\S]*?)\s*товар(?:а|ов)?<\/span>/i, replaceTagsAndSpaces, parseBalance);
+	    getParam(html, result, 'level', /<div[^>]+data-dashboard-level[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
 	    var status = {
 	    	gold: 'Золотой',
 	    	silver: 'Серебряный',
 	    	bronze: 'Бронзовый'
 	    };
-	    var medal = getParam(html, /<div class="header-balance[\s\S]*?medal medal--([\s\S]*?)"><\/div>/i, replaceTagsAndSpaces);
+	    var medal = getParam(html, /<div[^>]+class="header-balance[\s\S]*?medal medal--([\s\S]*?)"><\/div>/i, replaceTagsAndSpaces);
 	    getParam (status[medal]||medal, result, 'status');
 	}
 	
 	if (AnyBalance.isAvailable('__tariff', 'cardnum_plastic', 'cardnum_virtual', 'phone', 'fio')) {
 	    html = AnyBalance.requestGet(baseurl + '/dashboard/settings/', g_headers);
 	
-	    getParam(html, result, '__tariff', /Пластиковая Карта Магнит<[\s\S]*?card-number">([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
-	    getParam(html, result, 'cardnum_plastic', /Пластиковая Карта Магнит<[\s\S]*?card-number">([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
-	    getParam(html, result, 'cardnum_virtual', /Виртуальная Карта Магнит<[\s\S]*?card-number">([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+	    getParam(html, result, '__tariff', /Пластиковая Карта Магнит<[\s\S]*?card-number"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+	    getParam(html, result, 'cardnum_plastic', /Пластиковая Карта Магнит<[\s\S]*?card-number"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+	    getParam(html, result, 'cardnum_virtual', /Виртуальная Карта Магнит<[\s\S]*?card-number"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
 	    getParam(html, result, 'phone', /name="phone"[\s\S]*?value="([\s\S]*?)"/i, replaceNumber);
 	    getParam(html, result, 'fio', /name="name" value="([\s\S]*?)"/i, replaceTagsAndSpaces);
 	}
@@ -82,31 +87,41 @@ function main(){
         var dtStart = new Date(dt.getFullYear(), dt.getMonth(), '01');
 		
 		var hists = getElements(html, /<div[^>]+class="history-item"[^>]*>/ig);
-		AnyBalance.trace('Найдено транзакций: ' + hists.length);
+		AnyBalance.trace('Найдено операций: ' + hists.length);
 		if(hists && hists.length > 0){
 			// Данные по покупкам за месяц
 			for(var i = 0; i<hists.length; i++){
-				var purDate = getParam(hists[i], /<div class="history-item-title">([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseDate);
-		    	if (purDate >= dtStart) {
-		    	    sumParam(hists[i], result, 'month_purchases', /<div class="history-item-sum">([\s\S]*?)\s?₽<\/div>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+				var purDate = getParam(hists[i], /<div[^>]+class="history-item-title"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseDate);
+				if (i > 0)
+				    var prevPurDate = getParam(hists[i-1], /<div[^>]+class="history-item-title"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseDateSilent);
+		    	if (purDate >= dtStart && purDate != prevPurDate) {
+		    	    sumParam(hists[i], result, 'month_purchases', /<div[^>]+class="history-item-sum"[^>]*>([\s\S]*?)\s?₽<\/div>/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 				}
 		    }
 			
-			// Данные по последней транзакции
+			// Данные по последней операции
 			var hist = hists[0];
-		    var date = getParam(hist, /<div class="history-item-title">([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
-            var sum = getParam(hist, /<div class="history-item-sum">([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
-		    var bonus_b = getParam(hist, /<div class="balance balance--b">([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
-			var bonus_e = getParam(hist, /<div class="balance balance--e">([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+		    var date = getParam(hist, /<div[^>]+class="history-item-title"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+			if (hists.length > 1)
+			    var prevDate = getParam(hists[1], /<div[^>]+class="history-item-title"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+            var sum = getParam(hist, /<div[^>]+class="history-item-sum"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+		    var bonus_b = getParam(hist, /<div[^>]+class="balance balance--b"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+			if (prevDate && prevDate == date)
+			    var bonus_b_off = getParam(hists[1], /<div[^>]+class="balance balance--b">[\s\S]*?<span[^>]*>([\s\S]*?)<\/span>\s*<\/div>/i, replaceTagsAndSpaces);
+			var bonus_e = getParam(hist, /<div[^>]+class="balance balance--e"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
 			if (!bonus_e)
 				var bonus_e = 0;
-			var bonus_m = getParam(hist, /<div class="balance balance--m">([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+			var bonus_m = getParam(hist, /<div[^>]+class="balance balance--m"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
 			if (!bonus_m)
 				var bonus_m = 0;
 			
     		var res = date + '. ';
 			res += 'Покупка на ' + sum + '. ';
-    		res += 'Бонусы: ' + bonus_b + ' Б. ';
+			if (bonus_b_off) {
+				res += 'Бонусы: ' + bonus_b_off + '/' + bonus_b + ' Б. ';
+			} else {
+				res += 'Бонусы: ' + bonus_b + ' Б. ';
+			}
 			res += 'Экспресс: ' + bonus_e + ' Б. ';
 			res += 'Магнитики: ' + bonus_m + ' шт.';
     		getParam(res, result, 'last_operation');
@@ -116,6 +131,8 @@ function main(){
 			getParam('Нет операций', result, 'last_operation');
         }
 	}
+	
+	setCountersToNull(result);
 	
 	AnyBalance.setResult(result);
 }
@@ -196,7 +213,7 @@ function loginSite(prefs){
     }
 
     if (!json || json.status != "success") {
-		var error = json.errors.code;
+		var error = json.message;
     	if (error) {
 			AnyBalance.trace(html);
        		throw new AnyBalance.Error(error);	

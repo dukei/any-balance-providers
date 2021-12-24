@@ -1,5 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change version="5" date="2021-12-09">
+	- Улучшена обработка ошибок
+	- Мелкие исправления и улучшения
+	</change>
     <change version="4" date="2021-11-09">
 	- Поддержка изменений на сайте
 	</change>

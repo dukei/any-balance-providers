@@ -3,10 +3,10 @@
     <EditTextPreference 
         title="Компьютерный номер" 
         positiveButtonText="ОК" 
-        summary="||{@s}" 
+        summary="Компьютерный номер для входа в личный кабинет||{@s}\n" 
         dialogTitle="Компьютерный номер" 
         negativeButtonText="Отмена" 
-        dialogMessage="Введите компьютерный номер для входа в личный кабинет."
+        dialogMessage="Введите компьютерный номер, используемый для входа в личный кабинет."
         key="login">
     </EditTextPreference>
     <EditTextPreference 
@@ -15,7 +15,7 @@
         dialogTitle="Пароль"
         negativeButtonText="Отмена"
         title="Пароль"
-        summary="||***********"
+        summary="Пароль для входа в личный кабинет||***********\n"
         dialogMessage="Введите пароль, используемый для входа в личный кабинет."
         inputType="textPassword">
     </EditTextPreference>

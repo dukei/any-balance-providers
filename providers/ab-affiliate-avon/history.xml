@@ -1,5 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="5" date="2021-12-16">
+	- Поддержка изменений на сайте.
+	- Добавлены дополнительные счетчики.
+	</change>
 	<change version="4" date="2016-11-28">
 	- Поддержка изменений на сайте.
 	</change>

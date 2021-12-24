@@ -1,9 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
     <EditTextPreference 
-        title="E-mail" 
+        title="Логин" 
         positiveButtonText="ОК" 
-        summary="Логин в SimTravel||{@s}\n" 
+        summary="Логин для входа в SimTravel||{@s}\n" 
         dialogTitle="Логин" 
         negativeButtonText="Отмена" 
         dialogMessage="Введите ваш логин в SimTravel"
@@ -16,17 +16,17 @@
         dialogTitle="Пароль"
         negativeButtonText="Отмена"
         title="Пароль"
-        summary="|Введите пароль|************"
+        summary="Пароль для входа в SimTravel||**********\n"
         dialogMessage="Введите ваш пароль в SimTravel"
         inputType="textPassword">
     </EditTextPreference>
     <EditTextPreference 
-        title="Номер sim-карты" 
+        title="Номер SIM-карты" 
         positiveButtonText="ОК" 
-        summary="|Автоматически|{@s}" 
-        dialogTitle="Номер sim-карты" 
+        summary="Номер SIM-карты для просмотра|Автоматически\n|{@s}\n" 
+        dialogTitle="Номер SIM-карты" 
         negativeButtonText="Отмена" 
-        dialogMessage="Введите номер sim-карты, по которой вы хотите получить информацию, без пробелов и разделителей, например, 37254802354, или не вводите ничего, чтобы получить информацию по первой sim-карте."
+        dialogMessage="Введите номер SIM-карты, по которой вы хотите получить информацию, без пробелов и разделителей, например, 37254802354, или не вводите ничего, чтобы получить информацию по первой SIM-карте"
         inputType="number"
         key="num">
     </EditTextPreference>

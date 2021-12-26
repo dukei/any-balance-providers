@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<id version="1">crypt/cryptojs/base64</id>
 	<api flags="no_browser"/>
@@ -11,7 +11,7 @@
 		<module id="crypt/cryptojs/core"/>
 	</depends>
 	<files>
-		<js>base64.min.js</js>
+		<js>crypt.cryptojs.base64.min.js</js>
 		<history>history.xml</history>
 	</files>
 	<keywords></keywords>

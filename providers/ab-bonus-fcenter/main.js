@@ -6,12 +6,12 @@ var g_headers = {
 	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
 	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
 	'Connection': 'keep-alive',
-	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
+	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Safari/537.36',
 };
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'http://fcenter.ru/';
+	var baseurl = 'https://fcenter.ru/';
 	AnyBalance.setDefaultCharset('utf-8');
 	
 	checkEmpty(prefs.login, 'Введите логин!');
@@ -24,11 +24,11 @@ function main() {
 		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
 	}
 	
-	html = AnyBalance.requestPost(baseurl + 'profile/doLogin', {
-		userName: prefs.login,
-		userPass: prefs.password,
-		autoLogin: 'on'
-	}, addHeaders({Referer: baseurl + 'profile/login'}));
+	html = AnyBalance.requestPost(baseurl + 'profile/doLogin', [
+		['userName', prefs.login],
+		['userPass', prefs.password],
+		['autoLogin', 'on']
+	], addHeaders({Referer: baseurl + 'profile/login'}));
 	
 	if (!/logout/i.test(html)) {
 		var error = getParam(html, null, null, /<div[^>]+class="box-sec ajax-error"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
@@ -44,10 +44,11 @@ function main() {
 	var result = {success: true};
 	
 	getParam(html, result, 'balance', /(Баллов:\s+[\d.]+)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'fio', /Баллов:(?:[\s\S](?!<div))*((?:[\s\S](?!<br>))+)/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'fio', /Ваш логин[\s\S]*?value="([^"]*)/i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(html, result, 'type', /Скидка:([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(html, result, 'status', /Состояние:([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(html, result, 'cardnum', /Карта покупателя №([^<]+)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, '__tariff', /Карта покупателя №([^<]+)/i, replaceTagsAndSpaces, parseBalance);
 
 	if(isAvailable('history')){
 		html = AnyBalance.requestGet(baseurl + 'profile/points', g_headers);

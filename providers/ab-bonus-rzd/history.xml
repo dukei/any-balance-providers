@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
-<change version="2" date="2013-11-12">
-- Улучшена обработка ошибок (Stark)
-</change>
+    <change version="3" date="2021-12-07">
+    - Поддержка изменений на сайте
+	- Добавлены дополнительные счетчики
+	- Обновлена библиотека
+    </change>
+    <change version="2" date="2013-11-12">
+    - Улучшена обработка ошибок (Stark)
+    </change>
 </history>

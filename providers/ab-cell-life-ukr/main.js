@@ -73,7 +73,7 @@ function loginSite(prefs){
         AnyBalance.trace('recaptcha='+recaptcha);
 	var params = {
 		username: '38'+prefs.prefph+prefs.phone,
-                rememberMe: 'on',
+        rememberMe: 'on',
 	};
 
 	if(recaptcha && getParam(form, /data-sitekey[^>]*?disabled\s*=\s*"([^"]*)/i, replaceHtmlEntities) !== 'True'){
@@ -81,7 +81,7 @@ function loginSite(prefs){
 	}else{
 		AnyBalance.trace('Капча не требуется, ура');
 	}
-	var action=getParam(form,/action="([^"]*)/,replaceHtmlEntities)
+	var action=getParam(form,/action="([^"]*)/,replaceHtmlEntities);
 	html = AnyBalance.requestPost(action, params,g_headers
 	/*	addHeaders({
 		Accept: 'application/json, text/plain, ',
@@ -97,17 +97,35 @@ function loginSite(prefs){
 	}
 	var params = {
 		username: '',
-                password: prefs.pass
+        password: prefs.pass
 	};
-	var action=getParam(form,/action="([^"]*)/,replaceHtmlEntities)
+	var action=getParam(form,/action="([^"]*)/,replaceHtmlEntities);
 	html = AnyBalance.requestPost(action, params,g_headers);
+	
+	if(/one-time-code/i.test(html)){
+	    var form = getElement(html, /<form[^>]+otp-form/i);
+	    if(!form){
+	    	AnyBalance.trace(html);
+	    	throw new AnyBalance.Error('Не удаётся найти форму входа. Сайт изменен?');
+	    }
+	    var code = AnyBalance.retrieveCode('Пожалуйста, введите код из 6 цифр из SMS, отправленного на ваш номер '+'38'+prefs.prefph+prefs.phone, null, {inputType: 'number', time: 180000});
+	    var params = {
+	    	username: '',
+            password: code
+	    };
+	    var action=getParam(form,/action="([^"]*)/,replaceHtmlEntities);
+	    html = AnyBalance.requestPost(action, params,g_headers);
+	}else{
+		AnyBalance.trace('SMS-код не требуется, ура');
+	}
+	
 	return html;
 }
 function loginSiteOld(prefs,baseurl){
     var msisdn = '38' + prefs.prefph + prefs.phone;
 
     var html = AnyBalance.requestGet('https://auth.lifecell.ua/auth/realms/lifecell/protocol/openid-connect/logout?redirect_uri=https%3A%2F%2Fauth.lifecell.ua%2Fauth%2Frealms%2Flifecell%2Fprotocol%2Fopenid-connect%2Fauth%3Fredirect_uri%3Dlifecell.sso%3A%2Foauth2redirect%26client_id%3Dmy-lifecell-app-android%26response_type%3Dcode%26state%3DjqWFQcMIrPhdp99Ahx4lcQ%26scope%3Dopenid%2520offline_access%26code_challenge%3DsqhxgO3NL5QDeFAHfx8rri5x34TGzUv3Ovr6wYl6-8w%26code_challenge_method%3DS256%26ui_locales%3Den', g_headers); 
-    var form = getElement(html, /<form[^>]+username-form/i);
+	var form = getElement(html, /<form[^>]+username-form/i);
     if(!form){
     	AnyBalance.trace(form);
     	throw new AnyBalance.Error('Не удалось найти форму входа. Сайт изменен?');

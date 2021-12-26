@@ -185,10 +185,27 @@ function main() {
 		var data = json.data.lspuInfo.info.balances[i];
 
 		if(data){
-			getParam(data.balanceStartSum, result, 'advance', null, null, parseBalanceMy);
-			getParam(data.balanceEndSum, result, 'toPay', null, null, parseBalance);
+			var endSum = data.balanceEndSum;
+			if(endSum < 0){
+				getParam(data.balanceEndSum, result, 'advance', null, null, parseBalanceMy);
+				getParam(0, result, 'toPay', null, null, parseBalanceMy);
+			}else if(endSum > 0){
+				getParam(0, result, 'advance', null, null, parseBalanceMy);
+				getParam(data.balanceEndSum, result, 'toPay', null, null, parseBalanceMy);
+			}else{
+				getParam(0, result, 'advance', null, null, parseBalanceMy);
+				getParam(0, result, 'toPay', null, null, parseBalanceMy);
+			}
 			getParam(data.chargedSum, result, 'charged', null, null, parseBalance);
 			getParam(data.debtSum, result, 'recalculation', null, null, parseBalance);
+		}
+		break;
+	}
+	
+	for(var i=0; json.data.lspuInfo.info.payments; ++i){
+		var data = json.data.lspuInfo.info.payments[i];
+
+		if(data){
 			getParam(data.paidSum, result, 'paid', null, null, parseBalance);
 			getParam(data.date, result, 'payDate', null, null, parseDateISO);
 		}

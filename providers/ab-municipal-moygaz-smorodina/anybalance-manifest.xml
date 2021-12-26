@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-municipal-moygaz-smorodina</id>
+	<id version="3">ab-municipal-moygaz-smorodina</id>
 	<api flags="no_browser"/>
 	<name>Мой ГАЗ Смородина</name>
 	<description html="true"><![CDATA[
@@ -27,7 +27,7 @@
 		<counter id="toPay" name="Задолженность" units=" ₽"/>
 		<counter id="charged" name="Начислено" units=" ₽"/>
 		<counter id="recalculation" name="Корректировка" units=" ₽"/>
-		<counter id="paid" name="Оплачено" units=" ₽"/>
+		<counter id="paid" name="Сумма последней оплаты" units=" ₽"/>
 		<counter id="payDate" name="Дата последней оплаты" type="time" format="dd.MM.yyyy"/>
 		<counter id="id" name="Персональный ID" type="text"/>
 		<counter id="account" name="Лицевой счет" type="text"/>

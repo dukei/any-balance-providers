@@ -1,31 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-internet-flex</id>
-  <name>Flex (Ногинск)</name>
-  <description>
-    Получает баланс и информацию о тарифном плане для ногинского интернет-провайдера Flex (http://www.flex.ru). ООО "ФЛЕКС" осуществляет подключение клиентов к домовым сетям в населенных пунктах: Ногинск, Электросталь, Бахчиванджи, Электроугли, Орехово-Зуево, Ликино-Дулево, Давыдово, Демехово, Куровское, Селятино.
-
-    Информация берется с сервера статистики https://flex.ru/stats. Логин и пароль для доступа на сервер статистике прописаны в договоре на услуги интернет.
-  </description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>main.js</js>
-  </files>
-  <counters>
-    <counter id="balance" name="Баланс" units="р"/>
-    <counter id="traffic" name="Трафик в текущем месяце" units="Gb"/> -->
-    <counter id="status" name="Состояние" type="text"/>
-    <counter id="licschet" name="Код пользователя" type="text"/>
-  </counters>
-  <keywords>
-    интернет
-  </keywords>
-  <type>
-    internet
-  </type>
-  <country>
-    ru
-  </country>
+    <id version="2">ab-internet-flex</id>
+    <name>Flex (Ногинск)</name>
+	<api flags="no_browser"/>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе и тарифных опциях для ногинского интернет-провайдера Flex. ООО "ФЛЕКС" осуществляет подключение клиентов к домовым сетям в населенных пунктах: Ногинск, Электросталь, Бахчиванджи, Электроугли, Орехово-Зуево, Ликино-Дулево, Давыдово, Демехово, Куровское, Селятино.</p>
+	<p>Информация берется с сервера статистики https://flex.ru/stats. Логин и пароль для доступа на сервер статистике прописаны в договоре на услуги интернет.</p>	
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Для работы провайдера требуется ввести логин и пароль для входа в личный кабинет.</p>
+	]]></instruction>
+    <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
+    <files>
+        <icon>icon.png</icon>
+        <preferences>preferences.xml</preferences>
+        <js>main.js</js>
+    </files>
+    <counters>
+        <counter id="balance" name="Баланс" units=" {@currency}"/>
+		<counter id="discount" name="Скидка" type="text"/>
+        <counter id="traffic" name="Зачтенный трафик" units=" Mb"/>
+		<counter id="outgoing" name="Исходящий трафик" units=" Mb"/>
+		<counter id="incoming" name="Входящий трафик" units=" Mb"/>
+		<counter id="limit" name="Лимит трафика" units=" Mb"/>
+		<counter id="exceeding" name="Превышение лимита" units=" Mb"/>
+		<counter id="remains" name="Остаток трафика" units=" Mb"/>
+        <counter id="licschet" name="Код пользователя" type="text"/>
+		<counter id="ip_address" name="Привязка по IP адресу" type="text"/>
+		<counter id="username" name="Имя пользователя" type="text"/>
+    </counters>
+    <keywords>интернет, флекс, flex</keywords>
+    <type>internet</type>
+    <country>ru</country>
 </provider>

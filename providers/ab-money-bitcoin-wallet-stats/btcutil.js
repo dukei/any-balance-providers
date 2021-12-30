@@ -12,7 +12,7 @@ function validateBtcWallet(wallet)
 }
 
 // BTC exchange rate by currency code, from coindesk.com
-function getExchangeRate(currency)
+function getCDExchangeRate(currency)
 {
     currency = currency.toUpperCase();
     if (currency.match(/^[A-Z][A-Z][A-Z]$/)==null)
@@ -25,11 +25,50 @@ function getExchangeRate(currency)
     catch(error)
     {
         // errors are returned by coindesk as plain text string, so json parsing would fail
-        throw new AnyBalance.Error("coindesk.com: "+json);
+	AnyBalance.trace(json);
+        throw new AnyBalance.Error("coindesk.com: could not get exchange rate");
     }
     
     if ((typeof json.bpi=="undefined") || (typeof json.bpi[currency]=="undefined"))
         throw new AnyBalance.Error("unexpected coindesk.com repsonse");
 
-    return(json.bpi[currency]);
+    return {
+	rate: json.bpi[currency].rate_float,
+	currency: json.bpi[currency].code
+    };
+}
+
+
+function getBIExchangeRate(currency){
+    currency = currency.toUpperCase();
+    if (currency.match(/^[A-Z][A-Z][A-Z]$/)==null)
+        throw new AnyBalance.Error("currency code must be 3 characters long, English letters only");
+    var json = AnyBalance.requestGet('https://blockchain.info/ticker', g_headers);
+    try 
+    {
+        json = JSON.parse(json);
+    } 
+    catch(error)
+    {
+        // errors are returned by coindesk as plain text string, so json parsing would fail
+	AnyBalance.trace(json);
+        throw new AnyBalance.Error("blockchain.info: could not get exchange rate");
+    }
+    
+    if ((typeof json[currency]=="undefined"))
+        throw new AnyBalance.Error("unexpected blockchain.info repsonse");
+
+    return {
+	rate: json[currency].buy,
+	currency: json[currency].symbol
+    };
+}
+
+function getExchangeRate(currency){
+	try{
+		return getCDExchangeRate(currency);
+	}catch(e){
+		AnyBalance.trace(e.message);
+		return getBIExchangeRate(currency);
+	}
 }

@@ -53,9 +53,9 @@ function main()
     if ((typeof prefs.currency!="undefined") && (prefs.currency!=""))
     {
         var exchange = getExchangeRate(prefs.currency);
-        result['currency'] = CurrencyISO.getCurrencySymbol(exchange.code);
-        result['exchange_rate'] = Math.round(exchange.rate_float*100)/100;
-        result['value'] = Math.round(result['balance']*exchange.rate_float*100)/100;
+        result['currency'] = CurrencyISO.getCurrencySymbol(exchange.currency);
+        result['exchange_rate'] = Math.round(exchange.rate*100)/100;
+        result['value'] = Math.round(result['balance']*exchange.rate*100)/100;
     }
 
    	result.btcunits = 'Ƀ';

@@ -4,8 +4,8 @@
 
 var g_headers = {
 	'Connection':'keep-alive',
-	'Tele2-User-Agent': '"mytele2-app/3.17.0"; "unknown"; "Android/9"; "Build/12998710"',
-	'X-API-Version': '1',
+	'Tele2-User-Agent': '"mytele2-app/4.10.0"; "unknown"; "Android/9"; "Build/12998710"',
+	'X-API-Version': '3',
 	'User-Agent':'okhttp/4.2.0'
 };
 
@@ -349,7 +349,7 @@ function processInfo(result){
     }));
 
     var json = getJson(html);
-    getParam(json.data.fullName, info, "info.fio", /<div[^>]+class="user-name"[^>]*>([\s\S]*?)(?:<\/div>|<a)/i, replaceTagsAndSpaces, capitalFirstLetters);
+    getParam(json.data.fullName, info, "info.fio");
     getParam(subsid, info, "info.mphone");
     getParam(json.data.address.city + ' ' + json.data.address.street + ' ' + json.data.address.house, info, "info.address");
     getParam(json.data.email || undefined, info, "info.email");

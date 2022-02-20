@@ -19,6 +19,7 @@ class RuCaptcha {
 		let id = await this.sendToRecognition({
 			method: 'funcaptcha',
 			publickey: sitekey,
+			pageurl: url,
 			surl: surl,
 			userAgent: userAgent,
 		});

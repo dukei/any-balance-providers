@@ -27,7 +27,6 @@ function main() {
 		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
 	}
 
-
 	var params = createFormParams(html, function(params, str, name, value) {
 		if (name == 'login')
 			return prefs.login1;
@@ -36,6 +35,15 @@ function main() {
 
 		return value;
 	});
+
+	var recaptcha = getParam(html, /data-sitekey="([^"]*)/i, replaceHtmlEntities);
+	if (recaptcha) {
+	    var g_recaptcha_response = solveRecaptcha("Пожалуйста, докажите, что Вы не робот", AnyBalance.getLastUrl(), recaptcha);
+		params['g-recaptcha-response'] = g_recaptcha_response;
+	}
+	else {
+		AnyBalance.trace('Убрали reCaptcha, наконец то!');
+	}
 
 	html = AnyBalance.requestPost(baseurl + '/login', params, addHeaders({Referer: baseurl + '/login'}));
 

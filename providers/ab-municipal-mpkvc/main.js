@@ -40,7 +40,7 @@ function main() {
   
   
   AnyBalance.trace('Selected region: ' + region);
-  var baseurl = 'http://xn--b1apfm1b.xn--p1ai/';
+  var baseurl = 'http://old.mpkvc.ru/';
   
   var info = AnyBalance.requestGet(baseurl + "index.php?option=com_private", g_headers);
   

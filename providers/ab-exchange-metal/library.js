@@ -1,4 +1,4 @@
-﻿/**
+/**
 AnyBalance (http://any-balance-providers.googlecode.com)
 
 Содержит некоторые полезные для извлечения значений с сайтов функции.

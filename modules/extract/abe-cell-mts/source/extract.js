@@ -21,12 +21,15 @@ var regionsOrdinary = {
 
 var g_baseurl = 'https://lk.mts.ru';
 var g_baseurlLogin = 'http://login.mts.ru';
+var g_savedData;
 
 var g_headers = {
-    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3',
-    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.120 Safari/537.36',
-    'Upgrade-Insecure-Requests': '1',
+    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
 	'Accept-Language': 'en-US,en;q=0.9',
+	'Connection': 'keep-alive',
+	'Referer': 'https://login.mts.ru/',
+	'Upgrade-Insecure-Requests': '1',
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.75 Safari/537.36',
 //    'If-Modified-Since': null, //Иначе МТС глючит с кешированием...
 };
 
@@ -559,9 +562,437 @@ function loginWithPassword(){
     AnyBalance.trace("Entering lk...");
 
     var prefs = AnyBalance.getPreferences();
+	
+	if(!g_savedData)
+		g_savedData = new SavedData('mts', prefs.login);
 
-    var html = enterLK({login: prefs.login, password: prefs.password, baseurl: 'http://lk.mts.ru', url: 'http://login.mts.ru/amserver/UI/Login?service=lk&goto=http%3A%2F%2Flk.mts.ru%2F'});
-    return html;
+	g_savedData.restoreCookies();
+	
+	html = AnyBalance.requestGet('https://lk.mts.ru/', g_headers);
+	
+	if(/Мой МТС/i.test(html)){
+		AnyBalance.trace('Сессия сохранена. Входим автоматически...');
+	}else{
+		AnyBalance.trace('Сессия новая. Будем логиниться заново...');
+		clearAllCookies();
+	
+	    var recipient = getParam(prefs.login, null, null, null, [/.*(\d{3})(\d{3})(\d{2})(\d{2})$/, '+7 ($1) $2-$3-$4']);
+	
+	    var html = AnyBalance.requestPost('https://login.mts.ru/amserver/json/authenticate?authIndexType=service&authIndexValue=login-spa', null, addHeaders({
+	    	'Accept': '*/*',
+            'Accept-API-Version': 'resource=4.0, protocol=1.0',
+	    	'Content-Type': 'application/json',
+	    	'Origin': 'https://login.mts.ru',
+	    	'Referer': 'https://login.mts.ru/amserver/NUI/'
+	    }));
+	
+	    var json = getJson(html);
+		AnyBalance.trace('Проверка доступа: ' + JSON.stringify(json));
+	
+	    var id = json.authId;
+		var header = json.header;
+	
+	    var html = AnyBalance.requestPost('https://login.mts.ru/amserver/json/authenticate?authIndexType=service&authIndexValue=login-spa', JSON.stringify({
+            "authId": id,
+            "template": "NetworkHeaderRedirect.jsp",
+            "stage": "login-nodes-dslnull",
+            "header": "trusted-network",
+            "infoText": null,
+            "callbacks": [
+                {
+                    "type": "ConfirmationCallback",
+                    "output": [
+                        {
+                            "name": "prompt",
+                            "value": "Confirm"
+                        },
+                        {
+                            "name": "messageType",
+                            "value": 0
+                        },
+                        {
+                            "name": "options",
+                            "value": [
+                                "IGNORE",
+                                "OK"
+                            ]
+                        },
+                        {
+                            "name": "optionType",
+                            "value": -1
+                        },
+                        {
+                            "name": "defaultOption",
+                            "value": 1
+                        }
+                    ],
+                    "input": [
+                        {
+                            "name": "IDToken1",
+                            "value": 1
+                        }
+                    ]
+                },
+                {
+                    "type": "MetadataCallback",
+                    "output": [
+                        {
+                            "name": "data",
+                            "value": {
+                                "acceptableOperators": [
+                                    "MTS",
+                                    "OTHER"
+                                ],
+                                "hiddenLogo": false,
+                                "restrictXTethered": true,
+                                "acceptableOperatorsErrorMessage": "Введен неверный номер телефона.",
+                                "accessConditions": "https://static.ssl.mts.ru/mts_rf/images/usloviya-edinogo-dostupa-k-servisam-MTS.html",
+                                "correlationID": "7cef4c35-5349-4fe6-8f0f-7db3237b8fad",
+                                "label": "Введите номер телефона",
+                                "turnOffFeedbackService": true,
+                                "feedbackServiceUrl": "feedback-prod.stage2.websso.msk.mts.ru"
+                            }
+                        }
+                    ]
+                }
+            ]
+        }), addHeaders({
+	    	'Accept': '*/*',
+            'Accept-API-Version': 'resource=4.0, protocol=1.0',
+	    	'Content-Type': 'application/json',
+	    	'Origin': 'https://login.mts.ru',
+	    	'Referer': 'https://login.mts.ru/amserver/NUI/'
+	    }));
+	
+	    var json = getJson(html);
+		AnyBalance.trace('Проверка сети: ' + JSON.stringify(json));
+	
+		var header = json.header;
+	
+	    var html = AnyBalance.requestPost('https://login.mts.ru/amserver/json/authenticate?authIndexType=service&authIndexValue=login-spa', JSON.stringify({
+            "authId": id,
+            "template": "EnterPhone.jsp",
+            "stage": "login-nodes-dslnull",
+            "header": "enter-phone",
+            "infoText": null,
+            "callbacks": [
+                {
+                    "type": "NameCallback",
+                    "output": [
+                        {
+                            "name": "prompt",
+                            "value": "Введите номер телефона"
+                        }
+                    ],
+                    "input": [
+                        {
+                            "name": "IDToken1",
+                            "value": "7" + prefs.login
+                        }
+                    ]
+                },
+                {
+                    "type": "ConfirmationCallback",
+                    "output": [
+                        {
+                            "name": "prompt",
+                            "value": "Confirm"
+                        },
+                        {
+                            "name": "messageType",
+                            "value": 0
+                        },
+                        {
+                            "name": "options",
+                            "value": [
+                                "IGNORE",
+                                "OK"
+                            ]
+                        },
+                        {
+                            "name": "optionType",
+                            "value": -1
+                        },
+                        {
+                            "name": "defaultOption",
+                            "value": 0
+                        }
+                    ],
+                    "input": [
+                        {
+                            "name": "IDToken2",
+                            "value": 1
+                        }
+                    ]
+                },
+                {
+                    "type": "MetadataCallback",
+                    "output": [
+                        {
+                            "name": "data",
+                            "value": {
+                                "acceptableOperators": [
+                                    "MTS",
+                                    "OTHER"
+                                ],
+                                "hiddenLogo": false,
+                                "restrictXTethered": true,
+                                "acceptableOperatorsErrorMessage": "Введен неверный номер телефона.",
+                                "accessConditions": "https://static.ssl.mts.ru/mts_rf/images/usloviya-edinogo-dostupa-k-servisam-MTS.html",
+                                "correlationID": "7cef4c35-5349-4fe6-8f0f-7db3237b8fad",
+                                "label": "Введите номер телефона",
+                                "turnOffFeedbackService": true,
+                                "feedbackServiceUrl": "feedback-prod.stage2.websso.msk.mts.ru"
+                            }
+                        }
+                    ]
+                }
+            ]
+        }), addHeaders({
+	    	'Accept': '*/*',
+            'Accept-API-Version': 'resource=4.0, protocol=1.0',
+	    	'Content-Type': 'application/json',
+	    	'Origin': 'https://login.mts.ru',
+	    	'Referer': 'https://login.mts.ru/amserver/NUI/'
+	    }));
+	
+	    var json = getJson(html);
+		AnyBalance.trace('Отправка номера телефона: ' + JSON.stringify(json));
+	
+		var header = json.header;
+	 
+	    if (json.header == "verify-otp") {
+			AnyBalance.trace('МТС запросил проверку с помощью кода из SMS');
+			var code = AnyBalance.retrieveCode('Пожалуйста, введите код подтверждения, высланный на номер ' + recipient + '\n\nЕсли вы не хотите постоянно вводить SMS-пароли при входе, выберите способ входа "Пароль" в настройках безопасности вашего личного кабинета МТС', null, {inputType: 'number', time: 300000});
+		    var html = AnyBalance.requestPost('https://login.mts.ru/amserver/json/authenticate?authIndexType=service&authIndexValue=login-spa', JSON.stringify({
+                "authId": id,
+                "template": "VerifyOTP.jsp",
+                "stage": "login-nodes-dslnull",
+                "header": "verify-otp",
+                "infoText": null,
+                "callbacks": [
+                    {
+                        "type": "PasswordCallback",
+                        "output": [
+                            {
+                                "name": "prompt",
+                                "value": "Verify otp"
+                            }
+                        ],
+                        "input": [
+                            {
+                                "name": "IDToken1",
+                                "value": code
+                            }
+                        ]
+                    },
+                    {
+                        "type": "ConfirmationCallback",
+                        "output": [
+                            {
+                                "name": "prompt",
+                                "value": "Confirm"
+                            },
+                            {
+                                "name": "messageType",
+                                "value": 0
+                            },
+                            {
+                                "name": "options",
+                                "value": [
+                                    "IGNORE",
+                                    "OK",
+                                    "RESTART",
+                                    "REFRESH",
+                                    "CANTGET"
+                                ]
+                            },
+                            {
+                                "name": "optionType",
+                                "value": -1
+                            },
+                            {
+                                "name": "defaultOption",
+                                "value": 0
+                            }
+                        ],
+                        "input": [
+                            {
+                                "name": "IDToken2",
+                                "value": 1
+                            }
+                        ]
+                    },
+                    {
+                        "type": "MetadataCallback",
+                        "output": [
+                            {
+                                "name": "data",
+                                "value": {
+                                    "hiddenLogo": false,
+                                    "numberType": "MOBILE",
+                                    "restrictXTethered": true,
+                                    "retryCount": 3,
+                                    "isAux": false,
+                                    "acceptableOperatorsErrorMessage": "Введен неверный номер телефона.",
+                                    "channel": "SMS",
+                                    "accessConditions": "https://static.ssl.mts.ru/mts_rf/images/usloviya-edinogo-dostupa-k-servisam-MTS.html",
+                                    "label": "Введите номер телефона",
+                                    "abonent": "mMTS",
+                                    "userId": "dfcc9720-019a-11ea-88ba-339a25f0d609",
+                                    "acceptableOperators": [
+                                        "MTS",
+                                        "OTHER"
+                                    ],
+                                    "invalidCount": 0,
+                                    "recipient": recipient,
+                                    "authUserLevel": "0",
+                                    "correlationID": "01a59697-d872-4a42-a3b3-c86877ad4bc8",
+                                    "isRestoreMode": false,
+                                    "turnOffFeedbackService": true,
+                                    "feedbackServiceUrl": "feedback-prod.stage2.websso.msk.mts.ru"
+                                }
+                            }
+                        ]
+                    }
+                ]
+            }), addHeaders({
+	        	'Accept': '*/*',
+                'Accept-API-Version': 'resource=4.0, protocol=1.0',
+	        	'Content-Type': 'application/json',
+	        	'Origin': 'https://login.mts.ru',
+	        	'Referer': 'https://login.mts.ru/amserver/NUI/'
+	        }));
+	
+	        var json = getJson(html);
+			AnyBalance.trace('Отправка кода из SMS: ' + JSON.stringify(json));
+	
+		    var header = json.header;
+		}
+		
+		if (json.header == "verify-otp") {
+			var retryCount = json.callbacks[2].output[0].value.retryCount;
+			var invalidCount = json.callbacks[2].output[0].value.invalidCount;
+			var restCount = retryCount - invalidCount;
+			AnyBalance.trace(html);
+            throw new AnyBalance.Error('Неверный код! Осталось попыток: ' + restCount);
+	    }
+		
+	    if (json.header == "verify-password") {
+	        var html = AnyBalance.requestPost('https://login.mts.ru/amserver/json/authenticate?authIndexType=service&authIndexValue=login-spa', JSON.stringify({
+                "authId": id,
+                "template": "VerifyPassword.jsp",
+                "stage": "login-nodes-dslnull",
+                "header": "verify-password",
+                "infoText": null,
+                "callbacks": [
+                    {
+                        "type": "PasswordCallback",
+                        "output": [
+                            {
+                                "name": "prompt",
+                                "value": "Verify password"
+                            }
+                        ],
+                        "input": [
+                            {
+                                "name": "IDToken1",
+                                "value": prefs.password
+                            }
+                        ]
+                    },
+                    {
+                        "type": "ConfirmationCallback",
+                        "output": [
+                            {
+                                "name": "prompt",
+                                "value": "Confirm"
+                            },
+                            {
+                                "name": "messageType",
+                                "value": 0
+                            },
+                            {
+                                "name": "options",
+                                "value": [
+                                    "IGNORE",
+                                    "OK",
+                                    "RESTART",
+                                    "RESTORE"
+                                ]
+                            },
+                            {
+                                "name": "optionType",
+                                "value": -1
+                            },
+                            {
+                                "name": "defaultOption",
+                                "value": 0
+                            }
+                        ],
+                        "input": [
+                            {
+                                "name": "IDToken2",
+                                "value": 1
+                            }
+                        ]
+                    },
+                    {
+                        "type": "MetadataCallback",
+                        "output": [
+                            {
+                                "name": "data",
+                                "value": {
+                                    "lockoutCount": 3,
+                                    "hiddenLogo": false,
+                                    "numberType": "MOBILE",
+                                    "restrictXTethered": true,
+                                    "acceptableOperatorsErrorMessage": "Введен неверный номер телефона.",
+                                    "accessConditions": "https://static.ssl.mts.ru/mts_rf/images/usloviya-edinogo-dostupa-k-servisam-MTS.html",
+                                    "label": "Введите номер телефона",
+                                    "abonent": "mMTS",
+                                    "userId": "c25f25f0-588d-11ea-98aa-b9cf018c481e",
+                                    "acceptableOperators": [
+                                        "MTS",
+                                        "OTHER"
+                                    ],
+                                    "invalidCount": 0,
+                                    "recipient": recipient,
+                                    "authUserLevel": "1",
+                                    "correlationID": "7cef4c35-5349-4fe6-8f0f-7db3237b8fad",
+                                    "turnOffFeedbackService": true,
+                                    "feedbackServiceUrl": "feedback-prod.stage2.websso.msk.mts.ru"
+                                }
+                            }
+                        ]
+                    }
+                ]
+            }), addHeaders({
+	        	'Accept': '*/*',
+                'Accept-API-Version': 'resource=4.0, protocol=1.0',
+	        	'Content-Type': 'application/json',
+	        	'Origin': 'https://login.mts.ru',
+	        	'Referer': 'https://login.mts.ru/amserver/NUI/'
+	        }));
+	
+	        var json = getJson(html);
+			AnyBalance.trace('Отправка пароля: ' + JSON.stringify(json));
+		}
+	
+	    if (json.tokenId && json.successUrl) {
+	    	var tokenId = json.tokenId;
+	    	var successUrl = json.successUrl;
+			html = AnyBalance.requestGet(successUrl, addHeaders({Referer: 'https://login.mts.ru/'}));
+	    } else {
+	    	AnyBalance.trace(html);
+            throw new AnyBalance.Error('Неверный логин или пароль!');
+	    }
+	}
+	
+	g_savedData.setCookies();
+	g_savedData.save();
+	
+	return html;
 }
 
 function followIHLink(){
@@ -931,8 +1362,8 @@ function processCountersLK(result){
 	var token = callNewLKApiToken('services/list/active');
 	var data = callNewLKApiResult(token);
 	var status = {
-		Unblocked: 'Разблокировано',
-		Blocked: 'Заблокировано'
+		Unblocked: 'Номер не блокирован',
+		Blocked: 'Номер заблокирован'
 	};
 	getParam(status[data.accountBlockStatus]||data.accountBlockStatus, result.remainders, 'remainders.statuslock');
 	getParam(data.services.length, result.remainders, 'remainders.services');
@@ -964,7 +1395,7 @@ function processCountersLK(result){
 function mainLK(html, result) {
     AnyBalance.trace("Мы в личном кабинете...");
 
-    var maxIHTries = 3;
+/*    var maxIHTries = 3;
     //Иногда помощник входит не с первого раза почему-то.
     for(var i=0; i<maxIHTries; ++i){
         try{
@@ -987,17 +1418,17 @@ function mainLK(html, result) {
             	result.were_errors = true;
         }
     }
-
-    if (!isAnotherNumber()) {
-        processInfoLK(html, result);
-        try{
-        	processCountersLK(result);
-        }catch(e){
-        	AnyBalance.trace("Ошибка получения остатков из кабинета. Попробуйте ещё раз позднее. Ошибка: " + e.message);
-        }
-    } else {
-        AnyBalance.trace('Пропускаем получение данных из ЛК, если требуется информация по другому номеру');
+*/
+//    if (!isAnotherNumber()) {
+    processInfoLK(html, result);
+    try{
+    	processCountersLK(result);
+    }catch(e){
+    	AnyBalance.trace("Ошибка получения остатков из кабинета. Попробуйте ещё раз позднее. Ошибка: " + e.message);
     }
+//    } else {
+//        AnyBalance.trace('Пропускаем получение данных из ЛК, если требуется информация по другому номеру');
+//   }
 }
 
 function sleep(delay) {

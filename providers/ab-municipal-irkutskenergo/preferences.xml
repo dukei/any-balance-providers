@@ -3,7 +3,7 @@
 	<EditTextPreference
 		title="Номер лицевого счета/договора"
 		key="login"
-		summary="||{@s}"
+		summary="Логин для входа в личный кабинет|Введите логин\n|{@s}\n"
 		obligatory="true"
 		dialogTitle="Номер лицевого счета/договора"
 		positiveButtonText="ОК"
@@ -11,13 +11,14 @@
 		dialogMessage="Введите номер лицевого счета/договора, используемый для входа в личный кабинет.">
 	</EditTextPreference>
 	<EditTextPreference
-		title="Фамилия"
+		title="Фамилия/пароль"
 		key="password"
-		summary="||{@s}"
+		summary="Пароль для входа в личный кабинет|Введите пароль\n|***********\n"
 		obligatory="true"
-		dialogTitle="Фамилия"
+		inputType="textPassword"
+		dialogTitle="Фамилия/пароль"
 		positiveButtonText="ОК"
 		negativeButtonText="Отмена"
-		dialogMessage="Введите фамилию.">
+		dialogMessage="Введите фамилию/пароль для входа в личный кабинет.">
 	</EditTextPreference>
 </PreferenceScreen>

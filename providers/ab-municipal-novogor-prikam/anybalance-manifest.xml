@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-municipal-novogor-prikam</id>
+	<id version="3">ab-municipal-novogor-prikam</id>
 	<api flags="no_browser"/>
 	<name>Новогор-Прикамье</name>
 	<description html="true"><![CDATA[
@@ -11,6 +11,7 @@
 	<author>Aleksey Sosnin &lt;sosnin.aleksey@gmail.com&gt;</author>
 	<depends>
 		<module id="library"/>
+		<module id="misc/saved-data"/>
 	</depends>
 	<files>
 		<icon>icon.png</icon>

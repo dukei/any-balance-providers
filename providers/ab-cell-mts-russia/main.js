@@ -38,7 +38,7 @@ function main() {
 
 var g_countersTable = {
 	common: {
-		"balance": "balance",
+		"balance": "remainders.balance",
 		"bonus": "bonus",
 		"min_local": "remainders.min_local",
 		"min_left": "remainders.min_left",

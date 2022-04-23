@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
     <EditTextPreference 
-        title="Логин" 
+        title="Номер телефона" 
         positiveButtonText="ОК" 
-        summary="Номер телефона (10 цифр)||{@s}\n" 
+        summary="Номер для входа в личный кабинет|Введите номер\n|{@s}\n" 
         dialogTitle="Номер телефона" 
         negativeButtonText="Отмена" 
-        dialogMessage="Введите номер вашего телефона для входа в Интернет-Помощник (10 цифр), например 9161234567"
+        dialogMessage="Введите номер телефона для входа в личный кабинет в формате 10 цифр, например 9161234567"
         obligatory="true"
         key="login"
         inputType="number">
@@ -17,19 +17,19 @@
         dialogTitle="Пароль"
         negativeButtonText="Отмена"
         title="Пароль"
-        summary="Пароль для входа в Интернет-Помощник||***********\n"
-        dialogMessage="Введите пароль, используемый для входа в Интернет-Помощник"
+        summary="Пароль для входа в личный кабинет|Введите пароль\n|**********\n"
+        dialogMessage="Введите пароль, используемый для входа в личный кабинет"
         obligatory="true"
         inputType="textPassword">
     </EditTextPreference>
-<!--    <ListPreference 
+<!--<ListPreference 
         key="type" 
         title="Личный кабинет"
         summary="|Автоматически|{@s}"
         entries="Автоматически|Личный кабинет МТС|Мобильный интернет-помощник|Обычный интернет-помощник"
         entryValues="auto|lk|mobile|ordinary"
 	defaultValue="auto">
-    </ListPreference> -->
+    </ListPreference>
     <EditTextPreference 
         positiveButtonText="ОК"
         key="phone" 
@@ -40,7 +40,7 @@
         dialogMessage="Введите 10 цифр номера телефона, чей баланс вы хотите посмотреть. Например, 9161234567. Этот номер должен быть виден в вашем личном кабинете. Чтобы смотреть информацию по основному номеру, оставьте это поле пустым."
         inputType="number">
     </EditTextPreference>
-<!--    <ListPreference 
+    <ListPreference 
         key="region" 
         title="Регион"
         summary="Регион вашего номера|Нужен для определения Интернет-Помощника\n|{@s}\n"

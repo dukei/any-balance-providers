@@ -203,16 +203,16 @@ function main() {
 	    html = AnyBalance.requestGet('https://www.ozon.ru/my/points/?tab=classic', g_headers);
 	
 	    var tsHeadLs = getElements(html, /<span[^>]+class="tsHeadL"[^>]*>/ig);
-		var i8ls = getElements(html, /<div><!----> <!----> <span[^>]+class="i8l"[^>]*>/ig);
+		var items = getElements(html, /<div><!----> <!----> <span[^>]+class="[\s\S]*?"[^>]*>/ig);
         if(tsHeadLs){
    	    	for(var i=0; i<tsHeadLs.length; ++i){
 		        var tsHeadL = tsHeadLs[i];
-				var i8l = i8ls[i];
-		        if(/Баллы Ozon/i.test(i8l))
+				var item = items[i];
+		        if(/Баллы Ozon/i.test(item))
 		        	getParam(tsHeadL, result, 'bonus', /<span[^>]+class="tsHeadL"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
-			    if(/Premium баллы/i.test(i8l))
+			    if(/Premium баллы/i.test(item))
 		        	getParam(tsHeadL, result, 'bonus_premium', /<span[^>]+class="tsHeadL"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
-			    if(/Бонусы продавцов/i.test(i8l))
+			    if(/Бонусы продавцов/i.test(item))
 		        	getParam(tsHeadL, result, 'bonus_salers', /<span[^>]+class="tsHeadL"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
 			}
         }else{
@@ -223,11 +223,12 @@ function main() {
 		var lastName = getParam(html, null, null, /"lastName":"([^"]*)/i, replaceTagsAndSpaces);
 		result.fio = firstName + ' ' + lastName;
 		
-		var hist = getElements(html, /<div[^>]+class="i3m"[^>]*>/ig)[0];
+		var hist = getElements(html, [/<\/div>\s<div[^>]+class="[\s\S]*?"[^>]*>/ig, /tsBody/i])[0];
+		var hist1 = getParam(html, null, null, /<\/div>\s<div[^>]+class="[\s\S]*?"[^>]*>([\s\S]*?)<\/div><\/div>/i);
         if(hist){
-		    getParam(hist, result, 'oper_sum', /<div[^>]+class="i4m tsBodyLBold">([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
-            getParam(hist, result, 'oper_desc', /<span[^>]+class="m3i tsBodyL">([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
-			var date = getParam(hist, null, null, /<span[^>]+class="im4 tsBodyM">([\s\S]*?)в \d\d\:\d\d\s*<\/span>/i, replaceTagsAndSpaces);
+		    getParam(hist, result, 'oper_sum', /<div[^>]+class="[\s\S]*?tsBodyLBold">([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+            getParam(hist, result, 'oper_desc', /<span[^>]+class="[\s\S]*?tsBodyL">([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
+			var date = getParam(hist, null, null, /<span[^>]+class="[\s\S]*?tsBodyM">([\s\S]*?)в \d\d\:\d\d\s*<\/span>/i, replaceTagsAndSpaces);
 			if (!/\d\d\d\d/i.test(date)) {
 				var dt = new Date();
 				var ndate = date + ' ' + dt.getFullYear();

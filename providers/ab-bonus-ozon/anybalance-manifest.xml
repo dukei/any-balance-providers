@@ -1,10 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="20">ab-bonus-ozon</id>
+	<id version="22">ab-bonus-ozon</id>
 	<name>OZON.ru</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о баланcе, активном заказе и количестве баллов в интернет магазине OZON.ru <a href="http://www.ozon.ru">http://www.ozon.ru</a>.</p>
+	<p>Предоставляет информацию о баланcе, активном заказе и количестве баллов в интернет магазине OZON.ru <a href="https://www.ozon.ru/">https://www.ozon.ru/</a>.</p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>
@@ -18,14 +18,19 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Остаток" units=" р"/>
-		<counter id="blocked" name="Заблокировано" units=" р"/>
-		<counter id="available" name="Доступно" units=" р"/>
-		<counter id="bonus" name="Баллы"/>
-		<counter id="order_sum" name="Сумма заказа" units=" р"/>
-		<counter id="weight" name="Вес" units=" кг"/>
+		<counter id="balance" name="Остаток" units=" ₽"/>
+		<counter id="bonus" name="Баллы Ozon" units=" Б"/>
+		<counter id="bonus_premium" name="Premium баллы" units=" Б"/>
+		<counter id="bonus_salers" name="Бонусы продавцов" units=" Б"/>
+		<counter id="oper_sum" name="Сумма операции" units=" Б"/>
+		<counter id="oper_date" name="Дата операции" type="time" format="dd.MM.yyyy"/>
+		<counter id="oper_desc" name="Последняя операция" type="text"/>
+		<counter id="order_sum" name="Сумма заказа" units=" ₽"/>
+<!--	<counter id="weight" name="Вес" units=" кг"/>-->
 		<counter id="ticket" name="Отправление" type="text"/>
 		<counter id="state" name="Статус" type="text"/>
+		<counter id="phone" name="Телефон" type="text"/>
+		<counter id="fio" name="ФИО" type="text"/>
 	</counters>
 	<keywords>озон</keywords>
 	<type>bonus, shop</type>

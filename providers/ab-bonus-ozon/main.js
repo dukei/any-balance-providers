@@ -11,6 +11,8 @@ var g_headers = {
 	'x-o3-device-type': 'mobile'
 };
 
+var replaceNumber = [replaceTagsAndSpaces, /\D/g, '', /.*(\d\d\d)(\d\d\d)(\d\d)(\d\d)$/, '+7 $1 $2-$3-$4'];
+
 function callApi(verb, params){
 	var method = 'GET', params_str = '', headers = g_headers;
 	if(params){
@@ -188,18 +190,70 @@ function main() {
 
 	var result = {success: true};
 	
-	if (isAvailable(['balance', 'blocked', 'available', 'bonus'])) {
-		json = callApi('my-account-api.bx/account/v1');
+	if (isAvailable(['balance', 'bonus', 'bonus_premium', 'bonus_salers', 'fio'])) {
+		html = AnyBalance.requestGet('https://user-account.ozon.ru/safe-api/public/v1/user-account/balance', g_headers);
+		var json = getJson(html);
+	    if(!json || !json.balance){
+			AnyBalance.trace('Не удалось получить баланс');
+			result.balance = null;
+	    }else{
+			getParam((json.balance)/100, result, 'balance', null, null, parseBalance);
+		}
 		
-		getParam(json.clientAccountEntryInformationForWeb.current, result, 'balance');
-		getParam(json.clientAccountEntryInformationForWeb.blocked, result, 'blocked');
-		getParam(json.clientAccountEntryInformationForWeb.accessible, result, 'available');
-		getParam(json.clientAccountEntryInformationForWeb.score, result, 'bonus');
+	    html = AnyBalance.requestGet('https://www.ozon.ru/my/points/?tab=classic', g_headers);
+	
+	    var tsHeadLs = getElements(html, /<span[^>]+class="tsHeadL"[^>]*>/ig);
+		var items = getElements(html, /<div><!----> <!----> <span[^>]+class="[\s\S]*?"[^>]*>/ig);
+        if(tsHeadLs){
+   	    	for(var i=0; i<tsHeadLs.length; ++i){
+		        var tsHeadL = tsHeadLs[i];
+				var item = items[i];
+		        if(/Баллы Ozon/i.test(item))
+		        	getParam(tsHeadL, result, 'bonus', /<span[^>]+class="tsHeadL"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+			    if(/Premium баллы/i.test(item))
+		        	getParam(tsHeadL, result, 'bonus_premium', /<span[^>]+class="tsHeadL"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+			    if(/Бонусы продавцов/i.test(item))
+		        	getParam(tsHeadL, result, 'bonus_salers', /<span[^>]+class="tsHeadL"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
+			}
+        }else{
+        	AnyBalance.trace('Не удалось получить таблицу баллов');
+        }
+		
+		var firstName = getParam(html, null, null, /"firstName":"([^"]*)/i, replaceTagsAndSpaces);
+		var lastName = getParam(html, null, null, /"lastName":"([^"]*)/i, replaceTagsAndSpaces);
+		result.fio = firstName + ' ' + lastName;
+		
+		var hist = getElements(html, [/<\/div>\s<div[^>]+class="[\s\S]*?"[^>]*>/ig, /tsBody/i])[0];
+		var hist1 = getParam(html, null, null, /<\/div>\s<div[^>]+class="[\s\S]*?"[^>]*>([\s\S]*?)<\/div><\/div>/i);
+        if(hist){
+		    getParam(hist, result, 'oper_sum', /<div[^>]+class="[\s\S]*?tsBodyLBold">([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+            getParam(hist, result, 'oper_desc', /<span[^>]+class="[\s\S]*?tsBodyL">([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
+			var date = getParam(hist, null, null, /<span[^>]+class="[\s\S]*?tsBodyM">([\s\S]*?)в \d\d\:\d\d\s*<\/span>/i, replaceTagsAndSpaces);
+			if (!/\d\d\d\d/i.test(date)) {
+				var dt = new Date();
+				var ndate = date + ' ' + dt.getFullYear();
+			} else {
+				var ndate = date;
+			}
+			getParam(ndate, result, 'oper_date', null, null, parseDateWord);
+        }else{
+        	AnyBalance.trace('Не удалось получить данные по последней операции');
+        }
 	}
+		
+//		json = callApi('my-account-api.bx/account/v1');
+//		AnyBalance.trace(JSON.stringify(json));
+		
+//		getParam(json.clientAccountEntryInformationForWeb.current, result, 'balance');
+//		getParam(json.clientAccountEntryInformationForWeb.blocked, result, 'blocked');
+//		getParam(json.clientAccountEntryInformationForWeb.accessible, result, 'available');
+//		getParam(json.clientAccountEntryInformationForWeb.score, result, 'bonus');
+	
 	
 	var orders = 0;
 	if (isAvailable(['order_sum', 'weight', 'ticket', 'state'])) {
 		json = callApi('composer-api.bx/page/json/v1?url=%2Fmy%2Forderlist');
+		AnyBalance.trace(JSON.stringify(json));
 
 		var ola = getDefaultProp(json.csma.orderListApp);
 		for(var i=0; ola.orderListApp && i<ola.orderListApp.length; ++i){
@@ -211,18 +265,18 @@ function main() {
 			getParam(order.sections[0].status.name, result, 'state');
 			getParam(order.header.number, result, 'ticket');
 		    
-			if(AnyBalance.isAvailable('weight')){
-				var shw_items = getDefaultProp(json.csma.shipmentWidget).items;
-				var it = shw_items.find(function(b){ return b.type=="postings" });
-				for(var k=0; k<it.postings.postings.length; ++k){
-					var p = it.postings.postings[k];
-					var pjson = callPageJson(p.action.link);
-
-					var textAtom = getDefaultProp(pjson.common.textBlock).body.find(function(b){ return b.type=="textAtom" });
-					if(textAtom)
-						sumParam(textAtom.textAtom.text, result, 'weight', /•.*/, null, parseWeight, aggregate_sum);
-				}
-			}
+//			if(AnyBalance.isAvailable('weight')){
+//				var shw_items = getDefaultProp(json.csma.shipmentWidget).items;
+//				var it = shw_items.find(function(b){ return b.type=="postings" });
+//				for(var k=0; k<it.postings.postings.length; ++k){
+//					var p = it.postings.postings[k];
+//					var pjson = callPageJson(p.action.link);
+//
+//					var textAtom = getDefaultProp(pjson.common.textBlock).body.find(function(b){ return b.type=="textAtom" });
+//					if(textAtom)
+//						sumParam(textAtom.textAtom.text, result, 'weight', /•.*/, null, parseWeight, aggregate_sum);
+//				}
+//			}
 
 			break;
 		}
@@ -230,6 +284,7 @@ function main() {
 	}
 
 	result.__tariff = prefs.login;
+	getParam(prefs.login, result, 'phone', null, replaceNumber);
 	
 	AnyBalance.setResult(result);
 }

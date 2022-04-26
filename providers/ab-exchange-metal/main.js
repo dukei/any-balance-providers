@@ -1,5 +1,5 @@
 /**
-Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
+РџСЂРѕРІР°Р№РґРµСЂ AnyBalance (http://any-balance-providers.googlecode.com)
 */
 
 function numSize(num, size) {
@@ -29,7 +29,7 @@ function getMetalNew(xml, result, metal, idx) {
 	var maxtime = 0;
 	if (AnyBalance.isAvailable(metal)) {
 		var price = 0;
-		// Матчим всю строку
+		// РњР°С‚С‡РёРј РІСЃСЋ СЃС‚СЂРѕРєСѓ
 		var recordRe = new RegExp('(<Record[^>]*Code="'+idx+'">[\\s\\S]*?</Record>)', 'ig');
 		var records = sumParam(xml, null, null, recordRe);
 		
@@ -57,7 +57,7 @@ function main(){
 	var tomorrow = new Date(time + 86400*1000);
 	
 	var info = AnyBalance.requestGet('http://www.cbr.ru/scripts/xml_metall.asp?date_req1=' + getDateString(yyesterday) + '&date_req2=' + getDateString(tomorrow));
-	//info = info.replace(/windows-1251/i, 'utf-8'); //Не парсится xml с этой левой кодировкой
+	//info = info.replace(/windows-1251/i, 'utf-8'); //РќРµ РїР°СЂСЃРёС‚СЃСЏ xml СЃ СЌС‚РѕР№ Р»РµРІРѕР№ РєРѕРґРёСЂРѕРІРєРѕР№
 	
 	var result = {success: true};
 

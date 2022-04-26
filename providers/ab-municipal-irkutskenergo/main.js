@@ -15,7 +15,7 @@ function main() {
 	AnyBalance.setDefaultCharset('utf-8');
 	
 	AB.checkEmpty(prefs.login, 'Введите номер лицевого счета/договора!');
-    AB.checkEmpty(prefs.password, 'Введите фамилию!');
+    AB.checkEmpty(prefs.password, 'Введите фамилию/пароль!');
 	
 	var html = AnyBalance.requestGet(baseurl + 'qa/PersonalCabin.html', g_headers);
 	
@@ -24,13 +24,27 @@ function main() {
     }
 
     var plainParams = {
-        AccountNo:prefs.login,
-        AccountFIO:prefs.password,
-        PostAddress:"",
-        IsApproved:false,
-        Residents:"",
-        FullArea:"",
-        SaveDataFlag:false
+		"Home":true,
+	    "AccountNo":prefs.login,
+	    "AccountFIO":"",
+	    "CurrentAccountPassword":prefs.password,
+	    "Rooms_Count":"",
+	    "PostAddress":"",
+	    "IsApproved":false,
+	    "Residents":"",
+	    "FullArea":"",
+	    "FullArea_All":"",
+	    "IsBindMessage":false,
+	    "bindAddMode":false,
+	    "bindAccountDataItem":{},
+	    "bindAccountDataList":[],
+	    "contractsQueueList":[],
+	    "SaveDataFlag":true,
+	    "Services":[],
+	    "ContractorServiceInfoList":[],
+	    "ContractorBalanceInfoList":[],
+	    "CreditList":[],
+	    "BillsAvailable":false
     };
     
     var par = 'EnergoSales@LoginPL(\''+ JSON.stringify(plainParams) +'\'#string)';
@@ -58,27 +72,34 @@ function main() {
 	
 	var result = {success: true};
 
-    if (json.Credentials && json.Credentials.balanses) {
+    if (json.Credentials && json.Credentials.ContractorBalanceInfoList) {
+		
+		AB.getParam(json.Credentials.AccountNo, result, 'account');
+	    AB.getParam(json.Credentials.AccountFIO, result, 'fio');
 
-        var accounts = json.Credentials.balanses;
+        var accounts = json.Credentials.ContractorBalanceInfoList;
         for (var i = 0; i < accounts.length; i++) {
             var counter_name;
-            if(/электроэнергия/i.test(accounts[i].ServiceName))
+            if(/Иркутскэнергосбыт/i.test(accounts[i].Title)) // электроэнергия
                 counter_name = 'balance';
-            else if(/отопление/i.test(accounts[i].ServiceName))
+			else if(/Дирекция Городской Инфраструктуры/i.test(accounts[i].Title)) // водоснабжение
+                counter_name = 'balanceCold';
+            else if(/Байкальская энергетическая компания/i.test(accounts[i].Title)) // отопление + ГВС
                 counter_name = 'balanceHeat';
-            else if(/ГВС/i.test(accounts[i].ServiceName))
-                counter_name = 'balanceGVS';
+			else if(/ОДПУ/i.test(accounts[i].Title)) // установка ОДПУ
+                counter_name = 'balanceODPU';
 
             if(!counter_name)
-                AnyBalance.trace("Неизвестная опция: "+ accounts[i].ServiceName);
+                AnyBalance.trace("Неизвестная опция: " + accounts[i].Title);
             else
-                AB.getParam(accounts[i].Balans, result, counter_name, null, null, AB.parseBalance);
+                AB.getParam(accounts[i].Summ, result, counter_name, null, null, AB.parseBalance);
         }
     }
     else {
         AnyBalance.trace("Не удалось найти балансы по услугам.");
     }
+	
+	result.__tariff = prefs.login;
     
     var today = new Date(),
         to_month = today.getMonth() + 1,
@@ -100,10 +121,11 @@ function main() {
     );
     
     json = AB.getJson(html);
+	AnyBalance.trace('Ответ 2: '+ JSON.stringify(json));///////////////////////////////////////////////
 
     if (!json.Credits || !json.Credits[0]) {
     	AnyBalance.trace(html);
-    	throw new AnyBalance.Error('Информация временно недоступна. Попробуйте позднее');
+    	throw new AnyBalance.Error('Информация временно недоступна. Попробуйте позднее.');
     }
 
     AB.getParam(json.Credits[0].Balance, result, 'to_pay', null, null, AB.parseBalance);

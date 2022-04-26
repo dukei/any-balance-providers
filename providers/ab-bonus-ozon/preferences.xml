@@ -3,7 +3,7 @@
     <EditTextPreference 
         title="Телефон или e-mail" 
 		key="login"
-        summary="||{@s}" 
+        summary="Телефон или e-mail для входа||{@s}\n" 
         obligatory="true"
 		dialogTitle="Телефон или e-mail" 
 		positiveButtonText="ОК" 

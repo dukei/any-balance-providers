@@ -1,5 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="1.0" version="25" date="2022-05-03">
+	- Улучшена обработка ошибок.
+	- Добавлен счетчик Последняя покупка.
+	</change>
 	<change major_version="1.0" version="24" date="2021-04-29">
 	- Поддержка изменений на сайте.
 	</change>

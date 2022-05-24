@@ -3,10 +3,10 @@
     <EditTextPreference
         key="login"
         title="Номер телефона"
-        summary="Номер телефона для доступа к личному кабинету||{@s}\n"
+        summary="Номер телефона для входа в личный кабинет|Введите номер телефона\n|{@s}\n"
         inputType="number"
         dialogTitle="Номер телефона"
-        dialogMessage="Введите номер телефона для входа в личный кабинет"
+        dialogMessage="Введите номер телефона, используемый для входа в личный кабинет, в формате 10 цифр, например: 9061234567"
         positiveButtonText="ОК"
         negativeButtonText="Отмена">
     </EditTextPreference>

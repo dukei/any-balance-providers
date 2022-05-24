@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="1.0" version="24">ab-bonus-perekrestok</id>
+	<id major_version="1.0" version="25">ab-bonus-perekrestok</id>
 	<api flags="no_browser"/>
 	<name>Перекресток</name>
 	<description html="true"><![CDATA[
@@ -20,12 +20,15 @@
 	</files>
 	<counters>
 		<counter id="balance" name="Баллов" units=" Б"/>
-		<counter id="balance_rub" name="Рублей" units=" руб."/>
+		<counter id="balance_rub" name="Рублей" units=" ₽"/>
 		<counter id="stickers" name="Наклейки" units=" шт."/>
 		<counter id="burnInThisMonth" name="Сгорание баллов" units=" Б"/>
-		<counter id="burnInThisMonth_rub" name="Сгорание рублей" units=" руб"/>
+		<counter id="burnInThisMonth_rub" name="Сгорание рублей" units=" ₽"/>
 		<counter id="burnDate" name="Дата сгорания баллов" type="time" format="dd.MM.yyyy"/>
-		<counter id="customer" name="Владелец" type="text"/>
+		<counter id="cardNumber" name="Номер карты" type="text"/>
+		<counter id="last_transaсtion" name="Поcледняя покупка" type="html"/>
+		<counter id="phone" name="Номер телефона" type="text"/>
+<!--    <counter id="customer" name="Владелец" type="text"/> -->
 	</counters>
 	<keywords>клуб, перекресток, накопительная программа, накопительная карта, бонус, бонусная карта, продукты, покупки, баллы</keywords>
 	<type>bonus</type>

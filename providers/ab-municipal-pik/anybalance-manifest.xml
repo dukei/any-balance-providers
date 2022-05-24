@@ -1,25 +1,42 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="3">ab-municipal-pik</id>
+	<id version="4">ab-municipal-pik</id>
 	<api flags="no_browser"/>
 	<name>Пик Комфорт</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе в системе Пик Комфорт http://www.pik-comfort.ru/</p>
-	<p>Информация берется из личного кабинета https://client.pik-comfort.ru</p>
+	<p>Предоставляет информацию о балансе в системе Пик Комфорт https://pik-comfort.ru/.</p>
+	<p>Информация берется из личного кабинета https://new.pik-comfort.ru/</p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="balance" name="Баланс" units=" ₽"/>
+		<counter id="charge" name="Начислено" units=" ₽"/>
+		<counter id="chargecorrect" name="Перерасчет" units=" ₽"/>
+		<counter id="incomingbalance" name="Переплата" units=" ₽"/>
+		<counter id="period" name="Платежный период" type="time" format="dd.MM.yyyy"/>
+		<counter id="paid" name="Оплачено" units=" ₽"/>
+		<counter id="penalty" name="Пени" units=" ₽"/>
+		<counter id="subsidy" name="Льготы" units=" ₽"/>
+		<counter id="paymentday" name="Срок для след. оплаты" type="time" format="dd.MM.yyyy"/>
+		<counter id="readingday" name="Срок подачи показаний" type="time" format="dd.MM.yyyy"/>
 		<counter id="account" name="Лицевой счет" type="text"/>
+		<counter id="lastpaysum" name="Сумма посл. платежа" units=" ₽"/>
+		<counter id="lastpaydate" name="Дата посл. платежа" type="time" format="dd.MM.yyyy"/>
+		<counter id="lastpayplace" name="Место посл. платежа" type="text"/>
+		<counter id="address" name="Адрес" type="text"/>
+		<counter id="phone" name="Номер телефона" type="text"/>
+		<counter id="fio" name="ФИО владельца" type="text"/>
 	</counters>
-	<keywords></keywords>
+	<keywords>пик комфорт, pik comfort</keywords>
 	<type>municipal</type>
 	<country>ru</country>
 </provider>

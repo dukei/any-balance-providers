@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-bonus-privetmir</id>
+	<name>Привет, Мир!</name>
+	<api flags="no_browser"/>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе кешбэка, привязанных картах и начислениях по последним покупкам для держателей карт платежной системы Мир.</p>
+	<p>Информация берется из личного кабинета "Привет, Мир!" на сайте https://privetmir.ru/personal/.</p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Для работы провайдера требуется ввести номер телефона, к которому привязана карта, и пароль для входа в личный кабинет "Привет, Мир!".</p>
+	<p>Если у вас нет личного кабинета "Привет, Мир!", вы можете зарегистрировать его на сайте https://privetmir.ru/register/.</p>
+	]]></instruction>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<author>RamzesZeus &lt;ramzeszeus@gmail.com&gt;</author>
+    <depends>
+		<module id="library"/>
+		<module id="misc/saved-data"/>
+	</depends>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" {@currency}"/>
+		<counter id="cardnum" name="Номер карты" type="text"/>
+		<counter id="cardregdate" name="Дата регистрации карты" type="time" format="dd.MM.yyyy"/>
+		<counter id="cardnum2" name="Номер карты 2" type="text"/>
+		<counter id="cardregdate2" name="Дата регистрации карты 2" type="time" format="dd.MM.yyyy"/>
+		<counter id="cardnum3" name="Номер карты 3" type="text"/>
+		<counter id="cardregdate3" name="Дата регистрации карты 3" type="time" format="dd.MM.yyyy"/>
+		<counter id="cardnum4" name="Номер карты 4" type="text"/>
+		<counter id="cardregdate4" name="Дата регистрации карты 4" type="time" format="dd.MM.yyyy"/>
+		<counter id="cardnum5" name="Номер карты 5" type="text"/>
+		<counter id="cardregdate5" name="Дата регистрации карты 5" type="time" format="dd.MM.yyyy"/>
+		<counter id="lastoperbuy" name="Сумма посл. покупки" units=" {@currency}"/>
+		<counter id="lastoperdate" name="Дата посл. покупки" type="time" format="dd.MM.yyyy"/>
+		<counter id="lastoperplace" name="Место посл. покупки" type="text"/>
+		<counter id="lastopersum" name="Сумма посл. кешбэка" units=" {@currency}"/>
+		<counter id="lastopercard" name="Карта посл. кешбэка" type="text"/>
+		<counter id="lastoperstatus" name="Статус посл. кешбэка" type="text"/>
+		<counter id="currency" name="Валюта счета" type="text"/>
+		<counter id="phone" name="Номер телефона" type="text"/>
+        <counter id="fio" name="ФИО" type="text"/>
+	</counters>
+	<keywords>мир, mir, привет</keywords>
+	<type>money, bonus</type>
+	<country>ru</country>
+</provider>

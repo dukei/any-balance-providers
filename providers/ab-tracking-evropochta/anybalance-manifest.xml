@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-tracking-evropochta</id>
+	<api flags="no_browser"/>
+	<name>Европочта</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию по Отслеживанию посылок по всей Беларуси https://evropochta.by/</p>
+	
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p></p>
+	]]></instruction>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		
+		<counter id="place" name="DATA" type="text"/>
+		<counter id="track" name="Трэк номер" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type>tracking</type>
+	<country>by</country>
+</provider>

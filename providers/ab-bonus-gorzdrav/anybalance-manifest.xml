@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-bonus-gorzdrav</id>
+	<api flags="no_browser"/>
+	<name>Горздрав (Бонусы)</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о бонусном балансе карты постоянного покупателя сети аптек Горздрав.</p>
+	<p>Информация берется из личного кабинета Горздрав на сайте https://gorzdrav.org/my-account/my-profile.</p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Для работы провайдера требуется ввести номер телефона, привязанного к личному кабинету Горздрав, и ввести код подтверждения из SMS, высланного на этот номер.</p>
+	<p>Сайт Горздрав обладает защитой от роботов (ReCaptcha), поэтому для входа потребуется пройти проверку с помощью приложения Anybalance ReCaptcha или с помощью одного из сервисов автоматического распознавания.</p>
+	]]></instruction>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" ₽"/>
+		<counter id="bonuses_active" name="Активные бонусы" units=" Б"/>
+		<counter id="bonuses_inactive" name="Неактивные бонусы" units=" Б"/>
+		<counter id="bonuses_burn" name="Сгораемые бонусы" units=" Б"/>
+		<counter id="bonuses_till" name="Ближайшая дата сгорания" type="time" format="dd.MM.yyyy"/>
+		<counter id="cardnum" name="Номер карты" type="text"/>
+		<counter id="cardstate" name="Статус карты" type="text"/>
+		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="phone" name="Телефон" type="text"/>
+	</counters>
+	<keywords>Gorzdrav, Горздрав</keywords>
+	<type>bonus</type>
+	<country>ru</country>
+</provider>

@@ -373,10 +373,17 @@ function isLoggedIn(html) {
 
 function getLKJson(html, allowExceptions) {
     try {
-    	return getLKJson2(html);
+    	return getLKJsonNew(html);
     } catch (e) {
         AnyBalance.trace(e.message);
         AnyBalance.trace('Не удалось найти Json с описанием пользователя первым способом, сайт изменен?');
+    }
+
+    try {
+    	return getLKJson2(html);
+    } catch (e) {
+        AnyBalance.trace(e.message);
+        AnyBalance.trace('Не удалось найти Json с описанием пользователя вторым способом, сайт изменен?');
     }
 
     try {
@@ -386,12 +393,54 @@ function getLKJson(html, allowExceptions) {
             throw e;
         } else {
             AnyBalance.trace(e.message);
-            AnyBalance.trace('Не удалось найти Json с описанием пользователя двумя способами, сайт изменен?');
+            AnyBalance.trace('Не удалось найти Json с описанием пользователя тремя способами, сайт изменен?');
         }
         json = {};
     }
 
     return {};
+}
+
+function getLKJsonNew(html) {
+	var prefs = AnyBalance.getPreferences();
+	var html = AnyBalance.requestGet('https://lk.mts.ru/auth/profile/full/legacy', addHeaders({
+		Accept: 'application/json, text/plain, */*',
+    	Referer: 'https://lk.mts.ru/',
+		'X-Login': fetchNumber(),
+		'X-Requested-With': 'XMLHttpRequest'
+    }));
+	var json = getJson(html);
+	var out = {};
+	if (isAnotherNumber()) {
+        var accounts = json["profile:slaves"]["profile:slaves:accounts"];
+		var account = accounts["id=" + prefs.phone + ",ou=user,o=users,ou=services,dc=amroot"];
+		out.fio = account["profile:name"];
+        out.phone_formatted = ('' + account["mobile:phone"]).replace(/(\d\d\d)(\d\d\d)(\d\d)(\d\d)$/, '+7($1)$2-$3-$4');
+        out.phone = '' + account["mobile:phone"];
+//        out.balance = Math.round(account["mobile:balance"]*100)/100;
+        out.tariff = '' + account["mobile:tariff"];
+	} else {
+		out.fio = json["profile:name"];
+        out.phone_formatted = ('' + json["mobile:phone"]).replace(/(\d\d\d)(\d\d\d)(\d\d)(\d\d)$/, '+7($1)$2-$3-$4');
+        out.phone = '' + json["mobile:phone"];
+//        out.balance = Math.round(json["mobile:balance"]*100)/100;
+        out.tariff = '' + json["mobile:tariff"];
+	}
+	
+	var token = callNewLKApiToken('accountInfo/mscpBalance');
+	var data = callNewLKApiResult(token);
+	
+	out.balance = getParam(Math.round(data.amount*100)/100);
+
+    if(!out.balance){
+    	AnyBalance.trace('Нулевой баланс! Возможно, что-то не так! ' + html);
+    }
+
+    if(!out.phone){
+    	AnyBalance.trace('Не удаётся получить информацию о текущем пользователе. Сайт изменен?\n' + html);
+    }
+
+    return out;
 }
 
 function getLKJson2(html) {
@@ -840,12 +889,25 @@ function processTrafficLK(result){
 }
 */
 
+function fetchNumber() {
+    var prefs = AnyBalance.getPreferences();
+
+    if (prefs.phone && prefs.phone != prefs.login) {
+		var number = '7' + prefs.phone;
+	} else {
+		var number = '7' + prefs.login;
+	}
+	
+	return number;
+}
+
 function callNewLKApiToken(verb){
 	var html = AnyBalance.requestGet('https://lk.mts.ru/api/' + verb, addHeaders({
-		Referer: 'https://lk.mts.ru/',
-		Origin: 'https://lk.mts.ru',
-		'X-Requested-With': 'XMLHttpRequest',
 		Accept: 'application/json, text/plain, */*',
+		Origin: 'https://lk.mts.ru',
+		Referer: 'https://lk.mts.ru/',
+		'X-Login': fetchNumber(),
+		'X-Requested-With': 'XMLHttpRequest'
 	}));
 
 	var token = getJson(html);
@@ -863,10 +925,11 @@ function callNewLKApiToken(verb){
 function callNewLKApiResult(token){
 	for(var i=0; i<30; ++i){
 		var html = AnyBalance.requestGet('https://lk.mts.ru/api/longtask/check/' + token.token + '?for=' + token.verb, addHeaders({
-			Referer: 'https://lk.mts.ru/',
-			Origin: 'https://lk.mts.ru',
-			'X-Requested-With': 'XMLHttpRequest',
 			Accept: 'application/json, text/plain, */*',
+		    Origin: 'https://lk.mts.ru',
+		    Referer: 'https://lk.mts.ru/',
+		    'X-Login': fetchNumber(),
+		    'X-Requested-With': 'XMLHttpRequest'
 		}));
 		AnyBalance.trace('Ожидание результата ' + token.verb + ' ' + (i+1) + '/' + 30);
 		if(AnyBalance.getLastStatusCode() >= 400){
@@ -890,10 +953,11 @@ function callNewLKApiResult(token){
 function callNewLKApiResultAlt(token){
 	for(var i=0; i<30; ++i){
 		var html = AnyBalance.requestGet('https://lk.mts.ru/api/longtask/check/' + token.token + '?for=' + token.verb, addHeaders({
-			Referer: 'https://lk.mts.ru/',
-			Origin: 'https://lk.mts.ru',
-			'X-Requested-With': 'XMLHttpRequest',
 			Accept: 'application/json, text/plain, */*',
+		    Origin: 'https://lk.mts.ru',
+		    Referer: 'https://lk.mts.ru/',
+		    'X-Login': fetchNumber(),
+		    'X-Requested-With': 'XMLHttpRequest'
 		}));
 		AnyBalance.trace('Ожидание результата ' + token.verb + ' ' + (i+1) + '/' + 30);
 		if(AnyBalance.getLastStatusCode() >= 400){
@@ -918,16 +982,15 @@ function processCountersLK(result){
 	if(!result.remainders)
         result.remainders = {};
 	
-	var token = callNewLKApiToken('accountInfo/mscpBalance');
-	var data = callNewLKApiResult(token);
-	
-	getParam((data.amount).toFixed(2), result.remainders, 'remainders.balance');
-	
 	var token = callNewLKApiToken('sharing/counters');
 	var data = callNewLKApiResult(token);
 
 	for(var i=0; i<data.counters.length; ++i){
 		var c = data.counters[i];
+		if (/Входящ/i.test(c.name)){
+			AnyBalance.trace('Найден счетчик ' + c.name + ' (' + c.packageType + '). Это посуточный дополнительный пакет. Пропускаем...');
+			continue;
+	    }
 		AnyBalance.trace('Найден счетчик ' + c.name + ' (' + c.packageType + ')');
 
 		if(c.packageType === 'Calling'){
@@ -993,33 +1056,39 @@ function processCountersLK(result){
 }
 
 function mainLK(html, result) {
+	var prefs = AnyBalance.getPreferences();
     AnyBalance.trace("Мы в личном кабинете...");
 
-/*    var maxIHTries = 3;
-    //Иногда помощник входит не с первого раза почему-то.
-    for(var i=0; i<maxIHTries; ++i){
-        try{
-            if (isAnotherNumber() || isAvailableIH()) {
-            	AnyBalance.trace('Попытка входа в интернет-помощник ' + (i+1) + '/' + maxIHTries);
-                var ret = followIHLink();
-            
-                if (!isInOrdinary(ret.html)) //Тупой МТС не всегда может перейти из личного кабинета в интернет-помощник :(
-                	checkIHError(ret.html, true, true);
-            
-                fetchOrdinary(ret.html, ret.baseurlHelper, result);
-            }
-            break;
-        }catch(e){
-        	if(isAnotherNumber())
-        		throw e; //В случае требования другого номера все данные получаются только из интернет-помощника
-            AnyBalance.trace('Не удалось получить данные из ип: ' + e.message + '\n' + e.stack);
-
-        	if(i == maxIHTries-1) //Если попытка последняя, ставим флаг, что были ошибки
-            	result.were_errors = true;
-        }
+	if (isAnotherNumber()) {
+        AnyBalance.trace('Пробуем переключиться на номер ' + prefs.phone);
+		html = AnyBalance.requestGet('https://lk.mts.ru/auth/profile/full/legacy', g_headers);
+		var json = getJson(html);
+	
+        var accounts = json["profile:slaves"]["profile:slaves:accounts"];
+				
+		var account = accounts["id=" + prefs.phone + ",ou=user,o=users,ou=services,dc=amroot"];
+		if(!account)
+		    throw new AnyBalance.Error('Не удалось переключиться на номер ' + prefs.phone + '. Вероятно, он не принадлежит логину ' + prefs.login);
+				
+		var accountsUrl = account.login;				
+		if (accountsUrl) {
+		    html = AnyBalance.requestGet(accountsUrl, g_headers);
+		    var csrf = getParam(html, null, null, /antiForgeryToken = "([^"]*)/i);
+			html = AnyBalance.requestPost(accountsUrl, null, addHeaders({
+		        Accept: 'application/json, text/plain, */*',
+                Origin: 'https://lk.mts.ru',
+                Referer: 'https://lk.mts.ru/',
+				'X-CSRF-TOKEN': csrf,
+				'X-Login': '7' + prefs.login,
+                'X-Requested-With': 'XMLHttpRequest'
+		    }));
+        } else {
+			AnyBalance.trace(html);
+			throw new AnyBalance.Error('Не удалось переключиться на другой номер. Сайт изменен?');
+		}
+		
     }
-*/
-//    if (!isAnotherNumber()) {
+
     processInfoLK(html, result);
     try{
     	processCountersLK(result);
@@ -1027,9 +1096,6 @@ function mainLK(html, result) {
     	AnyBalance.trace("Ошибка получения остатков из кабинета. Попробуйте ещё раз позднее. Ошибка: " + e.message);
 		result.were_errors = true;
     }
-//    } else {
-//        AnyBalance.trace('Пропускаем получение данных из ЛК, если требуется информация по другому номеру');
-//   }
 }
 
 function sleep(delay) {

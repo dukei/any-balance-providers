@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
     <EditTextPreference 
-        title="Номер телефона" 
+        title="Логин" 
         positiveButtonText="ОК" 
-        summary="Номер для входа в личный кабинет|Введите номер\n|{@s}\n" 
-        dialogTitle="Номер телефона" 
+        summary="Логин для входа в личный кабинет|Введите логин\n|{@s}\n" 
+        dialogTitle="Логин" 
         negativeButtonText="Отмена" 
         dialogMessage="Введите номер телефона для входа в личный кабинет в формате 10 цифр, например 9161234567"
         obligatory="true"
@@ -29,7 +29,7 @@
         entries="Автоматически|Личный кабинет МТС|Мобильный интернет-помощник|Обычный интернет-помощник"
         entryValues="auto|lk|mobile|ordinary"
 	defaultValue="auto">
-    </ListPreference>
+    </ListPreference> -->
     <EditTextPreference 
         positiveButtonText="ОК"
         key="phone" 
@@ -37,10 +37,10 @@
         negativeButtonText="Отмена"
         title="Номер телефона"
         summary="Номер телефона, чей баланс показывать|Автоматически\n|{@s}\n"
-        dialogMessage="Введите 10 цифр номера телефона, чей баланс вы хотите посмотреть. Например, 9161234567. Этот номер должен быть виден в вашем личном кабинете. Чтобы смотреть информацию по основному номеру, оставьте это поле пустым."
+        dialogMessage="Введите номер телефона, чей баланс вы хотите посмотреть в формате 10 цифр, например 9161234567. Этот номер должен быть виден в вашем личном кабинете. Чтобы смотреть информацию по основному номеру, оставьте это поле пустым"
         inputType="number">
     </EditTextPreference>
-    <ListPreference 
+<!--<ListPreference 
         key="region" 
         title="Регион"
         summary="Регион вашего номера|Нужен для определения Интернет-Помощника\n|{@s}\n"

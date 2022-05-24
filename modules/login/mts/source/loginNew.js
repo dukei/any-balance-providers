@@ -32,6 +32,127 @@ function enterLKNew(options){
 	if (header)
 		AnyBalance.trace('Progress header: ' + header);
 	
+	if (json.header == "verify-captcha") {
+		AnyBalance.trace('МТС затребовал капчу');
+		var data = json.callbacks[0].output[0].value;
+		var img = getParam(data, /data:image\/\w+?(?:png)?;base64,([^"]+)/i);
+		var captcha = AnyBalance.retrieveCode('МТС требует ввести капчу для входа в личный кабинет, чтобы подтвердить, что вы не робот. Пожалуйста, введите символы с картинки', img);
+		
+		html = AnyBalance.requestPost(loginUrl, JSON.stringify({
+            "authId": id,
+            "template": "VerifyCaptcha.jsp",
+            "stage": "login-nodes-dslnull",
+            "header": "verify-captcha",
+            "infoText": null,
+            "callbacks": [
+                {
+                    "type": "TextOutputCallback",
+                    "output": [
+                        {
+                            "name": "message",
+                            "value": data
+						},
+                        {
+                            "name": "messageType",
+                            "value": "0"
+                        }
+                    ]
+                },
+                {
+                    "type": "PasswordCallback",
+                    "output": [
+                        {
+                            "name": "prompt",
+                            "value": "Verify captcha"
+                        }
+                    ],
+                    "input": [
+                        {
+                            "name": "IDToken2",
+                            "value": captcha
+                        }
+                    ]
+                },
+                {
+                    "type": "ConfirmationCallback",
+                    "output": [
+                        {
+                            "name": "prompt",
+                            "value": "Confirm"
+                        },
+                        {
+                            "name": "messageType",
+                            "value": 0
+                        },
+                        {
+                            "name": "options",
+                            "value": [
+                                "IGNORE",
+                                "OK",
+                                "RESTART",
+                                "REFRESH"
+                            ]
+                        },
+                        {
+                            "name": "optionType",
+                            "value": -1
+                        },
+                        {
+                            "name": "defaultOption",
+                            "value": 0
+                        }
+                    ],
+                    "input": [
+                        {
+                            "name": "IDToken3",
+                            "value": 1
+                        }
+                    ]
+                },
+                {
+                    "type": "MetadataCallback",
+                    "output": [
+                        {
+                            "name": "data",
+                            "value": {
+                                "acceptableOperators": [
+                                    "MTS",
+                                    "OTHER"
+                                ],
+                                "hiddenLogo": false,
+                                "restrictXTethered": true,
+                                "acceptableOperatorsErrorMessage": "Введен неверный номер телефона.",
+                                "accessConditions": "https://static.ssl.mts.ru/mts_rf/images/usloviya-edinogo-dostupa-k-servisam-MTS.html",
+                                "correlationID": "a03a3a91-4af7-44ef-975b-7a7cd53a964c",
+                                "label": "Введите номер телефона",
+                                "turnOffFeedbackService": true,
+                                "feedbackServiceUrl": "feedback-prod.stage2.websso.msk.mts.ru"
+                            }
+                        }
+                    ]
+                }
+            ]
+        }), addHeaders({
+	    	'Accept': '*/*',
+            'Accept-API-Version': 'resource=4.0, protocol=1.0',
+	    	'Content-Type': 'application/json',
+	    	'Origin': 'https://login.mts.ru',
+	    	'Referer': 'https://login.mts.ru/amserver/NUI/'
+	    }));
+	
+	    var json = getJson(html);
+//	    AnyBalance.trace('Отправка капчи: ' + JSON.stringify(json));
+	
+        var header = json.header;
+		if (header)
+		    AnyBalance.trace('Progress header: ' + header);
+		
+		if (json.header == "verify-captcha") {
+	    	AnyBalance.trace(html);
+            throw new AnyBalance.Error('Неверный код! Попробуйте еще раз', allowRetry);
+	    }
+	}
+	
 	if (json.header == "trusted-network") {
 		html = AnyBalance.requestPost(loginUrl, JSON.stringify({
             "authId": id,
@@ -307,6 +428,16 @@ function enterLKNew(options){
 	    var header = json.header;
 		if (header)
 		    AnyBalance.trace('Progress header: ' + header);
+		
+		if (json.header == "enter-phone") {
+	    	AnyBalance.trace(html);
+            throw new AnyBalance.Error('Неверный номер телефона!', allowRetry);
+	    }
+		
+		if (json.header == "lock-change-owner") {
+	    	AnyBalance.trace(html);
+            throw new AnyBalance.Error('Номер заблокирован!', allowRetry);
+	    }
 	}
 		
 	if (json.header == "verify-password") {
@@ -412,6 +543,11 @@ function enterLKNew(options){
         var header = json.header;
 		if (header)
 		    AnyBalance.trace('Progress header: ' + header);
+		
+		if (json.header == "verify-password") {
+	    	AnyBalance.trace(html);
+            throw new AnyBalance.Error('Неверный пароль!', allowRetry);
+	    }
 	}
 	
 	if (json.header == "verify-otp") {
@@ -523,14 +659,14 @@ function enterLKNew(options){
 	    var header = json.header;
 		if (header)
 		    AnyBalance.trace('Progress header: ' + header);
-	}
 		
-	if (json.header == "verify-otp") {
-		var retryCount = json.callbacks[2].output[0].value.retryCount;
-		var invalidCount = json.callbacks[2].output[0].value.invalidCount;
-		var restCount = retryCount - invalidCount;
-		AnyBalance.trace(html);
-        throw new AnyBalance.Error('Неверный код! Осталось попыток: ' + restCount);
+		if (json.header == "verify-otp") {
+	    	var retryCount = json.callbacks[2].output[0].value.retryCount;
+	    	var invalidCount = json.callbacks[2].output[0].value.invalidCount;
+	    	var restCount = retryCount - invalidCount;
+	    	AnyBalance.trace(html);
+            throw new AnyBalance.Error('Неверный код! Осталось попыток: ' + restCount, allowRetry);
+	    }
 	}
 	
 	if (json.tokenId && json.successUrl) {
@@ -540,7 +676,7 @@ function enterLKNew(options){
 		html = AnyBalance.requestGet(successUrl, addHeaders({Referer: 'https://login.mts.ru/'}));
 	} else {
 		AnyBalance.trace(html);
-        throw new AnyBalance.Error('Неверный логин или пароль!', allowRetry);
+        throw new AnyBalance.Error('Не удалось войти в личный кабинет. Сайт изменен?', allowRetry);
 	}
 
     return html;

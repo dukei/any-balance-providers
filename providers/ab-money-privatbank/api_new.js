@@ -191,7 +191,8 @@ function apiNew() {
     if (cards.length > 1) {
         var cardsData = [];
         cards.forEach(c => {
-            if (c.id != bonusCard[0].id) cardsData.push(readCard(c, result, prefs, data))
+        //    if (c.id != bonusCard[0].id) 
+        cardsData.push(readCard(c, result, prefs, data))
         });
         if (isAvailable('info')) {
             var info = cardsData.filter(cd => cd.info).map(cd => cd.name + '<br>' + cd.number + '<br>' + cd.info).join('<br>')

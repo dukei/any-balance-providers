@@ -1,0 +1,47 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-bonus-mosigra</id>
+	<api flags="no_browser"/>
+	<name>Мосигра (Бонусы)</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о бонусном балансе и последнем заказе постоянного покупателя сети магазинов настольных игр Мосигра.</p>
+	<p>Информация берется из личного кабинета Мосигра на сайте https://www.mosigra.ru/account/.</p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Для работы провайдера требуется ввести E-mail или номер телефона, привязанного к личному кабинету Мосигра, и пароль для входа в личный кабинет.</p>
+	]]></instruction>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<author>RamzesZeus &lt;ramzeszeus@gmail.com&gt;</author>
+	<depends>
+		<module id="library"/>
+		<module id="misc/saved-data"/>
+	</depends>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" Б"/>
+		<counter id="soon_bonuses" name="Бонусы в накоплении" units=" Б"/>
+		<counter id="exp_bonuses" name="Сгораемые бонусы" units=" Б"/>
+		<counter id="exp_bonuses_first" name="Ближайшее сгорание" units=" Б"/>
+		<counter id="exp_date_first" name="Ближайшая дата сгорания" type="time" format="dd.MM.yyyy"/>
+		<counter id="total_sum" name="Сумма всех покупок" units=" ₽"/>
+		<counter id="level_name" name="Текущий уровень" type="text"/>
+		<counter id="to_next_level" name="До следующего уровня" units=" ₽"/>
+		<counter id="level_percent" name="Кешбэк" units="%"/>
+		<counter id="account_id" name="Номер аккаунта" type="text"/>
+		<counter id="last_order_num" name="Номер посл. заказа" type="text"/>
+		<counter id="last_order_sum" name="Сумма посл. заказа" units=" ₽"/>
+		<counter id="last_order_date" name="Дата посл. заказа" type="time" format="dd.MM.yyyy"/>
+		<counter id="last_order_state" name="Статус посл. заказа" type="text"/>
+		<counter id="last_order_bonuses" name="Бонусы посл. заказа" type="text" units=" Б"/>
+		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="phone" name="Телефон" type="text"/>
+	</counters>
+	<keywords>Mosigra, Мосигра</keywords>
+	<type>bonus</type>
+	<country>ru</country>
+</provider>

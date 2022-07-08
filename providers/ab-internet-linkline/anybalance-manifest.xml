@@ -1,33 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="2">ab-internet-linkline</id>
-  <name>LinkLine (Москва)</name>
-  <description>
-    Получает баланс и информацию о тарифном плане для московского интернет-провайдера LinkLine ( http://linkline.ru ). Компания «LinkLine» предоставляет услуги доступа к сети Интернет с 2004 года. Собственная сеть компании охватывает районы Аэропорт-Динамо-Сокол, а также п.Алабушево Солнечногорского района Московской области.
-
-    Информация берется из личного кабинета https://stat.linkline.ru/.
-  </description>
-  <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>main.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="balance" name="Баланс" units="р"/>
-    <counter id="trafficIn" name="Вх.трафик в текущем периоде" units="Gb"/> -->
-    <counter id="trafficOut" name="Исх.трафик в текущем периоде" units="Gb"/> -->
-    <counter id="trafficLocal" name="Локальный трафик в текущем периоде" units="Gb"/> -->
-    <counter id="status" name="Состояние счета" type="text"/>
-  </counters>
-  <keywords>
-    интернет, линклайн
-  </keywords>
-  <type>
-    internet
-  </type>
-  <country>
-    ru
-  </country>
+    <id version="3">ab-internet-linkline</id>
+	<api flags="no_browser"/>
+    <name>LinkLine (Москва)</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе и тарифном плане для московского интернет-провайдера LinkLine (https://linkline.ru/).</p>
+	<p>Информация берется из личного кабинета https://stat.linkline.ru/</p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+    <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+    <depends>
+		<module id="library"/>
+	</depends>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+    <counters>
+        <counter id="balance" name="Баланс" units=" р"/>
+        <counter id="trafficIn" name="Вх. трафик в тек. периоде" units=" Gb"/>
+        <counter id="trafficOut" name="Исх. трафик в тек. периоде" units=" Gb"/>
+        <counter id="trafficLocal" name="Лок. трафик в тек. периоде" units=" Gb"/>
+		<counter id="dateStart" name="Начало учетного периода" type="time" format="dd.MM.yyyy"/>
+		<counter id="dateEnd" name="Окончание учетного периода" type="time" format="dd.MM.yyyy"/>
+		<counter id="till" name="Дата исчерпания баланса" type="time" format="dd.MM.yyyy"/>
+		<counter id="ipAddress" name="IP-адрес" type="text"/>
+        <counter id="status" name="Состояние счета" type="text"/>
+		<counter id="fio" name="ФИО" type="text"/>
+    </counters>
+    <keywords>интернет, линклайн</keywords>
+    <type>internet</type>
+    <country>ru</country>
 </provider>

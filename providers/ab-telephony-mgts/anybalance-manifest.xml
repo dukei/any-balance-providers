@@ -1,18 +1,18 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="28">ab-telephony-mgts</id>
+	<id version="29">ab-telephony-mgts</id>
 	<name>МГТС</name>
 	<api flags="no_browser"/>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о текущем балансе в МГТС.</p>
-	<p>Информация берется из личного кабинета (http://lk.mgts.ru/).</p>
+	<p>Информация берется из личного кабинета (https://lk.mgts.ru/).</p>
 	]]></description>
 	<instruction html="true"><![CDATA[
 	<p>Для входа в Интернет-помощник вам понадобится PIN-код.</p>
 	<p>Как получить PIN-код:</p>
 	<ul>
 	<li>Обратитесь в службу Единого контактного центра по тел. +7 495 636-0-636;</li>
-	<li>Обратитесь в любой Центр услуг связи ОАО МГТС http://mgts.ru/service-centres.</li>
+	<li>Обратитесь в любой Центр услуг связи ОАО МГТС https://mgts.ru/service-centres.</li>
 	</ul>
 	]]></instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
@@ -26,7 +26,7 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="balance" name="Баланс" units=" ₽"/>
 		<counter id="bonus" name="Бонус" units=" Б"/>
 		<counter id="licschet" name="Лицевой счет" type="text"/>
 		<counter id="phone" name="Номер телефона" type="text"/>

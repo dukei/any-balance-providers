@@ -2,11 +2,11 @@
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 */
 var g_headers = {
-	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
 	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
 	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
 	'Connection': 'keep-alive',
-	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.115 Safari/537.36',
+	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.4844.82 Safari/537.36',
 };
 
 function main() {
@@ -55,17 +55,33 @@ function main() {
 		if(prefs.__dbg) {
 			var html = AnyBalance.requestGet('https://lk.mgts.ru/', g_headers);
 		} else {
-			var html = AnyBalance.requestGet(baseurl, g_headers);
+			var html = AnyBalance.requestGet('https://auth.mgts.ru/login/b2c?feature=lk', g_headers);
+
+			var csrf = getParam(html, null, null, /name="_csrf-frontend" value="([^"]*)?/i, replaceTagsAndSpaces);
 			
 			var pin = prefs.password; //.substr(0, 8); //Слишком длинные пины тупо не воспринимаются
+			
+			html = AnyBalance.requestPost('https://auth.mgts.ru/login/b2c?feature=lk', {
+				'start': true,
+                'backbuttonstate': 1,
+                '_csrf-frontend': csrf,
+                'LoginForm[username]': prefs.login
+			}, addHeaders({Referer: 'https://auth.mgts.ru/login/b2c?feature=lk'}));
+			
+			var csrf = getParam(html, null, null, /name="_csrf-frontend" value="([^"]*)?/i, replaceTagsAndSpaces);
+			
+			var html = AnyBalance.requestPost('https://auth.mgts.ru/login/b2c?feature=lk', {
+				'backbuttonstate': 0,
+                'sector': 'b2c',
+                'LoginForm[username]': prefs.login,
+                '_csrf-frontend': csrf,
+                'LoginForm[password]': pin
+			}, addHeaders({Referer: 'https://auth.mgts.ru/login/b2c?feature=lk'}));
+			
 			var params = createFormParams(html, function(params, str, name, value) {
-				if (name == 'IDToken1') 
-					return prefs.login;
-				if (name == 'IDToken2') 
-					return pin;
 				return value;
 			});
-			html = AnyBalance.requestPost(baseurl, params, addHeaders({Referer: 'https://login.mgts.ru/amserver/UI/Login'}));		
+			html = AnyBalance.requestPost(baseurl, params, addHeaders({Referer: 'https://login.mgts.ru/amserver/UI/Login'}));
 		}
 		
 		if (!/logout/i.test(html)) {
@@ -77,7 +93,7 @@ function main() {
 			throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 		}
 		
-		getParam(getElement(html, /<div[^>]+account-info_header[^>]*>/i), result, 'fio', null, replaceTagsAndSpaces);
+		getParam(getElement(html, /<div[^>]+account-info_title[^>]*>/i), result, 'fio', null, replaceTagsAndSpaces);
 		getParam(html, result, 'balance', /<div[^>]+account-info_balance_value[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
 		getParam(html, result, 'phone', /Номер телефона:[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
 		getParam(html, result, 'licschet', /Лицевой счет:[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);

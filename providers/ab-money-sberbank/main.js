@@ -76,6 +76,7 @@ var g_countersTable = {
 		"__tariff": "accounts.num",
 		"till": "accounts.till",
 		"status": "accounts.status",
+		"userName": "accounts.userName",
 		"cardName": "accounts.cardName",
 		
 		"lastPurchSum": "accounts.transactions10.sum",

@@ -2,6 +2,16 @@
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 */
 
+var g_status = {
+	'active': 'Активен',
+	'inactive': 'Не активен',
+	'blocked': 'Заблокирован',
+	'arrested': 'Арестован',
+	'OPENED': 'Действующий',
+	'CLOSED': 'Закрытый',
+	'': 'Неизвестен'
+};
+
 function requestApiLogin(action, params, ignoreErrors) {
 	var baseurl = 'https://online.sberbank.ru:4477/CSAMAPI/';
 	return requestApiInner(baseurl + action, params, false, ignoreErrors);
@@ -315,42 +325,65 @@ function processCardAPI(xml, result) {
     var avail = getElement(xml, /<availableLimit>/i);
     getParam(avail, result, 'cards.balance', /<amount>([\s\S]*?)<\/amount>/i, replaceTagsAndSpaces, parseBalance);
     getParam(avail, result, ['cards.currency', 'cards.balance'], /<currency>\s*<code>([\s\S]*?)<\/code>/i, replaceTagsAndSpaces, myParseCurrency);
-    getParam(xml, result, 'cards.status', /<state>([\s\S]*?)<\/state>/i, replaceTagsAndSpaces);
-    getParam(xml, result, 'cards.type', /<type>([\s\S]*?)<\/type>/i, replaceTagsAndSpaces);
 
-    xml = requestApi('private/cards/info.do', {id: result.__id});
+	var cardStatus = getParam(xml, null, null, /<state>([\s\S]*?)<\/state>/i, replaceTagsAndSpaces);
+	getParam (g_status[cardStatus]||cardStatus, result, 'cards.status');
+    getParam(xml, result, 'cards.type', /<type>([\s\S]*?)<\/type>/i, replaceTagsAndSpaces);
+	
+	xml = requestApi('private/cards/info.do', {id: result.__id});
     getParam(xml, result, 'cards.userName', /<holderName>([\s\S]*?)<\/holderName>/i, replaceTagsAndSpaces, capitalFirstLetters);
 	
-	avail = getElement(xml, /<limit>/i);
-    getParam(avail, result, 'cards.limit', /<amount>-?([\s\S]*?)<\/amount>/i, replaceTagsAndSpaces, parseBalance);
+	if(AnyBalance.isAvailable('cards.limit')) {
+        avail = getElement(xml, /<limit>/i);
+        getParam(avail, result, 'cards.limit', /<amount>([\s\S]*?)<\/amount>/i, replaceTagsAndSpaces, parseBalance);
+	}
 	
-	avail = getElement(xml, /<ownSum>/i);
-    getParam(avail, result, 'cards.own', /<amount>-?([\s\S]*?)<\/amount>/i, replaceTagsAndSpaces, parseBalance);
+	if(AnyBalance.isAvailable('cards.own')) {
+        avail = getElement(xml, /<ownSum>/i);
+        var own = getParam(avail, null, null, /<amount>([\s\S]*?)<\/amount>/i, replaceTagsAndSpaces, parseBalance);
+	    if (own && own > 0){
+	    	getParam(own, result, 'cards.own', null, null, null);
+        }else{
+	    	getParam(0, result, 'cards.own', null, null, null);
+	    }
+	}
 	
-	avail = getElement(xml, /<minPayment>/i);
-    getParam(avail, result, 'cards.minpay', /<amount>-?([\s\S]*?)<\/amount>/i, replaceTagsAndSpaces, parseBalance);
+	if(AnyBalance.isAvailable('cards.minpay', 'cards.minpay_till')) {
+	    avail = getElement(xml, /<minPayment>/i);
+        getParam(avail, result, 'cards.minpay', /<amount>-?([\s\S]*?)<\/amount>/i, replaceTagsAndSpaces, parseBalance);
 
-	getParam(xml, result, 'cards.minpay_till', /<minPaymentDate>([\s\S]*?)<\/minPaymentDate>/i, replaceTagsAndSpaces, parseDate);
+	    getParam(xml, result, 'cards.minpay_till', /<minPaymentDate>([\s\S]*?)<\/minPaymentDate>/i, replaceTagsAndSpaces, parseDate);
+	}
 	
-	avail = getElement(xml, /<TotalOnReport>/i);
-    getParam(avail, result, 'cards.gracepay', /<amount>-?([\s\S]*?)<\/amount>/i, replaceTagsAndSpaces, parseBalance);
+	if(AnyBalance.isAvailable('cards.gracepay', 'cards.gracepay_till')) {
+	    avail = getElement(xml, /<TotalOnReport>/i);
+        getParam(avail, result, 'cards.gracepay', /<amount>([\s\S]*?)<\/amount>/i, replaceTagsAndSpaces, parseBalance);
 	
-	getParam(xml, result, 'cards.gracepay_till', /<minPaymentDate>([\s\S]*?)<\/minPaymentDate>/i, replaceTagsAndSpaces, parseDate);
+	    getParam(xml, result, 'cards.gracepay_till', /<minPaymentDate>([\s\S]*?)<\/minPaymentDate>/i, replaceTagsAndSpaces, parseDate);
+	}
 	
-	avail = getElement(xml, /<Debt>/i);
-    getParam(avail, result, 'cards.debt', /<amount>-?([\s\S]*?)<\/amount>/i, replaceTagsAndSpaces, parseBalance);
+	if(AnyBalance.isAvailable('cards.debt', 'cards.debt_date')) {
+	    avail = getElement(xml, /<Debt>/i);
+        getParam(avail, result, 'cards.debt', /<amount>([\s\S]*?)<\/amount>/i, replaceTagsAndSpaces, parseBalance);
 	
-	getParam(xml, result, 'cards.debt_date', /<LastBillingDate>([\s\S]*?)<\/LastBillingDate>/i, replaceTagsAndSpaces, parseDate);
+	    getParam(xml, result, 'cards.debt_date', /<LastBillingDate>([\s\S]*?)<\/LastBillingDate>/i, replaceTagsAndSpaces, parseDate);
+	}
 
-    avail = getElement(xml, /<availableCashLimit>/i);
-    getParam(avail, result, 'cards.cash', /<amount>([\s\S]*?)<\/amount>/i, replaceTagsAndSpaces, parseBalance);
+    if(AnyBalance.isAvailable('cards.cash')) {
+	    avail = getElement(xml, /<availableCashLimit>/i);
+        getParam(avail, result, 'cards.cash', /<amount>([\s\S]*?)<\/amount>/i, replaceTagsAndSpaces, parseBalance);
+	}
 
-    avail = getElement(xml, /<purchaseLimit>/i);
-    getParam(avail, result, 'cards.electrocash', /<amount>([\s\S]*?)<\/amount>/i, replaceTagsAndSpaces, parseBalance);
+    if(AnyBalance.isAvailable('cards.electrocash')) {
+	    avail = getElement(xml, /<purchaseLimit>/i);
+        getParam(avail, result, 'cards.electrocash', /<amount>([\s\S]*?)<\/amount>/i, replaceTagsAndSpaces, parseBalance);
+	}
 
-    getParam(xml, result, 'cards.accnum', /<accountNumber>([\s\S]*?)<\/accountNumber>/i, replaceTagsAndSpaces);
-	getParam(xml, result, 'cards.till', /<expireDate>([\s\S]*?)<\/expireDate>/i, replaceTagsAndSpaces, parseDate);
-	getParam(xml, result, 'cards.cardName', /<accountNumber>[\s\S]*?<name>([\s\S]*?)<\/name>/i, replaceTagsAndSpaces);
+    if(AnyBalance.isAvailable('cards.accnum', 'cards.till', 'cards.cardName')) {
+       getParam(xml, result, 'cards.accnum', /<accountNumber>([\s\S]*?)<\/accountNumber>/i, replaceTagsAndSpaces);
+	    getParam(xml, result, 'cards.till', /<expireDate>([\s\S]*?)<\/expireDate>/i, replaceTagsAndSpaces, parseDate);
+	    getParam(xml, result, 'cards.cardName', /<accountNumber>[\s\S]*?<name>([\s\S]*?)<\/name>/i, replaceTagsAndSpaces);
+	}
 	
     if(AnyBalance.isAvailable('cards.transactions10')) {
         processCardAPITransactions(result);
@@ -421,18 +454,28 @@ function parseBoolAPI(str) {
 
 function processAccountAPI(xml, result) {
     AnyBalance.trace('Обрабатываем счет ' + result.__name);
+	
     var avail = getElement(xml, /<balance>/i);
     getParam(avail, result, 'accounts.balance', /<amount>([\s\S]*?)<\/amount>/i, replaceTagsAndSpaces, parseBalance);
     getParam(avail, result, ['accounts.currency', 'accounts.balance'], /<currency>\s*<code>([\s\S]*?)<\/code>/i, replaceTagsAndSpaces, myParseCurrency);
     getParam(xml, result, 'accounts.pct', /<rate>([\s\S]*?)<\/rate>/i, replaceTagsAndSpaces, parseBalance);
     getParam(xml, result, 'accounts.till', /<closeDate>([\s\S]*?)<\/closeDate>/i, replaceTagsAndSpaces, parseDate);
-    getParam(xml, result, 'accounts.status', /<state>([\s\S]*?)<\/state>/i, replaceTagsAndSpaces);
+	var accStatus = getParam(xml, null, null, /<state>([\s\S]*?)<\/state>/i, replaceTagsAndSpaces);
+	getParam (g_status[accStatus]||accStatus, result, 'accounts.status');
 	getParam(xml, result, 'accounts.cardName', /<account>[\s\S]*?<name>([\s\S]*?)<\/name>/i, replaceTagsAndSpaces);
 
     xml = requestApi('private/accounts/info.do', {id: result.__id});
+	
     getParam(xml, result, 'accounts.period', /<period>([\s\S]*?)<\/period>/i, replaceTagsAndSpaces);
     getParam(xml, result, 'accounts.balance_min', /<irreducibleAmt>([\s\S]*?)<\/irreducibleAmt>/i, replaceTagsAndSpaces, parseBalance);
     getParam(xml, result, 'accounts.prolong', /<prolongation>([\s\S]*?)<\/prolongation>/i, replaceTagsAndSpaces, parseBoolAPI);
+	
+	xml = requestApi('private/profile/info.do');
+    
+    var firstName = getParam(xml, null, null, /<firstName>([\s\S]*?)<\/firstName>/i, replaceTagsAndSpaces, capitalFirstLetters);
+    var patrName = getParam(xml, null, null, /<patrName>([\s\S]*?)<\/patrName>/i, replaceTagsAndSpaces, capitalFirstLetters);
+    var surName = getParam(xml, null, null, /<surName>([\s\S]*?)<\/surName>/i, replaceTagsAndSpaces, capitalFirstLetters);
+	getParam(firstName + ' ' + patrName + ' ' + surName, result, 'accounts.userName', null, null, null);
 
     if(AnyBalance.isAvailable('accounts.transactions10')) {
         processAccountAPITransactions(result);
@@ -513,12 +556,15 @@ function processRatesAPI(result) {
 
 function processThanksAPI(result){
 	if (AnyBalance.isAvailable('spasibo')) {
+		AnyBalance.trace('Fetching bonuses...');
 		var html = requestApi('private/profile/loyaltyURL.do');
 		
 		var url = getParam(html, null, null, /<url>([^<]{10,})/i, replaceTagsAndSpaces);
-		if(url) {
-			html = AnyBalance.requestGet(url);
-			getParam(html, result, 'spasibo', /balance:([\d+\.\d+]*?)\,/i, replaceTagsAndSpaces, parseBalance);
+		var sat = getParam(url, null, null, /sat=([\s\S]*)/i, replaceTagsAndSpaces);
+		if(sat) {
+			html = AnyBalance.requestGet('https://bonus-spasibo.ru/sbrf-mobile/api/participant/info?sat=' + sat);
+			var json = getJson(html);
+			getParam(json.balance / 100, result, 'spasibo', null, null, parseBalance);
 		} else {
 			AnyBalance.trace("Не удалось найти ссылку на программу спасибо, сайт изменен?");
 		}

@@ -1,5 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="11" date="2022-05-20">
+	- Переезд на A1
+	- Изменена иконка и название на A1: Интернет и ТВ
+	</change>
 	<change version="10" date="2019-06-18">
 	- Поддержка изменений на сайте.
 	</change>

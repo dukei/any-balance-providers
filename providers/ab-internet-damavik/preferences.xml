@@ -1,24 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
 	<EditTextPreference
-		title="Логин"
+		title="Лицевой счет"
 		key="login"
-		summary="||{@s}"
+		summary="Номер счета для входа в ИССА|Введите номер счета\n|{@s}\n"
 		obligatory="true"
-		dialogTitle="Логин"
+		dialogTitle="Лицевой счет"
 		positiveButtonText="ОК"
 		negativeButtonText="Отмена"
-		dialogMessage="Введите логин, используемый для входа в личный кабинет.">
+		dialogMessage="Введите номер лицевого счета, используемый для входа в ИССА.">
 	</EditTextPreference>
 	<EditTextPreference
 		title="Пароль"
 		key="password"
-		summary="||***********"
+		summary="Пароль для входа в ИССА|Введите пароль\n|***********\n"
 		obligatory="true"
 		dialogTitle="Пароль"
 		positiveButtonText="ОК"
 		negativeButtonText="Отмена"
-		dialogMessage="Введите пароль, используемый для входа в личный кабинет."
+		dialogMessage="Введите пароль, используемый для входа в ИССА."
 		inputType="textPassword">
 	</EditTextPreference>
 </PreferenceScreen>

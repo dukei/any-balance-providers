@@ -3,13 +3,16 @@
 */
 
 var g_headers = {
-	'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-	'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
-	'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
-	'Connection':'keep-alive',
-	'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.66 Safari/537.36',
-	'Origin':'https://mydom.velcom.by',
+	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3',
+	'Accept-Language': 'en-US,en;q=0.9',
+	'Connection': 'keep-alive',
+	'Cache-Control': 'max-age=0',
+    'Upgrade-Insecure-Requests': '1',
+	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.120 Safari/537.36',
+	'Origin': 'https://my.a1.by',
 };
+
+var velcomOddPeople = 'Не удалось войти в личный кабинет. Сайт изменен?';
 
 function parseBalanceRK(_text) {
   var text = _text.replace(/\s+/g, '');
@@ -24,25 +27,33 @@ function parseBalanceRK(_text) {
 function main(){
     var prefs = AnyBalance.getPreferences();
 	
-	checkEmpty(prefs.login, 'Введите логин!');
+	checkEmpty(prefs.login, 'Введите номер лицевого счета!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 	
-    var baseurl = 'https://my.velcom.by/';
+	if (prefs.login.length > 12 || prefs.login.length < 6)
+		throw new AnyBalance.Error('Неверный формат номера. Номер лицевого счета должен содержать от 6 до 12 символов!', false, true);
+	if (prefs.password.length > 20 || prefs.password.length < 8)
+		throw new AnyBalance.Error('Неверный формат пароля. Пароль должен содержать от 8 до 20 символов!', false, true);
+	
+    var baseurl = 'https://my.a1.by/';
     AnyBalance.setDefaultCharset('utf-8'); 
 	
     var html = AnyBalance.requestGet(baseurl, g_headers);
-    var sid;
+	
+	var sid;
 	
 	try {
 		
-		var form = AB.getElement(html, /<form[^>]+asmpform/i);
+		var form = AB.getElement(html, /<form[^>]*name="asmpform"/i);
 		if(!form){
 			AnyBalance.trace(html);
-			throw new AnyBalance.Error('Не удаётся найти форму входа! Сайт изменен?');
+			throw new AnyBalance.Error('Не удалось найти форму входа. Сайт изменен?');
 		}
 	    
 		var params = AB.createFormParams(form, function(params, str, name, value) {
-			if (name == 'UserIDFixed') {
+			if (name == 'pinCheck') {
+				return 'false';
+			}else if (name == 'UserIDFixed') {
 				return prefs.login;
 			} else if (name == 'fixedPassword') {
 				return prefs.password;
@@ -76,7 +87,7 @@ function main(){
             if(error)
                 throw new AnyBalance.Error(error, null, /не зарегистрирован|Неверно указан номер|номер телефона|парол/i.test(error));
             if(/Сервис временно недоступен/i.test(html))
-                throw new AnyBalance.Error('ИССА Velcom временно недоступна. Пожалуйста, попробуйте позже.');
+                throw new AnyBalance.Error('Сервис временно недоступен. Пожалуйста, попробуйте позже.');
             
 			AnyBalance.trace(html);
             throw new AnyBalance.Error('Не удалось войти в личный кабинет. Сайт изменен?');
@@ -86,10 +97,10 @@ function main(){
 			var message = getParam(html, null, null, /<div class="BREAK">([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
 			if(message) {
 				AnyBalance.trace('Сайт ответил: ' + message);
-				throw new AnyBalance.Error('ИССА Velcom временно недоступна.\n ' + message);
+				throw new AnyBalance.Error('Сервис временно недоступен.\n ' + message);
 			}
 			
-			throw new AnyBalance.Error('ИССА Velcom временно недоступна. Пожалуйста, попробуйте позже.');
+			throw new AnyBalance.Error('Сервис временно недоступен. Пожалуйста, попробуйте позже.');
 		}	
 		
         var result = {success: true};
@@ -100,7 +111,7 @@ function main(){
 				var error = getParam(html, null, null, /<h1[^>]*>([\s\S]*?)<\/h1>/i, replaceTagsAndSpaces, html_entity_decode);
 				if(error)
 					throw new AnyBalance.Error(error);
-				throw new AnyBalance.Error('Сайт временно недоступен. Пожалуйста, попробуйте ещё раз позднее.');
+				throw new AnyBalance.Error('Сервис временно недоступен. Пожалуйста, попробуйте позже.');
 			}
 			AnyBalance.trace(html);
 			throw new AnyBalance.Error(velcomOddPeople);

@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-internet-klimovsk</id>
+	<id version="3">ab-internet-klimovsk</id>
 	<api flags="no_browser"/>
 	<name>Климовская сеть</name>
 	<description html="true"><![CDATA[
@@ -21,7 +21,7 @@
 		<counter id="balance" name="Баланс" units=" р"/>
 		<counter id="abon" name="Абонентская плата" units=" р"/>
 		<counter id="fio" name="ФИО" type="text"/>
-		<counter id="Номер договора" name="acc_num" type="text"/>
+		<counter id="acc_num" name="Номер договора" type="text"/>
 	</counters>
 	<keywords></keywords>
 	<type>internet</type>

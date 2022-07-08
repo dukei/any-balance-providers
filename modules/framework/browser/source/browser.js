@@ -1,6 +1,6 @@
 const BrowserAPI = (() => {
-//    const browserApi = 'http://browser.anybalance.ru:4024';
-    const browserApi = 'http://192.168.0.118:4024';
+    const browserApiRelease = 'http://browser.anybalance.ru:4024';
+    const browserApiDebug = 'http://localhost:4024';
 
     /*
     type RuleSource = {
@@ -11,6 +11,7 @@ const BrowserAPI = (() => {
     }
 
     type Options = {
+        debug?: boolean
         userAgent: string,
         rules?: RuleSource[]
         additionalRequestHeaders: {
@@ -27,6 +28,7 @@ const BrowserAPI = (() => {
         }
 
         requestAPI(verb, json) {
+            const browserApi = this.options.debug ? browserApiDebug : browserApiRelease;
             const html = json
                 ? AnyBalance.requestPost(browserApi + '/' + verb, JSON.stringify(json), {"Content-Type": "application/json"})
                 : AnyBalance.requestGet(browserApi + '/' + verb + (verb.indexOf('?') >= 0 ? '&' : '?') + '_=' + (+new Date()));
@@ -49,7 +51,7 @@ const BrowserAPI = (() => {
             return ret;
         }
 
-        waitForLoad(page, additionalHeaders) {
+        waitForLoad(page) {
             let num = 0, json;
 
             do {
@@ -98,10 +100,12 @@ const BrowserAPI = (() => {
                                 //https://stackoverflow.com/questions/5515869/string-length-in-bytes-in-javascript
                                 h[1] = '' + unescape(encodeURIComponent(html || '')).length;
                             }
-                            if (convertedHeaders[name] === undefined) {
+                            if(convertedHeaders[name] === undefined){
                                 convertedHeaders[name] = h[1];
-                            } else {
-                                convertedHeaders[name] += '\n' + h[1];
+                            }else if(Array.isArray(convertedHeaders[name])){
+                                convertedHeaders[name].push(h[1]);
+                            }else{
+                                convertedHeaders[name] += [h[1]];
                             }
                             if (name === 'content-type')
                                 ct = h[1];

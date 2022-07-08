@@ -1,14 +1,20 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser|captcha"/>
-	<id version="5">ab-bonus-detmir</id>
+	<id version="6">ab-bonus-detmir</id>
 	<name>Детский мир (Бонусы)</name>
 	<description html="true"><![CDATA[
-	<p>Получает данные по бонусной карте сети магазинов Детский мир http://www.detmir.ru/pages/bonus-balance/</p>
-	]]></description>	
+	<p>Предоставляет информацию по бонусной карте сети магазинов Детский мир.</p>
+	<p>Информация берется из личного кабинета Детский мир на сайте https://www.detmir.ru/profile/bonuscard/.</p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Для работы провайдера требуется ввести номер телефона, привязанного к личному кабинету Детский мир, и ввести код из 4-х последних цифр звонка, поступившего на этот номер.</p>
+	<p>Сайт Детский мир обладает защитой от роботов (ReCaptcha), поэтому для входа потребуется пройти проверку с помощью приложения Anybalance ReCaptcha или с помощью одного из сервисов автоматического распознавания.</p>
+	]]></instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>
 		<module id="library"/>
+		<module id="misc/saved-data"/>
 	</depends>
 	<files>
 		<icon>icon.png</icon>
@@ -17,11 +23,18 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Общее количество бонусов"/>
-		<counter id="active" name="Количество активных бонусов"/>
-		<counter id="inactive" name="Общее неактивных бонусов"/>
+		<counter id="balance" name="Всего бонусов" units=" Б"/>
+		<counter id="active" name="Активные бонусы" units=" Б"/>
+		<counter id="inactive" name="Неактивные бонусы" units=" Б"/>
+		<counter id="debt" name="Акционные бонусы" units=" Б"/>
+		<counter id="lastused" name="Дата посл. операции" type="time" format="dd.MM.yyyy"/>
+		<counter id="cardnum" name="Номер карты" type="text"/>
+		<counter id="cardtype" name="Тип карты" type="text"/>
+		<counter id="cardstate" name="Статус карты" type="text"/>
+		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="phone" name="Телефон" type="text"/>
 	</counters>
-	<keywords></keywords>
+	<keywords>детский мир</keywords>
 	<type>bonus</type>
 	<country>ru</country>
 </provider>

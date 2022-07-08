@@ -1,10 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-bonus-mosmetro</id>
+	<id version="3">ab-bonus-mosmetro</id>
 	<api flags="no_browser"/>
 	<name>Тройка mosmetro</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе карты Тройка из личного кабинета MosMetro </p>
+	<p>Предоставляет информацию о балансе карты Тройка из личного кабинета MosMetro.</p>
 	<p>Информация берется из личного кабинета https://lk.mosmetro.ru </p>
 	]]></description>
 	<instruction html="true"><![CDATA[
@@ -23,8 +23,16 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="balance" name="Баланс" units=" ₽"/>
 		<counter id="bonus" name="Бонус" units=" Б"/>
+		<counter id="lastpaytime" name="Последний проход" type="time" format="dd.MM.yyyy HH:mm"/>
+		<counter id="lastpaysum" name="Стоимость прохода" units=" ₽"/>
+		<counter id="lastpayname" name="Станция/Маршрут" type="text"/>
+		<counter id="leftpaydate" name="Посл. опл. проход" type="time" format="dd.MM.yyyy HH:mm"/>
+		<counter id="leftpaytime" name="Оплаченное время" units=" мин" type="time_interval" format="{@MIN}"/>
+		<counter id="lastoperdate" name="Последняя операция" type="time" format="dd.MM.yyyy HH:mm"/>
+		<counter id="lastopersum" name="Сумма посл. операции" units=" ₽"/>
+		<counter id="lastopername" name="Тип посл. операции" type="text"/>
 	</counters>
 	<keywords>метро тройка</keywords>
 	<type>bonus</type>

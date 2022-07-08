@@ -5,7 +5,7 @@
 	<name>Система УК Плюс</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию из квитанции в системе УК Плюс <a href="https://ukplus.ru/">ukplus.ru</a></p>
-	<p>Информация берется из личного кабинета <a href="https://ukplus.ru/disp/">ukplus.ru/disp/</a></p>
+	<p>Информация берется из личного кабинета <a href="https://lk.ukplus.ru/">lk.ukplus.ru</a></p>
 	]]></description>
 	<author>Aleksey Sosnin &lt;sosnin.aleksey@gmail.com&gt;</author>
 	<depends>
@@ -14,19 +14,20 @@
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
+		<js>library.min.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units=" ₽"/>
+		<counter id="balance" name="Баланс" units=" р"/>
 		<counter id="account" name="Лицевой счёт" type="text"/>
 		<counter id="fio" name="ФИО" type="text"/>
 		<counter id="address" name="Адрес" type="text"/>
-		<counter id="full_area" name="Общая площадь" units=" м²"/>
-		<counter id="living_area" name="Жилая площадь" units=" м²"/>
 		<counter id="provider" name="Поставщик услуг" type="text"/>
 		<counter id="period" name="Период" type="text"/>
-		<counter id="accruals" name="Начислено за период" units=" &#8381;"/>
+		<counter id="accruals" name="Начислено за период" units=" р"/>
+		<counter id="penalty" name="Пени" units=" р"/>
+		<counter id="debt" name="Задолженность" units=" р"/>
 		<counter id="messages" name="Сообщения" type="html"/>
 		<counter id="notifications" name="Уведомления" type="html"/>
 	</counters>

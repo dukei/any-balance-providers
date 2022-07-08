@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="18">ab-bonus-eldorado</id>
+	<id version="19">ab-bonus-eldorado</id>
 	<api flags="no_browser"/>
 	<name>Клуб Эльдорадо</name>
 	<description html="true"><![CDATA[
@@ -13,7 +13,6 @@
 	Если требование не выполнено, получите ошибку провайдера: Не удаётся войти в личный кабинет. Сайт изменен?</li>
 	</ul>
 	]]></instruction>
-	<author>DimaZ &lt;DIMAZ.KHUA@gmail.com&gt;</author>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>
 		<module id="library"/>
@@ -25,14 +24,14 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Активная сумма" units=" р"/>
-		<counter id="reserv" name="Резервная сумма" units=" р"/>
-		<counter id="inactive" name="Неактивная сумма" units=" р"/>
-		<counter id="userName" name="ФИО владельца" type="text"/>
+		<counter id="balance" name="Активная сумма" units=" ₽"/>
+		<counter id="reserv" name="Резервная сумма" units=" ₽"/>
+		<counter id="inactive" name="Неактивная сумма" units=" ₽"/>
 		<counter id="cardnum" name="Номер карты" type="text"/>
-		<counter id="phone" name="Телефон" type="text"/>
-		<counter id="level" name="Уровень"/>
-		<counter id="chargePercent" name="Процет накопления" units="%"/>
+		<counter id="level" name="Текущий статус" type="text"/>
+		<counter id="chargePercent" name="Процент накопления" units="%"/>
+		<counter id="phone" name="Номер телефона" type="text"/>
+		<counter id="userName" name="ФИО владельца" type="text"/>
 	</counters>
 	<keywords>eldorado, карта, бонус</keywords>
 	<type>bonus</type>

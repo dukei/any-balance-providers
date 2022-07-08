@@ -3,12 +3,12 @@
 	<EditTextPreference
 		title="Логин"
 		key="login"
-		summary="||{@s}"
+		summary="Логин для входа в личный кабинет|Введите логин\n|{@s}\n"
 		obligatory="true"
 		dialogTitle="Логин"
 		positiveButtonText="ОК"
 		negativeButtonText="Отмена"
-		dialogMessage="Введите имейл, логин или номер бонусной карты, используемый для входа в личный кабинет.">
+		dialogMessage="Введите email, логин или номер бонусной карты, используемый для входа в личный кабинет.">
 	</EditTextPreference>
     <EditTextPreference 
         positiveButtonText="ОК"
@@ -17,7 +17,7 @@
         negativeButtonText="Отмена"
         title="Пароль/PIN-код"
         obligatory="true"
-        summary="||***********"
+        summary="Пароль/PIN-код для входа в личный кабинет|Введите пароль/PIN-код\n|***********\n"
         dialogMessage="Введите пароль или PIN-код, используемый для входа в личный кабинет.">
     </EditTextPreference>
 </PreferenceScreen>

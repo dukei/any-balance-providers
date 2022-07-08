@@ -14,6 +14,7 @@
 	<depends>
 		<module id="library"/>
 		<module id="crypt/base64"/>
+		<module id="framework/browser"/>
 	</depends>
 	<type>login</type>
 </provider>

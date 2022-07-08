@@ -21,7 +21,6 @@ var regionsOrdinary = {
 
 var g_baseurl = 'https://lk.mts.ru';
 var g_baseurlLogin = 'http://login.mts.ru';
-var g_savedData;
 
 var g_headers = {
     'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
@@ -612,18 +611,13 @@ function loginWithPassword(){
 
     var prefs = AnyBalance.getPreferences();
 	
-	if(!g_savedData)
-		g_savedData = new SavedData('mts', prefs.login);
+	html = loadProtectedPage('https://lk.mts.ru/', g_headers);
 
-	g_savedData.restoreCookies();
-	
-	html = AnyBalance.requestGet('https://lk.mts.ru/', g_headers);
-	
 	if(/Мой МТС/i.test(html)){
 		AnyBalance.trace('Сессия сохранена. Входим автоматически...');
 	}else{
 		AnyBalance.trace('Сессия новая. Будем логиниться заново...');
-		clearAllCookies();
+        clearAllCookiesExceptProtection();
 		if(!/qrator/i.test(html)){
 			AnyBalance.trace('Защита не обнаружена. Используем старый вход');
 			var html = enterLK({login: prefs.login, password: prefs.password, baseurl: 'http://lk.mts.ru', url: 'http://login.mts.ru/amserver/UI/Login?service=lk&goto=http%3A%2F%2Flk.mts.ru%2F'});
@@ -694,6 +688,11 @@ function login(result){
     AnyBalance.setDefaultCharset('utf-8');
 
     var prefs = AnyBalance.getPreferences(), html;
+
+    if(!g_savedData)
+        g_savedData = new SavedData('mts', prefs.login);
+
+    g_savedData.restoreCookies();
 
     if(login.isLoggedIn){
     	//Если мы уже были в кабинете, то не перелогиниваемся, может это мультипарт получение данных

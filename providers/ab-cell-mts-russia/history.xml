@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="4.1" version="203" date="2022-07-08">
+	- Обход защиты от роботов
+	</change>
     <change major_version="4.1" version="202" date="2022-04-30">
 	- Поддержка капчи при входе через VPN для новой процедуры входа
 	</change>

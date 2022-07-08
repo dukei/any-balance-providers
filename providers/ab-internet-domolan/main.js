@@ -9,11 +9,10 @@ var g_headers = {
 	'Accept-Encoding': 'gzip, deflate, br',
     'Cache-Control': 'max-age=0',
 	'Connection': 'keep-alive',
-	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/95.0.4638.69 Safari/537.36'
+	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.88 Safari/537.36'
 };
 
-var baseurl = 'https://www.domolan.ru';
-var g_savedData;
+var baseurl = 'https://lk.domolan.ru';
 var replaceNumber = [replaceTagsAndSpaces, /\D/g, '', /.*(\d\d\d)(\d\d\d)(\d\d)(\d\d)$/, '+7 $1 $2-$3-$4'];
 
 function main() {
@@ -24,78 +23,94 @@ function main() {
 	AB.checkEmpty(prefs.login, 'Введите логин!');
 	AB.checkEmpty(prefs.password, 'Введите пароль!');
 	
-	if(!g_savedData)
-		g_savedData = new SavedData('domolan', prefs.login);
-
-	g_savedData.restoreCookies();
-
-    AnyBalance.trace ('Пробуем войти в личный кабинет...');
+	AnyBalance.trace ('Пробуем войти в личный кабинет...');
 	
-	var html = AnyBalance.requestGet(baseurl + '/', g_headers);
+	html = AnyBalance.requestGet(baseurl + '/csrfToken', addHeaders({
+		'Accept': 'application/json, text/plain, */*',
+       	'Referer': baseurl + '/lk/login'
+	}), g_headers);
 	
-	if (!html || AnyBalance.getLastStatusCode() > 400) {
-	   	AnyBalance.trace(html);
-	    throw new AnyBalance.Error('Сайт провайдера временно недоступен! Попробуйте обновить данные позже.');
-	}
-	
-	if (/\/signin/i.test(html)) {
-		AnyBalance.trace('Сессия новая. Будем логиниться заново...');
-		clearAllCookies();
-
-        var params = [
-            ['username',prefs.login],
-            ['password',prefs.password],
-			['rememberMe','1']
-	    ];
-
-        html = AnyBalance.requestPost(baseurl + '/signin', params, AB.addHeaders({
-	    	'Content-Type': 'application/x-www-form-urlencoded',
-	    	'Origin': baseurl,
-            'Referer': baseurl + '/signin',
-            'Upgrade-Insecure-Requests': '1'	
-	    }));
-	
-	    if(!/\/signout/i.test(html)){
-	    	AnyBalance.trace(html);
-	    	throw new AnyBalance.Error('Не удалось войти в личный кабинет. Сайт изменен?');			
-	    }
-			
-		g_savedData.setCookies();
-	    g_savedData.save();
-		
+	var g_token = getJson(html)._csrf;
+	if (g_token) {
+	    AnyBalance.trace ('Токен получен: ' + g_token);
 	}else{
-		AnyBalance.trace('Сессия сохранена. Входим автоматически...');
+		AnyBalance.trace(html);
+        throw new AnyBalance.Error('Не удалось получить токен авторизации. Сайт изменён?');
+	}
+		
+	var html = AnyBalance.requestPost(baseurl + '/api/login', JSON.stringify({
+        "login": prefs.login,
+        "password": prefs.password
+    }), addHeaders({
+		'Accept': 'application/json, text/plain, */*',
+       	'Content-Type': 'application/json',
+		'Host': 'lk.domolan.ru',
+		'Origin': baseurl,
+       	'Referer': baseurl + '/lk/login',
+	    'X-CSRF-Token': g_token
+	}), g_headers);
+
+	if (AnyBalance.getLastStatusCode() === 400) {
+		AnyBalance.trace(html);
+        throw new AnyBalance.Error('Неверный логин или пароль!');
+	}
+		
+	if (AnyBalance.getLastStatusCode() === 403) {
+		AnyBalance.trace(html);
+        throw new AnyBalance.Error('Не удалось войти в личный кабинет. Сайт изменён?');
 	}
 	
 	var result = {success: true};
 	
-	if (AnyBalance.isAvailable('balance', 'pin', '__tariff', 'speed', 'currency')) {
-	    html = AnyBalance.requestGet(baseurl + '/', g_headers);
+	if (AnyBalance.isAvailable('balance', 'pin', '__tariff', 'abon', 'speed', 'fio', 'phone', 'block_till', 'block_from')) {
+	    html = AnyBalance.requestGet(baseurl + '/api/user/data', g_headers);
+		var json = getJson(html);
 		
-        getParam(html, result, 'balance', /<p>Баланс:[\s\S]*?>([\s\S]*?)<\/span>\s*?<\/p>/i, replaceTagsAndSpaces, parseBalance);
-	    getParam(html, result, 'pin', /<p>Ваш PIN код:[\s\S]*?>([\s\S]*?)<\/span>\s*?<\/p>/i, replaceTagsAndSpaces);
-	    getParam(html, result, '__tariff', /<div[^>]+class="calculation tariff-update">[\s\S]*?<p>([\s\S]*?)<\/p>/i, replaceTagsAndSpaces);
-		getParam(html, result, 'speed', /<div[^>]+class="progress-speed">([\s\S]*?)<span class="progress-unit">[\s\S]*?<\/span><\/div>/i, replaceTagsAndSpaces, parseBalance);
-		getParam(html, result, ['currency', 'speed'], /<span[^>]+class="progress-unit">([\s\S]*?)<\/span><\/div>/i, replaceTagsAndSpaces);
+        getParam(json.balance, result, 'balance', null, null, parseBalance);
+	    getParam(json.payPIN, result, 'pin');
+		var tariffId = json.tariffId;
+		getParam(json.tariffs[tariffId].name, result, '__tariff');
+		getParam(json.tariffs[tariffId].price, result, 'abon', null, null, parseBalance);
+		getParam(json.tariffs[tariffId].speed[0], result, 'speed', null, null, parseBalance);
+		getParam(json.address, result, 'address');
+		getParam(json.name, result, 'fio');
+		getParam(json.phone, result, 'phone', null, replaceNumber);
+		getParam(json.daysBeforeBlock, result, 'block_till', null, null, parseBalance);
+		getParam(json.blocked, result, 'block_from', null, null, parseDate);
 	}
 	
-	if (AnyBalance.isAvailable('balance_start', 'cab_tv', 'abon', 'pay_month', 'lastpay_sum', 'lastpay_date')) {
-	    html = AnyBalance.requestGet(baseurl + '/statistics', g_headers);
+	if (AnyBalance.isAvailable('balance_start', 'cab_tv', 'lastpay_sum', 'lastpay_date', 'pay_month')) {
+		html = AnyBalance.requestPost(baseurl + '/api/balance/history', JSON.stringify({
+            "monthDelta": 0
+        }), addHeaders({
+			'Accept': 'application/json, text/plain, */*',
+        	'Content-Type': 'application/json',
+		  	'Host': 'lk.domolan.ru',
+			'Origin': baseurl,
+        	'Referer': baseurl + '/lk',
+		   	'X-CSRF-Token': g_token
+		}), g_headers);
 		
-        getParam(html, result, 'balance_start', /<td>Баланс на 01\.[\s\S]*?<td class="last-cell">([\s\S]*?)<tr>/i, replaceTagsAndSpaces, parseBalance);
-		getParam(html, result, 'cab_tv', /<td>Услуга кабельного телевидения[\s\S]*?<td class="last-cell">([\s\S]*?)<tr>/i, replaceTagsAndSpaces, parseBalance);
-		getParam(html, result, 'abon', /<td>Абонентская плата[\s\S]*?<td class="last-cell">([\s\S]*?)<tr>/i, replaceTagsAndSpaces, parseBalance);
-		getParam(html, result, 'pay_month', /<td>Пополнение[\s\S]*?<td class="last-cell">([\s\S]*?)<\/tbody>/i, replaceTagsAndSpaces, parseBalance);
-		getParam(html, result, 'lastpay_sum', /<span class="heading">История платежей[\s\S]*<td>[\s\S]*?<td class="last-cell">([\s\S]*?)<\/tbody>/i, replaceTagsAndSpaces, parseBalance);
-		getParam(html, result, 'lastpay_date', /<span class="heading">История платежей[\s\S]*<td>([\s\S]*?)<td>/i, replaceTagsAndSpaces, parseDate);
-	}
-	
-	if (AnyBalance.isAvailable('fio', 'phone', 'block_from')) {
-	    html = AnyBalance.requestGet(baseurl + '/profile', g_headers);
+		var json = getJson(html);
 		
-        getParam(html, result, 'fio', /<td>Фамилия Имя Отчество:[\s\S]*?<td>([\s\S]*?)<td>/i, replaceTagsAndSpaces);
-		getParam(html, result, 'phone', /<td>Телефон:[\s\S]*?<td>([\s\S]*?)<td>/i, replaceNumber);
-		getParam(html, result, 'block_from', /<td>Блокировка с [\s\S]*?<td>([\s\S]*?)<td>/i, replaceTagsAndSpaces, parseDate);
+		if (json) {
+		    for(var i=0; i<json.length; ++i){
+		        var caption = json[i].caption;
+		        if(/Баланс на/i.test(caption)){
+		        	getParam(json[i].itog, result, 'balance_start', null, null, parseBalance);
+		        }
+		    	if(/Услуга кабельного телевидения/i.test(caption)){
+		        	getParam(json[i].itog, result, 'cab_tv', null, null, parseBalance);
+		        }
+		    	if(/Оплата/i.test(caption)){
+		        	getParam(json[i].itog, result, 'lastpay_sum', null, null, parseBalance);
+		    		getParam(json[i].caption, result, 'lastpay_date', /Оплата[\s\S]*\(([\s\S]*)\)/i, replaceTagsAndSpaces, parseDate);
+		    		sumParam(json[i].itog, result, 'pay_month', null, null, parseBalance, aggregate_sum);
+		        }
+	        }
+		} else {
+			AnyBalance.trace('Не удалось получить историю платежей');
+		}
 	}
 	
 	AnyBalance.setResult(result);

@@ -1,6 +1,14 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
-	<change version="1" date="2021-11-11">
+    <change version="3" date="2022-05-20">
+	- Поддержка изменений в процедуре входа
+	- Добавлен счетчик Адрес подключения
+	</change>
+    <change version="2" date="2022-04-15">
+	- Поддержка изменений на сайте
+	- Добавлен счетчик Срок до блокировки
+	</change>
+	<change version="1" date="2021-11-10">
 	- Первая версия провайдера
 	</change>
 </history>

@@ -1,12 +1,15 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-internet-lovit</id>
+	<id version="2">ab-internet-lovit</id>
 	<api flags="no_browser"/>
 	<name>Lovit)) интернет провайдер</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе провайдера Lovit)) https://lovit.ru </p>
-	<p>Информация берется из личного кабинета https://lk.lovit.ru</p>
+	<p>Предоставляет информацию о балансе провайдера Lovit)) https://lovit.ru/.</p>
+	<p>Информация берется из мобильного приложения Lovit.</p>
 	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Для получения данных необходимо ввести в настройки провайдера номер договора или телефон, привязанный к личному кабинету, и пароль.</p>
+	]]></instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>
 		<module id="library"/>
@@ -18,11 +21,25 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="balance" name="Баланс" units=" ₽"/>
+		<counter id="date_to_off" name="Дата отключения" type="time" format="dd.MM.yyyy"/>
 		<counter id="days_to_off" name="Дней до отключения" units=" дн"/>
-		<counter id="status" name="Статус" type="text"/>
-		<counter id="abon" name="Абонентская плата" units=" р"/>
+		<counter id="status" name="Статус договора" type="text"/>
+		<counter id="abon" name="Абонентская плата" units=" ₽"/>
+		<counter id="servicename" name="Название услуги" type="text"/>
+		<counter id="servicedesc" name="Описание услуги" type="text"/>
+		<counter id="servicename2" name="Название услуги 2" type="text"/>
+		<counter id="servicedesc2" name="Описание услуги 2" type="text"/>
+		<counter id="servicename3" name="Название услуги 3" type="text"/>
+		<counter id="servicedesc3" name="Описание услуги 3" type="text"/>
+		<counter id="servicename4" name="Название услуги 4" type="text"/>
+		<counter id="servicedesc4" name="Описание услуги 4" type="text"/>
+		<counter id="servicename5" name="Название услуги 5" type="text"/>
+		<counter id="servicedesc5" name="Описание услуги 5" type="text"/>
 		<counter id="agreement" name="Номер договора" type="text"/>
+		<counter id="address" name="Адрес подключения" type="text"/>
+		<counter id="phone" name="Телефон" type="text"/>
+		<counter id="fio" name="ФИО" type="text"/>
 	</counters>
 	<keywords></keywords>
 	<type>internet</type>

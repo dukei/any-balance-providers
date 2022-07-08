@@ -2,7 +2,151 @@
  Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
  */
 
+//var browserApi = 'http://browser.anybalance.ru:4024';
+//var browserApi = 'http://192.168.0.117:4024';
+var browserApi = 'http://localhost:4024';
+var baseurl = 'https://login.mts.ru/amserver/UI/Login'
+
 function main() {
+    var html = AnyBalance.requestGet(baseurl, g_headers);
+clearAllCookies();
+    	html = AnyBalance.requestPost(browserApi + '/base/open', JSON.stringify({
+    		userAgent: g_headers["User-Agent"],
+    		url: baseurl,
+    		rules: [
+    		    {
+                	resType: /^(image|stylesheet|font)$/.toString(),
+                	action: 'abort',
+               	}
+		,{
+               		url: /_qrator/.toString(),
+                	action: 'request',
+		},
+    		    {
+                	resType: /^(image|stylesheet|font|script)$/i.toString(),
+                	action: 'abort',
+               	}
+		,{
+               		url: /\.(png|jpg|ico)/.toString(),
+                	action: 'abort',
+                }
+		,{
+               		url: /.*/.toString(),
+                	action: 'request',
+                }
+    		],
+    	}), {"Content-Type": "application/json"});
+    	var json = JSON.parse(html);
+    	if(json.status !== 'ok'){
+    		AnyBalance.trace(html);
+    		throw new AnyBalance.Error('Ошибка browser api: ' + json.message);
+    	}
+    	var page = json.page, num=0;
+
+    	do{
+    		++num;
+    		AnyBalance.sleep(3000);
+  			html = AnyBalance.requestGet(browserApi + '/base/status?page=' + page);
+  			json = JSON.parse(html);
+    		if(json.status !== 'ok'){
+    			AnyBalance.trace(html);
+    			throw new AnyBalance.Error('Ошибка browser api: ' + json.message);
+    		}
+    		AnyBalance.trace('Статус загрузки: ' + json.loadStatus + ' (попытка ' + num + ')');
+    		if(json.pendingRequests && json.pendingRequests.length > 0){
+    			for(let j=0; j<json.pendingRequests.length; ++j){
+    				var pr = json.pendingRequests[j];
+    				var headers = [];
+    				for(var name in pr.headers){
+    					var values = pr.headers[name].split('\n');
+					if(name === 'referer')
+						continue;
+    					for(var i=0; i<values.length; ++i)
+    						headers.push([name, values[i]]);
+					
+    				}
+    				html = AnyBalance.requestPost(pr.url, pr.body, addHeaders(headers, {
+					'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36',
+    					'Accept': '*/*',
+//						'Origin': 'https://login.mts.ru',
+//						'Sec-Fetch-Site': 'same-origin',
+//						'Sec-Fetch-Mode': 'cors',
+						//'Sec-Fetch-Dest': 'empty'
+    				}), {HTTP_METHOD: pr.method});
+    				var params = AnyBalance.getLastResponseParameters();
+    				var convertedHeaders = {}, ct;
+//    				params.headers.push(['set-cookie', '_HASH__=' + AnyBalance.getCookie('_HASH__') + '; Max-Age=3600; Path=/']);
+
+    				for(var i=0; i<params.headers.length; ++i){
+    					var h = params.headers[i];
+    					var name = h[0].toLowerCase();
+    					if(['transfer-encoding','content-encoding'].indexOf(name) >= 0)
+    						continue; //Возвращаем контент целиком
+    					if(name === 'content-length'){
+    						//https://stackoverflow.com/questions/5515869/string-length-in-bytes-in-javascript
+    						h[1] = '' + unescape(encodeURIComponent(html || '')).length;
+    					}
+    					if(convertedHeaders[name] === undefined){
+    						convertedHeaders[name] = h[1];
+    					}else if(Array.isArray(convertedHeaders[name])){
+						convertedHeaders[name].push(h[1]);
+					}else{
+    						convertedHeaders[name] += [h[1]];
+    					}
+    					if(name === 'content-type')
+    						ct = h[1];
+    				}
+    				var pr = {
+    					id: pr.id,
+    					page: page,
+    					r: {
+    						status: AnyBalance.getLastStatusCode(),
+    						headers: convertedHeaders,
+    						contentType: ct,
+    						body: html
+    					}
+    				}
+    				html = AnyBalance.requestPost(browserApi + '/base/response', JSON.stringify(pr), {"Content-Type": "application/json"});
+    			}
+    		}else if(json.loadStatus === 'load')
+    			break;
+    	}while(num < 15);
+
+    	if(json.loadStatus !== 'load')
+    		throw new AnyBalance.Error('Не удалось получить информацию для входа');
+
+    	html = AnyBalance.requestGet(browserApi + '/base/content?page='+page);
+    	json = JSON.parse(html);
+    	if(json.status !== 'ok'){
+    		AnyBalance.trace(html);
+    		throw new AnyBalance.Error('Ошибка browser api: ' + json.message);
+    	}
+    	var htmlContent = json.content;
+
+    	html = AnyBalance.requestPost(browserApi + '/base/cookies', JSON.stringify({
+    		page: page,
+    		urls: [baseurl]
+    	}), {"Content-Type": "application/json"});
+
+    	json = JSON.parse(html);
+    	if(json.status !== 'ok'){
+    		AnyBalance.trace(html);
+    		throw new AnyBalance.Error('Ошибка browser api: ' + json.message);
+    	}
+
+    	html = AnyBalance.requestPost(browserApi + '/base/close', JSON.stringify({
+    		page: page,
+    	}), {"Content-Type": "application/json"});
+
+    	for(var i=0; i<json.cookies.length; ++i){
+    		var c = json.cookies[i];
+    		AnyBalance.setCookie(c.domain, c.name, c.value, c);
+    	}
+
+        html = htmlContent;
+}
+
+function main_old() {
     var prefs = AnyBalance.getPreferences();
 
 	AnyBalance.setOptions({

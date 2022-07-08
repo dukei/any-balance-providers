@@ -1,19 +1,16 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id  version="2">ab-cell-volnamobile</id>
+	<id  version="3">ab-cell-volnamobile</id>
 	<api flags="no_browser"/>
 	<name>Волна мобайл</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе, использованных минутах,  SMS, MMS и трафике для пользователей сотового оператора Волна мобайл </p>
-	<p>Информация берется из личного кабинета.</p>
+	<p>Предоставляет информацию о балансе, использованных минутах, SMS, MMS и трафике для пользователей оператора сотовой связи Волна мобайл.</p>
+	<p>Информация берется из мобильного приложения Волна.</p>
 	]]></description>
 	<instruction html="true"><![CDATA[
-	<p>Как получить доступ</p>
-	<ul>
-	<li>Введите в настройки провайдера свой номер телефона и пароль</li>
-	</ul>
+	<p>Для работы провайдера требуется ввести логин и пароль для входа в личный кабинет Волна мобайл.</p> 
 	]]></instruction>
-	<author>DimaZ &lt;DIMAZ.KHUA@gmail.com&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>
 		<module id="library"/>
 	</depends>
@@ -49,8 +46,9 @@
 		<counter id="dateOfExpire" name="Пакет услуг действует до" type="time" format="dd.MM.yyyy"/>
 		<counter id="abon" name="Абонентская плата" type="text"/>
 		<counter id="ls" name="Лицевой счет" type="text"/>
+		<counter id="phone" name="Номер телефона" type="text"/>
 	</counters>
-	<keywords>Сотовый телефон, мобильный, мобильник, Волна, Волнамобайл,Volnamobile,Volna, Крым</keywords>
+	<keywords>Сотовый телефон, мобильный, мобильник, Волна, Волнамобайл, Volnamobile, Volna, Крым</keywords>
 	<type>cell</type>
 	<country>ua</country>
 </provider>

@@ -1,11 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="15">ab-bonus-aeroflot</id>
+	<id version="16">ab-bonus-aeroflot</id>
 	<api flags="no_browser"/>
 	<name>Аэрофлот Бонус</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о бонусных милях, квалификационных милях и уровне клиента для пользователей программы "Аэрофлот Бонус".</p>
-	<p>Информация берется из личного кабинета (http://aeroflotbonus.ru).</p>
+	<p>Информация берется из личного кабинета на сайте https://www.aeroflot.ru/lk/app/ru-ru/services.</p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<author>DimaZUA &lt;DIMAZ.KHUA@gmail.com&gt;</author>
@@ -26,9 +26,10 @@
 		<counter id="qmiles" name="Квалификационные мили" units=" qm"/>
 		<counter id="milesActivityDate" name="Дата активности миль" type="time" format="dd.MM.yyyy"/>
 		<counter id="milesExpirationDate" name="Мили действительны до" type="time" format="dd.MM.yyyy"/>
-		<counter id="segments" name="Полетные сегменты"/>
-		<counter id="segmentsBusiness" name="Cегменты бизнес класса"/>
-		<counter id="level" name="Уровень" type="text"/>
+		<counter id="segments" name="Полетные сегменты" units=" as"/>
+		<counter id="segmentsBusiness" name="Cегменты бизнес класса" units=" bs"/>
+		<counter id="partnum" name="Номер участника" type="text"/>
+		<counter id="level" name="Текущий уровень" type="text"/>
 		<counter id="levelExpirationDate" name="Срок действия уровня" type="time" format="dd.MM.yyyy"/>
 	</counters>
 	<keywords>aeroflot, miles</keywords>

@@ -12,8 +12,10 @@ var g_headers = {
 	'Origin': 'https://my.a1.by',
 };
 
+var baseurl = 'https://my.a1.by/';
 //var velcomOddPeople = 'Velcom сознательно противодействует оперативному получению вами баланса через сторонние программы! Вот и снова они специально ввели изменения, которые сломали получение баланса. Пожалуйста, позвоните в службу поддержки Velcom (411 и 410 с мобильного телефона в сети velcom без взимания оплаты) и оставьте претензию, что вы не можете пользоваться любимой программой. Проявите активную позицию, они скрывают ваш баланс от вас же. Зачем, интересно? МТС и Life своих абонентов уважают значительно больше...';
 var velcomOddPeople = 'Не удалось войти в личный кабинет. Сайт изменен?';
+var replaceNumber = [replaceTagsAndSpaces, /\D/g, '', /.*(\d{3})(\d\d)(\d{3})(\d\d)(\d\d)$/, '+$1 $2 $3-$4-$5'];
 
 function parseBalanceRK(_text) {
   var text = _text.replace(/\s+/g, '');
@@ -30,22 +32,70 @@ function getDomain(url){
 }
 
 function main(){
+	var prefs = AnyBalance.getPreferences();
+	
+	switch(prefs.source){
+	case 'cell':
+        var html = mainCell(prefs);
+    case 'internet':
+        var html = mainInternet(prefs);
+//    case 'auto':
+//    default:
+//        try{
+//			var html = mainAPI(prefs);
+//        }catch(e){
+//            if(e.fatal)
+//                throw e;
+//			AnyBalance.trace('Не удалось получить данные из мобильного приложения');
+//		    clearAllCookies();
+//            var html = mainSite(prefs);
+//        }
+//        break;
+	}
+	
+	try{
+	    // Выходим из кабинета, чтобы снизить нагрузку на сервер
+		AnyBalance.trace('Выходим из кабинета, чтобы снизить нагрузку на сервер');
+		html = requestPostMultipart(baseurl + 'work.html', {
+			sid3: sid,
+			user_input_timestamp: new Date().getTime(),
+			user_input_0: '_exit',
+			user_input_1: '',
+			last_id: ''
+		}, g_headers);
+	} catch(e) {
+		AnyBalance.trace('Ошибка при выходе из кабинета: ' + e.message);
+	}
+	
+	var result = {success: true};
+	
+	AnyBalance.setResult(result);
+}
+
+function mainCell(html, result){
     var prefs = AnyBalance.getPreferences();
 	
-    var baseurl = "https://my.a1.by/";
     AnyBalance.setDefaultCharset('utf-8');
 	
-    checkEmpty(prefs.login, 'Введите номер телефона в международном формате!');
-    checkEmpty(prefs.password, 'Введите пароль к ИССА!');
+    checkEmpty(prefs.login, 'Введите номер телефона!');
+    checkEmpty(prefs.password, 'Введите пароль!');
 	
     var matches;
     if(!(matches = /^\+375(\d\d)(\d{7})$/.exec(prefs.login)))
-		throw new AnyBalance.Error('Неверный номер телефона. Необходимо ввести номер в международном формате без пробелов и разделителей!', false, true);
+		throw new AnyBalance.Error('Неверный формат номера телефона. Необходимо ввести номер в международном формате без пробелов и разделителей!', false, true);
 	
     var phone = matches[2];
     var prefix = matches[1];
+	
+	if (prefs.password.length > 20 || prefs.password.length < 8)
+		throw new AnyBalance.Error('Неверный формат пароля. Пароль должен содержать от 8 до 20 символов!', false, true);
     
     var html = AnyBalance.requestGet(baseurl, g_headers);
+	
+	if(AnyBalance.getLastStatusCode() >= 500){
+        AnyBalance.trace(html);
+        throw new AnyBalance.Error('Сервис временно недоступен. Пожалуйста, попробуйте позже.');
+    }
 
 //		function randomString(length) {var result = '', chars = '0123456789';for (var i = length; i > 0; --i) {	result += chars[Math.round(Math.random() * (chars.length - 1))];}return result;}
 		// Ищи новый способ, как нас заблокировать.
@@ -54,7 +104,7 @@ function main(){
     var form = getElement(html, /<form[^>]*name="asmpform"/i);
     if(!form){
 		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Не удалось найти форму входа, похоже, velcom её спрятал. Обратитесь к автору провайдера.');
+		throw new AnyBalance.Error('Не удалось найти форму входа. Сайт изменен?');
     }
 	
 	var params = createFormParams(form, function(params, str, name, value) {
@@ -64,7 +114,7 @@ function main(){
 		}else if(name === 'UserID'){ //Это номер
 			value = prefs.login.replace(/(\+375)(\d\d)(\d{3})(\d\d)(\d\d)/, '$1 $2 $3 $4 $5');
 		}else if(name === 'mobilePassword'){ //Это пароль
-			value = prefs.password.substr(0, 10);  //Велкам уже принимает 10 символов пароля
+			value = prefs.password;
 		}else if(name === 'identification'){
 			value = 'Мобильнаясвязь';
 		}else if(name === 'radio'){
@@ -116,7 +166,7 @@ function main(){
         if(error)
             throw new AnyBalance.Error(error, null, /не зарегистрирован|Неверно указан номер|номер телефона|парол/i.test(error));
         if(/Сервис временно недоступен/i.test(html))
-            throw new AnyBalance.Error('ИССА Velcom временно недоступна. Пожалуйста, попробуйте позже.');
+            throw new AnyBalance.Error('Сервис временно недоступен. Пожалуйста, попробуйте позже.');
         
 		AnyBalance.trace(html);
         throw new AnyBalance.Error('Не удалось войти в личный кабинет. Сайт изменен?');
@@ -126,10 +176,10 @@ function main(){
 		var message = getParam(html, null, null, /<div class="BREAK">([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
 		if(message) {
 			AnyBalance.trace('Сайт ответил: ' + message);
-			throw new AnyBalance.Error('ИССА Velcom временно недоступна.\n ' + message);
+			throw new AnyBalance.Error('Сервис временно недоступен.\n ' + message);
 		}
 		
-		throw new AnyBalance.Error('ИССА Velcom временно недоступна. Пожалуйста, попробуйте позже.');
+		throw new AnyBalance.Error('Сервис временно недоступен. Пожалуйста, попробуйте позже.');
 	}	
 	
     var result = {success: true};
@@ -140,7 +190,7 @@ function main(){
 			var error = getParam(html, null, null, /<h1[^>]*>([\s\S]*?)<\/h1>/i, replaceTagsAndSpaces, html_entity_decode);
 			if(error)
 				throw new AnyBalance.Error(error);
-			throw new AnyBalance.Error('Сайт временно недоступен. Пожалуйста, попробуйте ещё раз позднее.');
+			throw new AnyBalance.Error('Сервис временно недоступен. Пожалуйста, попробуйте позже.');
 		}
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error(velcomOddPeople);
@@ -158,7 +208,7 @@ function main(){
     }));
 	
 	getParam(html, result, 'userName', /<td[^>]+id="(?:NAME|FIO)"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(html, result, 'userNum', /<td[^>]+id="(?:TEL_NUM|DIRNUM|PhoneNumber)"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, html_entity_decode);
+    getParam(html, result, 'userNum', /<td[^>]+id="(?:TEL_NUM|DIRNUM|PhoneNumber)"[^>]*>([\s\S]*?)<\/td>/i, replaceNumber, html_entity_decode);
     //Хитрецы несколько строчек начисления абонента делают, одна при этом пустая
     sumParam(html, result, 'balance', /(?:Баланс основного счета|Баланс лицевого счета|Баланс|Начисления абонента):[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseBalanceRK, aggregate_sum);
     sumParam(html, result, 'balanceBonus', /(?:Баланс бонусного счета(?: \d)?):[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/ig, replaceTagsAndSpaces, parseBalance, aggregate_sum);
@@ -183,7 +233,7 @@ function main(){
         sumParam(counters, result, 'min', /(-?\d[\d,\.]*)\s*мин/i, replaceTagsAndSpaces, parseBalance, aggregate_sum);
     }else{
 		AnyBalance.trace(html);
-		AnyBalance.trace('Не удалось найти остатки трафика, минут и ммс, сайт изменен?');
+		AnyBalance.trace('Не удалось найти остатки трафика, минут и ммс. Сайт изменен?');
     }
 	
 	if(AnyBalance.isAvailable('loan_balance', 'loan_left', 'loan_end')) {
@@ -200,18 +250,163 @@ function main(){
 		getParam(html, result, 'loan_left', /Остаток ([0-9]+) руб./i, replaceTagsAndSpaces, parseBalance);
 		getParam(html, result, 'loan_end', /Погашение ([0-9.]+)./i, replaceTagsAndSpaces, parseDate);
 	}
-	try{
-	    // Выходим из кабинета, чтобы снизить нагрузку на сервер
-		AnyBalance.trace('Выходим из кабинета, чтобы снизить нагрузку на сервер');
-		html = requestPostMultipart(baseurl + 'work.html', {
-			sid3: sid,
-			user_input_timestamp: new Date().getTime(),
-			user_input_0: '_exit',
-			user_input_1: '',
-			last_id: ''
-		}, g_headers);
+	
+    AnyBalance.setResult(result);
+}
+
+function mainInternet(html, result){
+    var prefs = AnyBalance.getPreferences();
+	
+	checkEmpty(prefs.login, 'Введите номер лицевого счета!');
+	checkEmpty(prefs.password, 'Введите пароль!');
+	
+	if (prefs.login.length > 12 || prefs.login.length < 6)
+		throw new AnyBalance.Error('Неверный формат номера. Номер лицевого счета должен содержать от 6 до 12 символов!', false, true);
+	if (prefs.password.length > 20 || prefs.password.length < 8)
+		throw new AnyBalance.Error('Неверный формат пароля. Пароль должен содержать от 8 до 20 символов!', false, true);
+
+    AnyBalance.setDefaultCharset('utf-8'); 
+	
+    var html = AnyBalance.requestGet(baseurl, g_headers);
+	
+	var sid;
+	
+	try {
+		
+		var form = AB.getElement(html, /<form[^>]*name="asmpform"/i);
+		if(!form){
+			AnyBalance.trace(html);
+			throw new AnyBalance.Error('Не удалось найти форму входа. Сайт изменен?');
+		}
+	    
+		var params = AB.createFormParams(form, function(params, str, name, value) {
+			if (name == 'pinCheck') {
+				return 'false';
+			}else if (name == 'UserIDFixed') {
+				return prefs.login;
+			} else if (name == 'fixedPassword') {
+				return prefs.password;
+			} else if (name == 'fixednet') {
+				return 'true';
+			}
+	    
+			return value;
+		});
+
+		var action = getParam(form, /action="([^"]*)/i, replaceHtmlEntities);
+		var url = joinUrl(AnyBalance.getLastUrl(), action);
+	    
+		html = AnyBalance.requestPost(url, params, AB.addHeaders({
+			Referer: AnyBalance.getLastUrl()
+		}));
+		
+        var kabinetType, personalInfo;
+		if(/_root\/PERSONAL_INFO_FISICAL/i.test(html)) {
+            personalInfo = 'PERSONAL_INFO_FISICAL';
+            kabinetType = 5;		
+		} else if(/_root\/PERSONAL_INFO/i.test(html)){
+            personalInfo = 'PERSONAL_INFO';
+            kabinetType = 2;
+        }
+		
+		AnyBalance.trace('Cabinet type: ' + kabinetType);
+		
+        if(!kabinetType){
+            var error = getElement(html, /<[^>]*p--error/i, replaceTagsAndSpaces);
+            if(error)
+                throw new AnyBalance.Error(error, null, /не зарегистрирован|Неверно указан номер|номер телефона|парол/i.test(error));
+            if(/Сервис временно недоступен/i.test(html))
+                throw new AnyBalance.Error('Сервис временно недоступен. Пожалуйста, попробуйте позже.');
+            
+			AnyBalance.trace(html);
+            throw new AnyBalance.Error('Не удалось войти в личный кабинет. Сайт изменен?');
+        }
+		// Иногда сервис недоступен, дальше идти нет смысла
+		if (/По техническим причинам работа с сервисами ограничена|Сервис временно недоступен/i.test(html)) {
+			var message = getParam(html, null, null, /<div class="BREAK">([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
+			if(message) {
+				AnyBalance.trace('Сайт ответил: ' + message);
+				throw new AnyBalance.Error('Сервис временно недоступен.\n ' + message);
+			}
+			
+			throw new AnyBalance.Error('Сервис временно недоступен. Пожалуйста, попробуйте позже.');
+		}	
+		
+        var result = {success: true};
+        
+        var sid = getParam(html, /<input[^>]+name="sid3"[^>]*value="([^"]*)/i, replaceHtmlEntities);
+        if(!sid){
+			if(AnyBalance.getLastStatusCode() >= 400){
+				var error = getParam(html, null, null, /<h1[^>]*>([\s\S]*?)<\/h1>/i, replaceTagsAndSpaces, html_entity_decode);
+				if(error)
+					throw new AnyBalance.Error(error);
+				throw new AnyBalance.Error('Сервис временно недоступен. Пожалуйста, попробуйте позже.');
+			}
+			AnyBalance.trace(html);
+			throw new AnyBalance.Error(velcomOddPeople);
+        }
+        
+		//Персональная информация
+        html = requestPostMultipart(baseurl + 'work.html', {
+            sid3: sid,
+            user_input_timestamp: new Date().getTime(),
+            user_input_0: '_next',
+            last_id: '',
+            user_input_1: personalInfo,
+        }, addHeaders({
+        	Referer: baseurl
+        }));
+		
+		getParam(html, result, 'balance', /Баланс:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalanceRK);
+		getParam(html, result, 'userName', /Клиент:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+		getParam(html, result, 'acc', /Лицевой счет:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+        getParam(html, result, '__tariff', /Тарифный план:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+        getParam(html, result, 'status', /Статус л\/с:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+        
+		
+		if(isAvailable(['trafic', 'trafic_total'])) {
+            html = requestPostMultipart(baseurl + 'work.html', {
+                sid3: sid,
+                user_input_timestamp: new Date().getTime(),
+                user_input_0: '_root/STATISTIC',
+                last_id: '',
+                user_input_1: '0',
+                user_input_2: '',
+            }, addHeaders({
+            	Referer: baseurl
+            }));
+
+            html = requestPostMultipart(baseurl + 'work.html', {
+                sid3: sid,
+                user_input_timestamp: new Date().getTime(),
+                user_input_0: '_next',
+                last_id: '',
+                user_input_1: 'STATISTIC_OF_TRAFFIC',
+            }, addHeaders({
+            	Referer: baseurl
+            }));
+
+            html = requestPostMultipart(baseurl + 'work.html', {
+                sid3: sid,
+                user_input_timestamp: new Date().getTime(),
+                user_input_0: '_next',
+                last_id: '',
+                user_input_1: '1',
+            }, addHeaders({
+            	Referer: baseurl
+            }));
+
+            getParam(html, result, 'traffic_total', /ИТОГО[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+
+            var dt = new Date();
+            sumParam(html, result, 'traffic', new RegExp(n2(dt.getMonth() + 1) + '\\.' + dt.getFullYear() + '[\\s\\S]*?<td[^>]*>([\\s\\S]*?)</td>', 'ig'),
+                replaceTagsAndSpaces, parseBalance, aggregate_sum);
+		}
+
+        AnyBalance.setResult(result);
+
 	} catch(e) {
-		AnyBalance.trace('Ошибка при выходе из кабинета: ' + e.message);
+		throw e;
 	}
 	
     AnyBalance.setResult(result);
@@ -225,4 +420,11 @@ function safeEval(window, script){
        AnyBalance.trace('Bad javascript (' + e.message + '): ' + script);
        throw new AnyBalance.Error(velcomOddPeople);
    }
+}
+
+function n2(val){
+	val = val + '';
+	if(val.length < 2)
+		val = '0' + val;
+	return val;
 }

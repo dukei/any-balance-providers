@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
 	<EditTextPreference
-		title="Номер телефона"
+		title="Логин"
 		positiveButtonText="ОК"
-		summary="|Номер телефона в международном формате|{@s}"
+		summary="Логин для входа в ИССА|Введите логин\n|{@s}\n"
 		dialogTitle="Логин"
 		negativeButtonText="Отмена"
 		obligatory="true"
-		dialogMessage="Введите ваш номер телефона в международном формате без пробелов и разделителей, например, +375441234567."
-		inputType="phone"
+		dialogMessage="Введите номер телефона в международном формате без пробелов и разделителей, например, +375441234567. При выборе категории Интернет для дома и офиса введите номер лицевого счета, используемый для входа в ИССА."
+		inputType="number"
 		key="login">
 	</EditTextPreference>
 	<EditTextPreference
@@ -18,8 +18,17 @@
 		negativeButtonText="Отмена"
 		title="Пароль"
 		obligatory="true"
-		summary="|Пароль для входа в ИССА|***********"
-		dialogMessage="Введите пароль, используемый для входа в ИССА https://internet.velcom.by."
+		summary="Пароль для входа в ИССА|Введите пароль\n|***********\n"
+		dialogMessage="Введите пароль, используемый для входа в ИССА."
 		inputType="textPassword">
 	</EditTextPreference>
+	<ListPreference
+		key="source"
+		title="Категория"
+		dialogTitle="Выберите категорию"
+		summary="Категория для получения информации||{@s}\n"
+		entries="Мобильная связь|Интернет для дома и офиса"
+		entryValues="cell|internet"
+		defaultValue="cell">
+	</ListPreference>
 </PreferenceScreen>

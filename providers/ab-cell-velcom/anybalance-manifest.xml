@@ -1,16 +1,16 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="67">ab-cell-velcom</id>
+	<id version="69">ab-cell-velcom</id>
 	<api flags="no_browser"/>
 	<name>A1 (Беларусь)</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе, использованных минутах, трафике для пользователей белорусского оператора сотовой связи Velcom.</p>
-	<p>Информация берется из интернет-службы сервиса абонента (ИССА) (http://my.a1.by/).</p>
+	<p>Предоставляет информацию о балансе, использованных минутах, трафике для пользователей мобильной связи и фиксированного интернета белорусского оператора сотовой связи А1.</p>
+	<p>Информация берется из интернет-службы сервиса абонента (ИССА) по адресу https://my.a1.by/.</p>
 	]]></description>
 	<instruction html="true"><![CDATA[
 	<p>Как зарегистрироваться в ИССА:</p>
 	<ol>
-	<li>Перейдите по ссылке «Регистрация» на странице http://my.a1.by.</li>
+	<li>Перейдите по ссылке «Регистрация» на странице https://my.a1.by.</li>
 	<li>Введите номер своего телефона и получите ВРЕМЕННЫЙ пароль (действует 1 час).</li>
 	<li>Зайдите через браузер в ИССА, используя полученный пароль, и смените его на ПОСТОЯННЫЙ (действует 1 год) в меню ""Дополнительно/Изменить пароль"".</li>
 	<li>Введите постоянный пароль в этот провайдер, чтобы получить баланс.</li>
@@ -35,16 +35,18 @@
 		<counter id="min_fn" name="Минуты на любимые номера" units=" мин лн"/>
 		<counter id="traffic" name="Трафик" units=" Мб"/>
 		<counter id="traffic_night" name="Трафик (ночь)" units=" Мб"/>
+		<counter id="traffic_total" name="Трафик всего" units=" Мб"/>
 		<counter id="balanceBonus" name="Бонусный баланс" units=" р"/>
-		<counter id="userName" name="ФИО" type="text"/>
 		<counter id="userNum" name="Номер абонента" type="text"/>
+		<counter id="acc" name="Номер лицевого счета" type="text"/>
 		<counter id="status" name="Статус" type="text"/>
+		<counter id="userName" name="ФИО" type="text"/>
 		<counter id="loan_balance" name="Размер ежемесячного платежа" units=" р"/>
 		<counter id="loan_left" name="Оставшаяся к выплате сумма по рассрочке" units=" р"/>
 		<counter id="loan_end" name="Дата погашения рассрочки" type="time" format="dd.MM.yyyy"/>
 		<counter id="call_barring" name="Запрет исходящих с" type="time" format="dd.MM.yyyy"/>
 	</counters>
-	<keywords>велком, мобильный,velcome</keywords>
-	<type>cell</type>
+	<keywords>А1, велком, мобильный, velcome, интернет, шпаркi дамавiк, атлант телеком</keywords>
+	<type>cell, internet</type>
 	<country>by</country>
 </provider>

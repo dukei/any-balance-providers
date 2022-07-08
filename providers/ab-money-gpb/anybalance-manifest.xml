@@ -1,13 +1,15 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="4">ab-money-gpb</id>
-	<api flags="no_browser"/>
-	<name>Газпромбанк</name>	
+	<id version="5">ab-money-gpb</id>
+	<name>Газпромбанк</name>
+    <api flags="no_browser"/>
 	<description html="true"><![CDATA[
-	<p>Получает текущий остаток и другие параметры карт банка Газпромбанк (http://www.gazprombank.ru), используя интернет-банк https://homebank.gazprombank.ru.</p>
+	<p>Предоставляет информацию о текущем остатке и другие данные для владельцев карт и счетов Газпромбанка.</p>
+	<p>Информация берётся из личного кабинета Газпромбанка на сайте https://online.gpb.ru/.</p>
 	]]></description>
 	<instruction html="true"><![CDATA[
-	<p>Подключиться к системе «Домашний Банк» Вы можете в дополнительных офисах, а также через БАНКОМАТЫ Газпромбанка г. Москвы.</p>
+	<p>Для работы провайдера требуется ввести номер телефона, к которому привязана карта Газпромбанка, и пароль для входа в интернет-банк.</p>
+	<p>Кроме того, для авторизации в личном кабинете потребуется ввести код подтверждения из SMS, высланного на номер телефона, привязанного к личному кабинету Газпромбанка.</p>
 	]]></instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>
@@ -20,21 +22,24 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Остаток"/>
-		<counter id="currency" name="Валюта" type="text"/>
+		<counter id="balance" name="Остаток" units=" {@currency}"/>
+		<counter id="currency" name="Валюта счета" type="text"/>
+		<counter id="creditlimit" name="Кредитный лимит" units=" {@currency}"/>
 		<!--<counter id="minpay" name="К оплате"/>
 		<counter id="minpaytill" name="Срок оплаты" type="time" format="dd/MM/yyyy"/>
 		<counter id="debt" name="Задолженность"/>-->
-		<counter id="type" name="Тип" type="text"/>
+		<counter id="type" name="Тип карты/счета" type="text"/>
 		<!--<counter id="pct" name="Процентная ставка" units="%"/>
 		<counter id="pcts" name="Сумма начисленных процентов"/>-->
-		<counter id="till" name="Срок действия" type="time" format="dd/MM/yyyy"/>
+		<counter id="till" name="Срок действия" type="text"/>
 		<counter id="status" name="Статус" type="text"/>
-		<counter id="cardnum" name="Номер карты" type="text"/>
+		<counter id="cardnum" name="Номер карты/счета" type="text"/>
+		<counter id="cardholder" name="Имя на карте" type="text"/>
+		<counter id="opendate" name="Дата открытия" type="text"/>
 		<!--<counter id="accnum" name="Номер счета" type="text"/>-->
 		<counter id="fio" name="Владелец" type="text"/>
 	</counters>
-	<keywords>интернет-банкинг</keywords>
+	<keywords>интернет-банкинг, gazprombank, газпромбанк</keywords>
 	<type>money, bank</type>
 	<country>ru</country>
 </provider>

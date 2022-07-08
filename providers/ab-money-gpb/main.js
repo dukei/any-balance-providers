@@ -2,236 +2,232 @@
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 */
 
-function sleep(delay) {
-   if(AnyBalance.getLevel() < 6){
-      var startTime = new Date();
-      var endTime = null;
-      do {
-          endTime = new Date();
-      } while (endTime.getTime() - startTime.getTime() < delay);
-   }else{
-      AnyBalance.sleep(delay);
-   }
-} 
-
-function encryptPass(pass, map){
-	if(map){
-		var ch='',i=0,k=0,TempPass='',PassTemplate=map.split(','), Pass='';
-		TempPass=pass;
-		while(TempPass!=''){
-			ch=TempPass.substr(0, 1);
-			k = ch.charCodeAt(0);
-			if(k>0xFF) k-=0x350;
-			if(k==7622) k=185;
-			TempPass=TempPass.length>1?TempPass.substr(1, TempPass.length):'';
-			if(Pass!='')Pass=Pass+';';
-			Pass=Pass+PassTemplate[k];
-		}
-                return Pass;
-	}else{
-		return pass;
-	}
-
-}
-
 var g_headers = {
-    'Accept-Language': 'ru, en',
-    BSSHTTPRequest:1,
-//    Referer: 'https://homebank.gazprombank.ru/v1/cgi/bsi.dll?T=RT_2Auth.BF&L=RUSSIAN&color=blue',
-//    Origin: 'https://homebank.gazprombank.ru',,
-    'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.1 (KHTML, like Gecko) Chrome/21.0.1180.60 Safari/537.1'
+    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
+	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
+	'Accept-Encoding': 'gzip, deflate, br',
+	'Accept-Language': 'ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.6',
+	'Cache-Control': 'max-age=0',
+	'Connection': 'keep-alive',
+	'Upgrade-Insecure-Requests': '1',
+	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/93.0.4577.82 Safari/537.36'
 }
+
+var g_currency = {
+	RUB: '₽',
+	RUR: '₽',
+	USD: '$',
+	EUR: '€',
+	GBP: '£',
+	JPY: 'Ұ',
+	CHF: '₣',
+	CNY: '¥',
+	undefined: ''
+};
+
+var g_statusCard = {
+	0: 'Активна',
+	1: 'Не активна'
+};
+
+var g_statusAcc = {
+	0: 'Активен',
+	1: 'Не активен'
+};
+
+var baseurl = 'https://online.gpb.ru';
+var g_csrf;
 
 function main(){
     var prefs = AnyBalance.getPreferences();
 
-    var baseurl = "https://homebank.gazprombank.ru/v1/cgi/bsi.dll?";
-    
-    var html = AnyBalance.requestGet(baseurl + 'T=RT_2Auth.BF');
-    var mapId = getParam(html, null, null, /<input[^>]*name="MapID"[^>]*value="([^"]*)"/i);
-    var map = getParam(html, null, null, /var\s+PassTemplate\s*=\s*new\s+Array\s*\(([^\)]*)/i);
-    var pass = encryptPass(prefs.password, map);
-
-    html = AnyBalance.requestPost(baseurl, {
-        tic: 0,
-        T:'RT_2Auth.CL',
-        A:prefs.login,
-        B:pass,
-        L:'russian',
-        C:'',
-        IdCaptcha:'',
-        IMode:'',
-        sTypeInterface:'default',
-        MapID:mapId || ''
-    }, g_headers);
-
-    var error = getParam(html, null, null, /<BSS_ERROR>\d*\|?([\s\S]*?)<\/BSS_ERROR>/i, replaceTagsAndSpaces, html_entity_decode);
-    if(error)
-        throw new AnyBalance.Error(error);
-
-    var jsonInfo = getParam(html, null, null, /ClientInfo=(\{[\s\S]*?\})\s*(?:<\/div>|$)/i);
-    if(!jsonInfo)
-        throw new AnyBalance.Error("Не удалось найти информацию о сессии в ответе банка.");
-
-    jsonInfo = JSON.parse(jsonInfo);
-
-    var html = AnyBalance.requestPost(baseurl, {
-        SID:jsonInfo.SID,
-        tic:1,
-        T:'rt_0clientupdaterest.doheavyupd'
-    }, g_headers);
+    AnyBalance.setDefaultCharset('utf-8');
 	
-	var i=0;
-    do {
-		AnyBalance.trace('Ожидание обновления данных: ' + (i+1));
-		html = AnyBalance.requestPost(baseurl, {
-			SID:jsonInfo.SID,
-			tic:1,
-			T:'rt_0clientupdaterest.CheckForAcyncProcess'
-		}, g_headers);
-		var opres = getParam(html, null, null, /^\s*(?:<BSS_ERROR>([\s\S]*?)<\/BSS_ERROR>)?([\s\S]*>)?\d+\s*$/i, replaceTagsAndSpaces, html_entity_decode);
-		if(opres) {
-			AnyBalance.trace('Обновление данных закончено. ' + opres);
-			break; //Всё готово, надо получать баланс
-        }
-        if(++i > 25){  //На всякий случай не делаем больше 10 попыток
-            AnyBalance.trace('Не удалось за 25 попыток обновить баланс, получаем старое значение...');
-            throw new AnyBalance.Error('Не удалось получить новые данные из интернет банка. Пожалуйста, попробуйте ещё раз', true);
-            break;
-        }
-        sleep(3000);
-    } while(true);
+	checkEmpty(prefs.login, 'Введите номер телефона!');
+    checkEmpty(/^\d{11}$/.test(prefs.login), 'Введите номер телефона - 11 цифр без пробелов и разделителей!');
+	checkEmpty(prefs.password, 'Введите пароль!');
 
-    if(prefs.type == 'card')
-        fetchCard(jsonInfo, baseurl);
-    else if(prefs.type == 'acc')
-        fetchAccount(jsonInfo, baseurl);
-    else if(prefs.type == 'dep')
-        fetchDeposit(jsonInfo, baseurl);
-    else
-        fetchCard(jsonInfo, baseurl); //По умолчанию карты будем получать
-}
-
-function fetchCard(jsonInfo, baseurl){
-    var prefs = AnyBalance.getPreferences();
-    if(prefs.cardnum && !/^\d{4}$/.test(prefs.cardnum))
-        throw new AnyBalance.Error("Введите 4 последних цифры номера карты или не вводите ничего, чтобы показать информацию по первой карте");
-
-    var html = AnyBalance.requestPost(baseurl, {
-        SID:jsonInfo.SID,
-        tic:1,
-        T:'RT_2IC.ShowMultiSchemePage',
-        nvgt:1,
-        SCHEMENAME:'CARDS'
-    }, g_headers);
-
-    var cardnum = prefs.cardnum ? prefs.cardnum : '\\d{4}';
-    var re = new RegExp('(<li[^>]*>(?:[\\s\\S](?!<li))*\\d+\\s+\\d+\\*+\\s+\\*+\\s+' + cardnum + '[\\s\\S]*?</li>)', 'i');
-    var tr = getParam(html, null, null, re);
-    if(!tr)
-        throw new AnyBalance.Error('Не удаётся найти ' + (prefs.cardnum ? 'карту с последними цифрами ' + prefs.cardnum : 'ни одной карты'));
-
-    var result = {success: true, balance: null};
-    
-	getParam(tr, result, 'balance', /<span[^>]+class="amount"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(tr, result, ['currency', 'balance'], /<span[^>]+class="currency"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
-	getParam(tr, result, 'cardnum', /<div[^>]+class="number"[^>]*>(?:[\s\S](?!<\/div))*?<p[^>]+class="value"[^>]*>([\s\S]*?)<\/p>/i, replaceTagsAndSpaces);
-    getParam(tr, result, 'type', /<div[^>]+class="type"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
-    getParam(tr, result, '__tariff', /<div[^>]+class="type"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
-    getParam(tr, result, 'status', /<p[^>]+class="status"[^>]*>([\s\S]*?)<\/p>/i, replaceTagsAndSpaces);
-    getParam(tr, result, 'fio', /<div[^>]+class="holder"[^>]*>(?:[\s\S](?!<\/div))*?<p[^>]+class="value"[^>]*>([\s\S]*?)<\/p>/i, replaceTagsAndSpaces);
-    getParam(tr, result, 'till', /<div[^>]+class="expire"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseDate);
+    AnyBalance.trace ('Пробуем войти в личный кабинет...');
 	
-    AnyBalance.setResult(result);
-}
-
-function fetchAccount(jsonInfo, baseurl){
-    var prefs = AnyBalance.getPreferences();
-    throw new AnyBalance.Error("Получение информации по счетам пока не поддерживается. Обращайтесь к разработчикам.");
-    /*
-    if(prefs.cardnum && !/^\d{4,}$/.test(prefs.cardnum))
-        throw new AnyBalance.Error("Введите от четырех последних цифр номера счета или не вводите ничего, чтобы показать информацию по первому счету");
-                                                                                                                                
-    var html = AnyBalance.requestPost(baseurl, {
-        SID:jsonInfo.SID,
-        tic:1,
-        T:'RT_2IC.form',
-        nvgt:1,
-        SCHEMENAME:'STM',
-        XACTION: 'NEW'
-    }, g_headers);
-
-    var cardnum = prefs.cardnum ? prefs.cardnum : '\\d{4,}';
-    var re = new RegExp('(<tr[^>]*>(?:[\\s\\S](?!<tr))*<input[^>]*STM="[^"]*' + cardnum + '["|][\\s\\S]*?</tr>)', 'i');
-    var tr = getParam(html, null, null, re);
-    if(!tr)
-        throw new AnyBalance.Error('Не удаётся найти ' + (prefs.cardnum ? 'счет с последними цифрами ' + prefs.cardnum : 'ни одного счета'));
-
-    var result = {success: true};
-    getParam(tr, result, 'accnum', /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
-    getParam(tr, result, 'balance', /(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(tr, result, 'currency', /(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
-    getParam(tr, result, 'type', /(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
-    getParam(tr, result, '__tariff', /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
-    getParam(jsonInfo.USR, result, 'fio', /(.*)/i, replaceTagsAndSpaces);
-    AnyBalance.setResult(result);
-    */
-}
-
-function fetchDeposit(jsonInfo, baseurl){
-    var prefs = AnyBalance.getPreferences();
-    throw new AnyBalance.Error("Получение информации по депозитам пока не поддерживается. Обращайтесь к разработчикам.");
-    /*
-    if(prefs.cardnum && !/^\d{4,}$/.test(prefs.cardnum))
-        throw new AnyBalance.Error("Введите от четырех последних цифр номера счета депозита или не вводите ничего, чтобы показать информацию по первому депозиту");
-
-    var html = AnyBalance.requestPost(baseurl, {
-        SID:jsonInfo.SID,
-        tic:1,
-        T:'RT_2IC.SC',
-        nvgt:1,
-        SCHEMENAME:'DEPOSITS',
-        FILTERIDENT:''
-    }, g_headers);
-
-    //Сколько цифр осталось, чтобы дополнить до 20
-    var accnum = prefs.cardnum || '';
-    var accprefix = accnum.length;
-    accprefix = 20 - accprefix;
-
-    var re = new RegExp('(<tr[^>]*>(?:[\\s\\S](?!<tr))*' + (accprefix > 0 ? '\\d{' + accprefix + '}' : '') + accnum + '[\\s\\S]*?</tr>)', 'i');
-    var tr = getParam(html, null, null, re);
-    if(!tr)
-        throw new AnyBalance.Error('Не удаётся найти ' + (accprefix > 0 ? 'депозит с последними цифрами ' + prefs.cardnum : 'ни одного депозита'));
-
-    var result = {success: true};
-    getParam(tr, result, 'balance', /(?:[\s\S]*?<td[^>]*>){6}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(tr, result, 'pct', /(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(tr, result, 'accnum', /(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
-    getParam(tr, result, 'currency', /(?:[\s\S]*?<td[^>]*>){7}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
-    getParam(tr, result, 'type', /(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
-    getParam(tr, result, 'till', /(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseDate);
-    getParam(tr, result, '__tariff', /(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
-    getParam(jsonInfo.USR, result, 'fio', /(.*)/i, replaceTagsAndSpaces);
-
-    if(AnyBalance.isAvailable('pcts')){
-        var id = getParam(tr, null, null, /SIDR="([^"]*)/i);
-        if(!id){
-            AnyBalance.trace('Не удаётся найти ID депозита для получения расширенной информации.');
-        }else{
-            
-            html = AnyBalance.requestPost(baseurl, {
-                SID:jsonInfo.SID,
-                tic:1,
-                T:'RT_2IC.view',
-                SCHEMENAME:'DEPOSITS',
-                IDR:id,
-                FORMACTION:'VIEW'
-            }, g_headers);
-
-            getParam(html, result, 'pcts', /Начисленные проценты(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-        }
+	var html = AnyBalance.requestGet(baseurl + '/login', g_headers);
+	AnyBalance.trace(html);
+	
+	if(AnyBalance.getLastStatusCode() >= 400){
+        AnyBalance.trace(html);
+        throw new AnyBalance.Error('Сайт Газпромбанка временно недоступен. Попробуйте еще раз позже');
     }
-    AnyBalance.setResult(result);
-    */
+	
+	var g_csrf = getParam(html, null, null, /<meta[^>]*name="_csrf"[^>]*content="([^"]*)"/i);
+	
+	if (!g_csrf) {
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удалось найти форму входа. Сайт изменен?');
+	}
+		
+	var params = [
+	    ['name','%2B'+prefs.login],
+        ['pwd',prefs.password],
+        ['locale','ru_RU'],
+		['lang','ru-RU']
+	];
+	
+	var html = AnyBalance.requestPost(baseurl + '/api/profile/login/init', params, addHeaders({
+		'Accept': 'application/json, text/plain, */*',
+		'Content-Type': 'application/x-www-form-urlencoded',
+		'Origin': baseurl,
+		'Referer': baseurl + '/login',
+		'X-CSRF-TOKEN': g_csrf
+	}));
+	
+	var json = getJson(html);
+	AnyBalance.trace(JSON.stringify(json));
+
+    if (json.needConfirmOtp && json.needConfirmOtp == true){
+		AnyBalance.trace('Сайт затребовал код подтверждения из SMS');
+	
+	    var code = AnyBalance.retrieveCode('Пожалуйста, введите код подтверждения, высланный на номер телефона ' + prefs.login, null, {inputType: 'number', time: 120000});
+	
+	    var params = [
+	        ['name','%2B'+prefs.login],
+            ['pwd',prefs.password],
+	    	['code',code],
+            ['locale','ru_RU'],
+	    	['lang','ru-RU']
+	    ];
+	
+	    var html = AnyBalance.requestPost(baseurl + '/api/profile/login/confirm', params, addHeaders({
+	    	'Accept': 'application/json, text/plain, */*',
+	    	'Content-Type': 'application/x-www-form-urlencoded',
+	    	'Origin': baseurl,
+	    	'Referer': baseurl + '/login',
+	    	'X-CSRF-TOKEN': g_csrf
+	    }));
+	
+	    var json = getJson(html);
+	    AnyBalance.trace(JSON.stringify(json));
+    }
+	
+	if (json.result != 0){
+		var error = json.description;
+    	if (error) {
+			AnyBalance.trace(html);
+    		throw new AnyBalance.Error(error);	
+    	}
+
+    	AnyBalance.trace(html);
+    	throw new AnyBalance.Error('Не удалось войти в личный кабинет. Сайт изменён?');
+    }
+	
+	var result = {success: true};
+	
+	AnyBalance.trace ('Получаем данные о владельце...');
+	
+	html = AnyBalance.requestPost(baseurl + '/api/profile', null, addHeaders({
+	        	'Accept': 'application/json, text/plain, */*',
+	        	'Content-Type': 'text/plain;charset=UTF-8',
+	        	'Origin': baseurl,
+	        	'Referer': baseurl + '/products',
+	        	'X-CSRF-TOKEN': g_csrf
+	        }));
+	
+	var json = getJson(html);
+	AnyBalance.trace(JSON.stringify(json));
+	
+	getParam(json.clientName, result, 'fio', null, null, capitalFirstLetters);
+	
+	switch(prefs.source){
+	case 'card':
+        fetchCard(prefs, result);
+		break;
+    case 'account':
+        fetchAccount(prefs, result);
+		break;
+	case 'auto':
+    default:
+        fetchCard(prefs, result);
+		break;
+	}
+	
+	AnyBalance.setResult(result);
+	
+}
+	
+function fetchCard(prefs, result){
+	AnyBalance.trace ('Получаем данные по карте...');
+	
+	var html = AnyBalance.requestGet(baseurl + '/api/card/cards', g_headers);
+	
+	var json = getJson(html);
+	AnyBalance.trace(JSON.stringify(json));
+	
+	var cards = json.cards;
+	AnyBalance.trace('Найдено карт: ' + cards.length);
+	if(cards.length < 1)
+		throw new AnyBalance.Error('У вас нет ни одной карты');
+
+	var currCard;
+	for(var i=0; i<cards.length; ++i){
+		var card = cards[i];
+		AnyBalance.trace('Найдена карта ' + card.number);
+		if(!currCard && (!prefs.num || endsWith(card.number, prefs.num))){
+			AnyBalance.trace('Выбрана карта ' + card.number);
+			currCard = card;
+		}
+	}
+
+	if(!currCard)
+		throw new AnyBalance.Error('Не удалось найти карту с последними цифрами ' + prefs.num);
+	
+	var cardId = currCard.id;
+	
+	getParam(card.balance, result, ['balance', 'currency']);
+	getParam(g_currency[card.currency]||card.currency, result, 'currency');
+	getParam(card.number, result, '__tariff');
+	getParam(card.number, result, 'cardnum');
+	getParam(card.name, result, 'type');
+	getParam(g_statusCard[card.status]||card.status, result, 'status');
+	getParam(card.cardHolder, result, 'cardholder');
+	getParam(card.expDate.replace(/(\d{4})(\d{2})/,'$2/$1'), result, 'till');
+	
+	if(AnyBalance.isAvailable('creditlimit'))
+	    getParam(card.creditLimit, result, 'creditlimit');
+	
+}
+
+function fetchAccount(prefs, result){
+	AnyBalance.trace ('Получаем данные по счету...');
+	
+	var html = AnyBalance.requestGet(baseurl + '/api/account/shortDeposits?accountStatusFilter=ALL', g_headers);
+	
+	var json = getJson(html);
+	AnyBalance.trace(JSON.stringify(json));
+	
+	var accounts = json.accounts;
+	AnyBalance.trace('Найдено счетов: ' + accounts.length);
+	if(accounts.length < 1)
+		throw new AnyBalance.Error('У вас нет ни одного счета');
+
+	var currAccount;
+	for(var i=0; i<accounts.length; ++i){
+		var account = accounts[i];
+		AnyBalance.trace('Найден счет ' + account.numberOriginal);
+		if(!currAccount && (!prefs.num || endsWith(account.numberOriginal, prefs.num))){
+			AnyBalance.trace('Выбран счет ' + account.numberOriginal);
+			currAccount = account;
+		}
+	}
+
+	if(!currAccount)
+		throw new AnyBalance.Error('Не удалось найти счет с последними цифрами ' + prefs.num);
+	
+	var accountId = currAccount.id;
+		
+    getParam(account.balance, result, ['balance', 'currency']);
+	getParam(g_currency[account.currency]||account.currency, result, 'currency');
+	getParam(account.numberOriginal, result, '__tariff');
+	getParam(account.numberOriginal, result, 'cardnum');
+	getParam(account.name, result, 'type');
+	getParam(account.openDate, result, 'opendate');
+	getParam(g_statusAcc[account.status]||account.status, result, 'status');
+	
 }

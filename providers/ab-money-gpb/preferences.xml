@@ -2,42 +2,43 @@
 <PreferenceScreen>
     <EditTextPreference
 		obligatory="true"
-        title="Логин" 
-        positiveButtonText="ОК" 
-        summary="|Введите логин в интернет-банк|{@s}" 
-        dialogTitle="Логин" 
-        negativeButtonText="Отмена" 
-        dialogMessage="Введите логин для входа в интернет-банк."
-        inputType="text"
-        key="login">
-    </EditTextPreference>
+		title="Номер телефона"
+		positiveButtonText="ОК"
+		summary="Номер телефона, привязанный к карте|Введите номер телефона\n|{@s}\n"
+		dialogTitle="Номер телефона"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите 11 цифр номера телефона без пробелов и разделителей. Например, 79261234567."
+		inputType="number"
+		key="login">
+	</EditTextPreference>
     <EditTextPreference
 		obligatory="true"
         positiveButtonText="ОК"
-        key="password" 
+        key="password"
         dialogTitle="Пароль"
         negativeButtonText="Отмена"
         title="Пароль"
-        summary="|Введите пароль в интернет-банк|***********"
+        summary="Пароль для входа в интернет-банк|Введите пароль\n|**********\n"
         dialogMessage="Введите пароль, используемый для входа в интернет-банк."
         inputType="textPassword">
     </EditTextPreference>
-<!--    <ListPreference 
-        key="type" 
-        title="Банковский продукт"
-        summary="||{@s}\n"
-        entries="Карта"
-        entryValues="card"
-	defaultValue="card">
-    </ListPreference> -->
+    <ListPreference
+		key="source"
+		title="Источник данных"
+		summary="Источник для получения информации||{@s}\n"
+		dialogTitle="Источник данных"
+		entries="Автоматически|Карта|Счет"
+		entryValues="auto|card|account"
+		defaultValue="auto">
+	</ListPreference>
     <EditTextPreference 
         positiveButtonText="ОК"
-        key="cardnum" 
-        inputType="number"
-        dialogTitle="Номер карты"
-        negativeButtonText="Отмена"
-        title="Номер карты"
-        summary="|Автоматически|{@s}"
-        dialogMessage="Введите последние 4 цифры карты, по которой вы хотите получить данные. Если это поле оставить пустым, то будет показана информация по первой карте.">
+		key="num"
+		dialogTitle="Номер карты/счета"
+		negativeButtonText="Отмена"
+		title="Номер карты/счета"
+		summary="Последние 4 цифры карты/счета|Автоматически\n|{@s}\n"
+		dialogMessage="Введите последние 4 цифры карты/счета, по которым Вы хотите получать информацию. Если оставить поле пустым, будет показана информация по первой карте/счету"
+		inputType="number">
     </EditTextPreference>
 </PreferenceScreen>

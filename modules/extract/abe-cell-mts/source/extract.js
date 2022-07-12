@@ -366,9 +366,14 @@ function fetchAccountStatus(html, result) {
 }
 
 function isLoggedIn(html) {
-    return getParam(html, /(<meta[^>]*name="lkMonitorCheck")/i)
-       || /js-logout/i.test(html) || /UI\/Logout/i.test(html) || /Вы управляете:/i.test(html);
-}
+    var prefs = AnyBalance.getPreferences();
+    var html = AnyBalance.requestGet('https://lk.mts.ru/auth/account/is-authorized', addHeaders({
+        'X-Requested-With': 'XMLHttpRequest',
+        Referer: 'https://lk.mts.ru/',
+        'X-Login': '7' + prefs.login
+    }))
+    return html === 'true';
+ }
 
 function getLKJson(html, allowExceptions) {
     try {
@@ -591,6 +596,13 @@ function enterLK(options) {
         }
     }
 
+    if(!isLoggedIn(html)) {
+        AnyBalance.trace('Требуется дологиниться')
+        AnyBalance.requestGet('https://lk.mts.ru/auth/account/login?goto=https://lk.mts.ru', addHeaders({
+            referer: 'https://lk.mts.ru/'
+        }))
+    }
+
     if (!isLoggedIn(html)) {
         if (getParam(html, null, null, /(auth-status=0)/i))
             throw new AnyBalance.Error('Неверный логин или пароль. Повторите попытку или получите новый пароль на сайте ' + g_baseurl + '/.', false, true);
@@ -611,21 +623,21 @@ function loginWithPassword(){
 
     var prefs = AnyBalance.getPreferences();
 	
-	html = loadProtectedPage('https://lk.mts.ru/', g_headers);
-
-	if(/Мой МТС/i.test(html)){
-		AnyBalance.trace('Сессия сохранена. Входим автоматически...');
+	html = loadProtectedPage('https://login.mts.ru/api/profile', addHeaders({referer: 'https://lk.mts.ru/'}));
+    if(/"mobile:phone"/i.test(html)){
+        AnyBalance.trace('Сессия сохранена. Входим автоматически...');
 	}else{
-		AnyBalance.trace('Сессия новая. Будем логиниться заново...');
+        AnyBalance.trace('Сессия новая. Будем логиниться заново...');
         clearAllCookiesExceptProtection();
-		if(!/qrator/i.test(html)){
-			AnyBalance.trace('Защита не обнаружена. Используем старый вход');
-			var html = enterLK({login: prefs.login, password: prefs.password, baseurl: 'http://lk.mts.ru', url: 'http://login.mts.ru/amserver/UI/Login?service=lk&goto=http%3A%2F%2Flk.mts.ru%2F'});
-		}else{
-			AnyBalance.trace('Обнаружена защита. Используем новый вход');
-		    var html = enterLKNew({login: prefs.login, password: prefs.password, baseurl: 'https://lk.mts.ru', url: 'https://login.mts.ru/amserver/json/authenticate?authIndexType=service&authIndexValue=login-spa'});
-	    }
-	}
+        if(!/qrator/i.test(html)){
+            AnyBalance.trace('Защита не обнаружена. Используем старый вход');
+            var html = enterLK({login: prefs.login, password: prefs.password, baseurl: 'http://lk.mts.ru', url: 'http://login.mts.ru/amserver/UI/Login?service=lk&goto=http%3A%2F%2Flk.mts.ru%2F'});
+        }else{
+            AnyBalance.trace('Обнаружена защита. Используем новый вход');
+            var html = enterLKNew({login: prefs.login, password: prefs.password, baseurl: 'https://lk.mts.ru', url: 'https://login.mts.ru/amserver/json/authenticate?authIndexType=service&authIndexValue=login-spa'});
+        }
+    }
+
 	
 	g_savedData.setCookies();
 	g_savedData.save();

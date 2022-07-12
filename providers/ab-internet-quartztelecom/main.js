@@ -2,7 +2,7 @@
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 */
 
-var baseurl = 'https://lk.quartztelecom.ru/';
+var baseurl = 'https://lk.tvpodolsk.ru/';
 
 var g_headers = {
 	'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',

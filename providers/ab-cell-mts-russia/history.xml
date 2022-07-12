@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="4.1" version="205" date="2022-07-12">
+	- Исправление проблем со входом иногда
+	</change>
 	<change major_version="4.1" version="204" date="2022-07-08">
 	- Обход защиты от роботов
 	</change>

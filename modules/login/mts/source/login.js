@@ -326,6 +326,10 @@ function loginOrdinaryForm(html, options){
     // AnyBalance.trace("Login params: " + JSON.stringify(params));
     AnyBalance.trace("Логинимся с заданным номером");
     html = AnyBalance.requestPost(options.url, params, addHeaders({Origin: g_baseurlLogin, Referer: options.url}));
+
+    var msocookie = AnyBalance.getCookie('MTSWebSSO');
+    AnyBalance.setCookie('.mts.ru', 'MTSWebSSO', msocookie);
+
     fixCookies();
     return html;
 }

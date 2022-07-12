@@ -599,7 +599,7 @@ function enterLK(options) {
     if(!isLoggedIn(html)) {
         AnyBalance.trace('Требуется дологиниться')
         AnyBalance.requestGet('https://lk.mts.ru/auth/account/login?goto=https://lk.mts.ru', addHeaders({
-            referer: 'https://lk.mts.ru/'
+            Referer: 'https://lk.mts.ru/'
         }))
     }
 
@@ -955,7 +955,7 @@ function callNewLKApiResult(token){
 
 		var json = getJson(html);
 		AnyBalance.trace('Получен результат ' + token.verb + ' от ' + json.refreshDate);
-		return json.data;
+		return json.data || json;
 	}
 
 	throw new AnyBalance.Error('Не удалось получить результат ' + token.verb);

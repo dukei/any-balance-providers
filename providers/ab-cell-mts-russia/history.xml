@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="4.1" version="207" date="2022-07-12">
+	- Исправлено получение баланса
+	</change>
 	<change major_version="4.1" version="206" date="2022-07-12">
 	- Изменения в процедуре входа
 	</change>

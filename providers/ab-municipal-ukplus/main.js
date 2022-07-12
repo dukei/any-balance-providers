@@ -22,8 +22,7 @@ function main() {
 	checkEmpty(formattedPhone, 'Введите номер телефона, используемый для входа в личный кабинет (10 цифр). Вы ввели: "' + (prefs.phone || 'пустое значение') + '"!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 
-	var baseurl = 'https://ukplus.ru/disp/';
-	var apiurl = 'http://givemetext.okfnlabs.org/tika/tika';
+	var baseurl = 'https://lk.ukplus.ru/';
 
 	var html = AnyBalance.requestGet(baseurl, g_headers);
 
@@ -52,63 +51,41 @@ function main() {
 		throw new AnyBalance.Error('Не удалось войти в личный кабинет. Забыли пароль?');
 	}
 
-    html = AnyBalance.requestGet(baseurl + '?type=receipt', addHeaders({'Referer': baseurl + '?act=login'}));
-
-    var pdf = AnyBalance.requestGet(baseurl + 'receipt',
-        addHeaders({'Referer': baseurl + '?type=receipt'}),
-		{options: {FORCE_CHARSET: 'base64'}});
-
-	AnyBalance.setOptions({forceCharset: 'UTF-8'});
-
-	text = AnyBalance.requestPost(apiurl, pdf,
-		{'Content-Type': 'application/pdf'},
-		{HTTP_METHOD: 'put', options: {REQUEST_CHARSET: 'base64'}}
-	);
-
-	if (!text || AnyBalance.getLastStatusCode() > 400) {
-		AnyBalance.trace(text);
-		throw new AnyBalance.Error('Ошибка при обработке PDF. Возможно, сервис givemetext не доступен.');
-	}
 	var result = {success: true};
 
-	var regex = /Всего к оплате с учетом задолженности и пени: ([^\n]+)\n+(.+)Начислено за текущий период\n.+для внесения платы за ([^\n]+)\n/imus;
+	if (AnyBalance.isAvailable('address') || AnyBalance.isAvailable('fio') || AnyBalance.isAvailable('provider')) {
+		html = AnyBalance.requestGet(baseurl + '?type=profile', addHeaders({'Referer': baseurl + '?act=login'}));
 
-	[ ,balance, accruals, tariff] = regex.exec(text);
+		getParam(html, result, 'address', /Адрес:<\/span>([^>]+)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+		result['fio'] = getParam(html, /ФИО:<\/span>([^>]+)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+		result['provider'] = getParam(html, /Управляющая компания:<\/span>([^>]+)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+	}
+    html = AnyBalance.requestGet(baseurl + '?type=balance', addHeaders({'Referer': baseurl + '?act=login'}));
 
-	result['__tariff'] = tariff.charAt(0).toUpperCase() + tariff.slice(1);
-	result['balance'] = - parseBalance(balance);
+	result['account'] = getParam(html, /<div[^>]+class="item">(\d+) \|/i, replaceTagsAndSpaces, html_entity_decode);
+	result['__tariff'] = getParam(html, /<div[^>]+class="item">\d+ \| ([^<]+)<br>/i, replaceTagsAndSpaces, html_entity_decode);
+	var balance = getParam(html, /<div[^>]+class="item">.+<b>(.+)<\/b>/i, [/руб\./, '.', / коп\./, '']);
+	result['balance'] = parseBalance(balance);
+
+	result['period'] = getParam(html, /<div[^>]+id="accruals"><div[^>]+class="item">([^\|]+) \|/i);
+	var accruals = getParam(html, /<div[^>]+id="accruals"><div[^>]+class="item">[^<]+<br>Начислено: ([^<]+)<br>/i, [/руб\./, '.', /коп\./, '']);
 	result['accruals'] = parseBalance(accruals);
+	var penalty = getParam(html, /<div[^>]+id="accruals"><div[^>]+class="item">[^<]+<br>[^<]+<br>Пени: ([^<]+)<br>/i, [/руб\./, '.', /коп\./, '']);
+	result['penalty'] = parseBalance(penalty);
+	var debt = getParam(html, /<div[^>]+id="accruals"><div[^>]+class="item">[^<]+<br>[^<]+<br>[^<]+<br>Задолженность: ([^<]+)<br>/i, [/руб\./, '.', /коп\./, '']);
+	result['debt'] = parseBalance(debt);
 
-	regex = /\n\n(\d{10}) ЗА ПЕРИОД (\d{2})\.(\d{4}) ([^\n]+)\n{2}(\d{2}\.\d{4})\n\s+([^\n]+)\n([^\n]+)\n(\S+)\s+(\S+)\s+\n([^\n]+)\n/imus;
-
-	[ ,account, month, year, address, period, fio, address2, full_area, living_area, provider] = regex.exec(text);
-
-	result['account'] = account;
-	var period_date = new Date(year + '-' + month + '-01');
-	let formatter = new Intl.DateTimeFormat('ru', {month: 'long', year: 'numeric'});
-	period = formatter.format(period_date);
-
-	result['period'] = period.charAt(0).toUpperCase() + period.slice(1);;
-	result['address'] = address;
-	result['fio'] = fio;
-	result['full_area'] = full_area;
-	result['living_area'] = living_area;
-	result['provider'] = provider;
-
-	AnyBalance.setOptions({forceCharset: 'Windows-1251'});
-	var replaceDivToBr = [/<\/*[^>]*>/ig, '^', /\s+/ig, ' ', /^\^(.*)\^$/, '$1', /\^\s*\^/, '^', /\^/ig, '<br>'];
-
+	var replaceDivToBr = [/<\/*[^>]*>/ig, ' ', /\s+/ig, ' ', /^\s(.*)\s$/ig, '$1'];
 	if (AnyBalance.isAvailable('messages')) {
-		html = AnyBalance.requestGet(baseurl + '?type=messages', addHeaders({'Referer': baseurl + '?type=receipt'}));
-		//AnyBalance.trace(html);
-		getParam(html, result, 'messages', /СООБЩЕНИЯ<\/div><div[^>]+>(.*)<div[^>]+><a/ims, replaceDivToBr, html_entity_decode);
+		html = AnyBalance.requestGet(baseurl + '?type=messages', addHeaders({'Referer': baseurl + '?type=balance'}));
+		var messages = getElements(html, /<div class="item"[^>]*>/ig, replaceDivToBr, html_entity_decode);
+		result['messages'] = messages.slice(0, 5).join('<br>');
 	}
 	if (AnyBalance.isAvailable('notifications')) {
-		html = AnyBalance.requestGet(baseurl + '?type=alert', addHeaders({'Referer': baseurl + '?type=receipt'}));
-		//AnyBalance.trace(html);
-		getParam(html, result, 'notifications', /УВЕДОМЛЕНИЯ<\/div><div[^>]+>(.*)<div[^>]+><a/ims, replaceDivToBr, html_entity_decode);
+		html = AnyBalance.requestGet(baseurl + '?type=alert', addHeaders({'Referer': baseurl + '?type=balance'}));
+		var notifications = getElements(html, /<div class="item"[^>]*>/ig, replaceDivToBr, html_entity_decode);
+		result['notifications'] = notifications.slice(0, 5).join('<br>');
 	}
-
 	AnyBalance.setResult(result)
 
 }

@@ -8,7 +8,6 @@
 		negativeButtonText="Отмена"
 		obligatory="true"
 		dialogMessage="Введите номер телефона в международном формате без пробелов и разделителей, например, +375441234567. При выборе категории Интернет для дома и офиса введите номер лицевого счета, используемый для входа в ИССА."
-		inputType="number"
 		key="login">
 	</EditTextPreference>
 	<EditTextPreference

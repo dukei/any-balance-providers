@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="5">ab-internet-quartztelecom</id>
+	<id version="6">ab-internet-quartztelecom</id>
 	<name>Кварц Телеком</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе TV провайдера г. Подольск и Подольского района Кварц Телеком http://quartztelecom.ru</p>

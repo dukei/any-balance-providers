@@ -1,16 +1,19 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="10">ab-bonus-vtb24</id>
+	<id version="11">ab-bonus-vtb24</id>
 	<api flags="no_browser"/>
-	<name>ВТБ24 (Бонусы)</name>
+	<name>ВТБ Мультибонус</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию об остатке бонусов в программе лояльности ВТБ Мультибонус</p>
-	<p>Информация берется из личного кабинета https://multibonus.ru/</p>
+	<p>Предоставляет информацию о балансе, подключенных картах, операциях с бонусами и заказах по программе лояльности ВТБ Мультибонус.</p>
+	<p>Информация берется из личного кабинета https://new.multibonus.ru/</p>
 	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Для работы провайдера требуется ввести номер телефона, к которому привязана карта, и пароль для входа в личный кабинет ВТБ Мультибонус.</p>
+	]]></instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
-	<author>DimaZUA &lt;DIMAZ.KHUA@gmail.com&gt;</author>
 	<depends>
 		<module id="library"/>
+		<module id="framework/browser"/>
 	</depends>
 	<files>
 		<icon>icon.png</icon>
@@ -19,9 +22,30 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс"/>
+		<counter id="balance" name="Баланс" units=" Б"/>
+		<counter id="cardnum" name="Номер карты" type="text"/>
+		<counter id="cardregdate" name="Дата регистрации карты" type="time" format="dd.MM.yyyy"/>
+		<counter id="cardnum2" name="Номер карты 2" type="text"/>
+		<counter id="cardregdate2" name="Дата регистрации карты 2" type="time" format="dd.MM.yyyy"/>
+		<counter id="cardnum3" name="Номер карты 3" type="text"/>
+		<counter id="cardregdate3" name="Дата регистрации карты 3" type="time" format="dd.MM.yyyy"/>
+		<counter id="cardnum4" name="Номер карты 4" type="text"/>
+		<counter id="cardregdate4" name="Дата регистрации карты 4" type="time" format="dd.MM.yyyy"/>
+		<counter id="cardnum5" name="Номер карты 5" type="text"/>
+		<counter id="cardregdate5" name="Дата регистрации карты 5" type="time" format="dd.MM.yyyy"/>
+		<counter id="lastopersum" name="Сумма посл. операции" units=" Б"/>
+		<counter id="lastoperdate" name="Дата посл. операции" type="time" format="dd.MM.yyyy"/>
+		<counter id="lastoperdesc" name="Тип посл. операции" type="text"/>
+		<counter id="lastordernum" name="Номер посл. заказа" type="text"/>
+		<counter id="lastordersum" name="Сумма посл. заказа" units=" ₽"/>
+		<counter id="lastorderdate" name="Дата посл. заказа" type="time" format="dd.MM.yyyy"/>
+		<counter id="lastorderstatus" name="Статус посл. заказа" type="text"/>
+		<counter id="lastorderpartner" name="Партнер посл. заказа" type="text"/>
+		<counter id="messages" name="Сообщения" units=" шт"/>
+		<counter id="phone" name="Номер телефона" type="text"/>
+        <counter id="fio" name="ФИО" type="text"/>
 	</counters>
-	<keywords></keywords>
+	<keywords>втб, мультибонус, бонус</keywords>
 	<type>bonus</type>
 	<country>ru</country>
 </provider>

@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="124" date="2022-07-12">
+	- Исправления в процедуре входа
+	</change>
 	<change version="23" date="2022-07-12">
 	- Мелкие изменения, оптимизация
 	</change>

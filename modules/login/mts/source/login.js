@@ -173,8 +173,10 @@ function loadProtectedPage(fromUrl, headers){
 
         AnyBalance.trace("Защита QRATOR успешно пройдена");
 
-        if(!g_savedData)
+        if(!g_savedData) {
+            const prefs = AnyBalance.getPreferences();
             g_savedData = new SavedData('mts', prefs.login);
+        }
 
         g_savedData.setCookies();
         g_savedData.save();
@@ -337,7 +339,7 @@ function enterMTS(options){
     fixCookies();
 
     if(!html || !getOrdinaryLoginForm(html)){
-        html = AnyBalance.requestGet(loginUrl, g_headers);
+        html = loadProtectedPage(loginUrl, g_headers);
         fixCookies();
         if(AnyBalance.getLastStatusCode() >= 500){
             AnyBalance.trace("МТС вернул 500. Пробуем ещё разок...");

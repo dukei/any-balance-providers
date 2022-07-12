@@ -52,8 +52,11 @@ function isLoggedIn(html) {
 function main(){
 	AnyBalance.setDefaultCharset('utf-8');
 
+        var prefs = AnyBalance.getPreferences();
+        g_savedData = new SavedData('mts', prefs.login);
+        g_savedData.restoreCookies();
+
     var baseurl = "https://lk-b2b.mts.ru/ncih/";
-    var prefs = AnyBalance.getPreferences();
   	var baseloginurl =
     	"http://login.mts.ru/amserver/UI/Login?org=/b2b/ncih&goto=https://lk-b2b.mts.ru/ncih_new/";
 
@@ -65,6 +68,9 @@ function main(){
   	});
 
     var result = {success: true}
+
+    var msocookie = AnyBalance.getCookie('MTSWebSSO');
+    AnyBalance.setCookie('.mts.ru', 'MTSWebSSO', msocookie);
 
     if(/ncih_new/i.test(AnyBalance.getLastUrl())){
     	AnyBalance.trace('Переходим на старый кабинет');

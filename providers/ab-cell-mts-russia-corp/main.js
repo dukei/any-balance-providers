@@ -69,9 +69,6 @@ function main(){
 
     var result = {success: true}
 
-    var msocookie = AnyBalance.getCookie('MTSWebSSO');
-    AnyBalance.setCookie('.mts.ru', 'MTSWebSSO', msocookie);
-
     if(/ncih_new/i.test(AnyBalance.getLastUrl())){
     	AnyBalance.trace('Переходим на старый кабинет');
     	html = AnyBalance.requestGet(baseurl);

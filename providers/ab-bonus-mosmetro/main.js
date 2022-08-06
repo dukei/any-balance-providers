@@ -21,6 +21,7 @@ function generateState() {
 }
 
 var baseurl = 'https://lk.mosmetro.ru';
+var baseurlAuth = 'https://auth.mosmetro.ru';
 
 function saveTokens(json){
 	AnyBalance.setData('accessToken', json.data.accessToken);
@@ -39,18 +40,18 @@ function loginPure(){
 		.replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
 
 	var html = AnyBalance.requestGet(baseurl + '/api/externals/v1.0?redirectUri=' + baseurl + '/external-auth&state=' + state + '&codeChallenge=' + challenge + '&codeChallengeMethod=S256',
-		{Referer: baseurl + '/sign_in'});
+		{Referer: baseurl + '/'});
 	var json = getJson(html);
 
 	var url = json.data.authorizeUrl;
-	html = AnyBalance.requestGet(url, addHeaders({Referer: baseurl + '/sign_in'}));
+	html = AnyBalance.requestGet(url, addHeaders({Referer: baseurl + '/'}));
 
 	var login = '7' + prefs.login;
 	
 	var signinurl = AnyBalance.getLastUrl();
 	var returnUrl = getParam(signinurl, /ReturnUrl=([^&]*)/i, null, decodeURIComponent);
 	
-	html = AnyBalance.requestPost(baseurl + '/auth/api/auth/login/sms', JSON.stringify({
+	html = AnyBalance.requestPost(baseurlAuth + '/api/auth/login/sms', JSON.stringify({
 		"login": login.replace(/\+/g, ''),
 		"returnUrl": returnUrl
 	}), addHeaders({
@@ -69,7 +70,7 @@ function loginPure(){
 	
 	var code = AnyBalance.retrieveCode('Пожалуйста, введите код подтверждения из SMS, высланного на номер +7' + prefs.login, null, {inputType: 'number', time: 180000});
 	
-	html = AnyBalance.requestPost(baseurl + '/auth/api/auth/login/sms/confirm', JSON.stringify({
+	html = AnyBalance.requestPost(baseurlAuth + '/api/auth/login/sms/confirm', JSON.stringify({
 		"secret": secret,
 		"token": code
 	}), addHeaders({
@@ -86,7 +87,7 @@ function loginPure(){
 	}
 	
 	url = html;
-	html = AnyBalance.requestGet(joinUrl(baseurl, url), addHeaders({Referer: signinurl}));
+	html = AnyBalance.requestGet(joinUrl(baseurlAuth, url), addHeaders({Referer: signinurl}));
 
 	var authlink = AnyBalance.getLastUrl();
 	var code = getParam(authlink, /code=([^&]*)/, null, decodeURIComponent);

@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="11">ab-bonus-vtb24</id>
+	<id version="12">ab-bonus-vtb24</id>
 	<api flags="no_browser"/>
 	<name>ВТБ Мультибонус</name>
 	<description html="true"><![CDATA[
@@ -13,7 +13,6 @@
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>
 		<module id="library"/>
-		<module id="framework/browser"/>
 	</depends>
 	<files>
 		<icon>icon.png</icon>

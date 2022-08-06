@@ -99,7 +99,7 @@ function main() {
 	        json = getJson(html);
 			
 			var cards = json.Cards.Cards;
-	        if(cards){
+	        if(cards && cards.length > 0){
 	        	AnyBalance.trace('Найдено привязанных карт: ' + cards.length);
 	         	getParam('**** ' + cards[0].MaskedCardNumber, result, '__tariff');
 	        	for(var i = 0; i<cards.length; i++){

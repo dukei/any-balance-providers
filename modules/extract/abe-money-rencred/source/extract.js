@@ -97,14 +97,16 @@ function login(){
 
     	if(json.changePasswordRequired)
     		throw new AnyBalance.Error('Банк требует сменить пароль. Пожалуйста, войдите в интернет банк ' + g_rootrul + ' через браузер, смените пароль и введите новый пароль в настройки провайдера', null, true);
-/*    	
-    	var code = AnyBalance.retrieveCode('На телефон ' + json.clientInfo.maskedPhoneNumber + ' выслан код подтверждения для входа в интернет банк. Пожалуйста, введите его', null, {inputType: 'number', time: json.validityOfOtpInSeconds*1000});
+		
+		if(json.confirmationType && json.confirmationType === 'SMS_OTP'){
+			AnyBalance.trace('Затребован код подтверждения из SMS');
+    	    var code = AnyBalance.retrieveCode('На телефон ' + json.clientInfo.maskedPhoneNumber + ' выслан код подтверждения для входа в интернет банк. Пожалуйста, введите его', null, {inputType: 'number', time: json.validityOfOtpInSeconds*1000});
 
-    	json = callAPI('private/auth/confirm', null, {
-    		confirmationCode: code,
-   			__paramsAreNotJson: true
-    	});
-    	*/
+    	    json = callAPI('private/auth/confirm', null, {
+    	    	otp: code,
+   		    	__paramsAreNotJson: true
+    	    });
+	    }
     }
 
 	if(!json.clientInfo){
@@ -181,7 +183,7 @@ function processCards(result) {
 
         var c = {
             __id: card.contractNumber + '_' + card.cardNumber.substr(-4),
-            __name: card.cardType.localizedText + ', ' + card.cardNumber,
+            __name: card.cardNumber,
             num: card.cardNumber
         }
 
@@ -210,7 +212,9 @@ function processCard(card, result){
     //Доступный лимит
 	getParam(card.availableAmount.amount, result, 'cards.balance');
 	//Валюта
-	getParam(card.availableAmount.currency.code, result, ['cards.currency', 'cards.balance', 'cards.minpay', 'cards.limit', 'cards.own', 'cards.blocked', 'cards.cash']);
+	getParam(card.availableAmount.currency.text, result, ['cards.currency', 'cards.balance', 'cards.minpay', 'cards.limit', 'cards.own', 'cards.blocked', 'cards.cash']);
+	//Код валюты
+	getParam(card.availableAmount.currency.code, result, 'cards.currencycode');
     //Тип
     getParam(card.cardType.localizedText, result, 'cards.type');
     getParam(card.cardType.code, result, 'cards.type_code'); //DBTO
@@ -218,13 +222,13 @@ function processCard(card, result){
     getParam(card.status.localizedText, result, 'cards.status');
     getParam(card.status.code, result, 'cards.status_code'); //ACTIVE|CLOSED
 //    getParam(card.closed, result, 'cards.closed');
-
-    getParam(card.lastPayPeriodMinimumPayment, result, 'cards.minpay');
-    getParam(card.creditLimit, result, 'cards.limit');
-    getParam(card.ownFundsAmount, result, 'cards.own');
+    getParam(card.lastPayPeriodMinimumPayment.amount, result, 'cards.minpay');
+    getParam(card.creditLimit.amount, result, 'cards.limit');
+    getParam(card.ownFundsAmount.amount, result, 'cards.own');
 //    getParam(html, result, 'cards.cash', /<div[^>]+class="cell[^>]*>Доступные средства для снятия наличных[\s\S]*?<div[^>]+class="cell[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(card.blockedAmount, result, 'cards.blocked');
-    getParam(card.payPeriodDateOfCompletion, result, 'cards.minpaytill', null, null, parseDateISO);
+    getParam(card.blockedAmount.amount, result, 'cards.blocked');
+	getParam(card.payPeriodDateOfCompletion, result, 'cards.minpaytill', null, null, parseDateISO);
+    getParam(card.payPeriodLastDate, result, 'cards.payperiodlastdate', null, null, parseDateISO);
 //    getParam(html, result, 'cards.userName', /<span[^>]+class="[^>]*fio[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
     getParam(card.accountNumber, result, 'cards.accnum');
     getParam(card.contractNumber, result, 'cards.contract');
@@ -247,7 +251,7 @@ function processCredits(result) {
         var credit = json.items[i];
         var c = {
             __id: credit.contractNumber,
-            __name: credit.loanName + ', ' + credit.contractNumber,
+            __name: credit.contractNumber,
             num: credit.contractNumber
         }
 
@@ -263,7 +267,9 @@ function processCredit(credit, result){
     //Доступный лимит
 	getParam(credit.balance, result, 'credits.balance');
 	//Валюта
-	getParam(credit.loanAmount.currency.code, result, ['credits.currency', 'credits.balance', 'credits.minpay', 'credits.limit']);
+	getParam(credit.loanAmount.currency.text, result, ['credits.currency', 'credits.balance', 'credits.minpay', 'credits.limit']);
+	//Код валюты
+	getParam(credit.loanAmount.currency.code, result, 'credits.currencycode');
     //Тип
     getParam(credit.loanName, result, 'credits.name');
 
@@ -300,10 +306,10 @@ function processCredit(credit, result){
 
 function processInfo(clientInfo, result){
     var info = result.info = {};
-    getParam(clientInfo.surname + ' ' + clientInfo.name + ' ' + clientInfo.patronymic, info, 'info.fio');
-    getParam(clientInfo.surname, info, 'info.name_last');
-    getParam(clientInfo.patronymic, info, 'info.name_patronymic');
-    getParam(clientInfo.name, info, 'info.name');
+    getParam(clientInfo.surname + ' ' + clientInfo.name + ' ' + clientInfo.patronymic, info, 'info.fio', null, null, capitalFirstLetters);
+    getParam(clientInfo.surname, info, 'info.name_last', null, null, capitalFirstLetters);
+    getParam(clientInfo.patronymic, info, 'info.name_patronymic', null, null, capitalFirstLetters);
+    getParam(clientInfo.name, info, 'info.name', null, null, capitalFirstLetters);
     getParam(clientInfo.maskedHomeNumber, info, 'info.hphone'); //+7000*****00
     getParam(clientInfo.maskedPhoneNumber, info, 'info.mphone'); //+7905*****42
     getParam(clientInfo.maskedOfficePhone, info, 'info.wphone'); //+7861*****25

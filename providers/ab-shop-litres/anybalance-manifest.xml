@@ -1,11 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="4">ab-shop-litres</id>
+	<id version="5">ab-shop-litres</id>
 	<api flags="no_browser"/>
 	<name>ЛитРес</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе ЛитРес http://www.litres.ru/</p>
+	<p>Предоставляет информацию о балансе, бонусах и операциях с книгами для пользователей электронной библиотеки ЛитРес (https://www.litres.ru/)</p>
 	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Для работы провайдера требуется ввести логин и пароль для входа в личный кабинет ЛитРес.</p>
+	]]></instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>
 		<module id="library"/>
@@ -17,11 +20,19 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units=" р"/>
-		<counter id="bonus" name="Бонусы" units=" Б"/>
+		<counter id="balance" name="Баланс" units=" ₽"/>
+    	<counter id="bonus" name="Бонусы" units=" Б"/>
 		<counter id="books" name="Мои книги" units=" шт"/>
+		<counter id="deferred" name="Отложенные" units=" шт"/>
+		<counter id="basket" name="Корзина" units=" шт"/>
+		<counter id="lastoperdate" name="Дата посл. операции" type="time" format="dd.MM.yyyy"/>
+		<counter id="lastopersum" name="Сумма посл. операции" units=" ₽"/>
+		<counter id="lastoperdesc" name="Тип посл. операции" type="text"/>
+		<counter id="regdate" name="Дата регистрации" type="time" format="dd.MM.yyyy"/>
+		<counter id="phone" name="Телефон" type="text"/>
+		<counter id="fio" name="ФИО" type="text"/>
 	</counters>
-	<keywords></keywords>
+	<keywords>LitRes, ЛитРес</keywords>
 	<type>shop</type>
 	<country>ru</country>
 </provider>

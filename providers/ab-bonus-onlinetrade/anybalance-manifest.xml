@@ -1,15 +1,20 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="8">ab-bonus-onlinetrade</id>
+	<id version="9">ab-bonus-onlinetrade</id>
 	<api flags="no_browser"/>
-	<name>Onlinetrade</name>
+	<name>ОнЛайн Трейд</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе ON-бонусов интернет-магазина Onlinetrade http://www.onlinetrade.ru/</p>
-	<p>Информация берется из личного кабинета https://www.onlinetrade.ru/member/</p>
+	<p>Предоставляет информацию о балансе и операциях с бонусами для участников Клуба ON-бонус интернет-магазина ОнЛайн Трейд (https://www.onlinetrade.ru/).</p>
+	<p>Информация берется из личного кабинета https://www.onlinetrade.ru/member/.</p>
 	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Если у вас нет доступа в личный кабинет ON-бонус, пройдите регистрацию на странице <a href="https://www.onlinetrade.ru/member/register.html">https://www.onlinetrade.ru/member/register.html</a>.</p>
+	<p>Для работы провайдера требуется ввести E-mail и пароль для входа в личный кабинет ON-бонус.</p>
+	]]></instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>
 		<module id="library"/>
+		<module id="misc/saved-data"/>
 	</depends>
 	<files>
 		<icon>icon.png</icon>
@@ -19,13 +24,23 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="ON-бонусов"/>
-		<!--<counter id="price" name="Цена" type="text"/>-->
+	    <counter id="balance" name="Баланс" units=" ₽"/>
+		<counter id="bonuses" name="ON-бонусы" units=" Б"/>
+		<counter id="last_oper_date" name="Дата последней операции" type="time" format="dd.MM.yyyy"/>
+		<counter id="last_oper_sum" name="Сумма последней операции" units=" Б"/>
+		<counter id="last_oper_type" name="Тип последней операции" type="text"/>
+		<counter id="last_oper_name" name="Имя последней операции" type="text"/>
 		<counter id="userId" name="Клиентский номер" type="text"/>
 		<counter id="status" name="Статус" type="text"/>
+		<counter id="messages" name="Сообщения" units=" шт"/>
+		<counter id="bookmarks" name="Закладки" units=" шт"/>
+		<counter id="basket" name="Корзина" units=" шт"/>
+		<counter id="point" name="Мой пункт выдачи" type="text"/>
 		<counter id="email" name="E-mail" type="text"/>
+		<counter id="phone" name="Телефон" type="text"/>
+		<counter id="fio" name="ФИО" type="text"/>
 	</counters>
-	<keywords></keywords>
+	<keywords>Onlinetrade, Online, trade, Онлайнтрейд, Онлайн, трейд</keywords>
 	<type>bonus</type>
 	<country>ru</country>
 </provider>

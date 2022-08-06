@@ -12,9 +12,11 @@ var g_headers = {
 
 var g_gwtCfg = {
 	url: 'https://account.kyivstar.ua/cas/auth/',
-	strong_name: '\\b%VARNAME_BROWSER%],(\\w+)\\)',
+//	strong_name: '\\b%VARNAME_BROWSER%],(\\w+)\\)',
+	//(['safari'], '94D5A2308BC862C8B25EE53A98A752D9')
+	strong_name: '\\(\\[\'safari\'\\],\\s*?\'([^\']*)\'\\)',
 	auth_nocache: 'auth.nocache.js',
-	magic_id: '11BE696C2F44311723F20D50A016F48A'
+	magic_id: '7EFB8080DC0FE63D10CD1D1F2C31C919' //7EFB8080DC0FE63D10CD1D1F2C31C919
 };
 
 function isLoggedIn(html) {
@@ -39,7 +41,7 @@ function checkGwtError(html) {
 		if (/accountNotFound|AccountException|passwordNotFound/i.test(e.message))
 			throw new AnyBalance.Error('Пользователь с таким логином не найден!', null, true);
 		if (/RecaptchaException/i.test(html))
-			throw new AnyBalance.Error('К сожалению, Киевстар потребовал ввода капчи для этого номера. Зайдите в личный кабинет один раз через браузер на этом устройстве', null, true);
+			throw new AnyBalance.Error('К сожалению, Киевстар потребовал ввода капчи для этого номера. Зайдите в личный кабинет один раз через браузер.', null, true);
 		if (e) throw e;
                 throw new AnyBalance.Error('Не удалось получить токен авторизации. Сайт изменен или требуется вход в личный кабинет через браузер на этом устройстве', null, true);
 	}
@@ -77,7 +79,7 @@ function loginBasic(html) {
 
 	var strongName = gwtLoadStrongName(g_gwtCfg),
 		checkRequest =
-		'7|0|6|%url%|%magic_id%|ua.kyivstar.cas.shared.rpc.AuthSupportRPCService|getAccountShortDetails|java.lang.String/2004016611|%LOGIN%|1|2|3|4|1|5|6|',
+		'7|0|6|%url%|%magic_id%|ua.kyivstar.cas.shared.rpc.AuthSupportRPCService|getLoginAuthDetails|java.lang.String/2004016611|%LOGIN%|1|2|3|4|1|5|6|',
 		authRequest =
 		'7|0|9|%url%|%magic_id%|ua.kyivstar.cas.shared.rpc.AuthSupportRPCService|authenticate|java.lang.String/2004016611|Z|%LOGIN%|%PASSWORD%|https://account.kyivstar.ua/cas/login?service=https%3A%2F%2Fb2b.kyivstar.ua%2Ftbmb%2Fnew%2F#password:%LOGIN%|1|2|3|4|5|5|5|5|6|5|7|8|0|0|9|';
 		authRequestCaptcha =                                                                                                                                                                                                                                                               
@@ -116,11 +118,10 @@ function loginBasic(html) {
 			.replace(/%PASSWORD%/g, gwtEscape(prefs.password))
 			.replace(/%RECAPTCHA%/g, gwtEscape(recaptchaResponse || '')),
 		addHeaders({Origin: 'https://account.kyivstar.ua'}, gwtHeaders(strongName, g_gwtCfg)));
-
+	AnyBalance.trace('html:'+html);
 	checkGwtError(html);
-
 	var token = getParam(html, null, null, /AuthResult[^"]*","([^"]*)/, replaceSlashes);
-
+	AnyBalance.trace('token:'+token);
 	if (!token) { //Токен не получаем в случае неверного пароля
 		throw new AnyBalance.Error('Персональный пароль указан неверно!', null, true);
 	}
@@ -141,8 +142,9 @@ function loginBasic(html) {
 
 		return value;
 	});
-
+//        AnyBalance.trace('params:'+JSON.stringify(params));
 	var action = getParam(form, null, null, /<form[^>]+action="([^"]*)/i, replaceHtmlEntities);
+	AnyBalance.trace('action:'+action);
 	AnyBalance.trace('Завершаем вход...');
 	html = AnyBalance.requestPost(/*joinUrl(referer, action)*/'https://account.kyivstar.ua/cas/login?service=http%3A%2F%2Fnew.kyivstar.ua%2Fecare%2F', params, addHeaders({
 		Referer: referer

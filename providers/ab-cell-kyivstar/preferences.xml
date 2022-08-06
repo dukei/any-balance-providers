@@ -1,34 +1,77 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
+	<ListPreference
+		key="source"
+		title="Источник данных"
+		summary="||{@s}"
+		entries="Автоматически|Сайт|Мобильное приложение"
+		entryValues="auto|new|app"
+		defaultValue="auto">
+	</ListPreference>	
 	<EditTextPreference
 		obligatory="true"
 		title="Логин"
 		positiveButtonText="ОК"
-		summary="|Номер телефона (в формате +380ХХХХХХХХХ)|{@s}"
+		summary="|Номер телефона|{@s}"
 		dialogTitle="Номер телефона"
 		negativeButtonText="Отмена"
-		dialogMessage="Введите номер вашего телефона для входа в Мой Киевстар (в формате +380ХХХХХХХХХ), например +380971234567"
+		dialogMessage="Введите номер вашего телефона, используемый для входа в Мой Киевстар"
 		key="login"
 		inputType="phone">
 	</EditTextPreference>
 	<EditTextPreference
 		obligatory="true"
+		title="Номер телефона"
+		positiveButtonText="ОК"
+		summary="|Номер телефона|{@s}"
+		dialogTitle="Номер телефона"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите номер вашего телефона, баланс по которому нужно проверить. Или не вводите ничего, чтобы проверить тот номер, который указан в логине"
+		key="phone"
+		inputType="phone">
+	</EditTextPreference>
+	<EditTextPreference
+		obligatory="false"
 		positiveButtonText="ОК"
 		key="password"
 		dialogTitle="Пароль"
 		negativeButtonText="Отмена"
 		title="Пароль"
-		summary="|Пароль для входа в Мой Киевстар|***********"
+		summary="|Пароль для входа в Мой Киевстар|Пароль введен (скрыт)"
 		dialogMessage="Введите пароль, используемый для входа в Мой Киевстар"
 		inputType="textPassword">
 	</EditTextPreference>
-<!--	<ListPreference
-		key="source"
-		title="Источник данных"
-		summary="||{@s}"
-		entries="Автоматически|Старый личный кабинет|Новый личный кабинет|Мобильное приложение"
-		entryValues="auto|old|new|app"
-		defaultValue="old">
-	</ListPreference>	
-!-->
+
+	<EditTextPreference
+		obligatory="false"
+		positiveButtonText="ОК"
+		key="PUK2"
+		dialogTitle="PUK2"
+		negativeButtonText="Отмена"
+		title="PUK2"
+		summary="|Первый вход через SMS|PUK2 введен (скрыт)"
+		dialogMessage="Введите код PUK2 (если оставить поле пустым вход будет осуществляться через SMS)"
+		inputType="textPassword">
+	</EditTextPreference>
+<!--
+	<EditTextPreference
+		obligatory="false"
+		positiveButtonText="ОК"
+		key="PIN"
+		dialogTitle="PIN код"
+		negativeButtonText="Отмена"
+		title="PIN код"
+		summary="|Будет запрошен при первой авторизации|PIN код введен (скрыт)"
+		dialogMessage="Введите PIN код, используемый для входа в мобильное приложение (если оставить поле пустым будет запрошен во время обновления)"
+		inputType="textPassword">
+	</EditTextPreference>
+-->
+	<CheckBoxPreference
+        	key="disconnectLimit"
+        	title="Лимит отключения"
+        	summary="Лимит отключения доступен контрактным абонентам."
+        	summaryOn="Баланс будет увеличен на сумму лимита"
+        	summaryOff="Баланс будет отображать только собственные средства"
+        	defaultValue="false"/>
+
 </PreferenceScreen>

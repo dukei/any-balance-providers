@@ -1398,12 +1398,21 @@ var AB = (function (global_scope) {
 		}
 	}
 
+	/*
+		Вместо sitekey можно передавать
+		{
+			SITEKEY: string,
+			USERAGENT?: string,
+			TYPE?: v3|v2,
+			ACTION?: string
+                }
+	*/
 	function solveRecaptcha(text, url, sitekey, time){
 		if(AnyBalance.getCapabilities().recaptcha2){
 			var grc_response = AnyBalance.retrieveCode(text, null, {
 				type: 'recaptcha2',
 				time: time || 120000,
-				sitekey: sitekey,
+				sitekey: typeof(sitekey) === 'object' ? JSON.stringify(sitekey) : sitekey,
 				url: url
 			});
 			return grc_response;

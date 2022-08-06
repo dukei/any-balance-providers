@@ -39,6 +39,7 @@ function gwtGetStrongName(js, cfg){
         throw new AnyBalance.Error('Could not find $strongName: variable name.');
     re = new RegExp('\\b'+varNameStrong+'=\'([^\']*)');
     var val = getParam(js, null, null, re);
+    val=varNameStrong;
     if(!val)
         throw new AnyBalance.Error('Could not find $strongName: variable value.');
     return val;

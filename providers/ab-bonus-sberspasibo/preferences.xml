@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+	<EditTextPreference 
+        title="Логин" 
+        positiveButtonText="ОК" 
+        summary="Логин для входа в личный кабинет|Введите логин\n|{@s}\n" 
+        dialogTitle="Логин" 
+        negativeButtonText="Отмена" 
+        obligatory="true"
+        dialogMessage="Введите номер телефона для входа в личный кабинет в формате 10 цифр без пробелов и разделителей, например: 9161234567"
+        key="login">
+    </EditTextPreference>
+</PreferenceScreen>

@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="2">ab-bonus-sberspasibo</id>
+	<api flags="no_browser"/>
+	<name>СберСпасибо</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе, текущем уровне начислений и операциях с бонусами по программе лояльности СберСпасибо.</p>
+	<p>Информация берется из личного кабинета https://spasibosberbank.ru/</p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Для работы провайдера требуется ввести номер телефона, на который зарегистрирована программа СберСпасибо, и однократно ввести код подтверждения из SMS, отправленного на этот номер.</p>
+	]]></instruction>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" Б"/>
+		<counter id="annul" name="Бонусы к аннулированию" units=" Б"/>
+		<counter id="annuldate" name="Дата аннулирования" type="time" format="dd.MM.yyyy"/>
+		<counter id="level" name="Текущий уровень" type="text"/>
+		<counter id="leveltill" name="Срок действия уровня" type="time" format="dd.MM.yyyy"/>
+		<counter id="levelnext" name="Следующий уровень" type="text"/>
+		<counter id="lastoperdate" name="Дата посл. операции" type="time" format="dd.MM.yyyy"/>
+		<counter id="lastopersum" name="Сумма посл. операции" units=" Б"/>
+		<counter id="lastoperdesc" name="Тип посл. операции" type="text"/>
+		<counter id="phone" name="Номер телефона" type="text"/>
+	</counters>
+	<keywords>Сбер, Спасибо, Sber, Spasibo</keywords>
+	<type>bonus</type>
+	<country>ru</country>
+</provider>

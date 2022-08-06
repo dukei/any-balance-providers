@@ -1,12 +1,15 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="6">ab-affiliate-epn-bz</id>
+	<id version="7">ab-affiliate-epn-bz</id>
 	<api flags="no_browser"/>
 	<name>e-Commerce Partners Network</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе партнерской программы e-Commerce Partners Network https://epn.bz/ru/</p>
-	<p>Информация берется из личного кабинета https://epn.bz/ru/cabinet</p>
+	<p>Предоставляет информацию о балансе кэшбэка по партнерской программе Backit от e-Commerce Partners Network (https://backit.me/).</p>
+	<p>Информация берется из личного кабинета https://backit.me/ru/cashback/.</p>
 	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Для работы провайдера требуется ввести логин, на который зарегистрирована партнерская программа, и пароль для входа в личный кабинет Backit.</p>
+	]]></instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>
 		<module id="library"/>
@@ -18,10 +21,23 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units=" $"/>
-		<counter id="balance_hold" name="В обработке" units=" $"/>
+		<counter id="balance" name="Баланс" units=" ₽"/>
+		<counter id="balance_hold" name="В обработке" units=" ₽"/>
+		<counter id="balance_pay" name="Всего выведено" units=" ₽"/>
+		<counter id="balance_usd" name="Баланс USD" units=" $"/>
+		<counter id="balance_hold_usd" name="В обработке USD" units=" $"/>
+		<counter id="balance_pay_usd" name="Всего выведено USD" units=" $"/>
+		<counter id="balance_gbp" name="Баланс GBP" units=" £"/>
+		<counter id="balance_hold_gbp" name="В обработке GBP" units=" £"/>
+		<counter id="balance_pay_gbp" name="Всего выведено GBP" units=" £"/>
+		<counter id="balance_eur" name="Баланс EUR" units=" €"/>
+		<counter id="balance_hold_eur" name="В обработке EUR" units=" €"/>
+		<counter id="balance_pay_eur" name="Всего выведено EUR" units=" €"/>
+		<counter id="user_name" name="Пользователь" type="text"/>
+		<counter id="phone" name="Телефон" type="text"/>
+        <counter id="fio" name="ФИО" type="text"/>
 	</counters>
-	<keywords></keywords>
+	<keywords>Backit, EPN, e-Commerce, Кэшбэк</keywords>
 	<type>affiliate</type>
 	<country>ru</country>
 </provider>

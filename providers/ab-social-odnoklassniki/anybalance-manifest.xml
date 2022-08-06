@@ -1,11 +1,15 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="10">ab-social-odnoklassniki</id>
+	<id version="11">ab-social-odnoklassniki</id>
 	<api flags="no_browser"/>
 	<name>Одноклассники</name>
 	<description html="true"><![CDATA[
-	<p>Получает данные о балансе OK из социальной сети Одноклассники (http://www.odnoklassniki.ru)</p>
+	<p>Получает данные о балансе OK и событиях в социальной сети Одноклассники (https://ok.ru/).</p>
+	<p>Информация берется из мобильной версии сайта https://m.ok.ru/.</p>
 	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Для работы провайдера требуется ввести логин и пароль для входа в учетную запись Одноклассники.</p>
+	]]></instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>
 		<module id="library"/>
@@ -18,9 +22,22 @@
 	</files>
 	<counters>
 		<counter id="balance" name="Баланс" units=" OK"/>
+		<counter id="main" name="Лента" units=" соб."/>
+		<counter id="dlgs" name="Сообщения" units=" соб."/>
+		<counter id="dscs" name="Обсуждения" units=" соб."/>
+		<counter id="events" name="Оповещения" units=" соб."/>
+		<counter id="marks" name="События" units=" соб."/>
+		<counter id="guests" name="Гости" units=" соб."/>
+		<counter id="friends" name="Друзья" units=" соб."/>
+		<counter id="groups" name="Группы" units=" соб."/>
+		<counter id="present" name="Подарки" units=" соб."/>
+		<counter id="showcase" name="Игры" units=" соб."/>
+		<counter id="offers" name="Приложения" units=" соб."/>
+		<counter id="card_num" name="Номер карты" type="text"/>
+		<counter id="card_till" name="Срок действия карты" type="time" format="MM/yyyy"/>
 		<counter id="fio" name="ФИО" type="text"/>
 	</counters>
-	<keywords>ok.ru</keywords>
+	<keywords>ok.ru, одноклассники</keywords>
 	<type>social</type>
 	<country>ru</country>
 </provider>

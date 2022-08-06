@@ -37,22 +37,35 @@ function main() {
 			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
 
 		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
+		throw new AnyBalance.Error('Не удалось войти в личный кабинет. Сайт изменен?');
 	}
 
-	var result = {
-		success: true
-	};
-
-	getParam(html, result, 'fio', /<span\s[^>]*class="[^"]*js-text-username[^"]*"[^>]*>([^<]+)/i, replaceTagsAndSpaces,
-		html_entity_decode);
-	getParam(html, result, '__tariff', /<span\s[^>]*class="[^"]*js-text-username[^"]*"[^>]*>([^<]+)/i,
-		replaceTagsAndSpaces, html_entity_decode);
-
-	html = AnyBalance.requestGet(baseurl + 'dk?st.cmd=selectPresent&st.or=o%3AM%2C&_prevCmd=userSettings&tkn=4665',
-		g_headers);
-
-	getParam(html, result, 'balance', /На счёте:?\s*(\d*)/i, replaceTagsAndSpaces, parseBalance);
+	var result = {success: true};
+	
+	html = AnyBalance.requestGet(baseurl + 'dk?st.cmd=userPaymentsHistory&_prevCmd=paymentsAndServices&tkn=9895', g_headers);
+    
+	getParam(html, result, 'balance', /<span[^>]+class="[^"]*ok-balance_value[^"]*"[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'fio', /<div[^>]+class="[^"]*js-text-username[^"]*"[^>]*>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, '__tariff', /<div[^>]+class="[^"]*js-text-username[^"]*"[^>]*>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'main', /<span[^>]+id="[^"]*userMain[^"]*"[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance); // Лента
+	getParam(html, result, 'dlgs', /<span[^>]+id="[^"]*userDlgs[^"]*"[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance); // Сообщения
+	getParam(html, result, 'dscs', /<span[^>]+id="[^"]*userDscs[^"]*"[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance); // Обсуждения
+	getParam(html, result, 'events', /<span[^>]+id="[^"]*userEvents[^"]*"[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance); // Оповещения
+	getParam(html, result, 'marks', /<span[^>]+id="[^"]*userMarks[^"]*"[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance); // События
+	getParam(html, result, 'guests', /<span[^>]+id="[^"]*userGuests[^"]*"[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance); // Гости
+	getParam(html, result, 'friends', /<span[^>]+id="[^"]*userFriends[^"]*"[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance); // Друзья
+	getParam(html, result, 'groups', /<span[^>]+id="[^"]*userAltGroups[^"]*"[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance); // Группы
+	getParam(html, result, 'present', /<span[^>]+id="[^"]*selectPresent[^"]*"[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance); // Подарки
+	getParam(html, result, 'showcase', /<span[^>]+id="[^"]*appsShowcase[^"]*"[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance); // Игры
+	getParam(html, result, 'offers', /<span[^>]+id="[^"]*offers[^"]*"[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance); // Приложения
+	
+    html = AnyBalance.requestGet(baseurl + 'dk?st.cmd=userPaymentsCards&_prevCmd=userPaymentsHistory&tkn=2002', g_headers);
+	
+	var cardNum = getParam(html, null, null, /<div[^>]+class="[^"]*card_mask[^"]*"[^>]*>([^<]*)/i, replaceTagsAndSpaces);
+	if(cardNum){
+		getParam(cardNum.replace(/(\d{4})(\d{2})(\D*)(\d{4})/i, '$1 $2** **** $4'), result, 'card_num');
+	    getParam(html, result, 'card_till', /<div[^>]+class="[^"]*expire-date[^"]*"[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseDate);
+	}
 
 	AnyBalance.setResult(result);
 }

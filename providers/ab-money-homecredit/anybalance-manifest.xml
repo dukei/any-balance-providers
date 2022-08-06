@@ -1,27 +1,32 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="15">ab-money-homecredit</id>
+	<id version="16">ab-money-homecredit</id>
 	<api flags="no_browser"/>
 	<name>Хоум Кредит</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о карте, кредите и депозите для клиентов банка "Хоум Кредит" (http://www.homecredit.ru).</p>
+	<p>Предоставляет информацию о картах, счетах и вкладах для клиентов банка "Хоум Кредит" (https://online.homecredit.ru/).</p>
 	]]></description>
 	<instruction html="true"><![CDATA[
 	<p>Настройки:</p>
 	<ul>
-		<li>Укажите логин и пароль к Интернет-банку (http://ib.homecredit.ru) в настройках провайдера.</li>
+		<li>Укажите номер телефона, дату рождения, PIN-код и кодовое слово для входа в Интернет-банк (https://online.homecredit.ru/web/Account/Login) в настройках провайдера.</li>
 	</ul>
-	<p>Как подключить Интернет-банк «Хоум Кредит»:</p>
+	<p>Как подключить Интернет-банк "Хоум Кредит":</p>
 	<ul>
-		<li>Обратитесь к менеджеру в удобном для вас офисе банка "Хоум Кредит".</li>
-	</ul> 
+		<li>Зайдите в браузере в Интернет-банк "Хоум Кредит" (https://online.homecredit.ru/web/Account/Login) и пройдите регистрацию.</li>
+		<li>Выберите интересующий вас продукт на главной странице предложений и оформите заявку на получение выбранного продукта.</li>
+		<li>Или обратитесь к специалисту в любом удобном для вас офисе банка "Хоум Кредит".</li>
+	</ul>
+	<p><small>Если PIN-код для Интернет-банка ранее не был установлен, вы можете задать его в процессе первой авторизации в провайдере.</small></p>
+	<p><small>Если вы не помните действующий PIN-код, пожалуйста, пройдите авторизацию на странице https://online.homecredit.ru/web/Account/Login и на этапе ввода PIN-кода нажмите внизу ссылку "Забыли код доступа?", чтобы установить новый.</small></p>
+	<p><small>Если вы изначально не ввели PIN-код и кодовое слово в настройках провайдера, вы можете ввести их в процессе первой авторизации.</small></p>
 	<p><b>ВНИМАНИЕ!</b></p> 
-	<p>В настоящее время предоставляется информация только по вкладам и картам. Если вам нужна поддержка кредитов, обращайтесь, пожалуйста, к автору провайдера по e-mail.  Для указания депозита или кредита вы можете ввести его ID.</p> 
-	<p><small>Получить ID всех депозитов и кредитов можно в счетчике "Сводка".</small></p>
+	<p>В настоящее время предоставляется информация только по картам, счетам и вкладам. Если вам нужна поддержка кредитов, пожалуйста, обратитесь к автору провайдера.</p>
 	]]></instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>
 		<module id="library"/>
+		<module id="misc/saved-data"/>
 	</depends>
 	<files>
 		<icon>icon.png</icon>
@@ -31,25 +36,30 @@
 	</files>
 	<counters>
 		<counter id="balance" name="Баланс" units=" {@currency}"/>
-		<counter id="blocked" name="Заблокировано" units=" {@currency}"/>
 		<counter id="minpay" name="Минимальный платеж" units=" {@currency}"/>
-		<counter id="minpaytill" name="Заплатить до" type="time" format="dd/MM/yyyy"/>
+		<counter id="minpay_till" name="Заплатить до" type="time" format="dd.MM.yyyy"/>
 		<counter id="debt" name="Задолженность" units=" {@currency}"/>
-		<counter id="pcts" name="Начисленные проценты"/>
-		<counter id="notpaid" name="Не выплачено"/> <!-- Это число неоплаченных периодов для кредита, насколько я понимаю -->
-		<counter id="currency" name="Валюта" type="text"/>
+		<counter id="debt_overview" name="Просрочка" units=" дн"/>
+		<counter id="penalty" name="Пени" units=" {@currency}"/>
+		<!-- <counter id="pcts" name="Начисленные проценты"/> -->
+		<!-- <counter id="notpaid" name="Не выплачено"/> -->
+		<counter id="currency_code" name="Валюта" type="text"/> 
 		<counter id="status" name="Статус" type="text"/>
-		<counter id="till" name="Срок действия" type="time" format="dd/MM/yyyy"/>
-		<counter id="rate" name="Процентная ставка" units="%"/>
+		<counter id="till" name="Срок действия" type="time" format="dd.MM.yyyy"/>
+		<!-- <counter id="rate" name="Процентная ставка" units="%"/> -->
 		<!-- <counter id="all" name="Сводка" type="text"/> -->
 		<counter id="accnum" name="Номер счета" type="text"/>
 		<counter id="card_num" name="Номер карты" type="text"/>
+		<counter id="type" name="Тип" type="text"/>
 		<counter id="accname" name="Название" type="text"/>
-		<counter id="limit" name="Кредитный лимит"/>
+		<counter id="limit" name="Кредитный лимит" units=" {@currency}"/>
 		<counter id="own" name="Собственные средства" units=" {@currency}"/>
-		<counter id="agreement" name="№ договора" type="text"/>
+		<counter id="agreement" name="Номер договора" type="text"/>
+		<counter id="agreement_date" name="Дата открытия" type="time" format="dd.MM.yyyy"/>
 		<counter id="overall_debt" name="Общая задолженность" units=" {@currency}"/>
-		<counter id="polsa" name="Баллов польза" units=" {@currency}"/>
+		<!-- <counter id="polsa" name="Баллов польза" units=" {@currency}"/> -->
+		<counter id="phone" name="Телефон" type="text"/>
+		<counter id="fio" name="ФИО" type="text"/>
 	</counters>
 	<keywords>Кредит, банк, home credit</keywords>
 	<type>money, bank</type>

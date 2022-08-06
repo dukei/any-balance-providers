@@ -1,20 +1,19 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="6">ab-bonus-hoff</id>
+	<id version="8">ab-bonus-hoff</id>
 	<api flags="no_browser"/>
 	<name>Hoff (бонусы)</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о бонусном балансе мебельного супермаркета Hoff</p>
-	<p>Информация берется из личного кабинета на https://hoff.ru </p>
+	<p>Предоставляет информацию о бонусном балансе мебельного супермаркета Hoff (https://hoff.ru/).</p>
+	<p>Информация берется из личного кабинета Hoff на сайте https://hoff.ru/personal/.</p>
 	]]></description>
 	<instruction html="true"><![CDATA[
-	<p>Если у вас нет доступа в Личный кабинет, получите его на странице https://hoff.ru/</p>
+	<p>Если у вас нет доступа в личный кабинет, получите его на странице https://hoff.ru/</p>
+	<p>Для работы провайдера требуется ввести номер телефона, привязанного к личному кабинету Hoff, и код подтверждения из SMS, высланного на этот номер.</p>
 	]]></instruction>
-	<author>DimaZ &lt;DIMAZ.KHUA@gmail.com&gt;</author>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>
 		<module id="library"/>
-		<module id="framework/icewood"/>
 		<module id="misc/saved-data"/>
 	</depends>
 	<files>
@@ -27,13 +26,15 @@
 		<counter id="balance" name="Баланс" units=" Б"/>
 		<counter id="balance_active" name="Активный баланс" units=" Б"/>
 		<counter id="soon_available" name="Бонусы в накоплении" units=" Б"/>
+		<counter id="soon" name="Ближайшая дата начисления" type="time" format="dd.MM.yyyy"/>
 		<counter id="burn_count" name="Сгораемые бонусы" units=" Б"/>
+		<counter id="burn" name="Ближайшая дата сгорания" type="time" format="dd.MM.yyyy"/>
 		<counter id="card" name="Номер карты" type="text"/>
+		<counter id="user_id" name="ID пользователя" type="text"/>
 		<counter id="fio" name="ФИО" type="text"/>
 		<counter id="phone" name="Телефон" type="text"/>
-		<counter id="burn" name="Ближайшая дата сгорания" type="time" format="dd.MM.yyyy"/>
 	</counters>
-	<keywords></keywords>
+	<keywords>Hoff, Хофф</keywords>
 	<type>bonus</type>
 	<country>ru</country>
 </provider>

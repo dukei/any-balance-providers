@@ -3,22 +3,11 @@
 	<EditTextPreference
 		title="Логин"
 		key="login"
-		summary="||{@s}"
+		summary="Логин для входа в личный кабинет|Введите логин\n|{@s}\n"
 		obligatory="true"
 		dialogTitle="Логин"
 		positiveButtonText="ОК"
 		negativeButtonText="Отмена"
-		dialogMessage="Введите логин, используемый для входа в личный кабинет">
-	</EditTextPreference>
-	<EditTextPreference
-		title="Пароль"
-		key="password"
-		summary="||***********"
-		obligatory="true"
-		dialogTitle="Пароль"
-		positiveButtonText="ОК"
-		negativeButtonText="Отмена"
-		dialogMessage="Введите пароль, используемый для входа в личный кабинет"
-		inputType="textPassword">
+		dialogMessage="Введите 10 цифр номера телефона без пробелов и разделителей. Например, 9161234567">
 	</EditTextPreference>
 </PreferenceScreen>

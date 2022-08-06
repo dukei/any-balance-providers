@@ -43,7 +43,7 @@ function callApi(requests,charset){
 	var html = AnyBalance.requestPost('https://cscapp.vodafone.ua/eai_mob/start.swe?SWEExtSource=JSONConverter&SWEExtCmd=Execute', JSON.stringify({
 		"requests": requests,
 		"params":{
-			"version":"2.3.9.0",
+			"version":"2.5.5.0",
 			"accessType": "",
 			"language": callApi.lang,
 			"source":"android 8",

@@ -1,14 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-bonus-letyshops</id>
+	<id version="3">ab-bonus-letyshops</id>
 	<api flags="no_browser"/>
 	<name>Letyshops</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе на кэшбэк сайте <a href="https://letyshops.ru/soc/sh-1/?r=2101640">https://letyshops.ru</a></p>
-	<p>Информация берется из личного кабинета <a href="https://letyshops.ru/soc/sh-1/?r=2101640">https://letyshops.ru</a></p>
+	<p>Предоставляет информацию о балансе на кэшбэк сайте <a href="https://letyshops.com/ua/">https://letyshops.com/ua/</a>.</p>
+	<p>Информация берется из личного кабинета <a href="https://letyshops.com/ua/user/">https://letyshops.com/ua/user/</a>.</p>
 	]]></description>
 	<instruction html="true"><![CDATA[
-	<p>Если у вас нет доступа в Личный кабинет, получите его на странице <a href="https://letyshops.ru/soc/sh-1/?r=2101640">https://letyshops.ru</a></p>
+	<p>Если у вас нет доступа в Личный кабинет, получите его на странице <a href="https://letyshops.com/ua/">https://letyshops.com/ua/</a>.</p>
 	]]></instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>
@@ -21,14 +21,17 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="В ожидании" units=" р"/>
-		<counter id="available" name="На балансе" units=" р"/>
-		<counter id="last_cashback" name="Последнее начисление" units=" р"/>
-		<counter id="last_date" name="Дата последней покупки" type="time" format="dd/MM/yyyy"/>
-		<counter id="last_sum" name="Сумма последней покупки" units=" р"/>
-		<counter id="last_place" name="Место последней покупки" type="text"/>
+		<counter id="balance" name="В ожидании" units=" {@currency}"/>
+		<counter id="available" name="На балансе" units=" {@currency}"/>
+		<counter id="all_cashback" name="Накоплено за все время" units=" {@currency}"/>
+		<counter id="last_cashback" name="Последнее начисление" units=" {@currency}"/>
+		<counter id="last_date" name="Дата последней операции" type="time" format="dd.MM.yyyy"/>
+		<counter id="last_sum" name="Сумма последней операции" units=" {@currency}"/>
+		<counter id="last_type" name="Тип последней операции" type="text"/>
+		<counter id="last_status" name="Статус последней операции" type="text"/>
+		<counter id="currency_full" name="Валюта счета" type="text"/>
 	</counters>
-	<keywords></keywords>
+	<keywords>Letyshops, Летишопс</keywords>
 	<type>bonus</type>
-	<country>ru</country>
+	<country>ua</country>
 </provider>

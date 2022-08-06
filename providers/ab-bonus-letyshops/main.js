@@ -11,13 +11,40 @@ var g_headers = {
 	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
 };
 
+var g_currency = {
+	KZT: 'тг.',
+    RUB: 'руб.',
+    RUR: 'руб.',
+    UAH: 'грн.',
+    EUR: '€',
+    USD: '$',
+    GBP: '£',
+	ARS: 'ARS',
+	CLP: 'CLP',
+    MXN: 'MXN',
+	COP: 'COP',
+	BRL: 'R$',
+	PEN: 'S/',
+	PLN: 'zł',
+	BYN: 'Br',
+    CAD: 'C$',
+    AUD: 'A$',
+    NZD: 'NZ$',
+    ZAR: 'R',
+    INR: 'INR',
+    PHP: '₱',
+    AED: 'AED',
+    CNY: 'CNY',
+	undefined: ''
+};
+
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'https://letyshops.com/';
+	var baseurl = 'https://letyshops.com/ua/';
 	AnyBalance.setDefaultCharset('utf-8');
 
-	AB.checkEmpty(prefs.login, 'Введите логин!');
-	AB.checkEmpty(prefs.password, 'Введите пароль!');
+	checkEmpty(prefs.login, 'Введите логин!');
+	checkEmpty(prefs.password, 'Введите пароль!');
 
 	var html = AnyBalance.requestGet(baseurl, g_headers);
 
@@ -32,7 +59,7 @@ function main() {
 		_csrf_token: ''
 	}, addHeaders({
 		Accept: 'application/json, text/plain, */*',
-		'X-Requested-With': 'XMLHttpRequest',
+		'X-Requested-With': 'XMLHttpRequest'
 	}));
 
 	var json = getJson(html);
@@ -56,25 +83,43 @@ function main() {
 		success: true
 	};
 
-	AB.getParam(data.user.balancePending, result, 'balance');
-	AB.getParam(data.user.balanceApproved, result, 'available');
+	getParam(data.user.balancePending, result, ['balance', 'currency'], null, null, parseBalance);
+	getParam(data.user.balanceApproved, result, ['available', 'currency'], null, null, parseBalance);
+	getParam(g_currency[data.user.balanceCurrency]||data.user.balanceCurrency, result, ['currency', 'balance']);
+	getParam(data.user.balanceCurrency, result, ['currency_full', 'balance']);
 
 	html = AnyBalance.requestGet(baseurl + 'user', g_headers);
-	var loyalty = getParam(html, /:loyalty="([^"]*)/i, replaceHtmlEntities, getJson);
-	result.__tariff = loyalty.level.current.name;
-	if(loyalty.level.next)
-		result.__tariff += ' (до ' + loyalty.level.next.name + ' ' + loyalty.level.next.delta + ' р.)';
-
-	if(AnyBalance.isAvailable('last_sum', 'last_date', 'last_place', 'last_cashback')){
-		html = AnyBalance.requestGet(baseurl + 'user/balance', g_headers);
-
-		var order = getElements(html, [/<tr[^>]+b-table__table-row/ig, /<td/i])[0];
-		if(order){
-			AB.getParam(order, result, 'last_sum', /(?:Кешбек|Сумма заказа):([^<]*)/i, AB.replaceTagsAndSpaces, AB.parseBalance);
-			AB.getParam(order, result, 'last_date', /Дата заказа:([^<]*)/i, AB.replaceTagsAndSpaces, AB.parseDate);
-			AB.getParam(order, result, 'last_place', /Заказ(?: реферала)? в([\s\S]*?)<\/span>/i, AB.replaceTagsAndSpaces);
-			AB.getParam(order, result, 'last_cashback', /<td[^>]+data-th="Кэшбэк"[^>]*>([\s\S]*?)<\/td>/i, AB.replaceTagsAndSpaces, parseBalance);
-		}
+    getParam(html, result, '__tariff', /Статус:[\s\S]*?<div class="text-lg[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+	getParam(html, result, 'all_cashback', /Накоплено за все время:[\s\S]*?text-base[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+	
+	if(AnyBalance.isAvailable('last_sum', 'last_date', 'last_type', 'last_cashback', 'last_status')){
+		html = AnyBalance.requestGet(baseurl + 'user/ajax/filtered/balance?page[offset]=0&page[limit]=12', addHeaders({
+			Referer: baseurl + 'user/balance', 'X-Requested-With': 'XMLHttpRequest'
+		}));
+		json = getJson(html);
+		AnyBalance.trace(JSON.stringify(json));
+		
+		var orders = json.data;
+	    if(orders && orders.length > 0){
+	    	AnyBalance.trace('Найдено покупок: ' + orders.length);
+			var order = orders[0];
+			if(order.data.converted_cart_amount){
+				getParam(order.data.converted_cart_amount, result, 'last_sum', null, null, parseBalance);
+			}else{
+				getParam(0, result, 'last_sum', null, null, parseBalance);
+			}
+	    	getParam(order.created, result, 'last_date', null, null, parseDateISO);
+            var shopName = '';
+			if(order.data.shop && order.data.shop.name){
+				getParam(order.translatedType + order.data.shop.name, result, 'last_type');
+			}else{
+				getParam(order.translatedType, result, 'last_type');
+			}
+			getParam(0||order.amount, result, 'last_cashback', null, null, parseBalance);
+			getParam(order.translatedStatus, result, 'last_status');
+	    }else{
+ 	    	AnyBalance.trace('Не удалось получить данные по последней покупке');
+ 	    }
 	}
 
 	AnyBalance.setResult(result);

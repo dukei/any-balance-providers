@@ -1,24 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
-	<EditTextPreference
-		title="СНИЛС/Телефон/Email"
+    <EditTextPreference
+		title="Логин"
 		key="login"
-		summary="||{@s}"
+		summary="Логин для входа в личный кабинет|Введите логин\n|{@s}\n"
 		obligatory="true"
-		dialogTitle="СНИЛС/Телефон/Email"
+		dialogTitle="Логин"
 		positiveButtonText="ОК"
 		negativeButtonText="Отмена"
-		dialogMessage="Введите СНИЛС (без пробелов и разделителей, 11 цифр подряд), телефон (10 цифр подряд) или введите Email.">
+		dialogMessage="Введите E-mail, СНИЛС (11 цифр без разделителей) или номер телефона (10 цифр без разделителей)">
 	</EditTextPreference>
 	<EditTextPreference
 		title="Пароль"
 		key="password"
-		summary="||***********"
+		summary="Пароль для входа в личный кабинет|Введите пароль\n|**********\n"
 		obligatory="true"
 		dialogTitle="Пароль"
 		positiveButtonText="ОК"
 		negativeButtonText="Отмена"
-		dialogMessage="Введите пароль, используемый для входа в Госуслуги."
+		dialogMessage="Введите пароль, используемый для входа в личный кабинет"
 		inputType="textPassword">
 	</EditTextPreference>
 <!--

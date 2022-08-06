@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="1.0" version="851">ab-service-gosuslugi</id>
+	<id major_version="1.2" version="856">ab-service-gosuslugi</id>
 	<api flags="no_browser"/>
 	<name>Госуслуги (Штрафы, Налоги)</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию из системы Госуслуги <a href="http://www.gosuslugi.ru">http://www.gosuslugi.ru</a></p>
+	<p>Предоставляет информацию из системы Госуслуги <a href="http://www.gosuslugi.ru">http://www.gosuslugi.ru</a>.</p>
 	<b>Поддерживаемые услуги:</b>
 	<ol>
 		<li>Проверка штрафов ГИБДД.</li>
@@ -12,12 +12,13 @@
 	</ol>
 	]]></description>
 	<instruction html="true"><![CDATA[
-	<p>Если у вас нет доступа в Личный кабинет Госуслуг, пройдите регистрацию на странице <a href="https://esia.gosuslugi.ru/sia-web/rf/registration/lp/Index.spr">https://esia.gosuslugi.ru/sia-web/rf/registration/lp/Index.spr</a></p>
+	<p>Если у вас нет доступа в личный кабинет Госуслуг, пройдите регистрацию на странице <a href="https://esia.gosuslugi.ru/login/registration">https://esia.gosuslugi.ru/login/registration</a>.</p>
+	<p>Для работы провайдера требуется ввести E-mail, СНИЛС или номер телефона и пароль для входа в личный кабинет Госуслуг.</p>
 	]]></instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
-	<author>DimaZUA &lt;DIMAZ.KHUA@gmail.com&gt;</author>
 	<depends>
 		<module id="library"/>
+		<module id="misc/saved-data"/>
 	</depends>
 	<files>
 		<icon>icon.png</icon>
@@ -27,10 +28,22 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Задолженность" units=" р"/>
+	    <counter id="balance" name="Задолженность" units=" ₽"/>
+		<counter id="snils" name="Номер СНИЛС" type="text"/>
+		<counter id="inn" name="Номер ИНН" type="text"/>
+		<counter id="total" name="Начисления" units=" шт"/>
 		<counter id="info" name="Сводка" type="html"/>
-		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="total_docs" name="Документы" units=" шт"/>
+		<counter id="account_status" name="Статус аккаунта" type="text"/>
+		<counter id="global_role" name="Тип регистрации" type="text"/>
+		<counter id="user_id" name="ID аккаунта" type="text"/>
+		<counter id="notifications" name="Уведомления" units=" шт"/>
 		<counter id="mails" name="Госпочта" units=" шт"/>
+		<counter id="lastorderdate" name="Дата посл. заявления" type="time" format="dd.MM.yyyy"/>
+		<counter id="lastordertype" name="Тип посл. заявления" type="text"/>
+		<counter id="lastorderstatus" name="Статус посл. заявления" type="text"/>
+		<counter id="phone" name="Номер телефона" type="text"/>
+		<counter id="fio" name="ФИО" type="text"/>
 	</counters>
 	<keywords>штрафы, электронное правительство, гос услуги, Налоги, ФНС, МВД, ГИБДД</keywords>
 	<type>service, government, tax, fine</type>

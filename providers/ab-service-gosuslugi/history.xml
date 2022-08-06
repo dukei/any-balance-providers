@@ -1,9 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change major_version="1.2" version="856" date="2022-07-30">
+	- Исправлена авторизация по номеру телефона
+	</change>
+    <change major_version="1.2" version="855" date="2022-05-28">
+	- Поддержка изменений в процедуре входа
+	</change>
+    <change major_version="1.2" version="854" date="2022-01-16">
+	- Поддержка изменений в процедуре входа
+	</change>
+    <change major_version="1.2" version="853" date="2022-01-16">
+	- Поддержка изменений в процедуре входа
+	</change>
+    <change major_version="1.2" version="852" date="2021-12-22">
+	- Поддержка изменений в процедуре входа
+	- Добавлены дополнительные счетчики
+	</change>
 	<change major_version="1.0" version="851" date="2021-07-02">
 	- Поддержка изменений в процедуре входа
 	</change>
-
 	<change major_version="1.0" version="850" date="2021-07-01">
 	- Поддержка изменений в процедуре входа
 	</change>

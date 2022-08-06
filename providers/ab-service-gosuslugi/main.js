@@ -1,131 +1,329 @@
 /**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 */
+
+var g_headers = {
+	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
+	'Accept-Language': 'ru-RU,ru;q=0.9,en-US;q=0.6,en;q=0.4',
+    'Cache-Control': 'max-age=0',
+	'Connection': 'keep-alive',
+	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36'
+};
+
 var g_baseurl = 'https://www.gosuslugi.ru/';
-		var g_headers = {
-			'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-			'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
-			'Connection': 'keep-alive',
-			'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.120 Safari/537.36',
-		};
+var g_savedData;
+var replaceNumber = [replaceTagsAndSpaces, /\D/g, '', /.*(\d)(\d\d\d)(\d\d\d)(\d\d)(\d\d)$/, '+$1 $2 $3-$4-$5'];
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
 
-	var result = {success: true};
-	
-	var profile = login(prefs);
-	getParam(profile.formattedLoginName||profile.formattedName||profile.lastName+' '+profile.firstName+''+profile.middleName,result,'fio')
-	var json=callAPI('pay/v1/informer/fetch');
-        result.balance=json.result.amount;
-        result.info='';
-	if (json.fns){
-        	//result.nalog_balance=json.fns.result.amount;
-        	json.fns.groups.forEach(function(g) {
-        		g.bills.forEach(function(n) {
-        			result.info+='<b>'+n.amount.toFixed(2)+' р.:</b>'+(n.billName||n.fnsName)+'<br><br>'
-        		})
-        	})
-        	
-	}
-        if (json.fine){
-        	//result.gibdd_info='';
-        	//result.gibdd_balance=json.fine.result.amount;
-        	//result.gibdd_balance_full=json.fine.result.originalAmount;
-        	json.fine.groups.forEach(function(g) {
-        		result.info+=g.name+'<br>'
-        		g.bills.forEach(function(n) {
-        			n.discountDate=n.discountDate.replace(/(\d*)-(\d*)-(\d*)/,'$3.$2.$1');
-        			if (parseDate(n.discountDate)>new Date())
-        				result.info+='<b>'+n.amount.toFixed(2)+' р. </b><small> (до '+n.discountDate+')</small><br>:';
-        			else
-        				result.info+='<b>'+n.originalAmount.toFixed(2)+' р.:</b><br>';
-                                result.info+=n.billName+' ('+n.articleCode+')<br>'+n.offenseDate.replace(/(\d{4})-(\d{2})-(\d{2})([\s\S]*)/,'$3.$2.$1 в$4');
-                                if (n.hasPhoto) result.info+='<br>Есть фото нарушения'
-                                result.info+='<br><small>'+n.supplierFullName+'</small><br><br>';
-        		})
-        	})
-        }
-        try{
-	var json=callAPI('lk/v1/feeds/counters');
-		result.mails=json.unread;
-	}catch(e){
-		AnyBalance.trace('Ошибка получения количества непрочитанных писем:'+e.mesage);
-	}
-	AnyBalance.setResult(result);
-}
-function login(prefs){
     //AnyBalance.setOptions({cookiePolicy: 'netscape'});
 	AnyBalance.setDefaultCharset('utf-8');
 
-	var formattedLogin;
-	var loginType;
-	var login = prefs.login.replace(/[^\d@]+/g, '');
-	if (/@/.test(login)) {
-		formattedLogin = getParam(prefs.login, /^\s*([a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*)\s*$/);
-		if(!formattedLogin)
-			throw new AnyBalance.Error('Некорректный e-mail');
-		loginType = 'email';
-	}else if(/^\s*\+7/i.test(prefs.login) || /^\d{10}$/.test(login)){
-		loginType = 'phone';
-		formattedLogin = login.replace(/^7?(\d{3})(\d{3})(\d{2})(\d{2})/i, '+7($1)$2$3$4');
-	}else if(/^\d{11}$/.test(login)){
-		if(!checkSnils(login))
-			throw new AnyBalance.Error('Некорректный СНИЛС, пожалуйста, проверьте и исправьте', null, true);
-		loginType = 'snils';
-		formattedLogin = login.replace(/^(\d{3})(\d{3})(\d{3})(\d{2})$/i, '$1-$2-$3 $4');
-	}else{
-		throw new AnyBalance.Error('В качестве логина введите СНИЛС (11 цифр без разделителей), телефон (10 цифр без разделителей) или e-mail', null, true);
+    if(!g_savedData)
+		g_savedData = new SavedData('gosuslugi', prefs.login);
+
+	g_savedData.restoreCookies();
+
+    AnyBalance.trace ('Пробуем войти в личный кабинет...');
+
+	var html = AnyBalance.requestGet(g_baseurl, g_headers);
+	var data = getJsonObject(html, /data:\s/);
+	
+	if (data && data.user && data.user.person) {
+		AnyBalance.trace('Похоже, мы уже залогинены на имя ' + data.user.person.person.firstName + ' ' + data.user.person.person.lastName + ' (' + prefs.login + ')');
+	} else {
+		AnyBalance.trace('Сессия новая. Будем логиниться заново...');
+		clearAllCookies();
+		
+		var formattedLogin;
+	    var loginType;
+	    var login = prefs.login.replace(/[^\d@]+/g, '');
+	    if (/@/.test(login)) {
+	    	formattedLogin = getParam(prefs.login, /^\s*([a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*)\s*$/);
+	    	if(!formattedLogin)
+	    		throw new AnyBalance.Error('Некорректный E-mail!');
+	    	loginType = 'email';
+	    }else if(/^\s*\+7/i.test(prefs.login) || /^\d{10}$/.test(login)){
+	    	loginType = 'phone';
+	    	formattedLogin = login.replace(/^7?(\d{3})(\d{3})(\d{2})(\d{2})/i, '+7($1)$2$3$4');
+	    }else if(/^\d{11}$/.test(login)){
+	    	if(!checkSnils(login))
+	    		throw new AnyBalance.Error('Некорректный СНИЛС!', null, true);
+	    	loginType = 'snils';
+	    	formattedLogin = login.replace(/^(\d{3})(\d{3})(\d{3})(\d{2})$/i, '$1-$2-$3 $4');
+	    }else{
+	    	throw new AnyBalance.Error('Введите E-mail, СНИЛС (11 цифр без разделителей) или номер телефона (10 цифр без разделителей)', null, true);
+	    }
+
+	    if (loginType == 'snils'){
+	    	checkEmpty(formattedLogin, 'Введите СНИЛС (11 цифр без разделителей). Вы ввели "' + (prefs.login || 'пустое поле') + '"!');
+	    }else{
+	    	checkEmpty(formattedLogin, 'Введите E-mail. Вы ввели "' + (prefs.login || 'пустое поле') + '"!');
+		}
+
+	    checkEmpty(prefs.password, 'Введите пароль!');
+		
+		var html = AnyBalance.requestGet(g_baseurl + 'node-api/login/?redirectPage=/', g_headers);
+		
+		html = AnyBalance.requestPost('https://esia.gosuslugi.ru/aas/oauth2/api/login', JSON.stringify({
+			'idType': loginType,
+			'login': formattedLogin,
+			'password': prefs.password
+		}), addHeaders({
+			'Accept': 'application/json, text/plain, */*',
+            'Content-Type': 'application/json',
+			'Origin': 'https://esia.gosuslugi.ru',
+			'Referer': 'https://esia.gosuslugi.ru/login/',
+		}));
+		
+		var json = getJson(html);
+	    AnyBalance.trace(JSON.stringify(json));
+		
+		if (json.additional_action && json.additional_action == 'otp') {
+			AnyBalance.trace('Госуслуги затребовали код подтверждения из SMS');
+            
+			var code = AnyBalance.retrieveCode('Пожалуйста, введите код подтверждения, высланный на номер ' + json.additional_data.phone, null, {inputType: 'number', time: 300000});
+			
+			html = AnyBalance.requestPost('https://esia.gosuslugi.ru/aas/oauth2/api/login/otp/verify', JSON.stringify({
+		    	'code': code
+		    }), addHeaders({
+		    	'Accept': 'application/json, text/plain, */*',
+                'Content-Type': 'application/json',
+		    	'Origin': 'https://esia.gosuslugi.ru',
+		    	'Referer': 'https://esia.gosuslugi.ru/login/',
+		    }));
+		
+		    var json = getJson(html);
+	        AnyBalance.trace(JSON.stringify(json));
+
+            if (json.status != 'successful') {
+		        var error = json.error;
+    	        if (error) {
+		            AnyBalance.trace(html);
+		    		throw new AnyBalance.Error('Неверный код подтверждения!', null, /invalid/i.test(error));
+    	        }
+
+    	        AnyBalance.trace(html);
+    	        throw new AnyBalance.Error('Не удалось войти в личный кабинет. Сайт изменён?');
+            }
+        }
+		
+		if (json.additional_action && json.additional_action == 'anomaly_reaction') {
+			if (json.anomaly_reaction == 'О.ЗД1' || json.anomaly_reaction.anomaly_reaction == 'О.ЗД1'){
+			    if (json.anomaly_reaction)
+			    	var guid = json.guid;
+			    if (json.anomaly_reaction.anomaly_reaction)
+			    	var guid = json.anomaly_reaction.guid;
+			    AnyBalance.trace('Госуслуги затребовали капчу');
+			
+			    html = AnyBalance.requestGet('https://esia.gosuslugi.ru/captcha/api/public/v2/type', g_headers);
+		
+		        var json = getJson(html);
+	            AnyBalance.trace(JSON.stringify(json));
+			
+			    var captchaType = json.captchaType;
+			    g_headers['captchaSession'] = json.captchaSession;
+			
+			    if (captchaType == 'recaptcha'){
+			    	var sitekey = json.sitekey;
+			        var captcha = solveRecaptcha('Пожалуйста, подтвердите, что вы не робот', g_baseurl + '/', sitekey, {USERAGENT: g_headers['User-Agent']});
+			    	var params = {'captchaResponse': captcha, 'captchaType': captchaType};
+			    }else if (captchaType == 'esiacaptcha'){
+			    	var capchaImg = AnyBalance.requestGet('https://esia.gosuslugi.ru/captcha/api/public/v2/image', g_headers);
+                    var captcha = AnyBalance.retrieveCode('В некоторых случаях Госуслуги используют защиту от роботов в виде кода проверки.\nПожалуйста, введите код с картинки', capchaImg, {/*inputType: 'number', */time: 180000});
+	                var params = {'answer': captcha, 'captchaType': captchaType};
+			    }else{
+			    	AnyBalance.trace('Неизвестный тип капчи: ' + captchaType);
+	            }
+			
+			    html = AnyBalance.requestPost('https://esia.gosuslugi.ru/captcha/api/public/v2/verify', JSON.stringify(params), addHeaders({
+		        	'Accept': 'application/json, text/plain, */*',
+                    'Content-Type': 'application/json',
+		        	'Origin': 'https://esia.gosuslugi.ru',
+		        	'Referer': 'https://esia.gosuslugi.ru/login/',
+		        }));
+			
+		        var json = getJson(html);
+	            AnyBalance.trace(JSON.stringify(json));
+			
+			    var verify_token = json.verify_token;
+			
+			    html = AnyBalance.requestGet('https://esia.gosuslugi.ru/anomaly-resolver/api/reaction/captcha/result?guid=' + guid + '&verify_token=' + verify_token, g_headers);
+		
+		        var json = getJson(html);
+	            AnyBalance.trace(JSON.stringify(json));
+			}
+			
+			if (json.anomaly_reaction == 'О.ЗИ1' || json.anomaly_reaction.anomaly_reaction == 'О.ЗИ1'){
+			    if (json.anomaly_reaction)
+			    	var guid = json.guid;
+			    if (json.anomaly_reaction.anomaly_reaction)
+			    	var guid = json.anomaly_reaction.guid;
+			    AnyBalance.trace('Госуслуги затребовали ответ на вопрос');
+			
+			    html = AnyBalance.requestGet('https://esia.gosuslugi.ru/anomaly-resolver/api/reaction/question?guid=' + guid, g_headers);
+		
+		        var json = getJson(html);
+	            AnyBalance.trace(JSON.stringify(json));
+				
+				var question = json.question_text;
+				
+				var captcha = AnyBalance.retrieveCode('В некоторых случаях Госуслуги используют защиту от роботов в виде проверки.\nПожалуйста, введите ответ на вопрос:\n\n' + question, null, {/*inputType: 'number', */time: 180000});
+			    var params = {'answer': captcha, 'guid': guid};
+			
+			    html = AnyBalance.requestPost('https://esia.gosuslugi.ru/anomaly-resolver/api/reaction/question/answer', JSON.stringify(params), addHeaders({
+		        	'Accept': 'application/json, text/plain, */*',
+                    'Content-Type': 'application/json',
+		        	'Origin': 'https://esia.gosuslugi.ru',
+		        	'Referer': 'https://esia.gosuslugi.ru/login/',
+		        }));
+			
+		        var json = getJson(html);
+	            AnyBalance.trace(JSON.stringify(json));
+			}
+			
+    	    if (json.result == true || json.is_verified == true) {
+				html = AnyBalance.requestPost('https://esia.gosuslugi.ru/aas/oauth2/api/login', JSON.stringify({
+			        'idType': loginType,
+					'login': formattedLogin,
+			        'password': prefs.password
+		        }), addHeaders({
+		        	'Accept': 'application/json, text/plain, */*',
+                    'Content-Type': 'application/json',
+		        	'Origin': 'https://esia.gosuslugi.ru',
+		        	'Referer': 'https://esia.gosuslugi.ru/login/',
+		        }));
+                
+				var json = getJson(html);
+	            AnyBalance.trace(JSON.stringify(json));
+				
+    	    }else{
+				AnyBalance.trace(html);
+    	        throw new AnyBalance.Error('Вы не прошли проверку. Пожалуйста, попробуйте ещё раз');
+			}
+        }
+		
+		if (json.status != 'successful') {
+		    var error = json.error;
+    	    if (error) {
+		        AnyBalance.trace(html);
+				throw new AnyBalance.Error('Неверные логин или пароль!', null, /login|password/i.test(error));
+    	    }
+
+    	    AnyBalance.trace(html);
+    	    throw new AnyBalance.Error('Не удалось войти в личный кабинет. Сайт изменён?');
+        }
+		
+		var redirectUrl = json.redirect_url;
+		if (redirectUrl) {
+			if (/^http/i.test(redirectUrl)){
+				url = redirectUrl;
+			}else{
+			    url = joinUrl('https://esia.gosuslugi.ru', redirectUrl);
+			}
+		
+            var html = AnyBalance.requestGet(url, addHeaders({Referer: AnyBalance.getLastUrl()}), g_headers);
+	    }
+		
+		g_savedData.setCookies();
+	    g_savedData.save();
 	}
-
-	if (loginType == 'snils')
-		checkEmpty(formattedLogin, 'Введите СНИЛС (без пробелов и разделителей, 11 символов подряд). Вы ввели: "' + (prefs.login || 'пустое поле') + '"!');
-	else
-		checkEmpty(formattedLogin, 'Введите правильный Email. Вы ввели: "' + (prefs.login || 'пустое поле') + '"!');
-
-	checkEmpty(prefs.password, 'Введите пароль!');
-
-	var html = AnyBalance.requestGet(g_baseurl + 'auth/esia/?redirectPage=/', g_headers);
-
-	// нужно для отладки
-	if (!isLoggedIn(html)) {
-		var jsessionid = AnyBalance.getCookie('JSESSIONID');
-		html = checkForRedirect(html);
-
-		// Госуслуги издеваются. Сначала выкатили новую форму входа, потом спрятали
-		// Пока используем старую
-		// html = AnyBalance.requestPost('https://esia.gosuslugi.ru/idp/authn/UsernamePasswordLogin', {
-		// username: formattedLogin,
-		// password: prefs.password,
-		// idType:loginType,
-		// }, addHeaders({Referer: 'https://esia.gosuslugi.ru/idp/authn/CommonLogin'}));
-
-		// А новую оставим на всякий
-		var command = getParam(html, null, null, /new\s+LoginViewModel\((?:[^,]+,){1,2}\s*'([^"']+)'/i);
-		if (!command && /ChallengeId/.test(html)){
-			//Поскольку куки мы переставили, надо челендж запросить с нужными куками
-			html=getChalenge(html);
-			command = getParam(html, null, null, /new\s+LoginViewModel\((?:[^,]+,){1,2}\s*'([^"']+)'/i);
+	
+	var result = {success: true};
+		
+    var json=callAPI('lk/v1/users/data');
+	var profile = json;
+	getParam(json.formattedLoginName, result, '__tariff');
+	getParam(json.firstName + ' ' + json.lastName, result, 'fio');
+	getParam(json.personSNILS, result, 'snils');
+	getParam(json.personINN, result, 'inn');
+	getParam(json.userId, result, 'user_id');
+	getParam(json.personMobilePhone, result, 'phone', null, replaceNumber);
+	var role={
+	    P:'Физическое лицо',
+		E:'Должностное лицо'
 		}
-
-		if (!command) {
-			AnyBalance.trace(html);
-			throw new AnyBalance.Error('Не удалось найти идентификатор команды для входа.');
+	getParam(role[json.globalRole]||json.globalRole, result, 'global_role');
+	var level={
+	    AL30:'Подтверждённый (КЭП)',
+		AL20:'Подтверждённый',
+		AL15:'Стандартный',
+		AL10:'Упрощённый'
 		}
-		AnyBalance.setCookie('esia.gosuslugi.ru','login_value',prefs.login);
-		AnyBalance.setCookie('esia.gosuslugi.ru','userSelectedLanguage','ru');
-		AnyBalance.setCookie('esia.gosuslugi.ru','_idp_authn_id',encodeURIComponent('email:'+prefs.login));
+	getParam(level[json.assuranceLevel]||json.assuranceLevel, result, 'account_status');
+	var json=callAPI('pay/v1/informer/fetch');
+	getParam(json.result.amount, result, 'balance', null, null, parseBalance);
+	getParam(json.result.total, result, 'total', null, null, parseBalance);
+	getParam(json.result.totalDocs, result, 'total_docs', null, null, parseBalance);
+    result.info='';
+	if (json.result.amount==0)
+    	result.info='Нет начислений'	
 
-		html = checkForRedirect(AnyBalance.requestPost('https://esia.gosuslugi.ru/idp/login/pwd/do', {
-			mobileOrEmail: prefs.login,
-			login: formattedLogin,
-			snils: '',
-			password: prefs.password,
-			idType: loginType,
-			'command': command
-		}, addHeaders({Referer: 'https://esia.gosuslugi.ru/idp/rlogin?cc=bp'})));
+	if (json.fns){
+       	//result.nalog_balance=json.fns.result.amount;
+       	json.fns.groups.forEach(function(g) {
+			result.info+=g.name
+       		g.bills.forEach(function(n) {
+				result.info+='<br>'+n.billDate.replace(/(\d{4})-(\d{2})-(\d{2})T(\d{2}:\d{2}:\d{2})([\s\S]*)/,'$3.$2.$1 $4');
+       			result.info+='<br>'+n.amount+' ₽<br>'+(n.billName||n.fnsName);
+       		})
+       	})    	
+	}
+	
+    if (json.fine){
+    	//result.gibdd_info='';
+    	//result.gibdd_balance=json.fine.result.amount;
+    	//result.gibdd_balance_full=json.fine.result.originalAmount;
+    	json.fine.groups.forEach(function(g) {
+    		result.info+=g.name
+    		g.bills.forEach(function(n) {
+    			n.discountDate=n.discountDate.replace(/(\d*)-(\d*)-(\d*)/,'$3.$2.$1');
+    			if (parseDate(n.discountDate)>new Date()) {
+    				result.info+='<br>'+n.amount+' ₽<br>(до '+n.discountDate+')';
+			    }else{
+    				result.info+='<br>'+n.originalAmount+' ₽';
+                    result.info+='<br>'+n.billName+' ('+n.articleCode+')<br>'+n.offenseDate.replace(/(\d{4})-(\d{2})-(\d{2})([\s\S]*)/,'$3.$2.$1 в $4');
+                    if (n.hasPhoto) {
+						result.info+='<br>Есть фото нарушения'
+                        result.info+='<br>'+n.supplierFullName;
+					}
+			    }
+        	})
+        })
+	}
+	
+    try{
+	    var json=callAPI('lk/v1/feeds/');
+	    for(var i=0; i<json.items.length; ++i){
+	    	var unread = json.items[i].unread;
+			var feedType = json.items[i].feedType;
+	    	if(unread == true){
+				var count = (i+1);
+	    	}
+			if(feedType == 'ORDER'){
+				getParam(json.items[i].date, result, 'lastorderdate', null, null, parseDateISO);
+				getParam(json.items[i].subTitle.replace(/([\«,\»]*)/g, ''), result, 'lastordertype', null, null, null);
+				getParam(json.items[i].title, result, 'lastorderstatus', null, null, null);
+	    		break;
+	    	}
+	    }
+		getParam(count||0, result, 'notifications', null, null, parseBalance);
+    }catch(e){
+		AnyBalance.trace('Не удалось получить информацию об уведомлениях:' + e.mesage);
+	}		
+		
+	try{	
+	    var json=callAPI('lk/v1/feeds/counters');
+		getParam(json.unread, result, 'mails', null, null, parseBalance);
+	}catch(e){
+		AnyBalance.trace('Не удалось получить информацию о непрочитанных письмах:' + e.mesage);
+	}
+	
+    AnyBalance.setResult(result);
 
-		var form = getElement(html, /<form[^>]+otpForm/i);
+/**	
+	var form = getElement(html, /<form[^>]+otpForm/i);
 		if(form){
 			AnyBalance.trace('Требуется смс для входа');
 			var sms = getElement(html, /<[^>]*code-is-sent/i, replaceTagsAndSpaces);
@@ -201,10 +399,12 @@ function login(prefs){
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
-
+    
 	return callAPI('lk/v1/users/data');
+	**/
 }
 
+/**
 function checkForJsOff(html) {
 	if (/Since your browser does not support JavaScript,\s+you must press the Continue button once to proceed/i.test(html)) {
 		AnyBalance.trace('Since your browser does not support JavaScript, you must press the Continue button once to proceed...');
@@ -270,10 +470,12 @@ function createFormParamsById(html, servicesubId) {
 	}
 	return createFormParams(form);
 }
+
 function isLoggedIn(html) {
 	var html = AnyBalance.requestGet(g_baseurl + 'api/lk/v1/users/data?_=' + Math.random(), addHeaders({Referer: g_headers}));
 	return /"firstName"/.test(html);
 }
+
 function getChalenge(html){
 	var ChallengeId=getParam(html,/ChallengeId=(\d*)/);
 	var Challenge=getParam(html,/Challenge=(\d*)/);
@@ -290,8 +492,8 @@ function getChalenge(html){
 	html=AnyBalance.requestGet(AnyBalance.getLastUrl());
 	return html;
 }
-function test(var1)
-{
+
+function test(var1){
 	var var_str=""+var1;
 	var var_arr=var_str.split("");
 	var LastDig=var_arr.reverse()[0];
@@ -323,12 +525,18 @@ function fixCookies(){
 	}
 	return repaired;
 }
-function callAPI(verb,params){
-	AnyBalance.trace('Запрос: '+verb);
+**/
+
+function callAPI(verb, params){
+	AnyBalance.trace('Запрос: ' + verb);
 	if (params)
-		var answer=AnyBalance.requestGet(g_baseurl + 'api/'+verb+'?_=' + Math.random(), addHeaders({Referer: g_headers}))
+		var html = AnyBalance.requestGet(g_baseurl + 'api/' + verb + '?_=' + Math.random(), addHeaders({Referer: g_headers}))
 	else
-		var answer=AnyBalance.requestGet(g_baseurl + 'api/'+verb+'?_=' + Math.random(),params, addHeaders({Referer: g_headers}))
-	AnyBalance.trace('Ответ: '+answer);
-	return getJson(answer);
+		var html = AnyBalance.requestGet(g_baseurl + 'api/' + verb + '?_=' + Math.random(), params, addHeaders({Referer: g_headers}))
+	AnyBalance.trace('Ответ: ' + html);
+	var json = getJson(html);
+	if(json.error && json.error.code != 0){
+		throw new AnyBalance.Error(json.error.message);
+	}
+	return json;
 }

@@ -1,53 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
-<!--	<ListPreference
-		key="cardType"
-		title="Статус карты"
-		obligatory="true"
-		summary="|Укажите статус карты, для авторизации по номеру карты|{@s}"
-		entries="Не указан|Обычная|Серебряная|Золотая"
-		positiveButtonText="ОК"
-		negativeButtonText="Отмена"
-		entryValues="0|1|2|3"
-		defaultValue="0">
-	</ListPreference> -->
     <EditTextPreference
 		obligatory="true"
 		title="Номер телефона"
 		positiveButtonText="ОК"
-		summary="Номер телефона, привязанный к карте||{@s}\n"
+		summary="Номер телефона, привязанный к карте|Ведите номер телефона\n|{@s}\n"
 		dialogTitle="Номер телефона"
 		negativeButtonText="Отмена"
-		dialogMessage="Введите 10 цифр номера телефона без пробелов и разделителей. Например, 9261234567."
+		dialogMessage="Введите 10 цифр номера телефона без пробелов и разделителей. Например, 9261234567"
 		key="login">
 	</EditTextPreference>
-	<EditTextPreference
-		obligatory="true"
-		title="Логин"
-		positiveButtonText="ОК"
-		summary="E-mail или номер телефона для входа||{@s}\n"
-		dialogTitle="Логин"
-		negativeButtonText="Отмена"
-		dialogMessage="Введите E-mail или 10 цифр номера телефона без пробелов и разделителей. Например, 9261234567."
-		key="login_site">
-	</EditTextPreference>
-	<EditTextPreference
-		positiveButtonText="ОК"
-		key="password"
-		dialogTitle="Пароль"
-		negativeButtonText="Отмена"
-		title="Пароль"
-		summary="Пароль для входа в личный кабинет||**********\n"
-		dialogMessage="Введите пароль, используемый для входа в личный кабинет. Вход с паролем потребует однократной проверки ReCaptcha."
-		inputType="textPassword">
-	</EditTextPreference>
-	<ListPreference
-		key="source"
-		title="Источник данных"
-		summary="Источник для получения информации||{@s}\n"
-		dialogTitle="Источник данных"
-		entries="Автоматически|Мобильное приложение|Официальный сайт"
-		entryValues="auto|app|site"
-		defaultValue="auto">
-	</ListPreference>
 </PreferenceScreen>

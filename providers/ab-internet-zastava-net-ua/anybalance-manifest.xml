@@ -1,0 +1,44 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-internet-zastava-net-ua</id>
+	<api flags="no_browser"/>
+	<name>Застава.NET (Украина)</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе интернет-провайдера Одессы и Одесской области Застава.NET (https://www.zastava.net.ua/ru/).</p>
+	<p>Информация берется из личного кабинета https://bill.zastava.net.ua:9443/.</p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Для работы провайдера требуется ввести логин и пароль для входа в личный кабинет.</p>
+	]]></instruction>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+		<module id="misc/saved-data"/>
+	</depends>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" грн."/>
+		<counter id="last_pay" name="Последняя оплата" units=" грн."/>
+		<counter id="last_pay_date" name="Дата последней оплаты" type="time" format="dd.MM.yyyy"/>
+		<counter id="status" name="Статус услуги" type="text"/>
+		<counter id="till_date" name="Срок действия услуги" type="time" format="dd.MM.yyyy"/>
+		<counter id="till_days" name="До завершения услуги" units=" дн."/>
+		<counter id="contract" name="Номер договора" type="text"/>
+		<counter id="contract_date" name="Дата договора" type="time" format="dd.MM.yyyy"/>
+		<counter id="abon_month" name="Абон. плата за месяц" units=" грн."/>
+		<counter id="abon_day" name="Дневная абон. плата" units=" грн."/>
+		<counter id="tarif_activate" name="Активация тарифа" units=" грн."/>
+		<counter id="ip_address" name="IP-адрес" type="text"/>
+		<counter id="mac_address" name="MAC-адрес" type="text"/>
+		<counter id="phone" name="Номер телефона" type="text"/>
+		<counter id="fio" name="ФИО" type="text"/>
+	</counters>
+	<keywords>Застава.NET, Zastava.NET</keywords>
+	<type>internet, tv</type>
+	<country>ua</country>
+</provider>

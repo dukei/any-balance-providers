@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="22">ab-bonus-ozon</id>
+	<id version="24">ab-bonus-ozon</id>
 	<name>OZON.ru</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о баланcе, активном заказе и количестве баллов в интернет магазине OZON.ru <a href="https://www.ozon.ru/">https://www.ozon.ru/</a>.</p>
@@ -18,7 +18,7 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Остаток" units=" ₽"/>
+		<counter id="balance" name="Баланс" units=" ₽"/>
 		<counter id="bonus" name="Баллы Ozon" units=" Б"/>
 		<counter id="bonus_premium" name="Premium баллы" units=" Б"/>
 		<counter id="bonus_salers" name="Бонусы продавцов" units=" Б"/>

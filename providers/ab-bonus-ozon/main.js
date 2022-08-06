@@ -11,6 +11,13 @@ var g_headers = {
 	'x-o3-device-type': 'mobile'
 };
 
+var g_webHeaders = {
+	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
+    'Accept-Language': 'ru-RU,ru;q=0.9',
+	'Upgrade-Insecure-Requests': '1',
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36'
+};
+
 var replaceNumber = [replaceTagsAndSpaces, /\D/g, '', /.*(\d\d\d)(\d\d\d)(\d\d)(\d\d)$/, '+7 $1 $2-$3-$4'];
 
 function callApi(verb, params){
@@ -21,8 +28,10 @@ function callApi(verb, params){
 		headers = addHeaders({'Content-Type': 'application/json; charset=UTF-8'});
 	}
 	
+//	AnyBalance.trace('Запрос: ' + verb);
 	var html = AnyBalance.requestPost('https://api.ozon.ru/' + verb, params_str, headers, {HTTP_METHOD: method});
 	var json = getJson(html);
+//	AnyBalance.trace('Ответ: ' + JSON.stringify(json));
 	if(json.error){
 		var error = json.error.message || json.error;
 		if(error)
@@ -190,6 +199,8 @@ function main() {
 
 	var result = {success: true};
 	
+	var at = AnyBalance.getData('authToken');
+	
 	if (isAvailable(['balance', 'bonus', 'bonus_premium', 'bonus_salers', 'fio'])) {
 		html = AnyBalance.requestGet('https://user-account.ozon.ru/safe-api/public/v1/user-account/balance', g_headers);
 		var json = getJson(html);
@@ -200,87 +211,83 @@ function main() {
 			getParam((json.balance)/100, result, 'balance', null, null, parseBalance);
 		}
 		
-	    html = AnyBalance.requestGet('https://www.ozon.ru/my/points/?tab=classic', g_headers);
-	
-	    var tsHeadLs = getElements(html, /<span[^>]+class="tsHeadL"[^>]*>/ig);
-		var items = getElements(html, /<div><!----> <!----> <span[^>]+class="[\s\S]*?"[^>]*>/ig);
-        if(tsHeadLs){
-   	    	for(var i=0; i<tsHeadLs.length; ++i){
-		        var tsHeadL = tsHeadLs[i];
-				var item = items[i];
-		        if(/Баллы Ozon/i.test(item))
-		        	getParam(tsHeadL, result, 'bonus', /<span[^>]+class="tsHeadL"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
-			    if(/Premium баллы/i.test(item))
-		        	getParam(tsHeadL, result, 'bonus_premium', /<span[^>]+class="tsHeadL"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
-			    if(/Бонусы продавцов/i.test(item))
-		        	getParam(tsHeadL, result, 'bonus_salers', /<span[^>]+class="tsHeadL"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
-			}
-        }else{
-        	AnyBalance.trace('Не удалось получить таблицу баллов');
-        }
+        html = AnyBalance.requestGet('https://api.ozon.ru/composer-api.bx/page/json/v1?url=%2Fmy%2Fpoints', g_webHeaders);
+		var json = getJson(html);
+
+		var balances = getDefaultProp(json.csma.webbalance).data;
+//		AnyBalance.trace('Балансы: ' + JSON.stringify(balances));
 		
-		var firstName = getParam(html, null, null, /"firstName":"([^"]*)/i, replaceTagsAndSpaces);
-		var lastName = getParam(html, null, null, /"lastName":"([^"]*)/i, replaceTagsAndSpaces);
-		result.fio = firstName + ' ' + lastName;
-		
-		var hist = getElements(html, [/<\/div>\s<div[^>]+class="[\s\S]*?"[^>]*>/ig, /tsBody/i])[0];
-		var hist1 = getParam(html, null, null, /<\/div>\s<div[^>]+class="[\s\S]*?"[^>]*>([\s\S]*?)<\/div><\/div>/i);
-        if(hist){
-		    getParam(hist, result, 'oper_sum', /<div[^>]+class="[\s\S]*?tsBodyLBold">([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
-            getParam(hist, result, 'oper_desc', /<span[^>]+class="[\s\S]*?tsBodyL">([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
-			var date = getParam(hist, null, null, /<span[^>]+class="[\s\S]*?tsBodyM">([\s\S]*?)в \d\d\:\d\d\s*<\/span>/i, replaceTagsAndSpaces);
-			if (!/\d\d\d\d/i.test(date)) {
-				var dt = new Date();
-				var ndate = date + ' ' + dt.getFullYear();
-			} else {
-				var ndate = date;
-			}
-			getParam(ndate, result, 'oper_date', null, null, parseDateWord);
+		if(balances){
+		    for(var i=0; balances && i<balances.length; ++i){
+		    	var bls = balances[i];
+		    	AnyBalance.trace('Нашли баланс "' + bls.title + '" ');
+				
+				if(/Баллы Ozon/i.test(bls.title)){
+		        	getParam(bls.amount, result, 'bonus', null, null, parseBalance);
+			    }else if(/Premium баллы/i.test(bls.title)){
+		        	getParam(bls.amount, result, 'bonus_premium', null, null, parseBalance);
+			    }else if(/Бонусы продавцов/i.test(bls.title)){
+		        	getParam(bls.amount, result, 'bonus_salers', null, null, parseBalance);
+				}else{
+					AnyBalance.trace('Неизвестный тип бонусов: "' + bls.title + '" ');
+				}
+		    }
         }else{
-        	AnyBalance.trace('Не удалось получить данные по последней операции');
-        }
+			AnyBalance.trace('Не удалось получить данные по балансам');
+		}
+		
+		if(isAvailable(['oper_sum', 'oper_desc', 'oper_date'])){
+		    var opa = getDefaultProp(json.csma.weboperations);
+//			AnyBalance.trace('Операции: ' + JSON.stringify(opa));
+		    if (opa) {
+		        for(var i=0; opa.items && i<opa.items.length; ++i){
+		        	var oper = opa.items[i];
+		        	AnyBalance.trace('Нашли операцию "' + oper.title + '" ');
+		    
+                    getParam(oper.priceText, result, 'oper_sum', null, null, parseBalance);
+                    getParam(oper.title, result, 'oper_desc');
+			        var date = oper.subtitle;
+			        if (!/\d\d\d\d/i.test(date)) {
+			        	var dt = new Date();
+			        	var ndate = date.replace(/в? \d\d:\d\d/, '') + dt.getFullYear();
+			        }else{
+			        	var ndate = date;
+			        }
+			        getParam(ndate, result, 'oper_date', null, null, parseDateWord);
+				
+			        break;
+		        }
+            }else{
+		    	AnyBalance.trace('Не удалось получить данные по последней операции');
+		    }
+		}
+		
+		var acc = getDefaultProp(json.myProfile.userAvatar);
+//		AnyBalance.trace('Профиль: ' + JSON.stringify(json));
+		
+		getParam(acc.firstName + ' ' + acc.secondName, result, 'fio');
 	}
-		
-//		json = callApi('my-account-api.bx/account/v1');
-//		AnyBalance.trace(JSON.stringify(json));
-		
-//		getParam(json.clientAccountEntryInformationForWeb.current, result, 'balance');
-//		getParam(json.clientAccountEntryInformationForWeb.blocked, result, 'blocked');
-//		getParam(json.clientAccountEntryInformationForWeb.accessible, result, 'available');
-//		getParam(json.clientAccountEntryInformationForWeb.score, result, 'bonus');
 	
-	
-	var orders = 0;
 	if (isAvailable(['order_sum', 'weight', 'ticket', 'state'])) {
 		json = callApi('composer-api.bx/page/json/v1?url=%2Fmy%2Forderlist');
-		AnyBalance.trace(JSON.stringify(json));
+//		AnyBalance.trace('Заказы: ' + JSON.stringify(json));
 
 		var ola = getDefaultProp(json.csma.orderListApp);
-		for(var i=0; ola.orderListApp && i<ola.orderListApp.length; ++i){
-			var order = ola.orderListApp[i];
-			AnyBalance.trace('Нашли ' + order.header.title + ' ' + order.header.number);
-			json = callPageJson(order.deeplink);
+		if (ola) {
+		    for(var i=0; ola.orderListApp && i<ola.orderListApp.length; ++i){
+		    	var order = ola.orderListApp[i];
+		    	AnyBalance.trace('Нашли ' + order.header.title + ' ' + order.header.number);
+		    	json = callPageJson(order.deeplink);
 		    
-            getParam(getDefaultProp(json.csma.orderTotal).summary.footer.price.price, result, 'order_sum', null, null, parseBalance);
-			getParam(order.sections[0].status.name, result, 'state');
-			getParam(order.header.number, result, 'ticket');
-		    
-//			if(AnyBalance.isAvailable('weight')){
-//				var shw_items = getDefaultProp(json.csma.shipmentWidget).items;
-//				var it = shw_items.find(function(b){ return b.type=="postings" });
-//				for(var k=0; k<it.postings.postings.length; ++k){
-//					var p = it.postings.postings[k];
-//					var pjson = callPageJson(p.action.link);
-//
-//					var textAtom = getDefaultProp(pjson.common.textBlock).body.find(function(b){ return b.type=="textAtom" });
-//					if(textAtom)
-//						sumParam(textAtom.textAtom.text, result, 'weight', /•.*/, null, parseWeight, aggregate_sum);
-//				}
-//			}
-
-			break;
+                getParam(getDefaultProp(json.csma.orderTotal).summary.footer.price.price, result, 'order_sum', null, null, parseBalance);
+		    	getParam(order.sections[0].status.name, result, 'state');
+		    	getParam(order.header.number, result, 'ticket');
+				
+			    break;
+		    }
+        }else{
+			AnyBalance.trace('Не удалось получить данные по последнему заказу');
 		}
-
 	}
 
 	result.__tariff = prefs.login;

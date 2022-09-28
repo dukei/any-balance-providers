@@ -1,12 +1,15 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-internet-mts-by</id>
+	<id version="3">ab-internet-mts-by</id>
 	<api flags="no_browser"/>
 	<name>Домашний Интернет и Телевидение МТС (Беларусь)</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе провайдера "Домашний Интернет и Телевидение МТС (Беларусь)" <a href="http://mts.by/">http://mts.by/</a></p>
-	<p>Информация берется из личного кабинета <a href="https://internet.mts.by/login">https://internet.mts.by/login</a></p>
+	<p>Предоставляет информацию о балансе провайдера "Домашний Интернет и Телевидение МТС (Беларусь)" <a href="https://home.mts.by/">https://home.mts.by/</a>.</p>
+	<p>Информация берется из личного кабинета <a href="https://internet.mts.by/">https://internet.mts.by/</a>.</p>
 	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Для работы провайдера требуется ввести номер телефона и пароль для входа в личный кабинет.</p>
+	]]></instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
     <depends>
         <module id="library"/>
@@ -19,13 +22,13 @@
 	</files>
 	<counters>
 		<counter id="balance" name="Баланс" units=" р"/>
-		<counter id="number" name="Номер" type="text"/>
+		<counter id="number" name="Номер телефона" type="text"/>
 		<counter id="traffic" name="Остаток трафика" units=" Gb"/>
-		<counter id="next_topup" name="Следующее пополнение трафика" type="time" format="dd/MM/yyyy"/>
-                <counter id="status" name="Статус" type="text"/>
-                <counter id="fio" name="ФИО" type="text"/>
+		<counter id="next_topup" name="Следующее пополнение трафика" type="time" format="dd.MM.yyyy"/>
+        <counter id="status" name="Статус" type="text"/>
+        <counter id="fio" name="ФИО" type="text"/>
 	</counters>
-	<keywords></keywords>
+	<keywords>МТС, Интернет, ТВ</keywords>
 	<type>internet, tv</type>
 	<country>by</country>
 </provider>

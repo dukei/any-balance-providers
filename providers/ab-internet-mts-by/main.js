@@ -3,11 +3,12 @@
 */
 
 var g_headers = {
-	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
 	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
-	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
+	'Accept-Language': 'ru-RU,ru;q=0.9,en-US;q=0.6,en;q=0.4',
 	'Connection': 'keep-alive',
-	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
+	'Upgrade-Insecure-Requests': '1',
+	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36'
 };
 
 function phoneNumberFormat(num) {
@@ -17,7 +18,7 @@ function phoneNumberFormat(num) {
 
 function main() {
     var prefs = AnyBalance.getPreferences();
-    var baseurl = 'https://internet.mts.by/';
+    var baseurl = 'https://internet.mts.by';
     AnyBalance.setDefaultCharset('utf-8');
 
     checkEmpty(prefs.login, 'Введите логин!');
@@ -26,7 +27,7 @@ function main() {
     var login = phoneNumberFormat(prefs.login);
     checkEmpty(login, 'Введите корректный логин!');
 
-    var html = AnyBalance.requestGet(baseurl + 'login', g_headers);
+    var html = AnyBalance.requestGet(baseurl, g_headers);
 
     if(!html || AnyBalance.getLastStatusCode() >= 400) {
         throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
@@ -40,13 +41,13 @@ function main() {
         return inputParams[name] || value;
     });
 
-    html = AnyBalance.requestPost(baseurl + 'session', params, addHeaders({
-        Referer: baseurl
+    html = AnyBalance.requestPost(baseurl + '/session', params, addHeaders({
+        Referer: baseurl + '/'
     }));
     
-    var fio = AB.getElement(html, /<div[^>]*?class="(?=[^"]*?\buser\b)(?=[^"]*?\bname\b)/i, replaceTagsAndSpaces);
+//  var fio = AB.getElement(html, /<div[^>]*?class="(?=[^"]*?\buser\b)(?=[^"]*?\bname\b)/i, replaceTagsAndSpaces);
 	
-    if (!fio) {
+    if (!/btn-(?:default\s)?exit/i.test(html)) {
         var error = AB.getElement(html, /<div[^>]+?class="[^"]*?flash-error/i, replaceTagsAndSpaces);
         if (error) {
             throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
@@ -58,7 +59,7 @@ function main() {
 
     var result = {success: true};
     
-    getParam(login, result, 'number');
+    getParam(prefs.login.replace(/.*(\d\d)(\d{3})(\d\d)(\d\d)$/i, '+375 ($1) $2-$3-$4'), result, 'number');
     
     function getValue(name, title, parseFunc) {
         if (AnyBalance.isAvailable(name)) {

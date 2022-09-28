@@ -4,20 +4,20 @@
 		obligatory="true"
         title="Гос. номер" 
         positiveButtonText="ОК" 
-        summary="||{@s}" 
-        dialogTitle="Введите номер Вашего автомобиля." 
+        summary="Государственный номер автомобиля|Введите номер автомобиля\n|{@s}\n" 
+        dialogTitle="Гос. номер" 
         negativeButtonText="Отмена" 
-        dialogMessage="Номер должен быть в формате а351со190 либо 1234ав199, буквы русские."
+        dialogMessage="Номер должен быть в формате а351со190 либо 1234ав199, буквы русские"
         key="login">
     </EditTextPreference>
     <EditTextPreference
 		obligatory="true"
         positiveButtonText="ОК"
         key="password" 
-        dialogTitle="Св-во о регистрации."
+        dialogTitle="Св-во о регистрации"
         negativeButtonText="Отмена"
-        title="Св-во о регистрации."
-        summary="||{@s}" 
-        dialogMessage="Введите номер свидетельства о регистрации в формате 50ХХ123456.">
+        title="Св-во о регистрации"
+        summary="Номер свидетельства о регистрации|Введите номер свидетельства\n|{@s}\n" 
+        dialogMessage="Введите номер свидетельства о регистрации в формате 50ХХ123456">
     </EditTextPreference>
 </PreferenceScreen>

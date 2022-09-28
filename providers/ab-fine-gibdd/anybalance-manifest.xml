@@ -1,10 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser|captcha" />
-	<id major_version="2.0" version="39">ab-fine-gibdd</id>
+	<id major_version="2.0" version="40">ab-fine-gibdd</id>
 	<name>Штрафы ГИБДД</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о наличии штрафов с сайта <a href="http://www.gibdd.ru/check/fines/">http://www.gibdd.ru/check/fines/</a></p>
+	<p>Предоставляет информацию о наличии штрафов с сайта <a href="https://xn--90adear.xn--p1ai/check/fines/">https://гибдд.рф/check/fines/</a>.</p>
 	<p>Наиболее точная информация доступна в провайдере <a href="https://anybalance.ru/catalog/ab-service-gosuslugi">Госуслуги (Штрафы, Налоги)</a>.</p>
 	]]></description>
 	<instruction html="true"><![CDATA[
@@ -23,15 +23,15 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Общая сумма штрафов" units=" р"/>
+		<counter id="balance" name="Общая сумма штрафов" units=" ₽"/>
 		<counter id="count" name="Количество штрафов" units=" шт"/>
-		<counter id="date" name="Дата последнего нарушения" type="time" format="dd/MM/yyyy"/>
-		<counter id="dateDiscount" name="Дата истечения скидки" type="time" format="dd/MM/yyyy"/>
+		<counter id="date" name="Дата последнего нарушения" type="time" format="dd.MM.yyyy"/>
+		<counter id="dateDiscount" name="Дата истечения скидки" type="time" format="dd.MM.yyyy"/>
 		<counter id="koap" name="Статья КоАП последнего штрафа" type="text"/>
 		<counter id="descr" name="Описание последнего штрафа" type="text"/>
 		<counter id="podrazdel" name="Подразделение последнего штрафа" type="text"/>
 		<counter id="postanovlenie" name="Постановление последнего штрафа" type="text"/>
-		<counter id="summ" name="Сумма последнего штрафа" units=" р"/>
+		<counter id="summ" name="Сумма последнего штрафа" units=" ₽"/>
 		<counter id="all" name="Сводка" type="html"/>
 	</counters>
 	<keywords>штрафы, гаи, гибдд, мвд, увд, штраф</keywords>

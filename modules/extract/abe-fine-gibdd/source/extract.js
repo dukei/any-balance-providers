@@ -3,11 +3,13 @@
 */
 
 var g_headers = {
-	'Accept':'application/json, text/javascript, */*; q=0.01',
-	'Accept-Language':'ru,en;q=0.8',
-	'Connection':'keep-alive',
-	'Origin':'http://www.gibdd.ru',
-	'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4298.0 Safari/537.36'
+	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
+	'Accept-Language': 'ru-RU,ru;q=0.9',
+	'Cache-Control': 'max-age=0',
+	'Connection': 'keep-alive',
+//	'Origin': 'http://www.gibdd.ru',
+	'Upgrade-Insecure-Requests': '1',
+	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.0.0 Safari/537.36'
 };
 
 function getGibddJson(html){
@@ -30,7 +32,7 @@ function requestFines(prefs) {
     var baseurl = 'https://xn--b1afk4ade.xn--90adear.xn--p1ai/';
     AnyBalance.setDefaultCharset('utf-8');
 	
-	var html = AnyBalance.requestGet(baseurlUser + 'check/fines', g_headers);
+	var html = AnyBalance.requestGet(baseurlUser + 'check/fines/', g_headers);
 	
 	if (AnyBalance.getLastStatusCode() >= 400) {
 		AnyBalance.trace('Server returned: ' + AnyBalance.getLastStatusString());
@@ -43,14 +45,22 @@ function requestFines(prefs) {
 	if(!found)
 		throw new AnyBalance.Error('Номер должен быть в формате а123вс190 либо 1234ав199, буквы русские.');
 	
-	var captcha = solveRecaptcha('Пожалуйста, докажите, что вы не робот', AnyBalance.getLastUrl(), JSON.stringify({SITEKEY: '6Lc66nwUAAAAANZvAnT-OK4f4D_xkdzw5MLtAYFL', TYPE: 'V3', ACTION: 'check_fines', USERAGENT: g_headers['User-Agent']}));
+	var imgCaptcha = AnyBalance.requestGet('https://check.gibdd.ru/captcha', addHeaders({'Accept': '*/*', Referer: baseurlUser}));
+    var json = getJson(imgCaptcha);
+    var img = json.base64jpg;
+    var token = json.token;
+	
+    var code = AnyBalance.retrieveCode('Пожалуйста, введите символы с картинки', img, {/*inputType: 'number', */time: 300000});
+	
+//	var reCaptcha = solveRecaptcha('Пожалуйста, докажите, что вы не робот', AnyBalance.getLastUrl(), JSON.stringify({SITEKEY: '6Lc66nwUAAAAANZvAnT-OK4f4D_xkdzw5MLtAYFL', TYPE: 'V3', ACTION: 'check_fines', USERAGENT: g_headers['User-Agent']}));
 
 	var params2 = [
 		['regnum',found[1].toUpperCase()],
 		['regreg',found[2]],
 		['stsnum',prefs.password.toUpperCase()],
-		['captchaWord',''],
-		['reCaptchaToken', captcha],
+		['captchaWord',code],
+		['captchaToken', token],
+//		['reCaptchaToken', ''],
 	];
 	
 	AnyBalance.trace('Пробуем запросить информацию с данными: '+prefs.login+', ' + prefs.password);

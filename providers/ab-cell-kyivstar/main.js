@@ -469,10 +469,10 @@ function processMobileApi() {
 
     function valut(v) {
         valuts = {
-            UAH: 'грн.',
+            UAH: '₴',
             USD: '$',
             EUR: '€',
-            RUB: 'р.'
+            RUB: '₽'
         }
         return valuts[v] ? valuts[v] : v;
     }
@@ -483,7 +483,18 @@ function processMobileApi() {
     getValById(user_number_info,'user_full_name',result,'name')
     getValById(user_number_info,'user_number_activation_date',result,'connection_date', parseDateISO);
     getValById(user_number_info,'user_number_expiration_date',result,'till', parseDateISO);
-    getValById(user_number_info,'user_number_status',result,'status');
+    var userStatus=getValById(user_number_info,'user_number_status',result,'status');
+	
+	if(!userStatus&&json.components.length){
+	    for(var i=0; i<json.components.length; ++i){
+	    	var component = json.components[i];
+	    	if(component.id=='internet_connection_and_tv_info'){
+                var internet_connection_and_tv_info=getValById(json.components,'internet_connection_and_tv_info').content;
+                getValById(internet_connection_and_tv_info,'user_number_status',result,'status');
+				break;
+            }
+	    }
+	}
 
 	var json=callMobileApi('plan/api/subscriptions/'+phone); // Тарифный план
 //	var json=callMobileApi('plan/api/products/price-options?subscriptionId='+phone); // Подробное описание тарифа
@@ -533,10 +544,22 @@ function processBonus(bonuses, result) {
 		}else if(/Экстра Деньги|Extra money|Екстра гроші/i.test(bonus.name)){
 			AnyBalance.trace('Это екстра деньги');
 			get_param(bonus.volume&&bonus.volume.leftover, result, 'bonus_money', null, null, parseBalance);
+		}else if(bonus.code=='internet-roaming'||bonus.code=='data'||bonus.code=='DATA_ROAMING_WAR_PERIOD'||(/DATA_ROAMING/i.test(bonus.code))){
+			AnyBalance.trace('Это интернет в роуминге');
+			get_param(bonus.volume&&(bonus.volume.leftover*1024+' МБ'), result, 'bonus_internet_roaming', null, null, parseTraffic);
+			get_param(bonus.volume&&bonus.volume.validity, result, 'bonus_internet_roaming_till', null, null, parseDateISO);
+		}else if(bonus.code=='internet-gb'||bonus.code=='data'||bonus.code=='DATA_NATIONAL_GB'){
+			AnyBalance.trace('Это интернет по акции Суперсила');
+			get_param(bonus.volume&&(bonus.volume.leftover*1024+' МБ'), result, 'bonus_internet_gb', null, null, parseTraffic);
+			get_param(bonus.volume&&bonus.volume.validity, result, 'bonus_internet_gb_till', null, null, parseDateISO);
 		}else if(bonus.code=='internet'||bonus.code=='data'||bonus.code=='DATA_NATIONAL'){
 			AnyBalance.trace('Это интернет');
 			get_param(bonus.volume&&(bonus.volume.leftover+' '+bonus.volume.unit), result, 'bonus_internet', null, null, parseTraffic);
 			get_param(bonus.volume&&bonus.volume.validity, result, 'bonus_internet_till', null, null, parseDateISO);
+		}else if(bonus.code=='off-net-roaming'||bonus.code=='off_net_minutes_roaming'||bonus.code=='VOICE_ROAMING_WAR_PERIOD'||(/VOICE_ROAMING/i.test(bonus.code)&&/!INCOM/i.test(bonus.code))){
+			AnyBalance.trace('Это минуты в роуминге');
+			get_param(bonus.volume&&(bonus.volume.leftover+' '+bonus.volume.unit), result, 'bonus_mins_roaming', null, null, parseMinutes);
+			get_param(bonus.volume&&bonus.volume.validity, result, 'bonus_mins_roaming_till', null, null, parseDateISO);
 		}else if(bonus.code=='off-net'||bonus.code=='off_net_minutes'||bonus.code=='VOICE_OFFNET_FIXED_ISD_OLD'){
 			AnyBalance.trace('Это минуты по Украине и заграницу');
 			get_param(bonus.volume&&(bonus.volume.leftover+' '+bonus.volume.unit), result, 'bonus_mins_2', null, null, parseMinutes);
@@ -553,11 +576,15 @@ function processBonus(bonuses, result) {
 			AnyBalance.trace('Это минуты на фикс. номера');
 			get_param(bonus.volume&&(bonus.volume.leftover+' '+bonus.volume.unit), result, 'mins_fix', null, null, parseMinutes);
 			get_param(bonus.volume&&bonus.volume.validity, result, 'mins_fix_till', null, null, parseDateISO);
-		}else if(/min|VOICE/i.test(bonus.code)){
+		}else if(/min|VOICE/i.test(bonus.code)&&/!INCOM/i.test(bonus.code)&&bonus.categoryType=='VOICE'){
 			AnyBalance.trace('!!! Неизвестные минуты. Относим к минутам по Украине' );
 			get_param(bonus.volume&&(bonus.volume.leftover+' '+bonus.volume.unit), result, 'bonus_mins_2', null, null, parseMinutes);
 			get_param(bonus.volume&&bonus.volume.validity, result, 'bonus_mins_2_till', null, null, parseDateISO);
-		}else if(/SMS/i.test(bonus.code)){
+		}else if(bonus.code=='SMS_ROAMING_WAR_PERIOD'||(/SMS_ROAMING/i.test(bonus.code)&&bonus.categoryType=='MESSAGE')){
+			AnyBalance.trace('Это SMS в роуминге');
+			get_param(bonus.volume&&bonus.volume.leftover, result, 'sms_roaming', null, null, parseBalance);
+			get_param(bonus.volume&&bonus.volume.validity, result, 'sms_roaming_till', null, null, parseDateISO);
+		}else if(/SMS/i.test(bonus.code)&&bonus.categoryType=='MESSAGE'){
 			AnyBalance.trace('Это SMS');
 			get_param(bonus.volume&&bonus.volume.leftover, result, 'sms', null, null, parseBalance);
 			get_param(bonus.volume&&bonus.volume.validity, result, 'sms_till', null, null, parseDateISO);
@@ -570,7 +597,6 @@ function processBonus(bonuses, result) {
 		}
 	}
 }
-
 
 /*
 function getFullBonusText(html, result) {

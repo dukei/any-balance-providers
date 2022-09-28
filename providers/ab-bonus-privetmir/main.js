@@ -16,7 +16,6 @@ var baseurl = "https://privetmir.ru";
 var baseurlApi = "https://api-user.privetmir.ru/api";
 var g_token;
 var g_savedData;
-var replaceLogin = [replaceTagsAndSpaces, /\D/g, '', /.*(\d\d\d)(\d\d\d)(\d\d)(\d\d)$/, '+ 7 ($1) $2-$3-$4'];
 var replaceNumber = [replaceTagsAndSpaces, /\D/g, '', /.*(\d\d\d)(\d\d\d)(\d\d)(\d\d)$/, '+7 $1 $2-$3-$4'];
 
 function main(){
@@ -54,7 +53,6 @@ function main(){
 	
 	html = AnyBalance.requestGet(dataUrl, addHeaders({
 		'Accept': 'application/json, text/plain, */*',
-		'Host': 'api-user.privetmir.ru',
 		'Origin': baseurl,
 		'Referer': baseurl + '/'
 	    }));
@@ -84,7 +82,6 @@ function main(){
 	    var cashbackUrl = json.data.views.cashback.urls.fetch.url;
 		html = AnyBalance.requestGet(cashbackUrl, addHeaders({
 	    	'Accept': 'application/json, text/plain, */*',
-	    	'Host': 'api-user.privetmir.ru',
 	    	'Origin': baseurl,
 	    	'Referer': baseurl + '/'
 	        }));
@@ -114,6 +111,13 @@ function loginSite(prefs){
     AnyBalance.setDefaultCharset('utf-8');
 	
 	checkEmpty(prefs.login, 'Введите номер телефона!');
+	var login = prefs.login.replace(/[^\d]+/g, '');
+	
+    if (/^\d+$/.test(login)){
+	    checkEmpty(/^\d{10}$/.test(login), 'Введите номер телефона - 10 цифр без пробелов и разделителей!');
+		var formattedLogin = login.replace(/.*(\d{3})(\d{3})(\d{2})(\d{2})$/i, '+7 ($1) $2-$3-$4');
+	}
+	
 	checkEmpty(prefs.password, 'Введите пароль!');	
 	
 	html = AnyBalance.requestGet(baseurl + '/auth/', g_headers);
@@ -122,24 +126,21 @@ function loginSite(prefs){
 
 	if(!g_csrf){
 		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Не удалось найти форму входа. Сайт изменён?');
+		throw new AnyBalance.Error('Не удалось найти токен авторизации. Сайт изменён?');
 	}
 	
-	var uPhone = getParam(prefs.login, null, null, null, replaceLogin);
-	
-	var params = [
-        ['login',uPhone],
-        ['pass',prefs.password],
-		['rememberMe',''],
-		['recaptcha_token',''],
-		['csrf',g_csrf]
-	];
+	var captcha = '';
+	var recaptcha = getJsonObject(html, /window.recaptcha\s*=\s*/);
+	if (recaptcha && recaptcha.active === true){
+		AnyBalance.trace('Сайт затребовал проверку reCaptcha');
+		var captcha = solveRecaptcha('Пожалуйста, докажите, что вы не робот', AnyBalance.getLastUrl(), JSON.stringify({SITEKEY: recaptcha.key, TYPE: 'V3', ACTION: 'login', USERAGENT: g_headers['User-Agent']}));
+	}
 	
 	var html = AnyBalance.requestPost(baseurlApi + '/auth', {
-		login: uPhone,
+		login: formattedLogin,
         pass: prefs.password,
 		rememberMe: '',
-		recaptcha_token: '',
+		recaptcha_token: captcha,
 		csrf: g_csrf,
 	}, addHeaders({
 		'Accept': 'application/json, text/plain, */*',
@@ -149,8 +150,6 @@ function loginSite(prefs){
 	
 	var json = getJson(html);
 	AnyBalance.trace(JSON.stringify(json));
-	
-	var fingerprint = json.data.fingerprint;
 
     if (json.success != true){
 		var error = json.data.errorMessage;
@@ -163,7 +162,8 @@ function loginSite(prefs){
        	throw new AnyBalance.Error('Не удалось войти в личный кабинет. Сайт изменён?');
     }
 	
-	g_token = json.data.token;
+	var fingerprint = json.data.fingerprint;
+	var g_token = json.data.token;
 	g_savedData.setCookies();
 	g_savedData.save();
 }

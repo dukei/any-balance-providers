@@ -24,11 +24,11 @@ var g_baseurlLogin = 'http://login.mts.ru';
 
 var g_headers = {
     'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
-	'Accept-Language': 'en-US,en;q=0.9',
+	'Accept-Language': 'ru-RU,ru;q=0.9',
 	'Connection': 'keep-alive',
 	'Referer': 'https://login.mts.ru/',
 	'Upgrade-Insecure-Requests': '1',
-    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.75 Safari/537.36',
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36',
 //    'If-Modified-Since': null, //Иначе МТС глючит с кешированием...
 };
 
@@ -421,13 +421,15 @@ function getLKJsonNew(html) {
 		out.fio = account["profile:name"];
         out.phone_formatted = ('' + account["mobile:phone"]).replace(/(\d\d\d)(\d\d\d)(\d\d)(\d\d)$/, '+7($1)$2-$3-$4');
         out.phone = '' + account["mobile:phone"];
-//        out.balance = Math.round(account["mobile:balance"]*100)/100;
+		out.license = '' + account["mobile:terminal:id"];
+//        out.balance = Math.round(account["mobile:balance"]*100)/100; // Почему-то здесь баланс обновляется неоперативно
         out.tariff = '' + account["mobile:tariff"];
 	} else {
 		out.fio = json["profile:name"];
         out.phone_formatted = ('' + json["mobile:phone"]).replace(/(\d\d\d)(\d\d\d)(\d\d)(\d\d)$/, '+7($1)$2-$3-$4');
         out.phone = '' + json["mobile:phone"];
-//        out.balance = Math.round(json["mobile:balance"]*100)/100;
+		out.license = '' + json["mobile:terminal:id"];
+//        out.balance = Math.round(json["mobile:balance"]*100)/100; // Почему-то здесь баланс обновляется неоперативно
         out.tariff = '' + json["mobile:tariff"];
 	}
 	
@@ -622,8 +624,12 @@ function loginWithPassword(){
     AnyBalance.trace("Пробуем войти в личный кабинет...");
 
     var prefs = AnyBalance.getPreferences();
+
+	var csrfToken = g_savedData.set('csrfToken', ''); // Для POST-запросов каждый раз требуется новый токен, поэтому удаляем сохранённый из прошлого входа
+	g_savedData.save();
 	
 	html = loadProtectedPage('https://login.mts.ru/api/profile', addHeaders({referer: 'https://lk.mts.ru/'}));
+	
     if(/"mobile:phone"/i.test(html)){
         AnyBalance.trace('Сессия сохранена. Входим автоматически...');
 	}else{
@@ -722,7 +728,7 @@ function login(result){
 }
 
 function processInfoLK(html, result){
-    if(!AnyBalance.isAvailable('balance', 'tariff', 'info.phone', 'info.fio'))
+    if(!AnyBalance.isAvailable('balance', 'tariff', 'info.licschet', 'info.phone', 'info.fio'))
         return;
 
     try {
@@ -735,6 +741,7 @@ function processInfoLK(html, result){
         if(AnyBalance.isAvailable('info')){
         	if(!result.info)
             	result.info = {};
+			getParam(info.license, result.info, 'info.licschet');
             getParam(info.phone, result.info, 'info.phone', null, replaceNumber);
             getParam(info.fio, result.info, 'info.fio');
         }
@@ -912,14 +919,22 @@ function fetchNumber() {
 	return number;
 }
 
-function callNewLKApiToken(verb){
-	var html = AnyBalance.requestGet('https://lk.mts.ru/api/' + verb, addHeaders({
-		Accept: 'application/json, text/plain, */*',
-		Origin: 'https://lk.mts.ru',
-		Referer: 'https://lk.mts.ru/',
-		'X-Login': fetchNumber(),
-		'X-Requested-With': 'XMLHttpRequest'
-	}));
+function callNewLKApiToken(verb, params){
+	var method = 'GET', params_str = '', headers = g_headers;
+	if(params){
+		var csrfToken = g_savedData.get('csrfToken'); // Нужен для POST-запросов
+	    if(!csrfToken){
+	        getCsrfToken();
+		    var csrfToken = g_savedData.get('csrfToken');
+		}
+		params_str = JSON.stringify(params);
+		method = 'POST';
+		headers = addHeaders({Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrfToken, 'X-Login': fetchNumber(), 'X-Requested-With': 'XMLHttpRequest'});
+	}else{
+		headers = addHeaders({Accept: 'application/json, text/plain, */*', 'X-Login': fetchNumber(), 'X-Requested-With': 'XMLHttpRequest'});
+	}
+	
+	var html = AnyBalance.requestPost('https://lk.mts.ru/api/' + verb, params_str, headers, {HTTP_METHOD: method});
 
 	var token = getJson(html);
 	if(typeof token !== 'string'){
@@ -937,8 +952,6 @@ function callNewLKApiResult(token){
 	for(var i=0; i<30; ++i){
 		var html = AnyBalance.requestGet('https://lk.mts.ru/api/longtask/check/' + token.token + '?for=' + token.verb, addHeaders({
 			Accept: 'application/json, text/plain, */*',
-		    Origin: 'https://lk.mts.ru',
-		    Referer: 'https://lk.mts.ru/',
 		    'X-Login': fetchNumber(),
 		    'X-Requested-With': 'XMLHttpRequest'
 		}));
@@ -952,7 +965,6 @@ function callNewLKApiResult(token){
 			continue;
 		}
 		
-
 		var json = getJson(html);
 		AnyBalance.trace('Получен результат ' + token.verb + ' от ' + json.refreshDate);
 		return json.data || json;
@@ -961,32 +973,26 @@ function callNewLKApiResult(token){
 	throw new AnyBalance.Error('Не удалось получить результат ' + token.verb);
 }
 
-function callNewLKApiResultAlt(token){
-	for(var i=0; i<30; ++i){
-		var html = AnyBalance.requestGet('https://lk.mts.ru/api/longtask/check/' + token.token + '?for=' + token.verb, addHeaders({
-			Accept: 'application/json, text/plain, */*',
-		    Origin: 'https://lk.mts.ru',
-		    Referer: 'https://lk.mts.ru/',
-		    'X-Login': fetchNumber(),
-		    'X-Requested-With': 'XMLHttpRequest'
-		}));
-		AnyBalance.trace('Ожидание результата ' + token.verb + ' ' + (i+1) + '/' + 30);
-		if(AnyBalance.getLastStatusCode() >= 400){
-			AnyBalance.trace("Waiting for result error: " + html);
-			throw new AnyBalance.Error(html);
+function callNewLKApiData(verb, params){ // Для прямых запросов без получения токена
+	var method = 'GET', params_str = '', headers = g_headers;
+	if(params){
+		var csrfToken = g_savedData.get('csrfToken'); // Нужен для POST-запросов
+	    if(!csrfToken){
+	        getCsrfToken();
+		    var csrfToken = g_savedData.get('csrfToken');
 		}
-		if(!html){
-			AnyBalance.sleep(2000);
-			continue;
-		}
-		
-
-		var json = getJson(html);
-		AnyBalance.trace('Получен результат ' + token.verb);
-		return json;
+		params_str = JSON.stringify(params);
+		method = 'POST';
+		headers = addHeaders({Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrfToken, 'X-Login': fetchNumber(), 'X-Requested-With': 'XMLHttpRequest'});
+	}else{
+		headers = addHeaders({Accept: 'application/json, text/plain, */*', 'X-Login': fetchNumber(), 'X-Requested-With': 'XMLHttpRequest'});
 	}
+	
+	var html = AnyBalance.requestPost('https://lk.mts.ru/api/' + verb, params_str, headers, {HTTP_METHOD: method});
 
-	throw new AnyBalance.Error('Не удалось получить результат ' + token.verb);
+	var json = getJson(html);
+	AnyBalance.trace('Получен результат api/' + verb + ' от ' + json.refreshDate);
+	return json.data || json;
 }
 
 function processCountersLK(result){
@@ -995,10 +1001,20 @@ function processCountersLK(result){
 	
 	var token = callNewLKApiToken('sharing/counters');
 	var data = callNewLKApiResult(token);
+	
+	if (data.counters && data.counters.length < 3){
+		var tries = 0;
+		do {
+			AnyBalance.trace('Получены не все остатки. Повторная попытка ' + (tries+1) + '/5');
+			AnyBalance.sleep(2000);
+		    var token = callNewLKApiToken('sharing/counters');
+		    var data = callNewLKApiResult(token);
+		} while (data.counters.length < 3 && ++ tries < 5);
+	}
 
 	for(var i=0; i<data.counters.length; ++i){
 		var c = data.counters[i];
-		if (/Входящ/i.test(c.name)){
+		if (/Входящ/i.test(c.name)){ // Для звонков в Беларуси
 			AnyBalance.trace('Найден счетчик ' + c.name + ' (' + c.packageType + '). Это посуточный дополнительный пакет. Пропускаем...');
 			continue;
 	    }
@@ -1037,6 +1053,8 @@ function processCountersLK(result){
 	var data = callNewLKApiResult(token);
 	var status = {
 		Unblocked: 'Номер не блокирован',
+		OnlyInboundCalls: 'Частичная блокировка',
+		BlockDueToInsufficiencyOfMoney: 'Номер заблокирован',
 		Blocked: 'Номер заблокирован'
 	};
 	getParam(status[data.accountBlockStatus]||data.accountBlockStatus, result.remainders, 'remainders.statuslock');
@@ -1061,9 +1079,117 @@ function processCountersLK(result){
 	}
 	
 	var token = callNewLKApiToken('creditLimit');
-	var data = callNewLKApiResultAlt(token);
+	var data = callNewLKApiResult(token);
 	
 	getParam(data.currentCreditLimitValue, result.remainders, 'remainders.credit');
+	
+	if (isAvailable(['expenses.usedinthismonth', 'expenses.usedinprevmonth', 'expenses.abonservice', 'expenses.refill'])) {
+	    processExpensesLK(result);
+	}
+	
+	if (isAvailable(['payments.sum', 'payments.date'])) {
+	    processTransactionsLK(result);
+	}
+}
+
+function getCsrfToken(){
+    var html = AnyBalance.requestGet('https://lk.mts.ru/api/login/user-info', addHeaders({
+		Accept: 'application/json, text/plain, */*',
+		'X-Requested-With': 'XMLHttpRequest'
+	}));
+
+    var csrf = AnyBalance.getLastResponseHeader('X-Refresh-CSRF-Token');
+	if(!csrf)
+		AnyBalance.trace('Не удалось получить csrfToken');
+	var csrfToken = g_savedData.set('csrfToken', csrf);
+	g_savedData.save();
+}
+
+function processExpensesLK(result){
+	if(!result.expenses)
+        result.expenses = {};
+
+    var dt = new Date();
+	var dateFrom = dt.getFullYear() + '-' + n2(dt.getMonth()+1) + '-' + '01' + 'T00:00:00+03:00';
+	var dateTo = dt.getFullYear() + '-' + n2(dt.getMonth()+1) + '-' + n2(dt.getDate()) + 'T23:59:59+03:00';
+	
+	var token = callNewLKApiToken('billHistory/summary', {
+        "dateFrom": dateFrom,
+        "dateTo": dateTo,
+        "transactionFilter": {
+            "pageNumber": 0,
+            "filterTypes": {},
+            "category": null
+        }
+    });
+	var data = callNewLKApiResult(token);
+	
+	getParam(data.billingTotal, result.expenses, 'expenses.usedinthismonth');
+	
+	if (data.categories && data.categories.length > 0) {
+		for(var i=0; data.categories && i<data.categories.length; ++i){
+			var categorie = data.categories[i];
+			AnyBalance.trace('Найдена категория "' + categorie.name + '" ');
+			if (/Абонентская плата/i.test(categorie.name)){
+	            getParam(categorie.totalAmount, result.expenses, 'expenses.abonservice');
+			}else if (/Пополнения/i.test(categorie.name)){
+				getParam(categorie.totalAmount, result.expenses, 'expenses.refill');
+			}
+		}
+    }else{
+		AnyBalance.trace('Не удалось получить данные по расходам');
+	}
+	
+	var dt = new Date();
+	var dtPrev = new Date(dt.getFullYear(), dt.getMonth(), 0);
+	var dateFromPrev = dtPrev.getFullYear() + '-' + n2(dtPrev.getMonth()+1) + '-' + '01' + 'T00:00:00+03:00';
+	var dateToPrev = dtPrev.getFullYear() + '-' + n2(dtPrev.getMonth()+1) + '-' + n2(dtPrev.getDate()) + 'T23:59:59+03:00';
+	
+	var token = callNewLKApiToken('billHistory/summary', {
+        "dateFrom": dateFromPrev,
+        "dateTo": dateToPrev,
+        "transactionFilter": {
+            "pageNumber": 0,
+            "filterTypes": {},
+            "category": null
+        }
+    });
+	var data = callNewLKApiResult(token);
+	
+	getParam(data.billingTotal, result.expenses, 'expenses.usedinprevmonth');
+}
+
+function processTransactionsLK(result){
+	if(!result.payments)
+        result.payments = {};
+	
+	var dt = new Date();
+	var dtHalf = new Date(dt.getFullYear(), dt.getMonth()-6, dt.getDate());
+	var dateFromHalf = dtHalf.getFullYear() + '-' + n2(dtHalf.getMonth()+1) + '-' + n2(dtHalf.getDate()) + 'T00:00:00+03:00';
+	var dateToHalf = dt.getFullYear() + '-' + n2(dt.getMonth()+1) + '-' + n2(dt.getDate()) + 'T23:59:59+03:00';
+	
+	var data = callNewLKApiData('billHistory/transactionPage', {
+        "dateFrom": dateFromHalf,
+        "dateTo": dateToHalf,
+        "transactionFilter": {
+            "category": "refill",
+            "pageNumber": 0,
+            "types": [
+                "Incomes"
+            ]
+        }
+    });
+	
+	if (data.transactions && data.transactions.length > 0) {
+		for(var i=0; data.transactions && i<data.transactions.length; ++i){
+			var transaction = data.transactions[i];
+            getParam(transaction.amount, result.payments, 'payments.sum');
+			getParam(transaction.dateTime.replace(/(\d{4})-(\d{2})-(\d{2}).*/, '$3.$2.$1'), result.payments, 'payments.date', null, null, parseDate);
+            break;
+		}
+    }else{
+		AnyBalance.trace('Не удалось получить данные последней транзакции');
+	}
 }
 
 function mainLK(html, result) {

@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id major_version="4.1" version="207">ab-cell-mts-russia</id>
+	<id major_version="4.1" version="209">ab-cell-mts-russia</id>
 	<name>МТС (Россия)</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе, бонусных баллах, использованных минутах на локальные, мобильные и любимые номера, расходах, статусе блокировки, кредите, номере лицевого счета, ежемесячной плате.</p>
@@ -42,7 +42,7 @@
 		<counter id="min_left_mts_rf" name="Бесплатные минуты на МТС РФ" units=" мин"/>
 		<counter id="min_left_connect" name="Минуты приложение МТС Connect" units=" мин"/>
 		<counter id="tourist" name="Туристическая СИМ-карта от МТС" type="time_interval" format="{@MIN}" units=" мин"/>
-		<counter id="abonservice" name="Абонентская плата за доп.услуги" units=" ₽"/>
+		<counter id="abonservice" name="Абонентская плата за услуги" units=" ₽"/>
 		<counter id="debt" name="Неоплаченные счета" units=" ₽"/>
 		<counter id="pay_till" name="Оплатить до" type="time" format="dd.MM.yyyy"/>
 		<counter id="min_till" name="Срок действия пакета минут" type="time" format="dd.MM.yyyy"/>
@@ -58,10 +58,10 @@
 		<counter id="services" name="Подключенные услуги" units=" шт"/>
 		<counter id="services_free" name="Бесплатные услуги" units=" шт"/>
 		<counter id="services_paid" name="Платные услуги" units=" шт"/>
-		<counter id="usedinthismonth" name="Расход за этот месяц" units=" ₽"/>
-		<counter id="usedinprevmonth" name="Расход за прошлый месяц" units=" ₽"/>
+		<counter id="usedinthismonth" name="Расходы за этот месяц" units=" ₽"/>
+		<counter id="usedinprevmonth" name="Расходы за прошлый месяц" units=" ₽"/>
 		<counter id="license" name="Лицевой счет" type="text"/>
-		<counter id="monthlypay" name="Ежемесячная плата" units=" ₽"/>
+		<counter id="refill" name="Пополнения за этот месяц" units=" ₽"/>
 		<counter id="phone" name="Номер телефона" type="text"/>
 		<counter id="fio" name="ФИО" type="text"/>
 		<counter id="bonus_balance" name="Остаток бонусного баланса" units=" ₽"/>

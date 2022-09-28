@@ -3,7 +3,7 @@
 */
 
 var g_headers = {
-	'User-Agent': 'PriorMobile3/3.17.03.22 (Android 26; versionCode 37)',
+	'User-Agent': 'PriorMobile3/3.42.5 (Android 26; versionCode 113)',
 	Connection: 'Keep-Alive'
 };
 

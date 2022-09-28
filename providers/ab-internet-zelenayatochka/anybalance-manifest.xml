@@ -1,14 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="9">ab-internet-zelenayatochka</id>
+	<id version="10">ab-internet-zelenayatochka</id>
 	<api flags="no_browser"/>
 	<name>Зеленая точка</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе интернет-провайдера Зеленая точка  <a href="http://zelenaya.net">http://zelenaya.net</a><.</p>
+	<p>Предоставляет информацию о балансе интернет-провайдера Зеленая точка <a href="https://zelenaya.net/">https://zelenaya.net/</a>.</p>
 	<p>Информация берется из личных кабинетов:</p>
 	<ul>
 		<li>Липецк <a href="https://lk.lipetsk.zelenaya.net/">https://lk.lipetsk.zelenaya.net/</a></li>
-		<li>Ставрополь <a href="https://personal.ooonet.ru/">https://personal.ooonet.ru/</a></li>
+		<li>Ставрополь <a href="https://lk.stavropol.zelenaya.net/">https://lk.stavropol.zelenaya.net/</a></li>
 		<li>Нальчик <a href="http://abonent.naltel.ru/">http://abonent.naltel.ru/</a></li>
 		<li>Уфа <a href="https://lk.ufa.zelenaya.net/">https://lk.ufa.zelenaya.net/</a></li>
 		<li>Белгород <a href="https://lk.belgorod.zelenaya.net/">https://lk.belgorod.zelenaya.net/</a></li>
@@ -17,9 +17,9 @@
 	</ul>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
-        <depends>
-            <module id="library"/>
-        </depends>
+    <depends>
+        <module id="library"/>
+    </depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
@@ -27,14 +27,16 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units=" р"/>
-		<counter id="cred_balance" name="Кредит/К оплате" units=" р"/>
-<!--	<counter id="bonuses" name="Бонусы" units=" б"/> -->
-		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="balance" name="Баланс" units=" ₽"/>
+		<counter id="cashback" name="Бонусы" units=" Б"/>
+		<counter id="cred_balance" name="К оплате" units=" ₽"/>
+    	<counter id="acc_num" name="Номер счета" type="text"/>
 		<counter id="status" name="Статус" type="text"/>
-		<counter id="acc_num" name="Номер счета" type="text"/>
+		<counter id="level" name="Уровень" units="%"/>
+		<counter id="address" name="Адрес" type="text"/>
+		<counter id="fio" name="ФИО" type="text"/>
 	</counters>
-	<keywords></keywords>
+	<keywords>Зеленая точка</keywords>
 	<type>internet</type>
 	<country>ru</country>
 </provider>

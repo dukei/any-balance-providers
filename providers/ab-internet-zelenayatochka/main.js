@@ -12,7 +12,7 @@ var g_headers = {
 
 var g_regions = {
 	lipetsk: getUnified,
-	stavr: getStavr,
+	stavropol: getUnified,
 	nal: getNal,
 	ufa: getUnified,
 	belgorod: getUnified,
@@ -58,11 +58,16 @@ function getUnified(prefs) {
 	
 	var result = {success: true};
 	
-	getParam(html, result, 'fio', /Клиент:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
-	getParam(html, result, 'balance', /Баланс:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'cred_balance', /необходимо оплатить:\s*<span[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'acc_num', /Личный счет №([^<]+)/i, replaceTagsAndSpaces);
-	getParam(getElement(html, /<div[^>]+tariffBlock/i), result, '__tariff', /<h3[^>]*>([\s\S]*?)<\/h3>/i, [replaceTagsAndSpaces, /^тариф\s*/i, '', /\s+/g, ' ']);
+	getParam(html, result, 'fio', /<div[^>]+class="cashback-block-name"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+	getParam(html, result, 'balance', /Баланс[\s\S]*?[^>]*>([\s\S]*?)<\/div>/, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'cashback', /<div[^>]+class="cashback-balance"[^>]*>([\s\S]*?)<\/div>/, replaceTagsAndSpaces, parseBalance);
+	var creditBalance = getParam(html, null, null, /необходимо оплатить[\s\S]*?[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalanceSilent);
+	getParam(0|creditBalance, result, 'cred_balance', null, null, parseBalance);
+	getParam(html, result, 'acc_num', /Номер сч[е|ё]та[\s\S]*?[^>]*>№([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+	getParam(html, result, 'address', /Адрес[\s\S]*?[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+	var cashbackStatus = getParam(html, result, 'status', /Статус:([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+	var cashbackLevel = getParam(html, result, 'level', /Cashback:([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+	result.__tariff = cashbackStatus + ' | ' + cashbackLevel + '%';
 	
 	AnyBalance.setResult(result);
 }

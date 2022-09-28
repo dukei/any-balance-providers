@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="16">ab-bonus-rosneft</id>
+	<id version="17">ab-bonus-rosneft</id>
 	<api flags="no_browser"/>
 	<name>Семейная команда (Бонусы)</name>
 	<description html="true"><![CDATA[
@@ -8,7 +8,7 @@
 	<p>Информация берется из личного кабинета на сайте https://komandacard.ru/.</p>
 	]]></description>
 	<instruction html="true"><![CDATA[
-	<p>Для получения данных с сайта необходимо ввести в настройки провайдера свой номер телефона, на который зарегистрирована карта "Семейная команда", однократно пройти проверку ReCaptcha и ввести проверочный код, пришедший по SMS.</p>
+	<p>Для работы провайдера требуется ввести номер телефона, к которому привязана карта, и пароль для входа в личный кабинет "Семейная команда", однократно пройти проверку ReCaptcha и ввести код подтверждения, высланный по SMS.</p>
 	]]></instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>

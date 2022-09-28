@@ -8,12 +8,12 @@ var replaceNumber = [replaceTagsAndSpaces, /\D/g, '', /.*(\d)(\d\d\d)(\d\d\d)(\d
 
 var g_headers = {
 	'Accept': '*/*',
-	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
+	'Accept-Language': 'ru-RU,ru;q=0.9,en-US;q=0.7,en;q=0.4',
 	'Connection': 'keep-alive',
 	'X-Requested-With': 'XMLHttpRequest',
 	'Origin': baseurl.replace(/\/+$/, ''),
 	'Referer': baseurl,
-	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.100 Safari/537.36',
+	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36'
 };
 
 function throwError(html, defError){
@@ -39,7 +39,7 @@ function main() {
 		'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9'
 	}));
 	
-	if(!/unauthorized/i.test(html)){
+	if(/data-show-login-form=""|Выход/i.test(html)){
 		AnyBalance.trace('Сессия сохранена. Входим автоматически...');
 	}else{
 		AnyBalance.trace('Сессия новая. Будем логиниться заново...');
@@ -77,7 +77,7 @@ function main() {
 		    var row = getElement(html, /<div[^>]+block-statement__content/i);
 		    row = row && getElement(row, /<div[^>]+block-table__body/i);
 		    rows = row && getElements(row, /<div[^>]+block-table__row/ig);
-            last = rows[rows.length - 1];
+            last = rows[0];
 		    getParam(last, result, 'last_date', /(?:[\s\S]*?<div[^>]*>){2}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseDate);
 			getParam(last, result, 'last_card', /(?:[\s\S]*?<div[^>]*>){3}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
 		    getParam(last, result, 'last_place', /(?:[\s\S]*?<div[^>]*>){4}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
@@ -121,7 +121,7 @@ function loginSite(prefs){
     var prefs = AnyBalance.getPreferences();
 
 	checkEmpty(prefs.login, 'Введите номер телефона!');
-	checkEmpty(/^\d{10}$/.test(prefs.login), 'Введите 10 цифр номера телефона в формате 9261234567 без пробелов и разделителей!');
+	checkEmpty(/^\d{10}$/.test(prefs.login), 'Введите номер телефона в формате 10 цифр без пробелов и разделителей!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 
 //	var html = AnyBalance.requestGet(baseurl + 'location/getcity', g_headers);
@@ -129,8 +129,14 @@ function loginSite(prefs){
 
 //	AnyBalance.setCookie('komandacard.ru', 'regionId', json.regionId);
 
-	var html = AnyBalance.requestGet(baseurl + 'account/login', g_headers);
+	var dt = new Date();
+	var html = AnyBalance.requestGet(baseurl + 'account/login?_=' + dt.getTime(), g_headers);
 	var rvt = getParam(html, /<input[^>]+__RequestVerificationToken[^>]*value="([^"]*)/i, replaceHtmlEntities);
+	
+	if(!rvt){
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удалось найти токен верификации запроса. Сайт изменен?');
+	}
 
 	var captcha = solveRecaptcha('Пожалуйста, докажите, что вы не робот', baseurl + 'login', '6LejgioUAAAAAK6ZVEm_o8YhLHpnBil1J-hrPQnB', {USERAGENT: g_headers['User-Agent']});
 
@@ -161,11 +167,11 @@ function loginSite(prefs){
 	}));
 
 	if(/SelectedChannelId/.test(html)){
-		AnyBalance.trace('Просим подтвердить Вашу личность одним из доступных способов');
+		AnyBalance.trace('Сайт затребовал подтверждение входа');
 
 		var label = getElement(html, /<label[^>]+for="[^"]+"/i);
 		if(!label){
-			throwError(html, 'Не удаётся найти вариант подтверждения входа. Сайт изменен?');
+			throwError(html, 'Не удалось найти способ подтверждения входа. Сайт изменен?');
 		}
 
 		var channelId = getParam(label, /<label[^>]+for="([^"]+)"/i, replaceHtmlEntities);
@@ -195,7 +201,7 @@ function loginSite(prefs){
 			throwError(html, 'Не удалось запросить подтверждение входа. Сайт изменен?');
 		}
 
-		var code = AnyBalance.retrieveCode('Пожалуйста, введите код подтверждения, высланный на номер ' + label, null, {inputType: 'number', time: 180000});
+		var code = AnyBalance.retrieveCode('Пожалуйста, введите код подтверждения, высланный на ' + label, null, {inputType: 'number', time: 180000});
 
 		rvt = getParam(html, /<input[^>]+__RequestVerificationToken[^>]*value="([^"]*)/i, replaceHtmlEntities);
 		html = AnyBalance.requestPost(baseurl + 'account/login', JSON.stringify({

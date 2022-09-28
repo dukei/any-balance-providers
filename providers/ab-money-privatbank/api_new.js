@@ -62,7 +62,7 @@ function apiNew() {
     if (!data.firstInitTime) data.firstInitTime = +new Date;
     if (!data.pt) data.pt = generateUUID('24-4-4-4-12');
     if (!data.pass) data.token = '';
-    g_geaders['user-agent-mob'] = '{"appVersion":"6.37.00","biometric":false,"brand":"OnePlus","deviceModel":"ONEPLUS A5000|OnePlus","display":"ONEPLUS A5000_23_171031","firstInitTime":"' + data.firstInitTime + '","hardware":"qcom","imeiGenerate":"' + data.imei + '","industrialName":"OnePlus5","isRooted":false,"lang":"' + (prefs.lang | 'ru') + '","lat":"0.0","lng":"0.0","model":"ONEPLUS A5000","modelType":"Tablet","nfcHce":true,"osName":"AOS","osVersion":"7.1.1"}';
+    g_geaders['user-agent-mob'] = '{"appVersion":"6.48.00","biometric":false,"brand":"OnePlus","deviceModel":"ONEPLUS A5000|OnePlus","display":"ONEPLUS A5000_23_171031","firstInitTime":"' + data.firstInitTime + '","hardware":"qcom","imeiGenerate":"' + data.imei + '","industrialName":"OnePlus5","isRooted":false,"lang":"' + (prefs.lang | 'ru') + '","lat":"0.0","lng":"0.0","model":"ONEPLUS A5000","modelType":"Tablet","nfcHce":true,"osName":"AOS","osVersion":"7.1.1"}';
     if (data.token) {
         AnyBalance.trace('Найден старый токен. Проверяем...');
         try {

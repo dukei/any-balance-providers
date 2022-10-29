@@ -1,11 +1,15 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="2.0" version="36">ab-internet-netbynet</id>
+	<id major_version="2.0" version="37">ab-internet-netbynet</id>
 	<api flags="no_browser"/>
 	<name>NetByNet</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе, остатке дней, статусе и обещанном платеже для пользователей  интернет-провайдера NetByNet (http://wifire.ru) из личного кабинета https://my.wifire.ru .</p>  
+	<p>Предоставляет информацию о балансе, остатке дней, статусе и обещанном платеже для пользователей  интернет-провайдера NetByNet (https://www.wifire.ru/).</p>
+	<p>Информация берется из личного кабинета https://my.wifire.ru/.</p>
 	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Для работы провайдера требуется ввести номер лицевого счета или логин и пароль для входа в личный кабинет NetByNet.</p>
+	]]></instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>
 		<module id="library"/>
@@ -17,18 +21,18 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units=" р"/>
-		<counter id="bonus_balance" name="Бонусный баланс" units=" б"/>
+		<counter id="balance" name="Баланс" units=" ₽"/>
+		<counter id="bonus_balance" name="Бонусный баланс" units=" Б"/>
 		<counter id="trafficLeft" name="Остаток трафика" units=" Гб"/>
 		<counter id="day_left" name="Осталось дней" suffix=" дн."/>
-		<counter id="minpay" name="К оплате" units=" р"/>
-		<counter id="minpay_till" name="К оплате до" type="time" format="dd/MM/yyyy"/>
+		<counter id="minpay" name="К оплате" units=" ₽"/>
+		<counter id="minpay_till" name="К оплате до" type="time" format="dd.MM.yyyy"/>
 		<counter id="subscriber" name="Абонент" type="text"/>
 		<counter id="contract" name="Номер договора" type="text" prefix="№ "/>
 		<counter id="status" name="Статус" type="text"/>
-		<counter id="promised_payment" name="Обещанный платеж" units=" р"/>
-		<counter id="abonday" name="Суточная абонплата" units=" р"/>
-		<counter id="abon" name="Ежемесячная абонплата" units=" р"/>
+		<counter id="promised_payment" name="Обещанный платеж" units=" ₽"/>
+		<counter id="abonday" name="Суточная абонплата" units=" ₽"/>
+		<counter id="abon" name="Ежемесячная абонплата" units=" ₽"/>
 	</counters>
 	<keywords>интернет, москва, санкт-петербург, россия, netbynet, нетбайнет</keywords>
 	<type>internet</type>

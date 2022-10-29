@@ -3,11 +3,12 @@
 */
 
 var g_headers = {
-	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
 	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
-	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
+	'Accept-Language': 'ru-RU,ru;q=0.9,en-US;q=0.7,en;q=0.4',
 	'Connection': 'keep-alive',
-	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36',
+	'Upgrade-Insecure-Requests': '1',
+	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/106.0.0.0 Safari/537.36'
 };
 
 var g_regions = {
@@ -30,7 +31,7 @@ function main(){
     var prefs = AnyBalance.getPreferences();
 
 	checkEmpty(prefs.login, 'Введите логин!');
-	checkEmpty(prefs.login.trim() == prefs.login, 'Вы случайно добавили пробелы в логин. Пожалуйста, введите логин в настройки провайдеров без пробелов.');
+	checkEmpty(prefs.login.trim() == prefs.login, 'Вы случайно добавили пробелы в логин. Пожалуйста, введите логин без пробелов');
 	checkEmpty(prefs.password, 'Введите пароль!');
 
     var func = g_regions[prefs.region] || g_regions.center;
@@ -58,7 +59,7 @@ function callAPI(verb, getParams, postParams, addheaders, checkResult){
 	});
 
 	if(postParams && !paramsAreNotJson)
-		headers['Content-Type'] = 'application/json; charset=utf-8';
+		headers['Content-Type'] = 'application/json';
 	if(addheaders)
 		headers = addHeaders(addheaders, headers);
 
@@ -83,7 +84,7 @@ function callAPI(verb, getParams, postParams, addheaders, checkResult){
 }
 
 function mainNew(){
-	var baseurl = 'https://my.netbynet.ru/';
+	var baseurl = 'https://my.wifire.ru/';
 
     var prefs = AnyBalance.getPreferences();
 
@@ -91,16 +92,18 @@ function mainNew(){
 	checkEmpty(prefs.password, 'Введите пароль!');
 
 	var json = callAPI('v1/get-way', {accountNumber: prefs.login});
-	json = callAPI('v2/login', null, {"accountNumber":prefs.login,"password":prefs.password,"captchaCode":""});
+	json = callAPI('v3/login', null, {"login": prefs.login, "password": prefs.password, "captchaCode": "", "save": false, "accountNumber": prefs.login, "deviceInfo": {"loginType": "SITE"}}); //{"accountNumber":prefs.login,"password":prefs.password,"captchaCode":""});
 
-	if(json.resultCode == 8){
+//  if(json.resultCode == 8){
+	if(json.captcha && json.captcha == true){
 		var img = AnyBalance.requestGet(baseurl + 'api/v2/captcha-challenge?accountNumber=' + prefs.login + '&time=' + (+new Date()), addHeaders({Referer: baseurl}));
 		var code = AnyBalance.retrieveCode('Пожалуйста, введите цифры с картинки', img, {inputType: 'number'});
-		json = callAPI('v2/login', null, {"accountNumber":prefs.login,"password":prefs.password,"captchaCode":code});
+//		json = callAPI('v2/login', null, {"accountNumber":prefs.login,"password":prefs.password,"captchaCode":code});
+		json = callAPI('v3/login', null, {"login": prefs.login, "password": prefs.password, "captchaCode": code, "save": false, "accountNumber": prefs.login, "deviceInfo": {"loginType": "SITE"}});
 	}
 
 	if(json.needChangePassword)
-		throw new AnyBalance.Error('NetByNet требует сменить пароль. Пожалуйста, зайдите на https://my.netbynet.ru через браузер, смените пароль и введите новый пароль в настройки провайдера', null, true);
+		throw new AnyBalance.Error('NetByNet требует сменить пароль. Пожалуйста, зайдите на https://my.wifire.ru через браузер, смените пароль и введите новый пароль в настройки провайдера', null, true);
 
 
 	//Надо исправить работу куки (пропали кавычки)

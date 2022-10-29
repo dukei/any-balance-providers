@@ -1,7 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="2.0" version="37" date="2022-10-28">
+	- Поддержка изменений в процедуре входа
+	</change>
 	<change major_version="2.0" version="36" date="2019-03-12">
-	Поддержка изменений на сайте
+	- Поддержка изменений на сайте
 	</change>
 	<change major_version="2.0" version="35" date="2017-05-04">
 	- Улучшена обработка ошибок.
@@ -10,10 +13,10 @@
 	- Поддержка изменений на сайте.
 	</change>
 	<change major_version="2.0" version="33" date="2017-04-18">
-	Разрешено вводить буквы в логине
+	- Разрешено вводить буквы в логине
 	</change>
 	<change major_version="2.0" version="32" date="2017-03-28">
-	Восстановление старого кабинета NetByNet
+	- Восстановление старого кабинета NetByNet
 	</change>
 	<change major_version="2.0" version="31" date="2017-03-21">
 	- Улучшена обработка ошибок.

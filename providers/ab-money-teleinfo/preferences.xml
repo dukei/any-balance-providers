@@ -4,10 +4,10 @@
 		obligatory="true"
 		title="Логин"
 		positiveButtonText="ОК"
-		summary="|УНК или псевдоним|{@s}"
-		dialogTitle="УНК или псевдоним"
+		summary="Логин для входа в личный кабинет|Введите логин\n|{@s}\n" 
+		dialogTitle="Логин"
 		negativeButtonText="Отмена"
-		dialogMessage="УНК или псевдоним"
+		dialogMessage="Введите УНК или псевдоним для входа в личный кабинет"
 		key="login">
 	</EditTextPreference>
 	<EditTextPreference
@@ -17,33 +17,35 @@
 		dialogTitle="Пароль"
 		negativeButtonText="Отмена"
 		title="Пароль"
-		summary="|Введите пароль|***********"
-		dialogMessage="Введите пароль для входа в телебанк"
+		summary="Пароль для входа в личный кабинет|Введите пароль\n|**********\n"
+		dialogMessage="Введите пароль, используемый для входа в личный кабинет"
 		inputType="textPassword">
 	</EditTextPreference>
 	<ListPreference
 		key="source"
-		title="Источник данных"
-		summary="||{@s}"
-		entries="Мобильное приложение|Интернет-банк (только карты и счета)"
+		title="Способ входа"
+		summary="Способ для входа в личный кабинет|Автоматически\n|{@s}\n"
+		dialogTitle="Способ входа"
+		entries="Мобильное приложение|Официальный сайт"
 		entryValues="mobile|site"
 		defaultValue="mobile">
 	</ListPreference>
 	<ListPreference
 		key="type"
-		title="Что смотреть"
-		summary="||{@s}"
+		title="Источник данных"
+		summary="Источник для получения информации||{@s}\n"
+		dialogTitle="Источник данных"
 		entries="Карта или счет|Депозит|Кредит"
 		entryValues="card|dep|crd"
 		defaultValue="card">
 	</ListPreference>
 	<EditTextPreference
-		title="Номер карты/счета"
+		title="Номер продукта"
 		positiveButtonText="ОК"
-		summary="|Автоматически|{@s}"
-		dialogTitle="Номер карты/счета"
+		summary="Последние 4 цифры номера продукта|Автоматически\n|{@s}\n"
+		dialogTitle="Номер продукта"
 		negativeButtonText="Отмена"
-		dialogMessage="В зависимости от настройки Что смотреть, введите сюда последние цифры номера карты или счета. Если оставить поле пустым, то будет показана информация по первому счету/карте."
+		dialogMessage="Введите последние 4 цифры карты, счета или депозита, по которым Вы хотите получать информацию. Если оставить поле пустым, будет показана информация по первому продукту"
 		key="card">
 	</EditTextPreference>
 </PreferenceScreen>

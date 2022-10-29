@@ -5,7 +5,7 @@
     <name>Easysax parser</name>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<files>
-		<js>easysax.min.js</js>
+		<js>parsers.easysax.min.js</js>
 		<history>history.xml</history>
 	</files>
 </provider>

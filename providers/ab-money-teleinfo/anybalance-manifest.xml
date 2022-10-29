@@ -1,13 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="46" major_version="3">ab-money-teleinfo</id>
-	<name>ВТБ24: Телебанк</name>
+	<id version="47" major_version="3">ab-money-teleinfo</id>
+	<name>ВТБ Онлайн</name>
 	<api flags="no_browser"/>
 	<description html="true"><![CDATA[
-	<p>Получает информацию о балансе карт и счетов из Системы «Телебанк» ВТБ24 ( https://www.telebank.ru ). Данные получаются по протоколу мобильного приложения ВТБ24 https://play.google.com/store/apps/details?id=ru.vtb24.mobilebanking.android, сравнивайте получаемые данные с приложением. </p>
+	<p>Получает информацию о балансе карт и счетов клиентов банка ВТБ (https://www.vtb.ru/).</p>
+	<p>Информация берется из мобильного приложения ВТБ Онлайн.</p>
 	]]></description>
 	<instruction html="true"><![CDATA[
-	<p>Для подключения к системе «Телебанк» Вам необходимо один раз посетить любой офис банка с  документом, удостоверяющим личность.</p>
+	<p>Для подключения к ВТБ Онлайн необходимо один раз посетить любой офис банка с  документом, удостоверяющим личность.</p>
 	]]></instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>

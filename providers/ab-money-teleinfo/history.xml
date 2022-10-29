@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="3" version="47" date="2022-10-27">
+	- Изменена иконка и название на ВТБ Онлайн
+	</change>
 	<change major_version="3" version="46" date="2021-06-27">
 	- Поддержка изменений в API
 	</change>

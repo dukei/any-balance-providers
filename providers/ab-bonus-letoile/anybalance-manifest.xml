@@ -1,16 +1,15 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="1.0" version="11">ab-bonus-letoile</id>
+	<id major_version="1.0" version="12">ab-bonus-letoile</id>
 	<api flags="no_browser"/>
 	<name>Л'Этуаль</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о бонусных баллах на клубных картах сети магазинов Л'Этуаль с сайтов letu.ru и letu.ua</p>
+	<p>Предоставляет информацию о бонусных баллах и другие данные по клубным картам сети магазинов Л'Этуаль с сайтов letu.ru и letu.ua.</p>
 	]]></description>
 	<instruction html="true"><![CDATA[
-	]]>
-	</instruction>
+	<p>Для работы провайдера требуется ввести логин и пароль для входа в личный кабинет Л'Этуаль и выбрать источник данных.</p>
+	]]></instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
-	<author>DimaZUA &lt;DIMAZ.KHUA@gmail.com&gt;</author>
 	<depends>
 		<module id="library"/>
 	</depends>
@@ -21,9 +20,22 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units=" {@unt}."/>
-		<counter id="discount" name="Скидка" units=" %"/>
+		<counter id="balance" name="Баланс" units=" {@currency}"/>
+		<counter id="bonuses_active" name="Активные бонусы" units=" Б"/>
+		<counter id="bonuses_inactive" name="Неактивные бонусы" units=" Б"/>
+		<counter id="discount" name="Скидка" units="%"/>
+		<counter id="bonuses_burn" name="Сгораемые бонусы" units=" Б"/>
+		<counter id="bonuses_till" name="Дата сгорания бонусов" type="time" format="dd.MM.yyyy"/>
 		<counter id="number" name="Номер карты" type="text"/>
+		<counter id="bonuses_total" name="Общая сумма бонусов" units=" Б"/>
+		<counter id="purchase_total" name="Общая сумма покупок" units=" {@currency}"/>
+		<counter id="orders" name="Заказы" units=" шт"/>
+		<counter id="last_order_sum" name="Сумма последнего заказа" units=" {@currency}"/>
+		<counter id="last_order_num" name="Номер последнего заказа" type="text"/>
+		<counter id="favorite" name="Избранное" units=" шт"/>
+		<counter id="notifications" name="Уведомления" units=" шт"/>
+		<counter id="phone" name="Номер телефона" type="text"/>
+		<counter id="fio" name="ФИО" type="text"/>
 	</counters>
 	<keywords>клубная карта, дисконтная карта, бонусная карта, бонус, bonus, лэтуаль, летуаль, л'этуаль, letoile, скидка</keywords>
 	<type>bonus</type>

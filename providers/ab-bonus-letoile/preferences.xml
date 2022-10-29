@@ -3,32 +3,31 @@
     <EditTextPreference
 		obligatory="true"
         key="login"
-        dialogTitle="Логин" 
         title="Логин"
-        summary="||{@s}" 
-        inputType="text"
-        dialogMessage="Введите email, используемый для входа на letu.ru или letu.ua"
+        summary="Логин для входа в личный кабинет|Введите логин\n|{@s}\n"
+        dialogTitle="Логин"
+        dialogMessage="Введите e-mail, используемый для входа в личный кабинет"
         positiveButtonText="ОК"
         negativeButtonText="Отмена">
     </EditTextPreference>
-	<EditTextPreference
+    <EditTextPreference
 		obligatory="true"
-		key="password"
-		title="Пароль"
-		summary="Пароль для авторизации||***********\n"
-		dialogTitle="Пароль"
-		negativeButtonText="Отмена"
-		dialogMessage="Введите пароль, используемый для авторизации"
-		positiveButtonText="ОК"
-		inputType="textPassword">
-	</EditTextPreference>
+        key="password"
+        title="Пароль"
+        summary="Пароль для входа в личный кабинет|Введите пароль\n|**********\n"
+        inputType="textPassword"
+        dialogTitle="Пароль"
+        dialogMessage="Введите пароль, используемый для входа в личный кабинет"
+        positiveButtonText="ОК"
+        negativeButtonText="Отмена">
+    </EditTextPreference>
     <ListPreference 
-        key="loc"
-        title="Проверять сайт"
-        summary="||{@s}" 
-        entries="Украина (letu.ua)|Росиия (letu.ru)"
-        entryValues="UA|RU"
-        defaultValue="UA">
+        key="loc" 
+        title="Регион"
+        summary="Регион для получения информации||{@s}\n"
+		dialogTitle="Регион"
+        entries="Россия (letu.ru)|Украина (letu.ua)"
+        entryValues="RU|UA"
+        defaultValue="RU">
     </ListPreference>
-
 </PreferenceScreen>

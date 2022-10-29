@@ -1,14 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="19">ab-bonus-lukoil</id>
+	<id version="21">ab-bonus-lukoil</id>
 	<name>Лукойл (Бонусы)</name>
 	<description html="true"><![CDATA[
-	<p>Получает информацию по картам "Лукойл Ликард" <a href="http://my.licard.com">http://my.licard.com</a></p>
+	<p>Получает информацию по картам "Лукойл Ликард" <a href="https://my.licard.com">https://my.licard.com</a></p>
 	<p>Также получает данные по картам Лояльности:</p>
 	<ul>
 		<li>Россия https://customer.licard.ru/</li>
-		<li>Беларусь http://club-lukoil.by/cabinet</li>
+		<li>Беларусь https://lk.club-lukoil.by/</li>
 	</ul>	
 	]]></description>
 	<instruction html="true"><![CDATA[
@@ -20,7 +20,7 @@
 	]]></instruction>
 	<author>DimaZ &lt;DIMAZ.KHUA@gmail.com&gt;</author>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
-        <depends>
+    <depends>
    		<module id="library"/>
    	</depends>
 	<files>
@@ -31,13 +31,19 @@
 	</files>
 	<counters>
 		<counter id="balance" name="Баланс" units=" Б"/>
-		<counter id="last_payment" name="Последний платеж" units=" р"/>
 		<counter id="cardnum" name="Номер карты" type="text"/>
-		<counter id="name" name="Имя" type="text"/>
 		<counter id="status" name="Статус карты" type="text"/>
+		<counter id="level" name="Уровень карты" type="text"/>
+		<counter id="expiration_date" name="Расчетный период" type="time" format="dd.MM.yyyy"/>
+		<counter id="last_payment" name="Последний платеж" units=" р"/>
+		<counter id="last_payment_date" name="Дата последнего платежа" type="time" format="dd.MM.yyyy"/>
+		<counter id="last_payment_points_plus" name="Начислено по посл. платежу" units=" Б"/>
+		<counter id="last_payment_points_minus" name="Списано по посл. платежу" units=" Б"/>
+		<counter id="last_payment_place" name="Место последнего платежа" type="text"/>
+		<counter id="name" name="Имя" type="text"/>
 		<counter id="phonenumber" name="Номер телефона" type="text"/>
 	</counters>
-	<keywords></keywords>
+	<keywords>лукойл, ликард, клуб</keywords>
 	<type>bonus</type>
 	<country>ru, by</country>
 </provider>

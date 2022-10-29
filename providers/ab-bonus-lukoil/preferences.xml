@@ -3,10 +3,10 @@
     <EditTextPreference 
         title="Логин" 
         positiveButtonText="ОК" 
-        summary="||{@s}" 
+        summary="Логин для входа в личный кабинет|Введите логин\n|{@s}\n"
         dialogTitle="Логин" 
         negativeButtonText="Отмена" 
-        dialogMessage="Введите e-mail или номер карты."
+        dialogMessage="Введите e-mail или номер карты для входа в личный кабинет"
         key="login">
     </EditTextPreference>
     <EditTextPreference 
@@ -15,15 +15,16 @@
         dialogTitle="Пароль"
         negativeButtonText="Отмена"
         title="Пароль"
-        summary="||***********"
-        dialogMessage="Введите пароль, используемый для входа в личный кабинет."
+        summary="Пароль для входа в личный кабинет|Введите пароль\n|***********\n"
+        dialogMessage="Введите пароль, используемый для входа в личный кабинет"
         inputType="textPassword">
     </EditTextPreference>
     <ListPreference 
         key="type" 
         title="Кабинет"
-        summary="||{@s}\n"
-        entries="club-lukoil.ru|my.licard.com|club-lukoil.by"
+        summary="Кабинет для получения информации||{@s}\n"
+		dialogTitle="Кабинет"
+        entries="customer.licard.ru|my.licard.com|lk.club-lukoil.by"
         entryValues="club|likard|clubby"
 	defaultValue="club">
     </ListPreference>	

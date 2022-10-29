@@ -31,8 +31,8 @@ function main(){
 
     var request='{"query":"query ContractList {  me {    id    contracts {      number      name      alias      address      existsRealMeter      liveBalance {liveBalance        recommendedPaySum                CharitySch                CharityNorm      }      filial {        id        title      }      contractData {        number        TO {NachTO {                    sum {                      CurSum                      PredSum                    }                    data {                      Tarif                      Cost                      Unit                      Cost                      Sum                    }                  }                  Dogovors {                    Num                    Code                    Name                    EndDate                    StartDate                  }                }        dogovorsVDGOInfo {          Num          Code          Name          SignDate          EndDate          StartDate          Saldo          CurPay          sumToPay        }        Nach {          sch {            data {              Cost              Unit              Dim            }          }          norm {            number            sum            data {              Id              Tarif              Cost              Unit              Dim              Count              m3              Sum              Normgaz            }          }        }        Devices {          ID          Place          ClassCode          ClassName          Model          ManfFirm          ManfNo          Status          DateNextCheck        }      }      metersHistory {        data      }    }  }}"}';
 	html = AnyBalance.requestPost(baseurl + 'graphql/', request,g_headers); 
-	AnyBalance.trace(html);
 	var json = getJson(html);
+	AnyBalance.trace(JSON.stringify(json));
 
     if(!json.data){
         throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
@@ -40,21 +40,20 @@ function main(){
 
     if (!json.data||!json.data.me||!json.data.me.contracts||!json.data.me.contracts.length)
     	throw new AnyBalance.Error('Лицевые счета не найдены');
+	
     var ls;
-    if(prefs.num){
-    	ls=json.data.me.contracts.filter(c=>c.number.endsWith(prefs.num));
-    	if (!ls.length){
-    		AnyBalance.trace('Найдены лицевые счета: '+json.data.me.contracts.map(c=>c.number).join(', '));
-    		throw new AnyBalance.Error('Не найден лицевой счет с последними цифрами '+prefs.num);
-    	}
-    	ls=ls[0];
-    }else{
-    	ls=json.data.me.contracts[0];
-    }
+	for(var i=0; i<json.data.me.contracts.length; ++i){
+		var contract = json.data.me.contracts[i];
+		AnyBalance.trace('Найден лицевой счет ' + contract.number);
+		if(!ls && (!prefs.num || endsWith(contract.number, prefs.num))){
+			ls = contract;
+		}
+	}
 
-
-    AnyBalance.trace('Выбрали ЛС ' + ls.number);
-
+	if(!ls)
+		throw new AnyBalance.Error('Не удалось найти лицевой счет с последними цифрами ' + prefs.num);
+	
+	AnyBalance.trace('Выбран лицевой счет ' + ls.number);
 	
     var result = {success: true};
     getParam(ls.liveBalance.recommendedPaySum, result, 'recomended',null,null,parseFloat);
@@ -64,12 +63,12 @@ function main(){
     getParam(ls.address, result, 'adr');
     if (ls.alias) getParam(ls.alias, result, '__tariff');
     if (ls.existsRealMeter){
-            getParam(ls.metersHistory.data[0].info.Name+' №'+ls.metersHistory.data[0].info.FactoryNum, result, 'counter');
-            getParam(ls.metersHistory.data[0].info.NextCheckDate,result,'NextCheckDate',null,[/(\d{4})(\d{2})(\d{2})/,'$3.$2.$1'],parseDate);
-            getParam(ls.metersHistory.data[0].values[0].V, result, 'lastV',null,null,parseInt);
-            getParam(ls.metersHistory.data[0].values[0].M3, result, 'lastM3',null,null,parseInt);
-            getParam(ls.metersHistory.data[0].values[0].Cost, result, 'cost',null,null,parseFloat);
-            getParam(ls.metersHistory.data[0].values[0].Date.date, result, 'lastDate',null,[/(\d{4})-(\d{2})-(\d{2})/,'$3.$2.$1'],parseDate);
+        getParam(ls.metersHistory.data[0].info.Name+' №'+ls.metersHistory.data[0].info.FactoryNum, result, 'counter');
+        getParam(ls.metersHistory.data[0].info.NextCheckDate,result,'NextCheckDate',null,[/(\d{4})(\d{2})(\d{2})/,'$3.$2.$1'],parseDate);
+        getParam(ls.metersHistory.data[0].values[0].V, result, 'lastV',null,null,parseInt);
+        getParam(ls.metersHistory.data[0].values[0].M3, result, 'lastM3',null,null,parseInt);
+        getParam(ls.metersHistory.data[0].values[0].Cost, result, 'cost',null,null,parseFloat);
+        getParam(ls.metersHistory.data[0].values[0].Date.date, result, 'lastDate',null,[/(\d{4})-(\d{2})-(\d{2})/,'$3.$2.$1'],parseDate);
     }
     if (isAvailable('income','nachisl','balanceStart')){
     	var request='{"operationName": "ContractPayments","variables": {"number": "'+ls.number+'"},"query": "query ContractPayments($number: String!) {  me {contract(number: $number) {calculationsAndPayments    }  }}"}';

@@ -3,7 +3,7 @@
     <EditTextPreference 
         title="Логин" 
         positiveButtonText="ОК" 
-        summary="||{@s}" 
+        summary="Логин для входа в личный кабинет|Введите логин\n|{@s}\n"
         dialogTitle="Логин" 
         negativeButtonText="Отмена" 
         obligatory="true"
@@ -17,17 +17,17 @@
         negativeButtonText="Отмена"
         obligatory="true"
         title="Пароль"
-        summary="||***********"
-        dialogMessage="Введите пароль, используемый для входа в личный кабинет."
+        summary="Пароль для входа в личный кабинет|Введите пароль\n|***********\n"
+        dialogMessage="Введите пароль, используемый для входа в личный кабинет"
         inputType="textPassword">
     </EditTextPreference>
     <EditTextPreference 
         title="Номер счета" 
         positiveButtonText="ОК" 
-        summary="|Автоматически|{@s}" 
+        summary="Номер счета для получения информации|Автоматически\n|{@s}\n" 
         dialogTitle="Номер счета" 
         negativeButtonText="Отмена" 
-        dialogMessage="Введите последние цифры номера счета, по которому нужно получить информацию. Или не вводите ничего, чтобы получить данные по первому счету в кабинете."
+        dialogMessage="Введите последние цифры номера счета, по которому нужно получить информацию. Или не вводите ничего, чтобы получить данные по первому счету в кабинете"
         key="num">
     </EditTextPreference>
 </PreferenceScreen>

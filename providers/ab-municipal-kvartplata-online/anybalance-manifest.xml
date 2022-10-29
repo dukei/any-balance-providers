@@ -1,0 +1,50 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="2">ab-municipal-kvartplata-online</id>
+	<api flags="no_browser"/>
+	<name>Квартплата.Онлайн (Краснодар)</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о задолженности, оплате и начислениях по ЖКХ для пользователей сервиса "Квартплата.Онлайн" <a href="https://xn--j1ab.xn--80aaaf3bi1ahsd.xn--80asehdb/">https://xn--j1ab.xn--80aaaf3bi1ahsd.xn--80asehdb/</a>.</p>
+	<p>Информация берется из личного кабинета Квартплата.Онлайн на сайте <a href="https://xn--j1ab.xn--80aaaf3bi1ahsd.xn--80asehdb/account/">https://xn--j1ab.xn--80aaaf3bi1ahsd.xn--80asehdb/account/</a>.</p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Для получения данных с сайта необходимо ввести в настройки провайдера свой логин, на который зарегистрирован личный кабинет, и пароль для входа.</p>
+	<p>Если в кабинете зарегистрировано несколько помещений, вы можете выбрать помещение, по которому хотите получать информацию, в настройках провайдера.</p>
+	]]></instruction>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<author>RamzesZeus &lt;ramzeszeus@gmail.com&gt;</author>
+	<depends>
+		<module id="library"/>
+		<module id="misc/saved-data"/>
+	</depends>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+	    <counter id="balance" name="Задолженность" units=" ₽"/>
+		<counter id="debtTotal" name="Общая задолженность" units=" ₽"/>
+		<counter id="debtHot" name="Отопление и ГВС" units=" ₽"/>
+		<counter id="debtCold" name="Водоснабжение" units=" ₽"/>
+		<counter id="debtPow" name="Электроэнергия" units=" ₽"/>
+		<counter id="debtTbo" name="Вывоз мусора и ТБО" units=" ₽"/>
+		<counter id="debtJkh" name="Услуги ЖКХ" units=" ₽"/>
+		<counter id="debtCap" name="Капитальный ремонт" units=" ₽"/>
+		<counter id="payHot" name="Отопление и ГВС (Начисления)" type="html"/>
+		<counter id="payCold" name="Водоснабжение (Начисления)" type="html"/>
+		<counter id="payPow" name="Электроэнергия (Начисления)" type="html"/>
+		<counter id="payTbo" name="Вывоз мусора и ТБО (Начисления)" type="html"/>
+		<counter id="payJkh" name="Услуги ЖКХ (Начисления)" type="html"/>
+		<counter id="payCap" name="Капитальный ремонт (Начисления)" type="html"/>
+		<counter id="countHot" name="Отопление и ГВС (Счетчики)" type="html"/>
+		<counter id="countCold" name="Водоснабжение (Счетчики)" type="html"/>
+		<counter id="countPow" name="Электроэнергия (Счетчики)" type="html"/>
+		<counter id="countJkh" name="Услуги ЖКХ (Счетчики)" type="html"/>
+		<counter id="address" name="Адрес" type="text"/>
+	</counters>
+	<keywords>ЖКХ, квартплата, онлайн, Краснодар</keywords>
+	<type>municipal</type>
+	<country>ru</country>
+</provider>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<history>
+	<change version="2" date="2022-10-25">
+	- Поддержка изменений на сайте
+	- Исправлена ошибка при первом входе
+	</change>
+	<change version="1" date="2022-06-03">
+	- Первая версия провайдера
+	</change>
+</history>

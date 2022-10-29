@@ -1,11 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="21">ab-bonus-s7</id>
+	<id version="24">ab-bonus-s7</id>
 	<name>S7 Приоритет</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе миль и другую информацию по бонусной карте авиакомпании S7 (http://www.s7.ru).</p>
-	<p>Информация берется из личного кабинета https://myprofile.s7.ru/login </p>
+	<p>Предоставляет информацию о балансе миль и другую информацию по бонусной карте авиакомпании S7 (https://www.s7.ru).</p>
+	<p>Информация берется из личного кабинета https://myprofile.s7.ru/login.</p>
 	]]></description>
 	<instruction html="true"><![CDATA[
 	<p>Как получить накопительную карту и пароль к личному кабинету, инструкция: https://myprofile.s7.ru/registration </p>
@@ -22,15 +22,18 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Мили"/>
-		<counter id="qmiles" name="Статусные мили"/>
-		<counter id="flights" name="Полеты"/>
-		<counter id="type" name="Тип карты" type="text"/>
-		<!-- <counter id="status" name="Статус" type="text"/> -->
+		<counter id="balance" name="Бонусные мили" units=" m"/>
+<!--    <counter id="qmiles" name="Статусные мили"/>
+		<counter id="flights" name="Статусные полеты"/> -->
+		<counter id="burning" name="Сгораемые мили" units=" m"/>
 		<counter id="cardnum" name="Номер карты" type="text"/>
-		<counter id="userName" name="Имя" type="text"/>
+		<counter id="type" name="Тип карты" type="text"/>
+		<counter id="status" name="Статус" type="text"/>
+		<counter id="expDate" name="Срок действия" type="time" format="dd.MM.yyyy"/>
+		<counter id="phone" name="Номер телефона" type="text"/>
+		<counter id="userName" name="ФИО" type="text"/>
 	</counters>
-	<keywords>с7 эссевен sseven</keywords>
+	<keywords>s7, с7, эссевен, sseven</keywords>
 	<type>bonus</type>
 	<country>ru</country>
 </provider>

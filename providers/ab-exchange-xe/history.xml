@@ -1,12 +1,21 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="5" date="2022-10-23">
+	- Добавлены дополнительные валютные пары
+	- Исправлено время обновления курсов
+	</change>
+	<change version="4" date="2022-10-23">
+	- Поддержка изменений на сайте
+	- Добавлены валюты KZT, ILS
+	- Исправлены ошибки конвертации
+	</change>
 	<change version="3" date="2019-06-16">
 	- Support site changes
 	</change>
 	<change version="2" date="2015-06-03">
-	- Добавил в баланс показатель Рубль (Alexander Kotelevets).
+	- Добавил в баланс показатель Рубль (Alexander Kotelevets)
 	</change>
 	<change version="1" date="2013-09-21">
-	- Первая версия провайдера.
+	- Первая версия провайдера
 	</change>
 </history>

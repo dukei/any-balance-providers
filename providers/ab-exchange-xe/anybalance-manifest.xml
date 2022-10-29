@@ -1,13 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="3">ab-exchange-xe</id>
+	<id version="5">ab-exchange-xe</id>
 	<api flags="no_browser"/>
 	<name>XE Live Exchange Rates</name>
 	<description html="true"><![CDATA[
 	<p>Shows XE Live Exchange Rates from <a href="https://www.xe.com/">https://www.xe.com/</a></p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
-	<author>Alexander Kotelevets &lt;kotelevets@mail.ua&gt;</author>
 	<depends>
 		<module id="library"/>
 	</depends>
@@ -22,35 +21,89 @@
 		<counter id="INRUSD" name="INR to USD" units=" USD"/>
 		<counter id="AUDUSD" name="AUD to USD" units=" USD"/>
 		<counter id="CADUSD" name="CAD to USD" units=" USD"/>
+		<counter id="RUBUSD" name="RUB to USD" units=" USD"/>
+		<counter id="ILSUSD" name="ILS to USD" units=" USD"/>
+		<counter id="KZTUSD" name="KZT to USD" units=" USD"/>
 		<counter id="ZARUSD" name="ZAR to USD" units=" USD"/>
 		<counter id="NZDUSD" name="NZD to USD" units=" USD"/>
 		<counter id="JPYUSD" name="JPY to USD" units=" USD"/>
+		<counter id="CNYUSD" name="CNY to USD" units=" USD"/>
+		
 		<counter id="USDEUR" name="USD to EUR" units=" EUR"/>
 		<counter id="GBPEUR" name="GBP to EUR" units=" EUR"/>
 		<counter id="INREUR" name="INR to EUR" units=" EUR"/>
 		<counter id="AUDEUR" name="AUD to EUR" units=" EUR"/>
 		<counter id="CADEUR" name="CAD to EUR" units=" EUR"/>
+		<counter id="RUBEUR" name="RUB to EUR" units=" EUR"/>
+		<counter id="ILSEUR" name="ILS to EUR" units=" EUR"/>
+		<counter id="KZTEUR" name="KZT to EUR" units=" EUR"/>
 		<counter id="ZAREUR" name="ZAR to EUR" units=" EUR"/>
 		<counter id="NZDEUR" name="NZD to EUR" units=" EUR"/>
 		<counter id="JPYEUR" name="JPY to EUR" units=" EUR"/>
+		<counter id="CNYEUR" name="CNY to EUR" units=" EUR"/>
+		
 		<counter id="USDGBP" name="USD to GBP" units=" GBP"/>
 		<counter id="EURGBP" name="EUR to GBP" units=" GBP"/>
 		<counter id="INRGBP" name="INR to GBP" units=" GBP"/>
 		<counter id="AUDGBP" name="AUD to GBP" units=" GBP"/>
 		<counter id="CADGBP" name="CAD to GBP" units=" GBP"/>
+		<counter id="RUBGBP" name="RUB to GBP" units=" GBP"/>
+		<counter id="ILSGBP" name="ILS to GBP" units=" GBP"/>
+		<counter id="KZTGBP" name="KZT to GBP" units=" GBP"/>
 		<counter id="ZARGBP" name="ZAR to GBP" units=" GBP"/>
 		<counter id="NZDGBP" name="NZD to GBP" units=" GBP"/>
 		<counter id="JPYGBP" name="JPY to GBP" units=" GBP"/>
-		<counter id="RUBUSD" name="RUB to USD" units=" RUB"/>
-		<counter id="RUBEUR" name="RUB to EUR" units=" RUB"/>
-		<counter id="RUBINR" name="RUB to INR" units=" RUB"/>
-		<counter id="RUBAUD" name="RUB to AUD" units=" RUB"/>
-		<counter id="RUBCAD" name="RUB to CAD" units=" RUB"/>
-		<counter id="RUBZAR" name="RUB to ZAR" units=" RUB"/>
-		<counter id="RUBNZD" name="RUB to NZD" units=" RUB"/>
-		<counter id="RUBJPY" name="RUB to JPY" units=" RUB"/>
+		<counter id="CNYGBP" name="CNY to GBP" units=" GBP"/>
+		
+		<counter id="USDCAD" name="USD to CAD" units=" CAD"/>
+		<counter id="EURCAD" name="EUR to CAD" units=" CAD"/>
+		<counter id="INRCAD" name="INR to CAD" units=" CAD"/>
+		<counter id="AUDCAD" name="AUD to CAD" units=" CAD"/>
+		<counter id="RUBCAD" name="RUB to CAD" units=" CAD"/>
+		<counter id="ILSCAD" name="ILS to CAD" units=" CAD"/>
+		<counter id="KZTCAD" name="KZT to CAD" units=" CAD"/>
+		<counter id="ZARCAD" name="ZAR to CAD" units=" CAD"/>
+		<counter id="NZDCAD" name="NZD to CAD" units=" CAD"/>
+		<counter id="JPYCAD" name="JPY to CAD" units=" CAD"/>
+		<counter id="CNYCAD" name="CNY to CAD" units=" CAD"/>
+		
+		<counter id="USDILS" name="USD to ILS" units=" ILS"/>
+		<counter id="EURILS" name="EUR to ILS" units=" ILS"/>
+		<counter id="INRILS" name="INR to ILS" units=" ILS"/>
+		<counter id="AUDILS" name="AUD to ILS" units=" ILS"/>
+		<counter id="CADILS" name="CAD to ILS" units=" ILS"/>
+		<counter id="RUBILS" name="RUB to ILS" units=" ILS"/>
+		<counter id="KZTILS" name="KZT to ILS" units=" ILS"/>
+		<counter id="ZARILS" name="ZAR to ILS" units=" ILS"/>
+		<counter id="NZDILS" name="NZD to ILS" units=" ILS"/>
+		<counter id="JPYILS" name="JPY to ILS" units=" ILS"/>
+		<counter id="CNYILS" name="CNY to ILS" units=" ILS"/>
+		
+		<counter id="USDRUB" name="USD to RUB" units=" RUB"/>
+		<counter id="EURRUB" name="EUR to RUB" units=" RUB"/>
+		<counter id="INRRUB" name="INR to RUB" units=" RUB"/>
+		<counter id="AUDRUB" name="AUD to RUB" units=" RUB"/>
+		<counter id="CADRUB" name="CAD to RUB" units=" RUB"/>
+		<counter id="ILSRUB" name="ILS to RUB" units=" RUB"/>
+		<counter id="KZTRUB" name="KZT to RUB" units=" RUB"/>
+		<counter id="ZARRUB" name="ZAR to RUB" units=" RUB"/>
+		<counter id="NZDRUB" name="NZD to RUB" units=" RUB"/>
+		<counter id="JPYRUB" name="JPY to RUB" units=" RUB"/>
+		<counter id="CNYRUB" name="CNY to RUB" units=" RUB"/>
+		
+		<counter id="USDKZT" name="USD to KZT" units=" KZT"/>
+		<counter id="EURKZT" name="EUR to KZT" units=" KZT"/>
+		<counter id="INRKZT" name="INR to KZT" units=" KZT"/>
+		<counter id="AUDKZT" name="AUD to KZT" units=" KZT"/>
+		<counter id="CADKZT" name="CAD to KZT" units=" KZT"/>
+		<counter id="RUBKZT" name="RUB to KZT" units=" KZT"/>
+		<counter id="ILSKZT" name="ILS to KZT" units=" KZT"/>
+		<counter id="ZARKZT" name="ZAR to KZT" units=" KZT"/>
+		<counter id="NZDKZT" name="NZD to KZT" units=" KZT"/>
+		<counter id="JPYKZT" name="JPY to KZT" units=" KZT"/>
+		<counter id="CNYKZT" name="CNY to KZT" units=" KZT"/>
 	</counters>
-	<keywords></keywords>
+	<keywords>XE, rates</keywords>
 	<type>exchange</type>
 	<country></country>
 </provider>

@@ -1,10 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="12">ab-seo-yandex-metrika</id>
+	<id version="14">ab-seo-yandex-metrika</id>
 	<name>Яндекс.Метрика</name>
 	<description html="true"><![CDATA[
-	<p>Получает данные по id счетчика в системе Яндекс Метрика https://metrika.yandex.ru/stat/traffic?group=day&id= </p>
+	<p>Получает данные по ID счетчика в системе Яндекс.Метрика (https://metrika.yandex.ru/list/).</p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>
@@ -25,6 +25,8 @@
 		<counter id="views_yesterday" name="Просмотров вчера"/>
 		<counter id="visits_yesterday" name="Визитов вчера"/>
 		<counter id="visitors_yesterday" name="Посетителей вчера"/>
+		<counter id="counter_id" name="ID счетчика" type="text"/>
+		<counter id="site" name="Сайт" type="text"/>
 	</counters>
 	<keywords>yandex metrika</keywords>
 	<type>seo</type>

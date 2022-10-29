@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id version="5">ab-adv-yandex-direct</id>
+	<id version="6">ab-adv-yandex-direct</id>
 	<name>Яндекс.Директ</name>
 	<description html="true"><![CDATA[
 	<p>Получает параметры рекламной кампании Яндекс.Директ.</p>
@@ -12,6 +12,7 @@
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>
 		<module id="login/yandex"/>
+		<module id="misc/saved-data"/>
 	</depends>
 	<files>
 		<icon>icon.png</icon>
@@ -20,17 +21,21 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Общий остаток" units=" уе"/>
-		<counter id="o_rest" name="Отсрочка платежа" units=" уе"/>
-		<counter id="o_debt" name="Задолженность" units=" уе"/>
+		<counter id="balance" name="Общий остаток" units=" {@currency}"/>
+		<counter id="o_rest" name="Отсрочка платежа" units=" {@currency}"/>
+		<counter id="o_debt" name="Задолженность" units=" {@currency}"/>
 		<counter id="o_paydate" name="Дата оплаты" type="time" format="dd/MM/yyyy"/>
-		<counter id="c_rest" name="Остаток" units=" уе"/>
+		<counter id="c_rest" name="Остаток" units=" {@currency}"/>
 		<counter id="c_clicks" name="Кликов сегодня"/>
 		<counter id="c_status" name="Статус" type="text"/>
 		<counter id="cnum" name="Активные кампании"/>
 		<counter id="cid" name="ID кампании" type="text"/>
 		<counter id="c_name" name="Название кампании" type="text"/>
 		<counter id="clist" name="Список кампаний" type="text"/>
+		<counter id="currency_full" name="Валюта" type="text"/>
+		<counter id="login" name="Логин" type="text"/>
+		<counter id="email" name="E-mail" type="text"/>
+		<counter id="fio" name="ФИО владельца" type="text"/>
 	</counters>
 	<keywords>яндекс-директ, yandex direct</keywords>
 	<type>adv</type>

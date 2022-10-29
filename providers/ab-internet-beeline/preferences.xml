@@ -4,10 +4,10 @@
 		obligatory="true"
         title="Логин" 
         positiveButtonText="ОК" 
-        summary="Логин в личный кабинет:||{@s}\n" 
+        summary="Логин для входа в личный кабинет|Введите логин\n|{@s}\n" 
         dialogTitle="Логин" 
         negativeButtonText="Отмена" 
-        dialogMessage="Введите логин в личный кабинет."
+        dialogMessage="Введите логин для входа в личный кабинет в формате 10 цифр без пробелов и разделителей, например: 0891234567"
         key="login">
     </EditTextPreference>
     <EditTextPreference 
@@ -17,14 +17,15 @@
         dialogTitle="Пароль"
         negativeButtonText="Отмена"
         title="Пароль"
-        summary="Пароль для входа в личный кабинет||***********\n"
-        dialogMessage="Введите пароль, используемый для входа в личный кабинет."
+        summary="Пароль для входа в личный кабинет|Введите пароль\n|**********\n"
+        dialogMessage="Введите пароль, используемый для входа в личный кабинет"
         inputType="textPassword">
     </EditTextPreference>
 	<ListPreference
 		key="type"
-		title="Какой кабинет использовать"
+		title="Тип кабинета"
 		summary="||{@s}"
+		dialogTitle="Лицевой счет"
 		entries="beeline.ru/login|cabinet.beeline.ru|cabinet.beeline.ru/myoffice/"
 		entryValues="lk|cab|office"
 		defaultValue="lk">

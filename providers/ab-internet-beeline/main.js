@@ -3,10 +3,10 @@
 */
 
 var g_headers = {
-	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
+	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
 	'Accept-Language': 'ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7',
 	'Connection': 'keep-alive',
-	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.139 Safari/537.36',
+	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36',
 };
 
 function main() {
@@ -204,7 +204,7 @@ function proceedLk(prefs) {
 				throw new AnyBalance.Error(json.errorMessage, null, /парол/i.test(json.errorMessage));
 	    
 			AnyBalance.trace(html);
-			throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
+			throw new AnyBalance.Error('Не удалось войти в личный кабинет. Сайт изменен?');
 		}
 	    
 		var params = AB.createFormParams(form);
@@ -218,14 +218,14 @@ function proceedLk(prefs) {
 			region = null;
 
 		if(region){
-			AnyBalance.trace('Posting form to ' + url + ' but due to 307 issues posting to https://' + region.domain + "/regionlogincallback/");
+			AnyBalance.trace('Надо отправить форму на ' + url + ', но из-за проблем с 307 отправляем на https://' + region.domain + "/regionlogincallback/");
 			url = "https://" + region.domain + "/regionlogincallback/";
 		}else{
-			AnyBalance.trace("Region is unknown, posting form to " + url);
+			AnyBalance.trace("Регион неизвестен, отправляем форму на " + url);
 		}
-
+        
 		html = AnyBalance.requestPost(url, createUrlEncodedParams(params).replace(/%20/g, '+'), addHeaders({
-			Referer: referer,
+			Referer: 'https://identity.beeline.ru/',
 			'Content-Type': 'application/x-www-form-urlencoded',
 			Origin: 'https://identity.beeline.ru',
 			'Cache-Control': 'max-age=0',
@@ -233,60 +233,178 @@ function proceedLk(prefs) {
 		}));
 		referer = AnyBalance.getLastUrl();
 
-		if(!region && /\blogin\b/i.test(referer)){
+		if(!region && /login/i.test(referer)){
 			region = getParam(referer, /https?:\/\/([^\/]+)/i);
-			AnyBalance.trace("Region is " + region + ". Restarting.");
+			AnyBalance.trace("Регион определен: " + region + ". Перезапускаем...");
 			AnyBalance.setData('region', { domain: region, login: prefs.login });
 			AnyBalance.saveData();
 			return "restart";  
 		}
 	}while(/<form[^>]*logincallback/i.test(html));
+	
+//	var token = getParam(html, null, null, /QA.Identity.setToken\('([^']*)/);
+//	if(!token){
+//		AnyBalance.trace(AnyBalance.getLastUrl() + ':\n' + html);
+//		throw new AnyBalance.Error('Не удалось получить токен авторизации. Сайт изменен?');
+//	}
 
-	var token = getParam(html, null, null, /QA.Identity.setToken\('([^']*)/);
-	if(!token){
+//	html = AnyBalance.requestGet('https://widgets.beeline.ru/api/Profile/Index', addHeaders({
+//		 OamAuthToken: token,
+//		 Referer: AnyBalance.getLastUrl()
+//	}));
+
+    if(!/"fttbNumber"/i.test(html)){
 		AnyBalance.trace(AnyBalance.getLastUrl() + ':\n' + html);
-		throw new AnyBalance.Error('Не удалось получить токен авторизации. Сайт изменен?');
+		throw new AnyBalance.Error('Не удалось войти в личный кабинет. Сайт изменен?');
 	}
+	
+	var result = {success: true};
+	
+	getParam(prefs.login, result, 'bill', /(\d{10})/g, [/(\d{3})(\d{3})(\d{4})/, '$1-$2-$3']);
 
-	html = AnyBalance.requestGet('https://widgets.beeline.ru/api/Profile/Index', addHeaders({
-		 OamAuthToken: token,
+    html = AnyBalance.requestGet('https://' + region.domain + '/api/uni-profile-balances/', addHeaders({ // Балансы
+		Referer: AnyBalance.getLastUrl()
+	}));
+	var json = getJson(removeBOM(html));
+	AnyBalance.trace('Балансы: ' + JSON.stringify(json));
+	
+	if(json && json.length>0){
+	    for(var i=0; i<json.length; ++i){
+	    	var bal = json[i];
+	    	AnyBalance.trace('Найден баланс ' + bal.balanceType);
+	    	if(bal.balanceType === 'Personal'){
+	    		var balance = getParam(round(bal.sum), result, 'balance');
+	    	}
+	    }
+	}else{
+		AnyBalance.trace('Не удалось получить балансы');
+	}
+	
+	html = AnyBalance.requestGet('https://' + region.domain + '/api/profile/home/preset/', addHeaders({ // Тариф
+		Referer: AnyBalance.getLastUrl(),
+		'X-Requested-With': 'XMLHttpRequest'
+	}));
+	
+	var tarif = AnyBalance.getData('tarif');
+	if(!tarif || tarif.login != prefs.login)
+		tarif = null;
+	
+	if(AnyBalance.getLastStatusCode() >= 500){
+		if(tarif){
+		    AnyBalance.trace('Нет ответа (' + AnyBalance.getLastStatusCode() + '). Восстанавливаем значения тарифа');
+		    result.__tariff = tarif.name;
+			result.internet_speed = tarif.speed;
+			result.internet_devices = tarif.intDevices;
+			result.tv_channels = tarif.channels;
+			result.tv_devices = tarif.tvDevices;
+		}else{
+			AnyBalance.trace('Нет ответа (' + AnyBalance.getLastStatusCode() + '). Пропускаем получение тарифа');
+		}
+	}else{
+	    var json = getJson(removeBOM(html));
+	    AnyBalance.trace('Тариф: ' + JSON.stringify(json));
+
+	    var tariff = getParam(json.view.internet.name, result, '__tariff');
+		var intSpeed = getParam(json.view.internet.speed, result, 'internet_speed');
+		var intDevCount = getParam(json.view.routers.length, result, 'internet_devices');
+	
+	    if(json.view.tv.name){
+	        var tvt = json.view.tv.name;
+	        if(tvt)
+	    		tariff += ' | ' + tvt;
+			var tvChCount = getParam(json.view.tv.channelsCount, result, 'tv_channels');
+			var tvDevCount = getParam(json.view.tv.deviceCount, result, 'tv_devices');
+	    }else{
+	    	AnyBalance.trace('Не удалось получить данные по ТВ. Похоже, услуга не подключена');
+			var tvChCount = 0;
+			var tvDevCount = 0;
+	    }
+	
+	    tarif = getParam(tariff, result, '__tariff');
+        AnyBalance.trace("Тарифные опции получены. Сохраняем...");
+		AnyBalance.setData('tarif', { name: tarif, speed: intSpeed, intDevices: intDevCount, channels: tvChCount, tvDevices: tvDevCount, login: prefs.login });
+		AnyBalance.saveData();
+	}
+	
+	html = AnyBalance.requestGet('https://' + region.domain + '/api/texts/elk-mobile-connection/', addHeaders({ // Статус
+		 Referer: AnyBalance.getLastUrl()
+	}));
+	var json = getJson(removeBOM(html));
+	AnyBalance.trace('Статус: ' + JSON.stringify(json));
+	
+	getParam(json.isActive, result, 'status', null, null, capitalFirstLetters);
+	
+	html = AnyBalance.requestGet('https://' + region.domain + '/api/uni-profile-fttb/fee/', addHeaders({ // Абонплата
 		 Referer: AnyBalance.getLastUrl()
 	}));
 	var json = getJson(removeBOM(html));
 	
-	var result = {success: true};
-
-	var offset = -new Date().getTimezoneOffset()/60;
-	offset = (offset > 0 ? '+' : '-') + n2(Math.abs(offset)) + ':00';
-
-	if(!json.BalanceWidget){
-		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Пожалуйста, введите в качестве логина номер лицевого счета домашнего интернета Билайн, а не номер телефона!', null, true);
+	if(!json.value){
+		html = AnyBalance.requestGet('https://' + region.domain + '/api/uni-profile-mobile/tariff-fee/', addHeaders({ // Абонплата в рамках мобильной связи
+		    Referer: AnyBalance.getLastUrl()
+	    }));
+	    var json = getJson(removeBOM(html));
+		AnyBalance.trace('Абонплата списывается в рамках мобильной связи: \n' + JSON.stringify(json));
+		
+		var abon = getParam(round(json.rcRate), result, 'abon');
+		if(json.billingDate)
+		    getParam(json.billingDate.replace(/(\d{4})-(\d{2})-(\d{2})/, '$3.$2.$1'), result, 'till', null, null, parseDate);
+	}else{
+		AnyBalance.trace('Абонплата списывается в рамках тарифного плана: \n' + JSON.stringify(json));
+		var abon = getParam(round(json.value), result, 'abon');
+		var date = getParam(json.nextPayment, null, null, /Списание\s?([^<]*)/i, replaceTagsAndSpaces);
+	    var dt = new Date();
+	    if (!/\d\d\d\d/i.test(date)) {
+	    	var ndate = date + ' '  + dt.getFullYear();
+	    	if (/янв/i.test(date) && dt.getMonth() != 0) {
+	    		var ndate = date + ' '  + (dt.getFullYear() + 1);
+	    	}
+	    }else{
+	    	var ndate = date;
+	    }
+	    getParam(ndate, result, 'till', null, null, parseDateWord);
 	}
-
-	function round(val){
-		if(val)
-			return Math.round(val*100)/100;
-		return val;
-	}
-
-	var topay = round(json.BalanceWidget.SubscriptionFee - json.BalanceWidget.Balance);
-	getParam(round(json.BalanceWidget.Balance), result, 'balance');
-	getParam(json.BalanceWidget.DueDate + offset, result, 'till', null, null, parseDateISO); //Без временной зоны, заразы, показывают
+	
+	var topay = round(abon - balance);
 	getParam(topay > 0 ? topay : 0, result, 'topay');
-	getParam(html, result, 'bonus', /Бонусы:[\s\S]*?<span[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(json.BalanceWidget.SubscriptionFee, result, 'abon');
-	getParam(json.ContractStatusWidget.Ctn, result, 'bill', /(\d{10})/g, [/(\d{3})(\d{3})(\d{4})/, '$1-$2-$3']);
-	getParam(getStatus(json.ContractStatusWidget.Status), result, 'status');
-	getParam(json.ContactDataWidget.AddressBlock, result, 'address'); //Теперь этот счётчик отображает адрес подключения, а не ФИО
 
-	sumParam(jspath1(json, '$.BundlePanel.BundleServiceWidget.Name'), result, '__tariff', null, null, null, aggregate_join);
-	sumParam(jspath1(json, '$.FttbPanel.FttbPricePlanWidget.Name'), result, '__tariff', null, null, null, aggregate_join);
+//	var offset = -new Date().getTimezoneOffset()/60;
+//	offset = (offset > 0 ? '+' : '-') + n2(Math.abs(offset)) + ':00';
 
-	var tvs = jspath(json, '$.TvPanel.IpTvPricePlanWidgets[*].Name');
-	sumParam(tvs && tvs.join(', '), result, '__tariff', null, null, null, aggregate_join);
+//	if(!json.BalanceWidget){
+//		AnyBalance.trace(html);
+//		throw new AnyBalance.Error('Пожалуйста, введите в качестве логина номер лицевого счета домашнего интернета Билайн, а не номер телефона!', null, true);
+//	}
+
+//	function round(val){
+//		if(val)
+//			return Math.round(val*100)/100;
+//		return val;
+//	}
+
+//	var topay = round(json.BalanceWidget.SubscriptionFee - json.BalanceWidget.Balance);
+//	getParam(round(json.BalanceWidget.Balance), result, 'balance');
+//	getParam(json.BalanceWidget.DueDate + offset, result, 'till', null, null, parseDateISO); //Без временной зоны, заразы, показывают
+//	getParam(topay > 0 ? topay : 0, result, 'topay');
+//	getParam(html, result, 'bonus', /Бонусы:[\s\S]*?<span[^>]*>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
+//	getParam(json.BalanceWidget.SubscriptionFee, result, 'abon');
+//	getParam(json.ContractStatusWidget.Ctn, result, 'bill', /(\d{10})/g, [/(\d{3})(\d{3})(\d{4})/, '$1-$2-$3']);
+//	getParam(getStatus(json.ContractStatusWidget.Status), result, 'status');
+//	getParam(json.ContactDataWidget.AddressBlock, result, 'address'); //Теперь этот счётчик отображает адрес подключения, а не ФИО
+
+//	sumParam(jspath1(json, '$.BundlePanel.BundleServiceWidget.Name'), result, '__tariff', null, null, null, aggregate_join);
+//	sumParam(jspath1(json, '$.FttbPanel.FttbPricePlanWidget.Name'), result, '__tariff', null, null, null, aggregate_join);
+
+//	var tvs = jspath(json, '$.TvPanel.IpTvPricePlanWidgets[*].Name');
+//	sumParam(tvs && tvs.join(', '), result, '__tariff', null, null, null, aggregate_join);
 	
 	AnyBalance.setResult(result);
+}
+
+function round(val){
+	if(val)
+		return Math.round(val*100)/100;
+	return val;
 }
 
 function parseTrafficGb(str) {

@@ -1,12 +1,15 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id version="24">ab-internet-beeline</id>
+	<id version="25">ab-internet-beeline</id>
 	<name>Билайн интернет</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе, бонусах и тарифном плане для пользователей Билайн интернет.</p>       
-	<p>Информация берется из личного кабинета http://www.beeline.ru/login либо из https://cabinet.beeline.ru</p>
+	<p>Предоставляет информацию о балансе, бонусах и тарифном плане для пользователей домашнего интернета и ТВ от Билайн.</p>       
+	<p>Информация берется из личного кабинета https://www.beeline.ru/login либо из https://cabinet.beeline.ru.</p>
 	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Для работы провайдера требуется ввести логин и пароль для входа в личный кабинет Билайн.</p>
+	]]></instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>
 		<module id="library"/>
@@ -19,19 +22,21 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units=" р"/>
-		<counter id="balance_tv" name="Баланс ТВ" units=" р"/>
-		<counter id="balance_phone" name="Баланс Телефон" units=" р"/>
-		<counter id="bonus" name="Бонусы" units=" р"/>
+		<counter id="balance" name="Баланс" units=" ₽"/>
+		<counter id="balance_tv" name="Баланс ТВ" units=" ₽"/>
+		<counter id="balance_phone" name="Баланс Телефон" units=" ₽"/>
+		<counter id="bonus" name="Бонусы" units=" ₽"/>
 		<counter id="traffic" name="Включенный трафик" units=" Гб"/>
-		<counter id="topay" name="Сумма к оплате" units=" р"/>
-		<counter id="abon" name="Ежемесячный платеж" units=" р"/>
-		<counter id="till" name="Конец расчетного периода" type="time"/>
+		<counter id="topay" name="Сумма к оплате" units=" ₽"/>
+		<counter id="abon" name="Ежемесячный платеж" units=" ₽"/>
+		<counter id="till" name="Конец расчетного периода" type="time" format="dd.MM.yyyy"/>
 		<counter id="address" name="Адрес подключения" type="text"/>
 		<counter id="bill" name="Счет" type="text"/>
 		<counter id="status" name="Статус" type="text"/>
-		<counter id="status_internet" name="Интернет (статус)" type="text"/>
-		<counter id="status_tv" name="Телевидение (статус)" type="text"/>
+		<counter id="internet_speed" name="Интернет (скорость)" units=" Мбит/с"/>
+		<counter id="internet_devices" name="Интернет (устройства)" units=" шт"/>
+		<counter id="tv_channels" name="Телевидение (каналы)" units=" шт"/>
+		<counter id="tv_devices" name="Телевидение (устройства)" units=" шт"/>
 	</counters>
 	<keywords>интернет, билайн, beeline</keywords>
 	<type>internet</type>

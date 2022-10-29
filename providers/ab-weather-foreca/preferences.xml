@@ -4,7 +4,7 @@
 		obligatory="true"
 		title="Город"
 		positiveButtonText="ОК"
-		summary="|Прогноз для города|{@s}"
+		summary="Город для информации о погоде|Введите название\n|{@s}\n"
 		dialogTitle="Город"
 		negativeButtonText="Отмена"
 		dialogMessage="Введите название города на русском языке"

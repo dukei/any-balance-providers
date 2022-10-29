@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
-    <change version="2" date="2017-12-26">
-        - Поддержка изменений на сайте.
+    <change version="3" date="2022-10-29">
+    - Поддержка изменений на сайте
+	- Добавлен счетчик Станция наблюдений
+	- Изменена иконка
     </change>
-<!--
-	<change version="2" date="2014-09-03">
-	- 
-	</change>
--->
+    <change version="2" date="2017-12-26">
+    - Поддержка изменений на сайте
+    </change>
 </history>

@@ -70,14 +70,12 @@ function main() {
 	}
 
 	var result = {success: true};
-
-	if (AnyBalance.isAvailable('city')) {
-		var city = getElementsByClassName(html, 'entry-title', replaceTagsAndSpaces);
-		if (city.length) {
-			result.city = city[0];
-		} else {
-			result.city = null;
-		}
+    
+	var city = getElementsByClassName(html, 'entry-title', replaceTagsAndSpaces);
+	if (city.length) {
+		result.__tariff = city[0];
+	} else {
+		result.__tariff = null;
 	}
 
 	var table = getElementsByClassName(html, 'table t_cond');
@@ -87,31 +85,27 @@ function main() {
 	} else {
 		table = table[0];
 	}
-
-	if (AnyBalance.isAvailable('temp')) {
-		var temp = getElementsByClassName(table, 'txt-xxlarge', replaceTagsAndSpaces, parseBalance);
-		if (temp.length) {
-			result.temp = temp[0];
-		} else {
-			result.temp = null;
-		}
+    
+	var temp = getElementsByClassName(table, 'txt-xxlarge', replaceTagsAndSpaces, parseBalance);
+	if (temp.length) {
+		result.temp = temp[0];
+	} else {
+		result.temp = null;
 	}
 
 	getParam(table, result, 'wind', /Фактическая\s*?погода[\s\S]*?<img[^>]*?wind[\s\S]*?>\s*?<strong[^>]*?>([\s\S]*?)</i, replaceTagsAndSpaces, parseBalance);
 	var replaceWind = ['N', 'С', 'S', 'Ю', 'W', 'З', 'E', 'В'];
 	getParam(table, result, 'wind_dir', /Фактическая\s*?погода[\s\S]*?<img[^>]*?wind[\s\S]*?alt\s*?=\s*['"]([\s\S]*?)['"][^>]*?>/i, replaceWind);
 	getParam(table, result, 'atmo_conditions', /Фактическая\s*?погода[\s\S]*?<img[^>]*?symb[\s\S]*?alt\s*?=\s*['"]([\s\S]*?)['"][^>]*?>/i, replaceTagsAndSpaces);
-
 	getParam(table, result, 'rf_temp', /Ощущается\s*?как[\s\S]*?<strong[^>]*?>([\s\S]*?)</i, replaceTagsAndSpaces, parseBalance);
-
 	getParam(table, result, 'pressure', /Барометр[\s\S]*?<strong[^>]*?>([\s\S]*?)</i, replaceTagsAndSpaces, parseBalance);
 	getParam(table, result, 'point_dew', /Точка\s*?росы[\s\S]*?<strong[^>]*?>([\s\S]*?)</i, replaceTagsAndSpaces, parseBalance);
 	getParam(table, result, 'humidity', /От.\s*?влажность[\s\S]*?<strong[^>]*?>([\s\S]*?)</i, replaceTagsAndSpaces, parseBalance);
 	getParam(table, result, 'line_of_sight', /Видимость[\s\S]*?<strong[^>]*?>([\s\S]*?)</i, replaceTagsAndSpaces, parseBalance);
 	getParam(table, result, 'rising', /Восход\s*?солнца[\s\S]*?<strong[^>]*?>([\s\S]*?)</i, replaceTagsAndSpaces, parseMinutes);
 	getParam(table, result, 'setting', /Закат\s*?солнца[\s\S]*?<strong[^>]*?>([\s\S]*?)</i, replaceTagsAndSpaces, parseMinutes);
-	getParam(table, result, 'dayLength', /Долгота\s*?дня[\s\S]*?<strong[^>]*?>([\s\S]*?)</i, replaceTagsAndSpaces, parseMinutes);
-
-
+	getParam(table, result, 'dayLength', /Долгота\s*?дня[\s\S]*?<strong[^>]*?>([\s\S]*?)</i, [/(\d+)[\s\S]*?(\d+)/, '$1:$2', replaceTagsAndSpaces], parseMinutes);
+	getParam(table, result, 'station', /Станция\s*?наблюдений[\s\S]*?<strong[^>]*?>([\s\S]*?)</i, replaceTagsAndSpaces);
+    
 	AnyBalance.setResult(result);
 }

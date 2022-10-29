@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-weather-foreca</id>
+	<id version="3">ab-weather-foreca</id>
 	<api flags="no_browser"/>
 	<name>Foreca</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о прогнозе погоды с сайта <a href="http://www.foreca.ru">http://www.foreca.ru</a></p>
+	<p>Предоставляет информацию о прогнозе погоды с сайта <a href="https://www.foreca.ru/">https://www.foreca.ru/.</a></p>
 	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Для работы провайдера требуется ввести название города.</p>
+	]]></instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>
 		<module id="library"/>
@@ -17,19 +20,20 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="city" name="Город" type="text"/>
-		<counter id="temp" name="Температура" suffix=" °C" type="numeric"/>
-		<counter id="rf_temp" name="Ощущается как" suffix=" °C" type="numeric"/>
-		<counter id="wind" name="Скорость ветра" suffix=" м/с" type="numeric"/>
+<!--	<counter id="city" name="Город" type="text"/> -->
+		<counter id="temp" name="Температура" units=" °C"/>
+		<counter id="rf_temp" name="Ощущается как" units=" °C"/>
+		<counter id="wind" name="Скорость ветра" units=" м/с"/>
 		<counter id="wind_dir" name="Направление ветра" type="text"/>
 		<counter id="atmo_conditions" name="Атмосферные явления" type="text"/>
-		<counter id="pressure" name="Барометр" suffix=" мм рт.ст." type="numeric"/>
-		<counter id="point_dew" name="Точка росы" suffix=" °C" type="numeric"/>
-		<counter id="humidity" name="От. влажность" suffix=" %" type="numeric"/>
-		<counter id="line_of_sight" name="Видимость" suffix=" км" type="numeric"/>
-		<counter id="rising" name="Восход солнца" type="time_interval" format="{@MIN}:{@sec}"/>
-		<counter id="setting" name="Закат солнца" type="time_interval" format="{@MIN}:{@sec}"/>
-		<counter id="dayLength" name="Долгота дня" type="time_interval" format="{@H} ч {@min} мин"/>
+		<counter id="pressure" name="Барометр" units=" мм рт.ст."/>
+		<counter id="point_dew" name="Точка росы" units=" °C"/>
+		<counter id="humidity" name="От. влажность" units=" %"/>
+		<counter id="line_of_sight" name="Видимость" units=" км"/>
+		<counter id="rising" name="Восход Солнца" type="time_interval" prefix="В. "/>
+		<counter id="setting" name="Закат Солнца" type="time_interval" prefix="З. "/>
+		<counter id="dayLength" name="Долгота дня" type="time_interval" prefix="Д. "/>
+		<counter id="station" name="Станция наблюдений" type="text"/>
 	</counters>
 	<keywords>форека, прогноз, погода, осадки, ветер, влажность, давление, солнце, температура, воздух, видимость, долгота дня</keywords>
 	<type>weather</type>

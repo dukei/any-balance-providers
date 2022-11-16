@@ -1,12 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="24">ab-tracking-russian-post</id>
+	<id version="25">ab-tracking-russian-post</id>
 	<api flags="no_browser|captcha"/>
 	<name>EMS и Почта России</name>
 	<description html="true"><![CDATA[
 	<p>Отслеживает почтовое отправление "Почты России" и EMS по его идентификатору.</p>
-	<p>Показывает сводную информацию, дату изменения статуса, текущую операцию, местонахождение, атрибуты.</p>
-	<p>Получает данные с сайта http://www.russianpost.ru или с http://www.emspost.ru.</p>
+	<p>Показывает сводную информацию, дату и время изменения статуса, текущую операцию, местонахождение, атрибуты и другую информацию.</p>
+	<p>Получает данные с сайта https://www.pochta.ru/tracking.</p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>
@@ -19,12 +19,18 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="fulltext" name="Сводка" type="html"/>
-		<counter id="date" name="Дата изменения" type="text"/>
+	    <counter id="date" name="Дата изменения" type="time" format="dd.MM.yyyy"/>
 		<counter id="operation" name="Операция" type="text"/>
+		<counter id="time" name="Время изменения" type="time" format="dd.MM.yyyy HH:mm"/>
 		<counter id="location" name="Местонахождение" type="text"/>
 		<counter id="attribute" name="Атрибут" type="text"/>
-		<counter id="addcost" name="Наложенный платеж" units=" р"/>
+		<counter id="operator" name="Оператор" type="text"/>
+		<counter id="weight" name="Вес" units=" г"/>
+		<counter id="sender" name="Отправитель" type="text"/>
+		<counter id="recipient" name="Получатель" type="text"/>
+		<counter id="to" name="Пункт назначения" type="text"/>
+		<counter id="fulltext" name="Сводка" type="html"/>
+		<counter id="addcost" name="Наложенный платеж" units=" ₽"/>
 	</counters>
 	<keywords>Почтовое отправление, почта России</keywords>
 	<type>tracking, post</type>

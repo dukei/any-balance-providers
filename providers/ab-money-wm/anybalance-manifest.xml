@@ -1,18 +1,18 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id version="21">ab-money-wm</id>
+	<id version="23">ab-money-wm</id>
 	<name>WebMoney</name>
 	<description html="true"><![CDATA[
-	<p>Получает информацию о балансе кошельков WMR, WMZ, WME, WMU, WMB и WMX из WM Keeper Standard https://mini.webmoney.ru .</p> 
-	<p>Если на вашем WM-идентификаторе несколько кошельков одного типа, балансы на них будут суммироваться.</p>
+	<p>Предоставляет информацию о балансе кошельков WMZ, WME, WMG, WMX, WML, WMF, WMH, WMT, WMB, WMK и WMY из WM Keeper Standard (https://mini.webmoney.ru).</p> 
+	<p>Если к вашему WM-идентификатору подключено несколько кошельков одного типа, их балансы будут суммироваться.</p>
 	]]></description>
 	<instruction html="true"><![CDATA[
 	<p>Настройки:</p>
 	<ul>
 		<li>Для входа вам потребуется WM-идентификатор и пароль, те, что требуются на сайте https://wallet.webmoney.ru .</li> 
-		<li>Для первого получения баланса могут потребоваться дополнительные подтверждения (SMS или E-NUM).</li> 
-		<li>Чтобы отображать кошельки в WM Keeper Standard может потребоваться установка доверия как описано <a href="https://wiki.webmoney.ru/projects/webmoney/wiki/%D0%9A%D0%B0%D0%BA_%D0%BF%D0%BE%D0%B4%D0%BA%D0%BB%D1%8E%D1%87%D0%B8%D1%82%D1%8C_WM_%D0%BA%D0%BE%D1%88%D0%B5%D0%BB%D0%B5%D0%BA_%D0%B2_WM_Keeper_Standard">здесь</a></li>
+		<li>Для первого получения баланса могут потребоваться дополнительные подтверждения (по номеру телефона или E-NUM).</li> 
+		<li>Для отображения кошельков в WM Keeper Standard может потребоваться установка доверия как описано <a href="https://wiki.webmoney.ru/projects/webmoney/wiki/%D0%9A%D0%B0%D0%BA_%D0%BF%D0%BE%D0%B4%D0%BA%D0%BB%D1%8E%D1%87%D0%B8%D1%82%D1%8C_WM_%D0%BA%D0%BE%D1%88%D0%B5%D0%BB%D0%B5%D0%BA_%D0%B2_WM_Keeper_Standard">здесь</a>.</li>
 	</ul>
 	]]></instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
@@ -21,24 +21,41 @@
 		<module id="crypt/md5"/>
 	</depends>
 	<files>
-\		<icon>icon.png</icon>
+		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="wmr" name="WMR" units=" р"/>
 		<counter id="wmz" name="WMZ" units=" $"/>
 		<counter id="wme" name="WME" units=" €"/>
-		<counter id="wmu" name="WMU" units=" ₴"/>
+		<counter id="wmg" name="WMG" units=" г"/>
+		<counter id="wmx" name="WMX" units=" mBTC"/>
+		<counter id="wml" name="WML" units=" mLTC"/>
+		<counter id="wmf" name="WMF" units=" mETH"/>
+		<counter id="wmh" name="WMH" units=" mBCH"/>
+		<counter id="wmt" name="WMT" units=" USDT"/>
 		<counter id="wmb" name="WMB" units=" р"/>
-		<counter id="wmx" name="WMX" units=" B"/>
-		<counter id="wmr_num" name="Номер WMR" type="text"/>
+		<counter id="wmk" name="WMK" units=" ₸"/>
+		<counter id="wmy" name="WMY" units=" сўм"/>
 		<counter id="wmz_num" name="Номер WMZ" type="text"/>
 		<counter id="wme_num" name="Номер WME" type="text"/>
-		<counter id="wmu_num" name="Номер WMU" type="text"/>
-		<counter id="wmb_num" name="Номер WMB" type="text"/>
+		<counter id="wmg_num" name="Номер WMG" type="text"/>
 		<counter id="wmx_num" name="Номер WMX" type="text"/>
+		<counter id="wml_num" name="Номер WML" type="text"/>
+		<counter id="wmf_num" name="Номер WMF" type="text"/>
+		<counter id="wmh_num" name="Номер WMH" type="text"/>
+		<counter id="wmt_num" name="Номер WMT" type="text"/>
+		<counter id="wmb_num" name="Номер WMB" type="text"/>
+		<counter id="wmk_num" name="Номер WMK" type="text"/>
+		<counter id="wmy_num" name="Номер WMY" type="text"/>
+		<counter id="wmid" name="WM-идентификатор" type="text"/>
+		<counter id="status" name="Статус" type="text"/>
+		<counter id="chats" name="Сообщения" units=" шт"/>
+		<counter id="nickname" name="Никнейм" type="text"/>
+		<counter id="email" name="E-mail" type="text"/>
+		<counter id="phone" name="Телефон" type="text"/>
+		<counter id="fio" name="ФИО" type="text"/>
 	</counters>
 	<keywords>вебмани</keywords>
 	<type>money, wallet</type>

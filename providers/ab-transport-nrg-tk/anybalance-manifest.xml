@@ -1,11 +1,15 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id version="5">ab-transport-nrg-tk</id>
+	<id version="8">ab-transport-nrg-tk</id>
 	<name>ТК Энергия</name>
 	<description html="true"><![CDATA[
-	<p>Получает информацию о перевозках в транспортной компании ТК Энергия (http://nrg-tk.ru/client/tracking/)</p>
+	<p>Предоставляет информацию о состоянии, дате и времени изменения, местонахождении и другую информацию для пользователей услуг доставки ТК Энергия (https://nrg-tk.ru/).</p>
+	<p>Информация берется со страницы отслеживания грузов на сайте https://nrg-tk.ru/client/tracking/.</p>
 	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Для работы провайдера требуется ввести номер экспедиторской расписки.</p>
+	]]></instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>
 		<module id="library"/>
@@ -18,12 +22,18 @@
 	</files>
 	<counters>
 		<!-- <counter id="results" name="Информация о доставке" type="html"/> -->
-		<counter id="now" name="Текущее местоположение" type="text"/>
-		<counter id="tocity" name="Куда" type="text"/>
-		<counter id="from" name="Откуда" type="text"/>
-		<counter id="sits" name="Кол-во мест" type="text"/>
+		<counter id="date" name="Дата изменения" type="time" format="dd.MM.yyyy"/>
+		<counter id="operation" name="Состояние" type="text"/>
+		<counter id="time" name="Время изменения" type="time" format="dd.MM.yyyy HH:mm"/>
+		<counter id="location" name="Местонахождение" type="text"/>
+		<counter id="tocity" name="Пункт назначения" type="text"/>
+		<counter id="from" name="Пункт отправления" type="text"/>
+		<counter id="triptype" name="Рейс" type="text"/>
+		<counter id="sits" name="Кол-во мест" type="text" units=" шт"/>
 		<counter id="weight" name="Вес" units=" кг"/>
-		<counter id="volume" name="Объём" units=" м3"/>
+		<counter id="volume" name="Объем" units=" м³"/>
+		<counter id="now" name="Сводка" type="html"/>
+		<counter id="delivery" name="Доставка" type="html"/>
 	</counters>
 	<keywords>nrg-tk</keywords>
 	<type>transport</type>

@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
     <EditTextPreference 
-        title="Номер накладной" 
+        title="Номер расписки" 
         positiveButtonText="ОК" 
-        summary="||{@s}" 
-        dialogTitle="Номер накладной" 
+        summary="Номер экспедиторской расписки|Введите номер\n|{@s}\n" 
+        dialogTitle="Номер расписки" 
         negativeButtonText="Отмена" 
-        dialogMessage="Введите номер накладной."
+        dialogMessage="Введите номер экспедиторской расписки. Номер расписки вводится так же, как указано в экспедиторской расписке. Например, 000-1234567 или 1234567"
         key="number">
     </EditTextPreference>
 <!--    <ListPreference 

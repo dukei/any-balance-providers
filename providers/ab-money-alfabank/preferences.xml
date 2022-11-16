@@ -1,42 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
-	<EditTextPreference
-		title="Логин"
-		positiveButtonText="ОК"
-		summary="|Введите логин в Альфа-Клик|{@s}"
-		obligatory="true"
-		dialogTitle="Логин"
-		negativeButtonText="Отмена"
-		dialogMessage="Введите логин для входа в систему Альфа-Клик."
-		key="login">
-	</EditTextPreference>
-	<EditTextPreference
-		positiveButtonText="ОК"
-		key="password"
-		dialogTitle="Пароль"
-		negativeButtonText="Отмена"
-		obligatory="true"
-		title="Пароль"
-		summary="|Введите пароль в Альфа-Клик|***********"
-		dialogMessage="Введите пароль, используемый для входа в систему Альфа-Клик."
-		inputType="textPassword">
-	</EditTextPreference>
+    <EditTextPreference 
+        title="Номер телефона" 
+        positiveButtonText="ОК" 
+        summary="Номер телефона для входа в Альфа-Онлайн|Введите номер телефона\n|{@s}\n" 
+        dialogTitle="Номер телефона" 
+        negativeButtonText="Отмена" 
+        obligatory="true"
+        dialogMessage="Введите номер телефона для входа в Альфа-Онлайн в формате 10 цифр, например: 9091234567"
+        key="login">
+    </EditTextPreference>
 	<ListPreference
-		key="type"
-		title="Что смотреть"
-		summary="||{@s}\n"
-		entries="Карта|Кредитный счет|Счет|Депозит"
-		entryValues="card|crd|acc|dep"
+		key="method"
+		title="Способ входа"
+		summary="Способ входа в Альфа-Онлайн|Выберите способ входа\n|{@s}\n"
+		dialogTitle="Способ входа" 
+		entries="По номеру карты|По номеру счета"
+		entryValues="card|account"
 		defaultValue="card">
+	</ListPreference>	
+	<EditTextPreference 
+        title="Номер карты" 
+        positiveButtonText="ОК" 
+        summary="Номер карты для входа в Альфа-Онлайн|Введите номер карты\n|{@s}\n" 
+        dialogTitle="Номер карты" 
+        negativeButtonText="Отмена" 
+        obligatory="true"
+        dialogMessage="Введите номер карты для входа в Альфа-Онлайн в формате 16 цифр, например: 4321000012345678"
+        key="cardnum">
+    </EditTextPreference>
+	<EditTextPreference 
+        title="Номер счета" 
+        positiveButtonText="ОК" 
+        summary="Номер счета для входа в Альфа-Онлайн|Введите номер счета\n|{@s}\n" 
+        dialogTitle="Номер счета" 
+        negativeButtonText="Отмена" 
+        obligatory="true"
+        dialogMessage="Введите номер счета для входа в Альфа-Онлайн в формате 20 цифр, например: 43210000123400005678"
+        key="accountnum">
+    </EditTextPreference>
+	<ListPreference
+		key="source"
+		title="Источник данных"
+		summary="Источник для получения информации||{@s}\n"
+		dialogTitle="Источник данных"
+		entries="Автоматически|Карта|Счет|Депозит|Кредит"
+		entryValues="auto|card|account|deposit|credit"
+		defaultValue="auto">
 	</ListPreference>
 	<EditTextPreference
 		positiveButtonText="ОК"
-		key="cardnum"
-		dialogTitle="Номер карты/счета"
+		key="num"
+		dialogTitle="Номер продукта"
 		negativeButtonText="Отмена"
-		title="Номер карты/счета"
-		summary="Последние 4 цифры карты или счета|Автоматически\n|{@s}\n"
-		dialogMessage="Введите последние цифры карты или кредитного, текущего или депозитного счета, по которому вы хотите получить информацию. Для счетов можно ввести больше 4 последних цифр, если это необходимо. Если это поле оставить пустым, то будет показана информация по первой карте/счету."
+		title="Номер продукта"
+		summary="Последние 4 цифры номера продукта|Автоматически\n|{@s}\n"
+		dialogMessage="Введите последние 4 цифры карты, счета или депозита, по которым Вы хотите получать информацию. Если оставить поле пустым, будет показана информация по первому продукту"
 		inputType="number">
 	</EditTextPreference>
 </PreferenceScreen>

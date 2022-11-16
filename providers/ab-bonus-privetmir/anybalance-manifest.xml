@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-bonus-privetmir</id>
+	<id version="3">ab-bonus-privetmir</id>
 	<name>Привет, Мир!</name>
 	<api flags="no_browser"/>
 	<description html="true"><![CDATA[
@@ -9,7 +9,7 @@
 	]]></description>
 	<instruction html="true"><![CDATA[
 	<p>Для работы провайдера требуется ввести номер телефона, к которому привязана карта, и пароль для входа в личный кабинет "Привет, Мир!".</p>
-	<p>Сайт "Привет, Мир!" обладает защитой от роботов (reCAPTCHA v3), поэтому для входа потребуется пройти проверку с помощью приложения Anybalance ReCaptcha или с помощью автоматического распознавания с использованием сервиса RuCaptchа.</p>
+	<p>Сайт "Привет, Мир!" обладает защитой от роботов (reCAPTCHA v3), поэтому для входа может потребоваться пройти проверку с помощью приложения Anybalance ReCaptcha или с помощью автоматического распознавания с использованием сервиса RuCaptchа.</p>
 	<p>Если у вас нет личного кабинета "Привет, Мир!", вы можете зарегистрировать его на сайте https://privetmir.ru/register/.</p>
 	]]></instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
@@ -25,6 +25,7 @@
 	</files>
 	<counters>
 		<counter id="balance" name="Баланс" units=" {@currency}"/>
+		<counter id="privets" name="Приветы" units=" пр"/>
 		<counter id="cardnum" name="Номер карты" type="text"/>
 		<counter id="cardregdate" name="Дата регистрации карты" type="time" format="dd.MM.yyyy"/>
 		<counter id="cardnum2" name="Номер карты 2" type="text"/>

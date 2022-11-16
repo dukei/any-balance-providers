@@ -61,6 +61,7 @@ function main(){
 
     getParam(json.data.user.balance, result, ['balance', 'currency'], null, null, parseBalance);
     var currency = getParam(json.data.user.balance, result, ['currency', 'balance'], null, null, parseCurrency);
+	getParam(json.data.user.gameStampsBalance, result, 'privets', null, null, parseBalance);
 	getParam(json.data.user.tel, result, 'phone', null, replaceNumber);
 	getParam(json.data.user.username, result, 'fio');
 		

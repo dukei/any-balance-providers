@@ -1,0 +1,43 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-internet-ip-telcom</id>
+	<api flags="no_browser"/>
+	<name>АйПи ТелКом (Беларусь)</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе и тарифном плане для пользователей интернет-провайдера АйПи ТелКом (Беларусь) (https://iptel.by/).</p>
+	<p>Информация берется из личного кабинета абонента АйПи ТелКом на сайте https://cabinet.iptel.by/user/.</p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Для работы провайдера требуется ввести логин и пароль для входа в личный кабинет АйПи ТелКом.</p>
+	]]></instruction>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="abon" name="Абон. плата с НДС" units=" р"/>
+		<counter id="discount" name="Списано с НДС" units=" р"/>
+		<counter id="licschet" name="Лицевой счет" type="text"/>
+		<counter id="date_start" name="Начало расчетного периода" type="time" format="dd.MM.yyyy"/>
+		<counter id="date_till" name="Конец расчетного периода" type="time" format="dd.MM.yyyy"/>
+		<counter id="date_connect" name="Дата подключения" type="time" format="dd.MM.yyyy"/>
+		<counter id="status_internet" name="Статус интернета" type="text"/>
+		<counter id="status_block" name="Состояние блокировки" type="text"/>
+		<counter id="last_payment_sum" name="Сумма последнего платежа" units=" р"/>
+		<counter id="last_payment_date" name="Дата последнего платежа" type="time" format="dd.MM.yyyy"/>
+		<counter id="last_payment_type" name="Метод последнего платежа" type="text"/>
+		<counter id="address" name="Адрес подключения" type="text"/>
+		<counter id="phone" name="Телефон" type="text"/>
+		<counter id="fio" name="ФИО" type="text"/>
+	</counters>
+	<keywords>internet, ip, telcom, айпи, телком</keywords>
+	<type>internet</type>
+	<country>by</country>
+</provider>

@@ -696,22 +696,22 @@ function fetchNewThanks(baseurl, result) {
 	if (AnyBalance.isAvailable('spasibo')) {
 		html = AnyBalance.requestGet(baseurl + '/PhizIC/clientapi/private/profile/loyaltyURL.do');
 		var href = getParam(html, /^{"response":{"url":"(https:\/\/[^"]*)"/i, replaceTagsAndSpaces);
-		if (href) href = getParam(href, /sat=([^"]*)/, replaceTagsAndSpaces);
-		if (!href) {
-			AnyBalance.trace('Не удаётся получить ссылку на спасибо от СберБанка: ' + html);
-		} else {
-			html = AnyBalance.requestGet('https://bonus-spasibo.ru/sbrf-mobile/api/participant/info?sat='+href);
+		var sat = getParam(href, /sat=([^"]*)/, replaceTagsAndSpaces);
+		if(sat){
+			html = AnyBalance.requestGet('https://bonus-spasibo.ru/sbrf-mobile/api/participant/info?sat=' + sat);
 			if(/Sberbank-spasibo - Подтверждение телефона/i.test(html)){
 				AnyBalance.trace('Не удалось получить баллы спасибо. Для получения баллов необходимо войти в https://bonus-spasibo.ru/ и привязать свой номер телефона');
 			}else{
-			      try{
-				var json=getJson(html);
-                                result.spasibo=json.balance/100;
-                              }catch(e){
-                              	AnyBalance.trace('Не удалось получить баллы спасибо. '+e.message);
-                              	AnyBalance.trace(html);
-                              }
+			    try{
+				    var json = getJson(html);
+			        getParam(json.balance / 100, result, 'spasibo', null, null, parseBalance);
+                }catch(e){
+                  	AnyBalance.trace('Не удалось получить баллы спасибо. ' + e.message);
+                  	AnyBalance.trace(html);
+                }
 			}
+		}else{
+			AnyBalance.trace('Не удаётся получить ссылку на спасибо от СберБанка: ' + html);
 		}
 	}
 }

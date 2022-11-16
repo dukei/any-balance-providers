@@ -34,7 +34,7 @@ function requestApiInner(url, params, no_default_params, ignoreErrors) {
 		newParams = joinObjects(params, {
 			'version':'9.20',
 			'appType':'android',
-			'appVersion':'11.13.0',
+			'appVersion':'12.20.0',
 			'deviceName':'SM-G973',
 		});
 	}

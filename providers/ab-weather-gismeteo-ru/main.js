@@ -132,7 +132,7 @@ function getCurrentWeather(html, result) {
   // Влажность
   getParam(html, result, 'humidity', [/title="Влажность">(\d+)/i, /<div[^>]+info[^>]*>влажность(?:[^>]*>){3}(\d+)/i], [], parseInt);
   // Время обновления
-  getParam(html, result, 'time', /class="icon date"[^>]*>([^<]*)/i, [/(\d{1,2})\s+(\S+)\s+(\d{4})\s+(.*)/, '$3/$2/$1 $4',
+  var a = getParam(html, result, 'time', /class="icon date"[^>]*>([^<]*)/i, [/(\d{1,2})\s+(\S+)\s+(\d{4})\s+(.*)/, '$1/$2/$3 $4',
       'января', '01',
       'февраля', '02',
       'марта', '03',
@@ -144,8 +144,8 @@ function getCurrentWeather(html, result) {
       'сентября', '09',
       'октября', '10',
       'ноября', '11',
-      'декабря', '12'
-  ], Date.parse);
+      'декабря', '12',
+	replaceTagsAndSpaces], parseDate);
 
   return result;
 }
@@ -187,7 +187,7 @@ function getWeatherForecast(html, result, tod) {
     getParam(tr, result, 'wind', /wind[^>]*>([\s\S]*?)<\/span/i, [/<dt[^>]*>(\S+)<\/[\s\S]*>([\s\S]*?)$/i, '$1, $2 м/с', replaceTagsAndSpaces], html_entity_decode);
     getParam(tr, result, 'humidity', /<td>(\d+)<\/td>/i, replaceTagsAndSpaces, parseBalance);
     getParam(tr, result, 'heat', /m_temp c[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseBalance);
-    getParam(tr, result, 'time', /Local:\s*(\d{4}-\d{2}-\d{2}\s+\d+:\d{2})/i, [/(\d{4})-(\d{2})-(\d{2})\s+(\d+:\d{2})/, '$3/$2/$1 $4'], parseDate);
+    getParam(tr, result, 'time', /Local:\s*(\d{4}-\d{2}-\d{2}\s+\d+:\d{2})/i, [/(\d{4})-(\d{2})-(\d{2})\s+(\d+:\d{2})/, '$3/$2/$1 $4', replaceTagsAndSpaces], parseDate);
   }
 
   return result;

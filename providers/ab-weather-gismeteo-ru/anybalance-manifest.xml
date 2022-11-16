@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="2.2" version="29">ab-weather-gismeteo-ru</id>
+	<id major_version="2.2" version="30">ab-weather-gismeteo-ru</id>
 	<api flags="no_browser"/>
 	<name>Gismeteo</name>
 	<description html="true"><![CDATA[
@@ -30,7 +30,7 @@
 		<counter id="pressure" name="Атмосферное давление" units=" мм.рт.ст."/>
 		<counter id="humidity" name="Влажность" units=" %"/>
 		<counter id="heat" name="Комфорт" units=" °C"/>
-		<counter id="time" name="Время прогноза" type="time" format="dd.MM.yyyy hh:mm"/>
+		<counter id="time" name="Время прогноза" type="time" format="dd.MM.yyyy HH:mm"/>
 		<counter id="waterTemperature" name="Температура воды" units=" °C"/>
 		<counter id="rising" name="Восход Солнца" type="time_interval" prefix="В. "/>
 		<counter id="setting" name="Закат Солнца" type="time_interval" prefix="З. "/>

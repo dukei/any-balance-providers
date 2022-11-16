@@ -1,18 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="4">ab-money-halvacard-sovkombank</id>
+	<id version="8">ab-money-halvacard-sovkombank</id>
 	<name>Халва-Совкомбанк</name>
 	<api flags="no_browser"/>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе, картах, счетах, операциях по счетам и другие данные для владельцев карт рассрочки Халва от Совкомбанка.</p>
-	<p>Информация берётся из личного кабинета Халва-Совкомбанк на сайте https://halvacard.ru.</p>
+	<p>Предоставляет информацию о балансе, картах, счетах, операциях по счетам и другие данные для владельцев карт рассрочки Халва от Совкомбанка (https://halvacard.ru/).</p>
+	<p>Информация берется из личного кабинета Халва-Совкомбанк на сайте https://halvacard.ru/lk/.</p>
 	]]></description>
 	<instruction html="true"><![CDATA[
 	<p>Для работы провайдера требуется ввести логин и пароль для входа в личный кабинет Халва-Совкомбанк.</p>
-	<p>Сайт Халва-Совкомбанк обладает защитой от роботов (ReCaptcha v3), поэтому для входа потребуется пройти проверку с помощью приложения Anybalance ReCaptcha или с помощью автоматического распознавания с использованием сервиса RuCaptchа.</p>
 	<p>Кроме того, для авторизации в личном кабинете потребуется ввести код подтверждения из SMS, высланного на номер телефона, привязанного к личному кабинету Халва-Совкомбанк.</p>
 	]]></instruction>
-	<author>RamzesZeus &lt;ramzeszeus@gmail.com&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
     <depends>
 		<module id="library"/>
 		<module id="misc/saved-data"/>
@@ -28,12 +27,13 @@
 		<counter id="balance_own" name="Собственные средства" units=" {@currency}"/>
 		<counter id="balance_credit" name="Заемные средства" units=" {@currency}"/>
 		<counter id="credit_limit" name="Лимит рассрочки" units=" {@currency}"/>
+		<counter id="next_calc_date" name="Дата формирования платежа" type="time" format="dd.MM.yyyy"/>
 		<counter id="min_payment" name="Минимальный платеж" units=" {@currency}"/>
 		<counter id="next_pay_date" name="Дата следующего платежа" type="time" format="dd.MM.yyyy"/>
 		<counter id="outstand_debt" name="Непогашенный долг" units=" {@currency}"/>
 		<counter id="overdue_days" name="Просрочка" units=" дн"/>
 		<counter id="overdue_debt" name="Долг" units=" {@currency}"/>
-		<counter id="currency" name="Валюта счета" type="text"/>
+		<counter id="currency_code" name="Валюта счета" type="text"/>
         <counter id="card" name="Номер карты" type="text"/>
 		<counter id="card_name" name="Имя карты" type="text"/>
 		<counter id="card_type" name="Тип карты" type="text"/>
@@ -57,7 +57,7 @@
 		<counter id="exp_loan_amount" name="Заемных средств за месяц" units=" {@currency}"/>
 		<counter id="exp_own_amount" name="Личных средств за месяц" units=" {@currency}"/>
 		<counter id="income_amount" name="Сумма доходов за месяц" units=" {@currency}"/>
-		<counter id="last_operation" name="Последняя операция" type="text"/>
+		<counter id="last_operation" name="Последняя операция" type="html"/>
 	</counters>
 	<keywords>халва, совкомбанк, halva, sovkombank</keywords>
 	<type>money, bank</type>

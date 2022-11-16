@@ -3,7 +3,7 @@
     <EditTextPreference 
         title="Логин" 
         positiveButtonText="ОК" 
-        summary="Логин для входа в личный кабинет||{@s}\n" 
+        summary="Логин для входа в личный кабинет|Введите логин\n|{@s}\n" 
         dialogTitle="Логин" 
         negativeButtonText="Отмена" 
         obligatory="true"
@@ -17,10 +17,21 @@
         negativeButtonText="Отмена"
         title="Пароль"
         obligatory="true"
-        summary="Пароль для входа в личный кабинет||**********\n"
-        dialogMessage="Введите пароль для входа в личный кабинет"
+        summary="Пароль для входа в личный кабинет|Введите пароль\n|**********\n"
+        dialogMessage="Введите пароль, используемый для входа в личный кабинет"
         inputType="textPassword">
     </EditTextPreference>
+<!--<EditTextPreference 
+        positiveButtonText="ОК"
+        key="pin" 
+		obligatory="true"
+        dialogTitle="PIN-код"
+        negativeButtonText="Отмена"
+        title="PIN-код"
+        summary="PIN-код для входа в личный кабинет|Введите PIN-код\n|***********\n"
+        dialogMessage="Введите PIN-код из четырех цифр для входа в личный кабинет. Если оставить поле пустым, вы сможете установить новый PIN-код в процессе авторизации"
+        inputType="textPassword">
+    </EditTextPreference>-->
 	<EditTextPreference
 		positiveButtonText="ОК"
 		key="lastdigits"
@@ -28,7 +39,7 @@
 		negativeButtonText="Отмена"
 		title="Номер карты"
 		summary="Последние 4 цифры карты|Автоматически\n|{@s}\n"
-		dialogMessage="Введите последние 4 цифры карты, по которой Вы хотите получать информацию. Если оставить поле пустым, будет показана информация по первой карте"
+		dialogMessage="Введите последние 4 цифры карты, по которой вы хотите получать информацию. Если оставить поле пустым, будет показана информация по первой карте"
 		inputType="number">
 	</EditTextPreference>
 </PreferenceScreen>

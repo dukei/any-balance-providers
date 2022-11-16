@@ -59,17 +59,6 @@ function handleRedirect(html){
 		html = AnyBalance.requestPost(joinUrl(ref, action), params, addHeaders({Referer: ref}));
 		ref = AnyBalance.getLastUrl();
 	}
-	if(/\/authorize/i.test(html)){
-		AnyBalance.trace('Требуется дологиниться');
-		ref = AnyBalance.getLastUrl();
-		form = getElement(html, /<form[^>]+form/i);
-		if(form){
-		    params = createFormParams(form);
-			action = getParam(form, null, null, /<form[^>]+action="([^"]*)/i, replaceHtmlEntities);
-			html = AnyBalance.requestPost(joinUrl(ref, action), params, addHeaders({Referer: ref}));
-			ref = AnyBalance.getLastUrl();
-		}
-	}
 	return html;
 }
 
@@ -154,6 +143,17 @@ function main(){
 		//var logOnUrl = getParam(html, /logOnUrl="([\s\S]*?)"/i, replaceSlashes);
 		//html=AnyBalance.requestGet(logOnUrl, g_headers);
 		html = handleRedirect(html);
+		if(/\/authorize/i.test(html)){
+	    	AnyBalance.trace('Требуется дологиниться');
+	    	ref = AnyBalance.getLastUrl();
+	    	form = getElement(html, /<form[^>]+form/i);
+	    	if(form){
+	    	    params = createFormParams(form);
+	    		action = getParam(form, null, null, /<form[^>]+action="([^"]*)/i, replaceHtmlEntities);
+	    		html = AnyBalance.requestPost(joinUrl(ref, action), params, addHeaders({Referer: ref}));
+	    		ref = AnyBalance.getLastUrl();
+	    	}
+	    }
 		if (isLoged()){
 		    token=getParam(html , /__RequestVerificationToken[\s\S]*?value="([\s\S]*?)"/);
             if (token)

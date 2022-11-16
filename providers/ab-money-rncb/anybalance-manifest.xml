@@ -1,13 +1,16 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="5">ab-money-rncb</id>
+	<id version="6">ab-money-rncb</id>
 	<api flags="no_browser"/>
 	<name>РНКБ</name>
 	<description html="true"><![CDATA[
-	<p>Получает текущий остаток и другие параметры продуктов банка РНКБ http://www.rncb.ru/, используя API мобильного приложения.</p>
+	<p>Предоставляет информацию о текущем остатке и других параметрах счетов и депозитов для клиентов банка РНКБ (https://www.rncb.ru/).</p>
+	<p>Информация берется из мобильного приложения РНКБ 24/7.</p>
 	]]></description>
 	<instruction html="true"><![CDATA[
-	<p>Если у вас нет доступа к интернет-банку: для получения пароля перейдите на сайт http://www.rncb.ru/ru/internet-bank/</p>
+	<p>Для работы провайдера требуется ввести логин и пароль для входа в Интернет-банк.</p>
+	<p>Кроме того, для авторизации в Интернет-банке потребуется однократно ввести код подтверждения из SMS, высланного на номер телефона, указанный при заключении Договора банковского обслуживания.</p>
+	<p>Если у вас нет доступа к Интернет-банку, для получения пароля перейдите на сайт https://online.rncb.ru/web_banking/protected/welcome.jsf.</p>
 	]]></instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>
@@ -25,13 +28,19 @@
 		<counter id="balance" name="Остаток" units=" {@currency}"/>
 		<counter id="availableAmount" name="Доступно" units=" {@currency}"/>
 		<counter id="lockedAmount" name="Заблокировано" units=" {@currency}"/>
+		<counter id="creditLimit" name="Кредитный лимит" units=" {@currency}"/>
 		<counter id="contractNumber" name="Номер счета" type="text"/>
-		<counter id="currency" name="Валюта" type="text"/>
-		<counter id="statusDescription" name="Статус" type="text"/>
+		<counter id="currency" name="Валюта счета" type="text"/>
 		<counter id="number" name="Номер карты" type="text"/>
-		<counter id="formattedName" name="Форматированное имя" type="text"/>
+		<counter id="statusDescription" name="Статус" type="text"/>
+		<counter id="formattedName" name="Название" type="text"/>
+		<counter id="accountType" name="Тип счета" type="text"/>
+		<counter id="percent" name="Процентная ставка" units=" %"/>
 		<counter id="type" name="Тип карты" type="text"/>
-		<counter id="expireDate" name="Срок действия" type="time" format="MM/yy"/>
+		<counter id="openDate" name="Дата открытия счета" type="time" format="dd.MM.yyyy"/>
+		<counter id="endDate" name="Срок действия счета" type="time" format="dd.MM.yyyy"/>
+		<counter id="expireDate" name="Срок действия карты" type="time" format="MM/yy"/>
+		<counter id="phone" name="Телефон" type="text"/>
 		<counter id="fio" name="ФИО" type="text"/>
 	</counters>
 	<keywords></keywords>

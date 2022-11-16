@@ -1,41 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
 	<EditTextPreference
-		obligatory="true"
 		title="Логин"
+		obligatory="true"
 		positiveButtonText="ОК"
-		summary="||{@s}"
+		summary="Логин для входа в Интернет-банк|Введите логин\n|{@s}\n"
 		dialogTitle="Логин"
 		negativeButtonText="Отмена"
-		dialogMessage="Введите логин для входа в интернет-банк."
+		dialogMessage="Введите логин, используемый для входа в Интернет-банк"
+		inputType="text"
 		key="login">
 	</EditTextPreference>
 	<EditTextPreference
-		obligatory="true"
 		positiveButtonText="ОК"
 		key="password"
+		obligatory="true"
 		dialogTitle="Пароль"
 		negativeButtonText="Отмена"
 		title="Пароль"
-		summary="||***********"
-		dialogMessage="Введите пароль, используемый для входа в интернет-банк."
+		summary="Пароль для входа в Интернет-банк|Введите пароль\n|***********\n"
+		dialogMessage="Введите пароль, используемый для входа в Интернет-банк"
 		inputType="textPassword">
 	</EditTextPreference>
 	<ListPreference
 		key="type"
 		title="Банковский продукт"
-		summary="||{@s}\n"
-		entries="Карта|Кредит|Депозит|Счет"
-		entryValues="card|crd|dep|acc"
+		summary="Продукт для получения информации||{@s}\n"
+		dialogTitle="Банковский продукт"
+		entries="Карта|Счет|Депозит|Кредит"
+		entryValues="card|acc|dep|crd"
 		defaultValue="card">
 	</ListPreference>
 	<EditTextPreference
 		positiveButtonText="ОК"
 		key="num"
-		dialogTitle="Номер"
+		inputType="number"
+		dialogTitle="Номер продукта"
 		negativeButtonText="Отмена"
-		title="Номер карты/счета/депозита/кредита"
-		summary="Последние 4 цифры номера карты/счета/депозита/кредита|Автоматически\n|{@s}\n"
-		dialogMessage="Введите последние 4 цифры номера карты/счета/депозита/кредита, по которому вы хотите получить данные. Если это поле оставить пустым, то будет показана информация по первому банковскому продукту.">
-	</EditTextPreference>	
+		title="Номер продукта"
+		summary="Последние 4 цифры номера продукта|Автоматически\n|{@s}\n"
+		dialogMessage="Введите последние 4 цифры номера банковского продукта, по которому вы хотите получить данные. Если оставить поле пустым, будет показана информация по первому банковскому продукту">
+	</EditTextPreference>
 </PreferenceScreen>

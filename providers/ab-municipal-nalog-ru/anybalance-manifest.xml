@@ -1,15 +1,18 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="12">ab-municipal-nalog-ru</id>
+	<id version="13">ab-municipal-nalog-ru</id>
 	<name>Федеральная Налоговая Служба (ФНС)</name>
-	<description>
-	Пролучает данные на сайте Федеральной Налоговой Службы (ФНС) https://nalog.ru/.
-	
-	Личный кабинет налогоплательщика находится на https://lkfl2.nalog.ru/lk/
-	
-	ВНИМАНИЕ! Для получения регистрационной карты и доступа к сервису «Личный кабинет налогоплательщика для физических лиц» Вы должны лично обратиться в любую* инспекцию ФНС России, независимо от места постановки на учет. При обращении в инспекцию ФНС России по месту жительства при себе необходимо иметь документ, удостоверяющий личность. При обращении в иные инспекции ФНС России при себе необходимо иметь документ, удостоверяющий личность, и оригинал или копию свидетельства о постановке на учет физического лица (свидетельство о присвоении ИНН)/уведомления о постановке на учет.
-	</description>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о задолженности по налогам с сайта Федеральной Налоговой Службы (ФНС) https://nalog.ru/.</p>
+	<p>Информация берется из личного кабинета налогоплательщика на сайте https://lkfl2.nalog.ru/lk/.</p>
+	<p>ВНИМАНИЕ! Для получения регистрационной карты и доступа к сервису «Личный кабинет налогоплательщика для физических лиц» вы должны лично обратиться в любую инспекцию ФНС России, независимо от места постановки на учет.</p>
+	<p>При обращении в инспекцию ФНС России по месту жительства при себе необходимо иметь документ, удостоверяющий личность.</p>
+	<p>При обращении в иные инспекции ФНС России при себе необходимо иметь документ, удостоверяющий личность, и оригинал или копию свидетельства о постановке на учет физического лица (свидетельство о присвоении ИНН)/уведомления о постановке на учет.</p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Для работы провайдера требуется ввести логин и пароль для входа в личный кабинет налогоплательщика.</p>
+	]]></instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>
 		<module id="library"/>
@@ -21,14 +24,27 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="arrears" name="Задолженность" units=" р"/>
-		<counter id="overpay" name="Переплата" units=" р"/>
-	<!--	<counter id="income" name="Зачислено" units=" р"/>
-		<counter id="paid" name="Уплачено" units=" р"/>
-		<counter id="unpaid" name="Начислено" units=" р"/> -->
+		<counter id="arrears" name="Задолженность" units=" ₽"/>
+		<counter id="overpay" name="Переплата" units=" ₽"/>
+		<counter id="enp" name="Единый налоговый платеж" units=" ₽"/>
+		<counter id="enpconfirmed" name="Подтвержденная сумма ЕНП" units=" ₽"/>
+		<counter id="transport" name="Транспортный налог" units=" ₽"/>
+		<counter id="property" name="Налог на имущество" units=" ₽"/>
+		<counter id="land" name="Земельный налог" units=" ₽"/>
+		<counter id="daysleft" name="Дней до срока уплаты" units=" дн"/>
+		<counter id="inn" name="ИНН" type="text"/>
+		<counter id="notifications" name="Сообщения" units=" шт"/>
+		<counter id="lastoperdate" name="Дата последней операции" type="time" format="dd.MM.yyyy"/>
+		<counter id="lastopersum" name="Сумма последней операции" units=" ₽"/>
+		<counter id="lastopertype" name="Тип последней операции" type="text"/>
+		<counter id="lastoperdesc" name="Описание последней операции" type="text"/>
+<!--	<counter id="income" name="Зачислено" units=" ₽"/>
+		<counter id="paid" name="Уплачено" units=" ₽"/>
+		<counter id="unpaid" name="Начислено" units=" ₽"/> -->
+		<counter id="email" name="E-mail" type="text"/>
 		<counter id="fio" name="ФИО" type="text"/>
 	</counters>
-	<keywords></keywords>
+	<keywords>налог, фнс</keywords>
 	<type>municipal, tax</type>
 	<country>ru</country>
 </provider>

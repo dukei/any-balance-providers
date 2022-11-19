@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-money-yandex-plus</id>
+	<id version="3">ab-money-yandex-plus</id>
 	<api flags="no_browser" />
 	<name>Яндекс Плюс</name>
 	<description html="true"><![CDATA[
@@ -37,7 +37,7 @@
 		<counter id="participants" name="Участники группы" type="html"/>
 		<counter id="lastoperationdate" name="Дата посл. операции" type="time" format="dd.MM.yyyy"/>
 		<counter id="lastoperationsum" name="Сумма посл. операции" units=" {@currency}"/>
-		<counter id="lastoperationtype" name="Тип посл. операции" type="text"/>
+		<counter id="lastoperationtype" name="Тип операции" type="html"/>
 		<counter id="lastoperationballs" name="Начислено по операции" units=" Б"/>
 		<counter id="freshmail" name="Недавние письма" units=" шт"/>
 		<counter id="unreadmail" name="Непрочитанные письма" units=" шт"/>

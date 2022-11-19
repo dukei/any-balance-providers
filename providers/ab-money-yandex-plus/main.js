@@ -144,21 +144,27 @@ function main() {
 	var json = getJson(html);
 	AnyBalance.trace(JSON.stringify(json));
 	
-	var info = json.data.userState.subscriptions[0]; // Получаем информацию только по Плюсу, подписки на другие сервисы не смотрим (пока...)
-	
-	if (info){
-	    getParam(g_type[info.tariff]||info.tariff, result, '__tariff', null, replaceTagsAndSpaces);
-	    getParam(g_status[info.status]||info.status, result, 'status', null, replaceTagsAndSpaces);
-		if (info.familyRole != 'CHILD'){ // Исключаем получение этих счетчиков для участников семейной группы, чтобы избежать ошибок из-за null
-		    getParam(info.commonPrice.amount, result, 'price', null, replaceTagsAndSpaces, parseBalance);
-	        getParam(info.end, result, 'expiresdate', null, replaceTagsAndSpaces, parseDateISO);
-	        getParam(info.nextPayment.price.amount, result, 'nextpaymentamount', null, replaceTagsAndSpaces, parseBalance);
-	        getParam(info.nextPayment.date, result, 'nextpaymentdate', null, replaceTagsAndSpaces, parseDateISO);
+	var subs = json.data.userState.subscriptions; // Получаем информацию по всем подпискам в кабинете
+    if (subs && subs.length>0){
+		for(var i=0; i<subs.length; ++i){
+		    sumParam(subs[i].asset.title, result, '__tariff', null, null, null, create_aggregate_join(' + '));
 		}
-	    getParam(info.start, result, 'starteddate', null, replaceTagsAndSpaces, parseDateISO);
-		getParam(g_role[info.familyRole]||info.familyRole, result, 'role', null, replaceTagsAndSpaces);
-	}else{
-		AnyBalance.trace('Не удалось получить информацию о подписке');
+	    var info = subs[0]; // Получаем подробную информацию только по основному тарифу (Плюсу)
+	    if (info){
+	        getParam(g_status[info.status]||info.status, result, 'status', null, replaceTagsAndSpaces);
+	    	if (info.familyRole != 'CHILD'){ // Пропускаем получение этих счетчиков для участников семейной группы, они всегда отсутствуют
+	    	    getParam(info.commonPrice && info.commonPrice.amount, result, 'price', null, replaceTagsAndSpaces, parseBalance);
+	            getParam(info.nextPayment && info.nextPayment.price && info.nextPayment.price.amount, result, 'nextpaymentamount', null, replaceTagsAndSpaces, parseBalance);
+	            getParam(info.nextPayment && info.nextPayment.date, result, 'nextpaymentdate', null, replaceTagsAndSpaces, parseDateISO);
+	    	}
+	        getParam(info.start, result, 'starteddate', null, replaceTagsAndSpaces, parseDateISO);
+	    	getParam(info.end, result, 'expiresdate', null, replaceTagsAndSpaces, parseDateISO);
+	    	getParam(g_role[info.familyRole]||info.familyRole, result, 'role', null, replaceTagsAndSpaces);
+	    }else{
+	    	AnyBalance.trace('Не удалось получить информацию о подписке');
+	    }
+    }else{
+		AnyBalance.trace('Не удалось получить информацию по подпискам');
 	}
 	
 	html = AnyBalance.requestPost(baseurl + 'api/blackbox_family_info?', JSON.stringify({}), addHeaders({'Referer': AnyBalance.getLastUrl()}));
@@ -168,11 +174,9 @@ function main() {
 	
 	if (json && json.users){
 		getParam(json.users.length, result, 'users', null, replaceTagsAndSpaces, parseBalance);
-		var res = json.users[0].info.display_name.name;
-		for(var i=1; i<json.users.length; ++i){
-	    	res += '<br>' + json.users[i].info.display_name.name;
-	    }
-		getParam(res, result, 'participants', null, null, null);
+		for(var i=0; i<json.users.length; ++i){
+		    sumParam(json.users[i].info.display_name.name, result, 'participants', null, null, null, create_aggregate_join(',<br> '));
+		}
 	}else{
 		AnyBalance.trace('Не удалось получить информацию о составе группы');
 	}
@@ -187,8 +191,10 @@ function main() {
 	if (hist){
 		getParam(hist.created, result, 'lastoperationdate', null, replaceTagsAndSpaces, parseDateISO);
 	    getParam(hist.total, result, 'lastoperationsum', null, replaceTagsAndSpaces, parseBalance);
-	    getParam(hist.service.name, result, 'lastoperationtype', null, replaceTagsAndSpaces);
 		getParam(hist.plus, result, 'lastoperationballs', null, replaceTagsAndSpaces, parseBalance);
+		for(var i=0; i<hist.items.length; ++i){
+		    sumParam(hist.items[i].name, result, 'lastoperationtype', null, null, null, create_aggregate_join(',<br> '));
+		}
 	}else{
 		AnyBalance.trace('Не удалось получить информацию о последнем платеже');
 	}

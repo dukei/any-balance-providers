@@ -11,65 +11,103 @@ var g_headers = {
 	'Accept': 'application/json, text/plain, */*',
 	'Accept-Language': 'en-GB,en;q=0.9,ru-RU;q=0.8,ru;q=0.7,en-US;q=0.6',
 	'Connection': 'keep-alive',
-	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.142 Safari/537.36',
+	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36',
 };
+
+var g_savedData;
 
 function main(){
     var prefs = AnyBalance.getPreferences();
     var baseurl = 'https://ikus.pesc.ru/';
     g_headers.Origin = baseurl.replace(/\/$/, '');
 
-    checkEmpty(prefs.login, 'Введите e-mail!');
+    checkEmpty(prefs.login, 'Введите E-mail!');
     checkEmpty(prefs.password, 'Введите пароль!');
 
-    AnyBalance.setDefaultCharset('utf-8');    
+    AnyBalance.setDefaultCharset('utf-8');
 
-    var html = AnyBalance.requestGet(baseurl, g_headers);
+    if(!g_savedData)
+		g_savedData = new SavedData('pskpetersburg', prefs.login);
 
-    var captcha = solveRecaptcha('Пожалуйста, докажите, что вы не робот', baseurl, '6Lep5K0UAAAAADF48l3jpw8QuqUKVQuOUxzM21HJ');
-
-    html = AnyBalance.requestPost(baseurl + 'application/v3/auth/login', JSON.stringify({
-		username:	prefs.login,
-		password:	prefs.password,
-		captchaCode: captcha,
-	}), addHeaders({'Content-Type': 'application/json', Referer: baseurl}));
-
-	var json = getJson(html);
-	if(!json.access_token){
-		AnyBalance.trace(html);
-		var error = json.errors.reduce(function(acc, cur) { acc.push(cur.message); return acc; }, []).join(';\n');
-		if(error)
-			throw new AnyBalance.Error(error, null, /не найден|парол|email/i.test(error));
-		throw new AnyBalance.Error('Не удалось войти в личный кабинет. Сайт изменен?');
-	}
-
-	g_headers.Authorization = 'Bearer ' + json.access_token;
-
-	//html = AnyBalance.requestGet(baseurl + 'application/v3/profile', addHeaders({Referer: baseurl}));
-	//json = getJson(html);
+	g_savedData.restoreCookies();
+	var token = g_savedData.get('token');
+	g_headers['Authorization'] = 'Bearer ' + token;
 	
-	html = AnyBalance.requestGet(baseurl + 'application/v3/groups', addHeaders({Referer: baseurl}));
-	json = getJson(html);
+	var html = AnyBalance.requestGet(baseurl + 'application/v3/groups', addHeaders({Referer: baseurl}));
+	
+	if (!html || AnyBalance.getLastStatusCode() > 500) {
+        AnyBalance.trace(html);
+        throw new AnyBalance.Error('Сайт провайдера временно недоступен. Попробуйте еще раз позже');
+    }
+	
+	var json = getJson(html);
+	AnyBalance.trace(JSON.stringify(json));
+	
+	if(AnyBalance.getLastStatusCode() === 401 || prefs.login !== g_savedData.get('login')){
+		AnyBalance.trace('Сессия новая. Будем логиниться заново...');
+		delete g_headers['Authorization'];
+		clearAllCookies();
+	
+	    var html = AnyBalance.requestGet(baseurl, g_headers);
 
+        var captcha = solveRecaptcha('Пожалуйста, докажите, что вы не робот', baseurl, '6Lep5K0UAAAAADF48l3jpw8QuqUKVQuOUxzM21HJ');
+
+        html = AnyBalance.requestPost(baseurl + 'application/v3/auth/login', JSON.stringify({
+	    	username:	prefs.login,
+	    	password:	prefs.password,
+	    	captchaCode: captcha,
+	    }), addHeaders({'Content-Type': 'application/json', Referer: baseurl}));
+
+	    var json = getJson(html);
+	    if(!json.access_token){
+	    	AnyBalance.trace(html);
+	    	var error = json.errors.reduce(function(acc, cur) { acc.push(cur.message); return acc; }, []).join(';\n');
+	    	if(error)
+	    		throw new AnyBalance.Error(error, null, /не найден|парол|email/i.test(error));
+	    	throw new AnyBalance.Error('Не удалось войти в личный кабинет. Сайт изменен?');
+	    }
+
+	    var token = json.access_token;
+		
+		g_headers['Authorization'] = 'Bearer ' + token;
+	
+	    html = AnyBalance.requestGet(baseurl + 'application/v3/groups', addHeaders({Referer: baseurl}));
+	    json = getJson(html);
+		
+		if(json.errors){
+	    	AnyBalance.trace(html);
+	    	var error = json.errors.reduce(function(acc, cur) { acc.push(cur.message); return acc; }, []).join(';\n');
+	    	if(error)
+	    		throw new AnyBalance.Error(error, null, /доступ/i.test(error));
+	    	throw new AnyBalance.Error('Не удалось войти в личный кабинет. Сайт изменен?');
+	    }
+		
+		g_savedData.set('login', prefs.login);
+		g_savedData.set('token', token);
+		g_savedData.setCookies();
+	    g_savedData.save();
+	}else{
+		AnyBalance.trace('Сессия сохранена. Входим автоматически...');
+	}
+	
 	var accounts = [];
 	for(var i=0; i<json.length; ++i){
 		let g = json[i].id;
 
-		html = AnyBalance.requestGet(baseurl + 'application/v3/groups/' + g + '/accounts', addHeaders({Referer: baseurl}));
+		html = AnyBalance.requestGet(baseurl + 'application/v5/groups/' + g + '/accounts', addHeaders({Referer: baseurl}));
 		json = getJson(html);
 		accounts.push.apply(accounts, json);
 	}
 
 //	html = AnyBalance.requestGet(baseurl + 'application/api/checkAuthentication', addHeaders({Referer: baseurl}));
 //	json = getJson(html);
-
-
+        
 	if(!accounts.length){
 		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Вы не добавили ни один лицевой счет в личный кабинет.');
+		throw new AnyBalance.Error('У вас нет ни одного лицевого счета');
 	}
 
-	AnyBalance.trace('Found accounts: ' + accounts.length);
+	AnyBalance.trace('Найдено лицевых счетов: ' + accounts.length);
 
 	var result = {success: true};
 
@@ -84,7 +122,7 @@ function main(){
 
 		var name_balance = 'balance' + (i || ''), name_peni = 'peni' + (i || '')
 
-		AnyBalance.trace('Found account: ' + JSON.stringify(json));
+		AnyBalance.trace('Лицевой счет: ' + JSON.stringify(json));
 
 		if(AnyBalance.isAvailable(name_balance, name_peni)){
 			html = AnyBalance.requestGet(baseurl + 'application/v3/accounts/' + acc.accountId + '/data', addHeaders({Referer: baseurl}));
@@ -104,6 +142,15 @@ function main(){
 			sumParam(_json.address, result, '__tariff', null, null, null, aggregate_join);
 		}
 
+	}
+	
+	if(AnyBalance.isAvailable('email', 'phone', 'fio')){
+	    html = AnyBalance.requestGet(baseurl + 'application/v3/profile', addHeaders({Referer: baseurl}));
+	    json = getJson(html);
+		
+		getParam(json.email, result, 'email');
+		getParam(json.phoneNumber, result, 'phone', null, [replaceTagsAndSpaces, /.*(\d\d\d)(\d\d\d)(\d\d)(\d\d)$/, '+7 $1 $2-$3-$4']);
+		getParam(json.firstName + ' ' + json.lastName, result, 'fio');
 	}
 
     AnyBalance.setResult(result); 

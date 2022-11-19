@@ -1,25 +1,24 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
-    <EditTextPreference 
-        title="E-mail" 
-        positiveButtonText="ОК" 
-        summary="||{@s}" 
-        dialogTitle="E-mail" 
-        negativeButtonText="Отмена" 
-        dialogMessage="E-mail для входа в личный кабинет Петербургской Сбытовой Компании"
-        inputType="textEmailAddress"
+    <EditTextPreference
+		title="Логин"
+		key="login"
+		summary="Логин для входа в личный кабинет|Введите логин\n|{@s}\n"
 		obligatory="true"
-        key="login">
-    </EditTextPreference>
-    <EditTextPreference 
-        positiveButtonText="ОК"
-        key="password" 
-        dialogTitle="Пароль"
-        negativeButtonText="Отмена"
-	obligatory="true"
-        title="Пароль"
-        summary="|Введите пароль|***********"
-        dialogMessage="Введите пароль, используемый для входа в личный кабинет"
-        inputType="textPassword">
-    </EditTextPreference>
+		dialogTitle="Логин"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите E-mail, используемый для входа в личный кабинет">
+	</EditTextPreference>
+	<EditTextPreference
+		title="Пароль"
+		key="password"
+		summary="Пароль для входа в личный кабинет|Введите пароль\n|***********\n"
+		obligatory="true"
+		dialogTitle="Пароль"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите пароль, используемый для входа в личный кабинет"
+		inputType="textPassword">
+	</EditTextPreference>
 </PreferenceScreen>

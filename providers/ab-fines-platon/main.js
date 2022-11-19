@@ -5,12 +5,11 @@
 
 var g_headers = {
 	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
-	'Accept-Language': 'ru-RU,ru;q=0.9,en-US;q=0.6,en;q=0.4',
-	'Accept-Encoding': 'gzip, deflate, br',
+	'Accept-Language': 'ru-RU,ru;q=0.9,en-US;q=0.7,en;q=0.4',
     'Cache-Control': 'max-age=0',
 	'Connection': 'keep-alive',
-//  'Upgrade-Insecure-Requests': '1',
-	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/95.0.4638.69 Safari/537.36'
+    'Upgrade-Insecure-Requests': '1',
+	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36'
 };
 
 var baseurl = 'https://lk.platon.ru';
@@ -38,7 +37,7 @@ function main() {
 	    throw new AnyBalance.Error('Сайт провайдера временно недоступен! Попробуйте обновить данные позже.');
 	}
 	
-	if (/Необходима авторизация/i.test(html)) {
+	if (!/sign_out/i.test(html)) {
 		AnyBalance.trace('Сессия новая. Будем логиниться заново...');
 		clearAllCookies();
 		
@@ -52,29 +51,30 @@ function main() {
 
 	    if(!authToken){
 	    	AnyBalance.trace(html);
-	    	throw new AnyBalance.Error('Не удалось найти форму входа! Сайт изменен?');
+	    	throw new AnyBalance.Error('Не удалось найти токен авторизации. Сайт изменен?');
 	    }
 
-        var params = [
-        	['utf8','✓'],
-            ['authenticity_token',authToken],
-            ['session[login]',prefs.login],
-            ['session[password]',prefs.password],
-            ['session[remember_me]','0'],
-            ['session[remember_me]','1']
-	    ];
-
-        html = AnyBalance.requestPost(baseurl + '/sign_in?locale=ru/', params, AB.addHeaders({
+        html = AnyBalance.requestPost(baseurl + '/sign_in?locale=ru/', {
+        	'utf8': '✓',
+            'authenticity_token': authToken,
+            'session[login]': prefs.login,
+            'session[password]': prefs.password,
+            'session[remember_me]': '0',
+            'session[remember_me]': '1'
+		}, AB.addHeaders({
 	    	'Content-Type': 'application/x-www-form-urlencoded',
 	    	'Origin': baseurl,
-            'Referer': baseurl + '/sign_in',
-            'Upgrade-Insecure-Requests': '1'	
+            'Referer': baseurl + '/sign_in'
 	    }));
 	
 	    if(!/sign_out/i.test(html)){
             var error = getParam(html, null, null, /<div[^>]+class="red">([\s\S]*?)<\/div>/ig, replaceTagsAndSpaces);
 	    	if(error)
 	    		throw new AnyBalance.Error(error, null, /логин|парол/i.test(error));
+			
+			if(/<form[^>]+action="\/change_passwords[\s\S]*?"/i.test(html))
+                throw new AnyBalance.Error('Платон требует сменить пароль. Пожалуйста, войдите в кабинет ' + baseurl + ' через браузер, смените пароль и введите новый пароль в настройки провайдера', null, true);
+			
 	    	AnyBalance.trace(html);
 	    	throw new AnyBalance.Error('Не удалось войти в личный кабинет. Сайт изменен?');			
 	    }

@@ -19,7 +19,7 @@ var g_headers = {
 };
 function delCookies(){
 	AnyBalance.trace('Удалены данные предыдущей сесии');
-	AB.clearAllCookies();
+	clearAllCookies();
 	AnyBalance.clearData();
 	AnyBalance.saveData();
 };
@@ -51,7 +51,7 @@ function handleRedirect(html){
 		}
 		html = AnyBalance.requestPost(joinUrl(ref, action), params, addHeaders({Referer: ref}));
 	}
-	if(/Сейчас произойдет автоматический переход на/i.test(html)){
+	if(/автоматический переход на/i.test(html)){
 		AnyBalance.trace('Обнаружена промежуточная страница, переходим на стандартный кошелек');
 		form = getElement(html, /<form[^>]+gk-form/i);
 		action = getParam(form, null, null, /<form[^>]+action="([^"]*)/i, replaceHtmlEntities);
@@ -94,8 +94,8 @@ function main(){
 	var baseurl = 'https://wallet.webmoney.ru/';
 	var baseurlLogin = 'https://login.wmtransfer.com/';
 
-	AB.checkEmpty(prefs.login, 'Введите логин!');
-	AB.checkEmpty(prefs.password, 'Введите пароль!');
+	checkEmpty(prefs.login, 'Введите логин!');
+	checkEmpty(prefs.password, 'Введите пароль!');
 	var token='';
 	AnyBalance.restoreCookies();
 	try{
@@ -116,7 +116,7 @@ function main(){
 	}
 
 	var elements;
-        if(isLoged() && token){
+    if(isLoged() && token){
 		var fns = AnyBalance.requestGet(baseurl + 'api/finance/purses/', addHeaders({
 			Accept: 'application/json, text/plain, */*',
 			Referer: baseurl + 'finances',
@@ -168,14 +168,14 @@ function main(){
 			    html = handleRedirect(html);
 			    ref = AnyBalance.getLastUrl();
 	        }
-			var form = AB.getElement(html, /<form[^>]+password[^>]*>/i);
+			var form = getElement(html, /<form[^>]+password[^>]*>/i);
 			if(!form){
 				AnyBalance.trace(html);
 				delCookies;
 				throw new AnyBalance.Error('Не удалось найти форму входа. Сайт изменен?');
 			}
 	        
-			var params = AB.createFormParams(form, function(params, str, name, value) {
+			var params = createFormParams(form, function(params, str, name, value) {
 				if (name == 'Login') {
 					return prefs.login;
 				} else if (name == 'RememberMe') {
@@ -203,7 +203,7 @@ function main(){
 			});
 			var action = getParam(form, null, null, /<form[\s\S]*?action=\"([\s\S]*?)\"/i, replaceHtmlEntities);
             //params.fid = hex_md5(prefs.login); //Теперь требуется фингерпринт передавать
-			html = AnyBalance.requestPost(joinUrl(baseurlLogin, action), params, AB.addHeaders({
+			html = AnyBalance.requestPost(joinUrl(baseurlLogin, action), params, addHeaders({
 				Referer: ref
 			}));
 	        
@@ -248,7 +248,7 @@ function main(){
 				AnyBalance.trace('Требуется подтверждение по номеру телефона на вход');
 
 				action = getParam(html, null, null, /<form[^>]+action="([^"]*)/i, replaceHtmlEntities);
-				params = AB.createFormParams(html);
+				params = createFormParams(html);
 	        
 				if(!params.Challenge){
 					var error = getElement(html, /<[^>]+login-global-error/i, replaceTagsAndSpaces);
@@ -270,7 +270,7 @@ function main(){
 				AnyBalance.trace('Требуется E-NUM подтверждение на вход');
 
 				action = getParam(html, null, null, /<form[^>]+action="([^"]*)/i, replaceHtmlEntities);
-				params = AB.createFormParams(html);
+				params = createFormParams(html);
 				params.languages='ru-RU';
 	        
 				if(!params.Challenge){
@@ -315,7 +315,7 @@ function main(){
 			html = AnyBalance.requestPost(joinUrl(ref, action), params, addHeaders({Referer: ref}));
 			ref = AnyBalance.getLastUrl();
 		}
-		if(/Сейчас произойдет автоматический переход на/i.test(html)){
+		if(/автоматический переход на/i.test(html)){
 			AnyBalance.trace('Обнаружена промежуточная страница, переходим на стандартный кошелек');
 			form = getElement(html, /<form[^>]+gk-form/i);
 			action = getParam(form, null, null, /<form[^>]+action="([^"]*)/i, replaceHtmlEntities);
@@ -342,13 +342,14 @@ function main(){
 	    
 		AnyBalance.trace('Успешно вошли');
 		token=getParam(html , /__RequestVerificationToken[\s\S]*?value="([\s\S]*?)"/);
-		if (!token)  {delCookies;throw new AnyBalance.Error('Не удалось получить токен авторизации');}
+		if (!token)  {delCookies;throw new AnyBalance.Error('Не удалось получить токен верификации');}
 		__setLoginSuccessful();
 	}
 
 	var result = {success: true};
 
 	if(!elements){
+		AnyBalance.trace('Используем токен верификации');
 		var fns = AnyBalance.requestGet(baseurl + 'api/finance/purses/', addHeaders({
 			Accept: 'application/json, text/plain, */*',
 			Referer: baseurl + 'finances',

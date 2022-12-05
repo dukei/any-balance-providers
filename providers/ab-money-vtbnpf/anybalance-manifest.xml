@@ -1,27 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-money-vtbnpf</id>
+	<id version="2">ab-money-vtbnpf</id>
 	<api flags="no_browser"/>
 	<name>НПФ ВТБ</name>
-	<description>
-Получает данные для физических лиц из Накопительного Пенсионного Фонда ВТБ (http://vtbnpf.ru/)
-
-Личный кабинет находится по адресу https://web.vtbnpf.ru/index.php?from=main
-	</description>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе для клиентов Накопительного Пенсионного Фонда ВТБ (https://www.vtbnpf.ru/).</p>
+	<p>Информация берется из личного кабинета на сайте https://lk.vtbnpf.ru/ipension/fiz/lk.php.</p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Для работы провайдера требуется ввести логин и пароль для входа в личный кабинет НПФ ВТБ.</p>
+	]]></instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units="р"/>
-		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="balance" name="Баланс" units=" ₽"/>
 		<counter id="acc_num" name="Номер счета" type="text"/>
+		<counter id="contract_num" name="Номер договора" type="text"/>
+		<counter id="contract_date" name="Дата договора" type="time" format="dd.MM.yyyy"/>
+		<counter id="snils" name="Номер СНИЛС" type="text"/>
+		<counter id="email" name="E-mail" type="text"/>
+		<counter id="phone" name="Телефон" type="text"/>
+		<counter id="fio" name="ФИО" type="text"/>
 	</counters>
-	<keywords></keywords>
+	<keywords>нпф, втб</keywords>
 	<type>money</type>
 	<country>ru</country>
 </provider>

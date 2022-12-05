@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
-<!--
-<change version="2" date="2013-09-21">
-- 
-</change>
--->
+	<change version="2" date="2022-11-21">
+	- Поддержка изменений на сайте
+	- Добавлены дополнительные счетчики
+	</change>
+	<change version="1" date="2016-09-14">
+	- Первая версия провайдера
+	</change>
 </history>

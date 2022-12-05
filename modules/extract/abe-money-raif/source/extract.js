@@ -4,6 +4,18 @@
 
 var g_baseurl = 'https://online.raiffeisen.ru/';
 
+var g_currency = {
+	RUB: '₽',
+	RUR: '₽',
+	USD: '$',
+	EUR: '€',
+	GBP: '£',
+	JPY: 'Ұ',
+	CHF: '₣',
+	CNY: '¥',
+	undefined: ''
+};
+
 var g_headers = {
 	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.120 Safari/537.36',
 	Accept: 'application/json, text/plain, */*',
@@ -17,7 +29,7 @@ var g_headers = {
 var g_token;
 var g_loginInfo;
 
-function callApi(verb, params){
+function callApi(verb, params, method){
 	if(!g_token && verb != 'oauth/token')
 		throw new AnyBalance.Error('Внутренняя ошибка, сайт изменен?');
 
@@ -25,16 +37,28 @@ function callApi(verb, params){
 	if(!g_token){
 		headers = addHeaders({Authorization: 'Basic b2F1dGhVc2VyOm9hdXRoUGFzc3dvcmQhQA=='}); 
 	}else{
-		headers = addHeaders({Authorization: 'Bearer ' + g_token}); 
+		if(/oauth\/entry\/confirm/i.test(verb)){
+		    headers = addHeaders({Authorization: ''});
+		}else{
+			headers = addHeaders({Authorization: 'Bearer ' + g_token});
+		}
 	}
-	if(params)
-		headers['Content-Type'] = 'application/json'; 
+	if(params){
+		headers['Content-Type'] = 'application/json; charset=UTF-8'; 
+	}
+	
+	AnyBalance.trace('Запрос: ' + verb);
 
-	var html = AnyBalance.requestPost(g_baseurl + verb, params && JSON.stringify(params), headers, {HTTP_METHOD: params ? 'POST' : 'GET'});
+	var html = AnyBalance.requestPost(g_baseurl + verb, params && JSON.stringify(params), headers, {HTTP_METHOD: method || 'GET'});
 
 	if(AnyBalance.getLastStatusCode() == 401){
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Отказ в доступе. Неправильный логин или пароль?', null, true);
+	}
+	
+	if(AnyBalance.getLastStatusCode() == 460){
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Отказ в доступе. Неверный код подтверждения?', null, true);
 	}
 
 	if(AnyBalance.getLastStatusCode() >= 400){
@@ -43,6 +67,7 @@ function callApi(verb, params){
 	}
 
 	var json = getJson(html);
+	AnyBalance.trace('Ответ: ' + JSON.stringify(json));
 	return json;
 }
 
@@ -53,18 +78,44 @@ function login(result) {
 	AB.checkEmpty(prefs.password, 'Введите пароль!');
 
 	if(!g_token){
-		var node = AnyBalance.requestGet(g_baseurl + 'rest/version', g_headers);
-		var status = AnyBalance.requestGet(g_baseurl + 'oauth/status', g_headers);
-
+//		var node = AnyBalance.requestGet(g_baseurl + 'rest/version', g_headers);
+//		AnyBalance.trace('node: ' + node);
+//		var status = AnyBalance.requestGet(g_baseurl + 'oauth/status', g_headers);
+//		AnyBalance.trace('status: ' + status);
+		
+		var dt = new Date();
+		var html = AnyBalance.requestGet(g_baseurl + 'import/web/config/online.raiffeisen.ru.json?date=' + dt.getTime(), g_headers);
+		var json = getJson(html);
+		if(json.reCaptcha3 && json.reCaptcha3.enabled === true){
+		    var reCaptcha = solveRecaptcha('Пожалуйста, докажите, что вы не робот', AnyBalance.getLastUrl(), JSON.stringify({SITEKEY: json.reCaptcha3.siteKey, TYPE: 'V3', ACTION: 'login', USERAGENT: g_headers['User-Agent']}));
+        }
 		var json = callApi('oauth/token', {
-			"grant_type":"password",
-			"node": node,
-			"password":prefs.password,
-			"uiVersion": "RC3.0-GUI-5.9.4",
-			"username":prefs.login,
-		});
+            "username": prefs.login,
+            "password": prefs.password,
+            "uiVersion": "RC3.0-GUI-5.57.1",
+            "reCaptchaResponse": reCaptcha,
+            "node": " ",
+            "grant_type": "password"
+		}, 'POST');
 
 		g_token = json.access_token;
+		AnyBalance.trace('g_token: ' + g_token);
+		if(!g_token)
+			throw new AnyBalance.Error('Не удалось получить токен авторизации. Сайт изменен?');
+		
+		if(json.is_push_otp_disable !== true){
+			AnyBalance.trace('Сайт затребовал проверку входа с помощью кода из SMS');
+			var json = callApi('oauth/entry/confirm/sms', {}, 'POST');
+			var requestId = json.requestId;
+			AnyBalance.trace('requestId: ' + requestId);
+			if(!requestId)
+				throw new AnyBalance.Error('Не удалось получить идентификатор запроса. Сайт изменен?');
+			var code = AnyBalance.retrieveCode('Пожалуйста, введите код подтверждения, высланный на номер телефона, указанный при заключении Договора банковского обслуживания', null, {inputType: 'number', time: json.await});
+			var json = callApi('oauth/entry/confirm/' + requestId + '/sms', {
+                "code": code
+		    }, 'PUT');
+		}
+		
 		g_loginInfo = json;
 	}
 }
@@ -80,7 +131,7 @@ function processInfo(result){
 		getParam(json.resource_owner.fullName, result.info, 'info.fio');
 		getParam(json.resource_owner.birthDate, result.info, 'info.birthday', null, null, parseDateISO);
 		getParam(json.resource_owner.address, result.info, 'info.address');
-		getParam(json.resource_owner.mobilePhone, result.info, 'info.mphone');
+		getParam(json.resource_owner.mobilePhone.replace(/.*(\d{3})(\d{3})(\d{2})(\d{2})$/i, '+7 $1 $2-$3-$4'), result.info, 'info.mphone');
 		getParam(json.resource_owner.email, result.info, 'info.email');
 		getParam(json.resource_owner.passportNumber, result.info, 'info.passport');
 		getParam(json.resource_owner.passportIssuer, result.info, 'info.passportissuer');
@@ -118,7 +169,8 @@ function processCards(result) {
 
 function processCard(info, result) {
 	getParam(info.balance, result, 'cards.balance');
-	getParam(info.currencyId, result, ['cards.currency', 'cards.balance', 'cards.minpay', 'cards.limit', 'cards.totalCreditDebtAmount', 'cards.blocked']);
+	getParam(info.currencyId, result, ['cards.currencyFull', 'cards.currency', 'cards.balance', 'cards.minpay', 'cards.limit', 'cards.totalCreditDebtAmount', 'cards.blocked']);
+	getParam(g_currency[info.currencyId]||info.currencyId, result, ['cards.currency', 'cards.currencyFull', 'cards.balance', 'cards.minpay', 'cards.limit', 'cards.totalCreditDebtAmount', 'cards.blocked']);
 
 //	getParam(info, result, 'cards.limit', /<creditLimit>([\s\S]*?)<\/creditLimit>/i, replaceTagsAndSpaces, parseBalance);
 	// getParam(info, result, 'cards.totalCreditDebtAmount', /<totalCreditDebtAmount>([\s\S]*?)<\/totalCreditDebtAmount>/i, replaceTagsAndSpaces, parseBalance);
@@ -197,7 +249,8 @@ function processAccounts(result) {
 function processAccount(info, result) {
 	getParam(info.balance, result, 'accounts.balance');
 	getParam(info.hold, result, 'accounts.blocked');
-	getParam(info.currencyId, result, ['accounts.currency', 'accounts.minpay', 'accounts.limit', 'accounts.balance']);
+	getParam(info.currencyId, result, ['accounts.currencyFull', 'accounts.currency', 'accounts.minpay', 'accounts.limit', 'accounts.balance']);
+	getParam(g_currency[info.currencyId]||info.currencyId, result, ['accounts.currency', 'accounts.currencyFull', 'accounts.minpay', 'accounts.limit', 'accounts.balance']);
 	getParam(info.cba, result, 'accounts.num');
 //	getParam(info, result, 'accounts.minpay_till', /<nextCreditPaymentDate>([\s\S]*?)<\/nextCreditPaymentDate>/i, replaceTagsAndSpaces, parseDateISO);
 //	getParam(info, result, 'accounts.minpay', /<minimalCreditPayment>([\s\S]*?)<\/minimalCreditPayment>/i, replaceTagsAndSpaces, parseBalance);
@@ -244,7 +297,8 @@ function processDeposit(info, result) {
 	getParam(info.deals[0].cba, result, 'deposits.num');
 	getParam(info.deals[0].currentAmount, result, 'deposits.balance');
 	getParam(info.deals[0].startAmount, result, 'deposits.balance_start');
-	getParam(info.deals[0].currencyId, result, ['deposits.currency', 'deposits.balance', 'deposits.currentAmount']);
+	getParam(info.deals[0].currencyId, result, ['deposits.currencyFull', 'deposits.currency', 'deposits.balance', 'deposits.currentAmount']);
+	getParam(g_currency[info.deals[0].currencyId]||info.deals[0].currencyId, result, ['deposits.currency', 'deposits.currencyFull', 'deposits.balance', 'deposits.currentAmount']);
 	getParam(info.deals[0].rate, result, 'deposits.pct');
 	getParam(info.deals[0].duration, result, 'deposits.period'); //days
 	getParam(info.deals[0].paidInterest, result, 'deposits.pcts');
@@ -288,7 +342,8 @@ function processLoan(loan, result) {
 	getParam(loan.pay, result, 'credits.minpay', '', replaceTagsAndSpaces, parseBalance);
 	getParam(loan.paidDebt, result, ['credits.paid', 'credits.paidLoanIntrest'], '', replaceTagsAndSpaces, parseBalance);
 	getParam(loan.paid-loan.paidDebt, result, ['credits.paidLoanIntrest', 'credits.paid'], '', replaceTagsAndSpaces, parseBalance);
-	getParam(loan.currencyId, result, ['credits.currency', 'credits.limit', 'credits.balance', 'credits.paid', 'credits.paidLoanIntrest', 'credits.minpay']);
+	getParam(loan.currencyId, result, ['credits.currencyFull', 'credits.currency', 'credits.limit', 'credits.balance', 'credits.paid', 'credits.paidLoanIntrest', 'credits.minpay']);
+	getParam(g_currency[loan.currencyId]||loan.currencyId, result, ['credits.currency', 'credits.currencyFull', 'credits.limit', 'credits.balance', 'credits.paid', 'credits.paidLoanIntrest', 'credits.minpay']);
 	getParam(loan.next, result, 'credits.minpay_till', '', replaceTagsAndSpaces, parseDateISO);
 	getParam(loan.close, result, 'credits.till', '', replaceTagsAndSpaces, parseDateISO);
 	getParam(loan.open, result, 'credits.date_start', '', replaceTagsAndSpaces, parseDateISO);

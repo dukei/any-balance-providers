@@ -6,14 +6,18 @@
 var g_countersTable = {
 	common: {
 		"fio": "info.fio",
+		"phone": "info.mphone",
 	}, 
 	card: {
 		"__tariff": "cards.__name",
 		
     	"balance": "cards.balance",
 		"currency": "cards.currency",
+		"currencyFull": "cards.currencyFull",
 		"cardnum": "cards.num",
+		"cardholder": "cards.holder",
 		"type": "cards.type",
+		"paymentSystem": "cards.shortType",
 		"accnum": "cards.accnum",
 		"till": "cards.till",
 		"minpay": "cards.minpay",
@@ -32,6 +36,7 @@ var g_countersTable = {
 		
 		"balance": "accounts.balance",
 		"currency": "accounts.currency",
+		"currencyFull": "accounts.currencyFull",
 		"type": "accounts.type",
 		"accnum": "accounts.num",
 		"till": "accounts.till",
@@ -43,7 +48,8 @@ var g_countersTable = {
 		"__tariff": "deposits.__name",
 		
     	"balance": "deposits.balance",
-    	"currency": "deposits.currency",
+		"currency": "deposits.currency",
+    	"currencyFull": "deposits.currencyFull",
 		"rate": "deposits.pct",
 		"accnum": "deposits.num",
 		"type": "deposits.type",
@@ -54,7 +60,8 @@ var g_countersTable = {
 		"__tariff": "credits.__name",
 		
     	"balance": "credits.balance",
-    	"currency": "credits.currency",
+		"currency": "credits.currency",
+    	"currencyFull": "credits.currencyFull",
     	"cred_ammount": "credits.limit",
 		"accnum": "cards.num",
     	"minpay": "credits.minpay",
@@ -104,6 +111,8 @@ function main(){
 		if(!adapter.wasProcessed('credits'))
 			throw new AnyBalance.Error(prefs.num ? 'Не найден кредит с последними цифрами ' + prefs.num : 'У вас нет ни одного кредита!');
 	}
+	
+	adapter.processInfo(result);
 	
 	result = adapter.convert(result);
 	

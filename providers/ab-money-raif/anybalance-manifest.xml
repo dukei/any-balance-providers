@@ -1,14 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id version="37">ab-money-raif</id>
+	<id version="38">ab-money-raif</id>
 	<name>Райффайзен</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о текущем остатке и других параметрах счетов и депозитов для клиентов банка Райффайзенбанк http://www.raiffeisen.ru</p>
-	<p>Информация берется из Интернет-банка http://connect.raiffeisen.ru</p>
+	<p>Предоставляет информацию о текущем остатке и других параметрах счетов и депозитов для клиентов банка Райффайзенбанк https://www.raiffeisen.ru/</p>
+	<p>Информация берется из Онлайн-банка https://online.raiffeisen.ru/</p>
 	]]></description>
 	<instruction html="true"><![CDATA[
-	<p>Как подключиться к Интернет-банку:</p>
+	<p>Для работы провайдера требуется ввести логин и пароль для входа в Онлайн-банк.</p>
+	<p>Онлайн-банк обладает защитой от роботов (ReCaptcha v3), поэтому для входа потребуется пройти проверку с помощью приложения Anybalance ReCaptcha или с помощью автоматического распознавания с использованием сервиса RuCaptchа.</p>
+	<p>Кроме того, для авторизации в Онлайн-банке потребуется ввести код подтверждения из SMS, высланного на номер телефона, указанный при заключении Договора банковского обслуживания.</p>
+	<p>Как подключиться к Онлайн-банку:</p>
 	<ol> 
 		<li>Обратитесь с документом, удостоверяющим личность, в любое отделение типа «А» Райффайзенбанка и подпишите Заявление на регистрацию в системе Raiffeisen CONNECT.</li>
 		<li>После подписания заявления вы получите логин и ПИН-конверт, содержащий ваш пароль для доступа в Raiffeisen CONNECT.</li>
@@ -31,20 +34,23 @@
 		<counter id="ownFunds" name="Собственные средства" units=" {@currency}"/>
 		<counter id="clearBalance" name="Баланс кредитной карты" units=" {@currency}"/>
 		<counter id="pcts" name="Проценты в конце срока" units=" {@currency}"/>
-		<counter id="currency" name="Валюта" type="text"/>
+		<counter id="currencyFull" name="Валюта" type="text"/>
 		<counter id="accnum" name="Номер счета" type="text"/>
 		<counter id="cardnum" name="Номер карты" type="text"/>
+		<counter id="cardholder" name="Держатель карты" type="text"/>
+		<counter id="paymentSystem" name="Платежная система" type="text"/>
 		<counter id="paid" name="Погашено по кредиту" units=" {@currency}"/>
 		<counter id="minpay" name="Сумма платежа по кредиту" units=" {@currency}"/>
 		<counter id="cred_ammount" name="Сумма кредита" units=" {@currency}"/>
-		<counter id="minpaytill" name="Срок платежа по кредиту" type="time" format="dd/MM/yyyy"/>
+		<counter id="minpaytill" name="Срок платежа по кредиту" type="time" format="dd.MM.yyyy"/>
 		<counter id="limit" name="Кредитный лимит" units=" {@currency}"/>
 		<counter id="paidLoanIntrest" name="Уплачено процентов по кредиту" units=" {@currency}"/>
-		<counter id="till" name="Срок действия" type="time" format="dd/MM/yyyy"/>
+		<counter id="till" name="Срок действия" type="time" format="MM/yyyy"/>
 		<counter id="gracePeriodOutstanding" name="Просрочено в льготном периоде" units=" {@currency}"/>
 		<counter id="unpaidGracePeriodDue" name="Неоплачено в льготном периоде" units=" {@currency}"/>
-		<counter id="gracePeriodEnd" name="Окончание льготного периода" type="time" format="dd/MM/yyyy"/>
+		<counter id="gracePeriodEnd" name="Окончание льготного периода" type="time" format="dd.MM.yyyy"/>
 		<counter id="rate" name="Процентная ставка" units=" %"/>
+		<counter id="phone" name="Телефон" type="text"/>
 		<counter id="fio" name="ФИО" type="text"/>
 		<counter id="type" name="Тип" type="text"/>
 		<!-- <counter id="all" name="Сводка" type="text"/> -->

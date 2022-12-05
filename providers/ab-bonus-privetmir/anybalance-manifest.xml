@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="3">ab-bonus-privetmir</id>
+	<id version="4">ab-bonus-privetmir</id>
 	<name>Привет, Мир!</name>
 	<api flags="no_browser"/>
 	<description html="true"><![CDATA[
@@ -25,7 +25,7 @@
 	</files>
 	<counters>
 		<counter id="balance" name="Баланс" units=" {@currency}"/>
-		<counter id="privets" name="Приветы" units=" пр"/>
+		<counter id="privets" name="Приветы" units=" П"/>
 		<counter id="cardnum" name="Номер карты" type="text"/>
 		<counter id="cardregdate" name="Дата регистрации карты" type="time" format="dd.MM.yyyy"/>
 		<counter id="cardnum2" name="Номер карты 2" type="text"/>

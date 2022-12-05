@@ -15,7 +15,7 @@ var g_headers = {
 var baseurl = 'https://my.a1.by/';
 //var velcomOddPeople = 'Velcom сознательно противодействует оперативному получению вами баланса через сторонние программы! Вот и снова они специально ввели изменения, которые сломали получение баланса. Пожалуйста, позвоните в службу поддержки Velcom (411 и 410 с мобильного телефона в сети velcom без взимания оплаты) и оставьте претензию, что вы не можете пользоваться любимой программой. Проявите активную позицию, они скрывают ваш баланс от вас же. Зачем, интересно? МТС и Life своих абонентов уважают значительно больше...';
 var velcomOddPeople = 'Не удалось войти в личный кабинет. Сайт изменен?';
-var replaceNumber = [replaceTagsAndSpaces, /\D/g, '', /.*(\d{3})(\d\d)(\d{3})(\d\d)(\d\d)$/, '+$1 $2 $3-$4-$5'];
+var replaceNumber = [replaceTagsAndSpaces, /\D/g, '', /.*(\d{3})(\d\d)(\d{3})(\d\d)(\d\d)$/, '+$1 ($2) $3-$4-$5'];
 
 function parseBalanceRK(_text) {
   var text = _text.replace(/\s+/g, '');
@@ -37,20 +37,13 @@ function main(){
 	switch(prefs.source){
 	case 'cell':
         var html = mainCell(prefs);
+		break;
     case 'internet':
         var html = mainInternet(prefs);
-//    case 'auto':
-//    default:
-//        try{
-//			var html = mainAPI(prefs);
-//        }catch(e){
-//            if(e.fatal)
-//                throw e;
-//			AnyBalance.trace('Не удалось получить данные из мобильного приложения');
-//		    clearAllCookies();
-//            var html = mainSite(prefs);
-//        }
-//        break;
+		break;
+	default:
+        var html = mainCell(prefs);
+		break;
 	}
 	
 	try{
@@ -87,8 +80,8 @@ function mainCell(html, result){
     var phone = matches[2];
     var prefix = matches[1];
 	
-	if (prefs.password.length > 20 || prefs.password.length < 8)
-		throw new AnyBalance.Error('Неверный формат пароля. Пароль должен содержать от 8 до 20 символов!', false, true);
+	if (prefs.password.length > 20)
+		throw new AnyBalance.Error('Неверный формат пароля. Пароль должен содержать не более 20 символов!', false, true);
     
     var html = AnyBalance.requestGet(baseurl, g_headers);
 	
@@ -146,7 +139,32 @@ function mainCell(html, result){
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error(velcomOddPeople + '!!');
 	}
-
+	
+	if(/user_input_3/i.test(html)){ // Требуется выбрать версию кабинета для перехода. Выбираем старую
+	    var form = getElement(html, /<form[^>]*name="mainForm"/i);
+        if(!form){
+	    	AnyBalance.trace(html);
+	    	throw new AnyBalance.Error('Не удалось найти форму выбора версии кабинета. Сайт изменен?');
+        }
+	    
+	    var params = createFormParams(form, function(params, str, name, value) {
+	    	if(name === 'user_input_timestamp'){
+	    		value = new Date().getTime();
+	    	}else if(name === 'user_input_0'){
+	    		value = '_next';
+	    	}else if(name === 'user_input_3'){
+	    		value = 1;
+	    	}
+	    	if(!name)
+	    		return;
+	    	return value || '';
+        });
+        delete params.user_submit;
+        var action = getParam(form, /<form[^>]+action="\.?([^"]*)/i, replaceHtmlEntities); // action  отдает с точкой (./work.html)
+        var referer = AnyBalance.getLastUrl();
+		html = AnyBalance.requestPost(joinUrl(referer, action), params, addHeaders({Referer: referer, Origin: getDomain(referer)}));
+	}
+	
     var kabinetType, personalInfo;
 	if(/_root\/PERSONAL_INFO_ABONENT/i.test(html)) {
         personalInfo = 'PERSONAL_INFO_ABONENT';
@@ -180,7 +198,7 @@ function mainCell(html, result){
 		}
 		
 		throw new AnyBalance.Error('Сервис временно недоступен. Пожалуйста, попробуйте позже.');
-	}	
+	}
 	
     var result = {success: true};
 
@@ -262,8 +280,8 @@ function mainInternet(html, result){
 	
 	if (prefs.login.length > 12 || prefs.login.length < 6)
 		throw new AnyBalance.Error('Неверный формат номера. Номер лицевого счета должен содержать от 6 до 12 символов!', false, true);
-	if (prefs.password.length > 20 || prefs.password.length < 8)
-		throw new AnyBalance.Error('Неверный формат пароля. Пароль должен содержать от 8 до 20 символов!', false, true);
+	if (prefs.password.length > 20)
+		throw new AnyBalance.Error('Неверный формат пароля. Пароль должен содержать не более 20 символов!', false, true);
 
     AnyBalance.setDefaultCharset('utf-8'); 
 	

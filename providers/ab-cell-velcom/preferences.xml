@@ -24,7 +24,7 @@
 	<ListPreference
 		key="source"
 		title="Категория"
-		dialogTitle="Выберите категорию"
+		dialogTitle="Категория"
 		summary="Категория для получения информации||{@s}\n"
 		entries="Мобильная связь|Интернет для дома и офиса"
 		entryValues="cell|internet"

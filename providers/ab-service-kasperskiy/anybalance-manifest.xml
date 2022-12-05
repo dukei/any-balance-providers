@@ -1,15 +1,19 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="4">ab-service-kasperskiy</id>
+	<id version="5">ab-service-kasperskiy</id>
 	<api flags="no_browser"/>
 	<name>My Kaspersky</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о кодах активации продуктов Лаборатории Касперского <a href="http://www.kaspersky.com/">http://www.kaspersky.com/</a></p>
-	<p>Информация берется из личного кабинета <a href="https://my.kaspersky.com/ru/">https://my.kaspersky.com/ru/</a></p>
+	<p>Предоставляет информацию о действующих лицензиях для пользователей продуктов Лаборатории Касперского (https://www.kaspersky.ru/).</p>
+	<p>Информация берется из личного кабинета My Kaspersky на сайте https://my.kaspersky.com/.</p>
 	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Для работы провайдера требуется ввести логин и пароль для входа в личный кабинет My Kaspersky.</p>
+	]]></instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>
 		<module id="library"/>
+		<module id="misc/saved-data"/>
 	</depends>
 	<files>
 		<icon>icon.png</icon>
@@ -18,11 +22,23 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="__tariff" name="Лицензия" type="text"/>
-		<counter id="devices" name="Количество устройств" type="text"/>
-		<counter id="expires_date" name="Дата окончания лицензии" type="time" format="dd/MM/yyyy"/>
+		<counter id="products" name="Лицензия" type="text"/>
+		<counter id="devices" name="Количество устройств" units=" шт"/>
+		<counter id="active_date" name="Дата активации лицензии" type="time" format="dd.MM.yyyy"/>
+		<counter id="expires_date" name="Дата окончания лицензии" type="time" format="dd.MM.yyyy"/>
+		<counter id="product_term" name="Срок действия лицензии" units=" дн"/>
+		<counter id="expires_days" name="Осталось до деактивации" units=" дн"/>
+		<counter id="product_desc" name="Описание лицензии" type="text"/>
+		<counter id="activation_code" name="Код активации" type="text"/>
+		<counter id="slots_count" name="Доступно устройств" units=" шт"/>
+		<counter id="total" name="Всего лицензий" units=" шт"/>
+		<counter id="unusages" name="Неиспользуемые лицензии" units=" шт"/>
+		<counter id="all_devices" name="Управляемые устройства" type="html"/>
+		<counter id="country" name="Регион" type="text"/>
+		<counter id="email" name="E-mail" type="text"/>
+		<counter id="fio" name="ФИО владельца" type="text"/>
 	</counters>
-	<keywords></keywords>
+	<keywords>Касперский, Kaspersky, антивирус</keywords>
 	<type>service</type>
 	<country>ru</country>
 </provider>

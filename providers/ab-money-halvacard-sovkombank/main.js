@@ -483,5 +483,5 @@ function loadProtectedPage(headers){
 }
 
 function clearAllCookiesExceptProtection(){
-    clearAllCookies(c => !/qrator|StickyID/i.test(c.name) && !/^TS0/i.test(c.name));
+	clearAllCookies(function(c){return!/qrator|StickyID/i.test(c.name)&&!/^TS0/i.test(c.name)});
 }

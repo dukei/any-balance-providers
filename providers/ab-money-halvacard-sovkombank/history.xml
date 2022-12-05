@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change version="9" date="2022-11-28">
+	- Исправление работы для AnyBalance+
+	</change>
     <change version="8" date="2022-11-11">
 	- Обход защиты от роботов
 	- Убрана поддержка PIN-кода

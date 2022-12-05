@@ -93,10 +93,10 @@ function main(){
 	var accounts = [];
 	for(var i=0; i<json.length; ++i){
 		let g = json[i].id;
-
+		
 		html = AnyBalance.requestGet(baseurl + 'application/v5/groups/' + g + '/accounts', addHeaders({Referer: baseurl}));
-		json = getJson(html);
-		accounts.push.apply(accounts, json);
+		var _json = getJson(html);
+		accounts.push.apply(accounts, _json);
 	}
 
 //	html = AnyBalance.requestGet(baseurl + 'application/api/checkAuthentication', addHeaders({Referer: baseurl}));

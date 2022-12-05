@@ -1,18 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-money-vtbnpf</id>
+	<id version="3">ab-money-vtbnpf</id>
 	<api flags="no_browser"/>
 	<name>НПФ ВТБ</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе для клиентов Накопительного Пенсионного Фонда ВТБ (https://www.vtbnpf.ru/).</p>
-	<p>Информация берется из личного кабинета на сайте https://lk.vtbnpf.ru/ipension/fiz/lk.php.</p>
+	<p>Информация берется из мобильного приложения НПФ ВТБ или из личного кабинета на сайте https://lk.vtbnpf.ru/ipension/fiz/lk.php.</p>
 	]]></description>
 	<instruction html="true"><![CDATA[
-	<p>Для работы провайдера требуется ввести логин и пароль для входа в личный кабинет НПФ ВТБ.</p>
+	<p>Для получения данных из мобильного приложения требуется ввести логин и пароль для входа в личный кабинет НПФ ВТБ и однократно ввести код, пришедший по SMS.</p>
+	<p>Для получения данных с сайта требуется ввести логин и пароль для входа в личный кабинет НПФ ВТБ и пройти проверку с помощью цифровой капчи.</p>
 	]]></instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>
 		<module id="library"/>
+		<module id="misc/saved-data"/>
 	</depends>
 	<files>
 		<icon>icon.png</icon>
@@ -22,9 +24,14 @@
 	</files>
 	<counters>
 		<counter id="balance" name="Баланс" units=" ₽"/>
+		<counter id="income_sum" name="Поступившие средства" units=" ₽"/>
+		<counter id="invest_sum" name="Сумма инвест. дохода" units=" ₽"/>
 		<counter id="acc_num" name="Номер счета" type="text"/>
 		<counter id="contract_num" name="Номер договора" type="text"/>
 		<counter id="contract_date" name="Дата договора" type="time" format="dd.MM.yyyy"/>
+		<counter id="last_oper_date" name="Дата посл. операции" type="time" format="dd.MM.yyyy"/>
+		<counter id="last_oper_sum" name="Сумма посл. операции" units=" ₽"/>
+		<counter id="last_oper_desc" name="Тип посл. операции" type="text"/>
 		<counter id="snils" name="Номер СНИЛС" type="text"/>
 		<counter id="email" name="E-mail" type="text"/>
 		<counter id="phone" name="Телефон" type="text"/>

@@ -21,4 +21,13 @@
 		dialogMessage="Введите пароль, используемый для входа в личный кабинет"
 		inputType="textPassword">
 	</EditTextPreference>
+	<ListPreference
+		key="source"
+		title="Источник данных"
+		summary="Источник для получения информации||{@s}\n"
+		dialogTitle="Источник данных"
+		entries="Автоматически|Мобильное приложение|Официальный сайт"
+		entryValues="auto|app|site"
+		defaultValue="auto">
+	</ListPreference>
 </PreferenceScreen>

@@ -3,41 +3,41 @@
 	<EditTextPreference
 		title="Логин"
 		key="login"
-		summary="||{@s}"
+		summary="Логин для входа в личный кабинет|Введите логин\n|{@s}\n"
 		obligatory="true"
 		dialogTitle="Логин"
 		positiveButtonText="ОК"
 		negativeButtonText="Отмена"
-		dialogMessage="Введите логин, используемый для входа в личный кабинет. Необходимо указать логин с префиксом, например SZF-12345678">
+		dialogMessage="Введите логин, используемый для входа в личный кабинет. Необходимо указать логин с префиксом, например: SZF-12345678 или номер телефона в формате 10 цифр, например: 9291234567">
 	</EditTextPreference>
 	<EditTextPreference
 		title="Пароль"
 		key="password"
-		summary="||***********"
+		summary="Пароль для входа в личный кабинет|Введите пароль\n|***********\n"
 		obligatory="true"
 		dialogTitle="Пароль"
 		positiveButtonText="ОК"
 		negativeButtonText="Отмена"
-		dialogMessage="Введите пароль, используемый для входа в личный кабинет."
+		dialogMessage="Введите пароль, используемый для входа в личный кабинет"
 		inputType="textPassword">
 	</EditTextPreference>
 	<ListPreference
 		key="region"
 		title="Регион"
-		dialogTitle="Выберите регион"
-		summary="||{@s}"
+		dialogTitle="Регион"
+		summary="Регион обслуживания МегаФон|Выберите регион\n|{@s}\n"
 		entries="Центральный филиал|Сибирский филиал|Северо-западный филиал|Дальневосточный филиал|Поволжский филиал|Кавказский филиал|Уральский филиал"
 		entryValues="center|sib|szf|dv|volga|kavkaz|ural"
 		defaultValue="center">
 	</ListPreference>
 	<EditTextPreference
-		title="Телефон"
+		title="Номер телефона"
 		key="phone"
-		summary="||{@s}"
-		dialogTitle="Телефон"
+		summary="Последние 4 цифры номера телефона|Автоматически\n|{@s}\n"
+		dialogTitle="Номер телефона"
 		positiveButtonText="ОК"
 		negativeButtonText="Отмена"
-		dialogMessage="Введите последние цифры номера телефона, по которому необходимо получать данные или не вводите ничего">
+		dialogMessage="Введите последние 4 цифры номера телефона, по которому вы хотите получать информацию. Если оставить поле пустым, будет показана информация по первому номеру телефона">
 	</EditTextPreference>	
 <!--	<EditTextPreference
 		title="л/с"

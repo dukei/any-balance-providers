@@ -1,11 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="34">ab-cell-megafon-korp</id>
+	<id version="36">ab-cell-megafon-korp</id>
 	<api flags="no_browser"/>
-	<name>Мегафон корпоративный</name>
+	<name>МегаФон корпоративный</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе и других параметрах Мегафона корпоративного <a href="http://megafon.ru/corporate/">http://megafon.ru/corporate/</a></p>
-	<p>Информация берется из личного кабинета https://lk.megafon.ru/b2blinks/</p>
+	<p>Предоставляет информацию о балансе и других параметрах МегаФона корпоративного <a href="https://megafon.ru/corporate/">https://megafon.ru/corporate/</a>.</p>
+	<p>Информация берется из личного кабинета https://b2blk.megafon.ru/.</p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>
@@ -18,12 +18,14 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units=" р"/>
-		<counter id="balance_if" name="Условный баланс" units=" р"/>
-		<counter id="amountTotal" name="Расходы с начала периода" units=" р"/>
+		<counter id="balance" name="Баланс" units=" ₽"/>
+		<counter id="balance_total" name="Общий баланс" units=" ₽"/>
+		<counter id="balance_if" name="Условный баланс" units=" ₽"/>
+		<counter id="creditLimit" name="Кредитный лимит" units=" ₽"/>
+		<counter id="cashbackAmount" name="Кешбэк" units=" ₽"/>
 		<counter id="min_left" name="Минуты" units=" мин"/>
 		<counter id="sms_left" name="SMS" units=" шт"/>
-		<counter id="sms_left_megafon" name="SMS на Мегафон" units=" шт"/>
+		<counter id="sms_left_megafon" name="SMS на МегаФон" units=" шт"/>
 		<counter id="traffic_left" name="Интернет" units=" мб"/>
 		<counter id="traffic_left_sng" name="Интернет (СНГ)" units=" мб"/>
 		<counter id="traffic_left_europe" name="Интернет (Европа)" units=" мб"/>
@@ -32,14 +34,29 @@
 		<counter id="position" name="Должность" type="text"/>
 		<counter id="labels" name="Метки" type="text"/>
 		<counter id="abonCount" name="Количество абонентов" units=" чел"/>
-		<counter id="amountLocal" name="Трафик" units=" р"/>
-		<counter id="abon" name="Абонентская плата" units=" р"/>
-		<counter id="charges" name="Разовые начисления" units=" р"/>
+		<counter id="amountTotal" name="Расходы за период (абонент)" units=" ₽"/>
+		<counter id="charges" name="Разовые начисления (абонент)" units=" ₽"/>
+		<counter id="amountLocal" name="Доп. услуги и тарифные опции (абонент)" units=" ₽"/>
+		<counter id="abon" name="Абонплата по тарифу (абонент)" units=" ₽"/>
+		<counter id="country" name="Трафик по России (абонент)" units=" ₽"/>
+		<counter id="home" name="Трафик в домашнем регионе (абонент)" units=" ₽"/>
+		<counter id="outhome" name="Трафик в домашнем филиале (абонент)" units=" ₽"/>
+		<counter id="roaming" name="Трафик в роуминге (абонент)" units=" ₽"/>
 		<counter id="phone_name" name="Номер телефона" type="text"/>
-		<counter id="name_name" name="Название" type="text"/>
-		<counter id="unpaids" name="Неоплаченные счета" units=" р"/>
-		<counter id="prsnl_balance" name="Персональный баланс" units=" р"/>
+		<counter id="name_name" name="Абонент" type="text"/>
+		<counter id="unpaidsQuantity" name="Неоплаченные счета (всего)" units=" шт"/>
+		<counter id="unpaids" name="Сумма неоплаченных счетов" units=" ₽"/>
+<!--	<counter id="prsnl_balance" name="Персональный баланс" units=" ₽"/> -->
 		<counter id="licschet" name="Лицевой счет" type="text"/>
+		<counter id="status" name="Статус " type="text"/>
+		<counter id="total_amountTotal" name="Расходы за период (всего)" units=" ₽"/>
+		<counter id="total_charges" name="Разовые начисления (всего)" units=" ₽"/>
+		<counter id="total_amountLocal" name="Доп. услуги и тарифные опции" units=" ₽"/>
+		<counter id="total_abon" name="Абонплата по тарифу" units=" ₽"/>
+		<counter id="total_country" name="Трафик по России" units=" ₽"/>
+		<counter id="total_home" name="Трафик в домашнем регионе" units=" ₽"/>
+		<counter id="total_outhome" name="Трафик в домашнем филиале" units=" ₽"/>
+		<counter id="total_roaming" name="Трафик в роуминге" units=" ₽"/>
 	</counters>
 	<keywords></keywords>
 	<type>cell</type>

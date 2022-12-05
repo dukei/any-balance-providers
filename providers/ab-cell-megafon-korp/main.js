@@ -8,6 +8,8 @@ var g_headers = {
 	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.120 Safari/537.36',
 };
 
+var replaceNumber = [replaceTagsAndSpaces, /\D/g, '', /.*(\d\d\d)(\d\d\d)(\d\d)(\d\d)$/, '+7 $1 $2-$3-$4'];
+
 function main() {
     var prefs = AnyBalance.getPreferences();
 
@@ -85,9 +87,37 @@ function main() {
     json = getJson(html).data;
     
     getParam(json.accountNumber, result, 'licschet');
-    getParam(user.user.username, result, 'phone_name');
+    getParam(user.user.username, result, 'phone_name', null, replaceNumber);
     getParam(json.currentBalance, result, 'balance');
-    getParam(json.totalBalance, result, 'balance_if');
+    getParam(json.totalBalance, result, 'balance_total');
+	getParam(json.conditionalBalance, result, 'balance_if');
+	getParam(json.creditLimit, result, 'creditLimit');
+	getParam(json.unpaidBillsQuantity, result, 'unpaidsQuantity');
+	getParam(json.unpaidBillsAmount, result, 'unpaids');
+	getParam(json.cashbackAmount, result, 'cashbackAmount');
+	
+	if (AnyBalance.isAvailable('total_amountTotal', 'total_charges', 'total_amountLocal', 'total_abon', 'total_country', 'total_home', 'total_outhome', 'total_roaming')) {
+	    var dt = new Date();
+        var dtPrevs = '01' + '.' + n2(dt.getMonth()+1) + '.' + dt.getFullYear();
+	    var dtCurr = n2(dt.getDate()) + '.' + n2(dt.getMonth()+1) + '.' + dt.getFullYear();
+	
+	    try{
+	        htmlExp = AnyBalance.requestGet(baseurlApi + 'widget/expenses/' + user.user.accountId + '?from=' + dtPrevs + '&to=' + dtCurr, addHeaders({Referer: baseurl + 'login'}));
+	        json = getJson(htmlExp).data;
+	        
+			getParam(json.totalOfBasicChargesAggregates, result, 'total_amountTotal');
+			getParam(json.oneTimeCharges, result, 'total_charges');
+			getParam(json.otherRecurringCharges, result, 'total_amountLocal');
+			getParam(json.recurringChargesForRatePlan, result, 'total_abon');
+			getParam(json.trafficChargesAtHomeMacroRegionAndNotInHomeRegion, result, 'total_country');
+            getParam(json.trafficChargesAtHomeRegion, result, 'total_home');
+			getParam(json.trafficChargesAtOutHomeMacroRegion, result, 'total_outhome');
+			getParam(json.trafficChargesAtRoaming, result, 'total_roaming');
+		} catch (e) {
+            AnyBalance.trace(e.message);
+            AnyBalance.trace('Не удалось получить данные по общим расходам с начала периода, свяжитесь, пожалуйста, с разработчиками.');
+        }
+	}
 
     try {
         var account;
@@ -139,45 +169,83 @@ function main() {
         	getParam(labels, result, 'labels');
         }
 
-        if(account.ratePlan && account.account && account.account.id){
+        var regId;
+		if(account.ratePlan && account.account && account.account.id){
         	getParam(account.account.number, result, 'licschet');
-        	getParam(account.msisdn, result, 'phone_name');
+        	getParam(account.msisdn, result, 'phone_name', null, replaceNumber);
 
         	getParam(account.balance && account.balance.value, result, 'balance', null, null, parseBalance);
         	getParam(account.ratePlan.def, result, '__tariff');
         	getParam(account.account.name, result, 'name_name');
         }else{
         	AnyBalance.trace('Пришлось получать данные из инфы о подписчике');
-        	var html = AnyBalance.requestGet(baseurl + 'subscriber/info/' + account.id, addHeaders({Referer: baseurl + 'b2b/subscriber/mobile'}));
+        	var html = AnyBalance.requestGet(baseurl + 'ws/v1.0/subscriber/' + account.id + '/meta', addHeaders({Referer: baseurl + 'b2b/subscriber/mobile'}));
         	var json = getJson(html);
+			AnyBalance.trace('meta: ' + JSON.stringify(json));
 
-        	getParam(json.profile.subscriberId, result, 'licschet');
-        	getParam(json.profile.msisdn, result, 'phone_name');
+        	getParam(json.data.account.number, result, 'licschet');
+        	var phone = getParam(json.data.number, result, 'phone_name', null, replaceNumber);
 
-        	getParam(json.profile.ratePlanName, result, '__tariff');
-        	getParam(json.subscriber.statusDef, result, 'status');
-        	getParam(json.profile.msisdn + ' - ' + (json.profile.profileFio || labels), result, 'name_name');
+        	getParam(phone + ' - ' + (json.data.name || labels), result, 'name_name');
+			
+			regId = json.data.regionId;
+			var html = AnyBalance.requestGet(baseurl + 'ws/v1.0/subscriber/' + account.id + '/info/tariff?regionId=' + regId, addHeaders({Referer: baseurl + 'b2b/subscriber/mobile'}));
+        	var json = getJson(html);
+			AnyBalance.trace('info/tariff: ' + JSON.stringify(json));
+			
+			getParam(json.data.ratePlan.name, result, '__tariff');
+			
+			var html = AnyBalance.requestGet(baseurl + 'ws/v1.0/subscriber/' + account.id + '/info/general', addHeaders({Referer: baseurl + 'b2b/subscriber/mobile'}));
+        	var json = getJson(html);
+			AnyBalance.trace('info/general: ' + JSON.stringify(json));
+			
+			getParam(json.data.status.name, result, 'status');
+			
+			if (json.subsAccessLevel)
+				getParam(json.subsAccessLevel, result, 'position');
         }
 
         if(AnyBalance.isAvailable('min_left', 'sms_left')){
-            getDiscounts(baseurl, account, result);
+            getDiscounts(baseurl, account, regId, result);
         }
 
-        if (AnyBalance.isAvailable('amountTotal', 'amountLocal', 'abon', 'charges')) {
-            var htmlExp = AnyBalance.requestGet(baseurl + 'subscriber/finances/' + account.id, g_headers);
+        if (AnyBalance.isAvailable('amountTotal', 'abon', 'amountLocal', 'charges', 'home', 'outhome', 'country', 'roaming')) {
+			var htmlExp = AnyBalance.requestGet(baseurl + 'ws/v1.0/subscriber/' + account.id + '/finances', addHeaders({Referer: baseurl + 'b2b/subscriber/mobile'}));
             var json = getJson(htmlExp);
+			AnyBalance.trace('Расходы абонента: ' + JSON.stringify(json));
 
-            getParam(json.financeProfile.subscriberCostsEntity.periodAmount, result, 'amountTotal');
-            getParam(json.financeProfile.subscriberCostsEntity.trafficAmount, result, 'amountLocal');
-            getParam(json.financeProfile.subscriberCostsEntity.feeAmount, result, 'abon');
-            getParam(json.financeProfile.subscriberCostsEntity.chargesAmount, result, 'charges');
+            getParam(json.data.totalOfBasicChargesAggregates, result, 'amountTotal');
+			var expences = json.data.aggregates;
+            for (var i = 0; i < expences.length; i++) {
+				var expence = expences[i];
+                var id = expence.id;
+                if(id == 'recurringChargesForRatePlan'){ // Абонентская плата по тарифному плану
+                    getParam(expence.value, result, 'abon');
+				}else if(id == 'otherRecurringCharges'){ // Абонентские платы за доп. услуги и опции
+                    getParam(expence.value, result, 'amountLocal');
+                }else if(id == 'oneTimeCharges'){ // Разовые начисления
+                    getParam(expence.value, result, 'charges');
+		    	}else if(id == 'trafficChargesAtHomeRegion'){ // ИТОГО на территории домашнего региона
+                    getParam(expence.value, result, 'home');
+				}else if(id == 'trafficChargesAtHomeMacroRegionAndNotInHomeRegion'){ // ИТОГО на территории домашнего филиала
+                    getParam(expence.value, result, 'outhome');
+				}else if(id == 'trafficChargesAtOutHomeMacroRegion'){ // ИТОГО на территории других филиалов
+                    getParam(expence.value, result, 'country');
+				}else if(id == 'trafficChargesAtRoaming'){ // ИТОГО в роуминге
+                    getParam(expence.value, result, 'roaming');
+                }else{
+                    AnyBalance.trace('Неизвестная опция: ' + expence.label);
+                }
+			}
         }
 
-        if(AnyBalance.isAvailable('prsnl_balance')){
-            var htmlBudget = AnyBalance.requestGet(baseurl + 'subscriber/budget/' + account.id, g_headers);
-            var json = getJson(htmlBudget);
-            getParam(json.subscriberBudget && json.subscriberBudget.balance, result, 'prsnl_balance');
-        }
+//      if(AnyBalance.isAvailable('prsnl_balance')){
+//          var htmlBudget = AnyBalance.requestGet(baseurl + 'd/subscriber/budget/' + account.id, g_headers);
+//			var htmlBudget = AnyBalance.requestGet(baseurl + 'ws/v1.0/subscriber/' + account.id + '/budget', g_headers);
+//          var json = getJson(htmlBudget);
+//			AnyBalance.trace('Переменная json 3: ' + JSON.stringify(json));//////////////////////////////////
+//          getParam(json.subscriberBudget && json.subscriberBudget.balance, result, 'prsnl_balance');
+//      }
 
         if(account.account && account.account.number){
         	getAccount(baseurl, account.account.number, result);
@@ -192,61 +260,47 @@ function main() {
     AnyBalance.setResult(result);
 }
 
-function getDiscounts(baseurl, account, result){
-    var html = AnyBalance.requestGet(baseurl + 'subscriber/info/' + account.id + '/discounts', addHeaders({'X-Requested-With':'XMLHttpRequest'}));
-    if(!/^\s*\{/i.test(html)){
-        if(/Сервис временно недоступен/i.test(html)){
-            AnyBalance.trace('Не удаётся получить дискаунты для этого номера: сервис временно недоступен');
-            return;
-        }
-
-        AnyBalance.trace('Не удаётся получить дискаунты для этого номера: ' + html);
-        return;
-    }
+function getDiscounts(baseurl, account, regId, result){
+	var html = AnyBalance.requestGet(baseurl + 'ws/v1.0/subscriber/' + account.id + '/info/tariff?regionId=' + regId, addHeaders({Referer: baseurl + 'b2b/subscriber/mobile'}));
 
     AnyBalance.trace('Найдены дискаунты: ' + html);
-    json = getJson(html);
-    for (var discgroup in json.discounts) {
-        var group = json.discounts[discgroup];
-        if(!group || !isArray(group)) continue;
+    json = getJson(html).data;
 
-        for(var i=0; i<group.length; ++i){
-            var d = group[i];
-            AnyBalance.trace('Найдена скидка: ' + d.name + ' ' + d.volume + ' ' + d.measure);
-            if(/мин/i.test(d.measure)){
-                AnyBalance.trace('Это минуты');
-                sumParam(d.volume, result, 'min_left', null, null, null, aggregate_sum);
-            }else if(/Базовый sms/i.test(d.name)){
-                AnyBalance.trace('Это смс на мегафон');
-                sumParam(d.volume, result, 'sms_left_megafon', null, null, null, aggregate_sum);
-            }else if(/шт|смс|sms/i.test(d.measure)){
-                AnyBalance.trace('Это смс');
-                sumParam(d.volume, result, 'sms_left', null, null, null, aggregate_sum);
-            }else if(/[мгкmgk][бb]/i.test(d.measure)){
-                AnyBalance.trace('Это интернет');
-                var mb = parseTraffic(d.volume + d.measure);
-                if(mb >= 9999999){
-                	AnyBalance.trace('Это безлимит, пропускаем');
-                	continue;
-                }
-                var cat = 'traffic_left';
-                if(/интернет/i.test(d.name) && /европ/i.test(d.name))
-                	cat = 'traffic_left_europe';
-                else if(/интернет/i.test(d.name) && /поп.+стран/i.test(d.name))
-                	cat = 'traffic_left_pop_countries';
-                else if(/остальн.+стран/i.test(d.name))
-                	cat = 'traffic_left_other_countries'
-                else if(/интернет/i.test(d.name) && /СНГ/i.test(d.name))
-                	cat = 'traffic_left_sng';
-
-                AnyBalance.trace('Относим ' + mb + ' МБ к ' + cat);
-                sumParam(mb, result, cat, null, null, null, aggregate_sum);
-            }else{
-                AnyBalance.trace('неизвестная скидка: ' + JSON.stringify(d));
+    for(var i=0; i<json.discounts.length; ++i){
+        var d = json.discounts[i];
+        AnyBalance.trace('Найдена скидка: ' + d.label + ' ' + d.value + ' ' + d.unit);
+        if(/мин/i.test(d.unit)){
+            AnyBalance.trace('Это минуты');
+            sumParam(d.value, result, 'min_left', null, null, null, aggregate_sum);
+        }else if(/Базовый sms/i.test(d.label)){
+            AnyBalance.trace('Это смс на мегафон');
+            sumParam(d.value, result, 'sms_left_megafon', null, null, null, aggregate_sum);
+        }else if(/шт|смс|sms/i.test(d.unit)){
+            AnyBalance.trace('Это смс');
+            sumParam(d.value, result, 'sms_left', null, null, null, aggregate_sum);
+        }else if(/[мгкmgk][бb]/i.test(d.unit)){
+            AnyBalance.trace('Это интернет');
+            var mb = parseTraffic(d.value + d.unit);
+            if(mb >= 9999999){
+            	AnyBalance.trace('Это безлимит, пропускаем');
+            	continue;
             }
+            var cat = 'traffic_left';
+            if(/интернет/i.test(d.label) && /европ/i.test(d.label))
+            	cat = 'traffic_left_europe';
+            else if(/интернет/i.test(d.label) && /поп.+стран/i.test(d.label))
+            	cat = 'traffic_left_pop_countries';
+            else if(/остальн.+стран/i.test(d.label))
+            	cat = 'traffic_left_other_countries'
+            else if(/интернет/i.test(d.label) && /СНГ/i.test(d.label))
+            	cat = 'traffic_left_sng';
+
+            AnyBalance.trace('Относим ' + mb + ' МБ к ' + cat);
+            sumParam(mb, result, cat, null, null, null, aggregate_sum);
+        }else{
+            AnyBalance.trace('Неизвестная скидка: ' + JSON.stringify(d));
         }
     }
-
 }
 
 function getAccount(baseurl, accnum, result){
@@ -287,20 +341,20 @@ function getAccount(baseurl, accnum, result){
 	    getParam(html, result, 'licschet', /Лицевой счет\s*(\d+)/i, replaceTagsAndSpaces);
     }
     
-    if (isAvailable('unpaids')) {
-    	if(acc){
-	        html = AnyBalance.requestGet(baseurl + 'b2b/account/accountInfo/' + acc.id, addHeaders({
-    			Accept: 'text/html',
-    			Referer: baseurl,
-	        }));
-	    }
+//  if (isAvailable('unpaids')) {
+//    	if(acc){
+//	        html = AnyBalance.requestGet(baseurl + 'b2b/account/accountInfo/' + acc.id, addHeaders({
+//    			Accept: 'text/html',
+//    			Referer: baseurl,
+//	        }));
+//	    }
 
-        var elemUnpaids = getElement(html, /<div\s[^>]*\bunpaidBillsCount\b/);
-        if (elemUnpaids) {
-            elemUnpaids = getElement(elemUnpaids, /<span[^>]+class="[^"']*?\bmoney/, replaceTagsAndSpaces, parseBalance);
-            getParam(elemUnpaids, result, 'unpaids');
-        }
-    }
+//      var elemUnpaids = getElement(html, /<div\s[^>]*\bunpaidBillsCount\b/);
+//        if (elemUnpaids) {
+//          elemUnpaids = getElement(elemUnpaids, /<span[^>]+class="[^"']*?\bmoney/, replaceTagsAndSpaces, parseBalance);
+//          getParam(elemUnpaids, result, 'unpaids');
+//      }
+//    }
 
 
 }

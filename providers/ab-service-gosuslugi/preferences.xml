@@ -21,43 +21,4 @@
 		dialogMessage="Введите пароль, используемый для входа в личный кабинет"
 		inputType="textPassword">
 	</EditTextPreference>
-<!--
-	<EditTextPreference
-		title="Номера автомобилей"
-		key="gosnumber"
-		summary="||{@s}"
-		dialogTitle="Номера автомобилей"
-		positiveButtonText="ОК"
-		negativeButtonText="Отмена"
-		dialogMessage="Введите номера автомобилей через символ ; (в формате х123хх50 или 1234хх50, буквы русские) максимально можно ввести 3 номера. Если в вашем кабинете автомобили уже сохранены, то оставьте поле пустым">
-	</EditTextPreference>
-	<EditTextPreference
-        title="Свидетельство о регистрации"
-        key="sts_num"
-        summary="||{@s}"
-        dialogTitle="Свидетельство о регистрации"
-        positiveButtonText="ОК"
-        negativeButtonText="Отмена"
-        dialogMessage="Введите номера cвидетельств о регистрации через символ ; (в формате 50XX123456, буквы русские) максимально можно ввести 3 номера. Если в вашем кабинете автомобили уже сохранены, то оставьте поле пустым">
-    </EditTextPreference>
-	<EditTextPreference
-		title="Серия и номер ВУ"
-		key="licensenumber"
-		summary="||{@s}"
-		dialogTitle="Серия и номер ВУ"
-		positiveButtonText="ОК"
-		negativeButtonText="Отмена"
-		dialogMessage="Введите серию и номер водительского удостоверения в формате 50км123456, буквы русские. Если в вашем кабинете номер вашего ВУ уже сохранен, то оставьте поле пустым">
-	</EditTextPreference>
-	<EditTextPreference
-		inputType="number"
-		title="ИНН"
-		key="inn"
-		summary="||{@s}"
-		dialogTitle="ИНН"
-		positiveButtonText="ОК"
-		negativeButtonText="Отмена"
-		dialogMessage="Введите один ИНН или несколько через символ ; максимально можно ввести 3 ИНН. Если в вашем кабинете ИНН уже сохранен, то оставьте поле пустым">
-	</EditTextPreference>
--->		
 </PreferenceScreen>

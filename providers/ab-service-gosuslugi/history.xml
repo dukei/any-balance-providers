@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change major_version="1.2" version="857" date="2022-11-27">
+	- Поддержка изменений в процедуре входа
+	</change>
     <change major_version="1.2" version="856" date="2022-07-30">
 	- Исправлена авторизация по номеру телефона
 	</change>

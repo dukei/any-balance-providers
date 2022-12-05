@@ -1,25 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
-    <EditTextPreference
+	<EditTextPreference
+		title="Логин"
+		key="login"
+		summary="Логин для входа в личный кабинет|Введите логин\n|{@s}\n"
 		obligatory="true"
-        title="Номер карты" 
-        positiveButtonText="ОК" 
-        summary="Номер карты Mnogo.ru||{@s}\n" 
-        dialogTitle="Номер карты" 
-        negativeButtonText="Отмена" 
-        dialogMessage="Введите номер карты Mnogo.ru"
-        key="login"
-        inputType="number">
-    </EditTextPreference>
+		dialogTitle="Логин"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите номер карты или E-mail для входа в личный кабинет">
+	</EditTextPreference>
+	<EditTextPreference
+		title="Пароль"
+		key="password"
+		summary="Пароль для входа в личный кабинет|Введите пароль\n|***********\n"
+		obligatory="true"
+		dialogTitle="Пароль"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите пароль, используемый для входа в личный кабинет"
+		inputType="textPassword">
+	</EditTextPreference>
     <EditTextPreference
 		obligatory="true"
         positiveButtonText="ОК"
         key="birthday" 
-        dialogTitle="День рождения"
+        dialogTitle="Дата рождения"
         negativeButtonText="Отмена"
-        title="День рождения"
-        summary="Ваш день рождения||{@s}\n"
-        dialogMessage="Введите ваш день рождения в формате DD-MM-YYYY, например, 28-04-1980"
+        title="Дата рождения"
+        summary="Дата рождения для входа в личный кабинет|Введите дату\n|{@s}\n"
+        dialogMessage="Введите дату вашего рождения в формате ДД.ММ.ГГГГ, например: 28.04.1980"
         inputType="date">
     </EditTextPreference>
+	<ListPreference
+		key="method"
+		title="Способ входа"
+		summary="Способ входа в личный кабинет||{@s}\n"
+		dialogTitle="Способ входа"
+		entries="По дате рождения|По паролю"
+		entryValues="birth|pass"
+		defaultValue="birth">
+	</ListPreference>
 </PreferenceScreen>

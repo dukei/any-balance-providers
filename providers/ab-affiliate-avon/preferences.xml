@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
     <EditTextPreference 
-        title="Компьютерный номер" 
+        title="Логин" 
         positiveButtonText="ОК" 
-        summary="Компьютерный номер для входа в личный кабинет||{@s}\n" 
-        dialogTitle="Компьютерный номер" 
+        summary="Логин для входа в личный кабинет|Введите логин\n|{@s}\n" 
+        dialogTitle="Логин" 
         negativeButtonText="Отмена" 
-        dialogMessage="Введите компьютерный номер, используемый для входа в личный кабинет."
+        dialogMessage="Введите компьютерный номер, используемый для входа в личный кабинет"
         key="login">
     </EditTextPreference>
     <EditTextPreference 
@@ -15,8 +15,8 @@
         dialogTitle="Пароль"
         negativeButtonText="Отмена"
         title="Пароль"
-        summary="Пароль для входа в личный кабинет||***********\n"
-        dialogMessage="Введите пароль, используемый для входа в личный кабинет."
+        summary="Пароль для входа в личный кабинет|Введите пароль\n|***********\n"
+        dialogMessage="Введите пароль, используемый для входа в личный кабинет"
         inputType="textPassword">
     </EditTextPreference>
 </PreferenceScreen>

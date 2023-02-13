@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="5">ab-affiliate-avon</id>
+	<id version="7">ab-affiliate-avon</id>
 	<name>Avon</name>
 	<description html="true"><![CDATA[
 	<p>Получает баланс и другую информацию по представителю Avon (https://www.avon.ru).</p>
@@ -31,10 +31,11 @@
 		<counter id="monthordersum" name="Сумма заказов за месяц" units=" {@currency}"/>
 		<counter id="rubdiscount" name="Скидка в рублях" units=" {@currency}"/>
 		<counter id="currdiscount" name="Текущий уровень скидки" type="text"/>
+		<counter id="thismonthdiscount" name="Скидка в этом месяце" type="text"/>
 		<counter id="tonextdiscount" name="До след. уровня скидки" units=" {@currency}"/>
-		<counter id="bonus" name="Доступные баллы" units=" б"/>
-		<counter id="p_bonus" name="Потенциальные баллы" units=" б"/>
-		<counter id="h_bonus" name="Горящие баллы" units=" б"/>
+		<counter id="bonus" name="Доступные баллы" units=" Б"/>
+		<counter id="p_bonus" name="Потенциальные баллы" units=" Б"/>
+		<counter id="h_bonus" name="Горящие баллы" units=" Б"/>
 		<counter id="expdate" name="Дата сдачи заказа" type="time" format="dd.MM.yyyy"/>
 		<counter id="daysleft" name="До сдачи заказа" units=" дн"/>
 		<counter id="orderdate" name="Дата заказа" type="time" format="dd.MM.yyyy"/>

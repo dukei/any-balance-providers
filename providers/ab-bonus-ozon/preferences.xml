@@ -1,24 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
     <EditTextPreference 
-        title="Телефон или e-mail" 
+        title="Логин" 
 		key="login"
-        summary="Телефон или e-mail для входа||{@s}\n" 
+        summary="Логин для входа в личный кабинет|Введите логин\n|{@s}\n" 
         obligatory="true"
-		dialogTitle="Телефон или e-mail" 
+		dialogTitle="Логин" 
 		positiveButtonText="ОК" 
         negativeButtonText="Отмена" 
-        dialogMessage="Введите ваш телефон (10 цифр без пробелов и разделителей) или e-mail, используемый для входа в личный кабинет OZON.">
+        dialogMessage="Введите номер телефона в формате 10 цифр без пробелов и разделителей или E-mail, используемый для входа в личный кабинет">
     </EditTextPreference>
-<!--    <EditTextPreference 
-        title="Пароль"
-		key="password" 
-		summary="||***********"
-        obligatory="true"
-		dialogTitle="Пароль"
-		positiveButtonText="ОК"
-        negativeButtonText="Отмена"
-        dialogMessage="Введите пароль, используемый для входа в личный кабинет."
-        inputType="textPassword">
-    </EditTextPreference> -->
 </PreferenceScreen>

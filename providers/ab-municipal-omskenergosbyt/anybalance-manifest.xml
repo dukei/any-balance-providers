@@ -1,0 +1,56 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+    <id version="1">ab-municipal-omskenergosbyt</id>
+    <api flags="no_browser"/>
+    <name>Омская энергосбытовая компания (ОЭК)</name>
+    <description html="true"><![CDATA[
+	<p>Предоставляет информацию о текущей задолженности и пеням для абонентов Омской энергосбытовой компании (https://www.omesc.ru/).</p>
+    <p>Информация берется из личного кабинета абонента ОЭК на сайте https://my.omesc.ru/.</p>
+    ]]></description>
+    <instruction html="true"><![CDATA[
+	<p>Для работы провайдера требуется ввести логин и пароль для входа в личный кабинет ОЭК.</p>
+	<p>Если у вас нет доступа в личный кабинет ОЭК, пройдите регистрацию на странице https://my.omesc.ru/lk/account/regform.</p>
+    ]]></instruction>
+    <author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+    <depends>
+    	<module id="library"/>
+    	<module id="misc/saved-data"/>
+    </depends>
+    <files>
+        <icon>icon.png</icon>
+        <preferences>preferences.xml</preferences>
+        <js>main.js</js>
+        <history>history.xml</history>
+    </files>
+    <counters>
+        <counter id="balance" name="Общая задолженность" units=" ₽"/>
+        <counter id="power" name="Электроэнергия" units=" ₽"/>
+        <counter id="tko" name="Обращение с ТКО" units=" ₽"/>
+        <counter id="cold" name="Холодное водоснабжение" units=" ₽"/>
+        <counter id="power_pen" name="Электроэнергия (пени)" units=" ₽"/>
+        <counter id="tko_pen" name="Обращение с ТКО (пени)" units=" ₽"/>
+		<counter id="debt_date" name="Дата задолженности" type="time" format="dd.MM.yyyy"/>
+		<counter id="period" name="Расчетный период" type="text"/>
+		<counter id="power_counter" name="Номер счетчика ЭЭ" type="text"/>
+		<counter id="power_start_sum" name="Сумма на начало периода" units=" ₽"/>
+		<counter id="accrued_kwt_peak" name="Расход (пик)" units=" кВтч"/>
+		<counter id="accrued_sum_peak" name="Начислено (пик)" units=" ₽"/>
+		<counter id="accrued_kwt_ppeak" name="Расход (п/пик)" units=" кВтч"/>
+		<counter id="accrued_sum_ppeak" name="Начислено (п/пик)" units=" ₽"/>
+		<counter id="accrued_kwt_night" name="Расход (ночь)" units=" кВтч"/>
+		<counter id="accrued_sum_night" name="Начислено (ночь)" units=" ₽"/>
+		<counter id="accrued_kwt" name="Расход (всего)" units=" кВтч"/>
+		<counter id="accrued_sum" name="Начислено (всего)" units=" ₽"/>
+		<counter id="power_to_pay" name="Сумма на конец периода" units=" ₽"/>
+		<counter id="last_pay_date" name="Дата посл. платежа" type="time" format="dd.MM.yyyy"/>
+        <counter id="account" name="Лицевой счет" type="text"/>
+		<counter id="els_gis" name="ЕЛС ГИС ЖКХ" type="text"/>
+		<counter id="address" name="Адрес" type="text"/>
+		<counter id="email" name="E-mail" type="text"/>
+		<counter id="phone" name="Телефон" type="text"/>
+		<counter id="fio" name="ФИО" type="text"/>
+    </counters>
+    <keywords>оэк, омск, омская область, энергосбыт, электричество</keywords>
+    <type>municipal</type>
+    <country>ru</country>
+</provider>

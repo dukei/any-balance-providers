@@ -1,16 +1,16 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="5">ab-bonus-magnit</id>
+	<id version="6">ab-bonus-magnit</id>
 	<api flags="no_browser"/>
 	<name>Магнит</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию по программе лояльности "Магнит" для клиентов сети магазинов Магнит.</p>
+	<p>Предоставляет информацию по бонусной карте для участников программы лояльности сети магазинов Магнит (https://magnit.ru/).</p>
 	<p>Информация берется из личного кабинета https://new.moy.magnit.ru/.</p>
 	]]></description>
 	<instruction html="true"><![CDATA[
-	<p>Для получения данных с сайта необходимо ввести в настройки провайдера свой номер телефона, на который зарегистрирована карта "Магнит" и однократно ввести проверочный код, пришедший по SMS.</p>
+	<p>Для получения данных с сайта необходимо ввести в настройки провайдера свой номер телефона, на который зарегистрирована бонусная карта Магнит, и ввести проверочный код, пришедший по SMS.</p>
 	]]></instruction>
-	<author>RamzesZeus &lt;ramzeszeus@gmail.com&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>
 		<module id="library"/>
 		<module id="misc/saved-data"/>
@@ -32,7 +32,7 @@
 		<counter id="month_purchases" name="Покупок за месяц" units=" ₽"/>
 		<counter id="level" name="Уровень начислений" units="%"/>
 		<counter id="status" name="Статус начислений" type="text"/>
-		<counter id="last_operation" name="Поcледняя операция" type="text"/>
+		<counter id="last_operation" name="Поcледняя операция" type="html"/>
 		<counter id="phone" name="Телефон" type="text"/>
 		<counter id="fio" name="ФИО владельца" type="text"/>
 	</counters>

@@ -5,18 +5,16 @@
 
 var g_headers = {
 	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
-	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
-	'Accept-Encoding': 'gzip, deflate, br',
-	'Accept-Language': 'ru-RU,ru;q=0.9,en-US;q=0.6,en;q=0.4',
+	'Accept-Language': 'ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7',
 	'Connection': 'keep-alive',
-	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/95.0.4638.69 Safari/537.36',
+	'Upgrade-Insecure-Requests': '1',
+	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36'
 };
 
 var baseurl = "https://new.moy.magnit.ru";
+var ksId;
 var g_savedData;
-var replaceLogin = [replaceTagsAndSpaces, /\D/g, '', /.*(\d\d\d)(\d\d\d)(\d\d)(\d\d)$/, '+ 7 ( $1 ) $2-$3$4'];
-var replaceLogin1 = [replaceTagsAndSpaces, /\D/g, '', /.*(\d\d\d)(\d\d\d)(\d\d)(\d\d)$/, ' 7 ( $1 ) $2-$3$4'];
-var replaceNumber = [replaceTagsAndSpaces, /\D/g, '', /.*(\d\d\d)(\d\d\d)(\d\d)(\d\d)$/, '+7 $1 $2-$3-$4'];
+var replaceNumber = [replaceTagsAndSpaces, /\D/g, '', /.*(\d{3})(\d{3})(\d{2})(\d{2})$/, '+7 $1 $2-$3-$4'];
 
 function main(){
     var prefs = AnyBalance.getPreferences();
@@ -30,12 +28,17 @@ function main(){
 	
 	AnyBalance.trace ('Пробуем войти в личный кабинет...');
 	
-	var html = AnyBalance.requestGet(baseurl + '/dashboard/', g_headers);
+	var html = AnyBalance.requestGet('https://moy.magnit.ru/dashboard/', g_headers);
 	
-	if(!html || AnyBalance.getLastStatusCode() >= 400){
+	if(!html || AnyBalance.getLastStatusCode() >= 500){
         AnyBalance.trace(html);
         throw new AnyBalance.Error('Сайт Мой магнит временно недоступен. Попробуйте ещё раз позже');
     }
+	
+	if(/технически|technical/i.test(html)){
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('На сайте ведутся технические работы. Попробуйте ещё раз позже');
+	}
 	
 	if(/logout/i.test(html)){
 		AnyBalance.trace('Сессия сохранена. Входим автоматически...');
@@ -48,12 +51,7 @@ function main(){
     var result = {success: true};
 	
 	if (AnyBalance.isAvailable('balance', 'express', 'magnets', 'spend_now', 'count_now', 'level', 'status')) {
-		html = AnyBalance.requestGet(baseurl + '/dashboard/', g_headers);
-		
-		if (!/logout/i.test(html)) {
-       	    AnyBalance.trace(html);
-       	    throw new AnyBalance.Error('Не удалось получить данные из-за проблем на сайте. Попробуйте ещё раз позже');
-        }
+		html = AnyBalance.requestGet('https://moy.magnit.ru/dashboard/', g_headers);
 		
 	    getParam(html, result, 'balance', /<div[^>]+class="balance balance--b"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
 	    getParam(html, result, 'express', /<div[^>]+class="balance balance--e"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
@@ -73,7 +71,7 @@ function main(){
 	if (AnyBalance.isAvailable('__tariff', 'cardnum_plastic', 'cardnum_virtual', 'phone', 'fio')) {
 	    html = AnyBalance.requestGet(baseurl + '/dashboard/settings/', g_headers);
 	
-	    getParam(html, result, '__tariff', /Пластиковая Карта Магнит<[\s\S]*?card-number"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+	    getParam(html, result, '__tariff', /Карта Магнит<[\s\S]*?card-number"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
 	    getParam(html, result, 'cardnum_plastic', /Пластиковая Карта Магнит<[\s\S]*?card-number"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
 	    getParam(html, result, 'cardnum_virtual', /Виртуальная Карта Магнит<[\s\S]*?card-number"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
 	    getParam(html, result, 'phone', /name="phone"[\s\S]*?value="([\s\S]*?)"/i, replaceNumber);
@@ -115,15 +113,15 @@ function main(){
 			if (!bonus_m)
 				var bonus_m = 0;
 			
-    		var res = date + '. ';
-			res += 'Покупка на ' + sum + '. ';
+    		var res = date;
+			res += '<br>Покупка на ' + sum;
 			if (bonus_b_off) {
-				res += 'Бонусы: ' + bonus_b_off + '/' + bonus_b + ' Б. ';
+				res += '<br>Бонусы: ' + bonus_b_off + '/' + bonus_b + ' Б';
 			} else {
-				res += 'Бонусы: ' + bonus_b + ' Б. ';
+				res += '<br>Бонусы: ' + bonus_b + ' Б';
 			}
-			res += 'Экспресс: ' + bonus_e + ' Б. ';
-			res += 'Магнитики: ' + bonus_m + ' шт.';
+			res += '<br>Экспресс: ' + bonus_e + ' Б';
+			res += '<br>Магнитики: ' + bonus_m + ' шт';
     		getParam(res, result, 'last_operation');
 			
 		}else{
@@ -137,6 +135,12 @@ function main(){
 	AnyBalance.setResult(result);
 }
 
+function generateUUID() {
+	function s4() {
+  		return Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
+	}
+  	return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
+}
 
 function loginSite(prefs){
 	var prefs = AnyBalance.getPreferences();
@@ -144,32 +148,37 @@ function loginSite(prefs){
 	checkEmpty(prefs.login, 'Введите номер телефона!');
     checkEmpty(/^\d{10}$/.test(prefs.login), 'Введите номер телефона - 10 цифр без пробелов и разделителей!');
 	
-	var uPhone = getParam(prefs.login, null, null, null, replaceLogin);
+	ksId = generateUUID() + '_0';
 	
-	var params = [
-	    ['phone',uPhone],
-	];
-	
-	var html = AnyBalance.requestPost(baseurl + '/local/ajax/login/', params, addHeaders({
-		'accept': 'application/json, text/javascript, */*; q=0.01',
-		'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
-		'origin': baseurl,
+	var html = AnyBalance.requestPost(baseurl + '/local/ajax/login/', {
+		phone: prefs.login.replace(/.*(\d{3})(\d{3})(\d{2})(\d{2})$/, '+ 7 ( $1 ) $2-$3-$4'),
+        ksid: ksId
+	}, addHeaders({
+		'Accept': 'application/json, text/javascript, */*; q=0.01',
+		'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+		'Origin': baseurl,
 		'Referer': baseurl + '/',
 		'X-Requested-With': 'XMLHttpRequest',
 	    }));
-
-	if(!html){
-		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Не удалось найти форму входа! Сайт изменён?');
-	}
 	
 	var json = getJson(html);
 	AnyBalance.trace(JSON.stringify(json));
+    
+	if (json && json.status_code > 500) {
+		var error = json.message;
+    	if (error) {
+			AnyBalance.trace(html);
+       		throw new AnyBalance.Error(error);	
+       	}
 
-    if(!json.data && json.status == "success"){
+       	AnyBalance.trace(html);
+       	throw new AnyBalance.Error('Не удалось войти в личный кабинет. Сайт изменён?');
+    }
+	
+    if(json && !json.data && json.status == "success"){
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось отправить SMS на указанный номер из-за проблем на сайте. Попробуйте ещё раз позже');
-	}else if (json.status != "success") {
+	}else if (json && json.status != "success") {
 		var error = json.errors.phone;
     	if (error) {
 			AnyBalance.trace(html);
@@ -180,26 +189,18 @@ function loginSite(prefs){
        	throw new AnyBalance.Error('Не удалось отправить SMS на указанный номер. Проверьте правильность ввода номера телефона');
     }
 	
-	if (!json) {
-       	AnyBalance.trace(html);
-       	throw new AnyBalance.Error('Не удалось войти в личный кабинет. Сайт изменён?');
-    }
-	
 	AnyBalance.trace('Сайт затребовал код подтверждения из SMS');
 	
-	var code = AnyBalance.retrieveCode('Пожалуйста, введите код подтверждения, высланный на номер ' + prefs.login, null, {inputType: 'number', time: 170000});
+	var code = AnyBalance.retrieveCode('Пожалуйста, введите код подтверждения, высланный на номер ' + prefs.login, null, {inputType: 'number', time: 180000});
 	
-	var uPhone = getParam(prefs.login, null, null, null, replaceLogin1);
-	
-	var params = [
-	    ['phone',uPhone],
-		['code',code],
-	];
-	
-	var html = AnyBalance.requestPost(baseurl + '/local/ajax/login/', params, addHeaders({
-		'accept': 'application/json, text/javascript, */*; q=0.01',
-		'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
-		'origin': baseurl,
+	var html = AnyBalance.requestPost(baseurl + '/local/ajax/login/', {
+		'phone': prefs.login.replace(/.*(\d{3})(\d{3})(\d{2})(\d{2})$/, ' 7 ( $1 ) $2-$3-$4'),
+		'code': code,
+        'ksid': ksId
+	}, addHeaders({
+		'Accept': 'application/json, text/javascript, */*; q=0.01',
+		'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+		'Origin': baseurl,
 		'Referer': baseurl + '/',
 		'X-Requested-With': 'XMLHttpRequest',
 	    }));
@@ -225,5 +226,4 @@ function loginSite(prefs){
 	
 	g_savedData.setCookies();
 	g_savedData.save();
-	return json;
 }

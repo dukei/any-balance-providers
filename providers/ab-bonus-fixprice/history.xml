@@ -1,5 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="114" date="2022-06-30">
+	- Поддержка изменений на сайте.
+	- Добавлены дополнительные счетчики.
+	</change>
 	<change version="113" date="2021-04-29">
 	- Вход по номеру телефона.
 	</change>

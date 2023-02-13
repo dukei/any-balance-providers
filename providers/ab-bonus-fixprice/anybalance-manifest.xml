@@ -1,17 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="113">ab-bonus-fixprice</id>
+	<id version="114">ab-bonus-fixprice</id>
 	<api flags="no_browser"/>
 	<name>FixPrice Бонус</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о бонусных баллах Fix Price http://www.fix-price.ru/</p>
-	<p>Информация берется из личного кабинета https://bonus.fix-price.ru/profile</p>
+	<p>Предоставляет информацию о бонусных баллах Fix Price https://fix-price.com/</p>
+	<p>Информация берется из личного кабинета https://fix-price.com/profile/settings.</p>
 	<p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
-	<author>DimaZ &lt;DIMAZ.KHUA@gmail.com&gt;</author>
 	<depends>
 		<module id="library"/>
+		<module id="misc/saved-data"/>
 	</depends>
 	<files>
 		<icon>icon.png</icon>
@@ -20,10 +20,16 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units=" баллов"/>
-		<counter id="balance_inactive" name="Неактивный баланс" units=" баллов"/>
-		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="balance" name="Баланс" units=" Б"/>
+		<counter id="balance_inactive" name="Неактивный баланс" units=" Б"/>
+		<counter id="lasttransum" name="Сумма посл. покупки" units=" ₽"/>
+		<counter id="lasttrandate" name="Дата посл. покупки" type="time" format="dd.MM.yyyy"/>
+		<counter id="lasttranbon" name="Бонусы по посл. покупке" units=" Б"/>
+		<counter id="lasttranchar" name="Скидка по посл. покупке" units=" ₽"/>
+		<counter id="lasttrantype" name="Тип посл. покупки" type="text"/>
 		<counter id="card" name="Номер карты" type="text"/>
+		<counter id="phone" name="Номер телефона" type="text"/>
+		<counter id="fio" name="ФИО" type="text"/>
 	</counters>
 	<keywords>Fix Price</keywords>
 	<type>bonus</type>

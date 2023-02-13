@@ -4,79 +4,141 @@
 */
 
 var g_headers = {
-	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
 	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
-	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
+	'Accept-Encoding': 'gzip, deflate, br',
+	'Accept-Language': 'ru-RU,ru;q=0.9,en-US;q=0.6,en;q=0.4',
+	'Cache-Control': 'max-age=0',
 	'Connection': 'keep-alive',
-	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
+	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36',
 };
 
+var baseurl = 'https://api.fix-price.com';
+var g_savedData;
+var replaceNumber = [replaceTagsAndSpaces, /\D/g, '', /.*(\d\d\d)(\d\d\d)(\d\d)(\d\d)$/, '+7 $1 $2-$3-$4'];
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'https://fix-price.ru/';
+	
 	AnyBalance.setDefaultCharset('utf-8');
 
-	AB.checkEmpty(prefs.login, 'Введите логин!');
-	AB.checkEmpty(prefs.password, 'Введите пароль!');
+	checkEmpty(prefs.login, 'Введите логин!');
+	checkEmpty(/^\d{10}$/.test(prefs.login), 'Введите номер телефона - 10 цифр без пробелов и разделителей!');
+	checkEmpty(prefs.password, 'Введите пароль!');
+	
+	if(!g_savedData)
+		g_savedData = new SavedData('fix-price', prefs.login);
 
-//	var grc_response = solveRecaptcha('Пожалуйста, подтвердите, что вы не робот', baseurl, '6LcxEwkUAAAAAHluJu_MhGMLI2hbzWPNAATYetWH');
-	var html = AnyBalance.requestGet(baseurl + 'personal/', g_headers);
-
+	g_savedData.restoreCookies();
+	var authXKey = g_savedData.get('authXKey');
+	
+	html = AnyBalance.requestGet(baseurl + '/buyer/v2/profile/personal', addHeaders({
+		'Content-Type': 'application/json;charset=UTF-8',
+		'Referer': baseurl + '/',
+		'X-City': 3,
+        'X-Key': authXKey,
+        'X-Language': 'ru'
+	}));
+	
 	if (!html || AnyBalance.getLastStatusCode() > 400) {
 		AnyBalance.trace(html);
-                AnyBalance.requestGet(baseurl + 'personal/?logout=yes', g_headers);
-		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
+		throw new AnyBalance.Error('Сайт провайдера временно недоступен. Попробуйте еще раз позже');
 	}
-	if (!/logout/i.test(html)){
-		AnyBalance.trace('Нужно логинится');
-		var token=getParam(html,  /CSRF"[\s\S]*?"([^"]*)/i, replaceTagsAndSpaces);
-		if (/@/.test(prefs.login)){
-			var auth_method='email';
-		}else{
-			var auth_method='phone';
-			prefs.login='+7 ('+prefs.login.replace(/[^\d]*/g,'').substr(-10).replace(/(\d{3})(\d{3})(\d{2})(\d{2})/,'$1) $2-$3-$4')
-		}
+	
+	if(/Требуется авторизация/i.test(html)){
+        AnyBalance.trace('Сессия новая. Будем логиниться заново...');
 
-		html = AnyBalance.requestPost(baseurl + 'ajax/auth_user.php', {
-			AUTH_FORM:	'Y',
-			TYPE:		'AUTH',
-			backurl:	'/personal/',
-			login: prefs.login,
-			password: prefs.password,
-	                auth_method: auth_method,
-	                CSRF:token
-		}, AB.addHeaders({
-			'X-Requested-With': 'XMLHttpRequest',
-			Accept: 'application/json, text/javascript, */*; q=0.01',
-			Referer: baseurl + 'bonus'
-		}), {HTTP_METHOD: 'POST'});
+		html = AnyBalance.requestGet('https://fix-price.com/', g_headers);
+		
+		var authXKey = getParam(html,  /authXKey:"([^">]*)/i, replaceTagsAndSpaces);
 
-		var json = AB.getJson(html);
+		prefs.login = '+7(' + prefs.login.replace(/[^\d]*/g,'').substr(-10).replace(/(\d{3})(\d{3})(\d{2})(\d{2})/, '$1)-$2-$3-$4')
 
-		if (!json.res) {
-			var error = json.mess;
+		html = AnyBalance.requestPost(baseurl + '/buyer/v2/auth/login', JSON.stringify({
+            phone: prefs.login,
+            password: prefs.password
+		}), addHeaders({
+			'Accept': 'application/json, text/plain, */*',
+			'Content-Type': 'application/json;charset=UTF-8',
+			'Origin': baseurl,
+			'Referer': baseurl + '/',
+			'X-City': 3,
+            'X-Key': authXKey,
+            'X-Language': 'ru'
+		}));
+
+		var json = getJson(html);
+		AnyBalance.trace(JSON.stringify(json));
+
+		if (json.code || AnyBalance.getLastStatusCode() > 400) {
+			var error = json.message;
 			if (error) {
-				AnyBalance.requestGet(baseurl + 'personal/?logout=yes', g_headers);
-				throw new AnyBalance.Error(error, null, /парол/i.test(error));
+				throw new AnyBalance.Error(error, null, /логин|парол/i.test(error));
 			}
 			AnyBalance.trace(html);
-			AnyBalance.requestGet(baseurl + 'personal/?logout=yes', g_headers);
-			throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
+			throw new AnyBalance.Error('Не удалось войти в личный кабинет. Сайт изменен?');
 		}
-		html = AnyBalance.requestGet(baseurl + 'personal/', addHeaders({Referer: baseurl}));
+		
+		g_savedData.set('authXKey', authXKey);
+		g_savedData.setCookies();
+	    g_savedData.save();
+		
+	}else{
+		AnyBalance.trace('Сессия сохранена. Входим автоматически...');
 	}
-	var result = {
-		success: true
-	};
+	
+	var result = {success: true};
 
+    html = AnyBalance.requestGet(baseurl + '/buyer/v2/profile/personal', addHeaders({
+		'Accept': 'application/json, text/plain, */*',
+		'Content-Type': 'application/json;charset=UTF-8',
+		'Origin': baseurl,
+		'Referer': baseurl + '/',
+		'X-City': 3,
+        'X-Key': authXKey,
+        'X-Language': 'ru'
+	}));
+	
+	var json = getJson(html);
+	AnyBalance.trace(JSON.stringify(json));
+	
+	getParam(json.activeBalance, result, 'balance', null, null, parseBalance);
+    getParam(json.inactiveBalance, result, 'balance_inactive', null, null, parseBalance);
+	getParam(json.card, result, '__tariff');
+	getParam(json.card, result, 'card');
 
-
-	getParam(html, result, 'fio', /<div[^>]+client-name[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
-	getParam(html, result, 'balance', /<div[^>]+client-points__active[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'balance_inactive', /<span[^>]+inactive-points[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
-	AB.getParam(html, result, 'card', /<div[^>]+personal-card__number[^>]*>([\s\S]*?)<\/div>/i, AB.replaceTagsAndSpaces);
-
+	var fio = json.firstName;
+	if (json.lastName)
+		fio += ' ' + json.lastName;
+	getParam(fio, result, 'fio');
+	getParam(json.phone, result, 'phone', null, replaceNumber);
+	
+	if(AnyBalance.isAvailable('lasttransum', 'lasttrandate', 'lasttranbon', 'lasttranchar', 'lasttrantype')) {
+		html = AnyBalance.requestGet(baseurl + '/buyer/v2/profile/transaction?page=1', addHeaders({
+	    	'Accept': 'application/json, text/plain, */*',
+		    'Content-Type': 'application/json;charset=UTF-8',
+		    'Origin': baseurl,
+		    'Referer': baseurl + '/',
+		    'X-City': 3,
+            'X-Key': authXKey,
+            'X-Language': 'ru'
+	    }));
+	
+	    var json = getJson(html);
+		AnyBalance.trace(JSON.stringify(json));
+	
+	    var t = json.transactions;
+	    if(t && t.length > 0){
+	    	AnyBalance.trace('Найдено последних покупок: ' + t.length);
+	    	getParam(t[0].amount, result, 'lasttransum', null, null, parseBalance);
+	    	getParam(t[0].date.replace(/(\d{4})-(\d{2})-(\d{2})(.*)/,'$3.$2.$1'), result, 'lasttrandate', null, null, parseDate);
+	    	getParam(t[0].amountBonus, result, 'lasttranbon', null, null, parseBalance);
+			getParam(t[0].amountCharge, result, 'lasttranchar', null, null, parseBalance);
+	    	getParam(t[0].type, result, 'lasttrantype');
+	    }else{
+ 	    	AnyBalance.trace('Не удалось получить данные по последней покупке');
+ 	    }
+	}
+	
 	AnyBalance.setResult(result);
-
 }

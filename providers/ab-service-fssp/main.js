@@ -18,8 +18,8 @@ function getCaptchaImage(e){
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'http://fssprus.ru/';
-	var baseurl_api = 'http://is.fssprus.ru/';
+	var baseurl = 'https://fssp.gov.ru/';
+	var baseurl_api = 'https://is-node1.fssp.gov.ru/';
 	AnyBalance.setDefaultCharset('utf-8');
 	
 	checkEmpty(prefs.last_name, 'Введите Фамилию!');
@@ -53,6 +53,7 @@ function main() {
 	
 	var url = baseurl_api + 'ajax_search?' + createUrlEncodedParams(params);
 	html = AnyBalance.requestGet(url, addHeaders({'X-Requested-With': 'XMLHttpRequest'}));
+	AnyBalance.trace('Результат запроса: ' + html);
 	var json = getJson(html);
 	html = json.data;
 	
@@ -64,24 +65,33 @@ function main() {
 		
 		params.push(['code', captchaa]);
 		html = AnyBalance.requestGet(baseurl_api + 'ajax_search?' + createUrlEncodedParams(params), addHeaders({Referer: url, 'X-Requested-With': 'XMLHttpRequest'}));
+		AnyBalance.trace('Результат поиска: ' + html);
 		html = getJson(html).data;
 	}
 
-	if(!/<div[^>]+class="results"/i.test(html)){
+	if(!/<div[^>]+class="results"/i.test(html) || /Извините, что-то пошло не так/i.test(html)){
 		var error = getParam(html, /<div[^>]+class="empty"[^>]*>([^]*?)<\/div>/i, replaceTagsAndSpaces);
 		if(error)
 			throw new AnyBalance.Error(error, null, /не найден/i.test(html));
 
 		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
+		throw new AnyBalance.Error('Не удалось войти в личный кабинет. Сайт изменен?');
 	}
 	
 	var result = {success: true};
 	
 	getParam(html, result, 'balance', /search-found-tota[^>]*>\s*Найдено([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+	var fullFio = prefs.first_name;
+	var shortFio = prefs.last_name + ' ' + prefs.first_name.replace(/(\S)(.*)/, '$1.');
+	if(prefs.otchestvo)
+		fullFio += ' ' + prefs.otchestvo;
+	    shortFio += prefs.otchestvo.replace(/(\S)(.*)/, '$1.');
+	fullFio += ' ' + prefs.last_name;
+	result.fio = fullFio;
+	result.__tariff = shortFio;
 	if(/По вашему запросу ничего не найдено/i.test(html)) {
-		getParam(0, result, 'balance');
-		getParam(0, result, 'sum');
+		getParam(0, result, 'balance', null, null, parseBalance);
+		getParam(0, result, 'sum', null, null, parseBalance);
 		getParam('По вашему запросу ничего не найдено', result, 'all');
 	} else {
 		getParam(html, /<table[^>]*class="list[\s\S]*?<\/table>/i, null, function(table) {

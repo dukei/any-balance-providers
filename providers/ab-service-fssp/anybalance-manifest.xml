@@ -1,12 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="14">ab-service-fssp</id>
+	<id version="15">ab-service-fssp</id>
 	<api flags="no_browser|captcha" min_level="7"/>
 	<name>Банк данных исполнительных производств</name>
 	<description html="true"><![CDATA[
-	<p>Получает данные из банка данных исполнительных производств Федеральной Службы Судебных Приставов (http://fssprus.ru/)</p>
-	<p>Для получения данных необходимо ввести ФИО и выбрать территориальные органы.</p>
-	]]></description>	
+	<p>Предоставляет информацию из банка данных исполнительных производств Федеральной Службы Судебных Приставов (https://fssp.gov.ru//).</p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Для работы провайдера требуется ввести ФИО, дату рождения и выбрать территориальные органы.</p>
+	]]></instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>
 		<module id="library"/>
@@ -19,8 +21,9 @@
 	</files>
 	<counters>
 		<counter id="balance" name="Всего производств" units=" шт"/>
-		<counter id="sum" name="На сумму" units=" р"/>
+		<counter id="sum" name="На сумму" units=" ₽"/>
 		<counter id="all" name="Сводка" type="html"/>
+		<counter id="fio" name="ФИО" type="text"/>
 	</counters>
 	<keywords>ФССП</keywords>
 	<type>service, fine</type>

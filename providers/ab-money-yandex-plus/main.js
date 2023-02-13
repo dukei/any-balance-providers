@@ -157,9 +157,22 @@ function main() {
 	            getParam(info.nextPayment && info.nextPayment.price && info.nextPayment.price.amount, result, 'nextpaymentamount', null, replaceTagsAndSpaces, parseBalance);
 	            getParam(info.nextPayment && info.nextPayment.date, result, 'nextpaymentdate', null, replaceTagsAndSpaces, parseDateISO);
 	    	}
-	        getParam(info.start, result, 'starteddate', null, replaceTagsAndSpaces, parseDateISO);
-	    	getParam(info.end, result, 'expiresdate', null, replaceTagsAndSpaces, parseDateISO);
 	    	getParam(g_role[info.familyRole]||info.familyRole, result, 'role', null, replaceTagsAndSpaces);
+			getParam(info.start, result, 'starteddate', null, replaceTagsAndSpaces, parseDateISO);
+	    	var expDate = getParam(info.end, result, 'expiresdate', null, replaceTagsAndSpaces, parseDateISO);
+			if (expDate){
+			    if (AnyBalance.isAvailable('expiresdays')){
+			    	var days = Math.ceil((expDate - (new Date().getTime())) / 86400 / 1000);
+			    	if (days >= 0){
+			            result.expiresdays = days;
+			    	}else{
+			    	    AnyBalance.trace('Дата окончания подписки уже наступила');
+			    		result.expiresdays = 0;
+			    	}
+			    }	
+ 		    }else{
+ 		    	AnyBalance.trace('Не удалось получить дату окончания подписки');
+ 		    }
 	    }else{
 	    	AnyBalance.trace('Не удалось получить информацию о подписке');
 	    }
@@ -172,10 +185,10 @@ function main() {
 	var json = getJson(html);
 	AnyBalance.trace(JSON.stringify(json));
 	
-	if (json && json.users){
+	if (json && json.users.length>0){
 		getParam(json.users.length, result, 'users', null, replaceTagsAndSpaces, parseBalance);
 		for(var i=0; i<json.users.length; ++i){
-		    sumParam(json.users[i].info.display_name.name, result, 'participants', null, null, null, create_aggregate_join(',<br> '));
+		    sumParam(json.users[i].info.display_name.name, result, 'participants', null, null, null, create_aggregate_join('<br>'));
 		}
 	}else{
 		AnyBalance.trace('Не удалось получить информацию о составе группы');
@@ -193,7 +206,7 @@ function main() {
 	    getParam(hist.total, result, 'lastoperationsum', null, replaceTagsAndSpaces, parseBalance);
 		getParam(hist.plus, result, 'lastoperationballs', null, replaceTagsAndSpaces, parseBalance);
 		for(var i=0; i<hist.items.length; ++i){
-		    sumParam(hist.items[i].name, result, 'lastoperationtype', null, null, null, create_aggregate_join(',<br> '));
+		    sumParam(hist.items[i].name, result, 'lastoperationtype', null, null, null, create_aggregate_join('<br>'));
 		}
 	}else{
 		AnyBalance.trace('Не удалось получить информацию о последнем платеже');

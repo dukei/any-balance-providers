@@ -99,8 +99,8 @@ function main() {
 	if(contractDate)
 		getParam(contractDate.replace(/(\d{4})-(\d\d)-(\d\d)(.*)/i, '$3.$2.$1'), result, 'contract_date', null, null, parseDate);
 	
-	getParam(html, result, 'status', /<td>Статус[\s\S]*?[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
-	getParam(html, result, '__tariff', /<td[^>]*>Тарифный план[\s\S]*?<td[^>]*>([\s\S]*?)<a/i, replaceTagsAndSpaces);
+	getParam(html, result, 'status', /<td[^>]*>Статус[\s\S]*?[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+	getParam(html, result, '__tariff', /<td[^>]*>(?:<strong>)?Тарифный план[\s\S]*?<td[^>]*>([\s\S]*?)<a/i, replaceTagsAndSpaces);
 	getParam(html, result, 'abon_month', /<td[^>]*>Абон\. плата за месяц[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'abon_day', /<td[^>]*>Дневная а\/п[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'tarif_activate', /<td[^>]*>Активация тарифного плана[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);

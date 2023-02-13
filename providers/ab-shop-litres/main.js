@@ -55,13 +55,12 @@ function main() {
 	
 	var result = {success: true};
 	
-	html = AnyBalance.requestGet(baseurl, g_headers);
+	html = AnyBalance.requestGet(baseurl + 'pages/personal_cabinet_notifications/', g_headers);
 	
 	getParam(html, result, 'balance', /setUserBalance\({[\s\S]*?account:([\s\S]*?),/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'bonus', /setUserBalance\({[\s\S]*?bonus:([\s\S]*?),/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, '__tariff', /setUserCredentials\({[\s\S]*?name:\s?"([^"]*)/i, replaceTagsAndSpaces);
-	var regDate = getParam(html, null, null, /setUserCredentials\({[\s\S]*?dateRegister:\s?"([^"]*)/i, replaceTagsAndSpaces);
-	getParam(regDate.replace(/(\d\d\d\d)-(\d\d)-(\d\d)(.*)/, '$3.$2.$1'), result, 'regdate', null, null, parseDate);
+	getParam(html, result, 'regdate', /setUserCredentials\({[\s\S]*?dateRegister:\s?"([^"]*)/i, [replaceTagsAndSpaces, /(\d{4})-(\d{2})-(\d{2})(.*)/, '$3.$2.$1'], parseDate);
 	var fio = getParam(html, null, null, /setUserCredentials\({[\s\S]*?firstName:\s?"([^"]*)/i, replaceTagsAndSpaces);
 	var lastName = getParam(html, null, null, /setUserCredentials\({[\s\S]*?lastName:\s?"([^"]*)/i, replaceTagsAndSpaces); 
 	if (lastName)

@@ -3,11 +3,11 @@
 */
 
 var g_headers = {
-	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
-	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
+	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
+	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.8,en;q=0.7',
 	'Connection': 'keep-alive',
-	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
+	'Upgrade-Insecure-Requests': '1',
+	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36',
 };
 
 function table2object(json){
@@ -56,7 +56,7 @@ function main() {
 		}
 	}
 
-	if(AnyBalance.isAvailable('mmvb')){
+	if(AnyBalance.isAvailable('mmvb', '__tariff', 'date')){
 		html = AnyBalance.requestGet(baseurl + 'iss/engines/stock/markets/index/securities.jsonp?callback=iss_jsonp_c2d0522cd13ff6516bd29effe6d36b6d4807dd6d&iss.meta=off&iss.only=securities%2Cmarketdata&securities=SNDX%3AIMOEX&lang=ru&_=' + (+new Date()), 
 			addHeaders({Referer: baseurl}));
 
@@ -64,15 +64,19 @@ function main() {
 	    
 		var data = table2object(json.marketdata); 
 		getParam(data[0].CURRENTVALUE, result, 'mmvb');
+		getParam(data[0].TRADEDATE.replace(/(\d{4})-(\d{2})-(\d{2})/i, '$3.$2.$1'), result, '__tariff');
+		getParam(data[0].TRADEDATE.replace(/(\d{4})-(\d{2})-(\d{2})/i, '$3.$2.$1'), result, 'date');
 	}
 
 	if(AnyBalance.isAvailable('USD', 'EUR')){
 		html = AnyBalance.requestGet('https://www.cbr.ru/', g_headers);
-		var elem = getElement(html, /<div[^>]+mobile-indicator_courses/i);
+		var elem = getElement(html, /<div[^>]+main-indicator_rates-table/i);
 
-		getParam(elem, result, 'USD', /Доллар США(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-		getParam(elem, result, 'EUR', /Евро(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+		getParam(elem, result, 'USD', /USD(?:[\s\S]*?<div[^>]*>){2}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+		getParam(elem, result, 'EUR', /EUR(?:[\s\S]*?<div[^>]*>){2}([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
 	}
+	
+	setCountersToNull(result);
 	
 	AnyBalance.setResult(result);
 }

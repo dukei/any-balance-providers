@@ -1,10 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="4">ab-exchange-moex</id>
+	<id version="5">ab-exchange-moex</id>
 	<api flags="no_browser"/>
 	<name>Курсы валют Московской Биржи</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о курсах валют Московской Биржи <a href="http://moex.com/">http://moex.com/</a></p>
+	<p>Предоставляет информацию о курсах валют Московской Биржи <a href="https://iss.moex.com/">https://iss.moex.com/</a></p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>
@@ -23,8 +23,9 @@
 		<counter id="EURUSD_TOM" name="EURUSD_TOM"/>
 		<counter id="USD" name="USD ЦБ"/>
 		<counter id="EUR" name="EUR ЦБ"/>
+		<counter id="date" name="Дата торгов" type="text"/>
 	</counters>
-	<keywords></keywords>
+	<keywords>mmvb, iss, moex, ммвб, биржа, курс</keywords>
 	<type>exchange</type>
 	<country>ru</country>
 </provider>

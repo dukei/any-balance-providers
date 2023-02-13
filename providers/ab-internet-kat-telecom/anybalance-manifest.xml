@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+    <id version="1">ab-internet-kat-telecom</id>
+	<api flags="no_browser"/>
+    <name>КАТ-Телеком (Косулино)</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе и тарифном плане для интернет-провайдера КАТ-Телеком (https://kat-telecom.ru/).</p>
+	<p>Информация берется из личного кабинета https://cabinet.kat-telecom.ru/cabinet/welcome/.</p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Для работы провайдера требуется ввести логин и пароль для входа в личный кабинет КАТ-Телеком.</p>
+	]]></instruction>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+    <depends>
+		<module id="library"/>
+	</depends>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+    <counters>
+        <counter id="balance" name="Баланс" units=" ₽"/>
+		<counter id="to_pay" name="Рекомендуемый платеж" units=" ₽"/>
+		<counter id="account" name="Лицевой счет" type="text"/>
+		<counter id="contract" name="Договор" type="text"/>
+		<counter id="activate_date" name="Дата активации" type="time" format="dd.MM.yyyy"/>
+		<counter id="ipAddress" name="IP-адрес" type="text"/>
+		<counter id="client" name="Клиент" type="text"/>
+		<counter id="status" name="Статус" type="text"/>
+		<counter id="tarif" name="Тариф" type="text"/>
+		<counter id="login" name="Логин" type="text"/>
+    </counters>
+    <keywords>интернет, кат-телеком, kat-telecom</keywords>
+    <type>internet</type>
+    <country>ru</country>
+</provider>

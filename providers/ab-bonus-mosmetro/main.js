@@ -7,7 +7,7 @@ var g_headers = {
 	'Accept': 'application/json, text/plain, */*',
 	'Accept-Language': 'ru',
 	'Connection': 'keep-alive',
-	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.150 Safari/537.36',
+	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36',
 };
 
 function generateCodeVerifier() {
@@ -39,8 +39,10 @@ function loginPure(){
 	var challenge = hash.toString(CryptoJS.enc.Base64)
 		.replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
 
-	var html = AnyBalance.requestGet(baseurl + '/api/externals/v1.0?redirectUri=' + baseurl + '/external-auth&state=' + state + '&codeChallenge=' + challenge + '&codeChallengeMethod=S256',
-		{Referer: baseurl + '/'});
+	var html = AnyBalance.requestGet(baseurl + '/api/externals/v1.0?redirectUri=' + baseurl + '/external-auth&state=' + state + '&codeChallenge=' + challenge + '&codeChallengeMethod=S256', addHeaders({
+		Referer: baseurl + '/sign-in',
+		'X-API-Variant': 'test'
+	}));
 	var json = getJson(html);
 
 	var url = json.data.authorizeUrl;

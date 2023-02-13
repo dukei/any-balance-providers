@@ -125,10 +125,10 @@ function main(){
 	    var items = json.data.cashback.items;
 	    if(items && items.length > 0){
 	    	AnyBalance.trace('Найдено операций по картам: ' + items.length);
-	    	getParam(items[0].credit.replace(/\-?/,''), result, 'lastoperbuy', null, null, parseBalance);
+	    	getParam(items[0].sum.replace(/\-?/,''), result, 'lastoperbuy', null, null, parseBalance);
 	    	getParam(items[0].date, result, 'lastoperdate', null, null, parseDate);
 	    	getParam(items[0].partner.name, result, 'lastoperplace');
-	    	getParam(items[0].debit, result, 'lastopersum', null, null, parseBalance);
+	    	getParam(items[0].cashback, result, 'lastopersum', null, null, parseBalance);
 	    	getParam(items[0].card, result, 'lastopercard');
 	    	getParam(items[0].status.text, result, 'lastoperstatus');
 	    }else{
@@ -152,7 +152,7 @@ function loginSite(prefs){
 		var formattedLogin = login.replace(/.*(\d{3})(\d{3})(\d{2})(\d{2})$/i, '+7 ($1) $2-$3-$4');
 	}
 	
-	checkEmpty(prefs.password, 'Введите пароль!');	
+	checkEmpty(prefs.password, 'Введите пароль!');
 	
 	html = AnyBalance.requestGet(baseurl + '/auth/', g_headers);
 	

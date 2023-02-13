@@ -1,14 +1,22 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="6">ab-exchange-nbu</id>
+	<id version="7">ab-exchange-nbu</id>
 	<api flags="no_browser"/>
 	<api min_level="5"/>
 	<name>Курсы валют НБУ</name>
 	<description html="true"><![CDATA[
 	<p>Текущие курсы валют, установленные Национальным Банком Украины. Содержит в том числе курс доллара, евро, фунта, белорусского рубля, тенге, юаня, гривны, швейцарского франка, йены.</p>
-	<p>Информация берется со страницы http://bank.gov.ua/control/uk/curmetal/detail/currency?period=daily</p>
+	<p>Информация берется с официального сайта (https://bank.gov.ua/ua/markets/exchangerates?period=daily), с сайта Финмаркет (http://www.finmarket.ru/currency/rates/?id=10134) или с портала Bigmir)net (https://finance.bigmir.net/2888099-nbu).</p>
 	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Для работы провайдера не требуются дополнительные настройки, достаточно просто создать аккаунт в приложении.</p>
+	<p>Вы можете использовать автоматический выбор источника данных или установить источник вручную.</p>
+	<p>Для отображения курсов на единицу валюты используйте переключатель в настройках провайдера.</p>
+	]]></instruction>
 	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<js>main.js</js>

@@ -1,9 +1,18 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
+    <ListPreference
+		key="source"
+		title="Источник данных"
+		summary="Источник для получения информации||{@s}\n"
+		dialogTitle="Источник данных"
+		entries="Автоматически|Официальный сайт|Сайт Финмаркет|Портал Bigmir)net"
+		entryValues="auto|site|finmarket|bigmir"
+		defaultValue="auto">
+	</ListPreference>
 	<CheckBoxPreference
 		title="Курсы на единицу валюты"
 		defaultValue="false"
 		summaryOn="Показываются курсы на единицу валюты"
-		summaryOff="Показываются курсы как есть на странице НБУ"
+		summaryOff="Показываются курсы как есть на странице"
 		key="normalize" />
 </PreferenceScreen>

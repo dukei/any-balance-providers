@@ -1,4 +1,4 @@
-﻿/**
+/**
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 */
 
@@ -12,30 +12,36 @@ var g_headers = {
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'http://alden.pp.ua:1010/index.cgi';
+	var baseurl = 'https://my.alden.in.ua/billing/userstats/';
 	AnyBalance.setDefaultCharset('windows-1251');
-	var html=AnyBalance.requestPost(baseurl, {
-        DOMAIN_ID: '',
-	REFERRER: 'http://alden.pp.ua:1010/',
-	language: 'russian',
-	user: prefs.login,
-	passwd: prefs.password,
-	logined:'Войти'
-	},g_headers);
+	AnyBalance.restoreCookies();
 	
-	if(!html || AnyBalance.getLastStatusCode() > 400){
-		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
+	var html=AnyBalance.requestGet(baseurl,g_headers);
+	if (!/(Проф[іи]ль)/i.test(html)) {
+		clearAllCookies();
+		AnyBalance.saveData();
+		var html=AnyBalance.requestPost(baseurl+'index.php', {
+		ulogin: prefs.login,
+		upassword: prefs.password
+		},g_headers);
+	
+		if(!html || AnyBalance.getLastStatusCode() > 400){
+			AnyBalance.trace(html);
+			throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
+		}
+		var html=AnyBalance.requestGet(baseurl,g_headers);
+		if (!/(Проф[іи]ль)/i.test(html)) {
+			AnyBalance.trace(html);
+			throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
+		}
 	}
-
-	if (!/(Лицевой счет|Особовий рахунок):/i.test(html)) {
-		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
-	}
+	
 
 	var result = {success: true};
 
-	getParam(html, result, 'balance', /Депозит(?:[^>]*>){2}([\s\S]*?)грн/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, '__tariff', /Тарифный план:\<\/td\>\<td\>([\s\S]*?)\<\/td\>/i, replaceTagsAndSpaces);
+	getParam(html, result, 'balance', /Баланс<[\w\W]*?(<td[\w\W]*?<\/td>)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, '__tariff', /Тариф<[\w\W]*?(<td[\w\W]*?<\/td>)/i, replaceTagsAndSpaces);
+	AnyBalance.saveCookies();
+	AnyBalance.saveData();
 	AnyBalance.setResult(result);
 }

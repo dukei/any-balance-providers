@@ -6,11 +6,11 @@ var g_headers = {
   'Accept': 'application/json, text/plain, */*',
   'Accept-Encoding': 'gzip, deflate, br',
   'Accept-Language': 'ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7',
-  'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.102 Safari/537.36'
+  'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36'
 };
 
-var g_baseUrlAuth = 'https://api-auth.domru.ru/v1';
-var g_baseUrlProfile = 'https://api-profile.domru.ru/v1';
+var g_baseUrlAuth = 'https://api-auth.dom.ru/v1';
+var g_baseUrlProfile = 'https://api-profile.dom.ru/v1';
 
 /* Оставляем для сохранения обратной совместимости */
 var g_region_change = {

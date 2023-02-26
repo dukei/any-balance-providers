@@ -3,10 +3,10 @@
     <EditTextPreference 
         title="Логин" 
         positiveButtonText="ОК" 
-        summary="|Введите логин в Яндекс.Деньги|{@s}" 
+        summary="Логин для входа в личный кабинет|Введите логин\n|{@s}\n" 
         dialogTitle="Логин" 
         negativeButtonText="Отмена" 
-        dialogMessage="Введите логин для входа в Яндекс.Деньги."
+        dialogMessage="Введите номер телефона или E-mail для входа в личный кабинет. Для авторизации по номеру телефона введите его в формате 11 цифр, например: 79091234567"
         key="login">
     </EditTextPreference>
     <EditTextPreference 
@@ -14,9 +14,9 @@
         key="password" 
         dialogTitle="Пароль"
         negativeButtonText="Отмена"
-        title="Пароль для входа"
-        summary="||***********"
-        dialogMessage="Введите пароль, используемый для входа в систему Яндекс.Деньги. Не платежный пароль, а именно пароль для входа!"
+        title="Пароль"
+        summary="Пароль для входа в личный кабинет|Введите пароль\n|**********\n"
+        dialogMessage="Введите пароль, используемый для входа в личный кабинет"
         inputType="textPassword">
     </EditTextPreference>
 </PreferenceScreen>

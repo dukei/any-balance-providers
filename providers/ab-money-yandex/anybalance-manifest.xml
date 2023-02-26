@@ -1,20 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="42">ab-money-yandex</id>
+	<id version="45">ab-money-yandex</id>
 	<api flags="no_browser" />
-	<name>ЮMoney (Яндекс.Деньги)</name>
+	<name>ЮMoney</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о текущем остатке и номере счета в "Яндекс.Деньги".</p>
-	<p>Информация берется из личного кабинета <a href="https://money.yandex.ru/">https://money.yandex.ru/</a></p>
+	<p>Предоставляет информацию о текущем остатке, номере счета, карте, бонусных опциях и другое для пользователей сервиса электронных платежей ЮMoney.</p>
+	<p>Информация берется из личного кабинета ЮMoney на сайте https://yoomoney.ru.</p>	
 	]]></description>
 	<instruction html="true"><![CDATA[
-	<p>Настройки подключения:</p>
-	<ul>
-		<li>Для работы провайдера требуется ввести пароль только для входа. ОБРАТИТЕ ВНИМАНИЕ на то, что платежный пароль вводить не надо.</li>
-	</ul>
+	<p>Для работы провайдера требуется ввести логин и пароль для входа в личный кабинет ЮMoney.</p>
+	<small><b>ВНИМАНИЕ!</b> Для входа в личный кабинет необходимо ввести только пароль для входа, ввод платежного пароля не требуется.</small>
 	]]></instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
-	<author>DimaZUA &lt;DIMAZ.KHUA@gmail.com&gt;</author>
 	<depends>
 		<module id="extract/abe-money-yandex"/>
 	</depends>
@@ -29,16 +26,15 @@
 		<counter id="bonus" name="Баллы" units=" Б"/>
 		<counter id="number" name="Номер счета" type="text"/>
 		<counter id="currency" name="Валюта счета" type="text"/>
-<!--
-		<counter id="no_cashback_count" name="Платежей без кэшбэка" units=" шт"/> 
--->
 		<counter id="accountStatus" name="Статус" type="text"/>
 		<counter id="userName" name="ФИО" type="text"/>
-		<counter id="cardNumber" name="Доп.карта" type="text"/>
+		<counter id="cardNumber" name="Номер карты" type="text"/>
 		<counter id="paymentSystem" name="Платежная система" type="text"/>
-		<counter id="cardDate" name="Срок дейстия доп.карты" type="time" format="dd.MM.yyyy"/>
+		<counter id="cardDate" name="Дата дейстия карты" type="time" format="dd.MM.yyyy"/>
+		<counter id="cardDays" name="Срок действия карты" units=" дн"/>
+		<counter id="cardType" name="Тип карты" type="text"/>
 	</counters>
-	<keywords>яндекс-деньги, yandex money, юмани, ю-мани</keywords>
+	<keywords>яндекс-деньги, yandex money, юмани, ю-мани, юmoney</keywords>
 	<type>money, wallet</type>
 	<country>ru</country>
 </provider>

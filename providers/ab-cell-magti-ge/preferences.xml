@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        title="Логин" 
+        positiveButtonText="ОК" 
+        summary="|Номер телефона (9 цифр)|{@s}"
+        dialogTitle="Номер телефона" 
+        negativeButtonText="Отмена" 
+        obligatory="true"
+        dialogMessage="Введите номер вашего телефона для входа в MyMagti (9 цифр). Например: 595123456."
+        key="login"
+        inputType="number">
+    </EditTextPreference>
+    <EditTextPreference 
+        positiveButtonText="ОК"
+        key="password" 
+        dialogTitle="Пароль"
+        negativeButtonText="Отмена"
+        title="Пароль"
+        summary="|Ваш пароль для входа в личный кабинет|***********"
+        dialogMessage="Введите пароль, используемый для входа в личный кабинет MyMagti. Если Вы не знаете свой пароль, пройдите регистрацию, восстановите пароль на сайте https://www.magticom.ge/."
+        inputType="textPassword">
+    </EditTextPreference>
+</PreferenceScreen>

@@ -1,0 +1,35 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-cell-magti-ge</id>
+	<api flags="no_browser"/>
+	<name>Magti</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет  информацию о балансе и остатке трафика для пользователей оператора сотовой связи Magti (Georgia).</p>
+	<p>Этот провайдер будет работать, если у вас работает сайт https://www.magticom.ge.</p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Как получить пароль к личному кабинету:</p>
+	<ul>
+		<li>Если у вас ещё нет пароля в личный кабинет, получите его на сайте https://www.magticom.ge.</li>
+	</ul>
+	]]></instruction>
+	<author>Ivan Belokobylskiy &lt;belokobylskij@gmail.com&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" ₾"/>
+		<counter id="traffic_till" name="Срок действия трафика" type="time" format="dd/MM/yyyy"/>
+		<counter id="traffic_left" name="Осталось трафика" units=" Mб"/>
+		<counter id="phone" name="Телефон" type="text"/>
+	</counters>
+	<keywords>Сотовый телефон, мобильный, мобильник, magti, грузия, georgia</keywords>
+	<type>cell</type>
+	<country>ge</country>
+</provider>

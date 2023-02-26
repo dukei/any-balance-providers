@@ -2,12 +2,12 @@
 <PreferenceScreen>
 	<EditTextPreference
 		obligatory="true"
-		title="Номер телефона/логин"
+		title="Логин"
 		positiveButtonText="ОК"
-		summary="|Номер телефона (10 цифр) или логин|{@s}"
-		dialogTitle="Номер телефона или логин"
+		summary="Логин для входа в личный кабинет|Введите логин\n|{@s}\n"
+		dialogTitle="Логин"
 		negativeButtonText="Отмена"
-		dialogMessage="Введите логин или номер Вашего телефона для входа в личный кабинет (10 цифр), например 9031234567"
+		dialogMessage="Введите номер телефона для входа в личный кабинет в формате 10 цифр, например 9031234567"
 		key="login">
 	</EditTextPreference>
 	<EditTextPreference
@@ -17,34 +17,36 @@
 		dialogTitle="Пароль"
 		negativeButtonText="Отмена"
 		title="Пароль"
-		summary="||***********"
-		dialogMessage="Введите пароль, используемый для входа в личный кабинет. Если Вы не знаете пароль, наберите *110*9# со своего мобильного телефона для получения логина и пароля."
+		summary="Пароль для входа в личный кабинет|Введите пароль\n|**********\n"
+		dialogMessage="Введите пароль, используемый для входа в личный кабинет. Если вы не знаете пароль, наберите *110*9# со своего мобильного телефона для получения логина и пароля"
 		inputType="textPassword">
 	</EditTextPreference>
 	<EditTextPreference
-		title="Доп. номер телефона"
+		title="Номер телефона"
 		positiveButtonText="ОК"
-		summary="|Автоматически|{@s}"
-		dialogTitle="Доп. номер телефона"
+		summary="Номер телефона для получения информации|Автоматически\n|{@s}\n"
+		dialogTitle="Номер телефона"
 		negativeButtonText="Отмена"
-		dialogMessage="Если к вашему договору присоединено несколько номеров, вы можете ввести последние цифры нужного номера, чтобы получить информацию именно по нему. Не вводите ничего, если хотите получить информацию по первому номеру."
+		dialogMessage="Если к вашему договору присоединено несколько номеров, вы можете ввести последние цифры нужного номера, чтобы получить информацию именно по нему. Не вводите ничего, если хотите получить информацию по первому номеру"
 		inputType="number"
 		key="phone">
 	</EditTextPreference>
 	<ListPreference
 		key="source"
 		title="Источник данных"
-		summary="||{@s}"
-		entries="Сайт|API мобильного приложения"
-		entryValues="site|app"
-		defaultValue="site">
+		summary="Источник для получения информации||{@s}\n"
+		dialogTitle="Источник данных"
+		entries="Мобильное приложение|Официальный сайт"
+		entryValues="app|site"
+		defaultValue="app">
 	</ListPreference>	
     <ListPreference 
         key="country" 
         title="Страна"
-        summary="|Нужна для определения личного кабинета|{@s}"
-        entries="Россия|Казахстан"
-        entryValues="ru|kz"
+        summary="Страна для определения личного кабинета||{@s}\n"
+		dialogTitle="Страна"
+        entries="Россия|Казахстан|Узбекистан"
+        entryValues="ru|kz|uz"
 		defaultValue="ru">
     </ListPreference>
 </PreferenceScreen>

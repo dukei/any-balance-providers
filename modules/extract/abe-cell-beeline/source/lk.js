@@ -14,8 +14,9 @@ var g_headers = {
 };
 
 var g_currencys = {
-    руб: 'р',
-    RUR: 'р',
+    руб: '₽',
+	RUB: '₽',
+    RUR: '₽',
     тенге:'₸',
     undefined: ''
 }

@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="169">ab-cell-beeline-new</id>
+	<id version="173">ab-cell-beeline-new</id>
 	<name>Билайн (новый кабинет)</name>
 	<api flags="no_browser" min_level="5"/>
 	<description html="true"><![CDATA[
@@ -24,15 +24,14 @@
 	</ol>
 	<p><strong>Как отключить уведомления по SMS о входе в личный кабинет:</strong></p>
 	<ol>
-		<li>Зайдите через браузер на сайт <a href="https://my.beeline.ru">https://my.beeline.ru</a> для России, <a href="https://my.beeline.kz">https://my.beeline.kz</a> для Казахстана и  <a href="https://my.beeline.uz">https://my.beeline.uz</a> для Узбекистана</li></li>
-		<li>Перейдите на закладку "Настройки".</li>
+		<li>Войдите в кабинет <a href="https://my.beeline.ru">https://my.beeline.ru</a> для России, <a href="https://my.beeline.kz">https://my.beeline.kz</a> для Казахстана и <a href="https://my.beeline.uz">https://my.beeline.uz</a> для Узбекистана.</li>
+		<li>Перейдите на вкладку "Настройки".</li>
 		<li>Нажмите на нужный номер телефона и подождите, пока не раскроется меню.</li>
 		<li>Снимите галочку с пункта "Вход в личный кабинет".</li>
-		<li>Нажмите кнопку сохранить внизу страницы.</li><br/>
+		<li>Нажмите кнопку "Сохранить" внизу страницы.</li><br/>
 	</ol>	
 	<small>Если данные об оставшихся SMS, MMS, минутах и трафике не отображаются в приложении, вначале проверьте, есть ли они в личном кабинете. Если есть, обратитесь к разработчикам.</small>
-	]]></instruction>	
-	<author>DimaZ &lt;DIMAZ.KHUA@gmail.com&gt;</author>
+	]]></instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>
 		<module id="library"/>
@@ -70,19 +69,22 @@
 		<counter id="fio" name="ФИО" type="text"/>
 		<counter id="phone" name="Телефон" type="text"/>
 		<counter id="agreement" name="Договор" type="text"/>
-		<counter id="last_pay_date" name="Дата последней оплаты" type="time" format="dd/MM/yyyy"/>
-		<counter id="last_pay_sum" name="Сумма последней оплаты" units=" {@currency}"/>
-		<counter id="last_pay_place" name="Место последней оплаты" type="text"/> <!-- Только для предоплатных абонентов -->
+		<counter id="last_pay_sum" name="Сумма последнего платежа" units=" {@currency}"/>
+		<counter id="last_pay_date" name="Дата последнего платежа" type="time" format="dd.MM.yyyy"/>
+		<counter id="last_pay_place" name="Место последнего платежа" type="text"/> <!-- Только для предоплатных абонентов -->
+		<counter id="statuslock" name="Статус блокировки" type="text"/>
 		<counter id="total_balance" name="Сумма по всем номерам" units=" {@currency}"/>
 		<counter id="traffic_used" name="Использовано трафика" units=" Mb"/>
 		<counter id="traffic_total" name="Всего трафика" units=" Mb"/>
-		<counter id="min_local_till" name="Срок действия пакета минут" type="time" format="dd/MM/yyyy"/>
-		<counter id="services_count" name="Услуги: всего" units=" шт"/>
-		<counter id="services_abon" name="Услуги: абонентская плата" units=" р"/>
+		<counter id="min_local_till" name="Срок действия пакета минут" type="time" format="dd.MM.yyyy"/>
+		<counter id="services_count" name="Подключенные услуги" prefix="💼 " units=" шт"/>
+		<counter id="services_paid" name="Платные услуги" prefix="💵 " units=" шт"/>
+		<counter id="services_free" name="Бесплатные услуги" prefix="🎁 " units=" шт"/>
+		<counter id="services_abon" name="Абонплата за услуги" units=" {@currency}"/>
 		<counter id="bills" name="Выставленные счета"/>
 		<!-- <counter id="addon_balance" name="Баланс для оплаты дополнительных услуг" units=" {@currency}"/> -->
 	</counters>
-	<keywords>beeline</keywords>
+	<keywords>Сотовый телефон, мобильный, мобильник, билайн, beeline, интернет, Россия</keywords>
 	<type>cell</type>
-	<country>ru, kz</country>
+	<country>ru, kz, uz</country>
 </provider>

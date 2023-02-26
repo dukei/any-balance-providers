@@ -178,6 +178,8 @@ function processApi(result){
 	processApiServices(result);
 
 	processApiTariff(result);
+	
+	processApiStatus(result);
 
 	if(processApi.payType[prefs.phone] == 'PREPAID'){
 		processApiPrepaid(result);
@@ -194,6 +196,20 @@ function processApiTariff(result){
 	var json = callAPIProc('1.0/info/pricePlan', {ctn: prefs.phone});
 
 	getParam(json.pricePlanInfo.entityName, result, 'tariff'); 
+}
+
+function processApiStatus(result){
+	if(!AnyBalance.isAvailable('statuslock'))
+		return;
+	
+	var prefs = AnyBalance.getPreferences();
+	var json = callAPIProc('1.0/info/status', {ctn: prefs.phone});
+	
+	if(json.statusDesc){
+		result.statuslock = 'Номер заблокирован';
+	}else{
+		result.statuslock = 'Номер не блокирован';
+	}
 }
 
 function processApiInfo(result){
@@ -297,13 +313,16 @@ function processApiRemaindersPrepaid(result){
 			for(var i = 0; i < json[prop].length; i++) {
 				var curr = json[prop][i];
 				
-				if(/bonusopros/i.test(curr.name)) {
+				if(/shadow/i.test(curr.name)) {
+					AnyBalance.trace('Пересекающийся пакет для семейных тарифов ' + curr.name + ': ' + curr.value + ' ' + curr.unit + '. Пропускаем...');
+					continue;
+				}else if(/bonusopros/i.test(curr.name)) {
 					sumParam(curr.value + '', remainders, 'remainders.rub_opros', null, replaceTagsAndSpaces, apiParseBalanceRound, aggregate_sum);
 				}else if(/bonusmoney/i.test(curr.name)) {
 					sumParam(curr.value + '', remainders, 'remainders.rub_bonus', null, replaceTagsAndSpaces, apiParseBalanceRound, aggregate_sum);
  				}else if(/comverse.balance.name.bonusbalance17/i.test(curr.name)){
-					getParam(curr.value + "", remainders, "remainders.rub_bonus2", null, replaceTagsAndSpaces, apiParseBalanceRound);
-					getParam(curr.dueDate, remainders, "remainders.rub_bonus2_till", null, replaceTagsAndSpaces, parseDateISO); 
+					getParam(curr.value + "", remainders, 'remainders.rub_bonus2', null, replaceTagsAndSpaces, apiParseBalanceRound);
+					getParam(curr.dueDate, remainders, 'remainders.rub_bonus2_till', null, replaceTagsAndSpaces, parseDateISO); 
 				}else if(/bonusseconds/i.test(curr.name)) { //Бонус секунд-промо
 					sumParam(curr.value + '', remainders, 'remainders.min_left_1', null, replaceTagsAndSpaces, apiParseBalanceRound, aggregate_sum);
 				}else if(/seconds/i.test(curr.name)) {
@@ -314,8 +333,12 @@ function processApiRemaindersPrepaid(result){
 					sumParam(curr.value + '', remainders, 'remainders.mms_left', null, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 				}else if(/sms/i.test(curr.name)) {
 					sumParam(curr.value + '', remainders, 'remainders.sms_left', null, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+				}else if(/Time/i.test(prop)) {
+					sumParam(curr.value + '', remainders, 'remainders.min_local', null, replaceTagsAndSpaces, apiParseBalanceRound, aggregate_sum);
+				}else if(/Data/i.test(prop)) {
+					sumParam(curr.value + 'б', remainders, 'remainders.traffic_left', null, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
 				}else{
-					AnyBalance.trace('Unknown option: ' + prop + ' ' + JSON.stringify(curr));
+					AnyBalance.trace('Неизвестная опция: ' + prop + ' ' + JSON.stringify(curr));
 				}
 			}
 		}
@@ -426,23 +449,31 @@ function apiParseBalanceRound(val) {
 
 
 function processApiServices(result){
-	if(!AnyBalance.isAvailable('services_count', 'services_abon'))
+	if(!AnyBalance.isAvailable('services_paid', 'services_free', 'services_count', 'services_abon'))
 		return;
 
 	var prefs = AnyBalance.getPreferences();
 	var json = callAPIProc('1.0/info/serviceList', {ctn: prefs.phone});
 
+	getParam(json.services ? json.services.length : 0, result, 'services_count')
 	getParam(0, result, 'services_abon');
-	getParam(0, result, 'services_count');
 
 	for(var i=0; i<json.services.length; ++i){
 		var s = json.services[i];
+		
 		if(s.rcRate){
-			AnyBalance.trace('Платная услуга ' + s.entityName + ' ' + s.rcRate + ' ' + s.rcRatePeriodText);
-			sumParam(s.rcRate, result, 'services_abon', null, null, null, aggregate_sum);
+			var dt = new Date();
+			if(/сутки/i.test(s.rcRatePeriodText)){
+                var sp = new Date(dt.getFullYear(), dt.getMonth()+1, 0).getDate(); // Дней в этом месяце
+            }else{
+                var sp = 1;
+            }
+			AnyBalance.trace('Платная услуга ' + s.entityName + ': ' + s.rcRate + ' ₽ ' + s.rcRatePeriodText);
+			sumParam(s.rcRate*sp, result, 'services_abon', null, null, null, aggregate_sum);
+			sumParam(1, result, 'services_paid', null, null, null, aggregate_sum);
+	    }else{
+			sumParam(1, result, 'services_free', null, null, null, aggregate_sum);
 		}
-	   	if(s.viewInd == 'Y')
-			sumParam(1, result, 'services_count', null, null, null, aggregate_sum);
 	}
 }
 

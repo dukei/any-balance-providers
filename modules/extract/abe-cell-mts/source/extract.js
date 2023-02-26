@@ -1057,18 +1057,26 @@ function processCountersLK(result){
 	getParam(data.services.length, result.remainders, 'remainders.services');
 	getParam(0, result.remainders, 'remainders.services_free');
 	getParam(0, result.remainders, 'remainders.services_paid');
+	getParam(0, result.remainders, 'remainders.services_abon');
 	for(var i=0; i<data.services.length; ++i){
 		var c = data.services[i];
 		AnyBalance.trace('Найдена услуга ' + c.name);
 
 		if(c.isSubscriptionFee === false){
 			AnyBalance.trace('Это бесплатная услуга');
-            countFree = 1;
-			sumParam(countFree, result.remainders, 'remainders.services_free', null, null, parseBalanceSilent, aggregate_sum);
+			sumParam(1, result.remainders, 'remainders.services_free', null, null, parseBalanceSilent, aggregate_sum);
 		}else if(c.isSubscriptionFee === true){
 			AnyBalance.trace('Это платная услуга');
-			countPaid = 1;
-			sumParam(countPaid, result.remainders, 'remainders.services_paid', null, null, parseBalanceSilent, aggregate_sum);
+			var dt = new Date();
+			sumParam(1, result.remainders, 'remainders.services_paid', null, null, parseBalanceSilent, aggregate_sum);
+            
+		    if(c.primarySubscriptionFee.unitOfMeasure !== 'Month'){
+                var sp = new Date(dt.getFullYear(), dt.getMonth()+1, 0).getDate(); // Дней в этом месяце
+            }else{
+                var cp = 1;
+            }
+		    AnyBalance.trace('Платная услуга ' + c.name + ': ' + c.primarySubscriptionFee.quotaPeriodicity + ' ' + c.primarySubscriptionFee.value + ' ₽');
+		    sumParam(c.primarySubscriptionFee.value*cp, result.remainders, 'remainders.services_abon', null, null, parseBalanceSilent, aggregate_sum);
 		}else{
 			AnyBalance.trace('Неизвестный тип услуги: ' + JSON.stringify(c));
 		}
@@ -1181,6 +1189,7 @@ function processTransactionsLK(result){
 			var transaction = data.transactions[i];
             getParam(transaction.amount, result.payments, 'payments.sum');
 			getParam(transaction.dateTime.replace(/(\d{4})-(\d{2})-(\d{2}).*/, '$3.$2.$1'), result.payments, 'payments.date', null, null, parseDate);
+			getParam(transaction.label, result.payments, 'payments.descr');
             break;
 		}
     }else{
@@ -1635,7 +1644,7 @@ function enterLK2(html, options){
 
 function turnOffLoginSMSNotify(){
     var html = AnyBalance.requestGet('https://profile.mts.ru/account', addHeaders({Referer: 'https://login.mts.ru/'}));
-	var _next = getParam(html, /<script[^>]+src="\/_next\/static\/(-?[\d\S]*?)\/_buildManifest.js" async=""><\/script>/i, replaceHtmlEntities);
+	var _next = getParam(html, /\/_next\/static\/([\d\S]*?)\/_buildManifest\.js/i, replaceHtmlEntities);
 	if(!html || !_next){
 		AnyBalance.trace('Не удалось получить идентификатор страницы настроек безопасности. Пропускаем проверку способа входа');
 		return;

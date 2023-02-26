@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id major_version="4.1" version="213">ab-cell-mts-russia</id>
+	<id major_version="4.1" version="215">ab-cell-mts-russia</id>
 	<name>МТС (Россия)</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе, бонусных баллах, использованных минутах на локальные, мобильные и любимые номера, расходах, статусе блокировки, кредите, номере лицевого счета, ежемесячной плате.</p>
@@ -28,11 +28,11 @@
 		<counter id="min_local" name="Использовано минут" units=" мин"/>
 		<counter id="min_left" name="Бесплатные минуты" units=" мин"/>
 		<counter id="min_left_mezh" name="Междугородные минуты" units=" мин"/>
-		<counter id="sms_left" name="Бесплатные СМС" units=" sms"/>
-		<counter id="sms_europe" name="СМС по Европе" units=" sms"/>
-		<counter id="sms_world" name="СМС по миру" units=" sms"/>
-		<counter id="mms_left" name="Бесплатные ММС" units=" mms"/>
-		<counter id="sms_used" name="Использовано СМС" units=" sms"/>
+		<counter id="sms_left" name="Бесплатные SMS" units=" sms"/>
+		<counter id="sms_europe" name="SMS по Европе" units=" sms"/>
+		<counter id="sms_world" name="SMS по миру" units=" sms"/>
+		<counter id="mms_left" name="Бесплатные ММS" units=" mms"/>
+		<counter id="sms_used" name="Использовано SMS" units=" sms"/>
 		<counter id="traffic_left_mb" name="Остаток трафика" units=" Mb"/>
 		<counter id="cashback" name="Кэшбэк" units=" ₽"/>
 		<counter id="min_used" name="Минут накоплено (кред.)" units=" мин"/>
@@ -42,7 +42,7 @@
 		<counter id="min_left_mts_rf" name="Бесплатные минуты на МТС РФ" units=" мин"/>
 		<counter id="min_left_connect" name="Минуты приложение МТС Connect" units=" мин"/>
 		<counter id="tourist" name="Туристическая СИМ-карта от МТС" type="time_interval" format="{@MIN}" units=" мин"/>
-		<counter id="abonservice" name="Абонентская плата за услуги" units=" ₽"/>
+		<counter id="abonservice" name="Начислено за услуги" units=" ₽"/>
 		<counter id="debt" name="Неоплаченные счета" units=" ₽"/>
 		<counter id="pay_till" name="Оплатить до" type="time" format="dd.MM.yyyy"/>
 		<counter id="min_till" name="Срок действия пакета минут" type="time" format="dd.MM.yyyy"/>
@@ -51,13 +51,15 @@
 		<counter id="mms_till" name="Срок действия пакета MMS" type="time" format="dd.MM.yyyy"/>
 		<counter id="traffic_used_mb" name="Истрачено трафика" units=" Mb"/>
 		<counter id="traffic_used_by_acceptors_mb" name="Истрачено трафика участниками" units=" Mb"/>
-		<counter id="last_pay_sum" name="Последний платеж" units=" ₽"/>
+		<counter id="last_pay_sum" name="Сумма последнего платежа" units=" ₽"/>
 		<counter id="last_pay_date" name="Дата последнего платежа" type="time" format="dd.MM.yyyy"/>
+		<counter id="last_pay_descr" name="Место последнего платежа" type="text"/>
 		<counter id="statuslock" name="Статус блокировки" type="text"/>
 		<counter id="credit" name="Кредитный лимит" units=" ₽"/>
-		<counter id="services" name="Подключенные услуги" units=" шт"/>
-		<counter id="services_free" name="Бесплатные услуги" units=" шт"/>
-		<counter id="services_paid" name="Платные услуги" units=" шт"/>
+		<counter id="services" name="Подключенные услуги" prefix="💼 " units=" шт"/>
+		<counter id="services_paid" name="Платные услуги" prefix="💵 " units=" шт"/>
+		<counter id="services_free" name="Бесплатные услуги" prefix="🎁 " units=" шт"/>
+		<counter id="services_abon" name="Абонплата за услуги" units=" ₽"/>
 		<counter id="usedinthismonth" name="Расходы за этот месяц" units=" ₽"/>
 		<counter id="usedinprevmonth" name="Расходы за прошлый месяц" units=" ₽"/>
 		<counter id="license" name="Лицевой счет" type="text"/>
@@ -65,9 +67,9 @@
 		<counter id="phone" name="Номер телефона" type="text"/>
 		<counter id="fio" name="ФИО" type="text"/>
 		<counter id="bonus_balance" name="Остаток бонусного баланса" units=" ₽"/>
-		<counter id="sms_left_perezvoni" name="СМС Перезвони" units=" sms"/>
+		<counter id="sms_left_perezvoni" name="SMS Перезвони" units=" sms"/>
 	</counters>
-	<keywords>Сотовый телефон, мобильный, мобильник, mts, россия</keywords>
+	<keywords>Сотовый телефон, мобильный, мобильник, мтс, mts, интернет, Россия</keywords>
 	<type>cell</type>
 	<country>ru</country>
 </provider>

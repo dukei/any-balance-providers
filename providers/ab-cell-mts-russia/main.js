@@ -70,8 +70,9 @@ var g_countersTable = {
 		"statuslock": "remainders.statuslock",
 		"credit": "remainders.credit",
 		"services": "remainders.services",
-		"services_free": "remainders.services_free",
 		"services_paid": "remainders.services_paid",
+		"services_free": "remainders.services_free",
+		"services_abon": "remainders.services_abon",
 		"usedinthismonth": "expenses.usedinthismonth",
 		"usedinprevmonth": "expenses.usedinprevmonth",
 		"license": "info.licschet",
@@ -79,8 +80,9 @@ var g_countersTable = {
 		"fio": "info.fio",
 		"bonus_balance": "remainders.bonus_balance",
 		"sms_left_perezvoni": "remainders.sms_left_perezvoni",
-		"last_pay_date": "payments.date",
 		"last_pay_sum": "payments.sum",
+		"last_pay_date": "payments.date",
+		"last_pay_descr": "payments.descr",
 		"__tariff": "tariff"
 	}
 };

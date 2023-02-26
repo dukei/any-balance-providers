@@ -352,7 +352,7 @@ function proceedLk(prefs) {
 	}else{
 		AnyBalance.trace('Абонплата списывается в рамках тарифного плана: \n' + JSON.stringify(json));
 		var abon = getParam(round(json.value), result, 'abon');
-		var date = getParam(json.nextPayment, null, null, /Списание\s?([^<]*)/i, replaceTagsAndSpaces);
+		var date = getParam(json.nextPayment, null, null, /Списание|Оплата\s?([^<]*)/i, replaceTagsAndSpaces);
 	    var dt = new Date();
 	    if (!/\d\d\d\d/i.test(date)) {
 	    	var ndate = date + ' '  + dt.getFullYear();

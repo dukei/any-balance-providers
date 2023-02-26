@@ -24,8 +24,8 @@
 	<ListPreference
 		key="type"
 		title="Тип кабинета"
-		summary="||{@s}"
-		dialogTitle="Лицевой счет"
+		summary="Тип кабинета для получения данных|Выберите кабинет\n|{@s}\n"
+		dialogTitle="Тип кабинета"
 		entries="beeline.ru/login|cabinet.beeline.ru|cabinet.beeline.ru/myoffice/"
 		entryValues="lk|cab|office"
 		defaultValue="lk">

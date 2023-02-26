@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="26" date="2023-02-13">
+	- Исправлено получение даты следующего платежа
+	</change>
 	<change version="25" date="2022-10-04">
 	- Поддержка изменений на сайте
 	</change>

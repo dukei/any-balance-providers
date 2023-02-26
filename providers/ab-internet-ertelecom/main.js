@@ -6,11 +6,12 @@ var g_headers = {
   'Accept': 'application/json, text/plain, */*',
   'Accept-Encoding': 'gzip, deflate, br',
   'Accept-Language': 'ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7',
-  'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36'
+  'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.102 Safari/537.36'
 };
 
 var g_baseUrlAuth = 'https://api-auth.dom.ru/v1';
 var g_baseUrlProfile = 'https://api-profile.dom.ru/v1';
+var g_baseUrlLoyalty = 'https://api-loyalty.dom.ru/v1';
 
 /* Оставляем для сохранения обратной совместимости */
 var g_region_change = {
@@ -38,7 +39,7 @@ function main() {
   }
 
   AB.checkEmpty(prefs.login, 'Укажите ваш номер Договора/Телефона/Логин/E-mail!');
-  AB.checkEmpty(prefs.password, 'Введите пароль от Личного кабинета!');
+  AB.checkEmpty(prefs.password, 'Введите пароль от личного кабинета!');
 
   AnyBalance.trace('Selected city: ' + city);
 
@@ -48,9 +49,12 @@ function main() {
 
   var accessToken = login(prefs.login, prefs.password, false, city);
 
-  getClientPersonal(accessToken, city, result);
   getPaymentInfo(accessToken, city, result);
   getProductsInfo(accessToken, city, result);
+  if (AnyBalance.isAvailable('tariff_number', 'name'))
+    getClientPersonal(accessToken, city, result);
+  if (AnyBalance.isAvailable('bonus_balance', 'bonus_expires_sum', 'bonus_expires_date', 'cashback_level', 'cashback_next_level_date'))
+    getProgramInfo(accessToken, city, result);
 
   AnyBalance.setResult(result);
 }
@@ -73,8 +77,8 @@ function login(username, password, rememberMe, domain) {
 function getClientPersonal(accessToken, domain, result) {
   var response = requestJson('GET', g_baseUrlProfile, '/info/personal', {
       headers: {
-        'Domain': domain,
-        'Authorization': 'Bearer ' + accessToken
+        'domain': domain,
+        'authorization': 'Bearer ' + accessToken
       }
     });
 
@@ -94,7 +98,9 @@ function getPaymentInfo(accessToken, domain, result) {
     });
 
   result['balance'] = parseBalanceSilent(response.balance);
+  result['pay_sum'] = parseBalanceSilent(response.paySum);
   result['pay_till'] = parseDateISOSilent(response.payDay);
+  result['pay_period'] = capitalFirstLetters(response.payPeriodDates);
 }
 
 function getProductsInfo(accessToken, domain, result) {
@@ -106,6 +112,25 @@ function getProductsInfo(accessToken, domain, result) {
     });
 
   result['__tariff'] = response.tariffName;
+}
+
+function getProgramInfo(accessToken, domain, result) {
+  var response = requestJson('GET', g_baseUrlLoyalty, '/program/info', {
+      headers: {
+        'Domain': domain,
+        'Authorization': 'Bearer ' + accessToken
+      }
+    });
+
+  if (response) {
+    result['bonus_balance'] = parseBalanceSilent(response.bonuses);
+    result['bonus_expires_sum'] = parseBalanceSilent(response.expireBonuses);
+    result['bonus_expires_date'] = parseDateISOSilent(response.expireDate);
+    result['cashback_level'] = parseBalanceSilent(response.loyaltyCash);
+    result['cashback_next_level_date'] = parseDateSilent(response.nextLevelDate);
+  } else {
+	AnyBalance.trace('Не удалось получить данные по программе лояльности');
+  }
 }
 
 function requestJson(method, url, action, options) {
@@ -125,12 +150,23 @@ function requestJson(method, url, action, options) {
     html = AnyBalance.requestGet(url + action + paramsStr, joinObjects(g_headers, options.headers));
   }
 
-  if (!html || AnyBalance.getLastStatusCode() >= 400) {
+  if (!html || AnyBalance.getLastStatusCode() >= 500) {
     AnyBalance.trace('Action: "' + action + '", Response: ' + html);
-    throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.', null, true);
+    throw new AnyBalance.Error('Сайт провайдера временно недоступен. Попробуйте еще раз позже', null, true);
   }
 
   var json = getJson(html);
+  
+  if (json.status && json.status >= 400) {
+	var error = json.message;
+	if (error) {
+      AnyBalance.trace('Action: "' + action + '", Response: ' + html);
+      throw new AnyBalance.Error(error, null, /договор|парол/i.test(error));
+	}
+	  
+    AnyBalance.trace('Action: "' + action + '", Response: ' + html);
+    throw new AnyBalance.Error('Не удалось войти в личный кабинет. Сайт изменен?');
+  }
 
   return json;
 }

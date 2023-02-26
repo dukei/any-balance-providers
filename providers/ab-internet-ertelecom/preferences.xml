@@ -1,17 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
-  <ListPreference
-        title="Город"
-        summary="|Выберите город|Выбран город '{@s}'!"
-        key="city"
-        defaultValue="ryazan"
-        entries="Ангарск|Барнаул|Березники|Брянск|Волгоград|Волжский|Воронеж|Дзержинск|Димитровград|Екатеринбург|Ижевск|Иркутск|Йошкар-Ола|Казань|Киров|Краснодар|Красноярск|Кунгур|Курган|Курск|Липецк|Магнитогорск|Мичуринск|Москва|Набережные Челны|Нижнекамск|Нижний Новгород|Новосибирск|Омск|Оренбург|Пенза|Пермь|Ростов-на-Дону|Рязань|Самара|Санкт-Петербург|Саратов|Северск|Соликамск|Сосновый Бор|Сызрань|Тверь|Томск|Тула|Тюмень|Ульяновск|Усолье-Сибирское|Уфа|Чебоксары|Челябинск|Чусовой|Энгельс|Ярославль|Улан-Удэ|Тайшет|Воткинск|Нижнеудинск"
-        entryValues="angarsk|barnaul|ber|bryansk|volgograd|vlz|voronezh|dzr|dimgrad|ekat|izhevsk|irkutsk|yola|kazan|kirov|krd|krsk|kungur|kurgan|kursk|lipetsk|mgn|mich|msk|chelny|nk|nn|nsk|omsk|oren|penza|perm|rostov|ryazan|samara|interzet|saratov|seversk|slk|sbor|syzran|tver|tomsk|tula|tmn|ulsk|usol|ufa|cheb|chel|chus|engels|yar|ulu|taishet|votkinsk|nizhneudinsk"
-        />
   <EditTextPreference
         key="login"
         title="Логин"
-        summary="Учетная запись в Личном кабинете||{@s}\n"
+        summary="Логин для входа в личный кабинет|Введите логин\n|{@s}\n"
         dialogTitle="Логин"
         negativeButtonText="Отмена"
         dialogMessage="Введите номер вашего Договора/Телефона/Логин/E-mail"
@@ -20,11 +12,20 @@
   <EditTextPreference
         key="password"
         title="Пароль"
-        summary="Пароль для входа в Личный кабинет||***********\n"
+        summary="Пароль для входа в личный кабинет|Введите пароль\n|***********\n"
         dialogTitle="Пароль"
         negativeButtonText="Отмена"
-        dialogMessage="Введите пароль, используемый для входа в Личный кабинет"
+        dialogMessage="Введите пароль, используемый для входа в личный кабинет"
         positiveButtonText="ОК"
         inputType="textPassword">
   </EditTextPreference>
+  <ListPreference
+        title="Город"
+        summary="Город для входа в личный кабинет|Выберите город\n|{@s}\n"
+		dialogTitle="Город"
+        key="city"
+        defaultValue="ryazan"
+        entries="Ангарск|Барнаул|Березники|Брянск|Волгоград|Волжский|Воронеж|Дзержинск|Димитровград|Екатеринбург|Ижевск|Иркутск|Йошкар-Ола|Казань|Киров|Краснодар|Красноярск|Кунгур|Курган|Курск|Липецк|Магнитогорск|Мичуринск|Москва|Набережные Челны|Нижнекамск|Нижний Новгород|Новосибирск|Омск|Оренбург|Пенза|Пермь|Ростов-на-Дону|Рязань|Самара|Санкт-Петербург|Саратов|Северск|Соликамск|Сосновый Бор|Сызрань|Тверь|Томск|Тула|Тюмень|Ульяновск|Усолье-Сибирское|Уфа|Чебоксары|Челябинск|Чусовой|Энгельс|Ярославль|Улан-Удэ|Тайшет|Воткинск|Нижнеудинск"
+        entryValues="angarsk|barnaul|ber|bryansk|volgograd|vlz|voronezh|dzr|dimgrad|ekat|izhevsk|irkutsk|yola|kazan|kirov|krd|krsk|kungur|kurgan|kursk|lipetsk|mgn|mich|msk|chelny|nk|nn|nsk|omsk|oren|penza|perm|rostov|ryazan|samara|interzet|saratov|seversk|slk|sbor|syzran|tver|tomsk|tula|tmn|ulsk|usol|ufa|cheb|chel|chus|engels|yar|ulu|taishet|votkinsk|nizhneudinsk">
+	</ListPreference>
 </PreferenceScreen>

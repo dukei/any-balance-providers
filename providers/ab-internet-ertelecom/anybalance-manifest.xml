@@ -1,15 +1,18 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="20">ab-internet-ertelecom</id>
+  <id version="21">ab-internet-ertelecom</id>
   <api flags="no_browser"/>
   <name>Дом.ру (Эр-телеком)</name>
   <description html="true">
     <![CDATA[
-	<p>Предоставляет информацию о текущем балансе и номере лицевого счета для пользователей интернет-провайдера "ЭР-Телеком" (Дом.ru), https://domru.ru.</p>
-	<p>Информация берется при помощи API (https://api-profile.domru.ru/v1/).</p>
+	<p>Предоставляет информацию о текущем балансе, бонусном балансе и состоянии лицевого счета для пользователей интернет-провайдера Дом.ру (https://dom.ru/).</p>
+	<p>Информация берется при помощи API (https://api-profile.dom.ru/v1/).</p>
 	<p>Провайдер предоставляет интернет для городов: Ангарск, Барнаул, Березники, Брянск, Волгоград, Волжский, Воронеж, Дзержинск, Димитровград, Екатеринбург, Ижевск, Иркутск, Йошкар-Ола, Казань, Киров, Краснодар, Красноярск, Кунгур, Курган, Курск, Липецк, Магнитогорск, Мичуринск, Москва, Набережные Челны, Нижнекамск, Нижний Новгород, Новосибирск, Омск, Оренбург, Пенза, Пермь, Ростов-на-Дону, Рязань, Самара, Санкт-Петербург, Саратов, Северск, Соликамск, Сосновый Бор, Сызрань, Тверь, Томск, Тула, Тюмень, Ульяновск, Усолье-Сибирское, Уфа, Чебоксары, Челябинск, Чусовой, Энгельс, Ярославль, Улан-Удэ, Тайшет, Воткинск, Нижнеудинск</p>
 	]]>
   </description>
+  <instruction html="true"><![CDATA[
+	<p>Для работы провайдера требуется ввести логин и пароль для входа в личный кабинет Дом.ру.</p>
+  ]]></instruction>
   <author>Pavel Biryukov &lt;biryukovpyu@gmail.com&gt;; AnyBalance Team &lt;info@anybalance.ru&gt;</author>
   <depends>
     <module id="library"/>
@@ -21,10 +24,17 @@
     <history>history.xml</history>
   </files>
   <counters>
-    <counter id="balance" name="Баланс" units=" р"/>
-    <counter id="name" name="ФИО" type="text"/>
+    <counter id="balance" name="Баланс" units=" ₽"/>
+	<counter id="bonus_balance" name="Бонусный баланс" units=" Б"/>
+	<counter id="bonus_expires_sum" name="Сгораемые бонусы" units=" Б"/>
+	<counter id="bonus_expires_date" name="Дата следующего сгорания" type="time" format="dd.MM.yyyy"/>
+	<counter id="cashback_level" name="Текущий уровень кешбэка" units="%"/>
+	<counter id="cashback_next_level_date" name="Дата следующего уровня" type="time" format="dd.MM.yyyy"/>
+	<counter id="pay_sum" name="Сумма к оплате" units=" ₽"/>
+	<counter id="pay_till" name="Дата следующего платежа" type="time" format="dd.MM.yyyy"/>
+	<counter id="pay_period" name="Расчетный период" type="text"/>
     <counter id="tariff_number" name="Номер договора" type="text"/>
-    <counter id="pay_till" name="Дата следующего пополнения" type="time" format="dd/MM/yyyy"/>
+    <counter id="name" name="ФИО" type="text"/>
   </counters>
   <keywords>дом.ру ertelecom citidom эретелеком ситидом</keywords>
   <type>internet</type>

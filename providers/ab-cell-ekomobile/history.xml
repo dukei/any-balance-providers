@@ -1,9 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="4" date="2023-02-10">
+	- Поддержка изменений на сайте.
+	- Добавлены дополнительные счетчики.
+	</change>
+	<change version="3" date="2022-08-31">
+	- Поддержка нового личного кабинета.
+	</change>
 	<change version="2" date="2018-04-10">
 	- Поддержка изменений на сайте.
 	</change>
-<!--    <change version="2" date="2012-12-26">
-      Исправлено название тарифа и формат даты (спасибо Valeriy Vyshnyak)
-    </change> -->
 </history>

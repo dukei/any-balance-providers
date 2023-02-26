@@ -1,14 +1,15 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<!-- Флаг отключает загрузку rhino.env.js на сервере, обязательно! -->
 	<api flags="no_browser" />
-	<id version="2">ab-cell-ekomobile</id>
+	<id version="4">ab-cell-ekomobile</id>
 	<name>Экомобайл (Москва)</name>
-	<description>
-		Получает данные для мобильного оператора Экомобайл (http://www.ekomobile.ru/)
-		
-		Личный кабинет находится по адресу http://www.ekomobile.ru/personal/info/
-	</description>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе и статусе для пользователей оператора сотовой связи Экомобайл (https://www.ekomobile.ru/).</p>
+	<p>Информация берется из личного кабинета на сайте https://lk.ekomobile.ru/user/login/.</p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Для работы провайдера требуется ввести номер телефона и пароль для входа в личный кабинет Экомобайл.</p>
+	]]></instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>
 		<module id="library"/>
@@ -20,12 +21,14 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units="р"/>
-		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="balance" name="Баланс" units=" ₽"/>
+		<counter id="bonuses" name="Бонусы" units=" Б"/>
+		<counter id="messages" name="Сообщения" units=" шт"/>
 		<counter id="status" name="Статус" type="text"/>
 		<counter id="phone" name="Телефон" type="text"/>
+		<counter id="fio" name="ФИО" type="text"/>
 	</counters>
-	<keywords></keywords>
+	<keywords>сотовый, экомобайл, мобайл</keywords>
 	<type>cell</type>
 	<country>ru</country>
 </provider>

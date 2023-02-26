@@ -8,6 +8,17 @@ var g_headers = {
     'User-Agent': 'OnePlus ONEPLUS A3010/android: 9/TCSMB/5.2.1'
 }
 
+var g_currency = {
+	RUB: '₽',
+	USD: '$',
+	EUR: '€',
+	BYN: 'Br',
+	KZT: '₸',
+	GBP: '£',
+	CNY: 'Ұ',
+	undefined: ''
+};
+
 var g_baseurl = 'https://api.tinkoff.ru/v1/';
 var g_sessionid;
 var g_postParams = {
@@ -283,9 +294,9 @@ function processCard(card, acc, result){
 
 	var balance = jspath1(card, '$.availableBalance') || jspath1(acc, '$.moneyAmount') || jspath1(acc, '$.accountBalance');
 
-    getParam(jspath1(acc, '$.accountBalance.value'), result, 'cards.balance');
-    getParam(jspath1(balance, '$.value'), result, 'cards.available');
-    getParam(jspath1(balance, '$.currency.name'), result, 'cards.currency');
+    getParam(jspath1(acc, '$.accountBalance.value'), result, ['cards.balance', 'cards.currency']);
+    getParam(jspath1(balance, '$.value'), result, ['cards.available', 'cards.currency']);
+    getParam(g_currency[jspath1(balance, '$.currency.name')]||jspath1(balance, '$.currency.name'), result, ['cards.currency', 'cards.balance']);
     getParam(jspath1(card, '$.expiration.milliseconds'), result, 'cards.till');
     getParam(jspath1(card, '$.activated'), result, 'cards.active');
     getParam(jspath1(card, '$.primary'), result, 'cards.primary');
@@ -338,9 +349,9 @@ function processAccount(acc, result){
 
 	var balance = jspath1(acc, '$.moneyAmount') || jspath1(acc, '$.accountBalance');
 
-    getParam(jspath1(acc, '$.accountBalance.value'), result, 'accounts.balance');
-    getParam(jspath1(acc, '$.moneyAmount.value'), result, 'accounts.available');
-    getParam(jspath1(balance, '$.currency.name'), result, 'accounts.currency');
+    getParam(jspath1(acc, '$.accountBalance.value'), result, ['accounts.balance', 'accounts.currency']);
+    getParam(jspath1(acc, '$.moneyAmount.value'), result, ['accounts.available', 'accounts.currency']);
+    getParam(g_currency[jspath1(balance, '$.currency.name')]||jspath1(balance, '$.currency.name'), result, ['accounts.currency', 'accounts.balance']);
     getParam(jspath1(acc, '$.creationDate.milliseconds'), result, 'accounts.date_start');
     getParam(jspath1(acc, '$.accountGroup'), result, 'accounts.type');
     getParam(jspath1(acc, '$.accountType'), result, 'accounts.type_code');
@@ -452,9 +463,9 @@ function processDeposit(acc, result){
     getParam(jspath1(acc, '$.interest.value'), result, 'deposits.pct_sum');
     getParam(jspath1(acc, '$.typeOfInterest'), result, 'deposits.pct_condition'); //TO_DEPOSIT
 
-    getParam(jspath1(acc, '$.moneyAmount.value'), result, 'deposits.balance');
-    getParam(jspath1(acc, '$.moneyAmount.currency.name'), result, 'deposits.currency');
-    getParam(jspath1(acc, '$.startAmount'), result, 'deposits.balance_start');
+    getParam(jspath1(acc, '$.moneyAmount.value'), result, ['deposits.balance', 'deposits.currency']);
+    getParam(g_currency[jspath1(acc, '$.moneyAmount.currency.name')]||jspath1(acc, '$.moneyAmount.currency.name'), result, ['deposits.currency', 'deposits.balance']);
+    getParam(jspath1(acc, '$.startAmount'), result, ['deposits.balance_start', 'deposits.currency']);
 
     getParam(jspath1(acc, '$.period'), result, 'deposits.period'); //В месяцах
 
@@ -482,9 +493,9 @@ function processSaving(acc, result){
     getParam(jspath1(acc, '$.interest.value'), result, 'savings.pct_sum');
     getParam(jspath1(acc, '$.tariffInfo.interestRate') || jspath1(acc, '$.rate'), result, 'savings.pct');
 
-    getParam(jspath1(acc, '$.accountBalance.value'), result, 'savings.balance');
-    getParam(jspath1(acc, '$.moneyAmount.value'), result, 'savings.available');
-    getParam(jspath1(acc, '$.moneyAmount.currency.name'), result, 'savings.currency');
+    getParam(jspath1(acc, '$.accountBalance.value'), result, ['savings.balance', 'savings.currency']);
+    getParam(jspath1(acc, '$.moneyAmount.value'), result, ['savings.available', 'savings.currency']);
+    getParam(g_currency[jspath1(acc, '$.moneyAmount.currency.name')]||jspath1(acc, '$.moneyAmount.currency.name'), result, ['savings.currency', 'savings.balance']);
 
     getParam(jspath1(acc, '$.status'), result, 'savings.status_code'); //ACTIVE
 
@@ -534,7 +545,7 @@ function fetchSaving(accounts, baseurl, sessionid){
 
 	result = {success: true};
 	getParam(saving.moneyAmount.value, result, 'balance');
-	getParam(saving.moneyAmount.currency.name, result, ['currency', 'balance']);
+	getParam(g_currency[saving.moneyAmount.currency.name]||saving.moneyAmount.currency.name, result, ['currency', 'balance']);
 	getParam(saving.nextStatementDate.milliseconds, result, 'nextStatementDate');
 	getParam(saving.name, result, 'name');
 	getParam(saving.name, result, '__tariff');

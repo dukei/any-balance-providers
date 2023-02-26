@@ -4,11 +4,11 @@
 		obligatory="true"
 		title="Телефон"
 		positiveButtonText="ОК"
-		summary="|Номер телефона в формате 9261234567|{@s}"
+		summary="Телефон для входа в интернет-банк|Введите телефон\n|{@s}\n"
 		dialogTitle="Телефон"
 		inputType="number"
 		negativeButtonText="Отмена"
-		dialogMessage="Введите номер телефона для входа в интернет-банк (10 цифр без пробелов и разделителей, например 9261234567)."
+		dialogMessage="Введите номер телефона для входа в интернет-банк в формате 10 цифр без пробелов и разделителей, например 9261234567"
 		key="login">
 	</EditTextPreference>
 	<EditTextPreference
@@ -18,14 +18,15 @@
 		dialogTitle="Пароль"
 		negativeButtonText="Отмена"
 		title="Пароль"
-		summary="||***********"
-		dialogMessage="Введите пароль, используемый для входа в интернет-банк."
+		summary="Пароль для входа в интернет-банк|Введите пароль\n|***********\n"
+		dialogMessage="Введите пароль, используемый для входа в интернет-банк"
 		inputType="textPassword">
 	</EditTextPreference>
 	<ListPreference
 		key="type"
-		title="Что смотреть"
-		summary="||{@s}"
+		title="Источник данных"
+		summary="Источник для получения информации|Автоматически\n|{@s}\n"
+		dialogTitle="Источник данных"
 		entries="Карта|Счет|Депозит|Накопительный счет"
 		entryValues="card|acc|dep|saving"
 		defaultValue="card">
@@ -33,10 +34,10 @@
 	<EditTextPreference
 		positiveButtonText="ОК"
 		key="num"
-		dialogTitle="Номер"
+		dialogTitle="Номер карты/счета"
 		negativeButtonText="Отмена"
-		title="Номер карты/Депозита"
-		summary="|Автоматически|{@s}"
-		dialogMessage="Введите последние 4 цифры карты или не менее 4 последних цифр номера счета депозита, по которому вы хотите получить данные. Если это поле оставить пустым, то будет показана информация по первой карте/депозиту.">
+		title="Номер карты/счета"
+		summary="Последние 4 цифры карты/счета|Автоматически\n|{@s}\n"
+		dialogMessage="Введите последние 4 цифры карты/счета, по которым вы хотите получать информацию. Если оставить поле пустым, будет показана информация по первой карте/счету">
 	</EditTextPreference>
 </PreferenceScreen>

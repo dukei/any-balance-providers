@@ -1,14 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="38">ab-money-tcs</id>
+	<id version="39">ab-money-tcs</id>
 	<api flags="no_browser" min_level="4"/>
-	<name>Тинькофф Кредитные Системы</name>
+	<name>Тинькофф Банк</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о текущем остатке и других параметрах карт, депозитов и накопительных счетов банка "Тинькофф Кредитные Системы".</p>
-	<p>Информация берется из системы интернет-банк при помощи API Мобильного приложения.</p>
+	<p>Предоставляет информацию о текущем остатке и других параметрах карт, депозитов и накопительных счетов банка "Тинькофф Банк".</p>
+	<p>Информация берется из системы интернет-банк при помощи API мобильного приложения.</p>
 	]]></description>
 	<instruction html="true"><![CDATA[
-	<p>Для работы провайдера необходимо один раз привязать свое устройство. Все операции аналогичны мобильному приложению Тинькофф Кредитные Системы.</p>
+	<p>Для работы провайдера необходимо один раз привязать свое устройство. Все операции аналогичны мобильному приложению Тинькофф онлайн банк.</p>
 	<p>Как получить доступ к интернет-банку:</p>
 	<ul>
 		<li>Зарегистрируйтесь по номеру карты на странице https://www.tcsbank.ru/authentication/register.</li>
@@ -26,7 +26,7 @@
 		<module id="nadapter"/>
 	</depends>
 	<files>
-		<icon>icon.png</icon>
+\		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
 		<js>main.js</js>
 		<history>history.xml</history>
@@ -34,11 +34,11 @@
 	<counters>
 		<counter id="available" name="Доступно" units=" {@currency}"/>
 		<counter id="minpay" name="Минимальный платеж" units=" {@currency}"/>
-		<counter id="minpaytill" name="Оплатить до" type="time" format="dd/MM/yyyy"/>
+		<counter id="minpaytill" name="Оплатить до" type="time" format="dd.MM.yyyy"/>
 		<counter id="debt" name="Задолженность" units=" {@currency}"/>
 		<counter id="pcts" name="Начислено процентов" units=" {@currency}"/>
 		<counter id="rate" name="Процентная ставка" units="%"/>
-		<counter id="till" name="Дата окончания" type="time" format="dd/MM/yyyy"/>
+		<counter id="till" name="Дата окончания" type="time" format="dd.MM.yyyy"/>
 		<counter id="limit" name="Кредитный лимит" units=" {@currency}"/>
 		<counter id="freeaddleft" name="Бесплатные пополнения (Остаток)" units=" {@currency}"/>
 		<counter id="freecashleft" name="Сумма льготного снятия (Остаток)" units=" {@currency}"/>
@@ -51,7 +51,7 @@
 		<counter id="balance" name="Доступный остаток" units=" {@currency}"/>
 		<counter id="remainder" name="Остаток на счете" units=" {@currency}"/>
 	</counters>
-	<keywords>ткс онлайн, tcs online, tinkoff</keywords>
+	<keywords>тинькофф банк, ткс онлайн, tcs online, tinkoff</keywords>
 	<type>money, bank</type>
 	<country>ru</country>
 </provider>

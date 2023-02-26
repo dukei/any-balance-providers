@@ -3,9 +3,8 @@
 	<change version="1" date="2020-12-25">
 	- Первая версия провайдера.
 	</change>
-<!--
-	<change version="2" date="2014-09-03">
-	- 
 	</change>
--->
+	<change version="4" date="2023-02-15">
+	- Поддержка изменений на сайте.
+	</change>
 </history>

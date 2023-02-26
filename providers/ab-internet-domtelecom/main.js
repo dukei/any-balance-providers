@@ -20,44 +20,52 @@ function main() {
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 	
-	var html = AnyBalance.requestGet(baseurl, g_headers);
+	var html = AnyBalance.requestGet(baseurl +'kiev/uk/signin', g_headers);
 	
 	if(!html || AnyBalance.getLastStatusCode() > 400)
 		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
-	
-	html = AnyBalance.requestPost(baseurl, {
-		login: prefs.login,
-		password: prefs.password
-	}, addHeaders({Referer: baseurl}));	
-	
+
+	var form = AB.getElement(html, /<form[^>]+authenticationForm[^>]*>/i);
+	if(!form){
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удаётся найти форму входа! Сайт изменен?');
+	}
+
+	var params = AB.createFormParams(form, function(params, str, name, value) {
+		if (name == 'username') {
+			return prefs.login;
+		} else if (name == 'password') {
+			return prefs.password;
+		} else if (name == '_spring_security_remember_me') {
+			return 'on';
+		}
+		return value;
+	});
+
+	html = AnyBalance.requestPost(baseurl + 'kiev/uk/signin', params, AB.addHeaders({
+		Accept: 'application/json, text/plain, */*',
+		Referer: 'https://my.datagroup.ua/kiev/uk/signin'
+	}));
 		
-	if (!/exit_form/i.test(html)) {
-		var error = getParam(html, null, null, /color:red(?:[^>]*>){1}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
+
+	if (!/signout/i.test(html)) {
+		var error = getParam(html, null, null, /signInPage_error errorMessage[\s\S]*?[display\:\snone]{0}([\s\S]*?)<\//i, replaceTagsAndSpaces, html_entity_decode);
 		if (error)
 			throw new AnyBalance.Error(error, null, /Неправильно введен логин или пароль/i.test(error));
 		
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
+		
     
-	html = AnyBalance.requestPost(baseurl, {
-        'where_to': 1
-	}, addHeaders({Referer: baseurl}));
-	
 	var result = {success: true};
 		
-	getParam(html, result, 'balance', /Баланс:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, [replaceTagsAndSpaces, /Долг([\s\d.,]+)/i, '- $1'], parseBalance);
-	getParam(html, result, 'fio', /Абонент:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
-	getParam(html, result, 'account', /(?:Номер договора|Номер договору):[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
-	getParam(html, result, 'lic_account', /(?:Лицевой Счет|Особистий Рахунок):[\s\S]*?<td[^>]*>([\s\S]*?)(?:<\/b|<\/td>)/i, replaceTagsAndSpaces);
-	getParam(html, result, 'connection', /(?:Подключение|Підключення):[\s\S]*?<td[^>]*>([\s\S]*?)(?:\*|<\/td>)/i, replaceTagsAndSpaces);
-	getParam(html, result, 'status', /Статус:[\s\S]*?<td[^>]*>([\s\S]*?)(?:<\/b|<\/td>)/i, replaceTagsAndSpaces);
-     
-	html = AnyBalance.requestPost(baseurl, {
-        'where_to': 4
-	}, addHeaders({Referer: baseurl}));
-	   
-	getParam(html, result, '__tariff', /<b>\s*Название:(?:[\s\S]*?<td[^>]*>){1}([^<]+)/i, replaceTagsAndSpaces, html_entity_decode);
+	getParam(html, result, 'balance', /currentBalance__value[\s\S]*?([\d\.\,\+\-]*)<\//i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'fio', /header__username[\s\S]*?<span>([\s\S]*?)<\//i, replaceTagsAndSpaces);
+	getParam(html, result, 'lic_account', /header__username__act[\s\S]*?(\d+)<\/span>/i, replaceTagsAndSpaces);
+	getParam(html, result, 'connection', /packageDescription[\s\S]*?<div[\s\S]*?<div>([\s\S]*?)<\//i, replaceTagsAndSpaces);
+	getParam(html, result, 'status', /packageDescription[\s\S]*?<div[\s\S]*?<span>([\s\S]*?)<\//i, replaceTagsAndSpaces);
+	getParam(html, result, '__tariff', /Тариф:[\s\S]*?<span>([^<]+)</i, replaceTagsAndSpaces, html_entity_decode);
 	
 	AnyBalance.setResult(result);
 }

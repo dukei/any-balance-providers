@@ -29,6 +29,8 @@ var g_countersTable = {
 		"bonus_burn": "bonus_burn",
 		"services_free": "services_free",
 		"services_paid": "services_paid",
+		"services_count": "services_count",
+		"services_abon": "services_abon",
 		"gb_with_you": "remainders.gb_with_you",
 		"internet_roam_other": "remainders.internet_roam_other",
 		"internet_roam_popular": "remainders.internet_roam_popular",
@@ -47,6 +49,9 @@ var g_countersTable = {
 		"sub_scl": "sub_scl",
 		"last_pay_sum": "payments.sum",
 		"last_pay_date": "payments.date",
+		"last_pay_descr": "payments.descr",
+		"statuslock": "statuslock",
+		"license": "license",
 		"phone": "phone",
 		"__tariff": "tariff"
 	}

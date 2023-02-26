@@ -228,7 +228,7 @@ function megafonLkAPIDo(options, result) {
             
             getParam(json.outcome + '', result, 'sub_scl', null, replaceTagsAndSpaces, parseBalance);
         }catch(e){
-            AnyBalance.trace('Ошибка получения информации о звонках: ' + e.message + '\n' + e.stack);
+            AnyBalance.trace('Ошибка получения информации о расходах: ' + e.message + '\n' + e.stack);
         }
     }
 
@@ -450,6 +450,12 @@ function processInfoApi(result){
         getParam(json.region.id, info, 'info.region_id');
         getParam(json.region.name, info, 'info.region_name');
     }
+	
+	if(AnyBalance.isAvailable('license')){
+		var json = callAPI('get', 'api/profile/accountNumber');
+		
+        getParam(json.accountNumber, result, 'license');
+    }
 }
 
 function processSmsTurnOffApi(){
@@ -476,10 +482,34 @@ function processSmsTurnOffApi(){
 }
 
 function processServices(result){
-	if(!AnyBalance.isAvailable('services_free', 'services_paid'))
+	if(!AnyBalance.isAvailable('services_free', 'services_paid', 'services_count', 'services_abon', 'statuslock'))
 		return;
 
     var json = callAPI('get', 'api/options/list/current');
+	
     getParam(json.free ? json.free.length : 0, result, 'services_free');
     getParam(json.paid ? json.paid.length : 0, result, 'services_paid');
+	getParam((json.free ? json.free.length : 0) + (json.paid ? json.paid.length : 0), result, 'services_count');
+	getParam(0, result, 'services_abon');
+	getParam('Номер не блокирован', result, 'statuslock');
+	
+	// Добровольная блокировка номера - платная услуга, проверяем её наличие в подключённых платных
+	if(json.paid && json.paid.length > 0){
+	    for(var i=0; i<json.paid.length; ++i){
+	    	var s = json.paid[i];
+			var dt = new Date();
+            
+		    if(s.monthly !== true){
+                var sp = new Date(dt.getFullYear(), dt.getMonth()+1, 0).getDate(); // Дней в этом месяце
+            }else{
+                var sp = 1;
+            }
+		    AnyBalance.trace('Платная услуга ' + s.optionName + ': ' + s.fees[0]);
+		    sumParam(s.monthRate*sp, result, 'services_abon', null, null, null, aggregate_sum);
+			
+			if(/Блокировка номера/i.test(s.optionName)){
+                getParam('Номер заблокирован', result, 'statuslock');
+            }
+	    }
+	}
 }

@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="2.0" version="87" date="2023-02-27">
+	- Поддержка изменений в API
+	</change>
 	<change major_version="2.0" version="86" date="2022-07-30">
 	- Исправлена ошибка обращения к серверу
 	</change>

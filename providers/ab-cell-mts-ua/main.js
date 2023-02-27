@@ -12,7 +12,7 @@ var g_apiHeaders = {
 	Origin: 'https://my.vodafone.ua',
 	Origin: 'file://',
 	'Accept-Encoding': null,
-	Authorization:'Basic YXBwLW15dm9kYWZvbmUtbXc6UGg1ZDg2QnpCNg==',
+	Authorization:'Basic YXBwLW15dm9kYWZvbmUtd2lkZ2V0LW13OktGLXJGdjUhMjVmIQ==',
 	'User-Agent': 'Mozilla/5.0 (Linux; Android 8.0; ONEPLUS A3010 Build/OPR6.170623.013) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/48.0.2564.116 Crosswalk/18.48.477.13 Mobile Safari/537.36',
 	'Content-Type': 'application/manifest+json; charset=UTF-8'
 }
@@ -43,7 +43,7 @@ function callApi(requests,charset){
 	var html = AnyBalance.requestPost('https://cscapp.vodafone.ua/eai_mob/start.swe?SWEExtSource=JSONConverter&SWEExtCmd=Execute', JSON.stringify({
 		"requests": requests,
 		"params":{
-			"version":"2.5.5.0",
+			"version":"4.0.6.0",
 			"accessType": "",
 			"language": callApi.lang,
 			"source":"android 8",
@@ -90,7 +90,7 @@ function callApi1(verb, request){
     params[verb] = request || {};
     var charset='UTF-8';
     var i=1;
-  while (i<10){
+  while (i<2){
     try{
         if (i>1){
         	AnyBalance.trace('Попытка получить '+verb+' '+i+' из 3');

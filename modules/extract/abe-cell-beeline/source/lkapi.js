@@ -9,14 +9,25 @@
 */
 
 var g_baseurlApi = 'https://my.beeline.ru/api/';
+var g_baseurlApiNew = 'https://api.beeline.ru/';
+
 var g_apiHeaders = {
 //	'Accept': 'application/vnd.beeline.api.v1.mobapp+json',
-	'User-Agent': 'okhttp/2.6.0',
-	'Client-Type': 'MYBEE/ANDROID/PHONE/2.90',
+	'User-Agent': 'MyBeeline/4.72.0-3913',
+	'Connection': 'Keep-Alive',
+	'Client-Type': 'MobbApp2',
+	'X-AppVersion':'4.72.0',
+	'X-AndroidVersion':'26',
+	'X-Device':'PHONE',
+	'X-Theme':'Light'
 };
 
 function callAPIProc(url, getParams, postParams, method) {
-	url = g_baseurlApi + url;
+	if(/mw\/auth|profile\/sasBalance/i.test(url)){
+		url = g_baseurlApiNew + url;
+	}else{
+	    url = g_baseurlApi + url;
+	}
 
 	var api_errors = {
 		AUTH_ERROR:' Ошибка авторизации! Проверьте логин-пароль!',
@@ -44,7 +55,17 @@ function callAPIProc(url, getParams, postParams, method) {
 	}
 
 	var json = getJson(html);
-	if(json.meta.status != 'OK'){
+	
+	if(json.offerUrl){
+		AnyBalance.trace('Требуется принять условия соглашения. Принимаем...');
+		var offerUrl = json.offerUrl;
+		g_apiHeaders['X-offer-token'] = json.token;
+		html = AnyBalance.requestGet(offerUrl, g_apiHeaders);
+		delete g_apiHeaders['X-offer-token'];
+		var json = getJson(html);
+	}
+    
+	if(json.meta && json.meta.status != 'OK'){
 		var error = (api_errors[json.meta.message] || json.meta.message || '');
 		if(postParams && postParams.password) postParams.password = '**********';
 		AnyBalance.trace('Request (' + method + '): ' + url + ', ' + JSON.stringify(postParams) + '\nResponse: ' + html); 
@@ -53,19 +74,35 @@ function callAPIProc(url, getParams, postParams, method) {
 	return json;
 }
 
+function generateUUID() {
+	function s4() {
+  		return Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
+	}
+  	return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
+}
+
 function apiLogin(baseurl){
 	if(baseurl)
 		g_baseurlApi = baseurl + 'api/';
 
 	var prefs = AnyBalance.getPreferences();
 	AnyBalance.setDefaultCharset('utf-8');
+	
+	var myBee = AnyBalance.getData('myBee' + prefs.login);
+	var adId = AnyBalance.getData('adId' + prefs.login);
 
 	try{
+		AnyBalance.restoreCookies();
+		g_apiHeaders['X-Auth-Token'] = AnyBalance.getData('authToken' + prefs.login);
+		g_apiHeaders['X-AdID'] = AnyBalance.getData('adId' + prefs.login);
 	    getApiAssocNumbers();
-		AnyBalance.trace('Уже залогинены, используем имеющийся вход');
+		AnyBalance.trace('Сессия сохранена. Входим автоматически...');
 		return;
 	}catch(e){
-		AnyBalance.trace('Сессия новая, надо логиниться.');
+		AnyBalance.trace('Сессия новая. Будем логиниться заново...');
+		clearAllCookies();
+		delete g_apiHeaders['X-Auth-Token'];
+		delete g_apiHeaders['X-AdID'];
 	}
 
 	var newPass;
@@ -73,16 +110,25 @@ function apiLogin(baseurl){
 		AnyBalance.trace('Пароль не задан, получаем его по смс');
 		newPass = createNewPasswordApi();
 	}
-
-	var json = callAPIProc('2.0/auth/auth', {
-			userType: 'Mobile',
-			login: prefs.login
-		}, {
-			password: prefs.password || newPass
-		}, 'PUT'
-	);
-
+	
+	if(!myBee)
+	    myBee = generateUUID();
+	
+	if(!adId)
+	    adId = generateUUID();
+	
+	g_apiHeaders['X-AdID'] = adId;
+	
+	var json = callAPIProc('mw/auth/1/auth', {client_id: 'mybee;' + myBee + ';android_26;4.72.0_3913', login: prefs.login, password: prefs.password || newPass});
+	
+	g_apiHeaders['X-Auth-Token'] = json.token;
+    
+	AnyBalance.setData('authToken' + prefs.login, json.token);
+	AnyBalance.setData('myBee' + prefs.login, myBee);
+	AnyBalance.setData('adId' + prefs.login, adId);
 	AnyBalance.setCookie(getParam(g_baseurlApi, null, null, /:\/\/([^\/]*)/), 'token', json.token);
+	AnyBalance.saveCookies();
+    AnyBalance.saveData();
 
 	__setLoginSuccessful();
 
@@ -127,11 +173,15 @@ function switchToAssocNumber(num){
 			if(num && endsWith(s.ctn, num)){
 				AnyBalance.trace('В качестве CTN берем ' + s.ctn + ' по заданным последним цифрам');
 				prefs.__login = login;
+				g_apiHeaders['X-CTN'] = s.ctn;
+                g_apiHeaders['X-Login'] = login;
 				return prefs.phone = s.ctn;
 			}
 			if(!num && s.ctnDefault){
 				AnyBalance.trace('В качестве CTN берем ' + s.ctn + ' по умолчанию');
 				prefs.__login = login;
+				g_apiHeaders['X-CTN'] = s.ctn;
+                g_apiHeaders['X-Login'] = login;
 				return prefs.phone = s.ctn;
 			}
 		}
@@ -139,6 +189,8 @@ function switchToAssocNumber(num){
 	    if(!num){
 			AnyBalance.trace('В качестве CTN берем ' + subscribers[0].ctn);
 			prefs.__login = login;
+			g_apiHeaders['X-CTN'] = subscribers[0].ctn;
+			g_apiHeaders['X-Login'] = login;
 			return prefs.phone = subscribers[0].ctn;
 		}
 	}
@@ -252,10 +304,15 @@ function processApiPrepaid(result){
 		getParam(json.currency, result, ['currency_code', 'balance']);
 		getParam(g_currencys[json.currency], result, ['currency', 'balance']);
 	}
-
+    
+	if(AnyBalance.isAvailable('addon_balance')){
+		var json = callAPIProc('mobile/api/v1/profile/sasBalance');
+		
+		getParam(json.data.sasBalanceValue, result, 'addon_balance', null, null, apiParseBalanceRound);
+	}
 
 	try{
-    		processApiRemaindersPrepaid(result);
+    	processApiRemaindersPrepaid(result);
 	}catch(e){
 		AnyBalance.trace('Не удалось получить бонусы: ' + e.message);
 	}

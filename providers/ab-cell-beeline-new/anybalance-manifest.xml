@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="173">ab-cell-beeline-new</id>
+	<id version="175">ab-cell-beeline-new</id>
 	<name>Билайн (новый кабинет)</name>
 	<api flags="no_browser" min_level="5"/>
 	<description html="true"><![CDATA[
@@ -81,8 +81,8 @@
 		<counter id="services_paid" name="Платные услуги" prefix="💵 " units=" шт"/>
 		<counter id="services_free" name="Бесплатные услуги" prefix="🎁 " units=" шт"/>
 		<counter id="services_abon" name="Абонплата за услуги" units=" {@currency}"/>
-		<counter id="bills" name="Выставленные счета"/>
-		<!-- <counter id="addon_balance" name="Баланс для оплаты дополнительных услуг" units=" {@currency}"/> -->
+		<counter id="bills" name="Выставленные счета" units=" шт"/>
+		<counter id="addon_balance" name="Баланс для доп. услуг" units=" {@currency}"/>
 	</counters>
 	<keywords>Сотовый телефон, мобильный, мобильник, билайн, beeline, интернет, Россия</keywords>
 	<type>cell</type>

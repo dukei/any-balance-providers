@@ -1,11 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id version="6">ab-telephony-comtube</id>
+	<id version="7">ab-telephony-comtube</id>
 	<name>ComTube</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о текущем балансе, балансе инвестиционного счета, валюте счета и номере внутри системы для пользователей провайдера IP-телефонии ComTube (http://www.comtube.com).</p>   
+	<p>Предоставляет информацию о текущем балансе, балансе инвестиционного счета, валюте счета и номере внутри системы для пользователей провайдера IP-телефонии ComTube (https://www.comtube.com/).</p>   
 	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Для работы провайдера требуется ввести логин и пароль для входа в личный кабинет ComTube.</p>
+	]]></instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>
 		<module id="library"/>

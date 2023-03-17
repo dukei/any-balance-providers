@@ -4,7 +4,7 @@ g_geaders = {
     'accept-encoding': 'gzip',
     'user-agent': 'okhttp/3.12.1'
 }
-const apiUrl = 'https://mob2.privat24.ua/api/p24-aos2/';
+const apiUrl = 'https://mob1.privat24.ua/api/p24-aos2/';
 const periods = {
     '0': ' в день',
     '1': ' в неделю',
@@ -22,7 +22,7 @@ const valut = v => {
 
 function callAPI(cmd, data, params) {
     AnyBalance.trace('cmd=' + cmd);
-    cmd += (cmd.includes('?') ? '&' : '?') + 'sid=' + data.sid + '&access_token=' + data.token + '&public_sid=50ff008ded1c585e384a911d39fa12c5d152606b27f3cfc325f8de419ed52306&public_token=ptok_rNmY7_1618_245496_335542';
+    cmd += (cmd.includes('?') ? '&' : '?') + 'sid=' + data.sid + '&access_token=' + data.token + '&public_sid=76aa07796032c1374685258648b86f6cc03257459a6ddd460e7fe1732dd80df0&public_token=ptok_Hd6qo_1677_507825_651268';
     if (params)
         var html = AnyBalance.requestPost(apiUrl + cmd, JSON.stringify(params), g_geaders);
     else
@@ -62,7 +62,7 @@ function apiNew() {
     if (!data.firstInitTime) data.firstInitTime = +new Date;
     if (!data.pt) data.pt = generateUUID('24-4-4-4-12');
     if (!data.pass) data.token = '';
-    g_geaders['user-agent-mob'] = '{"appVersion":"6.54.00","biometric":false,"brand":"OnePlus","deviceModel":"ONEPLUS A5000|OnePlus","display":"ONEPLUS A5000_23_171031","firstInitTime":"' + data.firstInitTime + '","hardware":"qcom","imeiGenerate":"' + data.imei + '","industrialName":"OnePlus5","isRooted":false,"lang":"' + (prefs.lang | 'ru') + '","lat":"0.0","lng":"0.0","model":"ONEPLUS A5000","modelType":"Tablet","nfcHce":true,"osName":"AOS","osVersion":"7.1.1"}';
+    g_geaders['user-agent-mob'] = '{"appVersion":"6.55.01","biometric":false,"brand":"OnePlus","deviceModel":"ONEPLUS A5000|OnePlus","display":"ONEPLUS A5000_23_171031","firstInitTime":"' + data.firstInitTime + '","hardware":"qcom","imeiGenerate":"' + data.imei + '","industrialName":"AnyBalance","isRooted":false,"lang":"' + (prefs.lang | 'ru') + '","lat":"0.0","lng":"0.0","model":"ONEPLUS A5000","modelType":"Tablet","nfcHce":true,"osName":"AOS","osVersion":"7.1.1"}';
     if (data.token) {
         AnyBalance.trace('Найден старый токен. Проверяем...');
         try {
@@ -71,7 +71,7 @@ function apiNew() {
         } catch (e) {
             AnyBalance.trace(e.message);
             AnyBalance.trace('Токен просрочен. Пробуем восстановить...');
-            var html = AnyBalance.requestPost('https://mob2.privat24.ua/api/proxy/reauth/?sid=' + data.sid + '&access_token=' + data.token + '&lang=ru&pt=' + data.pt,
+            var html = AnyBalance.requestPost('https://mob1.privat24.ua/api/proxy/reauth/?sid=' + data.sid + '&access_token=' + data.token + '&lang=uk&pt=' + data.pt,
                 JSON.stringify({
                     cmd: "show_static_password_form",
                     lat: 0,
@@ -168,7 +168,7 @@ function apiNew() {
                 if (!result.info) delete result.info;
             }
             if (isAvailable('statment')) {
-                var json = callAPI('statements?shiftToLast=false&action=getStatements&lang=ru&dateFrom=' + getFormattedDate({
+                var json = callAPI('statements?shiftToLast=false&action=getStatements&lang=uk&dateFrom=' + getFormattedDate({
                     offsetDay: 3,
                     format: 'DD.MM.YYYY'
                 }) + '&dateTo=' + getFormattedDate('DD.MM.YYYY') + '&cardId=' + card.id, data).transactions;
@@ -323,7 +323,7 @@ function readCard(card, result, prefs, data) {
             statment.info = info;
         }
         if (isAvailable('statment')) {
-            var json = callAPI('statements?shiftToLast=false&action=getStatements&lang=ru&dateFrom=' + getFormattedDate({
+            var json = callAPI('statements?shiftToLast=false&action=getStatements&lang=uk&dateFrom=' + getFormattedDate({
                 offsetDay: 3,
                 format: 'DD.MM.YYYY'
             }) + '&dateTo=' + getFormattedDate('DD.MM.YYYY') + '&cardId=' + card.id, data);
@@ -381,7 +381,7 @@ function loginSite(prefs, data) {
         action: "submit"
     }
 
-    var url = 'https://mob2.privat24.ua/api/proxy/auth/?login=' + prefs.login + '&pt=' + pt + '&lang=ru';
+    var url = 'https://mob1.privat24.ua/api/proxy/auth/?login=' + prefs.login + '&pt=' + pt + '&lang=uk';
 
     function doStep(step) {
         if (step) AnyBalance.trace('step:' + step);

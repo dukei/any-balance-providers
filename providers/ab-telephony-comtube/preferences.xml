@@ -3,10 +3,10 @@
     <EditTextPreference 
         title="Логин" 
         positiveButtonText="ОК" 
-        summary="|Логин в ComTube|{@s}" 
+        summary="Логин для входа в личный кабинет|Введите логин\n|{@s}\n" 
         dialogTitle="Логин" 
         negativeButtonText="Отмена" 
-        dialogMessage="Введите ваш логин в ComTube"
+        dialogMessage="Введите логин, используемый для входа в личный кабинет"
         key="login">
     </EditTextPreference>
     <EditTextPreference 
@@ -15,8 +15,8 @@
         dialogTitle="Пароль"
         negativeButtonText="Отмена"
         title="Пароль"
-        summary="|Введите пароль|************"
-        dialogMessage="Введите ваш пароль в ComTube"
+        summary="Пароль для входа в личный кабинет|Введите пароль\n|**********\n"
+        dialogMessage="Введите пароль, используемый для входа в личный кабинет"
         inputType="textPassword">
     </EditTextPreference>
 </PreferenceScreen>

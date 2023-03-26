@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="22">ab-money-privatbank</id>
+	<id version="23">ab-money-privatbank</id>
 	<api flags="no_browser|sms"/>
 	<name>Приватбанк (Украина)</name>
 	<description html="true"><![CDATA[
@@ -30,7 +30,6 @@
 	</files>
 	<counters>
 		<counter id="balance" name="Баланс" suffix="{@suflimit}" units=" {@currency}"/>
-		<counter id="bonusPlus" name="Баланс бонус+" units=" {@currency}"/>
 
 		<counter id="INET1" name="Internet card"   suffix="{@INET1_suf}" prefix="{@INET1_pref}" units=" {@INET1_currency}"/>
 		<counter id="INET2" name="Internet card-2"  suffix="{@INET2_suf}" prefix="{@INET2_pref}" units=" {@INET2_currency}"/>
@@ -69,11 +68,9 @@
 
 		<counter id="info" name="Информация о картах" type="html"/>
 		<counter id="statment" name="Выписка по картам" type="html"/>
-
-		<counter id="depdateclose" name="Ближайшая дата окончания депозита" prefix="{@DEPodateclose_pref}" type="time" format="dd.MM.yyyy"/>
-                
+               
 	</counters>
-	<keywords>приват, банк, украина, Бонус+</keywords>
+	<keywords>приват, банк, украина</keywords>
 	<type>money, bank</type>
 	<country>ua</country>
 </provider>

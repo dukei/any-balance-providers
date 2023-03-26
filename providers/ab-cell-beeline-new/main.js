@@ -58,6 +58,7 @@ function initialize(baseurl){
 var g_countersTable = {
 	common: {
 		"balance": "balance",
+		"addon_balance": "addon_balance",
 		"prebal": "prebal",
 		"overpay": "overpay",
 		"credit": "credit",

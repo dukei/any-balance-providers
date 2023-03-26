@@ -33,9 +33,7 @@ function main() {
 		getParam(price, result, ['rate', 'usd'], /\$([\d\.,\s]*)/i, replaceTagsAndSpaces, parseBalance);
 		getParam(price, result, ['rate_btc', 'btc'], /@([^<]*)/i, replaceTagsAndSpaces, parseBalance);
 
-		var gas = getElement(html, /<div[^>]+GasTracker Estimate for Average Gas/i);
-		getParam(gas, result, 'basefee', /Base Fee:([^<]*)/i, replaceTagsAndSpaces, parseBalance);
-		getParam(getElement(gas, /<a[^>]+gastracker/i, replaceTagsAndSpaces), result, 'gasprice', /.*?gwei/i, replaceTagsAndSpaces, parseBalance);
+		getParam(getElement(html, /<[^>]+gasPricePlaceHolder/i), result, 'gasprice', null, replaceTagsAndSpaces, parseBalance);
 	}
 
 	if(AnyBalance.isAvailable('balance', 'usd', 'btc')){

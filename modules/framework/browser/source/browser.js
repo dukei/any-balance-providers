@@ -65,7 +65,10 @@ const BrowserAPI = (() => {
                         const pr = json.pendingRequests[j];
                         const headers = [];
                         for (let name in pr.headers) {
-                            const values = pr.headers[name].split('\n');
+                            const hv = pr.headers[name];
+			    if(hv.trim() === '')
+				continue;
+                            const values = hv.split('\n');
                             for (let i = 0; i < values.length; ++i)
                                 headers.push([name, values[i]]);
                         }
@@ -76,7 +79,7 @@ const BrowserAPI = (() => {
                                 const arh = this.options.additionalRequestHeaders[a];
                                 if(!arh.url || arh.url.test(pr.url)){
                                     const headerMatchCounts = this.headerMatchCounts;
-                                    if(arh.maxCount || (headerMatchCounts[a] || 0) < arh.maxCount) {
+                                    if(!arh.maxCount || (headerMatchCounts[a] || 0) < arh.maxCount) {
                                         additionalHeaders = arh.headers || {};
                                         if(arh.maxCount)
                                             headerMatchCounts[a] = (headerMatchCounts[a] || 0) + 1;

@@ -128,7 +128,7 @@ function getOrdinaryLoginForm(html){
 }
 
 function loadProtectedPage(fromUrl, headers){
-    const url = fromUrl.startsWith(g_baseurlLogin) ? fromUrl : g_baseurlLogin;
+    const url = fromUrl.startsWith(g_baseurlLogin) ? fromUrl : g_baseurlLogin + '/amserver/UI/Login';
 
     var html = AnyBalance.requestGet(url, headers);
     if(/__qrator/.test(html)) {
@@ -136,7 +136,7 @@ function loadProtectedPage(fromUrl, headers){
         clearAllCookies();
 
         const bro = new BrowserAPI({
-            userAgent: g_headers["User-Agent"],
+            userAgent: headers["User-Agent"],
             rules: [{
                 resType: /^(image|stylesheet|font)$/.toString(),
                 action: 'abort',
@@ -153,9 +153,15 @@ function loadProtectedPage(fromUrl, headers){
                 url: /.*/.toString(),
                 action: 'request',
             }],
-            additionalRequestHeaders: {
-                headers: headers
-            }
+            additionalRequestHeaders: [
+		{
+                    headers: {
+			'User-Agent': headers["User-Agent"]
+
+		    }
+		}
+            ],
+            debug: true
         });
 
         const r = bro.open(url);
@@ -168,7 +174,7 @@ function loadProtectedPage(fromUrl, headers){
             bro.close(r.page);
         }
 
-        if(/__qrator/.test(html))
+        if(/__qrator|Access to [^<]* is forbidden|Доступ к сайту [^<]* запрещен/.test(html))
             throw new AnyBalance.Error('Не удалось обойти защиту. Сайт изменен?');
 
         AnyBalance.trace("Защита QRATOR успешно пройдена");

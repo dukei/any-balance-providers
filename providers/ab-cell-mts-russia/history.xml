@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="4.1" version="217" date="2023-04-15">
+	- Сообщение о неудаче обхода защиты от ботов
+	</change>
 	<change major_version="4.1" version="216" date="2023-04-15">
 	- сообщение о проблеме обхода защиты от ботов
 	</change>

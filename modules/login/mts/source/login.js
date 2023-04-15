@@ -161,7 +161,7 @@ function loadProtectedPage(fromUrl, headers){
 		    }
 		}
             ],
-            debug: true
+            //debug: true
         });
 
         const r = bro.open(url);

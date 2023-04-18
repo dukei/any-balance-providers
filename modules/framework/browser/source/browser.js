@@ -13,6 +13,8 @@ const BrowserAPI = (() => {
     type Options = {
         debug?: boolean
         userAgent: string,
+        singlePage?: boolean,
+        headful?: boolean,
         rules?: RuleSource[]
         additionalRequestHeaders: {
             url?: RegExp,
@@ -44,6 +46,8 @@ const BrowserAPI = (() => {
         open(url) {
             const ret = this.requestAPI('base/open', {
                 userAgent: this.options.userAgent,
+                singlePage: this.options.singlePage,
+                headful: this.options.headful,
                 url: url,
                 rules: this.options.rules
             })

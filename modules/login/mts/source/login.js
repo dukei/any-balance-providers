@@ -137,6 +137,8 @@ function loadProtectedPage(fromUrl, headers){
 
         const bro = new BrowserAPI({
             userAgent: headers["User-Agent"],
+            headful: true,
+            singlePage: true,
             rules: [{
                 resType: /^(image|stylesheet|font)$/.toString(),
                 action: 'abort',
@@ -161,7 +163,7 @@ function loadProtectedPage(fromUrl, headers){
 		    }
 		}
             ],
-            //debug: true
+//            debug: !!this.g_api_preferences
         });
 
         const r = bro.open(url);

@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="4.1" version="220" date="2023-04-20">
+	- Немного ускорен обход защиты
+	</change>
 	<change major_version="4.1" version="219" date="2023-04-20">
 	- Тюнинг обхода защиты
 	</change>

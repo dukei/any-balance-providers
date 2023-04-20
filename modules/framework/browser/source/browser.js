@@ -7,7 +7,8 @@ const BrowserAPI = (() => {
         url?: string
         resType?: string
         not?: boolean
-        action: 'abort'|'continue'|'request'
+        action: 'abort'|'continue'|'request'|'cache'
+        valid: number //for 'cache' in milliseconds
     }
 
     type Options = {

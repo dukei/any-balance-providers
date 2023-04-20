@@ -144,13 +144,17 @@ function loadProtectedPage(fromUrl, headers){
                 resType: /^(image|stylesheet|font)$/.toString(),
                 action: 'abort',
             }, {
+                url: /_qrator\/qauth_utm_v2\.js/.toString(),
+                action: 'cache',
+                valid: 3600*1000
+            }, {
                 url: /_qrator/.toString(),
                 action: 'request',
             }, {
                 resType: /^(image|stylesheet|font|script)$/i.toString(),
                 action: 'abort',
             }, {
-                url: /\.(png|jpg|ico)/.toString(),
+                url: /\.(png|jpg|ico|svg)/.toString(),
                 action: 'abort',
             }, {
                 url: /.*/.toString(),
@@ -164,7 +168,7 @@ function loadProtectedPage(fromUrl, headers){
 		    }
 		}
             ],
-//            debug: !!this.g_api_preferences
+            debug: AnyBalance.getPreferences().debug
         });
 
         const r = bro.open(url);
@@ -199,13 +203,13 @@ function loadProtectedPage(fromUrl, headers){
 }
 
 function enterMtsLK(options) {
-	var url = options.url || g_baseurlLogin;
+    var url = options.url || g_baseurlLogin;
 
     var html = loadProtectedPage(url, g_headers);
 
     if(fixCookies()){
         AnyBalance.trace("Куки исправлены на входе...");
-        html = AnyBalance.requestGet(AnyBalance.getLastUrl(), g_headers);
+        html = AnyBalance.requestGet(url, g_headers);
         fixCookies();
     }
 

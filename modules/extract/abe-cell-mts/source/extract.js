@@ -1075,7 +1075,7 @@ function processCountersLK(result){
 			sumParam(1, result.remainders, 'remainders.services_paid', null, null, parseBalanceSilent, aggregate_sum);
             
 		    if(c.primarySubscriptionFee.unitOfMeasure !== 'Month'){
-                var sp = new Date(dt.getFullYear(), dt.getMonth()+1, 0).getDate(); // Дней в этом месяце
+                var cp = new Date(dt.getFullYear(), dt.getMonth()+1, 0).getDate(); // Дней в этом месяце
             }else{
                 var cp = 1;
             }

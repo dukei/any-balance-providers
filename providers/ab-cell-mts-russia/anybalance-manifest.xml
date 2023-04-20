@@ -1,11 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id major_version="4.1" version="217">ab-cell-mts-russia</id>
+	<id major_version="4.1" version="218">ab-cell-mts-russia</id>
 	<name>МТС (Россия)</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе, бонусных баллах, использованных минутах на локальные, мобильные и любимые номера, расходах, статусе блокировки, кредите, номере лицевого счета, ежемесячной плате.</p>
-	<p>Информация берется из личного кабинета МТС https://lk.mts.ru/.</p>
+	<p>Информация берется из личного кабинета МТС на сайте https://lk.mts.ru/.</p>
 	]]></description>
 	<instruction html="true"><![CDATA[
 	<p>Если у вас нет доступа в Личный кабинет, получите его на странице https://login.mts.ru/amserver/UI/Login?service=register&srcsvc=lk&subscriber_only=true.</p>

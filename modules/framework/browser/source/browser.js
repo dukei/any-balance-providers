@@ -11,6 +11,7 @@ const BrowserAPI = (() => {
     }
 
     type Options = {
+        provider: string
         debug?: boolean
         userAgent: string,
         singlePage?: boolean,
@@ -32,8 +33,8 @@ const BrowserAPI = (() => {
         requestAPI(verb, json) {
             const browserApi = this.options.debug ? browserApiDebug : browserApiRelease;
             const html = json
-                ? AnyBalance.requestPost(browserApi + '/' + verb, JSON.stringify(json), {"Content-Type": "application/json"})
-                : AnyBalance.requestGet(browserApi + '/' + verb + (verb.indexOf('?') >= 0 ? '&' : '?') + '_=' + (+new Date()));
+                ? AnyBalance.requestPost(browserApi + '/' + verb, JSON.stringify(json), {"Referer": this.options.provider + '', "Content-Type": "application/json"})
+                : AnyBalance.requestGet(browserApi + '/' + verb + (verb.indexOf('?') >= 0 ? '&' : '?') + '_=' + (+new Date()), {"Referer": this.options.provider + ''});
             const ret = JSON.parse(html);
             if (ret.status !== 'ok') {
                 AnyBalance.trace(html);

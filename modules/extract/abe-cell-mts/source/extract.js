@@ -24,11 +24,12 @@ var g_baseurlLogin = 'http://login.mts.ru';
 var g_savedData;
 
 var g_headers = {
-    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
+    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
 	'Accept-Language': 'ru-RU,ru;q=0.9',
+	'Cache-Control': 'max-age=0',
 	'Connection': 'keep-alive',
 	'Upgrade-Insecure-Requests': '1',
-    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36',
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36',
     'If-Modified-Since': null, //Иначе МТС глючит с кешированием...
 };
 
@@ -422,14 +423,14 @@ function getLKJsonNew(html) {
 		out.fio = account["profile:name"];
         out.phone_formatted = ('' + account["mobile:phone"]).replace(/(\d\d\d)(\d\d\d)(\d\d)(\d\d)$/, '+7($1)$2-$3-$4');
         out.phone = '' + account["mobile:phone"];
-		out.license = '' + account["mobile:terminal:id"];
+		out.license = '' + account["profile:accountNumber"];
 //        out.balance = Math.round(account["mobile:balance"]*100)/100; // Почему-то здесь баланс обновляется неоперативно
         out.tariff = '' + account["mobile:tariff"];
 	} else {
 		out.fio = json["profile:name"];
         out.phone_formatted = ('' + json["mobile:phone"]).replace(/(\d\d\d)(\d\d\d)(\d\d)(\d\d)$/, '+7($1)$2-$3-$4');
         out.phone = '' + json["mobile:phone"];
-		out.license = '' + json["mobile:terminal:id"];
+		out.license = '' + json["profile:accountNumber"];
 //        out.balance = Math.round(json["mobile:balance"]*100)/100; // Почему-то здесь баланс обновляется неоперативно
         out.tariff = '' + json["mobile:tariff"];
 	}
@@ -599,8 +600,8 @@ function enterLK(options) {
         }
     }
 	
-	if (/no-config&arg=newsession/i.test(AnyBalance.getLastUrl())) { // Проверяем на новый вход
-        enterLK2(html, options);
+	if (/no-config&arg=newsession/i.test(AnyBalance.getLastUrl())) { // Проверяем на новый вход UI
+        enterLKUI(html, options);
     }
 	
 	if (!isLoggedIn(html)) {
@@ -636,14 +637,17 @@ function loginWithPassword(){
 	var csrfToken = g_savedData.set('csrfToken', ''); // Для POST-запросов каждый раз требуется новый токен, поэтому удаляем сохранённый из прошлого входа
 	g_savedData.save();
 	
-	html = loadProtectedPage('https://profile.mts.ru/account', addHeaders({referer: 'https://lk.mts.ru/'}));
+	var html = AnyBalance.requestGet('https://profile.mts.ru/account', addHeaders({referer: 'https://lk.mts.ru/'})); // Надо, чтобы новая кука TS0 установилась
 	
-    if(/\/account\/safety/i.test(html)){ // Ссылка на раздел "Безопасность" на странице профиля
-        AnyBalance.trace('Сессия сохранена. Входим автоматически...');
-	}else{
+	html = AnyBalance.requestGet('https://login.mts.ru/amserver/oauth2/sso/validate', addHeaders({referer: 'https://profile.mts.ru/'})); // Проверка валидности сессии
+	AnyBalance.trace(html);
+	
+	if(!/"isSessionCookieValid":\s*?true/i.test(html)){
         AnyBalance.trace('Сессия новая. Будем логиниться заново...');
         clearAllCookiesExceptProtection();
         var html = enterLK({login: prefs.login, password: prefs.password, baseurl: 'http://lk.mts.ru', url: 'http://login.mts.ru/amserver/UI/Login?service=lk&goto=http%3A%2F%2Flk.mts.ru%2F'});
+	}else{
+		AnyBalance.trace('Сессия сохранена. Входим автоматически...');
     }
 
 	g_savedData.setCookies();
@@ -1430,218 +1434,6 @@ function processPayments(baseurl, result) {
     }
 }
 
-function enterLK2(html, options){
-	var prefs = AnyBalance.getPreferences();
-
-	var loginFormatted = options.login.replace(/.*(\d{3})(\d{3})(\d{2})(\d{2})$/i, '$1 $2-$3-$4');
-	
-	if(/captchaForm/i.test(html)){
-		AnyBalance.trace('МТС затребовал капчу');
-		var form = getElement(html, /<form[^>]+captchaForm[^>]*>/i);
-	    if(!form){
-	    	AnyBalance.trace(html);
-            throw new AnyBalance.Error('Не удалось найти форму для ввода капчи. Сайт изменен?');
-        }
-	    
-		var img = getParam(form, /data:image\/\w+?(?:png)?;base64,([^"]+)/i);
-		var captcha = AnyBalance.retrieveCode('МТС требует ввести капчу для входа в личный кабинет, чтобы подтвердить, что вы не робот. Пожалуйста, введите символы с картинки', img);
-		
-		var params = createFormParams(form, function (params, input, name, value) {
-            var undef;
-	        if (name == 'IDToken2')
-                value = captcha;
-            else if (name == 'noscript')
-                value = undef; //Снимаем галочку
-        
-            return value;
-        });
-        
-		// Отправляем капчу
-        html = AnyBalance.requestPost('https://login.mts.ru/amserver/UI/Login?no-config&arg=newsession', params, addHeaders({
-        	Origin: 'https://login.mts.ru',
-	    	Referer: 'https://login.mts.ru/amserver/UI/Login?no-config&arg=newsession'
-	    }));
-		
-		if (!html || AnyBalance.getLastStatusCode() > 400) { // Через VPN иногда не пускает с ошибкой 403. Оповещаем, чтобы не смущать отсутствием формы 
-            throw new AnyBalance.Error('Личный кабинет МТС временно недоступен. Попробуйте ещё раз позже');
-	    }
-	
-	    if(/captchaForm/i.test(html)){
-	    	var form = getElement(html, /<form[^>]+captchaForm[^>]*>/i);
-            var error = getParam(form, null, null, /class="errorText"[\s\S]*?data-error="*>?([\s\S]*?)[">]*?<\/p>/i, replaceTagsAndSpaces);
-            if (error){
-                throw new AnyBalance.Error (error, null, /код/i.test(error));
-            }
-           	
-            AnyBalance.trace(html);
-			throw new AnyBalance.Error('Не удалось войти в личный кабинет. Сайт изменен?');
-        }
-	}
-	
-	if(/loginForm/i.test(html)){ // Ввод номера
-	    var form = getElement(html, /<form[^>]+loginForm[^>]*>/i);
-	    if(!form){
-	    	AnyBalance.trace(html);
-            throw new AnyBalance.Error('Не удалось найти форму для ввода номера. Сайт изменен?');
-        }
-	
-	    var params = createFormParams(form, function (params, input, name, value) {
-            var undef;
-	        if (name == 'login')
-                value = loginFormatted;
-            else if (name == 'IDToken1')
-                value = options.login;
-            else if (name == 'IDToken2')
-                value = options.password;
-            else if (name == 'noscript')
-                value = undef; //Снимаем галочку
-        
-            return value;
-        });
-    
-        // Отправляем номер телефона
-        html = AnyBalance.requestPost('https://login.mts.ru/amserver/UI/Login?no-config&arg=newsession', params, addHeaders({
-        	Origin: 'https://login.mts.ru',
-	    	Referer: 'https://login.mts.ru/amserver/UI/Login?no-config&arg=newsession'
-	    }));
-	}
-    
-	var form = getElement(html, /<form[^>]*>/i); // devicePrint
-	if(!form){
-		AnyBalance.trace(html);
-        throw new AnyBalance.Error('Не удалось найти форму для ввода devicePrint. Сайт изменен?');
-    }
-
-	var params = createFormParams(form, function (params, input, name, value) {
-        var undef;
-	    if (name == 'login')
-            value = loginFormatted;
-        else if (name == 'IDToken1')
-            value = options.login;
-        else if (name == 'IDToken2')
-            value = '{"screen":{"screenWidth":1600,"screenHeight":900,"screenColourDepth":24},"userAgent":"Mozilla/5.0+(Windows+NT+10.0;+WOW64)+AppleWebKit/537.36+(KHTML,+like+Gecko)+Chrome/107.0.0.0+Safari/537.36","platform":"Win32","language":"ru","timezone":{"timezone":-180},"plugins":{"installedPlugins":"internal-pdf-viewer;internal-pdf-viewer;internal-pdf-viewer;internal-pdf-viewer;internal-pdf-viewer;"},"fonts":{"installedFonts":"cursive;monospace;serif;sans-serif;fantasy;default;Arial;Arial+Black;Arial+Narrow;Bookman+Old+Style;Bradley+Hand+ITC;Century;Century+Gothic;Comic+Sans+MS;Courier;Courier+New;Georgia;Impact;Lucida+Console;Monotype+Corsiva;Papyrus;Tahoma;Times;Times+New+Roman;Trebuchet+MS;Verdana;"},"appName":"Netscape","appCodeName":"Mozilla","appVersion":"5.0+(Windows+NT+10.0;+WOW64)+AppleWebKit/537.36+(KHTML,+like+Gecko)+Chrome/107.0.0.0+Safari/537.36","product":"Gecko","productSub":"20030107","vendor":"Google+Inc."}';
-        else if (name == 'noscript')
-            value = undef; //Снимаем галочку
-        
-        return value;
-    });
-
-    // Теперь МТС ещё и devicePrint требует. Отправляем
-    html = AnyBalance.requestPost('https://login.mts.ru/amserver/UI/Login?no-config&arg=newsession', params, addHeaders({
-    	Origin: 'https://login.mts.ru',
-		Referer: 'https://login.mts.ru/amserver/UI/Login?no-config&arg=newsession'
-	}));
-	
-	if(/новый пользователь|Разблокировать/i.test(html)){
-		AnyBalance.trace(html);
-        throw new AnyBalance.Error('Ваш номер не зарегистрирован в МТС или доступ к нему заблокирован. Пожалуйста, перейдите на страницу авторизации https://login.mts.ru/amserver/UI/Login через браузер и выполните действия по регистрации или восстановлению доступа', null, true);
-    }
-	
-	if(/passwordForm/i.test(html)){
-	    var form = getElement(html, /<form[^>]+passwordForm[^>]*>/i);
-	    if(!form){
-	    	AnyBalance.trace(html);
-            throw new AnyBalance.Error('Не удалось найти форму для ввода пароля. Сайт изменен?');
-        }
-
-        var params = createFormParams(form, function (params, input, name, value) {
-            var undef;
-	        if (name == 'login')
-                value = loginFormatted;
-            else if (name == 'IDToken1')
-                value = options.login;
-            else if (name == 'IDToken2')
-                value = options.password;
-            else if (name == 'noscript')
-                value = undef; //Снимаем галочку
-		
-            return value;
-        });
-    
-        // Проверка пароля
-        html = AnyBalance.requestPost('https://login.mts.ru/amserver/UI/Login?no-config&arg=newsession', params, addHeaders({
-	    	Origin: 'https://login.mts.ru',
-	    	Referer: 'https://login.mts.ru/amserver/UI/Login?no-config&arg=newsession'
-	    }));
-	
-	    if(/passwordForm/i.test(html)){
-	    	var form = getElement(html, /<form[^>]+passwordForm[^>]*>/i);
-            var error = getParam(form, null, null, /class="errorText"[\s\S]*?data-error="*>?([\s\S]*?)[">]*?<\/p>/i, replaceTagsAndSpaces);
-            if (error){
-                throw new AnyBalance.Error (error, null, /парол/i.test(error));
-            }
-            	
-            AnyBalance.trace(html);
-			throw new AnyBalance.Error('Не удалось войти в личный кабинет. Сайт изменен?');
-        }
-	}
-	
-	if(/codeCheckForm/i.test(html)){
-		AnyBalance.trace('МТС запросил проверку с помощью кода из SMS');
-		var code = AnyBalance.retrieveCode('Пожалуйста, введите код подтверждения, высланный на номер +7 ' + loginFormatted + '.\n\nЕсли вы не хотите постоянно вводить SMS-пароли при входе, выберите способ входа "Пароль" в настройках безопасности вашего личного кабинета МТС', null, {inputType: 'number', time: 300000});
-	    var form = getElement(html, /<form[^>]+codeCheckForm[^>]*>/i);
-	    if(!form){
-	    	AnyBalance.trace(html);
-            throw new AnyBalance.Error('Не удалось найти форму для ввода кода из СМС. Сайт изменен?');
-        }
-
-        var params = createFormParams(form, function (params, input, name, value) {
-            var undef;
-	        if (name == 'IDToken1')
-                value = code;
-            else if (name == 'noscript')
-                value = undef; //Снимаем галочку
-		
-            return value;
-        });
-    
-        // Проверка пароля
-        html = AnyBalance.requestPost('https://login.mts.ru/amserver/UI/Login?no-config&arg=newsession', params, addHeaders({
-	    	Origin: 'https://login.mts.ru',
-	    	Referer: 'https://login.mts.ru/amserver/UI/Login?no-config&arg=newsession'
-	    }));
-	
-	    if(/codeCheckForm/i.test(html)){
-	    	var form = getElement(html, /<form[^>]+codeCheckForm[^>]*>/i);
-            var error = getParam(form, null, null, /class[^>]+errorText"[\s\S]*?oneLine"*>?([\s\S]*?)[">]*?<\/span>/i, replaceTagsAndSpaces);
-            if (error){
-                throw new AnyBalance.Error (error, null, /код/i.test(error));
-            }
-			
-            AnyBalance.trace(html);
-            throw new AnyBalance.Error('Не удалось войти в личный кабинет. Сайт изменен?');
-        }
-	}
-    
-	var form = getElement(html, /<form[^>]+gaForm[^>]*>/i); // Логинимся наконец
-	if(!form){
-		AnyBalance.trace(html);
-        throw new AnyBalance.Error('Не удалось найти форму входа. Сайт изменен?');
-    }
-
-    var params = createFormParams(form, function (params, input, name, value) {
-        var undef;
-	    if (name == 'login')
-            value = loginFormatted;
-        else if (name == 'IDToken1')
-            value = options.login;
-        else if (name == 'IDToken2')
-            value = options.password;
-        else if (name == 'noscript')
-            value = undef; //Снимаем галочку
-
-        return value;
-    });
-    
-    // Логинимся с заданным номером
-    html = AnyBalance.requestPost('https://login.mts.ru/amserver/UI/Login?no-config&arg=newsession', params, addHeaders({
-		Origin: 'https://login.mts.ru',
-		Referer: 'https://login.mts.ru/amserver/UI/Login?no-config&arg=newsession'
-	}));
-    
-    return html;
-}
-
 function turnOffLoginSMSNotify(){
     var html = AnyBalance.requestGet('https://profile.mts.ru/account', addHeaders({Referer: 'https://login.mts.ru/'}));
 	var _next = getParam(html, /\/_next\/static\/([\d\S]*?)\/_buildManifest\.js/i, replaceHtmlEntities);
@@ -1659,7 +1451,7 @@ function turnOffLoginSMSNotify(){
 	
 	var authLevel = json.pageProps.initialState.settings.authuserlevel;
 	if(authLevel !== '1'){
-		AnyBalance.trace('СМС для входа в кабинет включено. Выключаем...');
+		AnyBalance.trace('SMS для входа в кабинет включено. Выключаем...');
 		html = AnyBalance.requestPost('https://profile.mts.ru/api', JSON.stringify({
             "call": "updateAuthUserLevel",
             "arg": "1"
@@ -1669,11 +1461,11 @@ function turnOffLoginSMSNotify(){
 	    AnyBalance.trace(JSON.stringify(json));
    
         if(json.result !== 'success'){
-			AnyBalance.trace('Не удалось отключить СМС для входа');
+			AnyBalance.trace('Не удалось отключить SMS для входа');
 		}else{
-			AnyBalance.trace('СМС для входа успешно отключено');
+			AnyBalance.trace('SMS для входа успешно отключено');
 		}
 	}else{
-		AnyBalance.trace('СМС для входа уже отключено');
+		AnyBalance.trace('SMS для входа уже отключено');
 	}
 }

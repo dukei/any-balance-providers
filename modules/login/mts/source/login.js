@@ -136,6 +136,7 @@ function loadProtectedPage(fromUrl, headers){
         clearAllCookies();
 
         const bro = new BrowserAPI({
+            provider: 'mts-login',
             userAgent: headers["User-Agent"],
             headful: true,
             singlePage: true,

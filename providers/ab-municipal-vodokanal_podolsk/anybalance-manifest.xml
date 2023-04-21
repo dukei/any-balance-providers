@@ -1,0 +1,45 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-municipal-vodokanal_podolsk</id>
+	<api flags="no_browser"/>
+	<name>Водоканал (Подольск)</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о задолженности и состоянии счета для абонентов МУП "Водоканал" г. Подольск (http://vodokanalpodolsk.ru/).</p>
+	<p>Информация берется из личного кабинета абонента МУП "Водоканал" на сайте https://cab.vodokanalpodolsk.ru/.</p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Для работы провайдера требуется ввести логин и пароль для входа в личный кабинет МУП "Водоканал".</p>
+	<p>Если у вас нет доступа в личный кабинет МУП "Водоканал", пройдите регистрацию на странице https://cab.vodokanalpodolsk.ru/register/.</p>
+    ]]></instruction>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<author>RamzesZeus &lt;ramzeszeus@gmail.com&gt;</author>
+	<depends>
+		<module id="library"/>
+		<module id="misc/saved-data"/>
+	</depends>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Задолженность" units=" ₽"/>
+		<counter id="tariff_sanitation" name="Водоотведение (тариф)" units=" ₽/м³"/>
+		<counter id="tariff_coldwater" name="Водоснабжение (тариф)" units=" ₽/м³"/>
+		<counter id="countervalue" name="Показания счетчика" units=" м³"/>
+		<counter id="counternum" name="Номер счетчика" type="text"/>
+		<counter id="countertype" name="Тип счетчика" type="text"/>
+		<counter id="account" name="Лицевой счет" type="text"/>
+		<counter id="last_pay_date" name="Дата посл. оплаты" type="time" format="dd.MM.yyyy"/>
+		<counter id="last_upd_date" name="Дата посл. обновления" type="time" format="dd.MM.yyyy"/>
+		<counter id="living_area" name="Площадь помещения" units=" м²"/>
+		<counter id="lodgers" name="Число проживающих" units=" чел"/>
+		<counter id="address" name="Адрес" type="text"/>
+		<counter id="phone" name="Номер телефона" type="text"/>
+		<counter id="fio" name="ФИО" type="text"/>
+	</counters>
+	<keywords>водоканал, подольск, жкх</keywords>
+	<type>municipal</type>
+	<country>ru</country>
+</provider>

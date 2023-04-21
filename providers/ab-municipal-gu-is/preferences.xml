@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
     <EditTextPreference 
-        title="КОД плательщика" 
+        title="Код плательщика" 
         positiveButtonText="ОК" 
-        summary="||{@s}" 
-        dialogTitle="КОД плательщика" 
+        summary="Код плательщика для получения информации|Введите код плательщика\n|{@s}\n" 
+        dialogTitle="Код плательщика" 
         negativeButtonText="Отмена" 
-        dialogMessage="Введите код плательщика. Его можно посмотреть на любой квитанции ЕПД. Он состоит из цифр и выглядит примерно так: 1394046598."
+        dialogMessage="Введите код плательщика. Его можно посмотреть на любой квитанции ЕПД. Он состоит из цифр и выглядит примерно так: 1394046598"
         inputType="number"
         key="login">
     </EditTextPreference>

@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-  <id version="5">ab-municipal-gu-is</id>
-  <name>Оплата ЕПД (ГУ ИС)</name>
+    <id version="7">ab-municipal-gu-is</id>
+    <name>Оплата ЕПД</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о сумме оплаты по последнему выставленному счету ЕПД (за текущий или прошлый месяц).</p>
+	<p>Информация берется со страницы оплаты услуг ЖКХ на сайте <a href="https://1.elecsnet.ru/NotebookFront/services/0mhp/default.aspx?merchantId=956">Элекснет</a> или на сайте <a href="https://qiwi.com/payment/form/198">QIWI</a>.</p>
 	]]></description>
 	<instruction html="true"><![CDATA[
 	<p>Настройки:</p>
@@ -14,33 +15,28 @@
 	<p><small>Код плательщика можно найти на любой квитанции ЕПД.</small></p>
 	<p><b>Особенности:</b></p>
 	<ul>
-	<li>ГУ ИС не даёт информацию о сумме, если счет уже оплачен.</li>
+	<li>Информация о сумме отсутствует, если счет уже оплачен!</li>
 	</ul>
 	]]></instruction>
-  <author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
-  <depends>
-  	<module id="library"/>
-  </depends>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>main.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="balance" name="Сумма без страховки" units="р"/>
-    <counter id="balance_strah" name="Сумма со страховкой" units="р"/>
-    <counter id="strah" name="Сумма страховки" units="р"/>
-    <counter id="period" name="Период" type="text"/>
-    <counter id="status" name="Статус" type="text"/>
-  </counters>
-  <keywords>
-    единый платежный документ, еирц, ГУ ИС
-  </keywords>
-  <type>
-    municipal
-  </type>
-  <country>
-    ru
-  </country>
+    <author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+    <depends>
+  	    <module id="library"/>
+    </depends>
+    <files>
+	    <icon>icon.png</icon>
+        <preferences>preferences.xml</preferences>
+        <js>main.js</js>
+        <history>history.xml</history>
+    </files>
+    <counters>
+        <counter id="balance" name="Сумма без страховки" units=" ₽"/>
+        <counter id="balance_strah" name="Сумма со страховкой" units=" ₽"/>
+        <counter id="strah" name="Сумма страховки" units=" ₽"/>
+        <counter id="period" name="Период" type="text"/>
+        <counter id="status" name="Статус" type="text"/>
+		<counter id="payer_code" name="Код плательщика" type="text"/>
+    </counters>
+    <keywords>единый платежный документ, еирц, ГУ ИС</keywords>
+    <type>municipal</type>
+    <country>ru</country>
 </provider>

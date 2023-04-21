@@ -147,7 +147,14 @@ function main() {
 	var subs = json.data.userState.subscriptions; // Получаем информацию по всем подпискам в кабинете
     if (subs && subs.length>0){
 		for(var i=0; i<subs.length; ++i){
-		    sumParam(subs[i].asset.title, result, '__tariff', null, null, null, create_aggregate_join(' + '));
+			var pinfo = subs[i];
+			if(pinfo.product == 'TARIFF'){ // Получаем названия тарифа(ов)
+		        sumParam(g_type[pinfo.tariff]||pinfo.tariff, result, '__tariff', null, null, null, create_aggregate_join(' + '));
+			}
+			if(pinfo.product == 'SERVICE'){ // Получаем названия доп. опций
+		        sumParam(pinfo.asset && pinfo.asset.title, result, '__tariff', null, null, null, create_aggregate_join(' + '));
+				sumParam(pinfo.commonPrice && pinfo.commonPrice.amount, result, 'priceadds', null, null, parseBalance, aggregate_sum);
+			}
 		}
 	    var info = subs[0]; // Получаем подробную информацию только по основному тарифу (Плюсу)
 	    if (info){
@@ -177,65 +184,71 @@ function main() {
 	    	AnyBalance.trace('Не удалось получить информацию о подписке');
 	    }
     }else{
-		AnyBalance.trace('Не удалось получить информацию по подпискам');
+		AnyBalance.trace('Не удалось получить информацию о подписках');
 	}
 	
-	html = AnyBalance.requestPost(baseurl + 'api/blackbox_family_info?', JSON.stringify({}), addHeaders({'Referer': AnyBalance.getLastUrl()}));
-		
-	var json = getJson(html);
-	AnyBalance.trace(JSON.stringify(json));
-	
-	if (json && json.users.length>0){
-		getParam(json.users.length, result, 'users', null, replaceTagsAndSpaces, parseBalance);
-		for(var i=0; i<json.users.length; ++i){
-		    sumParam(json.users[i].info.display_name.name, result, 'participants', null, null, null, create_aggregate_join('<br>'));
-		}
-	}else{
-		AnyBalance.trace('Не удалось получить информацию о составе группы');
+	if (AnyBalance.isAvailable(['users', 'participants'])) {
+	    html = AnyBalance.requestPost(baseurl + 'api/blackbox_family_info?', JSON.stringify({}), addHeaders({'Referer': AnyBalance.getLastUrl()}));
+	    	
+	    var json = getJson(html);
+	    AnyBalance.trace(JSON.stringify(json));
+	    
+	    if (json && json.users && json.users.length>0){
+	    	getParam(json.users.length, result, 'users', null, replaceTagsAndSpaces, parseBalance);
+	    	for(var i=0; i<json.users.length; ++i){
+	    	    sumParam(json.users[i].info.display_name.name, result, 'participants', null, null, null, create_aggregate_join(',<br> '));
+	    	}
+	    }else{
+	    	AnyBalance.trace('Не удалось получить информацию о составе группы');
+	    }
 	}
 	
-	html = AnyBalance.requestGet('https://passport.yandex.ru/order-history/', g_headers); // Получаем информацию по истории платежей
+	if (AnyBalance.isAvailable(['lastoperationdate', 'lastoperationsum', 'lastoperationtype'])) {
+	    html = AnyBalance.requestGet('https://id.yandex.ru/pay/history', g_headers); // Получаем информацию по истории платежей
 	
-	var data = getJsonObject(html, /window.__STATE__\s*?=\s*?/);
-
-    var hist = data.orders.orders.edges[0]; // Получаем информацию только по последнему по времени платежу
-	AnyBalance.trace(JSON.stringify(hist));
+	    var data = getJsonObject(html, /"Transaction:[\d\w]*":/);// Получаем информацию только по последней по времени операции
 	
-	if (hist){
-		getParam(hist.created, result, 'lastoperationdate', null, replaceTagsAndSpaces, parseDateISO);
-	    getParam(hist.total, result, 'lastoperationsum', null, replaceTagsAndSpaces, parseBalance);
-		getParam(hist.plus, result, 'lastoperationballs', null, replaceTagsAndSpaces, parseBalance);
-		for(var i=0; i<hist.items.length; ++i){
-		    sumParam(hist.items[i].name, result, 'lastoperationtype', null, null, null, create_aggregate_join('<br>'));
-		}
-	}else{
-		AnyBalance.trace('Не удалось получить информацию о последнем платеже');
+	    if (data){
+	    	AnyBalance.trace(JSON.stringify(data));
+	    	getParam(data.created, result, 'lastoperationdate', null, replaceTagsAndSpaces, parseDateISO);
+	        getParam(data.rootPayment.total, result, 'lastoperationsum', null, replaceTagsAndSpaces, parseBalance);
+//	    	getParam(data.plus, result, 'lastoperationballs', null, replaceTagsAndSpaces, parseBalance); // Яндекс убрал пункт о начисленных по операции баллах
+            for(var i=0; i<data.rootPayment.basket.length; ++i){
+		        sumParam(data.rootPayment.basket[i].name, result, 'lastoperationtype', null, null, null, create_aggregate_join(',<br> '));
+		    }
+	    }else{
+	    	AnyBalance.trace('Не удалось получить информацию о последней операции');
+	    }
 	}
 	
-	html = AnyBalance.requestGet('https://mail.yandex.ru/api/v2/serp/counters?silent', addHeaders({'Referer': 'https://passport.yandex.ru/'}));
-		
-	var json = getJson(html);
-	AnyBalance.trace(JSON.stringify(json));
-
-	getParam(json.counters.fresh, result, 'freshmail', null, replaceTagsAndSpaces, parseBalance);
-	getParam(json.counters.unread, result, 'unreadmail', null, replaceTagsAndSpaces, parseBalance);
+	if (AnyBalance.isAvailable(['freshmail', 'unreadmail'])) {
+	    html = AnyBalance.requestGet('https://mail.yandex.ru/api/v2/serp/counters?silent', addHeaders({'Referer': 'https://passport.yandex.ru/'}));
+	    	
+	    var json = getJson(html);
+	    AnyBalance.trace(JSON.stringify(json));
+        
+	    getParam(json.counters.fresh, result, 'freshmail', null, replaceTagsAndSpaces, parseBalance);
+	    getParam(json.counters.unread, result, 'unreadmail', null, replaceTagsAndSpaces, parseBalance);
+	}
 	
-	html = AnyBalance.requestGet('https://api.passport.yandex.ru/all_accounts', addHeaders({'Referer': 'https://passport.yandex.ru/'}));
-		
-	var json = getJson(html);
-	AnyBalance.trace(JSON.stringify(json));
-	
-	var info = json.accounts[0]; // Получаем информацию только по первому аккаунту
-	
-	if (info){
-		getParam(info.defaultEmail, result, 'email', null, replaceTagsAndSpaces);
-		getParam(info.displayName.name, result, 'accname', null, replaceTagsAndSpaces);
-		var fio = info.displayName.firstname; // Если пользователь не указал в профиле фамилию, значение свойства "fio" имеет вид "Имя null", поэтому делаем в виде сводки
-	    if (info.displayName.lastname)
-	    	fio += ' ' + info.displayName.lastname;
-	    getParam(fio, result, 'fio', null, replaceTagsAndSpaces);
-	}else{
-		AnyBalance.trace('Не удалось получить информацию об аккаунте');
+	if (AnyBalance.isAvailable(['email', 'accname', 'fio'])) {
+	    html = AnyBalance.requestGet('https://api.passport.yandex.ru/all_accounts', addHeaders({'Referer': 'https://passport.yandex.ru/'}));
+	    	
+	    var json = getJson(html);
+	    AnyBalance.trace(JSON.stringify(json));
+	    
+	    var info = json.accounts[0]; // Получаем информацию только по первому аккаунту
+	    
+	    if (info){
+	    	getParam(info.defaultEmail, result, 'email', null, replaceTagsAndSpaces);
+	    	getParam(info.displayName.name, result, 'accname', null, replaceTagsAndSpaces);
+	    	var fio = info.displayName.firstname; // Если пользователь не указал в профиле фамилию, значение свойства "fio" имеет вид "Имя null", поэтому делаем в виде сводки
+	        if (info.displayName.lastname)
+	        	fio += ' ' + info.displayName.lastname;
+	        getParam(fio, result, 'fio', null, replaceTagsAndSpaces);
+	    }else{
+	    	AnyBalance.trace('Не удалось получить информацию об аккаунте');
+	    }
 	}
 
     AnyBalance.setResult(result);

@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="4">ab-money-yandex-plus</id>
+	<id version="6">ab-money-yandex-plus</id>
 	<api flags="no_browser" />
 	<name>Яндекс Плюс</name>
 	<description html="true"><![CDATA[
@@ -31,6 +31,7 @@
 		<counter id="starteddate" name="Дата начала подписки" type="time" format="dd.MM.yyyy"/>
 		<counter id="expiresdate" name="Дата окончания подписки" type="time" format="dd.MM.yyyy"/>
 		<counter id="expiresdays" name="Срок окончания подписки" units=" дн"/>
+		<counter id="priceadds" name="Стоимость доп. опций" units=" {@currency}"/>
 		<counter id="nextpaymentamount" name="Сумма след. платежа" units=" {@currency}"/>
 		<counter id="nextpaymentdate" name="Дата след. платежа" type="time" format="dd.MM.yyyy"/>
 		<counter id="role" name="Статус пользователя" type="text"/>
@@ -39,7 +40,7 @@
 		<counter id="lastoperationdate" name="Дата посл. операции" type="time" format="dd.MM.yyyy"/>
 		<counter id="lastoperationsum" name="Сумма посл. операции" units=" {@currency}"/>
 		<counter id="lastoperationtype" name="Тип посл. операции" type="html"/>
-		<counter id="lastoperationballs" name="Начислено по операции" units=" Б"/>
+<!--	<counter id="lastoperationballs" name="Начислено по операции" units=" Б"/> -->
 		<counter id="freshmail" name="Недавние письма" units=" шт"/>
 		<counter id="unreadmail" name="Непрочитанные письма" units=" шт"/>
 		<counter id="email" name="E-mail" type="text"/>

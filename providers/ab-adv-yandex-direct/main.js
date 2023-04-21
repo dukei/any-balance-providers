@@ -31,10 +31,6 @@ var g_currency = {
 var baseurl = "https://direct.yandex.ru/";
 var g_savedData;
 
-function getIdKey(html){
-    return getParam(html, null, null, /<input[^>]*name="idkey"[^>]*value="([^"]*)/i);
-}
-
 function main(){
     var prefs = AnyBalance.getPreferences();
     
@@ -52,9 +48,18 @@ function main(){
 	g_savedData.restoreCookies();
 	
 	var uLogin = g_savedData.get('uLogin');
+	
+	if(!uLogin){
+		if(/@/i.test(prefs.login)){
+			uLogin = prefs.login.replace(/(.*)(@.*)$/, '$1');
+		}else{
+			uLogin = prefs.login;
+		}
+	}
+	
 	var html = AnyBalance.requestGet(baseurl + 'wizard/overview/?ulogin=' + uLogin, g_headers);
 	
-	if (!html || AnyBalance.getLastStatusCode() > 400) {
+	if (!html || AnyBalance.getLastStatusCode() >= 500) {
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Сайт провайдера временно недоступен. Попробуйте еще раз позже');
 	}
@@ -67,19 +72,22 @@ function main(){
 			
 		html = AnyBalance.requestGet(baseurl, g_headers);
 			
-        if(!/=logout/i.test(html)){
+        var lastUrl = AnyBalance.getLastUrl();
+		
+		if(!/ulogin=/i.test(lastUrl)){
+			uLogin = AnyBalance.getCookie('yandex_login');
+			if(!uLogin && /"loggedin":true/i.test(html)){
+    	    	uLogin = getParam(html, null, null, /"login":"([^"]*)/);
+    	    }
+			html = AnyBalance.requestGet(baseurl + 'wizard/overview/?ulogin=' + uLogin, g_headers);
+		}else{
+			uLogin = getParam(lastUrl, null, null, /ulogin=([\s\S]*?)$/i, replaceTagsAndSpaces);
+		}
+		
+		if(!/=logout/i.test(html)){
     		AnyBalance.trace(html);
     	    throw new AnyBalance.Error('Не удалось войти в личный кабинет. Сайт изменен?');
     	}
-
-		var lastUrl = AnyBalance.getLastUrl();
-		
-		if(!/ulogin=/i.test(lastUrl)){
-			var uLogin = AnyBalance.getCookie('yandex_login');
-		    html = AnyBalance.requestGet(baseurl + 'wizard/overview/?ulogin=' + uLogin, g_headers);
-		}else{
-			var uLogin = getParam(lastUrl, null, null, /ulogin=([\s\S]*?)$/i, replaceTagsAndSpaces);
-		}
 			
 		g_savedData.set('uLogin', uLogin);
 		g_savedData.setCookies();
@@ -93,6 +101,16 @@ function main(){
         throw new AnyBalance.Error('Не удалось найти идентификатор сессии. Сайт изменен?');
 	
 	var result = {success: true};
+	
+	var data = getJsonObject(html, /"currentClient":/);
+	AnyBalance.trace('data: ' + JSON.stringify(data));
+	
+	if(AnyBalance.isAvailable(['account', '__tariff'])){
+		if(data && data.walletId){
+			result.account = data.walletId;
+			result.__tariff = data.walletId;
+		}
+	}
 	
     var jsonInfoStr = AnyBalance.requestGet('https://direct.yandex.ru/widget/export?yandexuid=' + yandexuid + '&cid=' + (prefs.cid || ''), g_headers);
 	if(/Сервис временно недоступен/.test(jsonInfoStr))
@@ -120,8 +138,13 @@ function main(){
 	
     result.currency = (g_currency[currency_code]) || currency_code;
 	
-	if(AnyBalance.isAvailable('balance'))
-        result.balance = sum_rest;
+	if(AnyBalance.isAvailable('balance')){
+		if(data && data.balance){
+			result.balance = data.balance;
+		}else{
+            result.balance = sum_rest;
+		}
+	}
 	
 	if(AnyBalance.isAvailable('currency_full'))
         result.currency_full = currency_code;
@@ -145,7 +168,7 @@ function main(){
             var camp = active_camps_list[i];
             campsNames[i] = '[' + camp.cid + '] ' + camp.name;
         }
-        result.clist = campsNames.join(',\n');
+        result.clist = campsNames.join(', \n') || 'Нет кампаний';
     }
 	
     var camps_info = jsonInfo.camps_info && jsonInfo.camps_info[0];
@@ -175,7 +198,8 @@ function main(){
 	var fio = firstname;
 	if(lastname)
 		fio += ' ' + lastname;
-	result.__tariff = fio;
+	if(!result.__tariff)
+		result.__tariff = fio;
 	
 	if(AnyBalance.isAvailable('fio'))
 	    result.fio = fio;

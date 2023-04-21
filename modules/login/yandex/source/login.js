@@ -186,6 +186,18 @@ function loginYandex(login, password, html, retpath, origin) {
 			    challenge: challengeType,
 				answer: answer
 		    }, 'Ошибка подтверждения входа');
+		}else if(challengeType === 'question'){
+			AnyBalance.trace('Требуется ответ на контрольный вопрос');
+			
+			var hint = json.challenge.hint;
+			var answer = AnyBalance.retrieveCode('Пожалуйста, введите ответ на контрольный вопрос:\n\n' + hint, null, {/*inputType: 'number', */time: 180000});
+			
+			json = apiPost('registration-validations/auth/challenge/commit', {
+			    csrf_token: csrf,
+			    track_id: track_id,
+			    challenge: challengeType,
+				answer: answer
+		    }, 'Ошибка подтверждения входа');
 			
 		}else{
 			AnyBalance.trace(html);

@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="3">ab-municipal-moygaz-smorodina</id>
+	<id version="4">ab-municipal-moygaz-smorodina</id>
 	<api flags="no_browser"/>
 	<name>Мой ГАЗ Смородина</name>
 	<description html="true"><![CDATA[
@@ -11,7 +11,7 @@
 	<p>Для получения данных с сайта необходимо ввести в настройки провайдера свой логин, на который зарегистрирован личный кабинет, и пароль для входа.</p>
 	<p>Если в кабинете зарегистрировано несколько лицевых счетов, вы можете выбрать счет, по которому хотите получать информацию, в настройках провайдера.</p>
 	]]></instruction>
-	<author>RamzesZeus &lt;ramzeszeus@gmail.com&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>
 		<module id="library"/>
 	</depends>

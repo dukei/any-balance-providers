@@ -15,32 +15,10 @@ var g_headers = {
 var baseurl = 'https://xn--80afnfom.xn--80ahmohdapg.xn--80asehdb';
 var replaceNumber = [replaceTagsAndSpaces, /\D/g, '', /.*(\d)(\d\d\d)(\d\d\d)(\d\d)(\d\d)$/, '+$1 $2 $3-$4-$5'];
 
-function main() {
-	var prefs = AnyBalance.getPreferences();
-	
-	AnyBalance.setDefaultCharset('utf-8');
-	
-	AnyBalance.trace ('Пробуем войти в личный кабинет...');
-	
+function getInfo(){
 	var g_token = AnyBalance.getData('token');
 	
-	if (g_token) {
-    	AnyBalance.trace('Сессия сохранена. Входим автоматически...');
-    	AnyBalance.restoreCookies();
-    	
-    } else {
-    	AnyBalance.trace('Сессия новая. Будем логиниться заново...');
-    	clearAllCookies();
-    	loginSite(prefs);
-    }
-
-	var result = {success: true};
-	
-	var g_token = AnyBalance.getData('token');
-	
-	AnyBalance.trace ('Пробуем получить информацию о пользователе...');
-	
-	var params = {
+    var params = {
 	    "operationName":"Client",
 		"variables":{},
 		"query":"query Client {\n  client {\n    id\n    identifier\n    email\n    phone\n    name\n    photo\n    token\n    hash\n    __typename\n  }\n}\n"
@@ -58,18 +36,54 @@ function main() {
 	AnyBalance.trace(JSON.stringify(json));
 	
 	if (json.errors) {
-		var error = json.errors.message;
-    	if (error) {
-		AnyBalance.trace(html);
-    		throw new AnyBalance.Error(error);	
-    	}
+		var error = (json.errors || []).map(function(e) { return e.message }).join('\n');
+    	if (error)
+    		throw new AnyBalance.Error(error, null, true);
 
     	AnyBalance.trace(html);
     	throw new AnyBalance.Error('Не удалось войти в личный кабинет. Сайт изменён?');
     }
+	
+    return json.data;
+}
 
-	getParam(json.data.client.name, result, 'fio');
-	getParam(json.data.client.phone, result, 'phone', null, replaceNumber);
+function main() {
+	var prefs = AnyBalance.getPreferences();
+	
+	AnyBalance.setDefaultCharset('utf-8');
+	
+	AnyBalance.trace ('Пробуем войти в личный кабинет...');
+	
+	var g_token = AnyBalance.getData('token');
+	
+	if (g_token) {
+		try{
+	    	AnyBalance.restoreCookies();
+			var json = getInfo();
+	    	AnyBalance.trace('Сессия сохранена. Входим автоматически...');
+	    }catch(e){
+	    	AnyBalance.trace('Сессия истекла. Будем логиниться заново...');
+	    	clearAllCookies();
+	    	AnyBalance.setData('token', undefined);
+	        AnyBalance.saveData();
+			loginSite(prefs);
+	    }
+    } else {
+    	AnyBalance.trace('Сессия новая. Будем логиниться заново...');
+    	clearAllCookies();
+    	loginSite(prefs);
+    }
+
+	var result = {success: true};
+	
+	var g_token = AnyBalance.getData('token');
+	
+	AnyBalance.trace ('Пробуем получить информацию о пользователе...');
+	
+	var json = getInfo();
+
+	getParam(json.client.name, result, 'fio');
+	getParam(json.client.phone, result, 'phone', null, replaceNumber);
 	
 	AnyBalance.trace ('Пробуем получить информацию по лицевому счету...');
 	

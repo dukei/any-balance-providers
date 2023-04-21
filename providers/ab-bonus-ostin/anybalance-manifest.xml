@@ -1,14 +1,20 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="5">ab-bonus-ostin</id>
-	<name>O`stin бонусы</name>
+	<id version="6">ab-bonus-ostin</id>
+	<name>O’STIN БОНУС</name>
 	<description html="true"><![CDATA[
-	<p>Получает баланс бонусных баллов на карте O`stin по адресу http://bonus.ostin.com/</p>
+	<p>Предоставляет информацию о балансе бонусных баллов и другие данные по бонусной программе O’STIN БОНУС.</p>
+	<p>Информация берется из личного кабинета O’STIN на сайте https://ostin.com/personal/club/.</p>
 	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Если у вас нет доступа в личный кабинет, получите его на странице https://ostin.com/.</p>
+	<p>Для работы провайдера требуется ввести номер телефона, привязанного к личному кабинету O’STIN, и код подтверждения из SMS, высланного на этот номер.</p>
+	]]></instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>
 		<module id="library"/>
+		<module id="framework/browser"/>
 	</depends>
 	<files>
 		<icon>icon.png</icon>
@@ -17,12 +23,20 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units=" б"/>
-		<counter id="total" name="Оборот" units=" р"/>
-		<counter id="next_level" name="До следующего уровня" units=" р"/>
-		<counter id="current_level" name="Уровень участия" type="text"/>
+		<counter id="balance" name="Баланс" units=" Б"/>
+		<counter id="total" name="Оборот" units=" ₽"/>
+		<counter id="expire_sum" name="Сгораемые бонусы" units=" Б"/>
+		<counter id="expire_date" name="Дата сгорания" type="time" format="dd.MM.yyyy"/>
+		<counter id="to_next_level" name="До следующего уровня" units=" ₽"/>
+		<counter id="current_level" name="Текущий уровень" type="text"/>
+		<counter id="bonus_percent" name="Уровень кэшбэка" units="%"/>
+		<counter id="next_level" name="Следующий уровень" type="text"/>
+		<counter id="cardnum" name="Номер карты" type="text"/>
+		<counter id="phone" name="Номер телефона" type="text"/>
+		<counter id="email" name="E-mail" type="text"/>
+        <counter id="fio" name="ФИО" type="text"/>
 	</counters>
-	<keywords>остин</keywords>
+	<keywords>O’stin, ostin, О’стин, остин</keywords>
 	<type>bonus</type>
 	<country>ru</country>
 </provider>

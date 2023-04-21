@@ -4,16 +4,18 @@
 */
 
 var g_headers = {
-	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-	'Accept-Language': 'ru,en-US;q=0.8,en;q=0.6',
+	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
+	'Accept-Language': 'ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7',
+	'Cache-Control': 'max-age=0',
 	'Connection': 'keep-alive',
-	Origin: 'https://newlk.letai.ru:8443',
-	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.99 Safari/537.36',
+	'Origin': 'https://lk.letai.ru/template.LOGIN',
+	'Upgrade-Insecure-Requests': '1',
+	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36',
 };
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'https://newlk.letai.ru:8443/template.LOGIN/';
+	var baseurl = 'https://lk.letai.ru/template.LOGIN/';
 	AnyBalance.setDefaultCharset('utf-8');
 
 	AB.checkEmpty(prefs.login, 'Введите логин!');
@@ -101,7 +103,7 @@ function main() {
 
 		if(!prefs.num || endsWith(num, prefs.num) || endsWith(phoneNum || '', prefs.num)){
 			getParam(num, result, 'licschet');
-			getParam(phoneNum, result, 'phone');
+			getParam(phoneNum && phoneNum.replace(/(\d\d\d)(\d\d\d)(\d\d)(\d\d)$/, '+7 $1 $2-$3-$4'), result, 'phone');
 			getParam(div, result, '__tariff', /(?:тарифный план|Тариф -)([^<]*)/i, replaceTagsAndSpaces);
 			getParam(div, result, 'balance', /<div[^>]+widget-price[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
 			getParam(div, result, 'abon', /Абонентская плата([^<]*)/i, replaceTagsAndSpaces, parseBalance);

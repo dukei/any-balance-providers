@@ -1,25 +1,34 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="5">ab-exchange-aliexpress</id>
+  <id version="6">ab-exchange-aliexpress</id>
   <api flags="no_browser"/>
-  <name>Курс Алиэкспресс</name>
+  <name>Курс AliExpress</name>
   <description html="true"><![CDATA[
-  <p>Определяет внутренний курс доллара в интернет-магазине Алиэкспресс (AliExpress) <a href="http://s.aliexpress.com/bMjqq6fM"/>http://www.aliexpress.com/</a></p>
+  <p>Предоставляет информацию о внутреннем курсе доллара в интернет-магазине AliExpress для международной (<a href="http://www.aliexpress.com/"/>AliExpress Global</a>) и российской (<a href="http://www.aliexpress.com/"/>AliExpress Россия</a>) площадок.</p>
+  <p>Информация берется из блога https://moneyfromnothing.ru/ на странице https://moneyfromnothing.ru/blog/aliexpress-kurs-dollara/.</p>
   ]]></description>
   <author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
   <depends>
-    <module id="library"/>
+      <module id="library"/>
   </depends>
   <files>
-    <icon>icon.png</icon>
-    <js>main.js</js>
-    <history>history.xml</history>
+      <icon>icon.png</icon>
+      <js>main.js</js>
+      <history>history.xml</history>
   </files>
   <counters>
-    <counter id="rate" name="Курс" units=" р за $1"/>
-    <counter id="date" name="Дата" type="time" format="dd/MM/yyyy"/>
+      <counter id="rate" name="Курс AliExpress Global" prefix="AG$ " units=" ₽"/>
+	  <counter id="rateru" name="Курс AliExpress Россия" prefix="AR$ " units=" ₽"/>
+	  <counter id="ratecbrf" name="Курс ЦБ РФ" prefix="CB$ " units=" ₽"/>
+	  <counter id="averrate" name="Ср. курс AliExpress Global" prefix="AG$~ " units=" ₽"/>
+	  <counter id="averrateru" name="Ср. курс AliExpress Россия" prefix="AR$~ " units=" ₽"/>
+	  <counter id="averratecbrf" name="Ср. курс ЦБ РФ" prefix="CB$~ " units=" ₽"/>
+	  <counter id="trend" name="Тренд AliExpress Global" type="html"/>
+	  <counter id="trendru" name="Тренд AliExpress Россия" type="html"/>
+	  <counter id="trendcbrf" name="Тренд ЦБ РФ" type="html"/>
+      <counter id="date" name="Дата курса" type="time" format="dd.MM.yyyy"/>
   </counters>
-  <keywords>алиэкспресс, покупки, шоппинг, обмен валют</keywords>
+  <keywords>AliExpress, алиэкспресс, покупки, шоппинг, обмен валют</keywords>
   <type>exchange, shop</type>
   <country>ru</country>
 </provider>

@@ -7,11 +7,13 @@
 */
 
 var g_headers = {
-  'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-  'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
-  'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
-  'Connection': 'keep-alive',
-  'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
+    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
+    'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
+    'Accept-Language': 'ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7',
+    'Connection': 'keep-alive',
+    'cache-control': 'max-age=0',
+    'upgrade-insecure-requests': '1',
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36'
 };
 
 var g_iso_to2letters = {
@@ -22,27 +24,29 @@ var g_iso_to2letters = {
 };
 
 function main(){
-  var prefs = AnyBalance.getPreferences();
-  AnyBalance.setDefaultCharset('utf-8');
+    var prefs = AnyBalance.getPreferences();
+    AnyBalance.setDefaultCharset('utf-8');
 
-  var region = findRegion(prefs.region).TRBANK_CODE;
+    var region = findRegion(prefs.region).TRBANK_CODE;
   
-  if (/office/.test(prefs.type)) {
+    if (/office/.test(prefs.type)) {
         var segType = '&segType=TRADITIONAL';
-        var requestID = 'c169d176feee11568f0ed90b07e5cada';
+		var enterType = '?tab=offices';
 		var sourceType = 'Офисы банка';
 	} else {
         var segType = '';
-        var requestID = '1e65ab9578777362383f525a74b7268f';
+		var enterType = '';
 		var sourceType = 'СберБанк Онлайн';
     }	
-
-  var html = AnyBalance.requestGet('https://www.sberbank.ru/proxy/services/rates/public/actual?rateType=PMR-3&isoCodes[]=A98&isoCodes[]=A99&isoCodes[]=A76&isoCodes[]=A33&regionId=' + region + segType,
-  	addHeaders({
-  		'X-Requested-With': 'XMLHttpRequest',
-  		'X-Request-ID': requestID,
-  		Referer: 'https://www.sberbank.ru/ru/quotes/metalbeznal/'
-  	}));
+  
+  var html = AnyBalance.requestGet('https://www.sberbank.ru/ru/quotes/metalbeznal', g_headers);
+  
+  html = AnyBalance.requestGet('https://www.sberbank.ru/proxy/services/rates/public/actual?rateType=PMR-3&isoCodes[]=A98&isoCodes[]=A99&isoCodes[]=A76&isoCodes[]=A33&regionId=' + region + segType,
+  addHeaders({
+      accept: '*/*',
+  	  Referer: 'https://www.sberbank.ru/ru/quotes/metalbeznal' + enterType
+  }));
+  AnyBalance.trace(html);
 
   var json = getJson(html);
 

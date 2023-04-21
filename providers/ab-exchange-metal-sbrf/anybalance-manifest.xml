@@ -1,46 +1,40 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="12">ab-exchange-metal-sbrf</id>
-  <api flags="no_browser"/>
-  <name>Курсы драгоценных металлов Сбербанка</name>
-  <description html="true"><![CDATA[
-  <p>Текущие курсы покупки и продажи драгоценных металлов ОМС, установленные Сбербанком РФ. Содержит цены золота, серебра, платины и палладия. Получает данные со страницы https://www.sberbank.ru/ru/quotes/metalbeznal/.</p>
-  <p>Позволяет также ввести вес имеющегося у вас металла и выводит ваш капитал в случае продажи всего металла Сбербанку по текущей цене покупки.</p>
-  ]]></description>
-  <author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
-  <depends>
-    <module id="library"/>
-    <module id="framework/sbrf"/>
-  </depends>
-  <files>
-    <icon>icon.png</icon>
-    <js>main.js</js>
-    <preferences>preferences.xml</preferences>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="Au_buy" name="Золото покупка" prefix="Au↓ " units=" ₽"/>
-    <counter id="Au_sell" name="Золото продажа" prefix="Au↑ " units=" ₽"/>
-    <counter id="Au_weight" name="Золото за вес" prefix="Au+ " units=" ₽"/>
-    <counter id="Ag_buy" name="Серебро покупка" prefix="Ag↓ " units=" ₽"/>
-    <counter id="Ag_sell" name="Серебро продажа" prefix="Ag↑ " units=" ₽"/>
-    <counter id="Ag_weight" name="Серебро за вес" prefix="Ag+ " units=" ₽"/>
-    <counter id="Pt_buy" name="Платина покупка" prefix="Pt↓ " units=" ₽"/>
-    <counter id="Pt_sell" name="Платина продажа" prefix="Pt↑ " units=" ₽"/>
-    <counter id="Pt_weight" name="Платина за вес" prefix="Pt+ " units=" ₽"/>
-    <counter id="Pd_buy" name="Палладий покупка" prefix="Pd↓ " units=" ₽"/>
-    <counter id="Pd_sell" name="Палладий продажа" prefix="Pd↑ " units=" ₽"/>
-    <counter id="Pd_weight" name="Палладий за вес" prefix="Pd+ " units=" ₽"/>
-    <counter id="date" name="Дата курсов" type="time" format="dd.MM.yyyy"/>
-	<counter id="source" name="Источник курсов" type="text"/>
-  </counters>
-  <keywords>
-    Драгоценные металлы, золото, серебро, платина, палладий, sberbank, сберегательный банк
-  </keywords>
-  <type>
-    exchange
-  </type>
-  <country>
-    ru
-  </country>
+    <id version="13">ab-exchange-metal-sbrf</id>
+    <api flags="no_browser"/>
+    <name>Курсы драгоценных металлов СБ РФ</name>
+    <description html="true"><![CDATA[
+    <p>Предоставляет информацию о курсах драгоценных металлов ОМС от банка "СберБанк" со страницы https://www.sberbank.ru/ru/quotes/metalbeznal/.</p>
+    <p>Позволяет также ввести вес имеющегося у вас металла и выводит ваш капитал в случае продажи всего металла СберБанку по текущей цене покупки.</p>
+    ]]></description>
+    <author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+    <depends>
+        <module id="library"/>
+        <module id="framework/sbrf"/>
+    </depends>
+    <files>
+        <icon>icon.png</icon>
+        <js>main.js</js>
+        <preferences>preferences.xml</preferences>
+        <history>history.xml</history>
+    </files>
+    <counters>
+        <counter id="Au_buy" name="Золото покупка" prefix="Au↓ " units=" ₽"/>
+        <counter id="Au_sell" name="Золото продажа" prefix="Au↑ " units=" ₽"/>
+        <counter id="Au_weight" name="Золото за вес" prefix="Au+ " units=" ₽"/>
+        <counter id="Ag_buy" name="Серебро покупка" prefix="Ag↓ " units=" ₽"/>
+        <counter id="Ag_sell" name="Серебро продажа" prefix="Ag↑ " units=" ₽"/>
+        <counter id="Ag_weight" name="Серебро за вес" prefix="Ag+ " units=" ₽"/>
+        <counter id="Pt_buy" name="Платина покупка" prefix="Pt↓ " units=" ₽"/>
+        <counter id="Pt_sell" name="Платина продажа" prefix="Pt↑ " units=" ₽"/>
+        <counter id="Pt_weight" name="Платина за вес" prefix="Pt+ " units=" ₽"/>
+        <counter id="Pd_buy" name="Палладий покупка" prefix="Pd↓ " units=" ₽"/>
+        <counter id="Pd_sell" name="Палладий продажа" prefix="Pd↑ " units=" ₽"/>
+        <counter id="Pd_weight" name="Палладий за вес" prefix="Pd+ " units=" ₽"/>
+        <counter id="date" name="Дата курсов" type="time" format="dd.MM.yyyy"/>
+	    <counter id="source" name="Источник курсов" type="text"/>
+    </counters>
+    <keywords>Драгоценные металлы, золото, серебро, платина, палладий, sberbank, сберегательный банк</keywords>
+    <type>exchange</type>
+    <country>ru</country>
 </provider>

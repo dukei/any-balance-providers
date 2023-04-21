@@ -3,34 +3,97 @@
 */
 
 var g_headers = {
-	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+	'Accept': 'application/json, text/plain, */*',
 	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
-	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
-	'Connection': 'keep-alive',
-	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
+	'Accept-Language': 'ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7',
+	'origin': 'https://www.vtb.ru',
+    'referer': 'https://www.vtb.ru/',
+	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36',
+};
+
+var g_iso_to2letters = {
+	USD: 'usd',
+	EUR: 'eur',
+	GBP: 'gbp',
+	CHF: 'chf',
+	CAD: 'cad',
+	SEK: 'sek',
+	NOK: 'nok',
+	JPY: 'jpy',
+	CNY: 'cny',
+	PLN: 'pln',
+	DKK: 'dkk',
+	TRY: 'try',
+	AED: 'aed',
 };
 
 function main() {
-	var baseurl = 'http://www.vtb24.ru/_layouts/Vtb24.Pages/CurrencyRateAjaxRedesign.aspx';
+	var prefs = AnyBalance.getPreferences();
+    
 	AnyBalance.setDefaultCharset('utf-8');
+
+    if(/office/.test(prefs.type)){
+        var category = 1;
+		var sourceType = 'Офисы банка';
+	}else{
+        var category = 3;
+		var sourceType = 'ВТБ Онлайн';
+    }
+    
+    var html = AnyBalance.requestGet('https://siteapi.vtb.ru/api/currencyrates/table?category=' + category + '&type=1', g_headers);
 	
-	var html = AnyBalance.requestGet(baseurl, g_headers);
+	if(AnyBalance.getLastStatusCode() >= 500){
+        AnyBalance.trace(html);
+        throw new AnyBalance.Error('Сайт провайдера временно недоступен. Попробуйте еще раз позже');
+    }
 	
-	if (!/Конвертация в офисе/i.test(html)) {
-		var error = AB.getParam(html, null, null, /<div[^>]+class="t-error"[^>]*>[\s\S]*?<ul[^>]*>([\s\S]*?)<\/ul>/i, AB.replaceTagsAndSpaces);
-		if (error)
-			throw new AnyBalance.Error(error, null, /Неверный логин или пароль/i.test(error));
+	AnyBalance.trace(html);
+
+    var json = getJson(html);
+	
+	if(!json.rates){
+		var error = json.error || json.message || json.title;
+		if(error)
+			throw new AnyBalance.Error(error, null, true);
 		
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось получить информацию по курсам валют. Сайт изменен?');
 	}
 	
 	var result = {success: true};
-
-    AB.getParam(html, result, 'usd_buy', /USD(?:[^>]*>){4}([\s\d,.]+)/i, AB.replaceTagsAndSpaces, AB.parseBalance);
-    AB.getParam(html, result, 'usd_sell', /USD(?:[^>]*>){7}([\s\d,.]+)/i, AB.replaceTagsAndSpaces, AB.parseBalance);
-    AB.getParam(html, result, 'eur_buy', /eur(?:[^>]*>){4}([\s\d,.]+)/i, AB.replaceTagsAndSpaces, AB.parseBalance);
-    AB.getParam(html, result, 'eur_sell', /eur(?:[^>]*>){7}([\s\d,.]+)/i, AB.replaceTagsAndSpaces, AB.parseBalance);
+	
+	var rates = json.rates;
+	
+	getParam(json.dateFrom && json.dateFrom.replace(/(\d{4})-(\d{2})-(\d{2})(.*)/,'$3.$2.$1'), result, '__tariff');
+	
+	if(AnyBalance.isAvailable('date'))
+	    getParam(json.dateFrom && json.dateFrom.replace(/(\d{4})-(\d{2})-(\d{2})(.*)/,'$3.$2.$1'), result, 'date', null, null, parseDate);
+	
+	if(AnyBalance.isAvailable('source'))
+            getParam(sourceType, result, 'source');
+	
+	for(var i=rates.length-1; i>=0; i--){ // Начинаем с конца, чтобы игнорировать коэффициент обмена
+		var valut = rates[i];
+		var key = valut.currency1.code;
+  	    var name = g_iso_to2letters[key];
+	    AnyBalance.trace(name + ': ' + JSON.stringify(valut));
+        if(AnyBalance.isAvailable(name + '_purch'))
+            result[name + '_purch'] = valut.bid;
+        if(AnyBalance.isAvailable(name + '_sell'))
+            result[name + '_sell'] = valut.offer;
+        if(AnyBalance.isAvailable(name + '_amount') && (amount = getAmount(name)))
+            result[name + '_amount'] = valut.bid * amount;
+	}
 	
 	AnyBalance.setResult(result);
+}
+
+function getAmount(valut){
+	var prefs = AnyBalance.getPreferences();
+	if(!prefs.amount)
+		return undefined;
+	if(/^[\d\s\.,]+$/.test(prefs.amount))
+		return parseBalance(prefs.amount);
+	var amount = getParam(prefs.amount, null, null, new RegExp(valut + '\s*:([^;a-z]*)', 'i'), null, parseBalance);
+	return amount;
 }

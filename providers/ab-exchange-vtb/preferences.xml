@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+	<ListPreference
+		key="type"
+		title="Источник курсов"
+		summary="Источник для получения информации||{@s}\n"
+		dialogTitle="Источник курсов"
+		entries="Офисы банка|ВТБ Онлайн"
+		entryValues="office|online"
+		defaultValue="office">
+	</ListPreference>
+    <EditTextPreference
+        title="Валюта на продажу"
+        positiveButtonText="ОК"
+        summary="Можно ввести сумму валюты, которая у вас есть, тогда будет показано, сколько рублей вы выручите, продав валюту банку ВТБ|Введите сумму\n|{@s}\n"
+        dialogTitle="Сумма валюты"
+        negativeButtonText="Отмена"
+        dialogMessage="Можно ввести сумму разных валют, например, eur:100;usd:255 или просто одно число, тогда эта сумма будет применена ко всем валютам"
+        key="amount"
+        inputType="text">
+    </EditTextPreference>
+</PreferenceScreen>

@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+	<ListPreference
+		key="type"
+		title="Источник курсов"
+		summary="Источник для получения информации||{@s}\n"
+		dialogTitle="Источник курсов"
+		entries="Отделения банка|Альфа-Онлайн"
+		entryValues="office|online"
+		defaultValue="office">
+	</ListPreference>
+</PreferenceScreen>

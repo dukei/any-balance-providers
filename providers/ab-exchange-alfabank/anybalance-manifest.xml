@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-exchange-alfabank</id>
+	<id version="2">ab-exchange-alfabank</id>
 	<api flags="no_browser"/>
-	<name>Альфа-Банк курс валют</name>
+	<name>Курсы валют Альфа-Банка</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о курсе валют Альфа-Банка <a href="https://alfabank.ru/">https://alfabank.ru/</a></p>
-	<p>Информация берется с RSS страницы <a href="https://alfabank.ru/_/rss/_currency.html">https://alfabank.ru/_/rss/_currency.html</a></p>
+	<p>Предоставляет информацию о курсах валют Альфа-Банка (https://alfabank.ru/).</p>
+	<p>Информация берется со страницы https://alfabank.ru/currency/.</p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>
@@ -13,22 +13,25 @@
 	</depends>
 	<files>
 		<icon>icon.png</icon>
-		<!-- <preferences>preferences.xml</preferences> -->
+		<preferences>preferences.xml</preferences>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="buyUSD" name="USD покупка" units=" р"/>
-    <counter id="sellUSD" name="USD продажа" units=" р"/>
-    <counter id="buyEUR" name="EUR покупка" units=" р"/>
-    <counter id="sellEUR" name="EUR продажа" units=" р"/>
-		<counter id="buyGBP" name="GBP покупка" units=" р"/>
-    <counter id="sellGBP" name="GBP продажа" units=" р"/>
-    <counter id="buyCHF" name="CHF покупка" units=" р"/>
-    <counter id="sellCHF" name="CHF продажа" units=" р"/>
-    <counter id="date" name="Дата" type="time" format="dd/MM/yyyy"/>
+		<counter id="buyUSD" name="USD покупка" prefix="$↓ " units=" ₽"/>
+        <counter id="sellUSD" name="USD продажа" prefix="$↑ " units=" ₽"/>
+        <counter id="buyEUR" name="EUR покупка" prefix="€↓ " units=" ₽"/>
+        <counter id="sellEUR" name="EUR продажа" prefix="€↑ " units=" ₽"/>
+		<counter id="buyGBP" name="GBP покупка" prefix="£↓ " units=" ₽"/>
+        <counter id="sellGBP" name="GBP продажа" prefix="£↑ " units=" ₽"/>
+        <counter id="buyCHF" name="CHF покупка" prefix="₣↓ " units=" ₽"/>
+        <counter id="sellCHF" name="CHF продажа" prefix="₣↑ " units=" ₽"/>
+		<counter id="buyCNY" name="CNY покупка" prefix="Ұ↓ " units=" ₽"/>
+        <counter id="sellCNY" name="CNY продажа" prefix="Ұ↑ " units=" ₽"/>
+        <counter id="date" name="Дата курсов" type="time" format="dd.MM.yyyy"/>
+	    <counter id="source" name="Источник курсов" type="text"/>
 	</counters>
-	<keywords>обмен валют</keywords>
+	<keywords>Курсы, валюта, доллар, евро, фунт, альфа-банк</keywords>
 	<type>exchange</type>
 	<country>ru</country>
 </provider>

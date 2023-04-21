@@ -123,12 +123,12 @@ function main(){
 	AnyBalance.trace ('Получаем данные о владельце...');
 	
 	html = AnyBalance.requestPost(baseurl + '/api/profile', null, addHeaders({
-	        	'Accept': 'application/json, text/plain, */*',
-	        	'Content-Type': 'text/plain;charset=UTF-8',
-	        	'Origin': baseurl,
-	        	'Referer': baseurl + '/products',
-	        	'X-CSRF-TOKEN': g_csrf
-	        }));
+		'Accept': 'application/json, text/plain, */*',
+		'Content-Type': 'text/plain;charset=UTF-8',
+		'Origin': baseurl,
+	    'Referer': baseurl + '/products',
+		'X-CSRF-TOKEN': g_csrf
+    }));
 	
 	var json = getJson(html);
 	AnyBalance.trace(JSON.stringify(json));
@@ -180,17 +180,17 @@ function fetchCard(prefs, result){
 	
 	var cardId = currCard.id;
 	
-	getParam(card.balance, result, ['balance', 'currency']);
-	getParam(g_currency[card.currency]||card.currency, result, 'currency');
-	getParam(card.number, result, '__tariff');
-	getParam(card.number, result, 'cardnum');
-	getParam(card.name, result, 'type');
-	getParam(g_statusCard[card.status]||card.status, result, 'status');
-	getParam(card.cardHolder, result, 'cardholder');
-	getParam(card.expDate.replace(/(\d{4})(\d{2})/,'$2/$1'), result, 'till');
+	getParam(currCard.balance, result, ['balance', 'currency'], null, null, parseBalance);
+	getParam(g_currency[currCard.currency]||currCard.currency, result, ['currency', 'balance']);
+	getParam(currCard.number, result, '__tariff');
+	getParam(currCard.number, result, 'cardnum');
+	getParam(currCard.name, result, 'type');
+	getParam(g_statusCard[currCard.status]||currCard.status, result, 'status');
+	getParam(currCard.cardHolder, result, 'cardholder');
+	getParam(currCard.expDate && currCard.expDate.replace(/(\d{4})(\d{2})/,'$2/$1'), result, 'till');
 	
 	if(AnyBalance.isAvailable('creditlimit'))
-	    getParam(card.creditLimit, result, 'creditlimit');
+	    getParam(currCard.creditLimit, result, ['creditlimit', 'currency'], null, null, parseBalance);
 	
 }
 
@@ -222,12 +222,12 @@ function fetchAccount(prefs, result){
 	
 	var accountId = currAccount.id;
 		
-    getParam(account.balance, result, ['balance', 'currency']);
-	getParam(g_currency[account.currency]||account.currency, result, 'currency');
-	getParam(account.numberOriginal, result, '__tariff');
-	getParam(account.numberOriginal, result, 'cardnum');
-	getParam(account.name, result, 'type');
-	getParam(account.openDate, result, 'opendate');
-	getParam(g_statusAcc[account.status]||account.status, result, 'status');
+    getParam(currAccount.balance, result, ['balance', 'currency'], null, null, parseBalance);
+	getParam(g_currency[currAccount.currency]||currAccount.currency, result, ['currency', 'balance']);
+	getParam(currAccount.numberOriginal, result, '__tariff');
+	getParam(currAccount.numberOriginal, result, 'cardnum');
+	getParam(currAccount.name, result, 'type');
+	getParam(currAccount.openDate, result, 'opendate');
+	getParam(g_statusAcc[currAccount.status]||currAccount.status, result, 'status');
 	
 }

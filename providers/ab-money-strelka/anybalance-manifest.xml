@@ -21,7 +21,7 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="balance" name="Баланс" units=" ₽"/>
 		<counter id="alias" name="Название карты" type="text"/>
 		<counter id="discount_count" name="Скидка: совершено поездок"/>
 		<counter id="discount_next_count" name="Скидка: поездок до следующего уровня"/>

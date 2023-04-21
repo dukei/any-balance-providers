@@ -1,11 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id  version="3">ab-cell-volnamobile</id>
+	<id  version="4">ab-cell-volnamobile</id>
 	<api flags="no_browser"/>
 	<name>Волна мобайл</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе, использованных минутах, SMS, MMS и трафике для пользователей оператора сотовой связи Волна мобайл.</p>
-	<p>Информация берется из мобильного приложения Волна.</p>
+	<p>Предоставляет информацию о балансе, использованных минутах, SMS и трафике для пользователей оператора сотовой связи Волна мобайл (https://volnamobile.ru/).</p>
+	<p>Информация берется из личного кабинета Волна мобайл на сайте https://lk-new.volnamobile.ru/.</p>
 	]]></description>
 	<instruction html="true"><![CDATA[
 	<p>Для работы провайдера требуется ввести логин и пароль для входа в личный кабинет Волна мобайл.</p> 
@@ -21,34 +21,40 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units=" руб."/>
+		<counter id="balance" name="Баланс" units=" ₽"/>
+		<counter id="bonuses" name="Бонусы" units=" Б"/>
 
-		<counter id="traffic_left1"  prefix='{@traffic_left_name1}' name="1.Трафик" units=" МБ"/>
+		<counter id="traffic_left1"  prefix='{@traffic_left_name1}' name="1.Трафик" units=" Мб"/>
 		<counter id="min_left1" prefix='{@min_left_name1}' name="1.Минуты" units=" мин"/>
 		<counter id="sms_left1" prefix='{@sms_left_name1}' name="1.Сообщения" units=" sms"/>
 
-		<counter id="traffic_left2"  prefix='{@traffic_left_name2}' name="2.Трафик" units=" МБ"/>
+		<counter id="traffic_left2"  prefix='{@traffic_left_name2}' name="2.Трафик" units=" Мб"/>
 		<counter id="min_left2" prefix='{@min_left_name2}' name="2.Минуты" units=" мин"/>
 		<counter id="sms_left2" prefix='{@sms_left_name2}' name="2.Сообщения" units=" sms"/>
 
-		<counter id="traffic_left3"  prefix='{@traffic_left_name3}' name="3.Трафик" units=" МБ"/>
+		<counter id="traffic_left3"  prefix='{@traffic_left_name3}' name="3.Трафик" units=" Мб"/>
 		<counter id="min_left3" prefix='{@min_left_name3}' name="3.Минуты" units=" мин"/>
 		<counter id="sms_left3" prefix='{@sms_left_name3}' name="3.Сообщения" units=" sms"/>
 
-		<counter id="traffic_left4"  prefix='{@traffic_left_name4}' name="4.Трафик" units=" МБ"/>
+		<counter id="traffic_left4"  prefix='{@traffic_left_name4}' name="4.Трафик" units=" Мб"/>
 		<counter id="min_left4" prefix='{@min_left_name4}' name="4.Минуты" units=" мин"/>
 		<counter id="sms_left4" prefix='{@sms_left_name4}' name="4.Сообщения" units=" sms"/>
 
-		<counter id="traffic_left5"  prefix='{@traffic_left_name5}' name="5.Трафик" units=" МБ"/>
+		<counter id="traffic_left5"  prefix='{@traffic_left_name5}' name="5.Трафик" units=" Мб"/>
 		<counter id="min_left5" prefix='{@min_left_name5}' name="5.Минуты" units=" мин"/>
 		<counter id="sms_left5" prefix='{@sms_left_name5}' name="5.Сообщения" units=" sms"/>
 
-		<counter id="dateOfExpire" name="Пакет услуг действует до" type="time" format="dd.MM.yyyy"/>
-		<counter id="abon" name="Абонентская плата" type="text"/>
+		<counter id="dateOfExpire" name="Срок действия пакета" type="time" format="dd.MM.yyyy"/>
+		<counter id="abon" name="Абонентская плата" units=" ₽/мес"/>
+		<counter id="total_spent" name="Расходы за этот месяц" units=" ₽"/>
+		<counter id="last_oper_date" name="Дата посл. операции" type="time" format="dd.MM.yyyy"/>
+		<counter id="last_oper_sum" name="Сумма посл. операции" units=" ₽"/>
+		<counter id="last_oper_desc" name="Тип посл. операции" type="text"/>
 		<counter id="ls" name="Лицевой счет" type="text"/>
 		<counter id="phone" name="Номер телефона" type="text"/>
+		<counter id="fio" name="ФИО" type="text"/>
 	</counters>
 	<keywords>Сотовый телефон, мобильный, мобильник, Волна, Волнамобайл, Volnamobile, Volna, Крым</keywords>
 	<type>cell</type>
-	<country>ua</country>
+	<country>ru</country>
 </provider>

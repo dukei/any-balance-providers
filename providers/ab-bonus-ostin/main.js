@@ -220,10 +220,15 @@ function loadProtectedPage(headers){
         clearAllCookies();
 
         const bro = new BrowserAPI({
+            provider: 'ostin',
             userAgent: g_headers["User-Agent"],
             rules: [{
                 resType: /^(image|stylesheet|font)$/.toString(),
                 action: 'abort',
+            }, {
+                url: /_qrator\/qauth_utm_v2\.js/.toString(),
+                action: 'cache',
+                valid: 3600*1000
             }, {
                 url: /_qrator/.toString(),
                 action: 'request',
@@ -231,15 +236,20 @@ function loadProtectedPage(headers){
                 resType: /^(image|stylesheet|font|script)$/i.toString(),
                 action: 'abort',
             }, {
-                url: /\.(png|jpg|ico)/.toString(),
+                url: /\.(png|jpg|ico|svg)/.toString(),
                 action: 'abort',
             }, {
                 url: /.*/.toString(),
                 action: 'request',
             }],
-            additionalRequestHeaders: {
-                headers: headers
-            }
+            additionalRequestHeaders: [
+		{
+                    headers: {
+			'User-Agent': g_headers["User-Agent"]
+		    }
+		}
+            ],
+            debug: AnyBalance.getPreferences().debug
         });
 
         const r = bro.open(url);
@@ -252,7 +262,7 @@ function loadProtectedPage(headers){
             bro.close(r.page);
         }
 
-        if(/__qrator/.test(html)||AnyBalance.getLastStatusCode()==403)
+        if(/__qrator/.test(html)||AnyBalance.getLastStatusCode() >= 400)
             throw new AnyBalance.Error('Не удалось обойти защиту. Сайт изменен?');
 
         AnyBalance.trace("Защита от роботов успешно пройдена");

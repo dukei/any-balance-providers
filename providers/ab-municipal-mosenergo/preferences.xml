@@ -2,12 +2,12 @@
 <PreferenceScreen>
     <EditTextPreference
 		obligatory="true"
-		title="Логин (e-mail или телефон)"
+		title="Логин"
 		positiveButtonText="ОК"
-		summary="||{@s}"
+		summary="Логин для входа в личный кабинет|Введите логин\n|{@s}\n"
 		dialogTitle="Логин"
 		negativeButtonText="Отмена"
-		dialogMessage="Введите ваш емейл или номер телефона для входа в личный кабинет"
+		dialogMessage="Введите e-mail или номер телефона для входа в личный кабинет"
 		inputType="textEmailAddress"
 		key="login">
     </EditTextPreference>
@@ -18,17 +18,17 @@
 		dialogTitle="Пароль"
 		negativeButtonText="Отмена"
 		title="Пароль"
-		summary="||***********"
-		dialogMessage="Введите пароль, используемый для входа в личный кабинет Мосэнергосбыт."
+		summary="Пароль для входа в личный кабинет|Введите пароль\n|***********\n"
+		dialogMessage="Введите пароль, используемый для входа в личный кабинет"
 		inputType="textPassword">
     </EditTextPreference>
     <EditTextPreference
-		title="№ лицевого счета"
+		title="Лицевой счет"
 		positiveButtonText="ОК"
-		summary="||{@s}"
-		dialogTitle="№ лицевого счета"
+		summary="Лицевой счет для получения информации|Автоматически\n|{@s}\n"
+		dialogTitle="Лицевой счет"
 		negativeButtonText="Отмена"
-		dialogMessage="Введите фрагмент номера лицевого счета, если вы хотите получить информацию по конкретному счету."
+		dialogMessage="Введите фрагмент номера лицевого счета, по которому нужно получить информацию. Или не вводите ничего, чтобы получить данные по первому счету"
 		inputType="text"
 		key="num">
     </EditTextPreference>

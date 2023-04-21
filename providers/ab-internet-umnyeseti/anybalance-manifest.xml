@@ -1,12 +1,16 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-internet-umnyeseti</id>
+	<id version="2">ab-internet-umnyeseti</id>
 	<api flags="no_browser"/>
 	<name>Умные сети</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе провайдера Умные сети <a href="http://umnyeseti.ru/">http://umnyeseti.ru/</a></p>
-	<p>Информация берется из личного кабинета <a href="https://stat.umnyeseti.ru/">https://stat.umnyeseti.ru/</a></p>
+	<p>Предоставляет информацию о балансе и другие данные для абонентов провайдера Умные сети (<a href="http://umnyeseti.ru/">http://umnyeseti.ru/</a>).</p>
+	<p>Информация берется из личного кабинета Умные сети на сайте <a href="https://stat.umnyeseti.ru/">https://stat.umnyeseti.ru/</a>.</p>
 	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Для работы провайдера требуется ввести логин и пароль для входа в личный кабинет Умные сети.</p>
+	]]></instruction>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<author>DimaZUA &lt;DIMAZ.KHUA@gmail.com&gt;</author>
 	<depends>
 		<module id="library"/>
@@ -26,10 +30,9 @@
 		<counter id="traf" name="Скачано" units=" Мб"/>
 		<counter id="d_invoice_begin" name="Начало расчетного периода" type="time" format="dd.MM.YYYY hh:mm"/>
 		<counter id="d_invoice_end" name="Окончание расчетного периода" type="time" format="dd.MM.YYYY hh:mm"/>
-		<counter id="activities" name="Доп.инфо." type="html"/>
-
+		<counter id="activities" name="Доп. информация" type="html"/>
 	</counters>
-	<keywords></keywords>
+	<keywords>Умные сети, интернет</keywords>
 	<type>internet</type>
 	<country>ru</country>
 </provider>

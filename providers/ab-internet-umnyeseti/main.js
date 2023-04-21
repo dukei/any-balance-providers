@@ -12,7 +12,7 @@ var g_headers = {
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'https://stat.umnyeseti.ru:8080/';
+	var baseurl = 'https://stat.umnyeseti.ru/';
 	AnyBalance.setDefaultCharset('utf-8');
 
 	checkEmpty(prefs.login, 'Введите логин!');

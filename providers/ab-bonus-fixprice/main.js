@@ -6,11 +6,11 @@
 var g_headers = {
 	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
 	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
-	'Accept-Encoding': 'gzip, deflate, br',
-	'Accept-Language': 'ru-RU,ru;q=0.9,en-US;q=0.6,en;q=0.4',
+	'Accept-Language': 'ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7',
 	'Cache-Control': 'max-age=0',
 	'Connection': 'keep-alive',
-	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36',
+	'Origin': 'https://fix-price.com',
+	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36',
 };
 
 var baseurl = 'https://api.fix-price.com';
@@ -32,9 +32,10 @@ function main() {
 	g_savedData.restoreCookies();
 	var authXKey = g_savedData.get('authXKey');
 	
-	html = AnyBalance.requestGet(baseurl + '/buyer/v2/profile/personal', addHeaders({
-		'Content-Type': 'application/json;charset=UTF-8',
-		'Referer': baseurl + '/',
+	var html = AnyBalance.requestGet(baseurl + '/buyer/v2/profile/personal', addHeaders({
+		'Accept': 'application/json, text/plain, */*',
+		'Content-Type': 'application/json',
+		'Referer': 'https://fix-price.com/',
 		'X-City': 3,
         'X-Key': authXKey,
         'X-Language': 'ru'
@@ -52,16 +53,16 @@ function main() {
 		
 		var authXKey = getParam(html,  /authXKey:"([^">]*)/i, replaceTagsAndSpaces);
 
-		prefs.login = '+7(' + prefs.login.replace(/[^\d]*/g,'').substr(-10).replace(/(\d{3})(\d{3})(\d{2})(\d{2})/, '$1)-$2-$3-$4')
+		prefs.login = '+7(' + prefs.login.replace(/[^\d]*/g,'').substr(-10).replace(/(\d{3})(\d{3})(\d{2})(\d{2})/, '$1)-$2-$3-$4');
 
 		html = AnyBalance.requestPost(baseurl + '/buyer/v2/auth/login', JSON.stringify({
-            phone: prefs.login,
+            email: null,
+			phone: prefs.login,
             password: prefs.password
 		}), addHeaders({
 			'Accept': 'application/json, text/plain, */*',
-			'Content-Type': 'application/json;charset=UTF-8',
-			'Origin': baseurl,
-			'Referer': baseurl + '/',
+			'Content-Type': 'application/json',
+			'Referer': 'https://fix-price.com/',
 			'X-City': 3,
             'X-Key': authXKey,
             'X-Language': 'ru'
@@ -79,6 +80,15 @@ function main() {
 			throw new AnyBalance.Error('Не удалось войти в личный кабинет. Сайт изменен?');
 		}
 		
+		html = AnyBalance.requestGet(baseurl + '/buyer/v2/profile/personal', addHeaders({
+		    'Accept': 'application/json, text/plain, */*',
+		    'Content-Type': 'application/json',
+		    'Referer': 'https://fix-price.com/',
+		    'X-City': 3,
+            'X-Key': authXKey,
+            'X-Language': 'ru'
+	    }));
+		
 		g_savedData.set('authXKey', authXKey);
 		g_savedData.setCookies();
 	    g_savedData.save();
@@ -88,16 +98,6 @@ function main() {
 	}
 	
 	var result = {success: true};
-
-    html = AnyBalance.requestGet(baseurl + '/buyer/v2/profile/personal', addHeaders({
-		'Accept': 'application/json, text/plain, */*',
-		'Content-Type': 'application/json;charset=UTF-8',
-		'Origin': baseurl,
-		'Referer': baseurl + '/',
-		'X-City': 3,
-        'X-Key': authXKey,
-        'X-Language': 'ru'
-	}));
 	
 	var json = getJson(html);
 	AnyBalance.trace(JSON.stringify(json));
@@ -116,9 +116,8 @@ function main() {
 	if(AnyBalance.isAvailable('lasttransum', 'lasttrandate', 'lasttranbon', 'lasttranchar', 'lasttrantype')) {
 		html = AnyBalance.requestGet(baseurl + '/buyer/v2/profile/transaction?page=1', addHeaders({
 	    	'Accept': 'application/json, text/plain, */*',
-		    'Content-Type': 'application/json;charset=UTF-8',
-		    'Origin': baseurl,
-		    'Referer': baseurl + '/',
+		    'Content-Type': 'application/json',
+		    'Referer': 'https://fix-price.com/',
 		    'X-City': 3,
             'X-Key': authXKey,
             'X-Language': 'ru'

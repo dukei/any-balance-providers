@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<history>
+<history>	<change version="8" date="2023-03-19">
+	- Поддержка изменений на сайте
+	</change>
+	<change version="7" date="2023-03-05">
+	- Поддержка изменений в процедуре входа
+	</change>
+	<change version="6" date="2022-05-22">
+	- Поддержка изменений в процедуре входа
+	</change>
 	<change version="5" date="2021-11-30">
 	- Новая библиотека
 	</change>

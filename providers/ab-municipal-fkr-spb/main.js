@@ -3,15 +3,20 @@
  */
 
 var g_headers = {
-    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
     'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
     'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
-    'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
+	'Cache-Control': 'max-age=0',
+    'Connection': 'keep-alive',
+	'Upgrade-Insecure-Requests': '1',
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36',
 };
+
+var g_savedData;
 
 function main() {
     var prefs = AnyBalance.getPreferences();
-    var baseurl = 'https://fkr-spb.ru';
+    var baseurl = 'https://lk.fkr-spb.ru';
     AnyBalance.setDefaultCharset('utf-8');
 
     checkEmpty(prefs.login, 'Введите логин!');
@@ -20,6 +25,11 @@ function main() {
 		checkEmpty(prefs.flatnum, 'Введите номер квартиры!');
 	if (prefs.flatnum && !prefs.housenum)
 		checkEmpty(prefs.housenum, 'Введите номер дома!');
+	
+	if(!g_savedData)
+		g_savedData = new SavedData('fkr-spb', prefs.login);
+
+	g_savedData.restoreCookies();
 
     var html = AnyBalance.requestGet(baseurl + '/user', g_headers);
 
@@ -28,30 +38,53 @@ function main() {
         throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
     }
 	
-	var form = getElement(html, /<form[^>]+id="user-login"[^>]*>/i);
+	if(/user\/logout/i.test(html)){
+		AnyBalance.trace('Сессия сохранена. Входим автоматически...');
+	}else{
+		AnyBalance.trace('Сессия новая. Будем логиниться заново...');
+		clearAllCookies();
+	
+	    var form = getElement(html, /<form[^>]+id="user-login"[^>]*>/i);
         if(!form){
         	AnyBalance.trace(form);
         	throw new AnyBalance.Error('Не удалось найти форму входа. Сайт изменен?');
         }
 	
-    var formBuildID = getParam(form, null, null, /<input[^>]+name="form_build_id"[^>]+value="([\s\S]*?)"[^>]*>/i);
-    html = AnyBalance.requestPost(baseurl + '/user', {
-        name: prefs.login,
-        pass: prefs.password,
-        form_id: 'user_login',
-        op: 'Войти',
-        form_build_id: formBuildID,
-//      'Remember': 'false'
-    }, addHeaders({Referer: baseurl}));
+	    var params = createFormParams(form, function(params, str, name, value) {
+	   		if (name == 'name') {
+	   			return prefs.login;
+    		} else if (name == 'pass') {
+	    		return prefs.password;
+	    	} else if (name == 'captcha_response') {
+	    		var imgUrl = getParam(form, null, null, /<img[^>]+foaf:Image[^>]+src="([^"]*)/i);
+	        
+	    		if(!imgUrl){
+	    			AnyBalance.trace(html);
+	    			throw new AnyBalance.Error('Не удалось найти капчу. Сайт изменен?');
+	    		}
+	    		var img = AnyBalance.requestGet(joinUrl(baseurl, imgUrl), addHeaders({Referer: baseurl + '/user'}));
+	    		return AnyBalance.retrieveCode('Пожалуйста, введите символы с картинки', img, {/*inputType: 'number', */time: 300000});
+	    	}
+	        
+	    	return value;
+	    });
+	    var action = getParam(form, null, null, /<form[\s\S]*?action=\"([\s\S]*?)\"/i, replaceHtmlEntities);
 
-    if (!/\/user\/\d+\/edit/i.test(html)) {
-        var error = getParam(html, null, null, /<div[^>]+class="messages error"[^>]*>[\s\S]*?<h2[^>]*>[\s\S]*?<\/h2>([\s\S]*?)\(.*?<\/div>/i, replaceTagsAndSpaces);
-        if (error)
-            throw new AnyBalance.Error(error, null, /Логин или пароль введены неверно/i.test(error));
+		html = AnyBalance.requestPost(joinUrl(baseurl, action), params, addHeaders({'Content-Type': 'application/x-www-form-urlencoded', Referer: baseurl + '/user'}));
+        
+		if (!/\/user\/\d+\/edit/i.test(html)) {
+            var error = getParam(html, null, null, /<div[^>]+class="messages error"[^>]*>[\s\S]*?<h2[^>]*>[\s\S]*?<\/h2>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+            if (error)
+                throw new AnyBalance.Error(error, null, /имя|парол/i.test(error));
 
-        AnyBalance.trace(html);
-        throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
-    }
+            AnyBalance.trace(html);
+            throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
+        }
+		
+		g_savedData.setCookies();
+	    g_savedData.save();
+	}
+	
     var result = {success: true};
 
     var userID = getParam(html, null, null, /<a href="\/user\/(\d+)\/[^>]*>/i);

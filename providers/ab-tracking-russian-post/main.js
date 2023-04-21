@@ -28,6 +28,21 @@ function mainRussianPost() {
 	
 	var info = AnyBalance.requestGet(baseurl + 'tracking', g_headers);
 	
+	if(!info || AnyBalance.getLastStatusCode() >= 500){
+        AnyBalance.trace(info);
+        throw new AnyBalance.Error('Сайт провайдера временно недоступен. Попробуйте еще раз позже');
+    }
+	
+	if(/"csrfTokenEnabled":\s?true/i.test(info)){
+	    var csrf = getParam(info, /"csrfToken":"([^"]*)/i, replaceHtmlEntities);
+		g_headers['Csrf-Token'] = csrf;
+		
+		if(!csrf || AnyBalance.getLastStatusCode() == 403){
+            AnyBalance.trace(info);
+            throw new AnyBalance.Error('Не удалось найти токен авторизации. Сайт изменен?');
+        }
+	}
+	
 	info = AnyBalance.requestPost(baseurl + 'api/nano-apps/api/v1/tracking.get-by-barcodes?language=ru', JSON.stringify([prefs.code]), addHeaders({
 		'Accept': 'application/json',
 		'Content-Type': 'application/json',
@@ -50,27 +65,30 @@ function mainRussianPost() {
 	}
 
     var jsonInfo = json.detailedTrackings[0];
-	getParam(jsonInfo.trackingItem.weight+'', result, 'weight', null, replaceTagsAndSpaces, parseBalance);
-	getParam(jsonInfo.trackingItem.sender+'', result, 'sender', null, replaceTagsAndSpaces);
-	getParam(jsonInfo.trackingItem.recipient+'', result, 'recipient', null, replaceTagsAndSpaces);
-	getParam(jsonInfo.trackingItem.destinationCityName+'', result, 'to', null, replaceTagsAndSpaces);
-	
-
 	if(!jsonInfo.trackingItem || !jsonInfo.trackingItem.trackingHistoryItemList)
 		throw new AnyBalance.Error('Нет информации о прохождении посылки! Возможно, она появится позже.');
 	
-	var op = jsonInfo.trackingItem.trackingHistoryItemList[0];
+	var item = jsonInfo.trackingItem;
 	
-	getParam(op.date+'', result, ['date', 'fulltext'], null, replaceTagsAndSpaces, parseDateISO);
-	getParam(op.date+'', result, ['time', 'fulltext'], null, replaceTagsAndSpaces, parseDateISO);
+	getParam(item.weight+'', result, 'weight', null, replaceTagsAndSpaces, parseBalance);
+	getParam(item.sender+'', result, 'sender', null, replaceTagsAndSpaces);
+	getParam(item.recipient+'', result, 'recipient', null, replaceTagsAndSpaces);
+	getParam(item.originCityName+'', result, 'from', null, replaceTagsAndSpaces);
+	getParam(item.destinationCityName+'', result, 'to', null, replaceTagsAndSpaces);
+	getParam(item.mailTypeText+'', result, 'type', null, replaceTagsAndSpaces);
+	getParam(item.mailRankText+'', result, 'rank', null, replaceTagsAndSpaces);
+	
+	var op = item.trackingHistoryItemList[0];
+	
 	getParam(op.humanStatus, result, ['operation', 'fulltext']);
+	getParam(op.date+'', result, ['time', 'fulltext'], null, replaceTagsAndSpaces, parseDateISO);
 	sumParam(op.cityName, result, ['location', 'fulltext'], null, null, null, aggregate_join);
 	sumParam(op.countryName, result, ['location', 'fulltext'], null, null, null, aggregate_join);
 	sumParam(op.index, result, ['location', 'fulltext'], null, null, null, aggregate_join);
 	getParam(op.description, result, ['attribute', 'fulltext']);
 	getParam(op.countryCustomName, result, ['operator', 'fulltext']);
 //	getParam(op.Payment+'', result, 'addcost', null, replaceTagsAndSpaces, parseBalance);
-	getParam('<small>' + getFormattedDate(null, new Date(result.time)) + '</small>: <b>' + result.operation + '</b><br/>' + result.location + '<br/>' + result.attribute + (result.addcost ? ', Н/п ' + result.addcost + 'р' : ''), result, 'fulltext');
+	getParam(getFormattedDate(null, new Date(result.time)) + ': ' + result.operation + ',<br/>' + result.location + ',<br/>' + result.attribute + (result.addcost ? ', Н/п ' + result.addcost + ' ₽' : ''), result, 'fulltext');
 	
 	AnyBalance.setResult(result);
 }

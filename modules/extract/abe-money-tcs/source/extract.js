@@ -19,6 +19,16 @@ var g_currency = {
 	undefined: ''
 };
 
+var g_system = {
+	MR: 'МИР',
+	MIR: 'МИР',
+	VI: 'VISA',
+	VISA: 'VISA',
+	MC: 'MasterCard',
+	MASTERCARD: 'MasterCard',
+	undefined: ''
+};
+
 var g_baseurl = 'https://api.tinkoff.ru/v1/';
 var g_sessionid;
 var g_postParams = {
@@ -293,8 +303,8 @@ function processCard(card, acc, result){
 	AnyBalance.trace('Обработка карты ' + result.__name);
 
 	var balance = jspath1(card, '$.availableBalance') || jspath1(acc, '$.moneyAmount') || jspath1(acc, '$.accountBalance');
-
-    getParam(jspath1(acc, '$.accountBalance.value'), result, ['cards.balance', 'cards.currency']);
+    
+	getParam(jspath1(acc, '$.accountBalance.value'), result, ['cards.balance', 'cards.currency']);
     getParam(jspath1(balance, '$.value'), result, ['cards.available', 'cards.currency']);
     getParam(g_currency[jspath1(balance, '$.currency.name')]||jspath1(balance, '$.currency.name'), result, ['cards.currency', 'cards.balance']);
     getParam(jspath1(card, '$.expiration.milliseconds'), result, 'cards.till');
@@ -304,6 +314,7 @@ function processCard(card, acc, result){
     getParam(jspath1(card, '$.status'), result, 'cards.status');
     getParam(jspath1(card, '$.statusCode'), result, 'cards.status_code'); //NORM
     getParam(jspath1(card, '$.name'), result, 'cards.name');
+	getParam(g_system[jspath1(card, '$.paymentSystem')]||jspath1(card, '$.paymentSystem'), result, 'cards.payment_system');
 
     getParam(jspath1(acc, '$.externalAccountNumber'), result, 'cards.accnum');
 
@@ -357,8 +368,10 @@ function processAccount(acc, result){
     getParam(jspath1(acc, '$.accountType'), result, 'accounts.type_code');
     getParam(jspath1(acc, '$.authorizationsAmount.value'), result, 'accounts.blocked');
 
-    getParam(jspath1(acc, '$.defaultMonthlyCashLimit.value'), result, 'accounts.free_cash_limit');
+    getParam(jspath1(acc, '$.c2cOutLimitBorder.value'), result, 'accounts.c2c_out_limit');
+	getParam(jspath1(acc, '$.defaultMonthlyCashLimit.value'), result, 'accounts.free_cash_limit');
     getParam(jspath1(acc, '$.defaultRenewalAmountLeft.value'), result, 'accounts.free_add_limit');
+	getParam(jspath1(acc, '$.c2cOutLimit.value'), result, 'accounts.c2c_out_left');
     getParam(jspath1(acc, '$.monthlyCashLimit.value'), result, 'accounts.free_cash_left');
     getParam(jspath1(acc, '$.renewalAmountLeft.value'), result, 'accounts.free_add_left');
 
@@ -491,7 +504,7 @@ function processSaving(acc, result){
 
     getParam(jspath1(acc, '$.creationDate.milliseconds'), result, 'savings.date_start');
     getParam(jspath1(acc, '$.interest.value'), result, 'savings.pct_sum');
-    getParam(jspath1(acc, '$.tariffInfo.interestRate') || jspath1(acc, '$.rate'), result, 'savings.pct');
+    getParam(jspath1(acc, '$.rate') || jspath1(acc, '$.tariffInfo.interestRate'), result, 'savings.pct');
 
     getParam(jspath1(acc, '$.accountBalance.value'), result, ['savings.balance', 'savings.currency']);
     getParam(jspath1(acc, '$.moneyAmount.value'), result, ['savings.available', 'savings.currency']);

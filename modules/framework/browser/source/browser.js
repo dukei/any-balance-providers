@@ -16,6 +16,7 @@ const BrowserAPI = (() => {
         debug?: boolean
         userAgent: string,
         singlePage?: boolean,
+        incognito?: boolean, //По умолчанию true
         headful?: boolean,
         rules?: RuleSource[]
         additionalRequestHeaders: {

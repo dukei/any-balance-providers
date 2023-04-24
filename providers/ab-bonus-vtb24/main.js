@@ -11,7 +11,7 @@ var g_headers = {
 
 var g_apiHeaders = {
 	'Accept': '*/*',
-	'Accept-Language': 'u-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7',
+	'Accept-Language': 'ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7',
 	'Content-type': 'application/json',
 	'Origin': 'https://new.multibonus.ru',
 	'Referer': 'https://new.multibonus.ru/',
@@ -45,6 +45,8 @@ function main() {
 	AnyBalance.restoreCookies();
 	
     var html = AnyBalance.requestGet(baseurl + 'Buy/GetBalance', g_apiHeaders);
+	AnyBalance.trace("LastStatusCode Buy/GetBalance: " + AnyBalance.getLastStatusCode());/////////////////////////////////
+	AnyBalance.trace("Cookies Buy/GetBalance: " + JSON.stringify(AnyBalance.getCookies()));/////////////////////////////////
 	AnyBalance.trace(html);
 	
     if(!html||AnyBalance.getLastStatusCode()==401){
@@ -54,8 +56,10 @@ function main() {
     	AnyBalance.saveData();
 	    
 		var html = loadProtectedPage(('https://new.multibonus.ru/', g_headers));
+		AnyBalance.trace("LastStatusCode https://new.multibonus.ru/: " + AnyBalance.getLastStatusCode());/////////////////////////////////
+	    AnyBalance.trace("Cookies https://new.multibonus.ru/: " + JSON.stringify(AnyBalance.getCookies()));/////////////////////////////////
 	    
-	    var html = AnyBalance.requestPost(baseurl + 'Token/GetToken', JSON.stringify({
+	    html = AnyBalance.requestPost(baseurl + 'Token/GetToken', JSON.stringify({
 			Password: prefs.password, 
 			UserPhone: '7' + prefs.login
 		}), g_apiHeaders, {httpMethod: 'PUT'});
@@ -197,18 +201,24 @@ function main() {
 
 function loadProtectedPage(headers){
 	var prefs = AnyBalance.getPreferences();
-	const url = 'https://new.multibonus.ru';
+	const url = 'https://new.multibonus.ru/';
 
     var html = AnyBalance.requestGet(url, headers);
-    if(/__qrator/.test(html)||AnyBalance.getLastStatusCode()==403) {
+    if(/__qrator/.test(html)) {
         AnyBalance.trace("Обнаружена защита от роботов. Пробуем обойти...");
         clearAllCookies();
 
         const bro = new BrowserAPI({
+            provider: 'vtb-multibonus',
             userAgent: g_headers["User-Agent"],
+            headful: true,
             rules: [{
                 resType: /^(image|stylesheet|font)$/.toString(),
                 action: 'abort',
+            }, {
+                url: /_qrator\/qauth_utm_v2\.js/.toString(),
+                action: 'cache',
+                valid: 3600*1000
             }, {
                 url: /_qrator/.toString(),
                 action: 'request',
@@ -216,15 +226,20 @@ function loadProtectedPage(headers){
                 resType: /^(image|stylesheet|font|script)$/i.toString(),
                 action: 'abort',
             }, {
-                url: /\.(png|jpg|ico)/.toString(),
+                url: /\.(png|jpg|ico|svg)/.toString(),
                 action: 'abort',
             }, {
                 url: /.*/.toString(),
                 action: 'request',
             }],
-            additionalRequestHeaders: {
-                headers: headers
-            }
+            additionalRequestHeaders: [
+		{
+                    headers: {
+			'User-Agent': g_headers["User-Agent"]
+		    }
+		}
+            ],
+            debug: AnyBalance.getPreferences().debug
         });
 
         const r = bro.open(url);
@@ -237,11 +252,10 @@ function loadProtectedPage(headers){
             bro.close(r.page);
         }
 
-        if(/__qrator/.test(html)||AnyBalance.getLastStatusCode()==403)
+        if(/__qrator|Access to [^<]* is forbidden|Доступ к сайту [^<]* запрещен/.test(html))
             throw new AnyBalance.Error('Не удалось обойти защиту. Сайт изменен?');
 
         AnyBalance.trace("Защита от роботов успешно пройдена");
-
         AnyBalance.saveCookies();
     	AnyBalance.saveData();
 

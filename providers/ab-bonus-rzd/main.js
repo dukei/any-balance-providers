@@ -4,17 +4,17 @@
 Получает информацию по бонусной карте РЖД
 
 Сайт оператора: https://rzd-bonus.ru
-Личный кабинет: https://rzd-bonus.ru
+Личный кабинет: https://rzd-bonus.ru/cabinet/
 */
 
 var g_headers = {
-	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
+	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
 	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
-	'Accept-Encoding': 'gzip, deflate, br',
-	'Accept-Language': 'ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.6',
+	'Accept-Language': 'ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7',
 	'Cache-Control': 'max-age=0',
 	'Connection': 'keep-alive',
-	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.45 Safari/537.36'
+	'Upgrade-Insecure-Requests': '1',
+	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36'
 };
 
 var baseurl = "https://rzd-bonus.ru";
@@ -67,11 +67,13 @@ function main(){
 	
     var result = {success: true};
 	
-    getParam(html, result, 'balance', /<p[^>]+class="user-info_points">Общая сумма баллов:([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'pballs', /Премиальные баллы[\s\S]*?number-inner[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'balance', /<span[^>]*>У Вас <a[^>]*>([\s\S]*?)<\/a><\/span>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'pballs', /Премиальных баллов:?([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'tballs', /Туристических баллов:?([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'qballs1', /Квалификационные баллы за \d+[\s\S]*?number-inner[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'qballs2', /Квалификационные баллы за \d+[\s\S]*?Квалификационные баллы за \d+[\s\S]*?number-inner[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
     getParam(html, result, 'cardnum', /<div[^>]+class="user_cart__number"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+	getParam(html, result, 'email', /user-info_name[\s\S]*?(?:[^"]*"){4}([^"]*)/i, replaceTagsAndSpaces);
 	getParam(html, result, 'phone', /user-info_name[\s\S]*?(?:[^"]*"){6}([^"]*)/i, replaceNumber);
 	
 	html = AnyBalance.requestGet(baseurl + '/cabinet/profile/', g_headers);
@@ -98,18 +100,32 @@ function main(){
 //  getParam(html, result, 'balls_spent', /Использовано на премии за все время участия в программе:[\s\S]*?<dd[^>]*>([\s\S]*?)<\/dd>/i, replaceTagsAndSpaces, parseBalance);
     
 	if (AnyBalance.isAvailable('lastdate', 'lastsum', 'lasttype', 'lastpballs', 'lastqballs', 'lastoff')) {
-		html = AnyBalance.requestGet(baseurl + '/cabinet/my-trips/', g_headers);
+		var dt = new Date();
+	    var dtPrev = new Date(dt.getFullYear()-1, dt.getMonth(), dt.getDate());
+	    var dateFrom = n2(dtPrev.getDate()) + '.' + n2(dtPrev.getMonth()+1) + '.' + dtPrev.getFullYear();
+	    var dateTo = n2(dt.getDate()) + '.' + n2(dt.getMonth()+1) + '.' + dt.getFullYear();
 		
-        var info = getElements(html, [/var clients = \[([^\]]*)/i, /\{([^\}]*)/ig])[0];
-	    if (info) {
-	        getParam(html, result, 'lastdate', /"Дата": "([^"]*)/i, replaceTagsAndSpaces, parseDateISO);
-	        getParam(html, result, 'lastsum', /Цена:\s?([\s\S]*?)<br>/i, replaceTagsAndSpaces, parseBalance);
-	        getParam(html, result, 'lasttype', /"Операция":\s?"([^<|"]*)/i, replaceTagsAndSpaces);
-	        getParam(html, result, 'lastpballs', /"Начислено премиальных баллов":\s?"([^"]*)/i, replaceTagsAndSpaces, parseBalance);
-	        getParam(html, result, 'lastqballs', /"Начислено квалификационых баллов":\s?"([^"]*)/i, replaceTagsAndSpaces, parseBalance);
-	        getParam(html, result, 'lastoff', /"Списано":\s?"([^"]*)/i, replaceTagsAndSpaces, parseBalance);
+		html = AnyBalance.requestGet(baseurl + '/cabinet/my-trips/?date=' + dateFrom + '+%2F+' + dateTo + '&type=0', g_headers);
+		
+		var info = getJsonObject(html, /var trips\s*=\s*/);
+		
+		if (info && info.length > 0) {
+		    const sortedInfo = info.sort( // Операции возвращаются без сортировки по дате, поэтому сортируем сами, чтобы получить последнюю
+                function (objA, objB) { return Number(new Date(objB["Дата"]).getTime()) - Number(new Date(objA["Дата"]).getTime()) },
+            );
+		    AnyBalance.trace('Найдено операций: ' + info.length);
+			
+		    info = sortedInfo[0];
+		    info = JSON.stringify(info);
+		    
+	        getParam(info, result, 'lastdate', /"Дата":\s?"([^"]*)/i, replaceTagsAndSpaces, parseDateISO);
+//	        getParam(html, result, 'lastsum', /Цена:\s?([\s\S]*?)<br>/i, replaceTagsAndSpaces, parseBalance);
+	        getParam(info, result, 'lasttype', /"Операция":\s?"([^<|"]*)/i, replaceTagsAndSpaces);
+	        getParam(info, result, 'lastpballs', /"Детализация":[\s\S]*?Премиальных баллов:\s?([^<|"]*)/i, replaceTagsAndSpaces, parseBalance);
+	        getParam(info, result, 'lastqballs', /"Детализация":[\s\S]*?Квалификационных баллов:\s?([^<|"]*)/i, replaceTagsAndSpaces, parseBalance);
+//	        getParam(html, result, 'lastoff', /"Списано":\s?"([^"]*)/i, replaceTagsAndSpaces, parseBalance);
 		} else {
-        	AnyBalance.trace('Последняя операция не найдена');
+        	AnyBalance.trace('Не удалось получить данные по последней операции');
         }
 	}
 	

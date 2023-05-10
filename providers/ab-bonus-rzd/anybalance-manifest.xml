@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="3">ab-bonus-rzd</id>
+	<api flags="no_browser"/>
+	<id version="4">ab-bonus-rzd</id>
 	<name>РЖД Бонус</name>
 	<description html="true"><![CDATA[
-	<p>Получает баланc баллов и другую информацию по бонусной карте РЖД (https://rzd-bonus.ru).</p>
-	<p>Информация берется из личного кабинета. </p>
-	]]></description>	
+	<p>Предоставляет информацию о балансе баллов и другую информацию по бонусной программе РЖД (https://rzd-bonus.ru).</p>
+	<p>Информация берется из личного кабинета "РЖД Бонус" на сайте https://rzd-bonus.ru/cabinet/.</p>
+	]]></description>
 	<instruction html="true"><![CDATA[
-	<p>Регистрация в программе осуществляется здесь: https://rzd-bonus.ru/registration.html.</p>
+	<p>Для работы провайдера требуется ввести логин и пароль для входа в личный кабинет "РЖД Бонус".</p>
+	<p>Если у вас нет доступа в личный кабинет "РЖД Бонус", пройдите регистрацию на странице https://rzd-bonus.ru/registration/.</p>
 	]]></instruction>
 	<author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
 	<depends>
@@ -20,24 +22,24 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Общая сумма баллов" units=" б"/>
-		<counter id="pballs" name="Премиальные баллы" units=" б"/>
-		<counter id="qballs1" name="Квалификационные баллы за текущий год" units=" б"/>
-		<counter id="qballs2" name="Квалификационные баллы за прошлый год" units=" б"/>
+		<counter id="balance" name="Общая сумма баллов" units=" Б"/>
+		<counter id="pballs" name="Премиальные баллы" units=" Б"/>
+		<counter id="tballs" name="Туристические баллы" units=" Б"/>
+		<counter id="qballs1" name="Квал. баллы за текущий год" units=" Б"/>
+		<counter id="qballs2" name="Квал. баллы за прошлый год" units=" Б"/>
 		<counter id="cardnum" name="Номер карты" type="text"/>
 		<counter id="status" name="Статус счета" type="text"/>
 		<counter id="lastdate" name="Дата последней операции" type="time" format="dd.MM.yyyy"/>
-		<counter id="lastsum" name="Сумма последней операции" units=" р"/>
+<!--	<counter id="lastsum" name="Сумма последней операции" units=" ₽"/> -->
 		<counter id="lasttype" name="Тип последней операции" type="text"/>
-		<counter id="lastpballs" name="Начислено прем. баллов по посл. операции" units=" б"/>
-		<counter id="lastqballs" name="Начислено квал. баллов по посл. операции" units=" б"/>
-		<counter id="lastoff" name="Списано баллов по посл. операции" units=" б"/>		
+		<counter id="lastpballs" name="Прем. баллов по посл. операции" units=" Б"/>
+		<counter id="lastqballs" name="Квал. баллов по посл. операции" units=" Б"/>
+<!--	<counter id="lastoff" name="Списано баллов по посл. операции" units=" Б"/> -->
+		<counter id="email" name="E-mail" type="text"/>
 		<counter id="phone" name="Номер телефона" type="text"/>
 		<counter id="fio" name="ФИО" type="text"/>
-		
 <!--	<counter id="balls_total" name="Всего набрано" units=" б"/>
 		<counter id="balls_spent" name="Всего потрачено" units=" б"/> -->
-		
 	</counters>
 	<keywords>rzd, российские железные дороги</keywords>
 	<type>bonus</type>

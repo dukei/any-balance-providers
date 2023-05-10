@@ -3,23 +3,30 @@
 
 Получает задолженность у Петербургской сбытовой компании
 
-Сайт оператора: http://pesc.ru/
-Личный кабинет: http://ikus.pesc.ru:8080/IKUSUser/
+Сайт оператора: https://pesc.ru/
+Личный кабинет: https://ikus.pesc.ru/
 */
 
 var g_headers = {
-	'Accept': 'application/json, text/plain, */*',
-	'Accept-Language': 'en-GB,en;q=0.9,ru-RU;q=0.8,ru;q=0.7,en-US;q=0.6',
-	'Connection': 'keep-alive',
-	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36',
+	'user-agent': 'Dart/2.19 (dart:io)',
+	'ra': 'ma',
+	'mversion': '3.6.0',
+	'customer': 'ikus-spb',
+	'context': 'ikus-spb',
 };
 
+var baseurl = 'https://ikus.pesc.ru/';
 var g_savedData;
+
+function generateUUID() {
+	function s4() {
+  		return Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
+	}
+  	return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
+}
 
 function main(){
     var prefs = AnyBalance.getPreferences();
-    var baseurl = 'https://ikus.pesc.ru/';
-    g_headers.Origin = baseurl.replace(/\/$/, '');
 
     checkEmpty(prefs.login, 'Введите E-mail!');
     checkEmpty(prefs.password, 'Введите пароль!');
@@ -31,58 +38,53 @@ function main(){
 
 	g_savedData.restoreCookies();
 	var token = g_savedData.get('token');
-	g_headers['Authorization'] = 'Bearer ' + token;
+	g_headers['authorization'] = 'Bearer ' + token;
 	
-	var html = AnyBalance.requestGet(baseurl + 'application/v3/groups', addHeaders({Referer: baseurl}));
+	var html = AnyBalance.requestGet(baseurl + 'api/v3/groups', g_headers);
 	
 	if (!html || AnyBalance.getLastStatusCode() > 500) {
         AnyBalance.trace(html);
         throw new AnyBalance.Error('Сайт провайдера временно недоступен. Попробуйте еще раз позже');
     }
 	
-	var json = getJson(html);
-	AnyBalance.trace(JSON.stringify(json));
+	var json = getExtJson(html);
 	
-	if(AnyBalance.getLastStatusCode() === 401 || prefs.login !== g_savedData.get('login')){
+	if(AnyBalance.getLastStatusCode() === 401){
 		AnyBalance.trace('Сессия новая. Будем логиниться заново...');
-		delete g_headers['Authorization'];
+		delete g_headers['authorization'];
 		clearAllCookies();
-	
-	    var html = AnyBalance.requestGet(baseurl, g_headers);
 
-        var captcha = solveRecaptcha('Пожалуйста, докажите, что вы не робот', baseurl, '6Lep5K0UAAAAADF48l3jpw8QuqUKVQuOUxzM21HJ');
-
-        html = AnyBalance.requestPost(baseurl + 'application/v3/auth/login', JSON.stringify({
+        html = AnyBalance.requestPost(baseurl + 'api/v3/auth/login', JSON.stringify({
 	    	username:	prefs.login,
 	    	password:	prefs.password,
-	    	captchaCode: captcha,
-	    }), addHeaders({'Content-Type': 'application/json', Referer: baseurl}));
+			captchaCode: generateUUID(),
+	    }), addHeaders({'content-type': 'application/json; charset=utf-8'}));
 
-	    var json = getJson(html);
+	    var json = getExtJson(html);
+		
 	    if(!json.access_token){
 	    	AnyBalance.trace(html);
-	    	var error = json.errors.reduce(function(acc, cur) { acc.push(cur.message); return acc; }, []).join(';\n');
+	    	var error = json.message || json.errors.reduce(function(acc, cur) { acc.push(cur.message); return acc; }, []).join(';\n');
 	    	if(error)
-	    		throw new AnyBalance.Error(error, null, /не найден|парол|email/i.test(error));
+	    		throw new AnyBalance.Error(error, null, /не найден|логин|парол/i.test(error));
 	    	throw new AnyBalance.Error('Не удалось войти в личный кабинет. Сайт изменен?');
 	    }
 
 	    var token = json.access_token;
 		
-		g_headers['Authorization'] = 'Bearer ' + token;
+		g_headers['authorization'] = 'Bearer ' + token;
 	
-	    html = AnyBalance.requestGet(baseurl + 'application/v3/groups', addHeaders({Referer: baseurl}));
-	    json = getJson(html);
+	    html = AnyBalance.requestGet(baseurl + 'api/v3/groups', g_headers);
+	    json = getExtJson(html);
 		
-		if(json.errors){
+		if(json.message || json.errors){
 	    	AnyBalance.trace(html);
-	    	var error = json.errors.reduce(function(acc, cur) { acc.push(cur.message); return acc; }, []).join(';\n');
+	    	var error = json.message || json.errors.reduce(function(acc, cur) { acc.push(cur.message); return acc; }, []).join(';\n');
 	    	if(error)
 	    		throw new AnyBalance.Error(error, null, /доступ/i.test(error));
 	    	throw new AnyBalance.Error('Не удалось войти в личный кабинет. Сайт изменен?');
 	    }
 		
-		g_savedData.set('login', prefs.login);
 		g_savedData.set('token', token);
 		g_savedData.setCookies();
 	    g_savedData.save();
@@ -90,17 +92,23 @@ function main(){
 		AnyBalance.trace('Сессия сохранена. Входим автоматически...');
 	}
 	
-	var accounts = [];
-	for(var i=0; i<json.length; ++i){
-		let g = json[i].id;
-		
-		html = AnyBalance.requestGet(baseurl + 'application/v5/groups/' + g + '/accounts', addHeaders({Referer: baseurl}));
-		var _json = getJson(html);
-		accounts.push.apply(accounts, _json);
-	}
+	AnyBalance.trace(JSON.stringify(json));
 
-//	html = AnyBalance.requestGet(baseurl + 'application/api/checkAuthentication', addHeaders({Referer: baseurl}));
-//	json = getJson(html);
+    var accounts = [];
+	
+	html = AnyBalance.requestGet(baseurl + 'api/v5/accounts/', g_headers);
+	var _json = getExtJson(html);
+	
+	for(var i=0; i<json.length; ++i){
+		var g = json[i].id;
+		
+		for(var j=0; j<_json.length; ++j){
+		    var _acc = _json[j];
+			
+		    if(_acc.objectId && _acc.objectId === g)
+		        accounts.push(_acc);
+		}
+	}
         
 	if(!accounts.length){
 		AnyBalance.trace(html);
@@ -113,40 +121,37 @@ function main(){
 
 	for(var i=0; i<accounts.length; ++i){
 		var acc = accounts[i];
+		
+		if(isAvailable('__tariff')){
+			if(acc.address)
+			    sumParam(acc.address, result, '__tariff', null, null, null, aggregate_join);
+		}
 
 		for(var j=0; j<acc.accountDisplayKey.length; ++j){
 			var f = acc.accountDisplayKey[j];
-			if(f.fieldCode === '001')
+			if(f.fieldCode === 'accountNumber')
 				sumParam(f.fieldValue, result, 'licschet', null, null, null, aggregate_join);
 		}
 
 		var name_balance = 'balance' + (i || ''), name_peni = 'peni' + (i || '')
 
-		AnyBalance.trace('Лицевой счет: ' + JSON.stringify(json));
+		AnyBalance.trace('Найден счет ' + acc.providerName + ' (' + acc.serviceName + ')');
 
 		if(AnyBalance.isAvailable(name_balance, name_peni)){
-			html = AnyBalance.requestGet(baseurl + 'application/v3/accounts/' + acc.accountId + '/data', addHeaders({Referer: baseurl}));
-			json = getJson(html);
+			html = AnyBalance.requestGet(baseurl + 'api/v5/accounts/' + acc.accountId + '/data', g_headers);
+			json = getExtJson(html);
 
-			getParam(json.balanceDetails.balance, result, name_balance);
+			getParam(json.balanceDetails.balance, result, name_balance, null, null, parseBalanceMy);
 			for(var k=0; k<json.balanceDetails.subServiceBalances.length; ++k){
 				var ss = json.balanceDetails.subServiceBalances[k];
 				sumParam(ss.fine, result, name_peni, null, null, null, aggregate_sum);
 			}
 		}
-
-		if(isAvailable('__tariff')){
-			html = AnyBalance.requestGet(baseurl + 'application/v3/accounts/' + acc.accountId + '/common-info', addHeaders({Referer: baseurl}));
-
-			var _json = getJson(html);
-			sumParam(_json.address, result, '__tariff', null, null, null, aggregate_join);
-		}
-
 	}
 	
 	if(AnyBalance.isAvailable('email', 'phone', 'fio')){
-	    html = AnyBalance.requestGet(baseurl + 'application/v3/profile', addHeaders({Referer: baseurl}));
-	    json = getJson(html);
+	    html = AnyBalance.requestGet(baseurl + 'api/v3/profile', g_headers);
+	    json = getExtJson(html);
 		
 		getParam(json.email, result, 'email');
 		getParam(json.phoneNumber, result, 'phone', null, [replaceTagsAndSpaces, /.*(\d\d\d)(\d\d\d)(\d\d)(\d\d)$/, '+7 $1 $2-$3-$4']);
@@ -154,4 +159,27 @@ function main(){
 	}
 
     AnyBalance.setResult(result); 
+}
+
+function getExtJson(html){
+	try{
+		var json = getJson(html);
+	}catch(e){
+		AnyBalance.trace(html);
+		
+		if(!html)
+			throw new AnyBalance.Error('Сайт временно работает с перебоями. Попробуйте еще раз позже');
+		
+		throw new AnyBalance.Error('Не удалось получить информацию. Пожалуйста, свяжитесь с разработчиком');
+	}
+
+	return json;
+}
+
+function parseBalanceMy(val) {
+	var balance = parseBalance(val + '');
+	if(!isset(balance))
+		return null;
+	
+	return -(balance);
 }

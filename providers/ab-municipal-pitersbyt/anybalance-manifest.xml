@@ -1,14 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-    <id version="46">ab-municipal-pitersbyt</id>
+    <id version="47">ab-municipal-pitersbyt</id>
     <api flags="no_browser"/>
     <name>Петербургская сбытовая компания</name>
     <description html="true"><![CDATA[
-	<p>Предоставляет информацию о текущей задолженности и пеням для абонентов Петербургской Сбытовой Компании и Петроэлектросбыте (https://pesc.ru/).</p>
-    <p>Информация берется из личного кабинета абонента Петербургской Сбытовой Компании на сайте https://ikus.pesc.ru/.</p>
+	<p>Предоставляет информацию о текущей задолженности и пеням для абонентов Петербургской Сбытовой Компании и Петроэлектросбыта (https://pesc.ru/).</p>
+    <p>Информация берется из мобильного приложения ЕИРЦ СПб/ПСК.</p>
     ]]></description>
     <instruction html="true"><![CDATA[
-	<p>Если у вас еще нет доступа к этому личному кабинету, или данные не отображаются, зарегистрируйтесь по ссылке https://ikus.pesc.ru/login/.</p>
+	<p>Если у вас еще нет доступа к личному кабинету или данные не отображаются, зарегистрируйтесь по ссылке https://ikus.pesc.ru/login/.</p>
     ]]></instruction>
     <author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
     <depends>
@@ -16,7 +16,7 @@
     	<module id="misc/saved-data"/>
     </depends>
     <files>
-        <icon>icon.png</icon>
+		<icon>icon.png</icon>
         <preferences>preferences.xml</preferences>
         <js>main.js</js>
         <history>history.xml</history>

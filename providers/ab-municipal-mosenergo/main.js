@@ -44,7 +44,6 @@ function callApi(query, params, action){
     return json.data;
 }
 
-
 var MES_KD_PROVIDER = 1;
 var MOE_KD_PROVIDER = 2;
 var TMK_NRG_KD_PROVIDER = 3;
@@ -54,7 +53,6 @@ var TKO_KD_PROVIDER = 6;
 var VLG_KD_PROVIDER = 7;
 var ORL_KD_PROVIDER = 8;
 var ORL_EPD_KD_PROVIDER = 9;
-
 
 var providersPlugin = {};
 providersPlugin[MES_KD_PROVIDER]= "bytProxy",
@@ -66,7 +64,6 @@ providersPlugin[UFA_KD_PROVIDER]= "ufaProxy",
 providersPlugin[TKO_KD_PROVIDER]= "trashProxy",
 providersPlugin[VLG_KD_PROVIDER]= "vlgProxy",
 providersPlugin[ORL_EPD_KD_PROVIDER]= "orlProxy";
-
 
 function main(){
     var prefs = AnyBalance.getPreferences();
@@ -117,7 +114,6 @@ function main(){
 		AnyBalance.trace(JSON.stringify(lsCurrent));
 		throw new AnyBalance.Error('Неизвестный тип провайдера счета: ' + lsCurrent.kd_provider + '. Сайт изменен?');
 	}
-
 
 	if(!this['process_' + type]){
 		throw new AnyBalance.Error('Тип счета ' + type + ' пока не поддерживается. Пожалуйста, обратитесь к разработчику.');
@@ -172,8 +168,9 @@ function process_bytProxy(ls, ipa, result){
 			proxyquery:	'CurrentBalance',
 			vl_provider: ls.vl_provider
 		});
-
-		getParam((/переплата/i.test(json[0].nm_balance) ? 1 : -1)*json[0].vl_balance, result, 'balance');
+    
+//		getParam((/переплата/i.test(json[0].nm_balance) ? 1 : -1)*json[0].vl_balance, result, 'balance'); // Баланс теперь отдаётся с минусом, если есть задолженность
+		getParam(json[0].vl_balance, result, 'balance');
 	}
 
 	if(ipa.pay_avail && AnyBalance.isAvailable('lastdate', 'lastsum')){
@@ -261,4 +258,3 @@ function process_smorodinaTransProxy(ls, ipa, result){
 		}
     } 
 }
-

@@ -18,7 +18,7 @@
         title="Пароль"
         obligatory="true"
         summary="Пароль для входа в личный кабинет|Введите пароль\n|**********\n"
-        dialogMessage="Введите пароль для входа в личный кабинет"
+        dialogMessage="Введите пароль, используемый для входа в личный кабинет"
         inputType="textPassword">
     </EditTextPreference>
 </PreferenceScreen>

@@ -3,19 +3,20 @@
 */
 
 var g_headers = {
-	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
+	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
 	'Accept-Language': 'u-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7',
+	'Connection': 'keep-alive',
 	'Upgrade-Insecure-Requests': '1',
-    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36'
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36'
 };
 
 var g_apiHeaders = {
 	'Accept': '*/*',
 	'Accept-Language': 'ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7',
 	'Content-type': 'application/json',
-	'Origin': 'https://new.multibonus.ru',
-	'Referer': 'https://new.multibonus.ru/',
-    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36'
+	'Origin': 'https://multibonus.ru',
+	'Referer': 'https://multibonus.ru/',
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36'
 };
 
 var g_statuses = {
@@ -28,7 +29,7 @@ var g_statuses = {
 	undefined: ''
 };
 
-var baseurl = 'https://new.multibonus.ru/mp-pl-b2c-gateway/api/v1/';
+var baseurl = 'https://multibonus.ru/mp-pl-b2c-gateway/api/v1/';
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
@@ -44,30 +45,25 @@ function main() {
 	
 	AnyBalance.restoreCookies();
 	
-    var html = AnyBalance.requestGet(baseurl + 'Buy/GetBalance', g_apiHeaders);
-	AnyBalance.trace("LastStatusCode Buy/GetBalance: " + AnyBalance.getLastStatusCode());/////////////////////////////////
-	AnyBalance.trace("Cookies Buy/GetBalance: " + JSON.stringify(AnyBalance.getCookies()));/////////////////////////////////
+	AnyBalance.trace('Пробуем войти в личный кабинет...');
+	
+	var html = AnyBalance.requestGet(baseurl + 'Authorize', g_apiHeaders);
 	AnyBalance.trace(html);
 	
-    if(!html||AnyBalance.getLastStatusCode()==401){
+    if(!html || AnyBalance.getLastStatusCode() == 401){
 	    AnyBalance.trace('Сессия новая. Будем логиниться заново...');
-		clearAllCookies();
-		AnyBalance.saveCookies();
-    	AnyBalance.saveData();
+		clearAllCookiesExceptProtection();
 	    
-		var html = loadProtectedPage(('https://new.multibonus.ru/', g_headers));
-		AnyBalance.trace("LastStatusCode https://new.multibonus.ru/: " + AnyBalance.getLastStatusCode());/////////////////////////////////
-	    AnyBalance.trace("Cookies https://new.multibonus.ru/: " + JSON.stringify(AnyBalance.getCookies()));/////////////////////////////////
+		var html = loadProtectedPage(('https://multibonus.ru/', g_headers));
 	    
-	    html = AnyBalance.requestPost(baseurl + 'Token/GetToken', JSON.stringify({
-			Password: prefs.password, 
-			UserPhone: '7' + prefs.login
+	    html = AnyBalance.requestPost(baseurl + 'token', JSON.stringify({
+			password: prefs.password, 
+			phoneNumber: '7' + prefs.login
 		}), g_apiHeaders, {httpMethod: 'PUT'});
 	    AnyBalance.trace(html);
 	
-	    if(!html||AnyBalance.getLastStatusCode()>400){
-	    	AnyBalance.trace('LastStatusCode: ' + AnyBalance.getLastStatusCode());
-	    	AnyBalance.trace(html);
+	    if(!html || AnyBalance.getLastStatusCode() >= 400){
+	    	AnyBalance.trace('LastStatusCode: ' + AnyBalance.getLastStatusCode() + '\n' + html);
             clearAllCookies();
             AnyBalance.saveCookies();
     	    AnyBalance.saveData();
@@ -77,21 +73,32 @@ function main() {
 	    var json = getJson(html);
 		
 	    if (!json.Success) {
+			var error = json.Error;
+			if(error){
+				if(error == 'invalid_grant')
+				    throw new AnyBalance.Error('Неверный номер телефона или пароль', null, true);
+			    else
+					throw new AnyBalance.Error(error, null, true);
+			}
+			
 	    	AnyBalance.trace(html);
-	    	throw new AnyBalance.Error('Не удалось войти в кабинет. Возможно, изменения в API');
+	    	throw new AnyBalance.Error('Не удалось войти в личный кабинет. Сайт изменен?');
 		}
 		
-        var html = AnyBalance.requestGet(baseurl + 'Buy/GetBalance', g_apiHeaders);
-		AnyBalance.trace(html);
 		AnyBalance.saveCookies();
     	AnyBalance.saveData();
     }else{
 		AnyBalance.trace('Сессия сохранена. Входим автоматически...');
+		AnyBalance.saveCookies();
+    	AnyBalance.saveData();
 	}
 
 	var result = {success: true};
 	
-    json = getJson(html);
+    var html = AnyBalance.requestGet(baseurl + 'Buy/GetBalance', g_apiHeaders);
+	AnyBalance.trace(html);
+	
+	var json = getJson(html);
 	
 	getParam(json.BalanceTotal, result, 'balance', null, replaceTagsAndSpaces, parseBalance);
 	
@@ -201,7 +208,7 @@ function main() {
 
 function loadProtectedPage(headers){
 	var prefs = AnyBalance.getPreferences();
-	const url = 'https://new.multibonus.ru/';
+	const url = 'https://multibonus.ru/';
 
     var html = AnyBalance.requestGet(url, headers);
     if(/__qrator/.test(html)) {
@@ -262,4 +269,8 @@ function loadProtectedPage(headers){
     }
 
     return html;
+}
+
+function clearAllCookiesExceptProtection(){
+	clearAllCookies(function(c){return!/qrator/i.test(c.name)})
 }

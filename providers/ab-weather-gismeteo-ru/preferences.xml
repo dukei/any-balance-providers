@@ -18,6 +18,16 @@
         dialogMessage="Введите индекс или название города. Индекс можно получить из адресной строки браузера, выбрав на сайте https://www.gismeteo.ru нужный вам город. Например, для Москвы это 4368"
         positiveButtonText="ОК"
         negativeButtonText="Отмена" />
+	<EditTextPreference
+		obligatory="true"
+		title="Регион или название страны"
+		positiveButtonText="ОК"
+		summary="Регион или название страны для погоды|Необязательно\n|{@s}\n"
+		dialogTitle="Регион или название страны"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите регион или название страны. Эти данные необязательны, но их наличие увеличивает точность поиска нужного города. Достаточно указать начальные буквы региона или страны"
+		key="country"
+		inputType="text" />
     <ListPreference
 		obligatory="true"
         title="Домен"

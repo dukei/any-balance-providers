@@ -33,7 +33,31 @@ function main() {
     var json = getJson(html);
     AnyBalance.trace(JSON.stringify(json));
 
-    var id = getParam(html, null, null, /^\{["']+(\d+)/i, [/\D/g, '']);
+    if(prefs.country){
+		AnyBalance.trace('Регион или название страны указаны в настройках (' + prefs.country + '). Ищем ID города ' + prefs.city + ' по указанным данным');
+		var json = arrayOfObj = Object.entries(json).map(function(e) { return  { [e[0]]: e[1] } });
+		if(json && json.length > 0){
+			for(var i=0; i<json.length; i++){
+				var obj = json[i];
+				var objStr = JSON.stringify(obj);
+				if(objStr.includes(prefs.country)){
+					AnyBalance.trace(objStr);
+				    var id = getParam(objStr, null, null, /^\{["']+(\d+)/i, [/\D/g, '']);
+					break;
+				}else{
+                    continue;
+				}
+			}
+		}
+		
+		if(!id){
+		    AnyBalance.trace('Точных соответствий по указанным данным не найдено. Ищем ID города ' + prefs.city + ' обычным способом');
+		    var id = getParam(html, null, null, /^\{["']+(\d+)/i, [/\D/g, '']);
+		}
+	}else{
+		AnyBalance.trace('Регион или название страны не указаны в настройках. Ищем ID города ' + prefs.city + ' обычным способом');
+		var id = getParam(html, null, null, /^\{["']+(\d+)/i, [/\D/g, '']);
+	}
 
     checkEmpty(id, 'Не удалось найти ID города ' + prefs.city, true);
     AnyBalance.trace('Нашли ID города ' + prefs.city + ': ' + id);
@@ -75,7 +99,7 @@ function main() {
 function getWeatherFromHTML(prefs) {
   var baseurl = 'https://www.gismeteo.' + prefs.domen + '/city/daily/';
 
-  AnyBalance.trace('Trying open address: ' + baseurl + prefs.city + '/');
+  AnyBalance.trace('Пробуем перейти по адресу: ' + baseurl + prefs.city + '/');
   var html = AnyBalance.requestGet(baseurl + prefs.city + '/');
 
   // Проверка неправильной пары логин/пароль
@@ -91,9 +115,9 @@ function getWeatherFromHTML(prefs) {
   }
 
   if (/(почасовой прогноз погоды|давление и влажность|Prognozė kas valandą)/i.test(html)) {
-    AnyBalance.trace('It looks like we are in selfcare...');
+    AnyBalance.trace('Похоже, мы уже на странице прогноза');
   } else {
-    AnyBalance.trace('Have not found weather info... Unknown error. Please contact author.');
+    AnyBalance.trace(html);
     throw new AnyBalance.Error('Не удалось найти прогноз погоды. Сайт изменен?');
   }
 

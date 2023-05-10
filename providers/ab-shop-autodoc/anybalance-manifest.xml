@@ -1,11 +1,15 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="3">ab-shop-autodoc</id>
+	<id version="4">ab-shop-autodoc</id>
 	<api flags="no_browser"/>
 	<name>Autodoc.ru</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе в интернет-магазине автозапчастей Autodoc.ru</p>
+	<p>Предоставляет информацию о балансе и другие данные для пользователей интернет-магазина автозапчастей Autodoc.ru (https://www.autodoc.ru/).</p>
+	<p>Информация берется из личного кабинета Autodoc.ru на сайте https://www.autodoc.ru/.</p>
 	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Для работы провайдера требуется ввести логин и пароль для входа в личный кабинет Autodoc.ru.</p>
+	]]></instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>
 		<module id="library"/>
@@ -17,9 +21,22 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units=" р"/>
-		<counter id="discount" name="Скидка" type="text"/>
-		<counter id="orders_details" name="Сводка по заказу" type="text"/>
+		<counter id="balance" name="Баланс" units=" ₽"/>
+		<counter id="balance_acc" name="На счете" units=" ₽"/>
+		<counter id="bonuses" name="Бонусы" units=" Б"/>
+		<counter id="discount" name="Текущая скидка" type="text"/>
+		<counter id="next_discount" name="Следующая скидка" type="text"/>
+		<counter id="to_next_discount" name="До следующей скидки" units=" ₽"/>
+		<counter id="oborot_accum" name="Накопленный оборот" units=" ₽"/>
+		<counter id="oborot_sum" name="Суммарный оборот" units=" ₽"/>
+		<counter id="last_oper_sum" name="Сумма посл. операции" units=" ₽"/>
+		<counter id="last_oper_bonus" name="Бонусы посл. операции" units=" Б"/>
+		<counter id="last_oper_date" name="Дата посл. операции" type="time" format="dd.MM.yyyy"/>
+		<counter id="last_oper_desc" name="Тип посл. операции" type="text"/>
+		<counter id="orders_details" name="Сводка по заказу" type="html"/>
+		<counter id="email" name="E-mail" type="text"/>
+		<counter id="phone" name="Номер телефона" type="text"/>
+		<counter id="fio" name="ФИО" type="text"/>
 	</counters>
 	<keywords>автодок</keywords>
 	<type>shop</type>

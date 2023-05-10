@@ -1,5 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="4" date="2023-04-30">
+	- Поддержка нового личного кабинета.
+	- Добавлены дополнительные счетчики.
+	</change>
 	<change version="3" date="2017-01-03">
 	- Поддержка изменений на сайте.
 	</change>

@@ -214,7 +214,7 @@ function main() {
 	
 	var at = AnyBalance.getData('authToken');
 	
-	if (isAvailable(['balance', 'bonus', 'bonus_premium', 'bonus_salers', 'fio'])) {
+	if (isAvailable(['balance', 'bonus', 'miles', 'bonus_premium', 'bonus_salers', 'fio'])) {
 		html = AnyBalance.requestGet('https://user-account.ozon.ru/action/safeUserAccountBalance', g_headers);
 		var json = getJson(html);
 //		AnyBalance.trace('Баланс Ozon' + JSON.stringify(json));
@@ -225,8 +225,10 @@ function main() {
 
 		var ozonPoints = getDefaultProp(json.premium.premiumBalanceHeader);
 //		AnyBalance.trace('Баллы Ozon: ' + JSON.stringify(ozonPoints));
-		if(ozonPoints)
-		    getParam(ozonPoints.ozon.amount, result, 'bonus', null, null, parseBalance);
+		if(ozonPoints){
+		    getParam(ozonPoints.ozon && ozonPoints.ozon.amount, result, 'bonus', null, null, parseBalance);
+		    getParam(ozonPoints.miles && ozonPoints.miles.amount, result, 'miles', null, null, parseBalance);
+		}
 		
 		var salersPoints = getDefaultProp(json.premium.premiumSellerPointsBalance);
 //		AnyBalance.trace('Бонусы продавцов: ' + JSON.stringify(salersPoints));

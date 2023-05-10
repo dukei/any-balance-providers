@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+	<EditTextPreference 
+        title="Логин" 
+        positiveButtonText="ОК" 
+        summary="Логин для входа в личный кабинет|Введите логин\n|{@s}\n" 
+        dialogTitle="Логин" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите номер телефона, используемый для входа в личный кабинет, в формате 10 цифр, например: 9781234567"
+	    obligatory="true"
+        key="login"
+        inputType="number">
+    </EditTextPreference>
+    <EditTextPreference 
+        positiveButtonText="ОК"
+        key="password" 
+        dialogTitle="Пароль"
+        negativeButtonText="Отмена"
+        title="Пароль"
+	    obligatory="true"
+        summary="Пароль для входа в личный кабинет|Введите пароль\n|**********\n"
+        dialogMessage="Введите пароль, используемый для входа в личный кабинет"
+        inputType="textPassword">
+    </EditTextPreference>
+	<CheckBoxPreference
+		title="Пакеты"
+		defaultValue="true"
+		summaryOn="Показывать названия пакетов"
+		summaryOff="Не показывать названия пакетов"
+		key="needPref">
+    </CheckBoxPreference>
+</PreferenceScreen>

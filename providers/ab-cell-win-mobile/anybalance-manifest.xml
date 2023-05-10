@@ -1,0 +1,61 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-cell-win-mobile</id>
+	<api flags="no_browser"/>
+	<name>Win mobile (Крым)</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе и тарифном плане для пользователей оператора сотовой связи Win mobile (https://www.mobile-win.ru/).</p>
+	<p>Информация берется из личного кабинета Win mobile на сайте https://lknew.mobile-win.ru/.</p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Для работы провайдера требуется ввести логин и пароль для входа в личный кабинет Win mobile.</p> 
+	]]></instruction>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" ₽"/>
+		<counter id="bonuses" name="Бонусы" units=" Б"/>
+
+		<counter id="traffic_left1"  prefix='{@traffic_left_name1}' name="1.Трафик" units=" Мб"/>
+		<counter id="min_left1" prefix='{@min_left_name1}' name="1.Минуты" units=" мин"/>
+		<counter id="sms_left1" prefix='{@sms_left_name1}' name="1.Сообщения" units=" sms"/>
+
+		<counter id="traffic_left2"  prefix='{@traffic_left_name2}' name="2.Трафик" units=" Мб"/>
+		<counter id="min_left2" prefix='{@min_left_name2}' name="2.Минуты" units=" мин"/>
+		<counter id="sms_left2" prefix='{@sms_left_name2}' name="2.Сообщения" units=" sms"/>
+
+		<counter id="traffic_left3"  prefix='{@traffic_left_name3}' name="3.Трафик" units=" Мб"/>
+		<counter id="min_left3" prefix='{@min_left_name3}' name="3.Минуты" units=" мин"/>
+		<counter id="sms_left3" prefix='{@sms_left_name3}' name="3.Сообщения" units=" sms"/>
+
+		<counter id="traffic_left4"  prefix='{@traffic_left_name4}' name="4.Трафик" units=" Мб"/>
+		<counter id="min_left4" prefix='{@min_left_name4}' name="4.Минуты" units=" мин"/>
+		<counter id="sms_left4" prefix='{@sms_left_name4}' name="4.Сообщения" units=" sms"/>
+
+		<counter id="traffic_left5"  prefix='{@traffic_left_name5}' name="5.Трафик" units=" Мб"/>
+		<counter id="min_left5" prefix='{@min_left_name5}' name="5.Минуты" units=" мин"/>
+		<counter id="sms_left5" prefix='{@sms_left_name5}' name="5.Сообщения" units=" sms"/>
+		
+		<counter id="dateOfExpire" name="Срок действия пакета" type="time" format="dd.MM.yyyy"/>
+		<counter id="abon" name="Абонентская плата" units=" ₽/мес"/>
+		<counter id="total_spent" name="Расходы за этот месяц" units=" ₽"/>
+		<counter id="total_payments" name="Пополнения за этот месяц" units=" ₽"/>
+		<counter id="last_oper_date" name="Дата посл. операции" type="time" format="dd.MM.yyyy"/>
+		<counter id="last_oper_sum" name="Сумма посл. операции" units=" ₽"/>
+		<counter id="last_oper_desc" name="Тип посл. операции" type="text"/>
+		<counter id="email" name="E-mail" type="text"/>
+		<counter id="phone" name="Номер телефона" type="text"/>
+		<counter id="fio" name="ФИО" type="text"/>
+	</counters>
+	<keywords>сотовая связь, мобильный, win mobile, вин-мобайл, Крым</keywords>
+	<type>cell</type>
+	<country>ru</country>
+</provider>

@@ -116,9 +116,10 @@ function main(){
 	    var cashbackUrl = json.data.views.cashback.urls.fetch.url;
 		html = AnyBalance.requestGet(cashbackUrl, addHeaders({
 	    	'Accept': 'application/json, text/plain, */*',
+			'Authorization': 'Bearer ' + accessToken,
 	    	'Origin': baseurl,
 	    	'Referer': baseurl + '/'
-	        }));
+	    }));
 	
 	    var json = getJson(html);
 	

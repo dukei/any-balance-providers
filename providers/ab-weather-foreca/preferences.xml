@@ -11,4 +11,15 @@
 		key="city_name"
 		inputType="text">
 	</EditTextPreference>
+	<EditTextPreference
+		obligatory="true"
+		title="Страна"
+		positiveButtonText="ОК"
+		summary="Страна для информации о погоде|Необязательно\n|{@s}\n"
+		dialogTitle="Страна"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите название страны на русском языке"
+		key="country_name"
+		inputType="text">
+	</EditTextPreference>
 </PreferenceScreen>

@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="3">ab-weather-foreca</id>
+	<id version="5">ab-weather-foreca</id>
 	<api flags="no_browser"/>
 	<name>Foreca</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о прогнозе погоды с сайта <a href="https://www.foreca.ru/">https://www.foreca.ru/.</a></p>
+	<p>Предоставляет информацию о прогнозе погоды с сайта <a href="https://old.foreca.com/">https://old.foreca.com/.</a></p>
 	]]></description>
 	<instruction html="true"><![CDATA[
 	<p>Для работы провайдера требуется ввести название города.</p>
+	<p>Название страны вводить необязательно, но при его наличии точность поиска нужного города увеличивается.</p>
 	]]></instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>
@@ -23,13 +24,13 @@
 <!--	<counter id="city" name="Город" type="text"/> -->
 		<counter id="temp" name="Температура" units=" °C"/>
 		<counter id="rf_temp" name="Ощущается как" units=" °C"/>
-		<counter id="wind" name="Скорость ветра" units=" м/с"/>
-		<counter id="wind_dir" name="Направление ветра" type="text"/>
+		<counter id="wind" name="Ветер" type="text"/>
 		<counter id="atmo_conditions" name="Атмосферные явления" type="text"/>
 		<counter id="pressure" name="Барометр" units=" мм рт.ст."/>
 		<counter id="point_dew" name="Точка росы" units=" °C"/>
-		<counter id="humidity" name="От. влажность" units=" %"/>
+		<counter id="humidity" name="От. влажность" units="%"/>
 		<counter id="line_of_sight" name="Видимость" units=" км"/>
+		<counter id="time" name="Время прогноза" type="time" format="dd.MM.yyyy HH:mm"/>
 		<counter id="rising" name="Восход Солнца" type="time_interval" prefix="В. "/>
 		<counter id="setting" name="Закат Солнца" type="time_interval" prefix="З. "/>
 		<counter id="dayLength" name="Долгота дня" type="time_interval" prefix="Д. "/>

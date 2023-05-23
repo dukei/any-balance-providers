@@ -80,6 +80,31 @@ function main() {
 		var json = getJson(html);
 	    AnyBalance.trace(JSON.stringify(json));
 		
+		if (json.action && json.action == 'FILL_MFA') {
+			AnyBalance.trace('Госуслуги предложили подключить вход с подтверждением. Отказываемся...');
+			
+			html = AnyBalance.requestPost('https://esia.gosuslugi.ru/aas/oauth2/api/login/promo-mfa/fill-mfa?decision=false', null, addHeaders({
+		    	'Accept': 'application/json, text/plain, */*',
+                'Content-Type': 'application/json',
+		    	'Origin': 'https://esia.gosuslugi.ru',
+		    	'Referer': 'https://esia.gosuslugi.ru/login/',
+		    }));
+		
+		    var json = getJson(html);
+	        AnyBalance.trace(JSON.stringify(json));
+
+            if (json.action != 'DONE') {
+		        var error = json.error || json.failed;
+    	        if (error) {
+		            AnyBalance.trace(html);
+		    		throw new AnyBalance.Error('Не удалось отказаться от подключения входа с подтверждением', null, true);
+    	        }
+
+    	        AnyBalance.trace(html);
+    	        throw new AnyBalance.Error('Не удалось войти в личный кабинет. Сайт изменён?');
+            }
+        }
+		
 		if (json.action && json.action == 'ENTER_MFA') {
 			if (json.mfa_details.type == 'SMS') {
 			    AnyBalance.trace('Госуслуги затребовали код подтверждения из SMS');
@@ -240,7 +265,7 @@ function main() {
 		    var error = json.error || json.failed;
     	    if (error) {
 		        AnyBalance.trace(html);
-				throw new AnyBalance.Error('Неверный логин или пароль!', null, /login|password|invalid/i.test(error));
+				throw new AnyBalance.Error('Неверные логин или пароль!', null, /login|password|invalid/i.test(error));
     	    }
 
     	    AnyBalance.trace(html);
@@ -357,7 +382,8 @@ function callAPI(verb, params){
 		var html = AnyBalance.requestGet(g_baseurl + 'api/' + verb + '?_=' + Math.random(), addHeaders({Referer: g_headers}))
 	else
 		var html = AnyBalance.requestGet(g_baseurl + 'api/' + verb + '?_=' + Math.random(), params, addHeaders({Referer: g_headers}))
-	AnyBalance.trace('Ответ: ' + html);
+	if (!/users\/data/i.test(verb)) // Страницу с пользовательскими данными не выводим
+	    AnyBalance.trace('Ответ: ' + html);
 	var json = getJson(html);
 	if(json.error && json.error.code != 0){
 		throw new AnyBalance.Error(json.error.message);

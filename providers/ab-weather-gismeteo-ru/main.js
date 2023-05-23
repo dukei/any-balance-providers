@@ -35,14 +35,14 @@ function main() {
 
     if(prefs.country){
 		AnyBalance.trace('Регион или название страны указаны в настройках (' + prefs.country + '). Ищем ID города ' + prefs.city + ' по указанным данным');
-		var json = arrayOfObj = Object.entries(json).map(function(e) { return  { [e[0]]: e[1] } });
-		if(json && json.length > 0){
-			for(var i=0; i<json.length; i++){
-				var obj = json[i];
-				var objStr = JSON.stringify(obj);
-				if(objStr.includes(prefs.country)){
-					AnyBalance.trace(objStr);
-				    var id = getParam(objStr, null, null, /^\{["']+(\d+)/i, [/\D/g, '']);
+		var objs = JSON.stringify(json).match(/"'+\d+[\s\S]*?span[^>]*>[\s\S]*?"/ig);
+		
+		if(objs && objs.length > 0){
+			for(var i=0; i<objs.length; i++){
+				var obj = objs[i];
+				if(obj.includes(prefs.country)){
+					AnyBalance.trace(obj);
+				    var id = getParam(obj, null, null, /^["']+(\d+)/i, [/\D/g, '']);
 					break;
 				}else{
                     continue;

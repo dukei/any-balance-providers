@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-municipal-vodokanal_podolsk</id>
+	<id version="3">ab-municipal-vodokanal_podolsk</id>
 	<api flags="no_browser"/>
 	<name>Водоканал (Подольск)</name>
 	<description html="true"><![CDATA[
@@ -24,7 +24,7 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Задолженность" units=" ₽"/>
+		<counter id="balance" name="Задолженность/Переплата" units=" ₽"/>
 		<counter id="tariff_sanitation" name="Водоотведение (тариф)" units=" ₽/м³"/>
 		<counter id="tariff_coldwater" name="Водоснабжение (тариф)" units=" ₽/м³"/>
 		<counter id="countervalue" name="Показания счетчика" units=" м³"/>

@@ -83,7 +83,7 @@ function main() {
 	
 	var result = {success: true};
 	
-	getParam(html, result, 'balance', /Задолженность([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(html, result, 'balance', /(?:Задолженность|Переплата)([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, '__tariff', /Лицевой счет:([\s\S]*?)\(/i, replaceTagsAndSpaces);
 	getParam(html, result, 'account', /Лицевой счет:([\s\S]*?)\(/i, replaceTagsAndSpaces);
 	getParam(html, result, 'living_area', /Лицевой счет:[\s\S]*?\(([\s\S]*?),/i, replaceTagsAndSpaces, parseBalance);

@@ -6,18 +6,22 @@ var g_headers = {
 	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
 	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
 	'Accept-Language': 'ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7',
+	'Cache-Control': 'max-age=0',
 	'Connection': 'keep-alive',
 	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36',
 };
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'https://old.foreca.com/';
+	var baseurl = 'https://www.foreca.ru/';
 	AnyBalance.setDefaultCharset('utf-8');
 
-	/* Проверяем не забыл ли пользователь ввести данные. Страну вводить не обязательно, она только уточняет поиск, поэтому её не проверяем */
+	/* Проверяем не забыл ли пользователь ввести данные */
 
 	checkEmpty(prefs.city_name, 'Введите название города!');
+	var city_name = prefs.city_name.replace(/^\s\s*|\s\s*$/g, '');
+	if(prefs.country_name)
+		var country_name = prefs.country_name.replace(/^\s\s*|\s\s*$/g, '');
 
 	/* Проверяем доступность ресурса */
 
@@ -25,120 +29,139 @@ function main() {
 
 	if(!html || AnyBalance.getLastStatusCode() > 400) {
 		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже');
+		throw new AnyBalance.Error('Сайт провайдера временно недоступен. Попробуйте еще раз позже');
 	}
 
-	// в нормальном виде cookie не применяются, если '%3D' => '=' и '%26' => '&'
-	AnyBalance.setCookie('old.foreca.com', 'st2', 'lang%3Dru%26units%3Dmetricmmhg%26tf%3D24h%26ml%3D%26u%3DRYU2ZSSXXU4A', {path: '/'});
+	// Устанавливаем куки региональных настроек, на всякий случай
+	AnyBalance.setCookie('www.foreca.ru', 'fcaSettings-v2', '{"units":{"temp":"C","wind":"ms","rain":"mm","pres":"mmHg","vis":"km"},"time":"24h","theme":"light","language":"ru"}', {path: '/'});
 
 	/* Проверяем доступность прогноза для указанного города */
-
-	html = AnyBalance.requestPost(baseurl, {
-		q: prefs.city_name,
-		do_search: 'Find place',
-		country_id: 'ru'
-	}, g_headers);
+	
+	html = AnyBalance.requestGet('https://api.foreca.net/locations/search/' + encodeURIComponent(city_name) + '.json?limit=30&format=legacy&ppl=true&lang=ru', g_headers);
 
 	if(!html || AnyBalance.getLastStatusCode() > 400) {
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Ошибка при определении города! Попробуйте еще раз позже');
 	}
-
-	// проверяем есть такой город или нет
-	if(/<h1 class="entry-title">/i.test(html)){
-		AnyBalance.trace('Похоже, мы уже на странице прогноза'); // Если поиск не предлагает выбора городов, то сразу отправляет на страницу прогноза
-	}else{
-		var expr = '<dd>[\\s\\S]*?<a[^>]*?href\\s*?=\\s*?"([\\s\\S]*?)"[\\s\\S]*?' + prefs.city_name + '[\\s\\S]*?<\/a[^>]*?>';
-	    var rx = new RegExp(expr, 'i');
-		var dl = getElement(html, /<dl[^>]+class="in">/i);
-		var dds = getElements(dl, /<dd[^>]*>/ig);
-		if(dds && dds.length > 0){
-			var cityHref;
-			for(var i=0; i<dds.length; i++){
-				var dd = dds[i];
-				var city = getParam(dd, null, null, /<a[^>]*?href\s*?=\s*?"[\s\S]*?"[^>]*>([\s\S]*?)<\/a[^>]*?>/i, replaceTagsAndSpaces);
-				var country = getParam(dd, null, null, /<a[^>]*?href\s*?=\s*?"[\s\S]*"[^>]*>([\s\S]*?)<\/a[^>]*?>/i, replaceTagsAndSpaces);
-				AnyBalance.trace('Найден город: ' + city + ' (' + country + ')');
-				if(!prefs.country_name){
-					if(city == prefs.city_name){
-						AnyBalance.trace('Страна не указана в настройках. Выбираем первый соответствующий названию город: ' + city + ' (' + country + ')');
-				        cityHref = getParam(dd, null, null, rx);
-				    	break;
-				    }else{
-						continue;
-					}
-				}else{
-					if(dd.includes(prefs.country_name) && city == prefs.city_name){
-					    AnyBalance.trace('Страна указана в настройках (' + prefs.country_name + '). Выбираем первый соответствующий названию город: ' + city);
-				        cityHref = getParam(dd, null, null, rx);
-						break;
-					}else{
-                        continue;
-					}
+	
+	var json = getJson(html);
+	AnyBalance.trace(JSON.stringify(json));
+	if(json.results && json.results.length > 0){
+	    var rxCity = new RegExp(city_name, 'i');
+		var rxCountry = new RegExp(country_name, 'i');
+		var cityname, admname, countryname;
+		
+		for(var i=0; i<json.results.length; i++){
+			var res = json.results[i];
+			AnyBalance.trace('Найден город: ' + res.name + ' (' + res.admName + ' - ' + res.countryName + ')');
+			if(!prefs.country_name || prefs.country_name == ''){
+				if(res.name.match(rxCity)){
+					cityname = res.defaultName;
+			        admname = res.defaultAdmName;
+			        countryname = res.defaultCountryName;
+					AnyBalance.trace('Регион не указан в настройках. Выбираем первый соответствующий названию город: ' + res.name
+					+ ' (' + res.admName + ' - ' + res.countryName + ')');
+			    	break;
+			    }else{
+					continue;
 				}
-			}
-			if(!cityHref){
-				var city = getParam(dds[0], null, null, /<a[^>]*?href\s*?=\s*?"[\s\S]*?"><strong[^>]*>([\s\S]*?)<\/strong><\/a[^>]*?>/i, replaceTagsAndSpaces);
-				var country = getParam(dds[0], null, null, /<a[^>]*?href\s*?=\s*?"[\s\S]*"[^>]*>([\s\S]*?)<\/a[^>]*?>/i, replaceTagsAndSpaces);
-				AnyBalance.trace('Точных соответствий не найдено. Выбираем первый город из списка предложенных: ' + city + ' (' + country + ')');
-				cityHref = getParam(dds[0], null, null, rx);
+			}else{
+			    if((res.countryName.match(rxCountry) || res.admName.match(rxCountry)) && res.name.match(rxCity)){
+					cityname = res.defaultName;
+			        admname = res.defaultAdmName;
+			        countryname = res.defaultCountryName;
+				    AnyBalance.trace('Регион указан в настройках (' + country_name + '). Выбираем первый соответствующий настройкам город: ' + res.name
+					+ ' (' + res.admName + ' - ' + res.countryName + ')');
+					break;
+				}else{
+                    continue;
+				}
 			}
 		}
 		
-	    if (!cityHref) {
-	    	var error = getParam(html, null, null, /Результаты\s*?выбора<\/h1[\s\S]*?class\s*?=\s*?['"]clearb[\s\S]*?<p[^>]*?>([\s\S]*?)<\/p[^>]*?>/i, replaceTagsAndSpaces);
-	    	if (error) {
-	    		throw new AnyBalance.Error(error, null, /Ваш выбор остался без результата/i.test(error));
-			} else {
-	    		// если не смогли определить ошибку, то показываем дефолтное сообщение
-	    		AnyBalance.trace(html);
-	    		throw new AnyBalance.Error('Не удалось определить город. Сайт изменен?');
-	    	}
-	    }
+		if(!countryname && !cityname){
+			res = json.results[0];
+			cityname = res.defaultName;
+			admname = res.defaultAdmName;
+			countryname = res.defaultCountryName;
+			AnyBalance.trace('Точных соответствий не найдено. Выбираем первый город из списка предложенных: ' + res.name
+			+ ' (' + res.admName + ' - ' + res.countryName + ')');
+		}
+		
+		if(!countryname && !cityname){ // Для перехода на страницу прогноза достаточно страны и города
+			AnyBalance.trace(html);
+			throw new AnyBalance.Error('Не удалось определить город. Сайт изменен?');
+		}
+		
+		var url = countryname;
+		if(admname)
+		    url += '/' + admname;
+		url += '/' + cityname;
+	}
+	
+	AnyBalance.trace('Пробуем перейти по адресу: ' + baseurl + url.replace(/\s/g, '%20'));
+	
+	var html = AnyBalance.requestGet(baseurl + url.replace(/\s/g, '%20'), g_headers);
 
-	    /* Получаем данные */
-
-	    //переходим на страницу с прогнозом
-	    var html = AnyBalance.requestGet(baseurl + cityHref.substring(1), g_headers);
-
-	    if(!html || AnyBalance.getLastStatusCode() > 400) {
-	    	AnyBalance.trace(html);
-	    	throw new AnyBalance.Error('Ошибка при получении прогноза! Попробуйте позже.');
-	    }
+	if(!html || AnyBalance.getLastStatusCode() > 400) {
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Ошибка при получении прогноза! Попробуйте еще раз позже');
 	}
 
 	var result = {success: true};
     
-	var city = getElementsByClassName(html, 'entry-title', replaceTagsAndSpaces);
-	if (city.length) {
-		result.__tariff = city[0];
-	} else if (!city.length && prefs.city_name) {
+	var city = getParam(html, null, null, /<div[^>]+class="header"><h2>([\s\S]*?)<\/h2>/i, replaceTagsAndSpaces);
+	if (city) {
+		result.__tariff = city;
+	} else if (!city && prefs.city_name) {
 		result.__tariff = prefs.city_name;
 	} else {
 		result.__tariff = null;
 	}
 
-	var table = getElementsByClassName(html, 'table t_cond');
-	if(!table.length) {
+	var data = getJsonObject(html, /window.renderObservations\s*?\(/);
+	
+	if(!data) {
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось получить прогноз. Сайт изменен?');
-	} else {
-		table = table[0];
 	}
-    
-	var temp = getElementsByClassName(table, 'txt-xxlarge', replaceTagsAndSpaces, parseBalance);
-	if (temp.length) {
-		result.temp = temp[0];
-	} else {
-		result.temp = null;
-	}
-
-	var wind = getParam(table, null, null, /Фактическая\s*?погода[\s\S]*?<br\s*?\/>\s*?(?:<img[^>]*?wind[\s\S]*?)?<strong[^>]*?>([\s\S]*?)</i, replaceTagsAndSpaces, parseBalance);
-	var replaceWind = ['N', 'С', 'NE', 'СВ', 'S', 'Ю', 'SE', 'ЮВ', 'W', 'З', 'NW', 'СВ', 'E', 'В', 'SW', 'ЮЗ'];
-	var windDir = getParam(table, null, null, /Фактическая\s*?погода[\s\S]*?<br\s*?\/>\s*?<img[^>]*?wind[\s\S]*?alt\s*?=\s*['"]([\s\S]*?)['"][^>]*?>/i, replaceWind);
 	
-	if (!windDir) {
-		var dir = getParam(html, null, null, /mgdata\s*?=[\s\S]*?wd:([\s\S]*?)\,/i, replaceTagsAndSpaces);
+	if(data.obs && data.obs.length > 0){ // Некоторые станции отдают не все данные по погоде
+		var info;
+		
+		for(var i=0; i<data.obs.length; i++){
+			var dataObs = data.obs[i];
+			
+			AnyBalance.trace('Найдена станция: ' + dataObs.stationName + ' (' + dataObs.dist + ' км)');
+			if(!dataObs.wx || !dataObs.presmmhg || !dataObs.vis){
+				AnyBalance.trace('Данные станции ' + dataObs.stationName + ' ограничены. Пробуем следующую...');
+				continue;
+			}else{
+				AnyBalance.trace('Данные станции ' + dataObs.stationName + ' полноценны. Выбираем эту станцию');
+				info = dataObs;
+				break;
+			}
+		}
+		
+		if(!info){
+			var info = data.obs[0];
+			AnyBalance.trace('Полноценных данных не найдено. Выбираем первую станцию из списка: ' + info.stationName + ' (' + info.dist + ' км)');
+		}
+		
+		if(!info){
+			AnyBalance.trace(html);
+			throw new AnyBalance.Error('Не удалось определить станцию. Сайт изменен?');
+		}
+	}
+	
+	AnyBalance.trace('Фактическая погода: ' + JSON.stringify(info));
+	
+	var wind = getParam(info.winds, null, null, null, null, parseBalance);
+	var replaceWind = ['N', 'С', 'NE', 'СВ', 'S', 'Ю', 'SE', 'ЮВ', 'W', 'З', 'NW', 'СВ', 'E', 'В', 'SW', 'ЮЗ'];
+	var windDir = getParam(info.windCardinal, null, null, null, replaceWind);
+	
+	if (!windDir) { // Если не получили буквенное направление ветра, рассчитываем из градусов
+		var dir = info.windd;
 		if (dir && (dir <= 22 || dir > 336)) {
 			windDir = 'N';
 		} else if (dir && (dir > 22 && dir <= 67)) {
@@ -156,38 +179,42 @@ function main() {
 		} else if (dir && (dir > 292 && dir <= 336)) {
 			windDir = 'NW';
 		} else {
-			windDir = undefined;
+			windDir = null;
 		}
 	}
 	
-	var direction = getParam(windDir, null, null, null, replaceWind);
-	result.wind = (direction || 'Ш') + ', ' + (wind || 0) + ' м/с'; // Форека не отдаёт никаких данных по ветру в случае штиля
-	
-	getParam(table, result, 'atmo_conditions', /Фактическая\s*?погода\s*?<img\s*?src=[\s\S]*?alt=[\s\S]*?div[^>]+class[^>]*>([\s\S]*?)<br\s*?\/>\s*?Ощущается/i, replaceTagsAndSpaces);
-	if(!result.atmo_conditions){
-		result.atmo_conditions = 'Нет данных';
+	if(!windDir || !wind || wind == 0){
+	    result.wind = 'Ш, 0 м/с'; // Форека отдаёт противоречащие данных по ветру в случае штиля (направление при нулевой скорости или 1 м/с без направления)
+	}else{
+		var direction = getParam(windDir, null, null, null, replaceWind);	
+		result.wind = direction + ', ' + wind + ' м/с';
 	}
-	getParam(table, result, 'rf_temp', /Ощущается\s*?как[\s\S]*?<strong[^>]*?>([\s\S]*?)</i, replaceTagsAndSpaces, parseBalance);
-	getParam(table, result, 'pressure', /Барометр[\s\S]*?<strong[^>]*?>([\s\S]*?)</i, replaceTagsAndSpaces, parseBalance);
-	getParam(table, result, 'point_dew', /Точка\s*?росы[\s\S]*?<strong[^>]*?>([\s\S]*?)</i, replaceTagsAndSpaces, parseBalance);
-	getParam(table, result, 'humidity', /От.\s*?влажность[\s\S]*?<strong[^>]*?>([\s\S]*?)</i, replaceTagsAndSpaces, parseBalance);
-	getParam(table, result, 'line_of_sight', /Видимость[\s\S]*?<strong[^>]*?>([\s\S]*?)</i, replaceTagsAndSpaces, parseBalance);
-	getParam(table, result, 'rising', /Восход\s*?солнца[\s\S]*?<strong[^>]*?>([\s\S]*?)</i, replaceTagsAndSpaces, parseMinutes);
-	getParam(table, result, 'setting', /Закат\s*?солнца[\s\S]*?<strong[^>]*?>([\s\S]*?)</i, replaceTagsAndSpaces, parseMinutes);
-	getParam(table, result, 'dayLength', /Долгота\s*?дня[\s\S]*?<strong[^>]*?>([\s\S]*?)</i, [/(\d+)[\s\S]*?(\d+)/, '$1:$2', replaceTagsAndSpaces], parseMinutes);
+	
+	getParam(Math.ceil(info.temp), result, 'temp', null, null, parseBalance);
+	getParam(info.wx, result, 'atmo_conditions');
+	getParam(info.flike, result, 'rf_temp', null, null, parseBalance);
+	getParam(Math.ceil(info.presmmhg), result, 'pressure', null, null, parseBalance);
+	getParam(info.cloud, result, 'cloudiness', null, null, parseBalance);
+	getParam(info.dewp, result, 'point_dew', null, null, parseBalance);
+	getParam(info.rhum, result, 'humidity', null, null, parseBalance);
+	getParam(Math.ceil(info.vis / 1000), result, 'line_of_sight', null, null, parseBalance); // Видимость отдаётся в метрах, паереводим в км
+	getParam(info.dateObject, result, 'time', null, null, parseDateISO);
+	getParam(info.stationName, result, 'station');
+	getParam(Math.ceil(info.dist), result, 'station_dist', null, null, parseBalance);
+	
+	var infoDay = data.dayForecast; // Некоторые данные есть только в прогнозе на сутки
+	AnyBalance.trace('Прогноз на сутки: ' + JSON.stringify(infoDay));
+	
+	if(!result.atmo_conditions){ // Если в фактической погоде отсутствуют условия (такое бывает), получаем их из прогноза на сутки
+		getParam(infoDay.wx, result, 'atmo_conditions');
+	}
+	
+	getParam(infoDay.sunrise.replace(/(\d+:\d+)(:\d+)?/, '$1'), result, 'rising', null, null, parseMinutes);
+	getParam(infoDay.sunset.replace(/(\d+:\d+)(:\d+)?/, '$1'), result, 'setting', null, null, parseMinutes);
+	getParam(infoDay.daylen, result, 'dayLength', null, null, parseBalanceSilent);
 	if(!result.dayLength && (result.setting && result.rising)){
 		getParam(formatSeconds(result.setting - result.rising), result, 'dayLength', null, null, parseMinutes);
 	}
-	getParam(table, result, 'station', /Станция\s*?наблюдений[\s\S]*?value="\d+"\s*?selected[^>]*?>([\s\S]*?)</i, replaceTagsAndSpaces);
     
-	getParam(table, result, 'time', /В\s*?<strong[^>]*?>([\s\S]*?)<\/strong><br\s*?\/>/i, [/(\d{2})\/(\d{2})\s+(\d{2}:\d{2})/, '$1/$2/' + new Date().getFullYear() + ' $3',
-	replaceTagsAndSpaces], parseDate);
-	
 	AnyBalance.setResult(result);
-}
-
-function formatSeconds(val) {
-    var date = new Date(1970,0,1);
-    date.setSeconds(val);
-    return date.toTimeString().replace(/.*(\d{2}):(\d{2}:\d{2}).*/, "$2");
 }

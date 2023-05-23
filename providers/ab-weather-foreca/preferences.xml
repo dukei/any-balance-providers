@@ -13,12 +13,12 @@
 	</EditTextPreference>
 	<EditTextPreference
 		obligatory="true"
-		title="Страна"
+		title="Регион"
 		positiveButtonText="ОК"
-		summary="Страна для информации о погоде|Необязательно\n|{@s}\n"
-		dialogTitle="Страна"
+		summary="Регион для информации о погоде|Необязательно\n|{@s}\n"
+		dialogTitle="Регион"
 		negativeButtonText="Отмена"
-		dialogMessage="Введите название страны на русском языке"
+		dialogMessage="Введите название региона на русском языке"
 		key="country_name"
 		inputType="text">
 	</EditTextPreference>

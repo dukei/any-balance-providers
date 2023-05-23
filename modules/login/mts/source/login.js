@@ -1,4 +1,4 @@
-var g_baseurlLogin = 'http://login.mts.ru';
+var g_baseurlLogin = 'https://login.mts.ru';
 var g_savedData;
 
 function checkLoginError(html, options) {
@@ -267,7 +267,7 @@ function enterMtsLK(options) {
     		options.url = AnyBalance.getLastUrl();
 		if(/\/amserver\/NUI\//i.test(AnyBalance.getLastUrl())){
 			AnyBalance.trace('МТС направил на новый вход NUI');
-			options.url = 'http://login.mts.ru/amserver/wsso/authenticate?authIndexType=service&authIndexValue=login-spa';
+			options.url = 'https://login.mts.ru/amserver/wsso/authenticate?authIndexType=service&authIndexValue=login-spa';
 			html = enterLKNUI(options);
 		}else{
 			AnyBalance.trace('МТС направил на старый вход UI');
@@ -276,8 +276,8 @@ function enterMtsLK(options) {
     }else{
     	AnyBalance.trace('Мы не на странице логина. Внутри уже?');
     }
-
-    if(isOnLogin()){
+	
+	if(isOnLogin()){
     	AnyBalance.trace(html);
     	throw new AnyBalance.Error('Не удаётся зайти в личный кабинет');
     }

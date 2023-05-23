@@ -20,7 +20,7 @@ var regionsOrdinary = {
 };
 
 var g_baseurl = 'https://lk.mts.ru';
-var g_baseurlLogin = 'http://login.mts.ru';
+var g_baseurlLogin = 'https://login.mts.ru';
 var g_savedData;
 
 var g_headers = {
@@ -560,15 +560,24 @@ function enterLK(options) {
     html = checkLoginState(html, {automatic: true});
 	
 	AnyBalance.trace('isLoggedIn(html) = ' + isLoggedIn(html));
+		
+	if (/no-config&arg=newsession/i.test(AnyBalance.getLastUrl())) { // Проверяем на альтернативный вход UI
+        enterLKUI(html, options);
+    }
+	
+	if (!isLoggedIn(html)) {
+        AnyBalance.trace('Требуется дологиниться')
+        AnyBalance.requestGet('https://lk.mts.ru/auth/account/login?goto=https://lk.mts.ru', addHeaders({Referer: 'https://lk.mts.ru/'}));
+    }
 
-    if (isLoggedIn(html)) {
+/*  if (isLoggedIn(html)) { // Процедура больше не требуется, переключение на дополнительный номер выполняется другим способом
         AnyBalance.trace("Уже залогинены, проверяем, что на правильный номер...");
         //Автоматом залогинились, надо проверить, что на тот номер
 
         var json = getLKJson(html);
 
         function logoutMTS(){
-            var html = AnyBalance.requestGet(g_baseurlLogin + '/amserver/UI/Logout', g_headers);
+            var html = AnyBalance.requestGet(g_baseurlLogin + '/amserver/UI/Logout?goto=https://lk.mts.ru/auth/account/login?goto=https://lk.mts.ru', g_headers);
 
             if (isLoggedIn(html)) {
                 AnyBalance.trace(html);
@@ -598,16 +607,7 @@ function enterLK(options) {
         } else {
             throw new AnyBalance.Error('Ручной вход запрещен');
         }
-    }
-	
-	if (/no-config&arg=newsession/i.test(AnyBalance.getLastUrl())) { // Проверяем на новый вход UI
-        enterLKUI(html, options);
-    }
-	
-	if (!isLoggedIn(html)) {
-        AnyBalance.trace('Требуется дологиниться')
-        AnyBalance.requestGet('https://lk.mts.ru/auth/account/login?goto=https://lk.mts.ru', addHeaders({Referer: 'https://lk.mts.ru/'}));
-    }
+    }*/
 	
     if (!isLoggedIn(html)) {
         if (getParam(html, null, null, /(auth-status=0)/i))
@@ -645,7 +645,7 @@ function loginWithPassword(){
 	if(!/"isSessionCookieValid":\s*?true/i.test(html)){
         AnyBalance.trace('Сессия новая. Будем логиниться заново...');
         clearAllCookiesExceptProtection();
-        var html = enterLK({login: prefs.login, password: prefs.password, baseurl: 'http://lk.mts.ru', url: 'http://login.mts.ru/amserver/UI/Login?service=lk&goto=http%3A%2F%2Flk.mts.ru%2F'});
+        var html = enterLK({login: prefs.login, password: prefs.password, baseurl: 'https://lk.mts.ru', url: 'https://lk.mts.ru/auth/account/login?goto=https://lk.mts.ru/'});
 	}else{
 		AnyBalance.trace('Сессия сохранена. Входим автоматически...');
     }
@@ -1303,7 +1303,7 @@ function initialize() {
 }
 
 function getPasswordBySMS(login) {
-    var url = g_baseurlLogin + '/amserver/UI/Login?service=smspassword&srcsvc=lk&goto=http%3A%2F%2Flk.ssl.mts.ru%2F';
+    var url = g_baseurlLogin + '/amserver/UI/Login?service=smspassword&srcsvc=lk&goto=https%3A%2F%2Flk.ssl.mts.ru%2F';
     var html = AnyBalance.requestGet(url, g_headers);
 
     var img = getParam(html, 

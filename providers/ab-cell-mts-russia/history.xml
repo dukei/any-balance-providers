@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="4.1" version="223" date="2023-05-21">
+	- Исправлено получение информации по другому номеру
+	</change>
+	<change major_version="4.1" version="222" date="2023-05-21">
+	- Поддержка изменений в процедуре входа
+	</change>
 	<change major_version="4.1" version="221" date="2023-04-21">
 	- Исправлена ошибка в расчете периода абонплаты
 	</change>

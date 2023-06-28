@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="45">ab-money-yandex</id>
+	<id version="46">ab-money-yandex</id>
 	<api flags="no_browser" />
 	<name>ЮMoney</name>
 	<description html="true"><![CDATA[
@@ -33,6 +33,9 @@
 		<counter id="cardDate" name="Дата дейстия карты" type="time" format="dd.MM.yyyy"/>
 		<counter id="cardDays" name="Срок действия карты" units=" дн"/>
 		<counter id="cardType" name="Тип карты" type="text"/>
+		<counter id="lastOperDate" name="Дата последней операции" type="time" format="dd.MM.yyyy"/>
+		<counter id="lastOperSum" name="Сумма последней операции" units=" {@currency}"/>
+		<counter id="lastOperDesc" name="Тип последней операции" type="text"/>
 	</counters>
 	<keywords>яндекс-деньги, yandex money, юмани, ю-мани, юmoney</keywords>
 	<type>money, wallet</type>

@@ -12,17 +12,17 @@ var g_headers = {
 };
 
 var g_currency = {
-	643: '₽',
-	843: '$',
-	978: '€',
-	933: 'Br',
-	398: '₸',
-	826: '£',
-	156: 'Ұ',
-	756: '₣',
-	203: 'Kč',
-	985: 'zł',
-	392: '¥',
+	RUB: '₽',
+	USD: '$',
+	EUR: '€',
+	BYN: 'Br',
+	KZT: '₸',
+	GBP: '£',
+	CNY: 'Ұ',
+	CHF: '₣',
+	CZK: 'Kč',
+	PLN: 'zł',
+	JPY: '¥',
 	undefined: ''
 };
 
@@ -225,20 +225,18 @@ function loginAndGetBalance(prefs, result) {
 
 	var html = login();
 	
-	var ld = getJsonObject(html, /window.__layoutData__\s*?=/);
+	var mainData = getJsonObject(html, /window.__data__\s*?=/);
+	var userData = getJsonObject(html, /window.__layoutData__\s*?=/);
 	
-	if(ld){
-		AnyBalance.trace('Загружаем из layoutData');
-		getParam(ld.user.accountId, result, 'number');
-		getParam(ld.user.accountId, result, '__tariff');
-		getParam(ld.user.userName, result, 'userName');
-		getParam(g_status[ld.user.accountStatus]||ld.user.accountStatus, result, 'accountStatus');
-		getParam(ld.balance.rub.availableAmount, result, ['balance', 'currency'], null, null, parseBalance);
-		getParam(g_currency[ld.balance.rub.currencyCode], result, ['currency', 'balance']);
-		var sk = ld.secretKey;
-
-		if(ld.bonus){
-			getParam(ld.bonus.availableAmount, result, 'bonus', null, null, parseBalance);
+	if(mainData && mainData.state){
+		AnyBalance.trace('Загружаем из data...');
+		var accInfo = mainData.state.account && mainData.state.account.accountInfo;
+		if(accInfo && accInfo.balances){
+		    getParam(accInfo.balances.RUB.availableAmount, result, ['balance', 'currency'], null, null, parseBalance);
+		    getParam(g_currency[accInfo.balances.RUB.currencyCode]||accInfo.balances.RUB.currencyCode, result, ['currency', 'balance']);
+		}
+		if(accInfo && accInfo.bonus){
+			getParam(accInfo.bonus.availableAmount, result, 'bonus', null, null, parseBalance);
 		}else{
 			var html = AnyBalance.requestGet(baseurl + 'loyalty', g_headers);
 			var wdb = getJsonObject(html, /window.__data\s*?=/);
@@ -270,12 +268,39 @@ function loginAndGetBalance(prefs, result) {
 		}catch(e){
 			AnyBalance.trace('Ошибка получения информации по картам' + e.message);
 		}
-
+        if(userData && userData.user){
+		    getParam(userData.user.accountId, result, 'number');
+		    getParam(userData.user.accountId, result, '__tariff');
+		    getParam(userData.user.userName, result, 'userName');
+		    getParam(g_status[userData.user.accountStatus]||userData.user.accountStatus, result, 'accountStatus');
+		    var sk = userData.secretKey;
+		}else{
+			AnyBalance.trace('Не удалось получить информацию о пользователе');
+		}
+		if(AnyBalance.isAvailable('lastOperDate', 'lastOperSum', 'lastOperDesc')){
+			var hist = mainData.state.timeline && mainData.state.timeline.history && mainData.state.timeline.history.entity;
+		    if(hist && hist.length > 0){
+		    	AnyBalance.trace('Найдено операций: ' + JSON.stringify(hist.length));
+		    	for(var i=0; i<hist.length; i++) {
+                    var h = hist[i];
+                    getParam(h.operationDateTime, result, 'lastOperDate', null, null, parseDateISO);
+                    getParam(h.amount.value, result, 'lastOperSum', null, null, parseBalance);
+                    getParam(h.title, result, 'lastOperDesc');
+		            		
+		    		break;
+                }
+		    }else{
+		    	AnyBalance.trace('Не удалось получить информацию по операциям');
+		    }
+		}
 	}else{
-		AnyBalance.trace('Загружаем по-старинке');
-		getParam(html, result, 'number', /Номер кошелька(?:[^>]*>){2}(\d{10,20})/i, replaceTagsAndSpaces);
+		AnyBalance.trace('Загружаем по-старинке...');
+		getParam(html, result, '__tariff', /account-number-text(?:[^>]*>)([\d\s]*?)</i, [replaceTagsAndSpaces, /\D/g, '']);
+		getParam(html, result, 'number', /account-number-text(?:[^>]*>)([\d\s]*?)</i, [replaceTagsAndSpaces, /\D/g, '']);
+		getParam(html, result, ['balance', 'currency'], /<div[^>]+class="UserBalance[^>]*>[\s\S]*?label="([^"]*)/i, replaceTagsAndSpaces, parseBalance);
+		getParam(html, result, ['currency', 'balance'], /<div[^>]+class="UserBalance[^>]*>[\s\S]*?label="([^"]*)/i, replaceTagsAndSpaces, parseCurrency);
 		
-		var textsum = getElements(html, [/<button/ig, /balance__icon/i])[0];
+/*		var textsum = getElements(html, [/<button/ig, /balance__icon/i])[0];
 		if(textsum)
 			textsum = replaceAll(textsum, replaceTagsAndSpaces);
     
@@ -297,8 +322,8 @@ function loginAndGetBalance(prefs, result) {
 		} else {
 		    getParam(textsum, result, 'balance', null, replaceTagsAndSpaces, parseBalance);
 		}
-    
-		getParam(html, result, 'bonus', /Скол`ько у вас баллов[\s\S]*?<div[^>]+balance__item[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+*/    
+		getParam(html, result, 'bonus', /<span[^>]+class="qa-bonus-sum"[^>]*>([\s\S]*?балл(?:а|ов)?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
 	}
 }
 

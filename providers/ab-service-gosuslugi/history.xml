@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change major_version="1.2" version="859" date="2023-06-14">
+	- Поддержка изменений в процедуре входа
+	</change>
     <change major_version="1.2" version="858" date="2023-05-16">
 	- Отказ от подключения входа с подтверждением
 	</change>

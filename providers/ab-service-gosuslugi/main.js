@@ -4,11 +4,12 @@
 
 var g_headers = {
 	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
-	'Accept-Language': 'ru-RU,ru;q=0.9,en-US;q=0.7,en;q=0.4',
+	'Accept-Language': 'ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7',
     'Cache-Control': 'max-age=0',
 	'Connection': 'keep-alive',
-	'Upgrade-Insecure-Requests': '1',
-	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36'
+//	'Upgrade-Insecure-Requests': '1',
+	'X-Requested-With': 'XMLHttpRequest',
+	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36'
 };
 
 var g_baseurl = 'https://www.gosuslugi.ru/';
@@ -46,12 +47,12 @@ function main() {
 	    	loginType = 'email';
 	    }else if(/^\s*\+7/i.test(prefs.login) || /^\d{10}$/.test(login)){
 	    	loginType = 'phone';
-	    	formattedLogin = login.replace(/^7?(\d{3})(\d{3})(\d{2})(\d{2})/i, '+7($1)$2$3$4');
+	    	formattedLogin = login.replace(/^7?(\d{3})(\d{3})(\d{2})(\d{2})/i, '$1$2$3$4');
 	    }else if(/^\d{11}$/.test(login)){
 	    	if(!checkSnils(login))
 	    		throw new AnyBalance.Error('Некорректный СНИЛС!', null, true);
 	    	loginType = 'snils';
-	    	formattedLogin = login.replace(/^(\d{3})(\d{3})(\d{3})(\d{2})$/i, '$1-$2-$3 $4');
+	    	formattedLogin = login.replace(/^(\d{3})(\d{3})(\d{3})(\d{2})$/i, '$1$2$3$4');
 	    }else{
 	    	throw new AnyBalance.Error('Введите E-mail, СНИЛС (11 цифр без разделителей) или номер телефона (10 цифр без разделителей)', null, true);
 	    }
@@ -64,10 +65,12 @@ function main() {
 
 	    checkEmpty(prefs.password, 'Введите пароль!');
 		
-		var html = AnyBalance.requestGet(g_baseurl + 'node-api/login/?redirectPage=/', g_headers);
+		var html = AnyBalance.requestGet('https://esia.gosuslugi.ru/aas/oauth2/config', g_headers); // Требуется для установки куки "strelets"
+		
+		html = AnyBalance.requestGet(g_baseurl + 'node-api/login/?redirectPage=/', g_headers); // Получаем куки сессии
 		
 		html = AnyBalance.requestPost('https://esia.gosuslugi.ru/aas/oauth2/api/login', JSON.stringify({
-			'idType': loginType,
+//			'idType': loginType,
 			'login': formattedLogin,
 			'password': prefs.password
 		}), addHeaders({
@@ -105,49 +108,18 @@ function main() {
             }
         }
 		
-		if (json.action && json.action == 'ENTER_MFA') {
-			if (json.mfa_details.type == 'SMS') {
-			    AnyBalance.trace('Госуслуги затребовали код подтверждения из SMS');
-                
-			    var details = json.mfa_details.otp_details;
-			
-			    var code = AnyBalance.retrieveCode('Пожалуйста, введите код подтверждения, высланный на номер ' + details.phone + '.\n\nОсталось попыток для ввода кода: ' + details.verify_attempts_left, null, {inputType: 'number', minLength: details.code_length, maxLength: details.code_length, time: 180000});
-			
-			    html = AnyBalance.requestPost('https://esia.gosuslugi.ru/aas/oauth2/api/login/otp/verify?code=' + code, null, addHeaders({
-		        	'Accept': 'application/json, text/plain, */*',
-                    'Content-Type': 'application/json',
-		        	'Origin': 'https://esia.gosuslugi.ru',
-		        	'Referer': 'https://esia.gosuslugi.ru/login/',
-		        }));
-		
-		        var json = getJson(html);
-	            AnyBalance.trace(JSON.stringify(json));
-			}
-
-            if (json.action != 'DONE') {
-		        var error = json.error || json.failed;
-    	        if (error) {
-		            AnyBalance.trace(html);
-		    		throw new AnyBalance.Error('Неверный код подтверждения!', null, /otp|invalid/i.test(error));
-    	        }
-
-    	        AnyBalance.trace(html);
-    	        throw new AnyBalance.Error('Не удалось войти в личный кабинет. Сайт изменён?');
-            }
-        }
-		
 		if (json.action && json.action == 'SOLVE_ANOMALY_REACTION') {
 			if (json.reaction_details && json.reaction_details.type == 'О.ЗД1') {
 			    var guid = json.reaction_details.guid;
 			    AnyBalance.trace('Госуслуги затребовали капчу');
-			
+			    
 			    html = AnyBalance.requestGet('https://esia.gosuslugi.ru/captcha/api/public/v2/type', g_headers);
 		
 		        var json = getJson(html);
 	            AnyBalance.trace(JSON.stringify(json));
 			
 			    var captchaType = json.captchaType;
-			    g_headers['captchasession'] = json.captchaSession;
+			    g_headers['Captchasession'] = json.captchaSession;
 			
 			    if (captchaType == 'recaptcha'){
 			    	var sitekey = json.sitekey;
@@ -166,7 +138,7 @@ function main() {
                             AnyBalance.trace(JSON.stringify(json));
                             
                             var captchaType = json.captchaType;
-                            g_headers['captchasession'] = json.captchaSession;
+                            g_headers['Captchasession'] = json.captchaSession;
                         
                             var capchaImg = AnyBalance.requestGet('https://esia.gosuslugi.ru/captcha/api/public/v2/image', g_headers);
                             var captcha = AnyBalance.retrieveCode('Пожалуйста, введите код с картинки.\n\nДля запроса другого кода введите 0', capchaImg, {/*inputType: 'number', */time: 180000});
@@ -191,7 +163,7 @@ function main() {
 			
 			    var verify_token = json.verify_token;
 			
-			    delete g_headers['captchasession'];
+			    delete g_headers['Captchasession'];
 				
 				html = AnyBalance.requestPost('https://esia.gosuslugi.ru/aas/oauth2/api/anomaly/captcha/verify?guid=' + guid + '&verify_token=' + verify_token, JSON.stringify({
                     'verify_token': verify_token,
@@ -245,7 +217,7 @@ function main() {
     	        throw new AnyBalance.Error('Не удалось войти в личный кабинет. Сайт изменён?');
             }else{
 				html = AnyBalance.requestPost('https://esia.gosuslugi.ru/aas/oauth2/api/login', JSON.stringify({
-			        'idType': loginType,
+//			        'idType': loginType,
 					'login': formattedLogin,
 			        'password': prefs.password
 		        }), addHeaders({
@@ -259,6 +231,37 @@ function main() {
 	            AnyBalance.trace(JSON.stringify(json));
 				
     	    }
+        }
+		
+		if (json.action && json.action == 'ENTER_MFA') {
+			if (json.mfa_details.type == 'SMS') {
+			    AnyBalance.trace('Госуслуги затребовали код подтверждения из SMS');
+                
+			    var details = json.mfa_details.otp_details;
+			
+			    var code = AnyBalance.retrieveCode('Пожалуйста, введите код подтверждения, высланный на номер ' + details.phone + '.\n\nОсталось попыток для ввода кода: ' + details.verify_attempts_left, null, {inputType: 'number', minLength: details.code_length, maxLength: details.code_length, time: 180000});
+			
+			    html = AnyBalance.requestPost('https://esia.gosuslugi.ru/aas/oauth2/api/login/otp/verify?code=' + code, null, addHeaders({
+		        	'Accept': 'application/json, text/plain, */*',
+                    'Content-Type': 'application/json',
+		        	'Origin': 'https://esia.gosuslugi.ru',
+		        	'Referer': 'https://esia.gosuslugi.ru/login/',
+		        }));
+		
+		        var json = getJson(html);
+	            AnyBalance.trace(JSON.stringify(json));
+			}
+
+            if (json.action != 'DONE') {
+		        var error = json.error || json.failed;
+    	        if (error) {
+		            AnyBalance.trace(html);
+		    		throw new AnyBalance.Error('Неверный код подтверждения!', null, /otp|invalid/i.test(error));
+    	        }
+
+    	        AnyBalance.trace(html);
+    	        throw new AnyBalance.Error('Не удалось войти в личный кабинет. Сайт изменён?');
+            }
         }
 		
 		if (json.action != 'DONE') {

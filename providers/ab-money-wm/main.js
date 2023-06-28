@@ -212,24 +212,30 @@ function main(){
 				AnyBalance.trace('Требуется выбор подтверждения на вход');
 				action = getParam(html, null, null, /<form[^>]+action="([^"]*)/i, replaceHtmlEntities);
 	        
-				var auth_options = getElements(html, /<li[^>]+auth-option[\s"]/ig);
+				//var auth_options = getElements(html, /<li[^>]+auth-option[\s"]/ig);
+				var auth_options = getElements(html, /<a[^>]+class="login-method"[^>]*>/ig);
 				AnyBalance.trace('Найдено вариантов подтверждения: ' + auth_options.length);
 				for(var i=0; i<auth_options.length; ++i){
 					var o = auth_options[i];
-					var name = getElement(o, /<b/i, replaceTagsAndSpaces);
-					var available = getParam(o, null, null, /<input[^>]+submit/i);
+					//var name = getElement(o, /<b/i, replaceTagsAndSpaces);
+					//var available = getParam(o, null, null, /<input[^>]+submit/i);
+					var name = getElement(o, /<h3[^>]+class="login-method__header"[^>]*>/i, replaceTagsAndSpaces);
+					var available = getParam(o, null, null, /data-factor2="/i);
 	        
 					AnyBalance.trace('Опция ' + name + (available ? ' доступна' : ' недоступна'));
 	        
 					//if(name == 'SMS' && available){
-					if(name == 'Подтверждение по номеру телефона' && available){
+					//if(name == 'Подтверждение по номеру телефона' && available){
+					if(name == 'По телефону' && available){ // "По телефону"
+						var phoneNumber = getElement(o, /<div[^>]+class="login-method__details"[^>]*>/i, replaceTagsAndSpaces);
 						html = AnyBalance.requestPost(joinUrl(ref, action), {Command: 'Sms'}, addHeaders({Referer: ref}));
 						ref = AnyBalance.getLastUrl();
 					   	break;
 					}
 
+					//if(name == 'E-NUM' && available){
 					if(name == 'E-NUM' && available){
-						var enumId = getParam(o, null, null, /<input[^>]+name="EnumId"[^>]*value="([^"]*)/i, replaceHtmlEntities);
+						var enumId = getElement(o, /<div[^>]+class="login-method__details"[^>]*>/i, replaceTagsAndSpaces);
 						html = AnyBalance.requestPost(joinUrl(ref, action), {Command: 'Enum', EnumId: enumId}, addHeaders({Referer: ref}));
 						ref = AnyBalance.getLastUrl();
 					   	break;
@@ -245,12 +251,12 @@ function main(){
 
 			if(/\bSms\b/i.test(ref)){
 				//AnyBalance.trace('Требуется SMS подтверждение на вход');
-				AnyBalance.trace('Требуется подтверждение по номеру телефона на вход');
+				AnyBalance.trace('Требуется подтверждение входа по номеру телефона');
 
 				action = getParam(html, null, null, /<form[^>]+action="([^"]*)/i, replaceHtmlEntities);
 				params = createFormParams(html);
-	        
-				if(!params.Challenge){
+				
+				if(!/name="Answer"/i.test(html)){
 					var error = getElement(html, /<[^>]+login-global-error/i, replaceTagsAndSpaces);
 					if(error)
 						throw new AnyBalance.Error(error);
@@ -262,18 +268,31 @@ function main(){
 				
 				//params.Answer = AnyBalance.retrieveCode('Для входа в кошелек, пожалуйста, введите код из SMS, посланной на номер ' + 
 				//params.PhoneNumber + ' (сессия ' + params.Challenge + ')', null, {inputType: 'number', minLength: 5, maxLength: 5, time: 180000});
-                params.Answer = AnyBalance.retrieveCode('Пожалуйста, введите последние 4 цифры номера телефона из звонка, поступившего на номер ' + 
-				params.PhoneNumber + ' (сессия ' + params.Challenge + ')', null, {inputType: 'number', minLength: 4, maxLength: 4, time: 180000});
+                //var code = AnyBalance.retrieveCode('Пожалуйста, введите последние 4 цифры номера телефона из звонка, поступившего на номер ' + 
+				//params.PhoneNumber + ' (сессия ' + params.Challenge + ')', null, {inputType: 'number', minLength: 4, maxLength: 4, time: 180000});
+				
+				if(!phoneNumber)
+				    var phoneNumber = getParam(html, null, null, /<div[^>]+class="auth-info"[\s\S]*?на([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+				
+				var code = AnyBalance.retrieveCode('Пожалуйста, введите последние 4 цифры номера телефона из звонка или код из SMS, поступившего на номер ' + 
+				phoneNumber, null, {inputType: 'number', minLength: 4, maxLength: 4, time: 180000});
 	        
+				var str = String(code); // преобразуем число в строку
+				for (var i=0; i<str.length; ++i){
+	                params.num = str[i];
+                }
+				
+				params.Answer = code;
+				
 				html = AnyBalance.requestPost(joinUrl(ref, action), params, addHeaders({Referer: ref}));
 			}else if(/\bEnum\b/i.test(ref)){
-				AnyBalance.trace('Требуется E-NUM подтверждение на вход');
+				AnyBalance.trace('Требуется подтверждение входа по E-NUM');
 
 				action = getParam(html, null, null, /<form[^>]+action="([^"]*)/i, replaceHtmlEntities);
 				params = createFormParams(html);
 				params.languages='ru-RU';
 	        
-				if(!params.Challenge){
+				if(!/name="Answer"/i.test(html)){
 					var error = getElement(html, /<[^>]+login-global-error/i, replaceTagsAndSpaces);
 					if(error)
 						throw new AnyBalance.Error(error);
@@ -282,9 +301,23 @@ function main(){
 					throw new AnyBalance.Error('Не удалось перейти к подтверждению входа по E-NUM. Сайт изменен?');
 				}
 				
-				params.Answer = AnyBalance.retrieveCode('Пожалуйста, введите число-ответ из приложения E-NUM с логином ' + 
-				params.EnumId + '. Число-вопрос для ввода в приложение Е-NUM: ' + params.Challenge, null, {inputType: 'number', minLength: 7, maxLength: 7, time: 180000});
+				//var code = AnyBalance.retrieveCode('Пожалуйста, введите число-ответ из приложения E-NUM с логином ' + 
+				//params.EnumId + '. Число-вопрос для ввода в приложение Е-NUM: ' + params.Challenge, null, {inputType: 'number', minLength: 7, maxLength: 7, time: 180000});
+				
+				if(!enumId)
+				    var enumId = getParam(html, null, null, /<div[^>]+class="enum-info__text"[\s\S]*?:([\s\S]*?)<\/p>/i, replaceTagsAndSpaces);
+				var challenge = getParam(html, null, null, /<div[^>]+class="enum-info__text"[\s\S]*?<\/p>[\s\S]*?:([\s\S]*?)<\/p>/i, replaceTagsAndSpaces);
+				
+				var code = AnyBalance.retrieveCode('Пожалуйста, введите число-ответ из приложения E-NUM с логином ' + 
+				enumId + '. Число-вопрос для ввода в приложение Е-NUM: ' + challenge, null, {inputType: 'number', minLength: 7, maxLength: 7, time: 180000});
 	        
+				var str = String(code); // преобразуем число в строку
+				for (var i=0; i<str.length; ++i){
+	                params.num = str[i];
+                }
+				
+				params.Answer = code;
+				
 				html = AnyBalance.requestPost(joinUrl(ref, action), params, addHeaders({Referer: ref}));
 			}else if(/\bCompleted\b/i.test(ref)){
 				AnyBalance.trace('Подтверждение на вход не требуется');
@@ -341,8 +374,11 @@ function main(){
 		}
 	    
 		AnyBalance.trace('Успешно вошли');
-		token=getParam(html , /__RequestVerificationToken[\s\S]*?value="([\s\S]*?)"/);
-		if (!token)  {delCookies;throw new AnyBalance.Error('Не удалось получить токен верификации');}
+		token = getParam(html, /__RequestVerificationToken[\s\S]*?value="([\s\S]*?)"/);
+		if (!token) {
+			delCookies;
+			throw new AnyBalance.Error('Не удалось получить токен верификации');
+		}
 		__setLoginSuccessful();
 	}
 

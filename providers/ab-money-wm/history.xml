@@ -1,5 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change version="27" date="2023-05-31">
+	- Поддержка изменений в процедуре входа
+	</change>
+    <change version="26" date="2022-12-18">
+	- Поддержка изменений в процедуре входа
+	</change>
 	<change version="25" date="2022-11-20">
 	- Исправлены ошибки при авторизации
 	</change>
@@ -67,6 +73,9 @@
 	- Исправление входа по SMS
 	</change>
 	<change version="4" date="2016-12-01">
+	- Поддержка кардинальных изменений на сайте.
+	</change>
+	<change version="3" major_version="b" date="2016-12-01">
 	- Поддержка кардинальных изменений на сайте.
 	</change>
 	<change version="3" date="2014-09-29">

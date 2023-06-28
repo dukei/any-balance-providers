@@ -6,17 +6,18 @@
 var g_headers = {
 	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
 	'Accept-Language': 'ru-RU,ru;q=0.9,en-US;q=0.6,en;q=0.4',
-	'Accept-Encoding': 'gzip, deflate, br',
     'Cache-Control': 'max-age=0',
 	'Connection': 'keep-alive',
-	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/95.0.4638.69 Safari/537.36'
+	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36'
 };
 
 var baseurl = 'https://xn--80afnfom.xn--80ahmohdapg.xn--80asehdb';
 var replaceNumber = [replaceTagsAndSpaces, /\D/g, '', /.*(\d)(\d\d\d)(\d\d\d)(\d\d)(\d\d)$/, '+$1 $2 $3-$4-$5'];
 
 function getInfo(){
-	var g_token = AnyBalance.getData('token');
+	var prefs = AnyBalance.getPreferences();
+	
+	var token = AnyBalance.getData('token' + prefs.login);
 	
     var params = {
 	    "operationName":"Client",
@@ -24,12 +25,12 @@ function getInfo(){
 		"query":"query Client {\n  client {\n    id\n    identifier\n    email\n    phone\n    name\n    photo\n    token\n    hash\n    __typename\n  }\n}\n"
 	};
 
-    html = AnyBalance.requestPost(baseurl + '/graphql', JSON.stringify(params), AB.addHeaders({
-		'accept': '*/*',
+    html = AnyBalance.requestPost(baseurl + '/abr-lka-backend', JSON.stringify(params), addHeaders({
+		'Accept': '*/*',
 		'Content-Type': 'application/json',
 	   	'Origin': baseurl,
         'Referer': baseurl + '/login',
-		'token': g_token
+		'token': token
 	}));
 		
 	var json = getJson(html);
@@ -54,9 +55,9 @@ function main() {
 	
 	AnyBalance.trace ('Пробуем войти в личный кабинет...');
 	
-	var g_token = AnyBalance.getData('token');
+	var token = AnyBalance.getData('token' + prefs.login);
 	
-	if (g_token) {
+	if (token) {
 		try{
 	    	AnyBalance.restoreCookies();
 			var json = getInfo();
@@ -64,7 +65,7 @@ function main() {
 	    }catch(e){
 	    	AnyBalance.trace('Сессия истекла. Будем логиниться заново...');
 	    	clearAllCookies();
-	    	AnyBalance.setData('token', undefined);
+	    	AnyBalance.setData('token' + prefs.login, undefined);
 	        AnyBalance.saveData();
 			loginSite(prefs);
 	    }
@@ -76,7 +77,7 @@ function main() {
 
 	var result = {success: true};
 	
-	var g_token = AnyBalance.getData('token');
+	var token = AnyBalance.getData('token' + prefs.login);
 	
 	AnyBalance.trace ('Пробуем получить информацию о пользователе...');
 	
@@ -93,12 +94,12 @@ function main() {
 		"query":"query AccountsN {\n  accountsN {\n    ok\n    error\n    accounts {\n      elsGroup {\n        els {\n          id\n          jntAccountNum\n          isFull\n          alias\n          address\n          epd {\n            id\n            name\n            __typename\n          }\n          __typename\n        }\n        lspu {\n          id\n          account\n          provider {\n            id\n            name\n            ...ClientProviderSetup\n            __typename\n          }\n          alias\n          isFull\n          __typename\n        }\n        __typename\n      }\n      lspu {\n        id\n        account\n        address\n        provider {\n          id\n          name\n          ...ClientProviderSetup\n          __typename\n        }\n        alias\n        isFull\n        __typename\n      }\n      __typename\n    }\n    __typename\n  }\n}\n\nfragment ClientProviderSetup on Provider {\n  setup {\n    MAX_CONSUMPTION\n    ACCOUNT_ATTACH_HINT\n    ALLOW_CREATE_AGREEMENT_TICKET\n    ALLOW_PAY\n    ALLOW_DOWNLOAD_CHARGES\n    ALLOW_INDICATION_SEND_LITE\n    COUNTER_CHECK_DATE\n    ALLOW_INDICATION_DATE_CHANGE\n    GAS_COUNTER_TARIFF\n    SERVICE_UNAVAILABLE\n    ENABLE_PRIVILEGES_SECTION\n    ENABLE_APPLICATIONS_SECTION\n    ENABLE_PRINT_INVOICE\n    ENABLE_CALCULATION_SECTION\n    ENABLE_AGREEMENT_SECTION\n    ENABLE_PAYMENT_DETAILS_LITE\n    ENABLE_PAYMENT_DETAILS_FULL\n    ENABLE_EQUIPMENTS_DATE\n    ENABLE_EQUIPMENTS_SERIAL\n    ENABLE_INDICATION_SOURCE\n    DEPARTMET_EMAIL\n    FULL_REQUEST_EMAIL\n    SUPPORT_EMAIL\n    ENABLE_ABONENT_FULLNAME\n    ENABLE_PAYMENT_EXCHANGE\n    __typename\n  }\n  __typename\n}\n"
 	};
 
-    html = AnyBalance.requestPost(baseurl + '/graphql', JSON.stringify(params), AB.addHeaders({
-		'accept': '*/*',
+    html = AnyBalance.requestPost(baseurl + '/abr-lka-backend', JSON.stringify(params), addHeaders({
+		'Accept': '*/*',
 		'Content-Type': 'application/json',
 	   	'Origin': baseurl,
         'Referer': baseurl + '/',
-		'token': g_token
+		'token': token
 	}));
 		
 	var json = getJson(html);
@@ -148,12 +149,12 @@ function main() {
 		"query":"query lspuInfo($lspuId: Float!) {\n  lspuInfo(lspuId: $lspuId) {\n    ok\n    error\n    info {\n      accountId\n      account\n      isFull\n      alias\n      balance\n      hasInfo\n      ...AccountBalances\n      ...AccountCounters\n      ...AccountEquipments\n      ...AccountParameters\n      ...AccountPayments\n      ...AccountServices\n      ...AccountContracts\n      ...AccountActions\n      ...AccountAlerts\n      ...AccountTickets\n      ...AccountActs\n      ...AccountInfoPrivilege\n      __typename\n    }\n    __typename\n  }\n}\n\nfragment AccountBalances on AccountInfo {\n  balances {\n    uuid\n    date\n    name\n    balanceStartSum\n    balanceEndSum\n    chargedSum\n    debtSum\n    paidSum\n    __typename\n  }\n  __typename\n}\n\nfragment AccountCounters on AccountInfo {\n  counters {\n    name\n    uuid\n    serialNumber\n    position\n    capacity\n    checkDate\n    checkNotification\n    state\n    values {\n      date\n      value\n      previousValue\n      rate\n      saved\n      state\n      source\n      overlap\n      color\n      __typename\n    }\n    __typename\n  }\n  __typename\n}\n\nfragment AccountEquipments on AccountInfo {\n  equipments {\n    uuid\n    name\n    serialNumber\n    type\n    position\n    state\n    date\n    color\n    __typename\n  }\n  __typename\n}\n\nfragment AccountParameters on AccountInfo {\n  parameters {\n    name\n    value\n    date\n    __typename\n  }\n  __typename\n}\n\nfragment AccountPayments on AccountInfo {\n  payments {\n    internalCode\n    transactionNumber\n    cardNumber\n    externalCode\n    approval\n    uuid\n    date\n    paidSum\n    serviceName\n    serviceUuid\n    source\n    status\n    color\n    __typename\n  }\n  __typename\n}\n\nfragment AccountServices on AccountInfo {\n  services {\n    id\n    name\n    balance\n    providerName\n    __typename\n  }\n  __typename\n}\n\nfragment AccountContracts on AccountInfo {\n  contracts {\n    active\n    name\n    description\n    uuid\n    status\n    serviceUuid\n    endDate\n    color\n    __typename\n  }\n  __typename\n}\n\nfragment AccountActions on AccountInfo {\n  actions {\n    type\n    iconUrl\n    title\n    description\n    value\n    color\n    __typename\n  }\n  __typename\n}\n\nfragment AccountAlerts on AccountInfo {\n  alerts {\n    title\n    description\n    __typename\n  }\n  __typename\n}\n\nfragment AccountTickets on AccountInfo {\n  tickets {\n    uuid\n    document\n    text\n    status\n    date\n    providerName\n    __typename\n  }\n  __typename\n}\n\nfragment AccountActs on AccountInfo {\n  acts {\n    uuid\n    name\n    data\n    works {\n      serviceUuid\n      sum\n      serviceName\n      equipmentName\n      __typename\n    }\n    __typename\n  }\n  __typename\n}\n\nfragment AccountInfoPrivilege on AccountInfo {\n  privileges {\n    abonentUuid\n    active\n    beginDate\n    endDate\n    name\n    __typename\n  }\n  __typename\n}\n"
 	};
 
-    html = AnyBalance.requestPost(baseurl + '/graphql', JSON.stringify(params), AB.addHeaders({
-		'accept': '*/*',
+    html = AnyBalance.requestPost(baseurl + '/abr-lka-backend', JSON.stringify(params), addHeaders({
+		'Accept': '*/*',
 		'Content-Type': 'application/json',
 	   	'Origin': baseurl,
         'Referer': baseurl + '/',
-		'token': g_token
+		'token': token
 	}));
 		
 	var json = getJson(html);
@@ -242,47 +243,63 @@ function loginSite(prefs){
 	
 	AnyBalance.setDefaultCharset('utf-8');
 	
-	AB.checkEmpty(prefs.login, 'Введите логин!');
-	AB.checkEmpty(prefs.password, 'Введите пароль!');
+	checkEmpty(prefs.login, 'Введите логин!');
+	checkEmpty(prefs.password, 'Введите пароль!');
 	
-        var params = {
-	        "operationName":"signInN2",
-			"variables":{
-				"input":{
-					"identifier":prefs.login,
-					"password":prefs.password,
-					"agreement":false
-				}},
-			"query":"mutation signInN2($input: ClientSignInInput!) {\n  signInN2(input: $input) {\n    ok\n    error\n    hasAgreement\n    token\n    __typename\n  }\n}\n"
-	    };
+	var html = AnyBalance.requestGet(baseurl + '/login', g_headers);
+	
+    var params = {
+        "operationName": "signInN2",
+        "variables": {
+            "input": {
+                "identifier": prefs.login,
+                "password": prefs.password,
+                "agreement": false
+            }
+        },
+        "query": "mutation signInN2($input: ClientSignInInput!) {\n  signInN2(input: $input) {\n    ok\n    error\n    hasAgreement\n    token\n    __typename\n  }\n}\n"
+	};
 
-        html = AnyBalance.requestPost(baseurl + '/graphql', JSON.stringify(params), AB.addHeaders({
-	    	'accept': '*/*',
-			'Content-Type': 'application/json',
-	    	'Origin': baseurl,
+    html = AnyBalance.requestPost(baseurl + '/abr-lka-backend', JSON.stringify(params), addHeaders({
+		'Accept': '*/*',
+    	'Content-Type': 'application/json',
+	    'Origin': baseurl,
+        'Referer': baseurl + '/login',
+	}));
+	
+	var json = getJson(html);
+	AnyBalance.trace(JSON.stringify(json));
+	
+	if (json.data && json.data.signInN2 && json.data.signInN2.hasAgreement != true) {
+		AnyBalance.trace('Требуется принять соглашение. Принимаем...');
+		
+		params.variables.input.agreement = true;
+		
+		html = AnyBalance.requestPost(baseurl + '/abr-lka-backend', JSON.stringify(params), addHeaders({
+	        'Accept': '*/*',
+		    'Content-Type': 'application/json',
+	        'Origin': baseurl,
             'Referer': baseurl + '/login',
 	    }));
 		
 		var json = getJson(html);
 	    AnyBalance.trace(JSON.stringify(json));
-		
-		if (!json.data || json.data.signInN2.ok != true) {
-    	    if (json.data.signInN2.error) {
-		    	var error = json.data.signInN2.error;
-            	if (error) {
-		    		AnyBalance.trace(html);
-            		throw new AnyBalance.Error(error);	
-            	}
-
-            	AnyBalance.trace(html);
-            	throw new AnyBalance.Error('Не удалось войти в личный кабинет. Сайт изменён?');
-            }
+    }
+	
+	if (json.data && json.data.signInN2 && json.data.signInN2.ok != true) {
+		var error = json.data.signInN2.error;
+        if (error) {
+            throw new AnyBalance.Error(error, null, true);	
         }
-		
-		var g_token = json.data.signInN2.token;
-		AnyBalance.trace('Токен авторизации: ' + g_token);
 
-    AnyBalance.setData('token', g_token);
+        AnyBalance.trace(html);
+        throw new AnyBalance.Error('Не удалось войти в личный кабинет. Сайт изменён?');
+    }
+		
+	var token = json.data.signInN2.token;
+	AnyBalance.trace('Токен авторизации: ' + token);
+
+    AnyBalance.setData('token' + prefs.login, token);
 	AnyBalance.saveCookies();
 	AnyBalance.saveData();
 }	

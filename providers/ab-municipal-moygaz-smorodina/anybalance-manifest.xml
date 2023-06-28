@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="4">ab-municipal-moygaz-smorodina</id>
+	<id version="5">ab-municipal-moygaz-smorodina</id>
 	<api flags="no_browser"/>
 	<name>Мой ГАЗ Смородина</name>
 	<description html="true"><![CDATA[
@@ -35,12 +35,12 @@
 		<counter id="serialNumber" name="Серийный номер" type="text"/>
 		<counter id="state" name="Состояние прибора" type="text"/>
 		<counter id="checkDate" name="Следующая дата поверки" type="time" format="dd.MM.yyyy"/>
-		<counter id="previousCounter" name="Предыдущие показания" units=" &#13221;"/>
-		<counter id="currentCounter" name="Текущие показания" units=" &#13221;"/>
-		<counter id="consumption" name="Потребление" units=" &#13221;"/>
+		<counter id="previousCounter" name="Предыдущие показания" units=" м³"/>
+		<counter id="currentCounter" name="Текущие показания" units=" м³"/>
+		<counter id="consumption" name="Потребление" units=" м³"/>
 		<counter id="date" name="Дата изменения" type="time" format="dd.MM.yyyy"/>
 		<counter id="countState" name="Статус показаний" type="text"/>
-		<counter id="averageMonthlyExpense" name="Среднемесячный расход" units=" &#13221;"/>
+		<counter id="averageMonthlyExpense" name="Среднемесячный расход" units=" м³"/>
 		<counter id="address" name="Адрес установки оборудования" type="text"/>
 		<counter id="provider" name="Провайдер" type="text"/>	
 		<counter id="phone" name="Номер телефона" type="text"/>

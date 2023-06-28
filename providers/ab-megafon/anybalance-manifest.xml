@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="4.0" version="244">ab-megafon</id>
+	<id major_version="4.0" version="245">ab-megafon</id>
 	<api flags="no_browser"/>
 	<name>МегаФон</name>
 	<description html="true"><![CDATA[
@@ -95,6 +95,9 @@
 		<counter id="services_paid" name="Платные услуги" prefix="💵 " units=" шт"/>
 		<counter id="services_free" name="Бесплатные услуги" prefix="🎁 " units=" шт"/>
 		<counter id="services_abon" name="Абонплата за услуги" units=" ₽"/>
+		<counter id="add_num" name="Дополнительный номер" type="text"/>
+		<counter id="add_num2" name="Дополнительный номер 2" type="text"/>
+		<counter id="add_num3" name="Дополнительный номер 3" type="text"/>
 		<counter id="license" name="Лицевой счет" type="text"/>
 		<counter id="phone" name="Телефон" type="text"/>
 	</counters>

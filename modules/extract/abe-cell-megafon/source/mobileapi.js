@@ -233,6 +233,8 @@ function megafonLkAPIDo(options, result) {
     }
 
     processInfoApi(result);
+	
+	processAddNumApi(result);
 
     if(AnyBalance.isAvailable('detalization'))
         processDetalizationApi(result);
@@ -456,6 +458,27 @@ function processInfoApi(result){
 		
         getParam(json.accountNumber, result, 'license');
     }
+}
+
+function processAddNumApi(result){
+	if(!AnyBalance.isAvailable('add_num', 'add_num1', 'add_num2'))
+        return;
+
+    var json = callAPI('get', 'api/additionalNumbers/list');
+		
+	if(json.additionalNumbersList && json.additionalNumbersList.length > 0){
+		AnyBalance.trace('Найдено доп. номеров: ' + json.additionalNumbersList.length);
+		for(var i = 0; i<json.additionalNumbersList.length; i++){
+			var num = (i >= 1 ? 'add_num' + (i + 1) : 'add_num');
+			var prefix = (i >= 1 ? 'add_num_prefix' + (i + 1) : 'add_num_prefix');
+			var charge = (i >= 1 ? 'add_num_charge' + (i + 1) : 'add_num_charge');
+		   	getParam(json.additionalNumbersList[i].number, result, num, null, replaceNumber);
+			getParam(json.additionalNumbersList[i].prefix, result, prefix);
+			getParam(json.additionalNumbersList[i].dailyCharge, result, charge);
+		}
+	}else{
+		AnyBalance.trace('Не удалось получить список доп. номеров: ' + JSON.stringify(json));
+	}
 }
 
 function processSmsTurnOffApi(){

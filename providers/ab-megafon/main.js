@@ -52,6 +52,9 @@ var g_countersTable = {
 		"last_pay_descr": "payments.descr",
 		"statuslock": "statuslock",
 		"license": "license",
+		"add_num": "add_num",
+		"add_num2": "add_num2",
+		"add_num3": "add_num3",
 		"phone": "phone",
 		"__tariff": "tariff"
 	}

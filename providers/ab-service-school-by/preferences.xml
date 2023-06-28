@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+	<EditTextPreference
+		title="Учетный номер"
+		key="login"
+		summary="Учетный номер для получения информации|Введите номер\n|{@s}\n"
+		obligatory="true"
+		dialogTitle="Учетный номер"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите учетный номер ученика в формате 10 или 16 цифр без пробелов и разделителей">
+	</EditTextPreference>
+	<ListPreference
+		key="district"
+		title="Район города"
+		summary="Район города для получения информации||{@s}\n"
+		dialogTitle="Район города"
+		entries="Заводской|Ленинский|Московский|Октябрьский|Партизанский|Первомайский|Советский|Фрунзенский|Центральный"
+		entryValues="zavodskoy|leninskiy|moskovskiy|oktjabrskiy|partizanskiy|pervomaiskiy|sovetskiy|frunzenskiy|centralniy"
+		defaultValue="zavodskoy">
+	</ListPreference>
+</PreferenceScreen>

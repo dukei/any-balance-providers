@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-service-school-by</id>
+	<api flags="no_browser"/>
+	<name>Школьное питание (Минск)</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе и состоянии лицевого счета ученика по программе питания в школьных столовых города Минска (Беларусь).</p>
+	<p>Информация берется из системы "Расчет" (ЕРИП) на сайте <a href="https://wmtransfer.by/pay.asp">WebMoney (Интернет деньги в Беларуси)</a>.</p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Для работы провайдера требуется ввести учетный номер ученика и выбрать район города для получения информации.</p>  
+	<p>Провайдер поддерживает лицевые счета, состоящие как из 10, так и из 16 цифр.</p>
+	]]></instruction>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+	    <counter id="balance" name="Баланс" units=" р"/>
+		<counter id="topay" name="Сумма к оплате" units=" р"/>
+		<counter id="days" name="Учебных дней" units=" дн"/>
+		<counter id="norm" name="Норма в день" units=" р"/>
+		<counter id="period" name="Расчетный период" type="text"/>
+		<counter id="saldo" name="Сальдо на 1 число" units=" р"/>
+		<counter id="paid" name="Оплачено за период" units=" р"/>
+		<counter id="code" name="Код платежа в бюджет" type="text"/>
+		<counter id="number" name="Учетный номер ученика" type="text"/>
+		<counter id="fio" name="ФИО" type="text"/>
+	</counters>
+	<keywords>ЕРИП, КШП, питание, образование, школа</keywords>
+	<type>service</type>
+	<country>by</country>
+</provider>

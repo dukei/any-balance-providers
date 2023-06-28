@@ -1,13 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="22">ab-money-sber-by</id>
-	<name>БПС Сбербанк (Беларусь)</name>
+	<id version="23">ab-money-sber-by</id>
+	<name>СберБанк Онлайн (Беларусь)</name>
 	<description html="true"><![CDATA[
-	<p>Получает текущий остаток и другие параметры продуктов БПС-Сбербанка http://www.bps-sberbank.by/, используя интернет-банк (https://i.bps-sberbank.by/).</p>
+	<p>Предоставляет информацию о текущем остатке и другие данные по продуктам ОАО "Сбер Банк" (https://www.sber-bank.by/).</p>
+	<p>Информация берется из мобильного приложения СберБанк Онлайн.</p>
 	]]></description>
 	<instruction html="true"><![CDATA[
-	<p>Если у вас нет доступа к интернет-банку: для получения пароля надо следовать инструкциям на этой странице: https://i.bps-sberbank.by/onlineRegistrationPage.xhtml</p>
+	<p>Если у вас нет доступа к интернет-банку, для получения пароля следуйте инструкциям на странице https://www.sber-bank.by/registration-sbol.</p>
 	]]></instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>

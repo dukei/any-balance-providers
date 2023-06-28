@@ -4,10 +4,10 @@
 		obligatory="true"
         title="Логин" 
         positiveButtonText="ОК" 
-        summary="|Введите логин в интернет-банк|{@s}" 
+        summary="Логин для входа в личный кабинет|Введите логин\n|{@s}\n"
         dialogTitle="Логин" 
         negativeButtonText="Отмена" 
-        dialogMessage="Введите логин для входа в интернет-банк."
+        dialogMessage="Введите логин, используемый для входа в систему СберБанк Онлайн."
         key="login"
         inputType="text">
     </EditTextPreference>
@@ -18,14 +18,15 @@
         dialogTitle="Пароль"
         negativeButtonText="Отмена"
         title="Пароль"
-        summary="|Введите пароль в интернет-банк|***********"
-        dialogMessage="Введите пароль, используемый для входа в интернет-банк."
+        summary="Пароль для входа в личный кабинет|Введите пароль\n|***********\n"
+        dialogMessage="Введите пароль, используемый для входа в систему СберБанк Онлайн."
         inputType="textPassword">
     </EditTextPreference>
    <ListPreference 
         key="type" 
         title="Банковский продукт"
-        summary="||{@s}\n"
+        summary="Продукт для получения информации|Автоматически\n|{@s}\n"
+		dialogTitle="Банковский продукт"
         entries="Карта|Счет|Кредит"
         entryValues="card|acc|crd"
 	    defaultValue="card">
@@ -33,10 +34,10 @@
     <EditTextPreference 
         positiveButtonText="ОК"
         key="cardnum" 
-        dialogTitle="Номера карт"
+        dialogTitle="Номер продукта"
         negativeButtonText="Отмена"
-        title="Номера карт"
-        summary="|Автоматически|{@s}"
-        dialogMessage="Введите через запятую последние 4 цифры номеров продуктов по которым хотите получить данные, поддерживаются до 3 продуктов. Если это поле оставить пустым, то будет показана информация по первому продукту.">
+        title="Номер продукта"
+        summary="Последние цифры номера продукта|Автоматически\n|{@s}\n"
+        dialogMessage="Введите через запятую последние 4 цифры номеров продуктов, по которым вы хотите получать информацию, поддерживаются до 3 продуктов. Если оставить поле пустым, будет показана информация по первому продукту.">
     </EditTextPreference>
 </PreferenceScreen>

@@ -141,11 +141,15 @@ function main(){
 			html = AnyBalance.requestGet(baseurl + 'api/v5/accounts/' + acc.accountId + '/data', g_headers);
 			json = getExtJson(html);
 
-			getParam(json.balanceDetails.balance, result, name_balance, null, null, parseBalanceMy);
-			for(var k=0; k<json.balanceDetails.subServiceBalances.length; ++k){
-				var ss = json.balanceDetails.subServiceBalances[k];
-				sumParam(ss.fine, result, name_peni, null, null, null, aggregate_sum);
-			}
+			if(json.balanceDetails){
+			    getParam(json.balanceDetails.balance, result, name_balance, null, null, parseBalanceMy);
+			    for(var k=0; k<json.balanceDetails.subServiceBalances.length; ++k){
+			    	var ss = json.balanceDetails.subServiceBalances[k];
+			    	sumParam(ss.fine, result, name_peni, null, null, null, aggregate_sum);
+			    }
+			}else{
+		        AnyBalance.trace('Баланс и пени по счету не найдены');
+	        }
 		}
 	}
 	

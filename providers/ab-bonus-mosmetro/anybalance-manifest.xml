@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="5">ab-bonus-mosmetro</id>
+	<id version="6">ab-bonus-mosmetro</id>
 	<api flags="no_browser"/>
 	<name>Тройка mosmetro</name>
 	<description html="true"><![CDATA[
@@ -30,6 +30,11 @@
 		<counter id="lastpayname" name="Станция/Маршрут" type="text"/>
 		<counter id="leftpaydate" name="Посл. опл. проход" type="time" format="dd.MM.yyyy HH:mm"/>
 		<counter id="leftpaytime" name="Оплаченное время" units=" мин" type="time_interval" format="{@MIN}"/>
+		<counter id="cardstatus" name="Статус карты" type="text"/>
+		<counter id="lastticketname" name="Название билета" type="text"/>
+		<counter id="lastticketstatus" name="Статус билета" type="text"/>
+		<counter id="lastticketdays" name="Срок действия билета" units=" дн"/>
+		<counter id="lasttickettime" name="Дата действия билета" type="time" format="dd.MM.yyyy HH:mm"/>
 		<counter id="lastoperdate" name="Последняя операция" type="time" format="dd.MM.yyyy HH:mm"/>
 		<counter id="lastopersum" name="Сумма посл. операции" units=" ₽"/>
 		<counter id="lastopername" name="Тип посл. операции" type="text"/>

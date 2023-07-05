@@ -11,7 +11,7 @@ function main(){
 
   AnyBalance.setDefaultCharset('utf-8');
   var prefs = AnyBalance.getPreferences();
-  var baseurl = 'https://cks.com.ua/';
+  var baseurl = 'https://komunalka.ua/';
   var headers = {
     'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
     'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
@@ -89,36 +89,41 @@ function main(){
 function setCounter(result,service,sum){
 	if (!service||!sum) return;
 	AnyBalance.trace('Знайдено:'+service+'\nБорг:'+sum);
-
-	if(/загальнобудинкового лічильника/i.test(service)||/вузла комерційного обліку/i.test(service)){
-		getParam(sum, result, 'heating_counter', null, null, parseBalance);
-	}else if(/ЦЕНТРАЛІЗОВАНЕ ОПАЛЕННЯ/i.test(service)) { 
-    		getParam(sum, result, 'heating', null, null, parseBalance);
+	sum=parseBalance(sum);
+	if(/абонентське обслуговування.*КИЇВВОДОКАНАЛ/i.test(service)) { 
+		sumParam(sum, result, 'aboncoldwater', null, null, parseBalance, aggregate_sum);
+	}else if(/абонентське обслуговування з постачання гарячої води/i.test(service)) { 
+		sumParam(sum, result, 'abonhotwater', null, null, parseBalance, aggregate_sum);
+	}else if(/абонентське обслуговування з постачання теплової енергії/i.test(service)) { 
+		sumParam(sum, result, 'abonheating', null, null, parseBalance, aggregate_sum);
+	}else if(/(ЦЕНТРАЛІЗОВАНЕ ОПАЛЕННЯ)|(постачання теплової енергії)|(загальнобудинкового лічильника)|(вузла комерційного обліку)/i.test(service)) { 
+		sumParam(sum, result, 'heating', null, null, parseBalance, aggregate_sum);
 	}else if(/ПОСТАЧАННЯ ГАРЯЧОЇ ВОДИ/i.test(service)) { 
-    		getParam(sum, result, 'hot_water', null, null, parseBalance);
+		sumParam(sum, result, 'hot_water', null, null, parseBalance, aggregate_sum);
 	}else if(/ЕЛЕКТРОЕНЕРГIЯ/i.test(service)) { 
-    		getParam(sum, result, 'electricity', null, null, parseBalance);
+		sumParam(sum, result, 'electricity', null, null, parseBalance, aggregate_sum);
 	}else if(/УТРИМАННЯ БУДИНКІВ/i.test(service)) { 
-    		getParam(sum, result, 'rent', null, null, parseBalance);
+		sumParam(sum, result, 'rent', null, null, parseBalance, aggregate_sum);
 	}else if(/ПОБУТОВИХ ВІДХОДІВ/i.test(service)) { 
-    		getParam(sum, result, 'garbage', null, null, parseBalance);
+		sumParam(sum, result, 'garbage', null, null, parseBalance, aggregate_sum);
 	}else if(/розподіл газу/i.test(service)) { 
-    		getParam(sum, result, 'gasrasp', null, null, parseBalance);
+		sumParam(sum, result, 'gasrasp', null, null, parseBalance, aggregate_sum);
 	}else if(/спожитий газ/i.test(service)) { 
-    		getParam(sum, result, 'gas', null, null, parseBalance);
-	}else if(/ПОСТАЧАННЯ ГАРЯЧОЇ ВОДИ/i.test(service)) { 
-    		getParam(sum, result, 'hot_water', null, null, parseBalance);
-	}else if(/ВОДОВІДВЕДЕННЯ ГАРЯЧОЇ ВОДИ/i.test(service)) { 
-    		getParam(sum, result, 'hot_water_out', null, null, parseBalance);
-	}else if(/ПОСТАЧАННЯ ХОЛОДНОЇ ВОДИ/i.test(service)) { 
-    		getParam(sum, result, 'cold_water', null, null, parseBalance);
+		sumParam(sum, result, 'gas', null, null, parseBalance, aggregate_sum);
+	}else if(/ВІДВЕДЕННЯ ГАРЯЧОЇ ВОДИ/i.test(service)) { 
+		sumParam(sum, result, 'hot_water_out', null, null, parseBalance, aggregate_sum);
+	}else if(/постач.*хол.*вод/i.test(service)) { 
+		sumParam(sum, result, 'cold_water', null, null, parseBalance, aggregate_sum);
 	}else if(/ВОДОВІДВЕДЕННЯ/i.test(service)) { 
-    		getParam(sum, result, 'cold_water_out', null, null, parseBalance);
+		sumParam(sum, result, 'cold_water_out', null, null, parseBalance, aggregate_sum);
 	}else if(/ДОМОФОН/i.test(service)) { 
-    		getParam(sum, result, 'domofon', null, null, parseBalance);
+		sumParam(sum, result, 'domofon', null, null, parseBalance, aggregate_sum);
+	}else if(/УкрТелеком/i.test(service)) { 
+		sumParam(sum, result, 'ukrtelecom', null, null, parseBalance, aggregate_sum);
 
 	}else{
 		AnyBalance.trace('^-- Невідома послуга. Пропущено');
 	}
-        sumParam(sum, result, 'balance', null, null, parseBalance, aggregate_sum);
+	
+        if (sum>0) result.balance+=sum;
 }

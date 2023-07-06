@@ -1,13 +1,13 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-internet-matrix_net</id>
+	<id version="4">ab-internet-matrix_net</id>
 	<api flags="no_browser"/>
 	<name>MatrixNET</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе провайдера MatrixNET <a href="https://m-x.net.ua">https://m-x.net.ua</a></p>
 	<p>Информация берется из личного кабинета <a href="https://my.m-x.net.ua">https://my.m-x.net.ua</a></p>
 	]]></description>
-	<author>dimapplk &lt;dimapplk@gmail.com&gt;</author>
+	<author>DimaZUA &lt;DIMAZ.KHUA@gmail.com&gt;</author>
 	<depends>
 		<module id="library"/>
 		<module id="crypt/md5"/>

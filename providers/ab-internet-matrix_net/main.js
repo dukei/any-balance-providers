@@ -16,7 +16,7 @@ function main() {
 	AnyBalance.setDefaultCharset('windows-1251');
 	var html=AnyBalance.requestGet(baseurl, g_headers);
 
-        if (/Авторизация для доступа в клиентскую статистику/i.test(html)){
+        if (/Авторизація для доступу до клієнтської статистики/i.test(html)){
 		var ses = /name\=ses\svalue\=(\d*)\>/i.exec(html)[1];	
 		var pp=hex_md5(ses+' '+prefs.password).toString();
 		html = AnyBalance.requestGet(baseurl+'?ses='+ses+'&uu='+prefs.login+'&pp='+pp, g_headers); 
@@ -27,17 +27,17 @@ function main() {
 		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
 	}
 
-	if (!/Состояние доступа ваших учетных записей/i.test(html)) {
+	if (!/Стан доступу до ваших облікових записів/i.test(html)) {
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
 	}
 
 	var result = {success: true};
 
-	getParam(html, result, 'balance', /На вашем счете(?:[^>]*>){2}([\s\S]*?)грн/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'balance', /на вашому рахунку(?:[^>]*>){2}([\s\S]*?)грн/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'price', /Итого к оплате([\s\S]*?)\<\/tr\>/i, replaceTagsAndSpaces, parseBalance);
 	getParam(html, result, 'mb', /вход\+выход([\s\S]*?)Мб/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, '__tariff', /((Лицевой Счет)[\s\S]*?)\/b/i, replaceTagsAndSpaces, parseBalance);
-        result.stat='<font  color=\'' + (/Все в порядке\. Спасибо за внимание/i.test(html) ? 'green\'>Ok' : 'red\'>ALERT') + '</font>';
+	getParam(html, result, '__tariff', /((Особовий Рахунок)[\s\S]*?)\/b/i, replaceTagsAndSpaces, parseBalance);
+        result.stat='<font  color=\'' + (/(дяку)|(спасибо)/i.test(html) ? 'green\'>Ok' : 'red\'>ALERT') + '</font>';
 	AnyBalance.setResult(result);
 }

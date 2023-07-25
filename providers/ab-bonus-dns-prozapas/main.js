@@ -19,7 +19,73 @@ function main() {
 	AB.checkEmpty(prefs.login, 'Введите логин!');
 	AB.checkEmpty(prefs.password, 'Введите пароль!');
 
-	var html = AnyBalance.requestGet(baseurl + 'login', g_headers);
+	var url = 'https://www.dns-shop.ru/profile/menu/';
+        var html = AnyBalance.requestGet(url, g_headers);
+
+    if(/__qrator/.test(html) || AnyBalance.getLastStatusCode() == 401) {
+        AnyBalance.trace("Обнаружена защита от роботов. Пробуем обойти...");
+        clearAllCookies();
+
+        const bro = new BrowserAPI({
+            provider: 'dns-shop',
+            userAgent: g_headers["User-Agent"],
+	    singlePage: true,
+            headfull: true,
+            rules: [{
+                url: /^data:/.toString(),
+                action: 'abort',
+            },{
+                resType: /^(image|stylesheet|font)$/.toString(),
+                action: 'abort',
+            }, {
+                url: /_qrator\/qauth_utm_v2(?:_\w+)?\.js/.toString(),
+                action: 'cache',
+                valid: 3600*1000
+            }, {
+                url: /_qrator/.toString(),
+                action: 'request',
+            }, {
+                resType: /^(image|stylesheet|font|script)$/i.toString(),
+                action: 'abort',
+            }, {
+                url: /\.(png|jpg|ico|svg)/.toString(),
+                action: 'abort',
+            }, {
+                url: /dns-shop\.ru/i.toString(),
+                action: 'request',
+            }, {
+		url: /.*/.toString(),
+		action: 'abort'
+            }],
+            additionalRequestHeaders: [
+		{
+                    headers: {
+			'User-Agent': g_headers["User-Agent"]
+		    }
+		}
+            ],
+            debug: AnyBalance.getPreferences().debug
+        });
+
+        const r = bro.open(url);
+        try {
+            bro.waitForLoad(r.page);
+            html = bro.content(r.page).content;
+            const cookies = bro.cookies(r.page, url);
+            BrowserAPI.useCookies(cookies);
+        } finally {
+            bro.close(r.page);
+        }
+
+        if(/__qrator|HTTP 40[31]/.test(html)||AnyBalance.getLastStatusCode() >= 400)
+            throw new AnyBalance.Error('Не удалось обойти защиту. Сайт изменен?');
+
+        AnyBalance.trace("Защита от роботов успешно пройдена");
+
+        AnyBalance.saveCookies();
+    	AnyBalance.saveData();
+
+    }
 
 	if (!html || AnyBalance.getLastStatusCode() > 400) {
 		AnyBalance.trace(html);

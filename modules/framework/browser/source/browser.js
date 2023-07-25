@@ -96,7 +96,7 @@ const BrowserAPI = (() => {
                             }
                         }
 
-                        const html = AnyBalance.requestPost(pr.url, pr.body, addHeaders(headers, additionalHeaders), {HTTP_METHOD: pr.method});
+                        const html = AnyBalance.requestPost(pr.url, pr.body, addHeaders(additionalHeaders, headers), {HTTP_METHOD: pr.method});
                         const params = AnyBalance.getLastResponseParameters();
                         const convertedHeaders = {};
                         let ct;

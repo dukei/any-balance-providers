@@ -1,15 +1,15 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="6">ab-money-yandex-plus</id>
+	<id version="7">ab-money-yandex-plus</id>
 	<api flags="no_browser" />
 	<name>Яндекс Плюс</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе баллов, состоянии подписки, платежах и другое для пользователей подписки Яндекс Плюс.</p>
-	<p>Информация берётся из личного кабинета Яндекс Плюс на сайте https://plus.yandex.ru/.</p>	
+	<p>Предоставляет информацию о балансе баллов, состоянии подписки, платежах и другие данные для владельцев подписки <a href="https://plus.yandex.ru/">Яндекс Плюс</a>.</p>
+	<p>Информация берется из личного кабинета Яндекс Плюс на сайте https://plus.yandex.ru/.</p>	
 	]]></description>
 	<instruction html="true"><![CDATA[
 	<p>Для работы провайдера требуется ввести логин и пароль для входа в систему Яндекс.</p>
-	<p>Если у Вас нет подписки Яндекс Плюс, оформите её на странице https://plus.yandex.ru/getplus.</p>
+	<p>Если у вас нет подписки Яндекс Плюс, оформите ее на странице https://plus.yandex.ru/getplus.</p>
 	]]></instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>
@@ -25,7 +25,7 @@
 	</files>
 	<counters>
 		<counter id="balance" name="Баланс" units=" Б"/>
-		<counter id="currency" name="Валюта счёта" type="text"/>
+		<counter id="currency" name="Валюта счета" type="text"/>
 		<counter id="status" name="Состояние подписки" type="text"/>
 		<counter id="price" name="Стоимость подписки" units=" {@currency}"/>
 		<counter id="starteddate" name="Дата начала подписки" type="time" format="dd.MM.yyyy"/>

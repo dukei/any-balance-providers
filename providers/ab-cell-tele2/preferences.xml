@@ -3,11 +3,11 @@
     <EditTextPreference 
         title="Логин" 
         positiveButtonText="ОК" 
-        summary="|Номер телефона (10 цифр)|{@s}"
-        dialogTitle="Номер телефона" 
+        summary="Логин для входа в личный кабинет|Введите логин\n|{@s}\n"
+        dialogTitle="Логин"
         negativeButtonText="Отмена" 
         obligatory="true"
-        dialogMessage="Введите номер вашего телефона для входа в Мой Tele2 (10 цифр). Например: 9531234567. Узнать номер можно, набрав *201# со своего телефона."
+        dialogMessage="Введите номер телефона для входа в личный кабинет в формате 10 цифр, например 9531234567"
         key="login"
         inputType="number">
     </EditTextPreference>
@@ -16,9 +16,9 @@
         key="password" 
         dialogTitle="Пароль"
         negativeButtonText="Отмена"
-        title="Пароль (необязательно)"
-        summary="|Оставьте пустым для входа по SMS|***********"
-        dialogMessage="Введите пароль, используемый для входа в личный кабинет Мой Tele2. Если Вы не знаете свой пароль, пройдите регистрацию, восстановите пароль на сайте https://my.tele2.ru или оставьте поле пустым для входа по SMS."
+        title="Пароль"
+        summary="Пароль для входа в личный кабинет|Введите пароль\n|**********\n"
+        dialogMessage="Введите пароль, используемый для входа в личный кабинет. Если вы не знаете пароль, пройдите регистрацию, восстановите пароль на сайте https://my.tele2.ru или оставьте поле пустым для входа по SMS"
         inputType="textPassword">
     </EditTextPreference>
 </PreferenceScreen>

@@ -14,7 +14,7 @@ function main() {
 function doNewCabinet() {
 	var countersTable = {
 		common: {
-			"__forceAvailable": ["payments.sum", "payments.date"],
+			"__forceAvailable": ["payments.sum", "payments.date", "payments.descr"],
 			"balance": "balance",
 			"__tariff": "tariff",
 			"min_left": "remainders.min_left",
@@ -29,9 +29,17 @@ function doNewCabinet() {
 			"traffic_used": "remainders.traffic_used",
 			"sms_used": "remainders.sms_used",
 			"mms_used": "remainders.mms_used",
-//			"history_income": "payments.sum",
-//			"history_out": "payments.sum",
-//			"history": "payments.sum",
+			"min_total": "remainders.min_total",
+			"traffic_total": "remainders.traffic_total",
+			"sms_total": "remainders.sms_total",
+			"statuslock": "remainders.statuslock",
+			"services_total": "services.services_total",
+		    "services_paid": "services.services_paid",
+		    "services_free": "services.services_free",
+			"services_abon": "services.services_abon",
+//			"last_payment_sum": "payments.sum",
+//			"last_payment_date": "payments.date",
+//			"last_payment_descr": "payments.descr",
 			"phone": "info.mphone",
 			"userName": "info.fio",
 		}
@@ -47,26 +55,34 @@ function doNewCabinet() {
     adapter.processRemainders = adapter.envelope(processRemainders);
     adapter.processPayments = adapter.envelope(processPayments);
     adapter.processBalance = adapter.envelope(processBalance);
+	adapter.processServices = adapter.envelope(processServices);
 
 	var result = {success: true};
     adapter.processInfo(result);
     adapter.processBalance(result);
     adapter.processRemainders(result);
     adapter.processPayments(result);
+	adapter.processServices(result);
 
     var newresult = adapter.convert(result);
 	
-	if(result.payments) {
+	if(result.payments && result.payments.length > 0) {
 		for (var i = 0; i < result.payments.length; ++i) {
 			var p = result.payments[i];
 
-			sumParam(fmtDate(new Date(p.date), '.') + ' ' + p.sum, newresult, 'history', null, null, null, aggregate_join);
+			sumParam(fmtDate(new Date(p.date), '.') + ' ' + p.sum + ' ₽', newresult, 'history', null, null, null, aggregate_join);
 			if (/^-/.test(p.sum)) {
 				sumParam(p.sum, newresult, 'history_out', null, null, null, aggregate_sum);
 			} else {
 				sumParam(p.sum, newresult, 'history_income', null, null, null, aggregate_sum);
 			}
 		}
+		
+		var lp = result.payments[0];
+		
+		getParam(lp.sum, newresult, 'last_payment_sum');
+		getParam(lp.date, newresult, 'last_payment_date');
+		getParam(lp.descr, newresult, 'last_payment_descr');
 	}
     
     AnyBalance.setResult(newresult);

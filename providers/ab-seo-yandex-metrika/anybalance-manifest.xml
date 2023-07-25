@@ -1,11 +1,16 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="14">ab-seo-yandex-metrika</id>
+	<id version="17">ab-seo-yandex-metrika</id>
 	<name>Яндекс.Метрика</name>
 	<description html="true"><![CDATA[
-	<p>Получает данные по ID счетчика в системе Яндекс.Метрика (https://metrika.yandex.ru/list/).</p>
+	<p>Предоставляет информацию о просмотрах, визитах, посетителях и другие данные для счетчика в системе <a href="https://metrika.yandex.ru/">Яндекс.Метрика</a>.</p>
+	<p>Информация берется из личного кабинета Яндекс.Метрики на сайте https://metrika.yandex.ru/list/.</p>	
 	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Для работы провайдера требуется ввести ID счетчика (ID можно посмотреть в адресной строке браузера ?counter_id=12345678).</p>
+	<p>Кроме того, если ваш счетчик непубличный, потребуется также ввести логин и пароль для входа в систему Яндекс.</p>
+	]]></instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>
 		<module id="library"/>
@@ -22,9 +27,17 @@
 		<counter id="views_today" name="Просмотров сегодня"/>
 		<counter id="visits_today" name="Визитов сегодня"/>
 		<counter id="visitors_today" name="Посетителей сегодня"/>
+		<counter id="new_visitors_part_today" name="Доля новых посетителей сегодня" units="%"/>
+		<counter id="refusals_today" name="Отказы сегодня" units="%"/>
+		<counter id="views_deep_today" name="Глубина просмотра сегодня"/>
+		<counter id="time_today" name="Время на сайте сегодня" type="time_interval" format="{@H}:{@min}"/>
 		<counter id="views_yesterday" name="Просмотров вчера"/>
 		<counter id="visits_yesterday" name="Визитов вчера"/>
 		<counter id="visitors_yesterday" name="Посетителей вчера"/>
+		<counter id="new_visitors_part_yesterday" name="Доля новых посетителей вчера" units="%"/>
+		<counter id="refusals_yesterday" name="Отказы вчера" units="%"/>
+		<counter id="views_deep_yesterday" name="Глубина просмотра вчера"/>
+		<counter id="time_yesterday" name="Время на сайте вчера" type="time_interval" format="{@H}:{@min}"/>
 		<counter id="counter_id" name="ID счетчика" type="text"/>
 		<counter id="site" name="Сайт" type="text"/>
 	</counters>

@@ -14,7 +14,7 @@ function apiPost(url, params, message, reFatal){
 	json = getJson(html);
 	if(json.status !== 'ok'){
 		AnyBalance.trace(html);
-		const error = json.errors.join('; ');
+		const error = json.errors.join('; ') || json.error.join('; ');
 		throw new AnyBalance.Error('Пароль не принят: ' + error, null, /not_matched/.test(error));
 	}
 }
@@ -38,9 +38,9 @@ function loginYandex(login, password, html, retpath, origin) {
 			Referer: referer
 		}));
 		const json = getJson(html);
-		if(json.status !== 'ok' && json.errors[0] !== 'captcha.required'){
+		if(json.status !== 'ok' && (json.error || (json.errors && json.errors[0] !== 'captcha.required'))){
 			AnyBalance.trace(html);
-			const error = json.errors.join('; ');
+			const error = json.errors.join('; ') || json.error.join('; ');
 			throw new AnyBalance.Error(message + ': ' + error, null, reFatal && reFatal.test(error));
 		}
 		return json;
@@ -94,7 +94,7 @@ function loginYandex(login, password, html, retpath, origin) {
 		retpath: retpath
 	}, 'Пароль не принят', /not_matched/);
 	
-	if(json.errors && json.errors[0] === 'captcha.required'){
+	if(json.errors && json.errors[0] == 'captcha.required'){
 	    checkCaptcha();
 		
 		json = apiPost('registration-validations/auth/multi_step/commit_password', {
@@ -106,12 +106,12 @@ function loginYandex(login, password, html, retpath, origin) {
 		
 	}
 	
-	if(json.state === 'change_password'){
+	if(json.state == 'change_password'){
 		AnyBalance.trace('Потребовалась смена пароля');
 		throw new AnyBalance.Error('Яндекс требует сменить пароль. Пожалуйста, перейдите на страницу авторизации https://passport.yandex.ru/auth/welcome через браузер, смените пароль и введите новый пароль в настройки провайдера', null, true);
 	}
 
-	if(json.state === 'auth_challenge'){
+	if(json.state == 'auth_challenge'){
 		AnyBalance.trace('Потребовалась дополнительная проверка входа');
 
 		json = apiPost('registration-validations/auth/challenge/submit', {
@@ -119,91 +119,116 @@ function loginYandex(login, password, html, retpath, origin) {
 			track_id: track_id,
 		}, 'Запрос на проверку входа не принят');
 
-		const challengeType = json.challenge.challengeType;
-
-		if(challengeType === 'phone_confirmation'){
-			AnyBalance.trace('Требуется подтверждение по телефону');
-			
-			const phoneId = json.challenge.phoneId;
-			const hint = json.challenge.hint;
-
-			json = apiPost('registration-validations/auth/validate_phone_by_id', {
-				csrf_token: csrf,
-				track_id: track_id,
-				phoneId: phoneId
-			}, 'Запрос на валидацию не принят');
-
-			if(json.valid_for_flash_call === false && json.valid_for_call === false){
-				AnyBalance.trace('Требуется подтверждение с помощью кода из SMS');
-				var confirm_method = 'by_sms';
-			}else if(json.valid_for_flash_call === true && json.valid_for_call === true){
-				AnyBalance.trace('Требуется подтверждение с помощью входящего звонка');
-				var confirm_method = 'by_flash_call';
-			}else if(!json.valid_for_flash_call && !json.valid_for_call){
-				AnyBalance.trace(html);
-				throw new AnyBalance.Error('Требуемое подтверждение не поддерживается');
-			}
-
-			json = apiPost('registration-validations/phone-confirm-code-submit', {
-				csrf_token: csrf,
-				track_id: track_id,
-				phone_id: phoneId,
-				confirm_method: confirm_method,
-				isCodeWithFormat: true
-			}, 'Запрос на отправку кода не принят');
-
-			if (json.global_sms_id){
-			    var code = AnyBalance.retrieveCode('Пожалуйста, введите код из ' + json.code_length + ' цифр из SMS, отправленного на ваш номер ' + json.number.masked_international, null, {inputType: 'number', time: 180000});
-			}else{
-				var code = AnyBalance.retrieveCode('Пожалуйста, введите последние ' + json.code_length + ' цифры номера телефона из звонка, поступившего на ваш номер ' + json.number.masked_international, null, {inputType: 'number', time: 180000});
-			}
-
-			json = apiPost('registration-validations/phone-confirm-code', {
-				csrf_token: csrf,
-				track_id: track_id,
-				code: code
-			}, 'Запрос на подтверждение кода не принят');
-			
-			json = apiPost('registration-validations/auth/challenge/commit', {
-		    	csrf_token: csrf,
-		    	track_id: track_id,
-		    	challenge: challengeType,
-		    }, 'Ошибка подтверждения входа');
-			
-		}else if(challengeType === 'push_2fa'){
+		var challengeType = json.challenge.challengeType;
+		var phoneId = json.challenge.phoneId;
+	    var hint = json.challenge.hint;
+		
+		if(challengeType == 'mobile_id'){ // Яндекс сломал красивую структуру входа, придётся обрабатывать по-другому
 			AnyBalance.trace('Требуется подтверждение через мобильный Яндекс');
 			
-            json = apiPost('registration-validations/auth/challenge/send_push', {
-				csrf_token: csrf,
-				track_id: track_id
-			}, 'Запрос на отправку уведомления не принят');
+			if(json.challenge.isSms2faChallenge == true){ // Если подтверждение через мобильный Яндекс доступно на устройстве (Яндекс установлен и авторизован)
+            
+			    json = apiPost('registration-validations/auth/challenge/send_push', {
+				    csrf_token: csrf,
+				    track_id: track_id
+			    }, 'Запрос на отправку уведомления не принят');
 
-			var answer = AnyBalance.retrieveCode('Пожалуйста, введите код из уведомления, отправленного в мобильное приложение Яндекс на вашем устройстве', null, {inputType: 'number', time: 180000});
+			    var answer = AnyBalance.retrieveCode('Пожалуйста, введите код из уведомления, отправленного в мобильное приложение Яндекс на вашем устройстве', null, {inputType: 'number', time: 180000});
 			
-			json = apiPost('registration-validations/auth/challenge/commit', {
-			    csrf_token: csrf,
-			    track_id: track_id,
-			    challenge: challengeType,
-				answer: answer
-		    }, 'Ошибка подтверждения входа');
-		}else if(challengeType === 'question'){
-			AnyBalance.trace('Требуется ответ на контрольный вопрос');
+			    json = apiPost('registration-validations/auth/challenge/commit', {
+			        csrf_token: csrf,
+			        track_id: track_id,
+				    challenge: 'push_2fa',
+				    answer: answer
+		        }, 'Ошибка подтверждения входа');
+			}else{ // Подтверждение через мобильный Яндекс недоступно. Запрашиваем подтверждение по телефону
+				AnyBalance.trace('Требуемое подтверждение не поддерживается');
+				challengeType = 'phone_confirmation';
+			}
 			
-			var hint = json.challenge.hint;
-			var answer = AnyBalance.retrieveCode('Пожалуйста, введите ответ на контрольный вопрос:\n\n' + hint, null, {/*inputType: 'number', */time: 180000});
-			
-			json = apiPost('registration-validations/auth/challenge/commit', {
-			    csrf_token: csrf,
-			    track_id: track_id,
-			    challenge: challengeType,
-				answer: answer
-		    }, 'Ошибка подтверждения входа');
-			
-		}else{
-			AnyBalance.trace(html);
-			throw new AnyBalance.Error('Затребованный тип проверки не поддерживется: ' + challengeType);
 		}
 
+		if(!/auth\/challenge\/commit/i.test(AnyBalance.getLastUrl())){ // На случай, если Яндекс сразу выкатил подтверждение по телефону или контрольный вопрос
+		    if(challengeType == 'phone_confirmation'){
+			    AnyBalance.trace('Требуется подтверждение по телефону');
+                
+			    json = apiPost('registration-validations/auth/validate_phone_by_id', {
+				    csrf_token: csrf,
+				    track_id: track_id,
+				    phoneId: phoneId
+			    }, 'Запрос на валидацию не принят');
+                
+			    if(json.valid_for_flash_call == false && json.valid_for_call == false){
+				    AnyBalance.trace('Требуется подтверждение с помощью кода из SMS');
+				    var confirm_method = 'by_sms';
+			    }else if(json.valid_for_flash_call == true && json.valid_for_call == true){
+				    AnyBalance.trace('Требуется подтверждение с помощью входящего звонка');
+				    var confirm_method = 'by_flash_call';
+			    }else if(!json.valid_for_flash_call && !json.valid_for_call){
+				    AnyBalance.trace(html);
+				    throw new AnyBalance.Error('Требуемое подтверждение не поддерживается');
+			    }
+                
+			    json = apiPost('registration-validations/phone-confirm-code-submit', {
+				    csrf_token: csrf,
+				    track_id: track_id,
+				    phone_id: phoneId,
+				    confirm_method: confirm_method,
+				    isCodeWithFormat: true
+			    }, 'Запрос на отправку кода не принят');
+                
+			    if (json.global_sms_id){
+			        var code = AnyBalance.retrieveCode('Пожалуйста, введите код из ' + json.code_length + ' цифр из SMS, отправленного на ваш номер ' + json.number.masked_international, null, {inputType: 'number', time: 180000});
+			    }else{
+				    var code = AnyBalance.retrieveCode('Пожалуйста, введите последние ' + json.code_length + ' цифры номера телефона из звонка, поступившего на ваш номер ' + json.number.masked_international, null, {inputType: 'number', time: 180000});
+			    }
+                
+			    json = apiPost('registration-validations/phone-confirm-code', {
+				    csrf_token: csrf,
+				    track_id: track_id,
+				    code: code
+			    }, 'Запрос на подтверждение кода не принят');
+			    
+			    json = apiPost('registration-validations/auth/challenge/commit', {
+		    	    csrf_token: csrf,
+		    	    track_id: track_id,
+		    	    challenge: challengeType,
+		        }, 'Ошибка подтверждения входа');
+			    
+		    }else if(challengeType == 'push_2fa'){
+			    AnyBalance.trace('Требуется подтверждение через мобильный Яндекс');
+			    
+                json = apiPost('registration-validations/auth/challenge/send_push', {
+				    csrf_token: csrf,
+				    track_id: track_id
+			    }, 'Запрос на отправку уведомления не принят');
+                
+			    var answer = AnyBalance.retrieveCode('Пожалуйста, введите код из уведомления, отправленного в мобильное приложение Яндекс на вашем устройстве', null, {inputType: 'number', time: 180000});
+			    
+			    json = apiPost('registration-validations/auth/challenge/commit', {
+			        csrf_token: csrf,
+			        track_id: track_id,
+			        challenge: challengeType,
+				    answer: answer
+		        }, 'Ошибка подтверждения входа');
+			    
+		    }else if(challengeType == 'question'){
+			    AnyBalance.trace('Требуется ответ на контрольный вопрос');
+			    
+			    var answer = AnyBalance.retrieveCode('Пожалуйста, введите ответ на контрольный вопрос:\n\n' + hint, null, {/*inputType: 'number', */time: 180000});
+			    
+			    json = apiPost('registration-validations/auth/challenge/commit', {
+			        csrf_token: csrf,
+			        track_id: track_id,
+			        challenge: challengeType,
+				    answer: answer
+		        }, 'Ошибка подтверждения входа');
+			    
+		    }else{
+			    AnyBalance.trace(html);
+			    throw new AnyBalance.Error('Затребованный тип проверки не поддерживется: ' + challengeType);
+		    }
+        }
 	}
 
 	html = AnyBalance.requestGet(baseurl + '/auth/finish/?' + createUrlEncodedParams({

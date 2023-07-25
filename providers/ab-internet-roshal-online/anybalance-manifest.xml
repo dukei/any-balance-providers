@@ -1,12 +1,15 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-internet-roshal-online</id>
+	<id version="3">ab-internet-roshal-online</id>
 	<api flags="no_browser"/>
 	<name>Рошаль-Онлайн</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе интернет-провайдера Рошаль-Онлайн <a href="http://www.roshalonline.ru/">http://www.roshalonline.ru/</a></p>
-	<p>Информация берется из личного кабинета <a href="http://netstat.atnr.ru/">http://netstat.atnr.ru/</a></p>
+	<p>Предоставляет информацию о балансе и тарифном плане для пользователей интернет-провайдера Рошаль-Онлайн (http://www.roshalonline.ru/).</p>
+	<p>Информация берется из личного кабинета Рошаль-Онлайн на сайте http://netstat.atnr.ru/.</p>
 	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Для работы провайдера требуется ввести логин и пароль для входа в личный кабинет Рошаль-Онлайн.</p>
+	]]></instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
     <depends>
         <module id="library"/>
@@ -18,18 +21,22 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units=" р"/>
-		<counter id="credit" name="Кредит" units=" p"/>
-		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="balance" name="Баланс" units=" ₽"/>
+		<counter id="credit" name="Кредит" units=" ₽"/>
 		<counter id="status" name="Состояние интернета" type="text"/>
 		<counter id="currentTariff" name="Текущий тариф" type="text"/>
-		<counter id="cost" name="Абонентская плата" units=" p"/>
-		<counter id="writtenOff" name="Списано абонентской платы" units=" p"/>
-		<counter id="deadline" name="Конец расчётного периода" type="time" format="dd/mm/yyyy"/>
-		<counter id="accountID" name="Основной лицевой счёт" type="text"/>
+		<counter id="cost" name="Абонентская плата" units=" ₽"/>
+		<counter id="writtenOff" name="Списано абонентской платы" units=" ₽"/>
+		<counter id="period" name="Расчетный период" type="text"/>
+		<counter id="deadline" name="Конец расчетного периода" type="time" format="dd.MM.yyyy"/>
+		<counter id="accountID" name="Основной лицевой счет" type="text"/>
+		<counter id="services" name="Услуги" type="text"/>
 		<counter id="adress" name="Фактический адрес" type="text"/>
+		<counter id="email" name="E-mail" type="text"/>
+		<counter id="phone" name="Телефон" type="text"/>
+		<counter id="fio" name="ФИО" type="text"/>
 	</counters>
-	<keywords></keywords>
+	<keywords>провайдер, интернет, рошаль, roshal</keywords>
 	<type>internet</type>
 	<country>ru</country>
 </provider>

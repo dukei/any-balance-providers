@@ -1,10 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
-	<change version="2" date="2016-02-03">
-	- Поддержка изменений на сайте.
+	<change version="3" date="2023-07-21">
+	- Поддержка нового личного кабинета
 	</change>
-
+	<change version="2" date="2016-02-03">
+	- Поддержка изменений на сайте
+	</change>
 	<change version="1" date="2014-11-20">
-	Первая версия провайдера
+	- Первая версия провайдера
 	</change>
 </history>

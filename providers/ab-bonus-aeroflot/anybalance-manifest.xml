@@ -1,19 +1,19 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="16">ab-bonus-aeroflot</id>
+	<id version="17">ab-bonus-aeroflot</id>
 	<api flags="no_browser"/>
 	<name>Аэрофлот Бонус</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о бонусных милях, квалификационных милях и уровне клиента для пользователей программы "Аэрофлот Бонус".</p>
-	<p>Информация берется из личного кабинета на сайте https://www.aeroflot.ru/lk/app/ru-ru/services.</p>
+	<p>Предоставляет информацию о бонусных милях, полетных сегментах и другие данные для участников программы лояльности "Аэрофлот Бонус" (https://www.aeroflot.ru/).</p>
+	<p>Информация берется из личного кабинета Аэрофлот Бонус на сайте https://www.aeroflot.ru/lk/app/ru-ru/services.</p>
 	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Для работы провайдера требуется ввести логин и пароль для входа в личный кабинет Аэрофлот Бонус.</p>
+	<p>Если у вас нет личного кабинета Аэрофлот Бонус, вы можете зарегистрировать его на сайте https://www.aeroflot.ru/lk/app/ru-ru/signup/simple.</p>
+	]]></instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
-	<author>DimaZUA &lt;DIMAZ.KHUA@gmail.com&gt;</author>
 	<depends>
 		<module id="library"/>
-<!--
-		<module id="crypt/cryptojs/pbkdf2"/>
--->
 	</depends>
 	<files>
 		<icon>icon.png</icon>
@@ -24,15 +24,21 @@
 	<counters>
 		<counter id="balance" name="Мили" units=" m"/>
 		<counter id="qmiles" name="Квалификационные мили" units=" qm"/>
-		<counter id="milesActivityDate" name="Дата активности миль" type="time" format="dd.MM.yyyy"/>
-		<counter id="milesExpirationDate" name="Мили действительны до" type="time" format="dd.MM.yyyy"/>
+		<counter id="milesActivityDate" name="Срок активности миль" type="time" format="dd.MM.yyyy"/>
+		<counter id="milesExpirationDate" name="Дата сгорания миль" type="time" format="dd.MM.yyyy"/>
 		<counter id="segments" name="Полетные сегменты" units=" as"/>
 		<counter id="segmentsBusiness" name="Cегменты бизнес класса" units=" bs"/>
 		<counter id="partnum" name="Номер участника" type="text"/>
 		<counter id="level" name="Текущий уровень" type="text"/>
 		<counter id="levelExpirationDate" name="Срок действия уровня" type="time" format="dd.MM.yyyy"/>
+		<counter id="regDate" name="Дата регистрации" type="time" format="dd.MM.yyyy"/>
+		<counter id="nickname" name="Имя на форуме" type="text"/>
+		<counter id="regname" name="Имя на карте" type="text"/>
+		<counter id="email" name="E-mail" type="text"/>
+		<counter id="phone" name="Телефон" type="text"/>
+		<counter id="fio" name="ФИО" type="text"/>
 	</counters>
-	<keywords>aeroflot, miles</keywords>
+	<keywords>aeroflot, bonus, miles</keywords>
 	<type>bonus</type>
 	<country>ru, ua, by, kz, uz</country>
 </provider>

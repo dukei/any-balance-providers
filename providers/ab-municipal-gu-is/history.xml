@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="8" date="2023-07-16">
+	- Получение информации с сайта ВсеПлатежи.
+	</change>
 	<change version="7" date="2023-04-20">
 	- Добавлено получение информации с сайта QIWI.
 	</change>

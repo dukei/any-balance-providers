@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-    <id version="7">ab-municipal-gu-is</id>
+    <id version="8">ab-municipal-gu-is</id>
     <name>Оплата ЕПД</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о сумме оплаты по последнему выставленному счету ЕПД (за текущий или прошлый месяц).</p>
-	<p>Информация берется со страницы оплаты услуг ЖКХ на сайте <a href="https://1.elecsnet.ru/NotebookFront/services/0mhp/default.aspx?merchantId=956">Элекснет</a> или на сайте <a href="https://qiwi.com/payment/form/198">QIWI</a>.</p>
+	<p>Информация берется со страницы оплаты услуг ЖКХ на сайте <a href="https://vp.ru/providers/jkuepd/">ВсеПлатежи</a>.</p>
 	]]></description>
 	<instruction html="true"><![CDATA[
 	<p>Настройки:</p>
@@ -30,13 +30,13 @@
     </files>
     <counters>
         <counter id="balance" name="Сумма без страховки" units=" ₽"/>
+		 <counter id="strah" name="Сумма страховки" units=" ₽"/>
         <counter id="balance_strah" name="Сумма со страховкой" units=" ₽"/>
-        <counter id="strah" name="Сумма страховки" units=" ₽"/>
         <counter id="period" name="Период" type="text"/>
-        <counter id="status" name="Статус" type="text"/>
 		<counter id="payer_code" name="Код плательщика" type="text"/>
+        <counter id="status" name="Статус" type="text"/>
     </counters>
-    <keywords>единый платежный документ, еирц, ГУ ИС</keywords>
+    <keywords>единый платежный документ, еирц, ГУ ИС, ЖКУ</keywords>
     <type>municipal</type>
     <country>ru</country>
 </provider>

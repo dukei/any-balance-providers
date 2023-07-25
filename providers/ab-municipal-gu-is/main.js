@@ -6,22 +6,12 @@
 */
 
 var g_headers = {
-	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
 	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
 	'Accept-Language': 'ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7',
 	'Connection': 'keep-alive',
-	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36',
-};
-
-var g_headersQIWI = {
-	'accept': 'application/vnd.qiwi.v1+json',
-	'client-software': 'WEB v4.127.2',
-	'content-type': 'application/json',
-	'origin': 'https://qiwi.com',
-    'referer': 'https://qiwi.com/',
-	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36',
-	'x-application-id': '0ec0da91-65ee-496b-86d7-c07afc987007',
-    'x-application-secret': '66f8109f-d6df-49c6-ade9-5692a0b6d0a1'
+	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36',
+	'X-Requested-With': 'XMLHttpRequest'
 };
 
 function main(){
@@ -31,128 +21,81 @@ function main(){
     try{
         findBill(dt);
     }catch(e){
-		try{
-            AnyBalance.trace('Запрос за период ' + (dt.getMonth()+1) + '-' + dt.getFullYear() + ' вернул ошибку: ' + e.message + '\nПробуем предыдущий период...');
-            dt = new Date(dt.getFullYear(), dt.getMonth()-1, 1);
-            findBill(dt);
-        }catch(e){
-            AnyBalance.trace('Запрос за период ' + (dt.getMonth()+1) + '-' + dt.getFullYear() + ' вернул ошибку: ' + e.message + '\nПробуем QIWI...');
-            dt = new Date();
-            findBillQIWI(dt);
-        }
+        AnyBalance.trace('Запрос за период ' + (dt.getMonth()+1) + '-' + dt.getFullYear() + ' вернул ошибку: ' + e.message + '\nПробуем предыдущий период...');
+        dt = new Date(dt.getFullYear(), dt.getMonth()-1, 1);
+        findBill(dt);
     }
 }
 
 function findBill(dt){
     var prefs = AnyBalance.getPreferences();
-
-    var month = '' + (dt.getMonth() + 1);
-    if(month.length < 2) month = '0' + month;
-
-	var html = AnyBalance.requestGet('https://1.elecsnet.ru/NotebookFront/services/0mhp/default.aspx?merchantId=956', g_headers);
-
-	html = AnyBalance.requestPost('https://1.elecsnet.ru/NotebookFront/services/0mhp/GetMerchantInfo', {
-	    merchantId:	'956',
-		paymentTool: '36',//9
-		'merchantFields[1]': prefs.login,
-		'merchantFields[2]': '01.' + month + '.' + dt.getFullYear(),
-	}, addHeaders({Referer: AnyBalance.getLastUrl(), 'X-Requested-With': 'XMLHttpRequest' }));
 	
-	var json = getJson(html);
-	if(!json.isSuccess){
-		var error = json.message;
-		if(/неверный номер плательщика/i.test(error))
-			throw new AnyBalance.Error(error, null, true);
-		if(error)
-			throw new AnyBalance.Error(error);
-		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Не удалось получить баланс. Cайт изменен?');
-	}
-
-	AnyBalance.trace('Ответ от внешней системы: ' + json.message);
-
-    var result = {success: true};
-
-    getParam(month + '-' + dt.getFullYear(), result, 'period');
-    getParam(prefs.login + ', ' + month + '-' + dt.getFullYear(), result, '__tariff');
-	getParam(prefs.login, result, 'payer_code');
-    
-	if(json.billData.bills.length === 0){
-        //Если счет просто оплачен, то не будем возвращать ошибку
-        getParam(0, result, 'balance');
-		getParam(json.billData.emptyMessage, result, 'status');
-    }else{
-        for(var i=0; i<json.billData.bills.length; ++i){
-        	var bill = json.billData.bills[i];
-        	if(/с уч[её]том страх/i.test(bill.label)){
-        		getParam(bill.transferSumm, result, 'balance_strah');
-        		getParam(bill.insurancePrice, result, 'strah');
-        	}else{
-        		getParam(bill.transferSumm, result, 'balance');
-        	}
-        }
-        getParam('OK', result, 'status');
-    }
-    
-    AnyBalance.setResult(result);
-}
-
-function findBillQIWI(dt){
-    var prefs = AnyBalance.getPreferences();
-
-    var month = '' + (dt.getMonth() + 1);
+	var month = '' + (dt.getMonth() + 1);
     if(month.length < 2) month = '0' + month;
 	var year = dt.getFullYear();
 	
-    var html = AnyBalance.requestGet('https://qiwi.com/payment/form/198', g_headers);
+    var html = AnyBalance.requestGet('https://vp.ru/providers/jkuepd/', g_headers);
     
-    if(!html || AnyBalance.getLastStatusCode() >= 500) {
+    if(!html || AnyBalance.getLastStatusCode() >= 400) {
         throw new AnyBalance.Error('Сайт провайдера временно недоступен. Попробуйте еще раз позже');
 	}
-		
-    html = AnyBalance.requestPost('https://qiwi.com/oauth/token', {grant_type: 'anonymous', client_id: 'anonymous'}, g_headers);
-		
+	
+	html = AnyBalance.requestGet('https://vp.ru/pay/providerentry?provider_type=jkuepd&sub_provider_type=&sub_provider_type=', g_headers);
+	
+	var cid = getParam(html, null, null, /name="_cid" value="([^"]*)/i, replaceTagsAndSpaces);
+	
+	html = AnyBalance.requestGet('https://vp.ru/pay/jkuepd/check?accountNumber=' + prefs.login + '&periodMonth=' + month + '&periodYear=' + year + '&_cid=' + cid, g_headers);
+	
     var json = getJson(html);
 	
-	if(!json.access_token){
-		AnyBalance.trace(JSON.stringify(json));
-		throw new AnyBalance.Error('Не удалось получить токен авторизации. Сайт изменен?')
-	}
-		
-    g_headersQIWI['authorization'] = 'TokenHead ' + json.access_token;
-		
-    html = AnyBalance.requestPost('https://edge.qiwi.com/sinap/api/refs/58c16e8b-2a99-4568-a788-9272f7557ad5/containers', JSON.stringify({
-	    account: prefs.login,
-	    period: month + year.toString().substr(-2),
-	    profileId: 'moscow'
-	}), g_headersQIWI);
-		
-	var json = getJson(html);
-		
-	if(json.message) 
-		throw new AnyBalance.Error(json.message, false, true)
-		
-	AnyBalance.trace('Ответ от внешней системы: ' + JSON.stringify(json));
-
-    var result = {success: true};
-
-    getParam(month + '-' + dt.getFullYear(), result, 'period');
-    getParam(prefs.login + ', ' + month + '-' + dt.getFullYear(), result, '__tariff');
-	getParam(prefs.login, result, 'payer_code');
-	getParam(0, result, 'balance');
-	getParam('Нет счетов к оплате', result, 'status');
-		
-	if(json.elements && json.elements.length > 0){
-	    for(var i=0; i<json.elements.length; ++i){
-	        var e = json.elements[i];
-            if(e.name == 'sum' && e.value != 0){
-				getParam(e.value, result, 'balance');
-				getParam('OK', result, 'status');
-			}
-	    }
-	}else{
-	    AnyBalance.trace('Не удалось получить информацию по счету. Сайт изменен?');
+	if(json.result != 'SUCCESS') {
+		var error = json.message || ((json.data && json.data.items) || []).map(function(e) { return e.message }).join('\n');
+		if(error)
+			throw new AnyBalance.Error(error, null, /номер|сч[её]т/i.test(error));	
+		    
+       	AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удалось найти форму ввода! Сайт изменен?');	
     }
+	
+    html = AnyBalance.requestGet('https://vp.ru/pay/jkuepd/form?accountNumber=' + prefs.login + '&periodMonth=' + month + '&periodYear=' + year + '&_cid=' + cid + '&sub_provider_type=', g_headers);
+	
+	if(!html || AnyBalance.getLastStatusCode() >= 400) {
+        throw new AnyBalance.Error('Сайт провайдера временно недоступен. Попробуйте еще раз позже');
+	}
+	
+	var result = {success: true};
+	
+	var monthes = {0: 'Январь', 1: 'Февраль', 2: 'Март', 3: 'Апрель', 4: 'Май', 5: 'Июнь', 6: 'Июль', 7: 'Август', 8: 'Сентябрь', 9: 'Октябрь', 10: 'Ноябрь', 11: 'Декабрь'};
+	
+	getParam(monthes[dt.getMonth()] + ' ' + dt.getFullYear(), result, 'period');
+    getParam(prefs.login + ' | ' + monthes[dt.getMonth()] + ' ' + dt.getFullYear(), result, '__tariff');
+	getParam(prefs.login, result, 'payer_code');
+	
+	var payment = getJsonObject(html, /var payment = /);
+	
+	if(payment){ // Получаем из переменной скрипта
+	    AnyBalance.trace('Ответ от внешней системы: ' + JSON.stringify(payment));
+		var balance = getParam(0||payment.amount, result, 'balance', null, null, parseBalance);
+        var strah = getParam(0||payment.amountInsurance, result, 'strah', null, null, parseBalance);
+		getParam(balance + strah, result, 'balance_strah', null, null, parseBalance);
+	    if(result.balance && result.balance != 0){
+		    getParam('Счет ЕПД выставлен', result, 'status');
+	    }else{
+		    getParam('Нет счетов к оплате', result, 'status');
+	    }
+	}else{ // Получаем обычным способом
+		AnyBalance.trace('Ответ от внешней системы: ' + html);
+		var balance = getParam(html, null, null, /<div[^>]+class="calculationAmount"[^>]*>[\s\S]*?value="([^"]*)/i, replaceTagsAndSpaces);
+		getParam(0||balance, result, 'balance', null, null, parseBalance);
+		var strah = getParam(html, null, null, /<div[^>]+class="insurance"[^>]*>[\s\S]*?value="([^"]*)/i, replaceTagsAndSpaces);
+		getParam(0||strah, result, 'strah', null, null, parseBalance);
+		getParam(balance + strah, result, 'balance_strah', null, null, parseBalance);
+		if(result.balance && result.balance != 0){
+		    getParam('Счет ЕПД выставлен', result, 'status');
+	    }else{
+		    getParam('Нет счетов к оплате', result, 'status');
+	    }
+	}
     
     AnyBalance.setResult(result);
 }

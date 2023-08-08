@@ -392,7 +392,7 @@ function processRemaindersApi(result){
 								getParam(current.available + current.unit, remainders, 'remainders.internet_roam_europe', null, replaceTagsAndSpaces, parseTraffic);
 						}else if(/Автопродление/i.test(name)) {
 								getParam(current.available + current.unit, remainders, 'remainders.internet_auto_prolong', null, replaceTagsAndSpaces, parseTraffic);
-						}else if(/Интернет в Крыму/i.test(name)) {
+						}else if(/Интернет в (?:Крыму|поездке)/i.test(name)) {
 								getParam(current.available + current.unit, remainders, 'remainders.internet_left_crimea', null, replaceTagsAndSpaces, parseTraffic);
                         } else {
                             var suffix = '';

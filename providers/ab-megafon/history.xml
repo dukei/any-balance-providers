@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="4.0" version="246" date="2023-08-01">
+	- Улучшено распознавание трафика в некоторых случаях
+	</change>
 	<change major_version="4.0" version="245" date="2023-06-20">
 	- Добавлено отображение дополнительных номеров
 	</change>

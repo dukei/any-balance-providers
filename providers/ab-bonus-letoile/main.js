@@ -15,13 +15,6 @@ var g_currency = {
 	UA: '₴'
 };
 
-var g_type = {
-	10: 'Рубиновая',
-	15: 'Сапфировая',
-	20: 'Аметистовая',
-	25: 'Бриллиантовая'
-};
-
 function main () {
     var prefs = AnyBalance.getPreferences ();
 	AnyBalance.setDefaultCharset('utf-8'); 
@@ -45,44 +38,79 @@ function main () {
     var html = AnyBalance.requestGet(baseurl + 'rest/model/atg/userprofiling/ClientActor/extendedProfileInfo?pushSite=' + siteId + '&_=' + (new Date().getTime()));
     
 	var json = getJson(html);
+	
     if (!json.profile.lastName){
         AnyBalance.trace('Сессия новая. Будем логиниться заново...');
+		
         checkEmpty (prefs.login, 'Введите логин!');
-        checkEmpty (prefs.password, 'Введите пароль!');
+		checkEmpty(/@|^\d{10}$/.test(prefs.login), 'Введите e-mail или телефон (10 цифр без пробелов и разделителей)!');
+	
+	    if(!/@/.test(prefs.login)){
+			if(loc === 'RU')
+		        var formattedLogin = prefs.login.replace(/.*(\d{3})(\d{3})(\d{2})(\d{2})$/i, '+7 ($1) $2-$3-$4');
+		    else
+				var formattedLogin = prefs.login.replace(/.*(\d{2})(\d{3})(\d{2})(\d{2})$/i, '+380 ($1) $2-$3-$4');
+		}
         
         var html = AnyBalance.requestGet(baseurl + 's/api/session/v2/confirmations');
         
         var json = getJson(html);
         var siteId = json.siteId;
 	    var setItem = json.confirmation;
-	
+        
         if (!siteId && !setItem) throw new AnyBalance.Error ('Не удалось найти параметры авторизации. Сайт изменен?');
 		
-	    var html = AnyBalance.requestGet(baseurl+'s/api/user/account/v1/verifications/email?pushSite=' + siteId + '&email=' + encodeURIComponent(prefs.login), g_headers);
-	    var json = getJson(html);
+	    var phoneNum;
+		
+		if(/@/i.test(prefs.login)){
+		    var html = AnyBalance.requestGet(baseurl+'s/api/user/account/v2/verifications/email?email=' + encodeURIComponent(prefs.login) + '&pushSite=' + siteId, g_headers);
+		    var json = getJson(html);
+            if (json.isExists != true){
+	    	    AnyBalance.trace(html);
+	    	    throw new AnyBalance.Error('Пользователь с таким e-mail не зарегистрирован');
+	        }
+		
+		    phoneNum = json.phoneNumber;
+		}
+		
+		if(!phoneNum)
+			phoneNum = formattedLogin;
+	    
+		var html = AnyBalance.requestGet(baseurl+'s/api/user/account/v1/verifications/phone?pushSite=' + siteId + '&phone=' + encodeURIComponent(phoneNum), g_headers);
+		var json = getJson(html);
         if (json.exists != true){
 	    	AnyBalance.trace(html);
-	    	throw new AnyBalance.Error('Пользователь с таким e-mail не зарегистрирован');
+	    	throw new AnyBalance.Error('Пользователь с таким номером телефона не зарегистрирован');
 	    }
-	
-	    var html = AnyBalance.requestPost(baseurl+'s/api/user/account/v2/authorizations/email?pushSite=' + siteId, JSON.stringify({
-	        email: prefs.login,
-	        password: prefs.password
+		
+		var html = AnyBalance.requestPost(baseurl+'s/api/user/account/v1/confirmations/phone?pushSite=' + siteId + '&_dynSessConf=' + setItem, JSON.stringify({
+	        phoneNumber: phoneNum,
+	        captcha: ''
     	}), g_headers);
 	    
         if (/<title>Error<\/title>/i.test(html)) {
         	var err = getElement(html, /<body>/, replaceTagsAndSpaces);
         	if (err) throw new AnyBalance.Error (err, false, true);
 	    	
-            throw new AnyBalance.Error ('Не удалось войти в личный кабинет. Сайт изменен?', false, true);
+            AnyBalance.trace(html);
+			throw new AnyBalance.Error ('Не удалось войти в личный кабинет. Сайт изменен?', false, true);
         }
-	
-        var json=getJson(html);
+		
+		var code = AnyBalance.retrieveCode('Пожалуйста, введите код подтверждения, высланный на номер ' + phoneNum, null, {inputType: 'number', time: 180000});
+		
+		var html = AnyBalance.requestPost(baseurl+'s/api/user/account/v1/authorizations/phone?pushSite=' + siteId + '&_dynSessConf=' + setItem, JSON.stringify({
+	        phoneNumber: phoneNum,
+	        captcha: '',
+			smsCode: code
+    	}), g_headers);
+		
+		var json=getJson(html);
 	    if (json.errors && json.errors.length>0){
-	    	var error = (json.errors || []).map(function(e) { return e.message }).join('\n');
-	    	throw new AnyBalance.Error(error, false, /парол/i.test());	
+	    	var error = (json.errors || []).map(function(e) { return e.message }).join('\n ');
+	    	if (error) throw new AnyBalance.Error(error, false, /номер|код|правильност/i.test());	
 	    	
-	    	throw new AnyBalance.Error ('Не удалось войти в личный кабинет. Сайт изменен?', false, true);
+	    	AnyBalance.trace(html);
+			throw new AnyBalance.Error ('Не удалось войти в личный кабинет. Сайт изменен?', false, true);
         }
 	    
         var html = AnyBalance.requestGet(baseurl + 'rest/model/atg/userprofiling/ClientActor/extendedProfileInfo?pushSite=' + siteId + '&_=' + (new Date().getTime()));

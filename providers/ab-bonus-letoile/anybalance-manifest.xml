@@ -1,13 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="1.0" version="12">ab-bonus-letoile</id>
+	<id major_version="1.0" version="13">ab-bonus-letoile</id>
 	<api flags="no_browser"/>
-	<name>Л'Этуаль</name>
+	<name>Лэтуаль</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о бонусных баллах и другие данные по клубным картам сети магазинов Л'Этуаль с сайтов letu.ru и letu.ua.</p>
+	<p>Предоставляет информацию о балансе, бонусных баллах и другие данные по клубным картам сети магазинов Лэтуаль.</p>
+	<p>Информация берется из личного кабинета Лэтуаль на сайте <a href="https://www.letu.ru/">https://www.letu.ru/</a>.</p>
 	]]></description>
 	<instruction html="true"><![CDATA[
-	<p>Для работы провайдера требуется ввести логин и пароль для входа в личный кабинет Л'Этуаль и выбрать источник данных.</p>
+	<p>Для работы провайдера требуется ввести E-mail или номер телефона, привязанного к личному кабинету Лэтуаль, и ввести код подтверждения из SMS, высланного на этот номер.</p>
 	]]></instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>

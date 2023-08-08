@@ -6,7 +6,7 @@
         title="Логин"
         summary="Логин для входа в личный кабинет|Введите логин\n|{@s}\n"
         dialogTitle="Логин"
-        dialogMessage="Введите e-mail, используемый для входа в личный кабинет"
+		dialogMessage="Введите E-mail или номер телефона для входа в личный кабинет в формате 10 цифр без пробелов и разделителей, например: 9261234567"
         positiveButtonText="ОК"
         negativeButtonText="Отмена">
     </EditTextPreference>
@@ -21,7 +21,7 @@
         positiveButtonText="ОК"
         negativeButtonText="Отмена">
     </EditTextPreference>
-    <ListPreference 
+<!--<ListPreference 
         key="loc" 
         title="Регион"
         summary="Регион для получения информации||{@s}\n"
@@ -29,5 +29,5 @@
         entries="Россия (letu.ru)|Украина (letu.ua)"
         entryValues="RU|UA"
         defaultValue="RU">
-    </ListPreference>
+    </ListPreference>-->
 </PreferenceScreen>

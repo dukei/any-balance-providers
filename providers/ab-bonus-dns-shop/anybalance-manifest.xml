@@ -1,0 +1,47 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-bonus-dns-shop</id>
+	<api flags="no_browser"/>
+	<name>DNS Shop</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе баллов, бонусах ProZaPass и другие данные для пользователей интернет магазина DNS Shop (<a href="https://www.dns-shop.ru/">https://www.dns-shop.ru/</a>).</p>
+	<p>Информация берется из личного кабинета DNS Shop на сайте https://www.dns-shop.ru/profile/menu/</p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Для работы провайдера требуется ввести логин и пароль для входа в личный кабинет DNS Shop.</p>
+	]]></instruction>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+		<module id="framework/browser"/>
+	</depends>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс баллов" units=" Б"/>
+		<counter id="level" name="Текущий уровень" type="text" prefix="Уровень "/>
+		<counter id="prozapass" name="Бонусы ProZaPass" units=" Б"/>
+		<counter id="prozapass_inactive" name="Неактивные бонусы" units=" Б"/>
+		<counter id="clubcoins" name="Клубкоины" units=" К"/>
+		<counter id="lastordernum" name="Номер посл. заказа" type="text"/>
+		<counter id="lastordersum" name="Сумма посл. заказа" units=" ₽"/>
+		<counter id="lastorderdate" name="Дата посл. заказа" type="time" format="dd.MM.yyyy"/>
+		<counter id="lastorderbon" name="Бонусы по посл. заказу" units=" Б"/>
+		<counter id="lastorderitems" name="Товары по посл. заказу" units=" шт"/>
+		<counter id="lastorderdesc" name="Описание посл. заказа" type="text"/>
+		<counter id="lastorderstatus" name="Статус посл. заказа" type="text"/>
+		<counter id="favorites" name="Избранное" units=" шт"/>
+		<counter id="regdate" name="Дата регистрации" type="time" format="dd.MM.yyyy"/>
+		<counter id="username" name="Никнейм" type="text"/>
+		<counter id="email" name="E-mail" type="text"/>
+		<counter id="phone" name="Номер телефона" type="text"/>
+        <counter id="fio" name="ФИО" type="text"/>
+	</counters>
+	<keywords>dns, днс, shop, шоп, prozapass, прозапас, club, клуб</keywords>
+	<type>bonus</type>
+	<country>ru</country>
+</provider>

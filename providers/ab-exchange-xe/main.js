@@ -3,19 +3,29 @@
 */
 
 var g_headers = {
-	'Accept': '*/*',
+	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
 	'Accept-Language': 'ru,en-US;q=0.9,en;q=0.8,ru-RU;q=0.7',
-	'Authorization': 'Basic bG9kZXN0YXI6YWs5TE5BU3NNZ2loaHROeVZIdm00c3VKR1RqZU4xQ3c=',
-	'Referer': 'https://www.xe.com/currencyconverter/convert/?Amount=1&From=USD&To=GBP',
-	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/106.0.0.0 Safari/537.36'
+	'Upgrade-Insecure-Requests': '1',
+	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36'
 	
 };
+
+var baseurl = 'https://www.xe.com/';
+
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'https://www.xe.com/';
+	
 	AnyBalance.setDefaultCharset('utf-8');
 	
-	var html = AnyBalance.requestGet(baseurl + 'api/protected/midmarket-converter/', g_headers);
+	var html = AnyBalance.requestGet(baseurl, g_headers);
+	
+	AnyBalance.setCookie('.www.xe.com', 'optimizelyOptOut', true);
+	
+	var html = AnyBalance.requestGet(baseurl + 'api/protected/midmarket-converter/', addHeaders({
+		'Accept': '*/*',
+		'Authorization': 'Basic bG9kZXN0YXI6Z1NlYkxFd0ZnOTlWVWNQT1p1WW0zOHVydkxzNFhrV1U=',
+		'Referer': baseurl,
+	}));
 	
 	var json = getJson(html);
 	AnyBalance.trace(JSON.stringify(json));
@@ -113,7 +123,7 @@ function main() {
 	getParam(smartRound(rates.KZT/rates.CNY), result, 'CNYKZT');
     // Date
 	var dt = new Date(json.timestamp);
-	result.__tariff = ('0' + (dt.getDate())).slice(-2) + '.' + ('0' + (dt.getMonth() + 1)).slice(-2) + '.' + dt.getFullYear() + ', ' + ('0' + (dt.getHours())).slice(-2) + ':' + ('0' + (dt.getMinutes())).slice(-2);
+	result.__tariff = ('0' + (dt.getDate())).slice(-2) + '.' + ('0' + (dt.getMonth() + 1)).slice(-2) + '.' + dt.getFullYear() + ' ' + ('0' + (dt.getHours())).slice(-2) + ':' + ('0' + (dt.getMinutes())).slice(-2);
     AnyBalance.setResult(result);
 }
 

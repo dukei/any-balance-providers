@@ -10,4 +10,13 @@
         inputType="number"
         key="login">
     </EditTextPreference>
+	<ListPreference
+		key="source"
+		title="Источник данных"
+		summary="Источник для получения информации||{@s}\n"
+		dialogTitle="Источник данных"
+		entries="Автоматически|Сайт ВсеПлатежи|Сайт QIWI"
+		entryValues="auto|vp|qiwi"
+		defaultValue="auto">
+	</ListPreference>
 </PreferenceScreen>

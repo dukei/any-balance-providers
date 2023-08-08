@@ -10,37 +10,71 @@ var g_headers = {
 	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
 };
 
-function getCurrs(html, curr, result) {
-	getParam(html, result, 'balance' + curr + 'spros', new RegExp(curr + '[\\s\\S]*?ticker__val1[^>]*>([\\s\\S]*?)<\/', 'i'), replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'balance' + curr + 'predl', new RegExp(curr + '[\\s\\S]*?ticker__val2[^>]*>([\\s\\S]*?)<\/', 'i'), replaceTagsAndSpaces, parseBalance);
-}
-
 function main() {
 	var baseurl = 'http://www.rbc.ru/';
 	AnyBalance.setDefaultCharset('utf-8');
 	
 	var html = AnyBalance.requestGet(baseurl, g_headers);
 	
-	var table = getElement(html, /<div[^>]+class="indicators__inner"[^>]*>/i);
-	if(!table)
-		throw new AnyBalance.Error('Не удалось найти таблицу с данными. Сайт изменен?');
+	var url = AnyBalance.getLastUrl();
 	
-	var result = {success: true};
+	html = AnyBalance.requestGet(url + 'v10/ajax/key-indicator-update/?_=' + Math.random(), g_headers);
+	var json = getJson(html);
+	if(!json)
+	    throw new AnyBalance.Error('Не удалось найти таблицу с данными. Сайт изменен?');
 	
-	getCurrs(table, 'usd', result);
-	getCurrs(table, 'eur', result);
-
-	if(AnyBalance.isAvailable('balanceeur_usdspros', 'balanceeur_usdpredl')){
-		html = AnyBalance.requestGet('http://stock.quote.rbc.ru/demo/forex.9/intraday/EUR_USD.rus.js?format=json&jsoncallback=jsonp&rnd=' + Math.random() + '&a=?&_=' + new Date().getTime(), g_headers);
-		var json = safeEval('var _json; function jsonp(x){ _json=x; } ' + html + '\nreturn _json');
-		if(!json || !json[0] || !json[0].header){
-			//Возвращаем результат
-			AnyBalance.trace('Неправильный jsonp: ' + html);
-		}else{
-			getParam(json[0].header.bid, result, 'balanceeur_usdspros');
-			getParam(json[0].header.ask, result, 'balanceeur_usdpredl');
+    var result = {success: true};
+	
+	for(var i=0; i<json.shared_key_indicators.length; ++i){
+	   	if(json.shared_key_indicators[i].item.ticker == 'USD Нал'){
+			getParam(json.shared_key_indicators[i].item.prepared.value1, result, 'balanceusdpredl', null, null, parseBalance);
+			getParam(json.shared_key_indicators[i].item.prepared.value2, result, 'balanceusdspros', null, null, parseBalance);
+	   	}
+		if(json.shared_key_indicators[i].item.ticker == 'EUR Нал'){
+			getParam(json.shared_key_indicators[i].item.prepared.value1, result, 'balanceeurpredl', null, null, parseBalance);
+    		getParam(json.shared_key_indicators[i].item.prepared.value2, result, 'balanceeurspros', null, null, parseBalance);
+		}
+		if(json.shared_key_indicators[i].item.ticker == 'EUR/USD'){
+			getParam(json.shared_key_indicators[i].item.prepared.closevalue, result, 'balanceeurusdcv', null, null, parseBalance);
+    		getParam(json.shared_key_indicators[i].item.prepared.change, result, 'balanceeurusdch', null, null, parseBalance);
+		}
+		if(json.shared_key_indicators[i].item.ticker == 'BTC/USD'){
+			getParam(json.shared_key_indicators[i].item.prepared.closevalue, result, 'balancebtcusdcv', null, null, parseBalance);
+    		getParam(json.shared_key_indicators[i].item.prepared.change, result, 'balancebtcusdch', null, null, parseBalance);
+		}
+		if(json.shared_key_indicators[i].item.ticker == 'USD ЦБ'){
+			getParam(json.shared_key_indicators[i].item.prepared.closevalue, result, 'balanceusdcbrfrt', null, null, parseBalance);
+    		getParam(json.shared_key_indicators[i].item.prepared.change, result, 'balanceusdcbrfch', null, null, parseBalance);
+		}
+		if(json.shared_key_indicators[i].item.ticker == 'EUR ЦБ'){
+			getParam(json.shared_key_indicators[i].item.prepared.closevalue, result, 'balanceeurcbrfrt', null, null, parseBalance);
+    		getParam(json.shared_key_indicators[i].item.prepared.change, result, 'balanceeurcbrfch', null, null, parseBalance);
+		}
+		if(json.shared_key_indicators[i].item.ticker == 'CNY ЦБ'){
+			getParam(json.shared_key_indicators[i].item.prepared.closevalue, result, 'balancecnycbrfrt', null, null, parseBalance);
+    		getParam(json.shared_key_indicators[i].item.prepared.change, result, 'balancecnycbrfch', null, null, parseBalance);
+		}
+		if(json.shared_key_indicators[i].item.ticker == 'USD Бирж'){
+			getParam(json.shared_key_indicators[i].item.prepared.closevalue, result, 'balanceusdstoсkrt', null, null, parseBalance);
+    		getParam(json.shared_key_indicators[i].item.prepared.change, result, 'balanceusdstoсkch', null, null, parseBalance);
+		}
+		if(json.shared_key_indicators[i].item.ticker == 'EUR Бирж'){
+			getParam(json.shared_key_indicators[i].item.prepared.closevalue, result, 'balanceeurstoсkrt', null, null, parseBalance);
+    		getParam(json.shared_key_indicators[i].item.prepared.change, result, 'balanceeurstoсkch', null, null, parseBalance);
+		}
+		if(json.shared_key_indicators[i].item.ticker == 'CNY Бирж'){
+			getParam(json.shared_key_indicators[i].item.prepared.closevalue, result, 'balancecnystoсkrt', null, null, parseBalance);
+    		getParam(json.shared_key_indicators[i].item.prepared.change, result, 'balancecnystoсkch', null, null, parseBalance);
 		}
 	}
+	
+	var dt = new Date();
+	var updDate = n2(dt.getDate()) + '.' + n2(dt.getMonth()+1) + '.' + dt.getFullYear();
+	
+	getParam(updDate, result, '__tariff');
+	
+	if(AnyBalance.isAvailable('date'))
+	    getParam(updDate, result, 'date', null, null, parseDate);
 	
 	AnyBalance.setResult(result);
 }

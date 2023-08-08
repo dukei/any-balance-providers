@@ -1,10 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="5">ab-exchange-rbc</id>
+	<id version="7">ab-exchange-rbc</id>
 	<api flags="no_browser"/>
 	<name>Курсы валют РБК</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о курсе валют с главной страницы сайта РБК http://www.rbc.ru/</p>
+	<p>Предоставляет информацию о курсе валют с главной страницы сайта РБК https://www.rbc.ru/</p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>
@@ -16,12 +16,27 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balanceusdspros" name="Нал. USD - спрос" units=" р"/>
-		<counter id="balanceusdpredl" name="Нал. USD - предложение" units=" р"/>
-		<counter id="balanceeurspros" name="Нал. EUR - спрос" units=" р"/>
-		<counter id="balanceeurpredl" name="Нал. EUR - предложение" units=" р"/>
-		<counter id="balanceeur_usdspros" name="EUR/USD - спрос"/>
-		<counter id="balanceeur_usdpredl" name="EUR/USD - предложение"/>
+		<counter id="balanceusdspros" name="Нал. USD - спрос" prefix="$↓ " units=" ₽"/>
+		<counter id="balanceusdpredl" name="Нал. USD - предложение" prefix="$↑ " units=" ₽"/>
+		<counter id="balanceeurspros" name="Нал. EUR - спрос" prefix="€↓ " units=" ₽"/>
+		<counter id="balanceeurpredl" name="Нал. EUR - предложение" prefix="€↑ " units=" ₽"/>
+		<counter id="balanceeurusdcv" name="EUR/USD - кросс-курс" prefix="€⇅ " units=" $"/>
+		<counter id="balanceeurusdch" name="EUR/USD - изменение" prefix="€± " units=" $"/>
+		<counter id="balancebtcusdcv" name="BTC/USD - кросс-курс" prefix="₿⇅ " units=" $"/>
+		<counter id="balancebtcusdch" name="BTC/USD - изменение" prefix="₿± " units=" $"/>
+		<counter id="balanceusdcbrfrt" name="ЦБ USD - курс" prefix="$⇅ " units=" ₽"/>
+		<counter id="balanceusdcbrfch" name="ЦБ USD - изменение" prefix="$± " units=" ₽"/>
+		<counter id="balanceeurcbrfrt" name="ЦБ EUR - курс" prefix="€⇅ " units=" ₽"/>
+		<counter id="balanceeurcbrfch" name="ЦБ EUR - изменение" prefix="€± " units=" ₽"/>
+		<counter id="balancecnycbrfrt" name="ЦБ CNY - курс" prefix="Ұ⇅ " units=" ₽"/>
+		<counter id="balancecnycbrfch" name="ЦБ CNY - изменение" prefix="Ұ± " units=" ₽"/>
+		<counter id="balanceusdstoсkrt" name="Бирж. USD - курс" prefix="$⇅ " units=" ₽"/>
+		<counter id="balanceusdstoсkch" name="Бирж. USD - изменение" prefix="$± " units=" ₽"/>
+		<counter id="balanceeurstoсkrt" name="Бирж. EUR - курс" prefix="€⇅ " units=" ₽"/>
+		<counter id="balanceeurstoсkch" name="Бирж. EUR - изменение" prefix="€± " units=" ₽"/>
+		<counter id="balancecnystoсkrt" name="Бирж. CNY - курс" prefix="Ұ⇅ " units=" ₽"/>
+		<counter id="balancecnystoсkch" name="Бирж. CNY - изменение" prefix="Ұ± " units=" ₽"/>
+		<counter id="date" name="Дата курсов" type="time" format="dd.MM.yyyy"/>
 	</counters>
 	<keywords>валюта</keywords>
 	<type>exchange</type>

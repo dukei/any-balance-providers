@@ -1,5 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="8" date="2023-08-03">
+	- Поддержка счетов и депозитов.
+	</change>
+	<change version="7" date="2023-07-04">
+	- Поддержка нового личного кабинета.
+	</change>
 	<change version="6" date="2023-03-27">
 	- Исправление ошибок.
 	</change>

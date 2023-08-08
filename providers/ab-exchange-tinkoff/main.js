@@ -18,7 +18,7 @@ function main() {
 	
 	if(!html || AnyBalance.getLastStatusCode() > 400){
 		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
+		throw new AnyBalance.Error('Сайт провайдера временно недоступен. Попробуйте еще раз позже');
 	}
 	
     var json = getJson(html);
@@ -62,6 +62,14 @@ function main() {
 			}
 		}
 	}
+	
+	var dt = new Date(json.payload.lastUpdate.milliseconds);
+	var updDate = n2(dt.getDate()) + '.' + n2(dt.getMonth()+1) + '.' + dt.getFullYear();
+	
+	getParam(updDate, result, '__tariff');
+	
+	if(AnyBalance.isAvailable('date'))
+	    getParam(updDate, result, 'date', null, null, parseDate);
 	
 	AnyBalance.setResult(result);
 }

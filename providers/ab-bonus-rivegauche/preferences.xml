@@ -4,20 +4,20 @@
 		obligatory="true"
 		key="login"
 		title="Логин"
-		summary="Номер карты или email||{@s}\n"
+		summary="Логин для входа в личный кабинет|Введите логин\n|{@s}\n"
 		inputType="text"
-		dialogTitle="Номер карты или email"
-		dialogMessage="Введите номер карты или email"
+		dialogTitle="Логин"
+		dialogMessage="Введите логин, используемый для входа в личный кабинет"
 		positiveButtonText="ОК"
 		negativeButtonText="Отмена">
 	</EditTextPreference>
 	<EditTextPreference
 		key="password"
 		title="Пароль"
-		summary="Пароль для авторизации||***********\n"
+		summary="Пароль для входа в личный кабинет|Введите пароль\n|**********\n"
 		dialogTitle="Пароль"
 		negativeButtonText="Отмена"
-		dialogMessage="Введите Пароль."
+		dialogMessage="Введите пароль, используемый для входа в личный кабинет"
 		positiveButtonText="ОК"
 		inputType="textPassword">
 	</EditTextPreference>

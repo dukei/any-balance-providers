@@ -1,12 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="3.0" version="5">ab-bonus-rivegauche</id>
+	<id major_version="3.0" version="6">ab-bonus-rivegauche</id>
 	<api flags="no_browser"/>
 	<name>Рив Гош</name>
 	<description html="true"><![CDATA[
-	<p>Получает сумму накоплений, сумму бонуса к Дню рождения для золотой карты, дата последней операции по карте.</p>
+	<p>Предоставляет информацию о сумме накоплений, бонусах ко Дню рождения и другие данные по клубным картам сети магазинов Рив Гош (https://rivegauche.ru/).</p>
+	<p>Информация берется из личного кабинета Рив Гош на сайте <a href="https://rivegauche.ru/my-account">https://rivegauche.ru/my-account</a>.</p>
 	]]></description>
-	<author>DimaZUA &lt;DIMAZ.KHUA@gmail.com&gt;</author>
+	<instruction html="true"><![CDATA[
+	<p>Для работы провайдера требуется ввести логин и пароль для входа в личный кабинет Рив Гош.</p>
+	<p>Сайт Рив Гош обладает защитой от роботов (reCAPTCHA), поэтому для входа может потребоваться пройти проверку с помощью приложения Anybalance ReCaptcha или с помощью одного из сервисов автоматического распознавания.</p>
+	]]></instruction>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>
 		<module id="library"/>
 	</depends>

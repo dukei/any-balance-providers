@@ -1,37 +1,58 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
+    <id major_version="3" version="7">ab-exchange-rosbank</id>
 	<api flags="no_browser"/>
-  <id major_version="2" version="7">ab-exchange-rosbank</id>
-  <name>Курсы валют РОСБАНК</name>
-  <description>
-    Текущие курсы покупки/продажи, установленные РОСБАНК на текущую дату. Содержит курс доллара и евро.
-	Для тех, у кого кредит/ипотека в DeltaCredit или BSGV или РОСБАНК:
-	Возможность ввести в настройках свою сумму (напр.платеж по кредиту) в валюте и получать пересчет в рубли по курсу продажи. Удобно прогнозировать ден.средства для оплаты.
-  </description>
-  <author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
-  <depends>
-  	<module id="library"/>
-  </depends>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>main.js</js>
-	<history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="RUB_summa" name="Сумма оплаты в рублях" units="р."/>
-    <counter id="USD_out" name="Курс доллара (продажа)" prefix="$ "/>
-    <counter id="date" name="Дата курса" type="text"/>
-    <counter id="USD" name="Курс доллара (ЦБ)" prefix="$ "/>
-    <counter id="USD_in" name="Курс доллара (покупка)" prefix="$ "/>
-    <counter id="EUR" name="Курс евро (ЦБ)" prefix="€ "/>
-    <counter id="EUR_out" name="Курс евро (продажа)" prefix="€ "/>
-    <counter id="EUR_in" name="Курс евро (покупка)" prefix="€ "/>
-  </counters>
-  <keywords>
-    Курс валют, центральный банк, центробанк рф, доллар, евро, форекс, forex, deltacredit, rosbank, bsgv, росбанк, дельтакредит, бсжв, дельта, кредит
-  </keywords>
-  <type>
-     exchange
-  </type>
+    <name>Курсы валют Росбанка</name>
+    <description html="true"><![CDATA[
+    <p>Предоставляет информацию о курсах валют от банка "Росбанк" со страницы https://www.rosbank.ru/obmen-valyuty/.</p>
+	<p>Позволяет также ввести сумму имеющейся у вас валюты и выводит ваш капитал в случае продажи всей валюты Росбанку по текущей цене покупки.</p>
+    ]]></description>
+    <author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+    <depends>
+  	    <module id="library"/>
+    </depends>
+    <files>
+		<icon>icon.png</icon>
+        <preferences>preferences.xml</preferences>
+        <js>main.js</js>
+	    <history>history.xml</history>
+    </files>
+    <counters>
+        <counter id="usd_purch" name="USD покупка" prefix="$↓ " units=" ₽"/>
+        <counter id="usd_sell" name="USD продажа" prefix="$↑ " units=" ₽"/>
+	    <counter id="usd_amount" name="USD за сумму" prefix="$+ " units=" ₽"/>
+		<counter id="usd_cbrf" name="USD ЦБ РФ" prefix="$! " units=" ₽"/>
+        <counter id="eur_purch" name="EUR покупка" prefix="€↓ " units=" ₽"/>
+        <counter id="eur_sell" name="EUR продажа" prefix="€↑ " units=" ₽"/>
+	    <counter id="eur_amount" name="EUR за сумму" prefix="€+ " units=" ₽"/>
+		<counter id="eur_cbrf" name="EUR ЦБ РФ" prefix="€! " units=" ₽"/>
+		<counter id="cny_purch" name="CNY покупка" prefix="Ұ↓ " units=" ₽"/>
+        <counter id="cny_sell" name="CNY продажа" prefix="Ұ↑ " units=" ₽"/>
+	    <counter id="cny_amount" name="CNY за сумму" prefix="Ұ+ " units=" ₽"/>
+		<counter id="cny_cbrf" name="CNY ЦБ РФ" prefix="Ұ! " units=" ₽"/>
+		<counter id="kzt_purch" name="KZT покупка" prefix="₸↓ " units=" ₽"/>
+        <counter id="kzt_sell" name="KZT продажа" prefix="₸↑ " units=" ₽"/>
+	    <counter id="kzt_amount" name="KZT за сумму" prefix="₸+ " units=" ₽"/>
+		<counter id="kzt_cbrf" name="KZT ЦБ РФ" prefix="₸! " units=" ₽"/>
+		<counter id="amd_purch" name="AMD покупка" prefix="֏↓ " units=" ₽"/>
+        <counter id="amd_sell" name="AMD продажа" prefix="֏↑ " units=" ₽"/>
+	    <counter id="amd_amount" name="AMD за сумму" prefix="֏+ " units=" ₽"/>
+		<counter id="amd_cbrf" name="AMD ЦБ РФ" prefix="֏! " units=" ₽"/>
+		<counter id="byn_purch" name="BYN покупка" prefix="Br↓ " units=" ₽"/>
+        <counter id="byn_sell" name="BYN продажа" prefix="Br↑ " units=" ₽"/>
+	    <counter id="byn_amount" name="BYN за сумму" prefix="Br+ " units=" ₽"/>
+		<counter id="byn_cbrf" name="BYN ЦБ РФ" prefix="Br! " units=" ₽"/>
+		<counter id="try_purch" name="TRY покупка" prefix="₺↓ " units=" ₽"/>
+        <counter id="try_sell" name="TRY продажа" prefix="₺↑ " units=" ₽"/>
+	    <counter id="try_amount" name="TRY за сумму" prefix="₺+ " units=" ₽"/>
+		<counter id="try_cbrf" name="TRY ЦБ РФ" prefix="₺! " units=" ₽"/>
+		<counter id="uzs_purch" name="UZS покупка" prefix="сўм↓ " units=" ₽"/>
+        <counter id="uzs_sell" name="UZS продажа" prefix="сўм↑ " units=" ₽"/>
+	    <counter id="uzs_amount" name="UZS за сумму" prefix="сўм+ " units=" ₽"/>
+        <counter id="uzs_cbrf" name="UZS ЦБ РФ" prefix="сўм! " units=" ₽"/>
+        <counter id="date" name="Дата курсов" type="time" format="dd.MM.yyyy"/>
+	    <counter id="source" name="Источник курсов" type="text"/>
+    </counters>
+    <keywords>Курс валют, центральный банк, центробанк рф, доллар, евро, форекс, forex, rosbank, росбанк</keywords>
+    <type>exchange</type>
 </provider>

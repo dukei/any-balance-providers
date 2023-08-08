@@ -1,21 +1,22 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
-    <EditTextPreference 
-        title="Сумма" 
-        positiveButtonText="ОК" 
-        summary="Сумма в валюте для расчета||{@s}\n" 
-        dialogTitle="Сумма" 
-        negativeButtonText="Отмена" 
-        dialogMessage="Введите сумму в валюте для пересчета в рубли по курсу продажи банка"
-        key="cur_summa"
-		inputType="numberDecimal">
+    <ListPreference
+		key="type"
+		title="Источник курсов"
+		summary="Источник для получения информации||{@s}\n"
+		dialogTitle="Источник курсов"
+		entries="Наличные операции|Безналичные операции|Росбанк Онлайн"
+		entryValues="cash|cashless|online"
+		defaultValue="cash">
+	</ListPreference>
+    <EditTextPreference
+        title="Валюта на продажу"
+        positiveButtonText="ОК"
+        summary="Можно ввести сумму валюты, которая у вас есть, тогда будет показано, сколько рублей вы выручите, продав валюту Росбанку|Введите сумму\n|{@s}\n"
+        dialogTitle="Сумма валюты"
+        negativeButtonText="Отмена"
+        dialogMessage="Можно ввести сумму разных валют, например, eur:100;usd:255 или просто одно число, тогда эта сумма будет применена ко всем валютам"
+        key="amount"
+        inputType="text">
     </EditTextPreference>
-    <ListPreference 
-        key="currency" 
-        title="Валюта"
-        summary="Валюта суммы|Для расчета суммы в рублях\n|{@s}\n"
-        entries="Доллар США|ЕВРО"
-        entryValues="usd|eur"
-	    defaultValue="usd">
-    </ListPreference>
 </PreferenceScreen>

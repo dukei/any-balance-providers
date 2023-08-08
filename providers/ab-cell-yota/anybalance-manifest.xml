@@ -1,0 +1,48 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<api flags="no_browser" />
+	<id version="1">ab-cell-yota</id>
+	<name>Yota для смартфона (Россия)</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе, использованных минутах, SMS и трафике для пользователей оператора сотовой связи Yota (https://yota.ru/).</p>
+	<p>Информация берется из личного кабинета Yota на сайте https://web.yota.ru/.</p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Для работы провайдера требуется ввести номер телефона, привязанного к личному кабинету Yota, и код подтверждения из SMS, высланного на этот номер.</p>
+	]]></instruction>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" ₽"/>
+		<counter id="abon" name="Абонплата по тарифу" units=" ₽"/>
+		<counter id="next_pay_date" name="Следующее списание" type="time" format="dd.MM.yyyy"/>
+		<counter id="min_left" name="Минуты (осталось)" units=" мин" type="time_interval" format="{@MIN}"/>
+		<counter id="sms_left" name="SMS (осталось)" units=" sms"/>
+		<counter id="traffic_left" name="Интернет (осталось)" units=" Мб"/>
+		<counter id="min_total" name="Минуты (всего)" units=" мин" type="time_interval" format="{@MIN}"/>
+		<counter id="sms_total" name="SMS (всего)" units=" sms"/>
+		<counter id="traffic_total" name="Интернет (всего)" units=" Мб"/>
+		<counter id="min_used" name="Минуты (израсходовано)" units=" мин" type="time_interval" format="{@MIN}"/>
+		<counter id="sms_used" name="SMS (израсходовано)" units=" sms"/>
+		<counter id="traffic_used" name="Интернет (израсходовано)" units=" Мб"/>
+		<counter id="packet_start" name="Начало действия пакета" type="time" format="dd.MM.yyyy"/>
+		<counter id="packet_till" name="Срок действия пакета" type="time" format="dd.MM.yyyy"/>
+		<counter id="traffic_left_roam" name="Интернет в роуминге (осталось)" units=" Мб"/>
+		<counter id="traffic_total_roam" name="Интернет в роуминге (всего)" units=" Мб"/>
+		<counter id="traffic_used_roam" name="Интернет в роуминге (израсходовано)" units=" Мб"/>
+		<counter id="status" name="Статус блокировки" type="text"/>
+		<counter id="phone" name="Телефон" type="text"/>
+<!--	<counter id="fio" name="ФИО" type="text"/> -->
+	</counters>
+	<keywords>Сотовый телефон, мобильный, мобильник, йота, Yota, интернет, Россия</keywords>
+	<type>cell</type>
+	<country>ru</country>
+</provider>

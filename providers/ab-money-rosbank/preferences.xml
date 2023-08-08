@@ -1,12 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
     <EditTextPreference
-        title="Номер карты" 
+        title="Логин" 
         positiveButtonText="ОК" 
-        summary="|Последние 8 цифр номера карты или логин|5084 5000 {@s}" 
-        dialogTitle="Логин или номер карты: 5084 5000 ..." 
+        summary="Логин для входа в интернет-банк|Введите логин\n|{@s}\n"
+        dialogTitle="Логин" 
         negativeButtonText="Отмена" 
-        dialogMessage="Введите последние 8 цифр номера карты или ваш логин для входа в Интернет-банк"
+        dialogMessage="Введите последние 8 цифр номера карты или логин для входа в интернет-банк"
         key="login"
         obligatory="true">
     </EditTextPreference>
@@ -16,26 +16,27 @@
         dialogTitle="Пароль"
         negativeButtonText="Отмена"
         title="Пароль"
-        summary="|Пароль для входа в Интернет-банк|***********"
-        dialogMessage="Введите пароль, используемый для входа в Интернет-банк."
+        summary="Пароль для входа в интернет-банк|Введите пароль\n|***********\n"
+        dialogMessage="Введите пароль, используемый для входа в интернет-банк"
         inputType="textPassword"
         obligatory="true">
     </EditTextPreference>
-    <ListPreference 
-        key="type" 
-        title="Что смотреть"
-        summary="||{@s}"
-        entries="Карта|Счет"
-        entryValues="card|acc"
-        defaultValue="card">
-    </ListPreference>
-    <EditTextPreference
-        title="Номер продукта" 
-        positiveButtonText="ОК" 
-        summary="|Автоматически|{@s}" 
-        dialogTitle="Номер продукта" 
-        negativeButtonText="Отмена" 
-        dialogMessage="В зависимости от настройки Что смотреть, введите сюда последние цифры номера счета или карты. Если оставить поле пустым, то будет показана информация по первому счету/карте."
-        key="contract">
-    </EditTextPreference>
+	<ListPreference
+		key="type"
+		title="Источник данных"
+		summary="Источник для получения информации||{@s}\n"
+		dialogTitle="Источник данных"
+		entries="Карта|Счет"
+		entryValues="card|acc"
+		defaultValue="card">
+	</ListPreference>
+	<EditTextPreference
+		title="Номер продукта"
+		positiveButtonText="ОК"
+		summary="Последние 4 цифры номера продукта|Автоматически\n|{@s}\n"
+		dialogTitle="Номер продукта"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите последние 4 цифры карты или счета, по которым вы хотите получать информацию. Если оставить поле пустым, будет показана информация по первому продукту"
+		key="contract">
+	</EditTextPreference>
 </PreferenceScreen>

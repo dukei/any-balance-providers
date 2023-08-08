@@ -123,7 +123,7 @@ function checkForRedirect(html) {
 	if(/<redirect>/i.test(html)) {
 		var href = getParam(html, null, null, /main;[^\]]+/i);
 		if(!href) {
-			AnyBalance.trace('Запрошен редиретк, но ссылка на него не найдена, сайт изменен?');
+			AnyBalance.trace('Запрошен редирект, но ссылка на него не найдена. Сайт изменен?');
 		}
 		var html = AnyBalance.requestGet(g_baseurl + href, g_headers);
 	}
@@ -146,9 +146,9 @@ function login() {
 		var params = AB.createFormParams(form, function(params, str, name, value) {
 			if (/actionComponent/i.test(name)) {
 				return;
-			} else if (/login/i.test(name)) {
+			} else if (/login|fields:field:1:component/i.test(name)) {
 			    return prefs.login
-            } else if(/password/i.test(name)) {
+            } else if(/password|fields:field:2:component/i.test(name)) {
 			    return prefs.password
             }
 			return value;
@@ -159,11 +159,9 @@ function login() {
             last_URL = AnyBalance.getLastUrl(),
             base_URL = getParam(html, null, null, /Wicket.Ajax.baseUrl="([^"]*)/i) || 'home?0';
 
-        html = requestWicketAction(actions[4], {'fields:field:1:login': prefs.login, '': ''},       last_URL, base_URL);
-        html = requestWicketAction(actions[5], {'fields:field:2:password': prefs.password, '': ''}, last_URL, base_URL);
+        html = requestWicketAction(actions[4], {'fields:field:1:component': prefs.login, '': ''},       last_URL, base_URL);
+        html = requestWicketAction(actions[5], {'fields:field:2:component': prefs.password, '': ''}, last_URL, base_URL);
         html = requestWicketAction(actions[2], params, last_URL, base_URL);
-
-
 
         if(/AcceptTerms/i.test(html)){
             throw new AnyBalance.Error('Вы ещё ни разу не входили в интернет-банк или вам требуется сменить пароль. Зайдите в интернет банк через браузер на https://online.rosbank.ru/ibank/, затем попробуйте выполнить провайдер ещё раз');
@@ -176,7 +174,6 @@ function login() {
             AnyBalance.trace(html);
             throw new AnyBalance.Error('Не удаётся войти в интернет банк. Сайт изменен?');
         }
-
 
         __setLoginSuccessful();
 

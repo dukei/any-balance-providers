@@ -7,8 +7,7 @@
 		summary="Логин для входа в личный кабинет|Введите логин\n|{@s}\n"
 		dialogTitle="Логин"
 		negativeButtonText="Отмена"
-		dialogMessage="Введите e-mail или номер карты для входа в личный кабинет S7"
-		inputType="textEmailAddress"
+		dialogMessage="Введите логин, используемый для входа в личный кабинет"
 		key="login">
 	</EditTextPreference>
 	<EditTextPreference
@@ -19,7 +18,7 @@
 		negativeButtonText="Отмена"
 		title="Пароль"
 		summary="Пароль для входа в личный кабинет|Введите пароль\n|***********\n"
-		dialogMessage="Введите пароль, используемый для входа в личный кабинет S7"
+		dialogMessage="Введите пароль, используемый для входа в личный кабинет"
 		inputType="textPassword">
 	</EditTextPreference>
 </PreferenceScreen>

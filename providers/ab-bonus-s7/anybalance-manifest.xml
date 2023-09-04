@@ -1,14 +1,15 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="24">ab-bonus-s7</id>
+	<id version="26">ab-bonus-s7</id>
 	<name>S7 Приоритет</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе миль и другую информацию по бонусной карте авиакомпании S7 (https://www.s7.ru).</p>
-	<p>Информация берется из личного кабинета https://myprofile.s7.ru/login.</p>
+	<p>Предоставляет информацию о балансе миль, состоянии аккаунта и другие данные по бонусной карте авиакомпании S7 Airlines (https://www.s7.ru/).</p>
+	<p>Информация берется из личного кабинета S7 Airlines на сайте https://myprofile.s7.ru/.</p>
 	]]></description>
 	<instruction html="true"><![CDATA[
-	<p>Как получить накопительную карту и пароль к личному кабинету, инструкция: https://myprofile.s7.ru/registration </p>
+	<p>Для работы провайдера требуется ввести логин и пароль для входа в личный кабинет S7 Airlines.</p>
+	<p>Как получить накопительную карту и пароль к личному кабинету, инструкция: https://myprofile.s7.ru/registration.</p>
 	]]></instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>
@@ -23,17 +24,27 @@
 	</files>
 	<counters>
 		<counter id="balance" name="Бонусные мили" units=" m"/>
-<!--    <counter id="qmiles" name="Статусные мили"/>
-		<counter id="flights" name="Статусные полеты"/> -->
-		<counter id="burning" name="Сгораемые мили" units=" m"/>
+        <counter id="qmiles" name="Статусные мили" units=" qm"/>
+		<counter id="flights" name="Статусные полеты" units=" qf"/>
+		<counter id="burning" name="Сгораемые бонусы" units=" {@unitsname}"/>
+		<counter id="burnDate" name="Дата сгорания" type="time" format="dd.MM.yyyy"/>
 		<counter id="cardnum" name="Номер карты" type="text"/>
 		<counter id="type" name="Тип карты" type="text"/>
-		<counter id="status" name="Статус" type="text"/>
+		<counter id="status" name="Текущий уровень" type="text"/>
+		<counter id="nextStatus" name="Следующий уровень" type="text"/>
+		<counter id="flightsToNextStatus" name="Полетов до след. уровня" units=" qf"/>
+		<counter id="milesToNextStatus" name="Миль до след. уровня" units=" qm"/>
 		<counter id="expDate" name="Срок действия" type="time" format="dd.MM.yyyy"/>
+		<counter id="accStatus" name="Состояние аккаунта" type="text"/>
+		<counter id="cardUserName" name="Имя на карте" type="text"/>
+		<counter id="lastOperDate" name="Дата посл. операции" type="time" format="dd.MM.yyyy"/>
+		<counter id="lastOperSum" name="Сумма посл. операции" units=" m"/>
+		<counter id="lastOperDesc" name="Описание посл. операции" type="html"/>
+		<counter id="email" name="E-mail" type="text"/>
 		<counter id="phone" name="Номер телефона" type="text"/>
 		<counter id="userName" name="ФИО" type="text"/>
 	</counters>
-	<keywords>s7, с7, эссевен, sseven</keywords>
+	<keywords>s7, с7, эссевен, sseven, приоритет, priority</keywords>
 	<type>bonus</type>
 	<country>ru</country>
 </provider>

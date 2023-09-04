@@ -1,11 +1,15 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="14">ab-money-priorbank</id>
+	<id version="15">ab-money-priorbank</id>
 	<api flags="no_browser"/>
 	<name>Приорбанк</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию об остатках на картах и счетах Приорбанка http://www.prior.by</p>
+	<p>Предоставляет информацию о текущем остатке и других параметрах карт, договоров и депозитов для клиентов Приорбанка (https://www.priorbank.by/).</p>
+	<p>Информация берется из системы Интернет-банк при помощи API мобильного приложения.</p>
 	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Для работы провайдера требуется ввести логин и пароль для входа в Интернет-банк.</p>
+	]]></instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>
 		<module id="crypt/cryptojs/sha512"/>
@@ -19,11 +23,22 @@
 	</files>
 	<counters>
 		<counter id="balance" name="Баланс" units=" {@currency}"/>
-		<counter id="currency" name="Валюта" type="text"/>
+		<counter id="totalBalance" name="Общий баланс" units=" {@currency}"/>
+		<counter id="ownBalance" name="Собственные средства" units=" {@currency}"/>
+		<counter id="blocked" name="Заблокировано" units=" {@currency}"/>
+		<counter id="creditLimit" name="Кредитный лимит" units=" {@currency}"/>
+		<counter id="repaymentProgress" name="Прогресс погашения" units="%"/>
 		<counter id="name" name="Наименование" type="text"/>
-		<counter id="fio" name="ФИО" type="text"/>
 		<counter id="cardNumber" name="Номер карты/контракта" type="text"/>
-		<counter id="validto" name="Срок действия/Дата закрытия" type="time" format="dd/MM/yyyy"/>
+		<counter id="status" name="Статус карты/контракта" type="text"/>
+		<counter id="openDate" name="Дата выдачи/открытия" type="time" format="dd.MM.yyyy"/>
+		<counter id="validto" name="Срок действия/Дата закрытия" type="time" format="dd.MM.yyyy"/>
+		<counter id="type" name="Вид карты/контракта" type="text"/>
+		<counter id="cardType" name="Тип карты/контракта" type="text"/>
+		<counter id="currency" name="Валюта" type="text"/>
+		<counter id="regdate" name="Дата регистрации" type="time" format="dd.MM.yyyy"/>
+		<counter id="phone" name="Номер телефона" type="text"/>
+		<counter id="fio" name="ФИО" type="text"/>
 	</counters>
 	<keywords></keywords>
 	<type>money, bank</type>

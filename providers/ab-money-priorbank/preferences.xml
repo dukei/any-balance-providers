@@ -1,41 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
-	<EditTextPreference
-		title="Логин"
-		key="login"
-		summary="||{@s}"
-		obligatory="true"
-		dialogTitle="Логин"
-		positiveButtonText="ОК"
-		negativeButtonText="Отмена"
-		dialogMessage="Введите логин, используемый для входа в личный кабинет.">
-	</EditTextPreference>
-	<EditTextPreference
-		title="Пароль"
-		key="password"
-		summary="||***********"
-		obligatory="true"
-		dialogTitle="Пароль"
-		positiveButtonText="ОК"
-		negativeButtonText="Отмена"
-		dialogMessage="Введите пароль, используемый для входа в личный кабинет."
-		inputType="textPassword">
-	</EditTextPreference>
+	<EditTextPreference 
+        title="Логин" 
+        positiveButtonText="ОК" 
+        summary="Логин для входа в Интернет-банк|Введите логин\n|{@s}\n" 
+        dialogTitle="Логин" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите логин, используемый для входа в Интернет-банк"
+	    obligatory="true"
+        key="login">
+    </EditTextPreference>
+    <EditTextPreference 
+        positiveButtonText="ОК"
+        key="password" 
+        dialogTitle="Пароль"
+        negativeButtonText="Отмена"
+        title="Пароль"
+	    obligatory="true"
+        summary="Пароль для входа в Интернет-банк|Введите пароль\n|**********\n"
+        dialogMessage="Введите пароль, используемый для входа в Интернет-банк"
+        inputType="textPassword">
+    </EditTextPreference>
    <ListPreference 
         key="type" 
-        title="Банковский продукт"
-        summary="||{@s}\n"
-        entries="Карта|Договор(Электронный депозит, кредит)"
+        title="Источник данных"
+		summary="Источник для получения информации|Выберите источник\n|{@s}\n"
+        dialogTitle="Источник данных"
+        entries="Карта|Договор"
         entryValues="card|contract"
 	    defaultValue="contract">
     </ListPreference>
     <EditTextPreference 
         positiveButtonText="ОК"
         key="num" 
-        dialogTitle="Псевдоним карты"
+        dialogTitle="Псевдоним продукта"
         negativeButtonText="Отмена"
-        title="Псевдоним карты/договора/депозита"
-        summary="|Автоматически|{@s}"
-        dialogMessage="Введите псевдоним карты/договора/депозита, информацию по которому Вы хотите получить, или последние 4 цифры номера карты/договора/депозита. Оставьте это поле пустым, если хотите получить информацию по первой карте/договору/депозиту">
+        title="Псевдоним продукта"
+		summary="Псевдоним карты/договора/депозита|Автоматически\n|{@s}\n"
+        dialogMessage="Введите псевдоним или последние 4 цифры номера карты/договора/депозита, по которым вы хотите получать информацию. Если оставить поле пустым, будет показана информация по первому продукту">
     </EditTextPreference>	
 </PreferenceScreen>

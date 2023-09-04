@@ -1,5 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change version="15" date="2023-08-17">
+	- Поддержка изменений в API приложения
+	- Добавлены дополнительные счетчики
+	</change>
     <change version="14" date="2022-08-18">
 	- Поддержка новой версии приложения
 	</change>

@@ -1,25 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
     <EditTextPreference 
-		obligatory="true"
-        title="Номер телефона" 
+        title="Логин" 
         positiveButtonText="ОК" 
-        summary="|Введите 10 цифр номера телефона|{@s}" 
-        dialogTitle="Номер телефона" 
+        summary="Логин для входа в личный кабинет|Введите логин\n|{@s}\n" 
+        dialogTitle="Логин" 
         negativeButtonText="Отмена" 
-        dialogMessage="Введите 10 цифр вашего номера телефона (только цифры), например, 7001234567."
-	inputType="number"
-        key="login">
+        dialogMessage="Введите номер телефона, используемый для входа в личный кабинет, в формате 10 цифр, например: 7001234567"
+	    obligatory="true"
+        key="login"
+        inputType="number">
     </EditTextPreference>
     <EditTextPreference 
-		obligatory="true"
         positiveButtonText="ОК"
         key="password" 
         dialogTitle="Пароль"
         negativeButtonText="Отмена"
         title="Пароль"
-        summary="||***********"
-        dialogMessage="Введите пароль, используемый для входа в личный кабинет."
+	    obligatory="true"
+        summary="Пароль для входа в личный кабинет|Введите пароль\n|**********\n"
+        dialogMessage="Введите пароль, используемый для входа в личный кабинет"
         inputType="textPassword">
     </EditTextPreference>
 </PreferenceScreen>

@@ -1,14 +1,16 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="2.0" version="16">ab-cell-altel4g</id>
+	<id major_version="3.0" version="17">ab-cell-altel4g</id>
 	<api flags="no_browser"/>
 	<name>ALTEL 4G (Казахстан)</name>
 	<description html="true"><![CDATA[
-	<p>Получает баланс и информацию о тарифном плане для сотового оператора АО «АЛТЕЛ» (http://altel4g.kz, http://altel.kz)</p>
-	<p>Информация берется из личного кабинета https://cabinet.altel.kz</p>
+	<p>Предоставляет информацию о балансе и тарифном плане для пользователей оператора сотовой связи "ALTEL" (https://altel.kz/).</p>
+	<p>Информация берется из личного кабинета Altel на сайте https://altel.kz/me/.</p>
 	]]></description>
 	<instruction html="true"><![CDATA[
-	<p>Если вы ещё ни разу не входили в личный кабинет, то в качестве пароля используйте PIN1.</p>
+	<p>Для работы провайдера требуется ввести логин и пароль для входа в личный кабинет Altel.</p>
+	<b>ВНИМАНИЕ!</b>
+	<p>Если вы прежде ни разу не входили в личный кабинет, используйте в качестве пароля PIN1.</p>
 	]]></instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>
@@ -21,21 +23,32 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units=" 〒"/>
-<!--		<counter id="bonus" name="Бонус" units=" 〒"/> -->
-		<counter id="fio" name="ФИО" type="text"/>
-		<counter id="phone" name="Телефон" type="text"/>
-		<counter id="till" name="Срок действия" type="time" format="dd/MM/yyyy"/>
-		<counter id="min_left" name="Остаток минут" type="time_interval" format="{@MIN}:{@sec}"/>
-		<counter id="min_left_gsm" name="Остаток минут на GSM" type="time_interval" format="{@MIN}:{@sec}"/>
-		<counter id="min_left_city" name="Остаток минут на город" type="time_interval" format="{@MIN}:{@sec}"/>
-		<counter id="sms_left" name="Остаток смс" units=" шт"/>
-<!--                <counter id="traffic_used" name="Использовано трафика" units=" Мб"/> -->
+		<counter id="balance" name="Баланс" units=" ₸"/>
+		<counter id="abon" name="Абонентская плата" units=" ₸"/>
+		<counter id="till" name="Срок действия" type="time" format="dd.MM.yyyy"/>
+		<counter id="min_left" name="Остаток минут" type="time_interval" format="{@MIN}" units=" мин"/>
+		<counter id="min_total" name="Всего минут" type="time_interval" format="{@MIN}" units=" мин"/>
+		<counter id="min_left_gsm" name="Остаток минут на GSM" type="time_interval" format="{@MIN}" units=" мин"/>
+		<counter id="min_total_gsm" name="Всего минут на GSM" type="time_interval" format="{@MIN}" units=" мин"/>
+		<counter id="min_left_city" name="Остаток минут на город" type="time_interval" format="{@MIN}" units=" мин"/>
+		<counter id="min_total_city" name="Всего минут на город" type="time_interval" format="{@MIN}" units=" мин"/>
+		<counter id="sms_left" name="Остаток SMS" units=" sms"/>
+		<counter id="sms_total" name="Всего SMS" units=" sms"/>
+		<counter id="mms_left" name="Остаток MMS" units=" mms"/>
+		<counter id="mms_total" name="Всего MMS" units=" mms"/>
 		<counter id="traffic_left" name="Остаток трафика" units=" Мб"/>
+		<counter id="traffic_total" name="Всего трафика" units=" Мб"/>
 		<counter id="day_traffic_left" name="Остаток дневного трафика" units=" Мб"/>
+		<counter id="day_traffic_total" name="Всего дневного трафика" units=" Мб"/>
 		<counter id="night_traffic_left" name="Остаток ночного трафика" units=" Мб"/>
+		<counter id="night_traffic_total" name="Всего ночного трафика" units=" Мб"/>
+		<counter id="traffic_left_roaming" name="Остаток трафика в роуминге" units=" Мб"/>
+		<counter id="traffic_total_roaming" name="Всего трафика в роуминге" units=" Мб"/>
+		<counter id="email" name="E-mail" type="text"/>
+		<counter id="phone" name="Телефон" type="text"/>
+		<counter id="fio" name="ФИО" type="text"/>
 	</counters>
-	<keywords>мобильный лте</keywords>
+	<keywords>мобильный, лте, altel, 4g, сотовый</keywords>
 	<type>cell</type>
 	<country>kz</country>
 </provider>

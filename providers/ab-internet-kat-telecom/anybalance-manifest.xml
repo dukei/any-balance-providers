@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-    <id version="1">ab-internet-kat-telecom</id>
+    <id version="2">ab-internet-kat-telecom</id>
 	<api flags="no_browser"/>
     <name>КАТ-Телеком (Косулино)</name>
 	<description html="true"><![CDATA[
@@ -23,6 +23,7 @@
     <counters>
         <counter id="balance" name="Баланс" units=" ₽"/>
 		<counter id="to_pay" name="Рекомендуемый платеж" units=" ₽"/>
+		<counter id="abon" name="Абонплата по тарифу" units=" ₽"/>
 		<counter id="account" name="Лицевой счет" type="text"/>
 		<counter id="contract" name="Договор" type="text"/>
 		<counter id="activate_date" name="Дата активации" type="time" format="dd.MM.yyyy"/>

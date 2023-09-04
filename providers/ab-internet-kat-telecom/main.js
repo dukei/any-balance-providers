@@ -63,15 +63,16 @@ function main() {
 	
 	var result = {success: true};
 	
-	getParam(html, result, 'balance', /Баланс[\s\S]*?<div[^>]+class[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'to_pay', /Рекомендуемый платеж[\s\S]*?<div[^>]+class[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'contract', /Договор[\s\S]*?<div[^>]+class[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
-	getParam(html, result, 'ipAddress', /IP-адрес:([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
-	getParam(html, result, 'client', /Клиент[\s\S]*?<div[^>]+class[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
-	getParam(html, result, 'status', /Статус[\s\S]*?<div[^>]+class[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
-	getParam(html, result, '__tariff', /Ваш тариф[\s\S]*?tarif-current"[^>]*>([\s\S]*?)<\/h4>/i, replaceTagsAndSpaces);
+	getParam(html, result, 'balance', /Баланс\s*?<\/div>\s*?<div[^>]+class[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'to_pay', /Рекомендуемый плат[е|ё]ж\s*?<\/div>\s*?<div[^>]+class[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'contract', /Договор\s*?<\/div>\s*?<div[^>]+class[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+	getParam(html, result, 'ipAddress', /Ваш IP-адрес:([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+	getParam(html, result, 'client', /Клиент\s*?<\/div>\s*?<div[^>]+class[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+	getParam(html, result, 'status', /Статус\s*?<\/div>\s*?<div[^>]+class[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+	getParam(html, result, '__tariff', /Ваш тариф[\s\S]*?tarif-current"[^>]*>([\s\S]*?t\/s)(?:[\s\S]*?)<\/h4>/i, replaceTagsAndSpaces);
 	getParam(html, result, 'tarif', /Ваш тариф[\s\S]*?tarif-current"[^>]*>([\s\S]*?)<\/h4>/i, replaceTagsAndSpaces);
-	getParam(html, result, 'login', /Логин[\s\S]*?<div[^>]+class[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+	getParam(html, result, 'abon', /Ваш тариф[\s\S]*?tarif-current"[^>]*>(?:[\s\S]*?t\/s:?)([\s\S]*?)<\/h4>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'login', /Логин\s*?<\/div>\s*?<div[^>]+class[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
 	
 	var href = getParam(html, null, null, /<a[^>]+href="https:\/\/cabinet\.kat-telecom\.ru([\s\S]*?)">Лицевой сч[е|ё]т<\/a>/i);
 	
@@ -83,11 +84,13 @@ function main() {
 	    getParam(html, result, 'account', /<td[^>]*>Номер сч[е|ё]та([\s\S]*?)<\/tr>/i, replaceTagsAndSpaces);
 		if(!result.contract)
             getParam(html, result, 'contract', /<td[^>]*>Договор([\s\S]*?)<\/tr>/i, replaceTagsAndSpaces);
-		getParam(html, result, 'activate_date', /<td[^>]*>Дата активации([\s\S]*?)<\/tr>/i, [replaceTagsAndSpaces, /(\d{4})-(\d{2})-(\d{2})(.*)/, '$3.$2.$1'], parseDate);
+		getParam(html, result, 'activate_date', /<td[^>]*>Дата активации([\s\S]*?)<\/tr>/i, [replaceTagsAndSpaces, /(\d{4})-(\d{2})-(\d{2})(.*)/, '$3.$2.$1'], parseDateISO);
 	    if(!result.status)
             getParam(html, result, 'status', /<td[^>]*>Статус([\s\S]*?)<\/tr>/i, replaceTagsAndSpaces);
 		if(!result.__tariff)
-            getParam(html, result, '__tariff', /<td[^>]*>Тариф([\s\S]*?)<\/tr>/i, replaceTagsAndSpaces);
+            getParam(html, result, '__tariff', /<td[^>]*>Тариф([\s\S]*?t\/s)(?:[\s\S]*?)<\/tr>/i, replaceTagsAndSpaces);
+		if(!result.abon)
+            getParam(html, result, 'abon', /<td[^>]*>Тариф(?:[\s\S]*?t\/s:?)([\s\S]*?)<\/tr>/i, replaceTagsAndSpaces, parseBalance);
 	    if(!result.tarif)
             getParam(html, result, 'tarif', /<td[^>]*>Тариф([\s\S]*?)<\/tr>/i, replaceTagsAndSpaces);
 	}

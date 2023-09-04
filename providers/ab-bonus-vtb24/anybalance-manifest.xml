@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="13">ab-bonus-vtb24</id>
+	<id version="14">ab-bonus-vtb24</id>
 	<api flags="no_browser"/>
 	<name>ВТБ Мультибонус</name>
 	<description html="true"><![CDATA[
@@ -24,15 +24,15 @@
 	<counters>
 		<counter id="balance" name="Баланс" units=" Б"/>
 		<counter id="cardnum" name="Номер карты" type="text"/>
-		<counter id="cardregdate" name="Дата регистрации карты" type="time" format="dd.MM.yyyy"/>
+<!--	<counter id="cardregdate" name="Дата регистрации карты" type="time" format="dd.MM.yyyy"/> -->
 		<counter id="cardnum2" name="Номер карты 2" type="text"/>
-		<counter id="cardregdate2" name="Дата регистрации карты 2" type="time" format="dd.MM.yyyy"/>
+<!--	<counter id="cardregdate2" name="Дата регистрации карты 2" type="time" format="dd.MM.yyyy"/> -->
 		<counter id="cardnum3" name="Номер карты 3" type="text"/>
-		<counter id="cardregdate3" name="Дата регистрации карты 3" type="time" format="dd.MM.yyyy"/>
+<!--	<counter id="cardregdate3" name="Дата регистрации карты 3" type="time" format="dd.MM.yyyy"/> -->
 		<counter id="cardnum4" name="Номер карты 4" type="text"/>
-		<counter id="cardregdate4" name="Дата регистрации карты 4" type="time" format="dd.MM.yyyy"/>
+<!--	<counter id="cardregdate4" name="Дата регистрации карты 4" type="time" format="dd.MM.yyyy"/> -->
 		<counter id="cardnum5" name="Номер карты 5" type="text"/>
-		<counter id="cardregdate5" name="Дата регистрации карты 5" type="time" format="dd.MM.yyyy"/>
+<!--	<counter id="cardregdate5" name="Дата регистрации карты 5" type="time" format="dd.MM.yyyy"/> -->
 		<counter id="lastopersum" name="Сумма посл. операции" units=" Б"/>
 		<counter id="lastoperdate" name="Дата посл. операции" type="time" format="dd.MM.yyyy"/>
 		<counter id="lastoperdesc" name="Тип посл. операции" type="text"/>
@@ -41,7 +41,10 @@
 		<counter id="lastorderdate" name="Дата посл. заказа" type="time" format="dd.MM.yyyy"/>
 		<counter id="lastorderstatus" name="Статус посл. заказа" type="text"/>
 		<counter id="lastorderpartner" name="Партнер посл. заказа" type="text"/>
+		<counter id="orderstotal" name="Заказы за все время" units=" шт"/>
+		<counter id="subscriptions" name="Активные подписки" units=" шт"/>
 		<counter id="messages" name="Сообщения" units=" шт"/>
+		<counter id="email" name="E-mail" type="text"/>
 		<counter id="phone" name="Номер телефона" type="text"/>
         <counter id="fio" name="ФИО" type="text"/>
 	</counters>

@@ -1,0 +1,50 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<api flags="no_browser" />
+	<id version="2">ab-cell-yota-corp</id>
+	<name>Yota для бизнеса (Россия)</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе и другие данные для корпоративных абонентов Yota (<a href="https://r2b.yota.ru/">https://r2b.yota.ru/</a>).</p> 
+	<p>Информация берется из личного кабинета Yota для бизнеса на сайте https://b2b.yota.ru/.</p>   
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Для работы провайдера требуется ввести логин и пароль для входа в личный кабинет Yota для бизнеса.</p>
+	<p>В настройках можно указать номер телефона для получения информации. В противном случае будет получена информация по первому номеру из списка подключенных.</p>
+	]]></instruction>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" ₽"/>
+		<counter id="abon" name="Абонплата по тарифу" units=" ₽"/>
+		<counter id="next_pay_date" name="Следующее списание" type="time" format="dd.MM.yyyy"/>
+		<counter id="min_left" name="Минуты (осталось)" units=" мин" type="time_interval" format="{@MIN}"/>
+		<counter id="sms_left" name="SMS (осталось)" units=" sms"/>
+		<counter id="traffic_left" name="Интернет (осталось)" units=" Мб"/>
+		<counter id="min_total" name="Минуты (всего)" units=" мин" type="time_interval" format="{@MIN}"/>
+		<counter id="sms_total" name="SMS (всего)" units=" sms"/>
+		<counter id="traffic_total" name="Интернет (всего)" units=" Мб"/>
+		<counter id="packet_till" name="Срок действия пакета" type="time" format="dd.MM.yyyy"/>
+		<counter id="options" name="Подключенные опции" type="html"/>
+		<counter id="licschet" name="Лицевой счет" type="text"/>
+		<counter id="contract_date" name="Дата договора" type="time" format="dd.MM.yyyy"/>
+		<counter id="abon_count" name="Количество абонентов" units=" чел"/>
+		<counter id="company_name" name="Владелец" type="text"/>
+		<counter id="sim_name" name="Название SIM-карты" type="text"/>
+		<counter id="sim_num" name="Номер SIM-карты" type="text"/>
+		<counter id="phone" name="Номер телефона" type="text"/>
+		<counter id="contact_name" name="Абонент" type="text"/>
+		<counter id="status" name="Статус блокировки" type="text"/>
+		<counter id="status_tariff" name="Состояние тарифа" type="text"/>
+	</counters>
+	<keywords>Корпоративный, бизнес, сотовый телефон, мобильный, мобильник, yota, йота, интернет, Россия</keywords>
+	<type>cell</type>
+	<country>ru</country>
+</provider>

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+    	obligatory="true"
+        title="Логин" 
+        positiveButtonText="ОК" 
+        summary="Логин для входа в личный кабинет|Введите логин\n|{@s}\n" 
+        dialogTitle="Логин" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите ICCID, E-mail, номер телефона или номер лицевого счета для входа в личный кабинет. Для авторизации по номеру телефона введите его в международном формате, например: 79961234567"
+        key="login">
+    </EditTextPreference>
+    <EditTextPreference 
+    	obligatory="true"
+        positiveButtonText="ОК"
+        key="password" 
+        dialogTitle="Пароль"
+        negativeButtonText="Отмена"
+        title="Пароль"
+        summary="Пароль для входа в личный кабинет|Введите пароль\n|**********\n"
+        dialogMessage="Введите пароль, используемый для входа в личный кабинет"
+        inputType="textPassword">
+    </EditTextPreference>
+    <EditTextPreference 
+        positiveButtonText="ОК"
+        key="sim" 
+        dialogTitle="ICCID или телефон"
+        negativeButtonText="Отмена"
+        title="ICCID или телефон"
+        summary="Номер ICCID или телефона|Автоматически\n|{@s}\n"
+        dialogMessage="Введите номер ICCID или телефона, по которым вы хотите получать информацию. Если оставить поле пустым, будет показана информация по первому номеру"
+        inputType="number">
+    </EditTextPreference>
+</PreferenceScreen>

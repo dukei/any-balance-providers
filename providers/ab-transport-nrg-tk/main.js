@@ -39,17 +39,22 @@ function main() {
 	
 	result.__tariff = prefs.number;
 
-    getParam(json.states[0].movingDateFormatted, result, 'date', null, replaceTagsAndSpaces, parseDate);
+	getParam(json.states[0].title, result, 'operation');
 	getParam(json.states[0].movingDateFormatted, result, 'time', null, replaceTagsAndSpaces, parseDate);
-	getParam(json.states[0].subStateTitle, result, 'operation');
-	getParam(json.states[0].title, result, 'location');
+	var loc = json.states[0].subStateTitle;
+	if (!loc && /Выдан|Доставлен|Вруч/i.test(json.states[0].title)){
+		loc = json.cityTo.name;
+	}
+	getParam(loc, result, 'location');
 	getParam(json.states[0].title + getState(json.states[0]), result, 'now');
+	getParam(json.cityFrom.name, result, 'from');
     getParam(json.cityTo.name, result, 'tocity');
-    getParam(json.cityFrom.name, result, 'from');
 	getParam(json.priceTripType.title, result, 'triptype');
     getParam(json.places, result, 'sits', null, replaceTagsAndSpaces, parseBalance);
     getParam(json.weight, result, 'weight', null, replaceTagsAndSpaces, parseBalance);
     getParam(json.volume, result, 'volume', null, replaceTagsAndSpaces, parseBalance);
+	getParam(json.senderTotalPrice, result, 'senderTotalPrice', null, replaceTagsAndSpaces, parseBalance);
+	getParam(json.recipientTotalPrice, result, 'recipientTotalPrice', null, replaceTagsAndSpaces, parseBalance);
 	var delivery = 'С ' + json.deliveryDateFromFormatted + ' по ' + json.deliveryDateToFormatted;
 	getParam(delivery + '', result, 'delivery');
 	
@@ -79,7 +84,7 @@ function getState(state){
         case 20:
             var d = new Date(state.stateInfo.issued.issueDate * 1000);
 			var dt = n2(d.getDate()) + '.' + n2(d.getMonth()+1) + '.' + d.getFullYear();
-            info = ': ' + (state.stateInfo.issued.issueDateFormatted).slice(0,-9) + ',<br>на складе "' + state.stateInfo.issued.warehouse.title + '"';
+            info = ': ' + dt + ',<br>на складе ' + state.stateInfo.issued.warehouse.title + ',<br>адрес: ' + state.stateInfo.issued.warehouse.address;
             break
         default:
             info = ': информация отсутствует. За информацией обратитесь к операторам по номеру 8-800-700-7000';

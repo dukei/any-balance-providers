@@ -64,7 +64,7 @@ function main(){
 		throw new AnyBalance.Error('Сайт провайдера временно недоступен. Попробуйте еще раз позже');
 	}
 	
-	if(!/=logout/i.test(html)){
+	if(!/"currentClient"/i.test(html)){
 		AnyBalance.trace('Сессия новая. Будем логиниться заново...');
         clearAllCookies();
     	var html = '';
@@ -84,7 +84,7 @@ function main(){
 			uLogin = getParam(lastUrl, null, null, /ulogin=([\s\S]*?)$/i, replaceTagsAndSpaces);
 		}
 		
-		if(!/=logout/i.test(html)){
+		if(!/"currentClient"/i.test(html)){
     		AnyBalance.trace(html);
     	    throw new AnyBalance.Error('Не удалось войти в личный кабинет. Сайт изменен?');
     	}
@@ -96,8 +96,9 @@ function main(){
 		AnyBalance.trace('Сессия сохранена. Входим автоматически...');
 	}
 	
-    var yandexuid = getParam(html, null, null, /=logout&[^<]*\byu=(\d+)/);
-    if(!yandexuid)
+    var yandexuid = getParam(html, null, null, /"yandexuid":"([^"]*)/); // id="restoreData">[^<]*\"(\d+)
+    var csrf_token = getParam(html, null, null, /"_direct_csrf_token":"([^"]*)/);
+	if(!yandexuid)
         throw new AnyBalance.Error('Не удалось найти идентификатор сессии. Сайт изменен?');
 	
 	var result = {success: true};

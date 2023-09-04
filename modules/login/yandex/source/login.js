@@ -14,7 +14,7 @@ function apiPost(url, params, message, reFatal){
 	json = getJson(html);
 	if(json.status !== 'ok'){
 		AnyBalance.trace(html);
-		const error = json.errors.join('; ') || json.error.join('; ');
+		const error = (json.errors || json.error).join('; ');
 		throw new AnyBalance.Error('Пароль не принят: ' + error, null, /not_matched/.test(error));
 	}
 }
@@ -40,7 +40,7 @@ function loginYandex(login, password, html, retpath, origin) {
 		const json = getJson(html);
 		if(json.status !== 'ok' && (json.error || (json.errors && json.errors[0] !== 'captcha.required'))){
 			AnyBalance.trace(html);
-			const error = json.errors.join('; ') || json.error.join('; ');
+			const error = (json.errors || json.error).join('; ');
 			throw new AnyBalance.Error(message + ': ' + error, null, reFatal && reFatal.test(error));
 		}
 		return json;
@@ -118,34 +118,21 @@ function loginYandex(login, password, html, retpath, origin) {
 			csrf_token: csrf,
 			track_id: track_id,
 		}, 'Запрос на проверку входа не принят');
+		
+		AnyBalance.trace(JSON.stringify(json));
 
 		var challengeType = json.challenge.challengeType;
 		var phoneId = json.challenge.phoneId;
 	    var hint = json.challenge.hint;
 		
-		if(challengeType == 'mobile_id'){ // Яндекс сломал красивую структуру входа, придётся обрабатывать по-другому
-			AnyBalance.trace('Требуется подтверждение через мобильный Яндекс');
-			
-			if(json.challenge.isSms2faChallenge == true){ // Если подтверждение через мобильный Яндекс доступно на устройстве (Яндекс установлен и авторизован)
-            
-			    json = apiPost('registration-validations/auth/challenge/send_push', {
-				    csrf_token: csrf,
-				    track_id: track_id
-			    }, 'Запрос на отправку уведомления не принят');
-
-			    var answer = AnyBalance.retrieveCode('Пожалуйста, введите код из уведомления, отправленного в мобильное приложение Яндекс на вашем устройстве', null, {inputType: 'number', time: 180000});
-			
-			    json = apiPost('registration-validations/auth/challenge/commit', {
-			        csrf_token: csrf,
-			        track_id: track_id,
-				    challenge: 'push_2fa',
-				    answer: answer
-		        }, 'Ошибка подтверждения входа');
-			}else{ // Подтверждение через мобильный Яндекс недоступно. Запрашиваем подтверждение по телефону
-				AnyBalance.trace('Требуемое подтверждение не поддерживается');
-				challengeType = 'phone_confirmation';
+		if(challengeType == 'mobile_id'){
+			if(!json.challenge.alternative.challengeType){
+                AnyBalance.trace('Альтернативных способов подтверждения входа не найдено. Устанавливаем подтверждение по телефону');
+			    challengeType = 'phone_confirmation';
+			}else{
+				AnyBalance.trace('Альтернативный способ подтверждения входа найден. Устанавливаем подтверждение ' + json.challenge.alternative.challengeType);
+				challengeType = json.challenge.alternative.challengeType;
 			}
-			
 		}
 
 		if(!/auth\/challenge\/commit/i.test(AnyBalance.getLastUrl())){ // На случай, если Яндекс сразу выкатил подтверждение по телефону или контрольный вопрос

@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id version="9">ab-adv-yandex-direct</id>
+	<id version="11">ab-adv-yandex-direct</id>
 	<name>Яндекс.Директ</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию об остатке средств, задолженности, статусе и другие данные для владельцев рекламной кампании <a href="https://direct.yandex.ru/">Яндекс.Директ</a>.</p>

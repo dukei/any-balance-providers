@@ -17,9 +17,14 @@ var g_headers = {
 
 var g_status = {
 	'ACTIVE': 'Номер не блокирован',
-	'INACTIVE': 'Номер не активен',
 	'BLOCKED': 'Номер заблокирован',
-	undefined: 'Неизвестен'
+	undefined: 'Не определен'
+};
+
+var g_status_tariff = {
+	'ACTIVE': 'Тариф активен',
+	'BLOCKED': 'Тариф не активен',
+	undefined: 'Не определено'
 };
 	
 var baseurl = 'https://mapi.yota.ru/';
@@ -148,7 +153,7 @@ function main(){
 	getParam(json.carrierProfile && json.carrierProfile.balance, result, 'balance', null, null, parseBalance);
     var status = json.context && json.context.features && json.context.features.carrierClientStatus;
 	getParam(g_status[status]||status, result, 'status');
-	getParam(json.context && json.context.msisdn, result, '__tariff', null, replaceNumber);
+//	getParam(json.context && json.context.msisdn, result, '__tariff', null, replaceNumber);
     getParam(json.context && json.context.msisdn, result, 'phone', null, replaceNumber);
 	
 	
@@ -173,7 +178,8 @@ function main(){
 			    continue;
 		    }else if(p.productType == 'REGULAR_PRODUCT'){
 			    AnyBalance.trace('Это текущие пакеты с остатками, обрабатываем...');
-				getParam(p.cost.finalCost, result, 'abon', null, null, parseBalance);
+//				getParam(p.cost.finalCost, result, 'abon', null, null, parseBalance);
+				sumParam(p.cost.finalCost, result, 'abon', null, null, parseBalance, aggregate_sum);
 			    for(var j=0; j<p.resources.length; ++j){
                     var r = p.resources[j];
 				    AnyBalance.trace('Найден пакет ' + r.productSpecCode + ' (' + r.resourceType + ')');
@@ -220,9 +226,25 @@ function main(){
                         AnyBalance.trace('Неизвестный пакет: ' + JSON.stringify(r));
                     }
                 }
+				if(p.options && p.options.length > 0){
+					AnyBalance.trace('Найдены подключенные опции, обрабатываем...');
+					for(var l=0; l<p.options.length; ++l){
+                        var o = p.options[l];
+						AnyBalance.trace('Найдена опция ' + o.name + ' (' + o.category + ')');
+						sumParam(o.cost.finalCost, result, 'abon', null, null, parseBalance, aggregate_sum);
+						if(AnyBalance.isAvailable('options')){
+			                sumParam(o.name + ': ' + o.cost.finalCost + ' ₽', result, 'options', null, null, null, create_aggregate_join(',<br> '));
+			            }
+					}
+				}else{
+					AnyBalance.trace('Подключенных опций не найдено');
+					result.options = 'Нет опций';
+				}
 				getParam(p.duration.begin, result, 'packet_start', null, null, parseDateISO);
 				getParam(p.duration.end, result, 'packet_till', null, null, parseDateISO);
 				getParam(p.duration.end, result, 'next_pay_date', null, null, parseDateISO);
+				getParam(p.offerCode, result, '__tariff');
+				getParam(g_status_tariff[p.status]||p.status, result, 'status_tariff');
 		    }else if(p.productType == 'ROAMING_TRAFFIC'){
 			    AnyBalance.trace('Это доступные пакеты в роуминге, обрабатываем...');
                 for(var j=0; j<p.resources.length; ++j){

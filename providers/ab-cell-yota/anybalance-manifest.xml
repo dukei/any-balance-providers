@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="1">ab-cell-yota</id>
+	<id version="2">ab-cell-yota</id>
 	<name>Yota для смартфона (Россия)</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе, использованных минутах, SMS и трафике для пользователей оператора сотовой связи Yota (https://yota.ru/).</p>
@@ -38,7 +38,9 @@
 		<counter id="traffic_left_roam" name="Интернет в роуминге (осталось)" units=" Мб"/>
 		<counter id="traffic_total_roam" name="Интернет в роуминге (всего)" units=" Мб"/>
 		<counter id="traffic_used_roam" name="Интернет в роуминге (израсходовано)" units=" Мб"/>
+		<counter id="options" name="Подключенные опции" type="html"/>
 		<counter id="status" name="Статус блокировки" type="text"/>
+		<counter id="status_tariff" name="Состояние тарифа" type="text"/>
 		<counter id="phone" name="Телефон" type="text"/>
 <!--	<counter id="fio" name="ФИО" type="text"/> -->
 	</counters>

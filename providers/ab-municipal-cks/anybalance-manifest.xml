@@ -33,7 +33,7 @@
     <counter id="ukrtelecom" name="Послуги Укртелеком" suffix=" ₴" type="numeric"/>
     <counter id="aboncoldwater" name="Абонплата хол.вода" suffix=" ₴" type="numeric"/>
     <counter id="abonhotwater" name="Абонплата гор.вода" suffix=" ₴" type="numeric"/>
-    <counter id="abonheating" name="Абонплата Оплаення" suffix=" ₴" type="numeric"/>
+    <counter id="abonheating" name="Абонплата опалення" suffix=" ₴" type="numeric"/>
     <counter id="address" name="Адреса" type="text"/>
   </counters>
   <keywords>

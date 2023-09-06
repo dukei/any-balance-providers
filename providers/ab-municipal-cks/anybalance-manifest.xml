@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-  <id version="3">ab-municipal-cks</id>
+  <id version="4">ab-municipal-cks</id>
   <name>Центр комунального сервісу</name>
   <description>
     Центр комунального сервісу – Ваш експерт у сфері житлово-комунальних послуг
@@ -31,11 +31,9 @@
     <counter id="cold_water_out" name="Водовідведення холодної води" suffix=" ₴" type="numeric"/>
     <counter id="hot_water_out" name="Водовідведення горячої води" suffix=" ₴" type="numeric"/>
     <counter id="ukrtelecom" name="Послуги Укртелеком" suffix=" ₴" type="numeric"/>
-    <counter id="aboncoldwater" name="Абонентське обслуговування Київводоканал" suffix=" ₴" type="numeric"/>
-    <counter id="abonhotwater" name="Абонентське обслуговування Київводоканал" suffix=" ₴" type="numeric"/>
-    <counter id="abonheating" name="Абонентське обслуговування Київводоканал" suffix=" ₴" type="numeric"/>
-    
-    
+    <counter id="aboncoldwater" name="Абонплата хол.вода" suffix=" ₴" type="numeric"/>
+    <counter id="abonhotwater" name="Абонплата гор.вода" suffix=" ₴" type="numeric"/>
+    <counter id="abonheating" name="Абонплата Оплаення" suffix=" ₴" type="numeric"/>
     <counter id="address" name="Адреса" type="text"/>
   </counters>
   <keywords>

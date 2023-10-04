@@ -250,13 +250,32 @@ function main() {
 		
 		        var json = getJson(html);
 	            AnyBalance.trace(JSON.stringify(json));
+			} else if (json.mfa_details.type == 'TTP') {
+			    AnyBalance.trace('Госуслуги затребовали код подтверждения из Яндекс Ключ');
+                
+			    var details = json.mfa_details.ttp_details;
+			
+			    var code = AnyBalance.retrieveCode('Пожалуйста, введите код подтверждения, предоставленный системой Яндекс Ключ', null, {inputType: 'number', minLength: details.code_length, maxLength: details.code_length, time: 180000});
+			    
+			    html = AnyBalance.requestPost('https://esia.gosuslugi.ru/aas/oauth2/api/login/totp/verify?code=' + code, null, addHeaders({
+		        	'Accept': 'application/json, text/plain, */*',
+                    'Content-Type': 'application/json',
+		        	'Origin': 'https://esia.gosuslugi.ru',
+		        	'Referer': 'https://esia.gosuslugi.ru/login/',
+		        }));
+		
+		        var json = getJson(html);
+	            AnyBalance.trace(JSON.stringify(json));
+			} else {
+				AnyBalance.trace(html);
+		    	throw new AnyBalance.Error('Неизвестный способ двухфакторной авторизации: ' + json.mfa_details.type, null, true);
 			}
 
             if (json.action != 'DONE') {
 		        var error = json.error || json.failed;
     	        if (error) {
 		            AnyBalance.trace(html);
-		    		throw new AnyBalance.Error('Неверный код подтверждения!', null, /otp|invalid/i.test(error));
+		    		throw new AnyBalance.Error('Неверный код подтверждения!', null, /otp|ttp|invalid/i.test(error));
     	        }
 
     	        AnyBalance.trace(html);

@@ -10,24 +10,24 @@ var g_headers = {
 	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
 };
 
-function getCurrent(html, result, value) {
-	getParam(html, result, value + '_bid', new RegExp('\\(' + value + '\\)([^>]*>){4}', 'i'), replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, value + '_ask', new RegExp('\\(' + value + '\\)([^>]*>){6}', 'i'), replaceTagsAndSpaces, parseBalance);
+function getCurrent(result, value) {
+	const now = Math.floor(+new Date()/1000);
+
+	const vn = value.replace(/\//g, '');
+	const text = AnyBalance.requestGet("https://charts.profinance.ru/html/tw/history?symbol=" + value + "&resolution=1&from=" + (now - 3600) + "&to=" + now, addHeaders({Referer: "https://www.profinance.ru/" + vn.toLowerCase()})); 
+	const json = JSON.parse(text);
+
+	getParam(json.l[json.l.length-1], result, vn + '_bid');
+	getParam(json.h[json.h.length-1], result, vn + '_ask');
 }
 
 function main() {
 	var baseurl = 'https://www.profinance.ru/chart/usdrub/';
 	AnyBalance.setDefaultCharset('utf-8');
 	
-	var html = AnyBalance.requestGet(baseurl, g_headers);
-	
-	if(!html || AnyBalance.getLastStatusCode() > 400)
-		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
-	
 	var result = {success: true};
 	
-	getCurrent(html, result, 'USDRUB');
-	getCurrent(html, result, 'EURRUB');
-	
+	getCurrent(result, 'USD/RUB');
+	getCurrent(result, 'EUR/RUB');
 	AnyBalance.setResult(result);
 }

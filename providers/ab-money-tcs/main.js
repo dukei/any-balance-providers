@@ -7,6 +7,7 @@
 
 var g_countersTable = {
 	common: {
+		"increasedcashback": "increasedcashback",
 	}, 
 	card: {
     	"balance": "cards.available",
@@ -24,6 +25,7 @@ var g_countersTable = {
 		"rate": "accounts.pct",
 		"till": "cards.till",
 		"limit": "accounts.limit",
+		"status": "cards.status",
 		"c2coutleft": "accounts.c2c_out_left",
 		"freeaddleft": "accounts.free_add_left",
 		"freecashleft": "accounts.free_cash_left",
@@ -40,6 +42,7 @@ var g_countersTable = {
 		"pcts": "deposits.pct_sum",
 		"rate": "deposits.pct",
 		"till": "deposits.till",
+		"status": "deposits.status",
 		"accnum": "deposits.num"
 	},
     acc: {
@@ -55,6 +58,7 @@ var g_countersTable = {
 		"debt": "accounts.debt",
 		"rate": "accounts.pct",
 		"limit": "accounts.limit",
+		"status": "accounts.status",
 		"c2coutleft": "accounts.c2c_out_left",
 		"freeaddleft": "accounts.free_add_left",
 		"freecashleft": "accounts.free_cash_left",
@@ -71,6 +75,7 @@ var g_countersTable = {
 		"__tariff": "savings.name",
 		"pcts": "savings.pct_sum",
 		"accnum": "savings.num",
+		"status": "savings.status",
 		"rate": "savings.pct",
 	},
 
@@ -85,16 +90,18 @@ function main(){
 
     var adapter = new NAdapter(joinObjects(g_countersTable[prefs.type], g_countersTable.common), shouldProcess);
 	
-//    adapter.processInfo = adapter.envelope(processInfo);
+//  adapter.processInfo = adapter.envelope(processInfo);
     adapter.processCards = adapter.envelope(processCards);
     adapter.processAccounts = adapter.envelope(processAccounts);
     adapter.processDeposits = adapter.envelope(processDeposits);
     adapter.processSavings = adapter.envelope(processSavings);
+	adapter.processCategories = adapter.envelope(processCategories);
 
 	login();
 	
 	var result = {success: true};
-
+	
+	adapter.processCategories(result);
 //	adapter.processInfo(result);
 	
 	if(prefs.type == 'card') {

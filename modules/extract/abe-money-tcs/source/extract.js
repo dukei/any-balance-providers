@@ -29,6 +29,15 @@ var g_system = {
 	undefined: ''
 };
 
+var g_status = {
+	NORM: 'Активен',
+	ACTIVE: 'Активен',
+	CLOSED: 'Закрыт',
+	ARRESTED: 'Арестован',
+	BLOCKED: 'Заблокирован',
+	undefined: ''
+};
+
 var g_baseurl = 'https://api.tinkoff.ru/v1/';
 var g_sessionid;
 var g_postParams = {
@@ -68,6 +77,7 @@ function requestJson(action, data, options) {
 	params.push(encodeURIComponent('connectionType') + '=' + encodeURIComponent(g_postParams.connectionType));
 	params.push(encodeURIComponent('deviceId') + '=' + encodeURIComponent(getDeviceId()));
 
+	AnyBalance.trace('Запрос : ' + action);
 	if(options.post) {
 		html = AnyBalance.requestPost(g_baseurl + action + '?' + params.join('&'), options.post, g_headers);
 	}else{
@@ -75,6 +85,7 @@ function requestJson(action, data, options) {
 	}
 
 	var json = getJson(html);
+	AnyBalance.trace('Ответ: ' + JSON.stringify(json));
 	
 	if(json.resultCode != 'OK' && !options.noException) {
 		AnyBalance.trace('Ошибка: ' + action + ', ' + json.errorMessage);
@@ -317,9 +328,37 @@ function processCard(card, acc, result){
 	getParam(g_system[jspath1(card, '$.paymentSystem')]||jspath1(card, '$.paymentSystem'), result, 'cards.payment_system');
 
     getParam(jspath1(acc, '$.externalAccountNumber'), result, 'cards.accnum');
-
-    if(AnyBalance.isAvailable('cards.transactions'))
+	
+	if(AnyBalance.isAvailable('cards.transactions'))
         processCardsTransactions(result);
+}
+
+function processCategories(result){
+	if(!AnyBalance.isAvailable('increasedcashback'))
+        return;
+	
+	AnyBalance.trace('Пробуем получить данные по повышенному кэшбэку...');
+	var json = requestJson('client_offer_essences');
+	
+	for(var i = 0; i < json.payload.length; i++) {
+        var pld = json.payload[i];
+			
+		if(pld.essences && pld.essences.length > 0){
+		    AnyBalance.trace('Найдено категорий: ' + pld.essences.length);
+		    for(var i = 0; i < pld.essences.length; i++) {
+                var category = pld.essences[i];
+			    
+				if(!jspath1(category, '$.isActive')){
+					continue;
+				}else{
+					sumParam(jspath1(category, '$.name')  + ': ' + jspath1(category, '$.percent') + '%', result, 'increasedcashback', null, null, null, create_aggregate_join(',<br> '));
+			    }
+		    }
+	    }else{
+		    AnyBalance.trace('Не удалось найти информацию по категориям месяца');
+		    result.increasedcashback = 'Нет данных';
+	    }
+	}
 }
 
 function processAccounts(result){
@@ -376,7 +415,7 @@ function processAccount(acc, result){
     getParam(jspath1(acc, '$.renewalAmountLeft.value'), result, 'accounts.free_add_left');
 
     getParam(jspath1(acc, '$.rate'), result, 'accounts.pct');
-    getParam(jspath1(acc, '$.status'), result, 'accounts.status_code'); //NORM
+    getParam(g_status[jspath1(acc, '$.status')]||jspath1(acc, '$.status'), result, 'accounts.status'); //NORM
 
     getParam(jspath1(acc, '$.creditLimit.value'), result, 'accounts.limit');
 
@@ -482,7 +521,7 @@ function processDeposit(acc, result){
 
     getParam(jspath1(acc, '$.period'), result, 'deposits.period'); //В месяцах
 
-    getParam(jspath1(acc, '$.status'), result, 'deposits.status_code'); //ACTIVE
+    getParam(g_status[jspath1(acc, '$.status')]||jspath1(acc, '$.status'), result, 'deposits.status'); //ACTIVE
 
     if(AnyBalance.isAvailable('deposits.accnum')){
         var acccur = findAccountById(jspath1(acc, '$.currentLinkedAccount'));
@@ -510,7 +549,7 @@ function processSaving(acc, result){
     getParam(jspath1(acc, '$.moneyAmount.value'), result, ['savings.available', 'savings.currency']);
     getParam(g_currency[jspath1(acc, '$.moneyAmount.currency.name')]||jspath1(acc, '$.moneyAmount.currency.name'), result, ['savings.currency', 'savings.balance']);
 
-    getParam(jspath1(acc, '$.status'), result, 'savings.status_code'); //ACTIVE
+    getParam(g_status[jspath1(acc, '$.status')]||jspath1(acc, '$.status'), result, 'savings.status'); //ACTIVE
 
     if(AnyBalance.isAvailable('savings.transactions'))
         processSavingsTransactions(result);

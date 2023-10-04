@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="41">ab-money-tcs</id>
+	<id version="42">ab-money-tcs</id>
 	<api flags="no_browser" min_level="4"/>
 	<name>Тинькофф Банк</name>
 	<description html="true"><![CDATA[
@@ -48,6 +48,8 @@
 		<counter id="paymentsystem" name="Платежная система" type="text"/>
 		<counter id="name" name="Название" type="text"/>
 		<counter id="accnum" name="Номер счета" type="text"/>
+		<counter id="status" name="Статус" type="text"/>
+		<counter id="increasedcashback" name="Повышенный кэшбэк" type="html"/>
 		<counter id="c2coutlimit" name="Переводы в другой банк (Лимит)" units=" {@currency}"/>
 		<counter id="freeaddlimit" name="Бесплатные пополнения (Лимит)" units=" {@currency}"/>
 		<counter id="freecashlimit" name="Сумма льготного снятия (Лимит)" units=" {@currency}"/>

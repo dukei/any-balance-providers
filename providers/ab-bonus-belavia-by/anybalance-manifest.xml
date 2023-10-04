@@ -1,15 +1,16 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id version="1">ab-bonus-belavia-by</id>
-	<name>BelAvia</name>
+	<id version="3">ab-bonus-belavia-by</id>
+	<name>Белавиа Лидер</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о бонусном балансе Авиакомпании «Белавиа» (https://belavia.by/).</p>   
-	<p>Информация берется из личного кабинета.
+	<p>Предоставляет информацию о балансе баллов, полетных сегментах и другие данные для участников программы лояльности "Белавиа Лидер" (https://belavia.by/leader/).</p>
+	<p>Информация берется из личного кабинета Белавиа Лидер на сайте https://leader.belavia.by/loyalty/.</p>
 	]]></description>
 	<instruction html="true"><![CDATA[
+	<p>Для работы провайдера требуется ввести логин и пароль для входа в личный кабинет Белавиа Лидер.</p>
+	<p>Если у вас нет личного кабинета Белавиа Лидер, вы можете зарегистрировать его на сайте https://leader.belavia.by/loyalty/frame/registration/.</p>
 	]]></instruction>
-  <author>DimaZUA &lt;DIMAZ.KHUA@gmail.com&gt;</author>
   <depends>
     <module id="library"/>
   </depends>
@@ -20,13 +21,18 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс"/>
-		<counter id="ball" name="Квалификационные баллы" />
-		<counter id="segments" name="Количество сегментов"/>
+		<counter id="balance" name="Баланс" units=" Б"/>
+		<counter id="ball" name="Квалификационные баллы"  units=" кБ"/>
+		<counter id="segments" name="Полетные сегменты" units=" пС"/>
 		<counter id="forNext" name="До следующего уровня" type="text"/>
-		<counter id="card" name="Карта" type="text"/>
+		<counter id="cardnum" name="Номер карты" type="text"/>
+		<counter id="type" name="Тип карты" type="text"/>
+		<counter id="level" name="Текущий уровень" type="text"/>
+		<counter id="email" name="E-mail" type="text"/>
+		<counter id="phone" name="Телефон" type="text"/>
+		<counter id="fio" name="ФИО" type="text"/>
 	</counters>
-	<keywords></keywords>
+	<keywords>Belavia, Белавиа, lider, лидер</keywords>
 	<type>bonus</type>
 	<country>by</country>
 </provider>

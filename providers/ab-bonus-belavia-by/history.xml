@@ -1,6 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="3" date="2023-10-03">
+	- Поддержка нового личного кабинета
+	- Добавлена информация по уровню участия
+	</change>
+	<change version="2" date="2023-10-03">
+	- Поддержка нового личного кабинета
+	</change>
 	<change version="1" date="2021-03-02">
-	- первая версия
+	- Первая версия
 	</change>
 </history>

@@ -21,6 +21,15 @@
 		dialogMessage="Введите пароль, используемый для входа в ИССА."
 		inputType="textPassword">
 	</EditTextPreference>
+	<EditTextPreference
+		title="Номер телефона"
+		key="phone"
+		summary="Последние 4 цифры номера телефона|Автоматически\n|{@s}\n"
+		dialogTitle="Номер телефона"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите последние 4 цифры номера телефона, по которому вы хотите получать информацию. Если оставить поле пустым, будет показана информация по первому номеру телефона">
+	</EditTextPreference>
 	<ListPreference
 		key="source"
 		title="Категория"

@@ -1,25 +1,25 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="72">ab-cell-velcom</id>
+	<id version="74">ab-cell-velcom</id>
 	<api flags="no_browser"/>
 	<name>A1 (Беларусь)</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе, использованных минутах, трафике для пользователей мобильной связи и фиксированного интернета белорусского оператора сотовой связи А1.</p>
-	<p>Информация берется из интернет-службы сервиса абонента (ИССА) по адресу https://my.a1.by/.</p>
+	<p>Предоставляет информацию о балансе, использованных минутах, трафике для пользователей мобильной связи и фиксированного интернета белорусского оператора сотовой связи А1 (https://www.a1.by/ru/).</p>
+	<p>Информация берется из интернет-службы сервиса абонента (ИССА) на сайте https://myaccount.a1.by/.</p>
 	]]></description>
 	<instruction html="true"><![CDATA[
 	<p>Как зарегистрироваться в ИССА:</p>
 	<ol>
-	<li>Перейдите по ссылке «Регистрация» на странице https://my.a1.by.</li>
+	<li>Перейдите по ссылке «Зарегистрироваться» на странице https://myaccount.a1.by/login.</li>
 	<li>Введите номер своего телефона и получите ВРЕМЕННЫЙ пароль (действует 1 час).</li>
-	<li>Зайдите через браузер в ИССА, используя полученный пароль, и смените его на ПОСТОЯННЫЙ (действует 1 год) в меню ""Дополнительно/Изменить пароль"".</li>
+	<li>Зайдите через браузер в ИССА, используя полученный пароль, и смените его на ПОСТОЯННЫЙ (действует 1 год) в меню "Дополнительно/Изменить пароль".</li>
 	<li>Введите постоянный пароль в этот провайдер, чтобы получить баланс.</li>
 	</ol>
 	]]></instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
-        <depends>
-            <module id="library"/>
-        </depends>
+    <depends>
+        <module id="library"/>
+    </depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
@@ -28,23 +28,34 @@
 	</files>
 	<counters>
 		<counter id="balance" name="Баланс" units=" р"/>
-		<counter id="min" name="Минуты" units=" мин"/>
-		<counter id="sms" name="Сообщения" units=" смс"/>
-		<counter id="mms" name="MMS" units=" ммс"/>
-		<counter id="min_velcom" name="Минуты на Velcom" units=" мин vc"/>
-		<counter id="min_fn" name="Минуты на любимые номера" units=" мин лн"/>
-		<counter id="traffic" name="Трафик" units=" Мб"/>
-		<counter id="traffic_night" name="Трафик (ночь)" units=" Мб"/>
-		<counter id="traffic_total" name="Трафик всего" units=" Мб"/>
 		<counter id="balanceBonus" name="Бонусный баланс" units=" р"/>
-		<counter id="userNum" name="Номер абонента" type="text"/>
+		<counter id="spendingSum" name="Сумма начислений" units=" р"/>
+		<counter id="abon" name="Абонплата по тарифу" units=" {@perunit}"/>
+		<counter id="min_left" name="Минуты (осталось)" units=" мин" type="time_interval" format="{@MIN}"/>
+		<counter id="sms_left" name="SMS (осталось)" units=" sms"/>
+		<counter id="traffic_left" name="Интернет (осталось)" units=" Мб"/>
+		<counter id="min_total" name="Минуты (всего)" units=" мин" type="time_interval" format="{@MIN}"/>
+		<counter id="sms_total" name="SMS (всего)" units=" sms"/>
+		<counter id="traffic_total" name="Интернет (всего)" units=" Мб"/>
+		<counter id="min_used" name="Минуты (израсходовано)" units=" мин" type="time_interval" format="{@MIN}"/>
+		<counter id="sms_used" name="SMS (израсходовано)" units=" sms"/>
+		<counter id="traffic_used" name="Интернет (израсходовано)" units=" Мб"/>
+		<counter id="services_count" name="Подключенные услуги" prefix="💼 " units=" шт"/>
+		<counter id="services_paid" name="Платные услуги" prefix="💵 " units=" шт"/>
+		<counter id="services_free" name="Бесплатные услуги" prefix="🎁 " units=" шт"/>
+		<counter id="services_abon_month" name="Абонплата за услуги (в месяц)" units=" р/мес"/>
+		<counter id="services_abon_day" name="Абонплата за услуги (в сутки)" units=" р/сут"/>
+		<counter id="club" name="Уровень участия" type="text"/>
 		<counter id="acc" name="Номер лицевого счета" type="text"/>
 		<counter id="status" name="Статус" type="text"/>
-		<counter id="userName" name="ФИО" type="text"/>
+		<counter id="paymentType" name="Форма оплаты" type="text"/>
 		<counter id="loan_balance" name="Размер ежемесячного платежа" units=" р"/>
-		<counter id="loan_left" name="Оставшаяся к выплате сумма по рассрочке" units=" р"/>
+		<counter id="loan_next" name="Дата следующего платежа" type="time" format="dd.MM.yyyy"/>
+		<counter id="loan_left" name="Осталось к оплате по рассрочке" units=" р"/>
 		<counter id="loan_end" name="Дата погашения рассрочки" type="time" format="dd.MM.yyyy"/>
-		<counter id="call_barring" name="Запрет исходящих с" type="time" format="dd.MM.yyyy"/>
+		<counter id="orgName" name="Организация" type="text"/>
+		<counter id="userNum" name="Номер абонента" type="text"/>
+		<counter id="userName" name="ФИО" type="text"/>
 	</counters>
 	<keywords>А1, велком, мобильный, velcome, интернет, шпаркi дамавiк, атлант телеком</keywords>
 	<type>cell, internet</type>

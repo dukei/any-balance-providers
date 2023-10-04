@@ -15,6 +15,7 @@
 	<depends>
 		<module id="library"/>
 		<module id="misc/saved-data"/>
+		<module id="framework/browser"/>
 	</depends>
 	<files>
 		<icon>icon.png</icon>

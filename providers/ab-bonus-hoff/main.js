@@ -26,16 +26,12 @@ function main() {
 
 	g_savedData.restoreCookies();
 
-	var html = AnyBalance.requestGet(baseurl + '/', g_headers);
+	var html = loadProtectedPage(g_headers);
 
     if (!html || AnyBalance.getLastStatusCode() > 500) {
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Сайт провайдера временно недоступен! Попробуйте обновить данные позже');
 	}
-	
-	if (/iwaf/.test(html)){
-       	loadProtectedPage();
-    }
 	
 	html = AnyBalance.requestGet(baseurl + '/vue/me/', g_headers);
 
@@ -169,26 +165,65 @@ function loginSite(prefs) {
 	return html;
 }
 
-function loadProtectedPage(html){
+function loadProtectedPage(headers){
 	var prefs = AnyBalance.getPreferences();
-	
-    AnyBalance.trace('Обнаружена защита от роботов! Пробуем обойти...');
-	
-	var html = AnyBalance.requestGet(baseurl + '/vue/me/', g_headers);
-	var iwafCookieName = getParam(html, null, null, /iwaf_js_cookie_([\s\S]*?)=[\s\S]*?;/i, replaceTagsAndSpaces);
-	var iwafJsCookieValue = getParam(html, null, null, /iwaf_js_cookie_[\s\S]*?=([\s\S]*?);/i, replaceTagsAndSpaces);
-	AnyBalance.setCookie('hoff.ru', 'iwaf_js_cookie_' + iwafCookieName, '' + iwafJsCookieValue);
-	
-	var html = AnyBalance.requestGet(baseurl + '/', addHeaders({'referer': baseurl + '/iwaf-challenge'}));
-	
-	if(/iwaf/.test(html)||AnyBalance.getLastStatusCode()==403){
-        throw new AnyBalance.Error('Не удалось обойти защиту. Сайт изменен?');
-    }else{
-        AnyBalance.trace('Защита от роботов успешно пройдена');
-	}
+	const url = 'https://hoff.ru/';
 
-    g_savedData.setCookies();
-	g_savedData.save();
+    var html = AnyBalance.requestGet(url, headers);
+    if(/__qrator/.test(html) || AnyBalance.getLastStatusCode() == 401) {
+        AnyBalance.trace("Обнаружена защита от роботов. Пробуем обойти...");
+        clearAllCookies();
+
+        const bro = new BrowserAPI({
+            provider: 'hoff',
+            userAgent: g_headers["user-agent"],
+            rules: [{
+                url: /^data:/.toString(),
+                action: 'abort',
+            },{
+                resType: /^(image|stylesheet|font)$/.toString(),
+                action: 'abort',
+            }, {
+                url: /_qrator\/qauth_utm_v2(?:_\w+)?\.js/.toString(),
+                action: 'cache',
+                valid: 3600*1000
+            }, {
+                url: /_qrator/.toString(),
+                action: 'request',
+            }, {
+                resType: /^(image|stylesheet|font|script)$/i.toString(),
+                action: 'abort',
+            }, {
+                url: /\.(png|jpg|ico|svg)/.toString(),
+                action: 'abort',
+            }, {
+                url: /hoff\.ru/i.toString(),
+                action: 'request',
+            }, {
+		        url: /.*/.toString(),
+		        action: 'abort'
+            }],
+            debug: AnyBalance.getPreferences().debug
+        });
+
+        const r = bro.open(url);
+        try {
+            bro.waitForLoad(r.page);
+            html = bro.content(r.page).content;
+            const cookies = bro.cookies(r.page, url);
+            BrowserAPI.useCookies(cookies);
+        } finally {
+            bro.close(r.page);
+        }
+
+        if(/__qrator|HTTP 40[31]/.test(html)||AnyBalance.getLastStatusCode() >= 400)
+            throw new AnyBalance.Error('Не удалось обойти защиту. Сайт изменен?');
+
+        AnyBalance.trace("Защита от роботов успешно пройдена");
+        AnyBalance.saveCookies();
+    	AnyBalance.saveData();
+
+    }
 
     return html;
 }

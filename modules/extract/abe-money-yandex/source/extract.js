@@ -245,17 +245,19 @@ function loginAndGetBalance(prefs, result) {
 		try{
 			var html = AnyBalance.requestGet(baseurl + 'cards', g_headers);
 			var wdc = getJsonObject(html, /window.__data__\s*?=/);
-			var cards = wdc.userCards;
-			if (cards && cards.length > 0){
-				card = cards[0];
+			var cardList = wdc.preloadedState && wdc.preloadedState.cardList;
+			var cards = cardList.ids;
+			if(cards && cards.length > 0){
+				var cardIds = cards[0];
+				var card = cardList.entities[cardIds];
 				getParam(card.panFragment.panLast4, result, 'cardNumber', /\d{4}$/, [/(\d{4})/, "**** $1"]);
 				getParam(g_system[card.paymentSystem]||card.paymentSystem, result, 'paymentSystem');
 				getParam(g_type[card.media]||card.media, result, 'cardType');
 				var date = getParam (card.expirationDate, null, null, null, null, parseDateISO);
-		        if (date){
+		        if(date){
 	        		result.cardDate = date;
 	        		var days = Math.ceil((date - (new Date().getTime())) / 86400 / 1000);
-	        		if (days >= 0){
+	        		if(days >= 0){
 	        			result.cardDays = days;
 	        		}else{
 	        			AnyBalance.trace('Дата деактивации уже наступила');

@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="46">ab-money-yandex</id>
+	<id version="47">ab-money-yandex</id>
 	<api flags="no_browser" />
 	<name>ЮMoney</name>
 	<description html="true"><![CDATA[
@@ -26,16 +26,16 @@
 		<counter id="bonus" name="Баллы" units=" Б"/>
 		<counter id="number" name="Номер счета" type="text"/>
 		<counter id="currency" name="Валюта счета" type="text"/>
-		<counter id="accountStatus" name="Статус" type="text"/>
-		<counter id="userName" name="ФИО" type="text"/>
 		<counter id="cardNumber" name="Номер карты" type="text"/>
 		<counter id="paymentSystem" name="Платежная система" type="text"/>
 		<counter id="cardDate" name="Дата дейстия карты" type="time" format="dd.MM.yyyy"/>
 		<counter id="cardDays" name="Срок действия карты" units=" дн"/>
 		<counter id="cardType" name="Тип карты" type="text"/>
+		<counter id="accountStatus" name="Статус" type="text"/>
 		<counter id="lastOperDate" name="Дата последней операции" type="time" format="dd.MM.yyyy"/>
 		<counter id="lastOperSum" name="Сумма последней операции" units=" {@currency}"/>
 		<counter id="lastOperDesc" name="Тип последней операции" type="text"/>
+		<counter id="userName" name="ФИО" type="text"/>
 	</counters>
 	<keywords>яндекс-деньги, yandex money, юмани, ю-мани, юmoney</keywords>
 	<type>money, wallet</type>

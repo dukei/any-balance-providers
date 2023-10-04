@@ -44,7 +44,7 @@ function requestApiInner(url, params, no_default_params, ignoreErrors) {
 
 	var code = getParam(html, null, null, /<status>\s*<code>\s*(-?\d+)\s*<\/code>/i, null, parseBalance);
 	
-	if(!/<status>\s*<code>\s*0\s*<\/code>/i.test(html)) {
+	if(!/<status>\s*<code>\s*0\s*<\/code>/i.test(html) && !/loyaltyURL.do/i.test(url)) { // Запрос Спасибо частенько глючит, не будем из-за него бросать Error
 		AnyBalance.trace(html);
 		if(!ignoreErrors){
 			var error = sumParam(html, null, null, /<error>\s*<text>\s*(?:<!\[CDATA\[)?([\s\S]*?)(?:\]\]>)?\s*<\/text>\s*<\/error>/ig, replaceTagsAndSpaces, null, aggregate_join);
@@ -560,7 +560,17 @@ function processThanksAPI(result){
 		var html = requestApi('private/profile/loyaltyURL.do');
 		
 		var url = getParam(html, null, null, /<url>([^<]{10,})/i, replaceTagsAndSpaces);
+		if(!url){
+			AnyBalance.trace('Не удалось получить url для бонусов Спасибо:\n ' + html);
+			result.spasibo = null;
+			return;
+		}
 		var sat = getParam(url, null, null, /sat=([\s\S]*)/i, replaceTagsAndSpaces);
+		if(!sat){
+			AnyBalance.trace('Не удалось получить sat для бонусов Спасибо:\n ' + html);
+			result.spasibo = null;
+			return;
+		}
 		if(sat) {
 			html = AnyBalance.requestGet('https://bonus-spasibo.ru/sbrf-mobile/api/participant/info?sat=' + sat);
 			var json = getJson(html);

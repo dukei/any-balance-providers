@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="13">ab-municipal-nalog-ru</id>
+	<id version="14">ab-municipal-nalog-ru</id>
 	<name>Федеральная Налоговая Служба (ФНС)</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о задолженности по налогам с сайта Федеральной Налоговой Службы (ФНС) https://nalog.ru/.</p>
@@ -25,6 +25,7 @@
 	</files>
 	<counters>
 		<counter id="arrears" name="Задолженность" units=" ₽"/>
+		<counter id="accruals" name="Сумма к уплате" units=" ₽"/>
 		<counter id="overpay" name="Переплата" units=" ₽"/>
 		<counter id="enp" name="Единый налоговый платеж" units=" ₽"/>
 		<counter id="enpconfirmed" name="Подтвержденная сумма ЕНП" units=" ₽"/>

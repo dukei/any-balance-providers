@@ -52,34 +52,110 @@ function main(){
 		getParam(json.sumToPay, result, 'arrears', null, null, parseBalance);
 	}
 	
-	if(AnyBalance.isAvailable(['appears', 'transport', 'property', 'land'])){
+	if(AnyBalance.isAvailable(['appears', 'accruals', 'transport', 'property', 'land', 'daysleft'])){
 	    html = AnyBalance.requestGet(baseurl + '/lkfl/api/v1/taxes/cards', addHeaders({
 			'Authorization': 'Bearer ' + accessToken,
 			'Referer': baseurl + '/lkfl/'
 		}));
         
 		json = getJson(html);
-		AnyBalance.trace('Категории: ' + JSON.stringify(json));
+		AnyBalance.trace('Категории налогов: ' + JSON.stringify(json));
 		
 		getParam(json.totalSumToPay, result, 'arrears', null, null, parseBalance);
 		
 		if(json.taxesGroup && json.taxesGroup.length>0){
 	        for(var i=0; i<json.taxesGroup.length; ++i){
 	        	var tax = json.taxesGroup[i];
-	        	AnyBalance.trace('Найден налог ' + tax.taxType);
-	        	if(tax.taxType === 'TRANSPORT'){
+	        	AnyBalance.trace('Найден налог: ' + tax.taxType);
+	        	if(tax.taxType == 'TRANSPORT'){
 	        		getParam(tax.totalSum, result, 'transport', null, null, parseBalance);
-	        	}else if(tax.taxType === 'PROPERTY'){
+	        	}else if(tax.taxType == 'PROPERTY'){
 	        		getParam(tax.totalSum, result, 'property', null, null, parseBalance);
-	        	}else if(tax.taxType === 'LAND'){
+	        	}else if(tax.taxType == 'LAND'){
 	        		getParam(tax.totalSum, result, 'land', null, null, parseBalance);
 	        	}else{
 	        		AnyBalance.trace('Неизвестный тип налога: ' + tax.taxType);
 	        	}
 	        }
 	    }else{
-	    	AnyBalance.trace('Не удалось получить информацию по налогам');
+	    	AnyBalance.trace('Не удалось получить информацию о задолженности по налогам. Проверяем предстоящие платежи...');
+			html = AnyBalance.requestPost(baseurl + '/api/lkfl/api/v1/ens/accrualsLiabilitySvnz', JSON.stringify({
+                "filter": {
+                    "liabilityType": "FL",
+                    "sourceDocCodes": [],
+                    "svnzCodes": []
+                },
+                "pagination": {
+                    "page": 0,
+                    "size": 10
+                }
+            }), addHeaders({
+			    'Accept': 'application/json, text/plain, */*',
+			    'Authorization': 'Bearer ' + accessToken,
+			    'Content-Type': 'application/json',
+			    'Origin': baseurl,
+			    'Referer': baseurl + '/lkfl/individual/taxes'
+		    }));
+        
+		    json = getJson(html);
+		    AnyBalance.trace('Предстоящие платежи: ' + JSON.stringify(json));
+		
+		    if(json.content && json.content.length>0){
+				var dates = [];
+				
+	            for(var i=0; i<json.content.length; ++i){
+	        	    var tax = json.content[i];
+	        	    AnyBalance.trace('Найден налог: ' + tax.svnzInfo.title);
+	        	    if(tax.svnzInfo.code == 20){ // Транспортный налог
+	        		    getParam(tax.amount, result, 'transport', null, null, parseBalance);
+						dates.push(getParam(tax.date, null, null, null, null, parseDateISO));
+	        	    }else if(tax.svnzInfo.code == 25){ // Налог на имущество
+	        		    getParam(tax.amount, result, 'property', null, null, parseBalance);
+						dates.push(getParam(tax.date, null, null, null, null, parseDateISO));
+	        	    }else if(tax.svnzInfo.code == 24){ // Земельный налог
+	        		    getParam(tax.amount, result, 'land', null, null, parseBalance);
+						dates.push(getParam(tax.date, null, null, null, null, parseDateISO));
+	        	    }else{
+	        		    AnyBalance.trace('Неизвестный тип налога: ' + tax.svnzInfo.title);
+	        	    }
+	            }
+				
+				var date = findEarliestDate(dates);
+				
+		        if(date){
+	        		var days = Math.ceil((date - (new Date().getTime())) / 86400 / 1000);
+	        		if(days >= 0){
+	        			result.daysleft = days;
+	        		}else{
+	        			AnyBalance.trace('Дата уплаты налогов уже наступила');
+		        		result.daysleft = 0;
+		        	}
+	        	}else{
+ 	        		AnyBalance.trace('Не удалось получить дату уплаты налогов');
+ 	        	}
+	        }else{
+	    	    AnyBalance.trace('Не удалось получить информацию о предстоящих платежах');
+	        }
 	    }
+		
+		if(AnyBalance.isAvailable('accruals')){
+			html = AnyBalance.requestGet(baseurl + '/api/lkfl/api/v1/ens/liabilitiesMeta', addHeaders({
+			    'Authorization': 'Bearer ' + accessToken,
+			    'Referer': baseurl + '/lkfl/individual/taxes'
+		    }));
+        
+		    json = getJson(html);
+		    AnyBalance.trace('Все начисления: ' + JSON.stringify(json));
+			
+			if(json.accruals && json.accruals.length>0){
+	            for(var i=0; i<json.accruals.length; ++i){
+	        	    var accrual = json.accruals[i];
+					sumParam(accrual.amount, result, 'accruals', null, null, parseBalance, aggregate_sum);
+				}
+			}else{
+	    	    AnyBalance.trace('Не удалось получить информацию о начислениях');
+	        }
+		}
 	}
 	
 	if(AnyBalance.isAvailable(['inn', 'notifications', 'email', 'fio'])){
@@ -97,10 +173,6 @@ function main(){
 	}
 	
 	if(AnyBalance.isAvailable('lastoperdate', 'lastopersum', 'lastopertype', 'lastoperdesc')){
-//	    var dt = new Date();
-//		dtBegin = dt.getFullYear() - 1 + '-' + ('0' + (dt.getMonth() + 1)).slice(-2) + '-' + ('0' + (dt.getDate())).slice(-2);
-//		dtEnd = dt.getFullYear() + '-' + ('0' + (dt.getMonth() + 1)).slice(-2) + '-' + ('0' + (dt.getDate())).slice(-2);
-		
 		html = AnyBalance.requestPost(baseurl + '/lkfl/api/v1/taxes/historyOperations', JSON.stringify({
             "pagination": {
                 "page": 0,
@@ -125,7 +197,7 @@ function main(){
 		
         if(json.content && json.content.length>0){
         	var o = json.content[0];
-        	getParam(o.operationDate.replace(/(\d{4})-(\d\d)-(\d\d)/,'$3.$2.$1'), result, 'lastoperdate', null, null, parseDate);
+        	getParam(o.operationDate, result, 'lastoperdate', null, null, parseDateISO);
         	getParam(o.sum, result, 'lastopersum', null, null, parseBalance);
         	getParam(g_type[o.taxType]||o.taxType, result, 'lastopertype');
 			getParam(o.operationDescription, result, 'lastoperdesc');
@@ -321,4 +393,20 @@ function login(){
 	if(!loginToken()){
 		loginPure();
 	}
+}
+
+function findEarliestDate(dates){
+    if(dates.length == 0)
+		return null;
+	
+    var earliestDate = dates[0];
+	
+    for(var i=1; i<dates.length; i++){
+        var currentDate = dates[i];
+        if(currentDate < earliestDate){
+            earliestDate = currentDate;
+        }
+    }
+	
+    return earliestDate;
 }

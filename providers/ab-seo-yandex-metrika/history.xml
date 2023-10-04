@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change version="19" date="2023-09-28">
+	- Поддержка изменений на сайте
+	</change>
     <change version="18" date="2023-08-11">
 	- Поддержка изменений в процедуре входа
 	</change>

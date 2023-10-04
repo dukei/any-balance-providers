@@ -37,7 +37,7 @@ function main() {
 	if (!prefs.debug)
 		html = AnyBalance.requestGet(counter_url, g_headers);
 
-	if (prefs.debug || /<form[^>]+name="MainLogin"|К сожалению, у вас нет прав доступа к этому объекту|Авторизация|войдите под своим именем/i.test(html)) {
+	if (prefs.debug || !/ownLogin|ownDisplayName/i.test(html) || /<form[^>]+name="MainLogin"|К сожалению, у вас нет прав доступа к этому объекту|Авторизация|войдите под своим именем|Начать пользоваться/i.test(html)) {
 		AnyBalance.trace('Сессия новая. Будем логиниться заново...');
         clearAllCookies();
 		var html = '';
@@ -70,7 +70,7 @@ function main() {
 	getParam(getElement(html, /<span[^>]+counter-toolbar__name[^>]*>([\s\S]*?)<\/span>/i), result, '__tariff', null, replaceTagsAndSpaces);
 	getParam(getElement(html, /<span[^>]+counter-toolbar__number[^>]*>([\s\S]*?)<\/span>/i), result, 'counter_id', null, replaceTagsAndSpaces);
 	getParam(getElement(html, /<a[^>]+counter-toolbar__site[^>]*>([\s\S]*?)<\/a>/i), result, 'site', null, replaceTagsAndSpaces);
-
+    
 	var key = meta['i-global'].jsParams['i-api-request'].skv2;
 	var data = [{"ids":prefs.login,"group":"day","calcHash":true,"sort":{"field":"ym:s:datePeriod<group>","direction":"desc"},"mode":"list","offset":0,"limit":50,"parents":null,"metrics":["ym:s:visits","ym:s:users","ym:s:pageviews","ym:s:percentNewVisitors","ym:s:bounceRate","ym:s:pageDepth","ym:s:avgVisitDurationSeconds"],"dimensions":["ym:s:datePeriod<group>"],"segments":[{"period":{"from":dateFrom,"to":dateTo},"filter":"ym:s:datePeriod<group>!n and ym:s:datePeriod<group>!n"}],"accuracy":"medium"}];
 	var rId = meta['i-global'].jsParams['requestId'];

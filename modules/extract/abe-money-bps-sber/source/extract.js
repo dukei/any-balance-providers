@@ -5,7 +5,7 @@
 var g_headers = {
 	Accept: 'application/json; charset=UTF-8',
 	'X-Sbol-OS': 'android',
-	'X-Sbol-Version': '1.4.2',
+	'X-Sbol-Version': '3.7.1',
 	'X-Sbol-Id': '',
 	'Connection': 'Keep-Alive',
 	'User-Agent': 'okhttp/3.6.0',
@@ -341,8 +341,13 @@ function processInfo(json, result){
     var info = result.info = {};
 
     json = apiCall('rest/user/updateProfile', JSON.stringify({}));
+	
+	var person = {};
+	sumParam(json.lastName, person, '__n', null, null, null, create_aggregate_join(' '));
+	sumParam(json.firstName, person, '__n', null, null, null, create_aggregate_join(' '));
+	sumParam(json.middleName, person, '__n', null, null, null, create_aggregate_join(' '));
+	getParam(person.__n, info, 'info.fio', null, null, capitalFirstLetters);
 
-    getParam(json.lastName + ' ' + json.firstName + ' ' + json.middleName, info, 'info.fio');
     getParam(json.passport, info, 'info.passport');
     getParam(json.birthday, info, 'info.birthday');
 }

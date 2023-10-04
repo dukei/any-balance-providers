@@ -221,12 +221,17 @@ function makeAdditionalBalances(result, results, numname){
 		if(i > 0){
 			getParam(results[i].balance, result, 'balance' + i);
 			getParam(results[i][numname], result, numname + i);
-			getParam(results[i].currency, result, ['currency' + i, 'balance' + i], null, null, CurrencyISO.getCurrencySymbol);
+			if(results[i].currency)
+			    getParam(results[i].currency, result, ['currency' + i, 'balance' + i], null, null, CurrencyISO.getCurrencySymbol);
 		}
 		var balance = results[i]['balance'];
 		if(typeof balance == 'undefined')
 			balance = '?';
+		
+		var res = '<b>' + results[i][numname] + ':</b><br/> ' + balance;
+		if(results[i]['currency'])
+			res += ' ' + results[i]['currency'];
 
-		sumParam('<b>' + results[i][numname] + ':</b> ' + balance + ' ' + results[i]['currency']+ '<br/>', result, 'details', null, null, null, create_aggregate_join(''));
+		sumParam(res, result, 'details', null, null, null, create_aggregate_join(',<br/> '));
 	}
 }

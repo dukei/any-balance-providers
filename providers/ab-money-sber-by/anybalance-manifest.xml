@@ -1,13 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="23">ab-money-sber-by</id>
+	<id version="25">ab-money-sber-by</id>
 	<name>СберБанк Онлайн (Беларусь)</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о текущем остатке и другие данные по продуктам ОАО "Сбер Банк" (https://www.sber-bank.by/).</p>
 	<p>Информация берется из мобильного приложения СберБанк Онлайн.</p>
 	]]></description>
 	<instruction html="true"><![CDATA[
+	<p>Для работы провайдера требуется ввести логин и пароль для доступа в интернет-банк.</p>
 	<p>Если у вас нет доступа к интернет-банку, для получения пароля следуйте инструкциям на странице https://www.sber-bank.by/registration-sbol.</p>
 	]]></instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
@@ -31,13 +32,13 @@
 		<counter id="balance2" name="Остаток 3" units=" {@currency2}"/>
 		<counter id="cardnum2" name="Номер продукта 3" type="text"/>		
 		<counter id="pct" name="Процентная ставка" units="%"/>
-		<counter id="till" name="Срок действия" type="time" format="dd/MM/yyyy"/>
+		<counter id="till" name="Срок действия" type="time" format="dd.MM.yyyy"/>
 		<counter id="limit" name="Разрешенный овердрафт" units=" {@currency}"/>
 		<counter id="accnum" name="Номер счета" type="text"/>
-		<counter id="fio" name="Владелец" type="text"/>
 		<counter id="type" name="Название" type="text"/>
 		<counter id="details" name="Сводка" type="html"/>
-		<!-- <counter id="currency" name="Валюта" type="text"/> -->
+		<counter id="currency" name="Валюта" type="text"/>
+		<counter id="fio" name="Владелец" type="text"/>
 	</counters>
 	<keywords>интернет-банкинг</keywords>
 	<type>money, bank</type>

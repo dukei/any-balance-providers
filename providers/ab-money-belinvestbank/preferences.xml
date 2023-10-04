@@ -3,32 +3,32 @@
     <EditTextPreference 
         title="Логин" 
 		key="login"
-        summary="||{@s}" 
+        summary="Логин для входа в личный кабинет|Введите логин\n|{@s}\n"
         obligatory="true"
 		dialogTitle="Логин" 
 		positiveButtonText="ОК" 
         negativeButtonText="Отмена" 
-        dialogMessage="Введите логин, используемый для входа в личный кабинет.">
+        dialogMessage="Введите логин, используемый для входа в личный кабинет">
     </EditTextPreference>
     <EditTextPreference 
         title="Пароль"
 		key="password" 
-		summary="||***********"
+		summary="Пароль для входа в личный кабинет|Введите пароль\n|***********\n"
         obligatory="true"
 		dialogTitle="Пароль"
 		positiveButtonText="ОК"
         negativeButtonText="Отмена"
-        dialogMessage="Введите пароль, используемый для входа в личный кабинет."
+        dialogMessage="Введите пароль, используемый для входа в личный кабинет"
         inputType="textPassword">
     </EditTextPreference>
     <EditTextPreference 
         title="Номер карты" 
 		key="cardnum"
-        summary="||{@s}" 
+        summary="Последние цифры номера карты|Автоматически\n|{@s}\n"
         obligatory="true"
 		dialogTitle="Номер карты" 
 		positiveButtonText="ОК" 
         negativeButtonText="Отмена" 
-        dialogMessage="Введите последние 4 цифры номера карты, либо оставьте поле пустым, для получения данных по первой карте.">
+        dialogMessage="Введите последние 4 цифры номера карты, по которой вы хотите получать информацию. Если оставить поле пустым, будет показана информация по первой карте">
     </EditTextPreference>	
 </PreferenceScreen>

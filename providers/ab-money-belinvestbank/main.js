@@ -3,12 +3,35 @@
 */
 
 var g_headers = {
-	'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+	'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
 	'Accept-Charset':'utf-8, iso-8859-1, utf-16, *;q=0.7',
-	'Accept-Language':'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
+	'Accept-Language':'ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7',
+	'Cache-Control': 'max-age=0',
 	'Connection':'keep-alive',
-	'User-Agent':'Mozilla/5.0 (Linux; U; Android 4.0.4; ru-ru; Android SDK built for x86 Build/IMM76D) AppleWebKit/534.30 (KHTML, like Gecko) Version/4.0 Mobile Safari/534.30',
+	'Upgrade-Insecure-Requests': '1',
+	'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36',
 };
+
+var g_currency = {
+	BYN: 'р',
+	BLR: 'р',
+	RUB: '₽',
+	RUR: '₽',
+	USD: '$',
+	EUR: '€',
+	GBP: '£',
+	JPY: 'Ұ',
+	CHF: '₣',
+	CNY: '¥',
+	undefined: ''
+};
+
+var g_cardKind = {
+	0: 'Дебетовая',
+	1: 'Кредитная',
+	undefined: 'Не определен'
+};
+
 function main() {
 	var prefs = AnyBalance.getPreferences();
 	var baseurl = 'https://ibank.belinvestbank.by/';
@@ -31,16 +54,35 @@ function main() {
 
 		var encryptArrayVar = getParam(html, /var\s*keyLang\s*=\s*\[([^\]]*)/i);
 		var encryptArray = sumParam(encryptArrayVar, /\d+/ig);
-
-		html = AnyBalance.requestPost(loginurl + 'signin', {
+		
+		var params = {
 	        login: prefs.login,
 	        password: cod(prefs.password, encryptArray),
 	        typeSessionKey: 0
-	    }, addHeaders({Referer: loginurl + 'signin'}));
+	    };
+		
+		if(/Код с картинки/i.test(html) && /captcha__img/.test(html)){
+			AnyBalance.trace('Сайт затребовал капчу');
+			var imgUrl = getParam(html, /<div[^>]+class="captcha__img"[^>]*>[\s\S]*?img src=\"([^\"]*)/i);
+			var img2 = joinUrl(loginurl, imgUrl);
+			
+			var img = AnyBalance.requestGet(joinUrl(loginurl, imgUrl), addHeaders({Referer: loginurl + 'signin'}));
+			
+			var keyStr = AnyBalance.retrieveCode("Пожалуйста, введите код с картинки", img, {
+			//	inputType: 'number',
+			//	minLength: 5,
+			//	maxLength: 5,
+				time: 180000
+			});
+			
+			params['keystring'] = keyStr;
+		}
+		
+		html = AnyBalance.requestPost(loginurl + 'signin', params, addHeaders({'Content-Type': 'application/x-www-form-urlencoded', Referer: loginurl + 'signin'}));
 
 		if(!/На Ваш номер телефона/i.test(html) && /showDialog\s*\(\s*'#confirmation_close_session/.test(html)){
 			AnyBalance.trace('Аннулируем предыдущий вход');
-			html = AnyBalance.requestPost(loginurl + 'confirmationCloseSession', {}, addHeaders({Referer: loginurl + 'signin'}));
+			html = AnyBalance.requestPost(loginurl + 'confirmationCloseSession', {}, addHeaders({'Content-Type': 'application/x-www-form-urlencoded', Referer: loginurl + 'signin'}));
 		}
 
 		if(!/На Ваш номер телефона/i.test(html)){
@@ -62,7 +104,7 @@ function main() {
 		html = AnyBalance.requestPost(loginurl + 'signin2', {
 	        action: 1,
 	        key: smsKey
-	    }, addHeaders({Referer: loginurl + 'signin2'}));
+	    }, addHeaders({'Content-Type': 'application/x-www-form-urlencoded', Referer: loginurl + 'signin2'}));
 
 		// ПРОВЕРКА НА НЕВЕРНЫЙ КОД ИЗ СМС!
 		if(!/logout/i.test(html)) {
@@ -75,28 +117,50 @@ function main() {
 		}
 		
 		html = AnyBalance.requestGet(baseurl + 'cards', addHeaders({'Referer':baseurl}));
-		
-		var cards = getElements(html, /<div[^>]+wrapper-newCard/ig);
+
+        var cards = getJsonObject(html, /var cardsList\s*?=\s*?/);
 
 		if(!cards.length){
 			AnyBalance.trace(html);
 			throw new AnyBalance.Error('Не удалось найти ни одной карты!');
 		}
+		
+		var currCard;
+		
+		for(var i=0; i<cards.length; ++i){
+		    var card = cards[i];
+		    AnyBalance.trace('Найдена карта ' + card.num + ' ("' + card.cardName + '")');
+		    if(!currCard && (!prefs.card || endsWith(card.num, prefs.card))){
+	       	    AnyBalance.trace('Выбрана карта ' + card.num + ' ("' + card.cardName + '")');
+	       	    currCard = card;
+	        }
+	    }
 
-		var card = prefs.cardnum ?
-				cards.filter(function(card){ return new RegExp('\\*\\*\\*\\*\\s*' + prefs.cardnum, 'i').test(card); })[0] : cards[0];
-
-		if(!card){
+		if(!currCard){
 			AnyBalance.trace(html);
 			throw new AnyBalance.Error('Не удалось найти' + ( prefs.cardnum ? ' карту с последними цифрами ' + prefs.cardnum : ' ни одной карты!' ));
 		}
 		
-		getParam(card, result, '__tariff', /(\*\*\*\*\s*\d{4})/i, replaceTagsAndSpaces);
-		getParam(card, result, 'balance', /newCard__sum\b[\s'"][^>]*>([^<]+)/i, replaceTagsAndSpaces, parseBalance);
-		getParam(card, result, ['currency', 'balance'], /newCard__valuta[^>]*>([^<]+)/i, replaceTagsAndSpaces);
-		getParam(card, result, 'validto', /newCard__shelf-life[^>]*>([^<]+)/i, replaceTagsAndSpaces, parseDate);
-	//	getParam(card, result, 'status', /(?:[\s\S]*?<td[^>]*>){6}([\s\S]*?)<\//i, replaceTagsAndSpaces);
-
+		var cardId = currCard.msCardId;
+		
+		html = AnyBalance.requestPost(baseurl + 'cards/balance-by-card', {msCardId: cardId}, addHeaders({
+			'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+			'Referer': baseurl,
+			'X-Requested-With': 'XMLHttpRequest'
+		}));
+		
+		var json = getJson(html);
+		
+		getParam(json.balance, result, 'balance', null, null, parseBalance);
+		getParam(g_currency[currCard.currency]||currCard.currency, result, ['currency', 'balance'], null, null);
+		getParam(currCard.currency, result, 'currencyfull', null, null);
+		getParam(currCard.cardName + currCard.fullNum.replace(/(.*)(\d{4})$/i, ' $2'), result, '__tariff', null, null);
+		getParam(currCard.fullNum, result, 'cardnum', null, null);
+		getParam(currCard.cardName, result, 'cardname', null, null);
+		getParam(currCard.type, result, 'cardtype', null, null);
+		getParam(g_cardKind[currCard.isCredit]||currCard.isCredit, result, 'cardkind', null, null);
+		getParam(currCard.cardHolder, result, 'cardholder', null, null);
+		getParam((currCard.expdate)*1000, result, 'validto', null, null);
 	} finally {
 		// Выходим, чтобы закончить сессию. Нужно, так как запрещено 2 одновременных подключения.
 		AnyBalance.requestGet(baseurl + 'logout', g_headers);

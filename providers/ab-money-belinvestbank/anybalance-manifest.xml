@@ -1,12 +1,16 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="17">ab-money-belinvestbank</id>
+	<id version="18">ab-money-belinvestbank</id>
 	<api flags="no_browser|sms"/>
 	<name>Белинвестбанк (Беларусь)</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе банковских карт Белинвестбанка</p>
-	<p>Информация берется из PDA версии интернет-банкинга (https://ibank.belinvestbank.by/signin)</p>
+	<p>Предоставляет информацию о балансе банковских карт Белинвестбанка (https://www.belinvestbank.by/).</p>
+	<p>Информация берется из PDA версии интернет-банкинга на сайте https://ibank.belinvestbank.by/signin.</p>
 	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Для работы провайдера требуется ввести логин и пароль для входа в личный кабинет.</p>
+	<p>Кроме того, для авторизации в личном кабинете потребуется ввести одноразовый сеансовый ключ из SMS, высланного на номер телефона, привязанного к личному кабинету Белинвестбанка.</p>
+	]]></instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>
 		<module id="library"/>
@@ -19,11 +23,15 @@
 	</files>
 	<counters>
 		<counter id="balance" name="Баланс" units=" {@currency}"/>
-		<counter id="currency" name="Валюта" type="text"/>
-		<counter id="validto" name="Срок действия" type="time" format="dd/MM/yyyy"/>
-	<!--	<counter id="status" name="Статус" type="text"/> -->
+		<counter id="currencyfull" name="Валюта" type="text"/>
+		<counter id="cardnum" name="Номер карты" type="text"/>
+		<counter id="cardname" name="Имя карты" type="text"/>
+		<counter id="validto" name="Срок действия" type="time" format="dd.MM.yyyy"/>
+		<counter id="cardtype" name="Тип карты" type="text"/>
+		<counter id="cardkind" name="Вид карты" type="text"/>
+		<counter id="cardholder" name="Имя на карте" type="text"/>
 	</counters>
-	<keywords></keywords>
+	<keywords>интернет-банкинг</keywords>
 	<type>money, bank</type>
 	<country>by</country>
 </provider>

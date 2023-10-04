@@ -1,17 +1,16 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-bonus-mosigra</id>
+	<id version="2">ab-bonus-mosigra</id>
 	<api flags="no_browser"/>
 	<name>Мосигра (Бонусы)</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о бонусном балансе и последнем заказе постоянного покупателя сети магазинов настольных игр Мосигра.</p>
+	<p>Предоставляет информацию о бонусном балансе и последнем заказе постоянного покупателя сети магазинов настольных игр <a href="https://www.mosigra.ru/">Мосигра</a>.</p>
 	<p>Информация берется из личного кабинета Мосигра на сайте https://www.mosigra.ru/account/.</p>
 	]]></description>
 	<instruction html="true"><![CDATA[
 	<p>Для работы провайдера требуется ввести E-mail или номер телефона, привязанного к личному кабинету Мосигра, и пароль для входа в личный кабинет.</p>
 	]]></instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
-	<author>RamzesZeus &lt;ramzeszeus@gmail.com&gt;</author>
 	<depends>
 		<module id="library"/>
 		<module id="misc/saved-data"/>
@@ -38,8 +37,8 @@
 		<counter id="last_order_date" name="Дата посл. заказа" type="time" format="dd.MM.yyyy"/>
 		<counter id="last_order_state" name="Статус посл. заказа" type="text"/>
 		<counter id="last_order_bonuses" name="Бонусы посл. заказа" type="text" units=" Б"/>
-		<counter id="fio" name="ФИО" type="text"/>
 		<counter id="phone" name="Телефон" type="text"/>
+		<counter id="fio" name="ФИО" type="text"/>
 	</counters>
 	<keywords>Mosigra, Мосигра</keywords>
 	<type>bonus</type>

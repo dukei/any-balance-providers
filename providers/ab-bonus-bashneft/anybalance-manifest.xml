@@ -1,14 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="5">ab-bonus-bashneft</id>
+	<id version="7">ab-bonus-bashneft</id>
 	<api flags="no_browser"/>
-	<name>БАШНЕФТЬ (сеть АЗС)</name>
+	<name>Башнефть (сеть АЗС)</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе провайдера Башнефть <a href="http://www.bashneft-azs.ru/">http://www.bashneft-azs.ru/</a></p>
-	<p>Информация берется из личного кабинета <a href="https://www.bashneft-azs.ru/loyalty/personal/">https://www.bashneft-azs.ru/loyalty/personal/</a></p>
+	<p>Предоставляет информацию о балансе и операциях с бонусами для клиентов сети АЗС Башнефть <a href="https://www.bashneft-azs.ru/">https://www.bashneft-azs.ru/</a>.</p>
+	<p>Информация берется из мобильного приложения Башнефть АЗС или из личного кабинета Башнефть на сайте <a href="https://www.bashneft-azs.ru/loyalty/personal/">https://www.bashneft-azs.ru/loyalty/personal/</a>.</p>
 	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Для работы провайдера требуется ввести логин и пароль для входа в личный кабинет Башнефть.</p>
+	<p>Сайт Башнефть обладает защитой от роботов (ReCaptcha v3), поэтому для входа потребуется пройти проверку с помощью приложения Anybalance ReCaptcha или с помощью автоматического распознавания с использованием сервиса RuCaptchа.</p>
+	]]></instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
-	<author>DimaZ &lt;DIMAZ.KHUA@gmail.com&gt;</author>
 	<depends>
 		<module id="library"/>
 	</depends>
@@ -19,12 +22,23 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс"/>
-		<counter id="currency" name="Валюта" type="text"/>
-		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="balance" name="Баланс" units=" Б"/>
+		<counter id="accrualPoints" name="Начислено за месяц" units=" Б"/>
+		<counter id="redeemPoints" name="Потрачено за месяц" units=" Б"/>
+		<counter id="burnPoints" name="Сгораемые бонусы" units=" Б"/>
+		<counter id="burnDate" name="Дата сгорания бонусов" type="time" format="dd.MM.yyyy"/>
+		<counter id="fuelType" name="Тип топлива" type="text"/>
+		<counter id="operSum" name="Сумма посл. операции" units=" ₽"/>
+		<counter id="operDate" name="Дата посл. операции" type="time" format="dd.MM.yyyy"/>
+		<counter id="operType" name="Тип посл. операции" type="text"/>
+		<counter id="operPoints" name="Бонусы по посл. операции" units=" Б"/>
 		<counter id="cardNumber" name="Номер карты" type="text"/>
+		<counter id="address" name="Адрес" type="text"/>
+		<counter id="email" name="E-mail" type="text"/>
+		<counter id="phone" name="Телефон" type="text"/>
+		<counter id="fio" name="ФИО" type="text"/>
 	</counters>
-	<keywords></keywords>
+	<keywords>bashneft, башнефть, bashoil, башойл, fuel, азс</keywords>
 	<type>bonus</type>
 	<country>ru</country>
 </provider>

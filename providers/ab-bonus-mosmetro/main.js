@@ -255,7 +255,7 @@ function main() {
             
 			getParam(ticket.validDateTimeUtc, result, 'lasttickettime');
 	        getParam(ticket.remainDayCount, result, 'lastticketdays');
-	        getParam(ticket.generalName, result, 'lastticketname');
+	        getParam(ticket.ticketName, result, 'lastticketname');
 			getParam(ticketState[ticket.isActive]||ticket.isActive, result, 'lastticketstatus');
 			break;
 	    }
@@ -321,7 +321,7 @@ function main() {
         "periodStartDateUtc": null
     }), addHeaders({'Content-Type': 'application/json', Referer: baseurl + '/operations-history'}));	
 	var json = getJson(html);
-	AnyBalance.trace(JSON.stringify(json));
+	AnyBalance.trace('Operations history from main page: ' + JSON.stringify(json));
 	
 	if(!json.data){
 	    AnyBalance.trace('Не удалось получить историю операций по основной ссылке. Пробуем получить данные со страницы карты...');
@@ -335,7 +335,7 @@ function main() {
             "periodStartDateUtc": ""
         }), addHeaders({'Content-Type': 'application/json', Referer: baseurl + '/my-transport-card/' + cardId}));	
 	    var json = getJson(html);
-	    AnyBalance.trace(JSON.stringify(json));
+	    AnyBalance.trace('Operations history from card page: ' + JSON.stringify(json));
 	}
 	
 	if (json.data && json.data.items && json.data.items.length && json.data.items.length > 0){
@@ -346,7 +346,7 @@ function main() {
 
 	    	if(cardNum == number){
 	    		getParam(item.date, result, 'lastoperdate');
-	    		getParam(item.payment.sum, result, 'lastopersum');
+	    		getParam((item.payment && item.payment.sum)||(item.deferredWrite && item.deferredWrite.sum), result, 'lastopersum');
 	    		getParam(item.displayName, result, 'lastopername');
 	    		break;
 	    	}

@@ -1,16 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id version="2">ab-social-4pda</id>
-	<name>4pda.ru</name>
+	<id version="3">ab-social-4pda</id>
+	<name>4PDA</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию с форума <a href="https://4pda.to/forum/index.php">4PDA.to</a>.</p>
+	<p>Предоставляет информацию о состоянии учетной записи для пользователей портала <a href="https://4pda.to/">4PDA</a>.</p>
+	<p>Информация берется из личного кабинета 4PDA на сайте <a href="https://4pda.to/forum/index.php">https://4pda.to/forum/index.php</a>.</p>
 	]]></description>
 	<instruction html="true"><![CDATA[
-	<p>Для работы провайдера необходимо зарегистрироваться на <a href="https://4pda.to/forum/index.php">4PDA.to</a>.</p>
-
+	<p>Для работы провайдера требуется ввести логин и пароль для входа в личный кабинет 4PDA.</p>
+	<p>Если у вас нет доступа в личный кабинет 4PDA, пройдите регистрацию на странице https://4pda.to/forum/index.php?act=auth#reg.</p>
 	]]></instruction>
-	<author>DimaZUA &lt;DIMAZ.KHUA@gmail.com&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>
 		<module id="library"/>
 	</depends>
@@ -22,13 +23,24 @@
 	</files>
 	<counters>
 		<counter id="reputation" name="Репутация" />
-		<counter id="topics" name="Тем создано"/>
-		<counter id="posts" name="Сообщений отправлено" />
-		<counter id="qms" name="Непрочитанных личных сообщений (QMS)" />
-		<counter id="mentions" name="Непросмотренные упоминания" />
-		<counter id="fav" name="Непрочитанно в избранном" />
+		<counter id="topics" name="Тем на форуме" />
+		<counter id="posts" name="Постов на форуме" />
+		<counter id="qms" name="Личные сообщения" />
+		<counter id="mentions" name="Упоминания" />
+		<counter id="fav" name="Избранное" />
+		<counter id="warnings" name="Предупреждения" units="%"/>
+		<counter id="karma" name="Карма" />
+		<counter id="postssite" name="Постов на сайте" />
+		<counter id="comments" name="Комментов на сайте" />
+		<counter id="status" name="Статус" type="text"/>
+		<counter id="unote" name="Подпись" type="text"/>
+		<counter id="devices" name="Устройства" type="html"/>
+		<counter id="rewards" name="Достижения" type="html"/>
+		<counter id="regdate" name="Дата регистрации" type="time" format="dd.MM.yyyy"/>
+		<counter id="email" name="E-mail" type="text"/>
+        <counter id="username" name="Имя пользователя" type="text"/>
 	</counters>
-	<keywords>форум 4pda</keywords>
-	<type>forum</type>
+	<keywords>4pda, forpda, fourpda, форум</keywords>
+	<type>social</type>
 	<country>ru</country>
 </provider>

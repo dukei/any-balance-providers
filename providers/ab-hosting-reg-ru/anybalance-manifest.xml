@@ -1,15 +1,17 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="11">ab-hosting-reg-ru</id>
-	<name>Reg.ru</name>
+	<id version="12">ab-hosting-reg-ru</id>
+	<name>REG.RU</name>
 	<api flags="no_browser"/>
 	<description html="true"><![CDATA[
-	<p>Получает баланс регистратора reg.ru (http://www.reg.ru)</p>
-	<p>Информация берется из личного кабинета клиента (https://www.reg.ru/)</p>
+	<p>Предоставляет информацию о балансе, доменах и услугах и другие данные для пользователей регистратора доменных имен и хостинг-провайдера <a href="https://www.reg.ru/">REG.RU</a>.</p>
+	<p>Информация берется из личного кабинета REG.RU на сайте https://www.reg.ru/user/.</p>
 	]]></description>
-	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>  
-	<author>DimaZUA &lt;DIMAZ.KHUA@gmail.com&gt;</author>
-        <depends>
+	<instruction html="true"><![CDATA[
+	<p>Для работы провайдера требуется ввести логин и пароль для входа в личный кабинет REG.RU.</p>
+	]]></instruction>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+    <depends>
 		<module id="library"/>
 	</depends>
 	<files>
@@ -19,63 +21,69 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units=" р."/>
-                <counter id="plan" name="Планируемые расходы" units=" р."/>
-                <counter id="user" name="Пользователь" type="text"/>
-                <counter id="dogovor" name="Договор" type="text"/>
-                <counter id="code" name="Код привлечения рефералов" type="text"/>
-                <counter id="currencyRate" name="Внутренний курс USD" units=" р."/>
-                <counter id="notPaidBills" name="Не оплачено счетов на" units=" р.{@notPaidBillsCount}"/>
-
-		<counter id="domain_0" name="Домен 1" type="text"/>
-		<counter id="domain_date_0" name="Дата окончания домена 1" type="time" format="dd.MM.yyyy"/>
-
-		<counter id="domain_1" name="Домен 2" type="text"/>
-		<counter id="domain_date_1" name="Дата окончания домена 2" type="time" format="dd.MM.yyyy"/>
-
-		<counter id="domain_2" name="Домен 3" type="text"/>
-		<counter id="domain_date_2" name="Дата окончания домена 3" type="time" format="dd.MM.yyyy"/>
-
-		<counter id="domain_3" name="Домен 4" type="text"/>
-		<counter id="domain_date_3" name="Дата окончания домена 4" type="time" format="dd.MM.yyyy"/>
-
-		<counter id="domain_4" name="Домен 5" type="text"/>
-		<counter id="domain_date_4" name="Дата окончания домена 5" type="time" format="dd.MM.yyyy"/>
-
-		<counter id="service_0" name="Услуга 1" type="text"/>
-		<counter id="service_date_0" name="Дата окончания услуги 1" type="time" format="dd.MM.yyyy"/>
-
-		<counter id="service_1" name="Услуга 2" type="text"/>
-		<counter id="service_date_1" name="Дата окончания услуги 2" type="time" format="dd.MM.yyyy"/>
-
-		<counter id="service_2" name="Услуга 3" type="text"/>
-		<counter id="service_date_2" name="Дата окончания услуги 3" type="time" format="dd.MM.yyyy"/>
-
-		<counter id="service_3" name="Услуга 4" type="text"/>
-		<counter id="service_date_3" name="Дата окончания услуги 4" type="time" format="dd.MM.yyyy"/>
-
-		<counter id="service_4" name="Услуга 5" type="text"/>
-		<counter id="service_date_4" name="Дата окончания услуги 5" type="time" format="dd.MM.yyyy"/>
-
-		<counter id="service_5" name="Услуга 6" type="text"/>
-		<counter id="service_date_5" name="Дата окончания услуги 6" type="time" format="dd.MM.yyyy"/>
-
-		<counter id="service_6" name="Услуга 7" type="text"/>
-		<counter id="service_date_6" name="Дата окончания услуги 7" type="time" format="dd.MM.yyyy"/>
-
-		<counter id="service_7" name="Услуга 8" type="text"/>
-		<counter id="service_date_7" name="Дата окончания услуги 8" type="time" format="dd.MM.yyyy"/>
-
-		<counter id="service_8" name="Услуга 9" type="text"/>
-		<counter id="service_date_8" name="Дата окончания услуги 9" type="time" format="dd.MM.yyyy"/>
-
-		<counter id="service_9" name="Услуга 10" type="text"/>
-		<counter id="service_date_9" name="Дата окончания услуги 10" type="time" format="dd.MM.yyyy"/>
-
-
-
+		<counter id="balance" name="Баланс" units=" ₽"/>
+        <counter id="expenses" name="Планируемые расходы" units=" ₽"/>
+		<counter id="not_paid_bills_amount" name="Общая сумма счетов" units=" ₽"/>
+		<counter id="not_paid_bills_count" name="Количество счетов" units=" шт"/>
+		<counter id="currency_rate" name="Внутренний курс USD" units=" ₽"/>
+		<counter id="debet" name="Оборот по счету" units=" ₽"/>
+		<counter id="credit" name="Кредитный лимит" units=" ₽"/>
+		<counter id="credit_days" name="Срок действия кредита" units=" дн"/>
+		<counter id="contract" name="Номер договора" type="text"/>
+		<counter id="contract_date" name="Дата договора" type="time" format="dd.MM.yyyy"/>
+		<counter id="next_pay_date" name="Дата следующей оплаты" type="time" format="dd.MM.yyyy"/>
+		<counter id="domain" name="Название домена" type="text"/>
+		<counter id="domain_date" name="Дата окончания домена" type="time" format="dd.MM.yyyy"/>
+		<counter id="domain_days" name="Срок окончания домена" units=" дн"/>
+		<counter id="domain2" name="Название домена 2" type="text"/>
+		<counter id="domain2_date" name="Дата окончания домена 2" type="time" format="dd.MM.yyyy"/>
+		<counter id="domain2_days" name="Срок окончания домена 2" units=" дн"/>
+		<counter id="domain3" name="Название домена 3" type="text"/>
+		<counter id="domain3_date" name="Дата окончания домена 3" type="time" format="dd.MM.yyyy"/>
+		<counter id="domain3_days" name="Срок окончания домена 3" units=" дн"/>
+		<counter id="domain4" name="Название домена 4" type="text"/>
+		<counter id="domain4_date" name="Дата окончания домена 4" type="time" format="dd.MM.yyyy"/>
+		<counter id="domain4_days" name="Срок окончания домена 4" units=" дн"/>
+		<counter id="domain5" name="Название домена 5" type="text"/>
+		<counter id="domain5_date" name="Дата окончания домена 5" type="time" format="dd.MM.yyyy"/>
+		<counter id="domain5_days" name="Срок окончания домена 5" units=" дн"/>
+		<counter id="service" name="Название услуги" type="text"/>
+		<counter id="service_date" name="Дата окончания услуги" type="time" format="dd.MM.yyyy"/>
+		<counter id="service_days" name="Срок окончания услуги" units=" дн"/>
+		<counter id="service2" name="Название услуги 2" type="text"/>
+		<counter id="service2_date" name="Дата окончания услуги 2" type="time" format="dd.MM.yyyy"/>
+		<counter id="service2_days" name="Срок окончания услуги 2" units=" дн"/>
+		<counter id="service3" name="Название услуги 3" type="text"/>
+		<counter id="service3_date" name="Дата окончания услуги 3" type="time" format="dd.MM.yyyy"/>
+		<counter id="service3_days" name="Срок окончания услуги 3" units=" дн"/>
+		<counter id="service4" name="Название услуги 4" type="text"/>
+		<counter id="service4_date" name="Дата окончания услуги 4" type="time" format="dd.MM.yyyy"/>
+		<counter id="service4_days" name="Срок окончания услуги 4" units=" дн"/>
+		<counter id="service5" name="Название услуги 5" type="text"/>
+		<counter id="service5_date" name="Дата окончания услуги 5" type="time" format="dd.MM.yyyy"/>
+		<counter id="service5_days" name="Срок окончания услуги 5" units=" дн"/>
+		<counter id="service6" name="Название услуги 6" type="text"/>
+		<counter id="service6_date" name="Дата окончания услуги 6" type="time" format="dd.MM.yyyy"/>
+		<counter id="service6_days" name="Срок окончания услуги 6" units=" дн"/>
+		<counter id="service7" name="Название услуги 7" type="text"/>
+		<counter id="service7_date" name="Дата окончания услуги 7" type="time" format="dd.MM.yyyy"/>
+		<counter id="service7_days" name="Срок окончания услуги 7" units=" дн"/>
+		<counter id="service8" name="Название услуги 8" type="text"/>
+		<counter id="service8_date" name="Дата окончания услуги 8" type="time" format="dd.MM.yyyy"/>
+		<counter id="service8_days" name="Срок окончания услуги 8" units=" дн"/>
+		<counter id="service9" name="Название услуги 9" type="text"/>
+		<counter id="service9_date" name="Дата окончания услуги 9" type="time" format="dd.MM.yyyy"/>
+		<counter id="service9_days" name="Срок окончания услуги 9" units=" дн"/>
+		<counter id="service10" name="Название услуги 10" type="text"/>
+		<counter id="service10_date" name="Дата окончания услуги 10" type="time" format="dd.MM.yyyy"/>
+		<counter id="service10_days" name="Срок окончания услуги 10" units=" дн"/>
+		<counter id="messages" name="Сообщения" units=" шт"/>
+		<counter id="code" name="Реферальный код" type="text"/>
+		<counter id="phone" name="Номер телефона" type="text"/>
+        <counter id="user" name="ФИО владельца" type="text"/>
+		<counter id="company" name="Организация" type="text"/>
 	</counters>
-	<keywords>рег ру</keywords>
+	<keywords>reg ru, рег ру</keywords>
 	<type>hosting</type>
 	<country>ru</country>
 </provider>

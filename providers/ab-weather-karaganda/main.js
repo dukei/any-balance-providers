@@ -1,7 +1,7 @@
  
-function getParam(result, data, paramName){
+function getValue(result, data, paramName){
          if(AnyBalance.isAvailable(paramName)){
-                result[paramName] = parseFloat($(data).find("point_1").attr(paramName));
+                result[paramName] = getParam(data, result, paramName, new RegExp("\\b" + paramName + "=\"(\\d+)"), replaceHtmlEntities, parseBalance);
         }
 
 } 
@@ -15,10 +15,10 @@ function main(){
         var info = AnyBalance.requestGet('http://meteoclub.kz/meteoXML.php', {
           "Content-Type": "multipart/form-data; boundary=----WebKitFormBoundaryIu4PwUJhm5qcpsdI",
           "User-Agent": "Mozilla/5.0 (Windows NT 6.1; WOW64)"});
-        var xmlDoc = $.parseXML(info), $xml = $(xmlDoc);
-        getParam(result,$xml,'temperature');
-        getParam(result,$xml,'pressure');
-        getParam(result,$xml,'wind');       
+        
+	getValue(result,info,'temperature');
+        getValue(result,info,'pressure');
+        getValue(result,info,'wind');       
       
         AnyBalance.setResult(result);
 }

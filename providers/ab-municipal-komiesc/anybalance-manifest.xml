@@ -1,25 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-municipal-komiesc</id>
+	<id version="5">ab-municipal-komiesc</id>
 	<api flags="no_browser"/>
 	<name>Коми энергосбытовая компания</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе провайдера ИмяПровайдера <a href=""></a></p>
-	<p>Информация берется из личного кабинета <a href=""></a></p>
+	<p>Предоставляет информацию о состоянии расчетов и другие данные для клиентов АО "Коми энергосбытовая компания" (https://komiesc.ru/).</p>
+    <p>Информация берется из личного кабинета клиента на сайте https://cabinet.komiesc.ru/.</p>
 	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Для работы провайдера требуется ввести логин и пароль для входа в личный кабинет.</p>
+	<p>Если у вас нет доступа в личный кабинет, пройдите регистрацию на странице https://cabinet.komiesc.ru/cabinet/.</p>
+    ]]></instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units=" р"/>
-		<counter id="account" name="Номер счета" type="text"/>
+		<counter id="balance" name="Баланс" units=" ₽"/>
+		<counter id="servicecontract" name="Номер договора" type="text"/>
+		<counter id="servicebalance" name="Состояние расчетов" units=" ₽"/>
+		<counter id="serviceprovider" name="Поставщик" type="text"/>
+		<counter id="servicecontract2" name="Номер договора 2" type="text"/>
+		<counter id="servicebalance2" name="Состояние расчетов 2" units=" ₽"/>
+		<counter id="serviceprovider2" name="Поставщик 2" type="text"/>
+		<counter id="servicecontract3" name="Номер договора 3" type="text"/>
+		<counter id="servicebalance3" name="Состояние расчетов 3" units=" ₽"/>
+		<counter id="serviceprovider3" name="Поставщик 3" type="text"/>
+		<counter id="servicecontract4" name="Номер договора 4" type="text"/>
+		<counter id="servicebalance4" name="Состояние расчетов 4" units=" ₽"/>
+		<counter id="serviceprovider4" name="Поставщик 4" type="text"/>
+		<counter id="servicecontract5" name="Номер договора 5" type="text"/>
+		<counter id="servicebalance5" name="Состояние расчетов 5" units=" ₽"/>
+		<counter id="serviceprovider5" name="Поставщик 5" type="text"/>
+		<counter id="account" name="Номер клиента" type="text"/>
+		<counter id="lodgers" name="Кол-во проживающих" units=" чел"/>
+		<counter id="address" name="Адрес" type="text"/>
+		<counter id="fio" name="Плательщик" type="text"/>
 	</counters>
-	<keywords></keywords>
+	<keywords>komi, коми, энергосбыт</keywords>
 	<type>municipal</type>
 	<country>ru</country>
 </provider>

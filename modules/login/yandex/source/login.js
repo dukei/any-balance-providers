@@ -199,7 +199,30 @@ function loginYandex(login, password, html, retpath, origin) {
 				    answer: answer
 		        }, 'Ошибка подтверждения входа');
 			    
-		    }else if(challengeType == 'question'){
+		    }else if(challengeType == 'email_code'){
+			    AnyBalance.trace('Требуется подтверждение через E-mail');
+			    
+                json = apiPost('registration-validations/auth/challenge/send_code_to_email', {
+				    csrf_token: csrf,
+				    track_id: track_id
+			    }, 'Запрос на отправку уведомления не принят');
+                
+			    var code = AnyBalance.retrieveCode('Пожалуйста, введите код из уведомления, отправленного на ваш электронный адрес ' + hint.join(', '), null, {inputType: 'number', time: 180000});
+			    
+			    json = apiPost('registration-validations/auth/challenge/confirm_email_code', {
+				    csrf_token: csrf,
+				    track_id: track_id,
+				    code: code,
+                    trackId: track_id
+			    }, 'Запрос на подтверждение кода не принят');
+			    
+			    json = apiPost('registration-validations/auth/challenge/commit', {
+		    	    csrf_token: csrf,
+		    	    track_id: track_id,
+		    	    challenge: challengeType,
+		        }, 'Ошибка подтверждения входа');
+			    
+			}else if(challengeType == 'question'){
 			    AnyBalance.trace('Требуется ответ на контрольный вопрос');
 			    
 			    var answer = AnyBalance.retrieveCode('Пожалуйста, введите ответ на контрольный вопрос:\n\n' + hint, null, {/*inputType: 'number', */time: 180000});

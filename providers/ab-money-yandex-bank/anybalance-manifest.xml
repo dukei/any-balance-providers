@@ -1,0 +1,55 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-money-yandex-bank</id>
+	<api flags="no_browser" />
+	<name>Яндекс Пэй</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе карты, баллах Плюса, сейвах, сплите и другие данные для пользователей сервиса <a href="https://bank.yandex.ru/pay">Яндекс Пэй</a>.</p>
+	<p>Информация берется из личного кабинета Яндекс Пэй на сайте https://bank.yandex.ru/pay.</p>	
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Для работы провайдера требуется ввести логин и пароль для входа в систему Яндекс.</p>
+	<p>Кроме того, для авторизации в сервисе Яндекс Пэй потребуется ввести код подтверждения из SMS, высланного на номер телефона, привязанного к личному кабинету Яндекс.</p>
+	]]></instruction>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+		<module id="login/yandex"/>
+		<module id="misc/saved-data"/>
+	</depends>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<history>history.xml</history>
+		<js>main.js</js>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" {@currency}"/>
+		<counter id="balance_saves" name="Сейвы" units=" {@currency}"/>
+		<counter id="balance_split" name="Сплит" units=" {@currency}"/>
+		<counter id="balance_plus" name="Баллы Плюса" units=" Б"/>
+		<counter id="cardNumber" name="Номер карты" type="text"/>
+		<counter id="cardType" name="Тип карты" type="text"/>
+		<counter id="paymentSystem" name="Платежная система" type="text"/>
+		<counter id="cardDate" name="Срок дейстия карты" type="text"/>
+		<counter id="cardStatus" name="Статус карты" type="text"/>
+		<counter id="cardAttach" name="Привязанная карта" type="text"/>
+		<counter id="cardAttach2" name="Привязанная карта 2" type="text"/>
+		<counter id="cardAttach3" name="Привязанная карта 3" type="text"/>
+		<counter id="cardAttach4" name="Привязанная карта 4" type="text"/>
+		<counter id="cardAttach5" name="Привязанная карта 5" type="text"/>
+		<counter id="lastOperDate" name="Дата посл. операции" type="time" format="dd.MM.yyyy"/>
+		<counter id="lastOperSum" name="Сумма посл. операции" units=" {@currency}"/>
+		<counter id="lastOperDesc" name="Описание посл. операции" type="text"/>
+		<counter id="lastOperStatus" name="Статус посл. операции" type="text"/>
+		<counter id="lastOperPlus" name="Баллы по посл. операции" units=" Б"/>
+		<counter id="notifications" name="Уведомления" units=" шт"/>
+		<counter id="currency_code" name="Валюта счета" type="text"/>
+		<counter id="email" name="E-mail" type="text"/>
+		<counter id="accname" name="Имя аккаунта" type="text"/>
+		<counter id="fio" name="ФИО владельца" type="text"/>
+	</counters>
+	<keywords>Яндекс Пэй, яндекс-пэй, yandex pay, Яндекс.Плюс, яндекс-плюс, yandex plus, карта плюса, яндекс банк</keywords>
+	<type>money, finance</type>
+	<country>ru</country>
+</provider>

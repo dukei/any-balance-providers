@@ -19,85 +19,88 @@ var replaceNumber = [replaceTagsAndSpaces, /\D/g, '', /.*(\d\d\d)(\d\d\d)(\d\d)(
 function main() {
 	var prefs = AnyBalance.getPreferences();
 	
+	AnyBalance.setDefaultCharset('utf-8');
+	
+	checkEmpty(prefs.login, 'Введите логин!');
+    if (/^\d+$/.test(prefs.login)){
+	    checkEmpty(/^\d{10}$/.test(prefs.login), 'Введите номер телефона - 10 цифр без пробелов и разделителей!');
+	}
+	
 	if(!g_savedData)
 		g_savedData = new SavedData('hoff', prefs.login);
 	
 	var token = g_savedData.get('token');
 
 	g_savedData.restoreCookies();
-
-	var html = loadProtectedPage(g_headers);
-
-    if (!html || AnyBalance.getLastStatusCode() > 500) {
+	
+	AnyBalance.trace('Пробуем войти в личный кабинет...');
+	
+	var html = loadProtectedPage((baseurl + '/', g_headers));
+	
+	if(!html || AnyBalance.getLastStatusCode() > 403){
 		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Сайт провайдера временно недоступен! Попробуйте обновить данные позже');
+		throw new AnyBalance.Error('Сайт провайдера временно недоступен. Попробуйте еще раз позже');
 	}
 	
-	html = AnyBalance.requestGet(baseurl + '/vue/me/', g_headers);
+	if(/iwaf/.test(html))
+       	loadProtectedPageIwaf(html);
 
-	var json = getJson(html);
+	html = AnyBalance.requestGet(baseurl + '/vue/me/', g_headers);
 	
-	if (json.data.error_code === 422) {
+	var json = getJson(html);
+	AnyBalance.trace(JSON.stringify(json));
+	
+	if(json.data.error_code === 422 || AnyBalance.getLastStatusCode() == 401){
 		AnyBalance.trace('Сессия новая. Будем логиниться заново...');
-		clearAllCookies();
-    	loginSite(prefs);
+		clearAllCookiesExceptProtection();
+    	html = login();
+		json = getJson(html);
+	    AnyBalance.trace(JSON.stringify(json));
 	}else{
-		AnyBalance.trace('Похоже, мы уже залогинены на имя ' + json.data.name + ' ' + json.data.last_name + ' (' + json.data.phone + ')');
+		AnyBalance.trace('Сессия сохранена. Входим автоматически...');
 	}
 	
 	var result = {success: true};
 	
-	if (AnyBalance.isAvailable('balance', 'balance_active', 'card', '__tariff', 'soon_available', 'soon', 'burn_count', 'burn', 'fio', 'phone')) {
-	    html = AnyBalance.requestGet(baseurl + '/vue/me/', addHeaders({
-	    	'accept': 'application/json, text/plain, */*',
-			'referer': baseurl + '/personal/',
-	    	'x-requested-with': 'XMLHttpRequest'
-	    }));
-	
-	    var json = getJson(html);
-	    AnyBalance.trace(JSON.stringify(json));
-	
-	    var userData = getJson(html).data;
-		if (userData.card && userData.card.length > 0){
-		    var firstCard = getParam(userData.card[0]);
-	        var cardData = getJson(html).data.card_data[firstCard];
-			getParam(cardData.balance, result, 'balance', null, null, parseBalance);
-	        getParam(cardData.balance_active, result, 'balance_active', null, null, parseBalance);
-	        getParam(userData.card[0], result, 'card');
-	        getParam(cardData.number, result, '__tariff');
-	        getParam(cardData.withdrawal_count, result, 'burn_count', null, null, parseBalance);
-	        getParam(cardData.withdrawal_time, result, 'burn', null, null, parseDate);
-		    if (cardData.soon_available && cardData.soon_available.length > 0){
-		        getParam(cardData.soon_available[0].amount, result, 'soon_available', null, null, parseBalance);
-		        getParam(cardData.soon_available[0].date, result, 'soon', null, null, parseDate);
-		    }
+	var userData = getJson(html).data;
+	if(userData.card && userData.card.length > 0){
+		var state = {0: 'Не активна', 1: 'Активна', 2: 'Заблокирована'};
+		var firstCard = getParam(userData.card[0]);
+	    var cardData = getJson(html).data.card_data[firstCard];
+	    getParam(cardData.balance, result, 'balance', null, null, parseBalance);
+	    getParam(cardData.balance_active, result, 'balance_active', null, null, parseBalance);
+	    getParam(userData.card[0], result, 'card');
+		getParam(state[cardData.is_registred]||cardData.is_registred, result, 'card_status');
+	    getParam(cardData.number, result, '__tariff');
+	    if(cardData && cardData.withdrawal_count)
+		    getParam(cardData.withdrawal_count, result, 'burn_count', null, null, parseBalance);
+	    if(cardData && cardData.withdrawal_time)
+		    getParam(cardData.withdrawal_time, result, 'burn', null, null, parseDate);
+		if(cardData && cardData.soon_available && cardData.soon_available.length > 0){
+		    getParam(cardData.soon_available[0].amount, result, 'soon_available', null, null, parseBalance);
+		    getParam(cardData.soon_available[0].date, result, 'soon', null, null, parseDate);
 		}
-		getParam(userData.id, result, 'user_id');
-	    getParam(userData.name + ' ' + userData.last_name, result, 'fio');
-	    getParam(userData.phone, result, 'phone', null, replaceNumber);
 	}
+		
+	getParam(userData.id, result, 'user_id');
+	getParam(userData.name + ' ' + userData.last_name, result, 'fio');
+	getParam(userData.phone, result, 'phone', null, replaceNumber);
 
 	AnyBalance.setResult(result);
 }
 	
-function loginSite(prefs) {
+function login(){
     var prefs = AnyBalance.getPreferences();
 	
 	AnyBalance.setDefaultCharset('utf-8');
 	
-	checkEmpty(prefs.login, 'Введите номер телефона!');
-    if (/^\d+$/.test(prefs.login)){
-	    checkEmpty(/^\d{10}$/.test(prefs.login), 'Введите номер телефона - 10 цифр без пробелов и разделителей!');
-	}
+	var formattedLogin = prefs.login.replace(/.*(\d{3})(\d{3})(\d{2})(\d{2})$/i, '7$1$2$3$4');
+	var formattedLoginHint = prefs.login.replace(/.*(\d{3})(\d{3})(\d{2})(\d{2})$/i, '+7 $1 $2-$3-$4');
 	
-	var login = prefs.login.replace(/[^\d]+/g, '');
-	var formattedLogin = login.replace(/.*(\d{3})(\d{3})(\d{2})(\d{2})$/i, '7$1$2$3$4');
+	var html = loadProtectedPage((baseurl + '/', g_headers));
 	
-	var html = AnyBalance.requestGet(baseurl + '/', g_headers);
-	
-	if (/iwaf/.test(html)){
-       	loadProtectedPage();
-    }
+	if(/iwaf/.test(html))
+       	loadProtectedPageIwaf(html);
 	
 	html = AnyBalance.requestPost(baseurl + '/api/v2/auth?device_id=b8134bab89a1ad87&isAndroid=true&isGooglePayEnabled=1&isSamsungPayEnabled=0&isAvailableSberPay=0&app_version=8.62.0&location=771&xhoff=eba30b9746c26d8b72d8db53fe43edcf635372f8%3A7477', {
         'type': 'check_contact',
@@ -109,9 +112,8 @@ function loginSite(prefs) {
 	var json = getJson(html);
 	AnyBalance.trace(JSON.stringify(json));
 	
-	if (json.exists !== true) {
+	if(json.exists !== true)
        	throw new AnyBalance.Error('Личный кабинет с указанным номером телефона не существует!');	
-    }
 	
 	html = AnyBalance.requestPost(baseurl + '/api/v2/auth?device_id=b8134bab89a1ad87&isAndroid=true&isGooglePayEnabled=1&isSamsungPayEnabled=0&isAvailableSberPay=0&app_version=8.62.0&location=771&xhoff=4dcb0afd1b7642c95c1f05ed48652063845ee826%3A6139', {
         'type': 'confirm_phone',
@@ -123,9 +125,9 @@ function loginSite(prefs) {
 	var json = getJson(html);
 	AnyBalance.trace(JSON.stringify(json));
 	
-	if (json.code !== 185) {
+	if(json.code !== 185){
 		var error = json.message;
-      	if (error) {
+      	if(error){
 			AnyBalance.trace(html);
        		throw new AnyBalance.Error(error);	
       	}
@@ -134,7 +136,7 @@ function loginSite(prefs) {
        	throw new AnyBalance.Error('Не удалось войти в личный кабинет. Сайт изменен?');
     }
 	
-	var code = AnyBalance.retrieveCode('Пожалуйста, введите код подтверждения, высланный на номер +7' + prefs.login, null, {inputType: 'number', time: 180000});
+	var code = AnyBalance.retrieveCode('Пожалуйста, введите код подтверждения, высланный на номер ' + formattedLoginHint, null, {inputType: 'number', time: 180000});
 	
 	html = AnyBalance.requestPost(baseurl + '/api/v2/auth?device_id=b8134bab89a1ad87&isAndroid=true&isGooglePayEnabled=1&isSamsungPayEnabled=0&isAvailableSberPay=0&app_version=8.62.0&location=771&xhoff=22e06171291aa736e924c40333291d8bf33e9e4a%3A8250', {
         'phone': formattedLogin,
@@ -146,9 +148,9 @@ function loginSite(prefs) {
 	var json = getJson(html);
 	AnyBalance.trace(JSON.stringify(json));
 	
-	if (json.code) {
+	if(json.code){
 		var error = json.message;
-      	if (error) {
+      	if(error){
 			AnyBalance.trace(html);
        		throw new AnyBalance.Error(error);	
       	}
@@ -157,11 +159,14 @@ function loginSite(prefs) {
        	throw new AnyBalance.Error('Не удалось войти в личный кабинет. Сайт изменен?');
     }
 	
+	html = AnyBalance.requestGet(baseurl + '/vue/me/', g_headers);
+	
 	var token = json.token;
 	g_savedData.set('token', token);
 	
 	g_savedData.setCookies();
 	g_savedData.save();
+	
 	return html;
 }
 
@@ -172,7 +177,7 @@ function loadProtectedPage(headers){
     var html = AnyBalance.requestGet(url, headers);
     if(/__qrator/.test(html) || AnyBalance.getLastStatusCode() == 401) {
         AnyBalance.trace("Обнаружена защита от роботов. Пробуем обойти...");
-        clearAllCookies();
+//      clearAllCookies();
 
         const bro = new BrowserAPI({
             provider: 'hoff',
@@ -226,4 +231,31 @@ function loadProtectedPage(headers){
     }
 
     return html;
+}
+
+function loadProtectedPageIwaf(html){
+	var prefs = AnyBalance.getPreferences();
+	
+	AnyBalance.setDefaultCharset('utf-8');
+	
+    AnyBalance.trace('Сайт затребовал челлендж для iwaf');
+	
+	var iwafCookieName = getParam(html, null, null, /iwaf_js_cookie_([\s\S]*?)=[\s\S]*?;/i, replaceTagsAndSpaces);
+	var iwafJsCookieValue = getParam(html, null, null, /iwaf_js_cookie_[\s\S]*?=([\s\S]*?);/i, replaceTagsAndSpaces);
+	AnyBalance.setCookie('hoff.ru', 'iwaf_js_cookie_' + iwafCookieName, '' + iwafJsCookieValue);
+	
+	var html = AnyBalance.requestGet(baseurl + '/', addHeaders({'referer': baseurl + '/iwaf-challenge'}));
+	
+	if(/iwaf/.test(html)||AnyBalance.getLastStatusCode()==403){
+        throw new AnyBalance.Error('Не удалось установить куку iwaf. Сайт изменен?');
+    }
+
+    g_savedData.setCookies();
+	g_savedData.save();
+
+    return html;
+}
+
+function clearAllCookiesExceptProtection(){
+	clearAllCookies(function(c){return!/qrator/i.test(c.name)})
 }

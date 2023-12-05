@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="8">ab-bonus-hoff</id>
+	<id version="9">ab-bonus-hoff</id>
 	<api flags="no_browser"/>
 	<name>Hoff (бонусы)</name>
 	<description html="true"><![CDATA[
@@ -31,9 +31,10 @@
 		<counter id="burn_count" name="Сгораемые бонусы" units=" Б"/>
 		<counter id="burn" name="Ближайшая дата сгорания" type="time" format="dd.MM.yyyy"/>
 		<counter id="card" name="Номер карты" type="text"/>
+		<counter id="card_status" name="Статус карты" type="text"/>
 		<counter id="user_id" name="ID пользователя" type="text"/>
-		<counter id="fio" name="ФИО" type="text"/>
 		<counter id="phone" name="Телефон" type="text"/>
+		<counter id="fio" name="ФИО" type="text"/>
 	</counters>
 	<keywords>Hoff, Хофф</keywords>
 	<type>bonus</type>

@@ -1,13 +1,16 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="116">ab-bonus-fixprice</id>
+	<id version="117">ab-bonus-fixprice</id>
 	<api flags="no_browser"/>
-	<name>FixPrice Бонус</name>
+	<name>Fix Price Бонус</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о бонусных баллах Fix Price https://fix-price.com/</p>
-	<p>Информация берется из личного кабинета https://fix-price.com/profile/settings.</p>
+	<p>Предоставляет информацию о бонусных баллах и другие данные для пользователей интернет-магазина Fix Price (https://fix-price.com/).</p>
+	<p>Информация берется из мобильного приложения Fix Price.</p>
 	<p>
 	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Для работы провайдера требуется ввести логин и пароль для входа в личный кабинет Fix Price.</p>
+	]]></instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>
 		<module id="library"/>
@@ -25,13 +28,18 @@
 		<counter id="lasttransum" name="Сумма посл. покупки" units=" ₽"/>
 		<counter id="lasttrandate" name="Дата посл. покупки" type="time" format="dd.MM.yyyy"/>
 		<counter id="lasttranbon" name="Бонусы по посл. покупке" units=" Б"/>
+		<counter id="lasttranprice" name="Стоимость посл. покупки" units=" ₽"/>
 		<counter id="lasttranchar" name="Скидка по посл. покупке" units=" ₽"/>
+		<counter id="lasttranitems" name="Товаров по посл. покупке" units=" шт"/>
 		<counter id="lasttrantype" name="Тип посл. покупки" type="text"/>
 		<counter id="card" name="Номер карты" type="text"/>
+		<counter id="favorcat" name="Любимые категории" type="html"/>
+		<counter id="favorcattilldate" name="Срок действия категорий" type="time" format="dd.MM.yyyy"/>
+		<counter id="email" name="E-mail" type="text"/>
 		<counter id="phone" name="Номер телефона" type="text"/>
 		<counter id="fio" name="ФИО" type="text"/>
 	</counters>
-	<keywords>Fix Price</keywords>
+	<keywords>Fix Price, бонус</keywords>
 	<type>bonus</type>
 	<country>ru</country>
 </provider>

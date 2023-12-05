@@ -1,13 +1,15 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="8">ab-internet-bitkom</id>
+	<id version="9">ab-internet-bitkom</id>
 	<api flags="no_browser"/>
-	<name>БитКом</name>
+	<name>LineNet (Линии связи)</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе провайдера БитКом <a href="https://bit-com.ru/">http://bit-com.ru/</a></p>
-	<p>Информация берется из личного кабинета <a href="https://stat.bit-com.ru/?q=user">http://stat.bit-com.ru/?q=user</a></p>
-
+	<p>Предоставляет информацию о балансе и тарифном плане для пользователей интернет-провайдера <a href="https://www.line-net.ru/">LineNet (Линии связи)</a>.</p>
+	<p>Информация берется из личного кабинета LineNet на сайте https://user.line-net.ru/.</p>
 	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Для работы провайдера требуется ввести логин и пароль для входа в личный кабинет LineNet.</p>
+	]]></instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>
 		<module id="library"/>
@@ -19,11 +21,18 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units=" р"/>
-		<counter id="lic_schet" name="Лицевой счет" type="text"/>
-		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="balance" name="Баланс" units=" ₽"/>
+		<counter id="lic_schet" name="Номер договора" type="text"/>
+		<counter id="status" name="Состояние договора" type="text"/>
+		<counter id="tarif_desc" name="Описание тарифа" type="text"/>
+		<counter id="last_oper_date" name="Дата последней операции" type="time" format="dd.MM.yyyy"/>
+		<counter id="last_oper_type" name="Тип последней операции" type="text"/>
+		<counter id="last_oper_desc" name="Описание последней операции" type="text"/>
+		<counter id="last_oper_sum" name="Баланс после операции" units=" ₽"/>
+		<counter id="last_oper_state" name="Состояние после операции" type="text"/>
+		<counter id="address" name="Адрес подключения" type="text"/>
 	</counters>
-	<keywords></keywords>
+	<keywords>BitCom, БитКом, LineNet, ЛайнНэт, линии связи, интернет, тв</keywords>
 	<type>internet</type>
 	<country>ru</country>
 </provider>

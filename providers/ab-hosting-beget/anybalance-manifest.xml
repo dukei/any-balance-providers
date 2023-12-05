@@ -1,12 +1,16 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="4">ab-hosting-beget</id>
+	<id version="5">ab-hosting-beget</id>
 	<api flags="no_browser"/>
-	<name>beget</name>
+	<name>Beget</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе и других параметрах хостинга beget <a href="https://beget.com/">https://beget.ru/</a></p>
-	<p>Информация берется из личного кабинета <a href="https://cp.beget.com/">https://cp.beget.ru/</a></p>
+	<p>Предоставляет информацию о балансе и другие данные для пользователей регистратора доменных имен и хостинг-провайдера <a href="https://beget.com/ru">Beget</a>.</p>
+	<p>Информация берется из личного кабинета Beget на сайте https://cp.beget.ru/.</p>
 	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Для работы провайдера требуется ввести логин и пароль для входа в личный кабинет Beget.</p>
+	<p>Сайт Beget обладает защитой от роботов (reCAPTCHA v3), поэтому для входа может потребоваться пройти проверку с помощью приложения Anybalance ReCaptcha или с помощью автоматического распознавания с использованием сервисов RuCaptchа или Anti-Captcha.</p>
+	]]></instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>
 		<module id="library"/>
@@ -18,23 +22,24 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units=" р"/>
-		<counter id="payment" name="Суммарная стоимость" units=" р"/>
+		<counter id="balance" name="Баланс" units=" ₽"/>
+		<counter id="payment" name="Суммарная стоимость" units=" ₽"/>
 		<counter id="user_id" name="ID пользователя" type="text"/>
-		<counter id="fio" name="ФИО" type="text"/>
 		<counter id="IP" name="IP сервера" type="text"/>
 		<counter id="server_name" name="Имя сервера" type="text"/>
-		<counter id="date_delete" name="Дата удаления" type="time" format="dd/MM/yyyy"/>
-		<counter id="date_block" name="Дата блокировки" type="time" format="dd/MM/yyyy"/>
-		<counter id="daysleft" name="Дней до блокировки" units=" д"/>
+		<counter id="date_delete" name="Дата удаления" type="time" format="dd.MM.yyyy"/>
+		<counter id="date_block" name="Дата блокировки" type="time" format="dd.MM.yyyy"/>
+		<counter id="daysleft" name="Дней до блокировки" units=" дн"/>
 		<counter id="ftp" name="FTP"/>
 		<counter id="mysql" name="MySQL"/>
 		<counter id="sites" name="Сайты"/>
 		<counter id="mail" name="Почта"/>
-		<counter id="plan_quota" name="Дисковое пространство (всего)" units=" Mb"/>
-		<counter id="used_quota" name="Дисковое пространство (использовано)" units=" Mb"/>
+		<counter id="plan_quota" name="Дисковая квота (всего)" units=" Mb"/>
+		<counter id="used_quota" name="Дисковая квота (использовано)" units=" Mb"/>
+		<counter id="phone" name="Телефон" type="text"/>
+		<counter id="fio" name="ФИО" type="text"/>
 	</counters>
-	<keywords></keywords>
+	<keywords>beget, бегет</keywords>
 	<type>hosting</type>
 	<country>ru</country>
 </provider>

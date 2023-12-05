@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        title="Логин" 
+		key="login"
+        summary="Логин для входа в личный кабинет|Введите логин\n|{@s}\n" 
+        obligatory="true"
+		dialogTitle="Логин" 
+		positiveButtonText="ОК" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите номер телефона в формате 10 цифр без пробелов и разделителей или E-mail, используемый для входа в личный кабинет">
+    </EditTextPreference>
+	<EditTextPreference 
+        positiveButtonText="ОК"
+        key="pin" 
+		obligatory="true"
+        dialogTitle="Код-пароль"
+        negativeButtonText="Отмена"
+        title="Код-пароль"
+        summary="Код-пароль для входа в личный кабинет|Введите код-пароль\n|***********\n"
+        dialogMessage="Введите код-пароль, используемый для входа в личный кабинет"
+        inputType="textPassword">
+    </EditTextPreference>
+	<ListPreference
+	    title="Источник данных"
+		key="source"
+		summary="Источник для получения информации|Выберите источник\n|{@s}\n"
+		dialogTitle="Источник данных"
+		entries="Автоматически|Ozon Карта|Накопительный счет"
+		entryValues="auto|card|account"
+		defaultValue="auto"
+		>
+	</ListPreference>
+    <EditTextPreference
+        title="Номер продукта" 
+        positiveButtonText="ОК" 
+        summary="Последние 4 цифры номера продукта|Автоматически\n|{@s}\n" 
+        dialogTitle="Номер продукта" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите последние 4 цифры карты или счета, по которым вы хотите получать информацию. Если оставить поле пустым, будет показана информация по первому продукту"
+        key="num"
+        inputType="number">
+    </EditTextPreference>
+</PreferenceScreen>

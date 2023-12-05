@@ -1,0 +1,65 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<api flags="no_browser" />
+	<id version="7">ab-money-ozon-bank</id>
+	<name>Ozon Банк</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о текущем остатке и других параметрах карт и счетов для клиентов Ozon Банка (https://finance.ozon.ru/).</p>
+	<p>Информация берется из мобильного приложения Ozon Банк.</p>
+	]]></description>
+		<instruction html="true"><![CDATA[
+	<p>Для работы провайдера требуется ввести E-mail или номер телефона, привязанный к личному кабинету Ozon Банка, и код подтверждения, высланный на указанный E-mail или номер телефона.</p>
+	<p>Кроме того, для авторизации в Интернет-банке необходимо ввести код-пароль, используемый для входа в личный кабинет Ozon Банка.</p>
+	<p>Если у вас нет карты Ozon Банка, вы можете оформить новую карту, следуя инструкциям на странице https://finance.ozon.ru/.</p>
+	]]></instruction>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+		<module id="crypt/md5"/>
+	</depends>
+	<files>
+		<js>login.ozon.id.js</js>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Остаток" units=" ₽"/>
+		<counter id="overlimit" name="Перерасход" units=" ₽"/>
+		<counter id="cashbackTotal" name="Заработано по карте" units=" ₽"/>
+		<counter id="cashback" name="Кешбэк" units=" ₽"/>
+		<counter id="cashback_soon" name="Дата зачисления кешбэка" type="time" format="dd.MM.yyyy"/>
+		<counter id="bonus_premium" name="Premium баллы" units=" Б"/>
+		<counter id="bonus_salers" name="Бонусы продавцов" units=" Б"/>
+		<counter id="bonus_salers_burn" name="Сгораемые бонусы" units=" Б"/>
+		<counter id="month_spend" name="Расходы за этот месяц" units=" ₽"/>
+		<counter id="month_receipt" name="Поступления за этот месяц" units=" ₽"/>
+		<counter id="card_num" name="Номер карты" type="text"/>
+		<counter id="card_type" name="Тип карты" type="text"/>
+		<counter id="card_sys" name="Платежная система" type="text"/>
+		<counter id="card_state" name="Статус карты" type="text"/>
+		<counter id="payment_period" name="Расчетный период" type="text"/>
+		<counter id="acc_payment_sum" name="Ожидаемый доход" units=" ₽"/>
+		<counter id="acc_payment_date" name="Дата выплаты процентов" type="time" format="dd.MM.yyyy"/>
+		<counter id="acc_num" name="Номер счета" type="text"/>
+		<counter id="acc_type" name="Тип счета" type="text"/>
+		<counter id="acc_open_date" name="Дата открытия счета" type="time" format="dd.MM.yyyy"/>
+		<counter id="acc_state" name="Статус счета" type="text"/>
+		<counter id="acc_percent" name="Доходность по счету" units="%"/>
+		<counter id="last_oper_date" name="Дата последней операции" type="time" format="dd.MM.yyyy"/>
+		<counter id="last_oper_sum" name="Сумма последней операции" units=" ₽"/>
+		<counter id="last_oper_type" name="Тип последней операции" type="text"/>
+		<counter id="last_oper_desc" name="Последняя операция" type="text"/>
+		<counter id="last_oper_state" name="Статус последней операции" type="text"/>
+		<counter id="increased_cashback" name="Повышенный кешбэк" type="html"/>
+		<counter id="premium_state" name="Подписка Premium" type="text"/>
+		<counter id="notifications" name="Сообщения" units=" шт"/>
+		<counter id="email" name="E-mail" type="text"/>
+		<counter id="phone" name="Телефон" type="text"/>
+		<counter id="fio" name="ФИО" type="text"/>
+	</counters>
+	<keywords>озон, банк, карта, ozon, bank, card</keywords>
+	<type>money, bank</type>
+	<country>ru</country>
+</provider>

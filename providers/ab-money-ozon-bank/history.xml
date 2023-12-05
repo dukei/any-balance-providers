@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<history>
+    <change version="7" date="2023-10-28">
+	- Поддержка изменений в API приложения
+	</change>
+    <change version="6" date="2023-10-24">
+	- Поддержка изменений в API приложения
+	- Добавлен счетчик Поступления за этот месяц
+	</change>
+    <change version="5" date="2023-09-26">
+	- Поддержка изменений в API приложения
+	</change>
+    <change version="4" date="2023-08-28">
+	- Поддержка изменений в API приложения
+	- Добавлен счетчик Заработано по карте
+	</change>
+    <change version="3" date="2023-07-12">
+	- Поддержка изменений в API приложения
+	</change>
+    <change version="2" date="2023-07-05">
+	- Поддержка изменений в API приложения
+	</change>
+	<change version="1" date="2023-06-26">
+	- Первая версия провайдера
+	</change>
+</history>

@@ -1,16 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="9">ab-internet-akado</id>
-	<name>Домашний Интернет и Телевидение АКАДО</name>
+	<id version="11">ab-internet-akado</id>
+	<name>АКАДО Телеком</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о текущем балансе, номере договора, ФИО владельца для пользователей провайдера интернет и телевидения АКАДО (http://www.akado.ru).</p>
-	<p>Информация берется из личного кабинета (http://office.akado.ru).</p> 
+	<p>Предоставляет информацию о балансе и тарифном плане для пользователей интернет-провайдера <a href="https://www.akado.ru/">АКАДО Телеком</a>.</p>
+	<p>Информация берется из личного кабинета АКАДО Телеком на сайте https://office.akado.ru/.</p>
 	]]></description>
 	<instruction html="true"><![CDATA[
+	<p>Для работы провайдера требуется ввести логин и пароль для входа в личный кабинет АКАДО Телеком.</p>
 	<p>Как получить пароль:<p> 
 	<ol>  
-	<li>Обратитесь в Абонентскую службу по телефону +7 (499) 940-00-00.</li> 
+	<li>Обратитесь в Абонентскую службу по телефону +7 (499) 940-00-00;</li> 
 	<li>Сообщите оператору 8-значный номер вашего абонентского договора.</li>
 	</ol>
 	]]></instruction>
@@ -25,12 +26,23 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units=" р"/>
-		<counter id="payhint" name="Рекомендуемая сумма оплаты" suffix=" р"/>
+		<counter id="balance" name="Баланс" units=" ₽"/>
+		<counter id="balance_begin" name="Баланс на начало месяца" units=" ₽"/>
+		<counter id="payhint" name="Рекомендуемая сумма оплаты" units=" ₽"/>
+		<counter id="balance_end" name="Остаток на конец месяца" units=" ₽"/>
+		<counter id="expense_this_month" name="Стоимость услуг в этом месяце" units=" ₽"/>
+		<counter id="expense_next_month" name="Стоимость услуг в след. месяце" units=" ₽"/>
+		<counter id="till_date" name="Услуги активны до" type="time" format="dd.MM.yyyy"/>
+		<counter id="till_days" name="Дней до продления" units=" дн"/>
 		<counter id="agreement" name="Номер договора" type="text"/>
+		<counter id="last_oper_sum" name="Сумма последнего платежа" units=" ₽"/>
+		<counter id="last_oper_date" name="Дата последнего платежа" type="time" format="dd.MM.yyyy"/>
+		<counter id="notifications" name="Новые уведомления" units=" шт"/>
+		<counter id="address" name="Адрес подключения" type="text"/>
+		<counter id="phone" name="Телефон" type="text"/>
 		<counter id="username" name="ФИО" type="text"/>
 	</counters>
-	<keywords>провайдер интернет AKADO мошенничество вымогательство</keywords>
+	<keywords>провайдер, интернет, ТВ, AKADO, telecom</keywords>
 	<type>internet, tv</type>
 	<country>ru</country>
 </provider>

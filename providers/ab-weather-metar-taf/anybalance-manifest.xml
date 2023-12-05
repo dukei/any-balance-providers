@@ -1,36 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-    <id version="9">ab-weather-metar-taf</id>
+    <id version="10">ab-weather-metar-taf</id>
+	<api flags="no_browser"/>
     <name>METAR-TAF</name>
-    <description>
-        Запрашивает крайнюю сводку погоды (METAR)  и прогнoз (TAF) для аэродрома с сайта http://www.aviationweather.gov/dataserver/. В настройках указывается код ародрома по ИКАО. Например для Домодедово это UUDD, для Шереметьево UUEE.
-    </description>
-    <author>theneedtocode &lt;theneedtocode@gmail.com&gt;</author>
-    <files>
-        <icon>icon.png</icon>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию по крайней сводке погоды (METAR) и прогнoзу (TAF) для аэродрома с сайта <a href="https://aviationweather.gov/">https://aviationweather.gov/</a>.</p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Для работы провайдера требуется ввести код станции (аэропорта) по ИКАО. Например, для Домодедово это UUDD, для Шереметьево UUEE.</p>
+	]]></instruction>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+    <depends>
+		<module id="library"/>
+	</depends>
+	<files>
+	    <icon>icon.png</icon>
         <preferences>preferences.xml</preferences>
         <js>main.js</js>
-        <js>api:jquery.min.js</js>
         <history>history.xml</history>
     </files>
     <counters>
-        <counter id="raw_text" name="Неразобранный текст METAR" prefix="" suffix="" type="text"/>
-        <counter id="taf_raw_text" name="Неразобранный текст TAF" prefix="" suffix="" type="text"/>
-        <counter id="station_id" name="Код станции" prefix="" suffix="" type="text"/>
-        <counter id="temp" name="Температура воздуха" prefix="" suffix=" ℃" type="numeric"/>
-        <counter id="dewpoint" name="Точка росы" prefix="" suffix=" ℃" type="numeric"/>
-        <counter id="wind_dir" name="Направление ветра(откуда)" prefix="" suffix=" гр." type="numeric"/>
-        <counter id="wind_speed" name="Скорость ветра" prefix="" suffix=" уз." type="numeric"/>
-        <counter id="wind_gust" name="Порывы ветра" prefix="" suffix=" уз." type="numeric"/>
-        <counter id="observation_time" name="Время наблюдения" prefix="" suffix="" type="time"/>
+        <counter id="temp" name="Температура воздуха" units=" °C"/>
+        <counter id="dewpoint" name="Точка росы" units=" °C"/>
+        <counter id="wind_dir" name="Направление ветра (откуда)" units="°"/>
+        <counter id="wind_speed" name="Скорость ветра" units=" уз"/>
+        <counter id="wind_gust" name="Порывы ветра" units=" уз"/>
+		<counter id="visibility" name="Видимость" units=" миль"/>
+		<counter id="pressure" name="Давление" units=" дюйм рт.ст."/>
+		<counter id="sky_cover" name="Облачность" type="text"/>
+		<counter id="cloud_base" name="Нижняя граница" units=" фут"/>
+		<counter id="flight_category" name="Категория полетов" type="text"/>
+		<counter id="elevation" name="Высота аэродрома" units=" м"/>
+		<counter id="raw_text" name="Неразобранный текст METAR" type="text"/>
+        <counter id="taf_raw_text" name="Неразобранный текст TAF" type="text"/>
+		<counter id="station_id" name="Код станции" type="text"/>
+        <counter id="observation_time" name="Время наблюдения" type="time" format="dd.MM.yyyy HH:mm"/>
     </counters>
-    <keywords>
-        weather, metar, taf
-    </keywords>
-    <type>
-        weather
-    </type>
-    <country>
-        ru 
-    </country>
+    <keywords>weather, metar, taf</keywords>
+    <type>weather</type>
+    <country>ru </country>
 </provider>

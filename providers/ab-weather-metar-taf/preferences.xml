@@ -2,12 +2,12 @@
 <PreferenceScreen>
     <EditTextPreference
         key="fieldCode"
-        title="Код станции(аэропорта)"
-        summary="|Укажите код ИКАО|{@s}"
-        dialogTitle="Код станции(аэропорта)"
+        title="Код станции"
+        summary="Код станции (аэропорта) по ИКАО|Введите код\n|{@s}\n"
+        dialogTitle="Код станции"
         negativeButtonText="Отмена"
         positiveButtonText="OK"
         inputType="text"
-        dialogMessage="Укажите код станции(аэропорта) ИКАО">
+        dialogMessage="Введите код станции (аэропорта) по ИКАО">
     </EditTextPreference>
 </PreferenceScreen>

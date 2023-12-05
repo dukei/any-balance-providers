@@ -1,20 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="1">ab-transport-alga</id>
-  <name>Алға</name>
-  <description>
-    Предоставляет баланс транспортной карты АЛГА от Башавтотранс. Данные берет с сайта https://alga-card.ru/balance.php
-  </description>
-  <author>Ainur Giniyatov &lt;anurique@gmail.com&gt;</author>
-  <files>
-	  <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>main.js</js>
-  </files>
-  <counters>
-    <counter id="balance" name="Баланс" type="numeric" units=" р."/>
-  </counters>
-  <keywords>alga</keywords>
+    <id version="3">ab-transport-alga</id>
+    <api flags="no_browser"/>
+    <name>Алға</name>
+    <description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе единой транспортной карты АЛҒА от Башавтотранс (https://alga-card.ru/).</p>
+	<p>Информация берется со страницы проверки баланса карты на сайте https://alga-card.ru/balance/.</p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Для работы провайдера требуется ввести номер транспортной карты АЛҒА.</p>
+	]]></instruction>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
+    <files>
+	    <icon>icon.png</icon>
+        <preferences>preferences.xml</preferences>
+        <js>main.js</js>
+		<history>history.xml</history>
+    </files>
+    <counters>
+        <counter id="balance" name="Баланс" units=" ₽"/>
+		<counter id="cardnum" name="Номер карты" type="text"/>
+    </counters>
+    <keywords>alga, карта алга, транспорт</keywords>
 	<type>transport</type>
 	<country>ru</country>
 </provider>

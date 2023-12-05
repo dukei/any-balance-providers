@@ -2,11 +2,11 @@
 <PreferenceScreen>
     <EditTextPreference 
         key="cardnumber"
-        title="Карта" 
-        summary="Номер карты (19 цифр)||{@s}\n" 
+        title="Номер карты" 
+        summary="Номер карты для получения информации|Введите номер\n|{@s}\n"
         dialogTitle="Номер карты" 
         negativeButtonText="Отмена" 
-        dialogMessage="Введите номер карты (19 цифр)"
+        dialogMessage="Введите номер карты в формате 19 цифр без пробелов и разделителей"
         positiveButtonText="ОК" 
         inputType="number">
     </EditTextPreference>

@@ -1,17 +1,15 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="30">ab-bonus-citilink</id>
+	<id version="31">ab-bonus-citilink</id>
 	<api flags="no_browser|captcha"/>
 	<name>Ситилинк</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о количестве бонусов в бонусной программе электронного дискаунтера "Ситилинк" (http://www.citilink.ru/).</p>
-	<p>Информация берется из личного кабинета.</p>
+	<p>Предоставляет информацию о количестве бонусов и другие данные для пользователей интернет магазина <a href="https://www.citilink.ru/">Ситилинк</a>.</p>
+	<p>Информация берется из личного кабинета Ситилинк на сайте https://www.citilink.ru/profile/.</p>
 	]]></description>
 	<instruction html="true"><![CDATA[
-	<p>Настройки:</p>
-	<ul>
-	<li>Получить доступ к личному кабинету вы можете, пройдя регистрацию по адресу http://www.citilink.ru/registration.</li>
-	</ul>
+	<p>Для работы провайдера требуется ввести логин и пароль для входа в личный кабинет Ситилинк.</p>
+	<p>Если у вас нет доступа в личный кабинет Ситилинк, пройдите регистрацию на странице https://www.citilink.ru/registration.</p>
 	]]></instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
     <depends>
@@ -26,18 +24,34 @@
 	</files>
 	<counters>
 		<counter id="balance" name="Бонусы" units=" Б"/>
-		<counter id="wo_sum" name="Будет списано" units=" Б"/>
-		<counter id="activation_sum" name="Сумма последней операции с бонусами" units=" Б"/>
-		<counter id="activation_type" name="Тип последней операции с бонусами" type="text"/>
-		<counter id="next_activation_sum" name="Сумма ближайшей активации бонусов" units=" Б"/>
-<!--		<counter id="num" name="Товаров в текущем квартале" units=" т"/>
+		<counter id="wo_sum" name="Сгораемые бонусы" units=" Б"/>
+		<counter id="wo_date" name="Дата сгорания бонусов" type="time" format="dd.MM.yyyy"/>
+		<counter id="activation_sum" name="Сумма посл. операции" units=" Б"/>
+		<counter id="activation_date" name="Дата посл. операции" type="time" format="dd.MM.yyyy"/>
+		<counter id="activation_type" name="Тип посл. операции" type="text"/>
+<!--	<counter id="next_activation_sum" name="Сумма ближайшей активации бонусов" units=" Б"/>
+		<counter id="num" name="Товаров в текущем квартале" units=" т"/>
 		<counter id="sum" name="Покупки в текущем квартале" units=" р"/>
-		<counter id="next_activation_date" name="Дата ближайшей активации бонусов" type="time" format="dd/MM/yyyy"/>
-		<counter id="next_nachisl_date" name="Дата начисления бонусов для ближайшей активации" type="time" format="dd/MM/yyyy"/> -->
- 		<counter id="wo_date" name="Ближайшая дата списания бонусов" type="time" format="dd/MM/yyyy"/>
-		<counter id="activation_date" name="Дата последней операции с бонусами" type="time" format="dd/MM/yyyy"/>
-		<counter id="card_activation_date" name="Дата активации карты" type="time" format="dd/MM/yyyy"/>
+		<counter id="next_activation_date" name="Дата ближайшей активации бонусов" type="time" format="dd.MM.yyyy"/>
+		<counter id="next_nachisl_date" name="Дата начисления бонусов для ближайшей активации" type="time" format="dd.MM.yyyy"/> -->
 		<counter id="card_num" name="Номер карты" type="text"/>
+		<counter id="card_activation_date" name="Дата активации карты" type="time" format="dd.MM.yyyy"/>
+		<counter id="current_appr_sum" name="Сумма покупок за квартал" units=" ₽"/>
+		<counter id="status_current" name="Текущий статус" type="text"/>
+		<counter id="bonus_deduction_amount" name="Размер списания бонусов" prefix="До " units="%"/>
+		<counter id="status_current_till_date" name="Срок действия статуса" type="time" format="dd.MM.yyyy"/>
+		<counter id="status_next" name="Следующий статус" type="text"/>
+		<counter id="lastordernum" name="Номер посл. заказа" type="text"/>
+		<counter id="lastordersum" name="Сумма посл. заказа" units=" ₽"/>
+		<counter id="lastorderdate" name="Дата посл. заказа" type="time" format="dd.MM.yyyy"/>
+		<counter id="lastorderbon" name="Бонусы по посл. заказу" units=" Б"/>
+		<counter id="lastorderitems" name="Товары по посл. заказу" units=" шт"/>
+		<counter id="lastorderdesc" name="Описание посл. заказа" type="text"/>
+		<counter id="lastorderstatus" name="Статус посл. заказа" type="text"/>
+		<counter id="username" name="Никнейм" type="text"/>
+		<counter id="email" name="E-mail" type="text"/>
+		<counter id="phone" name="Номер телефона" type="text"/>
+        <counter id="fio" name="ФИО" type="text"/>
 	</counters>
 	<keywords>ситилинк,citilink,citylink</keywords>
 	<type>bonus</type>

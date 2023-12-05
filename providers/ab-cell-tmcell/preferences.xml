@@ -2,23 +2,23 @@
 <PreferenceScreen>
 	<EditTextPreference
 		title="Логин"
-		key="login"
-		summary="||{@s}"
-		obligatory="true"
-		dialogTitle="Логин"
 		positiveButtonText="ОК"
+		summary="Логин для входа в личный кабинет|Введите логин\n|{@s}\n"
+		dialogTitle="Логин"
 		negativeButtonText="Отмена"
-		dialogMessage="Необходимо вводить последние 8 цифр номера телефона, исключая код страны.">
+		obligatory="true"
+		dialogMessage="Введите номер телефона в формате 8 цифр (без префикса +993) без пробелов и разделителей, например: 61234567"
+		key="login">
 	</EditTextPreference>
 	<EditTextPreference
-		title="Пароль"
-		key="password"
-		summary="||***********"
-		obligatory="true"
-		dialogTitle="Пароль"
 		positiveButtonText="ОК"
+		key="password"
+		dialogTitle="Пароль"
 		negativeButtonText="Отмена"
-		dialogMessage="Введите пароль, используемый для входа в личный кабинет."
+		title="Пароль"
+		obligatory="true"
+		summary="Пароль для входа в личный кабинет|Введите пароль\n|***********\n"
+		dialogMessage="Введите пароль, используемый для входа в личный кабинет"
 		inputType="textPassword">
 	</EditTextPreference>
 </PreferenceScreen>

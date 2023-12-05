@@ -1,26 +1,48 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-cell-tmcell</id>
+	<id version="4">ab-cell-tmcell</id>
 	<api flags="no_browser"/>
 	<name>TMCELL (Туркменистан)</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе провайдера TMCELL <a href="http://tmcell.tm/">http://tmcell.tm/</a></p>
-	<p>Информация берется из личного кабинета <a href="https://hyzmat.tmcell.tm">https://hyzmat.tmcell.tm</a></p>
+	<p>Предоставляет информацию о балансе и тарифном плане для пользователей оператора сотовой связи <a href="https://tmcell.tm/">TMCELL</a>.</p>
+	<p>Информация берется из личного кабинета TMCELL на сайте https://hyzmat.tmcell.tm/.</p>
 	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Для работы провайдера требуется ввести логин и пароль для входа в личный кабинет TMCELL.</p>
+	]]></instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс"/>
-		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="balance" name="Баланс" units=" m"/>
+		<counter id="min_left" name="Остаток минут" type="time_interval" format="{@MIN}" units=" min"/>
+		<counter id="sms_left" name="Остаток SMS" units=" sms"/>
+		<counter id="traffic_left" name="Остаток трафика" units=" Мб"/>
+		<counter id="min_total" name="Всего минут" type="time_interval" format="{@MIN}" units=" min"/>
+		<counter id="sms_total" name="Всего SMS" units=" sms"/>
+		<counter id="traffic_total" name="Всего трафика" units=" Мб"/>
+		<counter id="min_used" name="Израсходовано минут" type="time_interval" format="{@MIN}" units=" min"/>
+		<counter id="sms_used" name="Израсходовано SMS" units=" sms"/>
+		<counter id="traffic_used" name="Израсходовано трафика" units=" Мб"/>
+		<counter id="packet_start" name="Начало действия пакета" type="time" format="dd.MM.yyyy"/>
+		<counter id="packet_till" name="Срок действия пакета" type="time" format="dd.MM.yyyy"/>
+		<counter id="contract" name="Номер контракта" type="text"/>
+		<counter id="last_oper_date" name="Дата последней операции" type="time" format="dd.MM.yyyy"/>
+		<counter id="last_oper_sum" name="Сумма последней операции" units=" m"/>
+		<counter id="last_oper_type" name="Тип последней операции" type="text"/>
+		<counter id="last_oper_dealer" name="Дилер последней операции" type="text"/>
+		<counter id="last_oper_nds" name="Налог последней операции" units=" m"/>
 		<counter id="phone" name="Телефон" type="text"/>
+		<counter id="fio" name="ФИО" type="text"/>
 	</counters>
-	<keywords></keywords>
+	<keywords>tmcell, tm cell, Алтын Асыр</keywords>
 	<type>cell</type>
 	<country>tm</country>
 </provider>

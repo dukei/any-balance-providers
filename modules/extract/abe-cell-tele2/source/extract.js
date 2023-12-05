@@ -181,7 +181,7 @@ function processBalance(result){
 
     var subsid = getSubscriberId();
 
-    AnyBalance.trace('Получаем баланс');
+    AnyBalance.trace('Получаем баланс и тариф');
 
     var maxTries = 3;
 
@@ -237,28 +237,23 @@ function processRemainders(result){
     if (!AnyBalance.isAvailable('remainders'))
         return;
 
-    AnyBalance.trace('Получаем остатки услуг');
+    AnyBalance.trace('Получаем остатки по услугам');
 
     try {
         if(!result.remainders)
             result.remainders = {};
 
         var subsid = getSubscriberId();
-
-        AnyBalance.trace("Searching for resources left");
+		
+		AnyBalance.trace('Пытаемся получить остатки по услугам');
         var html = AnyBalance.requestGet(baseurl + "api/subscribers/" + subsid + '/rests', addHeaders({
         	Accept: '*/*',
         	'X-Requested-With': 'XMLHttpRequest',
         	Referer: baseurl
         }));
 
-        AnyBalance.trace('Got discounts: ' + html);
+        AnyBalance.trace('Успешно получили дискаунты: ' + html);
         json = JSON.parse(html);
-		var status = {
-		    active: 'Номер не блокирован',
-		    blocked: 'Номер заблокирован'
-	    };
-	    getParam(status[json.data.tariffStatus]||json.data.tariffStatus, result.remainders, 'remainders.statuslock');
         for (var i = 0; i<json.data.rests.length; ++i) {
             var discount = json.data.rests[i];
             getDiscount(result.remainders, discount);
@@ -277,6 +272,11 @@ function getDiscount(result, discount) {
     if(discount.limit === 0)
     	return; //Empty discount
 
+	var status = {
+		active: 'Номер не блокирован',
+		blocked: 'Номер заблокирован'
+	};
+	getParam(status[discount.status]||discount.status, result, 'remainders.statuslock');
 	getParam(discount.endDay, result, 'remainders.endDate', null, null, parseDateISO);
 	
     if (/min/i.test(units)) {
@@ -416,6 +416,6 @@ function processInfo(result){
     var json = getJson(html);
     getParam(json.data.fullName, info, "info.fio");
     getParam(subsid.replace(/.*(\d{3})(\d{3})(\d{2})(\d{2})$/i, '+7 $1 $2-$3-$4'), info, "info.mphone");
-    getParam(json.data.address.city + ' ' + json.data.address.street + ' ' + json.data.address.house, info, "info.address");
-    getParam(json.data.email || undefined, info, "info.email");
+    getParam(json.data.address.city + ', ' + json.data.address.street + ', ' + json.data.address.house, info, "info.address");
+    getParam(json.data.email || 'Не указан', info, "info.email");
 }

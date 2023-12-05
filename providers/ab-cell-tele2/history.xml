@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="57" date="2023-11-01">
+	- Исправлено получение статуса блокировки
+	</change>
 	<change version="56" date="2023-07-05">
 	- Добавлены дополнительные счетчики
 	</change>

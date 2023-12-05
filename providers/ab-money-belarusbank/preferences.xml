@@ -4,10 +4,10 @@
 		obligatory="true"
         title="Логин" 
         positiveButtonText="ОК" 
-        summary="||{@s}\n" 
+        summary="Логин для входа в личный кабинет|Введите логин\n|{@s}\n"
         dialogTitle="Логин" 
         negativeButtonText="Отмена" 
-        dialogMessage="Введите логин для входа в систему Интернет-банкинг."
+        dialogMessage="Введите логин, используемый для входа в систему Интернет-банкинг"
         key="login">
     </EditTextPreference>
     <EditTextPreference 
@@ -17,26 +17,27 @@
         dialogTitle="Пароль"
         negativeButtonText="Отмена"
         title="Пароль"
-        summary="||***********"
-        dialogMessage="Введите пароль, используемый для входа в систему Интернет-банкинг."
+        summary="Пароль для входа в личный кабинет|Введите пароль\n|**********\n"
+        dialogMessage="Введите пароль, используемый для входа в систему Интернет-банкинг"
         inputType="textPassword">
     </EditTextPreference>
-<!--	<ListPreference
+	<ListPreference
 		key="type"
 		title="Банковский продукт"
-		summary="||{@s}"
-		entries="Депозит|Карта"
-		entryValues="dep|card"
+		summary="Продукт для получения информации|Автоматически\n|{@s}\n"
+		dialogTitle="Банковский продукт"
+		entries="Карта|Депозит"
+		entryValues="card|dep"
 		defaultValue="card">
-	</ListPreference> -->
+	</ListPreference>
     <EditTextPreference 
         positiveButtonText="ОК"
         key="lastdigits" 
-        dialogTitle="Номер счета"
+        dialogTitle="Номер продукта"
         negativeButtonText="Отмена"
-        title="Номер"
-        summary="|Автоматически|{@s}"
-        dialogMessage="Введите последние цифры счета/карты, по которому вы хотите получить информацию. Если это поле оставить пустым, то будет показана информация по первому счету."
+        title="Номер продукта"
+        summary="Продукт для получения информации|Автоматически\n|{@s}\n"
+        dialogMessage="Введите последние цифры продукта, по которому вы хотите получить информацию. Если оставить поле пустым, будет показана информация по первому продукту"
         inputType="number">
     </EditTextPreference>
     <EditTextPreference 
@@ -45,7 +46,7 @@
         dialogTitle="Коды 1-10"
         negativeButtonText="Отмена"
         title="Коды 1-10"
-        summary="|Введите коды 1-10 через пробел|****"
+        summary="Коды с 1 по 10 с карты кодов банка|Введите коды 1-10\n|****\n"
         dialogMessage="Введите коды 1-10 с вашей карты кодов через пробел"
         inputType="phone">
     </EditTextPreference>
@@ -55,7 +56,7 @@
         dialogTitle="Коды 11-20"
         negativeButtonText="Отмена"
         title="Коды 11-20"
-        summary="|Введите коды 11-20 через пробел|****"
+        summary="Коды с 11 по 20 с карты кодов банка|Введите коды 11-20\n|****\n"
         dialogMessage="Введите коды 11-20 с вашей карты кодов через пробел"
         inputType="phone">
     </EditTextPreference>
@@ -65,7 +66,7 @@
         dialogTitle="Коды 21-30"
         negativeButtonText="Отмена"
         title="Коды 21-30"
-        summary="|Введите коды 21-30 через пробел|****"
+        summary="Коды с 21 по 30 с карты кодов банка|Введите коды 21-30\n|****\n"
         dialogMessage="Введите коды 21-30 с вашей карты кодов через пробел"
         inputType="phone">
     </EditTextPreference>
@@ -75,7 +76,7 @@
         dialogTitle="Коды 31-40"
         negativeButtonText="Отмена"
         title="Коды 31-40"
-        summary="|Введите коды 31-40 через пробел|****"
+        summary="Коды с 31 по 40 с карты кодов банка|Введите коды 31-40\n|****\n"
         dialogMessage="Введите коды 31-40 с вашей карты кодов через пробел"
         inputType="phone">
     </EditTextPreference>

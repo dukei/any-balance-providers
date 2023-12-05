@@ -127,11 +127,36 @@ function main(){
         throw new AnyBalance.Error('Не удалось войти в интернет-банк после ввода кода (№' + (codenum+1) + ': ' + code + ') . Сайт изменен?');
     }
 	
+	var addinfo;
+	
+	var fio = getParam(html, /<div[^>]+class="greetingDiv"[\s\S]*?(?:[^>]*>){6}([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
+	fio += ' ' + getParam(html, /<div[^>]+class="greetingDiv"[\s\S]*?(?:[^>]*>){9}([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
+	
+	var messages = getParam(html, /<span[^>]+CountMessagesForm:themeField[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
+	var events = getParam(html, /<span[^>]+EventCountForm:themeField[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
+	
+	addinfo = {
+		fio: fio,
+		messages: messages,
+		events: events
+	};
+	
 	var href = getParam(html, /href="\/([^"]+)">\s*Счета/i, [replaceTagsAndSpaces, /#.*$/, '']);
 	checkEmpty(href, 'Не удалось найти ссылку на счета, сайт изменен?', true);
 	html = AnyBalance.requestGet(baseurl + href, addHeaders({'Referer': baseurl}));
 	
-	fetchCard(baseurl, html);
+	switch(prefs.type){
+	case 'card':
+        fetchCard(baseurl, html, addinfo);
+		break;
+    case 'dep':
+        fetchDeposit(baseurl, html, addinfo);
+		break;
+	case 'auto':
+    default:
+        fetchCard(baseurl, html, addinfo);
+		break;
+	}
 }
 
 function findAccount(html){
@@ -177,12 +202,44 @@ function findAccount(html){
     return null;
 }
 
-function fetchCard(baseurl, html){
+function findDeposit(html){
+    var prefs = AnyBalance.getPreferences();
+    var accnum, account;
+
+    var accountsArea = getElement(html, /<table[^>]+id="[^"]*CsrubDepositListForm:ibDepositList"[^>]*>/i);
+    if(!accountsArea){
+    	AnyBalance.trace('Не удалось найти таблицу депозитов!');
+    	AnyBalance.trace(html);
+    	return null;
+    }
+    	
+    var accounts = getElements(accountsArea, [/<tr[^>]*>/ig, /<td>/i]);
+    AnyBalance.trace('Найдено ' + accounts.length + ' депозитов');
+
+    for(var i=0; i<accounts.length; ++i){
+    	account = accounts[i];
+    	accnum = getParam(account, /<td[^>]*class="tdNoPadding"[\s\S]*?(?:[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+    	
+    	var ok = !prefs.lastdigits || endsWith(accnum.replace(/\s+/g, ''), prefs.lastdigits);
+    	ok = ok || endsWith(accnum, prefs.lastdigits);
+
+    	AnyBalance.trace("Account number " + accnum + ': ' + ok);
+    	if(ok)
+    		return {
+    			accnum: accnum,
+    			account: account
+    		};
+    }
+
+    return null;
+}
+
+function fetchCard(baseurl, html, addinfo){
     var prefs = AnyBalance.getPreferences();
 
     if(prefs.lastdigits && !/^\d{4,}$/.test(prefs.lastdigits))
-        throw new AnyBalance.Error("Надо указывать 4 последних цифры карты или не менее 4 последних цифр счета счета или не указывать ничего");
-
+        throw new AnyBalance.Error("Надо указывать 4 последних цифры карты или не менее 4 последних цифр счета или не указывать ничего");
+	
 	var href = getParam(html, /href="\/([^"]+)"(?:[^>]*>){1,2}\s*Счета с карточкой/i, replaceTagsAndSpaces);
 	checkEmpty(href, 'Не удалось найти ссылку на счета, сайт изменен?', true);
 	html = AnyBalance.requestGet(baseurl + href, addHeaders({'Referer': baseurl}));
@@ -220,13 +277,16 @@ function fetchCard(baseurl, html){
 	
     var result = {success: true};
 
-	if(info.cardnum)
+	if(info.cardnum){
     	getParam(info.cardnum, result, 'cardnum');
-    else
+	    getParam(info.cardnum, result, '__tariff');
+    }else{
     	getParam(info.card, result, 'cardnum', /<td[^>]*class="tdNumber">([^]*?)<\/td>/, replaceTagsAndSpaces);
+		getParam(info.card, result, '__tariff', /<td[^>]*class="tdNumber">([^]*?)<\/td>/, replaceTagsAndSpaces);
+	}
 
     getParam(info.card, result, 'cardaccnum', /<td[^>]+class="tdId"[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
-	getParam(info.account, result, '__tariff', /<td[^>]*class="tdAccountText">([^]*?)<\/td>/, replaceTagsAndSpaces);
+	getParam(info.account, result, 'cardname', /<td[^>]*class="tdAccountText">([^]*?)<\/td>/, replaceTagsAndSpaces);
 	if(info.accnum == 'ExtraCardsAccount'){
     	getParam(info.card, result, 'balance', /\(<nobr[^>]*>[^<]*<\/nobr>\s+\w+\)/i, replaceTagsAndSpaces, parseBalance);
     	getParam(info.card, result, ['currency', 'balance'], /\(<nobr[^>]*>([^<]*<\/nobr>\s+\w+)\)/i, [replaceTagsAndSpaces, /на дату.*/i, ''], parseCurrency);
@@ -235,6 +295,48 @@ function fetchCard(baseurl, html){
     	getParam(info.account, result, ['currency', 'balance'], /<td[^>]*class="tdBalance">([\s\S]*?)<\/td>/, [replaceTagsAndSpaces, /на дату.*/i, ''], parseCurrency);
     	getParam(info.accnum, result, 'accnum');
     }
+	getParam(addinfo.fio, result, 'fio', null, null, capitalFirstLetters);
+	getParam(addinfo.messages, result, 'messages', null, null, parseBalance);
+	getParam(addinfo.events, result, 'events', null, null, parseBalance);
     
     AnyBalance.setResult(result);
+}
+
+function fetchDeposit(baseurl, html, addinfo){
+    var prefs = AnyBalance.getPreferences();
+
+    if(prefs.lastdigits && !/^\d{4,}$/.test(prefs.lastdigits))
+        throw new AnyBalance.Error("Надо указывать не менее 4 последних цифр депозита или не указывать ничего");
+	
+	var href = getParam(html, /href="\/([^"]+)"(?:[^>]*>){1,2}\s*Депозиты \(вклады\)/i, replaceTagsAndSpaces);
+	checkEmpty(href, 'Не удалось найти ссылку на депозиты, сайт изменен?', true);
+	html = AnyBalance.requestGet(baseurl + href, addHeaders({'Referer': baseurl}));
+
+    var info = findDeposit(html);
+
+    if(!info)
+        throw new AnyBalance.Error(prefs.lastdigits ? "Не найден депозит с последними цифрами " + prefs.lastdigits : "Не найдено ни одного депозита");
+	
+	var result = {success: true};
+	
+	if(info.accnum){
+    	getParam(info.accnum, result, 'cardnum');
+	    getParam(info.accnum, result, '__tariff');
+    }else{
+    	getParam(info.account, result, 'cardnum', /<td[^>]*class="tdNoPadding"[\s\S]*?(?:[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+		getParam(info.account, result, '__tariff', /<td[^>]*class="tdNoPadding"[\s\S]*?(?:[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+	}
+	
+	getParam(info.account, result, 'cardnum', /<td[^>]*class="tdNoPadding"[\s\S]*?(?:[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+	getParam(info.account, result, 'cardname', /<td[^>]*class="tdNoPadding"[\s\S]*?cellLable(?:[^>]*>){9}([\s\S]*?)<\/td>/, replaceTagsAndSpaces);
+	getParam(info.account, result, 'balance', /<td[^>]*class="tdNoPadding"[\s\S]*?cellLable(?:[^>]*>){14}([\s\S]*?)<\/td>/, replaceTagsAndSpaces, parseBalance);
+    getParam(info.account, result, ['currency', 'balance'], /<td[^>]*class="tdNoPadding"[\s\S]*?cellLable(?:[^>]*>){19}([\s\S]*?)<\/td>/, replaceTagsAndSpaces, parseCurrency);
+	if(!result.currency)
+		result.currency = getParam(info.account, null, null, /<td[^>]*class="tdNoPadding"[\s\S]*?cellLable(?:[^>]*>){19}([\s\S]*?)<\/td>/, replaceTagsAndSpaces)||'';
+	getParam(info.account, result, 'status', /<td[^>]*class="tdNoPadding"[\s\S]*?cellLable(?:[^>]*>){23}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+	getParam(addinfo.fio, result, 'fio', null, null, capitalFirstLetters);
+	getParam(addinfo.messages, result, 'messages', null, null, parseBalance);
+	getParam(addinfo.events, result, 'events', null, null, parseBalance);
+	
+	AnyBalance.setResult(result);
 }

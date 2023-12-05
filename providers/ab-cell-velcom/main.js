@@ -93,7 +93,7 @@ function mainCell(html, result){
 	
 	var login = prefs.login.replace(/.*(\d{3})(\d\d)(\d{3})(\d\d)(\d\d)$/, '$1$2$3$4$5');
 	
-	html = AnyBalance.requestPost('https://asmp.a1.by/sms_auth/checkRegistration', JSON.stringify({
+	html = AnyBalance.requestPost('https://asmp.a1.by/communityrest/mobile/checkRegistration', JSON.stringify({
         'msisdn': login,
         'realm': 'a1.by'
     }), addHeaders({
@@ -106,7 +106,16 @@ function mainCell(html, result){
     	throw new AnyBalance.Error('Указанный номер не зарегистрирован. Пожалуйста, пройдите регистрацию', null, true);
     }
 	
-	html = AnyBalance.requestPost('https://asmp.a1.by/sms_auth/passwordAuth', JSON.stringify({
+	html = AnyBalance.requestPost('https://appopenapi.a1.by/v1new_prod/public/self-registration/mnp/msisdn-check', JSON.stringify({
+        'msisdn': login
+    }), addHeaders({
+		'Accept': '*/*',
+		'Authorization': 'Basic dW5kYWJvdDo3ZmhCMHF0Q21EclM5SVpZUHY5SA==',
+		'Content-Type': 'application/json',
+		'X-Lk': true
+	}));
+	
+	html = AnyBalance.requestPost('https://asmp.a1.by/communityrest/mobile/passwordAuth', JSON.stringify({
         'username': login + '@a1.by',
         'password': prefs.password
     }), addHeaders({

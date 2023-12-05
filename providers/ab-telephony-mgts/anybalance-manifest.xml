@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="30">ab-telephony-mgts</id>
+	<id version="31">ab-telephony-mgts</id>
 	<name>МТС Интернет и ТВ (МГТС)</name>
 	<api flags="no_browser"/>
 	<description html="true"><![CDATA[

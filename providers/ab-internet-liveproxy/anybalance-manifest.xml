@@ -1,26 +1,45 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="6">ab-internet-liveproxy</id>
+	<api flags="no_browser"/>
+	<id version="7">ab-internet-liveproxy</id>
 	<name>Liveproxy (Армянск)</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе провайдера Liveproxy  в г.Армянск http://liveproxy.com.ua/</p>
-	<p>Информация берется из личного кабинета http://client.liveproxy.com.ua/</p>
+	<p>Предоставляет информацию о балансе и тарифном плане для пользователей интернет-провайдера <a href="https://liveproxy.ru/">Liveproxy</a>.</p>
+	<p>Информация берется из личного кабинета Liveproxy на сайте https://liveproxy.ru/lk/.</p>
 	]]></description>
-	<author>Dmitry &lt;dayser@liveproxy.com.ua&gt;</author>
+	<instruction html="true"><![CDATA[
+	<p>Для работы провайдера требуется ввести логин и пароль для входа в личный кабинет Liveproxy.</p>
+	]]></instruction>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
   	<files>
-		<js>api:jquery.min.js</js>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="end" name="Осталось " suffix=" дн"/>
-		<counter id="date" name="Срок окончания услуги" type="text"/>
-		<counter id="fio" name="Ф.И.О." type="html"/>
-		<counter id="state" name="Статус" type="html"/>
+		<counter id="balance" name="Баланс" units=" ₽"/>
+		<counter id="credit" name="Кредит" units=" ₽"/>
+		<counter id="lic_schet" name="Лицевой счет" type="text"/>
+		<counter id="status" name="Статус" type="text"/>
+		<counter id="tarif_desc" name="Описание тарифа" type="text"/>
+		<counter id="ip" name="IP-адрес" type="text"/>
+		<counter id="apikey" name="API ключ" type="text"/>
+		<counter id="last_pay_date" name="Дата последнего платежа" type="time" format="dd.MM.yyyy"/>
+		<counter id="last_pay_sum" name="Сумма последнего платежа" units=" ₽"/>
+		<counter id="last_pay_type" name="Метод последнего платежа" type="text"/>
+		<counter id="last_oper_date" name="Дата последней операции" type="time" format="dd.MM.yyyy"/>
+		<counter id="last_oper_sum_before" name="Баланс до операции" units=" ₽"/>
+		<counter id="last_oper_sum" name="Сумма последней операции" units=" ₽"/>
+		<counter id="last_oper_sum_after" name="Баланс после операции" units=" ₽"/>
+		<counter id="address" name="Адрес подключения" type="text"/>
+		<counter id="email" name="E-mail" type="text"/>
+		<counter id="fio" name="ФИО" type="text"/>
 	</counters>
-	<keywords>Liveproxy, Визит</keywords>
+	<keywords>Liveproxy, Визит, Крым</keywords>
 	<type>internet</type>
 	<country>ru</country>
 </provider>

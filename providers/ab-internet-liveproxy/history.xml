@@ -1,5 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="7" date="2023-11-16">
+	- Поддержка нового личного кабинета.
+	- Добавлены дополнительные счетчики.
+	</change>
 	<change version="6" date="2014-11-12">
 	- Исправлена ошибка.
 	</change>

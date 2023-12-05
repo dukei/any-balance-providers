@@ -1,25 +1,23 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="16">ab-money-homecredit</id>
+	<id version="19">ab-money-homecredit</id>
 	<api flags="no_browser"/>
-	<name>Хоум Кредит</name>
+	<name>Хоум Банк</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о картах, счетах и вкладах для клиентов банка "Хоум Кредит" (https://online.homecredit.ru/).</p>
+	<p>Предоставляет информацию о балансе и других параметрах карт, счетов и вкладов для клиентов Хоум Банка (https://home.bank/).</p>
+	<p>Информация берется из Интернет-банка на сайте https://my.homebank.ru/.</p>
 	]]></description>
 	<instruction html="true"><![CDATA[
 	<p>Настройки:</p>
 	<ul>
-		<li>Укажите номер телефона, дату рождения, PIN-код и кодовое слово для входа в Интернет-банк (https://online.homecredit.ru/web/Account/Login) в настройках провайдера.</li>
+		<li>Укажите номер телефона, пароль и дату рождения для входа в Интернет-банк в настройках провайдера.</li>
 	</ul>
-	<p>Как подключить Интернет-банк "Хоум Кредит":</p>
+	<p>Как подключить Интернет-банк:</p>
 	<ul>
-		<li>Зайдите в браузере в Интернет-банк "Хоум Кредит" (https://online.homecredit.ru/web/Account/Login) и пройдите регистрацию.</li>
+		<li>Зайдите в браузере в Интернет-банк Хоум Банка (https://my.homebank.ru/) и пройдите регистрацию.</li>
 		<li>Выберите интересующий вас продукт на главной странице предложений и оформите заявку на получение выбранного продукта.</li>
-		<li>Или обратитесь к специалисту в любом удобном для вас офисе банка "Хоум Кредит".</li>
+		<li>Или обратитесь к специалисту в любом удобном для вас офисе Хоум Банка.</li>
 	</ul>
-	<p><small>Если PIN-код для Интернет-банка ранее не был установлен, вы можете задать его в процессе первой авторизации в провайдере.</small></p>
-	<p><small>Если вы не помните действующий PIN-код, пожалуйста, пройдите авторизацию на странице https://online.homecredit.ru/web/Account/Login и на этапе ввода PIN-кода нажмите внизу ссылку "Забыли код доступа?", чтобы установить новый.</small></p>
-	<p><small>Если вы изначально не ввели PIN-код и кодовое слово в настройках провайдера, вы можете ввести их в процессе первой авторизации.</small></p>
 	<p><b>ВНИМАНИЕ!</b></p> 
 	<p>В настоящее время предоставляется информация только по картам, счетам и вкладам. Если вам нужна поддержка кредитов, пожалуйста, обратитесь к автору провайдера.</p>
 	]]></instruction>
@@ -58,10 +56,15 @@
 		<counter id="agreement_date" name="Дата открытия" type="time" format="dd.MM.yyyy"/>
 		<counter id="overall_debt" name="Общая задолженность" units=" {@currency}"/>
 		<!-- <counter id="polsa" name="Баллов польза" units=" {@currency}"/> -->
+		<counter id="last_oper_sum" name="Сумма посл. операции" units=" ₽"/>
+		<counter id="last_oper_date" name="Дата посл. операции" type="time" format="dd.MM.yyyy"/>
+		<counter id="last_oper_type" name="Тип посл. операции" type="text"/>
+		<counter id="last_oper_cat" name="Категория посл. операции" type="text"/>
+		<counter id="last_oper_desc" name="Описание посл. операции" type="text"/>
 		<counter id="phone" name="Телефон" type="text"/>
 		<counter id="fio" name="ФИО" type="text"/>
 	</counters>
-	<keywords>Кредит, банк, home credit</keywords>
+	<keywords>Кредит, банк, home credit, home bank, хоум</keywords>
 	<type>money, bank</type>
 	<country>ru</country>
 </provider>

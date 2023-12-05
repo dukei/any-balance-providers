@@ -3,13 +3,13 @@
 */
 
 var g_headers = {
-    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
+    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
     'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
-	'Accept-Language': 'ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.6',
+	'Accept-Language': 'ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7',
 	'Cache-Control': 'max-age=0',
 	'Connection': 'keep-alive',
 	'Upgrade-Insecure-Requests': '1',
-	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36'
+	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36'
 };
 
 var g_currency = {
@@ -20,7 +20,8 @@ var g_currency = {
 	undefined: '₽'
 };
 
-var baseurl = 'https://online.homecredit.ru';
+var baseurl = 'https://my.homebank.ru';
+var baseurlApi = 'https://api-ob.homebank.ru/';
 var g_savedData;
 
 function main() {
@@ -28,32 +29,36 @@ function main() {
 	
     AnyBalance.setDefaultCharset('utf-8');
 	
+	checkEmpty(prefs.login, 'Введите номер телефона!');
+	if(/^\d+$/.test(prefs.login))
+	    checkEmpty(/^\d{10}$/.test(prefs.login), 'Введите номер телефона - 10 цифр без пробелов и разделителей!');
+	checkEmpty(prefs.password, 'Введите пароль!');
+	checkEmpty(prefs.birthdate, 'Введите дату рождения!');
+	if(/^[\d+|\-+]*$/.test(prefs.birthdate))
+	    checkEmpty(/^(\d{4})-(\d{2})-(\d{2})$/.test(prefs.birthdate), 'Введите дату рождения в формате ГГГГ-ММ-ДД!');
+	
 	if(!g_savedData)
 		g_savedData = new SavedData('homecredit', prefs.login);
 
 	g_savedData.restoreCookies();
-
-    var pin = prefs.pin || g_savedData.get('pin');
-	if(!prefs.pin)
-		g_savedData.get('pin');
 	
-	var keyword = prefs.keyword || g_savedData.get('keyword');
-	if(!prefs.keyword)
-		g_savedData.get('keyword');
+	AnyBalance.trace('Пробуем войти в личный кабинет...');
 	
-	var html = AnyBalance.requestGet(baseurl + '/web/api/Client/GetClientInfo/', g_headers);
+	var html = AnyBalance.requestPost(baseurlApi + 'ocelot-api-gateway/myc-auth-server/v1/clientInfo/getClientInfo', null, addHeaders({
+		'Accept': 'application/json, text/plain, */*',
+		'Content-Type': 'application/x-www-form-urlencoded',
+	    'Origin': baseurl,
+        'Referer': baseurl + '/'
+	}));
 	
-	var json = getJson(html);
+	if(AnyBalance.getLastStatusCode() > 500){
+        AnyBalance.trace(html);
+        throw new AnyBalance.Error('Сайт провайдера временно недоступен. Попробуйте еще раз позже');
+    }
 	
-	if(!json.result && json.statusCode !== 200){
-		if(!pin){
-			AnyBalance.trace('Сессия новая. Будем логиниться заново...');
-			login();
-	    }else{
-		    AnyBalance.trace('PIN-код сохранен. Пробуем войти по PIN-коду...');
-		    loginPinCode();
-		}
-		
+	if(/"StatusCode":\s*?401/i.test(html) || AnyBalance.getLastStatusCode() == 401){
+		AnyBalance.trace('Сессия новая. Будем логиниться заново...');
+		login();
 	}else{
 		AnyBalance.trace('Сессия сохранена. Входим автоматически...');
 	}
@@ -86,7 +91,7 @@ function main() {
 }
 
 function fetchDebitCard(prefs, result){
-	var html = AnyBalance.requestGet(baseurl + '/web/api/proxy/mic/decard/v3/debitcards/?useCache=false', g_headers);
+	var html = AnyBalance.requestGet(baseurlApi + 'ocelot-api-gateway/decard/v3/debitcards/?useCache=false', g_headers);
 	
 	var json = getJson(html);
 	AnyBalance.trace('Дебетовые карты: ' + JSON.stringify(json));
@@ -138,6 +143,24 @@ function fetchDebitCard(prefs, result){
     };
     getParam (card_type[currCard.productType]||currCard.productType, result, 'type');
 	
+	if (AnyBalance.isAvailable(['last_oper_sum', 'last_oper_date', 'last_oper_type', 'last_oper_cat', 'last_oper_desc'])) {
+		var dt = new Date();
+	    var dtPrev = new Date(dt.getFullYear(), dt.getMonth()-1, dt.getDate());
+	    var dateFrom = dtPrev.getFullYear() + '-' + n2(dtPrev.getMonth()+1) + '-' + n2(dt.getDate());
+	    var dateTo = dt.getFullYear() + '-' + n2(dt.getMonth()+1) + '-' + n2(dt.getDate());
+		var params = {
+            "accountNumber": currCard.accountNumber,
+            "cardNumber": currCard.maskCardNumber,
+            "fromDate": dateFrom,
+            "toDate": dateTo,
+            "startPosition": "0",
+            "count": "0",
+            "isSort": true
+        };
+		var type = 'debitCard';
+	    fetchTransactions(prefs, result, params, type);
+	}
+	
 	if (AnyBalance.isAvailable('phone', 'fio')) {
 	    fetchProfileInfo(prefs, result);
 	}
@@ -146,13 +169,11 @@ function fetchDebitCard(prefs, result){
 }
 
 function fetchCreditCard(prefs, result){
-	var html = AnyBalance.requestPost(baseurl + '/web/api/proxy/api/Product/GetClientProducts/', JSON.stringify({
-        'ReturnCachedData': false
-    }), addHeaders({
+	var html = AnyBalance.requestPost(baseurlApi + 'ocelot-api-gateway/mycredit/api/Product/GetClientProducts', null, addHeaders({
 		'Accept': 'application/json, text/plain, */*',
-		'Content-Type': 'application/json;charset=UTF-8',
+		'Content-Type': 'application/x-www-form-urlencoded',
 	    'Origin': baseurl,
-        'Referer': baseurl + '/web/'
+        'Referer': baseurl + '/'
 	}));
 	
 	var json = getJson(html);
@@ -226,12 +247,12 @@ function fetchCreditCard(prefs, result){
 }
 
 function fetchAccount(prefs, result){
-	var html = AnyBalance.requestGet(baseurl + '/web/api/Payment/GetDeposits/', g_headers);
+	var html = AnyBalance.requestGet(baseurlApi + 'ocelot-api-gateway/deposito/v1/deposits', g_headers);
 	
 	var json = getJson(html);
 	AnyBalance.trace('Счета: ' + JSON.stringify(json));
 	
-	var accounts = json.result.accounts;
+	var accounts = json.accounts;
 	AnyBalance.trace('Найдено счетов: ' + accounts.length);
 	if(accounts.length < 1)
 		throw new AnyBalance.Error('У вас нет ни одного счета');
@@ -253,6 +274,7 @@ function fetchAccount(prefs, result){
     getParam(currAcc.accountNumber, result, '__tariff');
     getParam(currAcc.accountName, result, 'accname');
 	getParam(currAcc.accountNumber, result, 'accnum');
+	getParam(currAcc.contractNumber, result, 'agreement');
     var account_status = {
 		"ACTIVE": 'Активен',
     	"INACTIVE": 'Не активен',
@@ -278,12 +300,12 @@ function fetchAccount(prefs, result){
 }
 
 function fetchDeposit(prefs, result){
-	var html = AnyBalance.requestGet(baseurl + '/web/api/Payment/GetDeposits/', g_headers);
+	var html = AnyBalance.requestGet(baseurlApi + 'ocelot-api-gateway/deposito/v1/deposits', g_headers);
 	
 	var json = getJson(html);
 	AnyBalance.trace('Вклады: ' + JSON.stringify(json));
 	
-	var deposits = json.result.deposits;
+	var deposits = json.deposits;
 	AnyBalance.trace('Найдено вкладов: ' + deposits.length);
 	if(deposits.length < 1)
 		throw new AnyBalance.Error('У вас нет ни одного вклада');
@@ -330,13 +352,11 @@ function fetchDeposit(prefs, result){
 function fetchLoan(prefs, result){
 	throw new AnyBalance.Error('Кредиты пока не поддерживаются. Обратитесь к автору провайдера для добавления продукта');
 	
-	var html = AnyBalance.requestPost(baseurl + '/web/api/proxy/api/Product/GetClientProducts/', JSON.stringify({
-        'ReturnCachedData': false
-    }), addHeaders({
+	var html = AnyBalance.requestPost(baseurlApi + 'ocelot-api-gateway/mycredit/api/Product/GetClientProducts', null, addHeaders({
 		'Accept': 'application/json, text/plain, */*',
-		'Content-Type': 'application/json;charset=UTF-8',
+		'Content-Type': 'application/x-www-form-urlencoded',
 	    'Origin': baseurl,
-        'Referer': baseurl + '/web/'
+        'Referer': baseurl + '/'
 	}));
 	
 	var json = getJson(html);
@@ -399,273 +419,143 @@ function fetchLoan(prefs, result){
 	AnyBalance.setResult(result);
 }
 
+function fetchTransactions(prefs, result, params, type){
+	AnyBalance.trace('type: ' + type);
+	AnyBalance.trace('params: ' + JSON.stringify(params));
+	
+	var html = AnyBalance.requestPost(baseurlApi + 'ocelot-api-gateway/clio/v1/Transactions/' + type, JSON.stringify(params), addHeaders({
+		'Accept': 'application/json, text/plain, */*',
+		'Content-Type': 'application/json',
+	    'Origin': baseurl,
+        'Referer': baseurl + '/'
+	}));
+	
+	var json = getJson(html);
+	AnyBalance.trace('Transactions: ' + JSON.stringify(json));
+	
+	if(json && json.length > 0){
+	    AnyBalance.trace('Найдено последних операций: ' + json.length);
+		for(var i=0; i<json.length; ++i){
+		    var oper = json[i];
+			var g_operDir = {true: '+', false: '-', undefined: ''};
+		    
+	        getParam(g_operDir[oper.creditDebitIndicator] + oper.amount, result, 'last_oper_sum', null, null, parseBalance);
+	        getParam(oper.valueDate.replace(/(\d{4})-(\d\d)-(\d\d)(.*)/i, '$3.$2.$1'), result, 'last_oper_date', null, null, parseDate);
+	        getParam(oper.primaryDescription||'Нет данных', result, 'last_oper_type');
+		    getParam(oper.secondaryDescription||'Нет данных', result, 'last_oper_cat');
+		    getParam(oper.shortDescription||'Нет данных', result, 'last_oper_desc');
+		    
+		    break;
+		}
+	}else{
+ 	    AnyBalance.trace('Не удалось получить информацию по операциям');
+ 	}
+}
+
 function fetchProfileInfo(prefs, result){
-	var html = AnyBalance.requestGet(baseurl + '/web/api/Client/GetClientInfo/', g_headers);
+	var html = AnyBalance.requestPost(baseurlApi + 'ocelot-api-gateway/myc-auth-server/v1/clientInfo/getClientInfo', null, addHeaders({
+		'Accept': 'application/json, text/plain, */*',
+		'Content-Type': 'application/x-www-form-urlencoded',
+	    'Origin': baseurl,
+        'Referer': baseurl + '/'
+	}));
 	
 	var json = getJson(html);
 	AnyBalance.trace('Профиль: ' + JSON.stringify(json));
 	
-	getParam(json.result.phoneNumber.replace(/.*(\d\d\d)(\d\d\d)(\d\d)(\d\d)$/i, '+7 $1 $2-$3-$4'), result, 'phone');
-	var fio = json.result.firstName;
-	var lastName = json.result.lastName;
-	if(lastName)
-		fio += ' ' + lastName;
-	getParam(fio, result, 'fio');
-	
-	AnyBalance.setResult(result);
+	if(json.Result && json.Result.ClientId){
+	    getParam(json.Result.PhoneNumber.replace(/.*(\d\d\d)(\d\d\d)(\d\d)(\d\d)$/i, '+7 $1 $2-$3-$4'), result, 'phone');
+	    
+		var person = {};
+	    sumParam(json.Result.FirstName, person, '__n', null, null, null, create_aggregate_join(' '));
+//	    sumParam(json.Result.MiddleName, person, '__n', null, null, null, create_aggregate_join(' '));
+	    sumParam(json.Result.LastName, person, '__n', null, null, null, create_aggregate_join(' '));
+	    getParam(person.__n, result, 'fio', null, null, capitalFirstLetters);
+	}else{
+		AnyBalance.trace('Не удалось получить данные профиля. Сайт изменен?');
+	}
 }
 
 function login() {
     var prefs = AnyBalance.getPreferences();
 	
 	AnyBalance.setDefaultCharset('utf-8');
-	
-	checkEmpty(prefs.login, 'Введите номер телефона!');
-	if (/^\d+$/.test(prefs.login)){
-	    checkEmpty(/^\d{10}$/.test(prefs.login), 'Введите номер телефона - 10 цифр без пробелов и разделителей!');
-	}
-	checkEmpty(prefs.birthdate, 'Введите дату рождения!');
-	if (/^[\d+|\-+]*$/.test(prefs.birthdate)){
-	    checkEmpty(/^(\d{4})-(\d{2})-(\d{2})$/.test(prefs.birthdate), 'Введите дату рождения в формате ГГГГ-ММ-ДД!');
-	}
 
-    var html = AnyBalance.requestGet(baseurl + '/web/Account/Login', g_headers);
+    var html = AnyBalance.requestGet(baseurl + '/auth?redirectUrl=%2F', g_headers);
 	
-	if(AnyBalance.getLastStatusCode() >= 400){
+	if(AnyBalance.getLastStatusCode() >= 500){
         AnyBalance.trace(html);
         throw new AnyBalance.Error('Сайт провайдера временно недоступен. Попробуйте еще раз позже');
     }
-
-	html = AnyBalance.requestPost(baseurl + '/web/api/Account/GetCaptcha/', null, addHeaders({
-		'Accept': 'application/json, text/plain, */*', 
-	    'Origin': baseurl,
-        'Referer': baseurl + '/web/Account/Login'
-	}));
-	var json = getJson(html);
-		
-	if(json.statusCode !== 200){
-		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Не удалось получить капчу для входа. Сайт изменен?');
-	}
 	
-	var captchaGuid = json.result.captchaGuid;
-	var captchaImage = json.result.captchaImage;
+	var params = {
+        "dfp": "612cfb76924ffe925b07b5f79986a241",
+        "birth": prefs.birthdate,
+        "password": prefs.password,
+        "phone": "7" + prefs.login,
+        "osType": 4,
+        "deviceName": "Microsoft Windows"
+    };
 	
-	var captcha = AnyBalance.retrieveCode('Пожалуйста, введите код с картинки', captchaImage);
-	
-	AnyBalance.trace('Входим по логину ' + prefs.login);
-	
-	html = AnyBalance.requestPost(baseurl + '/web/api/Account/V4Login/', JSON.stringify({
-        'mobilePhone': prefs.login,
-        'birthDate': prefs.birthdate,
-        'captchaValue': captcha,
-        'captchaId': captchaGuid,
-        'dfp': '5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36,Win32,1600,900,Agency FB,Arial Black,Bauhaus 93,Bell MT,Bodoni MT,Bookman Old Style,Broadway,Calibri,Californian FB,Castellar,Centaur,Century Gothic,Colonna MT,Copperplate Gothic Light,Engravers MT,Forte,Franklin Gothic Heavy,French Script MT,Gabriola,Gigi,Goudy Old Style,Haettenschweiler,Harrington,Impact,Informal Roman,Lucida Bright,Lucida Fax,Magneto,Malgun Gothic,Matura MT Script Capitals,MingLiU-ExtB,MS Reference Sans Serif,Niagara Solid,Palace Script MT,Papyrus,Perpetua,Playbill,Rockwell,Segoe Print,Showcard Gothic,Snap ITC,Vladimir Script,Wide Latin,Chrome PDF Viewer,Chromium PDF Viewer,Microsoft Edge PDF Viewer,PDF Viewer,WebKit built-in PDF,audio/mp4; codecs=\"mp4a.40.2\",audio/mpeg,audio/webm; codecs=\"vorbis\",video/mp4; codecs=\"avc1.42c00d\",video/webm; codecs=\"vorbis,vp8\",video/webm; codecs=\"vorbis,vp9\"'
-    }), addHeaders({
+	html = AnyBalance.requestPost(baseurlApi + 'ocelot-api-gateway/myc-auth-server/v2/sms/send/bypassword/web', JSON.stringify(params), addHeaders({
+		'_os_': '4',
+        '_ver_': '8.14',
 		'Accept': 'application/json, text/plain, */*',
-		'Content-Type': 'application/json;charset=UTF-8',
+		'Content-Type': 'application/json',
 	    'Origin': baseurl,
-        'Referer': baseurl + '/web/Account/Login'
+        'Referer': baseurl + '/'
 	}));
 	
 	var json = getJson(html);
-	AnyBalance.trace('Ввели начальные данные : ' + JSON.stringify(json));
+	AnyBalance.trace(JSON.stringify(json));
 		
-	if(json.statusCode !== 200){
-		var error = json.errors.join(' ');
+	if(json.StatusCode !== 200){
+		var error = json.Errors.join(' ');
 		throw new AnyBalance.Error(error, null, /телефон|дат|код/i.test(error));
 	
 		AnyBalance.trace(html);
         throw new AnyBalance.Error('Не удалось войти в личный кабинет. Сайт изменен?');
 	}
 	
-	AnyBalance.trace('Требуется подтверждение через SMS');
+	AnyBalance.trace('Сайт затребовал код подтверждения из SMS');
 	
-	html = AnyBalance.requestPost(baseurl + '/web/api/Account/V4SendSms/', null, addHeaders({
-		'Accept': 'application/json, text/plain, */*', 
+	var formattedLogin = prefs.login.replace(/.*(\d{3})(\d{3})(\d{2})(\d{2})$/i, '+7 $1 $2-$3-$4');
+	
+	var code = AnyBalance.retrieveCode('Пожалуйста, введите код подтверждения, высланный на номер ' + formattedLogin, null, {time: 180000, inputType: 'number'});
+	
+	var params = {
+        "sms": code
+    };
+	
+	html = AnyBalance.requestPost(baseurlApi + 'ocelot-api-gateway/myc-auth-server/v2/sms/verify/web', JSON.stringify(params), addHeaders({
+		'_os_': '4',
+        '_ver_': '8.14',
+		'Accept': 'application/json, text/plain, */*',
+		'Content-Type': 'application/json',
 	    'Origin': baseurl,
-        'Referer': baseurl + '/web/Account/Login'
+        'Referer': baseurl + '/'
 	}));
 	
 	var json = getJson(html);
-	AnyBalance.trace('Запросили SMS с кодом подтверждения: ' + JSON.stringify(json)); ///////////////////////////////////////////
-		
-	if(json.result && json.result !== true){
-		var error = json.errors.join(' ');
+	AnyBalance.trace(JSON.stringify(json));
+	
+	if(json.StatusCode !== 200){
+		var error = json.Errors.join(' ');
 		throw new AnyBalance.Error(error, null, /код/i.test(error));
 	
-		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Не удалось отправить SMS с кодом подтверждения. Сайт изменен?');
-	}
-	
-	var code = AnyBalance.retrieveCode('Пожалуйста, введите код подтверждения, высланный на номер +7' + prefs.login, null, {inputType: 'number', time: 180000});
-	
-	html = AnyBalance.requestPost(baseurl + '/web/api/Account/V4ValidateSmsCode/', JSON.stringify({
-        'smsCode': code
-    }), addHeaders({
-		'Accept': 'application/json, text/plain, */*',
-		'Content-Type': 'application/json;charset=UTF-8',
-	    'Origin': baseurl,
-        'Referer': baseurl + '/web/Account/Login'
-	}));
-	
-	var json = getJson(html);
-	AnyBalance.trace('Ввели код подтверждения из SMS: ' + JSON.stringify(json));
-	
-	if(json.statusCode !== 200){
-		var error = json.errors.join(' ');
-		if(error)
-		    throw new AnyBalance.Error(error, null, /код/i.test(error));
-		
 		AnyBalance.trace(html);
         throw new AnyBalance.Error('Не удалось войти в личный кабинет. Сайт изменен?');
 	}
 		
-	if(json.result && json.result.isValidSmsCode !== true){
+	if(json.Result && json.Result.IsValid !== true){
 		throw new AnyBalance.Error('Неверный код подтверждения');
 	}
 	
-	var isUserPinCode = json.result.isUserPinCodeCreated; // Проверка на наличие PIN-кода
-	
-	if(isUserPinCode !== true){ // Создаем и отправляем PIN-код
-	    if(!prefs.pin){
-		    var pinCode = AnyBalance.retrieveCode('Пожалуйста, создайте четырехзначный PIN-код и введите его в поле ниже', null, {inputType: 'number', time: 180000});
-		}else{
-			var pinCode = prefs.pin;
-		}
-
-		html = AnyBalance.requestPost(baseurl + '/web/api/Account/V4SetUserPin/', JSON.stringify({
-			'clientData': null,
-            'pinCode': pinCode
-        }), addHeaders({
-	    	'Accept': 'application/json, text/plain, */*',
-	    	'Content-Type': 'application/json;charset=UTF-8',
-	        'Origin': baseurl,
-            'Referer': baseurl + '/web/Account/Login'
-	    }));
-	
-	    var json = getJson(html);
-	    AnyBalance.trace('Отправили PIN-код: ' + JSON.stringify(json));
-	}else{
-		if(!prefs.pin){
-		    var pinCode = AnyBalance.retrieveCode('Пожалуйста, введите четырехзначный PIN-код для входа в интернет-банк', null, {inputType: 'number', time: 180000});
-		}else{
-			var pinCode = prefs.pin;
-		}
-
-		html = AnyBalance.requestPost(baseurl + '/web/api/Account/V4CheckUserPin/', JSON.stringify({
-            'pinCode': pinCode,
-            'passportNumber': '',
-            'clientData': null
-        }), addHeaders({
-	    	'Accept': 'application/json, text/plain, */*',
-	    	'Content-Type': 'application/json;charset=UTF-8',
-	        'Origin': baseurl,
-            'Referer': baseurl + '/web/Account/Login'
-	    }));
-	
-	    var json = getJson(html);
-	    AnyBalance.trace('Отправили PIN-код: ' + JSON.stringify(json));
-	}
-		
-	if(json.result && json.result.isPinValid !== true){
-		throw new AnyBalance.Error('Неверный PIN-код');
-	}
-	
-	if(json.result.clientDataResult){
-	    var isUserCodeWord = json.result.clientDataResult.codewordCreationSettings.isEnabled; // Проверка на наличие кодового слова
-		
-		if(isUserCodeWord !== true){
-			AnyBalance.trace('Проверка с помощью кодового слова не требуется');
-		}else{
-			AnyBalance.trace('Требуется проверка с помощью кодового слова');
-			
-			html = AnyBalance.requestGet(baseurl + '/web/api/proxy/mic/cool-code/v2/codeword', addHeaders({
-	        	'Accept': 'application/json, text/plain, */*',
-	        	'Content-Type': 'application/json;charset=UTF-8',
-	            'Origin': baseurl,
-                'Referer': baseurl + '/web/Account/Login'
-	        }));
-	
-	        var json = getJson(html);
-	        AnyBalance.trace('Проверили на наличие кодового слова: ' + JSON.stringify(json));
-			
-			if(json.exist !== true){
-		        throw new AnyBalance.Error('Кодовое слово не установлено. Пожалуйста, обратитесь к специалисту в любом удобном для вас офисе банка "Хоум Кредит"');
-	        }else{
-			    if(!prefs.keyword){
-		            var keyWord = AnyBalance.retrieveCode('Пожалуйста, введите кодовое слово для входа в интернет-банк', null, {time: 180000});
-		        }else{
-		        	var keyWord = prefs.keyword;
-		        }
-
-		        html = AnyBalance.requestPost(baseurl + '/web/api/Account/V4LevelUp/', JSON.stringify({
-                    'keyWord': keyWord
-                }), addHeaders({
-	            	'Accept': 'application/json, text/plain, */*',
-	            	'Content-Type': 'application/json;charset=UTF-8',
-	                'Origin': baseurl,
-                    'Referer': baseurl + '/web/Account/Login'
-	            }));
-	
-	            var json = getJson(html);
-	            AnyBalance.trace('Отправили кодовое слово: ' + JSON.stringify(json));
-		    }
-		}
-	}
-
-	if(!json.result && json.statusCode !== 200){
-		var error = json.errors.join(' ');
-		throw new AnyBalance.Error(error, null, /телефон|дат|код|данные/i.test(error));
+	var sessionId = json.Result.SessionId;
     
-		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Не удалось войти в личный кабинет. Сайт изменен?');
-	}
-	
-	g_savedData.set('pin', pinCode);
-	g_savedData.set('keyword', keyWord);
+	g_savedData.set('sessionId', sessionId);
 	g_savedData.setCookies();
 	g_savedData.save();
 		
-	return json;
-}
-
-function loginPinCode() {
-    var prefs = AnyBalance.getPreferences();
-	
-	AnyBalance.setDefaultCharset('utf-8');
-	
-	g_savedData.restoreCookies();
-	
-	var pin = prefs.pin || g_savedData.get('pin');
-	if(!prefs.pin)
-		g_savedData.get('pin');
-
-	var pinCode = pin;
-
-    html = AnyBalance.requestPost(baseurl + '/web/api/Account/V4CheckUserPin/', JSON.stringify({
-        'pinCode': pinCode,
-        'passportNumber': '',
-        'clientData': null
-    }), addHeaders({
-       	'Accept': 'application/json, text/plain, */*',
-       	'Content-Type': 'application/json;charset=UTF-8',
-        'Origin': baseurl,
-        'Referer': baseurl + '/web/Account/Login'
-    }));
-	
-    var json = getJson(html);
-    AnyBalance.trace('Отправили PIN-код: ' + JSON.stringify(json));
-		
-	if(json.result && json.result.isPinValid !== true){
-		AnyBalance.trace('Требуется повторная авторизация');
-		clearAllCookies();
-		login();
-	}
-
-	g_savedData.set('pin', pinCode);
-	g_savedData.setCookies();
-	g_savedData.save();
-	
 	return json;
 }

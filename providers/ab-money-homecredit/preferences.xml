@@ -11,6 +11,17 @@
         key="login"
         inputType="number">
     </EditTextPreference>
+	<EditTextPreference 
+        positiveButtonText="ОК"
+        key="password" 
+        dialogTitle="Пароль"
+        negativeButtonText="Отмена"
+        title="Пароль"
+        obligatory="true"
+        summary="Пароль для входа в Интернет-банк|Введите пароль\n|**********\n"
+        dialogMessage="Введите пароль, используемый для входа в Интернет-банк"
+        inputType="textPassword">
+    </EditTextPreference>
 	<EditTextPreference
 		positiveButtonText="ОК"
 		key="birthdate"
@@ -20,28 +31,6 @@
 		summary="Дата рождения для входа в Интернет-банк|Введите дату рождения\n|{@s}\n"
 		dialogMessage="Введите дату рождения для входа в Интернет-банк в формате ГГГГ-ММ-ДД, например: 1970-01-01">
 	</EditTextPreference>
-    <EditTextPreference 
-        positiveButtonText="ОК"
-        key="pin" 
-		obligatory="true"
-        dialogTitle="PIN-код"
-        negativeButtonText="Отмена"
-        title="PIN-код"
-        summary="PIN-код для входа в Интернет-банк|Введите PIN-код\n|***********\n"
-        dialogMessage="Введите PIN-код, используемый для входа в Интернет-банк"
-        inputType="textPassword">
-    </EditTextPreference>
-	<EditTextPreference 
-        positiveButtonText="ОК"
-        key="keyword" 
-		obligatory="true"
-        dialogTitle="Кодовое слово"
-        negativeButtonText="Отмена"
-        title="Кодовое слово"
-        summary="Кодовое слово для входа в Интернет-банк|Введите кодовое слово\n|***********\n"
-        dialogMessage="Введите Кодовое слово, используемый для входа в Интернет-банк"
-        inputType="textPassword">
-    </EditTextPreference>
 	<ListPreference
 	    title="Источник данных"
 		key="source"
@@ -62,25 +51,4 @@
         key="num"
         inputType="number">
     </EditTextPreference>
-
-
-<!-- 	
-    <ListPreference 
-        key="type" 
-        title="Продукт"
-        summary="||{@s}"
-        entries="Депозит|Карта|Кредит"
-        entryValues="dep|card|crd"
-		defaultValue="dep">
-    </ListPreference>	
-    <EditTextPreference
-        title="ID продукта" 
-        positiveButtonText="ОК" 
-        summary="|Автоматически|{@s}" 
-        dialogTitle="ID продукта" 
-        negativeButtonText="Отмена" 
-        dialogMessage="В зависимости от настройки Что смотреть, введите сюда ID депозита или кредита или последние 4 цифры карты. Если оставить поле пустым, то будет показана информация по первому продукту. ID депозитов и кредитов можно узнать из счетчика Сводка."
-        key="contract"
-        inputType="number">
-    </EditTextPreference> -->
 </PreferenceScreen>

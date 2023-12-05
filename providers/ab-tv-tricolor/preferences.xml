@@ -4,10 +4,10 @@
 		obligatory="true"
         title="Логин" 
         positiveButtonText="ОК" 
-        summary="||{@s}" 
+        summary="Логин для входа в личный кабинет|Введите логин\n|{@s}\n" 
         dialogTitle="Логин" 
         negativeButtonText="Отмена" 
-        dialogMessage="Введите DREID - 12-тизначный или 14-тизначный номер приемника, номер абонентского договора или логин."
+        dialogMessage="Введите DREID - 12-тизначный или 14-тизначный номер приемника, номер абонентского договора или логин"
         inputType="text"
         key="login">
     </EditTextPreference>
@@ -18,8 +18,17 @@
         dialogTitle="Пароль"
         negativeButtonText="Отмена"
         title="Пароль"
-        summary="||***********"
-        dialogMessage="Введите пароль, используемый для входа в личный кабинет Триколор."
+        summary="Пароль для входа в личный кабинет|Введите пароль\n|**********\n"
+        dialogMessage="Введите пароль, используемый для входа в личный кабинет Триколор"
         inputType="textPassword">
     </EditTextPreference>
+	<EditTextPreference
+		title="Номер оборудования"
+		key="num"
+		summary="Оборудование для получения данных|Автоматически\n|{@s}\n"
+		dialogTitle="Номер оборудования"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите последние 4 цифры номера оборудования, по которому вы хотите получать информацию. Если оставить поле пустым, будет показана информация по первому номеру">
+	</EditTextPreference>
 </PreferenceScreen>

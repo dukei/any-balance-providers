@@ -1,23 +1,22 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id version="23">ab-tv-tricolor</id>
-	<name>Триколор ТВ</name>
+	<id version="25">ab-tv-tricolor</id>
+	<name>Триколор</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе и другие данные для пользователей провайдера спутникового телевидения "Триколор ТВ" (http://tricolor.tv).</p>   
-	<p>Информация берется из личного кабинета "Триколор ТВ" (http://lk.tricolor.tv/trcustomer).
+	<p>Предоставляет информацию о балансе и другие данные для пользователей провайдера цифровых услуг и сервисов Триколор (https://www.tricolor.ru/).</p>   
+	<p>Информация берется из личного кабинета Триколор на сайте https://lk.tricolor.ru/.
 	]]></description>
 	<instruction html="true"><![CDATA[
 	<p>Как получить доступ к личному кабинету:</p>
 	<ul>
-	<li>Для получения доступа пройдите по ссылке "получить пароль" на странице http://lk.tricolor.tv/trcustomer</li>
+	<li>Для получения доступа пройдите регистрацию на странице https://public.tricolor.ru/#Registration/NetAbonent.</li>
 	</ul>
 	]]></instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
-	<author>DimaZUA &lt;DIMAZ.KHUA@gmail.com&gt;</author>
-  <depends>
-    <module id="library"/>
-  </depends>
+    <depends>
+        <module id="library"/>
+    </depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
@@ -25,26 +24,33 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units=" р"/>
-		<counter id="agreement" name="Договор" type="text"/>
-		<counter id="device" name="№ оборудования" type="text"/>
-		<counter id="service1" name="Услуга" type="text"/>
-		<counter id="daysleft1" name="Остаток дней" units=" дн"/>
-		
-		<counter id="service2" name="Услуга 2" type="text"/>
-		<counter id="daysleft2" name="Остаток дней 2" units=" дн"/>
-		
-		<counter id="service3" name="Услуга 3" type="text"/>
-		<counter id="daysleft3" name="Остаток дней 3" units=" дн"/>
-		
-		<counter id="service4" name="Услуга 4" type="text"/>
-		<counter id="daysleft4" name="Остаток дней 4" units=" дн"/>
-
-		<counter id="service5" name="Услуга 5" type="text"/>
-		<counter id="daysleft5" name="Остаток дней 5" units=" дн"/>		
-		
-		<counter id="service6" name="Услуга 6" type="text"/>
-		<counter id="daysleft6" name="Остаток дней 6" units=" дн"/>
+		<counter id="balance" name="Баланс" units=" ₽"/>
+		<counter id="service1" name="Название услуги" type="text"/>
+		<counter id="tilldate1" name="Дата окончания услуги" type="time" format="dd.MM.yyyy"/>
+		<counter id="daysleft1" name="Срок действия услуги" units=" дн"/>
+		<counter id="service2" name="Название услуги 2" type="text"/>
+		<counter id="tilldate2" name="Дата окончания услуги 2" type="time" format="dd.MM.yyyy"/>
+		<counter id="daysleft2" name="Срок действия услуги 2" units=" дн"/>
+		<counter id="service3" name="Название услуги 3" type="text"/>
+		<counter id="tilldate3" name="Дата окончания услуги 3" type="time" format="dd.MM.yyyy"/>
+		<counter id="daysleft3" name="Срок действия услуги 3" units=" дн"/>
+		<counter id="service4" name="Название услуги 4" type="text"/>
+		<counter id="tilldate4" name="Дата окончания услуги 4" type="time" format="dd.MM.yyyy"/>
+		<counter id="daysleft4" name="Срок действия услуги 4" units=" дн"/>
+		<counter id="service5" name="Название услуги 5" type="text"/>
+		<counter id="tilldate5" name="Дата окончания услуги 5" type="time" format="dd.MM.yyyy"/>
+		<counter id="daysleft5" name="Срок действия услуги 5" units=" дн"/>		
+		<counter id="service6" name="Название услуги 6" type="text"/>
+		<counter id="tilldate6" name="Дата окончания услуги 6" type="time" format="dd.MM.yyyy"/>
+		<counter id="daysleft6" name="Срок действия услуги 6" units=" дн"/>
+		<counter id="agreement" name="Номер договор" type="text"/>
+		<counter id="agreementdate" name="Дата договора" type="time" format="dd.MM.yyyy"/>
+		<counter id="agreementstate" name="Статус договора" type="text"/>
+		<counter id="device" name="Номер оборудования" type="text"/>
+		<counter id="model" name="Модель оборудования" type="text"/>
+		<counter id="address" name="Адрес подключения" type="text"/>
+		<counter id="phone" name="Телефон" type="text"/>
+		<counter id="fio" name="ФИО" type="text"/>
 	</counters>
 	<keywords>спутник tricolor</keywords>
 	<type>tv</type>

@@ -1044,11 +1044,6 @@ function processCountersLK(result){
 		}
 	}
 	
-	var token = callNewLKApiToken('cashback/account');
-	var data = callNewLKApiResult(token);
-	
-	getParam(data.balance, result.remainders, 'remainders.cashback');
-	
 	var token = callNewLKApiToken('services/list/active');
 	var data = callNewLKApiResult(token);
 	var status = {
@@ -1091,6 +1086,10 @@ function processCountersLK(result){
 	
 	getParam(data.currentCreditLimitValue, result.remainders, 'remainders.credit');
 	
+	if (isAvailable(['remainders.cashback', 'remainders.premium_state'])) {
+		processCashbackLK(result);
+	}
+	
 	if (isAvailable(['expenses.usedinthismonth', 'expenses.usedinprevmonth', 'expenses.abonservice', 'expenses.refill'])) {
 	    processExpensesLK(result);
 	}
@@ -1111,6 +1110,20 @@ function getCsrfToken(){
 		AnyBalance.trace('Не удалось получить csrfToken');
 	var csrfToken = g_savedData.set('csrfToken', csrf);
 	g_savedData.save();
+}
+
+function processCashbackLK(result){
+	if(!result.remainders)
+        result.remainders = {};
+	
+	var html = AnyBalance.requestGet('https://login.mts.ru/amserver/rest/v1/cashback', g_headers);
+
+	var json = getJson(html);
+	AnyBalance.trace(JSON.stringify(json));
+	
+	getParam(json.cashBackValue, result.remainders, 'remainders.cashback');
+	var premStatus = {PREMIUM: 'Активна', NO_PREMIUM: 'Не активна'};
+	getParam(premStatus[json.premiumStatus]||json.premiumStatus, result.remainders, 'remainders.premium_state');
 }
 
 function processExpensesLK(result){

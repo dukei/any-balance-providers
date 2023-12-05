@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id major_version="4.1" version="223">ab-cell-mts-russia</id>
+	<id major_version="4.1" version="224">ab-cell-mts-russia</id>
 	<name>МТС (Россия)</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе, бонусных баллах, использованных минутах на локальные, мобильные и любимые номера, расходах, статусе блокировки, кредите, номере лицевого счета, ежемесячной плате.</p>
@@ -34,7 +34,7 @@
 		<counter id="mms_left" name="Бесплатные ММS" units=" mms"/>
 		<counter id="sms_used" name="Использовано SMS" units=" sms"/>
 		<counter id="traffic_left_mb" name="Остаток трафика" units=" Mb"/>
-		<counter id="cashback" name="Кэшбэк" units=" ₽"/>
+		<counter id="cashback" name="Кешбэк" units=" ₽"/>
 		<counter id="min_used" name="Минут накоплено (кред.)" units=" мин"/>
 		<counter id="min_love" name="Использовано минут на любимые номера" units=" мин"/>
 		<counter id="min_used_mts" name="Использовано минут на МТС" units=" мин"/>
@@ -63,6 +63,7 @@
 		<counter id="usedinthismonth" name="Расходы за этот месяц" units=" ₽"/>
 		<counter id="usedinprevmonth" name="Расходы за прошлый месяц" units=" ₽"/>
 		<counter id="license" name="Лицевой счет" type="text"/>
+		<counter id="premium_state" name="Подписка Premium" type="text"/>
 		<counter id="refill" name="Пополнения за этот месяц" units=" ₽"/>
 		<counter id="phone" name="Номер телефона" type="text"/>
 		<counter id="fio" name="ФИО" type="text"/>

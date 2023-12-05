@@ -8,7 +8,7 @@ function checkLoginError(html, options) {
 	function processError(html){
         var error = sumParam(html, /var\s+(?:passwordErr|loginErr)\s*=\s*'([^']*)/g, replaceSlashes, null, aggregate_join);
         if(!error) //На корп форме входа
-        	error = getElement(html, /<[^>]+field-help/i, replaceTagsAndSpaces);
+        	error = getElement(html, /<[^>]+errorText/i, replaceTagsAndSpaces);
         if (error)
             throw new AnyBalance.Error(error, null, /логин|парол/i.test(error));
 
@@ -380,35 +380,44 @@ function enterMTS(options){
 	}
 
 	html = redirectIfNeeded(html);
+	
+	var loginFormatted = options.login.replace(/.*(\d{3})(\d{3})(\d{2})(\d{2})$/i, '$1 $2-$3-$4');
 
     var form;
     if(form = getOrdinaryLoginForm(html)){  //Обычная форма входа
     	html = loginOrdinaryForm(html, options);
-    }else if(form = getElement(html, /<form[^>]+id="login-phone-form"/i)){       
+    }else if(form = getElement(html, /<form[^>]+class="section__form form -loginForm"/i)){       
     	AnyBalance.trace('Найдена корп. форма входа');
         var params = createFormParams(form, function (params, input, name, value) {
-            if (name == 'IDToken1')
+            if (name == 'login'){
+				value = loginFormatted;
+			}else if (name == 'IDToken1'){
                 value = options.login;
+			}
+			
             return value;
         });
+        
+		loginUrl = AnyBalance.getLastUrl();
         
         html = AnyBalance.requestPost(loginUrl, params, addHeaders({Origin: g_baseurlLogin, Referer: loginUrl}));
         fixCookies();
     	
-    	form = getElement(html, /<form[^>]+id="enter-password-form"/i);
-    	if(!form){
-    		var error = getElement(html, /<[^>]+intro-text/i, replaceTagsAndSpaces);
+    	form = getElement(html, /<form[^>]+class="section__passwordForm passwordForm "/i);
+		if(!form){
+    		var error = getElement(html, /<[^>]+errorText/i, replaceTagsAndSpaces);
     		if(error)
-    			throw new AnyBalance.Error(error, null, /не существует/i.test(error));
+    			throw new AnyBalance.Error(error, null, /пользователь|не существует/i.test(error));
+    		if(/codeCheckForm/i.test(html))
+    			throw new AnyBalance.Error('Личный кабинет для указанного номера телефона не зарегистрирован!', null, true);
     		AnyBalance.trace(html);
     		throw new AnyBalance.Error('Не удалось найти форму ввода пароля. Сайт изменен?');
     	}
 
         var params = createFormParams(form, function (params, input, name, value) {
             if (name == 'IDToken1')
-                value = options.login;
-            else if (name == 'IDToken2')
                 value = options.password;
+			
             return value;
         });
 

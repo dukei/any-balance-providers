@@ -67,6 +67,7 @@ var g_countersTable = {
 		"traffic_used_mb": "remainders.traffic_used_mb",
 		"traffic_used_by_acceptors_mb": "remainders.traffic_used_by_acceptors_mb",
 		"cashback": "remainders.cashback",
+		"premium_state": "remainders.premium_state",
 		"statuslock": "remainders.statuslock",
 		"credit": "remainders.credit",
 		"services": "remainders.services",

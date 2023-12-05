@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="5">ab-municipal-moygaz-smorodina</id>
+	<id version="6">ab-municipal-moygaz-smorodina</id>
 	<api flags="no_browser"/>
 	<name>Мой ГАЗ Смородина</name>
 	<description html="true"><![CDATA[
@@ -42,7 +42,8 @@
 		<counter id="countState" name="Статус показаний" type="text"/>
 		<counter id="averageMonthlyExpense" name="Среднемесячный расход" units=" м³"/>
 		<counter id="address" name="Адрес установки оборудования" type="text"/>
-		<counter id="provider" name="Провайдер" type="text"/>	
+		<counter id="provider" name="Провайдер" type="text"/>
+		<counter id="email" name="E-mail" type="text"/>
 		<counter id="phone" name="Номер телефона" type="text"/>
 		<counter id="fio" name="ФИО" type="text"/>
 	</counters>

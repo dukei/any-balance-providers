@@ -4,10 +4,10 @@
 		obligatory="true"
         title="Номер устройства"
         positiveButtonText="ОК"
-        summary="Номер устройства с сайта"
+		summary="Номер устройства с сайта|Введите номер\n|{@s}\n" 
         dialogTitle="Номер устройства"
         negativeButtonText="Отмена"
-        dialogMessage="Выберите нужное устройство на сайте http://narodmon.ru. После id= идет номер устройства."
+        dialogMessage="Введите номер устройства, выбранного на сайте. Для получения номера воспользуйтесь инструкцией к провайдеру"
         key="number">
     </EditTextPreference>
 </PreferenceScreen>

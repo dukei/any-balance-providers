@@ -1,5 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="2.0" version="11" date="2023-10-19">
+	- Добавлены счетчики Количество осадков, Освещенность, Радиация
+	- Незначительные изменения и улучшения
+	</change>
 	<change major_version="2.0" version="10" date="2016-12-28">
 	Добавлено отображение до 3 датчиков
 	</change>

@@ -1,23 +1,23 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="2.0" version="10">ab-weather-narodmon</id>
+	<id major_version="2.0" version="11">ab-weather-narodmon</id>
 	<api flags="no_browser"/>
-	<name>Народный монитор</name>
+	<name>Народный мониторинг</name>
 	<description html="true"><![CDATA[
-	<p>Получает текущую погоду с сайта narodmon.ru</p>
+	<p>Предоставляет информацию о текущей погоде по данным устройств с сайта https://narodmon.ru/.</p>
 	]]></description>
 	<instruction html="true"><![CDATA[
-	<p>В настройки провайдера требуется ввести номер устройства. Номер устройства можно получить так:</p>
+	<p>Для работы провайдера требуется ввести номер устройства. Номер можно получить так:</p>
 	<ol>
-		<li>Зайдите на http://narodmon.ru</li>
+		<li>Зайдите на https://narodmon.ru/</li>
 		<li>Кликните по интересующему вас датчику</li>
-		<li>ID устройства отображается в информации об устройстве (в окошке, которое открывается, если кликнуть по устройству) через запятую после его названия</li>
+		<li>ID устройства отображается в информации об устройстве (в окошке, которое открывается, если кликнуть по устройству) перед его названием</li>
 		<li>Введите номер в настройки провайдера, чтобы получить значение.</li>
 	</ol>
 	<p>Если вы не нашли ID устройства по инструкции выше, то можете продолжить:</p>
 	<ol>
-		<li>Нажмите в окне информации об устройстве на "Поделиться ссылкой на датчик"</li>
-		<li>Номер датчика начинается с id=</li>
+		<li>Нажмите в окне информации об устройстве на значок "Поделиться"</li>
+		<li>Номер датчика будет указан в конце ссылки после слеша</li>
 		<li>Введите номер в настройки провайдера, чтобы получить значение.</li>
 	</ol>
 	]]></instruction>
@@ -36,12 +36,23 @@
 		<counter id="temperature" name="Температура воздуха" units=" °C"/>
 		<counter id="humidity" name="Влажность" units="%"/>
 		<counter id="pressure" name="Давление" units=" мм рт.ст."/>
+		<counter id="precipitation" name="Количество осадков" units=" мм"/>
+		<counter id="light" name="Освещенность" units=" лк"/>
+		<counter id="radiation" name="Радиация" units=" мкР/ч"/>
 		<counter id="temperature1" name="Температура воздуха 2" units=" °C"/>
 		<counter id="humidity1" name="Влажность 2" units="%"/>
 		<counter id="pressure1" name="Давление 2" units=" мм рт.ст."/>
+		<counter id="precipitation1" name="Количество осадков 2" units=" мм"/>
+		<counter id="light1" name="Освещенность 2" units=" лк"/>
+		<counter id="radiation1" name="Радиация 2" units=" мкР/ч"/>
 		<counter id="temperature2" name="Температура воздуха 3" units=" °C"/>
 		<counter id="humidity2" name="Влажность 3" units="%"/>
 		<counter id="pressure2" name="Давление 3" units=" мм рт.ст."/>
+		<counter id="precipitation2" name="Количество осадков 3" units=" мм"/>
+		<counter id="light2" name="Освещенность 3" units=" лк"/>
+		<counter id="radiation2" name="Радиация 3" units=" мкР/ч"/>
+		<counter id="distance" name="Удаленность" units=" км"/>
+		<counter id="location" name="Расположение" type="text"/>
 	</counters>
 	<keywords>прогноз, погода, температура, воздух, narodmon</keywords>
 	<type>weather</type>

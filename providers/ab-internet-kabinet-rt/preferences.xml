@@ -1,47 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
-<!--
-	<EditTextPreference
-		obligatory="true"
-		title="Логин"
-		positiveButtonText="ОК"
-		summary="||{@s}"
-		dialogTitle="Логин"
-		negativeButtonText="Отмена"
-		dialogMessage="Введите логин, email или телефон (в формате +79001234567) для входа в личный кабинет https://lk.rt.ru."
-		key="login">
-	</EditTextPreference>
-	<EditTextPreference
-		obligatory="true"
-		positiveButtonText="ОК"
-		key="password"
-		dialogTitle="Пароль"
-		negativeButtonText="Отмена"
-		title="Пароль"
-		summary="||***********"
-		dialogMessage="Введите пароль, используемый для входа в личный кабинет https://lk.rt.ru."
-		inputType="textPassword">
-	</EditTextPreference>
-
-	<EditTextPreference
-		title="Номера л/с или телефонов"
-		positiveButtonText="ОК"
-		summary="|Автоматически|{@s}"
-		dialogTitle="Номера л/с или телефонов"
-		negativeButtonText="Отмена"
-		dialogMessage="Введите через запятую номера лицевых счетов или телефонов (до 4), по которым вы хотите получить информацию, или оставьте поле пустым, чтобы получить информацию по первым четырем лицевым счетам. Можно вводить номера не целиком, а только несколько последних цифр."
-		inputType="phone"
+    <EditTextPreference 
+    	obligatory="true"
+        title="Логин" 
+        positiveButtonText="ОК" 
+        summary="Логин для входа в личный кабинет|Введите логин\n|{@s}\n" 
+        dialogTitle="Логин" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите логин, E-mail, номер телефона или номер лицевого счета для входа в личный кабинет. Для авторизации по номеру телефона введите его в международном формате, например: 79001234567"
+        key="login">
+    </EditTextPreference>
+    <EditTextPreference 
+    	obligatory="true"
+        positiveButtonText="ОК"
+        key="password" 
+        dialogTitle="Пароль"
+        negativeButtonText="Отмена"
+        title="Пароль"
+        summary="Пароль для входа в личный кабинет|Введите пароль\n|**********\n"
+        dialogMessage="Введите пароль, используемый для входа в личный кабинет"
+        inputType="textPassword">
+    </EditTextPreference>
+	<EditTextPreference 
+        title="Список номеров" 
+        positiveButtonText="ОК" 
+        summary="Список номеров для получения данных|Автоматически\n|{@s}\n" 
+        dialogTitle="Список номеров" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите через запятую последние 4 цифры номеров лицевых счетов или телефонов, информацию по которым надо получить, например: 8823, 7751, 3224. Если оставить поле пустым, будет показана информация по первым четырем номерам"
+        inputType="phone"
 		key="num">
-	</EditTextPreference>
--->
-	<EditTextPreference
-		title="Лицевой счет"
-		positiveButtonText="ОК"
-		summary="||{@s}"
-		dialogTitle="Лицевой счет"
-		negativeButtonText="Отмена"
-		dialogMessage="Лицевой счет."
-		inputType="number"
-		key="num">
-	</EditTextPreference>
+    </EditTextPreference>
 </PreferenceScreen>

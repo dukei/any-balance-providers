@@ -2,6 +2,16 @@
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 */
 
+var g_headers = {
+	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
+	'Accept-Language': 'en-US,en;q=0.9,ru;q=0.8,ru-RU;q=0.7',
+	'Cache-Control': 'max-age=0',
+	'Connection': 'keep-alive',
+	'Upgrade-Insecure-Requests': '1',
+	'User-Agent': 'android.RTkabinet',
+	'X-Requested-With': 'com.dartit.RTcabinet'
+};
+
 var g_ServiceStatus = {
         NOT_CONNECTED: "Не подключена",
         CONNECTED: "Услуга активна",
@@ -16,39 +26,13 @@ var g_ServiceStatus = {
 };
 
 var baseurl = "https://lk.rt.ru/";
+var g_savedData;
 
-var g_web_headers = {
-	Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3',
-	'Accept-Language': 'en-US,en;q=0.9,ru;q=0.8,ru-RU;q=0.7',
-	Connection: 'keep-alive',
-	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.120 Safari/537.36',
-    Referer:baseurl,
-    'Sec-Fetch-Mode': 'navigate',
-	'Sec-Fetch-User': '?1',
-	'Sec-Fetch-Site': 'same-origin',
-	Origin: 'https://b2c.passport.rt.ru'
+var phoneFormat = function (phoneNumber, stacionar) { // 79034785123 -> +7 903 478-51-23
+    var phoneRegexp = /\s*\+?(\d)\s*\(?(\d{3})\)?\s*(\d{3})-?(\d{2})-?(\d{2})\s*/;
+    var phone = phoneNumber === "string" ? phoneNumber : String(phoneNumber);
+    return phone.replace(phoneRegexp, stacionar ? "$1 $2 $3-$4-$5" : "+$1 $2 $3-$4-$5");
 };
-
-var g_headers = {
-	Accept: 'application/json, text/plain, */*',
-	'Accept-Language': 'en-US,en;q=0.9,ru;q=0.8,ru-RU;q=0.7',
-	Connection: 'keep-alive',
-	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.120 Safari/537.36',
-	'Content-Type': 'application/json',
-    Referer:baseurl,
-    'Sec-Fetch-Mode': 'cors',
-    Origin: 'https://lk.rt.ru',
-    'Sec-Fetch-Site': 'same-origin'
-};
-
-    /**
-     * 79034785123 -> +7(903)478-51-23
-     */
-    var phoneFormat = function (phoneNumber, stacionar) {
-        var phoneRegexp = /\s*\+?(\d)\s*\(?(\d{3})\)?\s*(\d{3})-?(\d{2})-?(\d{2})\s*/;
-        var phone = phoneNumber === "string" ? phoneNumber : String(phoneNumber);
-        return phone.replace(phoneRegexp, stacionar ? "$1 ($2) $3-$4-$5" : "+$1 ($2) $3-$4-$5");
-    };
 
 var SERVICE_TYPE = new function () {
     var self = this;
@@ -98,8 +82,7 @@ var SERVICE_TYPE = new function () {
     };
 };
 
-
-function generateUUID () {
+function generateUUID(){
     var s = [], itoh = '0123456789ABCDEF', i;
     for (i = 0; i < 36; i++) {
         s[i] = Math.floor(Math.random() * 0x10);
@@ -114,150 +97,58 @@ function generateUUID () {
 }
 
 function main(){
-var g_headers = {
-'content-type':'application/json',
-accept:'application/vnd.qiwi.v1+json',
-'user-agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.77 Safari/537.36',
-'client-software':'WEB v4.98.0',
-'x-application-id':'0ec0da91-65ee-496b-86d7-c07afc987007',
-'x-application-secret':'66f8109f-d6df-49c6-ade9-5692a0b6d0a1',
-'origin':'https://qiwi.com',
-'sec-fetch-site':'same-site',
-'sec-fetch-mode':'cors',
-'sec-fetch-dest':'empty',
-'referer':'https://qiwi.com/',
-'accept-encoding':'gzip, deflate, br'
-}
-    var prefs = AnyBalance.getPreferences();
-    AnyBalance.setDefaultCharset('utf-8');
-    AnyBalance.setOptions({cookiePolicy: 'netscape'});	
-var html=AnyBalance.requestGet('https://qiwi.com/payment/form/32558');
-AnyBalance.trace(html);
-var html=AnyBalance.requestPost('https://qiwi.com/oauth/token',{grant_type:'anonymous',client_id:'anonymous'});
-AnyBalance.trace(html);
-var json=getJson(html);
-g_headers.authorization='TokenHead '+json.access_token;
-var html=AnyBalance.requestPost('https://edge.qiwi.com/sinap/api/refs/d70e3628-ac4c-48ff-9e20-e7f04b4c9b81/containers',JSON.stringify({
-	account: prefs.num,
-	serviceType: 'account',
-	profileId: 'rostelecom'}),g_headers);
-AnyBalance.trace(html);
-	var json=getJson(html);
-	if (json.message) throw new AnyBalance.Error(json.message,false,true)
-	AnyBalance.setResult({success:true,balance:json.elements[0].value})
-	return;
-
-    var prefs = AnyBalance.getPreferences();
-    AnyBalance.setDefaultCharset('utf-8');
-
-    if(AnyBalance.getLevel() < 4)
-        throw new AnyBalance.Error('Этот провайдер требует API v.4+');
-
-    checkEmpty(prefs.login, 'Введите логин!');
-    checkEmpty(prefs.password, 'Введите пароль!');
-
-    var login=prefs.login, type='LOGIN';
-    if(/^\d{9,11}$/i.test(prefs.login.replace(/[\+\s\-()]+/ig, ''))){
-    	AnyBalance.trace('Входить будем по номеру телефона');
-    	login = prefs.login.replace(/[\+\s\-()]+/ig, '');
-    	type = 'PHONE';
-    }else if(/@/i.test(prefs.login)){
-    	AnyBalance.trace('Входить будем по eмейл');
-    	type = 'EMAIL';
-    }else{
-    	AnyBalance.trace('Входить будем по логину');
-    }
-/*
-    //Get captcha
-    var sitekey = '6LeQM84SAAAAAKALDOQ_0oUk2i09ozbCzrWg4nt5';
-    var html = AnyBalance.requestGet('https://www.google.com/recaptcha/api/challenge?k=' + sitekey + '&ajax=1&cachestop=' + Math.random(), addHeaders({
-    	Referer: baseurl
-    }));
-    var challenge = getParam(html, /challenge\s*:\s*'([^']*)/);
-    html = AnyBalance.requestGet('https://www.google.com/recaptcha/api/reload?c=' + challenge + '&k=' + sitekey + '&reason=i&type=image&lang=ru', addHeaders({
-    	Referer: baseurl
-    }));
-    var imgid = getParam(html, /Recaptcha.finish_reload\(\'([^']*)/);
-    var img = AnyBalance.requestGet('https://www.google.com/recaptcha/api/image?c=' + imgid, addHeaders({
-    	Referer: baseurl
-    }));
-
-    var code = AnyBalance.retrieveCode('Пожалуйста, введите слова с картинки', img);
-*/
+	var prefs = AnyBalance.getPreferences();
+	AnyBalance.setDefaultCharset('utf-8');
 	
-	AnyBalance.setCookie('.rt.ru', 'oxxfgh', 'f9d528d6-f77e-421d-aa52-fb0260e7ec6e#0#1800000#5000');
+	if(!g_savedData)
+		g_savedData = new SavedData('rostelecom', prefs.login);
+
+	g_savedData.restoreCookies();
+	
+	var pageUUID = g_savedData.get('pageUUID');
+	
+	AnyBalance.trace('Пробуем войти в личный кабинет...');
+	
 	var html = AnyBalance.requestPost(baseurl + 'client-api/checkSession', JSON.stringify({
 		client_uuid: generateUUID(), 
-		current_page: ''
-	}), addHeaders({Referer: baseurl}));
-
-
-    var state = JSON.stringify({uuid: generateUUID()});
-    html = AnyBalance.requestGet('https://b2c.passport.rt.ru/auth/realms/b2c/protocol/openid-connect/auth?' + createUrlEncodedParams({
-    	response_type: 'code',
-    	scope: 'openid',
-    	client_id: 'lk_b2c',
-    	state: state,
-    	redirect_uri: 'https://lk.rt.ru/sso-auth/?redirect=https%3A%2F%2Flk.rt.ru%2F'
-    }), g_web_headers);
-
-     html = handleBobcmn(AnyBalance.getLastUrl(), html);
-    html = AnyBalance.requestGet('https://b2c.passport.rt.ru/auth/realms/b2c/protocol/openid-connect/auth?' + createUrlEncodedParams({
-    	response_type: 'code',
-    	scope: 'openid',
-    	client_id: 'lk_b2c',
-    	state: state,
-    	redirect_uri: 'https://lk.rt.ru/sso-auth/?redirect=https%3A%2F%2Flk.rt.ru%2F'
-    }), g_web_headers);
-
-	if(/Личный кабинет временно недоступен/i.test(html)) {
-		throw new AnyBalance.Error('Личный кабинет временно недоступен. Ведутся технические работы, попробуйте обновить баланс позже.');
-	}
-
-    var form = getElement(html, /<form[^>]+kc-form-login/i);
-    if(!form){
-    	AnyBalance.trace(html);
-    	throw new AnyBalance.Error('Не удалось найти форму входа. Сайт изменен?');
+		current_page: "auto-attach",
+		page_uuid: pageUUID
+	}), addHeaders({'Content-Type': 'application/json', 'Referer': baseurl}));
+	
+	if(AnyBalance.getLastStatusCode() >= 500){
+        AnyBalance.trace(html);
+        throw new AnyBalance.Error('Сайт провайдера временно недоступен. Попробуйте еще раз позже');
+    }
+	
+	AnyBalance.trace('checkSession: ' + html);
+	
+	if(!/"isSessionLost":\s*?false/i.test(html)){
+		AnyBalance.trace('Сессия новая. Будем логиниться заново...');
+		clearAllCookies();
+    	login(prefs);
+	}else{
+		AnyBalance.trace('Сессия сохранена. Входим автоматически...');
     }
 
-    var action = getParam(form, /<form[^>]+action="([^"]*)/i, replaceHtmlEntities);
-	var params = AB.createFormParams(form, function(params, str, name, value) {
-		if (name == 'username') {
-			return prefs.login;
-		} else if (name == 'password') {
-			return prefs.password;
-		}
+    var result = {success: true};
+	
+	var pageUUID = g_savedData.get('pageUUID');
 
-		return value;
-	});
-
-	var html = AnyBalance.requestPost(action, params, addHeaders({Referer: AnyBalance.getLastUrl()}, g_web_headers));
-
-	if(AnyBalance.getLastUrl().indexOf(baseurl) != 0){
-		var error = getElement(html, /<div[^>]+error/i, replaceTagsAndSpaces);
-		if(error)
-			throw new AnyBalance.Error(error, null, /парол/i.test(error));
-		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Не удалось войти в личный кабинет. Сайт изменен?');
-	}
-
-	html = AnyBalance.requestPost(baseurl + 'client-api/checkSession', JSON.stringify({
-		client_uuid: generateUUID(), 
-		current_page: ''
-	}), addHeaders({Referer: baseurl}));
-
-	html = AnyBalance.requestPost(baseurl + 'client-api/getAccounts', JSON.stringify({
+	var html = AnyBalance.requestPost(baseurl + 'client-api/getAccounts', JSON.stringify({
 		client_uuid: generateUUID(),
-		current_page: 'login'
-	}), addHeaders({Referer: baseurl}));
+		current_page: "auto-attach",
+		page_uuid: pageUUID
+	}), addHeaders({'Content-Type': 'application/json', 'Referer': baseurl}));
+	
+	AnyBalance.trace('getAccounts: ' + html);
     
     var accinfo = getRTJson(html);
 
     if(!accinfo.accounts || accinfo.accounts.length == 0)
-        throw new AnyBalance.Error("В вашем кабинете Ростелеком ещё не подключена ни одна услуга");
+        throw new AnyBalance.Error("У вас не подключена ни одна услуга");
 
-    AnyBalance.trace('Найдено ' + accinfo.accounts.length + ' л/с');
-    AnyBalance.trace('Требуются ' + (prefs.num || 'любые л/с'));
+    AnyBalance.trace('Найдено л/с: ' + accinfo.accounts.length);
+    AnyBalance.trace('Требуются ' + ('л/с: ' + prefs.num || 'любые л/с'));
 
     var nums = prefs.num ? prefs.num.split(/,/g) : ['', '', '', ''];
 
@@ -300,36 +191,44 @@ AnyBalance.trace(html);
         if(!acc){
             if(num){
                 not_found[not_found.length] = num;
-                AnyBalance.trace('Аккаунт, оканчивающийся на ' + num + ' не найден.');
+                AnyBalance.trace('Аккаунт, оканчивающийся на ' + num + ' не найден');
             }
             continue;
         }
-
+		
+		// Балансы
         var suffix = i ? i : '';
 
         if(AnyBalance.isAvailable('totalBalancePlus', 'totalBalanceMinus') ||
-           (i < 4 && AnyBalance.isAvailable('balance' + suffix, 'bonus' + suffix, 'sms' + suffix, 'mms' + suffix, 'min' + suffix, 'gprs' + suffix, 'status' + suffix, 'licschet' + suffix, 'name' + suffix, 'phone' + suffix))){
+           (i < 4 && AnyBalance.isAvailable('balance' + suffix, 'bonus' + suffix, 'sms' + suffix, 'mms' + suffix, 'min' + suffix, 'gprs' + suffix, 'till' + suffix, 'abon' + suffix, 'desc' + suffix, 'status' + suffix, 'licschet' + suffix, 'name' + suffix, 'phone' + suffix))){
 
             var servicesIds = [];
             for(var s=0; s<acc.services.length; ++s)
             	servicesIds.push(acc.services[s].serviceId);
-
+			
 			html = AnyBalance.requestPost(baseurl + 'client-api/getServiceTariffName', JSON.stringify({
 				servicesId: servicesIds,
 				client_uuid: generateUUID(),
-				current_page: 'main'
-			}), g_headers);
+				current_page: 'service',
+				page_uuid: pageUUID
+			}), addHeaders({'Content-Type': 'application/json', 'Referer': baseurl}));
+			
+	        AnyBalance.trace('getServiceTariffName: ' + html);
+			
 			acc.__tariffNames = getRTJson(html).tariffNames;
 
-            AnyBalance.trace('Получаем данные для л/с: ' + acc.number);
+            AnyBalance.trace('Получаем данные для л/с ' + acc.number);
 			try{
-				html = AnyBalance.requestPost(baseurl + 'client-api/getAccountBalance', JSON.stringify({
+				html = AnyBalance.requestPost(baseurl + 'client-api/getAccountBalanceV2', JSON.stringify({
 					accountId: acc.accountId,
 					client_uuid: generateUUID(),
-					current_page: 'main'
-				}), g_headers);
-
-				acc.__detailedInfo = getRTJson(html);;
+					current_page: 'account',
+					page_uuid: pageUUID
+				}), addHeaders({'Content-Type': 'application/json', 'Referer': baseurl}));
+                
+	            AnyBalance.trace('getAccountBalanceV2: ' + html);
+				
+				acc.__detailedInfo = getRTJson(html);
 
 				var balance = getAccBalance(acc.__detailedInfo);
 
@@ -337,7 +236,7 @@ AnyBalance.trace(html);
 					if(AnyBalance.isAvailable('balance' + suffix))
 						result['balance' + suffix] = balance;
 
-					var statuses = [], names = [], bonuses = [], phones = [], sms = [], mms = [], gprs = [];
+					var statuses = [], names = [], bonuses = [], phones = [], sms = [], mms = [], gprs = [], descs = [];
 					for(var j=0; acc.services && j<acc.services.length; ++j){
 						var service = acc.services[j];
 
@@ -347,10 +246,17 @@ AnyBalance.trace(html);
 						html = AnyBalance.requestPost(baseurl + 'client-api/getServiceInfo', JSON.stringify({
 							serviceId: service.serviceId,
 							client_uuid: generateUUID(),
-							current_page: 'main'
-						}), g_headers);
-
-						statuses.push(g_ServiceStatus[getRTJson(html).status]);
+							current_page: 'main',
+							page_uuid: pageUUID
+						}), addHeaders({'Content-Type': 'application/json', 'Referer': baseurl}));
+                        
+	                    AnyBalance.trace('getServiceInfo: ' + html);
+						
+						if(getRTJson(html).voluntaryBlockEndDate){
+						    statuses.push(g_ServiceStatus[getRTJson(html).status] + ' до ' + getRTJson(html).voluntaryBlockEndDate);
+						}else{
+							statuses.push(g_ServiceStatus[getRTJson(html).status]);
+						}
 						var st = SERVICE_TYPE[service.type];
 						if(st)
 							names.push(st.title);
@@ -371,13 +277,18 @@ AnyBalance.trace(html);
 							}*/
 						}
 
-						if(AnyBalance.isAvailable('sms' + suffix, 'mms' + suffix, 'min' + suffix, 'gprs' + suffix)){
-							var jsonPackets = getJson(AnyBalance.requestPost(baseurl + 'client-api/getServiceTariff', JSON.stringify({
+						if(AnyBalance.isAvailable('sms' + suffix, 'mms' + suffix, 'min' + suffix, 'gprs' + suffix, 'till' + suffix, 'abon' + suffix, 'desc' + suffix)){
+							html = AnyBalance.requestPost(baseurl + 'client-api/getServiceTariff', JSON.stringify({
 								serviceId: service.serviceId,
 								client_uuid: generateUUID(),
-								current_page: 'mvno'
-							}), g_headers));
-
+								current_page: 'service',
+								page_uuid: pageUUID
+							}), addHeaders({'Content-Type': 'application/json', 'Referer': baseurl}));
+                            
+							AnyBalance.trace('getServiceTariff: ' + html);
+							
+							var jsonPackets = getJson(html);
+							
 							if(jsonPackets.options){
 								for(var j1=0; j1<jsonPackets.options.length; ++j1){
 									var _packet = jsonPackets.options[j1];
@@ -394,8 +305,15 @@ AnyBalance.trace(html);
 										sumParam(limits.remain, result, 'min'+suffix, null, null, parseBalance, aggregate_sum);
 									else if(/[мmkкгg][бb]|байт|byte/i.test(limits.unit))
 										sumParam(limits.remain, result, 'gprs'+suffix, null, null, parseBalance, aggregate_sum);
+									getParam(limits.endDate, result, 'till'+suffix, null, null, parseDate);
 								}
 							}
+							
+							if(jsonPackets.fee)
+								getParam(jsonPackets.fee/100, result, 'abon'+suffix, null, null, parseBalance);
+							
+							if(jsonPackets.description)
+								descs.push(jsonPackets.description.replace(/<br>$/g, ''));
 						}
 
 /*						if(/INTERNET|TELEPHONY|IPTV|CDMA/.test(service.type || '')  //Судя по шаблону detailed_list, только у этих сервисов есть статистика
@@ -430,16 +348,19 @@ AnyBalance.trace(html);
 					}
 
 					if(AnyBalance.isAvailable('status' + suffix) && statuses.length > 0)
-						result['status' + suffix] = statuses.join(', ');
+						result['status' + suffix] = statuses.join(',\n ');
 
 					if(AnyBalance.isAvailable('licschet' + suffix))
 						result['licschet' + suffix] = acc.number;
 
 					if(AnyBalance.isAvailable('name' + suffix) && names.length > 0)
-						result['name' + suffix] = names.join(', ');
+						result['name' + suffix] = names.join(',\n ');
 
 					if(AnyBalance.isAvailable('phone' + suffix) && phones.length > 0)
-						result['phone' + suffix] = phones.join(', ');
+						result['phone' + suffix] = phones.join(',\n ');
+					
+					if(AnyBalance.isAvailable('desc' + suffix) && descs.length > 0)
+						result['desc' + suffix] = descs.join(',<br> ');
 
 					if(AnyBalance.isAvailable('bonus' + suffix)) {
 						if(bonuses.length > 0) {
@@ -482,10 +403,20 @@ AnyBalance.trace(html);
 		try {
 			html = AnyBalance.requestPost(baseurl + 'client-api/getFplStatus', JSON.stringify({
 				client_uuid: generateUUID(),
-				current_page: ''
-			}), g_headers);
+				current_page: 'service',
+				page_uuid: pageUUID
+			}), addHeaders({'Content-Type': 'application/json', 'Referer': baseurl}));
+			
+	        AnyBalance.trace('getFplStatus: ' + html);
+			
 			var jsonBonus = getRTJson(html);
+			
 			getParam(jsonBonus.balance, result, 'bonusFPL');
+			getParam(jsonBonus.levelInfo.name, result, 'bonusFPLStatus');
+			if(jsonBonus.balanceBurningPoints && jsonBonus.balanceBurningPoints.length > 0){
+			    getParam(jsonBonus.balanceBurningPoints[0].points, result, 'bonusFPLBurn');
+			    getParam(jsonBonus.balanceBurningPoints[0].burningDate.replace(/(\d{4})-(\d{2})-(\d{2})/, '$3.$2.$1'), result, 'bonusFPLBurnDate', null, null, parseDate);
+			}
 		} catch (e) {
 			AnyBalance.trace('Не удалось получить программу "Бонус": ' + e.message);
 		}
@@ -496,13 +427,17 @@ AnyBalance.trace(html);
         for(var i=0; i<accinfo.accounts.length; ++i){
             var acc = accinfo.accounts[i];
             if(!acc.__detailedInfo){
-                AnyBalance.trace('Дополнительно получаем данные для л/с: ' + acc.number);
+                AnyBalance.trace('Дополнительно получаем данные для л/с ' + acc.number);
 				try{
-					html = AnyBalance.requestPost(baseurl + 'client-api/getAccountBalance', JSON.stringify({
-						accountId: acc.accountId,
-						client_uuid: generateUUID(),
-						current_page: 'main'
-					}), g_headers);
+					html = AnyBalance.requestPost(baseurl + 'client-api/getAccountBalanceV2', JSON.stringify({
+			            accountId: acc.accountId,
+			            client_uuid: generateUUID(),
+			            current_page: 'account',
+			            page_uuid: pageUUID
+		            }), addHeaders({'Content-Type': 'application/json', 'Referer': baseurl}));
+					
+	                AnyBalance.trace('getAccountBalanceV2: ' + html);
+					
 					json = getRTJson(html);
 					var balance = getAccBalance(json);
 
@@ -522,15 +457,35 @@ AnyBalance.trace(html);
                 result.totalBalanceMinus = totalBalanceMinus;
         }
     }
+	
+	if(AnyBalance.isAvailable('fio')){
+	    html = AnyBalance.requestPost(baseurl + 'client-api/getProfile', JSON.stringify({
+		    client_uuid: generateUUID(), 
+		    current_page: "auto-attach",
+		    page_uuid: pageUUID
+	    }), addHeaders({'Content-Type': 'application/json', 'Referer': baseurl}));
+        
+	    AnyBalance.trace('getProfile: ' + html);
+		
+		json = getRTJson(html);
+		
+		var person = {};
+		sumParam(json.lastName, person, '__n', null, null, null, create_aggregate_join(' '));
+		sumParam(json.name, person, '__n', null, null, null, create_aggregate_join(' '));
+		sumParam(json.middleName, person, '__n', null, null, null, create_aggregate_join(' '));
+	    getParam(person.__n, result, 'fio');
+	}
 
     AnyBalance.setResult(result);
 }
 
 var g_south_bonus_version;
+
 function getSouthBonusVersion(baseurl){
     if(!isset(g_south_bonus_version)){
-        var html = AnyBalance.requestPost(baseurl + 'plugins/configuration', '', g_headers);
-        var json = getJson(html);
+        var html = AnyBalance.requestPost(baseurl + 'plugins/configuration', '', addHeaders({'Content-Type': 'application/json', 'Referer': baseurl}));
+		
+		var json = getJson(html);
         for(var i=0; i<json.length; ++i){
             if(json[i].name == 'south-bonus'){
                 return g_south_bonus_version = json[i].cononcialVersion;

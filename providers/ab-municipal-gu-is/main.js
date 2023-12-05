@@ -86,9 +86,9 @@ function findBillVP(dt){
     if(month.length < 2) month = '0' + month;
 	var year = dt.getFullYear();
 	
-    var html = AnyBalance.requestGet('https://vp.ru/providers/jkuepd/', g_headers);
+    var html = AnyBalance.requestGet('https://vp.ru/', g_headers);
     
-    if(!html || AnyBalance.getLastStatusCode() >= 400) {
+    if(!html || AnyBalance.getLastStatusCode() >= 500) {
         throw new AnyBalance.Error('Сайт провайдера временно недоступен. Попробуйте еще раз позже');
 	}
 	
@@ -111,7 +111,7 @@ function findBillVP(dt){
 	
     html = AnyBalance.requestGet('https://vp.ru/pay/jkuepd/form?accountNumber=' + prefs.login + '&periodMonth=' + month + '&periodYear=' + year + '&_cid=' + cid + '&sub_provider_type=', g_headers);
 	
-	if(!html || AnyBalance.getLastStatusCode() >= 400) {
+	if(!html || AnyBalance.getLastStatusCode() >= 500) {
         throw new AnyBalance.Error('Сайт провайдера временно недоступен. Попробуйте еще раз позже');
 	}
 	

@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-    <id version="9">ab-municipal-gu-is</id>
-    <name>Оплата ЕПД</name>
+    <id version="10">ab-municipal-gu-is</id>
+    <name>Оплата ЕПД ЖКУ (Москва)</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о сумме оплаты по последнему выставленному счету ЕПД (за текущий или прошлый месяц).</p>
+	<p>Предоставляет информацию о сумме оплаты по последнему выставленному счету ЕПД ЖКУ (за текущий или прошлый месяц).</p>
 	<p>Информация берется со страницы оплаты услуг ЖКХ на сайте <a href="https://vp.ru/providers/jkuepd/">ВсеПлатежи</a> или на сайте <a href="https://qiwi.com/payment/form/198">QIWI</a>.</p>
 	]]></description>
 	<instruction html="true"><![CDATA[

@@ -3,68 +3,156 @@
  */
 
 var g_headers = {
-    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
     'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
-    'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
+    'Accept-Language': 'ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7',
     'Connection': 'keep-alive',
-    'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
+	'Origin': 'https://online.vtb.ru',
+	'Referer': 'https://online.vtb.ru/',
+	'Upgrade-Insecure-Requests': '1',
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36',
 };
+
+var baseurl = 'https://online.vtb.ru/';
 
 function mainWeb() {
     var prefs = AnyBalance.getPreferences();
 
-    checkEmpty(prefs.login, 'Введите логин!');
-    checkEmpty(prefs.password, 'Введите пароль!');
-
-    try {
-        doOld(prefs);
-    } catch (e) {
-        AnyBalance.trace(e.message);
-        AnyBalance.trace('Войти в старый кабинет не удалось, пробуем новый...');
-        doNew(prefs);
-    }
-}
-
-function doNew(prefs) {
-    var baseurl = 'https://online.vtb24.ru/';
-    var html = AnyBalance.requestGet(baseurl + 'content/telebank-client/ru/login.html', g_headers);
-
-    var psec = getParam(html, null, null, /page-security-id="([^"]*)/i, null, html_entity_decode);
-	var M = new Date(), N = M.getHours() + ":" + M.getMinutes() + ":" + M.getSeconds() + " " + M.getDate() + "-" + M.getMonth() + "-" + M.getFullYear();
+    AnyBalance.setDefaultCharset('utf-8');
 	
-    html = AnyBalance.requestPost(baseurl + 'services/signin', {
-        login: prefs.login,
-        password: prefs.password,
-        '_charset_': 'utf-8',
-        'dateTime': N,
-        logParams: '{"ScreenResolution":"1920x1080"}',
-		callId: '2',
-		pageSecurityID: psec
-    }, addHeaders({Referer: baseurl + 'content/telebank-client/ru/login.html', 'X-Requested-With': 'XMLHttpRequest'}));
+	checkEmpty(prefs.login, 'Введите логин!');
+    checkEmpty(prefs.password, 'Введите пароль!');
+	
+	var accessToken = AnyBalance.getData(prefs.login + 'accessToken');
+	var refreshToken = AnyBalance.getData(prefs.login + 'refreshToken');
+	var idToken = AnyBalance.getData(prefs.login + 'idToken');
+	
+    AnyBalance.trace('Пробуем войти в личный кабинет...');
+	
+	AnyBalance.restoreCookies();
+	
+	var html = AnyBalance.requestPost('https://sso-app4.vtb.ru/oauth2/token', {
+		'refresh_token': refreshToken,
+        'grant_type': 'refresh_token',
+        'scope': 'openid',
+        'ac20_sms': false,
+    }, addHeaders({
+		'Accept': 'application/json, text/plain, */*',
+	    'Authorization': 'Basic QzJWWXYzYjZSSEVpZzJuXzU2YmZubjNHZkk0YTpjdlllaUFwdkZuQVBHbl9vUUNFelVXdmpTajhh',
+		'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+	    'x-finger-print': 'eyJvc0NwdSI6eyJkdXJhdGlvbiI6MH0sImxhbmd1YWdlcyI6eyJ2YWx1ZSI6W1sicnUtUlUiXV0sImR1cmF0aW9uIjowfSwiY29sb3JEZXB0aCI6eyJ2YWx1ZSI6MjQsImR1cmF0aW9uIjowfSwiZGV2aWNlTWVtb3J5Ijp7InZhbHVlIjo4LCJkdXJhdGlvbiI6MH0sInNjcmVlblJlc29sdXRpb24iOnsidmFsdWUiOls5MDAsMTYwMF0sImR1cmF0aW9uIjoxfSwiYXZhaWxhYmxlU2NyZWVuUmVzb2x1dGlvbiI6eyJ2YWx1ZSI6Wzg3MCwxNjAwXSwiZHVyYXRpb24iOjB9LCJoYXJkd2FyZUNvbmN1cnJlbmN5Ijp7InZhbHVlIjo4LCJkdXJhdGlvbiI6MH0sInRpbWV6b25lT2Zmc2V0Ijp7InZhbHVlIjotMTgwLCJkdXJhdGlvbiI6MH0sInRpbWV6b25lIjp7InZhbHVlIjoiRXVyb3BlL01vc2NvdyIsImR1cmF0aW9uIjowfSwic2Vzc2lvblN0b3JhZ2UiOnsidmFsdWUiOnRydWUsImR1cmF0aW9uIjowfSwibG9jYWxTdG9yYWdlIjp7InZhbHVlIjp0cnVlLCJkdXJhdGlvbiI6MH0sImluZGV4ZWREQiI6eyJ2YWx1ZSI6dHJ1ZSwiZHVyYXRpb24iOjF9LCJvcGVuRGF0YWJhc2UiOnsidmFsdWUiOnRydWUsImR1cmF0aW9uIjowfSwiY3B1Q2xhc3MiOnsiZHVyYXRpb24iOjB9LCJwbGF0Zm9ybSI6eyJ2YWx1ZSI6IldpbjMyIiwiZHVyYXRpb24iOjB9LCJwbHVnaW5zIjp7InZhbHVlIjpbeyJuYW1lIjoiUERGIFZpZXdlciIsImRlc2NyaXB0aW9uIjoiUG9ydGFibGUgRG9jdW1lbnQgRm9ybWF0IiwibWltZVR5cGVzIjpbeyJ0eXBlIjoiYXBwbGljYXRpb24vcGRmIiwic3VmZml4ZXMiOiJwZGYifSx7InR5cGUiOiJ0ZXh0L3BkZiIsInN1ZmZpeGVzIjoicGRmIn1dfSx7Im5hbWUiOiJDaHJvbWUgUERGIFZpZXdlciIsImRlc2NyaXB0aW9uIjoiUG9ydGFibGUgRG9jdW1lbnQgRm9ybWF0IiwibWltZVR5cGVzIjpbeyJ0eXBlIjoiYXBwbGljYXRpb24vcGRmIiwic3VmZml4ZXMiOiJwZGYifSx7InR5cGUiOiJ0ZXh0L3BkZiIsInN1ZmZpeGVzIjoicGRmIn1dfSx7Im5hbWUiOiJDaHJvbWl1bSBQREYgVmlld2VyIiwiZGVzY3JpcHRpb24iOiJQb3J0YWJsZSBEb2N1bWVudCBGb3JtYXQiLCJtaW1lVHlwZXMiOlt7InR5cGUiOiJhcHBsaWNhdGlvbi9wZGYiLCJzdWZmaXhlcyI6InBkZiJ9LHsidHlwZSI6InRleHQvcGRmIiwic3VmZml4ZXMiOiJwZGYifV19LHsibmFtZSI6Ik1pY3Jvc29mdCBFZGdlIFBERiBWaWV3ZXIiLCJkZXNjcmlwdGlvbiI6IlBvcnRhYmxlIERvY3VtZW50IEZvcm1hdCIsIm1pbWVUeXBlcyI6W3sidHlwZSI6ImFwcGxpY2F0aW9uL3BkZiIsInN1ZmZpeGVzIjoicGRmIn0seyJ0eXBlIjoidGV4dC9wZGYiLCJzdWZmaXhlcyI6InBkZiJ9XX0seyJuYW1lIjoiV2ViS2l0IGJ1aWx0LWluIFBERiIsImRlc2NyaXB0aW9uIjoiUG9ydGFibGUgRG9jdW1lbnQgRm9ybWF0IiwibWltZVR5cGVzIjpbeyJ0eXBlIjoiYXBwbGljYXRpb24vcGRmIiwic3VmZml4ZXMiOiJwZGYifSx7InR5cGUiOiJ0ZXh0L3BkZiIsInN1ZmZpeGVzIjoicGRmIn1dfV0sImR1cmF0aW9uIjowfSwidG91Y2hTdXBwb3J0Ijp7InZhbHVlIjp7Im1heFRvdWNoUG9pbnRzIjowLCJ0b3VjaEV2ZW50IjpmYWxzZSwidG91Y2hTdGFydCI6ZmFsc2V9LCJkdXJhdGlvbiI6MH0sImZvbnRzIjp7InZhbHVlIjpbIkFnZW5jeSBGQiIsIkNhbGlicmkiLCJDZW50dXJ5IiwiQ2VudHVyeSBHb3RoaWMiLCJGcmFua2xpbiBHb3RoaWMiLCJIYWV0dGVuc2Nod2VpbGVyIiwiTGVlbGF3YWRlZSIsIkx1Y2lkYSBCcmlnaHQiLCJMdWNpZGEgU2FucyIsIk1TIE91dGxvb2siLCJNUyBSZWZlcmVuY2UgU3BlY2lhbHR5IiwiTVMgVUkgR290aGljIiwiTVQgRXh0cmEiLCJNYXJsZXR0IiwiTWljcm9zb2Z0IFVpZ2h1ciIsIk1vbm90eXBlIENvcnNpdmEiLCJQcmlzdGluYSIsIlNlZ29lIFVJIExpZ2h0Il0sImR1cmF0aW9uIjo0MTh9LCJhdWRpbyI6eyJ2YWx1ZSI6MTI0LjA0MzQ3NTI3NTE2MDc0LCJkdXJhdGlvbiI6MjR9LCJwbHVnaW5zU3VwcG9ydCI6eyJ2YWx1ZSI6dHJ1ZSwiZHVyYXRpb24iOjB9LCJwcm9kdWN0U3ViIjp7InZhbHVlIjoiMjAwMzAxMDciLCJkdXJhdGlvbiI6MH0sImVtcHR5RXZhbExlbmd0aCI6eyJ2YWx1ZSI6MzMsImR1cmF0aW9uIjowfSwiZXJyb3JGRiI6eyJ2YWx1ZSI6ZmFsc2UsImR1cmF0aW9uIjowfSwidmVuZG9yIjp7InZhbHVlIjoiR29vZ2xlIEluYy4iLCJkdXJhdGlvbiI6MH0sImNocm9tZSI6eyJ2YWx1ZSI6dHJ1ZSwiZHVyYXRpb24iOjF9LCJjb29raWVzRW5hYmxlZCI6eyJ2YWx1ZSI6dHJ1ZSwiZHVyYXRpb24iOjEwfX0='
+	}));
 
-    var json = getJson(html);
+    AnyBalance.trace(html);
+	
+	var json = getJson(html);
+		
+	if(json.access_token){
+		AnyBalance.trace('Сессия сохранена. Входим автоматически...');
+		AnyBalance.setData(prefs.login + 'accessToken', json.access_token);
+	    AnyBalance.setData(prefs.login + 'refreshToken', json.refresh_token);
+	    AnyBalance.setData(prefs.login + 'idToken', json.id_token);
+	
+	    AnyBalance.saveCookies();
+        AnyBalance.saveData();
+	}else{
+		AnyBalance.trace('Сессия новая. Будем логиниться заново...');
+        clearAllCookies();
+		
+		var html = AnyBalance.requestGet(baseurl + 'login', g_headers);
+	
+        if(AnyBalance.getLastStatusCode() >= 500){
+            AnyBalance.trace(html);
+            throw new AnyBalance.Error('Сайт ВТБ Онлайн временно недоступен. Попробуйте еще раз позже');
+        }
+	
+	    html = AnyBalance.requestPost('https://sso-app4.vtb.ru/oauth2/token', {
+	    	'login': prefs.login,
+            'password': prefs.password,
+            'grant_type': 'login',
+            'scope': 'openid',
+            'ac20_sms': false,
+        }, addHeaders({
+			'Accept': 'application/json, text/plain, */*',
+			'Authorization': 'Basic QzJWWXYzYjZSSEVpZzJuXzU2YmZubjNHZkk0YTpjdlllaUFwdkZuQVBHbl9vUUNFelVXdmpTajhh',
+			'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+	        'x-finger-print': 'eyJvc0NwdSI6eyJkdXJhdGlvbiI6MH0sImxhbmd1YWdlcyI6eyJ2YWx1ZSI6W1sicnUtUlUiXV0sImR1cmF0aW9uIjowfSwiY29sb3JEZXB0aCI6eyJ2YWx1ZSI6MjQsImR1cmF0aW9uIjowfSwiZGV2aWNlTWVtb3J5Ijp7InZhbHVlIjo4LCJkdXJhdGlvbiI6MH0sInNjcmVlblJlc29sdXRpb24iOnsidmFsdWUiOls5MDAsMTYwMF0sImR1cmF0aW9uIjoxfSwiYXZhaWxhYmxlU2NyZWVuUmVzb2x1dGlvbiI6eyJ2YWx1ZSI6Wzg3MCwxNjAwXSwiZHVyYXRpb24iOjB9LCJoYXJkd2FyZUNvbmN1cnJlbmN5Ijp7InZhbHVlIjo4LCJkdXJhdGlvbiI6MH0sInRpbWV6b25lT2Zmc2V0Ijp7InZhbHVlIjotMTgwLCJkdXJhdGlvbiI6MH0sInRpbWV6b25lIjp7InZhbHVlIjoiRXVyb3BlL01vc2NvdyIsImR1cmF0aW9uIjowfSwic2Vzc2lvblN0b3JhZ2UiOnsidmFsdWUiOnRydWUsImR1cmF0aW9uIjowfSwibG9jYWxTdG9yYWdlIjp7InZhbHVlIjp0cnVlLCJkdXJhdGlvbiI6MH0sImluZGV4ZWREQiI6eyJ2YWx1ZSI6dHJ1ZSwiZHVyYXRpb24iOjF9LCJvcGVuRGF0YWJhc2UiOnsidmFsdWUiOnRydWUsImR1cmF0aW9uIjowfSwiY3B1Q2xhc3MiOnsiZHVyYXRpb24iOjB9LCJwbGF0Zm9ybSI6eyJ2YWx1ZSI6IldpbjMyIiwiZHVyYXRpb24iOjB9LCJwbHVnaW5zIjp7InZhbHVlIjpbeyJuYW1lIjoiUERGIFZpZXdlciIsImRlc2NyaXB0aW9uIjoiUG9ydGFibGUgRG9jdW1lbnQgRm9ybWF0IiwibWltZVR5cGVzIjpbeyJ0eXBlIjoiYXBwbGljYXRpb24vcGRmIiwic3VmZml4ZXMiOiJwZGYifSx7InR5cGUiOiJ0ZXh0L3BkZiIsInN1ZmZpeGVzIjoicGRmIn1dfSx7Im5hbWUiOiJDaHJvbWUgUERGIFZpZXdlciIsImRlc2NyaXB0aW9uIjoiUG9ydGFibGUgRG9jdW1lbnQgRm9ybWF0IiwibWltZVR5cGVzIjpbeyJ0eXBlIjoiYXBwbGljYXRpb24vcGRmIiwic3VmZml4ZXMiOiJwZGYifSx7InR5cGUiOiJ0ZXh0L3BkZiIsInN1ZmZpeGVzIjoicGRmIn1dfSx7Im5hbWUiOiJDaHJvbWl1bSBQREYgVmlld2VyIiwiZGVzY3JpcHRpb24iOiJQb3J0YWJsZSBEb2N1bWVudCBGb3JtYXQiLCJtaW1lVHlwZXMiOlt7InR5cGUiOiJhcHBsaWNhdGlvbi9wZGYiLCJzdWZmaXhlcyI6InBkZiJ9LHsidHlwZSI6InRleHQvcGRmIiwic3VmZml4ZXMiOiJwZGYifV19LHsibmFtZSI6Ik1pY3Jvc29mdCBFZGdlIFBERiBWaWV3ZXIiLCJkZXNjcmlwdGlvbiI6IlBvcnRhYmxlIERvY3VtZW50IEZvcm1hdCIsIm1pbWVUeXBlcyI6W3sidHlwZSI6ImFwcGxpY2F0aW9uL3BkZiIsInN1ZmZpeGVzIjoicGRmIn0seyJ0eXBlIjoidGV4dC9wZGYiLCJzdWZmaXhlcyI6InBkZiJ9XX0seyJuYW1lIjoiV2ViS2l0IGJ1aWx0LWluIFBERiIsImRlc2NyaXB0aW9uIjoiUG9ydGFibGUgRG9jdW1lbnQgRm9ybWF0IiwibWltZVR5cGVzIjpbeyJ0eXBlIjoiYXBwbGljYXRpb24vcGRmIiwic3VmZml4ZXMiOiJwZGYifSx7InR5cGUiOiJ0ZXh0L3BkZiIsInN1ZmZpeGVzIjoicGRmIn1dfV0sImR1cmF0aW9uIjowfSwidG91Y2hTdXBwb3J0Ijp7InZhbHVlIjp7Im1heFRvdWNoUG9pbnRzIjowLCJ0b3VjaEV2ZW50IjpmYWxzZSwidG91Y2hTdGFydCI6ZmFsc2V9LCJkdXJhdGlvbiI6MH0sImZvbnRzIjp7InZhbHVlIjpbIkFnZW5jeSBGQiIsIkNhbGlicmkiLCJDZW50dXJ5IiwiQ2VudHVyeSBHb3RoaWMiLCJGcmFua2xpbiBHb3RoaWMiLCJIYWV0dGVuc2Nod2VpbGVyIiwiTGVlbGF3YWRlZSIsIkx1Y2lkYSBCcmlnaHQiLCJMdWNpZGEgU2FucyIsIk1TIE91dGxvb2siLCJNUyBSZWZlcmVuY2UgU3BlY2lhbHR5IiwiTVMgVUkgR290aGljIiwiTVQgRXh0cmEiLCJNYXJsZXR0IiwiTWljcm9zb2Z0IFVpZ2h1ciIsIk1vbm90eXBlIENvcnNpdmEiLCJQcmlzdGluYSIsIlNlZ29lIFVJIExpZ2h0Il0sImR1cmF0aW9uIjo0MTh9LCJhdWRpbyI6eyJ2YWx1ZSI6MTI0LjA0MzQ3NTI3NTE2MDc0LCJkdXJhdGlvbiI6MjR9LCJwbHVnaW5zU3VwcG9ydCI6eyJ2YWx1ZSI6dHJ1ZSwiZHVyYXRpb24iOjB9LCJwcm9kdWN0U3ViIjp7InZhbHVlIjoiMjAwMzAxMDciLCJkdXJhdGlvbiI6MH0sImVtcHR5RXZhbExlbmd0aCI6eyJ2YWx1ZSI6MzMsImR1cmF0aW9uIjowfSwiZXJyb3JGRiI6eyJ2YWx1ZSI6ZmFsc2UsImR1cmF0aW9uIjowfSwidmVuZG9yIjp7InZhbHVlIjoiR29vZ2xlIEluYy4iLCJkdXJhdGlvbiI6MH0sImNocm9tZSI6eyJ2YWx1ZSI6dHJ1ZSwiZHVyYXRpb24iOjF9LCJjb29raWVzRW5hYmxlZCI6eyJ2YWx1ZSI6dHJ1ZSwiZHVyYXRpb24iOjEwfX0='
+		}));
 
-    if (!json.authorized) {
-        // Проверим на otp
-        if (json.authConfirmation)
-            throw new AnyBalance.Error('Телеинфо требует ввести одноразовый смс-код. Для использования данного провайдера, проверку кода необходимо отключить. Если это невозможно, поставьте в настройках провайдера источник данных Мобильное приложение, код будет запрашиваться.');
+        AnyBalance.trace(html);
+	
+	    var json = getJson(html);
+	
+	    if(json.type && json.type == 'second_factor_required'){
+	    	AnyBalance.trace('ВТБ затребовал код подтверждения из SMS');
+	    	var addProperties = json.additional_properties;
+	    	var mobile = addProperties.mobile;
+	    	var sessionDataKey = addProperties.sessionDataKey;
+	    	var transactionId = addProperties.transactionId;
+            
+			var code = AnyBalance.retrieveCode('Пожалуйста, введите код подтверждения, высланный на номер ' + mobile, null, {inputType: 'number', time: 180000});
+		
+	    	html = AnyBalance.requestPost('https://sso-app4.vtb.ru/oauth2/token', {
+	        	'login': prefs.login,
+                'password': prefs.password,
+	        	'transactionId': transactionId,
+	        	'otp': code,
+                'sessionDataKey': sessionDataKey,
+                'grant_type': 'login',
+                'scope': 'openid',
+                'ac20_sms': false,
+            }, addHeaders({
+				'Accept': 'application/json, text/plain, */*',
+				'Authorization': 'Basic QzJWWXYzYjZSSEVpZzJuXzU2YmZubjNHZkk0YTpjdlllaUFwdkZuQVBHbl9vUUNFelVXdmpTajhh',
+				'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+	            'x-finger-print': 'eyJvc0NwdSI6eyJkdXJhdGlvbiI6MH0sImxhbmd1YWdlcyI6eyJ2YWx1ZSI6W1sicnUtUlUiXV0sImR1cmF0aW9uIjowfSwiY29sb3JEZXB0aCI6eyJ2YWx1ZSI6MjQsImR1cmF0aW9uIjowfSwiZGV2aWNlTWVtb3J5Ijp7InZhbHVlIjo4LCJkdXJhdGlvbiI6MH0sInNjcmVlblJlc29sdXRpb24iOnsidmFsdWUiOls5MDAsMTYwMF0sImR1cmF0aW9uIjoxfSwiYXZhaWxhYmxlU2NyZWVuUmVzb2x1dGlvbiI6eyJ2YWx1ZSI6Wzg3MCwxNjAwXSwiZHVyYXRpb24iOjB9LCJoYXJkd2FyZUNvbmN1cnJlbmN5Ijp7InZhbHVlIjo4LCJkdXJhdGlvbiI6MH0sInRpbWV6b25lT2Zmc2V0Ijp7InZhbHVlIjotMTgwLCJkdXJhdGlvbiI6MH0sInRpbWV6b25lIjp7InZhbHVlIjoiRXVyb3BlL01vc2NvdyIsImR1cmF0aW9uIjowfSwic2Vzc2lvblN0b3JhZ2UiOnsidmFsdWUiOnRydWUsImR1cmF0aW9uIjowfSwibG9jYWxTdG9yYWdlIjp7InZhbHVlIjp0cnVlLCJkdXJhdGlvbiI6MH0sImluZGV4ZWREQiI6eyJ2YWx1ZSI6dHJ1ZSwiZHVyYXRpb24iOjF9LCJvcGVuRGF0YWJhc2UiOnsidmFsdWUiOnRydWUsImR1cmF0aW9uIjowfSwiY3B1Q2xhc3MiOnsiZHVyYXRpb24iOjB9LCJwbGF0Zm9ybSI6eyJ2YWx1ZSI6IldpbjMyIiwiZHVyYXRpb24iOjB9LCJwbHVnaW5zIjp7InZhbHVlIjpbeyJuYW1lIjoiUERGIFZpZXdlciIsImRlc2NyaXB0aW9uIjoiUG9ydGFibGUgRG9jdW1lbnQgRm9ybWF0IiwibWltZVR5cGVzIjpbeyJ0eXBlIjoiYXBwbGljYXRpb24vcGRmIiwic3VmZml4ZXMiOiJwZGYifSx7InR5cGUiOiJ0ZXh0L3BkZiIsInN1ZmZpeGVzIjoicGRmIn1dfSx7Im5hbWUiOiJDaHJvbWUgUERGIFZpZXdlciIsImRlc2NyaXB0aW9uIjoiUG9ydGFibGUgRG9jdW1lbnQgRm9ybWF0IiwibWltZVR5cGVzIjpbeyJ0eXBlIjoiYXBwbGljYXRpb24vcGRmIiwic3VmZml4ZXMiOiJwZGYifSx7InR5cGUiOiJ0ZXh0L3BkZiIsInN1ZmZpeGVzIjoicGRmIn1dfSx7Im5hbWUiOiJDaHJvbWl1bSBQREYgVmlld2VyIiwiZGVzY3JpcHRpb24iOiJQb3J0YWJsZSBEb2N1bWVudCBGb3JtYXQiLCJtaW1lVHlwZXMiOlt7InR5cGUiOiJhcHBsaWNhdGlvbi9wZGYiLCJzdWZmaXhlcyI6InBkZiJ9LHsidHlwZSI6InRleHQvcGRmIiwic3VmZml4ZXMiOiJwZGYifV19LHsibmFtZSI6Ik1pY3Jvc29mdCBFZGdlIFBERiBWaWV3ZXIiLCJkZXNjcmlwdGlvbiI6IlBvcnRhYmxlIERvY3VtZW50IEZvcm1hdCIsIm1pbWVUeXBlcyI6W3sidHlwZSI6ImFwcGxpY2F0aW9uL3BkZiIsInN1ZmZpeGVzIjoicGRmIn0seyJ0eXBlIjoidGV4dC9wZGYiLCJzdWZmaXhlcyI6InBkZiJ9XX0seyJuYW1lIjoiV2ViS2l0IGJ1aWx0LWluIFBERiIsImRlc2NyaXB0aW9uIjoiUG9ydGFibGUgRG9jdW1lbnQgRm9ybWF0IiwibWltZVR5cGVzIjpbeyJ0eXBlIjoiYXBwbGljYXRpb24vcGRmIiwic3VmZml4ZXMiOiJwZGYifSx7InR5cGUiOiJ0ZXh0L3BkZiIsInN1ZmZpeGVzIjoicGRmIn1dfV0sImR1cmF0aW9uIjowfSwidG91Y2hTdXBwb3J0Ijp7InZhbHVlIjp7Im1heFRvdWNoUG9pbnRzIjowLCJ0b3VjaEV2ZW50IjpmYWxzZSwidG91Y2hTdGFydCI6ZmFsc2V9LCJkdXJhdGlvbiI6MH0sImZvbnRzIjp7InZhbHVlIjpbIkFnZW5jeSBGQiIsIkNhbGlicmkiLCJDZW50dXJ5IiwiQ2VudHVyeSBHb3RoaWMiLCJGcmFua2xpbiBHb3RoaWMiLCJIYWV0dGVuc2Nod2VpbGVyIiwiTGVlbGF3YWRlZSIsIkx1Y2lkYSBCcmlnaHQiLCJMdWNpZGEgU2FucyIsIk1TIE91dGxvb2siLCJNUyBSZWZlcmVuY2UgU3BlY2lhbHR5IiwiTVMgVUkgR290aGljIiwiTVQgRXh0cmEiLCJNYXJsZXR0IiwiTWljcm9zb2Z0IFVpZ2h1ciIsIk1vbm90eXBlIENvcnNpdmEiLCJQcmlzdGluYSIsIlNlZ29lIFVJIExpZ2h0Il0sImR1cmF0aW9uIjo0MTh9LCJhdWRpbyI6eyJ2YWx1ZSI6MTI0LjA0MzQ3NTI3NTE2MDc0LCJkdXJhdGlvbiI6MjR9LCJwbHVnaW5zU3VwcG9ydCI6eyJ2YWx1ZSI6dHJ1ZSwiZHVyYXRpb24iOjB9LCJwcm9kdWN0U3ViIjp7InZhbHVlIjoiMjAwMzAxMDciLCJkdXJhdGlvbiI6MH0sImVtcHR5RXZhbExlbmd0aCI6eyJ2YWx1ZSI6MzMsImR1cmF0aW9uIjowfSwiZXJyb3JGRiI6eyJ2YWx1ZSI6ZmFsc2UsImR1cmF0aW9uIjowfSwidmVuZG9yIjp7InZhbHVlIjoiR29vZ2xlIEluYy4iLCJkdXJhdGlvbiI6MH0sImNocm9tZSI6eyJ2YWx1ZSI6dHJ1ZSwiZHVyYXRpb24iOjF9LCJjb29raWVzRW5hYmxlZCI6eyJ2YWx1ZSI6dHJ1ZSwiZHVyYXRpb24iOjEwfX0='
+			}));
 
-        if (json.accountLocked)
-            throw new AnyBalance.Error('Ваш аккаунт заблокирован банком, свяжитесь со службой технической поддержки для разблокирования аккаунта.', null, true);
+            AnyBalance.trace(html);
+	
+	        var json = getJson(html);
+	    }
+	
+	    if(!json.access_token){
+	    	var error = json.message;
+            if (error)
+                throw new AnyBalance.Error(error, null, /Логин или пароль введены неверно/i.test(error));
+    
+            AnyBalance.trace(html);
+			throw new AnyBalance.Error('Не удалось войти в личный кабинет. Сайт изменен?');
+        }
 
-        var error = json.error.msg;
-        if (error)
-            throw new AnyBalance.Error(error, null, /Логин или пароль введены неверно/i.test(error));
-
-        throw new AnyBalance.Error('Не удалось зайти в Телеинфо. Сайт изменен?');
-    }
-
-    html = AnyBalance.requestGet(baseurl + (json.redirectTo || '').replace(/\/$/, ''), g_headers);
-
-    /*if (prefs.type == 'abs') {
-     fetchAccountABS(baseurl);
-     } else */
-    fetchCardNew(baseurl, html, json);
+        AnyBalance.setData(prefs.login + 'accessToken', json.access_token);
+	    AnyBalance.setData(prefs.login + 'refreshToken', json.refresh_token);
+	    AnyBalance.setData(prefs.login + 'idToken', json.id_token);
+	
+	    AnyBalance.saveCookies();
+        AnyBalance.saveData();
+	}
+	
+	var accessToken = AnyBalance.getData(prefs.login + 'accessToken');
+	var refreshToken = AnyBalance.getData(prefs.login + 'refreshToken');
+	var idToken = AnyBalance.getData(prefs.login + 'idToken');
+	
+	html = AnyBalance.requestGet(baseurl + 'msa/api-gw/private/portfolio/portfolio-main-page/portfolios/active', addHeaders({
+		'Accept': 'application/json, text/plain, */*',
+		'Authorization': 'Bearer ' + idToken,
+		'x-channel': 'WWW2',
+	    'x-finger-print': 'eyJvc0NwdSI6eyJkdXJhdGlvbiI6MH0sImxhbmd1YWdlcyI6eyJ2YWx1ZSI6W1sicnUtUlUiXV0sImR1cmF0aW9uIjowfSwiY29sb3JEZXB0aCI6eyJ2YWx1ZSI6MjQsImR1cmF0aW9uIjowfSwiZGV2aWNlTWVtb3J5Ijp7InZhbHVlIjo4LCJkdXJhdGlvbiI6MH0sInNjcmVlblJlc29sdXRpb24iOnsidmFsdWUiOls5MDAsMTYwMF0sImR1cmF0aW9uIjoxfSwiYXZhaWxhYmxlU2NyZWVuUmVzb2x1dGlvbiI6eyJ2YWx1ZSI6Wzg3MCwxNjAwXSwiZHVyYXRpb24iOjB9LCJoYXJkd2FyZUNvbmN1cnJlbmN5Ijp7InZhbHVlIjo4LCJkdXJhdGlvbiI6MH0sInRpbWV6b25lT2Zmc2V0Ijp7InZhbHVlIjotMTgwLCJkdXJhdGlvbiI6MH0sInRpbWV6b25lIjp7InZhbHVlIjoiRXVyb3BlL01vc2NvdyIsImR1cmF0aW9uIjowfSwic2Vzc2lvblN0b3JhZ2UiOnsidmFsdWUiOnRydWUsImR1cmF0aW9uIjowfSwibG9jYWxTdG9yYWdlIjp7InZhbHVlIjp0cnVlLCJkdXJhdGlvbiI6MH0sImluZGV4ZWREQiI6eyJ2YWx1ZSI6dHJ1ZSwiZHVyYXRpb24iOjF9LCJvcGVuRGF0YWJhc2UiOnsidmFsdWUiOnRydWUsImR1cmF0aW9uIjowfSwiY3B1Q2xhc3MiOnsiZHVyYXRpb24iOjB9LCJwbGF0Zm9ybSI6eyJ2YWx1ZSI6IldpbjMyIiwiZHVyYXRpb24iOjB9LCJwbHVnaW5zIjp7InZhbHVlIjpbeyJuYW1lIjoiUERGIFZpZXdlciIsImRlc2NyaXB0aW9uIjoiUG9ydGFibGUgRG9jdW1lbnQgRm9ybWF0IiwibWltZVR5cGVzIjpbeyJ0eXBlIjoiYXBwbGljYXRpb24vcGRmIiwic3VmZml4ZXMiOiJwZGYifSx7InR5cGUiOiJ0ZXh0L3BkZiIsInN1ZmZpeGVzIjoicGRmIn1dfSx7Im5hbWUiOiJDaHJvbWUgUERGIFZpZXdlciIsImRlc2NyaXB0aW9uIjoiUG9ydGFibGUgRG9jdW1lbnQgRm9ybWF0IiwibWltZVR5cGVzIjpbeyJ0eXBlIjoiYXBwbGljYXRpb24vcGRmIiwic3VmZml4ZXMiOiJwZGYifSx7InR5cGUiOiJ0ZXh0L3BkZiIsInN1ZmZpeGVzIjoicGRmIn1dfSx7Im5hbWUiOiJDaHJvbWl1bSBQREYgVmlld2VyIiwiZGVzY3JpcHRpb24iOiJQb3J0YWJsZSBEb2N1bWVudCBGb3JtYXQiLCJtaW1lVHlwZXMiOlt7InR5cGUiOiJhcHBsaWNhdGlvbi9wZGYiLCJzdWZmaXhlcyI6InBkZiJ9LHsidHlwZSI6InRleHQvcGRmIiwic3VmZml4ZXMiOiJwZGYifV19LHsibmFtZSI6Ik1pY3Jvc29mdCBFZGdlIFBERiBWaWV3ZXIiLCJkZXNjcmlwdGlvbiI6IlBvcnRhYmxlIERvY3VtZW50IEZvcm1hdCIsIm1pbWVUeXBlcyI6W3sidHlwZSI6ImFwcGxpY2F0aW9uL3BkZiIsInN1ZmZpeGVzIjoicGRmIn0seyJ0eXBlIjoidGV4dC9wZGYiLCJzdWZmaXhlcyI6InBkZiJ9XX0seyJuYW1lIjoiV2ViS2l0IGJ1aWx0LWluIFBERiIsImRlc2NyaXB0aW9uIjoiUG9ydGFibGUgRG9jdW1lbnQgRm9ybWF0IiwibWltZVR5cGVzIjpbeyJ0eXBlIjoiYXBwbGljYXRpb24vcGRmIiwic3VmZml4ZXMiOiJwZGYifSx7InR5cGUiOiJ0ZXh0L3BkZiIsInN1ZmZpeGVzIjoicGRmIn1dfV0sImR1cmF0aW9uIjowfSwidG91Y2hTdXBwb3J0Ijp7InZhbHVlIjp7Im1heFRvdWNoUG9pbnRzIjowLCJ0b3VjaEV2ZW50IjpmYWxzZSwidG91Y2hTdGFydCI6ZmFsc2V9LCJkdXJhdGlvbiI6MH0sImZvbnRzIjp7InZhbHVlIjpbIkFnZW5jeSBGQiIsIkNhbGlicmkiLCJDZW50dXJ5IiwiQ2VudHVyeSBHb3RoaWMiLCJGcmFua2xpbiBHb3RoaWMiLCJIYWV0dGVuc2Nod2VpbGVyIiwiTGVlbGF3YWRlZSIsIkx1Y2lkYSBCcmlnaHQiLCJMdWNpZGEgU2FucyIsIk1TIE91dGxvb2siLCJNUyBSZWZlcmVuY2UgU3BlY2lhbHR5IiwiTVMgVUkgR290aGljIiwiTVQgRXh0cmEiLCJNYXJsZXR0IiwiTWljcm9zb2Z0IFVpZ2h1ciIsIk1vbm90eXBlIENvcnNpdmEiLCJQcmlzdGluYSIsIlNlZ29lIFVJIExpZ2h0Il0sImR1cmF0aW9uIjo0MTh9LCJhdWRpbyI6eyJ2YWx1ZSI6MTI0LjA0MzQ3NTI3NTE2MDc0LCJkdXJhdGlvbiI6MjR9LCJwbHVnaW5zU3VwcG9ydCI6eyJ2YWx1ZSI6dHJ1ZSwiZHVyYXRpb24iOjB9LCJwcm9kdWN0U3ViIjp7InZhbHVlIjoiMjAwMzAxMDciLCJkdXJhdGlvbiI6MH0sImVtcHR5RXZhbExlbmd0aCI6eyJ2YWx1ZSI6MzMsImR1cmF0aW9uIjowfSwiZXJyb3JGRiI6eyJ2YWx1ZSI6ZmFsc2UsImR1cmF0aW9uIjowfSwidmVuZG9yIjp7InZhbHVlIjoiR29vZ2xlIEluYy4iLCJkdXJhdGlvbiI6MH0sImNocm9tZSI6eyJ2YWx1ZSI6dHJ1ZSwiZHVyYXRpb24iOjF9LCJjb29raWVzRW5hYmxlZCI6eyJ2YWx1ZSI6dHJ1ZSwiZHVyYXRpb24iOjEwfX0=',
+	    'x-referrer': baseurl
+	}));
+	
+	var json = getJson(html);
+	
+	if (prefs.type == 'acc') {
+        fetchAccountNew(baseurl, html, json);
+    } else if (prefs.type == 'card') {
+        fetchCardNew(baseurl, html, json);
+	} else if (prefs.type == 'dep') {
+        fetchDepositNew(baseurl, html, json);
+	} else if (prefs.type == 'crd') {
+        fetchCreditNew(baseurl, html, json);
+	}
 }
 
 function doOld(prefs) {
@@ -103,168 +191,319 @@ function doOld(prefs) {
     }
 }
 
+function getInfo(result){
+	var prefs = AnyBalance.getPreferences();
+		
+	var idToken = AnyBalance.getData(prefs.login + 'idToken');
+
+	var html = AnyBalance.requestGet(baseurl + 'msa/api-gw/private/core/core-session-context/user-info', addHeaders({
+		'Accept': 'application/json, text/plain, */*',
+		'Authorization': 'Bearer ' + idToken,
+		'x-channel': 'WWW2',
+		'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+	    'x-finger-print': 'eyJvc0NwdSI6eyJkdXJhdGlvbiI6MH0sImxhbmd1YWdlcyI6eyJ2YWx1ZSI6W1sicnUtUlUiXV0sImR1cmF0aW9uIjowfSwiY29sb3JEZXB0aCI6eyJ2YWx1ZSI6MjQsImR1cmF0aW9uIjowfSwiZGV2aWNlTWVtb3J5Ijp7InZhbHVlIjo4LCJkdXJhdGlvbiI6MH0sInNjcmVlblJlc29sdXRpb24iOnsidmFsdWUiOls5MDAsMTYwMF0sImR1cmF0aW9uIjoxfSwiYXZhaWxhYmxlU2NyZWVuUmVzb2x1dGlvbiI6eyJ2YWx1ZSI6Wzg3MCwxNjAwXSwiZHVyYXRpb24iOjB9LCJoYXJkd2FyZUNvbmN1cnJlbmN5Ijp7InZhbHVlIjo4LCJkdXJhdGlvbiI6MH0sInRpbWV6b25lT2Zmc2V0Ijp7InZhbHVlIjotMTgwLCJkdXJhdGlvbiI6MH0sInRpbWV6b25lIjp7InZhbHVlIjoiRXVyb3BlL01vc2NvdyIsImR1cmF0aW9uIjowfSwic2Vzc2lvblN0b3JhZ2UiOnsidmFsdWUiOnRydWUsImR1cmF0aW9uIjowfSwibG9jYWxTdG9yYWdlIjp7InZhbHVlIjp0cnVlLCJkdXJhdGlvbiI6MH0sImluZGV4ZWREQiI6eyJ2YWx1ZSI6dHJ1ZSwiZHVyYXRpb24iOjF9LCJvcGVuRGF0YWJhc2UiOnsidmFsdWUiOnRydWUsImR1cmF0aW9uIjowfSwiY3B1Q2xhc3MiOnsiZHVyYXRpb24iOjB9LCJwbGF0Zm9ybSI6eyJ2YWx1ZSI6IldpbjMyIiwiZHVyYXRpb24iOjB9LCJwbHVnaW5zIjp7InZhbHVlIjpbeyJuYW1lIjoiUERGIFZpZXdlciIsImRlc2NyaXB0aW9uIjoiUG9ydGFibGUgRG9jdW1lbnQgRm9ybWF0IiwibWltZVR5cGVzIjpbeyJ0eXBlIjoiYXBwbGljYXRpb24vcGRmIiwic3VmZml4ZXMiOiJwZGYifSx7InR5cGUiOiJ0ZXh0L3BkZiIsInN1ZmZpeGVzIjoicGRmIn1dfSx7Im5hbWUiOiJDaHJvbWUgUERGIFZpZXdlciIsImRlc2NyaXB0aW9uIjoiUG9ydGFibGUgRG9jdW1lbnQgRm9ybWF0IiwibWltZVR5cGVzIjpbeyJ0eXBlIjoiYXBwbGljYXRpb24vcGRmIiwic3VmZml4ZXMiOiJwZGYifSx7InR5cGUiOiJ0ZXh0L3BkZiIsInN1ZmZpeGVzIjoicGRmIn1dfSx7Im5hbWUiOiJDaHJvbWl1bSBQREYgVmlld2VyIiwiZGVzY3JpcHRpb24iOiJQb3J0YWJsZSBEb2N1bWVudCBGb3JtYXQiLCJtaW1lVHlwZXMiOlt7InR5cGUiOiJhcHBsaWNhdGlvbi9wZGYiLCJzdWZmaXhlcyI6InBkZiJ9LHsidHlwZSI6InRleHQvcGRmIiwic3VmZml4ZXMiOiJwZGYifV19LHsibmFtZSI6Ik1pY3Jvc29mdCBFZGdlIFBERiBWaWV3ZXIiLCJkZXNjcmlwdGlvbiI6IlBvcnRhYmxlIERvY3VtZW50IEZvcm1hdCIsIm1pbWVUeXBlcyI6W3sidHlwZSI6ImFwcGxpY2F0aW9uL3BkZiIsInN1ZmZpeGVzIjoicGRmIn0seyJ0eXBlIjoidGV4dC9wZGYiLCJzdWZmaXhlcyI6InBkZiJ9XX0seyJuYW1lIjoiV2ViS2l0IGJ1aWx0LWluIFBERiIsImRlc2NyaXB0aW9uIjoiUG9ydGFibGUgRG9jdW1lbnQgRm9ybWF0IiwibWltZVR5cGVzIjpbeyJ0eXBlIjoiYXBwbGljYXRpb24vcGRmIiwic3VmZml4ZXMiOiJwZGYifSx7InR5cGUiOiJ0ZXh0L3BkZiIsInN1ZmZpeGVzIjoicGRmIn1dfV0sImR1cmF0aW9uIjowfSwidG91Y2hTdXBwb3J0Ijp7InZhbHVlIjp7Im1heFRvdWNoUG9pbnRzIjowLCJ0b3VjaEV2ZW50IjpmYWxzZSwidG91Y2hTdGFydCI6ZmFsc2V9LCJkdXJhdGlvbiI6MH0sImZvbnRzIjp7InZhbHVlIjpbIkFnZW5jeSBGQiIsIkNhbGlicmkiLCJDZW50dXJ5IiwiQ2VudHVyeSBHb3RoaWMiLCJGcmFua2xpbiBHb3RoaWMiLCJIYWV0dGVuc2Nod2VpbGVyIiwiTGVlbGF3YWRlZSIsIkx1Y2lkYSBCcmlnaHQiLCJMdWNpZGEgU2FucyIsIk1TIE91dGxvb2siLCJNUyBSZWZlcmVuY2UgU3BlY2lhbHR5IiwiTVMgVUkgR290aGljIiwiTVQgRXh0cmEiLCJNYXJsZXR0IiwiTWljcm9zb2Z0IFVpZ2h1ciIsIk1vbm90eXBlIENvcnNpdmEiLCJQcmlzdGluYSIsIlNlZ29lIFVJIExpZ2h0Il0sImR1cmF0aW9uIjo0MTh9LCJhdWRpbyI6eyJ2YWx1ZSI6MTI0LjA0MzQ3NTI3NTE2MDc0LCJkdXJhdGlvbiI6MjR9LCJwbHVnaW5zU3VwcG9ydCI6eyJ2YWx1ZSI6dHJ1ZSwiZHVyYXRpb24iOjB9LCJwcm9kdWN0U3ViIjp7InZhbHVlIjoiMjAwMzAxMDciLCJkdXJhdGlvbiI6MH0sImVtcHR5RXZhbExlbmd0aCI6eyJ2YWx1ZSI6MzMsImR1cmF0aW9uIjowfSwiZXJyb3JGRiI6eyJ2YWx1ZSI6ZmFsc2UsImR1cmF0aW9uIjowfSwidmVuZG9yIjp7InZhbHVlIjoiR29vZ2xlIEluYy4iLCJkdXJhdGlvbiI6MH0sImNocm9tZSI6eyJ2YWx1ZSI6dHJ1ZSwiZHVyYXRpb24iOjF9LCJjb29raWVzRW5hYmxlZCI6eyJ2YWx1ZSI6dHJ1ZSwiZHVyYXRpb24iOjEwfX0=',
+	    'x-referrer': baseurl
+	}));
+	
+	var json = getJson(html);
+	
+	AnyBalance.trace('Профиль: ' + html);
+	
+	var person = {};
+	if(json.firstName)
+		sumParam(json.firstName, person, '__n', null, null, null, create_aggregate_join(' '));
+	if(json.middleName)
+		sumParam(json.middleName, person, '__n', null, null, null, create_aggregate_join(' '));
+	if(json.lastName)
+		sumParam(json.lastName, person, '__n', null, null, null, create_aggregate_join(' '));
+	getParam(person.__n, result, 'fio');
+	
+	if(json.maskedTrustedPhoneNumber)
+	    getParam(json.maskedTrustedPhoneNumber.replace(/.*(\d{3})(\D+)(\d)(\d{2})$/i, '+7 $1 ***-*$3-$4'), result, 'phone');
+}
+
+function fetchBonuses(result){
+	var prefs = AnyBalance.getPreferences();
+		
+	var idToken = AnyBalance.getData(prefs.login + 'idToken');
+
+    var html = AnyBalance.requestGet(baseurl + 'msa/api-gw/private/dks/dks-pu-bonus/balance', addHeaders({
+		'Accept': 'application/json, text/plain, */*',
+		'Authorization': 'Bearer ' + idToken,
+		'x-channel': 'WWW2',
+		'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+	    'x-finger-print': 'eyJvc0NwdSI6eyJkdXJhdGlvbiI6MH0sImxhbmd1YWdlcyI6eyJ2YWx1ZSI6W1sicnUtUlUiXV0sImR1cmF0aW9uIjowfSwiY29sb3JEZXB0aCI6eyJ2YWx1ZSI6MjQsImR1cmF0aW9uIjowfSwiZGV2aWNlTWVtb3J5Ijp7InZhbHVlIjo4LCJkdXJhdGlvbiI6MH0sInNjcmVlblJlc29sdXRpb24iOnsidmFsdWUiOls5MDAsMTYwMF0sImR1cmF0aW9uIjoxfSwiYXZhaWxhYmxlU2NyZWVuUmVzb2x1dGlvbiI6eyJ2YWx1ZSI6Wzg3MCwxNjAwXSwiZHVyYXRpb24iOjB9LCJoYXJkd2FyZUNvbmN1cnJlbmN5Ijp7InZhbHVlIjo4LCJkdXJhdGlvbiI6MH0sInRpbWV6b25lT2Zmc2V0Ijp7InZhbHVlIjotMTgwLCJkdXJhdGlvbiI6MH0sInRpbWV6b25lIjp7InZhbHVlIjoiRXVyb3BlL01vc2NvdyIsImR1cmF0aW9uIjowfSwic2Vzc2lvblN0b3JhZ2UiOnsidmFsdWUiOnRydWUsImR1cmF0aW9uIjowfSwibG9jYWxTdG9yYWdlIjp7InZhbHVlIjp0cnVlLCJkdXJhdGlvbiI6MH0sImluZGV4ZWREQiI6eyJ2YWx1ZSI6dHJ1ZSwiZHVyYXRpb24iOjF9LCJvcGVuRGF0YWJhc2UiOnsidmFsdWUiOnRydWUsImR1cmF0aW9uIjowfSwiY3B1Q2xhc3MiOnsiZHVyYXRpb24iOjB9LCJwbGF0Zm9ybSI6eyJ2YWx1ZSI6IldpbjMyIiwiZHVyYXRpb24iOjB9LCJwbHVnaW5zIjp7InZhbHVlIjpbeyJuYW1lIjoiUERGIFZpZXdlciIsImRlc2NyaXB0aW9uIjoiUG9ydGFibGUgRG9jdW1lbnQgRm9ybWF0IiwibWltZVR5cGVzIjpbeyJ0eXBlIjoiYXBwbGljYXRpb24vcGRmIiwic3VmZml4ZXMiOiJwZGYifSx7InR5cGUiOiJ0ZXh0L3BkZiIsInN1ZmZpeGVzIjoicGRmIn1dfSx7Im5hbWUiOiJDaHJvbWUgUERGIFZpZXdlciIsImRlc2NyaXB0aW9uIjoiUG9ydGFibGUgRG9jdW1lbnQgRm9ybWF0IiwibWltZVR5cGVzIjpbeyJ0eXBlIjoiYXBwbGljYXRpb24vcGRmIiwic3VmZml4ZXMiOiJwZGYifSx7InR5cGUiOiJ0ZXh0L3BkZiIsInN1ZmZpeGVzIjoicGRmIn1dfSx7Im5hbWUiOiJDaHJvbWl1bSBQREYgVmlld2VyIiwiZGVzY3JpcHRpb24iOiJQb3J0YWJsZSBEb2N1bWVudCBGb3JtYXQiLCJtaW1lVHlwZXMiOlt7InR5cGUiOiJhcHBsaWNhdGlvbi9wZGYiLCJzdWZmaXhlcyI6InBkZiJ9LHsidHlwZSI6InRleHQvcGRmIiwic3VmZml4ZXMiOiJwZGYifV19LHsibmFtZSI6Ik1pY3Jvc29mdCBFZGdlIFBERiBWaWV3ZXIiLCJkZXNjcmlwdGlvbiI6IlBvcnRhYmxlIERvY3VtZW50IEZvcm1hdCIsIm1pbWVUeXBlcyI6W3sidHlwZSI6ImFwcGxpY2F0aW9uL3BkZiIsInN1ZmZpeGVzIjoicGRmIn0seyJ0eXBlIjoidGV4dC9wZGYiLCJzdWZmaXhlcyI6InBkZiJ9XX0seyJuYW1lIjoiV2ViS2l0IGJ1aWx0LWluIFBERiIsImRlc2NyaXB0aW9uIjoiUG9ydGFibGUgRG9jdW1lbnQgRm9ybWF0IiwibWltZVR5cGVzIjpbeyJ0eXBlIjoiYXBwbGljYXRpb24vcGRmIiwic3VmZml4ZXMiOiJwZGYifSx7InR5cGUiOiJ0ZXh0L3BkZiIsInN1ZmZpeGVzIjoicGRmIn1dfV0sImR1cmF0aW9uIjowfSwidG91Y2hTdXBwb3J0Ijp7InZhbHVlIjp7Im1heFRvdWNoUG9pbnRzIjowLCJ0b3VjaEV2ZW50IjpmYWxzZSwidG91Y2hTdGFydCI6ZmFsc2V9LCJkdXJhdGlvbiI6MH0sImZvbnRzIjp7InZhbHVlIjpbIkFnZW5jeSBGQiIsIkNhbGlicmkiLCJDZW50dXJ5IiwiQ2VudHVyeSBHb3RoaWMiLCJGcmFua2xpbiBHb3RoaWMiLCJIYWV0dGVuc2Nod2VpbGVyIiwiTGVlbGF3YWRlZSIsIkx1Y2lkYSBCcmlnaHQiLCJMdWNpZGEgU2FucyIsIk1TIE91dGxvb2siLCJNUyBSZWZlcmVuY2UgU3BlY2lhbHR5IiwiTVMgVUkgR290aGljIiwiTVQgRXh0cmEiLCJNYXJsZXR0IiwiTWljcm9zb2Z0IFVpZ2h1ciIsIk1vbm90eXBlIENvcnNpdmEiLCJQcmlzdGluYSIsIlNlZ29lIFVJIExpZ2h0Il0sImR1cmF0aW9uIjo0MTh9LCJhdWRpbyI6eyJ2YWx1ZSI6MTI0LjA0MzQ3NTI3NTE2MDc0LCJkdXJhdGlvbiI6MjR9LCJwbHVnaW5zU3VwcG9ydCI6eyJ2YWx1ZSI6dHJ1ZSwiZHVyYXRpb24iOjB9LCJwcm9kdWN0U3ViIjp7InZhbHVlIjoiMjAwMzAxMDciLCJkdXJhdGlvbiI6MH0sImVtcHR5RXZhbExlbmd0aCI6eyJ2YWx1ZSI6MzMsImR1cmF0aW9uIjowfSwiZXJyb3JGRiI6eyJ2YWx1ZSI6ZmFsc2UsImR1cmF0aW9uIjowfSwidmVuZG9yIjp7InZhbHVlIjoiR29vZ2xlIEluYy4iLCJkdXJhdGlvbiI6MH0sImNocm9tZSI6eyJ2YWx1ZSI6dHJ1ZSwiZHVyYXRpb24iOjF9LCJjb29raWVzRW5hYmxlZCI6eyJ2YWx1ZSI6dHJ1ZSwiZHVyYXRpb24iOjEwfX0=',
+	    'x-referrer': baseurl
+	}));
+	
+	AnyBalance.trace('Мультибонусы: ' + html);
+	
+	var json = getJson(html);
+	
+	getParam(json.multibonus, result, 'bonuses', null, null, parseBalance);
+}
+
+function getTransactions(result){
+	var prefs = AnyBalance.getPreferences();
+		
+	var idToken = AnyBalance.getData(prefs.login + 'idToken');
+	
+	var dt = new Date();
+	var dtPrev = new Date(dt.getFullYear(), dt.getMonth()-5, dt.getDate());
+	var dateFrom = dtPrev.getFullYear() + '-' + n2(dtPrev.getMonth()+1) + '-' + '01' + 'T00:00:00';
+	var dateTo = dt.getFullYear() + '-' + n2(dt.getMonth()+1) + '-' + n2(dt.getDate()) + 'T23:59:59';
+
+    var html = AnyBalance.requestGet(baseurl + 'msa/api-gw/private/history-hub/history-hub-homer/v1/history/byUser?dateFrom=' + dateFrom + '&dateTo=' + dateTo, addHeaders({
+		'Accept': 'application/json, text/plain, */*',
+		'Authorization': 'Bearer ' + idToken,
+		'x-channel': 'WWW2',
+		'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+	    'x-finger-print': 'eyJvc0NwdSI6eyJkdXJhdGlvbiI6MH0sImxhbmd1YWdlcyI6eyJ2YWx1ZSI6W1sicnUtUlUiXV0sImR1cmF0aW9uIjowfSwiY29sb3JEZXB0aCI6eyJ2YWx1ZSI6MjQsImR1cmF0aW9uIjowfSwiZGV2aWNlTWVtb3J5Ijp7InZhbHVlIjo4LCJkdXJhdGlvbiI6MH0sInNjcmVlblJlc29sdXRpb24iOnsidmFsdWUiOls5MDAsMTYwMF0sImR1cmF0aW9uIjoxfSwiYXZhaWxhYmxlU2NyZWVuUmVzb2x1dGlvbiI6eyJ2YWx1ZSI6Wzg3MCwxNjAwXSwiZHVyYXRpb24iOjB9LCJoYXJkd2FyZUNvbmN1cnJlbmN5Ijp7InZhbHVlIjo4LCJkdXJhdGlvbiI6MH0sInRpbWV6b25lT2Zmc2V0Ijp7InZhbHVlIjotMTgwLCJkdXJhdGlvbiI6MH0sInRpbWV6b25lIjp7InZhbHVlIjoiRXVyb3BlL01vc2NvdyIsImR1cmF0aW9uIjowfSwic2Vzc2lvblN0b3JhZ2UiOnsidmFsdWUiOnRydWUsImR1cmF0aW9uIjowfSwibG9jYWxTdG9yYWdlIjp7InZhbHVlIjp0cnVlLCJkdXJhdGlvbiI6MH0sImluZGV4ZWREQiI6eyJ2YWx1ZSI6dHJ1ZSwiZHVyYXRpb24iOjF9LCJvcGVuRGF0YWJhc2UiOnsidmFsdWUiOnRydWUsImR1cmF0aW9uIjowfSwiY3B1Q2xhc3MiOnsiZHVyYXRpb24iOjB9LCJwbGF0Zm9ybSI6eyJ2YWx1ZSI6IldpbjMyIiwiZHVyYXRpb24iOjB9LCJwbHVnaW5zIjp7InZhbHVlIjpbeyJuYW1lIjoiUERGIFZpZXdlciIsImRlc2NyaXB0aW9uIjoiUG9ydGFibGUgRG9jdW1lbnQgRm9ybWF0IiwibWltZVR5cGVzIjpbeyJ0eXBlIjoiYXBwbGljYXRpb24vcGRmIiwic3VmZml4ZXMiOiJwZGYifSx7InR5cGUiOiJ0ZXh0L3BkZiIsInN1ZmZpeGVzIjoicGRmIn1dfSx7Im5hbWUiOiJDaHJvbWUgUERGIFZpZXdlciIsImRlc2NyaXB0aW9uIjoiUG9ydGFibGUgRG9jdW1lbnQgRm9ybWF0IiwibWltZVR5cGVzIjpbeyJ0eXBlIjoiYXBwbGljYXRpb24vcGRmIiwic3VmZml4ZXMiOiJwZGYifSx7InR5cGUiOiJ0ZXh0L3BkZiIsInN1ZmZpeGVzIjoicGRmIn1dfSx7Im5hbWUiOiJDaHJvbWl1bSBQREYgVmlld2VyIiwiZGVzY3JpcHRpb24iOiJQb3J0YWJsZSBEb2N1bWVudCBGb3JtYXQiLCJtaW1lVHlwZXMiOlt7InR5cGUiOiJhcHBsaWNhdGlvbi9wZGYiLCJzdWZmaXhlcyI6InBkZiJ9LHsidHlwZSI6InRleHQvcGRmIiwic3VmZml4ZXMiOiJwZGYifV19LHsibmFtZSI6Ik1pY3Jvc29mdCBFZGdlIFBERiBWaWV3ZXIiLCJkZXNjcmlwdGlvbiI6IlBvcnRhYmxlIERvY3VtZW50IEZvcm1hdCIsIm1pbWVUeXBlcyI6W3sidHlwZSI6ImFwcGxpY2F0aW9uL3BkZiIsInN1ZmZpeGVzIjoicGRmIn0seyJ0eXBlIjoidGV4dC9wZGYiLCJzdWZmaXhlcyI6InBkZiJ9XX0seyJuYW1lIjoiV2ViS2l0IGJ1aWx0LWluIFBERiIsImRlc2NyaXB0aW9uIjoiUG9ydGFibGUgRG9jdW1lbnQgRm9ybWF0IiwibWltZVR5cGVzIjpbeyJ0eXBlIjoiYXBwbGljYXRpb24vcGRmIiwic3VmZml4ZXMiOiJwZGYifSx7InR5cGUiOiJ0ZXh0L3BkZiIsInN1ZmZpeGVzIjoicGRmIn1dfV0sImR1cmF0aW9uIjowfSwidG91Y2hTdXBwb3J0Ijp7InZhbHVlIjp7Im1heFRvdWNoUG9pbnRzIjowLCJ0b3VjaEV2ZW50IjpmYWxzZSwidG91Y2hTdGFydCI6ZmFsc2V9LCJkdXJhdGlvbiI6MH0sImZvbnRzIjp7InZhbHVlIjpbIkFnZW5jeSBGQiIsIkNhbGlicmkiLCJDZW50dXJ5IiwiQ2VudHVyeSBHb3RoaWMiLCJGcmFua2xpbiBHb3RoaWMiLCJIYWV0dGVuc2Nod2VpbGVyIiwiTGVlbGF3YWRlZSIsIkx1Y2lkYSBCcmlnaHQiLCJMdWNpZGEgU2FucyIsIk1TIE91dGxvb2siLCJNUyBSZWZlcmVuY2UgU3BlY2lhbHR5IiwiTVMgVUkgR290aGljIiwiTVQgRXh0cmEiLCJNYXJsZXR0IiwiTWljcm9zb2Z0IFVpZ2h1ciIsIk1vbm90eXBlIENvcnNpdmEiLCJQcmlzdGluYSIsIlNlZ29lIFVJIExpZ2h0Il0sImR1cmF0aW9uIjo0MTh9LCJhdWRpbyI6eyJ2YWx1ZSI6MTI0LjA0MzQ3NTI3NTE2MDc0LCJkdXJhdGlvbiI6MjR9LCJwbHVnaW5zU3VwcG9ydCI6eyJ2YWx1ZSI6dHJ1ZSwiZHVyYXRpb24iOjB9LCJwcm9kdWN0U3ViIjp7InZhbHVlIjoiMjAwMzAxMDciLCJkdXJhdGlvbiI6MH0sImVtcHR5RXZhbExlbmd0aCI6eyJ2YWx1ZSI6MzMsImR1cmF0aW9uIjowfSwiZXJyb3JGRiI6eyJ2YWx1ZSI6ZmFsc2UsImR1cmF0aW9uIjowfSwidmVuZG9yIjp7InZhbHVlIjoiR29vZ2xlIEluYy4iLCJkdXJhdGlvbiI6MH0sImNocm9tZSI6eyJ2YWx1ZSI6dHJ1ZSwiZHVyYXRpb24iOjF9LCJjb29raWVzRW5hYmxlZCI6eyJ2YWx1ZSI6dHJ1ZSwiZHVyYXRpb24iOjEwfX0=',
+	    'x-referrer': baseurl
+	}));
+	
+	AnyBalance.trace('Операции: ' + html);
+	
+	var json = getJson(html);
+	
+	if(json.operations && json.operations.length){
+		AnyBalance.trace('Найдено операций: ' + json.operations.length);
+		
+		for(var i = 0; i < json.operations.length; i++) {
+	    	var operation = json.operations[i];
+
+			getParam(operation.operationDate.replace(/(\d{4})-(\d{2})-(\d{2})/, '$3.$2.$1'), result, 'lastoperdate', null, null, parseDate);
+	        getParam(operation.operationAmount.sum, result, 'lastopersum', null, null, parseBalance);
+	        getParam(operation.fullOperationName, result, 'lastopername');
+			break;
+	    }
+	}else{
+		AnyBalance.trace('Не удалось получить информацию о последней операции');
+	}
+}
+
 function fetchCardNew(baseurl, html, json) {
+    var prefs = AnyBalance.getPreferences();
+	
+	var result = {success: true};
+    
+	var json = json.cards;
+	if(!json || JSON.stringify(json) === '{}')
+		throw new AnyBalance.Error('У вас нет ни одной карты');
+	
+	var currCard;
+	
+	for(var key in json){
+    	var product = json[key];
+	    AnyBalance.trace(key + ': ' + JSON.stringify(product));
+		AnyBalance.trace('Найдена карта ' + product.number + ' ("' + product.name + '")');
+		if(!currCard && (!prefs.card || endsWith(product.number, prefs.card))){
+	       	AnyBalance.trace('Выбрана карта ' + product.number + ' ("' + product.name + '")');
+	       	currCard = product;
+	    }
+    }
+
+	if(!currCard)
+		throw new AnyBalance.Error('Не удалось найти карту с последними цифрами ' + prefs.card);
+	
+	
+	getParam(currCard.name, result, 'cardname');
+	if(currCard.number){
+	    getParam(currCard.number.replace(/.*(\d{4})(\d{2})(\D+)(\d{4})$/i, '$1 $2** **** $4'), result, 'cardnum');
+	    getParam(currCard.number.replace(/.*(\d{4})(\d{2})(\D+)(\d{4})$/i, '$1 $2** **** $4'), result, '__tariff');
+	}
+    getParam(currCard.amount.amount, result, 'balance', null, null, parseBalance);
+    getParam(currCard.ownFunds.amount, result, 'own', null, null, parseBalance);
+    getParam(g_currency[currCard.amount.currency]||currCard.amount.currency, result, ['currency', 'balance', 'gracepay', 'minpay', 'limit', 'own', 'blocked']);
+    getParam(currCard.emosible, result, 'holder');
+    if(currCard.expireDate)
+	    getParam(currCard.expireDate.replace(/(\d{4})-(\d{2})-(\d{2})/, '$3.$2.$1'), result, 'till', null, null, parseDate);
+    if(currCard.openDate)
+	    getParam(currCard.openDate.replace(/(\d{4})-(\d{2})-(\d{2})/, '$3.$2.$1'), result, 'date_start', null, null, parseDate);
+    getParam(currCard.paySystem, result, 'ps'); // Visa
+	getParam(g_type[currCard.type]||currCard.type, result, 'type'); // Дебетовая карта, Кредитная карта
+	if(currCard.totalLiability)
+	    getParam(-(currCard.totalLiability), result, 'gracepay', null, null, parseBalance);
+	if(currCard.creditLimit)
+	    getParam(currCard.creditLimit, result, 'limit', null, null, parseBalance);
+	if(currCard.minNextPaymentAmount)
+	    getParam(-(currCard.minNextPaymentAmount), result, 'minpay', null, null, parseBalance);
+	if(currCard.nextPaymentDate)
+	    getParam(currCard.nextPaymentDate.replace(/(\d{4})-(\d{2})-(\d{2})/, '$3.$2.$1'), result, 'minpaytill', null, null, parseDate);
+	if(currCard.pastDueTotal)
+	    getParam(currCard.pastDueTotal, result, 'pastdue', null, null, parseBalance);
+    if(currCard.interestRate)
+	    getParam(currCard.interestRate, result, 'pct', null, null, parseBalance);
+    getParam(g_statusCard[currCard.status]||currCard.status, result, 'status'); //ACTIVE, Изготовлена
+	
+	
+	if(AnyBalance.isAvailable('bonuses'))
+		fetchBonuses(result);
+	
+	if(AnyBalance.isAvailable('fio', 'holder', 'phone'))
+		getInfo(result);
+	
+	if(AnyBalance.isAvailable('lastoperdate', 'lastopersum', 'lastoperdesc'))
+	    getTransactions(result)
+	
+    AnyBalance.setResult(result);
+}
+
+function fetchAccountNew(baseurl, html, json) {
     var prefs = AnyBalance.getPreferences();
 
     var result = {success: true};
-
-    html = AnyBalance.requestPost(baseurl + 'processor/process/minerva/info', {
-        'action': 'EXECUTE',
-        'topics': '[{"id":"portfolios","params":[{"ignoreCache":true}]}]',
-        'ignoreCache': 'true',
-        'locale': 'ru',
-        'pageToken': json.pageToken,
-    }, addHeaders({Referer: baseurl + json.redirectTo, 'X-Requested-With': 'XMLHttpRequest'}));
-
-    var response = getJson(html);
-
-    if (!response.result)
-        throw new AnyBalance.Error('Не удалось найти данные по картам и счетам. Сайт изменен?');
-
-    var str = JSON.stringify(response.result);
-    for (var t = 0; t < 10; t++) {
-        html = AnyBalance.requestPost(baseurl + 'processor/process/minerva/info', {
-            'action': 'GET_INCOME',
-            'allNotificationsRequired': 'false',
-            'ignoreCache': 'false',
-            'locale': 'ru',
-            'actionIDs': str,
-            'getIncomeParams': '{}',
-            'pageToken': response.pageToken,
-        }, addHeaders({Referer: baseurl + json.redirectTo, 'X-Requested-With': 'XMLHttpRequest'}));
-
-        response = getJson(html);
-
-        if (/"id":"portfolios"/i.test(html))
-            break;
+    
+	var accounts = json.accounts; // Обычные счета
+	var agreements = json.investAgreements; // Инвестиционные соглашения
+	var json = Object.assign(accounts, agreements); // Относим инвест. счета к обычным, чтобы не создавать отдельную категорию
+	
+	if(!json || JSON.stringify(json) === '{}')
+		throw new AnyBalance.Error('У вас нет ни одного счета');
+	
+	var currAcc;
+	
+	for(var key in json){
+    	var product = json[key];
+	    AnyBalance.trace(key + ': ' + JSON.stringify(product));
+		AnyBalance.trace('Найден счет ' + product.number + ' ("' + product.name + '")');
+		if(!currAcc && (!prefs.card || endsWith(product.number, prefs.card))){
+	       	AnyBalance.trace('Выбран счет ' + product.number + ' ("' + product.name + '")');
+	       	currAcc = product;
+	    }
     }
 
-    var FoundProduct;
-    for (var i = 0; i < response.topics.length; i++) {
-        var curr = response.topics[i];
-        // Интересуют только продукты банка
-        if (/portfolios/i.test(curr.id)) {
-            for (var z = 0; z < curr.items.length; z++) {
-                var item = curr.items[z];
-                // Вот, наконец-то нашли
-                if (/Счета и карты|Вклады и сбережения/i.test(item.name)) {
-                    // Ищем нужную
-                    for (var r = 0; r < item.products.length; r++) {
-                        var product = item.products[r];
+	if(!currAcc)
+		throw new AnyBalance.Error('Не удалось найти счет с последними цифрами ' + prefs.card);
+	
+	getParam(currAcc.name, result, 'cardname');
+	getParam(currAcc.number, result, 'cardnum');
+	getParam(currAcc.number, result, '__tariff');
+    getParam(currAcc.balance.amount, result, 'balance', null, null, parseBalance);
+    getParam(g_currency[currAcc.balance.currency]||currAcc.balance.currency, result, ['currency', 'balance', 'gracepay', 'minpay', 'limit', 'own', 'blocked']);
+    if(currAcc.expireDate)
+        getParam(currAcc.expireDate.replace(/(\d{4})-(\d{2})-(\d{2})/, '$3.$2.$1'), result, 'till', null, null, parseDate);
+    if(currAcc.openDate)
+	    getParam(currAcc.openDate.replace(/(\d{4})-(\d{2})-(\d{2})/, '$3.$2.$1'), result, 'date_start', null, null, parseDate);
+	getParam(g_type[currAcc.type]||currAcc.type, result, 'type'); // Мастер-счет, Инвест. соглашение
+    getParam(g_statusAcc[currAcc.status]||currAcc.status, result, 'status'); //ACTIVE, Изготовлена
+	
+	if(AnyBalance.isAvailable('bonuses'))
+		fetchBonuses(result);
+	
+	if(AnyBalance.isAvailable('fio', 'holder', 'phone'))
+		getInfo(result);
+	
+	if(AnyBalance.isAvailable('lastoperdate', 'lastopersum', 'lastoperdesc'))
+	    getTransactions(result)
+    
+    AnyBalance.setResult(result);
+}
 
-                        for (var p = 0; p < product.groups.length; p++) {
-                            var group = product.groups[p];
-
-                            for (var e = 0; e < group.items.length; e++) {
-                                var groupItem = group.items[e];
-
-                                if (prefs.type == 'card' && !/Card/i.test(groupItem.classType)) {
-                                    AnyBalance.trace('Продукт с номером ' + groupItem.number + ' не соответствует, т.к. не является картой...');
-                                    continue;
-                                }
-
-                                if (!prefs.card || new RegExp(prefs.card + '$').test(groupItem.number)) {
-                                    AnyBalance.trace('Продукт с номером ' + groupItem.number + ' соответствует, возьмем его...');
-                                    FoundProduct = groupItem;
-                                    break;
-                                }
-                            }
-                            if (FoundProduct)
-                                break;
-                        }
-                        if (FoundProduct)
-                            break;
-                    }
-                    if (FoundProduct)
-                        break;
-                }
-                if (FoundProduct)
-                    break;
-            }
-        }
-    }
-
-    if (!FoundProduct) {
-        throw new AnyBalance.Error(prefs.card ? 'Не найдена карта или счет с последними цифрами ' + prefs.card : 'Не найдено ни одной карты/счета!');
-    }
+function fetchDepositNew(baseurl, html, json) {
+    var prefs = AnyBalance.getPreferences();
 
     var result = {success: true};
-
-    //getParam(html, result, 'fio', /<div[^>]+id="name"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
-    getParam(FoundProduct.number + '', result, '__tariff', null, replaceTagsAndSpaces, html_entity_decode);
-    getParam(FoundProduct.name + '', result, 'cardname', null, replaceTagsAndSpaces, html_entity_decode);
-    getParam(FoundProduct.number, result, /\d{20}/.test(FoundProduct.number) ? 'accnum' : 'cardnum', null, replaceTagsAndSpaces, html_entity_decode);
-    getParam(FoundProduct.amount.sum + '', result, 'balance', null, replaceTagsAndSpaces, parseBalance);
-    getParam(FoundProduct.amount.currency + '', result, ['currency', 'balance', 'gracepay', 'minpay', 'limit', 'accbalance', 'own', 'blocked'], null, replaceTagsAndSpaces, html_entity_decode);
-
-    if (isAvailable(['minpaytill', 'minpay', 'blocked', 'own', 'limit', 'credit_till', 'pct', 'gracepay', 'gracetill'])) {
-
-        html = AnyBalance.requestPost(baseurl + 'processor/process/minerva/info', {
-            'action': 'EXECUTE',
-            'topics': JSON.stringify([{
-                "id": "details",
-                "params": [{"objects": [{"id": FoundProduct.id, "className": FoundProduct.classType}]}]
-            }]),
-            'ignoreCache': 'false',
-            'locale': 'ru',
-            'pageToken': response.pageToken,
-        }, addHeaders({Referer: baseurl + json.redirectTo, 'X-Requested-With': 'XMLHttpRequest'}));
-
-        response = getJson(html);
-        /*	    //Неосвоенные счетчики
-         <counter id="accbalance" name="Остаток на счете" units=" {@currency}"/>
-         <counter id="own_free" name="Свободные собственные средства" units=" {@currency}"/>
-         <counter id="accnum" name="Номер счета" type="text"/>
-         */
-        html = AnyBalance.requestPost(baseurl + 'processor/process/minerva/info', {
-            'action': 'GET_INCOME',
-            'allNotificationsRequired': 'false',
-            'ignoreCache': 'false',
-            'locale': 'ru',
-            'actionIDs': JSON.stringify(response.result),
-            'getIncomeParams': '{}',
-            'pageToken': response.pageToken,
-        }, addHeaders({Referer: baseurl + json.redirectTo, 'X-Requested-With': 'XMLHttpRequest'}));
-
-        response = getJson(html);
-
-        var details = null;
-        for (var i = 0; i < response.topics.length; ++i) {
-            if (response.topics[i].id == 'details') {
-                details = response.topics[i];
-                break;
-            }
-        }
-        if (!details)
-            throw new AnyBalance.Error('Не удаётся найти детальную информацию для продукта ' + FoundProduct.name);
-
-        var prod = null;
-        for (var i = 0; i < details.items.length; ++i) {
-            if (details.items[i].id == FoundProduct.id) {
-                prod = details.items[i];
-                break;
-            }
-        }
-
-        if (!prod)
-            throw new AnyBalance.Error('Не удаётся найти детали для продукта ' + FoundProduct.name);
-
-        if (prod.classType == 'CreditCard') {
-            getParam('' + prod.properties['cards.details.credit.nextPayment'], result, 'minpaytill', null, null, parseDate);
-            getParam('' + prod.properties['cards.details.credit.minAmountForRepayment'], result, 'minpay', null, null, parseBalance);
-            getParam('' + prod.properties['cards.details.creditcard.allowed-sum-details']['cards.details.blocked'], result, 'blocked', null, null, parseBalance);
-            getParam('' + prod.properties['cards.details.creditcard.allowed-sum-details']['cards.details.amountSum'], result, 'own', null, null, parseBalance);
-            getParam('' + prod.properties['cards.details.creditcard.allowed-sum-details']['cards.details.credit.limit'], result, 'limit', null, null, parseBalance);
-            getParam('' + prod.properties['cards.details.credit.limitEndDate'], result, 'credit_till', null, null, parseDate);
-            getParam('' + prod.properties['cards.details.credit.interestRate'], result, 'pct', null, null, parseBalance);
-            getParam('' + prod.properties['cards.details.credit.graceEndDate'], result, 'gracetill', null, null, parseDate);
-            getParam('' + prod.properties['cards.details.credit.graceAmountForRepayment'], result, 'gracepay', null, null, parseBalance);
-        } else {
-            AnyBalance.trace('Не умеем получать детали для ' + prod.classType + ': ' + JSON.stringify(response));
-        }
-
+    
+	var json = json.deposits;
+	if(!json || JSON.stringify(json) === '{}')
+		throw new AnyBalance.Error('У вас нет ни одного депозита');
+	
+	var currDep;
+	
+	for(var key in json){
+    	var product = json[key];
+	    AnyBalance.trace(key + ': ' + JSON.stringify(product));
+		AnyBalance.trace('Найден депозит ' + product.number + ' ("' + product.name + '")');
+		if(!currDep && (!prefs.card || endsWith(product.number, prefs.card))){
+	       	AnyBalance.trace('Выбран депозит ' + product.number + ' ("' + product.name + '")');
+	       	currDep = product;
+	    }
     }
 
+	if(!currDep)
+		throw new AnyBalance.Error('Не удалось найти депозит с последними цифрами ' + prefs.card);
+	
+	
+	getParam(currDep.name, result, 'cardname');
+	getParam(currDep.number, result, 'cardnum');
+	getParam(currDep.number, result, '__tariff');
+    getParam(currDep.balance.amount, result, 'balance', null, null, parseBalance);
+    getParam(g_currency[currDep.balance.currency]||currDep.balance.currency, result, ['currency', 'balance', 'gracepay', 'minpay', 'limit', 'own', 'blocked']);
+    if(currDep.savingGoal){
+		getParam(currDep.savingGoal.goalAmount, result, 'saving_sum', null, null, parseBalance);
+	    getParam(currDep.savingGoal.endDate.replace(/(\d{4})-(\d{2})-(\d{2})/, '$3.$2.$1'), result, 'deposit_till', null, null, parseDate);
+	}
+	if(currDep.openDate)
+        getParam(currDep.openDate.replace(/(\d{4})-(\d{2})-(\d{2})/, '$3.$2.$1'), result, 'date_start', null, null, parseDate);
+	getParam(currDep.monthProfit, result, 'month_profit', null, null, parseBalance);
+	getParam(g_type[currDep.type]||currDep.type, result, 'type'); // Накопительный счет
+    getParam(currDep.rate, result, 'pct', null, null, parseBalance);
+    getParam(g_statusAcc[currDep.status]||currDep.status, result, 'status');
+	
+	if(AnyBalance.isAvailable('bonuses'))
+		fetchBonuses(result);
+	
+	if(AnyBalance.isAvailable('fio', 'holder', 'phone'))
+		getInfo(result);
+	
+	if(AnyBalance.isAvailable('lastoperdate', 'lastopersum', 'lastoperdesc'))
+	    getTransactions(result)
+    
+    AnyBalance.setResult(result);
+}
+
+function fetchCreditNew(baseurl, html, json) {
+	throw new AnyBalance.Error('Кредиты пока не поддерживаются. Обратитесь к автору провайдера для добавления продукта');
+    var prefs = AnyBalance.getPreferences();
+
+    var result = {success: true};
+    
+	var json = json.loans;
+	if(!json || JSON.stringify(json) === '{}')
+		throw new AnyBalance.Error('У вас нет ни одного кредита');
+	
+	var currCrd;
+	
+	for(var key in json){
+    	var product = json[key];
+	    AnyBalance.trace(key + ': ' + JSON.stringify(product));
+		AnyBalance.trace('Найден кредит ' + product.number + ' ("' + product.name + '")');
+		if(!currCrd && (!prefs.card || endsWith(product.number, prefs.card))){
+	       	AnyBalance.trace('Выбран кредит ' + product.number + ' ("' + product.name + '")');
+	       	currCrd = product;
+	    }
+    }
+
+	if(!currCrd)
+		throw new AnyBalance.Error('Не удалось найти кредит с последними цифрами ' + prefs.card);
+	
+	
+	getParam(currCrd.name, result, 'cardname');
+	getParam(currCrd.number, result, 'cardnum');
+	getParam(currCrd.number, result, '__tariff');
+    getParam(currCrd.balance.amount, result, 'balance', null, null, parseBalance);
+	getParam(currCrd.creditLimit, result, 'limit', null, null, parseBalance);
+    getParam(g_currency[currCrd.balance.currency]||currCrd.balance.currency, result, ['currency', 'balance', 'gracepay', 'minpay', 'limit']);
+    if(currCrd.openDate)
+	    getParam(currCrd.openDate.replace(/(\d{4})-(\d{2})-(\d{2})/, '$3.$2.$1'), result, 'date_start', null, null, parseDate);
+	getParam(g_type[currCrd.type]||currCrd.type, result, 'type'); // Накопительный счет, Инвест. соглашение
+	getParam(-(currCrd.minNextPaymentAmount), result, 'minpay', null, null, parseBalance);
+	if(currCrd.nextPaymentDate)
+	    getParam(currCrd.nextPaymentDate.replace(/(\d{4})-(\d{2})-(\d{2})/, '$3.$2.$1'), result, 'minpaytill', null, null, parseDate);
+    getParam(currCrd.pastDueTotal, result, 'pastdue', null, null, parseBalance);
+	getParam(currCrd.rate, result, 'pct', null, null, parseBalance);
+    getParam(g_statusAcc[currCrd.status]||currCrd.status, result, 'status');
+	
+	if(AnyBalance.isAvailable('bonuses'))
+		fetchBonuses(result);
+	
+	if(AnyBalance.isAvailable('fio', 'holder', 'phone'))
+		getInfo(result);
+	
+	if(AnyBalance.isAvailable('lastoperdate', 'lastopersum', 'lastoperdesc'))
+	    getTransactions(result)
+    
     AnyBalance.setResult(result);
 }
 

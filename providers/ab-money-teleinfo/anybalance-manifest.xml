@@ -1,14 +1,15 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="47" major_version="3">ab-money-teleinfo</id>
+	<id version="48" major_version="3">ab-money-teleinfo</id>
 	<name>ВТБ Онлайн</name>
 	<api flags="no_browser"/>
 	<description html="true"><![CDATA[
 	<p>Получает информацию о балансе карт и счетов клиентов банка ВТБ (https://www.vtb.ru/).</p>
-	<p>Информация берется из мобильного приложения ВТБ Онлайн.</p>
+	<p>Информация берется из мобильного приложения ВТБ Онлайн или из личного кабинета ВТБ Онлайн на сайте https://online.vtb.ru/.</p>
 	]]></description>
 	<instruction html="true"><![CDATA[
-	<p>Для подключения к ВТБ Онлайн необходимо один раз посетить любой офис банка с  документом, удостоверяющим личность.</p>
+	<p>Для работы провайдера требуется ввести логин и пароль для входа в личный кабинет ВТБ Онлайн.</p>
+	<p>Кроме того, для авторизации в личном кабинете потребуется ввести код подтверждения из SMS, высланного на номер телефона, привязанного к личному кабинету ВТБ Онлайн.</p>
 	]]></instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>
@@ -26,24 +27,37 @@
 	</files>
 	<counters>
 		<counter id="balance" name="Баланс" units=" {@currency}"/>
+		<counter id="bonuses" name="Мультибонусы" units=" Б"/>
 		<counter id="minpay" name="Минимальный платеж" units=" {@currency}"/>
-		<counter id="minpaytill" name="Срок мин.платежа" type="time" format="dd/MM/yyyy"/>
+		<counter id="minpaytill" name="Срок мин. платежа" type="time" format="dd.MM.yyyy"/>
 		<counter id="gracepay" name="Грейс платеж" units=" {@currency}"/>
-		<counter id="gracetill" name="Конец льготного периода" type="time" format="dd/MM/yyyy"/>
-		<counter id="till" name="Действует до" type="time" format="dd/MM/yyyy"/>
+		<counter id="gracetill" name="Конец льготного периода" type="time" format="dd.MM.yyyy"/>
+		<counter id="till" name="Срок действия" type="time" format="dd.MM.yyyy"/>
+		<counter id="date_start" name="Дата открытия" type="time" format="dd.MM.yyyy"/>
 		<counter id="limit" name="Кредитный лимит" units=" {@currency}"/>
-		<counter id="credit_till" name="Срок кредита" type="time" format="dd/MM/yyyy"/>
+		<counter id="credit_till" name="Срок кредита" type="time" format="dd.MM.yyyy"/>
+		<counter id="deposit_till" name="Срок депозита" type="time" format="dd.MM.yyyy"/>
+		<counter id="saving_sum" name="Целевая сумма" units=" {@currency}"/>
+		<counter id="month_profit" name="Доход за месяц" units=" {@currency}"/>
+		<counter id="pct" name="Процентная ставка" units="%"/>
+		<counter id="pastdue" name="Просроченная задолженность" units=" {@currency}"/>
 		<counter id="own" name="Собственные средства" units=" {@currency}"/>
 		<counter id="blocked" name="Заблокировано" units=" {@currency}"/>
 		<counter id="accnum" name="Номер счета" type="text"/>
-		<counter id="pct" name="Процентная ставка" units="%"/>
+		<counter id="holder" name="Держатель карты" type="text"/>
 		<counter id="currency" name="Валюта" type="text"/>
+		<counter id="type" name="Тип" type="text"/>
 		<counter id="cardname" name="Название" type="text"/>
+		<counter id="status" name="Статус" type="text"/>
 		<counter id="cardnum" name="Номер" type="text"/>
-		<counter id="fio" name="Владелец" type="text"/>
-		<!-- <counter id="all" name="Сводка" type="text"/> -->
+		<counter id="ps" name="Платежная система" type="text"/>
+		<counter id="lastoperdate" name="Дата последней операции" type="time" format="dd.MM.yyyy"/>
+		<counter id="lastopersum" name="Сумма последней операции" units=" {@currency}"/>
+		<counter id="lastopername" name="Тип последней операций" type="text"/>
+		<counter id="phone" name="Телефон" type="text"/>
+		<counter id="fio" name="ФИО владельца" type="text"/>
 	</counters>
-	<keywords>ВТБ24, Телебанк, телеинфо, teleinfo, втб</keywords>
+	<keywords>ВТБ Онлайн, VTB Online, Телебанк, телеинфо, teleinfo, втб, vtb</keywords>
 	<type>money, bank</type>
 	<country>ru</country>
 </provider>

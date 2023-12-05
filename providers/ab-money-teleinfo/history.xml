@@ -1,5 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="3" version="48" date="2023-04-02">
+	- Поддержка нового личного кабинета
+	- Добавлены дополнительные счетчики
+	</change>
 	<change major_version="3" version="47" date="2022-10-27">
 	- Изменена иконка и название на ВТБ Онлайн
 	</change>

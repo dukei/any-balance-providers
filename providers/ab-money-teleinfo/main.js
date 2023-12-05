@@ -2,7 +2,57 @@
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 */
 
+var g_currency = {
+	RUB: '₽',
+	RUR: '₽',
+	USD: '$',
+	EUR: '€',
+	GBP: '£',
+	JPY: 'Ұ',
+	CHF: '₣',
+	CNY: '¥',
+	undefined: ''
+};
+
+var g_statusAcc = {
+	'Active': 'Активен',
+	'Inactive': 'Не активен',
+	'Blocked': 'Заблокирован',
+	'Arrested': 'Арестован',
+	'Opened': 'Действующий',
+	'Closed': 'Закрыт',
+	'': 'Неизвестен'
+};
+
+var g_statusCard = {
+	'Active': 'Активна',
+	'Inactive': 'Не активна',
+	'Blocked': 'Заблокирована',
+	'Arrested': 'Арестована',
+	'Opened': 'Действующая',
+	'Closed': 'Закрыта',
+	'': 'Неизвестен'
+};
+
+var g_type = {
+	CREDIT_CARD: 'Кредитная карта',
+	DEBET_CARD: 'Дебетовая карта',
+	MASTER_ACCOUNT: 'Мастер-счет',
+	PIGGY_BANK: 'Накопительный счет',
+	INVESTMENT_ACCOUNT: 'Инвестиционное соглашение',
+	undefined: ''
+};
+
 var g_countersTable = {
+	common: {
+		"bonuses": "bonuses",
+		"phone": "phone",
+		"fio": "fio",
+		"holder": "holder",
+		"lastoperdate": "lastoperdate",
+		"lastopersum": "lastopersum",
+		"lastopername": "lastopername"
+    },
 	card: {
 		"currency": ["cards.currency", "accounts.currency"],
     	"balance": ["cards.balance", "accounts.balance"],
@@ -14,11 +64,16 @@ var g_countersTable = {
 		"own": "cards.own",
 		"limit": "cards.limit",
 		"till": ["cards.till", "accounts.till"],
+		"pastdue": "cards.pastdue",
+		"date_start": "cards.date_start",
+		"ps": "cards.ps",
 		"pct": "cards.pct",
 		"cardname": ["cards.name", "accounts.name"],
+		"type": ["cards.type", "accounts.type"],
 		"cardnum": "cards.num",
 		"accnum": "accounts.num",
-		"fio": "cards.holder",
+		"status": "card.status",
+		"holder": "cards.holder",
 		"__tariff": ["cards.__name", "accounts.name"]
     },
     crd: {
@@ -30,6 +85,7 @@ var g_countersTable = {
 		"gracepay_till": "credits.gracepay_till",
 		"limit": "credits.limit",
 		"credit_till": "credits.till",
+		"pastdue": "credits.pastdue",
 		"pct": "credits.pct",
 		"cardname": "credits.__name",
 		"cardnum": "credits.num",
@@ -40,7 +96,11 @@ var g_countersTable = {
 		"currency": "deposits.currency",
     	"balance": "deposits.balance",
 		"accnum": "deposits.num",
+		"type": "deposits.type",
 		"till": "deposits.date_end",
+		"deposit_till": "deposits.till",
+		"saving_sum": "deposits.sum",
+		"month_profit": "deposits.profit",
 		"pct": "deposits.pct",
 		"own": "deposits.own",
 		"__tariff": "deposits.__name"
@@ -92,10 +152,13 @@ function main(){
 	var prefs = AnyBalance.getPreferences();
 
     if(prefs.source == 'site'){
-		AnyBalance.trace('В настройках выбрано обновление из интернет-банка');
+		AnyBalance.trace('В настройках выбрано обновление с официального сайта');
 		mainWeb();
 		return;
-    }
+    }else{
+		AnyBalance.trace('В настройках выбрано обновление из мобильного приложения');
+		throw new AnyBalance.Error('Обновление из мобильного приложения в настоящее время недоступно. Пожалуйста, выберите Официальный сайт в качестве способа входа в настройках провайдера');
+	}
 
 	AnyBalance.trace('В настройках выбрано обновление из мобильного приложения');
 
@@ -105,10 +168,10 @@ function main(){
 		return;
 	}
 
-    if(!/^(card|dep|crd)$/i.test(prefs.type || ''))
+    if(!/^(card|acc|dep|crd)$/i.test(prefs.type || ''))
     	prefs.type = 'card';
-
-    var adapter = new NAdapter(g_countersTable[prefs.type], shouldProcess);
+    
+	var adapter = new NAdapter(joinObjects(g_countersTable.common, g_countersTable[prefs.type]), shouldProcess);
     adapter.processAccounts = adapter.envelope(processAccounts);
     adapter.processCards = adapter.envelope(processCards);
     adapter.processDeposits = adapter.envelope(processDeposits);
@@ -123,6 +186,17 @@ function main(){
 
 	if(prefs.type == 'card'){
 
+		adapter.processCards(result);
+		if(!adapter.wasProcessed('cards')){
+			result.cards = [];
+			adapter.processAccounts(result);
+			if(!adapter.wasProcessed('accounts')) {
+				throw new AnyBalance.Error(prefs.card ? 'Не найдены ни карта, ни счет с последними цифрами ' + prefs.card : 'У вас нет ни одной карты или счета');
+			}
+		}
+		result = adapter.convert(result);
+
+	}else if(prefs.type == 'acc'){
 		adapter.processCards(result);
 		if(!adapter.wasProcessed('cards')){
 			result.cards = [];

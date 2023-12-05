@@ -35,8 +35,8 @@
 		title="Источник данных"
 		summary="Источник для получения информации||{@s}\n"
 		dialogTitle="Источник данных"
-		entries="Карта или счет|Депозит|Кредит"
-		entryValues="card|dep|crd"
+		entries="Карта|Счет|Депозит|Кредит"
+		entryValues="card|acc|dep|crd"
 		defaultValue="card">
 	</ListPreference>
 	<EditTextPreference

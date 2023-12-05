@@ -1,10 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="31">ab-bonus-ozon</id>
+	<id version="38">ab-bonus-ozon</id>
 	<name>OZON.ru</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о баланcе, активном заказе и количестве баллов в интернет магазине OZON.ru <a href="https://www.ozon.ru/">https://www.ozon.ru/</a>.</p>
+	<p>Предоставляет информацию о баланcе, активном заказе и количестве баллов в интернет магазине OZON.ru (<a href="https://www.ozon.ru/">https://www.ozon.ru/</a>).</p>
 	<p>Информация берется из мобильного приложения OZON.</p>
 	]]></description>
 		<instruction html="true"><![CDATA[
@@ -24,12 +24,13 @@
 	<counters>
 		<counter id="balance" name="Баланс" units=" ₽"/>
 		<counter id="bonus" name="Баллы Ozon" units=" Б"/>
+		<counter id="bonus_pending" name="Баллы в ожидании" units=" Б"/>
 		<counter id="bonus_premium" name="Premium баллы" units=" Б"/>
 		<counter id="bonus_salers" name="Бонусы продавцов" units=" Б"/>
 		<counter id="miles" name="Мили" units=" М"/>
 		<counter id="ozoncard_balance" name="Ozon Карта" units=" ₽"/>
-<!--	<counter id="ozoncard_balance2" name="Ozon Карта 2" units=" ₽"/>-->
-<!--	<counter id="ozoncard_balance3" name="Ozon Карта 3" units=" ₽"/>-->
+    	<counter id="ozoncard_balance2" name="Ozon Карта 2" units=" ₽"/>
+    	<counter id="ozoncard_balance3" name="Ozon Карта 3" units=" ₽"/>
 		<counter id="oper_sum" name="Сумма операции" units=" Б"/>
 		<counter id="oper_date" name="Дата операции" type="time" format="dd.MM.yyyy"/>
 		<counter id="oper_desc" name="Последняя операция" type="text"/>
@@ -39,12 +40,14 @@
 <!--	<counter id="weight" name="Вес" units=" кг"/>-->
 		<counter id="ticket" name="Последний заказ" type="text"/>
 		<counter id="state" name="Статус заказа" type="text"/>
-		<counter id="notifications" name="Уведомления" units=" шт"/>
+		<counter id="premium_state" name="Подписка Premium" type="text"/>
+		<counter id="notifications" name="Сообщения" units=" шт"/>
 		<counter id="favourites" name="Избранное" units=" шт"/>
+		<counter id="email" name="E-mail" type="text"/>
 		<counter id="phone" name="Телефон" type="text"/>
 		<counter id="fio" name="ФИО" type="text"/>
 	</counters>
-	<keywords>озон</keywords>
+	<keywords>Ozon, озон, market, маркет</keywords>
 	<type>bonus, shop</type>
 	<country>ru</country>
 </provider>

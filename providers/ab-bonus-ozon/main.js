@@ -3,19 +3,20 @@
 */
 
 var g_headers = {
-	Connection: 'Keep-Alive',
+	'Accept': 'application/json; charset=UTF-8',
+	'Connection': 'Keep-Alive',
 	'Cache-Control': 'no-cache',
-	'User-Agent': 'ozonapp_android/14.46+2253',
+	'User-Agent': 'ozonapp_android/16.16.0+2366',
 	'x-o3-app-name': 'ozonapp_android',
-	'x-o3-app-version': '14.46(2253)',
+	'x-o3-app-version': '16.16.0(2366)',
 	'x-o3-device-type': 'mobile'
 };
 
 var g_webHeaders = {
-	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
+	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
     'Accept-Language': 'ru-RU,ru;q=0.9',
 	'Upgrade-Insecure-Requests': '1',
-    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36'
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36'
 };
 
 var replaceNumber = [replaceTagsAndSpaces, /\D/g, '', /.*(\d\d\d)(\d\d\d)(\d\d)(\d\d)$/, '+7 $1 $2-$3-$4'];
@@ -43,8 +44,36 @@ function callApi(verb, params){
 	return json;
 }
 
+function callWebApi(verb, params){
+	var method = 'GET', params_str = '', headers = g_webHeaders;
+	if(params){
+		params_str = JSON.stringify(params);
+		method = 'POST';
+		headers = addHeaders({'Content-Type': 'application/json; charset=UTF-8'});
+	}
+	
+	AnyBalance.trace('Запрос: ' + verb);
+	if(/safeUserAccountBalance/i.test(verb)){
+		var baseurlApi = 'https://user-account.ozon.ru/';
+	}else{
+		var baseurlApi = 'https://api.ozon.ru/';
+	}
+	var html = AnyBalance.requestPost(baseurlApi + verb, params_str, headers, {HTTP_METHOD: method});
+	var json = getJson(html);
+	AnyBalance.trace('Ответ: ' + JSON.stringify(json));
+	if(json.error){
+		var error = json.error.message || json.error;
+		if(error)
+			throw new AnyBalance.Error(error,null, /не найден/i.test(error));
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
+	}
+
+	return json;
+}
+
 function callPageJson(url, params){
-	return callApi('composer-api.bx/page/json/v1?url=' + encodeURIComponent(url.replace(/^ozon:\//, '')), params);
+	return callApi('composer-api.bx/page/json/v2?url=' + encodeURIComponent(url.replace(/^ozon:\//, '')), params);
 }
 
 function generateUUID() {
@@ -79,24 +108,46 @@ function getDeviceInfo(){
 
 function getDefaultProp(obj){
 	for(var prop in obj){
-		if(/-default-/.test(prop))
+		if(/-default-/.test(prop)){
 			return obj[prop];
+		}
 		return obj;
 	}
+}
+
+function getDefaultPropName(obj, str){
+	for(var prop in obj){
+		if (prop.includes(str)) {
+			obj = obj[prop];
+			break;
+		}
+	}
+	return obj;
 }
 
 function loginPure(){
 	var prefs = AnyBalance.getPreferences(), json;
 	
     if(/@/.test(prefs.login)){
-    	AnyBalance.trace('Вход по емейл');
+    	AnyBalance.trace('Входить будем по email');
     	json = callPageJson('/my/entry/credentials-required?type=emailOtpEntry', getDeviceInfo());
     }else{
-    	AnyBalance.trace('Вход по телефону');
+    	AnyBalance.trace('Входить будем по телефону');
     	json = callPageJson('/my/entry/credentials-required', getDeviceInfo());
     }
-    
-    var submit = getDefaultProp(json.csma.entryCredentialsRequired).submitButton;
+	
+	if(json.common && json.common.emptyState){ // Проверка на новую версию
+	    var empty = getDefaultProp(json.common.emptyState);
+	    if(empty && empty.message){
+		    var error = empty.title + '. ' + empty.message;
+		    if(error)
+			    throw new AnyBalance.Error(error,null, /устарел|обновит/i.test(error));
+		    AnyBalance.trace(html);
+		    throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
+	    }
+	}
+	
+	var submit = JSON.parse(getDefaultPropName(json.widgetStates, 'entryCredentialsRequired')).submitButton;
     if(!submit)
     	throw new AnyBalance.Error('Не удалось найти кнопку входа. Сайт изменен?');
     if(/@/.test(prefs.login)){
@@ -107,7 +158,7 @@ function loginPure(){
     while(json.status && json.status.deeplink){
     	AnyBalance.trace('Потребовалась проверка: ' + json.status.deeplink);
     	json = callPageJson(json.status.deeplink);
-    	var otp = getDefaultProp(json.csma.otp);
+		var otp = JSON.parse(getDefaultPropName(json.widgetStates, 'otp'));
 		if(!otp.subtitle)
 			throw new AnyBalance.Error(otp.title, null, /превышен/i.test(otp.title));
     	var code = AnyBalance.retrieveCode(otp.title.replace(/\n/g, '') + '. ' + otp.subtitle.replace(/\n/g, ''), null, {inputType: 'number', time: 300000});
@@ -116,11 +167,11 @@ function loginPure(){
 		if(json.status && json.status.deeplink && (/isLongTimeNoSee=true/i.test(json.status.deeplink))){
 			AnyBalance.trace('Потребовалась проверка по почте: ' + json.status.deeplink);
     	    json = callPageJson(json.status.deeplink);
-    	    var otp = getDefaultProp(json.csma.entryCredentialsRequired);
+			var otp = JSON.parse(getDefaultPropName(json.widgetStates, 'entryCredentialsRequired'));
 			json = callApi('composer-api.bx/_action/' + otp.submitButton.action);
 			AnyBalance.trace('Потребовалась проверка: ' + json.status.deeplink);
     	    json = callPageJson(json.status.deeplink);
-    	    var otp = getDefaultProp(json.csma.otp);
+			var otp = JSON.parse(getDefaultPropName(json.widgetStates, 'otp'));
     	    var code = AnyBalance.retrieveCode(otp.title + '. ' + otp.subtitle, null, {inputType: 'number', time: 300000});
     	    json = callApi('composer-api.bx/_action/' + otp.action, joinObjects(joinObjects(getDeviceInfo(),otp.data),{extraOtp: code}));
 		}
@@ -214,31 +265,49 @@ function main() {
 	
 	var at = AnyBalance.getData('authToken');
 	
-	if (isAvailable(['balance', 'bonus', 'miles', 'bonus_premium', 'bonus_salers', 'fio'])) {
-		html = AnyBalance.requestGet('https://user-account.ozon.ru/action/safeUserAccountBalance', g_headers);
-		var json = getJson(html);
+	if (isAvailable(['balance', 'bonus', 'bonus_pending', 'miles', 'bonus_premium', 'bonus_salers', 'premium_state', 'email', 'phone', 'fio'])) {
+		json = callWebApi('action/safeUserAccountBalance');
 //		AnyBalance.trace('Баланс Ozon' + JSON.stringify(json));
 		getParam((json.balance)/100, result, 'balance', null, null, parseBalance);
 		
-        html = AnyBalance.requestGet('https://api.ozon.ru/composer-api.bx/page/json/v1?url=%2Fmy%2Fpoints', g_webHeaders);
-		var json = getJson(html);
-
-		var ozonPoints = getDefaultProp(json.premium.premiumBalanceHeader);
+        json = callWebApi('composer-api.bx/page/json/v2?url=%2Fmy%2Fpoints');
+		
+		try {
+		    var ozonPoints = JSON.parse(getDefaultPropName(json.widgetStates, 'premiumBalanceHeader'));
+		} catch (e) {
+            AnyBalance.trace('ozonPoints: ' + e.message);
+        }
+		
 //		AnyBalance.trace('Баллы Ozon: ' + JSON.stringify(ozonPoints));
 		if(ozonPoints){
-		    getParam(ozonPoints.ozon && ozonPoints.ozon.amount, result, 'bonus', null, null, parseBalance);
-		    getParam(ozonPoints.miles && ozonPoints.miles.amount, result, 'miles', null, null, parseBalance);
+		    if(ozonPoints.ozon)
+			    getParam(ozonPoints.ozon.amount, result, 'bonus', null, null, parseBalance);
+			if(ozonPoints.pending)
+			    getParam(ozonPoints.pending.amount, result, 'bonus_pending', null, null, parseBalance);
+		    if(ozonPoints.miles)
+			    getParam(ozonPoints.miles.amount, result, 'miles', null, null, parseBalance);
 		}
 		
-		var salersPoints = getDefaultProp(json.premium.premiumSellerPointsBalance);
+		try {
+		    var salersPoints = JSON.parse(getDefaultPropName(json.widgetStates, 'premiumSellerPointsBalance'));
 //		AnyBalance.trace('Бонусы продавцов: ' + JSON.stringify(salersPoints));
-		if(salersPoints)
+		} catch (e) {
+            AnyBalance.trace('salersPoints: ' + e.message);
+        }
+		
+		if(salersPoints){
 		    getParam(salersPoints.totalBalance, result, 'bonus_salers', null, null, parseBalance);
+		}
 		
 		if(isAvailable(['oper_sum', 'oper_desc', 'oper_date'])){
-		    var opa = getDefaultProp(json.premium.paymentsHistory);
+			try {
+		        var opa = JSON.parse(getDefaultPropName(json.widgetStates, 'paymentsHistory'));
+		    } catch (e) {
+                AnyBalance.trace('opa: ' + e.message);
+            }
+			
 //			AnyBalance.trace('Операции с баллами: ' + JSON.stringify(opa));
-		    if (opa && opa.history) {
+		    if (opa && opa.history && opa.history.length > 0) {
 				var opa = opa.history[0];
 		        for(var i=0; opa.items && i<opa.items.length; ++i){
 		        	var oper = opa.items[i];
@@ -255,60 +324,139 @@ function main() {
 		    }
 		}
 		
-		var acc = getDefaultProp(json.myProfile.userAvatar);
-//		AnyBalance.trace('Профиль: ' + JSON.stringify(json));
+		var info = json.userInfo;
+	    if(info && info.user && info.user.email)
+	        getParam(info.user.email, result, 'email');
 		
-		getParam(acc.firstName + ' ' + acc.secondName, result, 'fio');
+		try {
+		    var acc = JSON.parse(getDefaultPropName(json.widgetStates, 'userAvatar'));
+//		    AnyBalance.trace('Профиль: ' + JSON.stringify(acc));
+		} catch (e) {
+            AnyBalance.trace('acc: ' + e.message);
+        }
+		
+		var premStatus = {true: 'Активна', false: 'Не активна'};
+	    getParam(premStatus[acc.isPremium]||acc.isPremium, result, 'premium_state');
+		var fio = getParam(acc.firstName + ' ' + acc.secondName, result, 'fio');
+		if(fio){
+			result.__tariff = fio;
+		}else{
+			result.__tariff = prefs.login;
+		}
+		getParam(prefs.login, result, 'phone', null, replaceNumber);
 	}
 	
-	if (isAvailable(['ozoncard_balance', 'favourites'])) {
-		json = callApi('composer-api.bx/page/json/v2?url=%2Fmy', getDeviceInfo());
-//		AnyBalance.trace('Аккаунт: ' + JSON.stringify(json));
+	if (isAvailable(['ozoncard_balance', 'favourites', 'notifications'])) {
+	    json = callWebApi('composer-api.bx/page/json/v2?url=%2Fmy%2Fmain');
+//		AnyBalance.trace('Главная: ' + JSON.stringify(json));
 		
-		var widgetStates = json.widgetStates;
-		if (widgetStates) {
-			var data = JSON.stringify(widgetStates);
-			getParam(data, result, 'ozoncard_balance', /subTitleTextAtom\\":{\\"text\\":\\"([\s\S]*?)\\"/i, replaceTagsAndSpaces, parseBalance);
-			getParam(data, result, 'favourites', /Избранное\\",\\"subtitle\\":\\"([\s\S]*?)\\"/i, replaceTagsAndSpaces, parseBalance);
+	    try {
+		    var actionCards = JSON.parse(getDefaultPropName(json.widgetStates, 'actionCards'));
+		} catch (e) {
+            AnyBalance.trace('actionCards: ' + e.message);
+        }
+		
+		if (actionCards) // Не во всех кабинетах доступны Ozon Карты, путь может отсутствовать
+		    var cards = actionCards.cards;
+        
+		if (cards && cards.length > 0) {
+			AnyBalance.trace('Найдено Ozon Карт: ' + cards.length);
+		    for(var i = 0; i<cards.length; i++){
+				var card = cards[i];
+	        	var cardBal = (i >= 1 ? 'ozoncard_balance' + (i + 1) : 'ozoncard_balance');
+		    	getParam(card.subtitle.text, result, cardBal, null, null, parseBalance);
+		    }
         }else{
-			AnyBalance.trace('Не удалось получить данные по балансу Ozon Карты');
+			AnyBalance.trace('Не удалось получить данные по Ozon Картам');
+		}
+		
+		try {
+		    var favorites = JSON.parse(getDefaultPropName(json.widgetStates, 'favoriteCounter'));
+		} catch (e) {
+            AnyBalance.trace('favorites: ' + e.message);
+        }
+		
+		if (favorites) {
+			getParam(0|favorites.counter, result, 'favourites', null, null, parseBalance);
+        }else{
+			AnyBalance.trace('Не удалось получить данные по избранному');
+		}
+		
+		try {
+		    var menu = JSON.parse(getDefaultPropName(json.widgetStates, 'menu'));
+		} catch (e) {
+            AnyBalance.trace('menu: ' + e.message);
+        }
+		
+		if (menu && menu.sections && menu.sections.length > 0) {
+		    for(var i=0; menu.sections && i<menu.sections.length; ++i){ // Получаем количество сообщений
+		    	var section = menu.sections[i];
+				if (section.title == 'Заказы'){ // Виджет Сообщения здесь находится
+					for(var j=0; section.items && j<section.items.length; ++j){ // Получаем количество сообщений с бейджа
+					    var item = section.items[j];
+				        if (item.title == 'Сообщения'){
+						    if (!item.notification){
+						        getParam(0, result, 'notifications', null, null, parseBalance);
+						    }else{
+							    getParam(item.notification.badge.text, result, 'notifications', null, null, parseBalance);
+						    }
+				        	break;
+			            }
+					}
+					
+					break;
+		        }
+		    }
+		}else{
+			AnyBalance.trace('Не удалось получить данные по сообщениям');
 		}
 	}
 	
-	if (isAvailable(['order_sum', 'weight', 'ticket', 'state'])) {
-		json = callApi('composer-api.bx/page/json/v1?url=%2Fmy%2Forderlist');
+	if (isAvailable(['active_orders', 'order_date', 'order_sum', 'weight', 'ticket', 'state'])) {
+		json = callWebApi('composer-api.bx/page/json/v2?url=%2Fmy%2Forderlist');
 //		AnyBalance.trace('Заказы: ' + JSON.stringify(json));
-
-		var ola = getDefaultProp(json.csma.orderListApp);
-		if (ola) {
-		    for(var i=0; ola.orderListApp && i<ola.orderListApp.length; ++i){
-		    	var order = ola.orderListApp[i];
-		    	AnyBalance.trace('Нашли ' + order.header.title + ' ' + order.header.number);
-		    	json = callPageJson(order.deeplink);
-		    
-                getParam(getDefaultProp(json.csma.orderTotal).summary.footer.price.price, result, 'order_sum', null, null, parseBalance);
-		    	getParam(order.header.title, result, 'order_date', null, null, parseSmallDateSilent);
-				getParam(order.sections[0] && order.sections[0].status && order.sections[0].status.name, result, 'state');
-		    	getParam(order.header.number, result, 'ticket');
-				
-			    break;
+		
+		try {
+		    var ola = JSON.parse(getDefaultPropName(json.widgetStates, 'orderList'));
+		} catch (e) {
+            AnyBalance.trace('ola: ' + e.message);
+        }
+		
+		if (ola && ola.orderList && ola.orderList.length > 0) {
+			result.active_orders = 0;
+		    for(var i=0; ola.orderList && i<ola.orderList.length; ++i){ // Получаем количество активных заказов
+		    	var order = ola.orderList[i];
+				var state = (order.sections[0].status && order.sections[0].status.name) || (order.sections[0].statusProvider && order.sections[0].statusProvider.status.text);
+				if(state != 'Получен' && state != 'Получено' && state != 'Отменён' && state != 'Отменен' && state != 'Отменено')
+					sumParam(1, result, 'active_orders', null, null, parseBalanceSilent, aggregate_sum);
 		    }
+			
+			var order = ola.orderList[0];
+		    AnyBalance.trace('Нашли ' + order.header.title + ' ' + order.header.number);
+		    var state = (order.sections[0].status && order.sections[0].status.name) || (order.sections[0].statusProvider && order.sections[0].statusProvider.status.text);
+			getParam(order.header.title, result, 'order_date', null, null, parseSmallDateSilent);
+			getParam(order.header.payment.totalPrice, result, 'order_sum', null, null, parseBalance);
+		    getParam(order.header.number, result, 'ticket');
+			getParam(state, result, 'state');
+			if(!result.order_sum){ // Если сумму заказа не нашли, получаем её из деталей заказа
+			    if(order.weblink){
+			    	json = callWebApi('composer-api.bx/page/json/v2?url=' + order.weblink);
+					try {
+		                var oExt = JSON.parse(getDefaultPropName(json.widgetStates, 'orderTotal'));
+		            } catch (e) {
+                        AnyBalance.trace('oExt: ' + e.message);
+                    }
+					
+		            if(oExt && oExt.footer && oExt.footer.price && oExt.footer.price.price)
+                        getParam(oExt.footer.price.price, result, 'order_sum', null, null, parseBalance);
+			    }else{
+			        AnyBalance.trace('Не удалось получить ссылку на последний заказ');
+		        }
+			}
         }else{
 			AnyBalance.trace('Не удалось получить данные по последнему заказу');
 		}
 	}
-	
-	if (isAvailable('notifications')) {
-		json = callApi('composer-api.bx/page/json/v1?url=%2Fcommunications%2Fnotifications');
-		var not = getDefaultProp(json.csma.activeOrdersCount);
-//		AnyBalance.trace('Уведомления: ' + JSON.stringify(not));
-		
-		getParam(0|not.activeOrders, result, 'active_orders', null, null, parseBalance);
-		getParam(0|not.allUnread, result, 'notifications', null, null, parseBalance);
-	}
-
-	result.__tariff = prefs.login;
-	getParam(prefs.login, result, 'phone', null, replaceNumber);
 	
 	AnyBalance.setResult(result);
 }
@@ -393,4 +541,3 @@ function parseWeightEx(text, thousand, order, defaultUnits) {
     AnyBalance.trace('Parsing weight (' + val + dbg_units[order] + ') from: ' + text);
     return val;
 }
-

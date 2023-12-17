@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-money-rncard-corp</id>
+	<id version="2">ab-money-rncard-corp</id>
 	<api flags="no_browser"/>
 	<name>Роснефть (Топливные карты)</name>
 	<description html="true"><![CDATA[
@@ -35,11 +35,20 @@
 		<counter id="contract_state" name="Статус договора" type="text"/>
 		<counter id="contract_date" name="Дата заключения договора" type="time" format="dd.MM.yyyy"/>
 		<counter id="tariff_policy" name="Тарифная политика" type="text"/>
-		<counter id="cards_count" name="Количество карт" units=" шт"/>
+<!--	<counter id="cards_count" name="Количество карт" units=" шт"/>
 		<counter id="cards_active" name="Активные карты" units=" шт"/>
-		<counter id="cards_blocked" name="Заблокированные карты" units=" шт"/>
-		<counter id="last_pay_sum" name="Сумма посл. платежа" units=" ₽"/>
+		<counter id="cards_blocked" name="Заблокированные карты" units=" шт"/> -->
 		<counter id="last_pay_date" name="Дата посл. платежа" type="time" format="dd.MM.yyyy"/>
+		<counter id="last_pay_sum" name="Сумма посл. платежа" units=" ₽"/>
+		<counter id="last_oper_date" name="Дата посл. операции" type="time" format="dd.MM.yyyy"/>
+		<counter id="last_oper_card" name="Карта посл. операции" type="text"/>
+		<counter id="last_oper_sum" name="Сумма посл. операции" units=" ₽"/>
+		<counter id="last_oper_desc" name="Описание посл. операции" type="text"/>
+		<counter id="legal_address" name="Юридический адрес" type="text"/>
+		<counter id="actual_address" name="Фактический адрес" type="text"/>
+		<counter id="email" name="E-mail" type="text"/>
+		<counter id="phone" name="Номер телефона" type="text"/>
+		<counter id="company" name="Организация" type="text"/>
 	</counters>
 	<keywords>rosneft, роснефть, rncard</keywords>
 	<type>money</type>

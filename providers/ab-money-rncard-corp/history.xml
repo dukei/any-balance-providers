@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change version="2" date="2023-11-16">
+	- Поддержка изменений на сайте
+	- Добавлены дополнительные счетчики
+	</change>
     <change version="1" date="2023-11-05">
 	- Первая версия провайдера
 	</change>

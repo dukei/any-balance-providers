@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id major_version="4.1" version="224">ab-cell-mts-russia</id>
+	<id major_version="4.1" version="226">ab-cell-mts-russia</id>
 	<name>МТС (Россия)</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе, бонусных баллах, использованных минутах на локальные, мобильные и любимые номера, расходах, статусе блокировки, кредите, номере лицевого счета, ежемесячной плате.</p>
@@ -34,7 +34,11 @@
 		<counter id="mms_left" name="Бесплатные ММS" units=" mms"/>
 		<counter id="sms_used" name="Использовано SMS" units=" sms"/>
 		<counter id="traffic_left_mb" name="Остаток трафика" units=" Mb"/>
-		<counter id="cashback" name="Кешбэк" units=" ₽"/>
+		<counter id="cashback" name="Кешбэк на связь" units=" ₽"/>
+		<counter id="cashback_mts" name="Кешбэк МТС" units=" ₽"/>
+		<counter id="cashback_mts_pending" name="Ожидаемый кешбэк МТС" units=" ₽"/>
+		<counter id="cashback_mts_burning" name="Сгораемый кешбэк МТС" units=" ₽"/>
+		<counter id="cashback_mts_burning_date" name="Дата сгорания кешбэка МТС" type="time" format="dd.MM.yyyy"/>
 		<counter id="min_used" name="Минут накоплено (кред.)" units=" мин"/>
 		<counter id="min_love" name="Использовано минут на любимые номера" units=" мин"/>
 		<counter id="min_used_mts" name="Использовано минут на МТС" units=" мин"/>

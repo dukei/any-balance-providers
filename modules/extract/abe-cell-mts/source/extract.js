@@ -1044,49 +1044,60 @@ function processCountersLK(result){
 		}
 	}
 	
-	var token = callNewLKApiToken('services/list/active');
-	var data = callNewLKApiResult(token);
-	var status = {
-		Unblocked: 'Номер не блокирован',
-		OnlyInboundCalls: 'Частичная блокировка',
-		BlockDueToInsufficiencyOfMoney: 'Номер заблокирован',
-		Blocked: 'Номер заблокирован'
-	};
-	getParam(status[data.accountBlockStatus]||data.accountBlockStatus, result.remainders, 'remainders.statuslock');
-	getParam(data.services.length, result.remainders, 'remainders.services');
-	getParam(0, result.remainders, 'remainders.services_free');
-	getParam(0, result.remainders, 'remainders.services_paid');
-	getParam(0, result.remainders, 'remainders.services_abon');
-	for(var i=0; i<data.services.length; ++i){
-		var c = data.services[i];
-		AnyBalance.trace('Найдена услуга ' + c.name);
-
-		if(c.isSubscriptionFee === false){
-			AnyBalance.trace('Это бесплатная услуга');
-			sumParam(1, result.remainders, 'remainders.services_free', null, null, parseBalanceSilent, aggregate_sum);
-		}else if(c.isSubscriptionFee === true){
-			AnyBalance.trace('Это платная услуга');
-			var dt = new Date();
-			sumParam(1, result.remainders, 'remainders.services_paid', null, null, parseBalanceSilent, aggregate_sum);
-            
-		    if(c.primarySubscriptionFee.unitOfMeasure !== 'Month'){
-                var cp = new Date(dt.getFullYear(), dt.getMonth()+1, 0).getDate(); // Дней в этом месяце
-            }else{
-                var cp = 1;
-            }
-		    AnyBalance.trace('Платная услуга ' + c.name + ': ' + c.primarySubscriptionFee.quotaPeriodicity + ' ' + c.primarySubscriptionFee.value + ' ₽');
-		    sumParam(c.primarySubscriptionFee.value*cp, result.remainders, 'remainders.services_abon', null, null, parseBalanceSilent, aggregate_sum);
-		}else{
-			AnyBalance.trace('Неизвестный тип услуги: ' + JSON.stringify(c));
-		}
+	if (isAvailable('remainders.cashback')) {
+	    var token = callNewLKApiToken('cashback/account');
+	    var data = callNewLKApiResult(token);
+	    
+	    getParam(data.balance, result.remainders, 'remainders.cashback');
 	}
 	
-	var token = callNewLKApiToken('creditLimit');
-	var data = callNewLKApiResult(token);
+	if (isAvailable(['remainders.statuslock', 'remainders.services', 'remainders.services_free', 'remainders.services_paid', 'remainders.services_abon'])) {
+	    var token = callNewLKApiToken('services/list/active');
+	    var data = callNewLKApiResult(token);
+	    var status = {
+		    Unblocked: 'Номер не блокирован',
+		    OnlyInboundCalls: 'Частичная блокировка',
+		    BlockDueToInsufficiencyOfMoney: 'Номер заблокирован',
+		    Blocked: 'Номер заблокирован'
+	    };
+	    getParam(status[data.accountBlockStatus]||data.accountBlockStatus, result.remainders, 'remainders.statuslock');
+	    getParam(data.services.length, result.remainders, 'remainders.services');
+	    getParam(0, result.remainders, 'remainders.services_free');
+	    getParam(0, result.remainders, 'remainders.services_paid');
+	    getParam(0, result.remainders, 'remainders.services_abon');
+	    for(var i=0; i<data.services.length; ++i){
+		    var c = data.services[i];
+		    AnyBalance.trace('Найдена услуга ' + c.name);
+
+		    if(c.isSubscriptionFee === false){
+			    AnyBalance.trace('Это бесплатная услуга');
+			    sumParam(1, result.remainders, 'remainders.services_free', null, null, parseBalanceSilent, aggregate_sum);
+		    }else if(c.isSubscriptionFee === true){
+			    AnyBalance.trace('Это платная услуга');
+			    var dt = new Date();
+			    sumParam(1, result.remainders, 'remainders.services_paid', null, null, parseBalanceSilent, aggregate_sum);
+                
+		        if(c.primarySubscriptionFee.unitOfMeasure !== 'Month'){
+                    var cp = new Date(dt.getFullYear(), dt.getMonth()+1, 0).getDate(); // Дней в этом месяце
+                }else{
+                    var cp = 1;
+                }
+		        AnyBalance.trace('Платная услуга ' + c.name + ': ' + c.primarySubscriptionFee.quotaPeriodicity + ' ' + c.primarySubscriptionFee.value + ' ₽');
+		        sumParam(c.primarySubscriptionFee.value*cp, result.remainders, 'remainders.services_abon', null, null, parseBalanceSilent, aggregate_sum);
+		    }else{
+			    AnyBalance.trace('Неизвестный тип услуги: ' + JSON.stringify(c));
+		    }
+	    }
+    }
 	
-	getParam(data.currentCreditLimitValue, result.remainders, 'remainders.credit');
+	if (isAvailable('remainders.credit')) {
+	    var token = callNewLKApiToken('creditLimit');
+	    var data = callNewLKApiResult(token);
+	    
+	    getParam(data.currentCreditLimitValue, result.remainders, 'remainders.credit');
+	}
 	
-	if (isAvailable(['remainders.cashback', 'remainders.premium_state'])) {
+	if (isAvailable(['remainders.cashback_mts', 'remainders.cashback_mts_pending', 'remainders.cashback_mts_burning', 'remainders.cashback_mts_burning_date', 'remainders.premium_state'])) {
 		processCashbackLK(result);
 	}
 	
@@ -1121,7 +1132,12 @@ function processCashbackLK(result){
 	var json = getJson(html);
 	AnyBalance.trace(JSON.stringify(json));
 	
-	getParam(json.cashBackValue, result.remainders, 'remainders.cashback');
+	getParam(json.cashBackValue, result.remainders, 'remainders.cashback_mts');
+	getParam(json.pendingCashBackValue, result.remainders, 'remainders.cashback_mts_pending');
+	if(json.expiringCashBack){
+	    getParam(json.expiringCashBack.expiringCashBackValue, result.remainders, 'remainders.cashback_mts_burning');
+	    getParam(json.expiringCashBack.expiringCashBackDate, result.remainders, 'remainders.cashback_mts_burning_date', null, null, parseDateISO);
+	}
 	var premStatus = {PREMIUM: 'Активна', NO_PREMIUM: 'Не активна'};
 	getParam(premStatus[json.premiumStatus]||json.premiumStatus, result.remainders, 'remainders.premium_state');
 }

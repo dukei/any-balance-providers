@@ -144,7 +144,7 @@ function loadProtectedPage(fromUrl, headers){
                 resType: /^(image|stylesheet|font)$/.toString(),
                 action: 'abort',
             }, {
-                url: /_qrator\/qauth_utm_v2\.js/.toString(),
+                url: /_qrator\/qauth_utm_v2(?:_\w+)?\.js/.toString(),
                 action: 'cache',
                 valid: 3600*1000
             }, {

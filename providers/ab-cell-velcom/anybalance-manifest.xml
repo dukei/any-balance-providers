@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="75">ab-cell-velcom</id>
+	<id version="76">ab-cell-velcom</id>
 	<api flags="no_browser"/>
 	<name>A1 (Беларусь)</name>
 	<description html="true"><![CDATA[
@@ -8,6 +8,7 @@
 	<p>Информация берется из интернет-службы сервиса абонента (ИССА) на сайте https://myaccount.a1.by/.</p>
 	]]></description>
 	<instruction html="true"><![CDATA[
+	<p>Для работы провайдера требуется ввести логин и пароль для входа в ИССА.</p>
 	<p>Как зарегистрироваться в ИССА:</p>
 	<ol>
 	<li>Перейдите по ссылке «Зарегистрироваться» на странице https://myaccount.a1.by/login.</li>
@@ -22,6 +23,7 @@
     </depends>
 	<files>
 		<icon>icon.png</icon>
+		<js target="preferences">preferences.js</js>
 		<preferences>preferences.xml</preferences>
 		<js>main.js</js>
 		<history>history.xml</history>
@@ -33,13 +35,13 @@
 		<counter id="abon" name="Абонплата по тарифу" units=" {@perunit}"/>
 		<counter id="min_left" name="Минуты (осталось)" units=" мин" type="time_interval" format="{@MIN}"/>
 		<counter id="sms_left" name="SMS (осталось)" units=" sms"/>
-		<counter id="traffic_left" name="Интернет (осталось)" units=" Мб"/>
+		<counter id="traffic_left" name="Трафик (осталось)" units=" Мб"/>
 		<counter id="min_total" name="Минуты (всего)" units=" мин" type="time_interval" format="{@MIN}"/>
 		<counter id="sms_total" name="SMS (всего)" units=" sms"/>
-		<counter id="traffic_total" name="Интернет (всего)" units=" Мб"/>
+		<counter id="traffic_total" name="Трафик (всего)" units=" Мб"/>
 		<counter id="min_used" name="Минуты (израсходовано)" units=" мин" type="time_interval" format="{@MIN}"/>
 		<counter id="sms_used" name="SMS (израсходовано)" units=" sms"/>
-		<counter id="traffic_used" name="Интернет (израсходовано)" units=" Мб"/>
+		<counter id="traffic_used" name="Трафик (израсходовано)" units=" Мб"/>
 		<counter id="services_count" name="Подключенные услуги" prefix="💼 " units=" шт"/>
 		<counter id="services_paid" name="Платные услуги" prefix="💵 " units=" шт"/>
 		<counter id="services_free" name="Бесплатные услуги" prefix="🎁 " units=" шт"/>

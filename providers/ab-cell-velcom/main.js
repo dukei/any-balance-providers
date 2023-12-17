@@ -428,13 +428,13 @@ function mainInternet(html, result){
 	
 	try {
 		
-		var form = AB.getElement(html, /<form[^>]*name="asmpform"/i);
+		var form = getElement(html, /<form[^>]*name="asmpform"/i);
 		if(!form){
 			AnyBalance.trace(html);
 			throw new AnyBalance.Error('Не удалось найти форму входа. Сайт изменен?');
 		}
 	    
-		var params = AB.createFormParams(form, function(params, str, name, value) {
+		var params = createFormParams(form, function(params, str, name, value) {
 			if (name == 'pinCheck') {
 				return 'false';
 			}else if (name == 'UserIDFixed') {
@@ -451,9 +451,32 @@ function mainInternet(html, result){
 		var action = getParam(form, /action="([^"]*)/i, replaceHtmlEntities);
 		var url = joinUrl(AnyBalance.getLastUrl(), action);
 	    
-		html = AnyBalance.requestPost(url, params, AB.addHeaders({
-			Referer: AnyBalance.getLastUrl()
-		}));
+		html = AnyBalance.requestPost(url, params, addHeaders({Referer: AnyBalance.getLastUrl()}));
+		
+		if(/user_input_3/i.test(html)){ // Требуется выбрать версию кабинета для перехода. Выбираем старую
+			var form = getElement(html, /<form[^>]*name="mainForm"/i);
+            if(!form){
+	    	    AnyBalance.trace(html);
+	    	    throw new AnyBalance.Error('Не удалось найти форму выбора версии кабинета. Сайт изменен?');
+            }
+	        
+	        var params = createFormParams(form, function(params, str, name, value) {
+	    	    if(name === 'user_input_timestamp'){
+	    		    value = new Date().getTime();
+	    	    }else if(name === 'user_input_0'){
+	    		    value = '_next';
+	    	    }else if(name === 'user_input_3'){
+	    		    value = 1;
+	    	    }
+	    	    if(!name)
+	    		    return;
+	    	    return value || '';
+            });
+            delete params.user_submit;
+            var action = getParam(form, /<form[^>]+action="([^"]*)/i, replaceHtmlEntities);
+            var referer = AnyBalance.getLastUrl();
+		    html = requestPostMultipart(joinUrl(referer, action), params, addHeaders({Referer: referer, Origin: getDomain(referer)}));
+	    }
 		
         var kabinetType, personalInfo;
 		if(/_root\/PERSONAL_INFO_FISICAL/i.test(html)) {
@@ -519,7 +542,7 @@ function mainInternet(html, result){
         getParam(html, result, 'status', /Статус л\/с:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
         
 		
-		if(isAvailable(['trafic', 'trafic_total'])) {
+		if(isAvailable(['traffic_used', 'traffic_total'])) {
             html = requestPostMultipart(baseurl + 'work.html', {
                 sid3: sid,
                 user_input_timestamp: new Date().getTime(),
@@ -554,7 +577,7 @@ function mainInternet(html, result){
             getParam(html, result, 'traffic_total', /ИТОГО[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 
             var dt = new Date();
-            sumParam(html, result, 'traffic', new RegExp(n2(dt.getMonth() + 1) + '\\.' + dt.getFullYear() + '[\\s\\S]*?<td[^>]*>([\\s\\S]*?)</td>', 'ig'),
+            sumParam(html, result, 'traffic_used', new RegExp(n2(dt.getMonth() + 1) + '\\.' + dt.getFullYear() + '[\\s\\S]*?<td[^>]*>([\\s\\S]*?)</td>', 'ig'),
                 replaceTagsAndSpaces, parseBalance, aggregate_sum);
 		}
 		
@@ -568,6 +591,7 @@ function mainInternet(html, result){
 			    user_input_1: '',
 			    last_id: ''
 		    }, g_headers);
+			clearAllCookies();
 	    } catch(e) {
 		    AnyBalance.trace('Ошибка при выходе из кабинета: ' + e.message);
 	    }
@@ -577,23 +601,6 @@ function mainInternet(html, result){
 	}
 	
 	AnyBalance.setResult(result);
-}
-
-function safeEval(window, script){
-   try{
-       var result = new Function('window', 'document', 'self', 'location', 'AnyBalance', 'g_AnyBalanceApiParams', '_AnyBalanceApi', script).call(window, window, window.document, window, window.location);
-       return result;
-   }catch(e){
-       AnyBalance.trace('Bad javascript (' + e.message + '): ' + script);
-       throw new AnyBalance.Error(velcomOddPeople);
-   }
-}
-
-function n2(val){
-	val = val + '';
-	if(val.length < 2)
-		val = '0' + val;
-	return val;
 }
 
 function findEarliestDate(dates){

@@ -2,15 +2,15 @@
 <PreferenceScreen>
     <EditTextPreference 
     	obligatory="true"
-        title="Логин" 
+        title="Лицевой счет" 
         positiveButtonText="ОК" 
-        summary="Логин для входа в личный кабинет|Введите логин\n|{@s}\n" 
-        dialogTitle="Логин" 
+        summary="Лицевой счет для получения информации|Введите номер счета\n|{@s}\n" 
+        dialogTitle="Лицевой счет" 
         negativeButtonText="Отмена" 
-        dialogMessage="Введите логин, E-mail, номер телефона или номер лицевого счета для входа в личный кабинет. Для авторизации по номеру телефона введите его в международном формате, например: 79001234567"
+        dialogMessage="Введите номер лицевого счета для получения информациии"
         key="login">
     </EditTextPreference>
-    <EditTextPreference 
+<!--<EditTextPreference 
     	obligatory="true"
         positiveButtonText="ОК"
         key="password" 
@@ -30,5 +30,5 @@
         dialogMessage="Введите через запятую последние 4 цифры номеров лицевых счетов или телефонов, информацию по которым надо получить, например: 8823, 7751, 3224. Если оставить поле пустым, будет показана информация по первым четырем номерам"
         inputType="phone"
 		key="num">
-    </EditTextPreference>
+    </EditTextPreference>-->
 </PreferenceScreen>

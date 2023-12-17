@@ -3,7 +3,7 @@
 */
 
 var g_headers = {
-	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
+	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
 	'Accept-Language': 'en-US,en;q=0.9,ru;q=0.8,ru-RU;q=0.7',
 	'Cache-Control': 'max-age=0',
 	'Connection': 'keep-alive',
@@ -99,6 +99,10 @@ function generateUUID(){
 function main(){
 	var prefs = AnyBalance.getPreferences();
 	AnyBalance.setDefaultCharset('utf-8');
+	
+	getInfoByQiwi(prefs);
+	
+	return; // Пока получаем баланс через Киви
 	
 	if(!g_savedData)
 		g_savedData = new SavedData('rostelecom', prefs.login);
@@ -519,4 +523,63 @@ function getRTJson(text){
     if(json.isError)
         throw new AnyBalance.Error(json.errorMsg);
     return json;
+}
+
+function getInfoByQiwi(prefs){
+	checkEmpty(prefs.login, 'Введите логин!');
+	checkEmpty(/^\d+$/.test(prefs.login), 'Введите номер лицевого счета!');
+	
+	var headers = g_headers;
+	
+	headers['User-Agent'] = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36';
+	delete headers['X-Requested-With'];
+	
+    var html = AnyBalance.requestGet('https://qiwi.com/payment/form/32558', headers);
+    
+	if(AnyBalance.getLastStatusCode() >= 500){
+        AnyBalance.trace(html);
+        throw new AnyBalance.Error('Сайт провайдера временно недоступен. Попробуйте еще раз позже');
+    }
+	
+    html = AnyBalance.requestPost('https://qiwi.com/oauth/token', {grant_type: 'anonymous', client_id: 'anonymous'}, headers);
+    
+	AnyBalance.trace(html);
+	
+    var json = getJson(html);
+	
+    html = AnyBalance.requestPost('https://edge.qiwi.com/sinap/api/refs/d70e3628-ac4c-48ff-9e20-e7f04b4c9b81/containers', JSON.stringify({
+	    'account': prefs.login,
+	    'serviceType': 'account',
+	    'profileId': 'rostelecom'
+	}), addHeaders({
+		'Accept': 'application/vnd.qiwi.v1+json',
+        'Authorization': 'TokenHead ' + json.access_token,
+        'Client-Software': 'WEB v4.127.2',
+		'Content-Type': 'application/json',
+		'Origin': 'https://qiwi.com',
+        'Referer': 'https://qiwi.com/',
+	    'X-Application-Id': '0ec0da91-65ee-496b-86d7-c07afc987007',
+        'X-Application-Secret': '66f8109f-d6df-49c6-ade9-5692a0b6d0a1'
+	}), headers);
+	
+    AnyBalance.trace(html);
+	
+	json = getJson(html);
+	
+	if(!json.elements){
+		var error = json.message;
+		if(error)
+			throw new AnyBalance.Error(error, null, /номер|не найден/i.test(html));
+		
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удалось войти в личный кабинет. Сайт изменен?');
+	}
+	
+	var result = {success: true};
+	
+	getParam(json.elements && json.elements[0] && json.elements[0].value, result, 'balance', null, null, parseBalance);
+	result.__tariff = prefs.login;
+	result.licschet = prefs.login;
+		
+	AnyBalance.setResult(result);
 }

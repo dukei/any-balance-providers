@@ -3,7 +3,7 @@
 */
 
 var g_headers = {
-	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
+	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
 	'Accept-Language': 'en-US,en;q=0.9,ru;q=0.8,ru-RU;q=0.7',
 	'Cache-Control': 'max-age=0',
 	'Connection': 'keep-alive',
@@ -134,19 +134,19 @@ function login(prefs){
 	
 	var html = AnyBalance.requestPost(action, params, addHeaders({'Content-Type': 'application/x-www-form-urlencoded', 'Origin': null}));
 	
-	if(!html || AnyBalance.getLastStatusCode == 400){
-		if(/#registration?/i.test(AnyBalance.getLastUrl())){
-		    if(/isOnlimeSSO=true/i.test(AnyBalance.getLastUrl())){
-		        throw new AnyBalance.Error('Логин, используемый для входа, зарегистрирован для личного кабинета Ростелеком Москва! Пожалуйста, проверьте правильность ввода данных или используйте провайдер Ростелеком Москва (Onlime) для получения информации', null, true);
-		    }else{
-			    throw new AnyBalance.Error('Личный кабинет с таким логином не существует! Пожалуйста, проверьте правильность ввода данных или зарегистрируйтесь на сайте https://lk.rt.ru/', null, true);
-		    }
+	if(/#registration?/i.test(AnyBalance.getLastUrl())){
+		if(/isOnlimeSSO=true/i.test(AnyBalance.getLastUrl())){
+		    throw new AnyBalance.Error('Логин, используемый для входа, зарегистрирован для личного кабинета Ростелеком Москва! Пожалуйста, проверьте правильность ввода данных или используйте провайдер Ростелеком Москва (Onlime) для получения информации', null, true);
+		}else{
+			throw new AnyBalance.Error('Личный кабинет с таким логином не существует! Пожалуйста, проверьте правильность ввода данных или зарегистрируйтесь на сайте https://lk.rt.ru/', null, true);
 		}
-			
-		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Не удалось войти в личный кабинет. Сайт изменен?');
 	}
 	
+	if(/#auto-attach?/i.test(AnyBalance.getLastUrl())){
+		var redirectUrl = getParam(AnyBalance.getLastUrl(), null, null, /redirect=([^&]*)/i, null, decodeURIComponent);
+		AnyBalance.trace('Требуется принудительный редирект на ' + redirectUrl);
+		var html = AnyBalance.requestGet(redirectUrl, g_headers);
+	}
 	
 	var mergeConfig = getJsonObject(html, /<script[^>]*>\s*mergeConfig\(/);
 	var message = getJsonObject(html, /window\.__config__\s*=\s*\{[\s\S]*?message:\s*/);

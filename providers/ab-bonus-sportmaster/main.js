@@ -2,6 +2,21 @@
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 */
 
+var g_headers = {
+	Connection: "keep-alive",
+	"sec-ch-ua": '"Not_A Brand";v="8", "Chromium";v="120", "Google Chrome";v="120"',
+	"sec-ch-ua-mobile": '?0',
+	"sec-ch-ua-platform": '"Windows"',
+	"Upgrade-Insecure-Requests": '1',
+	"User-Agent": 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+	"Accept": 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
+	"Sec-Fetch-Site": 'none',
+	"Sec-Fetch-Mode": 'navigate',
+	"Sec-Fetch-User": '?1',
+	"Sec-Fetch-Dest": 'document',
+	"Accept-Language": 'ru',
+}
+
 var replaceNumber = [replaceTagsAndSpaces, /\D/g, '', /.*(\d\d\d)(\d\d\d)(\d\d)(\d\d)$/, '+7 $1 $2-$3-$4'];
 
 function generateUUID() {
@@ -174,6 +189,75 @@ function login(){
 	}
 }
 
+function loadProtectedPage(url, headers){
+	var prefs = AnyBalance.getPreferences();
+
+	if(!headers)
+		headers = g_headers;
+
+    var html = AnyBalance.requestGet(url, headers);
+    if(/__qrator/.test(html) || AnyBalance.getLastStatusCode() == 401) {
+        AnyBalance.trace("Обнаружена защита от роботов. Пробуем обойти...");
+//      clearAllCookies();
+
+        const bro = new BrowserAPI({
+            provider: 'sportmaster',
+            userAgent: headers["user-agent"] || headers["User-Agent"],
+	    headful: true,
+            rules: [{
+                url: /^data:/.toString(),
+                action: 'abort',
+            },{
+                resType: /^(image|stylesheet|font)$/.toString(),
+                action: 'abort',
+            }, {
+                url: /_qrator\/qauth_utm_v2(?:_\w+)?\.js/.toString(),
+                action: 'cache',
+                valid: 3600*1000
+            }, {
+                url: /_qrator/.toString(),
+                action: 'request',
+            }, {
+                resType: /^(image|stylesheet|font|script)$/i.toString(),
+                action: 'abort',
+            }, {
+                url: /\.(png|jpg|ico|svg)/.toString(),
+                action: 'abort',
+            }, {
+                url: /cdn.sportmaster.ru/.toString(),
+                action: 'abort'
+            }, {
+                url: /sportmaster\.ru/i.toString(),
+                action: 'request',
+            }, {
+		        url: /.*/.toString(),
+		        action: 'abort'
+            }],
+            debug: AnyBalance.getPreferences().debug
+        });
+
+        const r = bro.open(url);
+        try {
+            bro.waitForLoad(r.page);
+            html = bro.content(r.page).content;
+            const cookies = bro.cookies(r.page, url);
+            BrowserAPI.useCookies(cookies);
+        } finally {
+            bro.close(r.page);
+        }
+
+        if(/__qrator|HTTP 40[31]/.test(html)||AnyBalance.getLastStatusCode() >= 400)
+            throw new AnyBalance.Error('Не удалось обойти защиту. Сайт изменен?');
+
+        AnyBalance.trace("Защита от роботов успешно пройдена");
+        AnyBalance.saveCookies();
+    	AnyBalance.saveData();
+
+    }
+
+    return html;
+}
+
 function main(){
     var prefs = AnyBalance.getPreferences();
     AnyBalance.setDefaultCharset('utf-8');
@@ -181,7 +265,10 @@ function main(){
     AB.checkEmpty(prefs.login, 'Введите номер телефона!');
     AB.checkEmpty(/^\d{10}$/.test(prefs.login), 'Введите номер телефона - 10 цифр без пробелов и разделителей!');
 
-    var json;
+    
+    loadProtectedPage("https://www.sportmaster.ru/oferta/", g_headers);
+
+var json;
 	
 	login();
 

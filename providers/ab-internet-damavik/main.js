@@ -24,6 +24,10 @@ function parseBalanceRK(_text) {
   return val;
 }
 
+function getDomain(url){
+	return getParam(url, /^(https?:\/\/[^\/]*)/i);
+}
+
 function main(){
     var prefs = AnyBalance.getPreferences();
 	
@@ -32,11 +36,11 @@ function main(){
 	
 	if (prefs.login.length > 12 || prefs.login.length < 6)
 		throw new AnyBalance.Error('Неверный формат номера. Номер лицевого счета должен содержать от 6 до 12 символов!', false, true);
-	if (prefs.password.length > 20 || prefs.password.length < 8)
-		throw new AnyBalance.Error('Неверный формат пароля. Пароль должен содержать от 8 до 20 символов!', false, true);
+//	if (prefs.password.length > 20 || prefs.password.length < 8)
+//		throw new AnyBalance.Error('Неверный формат пароля. Пароль должен содержать от 8 до 20 символов!', false, true);
 	
     var baseurl = 'https://my.a1.by/';
-    AnyBalance.setDefaultCharset('utf-8'); 
+    AnyBalance.setDefaultCharset('utf-8');
 	
     var html = AnyBalance.requestGet(baseurl, g_headers);
 	
@@ -44,13 +48,13 @@ function main(){
 	
 	try {
 		
-		var form = AB.getElement(html, /<form[^>]*name="asmpform"/i);
+		var form = getElement(html, /<form[^>]*name="asmpform"/i);
 		if(!form){
 			AnyBalance.trace(html);
 			throw new AnyBalance.Error('Не удалось найти форму входа. Сайт изменен?');
 		}
 	    
-		var params = AB.createFormParams(form, function(params, str, name, value) {
+		var params = createFormParams(form, function(params, str, name, value) {
 			if (name == 'pinCheck') {
 				return 'false';
 			}else if (name == 'UserIDFixed') {
@@ -67,11 +71,34 @@ function main(){
 		var action = getParam(form, /action="([^"]*)/i, replaceHtmlEntities);
 		var url = joinUrl(AnyBalance.getLastUrl(), action);
 	    
-		html = AnyBalance.requestPost(url, params, AB.addHeaders({
-			Referer: AnyBalance.getLastUrl()
-		}));
+		html = AnyBalance.requestPost(url, params, addHeaders({Referer: AnyBalance.getLastUrl()}));
 		
-        var kabinetType, personalInfo;
+        if(/user_input_3/i.test(html)){ // Требуется выбрать версию кабинета для перехода. Выбираем старую
+			var form = getElement(html, /<form[^>]*name="mainForm"/i);
+            if(!form){
+	    	    AnyBalance.trace(html);
+	    	    throw new AnyBalance.Error('Не удалось найти форму выбора версии кабинета. Сайт изменен?');
+            }
+	        
+	        var params = createFormParams(form, function(params, str, name, value) {
+	    	    if(name === 'user_input_timestamp'){
+	    		    value = new Date().getTime();
+	    	    }else if(name === 'user_input_0'){
+	    		    value = '_next';
+	    	    }else if(name === 'user_input_3'){
+	    		    value = 1;
+	    	    }
+	    	    if(!name)
+	    		    return;
+	    	    return value || '';
+            });
+            delete params.user_submit;
+            var action = getParam(form, /<form[^>]+action="([^"]*)/i, replaceHtmlEntities);
+            var referer = AnyBalance.getLastUrl();
+		    html = requestPostMultipart(joinUrl(referer, action), params, addHeaders({Referer: referer, Origin: getDomain(referer)}));
+	    }
+		
+		var kabinetType, personalInfo;
 		if(/_root\/PERSONAL_INFO_FISICAL/i.test(html)) {
             personalInfo = 'PERSONAL_INFO_FISICAL';
             kabinetType = 5;		
@@ -135,7 +162,7 @@ function main(){
         getParam(html, result, 'status', /Статус л\/с:[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
         
 		
-		if(isAvailable(['trafic', 'trafic_total'])) {
+		if(isAvailable(['traffic_used', 'traffic_total'])) {
             html = requestPostMultipart(baseurl + 'work.html', {
                 sid3: sid,
                 user_input_timestamp: new Date().getTime(),
@@ -170,36 +197,28 @@ function main(){
             getParam(html, result, 'traffic_total', /ИТОГО[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
 
             var dt = new Date();
-            sumParam(html, result, 'traffic', new RegExp(n2(dt.getMonth() + 1) + '\\.' + dt.getFullYear() + '[\\s\\S]*?<td[^>]*>([\\s\\S]*?)</td>', 'ig'),
+            sumParam(html, result, 'traffic_used', new RegExp(n2(dt.getMonth() + 1) + '\\.' + dt.getFullYear() + '[\\s\\S]*?<td[^>]*>([\\s\\S]*?)</td>', 'ig'),
                 replaceTagsAndSpaces, parseBalance, aggregate_sum);
 		}
-
-        AnyBalance.setResult(result);
+		
+	    try{
+	    // Выходим из кабинета, чтобы снизить нагрузку на сервер
+		    AnyBalance.trace('Выходим из кабинета, чтобы снизить нагрузку на сервер');
+		    html = requestPostMultipart(baseurl + 'work.html', {
+			    sid3: sid,
+			    user_input_timestamp: new Date().getTime(),
+			    user_input_0: '_exit',
+			    user_input_1: '',
+			    last_id: ''
+		    }, g_headers);
+			clearAllCookies();
+	    } catch(e) {
+		    AnyBalance.trace('Ошибка при выходе из кабинета: ' + e.message);
+	    }
 
 	} catch(e) {
 		throw e;
-	} finally {
-		try{
-		    // Выходим из кабинета, чтобы снизить нагрузку на сервер
-			AnyBalance.trace('Выходим из кабинета, чтобы снизить нагрузку на сервер');
-			html = requestPostMultipart(baseurl + 'work.html', {
-				sid3: sid,
-				user_input_timestamp: new Date().getTime(),
-				user_input_0: '_exit',
-				user_input_1: '',
-				last_id: ''
-			}, g_headers);
-		} catch(e) {
-			AnyBalance.trace('Ошибка при выходе из кабинета: ' + e.message);
-		}
 	}
 	
     AnyBalance.setResult(result);
-}
-
-function n2(val){
-	val = val + '';
-	if(val.length < 2)
-		val = '0' + val;
-	return val;
 }

@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="12" date="2023-12-11">
+	- Поддержка изменений в процедуре входа
+	</change>
 	<change version="11" date="2022-05-20">
 	- Переезд на A1
 	- Изменена иконка и название на A1: Интернет и ТВ

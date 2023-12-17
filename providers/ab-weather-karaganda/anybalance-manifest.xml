@@ -1,34 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <api flags="no_browser"/>
-  <id major_version="1.0"  version="4">ab-weather-karaganda</id>
-  <name>Погода в Караганде</name>
-  <description>
-    Отображение текущей погоды с сайта meteoclub.kz.  Показания снимаются с оборудывания, расположенного по улице Язева города Караганда. 
-  </description>
-  <author>v_stikh &lt;stikhilyas@gmail.com&gt;</author>
-  <depends>
-	<module id="library"/>
-  </depends>
-  <files>
-    <icon>icon.png</icon>
-    <js>main.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="temperature" name="Температура" units="°C"/>
-    <counter id="pressure" name="Атмосферное давление" units="мм.рт.ст"/>
-    <counter id="wind" name="Скорость ветра" units="м/с"/>
-  </counters>
-  <keywords>
-   прогноз, погода, температура, Караганда, meteoclub.kz
-  </keywords>
-  <type>
-    weather
-  </type>
-  <country>
-    kz
-  </country>
+    <api flags="no_browser"/>
+    <id major_version="2.1" version="5">ab-weather-karaganda</id>
+    <name>Погода в Караганде</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о прогнозе погоды для города Караганда (Казахстан).</p>
+	<p>Информация берется с сайта http://meteoclub.kz/.</p>
+	<small>Показания снимаются с оборудования, расположенного по адресу: г. Караганда, ул. Язева.</small>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Для работы провайдера не требуются дополнительные настройки, достаточно просто создать аккаунт в приложении.</p>
+	]]></instruction>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+    <depends>
+	    <module id="library"/>
+    </depends>
+    <files>
+		<icon>icon.png</icon>
+        <js>main.js</js>
+        <history>history.xml</history>
+    </files>
+    <counters>
+        <counter id="temperature" name="Температура" units=" °C"/>
+        <counter id="pressure" name="Атмосферное давление" units=" мм рт.ст."/>
+        <counter id="wind" name="Скорость ветра" units=" м/с"/>
+		<counter id="time" name="Время прогноза" type="time" format="dd.MM.yyyy HH:mm"/>
+    </counters>
+    <keywords>прогноз, погода, температура, Караганда, meteoclub.kz</keywords>
+    <type>weather</type>
+    <country>kz</country>
 </provider>
 
 

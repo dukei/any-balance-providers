@@ -1,12 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change major_version="2.1" version="5" date="2023-12-10">
+	- Исправлено получение температуры
+	- Добавлен счетчик Время прогноза
+	- Название города в поле __tariff
+	</change>
 	<change major_version="1.0" version="4" date="2023-10-11">
 	- Мелкие изменения
 	</change>
     <change major_version="1.0" version="2" date="2013-02-02">
-      - Оптимизация провайдера (уменьшение трафика) - данные теперь извлекаются с meteoclub.kz/meteoXML.php
+    - Оптимизация провайдера (уменьшение трафика) - данные теперь извлекаются с meteoclub.kz/meteoXML.php
     </change>
 	<change major_version="1.0" version="3" date="2014-07-26">
-      - Исправлена загрузка данных
+    - Исправлена загрузка данных
     </change>
 </history>

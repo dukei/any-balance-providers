@@ -3,7 +3,7 @@
     <EditTextPreference 
         title="Логин" 
         positiveButtonText="ОК" 
-        summary="Логин для входа в систему Яндекс\n|Введите логин\n|{@s}\n" 
+        summary="Логин для входа в систему Яндекс|Введите логин\n|{@s}\n" 
         dialogTitle="Логин" 
         negativeButtonText="Отмена" 
         dialogMessage="Введите логин, используемый для входа в систему Яндекс"
@@ -15,7 +15,7 @@
         dialogTitle="Пароль"
         negativeButtonText="Отмена"
         title="Пароль"
-        summary="Пароль для входа в систему Яндекс\n|Введите пароль\n|**********\n"
+        summary="Пароль для входа в систему Яндекс|Введите пароль\n|**********\n"
         dialogMessage="Введите пароль, используемый для входа в систему Яндекс"
         inputType="textPassword">
     </EditTextPreference>

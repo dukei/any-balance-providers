@@ -32,7 +32,8 @@ var g_type = {
 	'plus-more.tv': 'Плюс с more.tv',
 	'plus-multi': 'Плюс Мульти',
 	'plus-multi-more.tv': 'Плюс Мульти с more.tv',
-	'plus-multi-amediateka': 'Плюс Мульти с Амедиатекой'
+	'plus-multi-amediateka': 'Плюс Мульти с Амедиатекой',
+	'station-lease-plus-kinopoisk-multi': 'Устройство с подпиской'
 };
 
 var g_status = {
@@ -148,11 +149,13 @@ function main() {
     if (subs && subs.length>0){
 		for(var i=0; i<subs.length; ++i){
 			var pinfo = subs[i];
+			if(pinfo.status != 'ACTIVE') // Пропускаем отложенные подписки
+				continue;
 			if(pinfo.product == 'TARIFF'){ // Получаем названия тарифа(ов)
-		        sumParam(g_type[pinfo.tariff]||pinfo.tariff, result, '__tariff', null, null, null, create_aggregate_join(' + '));
+		        sumParam(g_type[pinfo.tariff]||pinfo.asset.title, result, '__tariff', null, null, null, create_aggregate_join(' | '));
 			}
 			if(pinfo.product == 'SERVICE'){ // Получаем названия доп. опций
-		        sumParam(pinfo.asset && pinfo.asset.title, result, '__tariff', null, null, null, create_aggregate_join(' + '));
+		        sumParam(pinfo.asset && pinfo.asset.title, result, '__tariff', null, null, null, create_aggregate_join(' | '));
 				sumParam(pinfo.commonPrice && pinfo.commonPrice.amount, result, 'priceadds', null, null, parseBalance, aggregate_sum);
 			}
 		}
@@ -214,7 +217,7 @@ function main() {
 	        getParam(data.rootPayment.total, result, 'lastoperationsum', null, replaceTagsAndSpaces, parseBalance);
 //	    	getParam(data.plus, result, 'lastoperationballs', null, replaceTagsAndSpaces, parseBalance); // Яндекс убрал пункт о начисленных по операции баллах
             for(var i=0; i<data.rootPayment.basket.length; ++i){
-		        sumParam(data.rootPayment.basket[i].name, result, 'lastoperationtype', null, null, null, create_aggregate_join(',<br> '));
+		        sumParam(capitalizeFirstLetter(data.rootPayment.basket[i].name), result, 'lastoperationtype', null, null, null, create_aggregate_join(',<br> '));
 		    }
 	    }else{
 	    	AnyBalance.trace('Не удалось получить информацию о последней операции');
@@ -252,5 +255,8 @@ function main() {
 	}
 
     AnyBalance.setResult(result);
+}
 
+function capitalizeFirstLetter(str) {
+    return str.charAt(0).toUpperCase() + str.slice(1);
 }

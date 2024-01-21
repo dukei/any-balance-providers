@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="7">ab-money-ozon-bank</id>
+	<id version="8">ab-money-ozon-bank</id>
 	<name>Ozon Банк</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о текущем остатке и других параметрах карт и счетов для клиентов Ozon Банка (https://finance.ozon.ru/).</p>

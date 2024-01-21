@@ -377,7 +377,7 @@ function fetchAccount(prefs, result){
 	getParam((currAcc.paymentDate || currAcc.payoutDate).replace(/(\d{4})-(\d{2})-(\d{2})(.*)/, '$3.$2.$1'), result, 'acc_payment_date', null, null, parseDate);
 //	var periodFrom = currAcc.predictionInfo.intervalFrom.replace(/(\d{4})-(\d{2})-(\d{2})(.*)/, '$3.$2.$1');
 //	var periodTo = currAcc.predictionInfo.intervalTo.replace(/(\d{4})-(\d{2})-(\d{2})(.*)/, '$3.$2.$1');
-	getParam(currAcc.savingPercent, result, 'acc_percent', null, null, parseBalance);
+	getParam(currAcc.tariff && currAcc.tariff.interestRate, result, 'acc_percent', null, null, parseBalance);
 	
 	getPaymentPeriod(prefs, result);
 	

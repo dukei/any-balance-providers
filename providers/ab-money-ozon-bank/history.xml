@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change version="8" date="2023-12-24">
+	- Исправлено получение доходности по счету
+	</change>
     <change version="7" date="2023-10-28">
 	- Поддержка изменений в API приложения
 	</change>

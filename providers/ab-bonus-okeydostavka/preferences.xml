@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference
+		obligatory="true"
+		title="Номер телефона"
+		positiveButtonText="ОК"
+		summary="Номер телефона, привязанный к карте|Ведите номер телефона\n|{@s}\n"
+		dialogTitle="Номер телефона"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите 10 цифр номера телефона без пробелов и разделителей. Например, 9181234567"
+		key="login">
+	</EditTextPreference>
+</PreferenceScreen>

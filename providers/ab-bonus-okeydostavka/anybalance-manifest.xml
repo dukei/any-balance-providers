@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<api flags="no_browser"/>
+	<id version="1">ab-bonus-okeydostavka</id>
+	<name>О’КЕЙ</name>
+	<description html="true"><![CDATA[
+    <p>Предоставляет информацию по программе лояльности "О’КАРТА" для клиентов сети магазинов О’КЕЙ (https://www.okmarket.ru/).</p> 
+    <p>Информация берется из мобильного приложения О’КЕЙ.</p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Для работы провайдера требуется ввести номер телефона, на который зарегистрирована программа лояльности, и однократно ввести код подтверждения, высланный по SMS.</p>
+	]]></instruction>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+    <depends>
+   		<module id="library"/>
+   	</depends>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" Б"/>
+		<counter id="balance_worker" name="Баллы сотрудника" units=" Б"/>
+		<counter id="cardnum" name="Номер карты" type="text"/>
+		<counter id="cardnum2" name="Номер карты 2" type="text"/>
+		<counter id="cardnum3" name="Номер карты 3" type="text"/>
+		<counter id="cardtype" name="Тип карты" type="text"/>
+		<counter id="cardtype2" name="Тип карты 2" type="text"/>
+		<counter id="cardtype3" name="Тип карты 3" type="text"/>
+		<counter id="cardtill" name="Срок действия карты" type="time" format="dd.MM.yyyy"/>
+		<counter id="cardtill2" name="Срок действия карты 2" type="time" format="dd.MM.yyyy"/>
+		<counter id="cardtill3" name="Срок действия карты 3" type="time" format="dd.MM.yyyy"/>
+		<counter id="currlevel" name="Текущий уровень" type="text"/>
+		<counter id="discount" name="Уровень скидки" units="%"/>
+		<counter id="nextlevel" name="Следующий уровень" type="text"/>
+		<counter id="groups" name="Мои группы" type="text"/>
+		<counter id="last_oper_date" name="Дата последней операции" type="time" format="dd.MM.yyyy"/>
+		<counter id="last_oper_sum" name="Сумма последней операции" units=" Б"/>
+		<counter id="last_oper_type" name="Тип последней операции" type="text"/>
+		<counter id="last_oper_user" name="Категория посл. операции" type="text"/>
+		<counter id="last_payment_date" name="Дата последней покупки" type="time" format="dd.MM.yyyy"/>
+		<counter id="last_payment_sum" name="Сумма последней покупки" units=" ₽"/>
+		<counter id="last_payment_disc" name="Скидка по посл. покупке" units=" ₽"/>
+		<counter id="last_payment_type" name="Место последней покупки" type="text"/>
+		<counter id="favorite" name="Избранное" units=" шт"/>
+		<counter id="notifications" name="Уведомления" units=" шт"/>
+		<counter id="email" name="E-mail" type="text"/>
+		<counter id="phone" name="Телефон" type="text"/>
+		<counter id="fio" name="ФИО" type="text"/>
+	</counters>
+	<keywords>okey, окей, карта, бонус</keywords>
+	<type>bonus</type>
+	<country>ru</country>
+</provider>

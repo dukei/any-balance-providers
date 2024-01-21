@@ -93,7 +93,7 @@ function mainCell(html, result){
 	
 	var login = prefs.login.replace(/.*(\d{3})(\d\d)(\d{3})(\d\d)(\d\d)$/, '$1$2$3$4$5');
 	
-	html = AnyBalance.requestPost('https://asmp.a1.by/communityrest/mobile/checkRegistration', JSON.stringify({
+	html = AnyBalance.requestPost('https://asmp.a1.by/communityrest/checkRegistration/mobile', JSON.stringify({
         'msisdn': login,
         'realm': 'a1.by'
     }), addHeaders({
@@ -104,6 +104,9 @@ function mainCell(html, result){
 	if(/(?:User\s?|Number\s?)?not registered/i.test(html) || AnyBalance.getLastStatusCode == 404){
     	AnyBalance.trace(html);
     	throw new AnyBalance.Error('Указанный номер не зарегистрирован. Пожалуйста, пройдите регистрацию', null, true);
+    }else if(/Internal Server Error/i.test(html) || AnyBalance.getLastStatusCode >= 500){
+    	AnyBalance.trace(html);
+    	throw new AnyBalance.Error('Внутренняя ошибка сервера', null, true);
     }
 	
 	html = AnyBalance.requestPost('https://appopenapi.a1.by/v1new_prod/public/self-registration/mnp/msisdn-check', JSON.stringify({
@@ -115,7 +118,7 @@ function mainCell(html, result){
 		'X-Lk': true
 	}));
 	
-	html = AnyBalance.requestPost('https://asmp.a1.by/communityrest/mobile/passwordAuth', JSON.stringify({
+	html = AnyBalance.requestPost('https://asmp.a1.by/communityrest/passwordAuth/mobile', JSON.stringify({
         'username': login + '@a1.by',
         'password': prefs.password
     }), addHeaders({
@@ -126,6 +129,9 @@ function mainCell(html, result){
 	if(/Неверный (?:пароль|номер|телефон)/i.test(html) || AnyBalance.getLastStatusCode == 404){
     	AnyBalance.trace(html);
     	throw new AnyBalance.Error('Неверный пароль или номер телефона', null, true);
+    }else if(/Internal Server Error/i.test(html) || AnyBalance.getLastStatusCode >= 500){
+    	AnyBalance.trace(html);
+    	throw new AnyBalance.Error('Внутренняя ошибка сервера', null, true);
     }
 	
     var json = getJson(html);
@@ -133,7 +139,6 @@ function mainCell(html, result){
 	saveTokens(json);
 	
 	g_headers['X-Sso-Authorization'] = AnyBalance.getData('tokenType') + ' ' + AnyBalance.getData('accessToken');
-	
 	
 	html = AnyBalance.requestGet('https://appopenapi.a1.by/v1new_prod/profile?include=customer,subscriptions,subscriptions.activateSosCredits,subscriptions.addons,subscriptions.pauseInformation,subscriptions.currentChargesSum,subscriptions.units,subscriptions.primaryBillingAccount,subscriptions.tariff,subscriptions.currentCharges,roles,accounts,subscriptions.apns', addHeaders({
 		'Accept': '*/*',

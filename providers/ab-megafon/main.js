@@ -51,10 +51,13 @@ var g_countersTable = {
 		"last_pay_date": "payments.date",
 		"last_pay_descr": "payments.descr",
 		"statuslock": "statuslock",
-		"license": "license",
 		"add_num": "add_num",
 		"add_num2": "add_num2",
 		"add_num3": "add_num3",
+		"license": "info.license",
+		"region_name": "info.region_name",
+		"filial": "info.filial",
+		"fio": "info.fio",
 		"phone": "phone",
 		"__tariff": "tariff"
 	}

@@ -17,6 +17,7 @@ var replaceNumber = [replaceTagsAndSpaces, /\D/g, '', /.*(\d\d\d)(\d\d\d)(\d\d)(
 /** API Megafon LK*/
 function callAPI(method, url, params, allowerror) {
     var html;
+	AnyBalance.trace('Запрос: ' + api_url + url);/////////////////////////////////////
     if(method == 'post') {
         if(typeof(params) == 'string')
             html = AnyBalance.requestPost(api_url + url, params, addHeaders({'Content-Type': 'application/json; charset=utf-8'}, g_api_headers));
@@ -24,7 +25,7 @@ function callAPI(method, url, params, allowerror) {
             html = AnyBalance.requestPost(api_url + url, params, g_api_headers);
     }else
         html = AnyBalance.requestGet(api_url + url, g_api_headers);
-
+    
     var json = {};
     if(html){
         try{
@@ -33,7 +34,7 @@ function callAPI(method, url, params, allowerror) {
             json = getJsonEval(html);
         }
     }
-
+    AnyBalance.trace('Ответ: ' + JSON.stringify(json));/////////////////////////////////////
     if(json.code === 'a216'){ //Аккаунт заблокирован, надо явно его разблокировать через ussd или поддержку
     	throw new AnyBalance.Error(json.message, null, true);
     }
@@ -449,14 +450,17 @@ function processInfoApi(result){
         getParam(json.birthdate, info, 'info.birthday', null, null, parseDate);
         getParam(json.email, info, 'info.email');
         getParam(json.name, info, 'info.fio');
+		getParam(json.accountNumber, info, 'info.license');
         getParam(json.region.id, info, 'info.region_id');
         getParam(json.region.name, info, 'info.region_name');
+		var filial = {100: 'nw', 200: 'mos', 300: 'ctr', 400: 'kv', 500: 'vlg', 600: 'url', 700: 'sib', 800: 'dv'};
+		getParam(filial[json.region.id]||json.region.id, info, 'info.filial');
     }
 	
-	if(AnyBalance.isAvailable('license')){
+	if(AnyBalance.isAvailable('license') && !info.license){
 		var json = callAPI('get', 'api/profile/accountNumber');
 		
-        getParam(json.accountNumber, result, 'license');
+        getParam(json.accountNumber, info, 'info.license');
     }
 }
 

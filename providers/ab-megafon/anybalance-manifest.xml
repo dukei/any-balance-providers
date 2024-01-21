@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="4.0" version="246">ab-megafon</id>
+	<id major_version="4.0" version="247">ab-megafon</id>
 	<api flags="no_browser"/>
 	<name>МегаФон</name>
 	<description html="true"><![CDATA[
@@ -98,7 +98,9 @@
 		<counter id="add_num2" name="Дополнительный номер 2" type="text"/>
 		<counter id="add_num3" name="Дополнительный номер 3" type="text"/>
 		<counter id="license" name="Лицевой счет" type="text"/>
+		<counter id="region_name" name="Регион" type="text"/>
 		<counter id="phone" name="Телефон" type="text"/>
+		<counter id="fio" name="ФИО" type="text"/>
 	</counters>
 	<keywords>Сотовый телефон, мобильный, мобильник, мегафон, megafon, интернет, Россия</keywords>
 	<type>cell</type>

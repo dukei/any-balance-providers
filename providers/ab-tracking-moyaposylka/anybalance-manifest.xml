@@ -1,13 +1,16 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="18">ab-tracking-moyaposylka</id>
+	<id version="19">ab-tracking-moyaposylka</id>
 	<api flags="no_browser"/>
 	<name>Моя посылка</name>
 	<description html="true"><![CDATA[
-	<p>Отслеживает почтовое отправление с помощью сервиса http://moyaposylka.ru.</p>
-	<p>Сервис «Моя посылка» предоставляет возможность в одном месте автоматически отслеживать от имени пользователя регистрируемые почтовые отправления (РПО) на сайтах почтовых служб.</p>
-	<p>Информация о статусах прохождения посылки берётся из открытых источников и агрегируется на одной странице.</p>
+	<p>Предоставляет информацию о состоянии, дате и времени изменения, местонахождении и другую информацию для пользователей сервиса Моя посылка (https://moyaposylka.ru/).</p>
+	<p>Сервис Моя посылка позволяет в одном месте автоматически отслеживать от имени пользователя регистрируемые почтовые отправления (РПО) на сайтах почтовых служб.</p>
+	<p>Информация о статусах прохождения посылки берется из открытых источников и агрегируется на одной странице.</p>
 	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Для работы провайдера требуется ввести трек-номер отправления.</p>
+	]]></instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
   <depends>
     <module id="library"/>
@@ -19,11 +22,14 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
+	    <counter id="status" name="Состояние" type="text"/>
+		<counter id="date" name="Время изменения" type="time" format="dd.MM.yyyy HH:mm"/>
+		<counter id="address" name="Местонахождение" type="text"/>
+		<counter id="attribute" name="Атрибут" type="text"/>
+		<counter id="operator" name="Оператор" type="text"/>
+		<counter id="days" name="Время в пути" units=" дн"/>
+		<counter id="weight" name="Вес" units=" кг"/>
 		<counter id="fulltext" name="Сводка" type="html"/>
-		<counter id="date" name="Дата" type="time"/>
-		<counter id="status" name="Статус" type="text"/>
-		<counter id="days" name="Время в пути" units="д"/>
-		<counter id="address" name="Адрес" type="text"/>
 	</counters>
 	<keywords>Почтовое отправление, почта России, моя посылка</keywords>
 	<type>tracking, post</type>

@@ -31,13 +31,13 @@ function apiCall(verb) {
 
 function getMyPosylkaResult(prefs) {
 	AnyBalance.trace('Connecting to moyaposylka...');
-    AB.checkEmpty(prefs.track_id, 'Введите код почтового отправления!');
+    AB.checkEmpty(prefs.track_id, 'Введите трек-номер отправления!');
 
 	var dest = prefs.track_dest || "RU"; //Страна назначения
 	var html = AnyBalance.requestGet(g_baseurl, g_headers);
 
 	if(!html || AnyBalance.getLastStatusCode() > 400)
-		throw new AnyBalance.Error('Сайт временно не работает! Попробуйте обновить данные позже.');
+		throw new AnyBalance.Error('Сайт провайдера временно недоступен. Попробуйте еще раз позже');
 
 	AnyBalance.setCookie('moyaposylka.ru', 'trackerNumber', prefs.track_id);
 	AnyBalance.setCookie('moyaposylka.ru', 'countryCode', dest);
@@ -45,7 +45,7 @@ function getMyPosylkaResult(prefs) {
 	var json = apiCall('carriers/' + encodeURIComponent(prefs.track_id));
 	if(json.length == 0){
 		AnyBalance.trace(JSON.stringify(json));
-		throw new AnyBalance.Error('Неизвестный тип почтового отправления, проверьте правильность введенных данных.');
+		throw new AnyBalance.Error('Неизвестный тип почтового отправления, проверьте правильность введенных данных');
 	}
 
 	if(dest){
@@ -71,13 +71,13 @@ function getMyPosylkaResult(prefs) {
 	}while(tr <= 30);
 
 	if(tr > 30){
-		throw new AnyBalance.Error('Не удаётся получить информацию об отправлении. Либо оно ещё не попало в базу, либо почта не отдаёт данные. Попробуйте ещё раз позднее');
+		throw new AnyBalance.Error('Не удалось получить информацию об отправлении. Либо оно еще не попало в базу, либо почта не отдает данные. Попробуйте еще раз позже');
 	}
 		
 
 	if(!json.events && !json.events.length) {
 		AnyBalance.trace(JSON.stringify(json));
-		throw new AnyBalance.Error('Не удалось получить информацию об отправлении. Либо оно ещё не попало в базу, либо почта не отдаёт данные. Попробуйте ещё раз позднее');
+		throw new AnyBalance.Error('Не удалось получить информацию об отправлении. Либо оно еще не попало в базу, либо почта не отдает данные. Попробуйте еще раз позже');
 	}
 
 	var result = {success: true};
@@ -88,20 +88,33 @@ function getMyPosylkaResult(prefs) {
 		var lsdate = (ls && ls.eventDate) || 0,
 			lsplace = (ls && ls.location) || '',
 			lsstatus = (ls && ls.operation) || '???';
+			
+		var infoattribute = (json && json.attributes && json.attributes.type) || '',
+			infooperator = (json && json.carrier && json.carrier.name) || '',
+			infoweight = (json && json.weight) || 0,
+			infotrackid = (json && json.barcode) || '???';
 
-		var days = ls ? Math.round(((ls.delivered ? ls.eventDate : +new Date()) - json.events[json.events.length-1].eventDate)/86400000) : 0;
+		if(info.deliveringTime){
+			var days = info.deliveringTime;
+		}else{
+		    var days = ls ? Math.round(((ls.delivered ? ls.eventDate : +new Date()) - json.events[json.events.length-1].eventDate)/86400000) : 0;
+		}
 
-        AB.getParam(info.barcode, result, 'trackid');
+        AB.getParam(infotrackid, result, 'trackid');
+		AB.getParam(infotrackid, result, '__tariff');
         AB.getParam(days, result, 'days');
         AB.getParam(lsdate, result, 'date');
         AB.getParam(lsplace, result, 'address');
         AB.getParam(lsstatus, result, 'status');
+		AB.getParam(infoattribute, result, 'attribute');
+		AB.getParam(infooperator, result, 'operator');
+		AB.getParam(infoweight, result, 'weight');
 
 		if (AnyBalance.isAvailable('fulltext')) {
 			var date = lsdate || +new Date();
 			var address = lsplace;
 			var status = lsstatus;
-			result.fulltext = '<b>' + status + '</b><br/>\n' + '<small>' + getDateString(date) + '</small>: ' + address + '<br/>\n' + 'в пути ' + days + ' дн.';
+			result.fulltext = '<b>' + status + '</b><br/>\n' + getDateString(date) + ': ' + address + '.<br/>\n' + 'В пути ' + days + ' дн.';
 		}
 		return result;
 	}catch(e){
@@ -112,6 +125,7 @@ function getMyPosylkaResult(prefs) {
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
+	AnyBalance.setDefaultCharset('utf-8');
 	var result = getMyPosylkaResult(prefs);
 	AnyBalance.setResult(result);
 }
@@ -128,7 +142,7 @@ function numSize(num, size) {
 
 function getDateString(dt) {
 	if (typeof dt != 'object') dt = new Date(dt);
-	return numSize(dt.getDate(), 2) + '/' + numSize(dt.getMonth() + 1, 2) + '/' + dt.getFullYear() + " " + numSize(dt.getHours(), 2) + ':' + numSize(dt.getMinutes(), 2);
+	return numSize(dt.getDate(), 2) + '.' + numSize(dt.getMonth() + 1, 2) + '.' + dt.getFullYear() + " " + numSize(dt.getHours(), 2) + ':' + numSize(dt.getMinutes(), 2);
 }
 
 function createCountries(baseurl, result) {

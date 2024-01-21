@@ -453,6 +453,7 @@ function main() {
 			        AnyBalance.trace('Не удалось получить ссылку на последний заказ');
 		        }
 			}
+			result.summary = order.header.title + ' №' + order.header.number + ' на сумму ' + order.header.payment.totalPrice + ': ' + state;
         }else{
 			AnyBalance.trace('Не удалось получить данные по последнему заказу');
 		}

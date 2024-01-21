@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change version="39" date="2024-01-12">
+	- Добавлен счетчик Сводка по заказу
+	</change>
     <change version="38" date="2023-10-27">
 	- Исправлена синтаксическая ошибка
 	</change>

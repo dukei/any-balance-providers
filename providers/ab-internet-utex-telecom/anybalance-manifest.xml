@@ -1,42 +1,51 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="2">ab-internet-utex-telecom</id>
-  <name>Ютэкс-Телеком</name>
-  <description>
-    Получает баланс и информацию о тарифном плане для московского интернет-провайдера ЮТЭКС-ТЕЛЕКОМ. http://www.utex-telecom.ru/
-    Информация берется из личного кабинета https://cabinet.utex-telecom.ru/
-  </description>
-  <author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
-  <depends>
-    <module id="library"/>
-  </depends>
-  <files>
-    <icon>icon.png</icon>
-    <preferences>preferences.xml</preferences>
-    <js>main.js</js>
-    <history>history.xml</history>
-  </files>
-  <counters>
-    <counter id="balance" name="Баланс" units="р"/>
-    <counter id="monthly_payment" name="Суммарная абонентская плата" units="р"/>
-<!--
-    <counter id="bonus" name="Бонусы"/>
--->
-    <counter id="status" name="Состояние" type="text"/>
-    <counter id="agreement" name="Номер договора" type="text"/>
-    <counter id="paycode" name="Код оплаты" type="text"/>
-    <counter id="traffic" name="Трафик" units="Мб"/>
-    <!--<counter id="trafficIn" name="Вх.трафик в текущем месяце" units="Гб"/>
-    <counter id="trafficOut" name="Исх.трафик в текущем месяце" units="Гб"/>-->
-    <counter id="userName" name="ФИО" type="text"/>
-  </counters>
-  <keywords>
-    utextelecom москва
-  </keywords>
-  <type>
-    internet
-  </type>
-  <country>
-    ru
-  </country>
+    <id version="3">ab-internet-utex-telecom</id>
+    <api flags="no_browser"/>
+    <name>Ютэкс-Телеком</name>
+    <description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе и тарифном плане для пользователей интернет-провайдера <a href="https://utex.net/">UTEX</a>.</p>
+	<p>Информация берется из личного кабинета UTEX на сайте https://user.utex.net/.</p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Для работы провайдера требуется ввести логин и пароль для входа в личный кабинет UTEX.</p>
+	]]></instruction>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
+    <files>
+		<icon>icon.png</icon>
+        <preferences>preferences.xml</preferences>
+        <js>main.js</js>
+        <history>history.xml</history>
+    </files>
+    <counters>
+        <counter id="balance" name="Баланс" units=" ₽"/>
+        <counter id="monthly_payment" name="Суммарная абонентская плата" units=" ₽"/>
+		<counter id="to_pay" name="Рекомендуемый платеж" units=" ₽"/>
+<!--    <counter id="bonus" name="Бонусы"/> -->
+        <counter id="status" name="Состояние" type="text"/>
+        <counter id="agreement" name="Номер договора" type="text"/>
+		<counter id="agreement_date" name="Дата регистрации" type="time" format="dd.MM.yyyy"/>
+        <counter id="paycode" name="Код оплаты" type="text"/>
+        <counter id="traffic" name="Трафик" units=" Мб"/>
+		<counter id="date_start" name="Начало расчетного периода" type="time" format="dd.MM.yyyy"/>
+	    <counter id="date_till" name="Конец расчетного периода" type="time" format="dd.MM.yyyy"/>
+		<counter id="last_oper_sum" name="Сумма последней операции" units=" ₽"/>
+		<counter id="last_oper_date" name="Дата последней операции" type="time" format="dd.MM.yyyy"/>
+		<counter id="last_oper_type" name="Тип последней операции" type="text"/>
+		<counter id="last_oper_subtype" name="Подтип последней операции" type="text"/>
+		<counter id="last_oper_sum_after" name="Баланс после посл. операции" units=" ₽"/>
+		<counter id="last_oper_comment" name="Комментарий к посл. операции" type="text"/>
+<!--    <counter id="trafficIn" name="Вх. трафик в текущем месяце" units=" Гб"/>
+        <counter id="trafficOut" name="Исх. трафик в текущем месяце" units=" Гб"/> -->
+        <counter id="address" name="Адрес подключения" type="text"/>
+		<counter id="email" name="E-mail" type="text"/>
+		<counter id="userNum" name="Телефон" type="text"/>
+		<counter id="userName" name="ФИО" type="text"/>
+    </counters>
+    <keywords>utextelecom, utex, москва, интернет</keywords>
+    <type>internet</type>
+    <country>ru</country>
 </provider>

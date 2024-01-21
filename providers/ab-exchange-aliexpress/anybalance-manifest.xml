@@ -1,18 +1,18 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-  <id version="6">ab-exchange-aliexpress</id>
+  <id version="8">ab-exchange-aliexpress</id>
   <api flags="no_browser"/>
   <name>Курс AliExpress</name>
   <description html="true"><![CDATA[
   <p>Предоставляет информацию о внутреннем курсе доллара в интернет-магазине AliExpress для международной (<a href="http://www.aliexpress.com/"/>AliExpress Global</a>) и российской (<a href="http://www.aliexpress.com/"/>AliExpress Россия</a>) площадок.</p>
-  <p>Информация берется из блога https://moneyfromnothing.ru/ на странице https://moneyfromnothing.ru/blog/aliexpress-kurs-dollara/.</p>
+  <p>Информация берется с сайта https://helpix.ru/ на странице https://helpix.ru/currency/.</p>
   ]]></description>
   <author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
   <depends>
       <module id="library"/>
   </depends>
   <files>
-      <icon>icon.png</icon>
+	  <icon>icon.png</icon>
       <js>main.js</js>
       <history>history.xml</history>
   </files>
